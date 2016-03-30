@@ -12,7 +12,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
 #include<stdexcept>
 #include"TFEL/Math/Evaluator.hxx"
 
@@ -22,11 +21,9 @@ namespace tfel
   namespace math
   {
 
-    Evaluator::TExpr::~TExpr()
-    {} // end of Evaluator::TExpr::~TExpr
+    Evaluator::TExpr::~TExpr() = default;
 
-    Evaluator::TLogicalExpr::~TLogicalExpr()
-    {} // end of Evaluator::TLogicalExpr::~TLogicalExpr
+    Evaluator::TLogicalExpr::~TLogicalExpr() = default;
 
     Evaluator::TNegLogicalExpr::TNegLogicalExpr(const std::shared_ptr<Evaluator::TLogicalExpr > e_)
       : e(e_)
@@ -208,96 +205,60 @@ namespace tfel
     parser::ExprPtr
     Evaluator::TGroup::analyse(void)
     {
-      using namespace std;
       if(this->subExpr.size()!=1u){
-	string msg("TGroup::analyse : tgroup has not been reduced.");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("TGroup::analyse : "
+				 "tgroup has not been reduced."));
       }
       return (this->subExpr[0])->analyse();
     }
     
-    Evaluator::TGroup::~TGroup()
-    {}
+    Evaluator::TGroup::~TGroup() = default;
 
     void
     Evaluator::TGroup::reduce(const std::string& op)
     {
-      using namespace std;
       using namespace tfel::math::parser;
+      auto throw_if = [](const bool b, const std::string& m){
+	if(b){throw(std::runtime_error("Evaluator::TGroup::reduce: "+m));}
+      };
       auto p  = this->subExpr.begin();
-      vector<shared_ptr<Evaluator::TExpr>>::iterator previous;
-      vector<shared_ptr<Evaluator::TExpr>>::iterator next;
       while(p!=this->subExpr.end()){
 	if((*p)->isOperator()){
-	  auto o = make_shared<TOperator>(static_cast<const TOperator &>(*(p->get())));
+	  auto o = std::make_shared<TOperator>(static_cast<const TOperator &>(*(p->get())));
 	  if(o->getOperatorType()==op){
-	    next     = std::next(p);
+	    auto next = std::next(p);
 	    if(p==this->subExpr.begin()){
-	      if(op!="-"){
-		string msg("TGroup::reduce group began with an operator "+op);
-		throw(runtime_error(msg));
-	      } else {
-		if(next==this->subExpr.end()){
-		  string msg("TGroup::reduce group ends by operator "+op);
-		  throw(runtime_error(msg));
-		}
-		if((*next)->isOperator()){
-		  string msg("TGroup::reduce group two successive operators");
-		  throw(runtime_error(msg));
-		}
-		*next = shared_ptr<Evaluator::TExpr>(new TNegation(*next));
-		this->subExpr.erase(p);
-		p  = this->subExpr.begin();
-	      }
+	      throw_if(op!="-","group began with an operator ('"+op+"')");
+	      throw_if(next==this->subExpr.end(),"group ends by operator '"+op+"'");
+	      throw_if((*next)->isOperator(),"group two successive operators");
+	      *next = std::shared_ptr<Evaluator::TExpr>(new TNegation(*next));
+	      this->subExpr.erase(p);
+	      p  = this->subExpr.begin();
 	    } else {
-	      previous = std::prev(p);
-	      if(next==this->subExpr.end()){
-		string msg("TGroup::reduce group ends by operator "+op);
-		throw(runtime_error(msg));
-	      }
+	      auto previous = std::prev(p);
+	      throw_if(next==this->subExpr.end(),"group ends by operator '"+op+"'");
 	      if((*previous)->isOperator()){
-		if(op!="-"){
-		  string msg("TGroup::reduce group two successive operators");
-		  throw(runtime_error(msg));
-		}
-		shared_ptr<TOperator> po = shared_ptr<TOperator>(dynamic_cast<TOperator *>(previous->get()));
-		if(po->getOperatorType()!="+"){
-		  string msg("TGroup::reduce group two successive operators");
-		  throw(runtime_error(msg));
-		}
-		if((*next)->isOperator()){
-		  string msg("TGroup::reduce group three successive operators");
-		  throw(runtime_error(msg));
-		}
-		*p = shared_ptr<Evaluator::TExpr>(new TNegation(*next));
+		throw_if(op!="-","group two successive operators");
+		const auto po = std::shared_ptr<TOperator>(dynamic_cast<TOperator *>(previous->get()));
+		throw_if(po->getOperatorType()!="+","group two successive operators");
+		throw_if((*next)->isOperator(),"group three successive operators");
+		*p = std::shared_ptr<Evaluator::TExpr>(new TNegation(*next));
 		p=this->subExpr.erase(next);
 		--p;
 	      } else {  
 		if((*next)->isOperator()){
-		  if(op=="-"){
-		    string msg("TGroup::reduce group two successive operators");
-		    throw(runtime_error(msg));
-		  }
-		  TOperator * const no = dynamic_cast<TOperator *>(next->get());
-		  if(no->getOperatorType()!="-"){
-		    string msg("TGroup::reduce group two successive operators");
-		    throw(runtime_error(msg));
-		  }
-		  auto nnext = next+1;
-		  if(nnext==this->subExpr.end()){
-		    string msg("TGroup::reduce group ends by operator "+op);
-		    throw(runtime_error(msg));
-		  }
-		  if((*nnext)->isOperator()){
-		    string msg("TGroup::reduce group two successive operators");
-		    throw(runtime_error(msg));
-		  }
-		  *nnext = shared_ptr<Evaluator::TExpr>(new TNegation(*nnext));
+		  throw_if(op=="-","group two successive operators");
+		  const auto no = dynamic_cast<TOperator *>(next->get());
+		  throw_if(no->getOperatorType()!="-","group two successive operators");
+		  auto nnext = std::next(next);
+		  throw_if(nnext==this->subExpr.end(),"group ends by operator '"+op+"'");
+		  throw_if((*nnext)->isOperator(),"group two successive operators");
+		  *nnext = std::shared_ptr<Evaluator::TExpr>(new TNegation(*nnext));
 		  next=this->subExpr.erase(next);
 		  p = next-1;
 		  previous=next-2;
 		}
-		*previous = shared_ptr<Evaluator::TExpr>(new TBinaryOperation(*previous,o,*next));
+		*previous = std::shared_ptr<Evaluator::TExpr>(new TBinaryOperation(*previous,o,*next));
 		++next;
 		p=this->subExpr.erase(p,next);
 		--p;
@@ -376,7 +337,7 @@ namespace tfel
     Evaluator::TNumber::analyse(void)
     {
       using namespace tfel::math::parser;
-      return ExprPtr(new tfel::math::parser::Number(value));
+      return ExprPtr(new Number(this->value));
     }
     
     void
@@ -400,14 +361,12 @@ namespace tfel
     parser::ExprPtr
     Evaluator::TExternalFunctionExpr::analyse(void)
     {
-      using namespace std;
       using namespace tfel::math::parser;
-      vector<shared_ptr<Evaluator::TExpr>>::iterator p;
-      vector<ExprPtr> fargs;
-      for(p=this->args.begin();p!=this->args.end();++p){
-	fargs.push_back((*p)->analyse());
+      auto r = std::vector<ExprPtr>{};
+      for(auto& a : this->args){
+	r.push_back(a->analyse());
       }
-      return ExprPtr(new ExternalFunctionExpr(name,fargs,this->manager));
+      return ExprPtr(new ExternalFunctionExpr(name,r,this->manager));
     }
       
     void
@@ -438,23 +397,19 @@ namespace tfel
     parser::ExprPtr
     Evaluator::TDifferentiatedFunctionExpr::analyse(void)
     {
-      using namespace std;
       using namespace tfel::math::parser;
-      vector<shared_ptr<Evaluator::TExpr>>::iterator p;
-      vector<ExprPtr> fargs;
-      for(p=this->args.begin();p!=this->args.end();++p){
-	fargs.push_back((*p)->analyse());
+      auto r = std::vector<ExprPtr>{};
+      for(const auto& a: this->args){
+	r.push_back(a->analyse());
       }
-      return ExprPtr(new DifferentiatedFunctionExpr(this->f,fargs,this->var));
+      return ExprPtr(new DifferentiatedFunctionExpr(this->f,r,this->var));
     }
 
     void
     Evaluator::TDifferentiatedFunctionExpr::reduce(void)
     {
-      using namespace std;
-      vector<shared_ptr<Evaluator::TExpr>>::iterator p;
-      for(p=this->args.begin();p!=this->args.end();++p){
-	(*p)->reduce();
+      for(auto& a : this->args){
+	a->reduce();
       }
     }
 
@@ -510,13 +465,12 @@ namespace tfel
     parser::ExprPtr
     Evaluator::TExternalOperator::analyse(void)
     {
-      using namespace std;
       using namespace tfel::math::parser;
-      vector<ExprPtr> fargs;
+      auto r = std::vector<ExprPtr>{};
       for(auto& a : this->args){
-	fargs.push_back(a->analyse());
+	r.push_back(a->analyse());
       }
-      return (*(this->f))(this->param,fargs);
+      return (*(this->f))(this->param,r);
     } // end of Evaluator::TExternalOperator::analyse(void)
     
     void

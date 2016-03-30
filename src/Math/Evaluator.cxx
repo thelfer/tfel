@@ -386,22 +386,15 @@ namespace tfel
     void
     Evaluator::FunctionGeneratorManager::checkName(const std::string& name) const
     {
-      using namespace std;
-      if(this->fctGenerators.find(name)!=this->fctGenerators.end()){
-	string msg("Evaluator::checkName : ");
-	msg += "a function named '"+name+"' has already been declared.";
-	throw(runtime_error(msg));
-      }
-      if(this->bFctGenerators.find(name)!=this->bFctGenerators.end()){
-	string msg("Evaluator::checkName : ");
-	msg += "a binary function named '"+name+"' has already been declared.";
-	throw(runtime_error(msg));
-      }
-      if(this->extOpGenerators.find(name)!=this->extOpGenerators.end()){
-	string msg("Evaluator::checkName : ");
-	msg += "an external operator named '"+name+"' has already been declared.";
-	throw(runtime_error(msg));
-      }
+      auto throw_if = [](const bool b, const std::string& m){
+	if(b){throw(std::runtime_error(" Evaluator::FunctionGeneratorManager::checkName(: "+m));}
+      };
+      throw_if(this->fctGenerators.find(name)!=this->fctGenerators.end(),
+	       "a function named '"+name+"' has already been declared");
+      throw_if(this->bFctGenerators.find(name)!=this->bFctGenerators.end(),
+	       "a binary function named '"+name+"' has already been declared");
+      throw_if(this->extOpGenerators.find(name)!=this->extOpGenerators.end(),
+	       "an external operator named '"+name+"' has already been declared.");
     } // end of FunctionGeneratorManager::checkName
 
     void
@@ -454,8 +447,8 @@ namespace tfel
     Evaluator::FunctionGeneratorManager&
     Evaluator::getFunctionGeneratorManager(void)
     {
-      static FunctionGeneratorManager functionGeneratorManager;
-      return functionGeneratorManager;
+      static FunctionGeneratorManager m;
+      return m;
     } // end of Evaluator::getFunctionGeneratorManager(void)
 
     bool

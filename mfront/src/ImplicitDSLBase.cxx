@@ -705,8 +705,6 @@ namespace mfront{
 
   void ImplicitDSLBase::writeBehaviourParserSpecificIncludes(void)
   {
-    using namespace std;
-    VariableDescriptionContainer::const_iterator p;
     bool has_scalar  = false;
     bool has_scalar_array  = false;
     bool has_tvector = false;
@@ -714,27 +712,26 @@ namespace mfront{
     bool has_stensor = false;
     bool has_stensor_array = false;
     // checks
-    const auto& h = this->mb.getModellingHypotheses();
-    for(const auto & elem : h){
-      const auto& d = this->mb.getBehaviourData(elem);
-      const auto& sv = d.getIntegrationVariables();
-      for(p=sv.begin();p!=sv.end();++p){
-	SupportedTypes::TypeFlag flag  = this->getTypeFlag(p->type);
+    const auto& mh = this->mb.getModellingHypotheses();
+    for(const auto & h : mh){
+      const auto& d = this->mb.getBehaviourData(h);
+      for(const auto& v : d.getIntegrationVariables()){
+	const auto flag  = this->getTypeFlag(v.type);
 	if(flag==SupportedTypes::Scalar){
 	  has_scalar = true;
-	  if(p->arraySize>=1){
+	  if(v.arraySize>=1){
 	    has_scalar_array = true;
 	  }
 	}
 	if(flag==SupportedTypes::Stensor){
 	  has_stensor = true;
-	  if(p->arraySize>=1){
+	  if(v.arraySize>=1){
 	    has_stensor_array = true;
 	  }
 	}
 	if(flag==SupportedTypes::TVector){
 	  has_tvector = true;
-	  if(p->arraySize>=1){
+	  if(v.arraySize>=1){
 	    has_tvector_array = true;
 	  }
 	}
@@ -742,27 +739,27 @@ namespace mfront{
     }
     // output
     this->checkBehaviourFile();
-    this->behaviourFile << "#include\"TFEL/Math/st2tost2.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/tmatrix.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/tvector.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
+    this->behaviourFile << "#include\"TFEL/Math/st2tost2.hxx\"\n"
+			<< "#include\"TFEL/Math/tmatrix.hxx\"\n"
+			<< "#include\"TFEL/Math/tvector.hxx\"\n"
+			<< "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
+			<< "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n"
+			<< "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
     if(has_scalar_array){
       this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx\"\n"
 			  << "#include\"TFEL/Math/Vector/TinyVectorFromTinyVectorViewIO.hxx\"\n";
     }
     // tiny vectors
     if(has_tvector){
-      this->behaviourFile << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n\n";
-      this->behaviourFile << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n\n";
+      this->behaviourFile << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n\n"
+			  << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n\n";
     }
     if((has_scalar)&&(has_tvector)){
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixColumnView.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixColumnView2.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyVectorView.hxx\"\n";
+      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixColumnView.hxx\"\n"
+			  << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx\"\n"
+			  << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixColumnView2.hxx\"\n"
+			  << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx\"\n"
+			  << "#include\"TFEL/Math/Vector/TVectorFromTinyVectorView.hxx\"\n";
     }
     if(has_tvector_array){
       this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorView.hxx\"\n"
@@ -770,15 +767,15 @@ namespace mfront{
     }
     // symmetric tensors
     if(has_stensor){
-      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyVectorView.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx\"\n\n";
-      this->behaviourFile << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx\"\n\n";
+      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyVectorView.hxx\"\n"
+			  << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx\"\n\n"
+			  << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx\"\n\n";
     }
     if((has_scalar)&&(has_stensor)){
-      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx\"\n";
-      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx\"\n";
+      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx\"\n"
+			  << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx\"\n"
+			  << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx\"\n"
+			  << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx\"\n";
     }
     if(has_stensor_array){
       this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx\"\n"
@@ -1131,25 +1128,24 @@ namespace mfront{
     }
     // compute stress
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      this->behaviourFile << "void\ncomputeStress(void){\n";
-      this->behaviourFile << "using namespace std;\n";
-      this->behaviourFile << "using namespace tfel::math;\n";
-      this->behaviourFile << "using std::vector;\n";
+      this->behaviourFile << "void\ncomputeStress(void){\n"
+			  << "using namespace std;\n"
+			  << "using namespace tfel::math;\n"
+			  << "using std::vector;\n";
       writeMaterialLaws("ImplicitDSLBase::writeBehaviourParserSpecificMembers",
 			this->behaviourFile,this->mb.getMaterialLaws());
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeStress) << endl;
-      this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeStress\n\n";
+      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeStress)
+			  << "\n} // end of " << this->mb.getClassName() << "::computeStress\n\n";
     }
     if(this->mb.hasCode(h,BehaviourData::ComputeFinalStress)){
-      this->behaviourFile << "void\ncomputeFinalStress(void){\n";
-      this->behaviourFile << "using namespace std;\n";
-      this->behaviourFile << "using namespace tfel::math;\n";
-      this->behaviourFile << "using std::vector;\n";
+      this->behaviourFile << "void\ncomputeFinalStress(void){\n"
+			  << "using namespace std;\n"
+			  << "using namespace tfel::math;\n"
+			  << "using std::vector;\n";
       writeMaterialLaws("ImplicitDSLBase::writeBehaviourParserSpecificMembers",
 			this->behaviourFile,this->mb.getMaterialLaws());
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeFinalStress) << endl;
-      this->behaviourFile << "} // end of " << this->mb.getClassName() << "::computeStress\n\n";
-      this->behaviourFile << endl;
+      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeFinalStress)
+			  << "\n} // end of " << this->mb.getClassName() << "::computeStress\n\n";
     }
   } // end of ImplicitDSLBase::writeBehaviourParserSpecificMembers
 
