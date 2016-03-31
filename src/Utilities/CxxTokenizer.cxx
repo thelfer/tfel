@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<array>
 #include<cctype>
 #include<string>
 #include<sstream>
