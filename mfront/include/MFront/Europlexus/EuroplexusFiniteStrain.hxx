@@ -64,7 +64,29 @@ namespace epx{
 									const EuroplexusReal * const,
 									const EuroplexusReal * const,
 									const EuroplexusInt);
+
+  MFRONT_EPX_VISIBILITY_EXPORT void
+  computeLogarithmicStrainAndDerivative(EuroplexusReal * const,
+					EuroplexusReal * const,
+					EuroplexusReal * const,
+					EuroplexusReal * const,
+					const EuroplexusReal * const,
+					const EuroplexusReal * const,
+					const EuroplexusInt);
   
+  MFRONT_EPX_VISIBILITY_EXPORT void
+  computeDualStressOfLogarithmicStrainFromCauchyStress(EuroplexusReal * const,
+						       const EuroplexusReal * const,
+						       const EuroplexusReal * const,
+						       const EuroplexusReal * const,
+						       const EuroplexusInt);
+
+  MFRONT_EPX_VISIBILITY_EXPORT void
+  computeCauchyStressFromDualStressOfLogarithmicStrain(EuroplexusReal * const,
+						       const EuroplexusReal * const,
+						       const EuroplexusReal * const,
+						       const EuroplexusReal * const,
+						       const EuroplexusInt);
 } // end of namespace epx
 
 #endif /* LIB_MFRONT_EUROPLEXUS_EUROPLEXUSFINITESTRAIN_HXX_ */

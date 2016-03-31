@@ -37,7 +37,7 @@ namespace mtest
     const auto& hh = elm.getSupportedModellingHypotheses(l,b);
     if(find(hh.begin(),hh.end(),this->hypothesis)==hh.end()){
       string msg("UmatBehaviourBase::UmatBehaviourBase : "
-		 "unsupported modelling hypothesis '"+this->hypothesis+"'."
+		 "unsupported modelling hypothesis '"+this->hypothesis+"'. "
 		 "Supported modelling hypotheses are:");
       for(const auto& vh : hh){
 	msg += "\n'"+vh+"'";

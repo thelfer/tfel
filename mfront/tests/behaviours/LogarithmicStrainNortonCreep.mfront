@@ -4,13 +4,14 @@
 @Date      4/12/13;
 
 @UMATFiniteStrainStrategy[umat] MieheApelLambrechtLogarithmicStrain;
+@EPXFiniteStrainStrategy[epx]   MieheApelLambrechtLogarithmicStrain;
 @Theta 1.;
 
 @MaterialProperty real A;
 @MaterialProperty real E;
 
 @FlowRule{
-  const real tmp = A*pow(seq,E-1.);
+  const real tmp = A*pow(seq,E-1);
   f       = tmp*seq;
   df_dseq = E*tmp;
 }

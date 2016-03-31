@@ -795,6 +795,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-shear-4-3D.mtest
            mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-shear-5-3D.mtest
            mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-shear-6-3D.mtest
+           mfront/tests/behaviours/epx/epxmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-2D.mtest
+	   mfront/tests/behaviours/epx/epxmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D.mtest
            mfront/tests/behaviours/abaqus/Makefile
 	   mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck.mtest
            mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck2.mtest

@@ -220,7 +220,6 @@ namespace castem
 							  const CastemReal* const F,
 							  const CastemInt NDI)
   {
-    using namespace std;
     CastemCheckNDIValue(NDI);
     E[0] = log(F[0]);
     E[1] = log(F[4]);
@@ -354,7 +353,6 @@ namespace castem
 							   const CastemInt NTENS,
 							   const CastemInt NDI)
    {
-     using namespace std;
      if(NTENS==3u){
        CastemFiniteStrainComputeLogarithmicStrainAndDerivative1D(P,E,F,NDI);
      } else if(NTENS==4u){

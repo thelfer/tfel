@@ -12,9 +12,13 @@ set(mfront_tests_SOURCES
   SaintVenantKirchhoffElasticity
   SaintVenantKirchhoffElasticity2
   SaintVenantKirchhoffElasticity3
-  FiniteRotationSmallStrainElasticity)
+  FiniteRotationSmallStrainElasticity
+  LogarithmicStrainElasticity
+  LogarithmicStrainElasticity2
+  LogarithmicStrainNortonCreep)
 
-mfront_behaviour_check_library(MFrontEuroplexusBehaviours  epx ${mfront_tests_SOURCES})
+mfront_behaviour_check_library(MFrontEuroplexusBehaviours
+  epx ${mfront_tests_SOURCES})
 target_link_libraries(MFrontEuroplexusBehaviours
   EuroplexusInterface
   MFrontProfiling
@@ -166,3 +170,21 @@ test_epx(finiterotationsmallstrainelasticity-shear-3-3D)
 test_epx(finiterotationsmallstrainelasticity-shear-4-3D)
 test_epx(finiterotationsmallstrainelasticity-shear-5-3D)
 test_epx(finiterotationsmallstrainelasticity-shear-6-3D)
+
+test_epx(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-2D)
+test_epx(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D)
+# test_epx(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-2D)
+# test_epx(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D)
+# test_epx(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-2D)
+# test_epx(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D)
+# test_epx(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-2D)
+# test_epx(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-3D)
+# test_epx(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-2D)
+# test_epx(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-3D)
+# test_epx(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-2D)
+# test_epx(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3D)
+# test_epx(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-2D)
+# test_epx(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D)
+# test_epx(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-2D)
+# test_epx(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D)
+# test_epx(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D)

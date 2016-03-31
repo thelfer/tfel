@@ -1504,10 +1504,10 @@ namespace mfront{
 
   void
   CastemInterface::writeFiniteRotationSmallStrainCastemFunction(std::ostream& out,
-							    const std::string& name,
-							    const std::string& fname,
-							    const std::string& suffix,
-							    const BehaviourDescription& mb) const
+								const std::string& name,
+								const std::string& fname,
+								const std::string& suffix,
+								const BehaviourDescription& mb) const
   {
     using namespace std;
     if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){

@@ -180,27 +180,23 @@ namespace mfront{
   EuroplexusInterface::endTreatment(const BehaviourDescription& mb,
 				    const FileDescription& fd) const
   {
-    using namespace std;
     using namespace tfel::system;
-    if((mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)&&
-       (mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)){
-      throw(std::runtime_error("EuroplexusInterface::endTreatment : "
-			       "the europlexus interface only supports "
-			       "finite strain behaviours"));
-    }
+    auto throw_if = [](const bool b, const std::string& m){
+      if(b){throw(std::runtime_error("EuroplexusInterface::endTreatment: "+m));}
+    };
+    throw_if((mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)&&
+	     (mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR),
+	     "the europlexus interface only supports "
+	     "finite strain behaviours");
     if(this->fss==UNDEFINEDSTRATEGY){
-      if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	throw(std::runtime_error("EuroplexusInterface::endTreatment: "
-				 "behaviours written in the small strain framework "
-				 "must be embedded in a strain strategy"));
-      }
+      throw_if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+	       "behaviours written in the small strain framework "
+	       "must be embedded in a strain strategy");
     } else {
-      if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	throw(std::runtime_error("EuroplexusInterface::endTreatment: "
-				 "finite strain strategies can only be defined "
-				 "for behaviours writtent in the "
-				 "small strain framework"));
-      }
+      throw_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+	       "finite strain strategies can only be defined "
+	       "for behaviours writtent in the "
+	       "small strain framework");
     }
     // get the modelling hypotheses to be treated
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
@@ -213,40 +209,34 @@ namespace mfront{
 
     // header
     auto fname = "europlexus"+name+".hxx";
-    ofstream out("include/MFront/Europlexus/"+fname);
-    if(!out){
-      throw(std::runtime_error("EuroplexusInterface::endTreatment : "
-			       "could not open file '"+fname+"'"));
-    }
+    std::ofstream out("include/MFront/Europlexus/"+fname);
+    throw_if(!out,"could not open file '"+fname+"'");
 
-    out << "/*!\n";
-    out << "* \\file   "  << fname << endl;
-    out << "* \\brief  This file declares the europlexus interface for the " 
-	<< mb.getClassName() << " behaviour law\n";
-    out << "* \\author "  << fd.authorName << endl;
-    out << "* \\date   "  << fd.date       << endl;
-    out << "*/\n\n";
+    out << "/*!\n"
+	<< "* \\file   "  << fname << '\n'
+	<< "* \\brief  This file declares the europlexus interface for the " 
+	<< mb.getClassName() << " behaviour law\n"
+	<< "* \\author "  << fd.authorName << '\n'
+	<< "* \\date   "  << fd.date       << '\n'
+	<< "*/\n\n";
 
     const auto header = this->getHeaderDefine(mb);
-    out << "#ifndef "<< header << "\n";
-    out << "#define "<< header << "\n\n";
-
-    out << "#include\"TFEL/Config/TFELConfig.hxx\"\n\n";
-    out << "#include\"MFront/Europlexus/Europlexus.hxx\"\n\n";
-
-    out << "#ifdef __cplusplus\n";
-    out << "#include\"MFront/Europlexus/EuroplexusTraits.hxx\"\n";
+    out << "#ifndef "<< header << "\n"
+	<< "#define "<< header << "\n\n"
+	<< "#include\"TFEL/Config/TFELConfig.hxx\"\n\n"
+	<< "#include\"MFront/Europlexus/Europlexus.hxx\"\n\n"
+	<< "#ifdef __cplusplus\n"
+	<< "#include\"MFront/Europlexus/EuroplexusTraits.hxx\"\n";
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "#include\"MFront/Europlexus/EuroplexusOrthotropicBehaviour.hxx\"\n";
     }
-    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
-    out << "#endif /* __cplusplus */\n\n";
+    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
+	<< "#endif /* __cplusplus */\n\n";
 
     this->writeVisibilityDefines(out);
 
-    out << "#ifdef __cplusplus\n\n";
-
-    out << "namespace epx{\n\n";
+    out << "#ifdef __cplusplus\n\n"
+	<< "namespace epx{\n\n";
 
     if(!mb.areAllMechanicalDataSpecialised(mh)){
       this->writeEuroplexusBehaviourTraits(out,mb,ModellingHypothesis::UNDEFINEDHYPOTHESIS);
@@ -257,13 +247,11 @@ namespace mfront{
       }
     }
 
-    out << "} // end of namespace epx\n\n";
-
-    out << "#endif /* __cplusplus */\n\n";
-
-    out << "#ifdef __cplusplus\n";
-    out << "extern \"C\"{\n";
-    out << "#endif /* __cplusplus */\n\n";
+    out << "} // end of namespace epx\n\n"
+	<< "#endif /* __cplusplus */\n\n"
+	<< "#ifdef __cplusplus\n"
+	<< "extern \"C\"{\n"
+	<< "#endif /* __cplusplus */\n\n";
 
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
@@ -271,54 +259,39 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ void\n"
 	<< getFunctionName(name);
     writeEPXArguments(out);
-    out << ";\n\n";
-
-    out << "#ifdef __cplusplus\n";
-    out << "}\n";
-    out << "#endif /* __cplusplus */\n\n";
-
-    out << "#endif /* " << header << " */\n";
+    out << ";\n\n"
+	<< "#ifdef __cplusplus\n"
+	<< "}\n"
+	<< "#endif /* __cplusplus */\n\n"
+	<< "#endif /* " << header << " */\n";
 
     out.close();
 
     fname  = "epx"+name+".cxx";
     out.open("src/"+fname);
-    if(!out){
-      throw(std::runtime_error("EuroplexusInterface::endTreatment : "
-			       "could not open file '"+fname+"'"));
-    }
+    throw_if(!out,"could not open file '"+fname+"'");
 
-    string sfeh;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      sfeh = "epx::EuroplexusStandardSmallStrainStressFreeExpansionHandler";
-    } else if (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      sfeh = "nullptr";
-    } else {
-      throw(runtime_error("EuroplexusInterface::endTreatment: the europlexus interface only "
-			  "supports small and finite strain behaviours"));
-    }
-
-    out << "/*!\n";
-    out << "* \\file   "  << fname << endl;
-    out << "* \\brief  This file implements the europlexus interface for the " 
-	<< mb.getClassName() << " behaviour law\n";
-    out << "* \\author "  << fd.authorName << endl;
-    out << "* \\date   "  << fd.date       << endl;
-    out << "*/\n\n";
+    out << "/*!\n"
+	<< "* \\file   "  << fname << '\n'
+	<< "* \\brief  This file implements the europlexus interface for the " 
+	<< mb.getClassName() << " behaviour law\n"
+       << "* \\author "  << fd.authorName << '\n'
+       << "* \\date   "  << fd.date       << '\n'
+	<< "*/\n\n";
 
     this->getExtraSrcIncludes(out,mb);
 
-    out << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n";
-    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
+    out << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n"
+	<< "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
     if(this->fss!=UNDEFINEDSTRATEGY){
       out << "#include\"MFront/Europlexus/EuroplexusFiniteStrain.hxx\"\n\n";
     }
-    out << "#include\"MFront/Europlexus/EuroplexusStressFreeExpansionHandler.hxx\"\n\n";
-    out << "#include\"MFront/Europlexus/EuroplexusInterface.hxx\"\n\n";
-    out << "#include\"MFront/Europlexus/europlexus" << name << ".hxx\"\n\n";
+    out << "#include\"MFront/Europlexus/EuroplexusStressFreeExpansionHandler.hxx\"\n\n"
+	<< "#include\"MFront/Europlexus/EuroplexusInterface.hxx\"\n\n"
+	<< "#include\"MFront/Europlexus/europlexus" << name << ".hxx\"\n\n";
 
     this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
     
@@ -345,98 +318,26 @@ namespace mfront{
     if(getDebugMode()){
       out << "using namespace std;\n";
     }
-    out << "using tfel::material::ModellingHypothesis;\n";
-    out << "using tfel::material::" << mb.getClassName() << ";\n";
+    out << "using tfel::material::ModellingHypothesis;\n"
+	<< "using tfel::material::" << mb.getClassName() << ";\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
-      out << "using mfront::BehaviourProfiler;\n";
-      out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
-      out << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+      out << "using mfront::BehaviourProfiler;\n"
+	 << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
+	  << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
+	  << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
     if(this->fss==FINITEROTATIONSMALLSTRAIN){
-      if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	throw(std::runtime_error("EuroplexusInterface::endTreatment: "
-				 "internal error, the 'finite rotation small strain' "
-				 "strategy shall be used only with small "
-				 "strain behaviour"));
-      }
-      out << "epx::EuroplexusReal eto[6];\n"
-	  << "epx::EuroplexusReal deto[6];\n"
-	  << "epx::EuroplexusReal sig[6];\n"
-	  << "epx::computeGreenLagrangeStrain(eto,deto,F0,F1,*HYPOTHESIS);\n"
-	  << "epx::computeSecondPiolaKirchhoffStressFromCauchyStress(sig,STRESS,F0,*HYPOTHESIS);\n"
-	  << "const bool b = std::abs(*DDSDDE)>0.5;\n"
-	  << "if(*HYPOTHESIS==2){\n";
-      if(mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
-	const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
-	if(v.first){
-	  out << "const epx::EuroplexusReal ezz = "
-	      << "STATEV[" << v.second.getValueForDimension(2) << "];\n"
-	      << "epx::EuroplexusReal F_0[5] = {F0[0],F0[1],ezz,F0[3],F0[4]};\n"
-	      << "epx::computeSecondPiolaKirchhoffStressFromCauchyStress(sig,STRESS,"
-	      << "F_0,*HYPOTHESIS);\n";
-	} else {
-	  // no axial strain
-	  out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
-	      << "glossary name 'AxialStrain')\" << std::endl;\n";
-	  out << "*STATUS=-2;\n";
-	  out << "return;\n";
-	}
-      } else {
-	out << "*STATUS=-2;\n"
-	    << "return;\n";
-      }
-      out << "} else {\n"
-	  << "epx::computeSecondPiolaKirchhoffStressFromCauchyStress(sig,STRESS,F0,*HYPOTHESIS);\n"
-	  << "}\n"
-	  << "const epx::EPXData d = {STATUS,sig,STATEV,DDSDDE,PNEWDT,MSG,\n"
-	  << "                        *NSTATV,*DTIME,eto,deto,PROPS,*NPROPS,\n"
-	  << "                        TEMP,DTEMP,PREDEF,DPRED,*NPREDEF,\n"
-	  << "                        " << getFunctionName(name) << "_getOutOfBoundsPolicy(),\n"
-	  << "                        " << sfeh << "};\n"
-	  << "epx::EuroplexusInterface<" << mb.getClassName() << ">::exe(d,*HYPOTHESIS);\n"
-	  << "if(*STATUS==0){\n"
-	  << "if(*HYPOTHESIS==2){\n";
-      if(mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
-	const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
-	if(v.first){
-	  out << "const epx::EuroplexusReal ezz = "
-	      << "STATEV[" << v.second.getValueForDimension(2) << "];\n"
-	      << "epx::EuroplexusReal F_1[5] = {F1[1],F1[1],ezz,F1[3],F1[4]};\n"
-	      << "epx::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,sig,F_1,*HYPOTHESIS);\n";
-	} else {
-	  // no axial strain
-	  out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
-	      << "glossary name 'AxialStrain')\" << std::endl;\n";
-	  out << "*STATUS=-2;\n";
-	  out << "return;\n";
-	}
-      } else {
-	out << "*STATUS=-2;\n"
-	    << "return;\n";
-      }
-      out << "} else {\n"
-	  << "epx::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,sig,F1,*HYPOTHESIS);\n"
-	  << "}\n"
-	  << "if(b){\n"
-	  << "epx::computeCauchyStressDerivativeFromSecondPiolaKirchhoffStressDerivative(DDSDDE,STRESS,F1,*HYPOTHESIS);\n"
-	  << "}\n"
-      	  << "}\n";
+      this->writeFiniteRotationSmallStrainCall(out,mb,name);
     } else if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
-      if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	throw(std::runtime_error("EuroplexusInterface::endTreatment: "
-				 "internal error, logarithmic strain strategy shall be "
-				 "used only with small strain behaviour"));
-      }
-      throw(std::runtime_error("EuroplexusInterface::endTreatment: "
-			       "logarithmic strain not implemented yet"));
+      this->writeLogarithmicStrainCall(out,mb,name);
     } else {
       // this->generateMTestFile1(out);
       out << "const epx::EPXData d = {STATUS,STRESS,STATEV,DDSDDE,PNEWDT,MSG,\n"
 	  << "                        *NSTATV,*DTIME,F0,F1,PROPS,*NPROPS,\n"
 	  << "                        TEMP,DTEMP,PREDEF,DPRED,*NPREDEF,\n"
 	  << "                        " << getFunctionName(name) << "_getOutOfBoundsPolicy(),\n"
-	  << "                        " << sfeh << "};\n"
+	  << "                        nullptr};\n"
 	  << "epx::EuroplexusInterface<" << mb.getClassName() << ">::exe(d,*HYPOTHESIS);\n";
     } 
     // this->generateMTestFile2(out,mb.getBehaviourType(),
@@ -460,12 +361,9 @@ namespace mfront{
       out << "LAW '" << this->getFunctionName(name)  <<  "'\n"
 	  << "!! material properties\n";
       for(const auto& mp : this->buildMaterialPropertiesList(mb,h).first){
-	if(this->getTypeFlag(mp.type)!=SupportedTypes::Scalar){
-	  throw(std::runtime_error("EuroplexusInterface::endTreatment: "
-				   "material property '"+mp.name+
-				   "' is not a scalar. "
-				   "This is not supported yet"));
-	}
+	throw_if(this->getTypeFlag(mp.type)!=SupportedTypes::Scalar,
+		 "material property '"+mp.name+"' is not a scalar. "
+		 "This is not supported yet");
 	if(mp.arraySize==1u){
 	  out << "MATP '" << mp.name << "' ???\n";
 	} else {
@@ -477,7 +375,7 @@ namespace mfront{
       out << "!! internal state variables\n";
       out << "!! by default, internal state variables are set to zero\n";
       for(const auto& iv: d.getPersistentVariables()){
-	auto display = [&h,&out](const SupportedTypes::TypeFlag f){
+	auto display = [&h,&out,&throw_if](const SupportedTypes::TypeFlag f){
 	  if(f==SupportedTypes::Scalar){
 	    out << " ???";
 	  } else if(f==SupportedTypes::Stensor){
@@ -497,8 +395,7 @@ namespace mfront{
 	      out << " ??? ??? ??? ??? ???";
 	    }
 	  } else {
-	    throw(std::runtime_error("EuroplexusInterface::endTreatment: "
-				     "unsupported state variable type"));
+	    throw_if(true,"unsupported state variable type");
 	  }
 	};
 	if(iv.arraySize==1u){
@@ -517,12 +414,9 @@ namespace mfront{
       out << "!! external state variables\n"
 	  << "EVAR 'Temperature' 293.15\n";
       for(const auto& e: d.getExternalStateVariables()){
-	if(this->getTypeFlag(e.type)!=SupportedTypes::Scalar){
-	  throw(std::runtime_error("EuroplexusInterface::endTreatment: "
-				   "external state variable '"+e.name+
-				   "' is not a scalar. "
-				   "This is not supported yet"));
-	}
+	throw_if(this->getTypeFlag(e.type)!=SupportedTypes::Scalar,
+		 "external state variable '"+e.name+
+		 "' is not a scalar. This is not supported yet");
 	if(e.arraySize==1u){
 	  out << "EVAR '" << d.getExternalName(e.name) << "' ???\n";
 	} else {
@@ -535,6 +429,162 @@ namespace mfront{
     }
     out.close();
   } // end of EuroplexusInterface::endTreatment
+
+  void
+  EuroplexusInterface::writeFiniteRotationSmallStrainCall(std::ostream& out,
+							  const BehaviourDescription& mb,
+							  const std::string& name) const
+  {
+    if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      throw(std::runtime_error("EuroplexusInterface::writeLogarithmicStrainCall: "
+			       "internal error, the 'finite rotation small strain' "
+			       "strategy shall be used only with small "
+			       "strain behaviour"));
+    }
+    const auto sfeh = "epx::EuroplexusStandardSmallStrainStressFreeExpansionHandler";
+    out << "epx::EuroplexusReal eto[6];\n"
+	<< "epx::EuroplexusReal deto[6];\n"
+	<< "epx::EuroplexusReal sig[6];\n"
+	<< "epx::computeGreenLagrangeStrain(eto,deto,F0,F1,*HYPOTHESIS);\n"
+	<< "const bool b = std::abs(*DDSDDE)>0.5;\n"
+	<< "if(*HYPOTHESIS==2){\n";
+    if(mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      if(v.first){
+	out << "const epx::EuroplexusReal ezz = "
+	    << "STATEV[" << v.second.getValueForDimension(2) << "];\n"
+	    << "epx::EuroplexusReal F_0[5] = {F0[0],F0[1],std::sqrt(1+2*ezz),F0[3],F0[4]};\n"
+	    << "epx::computeSecondPiolaKirchhoffStressFromCauchyStress(sig,STRESS,"
+	    << "F_0,*HYPOTHESIS);\n";
+      } else {
+	// no axial strain
+	out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
+	    << "glossary name 'AxialStrain')\" << std::endl;\n";
+	out << "*STATUS=-2;\n";
+	out << "return;\n";
+      }
+    } else {
+      out << "*STATUS=-2;\n"
+	  << "return;\n";
+    }
+    out << "} else {\n"
+	<< "epx::computeSecondPiolaKirchhoffStressFromCauchyStress(sig,STRESS,F0,*HYPOTHESIS);\n"
+	<< "}\n"
+	<< "const epx::EPXData d = {STATUS,sig,STATEV,DDSDDE,PNEWDT,MSG,\n"
+	<< "                        *NSTATV,*DTIME,eto,deto,PROPS,*NPROPS,\n"
+	<< "                        TEMP,DTEMP,PREDEF,DPRED,*NPREDEF,\n"
+	<< "                        " << this->getFunctionName(name) << "_getOutOfBoundsPolicy(),\n"
+	<< "                        " << sfeh << "};\n"
+	<< "epx::EuroplexusInterface<" << mb.getClassName() << ">::exe(d,*HYPOTHESIS);\n"
+	<< "if(*STATUS==0){\n"
+	<< "if(*HYPOTHESIS==2){\n";
+    if(mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      if(v.first){
+	out << "const epx::EuroplexusReal ezz = "
+	    << "STATEV[" << v.second.getValueForDimension(2) << "];\n"
+	    << "epx::EuroplexusReal F_1[5] = {F1[1],F1[1],std::sqrt(1+2*ezz),F1[3],F1[4]};\n"
+	    << "epx::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,sig,F_1,*HYPOTHESIS);\n";
+      } else {
+	// no axial strain
+	out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
+	    << "glossary name 'AxialStrain')\" << std::endl;\n";
+	out << "*STATUS=-2;\n";
+	out << "return;\n";
+      }
+    } else {
+      out << "*STATUS=-2;\n"
+	  << "return;\n";
+    }
+    out << "} else {\n"
+	<< "epx::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,sig,F1,*HYPOTHESIS);\n"
+	<< "}\n"
+	<< "if(b){\n"
+	<< "epx::computeCauchyStressDerivativeFromSecondPiolaKirchhoffStressDerivative(DDSDDE,STRESS,F1,*HYPOTHESIS);\n"
+	<< "}\n"
+	<< "}\n";
+  }
+
+  void
+  EuroplexusInterface::writeLogarithmicStrainCall(std::ostream& out,
+						  const BehaviourDescription& mb,
+						  const std::string& name) const
+  {
+    if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      throw(std::runtime_error("EuroplexusInterface::writeFiniteRotationSmallStrainCall: "
+			       "internal error, the 'finite rotation small strain' "
+			       "strategy shall be used only with small "
+			       "strain behaviour"));
+    }
+    const auto sfeh = "epx::EuroplexusStandardSmallStrainStressFreeExpansionHandler";
+    out << "epx::EuroplexusReal eto[6];\n"
+	<< "epx::EuroplexusReal deto[6];\n"
+	<< "epx::EuroplexusReal sig[6];\n"
+	<< "epx::EuroplexusReal P0[36];\n"
+	<< "epx::EuroplexusReal P1[36];\n";
+    if(mb.getAttribute(BehaviourData::profiling,false)){
+      out << "{\n"
+	  << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	  << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
+    }
+    out << "epx::computeLogarithmicStrainAndDerivative(P0,P1,eto,deto,F0,F1,*HYPOTHESIS);\n"
+	<< "const bool b = std::abs(*DDSDDE)>0.5;\n"
+	<< "if(*HYPOTHESIS==2){\n";
+    if(mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      if(v.first){
+	out << "const epx::EuroplexusReal ezz = "
+	    << "STATEV[" << v.second.getValueForDimension(2) << "];\n"
+	    << "epx::EuroplexusReal F_0[5] = {F0[0],F0[1],std::exp(ezz),F0[3],F0[4]};\n"
+	    << "epx::computeDualStressOfLogarithmicStrainFromCauchyStress(sig,STRESS,P0,F_0,*HYPOTHESIS);\n";
+      } else {
+	// no axial strain
+	out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
+	    << "glossary name 'AxialStrain')\" << std::endl;\n";
+	out << "*STATUS=-2;\n";
+	out << "return;\n";
+      }
+    } else {
+      out << "*STATUS=-2;\n"
+	  << "return;\n";
+    }
+    out << "} else {\n"
+	<< "epx::computeDualStressOfLogarithmicStrainFromCauchyStress(sig,STRESS,P0,F0,*HYPOTHESIS);\n"
+	<< "}\n"
+	<< "const epx::EPXData d = {STATUS,sig,STATEV,DDSDDE,PNEWDT,MSG,\n"
+	<< "                        *NSTATV,*DTIME,eto,deto,PROPS,*NPROPS,\n"
+	<< "                        TEMP,DTEMP,PREDEF,DPRED,*NPREDEF,\n"
+	<< "                        " << this->getFunctionName(name) << "_getOutOfBoundsPolicy(),\n"
+	<< "                        " << sfeh << "};\n"
+	<< "epx::EuroplexusInterface<" << mb.getClassName() << ">::exe(d,*HYPOTHESIS);\n"
+	<< "if(*STATUS==0){\n"
+	<< "if(*HYPOTHESIS==2){\n";
+    if(mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      if(v.first){
+	out << "const epx::EuroplexusReal ezz = "
+	    << "STATEV[" << v.second.getValueForDimension(2) << "];\n"
+	    << "epx::EuroplexusReal F_1[5] = {F1[1],F1[1],std::exp(ezz),F1[3],F1[4]};\n"
+	    << "epx::computeCauchyStressFromDualStressOfLogarithmicStrain(STRESS,sig,P1,F_1,*HYPOTHESIS);\n";
+      } else {
+	// no axial strain
+	out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
+	    << "glossary name 'AxialStrain')\" << std::endl;\n";
+	out << "*STATUS=-2;\n";
+	out << "return;\n";
+      }
+    } else {
+      out << "*STATUS=-2;\n"
+	  << "return;\n";
+    }
+    out << "} else {\n"
+	<< "epx::computeCauchyStressFromDualStressOfLogarithmicStrain(STRESS,sig,P1,F1,*HYPOTHESIS);\n"
+	<< "}\n"
+	<< "if(b){\n"
+	<< "epx::computeCauchyStressDerivativeFromSecondPiolaKirchhoffStressDerivative(DDSDDE,STRESS,F1,*HYPOTHESIS);\n"
+	<< "}\n"
+	<< "}\n";
+  }
   
   void 
   EuroplexusInterface::writeInterfaceSpecificIncludes(std::ostream& out,
