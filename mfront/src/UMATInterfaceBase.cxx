@@ -205,8 +205,7 @@ namespace mfront
       of += this->getTypeSize(v.second.type,1u);
     }
     if(!persistentVarsHolder.empty()){
-      this->exportResults(out,
-			  persistentVarsHolder,
+      this->exportResults(out,persistentVarsHolder,
 			  iprefix+"statev",
 			  mb.useQt());
     }

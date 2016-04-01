@@ -555,7 +555,7 @@ namespace mfront{
 	  } else if((flag==SupportedTypes::TVector)||
 		    (flag==SupportedTypes::Stensor)||
 		    (flag==SupportedTypes::Tensor)){
-	    f << "exportToBaseTypeArray(" << p->name 
+	    f << "exportToBaseTypeArray(this->" << p->name 
 	      << ",&" << dest << "[" 
 	      << currentOffset << "]);\n";  
 	  } else {
@@ -629,9 +629,8 @@ namespace mfront{
 					     const std::string& fileName,
 					     const bool useTimeDerivative) const
   {
-    VariableDescriptionContainer::const_iterator p;
-    for(p=v.begin();p!=v.end();++p){
-      this->writeVariableDeclaration(f,*p,prefix,suffix,fileName,useTimeDerivative);
+    for(const auto& e:v){
+      this->writeVariableDeclaration(f,e,prefix,suffix,fileName,useTimeDerivative);
     }
   } // end of SupportedTypes::writeVariablesDeclarations
 
@@ -643,9 +642,8 @@ namespace mfront{
 					   const std::string& fileName,
 					   const bool useTimeDerivative) const
   {
-    using namespace std;
-    const string n = prefix+v.name+suffix;
-    const string t = (!useTimeDerivative) ? v.type :  this->getTimeDerivativeType(v.type);
+    const auto n = prefix+v.name+suffix;
+    const auto t = (!useTimeDerivative) ? v.type :  this->getTimeDerivativeType(v.type);
     if((!getDebugMode())&&(v.lineNumber!=0u)){
       f << "#line " << v.lineNumber << " \"" 
 	<< fileName << "\"\n";

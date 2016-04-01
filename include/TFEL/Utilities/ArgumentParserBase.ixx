@@ -133,9 +133,9 @@ namespace tfel
 	throw(std::runtime_error("ArgumentParserBase<Child>::setArguments: "
 				 "argc value not valid"));
       }
-      this->programName = argv[0];
       this->args.clear();
-      copy(argv+1,argv+argc,back_inserter(this->args));
+      this->programName = argv[0];
+      std::copy(argv+1,argv+argc,back_inserter(this->args));
     } // end of ArgumentParserBase<Child>::setArguments
 
     template<typename Child>

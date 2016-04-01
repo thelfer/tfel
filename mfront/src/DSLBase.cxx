@@ -151,8 +151,6 @@ namespace mfront
   CodeBlock
   DSLBase::readNextBlock(const CodeBlockParserOptions& options)
   {
-    using namespace std;
-    using namespace tfel::utilities;
     const auto& smn = options.smn;
     const auto& mn  = options.mn;
     const auto& delim1 = options.delim1;
@@ -173,11 +171,10 @@ namespace mfront
     this->checkNotEndOfFile("DSLBase::readNextBlock",
 			    "Expected a '"+delim2+"'.");
     if((this->current->value==";")&&(!allowSemiColon)){
-      string msg("DSLBase::readNextBlock : ");
-      msg += "read ';' before the end of block.\n";
-      msg += "Number of block opened : ";
-      msg += to_string(openedBlock);
-      throw(runtime_error(msg));
+      this->throwRuntimeError("DSLBase::readNextBlock",
+			      "read ';' before the end of block.\n"
+			      "Number of block opened : "+
+			      std::to_string(openedBlock));
     }
     if(this->current->value==delim1){
       ++openedBlock;
@@ -189,7 +186,7 @@ namespace mfront
     auto currentLine = this->current->line;
     if((registerLine)&&(!getDebugMode())){
       res  = "#line ";
-      res += to_string(currentLine);
+      res += std::to_string(currentLine);
       res += " \"";
       res += this->fileName;
       res += "\"\n";
@@ -218,7 +215,7 @@ namespace mfront
       res += this->current->value;
     } else if(mn.find(this->current->value)!=mn.end()){
       b.members.insert(this->current->value);
-      string currentValue;
+      auto currentValue = std::string{};
       auto previous = this->current;
       --previous;
       if((previous->value=="->")||
@@ -255,7 +252,7 @@ namespace mfront
 	if((registerLine)&&(!getDebugMode())){
 	  res += "\n";
 	  res += "#line ";
-	  res += to_string(currentLine);
+	  res += std::to_string(currentLine);
 	  res += " \"";
 	  res += this->fileName;
 	  res += "\"\n";
@@ -264,11 +261,10 @@ namespace mfront
 	}
       }
       if((this->current->value==";")&&(!allowSemiColon)){
-	string msg("DSLBase::readNextBlock : ");
-	msg += "read ';' before the end of block.\n";
-	msg += "Number of block opened : ";
-	msg += to_string(openedBlock);
-	throw(runtime_error(msg));
+	this->throwRuntimeError("DSLBase::readNextBlock",
+				"read ';' before the end of block.\n"
+				"Number of block opened : "+
+				std::to_string(openedBlock));
       }
       if(!this->current->comment.empty()){
 	if(!b.description.empty()){
@@ -294,7 +290,7 @@ namespace mfront
 	res += this->current->value;
       } else if(mn.find(this->current->value)!=mn.end()){
 	b.members.insert(this->current->value);
-	string currentValue;
+	auto currentValue = std::string{};
 	auto previous = this->current;
 	--previous;
 	if((previous->value=="->")||
@@ -331,11 +327,10 @@ namespace mfront
     }
     if(this->current==this->tokens.end()){
       --(this->current);
-      string msg("DSLBase::readNextBlock : ");
-      msg += "Expected the end of a block.\n";
-      msg += "Number of block opened : ";
-      msg += to_string(openedBlock);
-      throw(runtime_error(msg));
+      this->throwRuntimeError("DSLBase::readNextBlock",
+			      "Expected the end of a block.\n"
+			      "Number of block opened : "+
+			      std::to_string(openedBlock));
     }
     ++(this->current);
     return b;
@@ -361,19 +356,18 @@ namespace mfront
 
   void DSLBase::treatImport()
   {
-    using namespace std;
-    const string m = "DSLBase::treatImport";
-    const string oFileName = this->fileName;
+    const auto m = "DSLBase::treatImport";
+    const auto oFileName = this->fileName;
     this->checkNotEndOfFile(m);
     const auto& files = this->readStringOrArrayOfString(m);
     this->checkNotEndOfFile(m);
     this->readSpecifiedToken(m,";");
     TokensContainer oFileTokens;
     oFileTokens.swap(this->tokens);
-    TokensContainer::const_iterator ocurrent = this->current;
+    const auto ocurrent = this->current;
     for(const auto& f : files){
       this->importFile(SearchFile::search(f),
-		       vector<string>());
+		       std::vector<std::string>());
     }
     this->fileName = oFileName;
     this->tokens.swap(oFileTokens);
@@ -414,19 +408,15 @@ namespace mfront
   } // end of DSLBase::readUnsignedShort
 
   void
-  DSLBase::readSpecifiedToken(const std::string& method,
-				 const std::string& token)
+  DSLBase::readSpecifiedToken(const std::string& m,
+			      const std::string& v)
   {
-    using namespace std;
-    this->checkNotEndOfFile(method,"Expected '"+token+"'.");
-    if(this->current->value!=token){
-      string msg(method+" : ");
-      msg += "expected '"+token+"', read ";
-      msg += this->current->value;
-      msg += ".\n";
-      msg += "Error at line : ";
-      msg += to_string(this->current->line);
-      throw(runtime_error(msg));
+    this->checkNotEndOfFile(m,"expected '"+v+"'.");
+    if(this->current->value!=v){
+      this->throwRuntimeError(m,"expected '"+v+"', "
+			      "read '"+this->current->value+"'.\n"
+			      "Error at line: "+
+			      std::to_string(this->current->line));
     }
     ++(this->current);
   } // end of DSLBase::readSpecifiedToken
@@ -461,16 +451,13 @@ namespace mfront
   std::string
   DSLBase::readOnlyOneToken(void)
   {
-    using namespace std;
-    string res;
     this->checkNotEndOfFile("DSLBase::readOnlyOneToken",
 			    "Expected a word.");
     if(this->current->value==";"){
-      string msg("DSLBase::readOnlyOneToken : ");
-      msg += "No word read";
-      throw(runtime_error(msg));
+      this->throwRuntimeError("DSLBase::readOnlyOneToken",
+			      "no word read");
     }
-    res = this->current->value;
+    const auto res = this->current->value;
     ++(this->current);
     this->readSpecifiedToken("DSLBase::readOnlyOneToken",";");
     return res;
@@ -669,6 +656,7 @@ namespace mfront
 		    const bool b)
   {
     l.clear();
+    this->checkNotEndOfFile(m,"Expected '"+db+"'");
     if(this->current==this->tokens.end()){
       if(b){
 	return;
@@ -703,17 +691,16 @@ namespace mfront
   std::vector<std::string>
   DSLBase::readArrayOfString(const std::string& m)
   {
-    using namespace tfel::utilities;
-    std::vector<std::string> res;
-    std::vector<Token> tokens;
-    this->readList(tokens,m,"{","}",false);
-    for(const auto& t : tokens){
-      if(t.flag!=Token::String){
+    auto r = std::vector<std::string>{};
+    auto as = std::vector<tfel::utilities::Token>{};
+    this->readList(as,m,"{","}",false);
+    for(const auto& t : as){
+      if(t.flag!=tfel::utilities::Token::String){
 	this->throwRuntimeError(m,"Expected a string");
       }
-      res.push_back(t.value.substr(1,t.value.size()-2));
+      r.push_back(t.value.substr(1,t.value.size()-2));
     }
-    return res;
+    return r;
   } // end of DSLBase::readArrayOfString
 
   bool
@@ -736,9 +723,8 @@ namespace mfront
   std::string
   DSLBase::readString(const std::string& m)
   {
-    using namespace tfel::utilities;
     this->checkNotEndOfFile(m,"Expected a string or '{'");
-    if(this->current->flag!=Token::String){
+    if(this->current->flag!=tfel::utilities::Token::String){
       this->throwRuntimeError(m,"Expected a string");
     }
     const auto& r = this->current->value.substr(1,this->current->value.size()-2);
@@ -749,13 +735,11 @@ namespace mfront
   std::vector<std::string>
   DSLBase::readStringOrArrayOfString(const std::string& m)
   {
-    std::vector<std::string> res;
     this->checkNotEndOfFile(m,"Expected a string or '{'");
     if(this->current->value=="{"){
       return this->readArrayOfString(m);
     }
-    res.push_back(this->readString(m));
-    return res;
+    return {1u,this->readString(m)};
   } // end of DSLBase::readStringOrArrayOfString
 
   void
@@ -812,10 +796,7 @@ namespace mfront
 			       const std::string& value1,
 			       const std::string& value2)
   {
-    std::vector<std::string> values(2);
-    values[0] = value1;
-    values[1] = value2;
-    return this->readSpecifiedValues(file,values);
+    return this->readSpecifiedValues(file,{value1,value2});
   } // end of DSLBase::readSpecifiedValues
 
   std::vector<std::string>
@@ -986,7 +967,6 @@ namespace mfront
 
   void DSLBase::treatUnknownKeyword(void)
   {
-    using namespace std;
     --(this->current);
     this->throwRuntimeError("DSLBase::treatUnknownKeyword",
 			    "unknown keyword (read '"+this->current->value+"')");

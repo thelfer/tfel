@@ -59,8 +59,8 @@ int main(const int argc, const char *const *const argv)
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   try{
 #endif /* __CYGWIN__ */
-  MFront mfront(argc,argv);
-  mfront.exe();
+    MFront mfront(argc,argv);
+    mfront.exe();
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   }
   catch(std::exception& e){

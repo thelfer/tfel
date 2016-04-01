@@ -710,7 +710,7 @@ namespace mfront{
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto flag = this->getTypeFlag(f.type);
     if(flag==SupportedTypes::Stensor){
-      out << "tfel::fsalgo::copy<StensorSize>::exe(" << f.name << ".begin()," << a;
+      out << "tfel::fsalgo::copy<StensorSize>::exe(this->" << f.name << ".begin()," << a;
       if(!o.isNull()){
 	out << "+" << o;
       }

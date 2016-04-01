@@ -135,15 +135,13 @@ namespace mtest{
   void
   SchemeParserBase::handleReal(SchemeBase& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
     const auto& v = this->readString(p,this->tokens.end());
     if(!this->isValidIdentifier(v)){
-      throw(runtime_error("SchemeParserBase::handleReal : '"+
-			  v+"' is not a valid identifier"));
+      throw(std::runtime_error("SchemeParserBase::handleReal : '"+
+			       v+"' is not a valid identifier"));
     }
     const real value = this->readDouble(t,p);
-    shared_ptr<Evolution> mpev;
-    mpev = shared_ptr<Evolution>(new ConstantEvolution(value));
+    auto mpev = std::shared_ptr<Evolution>(new ConstantEvolution(value));
     this->readSpecifiedToken("SchemeParserBase::handleReal",";",
 			     p,this->tokens.end());
     t.addEvolution(v,mpev,true,true);
@@ -455,15 +453,14 @@ namespace mtest{
 	  this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
 				  this->tokens.end());
 	  if(p->value=="}"){
-	    string msg("SchemeParserBase::handleTimes: ");
-	    msg += "unexpected token '}'";
-	    throw(runtime_error(msg));
+	    throw(std::runtime_error("SchemeParserBase::handleTimes: "
+				     "unexpected token '}'"));
 	  }
 	} else {
 	  if(p->value!="}"){
-	    string msg("SchemeParserBase::handleTimes: ");
-	    msg += "unexpected token '"+p->value+"', expected ',' or '}'";
-	    throw(runtime_error(msg));
+	    throw(std::runtime_error("SchemeParserBase::handleTimes: "
+				     "unexpected token '"+p->value+"', "
+				     "expected ',' or '}'"));
 	  }
 	}
       }
@@ -532,41 +529,33 @@ namespace mtest{
   real
   SchemeParserBase::readDouble(SchemeBase& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
-    using tfel::utilities::Token;
-    using tfel::math::Evaluator;
     this->checkNotEndOfLine("SchemeParserBase::readDouble",p,
 			    this->tokens.end());
-    real v(0);
-    if(p->flag==Token::String){
-      const string&f = this->readString(p,this->tokens.end());
-      Evaluator ev(f);
-      const auto& vn = ev.getVariablesNames();
-      vector<string>::const_iterator pv;
-      for(pv=vn.begin();pv!=vn.end();++pv){
-	map<string,shared_ptr<Evolution> >::const_iterator pev;
-	shared_ptr<map<string,shared_ptr<Evolution> > > evs;
-	evs = t.getEvolutions();
-	pev = evs->find(*pv);
+    real r(0);
+    if(p->flag==tfel::utilities::Token::String){
+      const auto&f = this->readString(p,this->tokens.end());
+      tfel::math::Evaluator ev(f);
+      for(const auto& v : ev.getVariablesNames()){
+	const auto evs = t.getEvolutions();
+	const auto pev = evs->find(v);
 	if(pev==evs->end()){
-	  string msg("SchemeParserBase::readDouble: "
-		     "no evolution named '"+*pv+"' defined");
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("SchemeParserBase::readDouble: "
+				   "no evolution named '"+v+"' defined"));
 	}
-	const Evolution& e = *(pev->second);
+	const auto& e = *(pev->second);
 	if(!e.isConstant()){
-	  string msg("SchemeParserBase::readDouble : formula '"+f+"' shall "
-		     "only depend on constant evolutions "
-		     "(evolution '"+*pv+"' is not constant)");
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("SchemeParserBase::readDouble : "
+				   "formula '"+f+"' shall "
+				   "only depend on constant evolutions "
+				   "(evolution '"+v+"' is not constant)"));
 	}
-	ev.setVariableValue(*pv,e(0));
+	ev.setVariableValue(v,e(0));
       }
-      v = ev.getValue();
+      r = ev.getValue();
     } else {
-      v = CxxTokenizer::readDouble(p,this->tokens.end());
+      r = CxxTokenizer::readDouble(p,this->tokens.end());
     }
-    return v;
+    return r;
   } // end of SchemeParserBase::readDouble
 
   real
@@ -600,14 +589,13 @@ namespace mtest{
 				   const std::string& type,
 				   TokensContainer::const_iterator& p)
   {
-    using namespace std;
-    shared_ptr<Evolution> ev;
+    auto ev = std::shared_ptr<Evolution>{};
     this->checkNotEndOfLine("SchemeParserBase::parseEvolution",p,
 			    this->tokens.end());
     if(type.empty()||type=="evolution"){
       if(p->value=="{"){
-	vector<real> tvalues;
-	vector<real> values;
+	auto tvalues = std::vector<real>{};
+	auto values  = std::vector<real>{};
 	this->readSpecifiedToken("SchemeParserBase::parseEvolution","{",p,
 				 this->tokens.end());
 	this->checkNotEndOfLine("SchemeParserBase::parseEvolution",p,
@@ -636,14 +624,14 @@ namespace mtest{
 	}
 	this->readSpecifiedToken("SchemeParserBase::parseEvolution","}",p,
 				 this->tokens.end());
-	ev = shared_ptr<Evolution>(new LPIEvolution(tvalues,values));
+	ev = std::shared_ptr<Evolution>(new LPIEvolution(tvalues,values));
       } else {
 	const real s = this->readDouble(t,p);
-	ev = shared_ptr<Evolution>(new ConstantEvolution(s));
+	ev = std::shared_ptr<Evolution>(new ConstantEvolution(s));
       }
     } else if(type=="function"){
       const auto& f = this->readString(p,this->tokens.end());
-      ev = shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
+      ev = std::shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
     } else if((type=="data")||(type=="file")){
       tfel::utilities::TextData data{this->readString(p,this->tokens.end())};
       this->readSpecifiedToken("SchemeParserBase::parseEvolution","using",p,
@@ -664,10 +652,10 @@ namespace mtest{
       } else {
 	vv = data.getColumn(readUnsignedInt(p,this->tokens.end()));
       }
-      ev = shared_ptr<Evolution>(new LPIEvolution(tv,vv));
+      ev = std::shared_ptr<Evolution>(new LPIEvolution(tv,vv));
     } else {
-      throw(runtime_error("SchemeParserBase::parseEvolution: "
-			  "invalid evolution type '"+type+"'"));
+      throw(std::runtime_error("SchemeParserBase::parseEvolution: "
+			       "invalid evolution type '"+type+"'"));
     }
     return ev;
   } // end of SchemeParserBase::parseEvolution

@@ -357,12 +357,9 @@ namespace tfel{
       stensor<1u,typename TensorTraits<T>::NumType> >::type
     computeGreenLagrangeTensor(const T& t)
     {
-      typedef typename TensorTraits<T>::NumType real;
-      stensor<1u,real> r;
-      r[0] = (t[0]*t[0]-1)/2;
-      r[1] = (t[1]*t[1]-1)/2;
-      r[2] = (t[2]*t[2]-1)/2;
-      return r;
+      return {(t[0]*t[0]-1)/2,
+	      (t[1]*t[1]-1)/2,
+	      (t[2]*t[2]-1)/2};
     }
   
     template<class T>
@@ -373,14 +370,13 @@ namespace tfel{
       stensor<2u,typename TensorTraits<T>::NumType>
       >::type
     computeGreenLagrangeTensor(const T& t){
-      typedef typename TensorTraits<T>::NumType real;
+      using NumType = typename TensorTraits<T>::NumType;
+      using real    = typename tfel::typetraits::BaseType<NumType>::type;
       constexpr real cste = constexpr_fct::sqrt(real(2))/2;
-      stensor<2u,real> r;
-      r[0] = (t[0]*t[0]+t[4]*t[4]-1)/2;
-      r[1] = (t[1]*t[1]+t[3]*t[3]-1)/2;
-      r[2] = (t[2]*t[2]-1)/2;
-      r[3] = cste*(t[0]*t[3]+t[1]*t[4]);
-      return r;
+      return {(t[0]*t[0]+t[4]*t[4]-1)/2,
+	  (t[1]*t[1]+t[3]*t[3]-1)/2,
+	  (t[2]*t[2]-1)/2,
+	  cste*(t[0]*t[3]+t[1]*t[4])};
     }
     
     template<class T>
@@ -392,16 +388,15 @@ namespace tfel{
       >::type
     computeGreenLagrangeTensor(const T& t)
     {
-      typedef typename TensorTraits<T>::NumType real;
+      using NumType = typename TensorTraits<T>::NumType;
+      using real    = typename tfel::typetraits::BaseType<NumType>::type;
       constexpr real cste = constexpr_fct::sqrt(real(2))/2;
-      stensor<3u,real> r;
-      r[0] = (t[0]*t[0]+t[4]*t[4]+t[6]*t[6]-1)/2;
-      r[1] = (t[1]*t[1]+t[3]*t[3]+t[8]*t[8]-1)/2;
-      r[2] = (t[2]*t[2]+t[5]*t[5]+t[7]*t[7]-1)/2;
-      r[3] = cste*(t[6]*t[8]+t[1]*t[4]+t[0]*t[3]);
-      r[4] = cste*(t[4]*t[7]+t[2]*t[6]+t[0]*t[5]);
-      r[5] = cste*(t[2]*t[8]+t[1]*t[7]+t[3]*t[5]);
-      return r;
+      return {(t[0]*t[0]+t[4]*t[4]+t[6]*t[6]-1)/2,
+	  (t[1]*t[1]+t[3]*t[3]+t[8]*t[8]-1)/2,
+	  (t[2]*t[2]+t[5]*t[5]+t[7]*t[7]-1)/2,
+	  cste*(t[6]*t[8]+t[1]*t[4]+t[0]*t[3]),
+	  cste*(t[4]*t[7]+t[2]*t[6]+t[0]*t[5]),
+	  cste*(t[2]*t[8]+t[1]*t[7]+t[3]*t[5])};
     }
 
     template<typename T,typename T2>

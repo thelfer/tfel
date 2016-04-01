@@ -86,6 +86,7 @@ namespace mtest
     std::copy(s.e0.begin(),s.e0.end(),uu0.begin());
     std::copy(s.e1.begin(),s.e1.end(),uu1.begin());
     std::copy(s.s0.begin(),s.s0.end(),s1.begin());
+    std::copy(s.iv0.begin(),s.iv0.end(),s.iv1.begin());
     if(this->stype==1u){
       tfel::math::change_basis(uu0,s.r);
       tfel::math::change_basis(uu1,s.r);

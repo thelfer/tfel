@@ -54,11 +54,11 @@ namespace epx{
     using real = EuroplexusReal;
     if((h==3)||(h==2)||(h==1)){
       StensorView<2u,real> s(sig);
-      stensor<2u,real> c(STRESS);
+      const ConstStensorView<2u,real> c(STRESS);
       s = convertCauchyStressToSecondPiolaKirchhoffStress(c,tensor<2u,real>(F0));
     } else if(h==0){
       StensorView<3u,real> s(sig);
-      stensor<3u,real> c(STRESS);
+      const ConstStensorView<3u,real> c(STRESS);
       s = convertCauchyStressToSecondPiolaKirchhoffStress(c,tensor<3u,real>(F0));
     } else {
       std::cerr << "epx::computeSecondPiolaKirchhoffStressFromCauchyStress: "
@@ -76,11 +76,11 @@ namespace epx{
     using namespace tfel::math;
     using real = EuroplexusReal;
     if((h==3)||(h==2)||(h==1)){
-      stensor<2u,real> s(sig);
+      const ConstStensorView<2u,real> s(sig);
       StensorView<2u,real> c(STRESS);
       c = convertSecondPiolaKirchhoffStressToCauchyStress(s,tensor<2u,real>(F1));
     } else if(h==0){
-      stensor<3u,real> s(sig);
+      const ConstStensorView<3u,real> s(sig);
       StensorView<3u,real> c(STRESS);
       c = convertSecondPiolaKirchhoffStressToCauchyStress(s,tensor<3u,real>(F1));
     } else {

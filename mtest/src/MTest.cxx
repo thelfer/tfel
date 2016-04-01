@@ -424,8 +424,8 @@ namespace mtest
   void
   MTest::initializeCurrentState(StudyCurrentState& s) const
   {
-    auto throw_if = [](const bool b, const std::string& m){
-      if(b){throw(std::runtime_error("MTest::initializeCurrentState: "+m));}
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("MTest::initializeCurrentState: "+m));}
     };
     throw_if(this->b.get()==nullptr,"mechanical behaviour not set");
     throw_if(this->hypothesis==tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS,
