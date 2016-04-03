@@ -87,10 +87,6 @@ namespace mtest
     std::copy(s.e1.begin(),s.e1.end(),uu1.begin());
     std::copy(s.s0.begin(),s.s0.end(),s1.begin());
     std::copy(s.iv0.begin(),s.iv0.end(),s.iv1.begin());
-    if(this->stype==1u){
-      tfel::math::change_basis(uu0,s.r);
-      tfel::math::change_basis(uu1,s.r);
-    }
     epx::EuroplexusReal ndt(1.);
     epx::EuroplexusInt  status(0);
     char msg[256];
@@ -105,23 +101,6 @@ namespace mtest
     		&npredef);
     if(status!=0){
       return {false,ndt};
-    }
-    if(this->stype==1u){
-      auto tr = tfel::math::transpose(s.r);
-      tfel::math::change_basis(s1,tr);
-      if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||(h==MH::PLANESTRAIN)){
-	tfel::math::t2tost2<2u,real> D;
-	std::copy(Kt.begin(),Kt.end(),D.begin());
-#pragma message("HERE")
-	//	D.changeBasis(tr);
-	std::copy(D.begin(),D.end(),Kt.begin());
-      } else if (h==MH::TRIDIMENSIONAL){
-	tfel::math::t2tost2<3u,real> D;
-	std::copy(Kt.begin(),Kt.end(),D.begin());
-#pragma message("HERE")
-	//	tfel::math::change_basis(D,tr);
-	std::copy(D.begin(),D.end(),Kt.begin());
-      }
     }
     std::copy_n(s1.begin(),s.s1.size(),s.s1.begin());
     return {true,ndt};

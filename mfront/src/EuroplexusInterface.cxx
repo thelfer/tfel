@@ -500,7 +500,7 @@ namespace mfront{
 	<< "epx::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,sig,F1,*HYPOTHESIS);\n"
 	<< "}\n"
 	<< "if(b){\n"
-	<< "epx::computeCauchyStressDerivativeFromSecondPiolaKirchhoffStressDerivative(DDSDDE,STRESS,F1,*HYPOTHESIS);\n"
+	<< "epx::computeElasticModuli(DDSDDE,*HYPOTHESIS);\n"
 	<< "}\n"
 	<< "}\n";
   }
@@ -581,7 +581,7 @@ namespace mfront{
 	<< "epx::computeCauchyStressFromDualStressOfLogarithmicStrain(STRESS,sig,P1,F1,*HYPOTHESIS);\n"
 	<< "}\n"
 	<< "if(b){\n"
-	<< "epx::computeCauchyStressDerivativeFromSecondPiolaKirchhoffStressDerivative(DDSDDE,STRESS,F1,*HYPOTHESIS);\n"
+	<< "epx::computeElasticModuli(DDSDDE,*HYPOTHESIS);\n"
 	<< "}\n"
 	<< "}\n";
   }

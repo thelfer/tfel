@@ -2,6 +2,25 @@
 % Helfer Thomas
 % Janvier 19, 2016
 
+# Second MFront Users Day
+
+![](img/mfront-flyer-en.png "second users day flyer")
+
+CEA and EDF are pleased to announce that the second MFront users
+meeting will take place on May 20th 2016 and will be organized by EDF
+R&D at the EDF Lab Paris Saclay location.
+
+Researchers and engineers willing to present their works are
+welcome. They may contact the organizers for information at:
+[tfel-contact@cea.fr](mailto:tfel-contact@cea.fr).
+
+This users day will take place on Friday, May 20th, 2016 at EDF Lab
+Paris-Saclay (access map).
+
+
+Registration is required to ensure proper organization. See the
+dedicated form on the Code_Aster website: [http://www.code-aster.org/spip.php?article906](http://www.code-aster.org/spip.php?article906)
+
 # Abaqus interface
 
 The current development version now includes an experimental interface

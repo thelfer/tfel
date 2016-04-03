@@ -16,7 +16,6 @@
 @UMATFiniteStrainStrategy[umat] MieheApelLambrechtLogarithmicStrain;
 @EPXFiniteStrainStrategy[epx]   MieheApelLambrechtLogarithmicStrain;
 
-@UseQt true;
 @ProvidesSymmetricTangentOperator;
 
 @MaterialProperty stress young;
@@ -33,10 +32,13 @@ ps.setEntryName("PreviousStress");
 @InitLocalVars{
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
-  if(sqrt((sig-ps)|(sig-ps))>10*young*numeric_limits<stress>::epsilon()){
-    string msg("invalid stress value at the beginning "
-	       "of the time step");
-    throw(runtime_error(msg));
+  const stress ds  = sqrt((sig-ps)|(sig-ps));
+  const stress s   = sqrt(sig|sig);
+  const stress eps = 1e3*s*numeric_limits<stress>::epsilon();
+  if(ds>eps){
+    throw(runtime_error("invalid stress value at "
+			"the beginning of the time step "
+			"("+to_string(ds)+">"+to_string(eps)+")"));
   }
 }
 

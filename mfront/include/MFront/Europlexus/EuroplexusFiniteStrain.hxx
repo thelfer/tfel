@@ -55,15 +55,11 @@ namespace epx{
 						    const EuroplexusInt);
   /*!
    * \param[in/out] D:  second Piola-Kirchoff stress derivative
-   * \param[in]     s:  Cauchy stress
-   * \param[in]     F1: deformation gradient at the end of the time step
    * \param[in]     h: hypothesis
    */
   MFRONT_EPX_VISIBILITY_EXPORT void
-  computeCauchyStressDerivativeFromSecondPiolaKirchhoffStressDerivative(EuroplexusReal * const,
-									const EuroplexusReal * const,
-									const EuroplexusReal * const,
-									const EuroplexusInt);
+  computeElasticModuli(EuroplexusReal * const,
+		       const EuroplexusInt);
 
   MFRONT_EPX_VISIBILITY_EXPORT void
   computeLogarithmicStrainAndDerivative(EuroplexusReal * const,

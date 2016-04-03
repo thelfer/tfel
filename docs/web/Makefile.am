@@ -104,6 +104,8 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/topfuel2015-poster.png				   \
 	   ./img/abaqus-isotropichardening1.png			   \
 	   ./img/abaqus-isotropichardening2.png			   \
+	   ./img/mfront-flyer-en.svg                               \
+	   ./img/mfront-flyer-en.png                               \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \
