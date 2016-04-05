@@ -119,37 +119,32 @@ namespace mfront
 						    const BehaviourDescription& mb,
 						    const Hypothesis h) const
   {
-    using namespace std;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("UMATInterfaceBase::completeMaterialPropertiesList: "+m));}
+    };
     const auto& d = mb.getBehaviourData(h);
     const auto& mp = d.getMaterialProperties();
     for(auto p=mp.begin();p!=mp.end();++p){
       const auto& n = mb.getExternalName(h,p->name);
       bool found = false;
       const auto flag = this->getTypeFlag(p->type);
-      if(flag!=SupportedTypes::Scalar){
-	throw(runtime_error("UMATMaterialProperty::UMATMaterialProperty : "
-			    "Invalid type for material property '"+p->name+"' ("+p->type+").\n"
-			    "Material properties shall be scalars"));
-      }
+      throw_if(flag!=SupportedTypes::Scalar,
+	       "Invalid type for material property '"+p->name+"' ("+p->type+").\n"
+	       "Material properties shall be scalars");
       for(auto pum=mprops.begin();(pum!=mprops.end())&&(!found);++pum){
 	if(!pum->dummy){
 	  if(pum->name==n){
 	    // type check
 	    if(mb.useQt()){
-	      if(p->type!=pum->type){
-		string msg("UMATInterfaceBase::completeMaterialPropertiesList : "
-			   "incompatible type for variable '"+n+
-			   "' ('"+p->type+"' vs '"+pum->type+"')");
-		throw(runtime_error(msg));
-	      }
+	      throw_if(p->type!=pum->type,
+		       "UMATInterfaceBase::completeMaterialPropertiesList : "
+		       "incompatible type for variable '"+n+
+		       "' ('"+p->type+"' vs '"+pum->type+"')");
 	    } else {
 	      // don't use quantity
-	      if(this->getTypeFlag(p->type)!=this->getTypeFlag(pum->type)){;
-		string msg("UMATInterfaceBase::completeMaterialPropertiesList : "
-			   "incompatible type for variable '"+n+
-			   "' ('"+p->type+"' vs '"+pum->type+"')");
-		throw(runtime_error(msg));
-	      }
+	      throw_if(this->getTypeFlag(p->type)!=this->getTypeFlag(pum->type),
+		       "incompatible type for variable '"+n+
+		       "' ('"+p->type+"' vs '"+pum->type+"')");
 	      if(p->type!=pum->type){
 		auto& log = getLogStream();
 		log << "UMATInterfaceBase::completeMaterialPropertiesList : "
@@ -157,12 +152,9 @@ namespace mfront
 		    << "' ('" << p->type << "' vs '" << pum->type << "')\n";
 	      }
 	    }
-	    if(p->arraySize!=pum->arraySize){
-	      string msg("UMATInterfaceBase::completeMaterialPropertiesList : "
-			 "incompatible array size for variable '"+n+
-			 "' ('"+p->type+"' vs '"+pum->type+"')");
-	      throw(runtime_error(msg));
-	    }
+	    throw_if(p->arraySize!=pum->arraySize,
+		     "incompatible array size for variable '"+n+
+		     "' ('"+p->type+"' vs '"+pum->type+"')");
 	    found = true;
 	  }
 	}
@@ -209,7 +201,7 @@ namespace mfront
 			  iprefix+"statev",
 			  mb.useQt());
     }
-    out << "} // end of " << iprefix << "ExportStateData\n\n";
+    out << "} // end of " << iprefix << "exportStateData\n\n";
   }
 
   void 
@@ -247,17 +239,17 @@ namespace mfront
   } // end of UMATInterfaceBase::exportThermodynamicForce
   
   std::vector<std::pair<std::string,std::string>>
-								  UMATInterfaceBase::getBehaviourConstructorsAdditionalVariables(void) const{
+  UMATInterfaceBase::getBehaviourConstructorsAdditionalVariables(void) const{
     return {};
   } // end of UMATInterfaceBase::getBehaviourConstructorsAdditionalVariables
 			 
   std::vector<std::pair<std::string,std::string>>
-								  UMATInterfaceBase::getBehaviourDataConstructorAdditionalVariables(void) const{
+  UMATInterfaceBase::getBehaviourDataConstructorAdditionalVariables(void) const{
     return {};
   } // end of UMATInterfaceBase::getBehaviourDataConstructorAdditionalVariables
 
   std::vector<std::pair<std::string,std::string>>
-								  UMATInterfaceBase::getIntegrationDataConstructorAdditionalVariables(void) const{
+  UMATInterfaceBase::getIntegrationDataConstructorAdditionalVariables(void) const{
     return {};
   } // end of UMATInterfaceBase::getIntegrationDataConstructorAdditionalVariables
   
@@ -381,14 +373,14 @@ namespace mfront
 	      << offset << "])";  
 	  } else {
 	    throw(std::runtime_error("SupportedTypes::"
-				     "writeVariableInitializersInBehaviourDataConstructorI: "
+				     "writeMaterialPropertiesInitializersInBehaviourDataConstructorI: "
 				     "internal error, tag unsupported"));
 	  }
 	}
       }
     }
     
-  } // end of UMATInterfaceBase::writeVariableInitializersInBehaviourDataConstructorI
+  } // end of UMATInterfaceBase::writeMaterialPropertiesInitializersInBehaviourDataConstructorI
 
   void
   UMATInterfaceBase::writeMaterialPropertiesInitializersInBehaviourDataConstructorII(std::ostream& f,
@@ -469,7 +461,7 @@ namespace mfront
 	}
       }
     }
-  } // end of UMATInterfaceBase::writeVariableInitializersInBehaviourDataConstructorII
+  } // end of UMATInterfaceBase::writeMaterialPropertiesInitializersInBehaviourDataConstructorII
 
   void 
   UMATInterfaceBase::writeBehaviourDataConstructor(std::ostream& out,
@@ -797,13 +789,12 @@ namespace mfront
 					const std::vector<std::string>& v,
 					const std::string& t) const
   {
-    using namespace std;
     if(v.empty()){
       f << "MFRONT_SHAREDOBJ const char * const * "  << this->getSymbolName(name,h)
 	<< "_" << t << " = nullptr;\n\n";
     } else {
-      vector<string>::size_type s = 0u;
-      vector<string>::const_iterator p = v.begin();      
+      std::vector<std::string>::size_type s = 0u;
+      std::vector<std::string>::const_iterator p = v.begin();      
       f << "MFRONT_SHAREDOBJ const char * " << this->getSymbolName(name,h)
 	<< "_" << t << "[" << v.size() <<  "] = {";
       while(p!=v.end()){
@@ -826,33 +817,22 @@ namespace mfront
 				      tfel::utilities::CxxTokenizer::TokensContainer::const_iterator& current,
 				      const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end) const
   {
-    using namespace std;
+    auto throw_if = [&key](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("UMATInterfaceBase::readBooleanValue: "+m+
+				     ".\nError while treating key ("+key+")\n"));}
+    };
     bool b = true;
-    if(current==end){
-      string msg("MFrontUmatInterfaceBase::readBooleanValue ("+key+") : ");
-      msg += "unexpected end of file";
-      throw(runtime_error(msg));
-    }
+    throw_if(current==end,"unexpected end of file");
     if(current->value=="true"){
       b = true;
     } else if(current->value=="false"){
       b = false;
     } else {
-      string msg("MFrontUmatInterfaceBase::readBooleanValue ("+key+") :");
-      msg += "expected 'true' or 'false'";
-      throw(runtime_error(msg));
+      throw_if(true,"expected 'true' or 'false'");
     }
     ++(current); 
-    if(current==end){
-      string msg("MFrontUmatInterfaceBase::readBooleanValue ("+key+") : ");
-      msg += "unexpected end of file";
-      throw(runtime_error(msg));
-    }    
-    if(current->value!=";"){
-      string msg("MFrontUmatInterfaceBase::readBooleanValue : expected ';', read ");
-      msg += current->value;
-      throw(runtime_error(msg));
-    }
+    throw_if(current==end,"unexpected end of file");
+    throw_if(current->value!=";","expected ';', read '"+current->value+"'");
     ++(current);
     return b;
   }
@@ -877,22 +857,19 @@ namespace mfront
 					 bool& up,
 					 const VariableDescriptionContainer& pc) const
   {
-    using namespace std;
-    VariableDescriptionContainer::const_iterator pp;
     rp = false;
     ip = false;
     up = false;
-    for(pp=pc.begin();pp!=pc.end();++pp){
-      if(pp->type=="real"){
+    for(const auto& v : pc){
+      if(v.type=="real"){
 	rp = true;
-      } else if(pp->type=="int"){
+      } else if(v.type=="int"){
 	ip = true;
-      } else if(pp->type=="ushort"){
+      } else if(v.type=="ushort"){
 	up = true;
       } else {
-	string msg("UMATInterfaceBase::checkParametersType : ");
-	msg += "unsupport parameter type '"+pp->type+"'.";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("UMATInterfaceBase::checkParametersType: "
+				 "unsupport parameter type '"+v.type+"'."));
       } 
     }
   }
@@ -941,21 +918,19 @@ namespace mfront
 							     const std::string& name,
 							     const BehaviourDescription& mb) const
   {
-    using namespace std;
-    const set<Hypothesis> h  = mb.getDistinctModellingHypotheses();
-    const set<Hypothesis> h2 = this->getModellingHypothesesToBeTreated(mb);
-    set<Hypothesis>::const_iterator p;
-    for(p=h.begin();p!=h.end();++p){
-      if((*p==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
-	 (h2.find(*p)!=h2.end())){
+    const auto mh  = mb.getDistinctModellingHypotheses();
+    const auto mh2 = this->getModellingHypothesesToBeTreated(mb);
+    for(const auto h : mh){
+      if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
+	 (mh2.find(h)!=mh2.end())){
 	bool rp,ip,up;
-	const auto& d = mb.getBehaviourData(*p);
+	const auto& d = mb.getBehaviourData(h);
 	const auto& pc = d.getParameters();
 	this->checkParametersType(rp,ip,up,pc);
-	string fctName = this->getFunctionName(name);
-	string suffix;
-	if(*p!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	  suffix += ModellingHypothesis::toString(*p);
+	auto fctName = this->getFunctionName(name);
+	auto suffix  = std::string{};
+	if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	  suffix += ModellingHypothesis::toString(h);
 	  fctName += "_"+suffix;
 	}
 	if(rp){

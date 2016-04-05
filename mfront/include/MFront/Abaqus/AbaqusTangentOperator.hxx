@@ -40,6 +40,7 @@ namespace abaqus
    * \brief an helper structure introduced to normalise the tangent
    * operator to follow the umat interface
    */
+  template<typename real>
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusTangentOperator
   {
     /*!
@@ -47,37 +48,37 @@ namespace abaqus
      * \param[in] Dt : tangent operator
      */
     static void
-    normalize(tfel::math::ST2toST2View<1u,AbaqusReal>&);
+    normalize(tfel::math::ST2toST2View<1u,real>&);
     /*!
      * \brief normalize the tangent operator in 2D
      * \param[in] Dt : tangent operator
      */
     static void
-    normalize(tfel::math::ST2toST2View<2u,AbaqusReal>&);
+    normalize(tfel::math::ST2toST2View<2u,real>&);
     /*!
      * \brief normalize the tangent operator in 3D
      * \param[in] Dt : tangent operator
      */
     static void
-    normalize(tfel::math::ST2toST2View<3u,AbaqusReal>&);
+    normalize(tfel::math::ST2toST2View<3u,real>&);
     /*!
      * \brief transpose the tangent operator in 1D
      * \param[in] Dt : tangent operator
      */
     static void
-    transpose(tfel::math::ST2toST2View<1u,AbaqusReal>&);
+    transpose(tfel::math::ST2toST2View<1u,real>&);
     /*!
      * \brief transpose the tangent operator in 2D
      * \param[in] Dt : tangent operator
      */
     static void
-    transpose(tfel::math::ST2toST2View<2u,AbaqusReal>&);
+    transpose(tfel::math::ST2toST2View<2u,real>&);
     /*!
      * \brief transpose the tangent operator in 3D
      * \param[in] Dt : tangent operator
      */
     static void
-    transpose(tfel::math::ST2toST2View<3u,AbaqusReal>&);
+    transpose(tfel::math::ST2toST2View<3u,real>&);
   }; // end of struct AbaqusTangentOperator
 
   /*!
@@ -111,7 +112,7 @@ namespace abaqus
 	using  TangentOperatorViewType = typename AbaqusTangentOperatorType<AbaqusTraits<Behaviour>::btype,real,N>::view_type;
 	TangentOperatorViewType Dt{DDSDDE};
 	Dt = static_cast<const TangentOperatorType&>(bv.getTangentOperator());
-	AbaqusTangentOperator::normalize(Dt);
+	AbaqusTangentOperator<real>::normalize(Dt);
       } // end of exe	  
     };
     struct SymmetricConsistentTangentOperatorComputer
@@ -134,7 +135,7 @@ namespace abaqus
 	ConsistentTangentOperatorComputer::exe(bv,DDSDDE);
 	// les conventions fortran....
 	TangentOperatorViewType Dt{DDSDDE};
-	AbaqusTangentOperator::transpose(Dt);
+	AbaqusTangentOperator<real>::transpose(Dt);
       } // end of exe	  
     };
   }; // end of struct ExtractAndConvertTangentOperator
@@ -218,5 +219,7 @@ namespace abaqus
   };
   
 } // end of namespace abaqus
+
+#include"MFront/Abaqus/AbaqusTangentOperator.ixx"
 
 #endif /* LIB_MFRONT_ABAQUS_ABAQUSTANGENTOPERATOR_H_ */

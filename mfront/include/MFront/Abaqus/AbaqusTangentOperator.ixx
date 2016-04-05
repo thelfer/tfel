@@ -1,35 +1,27 @@
-/*! 
- * \file  mfront/src/AbaqusTangentOperator.cxx
- * \brief
- * \author Helfer Thomas
- * \brief 07 févr. 2013
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+/*!
+ * \file   AbaqusTangentOperator.ixx
+ * \brief    
+ * \author THOMAS HELFER
+ * \date   04 avril 2016
  */
 
-#include<cmath>
-#include<algorithm>
-
-#include"TFEL/Math/t2tost2.hxx"
-#include"TFEL/Math/st2tost2.hxx"
-#include"MFront/Abaqus/AbaqusTangentOperator.hxx"
+#ifndef LIB_ABAQUSTANGENTOPERATOR_IXX_
+#define LIB_ABAQUSTANGENTOPERATOR_IXX_
 
 namespace abaqus
 {
 
+  template<typename real>
   void
-  AbaqusTangentOperator::normalize(tfel::math::ST2toST2View<1u,AbaqusReal>&)
-  {} // end of AbaqusTangentOperator::normalize
+  AbaqusTangentOperator<real>::normalize(tfel::math::ST2toST2View<1u,real>&)
+  {} // end of AbaqusTangentOperator<real>::normalize
 
+  template<typename real>
   void
-  AbaqusTangentOperator::normalize(tfel::math::ST2toST2View<2u,AbaqusReal>& Dt)
+  AbaqusTangentOperator<real>::normalize(tfel::math::ST2toST2View<2u,real>& Dt)
   {
     using namespace std;
-    static const AbaqusReal inv_sqrt2 = AbaqusReal(1)/std::sqrt(AbaqusReal(2));
+    static const real inv_sqrt2 = real(1)/std::sqrt(real(2));
     Dt(0,3) *= inv_sqrt2;
     Dt(1,3) *= inv_sqrt2;
     Dt(2,3) *= inv_sqrt2;
@@ -37,13 +29,14 @@ namespace abaqus
     Dt(3,1) *= inv_sqrt2;
     Dt(3,2) *= inv_sqrt2;
     Dt(3,3) *= 0.5;
-  } // end of AbaqusTangentOperator::normalize
+  } // end of AbaqusTangentOperator<real>::normalize
   
+  template<typename real>
   void
-  AbaqusTangentOperator::normalize(tfel::math::ST2toST2View<3u,AbaqusReal>& Dt)
+  AbaqusTangentOperator<real>::normalize(tfel::math::ST2toST2View<3u,real>& Dt)
   {
     using namespace std;
-    static const AbaqusReal inv_sqrt2 = AbaqusReal(1)/std::sqrt(AbaqusReal(2));
+    static const real inv_sqrt2 = real(1)/std::sqrt(real(2));
     Dt(0,3) *= inv_sqrt2;
     Dt(1,3) *= inv_sqrt2;
     Dt(2,3) *= inv_sqrt2;
@@ -73,16 +66,18 @@ namespace abaqus
     Dt(5,5) *= 0.5;
   } // end of struct AbaqusTangentOperator
 
+  template<typename real>
   void
-  AbaqusTangentOperator::transpose(tfel::math::ST2toST2View<1u,AbaqusReal>& Dt)
+  AbaqusTangentOperator<real>::transpose(tfel::math::ST2toST2View<1u,real>& Dt)
   {
     std::swap(Dt(0,1),Dt(1,0));
     std::swap(Dt(0,2),Dt(2,0));
     std::swap(Dt(1,2),Dt(2,1));
   }
 
+  template<typename real>
   void
-  AbaqusTangentOperator::transpose(tfel::math::ST2toST2View<2u,AbaqusReal>& Dt)
+  AbaqusTangentOperator<real>::transpose(tfel::math::ST2toST2View<2u,real>& Dt)
   {
     std::swap(Dt(0,1),Dt(1,0));
     std::swap(Dt(0,2),Dt(2,0));
@@ -92,8 +87,9 @@ namespace abaqus
     std::swap(Dt(2,3),Dt(3,2));
   }
 
+  template<typename real>
   void
-  AbaqusTangentOperator::transpose(tfel::math::ST2toST2View<3u,AbaqusReal>& Dt)
+  AbaqusTangentOperator<real>::transpose(tfel::math::ST2toST2View<3u,real>& Dt)
   {
     std::swap(Dt(0,1),Dt(1,0));
     std::swap(Dt(0,2),Dt(2,0));
@@ -111,5 +107,7 @@ namespace abaqus
     std::swap(Dt(3,5),Dt(5,3));
     std::swap(Dt(4,5),Dt(5,4));
   }
-  
+
 } // end of namespace abaqus
+
+#endif /* LIB_ABAQUSTANGENTOPERATOR_IXX_ */

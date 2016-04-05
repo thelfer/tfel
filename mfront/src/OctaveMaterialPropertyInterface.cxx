@@ -84,7 +84,7 @@ namespace mfront
     const char * mkoctfile = ::getenv("MKOCTFILE");
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto target="../octave/"+name+".oct";
-    string cmd = "@cd ../octave/ && ";
+    string cmd = "@cd ../octave/ && CXXFLAGS=\"$(CXXFLAGS)\" ";
     if(mkoctfile==nullptr){
       cmd += "mkoctfile";
     } else {
@@ -169,9 +169,9 @@ namespace mfront
     } else {
       out << "void";
     }
-    out << ")\n{\n";
-    out << "using namespace std;\n";
-    out << "using real = double;\n";
+    out << ")\n{\n"
+	<< "using namespace std;\n"
+	<< "using real = double;\n";
     // material laws
     writeMaterialLaws("OctaveMaterialPropertyInterface::writeOutputFile",
 		      out,mpd.materialLaws);

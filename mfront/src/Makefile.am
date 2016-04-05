@@ -266,7 +266,6 @@ if HAVE_ABAQUS
 lib_LTLIBRARIES += libAbaqusInterface.la
 libAbaqusInterface_la_SOURCES = AbaqusInterfaceExceptions.cxx                      \
 		                AbaqusException.cxx                                \
-		                AbaqusTangentOperator.cxx                          \
 			        AbaqusComputeStiffnessTensor.cxx                   \
 			        AbaqusStressFreeExpansionHandler.cxx               \
 			        AbaqusComputeThermalExpansionCoefficientTensor.cxx

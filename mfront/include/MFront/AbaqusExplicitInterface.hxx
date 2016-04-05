@@ -95,6 +95,157 @@ namespace mfront{
     virtual std::string
     getInterfaceName(void) const override;
     /*!
+     * write the behaviour constructor associated with the law
+     * \param[in] behaviourFile           : output file
+     * \param[in] mb                      : behaviour description
+     * \param[in] initStateVarsIncrements : constructor part assigning
+     *                                      default value (zero) to state
+     *                                      variable increments
+     */
+    virtual void
+    writeBehaviourConstructor(std::ostream&,
+			      const BehaviourDescription&,
+			      const std::string&) const override;
+    /*!
+     * \brief write the behaviour constructor associated with the law
+     * \param[in] behaviourFile : output file
+     * \param[in] h             : modelling hypothesis
+     * \param[in] mb            : behaviour description
+     */
+    virtual void
+    writeBehaviourDataConstructor(std::ostream&,
+				  const Hypothesis,
+				  const BehaviourDescription&) const override;
+    /*!
+     * \param[out] out    : output file
+     * \param[in]  h      : modelling hypothesis
+     * \param[in]  mb     : behaviour description
+     * \param[in]  v      : variables to be initialized
+     * \param[in]  iv     : indirection vector
+     * \param[in]  o      : offset in the indirection vector
+     * \param[in]  src    : name of the array from which the variables are initialized
+     * \param[in]  prefix : prefix added to variable's names
+     * \param[in]  suffix : suffix added to variable's names
+     */
+    virtual void
+    writeMaterialPropertiesInitializersInBehaviourDataConstructorI(std::ostream&,
+								   const Hypothesis,
+								   const BehaviourDescription&,
+								   const std::vector<UMATMaterialProperty>&,
+								   const SupportedTypes::TypeSize,
+								   const std::string&,
+								   const std::string&,
+								   const std::string&) const override;
+    /*!
+     * \param[out] out    : output file
+     * \param[in]  h      : modelling hypothesis
+     * \param[in]  mb     : behaviour description
+     * \param[in]  v      : variables to be initialized
+     * \param[in]  iv     : indirection vector
+     * \param[in]  o      : offset in the indirection vector
+     * \param[in]  src    : name of the array from which the variables are initialized
+     * \param[in]  prefix : prefix added to variable's names
+     * \param[in]  suffix : suffix added to variable's names
+     */
+    virtual void
+    writeMaterialPropertiesInitializersInBehaviourDataConstructorII(std::ostream&,
+								    const Hypothesis,
+								    const BehaviourDescription&,
+								    const std::vector<UMATMaterialProperty>&,
+								    const SupportedTypes::TypeSize,
+								    const std::string&,
+								    const std::string&,
+								    const std::string&) const override;
+    /*!
+     * \param[out] out    : output file
+     * \param[in]  v      : variables to be initialized
+     * \param[in]  src    : name of the array from which the variables are initialized
+     * \param[in]  prefix : prefix added to variable's names
+     * \param[in]  suffix : suffix added to variable's names
+     * \param[in]  o      : offset in the array from which the variables are initialized
+     */
+    virtual void
+    writeVariableInitializersInBehaviourDataConstructorI(std::ostream&,
+							 const VariableDescriptionContainer&,
+							 const std::string&,
+							 const std::string&,
+							 const std::string&) const override;
+    /*!
+     * \param[out] out    : output file
+     * \param[in]  v      : variables to be initialized
+     * \param[in]  src    : name of the array from which the variables are initialized
+     * \param[in]  prefix : prefix added to variable's names
+     * \param[in]  suffix : suffix added to variable's names
+     * \param[in]  o      : offset in the array from which the variables are initialized
+     */
+    virtual void
+    writeVariableInitializersInBehaviourDataConstructorII(std::ostream&,
+							  const VariableDescriptionContainer&,
+							  const std::string&,
+							  const std::string&,
+							  const std::string&) const override;
+    /*!
+     * write the initialisation of the driving variables
+     * \param[in] os : output file
+     * \param[in] mb : behaviour description
+     */
+    virtual void 
+    writeBehaviourDataMainVariablesSetters(std::ostream&,
+					   const BehaviourDescription&) const override;
+    /*!
+     * \brief write the initialisation of a driving variables
+     * \param[in] os : output file
+     * \param[in] v  : variable to be initialised
+     * \param[in] o  : variable offsert
+     */
+    virtual void
+    writeBehaviourDataDrivingVariableSetter(std::ostream&,
+					    const DrivingVariable&,
+					    const SupportedTypes::TypeSize) const override;
+    /*!
+     * \brief write the initialisation of a thermodynamic force
+     * \param[in] os : output file
+     * \param[in] v  : variable to be initialised
+     * \param[in] o  : variable offsert
+     */
+    virtual void
+    writeBehaviourDataThermodynamicForceSetter(std::ostream&,
+					       const ThermodynamicForce&,
+					       const SupportedTypes::TypeSize) const override;
+    
+    virtual void
+    writeIntegrationDataConstructor(std::ostream&,
+				    const Hypothesis,
+				    const BehaviourDescription&) const override;
+    /*!
+     * write the initialisation of the driving variables
+     * \param[in] behaviourFile : output file
+     * \param[in] mb            : behaviour description
+     */
+    virtual void 
+    writeIntegrationDataMainVariablesSetters(std::ostream&,
+					     const BehaviourDescription&) const override;
+    /*!
+     * \brief write the initialisation of a driving variables
+     * \param[in] os : output file
+     * \param[in] v  : variable to be initialised
+     * \param[in] o  : variable offsert
+     */
+    virtual void
+    writeIntegrationDataDrivingVariableSetter(std::ostream&,
+					      const DrivingVariable&,
+					      const SupportedTypes::TypeSize) const override;
+    /*!
+     * \brief write the initialisation of a driving variables
+     * \param[in] os : output file
+     * \param[in] h  : hypothesis
+     * \param[in] mb : behaviour description
+     */
+    virtual void
+    exportMechanicalData(std::ostream&,
+			 const Hypothesis,
+			 const BehaviourDescription&) const override;
+    /*!
      * \param[out] out: ouput stream
      * \param[in]  md:  behaviour description
      * \param[in]  t:   floatting point type
@@ -116,6 +267,18 @@ namespace mfront{
 						const BehaviourDescription&,
 						const std::string&) const;
     /*!
+     * \brief write the body of the VUMAT function
+     * \param[out] out: ouput stream
+     * \param[in]  md:  behaviour description
+     * \param[in]  t:   floatting point type
+     * \param[in]  h:   modelling hypothesis
+     */
+    virtual void
+    writeFiniteRotationSmallStrainIntegration(std::ostream&,
+					      const BehaviourDescription&,
+					      const std::string&,
+					      const Hypothesis) const;
+   /*!
      * \brief write the body of the VUMAT function
      * \param[out] out: ouput stream
      * \param[in]  md:  behaviour description

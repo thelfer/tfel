@@ -1676,6 +1676,7 @@ mfront/include/MFront/Abaqus/AbaqusInterfaceExceptions.hxx -text
 mfront/include/MFront/Abaqus/AbaqusOrthotropicBehaviour.hxx -text
 mfront/include/MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx -text
 mfront/include/MFront/Abaqus/AbaqusTangentOperator.hxx -text
+mfront/include/MFront/Abaqus/AbaqusTangentOperator.ixx -text
 mfront/include/MFront/Abaqus/AbaqusTraits.hxx -text
 mfront/include/MFront/Abaqus/abaqus.doxygen -text
 mfront/include/MFront/AbaqusExplicitInterface.hxx -text
@@ -1895,7 +1896,6 @@ mfront/src/AbaqusInterface.cxx -text
 mfront/src/AbaqusInterfaceBase.cxx -text
 mfront/src/AbaqusInterfaceExceptions.cxx -text
 mfront/src/AbaqusStressFreeExpansionHandler.cxx -text
-mfront/src/AbaqusTangentOperator.cxx -text
 mfront/src/AbstractBehaviourBrick.cxx -text
 mfront/src/AbstractBehaviourBrickFactory.cxx -text
 mfront/src/AbstractBehaviourDSL.cxx -text
