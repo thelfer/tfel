@@ -91,7 +91,7 @@ namespace abaqus{
       const auto smf = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
       const auto r   = b.computePredictionOperator(smf,Behaviour<H,T,false>::ELASTIC);
       ExtractAndConvertTangentOperator<H>::exe(b,D);
-      return r==Behaviour<H,T,false>::SUCCESS;
+      return (r==Behaviour<H,T,false>::SUCCESS) ? 0 : 1;
     };
     /*!
      * \brief integrate a behaviour written at small strain

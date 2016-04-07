@@ -126,11 +126,8 @@ namespace mtest
   void
   AsterFiniteStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
   {
-    using namespace std;
-    fill(v.begin(),v.end(),real(0));
-    v[0] = real(1);
-    v[1] = real(1);
-    v[2] = real(1);
+    std::fill(v.begin(),v.end(),real(0));
+    v[0] = v[1] = v[2] = real(1);
   }
 
   void

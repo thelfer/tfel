@@ -11,8 +11,9 @@
  * project under specific licensing conditions. 
  */
 
-#include<iterator>
+#include<iostream>
 
+#include<iterator>
 #include<ostream>
 #include<fstream>
 #include<sstream>
@@ -58,6 +59,15 @@ namespace mtest{
     if(o.aa.get()!=nullptr){
       o.aa->preExecuteTasks();
     }
+    // packaging step
+    if(scs.period==1){
+      if(!s.doPackagingStep(scs)){
+	if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
+	  auto& log = mfront::getLogStream();
+	  log << "GenericSolver::execute : behaviour compute prediction matrix failed" << endl;
+	}
+      }
+    }
     // prediction phase
     if(o.ppolicy==PredictionPolicy::LINEARPREDICTION){
       s.makeLinearPrediction(scs,dt);
@@ -81,12 +91,12 @@ namespace mtest{
       } else {
 	if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
 	  auto& log = mfront::getLogStream();
-	  log << "Solver::execute : behaviour compute prediction matrix failed" << endl;
+	  log << "GenericSolver::execute : behaviour compute prediction matrix failed" << endl;
 	}
       }
     } else {
       if(o.ppolicy != PredictionPolicy::NOPREDICTION){
-	throw(runtime_error("Solver::execute: internal error, "
+	throw(runtime_error("GenericSolver::execute: internal error, "
 			    "unsupported prediction policy"));
       }	    
     }

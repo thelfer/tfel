@@ -75,6 +75,10 @@ namespace mtest{
     virtual void makeLinearPrediction(StudyCurrentState&,
 				      const real) const = 0;
     /*!
+     * \brief perform the computation of the packaging step
+     */
+    virtual bool doPackagingStep(StudyCurrentState&) const = 0;				      
+    /*!
      * \brief compute the stiffness matrix and the residual
      * \return a pair containing:
      * - a boolean syaing if the behaviour integration shall be

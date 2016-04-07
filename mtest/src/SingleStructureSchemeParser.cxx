@@ -127,8 +127,11 @@ namespace mtest{
     }
 #endif /* HAVE_EUROPLEXUS */
 #ifdef HAVE_ABAQUS
-    if(p->value=="abaqus"){
+    if((p->value=="abaqus")||(p->value=="abaqus_standard")||(p->value=="abaqus_umat")){
       i = "abaqus";
+    }
+    if((p->value=="abaqus_explicit")||(p->value=="abaqus_vumat")){
+      i = "abaqus_explicit";
     }
 #endif /* HAVE_ABAQUS */
 #ifdef HAVE_CYRANO

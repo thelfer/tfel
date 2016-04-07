@@ -14,8 +14,13 @@
 #ifndef LIB_MTEST_CURRENTSTATE_HXX_
 #define LIB_MTEST_CURRENTSTATE_HXX_
 
+#include<map>
+#include<string>
+
 #include"TFEL/Math/vector.hxx"
+#include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Utilities/GenTypeBase.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
 #include"MTest/Config.hxx"
@@ -26,6 +31,10 @@ namespace mtest
 
   // forward declaration
   struct Behaviour;
+
+  using PackagingInfo =
+    tfel::utilities::GenTypeBase<tfel::meta::GenerateTypeList<tfel::math::vector<real>,
+							      tfel::math::matrix<real>>::type>;
   
   /*!
    * structure containing the state of the material.
@@ -93,6 +102,8 @@ namespace mtest
     real position;
     // reference Temperature
     real Tref  = 293.15;
+    //! information collected during the packaging stage
+    std::map<std::string,PackagingInfo> packaging_info;
   }; // end of struct CurrentState
 
   /*!

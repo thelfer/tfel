@@ -21,8 +21,10 @@ namespace tfel{
     template<typename T>
     matrix<T>::matrix(const matrix<T>& src)
       : tfel::math::vector<T>(src),
-	MatrixProperties<T>(src)
+        MatrixProperties<T>(src),
+        tfel::math::MatrixConcept<matrix<T>>(src)
     {}
+        
 
     template<typename T>
     matrix<T>::matrix()
@@ -39,8 +41,8 @@ namespace tfel{
 
     template<typename T>
     matrix<T>::matrix(const typename matrix<T>::size_type n,
-			      const typename matrix<T>::size_type m,
-			      const T& v)
+		      const typename matrix<T>::size_type m,
+		      const T& v)
       : tfel::math::vector<T>(n*m,v),
 	MatrixProperties<T>(n,m)
     {}

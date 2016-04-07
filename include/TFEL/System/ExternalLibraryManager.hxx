@@ -216,6 +216,13 @@ namespace tfel
       getAbaqusExternalBehaviourFunction(const std::string&,
 					 const std::string&);
       /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      AbaqusExplicitFctPtr
+      getAbaqusExplicitExternalBehaviourFunction(const std::string&,
+						 const std::string&);
+      /*!
        * \note the loadLibrary must have already been called with this name
        */
       bool

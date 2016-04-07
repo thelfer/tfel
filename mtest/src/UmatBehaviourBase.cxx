@@ -666,18 +666,15 @@ namespace mtest
     }
   } // end of UmatBehaviourBase::initializeTangentOperator
 
+  bool
+  UmatBehaviourBase::doPackagingStep(CurrentState&,
+				     BehaviourWorkSpace&,
+				     const Hypothesis) const
+  {
+    return true;
+  } // end of UmatBehaviourBase::doPackagingStep
+  
   UmatBehaviourBase::~UmatBehaviourBase()
   {}
   
 } // end of namespace mtest
-
-
-
-
-
-
-
-
-
-
-

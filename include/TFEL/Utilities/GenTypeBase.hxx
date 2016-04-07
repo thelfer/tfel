@@ -432,15 +432,12 @@ namespace tfel{
 	const T1& >::type 
       get(void) const
       {	
-	using namespace std;
-	using namespace tfel::meta;
-	using namespace tfel::utilities::internals;
 	// a silly trick to avoir a gcc warning
 	union{
 	  const storage_t *c;
 	  const T1 *ptr;
 	} ptr;
-	if(this->index!=TLFindEltPos<T1,List>::value){
+	if(this->index!=tfel::meta::TLFindEltPos<T1,List>::value){
 	  throw(GenTypeCastError());
 	}
 	ptr.c = &(this->buffer);

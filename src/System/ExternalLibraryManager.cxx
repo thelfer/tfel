@@ -684,6 +684,30 @@ namespace tfel
       return fct;
     }
 
+    AbaqusExplicitFctPtr
+    ExternalLibraryManager::getAbaqusExplicitExternalBehaviourFunction(const std::string& l,
+					    const std::string& f)
+    {
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+      HINSTANCE__* lib = this->loadLibrary(l);
+#else
+      void * lib = this->loadLibrary(l);
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      AbaqusExplicitFctPtr fct = ::tfel_getAbaqusExplicitExternalBehaviourFunction(lib,f.c_str());
+      if(fct==nullptr){
+	std::string msg("ExternalLibraryManager::getAbaqusExplicitExternalBehaviourFunction : ");
+	msg += " could not load AbaqusExplicit external behaviour '"+f+"' (";
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+	  msg += getLastWin32Error();
+#else
+	  msg += ::dlerror();
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+	msg += ")";
+	throw(std::runtime_error(msg));
+      }
+      return fct;
+    }
+
     CastemFctPtr
     ExternalLibraryManager::getCastemExternalBehaviourFunction(const std::string& l,
 					    const std::string& f)

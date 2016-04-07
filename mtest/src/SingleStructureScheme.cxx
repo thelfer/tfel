@@ -36,6 +36,7 @@
 #endif /* HAVE_EUROPLEXUS  */
 #ifdef HAVE_ABAQUS
 #include"MTest/AbaqusSmallStrainBehaviour.hxx"
+#include"MTest/AbaqusExplicitBehaviour.hxx"
 #endif /* HAVE_ABAQUS  */
 #ifdef HAVE_CYRANO
 #include"MTest/CyranoBehaviour.hxx"
@@ -204,13 +205,25 @@ namespace mtest{
     }
 #endif
 #ifdef HAVE_ABAQUS
-    if(i=="abaqus"){
+    if((i=="abaqus")||(i=="abaqus_standard")||(i=="abaqus_umat")){
       auto& elm = ELM::getExternalLibraryManager();
       const auto type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
 	b = shared_ptr<Behaviour>(new AbaqusSmallStrainBehaviour(h,l,f));
 	// }  else if(type==2u){
 	// 	b = shared_ptr<Behaviour>(new AbaqusFiniteStrainBehaviour(h,l,f));
+      } else {
+	ostringstream msg;
+	msg << "SingleStructureScheme::setBehaviour: "
+	  "unsupported behaviour type (" << type << ")";
+	throw(runtime_error(msg.str()));
+      }
+    }
+    if((i=="abaqus_explicit")||(i=="abaqus_vumat")){
+      auto& elm = ELM::getExternalLibraryManager();
+      const auto type = elm.getUMATBehaviourType(l,f);
+      if(type==2u){
+	b = shared_ptr<Behaviour>(new AbaqusExplicitBehaviour(h,l,f));
       } else {
 	ostringstream msg;
 	msg << "SingleStructureScheme::setBehaviour: "
@@ -374,6 +387,19 @@ namespace mtest{
     checkIfDeclared(esvnames,*(this->evm),"external state variable");
   } // end of SingleStructureScheme::completeInitialisation
 
+  bool
+  SingleStructureScheme::doPackagingStep(StudyCurrentState& state) const
+  {
+    auto& scs = state.getStructureCurrentState("");
+    auto& bwk = scs.getBehaviourWorkSpace();
+    for(auto& s : scs.istates){
+      if(!this->b->doPackagingStep(s,bwk,this->hypothesis)){
+	return false;
+      }
+    }
+    return true;
+  } // end of SingleStructureScheme::doPackagingStep
+  
   StiffnessMatrixType
   SingleStructureScheme::getDefaultStiffnessMatrixType(void) const{
     return this->b->getDefaultStiffnessMatrixType();

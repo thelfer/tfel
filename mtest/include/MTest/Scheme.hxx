@@ -14,8 +14,6 @@
 #ifndef LIB_MTEST_SCHEME_HXX_
 #define LIB_MTEST_SCHEME_HXX_
 
-#include<string>
-
 #include"TFEL/Tests/Test.hxx"
 #include"MTest/Config.hxx"
 

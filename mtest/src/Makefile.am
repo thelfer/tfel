@@ -102,7 +102,8 @@ endif
 
 if HAVE_ABAQUS
 libTFELMTest_la_SOURCES += AbaqusStandardBehaviour.cxx    \
-			   AbaqusSmallStrainBehaviour.cxx
+			   AbaqusSmallStrainBehaviour.cxx \
+			   AbaqusExplicitBehaviour.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAbaqusInterface
 endif
 

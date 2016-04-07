@@ -182,6 +182,18 @@ namespace mtest
     virtual void
     setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
 					       const EvolutionManager&) const override;
+    /*!
+     * \brief execute the packaging step. This victious step is done
+     * at the beginning of the computation.
+     * \return a boolean
+     * \param[out] wk : behaviour workspace
+     * \param[in] s   : current state
+     * \param[in] h   : modelling hypothesis
+     */
+    virtual bool
+    doPackagingStep(CurrentState&,
+		    BehaviourWorkSpace&,
+		    const Hypothesis) const override;
     //! destructor
     virtual ~UmatBehaviourBase();
   protected:

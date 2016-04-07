@@ -320,48 +320,86 @@ namespace tfel
        * pleiades version of the castem finite element solver
        */
       typedef void (TFEL_ADDCALL_PTR AbaqusFctPtr)(AbaqusRealType *const,       /* stress                   */
-						  AbaqusRealType *const,       /* internal state variables */
-						  AbaqusRealType *const,       /* tangent operator         */
-						  AbaqusRealType *const,
-						  AbaqusRealType *const,
-						  AbaqusRealType *const,
-						  AbaqusRealType *const,
-						  AbaqusRealType *const,
-						  AbaqusRealType *const,
-						  AbaqusRealType *const,
-						  const AbaqusRealType *const, /* strain tensor    */
-						  const AbaqusRealType *const, /* strain increment */
-						  const AbaqusRealType *const,
-						  const AbaqusRealType *const, /* time increment   */
-						  const AbaqusRealType *const, /* temperature      */
-						  const AbaqusRealType *const, /* temperature increment    */
-						  const AbaqusRealType *const, /* external state variables */
-						  const AbaqusRealType *const, /* external state variables increments   */
-						  const char     *const,
-						  const AbaqusIntegerType  *const,
-						  const AbaqusIntegerType  *const,
-						  const AbaqusIntegerType  *const, /* number of components of tensors       */
-						  const AbaqusIntegerType  *const, /* number of internal state variables    */
-						  const AbaqusRealType *const,     /* material properties                   */
-						  const AbaqusIntegerType  *const, /* number of material properties         */
-						  const AbaqusRealType *const,
-						  const AbaqusRealType *const, /* rotation matrix                       */
-						  AbaqusRealType *const,       /* estimation of the next time increment */
-						  const AbaqusRealType *const,
-						  const AbaqusRealType *const,
-						  const AbaqusRealType *const,
-						  const AbaqusIntegerType  *const,
-						  const AbaqusIntegerType  *const,
-						  const AbaqusIntegerType  *const,
-						  const AbaqusIntegerType  *const,
-						  const AbaqusIntegerType  *const,
-						 AbaqusIntegerType  *const,
-						 const int /* hidden fortran parameter */);
-
+						   AbaqusRealType *const,       /* internal state variables */
+						   AbaqusRealType *const,       /* tangent operator         */
+						   AbaqusRealType *const,
+						   AbaqusRealType *const,
+						   AbaqusRealType *const,
+						   AbaqusRealType *const,
+						   AbaqusRealType *const,
+						   AbaqusRealType *const,
+						   AbaqusRealType *const,
+						   const AbaqusRealType *const, /* strain tensor    */
+						   const AbaqusRealType *const, /* strain increment */
+						   const AbaqusRealType *const,
+						   const AbaqusRealType *const, /* time increment   */
+						   const AbaqusRealType *const, /* temperature      */
+						   const AbaqusRealType *const, /* temperature increment    */
+						   const AbaqusRealType *const, /* external state variables */
+						   const AbaqusRealType *const, /* external state variables increments   */
+						   const char     *const,
+						   const AbaqusIntegerType  *const,
+						   const AbaqusIntegerType  *const,
+						   const AbaqusIntegerType  *const, /* number of components of tensors       */
+						   const AbaqusIntegerType  *const, /* number of internal state variables    */
+						   const AbaqusRealType *const,     /* material properties                   */
+						   const AbaqusIntegerType  *const, /* number of material properties         */
+						   const AbaqusRealType *const,
+						   const AbaqusRealType *const, /* rotation matrix                       */
+						   AbaqusRealType *const,       /* estimation of the next time increment */
+						   const AbaqusRealType *const,
+						   const AbaqusRealType *const,
+						   const AbaqusRealType *const,
+						   const AbaqusIntegerType  *const,
+						   const AbaqusIntegerType  *const,
+						   const AbaqusIntegerType  *const,
+						   const AbaqusIntegerType  *const,
+						   const AbaqusIntegerType  *const,
+						   AbaqusIntegerType  *const,
+						   const int /* hidden fortran parameter */);
       /*!
        * a simple alias.
        * This is the prototype of the external functions used by the
-       * pleiades version of the castem finite element solver
+       * abaqus explicit solver
+       */
+      typedef void (TFEL_ADDCALL_PTR AbaqusExplicitFctPtr)(const AbaqusIntegerType *const,
+							   const AbaqusIntegerType *const,
+							   const AbaqusIntegerType *const,
+							   const AbaqusIntegerType *const,
+							   const AbaqusIntegerType *const,
+							   const AbaqusIntegerType *const,
+							   const AbaqusIntegerType *const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const char* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   const AbaqusRealType* const,
+							   AbaqusRealType* const,
+							   AbaqusRealType* const,
+							   AbaqusRealType* const,
+							   AbaqusRealType* const,
+							   const int /* hidden fortran parameter */);
+      /*!
+       * a simple alias.
+       * This is the prototype of the external functions used by the
+       * Code_Aster finite element solver
        */
       typedef void (TFEL_ADDCALL_PTR AsterFctPtr)(AsterRealType *const,       /* stress                   */
 						  AsterRealType *const,       /* internal state variables */
@@ -380,7 +418,6 @@ namespace tfel
 						  const AsterRealType *const, /* rotation matrix                       */
 						  AsterRealType *const,       /* estimation of the next time increment */
 						  const AsterIntegerType  *const);
-
       /*!
        * a simple alias.
        * This is the prototype of the external functions used by the

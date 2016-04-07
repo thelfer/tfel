@@ -223,6 +223,13 @@ namespace mtest{
     return this->b->getRotationMatrix(mp,r);
   } // end of LogarithmicStrain1DBehaviourWrapper::getRotationMatrix
 
+  bool
+  LogarithmicStrain1DBehaviourWrapper::doPackagingStep(CurrentState& s,
+						       BehaviourWorkSpace& wk,
+						       const Hypothesis h) const{
+    return this->b->doPackagingStep(s,wk,h);
+  } // end of LogarithmicStrain1DBehaviourWrapper::doPackagingStep
+  
   std::pair<bool,real>
   LogarithmicStrain1DBehaviourWrapper::computePredictionOperator(BehaviourWorkSpace& wk,
 								 const CurrentState& s,

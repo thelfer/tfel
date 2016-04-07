@@ -67,7 +67,7 @@ namespace mtest{
     /*!
      * \return the behaviour workspace associated to the current thread.
      */
-    BehaviourWorkSpace& getBehaviourWorkSpace(void);
+    BehaviourWorkSpace& getBehaviourWorkSpace(void) const;
     /*!
      * \return the behaviour associated to the structure
      */
@@ -82,7 +82,7 @@ namespace mtest{
     //! modelling hypothesis
     Hypothesis h = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     //! behaviour workspaces
-    std::vector<std::shared_ptr<BehaviourWorkSpace>> bwks;
+    mutable std::vector<std::shared_ptr<BehaviourWorkSpace>> bwks;
   };
 
   /*!

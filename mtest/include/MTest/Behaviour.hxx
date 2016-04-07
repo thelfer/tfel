@@ -41,7 +41,9 @@ namespace mtest
   struct Behaviour
   {
     //! a simple alias
-    using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
+    using ModellingHypothesis = tfel::material::ModellingHypothesis;
+    //! a simple alias
+    using Hypothesis = ModellingHypothesis::Hypothesis;
     /*!
      * \brief This function set a material property to its default value if it not already declared
      * \param[out] mp  : evolution manager where 
@@ -230,7 +232,20 @@ namespace mtest
     getRotationMatrix(const tfel::math::vector<real>&,
 		      const tfel::math::tmatrix<3u,3u,real>&) const = 0;
     /*!
-     * \brief integrate the mechanical behaviour over the time step
+     * \brief execute the packaging step. This victious step is done
+     * at the beginning of the computation.
+     * \return a boolean
+     * \param[out] wk : behaviour workspace
+     * \param[in] s   : current state
+     * \param[in] h   : modelling hypothesis
+     */
+    virtual bool
+    doPackagingStep(CurrentState&,
+		    BehaviourWorkSpace&,
+		    const Hypothesis) const = 0;
+    /*!
+     * \brief compute the prediction operator at the beginning of the
+     * time step.
      * \return a pair. The first member is true if the integration was
      * successfull, false otherwise. The second member contains a time
      * step scaling factor.

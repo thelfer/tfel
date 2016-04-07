@@ -1041,10 +1041,11 @@ namespace mfront{
 	<< "_BehaviourType = " ;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       if(this->fss==UNDEFINEDSTRATEGY){
-	out << "1u;\n\n";
-      } else {
-	out << "2u;\n\n";
+	throw(std::runtime_error("EuroplexusInterface::writeUMATxxBehaviourTypeSymbols: "
+				 "behaviours written in the small strain framework "
+				 "must be embedded in a strain strategy"));
       }
+      out << "2u;\n\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "2u;\n\n";
     } else {

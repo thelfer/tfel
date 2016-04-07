@@ -200,6 +200,52 @@ extern "C" {
 										     const int);
   /*!
    * \return a pointer to a Castem external behaviour
+   *
+   * This function is a simple wrapper around dlsym. We can check if a
+   * symbol with the given name exists but cannot check if it points to
+   * a function with that prototype.
+   *
+   * \param[in] l: link to library opened through dlopen
+   * \param[in] n: name of the function to be checked
+   * \return a function pointer if the call succeed, the NULL pointer if not.
+   */
+  void (TFEL_ADDCALL_PTR tfel_getAbaqusExplicitExternalBehaviourFunction(LibraryHandlerPtr,
+									 const char * const))(const AbaqusIntegerType *const,
+											     const AbaqusIntegerType *const,
+											     const AbaqusIntegerType *const,
+											     const AbaqusIntegerType *const,
+											     const AbaqusIntegerType *const,
+											     const AbaqusIntegerType *const,
+											     const AbaqusIntegerType *const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const char* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     const AbaqusRealType* const,
+											     AbaqusRealType* const,
+											     AbaqusRealType* const,
+											     AbaqusRealType* const,
+											      AbaqusRealType* const,
+											      const int);
+  /*!
+   * \return a pointer to a Castem external behaviour
    * \param[in] l : library
    * \param[in] n : external behaviour name
    */

@@ -55,6 +55,8 @@ namespace mtest
     tfel::math::vector<real> mps;
    //! temporary vector for internal variables
     tfel::math::vector<real> ivs;
+   //! temporary vector for external state variables
+    tfel::math::vector<real> evs;
     //! numerical stiffness operator
     tfel::math::matrix<real> nk;
    //! temporary vector for internal state variables

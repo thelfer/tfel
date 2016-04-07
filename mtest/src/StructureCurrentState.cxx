@@ -54,7 +54,7 @@ namespace mtest{
   }
 
   BehaviourWorkSpace&
-  StructureCurrentState::getBehaviourWorkSpace(void){
+  StructureCurrentState::getBehaviourWorkSpace(void) const{
     using tfel::material::ModellingHypothesis;
     if(this->bwks.empty()){
       if(this->b.get()==nullptr){

@@ -92,6 +92,10 @@ namespace mtest{
      */
     virtual void setHandleThermalExpansion(const bool);
     /*!
+     * \brief perform the computation of the packaging step
+     */
+    virtual bool doPackagingStep(StudyCurrentState&) const override;      
+    /*!
      * \brief update current state at the beginning of a new time step:
      * - update the material properties
      * - update the external state variables
