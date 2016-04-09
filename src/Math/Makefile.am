@@ -8,13 +8,15 @@ lib_LTLIBRARIES += libTFELMathCubicSpline.la
 lib_LTLIBRARIES += libTFELMathKriging.la
 lib_LTLIBRARIES += libTFELMathParser.la
 
-libTFELMath_la_SOURCES = MathException.cxx              \
-			 LUException.cxx                \
-			 QRException.cxx                \
-			 Discretization1D.cxx           \
-		         RunTimeCheck.cxx               \
-		         TensorConcept.cxx              \
-			 StensorConcept.cxx             \
+libTFELMath_la_SOURCES = MathException.cxx                  \
+			 LUException.cxx                    \
+			 QRException.cxx                    \
+			 Discretization1D.cxx               \
+		         RunTimeCheck.cxx                   \
+		         TensorConcept.cxx                  \
+			 StensorConcept.cxx                 \
+		         StridedRandomAccessIterator.cxx    \
+		         DifferenceRandomAccessIterator.cxx \
 			 StensorComputeEigenValues.cxx
 
 libTFELMath_la_CPPFLAGS  = -I$(top_srcdir)/include

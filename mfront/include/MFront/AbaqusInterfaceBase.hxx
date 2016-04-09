@@ -94,6 +94,16 @@ namespace mfront{
      */
     virtual std::set<tfel::material::ModellingHypothesis::Hypothesis>
     getModellingHypothesesToBeTreated(const BehaviourDescription&) const override;
+
+    virtual void 
+    writeInputFileExample(const BehaviourDescription&,
+			  const FileDescription&) const;
+    
+    virtual void
+    writeDepvar(std::ostream&,int&,
+		const Hypothesis&,
+		const VariableDescription&,
+		const std::string&) const;
   }; // end of struct AbaqusInterfaceBase
   
 } // end of namespace mfront

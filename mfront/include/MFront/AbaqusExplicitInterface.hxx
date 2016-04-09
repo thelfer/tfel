@@ -117,74 +117,6 @@ namespace mfront{
 				  const Hypothesis,
 				  const BehaviourDescription&) const override;
     /*!
-     * \param[out] out    : output file
-     * \param[in]  h      : modelling hypothesis
-     * \param[in]  mb     : behaviour description
-     * \param[in]  v      : variables to be initialized
-     * \param[in]  iv     : indirection vector
-     * \param[in]  o      : offset in the indirection vector
-     * \param[in]  src    : name of the array from which the variables are initialized
-     * \param[in]  prefix : prefix added to variable's names
-     * \param[in]  suffix : suffix added to variable's names
-     */
-    virtual void
-    writeMaterialPropertiesInitializersInBehaviourDataConstructorI(std::ostream&,
-								   const Hypothesis,
-								   const BehaviourDescription&,
-								   const std::vector<UMATMaterialProperty>&,
-								   const SupportedTypes::TypeSize,
-								   const std::string&,
-								   const std::string&,
-								   const std::string&) const override;
-    /*!
-     * \param[out] out    : output file
-     * \param[in]  h      : modelling hypothesis
-     * \param[in]  mb     : behaviour description
-     * \param[in]  v      : variables to be initialized
-     * \param[in]  iv     : indirection vector
-     * \param[in]  o      : offset in the indirection vector
-     * \param[in]  src    : name of the array from which the variables are initialized
-     * \param[in]  prefix : prefix added to variable's names
-     * \param[in]  suffix : suffix added to variable's names
-     */
-    virtual void
-    writeMaterialPropertiesInitializersInBehaviourDataConstructorII(std::ostream&,
-								    const Hypothesis,
-								    const BehaviourDescription&,
-								    const std::vector<UMATMaterialProperty>&,
-								    const SupportedTypes::TypeSize,
-								    const std::string&,
-								    const std::string&,
-								    const std::string&) const override;
-    /*!
-     * \param[out] out    : output file
-     * \param[in]  v      : variables to be initialized
-     * \param[in]  src    : name of the array from which the variables are initialized
-     * \param[in]  prefix : prefix added to variable's names
-     * \param[in]  suffix : suffix added to variable's names
-     * \param[in]  o      : offset in the array from which the variables are initialized
-     */
-    virtual void
-    writeVariableInitializersInBehaviourDataConstructorI(std::ostream&,
-							 const VariableDescriptionContainer&,
-							 const std::string&,
-							 const std::string&,
-							 const std::string&) const override;
-    /*!
-     * \param[out] out    : output file
-     * \param[in]  v      : variables to be initialized
-     * \param[in]  src    : name of the array from which the variables are initialized
-     * \param[in]  prefix : prefix added to variable's names
-     * \param[in]  suffix : suffix added to variable's names
-     * \param[in]  o      : offset in the array from which the variables are initialized
-     */
-    virtual void
-    writeVariableInitializersInBehaviourDataConstructorII(std::ostream&,
-							  const VariableDescriptionContainer&,
-							  const std::string&,
-							  const std::string&,
-							  const std::string&) const override;
-    /*!
      * write the initialisation of the driving variables
      * \param[in] os : output file
      * \param[in] mb : behaviour description
@@ -299,6 +231,18 @@ namespace mfront{
     writeLogarithmicStrainBehaviourCall(std::ostream&,
 					const BehaviourDescription&,
 					const std::string&) const;
+    /*!
+     * \brief write the body of the VUMAT function
+     * \param[out] out: ouput stream
+     * \param[in]  md:  behaviour description
+     * \param[in]  t:   floatting point type
+     * \param[in]  h:   modelling hypothesis
+     */
+    virtual void
+    writeLogarithmicStrainIntegration(std::ostream&,
+				      const BehaviourDescription&,
+				      const std::string&,
+				      const Hypothesis) const;
     /*!
      * \brief write the body of the VUMAT function
      * \param[out] out: ouput stream

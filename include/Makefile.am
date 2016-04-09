@@ -290,6 +290,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/General/ScalarObjectRandomAccessConstIteratorSpecialisation.hxx                    \
 			TFEL/Math/General/ObjectObjectRandomAccessConstIteratorSpecialisation.hxx                    \
 			TFEL/Math/General/RandomRotationMatrix.hxx                                                   \
+			TFEL/Math/General/StridedRandomAccessIterator.hxx                                            \
+			TFEL/Math/General/DifferenceRandomAccessIterator.hxx                                         \
 			TFEL/Math/Quantity/qtOperations.hxx                                                          \
 			TFEL/Math/Quantity/qtOperations.ixx		                                             \
 			TFEL/Math/Quantity/qtComplexOperations.hxx		                                     \

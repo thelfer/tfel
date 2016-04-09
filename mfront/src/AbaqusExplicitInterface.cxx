@@ -99,13 +99,13 @@ namespace mfront{
 	  << "const " << type << "* const stepTime,\n"
 	  << "const " << type << "* const totalTime,\n"
 	  << "const " << type << "* const dt,\n"
-	  << "const char* const cmname,\n"
+	  << "const char* const,\n"
 	  << "const " << type << "* const,\n"
 	  << "const " << type << "* const,\n"
 	  << "const " << type << "* const props,\n"
 	  << "const " << type << "* const density,\n"
 	  << "const " << type << "* const strainInc,\n"
-	  << "const " << type << "* const relSpinInc,\n"
+	  << "const " << type << "* const,\n"
 	  << "const " << type << "* const tempOld,\n"
 	  << "const " << type << "* const stretchOld,\n"
 	  << "const " << type << "* const defgradOld,\n"
@@ -169,7 +169,7 @@ namespace mfront{
   std::string
   AbaqusExplicitInterface::getName(void)
   {
-    return "abaqus-vumat";
+    return "abaqusexplicit";
   }
 
   void
@@ -184,8 +184,8 @@ namespace mfront{
     const std::string tfel_config = "tfel-config";
 #endif /* WIN32 */
     insert_if(d[lib].cppflags,"$(shell "+tfel_config+" --includes)");
-    insert_if(d[lib].sources,"abaqusExplicit"+name+".cxx");
-    d.headers.push_back("MFront/Abaqus/abaqusExplicit"+name+".hxx");
+    insert_if(d[lib].sources,"abaqusexplicit"+name+".cxx");
+    d.headers.push_back("MFront/Abaqus/abaqusexplicit"+name+".hxx");
     insert_if(d[lib].ldflags,"-lAbaqusInterface");
     insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
     insert_if(d[lib].epts,this->getFunctionName(name));
@@ -258,7 +258,7 @@ namespace mfront{
     tfel::system::systemCall::mkdir("abaqus");
     copyVUMATFiles();
     // header
-    auto fname = "abaqusExplicit"+name+".hxx";
+    auto fname = "abaqusexplicit"+name+".hxx";
     std::ofstream out("include/MFront/Abaqus/"+fname);
     if(!out){
       throw(std::runtime_error("AbaqusExplicitInterface::endTreatment : "
@@ -323,7 +323,7 @@ namespace mfront{
 
     out.close();
 
-    fname  = "abaqusExplicit"+name+".cxx";
+    fname  = "abaqusexplicit"+name+".cxx";
     out.open("src/"+fname);
     if(!out){
       throw(std::runtime_error("AbaqusExplicitInterface::endTreatment : "
@@ -350,7 +350,7 @@ namespace mfront{
     }
     out << "#include\"MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx\"\n\n"
 	<< "#include\"MFront/Abaqus/AbaqusExplicitInterface.hxx\"\n\n"
-	<< "#include\"MFront/Abaqus/abaqusExplicit" << name << ".hxx\"\n\n";
+	<< "#include\"MFront/Abaqus/abaqusexplicit" << name << ".hxx\"\n\n";
 
     this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
     
@@ -380,22 +380,25 @@ namespace mfront{
 	  << "using MH = tfel::material::ModellingHypothesis;\n"
 	  << "using abaqus::AbaqusTraits;\n"
 	  << "using tfel::material::" << mb.getClassName() << ";\n"
-	  << "using AbaqusExplicitData = abaqus::AbaqusExplicitData<" << t << ">;\n";
+	  << "using AbaqusExplicitData = abaqus::AbaqusExplicitData<" << t << ">;\n"
+	  << "auto view = [&nblock](" << t << "* v){\n"
+	  << "  return AbaqusExplicitData::iterator(v,*nblock);\n"
+	  << "};\n"
+	  << "auto cview = [&nblock](const " << t << "* v){\n"
+	  << "  return AbaqusExplicitData::const_iterator(v,*nblock);\n"
+	  << "};\n"
+	  << "auto cdiffview = [&nblock](const " << t << "* v1,\n"
+	  << "                           const " << t << "* v2){\n"
+	  << "  return AbaqusExplicitData::diff_const_iterator(AbaqusExplicitData::const_iterator(v1,*nblock),\n"
+	  << "                                                 AbaqusExplicitData::const_iterator(v2,*nblock));\n"
+	  << "};\n";
       if(mb.getAttribute(BehaviourData::profiling,false)){
 	out << "using mfront::BehaviourProfiler;\n"
 	    << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
 	    << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	    << "BehaviourProfiler::TOTALTIME);\n";
       }
-      out << "const auto ntens = *ndir+*nshr;\n"
-	  << "const AbaqusExplicitData d = {*nblock,*ndir,*nshr,*nstatev,\n"
-	  << "                              *nfieldv,*nprops,*dt,props,density,\n"
-	  << "                              strainInc,relSpinInc,tempOld,\n"
-	  << "                              stretchOld,defgradOld,fieldOld,\n"
-	  << "                              stressOld,stateOld,enerInternOld,\n"
-	  << "                              enerInelasOld,tempNew,stretchNew,\n"
-	  << "                              defgradNew,fieldNew,stressNew,\n"
-	  << "                              stateNew,enerInternNew,enerInelasNew};\n";
+      out << "const auto ntens = *ndir+*nshr;\n";
       if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
 	if(this->fss==FINITEROTATIONSMALLSTRAIN){
 	  this->writeFiniteRotationSmallStrainBehaviourCall(out,mb,t);
@@ -416,8 +419,21 @@ namespace mfront{
     }
     out << "} // end of extern \"C\"\n";
     out.close();
+    this->writeInputFileExample(mb,fd);
   }
 
+  static void writeAbaqusExplicitDataInitialisation(std::ostream& out){
+    out << "const AbaqusExplicitData d = {*dt,cview(props),cview(density),*(tempOld+i*(*nblock)),\n"
+	<< "                              cview(stretchOld),cview(defgradOld),cview(fieldOld),\n"
+	<< "                              cview(stressOld),cview(stateOld),\n"
+	<< "                              *(enerInternOld+i*(*nblock)),\n"
+	<< "                              *(enerInelasOld+i*(*nblock)),*(tempNew+i*(*nblock)),\n"
+	<< "                              cview(stretchNew),cview(defgradNew),cdiffview(fieldNew,fieldOld),\n"
+	<< "                              view(stressNew),view(stateNew),\n"
+	<< "                              *(enerInternNew+i*(*nblock)),\n"
+	<< "                              *(enerInelasNew+i*(*nblock))};\n";
+  } // end of writeAbaqusExplicitDataInitialisation
+  
   void
   AbaqusExplicitInterface::writeBehaviourConstructor(std::ostream& out,
 						     const BehaviourDescription& mb,
@@ -430,21 +446,19 @@ namespace mfront{
     out << "/*\n"
 	<< " * \\brief constructor for the abaqus explicit interface\n"
 	<< " * \\param[in] " << iprefix << "d : data\n"
-      	<< " * \\param[in] " << iprefix << "i : block number\n"
 	<< " */\n"
 	<< mb.getClassName() 
-	<< "(const abaqus::AbaqusExplicitData<Type>& " << iprefix << "d,\n"
-	<< " const int "<< iprefix << "i)\n";
+	<< "(const abaqus::AbaqusExplicitData<Type>& " << iprefix << "d)\n";
     if(mb.useQt()){
       out << ": " << mb.getClassName() 
-	  << "BehaviourData<hypothesis,Type,use_qt>(" << iprefix << "d," << iprefix << "i),\n"
+	  << "BehaviourData<hypothesis,Type,use_qt>(" << iprefix << "d),\n"
 	  << mb.getClassName() 
-	  << "IntegrationData<hypothesis,Type,use_qt>(" << iprefix << "d," << iprefix << "i)\n";
+	  << "IntegrationData<hypothesis,Type,use_qt>(" << iprefix << "d)\n";
     } else {
       out << ": " << mb.getClassName() 
-	  << "BehaviourData<hypothesis,Type,false>(" << iprefix << "d," << iprefix << "i),\n"
+	  << "BehaviourData<hypothesis,Type,false>(" << iprefix << "d),\n"
 	  << mb.getClassName() 
-	  << "IntegrationData<hypothesis,Type,false>(" << iprefix << "d," << iprefix << "i)\n";
+	  << "IntegrationData<hypothesis,Type,false>(" << iprefix << "d)\n";
     }
     if(!initStateVarsIncrements.empty()){
       out << ",\n" << initStateVarsIncrements;
@@ -465,196 +479,28 @@ namespace mfront{
     out << "/*\n"
 	<< " * \\brief constructor for the abaqus explicit interface\n"
 	<< " * \\param[in] " << iprefix << "d : data\n"
-      	<< " * \\param[in] " << iprefix << "i : block number\n"
 	<< " */\n"
 	<< mb.getClassName() << "BehaviourData"
-	<< "(const abaqus::AbaqusExplicitData<Type>& " << iprefix << "d,\n"
-	<< " const int "<< iprefix << "i)\n"
-	<< ": T(*(" << iprefix << "d.tempOld+" << iprefix << "i*" << iprefix << "d.nblock))";
-    this->writeMaterialPropertiesInitializersInBehaviourDataConstructorI(out,
-									 h,mb,mprops.first,
+	<< "(const abaqus::AbaqusExplicitData<Type>& " << iprefix << "d)\n"
+	<< ": T(" << iprefix << "d.tempOld)";
+    this->writeMaterialPropertiesInitializersInBehaviourDataConstructorI(out,h,mb,mprops.first,
 									 mprops.second,
-									 iprefix+"mat","","");
-    this->writeVariableInitializersInBehaviourDataConstructorI(out,
-							       persistentVarsHolder,
-							       iprefix+"int_vars","","");
-    this->writeVariableInitializersInBehaviourDataConstructorI(out,
-							       externalStateVarsHolder,
-							       iprefix+"ext_vars","","");
+									 iprefix+"d.props","","");
+    this->writeVariableInitializersInBehaviourDataConstructorI(out,persistentVarsHolder,
+							       iprefix+"d.stateOld","","");
+    this->writeVariableInitializersInBehaviourDataConstructorI(out,externalStateVarsHolder,
+							       iprefix+"d.fieldOld","","");
     out << "\n{\n";
-    this->writeMaterialPropertiesInitializersInBehaviourDataConstructorII(out,
-									  h,mb,mprops.first,
+    this->writeMaterialPropertiesInitializersInBehaviourDataConstructorII(out,h,mb,mprops.first,
 									  mprops.second,
-									  iprefix+"mat","","");
-    this->writeVariableInitializersInBehaviourDataConstructorII(out,
-								persistentVarsHolder,
-								iprefix+"int_vars","","");
-    this->writeVariableInitializersInBehaviourDataConstructorII(out,
-								externalStateVarsHolder,
-								iprefix+"ext_vars","","");
+									  iprefix+"d.props","","");
+    this->writeVariableInitializersInBehaviourDataConstructorII(out,persistentVarsHolder,
+								iprefix+"d.stateOld","","");
+    this->writeVariableInitializersInBehaviourDataConstructorII(out,externalStateVarsHolder,
+								iprefix+"d.fieldOld","","");
     this->completeBehaviourDataConstructor(out,h,mb);
     out << "}\n\n";
   }
-
-  void
-  AbaqusExplicitInterface::writeMaterialPropertiesInitializersInBehaviourDataConstructorI(std::ostream&,
-											  const Hypothesis,
-											  const BehaviourDescription&,
-											  const std::vector<UMATMaterialProperty>&,
-											  const SupportedTypes::TypeSize,
-											  const std::string&,
-											  const std::string&,
-											  const std::string&) const
-  {
-    // const auto& d = mb.getBehaviourData(h);
-    // const auto& v = d.getMaterialProperties();
-    // if(!v.empty()){
-    //   for(auto p=v.cbegin();p!=v.cend();++p){
-    // 	if(p->arraySize==1u){
-    // 	  const auto n = prefix+p->name+suffix;
-    // 	  const auto& m = AbaqusExplicitInterface::findUMATMaterialProperty(i,mb.getExternalName(h,p->name));
-    // 	  auto offset = m.offset;
-    // 	  offset -= ioffset;
-    // 	  f << ",\n";
-    // 	  auto flag = this->getTypeFlag(p->type);
-    // 	  if(flag==SupportedTypes::Scalar){
-    // 	    f << n << "("+src+"[" 
-    // 	      << offset << "])";  
-    // 	  } else if((flag==SupportedTypes::TVector)||
-    // 		    (flag==SupportedTypes::Stensor)||
-    // 		    (flag==SupportedTypes::Tensor)){
-    // 	    f << n << "(&"+src+"[" 
-    // 	      << offset << "])";  
-    // 	  } else {
-    // 	    throw(std::runtime_error("SupportedTypes::"
-    // 				     "writeVariableInitializersInBehaviourDataConstructorI: "
-    // 				     "internal error, tag unsupported"));
-    // 	  }
-    // 	}
-    //   }
-    // }
-    
-  } // end of AbaqusExplicitInterface::writeMaterialPropertiesInitializersInBehaviourDataConstructorI
-
-  void
-  AbaqusExplicitInterface::writeMaterialPropertiesInitializersInBehaviourDataConstructorII(std::ostream&,
-											   const Hypothesis,
-											   const BehaviourDescription&,
-											   const std::vector<UMATMaterialProperty>&,
-											   const SupportedTypes::TypeSize,
-											   const std::string&,
-											   const std::string&,
-											   const std::string&) const
-  {
-    // const auto& d = mb.getBehaviourData(h);
-    // const auto& v = d.getMaterialProperties();
-    // if(!v.empty()){
-    //   for(auto p=v.begin();p!=v.end();++p){
-    // 	if(p->arraySize!=1u){
-    // 	  const auto& m =
-    // 	    AbaqusExplicitInterface::findUMATMaterialProperty(i,mb.getExternalName(h,p->name));	  
-    // 	  const auto flag = this->getTypeFlag(p->type);
-    // 	  SupportedTypes::TypeSize offset = m.offset;
-    // 	  offset -= ioffset;
-    // 	  const auto n = prefix+p->name+suffix;
-    // 	  if(this->useDynamicallyAllocatedVector(p->arraySize)){
-    // 	    f << n << ".resize(" << p->arraySize << ");\n";
-    // 	    f << "for(unsigned short idx=0;idx!=" << p->arraySize << ";++idx){\n";
-    // 	    switch(flag){
-    // 	    case SupportedTypes::Scalar : 
-    // 	      f << n << "[idx] = "+src+"[" 
-    // 		<< offset << "+idx];\n";  
-    // 	      break;
-    // 	    case SupportedTypes::TVector :
-    // 	      f << "tfel::fsalgo::copy<TVectorSize>::exe(&"+src+"[" 
-    // 		<< offset << "+idx*TVectorSize],"
-    // 		<< n << "[idx].begin());\n";  
-    // 	      break;
-    // 	    case SupportedTypes::Stensor :
-    // 	      f << n << "[idx].import(&"+src+"[" 
-    // 		<< offset << "+idx*StensorSize]);\n";  
-    // 	      break;
-    // 	    case SupportedTypes::Tensor :
-    // 	      f << "tfel::fsalgo::copy<TensorSize>::exe(&"+src+"[" 
-    // 		<< offset << "+idx*TensorSize],"
-    // 		<< n << "[idx].begin());\n";  
-    // 	      break;
-    // 	    default : 
-    // 	      throw(std::runtime_error("AbaqusExplicitInterface::"
-    // 				       "writeVariableInitializersInBehaviourDataConstructorII: "
-    // 				       "internal error, tag unsupported"));
-    // 	    }
-    // 	    f << "}\n";
-    // 	  } else {
-    // 	    for(int index=0;index!=p->arraySize;++index){
-    // 	      switch(flag){
-    // 	      case SupportedTypes::Scalar : 
-    // 		f << n << "[" << index << "] = "+src+"[" 
-    // 		  << offset << "];\n";  
-    // 		break;
-    // 	      case SupportedTypes::TVector :
-    // 		f << "tfel::fsalgo::copy<TVectorSize>::exe(&"+src+"[" 
-    // 		  << offset << "]," << n << "[" << index << "].begin());\n";  
-    // 		break;
-    // 	      case SupportedTypes::Stensor :
-    // 		f << n << "["<< index << "].import(&"+src+"[" 
-    // 		  << offset << "]);\n";  
-    // 		break;
-    // 	      case SupportedTypes::Tensor :
-    // 		f << "tfel::fsalgo::copy<TensorSize>::exe(&"+src+"[" 
-    // 		  << offset << "]," << n << "[" << index << "].begin());\n";  
-    // 		break;
-    // 	      default : 
-    // 		throw(std::runtime_error("AbaqusExplicitInterface::"
-    // 					 "writeVariableInitializersInBehaviourDataConstructorII: "
-    // 					 "internal error, tag unsupported"));
-    // 	      }
-    // 	      offset+=this->getTypeSize(p->type,1u);
-    // 	    }
-    // 	  }
-    // 	}
-    //   }
-    // }
-  } // end of AbaqusExplicitInterface::writeMaterialPropertiesInitializersInBehaviourDataConstructorI
-
-  void
-  AbaqusExplicitInterface::writeVariableInitializersInBehaviourDataConstructorI(std::ostream&,
-								       const VariableDescriptionContainer&,
-								       const std::string&,
-								       const std::string&,
-								       const std::string&) const
-  {
-    // SupportedTypes::TypeSize currentOffset;
-    // for(auto p=v.begin();p!=v.end();++p){
-    //   if(p->arraySize==1u){
-    // 	const auto n = prefix+p->name+suffix;
-    // 	f << ",\n";
-    // 	auto flag = this->getTypeFlag(p->type);
-    // 	if(flag==SupportedTypes::Scalar){
-    // 	  f << n << "("+src+"[" 
-    // 	    << currentOffset << "])";  
-    // 	} else if((flag==SupportedTypes::TVector)||
-    // 		  (flag==SupportedTypes::Stensor)||
-    // 		  (flag==SupportedTypes::Tensor)){
-    // 	  f << n << "(&"+src+"[" 
-    // 	    << currentOffset << "])";  
-    // 	} else {
-    // 	  throw(std::runtime_error("SupportedTypes::"
-    // 				   "writeVariableInitializersInBehaviourDataConstructorI : "
-    // 				   "internal error, tag unsupported"));
-    // 	}
-    //   }
-    //   currentOffset+=this->getTypeSize(p->type,p->arraySize);
-    // }
-  } // end of SupportedTypes::writeVariableInitializersInBehaviourDataConstructorI
-
-  void
-  AbaqusExplicitInterface::writeVariableInitializersInBehaviourDataConstructorII(std::ostream&,
-										 const VariableDescriptionContainer&,
-										 const std::string&,
-										 const std::string&,
-										 const std::string&) const
-  {} // end of SupportedTypes::writeVariableInitializersInBehaviourDataConstructorII
   
   void 
   AbaqusExplicitInterface::writeIntegrationDataConstructor(std::ostream& out,
@@ -668,25 +514,20 @@ namespace mfront{
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
     out << "/*\n"
 	<< " * \\brief constructor for the abaqus explicit interface\n"
-	<< " * \\param[in] " << iprefix << "d : data\n"
-      	<< " * \\param[in] " << iprefix << "i : block number\n"
+	<< " * \\param[in] " << iprefix << "d : data"
 	<< " */\n"
 	<< mb.getClassName() << "IntegrationData"
-	<< "(const abaqus::AbaqusExplicitData<Type>& " << iprefix << "d,\n"
-	<< " const int " << iprefix << "i)"
+	<< "(const abaqus::AbaqusExplicitData<Type>& " << iprefix << "d)"
 	<< ": dt(" << iprefix << "d.dt),\n"
-	<< "  dT(*(" << iprefix << "d.tempNew+" << iprefix << "i*" << iprefix << "d.nblock)-"
-        <<      "*(" << iprefix << "d.tempOld+" << iprefix << "i*" << iprefix << "d.nblock))";
+	<< "  dT(" << iprefix << "d.tempNew-" << iprefix << "d.tempOld)";
     if(!externalStateVarsHolder.empty()){
-      this->writeVariableInitializersInBehaviourDataConstructorI(out,
-								 externalStateVarsHolder,
-								 iprefix+"dext_vars","d","");
+      this->writeVariableInitializersInBehaviourDataConstructorI(out,externalStateVarsHolder,
+    								 iprefix+"d.dfield","d","");
     }
     out << "\n{\n";
     if(!externalStateVarsHolder.empty()){
-      this->writeVariableInitializersInBehaviourDataConstructorII(out,
-								  externalStateVarsHolder,
-								  iprefix+"dext_vars","d","");
+      this->writeVariableInitializersInBehaviourDataConstructorII(out,externalStateVarsHolder,
+    								  iprefix+"d.dfield","d","");
     }
     out << "}\n\n";
   }
@@ -748,99 +589,22 @@ namespace mfront{
 						const Hypothesis h,
 						const BehaviourDescription& mb) const
   {
-    auto throw_unsupported_tag_execption = [](){
-      throw(std::runtime_error("SupportedTypes::exportResults: "
-			       "internal error, tag unsupported"));
-    };
     const auto& d       = mb.getBehaviourData(h);
     const auto& ivs     = d.getPersistentVariables();
     const auto  iprefix = makeUpperCase(this->getInterfaceName());
     if(!ivs.empty()){
       out << "void exportStateData("
-	  << "Stensor& " << iprefix+"s, const abaqus::AbaqusExplicitData<Type>& " << iprefix+"d,\n"
-	  << "const int " << iprefix+"i) const\n";
+	  << "Stensor& " << iprefix+"s, const abaqus::AbaqusExplicitData<Type>& " << iprefix+"d) const\n";
     } else {
       out << "void exportStateData("
-	  << "Stensor& " << iprefix+"s, const abaqus::AbaqusExplicitData<Type>&,\n"
-	  << "const int) const\n";
+	  << "Stensor& " << iprefix+"s, const abaqus::AbaqusExplicitData<Type>&) const\n";
     }
     out << "{\n"
 	<< "using namespace tfel::math;\n"
 	<< iprefix+"s = " << "this->sig;\n";
-    // for(const auto& v : ivs){
-    // 	SupportedTypes::TypeFlag flag = this->getTypeFlag(v.type);
-    // 	if(v.arraySize==1u){
-    // 	  if(flag==SupportedTypes::Scalar){
-    // 	    if(useQt){
-    // 	      f << dest << "[" 
-    // 		<< currentOffset << "] = base_cast(this->"
-    // 		<< v.name << ");\n"; 
-    // 	    } else {
-    // 	      f << dest << "[" 
-    // 		<< currentOffset << "] = this->"
-    // 		<< v.name << ";\n"; 
-    // 	    } 
-    // 	  } else if((flag==SupportedTypes::TVector)||
-    // 		    (flag==SupportedTypes::Stensor)||
-    // 		    (flag==SupportedTypes::Tensor)){
-    // 	    f << "exportToBaseTypeArray(this->" << v.name 
-    // 	      << ",&" << dest << "[" 
-    // 	      << currentOffset << "]);\n";  
-    // 	  } else {
-    // 	    throw_unsupported_tag_execption();
-    // 	  }
-    // 	  currentOffset+=this->getTypeSize(v.type,v.arraySize);
-    // 	} else {
-    // 	  if(this->useDynamicallyAllocatedVector(v.arraySize)){
-    // 	    f << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){" << endl;
-    // 	    if(flag==SupportedTypes::Scalar){ 
-    // 	      if(useQt){
-    // 		f << dest << "[" 
-    // 		  << currentOffset << "+idx] = common_cast(this->"
-    // 		  << v.name << "[idx]);\n"; 
-    // 	      } else {
-    // 		f << dest << "[" 
-    // 		  << currentOffset << "+idx] = this->"
-    // 		  << v.name << "[idx];\n"; 
-    // 	      }
-    // 	    } else if((flag==SupportedTypes::TVector)||
-    // 		      (flag==SupportedTypes::Stensor)||
-    // 		      (flag==SupportedTypes::Tensor)){
-    // 	      f << "exportToBaseTypeArray(this->" << v.name
-    // 		<< "[idx],&" << dest << "[" 
-    // 		<< currentOffset << "+idx*StensorSize]);\n";  
-    // 	    } else {
-    // 	      throw_unsupported_tag_execption();
-    // 	    }
-    // 	    f << "}" << endl;
-    // 	    currentOffset+=this->getTypeSize(v.type,v.arraySize);
-    // 	  } else {
-    // 	    for(unsigned short i=0;i!=v.arraySize;++i){
-    // 	      if(flag==SupportedTypes::Scalar){
-    // 		if(useQt){
-    // 		  f << dest << "[" 
-    // 		    << currentOffset << "] = common_cast(this->"
-    // 		    << v.name << "[" << i << "]);\n"; 
-    // 		} else {
-    // 		  f << dest << "[" 
-    // 		    << currentOffset << "] = this->"
-    // 		    << v.name << "[" << i << "];\n"; 
-    // 		} 
-    // 	      } else if((flag==SupportedTypes::TVector)||
-    // 			(flag==SupportedTypes::Stensor)||
-    // 			(flag==SupportedTypes::Tensor)){
-    // 		f << "exportToBaseTypeArray(this->" << v.name
-    // 		  << "[" << i << "],&" << dest << "[" 
-    // 		  << currentOffset << "]);\n";  
-    // 	      } else {
-    // 		throw_unsupported_tag_execption();
-    // 	      }
-    // 	      currentOffset+=this->getTypeSize(v.type,1u);
-    // 	    }
-    // 	  }
-    // 	}
-    //   }
-    //  }
+    if(!ivs.empty()){
+      this->exportResults(out,ivs,iprefix+"d.stateNew",mb.useQt());
+    }
     out << "} // end of " << iprefix << "exportStateData\n\n";
   }
   
@@ -891,6 +655,7 @@ namespace mfront{
     if(mh.find(h)!=mh.end()){
       this->writeChecks(out,mb,t,h);
       out << "for(int i=0;i!=*nblock;++i){\n";
+      writeAbaqusExplicitDataInitialisation(out);
       if(h==MH::PLANESTRESS){
 	out << t << " eto[3u]  = {*(strainInc+i),\n"
 	    << "*(strainInc+i+(*nblock)),\n"
@@ -907,8 +672,8 @@ namespace mfront{
 	    << "*(strainInc+i+  (*nblock)),\n"
 	    << "*(strainInc+i+2*(*nblock)),\n"
 	    << "2*(*(strainInc+i+3*(*nblock))),\n"
-	    << "2*(*(strainInc+i+4*(*nblock))),\n"
-	    << "2*(*(strainInc+i+5*(*nblock)))};\n"
+	    << "2*(*(strainInc+i+5*(*nblock))),\n"
+	    << "2*(*(strainInc+i+4*(*nblock)))};\n"
 	    << t << " D[36u];\n";
       } else {
 	throw(std::runtime_error("AbaqusExplicitInterface::writeComputeElasticPrediction: "
@@ -916,7 +681,7 @@ namespace mfront{
       }
       out << "if(abaqus::AbaqusExplicitInterface<MH::" << MH::toUpperCaseString(h) << ","
 	  << t << "," << mb.getClassName()
-	  << ">::computeElasticPrediction(D,d,i)!=0){\n"
+	  << ">::computeElasticPrediction(D,d)!=0){\n"
 	  << "std::cerr << \"" << mb.getClassName() << ": elastic loading failed\\n\";\n"
 	  << "::exit(-1);\n"
 	  << "}\n";
@@ -969,11 +734,11 @@ namespace mfront{
       }
       this->writeChecks(out,mb,t,h);
       out << "for(int i=0;i!=*nblock;++i){\n";
+      writeAbaqusExplicitDataInitialisation(out);
       if(h==MH::PLANESTRESS){
 	const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
 	out << "const " << t << " ezz_old = "
 	    << "stateOld[i+" << v.second.getValueForDimension(2) << "(*nblock)];\n"
-	// on affecte ezz à U0, sa valeur pour U1 étant inconnue à ce moment
 	    << "stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
 	    << "                              0,cste*(*(stretchOld+i+2*(*nblock)))};\n"
 	    << "stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
@@ -982,6 +747,7 @@ namespace mfront{
 	    << "const stensor<2u," << t << "> deto = (square(U1)-stensor<2u," << t << ">::Id())/2-eto;\n\n"
 	    << "const stensor<2u," << t << "> s    = {*(stressOld+i),*(stressOld+i+*nblock),\n"
 	    << "                                      0,cste*(*(stressOld+i+2*(*nblock)))};\n"
+	  // on affecte ezz à U0, sa valeur pour U1 étant inconnue à ce moment (ne sert à rien pour le calcul de eto et deto
 	    << "U0[2] = std::sqrt(1+2*ezz_old);\n";
       } else if (h==MH::AXISYMMETRICAL){
   	out << "const stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
@@ -991,7 +757,7 @@ namespace mfront{
 	    << "const stensor<2u," << t << "> eto  = (square(U0)-stensor<2u," << t << ">::Id())/2;\n"
 	    << "const stensor<2u," << t << "> deto = (square(U1)-stensor<2u," << t << ">::Id())/2-eto;\n"
 	    << "stensor<2u," << t << "> s  = {*(stressOld+i),*(stressOld+i+*nblock),\n"
-	    << "                             *(stressOld+i+2*(*nblock)),cste*(*(stressOld+i+2*(*nblock)))};\n";
+	    << "                             *(stressOld+i+2*(*nblock)),cste*(*(stressOld+i+3*(*nblock)))};\n";
       } else if (h==MH::TRIDIMENSIONAL){
   	out << "const stensor<3u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
 	    << "                                    *(stretchOld+i+2*(*nblock)),       cste*(*(stretchOld+i+3*(*nblock))),\n"
@@ -1008,8 +774,8 @@ namespace mfront{
       out << "auto sk2 = convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(s,U0);\n"
 	  << "if(abaqus::AbaqusExplicitInterface<MH::" << MH::toUpperCaseString(h) << ","
   	  << t<< "," << mb.getClassName()
-  	  << ">::integrate(sk2,d,eto,deto,i)!=0){\n"
-	  << "std::cerr << \"" << mb.getClassName() << ": elastic loading failed\";\n"
+  	  << ">::integrate(sk2,d,eto,deto)!=0){\n"
+	  << "std::cerr << \"" << mb.getClassName() << ": behaviour integration failed\";\n"
   	  << "::exit(-1);\n"
   	  << "}\n";
       if(h==MH::PLANESTRESS){
@@ -1094,12 +860,161 @@ namespace mfront{
   }
 
   void
-  AbaqusExplicitInterface::writeLogarithmicStrainBehaviourCall(std::ostream&,
-							       const BehaviourDescription&,
-							       const std::string&) const
+  AbaqusExplicitInterface::writeLogarithmicStrainIntegration(std::ostream& out,
+							     const BehaviourDescription& mb,
+							     const std::string& t,
+							     const Hypothesis h) const
   {
-    throw(std::runtime_error("AbaqusExplicitInterface::writeLogarithmicStrainBehaviourCall: "
-			     "unsupported feature"));
+    using MH = tfel::material::ModellingHypothesis;
+    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
+    if(mh.find(h)!=mh.end()){
+      if(h==MH::PLANESTRESS){
+	// axial strain !
+	const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+	if(!v.first){
+	  // no axial strain
+	  out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
+	      << "glossary name 'AxialStrain')\" << std::endl;\n";
+	  out << "::exit(-1);\n";
+	  return;
+	}
+      }
+      this->writeChecks(out,mb,t,h);
+      out << "const auto  f = [](const " << t << " x){return std::log(x)/2;};\n"
+	  << "const auto df = [](const " << t << " x){return 1/(2*x);};\n"
+	  << "for(int i=0;i!=*nblock;++i){\n";
+      writeAbaqusExplicitDataInitialisation(out);
+      auto dime = (h==MH::TRIDIMENSIONAL) ? "3u" : "2u";
+      if(h==MH::PLANESTRESS){
+	out << "stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
+	    << "                              0,cste*(*(stretchOld+i+2*(*nblock)))};\n"
+	    << "stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
+	    << "                              0,cste*(*(stretchNew+i+2*(*nblock)))};\n"
+	    << "const stensor<2u," << t << "> s    = {*(stressOld+i),*(stressOld+i+*nblock),\n"
+	    << "                                      0,cste*(*(stressOld+i+2*(*nblock)))};\n";
+      } else if (h==MH::AXISYMMETRICAL){
+	out << "const stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
+	    << "                                    *(stretchOld+i+2*(*nblock)),cste*(*(stretchOld+i+3*(*nblock)))};\n"
+	    << "const stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
+	    << "                                    *(stretchNew+i+2*(*nblock)),cste*(*(stretchNew+i+3*(*nblock)))};\n"
+	    << "stensor<2u," << t << "> s  = {*(stressOld+i),*(stressOld+i+*nblock),\n"
+	    << "                             *(stressOld+i+2*(*nblock)),cste*(*(stressOld+i+3*(*nblock)))};\n";
+      } else if (h==MH::TRIDIMENSIONAL){
+  	out << "const stensor<3u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
+	    << "                                    *(stretchOld+i+2*(*nblock)),       cste*(*(stretchOld+i+3*(*nblock))),\n"
+	    << "                                    cste*(*(stretchOld+i+5*(*nblock))),cste*(*(stretchOld+i+4*(*nblock)))};\n"
+	    << "const stensor<3u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
+	    << "                                    *(stretchNew+i+2*(*nblock)),cste*(*(stretchNew+i+3*(*nblock))),\n"
+	    << "                                    cste*(*(stretchNew+i+5*(*nblock))),cste*(*(stretchNew+i+4*(*nblock)))};\n"
+	    << "stensor<3u," << t << "> s  = {*(stressOld+i),*(stressOld+i+*nblock),\n"
+	    << "                              *(stressOld+i+2*(*nblock)),cste*(*(stressOld+i+3*(*nblock))),\n"
+	    << "                              cste*(*(stressOld+i+5*(*nblock))),cste*(*(stressOld+i+4*(*nblock)))};\n";
+      }
+      out << "st2tost2<" << dime << "," << t << "> P0;\n"
+	  << "st2tost2<" << dime << "," << t << "> P1;\n"
+	  << "const stensor<" << dime << "," << t << "> C0  = square(U0);\n"
+	  << "const stensor<" << dime << "," << t << "> C1  = square(U1);\n"
+	  << "stensor<" << dime << "," << t << "> eto;\n"
+	  << "stensor<" << dime << "," << t << "> deto;\n"
+	  << "std::tie(eto ,P0) = C0.computeIsotropicFunctionAndDerivative(f,df,std::numeric_limits<" << t << ">::epsilon());\n"
+	  << "std::tie(deto,P1) = C1.computeIsotropicFunctionAndDerivative(f,df,std::numeric_limits<" << t << ">::epsilon());\n"
+	  << "deto -= eto;\n";
+      if(h==MH::PLANESTRESS){
+	// on affecte ezz à U0, sa valeur pour U1 étant inconnue à ce moment (ne sert à rien pour le calcul de eto et deto
+	const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+	out << "const " << t << " ezz_old = "
+	    << "stateOld[i+" << v.second.getValueForDimension(2) << "(*nblock)];\n"
+	    << "U0[2] = std::sqrt(1+2*ezz_old);\n";
+      }
+      out << "const auto iP0 = invert(P0);\n"
+	  << "auto sk2 = convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(s,U0);\n"
+	  << "stensor<" << dime << ","<< t << "> T = (sk2|iP0)/2;\n"
+	  << "if(abaqus::AbaqusExplicitInterface<MH::" << MH::toUpperCaseString(h) << ","
+  	  << t<< "," << mb.getClassName()
+  	  << ">::integrate(T,d,eto,deto)!=0){\n"
+	  << "std::cerr << \"" << mb.getClassName() << ": behaviour integration failed\";\n"
+  	  << "::exit(-1);\n"
+  	  << "}\n";
+      if(h==MH::PLANESTRESS){
+	// axial strain !
+	const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+	if(v.first){
+	  out << "const " << t << " ezz_new = "
+	      << "stateNew[i+" << v.second.getValueForDimension(2) << "(*nblock)];\n"
+	      << "U1[2] = std::sqrt(1+2*ezz_new);";
+	} else {
+	  // no axial strain
+	  out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
+	      << "glossary name 'AxialStrain')\" << std::endl;\n";
+	  out << "::exit(-1);\n";
+	}
+      }
+      out << "sk2 = 2*(T|P1);\n"
+	  << "s = convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(sk2,U1);\n";
+      if(h==MH::PLANESTRESS){
+	out << "*(stressNew+i)               = s[0];\n";
+	out << "*(stressNew+i+   *(nblock))  = s[1];\n";
+	out << "*(stressNew+i+2*(*(nblock))) = s[3]/cste;\n";
+      } else if (h==MH::AXISYMMETRICAL){
+	out << "*(stressNew+i)               = s[0];\n";
+	out << "*(stressNew+i+   *(nblock))  = s[1];\n";
+	out << "*(stressNew+i+2*(*(nblock))) = s[2];\n";
+	out << "*(stressNew+i+3*(*(nblock))) = s[3]/cste;\n";
+      } else if (h==MH::TRIDIMENSIONAL){
+	out << "*(stressNew+i)               = s[0];\n";
+	out << "*(stressNew+i+   *(nblock))  = s[1];\n";
+	out << "*(stressNew+i+2*(*(nblock))) = s[2];\n";
+	out << "*(stressNew+i+3*(*(nblock))) = s[3]/cste;\n";
+	out << "*(stressNew+i+4*(*(nblock))) = s[5]/cste;\n";
+	out << "*(stressNew+i+5*(*(nblock))) = s[4]/cste;\n";
+      }
+      out << "}\n";
+    } else {
+      out << "std::cerr << \"" << mb.getClassName() << ": unsupported hypothesis\";\n"
+  	  << "::exit(-1);\n";
+    }
+  }
+  
+  void
+  AbaqusExplicitInterface::writeLogarithmicStrainBehaviourCall(std::ostream& out,
+							       const BehaviourDescription& mb,
+							       const std::string& t) const
+  {
+    using MH = tfel::material::ModellingHypothesis;
+    // datacheck phase
+    out << "using namespace tfel::math;\n"
+	<< "static const " << t << " cste = std::sqrt(" << t << "{2});\n"
+	<< "if((std::abs(*stepTime)<std::numeric_limits<" << t << ">::min())&&\n"
+	<< "   (std::abs(*totalTime)<std::numeric_limits<" << t << ">::min())){\n"
+	<< "if(ntens==3u){\n"
+	<< "// plane stress\n";
+    this->writeComputeElasticPrediction(out,mb,t,MH::PLANESTRESS);
+    out << "} else if(ntens==4u){\n"
+	<< "// axisymmetric/plane strain case\n";
+    this->writeComputeElasticPrediction(out,mb,t,MH::AXISYMMETRICAL);      
+    out << "} else if(ntens==6u){\n"
+	<< "// tridimensional case\n";
+    this->writeComputeElasticPrediction(out,mb,t,MH::TRIDIMENSIONAL);
+    out << "} else {\n"
+	<< "std::cerr << \"" << mb.getClassName() << " unupported modelling hypothesis\";\n"
+	<< "std::exit(-1);\n"
+      	<< "}\n"
+      	<< "} else {\n"
+	<< "// behaviour integration\n"
+	<< "if(ntens==3u){\n"
+	<< "// plane stress\n";
+    this->writeLogarithmicStrainIntegration(out,mb,t,MH::PLANESTRESS);
+    out << "} else if(ntens==4u){\n"
+	<< "// axisymmetric case\n";
+    this->writeLogarithmicStrainIntegration(out,mb,t,MH::AXISYMMETRICAL);
+    out << "} else if(ntens==6u){\n"
+      	<< "// tridimensional case\n";
+    this->writeLogarithmicStrainIntegration(out,mb,t,MH::TRIDIMENSIONAL);
+    out << "} else {\n"
+	<< "std::cerr << \"" << mb.getClassName() << " unupported modelling hypothesis\";\n"
+	<< "std::exit(-1);\n"
+      	<< "}\n"
+	<< "}\n";      
   }
   
   void

@@ -124,16 +124,6 @@ namespace mfront{
     completeBehaviourDataConstructor(std::ostream&,
 				     const Hypothesis,
 				     const BehaviourDescription&) const override;
-
-    virtual void 
-    writeInputFileExample(const BehaviourDescription&,
-			  const FileDescription&) const;
-    
-    virtual void
-    writeDepvar(std::ostream&,int&,
-		const tfel::material::ModellingHypothesis::Hypothesis&,
-		const VariableDescription&,
-		const std::string&) const;
     
     bool compareToNumericalTangentOperator = false;
 

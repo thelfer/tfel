@@ -1,10 +1,11 @@
-@DSL IsotropicMisesCreep;
+@DSL       IsotropicMisesCreep;
 @Behaviour LogarithmicStrainNortonCreep;
 @Author    Helfer Thomas;
 @Date      4/12/13;
 
-@UMATFiniteStrainStrategy[umat] MieheApelLambrechtLogarithmicStrain;
-@EPXFiniteStrainStrategy[epx]   MieheApelLambrechtLogarithmicStrain;
+@UMATFiniteStrainStrategy[umat]                    MieheApelLambrechtLogarithmicStrain;
+@AbaqusFiniteStrainStrategy[abaqus,abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
+@EPXFiniteStrainStrategy[epx]                      MieheApelLambrechtLogarithmicStrain;
 @Theta 1.;
 
 @MaterialProperty real A;

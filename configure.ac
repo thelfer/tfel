@@ -945,7 +945,54 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/abaqus/abaqusfinitestrainsinglecrystal_numericaljacobian-159.mtest
            mfront/tests/behaviours/abaqus/abaqusdruckerprager.mtest
            mfront/tests/behaviours/abaqus/abaqusdruckerprager2.mtest
-           mfront/tests/behaviours/abaqus/abaqustssf.mtest	  
+           mfront/tests/behaviours/abaqus/abaqustssf.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/Makefile
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-shear-1-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-shear-1-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-shear-2-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-shear-2-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-shear-3-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-shear-4-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-shear-5-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-shear-6-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-uniaxialloading-1-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-uniaxialloading-1-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-uniaxialloading-2-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-uniaxialloading-2-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-uniaxialloading-3-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-uniaxialloading-3-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-shear-1-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-shear-1-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-shear-2-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-shear-2-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-shear-3-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-shear-4-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-shear-5-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-shear-6-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-uniaxialloading-1-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-uniaxialloading-1-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-uniaxialloading-2-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-uniaxialloading-2-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-uniaxialloading-3-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-uniaxialloading-3-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest
 	   mfront/tests/behaviours/castem/Makefile
 	   mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx
            mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck.mtest

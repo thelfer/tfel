@@ -13,8 +13,9 @@
  "after the integration."
 }
 
-@UMATFiniteStrainStrategy[umat] MieheApelLambrechtLogarithmicStrain;
-@EPXFiniteStrainStrategy[epx]   MieheApelLambrechtLogarithmicStrain;
+@UMATFiniteStrainStrategy[umat]                    MieheApelLambrechtLogarithmicStrain;
+@AbaqusFiniteStrainStrategy[abaqus,abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
+@EPXFiniteStrainStrategy[epx]                      MieheApelLambrechtLogarithmicStrain;
 
 @ProvidesSymmetricTangentOperator;
 
@@ -29,7 +30,7 @@ nu.setGlossaryName("PoissonRatio");
 @AuxiliaryStateVariable StressStensor ps;
 ps.setEntryName("PreviousStress");
 
-@InitLocalVars{
+@InitLocalVariables{
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
   const stress ds  = sqrt((sig-ps)|(sig-ps));
@@ -40,6 +41,11 @@ ps.setEntryName("PreviousStress");
 			"the beginning of the time step "
 			"("+to_string(ds)+">"+to_string(eps)+")"));
   }
+}
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
 }
 
 @Integrator{

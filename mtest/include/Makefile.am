@@ -40,6 +40,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/EuroplexusFiniteStrainBehaviour.hxx       \
 			 MTest/AbaqusStandardBehaviour.hxx               \
 			 MTest/AbaqusSmallStrainBehaviour.hxx            \
+			 MTest/AbaqusExplicitBehaviour.hxx               \
 			 MTest/CyranoBehaviour.hxx                       \
 			 MTest/Evolution.hxx                             \
 			 MTest/CastemEvolution.hxx                       \

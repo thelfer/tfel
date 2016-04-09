@@ -84,7 +84,8 @@ namespace tfel
 
       ArgumentStorage<TensorType> t;
       //! a simple check
-      TFEL_STATIC_ASSERT((tfel::meta::Implements<TensorType,TensorConcept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<TensorType>::type,
+			  TensorConcept>::cond));
 
     }; // end of struct Expr
     

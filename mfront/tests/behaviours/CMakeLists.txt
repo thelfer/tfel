@@ -20,6 +20,7 @@ endif(HAVE_ASTER)
 
 if(HAVE_ABAQUS)
   add_subdirectory(abaqus)
+  add_subdirectory(abaqus-explicit)
 endif(HAVE_ABAQUS)
 
 if(HAVE_EUROPLEXUS)

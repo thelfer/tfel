@@ -1,8 +1,9 @@
 SUBDIRS = unit-tests                                     \
-	  aster epx abaqus castem castem2 cyrano secant  \
+	  aster epx castem castem2 cyrano secant         \
 	  steffensen ironstuck  alternatesecant          \
 	  alternatedelta2 alternate2delta crossedsecant  \
-	  crosseddelta2 crossed2delta crossed2deltabis
+	  crosseddelta2 crossed2delta crossed2deltabis   \
+	  abaqus  abaqus-explicit
 
 MFRONTS= DDIF2.mfront                                                      \
          MaterialPropertiesBoundsCheck.mfront                              \

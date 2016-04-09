@@ -82,5 +82,4 @@ int main(void){
   m.addTestOutput(std::cout);
   m.addXMLTestOutput("ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
-  return EXIT_SUCCESS;
 }

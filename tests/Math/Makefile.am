@@ -87,7 +87,8 @@ test_PROGRAMS = hill                                     \
 		levenberg-marquardt4                     \
 		discretization1D                         \
 		TensorProductCheck                       \
-                ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest
+                ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest \
+		StridedRandomAccessIteratorTest
 
 LDADD = -L$(top_builddir)/src/Math      \
 	-L$(top_builddir)/src/Utilities \
@@ -157,6 +158,7 @@ levenberg_marquardt2_SOURCES  = levenberg-marquardt2.cxx
 levenberg_marquardt3_SOURCES  = levenberg-marquardt3.cxx
 TensorProductCheck_SOURCES    = TensorProductCheck.cxx
 ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest_SOURCES = ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest.cxx
+StridedRandomAccessIteratorTest_SOURCES = StridedRandomAccessIteratorTest.cxx
 
 discretization1D_SOURCES = discretization1D.cxx
 discretization1D_LDADD   = -L$(top_builddir)/src/Math      \

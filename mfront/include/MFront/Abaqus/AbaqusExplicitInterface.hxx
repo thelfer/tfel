@@ -70,18 +70,16 @@ namespace abaqus{
     /*!
      * \param[out] D: elastic stiffness
      * \param[out] d: data
-     * \param[out] i: block number
      */
     TFEL_ABAQUS_INLINE2 static
     int computeElasticPrediction(T *const D,
-				 const AbaqusExplicitData<T>& d,
-				 const int i)
+				 const AbaqusExplicitData<T>& d)
     {
       constexpr const T zero = T{0};
       const tfel::math::stensor<N,T> e(zero);
       const tfel::math::stensor<N,T> de(zero);
       const tfel::math::stensor<N,T> s(zero);
-      Behaviour<H,T,false> b(d,i);
+      Behaviour<H,T,false> b(d);
       b.setBehaviourDataDrivingVariables(e);
       b.setBehaviourDataThermodynamicForces(s);
       b.setIntegrationDataDrivingVariables(de);
@@ -99,16 +97,14 @@ namespace abaqus{
      * \param[out] d:  data
      * \param[out] e:  strain tensor
      * \param[out] de: strain tensor increment
-     * \param[out] i:  block number
      */
     TFEL_ABAQUS_INLINE2 static
     int integrate(tfel::math::stensor<N,T>& s,
 		  const AbaqusExplicitData<T>& d,
 		  const tfel::math::stensor<N,T>& e,
-		  const tfel::math::stensor<N,T>& de,
-		  const int i)
+		  const tfel::math::stensor<N,T>& de)
     {
-      Behaviour<H,T,false> b(d,i);
+      Behaviour<H,T,false> b(d);
       b.setBehaviourDataDrivingVariables(e);
       b.setBehaviourDataThermodynamicForces(s);
       b.setIntegrationDataDrivingVariables(de);
@@ -130,7 +126,7 @@ namespace abaqus{
 	return -1;
       }
       b.checkBounds();
-      b.exportStateData(s,d,i);
+      b.exportStateData(s,d);
       return 0;
     };
   }; // end of struct AbaqusExplicitInterface

@@ -553,13 +553,13 @@ namespace tfel{
 			const TensorType2&);
 
     template<typename TensorType>
-    TFEL_MATH_INLINE
-    typename std::enable_if<
-      tfel::meta::Implements<TensorType,TensorConcept>::cond,
-      Expr<tmatrix<3u,3u,typename TensorTraits<TensorType>::NumType>,
-	   MatrixViewFromTensorExpr<TensorType> >
-    >::type
-    matrix_view(const TensorType&);
+    TFEL_MATH_INLINE auto
+    matrix_view(TensorType&& t)
+    -> typename std::enable_if<
+      tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond,
+      Expr<tmatrix<3u,3u,typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType>,
+      MatrixViewFromTensorExpr<decltype(t)>>
+      >::type;
 
     /*!
      * \return a transposed view of  the tensor

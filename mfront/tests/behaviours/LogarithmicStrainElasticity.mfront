@@ -6,8 +6,9 @@
  (the most simple one in fact).
 }
 
-@UMATFiniteStrainStrategy[umat] MieheApelLambrechtLogarithmicStrain;
-@EPXFiniteStrainStrategy[epx]   MieheApelLambrechtLogarithmicStrain;
+@UMATFiniteStrainStrategy[umat]                    MieheApelLambrechtLogarithmicStrain;
+@AbaqusFiniteStrainStrategy[abaqus,abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
+@EPXFiniteStrainStrategy[epx]                      MieheApelLambrechtLogarithmicStrain;
 
 @UseQt true;
 @ProvidesSymmetricTangentOperator;
@@ -23,6 +24,11 @@ nu.setGlossaryName("PoissonRatio");
 @InitLocalVars{
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
+}
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
 }
 
 @Integrator{
