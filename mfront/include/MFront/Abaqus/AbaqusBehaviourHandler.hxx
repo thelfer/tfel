@@ -53,8 +53,7 @@ namespace abaqus
   struct AbaqusTangentOperatorFlag<abaqus::FINITESTRAINSTANDARDBEHAVIOUR>
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
-    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
-    TangentOperatorTraits;
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR> TangentOperatorTraits;
     static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::ABAQUS;
   };
 

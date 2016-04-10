@@ -114,7 +114,6 @@ namespace mtest
   {
     const auto ndv     = this->getDrivingVariablesSize(h);
     const auto nth     = this->getThermodynamicForcesSize(h);
-    const auto nstatev = this->getInternalStateVariablesSize(h);
     wk.D.resize(nth,nth);
     wk.kt.resize(nth,ndv);
     wk.k.resize(nth,ndv);

@@ -63,10 +63,6 @@ namespace abaqus{
       tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
     //! simple alias
     using MechanicalBehaviourBase = tfel::material::MechanicalBehaviourBase; 
-    //! simple alias
-    using TangentOperatorTraits =
-      tfel::material::TangentOperatorTraits<
-	MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>;
     /*!
      * \param[out] D: elastic stiffness
      * \param[out] d: data
@@ -75,6 +71,9 @@ namespace abaqus{
     int computeElasticPrediction(T *const D,
 				 const AbaqusExplicitData<T>& d)
     {
+      //! simple alias
+      using TangentOperatorTraits =
+	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>;
       constexpr const T zero = T{0};
       const tfel::math::stensor<N,T> e(zero);
       const tfel::math::stensor<N,T> de(zero);
@@ -83,10 +82,37 @@ namespace abaqus{
       b.setBehaviourDataDrivingVariables(e);
       b.setBehaviourDataThermodynamicForces(s);
       b.setIntegrationDataDrivingVariables(de);
-      //      b.setOutOfBoundsPolicy(d.op);
+      b.setOutOfBoundsPolicy(d.policy);
       b.initialize();
-      //      b.checkBounds();
+      b.checkBounds();
       const auto smf = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
+      const auto r   = b.computePredictionOperator(smf,Behaviour<H,T,false>::ELASTIC);
+      ExtractAndConvertTangentOperator<H>::exe(b,D);
+      return (r==Behaviour<H,T,false>::SUCCESS) ? 0 : 1;
+    };
+    /*!
+     * \param[out] D: elastic stiffness
+     * \param[out] d: data
+     */
+    TFEL_ABAQUS_INLINE2 static
+    int computeElasticPrediction2(T *const D,
+				  const AbaqusExplicitData<T>& d)
+    {
+      //! simple alias
+      using TangentOperatorTraits =
+	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>;
+      constexpr const T zero = T{0};
+      const tfel::math::tensor<N,T> F0(zero);
+      const tfel::math::tensor<N,T> F1(zero);
+      const tfel::math::stensor<N,T> s(zero);
+      Behaviour<H,T,false> b(d);
+      b.setBehaviourDataDrivingVariables(F0);
+      b.setIntegrationDataDrivingVariables(F1);
+      b.setBehaviourDataThermodynamicForces(s);
+      b.setOutOfBoundsPolicy(d.policy);
+      b.initialize();
+      b.checkBounds();
+      const auto smf = TangentOperatorTraits::ABAQUS;
       const auto r   = b.computePredictionOperator(smf,Behaviour<H,T,false>::ELASTIC);
       ExtractAndConvertTangentOperator<H>::exe(b,D);
       return (r==Behaviour<H,T,false>::SUCCESS) ? 0 : 1;
@@ -104,14 +130,58 @@ namespace abaqus{
 		  const tfel::math::stensor<N,T>& e,
 		  const tfel::math::stensor<N,T>& de)
     {
+      //! simple alias
+      using TangentOperatorTraits =
+	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>;
       Behaviour<H,T,false> b(d);
       b.setBehaviourDataDrivingVariables(e);
       b.setBehaviourDataThermodynamicForces(s);
       b.setIntegrationDataDrivingVariables(de);
-      //      b.setOutOfBoundsPolicy(d.op);
+      b.setOutOfBoundsPolicy(d.policy);
       b.initialize();
-      //      b.checkBounds();
+      b.checkBounds();
       const auto smf = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
+      T r_dt;
+      auto tsf = b.computeAPrioriTimeStepScalingFactor(r_dt);
+      if(!tsf.first){
+	return -1;
+      }
+      if(b.integrate(smf,Behaviour<H,T,false>::NOSTIFFNESSREQUESTED)==
+	 Behaviour<H,T,false>::FAILURE){
+	return -1;
+      }
+      tsf = b.computeAPosterioriTimeStepScalingFactor(r_dt);
+      if(!tsf.first){
+	return -1;
+      }
+      b.checkBounds();
+      b.exportStateData(s,d);
+      return 0;
+    };
+    /*!
+     * \brief integrate a behaviour written at small strain
+     * \param[out/in] s: stress tensor
+     * \param[out] d:  data
+     * \param[out] e:  strain tensor
+     * \param[out] de: strain tensor increment
+     */
+    TFEL_ABAQUS_INLINE2 static
+    int integrate(tfel::math::stensor<N,T>& s,
+		  const AbaqusExplicitData<T>& d,
+		  const tfel::math::tensor<N,T>& F0,
+		  const tfel::math::tensor<N,T>& F1)
+    {
+      //! simple alias
+      using TangentOperatorTraits =
+	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>;
+      Behaviour<H,T,false> b(d);
+      b.setBehaviourDataDrivingVariables(F0);
+      b.setIntegrationDataDrivingVariables(F1);
+      b.setBehaviourDataThermodynamicForces(s);
+      b.setOutOfBoundsPolicy(d.policy);
+      b.initialize();
+      b.checkBounds();
+      const auto smf = TangentOperatorTraits::ABAQUS;
       T r_dt;
       auto tsf = b.computeAPrioriTimeStepScalingFactor(r_dt);
       if(!tsf.first){

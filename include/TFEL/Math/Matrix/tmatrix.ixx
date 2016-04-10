@@ -46,6 +46,14 @@ namespace tfel{
     {}
 
     template<unsigned short N,unsigned short M, typename T>
+    template<typename T2,typename Operation,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    tmatrix<N,M,T>::tmatrix(const Expr<tmatrix<N,M,T2>,Operation>& src)
+    {
+      matrix_utilities<N,M,M>::copy(src,*this);
+    }
+    
+    template<unsigned short N,unsigned short M, typename T>
     constexpr const T& 
     tmatrix<N,M,T>::operator()(const unsigned short i,const unsigned short j) const
     {

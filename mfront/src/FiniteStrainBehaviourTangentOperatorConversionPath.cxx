@@ -21,13 +21,9 @@ namespace mfront
   FiniteStrainBehaviourTangentOperatorConversionPath::const_iterator
   FiniteStrainBehaviourTangentOperatorConversionPath::find(const FiniteStrainBehaviourTangentOperatorConversionPath::TangentOperatorFlag t) const
   {
-    const_iterator p;
-    for(p=this->begin();p!=this->end();++p){
-      if(p->to()==t){
-	return p;
-      }
-    }
-    return p;
+    return std::find_if(this->begin(),this->end(),[&t](const FiniteStrainBehaviourTangentOperatorConversion& v){
+	return v.to()==t;
+      });
   } // end of FiniteStrainBehaviourTangentOperatorConversionPath::find
 
   void
@@ -41,9 +37,7 @@ namespace mfront
     using std::vector;
     vector<TangentOperatorFlag> current_path(cp);
     current_path.push_back(b);
-    vector<FiniteStrainBehaviourTangentOperatorConversion>::const_iterator pc;
-    for(pc=converters.begin();pc!=converters.end();++pc){
-      const FiniteStrainBehaviourTangentOperatorConversion& c = *pc;
+    for(const auto& c : converters){
       if(c.from()==b){
 	if(!((find(k.begin(),k.end(),c.to())!=k.end())||
 	     (find(cp.begin(),cp.end(),c.to())!=cp.end()))){
@@ -71,9 +65,8 @@ namespace mfront
 									 const std::vector<TangentOperatorFlag>& k,
 									 const std::vector<FiniteStrainBehaviourTangentOperatorConversion>& converters)
   {
-    using std::vector; 
-    vector<FiniteStrainBehaviourTangentOperatorConversionPath> r;
-    FiniteStrainBehaviourTangentOperatorConversionPath::getConversionsPath(r,b,k,vector<TangentOperatorFlag>(),converters);
+    std::vector<FiniteStrainBehaviourTangentOperatorConversionPath> r;
+    FiniteStrainBehaviourTangentOperatorConversionPath::getConversionsPath(r,b,k,std::vector<TangentOperatorFlag>(),converters);
     return r;
   } // end of FiniteStrainBehaviourTangentOperatorConversionPath::getConversionsPath
 

@@ -76,7 +76,7 @@ namespace tfel{
 	return *(this->first)-*(this->second);
       }
 
-      reference operator[](const difference_type n) const
+      value_type operator[](const difference_type n) const
       {
 	return *(*this+n);
       }
@@ -96,8 +96,8 @@ namespace tfel{
 
       DifferenceRandomAccessIterator operator+(const difference_type n) const{
 	auto c = *this;
-	std::advance(this->first,n);
-	std::advance(this->second,n);
+	std::advance(c.first,n);
+	std::advance(c.second,n);
 	return c;
       }
       
@@ -105,7 +105,7 @@ namespace tfel{
 	return *this+(-n);
       }
 
-      DifferenceRandomAccessIterator operator+=(const difference_type n) const{
+      DifferenceRandomAccessIterator operator+=(const difference_type n){
 	std::advance(this->first,n);
 	std::advance(this->second,n);
 	return *this;

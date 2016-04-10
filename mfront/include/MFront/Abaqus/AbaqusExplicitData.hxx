@@ -10,6 +10,7 @@
 
 #include"TFEL/Math/General/StridedRandomAccessIterator.hxx"
 #include"TFEL/Math/General/DifferenceRandomAccessIterator.hxx"
+#include"TFEL/Material/OutOfBoundsPolicy.hxx"
 
 namespace abaqus{
 
@@ -28,21 +29,17 @@ namespace abaqus{
     const const_iterator props;
     const const_iterator density;
     const T tempOld;
-    const const_iterator stretchOld;
-    const const_iterator defgradOld;
     const const_iterator fieldOld;
-    const const_iterator stressOld;
     const const_iterator stateOld;
     const T enerInternOld;
     const T enerInelasOld;
     const T tempNew;
-    const const_iterator stretchNew;
-    const const_iterator defgradNew;
     const diff_const_iterator dfield;
-    const iterator stressNew;
     const iterator stateNew;
     T& enerInternNew;
     T& enerInelasNew;
+    //! out of bounds policy
+    const tfel::material::OutOfBoundsPolicy policy;
   }; // end of struct AbaqusExplicitData
   
 } // end of namespace abaqus

@@ -16,6 +16,7 @@
 #endif /* NDEBUG */
 
 #include<cmath>
+#include<array>
 #include<limits>
 #include<cstdlib>
 #include<algorithm>

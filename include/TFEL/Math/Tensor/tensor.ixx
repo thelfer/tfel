@@ -265,6 +265,13 @@ namespace tfel{
     {}
 
     template<unsigned short N, typename T>
+    template<typename T2,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    constexpr tensor<N,T>::tensor(const std::initializer_list<T2>& init)
+      : fsarray<TensorDimeToSize<N>::value,T>(init)
+    {}
+    
+    template<unsigned short N, typename T>
     T& 
     tensor<N,T>::operator()(const unsigned short i){
       return this->v[i];

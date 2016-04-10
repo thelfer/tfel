@@ -106,8 +106,8 @@ namespace mfront
 				   "StressStensor tangentOperator_sk2 = convertCauchyStressToSecondPiolaKirchhoffStress(this->sig,this->F1);\n"
 				   "computePushForwardDerivative(this->Dt.template get<t2tost2<N,stress> >(),tangentOperator_DS_DF,tangentOperator_sk2,this->F1);"));
     converters.push_back(Converter(TangentOperator::DS_DEGL,TangentOperator::DS_DC,
-    				   "const st2tost2<N,stress> tangentOperator_DS_DC = 0.5*tangentOperator_DS_DEGL;",
-				   "this->Dt = 0.5*tangentOperator_DS_DEGL;"));
+    				   "const st2tost2<N,stress> tangentOperator_DS_DC = tangentOperator_DS_DEGL/2;",
+				   "this->Dt = tangentOperator_DS_DEGL/2;"));
     converters.push_back(Converter(TangentOperator::DS_DC,TangentOperator::DS_DEGL,
     				   "const st2tost2<N,stress> tangentOperator_DS_DEGL = 2*tangentOperator_DS_DC;",
 				   "this->Dt = 2*tangentOperator_DS_DC;"));

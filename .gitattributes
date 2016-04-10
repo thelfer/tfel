@@ -4282,6 +4282,7 @@ tests/Math/CMakeLists.txt -text
 tests/Math/ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest.cxx -text
 tests/Math/CubicRoots.cxx -text
 tests/Math/CubicSplineTest.cxx -text
+tests/Math/DifferenceRandomAccessIteratorTest.cxx -text
 tests/Math/ExpressionTemplates/CMakeLists.txt -text
 tests/Math/ExpressionTemplates/Expr.cxx -text
 tests/Math/ExpressionTemplates/Expr2.cxx -text

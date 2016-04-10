@@ -844,12 +844,11 @@ namespace tfel{
       using T2   = typename ComputeBinaryResult<T,T,OpMult>::Result;
       constexpr auto dime = TensorTraits<TensorType>::dime; 
       const auto id = stensor<dime,base>::Id();
-      T (*sqrt_ptr)(const T2) = std::sqrt;
       tvector<3u,T2> vp_C;
       tvector<3u,T> vp_U;
       const auto C = computeRightCauchyGreenTensor(F);
       C.computeEigenValues(vp_C);
-      transform<3u>::exe(vp_C.begin(),vp_U.begin(),std::ptr_fun(sqrt_ptr));
+      transform<3u>::exe(vp_C.begin(),vp_U.begin(),[](const T2& v){return std::sqrt(v);});
       const auto i1 = vp_U[0]+vp_U[1]+vp_U[2];
       const auto i2 = vp_U[0]*vp_U[1]+vp_U[0]*vp_U[2]+vp_U[1]*vp_U[2];
       const auto i3 = vp_U[0]*vp_U[1]*vp_U[2];
@@ -867,9 +866,11 @@ namespace tfel{
       MatrixViewFromTensorExpr<decltype(t)>>
       >::type
     {
-      return {t};
+      using NumType = typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType;
+      return Expr<tmatrix<3u,3u,NumType>,
+		  MatrixViewFromTensorExpr<decltype(t)>>(std::forward<TensorType>(t));
     } // end of matrix_view
-
+		    
     template<typename TensorType>
     TFEL_MATH_INLINE auto
     transpose(TensorType&& t)
@@ -880,7 +881,7 @@ namespace tfel{
 	   TensorTransposeExpr1D<decltype(t)>>>::type{
       using NumType = typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType;
       return Expr<tensor<1u,NumType>,
-			 TensorTransposeExpr1D<decltype(t)>>(t);
+		  TensorTransposeExpr1D<decltype(t)>>(std::forward<TensorType>(t));
      } // end of transpose
 
     template<typename TensorType>
@@ -893,7 +894,7 @@ namespace tfel{
 	   TensorTransposeExpr2D<decltype(t)>>>::type{
       using NumType = typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType;
       return Expr<tensor<2u,NumType>,
-		  TensorTransposeExpr2D<decltype(t)>>(t);
+		  TensorTransposeExpr2D<decltype(t)>>(std::forward<TensorType>(t));
     } // end of transpose
 
     template<typename TensorType>
@@ -906,7 +907,7 @@ namespace tfel{
 	   TensorTransposeExpr3D<decltype(t)>>>::type{
       using NumType = typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType;
       return Expr<tensor<3u,NumType>,
-		  TensorTransposeExpr3D<decltype(t)>>(t);
+		  TensorTransposeExpr3D<decltype(t)>>(std::forward<TensorType>(t));
     } // end of transpose
   
   } // end of namespace math

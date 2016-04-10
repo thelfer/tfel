@@ -221,6 +221,13 @@ namespace tfel{
 	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
       TFEL_MATH_INLINE constexpr tmatrix(const std::initializer_list<T2>&);
       /*!
+       * copy from stensor expression template object
+       * \param[in] src: rhs
+       */
+      template<typename T2,typename Operation,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE tmatrix(const Expr<tmatrix<N,M,T2>,Operation>&);
+      /*!
        * \brief index operator (const version).
        * This is a matrix concept requirement.
        * \param const unsigned short, row index.

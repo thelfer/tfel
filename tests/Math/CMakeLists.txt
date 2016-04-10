@@ -124,6 +124,7 @@ tests_math(levenberg-marquardt2)
 tests_math(levenberg-marquardt3)
 tests_math(ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest)
 tests_math(StridedRandomAccessIteratorTest)
+tests_math(DifferenceRandomAccessIteratorTest)
 
 tests_math3(levenberg-marquardt4)
 

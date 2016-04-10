@@ -167,6 +167,13 @@ namespace tfel{
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
 	tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(init,reinterpret_cast<base*>(this->v));
       }
+      /*!
+       * \brief Default Constructor 
+       * \param[in] init: values used to initialise the components of the vector 
+       */
+      template<typename T2,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE constexpr tensor(const std::initializer_list<T2>&);
       //! \brief copy constructor
       TFEL_MATH_INLINE constexpr tensor(const tensor<N,T>&) = default;
       // Copy Constructor
