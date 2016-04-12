@@ -114,8 +114,10 @@ namespace mtest
       ude(i) *= sqrt2;
     }
     if (h==MH::PLANESTRESS){
-      us[2] = us[3]/sqrt2;
-      us[3] = 0;
+      std::swap(ue0[2],ue0[3]);
+      std::swap(ude[2],ude[3]); 
+      us[2]  = us[3]/sqrt2;
+      us[3]  = 0;
     } else {
       for(AbaqusInt i=3;i!=static_cast<unsigned short>(ntens);++i){
 	us(i) /= sqrt2;

@@ -75,6 +75,26 @@ namespace mfront{
     writeBehaviourDataMainVariablesSetters(std::ostream&,
 					   const BehaviourDescription&) const override;
     /*!
+     * \brief write the initialisation of a driving variables
+     * \param[in] os : output file
+     * \param[in] v  : variable to be initialised
+     * \param[in] o  : variable offsert
+     */
+    virtual void
+    writeBehaviourDataDrivingVariableSetter(std::ostream&,
+					    const DrivingVariable&,
+					    const SupportedTypes::TypeSize) const;
+    /*!
+     * \brief write the initialisation of a driving variables
+     * \param[in] os : output file
+     * \param[in] v  : variable to be initialised
+     * \param[in] o  : variable offsert
+     */
+    virtual void
+    writeIntegrationDataDrivingVariableSetter(std::ostream&,
+					      const DrivingVariable&,
+					      const SupportedTypes::TypeSize) const;
+    /*!
      * \brief write the instruction of exporting a thermodynamic force in an array
      * \param[out] out : output stream
      * \param[in]  a   : array name

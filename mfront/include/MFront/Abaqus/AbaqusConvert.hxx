@@ -16,6 +16,76 @@ namespace abaqus{
    * \tparam H: modelling hypothesis
    */
   template<tfel::material::ModellingHypothesis::Hypothesis H>
+  struct UMATImportDrivingVariables
+  {
+    //! space dimension
+    static constexpr const unsigned short N =
+      tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+    /*!
+     * \tparam T: type of the thermodynamique forces
+     * \param[out] s: symmetric tensor to be filled
+     * \param[in]  v: values
+     */
+    template<typename T>
+    static inline void
+    exe(tfel::math::stensor<N,T>& e,const AbaqusReal* const v){
+      e.importVoigt(v);
+    } // end of exe
+    /*!
+     * \tparam T: type of the thermodynamique forces
+     * \param[out] s: symmetric tensor to be filled
+     * \param[in]  v: values
+     */
+    template<typename T>
+    static inline void
+    exe(tfel::math::tensor<N,T>& F,const AbaqusReal* const v){
+      tfel::math::tensor<N,T>::buildFromFortranMatrix(F,v);
+    } // end of exe
+  }; // end of struct UMATImportDrivingVariables
+  /*!
+   * \brief partial specialisation of the UMATImportDrivingVariables
+   * for the plane stress modelling hypothesis.
+   */
+  template<>
+  struct UMATImportDrivingVariables<tfel::material::ModellingHypothesis::PLANESTRESS>
+  {
+    /*!
+     * \tparam T: type of the thermodynamique forces
+     * \param[out] s: symmetric tensor to be filled
+     * \param[in]  v: values
+     */
+    template<typename T>
+    static inline void
+    exe(tfel::math::stensor<2u,T>& e,const AbaqusReal* const v){
+#if defined __INTEL_COMPILER
+      const AbaqusReal cste =
+	1/tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
+#else
+      constexpr const AbaqusReal cste =
+	1/tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
+#endif
+      e[0]=v[0];
+      e[1]=v[1];
+      e[2]=AbaqusReal{0};
+      e[3]=v[2]*cste;
+    } // end of exe
+    /*!
+     * \tparam T: type of the thermodynamique forces
+     * \param[out] s: symmetric tensor to be filled
+     * \param[in]  v: values
+     */
+    template<typename T>
+    static inline void
+    exe(tfel::math::tensor<2u,T>& F,const AbaqusReal* const v){
+      tfel::math::tensor<2u,T>::buildFromFortranMatrix(F,v);
+    } // end of exe
+  }; // end of struct UMATImportDrivingVariables
+  /*!
+   * \brief class defining the convertion from abaqus to mfront for
+   * thermodynamic forces
+   * \tparam H: modelling hypothesis
+   */
+  template<tfel::material::ModellingHypothesis::Hypothesis H>
   struct UMATImportThermodynamicForces
   {
     //! space dimension

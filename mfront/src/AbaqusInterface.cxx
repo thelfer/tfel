@@ -577,6 +577,44 @@ namespace mfront{
     }
     os << "}\n\n";
   } // end of AbaqusInterface::writeBehaviourDataMainVariablesSetters
+
+  void 
+  AbaqusInterface::writeBehaviourDataDrivingVariableSetter(std::ostream& os,
+							   const DrivingVariable& v,
+							   const SupportedTypes::TypeSize o) const
+  {
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
+    if(!o.isNull()){
+      throw(std::runtime_error("AbaqusInterface::writeBehaviourDataMainVariablesSetter : "
+			       "only one driving variable supported"));
+    }
+    if(v.increment_known){
+      os << "abaqus::UMATImportDrivingVariables<hypothesis>::exe(this->" << v.name << ","
+	 << iprefix << "stran);\n";
+    } else {
+      os << "abaqus::UMATImportDrivingVariables<hypothesis>::exe(this->" << v.name << "0,"
+	 << iprefix << "stran);\n";
+    }
+  } // end of AbaqusInterface::writeBehaviourDataDrivingVariableSetter
+
+  void 
+  AbaqusInterface::writeIntegrationDataDrivingVariableSetter(std::ostream& os,
+							   const DrivingVariable& v,
+							   const SupportedTypes::TypeSize o) const
+  {
+    const auto iprefix = makeUpperCase(this->getInterfaceName());
+    if(!o.isNull()){
+      throw(std::runtime_error("AbaqusInterface::writeIntegrationDataMainVariablesSetter : "
+			       "only one driving variable supported"));
+    }
+    if(v.increment_known){
+      os << "abaqus::UMATImportDrivingVariables<hypothesis>::exe(this->d" << v.name << ","
+	 << iprefix << "dstran);\n";
+    } else {
+      os << "abaqus::UMATImportDrivingVariables<hypothesis>::exe(this->" << v.name << "1,"
+	 << iprefix << "dstran);\n";
+    }
+  } // end of AbaqusInterface::writeIntegrationDataDrivingVariableSetter
   
   void 
   AbaqusInterface::writeBehaviourDataThermodynamicForceSetter(std::ostream& os,
