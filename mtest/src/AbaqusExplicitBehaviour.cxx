@@ -12,6 +12,7 @@
  */
 
 #include<cmath>
+#include<ostream>
 #include<sstream>
 #include<algorithm>
 
@@ -24,6 +25,7 @@
 #include"TFEL/Math/Matrix/tmatrixIO.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/Abaqus/Abaqus.hxx"
 #include"MFront/Abaqus/AbaqusComputeStiffnessTensor.hxx"
 
@@ -134,8 +136,6 @@ namespace mtest
 					   const Hypothesis h) const{
     using tfel::math::matrix;
     using abaqus::AbaqusInt;
-    const auto ndv     = this->getDrivingVariablesSize(h);
-    const auto nth = this->getThermodynamicForcesSize(h);
     matrix<real> K;
     if((h==ModellingHypothesis::PLANESTRESS)||
        (h==ModellingHypothesis::AXISYMMETRICAL)||
@@ -245,6 +245,17 @@ namespace mtest
 				 ModellingHypothesis::toString(h)+")"));
       }
     }
+    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
+      std::ostream& log = mfront::getLogStream();
+      log << "AbaqusExplicitBehaviour::doPackagingStep: stiffness matrix\n";
+      for(matrix<real>::size_type i=0;i!=K.getNbRows();++i){
+	for(matrix<real>::size_type j=0;j!=K.getNbCols();++j){
+	  log << K(i,j) << " ";
+	}
+	log << '\n';
+      }
+      log << "\n\n";
+    }
     // convertion to TFEL conventions and storage in packaging
     // information
     const std::string n = "InitialElasticStiffness";
@@ -254,17 +265,37 @@ namespace mtest
     if((h==ModellingHypothesis::PLANESTRESS)||(h==ModellingHypothesis::AXISYMMETRICAL)||
        (h==ModellingHypothesis::PLANESTRAIN)){
       m.resize(4u,5u);
+      for(unsigned short i=0;i!=4;++i){
+	K(i,3) /= 2*cste;
+      }
     } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
       m.resize(6u,9u);
+      for(unsigned short i=0;i!=6;++i){
+	K(i,3) /= 2*cste;
+	K(i,4) /= 2*cste;
+	K(i,5) /= 2*cste;
+      }
     } else {
       throw(std::runtime_error("AbaqusExplicitBehaviour::computePredictionOperator: "
 			       "no 'InitialElasticStiffness' found. "
 			       "Was the packaging step done ?"));
     }
-#pragma message("AbaqusExplicitBehaviour::computePredictionOperator: finish filling final stiffness matrix")    
-    for(unsigned short i=0;i!=3;++i){
-      for(unsigned short j=0;j!=3;++j){
-	m(i,j)=K(i,j);
+    if((h==ModellingHypothesis::PLANESTRESS)||(h==ModellingHypothesis::AXISYMMETRICAL)||
+       (h==ModellingHypothesis::PLANESTRAIN)){
+      for(unsigned short i=0;i!=4;++i){
+	for(unsigned short j=0;j!=3;++j){
+	  m(i,j)=K(i,j);
+	}
+	m(i,3) = m(i,4) = K(i,3);
+      }
+    } else {
+      for(unsigned short i=0;i!=6;++i){
+	for(unsigned short j=0;j!=3;++j){
+	  m(i,j)=K(i,j);
+	}
+	m(i,3) = m(i,4) = K(i,3);
+	m(i,5) = m(i,6) = K(i,4);
+	m(i,7) = m(i,8) = K(i,5);
       }
     }
     return true;
@@ -390,6 +421,17 @@ namespace mtest
       s0.exportTab(stressOld);
       s0.exportTab(stressNew);
     } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
+      auto convert = [](real *aF,const tensor<3u,real>& F){
+	aF[0]=F[0];
+	aF[1]=F[1];
+	aF[2]=F[2];
+	aF[3]=F[3];
+	aF[4]=F[7];
+	aF[5]=F[6];
+	aF[6]=F[4];
+	aF[7]=F[8];
+	aF[8]=F[5];
+      };
       tensor<3u,real>  F0(&s.e0[0]);
       tensor<3u,real>  F1(&s.e1[0]);
       tensor<3u,real>  R0;
@@ -399,8 +441,8 @@ namespace mtest
       stensor<3u,real> s0(&(s.s0[0]));
       polar_decomposition(R0,U0,F0);
       polar_decomposition(R1,U1,F1);
-      tfel::fsalgo::copy<9u>::exe(F0.begin(),defgradOld);
-      tfel::fsalgo::copy<9u>::exe(F1.begin(),defgradNew);
+      convert(defgradOld,F0);
+      convert(defgradNew,F1);
       U0.exportTab(stretchOld);
       U1.exportTab(stretchNew);
       std::swap(stretchOld[4],stretchOld[5]);
@@ -450,8 +492,11 @@ namespace mtest
       sig.changeBasis(transpose(r1));
       tfel::fsalgo::copy<4u>::exe(sig.begin(),s.s1.begin());
     } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      stensor<3u,real> sig = {stressNew[0],stressNew[1],stressNew[2],
-			      stressNew[3]*sqrt2,stressNew[5]*sqrt2,
+      stensor<3u,real> sig = {stressNew[0],
+			      stressNew[1],
+			      stressNew[2],
+			      stressNew[3]*sqrt2,
+			      stressNew[5]*sqrt2,
 			      stressNew[4]*sqrt2};
       sig.changeBasis(transpose(r1));
       tfel::fsalgo::copy<6u>::exe(sig.begin(),s.s1.begin());

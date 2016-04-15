@@ -21,11 +21,19 @@ nu.setGlossaryName("PoissonRatio");
 @LocalVariable stress lambda;
 @LocalVariable stress mu;
 
-@ProvidesSymmetricTangentOperator;
-@Integrator{
-  // Lame coefficients
+@InitLocalVariables{
   lambda = computeLambda(young,nu);
   mu     = computeMu(young,nu);
+}
+
+@ProvidesSymmetricTangentOperator;
+@PredictionOperator<DS_DEGL>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice de
+			  // prédiction est toujours l'élastique
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@Integrator{
   // Green-Lagrange tensor
   const StrainStensor e = computeGreenLagrangeTensor(F1);
   // second Piola–Kirchhoff stress
@@ -37,30 +45,30 @@ nu.setGlossaryName("PoissonRatio");
     if(smflag==DS_DEGL){
       Dt = De;
     } else if(smflag==DS_DC){
-      Dt = 0.5*De;
+      Dt = De/2;
     } else if(smflag==DS_DF){
-      Dt = 0.5*De*t2tost2<N,strain>::dCdF(F1);
+      Dt = De*t2tost2<N,strain>::dCdF(F1)/2;
     } else if (smflag==DS_DDF){
-      Dt = 0.5*De*t2tost2<N,strain>::dCdF(F1)*t2tot2<N,real>::tpld(F0);
+      Dt = De*t2tost2<N,strain>::dCdF(F1)*t2tot2<N,real>::tpld(F0)/2;
     } else if (smflag==DTAU_DF){
-      t2tost2<N,stress> dS = 0.5*De*t2tost2<N,strain>::dCdF(F1);
+      t2tost2<N,stress> dS = De*t2tost2<N,strain>::dCdF(F1)/2;
       t2tost2<N,stress> dtau;
       computePushForwardDerivative(dtau,dS,s,F1); 
       Dt = dtau;
     } else if (smflag==DTAU_DDF){
-      t2tost2<N,stress> dS = 0.5*De*t2tost2<N,strain>::dCdF(F1);
+      t2tost2<N,stress> dS = De*t2tost2<N,strain>::dCdF(F1)/2;
       t2tost2<N,stress> dtau;
       computePushForwardDerivative(dtau,dS,s,F1);
       Dt = dtau*t2tot2<N,real>::tpld(F0); 
     } else if (smflag==DSIG_DF){
-      t2tost2<N,stress> dS = 0.5*De*t2tost2<N,strain>::dCdF(F1);
+      t2tost2<N,stress> dS = De*t2tost2<N,strain>::dCdF(F1)/2;
       t2tost2<N,stress> dtau;
       t2tost2<N,stress> dsig;
       computePushForwardDerivative(dtau,dS,s,F1); 
       computeCauchyStressDerivativeFromKirchoffStressDerivative(dsig,dtau,sig,F1); 
       Dt = dsig;
     } else if (smflag==DSIG_DDF){
-      t2tost2<N,stress> dS = 0.5*De*t2tost2<N,strain>::dCdF(F1);
+      t2tost2<N,stress> dS = De*t2tost2<N,strain>::dCdF(F1)/2;
       t2tost2<N,stress> dtau;
       t2tost2<N,stress> dsig;
       computePushForwardDerivative(dtau,dS,s,F1); 

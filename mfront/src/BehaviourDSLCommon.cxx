@@ -1871,6 +1871,7 @@ namespace mfront{
     this->mb.registerMemberName(h,"computeAPrioriTimeStepScalingFactorII");
     this->mb.registerMemberName(h,"computeAPosterioriTimeStepScalingFactor");
     this->mb.registerMemberName(h,"computeAPosterioriTimeStepScalingFactorII");
+    this->reserveName("computeTangentOperator_");
     this->mb.registerMemberName(h,"computeConsistentTangentOperator");
     for(const auto& to : tos){
       const auto ktype = convertFiniteStrainBehaviourTangentOperatorFlagToString(to);
@@ -1880,7 +1881,10 @@ namespace mfront{
     }
     this->reserveName("tangentOperator_sk2");
     this->reserveName("computePredictionOperator");
-    this->reserveName("computeTangentOperator_");
+    for(const auto& to : tos){
+      const auto ktype = convertFiniteStrainBehaviourTangentOperatorFlagToString(to);
+      this->mb.registerMemberName(h,"computePredictionOperator_"+ktype);
+    }
     this->reserveName("smt");
     this->reserveName("smflag");
     this->reserveName("dl_l0");
@@ -4177,15 +4181,135 @@ namespace mfront{
     this->writeBehaviourFileHeaderEnd();
   } // end of BehaviourDSLCommon::writeBehaviourFileBegin
 
+  static bool
+  hasUserDefinedPredictionOperatorCode(const BehaviourDescription& mb,
+				       const tfel::material::ModellingHypothesis::Hypothesis h)
+  {
+    using tfel::material::getFiniteStrainBehaviourTangentOperatorFlags;
+    if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      // all available tangent operators for finite strain behaviours
+      const auto tos = getFiniteStrainBehaviourTangentOperatorFlags();
+      // search tangent operators defined by the user
+      for(auto pt=tos.cbegin();pt!=tos.cend();++pt){
+	const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(*pt);
+	if(mb.hasCode(h,BehaviourData::ComputePredictionOperator+'-'+ktype)){
+	  return true;
+	}
+      }
+    } else {
+      if(mb.hasCode(h,BehaviourData::ComputePredictionOperator)){
+	return true;
+      }
+    }
+    return false;
+  } // end of BehaviourDSLCommon::hasUserDefinedTangentOperatorCode
+
+  
   void BehaviourDSLCommon::writeBehaviourComputePredictionOperator(const Hypothesis h)
   {
+    using namespace std;
+    using namespace tfel::material;
     const auto btype = this->mb.getBehaviourTypeFlag();
     if((!this->mb.getAttribute<bool>(h,BehaviourData::hasPredictionOperator,false))&&
        (this->mb.hasCode(h,BehaviourData::ComputePredictionOperator))){
       this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputePredictionOperator : ",
 			      "attribute 'hasPredictionOperator' is set but no associated code defined");
     }
-    if(this->mb.hasCode(h,BehaviourData::ComputePredictionOperator)){
+    if(!hasUserDefinedPredictionOperatorCode(this->mb,h)){
+      this->behaviourFile << "IntegrationResult computePredictionOperator(const SMFlag,const SMType) override{\n"
+			  << "throw(std::runtime_error(\"" << this->mb.getClassName()
+			  << "::computePredictionOperator: \"\n"
+			  << "\"unsupported prediction operator flag\"));\n"
+			  << "return FAILURE;\n"
+			  << "}\n\n";
+      return;
+    }
+    if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      // all available tangent operators for finite strain behaviours
+      const auto tos(getFiniteStrainBehaviourTangentOperatorFlags());
+      // all known converters
+      const auto converters =
+	FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions();
+      // tangent operators defined by the user
+      vector<FiniteStrainBehaviourTangentOperatorBase::Flag> ktos;
+      for(const auto& t : tos){
+	const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
+	if(this->mb.hasCode(h,BehaviourData::ComputePredictionOperator+'-'+ktype)){
+	  ktos.push_back(t);
+	}
+      }
+      if(!ktos.empty()){
+	// computing all the conversion paths starting from user defined ones
+	vector<FiniteStrainBehaviourTangentOperatorConversionPath> paths;
+	for(const auto& k:ktos){
+	  const auto kpaths = 
+	    FiniteStrainBehaviourTangentOperatorConversionPath::getConversionsPath(k,ktos,converters);
+	  paths.insert(paths.end(),kpaths.begin(),kpaths.end());
+	}
+	for(const auto& t:tos){
+	  const auto ktype = convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
+	  if(find(ktos.begin(),ktos.end(),t)!=ktos.end()){
+	    this->behaviourFile << "IntegrationResult\ncomputePredictionOperator_" << ktype << "(const SMType smt){\n"
+				<< "using namespace std;\n"
+				<< "using namespace tfel::math;\n"
+				<< "using std::vector;\n";
+	    writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputePredictionOperator",
+			      this->behaviourFile,this->mb.getMaterialLaws());
+	    this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputePredictionOperator+"-"+ktype) << '\n'
+				<< "return SUCCESS;\n"
+				<< "}\n\n";
+	  } else {
+	    const auto path =
+	      FiniteStrainBehaviourTangentOperatorConversionPath::getShortestPath(paths,t);
+	    if(path.empty()){
+	      this->behaviourFile << "IntegrationResult computePredictionOperator_" << ktype << "(const SMType){\n"
+				  << "throw(std::runtime_error(\"" << this->mb.getClassName()
+				  << "::computePredictionOperator_" << ktype << ": \"\n"
+				  << "\"computing the prediction operator '"
+				  << ktype << "' is not supported\"));\n"
+				  << "return FAILURE;\n"
+				  << "}\n\n";
+	    } else {
+	      this->behaviourFile << "IntegrationResult computePredictionOperator_" << ktype << "(const SMType smt){\n";
+	      auto pc = path.begin();
+	      this->behaviourFile << "using namespace tfel::math;\n";
+	      this->behaviourFile << "// computing " << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from()) << endl;
+	      const auto k = convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from());
+	      this->behaviourFile << "this->computePredictionOperator_" << k << "(smt);\n"
+				  << "const " << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from()) << "<N,stress>"
+				  << " tangentOperator_" << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from())
+				  << " = this->Dt.template get<"
+				  << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from())
+				  << "<N,stress> >();\n";
+	      for(;pc!=path.end();){
+		const auto converter = *pc;
+		if(++pc==path.end()){
+		  this->behaviourFile << converter.getFinalConversion() << endl;
+		} else {
+		  this->behaviourFile << converter.getIntermediateConversion() << endl;
+		}
+	      }
+	      this->behaviourFile << "return SUCCESS;\n"
+				  << "}\n\n";
+	    }
+	  }
+	}
+	this->behaviourFile << "IntegrationResult computePredictionOperator(const SMFlag smflag,const SMType smt){\n"
+			    << "using namespace std;\n"
+			    << "switch(smflag){\n";
+	for(const auto& t:tos){
+	  const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
+	  this->behaviourFile << "case " << ktype << ":\n"
+			      << "return this->computePredictionOperator_" << ktype << "(smt);\n";
+	}
+	this->behaviourFile << "}\n"
+			    << "throw(runtime_error(\"" << this->mb.getClassName()
+			    << "::computePredictionOperator: \"\n"
+			    << "\"unsupported prediction operator flag\"));\n"
+			    << "return FAILURE;\n"
+			    << "}\n\n";
+      }
+    } else {
       this->behaviourFile << "IntegrationResult\n"
 			  << "computePredictionOperator(const SMFlag smflag,const SMType smt) override{\n"
 			  << "using namespace std;\n"
@@ -4198,25 +4322,17 @@ namespace mfront{
 	if(mb.useQt()){
 	  this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
 			      << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
-			      << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
+			      << "throw(runtime_error(\"invalid prediction operator flag\"));\n"
 			      << "}\n";
 	} else {
 	  this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
 			      << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
-			      << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
+			      << "throw(runtime_error(\"invalid prediction operator flag\"));\n"
 			      << "}\n";
 	}
       }
       this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputePredictionOperator)
 			  << "return SUCCESS;\n"
-			  << "}\n\n";
-    } else {
-      this->behaviourFile << "IntegrationResult computePredictionOperator(const SMFlag,const SMType) override{\n"
-			  << "using namespace std;\n"
-			  << "string msg(\"" << this->mb.getClassName() << "::computePredictionOperator : \");\n"
-			  << "msg +=\"unimplemented feature\";\n"
-			  << "throw(runtime_error(msg));\n"
-			  << "return FAILURE;\n"
 			  << "}\n\n";
     }
   } // end of BehaviourDSLCommon::writeBehaviourComputePredictionOperator(void)
@@ -4297,7 +4413,7 @@ namespace mfront{
 	    }
 	  }
 	}
-	this->behaviourFile << "bool computeConsistentTangentOperator(const SMFlag& smflag,const SMType smt){\n"
+	this->behaviourFile << "bool computeConsistentTangentOperator(const SMFlag smflag,const SMType smt){\n"
 			    << "using namespace std;\n"
 			    << "switch(smflag){\n";
 	for(const auto& t:tos){
@@ -4306,10 +4422,9 @@ namespace mfront{
 			      << "return this->computeConsistentTangentOperator_" << ktype << "(smt);\n";
 	}
 	this->behaviourFile << "}\n"
-			    << "string msg(\"" << this->mb.getClassName()
-			    << "::computeConsistentTangentOperator : \");\n"
-			    << "msg += \"unsupported tangent operator flag\";\n"
-			    << "throw(runtime_error(msg));\n"
+			    << "throw(std::runtime_error(\"" << this->mb.getClassName()
+			    << "::computeConsistentTangentOperator : \"\n"
+			    << "\"unsupported tangent operator flag\"));\n"
 			    << "return false;\n"
 			    << "}\n\n";
       }
@@ -5296,11 +5411,58 @@ namespace mfront{
 
   void BehaviourDSLCommon::treatPredictionOperator(void)
   {
-    const auto& o = this->readCodeBlock(*this,BehaviourData::ComputePredictionOperator,
-						    &BehaviourDSLCommon::predictionOperatorVariableModifier,
-						    true,true);
-    for(const auto & elem : o.hypotheses){
-      this->mb.setAttribute(elem,BehaviourData::hasPredictionOperator,true);
+    using namespace std;
+    using namespace tfel::material;
+    using namespace tfel::utilities;
+    CodeBlockOptions o;
+    this->readCodeBlockOptions(o,true);
+    if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      bool found = false;
+      if(o.untreated.size()!=1u){
+	ostringstream msg;
+	msg << "BehaviourDSLCommon::treatPredictionOperator : "
+	    << "tangent operator type is undefined. Valid tanget operator type are :\n";
+	for(const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()){
+	  msg << "- " << convertFiniteStrainBehaviourTangentOperatorFlagToString(to) << " : "
+	      << getFiniteStrainBehaviourTangentOperatorDescription(to) << '\n';
+	}
+	throw(runtime_error(msg.str()));
+      }
+      if(o.untreated[0].flag!=Token::Standard){
+	throw(runtime_error("BehaviourDSLCommon::treatPredictionOperator : "
+			    "invalid option '"+o.untreated[0].value+"'"));
+      }
+      const auto& ktype = o.untreated[0].value;
+      for(const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()){
+	if(ktype==convertFiniteStrainBehaviourTangentOperatorFlagToString(to)){
+	  found=true;
+	  break;
+	}
+      }
+      if(!found){
+	ostringstream msg;
+	msg << "BehaviourDSLCommon::treatPredictionOperator : "
+	    << "invalid tangent operator type '"+ktype+"'. Valid tanget operator type are :\n";
+	for(const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()){
+	  msg << "- " << convertFiniteStrainBehaviourTangentOperatorFlagToString(to) << " : "
+	      << getFiniteStrainBehaviourTangentOperatorDescription(to) << endl;
+	}
+	throw(runtime_error(msg.str()));
+      }
+      this->readCodeBlock(*this,o,BehaviourData::ComputePredictionOperator+"-"+ktype,
+			  &BehaviourDSLCommon::predictionOperatorVariableModifier,true);
+      for(const auto & h : o.hypotheses){
+	if(!this->mb.hasAttribute(h,BehaviourData::hasPredictionOperator)){
+	  this->mb.setAttribute(h,BehaviourData::hasPredictionOperator,true);
+	}
+      }
+    } else {
+      this->treatUnsupportedCodeBlockOptions(o);
+      this->readCodeBlock(*this,o,BehaviourData::ComputePredictionOperator,
+			  &BehaviourDSLCommon::predictionOperatorVariableModifier,true);
+      for(const auto & h : o.hypotheses){
+	this->mb.setAttribute(h,BehaviourData::hasPredictionOperator,true);
+      }
     }
   } // end of BehaviourDSLCommon::treatPredictionOperator
 

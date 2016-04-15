@@ -230,21 +230,19 @@ namespace mfront{
   AbaqusInterface::endTreatment(const BehaviourDescription& mb,
 				const FileDescription& fd) const
   {
-    using namespace std;
     using namespace tfel::system;
-    if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
-      throw(std::runtime_error("AbaqusInterface::endTreatment : "
-			       "the abaqus interface only supports small and "
-			       "finite strain behaviours"));
-    }
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("AbaqusInterface::endTreatment: "+m));}
+    };
+    throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+	     "the abaqus interface only supports small and "
+	     "finite strain behaviours");
     if(this->compareToNumericalTangentOperator){
-      if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	throw(std::runtime_error("AbaqusInterface::endTreatment : "
-				 "unsupported feature @AbaqusSaveTangentOperator "
-				 "and @AbaqusCompareToNumericalTangentOperator : "
-				 "those are only valid for small strain beahviours"));
-      }
+      throw_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+	       "unsupported feature @AbaqusSaveTangentOperator "
+	       "and @AbaqusCompareToNumericalTangentOperator : "
+	       "those are only valid for small strain beahviours");
     }
     // get the modelling hypotheses to be treated
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
@@ -254,7 +252,7 @@ namespace mfront{
     systemCall::mkdir("include/MFront/Abaqus");
     systemCall::mkdir("abaqus");
 
-    ofstream out;
+    std::ofstream out;
     {
       // copy umat.cpp locally
       MFrontLockGuard lock;
@@ -280,40 +278,35 @@ namespace mfront{
     // header
     auto fname = "abaqus"+name+".hxx";
     out.open("include/MFront/Abaqus/"+fname);
-    if(!out){
-      throw(std::runtime_error("AbaqusInterface::endTreatment : "
-			       "could not open file '"+fname+"'"));
-    }
-
-    out << "/*!\n";
-    out << "* \\file   "  << fname << endl;
-    out << "* \\brief  This file declares the abaqus interface for the " 
-	<< mb.getClassName() << " behaviour law\n";
-    out << "* \\author "  << fd.authorName << endl;
-    out << "* \\date   "  << fd.date       << endl;
-    out << "*/\n\n";
+    throw_if(!out,"could not open file '"+fname+"'");
+    
+    out << "/*!\n"
+	<< "* \\file   "  << fname << '\n'
+	<< "* \\brief  This file declares the abaqus interface for the " 
+	<< mb.getClassName() << " behaviour law\n"
+	<< "* \\author "  << fd.authorName << '\n'
+	<< "* \\date   "  << fd.date       << '\n'
+	<< "*/\n\n";
 
     const auto header = this->getHeaderDefine(mb);
-    out << "#ifndef "<< header << "\n";
-    out << "#define "<< header << "\n\n";
+    out << "#ifndef "<< header << "\n"
+	<< "#define "<< header << "\n\n"
+	<< "#include\"TFEL/Config/TFELConfig.hxx\"\n\n"
+	<< "#include\"MFront/Abaqus/Abaqus.hxx\"\n"
+	<< "#include\"MFront/Abaqus/AbaqusData.hxx\"\n\n";
 
-    out << "#include\"TFEL/Config/TFELConfig.hxx\"\n\n";
-    out << "#include\"MFront/Abaqus/Abaqus.hxx\"\n";
-    out << "#include\"MFront/Abaqus/AbaqusData.hxx\"\n\n";
-
-    out << "#ifdef __cplusplus\n";
-    out << "#include\"MFront/Abaqus/AbaqusTraits.hxx\"\n";
+    out << "#ifdef __cplusplus\n"
+	<< "#include\"MFront/Abaqus/AbaqusTraits.hxx\"\n";
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "#include\"MFront/Abaqus/AbaqusOrthotropicBehaviour.hxx\"\n";
     }
-    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
-    out << "#endif /* __cplusplus */\n\n";
+    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
+	<< "#endif /* __cplusplus */\n\n";
 
     this->writeVisibilityDefines(out);
 
-    out << "#ifdef __cplusplus\n\n";
-
-    out << "namespace abaqus{\n\n";
+    out << "#ifdef __cplusplus\n\n"
+	<< "namespace abaqus{\n\n";
 
     if(!mb.areAllMechanicalDataSpecialised(mh)){
       this->writeAbaqusBehaviourTraits(out,mb,ModellingHypothesis::UNDEFINEDHYPOTHESIS);
@@ -324,13 +317,11 @@ namespace mfront{
       }
     }
 
-    out << "} // end of namespace abaqus\n\n";
-
-    out << "#endif /* __cplusplus */\n\n";
-
-    out << "#ifdef __cplusplus\n";
-    out << "extern \"C\"{\n";
-    out << "#endif /* __cplusplus */\n\n";
+    out << "} // end of namespace abaqus\n\n"
+	<< "#endif /* __cplusplus */\n\n"
+	<< "#ifdef __cplusplus\n"
+	<< "extern \"C\"{\n"
+	<< "#endif /* __cplusplus */\n\n";
 
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
@@ -340,38 +331,33 @@ namespace mfront{
     writeUMATArguments(out);
     out << ";\n\n";
 
-    out << "#ifdef __cplusplus\n";
-    out << "}\n";
-    out << "#endif /* __cplusplus */\n\n";
-
-    out << "#endif /* " << header << " */\n";
+    out << "#ifdef __cplusplus\n"
+	<< "}\n"
+	<< "#endif /* __cplusplus */\n\n"
+	<< "#endif /* " << header << " */\n";
 
     out.close();
 
     fname  = "abaqus"+name+".cxx";
     out.open("src/"+fname);
-    if(!out){
-      throw(std::runtime_error("AbaqusInterface::endTreatment : "
-			       "could not open file '"+fname+"'"));
-    }
+    throw_if(!out,"could not open file '"+fname+"'");
 
-    string sfeh;
+    std::string sfeh;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       sfeh = "abaqus::AbaqusStandardSmallStrainStressFreeExpansionHandler";
     } else if (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       sfeh = "nullptr";
     } else {
-      throw(runtime_error("AbaqusInterface::endTreatment: the abaqus interface only "
-			  "supports small and finite strain behaviours"));
+      throw_if(true,"the abaqus interface only supports small and finite strain behaviours");
     }
 
-    out << "/*!\n";
-    out << "* \\file   "  << fname << endl;
-    out << "* \\brief  This file implements the abaqus interface for the " 
-	<< mb.getClassName() << " behaviour law\n";
-    out << "* \\author "  << fd.authorName << endl;
-    out << "* \\date   "  << fd.date       << endl;
-    out << "*/\n\n";
+    out << "/*!\n"
+	<< "* \\file   "  << fname << '\n'
+	<< "* \\brief  This file implements the abaqus interface for the " 
+	<< mb.getClassName() << " behaviour law\n"
+	<< "* \\author "  << fd.authorName << '\n'
+	<< "* \\date   "  << fd.date       << '\n'
+	<< "*/\n\n";
 
     this->getExtraSrcIncludes(out,mb);
 
@@ -380,14 +366,14 @@ namespace mfront{
 	  << "#include<vector>\n"
 	  << "#include<algorithm>\n";
     }
-    out << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n";
-    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
+    out << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n"
+	<< "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
-    out << "#include\"MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx\"\n\n";
-    out << "#include\"MFront/Abaqus/AbaqusInterface.hxx\"\n\n";
-    out << "#include\"MFront/Abaqus/abaqus" << name << ".hxx\"\n\n";
+    out << "#include\"MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx\"\n\n"
+	<< "#include\"MFront/Abaqus/AbaqusInterface.hxx\"\n\n"
+	<< "#include\"MFront/Abaqus/abaqus" << name << ".hxx\"\n\n";
 
     this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
     
@@ -407,8 +393,8 @@ namespace mfront{
     this->writeSetParametersFunctionsImplementations(out,name,mb);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
-    string dv0;
-    string dv1;
+    std::string dv0;
+    std::string dv1;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       dv0 = "STRAN";
       dv1 = "DSTRAN";
@@ -416,9 +402,8 @@ namespace mfront{
       dv0 = "F0";
       dv1 = "F1";
     } else {
-      throw(runtime_error("AbaqusInterface::endTreatment : "
-			  "the abaqus interface only supports small "
-			  "and finite strain behaviours"));
+      throw_if(true,"the abaqus interface only supports small "
+	       "and finite strain behaviours");
     }
 
     out << "MFRONT_SHAREDOBJ void\n" << getFunctionName(name);
@@ -430,7 +415,8 @@ namespace mfront{
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
 	  << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
-	  << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	  << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
+	  << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
     this->generateMTestFile1(out);
@@ -536,8 +522,8 @@ namespace mfront{
 	  << "cout << endl;\n"
 	  << "}\n";
     }
-    out << "}\n";
-    out << "} // end of extern \"C\"\n";
+    out << "}\n"
+	<< "} // end of extern \"C\"\n";
     out.close();
     this->writeInputFileExample(mb,fd);
   } // end of AbaqusInterface::endTreatment
@@ -561,15 +547,17 @@ namespace mfront{
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov,of;
-    os << "void set" << iprefix << "BehaviourDataDrivingVariables(const Type* const " << iprefix << "stran)\n"
+    os << "void set"
+       << iprefix << "BehaviourDataDrivingVariables(const Type* const " << iprefix << "stran)\n"
        << "{\n";
     for(const auto& v : mb.getMainVariables()){
       this->writeBehaviourDataDrivingVariableSetter(os,v.first,ov);
       ov += this->getTypeSize(v.first.type,1u);
     }
     os << "}\n\n";
-    os << "void set" << iprefix << "BehaviourDataThermodynamicForces(const Type* const " << iprefix << "stress_,\n"
-       << "                                                          const Type* const )\n"
+    os << "void set"
+       << iprefix << "BehaviourDataThermodynamicForces(const Type* const " << iprefix << "stress_,\n"
+       << "                                                        const Type* const )\n"
        << "{\n";
     for(const auto& v : mb.getMainVariables()){
       this->writeBehaviourDataThermodynamicForceSetter(os,v.second,of);

@@ -25,10 +25,18 @@ nu.setGlossaryName("PoissonRatio");
 @LocalVariable stress lambda;
 @LocalVariable stress mu;
 
-@Integrator{
-  // Lame coefficients
+@InitLocalVariables{
   lambda = computeLambda(young,nu);
   mu     = computeMu(young,nu);
+}
+
+@PredictionOperator<DS_DEGL>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice de
+			  // prédiction est toujours l'élastique
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@Integrator{
   // Green-Lagrange tensor
   const StrainStensor e = computeGreenLagrangeTensor(F1);
   // second Piola–Kirchhoff stress

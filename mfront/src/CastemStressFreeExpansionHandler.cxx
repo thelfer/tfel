@@ -18,10 +18,10 @@ namespace castem
 {
 
   void CastemStandardSmallStrainStressFreeExpansionHandler(CastemReal * const e,
-							 CastemReal * const de,
-							 const CastemReal *const s0,
-							 const CastemReal *const s1,
-							 const CastemInt d)
+							   CastemReal * const de,
+							   const CastemReal *const s0,
+							   const CastemReal *const s1,
+							   const CastemInt d)
   {
     using namespace std;
     static const CastemReal cste = CastemReal(2)/sqrt(CastemReal(2));

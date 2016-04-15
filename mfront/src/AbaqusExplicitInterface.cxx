@@ -1180,14 +1180,14 @@ namespace mfront{
 	  << "                              cste*(*(stressOld+i+4*(*nblock)))};\n";
     }
     out << "const tmatrix<3u,3u," << t << "> R1 = matrix_view(F1*invert(U1));\n"
-      	<< "s.changeBasis(R1);\n"
+      	<< "s.changeBasis(transpose(R1));\n"
 	<< "if(abaqus::AbaqusExplicitInterface<MH::" << MH::toUpperCaseString(h) << ","
 	<< t<< "," << mb.getClassName()
 	<< ">::integrate(s,d,F0,F1)!=0){\n"
 	<< "std::cerr << \"" << mb.getClassName() << ": behaviour integration failed\";\n"
 	<< "::exit(-1);\n"
 	<< "}\n"
-      	<< "s.changeBasis(transpose(R1));\n";
+      	<< "s.changeBasis(R1);\n";
     if(h==MH::PLANESTRESS){
       out << "*(stressNew+i)               = s[0];\n";
       out << "*(stressNew+i+   *(nblock))  = s[1];\n";

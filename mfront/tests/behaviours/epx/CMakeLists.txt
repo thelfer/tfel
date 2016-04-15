@@ -156,6 +156,7 @@ test_epx(saintvenantkirchhoffelasticity3-shear-3-3D)
 test_epx(saintvenantkirchhoffelasticity3-shear-4-3D)
 test_epx(saintvenantkirchhoffelasticity3-shear-5-3D)
 test_epx(saintvenantkirchhoffelasticity3-shear-6-3D)
+
 test_epx(finiterotationsmallstrainelasticity-uniaxialloading-1-2D)
 test_epx(finiterotationsmallstrainelasticity-uniaxialloading-2-2D)
 test_epx(finiterotationsmallstrainelasticity-uniaxialloading-3-2D)

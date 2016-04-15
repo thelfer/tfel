@@ -102,8 +102,8 @@ namespace abaqus{
       using TangentOperatorTraits =
 	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>;
       constexpr const T zero = T{0};
-      const tfel::math::tensor<N,T> F0(zero);
-      const tfel::math::tensor<N,T> F1(zero);
+      const tfel::math::tensor<N,T> F0(tfel::math::tensor<N,T>::Id());
+      const tfel::math::tensor<N,T> F1(tfel::math::tensor<N,T>::Id());
       const tfel::math::stensor<N,T> s(zero);
       Behaviour<H,T,false> b(d);
       b.setBehaviourDataDrivingVariables(F0);

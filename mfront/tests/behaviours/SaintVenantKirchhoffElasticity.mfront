@@ -21,10 +21,7 @@ nu.setGlossaryName("PoissonRatio");
 // tangent
 @LocalVariable StressStensor s; //<! Second tenseur des contraintes de Piola-Kirchhoff
 
-/*!
- * Nous décrivons ici l'intégration de la loi. 
- */
-@Integrator{
+@InitLocalVariables{
   /*! 
    * Nous commençons par calculer les coefficients de Lame \(\lambda\)
    * et \(\mu\)~:
@@ -35,6 +32,18 @@ nu.setGlossaryName("PoissonRatio");
    */
   lambda = computeLambda(young,nu);
   mu     = computeMu(young,nu);
+}
+
+@PredictionOperator<DS_DEGL>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice de
+			  // prédiction est toujours l'élastique
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+/*!
+ * Nous décrivons ici l'intégration de la loi. 
+ */
+@Integrator{
   /*!
    * Nous calculons ensuite le tenseur de Green-Lagrange
    */

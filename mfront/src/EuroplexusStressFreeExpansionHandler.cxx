@@ -12,6 +12,8 @@
  */
 
 #include<cmath>
+#include"TFEL/Math/Stensor/StensorView.hxx"
+#include"TFEL/Math/Stensor/ConstStensorView.hxx"
 #include"MFront/Europlexus/EuroplexusStressFreeExpansionHandler.hxx"
 
 namespace epx
@@ -23,25 +25,20 @@ namespace epx
 							       const EuroplexusReal *const s1,
 							       const EuroplexusInt d)
   {
-    using namespace std;
-    static const EuroplexusReal cste = EuroplexusReal(2)/sqrt(EuroplexusReal(2));
-    e[0]  -= s0[0];
-    e[1]  -= s0[1];
-    e[2]  -= s0[2];
-    de[0] -= (s1[0]-s0[0]);
-    de[1] -= (s1[1]-s0[1]);
-    de[2] -= (s1[2]-s0[2]);
-    if(d==2){
-      e[3]  -= s0[3]*cste;
-      de[3] -= (s1[3]-s0[3])*cste;
-    }
-    if(d==3){
-      e[3]  -= s0[3]*cste;
-      e[4]  -= s0[3]*cste;
-      e[5]  -= s0[5]*cste;
-      de[3] -= (s1[3]-s0[3])*cste;
-      de[4] -= (s1[4]-s0[4])*cste;
-      de[5] -= (s1[5]-s0[5])*cste;
+    if(d==0){
+      tfel::math::StensorView<3u,EuroplexusReal> se(e);
+      tfel::math::StensorView<3u,EuroplexusReal> sde(de);
+      tfel::math::ConstStensorView<3u,EuroplexusReal> se0(s0);
+      tfel::math::ConstStensorView<3u,EuroplexusReal> se1(s1);
+      se  -= se0;
+      sde -= se1-se0;
+    } else {
+      tfel::math::StensorView<2u,EuroplexusReal> se(e);
+      tfel::math::StensorView<2u,EuroplexusReal> sde(de);
+      tfel::math::ConstStensorView<2u,EuroplexusReal> se0(s0);
+      tfel::math::ConstStensorView<2u,EuroplexusReal> se1(s1);
+      se  -= se0;
+      sde -= se1-se0;
     }
   } // end of EuroplexusStandardSmallStrainStressFreeExpansionHandler
 
