@@ -1410,6 +1410,7 @@ include/TFEL/Math/ST2toST2/ST2toST2Concept.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2Concept.ixx -text
 include/TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx -text
+include/TFEL/Math/ST2toST2/ST2toST2ConceptPushForward.ixx -text
 include/TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2ST2toST2ProductExpr.hxx -text
@@ -4418,6 +4419,7 @@ tests/Math/st2tost2/Makefile.am -text
 tests/Math/st2tost2/ST2toST2ChangeBasis.cxx -text
 tests/Math/st2tost2/ST2toST2FromTinyMatrixView.cxx -text
 tests/Math/st2tost2/ST2toST2FromTinyMatrixView2.cxx -text
+tests/Math/st2tost2/ST2toST2PushForward.cxx -text
 tests/Math/st2tost2/StensorSquareDerivative.cxx -text
 tests/Math/st2tost2/st2tost2-2.cxx -text
 tests/Math/st2tost2/st2tost2-3.cxx -text
@@ -4541,6 +4543,7 @@ tools/TensorConvertion/TensorConvertion.cxx -text
 tools/TensorConvertion/TensorConvertion1D.cxx -text
 tools/TensorConvertion/TensorConvertion2D.cxx -text
 tools/TensorConvertion/TensorConvertion3D.cxx -text
+tools/TensorConvertion/st2tost2_push_forward.cxx -text
 tools/docs/mfront-keywords.sh -text
 tools/glossary/generate_glossary.cxx -text
 tools/glossary/glossary.txt -text

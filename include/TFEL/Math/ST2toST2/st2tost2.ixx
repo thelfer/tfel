@@ -458,6 +458,47 @@ namespace tfel{
 		 const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename ST2toST2Traits<ST2toST2Type>::NumType>::type>& r){
       return st2tost2_internals::ChangeBasis<ST2toST2Traits<ST2toST2Type>::dime>::exe(s,r);
     }
+
+    template<typename ST2toST2Type,
+	     typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond&&
+      tfel::meta::Implements<TensorType,TensorConcept>::cond&&
+      ST2toST2Traits<ST2toST2Type>::dime==TensorTraits<TensorType>::dime,
+      st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
+	       typename ComputeBinaryResult<typename ST2toST2Traits<ST2toST2Type>::NumType,
+	       typename TensorTraits<TensorType>::NumType,OpMult>::Result>
+      >::type
+     push_forward(const ST2toST2Type& C,
+		  const TensorType& F)
+    {
+      st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
+      typename ComputeBinaryResult<typename ST2toST2Traits<ST2toST2Type>::NumType,
+      typename TensorTraits<TensorType>::NumType,OpMult>::Result> r;
+      push_forward(r,C,F);
+      return r;
+    }
+
+    template<typename ST2toST2Type,
+	     typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond&&
+      tfel::meta::Implements<TensorType,TensorConcept>::cond&&
+      ST2toST2Traits<ST2toST2Type>::dime==TensorTraits<TensorType>::dime,
+      st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
+	       typename ComputeBinaryResult<typename ST2toST2Traits<ST2toST2Type>::NumType,
+	       typename TensorTraits<TensorType>::NumType,OpMult>::Result>
+      >::type
+    pull_back(const ST2toST2Type& C,
+	      const TensorType& F)
+    {
+      st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
+      typename ComputeBinaryResult<typename ST2toST2Traits<ST2toST2Type>::NumType,
+      typename TensorTraits<TensorType>::NumType,OpMult>::Result> r;
+      const auto iF = invert(F);
+      push_forward(r,C,iF);
+      return r;
+    }
     
   } //end of namespace math
 

@@ -200,12 +200,10 @@ TFEL_TESTS_GENERATE_PROXY(ConvertToTangentModuliTest,
 
 int main(void)
 {
-  using namespace tfel::tests;
-  auto& manager = TestManager::getTestManager();
+  auto& manager = tfel::tests::TestManager::getTestManager();
   manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("ConvertToTangentModuli.xml");
-  TestResult r = manager.execute();
+  const auto r = manager.execute();
   return r.success() ? EXIT_SUCCESS : EXIT_FAILURE;
-  return EXIT_SUCCESS;
 }
 

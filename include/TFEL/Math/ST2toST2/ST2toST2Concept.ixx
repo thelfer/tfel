@@ -52,4 +52,6 @@ namespace tfel{
 
 } // end of namespace tfel
 
+#include"TFEL/Math/ST2toST2/ST2toST2ConceptPushForward.ixx"
+
 #endif /* LIB_TFEL_MATH_ST2TOST2_CONCEPT_IMPL_ */

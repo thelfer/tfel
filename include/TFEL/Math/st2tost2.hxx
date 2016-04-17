@@ -300,7 +300,39 @@ namespace tfel{
 					    typename ST2toST2Traits<ST2toST2Type>::NumType,OpDiv>::Result>
     >::type
     invert(const ST2toST2Type&);
-        
+
+    /*!
+     * \return the push_forward of a st2tost2:
+     * \[
+     * Ct_{ijkl}=F_{im}F_{jn}F_{kp}F_{lq}C_{mnpq}
+     * \]
+     * \param[in] C: input
+     * \param[in] F: deformation gradient
+     */
+    template<typename ST2toST2Type,
+	     typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond&&
+      tfel::meta::Implements<TensorType,TensorConcept>::cond&&
+      ST2toST2Traits<ST2toST2Type>::dime==TensorTraits<TensorType>::dime,
+      st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
+	       typename ComputeBinaryResult<typename ST2toST2Traits<ST2toST2Type>::NumType,
+	       typename TensorTraits<TensorType>::NumType,OpMult>::Result>>::type
+     push_forward(const ST2toST2Type&,
+		  const TensorType&);
+
+    template<typename ST2toST2Type,
+	     typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond&&
+      tfel::meta::Implements<TensorType,TensorConcept>::cond&&
+      ST2toST2Traits<ST2toST2Type>::dime==TensorTraits<TensorType>::dime,
+      st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
+	       typename ComputeBinaryResult<typename ST2toST2Traits<ST2toST2Type>::NumType,
+	       typename TensorTraits<TensorType>::NumType,OpMult>::Result>>::type
+    pull_back(const ST2toST2Type&,
+	      const TensorType&);
+    
   } // end of namespace math
 
   namespace typetraits{

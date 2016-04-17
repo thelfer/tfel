@@ -21,6 +21,7 @@
 #include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/General/ConceptRebind.hxx"
 #include"TFEL/Math/Forward/ST2toST2Concept.hxx"
+#include"TFEL/Math/Forward/TensorConcept.hxx"
 
 namespace tfel{
 
@@ -75,6 +76,76 @@ namespace tfel{
     >::type
     abs(const ST2toST2Type&);
 
+    /*!
+     * \brief performs the push_forward of a st2tost2:
+     * \[
+     * Ct_{ijkl}=F_{im}F_{jn}F_{kp}F_{lq}C_{mnpq}
+     * \]
+     * \param[out] Ct: result
+     * \param[in] C: input
+     * \param[in] F: deformation gradient
+     */
+    template<typename ST2toST2Type,
+	     typename ST2toST2Type2,
+	     typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond&&
+      tfel::meta::Implements<ST2toST2Type2,ST2toST2Concept>::cond&&
+      tfel::meta::Implements<TensorType,TensorConcept>::cond&&
+      ST2toST2Traits<ST2toST2Type>::dime==1u&&
+      ST2toST2Traits<ST2toST2Type2>::dime==1u&
+      TensorTraits<TensorType>::dime==1u,
+      void>::type
+    push_forward(ST2toST2Type&,
+		 const ST2toST2Type2&,
+		 const TensorType&);
+    /*!
+     * \brief performs the push_forward of a st2tost2:
+     * \[
+     * Ct_{ijkl}=F_{im}F_{jn}F_{kp}F_{lq}C_{mnpq}
+     * \]
+     * \param[out] Ct: result
+     * \param[in] C: input
+     * \param[in] F: deformation gradient
+     */
+    template<typename ST2toST2Type,
+	     typename ST2toST2Type2,
+	     typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond&&
+      tfel::meta::Implements<ST2toST2Type2,ST2toST2Concept>::cond&&
+      tfel::meta::Implements<TensorType,TensorConcept>::cond&&
+      ST2toST2Traits<ST2toST2Type>::dime==2u&&
+      ST2toST2Traits<ST2toST2Type2>::dime==2u&
+      TensorTraits<TensorType>::dime==2u,
+      void>::type
+    push_forward(ST2toST2Type&,
+		 const ST2toST2Type2&,
+		 const TensorType&);
+    /*!
+     * \brief performs the push_forward of a st2tost2:
+     * \[
+     * Ct_{ijkl}=F_{im}F_{jn}F_{kp}F_{lq}C_{mnpq}
+     * \]
+     * \param[out] Ct: result
+     * \param[in] C: input
+     * \param[in] F: deformation gradient
+     */
+    template<typename ST2toST2Type,
+	     typename ST2toST2Type2,
+	     typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond&&
+      tfel::meta::Implements<ST2toST2Type2,ST2toST2Concept>::cond&&
+      tfel::meta::Implements<TensorType,TensorConcept>::cond&&
+      ST2toST2Traits<ST2toST2Type>::dime==3u&&
+      ST2toST2Traits<ST2toST2Type2>::dime==3u&
+      TensorTraits<TensorType>::dime==3u,
+      void>::type
+    push_forward(ST2toST2Type&,
+		 const ST2toST2Type2&,
+		 const TensorType&);
+    
   } // end of namespace math
 
 } // end of namespace tfel

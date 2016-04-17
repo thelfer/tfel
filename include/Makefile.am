@@ -336,6 +336,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toST2/st2tost2.ixx                                                              \
 			TFEL/Math/ST2toST2/ST2toST2Concept.hxx                                                       \
 			TFEL/Math/ST2toST2/ST2toST2Concept.ixx                                                       \
+			TFEL/Math/ST2toST2/ST2toST2ConceptPushForward.ixx                                            \
 			TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx                                                     \
 			TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx                                             \
 			TFEL/Math/ST2toST2/st2tost2ResultType.hxx                                                    \

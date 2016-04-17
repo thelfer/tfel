@@ -11,6 +11,7 @@ test_PROGRAMS =	st2tost2      \
 		ST2toST2ChangeBasis         \
 		ST2toST2FromTinyMatrixView  \
 		ST2toST2FromTinyMatrixView2 \
+		ST2toST2PushForward         \
 		StensorSquareDerivative     \
 		ConvertToTangentModuliTest
 
@@ -25,6 +26,7 @@ st2tost2_3_SOURCES    = st2tost2-3.cxx
 ST2toST2ChangeBasis_SOURCES = ST2toST2ChangeBasis.cxx
 ST2toST2FromTinyMatrixView_SOURCES  = ST2toST2FromTinyMatrixView.cxx
 ST2toST2FromTinyMatrixView2_SOURCES = ST2toST2FromTinyMatrixView2.cxx
+ST2toST2PushForward_SOURCES = ST2toST2PushForward.cxx
 StensorSquareDerivative_SOURCES = StensorSquareDerivative.cxx
 ConvertToTangentModuliTest_SOURCES = ConvertToTangentModuliTest.cxx
 
