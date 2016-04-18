@@ -14,13 +14,13 @@
 #include<ostream>
 #include<cstring>
 #include<algorithm>
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"MFront/MFrontUtilities.hxx"
 
 namespace mfront{
 
-  void
-  insert_if(std::vector<std::string>& d,
-	    const std::string& v){
+  void insert_if(std::vector<std::string>& d,
+		 const std::string& v){
     if(v.empty()){
       return;
     }
@@ -29,9 +29,8 @@ namespace mfront{
     }
   }
 
-  void
-  insert_if(std::vector<std::string>& d,
-	    const char* const v){
+  void insert_if(std::vector<std::string>& d,
+		 const char* const v){
     if(v==nullptr){
       return;
     }
@@ -47,12 +46,14 @@ namespace mfront{
   write(std::ostream& os,
 	const std::vector<std::string>& v,
 	const std::string& id){
+    using tfel::utilities::replace_all;
     if(v.empty()){
       return;
     }
     os << id << " : {\n";
     for(auto p = v.begin();p!=v.end();){
-      os << "\"" << *p << "\"";
+      os << "\"" << replace_all(*p,"\"","\\\"")
+	 << "\"";
       if(++p!=v.end()){
 	os << ",\n";
       } else {
@@ -67,9 +68,8 @@ namespace mfront{
   read(tfel::utilities::CxxTokenizer::const_iterator& p,
        const tfel::utilities::CxxTokenizer::const_iterator pe)
   {
-    using tfel::utilities::CxxTokenizer;
     auto c = p;
-    auto r = CxxTokenizer::readDouble(c,pe);
+    auto r = tfel::utilities::CxxTokenizer::CxxTokenizer::readDouble(c,pe);
     p=c;
     return r;
   } // end of read
@@ -79,11 +79,10 @@ namespace mfront{
   read(tfel::utilities::CxxTokenizer::const_iterator& p,
        const tfel::utilities::CxxTokenizer::const_iterator pe)
   {
-    using tfel::utilities::CxxTokenizer;
     auto c = p;
-    auto r = CxxTokenizer::readString(c,pe);
+    const auto r = tfel::utilities::CxxTokenizer::CxxTokenizer::readString(c,pe);
     p=c;
-    return r;
+    return tfel::utilities::replace_all(r,"\\\"","\"");
   } // end of read
 
   template<>
@@ -91,9 +90,8 @@ namespace mfront{
   read(tfel::utilities::CxxTokenizer::const_iterator& p,
        const tfel::utilities::CxxTokenizer::const_iterator pe)
   {
-    using tfel::utilities::CxxTokenizer;
     auto c = p;
-    auto r = CxxTokenizer::readStringArray(c,pe);
+    auto r = tfel::utilities::CxxTokenizer::readStringArray(c,pe);
     p=c;
     return r;
   } // end of read

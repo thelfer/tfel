@@ -120,7 +120,7 @@ namespace mfront{
       ArgumentParserBase<MFront>::treatUnknownArgument();
 #else
       auto a = static_cast<const std::string&>(this->getCurrentCommandLineArgument());
-      std::cerr << "mfront : unsupported option '" 
+      std::cerr << "mfront: unsupported option '" 
 		<< a << '\'' << std::endl;
       exit(EXIT_FAILURE);
 #endif /* __CYGWIN__ */
@@ -198,7 +198,7 @@ namespace mfront{
   void
   MFront::treatListParsers(void)
   {
-    std::cout << "available dsl : \n";
+    std::cout << "available dsl: \n";
     auto& parserFactory = DSLFactory::getDSLFactory();
     const auto& parsers = parserFactory.getRegistredParsers();
     auto p = parsers.begin();
@@ -207,7 +207,7 @@ namespace mfront{
       if(tmp.size()<=32){
 	tmp.insert(tmp.size(),32-tmp.size(),' ');
       }
-      std::cout << tmp << " : " << parserFactory.getParserDescription(*p) << ".\n";
+      std::cout << tmp << ": " << parserFactory.getParserDescription(*p) << ".\n";
       ++p;
     }
     exit(EXIT_SUCCESS);
@@ -218,7 +218,7 @@ namespace mfront{
   {
     const auto& o = this->currentArgument->getOption();
     if(o.empty()){
-      throw(std::runtime_error("MFront::treatSilentBuild : "
+      throw(std::runtime_error("MFront::treatSilentBuild: "
 			       "no argument given to the "
 			       "--silentBuild option"));
     }
@@ -227,7 +227,7 @@ namespace mfront{
     } else if(o=="off"){
       this->opts.silentBuild=false;
     } else {
-      throw(std::runtime_error("MFront::treatSilentBuild : "
+      throw(std::runtime_error("MFront::treatSilentBuild: "
 			       "unsupported argument '"+o+
 			       "' given to the --silentBuild option"));
     }
@@ -377,35 +377,34 @@ namespace mfront{
   void
   MFront::treatHelpCommandsList(void)
   {
-    using namespace std;
-    using namespace tfel::utilities;
+    using tfel::utilities::TerminalColors;
     auto& f = DSLFactory::getDSLFactory();
     const auto& o = this->currentArgument->getOption();
     if(o.empty()){
-      throw(runtime_error("MFront::treatHelpCommandsList: "
-			  "no parser name given"));
+      throw(std::runtime_error("MFront::treatHelpCommandsList: "
+			       "no parser name given"));
     }
-    shared_ptr<AbstractDSL> p{f.createNewParser(o)};
-    vector<string> k;
-    p->getKeywordsList(k);
-    string::size_type msize = 0;
-    for(auto pk=k.begin();pk!=k.end();++pk){
-      msize = max(msize,pk->size());
+    std::shared_ptr<AbstractDSL> p{f.createNewParser(o)};
+    std::vector<std::string> keys;
+    p->getKeywordsList(keys);
+    std::string::size_type msize = 0;
+    for(const auto& k:keys){
+      msize = std::max(msize,k.size());
     }
-    for(auto pk=k.begin();pk!=k.end();++pk){
-      const auto fp = getDocumentationFilePath(o,*pk);
-      auto key = *pk;
-      key.resize(msize,' ');
-      cout << key << "  ";
+    for(const auto& key: keys){
+      const auto fp = getDocumentationFilePath(o,key);
+      auto k = key;
+      k.resize(msize,' ');
+      std::cout << k << "  ";
       if(!fp.empty()){
-	cout.write(TerminalColors::Green,sizeof(TerminalColors::Green));
-	cout << "(documented)";
+	std::cout.write(TerminalColors::Green,sizeof(TerminalColors::Green));
+	std::cout << "(documented)";
       } else {
-	cout.write(TerminalColors::Red,sizeof(TerminalColors::Red));
-	cout << "(undocumented)";
+	std::cout.write(TerminalColors::Red,sizeof(TerminalColors::Red));
+	std::cout << "(undocumented)";
       }
-      cout.write(TerminalColors::Reset,sizeof(TerminalColors::Reset));
-      cout << endl;
+      std::cout.write(TerminalColors::Reset,sizeof(TerminalColors::Reset));
+      std::cout << std::endl;
     }
     exit(EXIT_SUCCESS);
   } // end of MFront::treatHelpCommandsList
@@ -413,30 +412,29 @@ namespace mfront{
   void
   MFront::treatHelpCommands(void)
   {
-    using namespace std;
     auto& f = DSLFactory::getDSLFactory();
     const auto& o = this->currentArgument->getOption();
     if(o.empty()){
-      throw(runtime_error("MFront::treatHelpCommandsList: "
-			  "no parser name given"));
+      throw(std::runtime_error("MFront::treatHelpCommandsList: "
+			       "no parser name given"));
     }
-    auto keys = vector<string>{};
+    auto keys = std::vector<std::string>{};
     f.createNewParser(o)->getKeywordsList(keys);
-    cout << "% `" << o << "` keywords\n\n";
+    std::cout << "% `" << o << "` keywords\n\n";
     for(const auto& k : keys){
       const auto fp = getDocumentationFilePath(o,k);
-      cout << "\n# The `" <<  k << "` keyword\n\n";
+      std::cout << "\n# The `" <<  k << "` keyword\n\n";
       if(!fp.empty()){
 	std::ifstream desc{fp};
 	if(!desc){
 	  // note, this shall never append...
-	  cout << "Internal error : can't access to the description of keyword '"
-	       << k << '\n';
+	  std::cout << "Internal error: can't access to the description of keyword '"
+		    << k << '\n';
 	} else {
-	  cout << desc.rdbuf();
+	  std::cout << desc.rdbuf();
 	}
       } else {
-	cout << "The keyword `" <<  k << "` is not documented yet\n";
+	std::cout << "The keyword `" <<  k << "` is not documented yet\n";
       }
     }
     exit(EXIT_SUCCESS);
@@ -445,51 +443,49 @@ namespace mfront{
   void
   MFront::treatHelpCommand(void)
   {
-    using namespace std;
     auto& f = DSLFactory::getDSLFactory();
     const auto& o = this->currentArgument->getOption();
     if(o.empty()){
-      throw(runtime_error("MFront::treatHelpCommand: "
-			  "no argument given"));
+      throw(std::runtime_error("MFront::treatHelpCommand: "
+			       "no argument given"));
     }
     const auto pos = o.rfind(':');
-    if((pos==string::npos)||(pos+1==o.size())){
-      throw(runtime_error("MFront::treatHelpCommand: "
-			  "ill-formed argument, expected "
-			  "'parser:@keyword'"));
+    if((pos==std::string::npos)||(pos+1==o.size())){
+      throw(std::runtime_error("MFront::treatHelpCommand: "
+			       "ill-formed argument, expected "
+			       "'parser:@keyword'"));
     }
     const auto pn = o.substr(0,pos); // parser name
     const auto k  = o.substr(pos+1); // key
     if((pn.empty())||(k.empty())){
-      throw(runtime_error("MFront::treatHelpCommand: "
-			  "ill-formed argument, expected "
-			  "'parser:@keyword'"));
+      throw(std::runtime_error("MFront::treatHelpCommand: "
+			       "ill-formed argument, expected "
+			       "'parser:@keyword'"));
     }
     if(k[0]!='@'){
-      throw(runtime_error("MFront::treatHelpCommand: "
-			  "ill-formed argument, expected "
-			  "'parser:@keyword'"));
+      throw(std::runtime_error("MFront::treatHelpCommand: "
+			       "ill-formed argument, expected "
+			       "'parser:@keyword'"));
     }
     auto p = f.createNewParser(pn);
-    vector<string> keys;
+    std::vector<std::string> keys;
     p->getKeywordsList(keys);
     if(find(keys.begin(),keys.end(),k)==keys.end()){
-      string msg("MFront::treatHelpCommand : ");
-      msg += "keyword '"+k+"' is not declared ";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MFront::treatHelpCommand: "
+			       "keyword '"+k+"' is not declared "));
     }
     const auto fp = getDocumentationFilePath(pn,k);
     if(fp.empty()){
-      cout << "no description available for keyword '"
-	   << k << "'" << endl;
+      std::cout << "no description available for keyword '"
+		<< k << "'" << std::endl;
     } else {
-      ifstream desc(fp);
+      std::ifstream desc(fp);
       if(!desc){
 	// note, this shall never append...
-	cout << "can't access to the description of keyword '"
-	     << k << "'" << endl;
+	std::cout << "can't access to the description of keyword '"
+		  << k << "'" << std::endl;
       } else {
-	cout << desc.rdbuf();
+	std::cout << desc.rdbuf();
       }
     }
     exit(EXIT_SUCCESS);
@@ -512,13 +508,13 @@ namespace mfront{
   void MFront::treatDefFile(void){
     const auto& o = this->getCurrentCommandLineArgument().getOption();
     if(o.empty()){
-      throw(std::runtime_error("MFrontBase::treatDefFile : "
+      throw(std::runtime_error("MFrontBase::treatDefFile: "
 			       "no option given to the "
 			       "'--def-file' argument"));
     }
     for(const auto& l : tfel::utilities::tokenize(o,',')){
       if(l.empty()){
-	throw(std::runtime_error("MFrontBase::treatDefFile : "
+	throw(std::runtime_error("MFrontBase::treatDefFile: "
 				 "empty library specified."));
       }
       this->defs.insert(l);
@@ -530,8 +526,7 @@ namespace mfront{
   MFront::treatFile(const std::string& f) const
   {
     if(getVerboseMode()>=VERBOSE_LEVEL2){
-      auto& log = getLogStream();
-      log << "Treating file : '" << f << "'" <<  std::endl;
+      getLogStream() << "Treating file: '" << f << "'" <<  std::endl;
     }
     auto dsl = MFrontBase::getDSL(f);
     if(!this->interfaces.empty()){
@@ -554,7 +549,6 @@ namespace mfront{
 
   void
   MFront::analyseTargetsFile(void){
-    using tfel::utilities::CxxTokenizer;
     using tfel::system::dirStringSeparator;
     MFrontLockGuard lock;
     const auto file = "src"+dirStringSeparator()+"targets.lst";
@@ -562,12 +556,11 @@ namespace mfront{
     if(!test){
       return;
     }
-    CxxTokenizer tokenizer{file};
+    tfel::utilities::CxxTokenizer tokenizer{file};
     auto c = tokenizer.begin();
     const auto t = read<TargetsDescription>(c,tokenizer.end());
     if(getVerboseMode()>=VERBOSE_LEVEL2){
-      auto& log = getLogStream();
-      log << t << std::endl;
+      getLogStream() << t << std::endl;
     }
     mergeTargetsDescription(this->targets,t,false);
   }
@@ -647,14 +640,14 @@ namespace mfront{
     MFrontLockGuard lock;
     for(const auto& d:this->defs){
       if(!describes(this->targets,d)){
-	throw(std::runtime_error("MFront::generateDefsFile : "
+	throw(std::runtime_error("MFront::generateDefsFile: "
 				 "libray '"+d+"' is not handled"));
       }
       const auto f = "src"+tfel::system::dirStringSeparator()+d+".def";
       std::ofstream def{f};
       def.exceptions(std::ios::badbit|std::ios::failbit);
       if(!def){
-	throw(std::runtime_error("MFront::generateDefsFile : "
+	throw(std::runtime_error("MFront::generateDefsFile: "
 				 "can't open file '"+f+"'"));
       }
       def << "LIBRARY " << d << "\n"
@@ -668,7 +661,7 @@ namespace mfront{
   void
   MFront::writeTargetsDescription(void) const
   {
-    using namespace tfel::system;
+    using tfel::system::dirStringSeparator;
     MFrontLockGuard lock;
     std::ofstream file{"src"+dirStringSeparator()+"targets.lst"};
     file.exceptions(std::ios::badbit|std::ios::failbit);
@@ -678,10 +671,8 @@ namespace mfront{
   void
   MFront::exe(void)
   {
-    using namespace std;
-    using namespace tfel::system;
-    systemCall::mkdir("src");
-    systemCall::mkdir("include");
+    tfel::system::systemCall::mkdir("src");
+    tfel::system::systemCall::mkdir("include");
     if(this->specifiedTargets.empty()){
       this->specifiedTargets.insert("all");
     }
@@ -693,23 +684,24 @@ namespace mfront{
     w = w || (!this->defs.empty());
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
     if(!w){
-      throw(runtime_error("MFront::exe : no file name specified and nothing to be done\n"+
-			  this->getUsageDescription()));
+      throw(std::runtime_error("MFront::exe: no file name specified "
+			       "and nothing to be done\n"+
+			       this->getUsageDescription()));
     }
     // get file generated by previous sessions
     this->analyseTargetsFile();
-    auto errors = vector<pair<string,string>>{};
+    auto errors = std::vector<std::pair<std::string,std::string>>{};
     if(!this->inputs.empty()){
       for(const auto& i : this->inputs){
 	try{
 	  const auto td = this->treatFile(i);
 	  mergeTargetsDescription(this->targets,td,true);
-	} catch(exception& e){
+	} catch(std::exception& e){
 	  errors.push_back({i,e.what()});
 	}
       }
       for(auto& t : this->targets.specific_targets){
-	auto tmp = vector<string>{};
+	auto tmp = std::vector<std::string>{};
 	for(auto p2=t.second.first.cbegin();p2!=t.second.first.cend();++p2){
 	  const auto p4 = p2+1;
 	  if(find(p4,t.second.first.cend(),*p2)==t.second.first.cend()){
@@ -733,8 +725,8 @@ namespace mfront{
       this->writeTargetsDescription();
     }
     if(!errors.empty()){
-      auto msg = string{};
-      auto p6=errors.begin();
+      auto msg = std::string{};
+      auto p6  = errors.begin();
       while(p6!=errors.end()){
 	msg += "Error while treating file '"+p6->first+"'\n";
 	msg += p6->second;
@@ -742,7 +734,7 @@ namespace mfront{
 	  msg += "\n\n";
 	}
       }
-      throw(runtime_error(msg));
+      throw(std::runtime_error(msg));
     }
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     this->generateDefsFiles();
@@ -759,7 +751,7 @@ namespace mfront{
       auto& log = getLogStream();
       for(const auto& t : this->specifiedTargets){
 	if(getVerboseMode()>=VERBOSE_LEVEL0){
-	  log << "Treating target : " << t << endl;
+	  log << "Treating target : " << t << std::endl;
 	}
 	this->buildLibraries(t);
       }
@@ -775,7 +767,7 @@ namespace mfront{
 	    for(const auto& pts:l.epts){
 	      log << " " << pts;
 	    }
-	    log << endl;
+	    log << std::endl;
 	  }
 	}
 	if(!this->targets.specific_targets.empty()){
@@ -787,7 +779,7 @@ namespace mfront{
 	      log << "The following main targets have been build :\n";
 	    }
 	    for(const auto& t : pt2->second.first){
-	      log << "- " << t << endl;
+	      log << "- " << t << std::endl;
 	    }
 	  }
 	}

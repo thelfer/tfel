@@ -210,7 +210,7 @@ namespace tfel{
 	  std::string::const_reverse_iterator ps2(ps);
 	  const std::string::const_reverse_iterator pse(p);
 	  found=true;
-	  while((ps2!=pse)&&(*ps2=='\'')){
+	  while((ps2!=pse)&&(*ps2=='\\')){
 	    found = !found;
 	    ++ps2;
 	  }

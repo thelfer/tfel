@@ -195,14 +195,14 @@ namespace mfront{
     using tfel::utilities::CxxTokenizer;
     const auto f = "read<TargetsDescription>";
     auto error = [&f](const std::string& m){
-      throw(std::runtime_error(std::string{f}+" : "+m));
+      throw(std::runtime_error(std::string{f}+": "+m));
     };
     auto get_vector = [&f](std::vector<std::string>& v,
 			   tfel::utilities::CxxTokenizer::const_iterator& pc,
 			   const tfel::utilities::CxxTokenizer::const_iterator e,
 			   const std::string& n){
       if(!v.empty()){
-	throw(std::runtime_error(std::string{f}+" : library member '"+
+	throw(std::runtime_error(std::string{f}+": library member '"+
 				 n+"' multiply defined"));
       }
       auto c = pc;

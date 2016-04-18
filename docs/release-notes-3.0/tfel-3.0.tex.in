@@ -296,6 +296,9 @@ valeur de sa dérivée ou les deux en même temps.
 
 Trois fonctions du même nom sont également disponibles.
 
+\subsubsection{Implémentation de l'opération de {\tt push\_forward} et
+  de {\tt pull\_back} pour les tenseurs d'ordre $4$}
+
 \subsubsection{Convertion du second tenseur de Piola-Kirchoff en
   contraintes de Cauchy exprimées dans le repère corotationnel}
 

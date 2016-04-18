@@ -154,6 +154,12 @@ private:
 	TFEL_TESTS_ASSERT(std::abs(D(i,j)-D2(i,j))<eps*E);
       }
     }
+    const auto C_SE2 = pull_back(D,F);
+    for(size_type i=0;i!=StensorDimeToSize<3u>::value;++i){
+      for(size_type j=0;j!=StensorDimeToSize<3u>::value;++j){
+	TFEL_TESTS_ASSERT(std::abs(C_SE2(i,j)-C_SE(i,j))<eps*E);
+      }
+    }
   }
 }; // end of ST2toST2PushForwardTest
 

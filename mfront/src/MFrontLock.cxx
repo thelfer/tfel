@@ -37,24 +37,21 @@ namespace mfront{
 
   MFrontLock::MFrontLock()
   {
-    using namespace std;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     this->ghMutex = CreateMutex(nullptr,   // default security attributes
 				FALSE,     // initially not owned
 				"mfront"); // named mutex
     if (this->ghMutex == NULL){
-      string msg("MFrontLock::MFrontLock : ");
-      msg += "semaphore creation failed";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MFrontLock::MFrontLock: "
+			       "semaphore creation failed"));
     }
 #else
-    ostringstream sn;
+    std::ostringstream sn;
     sn << "/mfront-" << ::geteuid();
     this->l = ::sem_open(sn.str().c_str(),O_CREAT,S_IRUSR|S_IWUSR,1);
     if(this->l==SEM_FAILED){
-      string msg("MFrontLock::MFrontLock : ");
-      msg += "semaphore creation failed";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MFrontLock::MFrontLock: "
+			       "semaphore creation failed"));
     }
 #endif
   } // end of MFrontLock::MFrontLock()
@@ -62,21 +59,18 @@ namespace mfront{
   void
   MFrontLock::lock()
   {
-    using namespace std;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     DWORD dwWaitResult;
     dwWaitResult = ::WaitForSingleObject(this->ghMutex, // handle to mutex
 					 INFINITE);     // no time-out interval
     if(dwWaitResult==WAIT_ABANDONED){
-      string msg("MFrontLock::MFrontLock : ");
-      msg += "semaphore can't be aquired";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MFrontLock::MFrontLock: "
+			       "semaphore can't be aquired"));
     }
 #else
     if(::sem_wait(this->l)==-1){
-      string msg("MFrontLock::MFrontLock : ");
-      msg += "semaphore can't be aquired";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MFrontLock::MFrontLock: "
+			       "semaphore can't be aquired"));
     }
 #endif
   } // end of MFrontLock::lock()
@@ -84,7 +78,6 @@ namespace mfront{
   void
   MFrontLock::unlock()
   {
-    using namespace std;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     ::ReleaseMutex(this->ghMutex);
 #else

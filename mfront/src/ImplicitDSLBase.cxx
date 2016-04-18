@@ -12,7 +12,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
 #include<iomanip>
 
 #include<cmath>
