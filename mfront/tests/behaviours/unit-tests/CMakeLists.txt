@@ -21,8 +21,7 @@ macro(mfront_unit_test file)
   endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
   add_test(NAME mfront-unit-tests-${file}
     COMMAND ${mfront_executable}
-    --terminate-handler --no-gui
-    --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours
+    --no-gui --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours
     --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties
     ${mfront_file})
   if(_WILL_FAIL)

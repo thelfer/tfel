@@ -41,7 +41,7 @@ namespace mfront{
     this->ghMutex = CreateMutex(nullptr,   // default security attributes
 				FALSE,     // initially not owned
 				"mfront"); // named mutex
-    if (this->ghMutex == NULL){
+    if (this->ghMutex == nullptr){
       throw(std::runtime_error("MFrontLock::MFrontLock: "
 			       "semaphore creation failed"));
     }
@@ -95,15 +95,14 @@ namespace mfront{
   } // end of MFrontLock::~MFrontLock()
 
   MFrontLockGuard::MFrontLockGuard()
-    : lock(MFrontLock::getMFrontLock())
   {
-    this->lock.lock();
+    MFrontLock::getMFrontLock().lock();
   } // end of MFrontLockGuard::MFrontLockGuard
 
   MFrontLockGuard::~MFrontLockGuard()
   {
-    this->lock.unlock();
+    MFrontLock::getMFrontLock().unlock();
   } // end of MFrontLockGuard::~MFrontLockGuard
-  
+
 } // end of namespace mfront
 

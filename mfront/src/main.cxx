@@ -29,6 +29,17 @@
 
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
 TFEL_NORETURN static void mfront_terminate_handler(){
+  if(auto pe = std::current_exception()) { 
+    // we have an exception
+    try{
+      std::rethrow_exception(pe);
+    } catch(const std::exception& e) {
+      // additional action
+      std::cerr << e.what() << std::endl;
+    } catch( ... ) {
+      std::cerr << "unknown exception thrown" << std::endl;
+    }
+  }
   ::exit(EXIT_FAILURE);
 }
 #endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
@@ -37,7 +48,6 @@ TFEL_NORETURN static void mfront_terminate_handler(){
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char *const *const argv)
 {
-  using namespace mfront;
   auto find = [argv,argc](const char *v){
     for(auto a = argv; a!=argv+argc;++a){
       if(::strcmp(*a,v)==0){
@@ -47,19 +57,19 @@ int main(const int argc, const char *const *const argv)
     return false;
   };
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-  if(find("--terminate-handler")){
+  if(!find("--no-terminate-handler")){
     std::set_terminate(mfront_terminate_handler);
   }
 #endif /* ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)  */
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   const auto bg = !find("--no-gui");
 #endif
-  initParsers();
-  initInterfaces();
+  mfront::initParsers();
+  mfront::initInterfaces();
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   try{
 #endif /* __CYGWIN__ */
-    MFront mfront(argc,argv);
+    mfront::MFront mfront(argc,argv);
     mfront.exe();
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   }

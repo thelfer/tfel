@@ -63,9 +63,9 @@ namespace mfront{
   // res.second.first : list of object files
   // res.second.first : list of library dependencies
   static std::pair<bool,std::pair<std::string,std::string>>
-  getLibrarySourcesAndDependencies(const TargetsDescription& t,
-				   const GeneratorOptions& o,
-				   const std::string& name)
+    getLibrarySourcesAndDependencies(const TargetsDescription& t,
+				     const GeneratorOptions& o,
+				     const std::string& name)
   {
     const auto& l = t[name];
     auto res = std::pair<bool,std::pair<std::string,std::string>>{};
@@ -112,7 +112,7 @@ namespace mfront{
       auto& log = getLogStream();
       log << "generating Makefile\n";
     }
-    MFrontLockGuard mlock;
+    MFrontLockGuard lock;
     const auto env_cc   = ::getenv("CC");
     const auto env_cxx  = ::getenv("CXX");
     const auto inc      = ::getenv("INCLUDES");

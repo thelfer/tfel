@@ -62,8 +62,6 @@ namespace mfront{
     MFrontLockGuard(const MFrontLockGuard&) = delete;
     MFrontLockGuard& operator=(MFrontLockGuard&&) = delete;
     MFrontLockGuard& operator=(const MFrontLockGuard&) = delete;
-    // the lock
-    MFrontLock& lock;
   };
   
 } // end of namespace mfront

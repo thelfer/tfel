@@ -276,8 +276,8 @@ namespace mfront{
   void 
   MFront::registerArgumentCallBacks(void)
   {
-    this->registerNewCallBack("--terminate-handler",&MFront::doNothing,
-			      "set a terminate handler");
+    this->registerNewCallBack("--no-terminate-handler",&MFront::doNothing,
+			      "don't set a terminate handler");
     this->registerNewCallBack("--no-gui",&MFront::doNothing,
 			      "does not report errors by a message box");
     this->registerNewCallBack("--verbose",&MFront::treatVerbose,
