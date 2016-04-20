@@ -16,6 +16,7 @@
 #endif /* NDEBUG */
 
 #include<cstdlib>
+#include<iostream>
 #include<stdexcept>
 
 #include"TFEL/Tests/TestCase.hxx"
@@ -214,10 +215,9 @@ TFEL_TESTS_GENERATE_PROXY(BehaviourDescriptionTest,
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
-  using namespace std;
   using namespace tfel::tests;
   TestManager& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("BehaviourDescription.xml");
   TestResult r = manager.execute();
   if(!r.success()){

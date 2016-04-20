@@ -16,6 +16,7 @@
 
 #include<cmath>
 #include<cstdlib>
+#include<iostream>
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"

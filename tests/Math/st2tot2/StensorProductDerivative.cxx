@@ -18,6 +18,7 @@
 #include<cmath>
 #include<cstdlib>
 #include<cassert>
+#include<iostream>
 
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tensor.hxx"
@@ -116,10 +117,9 @@ TFEL_TESTS_GENERATE_PROXY(StensorProductDerivative_3D,"StensorProductDerivative-
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
-  using namespace std;
   using namespace tfel::tests;
   TestManager& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("StensorProductDerivative.xml");
   TestResult r = manager.execute();
   if(!r.success()){

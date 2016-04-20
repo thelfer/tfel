@@ -19,6 +19,7 @@
 #include<array>
 #include<limits>
 #include<cstdlib>
+#include<iostream>
 #include<algorithm>
 
 #include"TFEL/Tests/TestCase.hxx"

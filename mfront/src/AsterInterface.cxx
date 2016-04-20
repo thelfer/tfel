@@ -614,30 +614,28 @@ namespace mfront{
   void
   AsterInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
   {
-    using namespace std;
-    out << "ModellingHypothesis::Hypothesis h;" << endl;
-    out << "if( *NUMMOD == 2u ){" << endl;
-    out << "  h = ModellingHypothesis::GENERALISEDPLANESTRAIN;" << endl;
-    out << "} else if(*NUMMOD==4){" << endl;
-    out << "  h = ModellingHypothesis::AXISYMMETRICAL;" << endl;
-    out << "} else if(*NUMMOD==5){" << endl;
-    out << "  h = ModellingHypothesis::PLANESTRESS;" << endl;
-    out << "} else if(*NUMMOD==6){" << endl;
-    out << "  h = ModellingHypothesis::PLANESTRAIN;" << endl;
-    out << "} else if(*NUMMOD==3){" << endl;
-    out << "  h = ModellingHypothesis::TRIDIMENSIONAL;" << endl;
-    out << "} else {" << endl;
-    out << "  return;" << endl;
-    out << "}" << endl;
-    out << "mg.setModellingHypothesis(h);" << endl;
+    out << "ModellingHypothesis::Hypothesis h;\n"
+	<< "if( *NUMMOD == 2u ){\n"
+	<< "  h = ModellingHypothesis::GENERALISEDPLANESTRAIN;\n"
+	<< "} else if(*NUMMOD==4){\n"
+	<< "  h = ModellingHypothesis::AXISYMMETRICAL;\n"
+	<< "} else if(*NUMMOD==5){\n"
+	<< "  h = ModellingHypothesis::PLANESTRESS;\n"
+	<< "} else if(*NUMMOD==6){\n"
+	<< "  h = ModellingHypothesis::PLANESTRAIN;\n"
+	<< "} else if(*NUMMOD==3){\n"
+	<< "  h = ModellingHypothesis::TRIDIMENSIONAL;\n"
+	<< "} else {\n"
+	<< "  return;\n"
+	<< "}\n"
+	<< "mg.setModellingHypothesis(h);\n";
   } // end of AsterInterface::writeMTestFileGeneratorSetModellingHypothesis
   
   void 
   AsterInterface::writeInterfaceSpecificIncludes(std::ostream& out,
 						 const BehaviourDescription&) const
   {
-    using namespace std;
-    out << "#include\"MFront/Aster/Aster.hxx\"" << endl << endl;
+    out << "#include\"MFront/Aster/Aster.hxx\"\n\n";
   } // end of AsterInterface::writeInterfaceSpecificIncludes
 
   AsterInterface::~AsterInterface()
@@ -678,24 +676,22 @@ namespace mfront{
   AsterInterface::buildMaterialPropertiesList(const BehaviourDescription& mb,
 						     const Hypothesis h) const
   {
-    using namespace std;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("AsterInterface::buildMaterialPropertiesList: "+m));}
+    };
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       const auto ah = this->getModellingHypothesesToBeTreated(mb);
-      set<Hypothesis> uh;
+      std::set<Hypothesis> uh;
       for(const auto & elem : ah){
 	if(!mb.hasSpecialisedMechanicalData(elem)){
 	  uh.insert(elem);
 	}
       }
-      if(uh.empty()){
-	string msg("UMATInterface::endTreatment : ");
-	msg += "internal error : the mechanical behaviour says that not "
-	  "all handled mechanical data are specialised, but we found none.";
-	throw(runtime_error(msg));
-      }
+      throw_if(uh.empty(),"internal error : the mechanical behaviour says that not "
+	       "all handled mechanical data are specialised, but we found none.");
       // material properties for all the selected hypothesis
-      vector<pair<vector<UMATMaterialProperty>,
-		  SupportedTypes::TypeSize> > mpositions;
+      auto mpositions = std::vector<std::pair<std::vector<UMATMaterialProperty>,
+					      SupportedTypes::TypeSize>>{};
       for(const auto & elem : uh){
 	mpositions.push_back(this->buildMaterialPropertiesList(mb,elem));
       }
@@ -716,35 +712,25 @@ namespace mfront{
 	  o1+=pum->second;
 	  auto o2 = mp2.offset;
 	  o2+=mfirst.second;
-	  if(o1!=o2){
-	    string msg("UMATInterface::buildMaterialPropertiesList : "
-		       "incompatible offset for material property '"+mp.name+
-		       "' (aka '"+mp1.name+"'). This is one pitfall of the umat interface. "
-		       "To by-pass this limitation, you may want to explicitely "
-		       "specialise some modelling hypotheses");
-	    throw(runtime_error(msg));
-	  }
+	  throw_if(o1!=o2,"incompatible offset for material property '"+mp.name+
+		   "' (aka '"+mp1.name+"'). This is one pitfall of the umat interface. "
+		   "To by-pass this limitation, you may want to explicitely "
+		   "specialise some modelling hypotheses");
 	}
       }
       return mfirst;
     }
-    pair<vector<UMATMaterialProperty>,
-	 SupportedTypes::TypeSize> res;
+    auto res = std::pair<std::vector<UMATMaterialProperty>,
+			 SupportedTypes::TypeSize>{};
     auto& mprops = res.first;
-    if((h!=ModellingHypothesis::GENERALISEDPLANESTRAIN)&&
-       (h!=ModellingHypothesis::AXISYMMETRICAL)&&
-       (h!=ModellingHypothesis::PLANESTRAIN)&&
-       (h!=ModellingHypothesis::PLANESTRESS)&&
-       (h!=ModellingHypothesis::TRIDIMENSIONAL)){
-      string msg("AsterInterface::buildMaterialPropertiesList : "
-		 "unsupported modelling hypothesis");
-      if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	msg += " (default)";
-      } else {
-	msg += " '"+ModellingHypothesis::toString(h)+"'";
-      }
-      throw(runtime_error(msg));
-    }
+    throw_if((h!=ModellingHypothesis::GENERALISEDPLANESTRAIN)&&
+	     (h!=ModellingHypothesis::AXISYMMETRICAL)&&
+	     (h!=ModellingHypothesis::PLANESTRAIN)&&
+	     (h!=ModellingHypothesis::PLANESTRESS)&&
+	     (h!=ModellingHypothesis::TRIDIMENSIONAL),
+	     std::string("unsupported modelling hypothesis")+
+	     ((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS) ? " (default)" :
+	      " '"+ModellingHypothesis::toString(h)+"'")); 
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       if(mb.getSymmetryType()==mfront::ISOTROPIC){
 	this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus","youn",false);
@@ -765,12 +751,10 @@ namespace mfront{
 		  (h!=ModellingHypothesis::AXISYMMETRICAL)&&
 		  (h!=ModellingHypothesis::PLANESTRAIN)&&
 		  (h!=ModellingHypothesis::PLANESTRESS)){
-	  throw(runtime_error("AsterInterface::buildMaterialPropertiesList : "
-			      "unsupported modelling hypothesis"));
+	  throw_if(true,"unsupported modelling hypothesis");
 	}
       } else {
-	throw(runtime_error("AsterInterface::buildMaterialPropertiesList : "
-			    "unsupported behaviour symmetry type"));
+	throw_if(true,"unsupported behaviour symmetry type");
       }
     }
     if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
@@ -781,9 +765,7 @@ namespace mfront{
 	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion2","alp2",false);
 	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion3","alp3",false);
       } else {
-	string msg("AsterInterface::buildMaterialPropertiesList : "
-		   "unsupported behaviour symmetry type");
-	throw(runtime_error(msg));
+	throw_if(true,"unsupported behaviour symmetry type");
       }
     }
     if(!mprops.empty()){
@@ -862,9 +844,8 @@ namespace mfront{
     } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
       out << "static " << constexpr_c << " AsterBehaviourType btype = aster::COHESIVEZONEMODEL;" << endl;
     } else {
-      string msg("AsterInterface::writeAsterBehaviourTraits : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      throw(runtime_error("AsterInterface::writeAsterBehaviourTraits : "
+			  "unsupported behaviour type"));
     }
     out << "//! space dimension\n";
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
@@ -961,12 +942,11 @@ namespace mfront{
   std::map<UMATInterfaceBase::Hypothesis,std::string>
   AsterInterface::gatherModellingHypothesesAndTests(const BehaviourDescription& mb) const
   {
-    using namespace std;
-    map<Hypothesis,string> res;
+    std::map<Hypothesis,std::string> res;
     if((mb.getSymmetryType()==mfront::ORTHOTROPIC)&&
        ((mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
 	(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)))){
-      set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
+      const auto h = this->getModellingHypothesesToBeTreated(mb);
       for(const auto & mh : h){
 	res.insert({mh,this->getModellingHypothesisTest(mh)});
       }

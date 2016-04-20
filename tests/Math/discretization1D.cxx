@@ -14,6 +14,7 @@
 #include<cmath>
 #include<vector>
 #include<cstdlib>
+#include<iostream>
 
 #include"TFEL/Math/Discretization1D.hxx"
 
@@ -62,10 +63,9 @@ TFEL_TESTS_GENERATE_PROXY(Discretization1DTest,
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
-  using namespace std;
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("Discretization1D.xml");
   TestResult r = manager.execute();
   if(!r.success()){

@@ -127,6 +127,22 @@ struct CxxTokenizerTest final
     TFEL_TESTS_ASSERT(t.size()==1u);
     TFEL_TESTS_ASSERT(t[0].flag==Token::Char);
     TFEL_TESTS_ASSERT(t[0].value=="'c'");
+    t.parseString("'\\''");
+    TFEL_TESTS_ASSERT(t.size()==1u);
+    TFEL_TESTS_ASSERT(t[0].flag==Token::Char);
+    TFEL_TESTS_ASSERT(t[0].value=="'\\''");
+    // t.parseString("'\\\\'");
+    // TFEL_TESTS_ASSERT(t.size()==1u);
+    // TFEL_TESTS_ASSERT(t[0].flag==Token::Char);
+    // TFEL_TESTS_ASSERT(t[0].value=="'\\'");
+    // t.parseString("'\\\\"'");
+    // TFEL_TESTS_ASSERT(t.size()==1u);
+    // TFEL_TESTS_ASSERT(t[0].flag==Token::Char);
+    // TFEL_TESTS_ASSERT(t[0].value=="'\"'");
+    // t.parseString("\"\\\"\"");
+    // TFEL_TESTS_ASSERT(t.size()==1u);
+    // TFEL_TESTS_ASSERT(t[0].flag==Token::Char);
+    // TFEL_TESTS_ASSERT(t[0].value=="\"\\\"\"");
     // numbers
     t.parseString("12.3a");
     TFEL_TESTS_ASSERT(t.size()==2u);

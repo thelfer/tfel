@@ -15,10 +15,12 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include<cstdlib>
 #include<sstream>
-#include<algorithm>
+#include<cstdlib>
+#include<iostream>
 #include<stdexcept>
+#include<algorithm>
+
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"

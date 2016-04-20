@@ -12,9 +12,10 @@
  */
 
 #include<cmath>
+#include<limits>
 #include<cassert>
 #include<cstdlib>
-#include<limits>
+#include<iostream>
 
 #include"TFEL/Tests/Test.hxx"
 #include"TFEL/Tests/TestCase.hxx"
@@ -71,10 +72,9 @@ TFEL_TESTS_GENERATE_PROXY(TinyVectorOfStensorFromTinyVectorViewTest,"TinyVectorO
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
-  using namespace std;
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("TinyVectorOfStensorFromTinyVectorView.xml");
   TestResult r = manager.execute();
   if(!r.success()){

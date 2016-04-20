@@ -14,6 +14,7 @@
 #include<cmath>
 #include<fstream>
 #include<cstdlib>
+#include<iostream>
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
@@ -62,10 +63,9 @@ TFEL_TESTS_GENERATE_PROXY(TMatrixRowViewTest,
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
-  using namespace std;
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("TMatrixRowView.xml");
   TestResult r = manager.execute();
   if(!r.success()){

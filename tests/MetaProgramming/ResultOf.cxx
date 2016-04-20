@@ -14,6 +14,7 @@
 #include<cmath>
 #include<limits>
 #include<cstdlib>
+#include<iostream>
 #include<type_traits>
 
 #include"TFEL/Tests/TestCase.hxx"
@@ -67,16 +68,9 @@ TFEL_TESTS_GENERATE_PROXY(ResultOfTest,"ResultOfTest");
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
-  using namespace std;
-  using namespace std;
-  using namespace tfel::tests;
-  auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  auto& manager = tfel::tests::TestManager::getTestManager();
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("ResultOf.xml");
-  TestResult r = manager.execute();
-  if(!r.success()){
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+  return manager.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 } // end of main
 

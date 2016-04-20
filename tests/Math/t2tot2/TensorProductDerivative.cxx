@@ -19,6 +19,7 @@
 #include<string>
 #include<cassert>
 #include<cstdlib>
+#include<iostream>
 
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/t2tot2.hxx"

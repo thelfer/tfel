@@ -20,10 +20,10 @@
 #include<cstdlib>
 #include<cassert>
 #include<sstream>
+#include<iostream>
+#include<iterator>
 #include<algorithm>
 #include<stdexcept>
-
-#include<iterator>
 
 #include"TFEL/Tests/Test.hxx"
 #include"TFEL/Tests/TestCase.hxx"
@@ -100,10 +100,9 @@ TFEL_TESTS_GENERATE_PROXY(ParserTest,"Parser");
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
-  using namespace std;
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("parser8.xml");
   TestResult r = manager.execute();
   if(!r.success()){

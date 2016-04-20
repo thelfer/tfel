@@ -6,6 +6,7 @@
  */
 
 #include<cstdlib>
+#include<iostream>
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
@@ -47,15 +48,8 @@ TFEL_TESTS_GENERATE_PROXY(IsConstCallableTest,
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
-  using namespace std;
-  using namespace tfel::tests;
-  auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
-  manager.addXMLTestOutput("IsConstCallable.xml");
-  TestResult r = manager.execute();
-  if(!r.success()){
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+  auto& manager = tfel::tests::TestManager::getTestManager();
+  manager.addTestOutput(std::cout);
+  manager.addXMLTestOutput("ResultOf.xml");
+  return manager.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 } // end of main
-

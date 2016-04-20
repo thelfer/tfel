@@ -14,8 +14,6 @@
 #ifndef LIB_TFEL_MATH_TMATRIX_CONST_ROW_VIEW_IXX_
 #define LIB_TFEL_MATH_TMATRIX_CONST_ROW_VIEW_IXX_ 
 
-#include<iostream>
-
 namespace tfel
 {
 
@@ -27,9 +25,7 @@ namespace tfel
 	     unsigned short K,typename T>
     tmatrix_const_row_view_expr<N,M,I,J,K,T>::tmatrix_const_row_view_expr(const tmatrix<N,M,T>& m_)
       : m(m_)
-    {
-      std::cout << "row_view_expr m : " << &m << std::endl;
-    } // end of tmatrix_const_row_view_expr
+    {} // end of tmatrix_const_row_view_expr
     
     template<unsigned short N,unsigned short M,
 	     unsigned short I,unsigned short J,

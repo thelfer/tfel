@@ -17,9 +17,10 @@
 
 // a small trick so that the compiler refers to the original file for
 // error reports
-#line 21 "@abs_top_srcdir@/mfront/tests/unit-tests/MTestParserTest.cxx.in"
+#line 21 "@abs_top_srcdir@/mtest/tests/unit-tests/MTestParserTest.cxx.in"
 
 #include<cstdlib>
+#include<iostream>
 #include<stdexcept>
 
 #include"TFEL/Tests/TestCase.hxx"

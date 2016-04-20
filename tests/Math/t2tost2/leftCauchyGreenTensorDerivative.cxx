@@ -19,6 +19,7 @@
 #include<string>
 #include<cstdlib>
 #include<cassert>
+#include<iostream>
 
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tensor.hxx"
@@ -98,10 +99,9 @@ TFEL_TESTS_GENERATE_PROXY(LeftCauchyGreenTensorDerivative_3D,"LeftCauchyGreenTen
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
-  using namespace std;
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("LeftCauchyGreenTensorDerivative.xml");
   TestResult r = manager.execute();
   if(!r.success()){

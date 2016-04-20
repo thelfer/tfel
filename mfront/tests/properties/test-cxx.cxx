@@ -11,6 +11,7 @@
 #include<cmath>
 #include<cstdlib>
 #include<cassert>
+#include<iostream>
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
@@ -23,13 +24,13 @@
 #ifdef _MSC_VER
 int setenv(const char *name, const char *value, int overwrite)
 {
-	int errcode = 0;
-	if (!overwrite) {
-		size_t envsize = 0;
-		errcode = getenv_s(&envsize, NULL, 0, name);
-		if (errcode || envsize) return errcode;
-	}
-	return _putenv_s(name, value);
+  int errcode = 0;
+  if (!overwrite) {
+    size_t envsize = 0;
+    errcode = getenv_s(&envsize, NULL, 0, name);
+    if (errcode || envsize) return errcode;
+  }
+  return _putenv_s(name, value);
 }
 #endif /* _MSC_VER */
 
@@ -39,10 +40,10 @@ struct CxxMaterialPropertyInterfaceTest final
   CxxMaterialPropertyInterfaceTest()
     : tfel::tests::TestCase("TFEL/Math",
 			    "CxxMaterialPropertyInterfaceTest")
-  {} // end of CxxMaterialPropertyInterfaceTest
+    {} // end of CxxMaterialPropertyInterfaceTest
 
   virtual tfel::tests::TestResult
-  execute() override
+    execute() override
   {
     const auto y = [](const double T){
       return 127.8e9 * (1.-7.825e-5*(T-293.15));
@@ -58,7 +59,7 @@ struct CxxMaterialPropertyInterfaceTest final
     TFEL_TESTS_CHECK_THROW(mp_y(-900),std::range_error);
     TFEL_TESTS_CHECK_THROW(mp_n(-900),std::range_error);
 #ifndef _MSC_VER
-	unsetenv("OUT_OF_BOUNDS_POLICY");
+    unsetenv("OUT_OF_BOUNDS_POLICY");
 #endif
     TFEL_TESTS_ASSERT(std::abs(mp_y(50)-y(50))<1.e-14*y(50));
     setenv("OUT_OF_BOUNDS_POLICY","NONE",1);

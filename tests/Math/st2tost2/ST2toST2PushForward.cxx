@@ -6,6 +6,7 @@
  */
 
 #include<cstdlib>
+#include<iostream>
 
 #include"TFEL/Tests/Test.hxx"
 #include"TFEL/Tests/TestCase.hxx"

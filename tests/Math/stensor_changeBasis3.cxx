@@ -14,6 +14,7 @@
 #include<cmath>
 #include<fstream>
 #include<cstdlib>
+#include<iostream>
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
@@ -103,10 +104,9 @@ TFEL_TESTS_GENERATE_PROXY(StensorChangeBasis3Test,
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
-  using namespace std;
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("StensorChangeBasis3.xml");
   TestResult r = manager.execute();
   if(!r.success()){

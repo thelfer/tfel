@@ -15,11 +15,10 @@
 
 #include<map>
 #include<string>
-#include<ostream>
-#include<iostream>
+#include<memory>
+#include<iosfwd>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include<memory>
 
 #include"TFEL/Tests/Test.hxx"
 #include"TFEL/Tests/TestSuite.hxx"
@@ -28,24 +27,6 @@
 #include"TFEL/Tests/MultipleTestOutputs.hxx"
 
 #define TFEL_TESTS_HAS_XML_OUTPUT 1
-
-/*!
- * \def TFEL_TESTS_DEFAULTMAIN
- * \author Helfer Thomas
- * \date   11 Apr 10
- */
-#define TFEL_TESTS_DEFAULTMAIN()                          \
-  int main(void){                                         \
-    using namespace std;                                  \
-    using namespace tfel::tests;                          \
-    auto& manager = TestManager::getTestManager(); \
-    manager.addTestOutput(cout);                          \
-    TestResult r = manager.execute();                     \
-    if(r.success()){                                      \
-      return EXIT_SUCCESS;                                \
-    }                                                     \
-    return EXIT_FAILURE;				  \
-  }
 
 namespace tfel
 {

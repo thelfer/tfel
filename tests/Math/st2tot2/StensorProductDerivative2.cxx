@@ -18,6 +18,7 @@
 #include<cmath>
 #include<cstdlib>
 #include<cassert>
+#include<iostream>
 
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tensor.hxx"

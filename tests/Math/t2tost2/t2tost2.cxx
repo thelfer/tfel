@@ -18,6 +18,7 @@
 #include<cmath>
 #include<cstdlib>
 #include<cassert>
+#include<iostream>
 
 #include"TFEL/Math/t2tost2.hxx"
 
@@ -65,11 +66,9 @@ TFEL_TESTS_GENERATE_PROXY(T2toST2Test_1D,"T2toST2Test-1D");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
-  using namespace std;
-  using namespace std;
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("t2tost2.xml");
   TestResult r = manager.execute();
   if(!r.success()){

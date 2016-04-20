@@ -14,12 +14,11 @@
 #ifndef LIB_TFEL_TESTS_STDSTREAMTESTOUTPUT_HXX
 #define LIB_TFEL_TESTS_STDSTREAMTESTOUTPUT_HXX 1
 
+#include<iosfwd>
 #include<string>
-#include<ostream>
-
-#include"TFEL/Config/TFELConfig.hxx"
 #include<memory>
 
+#include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Tests/TestOutput.hxx"
 #include"TFEL/Tests/TestResult.hxx"
 

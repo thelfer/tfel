@@ -12,6 +12,7 @@
  */
 
 #include<fstream>
+#include<iostream>
 
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/System/System.hxx"

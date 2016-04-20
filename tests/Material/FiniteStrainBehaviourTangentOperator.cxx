@@ -11,6 +11,9 @@
  * project under specific licensing conditions. 
  */
 
+#include<cstdlib>
+#include<iostream>
+
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
@@ -45,12 +48,9 @@ TFEL_TESTS_GENERATE_PROXY(FiniteStrainBehaviourTangentOperator,
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
-  using namespace std;
-  using namespace std;
   using namespace tfel::tests;
-  using namespace tfel::utilities;
   auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
+  manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("CubicSpline.xml");
   TestResult r = manager.execute();
   if(!r.success()){

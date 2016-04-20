@@ -16,6 +16,7 @@
 #endif /* NDEBUG */
 
 #include<cstdlib>
+#include<iostream>
 #include<stdexcept>
 
 #include"TFEL/Tests/TestCase.hxx"

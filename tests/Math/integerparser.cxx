@@ -9,8 +9,9 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include<stdexcept>
 #include<cstdlib>
+#include<iostream>
+#include<stdexcept>
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
