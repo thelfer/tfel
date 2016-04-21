@@ -17,9 +17,10 @@
 #endif /* NDEBUG */
 
 #include<cmath>
+#include<limits>
 #include<cassert>
 #include<cstdlib>
-#include<limits>
+#include<iostream>
 
 #include"TFEL/Tests/Test.hxx"
 #include"TFEL/Tests/TestCase.hxx"
