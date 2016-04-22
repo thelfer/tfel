@@ -795,17 +795,15 @@ namespace mfront{
 
   void BehaviourDSLCommon::treatBrick(void)
   {
-    using namespace std;
-    using namespace tfel::utilities;
     auto& f = AbstractBehaviourBrickFactory::getFactory();
     AbstractBehaviourBrick::Parameters parameters;
     if(this->current->value=="<"){
-      vector<Token> options;
+      auto options = std::vector<tfel::utilities::Token>{};
       this->readList(options,"BehaviourDSLCommon::treatBehaviourBrick",
 		     "<",">",true);
       for(const auto& o: options){
 	const auto pos = o.value.find('=');
-	if(pos!=string::npos){
+	if(pos!=std::string::npos){
 	  if(pos==0){
 	    this->throwRuntimeError("BehaviourDSLCommon::treatBehaviourBrick",
 				    "no parameter name given");
@@ -827,7 +825,7 @@ namespace mfront{
   			    "Expected 'true' or 'false'.");
     const auto& b = this->readString("BehaviourDSLCommon::treatBehaviourBrick");
     this->readSpecifiedToken("BehaviourDSLCommon::treatBehaviourBrick",";");
-    f.get(b,*this,this->mb,parameters);
+    this->bricks.emplace_back(f.get(b,*this,this->mb,parameters));
   } // end of BehaviourDSLCommon::treatBrick
   
   void BehaviourDSLCommon::treatTangentOperator(void)
@@ -1172,15 +1170,13 @@ namespace mfront{
       this->readSpecifiedToken("BehaviourDSLCommon::treatVariableMethod","(");
       this->checkNotEndOfFile("BehaviourDSLCommon::treatVariableMethod");
       if(this->current->flag!=Token::String){
-	string msg("BehaviourDSLCommon::treatVariableMethod : ");
-	msg += "expected to read a string";
-	throw(runtime_error(msg));
+	this->throwRuntimeError("BehaviourDSLCommon::treatVariableMethod: ",
+				"expected to read a string");
       }
       const auto& g = this->current->value.substr(1,this->current->value.size()-2);
       if(!glossary.contains(g)){
-	string msg("BehaviourData::setGlossaryName : "
-		   "'"+g+"' is not a glossary name");
-	throw(runtime_error(msg));
+	this->throwRuntimeError("BehaviourDSLCommon::treatVariableMethod: ",
+				"'"+g+"' is not a glossary name");		
       }
       this->mb.setGlossaryName(h,n,g);
       ++(this->current);
@@ -1190,15 +1186,13 @@ namespace mfront{
       this->readSpecifiedToken("BehaviourDSLCommon::treatVariableMethod","(");
       this->checkNotEndOfFile("BehaviourDSLCommon::treatVariableMethod");
       if(this->current->flag!=Token::String){
-	string msg("BehaviourDSLCommon::treatVariableMethod : ");
-	msg += "expected to read a string";
-	throw(runtime_error(msg));
+	this->throwRuntimeError("BehaviourDSLCommon::treatVariableMethod: ",
+				"expected to read a string");
       }
       const auto& e = this->current->value.substr(1,this->current->value.size()-2);
       if(!this->isValidIdentifier(e)){
-	string msg("BehaviourDSLCommon::treatVariableMethod : ");
-	msg += "invalid entry name '"+e+"'";
-	throw(runtime_error(msg));
+	this->throwRuntimeError("BehaviourDSLCommon::treatVariableMethod: ",
+				"invalid entry name '"+e+"'");
       }
       ++(this->current);
       this->mb.setEntryName(h,n,e);

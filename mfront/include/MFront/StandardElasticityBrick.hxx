@@ -1,5 +1,5 @@
 /*! 
- * \file   ElasticityBehaviourBrick.hxx
+ * \file   StandardElasticityBrick.hxx
  * \brief
  * \author Helfer Thomas
  * \date   October,20 2014
@@ -47,7 +47,7 @@ namespace mfront{
    *   generic computation of the tangent operator will not be
    *   provided.
    */
-  struct ElasticityBehaviourBrick
+  struct StandardElasticityBrick
     : public BehaviourBrickBase
   {
     /*!
@@ -56,7 +56,7 @@ namespace mfront{
      * \param[in] bd_  : mechanical behaviour description
      * \param[in] p    : parameters
      */
-    ElasticityBehaviourBrick(AbstractBehaviourDSL&,
+    StandardElasticityBrick(AbstractBehaviourDSL&,
 			     BehaviourDescription&,
 			     const Parameters&);
     //! \return the name of the brick
@@ -72,7 +72,7 @@ namespace mfront{
     /*!
      * destructor
      */
-    virtual ~ElasticityBehaviourBrick();
+    virtual ~StandardElasticityBrick();
   protected:
     /*!
      * treat the case of isotropic behaviours
@@ -86,7 +86,7 @@ namespace mfront{
     treatOrthotropicBehaviour(void) const;
     bool pss; //!< plane stress support
     bool gto; //!< generic tangent operator support support
-  }; // end of struct ElasticityBehaviourBrick
+  }; // end of struct StandardElasticityBrick
 
 } // end of namespace mfront
 

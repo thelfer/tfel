@@ -1789,7 +1789,6 @@ mfront/include/MFront/DefaultDSL.hxx -text
 mfront/include/MFront/DefaultDSLBase.hxx -text
 mfront/include/MFront/DefaultFiniteStrainDSL.hxx -text
 mfront/include/MFront/DrivingVariable.hxx -text
-mfront/include/MFront/ElasticityBehaviourBrick.hxx -text
 mfront/include/MFront/Europlexus/Europlexus.hxx -text
 mfront/include/MFront/Europlexus/EuroplexusBehaviourHandler.hxx -text
 mfront/include/MFront/Europlexus/EuroplexusComputeStiffnessTensor.hxx -text
@@ -1868,6 +1867,7 @@ mfront/include/MFront/PythonMaterialPropertyInterface.hxx -text
 mfront/include/MFront/RungeKuttaDSL.hxx -text
 mfront/include/MFront/SearchFile.hxx -text
 mfront/include/MFront/SecondBroydenSolver.hxx -text
+mfront/include/MFront/StandardElasticityBrick.hxx -text
 mfront/include/MFront/StaticVarHandler.hxx -text
 mfront/include/MFront/StaticVariableDescription.hxx -text
 mfront/include/MFront/SupportedTypes.hxx -text
@@ -1962,7 +1962,6 @@ mfront/src/DefaultDSL.cxx -text
 mfront/src/DefaultDSLBase.cxx -text
 mfront/src/DefaultFiniteStrainDSL.cxx -text
 mfront/src/DrivingVariable.cxx -text
-mfront/src/ElasticityBehaviourBrick.cxx -text
 mfront/src/EuroplexusComputeStiffnessTensor.cxx -text
 mfront/src/EuroplexusComputeThermalExpansionCoefficientTensor.cxx -text
 mfront/src/EuroplexusException.cxx -text
@@ -2025,6 +2024,7 @@ mfront/src/PythonMaterialPropertyInterface.cxx -text
 mfront/src/RungeKuttaDSL.cxx -text
 mfront/src/SearchFile.cxx -text
 mfront/src/SecondBroydenSolver.cxx -text
+mfront/src/StandardElasticityBrick.cxx -text
 mfront/src/StaticVariableDescription.cxx -text
 mfront/src/SupportedTypes.cxx -text
 mfront/src/TargetsDescription.cxx -text

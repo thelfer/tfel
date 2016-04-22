@@ -41,7 +41,9 @@ namespace mfront
   struct AbstractBehaviourBrick
   {
     //! a simple alias
-    typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
+    using ModellingHypothesis = tfel::material::ModellingHypothesis;
+    //! a simple alias
+    using Hypothesis = ModellingHypothesis::Hypothesis;
     /*!
      * Object used to pass parameters to BehaviourBricks constructor
      * The key   is the parameter name.

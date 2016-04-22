@@ -1,5 +1,5 @@
 /*! 
- * \file  ElasticityBehaviourBrick.cxx
+ * \file  StandardElasticityBrick.cxx
  * \brief
  * \author Helfer Thomas
  * \date   20 oct. 2014
@@ -16,9 +16,10 @@
 
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
+#include "MFront/MFrontLogStream.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/BehaviourDescription.hxx"
-#include "MFront/ElasticityBehaviourBrick.hxx"
+#include "MFront/StandardElasticityBrick.hxx"
 
 namespace mfront{
 
@@ -38,29 +39,24 @@ namespace mfront{
     }
   } // end of setElasticSymmetryType
 
-  ElasticityBehaviourBrick::ElasticityBehaviourBrick(AbstractBehaviourDSL& dsl_,
+  StandardElasticityBrick::StandardElasticityBrick(AbstractBehaviourDSL& dsl_,
 						     BehaviourDescription& mb_,
 						     const AbstractBehaviourBrick::Parameters& p)
     : BehaviourBrickBase(dsl_,mb_),
       pss(true),
       gto(true)
   {
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("StandardElasticityBrick::StandardElasticityBrick: "+m));}
+    };
     typedef tfel::material::ModellingHypothesis MH; 
     // reserve some specific variables
     this->bd.reserveName(MH::UNDEFINEDHYPOTHESIS,"Je");
     // basic checks
-    if(this->bd.getBehaviourType()!=
-       BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      throw(std::runtime_error("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-			       "this BehaviourBrick is only usable for "
-			       "small strain behaviours"));
-    }
-    if(this->bd.getIntegrationScheme()!=
-       BehaviourDescription::IMPLICITSCHEME){
-      throw(std::runtime_error("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-			       "this BehaviourBrick is only usable in "
-			       "implicit schemes"));
-    }
+    throw_if(this->bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+	     "this BehaviourBrick is only usable for small strain behaviours");
+    throw_if(this->bd.getIntegrationScheme()!=BehaviourDescription::IMPLICITSCHEME,
+	     "this BehaviourBrick is only usable in implicit schemes");
     // parameters
     for(auto pp=p.cbegin();pp!=p.cend();++pp){
       if(pp->first=="Isotropic"){
@@ -76,35 +72,34 @@ namespace mfront{
 	this->checkThatParameterHasNoValue(*pp);
 	this->gto = false;
       } else {
-	throw(std::runtime_error("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-				 "unsupported parameter '"+pp->first+"'"));
+	throw_if(true,"unsupported parameter '"+pp->first+"'");
       }
     }
     if(this->pss){
       this->bd.registerMemberName(MH::UNDEFINEDHYPOTHESIS,"etozz");
       this->bd.registerMemberName(MH::UNDEFINEDHYPOTHESIS,"detozz");
     }
-   } // end of ElasticityBehaviourBrick::ElasticityBehaviourBrick
+   } // end of StandardElasticityBrick::StandardElasticityBrick
 
   
   void 
-  ElasticityBehaviourBrick::endTreatment(void) const
+  StandardElasticityBrick::endTreatment(void) const
   {
-    using namespace std;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("StandardElasticityBrick::endTreatment: "+m));}
+    };
     using tfel::glossary::Glossary; 
     typedef tfel::material::ModellingHypothesis MH; 
-    typedef MH::Hypothesis Hypothesis; 
-    const Hypothesis h = MH::UNDEFINEDHYPOTHESIS;
+    const auto h = MH::UNDEFINEDHYPOTHESIS;
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "StandardElasticityBrick::endTreatment: begin\n";
+    }
     // modelling hypotheses supported by the behaviour
-    const set<Hypothesis> bmh = bd.getModellingHypotheses();
+    const auto bmh = bd.getModellingHypotheses();
     // deformation strain
-    const pair<bool,bool> b = this->bd.checkVariableExistence("eel");
+    const auto b = this->bd.checkVariableExistence("eel");
     if(b.first){
-      if(!b.second){
-    	string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-    		   "'eel' is not declared for all specialisation of the behaviour");
-    	throw(runtime_error(msg));
-      }
+      throw_if(!b.second,"'eel' is not declared for all specialisation of the behaviour");
       this->bd.checkVariableExistence("eel","StateVariable");
       this->bd.checkVariablePosition("eel","StateVariable",0u);
       this->bd.checkVariableGlossaryName("eel",Glossary::ElasticStrain);
@@ -133,9 +128,7 @@ namespace mfront{
       } else if(this->bd.getElasticSymmetryType()==mfront::ORTHOTROPIC){
     	this->treatOrthotropicBehaviour();
       } else {
-    	string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-    		   "unsupported elastic symmetry type");
-    	throw(runtime_error(msg));
+	throw_if(true,"unsupported elastic symmetry type");
       }
     }
     // consistency checks
@@ -192,7 +185,7 @@ namespace mfront{
     // tangent operator
     if(gto){
       CodeBlock tangentOperator;
-      ostringstream to;
+      std::ostringstream to;
       if(this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
 	const bool agps = bmh.count(MH::AXISYMMETRICALGENERALISEDPLANESTRESS)!=0;
 	const bool ps   = bmh.count(MH::PLANESTRESS)!=0;
@@ -201,21 +194,18 @@ namespace mfront{
 	    if(!this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
 	      this->bd.setAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,true,false);
 	    }
-	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
-	      string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-			 "support for plane stress requires the use of an unaltered stiffness tensor");
-	      throw(runtime_error(msg));
-	    }
+	    throw_if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresUnAlteredStiffnessTensor),
+		     "support for plane stress requires the use of an unaltered stiffness tensor");
 	  }
 	}
-    	to << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){" << endl
-    	   << "  this->Dt = this->D;" << endl
-    	   << "} else if (smt==CONSISTENTTANGENTOPERATOR){" << endl
-    	   << "  Stensor4 Je;" << endl
-    	   << "  getPartialJacobianInvert(Je);" << endl
-    	   << "  this->Dt = (this->D)*Je;" << endl
-    	   << "} else {" << endl
-    	   << "  return false;" << endl
+    	to << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
+    	   << "  this->Dt = this->D;\n"
+    	   << "} else if (smt==CONSISTENTTANGENTOPERATOR){\n"
+    	   << "  Stensor4 Je;\n"
+    	   << "  getPartialJacobianInvert(Je);\n"
+    	   << "  this->Dt = (this->D)*Je;\n"
+    	   << "} else {\n"
+    	   << "  return false;\n"
     	   << "}";
     	tangentOperator.code = to.str();
     	this->bd.setCode(h,BehaviourData::ComputeTangentOperator,
@@ -223,25 +213,21 @@ namespace mfront{
     			 BehaviourData::AT_BEGINNING);
       } else {
     	if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-    	  to << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){" << endl
-    	     << "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);" << endl
-    	     << "} else if (smt==CONSISTENTTANGENTOPERATOR){" << endl
-    	     << "  StiffnessTensor Hooke;" << endl
-    	     << "  Stensor4 Je;" << endl
-    	     << "  computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);" << endl
-    	     << "  getPartialJacobianInvert(Je);" << endl
-    	     << "  Dt = Hooke*Je;" << endl
-    	     << "} else {" << endl
-    	     << "  return false;" << endl
+    	  to << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
+    	     << "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);\n"
+    	     << "} else if (smt==CONSISTENTTANGENTOPERATOR){\n"
+    	     << "  StiffnessTensor Hooke;\n"
+    	     << "  Stensor4 Je;\n"
+    	     << "  computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);\n"
+    	     << "  getPartialJacobianInvert(Je);\n"
+    	     << "  Dt = Hooke*Je;\n"
+    	     << "} else {\n"
+    	     << "  return false;\n"
     	     << "}";
     	} else if(this->bd.getElasticSymmetryType()==mfront::ORTHOTROPIC){
-    	  string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-    		     "orthotropic behaviour shall require the stiffness tensor");
-    	  throw(runtime_error(msg));
+    	  throw_if(true,"orthotropic behaviour shall require the stiffness tensor");
     	} else {
-    	  string msg("ElasticityBehaviourBrick::ElasticityBehaviourBrick : "
-    		     "unsupported elastic symmetry type");
-    	  throw(runtime_error(msg));
+    	  throw_if(true,"unsupported elastic symmetry type");
     	}
       }
     }
@@ -251,15 +237,16 @@ namespace mfront{
     this->bd.setCode(h,BehaviourData::Integrator,
     		     integrator,BehaviourData::CREATEORAPPEND,
     		     BehaviourData::AT_BEGINNING);
-} // end of ElasticityBehaviourBrick::endTreatment
+} // end of StandardElasticityBrick::endTreatment
 
   void
-  ElasticityBehaviourBrick::treatIsotropicBehaviour(void) const
+  StandardElasticityBrick::treatIsotropicBehaviour(void) const
   {
     using tfel::glossary::Glossary; 
-    typedef tfel::material::ModellingHypothesis MH; 
-    typedef MH::Hypothesis Hypothesis; 
-    const Hypothesis h = MH::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "StandardElasticityBrick::treatIsotropicBehaviour: begin\n";
+    }
     this->bd.appendToIncludes("#include\"TFEL/Material/Lame.hxx\"");
     this->addMaterialPropertyIfNotDefined("stress","young",Glossary::YoungModulus);
     this->addMaterialPropertyIfNotDefined("real","nu",Glossary::PoissonRatio);
@@ -285,37 +272,38 @@ namespace mfront{
     this->bd.setCode(h,BehaviourData::ComputeFinalStress,
 		     sets,BehaviourData::CREATE,
 		     BehaviourData::AT_BEGINNING,false);
-  } // end of ElasticityBehaviourBrick::treatIsotropicBehaviour
+  } // end of StandardElasticityBrick::treatIsotropicBehaviour
 
   void
-  ElasticityBehaviourBrick::treatOrthotropicBehaviour(void) const
+  StandardElasticityBrick::treatOrthotropicBehaviour(void) const
   {
-    using namespace std;
     typedef tfel::material::ModellingHypothesis MH; 
     typedef MH::Hypothesis Hypothesis; 
     const Hypothesis h = MH::UNDEFINEDHYPOTHESIS;
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "StandardElasticityBrick::treatOrthotropic: begin\n";
+    }
     if(!this->bd.hasAttribute(BehaviourDescription::requiresStiffnessTensor)){
       this->bd.setAttribute(h,BehaviourDescription::requiresStiffnessTensor,true);
     }
     if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-      string msg("ElasticityBehaviourBrick::treatOrthotropicBehaviour : "
-		 "the stiffness tensor must be defined for orthotropic behaviours");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("StandardElasticityBrick::treatOrthotropicBehaviour: "
+			       "the stiffness tensor must be defined for "
+			       "orthotropic behaviours"));
     }
-  } // end of ElasticityBehaviourBrick::treatOrthotropicBehaviour
+  } // end of StandardElasticityBrick::treatOrthotropicBehaviour
 
   std::string
-  ElasticityBehaviourBrick::getName() const{
+  StandardElasticityBrick::getName() const{
     return "Elasticity";
   }
   
   std::vector<tfel::material::ModellingHypothesis::Hypothesis> 
-  ElasticityBehaviourBrick::getSupportedModellingHypotheses(void) const
+  StandardElasticityBrick::getSupportedModellingHypotheses(void) const
   {
-    using namespace std;
     typedef tfel::material::ModellingHypothesis MH;
-    set<MH::Hypothesis> dmh = this->dsl.getDefaultModellingHypotheses();
-    vector<MH::Hypothesis> mh(dmh.begin(),dmh.end());
+    auto dmh = this->dsl.getDefaultModellingHypotheses();
+    std::vector<MH::Hypothesis> mh(dmh.begin(),dmh.end());
     if(this->pss){
       if(this->dsl.isModellingHypothesisSupported(MH::PLANESTRESS)){
 	mh.push_back(MH::PLANESTRESS);
@@ -325,9 +313,9 @@ namespace mfront{
       }
     }
     return mh;
-  } // end of ElasticityBehaviourBrick::getSupportedModellingHypothesis
+  } // end of StandardElasticityBrick::getSupportedModellingHypothesis
 
-  ElasticityBehaviourBrick::~ElasticityBehaviourBrick()
-  {} // end of ElasticityBehaviourBrick::~ElasticityBehaviourBrick
+  StandardElasticityBrick::~StandardElasticityBrick()
+  {} // end of StandardElasticityBrick::~StandardElasticityBrick
 
 } // end of namespace mfront

@@ -14,8 +14,8 @@
 #include<stdexcept>
 
 #include"MFront/AbstractBehaviourBrick.hxx"
-#include"MFront/ElasticityBehaviourBrick.hxx"
 #include"MFront/AbstractBehaviourBrickFactory.hxx"
+#include"MFront/StandardElasticityBrick.hxx"
 
 namespace mfront
 {
@@ -53,7 +53,7 @@ namespace mfront
   AbstractBehaviourBrickFactory::AbstractBehaviourBrickFactory()
   {
     this->registerAbstractBehaviourBrick("StandardElasticity",
-					 buildBehaviourBrickConstructor<ElasticityBehaviourBrick>);
+					 buildBehaviourBrickConstructor<StandardElasticityBrick>);
   } // end of AbstractBehaviourBrickFactory::AbstractBehaviourBrickFactory
 
   void

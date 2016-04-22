@@ -791,8 +791,8 @@ namespace mfront{
 						   const BehaviourDescription&,
 						   const FileDescription&) const
   {
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name);
-    out << "_savesTangentOperator = ";
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	<< "_savesTangentOperator = ";
     if(this->savesTangentOperator){
       out << "1";
     } else {
@@ -942,7 +942,7 @@ namespace mfront{
   std::map<UMATInterfaceBase::Hypothesis,std::string>
   AsterInterface::gatherModellingHypothesesAndTests(const BehaviourDescription& mb) const
   {
-    std::map<Hypothesis,std::string> res;
+    auto res = std::map<Hypothesis,std::string>{};
     if((mb.getSymmetryType()==mfront::ORTHOTROPIC)&&
        ((mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
 	(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)))){
