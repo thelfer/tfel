@@ -503,8 +503,27 @@ namespace mfront
   }
 
   static void
-  checkElasticMaterialProperty(const BehaviourDescription::MaterialProperty& emp,
-			       const std::string& n){
+  declareParameter(BehaviourDescription& bd,
+		   BehaviourDescription::MaterialProperty& mp,
+		   const tfel::glossary::GlossaryEntry& e,
+		   const std::string& n){
+    const auto h = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if(mp.is<BehaviourDescription::ConstantMaterialProperty>()){
+      auto& cmp = mp.get<BehaviourDescription::ConstantMaterialProperty>();
+      cmp.name  = n;
+      // declare associated parameter
+      VariableDescription m("real",n,1u,0u);
+      bd.addParameter(h,m);
+      bd.setParameterDefaultValue(h,n,cmp.value);
+      bd.setGlossaryName(h,n,e.getKey());
+    }
+  } // end of BehaviourDescription::declareParameter
+  
+  static void
+  checkElasticMaterialProperty(BehaviourDescription& bd,
+			       BehaviourDescription::MaterialProperty& emp,
+			       const tfel::glossary::GlossaryEntry& e,
+			       const std::string& n2){
     if(emp.is<BehaviourDescription::ComputedMaterialProperty>()){
       const auto& mpd = *(emp.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
       
@@ -519,24 +538,31 @@ namespace mfront
 	}
 	return mpd.output;
       }();
-      if(ename!=n){
+      if(ename!=e){
 	auto& log = getLogStream();
 	log << "checkElasticMaterialProperty: inconsistent external name for "
-	    << "material property '"+n+"': external name of mfront file "
+	    << "material property '"+e.getKey()+"': external name of mfront file "
 	    << "output  is '" << ename << "'\n";
       }
     }
+    declareParameter(bd,emp,e,n2);
   }
   
   void
   BehaviourDescription::setElasticMaterialProperties(const std::vector<MaterialProperty>& emps)
   {
+    if((this->getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)&&
+       (this->getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)){
+      throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
+			       "only finite and strain behaviour are supported"));
+    }
     this->setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		       BehaviourDescription::requiresStiffnessTensor,false);
     if(!this->elasticMaterialProperties.empty()){
       throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
 			       "elastic material property already declared"));
     }
+    auto lemps = emps; // local copy, swap to data member if no exceptions is thrown
     if(emps.size()==2u){
       if(this->isElasticSymmetryTypeDefined()){
 	if(this->getElasticSymmetryType()!=mfront::ISOTROPIC){
@@ -546,8 +572,8 @@ namespace mfront
       } else {
 	this->setElasticSymmetryType(mfront::ISOTROPIC);
       }
-      checkElasticMaterialProperty(emps[0],tfel::glossary::Glossary::YoungModulus);
-      checkElasticMaterialProperty(emps[1],tfel::glossary::Glossary::PoissonRatio);
+      checkElasticMaterialProperty(*this,lemps[0],tfel::glossary::Glossary::YoungModulus,"young");
+      checkElasticMaterialProperty(*this,lemps[1],tfel::glossary::Glossary::PoissonRatio,"nu");
     } else if(emps.size()==9u){
       if(this->getSymmetryType()!=mfront::ORTHOTROPIC){
 	throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
@@ -561,20 +587,20 @@ namespace mfront
       } else {
 	this->setElasticSymmetryType(mfront::ORTHOTROPIC);
       }
-      checkElasticMaterialProperty(emps[0],tfel::glossary::Glossary::YoungModulus1);
-      checkElasticMaterialProperty(emps[1],tfel::glossary::Glossary::YoungModulus2);
-      checkElasticMaterialProperty(emps[2],tfel::glossary::Glossary::YoungModulus3);
-      checkElasticMaterialProperty(emps[3],tfel::glossary::Glossary::PoissonRatio12);
-      checkElasticMaterialProperty(emps[4],tfel::glossary::Glossary::PoissonRatio23);
-      checkElasticMaterialProperty(emps[5],tfel::glossary::Glossary::PoissonRatio13);
-      checkElasticMaterialProperty(emps[6],tfel::glossary::Glossary::ShearModulus12);
-      checkElasticMaterialProperty(emps[7],tfel::glossary::Glossary::ShearModulus23);
-      checkElasticMaterialProperty(emps[8],tfel::glossary::Glossary::ShearModulus13);
+      checkElasticMaterialProperty(*this,lemps[0],tfel::glossary::Glossary::YoungModulus1,"young1");
+      checkElasticMaterialProperty(*this,lemps[1],tfel::glossary::Glossary::YoungModulus2,"young2");
+      checkElasticMaterialProperty(*this,lemps[2],tfel::glossary::Glossary::YoungModulus3,"young3");
+      checkElasticMaterialProperty(*this,lemps[3],tfel::glossary::Glossary::PoissonRatio12,"nu12");
+      checkElasticMaterialProperty(*this,lemps[4],tfel::glossary::Glossary::PoissonRatio23,"nu23");
+      checkElasticMaterialProperty(*this,lemps[5],tfel::glossary::Glossary::PoissonRatio13,"nu13");
+      checkElasticMaterialProperty(*this,lemps[6],tfel::glossary::Glossary::ShearModulus12,"mu12");
+      checkElasticMaterialProperty(*this,lemps[7],tfel::glossary::Glossary::ShearModulus23,"mu23");
+      checkElasticMaterialProperty(*this,lemps[8],tfel::glossary::Glossary::ShearModulus13,"mu13");
     } else {
       throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
 			       "unsupported behaviour type"));
     }
-    this->elasticMaterialProperties = emps;
+    this->elasticMaterialProperties.swap(lemps);
   } // end of BehaviourDescription::setElasticMaterialProperties
     
   BehaviourSymmetryType
@@ -1819,4 +1845,20 @@ namespace mfront
   BehaviourDescription::~BehaviourDescription()
   {}
 
+  void
+  setElasticSymmetryType(BehaviourDescription& bd,
+			 const BehaviourSymmetryType s)
+  {
+    if(bd.isElasticSymmetryTypeDefined()){
+      if(bd.getElasticSymmetryType()!=s){
+	throw(std::runtime_error("setElasticSymmetryType: "
+				 "the elastic symmetry type defined for "
+				 "the behaviour is inconsistent with the option "
+				 "passed to the 'Elasticity' brick."));
+      }
+    } else {
+      bd.setElasticSymmetryType(s);
+    }
+  } // end of setElasticSymmetryType
+  
 } // end of namespace mfront

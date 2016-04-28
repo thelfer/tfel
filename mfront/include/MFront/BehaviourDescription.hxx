@@ -54,7 +54,10 @@ namespace mfront
      */
     struct ConstantMaterialProperty
     {
-      long double value;
+      //! parameter name associated with the material property
+      std::string name;
+      //! default value for the constant material property
+      double value;
     };
     /*!
      * \brief this structure holds the value of a material
@@ -1433,6 +1436,17 @@ namespace mfront
     std::vector<std::string> materialLaws;
   }; // end of struct BehaviourDescription
 
+  /*!
+   * \brief set the elastic symmetry of a material if not already
+   * defined. If already defined, check that the symmetry is the same
+   * as the one given in argument
+   * \param[in/out] bd: behaviour description
+   * \param[in]     s:  symmetry type
+   */
+  MFRONT_VISIBILITY_EXPORT void
+  setElasticSymmetryType(BehaviourDescription&,
+			 const BehaviourSymmetryType);
+  
 } // end of namespace mfront
 
 #include"MFront/BehaviourDescription.ixx"

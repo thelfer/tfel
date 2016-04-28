@@ -13,9 +13,8 @@
  */
 
 #include<sstream>
-#include<stdexcept>
-#include<iostream>
 #include<iterator>
+#include<stdexcept>
 
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
@@ -910,88 +909,56 @@ namespace mfront{
 
   void
   BehaviourData::setParameterDefaultValue(const std::string& n,
-						    const double v)
+					  const double v)
   {
-    using namespace std;
-    if(!this->parameters.contains(n)){
-      string msg("BehaviourData::setParameterDefaultValue : "
-		 "no parameter '"+n+"' defined");
-      throw(runtime_error(msg));
-    }
+    auto throw_if = [](const bool b, const std::string& m){
+      if(b){throw(std::runtime_error("BehaviourData::setParameterDefaultValue: "+m));}
+    };
+    throw_if(!this->parameters.contains(n),"no parameter '"+n+"' defined");
     const auto& p = this->parameters.getVariable(n);
-    if(p.type!="real"){
-      string msg("BehaviourData::setParameterDefaultValue : "
-		 "parameter '"+n+"' is not a floatting point");
-      throw(runtime_error(msg));
-    }
-    if(!this->parametersDefaultValues.insert({n,v}).second){
-      string msg("BehaviourData::setParameterDefaultValue : "
-		 "default value for parameter '"+n+"' already defined");
-      throw(runtime_error(msg));
-    }
+    throw_if(p.type!="real","parameter '"+n+"' is not a floatting point");
+    throw_if(!this->parametersDefaultValues.insert({n,v}).second,
+	     "default value for parameter '"+n+"' already defined");
   }
 
   void
   BehaviourData::setParameterDefaultValue(const std::string& n,
-						    const int v)
+					  const int v)
   {
-    using namespace std;
-    if(!this->parameters.contains(n)){
-      string msg("BehaviourData::setParameterDefaultValue : "
-		 "no parameter '"+n+"' defined");
-      throw(runtime_error(msg));
-    }
+    auto throw_if = [](const bool b, const std::string& m){
+      if(b){throw(std::runtime_error("BehaviourData::setParameterDefaultValue: "+m));}
+    };
+    throw_if(!this->parameters.contains(n),"no parameter '"+n+"' defined");
     const auto& p = this->parameters.getVariable(n);
-    if(p.type!="int"){
-      string msg("BehaviourData::setParameterDefaultValue : "
-		 "parameter '"+n+"' is not an integer");
-      throw(runtime_error(msg));
-    }
-    if(!this->iParametersDefaultValues.insert({n,v}).second){
-      string msg("BehaviourData::setParameterDefaultValue : "
-		 "default value for parameter '"+n+"' already defined");
-      throw(runtime_error(msg));
-    }
+    throw_if(p.type!="int","parameter '"+n+"' is not a floatting point");
+    throw_if(!this->iParametersDefaultValues.insert({n,v}).second,
+	     "default value for parameter '"+n+"' already defined");
   }
 
   void
   BehaviourData::setParameterDefaultValue(const std::string& n,
 					  const unsigned short v)
   {
-    using namespace std;
-    if(!this->parameters.contains(n)){
-      string msg("BehaviourData::setParameterDefaultValue : "
-		 "no parameter '"+n+"' defined");
-      throw(runtime_error(msg));
-    }
+    auto throw_if = [](const bool b, const std::string& m){
+      if(b){throw(std::runtime_error("BehaviourData::setParameterDefaultValue: "+m));}
+    };
+    throw_if(!this->parameters.contains(n),"no parameter '"+n+"' defined");
     const auto& p = this->parameters.getVariable(n);
-    if(p.type!="ushort"){
-      string msg("BehaviourData::setParameterDefaultValue : "
-		 "parameter '"+n+"' is not an unsigned short integer");
-      throw(runtime_error(msg));
-    }
-    if(!this->uParametersDefaultValues.insert({n,v}).second){
-      string msg("BehaviourData::setParameterDefaultValue : "
-		 "default value for parameter '"+n+"' already defined");
-      throw(runtime_error(msg));
-    }
+    throw_if(p.type!="ushort","parameter '"+n+"' is not a floatting point");
+    throw_if(!this->uParametersDefaultValues.insert({n,v}).second,
+	     "default value for parameter '"+n+"' already defined");
   }
 
   double
   BehaviourData::getFloattingPointParameterDefaultValue(const std::string& n) const
   {
-    using namespace std;
-    if(!this->parameters.contains(n)){
-      string msg("BehaviourData::getFloattingPointParameterDefaultValue : "
-		 "no parameter '"+n+"' defined");
-      throw(runtime_error(msg));
-    }
-    map<string,double>::const_iterator p = this->parametersDefaultValues.find(n);
-    if(p==this->parametersDefaultValues.end()){
-      string msg("BehaviourData::getFloattingPointParameterDefaultValue : "
-		 "no default value defined for parameter '"+n+"'");
-      throw(runtime_error(msg));
-    }
+    auto throw_if = [](const bool b, const std::string& m){
+      if(b){throw(std::runtime_error("BehaviourData::getFloattingPointParameterDefaultValue: "+m));}
+    };
+    throw_if(!this->parameters.contains(n),"no parameter '"+n+"' defined");
+    const auto p = this->parametersDefaultValues.find(n);
+    throw_if(p==this->parametersDefaultValues.end(),
+	     "no default value defined for parameter '"+n+"'");
     return p->second;
   } // end of BehaviourData::getFloattingPointParameterDefaultValue
 
@@ -1030,22 +997,19 @@ namespace mfront{
 					const BehaviourAttribute& a,
 					const bool b)
   {
-    using namespace std;
+    auto throw_if = [](const bool b, const std::string& m){
+      if(b){throw(std::runtime_error("BehaviourData::setAttribute: "+m));}
+    };    
     if(b){
       auto p=this->attributes.find(n);
       if(p!=this->attributes.end()){
-	if(a.getTypeIndex()!=p->second.getTypeIndex()){
-	  string msg("BehaviourData::setAttribute : ",
-		     "attribute already exists with a different type");
-	  throw(runtime_error(msg));
-	}
+	throw_if(a.getTypeIndex()!=p->second.getTypeIndex(),
+		 "attribute already exists with a different type");
 	return;
       }
     }
-    if(!this->attributes.insert({n,a}).second){
-      throw(runtime_error("BehaviourData::setAttribute : "
-			  "attribute '"+n+"' already declared"));
-    }
+    throw_if(!this->attributes.insert({n,a}).second,
+	     "attribute '"+n+"' already declared");
   } // end of BehaviourData::setAttribute
 
   bool

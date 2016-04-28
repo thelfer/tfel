@@ -11,16 +11,16 @@
 @ComputeStiffnessTensor<Altered>{"Inconel600_YoungModulus.mfront",
     "PoissonRatioTest.mfront"};
 
-@ComputeStress {
-  sig = D*eel;
-}
-
 @Integrator{
   feel -= deto;
+}
+
+@ComputeFinalStress {
+  sig = D_tdt*eel;
 }
 
 @IsTangentOperatorSymmetric true;
 @TangentOperator{
   static_cast<void>(smt);
-  Dt = D;
+  Dt = D_tdt;
 }

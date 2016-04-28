@@ -16,10 +16,10 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include<cmath>
 #include<cstdlib>
 #include<cassert>
 #include<cstring>
-#include<cmath>
 
 #include"TFEL/System/wfstream.hxx"
 #include"TFEL/System/rfstream.hxx"

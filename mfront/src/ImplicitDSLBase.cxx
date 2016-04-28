@@ -12,12 +12,11 @@
  * project under specific licensing conditions. 
  */
 
-#include<iomanip>
-
 #include<cmath>
 #include<limits>
 #include<cstdlib>
 #include<sstream>
+#include<iomanip>
 
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
@@ -125,13 +124,39 @@ namespace mfront{
   void ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation(const Hypothesis h)
   {
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(h);
     if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
-      Modifier bts = [](const MaterialPropertyInput& i){
-	return "this->"+i.name;
+      this->behaviourFile << "// updating the stiffness tensor at the middle of the time step\n";
+      Modifier mts = [](const MaterialPropertyInput& i){
+	if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	   (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	  return "this->"+i.name + "+theta*(this->d" + i.name+')';
+	} else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		   (i.type==MaterialPropertyInput::PARAMETER)){
+	  return "this->"+i.name;
+	} else {
+	  throw(std::runtime_error("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation: "
+				   "unsupported input type for variable '"+i.name+"'"));
+	}
       };
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",bts);
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",mts);
+      if(!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
+	this->behaviourFile << "// stiffness tensor at the end of the time step\n";
+	Modifier ets = [](const MaterialPropertyInput& i){
+	  if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	     (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	    return "this->"+i.name + "+this->d" + i.name;
+	  } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		     (i.type==MaterialPropertyInput::PARAMETER)){
+	    return "this->"+i.name;
+	  } else {
+	    throw(std::runtime_error("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation: "
+				     "unsupported input type for variable '"+i.name+"'"));
+	  }
+	};
+	this->writeStiffnessTensorComputation(this->behaviourFile,"D_tdt",ets);
+      }
     }
+    BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(h);
   } // end of writeBehaviourLocalVariablesInitialisation
   
   void ImplicitDSLBase::treatStateVariable(void)
@@ -253,14 +278,12 @@ namespace mfront{
   
   bool
   ImplicitDSLBase::isCallableVariable(const Hypothesis h,
-					       const std::string& n) const
-
+				      const std::string& n) const
+    
   {
-     using namespace std;
      if(n.empty()){
-       string msg("ImplicitDSLBase::isCallableVariable : "
-		  "empty variable name '"+n+"'");
-       throw(runtime_error(msg));
+       this->throwRuntimeError("ImplicitDSLBase::isCallableVariable",
+			       "empty variable name '"+n+"'");
      }
      if((n[0]=='f')&&(this->mb.isIntegrationVariableName(h,n.substr(1)))){
        return true;
@@ -271,7 +294,7 @@ namespace mfront{
   void
   ImplicitDSLBase::treatCompareToNumericalJacobian(void)
   {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("ImplicitDSLBase::treatCompareToNumericalJacobian : ",
 			    "Expected 'true' or 'false'.");
     if(this->current->value=="true"){
@@ -289,8 +312,7 @@ namespace mfront{
   void
   ImplicitDSLBase::treatJacobianComparisonCriterion(void)
   {
-    using namespace std;
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(!this->mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
       this->throwRuntimeError("ImplicitDSLBase::treatJacobianComparisonCriterion",
 			      "must call '@CompareToNumericalJacobian' first");
@@ -298,7 +320,7 @@ namespace mfront{
     double jacobianComparisonCriterion;
     this->checkNotEndOfFile("ImplicitDSLBase::treatJacobianComparisonCriterion",
 			    "Cannot read jacobianComparisonCriterion value.");
-    istringstream flux(current->value);
+    std::istringstream flux(current->value);
     flux >> jacobianComparisonCriterion;
     if((flux.fail())||(!flux.eof())){
       this->throwRuntimeError("ImplicitDSLBase::treatJacobianComparisonCriterion",
@@ -318,9 +340,7 @@ namespace mfront{
 
   void ImplicitDSLBase::treatAlgorithm(void)
   {
-    using namespace std;
-    const NonLinearSystemSolverFactory& f =
-      NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
+    const auto& f = NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
     if(this->solver.get()!=nullptr){
       this->throwRuntimeError("ImplicitDSLBase::treatAlgorithm",
 			      "an algorithm has already been defined.");
@@ -1285,36 +1305,36 @@ namespace mfront{
     }
     this->checkBehaviourFile();
     this->behaviourFile << "void\ncomputeNumericalJacobian(tfel::math::tmatrix<" << n << "," << n << ",real>& njacobian)\n"
-			<< "{\n";
-    this->behaviourFile << "using namespace std;\n";
-    this->behaviourFile << "using namespace tfel::math;\n";
-    this->behaviourFile << "tvector<" << n << ",real> tzeros(this->zeros);\n";
-    this->behaviourFile << "tvector<" << n << ",real> tfzeros(this->fzeros);\n";
-    this->behaviourFile << "tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n";
-    this->behaviourFile << "for(unsigned short idx = 0; idx!= "<< n<<  ";++idx){\n";
-    this->behaviourFile << "this->zeros(idx) -= this->numerical_jacobian_epsilon;\n";
+			<< "{\n"
+			<< "using namespace std;\n"
+			<< "using namespace tfel::math;\n"
+			<< "tvector<" << n << ",real> tzeros(this->zeros);\n"
+			<< "tvector<" << n << ",real> tfzeros(this->fzeros);\n"
+			<< "tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n"
+			<< "for(unsigned short idx = 0; idx!= "<< n<<  ";++idx){\n"
+			<< "this->zeros(idx) -= this->numerical_jacobian_epsilon;\n";
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       this->behaviourFile << "this->computeStress();\n";
     }
-    this->behaviourFile << "this->computeFdF();\n";
-    this->behaviourFile << "this->zeros = tzeros;\n";
-    this->behaviourFile << "tvector<" << n << ",real> tfzeros2(this->fzeros);\n";
-    this->behaviourFile << "this->zeros(idx) += this->numerical_jacobian_epsilon;\n";
+    this->behaviourFile << "this->computeFdF();\n"
+			<< "this->zeros = tzeros;\n"
+			<< "tvector<" << n << ",real> tfzeros2(this->fzeros);\n"
+			<< "this->zeros(idx) += this->numerical_jacobian_epsilon;\n";
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       this->behaviourFile << "this->computeStress();\n";
     }
-    this->behaviourFile << "this->computeFdF();\n";
-    this->behaviourFile << "this->fzeros = (this->fzeros-tfzeros2)/(real(2)*(this->numerical_jacobian_epsilon));\n";
-    this->behaviourFile << "for(unsigned short idx2 = 0; idx2!= "<< n <<  ";++idx2){\n";
-    this->behaviourFile << "njacobian(idx2,idx) = this->fzeros(idx2);\n";
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "this->zeros    = tzeros;\n";
-    this->behaviourFile << "this->fzeros   = tfzeros;\n";
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "if(&njacobian!=&(this->jacobian)){\n";
-    this->behaviourFile << "this->jacobian = tjacobian;\n";
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "}\n\n";
+    this->behaviourFile << "this->computeFdF();\n"
+			<< "this->fzeros = (this->fzeros-tfzeros2)/(real(2)*(this->numerical_jacobian_epsilon));\n"
+			<< "for(unsigned short idx2 = 0; idx2!= "<< n <<  ";++idx2){\n"
+			<< "njacobian(idx2,idx) = this->fzeros(idx2);\n"
+			<< "}\n"
+			<< "this->zeros    = tzeros;\n"
+			<< "this->fzeros   = tfzeros;\n"
+			<< "}\n"
+			<< "if(&njacobian!=&(this->jacobian)){\n"
+			<< "this->jacobian = tjacobian;\n"
+			<< "}\n"
+			<< "}\n\n";
   }
 
   std::string
@@ -1328,12 +1348,11 @@ namespace mfront{
 	return "TinyVectorOfStensorFromTinyVectorView";
       }
     }
-    throw(std::runtime_error("ImplicitDSLBase::getVectorMappingClass : "
-			     "unsupported type for variable '"+v.name+"'"));
+    this->throwRuntimeError("ImplicitDSLBase::getVectorMappingClass",
+			    "unsupported type for variable '"+v.name+"'");
   } // end of ImplicitDSLBase::getVectorMappingClass
 
   void ImplicitDSLBase::writeBehaviourIntegrator(const Hypothesis h){
-    using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
     const auto btype = this->mb.getBehaviourTypeFlag();
     const auto& d = this->mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
@@ -1383,23 +1402,6 @@ namespace mfront{
 					     mb.getClassName(),
 					     BehaviourData::Integrator);
     }
-    if((this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false))&&
-       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
-      this->behaviourFile << "// updating the stiffness tensor at the middle of the time step\n";
-      Modifier mts = [](const MaterialPropertyInput& i){
-	if((i.type==MaterialPropertyInput::TEMPERATURE)||
-	   (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
-	  return "this->"+i.name + "+theta*(this->d" + i.name+')';
-	} else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
-		   (i.type==MaterialPropertyInput::PARAMETER)){
-	  return "this->"+i.name;
-	} else {
-	  throw(std::runtime_error("ImplicitDSLBase::writeBehaviourIntegrator: "
-				   "unsupported input type for variable '"+i.name+"'"));
-	}
-      };
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",mts);
-    }
     this->solver->writeResolutionAlgorithm(this->behaviourFile,this->mb,h);
     this->behaviourFile << "if(this->iter==this->iterMax){\n";
     if(getDebugMode()){
@@ -1427,23 +1429,6 @@ namespace mfront{
 	const auto& nf = this->mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	this->behaviourFile << "this->d" << v.name << " *= " << nf << ";\n";
       }
-    }
-    if((this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false))&&
-       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
-      this->behaviourFile << "// updating the stiffness tensor at the end of the time step\n";
-      Modifier ets = [](const MaterialPropertyInput& i){
-	if((i.type==MaterialPropertyInput::TEMPERATURE)||
-	   (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
-	  return "this->"+i.name + "+this->d" + i.name;
-	} else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
-		   (i.type==MaterialPropertyInput::PARAMETER)){
-	  return "this->"+i.name;
-	} else {
-	  throw(std::runtime_error("ImplicitDSLBase::writeBehaviourIntegrator: "
-				   "unsupported input type for variable '"+i.name+"'"));
-	}
-      };
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",ets);
     }
     this->behaviourFile << "this->updateIntegrationVariables();\n";
     this->behaviourFile << "this->updateStateVariables();\n";
@@ -1697,7 +1682,7 @@ namespace mfront{
 	init << ",\n";
       }
       if((flag!=SupportedTypes::Scalar)&&(flag!=SupportedTypes::Stensor)){
-	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourConstructors",
+	this->throwRuntimeError("getIntegrationVariablesIncrementsInitializers",
 				"internal error, tag unsupported");
       }
       if((flag==SupportedTypes::Scalar)&&(v.arraySize==1u)){
@@ -1715,8 +1700,11 @@ namespace mfront{
   ImplicitDSLBase::getBehaviourConstructorsInitializers(const Hypothesis h)
   {    
     auto init = BehaviourDSLCommon::getBehaviourConstructorsInitializers(h);
-    if(!init.empty()){
-      init += ",\n";
+    init += (!init.empty()) ? ",\n" : "";
+    if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
+      if(this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
+	init += "D_tdt(D),\n";
+      }
     }
     init += "zeros(real(0)),\nfzeros(real(0))";
     return init;
@@ -1735,51 +1723,49 @@ namespace mfront{
 
   void ImplicitDSLBase::writeBehaviourIntegrationVariablesIncrements(const Hypothesis h)
   {    
-    using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
     this->checkBehaviourFile();
-    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     SupportedTypes::TypeSize n2;
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n2 += this->getTypeSize(p->type,p->arraySize);
+    for(const auto& v : d.getIntegrationVariables()){
+      n2 += this->getTypeSize(v.type,v.arraySize);
     }
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      if((!getDebugMode())&&(p->lineNumber!=0u)){
-	this->behaviourFile << "#line " << p->lineNumber << " \"" 
+    for(const auto& v : d.getIntegrationVariables()){
+      if((!getDebugMode())&&(v.lineNumber!=0u)){
+	this->behaviourFile << "#line " << v.lineNumber << " \"" 
 			    << this->fileName << "\"\n";
       }
-      if(this->getTypeFlag(p->type)==SupportedTypes::Scalar){
-	if(p->arraySize==1u){
-	  this->behaviourFile << "real& d" << p->name << ";\n";
+      if(this->getTypeFlag(v.type)==SupportedTypes::Scalar){
+	if(v.arraySize==1u){
+	  this->behaviourFile << "real& d" << v.name << ";\n";
 	} else {
 	  this->behaviourFile << "typename tfel::math::TinyVectorFromTinyVectorView<" 
-			      <<  p->arraySize << "," << n2 << "," << n
+			      <<  v.arraySize << "," << n2 << "," << n
 			      << ",real,false>::type"
-			      << " d" << p->name << ";\n";
+			      << " d" << v.name << ";\n";
 	}
       } else {
-	if(p->arraySize==1u){
+	if(v.arraySize==1u){
 	  this->behaviourFile << "typename tfel::math::"
-			      << this->getVectorMappingClass(*p)    
+			      << this->getVectorMappingClass(v)    
 			      << "<N," << n2 << "," << n << ",real>::type"
-			      << " d" << p->name << ";\n";
+			      << " d" << v.name << ";\n";
 	} else {
 	  this->behaviourFile << "typename tfel::math::"
-			      << this->getVectorMappingClass(*p)    
-			      << "<N," << n2 << "," << n << "," << p-> arraySize << ",real>::type"
-			      << " d" << p->name << ";\n";
+			      << this->getVectorMappingClass(v)    
+			      << "<N," << n2 << "," << n << "," << v. arraySize << ",real>::type"
+			      << " d" << v.name << ";\n";
 	}
       }
-      n += this->getTypeSize(p->type,p->arraySize);
+      n += this->getTypeSize(v.type,v.arraySize);
     }
-    this->behaviourFile << endl;
+    this->behaviourFile << '\n';
   }
 
   void
   ImplicitDSLBase::endsInputFileProcessing(void)
   {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     BehaviourDSLCommon::endsInputFileProcessing();
     if(this->solver.get()==nullptr){
       const auto& f = NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
@@ -1793,10 +1779,17 @@ namespace mfront{
       }
     }
     if(this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false)){
-      VariableDescription D("StiffnessTensor","D",1u,0u);      
+      auto D = VariableDescription("StiffnessTensor","D",1u,0u);      
       D.description = "stiffness tensor computed from elastic "
 	"material properties";
       this->mb.addLocalVariable(h,D,BehaviourData::ALREADYREGISTRED);
+      auto  D_tdt = this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep() ?
+	VariableDescription("StiffnessTensor&","D_tdt",1u,0u) :
+	VariableDescription("StiffnessTensor","D_tdt",1u,0u);
+      D_tdt.description = "stiffness tensor computed from elastic "
+	"material properties";
+      this->mb.addLocalVariable(h,D_tdt,BehaviourData::ALREADYREGISTRED);
+	
     }
     // create the compute final stress code is necessary
     this->setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();

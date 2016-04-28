@@ -16,11 +16,11 @@
 }
 
 @ComputeFinalStress {
-  sig = D*eel;
+  sig = D_tdt*eel;
 }
 
 @IsTangentOperatorSymmetric true;
 @TangentOperator{
   static_cast<void>(smt);
-  Dt = D;
+  Dt = D_tdt;
 }

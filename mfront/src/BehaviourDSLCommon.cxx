@@ -312,28 +312,72 @@ namespace mfront{
   void
   BehaviourDSLCommon::endsInputFileProcessing(void)
   {
-    using namespace std;
     using namespace mfront::bbrick;
     const auto& g = tfel::glossary::Glossary::getGlossary();
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      auto& log = getLogStream();
-      log << "BehaviourDSLCommon::endsInputFileProcessing : begin\n";
+      getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing : begin\n";
     }
     // defining modelling hypotheses
     if(!this->mb.areModellingHypothesesDefined()){
       this->mb.setModellingHypotheses(this->getDefaultModellingHypotheses());
     }
-    const auto& h = this->mb.getModellingHypotheses();
+    const auto& mh = this->mb.getModellingHypotheses();
+    // treating bricks
+    if(!this->bricks.empty()){
+      if(getVerboseMode()>=VERBOSE_DEBUG){
+	getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing : "
+		       << "treating bricks\n";
+      }
+      for(const auto h: mh){
+	auto& d = this->mb.getBehaviourData(h);
+	RequirementManager r{d,this->mb.useQt()};
+	// for(const auto& pb : this->bricks){
+	//   pb->declareProviders(r,h);
+	// }
+	for(const auto& pb : this->bricks){
+	  pb->addRequirements(r,h);
+	}
+	// unmatched requirements
+	auto umrqs = std::vector<std::string>{};
+	const auto& urs = r.getUnresolvedRequirements();
+	for(const auto& n : urs){
+	  const auto s = SupportedTypes{};
+	  const auto ur = r.getRequirement(n);
+	  if((s.getTypeFlag(ur.type)!=SupportedTypes::Scalar)||
+	     (find(ur.aproviders.begin(),ur.aproviders.end(),
+		   ProviderIdentifier::MATERIALPROPERTY)==ur.aproviders.end())){
+	    umrqs.push_back(ur.name);	    
+	  }
+	}
+	if(!umrqs.empty()){
+	  std::string msg =  "the following requirements can't be met: ";
+	  for(const auto& umrq : umrqs){
+	    msg += "\n- "+umrq;
+	  }
+	  this->throwRuntimeError("BehaviourDSLCommon::endsInputFileProcessing",msg);
+	}
+	for(const auto& n : urs){
+	  const auto ur = r.getRequirement(n);
+	  this->mb.addMaterialProperty(h,{ur.type,ur.name,ur.asize,0u});
+	  if(!g.contains(ur.name)){
+	    this->mb.setEntryName(h,ur.name,ur.name);
+	  }
+	}
+      }
+    }
+    for(const auto& pb : this->bricks){
+      pb->endTreatment();
+    }
     if(getVerboseMode()>=VERBOSE_DEBUG){
       auto& log = getLogStream();
       log << "behaviour '" << this->mb.getClassName()
 	  << "' supports the following hypotheses : \n";
-      for(const auto & elem : h){
-	log << " - " << ModellingHypothesis::toString(elem);
-	if(this->mb.hasSpecialisedMechanicalData(elem)){
+      for(const auto & h : mh){
+	log << " - " << ModellingHypothesis::toString(h);
+	if(this->mb.hasSpecialisedMechanicalData(h)){
 	  log << " (specialised)";
 	}
-	log << endl;	    
+	log << std::endl;	    
       }
     }
     // time step scaling factors
@@ -345,8 +389,8 @@ namespace mfront{
 			    e,BehaviourData::ALREADYREGISTRED);
       this->mb.setParameterDefaultValue(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 					"minimal_time_step_scaling_factor",0.1);
-      this->mb.setEntryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS
-			    ,"minimal_time_step_scaling_factor","minimal_time_step_scaling_factor");
+      this->mb.setEntryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+			    "minimal_time_step_scaling_factor","minimal_time_step_scaling_factor");
     }
     if(!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 			      "maximal_time_step_scaling_factor")){
@@ -366,60 +410,11 @@ namespace mfront{
       this->throwRuntimeError("BehaviourDSLCommon::endsInputFileProcessing",
 			      "internal error, incompatible options for stiffness tensor");
     }
-    // treating bricks
-    if(!this->bricks.empty()){
-      if(getVerboseMode()>=VERBOSE_DEBUG){
-	auto& log = getLogStream();
-	log << "BehaviourDSLCommon::endsInputFileProcessing : "
-	    << "treating bricks\n";
-      }
-      for(const auto mh: h){
-	auto& d = this->mb.getBehaviourData(mh);
-	RequirementManager r{d,this->mb.useQt()};
-	// for(const auto& pb : this->bricks){
-	//   pb->declareProviders(r,mh);
-	// }
-	for(const auto& pb : this->bricks){
-	  pb->addRequirements(r,mh);
-	}
-	// unmatched requirements
-	auto umrqs = vector<string>{};
-	const auto& urs = r.getUnresolvedRequirements();
-	for(const auto& n : urs){
-	  const auto s = SupportedTypes{};
-	  const auto ur = r.getRequirement(n);
-	  if((s.getTypeFlag(ur.type)!=SupportedTypes::Scalar)||
-	     (find(ur.aproviders.begin(),ur.aproviders.end(),
-		   ProviderIdentifier::MATERIALPROPERTY)==ur.aproviders.end())){
-	    umrqs.push_back(ur.name);	    
-	  }
-	}
-	if(!umrqs.empty()){
-	  auto msg = string{};
-	  msg = "BehaviourDSLCommon::endsInputFileProcessing : "
-	    "the following requirements can't be met : ";
-	  for(const auto& umrq : umrqs){
-	    msg += "\n- "+umrq;
-	  }
-	  throw(runtime_error(msg));
-	}
-	for(const auto& n : urs){
-	  const auto ur = r.getRequirement(n);
-	  this->mb.addMaterialProperty(mh,{ur.type,ur.name,ur.asize,0u});
-	  if(!g.contains(ur.name)){
-	    this->mb.setEntryName(mh,ur.name,ur.name);
-	  }
-	}
-      }
-    }
-    for(const auto& pb : this->bricks){
-      pb->endTreatment();
-    }
     // check of stiffness tensor requirement
     if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
        (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
-      if((h.find(ModellingHypothesis::PLANESTRESS)!=h.end())||
-	 (h.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=h.end())){
+      if((mh.find(ModellingHypothesis::PLANESTRESS)!=mh.end())||
+	 (mh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=mh.end())){
 	if(this->mb.hasAttribute(BehaviourDescription::requiresStiffnessTensor)){
 	  if(!this->mb.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
 	    this->throwRuntimeError("BehaviourDSLCommon::endsInputFileProcessing",
@@ -453,9 +448,8 @@ namespace mfront{
 	  ((this->mb.areThermalExpansionCoefficientsDefined()) ?
 	   (this->mb.getThermalExpansionCoefficients().size()==3u) : false))){
 	// in this case, only tridimensional case is supported
-	const auto& hs = this->mb.getDistinctModellingHypotheses();
-	for(const auto mh:hs){
-	  if(mh!=ModellingHypothesis::TRIDIMENSIONAL){
+	for(const auto h:this->mb.getDistinctModellingHypotheses()){
+	  if(h!=ModellingHypothesis::TRIDIMENSIONAL){
 	    this->throwRuntimeError("BehaviourDSLCommon::endsInputFileProcessing",
 				    "An orthotropic axes convention must be choosen when "
 				    "using the @ComputeStiffnessTensor or the "
@@ -999,7 +993,7 @@ namespace mfront{
   std::vector<BehaviourDescription::MaterialProperty>
   BehaviourDSLCommon::readMaterialPropertyOrArrayOfMaterialProperties(const std::string& m)
   {
-    auto mps    = std::vector<BehaviourDescription::MaterialProperty>{};
+    auto mps = std::vector<BehaviourDescription::MaterialProperty>{};
     this->checkNotEndOfFile(m);
     if(this->current->value=="{"){
       auto mpv = std::vector<tfel::utilities::Token>{};
@@ -1017,19 +1011,22 @@ namespace mfront{
   void
   BehaviourDSLCommon::readElasticMaterialProperties(void){
     const auto& emps =
-      this->readMaterialPropertyOrArrayOfMaterialProperties("BehaviourDSLCommon::treatComputeStiffnessTensor");
-    this->readSpecifiedToken("BehaviourDSLCommon::treatComputeStiffnessTensor",";");
+      this->readMaterialPropertyOrArrayOfMaterialProperties("BehaviourDSLCommon::readElasticMaterialProperties");
+    this->readSpecifiedToken("BehaviourDSLCommon::readElasticMaterialProperties",";");
     if((emps.size()!=2u)&&(emps.size()!=9u)){
-      this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
+      this->throwRuntimeError("BehaviourDSLCommon::readElasticMaterialProperties",
 			      "invalid number of file names given");
     }
     if(emps.size()==9u){
       // the material shall have been declared orthotropic
       if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC){
-	this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
+	this->throwRuntimeError("BehaviourDSLCommon::readElasticMaterialProperties",
 				"the mechanical behaviour must be orthotropic to give more than "
 				"two elastic material properties.");
       }
+      setElasticSymmetryType(this->mb,mfront::ORTHOTROPIC);
+    } else {
+      setElasticSymmetryType(this->mb,mfront::ISOTROPIC);
     }
     this->mb.setElasticMaterialProperties(emps);
   }
@@ -1843,6 +1840,8 @@ namespace mfront{
     const auto tos = tfel::material::getFiniteStrainBehaviourTangentOperatorFlags();
     // stiffness tensor
     this->mb.registerMemberName(h,"D");
+    // stiffness tensor at the end of the time step
+    this->mb.registerMemberName(h,"D_tdt");
     // tangent operator
     this->mb.registerMemberName(h,"Dt");
     this->reserveName("N");

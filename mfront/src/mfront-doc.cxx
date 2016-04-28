@@ -33,39 +33,38 @@
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char *const *const argv)
 {
-  using namespace std;
   using namespace mfront;
   using BGen = BehaviourDocumentationGenerator;
   initParsers();
   initInterfaces();
-  vector<shared_ptr<BGen>> bgens;
+  std::vector<std::shared_ptr<BGen>> bgens;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   try{
 #endif /* __CYGWIN__ */
     for(auto a=argv+1;a!=argv+argc;++a){
       if((*a)[0]!='-'){
-	const string f{*a};
+	const std::string f{*a};
 	auto dsl = MFrontBase::getDSL(f);
 	if(dsl->getTargetType()==AbstractDSL::BEHAVIOURDSL){
-	  auto b = dynamic_pointer_cast<AbstractBehaviourDSL>(dsl);
+	  auto b = std::dynamic_pointer_cast<AbstractBehaviourDSL>(dsl);
 	  if(!b){
-	    throw(runtime_error("mfront-doc : invalid dsl implementation"));
+	    throw(std::runtime_error("mfront-doc : invalid dsl implementation"));
 	  }
-	  bgens.push_back(make_shared<BGen>(argc,argv,b,f));
+	  bgens.push_back(std::make_shared<BGen>(argc,argv,b,f));
 	} else {
-	  throw(runtime_error("mfront-doc : unsupported dsl type"));
+	  throw(std::runtime_error("mfront-doc : unsupported dsl type"));
 	}
       } else if ((strcmp(*a,"--help")==0)||(strcmp(*a,"-h")==0)){
-	cout << "Usage : " << argv[0] << " [options] [files]" << endl;
-	cout << "Available options are :" << endl
-	     << "--help,-h : print this message" << endl
-	     << "--usage   : show how to use " << argv[0] << endl;
-	exit(EXIT_SUCCESS);
+	std::cout << "Usage : " << argv[0] << " [options] [files]" << std::endl;
+	std::cout << "Available options are :" << std::endl
+		  << "--help,-h : print this message" << std::endl
+		  << "--usage   : show how to use " << argv[0] << std::endl;
+	::exit(EXIT_SUCCESS);
       } else if ((strcmp(*a,"--version")==0)||(strcmp(*a,"-v")==0)){
-	cout << MFrontHeader::getHeader();
+	std::cout << MFrontHeader::getHeader();
 	exit(EXIT_SUCCESS);
       } else if (strcmp(*a,"--usage")==0){
-	cout << "Usage : " << argv[0] << " [options] [files]" << endl;
+	std::cout << "Usage : " << argv[0] << " [options] [files]" << std::endl;
 	exit(EXIT_SUCCESS);
       }
     }
@@ -74,7 +73,7 @@ int main(const int argc, const char *const *const argv)
     }
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   }
-  catch(exception& e){
+  catch(std::exception& e){
     MessageBox(nullptr,e.what(),
 	       "mfront",0);
     return EXIT_FAILURE;

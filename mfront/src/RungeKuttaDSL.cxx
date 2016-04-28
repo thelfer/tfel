@@ -37,6 +37,30 @@ namespace std{
 
 namespace mfront{
 
+  static std::set<std::string>
+  getVariablesUsedDuringIntegration(const BehaviourDescription& mb,
+				    const RungeKuttaDSL::Hypothesis h){
+    const auto& d = mb.getBehaviourData(h);
+    //! all registred members used in this block
+    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
+    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
+    uvs.insert(uvs2.begin(),uvs2.end());
+    // variables used to compute the stiffness tensor
+    if((mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      const auto& mps = mb.getElasticMaterialProperties();
+      for(const auto& mp : mps){
+	if(mp.is<BehaviourDescription::ComputedMaterialProperty>()){
+	  const auto& cmp = mp.get<BehaviourDescription::ComputedMaterialProperty>();
+	  for(const auto& i : mb.getMaterialPropertyInputs(*(cmp.mpd))){
+	    uvs.insert(i.name);
+	  }
+	}
+      }
+    }
+    return uvs;
+  }
+  
   static void
   writeExternalVariablesCurrentValues(std::ostream& f,
 				      const BehaviourDescription& mb,
@@ -46,14 +70,11 @@ namespace mfront{
     const auto t = ((p=="0") ? "(t/this->dt)" :
 		    ((p=="1") ? "((t+dt_)/this->dt)" : "((t+"+p+"*dt_)/this->dt)"));
     const auto& d = mb.getBehaviourData(h);
-    //! all registred members used in this block
-    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
-    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
-    uvs.insert(uvs2.begin(),uvs2.end());
+    const auto uvs = getVariablesUsedDuringIntegration(mb,h);
     for(const auto& mv : mb.getMainVariables()){
       const auto& dv = mv.first;
       if(!dv.increment_known){
-	throw(std::runtime_error("writeExternalVariablesCurrentValues : "
+	throw(std::runtime_error("writeExternalVariablesCurrentValues: "
 				 "unsupported driving variable '"+dv.name+"'"));
       }
       if(uvs.find(dv.name)!=uvs.end()){
@@ -85,6 +106,54 @@ namespace mfront{
     }
   }
 
+  /*!
+   * \brief modifier used for evaluating the stiffness tensor during the
+   * the time step
+   */
+  static std::function<std::string(const BehaviourDescription::MaterialPropertyInput&)>&
+  modifyVariableForStiffnessTensorComputation(void){
+    using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
+    using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
+    static Modifier m = [](const BehaviourDescription::MaterialPropertyInput& i){
+      if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	return "this->"+i.name + "_";
+      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::PARAMETER)){
+	return "this->"+i.name;
+      } else {
+	throw(std::runtime_error("modifyVariableForStiffnessTensorComputation: "
+				 "unsupported input type for "
+				 "variable '"+i.name+"'"));
+      }
+    };
+    return m;
+  } // end of modifyVariableForStiffnessTensorComputation
+
+  /*!
+   * \brief modifier used for evaluating the stiffness tensor at the end of
+   * the time step.
+   */
+  static std::function<std::string(const BehaviourDescription::MaterialPropertyInput&)>&
+  modifyVariableForStiffnessTensorComputation2(){
+    using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
+    using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
+    static Modifier m = [](const BehaviourDescription::MaterialPropertyInput& i){
+      if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	return "this->"+i.name + "+this->d" + i.name;
+      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::PARAMETER)){
+	return "this->"+i.name;
+      } else {
+	throw(std::runtime_error("modifyVariableForStiffnessTensorComputation2: "
+				 "unsupported input type for "
+				 "variable '"+i.name+"'"));
+      }
+    };
+    return m;
+  } // end of modifyVariableForStiffnessTensorComputation2
+  
   static void
   writeExternalVariablesCurrentValues2(std::ostream& f,
 				       const BehaviourDescription& mb,
@@ -92,14 +161,11 @@ namespace mfront{
 				       const std::string& p)
   {
     const auto& d = mb.getBehaviourData(h);
-    //! all registred variables used in this block
-    auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
-    const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
-    uvs.insert(uvs2.begin(),uvs2.end());
+    const auto uvs = getVariablesUsedDuringIntegration(mb,h);
     for(const auto& mv : mb.getMainVariables()){
       const auto& dv = mv.first;
       if(!dv.increment_known){
-	throw(std::runtime_error("writeExternalVariablesCurrentValues2 : "
+	throw(std::runtime_error("writeExternalVariablesCurrentValues2: "
 				 "unsupported driving variable '"+dv.name+"'"));
       }
       if(uvs.find(dv.name)!=uvs.end()){
@@ -119,8 +185,7 @@ namespace mfront{
   RungeKuttaDSL::RungeKuttaDSL()
     : BehaviourDSLBase<RungeKuttaDSL>()
   {
-    using namespace std;
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->useStateVarTimeDerivative=true;
     // parameters
     this->reserveName("dtmin");
@@ -187,14 +252,15 @@ namespace mfront{
 			      &RungeKuttaDSL::treatRequireStiffnessOperator);
     this->disableCallBack("@Integrator");
     this->disableCallBack("@ComputedVar");
+    this->registerNewCallBack("@ComputeStiffnessTensor",
+			      &RungeKuttaDSL::treatComputeStiffnessTensor);
     this->mb.setIntegrationScheme(BehaviourDescription::EXPLICITSCHEME);
   }
 
   void RungeKuttaDSL::writeBehaviourParserSpecificIncludes(void)
   {
-    using namespace std;
-    bool b1 = false;
-    bool b2 = false;
+    auto b1 = false;
+    auto b2 = false;
     this->checkBehaviourFile();
     this->behaviourFile << "#include\"TFEL/Math/General/Abs.hxx\"\n\n";
     this->mb.requiresTVectorOrVectorIncludes(b1,b2);
@@ -218,7 +284,6 @@ namespace mfront{
 						const std::string& var,
 						const bool addThisPtr)
   {
-    using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
     if((this->mb.isDrivingVariableName(var)) ||(var=="T") ||
        (this->mb.isDrivingVariableIncrementName(var))||
@@ -263,10 +328,9 @@ namespace mfront{
 
   std::string
   RungeKuttaDSL::computeStressVariableModifier2(const Hypothesis h,
-							 const std::string& var,
-							 const bool addThisPtr)
+						const std::string& var,
+						const bool addThisPtr)
   {
-    using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
     if((this->mb.isDrivingVariableName(var))||(var=="T")||
        (d.isExternalStateVariableName(var))){
@@ -481,16 +545,15 @@ namespace mfront{
   void
   RungeKuttaDSL::endsInputFileProcessing(void)
   {
-    using namespace std;
     BehaviourDSLCommon::endsInputFileProcessing();
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     CodeBlock ib; // code inserted at before of the local variable initialisation
     CodeBlock ie; // code inserted at the end of the local variable initialisation
     if(!this->mb.hasAttribute(BehaviourData::algorithm)){
       this->setDefaultAlgorithm();
     }
     const auto& algorithm =
-      this->mb.getAttribute<string>(BehaviourData::algorithm);
+      this->mb.getAttribute<std::string>(BehaviourData::algorithm);
     const auto n =
       this->mb.getAttribute<unsigned short>(BehaviourData::numberOfEvaluations);
     // some checks
@@ -514,7 +577,7 @@ namespace mfront{
       const auto& evs = d.getExternalStateVariables();
       for(const auto& iv:ivs){
 	for(unsigned short i=0u;i!=n;++i){
-	  string currentVarName = "d" + iv.name + "_K"+to_string(i+1u);
+	  const auto currentVarName = "d" + iv.name + "_K"+std::to_string(i+1u);
 	  if(getVerboseMode()>=VERBOSE_DEBUG){
 	    auto& log = getLogStream();
 	    log << "registring variable '" << currentVarName << "'";
@@ -528,7 +591,7 @@ namespace mfront{
 	  this->mb.addLocalVariable(elem,VariableDescription(iv.type,currentVarName,iv.arraySize,0u));
 	}
 	if(uvs.find(iv.name)!=uvs.end()){
-	  string currentVarName = iv.name + "_";
+	  const auto currentVarName = iv.name + "_";
 	  if(getVerboseMode()>=VERBOSE_DEBUG){
 	    auto& log = getLogStream();
 	    log << "registring variable '" << currentVarName << "'";
@@ -541,7 +604,7 @@ namespace mfront{
 	  }
 	  this->mb.addLocalVariable(elem,VariableDescription(iv.type,currentVarName,iv.arraySize,0u));
 	  if(this->useDynamicallyAllocatedVector(iv.arraySize)){
-	    icb.code += "this->"+currentVarName +".resize("+to_string(iv.arraySize)+");\n";
+	    icb.code += "this->"+currentVarName +".resize("+std::to_string(iv.arraySize)+");\n";
 	  }
 	  if((algorithm!="RungeKutta4/2")&&(algorithm!="RungeKutta5/4")){
 	    icb.code += "this->" +currentVarName + " = this->" + iv.name + ";\n";
@@ -562,7 +625,7 @@ namespace mfront{
       }
       for(const auto& ev:evs){
 	if(uvs.find(ev.name)!=uvs.end()){
-	  string currentVarName = ev.name + "_";
+	  const auto currentVarName = ev.name + "_";
 	  if(getVerboseMode()>=VERBOSE_DEBUG){
 	    auto& log = getLogStream();
 	    log << "registring variable '" << currentVarName << "'";
@@ -575,7 +638,7 @@ namespace mfront{
 	  }
 	  this->mb.addLocalVariable(elem,VariableDescription(ev.type,currentVarName,ev.arraySize,0u));
 	  if(this->useDynamicallyAllocatedVector(ev.arraySize)){
-	    icb.code += "this->"+currentVarName +".resize("+to_string(ev.arraySize)+");\n";
+	    icb.code += "this->"+currentVarName +".resize("+std::to_string(ev.arraySize)+");\n";
 	  }
 	  if((algorithm!="RungeKutta4/2")&&(algorithm!="RungeKutta5/4")){
 	    icb.code += "this->" +currentVarName + " = this->" + ev.name + ";\n";
@@ -593,6 +656,12 @@ namespace mfront{
       this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u),
 			    BehaviourData::ALREADYREGISTRED);
       this->mb.setParameterDefaultValue(h,"epsilon",1.e-8);
+    }
+    if(this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false)){
+      auto D = VariableDescription("StiffnessTensor","D",1u,0u);      
+      D.description = "stiffness tensor computed from elastic "
+	"material properties";
+      this->mb.addLocalVariable(h,D,BehaviourData::ALREADYREGISTRED);
     }
     // minimal time step
     if(this->mb.hasParameter(h,"dtmin")){
@@ -626,6 +695,27 @@ namespace mfront{
     this->setMinimalTangentOperator();
   } // end of RungeKuttaDSL::endsInputFileProcessing
 
+  void RungeKuttaDSL::writeBehaviourLocalVariablesInitialisation(const Hypothesis h)
+  {
+    using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
+    if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
+      this->behaviourFile << "// the stiffness tensor at the beginning of the time step\n";
+      Modifier bts = [](const MaterialPropertyInput& i){
+	if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	   (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)||
+	   (i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+	   (i.type==MaterialPropertyInput::PARAMETER)){
+	  return "this->"+i.name;
+	} else {
+	  throw(std::runtime_error("RungeKuttaDSL::writeBehaviourLocalVariablesInitialisation: "
+				   "unsupported input type for variable '"+i.name+"'"));
+	}
+      };
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",bts);
+    }
+    BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(h);
+  } // end of RungeKuttaDSL::writeBehaviourLocalVariablesInitialisation
+  
   void
   RungeKuttaDSL::writeBehaviourParserSpecificTypedefs(void)
   {
@@ -684,7 +774,7 @@ namespace mfront{
 			  << "}\n\n";
     }
   } // end of  RungeKuttaDSL::writeBehaviourUpdateAuxiliaryStateVariables
-
+    
   void RungeKuttaDSL::writeBehaviourEulerIntegrator(const Hypothesis h)
   {
     const auto& d = this->mb.getBehaviourData(h);
@@ -693,6 +783,12 @@ namespace mfront{
     for(const auto& v : d.getStateVariables()){
       this->behaviourFile << "this->" << v.name << " += "
 			  << "this->dt*(this->d" << v.name << ");\n";
+    }
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating stiffness tensor at the end of the time step\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation2());
     }
     this->behaviourFile << "// Update stress field\n"
 			<< "this->computeFinalStress();\n";
@@ -715,11 +811,17 @@ namespace mfront{
       this->behaviourFile << "this->d" << v.name
 			  << "_K1 = (this->dt)*(this->d" << v.name << ");\n";
     }
-    writeExternalVariablesCurrentValues2(this->behaviourFile,this->mb,h,"cste1_2");
     for(const auto& iv : d.getStateVariables()){
       if(uvs.find(iv.name)!=uvs.end()){
 	this->behaviourFile << "this->" << iv.name << "_ += cste1_2*(this->d" << iv.name << "_K1);\n";
       }
+    }
+    writeExternalVariablesCurrentValues2(this->behaviourFile,this->mb,h,"cste1_2");
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "this->computeStress();\n\n"
 			<< "this->computeDerivative();\n"
@@ -727,6 +829,12 @@ namespace mfront{
     for(const auto& v : d.getStateVariables()){
       this->behaviourFile << "this->" << v.name << " += "
 			  << "this->dt*(this->d" << v.name << ");\n";
+    }
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating stiffness tensor at the end of the time step\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation2());
     }
     this->behaviourFile << "// Update stress field\n"
 			<< "this->computeFinalStress();\n";
@@ -737,7 +845,6 @@ namespace mfront{
 
   void RungeKuttaDSL::writeBehaviourRK54Integrator(const Hypothesis h)
   {
-    using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
     //! all registred variables used in ComputeDerivatives and ComputeStress blocks
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
@@ -792,6 +899,12 @@ namespace mfront{
     this->behaviourFile << "bool failed = false;\n";
     this->behaviourFile << "// Compute K1's values\n";
     writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"0");
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
+    }
     for(const auto& v : d.getStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
 	this->behaviourFile << "this->" << v.name << "_ = this->" << v.name << ";\n";
@@ -821,11 +934,23 @@ namespace mfront{
     this->behaviourFile << "}\n\n";
     this->behaviourFile << "if(!failed){\n";
     this->behaviourFile << "// Compute K2's values\n";
-    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_4");
     for(const auto& v: d.getStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
 	this->behaviourFile << "this->" << v.name << "_ += cste1_4*(this->d" << v.name << "_K1);\n";
       }
+    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_4");
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
+    }
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n";
     this->behaviourFile << "failed = !this->computeStress();\n";
@@ -853,7 +978,6 @@ namespace mfront{
 			<< "}\n\n"
 			<< "if(!failed){\n"
 			<< "// Compute K3's values\n";
-    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste3_8");
     for(const auto& v : d.getStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
 	this->behaviourFile << "this->" << v.name
@@ -861,6 +985,13 @@ namespace mfront{
 			    << "+cste3_32*(this->d" << v.name << "_K1+3*(this->d"
 			    << v.name << "_K2));\n";
       }
+    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste3_8");
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
 			<< "failed = !this->computeStress();\n";
@@ -889,7 +1020,6 @@ namespace mfront{
 
     this->behaviourFile << "if(!failed){\n";
     this->behaviourFile << "// Compute K4's values\n";
-    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste12_13");
     for(const auto& v : d.getStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
 	this->behaviourFile << "this->" << v.name
@@ -898,6 +1028,13 @@ namespace mfront{
 			    << "-cste7200_2197*(this->d" << v.name << "_K2)"
 			    << "+cste7296_2197*(this->d" << v.name << "_K3);\n";
       }
+    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste12_13");
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n";
     this->behaviourFile << "failed = !this->computeStress();\n";
@@ -925,7 +1062,6 @@ namespace mfront{
 			<< "}\n\n"
 			<< "if(!failed){\n"
 			<< "// Compute K5's values\n";
-    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"1");
     for(const auto & v : d.getStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
 	this->behaviourFile << "this->" << v.name
@@ -935,6 +1071,13 @@ namespace mfront{
 			    << "+cste3680_513*(this->d" << v.name << "_K3)"
 			    << "-cste845_4104*(this->d" << v.name << "_K4);\n";
       }
+    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"1");
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n";
     this->behaviourFile << "failed = !this->computeStress();\n";
@@ -962,7 +1105,6 @@ namespace mfront{
 			<< "}\n\n"
 			<< "if(!failed){\n"
 			<< "// Compute K6's values\n";
-    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_2");
     for(const auto& v : d.getStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
 	this->behaviourFile << "this->" << v.name
@@ -973,6 +1115,13 @@ namespace mfront{
 			    << "+cste1859_4104*(this->d" << v.name << "_K4)"
 			    << "-cste11_40*(this->d" << v.name << "_K5);\n";
       }
+    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_2");
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
 			<< "failed = !this->computeStress();\n";
@@ -1147,6 +1296,12 @@ namespace mfront{
 			  << "-cste9_50*(this->d" << v.name << "_K5)"
 			  << "+cste2_55*(this->d" << v.name << "_K6);\n";
     }
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating stiffness tensor at the end of the time step\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+    					    modifyVariableForStiffnessTensorComputation());
+    }
     this->behaviourFile << "// Update stress field\n"
 			<< "this->computeFinalStress();\n";
     if(d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)){
@@ -1263,11 +1418,17 @@ namespace mfront{
 			  << "::integrate() : from \" << t <<  \" to \" << t+dt_ << \" with time step \" << dt_ << endl;\n";
     }
     this->behaviourFile << "// Compute K1's values => y in castem \n";
-    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"0");
     for(const auto& v : d.getStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
 	this->behaviourFile << "this->" << v.name << "_ = this->" << v.name << ";\n";
       }
+    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"0");
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "failed = !this->computeStress();\n";
     if(getDebugMode()){
@@ -1294,11 +1455,17 @@ namespace mfront{
     this->behaviourFile << "}\n\n";
     this->behaviourFile << "if(!failed){\n";
     this->behaviourFile << "// Compute K2's values => y1 in castem\n";
-    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_2");
     for(const auto& v : d.getStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
 	this->behaviourFile << "this->" << v.name << "_ += cste1_2*(this->d" << v.name << "_K1);\n";
       }
+    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_2");
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
 			<< "failed = !this->computeStress();\n";
@@ -1334,6 +1501,12 @@ namespace mfront{
 			    << "+cste1_4*(this->d" << v.name << "_K1 + this->d" << v.name << "_K2);\n";
       }
     }
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
+    }
     this->behaviourFile << "// Update stress field\n"
 			<< "failed = !this->computeStress();\n";
     if(getDebugMode()){
@@ -1361,12 +1534,18 @@ namespace mfront{
 			<< "}\n\n"
 			<< "if(!failed){\n"
 			<< "// Compute K4's values => y13 = y12+y'3*dt/2 in castem\n";
-    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"1");
     for(const auto& v : d.getStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
 	this->behaviourFile << "this->" << v.name
 			    << "_ += cste1_2*(this->d" << v.name << "_K3);\n";
       }
+    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"1");
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
 			<< "failed = !this->computeStress();\n";
@@ -1403,6 +1582,12 @@ namespace mfront{
 			    << "+cste1_4*(this->d" << v.name << "_K1 + this->d" << v.name
 			    << "_K2 + this->d" << v.name << "_K3 + this->d" << v.name << "_K4);\n";
       }
+    }
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
 			<< "failed = !this->computeStress();\n";
@@ -1441,6 +1626,12 @@ namespace mfront{
 			    << "_K3 + this->d" << v.name << "_K5);\n";
       }
     }
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
+    }
     this->behaviourFile << "// Update stress field\n"
 			<< "failed = !this->computeStress();\n";
     if(getDebugMode()){
@@ -1476,6 +1667,12 @@ namespace mfront{
       this->behaviourFile << "this->" << v.name
 			  << " += cste1_4*(this->d" << v.name << "_K1 + this->d" << v.name
 			  << "_K2 + this->d" << v.name << "_K3 + this->d" << v.name << "_K4);\n";
+    }
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating stiffness tensor at the end of the time step\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "this->computeFinalStress();\n";
     if(this->mb.hasCode(h,BehaviourData::UpdateAuxiliaryStateVariables)){
@@ -1524,7 +1721,6 @@ namespace mfront{
 
   void RungeKuttaDSL::writeBehaviourRK42Integrator(const Hypothesis h)
   {
-    using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
     const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
@@ -1560,11 +1756,17 @@ namespace mfront{
     }
     this->behaviourFile << "bool failed = false;\n";
     this->behaviourFile << "// Compute K1's values\n";
-    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"0");
     for(const auto& v: d.getStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
 	this->behaviourFile << "this->" << v.name << "_ = this->" << v.name << ";\n";
       }
+    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"0");
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "failed = !this->computeStress();\n";
     if(getDebugMode()){
@@ -1590,11 +1792,17 @@ namespace mfront{
 			<< "}\n\n"
 			<< "if(!failed){\n"
 			<< "// Compute K2's values\n";
-    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_2");
     for(const auto& v : d.getStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
 	this->behaviourFile << "this->" << v.name << "_ += cste1_2*(this->d" << v.name << "_K1);\n";
       }
+    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"cste1_2");
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
 			<< "failed = !this->computeStress();\n";
@@ -1655,13 +1863,19 @@ namespace mfront{
 			<< "}\n\n"
 			<< "if(!failed){\n"
 			<< "// Compute K4's values\n";
-    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"1");
     for(const auto& v : d.getStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
 	this->behaviourFile << "this->" << v.name
 			    << "_ = this->" << v.name
 			    << "+this->d" << v.name << "_K3;\n";
       }
+    }
+    writeExternalVariablesCurrentValues(this->behaviourFile,this->mb,h,"1");
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
 			<< "failed = !this->computeStress();\n";
@@ -1717,8 +1931,8 @@ namespace mfront{
 	      this->behaviourFile << "error  = Type(0);\n";
 	      first=false;
 	    }
-	    this->behaviourFile << "for(unsigned short idx=0;idx!=" <<v.arraySize << ";++idx){\n";
-	    this->behaviourFile << "error += tfel::math::abs(";
+	    this->behaviourFile << "for(unsigned short idx=0;idx!=" <<v.arraySize << ";++idx){\n"
+				<< "error += tfel::math::abs(";
 	    if(enf.find(v.name)!=enf.end()){
 	      this->behaviourFile << "(";
 	    }
@@ -1889,10 +2103,10 @@ namespace mfront{
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
     const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
     uvs.insert(uvs2.begin(),uvs2.end());
-    this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};\n";
-    this->behaviourFile << "// Compute K1's values\n";
-    this->behaviourFile << "this->computeStress();\n";
-    this->behaviourFile << "this->computeDerivative();\n";
+    this->behaviourFile << "constexpr real cste1_2 = real{1}/real{2};\n"
+			<< "// Compute K1's values\n"
+			<< "this->computeStress();\n"
+			<< "this->computeDerivative();\n";
     for(const auto& v : d.getStateVariables()){
       this->behaviourFile << "this->d" << v.name
 			  << "_K1 = (this->dt)*(this->d" << v.name << ");\n";
@@ -1902,6 +2116,12 @@ namespace mfront{
       if(uvs.find(iv.name)!=uvs.end()){
 	this->behaviourFile << "this->" << iv.name << "_ += cste1_2*(this->d" << iv.name << "_K1);\n";
       }
+    }
+    if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
+       (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
+      this->behaviourFile << "// updating the stiffness tensor\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
 			<< "this->computeStress();\n\n"
@@ -1942,10 +2162,10 @@ namespace mfront{
     this->behaviourFile << "// Final Step\n";
     for(const auto& v : d.getStateVariables()){
       this->behaviourFile << "this->" << v.name << " += "
-			  << "1.f/6.f*(this->d" << v.name
-			  << "_K1+this->d" << v.name << "_K4)+\n";
-      this->behaviourFile << "1.f/3.f*(this->d" << v.name
-			  << "_K2+this->d" << v.name << "_K3);\n";
+			  << "(this->d" << v.name
+			  << "_K1+this->d" << v.name << "_K4)/6+\n";
+      this->behaviourFile << "(this->d" << v.name
+			  << "_K2+this->d" << v.name << "_K3)/3;\n";
     }
     this->behaviourFile << "// Update stress field\n"
 			<< "this->computeFinalStress();\n";

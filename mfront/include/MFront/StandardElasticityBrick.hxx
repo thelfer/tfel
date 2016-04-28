@@ -57,8 +57,8 @@ namespace mfront{
      * \param[in] p    : parameters
      */
     StandardElasticityBrick(AbstractBehaviourDSL&,
-			     BehaviourDescription&,
-			     const Parameters&);
+			    BehaviourDescription&,
+			    const Parameters&);
     //! \return the name of the brick
     virtual std::string getName() const override;
     /*!
@@ -75,6 +75,11 @@ namespace mfront{
     virtual ~StandardElasticityBrick();
   protected:
     /*!
+     * \brief declared the computeStress and computeFinalStress when the
+     * requiresStiffnessTensor attribute has been set.
+     */
+    void declareComputeStressWhenStiffnessTensorIsDefined(void) const;
+    /*!
      * treat the case of isotropic behaviours
      */
     virtual void
@@ -84,8 +89,24 @@ namespace mfront{
      */
     virtual void
     treatOrthotropicBehaviour(void) const;
-    bool pss; //!< plane stress support
-    bool gto; //!< generic tangent operator support support
+    /*!
+     * \brief add support for the AXISYMMETRICALGENERALISEDPLANESTRESS
+     * modelling hypothesis
+     */
+    virtual void
+    addAxisymmetricalGeneralisedPlaneStressSupport(void) const;
+    /*!
+     * \brief add support for the PLANESTRESS modelling hypothesis
+     */
+    virtual void addPlaneStressSupport(void) const;
+    /*!
+     * \brief add the generic tangent operator computation
+     */
+    virtual void addGenericTangentOperatorSupport(void) const;
+    //! plane stress support; 
+    bool pss = true;
+    //! generic tangent operator support support
+    bool gto = true;
   }; // end of struct StandardElasticityBrick
 
 } // end of namespace mfront

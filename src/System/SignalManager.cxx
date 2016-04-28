@@ -260,7 +260,6 @@ namespace tfel
       }
     } // end of SignalManager::removeHandler
 
-    
     void
     SignalManager::treatAction(int sig)
     {

@@ -73,6 +73,8 @@ namespace mfront{
 
     virtual void writeBehaviourParserSpecificMembers(const Hypothesis) override;
 
+    virtual void writeBehaviourLocalVariablesInitialisation(const Hypothesis) override;
+    
     virtual void writeBehaviourEulerIntegrator(const Hypothesis);
 
     virtual void writeBehaviourRK2Integrator(const Hypothesis);
