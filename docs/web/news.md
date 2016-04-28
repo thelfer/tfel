@@ -2,6 +2,34 @@
 % Helfer Thomas
 % Janvier 19, 2016
 
+# Cast3m 2016 is out (28 April 2016)
+
+![](img/IconeCast3M_bleue.png "")
+
+[`Cast3M`](http://www-cast3m.cea.fr) 2016 has been released.
+
+This version allow even better integration with `MFront` and can now
+directly be used to make direct calls to `MFront` libraries for
+material properties (mechanical behaviours can be used since Cast3M
+2015). 
+
+This syntax is now officially supported:
+
+~~~~{.python}
+Ty = 'TABLE' ;
+Ty.'LIB_LOI'   = 'libCastemM5.so' ;
+Ty.'FCT_LOI'   = 'M5_YoungModulus' ;
+Ty.'VARIABLES' = 'MOTS' 'T';
+
+mo = 'MODELISER' m 'MECANIQUE' 'ELASTIQUE';
+ma = 'MATERIAU' mo 'YOUN' Ty 'NU' 0.3;
+~~~~
+
+A binary version of TFEL compiled for Cast3M 2016 is now available for
+download on sourceforge:
+
+<https://sourceforge.net/projects/tfel/files/>
+
 # Second MFront Users Day
 
 ![](img/mfront-flyer-en.png "second users day flyer")

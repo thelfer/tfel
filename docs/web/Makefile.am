@@ -93,6 +93,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/materiaux2014.jpg		                   \
 	   ./img/SalomeMeca2015.png 				   \
 	   ./img/IconeCast3M_verte.png 				   \
+	   ./img/IconeCast3M_bleue.png 				   \
 	   ./img/poster-giens2015.svg 				   \
 	   ./img/Norton.mfront  				   \
 	   ./img/Norton-web.docx				   \
