@@ -18,7 +18,6 @@
 
 namespace mfront{
 
-
   //! forward declaration
   struct VariableDescriptionContainer;
   //! forward declaration
@@ -93,4 +92,3 @@ namespace mfront{
 }
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICKBASE_H */
-

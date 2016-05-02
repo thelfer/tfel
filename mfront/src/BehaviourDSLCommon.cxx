@@ -4287,7 +4287,7 @@ namespace mfront{
 	    }
 	  }
 	}
-	this->behaviourFile << "IntegrationResult computePredictionOperator(const SMFlag smflag,const SMType smt){\n"
+	this->behaviourFile << "IntegrationResult computePredictionOperator(const SMFlag smflag,const SMType smt) override{\n"
 			    << "using namespace std;\n"
 			    << "switch(smflag){\n";
 	for(const auto& t:tos){

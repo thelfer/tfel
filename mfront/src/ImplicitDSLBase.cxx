@@ -124,36 +124,68 @@ namespace mfront{
   void ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation(const Hypothesis h)
   {
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
+    Modifier mts = [](const MaterialPropertyInput& i){
+      if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	return "this->"+i.name + "+theta*(this->d" + i.name+')';
+      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::PARAMETER)){
+	return "this->"+i.name;
+      } else {
+	throw(std::runtime_error("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation: "
+				 "unsupported input type for variable '"+i.name+"'"));
+      }
+    };
+    Modifier ets = [](const MaterialPropertyInput& i){
+      if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	return "this->"+i.name + "+this->d" + i.name;
+      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::PARAMETER)){
+	return "this->"+i.name;
+      } else {
+	throw(std::runtime_error("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation: "
+				 "unsupported input type for variable '"+i.name+"'"));
+      }
+    };
     if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
       this->behaviourFile << "// updating the stiffness tensor at the middle of the time step\n";
-      Modifier mts = [](const MaterialPropertyInput& i){
-	if((i.type==MaterialPropertyInput::TEMPERATURE)||
-	   (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
-	  return "this->"+i.name + "+theta*(this->d" + i.name+')';
-	} else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
-		   (i.type==MaterialPropertyInput::PARAMETER)){
-	  return "this->"+i.name;
-	} else {
-	  throw(std::runtime_error("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation: "
-				   "unsupported input type for variable '"+i.name+"'"));
-	}
-      };
       this->writeStiffnessTensorComputation(this->behaviourFile,"D",mts);
       if(!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
 	this->behaviourFile << "// stiffness tensor at the end of the time step\n";
-	Modifier ets = [](const MaterialPropertyInput& i){
-	  if((i.type==MaterialPropertyInput::TEMPERATURE)||
-	     (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
-	    return "this->"+i.name + "+this->d" + i.name;
-	  } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
-		     (i.type==MaterialPropertyInput::PARAMETER)){
-	    return "this->"+i.name;
-	  } else {
-	    throw(std::runtime_error("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation: "
-				     "unsupported input type for variable '"+i.name+"'"));
-	  }
-	};
 	this->writeStiffnessTensorComputation(this->behaviourFile,"D_tdt",ets);
+      }
+    }
+    if((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false))&&
+       (this->mb.getElasticSymmetryType()==ISOTROPIC)&&
+       (this->mb.areElasticMaterialPropertiesDefined())){
+      const auto& emps = this->mb.getElasticMaterialProperties();
+      if(emps.size()!=2u){
+	this->throwRuntimeError("BehaviourDSLCommon::writeStiffnessTensorComputation",
+				"invalid number of material properties");
+      }
+      this->writeMaterialPropertyCheckBoundsEvaluation(this->behaviourFile,emps[0],mts);
+      this->writeMaterialPropertyCheckBoundsEvaluation(this->behaviourFile,emps[1],mts);
+      this->behaviourFile << "this->young=";
+      this->writeMaterialPropertyEvaluation(this->behaviourFile,emps[0],mts);
+      this->behaviourFile << "\nthis->nu=";
+      this->writeMaterialPropertyEvaluation(this->behaviourFile,emps[1],mts);
+      this->behaviourFile << "\nthis->lambda=computeLambda(young,nu);\n";
+      this->behaviourFile << "this->mu=computeMu(young,nu);\n";
+      if(!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
+	this->writeMaterialPropertyCheckBoundsEvaluation(this->behaviourFile,emps[0],ets);
+	this->writeMaterialPropertyCheckBoundsEvaluation(this->behaviourFile,emps[1],ets);
+	this->behaviourFile << "this->young_tdt=";
+	this->writeMaterialPropertyEvaluation(this->behaviourFile,emps[0],ets);
+	this->behaviourFile << "\nthis->nu_tdt=";
+	this->writeMaterialPropertyEvaluation(this->behaviourFile,emps[1],ets);
+	this->behaviourFile << "\nthis->lambda_tdt = computeLambda(young_tdt,nu_tdt);\n";
+	this->behaviourFile << "this->mu_tdt     = computeMu(young_tdt,nu_tdt);\n";
+      } else {
+	this->behaviourFile << "this->young_tdt  = this->young;\n";
+	this->behaviourFile << "this->nu_tdt     = this->nu;\n";
+	this->behaviourFile << "this->lambda_tdt = this->lambda;\n";
+	this->behaviourFile << "this->mu_tdt     = this->mu;\n";
       }
     }
     BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(h);
@@ -811,7 +843,7 @@ namespace mfront{
   void
   ImplicitDSLBase::writeBehaviourParserSpecificMembers(const Hypothesis h)
   {
-    using namespace std;
+    BehaviourDSLCommon::writeBehaviourParserSpecificMembers(h);
     const auto& d = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     VariableDescriptionContainer::const_iterator p2;
@@ -918,9 +950,8 @@ namespace mfront{
 	      			  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0u);\n"
 	      			  << "}\n\n";
 	    } else {
-	      string msg("ImplicitDSLBase::writeBehaviourParserSpecificMembers : ");
-	      msg += "derivation of a vector by a tensor is not defined";
-	      throw(runtime_error(msg));
+	      this->throwRuntimeError("ImplicitDSLBase::writeBehaviourParserSpecificMembers",
+				      "derivation of a vector by a tensor is not defined");
 	    }
 	  } else {
 	    if(flag2==SupportedTypes::Scalar){
@@ -958,9 +989,8 @@ namespace mfront{
 				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0u);\n"
 				  << "}\n\n";
 	    } else {
-	      string msg("ImplicitDSLBase::writeBehaviourParserSpecificMembers : ");
-	      msg += "derivation of a tensor by a vector is not defined";
-	      throw(runtime_error(msg));
+	      this->throwRuntimeError("ImplicitDSLBase::writeBehaviourParserSpecificMembers",
+				      "derivation of a tensor by a vector is not defined");
 	    }
 	  }
 	} else if((p->arraySize==1u)&&(p2->arraySize!=1u)){
@@ -1131,6 +1161,8 @@ namespace mfront{
     this->behaviourFile << "tfel::math::tvector<" << n << ",Type> fzeros;\n\n";
     this->behaviourFile << "// number of iterations\n";
     this->behaviourFile << "unsigned int iter = 0u;\n\n";
+    //
+    
     if(this->solver->usesJacobian()){
       // compute the numerical part of the jacobian.  This method is
       // used to compute a numerical approximation of the jacobian for
@@ -1779,7 +1811,7 @@ namespace mfront{
       }
     }
     if(this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false)){
-      auto D = VariableDescription("StiffnessTensor","D",1u,0u);      
+      auto D = VariableDescription("StiffnessTensor","D",1u,0u); 
       D.description = "stiffness tensor computed from elastic "
 	"material properties";
       this->mb.addLocalVariable(h,D,BehaviourData::ALREADYREGISTRED);
@@ -1789,7 +1821,26 @@ namespace mfront{
       D_tdt.description = "stiffness tensor computed from elastic "
 	"material properties";
       this->mb.addLocalVariable(h,D_tdt,BehaviourData::ALREADYREGISTRED);
-	
+    }
+    if((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false))&&
+       (this->mb.getElasticSymmetryType()==ISOTROPIC)&&
+       (this->mb.areElasticMaterialPropertiesDefined())){
+      auto add_lv = [](BehaviourDescription& bd,
+		       const std::string& t,
+		       const std::string& n,
+		       const std::string d){
+	VariableDescription v(t,n,1u,0u);
+	v.description = d;
+	bd.addLocalVariable(h,v,BehaviourData::UNREGISTRED);
+      };
+      add_lv(this->mb,"stress","young","Young modulus at t+theta*dt");
+      add_lv(this->mb,"real","nu","Poisson ratio at t+theta*dt");
+      add_lv(this->mb,"stress","lambda","first Lamé coefficient at t+theta*dt");
+      add_lv(this->mb,"stress","mu","shear modulus at t+theta*dt");
+      add_lv(this->mb,"stress","young_tdt","Young modulus at t+dt");
+      add_lv(this->mb,"real","nu_tdt","Poisson ratio at t+dt");
+      add_lv(this->mb,"stress","lambda_tdt","first Lamé coefficient at t+dt");
+      add_lv(this->mb,"stress","mu_tdt","shear modulus at t+dt");
     }
     // create the compute final stress code is necessary
     this->setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();

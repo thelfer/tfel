@@ -12,6 +12,7 @@
  */
 
 #include<cmath>
+#include<random>
 #include<fstream>
 #include<cstdlib>
 #include<iostream>

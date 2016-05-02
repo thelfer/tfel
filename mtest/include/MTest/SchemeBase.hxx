@@ -52,7 +52,7 @@ namespace mtest{
      * \param[in] h : modelling hypothesis
      */
     virtual void
-    setModellingHypothesis(const std::string&);
+    setModellingHypothesis(const std::string&) override;
     /*!
      * \param[in] t : times
      */
@@ -228,8 +228,6 @@ namespace mtest{
      * \note this method must be called by the derived class.
      */ 
     virtual void completeInitialisation(void);
-    //! \brief set the modelling hypothesis to the default one
-    virtual void setDefaultModellingHypothesis(void) = 0;
     //! \return the default stiffness matrix type
     virtual StiffnessMatrixType
     getDefaultStiffnessMatrixType(void) const = 0;

@@ -33,6 +33,7 @@ namespace mfront{
     };
     // reserve some specific variables
     this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"Je");
+    this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"szz");
     // basic checks
     throw_if(this->bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
 	     "this BehaviourBrick is only usable for small strain behaviours");
@@ -153,25 +154,33 @@ namespace mfront{
       getLogStream() << "StandardElasticityBrick::treatIsotropicBehaviour: begin\n";
     }
     this->bd.appendToIncludes("#include\"TFEL/Material/Lame.hxx\"");
-    this->addMaterialPropertyIfNotDefined("stress","young",Glossary::YoungModulus);
-    this->addMaterialPropertyIfNotDefined("real","nu",Glossary::PoissonRatio);
-    this->addLocalVariable("stress","lambda");
-    this->addLocalVariable("stress","mu");
-    // local variable initialisation
-    CodeBlock init;
-    init.code = "// initialisation Lame's coefficient\n"
-      "this->lambda=tfel::material::computeLambda(this->young,this->nu);\n"
-      "this->mu=tfel::material::computeMu(this->young,this->nu);\n";
     CodeBlock smts;
-    smts.code =
-      "this->sig=this->lambda*trace(this->eel+theta*(this->deel))*Stensor::Id()+"
-      "2*(this->mu)*(this->eel+theta*(this->deel));\n";
     CodeBlock sets;
-    sets.code =
-      "this->sig=this->lambda*trace(this->eel)*Stensor::Id()+2*(this->mu)*this->eel;";
-    this->bd.setCode(h,BehaviourData::BeforeInitializeLocalVariables,
-		     init,BehaviourData::CREATE,
-		     BehaviourData::AT_BEGINNING,false);
+    if(this->bd.areElasticMaterialPropertiesDefined()){
+      smts.code =
+	"this->sig=this->lambda*trace(this->eel+theta*(this->deel))*Stensor::Id()+"
+	"2*(this->mu)*(this->eel+theta*(this->deel));\n";
+      sets.code =
+	"this->sig=this->lambda_tdt*trace(this->eel)*Stensor::Id()+2*(this->mu_tdt)*this->eel;";
+    } else {
+      this->addMaterialPropertyIfNotDefined("stress","young",Glossary::YoungModulus);
+      this->addMaterialPropertyIfNotDefined("real","nu",Glossary::PoissonRatio);
+      this->addLocalVariable("stress","lambda");
+      this->addLocalVariable("stress","mu");
+      // local variable initialisation
+      CodeBlock init;
+      init.code = "// initialisation Lame's coefficient\n"
+	"this->lambda=tfel::material::computeLambda(this->young,this->nu);\n"
+	"this->mu=tfel::material::computeMu(this->young,this->nu);\n";
+      smts.code =
+	"this->sig=this->lambda*trace(this->eel+theta*(this->deel))*Stensor::Id()+"
+	"2*(this->mu)*(this->eel+theta*(this->deel));\n";
+      sets.code =
+	"this->sig=this->lambda*trace(this->eel)*Stensor::Id()+2*(this->mu)*this->eel;";
+      this->bd.setCode(h,BehaviourData::BeforeInitializeLocalVariables,
+		       init,BehaviourData::CREATE,
+		       BehaviourData::AT_BEGINNING,false);
+    }
     this->bd.setCode(h,BehaviourData::ComputeStress,
 		     smts,BehaviourData::CREATE,
 		     BehaviourData::AT_BEGINNING,false);
@@ -207,30 +216,46 @@ namespace mfront{
        (this->bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))){
       integrator.code +=
 	"// the generalised plane stress equation is satisfied at the end of the time step\n"
-	"const stress szz = (this->D(1,1))*(this->eel(1)+this->deel(1))+(this->D(1,0))*(this->eel(0)+this->deel(0))+(this->D(2,0))*(this->eel(2)+this->deel(2));\n"
-	"fetozz   = (szz-this->sigzz-this->dsigzz)/(this->D(1,1));\n"
+	"const stress szz = (this->D_tdt(1,1))*(this->eel(1)+this->deel(1))+(this->D_tdt(1,0))*(this->eel(0)+this->deel(0))+(this->D_tdt(2,0))*(this->eel(2)+this->deel(2));\n"
+	"fetozz   = (szz-this->sigzz-this->dsigzz)/(this->D_tdt(1,1));\n"
 	"// modification of the partition of strain\n"
 	"feel(1) -= this->detozz;\n"
 	"// jacobian\n"
 	"dfeel_ddetozz(1) = -1;\n"
 	"dfetozz_ddetozz  = real(0);\n"
 	"dfetozz_ddeel(1) = 1;\n"
-	"dfetozz_ddeel(0) = (this->D(1,0))/(this->D(1,1));\n"
-	"dfetozz_ddeel(2) = (this->D(2,0))/(this->D(1,1));\n";
+	"dfetozz_ddeel(0) = (this->D_tdt(1,0))/(this->D_tdt(1,1));\n"
+	"dfetozz_ddeel(2) = (this->D_tdt(2,0))/(this->D_tdt(1,1));\n";
     } else {
-      integrator.code +=
-	"// the generalised plane stress equation is satisfied at the end of the time step\n"
-	"const stress szz =   (this->lambda+2*(this->mu))*(this->eel(1)+this->deel(1))"
-	"                   + (this->lambda)*(this->eel(0)+this->deel(0)+this->eel(2)+this->deel(2));\n"
-	"fetozz   = (szz-this->sigzz-this->dsigzz)/this->young;\n"
-	"// modification of the partition of strain\n"
-	"feel(1) -= this->detozz;\n"
-	"// jacobian\n"
-	"dfeel_ddetozz(1) = -1;\n"
-	"dfetozz_ddetozz  = real(0);\n"
-	"dfetozz_ddeel(1) = (this->lambda+2*(this->mu))/this->young;\n"
-	"dfetozz_ddeel(0) = this->lambda/this->young;\n"
-	"dfetozz_ddeel(2) = this->lambda/this->young;\n";
+      if(this->bd.areElasticMaterialPropertiesDefined()){
+	integrator.code +=
+	  "// the generalised plane stress equation is satisfied at the end of the time step\n"
+	  "const stress szz =   (this->lambda_tdt+2*(this->mu_tdt))*(this->eel(1)+this->deel(1))"
+	  "                   + (this->lambda_tdt)*(this->eel(0)+this->deel(0)+this->eel(2)+this->deel(2));\n"
+	  "fetozz   = (szz-this->sigzz-this->dsigzz)/this->young_tdt;\n"
+	  "// modification of the partition of strain\n"
+	  "feel(1) -= this->detozz;\n"
+	  "// jacobian\n"
+	  "dfeel_ddetozz(1) = -1;\n"
+	  "dfetozz_ddetozz  = real(0);\n"
+	  "dfetozz_ddeel(1) = (this->lambda_tdt+2*(this->mu_tdt))/this->young_tdt;\n"
+	  "dfetozz_ddeel(0) = this->lambda_tdt/this->young_tdt;\n"
+	  "dfetozz_ddeel(2) = this->lambda_tdt/this->young_tdt;\n";
+      } else {
+	integrator.code +=
+	  "// the generalised plane stress equation is satisfied at the end of the time step\n"
+	  "const stress szz =   (this->lambda+2*(this->mu))*(this->eel(1)+this->deel(1))"
+	  "                   + (this->lambda)*(this->eel(0)+this->deel(0)+this->eel(2)+this->deel(2));\n"
+	  "fetozz   = (szz-this->sigzz-this->dsigzz)/this->young;\n"
+	  "// modification of the partition of strain\n"
+	  "feel(1) -= this->detozz;\n"
+	  "// jacobian\n"
+	  "dfeel_ddetozz(1) = -1;\n"
+	  "dfetozz_ddetozz  = real(0);\n"
+	  "dfetozz_ddeel(1) = (this->lambda+2*(this->mu))/this->young;\n"
+	  "dfetozz_ddeel(0) = this->lambda/this->young;\n"
+	  "dfetozz_ddeel(2) = this->lambda/this->young;\n";
+      }
     }
     this->bd.setCode(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,
 		     BehaviourData::Integrator,
@@ -252,18 +277,33 @@ namespace mfront{
 	"// the plane stress equation is satisfied at the end of the time step\n"
 	"const stress szz = ;\n"
 	"fetozz   = this->eel(1)+this->deel(1)+"
-	"           ((this->D(1,0))/(this->D(1,1)))*(this->eel(0)+this->deel(0))+"
-	"           ((this->D(2,0))/(this->D(1,1)))*(this->eel(2)+this->deel(2));\n"
+	"           ((this->D_tdt(1,0))/(this->D_tdt(1,1)))*(this->eel(0)+this->deel(0))+"
+	"           ((this->D_tdt(2,0))/(this->D_tdt(1,1)))*(this->eel(2)+this->deel(2));\n"
 	"// modification of the partition of strain\n"
 	"feel(1)          -= this->detozz;\n"
 	"// jacobian\n"
 	"dfeel_ddetozz(1)  = -1;\n"
 	"dfetozz_ddetozz   = real(0);\n"
 	"dfetozz_ddeel(1)  = 1;\n"
-	"dfetozz_ddeel(0)  = (this->D(1,0))/(this->D(1,1));\n"
-	"dfetozz_ddeel(2)  = (this->D(2,0))/(this->D(1,1));\n";
+	"dfetozz_ddeel(0)  = (this->D_tdt(1,0))/(this->D_tdt(1,1));\n"
+	"dfetozz_ddeel(2)  = (this->D_tdt(2,0))/(this->D_tdt(1,1));\n";
     } else {
-      integrator.code +=
+      if(this->bd.areElasticMaterialPropertiesDefined()){
+	integrator.code +=
+	  "// the plane stress equation is satisfied at the end of the time step\n"
+	  "const stress szz = (this->lambda_tdt+2*(this->mu_tdt))*(this->eel(2)+this->deel(2))+"
+	  "                   (this->lambda_tdt)*(this->eel(0)+this->deel(0)+this->eel(1)+this->deel(1));\n"
+	  "fetozz   = szz/(this->young_tdt);\n"
+	  "// modification of the partition of strain\n"
+	  "feel(2) -= detozz;\n"
+	  "// jacobian\n"
+	  "dfeel_ddetozz(2) = -1;\n"
+	  "dfetozz_ddetozz  = real(0);\n"
+	  "dfetozz_ddeel(2) = (this->lambda_tdt+2*(this->mu_tdt))/this->young_tdt;\n"
+	  "dfetozz_ddeel(0) = this->lambda_tdt/this->young_tdt;\n"
+	  "dfetozz_ddeel(1) = this->lambda_tdt/this->young_tdt;\n";
+      } else {
+	integrator.code +=
 	"// the plane stress equation is satisfied at the end of the time step\n"
 	"const stress szz = (this->lambda+2*(this->mu))*(this->eel(2)+this->deel(2))+"
 	"                   (this->lambda)*(this->eel(0)+this->deel(0)+this->eel(1)+this->deel(1));\n"
@@ -276,6 +316,7 @@ namespace mfront{
 	"dfetozz_ddeel(2) = (this->lambda+2*(this->mu))/this->young;\n"
 	"dfetozz_ddeel(0) = this->lambda/this->young;\n"
 	"dfetozz_ddeel(1) = this->lambda/this->young;\n";
+      }
     }
     this->bd.setCode(ModellingHypothesis::PLANESTRESS,
 		     BehaviourData::Integrator,

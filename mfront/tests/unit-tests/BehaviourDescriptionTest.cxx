@@ -41,26 +41,22 @@ struct BehaviourDescriptionTest final
     this->test2(&BehaviourDescription::declareAsASmallStrainStandardBehaviour);
     this->test2(&BehaviourDescription::declareAsAFiniteStrainStandardBehaviour);
     this->test2(&BehaviourDescription::declareAsACohesiveZoneModel);
-    for (const auto& m : { &BehaviourDescription::addMaterialProperty,
-	  &BehaviourDescription::addStateVariable,
-	  &BehaviourDescription::addAuxiliaryStateVariable,
-	  &BehaviourDescription::addIntegrationVariable,
-	  &BehaviourDescription::addExternalStateVariable,
-	  &BehaviourDescription::addLocalVariable,
-	  &BehaviourDescription::addParameter }) {
-      this->test3(m);
-    }
+    this->test3(&BehaviourDescription::addMaterialProperty);
+    this->test3(&BehaviourDescription::addStateVariable);
+    this->test3(&BehaviourDescription::addAuxiliaryStateVariable);
+    this->test3(&BehaviourDescription::addIntegrationVariable);
+    this->test3(&BehaviourDescription::addExternalStateVariable);
+    this->test3(&BehaviourDescription::addLocalVariable);
+    this->test3(&BehaviourDescription::addParameter);
     this->test4();
     this->test5();
-    for (const auto& m : { &BehaviourDescription::addMaterialProperty,
-	  &BehaviourDescription::addStateVariable,
-	  &BehaviourDescription::addAuxiliaryStateVariable,
-	  &BehaviourDescription::addIntegrationVariable,
-	  &BehaviourDescription::addExternalStateVariable,
-	  &BehaviourDescription::addLocalVariable,
-	  &BehaviourDescription::addParameter }) {
-      this->test6(m);
-    }
+    this->test6(&BehaviourDescription::addMaterialProperty);
+    this->test6(&BehaviourDescription::addStateVariable);
+    this->test6(&BehaviourDescription::addAuxiliaryStateVariable);
+    this->test6(&BehaviourDescription::addIntegrationVariable);
+    this->test6(&BehaviourDescription::addExternalStateVariable);
+    this->test6(&BehaviourDescription::addLocalVariable);
+    this->test6(&BehaviourDescription::addParameter);
     return this->result;
   } // end of execute
   

@@ -83,7 +83,7 @@ namespace mfront{
     virtual void
     writeBehaviourDataDrivingVariableSetter(std::ostream&,
 					    const DrivingVariable&,
-					    const SupportedTypes::TypeSize) const;
+					    const SupportedTypes::TypeSize) const override;
     /*!
      * \brief write the initialisation of a driving variables
      * \param[in] os : output file
@@ -93,7 +93,7 @@ namespace mfront{
     virtual void
     writeIntegrationDataDrivingVariableSetter(std::ostream&,
 					      const DrivingVariable&,
-					      const SupportedTypes::TypeSize) const;
+					      const SupportedTypes::TypeSize) const override;
     /*!
      * \brief write the instruction of exporting a thermodynamic force in an array
      * \param[out] out : output stream

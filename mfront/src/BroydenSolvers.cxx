@@ -91,7 +91,6 @@ namespace mfront{
   void
   MFrontBroydenSolverBase::endsInputFileProcessing(BehaviourDescription& mb) const
   {
-    using namespace std;
     if(this->usesPowellDogLegAlgorithm()){
       return PowellDogLegAlgorithmBase::endsInputFileProcessing(mb);
     }
@@ -108,22 +107,20 @@ namespace mfront{
 							     const BehaviourDescription& mb,
 							     const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
-    using namespace std;
     const auto& d = mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
     // size of linear system
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n += mb.getTypeSize(p->type,p->arraySize);
+    for(const auto& v : d.getIntegrationVariables()){
+      n += mb.getTypeSize(v.type,v.arraySize);
     }
     if(mb.hasCode(h,BehaviourData::InitializeJacobian)){
       out << mb.getCode(h,BehaviourData::InitializeJacobian);
     } else {
-      out << "// setting jacobian to identity" << endl;
-      out << "std::fill(this->jacobian.begin(),this->jacobian.end(),real(0));" << endl;
-      out << "for(unsigned short idx = 0; idx!= "<< n << ";++idx){" << endl;
-      out << "this->jacobian(idx,idx)= real(1);" << endl;
-      out << "}" << endl;
+      out << "// setting jacobian to identity\n";
+      out << "std::fill(this->jacobian.begin(),this->jacobian.end(),real(0));\n";
+      out << "for(unsigned short idx = 0; idx!= "<< n << ";++idx){\n";
+      out << "this->jacobian(idx,idx)= real(1);\n";
+      out << "}\n";
     }
   } // end of MFrontBroydenSolverBase::writeSpecificInitializeMethodPart
 
@@ -132,13 +129,11 @@ namespace mfront{
 						    const BehaviourDescription& mb,
 						    const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
-    using namespace std;
-    const string btype = mb.getBehaviourTypeFlag();
+    const auto btype = mb.getBehaviourTypeFlag();
     const auto& d = mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n2;
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n2 += mb.getTypeSize(p->type,p->arraySize);
+    for(const auto& v : d.getIntegrationVariables()){
+      n2 += mb.getTypeSize(v.type,v.arraySize);
     }
     out << "tmatrix<" << n2 << "," << n2 << ",real> jacobian2;\n";
     out << "tvector<" << n2 << ",real> fzeros2;\n";
@@ -191,17 +186,17 @@ namespace mfront{
     out << "if(!converged){\n";
     out << "Dzeros = this->fzeros;\n";
     out << "jacobian2 = this->jacobian;\n";
-    out << "try{" << endl;
+    out << "try{\n";
     out << "TinyMatrixSolve<" << n2
 	<< "," << "real>::exe(jacobian2,Dzeros);\n";
-    out << "}" << endl;
-    out << "catch(LUException&){" << endl;
+    out << "}\n";
+    out << "catch(LUException&){\n";
     if(mb.useQt()){        
       out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
       out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    out << "}" << endl;
+    out << "}\n";
     out << "jacobian2 = this->jacobian;\n";
     if(this->usesPowellDogLegAlgorithm()){
       this->writePowellDogLegStep(out,mb,h,"tjacobian","tfzeros","fzeros");

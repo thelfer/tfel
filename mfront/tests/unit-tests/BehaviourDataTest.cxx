@@ -39,15 +39,13 @@ struct BehaviourDataTest final
   execute() override
   {
     using namespace mfront;
-    for (const auto& m : {&BehaviourData::addMaterialProperty,
-	  &BehaviourData::addStateVariable,
-	  &BehaviourData::addAuxiliaryStateVariable,
-	  &BehaviourData::addIntegrationVariable,
-	  &BehaviourData::addExternalStateVariable,
-	  &BehaviourData::addLocalVariable,
-	  &BehaviourData::addParameter}) {
-      this->test(m);
-    }
+    this->test(&BehaviourData::addMaterialProperty);
+    this->test(&BehaviourData::addStateVariable);
+    this->test(&BehaviourData::addAuxiliaryStateVariable);
+    this->test(&BehaviourData::addIntegrationVariable);
+    this->test(&BehaviourData::addExternalStateVariable);
+    this->test(&BehaviourData::addLocalVariable);
+    this->test(&BehaviourData::addParameter);
     this->test2();
     this->test3();
     this->test4();
