@@ -997,8 +997,8 @@ namespace mfront{
 					const BehaviourAttribute& a,
 					const bool b)
   {
-    auto throw_if = [](const bool b, const std::string& m){
-      if(b){throw(std::runtime_error("BehaviourData::setAttribute: "+m));}
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("BehaviourData::setAttribute: "+m));}
     };    
     if(b){
       auto p=this->attributes.find(n);

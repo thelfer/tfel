@@ -18,7 +18,9 @@
 
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
+#include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"MFront/MFrontLogStream.hxx"
+#include"MFront/LocalDataStructure.hxx"
 #include"MFront/BehaviourDescription.hxx"
 
 namespace mfront
@@ -727,6 +729,43 @@ namespace mfront
   }
 
   void
+  BehaviourDescription::addLocalDataStructure(const LocalDataStructure& lds,
+					      const BehaviourData::RegistrationStatus s){
+    auto gs = [](const std::vector<LocalDataStructure::Variable>& vars){
+      auto r = std::string{};
+      r = "struct{\n";
+      for(const auto& v : vars){
+	r += v.type +' '+v.name+";\n";
+      }
+      r += "}";
+      return r;
+    };
+    if(!tfel::utilities::CxxTokenizer::isValidIdentifier(lds.name,true)){
+      throw(std::runtime_error("BehaviourDSLCommon::addLocalDataStructure: "
+			       "invalid local structure name '"+lds.name+"'"));
+    }
+    const auto mh = lds.getSpecialisedHypotheses();
+    for(const auto h:mh){
+      if(!lds.get(h).empty()){ // paranoiac checks, this can't occur
+	this->addLocalVariable(h,{gs(lds.get(h)),lds.name,1u,0u},s);
+      }
+    }
+    const auto v = lds.get(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+    if(v.empty()){
+      return;
+    }
+    auto vd = VariableDescription{gs(v),lds.name,1u,0u};
+    if(!this->areAllMechanicalDataSpecialised()){
+      this->d.addLocalVariable(vd,s);
+    }
+    for(auto& ld : this->sd){
+      if(std::find(mh.begin(),mh.end(),ld.first)==mh.end()){
+	ld.second->addLocalVariable(vd,s);
+      }
+    }
+  }
+  
+  void
   BehaviourDescription::addMainVariable(const DrivingVariable&    v,
 					const ThermodynamicForce& f)
   {
@@ -950,72 +989,52 @@ namespace mfront
   }
 
   void
-  BehaviourDescription::setModellingHypotheses(const std::set<Hypothesis>& h,
+  BehaviourDescription::setModellingHypotheses(const std::set<Hypothesis>& mh,
 					       const bool b)
   {
-    using namespace std;
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("BehaviourDescription::setHypotheses: "+m));}
+    };
     // never ever trust a user
-    if(h.empty()){
-      throw(runtime_error("BehaviourDescription::setHypotheses: "
-			  "empty set of modelling hypotheses specificied"));
-    }
+    throw_if(mh.empty(),"empty set of modelling hypotheses specificied");
     // check that the user did not already set the modelling hypotheses
-    if(!this->hypotheses.empty()){
-      string msg("BehaviourDescription::setHypotheses: "
-		 "supported modelling hypotheses have already been declared");
-      throw(runtime_error(msg));
-    }
+    throw_if(!this->hypotheses.empty(),
+	     "supported modelling hypotheses have already been declared");
     // check that if a specialised version of the behaviour
     // is defined, it is present in the set of hypotheses defined here
-    map<Hypothesis,MBDPtr>::const_iterator p;
-    for(p=this->sd.begin();p!=this->sd.end();++p){
-      if(h.find(p->first)==h.end()){
-	string msg("BehaviourDescription::setHypotheses: "
-		   "partial specialisation of the behaviour exists for "
-		   "the hypothesis '"+ModellingHypothesis::toString(p->first)+"' "
-		   "which is not in the set of hypotheses which have to be "
-		   "supported by the behaviour.");
-	throw(runtime_error(msg));
-      }
+    for(const auto& ld : this->sd){
+      throw_if(mh.find(ld.first)==mh.end(),
+	       "partial specialisation of the behaviour exists for "
+	       "the hypothesis '"+ModellingHypothesis::toString(ld.first)+"' "
+	       "which is not in the set of hypotheses which have to be "
+	       "supported by the behaviour.");
     }
-    set<Hypothesis>::const_iterator p2;
-    for(p2=this->requestedHypotheses.begin();
-	p2!=this->requestedHypotheses.end();++p2){
-      if(h.find(*p2)==h.end()){
-	string msg("BehaviourDescription::setHypotheses: "
-		   "a description of the behaviour for "
-		   "the hypothesis '"+ModellingHypothesis::toString(*p2)+"' "
-		   "has been requested earlier, but this hypothesis is not "
-		   "in the set of hypotheses which will to be "
-		   "supported by the behaviour. This may lead to inconsistencies. "
-		   "Cowardly aborting.");
-	throw(runtime_error(msg));
-      }
+    for(const auto h : this->requestedHypotheses){
+      throw_if(mh.find(h)==mh.end(),
+	       "a description of the behaviour for "
+	       "the hypothesis '"+ModellingHypothesis::toString(h)+"' "
+	       "has been requested earlier, but this hypothesis is not "
+	       "in the set of hypotheses which will to be "
+	       "supported by the behaviour. This may lead to inconsistencies. "
+	       "Cowardly aborting.");
     }
     if(this->hypotheses.empty()){
-      this->hypotheses.insert(h.begin(),h.end());
+      this->hypotheses.insert(mh.begin(),mh.end());
     } else {
       if(b){
 	// find the intersection of the given hypotheses and the
 	// existing one
-	set<Hypothesis> nh;
-	for(set<Hypothesis>::const_iterator ph=this->hypotheses.begin();
-	    ph!=this->hypotheses.end();++ph){
-	  if(h.find(*ph)!=h.end()){
-	    nh.insert(*ph);
+	std::set<Hypothesis> nh;
+	for(const auto h : this->hypotheses){
+	  if(mh.find(h)!=mh.end()){
+	    nh.insert(h);
 	  }
 	}
-	if(nh.empty()){
-	  string msg("BehaviourDescription::setHypotheses: "
-		     "intersection of previously modelling hypotheses "
-		     "with the new ones is empty");
-	  throw(runtime_error(msg));
-	}
+	throw_if(nh.empty(),"intersection of previously modelling hypotheses "
+		 "with the new ones is empty");
 	this->hypotheses.swap(nh);
       } else {
-	string msg("BehaviourDescription::setHypotheses: "
-		   "supported modelling hypotheses have already been declared");
-	throw(runtime_error(msg));
+	throw_if(true,"supported modelling hypotheses have already been declared");
       }
     }
   } // end of BehaviourDescription::setModellingHypotheses
@@ -1193,12 +1212,10 @@ namespace mfront
   bool
   BehaviourDescription::hasParameters(void) const
   {
-    using namespace std;
     if(this->d.hasParameters()){
       return true;
     }
-    map<Hypothesis,MBDPtr>::const_iterator p;
-    for(p=this->sd.begin();p!=this->sd.end();++p){
+    for(auto p=this->sd.begin();p!=this->sd.end();++p){
       if(p->second->hasParameters()){
 	return true;
       }
@@ -1853,8 +1870,7 @@ namespace mfront
       if(bd.getElasticSymmetryType()!=s){
 	throw(std::runtime_error("setElasticSymmetryType: "
 				 "the elastic symmetry type defined for "
-				 "the behaviour is inconsistent with the option "
-				 "passed to the 'Elasticity' brick."));
+				 "the behaviour is inconsistent."));
       }
     } else {
       bd.setElasticSymmetryType(s);

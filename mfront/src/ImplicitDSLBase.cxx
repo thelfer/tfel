@@ -104,6 +104,16 @@ namespace mfront{
     this->mb.setIntegrationScheme(BehaviourDescription::IMPLICITSCHEME);
   } // end of ImplicitDSLBase::ImplicitDSLBase
 
+  const NonLinearSystemSolver&
+  ImplicitDSLBase::getSolver(void) const
+  {
+    if(this->solver.get()==nullptr){
+      this->throwRuntimeError("ImplicitBase::getSolver",
+			      "no solver defined");
+    }
+    return *(this->solver);
+  }
+  
   void
   ImplicitDSLBase::treatUnknownKeyword()
   {
@@ -1798,11 +1808,11 @@ namespace mfront{
   ImplicitDSLBase::endsInputFileProcessing(void)
   {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    BehaviourDSLCommon::endsInputFileProcessing();
     if(this->solver.get()==nullptr){
       const auto& f = NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
       this->solver = f.getSolver("NewtonRaphson");
     }
+    BehaviourDSLCommon::endsInputFileProcessing();
     if(this->mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
       if((!this->solver->usesJacobian())||(this->solver->requiresNumericalJacobian())){
 	this->throwRuntimeError("ImplicitDSLBase::endsInputFileProcessing",

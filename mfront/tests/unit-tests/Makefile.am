@@ -7,20 +7,27 @@ if WITH_TESTS
 
 testdir = $(pkgdatadir)/mfront/tests/unit-tests
 test_PROGRAMS = DSLTest                              \
+		DSLTest2                             \
 		BehaviourDataTest                    \
 		BehaviourDescriptionTest             \
 		BehaviourBrickProviderTest           \
 		BehaviourBrickRequirementManagerTest \
 		TargetsDescriptionTest               \
-		DSLTest2
+		StandardElasticityBrickTest          \
+		LocalDataStructureTest               \
+		ComputeStiffnessTensorTest
 
-DSLTest_SOURCES                    = DSLTest.cxx
-DSLTest2_SOURCES                   = DSLTest2.cxx
-BehaviourDataTest_SOURCES          = BehaviourDataTest.cxx
-BehaviourDescriptionTest_SOURCES   = BehaviourDescriptionTest.cxx
-BehaviourBrickProviderTest_SOURCES = BehaviourBrickProviderTest.cxx
+
+DSLTest_SOURCES                     = DSLTest.cxx
+DSLTest2_SOURCES                    = DSLTest2.cxx
+BehaviourDataTest_SOURCES           = BehaviourDataTest.cxx
+BehaviourDescriptionTest_SOURCES    = BehaviourDescriptionTest.cxx
+BehaviourBrickProviderTest_SOURCES  = BehaviourBrickProviderTest.cxx
 BehaviourBrickRequirementManagerTest_SOURCES = BehaviourBrickRequirementManagerTest.cxx
-TargetsDescriptionTest_SOURCES     = TargetsDescriptionTest.cxx
+TargetsDescriptionTest_SOURCES      = TargetsDescriptionTest.cxx
+StandardElasticityBrickTest_SOURCES = StandardElasticityBrickTest.cxx
+LocalDataStructureTest_SOURCES      = LocalDataStructureTest.cxx
+ComputeStiffnessTensorTest_SOURCES  = ComputeStiffnessTensorTest.cxx
 
 LDADD = -L$(top_builddir)/mfront/src    \
 	-L$(top_builddir)/src/Material  \

@@ -108,6 +108,7 @@ set(TFELMFront_SOURCES
     BehaviourBrickRequirementManager.cxx
     BehaviourBrickBase.cxx
     StandardElasticityBrick.cxx
+    LocalDataStructure.cxx
     PerformanceProfiling.cxx
     MultipleIsotropicMisesFlowsDSL.cxx
     IsotropicBehaviourDSLBase.cxx

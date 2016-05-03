@@ -15,7 +15,6 @@
 #define LIB_MFRONTIMPLICITPARSERBASE_H_ 
 
 #include<string>
-
 #include<memory>
 #include"MFront/BehaviourDSLBase.hxx"
 
@@ -24,19 +23,23 @@ namespace mfront{
   // forward declaratin
   struct NonLinearSystemSolver;
 
-  /*!
-   * Base class for all parser based on an implicit scheme
-   */
+  //! \brief Base class for all parser based on an implicit scheme
   struct ImplicitDSLBase
     : public BehaviourDSLBase<ImplicitDSLBase>
   {
-    /*!
-     * \brief constructor
-     */
+    //! \brief constructor
     ImplicitDSLBase();
     /*!
-     * \brief destructor
+     * \return the solver used to integrate the mechanical behaviour
+     * \throw this methods throws is the solver is not defined yet.
+     * \note the solver is only defined after the
+     * endsInputFileProcessing is called. This defined at the
+     * beginning of this method, so it is safe to use this method in
+     * the rest of the endsInputFileProcessing method, in the
+     * endTreatment method of the behaviour bricks in particular.
      */
+    const NonLinearSystemSolver& getSolver(void) const;
+    //!\brief destructor
     virtual ~ImplicitDSLBase();
 
   protected:

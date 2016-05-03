@@ -279,14 +279,8 @@ TFEL_TESTS_GENERATE_PROXY(BehaviourDataTest,
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
-  using namespace std;
-  using namespace tfel::tests;
-  TestManager& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
-  manager.addXMLTestOutput("BehaviourData.xml");
-  TestResult r = manager.execute();
-  if(!r.success()){
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("LocalDataStructure.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 } // end of main

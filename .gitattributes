@@ -1829,6 +1829,7 @@ mfront/include/MFront/JavaMaterialPropertyInterface.hxx -text
 mfront/include/MFront/LawFunction.hxx -text
 mfront/include/MFront/LevenbergMarquardtSolvers.hxx -text
 mfront/include/MFront/LibraryDescription.hxx -text
+mfront/include/MFront/LocalDataStructure.hxx -text
 mfront/include/MFront/MFront.hxx -text
 mfront/include/MFront/MFrontBase.hxx -text
 mfront/include/MFront/MFrontConfig.hxx -text
@@ -1993,6 +1994,7 @@ mfront/src/JavaMaterialPropertyInterface.cxx -text
 mfront/src/LawFunction.cxx -text
 mfront/src/LevenbergMarquardtSolvers.cxx -text
 mfront/src/LibraryDescription.cxx -text
+mfront/src/LocalDataStructure.cxx -text
 mfront/src/MFront.cxx -text
 mfront/src/MFrontBase.cxx -text
 mfront/src/MFrontDebugMode.cxx -text
@@ -3983,9 +3985,12 @@ mfront/tests/unit-tests/BehaviourBrickRequirementManagerTest.cxx.in -text
 mfront/tests/unit-tests/BehaviourDataTest.cxx -text
 mfront/tests/unit-tests/BehaviourDescriptionTest.cxx -text
 mfront/tests/unit-tests/CMakeLists.txt -text
+mfront/tests/unit-tests/ComputeStiffnessTensorTest.cxx -text
 mfront/tests/unit-tests/DSLTest.cxx -text
 mfront/tests/unit-tests/DSLTest2.cxx.in -text
+mfront/tests/unit-tests/LocalDataStructureTest.cxx -text
 mfront/tests/unit-tests/Makefile.am -text
+mfront/tests/unit-tests/StandardElasticityBrickTest.cxx -text
 mfront/tests/unit-tests/TargetsDescriptionTest.cxx -text
 mfront/tests/unit-tests/mfront/test1.mfront -text
 mfront/tests/unit-tests/mfront/test2.mfront -text

@@ -18,10 +18,12 @@
 
 namespace mfront{
 
-  //! forward declaration
+  // forward declaration
   struct AbstractBehaviourDSL;
-  //! forward declaration
+  // forward declaration
   struct BehaviourDescription;
+  // forward declaration
+  struct LocalDataStructure;
 
   /*!
    * BehaviourBrick describing standard elasticity for small strain behaviours
@@ -83,7 +85,7 @@ namespace mfront{
      * treat the case of isotropic behaviours
      */
     virtual void
-    treatIsotropicBehaviour(void) const;
+    treatIsotropicBehaviour(LocalDataStructure&) const;
     /*!
      * treat the case of isotropic behaviours
      */
@@ -94,11 +96,11 @@ namespace mfront{
      * modelling hypothesis
      */
     virtual void
-    addAxisymmetricalGeneralisedPlaneStressSupport(void) const;
+    addAxisymmetricalGeneralisedPlaneStressSupport(LocalDataStructure&) const;
     /*!
      * \brief add support for the PLANESTRESS modelling hypothesis
      */
-    virtual void addPlaneStressSupport(void) const;
+    virtual void addPlaneStressSupport(LocalDataStructure&) const;
     /*!
      * \brief add the generic tangent operator computation
      */

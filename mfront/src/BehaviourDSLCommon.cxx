@@ -1385,9 +1385,9 @@ namespace mfront{
   BehaviourDSLCommon::treatRequireStiffnessTensor(void)
   {
     if(this->mb.hasAttribute(BehaviourDescription::computesStiffnessTensor)){
-      this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
-			      "@ComputeStiffnessTensor can be used along with "
-			      "@RequireStiffnessTensor");
+      this->throwRuntimeError("BehaviourDSLCommon::treatRequireStiffnessTensor",
+			      "@RequireStiffnessTensor can be used along with "
+			      "@ComputeStiffnessTensor");
     }
     this->checkNotEndOfFile("BehaviourDSLCommon::treatRequireStiffnessTensor");
     if(this->current->value=="<"){
@@ -3613,8 +3613,11 @@ namespace mfront{
 			  << v.name << " << '\\n';\n";  
     }
     for(const auto& v : md.getLocalVariables()){
-      this->behaviourFile << "os << \"" << v.name << " : \" << b." 
-			  << v.name <<  " << '\\n';\n";  
+#pragma message "BehaviourDSLCommon: handle LocalDataStructure properly"
+      if((v.type.size()>=7)&&(v.type.substr(0,7)!="struct{")){
+	this->behaviourFile << "os << \"" << v.name << " : \" << b." 
+			    << v.name <<  " << '\\n';\n";
+      }
     }
     for(const auto& v : md.getParameters()){
       this->behaviourFile << "os << \"" << v.name << " : \" << b." 

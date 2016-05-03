@@ -86,7 +86,8 @@ nobase_include_HEADERS= MFront/MFront.hxx                               \
 			MFront/BehaviourBrick/ProviderIdentifier.hxx    \
 			MFront/BehaviourBrick/Requirement.hxx           \
 			MFront/BehaviourBrick/RequirementManager.hxx    \
-			MFront/BehaviourBrick/Provider.hxx
+			MFront/BehaviourBrick/Provider.hxx              \
+			MFront/LocalDataStructure.hxx
 
 
 nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                          \

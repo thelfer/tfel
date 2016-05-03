@@ -84,6 +84,7 @@ install_mfront_header(MFront/BehaviourBrick ProviderIdentifier.hxx)
 install_mfront_header(MFront/BehaviourBrick Requirement.hxx)
 install_mfront_header(MFront/BehaviourBrick RequirementManager.hxx)
 install_mfront_header(MFront/BehaviourBrick Provider.hxx)
+install_mfront_header(MFront LocalDataStructure.hxx)
 
 if(HAVE_CASTEM)
 install_mfront_header(MFront/Castem Castem.hxx)

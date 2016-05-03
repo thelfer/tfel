@@ -33,6 +33,9 @@
 namespace mfront
 {
 
+  // forward declaration
+  struct LocalDataStructure;
+  
   /*!
    * This structure describes a mechanical behaviour
    *
@@ -227,13 +230,16 @@ namespace mfront
      */
     void addMaterialLaw(const std::string&);
     /*!
-     * \return the list of material laws
+     * add a local data structure
+     * \param[in] lds: local data structure
+     * \param[in] s : registration status
      */
+    void addLocalDataStructure(const LocalDataStructure&,
+			       const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    //! \return the list of material laws
     const std::vector<std::string>&
     getMaterialLaws(void) const;
-    /*!
-     * \return the size of the main variables
-     */
+    //! \return the size of the main variables
     std::pair<SupportedTypes::TypeSize,
 	      SupportedTypes::TypeSize>
     getMainVariablesSize(void) const;
@@ -1036,23 +1042,20 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    hasParameter(const Hypothesis,
-		 const std::string&) const;
+    bool hasParameter(const Hypothesis,
+		      const std::string&) const;
     /*!
      * \return true the given modelling hypothesis has a
      * parameter.
      * \param[in] h : modelling hypothesis \param[in] n :
      * name
      */
-    bool
-    hasParameters(const Hypothesis) const;
+    bool hasParameters(const Hypothesis) const;
     /*!
      * \return true if at least one modelling hypothesis has a
      * parameter.
      */
-    bool
-    hasParameters(void) const;
+    bool hasParameters(void) const;
     /*!
      * \brief insert a new attribute
      * \param[in] n : name
@@ -1131,7 +1134,7 @@ namespace mfront
      * \brief check variable existence
      * \return a pair of iterator. The first part tells if the
      * variable was found in a least one specialisation of the
-     * behaviour and the second telles if the variable is available
+     * behaviour and the second tells if the variable is available
      * for all distinct modelling hypothesis.
      * The variable could be any sort of variable (local variable,
      * integration variable, static variable, ...)
@@ -1143,7 +1146,7 @@ namespace mfront
      * \brief check variable existence for a particular sort of variable.
      * \return a pair of iterator. The first part tells if the
      * variable was found in a least one specialisation of the
-     * behaviour and the second telles if the variable is available
+     * behaviour and the second tells if the variable is available
      * for all distinct modelling hypothesis.
      * \param[in] v: variable name
      * \param[in] c: variable category

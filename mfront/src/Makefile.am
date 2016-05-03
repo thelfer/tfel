@@ -104,6 +104,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 			   BehaviourBrickRequirementManager.cxx                   \
 			   BehaviourBrickProvider.cxx                             \
 		           StandardElasticityBrick.cxx                            \
+		           LocalDataStructure.cxx                                 \
 		           AbstractBehaviourBrickFactory.cxx                      \
 		           UMATInterfaceBase.cxx
 
