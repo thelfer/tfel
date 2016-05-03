@@ -299,9 +299,7 @@ namespace mtest{
 	  dt *= rdt;
 	}
 	++scs.period;
-	if(end){
-	  s.printOutput(t,scs,true);
-	} else {
+	if(!end){
 	  s.printOutput(t,scs,false);
 	}
       } else {

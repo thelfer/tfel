@@ -547,6 +547,7 @@ namespace mtest
       while(pt2!=this->times.end()){
 	// allowing subdivisions of the time step
 	this->execute(state,wk,*pt,*pt2);
+	this->printOutput(*pt2,state,true);
 	++pt;
 	++pt2;
       }
