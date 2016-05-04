@@ -11,9 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#include<string>
 #include<map>
-
+#include<string>
 #include<boost/python.hpp>
 #include"TFEL/Python/MapConverter.hxx"
 

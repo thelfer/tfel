@@ -2,6 +2,35 @@
 % Helfer Thomas
 % Janvier 19, 2016
 
+# Announcing the `mfront` module
+
+A new `python` module has been introduced to analyse `MFront` files.
+
+An overview of the module is available [here](mfront-python.html).
+
+Here is a typical usage example:
+
+~~~~{.python}
+import mfront
+
+dsl = mfront.getDSL("Chaboche.mfront")
+dsl.setInterfaces(["aster"])
+dsl.analyseFile("Chaboche.mfront",[])
+
+# file description
+fd = dsl.getFileDescription()
+print("file author:      ", fd.authorName)
+print("file date:        ", fd.date)
+print("file descrption:\n", fd.description)
+
+# targets information
+tgt = dsl.getTargetsDescription()
+
+# loop over (to be) generated libraries
+for l in tgt:
+	print(l)
+~~~~
+
 # Cast3m 2016 is out (28 April 2016)
 
 ![](img/IconeCast3M_bleue.png "")

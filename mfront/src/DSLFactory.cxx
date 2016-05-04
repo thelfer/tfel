@@ -60,8 +60,8 @@ namespace mfront{
 
   void
   DSLFactory::registerParserCreator(const std::string& parserName,
-					     const DSLFactory::ParserCreator f,
-					     const DSLFactory::DescriptionPtr f2)
+				    const DSLFactory::ParserCreator f,
+				    const DSLFactory::DescriptionPtr f2)
   {
     using namespace std;
     if(!this->getMap().insert(make_pair(parserName,f)).second){
@@ -77,28 +77,30 @@ namespace mfront{
   } // end of DSLFactory::registerParserCreator
 
   std::string
-  DSLFactory::getParserDescription(const std::string& parserName)
+  DSLFactory::getParserDescription(const std::string& n)
   {
-    using namespace std;
-    auto p = this->getDescriptionMap().find(parserName);
+    auto p = this->getDescriptionMap().find(n);
     if(p==this->getDescriptionMap().end()){
-      string msg = "DSLFactory::getParserDescription : no parser named ";
-      msg += parserName;
-      throw(runtime_error(msg));
+      throw(std::runtime_error("DSLFactory::getParserDescription: "
+			       "no parser named '"+n+"'"));
     }
     auto c = p->second;
     return c();
   } // end of 
 
   std::shared_ptr<AbstractDSL>
-  DSLFactory::createNewParser(const std::string& parserName)
+  DSLFactory::createNewParser(const std::string& n)
   {
-    using namespace std;
-    auto p = this->getMap().find(parserName);
+    return this->createNewDSL(n);
+  }
+    
+  std::shared_ptr<AbstractDSL>
+  DSLFactory::createNewDSL(const std::string& n)
+  {
+    auto p = this->getMap().find(n);
     if(p==this->getMap().end()){
-      string msg = "DSLFactory::createNewParser : no parser named '";
-      msg += parserName+"'";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("DSLFactory::createNewDSL: "
+			       "no parser named '"+n+"'"));
     }
     auto c = p->second;
     return c();

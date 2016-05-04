@@ -27,9 +27,8 @@ namespace mfront{
 
   MultipleIsotropicMisesFlowsDSL::MultipleIsotropicMisesFlowsDSL()
   {
-    using namespace std;
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->mb.setParserName("MultipleIsotropicMisesFlows");
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    this->mb.setDSLName("MultipleIsotropicMisesFlows");
     // Default state vars
     this->mb.addStateVariable(h,VariableDescription("StrainStensor","eel",1u,0u));
     this->mb.addStateVariable(h,VariableDescription("strain","p",1u,0u));

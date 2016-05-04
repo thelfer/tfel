@@ -24,8 +24,8 @@ namespace mfront{
   DefaultCZMDSL::DefaultCZMDSL()
     : DefaultDSLBase()
   {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->mb.setParserName("DefaultCZM");
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    this->mb.setDSLName("DefaultCZM");
     this->mb.declareAsACohesiveZoneModel();
     this->mb.addLocalVariable(h,VariableDescription("real&","u_n",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("real&","du_n",1u,0u));

@@ -15,6 +15,7 @@
 #define LIB_MFRONT_THERMODYNAMICFORCE_H_ 
 
 #include<string>
+#include"MFront/MFrontConfig.hxx"
 
 namespace mfront
 {
@@ -23,7 +24,7 @@ namespace mfront
    * structure describes the thermodynamic force associated with a
    * driving variable.
    */
-  struct ThermodynamicForce
+  struct MFRONT_VISIBILITY_EXPORT ThermodynamicForce
   {
     ThermodynamicForce() = default;
     ThermodynamicForce(ThermodynamicForce&&) = default;

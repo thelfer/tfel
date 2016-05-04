@@ -64,7 +64,7 @@ int main(const int argc, const char *const *const argv)
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   const auto bg = !find("--no-gui");
 #endif
-  mfront::initParsers();
+  mfront::initDSLs();
   mfront::initInterfaces();
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   try{

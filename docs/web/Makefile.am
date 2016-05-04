@@ -24,6 +24,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./mfront-template.html				   \
 	   ./benchmark.md					   \
 	   ./documentations.md					   \
+	   ./mfront-python.md					   \
 	   ./mtest.md						   \
 	   ./tutorial.md					   \
 	   ./LICENSE.md						   \

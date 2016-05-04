@@ -15,6 +15,7 @@
 #define LIB_MFRONT_DRIVINGVARIABLE_H_ 
 
 #include<string>
+#include"MFront/MFrontConfig.hxx"
 
 namespace mfront
 {
@@ -24,7 +25,7 @@ namespace mfront
    * and their associated thermodynamic forces.  For example, small
    * strain behaviours have the total strain as driving variable.
    */
-  struct DrivingVariable
+  struct MFRONT_VISIBILITY_EXPORT DrivingVariable
   {
     DrivingVariable() = default;
     DrivingVariable(DrivingVariable&&) = default;

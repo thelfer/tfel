@@ -35,7 +35,7 @@ int main(const int argc, const char *const *const argv)
 {
   using namespace mfront;
   using BGen = BehaviourDocumentationGenerator;
-  initParsers();
+  initDSLs();
   initInterfaces();
   std::vector<std::shared_ptr<BGen>> bgens;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__

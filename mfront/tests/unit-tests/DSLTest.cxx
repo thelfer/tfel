@@ -189,7 +189,7 @@ TFEL_TESTS_GENERATE_PROXY(DSLTest,"DSLTest");
 int main(void)
 {
   using namespace tfel::tests;
-  mfront::initParsers();
+  mfront::initDSLs();
   auto& m = TestManager::getTestManager();
   m.addTestOutput(std::cout);
   m.addXMLTestOutput("DSL.xml");

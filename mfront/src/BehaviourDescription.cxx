@@ -219,25 +219,25 @@ namespace mfront
   } // end of BehaviourDescription::getBehaviourName
 
   void
-  BehaviourDescription::setParserName(const std::string& m)
+  BehaviourDescription::setDSLName(const std::string& m)
   {
-    if(!this->parser.empty()){
-      throw(std::runtime_error("BehaviourDescription::setParserName: "
-			       "parser name already defined"));
+    if(!this->dsl.empty()){
+      throw(std::runtime_error("BehaviourDescription::setDSLName: "
+			       "dsl name already defined"));
     }
-    this->parser = m;
+    this->dsl = m;
     this->updateClassName();
-  } // end of BehaviourDescription::setParserName
+  } // end of BehaviourDescription::setDSLName
 
   const std::string&
-  BehaviourDescription::getParserName(void) const
+  BehaviourDescription::getDSLName(void) const
   {
-    if(this->parser.empty()){
-      throw(std::runtime_error("BehaviourDescription::getParserName: "
-			       "parser name not defined"));
+    if(this->dsl.empty()){
+      throw(std::runtime_error("BehaviourDescription::getDSLName: "
+			       "dsl name not defined"));
     }
-    return this->parser;
-  } // end of BehaviourDescription::getParserName
+    return this->dsl;
+  } // end of BehaviourDescription::getDSLName
 
   std::vector<BehaviourDescription::MaterialPropertyInput>
   BehaviourDescription::getMaterialPropertyInputs(const MaterialPropertyDescription& mpd) const

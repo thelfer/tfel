@@ -82,16 +82,16 @@ namespace mfront
     using MaterialProperty = tfel::utilities::GenTypeBase<MaterialPropertyTypes>;
     /*!
      * \brief Available integration schemes.
-     * One of the first thing a parser shall do is to set the
+     * One of the first thing a dsl shall do is to set the
      * integration scheme it uses.
      */
     enum IntegrationScheme{
-      IMPLICITSCHEME, //!< value set by the `Implicit` Parser family
-      EXPLICITSCHEME, //!< value set by the `Runge-Kutta` Parser
+      IMPLICITSCHEME, //!< value set by the `Implicit` Dsl family
+      EXPLICITSCHEME, //!< value set by the `Runge-Kutta` Dsl
       SPECIFICSCHEME, /*!< value set by the `	IsotropicMisesCreepDSL`,
 		       * `IsotropicMisesPlasticFlowDSL`,
 		       * `IsotropicStrainHardeningMisesCreepDSL`
-		       * `MultipleIsotropicMisesFlowsDSL` parsers. */
+		       * `MultipleIsotropicMisesFlowsDSL` dsls. */
       UNDEFINEDINTEGRATIONSCHEME //! default value.
     };
     /*!
@@ -140,15 +140,15 @@ namespace mfront
     const std::string&
     getBehaviourName(void) const;
     /*!
-     * \brief set the parser name
-     * \param[in] b : parser name
+     * \brief set the dsl name
+     * \param[in] b : dsl name
      */
-    void setParserName(const std::string&);
+    void setDSLName(const std::string&);
     /*!
-     * \return the parser name
+     * \return the dsl name
      */
     const std::string&
-    getParserName(void) const;
+    getDSLName(void) const;
     /*!
      * \brief set the material name
      * \param[in] m : material name
@@ -391,7 +391,7 @@ namespace mfront
      * hypothesis has no specialisation, UNDEFINEDHYPOTHESIS.
      *
      * This method has been introduced for iteration purpose in
-     * behaviour parsers.
+     * behaviour dsls.
      */
     std::set<Hypothesis>
     getDistinctModellingHypotheses(void) const;
@@ -1344,9 +1344,9 @@ namespace mfront
      */
     std::string behaviour;
     /*!
-     * parser name
+     * dsl name
      */
-    std::string parser;
+    std::string dsl;
     /*!
      * library name
      */

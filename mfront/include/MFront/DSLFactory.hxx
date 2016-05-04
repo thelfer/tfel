@@ -42,6 +42,9 @@ namespace mfront{
     std::shared_ptr<AbstractDSL>
     createNewParser(const std::string&);
 
+    std::shared_ptr<AbstractDSL>
+    createNewDSL(const std::string&);
+
     std::string
     getParserDescription(const std::string&);
     

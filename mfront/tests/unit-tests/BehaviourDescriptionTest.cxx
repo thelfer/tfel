@@ -87,7 +87,7 @@ private:
 			   runtime_error);
     TFEL_TESTS_CHECK_THROW(bd.getBehaviourData(psh),runtime_error);
     TFEL_TESTS_CHECK_THROW(bd.getBehaviourName(),runtime_error);
-    TFEL_TESTS_CHECK_THROW(bd.getParserName(),runtime_error);
+    TFEL_TESTS_CHECK_THROW(bd.getDSLName(),runtime_error);
     TFEL_TESTS_CHECK_THROW(bd.getClassName(),runtime_error);
   } // end of test1
 

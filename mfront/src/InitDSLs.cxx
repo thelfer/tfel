@@ -34,7 +34,7 @@
 namespace mfront
 {
 
-  void initParsers(void)
+  void initDSLs(void)
   {
     static bool init = false;
     static std::mutex m;
@@ -63,6 +63,6 @@ namespace mfront
       DSLProxy<ImplicitFiniteStrainDSL> proxy201("ImplicitFiniteStrainParser");
       init = true;
     }
-  } // end of initParsers 
+  } // end of initDSLs 
 
 } // end of namespace mfront

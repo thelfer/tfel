@@ -17,7 +17,7 @@ namespace mfront{
 
   ImplicitFiniteStrainDSL::ImplicitFiniteStrainDSL()
   {
-    this->mb.setParserName("ImplicitFiniteStrain");
+    this->mb.setDSLName("ImplicitFiniteStrain");
     this->mb.declareAsAFiniteStrainStandardBehaviour();
   } // end of ImplicitFiniteStrainDSL::ImplicitFiniteStrainDSL
 

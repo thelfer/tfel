@@ -17,7 +17,9 @@
 #include<string>
 #include<vector>
 
+#include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"MFront/MFrontConfig.hxx"
+#include"MFront/MFrontUtilities.hxx"
 
 namespace mfront{
 
@@ -65,15 +67,6 @@ namespace mfront{
     static const char*
     getDefaultLibrarySuffix(const TargetSystem,
 			    const LibraryType) noexcept;
-    /*!
-     * Constructor
-     * \param[in] n : name   of the library
-     * \param[in] s : suffix of the library
-     * \param[in] t : type   of the library
-     */
-    LibraryDescription(const std::string&,
-		       const std::string&,
-		       const LibraryType);
     /*!
      * Constructor
      * \param[in] n : name   of the library

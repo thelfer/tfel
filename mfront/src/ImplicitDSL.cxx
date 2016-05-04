@@ -17,8 +17,8 @@ namespace mfront{
 
   ImplicitDSL::ImplicitDSL()
   {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->mb.setParserName("Implicit");
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    this->mb.setDSLName("Implicit");
     // input variables
     this->mb.declareAsASmallStrainStandardBehaviour();
     // Default state variable

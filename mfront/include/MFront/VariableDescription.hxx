@@ -92,6 +92,7 @@ namespace mfront
     // resusing method from std::vector
     using std::vector<VariableDescription>::size_type;
     using std::vector<VariableDescription>::value_type;
+    using std::vector<VariableDescription>::difference_type;
     using std::vector<VariableDescription>::reference;
     using std::vector<VariableDescription>::const_reference;
     using std::vector<VariableDescription>::iterator;

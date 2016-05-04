@@ -145,6 +145,7 @@ header {
     margin: 0px auto;
     text-align: center;
     display:block;
+    z-index: 1;
 }
 
 #header h1{

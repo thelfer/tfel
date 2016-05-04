@@ -1,5 +1,7 @@
 @DSL Implicit;
 @Behaviour Chaboche;
+@Author    Jean-Michel Proix;
+@Date      26/11/2013;
 @Algorithm NewtonRaphson_NumericalJacobian;
 
 @Theta 1. ;

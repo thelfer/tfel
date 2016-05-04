@@ -19,9 +19,14 @@
 
 namespace mfront
 {
-  
-  MFRONT_VISIBILITY_EXPORT void
-  initParsers(void);
+
+  /*!
+   * \brief declare dls's delivered with mfront
+   *
+   * Users can use the MFRONT_ADDITIONAL_LIBRARIES environment to load
+   * their own libraries. See the DSLProxy class for details.
+   */
+  MFRONT_VISIBILITY_EXPORT void initDSLs(void);
 
 } // end of namespace mfront  
 

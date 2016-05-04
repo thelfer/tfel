@@ -23,8 +23,8 @@ namespace mfront{
 
   IsotropicStrainHardeningMisesCreepDSL::IsotropicStrainHardeningMisesCreepDSL()
   {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->mb.setParserName("IsotropicStrainHardeningMisesCreep");
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    this->mb.setDSLName("IsotropicStrainHardeningMisesCreep");
     // Default state vars
     this->mb.addStateVariable(h,VariableDescription("StrainStensor","eel",1u,0u));
     this->mb.addStateVariable(h,VariableDescription("strain","p",1u,0u));

@@ -215,7 +215,7 @@ int main(void)
   using namespace std;
   using namespace mfront;
   using namespace tfel::tests;
-  initParsers();
+  initDSLs();
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("BehaviourBrickRequirementManager.xml");

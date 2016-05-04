@@ -23,8 +23,8 @@ namespace mfront{
 
   IsotropicMisesCreepDSL::IsotropicMisesCreepDSL()
   {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->mb.setParserName("IsotropicMisesCreepDSL");
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    this->mb.setDSLName("IsotropicMisesCreepDSL");
     // Default state vars
     this->reserveName("ccto_tmp_1");
     this->reserveName("inv_sqrt2");

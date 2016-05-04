@@ -12,7 +12,7 @@
  */
 
 #include<boost/python.hpp>
-
+#include"TFEL/Python/VectorConverter.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
 void declareModellingHypothesis(void);
@@ -21,6 +21,7 @@ void declareModellingHypothesis(void)
 {
   using namespace boost::python;
   using namespace tfel::material;
+  using namespace tfel::python;
   enum_<ModellingHypothesis::Hypothesis>("ModellingHypothesis")
     .value("AXISYMMETRICALGENERALISEDPLANESTRAIN",
 	   ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)
@@ -33,6 +34,6 @@ void declareModellingHypothesis(void)
     .value("TRIDIMENSIONAL",ModellingHypothesis::TRIDIMENSIONAL)
     .value("UNDEFINEDHYPOTHESIS",ModellingHypothesis::UNDEFINEDHYPOTHESIS)
     ;
-
+  initializeVectorConverter<std::vector<ModellingHypothesis::Hypothesis>>();
 }
 
