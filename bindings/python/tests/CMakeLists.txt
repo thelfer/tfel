@@ -14,3 +14,4 @@ endmacro(test_pymfront)
 
 test_pymfront(test1)
 test_pymfront(test2)
+test_pymfront(test3)

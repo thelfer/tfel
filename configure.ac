@@ -2310,6 +2310,7 @@ AC_OUTPUT([debug.sh
 	   bindings/python/tests/Makefile
    	   bindings/python/tests/pymfronttest1.py
       	   bindings/python/tests/pymfronttest2.py
+       	   bindings/python/tests/pymfronttest3.py
 	   tests/Makefile
 	   tests/Tests/Makefile
 	   tests/Math/Makefile

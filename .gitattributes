@@ -68,6 +68,7 @@ bindings/python/tests/CMakeLists.txt -text
 bindings/python/tests/Makefile.am -text
 bindings/python/tests/pymfronttest1.py.in -text
 bindings/python/tests/pymfronttest2.py.in -text
+bindings/python/tests/pymfronttest3.py.in -text
 bindings/python/tfel/CMakeLists.txt -text
 bindings/python/tfel/ExternalBehaviourDescription.cxx -text
 bindings/python/tfel/ExternalLibraryManager.cxx -text

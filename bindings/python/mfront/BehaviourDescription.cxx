@@ -17,33 +17,124 @@
 #include"MFront/BehaviourDescription.hxx"
 
 std::vector<tfel::material::ModellingHypothesis::Hypothesis>
-BD_getModellingHypotheses(const mfront::BehaviourDescription& bd){
+getModellingHypotheses(const mfront::BehaviourDescription& bd){
   const auto& mh = bd.getModellingHypotheses();
   return {mh.begin(),mh.end()};
 }
 
 std::vector<tfel::material::ModellingHypothesis::Hypothesis>
-BD_getDistinctModellingHypotheses(const mfront::BehaviourDescription& bd){
+getDistinctModellingHypotheses(const mfront::BehaviourDescription& bd){
   const auto& mh = bd.getDistinctModellingHypotheses();
   return {mh.begin(),mh.end()};
 }
 
 void
-BD_setModellingHypotheses1(mfront::BehaviourDescription& bd,
+setModellingHypotheses1(mfront::BehaviourDescription& bd,
 			   const std::vector<tfel::material::ModellingHypothesis::Hypothesis>& mh){
   using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
   bd.setModellingHypotheses(std::set<Hypothesis>{mh.begin(),mh.end()});
 }
 
 void
-BD_setModellingHypotheses2(mfront::BehaviourDescription& bd,
+setModellingHypotheses2(mfront::BehaviourDescription& bd,
 			   const std::vector<tfel::material::ModellingHypothesis::Hypothesis>& mh,
 					     const bool b){
   using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
   bd.setModellingHypotheses(std::set<Hypothesis>{mh.begin(),mh.end()},b);
 }
 
+static std::string
+getStringAttribute(const mfront::BehaviourDescription& d,
+		   const std::string& n){
+  return d.getAttribute<std::string>(n);
+}
 
+static std::string
+getStringAttribute2(const mfront::BehaviourDescription& d,
+		    const std::string& n,
+		    const std::string& v){
+  return d.getAttribute<std::string>(n,v);
+}
+
+static unsigned short
+getUnsignedShortAttribute(const mfront::BehaviourDescription& d,
+			  const std::string& n){
+  return d.getAttribute<unsigned short>(n);
+}
+
+static unsigned short
+getUnsignedShortAttribute2(const mfront::BehaviourDescription& d,
+			   const std::string& n,
+			   const unsigned short v){
+  return d.getAttribute<unsigned short>(n,v);
+}
+
+static bool
+getBooleanAttribute(const mfront::BehaviourDescription& d,
+		    const std::string& n){
+  return d.getAttribute<bool>(n);
+}
+
+static bool
+getBooleanAttribute2(const mfront::BehaviourDescription& d,
+		     const std::string& n,
+		     const bool v){
+  return d.getAttribute<bool>(n,v);
+}
+
+
+static std::string
+getStringAttribute3(const mfront::BehaviourDescription& d,
+		    const mfront::BehaviourDescription::Hypothesis h,
+		    const std::string& n){
+  return d.getAttribute<std::string>(h,n);
+}
+
+static unsigned short
+getUnsignedShortAttribute3(const mfront::BehaviourDescription& d,
+			   const mfront::BehaviourDescription::Hypothesis h,
+			   const std::string& n){
+  return d.getAttribute<unsigned short>(h,n);
+}
+
+static bool
+getBooleanAttribute3(const mfront::BehaviourDescription& d,
+		     const mfront::BehaviourDescription::Hypothesis h,
+		     const std::string& n){
+  return d.getAttribute<bool>(h,n);
+}
+
+static std::string
+getStringAttribute4(const mfront::BehaviourDescription& d,
+		    const mfront::BehaviourDescription::Hypothesis h,
+		    const std::string& n,
+		    const std::string& v){
+  return d.getAttribute<std::string>(h,n,v);
+}
+
+static unsigned short
+getUnsignedShortAttribute4(const mfront::BehaviourDescription& d,
+			   const mfront::BehaviourDescription::Hypothesis h,
+			   const std::string& n,
+			   const unsigned short v){
+  return d.getAttribute<unsigned short>(h,n,v);
+}
+
+static bool
+getBooleanAttribute4(const mfront::BehaviourDescription& d,
+		     const mfront::BehaviourDescription::Hypothesis h,
+		     const std::string& n,
+		     const bool v){
+  return d.getAttribute<bool>(h,n,v);
+}
+
+static bool
+hasAttribute(const mfront::BehaviourDescription& d,
+	     const mfront::BehaviourDescription::Hypothesis h,
+	     const std::string& n){
+  return d.hasAttribute(h,n);
+}
+  
 void declareBehaviourDescription(void){
   using namespace boost::python;
   using namespace mfront;
@@ -68,14 +159,29 @@ void declareBehaviourDescription(void){
     .def("isModellingHypothesisSupported",
 	 &BehaviourDescription::isModellingHypothesisSupported)
     .def("getModellingHypotheses",
-	 BD_getModellingHypotheses)
-    .def("getDistinctModellingHypotheses",
-	 BD_getDistinctModellingHypotheses)
-    .def("setModellingHypotheses",
-	 BD_setModellingHypotheses1)
-    .def("setModellingHypotheses",
-	 BD_setModellingHypotheses2)
+	 getModellingHypotheses)
+    .def("getDistinctModellingHypotheses",getDistinctModellingHypotheses)
+    .def("setModellingHypotheses",setModellingHypotheses1)
+    .def("setModellingHypotheses",setModellingHypotheses2)
     .def("getBehaviourData",&BehaviourDescription::getBehaviourData,
-	 return_internal_reference<>());
+	 return_internal_reference<>())
+    .def("hasAttribute",
+	 static_cast<bool (BehaviourDescription::*)(const std::string&) const>(&BehaviourDescription::hasAttribute))
+    .def("hasAttribute",hasAttribute)
+    .def("getUnsignedShortAttribute",getUnsignedShortAttribute)
+    .def("getStringAttribute",getStringAttribute)
+    .def("getBooleanAttribute",getBooleanAttribute)
+    .def("getUnsignedShortAttribute",getUnsignedShortAttribute2)
+    .def("getStringAttribute",getStringAttribute2)
+    .def("getBooleanAttribute",getBooleanAttribute2)
+    .def("getUnsignedShortAttribute",getUnsignedShortAttribute3)
+    .def("getStringAttribute",getStringAttribute3)
+    .def("getBooleanAttribute",getBooleanAttribute3)
+    .def("getUnsignedShortAttribute",getUnsignedShortAttribute4)
+    .def("getStringAttribute",getStringAttribute4)
+    .def("getBooleanAttribute",getBooleanAttribute4)
+    .def("getAttributes",&BehaviourDescription::getAttributes,
+	 return_value_policy<copy_const_reference>())
     ;
+
 }

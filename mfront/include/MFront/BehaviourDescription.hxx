@@ -1034,9 +1034,8 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    hasAttribute(const Hypothesis,
-		 const std::string&) const;
+    bool hasAttribute(const Hypothesis,
+		      const std::string&) const;
     /*!
      * \return true a parameter with the given name has been declared
      * \param[in] h : modelling hypothesis

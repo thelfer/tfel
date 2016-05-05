@@ -23,5 +23,16 @@ _mfront_la_SOURCES = mfront.cxx               \
 		     BehaviourDescription.cxx
 
 _mfront_la_LDFLAGS = -module
+_mfront_la_LIBADD  = -L@top_builddir@/mfront/src                       \
+		     -lTFELMFront -lMFrontLogStream                    \
+	   	     -L$(top_builddir)/src/Material  -lTFELMaterial    \
+		     -L$(top_builddir)/src/Math      -lTFELMathParser  \
+		     -L$(top_builddir)/src/System    -lTFELSystem      \
+		     -L$(top_builddir)/src/Glossary  -lTFELGlossary    \
+		     -L$(top_builddir)/src/Utilities -lTFELUtilities   \
+		     -L$(top_builddir)/src/Exception -lTFELException   \
+		     -L$(top_builddir)/src/Config    -lTFELConfig      \
+		     @BOOST_LIBS@ @BOOST_PYTHON_LIBS@                  \
+		     -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 
 EXTRA_DIST=CMakeLists.txt

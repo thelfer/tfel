@@ -29,8 +29,8 @@ getUnsignedShortAttribute(const mfront::BehaviourData& d,
 }
 
 static bool
-getBoolAttribute(const mfront::BehaviourData& d,
-		 const std::string& n){
+getBooleanAttribute(const mfront::BehaviourData& d,
+		    const std::string& n){
   return d.getAttribute<bool>(n);
 }
 
@@ -109,7 +109,7 @@ void declareBehaviourData(void){
     .def("setAttribute",&BehaviourData::setAttribute)
     .def("getUnsignedShortAttribute",getUnsignedShortAttribute)
     .def("getStringAttribute",getStringAttribute)
-    .def("getBoolAttribute",getBoolAttribute)
+    .def("getBooleanAttribute",getBooleanAttribute)
     .def("getAttributes",&BehaviourData::getAttributes,
 	 return_value_policy<copy_const_reference>())
     .def("reserveName",&BehaviourData::reserveName)
