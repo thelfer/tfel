@@ -13,21 +13,22 @@
 
 #include<set>
 #include<memory>
-#include<boost/python.hpp>
 #include"TFEL/Python/SharedPtr.hxx"
+#include<boost/python.hpp>
+
 #include"MFront/FileDescription.hxx"
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/AbstractDSL.hxx"
 
-static void AbstractDSL_setInterfaces(mfront::AbstractDSL& dsl,
-				      const std::vector<std::string>& i)
+static void setInterfaces(mfront::AbstractDSL& dsl,
+			  const std::vector<std::string>& i)
 {
   std::set<std::string> inames(i.begin(),i.end());
   dsl.setInterfaces(inames);
 }
 
 static std::vector<std::string>
-AbstractDSL_getKeywordsList(mfront::AbstractDSL& dsl)
+getKeywordsList(mfront::AbstractDSL& dsl)
 {
   std::vector<std::string> keys;
   dsl.getKeywordsList(keys);
@@ -35,16 +36,16 @@ AbstractDSL_getKeywordsList(mfront::AbstractDSL& dsl)
 }
 
 static void
-AbstractDSL_analyseFile1(mfront::AbstractDSL& dsl,
-			 const std::string& f)
+analyseFile1(mfront::AbstractDSL& dsl,
+	     const std::string& f)
 {
   dsl.analyseFile(f,{});
 }
 
 static void
-AbstractDSL_analyseFile2(mfront::AbstractDSL& dsl,
-			 const std::string& f,
-			 const std::vector<std::string>& args)
+analyseFile2(mfront::AbstractDSL& dsl,
+	     const std::string& f,
+	     const std::vector<std::string>& args)
 {
   dsl.analyseFile(f,args);
 }
@@ -62,14 +63,14 @@ void declareAbstractDSL(void){
     .def("getTargetType",&AbstractDSL::getTargetType)
     .def("getFileDescription",&AbstractDSL::getFileDescription,
 	 return_internal_reference<>())
-    .def("analyseFile",AbstractDSL_analyseFile1)
-    .def("analyseFile",AbstractDSL_analyseFile2)
+    .def("analyseFile",analyseFile1)
+    .def("analyseFile",analyseFile2)
     .def("analyseString",&AbstractDSL::analyseString)
     .def("getTargetsDescription",&AbstractDSL::getTargetsDescription,
 	 return_internal_reference<>())
     .def("generateOutputFiles",&AbstractDSL::generateOutputFiles)
     .def("generateOutputFiles",&AbstractDSL::generateOutputFiles)
-    .def("setInterfaces",&AbstractDSL_setInterfaces)
-    .def("getKeywordsList",&AbstractDSL_getKeywordsList)
+    .def("setInterfaces",&setInterfaces)
+    .def("getKeywordsList",&getKeywordsList)
     ;
 }

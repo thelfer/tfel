@@ -13,8 +13,8 @@
 
 #include<set>
 #include<memory>
-#include<boost/python.hpp>
 #include"TFEL/Python/SharedPtr.hxx"
+#include<boost/python.hpp>
 #include"MFront/BehaviourDescription.hxx"
 #include"MFront/AbstractBehaviourDSL.hxx"
 
