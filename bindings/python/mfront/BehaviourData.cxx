@@ -19,6 +19,10 @@
 void declareBehaviourData(void){
   using namespace boost::python;
   using namespace mfront;
+
+  // const std::string& (BehaviourData::* ptr1)(const std::string&) const =
+  //   &BehaviourData::getAttribute;
+
   class_<BehaviourData>("BehaviourData")
     .def("getMaterialProperties",&BehaviourData::getMaterialProperties,
 	 return_internal_reference<>())
@@ -57,7 +61,6 @@ void declareBehaviourData(void){
     .def("isExternalStateVariableIncrementName",&BehaviourData::isExternalStateVariableIncrementName)
     .def("isParameterName",&BehaviourData::isParameterName)
     .def("isStaticVariableName",&BehaviourData::isStaticVariableName)
-    .def("hasAttribute",&BehaviourData::hasAttribute)
     .def("hasGlossaryName",&BehaviourData::hasGlossaryName)
     .def("hasEntryName",&BehaviourData::hasEntryName)
     .def("getExternalName",&BehaviourData::getExternalName)
@@ -69,5 +72,8 @@ void declareBehaviourData(void){
     .def("isUsedAsEntryName",&BehaviourData::isUsedAsEntryName)
     .def("getVariableNameFromGlossaryNameOrEntryName",
 	 &BehaviourData::getVariableNameFromGlossaryNameOrEntryName)
+    .def("hasAttribute",&BehaviourData::hasAttribute)
+    .def("setAttribute",&BehaviourData::setAttribute)
+    //    .def("getStringAttribute",ptr1)
     ;
 }

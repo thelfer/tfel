@@ -21,9 +21,11 @@ bindings/python/include/CMakeLists.txt -text
 bindings/python/include/Makefile.am -text
 bindings/python/include/TFEL/Python/MapConverter.hxx -text
 bindings/python/include/TFEL/Python/PairConverter.hxx -text
+bindings/python/include/TFEL/Python/SharedPtr.hxx -text
 bindings/python/include/TFEL/Python/VectorConverter.hxx -text
 bindings/python/mfront/AbstractBehaviourDSL.cxx -text
 bindings/python/mfront/AbstractDSL.cxx -text
+bindings/python/mfront/BehaviourAttribute.cxx -text
 bindings/python/mfront/BehaviourData.cxx -text
 bindings/python/mfront/BehaviourDescription.cxx -text
 bindings/python/mfront/CMakeLists.txt -text

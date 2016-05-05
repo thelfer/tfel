@@ -15,6 +15,12 @@
 #include"MFront/VariableDescription.hxx"
 #include"TFEL/Python/VectorConverter.hxx"
 
+mfront::VariableDescriptionContainer::size_type
+VariableDescriptionContainer_size(const mfront::VariableDescriptionContainer& v)
+{
+  return v.size();
+}
+
 void declareVariableDescription(void){
   using namespace boost::python;
   using namespace mfront;
@@ -27,6 +33,7 @@ void declareVariableDescription(void){
     ;
   class_<VariableDescriptionContainer>("VariableDescriptionContainer")
     .def("__iter__", iterator<VariableDescriptionContainer>())
+    .def("__len__",VariableDescriptionContainer_size)
     .def("contains",&VariableDescriptionContainer::contains)
     ;
 }

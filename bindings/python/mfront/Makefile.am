@@ -18,8 +18,9 @@ _mfront_la_SOURCES = mfront.cxx               \
 		     DSLFactory.cxx           \
 		     VariableDescription.cxx  \
 		     AbstractBehaviourDSL.cxx \
-		     BehaviourDescription.cxx \
-		     BehaviourData.cxx
+		     BehaviourAttribute.cxx   \
+		     BehaviourData.cxx        \
+		     BehaviourDescription.cxx
 
 _mfront_la_LDFLAGS = -module
 

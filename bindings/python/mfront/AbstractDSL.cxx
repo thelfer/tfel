@@ -14,6 +14,7 @@
 #include<set>
 #include<memory>
 #include<boost/python.hpp>
+#include"TFEL/Python/SharedPtr.hxx"
 #include"MFront/FileDescription.hxx"
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/AbstractDSL.hxx"

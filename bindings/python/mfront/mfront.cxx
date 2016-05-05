@@ -25,6 +25,7 @@ void declareLibraryDescription();
 void declareTargetsDescription();
 void declareAbstractBehaviourDSL();
 void declareVariableDescription();
+void declareBehaviourAttribute();
 void declareBehaviourData();
 void declareBehaviourDescription();
 
@@ -55,6 +56,7 @@ BOOST_PYTHON_MODULE(_mfront)
   declareTargetsDescription();
   // behaviours
   declareAbstractBehaviourDSL();
+  declareBehaviourAttribute();
   declareVariableDescription();
   declareBehaviourData();
   declareBehaviourDescription();

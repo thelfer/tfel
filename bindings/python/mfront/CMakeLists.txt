@@ -25,8 +25,9 @@ mfront_python_module(_mfront mfront.cxx
   DSLFactory.cxx
   AbstractBehaviourDSL.cxx
   VariableDescription.cxx
-  BehaviourDescription.cxx
-  BehaviourData.cxx)
+  BehaviourAttribute.cxx
+  BehaviourData.cxx
+  BehaviourDescription.cxx)
 target_link_libraries(py_mfront__mfront TFELMFront
   MFrontLogStream TFELMaterial
   TFELMathParser  TFELSystem

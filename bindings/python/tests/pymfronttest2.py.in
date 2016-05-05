@@ -9,26 +9,47 @@ import mfront
 class PyMFrontTest2(unittest.TestCase):
 
     def test_pass(self):
-        # dsl = mfront.getDSL("Chaboche.mfront")
-        # dsl.analyseFile("Chaboche.mfront",[])
+        f   = '@top_srcdir@/mfront/tests/behaviours/Chaboche.mfront'
+        dsl = mfront.getDSL(f)
+        dsl.analyseFile(f,[])
 
-        # # behaviour description
-        # bd = dsl.getBehaviourDescription()
+        # behaviour description
+        bd = dsl.getBehaviourDescription()
 
-        # print("List of supported modelling hypotheses:\n")
-        # print(bd.getModellingHypotheses())
-        # print("\n")
+        mh = bd.getModellingHypotheses()
+        self.assertEqual(len(mh),5)
+        self.assertTrue(ModellingHypothesis.AXISYMMETRICALGENERALISEDPLANESTRAIN in mh)
+        self.assertTrue(ModellingHypothesis.AXISYMMETRICAL in mh)
+        self.assertTrue(ModellingHypothesis.PLANESTRAIN in mh)
+        self.assertTrue(ModellingHypothesis.GENERALISEDPLANESTRAIN in mh)
+        self.assertTrue(ModellingHypothesis.TRIDIMENSIONAL in mh)
 
-        # # a deeper look at the 3D case
-        # d = bd.getBehaviourData(ModellingHypothesis.TRIDIMENSIONAL)
-        # print "List of material properties in 3D:\n"
-        # for mp in d.getMaterialProperties():
-        #     print("- "+mp.type+" "+mp.name+" as "+d.getExternalName(mp.name))
-
-        # print "\nList of state variables in 3D:\n"
-        # for iv in d.getPersistentVariables():
-        #     print("- "+iv.type+" "+iv.name+" as "+d.getExternalName(iv.name))
-        pass
+        # a deeper look at the 3D case
+        d = bd.getBehaviourData(ModellingHypothesis.TRIDIMENSIONAL)
+        mps = d.getMaterialProperties()
+        self.assertEqual(len(mps),10)
+        mpsnames = d.getExternalNames(mps)
+        self.assertEqual(len(mpsnames),12)
+        self.assertTrue('YoungModulus' in mpsnames)
+        self.assertTrue('PoissonRatio' in mpsnames)
+        self.assertTrue('R_inf' in mpsnames)
+        self.assertTrue('R_0' in mpsnames)
+        self.assertTrue('b' in mpsnames)
+        self.assertTrue('k' in mpsnames)
+        self.assertTrue('w' in mpsnames)
+        self.assertTrue('C_inf[0]' in mpsnames)
+        self.assertTrue('C_inf[1]' in mpsnames)
+        self.assertTrue('g_0[0]' in mpsnames)
+        self.assertTrue('g_0[1]' in mpsnames)
+        self.assertTrue('a_inf' in mpsnames)
+        
+        ivs = d.getPersistentVariables()
+        ivsnames = d.getExternalNames(ivs)
+        self.assertEqual(len(ivsnames),4)
+        self.assertTrue('ElasticStrain' in ivsnames)
+        self.assertTrue('p' in ivsnames)
+        self.assertTrue('a[0]' in ivsnames)
+        self.assertTrue('a[1]' in ivsnames)
         
 if __name__ == '__main__':
     unittest.main()
