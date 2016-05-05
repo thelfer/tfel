@@ -12,6 +12,7 @@
  */
 
 #include<boost/python.hpp>
+#include"TFEL/Python/MapConverter.hxx"
 #include"MFront/BehaviourAttribute.hxx"
 
 template<typename T>
@@ -33,10 +34,12 @@ static void add_def(boost::python::class_<mfront::BehaviourAttribute>& w,
 void declareBehaviourAttribute(void){
   using namespace boost::python;
   using namespace mfront;
+  using namespace tfel::python;
   class_<BehaviourAttribute> w("BehaviourAttribute");
   add_def<bool>(w,"Bool");
   add_def<unsigned short>(w,"UnsignedShort");
   add_def<std::string>(w,"String");
 
+  initializeMapConverter<std::string,BehaviourAttribute>();
 }
 

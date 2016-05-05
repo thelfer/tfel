@@ -34,6 +34,24 @@ getBoolAttribute(const mfront::BehaviourData& d,
   return d.getAttribute<bool>(n);
 }
 
+static const std::vector<std::string>
+getRegistredMembersNames(const mfront::BehaviourData& d){
+  const auto n = d.getRegistredMembersNames();
+  return {n.begin(),n.end()};
+}
+
+static const std::vector<std::string>
+getRegistredStaticMembersNames(const mfront::BehaviourData& d){
+  const auto n = d.getRegistredStaticMembersNames();
+  return {n.begin(),n.end()};
+}
+
+static const std::vector<std::string>
+getVariablesNames(const mfront::BehaviourData& d){
+  const auto n = d.getVariablesNames();
+  return {n.begin(),n.end()};
+}
+
 void declareBehaviourData(void){
   using namespace boost::python;
   using namespace mfront;
@@ -92,5 +110,28 @@ void declareBehaviourData(void){
     .def("getUnsignedShortAttribute",getUnsignedShortAttribute)
     .def("getStringAttribute",getStringAttribute)
     .def("getBoolAttribute",getBoolAttribute)
+    .def("getAttributes",&BehaviourData::getAttributes,
+	 return_value_policy<copy_const_reference>())
+    .def("reserveName",&BehaviourData::reserveName)
+    .def("registerMemberName",&BehaviourData::registerMemberName)
+    .def("registerStaticMemberName",&BehaviourData::registerStaticMemberName)
+    .def("getRegistredMembersNames",getRegistredMembersNames)
+    .def("getRegistredStaticMembersNames",getRegistredStaticMembersNames)
+    .def("getVariablesNames",getVariablesNames)
+    .def("hasParameter",&BehaviourData::hasParameter)
+    .def("hasParameters",&BehaviourData::hasParameters)
+    .def("setFloattingPointParameterDefaultVale",
+	 static_cast<void (BehaviourData:: *)(const std::string&,
+					      const double)>(&BehaviourData::setParameterDefaultValue))
+    .def("setUnsignedShortParameterDefaultVale",
+	 static_cast<void (BehaviourData:: *)(const std::string&,
+					      const unsigned short)>(&BehaviourData::setParameterDefaultValue))
+    .def("setIntegerParameterDefaultVale",
+	 static_cast<void (BehaviourData:: *)(const std::string&,
+					      const int)>(&BehaviourData::setParameterDefaultValue))
+    .def("getCodeBlockNames",&BehaviourData::getCodeBlockNames)
+    .def("getCode",&BehaviourData::getCode)
+    .def("hasCode",&BehaviourData::hasCode)
     ;
+
 }
