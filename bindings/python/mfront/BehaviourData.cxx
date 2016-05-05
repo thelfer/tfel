@@ -16,12 +16,27 @@
 #include<boost/python.hpp>
 #include"MFront/BehaviourData.hxx"
 
+static std::string
+getStringAttribute(const mfront::BehaviourData& d,
+		   const std::string& n){
+  return d.getAttribute<std::string>(n);
+}
+
+static unsigned short
+getUnsignedShortAttribute(const mfront::BehaviourData& d,
+			  const std::string& n){
+  return d.getAttribute<unsigned short>(n);
+}
+
+static bool
+getBoolAttribute(const mfront::BehaviourData& d,
+		 const std::string& n){
+  return d.getAttribute<bool>(n);
+}
+
 void declareBehaviourData(void){
   using namespace boost::python;
   using namespace mfront;
-
-  // const std::string& (BehaviourData::* ptr1)(const std::string&) const =
-  //   &BehaviourData::getAttribute;
 
   class_<BehaviourData>("BehaviourData")
     .def("getMaterialProperties",&BehaviourData::getMaterialProperties,
@@ -74,6 +89,8 @@ void declareBehaviourData(void){
 	 &BehaviourData::getVariableNameFromGlossaryNameOrEntryName)
     .def("hasAttribute",&BehaviourData::hasAttribute)
     .def("setAttribute",&BehaviourData::setAttribute)
-    //    .def("getStringAttribute",ptr1)
+    .def("getUnsignedShortAttribute",getUnsignedShortAttribute)
+    .def("getStringAttribute",getStringAttribute)
+    .def("getBoolAttribute",getBoolAttribute)
     ;
 }

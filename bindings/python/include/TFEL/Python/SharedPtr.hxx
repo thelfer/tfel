@@ -1,7 +1,8 @@
 /*!
  * \file   SharedPtr.hxx
  * \brief This file works around a missing specialisation of the
- * get_pointer function for std::shared_ptr in old boost versions
+ * get_pointer function for std::shared_ptr in old boost versions.
+ * Proper support has been introduced in boost 1.53.
  * \author THOMAS HELFER
  * \date   05 mai 2016
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
@@ -18,7 +19,7 @@
 #include<boost/version.hpp>
 #include<boost/bind.hpp>
 
-#if BOOST_VERSION < 105500
+#if BOOST_VERSION < 105300
 /* make boost::python understand std::shared_ptr */
 /* http://boost.2283326.n4.nabble.com/No-automatic-upcasting-with-std-shared-ptr-in-function-calls-td4573165.html */
 namespace boost {
