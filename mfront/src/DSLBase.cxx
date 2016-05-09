@@ -105,9 +105,19 @@ namespace mfront
   
   void
   DSLBase::openFile(const std::string& f,
-		    const std::vector<std::string>& ecmds)
+		    const std::vector<std::string>& ecmds,
+		    const std::map<std::string,std::string>& s)
   {
     CxxTokenizer::openFile(f);
+    // substitutions
+    const auto pe = s.end();
+    for(auto& t: this->tokens){
+      auto p = s.find(t.value);
+      if(p!=pe){
+	t.value = p->second;
+      }
+    }
+    // treating external commands
     for(const auto& c : ecmds){
       CxxTokenizer t;
       try{
@@ -117,8 +127,7 @@ namespace mfront
 				 "error while parsing external command "
 				 "'"+c+"'\n"+std::string(e.what())));
       }
-      this->tokens.insert(this->tokens.begin(),
-			      t.begin(),t.end());
+      this->tokens.insert(this->tokens.begin(),t.begin(),t.end());
     }
   } // end of DSLBase::openFile
 
@@ -367,7 +376,7 @@ namespace mfront
     const auto ocurrent = this->current;
     for(const auto& f : files){
       this->importFile(SearchFile::search(f),
-		       std::vector<std::string>());
+		       std::vector<std::string>(),{});
     }
     this->fileName = oFileName;
     this->tokens.swap(oFileTokens);
@@ -376,20 +385,19 @@ namespace mfront
 
   void
   DSLBase::checkNotEndOfFile(const std::string& method,
-				const std::string& error) const{
-    using namespace std;
+			     const std::string& error) const{
     if(this->current==this->tokens.end()){
       auto previous = this->current;
       --previous;
-      string msg(method+" : ");
+      auto msg = std::string{};
       msg += "unexpected end of file.";
       if(!error.empty()){
 	msg += "\n"+error;
       }
       if(!this->tokens.empty()){
-	msg += "\nError at line " + to_string(this->current->line);
+	msg += "\nError at line " + std::to_string(this->current->line);
       }
-      throw(runtime_error(msg));
+      this->throwRuntimeError(method,msg);
     }
   } // end of DSLBase::checkNotEndOfFile
 
@@ -424,15 +432,13 @@ namespace mfront
   std::string
   DSLBase::readUntilEndOfInstruction(void)
   {
-    using namespace std;
-    string res;
+    auto res = std::string{};
     while((this->current!=this->tokens.end())&&
 	  (this->current->value != ";")){
       if(!this->current->value.empty()){
 	if(this->current->value[0]=='@'){
-	  string msg("DSLBase::readUntilEndOfInstruction : ");
-	  msg += "no word beginning with '@' are allowed here";
-	  throw(runtime_error(msg));
+	  this->throwRuntimeError("DSLBase::readUntilEndOfInstruction",
+				  "no word beginning with '@' are allowed here");
 	}
 	res+=this->current->value;
 	res+=" ";
@@ -489,10 +495,7 @@ namespace mfront
 			    const std::string& type,
 			    const bool allowArray)
   {
-    using namespace std;
-    using namespace tfel::math;
-    using namespace tfel::utilities;
-    string endComment;
+    auto endComment = std::string{};
     auto endOfTreatment=false;
     while((this->current!=this->tokens.end())&&
 	  (!endOfTreatment)){
@@ -510,11 +513,11 @@ namespace mfront
 	  this->throwRuntimeError("DSLBase::readVarList : ",
 				  "variable '"+varName+"' can't be declared an array");
 	}
-	string array_size;
+	auto array_size = std::string{};
 	++(this->current);
 	this->checkNotEndOfFile("DSLBase::readVarList");
 	while(this->current->value!="]"){
-	  if((this->current->flag!=Token::Standard)||
+	  if((this->current->flag!=tfel::utilities::Token::Standard)||
 	     (this->current->value==";")){
 	    this->throwRuntimeError("DSLBase::readVarList : ",
 				    "invalid array size for '"+varName+"'");
@@ -527,7 +530,7 @@ namespace mfront
 	  this->throwRuntimeError("DSLBase::readVarList : ",
 				  "empty array size for '"+varName+"'");
 	}
-	IntegerEvaluator ev(array_size);
+	tfel::math::IntegerEvaluator ev(array_size);
 	const auto& vars = ev.getVariablesNames();
 	for(auto pv=vars.begin();pv!=vars.end();++pv){
 	  auto pvv = this->integerConstants.find(*pv);
@@ -562,11 +565,11 @@ namespace mfront
       }
     }
     if(!endComment.empty()){
-      for(auto & elem : cont){
-	if(!elem.description.empty()){
-	  elem.description += ' ';
+      for(auto & c : cont){
+	if(!c.description.empty()){
+	  c.description += ' ';
 	}
-	elem.description += endComment;
+	c.description += endComment;
       }
     }
     if(!endOfTreatment){

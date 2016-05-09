@@ -1,0 +1,22 @@
+@DSL Implicit;
+@Behaviour OrthotropicStandardElasticity2;
+@Author Thomas Helfer;
+@Date   5/06/2016;
+@Description{
+  "This file is used to test the StandardElasticity brick for "
+  "an isotropic behaviour. Elastic properties are defined through "
+  "parameters."
+}
+
+@OrthotropicBehaviour<Pipe>;
+@Epsilon 1e-14;
+@ModellingHypotheses {".+"};
+@Brick "StandardElasticity";
+
+@ComputeStiffnessTensor<UnAltered> {
+  "YoungModulusTest_1.mfront" ,"YoungModulusTest_2.mfront" ,
+  "YoungModulusTest_3.mfront" ,"PoissonRatioTest_12.mfront",
+  "PoissonRatioTest_23.mfront","PoissonRatioTest_13.mfront",
+  "ShearModulusTest_12.mfront","ShearModulusTest_23.mfront",
+  "ShearModulusTest_13.mfront"
+};

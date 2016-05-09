@@ -64,12 +64,21 @@ namespace mtest
   } // end of PipeTestParser::parseString
 
   void
-  PipeTestParser::execute(PipeTest& t,const std::string& f)
+  PipeTestParser::execute(PipeTest& t,const std::string& f,
+		    const std::map<std::string,std::string>& s)
   {
     this->file = f;
     this->treatCharAsString(true);
     this->openFile(f);
     this->stripComments();
+    // substitutions
+    const auto pe = s.end();
+    for(auto& token: this->tokens){
+      auto p = s.find(token.value);
+      if(p!=pe){
+	token.value = p->second;
+      }
+    }
     this->execute(t);
   }
   

@@ -31,13 +31,14 @@ namespace mfront{
   std::shared_ptr<AbstractDSL>
   MFrontBase::getDSL(const std::string& f)
   {
-    using namespace std;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("MFrontBase::getDSL: "+m));}
+    };
     using namespace tfel::system;
-    using namespace tfel::utilities;
     auto& dslFactory = DSLFactory::getDSLFactory();
-    shared_ptr<AbstractDSL> dsl;
-    string library,dslName;
-    CxxTokenizer file(f);
+    std::shared_ptr<AbstractDSL> dsl;
+    std::string library,dslName;
+    tfel::utilities::CxxTokenizer file(f);
     file.stripComments();
     auto pt = file.begin();
     const auto pte = file.end();
@@ -47,53 +48,22 @@ namespace mfront{
 	if(pt!=file.begin()){
 	  auto ptp = pt;
 	  --ptp;
-	  if(ptp->value!=";"){
-	    string msg("MFrontBase::getDSL : ");
-	    msg += "the keyword @Parser or @DSL does not begin a new instruction.";
-	    throw(runtime_error(msg));
-	  }
+	  throw_if(ptp->value!=";","the keyword @DSL (or @Parser) does "
+		   "not begin a new instruction.");
 	}
 	++pt;
-	if(pt==pte){
-	  ostringstream msg;
-	  msg << "MFrontBase::getDSL : ";
-	  msg << "unexepected end of file (exepected dsl name).\n";
-	  msg << "Error at line " << pt->line << ".";
-	  throw(runtime_error(msg.str()));
-	}
-	if(pt->value==";"){
-	  ostringstream msg;
-	  msg << "MFrontBase::getDSL : ";
-	  msg << "unexepected end of file (exepected dsl name).\n";
-	  msg << "Error at line " << pt->line << ".";
-	  throw(runtime_error(msg.str()));
-	}
+	throw_if(pt==pte,"unexpected end of file (exepected dsl name)");
+	throw_if(pt->value==";","unexepected token '"+pt->value+"'.\n"
+		 "Error at line "+ std::to_string(pt->line));
 	dslName = pt->value;
 	++pt;
-	if(pt==pte){
-	  ostringstream msg;
-	  msg << "MFrontBase::getDSL : ";
-	  msg << "unexepected end of file (exepected library name or ';').\n";
-	  msg << "Error at line " << pt->line << ".";
-	  throw(runtime_error(msg.str()));
-	}
+	throw_if(pt==pte,"unexpected end of file (exepected dsl name)");
 	if(pt->value!=";"){
 	  library = pt->value;
 	  ++pt;
-	  if(pt==pte){
-	    ostringstream msg;
-	    msg << "MFrontBase::getDSL : ";
-	    msg << "unexepected end of file (exepected ';').\n";
-	    msg << "Error at line " << pt->line << ".";
-	    throw(runtime_error(msg.str()));
-	  }
-	  if(pt->value!=";"){
-	    ostringstream msg;
-	    msg << "MFrontBase::getDSL : ";
-	    msg << "unexepected token '" << pt->value << "' (exepected ';').\n";
-	    msg << "Error at line " << pt->line << ".";
-	    throw(runtime_error(msg.str()));
-	  }
+	  throw_if(pt==pte,"unexpected end of file (exepected dsl name)");
+	  throw_if(pt->value==";","unexepected token '"+pt->value+"'.\n"
+		   "Error at line "+ std::to_string(pt->line));
 	}
 	found = true;
       }
@@ -107,19 +77,18 @@ namespace mfront{
 	}
 	dsl = dslFactory.createNewParser(dslName);
       } 
-      catch(runtime_error& r){
-	ostringstream msg;
+      catch(std::runtime_error& r){
+	std::ostringstream msg;
 	msg << "MFrontBase::getDSL : error while loading dsl "
 	    << dslName << " (" << r.what() << ")\n";
-	msg << "Available dsls : " << endl;
+	msg << "Available dsls:\n";
 	const auto& dsls = dslFactory.getRegistredParsers();
-	copy(dsls.begin(),dsls.end(),ostream_iterator<string>(msg," "));
-	throw(runtime_error(msg.str()));
+	copy(dsls.begin(),dsls.end(),std::ostream_iterator<std::string>(msg," "));
+	throw(std::runtime_error(msg.str()));
       }
     } else {
       if(getVerboseMode()>=VERBOSE_LEVEL2){
-	auto& log = getLogStream();
-	log << "MFrontBase::getDSL : no dsl specified, using default" << endl;
+	getLogStream() << "MFrontBase::getDSL : no dsl specified, using default\n";
       }
       dsl = dslFactory.createNewParser(DefaultDSL::getName());
     }
@@ -129,12 +98,11 @@ namespace mfront{
   MFrontBase::MFrontBase()
   {
     using namespace tfel::system;
-    using namespace tfel::utilities;
     // calling mfront plugins
     const char * libs = ::getenv("MFRONT_ADDITIONAL_LIBRARIES");
     if(libs!=nullptr){
       auto& lm = ExternalLibraryManager::getExternalLibraryManager();
-      for(const auto& l : tokenize(libs,':')){
+      for(const auto& l : tfel::utilities::tokenize(libs,':')){
 	lm.loadLibrary(l);
       }
     }
@@ -143,11 +111,10 @@ namespace mfront{
   void
   MFrontBase::treatSearchPath(void)
   {
-    using namespace std;
     const auto& o = this->getCurrentCommandLineArgument().getOption();
     if(o.empty()){
-      throw(runtime_error("MFrontBase::treatSearchPath : "
-			  "no path given"));
+      throw(std::runtime_error("MFrontBase::treatSearchPath : "
+			       "no path given"));
     }
     SearchFile::addSearchPaths(o);
   }
@@ -161,12 +128,35 @@ namespace mfront{
       if(an.size()>=4){
 	if((an[1]=='-')&&(an[2]=='@')){
 	  const auto& o = a.getOption();
-	  auto cmd = an.substr(2);
-	  if(!o.empty()){
-	    cmd += ' '+o;
+	  if(an.back()=='@'){
+	    if(o.empty()){
+	      return false;
+	    }
+	    const auto s1 = an.substr(2);
+	    if(std::count(s1.begin(),s1.end(),'@')!=2){
+	      throw(std::runtime_error("MFrontBase::treatUnknownArgumentBase: "
+				       "bas substitution pattern '"+s1+"'"));
+	    }
+	    if(s1.empty()){
+	      return false;
+	    }
+	    const auto s2 = o;
+	    if(getVerboseMode()>=VERBOSE_LEVEL2){
+	      getLogStream() << "substituting '" << s1 << "' by '" << s2 << "'\n";
+	    }
+	    if(!this->substitutions.insert({s1,s2}).second){
+	      throw(std::runtime_error("MFrontBase::treatUnknownArgumentBase: "
+				       "a substitution for '"+s1+"' has "
+				       "already been defined"));
+	    }
+	  } else {
+	    auto cmd = an.substr(2);
+	    if(!o.empty()){
+	      cmd += ' '+o;
+	    }
+	    cmd += ';';
+	    this->ecmds.push_back(cmd);
 	  }
-	  cmd += ';';
-	  this->ecmds.push_back(cmd);
 	  ok = true;
 	}
       }
@@ -179,7 +169,6 @@ namespace mfront{
   void
   MFrontBase::treatVerbose(void)
   {
-    using namespace std;
     if(getCurrentCommandLineArgument().getOption().empty()){
       setVerboseMode(VERBOSE_LEVEL1);
     } else {
@@ -199,9 +188,8 @@ namespace mfront{
       } else if (o=="full"){
 	setVerboseMode(VERBOSE_FULL);
       } else {
-	string msg("MTestMain::treatVerbose : ");
-	msg += "unknown option '"+o+"'";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("MFrontBase::treatVerbose: "
+				 "unknown option '"+o+"'"));
       }
     }
   }
@@ -224,29 +212,23 @@ namespace mfront{
 
   void
   MFrontBase::setInterface(const std::string& i){
-    using std::runtime_error;
     if(!this->interfaces.insert(i).second){
-      throw(runtime_error("MFrontBase::treatInterface : "
-			  "the interface '"+i+"' has "
-			  "already been specified"));
+      throw(std::runtime_error("MFrontBase::treatInterface : "
+			       "the interface '"+i+"' has "
+			       "already been specified"));
     }
   } // end of MFrontBase::setInterface
   
   void
   MFrontBase::treatInterface(void)
   {
-    using std::runtime_error;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("MFrontBase::treatInterface: "+m));}
+    };
     const auto& o = this->getCurrentCommandLineArgument().getOption();
-    if(o.empty()){
-      throw(runtime_error("MFrontBase::treatInterface : "
-			  "no option given to the "
-			  "'--interface' argument"));
-    }
+    throw_if(o.empty(),"no option given to the '--interface' argument");
     for(const auto& i : tfel::utilities::tokenize(o,',')){
-      if(i.empty()){
-	throw(runtime_error("MFrontBase::treatInterface : "
-			    "empty interface specified."));
-      }
+      throw_if(i.empty(),"empty interface specified.");
       this->setInterface(i);
     }
   } // end of MFrontBase::treatInterface

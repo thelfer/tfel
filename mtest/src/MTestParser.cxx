@@ -70,12 +70,26 @@ namespace mtest
   } // end of MTestParser::parseString
 
   void
-  MTestParser::execute(MTest& t,const std::string& f)
+  MTestParser::execute(MTest& t,const std::string& f,
+		       const std::map<std::string,std::string>& s)
   {
     this->file = f;
     this->treatCharAsString(true);
     this->openFile(f);
     this->stripComments();
+    // substitutions
+    const auto pe = s.end();
+    for(auto& token: this->tokens){
+      auto p = s.find(token.value);
+      if(p!=pe){
+	token.value = p->second;
+	if(((p->second.front()=='\'')&&(p->second.back()=='\''))||
+	   ((p->second.front()=='"') &&(p->second.back()=='"'))){
+	  
+	  token.flag=tfel::utilities::Token::String;
+	}
+      }
+    }
     this->execute(t);
   }
   

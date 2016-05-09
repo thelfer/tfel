@@ -279,9 +279,10 @@ namespace mfront{
 
   void
   BehaviourDSLCommon::analyseFile(const std::string& fileName_,
-				  const std::vector<std::string>& ecmds)
+				  const std::vector<std::string>& ecmds,
+				  const std::map<std::string,std::string>& s)
   {
-    this->importFile(fileName_,ecmds);
+    this->importFile(fileName_,ecmds,s);
     // Adding some stuff
     this->endsInputFileProcessing();
     // setting the name of the output files

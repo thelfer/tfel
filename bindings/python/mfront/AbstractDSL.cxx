@@ -39,7 +39,7 @@ static void
 analyseFile1(mfront::AbstractDSL& dsl,
 	     const std::string& f)
 {
-  dsl.analyseFile(f,{});
+  dsl.analyseFile(f,{},{});
 }
 
 static void
@@ -47,7 +47,16 @@ analyseFile2(mfront::AbstractDSL& dsl,
 	     const std::string& f,
 	     const std::vector<std::string>& args)
 {
-  dsl.analyseFile(f,args);
+  dsl.analyseFile(f,args,{});
+}
+
+static void
+analyseFile3(mfront::AbstractDSL& dsl,
+	     const std::string& f,
+	     const std::vector<std::string>& args,
+	     const std::map<std::string,std::string>& s)
+{
+  dsl.analyseFile(f,args,s);
 }
 
 void declareAbstractDSL(void){
@@ -65,6 +74,7 @@ void declareAbstractDSL(void){
 	 return_internal_reference<>())
     .def("analyseFile",analyseFile1)
     .def("analyseFile",analyseFile2)
+    .def("analyseFile",analyseFile3)
     .def("analyseString",&AbstractDSL::analyseString)
     .def("getTargetsDescription",&AbstractDSL::getTargetsDescription,
 	 return_internal_reference<>())

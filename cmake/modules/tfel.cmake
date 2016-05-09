@@ -105,6 +105,11 @@ endmacro(mtest_library)
 
 macro(add_mfront_behaviour_generated_source lib interface file)
   set(mfront_file   "${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${file}.mfront")
+  if(interface STREQUAL "castem")
+    set(iprefix "umat")
+  else (interface STREQUAL "castem")
+    set(iprefix "${interface}")
+  endif(interface STREQUAL "castem")
   if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
     set(mfront_executable "$<TARGET_FILE:mfront>")
   else(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
@@ -124,7 +129,7 @@ macro(add_mfront_behaviour_generated_source lib interface file)
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     add_custom_command(
       OUTPUT  "src/${file}.cxx"
-      OUTPUT  "src/${interface}${file}.cxx"
+      OUTPUT  "src/${iprefix}${file}.cxx"
       COMMAND "set"
       ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;%PATH%"
       COMMAND "set"
@@ -153,7 +158,7 @@ macro(add_mfront_behaviour_generated_source lib interface file)
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
       add_custom_command(
 	OUTPUT  "src/${file}.cxx"
-	OUTPUT  "src/${interface}${file}.cxx"
+	OUTPUT  "src/${iprefix}${file}.cxx"
 	COMMAND "${mfront_executable}"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
@@ -172,7 +177,7 @@ macro(add_mfront_behaviour_generated_source lib interface file)
 	  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
       endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set(${lib}_SOURCES "src/${file}.cxx" "src/${interface}${file}.cxx"
+  set(${lib}_SOURCES "src/${file}.cxx" "src/${iprefix}${file}.cxx"
     ${${lib}_SOURCES})
 endmacro(add_mfront_behaviour_generated_source)
 

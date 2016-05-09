@@ -14,8 +14,8 @@
 #ifndef LIB_MFRONT_BEHAVIOURDSLBASE_IXX_
 #define LIB_MFRONT_BEHAVIOURDSLBASE_IXX_ 
 
-#include<stdexcept>
 #include<sstream>
+#include<stdexcept>
 #include<algorithm>
 
 #include"MFront/AbstractBehaviourInterface.hxx"
@@ -228,10 +228,11 @@ namespace mfront{
   
   template<typename Child>
   void BehaviourDSLBase<Child>::importFile(const std::string& fileName_,
-					   const std::vector<std::string>& ecmds)
+					   const std::vector<std::string>& ecmds,
+					   const std::map<std::string,std::string>& s)
   {
     this->fileName = fileName_;
-    this->openFile(this->fileName,ecmds);
+    this->openFile(this->fileName,ecmds,s);
     this->analyse();
   } // end of BehaviourDSLBase<Child>::importFile
 

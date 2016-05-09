@@ -1,0 +1,41 @@
+@Author  Thomas Helfer;
+@Date 6/05/2016;
+@Description{
+  This file describes a tensile test along XX.
+  Simulation Results are compared to the
+  analytical solution.
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<umat> @library@ @behaviour@;
+@MaterialProperty<constant> 'YoungModulus1'   78.e9;
+@MaterialProperty<constant> 'YoungModulus2'   78.e9;
+@MaterialProperty<constant> 'YoungModulus3'   78.e9;
+@MaterialProperty<constant> 'PoissonRatio12'   0.3;
+@MaterialProperty<constant> 'PoissonRatio23'   0.3;
+@MaterialProperty<constant> 'PoissonRatio13'   0.3;
+@MaterialProperty<constant> 'ShearModulus12'  '78e9/(2*(1+0.3))';
+@MaterialProperty<constant> 'ShearModulus23'  '78e9/(2*(1+0.3))';
+@MaterialProperty<constant> 'ShearModulus13'  '78e9/(2*(1+0.3))';
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+
+@Real 'e0' 1.e-3;
+@ImposedStrain<function> 'EXX' 'e0*sin(t/900.)';
+
+@Times {0.,3600 in 20};
+
+// stresses
+@Test<function> 'SXX' 'YoungModulus1*EXX'  1.e-3;
+@Test<function> 'SYY' '0.'                1.e-3;
+@Test<function> 'SZZ' '0.'                1.e-3;
+@Test<function> 'SXY' '0.'                1.e-3;
+@Test<function> 'SXZ' '0.'                1.e-3;
+@Test<function> 'SYZ' '0.'                1.e-3;
+// strains
+@Test<function> 'EYY' '-PoissonRatio12*EXX' 1.e-8;
+@Test<function> 'EZZ' '-PoissonRatio13*EXX' 1.e-8;
+@Test<function> 'EXY' '0.'                  1.e-8;
+@Test<function> 'EXZ' '0.'                  1.e-8;
+@Test<function> 'EYZ' '0.'                  1.e-8;

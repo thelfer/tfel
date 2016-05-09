@@ -64,6 +64,8 @@ namespace mtest{
      */
     virtual void
     setOutputFileName(const std::string&);
+    //! \return true if the output file name has been defined
+    virtual bool isOutputFileNameDefined(void) const;
     /*!
      * \brief set the output file precision
      * \param[in] p : precision
@@ -76,6 +78,17 @@ namespace mtest{
      */
     virtual void
     setResidualFileName(const std::string&);
+    //! \return true if the residual file name has been defined
+    virtual bool isResidualFileNameDefined(void) const;
+    /*!
+     * \brief set the residual file
+     * \param[in] f : file name
+     */
+    virtual void setXMLOutputFileName(const std::string&);
+    //! \return true if the residual file name has been defined
+    virtual bool isXMLOutputFileNameDefined(void) const;
+    //! \return true if the residual file name has been defined
+    virtual std::string getXMLOutputFileName(void) const;
     /*!
      * \brief set the residual file precision
      * \param[in] p : precision
@@ -268,6 +281,8 @@ namespace mtest{
     mutable std::ofstream out;
     //! residual file name
     std::string residualFileName;
+    //! xml file name
+    std::string xmlFileName;
     //! file where residuals evolutions as a function of the iteration
     //! number are saved
     mutable std::ofstream residual;

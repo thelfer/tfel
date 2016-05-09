@@ -23,7 +23,5 @@ E.setGlossaryName("YoungModulus");
 @Function
 {
   const real TC = TK-273.15;
-
   E=(-3.1636e-3*TC*TC-3.8654*TC+2.1421e+4)*1e7;
-
 }

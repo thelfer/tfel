@@ -1,0 +1,18 @@
+@DSL Implicit;
+@Behaviour IsotropicStandardElasticity2;
+@Author Thomas Helfer;
+@Date   5/06/2016;
+@Description{
+  "This file is used to test the StandardElasticity brick for "
+  "an isotropic behaviour. Elastic properties are defined through "
+  "material properties."
+}
+
+@Epsilon 1e-14;
+@ModellingHypotheses {".+"};
+@Brick "StandardElasticity";
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");

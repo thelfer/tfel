@@ -18,15 +18,24 @@
 
 void declareMTestParser(void);
 
+static void execute(mtest::MTestParser& p,mtest::MTest& m,const std::string& f){
+  p.execute(m,f,{});
+}
+
+static void execute2(mtest::MTestParser& p,mtest::MTest& m,const std::string& f,
+		     const std::map<std::string,std::string>& s){
+  p.execute(m,f,s);
+}
+
 void declareMTestParser(void)
 {
   using namespace boost;
   using namespace boost::python;
   using namespace mtest;
-  void (MTestParser::* execute)(MTest&,const std::string&) = &MTestParser::execute;
-  class_<MTestParser,noncopyable>("MTestParser")
-    .def("execute",execute)
-    .def("parseString",&MTestParser::parseString)
-    ;
+   class_<MTestParser,noncopyable>("MTestParser")
+     .def("execute",execute)
+     .def("execute",execute2)
+     .def("parseString",&MTestParser::parseString)
+     ;
 
 } // end of declareExternalLibraryManager

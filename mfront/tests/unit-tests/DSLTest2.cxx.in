@@ -77,7 +77,7 @@ struct DSLTest2 final
     const auto mh = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto f  = std::string{"@top_srcdir@/mfront/tests/unit-tests/mfront/test1.mfront"};
     auto dsl = getBehaviourDSL(f);
-    dsl->analyseFile(f,{});
+    dsl->analyseFile(f,{},{});
     const auto& bd = dsl->getBehaviourDescription();
     TFEL_TESTS_ASSERT(bd.isMaterialPropertyName(mh,"young"));
     TFEL_TESTS_ASSERT(bd.hasGlossaryName(mh,"young"));
@@ -113,7 +113,7 @@ struct DSLTest2 final
     const auto mh = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto f  = std::string{"@top_srcdir@/mfront/tests/unit-tests/mfront/test1.mfront"};
     auto dsl = getBehaviourDSL(f);
-    dsl->analyseFile(f,{});
+    dsl->analyseFile(f,{},{});
     const auto& bd = dsl->getBehaviourDescription().getBehaviourData(mh);
     TFEL_TESTS_ASSERT(bd.isMaterialPropertyName("young"));
     TFEL_TESTS_ASSERT((bd.isGlossaryNameUsed(Glossary::YoungModulus)));

@@ -506,6 +506,11 @@ namespace mtest{
     this->output = o;
   }
 
+  bool SchemeBase::isOutputFileNameDefined(void) const
+  {
+    return !this->output.empty();
+  }
+  
   void
   SchemeBase::setOutputFilePrecision(const unsigned int p)
   {
@@ -526,6 +531,11 @@ namespace mtest{
     this->residualFileName = o;
   }
 
+  bool SchemeBase::isResidualFileNameDefined(void) const
+  {
+    return !this->residualFileName.empty();
+  }
+  
   void
   SchemeBase::setResidualFilePrecision(const unsigned int p)
   {
@@ -534,6 +544,30 @@ namespace mtest{
 			       "residual file precision already defined"));
     }
     this->rprec = static_cast<int>(p);
+  }
+
+  void
+  SchemeBase::setXMLOutputFileName(const std::string& o)
+  {
+    if(!this->xmlFileName.empty()){
+      throw(std::runtime_error("SchemeBase::setXMLOutputFileName : "
+			       "XMLOutput file name already defined"));
+    }
+    this->xmlFileName = o;
+  }
+  
+  bool SchemeBase::isXMLOutputFileNameDefined(void) const
+  {
+    return !this->xmlFileName.empty();
+  }
+
+  std::string SchemeBase::getXMLOutputFileName(void) const
+  {
+    if(this->xmlFileName.empty()){
+      throw(std::runtime_error("SchemeBase::getXMLOutputFileName : "
+			       "XML output file name not defined"));
+    }
+    return this->xmlFileName;
   }
   
   SchemeBase::~SchemeBase()

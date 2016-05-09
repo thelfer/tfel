@@ -82,7 +82,7 @@ struct BehaviourBrickRequirementManagerTest final
     const auto mh = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto f  = std::string{"@top_srcdir@/mfront/tests/unit-tests/mfront/test2.mfront"};
     auto dsl = getBehaviourDSL(f);
-    dsl->analyseFile(f,{});
+    dsl->analyseFile(f,{},{});
     const RequirementManager r{dsl->getBehaviourDescription().getBehaviourData(mh),false};
     TFEL_TESTS_ASSERT(r.getProvider(Glossary::YoungModulus).getIdentifier()==
 		      ProviderIdentifier::MATERIALPROPERTY);
@@ -124,7 +124,7 @@ struct BehaviourBrickRequirementManagerTest final
     const auto mp = ProviderIdentifier::MATERIALPROPERTY;
     const auto ip = ProviderIdentifier::INTEGRATIONVARIABLE;
     auto dsl = getBehaviourDSL(f);
-    dsl->analyseFile(f,{});
+    dsl->analyseFile(f,{},{});
     RequirementManager r{dsl->getBehaviourDescription().getBehaviourData(mh),false};
     r.addRequirement(Requirement{"real","r1",1u,{mp}});
     r.addMaterialPropertyProvider("real","ir2","r2",1u);
@@ -167,7 +167,7 @@ struct BehaviourBrickRequirementManagerTest final
     const auto mp = ProviderIdentifier::MATERIALPROPERTY;
     const auto ip = ProviderIdentifier::INTEGRATIONVARIABLE;
     auto dsl = getBehaviourDSL(f);
-    dsl->analyseFile(f,{});
+    dsl->analyseFile(f,{},{});
     RequirementManager r{dsl->getBehaviourDescription().getBehaviourData(mh),true};
     r.addRequirement(Requirement{"real","r1",1u,{mp}});
     r.addMaterialPropertyProvider("real","ir2","r2",1u);

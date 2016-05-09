@@ -56,10 +56,15 @@ namespace mfront{
      * \param[in] ecmds : additionnal commands inserted treated before
      * the input file commands (those commands are given through the
      * `--@??` option of the command line
+     * \param[in] s : substitutions patterns inserted (those
+     * substitutions are given through command-line options such as
+     * `--@YYY@=XXX`)
+     * 
      */
     virtual void
     analyseFile(const std::string&,
-		const std::vector<std::string>&) override;
+		const std::vector<std::string>&,
+		const std::map<std::string,std::string>&) override;
   protected:
     //! a simple alias
     using MaterialPropertyInput =

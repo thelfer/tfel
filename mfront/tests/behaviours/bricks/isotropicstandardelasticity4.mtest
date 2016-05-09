@@ -1,0 +1,28 @@
+@Author T. Helfer;
+@Date 26/02/2016;
+@Description{
+  "Test of the StandardElasticity brick in plane stress."
+};
+
+@ModellingHypothesis 'PlaneStress';
+@Behaviour<castem> @library@ @behaviour@;
+
+@MaterialProperty<constant> 'YoungModulus' 78.e9;
+@MaterialProperty<constant> 'PoissonRatio'  0.3;
+
+@ExternalStateVariable 'Temperature' 293.15;
+@ImposedStrain<function> 'EXX' '1.e-3*sin(t/900.)';
+
+@Times {0.,3600 in 20};
+
+// stresses
+@Real 'E'  7.8e+10;
+@Real 'nu' 0.3;
+@Test<function> 'SXX' 'E*EXX' 1.e-3;
+@Test<function> 'SYY' '0.'    1.e-3;
+@Test<function> 'SZZ' '0.'    1.e-3;
+@Test<function> 'SXY' '0.'    1.e-3;
+// strains
+@Test<function> 'EYY' '-nu*EXX' 1.e-8;
+@Test<function> 'EZZ' '0.' 1.e-8;
+@Test<function> 'EXY' '0.' 1.e-8;

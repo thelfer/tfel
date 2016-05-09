@@ -24,6 +24,9 @@ young.setGlossaryName("YoungModulus");
 @MaterialProperty real   nu;
 nu.setGlossaryName("PoissonRatio");
 
+@ExternalStateVariable<AxisymmetricalGeneralisedPlaneStress> stress sigzz;
+AxisymmetricalGeneralisedPlaneStress::sigzz.setGlossaryName("AxialStress");
+
 // Lame Coefficients
 @LocalVariable stress lambda,mu;
 
@@ -44,9 +47,17 @@ nu.setGlossaryName("PoissonRatio");
   }
 }
 
-@Integrator<PlaneStress,AxisymmetricalGeneralisedPlaneStress,Replace>{
+@Integrator<PlaneStress,Replace>{
   // here we compute the tangent operator even if we don't need too
   static_cast<void>(computeTangentOperator_);
   computeAlteredElasticStiffness<hypothesis,real>::exe(Dt,lambda,mu);
   sig = Dt*(eto+deto);
+}
+
+@Integrator<AxisymmetricalGeneralisedPlaneStress,Replace>{
+  // here we compute the tangent operator even if we don't need too
+  static_cast<void>(computeTangentOperator_);
+  computeAlteredElasticStiffness<hypothesis,real>::exe(Dt,lambda,mu);
+  sig = Dt*(eto+deto);
+  sig(2)=this->sigzz+this->dsigzz;
 }

@@ -63,38 +63,28 @@ namespace mtest
       DEFAULT
     } scheme = DEFAULT;
     friend struct tfel::utilities::ArgumentParserBase<MTestMain>;
-    void
-    treatUnknownArgument(void);
-    void
-    treatVerbose(void);
-    void
-    treatScheme(void);
-    void
-    treatXMLOutput(void);
-    void
-    treatResultFileOutput(void);
-    void
-    treatResidualFileOutput(void);
-    TFEL_NORETURN void
-    treatHelpCommandsList(void);
-    TFEL_NORETURN void
-    treatHelpCommands(void);
-    TFEL_NORETURN void
-    treatHelpCommand(void);
-    void
-    treatEnableFloatingPointExceptions(void);
+    void treatUnknownArgument(void);
+    void treatVerbose(void);
+    void treatScheme(void);
+    void treatXMLOutput(void);
+    void treatResultFileOutput(void);
+    void treatResidualFileOutput(void);
+    TFEL_NORETURN void treatHelpCommandsList(void);
+    TFEL_NORETURN void treatHelpCommands(void);
+    TFEL_NORETURN void treatHelpCommand(void);
+    void treatEnableFloatingPointExceptions(void);
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-    void
-    treatBacktrace();
+    void treatBacktrace();
 #endif
     virtual std::string 
     getVersionDescription(void) const override;
     virtual std::string 
     getUsageDescription(void) const override;
-    void 
-    registerArgumentCallBacks(void);
+    void registerArgumentCallBacks(void);
     // input files
     std::vector<std::string> inputs;
+    // substitutions
+    std::map<std::string,std::string> substitutions;
     // xml output
     bool xml_output = false;
     // generate result file
@@ -315,8 +305,7 @@ namespace mtest
     ::exit(EXIT_SUCCESS);
   } // end of MTestMain::treatHelpCommands
   
-  void
-  MTestMain::treatHelpCommand()
+  void MTestMain::treatHelpCommand()
   {
     const auto& k = this->currentArgument->getOption();
     if(k.empty()){
@@ -331,12 +320,33 @@ namespace mtest
     ::exit(EXIT_SUCCESS);
   }
 
-  void
-  MTestMain::treatUnknownArgument(void)
+  void MTestMain::treatUnknownArgument(void)
   {
-    using namespace tfel::utilities;
     const auto& a = this->currentArgument->as_string();
     if(a[0]=='-'){
+      if(a.size()>4){
+	if((a[1]=='-')&&(a[2]=='@')&&(a.back()=='@')){
+	  const auto s1 = a.substr(2);
+	  if(std::count(s1.begin(),s1.end(),'@')!=2){
+	    throw(std::runtime_error("MTestMain::treatUnknownArgument: "
+				     "bas substitution pattern '"+s1+"'"));
+	  }
+	  const auto s2 = this->currentArgument->getOption();
+	  if(s2.empty()){
+	    throw(std::runtime_error("MTestMain::treatUnknownArgument: "
+				     "no substitution given for pattern '"+s1+"'"));
+	  }
+	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
+	    mfront::getLogStream() << "substituting '" << s1 << "' by '" << s2 << "'\n";
+	  }
+	  if(!this->substitutions.insert({s1,s2}).second){
+	    throw(std::runtime_error("MFrontBase::treatUnknownArgumentBase: "
+				     "a substitution for '"+s1+"' has "
+				     "already been defined"));
+	  }
+	  return;
+	}
+      }
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
       ArgumentParserBase<MTestMain>::treatUnknownArgument();
 #else
@@ -345,7 +355,6 @@ namespace mtest
 #endif /* __CYGWIN__ */
     }
     this->inputs.push_back(this->currentArgument->as_string());
-    return;
   } // end of MTestMain::treatUnknownArgument()
 
   std::string 
@@ -363,16 +372,18 @@ namespace mtest
   int
   MTestMain::execute(void)
   {
-    auto mtest = [](const std::string& f)
+    auto mtest = [](const std::string& f,
+		    const std::map<std::string,std::string>& s)
       -> std::shared_ptr<SchemeBase> {
       auto t = std::make_shared<MTest>();
-      t->readInputFile(f);
+      t->readInputFile(f,s);
       return t;
     };
-    auto ptest = [](const std::string& f)
+    auto ptest = [](const std::string& f,
+		    const std::map<std::string,std::string>& s)
       -> std::shared_ptr<SchemeBase> {
       auto t = std::make_shared<PipeTest>();
-      PipeTestParser().execute(*t,f);
+      PipeTestParser().execute(*t,f,s);
       return t;
     };
     using namespace std;
@@ -390,25 +401,34 @@ namespace mtest
       }
       auto t = std::shared_ptr<SchemeBase>{};
       if(this->scheme==MTEST){
-	t = mtest(i);
+	t = mtest(i,this->substitutions);
       } else if (this->scheme==PTEST){
-	t = ptest(i);
+	t = ptest(i,this->substitutions);
       } else if (this->scheme==DEFAULT){
 	if(ext==".ptest"){
-	  t = ptest(i);
+	  t = ptest(i,this->substitutions);
 	} else {
-	  t = mtest(i);
+	  t = mtest(i,this->substitutions);
 	}
       }
       if(this->result_file_output){
-	t->setOutputFileName(tname+".res");
+	if(!t->isOutputFileNameDefined()){
+	  t->setOutputFileName(tname+".res");
+	}
       }
       if(this->residual_file_output){
-	t->setResidualFileName(tname+"-residual.res");
+	if(!t->isResidualFileNameDefined()){
+	  t->setResidualFileName(tname+"-residual.res");
+	}
       }
       tm.addTest("MTest/"+tname,t);
       if(this->xml_output){
-	shared_ptr<TestOutput> o(new XMLTestOutput(tname+".xml"));
+	shared_ptr<TestOutput> o;
+	if(!t->isXMLOutputFileNameDefined()){
+	  o = shared_ptr<TestOutput>(new XMLTestOutput(tname+".xml"));
+	} else {
+	  o = shared_ptr<TestOutput>(new XMLTestOutput(t->getXMLOutputFileName()));
+	}
 	tm.addTestOutput("MTest/"+tname,o);
       }
       tm.addTestOutput("MTest/"+tname,cout);

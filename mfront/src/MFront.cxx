@@ -532,7 +532,7 @@ namespace mfront{
     if(!this->interfaces.empty()){
       dsl->setInterfaces(this->interfaces);
     }
-    dsl->analyseFile(f,this->ecmds);
+    dsl->analyseFile(f,this->ecmds,this->substitutions);
     dsl->generateOutputFiles();
     auto td = dsl->getTargetsDescription();
     for(auto& l: td){

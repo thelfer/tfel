@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
 #include<string>
 #include<sstream>
 #include<stdexcept>
@@ -475,20 +476,29 @@ namespace mfront
   } // end of BehaviourDescription::areElasticMaterialPropertiesDefined
 
   bool
+  BehaviourDescription::isMaterialPropertyConstantDuringTheTimeStep(const MaterialProperty& mp) const{
+    if(mp.is<ComputedMaterialProperty>()){
+      const auto& cmp = mp.get<ComputedMaterialProperty>();
+      for(const auto& i : this->getMaterialPropertyInputs(*(cmp.mpd))){
+	if(!((i.type==BehaviourDescription::MaterialPropertyInput::MATERIALPROPERTY)||
+	     (i.type==BehaviourDescription::MaterialPropertyInput::PARAMETER))){
+	  return false;
+	}
+      }
+      return true;
+    }
+    return true;
+  } // end of BehaviourDescription::isMaterialPropertyConstantDuringTheTimeStep
+  
+  bool
   BehaviourDescription::areElasticMaterialPropertiesConstantDuringTheTimeStep(void) const{
     if(!this->areElasticMaterialPropertiesDefined()){
       throw(std::runtime_error("BehaviourDescription::getElasticMaterialProperties: "
 			       "no elastic material property defined"));
     }
     for(const auto& mp : this->elasticMaterialProperties){
-      if(mp.is<ComputedMaterialProperty>()){
-	const auto& cmp = mp.get<ComputedMaterialProperty>();
-	for(const auto& i : this->getMaterialPropertyInputs(*(cmp.mpd))){
-	  if(!((i.type==BehaviourDescription::MaterialPropertyInput::MATERIALPROPERTY)||
-	       (i.type==BehaviourDescription::MaterialPropertyInput::PARAMETER))){
-	    return false;
-	  }
-	}
+      if(!this->isMaterialPropertyConstantDuringTheTimeStep(mp)){
+	return false;
       }
     }
     return true;
@@ -1769,14 +1779,14 @@ namespace mfront
 					       const std::string& c,
 					       const bool b) const
   {
-    const auto& h = this->getDistinctModellingHypotheses();
+    const auto& mh = this->getDistinctModellingHypotheses();
     std::pair<bool,bool> r = {true,false};
-    for(const auto & elem : h){
-      const auto& bdata = this->getBehaviourData(elem);
-      const bool f = bdata.getVariables(c).contains(n);
+    for(const auto h : mh){
+      const auto& bd = this->getBehaviourData(h);
+      const auto f = bd.getVariables(c).contains(n);
       if(!f&&b){
 	throw(std::runtime_error("BehaviourDescription::checkVariableExistence: "
-				 "no variable named '"+n+"' found for at "
+				 "no '"+c+"' named '"+n+"' found for at "
 				 "least one modelling hypothesis"));
       }
       r.first  = r.first  && f;

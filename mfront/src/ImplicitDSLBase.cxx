@@ -18,6 +18,8 @@
 #include<sstream>
 #include<iomanip>
 
+#include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/NonLinearSystemSolver.hxx"
@@ -99,6 +101,10 @@ namespace mfront{
     			      &ImplicitDSLBase::treatIntegrationVariable);
     this->registerNewCallBack("@ComputeStiffnessTensor",
 			      &ImplicitDSLBase::treatComputeStiffnessTensor);
+    this->registerNewCallBack("@ComputeStiffnessTensor",
+			      &ImplicitDSLBase::treatComputeStiffnessTensor);
+    this->registerNewCallBack("@ElasticMaterialProperties",
+			      &ImplicitDSLBase::treatElasticMaterialProperties);
     this->disableCallBack("@ComputedVar");
     this->disableCallBack("@UseQt");
     this->mb.setIntegrationScheme(BehaviourDescription::IMPLICITSCHEME);
@@ -174,26 +180,44 @@ namespace mfront{
 	this->throwRuntimeError("BehaviourDSLCommon::writeStiffnessTensorComputation",
 				"invalid number of material properties");
       }
-      this->writeMaterialPropertyCheckBoundsEvaluation(this->behaviourFile,emps[0],mts);
-      this->writeMaterialPropertyCheckBoundsEvaluation(this->behaviourFile,emps[1],mts);
-      this->behaviourFile << "this->young=";
-      this->writeMaterialPropertyEvaluation(this->behaviourFile,emps[0],mts);
-      this->behaviourFile << "\nthis->nu=";
-      this->writeMaterialPropertyEvaluation(this->behaviourFile,emps[1],mts);
-      this->behaviourFile << "\nthis->lambda=computeLambda(young,nu);\n";
+      if(!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()){
+	this->writeMaterialPropertyCheckBoundsEvaluation(this->behaviourFile,emps[0],mts);
+      }
+      if(!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()){
+	this->writeMaterialPropertyCheckBoundsEvaluation(this->behaviourFile,emps[1],mts);
+      }
+      if(!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()){
+	this->behaviourFile << "this->young=";
+	this->writeMaterialPropertyEvaluation(this->behaviourFile,emps[0],mts);
+	this->behaviourFile << ";\n";
+      }
+      if(!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()){
+	this->behaviourFile << "this->nu=";
+	this->writeMaterialPropertyEvaluation(this->behaviourFile,emps[1],mts);
+	this->behaviourFile << ";\n";
+      }
+      this->behaviourFile << "this->lambda=computeLambda(young,nu);\n";
       this->behaviourFile << "this->mu=computeMu(young,nu);\n";
-      if(!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
+      if(!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[0])){
 	this->writeMaterialPropertyCheckBoundsEvaluation(this->behaviourFile,emps[0],ets);
-	this->writeMaterialPropertyCheckBoundsEvaluation(this->behaviourFile,emps[1],ets);
 	this->behaviourFile << "this->young_tdt=";
 	this->writeMaterialPropertyEvaluation(this->behaviourFile,emps[0],ets);
-	this->behaviourFile << "\nthis->nu_tdt=";
-	this->writeMaterialPropertyEvaluation(this->behaviourFile,emps[1],ets);
-	this->behaviourFile << "\nthis->lambda_tdt = computeLambda(young_tdt,nu_tdt);\n";
-	this->behaviourFile << "this->mu_tdt     = computeMu(young_tdt,nu_tdt);\n";
+	this->behaviourFile << ";\n";
       } else {
 	this->behaviourFile << "this->young_tdt  = this->young;\n";
+      }
+      if(!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[1])){
+	this->writeMaterialPropertyCheckBoundsEvaluation(this->behaviourFile,emps[1],ets);
+	this->behaviourFile << "this->nu_tdt=";
+	this->writeMaterialPropertyEvaluation(this->behaviourFile,emps[1],ets);
+	this->behaviourFile << ";\n";
+      } else {
 	this->behaviourFile << "this->nu_tdt     = this->nu;\n";
+      }
+      if(!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
+	this->behaviourFile << "this->lambda_tdt = computeLambda(young_tdt,nu_tdt);\n";
+	this->behaviourFile << "this->mu_tdt     = computeMu(young_tdt,nu_tdt);\n";
+      } else {
 	this->behaviourFile << "this->lambda_tdt = this->lambda;\n";
 	this->behaviourFile << "this->mu_tdt     = this->mu;\n";
       }
@@ -203,7 +227,7 @@ namespace mfront{
   
   void ImplicitDSLBase::treatStateVariable(void)
   {
-    VarContainer v;
+    VariableDescriptionContainer v;
     auto hs = std::set<Hypothesis>{};
     this->readVariableList(v,hs,&BehaviourDescription::addStateVariables,true,false);
     for(const auto h : hs){
@@ -215,7 +239,7 @@ namespace mfront{
 
   void ImplicitDSLBase::treatIntegrationVariable(void)
   {
-    VarContainer v;
+    VariableDescriptionContainer v;
     auto hs = std::set<Hypothesis>{};
     this->readVariableList(v,hs,&BehaviourDescription::addIntegrationVariables,true,false);
     for(const auto h : hs){
@@ -1807,6 +1831,7 @@ namespace mfront{
   void
   ImplicitDSLBase::endsInputFileProcessing(void)
   {
+    using namespace tfel::glossary;
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(this->solver.get()==nullptr){
       const auto& f = NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
@@ -1838,19 +1863,32 @@ namespace mfront{
       auto add_lv = [](BehaviourDescription& bd,
 		       const std::string& t,
 		       const std::string& n,
+		       const std::string& g,
 		       const std::string d){
-	VariableDescription v(t,n,1u,0u);
-	v.description = d;
-	bd.addLocalVariable(h,v,BehaviourData::UNREGISTRED);
+	auto r = bd.checkVariableExistence(n,"Parameter",false);
+	if(!r.first){
+	  VariableDescription v(t,n,1u,0u);
+	  v.description = d;
+	  bd.addLocalVariable(h,v,BehaviourData::UNREGISTRED);
+	} else {
+	  if(!r.second){
+	    throw(std::runtime_error("ImplicitDSLBase::endsInputFileProcessing: "
+				     "Parameter '"+n+"' is not defined for all hypotheses"));
+	  }
+	  if(!g.empty()){
+	    bd.checkVariableGlossaryName(n,g);
+	  }
+	}
       };
-      add_lv(this->mb,"stress","young","Young modulus at t+theta*dt");
-      add_lv(this->mb,"real","nu","Poisson ratio at t+theta*dt");
-      add_lv(this->mb,"stress","lambda","first Lamé coefficient at t+theta*dt");
-      add_lv(this->mb,"stress","mu","shear modulus at t+theta*dt");
-      add_lv(this->mb,"stress","young_tdt","Young modulus at t+dt");
-      add_lv(this->mb,"real","nu_tdt","Poisson ratio at t+dt");
-      add_lv(this->mb,"stress","lambda_tdt","first Lamé coefficient at t+dt");
-      add_lv(this->mb,"stress","mu_tdt","shear modulus at t+dt");
+      add_lv(this->mb,"stress","young",Glossary::YoungModulus,"Young modulus at t+theta*dt");
+      add_lv(this->mb,"real","nu",Glossary::PoissonRatio,"Poisson ratio at t+theta*dt");
+      add_lv(this->mb,"stress","lambda",Glossary::FirstLameCoefficient,
+	     "first Lamé coefficient at t+theta*dt");
+      add_lv(this->mb,"stress","mu",Glossary::ShearModulus,"shear modulus at t+theta*dt");
+      add_lv(this->mb,"stress","young_tdt","","Young modulus at t+dt");
+      add_lv(this->mb,"real","nu_tdt","","Poisson ratio at t+dt");
+      add_lv(this->mb,"stress","lambda_tdt","","first Lamé coefficient at t+dt");
+      add_lv(this->mb,"stress","mu_tdt","","shear modulus at t+dt");
     }
     // create the compute final stress code is necessary
     this->setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();
@@ -1875,21 +1913,26 @@ namespace mfront{
       const std::string nje = "numerical_jacobian_epsilon";
       if(!this->mb.hasParameter(h,nje)){
 	const double eps = 0.1*this->mb.getFloattingPointParameterDefaultValue(h,"epsilon");
-	this->mb.addParameter(h,VariableDescription("real",nje,1u,0u),
-			      BehaviourData::ALREADYREGISTRED);
+	VariableDescription v("real",nje,1u,0u);
+	v.description="perturbation value used to compute a numerical "
+	  "approximation of the jacobian";
+	this->mb.addParameter(h,v,BehaviourData::ALREADYREGISTRED);
 	this->mb.setParameterDefaultValue(h,nje,eps);
       }
     }
     if(!this->mb.hasParameter(h,"iterMax")){
       unsigned short iterMax = 100u;
-      this->mb.addParameter(h,VariableDescription("ushort","iterMax",1u,0u),
-			    BehaviourData::ALREADYREGISTRED);
+      VariableDescription v("ushort","iterMax",1u,0u);
+      v.description = "maximum number of iterations allowed";
+      this->mb.addParameter(h,v,BehaviourData::ALREADYREGISTRED);
       this->mb.setParameterDefaultValue(h,"iterMax",iterMax);
     }
     if(this->mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
       if(!this->mb.hasParameter(h,"jacobianComparisonCriterion")){
-	this->mb.addParameter(h,VariableDescription("real","jacobianComparisonCriterion",1u,0u),
-			      BehaviourData::ALREADYREGISTRED);
+	VariableDescription v("real","jacobianComparisonCriterion",1u,0u);
+	v.description = "criterion value used to compare the jacobian "
+	  "provided by the user to its numerical approximation";
+	this->mb.addParameter(h,v,BehaviourData::ALREADYREGISTRED);
 	this->mb.setParameterDefaultValue(h,"jacobianComparisonCriterion",
 					  this->mb.getFloattingPointParameterDefaultValue(h,"epsilon"));
       }

@@ -345,6 +345,12 @@ namespace mfront
     
     bool isElasticSymmetryTypeDefined() const;
     /*!
+     * \return true if the material property is constant over the time step
+     * \param[in] mp: material property
+     */
+    bool
+    isMaterialPropertyConstantDuringTheTimeStep(const MaterialProperty&) const;
+    /*!
      * \brief set the elastic material properties
      * \param[in] emps : elastic material properties
      */

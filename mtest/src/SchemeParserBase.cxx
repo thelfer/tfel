@@ -101,6 +101,14 @@ namespace mtest{
   } // end of SchemeParserBase::Description
 
   void
+  SchemeParserBase::handleXMLOutputFile(SchemeBase& t,TokensContainer::const_iterator& p)
+  {
+    t.setXMLOutputFileName(this->readString(p,this->tokens.end()));
+    this->readSpecifiedToken("SchemeParserBase::handleXMLOutputFiles",";",
+			     p,this->tokens.end());
+  } // end of SchemeParserBase::handleXMLOutputFile
+  
+  void
   SchemeParserBase::handleOutputFile(SchemeBase& t,TokensContainer::const_iterator& p)
   {
     t.setOutputFileName(this->readString(p,this->tokens.end()));
@@ -694,6 +702,8 @@ namespace mtest{
     this->registerCallBack("@Description",&SchemeParserBase::handleDescription);
     this->registerCallBack("@OutputFile",
 			   &SchemeParserBase::handleOutputFile);
+    this->registerCallBack("@XMLOutputFile",
+			   &SchemeParserBase::handleXMLOutputFile);
     this->registerCallBack("@OutputFrequency",
 			   &SchemeParserBase::handleOutputFrequency);
     this->registerCallBack("@OutputFilePrecision",

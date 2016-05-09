@@ -470,7 +470,7 @@ const Hypothesis){
       getLogStream() << "Treating file '" << this->file << "'" << endl;
     }
     // analysing the file
-    this->dsl->analyseFile(this->file,this->ecmds);
+    this->dsl->analyseFile(this->file,this->ecmds,this->substitutions);
     const auto& fd = this->dsl->getFileDescription();
     const auto& d  = this->dsl->getBehaviourDescription();
     // checks

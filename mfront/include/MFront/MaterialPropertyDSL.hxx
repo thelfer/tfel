@@ -64,7 +64,8 @@ namespace mfront{
      */
     virtual void
     analyseFile(const std::string&,
-		const std::vector<std::string>& = std::vector<std::string>()) override;
+		const std::vector<std::string>& = {},
+		const std::map<std::string,std::string>& = {}) override;
     /*!
      * \brief analyse the specified string.
      * \param[in] s : analyse a string
@@ -76,9 +77,13 @@ namespace mfront{
      * \param[in] f     : file name
      * \param[in] ecmds : additionnal commands inserted treated before
      * the input file commands.
+     * \param[in] s : substitutions patterns inserted (those
+     * substitutions are given through command-line options such as
+     * `--@YYY@=XXX`)
      */
     virtual void importFile(const std::string&,
-			    const std::vector<std::string>&) override;
+			    const std::vector<std::string>&,
+			    const std::map<std::string,std::string>&) override;
     
     virtual const MaterialPropertyDescription&
     getMaterialPropertyDescription(void) const;

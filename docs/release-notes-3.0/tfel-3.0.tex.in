@@ -225,6 +225,24 @@ informations sur un fichier \mfront{}.
 \paragraph{L'option {\tt -D}} L'option {\tt -D} permet de définir des
 macros pour le préprocesseur {\tt C/C++} en ligne de commande.
 
+\paragraph{Substitutions} \mfront{} permet désormais de substituer
+certaines parties des fichiers d'entrée par d'autres depuis la ligne
+de commande. La syntaxe retenue est relativement classique et
+s'inspire du logiciel {\tt autoconf}.
+
+Plus précisément, les options passées à \mfront{} en ligne de commande
+de la forme {\tt --\symbol{64}XXX\symbol{64}=YYY}, où {\tt XXX} est
+une chaine de caractères quelconque de ne contenant pas le caractère
+{\tt \symbol{64}}, substituent chaque occurrence de {\tt
+  --\symbol{64}XXX\symbol{64}} par {\tt YYY} dans les fichiers
+traités.
+
+Par exemple, considérons l'appel suivant~:
+\bash{mfront --\symbol{64}p1\_value\symbol{64}=12.9 test.mfront}
+
+Toutes les occurrences de {\tt \symbol{64}p1\_value\symbol{64}} seront
+remplacées par {\tt 12.9}.
+
 \section{Nouveautés \mtest{}}
 
 \subsection{Modélisation des tubes sous pression}

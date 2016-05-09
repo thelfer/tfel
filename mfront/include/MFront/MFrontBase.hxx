@@ -67,6 +67,12 @@ namespace mfront{
      * an --@XXX option
      */
     std::vector<std::string> ecmds;
+    /*!
+     * \brief substitutions specificed on the command line through an
+     * --@XXX@=YYY option: every occurrence of @XXX@ in the input
+     * files will be replaced by YYY
+     */
+    std::map<std::string,std::string> substitutions;
     //! list of all input files
     std::set<std::string> inputs;
     //! list of interfaces declared on the command line or explicitely

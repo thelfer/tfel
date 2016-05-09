@@ -54,7 +54,8 @@ namespace mfront{
      */
     virtual void
     analyseFile(const std::string&,
-		const std::vector<std::string>&) = 0;
+		const std::vector<std::string>&,
+		const std::map<std::string,std::string>&) = 0;
     /*!
      * \brief analyse the specified string.
      * \param[in] s : analyse a string

@@ -67,10 +67,11 @@ namespace mfront{
   template<typename Child>
   void
   ModelDSLBase<Child>::importFile(const std::string& fileName_,
-				   const std::vector<std::string>& ecmds)
+				  const std::vector<std::string>& ecmds,
+				  const std::map<std::string,std::string>& s)
   {
     this->fileName = fileName_;
-    this->openFile(this->fileName,ecmds);
+    this->openFile(this->fileName,ecmds,s);
     this->analyse();
   } // end of ModelDSLBase<Child>::importFile
     
@@ -156,9 +157,10 @@ namespace mfront{
   template<typename Child>
   void
   ModelDSLBase<Child>::analyseFile(const std::string& fileName_,
-				   const std::vector<std::string>& ecmds)
+				   const std::vector<std::string>& ecmds,
+				   const std::map<std::string,std::string>& s)
   {
-    this->importFile(fileName_,ecmds);
+    this->importFile(fileName_,ecmds,s);
     for(const auto & i : this->interfaces){
       i.second->getTargetsDescription(this->td,*this);
     }

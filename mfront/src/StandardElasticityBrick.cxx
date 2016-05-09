@@ -172,7 +172,6 @@ namespace mfront{
       this->addMaterialPropertyIfNotDefined("real","nu",Glossary::PoissonRatio);
       d.addVariable(h,{"stress","lambda"});
       d.addVariable(h,{"stress","mu"});
-      this->addLocalVariable("stress","mu");
       // local variable initialisation
       CodeBlock init;
       init.code = "// initialisation Lame's coefficient\n"
@@ -230,20 +229,22 @@ namespace mfront{
     const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
     if((this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,false))||
        (this->bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))){
+      const std::string D =
+	this->bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false) ? "D_tdt" : "D"; 
       integrator.code +=
 	"// the generalised plane stress equation is satisfied at the end of the time step\n"
-	"this->sebdata.szz = (this->D_tdt(1,1))*(this->eel(1)+this->deel(1))+(this->D_tdt(1,0))*(this->eel(0)+this->deel(0))+(this->D_tdt(2,0))*(this->eel(2)+this->deel(2));\n"
-	"fetozz   = (this->sebdata.szz-this->sigzz-this->dsigzz)/(this->D_tdt(1,1));\n"
+	"this->sebdata.szz = (this->"+D+"(1,1))*(this->eel(1)+this->deel(1))+(this->"+D+"(1,0))*(this->eel(0)+this->deel(0))+(this->"+D+"(2,0))*(this->eel(2)+this->deel(2));\n"
+	"fetozz   = (this->sebdata.szz-this->sigzz-this->dsigzz)/(this->"+D+"(1,1));\n"
 	"// modification of the partition of strain\n"
 	"feel(1) -= this->detozz;\n";
-      if(idsl.getSolver().usesJacobian()){
+      if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
 	integrator.code +=
 	  "// jacobian\n"
 	  "dfeel_ddetozz(1) = -1;\n"
 	  "dfetozz_ddetozz  = real(0);\n"
 	  "dfetozz_ddeel(1) = 1;\n"
-	  "dfetozz_ddeel(0) = (this->D_tdt(1,0))/(this->D_tdt(1,1));\n"
-	  "dfetozz_ddeel(2) = (this->D_tdt(2,0))/(this->D_tdt(1,1));\n";
+	  "dfetozz_ddeel(0) = (this->"+D+"(1,0))/(this->"+D+"(1,1));\n"
+	  "dfetozz_ddeel(2) = (this->"+D+"(2,0))/(this->"+D+"(1,1));\n";
       }
     } else {
       if(this->bd.areElasticMaterialPropertiesDefined()){
@@ -254,7 +255,7 @@ namespace mfront{
 	  "fetozz   = (this->sebdata.szz-this->sigzz-this->dsigzz)/this->young_tdt;\n"
 	  "// modification of the partition of strain\n"
 	  "feel(1) -= this->detozz;\n";
-	if(idsl.getSolver().usesJacobian()){
+	if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
 	  integrator.code +=
 	    "// jacobian\n"
 	    "dfeel_ddetozz(1) = -1;\n"
@@ -274,7 +275,7 @@ namespace mfront{
 	  "fetozz   = (this->sebdata.szz-this->sigzz-this->dsigzz)/this->young;\n"
 	  "// modification of the partition of strain\n"
 	  "feel(1) -= this->detozz;\n";
-	if(idsl.getSolver().usesJacobian()){
+	if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
 	  integrator.code +=
 	    "// jacobian\n"
 	    "dfeel_ddetozz(1) = -1;\n"
@@ -303,21 +304,23 @@ namespace mfront{
     const auto& idsl = dynamic_cast<ImplicitDSLBase&>(this->dsl);
     if((this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,false))||
        (this->bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))){
+      const std::string D =
+	this->bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false) ? "D_tdt" : "D"; 
       integrator.code +=
 	"// the plane stress equation is satisfied at the end of the time step\n"
-	"fetozz   = this->eel(1)+this->deel(1)+"
-	"           ((this->D_tdt(1,0))/(this->D_tdt(1,1)))*(this->eel(0)+this->deel(0))+"
-	"           ((this->D_tdt(2,0))/(this->D_tdt(1,1)))*(this->eel(2)+this->deel(2));\n"
+	"fetozz   = this->eel(2)+this->deel(2)+"
+	"           ((this->"+D+"(2,0))/(this->"+D+"(2,2)))*(this->eel(0)+this->deel(0))+"
+	"           ((this->"+D+"(2,1))/(this->"+D+"(2,2)))*(this->eel(1)+this->deel(1));\n"
 	"// modification of the partition of strain\n"
-	"feel(1)          -= this->detozz;\n";
-      if(idsl.getSolver().usesJacobian()){
+	"feel(2)          -= this->detozz;\n";
+      if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
 	integrator.code +=
 	  "// jacobian\n"
-	  "dfeel_ddetozz(1)  = -1;\n"
+	  "dfeel_ddetozz(2)  = -1;\n"
 	  "dfetozz_ddetozz   = real(0);\n"
-	  "dfetozz_ddeel(1)  = 1;\n"
-	  "dfetozz_ddeel(0)  = (this->D_tdt(1,0))/(this->D_tdt(1,1));\n"
-	  "dfetozz_ddeel(2)  = (this->D_tdt(2,0))/(this->D_tdt(1,1));\n";
+	  "dfetozz_ddeel(2)  = 1;\n"
+	  "dfetozz_ddeel(0)  = (this->"+D+"(1,0))/(this->"+D+"(1,1));\n"
+	  "dfetozz_ddeel(1)  = (this->"+D+"(2,0))/(this->"+D+"(1,1));\n";
       }
     } else {
       if(this->bd.areElasticMaterialPropertiesDefined()){
@@ -328,7 +331,7 @@ namespace mfront{
 	  "fetozz   = this->sebdata.szz/(this->young_tdt);\n"
 	  "// modification of the partition of strain\n"
 	  "feel(2) -= detozz;\n";
-	if(idsl.getSolver().usesJacobian()){
+	if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
 	  integrator.code +=
 	    "// jacobian\n"
 	    "dfeel_ddetozz(2) = -1;\n"
@@ -348,7 +351,7 @@ namespace mfront{
 	  "fetozz   = this->sebdata.szz/(this->young);\n"
 	  "// modification of the partition of strain\n"
 	  "feel(2) -= detozz;\n";
-	if(idsl.getSolver().usesJacobian()){
+	if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
 	  integrator.code +=
 	    "// jacobian\n"
 	    "dfeel_ddetozz(2) = -1;\n"
@@ -390,7 +393,7 @@ namespace mfront{
       tangentOperator.code =
 	"if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
 	"  this->Dt = this->D;\n";
-      if(idsl.getSolver().usesJacobian()){
+      if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
 	tangentOperator.code +=
 	  "} else if (smt==CONSISTENTTANGENTOPERATOR){\n"
 	  "  Stensor4 Je;\n"
@@ -410,7 +413,7 @@ namespace mfront{
 	  "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
 	  "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,"+lambda+","+mu+");\n"
 	  "} else if (smt==CONSISTENTTANGENTOPERATOR){\n";
-	if(idsl.getSolver().usesJacobian()){
+	if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
 	  tangentOperator.code +=
 	    "  StiffnessTensor Hooke;\n"
 	    "  Stensor4 Je;\n"
@@ -428,7 +431,7 @@ namespace mfront{
 	tangentOperator.code =
 	  "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
 	  "  this->Dt = this->D_tdt;\n";
-	if(idsl.getSolver().usesJacobian()){
+	if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
 	  tangentOperator.code +=
 	    "} else if (smt==CONSISTENTTANGENTOPERATOR){\n"
 	    "  Stensor4 Je;\n"

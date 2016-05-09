@@ -1,0 +1,14 @@
+@DSL Implicit;
+@Behaviour IsotropicStandardElasticity5;
+@Author Thomas Helfer;
+@Date   5/06/2016;
+@Description{
+  "This file is used to test the StandardElasticity brick for "
+  "an isotropic behaviour. Here we use a computed "
+  "stiffness tensor."
+}
+
+@Epsilon 1e-14;
+@ModellingHypotheses {".+"};
+@Brick "StandardElasticity";
+@ComputeStiffnessTensor<UnAltered> {"YoungModulusTest.mfront",0.3};

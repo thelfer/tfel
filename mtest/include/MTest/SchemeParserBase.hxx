@@ -153,6 +153,12 @@ namespace mtest{
     virtual void
     handleOutputFile(SchemeBase&,TokensContainer::const_iterator&);
     /*!
+     * handle the @XMLOutputFile keyword
+     * \param[in,out] p : position in the input file
+     */
+    virtual void
+    handleXMLOutputFile(SchemeBase&,TokensContainer::const_iterator&);
+    /*!
      * handle the @OutputFilePrecision keyword
      * \param[in,out] p : position in the input file
      */

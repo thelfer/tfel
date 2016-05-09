@@ -24,18 +24,17 @@ namespace tfel{
       : MTest(),
 	file(f)
     {
-      this->readInputFile(f);
+      this->readInputFile(f,{});
     } // end of MTestDocParser::MTestDocParser
     
     void
     MTestDocParser::addDocumentation(std::map<std::string,
 					      std::vector<TestDocumentation> >& r)
     {
-      using namespace std;
       const auto c = "Mechanical behaviour unary testing";
       auto ptest = r.find(c);
       if(r.find(c)==r.end()){
-	ptest = r.insert({c,vector<TestDocumentation>()}).first;
+	ptest = r.insert({c,std::vector<TestDocumentation>()}).first;
       }
       ptest->second.push_back(TestDocumentation());
       auto& t = ptest->second.back();

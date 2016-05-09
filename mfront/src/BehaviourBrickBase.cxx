@@ -34,11 +34,9 @@ namespace mfront{
   void
   BehaviourBrickBase::checkThatParameterHasNoValue(const Parameter& p) const
   {
-    using namespace std;
     if(!p.second.empty()){
-      string msg("BehaviourBrickBase::checkThatParameterHasNoValue : "
-		 "parameter '"+p.first+"' shall not have any value");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourBrickBase::checkThatParameterHasNoValue: "
+			       "parameter '"+p.first+"' shall not have any value"));
     }
   } // end of BehaviourBrickBase::checkThatParameterHasNoValue
   
@@ -47,23 +45,31 @@ namespace mfront{
 						      const std::string& n,
 						      const std::string& g) const
   {
-    using namespace std;
-    typedef tfel::material::ModellingHypothesis MH; 
-    typedef MH::Hypothesis Hypothesis; 
-    // treating material properties
-    const pair<bool,bool> b = this->bd.checkVariableExistence(n);
-    if(b.first){
-      if(!b.second){
-	string msg("BehaviourBrickBase::addMaterialPropertyIfNotDefined : "
-		   "'"+n+"' is not declared for all specialisation of the behaviour");
-	throw(runtime_error(msg));
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){
+	throw(std::runtime_error("BehaviourBrickBase::addMaterialPropertyIfNotDefined: "+m));
       }
-      this->bd.checkVariableExistence(n,"MaterialProperty");
+    };
+    // treating material properties
+    const auto b = this->bd.checkVariableExistence(n);
+    if(b.first){
+      throw_if(!b.second,"variable '"+n+"' is not declared for all specialisations "
+	       "of the behaviour");
+      auto r = this->bd.checkVariableExistence(n,"Parameter",false);
+      if(r.first){
+	throw_if(!r.second,"parameter '"+n+"' is not declared for all specialisations "
+	       "of the behaviour");
+      } else {
+	r = this->bd.checkVariableExistence(n,"MaterialProperty",false);
+	throw_if(!r.first,"variable '"+n+"' is neither declared as a parameter nor "
+		 "a material property");
+	throw_if(!r.second,"material property '"+n+"' is not declared"
+		 "for all specialisations of the behaviour");
+      }
       this->bd.checkVariableGlossaryName(n,g);
     } else {
-      const Hypothesis h = MH::UNDEFINEDHYPOTHESIS;
-      VariableDescription v(t,n,1u,0u);
-      this->bd.addMaterialProperty(h,v);
+      const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      this->bd.addMaterialProperty(h,{t,n,1u,0u});
       this->bd.setGlossaryName(h,n,g);
     }
   } // end of BehaviourBrickBase::addMaterialPropertyIfNotDefined
@@ -72,9 +78,7 @@ namespace mfront{
   BehaviourBrickBase::addLocalVariable(const std::string& t,
 				       const std::string& n) const
   {
-    typedef tfel::material::ModellingHypothesis MH; 
-    typedef MH::Hypothesis Hypothesis; 
-    const Hypothesis h = MH::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     VariableDescription v(t,n,1u,0u);
     this->bd.addLocalVariable(h,v);
   } // end of BehaviourBrickBase::addLocalVariable
