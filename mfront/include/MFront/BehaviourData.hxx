@@ -437,6 +437,22 @@ namespace mfront{
     requiresTVectorOrVectorIncludes(bool&,
 				    bool&) const;   
     /*!
+     * \brief append the given code to the members
+     * \param[in] s : members
+     */
+    void appendToMembers(const std::string&);
+    /*!
+     * \return the material additional members
+     */
+    const std::string getMembers(void) const;
+    /*!
+     * \brief append the given code to the members
+     * \param[in] s : members
+     */
+    void appendToPrivateCode(const std::string&);
+    //! \return the material private code
+    const std::string getPrivateCode(void) const;
+    /*!
      * \brief return the name of the code blocks defined so far
      * \param[in] h : modelling hypothesis
      */
@@ -777,6 +793,10 @@ namespace mfront{
     //! behaviour attributes
     std::map<std::string,
 	     BehaviourAttribute> attributes;
+    //! private code
+    std::string privateCode;
+    //! class members
+    std::string members;
     //! list of glossary names used by the behaviour
     std::map<std::string,std::string> glossaryNames;
     //! list of entry names used by the behaviour

@@ -68,9 +68,8 @@ namespace mfront{
       this->bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"etozz");
       this->bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"detozz");
     }
-   } // end of StandardElasticityBrick::StandardElasticityBrick
+  } // end of StandardElasticityBrick::StandardElasticityBrick
 
-  
   void 
   StandardElasticityBrick::endTreatment(void) const
   {
@@ -112,6 +111,37 @@ namespace mfront{
 	throw_if(true,"unsupported elastic symmetry type");
       }
     }
+    // // declaring the computeElasticPrediction member
+    // for(const auto h:this->bd.getDistinctModellingHypotheses()){
+    //   std::string m =
+    // 	"//! \brief return an elastic prediction of the stresses\n"
+    // 	"StressStensor computeElasticPrediction(void){\n";
+    //   if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
+	
+    //   } else if (h==ModellingHypothesis::PLANESTRESS){
+
+    //   } else {
+    // 	if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
+    // 	   (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
+    // 	  m += "return D*(eel+deto);"
+    // 	} else {
+    // 	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
+    // 	    if(this->bd.areElasticMaterialPropertiesDefined()){
+	      
+    // 	    } else {
+    // 	    }
+    // 	  } else {
+    // 	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
+    // 	      throw(std::runtime_error("StandardElasticityBrick::treatOrthotropicBehaviour: "
+    // 				       "the stiffness tensor must be defined for "
+    // 				       "orthotropic behaviours"));
+    // 	    }
+    // 	  }
+    // 	}
+    //   }
+    //   m+= "}\n";
+    //   this->bd.appendToMembers(h,m,false);
+    // }    
     // plane stress support
     if(this->pss){
       const bool agps = bmh.count(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=0;
@@ -387,7 +417,8 @@ namespace mfront{
 	    this->bd.setAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,true,false);
 	  }
 	  throw_if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresUnAlteredStiffnessTensor),
-		   "support for plane stress requires the use of an unaltered stiffness tensor");
+		   "genertic tangent operator support for "
+		   "plane stress hypotheses requires the use of an unaltered stiffness tensor");
 	}
       }
       tangentOperator.code =

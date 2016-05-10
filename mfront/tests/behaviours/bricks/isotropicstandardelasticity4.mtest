@@ -4,6 +4,7 @@
   "Test of the StandardElasticity brick in plane stress."
 };
 
+@XMLOutputFile @xml_output@;
 @ModellingHypothesis 'PlaneStress';
 @Behaviour<castem> @library@ @behaviour@;
 

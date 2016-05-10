@@ -193,28 +193,35 @@ namespace mfront
     /*!
      * \return the material
      */
-    const std::string&
-    getSources(void) const;
+    const std::string& getSources(void) const;
     /*!
      * \brief append the given code to the members
-     * \param[in] s : members
+     * \param[in] h: hypothesis
+     * \param[in] s: members
+     * \param[in] b: if h is UNDEFINEDHYPOTHIS, propagate to all specialised data
+     
      */
-    void appendToMembers(const std::string&);
+    void appendToMembers(const Hypothesis,
+			 const std::string&,
+			 const bool);
     /*!
-     * \return the material
+     * \return the aditional members
      */
-    const std::string&
-    getMembers(void) const;
+    const std::string getMembers(const Hypothesis) const;
     /*!
      * \brief append the given code to the members
+     * \param[in] h : hypothesis
      * \param[in] s : members
+     * \param[in] b: if h is UNDEFINEDHYPOTHIS, propagate to all specialised data
      */
-    void appendToPrivateCode(const std::string&);
+    void appendToPrivateCode(const Hypothesis,
+			     const std::string&,
+			     const bool);
     /*!
-     * \return the material
+     * \return the material private code
+     * \param[in] h : hypothesis
      */
-    const std::string&
-    getPrivateCode(void) const;
+    const std::string getPrivateCode(const Hypothesis) const;
     /*!
      * \brief append the given code to the includes
      * \param[in] s : includes
@@ -1222,57 +1229,57 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      * \param[in] m : behaviour data method
      * \param[in] a : argument given to the behaviour data's method
-     * \note if h is Hypothesis::UNDEFINEDHYPOTHESIS, the default data
-     * and all the specialisations are called.
+     * \param[in] b: propagate to all hypothesis if h is UNDEFINEDHYPOTHESIS
+     * \note if h is UNDEFINEDHYPOTHESIS, the default data
+     * and all the specialisations are called, unless the last parameter is false.
      */
     template<typename Arg1>
-    void
-    callBehaviourData(const Hypothesis,
-    				void (BehaviourData:: *)(const Arg1&),
-    				const Arg1&);
+    void callBehaviourData(const Hypothesis,
+			   void (BehaviourData:: *)(const Arg1&),
+			   const Arg1&,const bool);
     /*!
      * \brief call the behaviour data associated with the given hypothesis
      * \param[in] h : modelling hypothesis
      * \param[in] m : behaviour data method
-     * \param[in] a : first  argument given to the behaviour data's method
-     * \param[in] b : second argument given to the behaviour data's method
-     * \note if h is Hypothesis::UNDEFINEDHYPOTHESIS, the default data
-     * and all the specialisations are called.
+     * \param[in] a1 : first  argument given to the behaviour data's method
+     * \param[in] a2 : second argument given to the behaviour data's method
+     * \param[in] b: propagate to all hypothesis if h is UNDEFINEDHYPOTHESIS
+     * \note if h is UNDEFINEDHYPOTHESIS, the default data
+     * and all the specialisations are called, unless the last parameter is false.
      */
     template<typename Arg1,typename Arg2>
-    void
-    callBehaviourData(const Hypothesis,
-    				void (BehaviourData:: *)(const Arg1&,
-							 const Arg2),
-    				const Arg1&,const Arg2);
+    void callBehaviourData(const Hypothesis,
+			   void (BehaviourData:: *)(const Arg1&,
+						    const Arg2),
+			   const Arg1&,const Arg2,const bool);
     /*!
      * \brief call the behaviour data associated with the given hypothesis
      * \param[in] h : modelling hypothesis
      * \param[in] m : behaviour data method
-     * \param[in] a : first  argument given to the behaviour data's method
-     * \param[in] b : second argument given to the behaviour data's method
-     * \note if h is Hypothesis::UNDEFINEDHYPOTHESIS, the default data
-     * and all the specialisations are called.
+     * \param[in] a1 : first  argument given to the behaviour data's method
+     * \param[in] a2 : second argument given to the behaviour data's method
+     * \param[in] b: propagate to all hypothesis if h is UNDEFINEDHYPOTHESIS
+     * \note if h is UNDEFINEDHYPOTHESIS, the default data
+     * and all the specialisations are called, unless the last parameter is false.
      */
     template<typename Arg1,typename Arg2>
-    void
-    callBehaviourData(const Hypothesis,
-		      void (BehaviourData:: *)(const Arg1&,
-					       const Arg2&),
-		      const Arg1&,const Arg2&);
+    void callBehaviourData(const Hypothesis,
+			   void (BehaviourData:: *)(const Arg1&,
+						    const Arg2&),
+			   const Arg1&,const Arg2&,const bool);
     /*!
      * \brief call the behaviour data associated with the given hypothesis
-     * \param[in] h : modelling hypothesis
-     * \param[in] m : behaviour data method
-     * \param[in] a : argument given to the behaviour data's method
-     * \note if h is Hypothesis::UNDEFINEDHYPOTHESIS, the default data
-     * and all the specialisations are called.
+     * \param[in] h: modelling hypothesis
+     * \param[in] m: behaviour data method
+     * \param[in] a: argument given to the behaviour data's method
+     * \param[in] b: propagate to all hypothesis if h is UNDEFINEDHYPOTHESIS
+     * \note if h is UNDEFINEDHYPOTHESIS, the default data
+     * and all the specialisations are called, unless the last parameter is false.
      */
     template<typename Arg1>
-    void
-    callBehaviourData(const Hypothesis,
-		      void (BehaviourData:: *)(const Arg1),
-		      const Arg1);
+    void callBehaviourData(const Hypothesis,
+			   void (BehaviourData:: *)(const Arg1),
+			   const Arg1,const bool);
     /*!
      * \brief add variables to the behaviour data
      * \param[in] h : modelling hypothesis
@@ -1372,14 +1379,6 @@ namespace mfront
      * specific sources
      */
     std::string sources;
-    /*!
-     * private code
-     */
-    std::string privateCode;
-    /*!
-     * class member
-     */
-    std::string members;
     /*!
      * list of modelling hypotheses for
      * which the behaviour is defined

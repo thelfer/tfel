@@ -5,6 +5,7 @@
   "account for an orthotropic material."
 };
 
+@XMLOutputFile @xml_output@;
 @Behaviour<umat> @library@ @behaviour@;
 
 @Real 'E1'   '7.8e+10';

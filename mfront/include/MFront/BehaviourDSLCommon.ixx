@@ -20,8 +20,8 @@ namespace mfront
   template<typename T,
 	   typename T2>
   BehaviourDSLCommon::StandardVariableModifier<T,T2>::StandardVariableModifier(T& i,
-											const Hypothesis h,
-											const MPtr p)
+									       const Hypothesis h,
+									       const MPtr p)
     : instance(i),
       hypothesis(h),
       mptr(p)
@@ -45,10 +45,10 @@ namespace mfront
 	   typename T2>
   std::shared_ptr<BehaviourDSLCommon::VariableModifier>
   BehaviourDSLCommon::makeVariableModifier(T& i,
-						    const Hypothesis h,
-						    std::string (T2::* p)(const Hypothesis,
-									  const std::string&,
-									  const bool))
+					   const Hypothesis h,
+					   std::string (T2::* p)(const Hypothesis,
+								 const std::string&,
+								 const bool))
   {
     return std::shared_ptr<VariableModifier>(new StandardVariableModifier<T,T2>(i,h,p));
   } // end of makeVariableModifier
@@ -56,8 +56,8 @@ namespace mfront
   template<typename T,
 	   typename T2>
   BehaviourDSLCommon::StandardWordAnalyser<T,T2>::StandardWordAnalyser(T& i,
-										const Hypothesis h,
-										const MPtr p)
+								       const Hypothesis h,
+								       const MPtr p)
     : instance(i),
       mptr(p),
       hypothesis(h)
@@ -80,9 +80,9 @@ namespace mfront
 	   typename T2>
   std::shared_ptr<BehaviourDSLCommon::WordAnalyser>
   BehaviourDSLCommon::makeWordAnalyser(T& i,
-						const Hypothesis h,
-						void (T2::* p)(const Hypothesis,
-								    const std::string&))
+				       const Hypothesis h,
+				       void (T2::* p)(const Hypothesis,
+						      const std::string&))
   {
     return std::shared_ptr<WordAnalyser>(new StandardWordAnalyser<T,T2>(i,h,p));
   } // end of makeWordAnalyser

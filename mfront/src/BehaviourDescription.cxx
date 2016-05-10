@@ -31,12 +31,15 @@ namespace mfront
   void
   BehaviourDescription::callBehaviourData(const Hypothesis h,
 					  void (BehaviourData:: *m)(const Arg1&),
-					  const Arg1& a)
+					  const Arg1& a,
+					  const bool b)
   {
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       (this->d.*m)(a);
-      for(auto md : this->sd){
-  	(md.second.get()->*m)(a);
+      if(b){
+	for(auto md : this->sd){
+	  (md.second.get()->*m)(a);
+	}
       }
     } else {
       (this->getBehaviourData2(h).*m)(a);
@@ -47,13 +50,16 @@ namespace mfront
   void
   BehaviourDescription::callBehaviourData(const Hypothesis h,
 					  void (BehaviourData:: *m)(const Arg1),
-					  const Arg1 a)
+					  const Arg1 a,
+					  const bool b)
   {
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       (this->d.*m)(a);
-      for(const auto& ptr : this->sd){
-	auto& bdata = *(ptr.second);
-	(bdata.*m)(a);
+      if(b){
+	for(const auto& ptr : this->sd){
+	  auto& bdata = *(ptr.second);
+	  (bdata.*m)(a);
+	}
       }
     } else {
       (this->getBehaviourData2(h).*m)(a);
@@ -65,17 +71,20 @@ namespace mfront
   BehaviourDescription::callBehaviourData(const Hypothesis h,
 					  void (BehaviourData:: *m)(const Arg1&,
 								    const Arg2),
-					  const Arg1& a,
-					  const Arg2  b)
+					  const Arg1& a1,
+					  const Arg2  a2,
+					  const bool b)
   {
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      (this->d.*m)(a,b);
-      for(const auto& ptr : this->sd){
-	auto& bdata = *(ptr.second);
-	(bdata.*m)(a,b);
+      (this->d.*m)(a1,a2);
+      if(b){
+	for(const auto& ptr : this->sd){
+	  auto& bdata = *(ptr.second);
+	  (bdata.*m)(a1,a2);
+	}
       }
     } else {
-      (this->getBehaviourData2(h).*m)(a,b);
+      (this->getBehaviourData2(h).*m)(a1,a2);
     }
   } // end of BehaviourDescription::callBehaviourData
 
@@ -85,17 +94,20 @@ namespace mfront
   BehaviourDescription::callBehaviourData(const Hypothesis h,
 					  void (BehaviourData:: *m)(const Arg1&,
 								    const Arg2&),
-					  const Arg1& a,
-					  const Arg2& b)
+					  const Arg1& a1,
+					  const Arg2& a2,
+					  const bool b)
   {
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      (this->d.*m)(a,b);
-      for(const auto& ptr : this->sd){
-	auto& bdata = *(ptr.second);
-	(bdata.*m)(a,b);
+      (this->d.*m)(a1,a2);
+      if(b){
+	for(const auto& ptr : this->sd){
+	  auto& bdata = *(ptr.second);
+	  (bdata.*m)(a1,a2);
+	}
       }
     } else {
-      (this->getBehaviourData2(h).*m)(a,b);
+      (this->getBehaviourData2(h).*m)(a1,a2);
     }
   } // end of BehaviourDescription::callBehaviourData
 
@@ -320,11 +332,9 @@ namespace mfront
   void
   BehaviourDescription::setLibrary(const std::string& l)
   {
-    using namespace std;
     if(!this->library.empty()){
-      string msg("BehaviourDescription::setLibrary: ");
-      msg += "material name alreay defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::setLibrary: "
+			       "library alreay defined"));
     }
     this->library = l;
   } // end of BehaviourDescription::setLibrary
@@ -338,11 +348,9 @@ namespace mfront
   void
   BehaviourDescription::setMaterialName(const std::string& m)
   {
-    using namespace std;
     if(!this->material.empty()){
-      string msg("BehaviourDescription::setMaterialName: ");
-      msg += "material name alreay defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::setMaterialName: "
+			       "material name alreay defined"));
     }
     this->material = m;
     this->updateClassName();
@@ -357,11 +365,9 @@ namespace mfront
   void
   BehaviourDescription::setClassName(const std::string& n)
   {
-    using namespace std;
     if(!this->className.empty()){
-      string msg("BehaviourDescription::setClassName: ");
-      msg += "class name alreay defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::setClassName: "
+			       "class name alreay defined"));
     }
     this->className = n;
   } // end of BehaviourDescription::setClassName
@@ -369,11 +375,9 @@ namespace mfront
   const std::string&
   BehaviourDescription::getClassName(void) const
   {
-    using namespace std;
     if(this->className.empty()){
-      string msg("BehaviourDescription::getClassName: ");
-      msg += "class name not defined";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDescription::getClassName: "
+			       "class name not defined"));
     }
     return this->className;
   } // end of BehaviourDescription::getClassName
@@ -396,37 +400,28 @@ namespace mfront
   } // end of BehaviourDescription::getIncludes
 
   void
-  BehaviourDescription::appendToMembers(const std::string& c)
+  BehaviourDescription::appendToMembers(const Hypothesis h,
+					const std::string& c,
+					const bool b)
   {
-    this->members+=c;
-    if(!this->members.empty()){
-      if(*(this->members.rbegin())!='\n'){
-	this->members+='\n';
-      }
-    }
+    this->callBehaviourData(h,&BehaviourData::appendToMembers,c,b);
   } // end of BehaviourDescription::appendToMembers
 
-  const std::string&
-  BehaviourDescription::getMembers(void) const
+  const std::string BehaviourDescription::getMembers(const Hypothesis h) const
   {
-    return this->members;
+    return this->getBehaviourData(h).getMembers();
   } // end of BehaviourDescription::getMembers
 
-  void
-  BehaviourDescription::appendToPrivateCode(const std::string& c)
+  void BehaviourDescription::appendToPrivateCode(const Hypothesis h,
+						 const std::string& c,
+						 const bool b)
   {
-    this->privateCode+=c;
-    if(!this->privateCode.empty()){
-      if(*(this->privateCode.rbegin())!='\n'){
-	this->privateCode+='\n';
-      }
-    }
+    this->callBehaviourData(h,&BehaviourData::appendToPrivateCode,c,b);
   } // end of BehaviourDescription::appendToPrivateCode
 
-  const std::string&
-  BehaviourDescription::getPrivateCode(void) const
+  const std::string BehaviourDescription::getPrivateCode(const Hypothesis h) const
   {
-    return this->privateCode;
+    return this->getBehaviourData(h).getPrivateCode();
   } // end of BehaviourDescription::getPrivateCode
 
   void
@@ -971,24 +966,24 @@ namespace mfront
   std::set<BehaviourDescription::Hypothesis>
   BehaviourDescription::getDistinctModellingHypotheses(void) const
   {
-    std::set<Hypothesis> h;
     const auto& mh = this->getModellingHypotheses();
     if(mh.size()==1u){
       // if only one modelling hypothesis is supported, it is not
       // considered as specialised, so we return it.
       return mh;
     }
+    std::set<Hypothesis> dh;
     if(!this->areAllMechanicalDataSpecialised()){
       // We return UNDEFINEDHYPOTHESIS to take into account all the
       // modelling hypotheses that were not specialised
-      h.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+      dh.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    for(const auto & elem : mh){
-      if(this->hasSpecialisedMechanicalData(elem)){
-	h.insert(elem);
+    for(const auto & h : mh){
+      if(this->hasSpecialisedMechanicalData(h)){
+	dh.insert(h);
       }
     }
-    return h;
+    return dh;
   } // end of BehaviourDescription::getDistinctModellingHypotheses
 
 
@@ -1241,7 +1236,7 @@ namespace mfront
     void (BehaviourData:: *mptr)(const std::string&,
 				 const double);
     mptr = &BehaviourData::setParameterDefaultValue;
-    this->callBehaviourData(h,mptr,n,v);
+    this->callBehaviourData(h,mptr,n,v,true);
   }
 
   void
@@ -1252,7 +1247,7 @@ namespace mfront
     void (BehaviourData:: *mptr)(const std::string&,
 				 const int v);
     mptr = &BehaviourData::setParameterDefaultValue;
-    this->callBehaviourData(h,mptr,n,v);
+    this->callBehaviourData(h,mptr,n,v,true);
   }
 
   void
@@ -1263,7 +1258,7 @@ namespace mfront
     void (BehaviourData:: *mptr)(const std::string&,
 				 const unsigned short v);
     mptr = &BehaviourData::setParameterDefaultValue;
-    this->callBehaviourData(h,mptr,n,v);
+    this->callBehaviourData(h,mptr,n,v,true);
   }
 
   unsigned short
@@ -1407,7 +1402,7 @@ namespace mfront
   {
     void (BehaviourData::* m)(const std::string&) =
       &BehaviourData::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution;
-    this->callBehaviourData(h,m,n);
+    this->callBehaviourData(h,m,n,true);
   } // end of BehaviourDescription::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
 
   void
@@ -1416,7 +1411,7 @@ namespace mfront
   {
     void (BehaviourData::* m)(const bool) =
       &BehaviourData::setUsableInPurelyImplicitResolution;
-    this->callBehaviourData(h,m,b);
+    this->callBehaviourData(h,m,b,true);
   } // end of BehaviourDescription::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
 
   bool
@@ -1648,7 +1643,7 @@ namespace mfront
 					const std::string& n,
 					const std::string& g)
   {
-    this->callBehaviourData(h,&BehaviourData::setGlossaryName,n,g);
+    this->callBehaviourData(h,&BehaviourData::setGlossaryName,n,g,true);
   } // end of BehaviourDescription::setGlossaryName
 
   bool
@@ -1663,7 +1658,7 @@ namespace mfront
 				     const std::string& n,
 				     const std::string& g)
   {
-    this->callBehaviourData(h,&BehaviourData::setEntryName,n,g);
+    this->callBehaviourData(h,&BehaviourData::setEntryName,n,g,true);
   } // end of BehaviourDescription::setEntryName
 
   bool
@@ -1724,21 +1719,21 @@ namespace mfront
   BehaviourDescription::reserveName(const Hypothesis h,
 				    const std::string& n)
   {
-    this->callBehaviourData(h,&BehaviourData::reserveName,n);
+    this->callBehaviourData(h,&BehaviourData::reserveName,n,true);
   }
   
   void
   BehaviourDescription::registerMemberName(const Hypothesis h,
 					   const std::string& n)
   {
-    this->callBehaviourData(h,&BehaviourData::registerMemberName,n);
+    this->callBehaviourData(h,&BehaviourData::registerMemberName,n,true);
   } // end of BehaviourDescription::registerMemberName
 
   void
   BehaviourDescription::registerStaticMemberName(const Hypothesis h,
 						 const std::string& n)
   {
-    this->callBehaviourData(h,&BehaviourData::registerStaticMemberName,n);
+    this->callBehaviourData(h,&BehaviourData::registerStaticMemberName,n,true);
   } // end of BehaviourDescription::registerMemberName
   
   void
@@ -1802,9 +1797,8 @@ namespace mfront
   BehaviourDescription::checkVariableGlossaryName(const std::string& n,
 						  const std::string& g) const
   {
-    const auto& h = this->getDistinctModellingHypotheses();
-    for(const auto & elem : h){
-      const auto& bdata = this->getBehaviourData(elem);
+    for(const auto & h : this->getDistinctModellingHypotheses()){
+      const auto& bdata = this->getBehaviourData(h);
       if(!bdata.hasGlossaryName(n)){
 	throw(std::runtime_error("BehaviourDescription::VariableGlossaryName: "
 				 "no glossary name associated with variable '"+n+"'"));
@@ -1823,9 +1817,8 @@ namespace mfront
 					      const std::string& c,
 					      const size_t p)
   {
-    const auto& h = this->getDistinctModellingHypotheses();
-    for(const auto & elem : h){
-      const auto& bdata = this->getBehaviourData(elem);
+    for(const auto & h : this->getDistinctModellingHypotheses()){
+      const auto& bdata = this->getBehaviourData(h);
       const auto& vc = bdata.getVariables(c);
       if(p>=vc.size()){
 	throw(std::runtime_error("BehaviourDescription::checkVariablePosition: "

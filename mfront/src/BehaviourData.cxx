@@ -441,8 +441,8 @@ namespace mfront{
   BehaviourData::isMemberUsedInCodeBlocks(const std::string& v) const
   {
     for(const auto& c : this->cblocks){
-      const auto& members = c.second.get().members;
-      if(members.find(v)!=members.end()){
+      const auto& m = c.second.get().members;
+      if(m.find(v)!=m.end()){
 	return true;
       }
     }
@@ -1174,6 +1174,36 @@ namespace mfront{
     return this->parameters;
   } // end of BehaviourData::getParameters
 
+  void BehaviourData::appendToMembers(const std::string& c)
+  {
+    this->members+=c;
+    if(!this->members.empty()){
+      if(*(this->members.rbegin())!='\n'){
+	this->members+='\n';
+      }
+    }
+  } // end of BehaviourData::appendToMembers
+
+  const std::string BehaviourData::getMembers(void) const
+  {
+    return this->members;
+  } // end of BehaviourData::getMembers
+
+  void BehaviourData::appendToPrivateCode(const std::string& c)
+  {
+    this->privateCode+=c;
+    if(!this->privateCode.empty()){
+      if(*(this->privateCode.rbegin())!='\n'){
+	this->privateCode+='\n';
+      }
+    }
+  } // end of BehaviourData::appendToPrivateCode
+
+  const std::string BehaviourData::getPrivateCode(void) const
+  {
+    return this->privateCode;
+  } // end of BehaviourData::getPrivateCode
+  
   BehaviourData::~BehaviourData()
   {} // end of BehaviourData::~BehaviourData
 

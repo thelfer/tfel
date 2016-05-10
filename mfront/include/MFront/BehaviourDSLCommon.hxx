@@ -506,9 +506,11 @@ namespace mfront{
      * treat the @Brick keyword
      */
     virtual void treatBrick(void);
-    /*!
-     * treat the @TangentOperator keyword
-     */
+    //! \brief treat the @Private keyword
+    virtual void treatPrivate(void) override;
+    //! \brief treat the @Members keyword
+    virtual void treatMembers(void) override;
+    //! \brief treat the @TangentOperator keyword
     virtual void treatTangentOperator(void);
     /*!
      * treat the @IsTangentOperatorSymmetric keyword
@@ -970,10 +972,10 @@ namespace mfront{
     writeBehaviourStaticVariables(const Hypothesis);
 
     virtual void
-    writeBehaviourMembersFunc(void);
+    writeBehaviourAdditionalMembers(const Hypothesis);
 
     virtual void
-    writeBehaviourPrivate(void);
+    writeBehaviourPrivate(const Hypothesis);
 
     virtual void
     writeBehaviourUpdateIntegrationVariables(const Hypothesis);
