@@ -54,7 +54,7 @@ macro(test_brick test_arg behaviour)
   set(file "${CMAKE_CURRENT_SOURCE_DIR}/${test_arg}.mtest")
   add_test(NAME brick${test_arg}${behaviour}_mtest
     COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false
-    --@library@="/home/th202608/codes/tfel/tfel-3.0.x/src/build/mfront/tests/behaviours/bricks/libMFrontCastemBehaviourBricks.so" --@behaviour@="${behaviour}" --@xml_output@="${test_arg}-${behaviour}.xml" ${file})
+    --@library@="$<TARGET_FILE:MFrontCastemBehaviourBricks>" --@behaviour@="${behaviour}" --@xml_output@="${test_arg}-${behaviour}.xml" ${file})
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST castem${test_arg}_${conf}_mtest
       PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest"
