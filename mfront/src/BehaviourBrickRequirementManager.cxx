@@ -65,7 +65,7 @@ namespace mfront{
 	this->addExternalStateVariableProvider(v,bd.getExternalName(v.name));
       }
       for(const auto& v: bd.getLocalVariables()){
-	this->addLocalVariableProvider(v,bd.getExternalName(v.name));
+      	this->addLocalVariableProvider(v,bd.getExternalName(v.name));
       }
       for(const auto& v: bd.getStaticVariables()){
 	this->addStaticVariableProvider(v,bd.getExternalName(v.name));

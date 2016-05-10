@@ -25,6 +25,7 @@ set(mfront_tests_SOURCES
   OrthotropicStandardElasticity
   OrthotropicStandardElasticity2
   OrthotropicStandardElasticity3
+  IsotropicPlasticity
  )
 
 mfront_dependencies(MFrontCastemBehaviourBricks

@@ -85,22 +85,28 @@ namespace mfront{
     {
       /*!
        * constructor
-       * \param[in] t : variable type
-       * \param[in] n : variable name
-       * \param[in] e : external name
-       * \param[in] s : array size
+       * \param[in] t: variable type
+       * \param[in] n: variable name
+       * \param[in] e: external name
+       * \param[in] s: array size
+       * \param[in] b: check if variable type is suppported (See the
+       * SupportedType class for details)
        */
       StandardProvider(const std::string&,
 		       const std::string&,
 		       const std::string&,
-		       const unsigned short);
+		       const unsigned short,
+		       const bool);
       /*!
        * constructor
        * \param[in] v : variable description
        * \param[in] e : external name
+       * \param[in] b: check if variable type is suppported (See the
+       * SupportedType class for details)
        */
       StandardProvider(const mfront::VariableDescription&,
-		       const std::string&);
+		       const std::string&,
+		       const bool);
       //! \return the type of the variable that can be produced
       virtual std::string getVariableType(void) const override final;
       //! \return the external name of the variable that can be produced

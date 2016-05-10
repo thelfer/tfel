@@ -2104,6 +2104,7 @@ mfront/tests/behaviours/ImplicitSimoMieheElastoPlasticity.mfront -text
 mfront/tests/behaviours/IncompressibleMooneyRivlinBehaviour.mfront -text
 mfront/tests/behaviours/IncompressiblePlaneStressGornetDesmoratBehaviour.mfront -text
 mfront/tests/behaviours/IncompressiblePlaneStressMooneyRivlinBehaviour.mfront -text
+mfront/tests/behaviours/IsotropicPlasticity.mfront -text
 mfront/tests/behaviours/IsotropicStandardElasticity.mfront -text
 mfront/tests/behaviours/IsotropicStandardElasticity10.mfront -text
 mfront/tests/behaviours/IsotropicStandardElasticity11.mfront -text

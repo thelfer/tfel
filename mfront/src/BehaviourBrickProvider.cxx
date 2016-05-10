@@ -76,30 +76,36 @@ namespace mfront{
     StandardProvider::StandardProvider(const std::string& t,
 				       const std::string& n,
 				       const std::string& e,
-				       const unsigned short s)
+				       const unsigned short s,
+				       const bool b)
       : type(t),
 	name(n),
 	ename(e),
 	asize(s)
     {
       const auto st = SupportedTypes{};
-      if(!st.isSupportedType(this->type)){
-	throw(std::runtime_error("StandardProvider::StandardProvider : "
-				 "unsupported type '"+this->type+"'"));
+      if(b){
+	if(!st.isSupportedType(this->type)){
+	  throw(std::runtime_error("StandardProvider::StandardProvider : "
+				   "unsupported type '"+this->type+"'"));
+	}
       }
     } // end of StandardProvider::StandardProvider
 
     StandardProvider::StandardProvider(const mfront::VariableDescription& v,
-				       const std::string& e)
+				       const std::string& e,
+				       const bool b)
       : type(v.type),
 	name(v.name),
 	ename(e),
 	asize(v.arraySize)
     {
       const auto st = SupportedTypes{};
-      if(!st.isSupportedType(this->type)){
-	throw(std::runtime_error("StandardProvider::StandardProvider : "
-				 "unsupported type '"+this->type+"'"));
+      if(b){
+	if(!st.isSupportedType(this->type)){
+	  throw(std::runtime_error("StandardProvider::StandardProvider : "
+				   "unsupported type '"+this->type+"'"));
+	}
       }
     } // end of StandardProvider::StandardProvider
     
@@ -121,12 +127,12 @@ namespace mfront{
 						       const std::string& n,
 						       const std::string& e,
 						       const unsigned short s)
-      : StandardProvider(t,n,e,s)
+      : StandardProvider(t,n,e,s,true)
     {} // end of MaterialPropertyProvider::MaterialPropertyProvider
 
     MaterialPropertyProvider::MaterialPropertyProvider(const mfront::VariableDescription& v,
 						       const std::string& e)
-      : StandardProvider(v,e)
+      : StandardProvider(v,e,true)
     {} // end of MaterialPropertyProvider::MaterialPropertyProvider
     
     ProviderIdentifier
@@ -162,12 +168,12 @@ namespace mfront{
 								   const std::string& n,
 								   const std::string& e,
 								   const unsigned short s)
-      : StandardProvider(t,n,e,s)
+      : StandardProvider(t,n,e,s,true)
     {} // end of AuxiliaryStateVariableProvider::AuxiliaryStateVariableProvider
 
     AuxiliaryStateVariableProvider::AuxiliaryStateVariableProvider(const mfront::VariableDescription& v,
 								   const std::string& e)
-      : StandardProvider(v,e)
+      : StandardProvider(v,e,true)
     {} // end of AuxiliaryStateVariableProvider::AuxiliaryStateVariableProvider
     
     ProviderIdentifier
@@ -181,12 +187,12 @@ namespace mfront{
 								 const std::string& n,
 								 const std::string& e,
 								 const unsigned short s)
-      : StandardProvider(t,n,e,s)
+      : StandardProvider(t,n,e,s,true)
     {} // end of ExternalStateVariableProvider::ExternalStateVariableProvider
 
     ExternalStateVariableProvider::ExternalStateVariableProvider(const mfront::VariableDescription& v,
 								 const std::string& e)
-      : StandardProvider(v,e)
+      : StandardProvider(v,e,true)
     {} // end of ExternalStateVariableProvider::ExternalStateVariableProvider
     
     ProviderIdentifier
@@ -200,12 +206,12 @@ namespace mfront{
 							     const std::string& n,
 							     const std::string& e,
 							     const unsigned short s)
-      : StandardProvider(t,n,e,s)
+      : StandardProvider(t,n,e,s,true)
     {} // end of IntegrationVariableProvider::IntegrationVariableProvider
 
     IntegrationVariableProvider::IntegrationVariableProvider(const mfront::VariableDescription& v,
 							     const std::string& e)
-      : StandardProvider(v,e)
+      : StandardProvider(v,e,true)
     {} // end of IntegrationVariableProvider::IntegrationVariableProvider
     
     ProviderIdentifier
@@ -219,12 +225,12 @@ namespace mfront{
 						 const std::string& n,
 						 const std::string& e,
 						 const unsigned short s)
-      : StandardProvider(t,n,e,s)
+      : StandardProvider(t,n,e,s,false)
     {} // end of LocalVariableProvider::LocalVariableProvider
 
     LocalVariableProvider::LocalVariableProvider(const mfront::VariableDescription& v,
 							   const std::string& e)
-      : StandardProvider(v,e)
+      : StandardProvider(v,e,false)
     {} // end of LocalVariableProvider::LocalVariableProvider
     
     ProviderIdentifier

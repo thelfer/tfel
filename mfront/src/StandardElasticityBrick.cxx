@@ -67,6 +67,9 @@ namespace mfront{
     if(this->pss){
       this->bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"etozz");
       this->bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"detozz");
+      this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"prediction_stress");
+      this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"prediction_strain");
+      this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"prediction_theta");
     }
   } // end of StandardElasticityBrick::StandardElasticityBrick
 
@@ -77,7 +80,7 @@ namespace mfront{
       if(b){throw(std::runtime_error("StandardElasticityBrick::endTreatment: "+m));}
     };
     using tfel::glossary::Glossary; 
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "StandardElasticityBrick::endTreatment: begin\n";
     }
@@ -95,8 +98,8 @@ namespace mfront{
     } else {
       VariableDescription eel("StrainStensor","eel",1u,0u);
       eel.description = "elastic strain";
-      this->bd.addStateVariable(h,eel);
-      this->bd.setGlossaryName(h,"eel",Glossary::ElasticStrain);
+      this->bd.addStateVariable(uh,eel);
+      this->bd.setGlossaryName(uh,"eel",Glossary::ElasticStrain);
     }
     // treating material properties and stress computation
     if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
@@ -111,37 +114,68 @@ namespace mfront{
 	throw_if(true,"unsupported elastic symmetry type");
       }
     }
-    // // declaring the computeElasticPrediction member
-    // for(const auto h:this->bd.getDistinctModellingHypotheses()){
-    //   std::string m =
-    // 	"//! \brief return an elastic prediction of the stresses\n"
-    // 	"StressStensor computeElasticPrediction(void){\n";
-    //   if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
-	
-    //   } else if (h==ModellingHypothesis::PLANESTRESS){
-
-    //   } else {
-    // 	if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
-    // 	   (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
-    // 	  m += "return D*(eel+deto);"
-    // 	} else {
-    // 	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-    // 	    if(this->bd.areElasticMaterialPropertiesDefined()){
-	      
-    // 	    } else {
-    // 	    }
-    // 	  } else {
-    // 	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-    // 	      throw(std::runtime_error("StandardElasticityBrick::treatOrthotropicBehaviour: "
-    // 				       "the stiffness tensor must be defined for "
-    // 				       "orthotropic behaviours"));
-    // 	    }
-    // 	  }
-    // 	}
-    //   }
-    //   m+= "}\n";
-    //   this->bd.appendToMembers(h,m,false);
-    // }    
+    // declaring the computeElasticPrediction member
+    for(const auto h:this->bd.getDistinctModellingHypotheses()){
+      std::string m =
+    	"//! \brief return an elastic prediction of the stresses\n"
+    	"StressStensor computeElasticPrediction(void) const{\n"
+	"return this->computeElasticPrediction(this->theta);\n"
+	"}\n"
+    	"//! \brief return an elastic prediction of the stresses\n"
+    	"StressStensor computeElasticPrediction(const real prediction_theta) const{\n";
+      if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
+	m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\");\n";
+	m += "return {};\n";
+      } else if (h==ModellingHypothesis::PLANESTRESS){
+    	if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
+    	   (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
+	  if(this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
+	    m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\");\n";
+	    m += "return {};\n";
+	  } else {
+	    m += "return (this->D)*(this->eel+prediction_theta*this->deto);";
+	  }
+    	} else {
+    	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
+	    const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
+	    const std::string lambda = lvs.contains("lambda") ? "this->lambda" : "this->sebdata.lambda";
+	    const std::string mu     = lvs.contains("mu")     ? "this->mu"     : "this->sebdata.mu";
+	    m += "StressStensor prediction_strain = this->eel+prediction_theta*this->deto;\n";
+	    m += "prediction_stress(0) = (2*("+lambda+"+"+mu+"))/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(1))+2*("+mu+")*prediction_strain(0);\n";
+	    m += "prediction_stress(1) = (2*("+lambda+"+"+mu+"))/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(1))+2*("+mu+")*prediction_strain(1);\n";
+	    m += "prediction_stress(2) = stress(0);\n";
+	    m += "prediction_stress(3) = 2*("+mu+")*prediction_strain(3);\n";
+    	  } else {
+    	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
+    	      throw(std::runtime_error("StandardElasticityBrick::treatOrthotropicBehaviour: "
+    				       "the stiffness tensor must be defined for "
+    				       "orthotropic behaviours"));
+    	    }
+    	  }
+    	}
+      } else {
+    	if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
+    	   (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
+	    m += "return (this->D)*(this->eel+prediction_theta*this->deto);";
+    	} else {
+    	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
+	    const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
+	    const std::string lambda = lvs.contains("lambda") ? "this->lambda" : "this->sebdata.lambda";
+	    const std::string mu     = lvs.contains("mu")     ? "this->mu"     : "this->sebdata.mu";
+	    m+= "return "+lambda+"*trace(this->eel+prediction_theta*(this->deto))*Stensor::Id()+"
+	      "2*("+mu+")*(this->eel+prediction_theta*(this->deto));\n";
+    	  } else {
+    	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
+    	      throw(std::runtime_error("StandardElasticityBrick::treatOrthotropicBehaviour: "
+    				       "the stiffness tensor must be defined for "
+    				       "orthotropic behaviours"));
+    	    }
+    	  }
+    	}
+      }
+      m+= "}\n";
+      this->bd.appendToMembers(h,m,false);
+    }    
     // plane stress support
     if(this->pss){
       const bool agps = bmh.count(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=0;
@@ -160,7 +194,7 @@ namespace mfront{
     // implicit equation associated with the elastic strain
     CodeBlock integrator;
     integrator.code = "feel -= this->deto;\n";
-    this->bd.setCode(h,BehaviourData::Integrator,
+    this->bd.setCode(uh,BehaviourData::Integrator,
     		     integrator,BehaviourData::CREATEORAPPEND,
     		     BehaviourData::AT_END);
     this->bd.addLocalDataStructure(d,BehaviourData::ALREADYREGISTRED);
