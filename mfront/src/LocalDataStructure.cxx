@@ -69,5 +69,15 @@ namespace mfront{
     }
     return p->second;
   } // end of LocalDataStructure::get
+
+  bool LocalDataStructure::contains(const Hypothesis h,
+				    const std::string& n) const{
+    const auto& d = this->get(h);
+    const auto p = std::find_if(d.begin(),d.end(),[&n](const Variable& v){
+	return v.name==n;
+      });
+    return p!=d.end();
+  }
+  
   
 } // end of mfront

@@ -84,6 +84,7 @@ namespace mfront{
     declareComputeStressWhenStiffnessTensorIsDefined(void) const;
     /*!
      * treat the case of isotropic behaviours
+     * \param[in] d: local data structure
      */
     virtual void
     treatIsotropicBehaviour(LocalDataStructure&) const;
@@ -95,19 +96,25 @@ namespace mfront{
     /*!
      * \brief add support for the AXISYMMETRICALGENERALISEDPLANESTRESS
      * modelling hypothesis
+     * \param[in] d: local data structure
      */
     virtual void
     addAxisymmetricalGeneralisedPlaneStressSupport(LocalDataStructure&) const;
     /*!
      * \brief add support for the PLANESTRESS modelling hypothesis
+     * \param[in] d: local data structure
      */
     virtual void addPlaneStressSupport(LocalDataStructure&) const;
     /*!
      * \brief add the generic tangent operator computation
+     * \param[in] d: local data structure
      */
-    virtual void addGenericTangentOperatorSupport(void) const;
-    //! declare the compute elastic prediction method
-    virtual void declareComputeElasticPredictionMethod(void) const;
+    virtual void addGenericTangentOperatorSupport(const LocalDataStructure&) const;
+    /*! 
+     * \brief declare the compute elastic prediction method
+     * \param[in] d: local data structure
+     */
+    virtual void declareComputeElasticPredictionMethod(const LocalDataStructure&) const;
     //! plane stress support; 
     bool pss = true;
     //! generic tangent operator support support

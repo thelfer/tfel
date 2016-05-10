@@ -125,10 +125,10 @@ namespace mfront{
       }
     }
     // declaring the computeElasticPrediction member
-    this->declareComputeElasticPredictionMethod();
+    this->declareComputeElasticPredictionMethod(d);
     // tangent operator
     if(gto){
-      this->addGenericTangentOperatorSupport();
+      this->addGenericTangentOperatorSupport(d);
     }
     // implicit equation associated with the elastic strain
     CodeBlock integrator;
@@ -140,7 +140,7 @@ namespace mfront{
   } // end of StandardElasticityBrick::endTreatment
 
   void 
-  StandardElasticityBrick::declareComputeElasticPredictionMethod(void) const
+  StandardElasticityBrick::declareComputeElasticPredictionMethod(const LocalDataStructure& d) const
   {
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     for(const auto h:this->bd.getDistinctModellingHypotheses()){
@@ -156,8 +156,16 @@ namespace mfront{
 	    m += "return {};\n";
 	  } else {
 	    if(this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
-	      m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\"));\n";
-	      m += "return {};\n";
+	      m += "StrainStensor prediction_stress;\n";
+	      m += "StrainStensor prediction_strain = this->eel+(this->theta)*this->deto;\n";
+	      m += "prediction_stress(0) = (this->D(0,0)-((this->D(0,2))*(this->D(2,0)))/(this->D(2,2)))*prediction_strain(0)+\n";
+	      m += "                       (this->D(0,1)-((this->D(0,2))*(this->D(2,1)))/(this->D(2,2)))*prediction_strain(1)+\n";
+	      m += "                       (this->D(0,2))/(this->D(2,2))*(this->sigzz+this->dsigzz);\n";
+	      m += "prediction_stress(1) = (this->D(1,0)-((this->D(1,2))*(this->D(2,0)))/(this->D(2,2)))*prediction_strain(0)+\n";
+	      m += "                       (this->D(1,1)-((this->D(1,2))*(this->D(2,1)))/(this->D(2,2)))*prediction_strain(1)+\n";
+	      m += "                       (this->D(1,2))/(this->D(2,2))*(this->sigzz+this->dsigzz);\n";
+	      m += "prediction_stress(2) = stress(0);\n";
+	      m += "return prediction_stress;\n";
 	    } else {
 	      m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\"));\n";
 	      m += "return {};\n";
@@ -166,8 +174,8 @@ namespace mfront{
 	} else{
     	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
 	    const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
-	    const std::string lambda = lvs.contains("lambda") ? "this->lambda" : "this->sebdata.lambda";
-	    const std::string mu     = lvs.contains("mu")     ? "this->mu"     : "this->sebdata.mu";
+	    const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
+	    const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
 	    m += "StrainStensor prediction_stress;\n";
 	    m += "StrainStensor prediction_strain = this->eel+(this->theta)*this->deto;\n";
 	    m += "prediction_stress(0) = 2*("+mu+")*(("+lambda+")/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(2))+prediction_strain(0))+\n";
@@ -189,10 +197,18 @@ namespace mfront{
 	   (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
 	  if((this->bd.getElasticSymmetryType()!=mfront::ISOTROPIC)&&
 	     (this->bd.getElasticSymmetryType()!=mfront::ORTHOTROPIC)){
+	    m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\"));\n";
+	    m += "return {};\n";
 	  } else {
 	    if(this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
-	      m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\"));\n";
-	      m += "return {};\n";
+	      m += "StrainStensor prediction_stress;\n";
+	      m += "StrainStensor prediction_strain = this->eel+(this->theta)*this->deto;\n";
+	      m += "prediction_stress(0) = (this->D(0,0)-((this->D(0,2))*(this->D(2,0)))/(this->D(2,2)))*prediction_strain(0)+\n";
+	      m += "                       (this->D(0,1)-((this->D(0,2))*(this->D(2,1)))/(this->D(2,2)))*prediction_strain(1);\n";
+	      m += "prediction_stress(1) = (this->D(1,0)-((this->D(1,2))*(this->D(2,0)))/(this->D(2,2)))*prediction_strain(0)+\n";
+	      m += "                       (this->D(1,1)-((this->D(1,2))*(this->D(2,1)))/(this->D(2,2)))*prediction_strain(1);\n";
+	      m += "prediction_stress(2) = stress(0);\n";
+	      m += "return prediction_stress;\n";
 	    } else {
 	      m += "return (this->D)*(this->eel+(this->theta)*this->deto);";
 	    }
@@ -200,8 +216,8 @@ namespace mfront{
 	} else {
 	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
 	    const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
-	    const std::string lambda = lvs.contains("lambda") ? "this->lambda" : "this->sebdata.lambda";
-	    const std::string mu     = lvs.contains("mu")     ? "this->mu"     : "this->sebdata.mu";
+	    const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
+	    const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
 	    m += "StrainStensor prediction_stress;\n";
 	    m += "StressStensor prediction_strain = this->eel+(this->theta)*this->deto;\n";
 	    m += "prediction_stress(0) = 2*("+mu+")*(("+lambda+")/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(1))+prediction_strain(0));\n";
@@ -224,8 +240,8 @@ namespace mfront{
     	} else {
     	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
 	    const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
-	    const std::string lambda = lvs.contains("lambda") ? "this->lambda" : "this->sebdata.lambda";
-	    const std::string mu     = lvs.contains("mu")     ? "this->mu"     : "this->sebdata.mu";
+	    const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
+	    const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
 	    m+= "return "+lambda+"*trace(this->eel+(this->theta)*(this->deto))*Stensor::Id()+"
 	      "2*("+mu+")*(this->eel+(this->theta)*(this->deto));\n";
     	  } else {
@@ -260,7 +276,7 @@ namespace mfront{
   StandardElasticityBrick::treatIsotropicBehaviour(LocalDataStructure& d) const
   {
     using tfel::glossary::Glossary; 
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "StandardElasticityBrick::treatIsotropicBehaviour: begin\n";
     }
@@ -276,26 +292,27 @@ namespace mfront{
     } else {
       this->addMaterialPropertyIfNotDefined("stress","young",Glossary::YoungModulus);
       this->addMaterialPropertyIfNotDefined("real","nu",Glossary::PoissonRatio);
-      d.addVariable(h,{"stress","lambda"});
-      d.addVariable(h,{"stress","mu"});
+      d.addVariable(uh,{"stress","lambda"});
+      d.addVariable(uh,{"stress","mu"});
       // local variable initialisation
       CodeBlock init;
       init.code = "// initialisation Lame's coefficient\n"
 	"this->sebdata.lambda=tfel::material::computeLambda(this->young,this->nu);\n"
 	"this->sebdata.mu=tfel::material::computeMu(this->young,this->nu);\n";
+      this->bd.setCode(uh,BehaviourData::BeforeInitializeLocalVariables,
+		       init,BehaviourData::CREATE,
+		       BehaviourData::AT_BEGINNING,false);
+      // Hooke law
       smts.code =
 	"this->sig=(this->sebdata.lambda)*trace(this->eel+theta*(this->deel))*Stensor::Id()+"
 	"2*(this->sebdata.mu)*(this->eel+theta*(this->deel));\n";
       sets.code =
 	"this->sig=(this->sebdata.lambda)*trace(this->eel)*Stensor::Id()+2*(this->sebdata.mu)*this->eel;";
-      this->bd.setCode(h,BehaviourData::BeforeInitializeLocalVariables,
-		       init,BehaviourData::CREATE,
-		       BehaviourData::AT_BEGINNING,false);
     }
-    this->bd.setCode(h,BehaviourData::ComputeStress,
+    this->bd.setCode(uh,BehaviourData::ComputeStress,
 		     smts,BehaviourData::CREATE,
 		     BehaviourData::AT_BEGINNING,false);
-    this->bd.setCode(h,BehaviourData::ComputeFinalStress,
+    this->bd.setCode(uh,BehaviourData::ComputeFinalStress,
 		     sets,BehaviourData::CREATE,
 		     BehaviourData::AT_BEGINNING,false);
   } // end of StandardElasticityBrick::treatIsotropicBehaviour
@@ -372,8 +389,8 @@ namespace mfront{
 	}
       } else {
 	const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
-	const std::string lambda = lvs.contains("lambda") ? "this->lambda" : "this->sebdata.lambda";
-	const std::string mu     = lvs.contains("mu")     ? "this->mu"     : "this->sebdata.mu";
+	const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
+	const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
 	integrator.code +=
 	  "// the generalised plane stress equation is satisfied at the end of the time step\n"
 	  "this->sebdata.szz =   ("+lambda+"+2*("+mu+"))*(this->eel(1)+this->deel(1))"
@@ -448,8 +465,8 @@ namespace mfront{
 	}
       } else {
 	const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
-	const std::string lambda = lvs.contains("lambda") ? "this->lambda" : "this->sebdata.lambda";
-	const std::string mu     = lvs.contains("mu")     ? "this->mu"     : "this->sebdata.mu";
+	const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
+	const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
 	integrator.code +=
 	  "// the plane stress equation is satisfied at the end of the time step\n"
 	  "this->sebdata.szz = ("+lambda+"+2*("+mu+"))*(this->eel(2)+this->deel(2))+"
@@ -474,7 +491,7 @@ namespace mfront{
   }
 
   void
-  StandardElasticityBrick::addGenericTangentOperatorSupport(void) const{
+  StandardElasticityBrick::addGenericTangentOperatorSupport(const LocalDataStructure& d) const{
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("StandardElasticityBrick::"
 				     "addGenericTangentOperatorSupport: "+m));}
@@ -514,8 +531,8 @@ namespace mfront{
     } else {
       if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
 	const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
-	const std::string lambda = lvs.contains("lambda") ? "this->lambda" : "this->sebdata.lambda";
-	const std::string mu     = lvs.contains("mu")     ? "this->mu"     : "this->sebdata.mu";
+	const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
+	const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
 	tangentOperator.code =
 	  "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
 	  "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,"+lambda+","+mu+");\n"
