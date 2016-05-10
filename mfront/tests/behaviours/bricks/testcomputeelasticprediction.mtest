@@ -1,0 +1,29 @@
+@Author  Thomas Helfer;
+@Date 6/05/2016;
+@Description{
+  This file describes a tensile test along XX.
+};
+
+@ModellingHypothesis 'PlaneStress';
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<umat> @library@ @behaviour@;
+@MaterialProperty<constant> 'YoungModulus' 78.e9;
+@MaterialProperty<constant> 'PoissonRatio'  0.3;
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+
+@Real 'e0' 1.e-3;
+@ImposedStrain<function> 'EXX' 'e0*sin(t/900.)';
+
+@Times {0.,3600 in 20};
+
+// stresses
+@Test<function> 'SXX' 'YoungModulus*EXX'  1.e-3;
+@Test<function> 'SYY' '0.'                1.e-3;
+@Test<function> 'SZZ' '0.'                1.e-3;
+@Test<function> 'SXY' '0.'                1.e-3;
+// strains
+@Test<function> 'EYY'         '-PoissonRatio*EXX' 1.e-8;
+@Test<function> 'AxialStrain' '-PoissonRatio*EXX' 1.e-8;
+@Test<function> 'EXY' '0.'                1.e-8;

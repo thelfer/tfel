@@ -6,6 +6,10 @@ EXTRA_DIST = CMakeLists.txt                       \
 	     isotropicstandardelasticity5.mtest   \
 	     isotropicstandardelasticity6.mtest   \
 	     isotropicstandardelasticity7.mtest   \
-	     isotropicplasticity.mtest            \
-	     orthotropicstandardelasticity.mtest
+	     orthotropicstandardelasticity.mtest  \
+	     testcomputeelasticprediction.mtest   \
+	     testcomputeelasticprediction2.mtest  \
+	     testcomputeelasticprediction3.mtest  \
+	     testcomputeelasticprediction4.mtest  \
+	     isotropicplasticity.mtest
 

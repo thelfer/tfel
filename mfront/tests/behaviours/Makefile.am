@@ -120,6 +120,8 @@ MFRONTS= DDIF2.mfront                                                      \
 	 OrthotropicStandardElasticity.mfront                              \
 	 OrthotropicStandardElasticity2.mfront			           \
 	 OrthotropicStandardElasticity3.mfront                             \
+	 TestComputeElasticPrediction.mfront                               \
+	 TestComputeElasticPrediction2.mfront                              \
 	 IsotropicPlasticity.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours

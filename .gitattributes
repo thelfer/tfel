@@ -1167,6 +1167,7 @@ docs/web/mfront-doc.md -text
 docs/web/mfront-python.md -text
 docs/web/mfront-template.html -text
 docs/web/models.md -text
+docs/web/mtest-python.md -text
 docs/web/mtest.md -text
 docs/web/news.md -text
 docs/web/packages.md -text
@@ -2175,6 +2176,8 @@ mfront/tests/behaviours/SlidingSystemsCC.mfront -text
 mfront/tests/behaviours/StateVariablesBoundsCheck.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep.mfront -text
 mfront/tests/behaviours/T91ViscoplasticBehaviour.mfront -text
+mfront/tests/behaviours/TestComputeElasticPrediction.mfront -text
+mfront/tests/behaviours/TestComputeElasticPrediction2.mfront -text
 mfront/tests/behaviours/Tvergaard.mfront -text
 mfront/tests/behaviours/ViscoChaboche.mfront -text
 mfront/tests/behaviours/ViscoMemoNrad.mfront -text
@@ -2863,6 +2866,10 @@ mfront/tests/behaviours/bricks/isotropicstandardelasticity5.mtest -text
 mfront/tests/behaviours/bricks/isotropicstandardelasticity6.mtest -text
 mfront/tests/behaviours/bricks/isotropicstandardelasticity7.mtest -text
 mfront/tests/behaviours/bricks/orthotropicstandardelasticity.mtest -text
+mfront/tests/behaviours/bricks/testcomputeelasticprediction.mtest -text
+mfront/tests/behaviours/bricks/testcomputeelasticprediction2.mtest -text
+mfront/tests/behaviours/bricks/testcomputeelasticprediction3.mtest -text
+mfront/tests/behaviours/bricks/testcomputeelasticprediction4.mtest -text
 mfront/tests/behaviours/castem/CMakeLists.txt -text
 mfront/tests/behaviours/castem/Makefile.am -text
 mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx.in -text

@@ -25,6 +25,8 @@ set(mfront_tests_SOURCES
   OrthotropicStandardElasticity
   OrthotropicStandardElasticity2
   OrthotropicStandardElasticity3
+  TestComputeElasticPrediction
+  TestComputeElasticPrediction2
   IsotropicPlasticity
  )
 
@@ -55,7 +57,6 @@ macro(test_brick test_arg behaviour)
   set(_REFERENCE_FILE )
   if(NOT (${ARGC} EQUAL 0))
     set(_REFERENCE_FILE "${ARGN}")
-    message("REFERENCE_FILE: ${_REFERENCE_FILE}")
   endif()
   set(file "${CMAKE_CURRENT_SOURCE_DIR}/${test_arg}.mtest")
   if(NOT _REFERENCE_FILE)
@@ -129,6 +130,11 @@ test_brick(isotropicstandardelasticity7 umatisotropicstandardelasticity13)
 test_brick(orthotropicstandardelasticity umatorthotropicstandardelasticity )
 test_brick(orthotropicstandardelasticity umatorthotropicstandardelasticity2)
 test_brick(orthotropicstandardelasticity umatorthotropicstandardelasticity3)
+
+test_brick(testcomputeelasticprediction  umattestcomputeelasticprediction)
+test_brick(testcomputeelasticprediction2 umattestcomputeelasticprediction)
+test_brick(testcomputeelasticprediction3 umattestcomputeelasticprediction2)
+test_brick(testcomputeelasticprediction4 umattestcomputeelasticprediction2)
 
 test_brick(isotropicplasticity umatisotropicplasticity plasticity.ref)
 

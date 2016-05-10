@@ -26,6 +26,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./documentations.md					   \
 	   ./mfront-python.md					   \
 	   ./mtest.md						   \
+	   ./mtest-python.md					   \
 	   ./tutorial.md					   \
 	   ./LICENSE.md						   \
 	   ./glossary.md					   \
