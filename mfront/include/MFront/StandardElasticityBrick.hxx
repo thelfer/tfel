@@ -80,7 +80,8 @@ namespace mfront{
      * \brief declared the computeStress and computeFinalStress when the
      * requiresStiffnessTensor attribute has been set.
      */
-    void declareComputeStressWhenStiffnessTensorIsDefined(void) const;
+    virtual void
+    declareComputeStressWhenStiffnessTensorIsDefined(void) const;
     /*!
      * treat the case of isotropic behaviours
      */
@@ -105,6 +106,8 @@ namespace mfront{
      * \brief add the generic tangent operator computation
      */
     virtual void addGenericTangentOperatorSupport(void) const;
+    //! declare the compute elastic prediction method
+    virtual void declareComputeElasticPredictionMethod(void) const;
     //! plane stress support; 
     bool pss = true;
     //! generic tangent operator support support

@@ -1,0 +1,43 @@
+@Author Helfer Thomas;
+@Date   10/06/2016;
+@Description{
+  "Uniaxial tensile test of a simple isotropic behaviour "
+  "in plane stress"
+};
+
+@XMLOutputFile @xml_output@;
+@ModellingHypothesis 'PlaneStress';
+@OutputFilePrecision 12;
+@UseCastemAccelerationAlgorithm true;
+
+@Real 'Hy'  '102e9'; // H is used internally for the Heavyside function
+@Behaviour<umat> @library@ @behaviour@;
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+
+@Real 's0'  102.e6;
+@Real 'de'   '1.e-3';
+@Real 't1' '3600.';
+@Real 't0' 's0/(YoungModulus*de)*t1';
+@Real 'e0' 'de*t0';
+@Real 'aone' '0.9999999';
+@ImposedStrain<function> 'EXX' '(de*t/t1)*H(aone*t1-t)+de*((1-t/t1)+1)*H(t-t1)';
+
+@Times {0.,'t1' in 20,'2*t1' in 2};
+
+@Test<function> 'SYY' '0.' 1.e-3;
+@Test<function> 'SZZ' '0.' 1.e-3;
+@Test<function> 'SXY' '0.' 1.e-3;
+@Test<function> 'EXY' '0.' 1.e-12;
+@Test<file> @reference_file@
+   {'EYY'            :3,
+    'AxialStrain'    :4,
+    'ElasticStrainXX':14,
+    'ElasticStrainYY':15,
+    'ElasticStrainZZ':16,
+    'ElasticStrainXY':17,
+    'EquivalentPlasticStrain':20} 1.e-12;
+    
+@Test<file> @reference_file@ 'SXX' 8 1.e-3;

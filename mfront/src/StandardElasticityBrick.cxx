@@ -69,7 +69,6 @@ namespace mfront{
       this->bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"detozz");
       this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"prediction_stress");
       this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"prediction_strain");
-      this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"prediction_theta");
     }
   } // end of StandardElasticityBrick::StandardElasticityBrick
 
@@ -114,68 +113,6 @@ namespace mfront{
 	throw_if(true,"unsupported elastic symmetry type");
       }
     }
-    // declaring the computeElasticPrediction member
-    for(const auto h:this->bd.getDistinctModellingHypotheses()){
-      std::string m =
-    	"//! \brief return an elastic prediction of the stresses\n"
-    	"StressStensor computeElasticPrediction(void) const{\n"
-	"return this->computeElasticPrediction(this->theta);\n"
-	"}\n"
-    	"//! \brief return an elastic prediction of the stresses\n"
-    	"StressStensor computeElasticPrediction(const real prediction_theta) const{\n";
-      if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
-	m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\");\n";
-	m += "return {};\n";
-      } else if (h==ModellingHypothesis::PLANESTRESS){
-    	if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
-    	   (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
-	  if(this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
-	    m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\");\n";
-	    m += "return {};\n";
-	  } else {
-	    m += "return (this->D)*(this->eel+prediction_theta*this->deto);";
-	  }
-    	} else {
-    	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-	    const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
-	    const std::string lambda = lvs.contains("lambda") ? "this->lambda" : "this->sebdata.lambda";
-	    const std::string mu     = lvs.contains("mu")     ? "this->mu"     : "this->sebdata.mu";
-	    m += "StressStensor prediction_strain = this->eel+prediction_theta*this->deto;\n";
-	    m += "prediction_stress(0) = (2*("+lambda+"+"+mu+"))/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(1))+2*("+mu+")*prediction_strain(0);\n";
-	    m += "prediction_stress(1) = (2*("+lambda+"+"+mu+"))/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(1))+2*("+mu+")*prediction_strain(1);\n";
-	    m += "prediction_stress(2) = stress(0);\n";
-	    m += "prediction_stress(3) = 2*("+mu+")*prediction_strain(3);\n";
-    	  } else {
-    	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-    	      throw(std::runtime_error("StandardElasticityBrick::treatOrthotropicBehaviour: "
-    				       "the stiffness tensor must be defined for "
-    				       "orthotropic behaviours"));
-    	    }
-    	  }
-    	}
-      } else {
-    	if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
-    	   (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
-	    m += "return (this->D)*(this->eel+prediction_theta*this->deto);";
-    	} else {
-    	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-	    const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
-	    const std::string lambda = lvs.contains("lambda") ? "this->lambda" : "this->sebdata.lambda";
-	    const std::string mu     = lvs.contains("mu")     ? "this->mu"     : "this->sebdata.mu";
-	    m+= "return "+lambda+"*trace(this->eel+prediction_theta*(this->deto))*Stensor::Id()+"
-	      "2*("+mu+")*(this->eel+prediction_theta*(this->deto));\n";
-    	  } else {
-    	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-    	      throw(std::runtime_error("StandardElasticityBrick::treatOrthotropicBehaviour: "
-    				       "the stiffness tensor must be defined for "
-    				       "orthotropic behaviours"));
-    	    }
-    	  }
-    	}
-      }
-      m+= "}\n";
-      this->bd.appendToMembers(h,m,false);
-    }    
     // plane stress support
     if(this->pss){
       const bool agps = bmh.count(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=0;
@@ -187,6 +124,8 @@ namespace mfront{
 	this->addAxisymmetricalGeneralisedPlaneStressSupport(d);
       }
     }
+    // declaring the computeElasticPrediction member
+    this->declareComputeElasticPredictionMethod();
     // tangent operator
     if(gto){
       this->addGenericTangentOperatorSupport();
@@ -200,6 +139,109 @@ namespace mfront{
     this->bd.addLocalDataStructure(d,BehaviourData::ALREADYREGISTRED);
   } // end of StandardElasticityBrick::endTreatment
 
+  void 
+  StandardElasticityBrick::declareComputeElasticPredictionMethod(void) const
+  {
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    for(const auto h:this->bd.getDistinctModellingHypotheses()){
+      std::string m =
+    	"//! \\brief return an elastic prediction of the stresses\n"
+    	"StressStensor computeElasticPrediction(void) const{\n";
+      if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
+    	if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
+    	   (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
+	  if((this->bd.getElasticSymmetryType()!=mfront::ISOTROPIC)&&
+	     (this->bd.getElasticSymmetryType()!=mfront::ORTHOTROPIC)){
+	    m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\"));\n";
+	    m += "return {};\n";
+	  } else {
+	    if(this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
+	      m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\"));\n";
+	      m += "return {};\n";
+	    } else {
+	      m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\"));\n";
+	      m += "return {};\n";
+	    }
+	  }
+	} else{
+    	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
+	    const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
+	    const std::string lambda = lvs.contains("lambda") ? "this->lambda" : "this->sebdata.lambda";
+	    const std::string mu     = lvs.contains("mu")     ? "this->mu"     : "this->sebdata.mu";
+	    m += "StrainStensor prediction_stress;\n";
+	    m += "StrainStensor prediction_strain = this->eel+(this->theta)*this->deto;\n";
+	    m += "prediction_stress(0) = 2*("+mu+")*(("+lambda+")/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(2))+prediction_strain(0))+\n";
+	    m += "("+lambda+")/("+lambda+"+2*("+mu+")*(this->sigzz+theta*(this->dsigzz));\n";
+	    m += "prediction_stress(2) = 2*("+mu+")*(("+lambda+")/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(2))+prediction_strain(2))+\n";
+	    m += "("+lambda+")/("+lambda+"+2*("+mu+")*(this->sigzz+theta*(this->dsigzz));\n";
+	    m += "prediction_stress(1) = this->sigzz+theta*(this->dsigzz);\n";
+	    m += "return prediction_stress;\n";
+    	  } else {
+    	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
+    	      throw(std::runtime_error("StandardElasticityBrick::declareComputeElasticPredictionMethod: "
+    				       "the stiffness tensor must be defined for "
+    				       "orthotropic behaviours"));
+    	    }
+    	  }
+	}
+      } else if (h==ModellingHypothesis::PLANESTRESS){
+	if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
+	   (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
+	  if((this->bd.getElasticSymmetryType()!=mfront::ISOTROPIC)&&
+	     (this->bd.getElasticSymmetryType()!=mfront::ORTHOTROPIC)){
+	  } else {
+	    if(this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
+	      m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\"));\n";
+	      m += "return {};\n";
+	    } else {
+	      m += "return (this->D)*(this->eel+(this->theta)*this->deto);";
+	    }
+	  }
+	} else {
+	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
+	    const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
+	    const std::string lambda = lvs.contains("lambda") ? "this->lambda" : "this->sebdata.lambda";
+	    const std::string mu     = lvs.contains("mu")     ? "this->mu"     : "this->sebdata.mu";
+	    m += "StrainStensor prediction_stress;\n";
+	    m += "StressStensor prediction_strain = this->eel+(this->theta)*this->deto;\n";
+	    m += "prediction_stress(0) = 2*("+mu+")*(("+lambda+")/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(1))+prediction_strain(0));\n";
+	    m += "prediction_stress(1) = 2*("+mu+")*(("+lambda+")/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(1))+prediction_strain(1));\n";
+	    m += "prediction_stress(2) = stress(0);\n";
+	    m += "prediction_stress(3) = 2*("+mu+")*prediction_strain(3);\n";
+	    m += "return prediction_stress;\n";
+	  } else {
+	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
+	      throw(std::runtime_error("StandardElasticityBrick::declareComputeElasticPredictionMethod: "
+				       "the stiffness tensor must be defined for "
+				       "orthotropic behaviours"));
+	    }
+	  }
+	}
+      } else {
+    	if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
+    	   (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
+	  m += "return (this->D)*(this->eel+(this->theta)*this->deto);";
+    	} else {
+    	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
+	    const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
+	    const std::string lambda = lvs.contains("lambda") ? "this->lambda" : "this->sebdata.lambda";
+	    const std::string mu     = lvs.contains("mu")     ? "this->mu"     : "this->sebdata.mu";
+	    m+= "return "+lambda+"*trace(this->eel+(this->theta)*(this->deto))*Stensor::Id()+"
+	      "2*("+mu+")*(this->eel+(this->theta)*(this->deto));\n";
+    	  } else {
+    	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
+    	      throw(std::runtime_error("StandardElasticityBrick::declareComputeElasticPredictionMethod: "
+    				       "the stiffness tensor must be defined for "
+    				       "orthotropic behaviours"));
+    	    }
+    	  }
+    	}
+      }
+      m+= "}\n";
+      this->bd.appendToMembers(h,m,false);
+    }  
+  } // end of StandardElasticityBrick::declareComputeElasticPredictionMethod
+  
   void
   StandardElasticityBrick::declareComputeStressWhenStiffnessTensorIsDefined(void) const{
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;

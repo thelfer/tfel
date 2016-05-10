@@ -52,10 +52,25 @@ target_link_libraries(MFrontCastemBehaviourBricks
   TFELException)
 
 macro(test_brick test_arg behaviour)
+  set(_REFERENCE_FILE )
+  if(NOT (${ARGC} EQUAL 0))
+    set(_REFERENCE_FILE "${ARGN}")
+    message("REFERENCE_FILE: ${_REFERENCE_FILE}")
+  endif()
   set(file "${CMAKE_CURRENT_SOURCE_DIR}/${test_arg}.mtest")
-  add_test(NAME brick${test_arg}${behaviour}_mtest
-    COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false
-    --@library@="$<TARGET_FILE:MFrontCastemBehaviourBricks>" --@behaviour@="${behaviour}" --@xml_output@="${test_arg}-${behaviour}.xml" ${file})
+  if(NOT _REFERENCE_FILE)
+    add_test(NAME brick${test_arg}${behaviour}_mtest
+      COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false
+      --@library@="$<TARGET_FILE:MFrontCastemBehaviourBricks>" --@behaviour@="${behaviour}"
+      --@xml_output@="${test_arg}-${behaviour}.xml" ${file})
+  else(NOT _REFERENCE_FILE)
+    add_test(NAME brick${test_arg}${behaviour}_mtest
+      COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false
+      --@library@="$<TARGET_FILE:MFrontCastemBehaviourBricks>" --@behaviour@="${behaviour}"
+      --@xml_output@="${test_arg}-${behaviour}.xml"
+      --@reference_file@="${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}"
+      ${file})
+  endif(NOT _REFERENCE_FILE)
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST castem${test_arg}_${conf}_mtest
       PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest"
@@ -114,4 +129,6 @@ test_brick(isotropicstandardelasticity7 umatisotropicstandardelasticity13)
 test_brick(orthotropicstandardelasticity umatorthotropicstandardelasticity )
 test_brick(orthotropicstandardelasticity umatorthotropicstandardelasticity2)
 test_brick(orthotropicstandardelasticity umatorthotropicstandardelasticity3)
+
+test_brick(isotropicplasticity umatisotropicplasticity plasticity.ref)
 
