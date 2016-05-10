@@ -3,8 +3,8 @@
 @Author Thomas Helfer;
 @Date   5/06/2016;
 @Description{
-  "This file is used to test the StandardElasticity brick for "
-  "an isotropic plastic behaviour."
+  "This file is used to test the StandardElasticity "
+  "brick for an isotropic plastic behaviour."
  }
 
 @Theta 1;
