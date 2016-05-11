@@ -166,10 +166,10 @@ namespace mfront{
     };
     if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
       this->behaviourFile << "// updating the stiffness tensor at the middle of the time step\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",mts);
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",mts);
       if(!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
 	this->behaviourFile << "// stiffness tensor at the end of the time step\n";
-	this->writeStiffnessTensorComputation(this->behaviourFile,"D_tdt",ets);
+	this->writeStiffnessTensorComputation(this->behaviourFile,"this->D_tdt",ets);
       }
     }
     if((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false))&&

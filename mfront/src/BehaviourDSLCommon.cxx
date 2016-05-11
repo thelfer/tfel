@@ -3173,7 +3173,12 @@ namespace mfront{
 						      std::function<std::string(const MaterialPropertyInput&)>& f)
   {
     if(m.is<BehaviourDescription::ConstantMaterialProperty>()){
-      out << m.get<BehaviourDescription::ConstantMaterialProperty>().value;
+      const auto& cmp = m.get<BehaviourDescription::ConstantMaterialProperty>();
+      if(!cmp.name.empty()){
+	out << "this->" << cmp.name;
+      } else {
+	out << cmp.value;
+      }
     } else if(m.is<BehaviourDescription::ComputedMaterialProperty>()){
       const auto& cmp = m.get<BehaviourDescription::ComputedMaterialProperty>();
       const auto& mpd = *(cmp.mpd);

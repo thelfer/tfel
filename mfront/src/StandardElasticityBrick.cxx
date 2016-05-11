@@ -160,13 +160,13 @@ namespace mfront{
 	    if(this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
 	      m += "StrainStensor prediction_stress;\n";
 	      m += "StrainStensor prediction_strain = this->eel+(this->theta)*this->deto;\n";
-	      m += "prediction_stress(0) = (this->D(0,0)-((this->D(0,2))*(this->D(2,0)))/(this->D(2,2)))*prediction_strain(0)+\n";
-	      m += "                       (this->D(0,1)-((this->D(0,2))*(this->D(2,1)))/(this->D(2,2)))*prediction_strain(1)+\n";
-	      m += "                       (this->D(0,2))/(this->D(2,2))*(this->sigzz+this->dsigzz);\n";
-	      m += "prediction_stress(1) = (this->D(1,0)-((this->D(1,2))*(this->D(2,0)))/(this->D(2,2)))*prediction_strain(0)+\n";
-	      m += "                       (this->D(1,1)-((this->D(1,2))*(this->D(2,1)))/(this->D(2,2)))*prediction_strain(1)+\n";
-	      m += "                       (this->D(1,2))/(this->D(2,2))*(this->sigzz+this->dsigzz);\n";
-	      m += "prediction_stress(2) = stress(0);\n";
+	      m += "prediction_stress(0) = (this->D(0,0)-((this->D(0,1))*(this->D(1,0)))/(this->D(1,1)))*prediction_strain(0)+\n";
+	      m += "                       (this->D(0,2)-((this->D(0,1))*(this->D(1,2)))/(this->D(1,1)))*prediction_strain(2)+\n";
+	      m += "                       (this->D(0,1))/(this->D(1,1))*(this->sigzz+(this->theta)*(this->dsigzz));\n";
+	      m += "prediction_stress(1) = this->sigzz+(this->theta)*(this->dsigzz);\n";
+	      m += "prediction_stress(2) = (this->D(2,0)-((this->D(2,1))*(this->D(1,0)))/(this->D(1,1)))*prediction_strain(0)+\n";
+	      m += "                       (this->D(2,2)-((this->D(2,1))*(this->D(1,2)))/(this->D(1,1)))*prediction_strain(2)+\n";
+	      m += "                       (this->D(2,1))/(this->D(1,1))*(this->sigzz+(this->theta)*(this->dsigzz));\n";
 	      m += "return prediction_stress;\n";
 	    } else {
 	      m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\"));\n";
@@ -362,7 +362,7 @@ namespace mfront{
 	this->bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false) ? "D_tdt" : "D"; 
       integrator.code +=
 	"// the generalised plane stress equation is satisfied at the end of the time step\n"
-	"this->sebdata.szz = (this->"+D+"(1,1))*(this->eel(1)+this->deel(1))+(this->"+D+"(1,0))*(this->eel(0)+this->deel(0))+(this->"+D+"(2,0))*(this->eel(2)+this->deel(2));\n"
+	"this->sebdata.szz = (this->"+D+"(1,1))*(this->eel(1)+this->deel(1))+(this->"+D+"(1,0))*(this->eel(0)+this->deel(0))+(this->"+D+"(1,2))*(this->eel(2)+this->deel(2));\n"
 	"fetozz   = (this->sebdata.szz-this->sigzz-this->dsigzz)/(this->"+D+"(1,1));\n"
 	"// modification of the partition of strain\n"
 	"feel(1) -= this->detozz;\n";
@@ -373,7 +373,7 @@ namespace mfront{
 	  "dfetozz_ddetozz  = real(0);\n"
 	  "dfetozz_ddeel(1) = 1;\n"
 	  "dfetozz_ddeel(0) = (this->"+D+"(1,0))/(this->"+D+"(1,1));\n"
-	  "dfetozz_ddeel(2) = (this->"+D+"(2,0))/(this->"+D+"(1,1));\n";
+	  "dfetozz_ddeel(2) = (this->"+D+"(1,2))/(this->"+D+"(1,1));\n";
       }
     } else {
       if(this->bd.areElasticMaterialPropertiesDefined()){

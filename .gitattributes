@@ -2875,6 +2875,10 @@ mfront/tests/behaviours/bricks/castem/testcomputeelasticprediction4.mtest -text
 mfront/tests/behaviours/bricks/cyrano/CMakeLists.txt -text
 mfront/tests/behaviours/bricks/cyrano/Makefile.am -text
 mfront/tests/behaviours/bricks/cyrano/isotropicstandardelasticity.mtest -text
+mfront/tests/behaviours/bricks/cyrano/testcomputeelasticprediction.mtest -text
+mfront/tests/behaviours/bricks/cyrano/testcomputeelasticprediction2.mtest -text
+mfront/tests/behaviours/bricks/cyrano/testcomputeelasticprediction3.mtest -text
+mfront/tests/behaviours/bricks/cyrano/testcomputeelasticprediction4.mtest -text
 mfront/tests/behaviours/castem/CMakeLists.txt -text
 mfront/tests/behaviours/castem/Makefile.am -text
 mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx.in -text

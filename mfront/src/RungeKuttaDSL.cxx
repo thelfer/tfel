@@ -711,7 +711,7 @@ namespace mfront{
 				   "unsupported input type for variable '"+i.name+"'"));
 	}
       };
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",bts);
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",bts);
     }
     BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(h);
   } // end of RungeKuttaDSL::writeBehaviourLocalVariablesInitialisation
@@ -787,7 +787,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating stiffness tensor at the end of the time step\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation2());
     }
     this->behaviourFile << "// Update stress field\n"
@@ -820,7 +820,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "this->computeStress();\n\n"
@@ -833,7 +833,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating stiffness tensor at the end of the time step\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation2());
     }
     this->behaviourFile << "// Update stress field\n"
@@ -902,7 +902,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     for(const auto& v : d.getStateVariables()){
@@ -943,13 +943,13 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n";
@@ -990,7 +990,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
@@ -1033,7 +1033,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n";
@@ -1076,7 +1076,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n";
@@ -1120,7 +1120,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
@@ -1299,7 +1299,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating stiffness tensor at the end of the time step\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
     					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
@@ -1427,7 +1427,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "failed = !this->computeStress();\n";
@@ -1464,7 +1464,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
@@ -1504,7 +1504,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
@@ -1544,7 +1544,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
@@ -1586,7 +1586,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
@@ -1629,7 +1629,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
@@ -1671,7 +1671,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating stiffness tensor at the end of the time step\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "this->computeFinalStress();\n";
@@ -1765,7 +1765,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "failed = !this->computeStress();\n";
@@ -1801,7 +1801,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
@@ -1874,7 +1874,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
@@ -2120,7 +2120,7 @@ namespace mfront{
     if((this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))&&
        (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep())){
       this->behaviourFile << "// updating the stiffness tensor\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"D",
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",
 					    modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "// Update stress field\n"
