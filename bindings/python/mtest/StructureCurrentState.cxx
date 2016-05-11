@@ -12,13 +12,16 @@
  */
 
 #include<boost/python.hpp>
+#include"MTest/CurrentState.hxx"
 #include"MTest/StructureCurrentState.hxx"
 
 void declareStructureCurrentState(void);
 
 void declareStructureCurrentState(void)
 {
+
   boost::python::class_<mtest::StructureCurrentState>("StructureCurrentState")
+    .def_readonly("istates",&mtest::StructureCurrentState::istates)
     ;
 
 }

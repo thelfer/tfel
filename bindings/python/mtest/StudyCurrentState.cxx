@@ -13,12 +13,32 @@
 
 #include<boost/python.hpp>
 #include"MTest/StudyCurrentState.hxx"
+#include"MTest/StructureCurrentState.hxx"
 
 void declareStudyCurrentState(void);
 
+static mtest::StructureCurrentState&
+getStructureCurrentState(mtest::StudyCurrentState& s,
+			 const std::string& n){
+  return s.getStructureCurrentState(n);
+}
+
+
 void declareStudyCurrentState(void)
 {
-  boost::python::class_<mtest::StudyCurrentState>("StudyCurrentState")
+  using mtest::StudyCurrentState;
+    
+  boost::python::class_<StudyCurrentState>("StudyCurrentState")
+    .def_readonly("u_1",&StudyCurrentState::u_1)
+    .def_readonly("u0",&StudyCurrentState::u0)
+    .def_readonly("u1",&StudyCurrentState::u1)
+    .def_readonly("u10",&StudyCurrentState::u10)
+    .def_readonly("period",&StudyCurrentState::period)
+    .def_readonly("iterations",&StudyCurrentState::iterations)
+    .def_readonly("subSteps",&StudyCurrentState::subSteps)
+    .def_readonly("dt_1",&StudyCurrentState::dt_1)
+    .def("getStructureCurrentState",getStructureCurrentState,
+	 boost::python::return_internal_reference<>())
     ;
 
 }

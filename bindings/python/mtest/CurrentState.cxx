@@ -13,6 +13,7 @@
 
 #include<boost/python.hpp>
 #include"MTest/CurrentState.hxx"
+#include"TFEL/Python/VectorConverter.hxx"
 
 #define TFEL_PYTHON_CURRENTSTATEGETTER( X )		\
   static tfel::math::vector<mtest::real>		\
@@ -35,13 +36,44 @@ TFEL_PYTHON_CURRENTSTATEGETTER(iv1)
 TFEL_PYTHON_CURRENTSTATEGETTER(esv0)
 TFEL_PYTHON_CURRENTSTATEGETTER(desv)
 
+static tfel::math::vector<mtest::CurrentState>::iterator
+v_begin(tfel::math::vector<mtest::CurrentState>& s){
+  return s.begin();
+}
+
+static tfel::math::vector<mtest::CurrentState>::iterator
+v_end(tfel::math::vector<mtest::CurrentState>& s){
+  return s.end();
+}
+
+static void
+v_setitem(tfel::math::vector<mtest::CurrentState>& s,
+	  const tfel::math::vector<mtest::CurrentState>::size_type i,
+	  const mtest::CurrentState& v){
+  if(i>=s.size()){
+    throw(std::out_of_range("tfel::math::vector<mtest::CurrentState>::operator[]: invalid_index"));
+  }
+  s[i] = v;
+}
+
+static mtest::CurrentState&
+v_getitem(tfel::math::vector<mtest::CurrentState>& s,
+	  const tfel::math::vector<mtest::CurrentState>::size_type i){
+  if(i>=s.size()){
+    throw(std::out_of_range("tfel::math::vector<mtest::CurrentState>::operator[]: invalid_index"));
+  }
+  return s[i];
+}
+
+
 void declareCurrentState(void);
 
 void declareCurrentState(void)
 {
   using namespace boost;
   using namespace boost::python;
-  
+  using namespace tfel::python;
+
   class_<mtest::CurrentState>("CurrentState")
     .add_property("s_1",CurrentState_gets_1)
     .add_property("s0",CurrentState_gets0)
@@ -58,4 +90,10 @@ void declareCurrentState(void)
     .add_property("desv",CurrentState_getdesv)
     ;
 
+  class_<tfel::math::vector<mtest::CurrentState>>("CurrentStateVector")
+    .def("__iter__",boost::python::range(&v_begin,&v_end))
+    .def("__getitem__",&v_getitem,return_internal_reference<>())
+    .def("__setitem__",&v_setitem)
+    ;
+  
 }
