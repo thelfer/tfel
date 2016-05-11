@@ -67,6 +67,8 @@ namespace mfront{
     if(this->pss){
       this->bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"etozz");
       this->bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"detozz");
+      this->bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"sigzz");
+      this->bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"dsigzz");
       this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"prediction_stress");
       this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"prediction_strain");
     }
@@ -179,9 +181,9 @@ namespace mfront{
 	    m += "StrainStensor prediction_stress;\n";
 	    m += "StrainStensor prediction_strain = this->eel+(this->theta)*this->deto;\n";
 	    m += "prediction_stress(0) = 2*("+mu+")*(("+lambda+")/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(2))+prediction_strain(0))+\n";
-	    m += "("+lambda+")/("+lambda+"+2*("+mu+")*(this->sigzz+theta*(this->dsigzz));\n";
+	    m += "("+lambda+")/("+lambda+"+2*("+mu+"))*(this->sigzz+theta*(this->dsigzz));\n";
 	    m += "prediction_stress(2) = 2*("+mu+")*(("+lambda+")/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(2))+prediction_strain(2))+\n";
-	    m += "("+lambda+")/("+lambda+"+2*("+mu+")*(this->sigzz+theta*(this->dsigzz));\n";
+	    m += "("+lambda+")/("+lambda+"+2*("+mu+"))*(this->sigzz+theta*(this->dsigzz));\n";
 	    m += "prediction_stress(1) = this->sigzz+theta*(this->dsigzz);\n";
 	    m += "return prediction_stress;\n";
     	  } else {
@@ -344,6 +346,10 @@ namespace mfront{
     d.addVariable(agps,{"stress","szz"});
     this->bd.addStateVariable(agps,etozz,BehaviourData::ALREADYREGISTRED);
     this->bd.setGlossaryName(agps,"etozz",tfel::glossary::Glossary::AxialStrain);
+    VariableDescription sigzz("strain","sigzz",1u,0u);
+    etozz.description = "axial stress";
+    this->bd.addExternalStateVariable(agps,sigzz,BehaviourData::ALREADYREGISTRED);
+    this->bd.setGlossaryName(agps,"sigzz",tfel::glossary::Glossary::AxialStress);
     CodeBlock integrator;
     // The brick contains a reference to an abstract behaviour dsl.
     // We need to know if we have to define the jacobian terms. So we

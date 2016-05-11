@@ -1,0 +1,27 @@
+@Author  Thomas Helfer;
+@Date 6/05/2016;
+@Description{
+  This file describes a tensile test along XX.
+  Simulation Results are compared to the
+  analytical solution.
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<umat> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+@ExternalStateVariable 'AxialStress' 0;
+
+@Real 'e0' 1.e-3;
+@ImposedStrain<function> 'ERR' 'e0*sin(t/900.)';
+
+@Times {0.,3600 in 20};
+
+// stresses
+@Test<function> 'SRR' 'YoungModulus*ERR'  1.e-3;
+@Test<function> 'SZZ' '0.'                1.e-3;
+@Test<function> 'STT' '0.'                1.e-3;
+// strains
+@Test<function> 'EZZ'         '-PoissonRatio*ERR' 1.e-8;
+@Test<function> 'AxialStrain' '-PoissonRatio*ERR' 1.e-8;

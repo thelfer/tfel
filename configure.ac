@@ -1042,6 +1042,8 @@ AC_OUTPUT([debug.sh
    	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D.mtest
    	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest
 	   mfront/tests/behaviours/bricks/Makefile
+	   mfront/tests/behaviours/bricks/castem/Makefile
+	   mfront/tests/behaviours/bricks/cyrano/Makefile
 	   mfront/tests/behaviours/castem/Makefile
 	   mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx
            mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck.mtest

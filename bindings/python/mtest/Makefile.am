@@ -1,4 +1,5 @@
 AM_CPPFLAGS = -I@top_srcdir@/include/                       \
+	      -I@top_srcdir@/bindings/python/include/       \
 	      -I@top_srcdir@/mfront/include/                \
 	      -I@top_srcdir@/mtest/include/                 \
 	      @BOOST_CPPFLAGS@                              \
