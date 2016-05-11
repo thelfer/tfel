@@ -507,7 +507,8 @@ namespace mfront{
     CodeBlock tangentOperator;
     // modelling hypotheses supported by the behaviour
     const auto bmh = bd.getModellingHypotheses();
-    if(this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
+    if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
+       (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
       const bool agps = bmh.count(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=0;
       const bool ps   = bmh.count(ModellingHypothesis::PLANESTRESS)!=0;
       if(agps || ps){
@@ -520,15 +521,17 @@ namespace mfront{
 		   "plane stress hypotheses requires the use of an unaltered stiffness tensor");
 	}
       }
+      const std::string D = this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false) ?
+	"this->D" : "this->D_tdt";
       tangentOperator.code =
 	"if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-	"  this->Dt = this->D;\n";
-      if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
+	"  this->Dt = "+D+";\n";
+      if(idsl.getSolver().usesJacobian()){
 	tangentOperator.code +=
 	  "} else if (smt==CONSISTENTTANGENTOPERATOR){\n"
 	  "  Stensor4 Je;\n"
 	  "  getPartialJacobianInvert(Je);\n"
-	  "  this->Dt = (this->D)*Je;\n";
+	  "  this->Dt = ("+D+")*Je;\n";
       }
       tangentOperator.code +=
 	"} else {\n"
@@ -541,10 +544,10 @@ namespace mfront{
 	const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
 	tangentOperator.code =
 	  "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-	  "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,"+lambda+","+mu+");\n"
-	  "} else if (smt==CONSISTENTTANGENTOPERATOR){\n";
-	if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
+	  "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,"+lambda+","+mu+");\n";
+	if(idsl.getSolver().usesJacobian()){
 	  tangentOperator.code +=
+	    "} else if (smt==CONSISTENTTANGENTOPERATOR){\n"
 	    "  StiffnessTensor Hooke;\n"
 	    "  Stensor4 Je;\n"
 	    "  computeElasticStiffness<N,Type>::exe(Hooke,"+lambda+","+mu+");\n"
@@ -561,7 +564,7 @@ namespace mfront{
 	tangentOperator.code =
 	  "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
 	  "  this->Dt = this->D_tdt;\n";
-	if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
+	if(idsl.getSolver().usesJacobian()){
 	  tangentOperator.code +=
 	    "} else if (smt==CONSISTENTTANGENTOPERATOR){\n"
 	    "  Stensor4 Je;\n"
@@ -576,6 +579,9 @@ namespace mfront{
 	throw_if(true,"unsupported elastic symmetry type");
       }
     }
+    this->bd.setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+			  BehaviourData::hasConsistentTangentOperator,
+			  true,true);
     this->bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		     BehaviourData::ComputeTangentOperator,
 		     tangentOperator,BehaviourData::CREATEORAPPEND,

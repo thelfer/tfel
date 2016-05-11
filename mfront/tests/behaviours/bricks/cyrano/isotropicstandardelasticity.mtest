@@ -8,7 +8,8 @@
 
 @XMLOutputFile @xml_output@;
 @MaximumNumberOfSubSteps 1;
-@Behaviour<umat> @library@ @behaviour@;
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStress';
+@Behaviour<cyrano> @library@ @behaviour@;
 
 @ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
 @ExternalStateVariable 'AxialStress' 0;
@@ -18,10 +19,12 @@
 
 @Times {0.,3600 in 20};
 
+@Real 'YoungModulus' 78.e9;
+@Real 'PoissonRatio'  0.3;
 // stresses
 @Test<function> 'SRR' 'YoungModulus*ERR'  1.e-3;
 @Test<function> 'SZZ' '0.'                1.e-3;
 @Test<function> 'STT' '0.'                1.e-3;
 // strains
-@Test<function> 'EZZ'         '-PoissonRatio*ERR' 1.e-8;
+@Test<function> 'ETT'         '-PoissonRatio*ERR' 1.e-8;
 @Test<function> 'AxialStrain' '-PoissonRatio*ERR' 1.e-8;

@@ -10,6 +10,7 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
 
 if(HAVE_CYRANO)
   mfront_dependencies(MFrontCyranoBehaviourBricks
+    YoungModulusTest
     YoungModulusTest_1
     YoungModulusTest_2
     YoungModulusTest_3
@@ -78,12 +79,10 @@ macro(cyranotest_brick test_arg behaviour)
 endmacro(cyranotest_brick)
 
 cyranotest_brick(isotropicstandardelasticity cyranoisotropicstandardelasticity )
-cyranotest_brick(isotropicstandardelasticity cyranoisotropicstandardelasticity2)
 cyranotest_brick(isotropicstandardelasticity cyranoisotropicstandardelasticity3)
 cyranotest_brick(isotropicstandardelasticity cyranoisotropicstandardelasticity4)
 cyranotest_brick(isotropicstandardelasticity cyranoisotropicstandardelasticity5)
 cyranotest_brick(isotropicstandardelasticity cyranoisotropicstandardelasticity6)
-cyranotest_brick(isotropicstandardelasticity cyranoisotropicstandardelasticity7)
 cyranotest_brick(isotropicstandardelasticity cyranoisotropicstandardelasticity8)
 cyranotest_brick(isotropicstandardelasticity cyranoisotropicstandardelasticity9)
 cyranotest_brick(isotropicstandardelasticity cyranoisotropicstandardelasticity10)

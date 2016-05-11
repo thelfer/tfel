@@ -4494,7 +4494,7 @@ namespace mfront{
       this->behaviourFile << "using namespace std;\n"
 			  << "using namespace tfel::math;\n"
 			  << "using std::vector;\n";
-      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeTangentOperator",
+      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactorII",
 			this->behaviourFile,this->mb.getMaterialLaws());
       this->behaviourFile << this->mb.getCode(h,BehaviourData::APrioriTimeStepScalingFactor) << '\n';
     }
@@ -4525,7 +4525,7 @@ namespace mfront{
       this->behaviourFile << "using namespace std;\n"
 			  << "using namespace tfel::math;\n"
 			  << "using std::vector;\n";
-      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeTangentOperator",
+      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactorII",
 			this->behaviourFile,this->mb.getMaterialLaws());
       this->behaviourFile << this->mb.getCode(h,BehaviourData::APosterioriTimeStepScalingFactor) << '\n';
     }

@@ -10,6 +10,7 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
 
 if(HAVE_CASTEM)
   mfront_dependencies(MFrontCastemBehaviourBricks
+    YoungModulusTest
     YoungModulusTest_1
     YoungModulusTest_2
     YoungModulusTest_3
