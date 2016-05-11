@@ -2858,6 +2858,7 @@ mfront/tests/behaviours/aster/strainhardeningcreep.gnuplot -text
 mfront/tests/behaviours/bricks/CMakeLists.txt -text
 mfront/tests/behaviours/bricks/Makefile.am -text
 mfront/tests/behaviours/bricks/castem/CMakeLists.txt -text
+mfront/tests/behaviours/bricks/castem/Makefile.am -text
 mfront/tests/behaviours/bricks/castem/isotropicplasticity.mtest -text
 mfront/tests/behaviours/bricks/castem/isotropicstandardelasticity.mtest -text
 mfront/tests/behaviours/bricks/castem/isotropicstandardelasticity2.mtest -text
@@ -2871,6 +2872,8 @@ mfront/tests/behaviours/bricks/castem/testcomputeelasticprediction.mtest -text
 mfront/tests/behaviours/bricks/castem/testcomputeelasticprediction2.mtest -text
 mfront/tests/behaviours/bricks/castem/testcomputeelasticprediction3.mtest -text
 mfront/tests/behaviours/bricks/castem/testcomputeelasticprediction4.mtest -text
+mfront/tests/behaviours/bricks/cyrano/CMakeLists.txt -text
+mfront/tests/behaviours/bricks/cyrano/Makefile.am -text
 mfront/tests/behaviours/bricks/cyrano/isotropicstandardelasticity.mtest -text
 mfront/tests/behaviours/castem/CMakeLists.txt -text
 mfront/tests/behaviours/castem/Makefile.am -text
