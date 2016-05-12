@@ -41,13 +41,15 @@ namespace mtest
     MTestParser();
     /*!
      * execute mtest parser on a file
-     * \param[out] t : structure to be filled
-     * \param[in] f : file name
-     * \param[in] s : substitutions patterns inserted (those
+     * \param[out] t:    structure to be filled
+     * \param[in] f:     file name
+     * \param[in] ecmds: external commands
+     * \param[in] s:     substitutions patterns inserted (those
      * substitutions are given through command-line options such as
      * `--@YYY@=XXX`)
      */
     void execute(MTest&,const std::string&,
+		 const std::vector<std::string>&,
 		 const std::map<std::string,std::string>&);
     /*!
      * execute mtest parser on a string

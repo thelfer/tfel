@@ -81,9 +81,11 @@ namespace mtest
     virtual std::string 
     getUsageDescription(void) const override;
     void registerArgumentCallBacks(void);
-    // input files
+    //! input files
     std::vector<std::string> inputs;
-    // substitutions
+    //! external commands
+    std::vector<std::string> ecmds;
+    //! substitutions
     std::map<std::string,std::string> substitutions;
     // xml output
     bool xml_output = false;
@@ -324,8 +326,8 @@ namespace mtest
   {
     const auto& a = this->currentArgument->as_string();
     if(a[0]=='-'){
-      if(a.size()>4){
-	if((a[1]=='-')&&(a[2]=='@')&&(a.back()=='@')){
+      if((a.size()>4)&&((a[1]=='-')&&(a[2]=='@'))){
+	if(a.back()=='@'){
 	  const auto s1 = a.substr(2);
 	  if(std::count(s1.begin(),s1.end(),'@')!=2){
 	    throw(std::runtime_error("MTestMain::treatUnknownArgument: "
@@ -340,10 +342,19 @@ namespace mtest
 	    mfront::getLogStream() << "substituting '" << s1 << "' by '" << s2 << "'\n";
 	  }
 	  if(!this->substitutions.insert({s1,s2}).second){
-	    throw(std::runtime_error("MFrontBase::treatUnknownArgumentBase: "
+	    throw(std::runtime_error("MTestMain::treatUnknownArgument: "
 				     "a substitution for '"+s1+"' has "
 				     "already been defined"));
 	  }
+	  return;
+	} else {
+	  const auto o = this->currentArgument->getOption();
+	  auto cmd = a.substr(2);
+	  if(!o.empty()){
+	    cmd += ' '+o;
+	  }
+	  cmd += ';';
+	  this->ecmds.push_back(cmd);
 	  return;
 	}
       }
@@ -373,17 +384,19 @@ namespace mtest
   MTestMain::execute(void)
   {
     auto mtest = [](const std::string& f,
+		    const std::vector<std::string>& e,
 		    const std::map<std::string,std::string>& s)
       -> std::shared_ptr<SchemeBase> {
       auto t = std::make_shared<MTest>();
-      t->readInputFile(f,s);
+      t->readInputFile(f,e,s);
       return t;
     };
     auto ptest = [](const std::string& f,
+		    const std::vector<std::string>& e,
 		    const std::map<std::string,std::string>& s)
       -> std::shared_ptr<SchemeBase> {
       auto t = std::make_shared<PipeTest>();
-      PipeTestParser().execute(*t,f,s);
+      PipeTestParser().execute(*t,f,e,s);
       return t;
     };
     using namespace std;
@@ -401,14 +414,14 @@ namespace mtest
       }
       auto t = std::shared_ptr<SchemeBase>{};
       if(this->scheme==MTEST){
-	t = mtest(i,this->substitutions);
+	t = mtest(i,this->ecmds,this->substitutions);
       } else if (this->scheme==PTEST){
-	t = ptest(i,this->substitutions);
+	t = ptest(i,this->ecmds,this->substitutions);
       } else if (this->scheme==DEFAULT){
 	if(ext==".ptest"){
-	  t = ptest(i,this->substitutions);
+	  t = ptest(i,this->ecmds,this->substitutions);
 	} else {
-	  t = mtest(i,this->substitutions);
+	  t = mtest(i,this->ecmds,this->substitutions);
 	}
       }
       if(this->result_file_output){

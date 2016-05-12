@@ -24,7 +24,7 @@ namespace tfel{
       : MTest(),
 	file(f)
     {
-      this->readInputFile(f,{});
+      this->readInputFile(f,{},{});
     } // end of MTestDocParser::MTestDocParser
     
     void

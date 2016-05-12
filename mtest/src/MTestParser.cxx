@@ -71,6 +71,7 @@ namespace mtest
 
   void
   MTestParser::execute(MTest& t,const std::string& f,
+		       const std::vector<std::string>& ecmds,
 		       const std::map<std::string,std::string>& s)
   {
     this->file = f;
@@ -89,6 +90,19 @@ namespace mtest
 	  token.flag=tfel::utilities::Token::String;
 	}
       }
+    }
+    // treating external commands
+    for(const auto& c : ecmds){
+      CxxTokenizer tokenizer;
+      tokenizer.treatCharAsString(true);
+      try{
+	tokenizer.parseString(c);
+      } catch(std::exception& e){
+	throw(std::runtime_error("MTestParser::execute : "
+				 "error while parsing external command "
+				 "'"+c+"'\n"+std::string(e.what())));
+      }
+      this->tokens.insert(this->tokens.begin(),tokenizer.begin(),tokenizer.end());
     }
     this->execute(t);
   }

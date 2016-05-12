@@ -109,9 +109,10 @@ namespace mtest
   {}
 
   void MTest::readInputFile(const std::string& f,
+			    const std::vector<std::string>& ecmds,
 			    const std::map<std::string,std::string>& s){
     MTestParser p;
-    p.execute(*this,f,s);
+    p.execute(*this,f,ecmds,s);
   } // end of MTest::readInputFile
 
   std::string

@@ -100,12 +100,14 @@ namespace mtest
     classname(void) const override;
     /*!
      * \param[in] f : file to be read
+     * \param[in] ecmds: external commands
      * \param[in] s : substitutions patterns inserted (those
      * substitutions are given through command-line options such as
      * `--@YYY@=XXX`)
      */
     virtual void
     readInputFile(const std::string&,
+		  const std::vector<std::string>&,
 		  const std::map<std::string,std::string>&);
     /*!
      * complete the initialisation. This method must be called once.

@@ -65,7 +65,8 @@ namespace mtest
 
   void
   PipeTestParser::execute(PipeTest& t,const std::string& f,
-		    const std::map<std::string,std::string>& s)
+			  const std::vector<std::string>& ecmds,
+			  const std::map<std::string,std::string>& s)
   {
     this->file = f;
     this->treatCharAsString(true);
@@ -78,6 +79,20 @@ namespace mtest
       if(p!=pe){
 	token.value = p->second;
       }
+    }
+    // treating external commands
+    for(const auto& c : ecmds){
+      CxxTokenizer tokenizer;
+      tokenizer.treatCharAsString(true);
+      try{
+	tokenizer.parseString(c);
+
+      } catch(std::exception& e){
+	throw(std::runtime_error("PipeTestParser::execute: "
+				 "error while parsing external command "
+				 "'"+c+"'\n"+std::string(e.what())));
+      }
+      this->tokens.insert(this->tokens.begin(),tokenizer.begin(),tokenizer.end());
     }
     this->execute(t);
   }

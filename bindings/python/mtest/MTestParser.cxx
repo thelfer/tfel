@@ -19,13 +19,20 @@
 void declareMTestParser(void);
 
 static void execute(mtest::MTestParser& p,mtest::MTest& m,const std::string& f){
-  p.execute(m,f,{});
+  p.execute(m,f,{},{});
 }
 
 static void execute2(mtest::MTestParser& p,mtest::MTest& m,const std::string& f,
-		     const std::map<std::string,std::string>& s){
-  p.execute(m,f,s);
+		     const std::vector<std::string>& e){
+  p.execute(m,f,e,{});
 }
+
+static void execute3(mtest::MTestParser& p,mtest::MTest& m,const std::string& f,
+		     const std::vector<std::string>& e,
+		     const std::map<std::string,std::string>& s){
+  p.execute(m,f,e,s);
+}
+
 
 void declareMTestParser(void)
 {
@@ -35,6 +42,7 @@ void declareMTestParser(void)
    class_<MTestParser,noncopyable>("MTestParser")
      .def("execute",execute)
      .def("execute",execute2)
+     .def("execute",execute3)
      .def("parseString",&MTestParser::parseString)
      ;
 

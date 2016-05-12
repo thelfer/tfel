@@ -66,6 +66,12 @@ v_getitem(tfel::math::vector<mtest::CurrentState>& s,
 }
 
 
+static auto v_size(const tfel::math::vector<mtest::CurrentState>& v)
+  -> decltype(v.end()-v.begin())
+{
+  return v.end()-v.begin();
+}
+
 void declareCurrentState(void);
 
 void declareCurrentState(void)
@@ -92,6 +98,7 @@ void declareCurrentState(void)
 
   class_<tfel::math::vector<mtest::CurrentState>>("CurrentStateVector")
     .def("__iter__",boost::python::range(&v_begin,&v_end))
+    .def("__len__",&v_size)
     .def("__getitem__",&v_getitem,return_internal_reference<>())
     .def("__setitem__",&v_setitem)
     ;

@@ -58,13 +58,23 @@ macro(castemtest_brick test_arg behaviour)
 	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false
 	--@library@="$<TARGET_FILE:MFrontCastemBehaviourBricks>" --@behaviour@="${behaviour}"
 	--@xml_output@="${test_arg}-${behaviour}.xml" ${file})
+      add_test(NAME brick${test_arg}${behaviour}_consistenttangentoperator_mtest
+	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false
+	--@StiffnessMatrixType='ConsistentTangentOperator'
+	--@library@="$<TARGET_FILE:MFrontCastemBehaviourBricks>" --@behaviour@="${behaviour}"
+	--@xml_output@="${test_arg}-${behaviour}.xml" ${file})
     else(NOT _REFERENCE_FILE)
       add_test(NAME brick${test_arg}${behaviour}_mtest
 	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false
 	--@library@="$<TARGET_FILE:MFrontCastemBehaviourBricks>" --@behaviour@="${behaviour}"
-	--@xml_output@="${test_arg}-${behaviour}.xml"
-	--@reference_file@="${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}"
-	${file})
+	--@xml_output@="${test_arg}-${behaviour}-consistenttangentoperator.xml"
+	--@reference_file@="${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}" ${file})
+      add_test(NAME brick${test_arg}${behaviour}_consistenttangentoperator_mtest
+	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false
+	--@StiffnessMatrixType='ConsistentTangentOperator'
+	--@library@="$<TARGET_FILE:MFrontCastemBehaviourBricks>" --@behaviour@="${behaviour}"
+	--@xml_output@="${test_arg}-${behaviour}-consistenttangentoperator.xml"
+	--@reference_file@="${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}" ${file})
     endif(NOT _REFERENCE_FILE)
     if((CMAKE_HOST_WIN32) AND (NOT MSYS))
       set_property(TEST castem${test_arg}_${conf}_mtest
