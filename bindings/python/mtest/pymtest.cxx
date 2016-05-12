@@ -18,6 +18,7 @@ void declareSchemeBase(void);
 void declareSingleStructureScheme(void);
 void declareMTest(void);
 void declareMTestParser(void);
+void declarePipeMesh(void);
 void declarePipeTest(void);
 void declareCurrentState(void);
 void declareStructureCurrentState(void);
@@ -64,6 +65,7 @@ BOOST_PYTHON_MODULE(_mtest)
   declareSchemeBase();
   declareSingleStructureScheme();
   declareMTest();
+  declarePipeMesh();
   declarePipeTest();
   declareMFrontLogStream();
 }

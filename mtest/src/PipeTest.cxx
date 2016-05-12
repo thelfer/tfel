@@ -347,6 +347,10 @@ namespace mtest{
 		 "number of elements",r,false);
   } // end of PipeTest::setNumberOfElements
 
+  const PipeMesh& PipeTest::getMesh(void) const{
+    return this->mesh;
+  }
+  
   template<typename T>
   static void checkValue(const T& v,const char* const n){
     if(v<T(0)){

@@ -21,6 +21,7 @@ mtest_python_module(_mtest
   SingleStructureScheme.cxx
   MTest.cxx
   MTestParser.cxx
+  PipeMesh.cxx
   PipeTest.cxx
   CurrentState.cxx
   StructureCurrentState.cxx

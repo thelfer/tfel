@@ -13,6 +13,7 @@ _mtest_la_SOURCES =  pymtest.cxx                \
 		     SchemeBase.cxx             \
 		     SingleStructureScheme.cxx  \
 		     MTest.cxx                  \
+		     PipeMesh.cxx               \
 		     PipeTest.cxx               \
 		     MTestParser.cxx            \
 		     CurrentState.cxx           \

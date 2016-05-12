@@ -86,7 +86,6 @@ namespace mtest
 	token.value = p->second;
 	if(((p->second.front()=='\'')&&(p->second.back()=='\''))||
 	   ((p->second.front()=='"') &&(p->second.back()=='"'))){
-	  
 	  token.flag=tfel::utilities::Token::String;
 	}
       }

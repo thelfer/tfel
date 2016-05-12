@@ -50,6 +50,7 @@ bindings/python/mtest/MFrontLogStream.cxx -text
 bindings/python/mtest/MTest.cxx -text
 bindings/python/mtest/MTestParser.cxx -text
 bindings/python/mtest/Makefile.am -text
+bindings/python/mtest/PipeMesh.cxx -text
 bindings/python/mtest/PipeTest.cxx -text
 bindings/python/mtest/SchemeBase.cxx -text
 bindings/python/mtest/SingleStructureScheme.cxx -text

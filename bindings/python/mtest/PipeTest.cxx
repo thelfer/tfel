@@ -244,6 +244,9 @@ void declarePipeTest(void)
      "method for details.\n")
     .def("setElementType",&PipeTest_setElementType)
     .def("addProfile",&PipeTest::addProfile)
+    .def("getMesh",&PipeTest::getMesh,
+	 boost::python::return_value_policy<boost::python::copy_const_reference>(),
+	 "This method returns the underlying mesh")
     ;
 
 }

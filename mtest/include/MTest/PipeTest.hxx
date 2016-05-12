@@ -88,6 +88,8 @@ namespace mtest{
     }; // end of struct UnitTest
     //! default constructor
     PipeTest();
+    //! return the mesh
+    const PipeMesh& getMesh(void) const;
     /*! 
      * \return the name of the test
      */
