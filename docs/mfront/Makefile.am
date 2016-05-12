@@ -11,6 +11,7 @@ MFRONT_DOCS = Algorithm.md				                \
 	      CompareToNumericalJacobian.md		                \
 	      ComputeStress.md				                \
 	      ComputeFinalStress.md				        \
+	      ComputeThermalExpansion.md				\
 	      Date.md				                        \
 	      Description.md                                            \
 	      DSL.md				                        \

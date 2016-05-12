@@ -745,16 +745,16 @@ namespace mfront
      * set the behaviour thermal expansion coefficient (isotropic behaviour)
      * \param[in] a : thermal expansion
      */
-    void setThermalExpansionCoefficient(const MaterialProperty&);
+    void setThermalExpansionCoefficient(MaterialProperty);
     /*!
      * set the behaviour thermal expansions coefficient (orthotropic behaviour)
      * \param[in] a1 : thermal expansion in the first direction
      * \param[in] a2 : thermal expansion in the second direction
      * \param[in] a3 : thermal expansion in the third  direction
      */
-    void setThermalExpansionCoefficients(const MaterialProperty&,
-					 const MaterialProperty&,
-					 const MaterialProperty&);
+    void setThermalExpansionCoefficients(MaterialProperty,
+					 MaterialProperty,
+					 MaterialProperty);
     /*!
      * \return the external names associated with the variables
      * contained in the given container

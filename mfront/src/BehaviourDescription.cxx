@@ -121,25 +121,75 @@ namespace mfront
   } // end of BehaviourDescription::getData
 
   static void
-  BehaviourDescriptionCheckThermalExpansionCoefficientArgument(const BehaviourDescription::MaterialProperty& a)
+  declareParameter(BehaviourDescription& bd,
+		   BehaviourDescription::MaterialProperty& mp,
+		   const tfel::glossary::GlossaryEntry& e,
+		   const std::string& n){
+    const auto h = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if(mp.is<BehaviourDescription::ConstantMaterialProperty>()){
+      auto& cmp = mp.get<BehaviourDescription::ConstantMaterialProperty>();
+      cmp.name  = n;
+      // declare associated parameter
+      VariableDescription m("real",n,1u,0u);
+      bd.addParameter(h,m);
+      bd.setParameterDefaultValue(h,n,cmp.value);
+      bd.setGlossaryName(h,n,e.getKey());
+    }
+  } // end of BehaviourDescription::declareParameter
+  
+  static void
+  checkElasticMaterialProperty(BehaviourDescription& bd,
+			       BehaviourDescription::MaterialProperty& emp,
+			       const tfel::glossary::GlossaryEntry& e,
+			       const std::string& n2){
+    if(emp.is<BehaviourDescription::ComputedMaterialProperty>()){
+      const auto& mpd = *(emp.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
+      
+      const auto ename = [&mpd](){
+	auto p = mpd.glossaryNames.find(mpd.output);
+	if(p!=mpd.glossaryNames.end()){
+	  return p->second;
+	}
+	p = mpd.entryNames.find(mpd.output);
+	if(p!=mpd.entryNames.end()){
+	  return p->second;
+	}
+	return mpd.output;
+      }();
+      if(ename!=e){
+	auto& log = getLogStream();
+	log << "checkElasticMaterialProperty: inconsistent external name for "
+	    << "material property '"+e.getKey()+"': external name of mfront file "
+	    << "output  is '" << ename << "'\n";
+      }
+    }
+    declareParameter(bd,emp,e,n2);
+  }
+  
+  static void
+  checkThermalExpansionCoefficientArgument(BehaviourDescription& bd,
+							       BehaviourDescription::MaterialProperty& a,
+							       const tfel::glossary::GlossaryEntry& e,
+							       const std::string& n)
   {
+    declareParameter(bd,a,e,n);
     if(!a.is<BehaviourDescription::ComputedMaterialProperty>()){
       return;
     }
     const auto& mpd = *(a.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
     if(!((mpd.inputs.size())||(mpd.inputs.size()!=1u))){
-      throw(std::runtime_error("BehaviourDescriptionCheckThermalExpansionCoefficientArgument: "
+      throw(std::runtime_error("checkThermalExpansionCoefficientArgument: "
 			       "thermal expansion shall only depend on temperature or be constant"));
     }
     if(mpd.inputs.size()==1u){
       const auto& v = mpd.inputs.front();
       const auto& vn = v.getExternalName(mpd.glossaryNames,mpd.entryNames);
       if(vn!="Temperature"){
-	throw(std::runtime_error("BehaviourDescriptionCheckThermalExpansionCoefficientArgument: "
+	throw(std::runtime_error("checkThermalExpansionCoefficientArgument: "
 				 "thermal expansion shall only depend on temperature"));
       }
     }
-  } // end of BehaviourDescriptionCheckThermalExpansionCoefficientArgument
+  } // end of checkThermalExpansionCoefficientArgument
 
   const std::string
   BehaviourDescription::requiresStiffnessTensor("requiresStiffnessTensor");
@@ -508,52 +558,6 @@ namespace mfront
     }
     return this->elasticMaterialProperties;
   }
-
-  static void
-  declareParameter(BehaviourDescription& bd,
-		   BehaviourDescription::MaterialProperty& mp,
-		   const tfel::glossary::GlossaryEntry& e,
-		   const std::string& n){
-    const auto h = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    if(mp.is<BehaviourDescription::ConstantMaterialProperty>()){
-      auto& cmp = mp.get<BehaviourDescription::ConstantMaterialProperty>();
-      cmp.name  = n;
-      // declare associated parameter
-      VariableDescription m("real",n,1u,0u);
-      bd.addParameter(h,m);
-      bd.setParameterDefaultValue(h,n,cmp.value);
-      bd.setGlossaryName(h,n,e.getKey());
-    }
-  } // end of BehaviourDescription::declareParameter
-  
-  static void
-  checkElasticMaterialProperty(BehaviourDescription& bd,
-			       BehaviourDescription::MaterialProperty& emp,
-			       const tfel::glossary::GlossaryEntry& e,
-			       const std::string& n2){
-    if(emp.is<BehaviourDescription::ComputedMaterialProperty>()){
-      const auto& mpd = *(emp.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
-      
-      const auto ename = [&mpd](){
-	auto p = mpd.glossaryNames.find(mpd.output);
-	if(p!=mpd.glossaryNames.end()){
-	  return p->second;
-	}
-	p = mpd.entryNames.find(mpd.output);
-	if(p!=mpd.entryNames.end()){
-	  return p->second;
-	}
-	return mpd.output;
-      }();
-      if(ename!=e){
-	auto& log = getLogStream();
-	log << "checkElasticMaterialProperty: inconsistent external name for "
-	    << "material property '"+e.getKey()+"': external name of mfront file "
-	    << "output  is '" << ename << "'\n";
-      }
-    }
-    declareParameter(bd,emp,e,n2);
-  }
   
   void
   BehaviourDescription::setElasticMaterialProperties(const std::vector<MaterialProperty>& emps)
@@ -830,23 +834,25 @@ namespace mfront
   } // end of BehaviourDescription::getMainVariablesSize
 
   void
-  BehaviourDescription::setThermalExpansionCoefficient(const MaterialProperty& a)
+  BehaviourDescription::setThermalExpansionCoefficient(MaterialProperty a)
   {
+    using tfel::glossary::Glossary;
     if(this->areThermalExpansionCoefficientsDefined()){
       throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient: "
 			       "thermal expansion coefficient already defined"));
     }
     this->setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		       BehaviourDescription::requiresThermalExpansionCoefficientTensor,false);
-    BehaviourDescriptionCheckThermalExpansionCoefficientArgument(a);
+    checkThermalExpansionCoefficientArgument(*this,a,Glossary::ThermalExpansion,"alpha");
     this->thermalExpansionCoefficients.push_back(a);
   } // end of BehaviourDescription::setThermalExpansionCoefficient
 
   void
-  BehaviourDescription::setThermalExpansionCoefficients(const MaterialProperty& a1,
-							const MaterialProperty& a2,
-							const MaterialProperty& a3)
+  BehaviourDescription::setThermalExpansionCoefficients(MaterialProperty a1,
+							MaterialProperty a2,
+							MaterialProperty a3)
   {
+    using tfel::glossary::Glossary;
     if(this->areThermalExpansionCoefficientsDefined()){
       throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient: "
 			       "thermal expansion coefficient already defined"));
@@ -857,9 +863,9 @@ namespace mfront
     }
     this->setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		       BehaviourDescription::requiresThermalExpansionCoefficientTensor,false);
-    BehaviourDescriptionCheckThermalExpansionCoefficientArgument(a1);
-    BehaviourDescriptionCheckThermalExpansionCoefficientArgument(a2);
-    BehaviourDescriptionCheckThermalExpansionCoefficientArgument(a3);
+    checkThermalExpansionCoefficientArgument(*this,a1,Glossary::ThermalExpansion1,"alpha1");
+    checkThermalExpansionCoefficientArgument(*this,a2,Glossary::ThermalExpansion2,"alpha2");
+    checkThermalExpansionCoefficientArgument(*this,a3,Glossary::ThermalExpansion3,"alpha3");
     this->thermalExpansionCoefficients.push_back(a1);
     this->thermalExpansionCoefficients.push_back(a2);
     this->thermalExpansionCoefficients.push_back(a3);

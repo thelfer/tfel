@@ -3201,7 +3201,12 @@ namespace mfront{
     if(!i.empty()){out << "_" << i;}
     out << " = ";
     if(a.is<BehaviourDescription::ConstantMaterialProperty>()){
-      out << a.get<BehaviourDescription::ConstantMaterialProperty>().value << ";\n";
+      const auto& cmp = a.get<BehaviourDescription::ConstantMaterialProperty>();
+      if(cmp.name.empty()){
+	out << cmp.value << ";\n";
+      } else {
+	out << "this->" << cmp.name << ";\n";
+      }
     } else if(a.is<BehaviourDescription::ComputedMaterialProperty>()){
       const auto& mpd = *(a.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
       const auto inputs = this->mb.getMaterialPropertyInputs(mpd);
@@ -3276,9 +3281,15 @@ namespace mfront{
       const auto Tref = "293.15";
       const auto i = b ? "1" : "0";
       const auto T = b ? "this->T+this->dT" : "this->T";
-      out << "dl_l" << i << "[" << c << "] = "
-      << cmp.value << "/(1+" << cmp.value << "*(this->referenceTemperatureForThermalExpansion-" << Tref << "))"
-      << "*(" << T << "-this->referenceTemperatureForThermalExpansion);\n";
+      if(cmp.name.empty()){
+	out << "dl_l" << i << "[" << c << "] = "
+	    << cmp.value << "/(1+" << cmp.value << "*(this->referenceTemperatureForThermalExpansion-" << Tref << "))"
+	    << "*(" << T << "-this->referenceTemperatureForThermalExpansion);\n";
+      } else {
+	out << "dl_l" << i << "[" << c << "] = (this->"
+	    << cmp.name << ")/(1+(this->" << cmp.name << ")*(this->referenceTemperatureForThermalExpansion-" << Tref << "))"
+	    << "*(" << T << "-this->referenceTemperatureForThermalExpansion);\n";
+      }
     };
     if(!this->mb.areThermalExpansionCoefficientsDefined()){
       return;
