@@ -260,7 +260,8 @@ discussing the `MTestCurrentState` class. Indeed, the
 `MTestCurrentState` is just a wrapper around the `StudyCurrentState`.
 
 In the case of pipes, the unknowns are the radial displacements of the
-nodes of the pipe mesh. There are no Lagrange multipliers.
+nodes of the pipe mesh and the axial displacement. There are no
+Lagrange multipliers.
 
 ### The `StructureCurrentState` class
 
