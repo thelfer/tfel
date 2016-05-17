@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<stdexcept>
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 
 namespace tfel
@@ -103,13 +104,12 @@ namespace tfel
     replace_all(const std::string& c,
 		const char c1,
 		const char c2){
-      using namespace std;
-      string s(c);
-      string::size_type p  = 0u;
+      std::string s(c);
+      std::string::size_type p  = 0u;
       if(s.size()==0){
 	return "";
       }
-      while((p=s.find(c1,p))!=string::npos){
+      while((p=s.find(c1,p))!=std::string::npos){
 	s[p] = c2;
 	p+=1u;
       }
@@ -120,16 +120,28 @@ namespace tfel
     replace_all(std::string& s,
 		const char c,
 		const std::string& n){
-      using namespace std;
-      string::size_type p  = 0u;
-      string::size_type ns = n.size();
+      std::string::size_type p  = 0u;
+      std::string::size_type ns = n.size();
       if((s.size()==0)||(ns==0)){
 	return;
       }
-      while((p=s.find(c,p))!=string::npos){
+      while((p=s.find(c,p))!=std::string::npos){
 	s.replace(p,1u,n);
 	p+=ns;
       }
+    }
+
+    template<>
+    double convert<>(const std::string& s){
+      auto throw_if = [&s](const bool b){
+	if(b){throw(std::invalid_argument("tfel::utilities::convert: could not "
+					  "convert '"+s+"' to double"));}
+      };
+      throw_if(s.empty());
+      std::size_t p;
+      const double r = std::stod(s,&p);
+      throw_if(p!=s.size());
+      return r;
     }
     
   } // end of namespace utilities

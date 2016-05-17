@@ -336,7 +336,17 @@ namespace mfront{
 	    os << "\t+ " << map_at(l,"default value for")+" "+ModellingHypothesis::toString(*pvh)+" : ";
 	  }
 	  if(d.type=="real"){
-	    os << mb.getFloattingPointParameterDefaultValue(*pvh,d.name);
+	    const auto& p = mb.getBehaviourData(*pvh).getParameters().getVariable(d.name);
+	    if(p.arraySize==1u){
+	      os << mb.getFloattingPointParameterDefaultValue(*pvh,d.name);
+	    } else {
+	      for(unsigned short i=0;i!=p.arraySize;){
+		os << mb.getFloattingPointParameterDefaultValue(*pvh,d.name,i);
+		if(++i!=p.arraySize){
+		  os << " ";
+		}
+	      }
+	    }
 	  } else if(d.type=="int"){
 	    os << mb.getIntegerParameterDefaultValue(*pvh,d.name);
 	  } else {

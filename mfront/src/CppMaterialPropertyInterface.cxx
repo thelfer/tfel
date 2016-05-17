@@ -58,7 +58,7 @@ namespace mfront
     insert_if(d[lib].sources,name+"-cxx.cxx");
     insert_if(d.headers,this->headerFileName);
     auto cn = std::string{};
-#pragma message("HERE")
+#pragma message("handle namespace")
     // for(const auto& ns : this->namespaces){
     //   cc += ns + "::"
     // }

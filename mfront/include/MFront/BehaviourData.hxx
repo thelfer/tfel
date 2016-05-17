@@ -395,6 +395,14 @@ namespace mfront{
 				  const double);
     /*!
      * \param[in] n : parameter name
+     * \param[in] i : index
+     * \param[in] v : parameter default value
+     */
+    void setParameterDefaultValue(const std::string&,
+				  const unsigned short i,
+				  const double);
+    /*!
+     * \param[in] n : parameter name
      * \param[in] v : parameter default value
      */
     void setParameterDefaultValue(const std::string&,
@@ -410,6 +418,13 @@ namespace mfront{
      * \param[in] v : parameter default value
      */
     double getFloattingPointParameterDefaultValue(const std::string&) const;
+    /*!
+     * \return the default value of a paramater
+     * \param[in] v: parameter default value
+     * \param[in] i: index
+     */
+    double getFloattingPointParameterDefaultValue(const std::string&,
+						  const unsigned short) const;
     /*!
      * \return the default value of a paramater
      * \param[in] v : parameter default value

@@ -814,6 +814,17 @@ namespace mfront
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] n : parameter name
+     * \param[in] i : index
+     * \param[in] v : parameter default value
+     */
+    void
+    setParameterDefaultValue(const Hypothesis,
+			     const std::string&,
+			     const unsigned short i,
+			     const double);
+    /*!
+     * \param[in] h : modelling hypothesis
+     * \param[in] n : parameter name
      * \param[in] v : parameter default value
      */
     void
@@ -830,7 +841,7 @@ namespace mfront
 			     const std::string&,
 			     const unsigned short);
     /*!
-     * \return the default value of a paramater
+     * \return the default value of a parameter
      * \param[in] h : modelling hypothesis
      * \param[in] v : parameter default value
      */
@@ -838,7 +849,17 @@ namespace mfront
     getFloattingPointParameterDefaultValue(const Hypothesis,
 					   const std::string&) const;
     /*!
-     * \return the default value of a paramater
+     * \return the default value of a parameter (array case)
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: parameter default value
+     * \param[in] i: index
+     */
+    double
+    getFloattingPointParameterDefaultValue(const Hypothesis,
+					   const std::string&,
+					   const unsigned short) const;
+    /*!
+     * \return the default value of a parameter
      * \param[in] h : modelling hypothesis
      * \param[in] v : parameter default value
      */
@@ -846,7 +867,7 @@ namespace mfront
     getIntegerParameterDefaultValue(const Hypothesis,
 				    const std::string&) const;
     /*!
-     * \return the default value of a paramater
+     * \return the default value of a parameter
      * \param[in] h : modelling hypothesis
      * \param[in] v : parameter default value
      */
@@ -1235,8 +1256,8 @@ namespace mfront
      */
     template<typename Arg1>
     void callBehaviourData(const Hypothesis,
-			   void (BehaviourData:: *)(const Arg1&),
-			   const Arg1&,const bool);
+    			   void (BehaviourData:: *)(const Arg1&),
+    			   const Arg1&,const bool);
     /*!
      * \brief call the behaviour data associated with the given hypothesis
      * \param[in] h : modelling hypothesis
@@ -1249,9 +1270,25 @@ namespace mfront
      */
     template<typename Arg1,typename Arg2>
     void callBehaviourData(const Hypothesis,
-			   void (BehaviourData:: *)(const Arg1&,
-						    const Arg2),
-			   const Arg1&,const Arg2,const bool);
+    			   void (BehaviourData:: *)(const Arg1&,
+    						    const Arg2),
+    			   const Arg1&,const Arg2,const bool);
+    /*!
+     * \brief call the behaviour data associated with the given hypothesis
+     * \param[in] h : modelling hypothesis
+     * \param[in] m : behaviour data method
+     * \param[in] a1 : first  argument given to the behaviour data's method
+     * \param[in] a2 : second argument given to the behaviour data's method
+     * \param[in] b: propagate to all hypothesis if h is UNDEFINEDHYPOTHESIS
+     * \note if h is UNDEFINEDHYPOTHESIS, the default data
+     * and all the specialisations are called, unless the last parameter is false.
+     */
+    template<typename Arg1,typename Arg2,typename Arg3>
+    void callBehaviourData(const Hypothesis,
+    			   void (BehaviourData:: *)(const Arg1&,
+    						    const Arg2&,
+    						    const Arg3&),
+    			   const Arg1&,const Arg2&,const Arg3&, const bool);
     /*!
      * \brief call the behaviour data associated with the given hypothesis
      * \param[in] h : modelling hypothesis
@@ -1264,9 +1301,9 @@ namespace mfront
      */
     template<typename Arg1,typename Arg2>
     void callBehaviourData(const Hypothesis,
-			   void (BehaviourData:: *)(const Arg1&,
-						    const Arg2&),
-			   const Arg1&,const Arg2&,const bool);
+    			   void (BehaviourData:: *)(const Arg1&,
+    						    const Arg2&),
+    			   const Arg1&,const Arg2&,const bool);
     /*!
      * \brief call the behaviour data associated with the given hypothesis
      * \param[in] h: modelling hypothesis
@@ -1278,8 +1315,8 @@ namespace mfront
      */
     template<typename Arg1>
     void callBehaviourData(const Hypothesis,
-			   void (BehaviourData:: *)(const Arg1),
-			   const Arg1,const bool);
+    			   void (BehaviourData:: *)(const Arg1),
+    			   const Arg1,const bool);
     /*!
      * \brief add variables to the behaviour data
      * \param[in] h : modelling hypothesis

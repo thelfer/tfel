@@ -30,16 +30,16 @@ namespace mfront
   template<typename Arg1>
   void
   BehaviourDescription::callBehaviourData(const Hypothesis h,
-					  void (BehaviourData:: *m)(const Arg1&),
-					  const Arg1& a,
-					  const bool b)
+  					  void (BehaviourData:: *m)(const Arg1&),
+  					  const Arg1& a,
+  					  const bool b)
   {
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       (this->d.*m)(a);
       if(b){
-	for(auto md : this->sd){
-	  (md.second.get()->*m)(a);
-	}
+  	for(auto md : this->sd){
+  	  (md.second.get()->*m)(a);
+  	}
       }
     } else {
       (this->getBehaviourData2(h).*m)(a);
@@ -49,17 +49,17 @@ namespace mfront
   template<typename Arg1>
   void
   BehaviourDescription::callBehaviourData(const Hypothesis h,
-					  void (BehaviourData:: *m)(const Arg1),
-					  const Arg1 a,
-					  const bool b)
+  					  void (BehaviourData:: *m)(const Arg1),
+  					  const Arg1 a,
+  					  const bool b)
   {
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       (this->d.*m)(a);
       if(b){
-	for(const auto& ptr : this->sd){
-	  auto& bdata = *(ptr.second);
-	  (bdata.*m)(a);
-	}
+  	for(const auto& ptr : this->sd){
+  	  auto& bdata = *(ptr.second);
+  	  (bdata.*m)(a);
+  	}
       }
     } else {
       (this->getBehaviourData2(h).*m)(a);
@@ -69,45 +69,68 @@ namespace mfront
   template<typename Arg1,typename Arg2>
   void
   BehaviourDescription::callBehaviourData(const Hypothesis h,
-					  void (BehaviourData:: *m)(const Arg1&,
-								    const Arg2),
-					  const Arg1& a1,
-					  const Arg2  a2,
-					  const bool b)
+  					  void (BehaviourData:: *m)(const Arg1&,
+  								    const Arg2),
+  					  const Arg1& a1,
+  					  const Arg2  a2,
+  					  const bool b)
   {
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       (this->d.*m)(a1,a2);
       if(b){
-	for(const auto& ptr : this->sd){
-	  auto& bdata = *(ptr.second);
-	  (bdata.*m)(a1,a2);
-	}
+  	for(const auto& ptr : this->sd){
+  	  auto& bdata = *(ptr.second);
+  	  (bdata.*m)(a1,a2);
+  	}
       }
     } else {
       (this->getBehaviourData2(h).*m)(a1,a2);
     }
   } // end of BehaviourDescription::callBehaviourData
 
-  template<typename Arg1,
-	   typename Arg2>
+  template<typename Arg1,typename Arg2>
   void
   BehaviourDescription::callBehaviourData(const Hypothesis h,
-					  void (BehaviourData:: *m)(const Arg1&,
-								    const Arg2&),
-					  const Arg1& a1,
-					  const Arg2& a2,
-					  const bool b)
+  					  void (BehaviourData:: *m)(const Arg1&,
+  								    const Arg2&),
+  					  const Arg1& a1,
+  					  const Arg2& a2,
+  					  const bool b)
   {
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       (this->d.*m)(a1,a2);
       if(b){
-	for(const auto& ptr : this->sd){
-	  auto& bdata = *(ptr.second);
-	  (bdata.*m)(a1,a2);
-	}
+  	for(const auto& ptr : this->sd){
+  	  auto& bdata = *(ptr.second);
+  	  (bdata.*m)(a1,a2);
+  	}
       }
     } else {
       (this->getBehaviourData2(h).*m)(a1,a2);
+    }
+  } // end of BehaviourDescription::callBehaviourData
+
+  template<typename Arg1,typename Arg2,typename Arg3>
+  void
+  BehaviourDescription::callBehaviourData(const Hypothesis h,
+  					  void (BehaviourData:: *m)(const Arg1&,
+  								    const Arg2&,
+  								    const Arg3&),
+  					  const Arg1& a1,
+  					  const Arg2& a2,
+  					  const Arg3& a3,
+  					  const bool b)
+  {
+    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      (this->d.*m)(a1,a2,a3);
+      if(b){
+  	for(const auto& ptr : this->sd){
+  	  auto& bdata = *(ptr.second);
+  	  (bdata.*m)(a1,a2,a3);
+  	}
+      }
+    } else {
+      (this->getBehaviourData2(h).*m)(a1,a2,a3);
     }
   } // end of BehaviourDescription::callBehaviourData
 
@@ -1248,6 +1271,26 @@ namespace mfront
   void
   BehaviourDescription::setParameterDefaultValue(const Hypothesis h,
 						 const std::string& n,
+						 const unsigned short i,
+						 const double v)
+  {
+    void (BehaviourData:: *m)(const std::string&,
+				 const unsigned short,
+				 const double)
+      = &BehaviourData::setParameterDefaultValue;
+    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      (this->d.*m)(n,i,v);
+      for(auto md : this->sd){
+	(md.second.get()->*m)(n,v,i);
+      }
+    } else {
+      (this->getBehaviourData2(h).*m)(n,v,i);
+    }
+  }
+
+  void
+  BehaviourDescription::setParameterDefaultValue(const Hypothesis h,
+						 const std::string& n,
 						 const int v)
   {
     void (BehaviourData:: *mptr)(const std::string&,
@@ -1286,6 +1329,14 @@ namespace mfront
 							       const std::string& n) const
   {
     return this->getData(h,&BehaviourData::getFloattingPointParameterDefaultValue,n);
+  } // end of BehaviourDescription::getFloattingPointParameterDefaultValue
+
+  double
+  BehaviourDescription::getFloattingPointParameterDefaultValue(const Hypothesis h,
+							       const std::string& n,
+							       const unsigned short i) const
+  {
+    return this->getBehaviourData(h).getFloattingPointParameterDefaultValue(n,i);
   } // end of BehaviourDescription::getFloattingPointParameterDefaultValue
 
   void

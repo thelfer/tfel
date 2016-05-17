@@ -477,7 +477,6 @@ namespace mfront{
     const auto& d = mb.getBehaviourData(h);
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto mprops = this->buildMaterialPropertiesList(mb,h);
-    const auto& mp = d.getMaterialProperties();
     const auto& persistentVarsHolder = d.getPersistentVariables();
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
     out << "/*\n"

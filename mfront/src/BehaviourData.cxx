@@ -923,6 +923,26 @@ namespace mfront{
 
   void
   BehaviourData::setParameterDefaultValue(const std::string& n,
+					  const unsigned short i,
+					  const double v)
+  {
+    auto throw_if = [](const bool b, const std::string& m){
+      if(b){throw(std::runtime_error("BehaviourData::setParameterDefaultValue: "+m));}
+    };
+    throw_if(!this->parameters.contains(n),"no parameter '"+n+"' defined");
+    const auto& p = this->parameters.getVariable(n);
+    throw_if(p.type!="real","parameter '"+n+"' is not a floatting point");
+    throw_if(p.arraySize==1,"parameter '"+n+"' has not been declared as an array");
+    const auto idx = std::to_string(i);
+    const auto n2  = n+'['+idx+']';
+    throw_if(i>=p.arraySize,"index "+idx+" is greater "
+	     "than parameter '"+n+"' array size");
+    throw_if(!this->parametersDefaultValues.insert({n2,v}).second,
+	     "default value for parameter '"+n2+"' already defined");
+  }
+
+  void
+  BehaviourData::setParameterDefaultValue(const std::string& n,
 					  const int v)
   {
     auto throw_if = [](const bool b, const std::string& m){
@@ -959,6 +979,24 @@ namespace mfront{
     const auto p = this->parametersDefaultValues.find(n);
     throw_if(p==this->parametersDefaultValues.end(),
 	     "no default value defined for parameter '"+n+"'");
+    return p->second;
+  } // end of BehaviourData::getFloattingPointParameterDefaultValue
+
+  double
+  BehaviourData::getFloattingPointParameterDefaultValue(const std::string& n,
+							const unsigned short i) const
+  {
+    auto throw_if = [](const bool b, const std::string& m){
+      if(b){throw(std::runtime_error("BehaviourData::getFloattingPointParameterDefaultValue: "+m));}
+    };
+    throw_if(!this->parameters.contains(n),"no parameter '"+n+"' defined");
+    const auto& v = this->parameters.getVariable(n);
+    throw_if(v.arraySize==1u,"parameter '"+n+"' is not an array");    
+    throw_if(i>=v.arraySize,"invalid index for parameter '"+n+"'");    
+    const auto n2 = n+'['+std::to_string(i)+']';
+    const auto p = this->parametersDefaultValues.find(n2);
+    throw_if(p==this->parametersDefaultValues.end(),
+	     "no default value defined for parameter '"+n2+"'");
     return p->second;
   } // end of BehaviourData::getFloattingPointParameterDefaultValue
 

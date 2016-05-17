@@ -99,7 +99,20 @@ namespace tfel{
     replace_all(std::string&,
 		const char,
 		const std::string&);
-        
+    /*!
+     * \brief convert a string to the given type
+     * \param[in] s: string to be converted
+     */
+    template<typename T>
+    T convert(const std::string&);
+    /*!
+     * \brief partial specialisation for double
+     * \param[in] s: string to be converted
+     */
+    template<>
+    TFELUTILITIES_VISIBILITY_EXPORT
+    double convert<>(const std::string&);
+    
   } // end of namespace utilities
 
 } // end of namespace tfel

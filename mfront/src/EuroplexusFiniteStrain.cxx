@@ -116,6 +116,21 @@ namespace epx{
     }
   }
 
+  template<unsigned short N>
+  static void
+  doComputeLogarithmicStrainAndDerivative(tfel::math::StensorView<N,EuroplexusReal>&  e,
+					  tfel::math::ST2toST2View<N,EuroplexusReal>& p,
+					  const EuroplexusReal * const F)
+  {
+    constexpr const EuroplexusReal eps = 100*std::numeric_limits<EuroplexusReal>::epsilon();
+    using stensor = tfel::math::stensor<N,EuroplexusReal>;
+    using tensor  = tfel::math::tensor<N,EuroplexusReal>;
+    const auto f  = [](const EuroplexusReal x){return std::log(1+x)/2;};
+    const auto df = [](const EuroplexusReal x){return 1/(2*(1+x));};
+    const stensor C = computeRightCauchyGreenTensor(tensor(F))-stensor::Id();
+    std::tie(e,p)   = C.computeIsotropicFunctionAndDerivative(f,df,eps);
+  } // end of doComputeLogarithmicStrainAndDerivative
+
   void
   computeLogarithmicStrainAndDerivative(EuroplexusReal * const P0,
 					EuroplexusReal * const P1,
@@ -124,30 +139,21 @@ namespace epx{
 					const EuroplexusReal * const F0,
 					const EuroplexusReal * const F1,
 					const EuroplexusInt h){
-    using namespace tfel::math;
-    using real = EuroplexusReal;
-    // Elog = log(C)/2
-    const auto  f = [](const real x){return std::log(x)/2;};
-    const auto df = [](const real x){return 1/(2*x);};
     if((h==3)||(h==2)||(h==1)){
-      StensorView<2u,real>  e(eto);
-      StensorView<2u,real>  de(deto);
-      ST2toST2View<2u,real> p0(P0);
-      ST2toST2View<2u,real> p1(P1);
-      const auto C0 = computeRightCauchyGreenTensor(tensor<2u,real>(F0));
-      const auto C1 = computeRightCauchyGreenTensor(tensor<2u,real>(F1));
-      std::tie(e ,p0) = C0.computeIsotropicFunctionAndDerivative(f,df,1.e-16);
-      std::tie(de,p1) = C1.computeIsotropicFunctionAndDerivative(f,df,1.e-16);
+      tfel::math::StensorView<2u,EuroplexusReal>  e(eto);
+      tfel::math::StensorView<2u,EuroplexusReal>  de(deto);
+      tfel::math::ST2toST2View<2u,EuroplexusReal> p0(P0);
+      tfel::math::ST2toST2View<2u,EuroplexusReal> p1(P1);
+      doComputeLogarithmicStrainAndDerivative(e ,p0,F0);
+      doComputeLogarithmicStrainAndDerivative(de,p1,F1);
       de -= e;
     } else if(h==0){
-      StensorView<3u,real>  e(eto);
-      StensorView<3u,real>  de(deto);
-      ST2toST2View<3u,real> p0(P0);
-      ST2toST2View<3u,real> p1(P1);
-      const auto C0   = computeRightCauchyGreenTensor(tensor<3u,real>(F0));
-      const auto C1   = computeRightCauchyGreenTensor(tensor<3u,real>(F1));
-      std::tie(e ,p0) = C0.computeIsotropicFunctionAndDerivative(f,df,1.e-16);
-      std::tie(de,p1) = C1.computeIsotropicFunctionAndDerivative(f,df,1.e-16);
+      tfel::math::StensorView<3u,EuroplexusReal>  e(eto);
+      tfel::math::StensorView<3u,EuroplexusReal>  de(deto);
+      tfel::math::ST2toST2View<3u,EuroplexusReal> p0(P0);
+      tfel::math::ST2toST2View<3u,EuroplexusReal> p1(P1);
+      doComputeLogarithmicStrainAndDerivative(e ,p0,F0);
+      doComputeLogarithmicStrainAndDerivative(de,p1,F1);
       de -= e;
     } else {
       std::cerr << "epx::computeLogarithmicStrainAndDerivative: "

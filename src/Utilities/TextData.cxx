@@ -18,6 +18,7 @@
 #include<algorithm>
 #include<iterator>
 #include"TFEL/Utilities/TextData.hxx"
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 
 namespace tfel
 {
@@ -82,7 +83,7 @@ namespace tfel
 	    bool all_numbers = true;
 	    for(const auto& l:this->legends){
 	      try{
-		std::stod(l);
+		convert<double>(l);
 	      } catch(exception&){
 		all_numbers = false;
 	      }

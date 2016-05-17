@@ -175,7 +175,6 @@ namespace mfront{
 	  }
 	} else{
     	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-	    const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
 	    const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
 	    const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
 	    m += "StrainStensor prediction_stress;\n";
@@ -210,6 +209,7 @@ namespace mfront{
 	      m += "prediction_stress(1) = (this->D(1,0)-((this->D(1,2))*(this->D(2,0)))/(this->D(2,2)))*prediction_strain(0)+\n";
 	      m += "                       (this->D(1,1)-((this->D(1,2))*(this->D(2,1)))/(this->D(2,2)))*prediction_strain(1);\n";
 	      m += "prediction_stress(2) = stress(0);\n";
+	      m += "prediction_stress(3) = stress(0);\n";
 	      m += "return prediction_stress;\n";
 	    } else {
 	      m += "return (this->D)*(this->eel+(this->theta)*this->deto);";
@@ -217,7 +217,6 @@ namespace mfront{
 	  }
 	} else {
 	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-	    const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
 	    const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
 	    const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
 	    m += "StrainStensor prediction_stress;\n";
@@ -241,7 +240,6 @@ namespace mfront{
 	  m += "return (this->D)*(this->eel+(this->theta)*this->deto);";
     	} else {
     	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-	    const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
 	    const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
 	    const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
 	    m+= "return "+lambda+"*trace(this->eel+(this->theta)*(this->deto))*Stensor::Id()+"
@@ -394,7 +392,6 @@ namespace mfront{
 	    "dfetozz_ddeel(2) = this->lambda_tdt/this->young_tdt;\n";
 	}
       } else {
-	const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
 	const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
 	const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
 	integrator.code +=
@@ -470,7 +467,6 @@ namespace mfront{
 	    "dfetozz_ddeel(1) = this->lambda_tdt/this->young_tdt;\n";
 	}
       } else {
-	const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
 	const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
 	const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
 	integrator.code +=
@@ -539,7 +535,6 @@ namespace mfront{
 	"}";
     } else {
       if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-	const auto& lvs = this->bd.getBehaviourData(uh).getLocalVariables();
 	const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
 	const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
 	tangentOperator.code =

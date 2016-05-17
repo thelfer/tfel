@@ -310,7 +310,17 @@ const Hypothesis){
 	const auto& bd = d.getBehaviourData(h);
 	const auto& p  = bd.getParameters().getVariable(o);
 	if(p.type=="real"){
-	  cout << bd.getFloattingPointParameterDefaultValue(o) << endl;
+	  if(p.arraySize==1){
+	    cout << bd.getFloattingPointParameterDefaultValue(o) << endl;
+	  } else {
+	    for(unsigned short i=0;i!=p.arraySize;){
+	      cout << bd.getFloattingPointParameterDefaultValue(o,i);
+	      if(++i!=p.arraySize){
+		cout << " ";
+	      }
+	    }
+	    cout << endl;
+	  }
 	} else if(p.type=="int"){
 	  cout << bd.getIntegerParameterDefaultValue(o) << endl;
 	} else if(p.type=="ushort"){
@@ -339,13 +349,19 @@ const Hypothesis){
       const auto& vars     = (d.*m)();
       for(const auto& v:vars){
 	const auto& n = d.getExternalName(v.name);
-	cout << "- " << n << " (" << v.name << ")";
+	cout << "- " << n;
+	if(v.arraySize!=1u){
+	  cout << '[' << v.arraySize << ']';
+	}
+	if(n!=v.name){
+	  cout << " (" << v.name << ")";
+	}
 	if(!v.description.empty()){
-	  cout << " :  " << v.description;
+	  cout << ": " << v.description;
 	} else {
 	  const auto& glossary = Glossary::getGlossary();
 	  if(glossary.contains(n)){
-	    cout << " :  " << glossary.getGlossaryEntry(n).getShortDescription();
+	    cout << ": " << glossary.getGlossaryEntry(n).getShortDescription();
 	  }
 	}
 	cout << endl;

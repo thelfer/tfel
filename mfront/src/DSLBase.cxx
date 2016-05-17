@@ -19,6 +19,7 @@
 #include<algorithm>
 
 #include"TFEL/Math/IntegerEvaluator.hxx"
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 
 #include"MFront/MFront.hxx"
 #include"MFront/SupportedTypes.hxx"
@@ -211,8 +212,7 @@ namespace mfront
     }
     if(smn.find(this->current->value)!=smn.end()){
       b.staticMembers.insert(this->current->value);
-      auto previous = this->current;
-      --previous;
+      const auto previous = std::prev(this->current);
       if((previous->value!="->")&&
 	 (previous->value!=".")&&
 	 (previous->value!="::")){
@@ -225,8 +225,7 @@ namespace mfront
     } else if(mn.find(this->current->value)!=mn.end()){
       b.members.insert(this->current->value);
       auto currentValue = std::string{};
-      auto previous = this->current;
-      --previous;
+      auto previous = std::prev(this->current);
       if((previous->value=="->")||
 	 (previous->value==".")||
 	 (previous->value=="::")){
@@ -242,8 +241,7 @@ namespace mfront
 	  }
 	}
       }
-      previous = this->current;
-      --previous;
+      previous = std::prev(this->current);
       if(previous->value=="*"){
 	res += "("+currentValue+")";
       } else {
@@ -286,8 +284,7 @@ namespace mfront
       }
       if(smn.find(this->current->value)!=smn.end()){
 	b.staticMembers.insert(this->current->value);
-	auto previous = this->current;
-	--previous;
+	const auto previous = std::prev(this->current);
 	if((previous->value!="->")&&
 	   (previous->value!=".")&&
 	   (previous->value!="::")){
@@ -300,8 +297,7 @@ namespace mfront
       } else if(mn.find(this->current->value)!=mn.end()){
 	b.members.insert(this->current->value);
 	auto currentValue = std::string{};
-	auto previous = this->current;
-	--previous;
+	const auto previous = std::prev(this->current);
 	if((previous->value=="->")||
 	   (previous->value==".")||
 	   (previous->value=="::")){
@@ -387,15 +383,14 @@ namespace mfront
   DSLBase::checkNotEndOfFile(const std::string& method,
 			     const std::string& error) const{
     if(this->current==this->tokens.end()){
-      auto previous = this->current;
-      --previous;
       auto msg = std::string{};
       msg += "unexpected end of file.";
       if(!error.empty()){
 	msg += "\n"+error;
       }
       if(!this->tokens.empty()){
-	msg += "\nError at line " + std::to_string(this->current->line);
+	const auto previous = std::prev(this->current);
+	msg += "\nError at line " + std::to_string(previous->line);
       }
       this->throwRuntimeError(method,msg);
     }
@@ -557,7 +552,7 @@ namespace mfront
 	++(this->current);
       } else {
 	this->throwRuntimeError("DSLBase::readVarList",
-				", or ; expected afer '"+varName+"'");
+				", or ; expected after '"+varName+"'");
       }
       cont.push_back(VariableDescription(type,varName,asize,lineNumber));
       if(!this->currentComment.empty()){
@@ -697,11 +692,25 @@ namespace mfront
     auto r = std::vector<std::string>{};
     auto as = std::vector<tfel::utilities::Token>{};
     this->readList(as,m,"{","}",false);
+    r.reserve(as.size());
     for(const auto& t : as){
       if(t.flag!=tfel::utilities::Token::String){
 	this->throwRuntimeError(m,"Expected a string");
       }
       r.push_back(t.value.substr(1,t.value.size()-2));
+    }
+    return r;
+  } // end of DSLBase::readArrayOfString
+
+  std::vector<double>
+  DSLBase::readArrayOfDouble(const std::string& m)
+  {
+    auto r = std::vector<double>{};
+    auto as = std::vector<tfel::utilities::Token>{};
+    this->readList(as,m,"{","}",false);
+    r.reserve(as.size());
+    for(const auto& t : as){
+      r.push_back(tfel::utilities::convert<double>(t.value));
     }
     return r;
   } // end of DSLBase::readArrayOfString
@@ -921,16 +930,14 @@ namespace mfront
 	  (!((this->current->value=="}")&&
 	     (openedBrackets==1u)))){
       if(this->current->value=="{"){
-	auto previous = this->current;
-	--previous;
+	const auto previous = std::prev(this->current);
 	if((previous->value.size()>0)&&
 	   (previous->value[previous->value.size()-1]!='\\')){
 	  ++openedBrackets;
 	}
       }
       if(this->current->value=="}"){
-	auto previous = this->current;
-	--previous;
+	const auto previous = std::prev(this->current);
 	if((previous->value.size()>0)&&
 	   (previous->value[previous->value.size()-1]!='\\')){
 	  --openedBrackets;
@@ -1064,8 +1071,7 @@ namespace mfront
 	  --openedBrackets;
 	}
       }
-      auto next = this->current;
-      ++next;
+      const auto next = std::next(this->current);
       if(next!=this->tokens.end()){
 	if(next->value==";"){
 	  current = next;
@@ -1141,7 +1147,7 @@ namespace mfront
 	++(this->current);
       } else {
 	this->throwRuntimeError("DSLBase::handleParameter",
-				", or ; expected afer '"+n+"'");
+				", or ; expected after '"+n+"'");
       }
       c.push_back(VariableDescription("real",n,1u,lineNumber));
     }

@@ -1471,7 +1471,7 @@ namespace mfront{
 	++(this->current);
       } else {
 	this->throwRuntimeError("BehaviourDSLCommon::readStringList",
-				"',' or ';' expected afer '"+s+"'");
+				"',' or ';' expected after '"+s+"'");
       }
       if(find(cont.begin(),cont.end(),s)!=cont.end()){
 	this->throwRuntimeError("BehaviourDSLCommon::readStringList",
@@ -3533,7 +3533,12 @@ namespace mfront{
 			      << this->fileName << "\"\n";
 	}
       }
-      this->behaviourFile << v.type << " " << v.name << ";\n";  
+      if(v.arraySize==1){
+	this->behaviourFile << v.type << " " << v.name << ";\n";  
+      } else {
+	this->behaviourFile << "tfel::math::tvector<" << v.arraySize << "," << v.type << "> " 
+			    << v.name << ";\n";  
+      }
     }
     this->behaviourFile << '\n';
   }
@@ -4002,11 +4007,11 @@ namespace mfront{
     if(!this->mb.hasParameters()){
       return;
     }
-    auto h = this->mb.getDistinctModellingHypotheses();
-    h.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-    for(const auto p : h){
-      if(this->mb.hasParameters(p)){
-	this->writeBehaviourParametersInitializer(p);
+    auto mh = this->mb.getDistinctModellingHypotheses();
+    mh.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+    for(const auto h : mh){
+      if(this->mb.hasParameters(h)){
+	this->writeBehaviourParametersInitializer(h);
       }
     }
   } // end of BehaviourDSLCommon::writeBehaviourParametersInitializers
@@ -4014,10 +4019,9 @@ namespace mfront{
   void 
   BehaviourDSLCommon::writeBehaviourParametersInitializer(const Hypothesis h)
   {
-    using namespace std;
     const auto& md = this->mb.getBehaviourData(h);
     const auto& params = md.getParameters();
-    string cname(this->mb.getClassName());
+    std::string cname(this->mb.getClassName());
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       cname += ModellingHypothesis::toString(h);
     }
@@ -4029,7 +4033,7 @@ namespace mfront{
     bool ip2 = false;
     bool up2 = false;
     this->checkBehaviourFile();
-    this->behaviourFile << "struct " << cname << endl
+    this->behaviourFile << "struct " << cname << '\n'
 			<< "{\n"
 			<< "static " << cname << "&\n"
 			<< "get();\n\n";
@@ -4040,7 +4044,11 @@ namespace mfront{
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name)))){
 	  rp2=true;
-	  this->behaviourFile << "double " << p.name << ";\n"; 
+	  if(p.arraySize==1){
+	    this->behaviourFile << "double " << p.name << ";\n"; 
+	  } else {
+	    this->behaviourFile << "tfel::math::tvector<" << p.arraySize << ",double> " << p.name << ";\n"; 
+	  }
 	}
       } else if(p.type=="int"){
 	ip = true;
@@ -4064,7 +4072,7 @@ namespace mfront{
       }
     }
     if(!params.empty()){
-      this->behaviourFile << endl; 
+      this->behaviourFile << '\n'; 
     }
     if(rp){
       this->behaviourFile << "void set(const char* const,const double);\n\n";
@@ -5170,8 +5178,19 @@ namespace mfront{
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
 	  rp2=true;
-	  this->srcFile << "this->" << p->name << " = " 
-			<< this->mb.getFloattingPointParameterDefaultValue(h,p->name) << ";\n"; 
+	  this->srcFile << "this->" << p->name << " = ";
+	  if(p->arraySize==1u){
+	    this->srcFile << this->mb.getFloattingPointParameterDefaultValue(h,p->name) << ";\n"; 
+	  } else {
+	    this->srcFile << '{';
+	    for(unsigned short i=0;i!=p->arraySize;){
+	      this->srcFile << this->mb.getFloattingPointParameterDefaultValue(h,p->name,i); 
+	      if(++i!=p->arraySize){
+		this->srcFile << ',';
+	      }
+	    }
+	    this->srcFile << "};\n";
+	  }
 	}
       } else if(p->type=="int"){
 	ip = true;
@@ -5199,6 +5218,14 @@ namespace mfront{
       this->srcFile << cname << "::readParameters(*this,\"" << this->mb.getClassName() << ModellingHypothesis::toString(h) << "-parameters.txt\");\n";
     }
     this->srcFile <<"}\n\n";
+    auto write_if = [](std::ostream& os,bool& b){
+      if(b){
+	os << "if(";
+	b = false;
+      } else {
+	os << "} else if(";
+      }
+    };
     if(rp){
       this->srcFile <<"void\n"
 		    << cname << "::set(const char* const key,\nconst double v)" 
@@ -5207,19 +5234,30 @@ namespace mfront{
       bool first = true;
       for(p=params.begin();p!=params.end();++p){
 	if(p->type=="real"){
-	  if(first){
-	    this->srcFile << "if(";
-	    first = false;
+	  if(p->arraySize==1u){
+	    write_if(this->srcFile,first);
+	    this->srcFile << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){\n";
+	    if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
+	       ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
+		(!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
+	      this->srcFile << "this->" << p->name << " = v;\n";
+	    } else {
+	      this->srcFile << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\",v);\n";
+	    }
 	  } else {
-	    this->srcFile << "} else if(";
-	  }
-	  this->srcFile << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){\n";
-	  if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
-	     ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
-	      (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
-	    this->srcFile << "this->" << p->name << " = v;\n";
-	  } else {
-	    this->srcFile << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\",v);\n";
+	    for(unsigned short i=0;i!=p->arraySize;++i){
+	      write_if(this->srcFile,first);
+	      const auto vn = p->name+'['+to_string(i)+']';
+	      const auto en = this->mb.getExternalName(h,p->name)+'['+to_string(i)+']';
+	      this->srcFile << "::strcmp(\""+en+"\",key)==0){\n";
+	      if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
+		 ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
+		  (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
+		this->srcFile << "this->" << vn << " = v;\n";
+	      } else {
+		this->srcFile << dcname << "::get().set(\"" << en << "\",v);\n";
+	      }
+	    }
 	  }
 	}
       }
@@ -5240,12 +5278,7 @@ namespace mfront{
       bool first = true;
       for(p=params.begin();p!=params.end();++p){
 	if(p->type=="int"){
-	  if(first){
-	    this->srcFile << "if(";
-	    first = false;
-	  } else {
-	    this->srcFile << "} else if(";
-	  }
+	  write_if(this->srcFile,first);
 	  this->srcFile << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){\n";
 	  if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	     ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
@@ -5273,12 +5306,7 @@ namespace mfront{
       bool first = true;
       for(p=params.begin();p!=params.end();++p){
 	if(p->type=="ushort"){
-	  if(first){
-	    this->srcFile << "if(";
-	    first = false;
-	  } else {
-	    this->srcFile << "} else if(";
-	  }
+	  write_if(this->srcFile,first);
 	  this->srcFile << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){\n";
 	  if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	     ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
@@ -5334,53 +5362,63 @@ namespace mfront{
 		  << "break;\n"
 		  << "}\n"
 		  << "f >> v;\n";
-      for(p=params.begin();p!=params.end();++p){
-	if(p==params.begin()){
-	  this->srcFile << "if(";
+    bool first = true;
+    for(const auto& v : params){
+      const auto b = ((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
+		      ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
+		       (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,v.name))));
+      auto write = [&v,&write_if,&b,&dcname,&cname](std::ostream& os,const std::string& vn, const std::string& en){
+	os << "\"" <<  en << "\"==p){\n";
+	if(b){
+	  os << "pi." << vn << " = ";
+	  if(v.type=="real"){
+	    os <<  cname << "::getDouble(p,v);\n";
+	  } else if(v.type=="int"){
+	    os << cname << "::getInt(p,v);\n";
+	  } else if(v.type=="ushort"){
+	    os << cname << "::getUnsignedShort(p,v);\n";
+	  } else {
+	    throw(std::runtime_error("BehaviourDSLCommon::writeSrcFileParametersInitializer: "
+				     "invalid parameter type '"+v.type+"'"));
+	  }
 	} else {
-	  this->srcFile << "} else if(";
+	  os << dcname << "::get().set(\"" << en << "\",\n";
+	  if(v.type=="real"){
+	    os << dcname << "::getDouble(p,v)";
+	  } else if(v.type=="int"){
+	    os << dcname << "::getInt(p,v)";
+	  } else if(v.type=="ushort"){
+	    os << dcname << "::getUnsignedShort(p,v)";
+	  } else {
+	    throw(std::runtime_error("BehaviourDSLCommon::writeSrcFileParametersInitializer: "
+				     "invalid parameter type '"+v.type+"'"));
+	  }
+	  os << ");\n";
 	}
-	this->srcFile << "\"" <<  this->mb.getExternalName(h,p->name) << "\"==p){\n";
-	if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
-	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
-	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
-	  this->srcFile << "pi." << p->name << " = ";
-	  if(p->type=="real"){
-	    this->srcFile <<  cname << "::getDouble(p,v);\n";
-	  } else if(p->type=="int"){
-	    this->srcFile << cname << "::getInt(p,v);\n";
-	  } else if(p->type=="ushort"){
-	    this->srcFile << cname << "::getUnsignedShort(p,v);\n";
-	  } else {
-	    this->throwRuntimeError("BehaviourDSLCommon::writeSrcFileParametersInitializer",
-				    "invalid parameter type '"+p->type+"'");
-	  }
-	} else {
-	  this->srcFile << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\",\n";
-	  if(p->type=="real"){
-	    this->srcFile << dcname << "::getDouble(p,v)";
-	  } else if(p->type=="int"){
-	    this->srcFile << dcname << "::getInt(p,v)";
-	  } else if(p->type=="ushort"){
-	    this->srcFile << dcname << "::getUnsignedShort(p,v)";
-	  } else {
-	    this->throwRuntimeError("BehaviourDSLCommon::writeSrcFileParametersInitializer",
-				    "invalid parameter type '"+p->type+"'");
-	  }
-	  this->srcFile << ");\n";
+      };
+      if(v.arraySize==1u){
+	write_if(this->srcFile,first);
+	write(this->srcFile,v.name,this->mb.getExternalName(h,v.name));
+      } else {
+	for(unsigned short i=0;i!=v.arraySize;++i){
+	  const auto vn = v.name+'['+to_string(i)+']';
+	  const auto en = this->mb.getExternalName(h,v.name)+'['+to_string(i)+']';
+	  write_if(this->srcFile,first);
+	  write(this->srcFile,vn,en);
 	}
       }
-      this->srcFile << "} else {\n"
-		    << "string msg(\"" << cname << "::readParameters : \");\n"
-		    << "msg+=\"Error while parsing file '\";\n"
-		    << "msg+=fn;\n"
-		    << "msg+=\"'. Invalid parameter '\"+p+\"'\";\n"
-		    << "throw(runtime_error(msg));\n"
+    }
+    this->srcFile << "} else {\n"
+		  << "string msg(\"" << cname << "::readParameters : \");\n"
+		  << "msg+=\"Error while parsing file '\";\n"
+		  << "msg+=fn;\n"
+		  << "msg+=\"'. Invalid parameter '\"+p+\"'\";\n"
+		  << "throw(runtime_error(msg));\n"
 		    << "}\n"
-		    << "}\n"
-		    << "}\n\n";
+		  << "}\n"
+		  << "}\n\n";
   } // end of BehaviourDSLCommon::writeSrcFileParametersInitializer
-
+  
   void
   BehaviourDSLCommon::writeSrcFileBehaviourProfiler(void)
   {
@@ -5496,51 +5534,94 @@ namespace mfront{
   void
   BehaviourDSLCommon::treatParameter(void)
   {
-    using namespace std;
-    set<Hypothesis> h;
-    this->readHypothesesList(h);
+    std::set<Hypothesis> mh;
+    this->readHypothesesList(mh);
     bool endOfTreatment=false;
     while((this->current!=this->tokens.end())&&
 	  (!endOfTreatment)){
       if(!isValidIdentifier(this->current->value)){
-	this->throwRuntimeError("DSLBase::handleParameter : ",
+	this->throwRuntimeError("DSLBase::treatParameter : ",
 				"variable given is not valid (read '"+this->current->value+"').");
       }
       const auto n = this->current->value;
       const auto lineNumber = this->current->line;
       ++(this->current);
-      this->checkNotEndOfFile("DSLBase::handleParameter");
+      this->checkNotEndOfFile("DSLBase::treatParameter");
+      unsigned short arraySize = 1u;
+      if(this->current->value=="["){
+	++(this->current);
+	this->checkNotEndOfFile("DSLBase::treatParameter");
+	arraySize=this->readUnsignedShort("DSLBase::treatParameter");
+	if(arraySize==0u){
+	  this->throwRuntimeError("DSLBase::treatParameter",
+				  "invalid array size");
+	}
+	this->checkNotEndOfFile("DSLBase::treatParameter");
+	this->readSpecifiedToken("DSLBase::treatParameter","]");
+      }
+      this->checkNotEndOfFile("DSLBase::treatParameter");
       if((this->current->value=="=")||
 	 (this->current->value=="{")||
 	 (this->current->value=="(")){
-	string ci; // closing initializer
-	double value;
+	std::string ci; // closing initializer
 	if(this->current->value=="{"){
 	  ci="}";
 	}
 	if(this->current->value=="("){
+	  if(arraySize!=1u){
+	    this->throwRuntimeError("DSLBase::treatParameter",
+				    "invalid initalisation syntax for the default values "
+				    "of an array of parameters.\n"
+				    "Unexpected token '"+current->value+"'");
+	  }
 	  ci=")";
 	}
 	++(this->current);
-	this->checkNotEndOfFile("DSLBase::handleParameter");
-	istringstream converter(this->current->value);
-	converter >> value;
-	if(!converter||(!converter.eof())){
-	  this->throwRuntimeError("DSLBase::handleParameter",
-				  "could not read default value for parameter '"+n+"'");
-	}
-	++(this->current);
-	this->checkNotEndOfFile("DSLBase::handleParameter");
-	if(!ci.empty()){
-	  this->readSpecifiedToken("DSLBase::handleParameter",ci);
-	}
-	for(const auto & elem : h){
-	  this->mb.addParameter(elem,VariableDescription("real",n,1u,lineNumber));
-	  this->mb.setParameterDefaultValue(elem,n,value);
+	this->checkNotEndOfFile("DSLBase::treatParameter");
+	if(arraySize!=1u){
+	  if(ci!="}"){
+	    this->readSpecifiedToken("DSLBase::treatParameter","{");
+	  }
+	  --(this->current);
+	  const auto  r = this->readArrayOfDouble("DSLBase::treatParameter");
+	  if(r.size()!=arraySize){
+	    this->throwRuntimeError("DSLBase::treatParameter",
+				    "number of values given does not match the number of parameters "
+				    "("+std::to_string(r.size())+" vs +"+std::to_string(arraySize)+").\n");
+	  }
+	  for(const auto & h : mh){
+	    this->mb.addParameter(h,VariableDescription("real",n,arraySize,lineNumber));
+	    for(decltype(r.size()) i=0;i!=r.size();++i){
+	      this->mb.setParameterDefaultValue(h,n,i,r[i]);
+	    }
+	  }	
+	} else {
+	  double value;
+	  std::istringstream converter(this->current->value);
+	  converter >> value;
+	  if(!converter||(!converter.eof())){
+	    this->throwRuntimeError("DSLBase::treatParameter",
+				    "could not read default value for parameter '"+n+"'");
+	  }
+	  ++(this->current);
+	  this->checkNotEndOfFile("DSLBase::treatParameter");
+	  if(!ci.empty()){
+	    this->readSpecifiedToken("DSLBase::treatParameter",ci);
+	  }
+	  for(const auto & h : mh){
+	    this->mb.addParameter(h,VariableDescription("real",n,1u,lineNumber));
+	    this->mb.setParameterDefaultValue(h,n,value);
+	  }
 	}
       } else {
-	for(const auto & elem : h){
-	  this->mb.addParameter(elem,VariableDescription("real",n,1u,lineNumber));
+	if(arraySize!=1){
+	  this->throwRuntimeError("DSLBase::treatParameter",
+				  "default values of parameters array "
+				  "must be defined with the array. "
+				  "Unexpected token '"+current->value+"'");
+	}
+	for(const auto & h : mh){
+	  this->mb.addParameter(h,VariableDescription("real",n,1u,lineNumber));
 	}
       }
       if(this->current->value==","){
@@ -5549,13 +5630,13 @@ namespace mfront{
 	endOfTreatment=true;
 	++(this->current);
       } else {
-	this->throwRuntimeError("DSLBase::handleParameter",
-				", or ; expected afer '"+n+"'");
+	this->throwRuntimeError("DSLBase::treatParameter",
+				", or ; expected after '"+n+"', read '"+this->current->value+"'");
       }
     }
     if(!endOfTreatment){
       --(this->current);
-      this->throwRuntimeError("DSLBase::handleParameter",
+      this->throwRuntimeError("DSLBase::treatParameter",
 			      "Expected ';' before end of file");
     }
   } // end of BehaviourDSLCommon::treatParameter

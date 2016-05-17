@@ -293,6 +293,14 @@ namespace mfront
     std::vector<std::string>
     readArrayOfString(const std::string&);
     /*!
+     * extract an array of double starting from the current token and
+     * go the token following the end of the array
+     * \param[in] m : calling method name (used for error message)
+     * \return the extracted array of doubles
+     */
+    std::vector<double>
+    readArrayOfDouble(const std::string&);
+    /*!
      * extract an array of string starting from the current token and
      * go the token following the end of the array
      * \param[in] m : calling method name (used for error message)

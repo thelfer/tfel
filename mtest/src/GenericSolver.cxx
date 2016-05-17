@@ -197,7 +197,7 @@ namespace mtest{
       LUSolve::exe(wk.K,wk.du,wk.x,wk.p_lu);
       u1 -= wk.du;
       converged = (o.ppolicy == PredictionPolicy::NOPREDICTION) ? (iter>1) : true;
-      converged = converged && s.checkConvergence(scs,wk.du,wk.r,o,iter,t,dt);
+      converged = s.checkConvergence(scs,wk.du,wk.r,o,iter,t,dt) && converged;
       ne = s.getErrorNorm(wk.du);
       if(!converged){
 	if(iter==o.iterMax){

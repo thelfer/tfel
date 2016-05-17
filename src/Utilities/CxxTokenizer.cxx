@@ -22,6 +22,7 @@
 
 #include"TFEL/Utilities/CxxKeywords.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
 #if defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99)
@@ -940,7 +941,7 @@ namespace tfel{
       }
 #else
       try{
-	res = std::stod(p->value);
+	res=convert<double>(p->value);
       }
       catch(std::exception& e){
 	throw(std::runtime_error("CxxTokenizer::readDouble : "
