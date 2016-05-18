@@ -766,6 +766,7 @@ namespace mfront{
       this->checkNotEndOfFile("MaterialPropertyDSL::registerBounds ",
 			      "Expected lower bound value for variable "+boundsDescription.varName);
       boundsDescription.lowerBound=this->readDouble();
+      boundsDescription.boundsType = VariableBoundsDescription::LowerAndUpper;
     } else {
       this->throwRuntimeError("MaterialPropertyDSL::registerBounds",
 			      "Expected ']' or '[' (read '"+this->current->value+"')");
