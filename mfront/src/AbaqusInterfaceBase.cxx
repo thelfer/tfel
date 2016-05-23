@@ -382,13 +382,15 @@ namespace mfront{
 
   void
   AbaqusInterfaceBase::writeInputFileExample(const BehaviourDescription& mb,
-					 const FileDescription& fd) const{ 
+					     const FileDescription& fd,
+					     const bool b) const{ 
     const auto name =  mb.getLibrary()+mb.getClassName();
     const auto mn = this->getLibraryName(mb)+"_"+mb.getClassName();
-    std::ofstream out{"abaqus/"+name+".inp"};
+    const auto fn = (b ? "abaqus/" : "abaqus-explicit/") +name+".inp";
+    std::ofstream out{fn};
     if(!out){
       throw(std::runtime_error("AbaqusInterfaceBase::writeInputFileExample: "
-			       "could not open file 'abaqus/"+name+".inp'"));
+			       "could not open file '"+fn+"'"));
     }
     // header
     out << "** \n"
@@ -424,10 +426,12 @@ namespace mfront{
 	  out << "** " << i << ": " << mb.getExternalName(h,pv->name);
 	}
       }
-      out << "*Material, name=" << mn << '\n'
-	  << "*Depvar\n" 
-	  << (vsize==0 ? 1 : vsize)  << ",\n";
-      if(!persistentVarsHolder.empty()){
+      out << "*Material, name=" << mn << '\n';
+      if(!b){
+	out << "*DENSITY\n<density>\n";
+      }
+      if(vsize!=0){
+	out << "*Depvar\n" << vsize  << ",\n";
 	int i=1;
 	for(const auto& v : persistentVarsHolder){
 	  const auto vn = mb.getExternalName(h,v.name);

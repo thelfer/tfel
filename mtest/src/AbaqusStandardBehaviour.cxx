@@ -120,7 +120,7 @@ namespace mtest
     wk.kt.resize(nth,ndv);
     wk.k.resize(nth,ndv);
     wk.mps.resize(this->mpnames.size()==0 ? 1u : this->mpnames.size(),real(0));
-    wk.ivs.resize(nstatev==0 ? 1u : nstatev,real(0));
+    wk.ivs.resize(nstatev);
     wk.nk.resize(nth,ndv);
     wk.ne.resize(ndv);
     wk.ns.resize(nth);

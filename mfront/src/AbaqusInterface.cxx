@@ -131,7 +131,6 @@ namespace mfront{
   static void
   writeUMATArguments(std::ostream& out)
   {
-    using namespace std;
     out << "(abaqus::AbaqusReal *const,\n"
 	<< " abaqus::AbaqusReal *const,\n"
 	<< " abaqus::AbaqusReal *const,\n"
@@ -526,7 +525,7 @@ namespace mfront{
     out << "}\n"
 	<< "} // end of extern \"C\"\n";
     out.close();
-    this->writeInputFileExample(mb,fd);
+    this->writeInputFileExample(mb,fd,true);
   } // end of AbaqusInterface::endTreatment
   
   void 
@@ -629,32 +628,42 @@ namespace mfront{
 						    const Hypothesis h,
 						    const BehaviourDescription& mb) const
   {
+    auto do_nothing = [&out](){
+      out << "static_cast<void>(ABAQUSDR);\n";
+    };
+    if((mb.getSymmetryType()==mfront::ORTHOTROPIC)||
+       (mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+      do_nothing();
+      return;
+    }
+    // checking if there are variables that need to be rotated
     const auto& d = mb.getBehaviourData(h);
     bool b = false; // have persistent variables that have to be updated
     for(const auto& v:d.getPersistentVariables()){
-	const auto flag = this->getTypeFlag(v.type);
-	if((flag==SupportedTypes::Stensor)||
-	   (flag==SupportedTypes::Tensor)){
-	  b = true;
-	  break;
-	}
+      const auto flag = this->getTypeFlag(v.type);
+      if((flag==SupportedTypes::Stensor)||
+	 (flag==SupportedTypes::Tensor)){
+	b = true;
+	break;
+      }
     }
     if(!b){
-      out << "static_cast<void>(ABAQUSDR);\n";
-    } else {
-      out << "const tfel::math::tmatrix<3u,3u,real> abaqus_dr = {ABAQUSDR[0],ABAQUSDR[1],ABAQUSDR[2],\n"
-             "                                                   ABAQUSDR[3],ABAQUSDR[4],ABAQUSDR[5],\n"
-             "                                                   ABAQUSDR[6],ABAQUSDR[7],ABAQUSDR[8]};\n";
-      for(const auto& v:d.getPersistentVariables()){
-	const auto flag = this->getTypeFlag(v.type);
-	if((flag==SupportedTypes::Stensor)||
-	   (flag==SupportedTypes::Tensor)){
-	  if(v.arraySize==1u){
-	    out << "this->" << v.name << ".changeBasis(abaqus_dr);\n";
-	  } else {
-	    for(unsigned short i=0;i!=v.arraySize;++i){
-	      out << "this->" << v.name << "[" << i << "].changeBasis(abaqus_dr);\n";
-	    }
+      do_nothing();
+      return;
+    }
+    // rotate variables
+    out << "const tfel::math::tmatrix<3u,3u,real> abaqus_dr = {ABAQUSDR[0],ABAQUSDR[1],ABAQUSDR[2],\n"
+      "                                                   ABAQUSDR[3],ABAQUSDR[4],ABAQUSDR[5],\n"
+      "                                                   ABAQUSDR[6],ABAQUSDR[7],ABAQUSDR[8]};\n";
+    for(const auto& v:d.getPersistentVariables()){
+      const auto flag = this->getTypeFlag(v.type);
+      if((flag==SupportedTypes::Stensor)||
+	 (flag==SupportedTypes::Tensor)){
+	if(v.arraySize==1u){
+	  out << "this->" << v.name << ".changeBasis(abaqus_dr);\n";
+	} else {
+	  for(unsigned short i=0;i!=v.arraySize;++i){
+	    out << "this->" << v.name << "[" << i << "].changeBasis(abaqus_dr);\n";
 	  }
 	}
       }

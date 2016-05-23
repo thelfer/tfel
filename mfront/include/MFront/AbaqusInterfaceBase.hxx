@@ -94,10 +94,18 @@ namespace mfront{
      */
     virtual std::set<tfel::material::ModellingHypothesis::Hypothesis>
     getModellingHypothesesToBeTreated(const BehaviourDescription&) const override;
-
+    /*!
+     * \return the input file example
+     * \param[in] mb: behaviour description
+     * \param[in] fd: file description
+     * \param[in] b: if true, write the example for
+     * Abaqus-Standard. If false, write the example for
+     * Abaqus-Explicit
+     */
     virtual void 
     writeInputFileExample(const BehaviourDescription&,
-			  const FileDescription&) const;
+			  const FileDescription&,
+			  const bool) const;
     
     virtual void
     writeDepvar(std::ostream&,int&,

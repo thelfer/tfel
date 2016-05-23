@@ -287,17 +287,16 @@ namespace abaqus
     } // end of checkNPROPS
       
     TFEL_ABAQUS_INLINE2 static void
-      checkNSTATV(const AbaqusInt NSTATV)
+    checkNSTATV(const AbaqusInt NSTATV)
     {
       typedef Behaviour<H,AbaqusReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const unsigned short nstatv  = Traits::internal_variables_nb;
-      const unsigned short NSTATV_ = nstatv == 0 ? 1u : nstatv;
       const bool is_defined_       = Traits::is_defined;
       //Test if the nb of state variables matches Behaviour requirements
-      if((NSTATV_!=NSTATV)&&is_defined_){
+      if((nstatv!=NSTATV)&&is_defined_){
 	throwUnMatchedNumberOfStateVariables(Traits::getName(),
-					     NSTATV_,NSTATV);
+					     nstatv,NSTATV);
       }
     } // end of checkNSTATV
       

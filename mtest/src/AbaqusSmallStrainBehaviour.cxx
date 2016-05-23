@@ -84,9 +84,6 @@ namespace mtest
     // using a local copy of internal state variables to handle the
     // case where s.iv0 is empty
     copy(s.iv0.begin(),s.iv0.end(),wk.ivs.begin());
-    if(s.iv0.empty()){
-      wk.ivs[0] = real(0);
-    }
     const auto nstatv = static_cast<AbaqusInt>(wk.ivs.size());
     // rotation matrix, set to identity
     const tmatrix<3u,3u,real> drot = {1,0,0,

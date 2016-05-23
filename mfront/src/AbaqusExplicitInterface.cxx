@@ -31,7 +31,7 @@ namespace mfront{
     std::ofstream out;
     MFrontLockGuard lock;
     for(const std::string f: {"vumat-sp.cpp","vumat-dp.cpp"}){
-      out.open("abaqus/"+f);
+      out.open("abaqus-explicit/"+f);
       if(out){
 	const auto root = tfel::getInstallPath();
 	const auto fn = root+"/share/doc/mfront/abaqus/"+f;
@@ -256,7 +256,7 @@ namespace mfront{
     // output directories
     tfel::system::systemCall::mkdir("include/MFront");
     tfel::system::systemCall::mkdir("include/MFront/Abaqus");
-    tfel::system::systemCall::mkdir("abaqus");
+    tfel::system::systemCall::mkdir("abaqus-explicit");
     copyVUMATFiles();
     // header
     auto fname = "abaqusexplicit"+name+".hxx";
@@ -420,7 +420,7 @@ namespace mfront{
     }
     out << "} // end of extern \"C\"\n";
     out.close();
-    this->writeInputFileExample(mb,fd);
+    this->writeInputFileExample(mb,fd,false);
   }
 
   static void writeAbaqusExplicitDataInitialisation(std::ostream& out,

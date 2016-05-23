@@ -48,6 +48,9 @@ namespace mfront{
    * - `NoGenericTangentOperator`. If this parameter is given, the
    *   generic computation of the tangent operator will not be
    *   provided.
+   * - `NoGenericPredictionOperator`. If this parameter is given, the
+   *   generic computation of the prediction operator will not be
+   *   provided.
    */
   struct StandardElasticityBrick
     : public BehaviourBrickBase
@@ -110,6 +113,11 @@ namespace mfront{
      * \param[in] d: local data structure
      */
     virtual void addGenericTangentOperatorSupport(const LocalDataStructure&) const;
+    /*!
+     * \brief add the generic prediction operator computation
+     * \param[in] d: local data structure
+     */
+    virtual void addGenericPredictionOperatorSupport(const LocalDataStructure&) const;
     /*! 
      * \brief declare the compute elastic prediction method
      * \param[in] d: local data structure
@@ -117,8 +125,10 @@ namespace mfront{
     virtual void declareComputeElasticPredictionMethod(const LocalDataStructure&) const;
     //! plane stress support; 
     bool pss = true;
-    //! generic tangent operator support support
+    //! generic prediction operator support
     bool gto = true;
+    //! generic tangent operator support
+    bool gpo = true;
   }; // end of struct StandardElasticityBrick
 
 } // end of namespace mfront

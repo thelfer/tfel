@@ -60,6 +60,9 @@ namespace mfront{
       } else if(pp->first=="NoGenericTangentOperator"){
 	this->checkThatParameterHasNoValue(*pp);
 	this->gto = false;
+      } else if(pp->first=="NoGenericPredictionOperator"){
+	this->checkThatParameterHasNoValue(*pp);
+	this->gpo = false;
       } else {
 	throw_if(true,"unsupported parameter '"+pp->first+"'");
       }
@@ -128,8 +131,12 @@ namespace mfront{
     }
     // declaring the computeElasticPrediction member
     this->declareComputeElasticPredictionMethod(d);
+    // prediction operator
+    if(this->gpo){
+      this->addGenericPredictionOperatorSupport(d);
+    }
     // tangent operator
-    if(gto){
+    if(this->gto){
       this->addGenericTangentOperatorSupport(d);
     }
     // implicit equation associated with the elastic strain
@@ -535,8 +542,8 @@ namespace mfront{
 	"}";
     } else {
       if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-	const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
-	const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
+	const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda_tdt";
+	const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu_tdt";
 	tangentOperator.code =
 	  "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
 	  "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,"+lambda+","+mu+");\n";
@@ -579,6 +586,71 @@ namespace mfront{
 			  true,true);
     this->bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		     BehaviourData::ComputeTangentOperator,
+		     tangentOperator,BehaviourData::CREATEORAPPEND,
+		     BehaviourData::AT_BEGINNING);
+  }
+
+  void
+  StandardElasticityBrick::addGenericPredictionOperatorSupport(const LocalDataStructure& d) const{
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("StandardElasticityBrick::"
+				     "addGenericPredictionOperatorSupport: "+m));}
+    };
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
+    CodeBlock tangentOperator;
+    // modelling hypotheses supported by the behaviour
+    const auto bmh = bd.getModellingHypotheses();
+    if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
+       (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
+      const bool agps = bmh.count(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=0;
+      const bool ps   = bmh.count(ModellingHypothesis::PLANESTRESS)!=0;
+      if(agps || ps){
+	if(this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
+	  if(!this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
+	    this->bd.setAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,true,false);
+	  }
+	  throw_if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresUnAlteredStiffnessTensor),
+		   "genertic tangent operator support for "
+		   "plane stress hypotheses requires the use of an unaltered stiffness tensor");
+	}
+      }
+      const std::string D = this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false) ?
+	"this->D" : "this->D_tdt";
+      tangentOperator.code =
+	"if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
+	"  this->Dt = "+D+";\n"
+	"} else {\n"
+	"  return FAILURE;\n"
+	"}";
+    } else {
+      if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
+	const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda_tdt";
+	const std::string mu     = d.contains(uh,"mu")     ? "this->sebdata.mu"     : "this->mu_tdt";
+	tangentOperator.code =
+	  "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
+	  "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,"+lambda+","+mu+");\n"
+	  "} else {\n"
+	  "  return FAILURE;\n"
+	  "}";
+      } else if(this->bd.getElasticSymmetryType()==mfront::ORTHOTROPIC){
+	throw_if(!this->bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false),
+		 "orthotropic behaviour shall require the stiffness tensor");
+	tangentOperator.code =
+	  "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
+	  "  this->Dt = this->D_tdt;\n"
+	  "} else {\n"
+	  "  return FAILURE;\n"
+	  "}";
+      } else {
+	throw_if(true,"unsupported elastic symmetry type");
+      }
+    }
+    this->bd.setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+			  BehaviourData::hasPredictionOperator,
+			  true,true);
+    this->bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		     BehaviourData::ComputePredictionOperator,
 		     tangentOperator,BehaviourData::CREATEORAPPEND,
 		     BehaviourData::AT_BEGINNING);
   }
