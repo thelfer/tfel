@@ -783,16 +783,17 @@ namespace mfront{
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name));
     if(h==MH::PLANESTRESS){
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
-      out << "const " << t << " ezz_old = "
-	  << "stateOld[i+" << v.second.getValueForDimension(2) << "(*nblock)];\n"
+      out << "constexpr const " << t << " zero = " << t <<  "(0);"
+	  << "const " << t << " ezz_old = "
+	  << "stateOld[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
 	  << "stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
-	  << "                              0,cste*(*(stretchOld+i+2*(*nblock)))};\n"
+	  << "                              zero,cste*(*(stretchOld+i+2*(*nblock)))};\n"
 	  << "stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
-	  << "                              0,cste*(*(stretchNew+i+2*(*nblock)))};\n"
+	  << "                              zero,cste*(*(stretchNew+i+2*(*nblock)))};\n"
 	  << "const stensor<2u," << t << "> eto  = (square(U0)-stensor<2u," << t << ">::Id)/2;\n"
 	  << "const stensor<2u," << t << "> deto = (square(U1)-stensor<2u," << t << ">::Id())/2-eto;\n\n"
-	  << "const stensor<2u," << t << "> s    = {*(stressOld+i),*(stressOld+i+*nblock),\n"
-	  << "                                      0,cste*(*(stressOld+i+2*(*nblock)))};\n"
+	  << "stensor<2u," << t << "> s    = {*(stressOld+i),*(stressOld+i+*nblock),\n"
+	  << "                                zero,cste*(*(stressOld+i+2*(*nblock)))};\n"
 	// on affecte ezz à U0, sa valeur pour U1 étant inconnue à ce moment (ne sert à rien pour le calcul de eto et deto
 	  << "U0[2] = std::sqrt(1+2*ezz_old);\n";
     } else if (h==MH::AXISYMMETRICAL){
@@ -829,8 +830,8 @@ namespace mfront{
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
       if(v.first){
 	out << "const " << t << " ezz_new = "
-	    << "stateNew[i+" << v.second.getValueForDimension(2) << "(*nblock)];\n"
-	    << "U1[2] = std::sqrt(1+2*ezz_new);";
+	    << "stateNew[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
+	    << "U1[2] = std::sqrt(1+2*ezz_new);\n";
       } else {
 	// no axial strain
 	out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
@@ -933,12 +934,13 @@ namespace mfront{
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name));
     auto dime = (h==MH::TRIDIMENSIONAL) ? "3u" : "2u";
     if(h==MH::PLANESTRESS){
-      out << "stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
-	  << "                              0,cste*(*(stretchOld+i+2*(*nblock)))};\n"
+      out << "constexpr const " << t << " zero = " << t <<  "(0);"
+	  << "stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
+	  << "                              zero,cste*(*(stretchOld+i+2*(*nblock)))};\n"
 	  << "stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
-	  << "                              0,cste*(*(stretchNew+i+2*(*nblock)))};\n"
-	  << "const stensor<2u," << t << "> s    = {*(stressOld+i),*(stressOld+i+*nblock),\n"
-	  << "                                      0,cste*(*(stressOld+i+2*(*nblock)))};\n";
+	  << "                              zero,cste*(*(stretchNew+i+2*(*nblock)))};\n"
+	  << "stensor<2u," << t << "> s    = {*(stressOld+i),*(stressOld+i+*nblock),\n"
+	  << "                                zero,cste*(*(stressOld+i+2*(*nblock)))};\n";
     } else if (h==MH::AXISYMMETRICAL){
       out << "const stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
 	  << "                                    *(stretchOld+i+2*(*nblock)),cste*(*(stretchOld+i+3*(*nblock)))};\n"
@@ -970,7 +972,7 @@ namespace mfront{
       // on affecte ezz à U0, sa valeur pour U1 étant inconnue à ce moment (ne sert à rien pour le calcul de eto et deto
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
       out << "const " << t << " ezz_old = "
-	  << "stateOld[i+" << v.second.getValueForDimension(2) << "(*nblock)];\n"
+	  << "stateOld[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
 	  << "U0[2] = std::sqrt(1+2*ezz_old);\n";
     }
     out << "const auto iP0 = invert(P0);\n"
@@ -987,8 +989,8 @@ namespace mfront{
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
       if(v.first){
 	out << "const " << t << " ezz_new = "
-	    << "stateNew[i+" << v.second.getValueForDimension(2) << "(*nblock)];\n"
-	    << "U1[2] = std::sqrt(1+2*ezz_new);";
+	    << "stateNew[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
+	    << "U1[2] = std::sqrt(1+2*ezz_new);\n";
       } else {
 	// no axial strain
 	out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
