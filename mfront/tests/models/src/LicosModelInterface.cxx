@@ -1199,6 +1199,7 @@ namespace mfront{
     this->srcFile << "using namespace pleiades::mesh;\n";
     this->srcFile << "using namespace pleiades::field;\n";
     this->srcFile << "using namespace pleiades::glossary;\n";
+    this->srcFile << "using std::shared_ptr;\n";
     this->srcFile << "vector<string>::const_iterator ptr;\n";
     this->srcFile << "this->computeMaterialProperties();\n";
     // do we need time increment ?
@@ -1465,7 +1466,9 @@ namespace mfront{
     this->srcFile << "using namespace boost;\n";
     this->srcFile << "using namespace pleiades::glossary;\n";
     this->srcFile << "using namespace pleiades::field;\n";
+    this->srcFile << "using std::shared_ptr;\n";
     this->srcFile << "typedef UniformScalarStateVariableDescription USSVD;\n";
+    this->srcFile << "typedef std::shared_ptr<USSVD> USSVDPtr;\n";
     this->srcFile << "vector<string>::const_iterator ptr;\n";
     for(i=0,p=mdata.functions.begin();p!=mdata.functions.end();++p,++i){
       for(p2=p->modifiedVariables.begin();p2!=p->modifiedVariables.end();++p2){
@@ -1479,7 +1482,7 @@ namespace mfront{
 	  this->srcFile << "if(md.containsStateVariable(" <<  this->getVariableName(*p2,mdata) << ")){\n";
 	  this->srcFile << "shared_ptr<StateVariableDescription> tmp = md.getStateVariable("<<  this->getVariableName(*p2,mdata) << ");\n";
 	  this->srcFile << "if(!this->outputsInitialValues[" << this->getVariableName(*p2,mdata)
-			<< "].insert(make_pair(*ptr,tmp)).second){\n";
+			<< "].insert({*ptr,tmp}).second){\n";
 	  this->srcFile << "string msg(\"" << mdata.className << "::initializeOutputsVariablesInitialValues : \");\n";
 	  this->srcFile << "msg += \"output '\";\n";
 	  this->srcFile << "msg += " <<  this->getVariableName(*p2,mdata) << ";\n";
@@ -1488,11 +1491,11 @@ namespace mfront{
 	  this->srcFile << "}\n";
 	  this->srcFile << "} else {\n";
 	  this->srcFile << "if(!this->outputsInitialValues[" << this->getVariableName(*p2,mdata)
-			<< "].insert(make_pair(*ptr,new USSVD("
+			<< "].insert({*ptr,std::make_shared<USSVD>("
 			<< this->getVariableName(*p2,mdata)
 			<< ","
 			<< p3->second;
-	  this->srcFile << "))).second){\n";
+	  this->srcFile << ")}).second){\n";
 	  this->srcFile << "string msg(\"" << mdata.className << "::initializeOutputsVariablesInitialValues : \");\n";
 	  this->srcFile << "msg += \"output '\";\n";
 	  this->srcFile << "msg += " <<  this->getVariableName(*p2,mdata) << ";\n";
@@ -1502,11 +1505,11 @@ namespace mfront{
 	  this->srcFile << "}\n";
 	  this->srcFile << "} else {\n";
 	  this->srcFile << "if(!this->outputsInitialValues[" << this->getVariableName(*p2,mdata)
-			<< "].insert(make_pair(*ptr,new USSVD("
+			<< "].insert({*ptr,std::make_shared<USSVD>("
 			<< this->getVariableName(*p2,mdata)
 			<< ","
 			<< p3->second;
-	  this->srcFile << "))).second){\n";
+	  this->srcFile << ")}).second){\n";
 	  this->srcFile << "string msg(\"" << mdata.className << "::initializeOutputsVariablesInitialValues : \");\n";
 	  this->srcFile << "msg += \"output '\";\n";
 	  this->srcFile << "msg += " <<  this->getVariableName(*p2,mdata) << ";\n";
@@ -1527,7 +1530,7 @@ namespace mfront{
 	  this->srcFile << "if(md.containsStateVariable(" <<  this->getVariableName(*p2,mdata) << ")){\n";
 	  this->srcFile << "shared_ptr<StateVariableDescription> tmp = md.getStateVariable("<<  this->getVariableName(*p2,mdata) << ");\n";
 	  this->srcFile << "if(!this->outputsInitialValues[" << this->getVariableName(*p2,mdata)
-			<< "].insert(make_pair(*ptr,tmp)).second){\n";
+			<< "].insert({*ptr,tmp}).second){\n";
 	  this->srcFile << "string msg(\"" << mdata.className << "::initializeOutputsVariablesInitialValues : \");\n";
 	  this->srcFile << "msg += \"output '\";\n";
 	  this->srcFile << "msg += " << this->getVariableName(*p2,mdata) << ";\n";

@@ -16,6 +16,7 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include<cmath>
 #include<cstdlib>
 #include<cassert>
 #include<cstring>
@@ -39,7 +40,7 @@ static void read (void)
   c[4]='\0';
   assert(strcmp(c,"toto")==0);
   r >> t;
-  assert(abs(t-12.)<1.e-14);
+  assert(std::abs(t-12.)<1.e-14);
   r.read(c,4u);
   c[4]='\0';
   assert(strcmp(c,"tutu")==0);
