@@ -11,6 +11,7 @@
 #include<map>
 #include<mutex>
 #include<string>
+#include<vector>
 #include<utility>
 #include<cstring>
 #include<stdexcept>
@@ -165,15 +166,16 @@ static umatptr load(const char* n){
     std::string name;
     umatptr ptr;
   }; // end of UmatPtrHandler
+  using UmatPtrContainer = std::vector<UmatPtrHandler>;
   static std::mutex m;
   static LibrariesHandler libraries;
-  static std::vector<UmatPtrHandler> fcts;
+  static UmatPtrContainer fcts;
   std::lock_guard<std::mutex> lock(m);
   auto report = [&n](const std::string& ln,
 		     const std::string& fn,
 		     const std::string& en){
     std::cerr << "umat::load : could not load behaviour '"
-    << std::string{n,n+80} << '\'';
+    << std::string(n,n+80) << '\'';
     if(!ln.empty()){
       std::cerr << "\nTried library '" << ln << '\'';
     }
@@ -188,7 +190,7 @@ static umatptr load(const char* n){
   try{
     auto p = std::find_if(fcts.begin(),fcts.end(),[&n](const UmatPtrHandler& h){
 	return ::strncmp(h.name.data(),n,std::min(h.name.size(),
-						  std::string::size_type{79}))==0;
+						  std::string::size_type(79)))==0;
       });
     if(p==fcts.end()){
       const auto ne = n+80;
@@ -197,13 +199,13 @@ static umatptr load(const char* n){
 	report("","","");
 	return nullptr;
       }
-      auto lib = "lib"+std::string{n,pos}+".so";
+      auto lib = "lib"+std::string(n,pos)+".so";
       auto pos2 = std::find(pos+1,ne,' ');
       if(pos2-pos-1<=0){
 	report("","","");
 	return nullptr;
       }
-      auto fct = std::string{pos+1,pos2};
+      auto fct = std::string(pos+1,pos2);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       libptr l = ::LoadLibrary(TEXT (lib.c_str()));
 #else
@@ -213,7 +215,7 @@ static umatptr load(const char* n){
 	report(lib,"",::dlerror());
 	return nullptr;
       }
-      libraries.insert({lib,l});
+      libraries.insert(std::make_pair(lib,l));
       union {
 	void *ptr;
 	umatptr f;
