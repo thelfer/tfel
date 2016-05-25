@@ -28,33 +28,33 @@ namespace mfront{
   private:
 
     virtual void
-    setOutputFileNames(const ModelData&) override;
+    setOutputFileNames(const ModelDescription&) override;
 
     virtual void
     writeGetConstantMaterialProperty(const VarHandler&,
-				     const ModelData&) override;
+				     const ModelDescription&) override;
 
     virtual std::string
     getApplicationName(void) const override;
 
     virtual void
-    writeInitializeMethod(const ModelData&) override;
+    writeInitializeMethod(const ModelDescription&) override;
 
     virtual void
     writeSpecificPrivateMethodDeclaration(const FileDescription&,
-					  const ModelData&) override;
+					  const ModelDescription&) override;
 
     virtual void
-    generateDomainsList(const ModelData&) override;
+    generateDomainsList(const ModelDescription&) override;
 
     virtual void
     buildDomainName() override;
 
     virtual bool
-    initializeDefaultDomainListInConstrutor(const ModelData&) const override;
+    initializeDefaultDomainListInConstrutor(const ModelDescription&) const override;
 
     virtual void
-    writeInitializeParametersMethod(const ModelData&) override;
+    writeInitializeParametersMethod(const ModelDescription&) override;
 
   }; // end of class MFrontGerminalModelInterface
 

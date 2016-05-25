@@ -23,7 +23,7 @@
 #include"MFront/MFrontConfig.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
-#include"MFront/ModelData.hxx"
+#include"MFront/ModelDescription.hxx"
 
 
 namespace mfront{
@@ -33,7 +33,7 @@ namespace mfront{
   // forward declartion
   struct TargetsDescription;
   // forward declartion
-  struct ModelData;
+  struct ModelDescription;
   
   struct MFRONT_VISIBILITY_EXPORT AbstractModelInterface
   {
@@ -57,14 +57,14 @@ namespace mfront{
      * \param[in]  md : model description
      */
     virtual void getTargetsDescription(TargetsDescription&,
-				       const ModelData&) = 0;
+				       const ModelDescription&) = 0;
     /*!
      * \param pdata : generic data
      * \param data  : model data
      */
     virtual
     void writeOutputFiles(const FileDescription&,
-			  const ModelData&) = 0;
+			  const ModelDescription&) = 0;
     //! desctructor
     virtual ~AbstractModelInterface();
 

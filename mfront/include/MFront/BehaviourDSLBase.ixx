@@ -37,6 +37,7 @@ namespace mfront{
   {
     this->registerNewCallBack("@DSL",&Child::treatParser);
     this->registerNewCallBack("@Parser",&Child::treatParser);
+    this->registerNewCallBack("@Model",&Child::treatModel);
     this->registerNewCallBack("@Brick",&Child::treatBrick);
     this->registerNewCallBack("@ModellingHypothesis",
 			      &Child::treatModellingHypothesis);

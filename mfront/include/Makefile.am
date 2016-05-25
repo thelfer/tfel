@@ -43,7 +43,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                               \
 			MFront/BehaviourInterfaceProxy.ixx              \
 			MFront/BehaviourInterfaceFactory.hxx            \
 			MFront/AbstractModelInterface.hxx               \
-			MFront/ModelData.hxx                            \
+			MFront/ModelDescription.hxx                            \
 			MFront/ModelInterfaceProxy.hxx                  \
 			MFront/ModelInterfaceProxy.ixx                  \
 			MFront/ModelInterfaceFactory.hxx                \

@@ -119,7 +119,7 @@ namespace mfront{
 
   void
   MFrontPleiadesModelInterfaceBase::writeOutputFiles(const FileDescription& pdata,
-						     const ModelData& mdata)
+						     const ModelDescription& mdata)
   {
     using namespace std;
     if(mdata.className.empty()){
@@ -136,7 +136,7 @@ namespace mfront{
 
   void
   MFrontPleiadesModelInterfaceBase::generateOutputFiles(const FileDescription& pdata,
-							const ModelData& data)
+							const ModelDescription& data)
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -158,12 +158,12 @@ namespace mfront{
 
   void
   MFrontPleiadesModelInterfaceBase::writeHeaderFile(const FileDescription& pdata,
-						    const ModelData& mdata)
+						    const ModelDescription& mdata)
   {
     using namespace std;
     VarContainer::const_iterator p;
     StaticVarContainer::const_iterator p2;
-    ModelData::FunctionContainer::const_iterator p3;
+    ModelDescription::FunctionContainer::const_iterator p3;
     set<string>::iterator p4;
     this->headerFile << "/*!" << endl;
     this->headerFile << "* \\file   " << this->headerFileName  << endl;
@@ -362,7 +362,7 @@ namespace mfront{
   } // end of MFrontPleiadesModelInterfaceBase::getGenTypeMethod
 
   static std::pair<std::string,unsigned short>
-  getFieldAndDepthFromFieldName(const ModelData& data,
+  getFieldAndDepthFromFieldName(const ModelDescription& data,
 				const std::string& n){
     // This is a silly hack
     using namespace std;
@@ -403,13 +403,13 @@ namespace mfront{
 
   void
   MFrontPleiadesModelInterfaceBase::writeSrcFile(const FileDescription& pdata,
-						 const ModelData& mdata)
+						 const ModelDescription& mdata)
   {
     using namespace std;
     VarContainer::const_iterator p;
     map<string,string>::const_iterator p4;
     StaticVarContainer::const_iterator p10;
-    ModelData::FunctionContainer::const_iterator p11;
+    ModelDescription::FunctionContainer::const_iterator p11;
     set<string>::const_iterator p12;
     this->srcFile << "/*!" << endl;
     this->srcFile << "* \\file   " << this->srcFileName  << endl;
@@ -769,7 +769,7 @@ namespace mfront{
 
   void
   MFrontPleiadesModelInterfaceBase::getTargetsDescription(TargetsDescription& td,
-							  const ModelData&  md)
+							  const ModelDescription&  md)
   {
     std::string lib;
     if(md.library.empty()){
@@ -804,7 +804,7 @@ namespace mfront{
 
   void
   MFrontPleiadesModelInterfaceBase::writeGetGlobalParameter(const VarHandler& v,
-							    const ModelData& mdata)
+							    const ModelDescription& mdata)
   {
     using namespace std;
     string name;
@@ -835,7 +835,7 @@ namespace mfront{
 
   void
   MFrontPleiadesModelInterfaceBase::writeGetConstantMaterialProperty(const VarHandler& v,
-								     const ModelData& mdata)
+								     const ModelDescription& mdata)
   {
     using namespace std;
     string name;
@@ -865,13 +865,13 @@ namespace mfront{
   } // end of MFrontPleiadesModelInterfaceBase::writeGetConstantMaterialProperty
 
   void
-  MFrontPleiadesModelInterfaceBase::writeFunctionCall(const ModelData& data,
-						      const std::vector<ModelData::Function>& functions)
+  MFrontPleiadesModelInterfaceBase::writeFunctionCall(const ModelDescription& data,
+						      const std::vector<ModelDescription::Function>& functions)
   {
     using namespace std;
     set<string> usedVariables;
     set<string> modifiedVariables;
-    vector<ModelData::Function>::const_iterator p;
+    vector<ModelDescription::Function>::const_iterator p;
     set<string>::const_iterator p2;
     set<string>::const_iterator p3;
     usedVariables.clear();
@@ -972,7 +972,7 @@ namespace mfront{
   }
 
   void
-  MFrontPleiadesModelInterfaceBase::generateDomainsList(const ModelData& data)
+  MFrontPleiadesModelInterfaceBase::generateDomainsList(const ModelDescription& data)
   {
     using namespace std;
     set<string>::const_iterator p;
@@ -987,7 +987,7 @@ namespace mfront{
   } // end of MFrontPleiadesModelInterfaceBase::generateDomainsList
 
   void
-  MFrontPleiadesModelInterfaceBase::writeInitializeMethod(const ModelData& mdata)
+  MFrontPleiadesModelInterfaceBase::writeInitializeMethod(const ModelDescription& mdata)
   {
     this->srcFile << "bool\n"
 		  << mdata.className 
@@ -1001,7 +1001,7 @@ namespace mfront{
   } // end of MFrontPleiadesModelInterfaceBase::writeInitializeMethod
 
   void
-  MFrontPleiadesModelInterfaceBase::writeInitializeParametersMethod(const ModelData& mdata)
+  MFrontPleiadesModelInterfaceBase::writeInitializeParametersMethod(const ModelDescription& mdata)
   {
     this->srcFile << "bool\n"
 		  << mdata.className 
@@ -1019,7 +1019,7 @@ namespace mfront{
   } // end of MFrontPleiadesModelInterfaceBase::writeInitializeParametersMethod
 
   void
-  MFrontPleiadesModelInterfaceBase::writeInitializeOutputMethod(const ModelData& mdata)
+  MFrontPleiadesModelInterfaceBase::writeInitializeOutputMethod(const ModelDescription& mdata)
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -1062,7 +1062,7 @@ namespace mfront{
   } // end of MFrontPleiadesModelInterfaceBase::writeInitializeOutputMethod
 
   void
-  MFrontPleiadesModelInterfaceBase::writeInitializeInputMethod(const ModelData& mdata)
+  MFrontPleiadesModelInterfaceBase::writeInitializeInputMethod(const ModelDescription& mdata)
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -1099,11 +1099,11 @@ namespace mfront{
 
   void
   MFrontPleiadesModelInterfaceBase::writeSpecificPrivateMethodDeclaration(const FileDescription&,
-									  const ModelData&)
+									  const ModelDescription&)
   {} // end of MFrontPleiadesModelInterfaceBase::writeSpecificPrivateMethodDeclaration
 
   bool
-  MFrontPleiadesModelInterfaceBase::initializeDefaultDomainListInConstrutor(const ModelData&) const
+  MFrontPleiadesModelInterfaceBase::initializeDefaultDomainListInConstrutor(const ModelDescription&) const
   {
     return true;
   } // end of MFrontPleiadesModelInterfaceBase::initializeDefaultDomainListInConstrutor

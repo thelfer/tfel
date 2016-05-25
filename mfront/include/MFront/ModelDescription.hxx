@@ -1,5 +1,5 @@
 /*! 
- * \file   mfront/include/MFront/ModelData.hxx
+ * \file   mfront/include/MFront/ModelDescription.hxx
  * \brief
  * \author Helfer Thomas
  * \brief  12 jun 2010
@@ -26,7 +26,7 @@
 namespace mfront
 {
 
-  struct MFRONT_VISIBILITY_EXPORT ModelData
+  struct MFRONT_VISIBILITY_EXPORT ModelDescription
   {
 
     struct MFRONT_VISIBILITY_EXPORT Function
@@ -50,12 +50,12 @@ namespace mfront
 
     using FunctionContainer=std::vector<Function> ;
 
-    ModelData();
-    ModelData(const ModelData&);
-    ModelData(ModelData&&);
-    ModelData& operator=(const ModelData&);
-    ModelData& operator=(ModelData&&);
-    ~ModelData();
+    ModelDescription();
+    ModelDescription(const ModelDescription&);
+    ModelDescription(ModelDescription&&);
+    ModelDescription& operator=(const ModelDescription&);
+    ModelDescription& operator=(ModelDescription&&);
+    ~ModelDescription();
 
     FunctionContainer functions;
     VariableDescriptionContainer outputs;
@@ -96,7 +96,7 @@ namespace mfront
     std::map<std::string,unsigned short> depths;
     //! list of material laws used
     std::vector<std::string> materialLaws;
-  }; // end of struct ModelData
+  }; // end of struct ModelDescription
 
 } // end of namespace mfront
 

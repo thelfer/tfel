@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTMODELPARSERCOMMON_H_
-#define LIB_MFRONTMODELPARSERCOMMON_H_ 
+#ifndef LIB_MFRONT_MFRONTMODELDSLCOMMON_H_
+#define LIB_MFRONT_MFRONTMODELDSLCOMMON_H_ 
 
 #include<set>
 #include<map>
@@ -23,7 +23,7 @@
 
 #include"MFront/DSLBase.hxx"
 #include"MFront/AbstractDSL.hxx"
-#include"MFront/ModelData.hxx"
+#include"MFront/ModelDescription.hxx"
 
 namespace mfront{
 
@@ -32,10 +32,10 @@ namespace mfront{
 
   struct MFRONT_VISIBILITY_EXPORT ModelDSLCommon
     : public DSLBase,
-      protected ModelData
+      protected ModelDescription
   {
     static bool
-    is(const ModelData&,
+    is(const ModelDescription&,
        const VariableDescriptionContainer&,
        const std::string&);
     //! constructor
@@ -117,65 +117,49 @@ namespace mfront{
     virtual void
     treatLibrary(void);
 
-    void
-    treatModel(void);
+    virtual void treatModel(void);
 
-    void
-    treatDomain(void);
+    virtual void treatDomain(void);
 
-    void
-    treatDomains(void);
+    virtual void treatDomains(void);
 
     virtual void
     treatUnknownKeyword(void) override;
 
-    void
-    treatBounds(void);
+    virtual void treatBounds(void);
+    
+    virtual void treatPhysicalBounds(void);
 
-    void
-    treatPhysicalBounds(void);
+    virtual void treatConstantMaterialProperty(void);
 
-    void
-    treatConstantMaterialProperty(void);
+    virtual void treatConstantMaterialPropertyMethod(void);
 
-    void
-    treatConstantMaterialPropertyMethod(void);
+    virtual void treatFunction(void);
 
-    void
-    treatFunction(void);
+    virtual void treatOutput(void);
 
-    void
-    treatOutput(void);
+    virtual void treatOutputMethod(void);
 
-    void
-    treatOutputMethod(void);
+    virtual void treatInput(void);
 
-    void
-    treatInput(void);
+    virtual void treatInputMethod(void);
 
-    void
-    treatInputMethod(void);
+    virtual void treatParameter(void);
 
-    void
-    treatParameter(void);
+    virtual void treatLocalParameter(void);
 
-    void
-    treatParameterMethod(void);
+    virtual void treatParameterMethod(void);
 
-    void
-    readDefaultValue(void);
+    virtual void readDefaultValue(void);
 
-    void
-    registerBounds(std::vector<VariableBoundsDescription>&);
+    virtual void registerBounds(std::vector<VariableBoundsDescription>&);
 
-    std::pair<std::string,unsigned short>
+    virtual std::pair<std::string,unsigned short>
     decomposeVariableName(const std::string&) const;
 
-    bool
-    isOutputVariable(const std::string&) const;
+    virtual bool isOutputVariable(const std::string&) const;
 
-    bool
-    isInputVariable(const std::string&) const;
+    virtual bool isInputVariable(const std::string&) const;
 
     std::map<std::string,
 	     std::shared_ptr<AbstractModelInterface>> interfaces;
@@ -185,5 +169,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* LIB_MFRONTMODELPARSERCOMMON_H_ */
+#endif /* LIB_MFRONT_MFRONTMODELDSLCOMMON_H_ */
 

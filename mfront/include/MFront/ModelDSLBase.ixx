@@ -44,6 +44,8 @@ namespace mfront{
 			      &Child::treatConstantMaterialProperty);
     this->registerNewCallBack("@Parameter",
 			      &Child::treatParameter);
+    this->registerNewCallBack("@LocalParameter",
+			      &Child::treatLocalParameter);
     this->registerNewCallBack("@ConstantMaterialProperty",
 			      &Child::treatConstantMaterialProperty);
     this->registerNewCallBack("@Domain",&Child::treatDomain);

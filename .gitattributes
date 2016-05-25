@@ -1873,7 +1873,7 @@ mfront/include/MFront/ModelDSL.hxx -text
 mfront/include/MFront/ModelDSLBase.hxx -text
 mfront/include/MFront/ModelDSLBase.ixx -text
 mfront/include/MFront/ModelDSLCommon.hxx -text
-mfront/include/MFront/ModelData.hxx -text
+mfront/include/MFront/ModelDescription.hxx -text
 mfront/include/MFront/ModelInterfaceFactory.hxx -text
 mfront/include/MFront/ModelInterfaceProxy.hxx -text
 mfront/include/MFront/ModelInterfaceProxy.ixx -text
@@ -2033,7 +2033,7 @@ mfront/src/MaterialPropertyInterfaceFactory.cxx -text
 mfront/src/MaterialPropertyParametersHandler.cxx -text
 mfront/src/ModelDSL.cxx -text
 mfront/src/ModelDSLCommon.cxx -text
-mfront/src/ModelData.cxx -text
+mfront/src/ModelDescription.cxx -text
 mfront/src/ModelInterfaceFactory.cxx -text
 mfront/src/MultipleIsotropicMisesFlowsDSL.cxx -text
 mfront/src/NewtonRaphsonSolvers.cxx -text

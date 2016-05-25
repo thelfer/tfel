@@ -259,14 +259,7 @@ namespace mfront{
       : type(v.type),
 	name(v.name),
 	ename(e)
-    {
-      const auto s = SupportedTypes{};
-      if(!s.isSupportedType(this->type)){
-	throw(std::runtime_error("StaticVariableProvider::StaticVariableProvider : "
-				 "unsupported type '"+this->type+"'"));
-      }
-    } // end of StaticVariableProvider::StaticVariableProvider
-    
+    {} // end of StaticVariableProvider::StaticVariableProvider
     
     std::string StaticVariableProvider::getVariableType(void) const {
       return this->type;

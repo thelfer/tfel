@@ -48,7 +48,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           StaticVariableDescription.cxx                          \
 		           VariableBoundsDescription.cxx                          \
 		           BehaviourDSLCommon.cxx                                 \
-		           ModelData.cxx                                          \
+		           ModelDescription.cxx                                          \
 		           ModelDSLCommon.cxx                                     \
 		           AbstractDSL.cxx                                        \
 		           AbstractBehaviourDSL.cxx                               \

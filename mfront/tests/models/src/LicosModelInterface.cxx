@@ -30,7 +30,7 @@
 #include"MFront/ModelDSLCommon.hxx"
 #include"MFront/FileDescription.hxx"
 #include"MFront/TargetsDescription.hxx"
-#include"MFront/ModelData.hxx"
+#include"MFront/ModelDescription.hxx"
 #include"MFront/ModelInterfaceProxy.hxx"
 #include"MFront/LicosModelInterface.hxx"
 
@@ -60,7 +60,7 @@ namespace mfront{
   }
 
   static std::string
-  getLibraryName(const ModelData& mdata)
+  getLibraryName(const ModelDescription& mdata)
   {
     using namespace std;
     string a = "@Application@";
@@ -75,14 +75,14 @@ namespace mfront{
   } // end of getLibraryName
 
   static bool
-  isInputVariable(const ModelData& data,
+  isInputVariable(const ModelDescription& data,
 		  const std::string& v)
   {
     return ModelDSLCommon::is(data,data.inputs,v);
   } // end of isInputVariable
 
   static std::pair<std::string,unsigned short>
-  decomposeVariableName(const ModelData& data,
+  decomposeVariableName(const ModelDescription& data,
 			const std::string& v)
   {
     using namespace std;
@@ -221,11 +221,11 @@ namespace mfront{
   
   void
   MFrontModelInterface::generateOutputFiles(const FileDescription& fdata,
-					    const ModelData& mdata)
+					    const ModelDescription& mdata)
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
-    ModelData::FunctionContainer::const_iterator p2;
+    ModelDescription::FunctionContainer::const_iterator p2;
     this->hasDefaultConstructor=true;
     if(mdata.domains.empty()){
       this->hasDefaultConstructor=false;
@@ -268,12 +268,12 @@ namespace mfront{
 
   void
   MFrontModelInterface::writeHeaderFile(const FileDescription& fdata,
-					const ModelData& mdata)
+					const ModelDescription& mdata)
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
     StaticVariableDescriptionContainer::const_iterator p2;
-    ModelData::FunctionContainer::const_iterator p3;
+    ModelDescription::FunctionContainer::const_iterator p3;
     set<string>::iterator p4;
     set<unsigned short> applyHeaders;
     set<unsigned short>::const_iterator p18;
@@ -539,13 +539,13 @@ namespace mfront{
 
   void
   MFrontModelInterface::writeSrcFile(const FileDescription& fdata,
-				     const ModelData& mdata)
+				     const ModelDescription& mdata)
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
     map<string,string>::const_iterator p4;
     StaticVariableDescriptionContainer::const_iterator p10;
-    ModelData::FunctionContainer::const_iterator p11;
+    ModelDescription::FunctionContainer::const_iterator p11;
     set<string>::const_iterator p12;
     set<string>::const_iterator p15;
     set<unsigned short> applyHeaders;
@@ -1149,6 +1149,7 @@ namespace mfront{
     this->srcFile << "using namespace pleiades::mesh;\n";
     this->srcFile << "using namespace pleiades::field;\n";
     this->srcFile << "using namespace pleiades::glossary;\n";
+    this->srcFile << "using std::shared_ptr;\n";
     this->srcFile << "vector<string>::const_iterator ptr;\n";
     this->srcFile << "this->computeMaterialProperties();\n";
     // do we need time increment ?
@@ -1297,7 +1298,7 @@ namespace mfront{
   } // end of MFrontModelInterface::writeSrcFile(void)
     
   void
-  MFrontModelInterface::writeInitializeOutputsVariablesDepths(const ModelData& mdata)
+  MFrontModelInterface::writeInitializeOutputsVariablesDepths(const ModelDescription& mdata)
   {
     using namespace std;
     this->srcFile << "void\n" << mdata.className << "::initializeOutputsVariablesDepths(void)\n{\n";
@@ -1333,10 +1334,10 @@ namespace mfront{
   } // end of MFrontModelInterface::writeInitializeOutputsVariablesDepths()
 
   void
-  MFrontModelInterface::writeInitializeConstantMaterialProperties(const ModelData& mdata)
+  MFrontModelInterface::writeInitializeConstantMaterialProperties(const ModelDescription& mdata)
   {
     using namespace std;
-    ModelData::FunctionContainer::const_iterator p;
+    ModelDescription::FunctionContainer::const_iterator p;
     set<string>::const_iterator p2;
     map<string,string>::const_iterator p3;
     unsigned int i;
@@ -1397,10 +1398,10 @@ namespace mfront{
   } // end of MFrontModelInterface::writeInitializeConstantMaterialProperties(void)
 
   void
-  MFrontModelInterface::writeInitializeOutputsVariablesInitialValues(const ModelData& mdata)
+  MFrontModelInterface::writeInitializeOutputsVariablesInitialValues(const ModelDescription& mdata)
   {
     using namespace std;
-    ModelData::FunctionContainer::const_iterator p;
+    ModelDescription::FunctionContainer::const_iterator p;
     set<string>::const_iterator p2;
     map<string,double>::const_iterator p3;
     unsigned int i;
@@ -1411,7 +1412,9 @@ namespace mfront{
     this->srcFile << "using namespace boost;\n";
     this->srcFile << "using namespace pleiades::glossary;\n";
     this->srcFile << "using namespace pleiades::field;\n";
+    this->srcFile << "using std::shared_ptr;\n";
     this->srcFile << "typedef UniformScalarStateVariableDescription USSVD;\n";
+    this->srcFile << "typedef std::shared_ptr<USSVD> USSVDPtr;\n";
     this->srcFile << "vector<string>::const_iterator ptr;\n";
     for(i=0,p=mdata.functions.begin();p!=mdata.functions.end();++p,++i){
       for(p2=p->modifiedVariables.begin();p2!=p->modifiedVariables.end();++p2){
@@ -1424,7 +1427,7 @@ namespace mfront{
 	  this->srcFile << "if(md.containsStateVariable(" <<  this->getVariableName(*p2,mdata) << ")){\n";
 	  this->srcFile << "shared_ptr<StateVariableDescription> tmp = md.getStateVariable("<<  this->getVariableName(*p2,mdata) << ");\n";
 	  this->srcFile << "if(!this->outputsInitialValues[" << this->getVariableName(*p2,mdata)
-			<< "].insert(make_pair(*ptr,tmp)).second){\n";
+			<< "].insert({*ptr,tmp}).second){\n";
 	  this->srcFile << "string msg(\"" << mdata.className << "::initializeOutputsVariablesInitialValues : \");\n";
 	  this->srcFile << "msg += \"output '\";\n";
 	  this->srcFile << "msg += " <<  this->getVariableName(*p2,mdata) << ";\n";
@@ -1433,11 +1436,11 @@ namespace mfront{
 	  this->srcFile << "}\n";
 	  this->srcFile << "} else {\n";
 	  this->srcFile << "if(!this->outputsInitialValues[" << this->getVariableName(*p2,mdata)
-			<< "].insert(make_pair(*ptr,new USSVD("
+			<< "].insert({*ptr,std::make_shared<USSVD>("
 			<< this->getVariableName(*p2,mdata)
 			<< ","
 			<< p3->second;
-	  this->srcFile << "))).second){\n";
+	  this->srcFile << ")}).second){\n";
 	  this->srcFile << "string msg(\"" << mdata.className << "::initializeOutputsVariablesInitialValues : \");\n";
 	  this->srcFile << "msg += \"output '\";\n";
 	  this->srcFile << "msg += " <<  this->getVariableName(*p2,mdata) << ";\n";
@@ -1447,11 +1450,11 @@ namespace mfront{
 	  this->srcFile << "}\n";
 	  this->srcFile << "} else {\n";
 	  this->srcFile << "if(!this->outputsInitialValues[" << this->getVariableName(*p2,mdata)
-			<< "].insert(make_pair(*ptr,new USSVD("
+			<< "].insert({*ptr,std::make_shared<USSVD>("
 			<< this->getVariableName(*p2,mdata)
 			<< ","
 			<< p3->second;
-	  this->srcFile << "))).second){\n";
+	  this->srcFile << ")}).second){\n";
 	  this->srcFile << "string msg(\"" << mdata.className << "::initializeOutputsVariablesInitialValues : \");\n";
 	  this->srcFile << "msg += \"output '\";\n";
 	  this->srcFile << "msg += " <<  this->getVariableName(*p2,mdata) << ";\n";
@@ -1472,7 +1475,7 @@ namespace mfront{
 	  this->srcFile << "if(md.containsStateVariable(" <<  this->getVariableName(*p2,mdata) << ")){\n";
 	  this->srcFile << "shared_ptr<StateVariableDescription> tmp = md.getStateVariable("<<  this->getVariableName(*p2,mdata) << ");\n";
 	  this->srcFile << "if(!this->outputsInitialValues[" << this->getVariableName(*p2,mdata)
-			<< "].insert(make_pair(*ptr,tmp)).second){\n";
+			<< "].insert({*ptr,tmp}).second){\n";
 	  this->srcFile << "string msg(\"" << mdata.className << "::initializeOutputsVariablesInitialValues : \");\n";
 	  this->srcFile << "msg += \"output '\";\n";
 	  this->srcFile << "msg += " << this->getVariableName(*p2,mdata) << ";\n";
@@ -1488,11 +1491,11 @@ namespace mfront{
   } // end of MFrontModelInterface::writeInitializeOutputsVariablesInitialValues()
 
   void
-  MFrontModelInterface::writeInitializeInputsVariablesDepths(const ModelData& mdata)
+  MFrontModelInterface::writeInitializeInputsVariablesDepths(const ModelDescription& mdata)
   {
     using namespace std;
     set<string> treatedVars;
-    ModelData::FunctionContainer::const_iterator p;
+    ModelDescription::FunctionContainer::const_iterator p;
     set<string>::const_iterator p2;
     map<string,unsigned short>::const_iterator p3;
     unsigned int i;
@@ -1546,7 +1549,7 @@ namespace mfront{
 
   std::string
   MFrontModelInterface::getVariableName(const std::string& v,
-					const ModelData& mdata) const
+					const ModelDescription& mdata) const
   {
     using namespace std;
     map<string,string>::const_iterator p;
@@ -1560,7 +1563,7 @@ namespace mfront{
 
   void
   MFrontModelInterface::writeStaticVariableInitialization(const FileDescription& fdata,
-							  const ModelData& mdata,
+							  const ModelDescription& mdata,
 							  const StaticVariableDescription& v)
   {
     using namespace std;
@@ -1610,7 +1613,7 @@ namespace mfront{
     
   void
   MFrontModelInterface::writeOutputFiles(const FileDescription& fdata,
-					 const ModelData& mdata)
+					 const ModelDescription& mdata)
   {
     using namespace std;
     if(mdata.className.empty()){
@@ -1661,7 +1664,7 @@ namespace mfront{
 
   void
   MFrontModelInterface::getTargetsDescription(TargetsDescription& td,
-					      const ModelData& md)
+					      const ModelDescription& md)
   {
     const auto lib = getLibraryName(md);
     td[lib].sources.push_back(md.className+"-@application@.cxx");

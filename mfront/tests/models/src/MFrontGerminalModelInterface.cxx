@@ -30,7 +30,7 @@ namespace mfront{
   } // end of MFrontPleiadesModelInterfaceBase::getName(void)
 
   void
-  MFrontGerminalModelInterface::setOutputFileNames(const ModelData& mdata)
+  MFrontGerminalModelInterface::setOutputFileNames(const ModelDescription& mdata)
   {
     this->headerFileName  = "Pleiades/PMetier/PModels/"+mdata.className;
     this->headerFileName += "-germinal.hxx";
@@ -46,7 +46,7 @@ namespace mfront{
 
   void
   MFrontGerminalModelInterface::writeGetConstantMaterialProperty(const VarHandler& v,
-								 const ModelData& mdata)
+								 const ModelDescription& mdata)
   {
     using namespace std;
     string name;
@@ -83,7 +83,7 @@ namespace mfront{
   } // end of MFrontGerminalModelInterface::writeGetConstantMaterialProperty
 
   void
-  MFrontGerminalModelInterface::writeInitializeMethod(const ModelData& mdata)
+  MFrontGerminalModelInterface::writeInitializeMethod(const ModelDescription& mdata)
   {
     using namespace std;
     VarContainer::const_iterator p;
@@ -155,7 +155,7 @@ namespace mfront{
   } // end of MFrontGerminalModelInterface::writeInitializeMethod
 
   void
-  MFrontGerminalModelInterface::writeInitializeParametersMethod(const ModelData& mdata)
+  MFrontGerminalModelInterface::writeInitializeParametersMethod(const ModelDescription& mdata)
   {
     this->srcFile << "bool\n"
 		  << mdata.className
@@ -167,7 +167,7 @@ namespace mfront{
   } // end of MFrontGerminalModelInterface::writeInitializeParametersMethod
 
   void
-  MFrontGerminalModelInterface::generateDomainsList(const ModelData&)
+  MFrontGerminalModelInterface::generateDomainsList(const ModelDescription&)
   {
     this->domains.insert("this->getMeshZoneName()");
   } // end of MFrontGerminalModelInterface::generateDomainsList
@@ -180,7 +180,7 @@ namespace mfront{
 
   void
   MFrontGerminalModelInterface::writeSpecificPrivateMethodDeclaration(const FileDescription&,
-								      const ModelData&)
+								      const ModelDescription&)
   {
     using namespace std;
     this->headerFile << "void\n"
@@ -189,7 +189,7 @@ namespace mfront{
   } // end of MFrontGerminalModelInterface::writeSpecificPrivateMethodDeclaration
 
   bool
-  MFrontGerminalModelInterface::initializeDefaultDomainListInConstrutor(const ModelData&) const
+  MFrontGerminalModelInterface::initializeDefaultDomainListInConstrutor(const ModelDescription&) const
   {
     return false;
   } // end of MFrontGerminalModelInterface::initializeDefaultDomainListInConstrutor

@@ -43,14 +43,14 @@ namespace mfront{
      */
     virtual
     void writeOutputFiles(const FileDescription&,
-			  const ModelData&) override;
+			  const ModelDescription&) override;
     /*!
      * \brief : fill the target descripton
      * \param[out] d  : target description
      * \param[in]  md : model description
      */
     virtual void getTargetsDescription(TargetsDescription&,
-				       const ModelData&) override;
+				       const ModelDescription&) override;
 
   private:
 
@@ -63,7 +63,7 @@ namespace mfront{
      */
     void
     generateOutputFiles(const FileDescription&,
-			const ModelData&);
+			const ModelDescription&);
 
     /*!
      * \param pdata : processing data
@@ -71,7 +71,7 @@ namespace mfront{
      */
     void
     writeHeaderFile(const FileDescription&,
-		    const ModelData&);
+		    const ModelDescription&);
 
     /*!
      * \param pdata : processing data
@@ -79,26 +79,26 @@ namespace mfront{
      */
     void
     writeSrcFile(const FileDescription&,
-		 const ModelData&);
+		 const ModelDescription&);
     
     void
-    writeInitializeIntputsVariablesInitialValues(const ModelData&);
+    writeInitializeIntputsVariablesInitialValues(const ModelDescription&);
 
     void
-    writeInitializeConstantMaterialProperties(const ModelData&);
+    writeInitializeConstantMaterialProperties(const ModelDescription&);
 
     void
-    writeInitializeInputsVariablesDepths(const ModelData&);
+    writeInitializeInputsVariablesDepths(const ModelDescription&);
 
     void
-    writeInitializeOutputsVariablesInitialValues(const ModelData&);
+    writeInitializeOutputsVariablesInitialValues(const ModelDescription&);
 
     void
-    writeInitializeOutputsVariablesDepths(const ModelData&);
+    writeInitializeOutputsVariablesDepths(const ModelDescription&);
 
     void
     writeStaticVariableInitialization(const FileDescription&,
-				      const ModelData&,
+				      const ModelDescription&,
 				      const StaticVariableDescription&);
 
     void
@@ -120,7 +120,7 @@ namespace mfront{
 
     std::string
     getVariableName(const std::string&,
-		    const ModelData&) const;
+		    const ModelDescription&) const;
 
   private:
 

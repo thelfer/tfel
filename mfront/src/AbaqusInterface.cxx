@@ -191,7 +191,7 @@ namespace mfront{
   {
     using tfel::utilities::CxxTokenizer;
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AbaqusInterface::treatKeyword : "+m));}
+      if(b){throw(std::runtime_error("AbaqusInterface::treatKeyword: "+m));}
     };
     if (key=="@AbaqusGenerateMTestFileOnFailure"){
       this->generateMTestFile = this->readBooleanValue(key,current,end);

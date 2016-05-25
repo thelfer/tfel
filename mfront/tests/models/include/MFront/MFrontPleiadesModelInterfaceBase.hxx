@@ -44,13 +44,13 @@ namespace mfront{
      * \param[in]  md : model description
      */
     virtual void getTargetsDescription(TargetsDescription&,
-				       const ModelData&) override;
+				       const ModelDescription&) override;
     /*!
      * \param pdata : processing data
      * \param data  : model data
      */
     virtual void writeOutputFiles(const FileDescription&,
-				  const ModelData&) override;
+				  const ModelDescription&) override;
     
   protected:
 
@@ -62,19 +62,19 @@ namespace mfront{
 
     virtual void
     generateOutputFiles(const FileDescription&,
-			const ModelData&);
+			const ModelDescription&);
     
     virtual void
     writeHeaderFile(const FileDescription&,
-		    const ModelData&);
+		    const ModelDescription&);
 
     virtual void
     writeSpecificPrivateMethodDeclaration(const FileDescription&,
-					  const ModelData&);
+					  const ModelDescription&);
     
     virtual void
     writeSrcFile(const FileDescription&,
-		 const ModelData&);
+		 const ModelDescription&);
 
     virtual void
     writeAssignDefaultValue(const VarContainer::const_iterator,
@@ -84,15 +84,15 @@ namespace mfront{
     getGenTypeMethod(const std::string& type) const;
 
     virtual void
-    setOutputFileNames(const ModelData&) = 0;
+    setOutputFileNames(const ModelDescription&) = 0;
 
     virtual void
     writeGetGlobalParameter(const VarHandler&,
-			    const ModelData&);
+			    const ModelDescription&);
 
     virtual void
     writeGetConstantMaterialProperty(const VarHandler&,
-				     const ModelData&);
+				     const ModelDescription&);
 
     virtual void
     buildDomainName(void) = 0;
@@ -101,26 +101,26 @@ namespace mfront{
     getApplicationName(void) const = 0;
 
     virtual void
-    generateDomainsList(const ModelData&);
+    generateDomainsList(const ModelDescription&);
 
     virtual void
-    writeFunctionCall(const ModelData&,
-		      const std::vector<ModelData::Function>&);
+    writeFunctionCall(const ModelDescription&,
+		      const std::vector<ModelDescription::Function>&);
 
     virtual void
-    writeInitializeMethod(const ModelData&);
+    writeInitializeMethod(const ModelDescription&);
 
     virtual void
-    writeInitializeOutputMethod(const ModelData&);
+    writeInitializeOutputMethod(const ModelDescription&);
 
     virtual void
-    writeInitializeInputMethod(const ModelData&);
+    writeInitializeInputMethod(const ModelDescription&);
 
     virtual void
-    writeInitializeParametersMethod(const ModelData&);
+    writeInitializeParametersMethod(const ModelDescription&);
 
     virtual bool
-    initializeDefaultDomainListInConstrutor(const ModelData&) const;
+    initializeDefaultDomainListInConstrutor(const ModelDescription&) const;
 
     std::set<std::string> domains;
 

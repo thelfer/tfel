@@ -15,8 +15,8 @@
 #ifndef LIB_MFRONTMODELPARSERBASE_HXX_
 #define LIB_MFRONTMODELPARSERBASE_HXX_ 
 
-#include<string>
 #include<map>
+#include<string>
 
 #include"MFront/DSLBase.hxx"
 #include"MFront/ModelDSLCommon.hxx"

@@ -62,7 +62,7 @@ set(TFELMFront_SOURCES
     StaticVariableDescription.cxx
     VariableBoundsDescription.cxx
     BehaviourDSLCommon.cxx
-    ModelData.cxx
+    ModelDescription.cxx
     ModelDSLCommon.cxx
     ModelDSL.cxx
     AbstractDSL.cxx

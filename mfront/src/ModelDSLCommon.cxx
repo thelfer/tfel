@@ -78,24 +78,23 @@ namespace mfront{
   }
 
   bool
-  ModelDSLCommon::is(const ModelData& data,
-			      const VariableDescriptionContainer& vc,
-			      const std::string& v)
+  ModelDSLCommon::is(const ModelDescription& data,
+		     const VariableDescriptionContainer& vc,
+		     const std::string& vn)
   {
-    using namespace std;
     unsigned int d,i;
-    for(const auto & elem : vc){
-      if(elem.name==v){
+    for(const auto & v : vc){
+      if(v.name==vn){
 	return true;
       }
-      auto p2 = data.depths.find(elem.name);
+      auto p2 = data.depths.find(v.name);
       if(p2==data.depths.end()){
 	d = 0;
       } else {
 	d = p2->second;
       }
       for(i=1;i!=d+1;++i){
-	if(elem.name+'_'+to_string(i)==v){
+	if(v.name+'_'+std::to_string(i)==vn){
 	  return true;
 	}
       }
@@ -118,44 +117,37 @@ namespace mfront{
   void
   ModelDSLCommon::treatMaterial(void)
   {
-    using namespace std;
-    if(!ModelData::material.empty()){
-      string msg("ModelDSLCommon::treatMaterial : ");
-      msg += "material name alreay defined";
-      throw(runtime_error(msg));
+    if(!ModelDescription::material.empty()){
+      this->throwRuntimeError("ModelDSLCommon::treatMaterial",
+			      "material name alreay defined");
     }
-    this->material       = this->readOnlyOneToken();
-    if(!CxxTokenizer::isValidIdentifier(ModelData::material,true)){
-      string msg("ModelDSLCommon::treatMaterial : ");
-      msg += "invalid material name '"+ModelData::material+"'";
-      throw(runtime_error(msg));
+    this->material = this->readOnlyOneToken();
+    if(!CxxTokenizer::isValidIdentifier(ModelDescription::material,true)){
+      this->throwRuntimeError("ModelDSLCommon::treatMaterial",
+			      "invalid material name ('"+this->material+"')");
     }
     if(!this->className.empty()){
-      this->className = ModelData::material+"_"+this->className;
+      this->className = ModelDescription::material+"_"+this->className;
     }
   } // end of ModelDSLCommon::treatMaterial
 
   void
   ModelDSLCommon::treatLibrary(void)
   {
-    using namespace std;
     const auto& l = this->readOnlyOneToken();
     if(!CxxTokenizer::isValidIdentifier(l,true)){
-      string msg("ModelDSLCommon::treatLibrary : ");
-      msg += "invalid library name '"+l+"'";
-      throw(runtime_error(msg));
+      this->throwRuntimeError("ModelDSLCommon::treatMaterial",
+			      "invalid library name");
     }
     if(!this->library.empty()){
-      string msg("ModelDSLCommon::treatLibrary : ");
-      msg += "material name alreay defined";
-      throw(runtime_error(msg));
+      this->throwRuntimeError("ModelDSLCommon::treatMaterial",
+			      "library name already registred");
     }
     this->library = l;
   } // end of ModelDSLCommon::treatLibrary
 
   void ModelDSLCommon::treatModel(void)
   {
-    using namespace std;
     if(!this->className.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatModel",
 			      "model name already defined");
@@ -165,8 +157,8 @@ namespace mfront{
       this->throwRuntimeError("ModelDSLCommon::treatModel",
 			      "invalid model name");
     }
-    if(!ModelData::material.empty()){
-      this->className = ModelData::material+"_"+this->className;
+    if(!ModelDescription::material.empty()){
+      this->className = ModelDescription::material+"_"+this->className;
     }
   } // end of ModelDSLCommon::treatModel
 
@@ -185,11 +177,9 @@ namespace mfront{
   void
   ModelDSLCommon::generateOutputFiles(void)
   {
-    using namespace std;
     if(this->interfaces.empty()){
-      string msg("ModelDSLCommon::generateOutputFile : ");
-      msg += "no interface defined";
-      throw(runtime_error(msg));
+      this->throwRuntimeError("ModelDSLCommon::generateOutputFiles",
+			      "no interface defined");
     }
     for(const auto& i : this->interfaces){
       i.second->writeOutputFiles(*this,*this);
@@ -199,23 +189,19 @@ namespace mfront{
   void
   ModelDSLCommon::treatUnknownKeyword(void)
   {
-    using namespace std;
-    using namespace tfel::utilities;
-    pair<bool,CxxTokenizer::TokensContainer::const_iterator> p;
-    TokensContainer::const_iterator p2;
-    bool treated = false;
-    string key;
+    auto treated = false;
+    auto p2 = TokensContainer::const_iterator{};
     --(this->current);
-    key = this->current->value;
+    const auto key = this->current->value;
     ++(this->current);
     this->checkNotEndOfFile("ModelDSLCommon::treatUnknownKeyword");
     if(this->current->value=="["){
-      set<string> s;
+      auto s = std::set<std::string>{};
       while(this->current->value!="]"){
 	++(this->current);
 	this->checkNotEndOfFile("ModelDSLCommon::treatUnknownKeyword");
-	string t;
-	if(this->current->flag==Token::String){
+	std::string t;
+	if(this->current->flag==tfel::utilities::Token::String){
 	  t = this->current->value.substr(1,this->current->value.size()-2);
 	} else {
 	  t = this->current->value;
@@ -226,29 +212,28 @@ namespace mfront{
 	++(this->current);
 	if((this->current->value!="]")&&(this->current->value!=",")){
 	  this->throwRuntimeError("ModelDSLCommon::treatUnknownKeyword",
-				  "unexpected token '"+this->current->value+"' (expected ']' or ',').");
+				  "unexpected token '"+this->current->value+"' "
+				  "(expected ']' or ',').");
 	}
       }
       ++(this->current);
       if(s.empty()){
 	this->ignoreKeyWord(key);
       } else {
-	for(const auto & elem : s){
-	  p = interfaces.at(elem)->treatKeyword(key,this->current,
+	for(const auto & i : s){
+	  const auto p = interfaces.at(i)->treatKeyword(key,this->current,
 						this->tokens.end());
 	  if(!p.first){
-	    string msg("ModelDSLCommon::treatUnknownKeyword : the keyword '");
-	    msg += key;
-	    msg += " has not been treated by interface '"+elem+"'";
-	    throw(runtime_error(msg));
+	    this->throwRuntimeError("ModelDSLCommon::treatUnknownKeyword",
+				    "the keyword '"+key+"' has not been treated "
+				    "by interface '"+i+"'");
 	  }
 	  if(treated){
 	    if(p2!=p.second){
-	      string msg("ModelDSLCommon::treatUnknownKeyword : the keyword '");
-	      msg += key;
-	      msg += "' has been treated by two interfaces but";
-	      msg += " results were differents";
-	      throw(runtime_error(msg));
+	      this->throwRuntimeError("ModelDSLCommon::treatUnknownKeyword",
+				      "the keyword '"+key+"' has been treated "
+				      "by two interfaces but results were "
+				      "different");
 	    }
 	  }
 	  p2 = p.second;
@@ -258,19 +243,18 @@ namespace mfront{
       }
     } else {
       for(const auto& i : this->interfaces){
-	p = i.second->treatKeyword(key,this->current,
-				   this->tokens.end());
+	auto p = i.second->treatKeyword(key,this->current,
+					this->tokens.end());
 	if(p.first){
 	  if(treated){
 	    if(p2!=p.second){
-	      string msg("ModelDSLCommon::treatUnknownKeyword : the keyword '");
-	      msg += key;
-	      msg += "' has been treated by two interfaces but";
-	      msg += " results were differents";
-	      throw(runtime_error(msg));
+	      this->throwRuntimeError("ModelDSLCommon::treatUnknownKeyword",
+				      "the keyword '"+key+"' has been treated "
+				      "by two interfaces but results were "
+				      "different");
 	    }
 	  }
-	  p2 = p.second;
+	    p2 = p.second;
 	  treated = true;
 	}
       }
@@ -285,10 +269,9 @@ namespace mfront{
   void
   ModelDSLCommon::treatDomain(void)
   {
-    using namespace std;
     using namespace tfel::utilities;
     if(!this->domains.empty()){
-      string msg("domain has already been defined ");
+      std::string msg("domain has already been defined ");
       if(!this->domains.empty()){
 	msg+="with @Domain or @Domains";
       }
@@ -311,11 +294,10 @@ namespace mfront{
   void
   ModelDSLCommon::treatDomains(void)
   {
-    using namespace std;
     using namespace tfel::utilities;
     bool bend;
     if(!this->domains.empty()){
-      string msg("domain has already been defined ");
+      std::string msg("domain has already been defined ");
       if(!this->domains.empty()){
 	msg+="with @Domain or @Domains";
       }
@@ -367,7 +349,7 @@ namespace mfront{
     unsigned int d,i;
     for(const auto & elem : this->inputs){
       if(v==elem.name){
-	return pair<string,unsigned short>(v,0u);
+	return {v,0u};
       }
       auto p2 = this->depths.find(elem.name);
       if(p2!=this->depths.end()){
@@ -377,13 +359,13 @@ namespace mfront{
       }
       for(i=1;i!=d+1;++i){
 	if(v==elem.name+"_"+to_string(i)){
-	  return pair<string,unsigned short>(elem.name,i);
+	  return {elem.name,i};
 	}
       }
     }
     for(const auto & elem : this->outputs){
       if(v==elem.name){
-	return pair<string,unsigned short>(v,0);
+	return {v,0};
       }
       auto p2 = this->depths.find(elem.name);
       if(p2!=this->depths.end()){
@@ -393,7 +375,7 @@ namespace mfront{
       }
       for(i=1;i!=d+1;++i){
 	if(v==elem.name+"_"+to_string(i)){
-	  return pair<string,unsigned short>(elem.name,i);
+	  return {elem.name,i};
 	}
       }
     }
@@ -417,7 +399,7 @@ namespace mfront{
   ModelDSLCommon::treatFunction(void)
   {
     using namespace std;
-    auto isStaticMemberName = [](const ModelData& d,
+    auto isStaticMemberName = [](const ModelDescription& d,
 				 const std::string& n){
       for(const auto& v : d.staticMemberNames){
 	if(v==n){
@@ -426,7 +408,7 @@ namespace mfront{
       }
       return false;
     };
-    auto isMemberName = [](const ModelData& d,
+    auto isMemberName = [](const ModelDescription& d,
 			   const std::string& n){
       for(const auto& v : d.memberNames){
 	if(v==n){
@@ -985,8 +967,13 @@ namespace mfront{
       this->parameters.push_back(p);
     }
   } // end of ModelDSLCommon::treatParameter(void)
-  
 
+  void
+  ModelDSLCommon::treatLocalParameter(void)
+  {
+    this->treatParameter();
+  }
+    
   void
   ModelDSLCommon::treatParameterMethod(void) 
   {
@@ -1192,7 +1179,7 @@ namespace mfront{
       double tmp;
       converter >> tmp;
       if(!converter||(!converter.eof())){
-	this->throwRuntimeError("MFrontMode⁹8lParserCommon::readDefaultValue",
+	this->throwRuntimeError("ModelDSLCommon::readDefaultValue",
 				"Could not read default for variable '"+this->currentVar+"'");
       }
       res = this->current->value;

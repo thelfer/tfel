@@ -506,6 +506,15 @@ namespace mfront{
      * treat the @Brick keyword
      */
     virtual void treatBrick(void);
+    /*!
+     * treat the @Model keyword
+     */
+    virtual void treatModel();
+    /*!
+     * get a model description from an mfront file
+     * \param[in] m: file
+     */
+    virtual void getModel(const std::string&);
     //! \brief treat the @Private keyword
     virtual void treatPrivate(void) override;
     //! \brief treat the @Members keyword

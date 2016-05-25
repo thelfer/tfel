@@ -234,8 +234,24 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::readCodeBlockOptions
 
-  void
-  BehaviourDSLCommon::treatUnsupportedCodeBlockOptions(const CodeBlockOptions& o)
+  void BehaviourDSLCommon::getModel(const std::string& m){
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "BehaviourDSLCommon::treatModel: treating file '" << m << "'\n";
+    }
+  } // end of BehaviourDSLCommon::getModel
+  
+  void BehaviourDSLCommon::treatModel(void){
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "BehaviourDSLCommon::treatModel: begin\n";
+    }
+    this->getModel(this->readString("BehaviourDSLCommon::treatModel"));
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "BehaviourDSLCommon::treatModel: end\n";
+    }
+    this->readSpecifiedToken("BehaviourDSLCommon::treatModel",";");    
+  } // end of BehaviourDSLCommon::treatModel
+  
+  void BehaviourDSLCommon::treatUnsupportedCodeBlockOptions(const CodeBlockOptions& o)
   {
     if(!o.untreated.empty()){
       std::ostringstream msg;
@@ -472,8 +488,7 @@ namespace mfront{
       this->doPedanticChecks();
     }
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      auto& log = getLogStream();
-      log << "BehaviourDSLCommon::endsInputFileProcessing : end\n";
+      getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing : end\n";
     }
   } // end of BehaviourDSLCommon::endsInputFileProcessing
 
