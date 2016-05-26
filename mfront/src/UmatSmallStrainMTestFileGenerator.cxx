@@ -27,42 +27,37 @@ namespace mfront
       library(l),
       behaviour(b)
   {
-    using namespace std;
-    fill(eto,eto+6,0.);
-    fill(deto,deto+6,0.);
-    fill(stress,stress+6,0.);
+    std::fill(eto,eto+6,0.);
+    std::fill(deto,deto+6,0.);
+    std::fill(stress,stress+6,0.);
   } // end of UmatSmallStrainMTestFileGenerator::UmatSmallStrainMTestFileGenerator
 
   void
   UmatSmallStrainMTestFileGenerator::writeBehaviourDeclaration(std::ostream& os) const
   {
-    using namespace std;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-    os << "@Behaviour<" << this->interface << "> '" << this->library << ".dll' '"<< this->behaviour << "';" << endl;
+    os << "@Behaviour<" << this->interface << "> '" << this->library << ".dll' '"<< this->behaviour << "';" << std::endl;
 #else
-    os << "@Behaviour<" << this->interface << "> '" << this->library << ".so' '"<< this->behaviour << "';" << endl;
+    os << "@Behaviour<" << this->interface << "> '" << this->library << ".so' '"<< this->behaviour << "';" << std::endl;
 #endif
   } // end of UmatSmallStrainMTestFileGenerator::writeBehaviourDeclaration
 
   void
   UmatSmallStrainMTestFileGenerator::setStrainTensor(const double*const e)
   {
-    using namespace std;
-    copy(e,e+this->getStensorSize(),this->eto);
+    std::copy(e,e+this->getStensorSize(),this->eto);
   } // end of UmatSmallStrainMTestFileGenerator::setStrainTensor
 
   void
   UmatSmallStrainMTestFileGenerator::setStrainTensorIncrement(const double*const de)
   {
-    using namespace std;
-    copy(de,de+this->getStensorSize(),this->deto);
+    std::copy(de,de+this->getStensorSize(),this->deto);
   } // end of UmatSmallStrainMTestFileGenerator::setStrainTensorIncrement
 
   void
   UmatSmallStrainMTestFileGenerator::setStressTensor(const double*const s)
   {
-    using namespace std;
-    copy(s,s+this->getStensorSize(),this->stress);
+    std::copy(s,s+this->getStensorSize(),this->stress);
   } // end of UmatSmallStrainMTestFileGenerator::setStressTensor
 
   void
@@ -74,9 +69,8 @@ namespace mfront
     vector<string>::const_iterator p;
     unsigned short i;
     if(this->times.size()!=2){
-      string msg("UmatSmallStrainMTestFileGenerator::writeDrivingVariables : "
-		 "invalid number of times");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("UmatSmallStrainMTestFileGenerator::writeDrivingVariables: "
+			       "invalid number of times"));
     }
     const real t0 = *(this->times.begin());
     const real t1 = *(this->times.rbegin());
@@ -89,6 +83,15 @@ namespace mfront
 	os << (this->stress[i])*sqrt(2.);
       }
       if(++i!=this->getStensorSize()){
+	os << ",";
+      }
+    }
+    os << "};\n\n";
+    os << "@Strain {";
+    for(p=n.begin(),i=0;p!=n.end();++i){
+      os.precision(14);
+      os << this->eto[i];
+      if(++p!=n.end()){
 	os << ",";
       }
     }

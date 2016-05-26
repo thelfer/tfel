@@ -114,6 +114,15 @@ namespace mfront
       }
     }
     os << "};\n\n";
+    os << "@DeformationGradient {";
+    for(p=n.begin(),i=0;p!=n.end();++i){
+      os.precision(14);
+      os << this->F0[i];
+      if(++p!=n.end()){
+	os << ",";
+      }
+    }
+    os << "};\n";
     for(p=n.begin(),i=0;p!=n.end();++p,++i){
       os.precision(14);
       os << "@ImposedDeformationGradient<evolution> '" << *p << "' {" 
