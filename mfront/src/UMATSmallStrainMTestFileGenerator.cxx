@@ -93,6 +93,15 @@ namespace mfront
       }
     }
     os << "};\n\n";
+    os << "@Strain {";
+    for(p=n.begin(),i=0;p!=n.end();++i){
+      os.precision(14);
+      os << this->eto[i];
+      if(++p!=n.end()){
+	os << ",";
+      }
+    }
+    os << "};\n\n";
     for(p=n.begin(),i=0;p!=n.end();++p,++i){
       os.precision(14);
       if(i<3){
