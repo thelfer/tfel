@@ -121,7 +121,7 @@ namespace mtest
       }
     }
     AbaqusReal ndt = std::numeric_limits<AbaqusReal>::max();
-    (this->fct)(&us(0),&wk.ivs(0),&(wk.D(0,0)),
+    (this->fct)(&us(0),wk.ivs.size() == 0 ? nullptr : &wk.ivs(0),&(wk.D(0,0)),
 		nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,
 		&ue0(0),&ude(0),nullptr,&dt,
