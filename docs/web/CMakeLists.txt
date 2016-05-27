@@ -70,6 +70,7 @@ pandoc_html(MaterialLaw-keywords "--toc" "--toc-depth=1")
 pandoc_html(Model-keywords "--toc" "--toc-depth=1")
 pandoc_html(MultipleIsotropicMisesFlows-keywords "--toc" "--toc-depth=1")
 pandoc_html(RungeKutta-keywords "--toc" "--toc-depth=1")
+pandoc_html(BehaviourBricks "--toc" "--toc-depth=2")
 
 # mtest keywords
 

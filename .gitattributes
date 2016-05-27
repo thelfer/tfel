@@ -364,6 +364,7 @@ docs/mfront/behaviours/InternalNames.tex.in -text
 docs/mfront/behaviours/Makefile.doc.in -text
 docs/mfront/behaviours/annexe-orthotropie.tex.in -text
 docs/mfront/behaviours/behaviours.tex.in -text
+docs/mfront/bricks/StandardElasticity.md -text
 docs/mfront/castem/CMakeLists.txt -text
 docs/mfront/castem/Makefile.doc.in -text
 docs/mfront/castem/castem.tex.in -text
@@ -1032,6 +1033,7 @@ docs/tutorial/rappels.tex.in -text
 docs/tutorial/resume.tex.in -text
 docs/tutorial/tutoriel.tex.in -text
 docs/web/404.html -text
+docs/web/BehaviourBricks.md -text
 docs/web/CHANGELOG.md -text
 docs/web/CMakeLists.txt -text
 docs/web/CONTRIBUTING.md -text
@@ -1093,6 +1095,9 @@ docs/web/img/172_5pc.xcf -text
 docs/web/img/AMITEX_FFTP_sig1.png -text
 docs/web/img/AMITEX_FFTP_sig1.xcf -text
 docs/web/img/AMITEX_FFTP_website.png -text
+docs/web/img/AbaqusFLD.pdf -text
+docs/web/img/AbaqusFLD.png -text
+docs/web/img/AbaqusFLD.xcf -text
 docs/web/img/Behaviour-img2.eps -text
 docs/web/img/Behaviour-img2.png -text
 docs/web/img/Behaviour-img3.eps -text
@@ -1105,6 +1110,7 @@ docs/web/img/Behaviour-img8.eps -text
 docs/web/img/Behaviour-img8.png -text
 docs/web/img/Behaviour-img9.eps -text
 docs/web/img/Behaviour-img9.png -text
+docs/web/img/BrittleFracturePhaseField.png -text
 docs/web/img/CastemWebSite.png -text
 docs/web/img/CastemWebSite.xcf -text
 docs/web/img/CodeAster2015Flyer.png -text

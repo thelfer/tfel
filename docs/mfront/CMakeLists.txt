@@ -20,25 +20,25 @@ macro(install_mfront_desc file)
     COMPONENT mfront)
 endmacro(install_mfront_desc file)
 
-macro(install_mfront_desc2 parser file)
+macro(install_mfront_desc2 directory file)
   # if(HAVE_PANDOC)
   #   ADD_CUSTOM_COMMAND(
-  #     OUTPUT    ${file}-${parser}.html
-  #     DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/${parser}/${file}.md
+  #     OUTPUT    ${file}-${directory}.html
+  #     DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${file}.md
   #     COMMAND   ${PANDOC}
   #     ARGS      -f markdown-markdown_in_html_blocks+tex_math_single_backslash
   #     ARGS      --mathjax
   #     ARGS      ${ARGN}
-  #     ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/${parser}/${file}.md -o ${file}-${parser}.html)
-  # add_custom_target(mfront-${file}-${parser}-html ALL DEPENDS ${file}-${parser}.html)
-  # add_dependencies(website mfront-${file}-${parser}-html)
-  #   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}-${parser}.html
-  #     DESTINATION share/doc/tfel/web/mfront/${parser}/${file}.html
+  #     ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${file}.md -o ${file}-${directory}.html)
+  # add_custom_target(mfront-${file}-${directory}-html ALL DEPENDS ${file}-${directory}.html)
+  # add_dependencies(website mfront-${file}-${directory}-html)
+  #   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}-${directory}.html
+  #     DESTINATION share/doc/tfel/web/mfront/${directory}/${file}.html
   #     COMPONENT website)
   # endif(HAVE_PANDOC)
-  install(FILES ${parser}/${file}.md DESTINATION share/doc/mfront/${parser}
+  install(FILES ${directory}/${file}.md DESTINATION share/doc/mfront/${directory}
     COMPONENT mfront)
-endmacro(install_mfront_desc2 parser file)
+endmacro(install_mfront_desc2 directory file)
 
 install_mfront_desc(Algorithm)
 install_mfront_desc(Author)
@@ -119,6 +119,8 @@ install_mfront_desc2(Model GlobalParameter)
 install_mfront_desc2(Model LocalParameter)
 install_mfront_desc2(Model Model)
 install_mfront_desc2(Model Output)
+
+install_mfront_desc2(bricks StandardElasticity)
 
 if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
 

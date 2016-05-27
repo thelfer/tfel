@@ -4,6 +4,8 @@
 
 <div id="slideshow">
   <ul class="slides">
+    <li><img src="img/AbaqusFLD.png" width="620" height="320" alt="Simulation of a Punching test" /></li>
+    <li><img src="img/BrittleFracturePhaseField.png" width="620" height="320" alt="Phase field modelling of brittle fracture" /></li>
     <li><img src="img/FuelRod-ddif2.png" width="620" height="320" alt="Fuel pellet cracking" /></li>
     <li><img src="img/172_5pc.png" width="620" height="320" alt="Polycrystals computation" /></li>
 	<li><img src="img/VoidsGrowth.png" width="620" height="320" alt="Void growth" /></li>
@@ -33,7 +35,8 @@ knowledge:
   generated mechanical behaviours were given a particular
   attention. [Various benchmarks](benchmarks.html) show that `MFront`
   implementations are competitive with native implementations
-  available in the `Cast3M`, `Code-Aster` and `Cyrano3` solvers.
+  available in the `Cast3M`, `Code-Aster`, `Abaqus Standard` and
+  `Cyrano3` solvers.
 - [simple point-wise models](models.html), such as material swelling
   used in fuel performance codes.
 
@@ -43,8 +46,15 @@ A set of interfaces are provided for various solvers:
   interface is described [here](castem.html).
 - the [`Code_Aster`](http://www.code-aster.org) finite element
   solver. This interface is described [here](aster.html)
-- the [`ZeBuLoN`](http://www.zset-software.com/products/zebulon). This
-  interface is described [here](zmat.html)
+- the [`Europlexus`](http://europlexus.jrc.ec.europa.eu/) finite element solver.
+- the
+  [`Abaqus Standard`](http://www.3ds.com/products-services/simulia/products/abaqus/abaqusstandard/)
+  finite element solver.
+- the
+  [`Abaqus Explicit`](http://www.3ds.com/products-services/simulia/products/abaqus/abaqusexplicit/)
+  finite element solver.
+- the [`ZeBuLoN`](http://www.zset-software.com/products/zebulon)
+  finite element solver. This interface is described [here](zmat.html)
 - the `TMFFT` and the
   [`AMITEX_FFTP`](http://www.maisondelasimulation.fr/projects/amitex/html/)
   Fast Fourier Transform solvers developed internally at

@@ -35,6 +35,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./CONTRIBUTING.md					   \
 	   ./release-notes.md					   \
 	   ./TODO.md						   \
+	   ./BehaviourBricks.md				           \
 	   ./DefaultCZMDSL-keywords.md				   \
 	   ./DefaultDSL-keywords.md				   \
 	   ./DefaultFiniteStrainDSL-keywords.md			   \
@@ -109,6 +110,10 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/abaqus-isotropichardening2.png			   \
 	   ./img/mfront-flyer-en.svg                               \
 	   ./img/mfront-flyer-en.png                               \
+	   ./img/AbaqusFDL.png                                     \
+	   ./img/AbaqusFDL.xcf                                     \
+	   ./img/AbaqusFDL.pdf                                     \
+	   ./img/BrittleFracturePhaseField.png                     \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \

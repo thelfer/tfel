@@ -76,7 +76,8 @@ MFRONT_DOCS = Algorithm.md				                \
 	      Model/GlobalParameter.md                                  \
 	      Model/LocalParameter.md				        \
 	      Model/Model.md				                \
-	      Model/Output.md
+	      Model/Output.md                                           \
+	      bricks/StandardElasticity.md
 
 mfrontdocdir   = $(datadir)/doc/mfront
 nobase_mfrontdoc_DATA = $(MFRONT_DOCS)

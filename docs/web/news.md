@@ -1,6 +1,17 @@
 % News
 % Helfer Thomas
-% Janvier 19, 2016
+% May 27, 2016
+
+# TFEL `github` repository
+
+The `subversion` repository used by CEA and EDF are now synchronized
+with a public `githbub` repository:
+
+<https://github.com/thelfer/tfel>
+
+All the branches, commit description and history of TFEL are
+available. This repository is read-only. Its purpose is to integrate
+TFEL in continous-integration projects which depends on TFEL.
 
 # Announcing the `mfront` module
 

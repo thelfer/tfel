@@ -26,6 +26,8 @@
 - Kulbir Singh
 - Christian Fokam
 - Élodie Bosso
+- Olivier Jamond
+- Tran Thang Dang
 
 # Tools
 
