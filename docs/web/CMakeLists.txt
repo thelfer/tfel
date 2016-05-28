@@ -36,11 +36,12 @@ pandoc_html(mtest)
 pandoc_html(mtest-python  "--toc" "--toc-depth=3")
 pandoc_html(tutorial)
 pandoc_html(benchmark)
-pandoc_html(news)
+pandoc_html(news "-c css/slideshow.css")
 pandoc_html(castem)
 pandoc_html(castem-fr)
 pandoc_html(aster)
 pandoc_html(zmat)
+pandoc_html(epx "-c css/slideshow.css")
 pandoc_html(documentations)
 pandoc_html(glossary)
 pandoc_html(material-properties)
@@ -76,7 +77,7 @@ pandoc_html(BehaviourBricks "--toc" "--toc-depth=2")
 
 pandoc_html(MTest-keywords "--toc" "--toc-depth=1")
 
-install(DIRECTORY js css doc img downloads
+install(DIRECTORY js css doc img media downloads
     DESTINATION share/doc/tfel/web
     COMPONENT website
     PATTERN ".svn" EXCLUDE)

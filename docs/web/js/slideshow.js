@@ -31,6 +31,17 @@ $(window).load(function(){
 		// Rendering the modified versions of the images:
 		createCanvasOverlay(this);
 	    });
+	    $('#slideshow video').each(function(){
+
+		if(!slideshow.width){
+		    // Taking the dimensions of the first image:
+		    slideshow.width = this.width;
+		    slideshow.height = this.height;
+		}
+		
+		// Rendering the modified versions of the images:
+		createCanvasOverlay(this);
+	    });
 	}
 	
 	window.console && window.console.timeEnd && console.timeEnd('Generated In');

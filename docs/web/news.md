@@ -2,7 +2,44 @@
 % Helfer Thomas
 % May 27, 2016
 
-# TFEL `github` repository
+# Documentation of behaviour bricks (27 Mai 2016)
+
+~~~~{.cpp}
+@Brick "StandardElasticity";
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Behaviour bricks will be one of the most important new feature of
+`TFEL 3.0`.
+
+A dedicated page has been created [here](BehaviourBricks.html)
+
+# The `EUROPLEXUS` interface (27 Mai 2016)
+
+![](img/epx.png "")
+
+An interface for the EUROPLEXUS explicit finite element solver has
+been developed.
+
+[EUROPLEXUS](http://europlexus.jrc.ec.europa.eu/) (EPX) is a
+simulation software dedicated to the analysis of fast transient
+phenomena involving structures and fluids in interaction.
+
+<video style="display:block; margin: 0 auto;" width="640" height="320" controls>
+  <source src="media/epx2.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+See the [dedicated page](epx.html) for more information.
+
+# `tfel-doc` `github` repository. Talks of the Second MFront Users Day (27 Mai 2016)
+
+A `github` repository has been set up to store various documents
+describing TFEL and MFront usage. The talks of the first and second
+MFront Users are available there:
+
+<https://github.com/thelfer/tfel-doc>
+
+# TFEL `github` repository (27 Mai 2016)
 
 The `subversion` repository used by CEA and EDF are now synchronized
 with a public `githbub` repository:
@@ -13,7 +50,7 @@ All the branches, commit description and history of TFEL are
 available. This repository is read-only. Its purpose is to integrate
 TFEL in continous-integration projects which depends on TFEL.
 
-# Announcing the `mfront` module
+# Announcing the `mfront` module (Mai 2016)
 
 A new `python` module has been introduced to analyse `MFront` files.
 

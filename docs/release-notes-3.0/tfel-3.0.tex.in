@@ -432,6 +432,19 @@ jour et une évaluation de leurs conséquences~:
   \pleiades{}.
 \end{itemize}
 
+\subsection{Corrections d'anomalies}
+
+\subsubsection{Ticket {\# 25}}
+
+Les valeurs initiales de la déformation ou du gradient de la
+transformation n'étaient pas renseignées dans les fichiers \mtest{}
+généré en cas de non-convergence d'une loi.
+
+Plus de détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/25/}
+\end{center}
+
 \section{Perspectives}
 
 \subsubsection{Lois de comportement à gradient de variables internes}

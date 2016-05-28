@@ -1086,6 +1086,7 @@ docs/web/downloads/example-castem2014.tar.bz2 -text
 docs/web/downloads/example-zset8.5.tar.bz2 -text
 docs/web/downloads/patchs-Cast3M-2014.tar.bz2 -text
 docs/web/downloads/patchs-Cast3M-2015.tar.bz2 -text
+docs/web/epx.md -text
 docs/web/faq.md -text
 docs/web/favicon.ico -text
 docs/web/glossary.md -text
@@ -1144,6 +1145,7 @@ docs/web/img/arrows.png -text
 docs/web/img/background.svg -text
 docs/web/img/cyrano-mfront.eps -text
 docs/web/img/cyrano-mfront.svg -text
+docs/web/img/epx.png -text
 docs/web/img/hsnv125.png -text
 docs/web/img/hsnv125.xcf -text
 docs/web/img/materiaux2014.jpg -text
@@ -1171,6 +1173,8 @@ docs/web/js/slideshow.js -text
 docs/web/js/vendor/jquery-1.10.2.min.js -text
 docs/web/js/vendor/modernizr-2.6.2.min.js -text
 docs/web/material-properties.md -text
+docs/web/media/epx1.mp4 -text
+docs/web/media/epx2.mp4 -text
 docs/web/mfront-doc.md -text
 docs/web/mfront-python.md -text
 docs/web/mfront-template.html -text

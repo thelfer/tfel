@@ -14,6 +14,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./models.md				                   \
 	   ./castem.md						   \
 	   ./castem-fr.md					   \
+	   ./epx.md						   \
 	   ./aster.md						   \
 	   ./zmat.md						   \
 	   ./install.md						   \
@@ -110,10 +111,13 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/abaqus-isotropichardening2.png			   \
 	   ./img/mfront-flyer-en.svg                               \
 	   ./img/mfront-flyer-en.png                               \
-	   ./img/AbaqusFDL.png                                     \
-	   ./img/AbaqusFDL.xcf                                     \
-	   ./img/AbaqusFDL.pdf                                     \
+	   ./img/AbaqusFLD.png                                     \
+	   ./img/AbaqusFLD.xcf                                     \
+	   ./img/AbaqusFLD.pdf                                     \
 	   ./img/BrittleFracturePhaseField.png                     \
+	   ./img/epx.png                                           \
+	   ./media/epx1.mp4                                        \
+	   ./media/epx2.mp4                                        \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \
