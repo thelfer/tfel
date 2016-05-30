@@ -8,9 +8,12 @@ library. Those languages covers three kind of material knowledge:
 
 - material properties (for instance the
   Young modulus, the thermal conductivity, etc.)
-- mechanical behaviours. Numerical performances of
-  generated mechanical behaviours was given a particular
-  attention. Various benchmarks shows that `MFront`
+- mechanical behaviours. Numerical performances of generated
+  mechanical behaviours was given a particular attention. MFront
+  offers a variety of interfaces to finite element solvers `Cast3M`,
+  `Code-Aster`, `EUROPLEXUS`, `Abaqus-Standard`, `Abaqus-Explicit`,
+  `Zebulon`, etc.. or various FFT solvers such as
+  `AMITEX_FFTP`. Various benchmarks shows that `MFront`
   implementations are competitive with native implementations
   available in the `Cast3M`, `Code-Aster` and `Cyrano3` solvers.
 - simple point-wise models, such as material swelling

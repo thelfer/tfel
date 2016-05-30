@@ -11,7 +11,7 @@
 /LICENCE-CECILL-A-FR -text
 /LICENCE-GNU-GPL -text
 /Makefile.am -text
-/README -text
+/README.md -text
 /TODO.md -text
 bindings/CMakeLists.txt -text
 bindings/Makefile.am -text
