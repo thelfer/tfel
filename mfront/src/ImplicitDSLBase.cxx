@@ -284,11 +284,10 @@ namespace mfront{
   void ImplicitDSLBase::treatUnknownVariableMethod(const Hypothesis h,
 							    const std::string& n)
   {
-    using namespace std;
     if((this->mb.isIntegrationVariableName(h,n))||
        ((n[0]=='f')&&(this->mb.isIntegrationVariableName(h,n.substr(1))))){
       if(this->current->value=="setNormalisationFactor"){
-    	string var;
+    	auto var = std::string{};
     	++(this->current);
     	this->checkNotEndOfFile("ImplicitDSLBase::treatUnknowVariableMethod");
     	this->readSpecifiedToken("ImplicitDSLBase::treatUnknowVariableMethod","(");
@@ -300,7 +299,7 @@ namespace mfront{
     	} else {
     	  // var shall be a number
     	  double value;
-    	  istringstream flux(var);
+	  std::istringstream flux(var);
     	  flux >> value;
     	  if(flux.fail()){
     	    this->throwRuntimeError("ImplicitDSLBase::treatUnknowVariableMethod",
@@ -319,9 +318,9 @@ namespace mfront{
     	this->checkNotEndOfFile("ImplicitDSLBase::treatUnknowVariableMethod");
     	this->readSpecifiedToken("ImplicitDSLBase::treatUnknowVariableMethod","(");
     	this->checkNotEndOfFile("ImplicitDSLBase::treatUnknowVariableMethod");
-    	const string var =  this->current->value;
+    	const auto var =  this->current->value;
     	double value;
-    	istringstream flux(var);
+	std::istringstream flux(var);
     	flux >> value;
     	if(flux.fail()){
     	  this->throwRuntimeError("ImplicitDSLBase::treatUnknowVariableMethod",
