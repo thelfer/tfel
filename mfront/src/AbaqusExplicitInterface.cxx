@@ -383,15 +383,15 @@ namespace mfront{
 	  << "using tfel::material::" << mb.getClassName() << ";\n"
 	  << "using AbaqusExplicitData = abaqus::AbaqusExplicitData<" << t << ">;\n"
 	  << "auto view = [&nblock](" << t << "* v){\n"
-	  << "  return AbaqusExplicitData::iterator(v,*nblock);\n"
+	  << "  return AbaqusExplicitData::strided_iterator(v,*nblock);\n"
 	  << "};\n"
 	  << "auto cview = [&nblock](const " << t << "* v){\n"
-	  << "  return AbaqusExplicitData::const_iterator(v,*nblock);\n"
+	  << "  return AbaqusExplicitData::strided_const_iterator(v,*nblock);\n"
 	  << "};\n"
 	  << "auto cdiffview = [&nblock](const " << t << "* v1,\n"
 	  << "                           const " << t << "* v2){\n"
-	  << "  return AbaqusExplicitData::diff_const_iterator(AbaqusExplicitData::const_iterator(v1,*nblock),\n"
-	  << "                                                 AbaqusExplicitData::const_iterator(v2,*nblock));\n"
+	  << "  return AbaqusExplicitData::diff_strided_const_iterator(AbaqusExplicitData::strided_const_iterator(v1,*nblock),\n"
+	  << "                                                         AbaqusExplicitData::strided_const_iterator(v2,*nblock));\n"
 	  << "};\n";
       if(mb.getAttribute(BehaviourData::profiling,false)){
 	out << "using mfront::BehaviourProfiler;\n"
@@ -425,16 +425,16 @@ namespace mfront{
 
   static void writeAbaqusExplicitDataInitialisation(std::ostream& out,
 						    const std::string& n){
-    out << "const AbaqusExplicitData d = {*dt,cview(props),cview(density),\n"
-	<< "                              *(tempOld+i*(*nblock)),\n"
-	<< "                              cview(fieldOld),cview(stateOld),\n"
-	<< "                              *(enerInternOld+i*(*nblock)),\n"
-	<< "                              *(enerInelasOld+i*(*nblock)),\n"
-	<< "                              *(tempNew+i*(*nblock)),\n"
-	<< "                              cdiffview(fieldNew,fieldOld),\n"
-	<< "                              view(stateNew),\n"
-	<< "                              *(enerInternNew+i*(*nblock)),\n"
-	<< "                              *(enerInelasNew+i*(*nblock)),\n"
+    out << "const AbaqusExplicitData d = {*dt,props,*(density+i),\n"
+	<< "                              *(tempOld+i),\n"
+	<< "                              cview(fieldOld+i),cview(stateOld+i),\n"
+	<< "                              *(enerInternOld+i),\n"
+	<< "                              *(enerInelasOld+i),\n"
+	<< "                              *(tempNew+i),\n"
+	<< "                              cdiffview(fieldNew+i,fieldOld+i),\n"
+	<< "                              view(stateNew+i),\n"
+	<< "                              *(enerInternNew+i),\n"
+	<< "                              *(enerInelasNew+i),\n"
 	<< "                              " << n << "_getOutOfBoundsPolicy()" << "};\n";
   } // end of writeAbaqusExplicitDataInitialisation
   
@@ -487,20 +487,20 @@ namespace mfront{
 	<< "(const abaqus::AbaqusExplicitData<Type>& " << iprefix << "d)\n"
 	<< ": T(" << iprefix << "d.tempOld)";
     this->writeMaterialPropertiesInitializersInBehaviourDataConstructorI(out,h,mb,mprops.first,
-									 mprops.second,
-									 iprefix+"d.props","","");
+    									 mprops.second,
+    									 iprefix+"d.props","","");
     this->writeVariableInitializersInBehaviourDataConstructorI(out,persistentVarsHolder,
-							       iprefix+"d.stateOld","","");
+    							       iprefix+"d.stateOld","","");
     this->writeVariableInitializersInBehaviourDataConstructorI(out,externalStateVarsHolder,
-							       iprefix+"d.fieldOld","","");
+    							       iprefix+"d.fieldOld","","");
     out << "\n{\n";
     this->writeMaterialPropertiesInitializersInBehaviourDataConstructorII(out,h,mb,mprops.first,
-									  mprops.second,
-									  iprefix+"d.props","","");
+    									  mprops.second,
+    									  iprefix+"d.props","","");
     this->writeVariableInitializersInBehaviourDataConstructorII(out,persistentVarsHolder,
-								iprefix+"d.stateOld","","");
+    								iprefix+"d.stateOld","","");
     this->writeVariableInitializersInBehaviourDataConstructorII(out,externalStateVarsHolder,
-								iprefix+"d.fieldOld","","");
+    								iprefix+"d.fieldOld","","");
     this->completeBehaviourDataConstructor(out,h,mb);
     out << "}\n\n";
   }

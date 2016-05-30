@@ -17,25 +17,27 @@ namespace abaqus{
   template<typename T>
   struct AbaqusExplicitData{
     //! a simple alias
-    using iterator       =
+    using const_iterator = const T*;
+    //! a simple alias
+    using strided_iterator =
       tfel::math::StridedRandomAccessIterator<T*>;
     //! a simple alias
-    using const_iterator =
+    using strided_const_iterator =
       tfel::math::StridedRandomAccessIterator< const T*>;
-    using diff_const_iterator =
-      tfel::math::DifferenceRandomAccessIterator<const_iterator>;
+    using diff_strided_const_iterator =
+      tfel::math::DifferenceRandomAccessIterator<strided_const_iterator>;
     // time increment
     const T dt;
     const const_iterator props;
-    const const_iterator density;
+    const T density;
     const T tempOld;
-    const const_iterator fieldOld;
-    const const_iterator stateOld;
+    const strided_const_iterator fieldOld;
+    const strided_const_iterator stateOld;
     const T enerInternOld;
     const T enerInelasOld;
     const T tempNew;
-    const diff_const_iterator dfield;
-    const iterator stateNew;
+    const diff_strided_const_iterator dfield;
+    const strided_iterator stateNew;
     T& enerInternNew;
     T& enerInelasNew;
     //! out of bounds policy

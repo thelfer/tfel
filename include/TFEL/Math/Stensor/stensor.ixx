@@ -881,11 +881,15 @@ namespace tfel{
     {}
 
     template<unsigned short N, typename T>
-    stensor<N,T>::stensor(const typename tfel::typetraits::BaseType<T>::type* const init)
+    template<typename InputIterator,
+	     typename std::enable_if<std::is_same<typename std::iterator_traits<InputIterator>::value_type,
+						  typename tfel::typetraits::BaseType<T>::type>::value,
+				     bool>::type>
+    stensor<N,T>::stensor(const InputIterator p)
     {
       typedef typename tfel::typetraits::BaseType<T>::type base;
       TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
-      tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(init,reinterpret_cast<base*>(this->v));
+      tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(p,reinterpret_cast<base*>(this->v));
     }
 
     template<unsigned short N, typename T>
@@ -923,41 +927,39 @@ namespace tfel{
 
     // Import from Voigt
     template<unsigned short N,typename T>
-    template<typename T2>
-    typename std::enable_if<
-      tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
-      void>::type
-    stensor<N,T>::importVoigt(const T2 * const src)
+    template<typename InputIterator>
+    typename std::enable_if<std::is_same<typename std::iterator_traits<InputIterator>::value_type,
+					 typename tfel::typetraits::BaseType<T>::type>::value,
+			    void>::type
+    stensor<N,T>::importVoigt(const InputIterator p)
     {
-      tfel::math::internals::ImportFromVoigt<N>::exe(reinterpret_cast<T2*>(this->v),src);
+      typedef typename tfel::typetraits::BaseType<T>::type base;
+      tfel::math::internals::ImportFromVoigt<N>::exe(reinterpret_cast<base*>(this->v),p);
     }
     
     // Import from Tab
     template<unsigned short N,typename T>
-    template<typename T2>
-    typename std::enable_if<
-      tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
-      void>::type
-    stensor<N,T>::importTab(const T2* const src)
+    template<typename InputIterator>
+    typename std::enable_if<std::is_same<typename std::iterator_traits<InputIterator>::value_type,
+					 typename tfel::typetraits::BaseType<T>::type>::value,
+			    void>::type
+    stensor<N,T>::importTab(const InputIterator p)
     {
       typedef typename tfel::typetraits::BaseType<T>::type base;
       typedef tfel::math::internals::ImportFromTab<N> Import;
-      TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
-      Import::exe(reinterpret_cast<T2*>(this->v),src);
+      Import::exe(reinterpret_cast<base*>(this->v),p);
     }
 
     // Import from values
     template<unsigned short N,typename T>
-    template<typename T2>
-    typename std::enable_if<
-      tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
-      void>::type
-    stensor<N,T>::import(const T2 * const src)
+    template<typename InputIterator>
+    typename std::enable_if<std::is_same<typename std::iterator_traits<InputIterator>::value_type,
+					 typename tfel::typetraits::BaseType<T>::type>::value,
+			    void>::type
+    stensor<N,T>::import(const InputIterator p)
     {
       typedef typename tfel::typetraits::BaseType<T>::type base;
-      typedef tfel::fsalgo::copy<StensorDimeToSize<N>::value> Copy;
-      TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
-      Copy::exe(src,reinterpret_cast<base*>(this->v));
+      tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(p,reinterpret_cast<base*>(this->v));
     }
 
     // Export to Tab
@@ -1205,10 +1207,9 @@ namespace tfel{
     T tresca(const stensor<1u,T>& s,
 	     const bool)
     {
-      using namespace std;
-      const T sd1 = abs(s[0]-s[1]);
-      const T sd2 = abs(s[0]-s[2]);
-      const T sd3 = abs(s[2]-s[1]);
+      const T sd1 = std::abs(s[0]-s[1]);
+      const T sd2 = std::abs(s[0]-s[2]);
+      const T sd3 = std::abs(s[2]-s[1]);
       const T tmp  = sd1 > sd2 ? sd1 : sd2;
       const T tmp2 = sd3 > tmp ? sd3 : tmp;
       return tmp2;
@@ -1218,14 +1219,11 @@ namespace tfel{
     T tresca(const stensor<N,T>& s,
 	     const bool b)
     {
-      using namespace std;
-      T s1;
-      T s2;
-      T s3;
+      T s1,s2,s3;
       s.computeEigenValues(s1,s2,s3,b);
-      const T sd1 = abs(s1-s2);
-      const T sd2 = abs(s1-s3);
-      const T sd3 = abs(s3-s2);
+      const T sd1 = std::abs(s1-s2);
+      const T sd2 = std::abs(s1-s3);
+      const T sd3 = std::abs(s3-s2);
       const T tmp  = sd1 > sd2  ? sd1 : sd2;
       const T tmp2 = sd3 > tmp  ? sd3 : tmp;
       return tmp2;

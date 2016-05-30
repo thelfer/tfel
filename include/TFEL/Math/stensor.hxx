@@ -15,6 +15,7 @@
 #define LIB_TFEL_STENSOR_H_ 
 
 #include<cstddef>
+#include<iterator>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
@@ -151,8 +152,12 @@ namespace tfel{
        * const, pointer to a tabular used to initialise the components
        * of the stensor. This tabular is left unchanged.
        */
+      template<typename InputIterator,
+	       typename std::enable_if<std::is_same<typename std::iterator_traits<InputIterator>::value_type,
+						    typename tfel::typetraits::BaseType<T>::type>::value,
+				       bool>::type = true>
       TFEL_MATH_INLINE explicit
-      stensor(const typename tfel::typetraits::BaseType<T>::type* const);
+      stensor(const InputIterator);
       //! \brief copy constructor
       TFEL_MATH_INLINE constexpr
       stensor(const stensor<N,T>&) = default;
@@ -175,22 +180,30 @@ namespace tfel{
       /*!
        * \brief Import from Voigt
        */
-      template<typename T2>
-      TFEL_MATH_INLINE2 
-      typename std::enable_if<
-	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
-	void
-	>::type
-      importVoigt(const T2* const);
+      template<typename InputIterator>
+      TFEL_MATH_INLINE2
+      typename std::enable_if<std::is_same<typename std::iterator_traits<InputIterator>::value_type,
+					   typename tfel::typetraits::BaseType<T>::type>::value,
+			      void>::type
+      importVoigt(const InputIterator);
       /*!
        * Import from Tab (Voigt notations for stresses)
        */
-      template<typename T2>
-      TFEL_MATH_INLINE2 
-      typename std::enable_if<
-	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
-	void>::type
-      importTab(const T2* const);
+      template<typename InputIterator>
+      TFEL_MATH_INLINE2
+      typename std::enable_if<std::is_same<typename std::iterator_traits<InputIterator>::value_type,
+					   typename tfel::typetraits::BaseType<T>::type>::value,
+			      void>::type
+      importTab(const InputIterator);
+      /*!
+       * Import values
+       */
+      template<typename InputIterator>
+      TFEL_MATH_INLINE2
+      typename std::enable_if<std::is_same<typename std::iterator_traits<InputIterator>::value_type,
+					   typename tfel::typetraits::BaseType<T>::type>::value,
+			      void>::type
+      import(const InputIterator);
       /*!
        * Export to Tab (Voigt notations for stresses)
        */
@@ -210,15 +223,6 @@ namespace tfel{
 	void
 	>::type
       write(T2* const) const;
-      /*!
-       * Import values
-       */
-      template<typename T2>
-      TFEL_MATH_INLINE2 
-      typename std::enable_if<
-	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
-	void>::type
-      import(const T2* const);
       //! using stensor_base::operator=
       using stensor_base<stensor>::operator=;
       /*!
