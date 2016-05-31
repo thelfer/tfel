@@ -42,6 +42,7 @@ set(mfront_tests_SOURCES
   EllipticCreep
   StrainHardeningCreep
   Mazars
+  UnilateralMazars
   Lorentz
   Lorentz2
   PlasIsoCin
@@ -246,6 +247,7 @@ test_aster(druckerprager)
 test_aster(druckerprager2)
 test_aster(mazars)
 test_aster(mazars2)
+test_aster(unilateralmazars)
 test_aster(lorentz)
 test_aster(lorentz2)
 test_aster(norton)

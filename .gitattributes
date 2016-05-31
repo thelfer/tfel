@@ -2192,6 +2192,7 @@ mfront/tests/behaviours/T91ViscoplasticBehaviour.mfront -text
 mfront/tests/behaviours/TestComputeElasticPrediction.mfront -text
 mfront/tests/behaviours/TestComputeElasticPrediction2.mfront -text
 mfront/tests/behaviours/Tvergaard.mfront -text
+mfront/tests/behaviours/UnilateralMazars.mfront -text
 mfront/tests/behaviours/ViscoChaboche.mfront -text
 mfront/tests/behaviours/ViscoMemoNrad.mfront -text
 mfront/tests/behaviours/ViscoPlasIsoCin.mfront -text
@@ -2863,6 +2864,7 @@ mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-uniaxialloadi
 mfront/tests/behaviours/aster/asterstrainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/aster/asterstressrelaxation.mtest.in -text
 mfront/tests/behaviours/aster/astertvergaard.mtest.in -text
+mfront/tests/behaviours/aster/asterunilateralmazars.mtest.in -text
 mfront/tests/behaviours/aster/asterviscochaboche-memo-nrad.py.in -text
 mfront/tests/behaviours/aster/asterviscochaboche.mtest.in -text
 mfront/tests/behaviours/aster/asterviscoplasisocin.mtest.in -text
@@ -3788,6 +3790,7 @@ mfront/tests/behaviours/references/tssf.ref -text
 mfront/tests/behaviours/references/tssf2.ref -text
 mfront/tests/behaviours/references/tssf3.ref -text
 mfront/tests/behaviours/references/tvergaard.ref -text
+mfront/tests/behaviours/references/unilateralmazars.ref -text
 mfront/tests/behaviours/references/viscoplasisocin.ref -text
 mfront/tests/behaviours/secant/CMakeLists.txt -text
 mfront/tests/behaviours/secant/Makefile.am -text

@@ -1,0 +1,30 @@
+@Author François Hamon;
+@Date   21 mai 2016;
+@Description{
+  "Test de la loi de comportement de Mazars "
+  "avec effet unilatéral"
+};
+
+@StiffnessMatrixType 'SecantOperator';
+@Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterunilateralmazars';
+@MaterialProperty<constant> 'YoungModulus'     3.2e10; 
+@MaterialProperty<constant> 'PoissonRatio'     0.2;    
+@MaterialProperty<constant> 'At' 0.98;
+@MaterialProperty<constant> 'Bt' 11000;
+@MaterialProperty<constant> 'Ac' 1.3;
+@MaterialProperty<constant> 'Bc' 515.;
+@MaterialProperty<constant> 'st_max'   3310000.;
+@MaterialProperty<constant> 'sc_max' -10000000.;
+@MaterialProperty<constant> 'k' 0.7;
+
+@ExternalStateVariable 'Temperature' 293.15;
+@ImposedStrain 'EXX' {0.:0.,1.:-1.5e-3,
+                      2.:0.,3.:-4.5e-3,
+                      4.:0.,5.:+1.5e-3};
+
+@Times {0.,5.0 in 800};
+
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/unilateralmazars.ref'
+            {'EYY':3,'EZZ':4,'EXY':5,'EXZ':6,'EYZ':7} 1.e-10;
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/unilateralmazars.ref'
+            {'SXX':8, 'SYY':9, 'SZZ':10,'SXY':11,'SXZ':12,'SYZ':13} 1.e2;
