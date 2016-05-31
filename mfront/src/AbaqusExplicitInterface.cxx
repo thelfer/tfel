@@ -687,6 +687,7 @@ namespace mfront{
 	  << "::exit(-1);\n";
     }
     this->writeChecks(out,mb,t,h);
+    //omp support    #pragma omp parallel for
     out << "for(int i=0;i!=*nblock;++i){\n";
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name));
     if(h==MH::PLANESTRESS){
@@ -779,6 +780,7 @@ namespace mfront{
       }
     }
     this->writeChecks(out,mb,t,h);
+    //omp support    #pragma omp parallel for
     out << "for(int i=0;i!=*nblock;++i){\n";
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name));
     if(h==MH::PLANESTRESS){
@@ -930,6 +932,7 @@ namespace mfront{
     this->writeChecks(out,mb,t,h);
     out << "const auto  f = [](const " << t << " x){return std::log(x)/2;};\n"
 	<< "const auto df = [](const " << t << " x){return 1/(2*x);};\n"
+    //omp support    #pragma omp parallel for
 	<< "for(int i=0;i!=*nblock;++i){\n";
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name));
     auto dime = (h==MH::TRIDIMENSIONAL) ? "3u" : "2u";
@@ -1119,6 +1122,7 @@ namespace mfront{
       return;
     }
     this->writeChecks(out,mb,t,h);
+    //omp support    #pragma omp parallel for
     out << "for(int i=0;i!=*nblock;++i){\n";
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name));
     if(h==MH::PLANESTRESS){
