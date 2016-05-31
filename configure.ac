@@ -628,6 +628,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterelasticity33.mtest	   
            mfront/tests/behaviours/aster/astermazars.mtest
            mfront/tests/behaviours/aster/astermazars2.mtest
+           mfront/tests/behaviours/aster/asterunilateralmazars.mtest
            mfront/tests/behaviours/aster/asterlorentz.mtest
            mfront/tests/behaviours/aster/asterlorentz2.mtest
            mfront/tests/behaviours/aster/asternorton.mtest

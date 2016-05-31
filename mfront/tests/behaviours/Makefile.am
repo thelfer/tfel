@@ -53,6 +53,7 @@ MFRONTS= DDIF2.mfront                                                      \
          ImplicitOrthotropicCreep.mfront                                   \
          StrainHardeningCreep.mfront                                       \
          Mazars.mfront                                                     \
+         UnilateralMazars.mfront                                           \
          Lorentz.mfront                                                    \
          Lorentz2.mfront                                                   \
 	 PlasIsoCin.mfront                                                 \
@@ -135,6 +136,7 @@ EXTRA_DIST=CMakeLists.txt                                                 \
 	   references/elasticity15-aster.ref                              \
 	   references/generalizedmaxwell.ref                              \
 	   references/mazars-aster.ref                                    \
+	   references/unilateralmazars.ref                                \
 	   references/plasisocin.ref                                      \
 	   references/viscoplasisocin.ref                                 \
 	   references/chaboche2-aster.ref                                 \
