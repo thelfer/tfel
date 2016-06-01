@@ -75,8 +75,7 @@ nu.setGlossaryName("PoissonRatio");
   const real Y0 =r*limint+(1.0-r)*liminc;
   const real Y =r*EPTM+(1.0-r)*EPCM;
   const real dmu= (Y<Y0) ? 0 : 1-(1-A)*Y0/(Y)-A*exp(-B*((Y)-Y0));
-  d=max(real(0),dmu);
-  d=min(dmax,dmu);
+  d=min(max(real(0),dmu),dmax);
   Yt0=EPTM;
   Yc0=EPCM;
   // stresses at the end

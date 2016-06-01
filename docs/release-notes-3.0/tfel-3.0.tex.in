@@ -445,6 +445,20 @@ Plus de détails peuvent être trouvés à la page~:
   \url{https://sourceforge.net/p/tfel/tickets/25/}
 \end{center}
 
+
+
+\subsubsection{Ticket {\# 27}}
+
+La dépendance de la librairie {\tt TFELMaterial} envers la librairie
+{\tt TFELUtilities} n'était pas prise en compte par l'utilitaire {\tt
+tfel-config}.
+
+Plus de détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/27/}
+\end{center}
+
+
 \section{Perspectives}
 
 \subsubsection{Lois de comportement à gradient de variables internes}
