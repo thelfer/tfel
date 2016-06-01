@@ -398,6 +398,7 @@ treatMaterial(void)
 {
   exceptions  = true;
   math        = true;
+  utilities   = true;
   material    = true;
 } // end of treatMaterial
 
