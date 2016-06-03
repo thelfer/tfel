@@ -116,8 +116,10 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/AbaqusFLD.pdf                                     \
 	   ./img/BrittleFracturePhaseField.png                     \
 	   ./img/epx.png                                           \
+	   ./img/UnilateralMazars.svg                              \
 	   ./media/epx1.mp4                                        \
 	   ./media/epx2.mp4                                        \
+	   ./media/abaqus-explicit.mp4                             \
 	   ./doc/js.md						   \
 	   ./doc/usage.md					   \
 	   ./doc/css.md						   \

@@ -1,6 +1,0 @@
-@DSL Implicit;
-@Behaviour OrthotropicElasticity;
-
-@OrthotropicBehaviour;
-@RequireStiffnessTensor;
-@Brick "StandardElasticity";

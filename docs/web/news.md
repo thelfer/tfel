@@ -2,7 +2,34 @@
 % Helfer Thomas
 % May 27, 2016
 
-# Documentation of behaviour bricks (27 Mai 2016)
+# A new behaviour implementation, called `UnilateralMazars` (1 June 2016)
+
+![](img/UnilateralMazars.svg "")
+
+A new behaviour implementation has been submitted by F. Hamon (EDF R&D
+AMA). This behaviour describes the damaging behaviour of concrete with
+unilateral effects as described in a dedicated paper:
+
+  > A new 3D damage model for concrete under monotonic, cyclic and
+  > dynamic loadings.  Jacky Mazars, François Hamon and Stéphane
+  > Grange. Materials and Structures ISSN 1359-5997 DOI
+  > 10.1617/s11527-014-0439-8
+
+This implementation can be found in the current development sources of
+MFront.
+
+# Progress in the Abaqus Explicit interface (VUMAT) (28 May 2016)
+
+<video style="display:block; margin: 0 auto;" width="640" height="320" controls>
+  <source src="media/abaqus-explicit.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+The Abaqus Explicit interface is becoming quite usable du to the
+extensive testing efforts of D. Deloison (Airbus). Here is an example
+a punching test (This test was also modelled using Abaqus Standard).
+
+# Documentation of behaviour bricks (27 May 2016)
 
 ~~~~{.cpp}
 @Brick "StandardElasticity";
@@ -13,7 +40,7 @@ Behaviour bricks will be one of the most important new feature of
 
 A dedicated page has been created [here](BehaviourBricks.html)
 
-# The `EUROPLEXUS` interface (27 Mai 2016)
+# The `EUROPLEXUS` interface (27 May 2016)
 
 ![](img/epx.png "")
 
@@ -31,7 +58,7 @@ phenomena involving structures and fluids in interaction.
 
 See the [dedicated page](epx.html) for more information.
 
-# `tfel-doc` `github` repository. Talks of the Second MFront Users Day (27 Mai 2016)
+# `tfel-doc` `github` repository. Talks of the Second MFront Users Day (27 May 2016)
 
 A `github` repository has been set up to store various documents
 describing TFEL and MFront usage. The talks of the first and second
@@ -39,7 +66,7 @@ MFront Users are available there:
 
 <https://github.com/thelfer/tfel-doc>
 
-# TFEL `github` repository (27 Mai 2016)
+# TFEL `github` repository (27 May 2016)
 
 The `subversion` repository used by CEA and EDF are now synchronized
 with a public `githbub` repository:
@@ -50,7 +77,7 @@ All the branches, commit description and history of TFEL are
 available. This repository is read-only. Its purpose is to integrate
 TFEL in continous-integration projects which depends on TFEL.
 
-# Announcing the `mfront` module (Mai 2016)
+# Announcing the `mfront` module (May 2016)
 
 A new `python` module has been introduced to analyse `MFront` files.
 
@@ -396,7 +423,7 @@ See the [dedicated page](castem.html) for more information.
 A presentation of `MFront` was done during the `Salome-Meca` and
 `Code_Aster` Users Day 2015 user meeting at EDF Lab Clamart.
 
-Slides can be found [here](documents/CodeAsterUserMeeting2015/mfront-aster-2015.pdf).
+Slides can be found [here](https://github.com/thelfer/tfel-doc/tree/master/Talks/CodeAsterUserDays2015).
 
 # `MFront` user meeting (6 Februar 2015)
 
@@ -406,15 +433,18 @@ discuss and comment about their use of MFront.
 
 Various subjects were discussed:
 
-- [Introduction to the user meeting](documents/mfront-user-meeting-2015/VM-ClubU_MFront_6-2-2015.pdf)
-- [New functionalities introduced in `TFEL`/`MFront` 2.0](documents/mfront-user-meeting-2015/mfront-cea.pdf)
+- Introduction to the user meeting
+- New functionalities introduced in `TFEL`/`MFront` 2.0
 - Feed-back from users:
-    - [Feed-back from the `Code-Aster` development team](documents/mfront-user-meeting-2015/2015-ClubU-MFront-REX-Aster.pdf)
-	- [Feed-back from the `Cyrano3` development team](documents/mfront-user-meeting-2015/petry_MFRONT.pdf)
-- [Modèle de couplage Fluage/Endommagement/Réaction Alcali Granulat (RAG) du béton](documents/mfront-user-meeting-2015/hamon_ClubU_MFront_6-2-2015.pdf)
+    - Feed-back from the `Code-Aster` development team
+	- Feed-back from the `Cyrano3` development team
+- Modèle de couplage Fluage/Endommagement/Réaction Alcali Granulat (RAG) du béton
 - Modélisation à différentes échelles du comportement mécanique du dioxyde d'uranium
-- [Writing portable behaviour with `MFront`](documents/mfront-user-meeting-2015/writing-portable-behaviour.pdf)
-- [On the road to `TFEL 3.x`](documents/mfront-user-meeting-2015/tfel-3.0.pdf)
+- Writing portable behaviour with `MFront`
+- On the road to `TFEL 3.x`
+
+Those talks are available
+[here](https://github.com/thelfer/tfel-doc/tree/master/MFrontUserDays/FirstUserDay)
 
 # First `MFront` user meeting (12 December 2014)
 
@@ -444,7 +474,8 @@ Other talks are welcomed.
 The [`Cast3M`](http://www-cast3m.cea.fr) user meeting was held in
 Paris on November 28, 2014. Jérémy Hure had a talk about the
 application of `MFront` in finite strain elasto-plasticity. This talk
-is available [here](documents/ClubCast3M2014/HureCast3M14.pdf).
+is available
+[here](https://github.com/thelfer/tfel-doc/tree/master/Talks/Cast3MUserDays2014).
 
 # `AMITEX_FFTP` has its own website (4 December 2014)
 
@@ -490,7 +521,7 @@ mailing lists:
 ![](img/materiaux2014.jpg "")
 
 An `MFront` talk was given at Materiaux 2014. Slides (in french) are
-available [here](documents/Materiaux2014/materiaux2014.html).
+available [here](https://github.com/thelfer/tfel-doc/tree/master/Talks/Materiaux2014).
 
 # Beta release of tfel-2.0.1 for `Windows 64bits` and `Cast3M 2014` (18 November 2014)
 
