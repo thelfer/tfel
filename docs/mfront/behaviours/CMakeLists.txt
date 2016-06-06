@@ -66,5 +66,5 @@ install(FILES
   COMPONENT docs)
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/behaviours.pdf
-  DESTINATION share/doc/tfel/web/documents/behaviours
+  DESTINATION share/doc/tfel/web/documents/mfront
   COMPONENT website)
