@@ -127,10 +127,6 @@ cmake/pyo-compile.py -text
 /debug.sh.in -text
 docs/CMakeLists.txt -text
 docs/Makefile.am -text
-docs/articles/CMakeLists.txt -text
-docs/articles/Makefile.am -text
-docs/articles/topfuel2015-poster.pdf -text
-docs/articles/topfuel2015.pdf -text
 docs/doxygen/CMakeLists.txt -text
 docs/doxygen/Makefile.am -text
 docs/html/Makefile.am -text
