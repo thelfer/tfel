@@ -16,7 +16,6 @@ if(GENERATE_WEBSITE)
   add_subdirectory(web)
 endif(GENERATE_WEBSITE)
 
-add_subdirectory(articles)
 add_subdirectory(mfront)
 add_subdirectory(mtest)
 add_subdirectory(ptest)
