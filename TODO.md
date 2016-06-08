@@ -7,9 +7,19 @@
 <!-- pandoc -s --mathjax -i -t revealjs TODO -o TODO.html -->
 <!-- pandoc -t beamer -V theme:Warsow beamercea TODO -o TODO.pdf -->
 
+# Specific DSL
+
+- support for external material properties
+
+# Bricks
+
+- finite strain single crystal plasticity
+- Marigo and Lorentz damage models
+- DDIF2 damage models
+
 # Plane stress
 
-- currently only supported by Implicit Parser
+- currently only supported by Implicit DSL
 - extension to restricted domain specific languages
   (IsotropicMisesPlasticFlow, etc..)
     - reduction to a *scalar* equation
