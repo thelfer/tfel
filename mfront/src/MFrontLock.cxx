@@ -28,8 +28,7 @@
 
 namespace mfront{
 
-  MFrontLock&
-  MFrontLock::getMFrontLock()
+  MFrontLock& MFrontLock::getMFrontLock()
   {
     static MFrontLock lock;
     return lock;
@@ -56,8 +55,7 @@ namespace mfront{
 #endif
   } // end of MFrontLock::MFrontLock()
 
-  void
-  MFrontLock::lock()
+  void MFrontLock::lock()
   {
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     DWORD dwWaitResult;

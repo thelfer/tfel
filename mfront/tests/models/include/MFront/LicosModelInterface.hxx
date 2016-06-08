@@ -54,14 +54,14 @@ namespace mfront{
 
   private:
 
-    void
+    virtual void
     openOutputFiles(void);
     
     /*!
      * \param pdata : processing data
      * \param data  : model data
      */
-    void
+    virtual void
     generateOutputFiles(const FileDescription&,
 			const ModelDescription&);
 
@@ -69,7 +69,7 @@ namespace mfront{
      * \param pdata : processing data
      * \param data  : model data
      */
-    void
+    virtual void
     writeHeaderFile(const FileDescription&,
 		    const ModelDescription&);
 
@@ -77,7 +77,7 @@ namespace mfront{
      * \param pdata : processing data
      * \param data  : model data
      */
-    void
+    virtual void
     writeSrcFile(const FileDescription&,
 		 const ModelDescription&);
     

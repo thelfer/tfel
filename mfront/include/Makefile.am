@@ -6,7 +6,9 @@ nobase_include_HEADERS= MFront/MFront.hxx                               \
 			MFront/MFrontUtilities.ixx                      \
 			MFront/GeneratorOptions.hxx                     \
 			MFront/MakefileGenerator.hxx                    \
+			MFront/MaterialPropertyQuery.hxx                \
 			MFront/BehaviourQuery.hxx                       \
+			MFront/ModelQuery.hxx                           \
 			MFront/BehaviourDocumentationGenerator.hxx      \
 			MFront/CodeBlock.hxx                            \
 			MFront/MFrontConfig.hxx	                        \
@@ -126,7 +128,8 @@ nobase_noinst_HEADERS += MFront/CMaterialPropertyInterfaceBase.hxx          \
 			 MFront/OctaveMaterialPropertyInterface.hxx         \
 			 MFront/ExcelMaterialPropertyInternalInterface.hxx  \
 			 MFront/PythonMaterialPropertyInterface.hxx         \
-			 MFront/JavaMaterialPropertyInterface.hxx
+			 MFront/JavaMaterialPropertyInterface.hxx           \
+			 MFront/MFrontModelInterface.hxx
 
 nobase_include_HEADERS += MFront/BehaviourProfiler.hxx
 

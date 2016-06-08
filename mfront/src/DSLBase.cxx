@@ -882,7 +882,7 @@ namespace mfront
       mp.analyseFile(path);
       const auto& mpd = mp.getMaterialPropertyDescription();
       const auto& mname = minterface.getFunctionName(mpd.material,
-						       mpd.law);
+						     mpd.law);
       this->reserveName(mname);
       this->reserveName(mname+"_checkBounds");
       this->reserveName(mname+"_bounds_check_status");
@@ -894,8 +894,8 @@ namespace mfront
       const auto t = m.treatFile(path);
       if(!t.specific_targets.empty()){
 	this->throwRuntimeError("DSLBase::handleMaterialLaw",
-				"error while treating file '"+f+"'\n"
-				"No specific targets are not supported");
+				"error while treating file '"+f+"'.\n"
+				"Specific targets are not supported");
       }
       this->atds.push_back(t);
     } catch(std::exception& e){
@@ -911,8 +911,8 @@ namespace mfront
 
   void
   DSLBase::treatMaterialLaw(void){
-    const auto vfiles = this->readStringOrArrayOfString("DSLBase::treatMfront");
-    this->readSpecifiedToken("DSLBase::treatMfront",";");
+    const auto vfiles = this->readStringOrArrayOfString("DSLBase::treatMaterialLaw");
+    this->readSpecifiedToken("DSLBase::treatMaterialLaw",";");
     for(const auto& f : vfiles){
       this->handleMaterialLaw(f);
     }

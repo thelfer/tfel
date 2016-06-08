@@ -1,8 +1,8 @@
-/*! 
- * \file  BehaviourQuery.hxx
- * \brief
- * \author Helfer Thomas
- * \date   04 mars 2015
+/*!
+ * \file   ModelQuery.hxx
+ * \brief    
+ * \author THOMAS HELFER
+ * \date   08 juin 2016
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURQUERY_H
-#define LIB_MFRONT_BEHAVIOURQUERY_H 
+#ifndef LIB_MFRONT_MODELQUERY_HXX
+#define LIB_MFRONT_MODELQUERY_HXX
 
 #include<string>
 #include<vector>
@@ -21,19 +21,16 @@
 #include<functional>
 
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
 #include"MFront/MFrontBase.hxx"
 
 namespace mfront{
 
   // forward declaration
-  struct AbstractBehaviourDSL;
+  struct ModelDSL;
   // forward declaration
   struct FileDescription;
   // forward declaration
-  struct BehaviourDescription;
-  // forward declaration
-  struct BehaviourData;
+  struct ModelDescription;
   // forward declaration
   struct VariableDescriptionContainer;
 
@@ -41,45 +38,35 @@ namespace mfront{
    * Class used by the mfront-query tool to extract information from
    * behaviour implementation
    */
-  struct BehaviourQuery final
-    : public tfel::utilities::ArgumentParserBase<BehaviourQuery>,
+  struct ModelQuery final
+    : public tfel::utilities::ArgumentParserBase<ModelQuery>,
       public MFrontBase
   {
     /*!
-     * build a BehaviourQuery object based on command line arguments
+     * build a ModelQuery object based on command line arguments
      * \param[in] argc : number of command line arguments
      * \param[in] argv : command line arguments
      * \param[in] d    : behaviour domain specific language
      * \param[in] f    : behaviour domain specific language
      */
-    BehaviourQuery(const int, const char *const *const,
-		   std::shared_ptr<AbstractBehaviourDSL>,
-		   const std::string&);
+    ModelQuery(const int, const char *const *const,
+	       std::shared_ptr<ModelDSL>,
+	       const std::string&);
     //! treat the requests
     virtual void exe(void);
     //! destructor
-    virtual ~BehaviourQuery();
+    virtual ~ModelQuery();
   private :
     //! a simple alias
-    using ModellingHypothesis = tfel::material::ModellingHypothesis;
-    //! a simple alias
-    using Hypothesis = ModellingHypothesis::Hypothesis;
-    //! a simple alias
     using query = std::function<void(const FileDescription&,
-				     const BehaviourDescription&,
-				     const Hypothesis)>;
+				     const ModelDescription&)>;
     //! ArgumentParserBase must be a friend
-    friend struct tfel::utilities::ArgumentParserBase<BehaviourQuery>;
+    friend struct tfel::utilities::ArgumentParserBase<ModelQuery>;
     //! \brief register call-backs associated with command line arguments
     virtual void registerCommandLineCallBacks(void);
     //! return the current argument
     virtual const tfel::utilities::Argument&
     getCurrentCommandLineArgument() const override final;
-    //! treat a standard query
-    virtual void treatStandardQuery(void) final;
-    //! treat a standard query (an option to the command line
-    //! triggering the query is required)
-    virtual void treatStandardQuery2(void) final;
     //! treat the "--generated-sources" query
     virtual void treatGeneratedSources(void) final;
     //! treat the "--cppflags" query
@@ -90,8 +77,8 @@ namespace mfront{
     virtual void treatLibrariesDependencies(void) final;
     //! treat the "--specific-targets" query
     virtual void treatSpecificTargets(void) final;
-    //! treat the "--modelling-hypothesis" command line argument
-    virtual void treatModellingHypothesis(void) final;
+    //! treat a standard query
+    virtual void treatStandardQuery(void) final;
     //! treat an unknown argument
     virtual void treatUnknownArgument(void) final;
     //! get the version description
@@ -100,20 +87,14 @@ namespace mfront{
     //! get the usage description
     virtual std::string
     getUsageDescription(void) const override final;
-    //! \return a query that show a list of variables
-    template<const VariableDescriptionContainer& (BehaviourData::* m)(void) const>
-    query generateVariablesListQuery(void);
     //! all the registred queries
     std::vector<std::pair<std::string,query>> queries;
     //! abstract behaviour dsl
-    std::shared_ptr<AbstractBehaviourDSL> dsl;
+    std::shared_ptr<ModelDSL> dsl;
     //! file name
     std::string file;    
-    //! modelling hypothesis
-    Hypothesis hypothesis = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-  }; // end of struct BehaviourQuery
-
+  }; // end of struct ModelQuery
+  
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURQUERY_H */
-
+#endif /* LIB_MFRONT_MODELQUERY_HXX_ */

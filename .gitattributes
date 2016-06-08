@@ -1755,6 +1755,7 @@ mfront/include/MFront/MFrontHeader.hxx -text
 mfront/include/MFront/MFrontLock.hxx -text
 mfront/include/MFront/MFrontLogStream.hxx -text
 mfront/include/MFront/MFrontMaterialPropertyInterface.hxx -text
+mfront/include/MFront/MFrontModelInterface.hxx -text
 mfront/include/MFront/MFrontUtilities.hxx -text
 mfront/include/MFront/MFrontUtilities.ixx -text
 mfront/include/MFront/MTestFileGeneratorBase.hxx -text
@@ -1765,6 +1766,7 @@ mfront/include/MFront/MaterialPropertyInterfaceFactory.hxx -text
 mfront/include/MFront/MaterialPropertyInterfaceProxy.hxx -text
 mfront/include/MFront/MaterialPropertyInterfaceProxy.ixx -text
 mfront/include/MFront/MaterialPropertyParametersHandler.hxx -text
+mfront/include/MFront/MaterialPropertyQuery.hxx -text
 mfront/include/MFront/ModelDSL.hxx -text
 mfront/include/MFront/ModelDSLBase.hxx -text
 mfront/include/MFront/ModelDSLBase.ixx -text
@@ -1773,6 +1775,7 @@ mfront/include/MFront/ModelDescription.hxx -text
 mfront/include/MFront/ModelInterfaceFactory.hxx -text
 mfront/include/MFront/ModelInterfaceProxy.hxx -text
 mfront/include/MFront/ModelInterfaceProxy.ixx -text
+mfront/include/MFront/ModelQuery.hxx -text
 mfront/include/MFront/MultipleIsotropicMisesFlowsDSL.hxx -text
 mfront/include/MFront/NewtonRaphsonSolvers.hxx -text
 mfront/include/MFront/NonLinearSystemSolver.hxx -text
@@ -1919,6 +1922,7 @@ mfront/src/MFrontHeader.cxx.in -text
 mfront/src/MFrontLock.cxx -text
 mfront/src/MFrontLogStream.cxx -text
 mfront/src/MFrontMaterialPropertyInterface.cxx -text
+mfront/src/MFrontModelInterface.cxx -text
 mfront/src/MFrontUtilities.cxx -text
 mfront/src/MTestFileGeneratorBase.cxx -text
 mfront/src/Makefile.am -text
@@ -1927,10 +1931,12 @@ mfront/src/MaterialPropertyDSL.cxx -text
 mfront/src/MaterialPropertyDescription.cxx -text
 mfront/src/MaterialPropertyInterfaceFactory.cxx -text
 mfront/src/MaterialPropertyParametersHandler.cxx -text
+mfront/src/MaterialPropertyQuery.cxx -text
 mfront/src/ModelDSL.cxx -text
 mfront/src/ModelDSLCommon.cxx -text
 mfront/src/ModelDescription.cxx -text
 mfront/src/ModelInterfaceFactory.cxx -text
+mfront/src/ModelQuery.cxx -text
 mfront/src/MultipleIsotropicMisesFlowsDSL.cxx -text
 mfront/src/NewtonRaphsonSolvers.cxx -text
 mfront/src/NonLinearSystemSolver.cxx -text

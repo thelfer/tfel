@@ -38,4 +38,9 @@ namespace mfront
     }
   } // end of ModelDSL::setInterfaces
 
+  ModelDescription
+  ModelDSL::getModelDescription(void) const{
+    return *this;
+  } // end of ModelDSL::getModelDescription
+  
 } // end of namespace mfront

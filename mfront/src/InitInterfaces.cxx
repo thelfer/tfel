@@ -65,6 +65,7 @@
 #endif
 
 #include"MFront/ZMATInterface.hxx"
+#include"MFront/MFrontModelInterface.hxx"
 #include"MFront/InitInterfaces.hxx"
 
 namespace mfront
@@ -140,6 +141,8 @@ namespace mfront
     BehaviourInterfaceProxy<ZMATInterface> zmatProxy;
 #endif /* HAVE_ZMAT */
 
+    ModelInterfaceProxy<MFrontModelInterface> mmi;
+    
   } // end of initInterfaces(void)
 
 } // end of namespace mfront

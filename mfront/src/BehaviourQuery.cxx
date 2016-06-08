@@ -542,16 +542,13 @@ const Hypothesis){
     }
   }
 
-  std::string
-  BehaviourQuery::getVersionDescription(void) const{
+  std::string BehaviourQuery::getVersionDescription(void) const{
     return MFrontHeader::getHeader();
   }
 
-  std::string 
-  BehaviourQuery::getUsageDescription(void) const
+  std::string BehaviourQuery::getUsageDescription(void) const
   {
-    using namespace std;
-    string usage("Usage : ");
+    auto usage = std::string("Usage : ");
     usage += this->programName;
     usage += " [options] [files]";
     return usage;

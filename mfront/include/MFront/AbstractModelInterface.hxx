@@ -37,8 +37,12 @@ namespace mfront{
   
   struct MFRONT_VISIBILITY_EXPORT AbstractModelInterface
   {
-    virtual
-    void declareReservedNames(std::set<std::string>&) = 0;
+    //! a simple alias
+    using TokensContainer = tfel::utilities::CxxTokenizer::TokensContainer;
+    /*!
+     * \param[out] names: reserved names
+     */
+    virtual void declareReservedNames(std::set<std::string>&) = 0;
     /*!
      * \param[in] k  : keyword treated
      * \param[in] p  : iterator to the current token
@@ -47,27 +51,26 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    virtual std::pair<bool,TokensContainer::const_iterator>
     treatKeyword(const std::string&,
-		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) = 0;
+		 TokensContainer::const_iterator,
+		 const TokensContainer::const_iterator) = 0;
     /*!
      * \brief : fill the target descripton
-     * \param[out] d  : target description
-     * \param[in]  md : model description
+     * \param[out] td: target description
+     * \param[in]  md: model description
      */
     virtual void getTargetsDescription(TargetsDescription&,
 				       const ModelDescription&) = 0;
     /*!
-     * \param pdata : generic data
-     * \param data  : model data
+     * \param fd: file description
+     * \param md: model description
      */
-    virtual
-    void writeOutputFiles(const FileDescription&,
-			  const ModelDescription&) = 0;
+    virtual void
+    writeOutputFiles(const FileDescription&,
+		     const ModelDescription&) = 0;
     //! desctructor
     virtual ~AbstractModelInterface();
-
   }; // end of AbstractModelInterface
 
 } // end of namespace mfront  

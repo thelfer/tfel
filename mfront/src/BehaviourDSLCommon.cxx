@@ -42,6 +42,7 @@
 #include"MFront/AbstractBehaviourBrick.hxx"
 #include"MFront/AbstractBehaviourBrickFactory.hxx"
 #include"MFront/TargetsDescription.hxx"
+#include"MFront/ModelDSL.hxx"
 #include"MFront/BehaviourDSLCommon.hxx"
 #include"MFront/BehaviourBrick/Requirement.hxx"
 #include"MFront/BehaviourBrick/RequirementManager.hxx"
@@ -234,10 +235,27 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::readCodeBlockOptions
 
+  //  MaterialPropertyDescription
   void BehaviourDSLCommon::getModel(const std::string& m){
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "BehaviourDSLCommon::treatModel: treating file '" << m << "'\n";
     }
+    // getting informations the source files
+    ModelDSL dsl;
+    try{
+      dsl.analyseFile(SearchFile::search(m),{},{});
+    } catch(std::exception& e){
+      this->throwRuntimeError("BehaviourDSLCommon::getModel",
+			      "error while treating file '"+m+"'\n"+
+			      std::string(e.what()));
+    } catch(...){
+      this->throwRuntimeError("BehaviourDSLCommon::getModel",
+			      "error while treating file '"+m+"'");
+    }
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "BehaviourDSLCommon::treatModel: end of file '" << m << "' treatment\n";
+    }
+    // return dsl.getModelDescription();
   } // end of BehaviourDSLCommon::getModel
   
   void BehaviourDSLCommon::treatModel(void){

@@ -17,6 +17,7 @@
 
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/ModelDSLCommon.hxx"
@@ -47,8 +48,8 @@ namespace mfront{
   void
   ModelDSLCommon::reserveName(const std::string& n){
     if(!this->reservedNames.insert(n).second){
-      throw(std::runtime_error("ModelDSLCommon::reserveName: "
-			       "name '"+n+"' already reserved"));
+      this->throwRuntimeError("ModelDSLCommon::reserveName",
+			      "name '"+n+"' already reserved");
     }
   }
   
@@ -57,8 +58,8 @@ namespace mfront{
   {
     this->reserveName(n);
     if(!this->memberNames.insert(n).second){
-      throw(std::runtime_error("ModelDSLCommon::registerMemberName: "
-			       "name '"+n+"' already reserved"));
+      this->throwRuntimeError("ModelDSLCommon::registerMemberName",
+			      "name '"+n+"' already reserved");
     }
   } // end of ModelDSLCommon::registerMemberName
 
@@ -67,8 +68,8 @@ namespace mfront{
   {
     this->reserveName(n);
     if(!this->staticMemberNames.insert(n).second){
-      throw(std::runtime_error("ModelDSLCommon::registerStaticMemberName: "
-			       "name '"+n+"' already reserved"));
+      this->throwRuntimeError("ModelDSLCommon::registerStaticMemberName",
+			      "name '"+n+"' already reserved");
     }
   } // end of ModelDSLCommon::registerStaticMemberName
   
@@ -189,6 +190,9 @@ namespace mfront{
   void
   ModelDSLCommon::treatUnknownKeyword(void)
   {
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("ModelDSLCommon::treatUnknownKeyword: "+m));}
+    };
     auto treated = false;
     auto p2 = TokensContainer::const_iterator{};
     --(this->current);
@@ -210,11 +214,9 @@ namespace mfront{
 	  s.insert(t);
 	}
 	++(this->current);
-	if((this->current->value!="]")&&(this->current->value!=",")){
-	  this->throwRuntimeError("ModelDSLCommon::treatUnknownKeyword",
-				  "unexpected token '"+this->current->value+"' "
-				  "(expected ']' or ',').");
-	}
+	throw_if((this->current->value!="]")&&(this->current->value!=","),
+		 "unexpected token '"+this->current->value+"' "
+		 "(expected ']' or ',').");
       }
       ++(this->current);
       if(s.empty()){
@@ -223,18 +225,11 @@ namespace mfront{
 	for(const auto & i : s){
 	  const auto p = interfaces.at(i)->treatKeyword(key,this->current,
 						this->tokens.end());
-	  if(!p.first){
-	    this->throwRuntimeError("ModelDSLCommon::treatUnknownKeyword",
-				    "the keyword '"+key+"' has not been treated "
-				    "by interface '"+i+"'");
-	  }
+	  throw_if(!p.first,"the keyword '"+key+"' has not been treated "
+		   "by interface '"+i+"'");
 	  if(treated){
-	    if(p2!=p.second){
-	      this->throwRuntimeError("ModelDSLCommon::treatUnknownKeyword",
-				      "the keyword '"+key+"' has been treated "
-				      "by two interfaces but results were "
-				      "different");
-	    }
+	    throw_if(p2!=p.second,"the keyword '"+key+"' has been treated "
+		     "by two interfaces but results were different");
 	  }
 	  p2 = p.second;
 	  treated = true;
@@ -247,14 +242,10 @@ namespace mfront{
 					this->tokens.end());
 	if(p.first){
 	  if(treated){
-	    if(p2!=p.second){
-	      this->throwRuntimeError("ModelDSLCommon::treatUnknownKeyword",
-				      "the keyword '"+key+"' has been treated "
-				      "by two interfaces but results were "
-				      "different");
-	    }
+	    throw_if(p2!=p.second,"the keyword '"+key+"' has been treated "
+		     "by two interfaces but results were different");
 	  }
-	    p2 = p.second;
+	  p2 = p.second;
 	  treated = true;
 	}
       }
@@ -269,23 +260,14 @@ namespace mfront{
   void
   ModelDSLCommon::treatDomain(void)
   {
-    using namespace tfel::utilities;
-    if(!this->domains.empty()){
-      std::string msg("domain has already been defined ");
-      if(!this->domains.empty()){
-	msg+="with @Domain or @Domains";
-      }
-      this->throwRuntimeError("ModelDSLCommon::treatDomains",msg);
-    }
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("ModelDSLCommon::treatDomain: "+m));}
+    };    
+    throw_if(!this->domains.empty(),"domain defined");
     this->checkNotEndOfFile("ModelDSLCommon::treatDomain");
-    if(this->current->flag!=Token::String){
-      this->throwRuntimeError("ModelDSLCommon::treatDomain",
-			      "Expected to read a string (read '"+this->current->value+"').");
-    }
-    if(this->current->value.size()<2){
-      this->throwRuntimeError("ModelDSLCommon::treatDomain : ",
-			      "domain name too short.");
-    }
+    throw_if(this->current->flag!=tfel::utilities::Token::String,
+	     "Expected to read a string (read '"+this->current->value+"').");
+    throw_if(this->current->value.size()<2,"domain name too short.");
     this->domains.insert(this->current->value.substr(1,this->current->value.size()-2));
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatDomain",";");
@@ -294,52 +276,16 @@ namespace mfront{
   void
   ModelDSLCommon::treatDomains(void)
   {
-    using namespace tfel::utilities;
-    bool bend;
-    if(!this->domains.empty()){
-      std::string msg("domain has already been defined ");
-      if(!this->domains.empty()){
-	msg+="with @Domain or @Domains";
-      }
-      this->throwRuntimeError("ModelDSLCommon::treatDomains",msg);
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("ModelDSLCommon::treatDomains: "+m));}
+    };    
+    throw_if(!this->domains.empty(),"domains defined");
+    for(const auto& d : this->readArrayOfString("ModelDSLCommon::treatDomains")){
+      throw_if(!this->domains.insert(d).second,
+	       "domain "+d+" already defined.");
     }
-    this->checkNotEndOfFile("ModelDSLCommon::treatDomains");
-    this->readSpecifiedToken("ModelDSLCommon::treatDomains","{");
-    this->checkNotEndOfFile("ModelDSLCommon::treatDomains");
-    bend = false;
-    while((this->current!=this->tokens.end())&&(!bend)){
-      if(this->current->flag!=Token::String){
-	this->throwRuntimeError("ModelDSLCommon::treatDomains",
-				"Expected to read a string (read '"+this->current->value+"').");
-      }
-      if(this->current->value.size()<3){
-	this->throwRuntimeError("ModelDSLCommon::treatDomains",
-				"Domain name too short.");
-      }
-      if(!this->domains.insert(this->current->value.substr(1,this->current->value.size()-2)).second){
-	this->throwRuntimeError("ModelDSLCommon::treatDomains",
-				"domain "+this->current->value.substr(1,this->current->value.size()-2)+
-				" already defined.");
-      }
-      ++(this->current);	
-      this->checkNotEndOfFile("ModelDSLCommon::treatDomains",
-			      "Expected ',' or ')'.");
-      if(this->current->value==","){
-	++this->current;
-      } else if(this->current->value=="}"){
-	bend = true;
-      } else {
-	this->throwRuntimeError("ModelDSLCommon::treatDomains",
-				"Expected ',' or ')' (read '"+this->current->value+"').");
-      }
-    }
-    this->readSpecifiedToken("ModelDSLCommon::treatDomains","}");
-    if(this->domains.empty()){
-      this->throwRuntimeError("ModelDSLCommon::treatDomains",
-			      "@Domains does not set any domain.");
-    }
-    this->checkNotEndOfFile("ModelDSLCommon::treatDomains");
-    ++(this->current);
+    throw_if(this->domains.empty(),"@Domains does not set any domain");
+    this->readSpecifiedToken("ModelDSLCommon::treatDomain",";");
   } // end of ModelDSLCommon::treatDomains(void)
 
   std::pair<std::string,unsigned short>
@@ -379,8 +325,8 @@ namespace mfront{
 	}
       }
     }
-    throw(std::runtime_error("ModelDSLCommon::decomposeVariableName : "
-			     "no decomposition found  for variable '"+v+"'"));
+    this->throwRuntimeError("ModelDSLCommon::decomposeVariableName",
+			    "no decomposition found  for variable '"+v+"'");
   } // end of ModelDSLCommon::getPleiadesVariableName(const std::string& v)
 
   bool
@@ -398,7 +344,9 @@ namespace mfront{
   void
   ModelDSLCommon::treatFunction(void)
   {
-    using namespace std;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("ModelDSLCommon::treatFunction: "+m));}
+    };
     auto isStaticMemberName = [](const ModelDescription& d,
 				 const std::string& n){
       for(const auto& v : d.staticMemberNames){
@@ -421,14 +369,11 @@ namespace mfront{
     unsigned int openedBrackets = 0;
     unsigned int openedParenthesis = 0;
     f.useTimeIncrement = false;
-    this->registerMemberName("functor"+to_string(this->functions.size()));
+    this->registerMemberName("functor"+std::to_string(this->functions.size()));
     this->checkNotEndOfFile("ModelDSLCommon::treatFunction");
     f.name = this->current->value;
-    if(!this->isValidIdentifier(f.name)){
-      string msg("ModelDSLCommon::treatFunction : ");
-      msg += "function name '"+f.name+"' is not valid";
-      throw(runtime_error(msg));
-    }
+    throw_if(!this->isValidIdentifier(f.name),
+	     "function name '"+f.name+"' is not valid");
     this->registerMemberName(f.name);
     this->reserveName(f.name+".Domain");
     this->reserveName(f.name+".Domains");
@@ -437,12 +382,12 @@ namespace mfront{
     this->readSpecifiedToken("ModelDSLCommon::treatFunction","{");
     ++openedBrackets;
     this->checkNotEndOfFile("ModelDSLCommon::treatFunction",
-			    "Expected body of function '"+f.name+"'.");
+			    "expected body of function '"+f.name+"'.");
     auto currentLine    = this->current->line;
     auto newInstruction = true;
     auto newLine        = true;
     if(getDebugMode()){
-      f.body  +="#line " + to_string(currentLine) + " \"" + this->fileName + "\"\n";
+      f.body  +="#line " + std::to_string(currentLine) + " \"" + this->fileName + "\"\n";
     }
     for(;(this->current!=this->tokens.end())&&
 	  (openedBrackets!=0);++(this->current)){
@@ -450,7 +395,7 @@ namespace mfront{
 	currentLine=this->current->line;
 	f.body  += "\n";
 	if(getDebugMode()){
-	  f.body  +="#line " + to_string(currentLine) + " \"" + this->fileName + "\"\n";
+	  f.body  +="#line " + std::to_string(currentLine) + " \"" + this->fileName + "\"\n";
 	}
 	newLine = true;
       } 
@@ -467,10 +412,7 @@ namespace mfront{
 	++openedParenthesis;
 	f.body  +="(";
       } else if(this->current->value==")"){
-	if(openedParenthesis==0){
-	  this->throwRuntimeError("ModelDSLCommon::treatFunction",
-				  "unbalanced parenthesis");
-	}
+	throw_if(openedParenthesis==0,"unbalanced parenthesis");
 	--openedParenthesis;
 	f.body  += ")";
       } else if(this->current->value==";"){
@@ -485,14 +427,12 @@ namespace mfront{
 	} else if(isMemberName(*this,this->current->value)){
 	  bool treated = false;
 	  if(newInstruction){
-	    string var = this->current->value;
-	    string op;
+	    const auto var = this->current->value;
+	    auto op = std::string{};
 	    ++(this->current);
-	    if(this->current==tokens.end()){
-	      string msg("ModelDSLCommon::treatFunction : ");
-	      msg+="unexpected end of file while reading body of function " + f.name;
-	      throw(runtime_error(msg));
-	    }
+	    throw_if(this->current==tokens.end(),
+		     "unexpected end of file while reading "
+		     "body of function '"+f.name+"'");
 	    auto modifier = false;
 	    if(this->current->value=="="){
 	      op = "=";
@@ -594,27 +534,11 @@ namespace mfront{
       }
       newLine=false;
     }
-    if((this->current==tokens.end())&&(openedBrackets!=0)){
-      string msg("ModelDSLCommon::treatFunction : ");
-      msg+="unexpected end of file while reading body of function " + f.name;
-      throw(runtime_error(msg));
-    }
-    if(openedBrackets!=0){
-      string msg("ModelDSLCommon::treatFunction : ");
-      msg+="parenthesis still opened at the end of function " + f.name;
-      throw(runtime_error(msg));
-    }
-    if(f.modifiedVariables.size()==0){
-      string msg("ModelDSLCommon::treatFunction : ");
-      msg+="function " + f.name + " does not change any variable.";
-      throw(runtime_error(msg));
-    }
-    if(!this->functionNames.insert(f.name).second){
-      string msg("ModelDSLCommon::treatFunction : ");
-      msg+="function " + f.name + " already declared.";
-      throw(runtime_error(msg));
-    }
-
+    throw_if((this->current==tokens.end())&&(openedBrackets!=0),
+	     "unexpected end of file while reading body of function '"+f.name+"'");
+    throw_if(openedBrackets!=0,"parenthesis still opened at the end of function '"+f.name+"'");
+    throw_if(f.modifiedVariables.size()==0,"function " + f.name + " does not change any variable.");
+    throw_if(!this->functionNames.insert(f.name).second,"function " + f.name + " already declared.");
     for(auto p2=f.modifiedVariables.begin();p2!=f.modifiedVariables.end();++p2){
       auto p3=f.usedVariables.find(*p2);
       if(p3!=f.usedVariables.end()){
@@ -627,11 +551,10 @@ namespace mfront{
   void
   ModelDSLCommon::treatOutput(void)
   {
-    using namespace std;
     if(!this->functions.empty()){
-      throw(std::runtime_error("ModelDSLCommon::treatInput : "
+      this->throwRuntimeError("ModelDSLCommon::treatInput",
 			       "outputs must be declared before "
-			       "declaring functions"));
+			       "declaring functions");
     }
     VariableDescriptionContainer noutputs;
     this->readVarList(noutputs,"Field",false);
@@ -646,8 +569,9 @@ namespace mfront{
   ModelDSLCommon::treatInput(void)
   {
     if(!this->functions.empty()){
-      throw(std::runtime_error("ModelDSLCommon::treatInput : "
-			       "inputs must be declared before declaring functions"));
+      this->throwRuntimeError("ModelDSLCommon::treatInput",
+			      "inputs must be declared before "
+			      "declaring functions");
     }
     VariableDescriptionContainer ninputs;
     this->readVarList(ninputs,"Field",false);
@@ -665,13 +589,13 @@ namespace mfront{
   {
     for(const auto& gn : g){
       if(gn.second==n){
-	throw(std::runtime_error("MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName : "
+	throw(std::runtime_error("MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName: "
 				 "name '"+n+"' is already used as a glossary name"));
       }
     }
     for(const auto& en : e){
       if(en.second==n){
-	throw(std::runtime_error("MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName : "
+	throw(std::runtime_error("MFrontLawParserCheckIfNameIsAnEntryNameOrAGlossaryName: "
 				 "name '"+n+"' is already used as a entry name"));
       }
     }
@@ -780,13 +704,7 @@ namespace mfront{
     }  else if (methodName=="setDefaultInitialValue"){
       this->checkNotEndOfFile("ModelDSLCommon::treatOutputMethod",
 			      "Expected intial value.");
-      double value;
-      istringstream converter(this->current->value);
-      converter >> value;
-      if(!converter||(!converter.eof())){
-	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
-				"Could not read initial value of field : '"+this->currentVar+"'");
-      }
+      const auto value = tfel::utilities::convert<double>(this->current->value);
       if(!this->initialValues.insert({this->currentVar,value}).second){
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				"Initial value for field '"+this->currentVar +"' already defined.");
@@ -962,9 +880,9 @@ namespace mfront{
   {
     VariableDescriptionContainer gp;
     this->readVarList(gp,false);
-    for(const auto& p : gp){
-      this->registerMemberName(p.name);
-      this->parameters.push_back(p);
+    for(const auto& v : gp){
+      this->registerMemberName(v.name);
+      this->parameters.push_back(v);
     }
   } // end of ModelDSLCommon::treatParameter(void)
 
@@ -977,61 +895,44 @@ namespace mfront{
   void
   ModelDSLCommon::treatParameterMethod(void) 
   {
-    using namespace std;
-    using namespace tfel::utilities;
-    string methodName;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("ModelDSLCommon::treatParameterMethod: "+m));}
+    };
+    std::string methodName;
     this->readSpecifiedToken("ModelDSLCommon::treatParameterMethod",".");
     this->checkNotEndOfFile("ModelDSLCommon::treatParameterMethod",
 			    "Expected method name.");
     methodName = this->current->value;
-    if((methodName!="setGlossaryName")&&
-       (methodName!="setEntryName")&&
-       (methodName!="setDefaultValue")){
-      this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
-			      "Unknown method (valid methods for local parameters are "
-			      "setGlossaryName, setEntryName and setDefaultValue"
-			      ", read "+methodName+").");
-    }
+    throw_if((methodName!="setGlossaryName")&&(methodName!="setEntryName")&&
+	     (methodName!="setDefaultValue"),
+	     "unknown method (valid methods for local parameters are "
+	     "setGlossaryName, setEntryName and setDefaultValue"
+	     ", read "+methodName+").");
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatParameterMethod","(");
     if(methodName=="setGlossaryName"){
       this->checkNotEndOfFile("ModelDSLCommon::treatParameterMethod",
 			      "Expected glossary name.");
-      if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
-	 (this->entryNames.find(this->currentVar)!=this->entryNames.end())){
-	this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
-				"A glossary or an entry name has already been defined for field '"
-				+this->currentVar+"'.");
-      }
-      if(this->current->flag!=Token::String){
-	this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
-				"Expected a string as glossary name.");
-      }
-      if(this->current->value.size()<3){
-	this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
-				"Glossary name too short.");
-      }
-      string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->glossaryNames.insert({this->currentVar,glossaryName}).second){
-	this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
-				"Glossary name for field '"+ this->currentVar +"' already defined.");
-      }
+      throw_if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
+	       (this->entryNames.find(this->currentVar)!=this->entryNames.end()),
+	       "a glossary or an entry name has already been defined for "
+	       "variable '"+this->currentVar+"'.");
+      throw_if(this->current->flag!=tfel::utilities::Token::String,
+	       "expected a string as glossary name.");
+      throw_if(this->current->value.size()<3,"glossary name too short.");
+      const auto glossaryName = this->current->value.substr(1,this->current->value.size()-2);
+      throw_if(!this->glossaryNames.insert({this->currentVar,glossaryName}).second,
+	       "glossary name for variable '"+ this->currentVar +"' already defined.");
     } else if(methodName=="setEntryName"){
       this->checkNotEndOfFile("ModelDSLCommon::treatParameterMethod",
 			      "Expected entry file name.");
-      if(this->current->flag!=Token::String){
-	this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
-				"Expected a string as entry file name.");
-      }
-      if(this->current->value.size()<3){
-	this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
-				"Entry file name too short.");
-      }
-      string entryName = this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->entryNames.insert({this->currentVar,entryName}).second){
-	this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",
-				"Entry file name for field '"+ this->currentVar +"' already defined.");
-      }
+      throw_if(this->current->flag!=tfel::utilities::Token::String,
+	       "expected a string as entry file name.");
+      throw_if(this->current->value.size()<3,
+	       "entry file name too short.");
+      const auto entryName = this->current->value.substr(1,this->current->value.size()-2);
+      throw_if(!this->entryNames.insert({this->currentVar,entryName}).second,
+	       "entry file name for field '"+ this->currentVar +"' already defined.");
     } else if (methodName=="setDefaultValue"){
       this->readDefaultValue();
     }
@@ -1054,60 +955,40 @@ namespace mfront{
   void
   ModelDSLCommon::treatConstantMaterialPropertyMethod(void) 
   {
-    using namespace std;
-    using namespace tfel::utilities;
-    string methodName;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("ModelDSLCommon::treatConstantMaterialPropertyMethod: "+m));}
+    };
     this->readSpecifiedToken("ModelDSLCommon::treatConstantMaterialPropertyMethod",".");
     this->checkNotEndOfFile("ModelDSLCommon::treatConstantMaterialPropertyMethod",
 			    "Expected method name.");
-    methodName = this->current->value;
-    if((methodName!="setGlossaryName")&&
-       (methodName!="setEntryName")){
-      this->throwRuntimeError("ModelDSLCommon::treatConstantMaterialPropertyMethod",
-			      "Unknown method (valid methods for local parameters are "
-			      "setGlossaryName and setEntryName"
-			      ", read "+methodName+").");
-    }
+    const auto methodName = this->current->value;
+    throw_if((methodName!="setGlossaryName")&&(methodName!="setEntryName"),
+	     "unknown method (valid methods for local parameters are "
+	     "setGlossaryName and setEntryName, read "+methodName+").");
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatConstantMaterialPropertyMethod","(");
     if(methodName=="setGlossaryName"){
       this->checkNotEndOfFile("ModelDSLCommon::treatConstantMaterialPropertyMethod",
 			      "Expected glossary name.");
-      if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
-	 (this->entryNames.find(this->currentVar)!=this->entryNames.end())){
-	this->throwRuntimeError("ModelDSLCommon::treatConstantMaterialPropertyMethod",
-				"A glossary or an entry name has already been defined for field '"
-				+this->currentVar+"'.");
-      }
-      if(this->current->flag!=Token::String){
-	this->throwRuntimeError("ModelDSLCommon::treatConstantMaterialPropertyMethod",
-				"Expected a string as glossary name.");
-      }
-      if(this->current->value.size()<3){
-	this->throwRuntimeError("ModelDSLCommon::treatConstantMaterialPropertyMethod",
-				"Glossary name too short.");
-      }
-      string glossaryName = this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->glossaryNames.insert({this->currentVar,glossaryName}).second){
-	this->throwRuntimeError("ModelDSLCommon::treatConstantMaterialPropertyMethod",
-				"Glossary name for field '"+ this->currentVar +"' already defined.");
-      }
+      throw_if((this->glossaryNames.find(this->currentVar)!=this->glossaryNames.end()) ||
+	       (this->entryNames.find(this->currentVar)!=this->entryNames.end()),
+	       "a glossary or an entry name has already been defined for variable '"
+	       +this->currentVar+"'.");
+      throw_if(this->current->flag!=tfel::utilities::Token::String,
+	       "expected a string as glossary name.");
+      throw_if(this->current->value.size()<3,"glossary name too short.");
+      const auto glossaryName = this->current->value.substr(1,this->current->value.size()-2);
+      throw_if(!this->glossaryNames.insert({this->currentVar,glossaryName}).second,
+	       "glossary name for field '"+ this->currentVar +"' already defined.");
     } else if(methodName=="setEntryName"){
       this->checkNotEndOfFile("ModelDSLCommon::treatConstantMaterialPropertyMethod",
 			      "Expected entry file name.");
-      if(this->current->flag!=Token::String){
-	this->throwRuntimeError("ModelDSLCommon::treatConstantMaterialPropertyMethod",
-				"Expected a string as entry file name.");
-      }
-      if(this->current->value.size()<3){
-	this->throwRuntimeError("ModelDSLCommon::treatConstantMaterialPropertyMethod",
-				"Entry file name too short.");
-      }
-      string entryName = this->current->value.substr(1,this->current->value.size()-2);
-      if(!this->entryNames.insert({this->currentVar,entryName}).second){
-	this->throwRuntimeError("ModelDSLCommon::treatConstantMaterialPropertyMethod",
-				"Entry file name for field '"+ this->currentVar +"' already defined.");
-      }
+      throw_if(this->current->flag!=tfel::utilities::Token::String,
+	       "expected a string as entry file name.");
+      throw_if(this->current->value.size()<3,"entry file name too short.");
+      const auto entryName = this->current->value.substr(1,this->current->value.size()-2);
+      throw_if(!this->entryNames.insert({this->currentVar,entryName}).second,
+	       "entry file name for field '"+ this->currentVar +"' already defined.");
     }
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatConstantMaterialPropertyMethod",")");
@@ -1117,44 +998,31 @@ namespace mfront{
   void
   ModelDSLCommon::readDefaultValue(void)
   {
-    using namespace std;
-    using namespace tfel::utilities;
-    VariableDescriptionContainer::const_iterator p;
-    string res;
-    bool found;
-    found=false;
-    for(p=this->parameters.begin();(p!=this->parameters.end())&&(!found);){
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("ModelDSLCommon::readDefaultValue: "+m));}
+    };
+    std::string res;
+    auto found=false;
+    auto p = this->parameters.begin();
+    while(p!=this->parameters.end()){
       if(p->name==this->currentVar){
 	found=true;
-      } else {
-	++p;
+	break;
       }
-    }    
-    if(!found){
-      this->throwRuntimeError("ModelDSLCommon::readDefaultValue",
-			      "variable '"+this->currentVar+"' is not "
-			      "a parameter");
-    }
+      ++p;
+    }   
+    throw_if(!found,"variable '"+this->currentVar+"' is not a parameter");
     this->checkNotEndOfFile("ModelDSLCommon::readDefaultValue",
 			    "Expected default value.");
-    if((p->type=="DoubleArray")||
-       (p->type=="StringArray")){
+    if((p->type=="DoubleArray")||(p->type=="StringArray")){
       unsigned int nbr=0u;
       auto bend = false;
       while(bend==false){
 	if(p->type=="DoubleArray"){
-	  istringstream converter(this->current->value);
-	  double tmp;
-	  converter >> tmp;
-	  if(!converter||(!converter.eof())){
-	    this->throwRuntimeError("ModelDSLCommon::readDefaultValue",
-				    "Could not read default for variable '"+this->currentVar+"'");
-	  }
+	  tfel::utilities::convert<double>(this->current->value);
 	} else {
-	  if(this->current->flag!=Token::String){
-	    this->throwRuntimeError("ModelDSLCommon::readDefaultValue",
-				    "Expected to read a string (read '"+this->current->value+"').");
-	  }
+	  throw_if(this->current->flag!=tfel::utilities::Token::String,
+		   "expected to read a string (read '"+this->current->value+"').");
 	}
 	++nbr;
 	res+=" "+this->current->value;
@@ -1169,42 +1037,27 @@ namespace mfront{
 	  this->checkNotEndOfFile("ModelDSLCommon::readDefaultValue",
 				  "Expected default value.");
 	} else {
-	  this->throwRuntimeError("ModelDSLCommon::readDefaultValue",
-				  "Unexpected token (expected ',' or ')', read '"+this->current->value+"').");
+	  throw_if(true,"unexpected token (expected ',' or ')', read '"+this->current->value+"').");
 	}
       }
-      res = to_string(nbr)+res;
+      res = std::to_string(nbr)+res;
     } else if ((p->type=="double")||(p->type=="real")){
-      istringstream converter(this->current->value);
-      double tmp;
-      converter >> tmp;
-      if(!converter||(!converter.eof())){
-	this->throwRuntimeError("ModelDSLCommon::readDefaultValue",
-				"Could not read default for variable '"+this->currentVar+"'");
-      }
+      tfel::utilities::convert<double>(this->current->value);
       res = this->current->value;
     } else if (p->type=="string"){
-      if(this->current->flag!=Token::String){
-	this->throwRuntimeError("ModelDSLCommon::readDefaultValue",
-				"Expected to read a string (read '"+this->current->value+"').");
-      }
+      throw_if(this->current->flag!=tfel::utilities::Token::String,
+	       "expected to read a string (read '"+this->current->value+"').");
       res = this->current->value;
     } else if (p->type=="bool"){
-      if((this->current->value!="true")&&
-	 (this->current->value!="false")){
-	this->throwRuntimeError("ModelDSLCommon::readDefaultValue",
-				"expected to read 'true' or 'false' for type 'bool', read '"+
-				this->current->value+"'");
-      }
+      throw_if((this->current->value!="true")&&(this->current->value!="false"),
+	       "expected to read 'true' or 'false' for type 'bool', "
+	       "read '"+this->current->value+"'");
       res = this->current->value;
     } else {
-      this->throwRuntimeError("ModelDSLCommon::readDefaultValue",
-			      "type '"+p->type+"' is not supported.");
+      throw_if(true,"type '"+p->type+"' is not supported.");
     }
-    if(!this->defaultValues.insert({this->currentVar,res}).second){
-      this->throwRuntimeError("ModelDSLCommon::readDefaultValue",
-			      "default value for field '"+ this->currentVar +"' already defined.");
-    }
+    throw_if(!this->defaultValues.insert({this->currentVar,res}).second,
+	     "default value for '"+ this->currentVar +"' already defined.");
   } // end of ModelDSLCommon::readDefaultValue
 
   void
@@ -1222,32 +1075,28 @@ namespace mfront{
   void
   ModelDSLCommon::registerBounds(std::vector<VariableBoundsDescription>& container)
   {
-    using namespace std;
-    VariableDescriptionContainer::const_iterator p;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("ModelDSLCommon::registerBounds: "+m));}
+    };
     VariableBoundsDescription boundsDescription;
-    bool found;
-
     this->checkNotEndOfFile("ModelDSLCommon::registerBounds");
-
     boundsDescription.lineNumber = this->current->line;
     boundsDescription.varName = this->current->value;
     boundsDescription.varNbr  = 0u;
-	
-    found = false;
-    for(p=this->outputs.begin();(p!=this->outputs.end())&&(!found);++p){
-      if(p->name==boundsDescription.varName){
+    auto found = false;
+    for(const auto& v : this->outputs){
+      if(v.name==boundsDescription.varName){
 	found=true;
+	break;
       }
     }
-    for(p=this->inputs.begin();(p!=this->inputs.end())&&(!found);++p){
-      if(p->name==boundsDescription.varName){
+    for(const auto& v : this->inputs){
+      if(v.name==boundsDescription.varName){
 	found=true;
+	break;
       }
     }
-    if(!found){
-      this->throwRuntimeError("ModelDSLCommon::registerBounds",
-			      this->current->value+" is not a valid identifier.");
-    }
+    throw_if(!found,"'"+this->current->value+"' is not a valid identifier.");
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::registerBounds","in");
     this->checkNotEndOfFile("ModelDSLCommon::registerBounds ",
@@ -1256,36 +1105,24 @@ namespace mfront{
       ++(this->current);
       this->checkNotEndOfFile("ModelDSLCommon::registerBounds ",
 			      "Expected '*'.");
-      if(this->current->value!="*"){
-	this->throwRuntimeError("ModelDSLCommon::registerBounds",
-				"Expected '*' (read '"+this->current->value+"')");
-      }
+      throw_if(this->current->value!="*","expected '*' (read '"+this->current->value+"')");
       boundsDescription.boundsType = VariableBoundsDescription::Upper;
     } else if(this->current->value=="["){
       ++(this->current);
       this->checkNotEndOfFile("ModelDSLCommon::registerBounds ",
 			      "Expected lower bound value for variable "+boundsDescription.varName);
-      istringstream converter(this->current->value);
-      converter >> boundsDescription.lowerBound;
       boundsDescription.boundsType = VariableBoundsDescription::LowerAndUpper;
-      if(!converter||(!converter.eof())){
-	this->throwRuntimeError("ModelDSLCommon::registerBounds",
-				"Could not read lower bound value for variable '"+
-				boundsDescription.varName+"' (read '"+this->current->value+"')");
-      }
+      boundsDescription.lowerBound = tfel::utilities::convert<double>(this->current->value);
     } else {
-      this->throwRuntimeError("ModelDSLCommon::registerBounds",
-			      "Expected ']' or '[' (read '"+this->current->value+"')");
+      throw_if(true,"expected ']' or '[' (read '"+this->current->value+"')");
     }
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::registerBounds",":");
     this->checkNotEndOfFile("ModelDSLCommon::registerBounds",
 			    "Could not read upper bound value for variable "+boundsDescription.varName);
     if(this->current->value=="*"){
-      if(boundsDescription.boundsType==VariableBoundsDescription::Upper){
-	this->throwRuntimeError("ModelDSLCommon::registerBounds",
-				"Upper and lower values bounds are both infinity. This is inconsistent.");
-      }
+      throw_if(boundsDescription.boundsType==VariableBoundsDescription::Upper,
+	       "upper and lower values bounds are both infinity. This is inconsistent.");
       boundsDescription.boundsType=VariableBoundsDescription::Lower;
       ++(this->current);
       this->checkNotEndOfFile("ModelDSLCommon::registerBounds",
@@ -1295,27 +1132,17 @@ namespace mfront{
 				"Expected '[' (read '"+this->current->value+"')");
       }
     } else {
-      istringstream converter(this->current->value);
-      converter >> boundsDescription.upperBound;
-      if(!converter||(!converter.eof())){
-	this->throwRuntimeError("ModelDSLCommon::registerBounds",
-				"Could not read lower bound value for variable '"+
-				boundsDescription.varName+"' (read '"+this->current->value+"')");
-      }
+      boundsDescription.upperBound = tfel::utilities::convert<double>(this->current->value);
       if(boundsDescription.boundsType==VariableBoundsDescription::LowerAndUpper){
-	if(boundsDescription.lowerBound>boundsDescription.upperBound){
-	  this->throwRuntimeError("ModelDSLCommon::registerBounds",
-				  "Lower bound value is greater than upper bound value for variable '"+
-				  boundsDescription.varName+"'");
-	}
+	throw_if(boundsDescription.lowerBound>boundsDescription.upperBound,
+		 "lower bound value is greater than upper bound value for variable '"+
+		 boundsDescription.varName+"'");
       }
       ++(this->current);
       this->checkNotEndOfFile("ModelDSLCommon::registerBounds",
 			      "Expected ']'");
-      if(this->current->value!="]"){
-	this->throwRuntimeError("ModelDSLCommon::registerBounds",
-				"Expected ']' (read '"+this->current->value+"'");
-      }      
+      throw_if(this->current->value!="]",
+	       "expected ']' (read '"+this->current->value+"'");
     }
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::registerBounds",";");
@@ -1325,9 +1152,8 @@ namespace mfront{
   void
   ModelDSLCommon::addMaterialLaw(const std::string& m)
   {
-    using namespace std;
-    if(find(this->materialLaws.begin(),
-	    this->materialLaws.end(),m)==this->materialLaws.end()){
+    if(std::find(this->materialLaws.begin(),
+		 this->materialLaws.end(),m)==this->materialLaws.end()){
       this->materialLaws.push_back(m);
     }
   } // end of ModelDSLCommon::addMaterialLaw

@@ -120,6 +120,7 @@ set(TFELMFront_SOURCES
     ExcelMaterialPropertyInterface.cxx
     OctaveMaterialPropertyInterface.cxx
     ExcelMaterialPropertyInternalInterface.cxx
+    MFrontModelInterface.cxx
     UMATInterfaceBase.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
@@ -296,7 +297,9 @@ install(TARGETS mfront DESTINATION bin
 
 # mfront-query
 add_executable(mfront-query mfront-query.cxx
-  BehaviourQuery.cxx)
+  MaterialPropertyQuery.cxx
+  BehaviourQuery.cxx
+  ModelQuery.cxx)
 target_link_libraries(mfront-query
   TFELMFront 
   MFrontLogStream

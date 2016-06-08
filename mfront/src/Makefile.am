@@ -97,6 +97,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           ExcelMaterialPropertyInterface.cxx                     \
 		           ExcelMaterialPropertyInternalInterface.cxx             \
 			   OctaveMaterialPropertyInterface.cxx                    \
+		           MFrontModelInterface.cxx                               \
 		           AbstractBehaviourBrick.cxx                             \
 		           BehaviourBrickBase.cxx                                 \
 			   BehaviourBrickProviderIdentifier.cxx                   \
@@ -311,7 +312,7 @@ if !TFEL_WIN
 mfront_LDFLAGS  = -export-dynamic
 endif # TFEL_WIN
 
-mfront_query_SOURCES = mfront-query.cxx BehaviourQuery.cxx
+mfront_query_SOURCES = mfront-query.cxx MaterialPropertyQuery.cxx BehaviourQuery.cxx ModelQuery.cxx
 mfront_query_LDADD = -L$(top_builddir)/mfront/src -lTFELMFront -lMFrontLogStream \
                      -L$(top_builddir)/src/Glossary -lTFELGlossary   \
                      -L$(top_builddir)/src/Material -lTFELMaterial   \

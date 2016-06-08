@@ -1796,8 +1796,8 @@ namespace mfront
   void
   BehaviourDescription::addMaterialLaw(const std::string& m)
   {
-    if(find(this->materialLaws.begin(),
-	    this->materialLaws.end(),m)==this->materialLaws.end()){
+    if(std::find(this->materialLaws.begin(),
+		 this->materialLaws.end(),m)==this->materialLaws.end()){
       this->materialLaws.push_back(m);
     }
   } // end of BehaviourDescription::getMaterialLaws
