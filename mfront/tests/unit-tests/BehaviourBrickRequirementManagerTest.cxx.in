@@ -20,6 +20,7 @@
 #line 21 "@abs_top_srcdir@/mfront/tests/unit-tests/BehaviourBrickRequirementManagerTest.cxx.in"
 
 #include<cstdlib>
+#include<iostream>
 #include<stdexcept>
 
 #include"TFEL/Tests/TestCase.hxx"
@@ -212,16 +213,9 @@ TFEL_TESTS_GENERATE_PROXY(BehaviourBrickRequirementManagerTest,
 
 int main(void)
 {
-  using namespace std;
-  using namespace mfront;
-  using namespace tfel::tests;
-  initDSLs();
-  TestManager& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
-  manager.addXMLTestOutput("BehaviourBrickRequirementManager.xml");
-  TestResult r = manager.execute();
-  if(!r.success()){
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+  mfront::initDSLs();
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("BehaviourBrickRequirementManager.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 } // end of main

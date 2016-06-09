@@ -30,11 +30,11 @@ namespace mfront{
   } // end of MFrontPleiadesModelInterfaceBase::getName(void)
 
   void
-  MFrontGerminalModelInterface::setOutputFileNames(const ModelDescription& mdata)
+  MFrontGerminalModelInterface::setOutputFileNames(const ModelDescription& md)
   {
-    this->headerFileName  = "Pleiades/PMetier/PModels/"+mdata.className;
+    this->headerFileName  = "Pleiades/PMetier/PModels/"+md.className;
     this->headerFileName += "-germinal.hxx";
-    this->srcFileName  = mdata.className;
+    this->srcFileName  = md.className;
     this->srcFileName += "-germinal.cxx";
   } // end of MFrontGerminalModelInterface::setOutputFileNames(void)
 
@@ -46,124 +46,110 @@ namespace mfront{
 
   void
   MFrontGerminalModelInterface::writeGetConstantMaterialProperty(const VarHandler& v,
-								 const ModelDescription& mdata)
+								 const ModelDescription& md)
   {
-    using namespace std;
-    string name;
-    string name2;
-    map<string,string>::const_iterator p;
-    if((p=mdata.glossaryNames.find(v.name))!=mdata.glossaryNames.end()){
-      name  = "GlossaireParam::" + p->second;
-      name2 = "this->getMeshZoneName()+\".\"+GlossaireParam::" + p->second;
-    } else if((p=mdata.entryNames.find(v.name))!=mdata.entryNames.end()){
-      name = "\""+p->second+"\"";
-      name2 = "this->getMeshZoneName()+\"."+p->second+"\"";
+    std::string name;
+    std::string name2;
+    const auto p = md.defaultValues.find(v.name);
+    if(md.hasGlossaryName(v.name)){
+      name  = "GlossaireParam::" + md.getGlossaryName(v.name);
+      name2 = "this->getMeshZoneName()+\".\"+GlossaireParam::" + md.getGlossaryName(v.name);
     } else {
-      name = "\""+v.name+"\"";
-      name2 = "this->getMeshZoneName()+\"."+v.name+"\"";
+      name = "\""+md.getExternalName(v.name)+"\"";
+      name2 = "this->getMeshZoneName()+\"."+md.getExternalName(v.name)+"\"";
     }
-    this->srcFile << "if(arg.contains(" << name2 << ")){\n";
-    this->srcFile << "this->" << v.name << " = arg[" << name2 << "]."
-		  << this->getGenTypeMethod(v.type) << "();\n";
-    this->srcFile << "} else if(arg.contains(" << name << ")){\n";
-    this->srcFile << "this->" << v.name << " = arg[" << name << "]."
-		  << this->getGenTypeMethod(v.type) << "();\n";
-    this->srcFile << "} else {\n";
-    if((p=mdata.defaultValues.find(v.name))!=mdata.defaultValues.end()){
-      this->srcFile << "this->" << v.name << " = " << p->second << ";" << endl;
+    this->srcFile << "if(arg.contains(" << name2 << ")){\n"
+		  << "this->" << v.name << " = arg[" << name2 << "]."
+		  << this->getGenTypeMethod(v.type) << "();\n"
+		  << "} else if(arg.contains(" << name << ")){\n"
+		  << "this->" << v.name << " = arg[" << name << "]."
+		  << this->getGenTypeMethod(v.type) << "();\n"
+		  << "} else {\n";
+    if(p!=md.defaultValues.end()){
+      this->srcFile << "this->" << v.name << " = " << p->second << ";\n";
     } else {
-      this->srcFile << "string msg(\"" << mdata.className << "::initializeParameters : \");\n";
-      this->srcFile << "msg += \"can't initialize constant material property  '"
-		    << v.name << "' using '\";\n";
-      this->srcFile << "msg += " << name << ";\n";
-      this->srcFile << "msg += '\\'';\n";
-      this->srcFile << "throw(PleiadesError(msg));\n";
+      this->srcFile << "string msg(\"" << md.className << "::initializeParameters : \");\n"
+		    << "msg += \"can't initialize constant material property  '"
+		    << v.name << "' using '\";\n"
+		    << "msg += " << name << ";\n"
+		    << "msg += '\\'';\n"
+		    << "throw(PleiadesError(msg));\n";
     }
     this->srcFile << "}\n";
   } // end of MFrontGerminalModelInterface::writeGetConstantMaterialProperty
 
   void
-  MFrontGerminalModelInterface::writeInitializeMethod(const ModelDescription& mdata)
+  MFrontGerminalModelInterface::writeInitializeMethod(const ModelDescription& md)
   {
-    using namespace std;
-    VarContainer::const_iterator p;
-    map<string,string>::const_iterator p2;
-    map<string,double>::const_iterator p3;
-
     this->srcFile << "bool\n"
-		  << mdata.className
-		  << "::initialize(const Pleiades::PMetier::IArgumentMetier& arg)";
-    this->srcFile << "{\n";
-    this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace Pleiades::PUtilitaires;\n";
-    this->srcFile << "using namespace Pleiades::PExceptions;\n";
-    this->srcFile << "using namespace Pleiades::PMetier::PGlossaire;\n";
-    for(p=mdata.outputs.begin();p!=mdata.outputs.end();++p){
-      string name;
-      string iname;
-      if((p2=mdata.glossaryNames.find(p->name))!=mdata.glossaryNames.end()){
-	name  = "GlossaireField::"+p2->second;
-	iname = "GlossaireField::"+p2->second+"+\".InitialValue\"";
-      } else if((p2=mdata.entryNames.find(p->name))!=mdata.entryNames.end()){
-	name  = "\""+p2->second+"\"";
-	iname = "\""+p2->second+".InitialValue\"";
+		  << md.className
+		  << "::initialize(const Pleiades::PMetier::IArgumentMetier& arg)"
+		  << "{\n"
+		  << "using namespace std;\n"
+		  << "using namespace Pleiades::PUtilitaires;\n"
+		  << "using namespace Pleiades::PExceptions;\n"
+		  << "using namespace Pleiades::PMetier::PGlossaire;\n";
+    for(const auto& v : md.outputs){
+      std::string name;
+      std::string iname;
+      if(md.hasGlossaryName(v.name)){
+	name  = "GlossaireField::"+md.getGlossaryName(v.name);
+	iname = "GlossaireField::"+md.getGlossaryName(v.name)+"+\".InitialValue\"";
       } else {
-	name  = "\""+p->name+"\"";
-	iname = "\""+p->name+".InitialValue\"";
+	name  = "\""+md.getExternalName(v.name)+"\"";
+	iname = "\""+md.getExternalName(v.name)+".InitialValue\"";
       }
+      const auto p = md.initialValues.find(v.name);
       this->srcFile << "if(arg.contains(this->getMeshZoneName()+\".\"+" << iname << ")){\n";
-      this->srcFile << "this->initializeField(this->_ple" << p->name
+      this->srcFile << "this->initializeField(this->_ple" << v.name
 		    << ",arg[this->getMeshZoneName()+\".\"+" << iname << "]."
-		    << this->getGenTypeMethod("real") << "());" << endl;
+		    << this->getGenTypeMethod("real") << "());\n";
       this->srcFile << "} else if(arg.contains("<<iname << ")){\n";
-      this->srcFile << "this->initializeField(this->_ple" << p->name
+      this->srcFile << "this->initializeField(this->_ple" << v.name
 		    << ",arg[" <<iname << "]."
-		    << this->getGenTypeMethod("real") << "());" << endl;
+		    << this->getGenTypeMethod("real") << "());\n";
       this->srcFile << "} else {\n";
-      if((p3=mdata.initialValues.find(p->name))!=mdata.initialValues.end()){
-	this->srcFile << "this->initializeField(this->_ple" << p->name
-		      << "," << p3->second << ");\n";
+      if(p!=md.initialValues.end()){
+	this->srcFile << "this->initializeField(this->_ple" << v.name
+		      << "," << p->second << ");\n";
       } else {
-	this->srcFile << "string msg(\"" << mdata.className << "::initializeOutput : \");\n";
+	this->srcFile << "string msg(\"" << md.className << "::initializeOutput : \");\n";
 	this->srcFile << "msg += \"no initial value given for output field '\";\n";
 	this->srcFile << "msg += " << name << ";\n";
 	this->srcFile << "msg += " << "\"'\";\n";
 	this->srcFile << "throw(PleiadesError(msg));\n";
       }
       this->srcFile << "}\n";
-
     }
-    this->srcFile << "return true;\n";
-    this->srcFile << "} // end of " << mdata.className << "::initialize\n\n";
-
-    this->srcFile << "void\n"
-    		  << mdata.className
-    		  << "::initializeField(Pleiades::PMetier::PField::PtrIFieldDouble f,\n"
-    		  << "const double v)\n";
-    this->srcFile << "{\n";
-    this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace Pleiades::PUtilitaires;\n";
-    this->srcFile << "using namespace Pleiades::PExceptions;\n";
-    this->srcFile << "using namespace Pleiades::PMetier::PGlossaire;\n";
-    this->srcFile << "const vector<int>& nodes = "<< mdata.className
-    		  << "::getNodesOfCELLZone(f->getMesh(),this->getMeshZoneName());\n";
-    this->srcFile << "for(int node_k=0;node_k!=static_cast<int>(nodes.size());++node_k){\n";
-    this->srcFile << "f->setValueType(nodes[node_k],v,0);\n";
-    this->srcFile << "}\n";
-    this->srcFile << "} // end of " << mdata.className << "::initializeField\n\n";
-
+    this->srcFile << "return true;\n"
+		  << "} // end of " << md.className << "::initialize\n\n"
+		  << "void\n"
+		  << md.className
+		  << "::initializeField(Pleiades::PMetier::PField::PtrIFieldDouble f,\n"
+		  << "const double v)\n"
+		  << "{\n"
+		  << "using namespace std;\n"
+		  << "using namespace Pleiades::PUtilitaires;\n"
+		  << "using namespace Pleiades::PExceptions;\n"
+		  << "using namespace Pleiades::PMetier::PGlossaire;\n"
+		  << "const vector<int>& nodes = "<< md.className
+		  << "::getNodesOfCELLZone(f->getMesh(),this->getMeshZoneName());\n"
+		  << "for(int node_k=0;node_k!=static_cast<int>(nodes.size());++node_k){\n"
+		  << "f->setValueType(nodes[node_k],v,0);\n"
+		  << "}\n"
+		  << "} // end of " << md.className << "::initializeField\n\n";
   } // end of MFrontGerminalModelInterface::writeInitializeMethod
 
   void
-  MFrontGerminalModelInterface::writeInitializeParametersMethod(const ModelDescription& mdata)
+  MFrontGerminalModelInterface::writeInitializeParametersMethod(const ModelDescription& md)
   {
     this->srcFile << "bool\n"
-		  << mdata.className
-		  << "::initializeParameters(const Pleiades::PMetier::IArgumentMetier& arg)";
-    this->srcFile << "{\n";
-    this->srcFile << "this->domains.insert(this->getMeshZoneName());\n";
-    this->srcFile << "return true;\n";
-    this->srcFile << "} // end of " << mdata.className << "::initializeParameters\n\n";
+		  << md.className
+		  << "::initializeParameters(const Pleiades::PMetier::IArgumentMetier& arg)"
+		  << "{\n"
+		  << "this->domains.insert(this->getMeshZoneName());\n"
+		  << "return true;\n"
+		  << "} // end of " << md.className << "::initializeParameters\n\n";
   } // end of MFrontGerminalModelInterface::writeInitializeParametersMethod
 
   void

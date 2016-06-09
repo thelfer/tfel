@@ -18,9 +18,10 @@
 #include<windows.h>
 #endif /* __CYGWIN__ */
 
+#include<stdexcept>
+#include<iostream>
 #include<cstring>
 #include<cstdlib>
-#include<stdexcept>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"MFront/InitDSLs.hxx"

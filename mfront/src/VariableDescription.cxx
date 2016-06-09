@@ -49,17 +49,54 @@ namespace mfront{
   VariableDescription::getExternalName(const std::map<std::string,std::string>& glossaryNames,
 				       const std::map<std::string,std::string>& entryNames) const
   {
-    using namespace std;
-    map<string,string>::const_iterator p2;
-    map<string,string>::const_iterator p3;
-    if((p2=glossaryNames.find(this->name))!=glossaryNames.end()){
+    auto p2=glossaryNames.find(this->name);
+    auto p3=entryNames.find(this->name);
+    if(p2!=glossaryNames.end()){
       return p2->second;
-    } else if((p3=entryNames.find(this->name))!=entryNames.end()){
+    } else if(p3!=entryNames.end()){
       return p3->second;
     }
     return this->name;
   } // end of VariableDescription::getExternalName
 
+  void
+  VariableDescription::throwUndefinedAttribute(const std::string& n)
+  {
+    throw(std::runtime_error("VariableDescription::getAttribute : "
+			     "no attribute named '"+n+"'"));
+  } // end of VariableDescription::throwUndefinedAttribute
+
+  void
+  VariableDescription::setAttribute(const std::string& n,
+					const VariableAttribute& a,
+					const bool b)
+  {
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("VariableDescription::setAttribute: "+m));}
+    };    
+    if(b){
+      auto p=this->attributes.find(n);
+      if(p!=this->attributes.end()){
+	throw_if(a.getTypeIndex()!=p->second.getTypeIndex(),
+		 "attribute already exists with a different type");
+	return;
+      }
+    }
+    throw_if(!this->attributes.insert({n,a}).second,
+	     "attribute '"+n+"' already declared");
+  } // end of VariableDescription::setAttribute
+
+  bool VariableDescription::hasAttribute(const std::string& n) const
+  {
+    return this->attributes.count(n)!=0u;
+  } // end of VariableDescription::hasAttribute
+
+  const std::map<std::string,VariableAttribute>&
+  VariableDescription::getAttributes() const
+  {
+    return this->attributes;
+  } // end of VariableDescription::getAttributes
+  
   VariableDescription::~VariableDescription()
   {} // end of VariableDescription::~VariableDescription
 
@@ -77,8 +114,7 @@ namespace mfront{
   VariableDescriptionContainer::operator=(const VariableDescriptionContainer&) = default;
 
 
-  bool
-  VariableDescriptionContainer::contains(const std::string& n) const
+  bool VariableDescriptionContainer::contains(const std::string& n) const
   {
     VariableDescriptionContainer::const_iterator p;
     for(p=this->begin();p!=this->end();++p){
@@ -93,8 +129,7 @@ namespace mfront{
   VariableDescriptionContainer::getExternalNames(const std::map<std::string,std::string>& glossaryNames,
 						 const std::map<std::string,std::string>& entryNames) const
   {
-    using namespace std;
-    vector<string> n;
+    std::vector<std::string> n;
     this->appendExternalNames(n,glossaryNames,entryNames);
     return n;
   }

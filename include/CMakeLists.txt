@@ -79,6 +79,8 @@ install_header(TFEL/System wfstream.hxx)
 install_header(TFEL/System getFunction.h)
 
 install_header(TFEL/Utilities StringAlgorithms.hxx)
+install_header(TFEL/Utilities Argument.hxx)
+install_header(TFEL/Utilities ArgumentParser.hxx)
 install_header(TFEL/Utilities ArgumentParserBase.hxx)
 install_header(TFEL/Utilities ArgumentParserBase.ixx)
 install_header(TFEL/Utilities CxxKeywords.hxx)

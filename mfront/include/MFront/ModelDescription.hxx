@@ -47,32 +47,66 @@ namespace mfront
       unsigned int line = 0u;
       bool useTimeIncrement = false;
     }; // end of struct MFrontData::Function
-
-    using FunctionContainer=std::vector<Function> ;
-
+    //! defaut constructor
     ModelDescription();
+    //! copy constructor
     ModelDescription(const ModelDescription&);
+    //! move constructor
     ModelDescription(ModelDescription&&);
+    //! assignement operator
     ModelDescription& operator=(const ModelDescription&);
+    //! move assignement operator
     ModelDescription& operator=(ModelDescription&&);
-    ~ModelDescription();
-
-    FunctionContainer functions;
+    /*!
+     * \return true if a glossary name has been defined for the given
+     * variable
+     * \param[in] n: variable name
+     */
+    bool hasGlossaryName(const std::string&) const;
+    /*!
+     * \return the glossary name associated to the given variable
+     * \param[in] n: variable name
+     */
+    std::string getGlossaryName(const std::string&) const;
+    /*!
+     * \return the external name of a variable
+     * \param[in] n: variable name
+     */
+    const std::string&
+    getExternalName(const std::string&) const;
+    /*!
+     * \brief associate a glossary name to a variable 
+     * \param[in] v: variable name
+     * \param[in] g: glossary name
+     */
+    virtual void setGlossaryName(const std::string&,
+				 const std::string&);
+    /*!
+     * \brief associate a glossary name to a variable 
+     * \param[in] v: variable name
+     * \param[in] g: glossary name
+     */
+    virtual void setEntryName(const std::string&,
+			      const std::string&);
+    //! desctructor
+    virtual ~ModelDescription();
+    //! list of functions declared
+    std::vector<Function> functions;
+    //! list of all outputs
     VariableDescriptionContainer outputs;
+    //! list of all inputs
     VariableDescriptionContainer inputs;
+    //! list of all parameters
     VariableDescriptionContainer parameters;
+    //! list of all constant material properties
     VariableDescriptionContainer constantMaterialProperties;
-    //!static variables
+    //! static variables
     StaticVariableDescriptionContainer staticVars;
-    //! list of reserved names
-    std::set<std::string> reservedNames;
-    //! list of variables names
-    std::set<std::string> memberNames;
-    //! list of variables names
-    std::set<std::string> staticMemberNames;
     //! material name
     std::string material;
+    //! library name
     std::string library;
+    //! class name
     std::string className;
     //! additionnal header files
     std::string includes;
@@ -80,15 +114,11 @@ namespace mfront
     std::string sources;
     //! private code
     std::string privateCode;
-    /*!
-     * class member
-     */
+    //! class member
     std::string members;
     std::set<std::string> domains;
     std::set<std::string> fieldNames;
     std::set<std::string> functionNames;
-    std::map<std::string,std::string> glossaryNames;
-    std::map<std::string,std::string> entryNames;
     std::map<std::string,double>      initialValues;
     std::map<std::string,std::string> defaultValues;
     std::vector<VariableBoundsDescription> bounds;
@@ -96,6 +126,50 @@ namespace mfront
     std::map<std::string,unsigned short> depths;
     //! list of material laws used
     std::vector<std::string> materialLaws;
+    //! list of variables names
+    std::set<std::string> memberNames;
+    //! list of variables names
+    std::set<std::string> staticMemberNames;
+  protected:
+    /*!
+     * \brief register a name.
+     * \param[in] n : name
+     * \param[in] b : if false, don't check if variable has already
+     * been reserved yet. If true, check if the variable has alredy
+     * been registred and throws an exception if it does, register it
+     * otherwise
+     * \note this method is called internally by the registerVariable
+     * and registerStaticVariable methods.
+     */
+    virtual void reserveName(const std::string&);
+    /*!
+     * \brief register a static member name
+     * \param[in] n : name
+     */
+    virtual void registerMemberName(const std::string&);
+    /*!
+     * \brief register a static member name
+     * \param[in] n : name
+     */
+    virtual void registerStaticMemberName(const std::string&);
+    /*!
+     * check that a variable exists
+     * \param[in] v: variable name
+     */
+    virtual void checkVariableExistence(const std::string&) const;
+    //! \return the list of reserved names
+    std::set<std::string>&
+    getReservedNames(void);
+    //! \return the list of reserved names
+    const std::set<std::string>&
+    getReservedNames(void) const;
+  private:
+    //! set glossary names
+    std::map<std::string,std::string> glossaryNames;
+    //! entry names
+    std::map<std::string,std::string> entryNames;
+    //! list of reserved names
+    std::set<std::string> reservedNames;
   }; // end of struct ModelDescription
 
 } // end of namespace mfront

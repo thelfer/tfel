@@ -12,6 +12,7 @@
  */
 
 #include<stdexcept>
+#include<algorithm>
 #include<iostream>
 #include<iterator>
 #include<cstdlib>
@@ -470,7 +471,7 @@ namespace mfront{
     auto p = f.createNewParser(pn);
     std::vector<std::string> keys;
     p->getKeywordsList(keys);
-    if(find(keys.begin(),keys.end(),k)==keys.end()){
+    if(std::find(keys.begin(),keys.end(),k)==keys.end()){
       throw(std::runtime_error("MFront::treatHelpCommand: "
 			       "keyword '"+k+"' is not declared "));
     }

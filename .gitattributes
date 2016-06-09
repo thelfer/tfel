@@ -1541,6 +1541,8 @@ include/TFEL/TypeTraits/IsUnaryOperator.hxx -text
 include/TFEL/TypeTraits/Promote.hxx -text
 include/TFEL/TypeTraits/Promote/Promote.ixx -text
 include/TFEL/TypeTraits/RealPartType.hxx -text
+include/TFEL/Utilities/Argument.hxx -text
+include/TFEL/Utilities/ArgumentParser.hxx -text
 include/TFEL/Utilities/ArgumentParserBase.hxx -text
 include/TFEL/Utilities/ArgumentParserBase.ixx -text
 include/TFEL/Utilities/CxxKeywords.hxx -text
@@ -1799,8 +1801,10 @@ mfront/include/MFront/UMATInterfaceBase.hxx -text
 mfront/include/MFront/UmatFiniteStrainMTestFileGenerator.hxx -text
 mfront/include/MFront/UmatSmallStrainMTestFileGenerator.hxx -text
 mfront/include/MFront/VarHandler.hxx -text
+mfront/include/MFront/VariableAttribute.hxx -text
 mfront/include/MFront/VariableBoundsDescription.hxx -text
 mfront/include/MFront/VariableDescription.hxx -text
+mfront/include/MFront/VariableDescription.ixx -text
 mfront/include/MFront/ZMAT/ZMATInterface.hxx -text
 mfront/include/MFront/ZMAT/ZMATInterface.ixx -text
 mfront/include/MFront/ZMAT/ZMATUndefs.hxx -text
@@ -4274,6 +4278,8 @@ src/Tests/TestOutput.cxx -text
 src/Tests/TestResult.cxx -text
 src/Tests/TestSuite.cxx -text
 src/Tests/XMLTestOutput.cxx -text
+src/Utilities/Argument.cxx -text
+src/Utilities/ArgumentParser.cxx -text
 src/Utilities/ArgumentParserBase.cxx -text
 src/Utilities/CMakeLists.txt -text
 src/Utilities/CxxKeywords.cxx -text

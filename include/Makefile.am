@@ -445,6 +445,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/System/rfstream.hxx                                                                     \
 			TFEL/System/wfstream.hxx                                                                     \
 			TFEL/System/getFunction.h                                                                    \
+			TFEL/Utilities/Argument.hxx                                                                  \
+			TFEL/Utilities/ArgumentParser.hxx                                                            \
 			TFEL/Utilities/ArgumentParserBase.hxx                                                        \
 			TFEL/Utilities/ArgumentParserBase.ixx                                                        \
 			TFEL/Utilities/CxxKeywords.hxx                                                               \

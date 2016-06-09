@@ -13,6 +13,7 @@ libTFELUtilities_la_SOURCES = TextData.cxx           \
 			      CxxTokenizer.cxx       \
 			      TerminalColors.cxx     \
 			      StringAlgorithms.cxx   \
-			      ArgumentParserBase.cxx 
+			      Argument.cxx           \
+			      ArgumentParser.cxx 
 
 EXTRA_DIST = CMakeLists.txt

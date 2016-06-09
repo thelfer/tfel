@@ -21,6 +21,7 @@
 
 #include<memory>
 #include<cstdlib>
+#include<iostream>
 #include<stdexcept>
 
 #include"TFEL/Tests/TestCase.hxx"
@@ -160,14 +161,9 @@ TFEL_TESTS_GENERATE_PROXY(DSLTest2,"DSLTest2");
 
 int main(void)
 {
-  using namespace tfel::tests;
   mfront::initDSLs();
-  auto& m = TestManager::getTestManager();
+  auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("MFront.xml");
-  const auto r = m.execute();
-  if(!r.success()){
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+  m.addXMLTestOutput("DSLTest2.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 } // end of main

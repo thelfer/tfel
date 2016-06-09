@@ -22,12 +22,9 @@ namespace mfront{
     T&>::type
   BehaviourData::getAttribute(const std::string& n)
   {
-    using namespace std;
-    typedef typename map<string,BehaviourAttribute>::value_type MVType;
-    typename map<string,BehaviourAttribute>::iterator p;
-    p = this->attributes.find(n);
+    auto p = this->attributes.find(n);
     if(p==this->attributes.end()){
-      p = this->attributes.insert(MVType(n,BehaviourAttribute(T()))).first;
+      p = this->attributes.insert({n,BehaviourAttribute(T())}).first;
     }
     return p->second.template get<T>();
   } // end of BehaviourData::getAttribute
@@ -38,9 +35,7 @@ namespace mfront{
     const T&>::type
   BehaviourData::getAttribute(const std::string& n) const
   {
-    using namespace std;
-    map<string,BehaviourAttribute>::const_iterator p;
-    p = this->attributes.find(n);
+    auto p = this->attributes.find(n);
     if(p==this->attributes.end()){
       BehaviourData::throwUndefinedAttribute(n);
     }

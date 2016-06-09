@@ -18,61 +18,20 @@
 #include<vector>
 #include<string>
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Utilities/ArgumentParser.hxx"
 
 namespace tfel
 {
 
   namespace utilities
   {
-
+    
     /*!
-     * Class holding a command line argument
-     *
-     * This class is used internally.
-     * \note inheriting from std::string shall be forbidden in most
-     *cases. Here its does not harm.
-     */
-    struct TFELUTILITIES_VISIBILITY_EXPORT Argument
-    {
-      //! \param s : argument name
-      Argument(std::string);
-      //! \param s : argument name
-      Argument(const char* const s);
-      Argument(Argument&&);
-      Argument(const Argument&);
-      Argument& operator=(Argument&&);
-      Argument& operator=(const Argument&);
-      //! \return true if an option was given for this argument
-      bool hasOption(void) const noexcept;
-      //! convertion to string
-      std::string& as_string() noexcept;
-      //! convertion to string
-      const std::string& as_string() const noexcept;
-      //! convertion to string (return argument's name)
-      explicit operator const std::string& () const noexcept;
-      /*!
-       * \brief set argument option
-       * \param o : option
-       */
-      void setOption(const std::string& o);
-      //! \return argument option
-      const std::string& getOption() const noexcept;
-      //! destructor
-      ~Argument() noexcept;
-    private:
-      //! argument name
-      std::string name;
-      //! argument option
-      std::string option;
-      bool isOptionSet = false;
-    }; // end of struct Argument
-
-    /*!
-     * \brief Class used for command line argument parsing.
+     * \brief an helper class used for command line argument parsing.
      *
      * The CRTP pattern is used to enable ArgumentParserBase to used
-     * the method of its derivate class.
+     * the method of its derivate class. Such a design was extremly
+     * usefull before std::function was introduced.
      * 
      * The class maps the command line arguments to method of the
      * derivate class.
@@ -81,32 +40,18 @@ namespace tfel
      */
     template<typename Child>
     struct ArgumentParserBase
+      : public ArgumentParser
     {
-
-    protected:
-    
       //! a simple alias
-      typedef void (Child::* MemberFuncPtr)(void);
-      //! a simple alias
-      typedef std::map<std::string,
-		       std::pair<MemberFuncPtr,
-				 std::pair<bool,std::string> > > CallBacksContainer;
-      //! a simple alias
-      typedef std::map<std::string,std::string> AliasContainer;
-      //! a simple alias
-      typedef std::vector<Argument> ArgsContainer;
-
-      //! container of all the call-backs
-      CallBacksContainer callBacksContainer;
-      //! container of all the alias
-      AliasContainer alias;
-      //! container of all the command line arguments
-      ArgsContainer  args;
-      //! an iterator to the argument being treated
-      typename ArgsContainer::iterator currentArgument;
-      //! program name
-      std::string programName;
-      
+      using MemberFuncPtr = void (Child::*)(void);
+      //! default constructor
+      ArgumentParserBase();
+      /*!
+       * \brief constructor
+       * \param argc : number of arguments given at command line
+       * \param argv : arguments list
+       */
+      ArgumentParserBase(const int,const char* const* const);
       /*!
        * \brief register a new callback
        * \param key         : command line argument name
@@ -134,94 +79,18 @@ namespace tfel
 			       const MemberFuncPtr&,
 			       const std::string& = "",
 			       const bool = false);
-
-      /*!
-       * \brief register a default callbacks
-       *
-       * The default callbacks are :
-       * - '--help', '-h' which displays the list of the command line
-           arguments (if the treatHelp method is not overriden if the
-           derivate class)
-       * - '--version', '-v' which displays the current code version
-           using the getVersionDescription() method of the derivate
-           class (if the 'treatVersion' method is not overriden if the
-           derivate class)
-       */
-      void registerDefaultCallBacks(void);
-
-      /*!
-       * \brief method called while parsing unregistred command line
-       * arguments.
-       *
-       * \throw runtime_error
-       */
-      void treatUnknownArgument(void);
-
-      /*!
-       * \brief method associated with the '--help' command line
-       * argument.
-       *
-       * This method uses the getUsageDescription() method to get a
-       * more helpfull message.
-       *
-       * This method stops the execution by calling the exit
-       * method.
-       */
-      void treatHelp(void);
-      /*!
-       * \brief method associated with the '--version' command line
-       * argument
-       */
-      void treatVersion(void);
-      /*!
-       * \brief parse arguments using registred methods.
-       */
-      void parseArguments(void);
-      //! default constructor
-      ArgumentParserBase();
-      /*!
-       * \brief constructor
-       * \param argc : number of arguments given at command line
-       * \param argv : arguments list
-       */
-      ArgumentParserBase(const int,const char* const* const);
-      /*!
-       * \brief set the arguments to be parsed
-       * \param argc : number of arguments given at command line
-       * \param argv : arguments list
-       */
-      void setArguments(const int,const char* const* const);
-      /*!
-       * Destructor
-       */
+      //! destructor
       virtual ~ArgumentParserBase();
 
     private:
-
+      //! copy constructor
       ArgumentParserBase(const ArgumentParserBase&) = delete;
+      //! move constructor
       ArgumentParserBase(ArgumentParserBase&&) = delete;
+      //! assignement
       ArgumentParserBase& operator=(const ArgumentParserBase&) = delete;
+      //! move assignement
       ArgumentParserBase& operator=(ArgumentParserBase&&) = delete;
-      /*!
-       * \brief replaces aliases by their usual names
-       */
-      void replaceAliases(void);
-      /*!
-       * \brief slip arguments and options
-       */
-      void stripArguments(void);
-
-    protected:
-    
-      /*!
-       * \return the version of the program being used
-       */
-      virtual std::string getVersionDescription(void) const = 0;
-
-      /*!
-       * \return the usage of the program being used
-       */
-      virtual std::string getUsageDescription(void) const = 0;
 
     }; // end of ArgumentParserBase<Child>
 

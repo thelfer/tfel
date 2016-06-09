@@ -11,6 +11,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
+#include<iterator>
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"MFront/MaterialPropertyDSL.hxx"
 #include"MFront/MFrontLogStream.hxx"

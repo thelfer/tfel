@@ -11,6 +11,10 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
+#include<iterator>
+#include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"MFront/ModelDSL.hxx"
 #include"MFront/MFrontLogStream.hxx"
@@ -52,24 +56,17 @@ namespace mfront{
 				"print pedantic warning message");
     Parser::registerNewCallBack("--interface",&ModelQuery::treatInterface,
 				"define an interface",true);
-    // // standard queries
+    // standard queries
     const std::vector<std::pair<const char*,const char*>> sq = {
       {"--author","show the author name"},
       {"--description","show the file description"},
       {"--date","show the file implementation date"},
       {"--material","show the material name"},
-      {"--library","show the library name"}};
+      {"--library","show the library name"},
+      {"--outputs","show model outputs"}};
     for(const auto& q : sq){
       Parser::registerNewCallBack(q.first,&ModelQuery::treatStandardQuery,q.second);
     }
-      // const vector<pair<const char*,const char*>> sq2 = {
-    //   {"--attribute-type","display an attribute type"},
-    //   {"--attribute-value","display an attribute value"},
-    //   {"--parameter-type","display a parameter type"},
-    //   {"--parameter-default-value","display a parameter default value"}};
-    // for(const auto& q : sq2){
-    //   Parser::registerNewCallBack(q.first,&ModelQuery::treatStandardQuery2,q.second,true);
-    // }
     Parser::registerNewCallBack("--generated-sources",&ModelQuery::treatGeneratedSources,
 				"show all the generated sources");
     Parser::registerNewCallBack("--generated-headers",&ModelQuery::treatGeneratedHeaders,
@@ -83,14 +80,12 @@ namespace mfront{
   } // end of ModelQuery::registerCommandLineCallBacks
 
   void ModelQuery::treatStandardQuery(void){
-    using namespace std;
-    const auto& q = this->getCurrentCommandLineArgument();
-    const auto& qn = q.as_string();
+    const auto& qn = this->getCurrentCommandLineArgument().as_string();
     if(qn=="--author"){
       this->queries.push_back({"author",[](const FileDescription& fd,
 					   const ModelDescription&){
 	    const auto& a = fd.authorName;
-	    cout << (!a.empty() ? a : "(undefined)") << endl;
+	    std::cout << (!a.empty() ? a : "(undefined)") << std::endl;
 	  }});
     } else if(qn=="--description"){
       this->queries.push_back({"description",[](const FileDescription& fd,
@@ -99,36 +94,58 @@ namespace mfront{
 	      const auto d = tfel::utilities::tokenize(fd.description,'\n');
 	      for(const auto& l : d){
 		if((l.size()>=2)&&((l)[0]=='*')&&((l)[1]==' ')){
-		  cout << l.substr(2) << endl;
+		  std::cout << l.substr(2) << std::endl;
 		} else {
-		  cout << l << endl;
+		  std::cout << l << std::endl;
 		}
 	      }
 	    } else {
-	      cout << "(undefined)" << endl;
+	      std::cout << "(undefined)" << std::endl;
 	    }
 	  }});
     } else if(qn=="--date"){
       this->queries.push_back({"date",[](const FileDescription& fd,
 					 const ModelDescription&){
 	    const auto& d = fd.date;
-	    cout << (!d.empty() ? d : "(undefined)") << endl;
+	    std::cout << (!d.empty() ? d : "(undefined)") << std::endl;
 	  }});
     } else if(qn=="--material"){
       this->queries.push_back({"material",[](const FileDescription&,
 					     const ModelDescription& d){
 	    const auto& m = d.material;
-	    cout << (!m.empty() ? m : "(undefined)") << endl;
+	    std::cout << (!m.empty() ? m : "(undefined)") << std::endl;
 	  }});
     } else if(qn=="--library"){
       this->queries.push_back({"library",[](const FileDescription&,
 					    const ModelDescription& d){
 	    const auto& l = d.library;
-	    cout << (!l.empty() ? l : "(undefined)") << endl;
+	    std::cout << (!l.empty() ? l : "(undefined)") << std::endl;
 	  }});
+    } else if(qn=="--outputs"){
+      this->queries.push_back({"outputs",[](const FileDescription&,
+					    const ModelDescription& d){
+	    for(const auto& v:d.outputs){
+	      const auto& n = v.name; // d.getExternalName(v.name);
+	      std::cout << "- " << n;
+	      if(v.arraySize!=1u){
+		std::cout << '[' << v.arraySize << ']';
+	      }
+	      if(n!=v.name){
+		std::cout << " (" << v.name << ")";
+	      }
+	      if(!v.description.empty()){
+		std::cout << ": " << v.description;
+	      } else {
+		const auto& g = tfel::glossary::Glossary::getGlossary();
+		if(g.contains(n)){
+		  std::cout << ": " << g.getGlossaryEntry(n).getShortDescription();
+		}
+	      }
+	      std::cout << std::endl;
+	    }}});
     } else {
-      throw(runtime_error("Model::treatStandardQuery : "
-			  "unsupported query '"+qn+"'"));
+      throw(std::runtime_error("Model::treatStandardQuery : "
+			       "unsupported query '"+qn+"'"));
     }
   } // end of ModelQuery::treatStandardQuery
   

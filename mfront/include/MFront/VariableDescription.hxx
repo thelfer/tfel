@@ -20,6 +20,7 @@
 #include<initializer_list>
 
 #include"MFront/MFrontConfig.hxx"
+#include"MFront/VariableAttribute.hxx"
 
 namespace mfront
 {
@@ -31,13 +32,25 @@ namespace mfront
    */
   struct MFRONT_VISIBILITY_EXPORT VariableDescription
   {
+    //! default constructor
     VariableDescription();
+    //! copy constructor
     VariableDescription(const VariableDescription&);
+    //! move constructor
     VariableDescription(VariableDescription&&);
+    //! move operator
     VariableDescription&
     operator=(VariableDescription&&);
+    //! assignement operator
     VariableDescription&
     operator=(const VariableDescription&);
+    /*!
+     * \brief throw an exception saying that no attribute with the
+     * given name exists
+     * \param[in] n: name of the attribute
+     */
+    TFEL_NORETURN static void
+    throwUndefinedAttribute(const std::string&);
     /*!
      * Constructor
      * \param[in] t : variable type
@@ -53,12 +66,66 @@ namespace mfront
     /*!
      * \return the name used to call the variable from outside
      * (pleiades application, mtest, etc..)
-     * \param[in] glossaryNames
-     * \param[in] entryNames
+     * \param[in] gn: glossaryNames
+     * \param[in] en: entryNames
      */
     const std::string&
     getExternalName(const std::map<std::string,std::string>&,
 		    const std::map<std::string,std::string>&) const;
+    /*!
+     * \brief insert a new attribute
+     * \param[in] n : name
+     * \param[in] a : attribute
+     * \param[in] b : don't throw if the the
+     *                attribute already exists.
+     *                The attribute is left unchanged.
+     *                However the type of the attribute is checked.
+     */
+    void
+    setAttribute(const std::string&,
+		 const VariableAttribute&,
+		 const bool);
+    /*!
+     * \return true if an attribute with the given name as been registred
+     * \param[in] n : name
+     */
+    bool hasAttribute(const std::string&) const;
+    /*!
+     * \return the attribute with the given name
+     * \param[in] n : name
+     */
+    template<typename T>
+    typename std::enable_if<
+      tfel::meta::TLCountNbrOfT<T,VariableAttributeTypes>::value==1, 
+      T&>::type
+    getAttribute(const std::string&);
+    /*!
+     * \return the attribute with the given name
+     * \param[in] n : name
+     */
+    template<typename T>
+    typename std::enable_if<
+      tfel::meta::TLCountNbrOfT<T,VariableAttributeTypes>::value==1, 
+      const T&>::type
+    getAttribute(const std::string&) const;
+    /*!
+     * \return the attribute with the given name or the given default
+     * value if the variable does not exists
+     * \param[in] n : name
+     * \param[in] v : value
+     */
+    template<typename T>
+    typename std::enable_if<
+      tfel::meta::TLCountNbrOfT<T,VariableAttributeTypes>::value==1, 
+      T>::type
+    getAttribute(const std::string&,
+		 const T&) const;
+    /*!
+     * \return all the attribute registred
+     * \param[in] n : name
+     */
+    const std::map<std::string,VariableAttribute>&
+    getAttributes(void) const;
     //! destructor
     ~VariableDescription();
     //! type of the variable
@@ -74,6 +141,9 @@ namespace mfront
     unsigned short arraySize;
     //! line at wich the variable has been declared
     unsigned int lineNumber;
+  private:
+    //! variable attributes
+    std::map<std::string,VariableAttribute> attributes;
   }; // end of struct VariableDescription
 
   //! a simple alias for backward compatibility
@@ -161,6 +231,8 @@ namespace mfront
   typedef VariableDescriptionContainer      VarContainer;  
 
 } // end of namespace mfront
+
+#include"MFront/VariableDescription.ixx"
 
 #endif /* LIB_MFRONT_VARDESCRIPTION_H_ */
 

@@ -870,12 +870,10 @@ namespace mfront{
   const CodeBlock&
   BehaviourData::getCodeBlock(const std::string& n) const
   {
-    using namespace std;
     auto p = this->cblocks.find(n);
     if(p==this->cblocks.end()){
-      string msg("BehaviourData::getCode : "
-		 "no code block associated with '"+n+"'");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourData::getCode: "
+			       "no code block associated with '"+n+"'"));
     }
     return p->second.get();
   } // end of BehaviourData::getCodeBlock

@@ -8,6 +8,7 @@ set(TFELUtilities_SOURCES
     CxxKeywords.cxx
     TerminalColors.cxx
     CxxTokenizer.cxx
-    ArgumentParserBase.cxx)
+    Argument.cxx
+    ArgumentParser.cxx)
 
 tfel_library(TFELUtilities ${TFELUtilities_SOURCES})

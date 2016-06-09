@@ -34,7 +34,7 @@ namespace mfront
   {
     ModelDSLCommon::setInterfaces(f);
     for(const auto& i : this->interfaces){
-      i.second->declareReservedNames(this->reservedNames);
+      i.second->declareReservedNames(this->getReservedNames());
     }
   } // end of ModelDSL::setInterfaces
 

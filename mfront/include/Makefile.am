@@ -69,7 +69,9 @@ nobase_include_HEADERS= MFront/MFront.hxx                               \
 			MFront/VariableBoundsDescription.hxx            \
 			MFront/VarHandler.hxx                           \
 			MFront/StaticVarHandler.hxx                     \
+			MFront/VariableAttribute.hxx                    \
 			MFront/VariableDescription.hxx                  \
+			MFront/VariableDescription.ixx                  \
 			MFront/StaticVariableDescription.hxx            \
 			MFront/LawFunction.hxx                          \
 			MFront/DefaultDSLBase.hxx                       \

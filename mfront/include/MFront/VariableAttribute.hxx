@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MFront/BehaviourAttribute.hxx
+ * \file  mfront/include/MFront/VariableAttribute.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 19 mars 2014
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURATTRIBUTE_H_
-#define LIB_MFRONT_BEHAVIOURATTRIBUTE_H_ 
+#ifndef LIB_MFRONT_VARIABLEATTRIBUTE_H_
+#define LIB_MFRONT_VARIABLEATTRIBUTE_H_ 
 
 #include<string>
 #include"TFEL/Metaprogramming/GenerateTypeList.hxx"
@@ -20,14 +20,14 @@
 
 namespace mfront{
 
-  //! types that can be stored in a behaviour attribute
-  typedef tfel::meta::GenerateTypeList<bool,
-				       unsigned short,
-				       std::string>::type BehaviourAttributeTypes;
-  //! a class storing mechanical behaviour attribute
-  typedef tfel::utilities::GenTypeBase<BehaviourAttributeTypes> BehaviourAttribute;
+  //! \brief types that can be stored in a variable attribute
+  using  VariableAttributeTypes = tfel::meta::GenerateTypeList<bool,
+							       unsigned short,
+							       std::string>::type;
+  //! \brief a class used to store a variable attribute
+  using VariableAttribute = tfel::utilities::GenTypeBase<VariableAttributeTypes>;
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURATTRIBUTE_H_ */
+#endif /* LIB_MFRONT_VARIABLEATTRIBUTE_H_ */
 

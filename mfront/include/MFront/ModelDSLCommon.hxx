@@ -61,20 +61,8 @@ namespace mfront{
      * been reserved yet. If true, check if the variable has alredy
      * been registred and throws an exception if it does, register it
      * otherwise
-     * \note this method is called internally by the registerVariable
-     * and registerStaticVariable methods.
      */
-    virtual void reserveName(const std::string&) override;
-    /*!
-     * \brief register a static member name
-     * \param[in] n : name
-     */
-    virtual void registerMemberName(const std::string&);
-    /*!
-     * \brief register a static member name
-     * \param[in] n : name
-     */
-    virtual void registerStaticMemberName(const std::string&);
+    virtual void reserveName(const std::string&);
     /*!
      * \return the name of the generated class
      */

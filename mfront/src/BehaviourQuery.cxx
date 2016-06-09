@@ -18,8 +18,9 @@
 #include<windows.h>
 #include<cstdlib>
 #endif
-#include<sstream>
 #include<algorithm>
+#include<iostream>
+#include<sstream>
 
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
