@@ -35,7 +35,7 @@ namespace tfel
        * \brief structure describing an action to be performed when a
        * argument is treated
        */
-      struct CallBack{
+      struct TFELUTILITIES_VISIBILITY_EXPORT CallBack{
 	//! default constructor (deleted)
 	CallBack() = delete;
 	/*!
