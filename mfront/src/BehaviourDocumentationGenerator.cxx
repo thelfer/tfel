@@ -5,6 +5,7 @@
  * \date   01 avril 2015
  */
 
+#include<iostream>
 #include<sstream>
 #include<fstream>
 
