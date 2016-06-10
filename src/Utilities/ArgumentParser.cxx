@@ -11,8 +11,9 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
 #include<algorithm>
+#include<stdexcept>
+#include<iostream>
 #include<utility>
 #include<cstdlib>
 #include"TFEL/Utilities/ArgumentParser.hxx"

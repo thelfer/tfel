@@ -88,6 +88,22 @@ namespace mfront
     }
   } // end of ModelDescription::checkVariableExistence
 
+  bool ModelDescription::hasGlossaryName(const std::string& v) const{
+    this->checkVariableExistence(v);
+    return this->glossaryNames.count(v)!=0;
+  }
+
+  std::string
+  ModelDescription::getGlossaryName(const std::string& v) const{
+    this->checkVariableExistence(v);
+    const auto p = this->glossaryNames.find(v);
+    if(p==this->glossaryNames.end()){
+      throw(std::runtime_error("ModelDescription::getGlossaryName: "
+			       "no glossary named defined for variable '"+v+"'"));
+    }
+    return p->second;
+  } // end of ModelDescription::getGlossaryName
+  
   void ModelDescription::setGlossaryName(const std::string& v,
 					 const std::string& g){
     this->checkVariableExistence(v);
