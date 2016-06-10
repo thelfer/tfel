@@ -7,6 +7,7 @@
 
 #include<stdexcept>
 #include<algorithm>
+#include<cstdlib>
 
 #if defined _WIN32 || defined _WIN64
 #ifndef NOMINMAX
