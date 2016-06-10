@@ -16,10 +16,23 @@
 #ifndef LIB_TFEL_PYTHON_SHAREDPTR_HXX
 #define LIB_TFEL_PYTHON_SHAREDPTR_HXX
 
+#include<ciso646>
 #include<boost/version.hpp>
 #include<boost/bind.hpp>
 
 #if BOOST_VERSION < 105300
+#define TFEL_PYTHON_GETPOINTER_OVERLOAD
+#else
+#ifdef __clang__
+#ifndef _LIBCPP_VERSION
+#ifdef BOOST_VERSION < 105700
+#define TFEL_PYTHON_GETPOINTER_OVERLOAD
+#endif /* BOOST_VERSION */
+#endif /* _LIBCPP_VERSION */
+#endif /* __clang__ */
+#endif /* BOOST_VERSION */
+
+#ifdef TFEL_PYTHON_GETPOINTER_OVERLOAD
 /* make boost::python understand std::shared_ptr */
 /* http://boost.2283326.n4.nabble.com/No-automatic-upcasting-with-std-shared-ptr-in-function-calls-td4573165.html */
 namespace boost {
