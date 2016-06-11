@@ -21,6 +21,7 @@
 #include<cstdlib>
 #include<cstring>
 #include<iostream>
+#include<stdexcept>
 
 #include"MFront/InitDSLs.hxx"
 #include"MFront/InitInterfaces.hxx"

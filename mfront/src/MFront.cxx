@@ -13,6 +13,7 @@
 
 #include<stdexcept>
 #include<algorithm>
+#include<stdexcept>
 #include<iostream>
 #include<iterator>
 #include<cstdlib>
