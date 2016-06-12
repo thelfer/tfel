@@ -14,6 +14,16 @@
 #ifdef _MSC_VER
 #define _USE_MATH_DEFINES
 #endif
+#if defined _WIN32 || defined _WIN64
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include<windows.h>
+#endif
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 #include<map>
 #include<cmath>
@@ -26,17 +36,6 @@
 #include<iostream>
 #include<algorithm>
 #include<stdexcept>
-
-#if defined _WIN32 || defined _WIN64
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-#include<windows.h>
-#endif
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
 
 #include"TFEL/Utilities/TerminalColors.hxx"
 #include"TFEL/Utilities/GenTypeBase.hxx"
