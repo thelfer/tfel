@@ -33,6 +33,184 @@ namespace tfel{
 
   namespace math {
 
+    namespace internals {
+
+      /*!
+       * \brief an helper class used to compute special t2tot2 values
+       * \tparam N: space dimension
+       * \tparam T: numerical type
+       */
+      template<unsigned short N, typename T>
+      struct ComputeSpecialT2toT2Values;
+      /*!
+       * \brief Partial specialisation of the
+       * ComputeSpecialT2toT2Values class in 1D.
+       * \tparam T: numerical type
+       */
+      template<typename T>
+      struct ComputeSpecialT2toT2Values<1u,T>{
+	static constexpr const T zero      = T{0};
+	static constexpr const T one       = T{1};
+	static constexpr const T one_third = 1/T{3};
+	static constexpr const T two_third = 2/T{3};
+	static TFEL_MATH_INLINE constexpr
+	/*!
+	 * \return the derivative of the transpose of a tensor with respect of this tensor
+	 */
+	tfel::math::t2tot2<1u,T> transpose_derivative(void){
+	  return {one,zero,zero,
+	          zero,one,zero,
+	          zero,zero,one};
+	}
+	//! \return the identity
+	static TFEL_MATH_INLINE constexpr
+	tfel::math::t2tot2<1u,T> Id(void){
+	  return { one,zero,zero,
+		  zero, one,zero,
+	          zero,zero, one};
+	}
+	//! \return Id2^Id2, where Id2 is the identity tensor 
+	static TFEL_MATH_INLINE constexpr
+	tfel::math::t2tot2<1u,T> IxI(void){
+	  return {one,one,one,
+		  one,one,one,
+	          one,one,one};
+	}
+	/*!
+	 * \return Id4-Id2^Id2/3, where Id4 is the identity of t2tot2 and
+	 * Id2 is the identity tensor
+	 */
+	static TFEL_MATH_INLINE constexpr
+	tfel::math::t2tot2<1u,T> K(void){
+	  return { two_third,-one_third,-one_third,
+		  -one_third, two_third,-one_third,
+	          -one_third,-one_third, two_third};
+	}
+      };
+      /*!
+       * \brief Partial specialisation of the
+       * ComputeSpecialT2toT2Values class in 2D.
+       * \tparam T: numerical type
+       */
+      template<typename T>
+      struct ComputeSpecialT2toT2Values<2u,T>{
+	static constexpr const T zero      = T{0};
+	static constexpr const T one       = T{1};
+	static constexpr const T one_third = 1/T{3};
+	static constexpr const T two_third = 2/T{3};
+	static TFEL_MATH_INLINE constexpr
+	/*!
+	 * \return the derivative of the transpose of a tensor with respect of this tensor
+	 */
+	tfel::math::t2tot2<2u,T> transpose_derivative(void){
+	  return {one,zero,zero,zero,zero,
+	          zero,one,zero,zero,zero,
+	          zero,zero,one,zero,zero,
+	          zero,zero,zero,zero,one,
+	          zero,zero,zero,one,zero};
+	}
+	//! \return the identity
+	static TFEL_MATH_INLINE constexpr
+	tfel::math::t2tot2<2u,T> Id(void){
+	  return {one,zero,zero,zero,zero,
+		  zero,one,zero,zero,zero,
+	          zero,zero,one,zero,zero,
+	          zero,zero,zero,one,zero,
+	          zero,zero,zero,zero,one};
+	}
+	//! \return Id2^Id2, where Id2 is the identity tensor 
+	static TFEL_MATH_INLINE constexpr
+	tfel::math::t2tot2<2u,T> IxI(void){
+	  return {one,one,one,zero,zero,
+		  one,one,one,zero,zero,
+	          one,one,one,zero,zero,
+	          zero,zero,zero,zero,zero,
+	          zero,zero,zero,zero,zero};
+	}
+	/*!
+	 * \return Id4-Id2^Id2/3, where Id4 is the identity of t2tot2 and
+	 * Id2 is the identity tensor
+	 */
+	static TFEL_MATH_INLINE constexpr
+	tfel::math::t2tot2<2u,T> K(void){
+	  return { two_third,-one_third,-one_third,zero,zero,
+		  -one_third, two_third,-one_third,zero,zero,
+	          -one_third,-one_third, two_third,zero,zero,
+	          zero,zero,zero,one,zero,
+	          zero,zero,zero,zero,one};
+	}
+      };
+      /*!
+       * \brief Partial specialisation of the
+       * ComputeSpecialT2toT2Values class in 3D.
+       * \tparam T: numerical type
+       */
+      template<typename T>
+      struct ComputeSpecialT2toT2Values<3u,T>{
+	static constexpr const T zero = T{0};
+	static constexpr const T one  = T{1};
+	static constexpr const T one_third = one/T{3};
+	static constexpr const T two_third = 2/T{3};
+	static TFEL_MATH_INLINE constexpr
+	/*!
+	 * \return the derivative of the transpose of a tensor with respect of this tensor
+	 */
+	tfel::math::t2tot2<3u,T> transpose_derivative(void){
+	  return {one,zero,zero,zero,zero,zero,zero,zero,zero,
+	          zero,one,zero,zero,zero,zero,zero,zero,zero,
+	          zero,zero,one,zero,zero,zero,zero,zero,zero,
+	          zero,zero,zero,zero,one,zero,zero,zero,zero,
+	          zero,zero,zero,one,zero,zero,zero,zero,zero,
+	          zero,zero,zero,zero,zero,zero,one,zero,zero,
+	          zero,zero,zero,zero,zero,one,zero,zero,zero,
+	          zero,zero,zero,zero,zero,zero,zero,zero,one,
+	          zero,zero,zero,zero,zero,zero,zero,one,zero};
+	}
+	//! \return the identity
+	static TFEL_MATH_INLINE constexpr
+	tfel::math::t2tot2<3u,T> Id(void){
+	  return {one,zero,zero,zero,zero,zero,zero,zero,zero,
+		  zero,one,zero,zero,zero,zero,zero,zero,zero,
+	          zero,zero,one,zero,zero,zero,zero,zero,zero,
+	          zero,zero,zero,one,zero,zero,zero,zero,zero,
+	          zero,zero,zero,zero,one,zero,zero,zero,zero,
+	          zero,zero,zero,zero,zero,one,zero,zero,zero,
+	          zero,zero,zero,zero,zero,zero,one,zero,zero,
+	          zero,zero,zero,zero,zero,zero,zero,one,zero,
+	      	  zero,zero,zero,zero,zero,zero,zero,zero,one};
+	}
+	//! \return Id2^Id2, where Id2 is the identity tensor 
+	static TFEL_MATH_INLINE constexpr
+	tfel::math::t2tot2<3u,T> IxI(void){
+	  return {one,one,one,zero,zero,zero,zero,zero,zero,
+		  one,one,one,zero,zero,zero,zero,zero,zero,
+	          one,one,one,zero,zero,zero,zero,zero,zero,
+	          zero,zero,zero,zero,zero,zero,zero,zero,zero,
+	          zero,zero,zero,zero,zero,zero,zero,zero,zero,
+	          zero,zero,zero,zero,zero,zero,zero,zero,zero,
+	          zero,zero,zero,zero,zero,zero,zero,zero,zero,
+	          zero,zero,zero,zero,zero,zero,zero,zero,zero,
+	          zero,zero,zero,zero,zero,zero,zero,zero,zero};
+	}
+	/*!
+	 * \return Id4-Id2^Id2/3, where Id4 is the identity of t2tot2 and
+	 * Id2 is the identity tensor
+	 */
+	static TFEL_MATH_INLINE constexpr
+	tfel::math::t2tot2<3u,T> K(void){
+	  return { two_third,-one_third,-one_third,zero,zero,zero,zero,zero,zero,
+		  -one_third, two_third,-one_third,zero,zero,zero,zero,zero,zero,
+	          -one_third,-one_third, two_third,zero,zero,zero,zero,zero,zero,
+	          zero,zero,zero,one,zero,zero,zero,zero,zero,
+	          zero,zero,zero,zero,one,zero,zero,zero,zero,
+	          zero,zero,zero,zero,zero,one,zero,zero,zero,
+	          zero,zero,zero,zero,zero,zero,one,zero,zero,
+	          zero,zero,zero,zero,zero,zero,zero,one,zero,
+	      	  zero,zero,zero,zero,zero,zero,zero,zero,one};
+	}
+      };
+    } // end of namespace internals
+    
     // Assignement operator
     template<typename Child>
     template<typename T2toT2Type>
@@ -190,20 +368,30 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     typename tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type>
-    t2tot2<N,T>::transpose_derivative(void){
-      using size_type = typename t2tot2<N,T>::size_type;
+    constexpr t2tot2<N,T>::transpose_derivative(void){
       using base = typename tfel::typetraits::BaseType<T>::type;
-      constexpr base one  = base(1);
-      constexpr base zero = base(0);
-      t2tot2<N,base> r(zero);
-      for(size_type i=0;i!=3u;++i){
-	r(i,i)=one;
-      }
-      for(size_type j=3u;j!=TensorDimeToSize<N>::value;j+=2){
-	r(j+1,j) = one;
-	r(j,j+1) = one;
-      }
-      return r;
+      return internals::ComputeSpecialT2toT2Values<N,base>::transpose_derivative();
+    }
+
+    template<unsigned short N, typename T>
+    constexpr t2tot2<N,typename tfel::typetraits::BaseType<T>::type>
+    t2tot2<N,T>::Id(void){
+      using base = typename tfel::typetraits::BaseType<T>::type;
+      return internals::ComputeSpecialT2toT2Values<N,base>::Id();
+    }
+
+    template<unsigned short N, typename T>
+    constexpr t2tot2<N,typename tfel::typetraits::BaseType<T>::type>
+    t2tot2<N,T>::IxI(void){
+      using base = typename tfel::typetraits::BaseType<T>::type;
+      return internals::ComputeSpecialT2toT2Values<N,base>::IxI();
+    }
+
+    template<unsigned short N, typename T>
+    constexpr t2tot2<N,typename tfel::typetraits::BaseType<T>::type>
+    t2tot2<N,T>::K(void){
+      using base = typename tfel::typetraits::BaseType<T>::type;
+      return internals::ComputeSpecialT2toT2Values<N,base>::K();
     }
     
     template<unsigned short N, typename T>
@@ -217,6 +405,14 @@ namespace tfel{
       : fsarray<TensorDimeToSize<N>::value*TensorDimeToSize<N>::value,T>(init)
     {}
 
+    template<unsigned short N, typename T>
+    template<typename T2,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    constexpr t2tot2<N,T>::t2tot2(const std::initializer_list<T2>& values)
+      : fsarray<TensorDimeToSize<N>::value*
+		TensorDimeToSize<N>::value,T>(values)
+    {}
+    
     template<unsigned short N,typename T>
     template<typename T2,typename Op>
     t2tot2<N,T>::t2tot2(const Expr<t2tot2<N,T2>,Op>& src){

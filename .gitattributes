@@ -4439,6 +4439,7 @@ tests/Math/t2tot2/SpinRateDerivative.cxx -text
 tests/Math/t2tot2/TensorProductDerivative.cxx -text
 tests/Math/t2tot2/TransposeDerivative.cxx -text
 tests/Math/t2tot2/VelocityGradientDerivative.cxx -text
+tests/Math/t2tot2/t2tot2-specialvalues.cxx -text
 tests/Math/t2tot2/t2tot2.cxx -text
 tests/Math/tensor.cxx -text
 tests/Math/tensor2.cxx -text

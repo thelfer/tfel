@@ -198,12 +198,22 @@ namespace tfel{
       /*!
        * \return the derivative of the transpose of a tensor with respect of this tensor
        */
-      static TFEL_MATH_INLINE
+      static TFEL_MATH_INLINE constexpr
       tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type>
       transpose_derivative(void);
+      //! \return the identity
+      static TFEL_MATH_INLINE constexpr
+      tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type> Id(void);
+      //! \return Id2^Id2, where Id2 is the identity tensor 
+      static TFEL_MATH_INLINE constexpr
+      tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type> IxI(void);
       /*!
-       * This is a StensorConcept requirement.
+       * \return Id4-Id2^Id2/3, where Id4 is the identity of t2tot2 and
+       * Id2 is the identity tensor
        */
+      static TFEL_MATH_INLINE constexpr
+      tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type> K(void);
+      //! This is a T2toT2 concept requirement.
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
        * \brief Default Constructor 
@@ -225,6 +235,14 @@ namespace tfel{
       template<typename T2,typename Op>
       TFEL_MATH_INLINE
       t2tot2(const Expr<t2tot2<N,T2>,Op>&);
+      /*!
+       * \brief default constructor 
+       * \param[in] v : values
+       */
+      template<typename T2,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE constexpr
+      t2tot2(const std::initializer_list<T2>&);
       //! assignement operator
       TFEL_MATH_INLINE t2tot2&
       operator=(const t2tot2&);

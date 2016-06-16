@@ -5,7 +5,8 @@ if WITH_TESTS
 
 testdir = $(pkgdatadir)/tests/Math/T2toT2
 
-test_PROGRAMS =	t2tot2 TensorProductDerivative \
+test_PROGRAMS =	t2tot2 t2tot2-specialvalues    \
+		TensorProductDerivative \
 		SpinRateDerivative             \
 		VelocityGradientDerivative     \
 		TransposeDerivative
@@ -16,7 +17,8 @@ LDADD = -lTFELMath -lTFELException -lTFELTests \
 	-L$(top_builddir)/src/Math             \
 	-L$(top_builddir)/src/Exception
 
-t2tot2_SOURCES = t2tot2.cxx
+t2tot2_SOURCES                     = t2tot2.cxx
+t2tot2_specialvalues_SOURCES       = t2tot2-specialvalues.cxx
 TensorProductDerivative_SOURCES    = TensorProductDerivative.cxx
 TransposeDerivative_SOURCES        = TransposeDerivative.cxx
 VelocityGradientDerivative_SOURCES = VelocityGradientDerivative.cxx

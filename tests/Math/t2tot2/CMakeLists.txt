@@ -17,6 +17,7 @@ macro(tests_t2tot2 test_arg)
 endmacro(tests_t2tot2)
 
 tests_t2tot2(t2tot2)
+tests_t2tot2(t2tot2-specialvalues)
 tests_t2tot2(TensorProductDerivative)
 tests_t2tot2(TransposeDerivative)
 tests_t2tot2(VelocityGradientDerivative)

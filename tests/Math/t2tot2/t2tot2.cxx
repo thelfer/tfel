@@ -66,13 +66,8 @@ TFEL_TESTS_GENERATE_PROXY(T2tot2Test_1D,"T2tot2Test-1D");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
-  using namespace tfel::tests;
-  auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(std::cout);
-  manager.addXMLTestOutput("t2tot2.xml");
-  TestResult r = manager.execute();
-  if(!r.success()){
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("t2tot2.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
