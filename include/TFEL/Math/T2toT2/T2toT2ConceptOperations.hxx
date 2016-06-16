@@ -80,11 +80,11 @@ namespace tfel
     class ComputeBinaryResult_<T2toT2Tag,ScalarTag,A,B,Op>
     {
       struct DummyHandle{};
-      typedef typename T2toT2Type<A>::type T2toT2TypeA;
+      typedef typename T2toT2Type<typename std::decay<A>::type>::type T2toT2TypeA;
     public:
       typedef typename ResultType<T2toT2TypeA,B,Op>::type Result;
       typedef typename std::conditional<tfel::typetraits::IsInvalid<Result>::cond,
-				      DummyHandle,
+					DummyHandle,
 					Expr<Result,ObjectScalarOperation<A,B,Op>>>::type Handle;
     };
 
