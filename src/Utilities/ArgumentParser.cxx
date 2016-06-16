@@ -153,8 +153,7 @@ namespace tfel{
 	      throw(std::runtime_error("ArgumentParser::replaceAliases : '"
 				       "no argument given to option '"+pn+"'"));
 	    }
-	    *p = pa->second;
-	    p->setOption(p2n);
+	    *p = pa->second+'='+p2n;
 	    p = this->args.erase(p2);
 	  } else {
 	    *p = pa->second;
@@ -173,18 +172,17 @@ namespace tfel{
 	auto& an = a.as_string();
 	const auto pos = an.find("=");
 	if(pos!=std::string::npos){
-	  if(pos!=std::string::npos){
-	    const auto option = an.substr(pos+1,std::string::npos);
-	    an.erase(pos,std::string::npos);
-	    const auto pf = this->callBacksContainer.find(an);
-	    if(pf!=this->callBacksContainer.end()){
-	      if(!(pf->second.hasOption)){
-		throw(std::runtime_error("ArgumentParser::stripArguments: "
-					 "argument '"+an+"' does not have any option"));
-	      }
+	  const auto option = an.substr(pos+1,std::string::npos);
+	  an.erase(pos,std::string::npos);
+	  const auto pf = this->callBacksContainer.find(an);
+	  if(pf!=this->callBacksContainer.end()){
+	    if(!(pf->second.hasOption)){
+	      throw(std::runtime_error("ArgumentParser::stripArguments: "
+				       "argument '"+an+"' does not "
+				       "have any option"));
 	    }
-	    a.setOption(option);
 	  }
+	  a.setOption(option);
 	}
       }
     } // end of ArgumentParser::stripArguments
@@ -203,8 +201,8 @@ namespace tfel{
 		     const char* const s){
 	return a.as_string()==s;
       };
-      this->stripArguments();
       this->replaceAliases();
+      this->stripArguments();
       for(auto pa = args.begin();pa!=args.end();){
 	if(comp(*pa,"--help")){
 	  this->treatHelp();

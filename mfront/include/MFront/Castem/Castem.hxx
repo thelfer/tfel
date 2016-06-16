@@ -33,8 +33,8 @@
 
 namespace castem{
 
-  typedef cast_int CastemInt;
-  typedef double   CastemReal;
+  typedef cast_int    CastemInt;
+  typedef cast_double CastemReal;
 
   /*!
    * prototype of a function handling stress-free expansion at the
