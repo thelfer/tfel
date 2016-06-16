@@ -16,12 +16,11 @@
 #define LIB_TFEL_CASTEM_MFRONT_CASTEM_H_ 
 
 #include<castem.h>
-
-#ifdef umat /* the umat symbol might be defined 
-	     * in the castem header, so remove it
+#ifdef umat /* the umat symbol might be defined in the (standard)
+	     * castem header, so remove it
 	     */
 #undef umat
-#endif /* LIB_TFEL_CASTEM_MFRONT_CASTEM_H_ */
+#endif /* umat */
 
 #ifndef TFEL_CASTEM_INLINE
 #define TFEL_CASTEM_INLINE inline
@@ -57,4 +56,3 @@ namespace castem{
 } // end of namespace castem
 
 #endif /* LIB_TFEL_CASTEM_MFRONT_CASTEM_H_ */
-
