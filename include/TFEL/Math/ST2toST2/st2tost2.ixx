@@ -188,10 +188,10 @@ namespace tfel{
     {}
 
     template<unsigned short N, typename T>
-    struct ComputeSpeciatlST2ST2Values;
+    struct ComputeSpecialST2ST2Values;
 
     template<typename T>
-    struct ComputeSpeciatlST2ST2Values<1u,T>
+    struct ComputeSpecialST2ST2Values<1u,T>
     {
       static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
       getId(void){
@@ -226,7 +226,7 @@ namespace tfel{
     };
 
     template<typename T>
-    struct ComputeSpeciatlST2ST2Values<2u,T>
+    struct ComputeSpecialST2ST2Values<2u,T>
     {
       static TFEL_MATH_INLINE constexpr st2tost2<2u,T>
       getId(void){
@@ -266,7 +266,7 @@ namespace tfel{
     };
   
     template<typename T>
-    struct ComputeSpeciatlST2ST2Values<3u,T>
+    struct ComputeSpecialST2ST2Values<3u,T>
     {
       static TFEL_MATH_INLINE constexpr st2tost2<3u,T>
       getId(void){
@@ -318,31 +318,31 @@ namespace tfel{
     template<unsigned short N, typename T>
     constexpr st2tost2<N,T>
     st2tost2<N,T>::Id(void){
-      return ComputeSpeciatlST2ST2Values<N,T>::getId();
+      return ComputeSpecialST2ST2Values<N,T>::getId();
     } // end of st2tost2<N,T>::Id
 
     template<unsigned short N, typename T>
     constexpr st2tost2<N,T>
     st2tost2<N,T>::IxI(void){
-      return ComputeSpeciatlST2ST2Values<N,T>::getIxI();
+      return ComputeSpecialST2ST2Values<N,T>::getIxI();
     } // end of st2tost2<N,T>::Id
 
     template<unsigned short N, typename T>
     constexpr st2tost2<N,T>
     st2tost2<N,T>::K(void){
-      return ComputeSpeciatlST2ST2Values<N,T>::getK();
+      return ComputeSpecialST2ST2Values<N,T>::getK();
     } // end of st2tost2<N,T>::K
 
     template<unsigned short N, typename T>
     constexpr st2tost2<N,T>
     st2tost2<N,T>::M(void){
-      return ComputeSpeciatlST2ST2Values<N,T>::getM();
+      return ComputeSpecialST2ST2Values<N,T>::getM();
     } // end of st2tost2<N,T>::M
 
     template<unsigned short N, typename T>
     constexpr st2tost2<N,T>
     st2tost2<N,T>::J(void){
-      return ComputeSpeciatlST2ST2Values<N,T>::getJ();
+      return ComputeSpecialST2ST2Values<N,T>::getJ();
     } // end of st2tost2<N,T>::J
 
     template<unsigned short N,typename T>
