@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<tuple>
 #include<boost/python.hpp>
 #include"MTest/Behaviour.hxx"
 #include"MTest/Evolution.hxx"
@@ -69,11 +70,10 @@ SingleStructureScheme_setMaterialProperty2(mtest::SingleStructureScheme& t,
 					   const std::string& f,
 					   const bool b)
 {
-  using namespace std;
   using namespace mtest;
   using mtest::real;
-  shared_ptr<Evolution> mpev;
-  mpev = shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
+  std::shared_ptr<Evolution> mpev;
+  mpev = std::shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
   t.setMaterialProperty(n,mpev,b);
 }
 
@@ -83,9 +83,8 @@ SingleStructureScheme_setMaterialProperty3(mtest::SingleStructureScheme& t,
 					   const std::string& f,
 					   const bool b)
 {
-  using namespace std;
   using namespace mtest;
-  shared_ptr<Evolution> pev(new FunctionEvolution(f,t.getEvolutions()));
+  std::shared_ptr<Evolution> pev(new FunctionEvolution(f,t.getEvolutions()));
   t.setMaterialProperty(n,pev,b);
 }
 
@@ -96,11 +95,9 @@ SingleStructureScheme_setCastemMaterialProperty(mtest::SingleStructureScheme& t,
 						const std::string& f,
 						const bool b)
 {
-  using namespace std;
   using namespace mtest;
-  using mtest::real;
-  shared_ptr<Evolution> mpev;
-  mpev = shared_ptr<Evolution>(new CastemEvolution(l,f,t.getEvolutions()));
+  std::shared_ptr<Evolution> mpev;
+  mpev = std::shared_ptr<Evolution>(new CastemEvolution(l,f,t.getEvolutions()));
   t.setMaterialProperty(n,mpev,b);
 }
 
@@ -119,21 +116,18 @@ static void
 SingleStructureScheme_setExternalStateVariable2(mtest::SingleStructureScheme& t,
 						const std::string&  n,
 						const std::map<mtest::real,
-						mtest::real>& v,
+						mtest::real>& values,
 						const bool b)
 {
-  using namespace std;
   using namespace mtest;
-  using mtest::real;
-  vector<real> tv(v.size());
-  vector<real> ev(v.size());
-  vector<real>::size_type i;
-  map<real,real>::const_iterator pv;
-  for(pv=v.begin(),i=0;pv!=v.end();++pv,++i){
-    tv[i] = pv->first;
-    ev[i] = pv->second;
+  std::vector<real> tv(values.size());
+  std::vector<real> ev(values.size());
+  std::vector<real>::size_type i = 0;
+  for(const auto& v : values){
+    std::tie(tv[i],ev[i]) = v;
+    ++i;
   }
-  shared_ptr<Evolution> pev(new LPIEvolution(tv,ev));
+  std::shared_ptr<Evolution> pev(new LPIEvolution(tv,ev));
   t.setExternalStateVariable(n,pev,b);
 }
 
