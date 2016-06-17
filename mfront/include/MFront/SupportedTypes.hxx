@@ -15,84 +15,96 @@
 #define LIB_MFRONT_SUPPORTEDTYPES_H_ 
 
 #include<map>
+#include<iosfwd>
 #include<string>
 #include<vector>
-#include<ostream>
 
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"MFront/MFrontConfig.hxx"
-#include"MFront/VariableDescription.hxx"
 
 namespace mfront
 {
 
+  // forward declaration
+  struct VariableDescription;
+  // forward declaration
+  struct VariableDescriptionContainer;
+
+  //! class handling all type variables types supported by MFront
   struct MFRONT_VISIBILITY_EXPORT SupportedTypes
   {
-
+    //! limit for small array support
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     static const int ArraySizeLimit = 10u;
 #else 
     static constexpr int ArraySizeLimit = 10u;
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
-
-
+    //! type of variable supported
     enum TypeFlag{Scalar,TVector,Stensor,Tensor};
-
+    /*!
+     * class handling the size of a variable or a set of variables as
+     * a function of the variables' type and the modelling hypothesis
+     */
     struct MFRONT_VISIBILITY_EXPORT TypeSize
     {
-
+      //! a simple alias
+      using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
+      //! constructor
       TypeSize();
-
+      //! move constructor
+      TypeSize(TypeSize&&);
+      //! copy constructor
       TypeSize(const TypeSize&);
-
+      /*!
+       * \brief constructor
+       * \param[in] a: scalar size
+       * \param[in] b: vector size
+       * \param[in] c: symmetric tensor size
+       * \param[in] d: (unsymmetric) tensor size
+       */
       TypeSize(const int,const int,
 	       const int,const int);
-
-      TypeSize&
-      operator=(const TypeSize&);
+      //! assignement
+      TypeSize& operator=(const TypeSize&);
+      //! move assignement
+      TypeSize& operator=(TypeSize&&);
     
-      TypeSize&
-      operator+=(const TypeSize&);
+      TypeSize& operator+=(const TypeSize&);
 
-      TypeSize&
-      operator-=(const TypeSize&);
+      TypeSize& operator-=(const TypeSize&);
     
-      bool
-      operator!=(const TypeSize&) const;
-
-      bool
-      operator==(const TypeSize&) const;
-
-      int
-      getScalarSize() const;
-    
-      int
-      getTVectorSize() const;
-
-      int
-      getStensorSize() const;
-
-      int
-      getTensorSize() const;
+      bool operator!=(const TypeSize&) const;
+      //! comparision operator
+      bool operator==(const TypeSize&) const;
+      //! return the scalar part of the size
+      int getScalarSize() const;
+      //! return the vector part of the size
+      int getTVectorSize() const;
+      //! return the symmetric tensor part of the size
+      int getStensorSize() const;
+      //! return the (un)symmetric tensor part of the size
+      int getTensorSize() const;
 
       int
       getValueForDimension(const unsigned short) const;
 
       int
-      getValueForModellingHypothesis(const tfel::material::ModellingHypothesis::Hypothesis) const;
-
+      getValueForModellingHypothesis(const Hypothesis) const;
+      //! \return true is all components of the TipeSize are null
       bool isNull(void) const;
       
     private:
-
+      //! ouptut operator
       friend std::ostream& 
       operator<< (std::ostream&, const TypeSize&);
-
-      int scalarSize;
-      int tvectorSize;
-      int stensorSize;
-      int tensorSize;
-
+      //! scalar part
+      int scalarSize  = 0;
+      //! vector part
+      int tvectorSize = 0;
+      //! symmetric tensor part
+      int stensorSize = 0;
+      //! (un)symmetric tensor part
+      int tensorSize  = 0;
     }; // end of class SupportedTypes::TypeSize
     //! \return a list of type names associated with type flags
     static const std::map<std::string,TypeFlag>&
@@ -128,20 +140,17 @@ namespace mfront
 
     std::string
     getTimeDerivativeType(const std::string&) const;
-
     /*!
      * \return true of the parser shall declare a dynamically
      * allocated vector for the given array size
      */
     bool
     useDynamicallyAllocatedVector(const unsigned short) const;
-
     /*!
      * \return true if dynamically allocated vectors are allowed
      */
     bool
     areDynamicallyAllocatedVectorsAllowed(void) const;
-
     /*!
      * write the given variables declaration
      * \param[out] f                 : output file
@@ -241,16 +250,12 @@ namespace mfront
     writeResultsArrayResize(std::ostream&,
 			    const std::string&,
 			    const SupportedTypes::TypeSize&) const;
-
+    //! desctructor
     virtual ~SupportedTypes();
 
   protected:
-
-    /*!
-     * reset the class members
-     */
+    //! reset the class members
     void reset(void);
-
     /*!
      * Support for dynamically allocated vectors is not allowed in all
      * parsers. Parsers may change this value to disable the use of

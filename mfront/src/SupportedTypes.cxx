@@ -17,6 +17,7 @@
 #include<stdexcept>
 
 #include"MFront/MFrontDebugMode.hxx"
+#include"MFront/VariableDescription.hxx"
 #include"MFront/SupportedTypes.hxx"
 
 namespace mfront{
@@ -61,24 +62,14 @@ namespace mfront{
     return SupportedTypes_getFlags();
   } // end of SupportedTypes::getTypeFlags
   
-  SupportedTypes::TypeSize::TypeSize()
-    : scalarSize(0),
-      tvectorSize(0),
-      stensorSize(0),
-      tensorSize(0)
-  {}
+  SupportedTypes::TypeSize::TypeSize() = default;
   
-  SupportedTypes::TypeSize::TypeSize(const SupportedTypes::TypeSize& src)
-    : scalarSize(src.scalarSize),
-      tvectorSize(src.tvectorSize),
-      stensorSize(src.stensorSize),
-      tensorSize(src.tensorSize)
-  {}
+  SupportedTypes::TypeSize::TypeSize(TypeSize&&) = default;
+
+  SupportedTypes::TypeSize::TypeSize(const TypeSize&) = default;
   
-  SupportedTypes::TypeSize::TypeSize(const int a,
-				     const int b,
-				     const int c,
-				     const int d)				     
+  SupportedTypes::TypeSize::TypeSize(const int a,const int b,
+				     const int c,const int d)				     
     : scalarSize(a),
       tvectorSize(b),
       stensorSize(c),
@@ -86,32 +77,28 @@ namespace mfront{
   {}
   
   SupportedTypes::TypeSize&
-  SupportedTypes::TypeSize::operator=(const SupportedTypes::TypeSize& src)
-  {
-    scalarSize  = src.scalarSize;
-    tvectorSize = src.tvectorSize;
-    stensorSize = src.stensorSize;
-    tensorSize  = src.tensorSize;
-    return *this;
-  }
+  SupportedTypes::TypeSize::operator=(TypeSize&&) = default;
 
   SupportedTypes::TypeSize&
-  SupportedTypes::TypeSize::operator+=(const SupportedTypes::TypeSize& src)
+  SupportedTypes::TypeSize::operator=(const TypeSize&) = default;
+
+  SupportedTypes::TypeSize&
+  SupportedTypes::TypeSize::operator+=(const TypeSize& rhs)
   {
-    scalarSize  = scalarSize+src.scalarSize;
-    tvectorSize = tvectorSize+src.tvectorSize;
-    stensorSize = stensorSize+src.stensorSize;
-    tensorSize  = tensorSize+src.tensorSize;
+    this->scalarSize  += rhs.scalarSize;
+    this->tvectorSize += rhs.tvectorSize;
+    this->stensorSize += rhs.stensorSize;
+    this->tensorSize  += rhs.tensorSize;
     return *this;
   }
   
   SupportedTypes::TypeSize&
-  SupportedTypes::TypeSize::operator-=(const SupportedTypes::TypeSize& src)
+  SupportedTypes::TypeSize::operator-=(const TypeSize& rhs)
   {
-    scalarSize  = scalarSize-src.scalarSize;
-    tvectorSize = tvectorSize-src.tvectorSize;
-    stensorSize = stensorSize-src.stensorSize;
-    tensorSize  = tensorSize-src.tensorSize;
+    this->scalarSize  -= rhs.scalarSize;
+    this->tvectorSize -= rhs.tvectorSize;
+    this->stensorSize -= rhs.stensorSize;
+    this->tensorSize  -= rhs.tensorSize;
     return *this;
   }
 
@@ -131,7 +118,7 @@ namespace mfront{
   } // end of SupportedTypes::TypeSize::getValueForDimension
 
   int
-  SupportedTypes::TypeSize::getValueForModellingHypothesis(const tfel::material::ModellingHypothesis::Hypothesis h) const{
+  SupportedTypes::TypeSize::getValueForModellingHypothesis(const Hypothesis h) const{
     return this->getValueForDimension(tfel::material::getSpaceDimension(h));
   }
   
@@ -215,7 +202,6 @@ namespace mfront{
   SupportedTypes::getTypeSize(const std::string& type,
 			      const unsigned short a) const
   {
-    using namespace std;
     TypeSize res;
     switch(this->getTypeFlag(type)){
     case Scalar : 
@@ -231,7 +217,7 @@ namespace mfront{
       res=TypeSize(0u,0u,0u,a);
       break;
     default : 
-      throw(runtime_error("SupportedTypes::getTypeSize : internal error."));
+      throw(std::runtime_error("SupportedTypes::getTypeSize: internal error."));
     }
     return res;
   }
@@ -239,7 +225,6 @@ namespace mfront{
   std::string
   SupportedTypes::getTimeDerivativeType(const std::string& type) const
   {
-    using namespace std;
     if (type=="real"){
       return "frequency";
     } else if(type=="strain"){
@@ -253,10 +238,8 @@ namespace mfront{
     } else if (type=="StrainStensor"){
       return "StrainRateStensor";
     } else {
-      string msg("SupportedTypes::getTimeDerivativeType : ");
-      msg+="internal error, unsupported type ";
-      msg+=type;
-      throw(runtime_error(msg));
+      throw(std::runtime_error("SupportedTypes::getTimeDerivativeType: "
+			       "internal error, unsupported type"));
     }
   }
 
@@ -305,10 +288,8 @@ namespace mfront{
   bool
   SupportedTypes::TypeSize::isNull(void) const
   {
-    return ((this->getScalarSize()==0)&&
-	    (this->getStensorSize()==0)&&
-	    (this->getTVectorSize()==0)&&
-	    (this->getTensorSize()==0));
+    return ((this->getScalarSize()==0)  && (this->getStensorSize()==0)&&
+	    (this->getTVectorSize()==0) && (this->getTensorSize()==0));
   } // end of SupportedTypes::TypeSize::isNull
 
   void
