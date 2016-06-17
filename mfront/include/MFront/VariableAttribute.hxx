@@ -15,6 +15,7 @@
 #define LIB_MFRONT_VARIABLEATTRIBUTE_H_ 
 
 #include<string>
+#include<vector>
 #include"TFEL/Metaprogramming/GenerateTypeList.hxx"
 #include"TFEL/Utilities/GenTypeBase.hxx"
 #include"MFront/BoundsDescription.hxx"
@@ -22,9 +23,13 @@
 namespace mfront{
 
   //! \brief types that can be stored in a variable attribute
-  using  VariableAttributeTypes = tfel::meta::GenerateTypeList<bool,unsigned short,
-							       BoundsDescription,
-							       std::string>::type;
+  using  VariableAttributeTypes = tfel::meta::GenerateTypeList<bool,
+							       unsigned short,
+							       double,
+							       std::string,
+							       std::vector<double>,
+							       std::vector<std::string>,
+							       BoundsDescription>::type;
   //! \brief a class used to store a variable attribute
   using VariableAttribute = tfel::utilities::GenTypeBase<VariableAttributeTypes>;
 

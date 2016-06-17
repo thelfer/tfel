@@ -77,8 +77,7 @@ namespace mfront{
 		 const ModelDescription&);
 
     virtual void
-    writeAssignDefaultValue(const VarContainer::const_iterator,
-			    const std::map<std::string,std::string>::const_iterator);
+    writeAssignDefaultValue(const VariableDescription&);
 
     virtual std::string
     getGenTypeMethod(const std::string& type) const;
@@ -87,11 +86,11 @@ namespace mfront{
     setOutputFileNames(const ModelDescription&) = 0;
 
     virtual void
-    writeGetGlobalParameter(const VarHandler&,
+    writeGetGlobalParameter(const VariableDescription&,
 			    const ModelDescription&);
 
     virtual void
-    writeGetConstantMaterialProperty(const VarHandler&,
+    writeGetConstantMaterialProperty(const VariableDescription&,
 				     const ModelDescription&);
 
     virtual void

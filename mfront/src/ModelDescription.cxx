@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"MFront/ModelDescription.hxx"
 
@@ -117,12 +118,17 @@ namespace mfront
 			       "an external name has already been set "
 			       "for variable '"+v+"'"));
     }
+    this->reserveName(g);
     this->glossaryNames.insert({v,g});
   }
 
   void ModelDescription::setEntryName(const std::string& v,
 				      const std::string& e){
     this->checkVariableExistence(v);
+    if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e,false)){
+      throw(std::runtime_error("ModelDescription::setEntryName: "
+			       "'"+e+"' is a not a valid entry name"));
+    }
     if(tfel::glossary::Glossary::getGlossary().contains(e)){
       throw(std::runtime_error("ModelDescription::setEntryName: "
 			       "'"+e+"' is a glossary name"));

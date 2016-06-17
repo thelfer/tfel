@@ -1084,16 +1084,7 @@ namespace mfront
   double DSLBase::readDouble(void)
   {
     this->checkNotEndOfFile("DSLBase::readDouble");
-    std::istringstream flux(this->current->value);
-    double value;
-    flux >> value;
-    if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("DSLBase::readDouble",
-			      "Failed to read double value from token '"+
-			      this->current->value+"'.");
-    }
-    ++(this->current);
-    return value;
+    return CxxTokenizer::readDouble(this->current,this->tokens.end());
   } // end of DSLBase::readDouble
 
   void

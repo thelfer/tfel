@@ -45,12 +45,11 @@ namespace mfront{
   } // end of MFrontGerminalModelInterface::getLibraryBaseName
 
   void
-  MFrontGerminalModelInterface::writeGetConstantMaterialProperty(const VarHandler& v,
+  MFrontGerminalModelInterface::writeGetConstantMaterialProperty(const VariableDescription& v,
 								 const ModelDescription& md)
   {
     std::string name;
     std::string name2;
-    const auto p = md.defaultValues.find(v.name);
     if(md.hasGlossaryName(v.name)){
       name  = "GlossaireParam::" + md.getGlossaryName(v.name);
       name2 = "this->getMeshZoneName()+\".\"+GlossaireParam::" + md.getGlossaryName(v.name);
@@ -65,8 +64,8 @@ namespace mfront{
 		  << "this->" << v.name << " = arg[" << name << "]."
 		  << this->getGenTypeMethod(v.type) << "();\n"
 		  << "} else {\n";
-    if(p!=md.defaultValues.end()){
-      this->srcFile << "this->" << v.name << " = " << p->second << ";\n";
+    if(v.hasAttribute(VariableDescription::defaultValue)){
+      this->srcFile << "this->" << v.name << " = " << v.getAttribute<double>(VariableDescription::defaultValue) << ";\n";
     } else {
       this->srcFile << "string msg(\"" << md.className << "::initializeParameters : \");\n"
 		    << "msg += \"can't initialize constant material property  '"
@@ -99,7 +98,6 @@ namespace mfront{
 	name  = "\""+md.getExternalName(v.name)+"\"";
 	iname = "\""+md.getExternalName(v.name)+".InitialValue\"";
       }
-      const auto p = md.initialValues.find(v.name);
       this->srcFile << "if(arg.contains(this->getMeshZoneName()+\".\"+" << iname << ")){\n";
       this->srcFile << "this->initializeField(this->_ple" << v.name
 		    << ",arg[this->getMeshZoneName()+\".\"+" << iname << "]."
@@ -109,9 +107,9 @@ namespace mfront{
 		    << ",arg[" <<iname << "]."
 		    << this->getGenTypeMethod("real") << "());\n";
       this->srcFile << "} else {\n";
-      if(p!=md.initialValues.end()){
-	this->srcFile << "this->initializeField(this->_ple" << v.name
-		      << "," << p->second << ");\n";
+      if(v.hasAttribute(VariableDescription::initialValue)){
+	this->srcFile << "this->initializeField(this->_ple" << v.name << ","
+		      << v.getAttribute<double>(VariableDescription::initialValue) << ");\n";
       } else {
 	this->srcFile << "string msg(\"" << md.className << "::initializeOutput : \");\n";
 	this->srcFile << "msg += \"no initial value given for output field '\";\n";

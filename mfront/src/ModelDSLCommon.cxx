@@ -498,7 +498,9 @@ namespace mfront{
 	     "unexpected end of file while reading body of function '"+f.name+"'");
     throw_if(openedBrackets!=0,"parenthesis still opened at the end of function '"+f.name+"'");
     throw_if(f.modifiedVariables.size()==0,"function " + f.name + " does not change any variable.");
-    throw_if(!this->functionNames.insert(f.name).second,"function " + f.name + " already declared.");
+    for(const auto& df: this->functions){
+      throw_if(df.name==f.name,"function " + f.name + " already declared.");
+    }
     for(auto p2=f.modifiedVariables.begin();p2!=f.modifiedVariables.end();++p2){
       auto p3=f.usedVariables.find(*p2);
       if(p3!=f.usedVariables.end()){
@@ -572,10 +574,8 @@ namespace mfront{
       this->checkNotEndOfFile("ModelDSLCommon::treatOutputMethod",
 			      "Expected intial value.");
       const auto value = tfel::utilities::convert<double>(this->current->value);
-      if(!this->initialValues.insert({this->currentVar,value}).second){
-	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
-				"Initial value for field '"+this->currentVar +"' already defined.");
-      }
+      auto& v = this->outputs.getVariable(this->currentVar);
+      v.setAttribute(VariableDescription::initialValue,value,false);
     } else if (mn=="setDepth"){
       this->checkNotEndOfFile("ModelDSLCommon::treatOutputMethod",
 			      "Expected depth value.");
@@ -594,11 +594,11 @@ namespace mfront{
 	this->registerMemberName("f_"+vn);
 	this->registerMemberName("ff_"+vn);
       }
+      ++(this->current);
     } else {
       this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 			      "Internal error (untreated method '"+ mn +"')");
     }
-    ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatOutputMethod",")");
     this->readSpecifiedToken("ModelDSLCommon::treatOutputMethod",";");
   } // end of ModelDSLCommon::treatOutputMethod
@@ -647,11 +647,11 @@ namespace mfront{
 	this->registerMemberName("f_"+vn);
 	this->registerMemberName("ff_"+vn);
       }
+      ++(this->current);
     } else {
       this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
 			      "Internal error (untreated method '"+ mn +"')");
     }
-    ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatInputMethod",")");
     this->readSpecifiedToken("ModelDSLCommon::treatInputMethod",";");
   } // end of ModelDSLCommon::treatInputMethod
@@ -699,7 +699,6 @@ namespace mfront{
     } else if (mn=="setDefaultValue"){
       this->readDefaultValue();
     }
-    ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatParameterMethod",")");
     this->readSpecifiedToken("ModelDSLCommon::treatParameterMethod",";");
   } // end of ModelDSLCommon::treatParameterMethod
@@ -737,7 +736,6 @@ namespace mfront{
       throw_if(true,"unknown method (valid methods for local parameters are "
 	       "setGlossaryName and setEntryName, read "+mn+").");
     }
-    ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatConstantMaterialPropertyMethod",")");
     this->readSpecifiedToken("ModelDSLCommon::treatConstantMaterialPropertyMethod",";");
   } // end of ModelDSLCommon::treatConstantMaterialPropertyMethod
@@ -748,63 +746,27 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::readDefaultValue: "+m));}
     };
-    std::string res;
-    auto found=false;
-    auto p = this->parameters.begin();
-    while(p!=this->parameters.end()){
-      if(p->name==this->currentVar){
-	found=true;
-	break;
-      }
-      ++p;
-    }   
-    throw_if(!found,"variable '"+this->currentVar+"' is not a parameter");
+    auto& v = this->parameters.getVariable(this->currentVar);
     this->checkNotEndOfFile("ModelDSLCommon::readDefaultValue",
 			    "Expected default value.");
-    if((p->type=="DoubleArray")||(p->type=="StringArray")){
-      unsigned int nbr=0u;
-      auto bend = false;
-      while(bend==false){
-	if(p->type=="DoubleArray"){
-	  tfel::utilities::convert<double>(this->current->value);
-	} else {
-	  throw_if(this->current->flag!=tfel::utilities::Token::String,
-		   "expected to read a string (read '"+this->current->value+"').");
-	}
-	++nbr;
-	res+=" "+this->current->value;
-	++(this->current);
-	this->checkNotEndOfFile("ModelDSLCommon::readDefaultValue",
-				"Expected ',' or ')'.");
-	if(this->current->value==")"){
-	  bend = true;
-	  --(this->current);
-	} else if(this->current->value==","){
-	  ++(this->current);
-	  this->checkNotEndOfFile("ModelDSLCommon::readDefaultValue",
-				  "Expected default value.");
-	} else {
-	  throw_if(true,"unexpected token (expected ',' or ')', read '"+this->current->value+"').");
-	}
-      }
-      res = std::to_string(nbr)+res;
-    } else if ((p->type=="double")||(p->type=="real")){
-      tfel::utilities::convert<double>(this->current->value);
-      res = this->current->value;
-    } else if (p->type=="string"){
-      throw_if(this->current->flag!=tfel::utilities::Token::String,
-	       "expected to read a string (read '"+this->current->value+"').");
-      res = this->current->value;
-    } else if (p->type=="bool"){
-      throw_if((this->current->value!="true")&&(this->current->value!="false"),
-	       "expected to read 'true' or 'false' for type 'bool', "
-	       "read '"+this->current->value+"'");
-      res = this->current->value;
+    if(v.type=="DoubleArray"){
+      const auto values = this->readArrayOfDouble("ModelDSLCommon::readDefaultValue");
+      v.setAttribute(VariableDescription::defaultValue,values,false);
+    } else if (v.type=="StringArray"){
+      const auto values = this->readArrayOfDouble("ModelDSLCommon::readDefaultValue");
+      v.setAttribute(VariableDescription::defaultValue,values,false);
+    } else if ((v.type=="double")||(v.type=="real")){
+      const auto value = this->readDouble();
+      v.setAttribute(VariableDescription::defaultValue,value,false);
+    } else if (v.type=="string"){
+      const auto value = this->readString("ModelDSLCommon::readDefaultValue");
+      v.setAttribute(VariableDescription::defaultValue,value,false);
+    } else if (v.type=="bool"){
+      const auto b = this->readBooleanValue("ModelDSLCommon::readDefaultValue");
+      v.setAttribute(VariableDescription::defaultValue,b,false);
     } else {
-      throw_if(true,"type '"+p->type+"' is not supported.");
+      throw_if(true,"type '"+v.type+"' is not supported.");
     }
-    throw_if(!this->defaultValues.insert({this->currentVar,res}).second,
-	     "default value for '"+ this->currentVar +"' already defined.");
   } // end of ModelDSLCommon::readDefaultValue
 
   void

@@ -127,14 +127,12 @@ namespace mfront{
     if(this->domains.empty()){
       this->hasDefaultConstructor=false;
     }
-    if(!md.parameters.empty()){
-      for(const auto& p:md.parameters){
-	if(!(this->hasDefaultConstructor)){
-	  break;
-	}
-	if(md.defaultValues.find(p.name)==md.defaultValues.end()){
-	  this->hasDefaultConstructor = false;
-	}
+    for(const auto& p:md.parameters){
+      if(!(this->hasDefaultConstructor)){
+	break;
+      }
+      if(!p.hasAttribute(VariableDescription::defaultValue)){
+	this->hasDefaultConstructor = false;
       }
     }
     this->writeHeaderFile(fd,md);
@@ -146,8 +144,8 @@ namespace mfront{
 						    const ModelDescription& md)
   {
     using namespace std;
-    VarContainer::const_iterator p;
-    StaticVarContainer::const_iterator p2;
+    VariableDescriptionContainer::const_iterator p;
+    StaticVariableDescriptionContainer::const_iterator p2;
     set<string>::iterator p4;
     this->headerFile << "/*!" << endl;
     this->headerFile << "* \\file   " << this->headerFileName  << endl;
@@ -384,9 +382,8 @@ namespace mfront{
 						 const ModelDescription& md)
   {
     using namespace std;
-    VarContainer::const_iterator p;
     map<string,string>::const_iterator p4;
-    StaticVarContainer::const_iterator p10;
+    StaticVariableDescriptionContainer::const_iterator p10;
     set<string>::const_iterator p12;
     this->srcFile << "/*!" << endl;
     this->srcFile << "* \\file   " << this->srcFileName  << endl;
@@ -503,10 +500,8 @@ namespace mfront{
     if(this->hasDefaultConstructor){
       this->srcFile << md.className << "::" 
 		    << md.className << "()\n{\n";
-      for(p=md.parameters.begin();p!=md.parameters.end();++p){
-	p4=md.defaultValues.find(p->name);
-	assert(p4!=md.defaultValues.end());
-	this->writeAssignDefaultValue(p,p4);
+      for(const auto& p : md.parameters){
+	this->writeAssignDefaultValue(p);
       }
       if(this->initializeDefaultDomainListInConstrutor(md)){
 	for(p12=this->domains.begin();p12!=this->domains.end();++p12){
@@ -528,8 +523,8 @@ namespace mfront{
       for(const auto& v : md.parameters){
 	const auto name = getDeclarationName(md,"GlossaireParam",v.name);
 	this->srcFile << "if(!arg.contains(" << name << ")){\n";
-	if((p4=md.defaultValues.find(v.name))!=md.defaultValues.end()){
-	  this->writeAssignDefaultValue(p,p4);
+	if(v.hasAttribute(VariableDescription::defaultValue)){
+	  this->writeAssignDefaultValue(v);
 	  this->srcFile << "} else {\n";
 	} else {
 	  this->srcFile << "string msg(\"" << md.className << "::" << md.className << " : \");\n"
@@ -760,54 +755,52 @@ namespace mfront{
   } // end of MFrontPleiadesModelInterfaceBase::getTargetsDescription
   
   void
-  MFrontPleiadesModelInterfaceBase::writeAssignDefaultValue(const VarContainer::const_iterator p,
-							    const std::map<std::string,std::string>::const_iterator p4)
+  MFrontPleiadesModelInterfaceBase::writeAssignDefaultValue(const VariableDescription& v)
   {
-    using namespace std;
-    if((p->type=="string")||(p->type=="double")||(p->type=="real")){
-      this->srcFile << "this->" << p->name << " = "  << p4->second << ";" << endl;
+    if(v.type=="string"){
+      this->srcFile << "this->" << v.name << " = "
+		    << v.getAttribute<std::string>(VariableDescription::defaultValue) << ";\n";
+    } else if ((v.type=="double")||(v.type=="real")){
+      this->srcFile << "this->" << v.name << " = "
+		    << v.getAttribute<double>(VariableDescription::defaultValue) << ";\n";
     } else {
-      string msg("MFrontPleiadesModelInterfaceBase::writeAssignDefaultValue : ");
-      msg+="type "+p->type+" is not supported.\n";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MFrontPleiadesModelInterfaceBase::writeAssignDefaultValue: "
+			       "type "+v.type+" is not supported.\n"));
     }   
   } // end of MFrontPleiadesModelInterfaceBase::writeAssignDefaultValue
 
   void
-  MFrontPleiadesModelInterfaceBase::writeGetGlobalParameter(const VarHandler& v,
+  MFrontPleiadesModelInterfaceBase::writeGetGlobalParameter(const VariableDescription& v,
 							    const ModelDescription& md)
   {
     const auto name = getDeclarationName(md,"GlossaireParam",v.name);
-    const auto p=md.defaultValues.find(v.name);
     this->srcFile << "if(!arg.contains(" << name << ")){\n";
-    if(p!=md.defaultValues.end()){
-      this->srcFile << "this->" << v.name << " = " << p->second << ";\n"
-		    << "} else {\n";
+    if(v.hasAttribute(VariableDescription::defaultValue)){
+      this->writeAssignDefaultValue(v);
     } else {
       this->srcFile << "string msg(\"" << md.className << "::initializeParameters : \");\n"
 		    << "msg += \"can't initialize parameter '" << v.name << "' using '\";\n"
 		    << "msg += " << name << ";\n"
 		    << "msg += '\\'';\n"
-		    << "throw(PleiadesError(msg));\n"
-		    << "} else {\n";
+		    << "throw(PleiadesError(msg));\n";
     }
-    this->srcFile << "this->" << v.name << " = arg[" << name << "]." 
+    this->srcFile << "} else {\n"
+		  << "this->" << v.name << " = arg[" << name << "]." 
 		  << this->getGenTypeMethod(v.type) << "();\n"
 		  << "}\n";
   } // end of MFrontPleiadesModelInterfaceBase::writeGetGlobalParameter
 
   void
-  MFrontPleiadesModelInterfaceBase::writeGetConstantMaterialProperty(const VarHandler& v,
+  MFrontPleiadesModelInterfaceBase::writeGetConstantMaterialProperty(const VariableDescription& v,
 								     const ModelDescription& md)
   {
     const auto name = getDeclarationName(md,"GlossaireParam",v.name);
-    const auto p=md.defaultValues.find(v.name);
     this->srcFile << "if(arg.contains(" << name << ")){\n"
 		  << "this->" << v.name << " = arg[" << name << "]." 
 		  << this->getGenTypeMethod(v.type) << "();\n"
 		  << "} else {\n";
-    if(p!=md.defaultValues.end()){
-      this->srcFile << "this->" << v.name << " = " << p->second << ";\n";
+    if(v.hasAttribute(VariableDescription::defaultValue)){
+      this->writeAssignDefaultValue(v);
     } else {
       this->srcFile << "string msg(\"" << md.className << "::initializeParameters : \");\n"
 		    << "msg += \"can't initialize constant material property  '"
@@ -996,11 +989,10 @@ namespace mfront{
 		  << "using namespace Pleiades::PMetier::PGlossaire;\n";
     for(const auto& v : md.outputs){
       const auto name = getDeclarationName(md,"GlossaireField",v.name);
-      const auto p    = md.initialValues.find(v.name);
       this->srcFile << "if(!this->initializeOutputIFieldDouble(arg," << name;
       this->srcFile << ",\nthis->_ple" << v.name << ",\"\",";
-      if(p!=md.initialValues.end()){
-	this->srcFile << p->second;
+      if(v.hasAttribute(VariableDescription::initialValue)){
+	this->srcFile << v.getAttribute<double>(VariableDescription::initialValue);
       } else {
 	this->srcFile << "0";
       }

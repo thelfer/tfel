@@ -38,6 +38,10 @@ namespace mfront
     static const std::string bounds;
     //! standard attribute name
     static const std::string physicalBounds;
+    //! standard attribute name
+    static const std::string initialValue;
+    //! standard attribute name
+    static const std::string defaultValue;
     //! default constructor
     VariableDescription();
     //! copy constructor

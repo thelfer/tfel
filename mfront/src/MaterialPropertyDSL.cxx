@@ -511,7 +511,7 @@ namespace mfront{
       }
       if(!CxxTokenizer::isValidIdentifier(entryName)){
 	this->throwRuntimeError("MaterialPropertyDSL::treatMethod",
-				"Invalid entry name '"+entryName+"'");
+				"invalid entry name '"+entryName+"'");
       }
       if(entryName!=this->currentVar){
 	this->reserveName(entryName);

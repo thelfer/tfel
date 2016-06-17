@@ -219,12 +219,12 @@ namespace mfront{
     if(md.domains.empty()){
       this->hasDefaultConstructor=false;
     }
-    if(!md.parameters.empty()){
-      for(auto p=md.parameters.begin();
-	  (p!=md.parameters.end())&&(this->hasDefaultConstructor);++p){
-	if(md.defaultValues.find(p->name)==md.defaultValues.end()){
-	  this->hasDefaultConstructor = false;
-	}
+    for(const auto& p:md.parameters){
+      if(!(this->hasDefaultConstructor)){
+	break;
+      }
+      if(!p.hasAttribute(VariableDescription::defaultValue)){
+	this->hasDefaultConstructor = false;
       }
     }
     // sanity checks
@@ -774,9 +774,7 @@ namespace mfront{
       this->srcFile << "vector<string>::const_iterator ptr;\n";
       this->srcFile << "vector<string>::const_iterator ptr2;\n";
       for(const auto& p : md.parameters){
-	p4=md.defaultValues.find(p.name);
-	assert(p4!=md.defaultValues.end());
-	this->writeAssignDefaultValue(p,p4);
+	this->writeAssignDefaultValue(p);
       }
       if(md.domains.empty()){
 	string msg("MFrontModelInterface::writeSrcFile : ");
@@ -862,15 +860,14 @@ namespace mfront{
       const auto name = this->getVariableName(p.name,md);
       this->srcFile << "ptr = md.find(" << name << ");\n";
       this->srcFile << "if(ptr==md.end()){\n";
-      if((p4=md.defaultValues.find(p.name))!=md.defaultValues.end()){
-	this->writeAssignDefaultValue(p,p4);
-	this->srcFile << "} else {\n";
+      if(p.hasAttribute(VariableDescription::defaultValue)){
+	this->writeAssignDefaultValue(p);
       } else {
 	this->srcFile << "string msg(\"" << md.className << "::" << md.className << " : \");\n";
 	this->srcFile << "msg += \"can't initialize parameter " << p.name << "\";\n";
 	this->srcFile << "throw(runtime_error(msg));\n";
-	this->srcFile << "} else {\n";
       }
+      this->srcFile << "} else {\n";
       this->srcFile << "if(!ptr->second." << this->getGenTypeIsMethod(p.type) << "()){\n";
       this->srcFile << "string msg(\"" << md.className << "::" << md.className << " : \");\n";
       this->srcFile << "msg += \"wrong type for parameter '" << p.name << "' (expected a '"+p.type+"')\";\n";
@@ -1324,7 +1321,6 @@ namespace mfront{
   void
   MFrontModelInterface::writeInitializeConstantMaterialProperties(const ModelDescription& md)
   {
-    unsigned int i;
     this->srcFile << "void\n" << md.className
 		  << "::initializeConstantMaterialProperties(" 
 		  << "const pleiades::parser::DataManager& data)\n{\n";
@@ -1333,10 +1329,9 @@ namespace mfront{
     this->srcFile << "using namespace pleiades::field;\n";
     this->srcFile << "typedef ConstantMaterialPropertyDescription CMPD;\n";
     this->srcFile << "vector<string>::const_iterator ptr;\n";
-    i=0;
     for(const auto& f : md.functions){
       for(const auto& c : f.constantMaterialProperties){
-	const auto p=md.defaultValues.find(c);
+	const auto& v = md.constantMaterialProperties.getVariable(c);
 	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	// getting material description
 	this->srcFile << "if(!md.hasMaterialDescription(*ptr)){\n";
@@ -1366,9 +1361,9 @@ namespace mfront{
 	this->srcFile << "this->constantMaterialProperties[*ptr][\"" << c << "\"]" 
 		      << " = mpd.get<CMPD>().getValue();\n";
 	this->srcFile << "} else {\n";
-	if(p!=md.defaultValues.end()){
+	if(v.hasAttribute(VariableDescription::defaultValue)){
 	  this->srcFile << "this->constantMaterialProperties[*ptr][\"" << c 
-			<< "\"] = " << p->second << ";\n";	  
+			<< "\"] = " << v.getAttribute<double>(VariableDescription::defaultValue) << ";\n";	  
 	} else {
 	  this->srcFile << "string msg(\"" << md.className
 			<< "::initializeConstantMaterialProperties : \");\n";
@@ -1380,7 +1375,6 @@ namespace mfront{
 	this->srcFile << "}\n";
 	this->srcFile << "}\n";
       }
-      ++i;
     }
     this->srcFile << "} // end of " << md.className << "::initializeConstantMaterialProperties\n\n";
   } // end of MFrontModelInterface::writeInitializeConstantMaterialProperties(void)
@@ -1399,49 +1393,47 @@ namespace mfront{
     this->srcFile << "typedef UniformScalarStateVariableDescription USSVD;\n";
     this->srcFile << "typedef std::shared_ptr<USSVD> USSVDPtr;\n";
     this->srcFile << "vector<string>::const_iterator ptr;\n";
-    unsigned int i=0;
     for(const auto& f : md.functions){
-      for(const auto& v : f.modifiedVariables){
-	auto p3 = md.initialValues.find(v);
+      for(const auto& mv : f.modifiedVariables){
+	// external name
+	const auto& en = this->getVariableName(mv,md); 
+	const auto& v  = md.outputs.getVariable(mv);
 	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	// getting material description
-	if(p3!=md.initialValues.end()){
+	if(v.hasAttribute(VariableDescription::initialValue)){
+	  const auto iv = v.getAttribute<double>(VariableDescription::initialValue);
 	  this->srcFile << "if(md.hasMaterialDescription(*ptr)){\n";
 	  this->srcFile << "const MaterialDescription& md = *(md.getMaterialDescription(*ptr));\n";
-	  this->srcFile << "if(md.containsStateVariable(" <<  this->getVariableName(v,md) << ")){\n";
-	  this->srcFile << "shared_ptr<StateVariableDescription> tmp = md.getStateVariable("<<  this->getVariableName(v,md) << ");\n";
-	  this->srcFile << "if(!this->outputsInitialValues[" << this->getVariableName(v,md)
+	  this->srcFile << "if(md.containsStateVariable(" <<  en << ")){\n";
+	  this->srcFile << "shared_ptr<StateVariableDescription> tmp = md.getStateVariable("<<  en << ");\n";
+	  this->srcFile << "if(!this->outputsInitialValues[" << en
 			<< "].insert({*ptr,tmp}).second){\n";
 	  this->srcFile << "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n";
 	  this->srcFile << "msg += \"output '\";\n";
-	  this->srcFile << "msg += " <<  this->getVariableName(v,md) << ";\n";
+	  this->srcFile << "msg += " <<  en << ";\n";
 	  this->srcFile << "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n";
 	  this->srcFile << "throw(runtime_error(msg));\n";
 	  this->srcFile << "}\n";
 	  this->srcFile << "} else {\n";
-	  this->srcFile << "if(!this->outputsInitialValues[" << this->getVariableName(v,md)
+	  this->srcFile << "if(!this->outputsInitialValues[" << en
 			<< "].insert({*ptr,std::make_shared<USSVD>("
-			<< this->getVariableName(v,md)
-			<< ","
-			<< p3->second;
+			<< en << "," << iv;
 	  this->srcFile << ")}).second){\n";
 	  this->srcFile << "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n";
 	  this->srcFile << "msg += \"output '\";\n";
-	  this->srcFile << "msg += " <<  this->getVariableName(v,md) << ";\n";
+	  this->srcFile << "msg += " << en << ";\n";
 	  this->srcFile << "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n";
 	  this->srcFile << "throw(runtime_error(msg));\n";
 	  this->srcFile << "}\n";
 	  this->srcFile << "}\n";
 	  this->srcFile << "} else {\n";
-	  this->srcFile << "if(!this->outputsInitialValues[" << this->getVariableName(v,md)
+	  this->srcFile << "if(!this->outputsInitialValues[" << en
 			<< "].insert({*ptr,std::make_shared<USSVD>("
-			<< this->getVariableName(v,md)
-			<< ","
-			<< p3->second;
+			<< en << "," << iv;
 	  this->srcFile << ")}).second){\n";
 	  this->srcFile << "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n";
 	  this->srcFile << "msg += \"output '\";\n";
-	  this->srcFile << "msg += " <<  this->getVariableName(v,md) << ";\n";
+	  this->srcFile << "msg += " <<  en << ";\n";
 	  this->srcFile << "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n";
 	  this->srcFile << "throw(runtime_error(msg));\n";
 	  this->srcFile << "}\n";
@@ -1451,18 +1443,18 @@ namespace mfront{
 	  this->srcFile << "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n";
 	  this->srcFile << "msg += \"no material description  on material '\"+*ptr+\"', \";\n";
 	  this->srcFile << "msg += \"required to initialize output value '\";\n";
-	  this->srcFile << "msg += " << this->getVariableName(v,md) << ";\n";
+	  this->srcFile << "msg += " << en << ";\n";
 	  this->srcFile << "msg += '\\\'';\n";
 	  this->srcFile << "throw(runtime_error(msg));\n";
 	  this->srcFile << "}\n";
 	  this->srcFile << "const MaterialDescription& md = *(md.getMaterialDescription(*ptr));\n";
-	  this->srcFile << "if(md.containsStateVariable(" <<  this->getVariableName(v,md) << ")){\n";
-	  this->srcFile << "shared_ptr<StateVariableDescription> tmp = md.getStateVariable("<<  this->getVariableName(v,md) << ");\n";
-	  this->srcFile << "if(!this->outputsInitialValues[" << this->getVariableName(v,md)
+	  this->srcFile << "if(md.containsStateVariable(" <<  en << ")){\n";
+	  this->srcFile << "shared_ptr<StateVariableDescription> tmp = md.getStateVariable("<< en << ");\n";
+	  this->srcFile << "if(!this->outputsInitialValues[" << en
 			<< "].insert({*ptr,tmp}).second){\n";
 	  this->srcFile << "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n";
 	  this->srcFile << "msg += \"output '\";\n";
-	  this->srcFile << "msg += " << this->getVariableName(v,md) << ";\n";
+	  this->srcFile << "msg += " << en << ";\n";
 	  this->srcFile << "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n";
 	  this->srcFile << "throw(runtime_error(msg));\n";
 	  this->srcFile << "}\n";
@@ -1470,7 +1462,6 @@ namespace mfront{
 	}
 	this->srcFile << "}\n";
       }
-      ++i;
     }
     this->srcFile << "} // end of " << md.className << "::initializeOutputsVariablesInitialValues\n\n";
   } // end of MFrontModelInterface::writeInitializeOutputsVariablesInitialValues()
@@ -1608,11 +1599,17 @@ namespace mfront{
   } // end of class MFrontModelInterface::writeOutputFiles()
 
   void
-  MFrontModelInterface::writeAssignDefaultValue(const VariableDescription& v,
-						const std::map<std::string,std::string>::const_iterator p4)
+  MFrontModelInterface::writeAssignDefaultValue(const VariableDescription& v)
   {
-    if((v.type=="string")||(v.type=="double")||(v.type=="real")||(v.type=="bool")){
-      this->srcFile << "this->" << v.name << " = "  << p4->second << ";" << std::endl;
+    if(v.type=="string"){
+      this->srcFile << "this->" << v.name << " = "
+		    << v.getAttribute<std::string>(VariableDescription::defaultValue) << ";\n";
+    } else if ((v.type=="double")||(v.type=="real")){
+      this->srcFile << "this->" << v.name << " = "
+		    << v.getAttribute<double>(VariableDescription::defaultValue) << ";\n";
+    } else if (v.type=="bool"){
+      this->srcFile << "this->" << v.name << " = "
+		    << v.getAttribute<bool>(VariableDescription::defaultValue) << ";\n";
     } else {
       throw(std::runtime_error("MFrontModelInterface::writeAssignDefaultValue: "
 			       "type '"+v.type+"' is not supported.\n"));

@@ -102,8 +102,7 @@ namespace mfront{
 				      const StaticVariableDescription&);
 
     void
-    writeAssignDefaultValue(const VariableDescription&,
-			    const std::map<std::string,std::string>::const_iterator);
+    writeAssignDefaultValue(const VariableDescription&);
 
     void
     closeOutputFiles(void);

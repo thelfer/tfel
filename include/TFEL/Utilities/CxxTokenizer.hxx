@@ -33,14 +33,12 @@ namespace tfel{
      */
     struct TFELUTILITIES_VISIBILITY_EXPORT CxxTokenizer
     {
-    
       //! a simple alias
       typedef std::vector<Token> TokensContainer;
       //! a simple alias
       typedef TokensContainer::const_iterator const_iterator;
       //! a simple alias
       typedef TokensContainer::size_type size_type;
-
       /*!
        * \return true if the given string is a valid variable name.
        * \param[in] s : variable name
@@ -48,7 +46,6 @@ namespace tfel{
        */
       static bool
       isValidIdentifier(const std::string&,const bool=true);
-
       /*!
        * \brief default constructor
        */

@@ -22,6 +22,8 @@ namespace mfront{
   const std::string VariableDescription::depth("depth");
   const std::string VariableDescription::bounds("bounds");
   const std::string VariableDescription::physicalBounds("physicalBounds");
+  const std::string VariableDescription::initialValue("initialValue");
+  const std::string VariableDescription::defaultValue("defaultValue");
   
   VariableDescription::VariableDescription() = default;
 

@@ -134,9 +134,6 @@ namespace mfront
     //! class member
     std::string members;
     std::set<std::string> domains;
-    std::set<std::string> functionNames;
-    std::map<std::string,double>      initialValues;
-    std::map<std::string,std::string> defaultValues;
     std::vector<VariableBoundsDescription> bounds;
     std::vector<VariableBoundsDescription> physicalBounds;
     //! list of material laws used

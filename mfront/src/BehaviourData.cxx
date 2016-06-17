@@ -18,6 +18,7 @@
 
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
+#include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/PerformanceProfiling.hxx"
 #include"MFront/BehaviourData.hxx"
@@ -1169,6 +1170,10 @@ namespace mfront{
 	  << "Please use 'setGlossaryName' method instead or choose another entry name.";
       displayGlossaryEntryCompleteDescription(msg,glossary.getGlossaryEntry(e));
       throw(std::runtime_error(msg.str()));
+    }
+    if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e,false)){
+      throw(std::runtime_error("BehaviourData::setEntryName: "
+			       "'"+e+"' is a not a valid entry name"));
     }
     BehaviourDataAddToGlossaryOrEntryNames(this->entryNames,
 					   this->glossaryNames,

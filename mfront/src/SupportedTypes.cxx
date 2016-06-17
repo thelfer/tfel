@@ -5,7 +5,7 @@
  * \author Helfer Thomas
  * \date   12 Jan 2007
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
- * reserved. 
+ * re served. 
  * This project is publicly released under either the GNU GPL Licence 
  * or the CECILL-A licence. A copy of thoses licences are delivered 
  * with the sources of TFEL. CEA or EDF may also distribute this 
@@ -173,14 +173,12 @@ namespace mfront{
     : areDynamicallyAllocatedVectorsAllowed_(true)
   {}
 
-  void
-  SupportedTypes::reset(void)
+  void SupportedTypes::reset(void)
   {
     this->areDynamicallyAllocatedVectorsAllowed_ = true;
   } // end of SupportedTypes::reset
 
-  bool
-  SupportedTypes::isSupportedType(const std::string& t) const
+  bool SupportedTypes::isSupportedType(const std::string& t) const
   {
     const auto& flags = SupportedTypes_getFlags();
     return flags.find(t)!=flags.end();
@@ -243,46 +241,39 @@ namespace mfront{
     }
   }
 
-  int
-  SupportedTypes::TypeSize::getScalarSize(void) const
+  int SupportedTypes::TypeSize::getScalarSize(void) const
   {
     return this->scalarSize;
   }
 
-  int
-  SupportedTypes::TypeSize::getTVectorSize(void) const
+  int SupportedTypes::TypeSize::getTVectorSize(void) const
   {
     return this->tvectorSize;
   }
     
-  int
-  SupportedTypes::TypeSize::getStensorSize(void) const
+  int SupportedTypes::TypeSize::getStensorSize(void) const
   {
     return this->stensorSize;
   }
 
-  int
-  SupportedTypes::TypeSize::getTensorSize(void) const
+  int SupportedTypes::TypeSize::getTensorSize(void) const
   {
     return this->tensorSize;
   }
 
   bool
-  SupportedTypes::TypeSize::operator==(const SupportedTypes::TypeSize& src) const
+  SupportedTypes::TypeSize::operator==(const SupportedTypes::TypeSize& rhs) const
   {
-    return ((this->getScalarSize()==src.getScalarSize())&&
-	    (this->getStensorSize()==src.getStensorSize())&&
-	    (this->getTVectorSize()==src.getTVectorSize())&&
-	    (this->getTensorSize()==src.getTensorSize()));
+    return ((this->getScalarSize()==rhs.getScalarSize())&&
+	    (this->getStensorSize()==rhs.getStensorSize())&&
+	    (this->getTVectorSize()==rhs.getTVectorSize())&&
+	    (this->getTensorSize()==rhs.getTensorSize()));
   } // end of SupportedTypes::TypeSize::operator==
 
   bool
-  SupportedTypes::TypeSize::operator!=(const SupportedTypes::TypeSize& src) const
+  SupportedTypes::TypeSize::operator!=(const SupportedTypes::TypeSize& rhs) const
   {
-    return ((this->getScalarSize()!=src.getScalarSize())||
-	    (this->getStensorSize()!=src.getStensorSize())||
-	    (this->getTVectorSize()!=src.getTVectorSize())||
-	    (this->getTensorSize()!=src.getTensorSize()));
+    return !this->operator==(rhs);
   } // end of SupportedTypes::TypeSize::operator!=
 
   bool
@@ -471,23 +462,21 @@ namespace mfront{
   } // end of SupportedTypes::getIntegrationVariablesInitializers
 
   SupportedTypes::TypeSize
-  SupportedTypes::getTotalSize(const VariableDescriptionContainer& v) const
+  SupportedTypes::getTotalSize(const VariableDescriptionContainer& vc) const
   {
     SupportedTypes::TypeSize s;
-    VariableDescriptionContainer::const_iterator p;
-    for(p =v.begin();p!=v.end();++p){
-      s+=this->getTypeSize(p->type,p->arraySize);
+    for(const auto& v : vc){
+      s+=this->getTypeSize(v.type,v.arraySize);
     }
     return s;
   } // end of SupportedTypes::getTotalSize
 
   unsigned short
-  SupportedTypes::getNumberOfVariables(const VariableDescriptionContainer& v) const
+  SupportedTypes::getNumberOfVariables(const VariableDescriptionContainer& vc) const
   {
     unsigned short n = 0u;
-    VariableDescriptionContainer::const_iterator p;
-    for(p =v.begin();p!=v.end();++p){
-      n = n + p->arraySize;
+    for(const auto& v : vc){
+      n = n + v.arraySize;
     }
     return n;
   } // end of SupportedTypes::getNumberOfVariables

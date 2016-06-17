@@ -68,11 +68,17 @@ namespace mfront
       TypeSize& operator=(const TypeSize&);
       //! move assignement
       TypeSize& operator=(TypeSize&&);
-    
+      /*!
+       * plus-equal operator
+       * \param[in] rhs: right hand side
+       */
       TypeSize& operator+=(const TypeSize&);
-
+      /*!
+       * minus-equal operator
+       * \param[in] rhs: right hand side
+       */
       TypeSize& operator-=(const TypeSize&);
-    
+      //! comparision operator
       bool operator!=(const TypeSize&) const;
       //! comparision operator
       bool operator==(const TypeSize&) const;
@@ -228,15 +234,13 @@ namespace mfront
 		  const VariableDescriptionContainer&,
 		  const std::string&,
 		  const bool) const;
-    
     /*!
      * \param[in]  v   : variables
      */
     TypeSize
     getTotalSize(const VariableDescriptionContainer&) const;
-
     /*!
-     * \param[in]  v   : variables
+     * \param[in]  vc : variables
      */
     unsigned short
     getNumberOfVariables(const VariableDescriptionContainer&) const;
