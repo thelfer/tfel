@@ -17,12 +17,13 @@
 #include<string>
 #include"TFEL/Metaprogramming/GenerateTypeList.hxx"
 #include"TFEL/Utilities/GenTypeBase.hxx"
+#include"MFront/BoundsDescription.hxx"
 
 namespace mfront{
 
   //! \brief types that can be stored in a variable attribute
-  using  VariableAttributeTypes = tfel::meta::GenerateTypeList<bool,
-							       unsigned short,
+  using  VariableAttributeTypes = tfel::meta::GenerateTypeList<bool,unsigned short,
+							       BoundsDescription,
 							       std::string>::type;
   //! \brief a class used to store a variable attribute
   using VariableAttribute = tfel::utilities::GenTypeBase<VariableAttributeTypes>;
