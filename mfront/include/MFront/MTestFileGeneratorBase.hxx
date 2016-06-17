@@ -18,7 +18,7 @@
 #include<set>
 #include<vector>
 #include<string>
-#include<ostream>
+#include<iosfwd>
 
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
