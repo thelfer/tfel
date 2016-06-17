@@ -613,19 +613,34 @@ namespace mtest{
       std::fill(cs.iv_1.begin(),cs.iv_1.end(),real(0));
       std::fill(cs.iv0.begin(),cs.iv0.end(),real(0));
       std::fill(cs.iv1.begin(),cs.iv1.end(),real(0));
-      // copy(this->e_t0.begin(),this->e_t0.end(),s.u_1.begin());
-      // // setting the intial  values of stresses
-      // copy(this->s_t0.begin(),this->s_t0.end(),cs.s0.begin());
-      // // getting the initial values of internal state variables
-      // if((this->iv_t0.size()>cs.iv_1.size())||
-      //    (this->iv_t0.size()>cs.iv0.size())||
-      //    (this->iv_t0.size()>cs.iv1.size())){
-      //   throw(std::runtime_error("PipeTest::initializeCurrentState: the number of initial values declared "
-      // 			       "by the user for the internal state variables exceeds the "
-      // 			       "number of internal state variables declared by the behaviour"));
+
+      //      if(!this->e_t0.empty()){
+      // there could be an inconsistency with displacements
+      // we should also be able to give a profile
+      // throw(std::runtime_error("PipeTest::initializeCurrentState: "
+      // 			 "initialisation of strain is not supported yet"));
+      // std::copy(this->e_t0.begin(),this->e_t0.end(),s.e0.begin());
+      //      }
+      // setting the intial  values of stresses
+      // if(!this->s_t0.empty()){
+      // 	// we should be able to give a profile to do this
+      // 	throw(std::runtime_error("PipeTest::initializeCurrentState: "
+      // 				 "initialisation of stress is not supported yet"));
+      // 	// std::copy(this->s_t0.begin(),this->s_t0.end(),cs.s0.begin());
       // }
-      // std::copy(this->iv_t0.begin(),this->iv_t0.end(),cs.iv_1.begin());
-      // std::copy(this->iv_t0.begin(),this->iv_t0.end(),cs.iv0.begin());
+
+      // We should be able to give a profile here.
+      // getting the initial values of internal state variables
+      if((this->iv_t0.size()>cs.iv_1.size())||
+         (this->iv_t0.size()>cs.iv0.size())||
+         (this->iv_t0.size()>cs.iv1.size())){
+        throw(std::runtime_error("PipeTest::initializeCurrentState: "
+				 "the number of initial values declared "
+				 "by the user for the internal state variables exceeds the "
+				 "number of internal state variables declared by the behaviour"));
+      }
+      std::copy(this->iv_t0.begin(),this->iv_t0.end(),cs.iv_1.begin());
+      std::copy(this->iv_t0.begin(),this->iv_t0.end(),cs.iv0.begin());
       // revert the current state
       mtest::revert(ss);
     // // rotation matrix
