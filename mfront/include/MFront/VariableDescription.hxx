@@ -32,6 +32,12 @@ namespace mfront
    */
   struct MFRONT_VISIBILITY_EXPORT VariableDescription
   {
+    //! standard attribute name
+    static const std::string depth;
+    //! standard attribute name
+    static const std::string bounds;
+    //! standard attribute name
+    static const std::string physicalBounds;
     //! default constructor
     VariableDescription();
     //! copy constructor
@@ -76,15 +82,13 @@ namespace mfront
      * \brief insert a new attribute
      * \param[in] n : name
      * \param[in] a : attribute
-     * \param[in] b : don't throw if the the
-     *                attribute already exists.
-     *                The attribute is left unchanged.
-     *                However the type of the attribute is checked.
+     * \param[in] b : don't throw if the attribute already exists.  In
+     * this case, the attribute is left unchanged. However the type of
+     * the attribute is checked.
      */
-    void
-    setAttribute(const std::string&,
-		 const VariableAttribute&,
-		 const bool);
+    void setAttribute(const std::string&,
+		      const VariableAttribute&,
+		      const bool);
     /*!
      * \return true if an attribute with the given name as been registred
      * \param[in] n : name
@@ -217,6 +221,11 @@ namespace mfront
     appendExternalNames(std::vector<std::string>&,
 			const std::map<std::string,std::string>&,
 			const std::map<std::string,std::string>&) const;
+    /*!
+     * \return the variable with the given name
+     * \param[in] n : name
+     */
+    VariableDescription& getVariable(const std::string&);
     /*!
      * \return the variable with the given name
      * \param[in] n : name
