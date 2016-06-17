@@ -12,6 +12,7 @@
  */
 
 #include<cmath>
+#include<ostream>
 #include<stdexcept>
 #include<algorithm>
 
@@ -36,9 +37,11 @@ namespace mfront
   UmatSmallStrainMTestFileGenerator::writeBehaviourDeclaration(std::ostream& os) const
   {
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-    os << "@Behaviour<" << this->interface << "> '" << this->library << ".dll' '"<< this->behaviour << "';" << std::endl;
+    os << "@Behaviour<" << this->interface << "> '" << this->library << ".dll' '"
+       << this->behaviour << "';" << std::endl;
 #else
-    os << "@Behaviour<" << this->interface << "> '" << this->library << ".so' '"<< this->behaviour << "';" << std::endl;
+    os << "@Behaviour<" << this->interface << "> '" << this->library << ".so' '"
+       << this->behaviour << "';" << std::endl;
 #endif
   } // end of UmatSmallStrainMTestFileGenerator::writeBehaviourDeclaration
 

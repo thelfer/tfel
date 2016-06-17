@@ -12,6 +12,7 @@
  */
 
 #include<cmath>
+#include<ostream>
 #include<stdexcept>
 #include<algorithm>
 
@@ -27,20 +28,20 @@ namespace mfront
       library(l),
       behaviour(b)
   {
-    using namespace std;
-    fill(F0,F0+36,0.);
-    fill(F1,F1+36,0.);
-    fill(stress,stress+6,0.);
+    std::fill(this->F0,this->F0+36,0.);
+    std::fill(this->F1,this->F1+36,0.);
+    std::fill(this->stress,this->stress+6,0.);
   } // end of UmatFiniteStrainMTestFileGenerator::UmatFiniteStrainMTestFileGenerator
 
   void
   UmatFiniteStrainMTestFileGenerator::writeBehaviourDeclaration(std::ostream& os) const
   {
-    using namespace std;
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-    os << "@Behaviour<" << this->interface << "> '" << this->library << ".dll' '"<< this->behaviour << "';" << endl;
+    os << "@Behaviour<" << this->interface << "> '" << this->library << ".dll' '"
+       << this->behaviour << "';" << std::endl;
 #else
-    os << "@Behaviour<" << this->interface << "> '" << this->library << ".so' '"<< this->behaviour << "';" << endl;
+    os << "@Behaviour<" << this->interface << "> '" << this->library << ".so' '"
+       << this->behaviour << "';" << std::endl;
 #endif
   } // end of UmatFiniteStrainMTestFileGenerator::writeBehaviourDeclaration
 
