@@ -55,23 +55,16 @@ namespace mfront{
     return MODELDSL;
   }
 
-  bool
-  ModelDSLCommon::is(const ModelDescription& data,
-		     const VariableDescriptionContainer& vc,
-		     const std::string& vn)
+  bool ModelDSLCommon::is(const ModelDescription& md,
+			  const VariableDescriptionContainer& vc,
+			  const std::string& vn)
   {
-    unsigned int d,i;
     for(const auto & v : vc){
       if(v.name==vn){
 	return true;
       }
-      auto p2 = data.depths.find(v.name);
-      if(p2==data.depths.end()){
-	d = 0;
-      } else {
-	d = p2->second;
-      }
-      for(i=1;i!=d+1;++i){
+      const auto d = v.getAttribute<unsigned short>(VariableDescription::depth,0);
+      for(unsigned short i=1;i!=d+1;++i){
 	if(v.name+'_'+std::to_string(i)==vn){
 	  return true;
 	}
@@ -266,44 +259,34 @@ namespace mfront{
   } // end of ModelDSLCommon::treatDomains(void)
 
   std::pair<std::string,unsigned short>
-  ModelDSLCommon::decomposeVariableName(const std::string& v) const
+  ModelDSLCommon::decomposeVariableName(const std::string& vn) const
   {
-    using namespace std;
-    unsigned int d,i;
-    for(const auto & elem : this->inputs){
-      if(v==elem.name){
-	return {v,0u};
-      }
-      auto p2 = this->depths.find(elem.name);
-      if(p2!=this->depths.end()){
-	d = p2->second;
-      } else {
-	d = 0;
-      }
-      for(i=1;i!=d+1;++i){
-	if(v==elem.name+"_"+to_string(i)){
-	  return {elem.name,i};
+    auto get = [&vn](const VariableDescriptionContainer& vc)
+      -> std::pair<std::string,unsigned short>
+    {
+      for(const auto & v : vc){
+	if(vn==v.name){
+	  return {vn,0u};
+	}
+	const auto d = v.getAttribute<unsigned short>(VariableDescription::depth,0);
+	for(unsigned short i=1;i!=d+1;++i){
+	  if(vn==v.name+"_"+std::to_string(i)){
+	    return {v.name,i};
+	  }
 	}
       }
+      return {};
+    };
+    auto r = get(this->inputs);
+    if(!r.first.empty()){
+      return r;
     }
-    for(const auto & elem : this->outputs){
-      if(v==elem.name){
-	return {v,0};
-      }
-      auto p2 = this->depths.find(elem.name);
-      if(p2!=this->depths.end()){
-	d = p2->second;
-      } else {
-	d = 0;
-      }
-      for(i=1;i!=d+1;++i){
-	if(v==elem.name+"_"+to_string(i)){
-	  return {elem.name,i};
-	}
-      }
+    r = get(this->outputs);
+    if(r.first.empty()){
+      this->throwRuntimeError("ModelDSLCommon::decomposeVariableName",
+			      "no decomposition found for variable '"+vn+"'");
     }
-    this->throwRuntimeError("ModelDSLCommon::decomposeVariableName",
-			    "no decomposition found  for variable '"+v+"'");
+    return r;
   } // end of ModelDSLCommon::getPleiadesVariableName(const std::string& v)
 
   bool
@@ -537,7 +520,6 @@ namespace mfront{
     this->readVarList(noutputs,"Field",false);
     for(const auto& v : noutputs){
       this->registerMemberName(v.name);
-      this->fieldNames.insert(v.name);
       this->outputs.push_back(v);
     }
   } // end of ModelDSLCommon::treatOutput(void)
@@ -554,7 +536,6 @@ namespace mfront{
     this->readVarList(ninputs,"Field",false);
     for(const auto& v : ninputs){
       this->registerMemberName(v.name);
-      this->fieldNames.insert(v.name);
       this->inputs.push_back(v);
     }
   } // end of ModelDSLCommon::treatInput(void)
@@ -562,13 +543,10 @@ namespace mfront{
   void
   ModelDSLCommon::treatOutputMethod(void) 
   {
-    using namespace std;
-    using namespace tfel::utilities;
-    using namespace tfel::glossary;
     if(!this->functions.empty()){
-      string msg("ModelDSLCommon::treatOutputMethod : ");
-      msg += "output must be called before declaring functions";
-      throw(runtime_error(msg));
+      this->throwRuntimeError("ModelDSLCommon::treatOutputMethod: ",
+			      "variable methods must be called "
+			      "before declaring functions");
     }
     this->readSpecifiedToken("ModelDSLCommon::treatOutputMethod",".");
     this->checkNotEndOfFile("ModelDSLCommon::treatOutputMethod",
@@ -601,27 +579,20 @@ namespace mfront{
     } else if (mn=="setDepth"){
       this->checkNotEndOfFile("ModelDSLCommon::treatOutputMethod",
 			      "Expected depth value.");
-      unsigned int value;
-      istringstream converter(this->current->value);
+      unsigned short value;
+      std::istringstream converter(this->current->value);
       converter >> value;
       if(!converter||(!converter.eof())){
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				"Could not read depth value of field '"+this->currentVar+"'");
       }
-      if(!this->depths.insert({this->currentVar,value}).second){
-	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
-				"depth value for field '"+this->currentVar+"' already defined.");
-      }
-      for(unsigned int i=1;i<=value;++i){
-	const auto vn = this->currentVar+"_"+to_string(i);
+      auto& v = this->outputs.getVariable(this->currentVar);
+      v.setAttribute(VariableDescription::depth,value,false);
+      for(unsigned short i=1;i<=value;++i){
+	const auto vn = this->currentVar+"_"+std::to_string(i);
 	this->registerMemberName(vn);
 	this->registerMemberName("f_"+vn);
 	this->registerMemberName("ff_"+vn);
-	if(!this->fieldNames.insert(vn).second){
-	  this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
-				  "Field '"+vn+"' has already been declared "
-				  "(internal error, this shall have been detected before).");
-	}
       }
     } else {
       this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
@@ -635,21 +606,16 @@ namespace mfront{
   void
   ModelDSLCommon::treatInputMethod(void) 
   {
-    using namespace std;
-    using namespace tfel::utilities;
-    using namespace tfel::glossary;
     if(!this->functions.empty()){
-      string msg("ModelDSLCommon::treatInputMethod : ");
-      msg += "input method must be called before declaring functions";
-      throw(runtime_error(msg));
+      this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
+			      "input methods must be called "
+			      "before declaring functions");
     }
     this->readSpecifiedToken("ModelDSLCommon::treatInputMethod",".");
     this->checkNotEndOfFile("ModelDSLCommon::treatInputMethod",
 			    "Expected method name.");
     const auto mn = this->current->value;
-    if((mn!="setGlossaryName")&&
-       (mn!="setEntryName") &&
-       (mn!="setDepth")){
+    if((mn!="setGlossaryName")&&(mn!="setEntryName")&&(mn!="setDepth")){
       this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
 			      "Unknown method (valid methods for input fields are "
 			      "setGlossaryName, setEntryName, setDepth"
@@ -666,27 +632,20 @@ namespace mfront{
     } else if (mn=="setDepth"){
       this->checkNotEndOfFile("ModelDSLCommon::treatInputMethod",
 			      "Expected depth value.");
-      unsigned int value;
-      istringstream converter(this->current->value);
+      unsigned short value;
+      std::istringstream converter(this->current->value);
       converter >> value;
       if(!converter||(!converter.eof())){
 	this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
 				"Could not read initial value of field '"+this->currentVar+"'");
       }
-      if(!this->depths.insert({this->currentVar,value}).second){
-	this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
-				"Initial value for field '"+this->currentVar+"' already defined.");
-      }
-      for(unsigned int i=1;i<=value;++i){
-	const auto vn = this->currentVar+"_"+to_string(i);
+      auto& v = this->inputs.getVariable(this->currentVar);
+      v.setAttribute(VariableDescription::depth,value,false);
+      for(unsigned short i=1;i<=value;++i){
+	const auto vn = this->currentVar+"_"+std::to_string(i);
 	this->registerMemberName(vn);
 	this->registerMemberName("f_"+vn);
 	this->registerMemberName("ff_"+vn);
-	if(!this->fieldNames.insert(this->currentVar+"_"+to_string(i)).second){
-	  this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
-				  "Field '"+vn+"' has already been declared "
-				  "(internal error, this shall have been detected before).");
-	}
       }
     } else {
       this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
@@ -907,7 +866,8 @@ namespace mfront{
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::registerBounds",":");
     this->checkNotEndOfFile("ModelDSLCommon::registerBounds",
-			    "Could not read upper bound value for variable "+boundsDescription.varName);
+			    "Could not read upper bound value for variable "+
+			    boundsDescription.varName);
     if(this->current->value=="*"){
       throw_if(boundsDescription.boundsType==VariableBoundsDescription::Upper,
 	       "upper and lower values bounds are both infinity. This is inconsistent.");

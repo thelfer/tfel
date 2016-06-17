@@ -75,52 +75,44 @@ namespace mfront{
   } // end of getLibraryName
 
   static bool
-  isInputVariable(const ModelDescription& data,
+  isInputVariable(const ModelDescription& md,
 		  const std::string& v)
   {
-    return ModelDSLCommon::is(data,data.inputs,v);
+    return ModelDSLCommon::is(md,md.inputs,v);
   } // end of isInputVariable
 
   static std::pair<std::string,unsigned short>
-  decomposeVariableName(const ModelDescription& data,
-			const std::string& v)
+  decomposeVariableName(const ModelDescription& md,
+			const std::string& n)
   {
-    using namespace std;
-    unsigned short d;
-    for(auto p=data.inputs.begin();p!=data.inputs.end();++p){
-      if(v==p->name){
-	return {v,0u};
-      }
-      auto p2 = data.depths.find(p->name);
-      if(p2!=data.depths.end()){
-	d = p2->second;
-      } else {
-	d = 0;
-      }
-      for(unsigned short i=1;i!=d+1;++i){
-	if(v==p->name+"_"+to_string(static_cast<unsigned int>(i))){
-	  return {p->name,i};
+    auto get = [&n](const VariableDescriptionContainer& vc)
+      -> std::pair<std::string,unsigned short>
+    {
+      using size_type = unsigned short;
+      for(const auto& v:vc){
+	if(v.name==n){
+	  return {v.name,0u};
+	}
+	const auto d = v.getAttribute<size_type>(VariableDescription::depth,0);
+	for(size_type j=1;j<=d;++j){
+	  auto fn = v.name + "_" + std::to_string(j);
+	  if(fn==n){
+	    return {v.name,j};
+	  }
 	}
       }
+      return {};
+    };
+    auto r = get(md.outputs);
+    if(!r.first.empty()){
+      return r;
     }
-    for(auto p=data.outputs.begin();p!=data.outputs.end();++p){
-      if(v==p->name){
-	return {v,0};
-      }
-      auto p2 = data.depths.find(p->name);
-      if(p2!=data.depths.end()){
-	d = p2->second;
-      } else {
-	d = 0;
-      }
-      for(unsigned short i=1;i!=d+1;++i){
-	if(v==p->name+"_"+to_string(static_cast<unsigned int>(i))){
-	  return {p->name,i};
-	}
-      }
+    r = get(md.inputs);
+    if(r.first.empty()){
+      throw(std::runtime_error("decomposeVariableName: "
+			       "field name '"+n+"' has not been found"));
     }
-    throw(std::runtime_error("ModelDSLCommon::decomposeVariableName : "
-			     "no decomposition found  for variable '"+v+"'"));
+    return r;
   } // end of MFrontModelInterface::getVariableName(const std::string& v)
 
   MFrontModelInterface::MFrontModelInterface(void)
@@ -1308,9 +1300,9 @@ namespace mfront{
 	const auto functor = "functor"+to_string(i);
 	auto p3 = f.depths.find(mf);
 	if(p3==f.depths.end()){
-	  string msg("MFrontModelInterface::writeInitializeOutputsVariablesDepths : ");
-	  msg += "internal error, no depth found for variable '"+mf+"' in function '"+f.name+"'";
-	  throw(runtime_error(msg));
+	  throw(runtime_error("MFrontModelInterface::writeInitializeOutputsVariablesDepths: "
+			      "internal error, no depth found for variable '"+mf+"' "
+			      "in function '"+f.name+"'"));
 	}
 	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	this->srcFile << "if(!this->outputsDepths[" << this->getVariableName(mf,md)

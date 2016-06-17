@@ -19,6 +19,10 @@
 
 namespace mfront{
 
+  const std::string VariableDescription::depth("depth");
+  const std::string VariableDescription::bounds("bounds");
+  const std::string VariableDescription::physicalBounds("physicalBounds");
+  
   VariableDescription::VariableDescription() = default;
 
   VariableDescription::VariableDescription(const std::string& t,
@@ -162,6 +166,18 @@ namespace mfront{
     }
   } // end of VariableDescriptionContainer::appendExternalNames
 
+  VariableDescription&
+  VariableDescriptionContainer::getVariable(const std::string& n)
+  {
+    for(auto& v : *this){
+      if(v.name==n){
+	return v;
+      }
+    }
+    throw(std::runtime_error("VariableDescriptionContainer::getVariable : "
+			     "no variable named '"+n+"'"));
+  }
+  
   const VariableDescription&
   VariableDescriptionContainer::getVariable(const std::string& n) const
   {
@@ -171,7 +187,7 @@ namespace mfront{
       }
     }
     throw(std::runtime_error("VariableDescriptionContainer::getVariable : "
-			"no variable named '"+n+"'"));
+			     "no variable named '"+n+"'"));
   }
 
   VariableDescriptionContainer::~VariableDescriptionContainer()

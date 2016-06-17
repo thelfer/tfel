@@ -26,25 +26,42 @@
 namespace mfront
 {
 
+  //! Class describing a model
   struct MFRONT_VISIBILITY_EXPORT ModelDescription
   {
-
+    //! a model may contain several function
     struct MFRONT_VISIBILITY_EXPORT Function
     {
+      //! default constructor
       Function();
+      //! copy constructor
       Function(const Function&);
+      //! move constructor
       Function(Function&&);
+      //! assignement
       Function& operator=(const Function&);
+      //! move assignement
       Function& operator=(Function&&);
+      //! destructor
       ~Function();
+      //! list of variables used by the function
       std::set<std::string> usedVariables;
+      //! list of variables modified by the function
       std::set<std::string> modifiedVariables;
+      //! list of constant material properties used by the function
       std::set<std::string> constantMaterialProperties;
+      //! list of parameters used by the function
       std::set<std::string> parameters;
+      //! depths of each variables
       std::map<std::string,unsigned short> depths;
+      //! name of the function
       std::string name;
+      //! body of the function
       std::string body;
+      //! line starting the definition of the function in the initial
+      //! MFront file
       unsigned int line = 0u;
+      //! if true, the body of the function uses the time increment dt
       bool useTimeIncrement = false;
     }; // end of struct MFrontData::Function
     //! defaut constructor
@@ -117,13 +134,11 @@ namespace mfront
     //! class member
     std::string members;
     std::set<std::string> domains;
-    std::set<std::string> fieldNames;
     std::set<std::string> functionNames;
     std::map<std::string,double>      initialValues;
     std::map<std::string,std::string> defaultValues;
     std::vector<VariableBoundsDescription> bounds;
     std::vector<VariableBoundsDescription> physicalBounds;
-    std::map<std::string,unsigned short> depths;
     //! list of material laws used
     std::vector<std::string> materialLaws;
     //! list of variables names
