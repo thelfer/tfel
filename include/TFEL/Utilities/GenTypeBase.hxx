@@ -423,7 +423,8 @@ namespace tfel{
       /*
        * \return const T1&, the value affected to the GenType.
        * \pre    T1 must be a type that the GenType can hold.
-       * \throw  GenTypeCastError, if the type contained in the GenType doesnot match.
+       * \throw  GenTypeCastError, if the type contained in the GenType does
+       * not match.
        */
       template<typename T1>
       TFEL_INLINE
