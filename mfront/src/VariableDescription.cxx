@@ -20,8 +20,8 @@
 namespace mfront{
 
   const std::string VariableDescription::depth("depth");
-  const std::string VariableDescription::bounds("bounds");
-  const std::string VariableDescription::physicalBounds("physicalBounds");
+  const std::string VariableDescription::bound("bound");
+  const std::string VariableDescription::physicalBound("physicalBound");
   const std::string VariableDescription::initialValue("initialValue");
   const std::string VariableDescription::defaultValue("defaultValue");
   
@@ -36,11 +36,9 @@ namespace mfront{
       arraySize(s),
       lineNumber(l)
   {
-    using namespace std;
     if(this->arraySize==0){
-      string msg("VariableDescription::VariableDescription : ");
-      msg += "invalid array size";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("VariableDescription::VariableDescription: "
+			       "invalid array size"));
     }
   } // end of VariableDescription::VariableDescription
 
@@ -122,9 +120,8 @@ namespace mfront{
 
   bool VariableDescriptionContainer::contains(const std::string& n) const
   {
-    VariableDescriptionContainer::const_iterator p;
-    for(p=this->begin();p!=this->end();++p){
-      if(p->name==n){
+    for(const auto v : *this){
+      if(v.name==n){
 	return true;
       }
     }

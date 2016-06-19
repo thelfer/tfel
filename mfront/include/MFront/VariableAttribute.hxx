@@ -18,7 +18,7 @@
 #include<vector>
 #include"TFEL/Metaprogramming/GenerateTypeList.hxx"
 #include"TFEL/Utilities/GenTypeBase.hxx"
-#include"MFront/BoundsDescription.hxx"
+#include"MFront/VariableBoundsDescription.hxx"
 
 namespace mfront{
 
@@ -29,7 +29,7 @@ namespace mfront{
 							       std::string,
 							       std::vector<double>,
 							       std::vector<std::string>,
-							       BoundsDescription>::type;
+							       VariableBoundsDescription>::type;
   //! \brief a class used to store a variable attribute
   using VariableAttribute = tfel::utilities::GenTypeBase<VariableAttributeTypes>;
 

@@ -35,9 +35,9 @@ namespace mfront
     //! standard attribute name
     static const std::string depth;
     //! standard attribute name
-    static const std::string bounds;
+    static const std::string bound;
     //! standard attribute name
-    static const std::string physicalBounds;
+    static const std::string physicalBound;
     //! standard attribute name
     static const std::string initialValue;
     //! standard attribute name

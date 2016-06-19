@@ -1026,9 +1026,8 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      * \param[in] b : bounds description
      */
-    void
-    setBounds(const Hypothesis,
-	      const BoundsDescription&);
+    void setBounds(const Hypothesis,
+		   const BoundsDescription&);
     /*!
      * \brief set a mechanical attribute
      * \param[in] h : modelling hypothesis

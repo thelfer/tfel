@@ -34,10 +34,6 @@ namespace mfront{
     : public DSLBase,
       protected ModelDescription
   {
-    static bool
-    is(const ModelDescription&,
-       const VariableDescriptionContainer&,
-       const std::string&);
     //! constructor
     ModelDSLCommon();
     //! \return the target of the dsl
@@ -139,8 +135,18 @@ namespace mfront{
     virtual void treatParameterMethod(void);
 
     virtual void readDefaultValue(void);
-
-    virtual void registerBounds(std::vector<VariableBoundsDescription>&);
+    /*!
+     * \param[in] bn: bounds type
+     */
+    virtual void registerBounds(const std::string&);
+    /*!
+     * \param[out] v:  variable
+     * \param[in]  bd: bounds description
+     * \param[in]  bn: bounds type
+     */
+    virtual void registerBounds(VariableDescription&,
+				VariableBoundsDescription,
+				const std::string&);
 
     virtual std::pair<std::string,unsigned short>
     decomposeVariableName(const std::string&) const;
