@@ -121,7 +121,7 @@ namespace mtest
     wk.k.resize(nth,ndv);
     wk.mps.resize(this->mpnames.size()==0 ? 1u : this->mpnames.size(),real(0));
     wk.evs.resize(this->evnames.size());
-    mtest::allocate(wk.cs,*this,h);
+    mtest::allocate(wk.cs,this->shared_from_this(),h);
   } // end of AbaqusExplicitBehaviour::allocate
 
   StiffnessMatrixType

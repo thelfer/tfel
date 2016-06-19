@@ -16,6 +16,7 @@
 
 #include<vector>
 #include<string>
+#include<memory>
 
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/matrix.hxx"
@@ -39,6 +40,7 @@ namespace mtest
   
   //! A simple wrapper around mechanical behaviours
   struct Behaviour
+    : std::enable_shared_from_this<Behaviour>
   {
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;

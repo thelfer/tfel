@@ -520,7 +520,7 @@ namespace mtest{
 	  computeThermalExpansion(s,*(this->evm),t,dt);
 	} else if(this->b->getSymmetryType()==1){
 	  // orthotropic case
-	  computeThermalExpansion(s,*(this->b),*(this->evm),t,dt,
+	  computeThermalExpansion(s,*(this->evm),t,dt,
 				  getSpaceDimension(this->hypothesis));
 	} else {
 	  throw(std::runtime_error("SingleStructureScheme::prepare: "

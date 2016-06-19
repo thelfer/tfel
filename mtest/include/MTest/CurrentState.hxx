@@ -56,6 +56,8 @@ namespace mtest
     CurrentState& operator=(CurrentState&&);
     //! destructor
     ~CurrentState() noexcept;
+    //! behaviour
+    std::shared_ptr<const Behaviour> behaviour;
     //! thermodynamic forces at the beginning of the previous of the time step
     tfel::math::vector<real> s_1;
     //! thermodynamic forces at the beginning of the time step
@@ -114,7 +116,7 @@ namespace mtest
    */
   MTEST_VISIBILITY_EXPORT void
   allocate(CurrentState&,
-	   const Behaviour&,
+	   const std::shared_ptr<const Behaviour>&,
 	   const tfel::material::ModellingHypothesis::Hypothesis);
   
   /*!
@@ -159,7 +161,6 @@ namespace mtest
 
   MTEST_VISIBILITY_EXPORT void
   computeThermalExpansion(CurrentState&,
-			  const Behaviour&,
 			  const EvolutionManager&,
 			  const real,
 			  const real,

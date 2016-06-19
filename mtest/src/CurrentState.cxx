@@ -25,11 +25,15 @@ namespace mtest{
 
   CurrentState::~CurrentState() noexcept = default;
 
-  void allocate(CurrentState& s,const Behaviour& b,
+  void allocate(CurrentState& s,const std::shared_ptr<const Behaviour>& b,
 		const tfel::material::ModellingHypothesis::Hypothesis h)
   {
-    const auto mpnames(b.getMaterialPropertiesNames());
-    const auto esvnames(b.getExternalStateVariablesNames());
+    if(s.behaviour.get()!=nullptr){
+      throw(std::runtime_error("mtest::allocate: state already allocated"));
+    }
+    s.behaviour = b;
+    const auto mpnames  = s.behaviour->getMaterialPropertiesNames();
+    const auto esvnames = s.behaviour->getExternalStateVariablesNames();
     // clear
     s.s_1.clear();
     s.s0.clear();
@@ -45,8 +49,8 @@ namespace mtest{
     s.esv0.clear();
     s.desv.clear();
     // resizing
-    const auto ndv = b.getDrivingVariablesSize(h);
-    const auto nth = b.getThermodynamicForcesSize(h);
+    const auto ndv = b->getDrivingVariablesSize(h);
+    const auto nth = b->getThermodynamicForcesSize(h);
     s.s_1.resize(nth,0.);
     s.s0.resize(nth,0.);
     s.s1.resize(nth,0.);
@@ -55,20 +59,23 @@ namespace mtest{
     s.e_th0.resize(ndv,0.);
     s.e_th1.resize(ndv,0.);
     s.mprops1.resize(mpnames.size());
-    s.iv_1.resize(b.getInternalStateVariablesSize(h),0.);
+    s.iv_1.resize(b->getInternalStateVariablesSize(h),0.);
     s.iv0.resize(s.iv_1.size(),0.);
     s.iv1.resize(s.iv0.size(),0.);
     s.esv0.resize(esvnames.size(),0.);
     s.desv.resize(esvnames.size(),0.);
   }
   
-  void
-  computeMaterialProperties(CurrentState& s,
-			    const EvolutionManager& evm,
-			    const EvolutionManager& dvm,
-			    const std::vector<std::string>& mpnames,
-			    const real t,
-			    const real dt){
+  void computeMaterialProperties(CurrentState& s,
+				 const EvolutionManager& evm,
+				 const EvolutionManager& dvm,
+				 const std::vector<std::string>& mpnames,
+				 const real t,
+				 const real dt){
+    if(s.behaviour.get()==nullptr){
+      throw(std::runtime_error("mtest::computeThermalExpanstion: "
+			       "uninitialised state"));
+    }
     if(s.mprops1.size()!=mpnames.size()){
       throw(std::runtime_error("computeMaterialProperties:"
 			       "CurrentState variable was not initialized appropriately"));
@@ -93,12 +100,15 @@ namespace mtest{
     }
   } // end of computeMaterialProperties
   
-  void
-  computeExternalStateVariables(CurrentState& s,
-				const EvolutionManager& evm,
-				const std::vector<std::string>& esvnames,
-				const real t,
-				const real dt){
+  void computeExternalStateVariables(CurrentState& s,
+				     const EvolutionManager& evm,
+				     const std::vector<std::string>& esvnames,
+				     const real t,
+				     const real dt){
+    if(s.behaviour.get()==nullptr){
+      throw(std::runtime_error("mtest::computeThermalExpanstion: "
+			       "uninitialised state"));
+    }
     if((s.esv0.size()!=esvnames.size())||
        (s.desv.size()!=esvnames.size())){
       throw(std::runtime_error("computeExternalStateVariables:"
@@ -118,13 +128,16 @@ namespace mtest{
     }
   } // end of computeExternalStateVariables
 
-  void
-  computeThermalExpansion(CurrentState& s,
-			  const EvolutionManager& evm,
-			  const real t,
-			  const real dt){
+  void computeThermalExpansion(CurrentState& s,
+			       const EvolutionManager& evm,
+			       const real t,
+			       const real dt){
     static const std::string T{"Temperature"};
     static const std::string a{"ThermalExpansion"};
+    if(s.behaviour.get()==nullptr){
+      throw(std::runtime_error("mtest::computeThermalExpanstion: "
+			       "uninitialised state"));
+    }
     auto pev   = evm.find(T);
     auto pev2  = evm.find(a);
     if((pev==evm.end())||(pev2==evm.end())){
@@ -142,7 +155,6 @@ namespace mtest{
 
   void
   computeThermalExpansion(CurrentState& s,
-			  const Behaviour& b,
 			  const EvolutionManager& evm,
 			  const real t,
 			  const real dt,
@@ -152,6 +164,10 @@ namespace mtest{
     static const std::string a1{"ThermalExpansion1"};
     static const std::string a2{"ThermalExpansion2"};
     static const std::string a3{"ThermalExpansion3"};
+    if(s.behaviour.get()==nullptr){
+      throw(std::runtime_error("mtest::computeThermalExpanstion: "
+			       "uninitialised state"));
+    }
     const auto pev   = evm.find(T);
     const auto pev2  = evm.find(a1);
     const auto pev3  = evm.find(a2);
@@ -186,7 +202,7 @@ namespace mtest{
       se_th0[2u] = a3_ev(t)*(T_ev(t)-s.Tref);
       se_th1[2u] = a3_ev(t+dt)*(T_ev(t+dt)-s.Tref);
       // backward rotation matrix
-      const auto brm = transpose(b.getRotationMatrix(s.mprops1,s.r));
+      const auto brm = transpose(s.behaviour->getRotationMatrix(s.mprops1,s.r));
       se_th0.changeBasis(brm);
       se_th1.changeBasis(brm);
       const auto ss = tfel::math::getStensorSize(d);

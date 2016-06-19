@@ -442,7 +442,7 @@ namespace mtest
     // state of the one and only integration point
     ss.istates.resize(1);
     auto& cs = ss.istates[0];
-    mtest::allocate(cs,*(this->b),this->hypothesis);
+    mtest::allocate(cs,this->b,this->hypothesis);
     // setting the intial  values of strains
     this->b->getDrivingVariablesDefaultInitialValues(s.u_1);
     copy(this->e_t0.begin(),this->e_t0.end(),s.u_1.begin());
