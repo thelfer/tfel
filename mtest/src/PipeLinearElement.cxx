@@ -117,7 +117,6 @@ namespace mtest{
 							 const StiffnessMatrixType mt,
 							 const size_t i){
     //! a simple alias
-    using ModellingHypothesis = tfel::material::ModellingHypothesis;
     constexpr const real pi = 3.14159265358979323846;
     // number of elements
     const auto ne = size_t(m.number_of_elements);

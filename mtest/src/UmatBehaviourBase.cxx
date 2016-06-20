@@ -405,45 +405,44 @@ namespace mtest
   size_t
   UmatBehaviourBase::getInternalStateVariablesSize() const
   {
-    using namespace std;
     const auto h = this->getHypothesis();    
-    vector<int>::const_iterator p;
     size_t s = 0;
-    for(p=this->ivtypes.begin();p!=this->ivtypes.end();++p){
-      if(*p==0){
+    for(const auto& t : this->ivtypes){
+      if(t==0){
 	s+=1;
-      } else if(*p==1){
+      } else if(t==1){
 	if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
 	   (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	  s+=3;
-	} else if((h==ModellingHypothesis::AXISYMMETRICAL)||(h==ModellingHypothesis::PLANESTRESS)||
-		  (h==ModellingHypothesis::PLANESTRAIN)||(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	} else if((h==ModellingHypothesis::AXISYMMETRICAL)||
+		  (h==ModellingHypothesis::PLANESTRESS)||
+		  (h==ModellingHypothesis::PLANESTRAIN)||
+		  (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	  s+=4;
 	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	  s+=6;
 	} else {
-	  string msg("UmatBehaviourBase::getInternalStateVariablesSize : "
-		     "unsupported modelling hypothesis");
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("UmatBehaviourBase::getInternalStateVariablesSize: "
+				   "unsupported modelling hypothesis"));
 	}
-      } else if(*p==3){
+      } else if(t==3){
 	if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
 	   (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	  s+=3;
-	} else if((h==ModellingHypothesis::AXISYMMETRICAL)||(h==ModellingHypothesis::PLANESTRESS)||
-		  (h==ModellingHypothesis::PLANESTRAIN)||(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	} else if((h==ModellingHypothesis::AXISYMMETRICAL)||
+		  (h==ModellingHypothesis::PLANESTRESS)||
+		  (h==ModellingHypothesis::PLANESTRAIN)||
+		  (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	  s+=5;
 	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	  s+=9;
 	} else {
-	  string msg("UmatBehaviourBase::getInternalStateVariablesSize : "
-		     "unsupported modelling hypothesis");
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("UmatBehaviourBase::getInternalStateVariablesSize: "
+				   "unsupported modelling hypothesis"));
 	}
       } else {
-	string msg("UmatBehaviourBase::getInternalStateVariablesSize : "
-		   "unsupported variable type");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("UmatBehaviourBase::getInternalStateVariablesSize: "
+				 "unsupported variable type"));
       }
     }
     return s;
@@ -458,10 +457,9 @@ namespace mtest
     vector<int>::const_iterator p;
     vector<string>::const_iterator pn;
     if(this->ivnames.size()!=this->ivtypes.size()){
-      string msg("UmatBehaviourBase::getInternalStateVariablesDescriptions : "
-		 "internal error (the number of internal state variables names "
-		 "dont match the number of internal state variables types)");
-      throw(runtime_error(msg));
+      throw(runtime_error("UmatBehaviourBase::getInternalStateVariablesDescriptions : "
+			  "internal error (the number of internal state variables names "
+			  "dont match the number of internal state variables types)"));
     }
     for(p=this->ivtypes.begin(),pn=this->ivnames.begin();
 	p!=this->ivtypes.end();++p,++pn){
