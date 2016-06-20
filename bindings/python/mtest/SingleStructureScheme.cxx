@@ -144,8 +144,8 @@ SingleStructureScheme_setExternalStateVariable3(mtest::SingleStructureScheme& t,
 
 static void
 SingleStructureScheme_setInternalStateVariableInitialValue1(mtest::SingleStructureScheme& s,
-							   const std::string&  n,
-							   const mtest::real v){
+							    const std::string&  n,
+							    const mtest::real v){
   s.setScalarInternalStateVariableInitialValue(n,v);
 }
 

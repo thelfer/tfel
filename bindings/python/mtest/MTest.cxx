@@ -15,9 +15,10 @@
 
 #include"MTest/MTest.hxx"
 #include"MTest/Evolution.hxx"
+#include"MTest/Behaviour.hxx"
+#include"MTest/Constraint.hxx"
 #include"MTest/CurrentState.hxx"
 #include"MTest/StructureCurrentState.hxx"
-#include"MTest/Constraint.hxx"
 #include"MTest/ImposedThermodynamicForce.hxx"
 #include"MTest/ImposedDrivingVariable.hxx"
 
@@ -357,6 +358,115 @@ MTestCurrentState_getTref(const mtest::MTestCurrentState& t)
   return sc. istates[0]. Tref ;
 }
 
+static void 
+setInternalStateVariableValue3(mtest::MTestCurrentState& t,
+			       const std::string& n,
+			       const mtest::real v,
+			       const int d)
+{
+  auto& sc = t.getStructureCurrentState("");
+  if(sc.istates.size()!=1){
+    throw(std::runtime_error("MTestCurrentState::get: "
+			     "uninitialized state"));
+  }
+  auto& s = sc. istates[0];
+  mtest::setInternalStateVariableValue(s,n,v,d);
+}
+
+static void 
+setInternalStateVariableValue(mtest::MTestCurrentState& t,
+			      const std::string& n,
+			      const mtest::real v)
+{
+  setInternalStateVariableValue3(t,n,v,-1);
+  setInternalStateVariableValue3(t,n,v,0);
+  setInternalStateVariableValue3(t,n,v,1);
+}
+
+static void 
+setInternalStateVariableValue4(mtest::MTestCurrentState& t,
+			       const std::string& n,
+			       const std::vector<mtest::real>& v,
+			       const int d)
+{
+  auto& sc = t.getStructureCurrentState("");
+  if(sc.istates.size()!=1){
+    throw(std::runtime_error("MTestCurrentState::get: "
+			     "uninitialized state"));
+  }
+  auto& s = sc. istates[0];
+  mtest::setInternalStateVariableValue(s,n,v,d);
+}
+
+static void 
+setInternalStateVariableValue2(mtest::MTestCurrentState& t,
+			       const std::string& n,
+			       const std::vector<mtest::real>& v)
+{
+  setInternalStateVariableValue4(t,n,v,-1);
+  setInternalStateVariableValue4(t,n,v,0);
+  setInternalStateVariableValue4(t,n,v,1);
+}
+
+static boost::python::object
+getInternalStateVariableValue1(const mtest::MTestCurrentState& t,
+			       const std::string& n,
+			       const int i)
+{
+  auto throw_if = [](const bool b, const std::string& m){
+    if(b){throw(std::runtime_error("mtest::getInternalStateVariableValue: "+m));}
+  };
+  const auto& sc = t.getStructureCurrentState("");
+  if(sc.istates.size()!=1){
+    throw(std::runtime_error("MTestCurrentState::get: "
+			     "uninitialized state"));
+  }
+  auto& s = sc.istates[0];
+  throw_if(s.behaviour.get()==nullptr,"no behaviour defined");
+  const auto& ivsnames = s.behaviour->getInternalStateVariablesNames();
+  throw_if(std::find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end(),
+	   "the behaviour don't declare an internal state "
+	   "variable named '"+n+"'");
+  const auto type = s.behaviour->getInternalStateVariableType(n);
+  const auto size = [&s,throw_if,type]() -> std::vector<mtest::real>::size_type {
+    if(type==0){
+      return 1;
+    } else if(type==1){
+      return tfel::material::getStensorSize(s.behaviour->getHypothesis());
+    } else if(type==3){
+      return tfel::material::getSpaceDimension(s.behaviour->getHypothesis());
+    } else if(type==3){
+      return tfel::material::getTensorSize(s.behaviour->getHypothesis());
+    }
+    throw_if(true,"unsupported variable type");
+    return 0;
+  }();
+  const auto pos = s.behaviour->getInternalStateVariablePosition(n);
+  throw_if((s.iv_1.size()<pos+size)||(s.iv0.size()<pos+size)||(s.iv1.size()<pos+size),
+	   "invalid size for state variables (bad initialization)");
+  const auto& iv = [&s,throw_if,i]() -> const tfel::math::vector<mtest::real>& {
+    throw_if((i!=1)&&(i!=0)&&(i!=-1),"invalid depth");
+    if(i==-1){
+      return s.iv_1;
+    } else if(i==0){
+      return s.iv0;
+    }
+    return s.iv1;
+  }();
+  if(type==0){
+    return boost::python::object(iv[pos]);
+  }
+  return boost::python::object(std::vector<mtest::real>(iv.begin()+pos,
+							iv.begin()+pos+size));
+}
+
+static boost::python::object
+getInternalStateVariableValue2(const mtest::MTestCurrentState& s,
+			       const std::string& n)
+{
+  return getInternalStateVariableValue1(s,n,1);
+} // end of getInternalStateVariableValue
+
 void declareMTest(void);
 
 void declareMTest(void)
@@ -387,6 +497,69 @@ void declareMTest(void)
     .add_property("desv",MTestCurrentState_getdesv)
     .add_property("dt_1",MTestCurrentState_getdt_1)
     .add_property("Tref",MTestCurrentState_getTref)
+    .def("setInternalStateVariableValue",::setInternalStateVariableValue,
+	 "set the value of a scalar internal state variable\n"
+	 "\n"
+	 "param[in]  n: variable name\n"
+	 "param[in]  v: values\n"
+	 "\n"
+	 "This overwrites the values of the internal state variables:\n"
+	 "- at the beginning of the previous time step\n"
+	 "- at the beginning of the current time step\n"
+	 "- at the end of the current time step")
+    .def("setInternalStateVariableValue",::setInternalStateVariableValue2,
+	 "set the value of an internal state variable\n"
+	 "\n"
+	 "param[in]  n: variable name\n"
+	 "param[in]  v: values\n"
+	 "\n"
+	 "This overwrites the values of the internal state variables:\n"
+	 "- at the beginning of the previous time step\n"
+	 "- at the beginning of the current time step\n"
+	 "- at the end of the current time step")
+    .def("setInternalStateVariableValue",::setInternalStateVariableValue3,
+	 "set the value of a scalar internal state variable\n"
+	 "\n"
+	 "param[in]  n: variable name\n"
+	 "param[in]  v: value\n"
+	 "param[in]  d: depth\n"
+	 "\n"
+	 "The depth value has the following meaning:\n"
+	 "- -1 means that we are modifying the internal state variable\n"
+	 "  value at the beginning of the previous time step\n"
+	 "- 0 means that we are modifying the internal state variable value\n"
+	 "  at the beginning of the current time step\n"
+	 "- 1 means that we are modifying the internal state variable value\n"
+	 "  at the end of the current time step")
+    .def("setInternalStateVariableValue",::setInternalStateVariableValue4,
+	 "set the value of an internal state variable\n"
+	 "\n"
+	 "param[in]  n: variable name\n"
+	 "param[in]  v: value\n"
+	 "param[in]  d: depth\n"
+	 "\n"
+	 "The depth value has the following meaning:\n"
+	 "- -1 means that we are modifying the internal state variable\n"
+	 "  value at the beginning of the previous time step\n"
+	 "- 0 means that we are modifying the internal state variable value\n"
+	 "  at the beginning of the current time step\n"
+	 "- 1 means that we are modifying the internal state variable value\n"
+	 "  at the end of the current time step")
+    .def("getInternalStateVariableValue",::getInternalStateVariableValue2,
+	 "get the value of an internal state variable at the end of the time \n"
+	 "step\n"
+	 "\n"
+	 "param[in]  n: variable name")
+    .def("getInternalStateVariableValue",::getInternalStateVariableValue2,
+	 "get the value of an internal state variable\n"
+	 "\n"
+	 "param[in]  n: variable name\n"
+	 "param[in]  d: depth\n"
+	 "\n"
+	 "The depth value has the following meaning:\n"
+	 "- -1 means that we request the value at the beginning of the previous time step\n"
+	 "- 0 means that we request the  value at the beginning of the current time step\n"
+	 "- 1 means that we request the  value at the end of the current time step")
     ;
   
   TestResult (MTest:: *pm)(void) = &MTest::execute;
