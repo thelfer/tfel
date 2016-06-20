@@ -139,7 +139,8 @@ para2D = 'MOTS' 'T';
 
 mod1 = 'MODELISER' s1 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
    'NON_LINEAIRE' 'UTILISATEUR'
-   'NUME_LOI' 1
+   'LIB_LOI' 'src/libUmatBehaviour.so'
+   'FCT_LOI' 'umatnorton'
    'C_MATERIAU' coel2D
    'C_VARINTER' stav2D
    'PARA_LOI'   para2D
