@@ -170,6 +170,10 @@ cases:
 - make appropriate time substepping in case of integration failure
 - loading control based of the behaviour feed-back
 
+The `MTestCurrentState` also provides `getInternalStateVariableValue`
+and `setInternalStateVariableValue` methods, which are described more
+in depth below.
+
 # Using the `PipeTest` class
 
 Here is an example:
@@ -319,8 +323,6 @@ contains the following fields:
 Those fields are the same than those of the `MTestCurrentState` which
 indeed acts as a proxy for the unique integration point it handles.
 
-### Example
-
 Here is an example of use of the `StudyCurrentState` class:
 
 ~~~~ {.python}
@@ -330,6 +332,162 @@ scs = s.getStructureCurrentState("")
 for cs in scs.istates:
     #print the radial stress, the axial stress, the hoop stress
     print(str(cs.s1[0])+" "+str(cs.s1[1])+" "+str(cs .s1[1]))
+~~~~
+
+#### Accessing the values of the internal state variables
+
+The internal state variables are stored in the `iv_1`, `iv0` and `iv1`
+fields. Beware that access to those fields creates a copy of the
+underlying array of values.
+
+The `CurrentState` also provides a method called
+`getInternalStateVariableValue` which has two overloads.
+
+The first one takes the name of a variable and returns its value at
+the end of the time step.
+
+The second one has one more argument: the depth of the values to be
+accessed:
+
+- `-1` means that we are modifying the internal state variable
+	value at the beginning of the previous time step
+-  `0` means that we are modifying the internal state variable
+       value at the beginning of the current time step
+-  `1` means that we are modifying the internal state variable
+      value at the end of the current time step
+
+#### Initial values of the internal state variables
+
+The initial values of the internal state variables can be specified by
+the `setInternalStateVariableInitialValue` method of the `MTest` or
+`PipeTest` class. This method takes the name of internal state
+variable and a `list` of `floats` (a `float` is accepted for
+scalar internal state variables).
+
+The values are stored in the `MTest` or `PipeTest` object and will be
+used every time the `initializeCurrentState` method is called.
+
+Here is an example of use of the `getInternalStateVariableValue` method:
+
+~~~~ {.python}
+scs = s.getStructureCurrentState("")
+# get the maximum of the equivalent plastic strain over the integration points
+p = max([cs.getInternalStateVariableValue('EquivalentPlasticStrain') for cs in scs.istates])
+~~~~
+
+#### Modifying the values of the internal state variables
+
+Sometimes, it can be usefull to modify the values of the internal
+state variables during the computation. This can
+
+The internal state variables are stored in the `iv_1`, `iv0` and `iv1`
+fields. Access to those variables creates a copy of the underlying
+array of values. Thus, modifying those values has no effect of the
+`CurrentState` object.
+
+To modify the values of a `CurrentState`, one may of the two overloads
+of the `setInternalStateVariableValue` method:
+
+- the first one takes the name of the state variable to be modified,
+  the new values as a `list` of `floats` (a `float` is accepted for
+  scalar internal state variables). The value given is affected to
+  internal state variable values at the beginning of the previous time
+  step (`iv_1` field), the beginning of the current time step (`iv0`
+  field) and the end of the current time step (`iv1` field).
+- the second one as one more argument than the first overload: the
+  depth of the values to be modified:
+    - `-1` means that we are modifying the internal state variable
+      value at the beginning of the previous time step
+    -  `0` means that we are modifying the internal state variable
+      value at the beginning of the current time step
+    -  `1` means that we are modifying the internal state variable
+      value at the end of the current time step
+
+Here is an example of use of the `setInternalStateVariableValue`
+method:
+
+~~~~ {.python}
+scs = s.getStructureCurrentState("")
+# iterate of over the integration points
+for cs in scs.istates:
+    # set the value of the equivalent plastic strain
+    cs.setInternalStateVariableValue('EquivalentPlasticStrain',2.e-2)
+~~~~
+
+### Example of use of the `PipeTest` class
+
+~~~~ {.python}
+from mtest import PipeTest,StudyCurrentState,SolverWorkSpace, \
+    setVerboseMode, VerboseLevel
+
+# no output
+setVerboseMode(VerboseLevel.VERBOSE_QUIET)
+
+Re = 4.18e-3
+Fz = 3.1415926*Re*Re*20e6
+
+t = PipeTest()
+
+# geometric and meshing options
+t.setInnerRadius(0)
+t.setOuterRadius(Re)
+t.setNumberOfElements(1)
+t.setElementType('Quadratic')
+
+# Type of loading
+t.setAxialLoading('ImposedAxialForce')
+
+# no geometrical update
+t.performSmallStrainAnalysis()
+
+# by default, with the 'castem' interface, one does not use the
+# consistent tangent operator. Using the acceleration algorithm
+# is mandatory for convergence.
+t.setUseCastemAccelerationAlgorithm(True)
+
+# axial loading
+t.setAxialForceEvolution({0.:0.,1.e-6 :Fz,3600:Fz})
+
+# definition of the mechanical behaviour and the material properties
+t.setBehaviour('castem','../../src/libUmatBehaviour.so','umatnorton')
+t.setMaterialProperty('YoungModulus',150e9)
+t.setMaterialProperty('PoissonRatio',0.3)
+t.setMaterialProperty('A',8.e-67)
+t.setMaterialProperty('E',8.2)
+
+# temperature (mandatory)
+t.setExternalStateVariable('Temperature',293.15)
+
+# results file
+t.setOutputFileName('pipe4.res')
+
+s  = StudyCurrentState()
+wk = SolverWorkSpace()
+
+# complete initialisation of the problem
+t.completeInitialisation()
+t.initializeCurrentState(s)
+t.initializeWorkSpace(wk)
+
+# time discretization
+times = [0]+[1.e-6+((3600.-1.e-6)/20.)*i for i in range(21)];
+
+# get the state of the pipe (unique structure defined)
+scs = s.getStructureCurrentState("")
+p   = max([cs.getInternalStateVariableValue("EquivalentViscoplasticStrain")
+           for cs in scs.istates])
+print(str(times[0])+" "+str(p))
+
+# loop over the time steps
+for i in range(0,len(times)-1):
+	# search the mechanical equilibrium at the end of the time step
+	t.execute(s,wk,times[i],times[i+1])
+	# write in the output file
+    t.printOutput(times[i+1],s)
+    # iterate of over the integration points
+    p = max([cs.getInternalStateVariableValue("EquivalentViscoplasticStrain")
+             for cs in scs.istates])
+    print(str(times[i+1])+" "+str(p))
 ~~~~
 
 <!-- Local IspellDict: english -->
