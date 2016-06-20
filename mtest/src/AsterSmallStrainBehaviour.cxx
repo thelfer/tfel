@@ -46,7 +46,6 @@ namespace mtest
   AsterSmallStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
 					    CurrentState& s,
 					    BehaviourWorkSpace& wk,
-					    const tfel::material::ModellingHypothesis::Hypothesis h,
 					    const real dt,
 					    const StiffnessMatrixType ktype,
 					    const bool b) const
@@ -54,7 +53,6 @@ namespace mtest
     using namespace std;
     using namespace tfel::math;
     using namespace aster;
-    typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
     static const real sqrt2 = sqrt(real(2));
     unsigned short dimension;
@@ -62,19 +60,20 @@ namespace mtest
     AsterInt nprops = s.mprops1.size() == 0 ? 1 : static_cast<AsterInt>(s.mprops1.size());
     AsterInt nstatv;
     AsterInt nummod;
-    if (h==MH::AXISYMMETRICAL){
+    const auto h = this->getHypothesis();
+    if (h==ModellingHypothesis::AXISYMMETRICAL){
       ntens = 4;
       dimension = 2u;
       nummod = 4u;
-    } else if (h==MH::PLANESTRESS){
+    } else if (h==ModellingHypothesis::PLANESTRESS){
       ntens = 4;
       dimension = 2u;
       nummod = 5u;
-    } else if (h==MH::PLANESTRAIN){
+    } else if (h==ModellingHypothesis::PLANESTRAIN){
       ntens = 4;
       dimension = 2u;
       nummod = 6u;
-    } else if (h==MH::TRIDIMENSIONAL){
+    } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
       ntens = 6;
       dimension = 3u;
       nummod = 3u;

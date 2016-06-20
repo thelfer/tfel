@@ -625,12 +625,10 @@ namespace mtest
 								 const std::string& b)
     : CastemStandardBehaviour(getEffectiveModellingHypothesis(h,l,b),l,b)
   {
-    using namespace tfel::system;
-    using namespace tfel::material;
-    typedef ExternalLibraryManager ELM;
     if(h==ModellingHypothesis::PLANESTRESS){
-      auto& elm = ELM::getExternalLibraryManager();
+      auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
       if(elm.checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm(l,b)){
+	this->usesGenericPlaneStressAlgorithm = true;
 	//! better name required
 	this->ivnames.push_back("AxialStrain");
 	this->ivtypes.push_back(0);
@@ -641,8 +639,7 @@ namespace mtest
   void
   CastemFiniteStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
   {
-    using namespace std;
-    fill(v.begin(),v.end(),real(0));
+    std::fill(v.begin(),v.end(),real(0));
     v[0] = real(1);
     v[1] = real(1);
     v[2] = real(1);
@@ -651,14 +648,13 @@ namespace mtest
   std::pair<bool,real>
   CastemFiniteStrainBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
 							 const CurrentState& s,
-							 const tfel::material::ModellingHypothesis::Hypothesis h,
 							 const StiffnessMatrixType ktype) const
   {
     // rotation matrix
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       // compute the stiffness operator from material properties
       const auto rt = transpose(s.r);
-      this->computeElasticStiffness(wk.kt,s.mprops1,rt,h);
+      this->computeElasticStiffness(wk.kt,s.mprops1,rt);
       return {true,1};
     }
     throw(std::runtime_error("CastemFiniteStrainBehaviour::computePredictionOperator : "
@@ -669,36 +665,35 @@ namespace mtest
   std::pair<bool,real>
   CastemFiniteStrainBehaviour::integrate(CurrentState& s,
 					 BehaviourWorkSpace& wk,
-					 const tfel::material::ModellingHypothesis::Hypothesis h,
 					 const real dt,
 					 const StiffnessMatrixType ktype) const
   {
     using namespace std;
     using namespace tfel::math;
     using namespace castem;
-    typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
     static const real sqrt2 = sqrt(real(2));
-    CastemInt ntens;
-    CastemInt ndi;
+    const auto h = this->usesGenericPlaneStressAlgorithm ?
+                   ModellingHypothesis::PLANESTRESS :this->getHypothesis();
+    CastemInt ntens,ndi;
     const auto nprops = static_cast<CastemInt>(s.mprops1.size());
     CastemInt nstatv;
-    if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+    if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       ndi   = 14;
       ntens = 3;
-    } else if (h==MH::AXISYMMETRICAL){
+    } else if (h==ModellingHypothesis::AXISYMMETRICAL){
       ndi = 0;
       ntens = 4;
-    } else if (h==MH::PLANESTRESS){
+    } else if (h==ModellingHypothesis::PLANESTRESS){
       ndi = -2;
       ntens = 4;
-    } else if (h==MH::PLANESTRAIN){
+    } else if (h==ModellingHypothesis::PLANESTRAIN){
       ndi = -1;
       ntens = 4;
-    } else if (h==MH::GENERALISEDPLANESTRAIN){
+    } else if (h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
       ndi = -3;
       ntens = 4;
-    } else if (h==MH::TRIDIMENSIONAL){
+    } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
       ndi = 2;
       ntens = 6;
     } else {
@@ -728,15 +723,17 @@ namespace mtest
     uu0(0,0) = s.e0(0); uu1(0,0) = s.e1(0);
     uu0(1,1) = s.e0(1); uu1(1,1) = s.e1(1);
     uu0(2,2) = s.e0(2); uu1(2,2) = s.e1(2);
-    if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+    if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       uu0(1,0) = 0.; uu1(1,0) = 0.;
       uu0(0,1) = 0.; uu1(0,1) = 0.;
       uu0(2,0) = 0.; uu1(2,0) = 0.;
       uu0(0,2) = 0.; uu1(0,2) = 0.;
       uu0(2,1) = 0.; uu1(2,1) = 0.;
       uu0(1,2) = 0.; uu1(1,2) = 0.;
-    } else if ((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
-	       (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
+    } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+	       (h==ModellingHypothesis::PLANESTRESS)||
+	       (h==ModellingHypothesis::PLANESTRAIN)||
+	       (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
       // uu0 and uu1 must be built using Fortran notations
       uu0(1,0) = s.e0(3); uu1(1,0) = s.e1(3);
       uu0(0,1) = s.e0(4); uu1(0,1) = s.e1(4);
@@ -744,7 +741,7 @@ namespace mtest
       uu0(0,2) = 0.; uu1(0,2) = 0.;
       uu0(2,1) = 0.; uu1(2,1) = 0.;
       uu0(1,2) = 0.; uu1(1,2) = 0.;
-    } else if (h==MH::TRIDIMENSIONAL){
+    } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
       // uu0 and uu1 must be built using Fortran notations
       uu0(1,0) = s.e0(3); uu1(1,0) = s.e1(3);
       uu0(0,1) = s.e0(4); uu1(0,1) = s.e1(4);
@@ -777,7 +774,7 @@ namespace mtest
     // tangent operator (...)
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
       if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
-	this->computeElasticStiffness(wk.k,s.mprops1,drot,h);
+	this->computeElasticStiffness(wk.k,s.mprops1,drot);
       } else {
 	throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
 			    "computation of the tangent operator "
@@ -797,62 +794,61 @@ namespace mtest
   void
   CastemFiniteStrainBehaviour::computeElasticStiffness(tfel::math::matrix<real>& Kt,
 						       const tfel::math::vector<real>& mp,
-						       const tfel::math::tmatrix<3u,3u,real>&,
-						       const tfel::material::ModellingHypothesis::Hypothesis h) const
+						       const tfel::math::tmatrix<3u,3u,real>&) const
   {
     using namespace std;
     using namespace tfel::math;
-    typedef tfel::material::ModellingHypothesis MH;
     tmatrix<3u,3u,real>::size_type i,j;
+    const auto h = this->getHypothesis();    
     if(this->stype==0u){
-      if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+      if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	t2tost2<1u,real> De;
-	MTestCastemComputeFiniteStrainStiffnessTensor<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 						    mfront::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=3u;++i){
 	  for(j=0;j!=3u;++j){
 	    Kt(i,j) = De(i,j);
 	  }
 	}
-      } else if (h==MH::AXISYMMETRICAL){
+      } else if (h==ModellingHypothesis::AXISYMMETRICAL){
 	t2tost2<2u,real> De;
-	MTestCastemComputeFiniteStrainStiffnessTensor<MH::AXISYMMETRICAL,
+	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::AXISYMMETRICAL,
 						    mfront::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=5u;++j){
 	    Kt(i,j) = De(i,j);
 	  }
 	}
-      } else if (h==MH::PLANESTRESS){
+      } else if (h==ModellingHypothesis::PLANESTRESS){
 	t2tost2<2u,real> De;
-	MTestCastemComputeFiniteStrainStiffnessTensor<MH::PLANESTRESS,
+	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::PLANESTRESS,
 						    mfront::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=5u;++j){
 	    Kt(i,j) = De(i,j);
 	  }
 	}
-      } else if (h==MH::PLANESTRAIN){
+      } else if (h==ModellingHypothesis::PLANESTRAIN){
 	t2tost2<2u,real> De;
-	MTestCastemComputeFiniteStrainStiffnessTensor<MH::PLANESTRAIN,
+	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::PLANESTRAIN,
 						    mfront::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=5u;++j){
 	    Kt(i,j) = De(i,j);
 	  }
 	}
-      } else if (h==MH::GENERALISEDPLANESTRAIN){
+      } else if (h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
 	t2tost2<2u,real> De;
-	MTestCastemComputeFiniteStrainStiffnessTensor<MH::GENERALISEDPLANESTRAIN,
+	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::GENERALISEDPLANESTRAIN,
 						    mfront::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=4u;++i){
 	  for(j=0;j!=5u;++j){
 	    Kt(i,j) = De(i,j);
 	  }
 	}
-      } else if (h==MH::TRIDIMENSIONAL){
+      } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
 	t2tost2<3u,real> De;
-	MTestCastemComputeFiniteStrainStiffnessTensor<MH::TRIDIMENSIONAL,
+	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::TRIDIMENSIONAL,
 						    mfront::ISOTROPIC>::exe(&mp(0),De);
 	for(i=0;i!=6u;++i){
 	  for(j=0;j!=9u;++j){
@@ -860,23 +856,22 @@ namespace mtest
 	  }
 	}
       } else {
-	string msg("CastemFiniteStrainBehaviour::computeElasticMatrix : ");
-	msg += "unsupported hypothesis";
-	throw(runtime_error(msg));
+	throw(runtime_error("CastemFiniteStrainBehaviour::computeElasticMatrix: "
+			    "unsupported hypothesis"));
       }
     } else if(this->stype==1u){
-      if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+      if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       	t2tost2<1u,real> De;
-      	MTestCastemComputeFiniteStrainStiffnessTensor<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+      	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
       	for(i=0;i!=3u;++i){
       	  for(j=0;j!=3u;++j){
       	    Kt(i,j) = De(i,j);
       	  }
       	}
-      } else if (h==MH::AXISYMMETRICAL){
+      } else if (h==ModellingHypothesis::AXISYMMETRICAL){
       	t2tost2<2u,real> De;
-      	MTestCastemComputeFiniteStrainStiffnessTensor<MH::AXISYMMETRICAL,
+      	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::AXISYMMETRICAL,
 						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
 //      	MTestCastemfiniteStrainRotationMatrix2D m(&drot(0,0));
 #pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
@@ -885,9 +880,9 @@ namespace mtest
       	    Kt(i,j) = De(i,j);
       	  }
       	}
-      } else if (h==MH::PLANESTRESS){
+      } else if (h==ModellingHypothesis::PLANESTRESS){
       	t2tost2<2u,real> De;
-      	MTestCastemComputeFiniteStrainStiffnessTensor<MH::PLANESTRESS,
+      	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::PLANESTRESS,
 						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
 //      	MTestCastemfiniteStrainRotationMatrix2D m(&drot(0,0));
 #pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
@@ -896,9 +891,9 @@ namespace mtest
       	    Kt(i,j) = De(i,j);
       	  }
       	}
-      } else if (h==MH::PLANESTRAIN){
+      } else if (h==ModellingHypothesis::PLANESTRAIN){
       	t2tost2<2u,real> De;
-      	MTestCastemComputeFiniteStrainStiffnessTensor<MH::PLANESTRAIN,
+      	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::PLANESTRAIN,
 						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
 //      	MTestCastemfiniteStrainRotationMatrix2D m(&drot(0,0));
 #pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
@@ -907,9 +902,9 @@ namespace mtest
       	    Kt(i,j) = De(i,j);
       	  }
       	}
-      } else if (h==MH::GENERALISEDPLANESTRAIN){
+      } else if (h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
       	t2tost2<2u,real> De;
-      	MTestCastemComputeFiniteStrainStiffnessTensor<MH::GENERALISEDPLANESTRAIN,
+      	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::GENERALISEDPLANESTRAIN,
 						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
 //      	MTestCastemfiniteStrainRotationMatrix2D m(&drot(0,0));
 #pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
@@ -918,10 +913,10 @@ namespace mtest
       	    Kt(i,j) = De(i,j);
       	  }
       	}
-      } else if (h==MH::TRIDIMENSIONAL){
+      } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
       	t2tost2<3u,real> De;
-      	MTestCastemComputeFiniteStrainStiffnessTensor<MH::TRIDIMENSIONAL,
-						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
+      	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::TRIDIMENSIONAL,
+						      mfront::ORTHOTROPIC>::exe(&mp(0),De);
 	//      	MTestCastemfiniteStrainRotationMatrix3D m(&drot(0,0));
 #pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
       	for(i=0;i!=6u;++i){
@@ -930,15 +925,12 @@ namespace mtest
       	  }
       	}
       } else {
-	string msg("CastemFiniteStrainBehaviour::computeElasticMatrix : ");
-	msg += "unsupported modelling hypothesis";
-	throw(runtime_error(msg));
+	throw(runtime_error("CastemFiniteStrainBehaviour::computeElasticMatrix: "
+			    "unsupported modelling hypothesis"));
       }
     } else {
-      string msg("CastemFiniteStrainBehaviour::integrate : ");
-      msg += "invalid behaviour type (neither "
-	"isotropic or orthotropic)";
-      throw(runtime_error(msg));
+      throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
+			  "invalid behaviour type (neither isotropic or orthotropic)"));
     }
 
   }
@@ -947,9 +939,7 @@ namespace mtest
   CastemFiniteStrainBehaviour::setOptionalMaterialPropertiesDefaultValues(EvolutionManager& mp,
 									     const EvolutionManager& evm) const
   {
-    using namespace std;
-    using tfel::material::ModellingHypothesis;
-    const ModellingHypothesis::Hypothesis h = ModellingHypothesis::fromString(this->hypothesis);
+    const auto h = this->getHypothesis();
     CastemStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(mp,evm);
     if(this->stype==0){
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion",0.);
@@ -958,9 +948,9 @@ namespace mtest
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion2",0.);
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion3",0.);
     } else {
-      string msg("CastemSmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues : "
-		 "unsupported symmetry type");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("CastemSmallStrainBehaviour::"
+			       "setOptionalMaterialPropertiesDefaultValues : "
+			       "unsupported symmetry type"));
     }
     if(h==ModellingHypothesis::PLANESTRESS){
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"PlateWidth",0.);

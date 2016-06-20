@@ -67,12 +67,11 @@ namespace mtest
   } // end of CastemCohesiveZoneModel::getRotationMatrix
 
   void
-  CastemCohesiveZoneModel::allocate(BehaviourWorkSpace& wk,
-				    const tfel::material::ModellingHypothesis::Hypothesis h) const
+  CastemCohesiveZoneModel::allocate(BehaviourWorkSpace& wk) const
   {
-    const auto ndv     = this->getDrivingVariablesSize(h);
-    const auto nth     = this->getThermodynamicForcesSize(h);
-    const auto nstatev = this->getInternalStateVariablesSize(h);
+    const auto ndv     = this->getDrivingVariablesSize();
+    const auto nth     = this->getThermodynamicForcesSize();
+    const auto nstatev = this->getInternalStateVariablesSize();
     wk.D.resize(nth,ndv);
     wk.kt.resize(nth,ndv);
     wk.k.resize(nth,ndv);
@@ -81,7 +80,7 @@ namespace mtest
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
-    mtest::allocate(wk.cs,this->shared_from_this(),h);
+    mtest::allocate(wk.cs,this->shared_from_this());
   }
 
   void
@@ -99,13 +98,12 @@ namespace mtest
   std::pair<bool,real>
   CastemCohesiveZoneModel::computePredictionOperator(BehaviourWorkSpace& wk,
 						     const CurrentState& s,
-						     const tfel::material::ModellingHypothesis::Hypothesis h,
 						     const StiffnessMatrixType ktype) const
   {
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       // rotation matrix
       const auto drot = transpose(s.r);
-      this->computeElasticStiffness(wk.k,s.mprops1,drot,h);
+      this->computeElasticStiffness(wk.k,s.mprops1,drot);
       return {true,1};
     }
     throw(std::runtime_error("CastemCohesiveZoneModel::computePredictionOperator : "
@@ -116,34 +114,33 @@ namespace mtest
   std::pair<bool,real>
   CastemCohesiveZoneModel::integrate(CurrentState& s,
 				     BehaviourWorkSpace& wk,
-				     const tfel::material::ModellingHypothesis::Hypothesis h,
 				     const real dt,
 				     const StiffnessMatrixType ktype) const
   {
     using namespace std;
     using namespace tfel::math;
     using namespace castem;
-    typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
     CastemInt ntens;
     CastemInt ndi;
     CastemInt nprops = static_cast<CastemInt>(s.mprops1.size());
     CastemInt nstatv;
-    if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-       (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)||
-       (h==MH::AXISYMMETRICAL)){
+    const auto h = this->getHypothesis();
+    if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+       (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)||
+       (h==ModellingHypothesis::AXISYMMETRICAL)){
       throw(runtime_error("CastemCohesiveZoneModel::integrate: "
 			  "unsupported modelling hypothesis"));
-    } else if (h==MH::PLANESTRESS){
+    } else if (h==ModellingHypothesis::PLANESTRESS){
       ndi = -2;
       ntens = 2;
-    } else if (h==MH::PLANESTRAIN){
+    } else if (h==ModellingHypothesis::PLANESTRAIN){
       ndi = -1;
       ntens = 2;
-    } else if (h==MH::GENERALISEDPLANESTRAIN){
+    } else if (h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
       ndi = -3;
       ntens = 2;
-    } else if (h==MH::TRIDIMENSIONAL){
+    } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
       ndi = 2;
       ntens = 3;
     } else {
@@ -198,7 +195,7 @@ namespace mtest
     // tangent operator (...)
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
       if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
-	this->computeElasticStiffness(wk.k,s.mprops1,drot,h);
+	this->computeElasticStiffness(wk.k,s.mprops1,drot);
       } else {
 	throw(runtime_error("CastemCohesiveZoneModel::integrate : "
 			    "computation of the tangent operator "
@@ -223,21 +220,20 @@ namespace mtest
 
   void
   CastemCohesiveZoneModel::computeElasticStiffness(tfel::math::matrix<real>& Kt,
-							       const tfel::math::vector<real>& mp,
-							       const tfel::math::tmatrix<3u,3u,real>&,
-							       const tfel::material::ModellingHypothesis::Hypothesis h) const
+						   const tfel::math::vector<real>& mp,
+						   const tfel::math::tmatrix<3u,3u,real>&) const
   {
     using namespace std;
     using namespace tfel::math;
-    typedef tfel::material::ModellingHypothesis MH;
     if(this->stype==0u){
-      if((h==MH::PLANESTRESS)||(h==MH::PLANESTRAIN)||
-	 (h==MH::GENERALISEDPLANESTRAIN)){
+      const auto h = this->getHypothesis();
+      if((h==ModellingHypothesis::PLANESTRESS)||(h==ModellingHypothesis::PLANESTRAIN)||
+	 (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	Kt(0,0) = mp(1);
 	Kt(0,1) = real(0);
 	Kt(1,0) = real(0);
 	Kt(1,1) = mp(0);
-      } else if (h==MH::TRIDIMENSIONAL){
+      } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
 	Kt(0,0) = mp(1);
 	Kt(1,1) = mp(0);
 	Kt(2,2) = mp(0);
@@ -245,34 +241,29 @@ namespace mtest
 	Kt(1,0) = Kt(1,2) = real(0);
 	Kt(2,0) = Kt(2,1) = real(0);
       } else {
-	string msg("CastemCohesiveZoneModel::integrate : ");
-	msg += "unsupported hypothesis";
-	throw(runtime_error(msg));
+	throw(runtime_error("CastemCohesiveZoneModel::integrate: "
+			    "unsupported hypothesis"));
       }
     } else if(this->stype==1u){
-      string msg("CastemCohesiveZoneModel::integrate : ");
-      msg += "invalid behaviour type (orthotropic type is not supported yet)";
-      throw(runtime_error(msg));
+      throw(runtime_error("CastemCohesiveZoneModel::integrate: "
+			  "invalid behaviour type (orthotropic type is not supported yet)"));
     } else {
-      string msg("CastemCohesiveZoneModel::integrate : ");
-      msg += "invalid behaviour type (neither "
-	"isotropic or orthotropic)";
-      throw(runtime_error(msg));
+      throw(runtime_error("CastemCohesiveZoneModel::integrate: "
+			  "invalid behaviour type (neither "
+			  "isotropic or orthotropic)"));
     }
   }
 
   void
   CastemCohesiveZoneModel::setOptionalMaterialPropertiesDefaultValues(EvolutionManager& mp,
-										  const EvolutionManager& evm) const
+								      const EvolutionManager& evm) const
   {
-    using namespace std;
     Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"MassDensity",0.);
     if(this->stype==0){
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"NormalThermalExpansion",0.);
     } else {
-      string msg("CastemCohesiveZoneModel::CastemCohesiveZoneModel : "
-		 "unsupported symmetry type");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("CastemCohesiveZoneModel::CastemCohesiveZoneModel : "
+			       "unsupported symmetry type"));
     }
   } // end of CastemCohesiveZoneModel::setOptionalMaterialPropertiesDefaultValues
       

@@ -710,7 +710,6 @@ namespace mtest
 			    this->tokens.end());
     auto sev = this->parseEvolution(t,evt,p);
     auto sc  = std::make_shared<ImposedThermodynamicForce>(*(t.getBehaviour()),
-							   t.getModellingHypothesis(),
 							   c,sev);
     t.addEvolution(c,sev,false,true);
     t.addConstraint(sc);
@@ -763,7 +762,6 @@ namespace mtest
 			    this->tokens.end());
     auto sev = this->parseEvolution(t,evt,p);
     auto sc  = std::make_shared<ImposedDrivingVariable>(*(t.getBehaviour()),
-							t.getModellingHypothesis(),
 							c,sev);
     this->readSpecifiedToken("MTestParser::handleImposedDrivingVariable",";",
 			     p,this->tokens.end());
@@ -811,9 +809,8 @@ namespace mtest
   void
   MTestParser::handleDrivingVariable(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
-    const unsigned short N = t.getBehaviour()->getDrivingVariablesSize(t.getModellingHypothesis());
-    vector<real> e_t0;
+    const auto N = t.getBehaviour()->getDrivingVariablesSize();
+    std::vector<real> e_t0;
     e_t0.resize(N,0);
     this->readArrayOfSpecifiedSize(e_t0,t,p);
     this->readSpecifiedToken("MTestParser::handleDrivingVariable",
@@ -849,7 +846,7 @@ namespace mtest
   void
   MTestParser::handleThermodynamicForce(MTest& t,TokensContainer::const_iterator& p)
   {
-    const auto N = t.getBehaviour()->getThermodynamicForcesSize(t.getModellingHypothesis());
+    const auto N = t.getBehaviour()->getThermodynamicForcesSize();
     std::vector<real> s_t0;
     s_t0.resize(N,0);
     this->readArrayOfSpecifiedSize(s_t0,t,p);

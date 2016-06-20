@@ -112,12 +112,10 @@ namespace mtest
    * \brief allocate memory
    * \param[out] s: state
    * \param[in]  b: behaviour
-   * \param[in]  h: modelling hypothesis
    */
   MTEST_VISIBILITY_EXPORT void
   allocate(CurrentState&,
-	   const std::shared_ptr<const Behaviour>&,
-	   const tfel::material::ModellingHypothesis::Hypothesis);
+	   const std::shared_ptr<const Behaviour>&);
   
   /*!
    * \brief compute the external state variables for the current time

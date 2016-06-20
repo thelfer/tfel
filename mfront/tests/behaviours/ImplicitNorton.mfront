@@ -23,7 +23,7 @@
 }
 
 @ModellingHypotheses {".+"};
-@Epsilon 1.e-11;
+@Epsilon 1.e-16;
 
 @AsterCompareToNumericalTangentOperator[aster] true;
 @AsterStrainPerturbationValue[aster] 1.e-6;

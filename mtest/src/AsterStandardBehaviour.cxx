@@ -128,51 +128,51 @@ namespace mtest
   } // end of AsterStandardBehaviour::getRotationMatrix
 
   size_t
-  AsterStandardBehaviour::getInternalStateVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis h) const
+  AsterStandardBehaviour::getInternalStateVariablesSize() const
   {
-    using namespace std;
-    using namespace tfel::material;
     size_t s(0);
+    const auto h = this->getHypothesis();
     if(this->savesTangentOperator){
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	s=9;
-      } else if((h==ModellingHypothesis::AXISYMMETRICAL)||(h==ModellingHypothesis::PLANESTRESS)||
-		(h==ModellingHypothesis::PLANESTRAIN)||(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+      } else if((h==ModellingHypothesis::AXISYMMETRICAL)||
+		(h==ModellingHypothesis::PLANESTRESS)||
+		(h==ModellingHypothesis::PLANESTRAIN)||
+		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	s=16;
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	s=36;
       } else {
-	string msg("AsterStandardBehaviour::getInternalStateVariablesSize : "
-		   "invalid modelling hypothesis");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("AsterStandardBehaviour::getInternalStateVariablesSize: "
+				 "invalid modelling hypothesis"));
       }	
     }
-    return s+ UmatBehaviourBase::getInternalStateVariablesSize(h);
+    return s+ UmatBehaviourBase::getInternalStateVariablesSize();
   } // end of AsterStandardBehaviour::getInternalStateVariablesSize() const
 
   std::vector<std::string>
-  AsterStandardBehaviour::getInternalStateVariablesDescriptions(const tfel::material::ModellingHypothesis::Hypothesis h) const
+  AsterStandardBehaviour::getInternalStateVariablesDescriptions() const
   {
-    using namespace std;
-    using namespace tfel::material;
-    vector<string> desc = UmatBehaviourBase::getInternalStateVariablesDescriptions(h);
+    auto desc = UmatBehaviourBase::getInternalStateVariablesDescriptions();
     if(this->savesTangentOperator){
       size_t s(0);
+      const auto h = this->getHypothesis();
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	s=3;
-      } else if((h==ModellingHypothesis::AXISYMMETRICAL)||(h==ModellingHypothesis::PLANESTRESS)||
-		(h==ModellingHypothesis::PLANESTRAIN)||(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+      } else if((h==ModellingHypothesis::AXISYMMETRICAL)||
+		(h==ModellingHypothesis::PLANESTRESS)||
+		(h==ModellingHypothesis::PLANESTRAIN)||
+		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	s=4;
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	s=6;
       } else {
-	string msg("AsterStandardBehaviour::getInternalStateVariablesDescriptions : "
-		   "invalid modelling hypothesis");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("AsterStandardBehaviour::getInternalStateVariablesDescriptions: "
+				 "invalid modelling hypothesis"));
       }
       for(unsigned short i=0;i!=s;++i){
 	for(unsigned short j=0;j!=s;++j){
-	  ostringstream n;
+	  std::ostringstream n;
 	  n << "component (" << j << "," << i << ") of the tangent operator";
 	  desc.push_back(n.str());	  
 	}
@@ -182,12 +182,11 @@ namespace mtest
   } // end of AsterStandardBehaviour::getInternalStateVariablesDescriptions
 
   void
-  AsterStandardBehaviour::allocate(BehaviourWorkSpace& wk,
-				   const tfel::material::ModellingHypothesis::Hypothesis h) const
+  AsterStandardBehaviour::allocate(BehaviourWorkSpace& wk) const
   {
-    const auto ndv     = this->getDrivingVariablesSize(h);
-    const auto nth     = this->getThermodynamicForcesSize(h);
-    const auto nstatev = this->getInternalStateVariablesSize(h);
+    const auto ndv     = this->getDrivingVariablesSize();
+    const auto nth     = this->getThermodynamicForcesSize();
+    const auto nstatev = this->getInternalStateVariablesSize();
     wk.kt.resize(nth,ndv);
     wk.k.resize(nth,ndv);
     wk.D.resize(nth,ndv);
@@ -197,7 +196,7 @@ namespace mtest
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
-    mtest::allocate(wk.cs,this->shared_from_this(),h);
+    mtest::allocate(wk.cs,this->shared_from_this());
   } // end of AsterStandardBehaviour::allocate
 
   StiffnessMatrixType
@@ -209,24 +208,22 @@ namespace mtest
   std::pair<bool,real>
   AsterStandardBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
 						    const CurrentState& s,
-						    const tfel::material::ModellingHypothesis::Hypothesis h,
 						    const StiffnessMatrixType ktype) const
   {
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       return {false,real(-1)};
     }
     wk.cs = s;
-    return this->call_behaviour(wk.kt,wk.cs,wk,h,real(1),ktype,false);
+    return this->call_behaviour(wk.kt,wk.cs,wk,real(1),ktype,false);
   }
 
   std::pair<bool,real>
   AsterStandardBehaviour::integrate(CurrentState& s,
 				    BehaviourWorkSpace& wk,
-				    const tfel::material::ModellingHypothesis::Hypothesis h,
 				    const real dt,
 				    const StiffnessMatrixType ktype) const
   {
-    return this->call_behaviour(wk.k,s,wk,h,dt,ktype,true);
+    return this->call_behaviour(wk.k,s,wk,dt,ktype,true);
   } // end of AsterStandardBehaviour::integrate
 
   AsterStandardBehaviour::~AsterStandardBehaviour()

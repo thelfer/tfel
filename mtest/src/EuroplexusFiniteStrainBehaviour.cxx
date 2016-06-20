@@ -45,10 +45,9 @@ namespace mtest
   }
 
   void
-  EuroplexusFiniteStrainBehaviour::allocate(BehaviourWorkSpace& wk,
-				       const tfel::material::ModellingHypothesis::Hypothesis h) const
+  EuroplexusFiniteStrainBehaviour::allocate(BehaviourWorkSpace& wk) const
   {
-    EuroplexusStandardBehaviour::allocate(wk,h);
+    EuroplexusStandardBehaviour::allocate(wk);
     wk.D.resize(6u,9u);
   }
 
@@ -56,23 +55,22 @@ namespace mtest
   EuroplexusFiniteStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
 						  CurrentState& s,
 						  BehaviourWorkSpace&,
-						  const tfel::material::ModellingHypothesis::Hypothesis h,
 						  const real dt,
 						  const StiffnessMatrixType ktype,
 						  const bool b) const
   {
-    typedef tfel::material::ModellingHypothesis MH;
-    const epx::EuroplexusInt nprops  = static_cast<epx::EuroplexusInt>(s.mprops1.size());
-    const epx::EuroplexusInt nstatv  = static_cast<epx::EuroplexusInt>(s.iv0.size());
-    const epx::EuroplexusInt npredef = static_cast<epx::EuroplexusInt>(s.esv0.size())-1;
+    const auto nprops  = static_cast<epx::EuroplexusInt>(s.mprops1.size());
+    const auto nstatv  = static_cast<epx::EuroplexusInt>(s.iv0.size());
+    const auto npredef = static_cast<epx::EuroplexusInt>(s.esv0.size())-1;
+    const auto h = this->getHypothesis();
     const epx::EuroplexusInt hv = [&h](){
-      if (h==MH::AXISYMMETRICAL){
+      if (h==ModellingHypothesis::AXISYMMETRICAL){
 	return 3;
-      } else if (h==MH::PLANESTRESS){
+      } else if (h==ModellingHypothesis::PLANESTRESS){
 	return 2;
-      } else if (h==MH::PLANESTRAIN){
+      } else if (h==ModellingHypothesis::PLANESTRAIN){
 	return 1;
-      } else if (h==MH::TRIDIMENSIONAL){
+      } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 0;
       } else {
 	throw(std::runtime_error("EuroplexusFiniteStrainBehaviour::call_beahviour: "

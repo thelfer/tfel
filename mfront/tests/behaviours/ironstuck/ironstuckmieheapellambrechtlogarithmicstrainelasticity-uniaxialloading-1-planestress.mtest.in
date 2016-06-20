@@ -27,5 +27,5 @@
 
 @Test<function> {'SZZ':'0','SYY':'0'}           1.e-2;
 @Test<function> {'SXX':'Txx/J','SXY':'0'}       1.e-2;
-@Test<function> {'FYY': 'sqrt(exp(2*eyy))','FZZ': '0.'} 1.e-7;
+@Test<function> {'FYY': 'sqrt(exp(2*eyy))','FZZ': '1'} 1.e-7;
 @Test<function> {'FXY': '0', 'FYX':'0'} 1.e-10;

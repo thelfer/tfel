@@ -33,9 +33,9 @@ namespace mtest
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
-    AsterStandardBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
-				const std::string&,
-				const std::string&);
+    AsterStandardBehaviour(const Hypothesis,
+			   const std::string&,
+			   const std::string&);
     /*!
      * \brief compute the *real* rotation matrix
      * \param[in] mp : material properties
@@ -48,16 +48,15 @@ namespace mtest
 		      const tfel::math::tmatrix<3u,3u,real>&) const override;
     /*!
      * \return the size of the array of internal variables
-     * \param[in] d : space dimension
      */
     virtual size_t
-    getInternalStateVariablesSize(const tfel::material::ModellingHypothesis::Hypothesis h) const override;
+    getInternalStateVariablesSize() const override;
     /*!
      * \return the descriptions the internal variables
      * \param[in] d : space dimension
      */
     virtual std::vector<std::string>
-    getInternalStateVariablesDescriptions(const tfel::material::ModellingHypothesis::Hypothesis) const override;
+    getInternalStateVariablesDescriptions() const override;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
@@ -76,7 +75,6 @@ namespace mtest
     virtual std::pair<bool,real>
     computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
-			      const tfel::material::ModellingHypothesis::Hypothesis,
 			      const StiffnessMatrixType) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
@@ -85,24 +83,20 @@ namespace mtest
      * step scaling factor.
      * \param[out/in] s     : current state
      * \param[out]    wk    : behaviour workspace
-     * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
     virtual std::pair<bool,real>
     integrate(CurrentState&,
 	      BehaviourWorkSpace&,
-	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real,
 	      const StiffnessMatrixType) const override;
     /*!
      * \brief allocate internal workspace
      * \param[out] wk : behaviour workspace
-     * \param[in]  h  : modelling hypothesis
      */
     virtual void
-    allocate(BehaviourWorkSpace&,
-	     const tfel::material::ModellingHypothesis::Hypothesis) const override;
+    allocate(BehaviourWorkSpace&) const override;
     //! destructor
     virtual ~AsterStandardBehaviour();
   protected:
@@ -114,7 +108,6 @@ namespace mtest
      * \param[out]    Kt    : tangent operator
      * \param[in/out] s     : current state
      * \param[out]    wk    : behaviour workspace
-     * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      * \param[in]     b     : if true, integrate the behaviour over the time
@@ -124,7 +117,6 @@ namespace mtest
     call_behaviour(tfel::math::matrix<real>&,
 		   CurrentState&,
 		   BehaviourWorkSpace&,
-		   const tfel::material::ModellingHypothesis::Hypothesis,
 		   const real,
 		   const StiffnessMatrixType,
 		   const bool) const = 0;

@@ -61,23 +61,23 @@ namespace mtest
 			     tfel::math::vector<real>& r,
 			     const Behaviour& b,
 			     const tfel::math::matrix<real>& kt,
-			     const tfel::math::vector<real>& s,
-			     const tfel::material::ModellingHypothesis::Hypothesis h)
+			     const tfel::math::vector<real>& s)
   {
     using namespace tfel::material;
     using size_type = tfel::math::matrix<real>::size_type;
-    const auto ndv = b.getDrivingVariablesSize(h);
-    const auto nth = b.getThermodynamicForcesSize(h);
+    const auto ndv = b.getDrivingVariablesSize();
+    const auto nth = b.getThermodynamicForcesSize();
     std::fill(k.begin(),k.end(),real(0));
     std::fill(r.begin(),r.end(),real(0));
-    if(b.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(b.getBehaviourType()==
+       MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
       for(size_type i=0;i!=3u;++i){
 	r(i) += s(i);
 	for(size_type j=0;j!=ndv;++j){
 	  k(i,j) += kt(i,j);
 	}
       }
-      if(getSpaceDimension(h)>1u){
+      if(getSpaceDimension(b.getHypothesis())>1u){
 	for(size_type i=0;i!=nth-3u;++i){
 	  r(2*i+3u)   += s(i);
 	  r(2*i+3u+1) += s(i);
@@ -207,21 +207,21 @@ namespace mtest
       throw(std::runtime_error("MTest::getVariableTypeAndPosition : "
 			       "no behaviour defined"));
     }
-    const auto enames = this->b->getDrivingVariablesComponents(this->hypothesis);
-    const auto snames = this->b->getThermodynamicForcesComponents(this->hypothesis);
-    auto p=find(enames.begin(),enames.end(),n);
+    const auto enames = this->b->getDrivingVariablesComponents();
+    const auto snames = this->b->getThermodynamicForcesComponents();
+    auto p= std::find(enames.begin(),enames.end(),n);
     if(p!=enames.end()){
       pos  = static_cast<unsigned short>(p-enames.begin());
       type = MTest::UTest::DRIVINGVARIABLE;
       return;
     } 
-    p=find(snames.begin(),snames.end(),n);
+    p=std::find(snames.begin(),snames.end(),n);
     if(p!=snames.end()){
       pos  = static_cast<unsigned short>(p-snames.begin());
       type = MTest::UTest::THERMODYNAMICFORCE;
       return;
     } 
-    p=find(this->ivfullnames.begin(),this->ivfullnames.end(),n);
+    p=std::find(this->ivfullnames.begin(),this->ivfullnames.end(),n);
     if(p!=this->ivfullnames.end()){
       pos  = static_cast<unsigned short>(p-this->ivfullnames.begin());
       type = MTest::UTest::INTERNALSTATEVARIABLE;
@@ -234,8 +234,8 @@ namespace mtest
   void
   MTest::setDefaultModellingHypothesis(void)
   {
-    typedef tfel::material::ModellingHypothesis MH;
-    if(this->hypothesis!=MH::UNDEFINEDHYPOTHESIS){
+    using tfel::material::ModellingHypothesis;
+    if(this->hypothesis!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       throw(std::runtime_error("MTest::setDefaultModellingHypothesis: "
 			       "internal error : the modelling "
 			       "hypothesis is already defined"));
@@ -248,7 +248,7 @@ namespace mtest
       auto& log = mfront::getLogStream();
       log << "No hypothesis defined, using default" << std::endl;
     }
-    this->hypothesis = MH::TRIDIMENSIONAL;
+    this->hypothesis = ModellingHypothesis::TRIDIMENSIONAL;
   }
 
   void
@@ -265,7 +265,7 @@ namespace mtest
 			       "the initial values of the strains have "
 			       "already been declared"));
     }
-    const auto N = this->b->getDrivingVariablesSize(this->hypothesis);
+    const auto N = this->b->getDrivingVariablesSize();
     if(v.size()!=N){
       throw(std::runtime_error("MTest::setDrivingVariablesInitialValues: "
 			       "invalid initial values size"));
@@ -282,7 +282,7 @@ namespace mtest
 			       "the initial values of the strains have "
 			       "already been declared"));
     }
-    const auto N = this->b->getThermodynamicForcesSize(this->hypothesis);
+    const auto N = this->b->getThermodynamicForcesSize();
     if(v.size()!=N){
       throw(std::runtime_error("MTest::setThermodynamicForcesInitialValues: "
 			       "invalid initial values size"));
@@ -301,15 +301,32 @@ namespace mtest
     // additional constraints
     // must be set *before* `SingleStructureScheme::completeInitialisation`
     if(this->hypothesis==ModellingHypothesis::PLANESTRAIN){
-      shared_ptr<Evolution>  eev(new ConstantEvolution(0.));
-      shared_ptr<Constraint> ec(new ImposedDrivingVariable(2,eev));
-      this->constraints.push_back(ec);
+      if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
+	shared_ptr<Evolution>  eev;
+	if(this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+	  eev = shared_ptr<Evolution>(new ConstantEvolution(1.));
+	} else {
+	  eev = shared_ptr<Evolution>(new ConstantEvolution(0.));
+	}
+	shared_ptr<Constraint> ec(new ImposedDrivingVariable(2,eev));
+	this->constraints.push_back(ec);
+      }	else {
+	throw(std::runtime_error("MTest::completeInitialisation : "
+				 "plane strain hypothesis is only "
+				 "handled for small and finite strain behaviours"));
+      }
     }
     if(this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
       // shall be in the behaviour
       if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-	shared_ptr<Evolution>  eev(new ConstantEvolution(0.));
+	shared_ptr<Evolution>  eev;
+	if(this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+	  eev = shared_ptr<Evolution>(new ConstantEvolution(1.));
+	} else {
+	  eev = shared_ptr<Evolution>(new ConstantEvolution(0.));
+	}
 	shared_ptr<Constraint> ec(new ImposedDrivingVariable(1,eev));
 	shared_ptr<Evolution>  sev;
 	auto pev = this->evm->find("AxialStress");
@@ -331,7 +348,12 @@ namespace mtest
       // shall be in the behaviour
       if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-	shared_ptr<Evolution>  eev(new ConstantEvolution(0.));
+	shared_ptr<Evolution>  eev;
+	if(this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+	  eev = shared_ptr<Evolution>(new ConstantEvolution(1.));
+	} else {
+	  eev = shared_ptr<Evolution>(new ConstantEvolution(0.));
+	}
 	shared_ptr<Constraint> ec(new ImposedDrivingVariable(2,eev));
 	shared_ptr<Evolution>  sev(new ConstantEvolution(0.));
 	shared_ptr<Constraint> sc(new ImposedThermodynamicForce(2,sev));
@@ -362,8 +384,8 @@ namespace mtest
       dvn = "driving variables";
       thn = "thermodynamic forces";
     }
-    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
-    const auto nth = this->b->getThermodynamicForcesSize(this->hypothesis);
+    const auto ndv = this->b->getDrivingVariablesSize();
+    const auto nth = this->b->getThermodynamicForcesSize();
     for(unsigned short i=0;i!=ndv;++i){
       this->out << "# " << cnbr << " column : " << i+1 << "th component of the " << dvn << '\n';
       ++cnbr;
@@ -372,8 +394,8 @@ namespace mtest
       this->out << "# " << cnbr << " column : " << i+1 << "th component of the " << thn << '\n';
       ++cnbr;
     }
-    const auto& ivdes = this->b->getInternalStateVariablesDescriptions(this->hypothesis);
-    if(ivdes.size()!=this->b->getInternalStateVariablesSize(this->hypothesis)){
+    const auto& ivdes = this->b->getInternalStateVariablesDescriptions();
+    if(ivdes.size()!=this->b->getInternalStateVariablesSize()){
       throw(std::runtime_error("MTest::completeInitialisation : internal error "
 			       "(the number of descriptions given by "
 			       "the mechanical behaviour don't match "
@@ -442,7 +464,7 @@ namespace mtest
     // state of the one and only integration point
     ss.istates.resize(1);
     auto& cs = ss.istates[0];
-    mtest::allocate(cs,this->b,this->hypothesis);
+    mtest::allocate(cs,this->b);
     // setting the intial  values of strains
     this->b->getDrivingVariablesDefaultInitialValues(s.u_1);
     copy(this->e_t0.begin(),this->e_t0.end(),s.u_1.begin());
@@ -504,7 +526,7 @@ namespace mtest
 			       "object not initialised"));
     }
     // number of components of the driving variables
-    const auto N = this->b->getDrivingVariablesSize(this->hypothesis);
+    const auto N = this->b->getDrivingVariablesSize();
     // getting the total number of unknowns
     size_t s = N;
     for(const auto& pc : this->constraints){
@@ -602,7 +624,7 @@ namespace mtest
     }
     // driving variables at the beginning of the time step
     for(auto& s: scs.istates){
-      const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+      const auto ndv = this->b->getDrivingVariablesSize();
       for(unsigned short i=0;i!=ndv;++i){
   	s.e0[i] = state.u0[i];
       }
@@ -643,15 +665,15 @@ namespace mtest
 			       "invalid state"));
     }
     auto& s = scs.istates[0];
-    auto res = this->b->computePredictionOperator(bwk,s,this->hypothesis,smt);
+    auto res = this->b->computePredictionOperator(bwk,s,smt);
     if(!res.first){
       return res;
     }
     std::fill(k.begin(),k.end(),0.);
     std::fill(r.begin(),r.end(),0.);
-    updateStiffnessAndResidual(k,r,*(this->b),bwk.kt,s.s0,this->hypothesis);
-    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
-    const auto nth = this->b->getThermodynamicForcesSize(this->hypothesis);
+    updateStiffnessAndResidual(k,r,*(this->b),bwk.kt,s.s0);
+    const auto ndv = this->b->getDrivingVariablesSize();
+    const auto nth = this->b->getThermodynamicForcesSize();
     // free dilatation treatment
     if(this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
       for(size_type i=0;i!=nth;++i){
@@ -700,14 +722,14 @@ namespace mtest
 			       "invalid state"));
     }
     auto& s = scs.istates[0];
-    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
-    const auto nth = this->b->getThermodynamicForcesSize(this->hypothesis);
+    const auto ndv = this->b->getDrivingVariablesSize();
+    const auto nth = this->b->getThermodynamicForcesSize();
     const auto btype = this->b->getBehaviourType();
     for(size_type i=0;i!=ndv;++i){
       s.e1[i] = state.u1[i];
     }
     // behaviour integration
-    const auto rb = this->b->integrate(s,bwk,this->hypothesis,dt,mt);
+    const auto rb = this->b->integrate(s,bwk,dt,mt);
     if(!rb.first){
       if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
   	auto& log = mfront::getLogStream();
@@ -728,7 +750,7 @@ namespace mtest
 	std::copy(bwk.ne.begin(),bwk.ne.end(),s.e1.begin());
 	s.e1[i] += this->pv;
 	try{
-	  ok = this->b->integrate(s,bwk,this->hypothesis,dt,mt).first;
+	  ok = this->b->integrate(s,bwk,dt,mt).first;
 	} catch(...){
 	  ok = false;
 	}
@@ -742,7 +764,7 @@ namespace mtest
 	std::copy(bwk.ne.begin(),bwk.ne.end(),s.e1.begin());
 	s.e1[i] -= this->pv;
 	try{
-	  ok = this->b->integrate(s,bwk,this->hypothesis,dt,mt).first;
+	  ok = this->b->integrate(s,bwk,dt,mt).first;
 	} catch(...){
 	  ok = false;
 	}
@@ -778,7 +800,7 @@ namespace mtest
 	log << "Numerical evalution of tangent operator failed.\n\n";
       }
     }
-    updateStiffnessAndResidual(k,r,*(this->b),bwk.k,s.s1,this->hypothesis);
+    updateStiffnessAndResidual(k,r,*(this->b),bwk.k,s.s1);
     if(!state.containsParameter("LagrangeMultipliersNormalisationFactor")){
       state.setParameter("LagrangeMultipliersNormalisationFactor",
 			 *(std::max_element(k.begin(),k.end())));
@@ -807,7 +829,7 @@ namespace mtest
   
   real
   MTest::getErrorNorm(const tfel::math::vector<real>& du) const {
-    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+    const auto ndv = this->b->getDrivingVariablesSize();
     return MTest_getErrorNorm(du,ndv);
   } // end of MTest::getErrorNorm
   
@@ -839,7 +861,7 @@ namespace mtest
 			       "invalid state"));
     }
     const auto& s = scs.istates[0];
-    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+    const auto ndv = this->b->getDrivingVariablesSize();
     const auto ne = getErrorNorm(du);
     const auto nr = MTest_getErrorNorm(r,ndv);
     if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
@@ -875,7 +897,7 @@ namespace mtest
 			       "invalid state"));
     }
     const auto& s = scs.istates[0];
-    const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
+    const auto ndv = this->b->getDrivingVariablesSize();
     const auto ne = this->getErrorNorm(du);
     const auto nr = MTest_getErrorNorm(r,ndv);
     auto fc = std::vector<std::string>{};
@@ -944,8 +966,8 @@ namespace mtest
     if(this->out){
       auto& cs = s.getStructureCurrentState("").istates[0];
       // number of components of the driving variables and the thermodynamic forces
-      const auto ndv = this->b->getDrivingVariablesSize(this->hypothesis);
-      const auto nth = this->b->getThermodynamicForcesSize(this->hypothesis);
+      const auto ndv = this->b->getDrivingVariablesSize();
+      const auto nth = this->b->getThermodynamicForcesSize();
       unsigned short i;
       this->out << t << " ";
       for(i=0;i!=ndv;++i){
@@ -960,7 +982,6 @@ namespace mtest
     }
   }
   
-  MTest::~MTest()
-  {}
+  MTest::~MTest() = default;
 
 } // end namespace mtest

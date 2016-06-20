@@ -33,7 +33,7 @@ namespace mtest
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
-    EuroplexusFiniteStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
+    EuroplexusFiniteStrainBehaviour(const Hypothesis,
 				    const std::string&,
 				    const std::string&);
     /*!
@@ -44,11 +44,9 @@ namespace mtest
     /*!
      * \brief allocate internal workspace
      * \param[out] wk : work space
-     * \param[in]  h  : modelling hypothesis
      */
     virtual void
-    allocate(BehaviourWorkSpace&,
-	     const tfel::material::ModellingHypothesis::Hypothesis) const override;
+    allocate(BehaviourWorkSpace&) const override;
     //! destructor
     virtual ~EuroplexusFiniteStrainBehaviour();
   protected:
@@ -60,7 +58,6 @@ namespace mtest
      * \param[out]    Kt    : tangent operator
      * \param[in/out] s     : current state
      * \param[out]    wk    : workspace
-     * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      * \param[in]     b     : if true, integrate the behaviour over the time
@@ -70,7 +67,6 @@ namespace mtest
     call_behaviour(tfel::math::matrix<real>&,
 		   CurrentState&,
 		   BehaviourWorkSpace&,
-		   const tfel::material::ModellingHypothesis::Hypothesis,
 		   const real,
 		   const StiffnessMatrixType,
 		   const bool) const override;

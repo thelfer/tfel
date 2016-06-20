@@ -29,6 +29,8 @@ namespace mtest
      * \param[in] wb : wrapped behaviour
      */
     LogarithmicStrain1DBehaviourWrapper(const std::shared_ptr<Behaviour>&);
+    //! \return the modelling hypothesis 
+    virtual Hypothesis getHypothesis(void) const override;
     /*!
      * \brief This function set a material property to its default value if it not already declared
      * \param[out] mp  : evolution manager where 
@@ -48,10 +50,9 @@ namespace mtest
     getBehaviourType(void) const override;
     /*!
      * \return the size of a vector able to contain all the components of the driving variables
-     * \param[in] h : modelling hypothesis
      */
     virtual unsigned short
-    getDrivingVariablesSize(const Hypothesis) const override;
+    getDrivingVariablesSize() const override;
     /*!
      * \param[out] v : initial values of the driving variables
      * \note : the vector shall have been correctly allocated
@@ -60,48 +61,39 @@ namespace mtest
     getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const override;
     /*!
      * \return the size of a vector able to contain all the components of the thermodynamic forces
-     * \param[in] h : modelling hypothesis
      */
     virtual unsigned short
-    getThermodynamicForcesSize(const Hypothesis) const override;
+    getThermodynamicForcesSize() const override;
     /*!
      * \return the components suffixes of a symmetric tensor
-     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getStensorComponentsSuffixes(const Hypothesis) const override;
+    getStensorComponentsSuffixes() const override;
     /*!
      * \return the components suffixes of a tensor
-     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getTensorComponentsSuffixes(const Hypothesis) const override;
+    getTensorComponentsSuffixes() const override;
     /*!
      * \return the components of the driving variables
-     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getDrivingVariablesComponents(const Hypothesis) const override;
+    getDrivingVariablesComponents() const override;
     /*!
      * \return the components of the thermodynamic forces
-     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getThermodynamicForcesComponents(const Hypothesis) const override;
+    getThermodynamicForcesComponents() const override;
     /*!
-     * \param[in] h : modelling hypothesis
      * \param[in] c : component
      */
     virtual unsigned short
-    getDrivingVariableComponentPosition(const Hypothesis,
-					const std::string&) const override;
+    getDrivingVariableComponentPosition(const std::string&) const override;
     /*!
-     * \param[in] h : modelling hypothesis
      * \param[in] c : component
      */
     virtual unsigned short
-    getThermodynamicForceComponentPosition(const Hypothesis,
-					   const std::string&) const override;
+    getThermodynamicForceComponentPosition(const std::string&) const override;
     /*!
      * \return the type of the behaviour
      * 0 means that the behaviour is isotropic.
@@ -134,16 +126,14 @@ namespace mtest
     getInternalStateVariablesNames(void) const  override;
     /*!
      * \return the size of the array of internal variables
-     * \param[in] h : modelling hypothesis
      */
     virtual size_t
-    getInternalStateVariablesSize(const Hypothesis) const override;
+    getInternalStateVariablesSize() const override;
     /*!
      * \return the descriptions the internal variables
-     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getInternalStateVariablesDescriptions(const Hypothesis) const override;
+    getInternalStateVariablesDescriptions() const override;
     /*!
      * \return the type of an internal variable
      * \param[in] n : internal variable name
@@ -152,12 +142,10 @@ namespace mtest
     getInternalStateVariableType(const std::string&) const override;
     /*!
      * \return the position of an internal variable
-     * \param[in] h : modelling hypothesis
      * \param[in] n : internal variable name
      */
     virtual unsigned short
-    getInternalStateVariablePosition(const Hypothesis,
-				     const std::string&) const override;
+    getInternalStateVariablePosition(const std::string&) const override;
     /*!
      * \return the number of external variables
      */
@@ -196,11 +184,9 @@ namespace mtest
     /*!
      * \brief allocate workspace
      * \param[out] wk : behaviour workspace
-     * \param[in]  h  : modelling hypothesis
      */
     virtual void
-    allocate(BehaviourWorkSpace&,
-	     const Hypothesis) const override;
+    allocate(BehaviourWorkSpace&) const override;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
@@ -222,12 +208,10 @@ namespace mtest
      * \return a boolean
      * \param[out] wk : behaviour workspace
      * \param[in] s   : current state
-     * \param[in] h   : modelling hypothesis
      */
     virtual bool
     doPackagingStep(CurrentState&,
-		    BehaviourWorkSpace&,
-		    const Hypothesis) const override;
+		    BehaviourWorkSpace&) const override;
     /*!
      * \brief compute the prediction operator at the beginning of the
      * time step.
@@ -236,13 +220,11 @@ namespace mtest
      * step scaling factor.
      * \param[out] wk    : behaviour workspace
      * \param[in]  s     : current state
-     * \param[in]  h     : modelling hypothesis
      * \param[in]  ktype : type of the stiffness matrix
      */
     virtual std::pair<bool,real>
     computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
-			      const Hypothesis,
 			      const StiffnessMatrixType) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
@@ -251,14 +233,12 @@ namespace mtest
      * step scaling factor.
      * \param[out/in] s     : current state
      * \param[out]    wk    : behaviour workspace
-     * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
     virtual std::pair<bool,real>
     integrate(CurrentState&,
 	      BehaviourWorkSpace&,
-	      const Hypothesis,
 	      const real,
 	      const StiffnessMatrixType) const override;
     //! destructor

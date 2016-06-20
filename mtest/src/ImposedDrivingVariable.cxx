@@ -21,12 +21,11 @@ namespace mtest
 {
 
   ImposedDrivingVariable::ImposedDrivingVariable(const Behaviour& b,
-						 const tfel::material::ModellingHypothesis::Hypothesis h,
 						 const std::string& cname,
 						 const std::shared_ptr<Evolution> e_)
     : eev(e_)
   {
-    this->c = b.getDrivingVariableComponentPosition(h,cname);
+    this->c = b.getDrivingVariableComponentPosition(cname);
   } // end of ImposedDrivingVariable::ImposedDrivingVariable
 
   ImposedDrivingVariable::ImposedDrivingVariable(const unsigned short c_,

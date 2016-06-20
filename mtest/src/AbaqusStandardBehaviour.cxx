@@ -110,12 +110,11 @@ namespace mtest
   } // end of AbaqusStandardBehaviour::getRotationMatrix
 
   void
-  AbaqusStandardBehaviour::allocate(BehaviourWorkSpace& wk,
-				    const tfel::material::ModellingHypothesis::Hypothesis h) const
+  AbaqusStandardBehaviour::allocate(BehaviourWorkSpace& wk) const
   {
-    const auto ndv     = this->getDrivingVariablesSize(h);
-    const auto nth     = this->getThermodynamicForcesSize(h);
-    const auto nstatev = this->getInternalStateVariablesSize(h);
+    const auto ndv     = this->getDrivingVariablesSize();
+    const auto nth     = this->getThermodynamicForcesSize();
+    const auto nstatev = this->getInternalStateVariablesSize();
     wk.D.resize(nth,nth);
     wk.kt.resize(nth,ndv);
     wk.k.resize(nth,ndv);
@@ -125,7 +124,7 @@ namespace mtest
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
-    mtest::allocate(wk.cs,this->shared_from_this(),h);
+    mtest::allocate(wk.cs,this->shared_from_this());
   } // end of AbaqusStandardBehaviour::allocate
 
   StiffnessMatrixType
@@ -137,24 +136,22 @@ namespace mtest
   std::pair<bool,real>
   AbaqusStandardBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
 						     const CurrentState& s,
-						     const tfel::material::ModellingHypothesis::Hypothesis h,
 						     const StiffnessMatrixType ktype) const
   {
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       return {false,real(-1)};
     }
     wk.cs = s;
-    return this->call_behaviour(wk.kt,wk.cs,wk,h,real(1),ktype,false);
+    return this->call_behaviour(wk.kt,wk.cs,wk,real(1),ktype,false);
   }
 
   std::pair<bool,real>
   AbaqusStandardBehaviour::integrate(CurrentState& s,
 				     BehaviourWorkSpace& wk,
-				     const tfel::material::ModellingHypothesis::Hypothesis h,
 				     const real dt,
 				     const StiffnessMatrixType ktype) const
   {
-    return this->call_behaviour(wk.k,s,wk,h,dt,ktype,true);
+    return this->call_behaviour(wk.k,s,wk,dt,ktype,true);
   } // end of AbaqusStandardBehaviour::integrate
 
   AbaqusStandardBehaviour::~AbaqusStandardBehaviour()

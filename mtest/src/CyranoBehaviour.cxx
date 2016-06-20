@@ -29,8 +29,8 @@ namespace mtest
 {
 
   CyranoBehaviour::CyranoBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
-					     const std::string& l,
-					     const std::string& b)
+				   const std::string& l,
+				   const std::string& b)
     : UmatBehaviourBase(h,l,b)
   {
     using namespace tfel::system;
@@ -74,10 +74,9 @@ namespace mtest
   }
 
   void
-  CyranoBehaviour::allocate(BehaviourWorkSpace& wk,
-			    const tfel::material::ModellingHypothesis::Hypothesis h) const
+  CyranoBehaviour::allocate(BehaviourWorkSpace& wk) const
   {
-    const auto nstatev = this->getInternalStateVariablesSize(h);
+    const auto nstatev = this->getInternalStateVariablesSize();
     wk.D.resize(3u,3u);
     wk.kt.resize(3u,3u);
     wk.k.resize(3u,3u);
@@ -87,7 +86,7 @@ namespace mtest
     wk.ne.resize(3u);
     wk.ns.resize(3u);
     wk.nivs.resize(nstatev);
-    mtest::allocate(wk.cs,this->shared_from_this(),h);
+    mtest::allocate(wk.cs,this->shared_from_this());
   }
 
   tfel::math::tmatrix<3u,3u,real>
@@ -113,31 +112,28 @@ namespace mtest
   std::pair<bool,real>
   CyranoBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
 					     const CurrentState& s,
-					     const tfel::material::ModellingHypothesis::Hypothesis h,
 					     const StiffnessMatrixType ktype) const
   {
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       return {false,real(-1)};
     }
     wk.cs = s;
-    return this->call_behaviour(wk.kt,wk.cs,wk,h,real(1),ktype,false);
+    return this->call_behaviour(wk.kt,wk.cs,wk,real(1),ktype,false);
   } // end of CyranoBehaviour::computePredictionOperator
 
   std::pair<bool,real>
   CyranoBehaviour::integrate(CurrentState& s,
 			     BehaviourWorkSpace& wk,
-			     const tfel::material::ModellingHypothesis::Hypothesis h,
 			     const real dt,
 			     const StiffnessMatrixType ktype) const
   {
-    return this->call_behaviour(wk.k,s,wk,h,dt,ktype,true);
+    return this->call_behaviour(wk.k,s,wk,dt,ktype,true);
   } // end of CyranoBehaviour::integrate
 
   std::pair<bool,real>
   CyranoBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
 				  CurrentState& s,
 				  BehaviourWorkSpace& wk,
-				  const tfel::material::ModellingHypothesis::Hypothesis h,
 				  const real dt,
 				  const StiffnessMatrixType ktype,
 				  const bool b) const
@@ -145,39 +141,36 @@ namespace mtest
     using namespace std;
     using namespace tfel::math;
     using namespace cyrano;
-    typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
     using cyrano::CyranoComputeStiffnessTensor;
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("CyranoBehaviour::call_behaviour: "+m));}
+    };
     CyranoInt ntens;
     CyranoInt ndi;
     CyranoInt nprops = s.mprops1.size() == 0 ? 1 : static_cast<CyranoInt>(s.mprops1.size());
     CyranoInt nstatv;
-    if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+    const auto h = this->getHypothesis();
+    if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       ndi   = 1;
       ntens = 3;
-    } else if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS){
+    } else if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
       ndi   = 2;
       ntens = 3;
     } else {
-      string msg("CyranoBehaviour::integrate : ");
-      msg += "unsupported hypothesis";
-      throw(runtime_error(msg));
+      throw_if(true,"unsupported hypothesis");
     }
-    if((Kt.getNbRows()!=3u)||(Kt.getNbCols()!=3u)){
-      throw(runtime_error("CyranoBehaviour::integrate: "
-			  "invalid tangent operator size"));
-    }
-    if(((s.iv0.size()==0)&&(wk.ivs.size()!=1u))||
-       ((s.iv0.size()!=0)&&(s.iv0.size()!=wk.ivs.size()))){
-      throw(runtime_error("CyranoBehaviour::integrate: "
-			  "the memory has not been allocated correctly"));
-    }
-    fill(wk.D.begin(),wk.D.end(),0.);
+    throw_if((Kt.getNbRows()!=3u)||(Kt.getNbCols()!=3u),
+	     "invalid tangent operator size");
+    throw_if(((s.iv0.size()==0)&&(wk.ivs.size()!=1u))||
+	     ((s.iv0.size()!=0)&&(s.iv0.size()!=wk.ivs.size())),
+	     "the memory has not been allocated correctly");
+    std::fill(wk.D.begin(),wk.D.end(),0.);
     // choosing the type of stiffness matrix
     UmatBehaviourBase::initializeTangentOperator(wk.D,ktype,b);
     // using a local copy of material properties to handle the
     // case where s.mprops1 is empty
-    copy(s.mprops1.begin(),s.mprops1.end(),wk.mps.begin());
+    std::copy(s.mprops1.begin(),s.mprops1.end(),wk.mps.begin());
     if(s.mprops1.empty()){
       wk.mps[0] = real(0);
     }

@@ -111,17 +111,16 @@ namespace mtest
   } // end of AbaqusExplicitBehaviour::getRotationMatrix
 
   void
-  AbaqusExplicitBehaviour::allocate(BehaviourWorkSpace& wk,
-				    const Hypothesis h) const
+  AbaqusExplicitBehaviour::allocate(BehaviourWorkSpace& wk) const
   {
-    const auto ndv     = this->getDrivingVariablesSize(h);
-    const auto nth     = this->getThermodynamicForcesSize(h);
+    const auto ndv     = this->getDrivingVariablesSize();
+    const auto nth     = this->getThermodynamicForcesSize();
     wk.D.resize(nth,nth);
     wk.kt.resize(nth,ndv);
     wk.k.resize(nth,ndv);
     wk.mps.resize(this->mpnames.size()==0 ? 1u : this->mpnames.size(),real(0));
     wk.evs.resize(this->evnames.size());
-    mtest::allocate(wk.cs,this->shared_from_this(),h);
+    mtest::allocate(wk.cs,this->shared_from_this());
   } // end of AbaqusExplicitBehaviour::allocate
 
   StiffnessMatrixType
@@ -132,11 +131,11 @@ namespace mtest
 
   bool
   AbaqusExplicitBehaviour::doPackagingStep(CurrentState& s,
-					   BehaviourWorkSpace& wk,
-					   const Hypothesis h) const{
+					   BehaviourWorkSpace& wk) const{
     using tfel::math::matrix;
     using abaqus::AbaqusInt;
     matrix<real> K;
+    const auto h = this->getHypothesis();
     if((h==ModellingHypothesis::PLANESTRESS)||
        (h==ModellingHypothesis::AXISYMMETRICAL)||
        (h==ModellingHypothesis::PLANESTRAIN)){
@@ -304,7 +303,6 @@ namespace mtest
   std::pair<bool,real>
   AbaqusExplicitBehaviour::computePredictionOperator(BehaviourWorkSpace& wk,
 						     const CurrentState& s,
-						     const Hypothesis,
 						     const StiffnessMatrixType ktype) const
   {
     if(ktype==StiffnessMatrixType::ELASTIC){
@@ -323,7 +321,6 @@ namespace mtest
   std::pair<bool,real>
   AbaqusExplicitBehaviour::integrate(CurrentState& s,
 				     BehaviourWorkSpace& wk,
-				     const Hypothesis h,
 				     const real dt,
 				     const StiffnessMatrixType ktype) const
   {
@@ -343,6 +340,7 @@ namespace mtest
 			       "unsupported stiffness matrix type"));
     }
     const AbaqusInt nblock = 1;
+    const auto h = this->getHypothesis();
     const AbaqusInt ndir = [&h](){
       switch(h){
       case ModellingHypothesis::PLANESTRESS:

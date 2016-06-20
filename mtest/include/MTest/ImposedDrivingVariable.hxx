@@ -39,14 +39,12 @@ namespace mtest
     /*!
      * constructor
      * \param[in] b : behaviour
-     * \param[in] h : modelling hypothesis
      * \param[in] c : driving variable component
      * \param[in] s : driving variable evolution
      */
     ImposedDrivingVariable(const Behaviour&,
-				const tfel::material::ModellingHypothesis::Hypothesis,
-				const std::string&,
-				const std::shared_ptr<Evolution>);
+			   const std::string&,
+			   const std::shared_ptr<Evolution>);
     /*!
      * constructor
      * \param[in] c : component

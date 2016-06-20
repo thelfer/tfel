@@ -33,9 +33,9 @@ namespace mtest
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
-    AbaqusExplicitBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
-				const std::string&,
-				const std::string&);
+    AbaqusExplicitBehaviour(const Hypothesis,
+			    const std::string&,
+			    const std::string&);
     /*!
      * \brief compute the *real* rotation matrix
      * \param[in] mp : material properties
@@ -62,12 +62,10 @@ namespace mtest
      * \return a boolean
      * \param[out] wk : behaviour workspace
      * \param[in] s   : current state
-     * \param[in] h   : modelling hypothesis
      */
     virtual bool
     doPackagingStep(CurrentState&,
-		    BehaviourWorkSpace&,
-		    const Hypothesis) const override;
+		    BehaviourWorkSpace&) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return a pair. The first member is true if the integration was
@@ -75,13 +73,11 @@ namespace mtest
      * step scaling factor.
      * \param[out] wk    : behaviour workspace
      * \param[in]  s     : current state
-     * \param[in]  h     : modelling hypothesis
      * \param[in]  ktype : type of the stiffness matrix
      */
     virtual std::pair<bool,real>
     computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
-			      const tfel::material::ModellingHypothesis::Hypothesis,
 			      const StiffnessMatrixType) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
@@ -90,24 +86,20 @@ namespace mtest
      * step scaling factor.
      * \param[in/out] s     : current state
      * \param[out]    wk    : behaviour workspace
-     * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
     virtual std::pair<bool,real>
     integrate(CurrentState&,
 	      BehaviourWorkSpace&,
-	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real,
 	      const StiffnessMatrixType) const override;
     /*!
      * \brief allocate internal workspace
      * \param[out] wk : behaviour workspace
-     * \param[in] h   : modelling hypothesis
      */
     virtual void
-    allocate(BehaviourWorkSpace&,
-	     const tfel::material::ModellingHypothesis::Hypothesis) const override;
+    allocate(BehaviourWorkSpace&) const override;
     //! destructor
     virtual ~AbaqusExplicitBehaviour();
   protected:

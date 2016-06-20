@@ -66,7 +66,7 @@ namespace mtest{
 				 "modelling hypothesis not set"));
       }
       this->bwks.push_back(std::make_shared<BehaviourWorkSpace>());
-      this->b->allocate(*(this->bwks[0]),this->h);
+      this->b->allocate(*(this->bwks[0]));
     }
     return *(this->bwks[0]);
   } // end of StructureCurrentState::getBehaviourWorkSpace

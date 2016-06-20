@@ -785,7 +785,7 @@ namespace mfront{
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name));
     if(h==MH::PLANESTRESS){
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
-      out << "constexpr const " << t << " zero = " << t <<  "(0);"
+      out << "constexpr const " << t << " zero = " << t <<  "(0);\n"
 	  << "const " << t << " ezz_old = "
 	  << "stateOld[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
 	  << "stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
@@ -937,7 +937,7 @@ namespace mfront{
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name));
     auto dime = (h==MH::TRIDIMENSIONAL) ? "3u" : "2u";
     if(h==MH::PLANESTRESS){
-      out << "constexpr const " << t << " zero = " << t <<  "(0);"
+      out << "constexpr const " << t << " zero = " << t <<  "(0);\n"
 	  << "stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
 	  << "                              zero,cste*(*(stretchOld+i+2*(*nblock)))};\n"
 	  << "stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"

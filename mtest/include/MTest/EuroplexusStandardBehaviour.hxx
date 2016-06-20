@@ -33,7 +33,7 @@ namespace mtest
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
-    EuroplexusStandardBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
+    EuroplexusStandardBehaviour(const Hypothesis,
 				const std::string&,
 				const std::string&);
     /*!
@@ -64,7 +64,6 @@ namespace mtest
     virtual std::pair<bool,real>
     computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
-			      const tfel::material::ModellingHypothesis::Hypothesis,
 			      const StiffnessMatrixType) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
@@ -73,24 +72,20 @@ namespace mtest
      * step scaling factor.
      * \param[out/in] s     : current state
      * \param[out]    wk    : behaviour workspace
-     * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
     virtual std::pair<bool,real>
     integrate(CurrentState&,
 	      BehaviourWorkSpace&,
-	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real,
 	      const StiffnessMatrixType) const override;
     /*!
      * \brief allocate internal workspace
      * \param[out] wk : behaviour workspace
-     * \param[in]  h  : modelling hypothesis
      */
     virtual void
-    allocate(BehaviourWorkSpace&,
-	     const tfel::material::ModellingHypothesis::Hypothesis) const override;
+    allocate(BehaviourWorkSpace&) const override;
     //! destructor
     virtual ~EuroplexusStandardBehaviour();
   protected:
@@ -102,7 +97,6 @@ namespace mtest
      * \param[out]    Kt    : tangent operator
      * \param[in/out] s     : current state
      * \param[out]    wk    : behaviour workspace
-     * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      * \param[in]     b     : if true, integrate the behaviour over the time
@@ -112,7 +106,6 @@ namespace mtest
     call_behaviour(tfel::math::matrix<real>&,
 		   CurrentState&,
 		   BehaviourWorkSpace&,
-		   const tfel::material::ModellingHypothesis::Hypothesis,
 		   const real,
 		   const StiffnessMatrixType,
 		   const bool) const = 0;

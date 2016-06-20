@@ -18,8 +18,6 @@
 
 @MaximumNumberOfSubSteps   1;
 @AccelerationAlgorithm 'Crossed2Delta';
-@StrainEpsilon 1.e-11;
-@StressEpsilon 1.;
 
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

@@ -46,6 +46,8 @@ namespace mtest
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
+    //! \return the modelling hypothesis 
+    virtual Hypothesis getHypothesis(void) const = 0;
     /*!
      * \brief This function set a material property to its default value if it not already declared
      * \param[out] mp  : evolution manager where 
@@ -65,10 +67,9 @@ namespace mtest
     getBehaviourType(void) const = 0;
     /*!
      * \return the size of a vector able to contain all the components of the driving variables
-     * \param[in] h : modelling hypothesis
      */
     virtual unsigned short
-    getDrivingVariablesSize(const Hypothesis) const = 0;
+    getDrivingVariablesSize(void) const = 0;
     /*!
      * \param[out] v : initial values of the driving variables
      * \note : the vector shall have been correctly allocated
@@ -77,48 +78,39 @@ namespace mtest
     getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>&) const = 0;
     /*!
      * \return the size of a vector able to contain all the components of the thermodynamic forces
-     * \param[in] h : modelling hypothesis
      */
     virtual unsigned short
-    getThermodynamicForcesSize(const Hypothesis) const = 0;
+    getThermodynamicForcesSize(void) const = 0;
     /*!
      * \return the components suffixes of a symmetric tensor
-     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getStensorComponentsSuffixes(const Hypothesis) const = 0;
+    getStensorComponentsSuffixes(void) const = 0;
     /*!
      * \return the components suffixes of a tensor
-     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getTensorComponentsSuffixes(const Hypothesis) const = 0;
+    getTensorComponentsSuffixes(void) const = 0;
     /*!
      * \return the components of the driving variables
-     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getDrivingVariablesComponents(const Hypothesis) const = 0;
+    getDrivingVariablesComponents(void) const = 0;
     /*!
      * \return the components of the thermodynamic forces
-     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getThermodynamicForcesComponents(const Hypothesis) const = 0;
+    getThermodynamicForcesComponents(void) const = 0;
     /*!
-     * \param[in] h : modelling hypothesis
      * \param[in] c : component
      */
     virtual unsigned short
-    getDrivingVariableComponentPosition(const Hypothesis,
-					const std::string&) const = 0;
+    getDrivingVariableComponentPosition(const std::string&) const = 0;
     /*!
-     * \param[in] h : modelling hypothesis
      * \param[in] c : component
      */
     virtual unsigned short
-    getThermodynamicForceComponentPosition(const Hypothesis,
-					   const std::string&) const = 0;
+    getThermodynamicForceComponentPosition(const std::string&) const = 0;
     /*!
      * \return the type of the behaviour
      * 0 means that the behaviour is isotropic.
@@ -151,30 +143,25 @@ namespace mtest
     getInternalStateVariablesNames(void) const  = 0;
     /*!
      * \return the size of the array of internal variables
-     * \param[in] h : modelling hypothesis
      */
     virtual size_t
-    getInternalStateVariablesSize(const Hypothesis) const = 0;
+    getInternalStateVariablesSize(void) const = 0;
     /*!
      * \return the descriptions the internal variables
-     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getInternalStateVariablesDescriptions(const Hypothesis) const = 0;
+    getInternalStateVariablesDescriptions(void) const = 0;
     /*!
      * \return the type of an internal variable
-     * \param[in] n : internal variable name
      */
     virtual unsigned short
     getInternalStateVariableType(const std::string&) const = 0;
     /*!
      * \return the position of an internal variable
-     * \param[in] h : modelling hypothesis
      * \param[in] n : internal variable name
      */
     virtual unsigned short
-    getInternalStateVariablePosition(const Hypothesis,
-				     const std::string&) const = 0;
+    getInternalStateVariablePosition(const std::string&) const = 0;
     /*!
      * \return the number of external variables
      */
@@ -213,11 +200,9 @@ namespace mtest
     /*!
      * \brief allocate workspace
      * \param[out] wk : behaviour workspace
-     * \param[in]  h  : modelling hypothesis
      */
     virtual void
-    allocate(BehaviourWorkSpace&,
-	     const Hypothesis) const = 0;
+    allocate(BehaviourWorkSpace&) const = 0;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
@@ -239,12 +224,10 @@ namespace mtest
      * \return a boolean
      * \param[out] wk : behaviour workspace
      * \param[in] s   : current state
-     * \param[in] h   : modelling hypothesis
      */
     virtual bool
     doPackagingStep(CurrentState&,
-		    BehaviourWorkSpace&,
-		    const Hypothesis) const = 0;
+		    BehaviourWorkSpace&) const = 0;
     /*!
      * \brief compute the prediction operator at the beginning of the
      * time step.
@@ -253,13 +236,11 @@ namespace mtest
      * step scaling factor.
      * \param[out] wk    : behaviour workspace
      * \param[in]  s     : current state
-     * \param[in]  h     : modelling hypothesis
      * \param[in]  ktype : type of the stiffness matrix
      */
     virtual std::pair<bool,real>
     computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
-			      const Hypothesis,
 			      const StiffnessMatrixType) const = 0;
     /*!
      * \brief integrate the mechanical behaviour over the time step
@@ -268,14 +249,12 @@ namespace mtest
      * step scaling factor.
      * \param[out/in] s     : current state
      * \param[out]    wk    : behaviour workspace
-     * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
     virtual std::pair<bool,real>
     integrate(CurrentState&,
 	      BehaviourWorkSpace&,
-	      const Hypothesis,
 	      const real,
 	      const StiffnessMatrixType) const = 0;
     //! destructor

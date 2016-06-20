@@ -9,7 +9,7 @@
 @DSL Implicit;
 @Behaviour ImplicitNorton2;
 
-@Epsilon 1.e-12;
+@Epsilon 1.e-14;
 
 @CompareToNumericalJacobian true;
 @JacobianComparisonCriterium 1.e-8;

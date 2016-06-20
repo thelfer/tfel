@@ -32,9 +32,9 @@ namespace mtest
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
-    CastemStandardBehaviour(const tfel::material::ModellingHypothesis::Hypothesis,
-			       const std::string&,
-			       const std::string&);
+    CastemStandardBehaviour(const Hypothesis,
+			    const std::string&,
+			    const std::string&);
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
@@ -43,11 +43,9 @@ namespace mtest
     /*!
      * \brief allocate internal workspace
      * \param[out] wk : workspace
-     * \param[in]  h  : modelling hypothesis
      */
     virtual void
-    allocate(BehaviourWorkSpace&,
-	     const tfel::material::ModellingHypothesis::Hypothesis) const override;
+    allocate(BehaviourWorkSpace&) const override;
     /*!
      * \brief compute the *real* rotation matrix
      * \param[in] mp : material properties

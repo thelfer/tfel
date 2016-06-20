@@ -25,98 +25,53 @@ namespace mtest
 							 const std::string& b)
     : UmatBehaviourBase(h,l,b)
   {
-    using namespace std;
-    using namespace tfel::system;
-    using namespace tfel::material;
-    typedef ExternalLibraryManager ELM;
-    auto& elm = ELM::getExternalLibraryManager();
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     this->fct = elm.getCastemExternalBehaviourFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
     if(this->stype==0){
-      this->mpnames.insert(this->mpnames.begin(),"ThermalExpansion");
-      this->mpnames.insert(this->mpnames.begin(),"MassDensity");
-      this->mpnames.insert(this->mpnames.begin(),"PoissonRatio");
-      this->mpnames.insert(this->mpnames.begin(),"YoungModulus");
+      this->mpnames.insert(this->mpnames.begin(),{
+	  "YoungModulus","PoissonRatio","MassDensity","ThermalExpansion"});
     } else {
-      vector<string> tmp;
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-	tmp.push_back("YoungModulus1");
-	tmp.push_back("YoungModulus2");
-	tmp.push_back("YoungModulus3");
-	tmp.push_back("PoissonRatio12");
-	tmp.push_back("PoissonRatio23");
-	tmp.push_back("PoissonRatio13");
-	tmp.push_back("MassDensity");
-	tmp.push_back("ThermalExpansion1");
-	tmp.push_back("ThermalExpansion2");
-	tmp.push_back("ThermalExpansion3");
+	this->mpnames.insert(this->mpnames.begin(),{
+	    "YoungModulus1","YoungModulus2","YoungModulus3",
+	    "PoissonRatio12","PoissonRatio23","PoissonRatio13",
+	    "MassDensity",
+	    "ThermalExpansion1","ThermalExpansion2","ThermalExpansion3"});
       } else if(h==ModellingHypothesis::PLANESTRESS){
-	tmp.push_back("YoungModulus1");
-	tmp.push_back("YoungModulus2");
-	tmp.push_back("PoissonRatio12");
-	tmp.push_back("ShearModulus12");
-	tmp.push_back("V1X");
-	tmp.push_back("V1Y");
-	tmp.push_back("YoungModulus3");
-	tmp.push_back("PoissonRatio23");
-	tmp.push_back("PoissonRatio13");
-	tmp.push_back("MassDensity");
-	tmp.push_back("ThermalExpansion1");
-	tmp.push_back("ThermalExpansion2");
-	tmp.push_back("PlateWidth");
+	this->mpnames.insert(this->mpnames.begin(),{
+	    "YoungModulus1","YoungModulus2","PoissonRatio12",
+	    "ShearModulus12","V1X","V1Y","YoungModulus3",
+	    "PoissonRatio23","PoissonRatio13","MassDensity",
+            "ThermalExpansion1","ThermalExpansion2","PlateWidth"});
       } else if((h==ModellingHypothesis::PLANESTRAIN)||
 		(h==ModellingHypothesis::AXISYMMETRICAL)||
 		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
-	tmp.push_back("YoungModulus1");
-	tmp.push_back("YoungModulus2");
-	tmp.push_back("YoungModulus3");
-	tmp.push_back("PoissonRatio12");
-	tmp.push_back("PoissonRatio23");
-	tmp.push_back("PoissonRatio13");
-	tmp.push_back("ShearModulus12");
-	tmp.push_back("V1X");
-	tmp.push_back("V1Y");
-	tmp.push_back("MassDensity");
-	tmp.push_back("ThermalExpansion1");
-	tmp.push_back("ThermalExpansion2");
-	tmp.push_back("ThermalExpansion3");
+	this->mpnames.insert(this->mpnames.begin(),{
+	    "YoungModulus1","YoungModulus2","YoungModulus3",
+	    "PoissonRatio12","PoissonRatio23","PoissonRatio13",
+	    "ShearModulus12","V1X","V1Y","MassDensity",
+            "ThermalExpansion1","ThermalExpansion2","ThermalExpansion3"});
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	tmp.push_back("YoungModulus1");
-	tmp.push_back("YoungModulus2");
-	tmp.push_back("YoungModulus3");
-	tmp.push_back("PoissonRatio12");
-	tmp.push_back("PoissonRatio23");
-	tmp.push_back("PoissonRatio13");
-	tmp.push_back("ShearModulus12");
-	tmp.push_back("ShearModulus23");
-	tmp.push_back("ShearModulus13");
-	tmp.push_back("V1X");
-	tmp.push_back("V1Y");
-	tmp.push_back("V1Z");
-	tmp.push_back("V2X");
-	tmp.push_back("V2Y");
-	tmp.push_back("V2Z");
-	tmp.push_back("MassDensity");
-	tmp.push_back("ThermalExpansion1");
-	tmp.push_back("ThermalExpansion2");
-	tmp.push_back("ThermalExpansion3");
+	this->mpnames.insert(this->mpnames.begin(),{
+	    "YoungModulus1","YoungModulus2","YoungModulus3",
+	    "PoissonRatio12","PoissonRatio23","PoissonRatio13",
+	    "ShearModulus12","ShearModulus23","ShearModulus13",
+	    "V1X","V1Y","V1Z","V2X","V2Y","V2Z","MassDensity",
+            "ThermalExpansion1","ThermalExpansion2","ThermalExpansion3"});
       } else {
 	throw(std::runtime_error("CastemStandardBehaviour::CastemStandardBehaviour : "
 				 "unsupported hypothesis"));
       }
-      this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
     }
   }
 
   tfel::math::tmatrix<3u,3u,real>
   CastemStandardBehaviour::getRotationMatrix(const tfel::math::vector<real>& mp,
-						const tfel::math::tmatrix<3u,3u,real>& r) const
+					     const tfel::math::tmatrix<3u,3u,real>& r) const
   {
-    using namespace std;
-    using namespace tfel::math;
-    typedef tfel::material::ModellingHypothesis ModellingHypothesis;
-    tmatrix<3u,3u,real> nr(0.);
-    const auto& h = ModellingHypothesis::fromString(this->hypothesis);
+    tfel::math::tmatrix<3u,3u,real> nr(0.);
+    const auto h = this->getHypothesis();
     if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       nr(0,0) = nr(1,1) = nr(2,2) = 1.; // identité
     } else if((h==ModellingHypothesis::AXISYMMETRICAL)||
@@ -158,12 +113,11 @@ namespace mtest
   } // end of CastemStandardBehaviour::getRotationMatrix
 
   void
-  CastemStandardBehaviour::allocate(BehaviourWorkSpace& wk,
-				    const tfel::material::ModellingHypothesis::Hypothesis h) const
+  CastemStandardBehaviour::allocate(BehaviourWorkSpace& wk) const
   {
-    const auto ndv     = this->getDrivingVariablesSize(h);
-    const auto nth     = this->getThermodynamicForcesSize(h);
-    const auto nstatev = this->getInternalStateVariablesSize(h);
+    const auto ndv     = this->getDrivingVariablesSize();
+    const auto nth     = this->getThermodynamicForcesSize();
+    const auto nstatev = this->getInternalStateVariablesSize();
     wk.D.resize(nth,ndv);
     wk.k.resize(nth,ndv);
     wk.kt.resize(nth,ndv);
@@ -172,7 +126,7 @@ namespace mtest
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
-    mtest::allocate(wk.cs,this->shared_from_this(),h);
+    mtest::allocate(wk.cs,this->shared_from_this());
   }
 
   StiffnessMatrixType
@@ -185,8 +139,7 @@ namespace mtest
   CastemStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(EvolutionManager& mp,
 									 const EvolutionManager& evm) const
   {
-    using tfel::material::ModellingHypothesis;
-    const ModellingHypothesis::Hypothesis h = ModellingHypothesis::fromString(this->hypothesis);      
+    const auto h = this->getHypothesis();
     Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"MassDensity",0.);
     if(this->stype==1){
       if(h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){

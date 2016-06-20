@@ -25,8 +25,7 @@ namespace mtest{
 
   CurrentState::~CurrentState() noexcept = default;
 
-  void allocate(CurrentState& s,const std::shared_ptr<const Behaviour>& b,
-		const tfel::material::ModellingHypothesis::Hypothesis h)
+  void allocate(CurrentState& s,const std::shared_ptr<const Behaviour>& b)
   {
     if(s.behaviour.get()!=nullptr){
       throw(std::runtime_error("mtest::allocate: state already allocated"));
@@ -49,8 +48,8 @@ namespace mtest{
     s.esv0.clear();
     s.desv.clear();
     // resizing
-    const auto ndv = b->getDrivingVariablesSize(h);
-    const auto nth = b->getThermodynamicForcesSize(h);
+    const auto ndv = b->getDrivingVariablesSize();
+    const auto nth = b->getThermodynamicForcesSize();
     s.s_1.resize(nth,0.);
     s.s0.resize(nth,0.);
     s.s1.resize(nth,0.);
@@ -59,7 +58,7 @@ namespace mtest{
     s.e_th0.resize(ndv,0.);
     s.e_th1.resize(ndv,0.);
     s.mprops1.resize(mpnames.size());
-    s.iv_1.resize(b->getInternalStateVariablesSize(h),0.);
+    s.iv_1.resize(b->getInternalStateVariablesSize(),0.);
     s.iv0.resize(s.iv_1.size(),0.);
     s.iv1.resize(s.iv0.size(),0.);
     s.esv0.resize(esvnames.size(),0.);

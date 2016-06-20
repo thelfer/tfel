@@ -26,31 +26,29 @@ namespace mtest
   UmatBehaviourBase::UmatBehaviourBase(const Hypothesis h,
 				       const std::string& l,
 				       const std::string& b)
-    : hypothesis(tfel::material::ModellingHypothesis::toString(h)),
+    : hypothesis(ModellingHypothesis::toString(h)),
       library(l),
       behaviour(b)
   {
-    using namespace std;
     using namespace tfel::material;
     using namespace tfel::system;
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     const auto& hh = elm.getSupportedModellingHypotheses(l,b);
     if(find(hh.begin(),hh.end(),this->hypothesis)==hh.end()){
-      string msg("UmatBehaviourBase::UmatBehaviourBase : "
-		 "unsupported modelling hypothesis '"+this->hypothesis+"'. "
-		 "Supported modelling hypotheses are:");
+      std::string msg("UmatBehaviourBase::UmatBehaviourBase : "
+		      "unsupported modelling hypothesis '"+this->hypothesis+"'. "
+		      "Supported modelling hypotheses are:");
       for(const auto& vh : hh){
 	msg += "\n'"+vh+"'";
       }
-      throw(runtime_error(msg));
+      throw(std::runtime_error(msg));
     }
     this->type  = elm.getUMATBehaviourType(l,b);
     this->stype = elm.getUMATSymmetryType(l,b);
     if(this->stype>=2u){
-      string msg("UmatBehaviourBase::UmatBehaviourBase : "
-		 "unsupported behaviour type "
-		 "(neither isotropic nor orthotropic)");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("UmatBehaviourBase::UmatBehaviourBase : "
+			       "unsupported behaviour type "
+			       "(neither isotropic nor orthotropic)"));
     }
     this->ivnames = elm.getUMATInternalStateVariablesNames(l,b,this->hypothesis);
     this->ivtypes = elm.getUMATInternalStateVariablesTypes(l,b,this->hypothesis);
@@ -58,11 +56,15 @@ namespace mtest
     this->evnames.insert(this->evnames.begin(),"Temperature");
   }
 
+  UmatBehaviourBase::Hypothesis
+  UmatBehaviourBase::getHypothesis(void) const{
+    return ModellingHypothesis::fromString(this->hypothesis);
+  } // end of UmatBehaviourBase::getHypothesis
+  
   void
   UmatBehaviourBase::setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy p) const
   {
-    typedef tfel::system::ExternalLibraryManager ELM;    
-    ELM& elm = ELM::getExternalLibraryManager();
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     elm.setOutOfBoundsPolicy(this->library,this->behaviour,p);
   } // end of UmatBehaviourBase::setOutOfBoundsPolicy
   
@@ -85,18 +87,20 @@ namespace mtest
   } // end of UmatBehaviourBase::getBehaviourType
 
   unsigned short
-  UmatBehaviourBase::getDrivingVariablesSize(const Hypothesis h) const
+  UmatBehaviourBase::getDrivingVariablesSize(void) const
   {
-    typedef tfel::material::ModellingHypothesis MH;
+    const auto h = this->getHypothesis();
     if(this->type==1){
       // small strain behaviours
-      if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-	 (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+      if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	 (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	return 3u;
-      } else if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
-		(h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
+      } else if((h==ModellingHypothesis::PLANESTRAIN)||
+		(h==ModellingHypothesis::PLANESTRESS)||
+		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)||
+		(h==ModellingHypothesis::AXISYMMETRICAL)){
 	return 4u;
-      } else if(h==MH::TRIDIMENSIONAL){
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6u;
       } else {
 	throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesSize : "
@@ -104,13 +108,15 @@ namespace mtest
       }
     } else if(this->type==2){
       // finite strain behaviours
-      if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-	 (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+      if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	 (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	return 3u;
-      } else if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
-		(h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
+      } else if((h==ModellingHypothesis::PLANESTRAIN)||
+		(h==ModellingHypothesis::PLANESTRESS)||
+		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)||
+		(h==ModellingHypothesis::AXISYMMETRICAL)){
 	return 5u;
-      } else if(h==MH::TRIDIMENSIONAL){
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 9u;
       } else {
 	throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesSize : "
@@ -118,10 +124,12 @@ namespace mtest
       }
     } else if(this->type==3){
       // cohesive zone models
-      if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
-	 (h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
+      if((h==ModellingHypothesis::PLANESTRAIN)||
+	 (h==ModellingHypothesis::PLANESTRESS)||
+	 (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)||
+	 (h==ModellingHypothesis::AXISYMMETRICAL)){
 	return 2u;
-      } else if(h==MH::TRIDIMENSIONAL){
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 3u;
       } else {
 	throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesSize : "
@@ -133,18 +141,20 @@ namespace mtest
   } // end of UmatBehaviourBase::getDrivingVariablesSize
 
   unsigned short
-  UmatBehaviourBase::getThermodynamicForcesSize(const Hypothesis h) const
+  UmatBehaviourBase::getThermodynamicForcesSize() const
   {
-    typedef tfel::material::ModellingHypothesis MH;
+    const auto h = this->getHypothesis();
     if(this->type==1){
       // small strain behaviours
-      if ((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-	  (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+      if ((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	  (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	return 3u;
-      } else if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
-		(h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
+      } else if((h==ModellingHypothesis::PLANESTRAIN)||
+		(h==ModellingHypothesis::PLANESTRESS)||
+		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)||
+		(h==ModellingHypothesis::AXISYMMETRICAL)){
 	return 4u;
-      } else if(h==MH::TRIDIMENSIONAL){
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6u;
       } else {
 	throw(std::runtime_error("UmatBehaviourBase::getThermodynamicForcesSize : "
@@ -152,13 +162,15 @@ namespace mtest
       }
     } else if(this->type==2){
       // finite strain behaviours
-      if ((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-	  (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+      if ((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	  (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	return 3u;
-      } else if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
-		(h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
+      } else if((h==ModellingHypothesis::PLANESTRAIN)||
+		(h==ModellingHypothesis::PLANESTRESS)||
+		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)||
+		(h==ModellingHypothesis::AXISYMMETRICAL)){
 	return 4u;
-      } else if(h==MH::TRIDIMENSIONAL){
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6u;
       } else {
 	throw(std::runtime_error("UmatBehaviourBase::getThermodynamicForcesSize : "
@@ -166,10 +178,12 @@ namespace mtest
       }
     } else if(this->type==3){
       // cohesive zone models
-      if((h==MH::PLANESTRAIN)||(h==MH::PLANESTRESS)||
-	 (h==MH::GENERALISEDPLANESTRAIN)||(h==MH::AXISYMMETRICAL)){
+      if((h==ModellingHypothesis::PLANESTRAIN)||
+	 (h==ModellingHypothesis::PLANESTRESS)||
+	 (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)||
+	 (h==ModellingHypothesis::AXISYMMETRICAL)){
 	return 2u;
-      } else if(h==MH::TRIDIMENSIONAL){
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 3u;
       } else {
 	throw(std::runtime_error("UmatBehaviourBase::getThermodynamicForcesSize : "
@@ -181,29 +195,29 @@ namespace mtest
   } // end of UmatBehaviourBase::getThermodynamicForcesSize
 
   std::vector<std::string>
-  UmatBehaviourBase::getStensorComponentsSuffixes(const Hypothesis h) const
+  UmatBehaviourBase::getStensorComponentsSuffixes() const
   {
-    typedef tfel::material::ModellingHypothesis MH;
+    const auto h = this->getHypothesis();
     std::vector<std::string> c;						  
-    if((h==MH::TRIDIMENSIONAL)||
-       (h==MH::PLANESTRAIN)||
-       (h==MH::PLANESTRESS)||
-       (h==MH::GENERALISEDPLANESTRAIN)){
+    if((h==ModellingHypothesis::TRIDIMENSIONAL)||
+       (h==ModellingHypothesis::PLANESTRAIN)||
+       (h==ModellingHypothesis::PLANESTRESS)||
+       (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
       c.push_back("XX");
       c.push_back("YY");
       c.push_back("ZZ");
       c.push_back("XY");
-      if(h==MH::TRIDIMENSIONAL){
+      if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	c.push_back("XZ");
 	c.push_back("YZ");
       }
-    } else if ((h==MH::AXISYMMETRICAL)||
-	       (h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-	       (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+    } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+	       (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	       (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       c.push_back("RR");
       c.push_back("ZZ");
       c.push_back("TT");
-      if(h==MH::AXISYMMETRICAL){
+      if(h==ModellingHypothesis::AXISYMMETRICAL){
 	c.push_back("RZ");
       }
     } else {
@@ -214,32 +228,32 @@ namespace mtest
   } // end of UmatBehaviourBase::getStensorComponentsSuffixes
 
   std::vector<std::string>
-  UmatBehaviourBase::getTensorComponentsSuffixes(const Hypothesis h) const
+  UmatBehaviourBase::getTensorComponentsSuffixes() const
   {
-    typedef tfel::material::ModellingHypothesis MH;
+    const auto h = this->getHypothesis();
     std::vector<std::string> c;						  
-    if((h==MH::TRIDIMENSIONAL)||
-       (h==MH::PLANESTRAIN)||
-       (h==MH::PLANESTRESS)||
-       (h==MH::GENERALISEDPLANESTRAIN)){
+    if((h==ModellingHypothesis::TRIDIMENSIONAL)||
+       (h==ModellingHypothesis::PLANESTRAIN)||
+       (h==ModellingHypothesis::PLANESTRESS)||
+       (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
       c.push_back("XX");
       c.push_back("YY");
       c.push_back("ZZ");
       c.push_back("XY");
       c.push_back("YX");
-      if(h==MH::TRIDIMENSIONAL){
+      if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	c.push_back("XZ");
 	c.push_back("ZX");
 	c.push_back("YZ");
 	c.push_back("ZY");
       }
-    } else if ((h==MH::AXISYMMETRICAL)||
-	       (h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-	       (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+    } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+	       (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	       (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       c.push_back("RR");
       c.push_back("ZZ");
       c.push_back("TT");
-      if(h==MH::AXISYMMETRICAL){
+      if(h==ModellingHypothesis::AXISYMMETRICAL){
 	c.push_back("RZ");
 	c.push_back("ZR");
       }
@@ -251,28 +265,28 @@ namespace mtest
   } // end of UmatBehaviourBase::getTensorComponentsSuffixes
 
   std::vector<std::string>
-  UmatBehaviourBase::getDrivingVariablesComponents(const Hypothesis h) const
+  UmatBehaviourBase::getDrivingVariablesComponents() const
   {
     using namespace std;
-    typedef tfel::material::ModellingHypothesis MH;
+    const auto h = this->getHypothesis();
     vector<string> c;
     if(this->type==1){
-      const auto exts = this->getStensorComponentsSuffixes(h);
+      const auto exts = this->getStensorComponentsSuffixes();
       for(const auto& e : exts){
 	c.push_back("E"+e);
       }
     } else if(this->type==2){
-      const auto exts = this->getTensorComponentsSuffixes(h);
+      const auto exts = this->getTensorComponentsSuffixes();
       for(const auto& e : exts){
 	c.push_back("F"+e);
       }
     } else if(this->type==3){
-      if((h==MH::TRIDIMENSIONAL)||
-	 (h==MH::PLANESTRAIN)||
-	 (h==MH::PLANESTRESS)||
-	 (h==MH::GENERALISEDPLANESTRAIN)){
+      if((h==ModellingHypothesis::TRIDIMENSIONAL)||
+	 (h==ModellingHypothesis::PLANESTRAIN)||
+	 (h==ModellingHypothesis::PLANESTRESS)||
+	 (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	c.push_back("Un");
-	if(h==MH::TRIDIMENSIONAL){
+	if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	  c.push_back("Ut1");
 	  c.push_back("Ut2");
 	} else {
@@ -292,23 +306,23 @@ namespace mtest
   } // end of UmatBehaviourBase::getDrivingVariablesComponents
 
   std::vector<std::string>
-  UmatBehaviourBase::getThermodynamicForcesComponents(const Hypothesis h) const
+  UmatBehaviourBase::getThermodynamicForcesComponents() const
   {
     using namespace std;
-    typedef tfel::material::ModellingHypothesis MH;
+    const auto h = this->getHypothesis();
     vector<string> c;							   
     if((this->type==1)||(this->type==2)){
-      const auto exts = this->getStensorComponentsSuffixes(h);
+      const auto exts = this->getStensorComponentsSuffixes();
       for(const auto& e : exts){
 	c.push_back("S"+e);
       }
     } else if(this->type==3){
-      if((h==MH::TRIDIMENSIONAL)||
-	 (h==MH::PLANESTRAIN)||
-	 (h==MH::PLANESTRESS)||
-	 (h==MH::GENERALISEDPLANESTRAIN)){
+      if((h==ModellingHypothesis::TRIDIMENSIONAL)||
+	 (h==ModellingHypothesis::PLANESTRAIN)||
+	 (h==ModellingHypothesis::PLANESTRESS)||
+	 (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	c.push_back("Tn");
-	if(h==MH::TRIDIMENSIONAL){
+	if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	  c.push_back("Tt1");
 	  c.push_back("Tt2");
 	} else {
@@ -326,11 +340,10 @@ namespace mtest
   } // end of UmatBehaviourBase::getThermodynamicForcesComponents
 
   unsigned short
-  UmatBehaviourBase::getDrivingVariableComponentPosition(const Hypothesis h,
-							      const std::string& cname) const
+  UmatBehaviourBase::getDrivingVariableComponentPosition(const std::string& cname) const
   {
     using namespace std;
-    const auto c = this->getDrivingVariablesComponents(h);
+    const auto c = this->getDrivingVariablesComponents();
     auto p = find(c.begin(),c.end(),cname);
     if(p==c.end()){
       ostringstream msg;
@@ -343,11 +356,10 @@ namespace mtest
   } // end of UmatBehaviourBase::getDrivingVariableComponentPosition
 
   unsigned short
-  UmatBehaviourBase::getThermodynamicForceComponentPosition(const Hypothesis h,
-								 const std::string& cname) const
+  UmatBehaviourBase::getThermodynamicForceComponentPosition(const std::string& cname) const
   {
     using namespace std;
-    const auto c = this->getThermodynamicForcesComponents(h);
+    const auto c = this->getThermodynamicForcesComponents();
     auto p = find(c.begin(),c.end(),cname);
     if(p==c.end()){
       ostringstream msg;
@@ -391,23 +403,23 @@ namespace mtest
   }
 
   size_t
-  UmatBehaviourBase::getInternalStateVariablesSize(const Hypothesis h) const
+  UmatBehaviourBase::getInternalStateVariablesSize() const
   {
     using namespace std;
-    typedef tfel::material::ModellingHypothesis MH;
+    const auto h = this->getHypothesis();    
     vector<int>::const_iterator p;
     size_t s = 0;
     for(p=this->ivtypes.begin();p!=this->ivtypes.end();++p){
       if(*p==0){
 	s+=1;
       } else if(*p==1){
-	if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-	   (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+	if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	   (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	  s+=3;
-	} else if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
-		  (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
+	} else if((h==ModellingHypothesis::AXISYMMETRICAL)||(h==ModellingHypothesis::PLANESTRESS)||
+		  (h==ModellingHypothesis::PLANESTRAIN)||(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	  s+=4;
-	} else if(h==MH::TRIDIMENSIONAL){
+	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	  s+=6;
 	} else {
 	  string msg("UmatBehaviourBase::getInternalStateVariablesSize : "
@@ -415,13 +427,13 @@ namespace mtest
 	  throw(runtime_error(msg));
 	}
       } else if(*p==3){
-	if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-	   (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+	if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	   (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	  s+=3;
-	} else if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
-		  (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
+	} else if((h==ModellingHypothesis::AXISYMMETRICAL)||(h==ModellingHypothesis::PLANESTRESS)||
+		  (h==ModellingHypothesis::PLANESTRAIN)||(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	  s+=5;
-	} else if(h==MH::TRIDIMENSIONAL){
+	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	  s+=9;
 	} else {
 	  string msg("UmatBehaviourBase::getInternalStateVariablesSize : "
@@ -438,10 +450,10 @@ namespace mtest
   } // end of UmatBehaviourBase::getInternalStateVariablesSize
 
   std::vector<std::string>
-  UmatBehaviourBase::getInternalStateVariablesDescriptions(const Hypothesis h) const
+  UmatBehaviourBase::getInternalStateVariablesDescriptions() const
   {
     using namespace std;
-    typedef tfel::material::ModellingHypothesis MH;
+    const auto h = this->getHypothesis();    
     vector<string> desc;
     vector<int>::const_iterator p;
     vector<string>::const_iterator pn;
@@ -460,12 +472,12 @@ namespace mtest
 	desc.push_back("first  component of internal variable '"+*pn+"'");
 	desc.push_back("second component of internal variable '"+*pn+"'");
 	desc.push_back("third  component of internal variable '"+*pn+"'");
-	if(!((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-	     (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS))){
-	  if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
-	     (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
+	if(!((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	     (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))){
+	  if((h==ModellingHypothesis::AXISYMMETRICAL)||(h==ModellingHypothesis::PLANESTRESS)||
+	     (h==ModellingHypothesis::PLANESTRAIN)||(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	    desc.push_back("fourth  component of internal variable '"+*pn+"'");
-	  } else if(h==MH::TRIDIMENSIONAL){
+	  } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	    desc.push_back("fourth  component of internal variable '"+*pn+"'");
 	    desc.push_back("fifth   component of internal variable '"+*pn+"'");
 	    desc.push_back("sixth   component of internal variable '"+*pn+"'");
@@ -480,13 +492,13 @@ namespace mtest
 	desc.push_back("first  component of internal variable '"+*pn+"'");
 	desc.push_back("second component of internal variable '"+*pn+"'");
 	desc.push_back("third  component of internal variable '"+*pn+"'");
-	if(!((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-	     (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS))){
-	  if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
-	     (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
+	if(!((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	     (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))){
+	  if((h==ModellingHypothesis::AXISYMMETRICAL)||(h==ModellingHypothesis::PLANESTRESS)||
+	     (h==ModellingHypothesis::PLANESTRAIN)||(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	    desc.push_back("fourth  component of internal variable '"+*pn+"'");
 	    desc.push_back("fifth   component of internal variable '"+*pn+"'");
-	  } else if(h==MH::TRIDIMENSIONAL){
+	  } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	    desc.push_back("fourth  component of internal variable '"+*pn+"'");
 	    desc.push_back("fifth   component of internal variable '"+*pn+"'");
 	    desc.push_back("sixth   component of internal variable '"+*pn+"'");
@@ -534,13 +546,11 @@ namespace mtest
   }
   
   unsigned short
-  UmatBehaviourBase::getInternalStateVariablePosition(const Hypothesis h,
-						      const std::string& n) const
+  UmatBehaviourBase::getInternalStateVariablePosition(const std::string& n) const
   {
     using namespace std;
-    typedef tfel::material::ModellingHypothesis MH;
-    vector<string>::const_iterator p;
-    p=find(this->ivnames.begin(),this->ivnames.end(),n);
+    const auto h = this->getHypothesis();    
+    auto p=find(this->ivnames.begin(),this->ivnames.end(),n);
     if(p==this->ivnames.end()){
       string msg("UmatBehaviourBase::getInternalStateVariablePosition : ");
       msg += "no internal variable named '"+n+"' declared";
@@ -560,13 +570,13 @@ namespace mtest
       if(t==0){
 	s += 1;
       } else if(t==1){
-	if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-	   (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+	if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	   (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	  s+=3;
-	} else if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
-		  (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
+	} else if((h==ModellingHypothesis::AXISYMMETRICAL)||(h==ModellingHypothesis::PLANESTRESS)||
+		  (h==ModellingHypothesis::PLANESTRAIN)||(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	  s+=4;
-	} else if(h==MH::TRIDIMENSIONAL){
+	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	  s+=6;
 	} else {
 	  string msg("UmatBehaviourBase::getInternalStateVariablePosition : "
@@ -574,13 +584,13 @@ namespace mtest
 	  throw(runtime_error(msg));
 	}
       } else if(t==3){
-	if((h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-	   (h==MH::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+	if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	   (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
 	  s+=3;
-	} else if((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
-		  (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
+	} else if((h==ModellingHypothesis::AXISYMMETRICAL)||(h==ModellingHypothesis::PLANESTRESS)||
+		  (h==ModellingHypothesis::PLANESTRAIN)||(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	  s+=5;
-	} else if(h==MH::TRIDIMENSIONAL){
+	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	  s+=9;
 	} else {
 	  string msg("UmatBehaviourBase::getInternalStateVariablePosition : "
@@ -668,8 +678,7 @@ namespace mtest
 
   bool
   UmatBehaviourBase::doPackagingStep(CurrentState&,
-				     BehaviourWorkSpace&,
-				     const Hypothesis) const
+				     BehaviourWorkSpace&) const
   {
     return true;
   } // end of UmatBehaviourBase::doPackagingStep

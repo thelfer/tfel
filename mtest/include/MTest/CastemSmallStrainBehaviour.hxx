@@ -32,7 +32,7 @@ namespace mtest
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
-    CastemSmallStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis,
+    CastemSmallStrainBehaviour(const Hypothesis,
 			       const std::string&,
 			       const std::string&);
     /*!
@@ -47,13 +47,11 @@ namespace mtest
      * step scaling factor.
      * \param[out] wk    : workspace
      * \param[in]  s     : current state
-     * \param[in]  h     : modelling hypothesis
      * \param[in]  ktype : type of the stiffness matrix
      */
     virtual std::pair<bool,real>
     computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
-			      const tfel::material::ModellingHypothesis::Hypothesis,
 			      const StiffnessMatrixType) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
@@ -62,14 +60,12 @@ namespace mtest
      * step scaling factor.
      * \param[out/in] s     : current state
      * \param[out]    wk    : workspace
-     * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
     virtual std::pair<bool,real>
     integrate(CurrentState&,
 	      BehaviourWorkSpace&,
-	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real,
 	      const StiffnessMatrixType) const override;
     /*!
@@ -96,7 +92,6 @@ namespace mtest
      * \param[out]    Kt    : tangent operator
      * \param[in/out] s     : current state
      * \param[out]    wk    : workspace
-     * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      * \param[in]     b     : if true, integrate the behaviour over the time
@@ -106,7 +101,6 @@ namespace mtest
     call_behaviour(tfel::math::matrix<real>&,
 		   CurrentState&,
 		   BehaviourWorkSpace&,
-		   const tfel::material::ModellingHypothesis::Hypothesis,
 		   const real,
 		   const StiffnessMatrixType,
 		   const bool) const;
@@ -115,13 +109,20 @@ namespace mtest
      * \param[out] Kt   : tangent operator
      * \param[in]  mp   : material properties
      * \param[in]  drot : rotation matrix (Fortran convention)
-     * \param[in]  h    : modelling hypothesis
      */
     virtual void
     computeElasticStiffness(tfel::math::matrix<real>&,
 			    const tfel::math::vector<real>&,
-			    const tfel::math::tmatrix<3u,3u,real>&,
-			    const tfel::material::ModellingHypothesis::Hypothesis) const;
+			    const tfel::math::tmatrix<3u,3u,real>&) const;
+    /*!
+     * The umat interface can handle plane stress by calling the
+     * generalised plane strain version of the behaviour.  In this
+     * case, the hypothesis used by the behaviour is different than
+     * the hypothesis used to perform the computation. This flag
+     * distinguishes this case.
+     */
+    bool usesGenericPlaneStressAlgorithm = false;
+
   }; // end of struct Behaviour
   
 } // end of namespace mtest

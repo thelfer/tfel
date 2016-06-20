@@ -131,10 +131,9 @@ namespace mtest
   }
 
   void
-  AsterFiniteStrainBehaviour::allocate(BehaviourWorkSpace& wk,
-				       const tfel::material::ModellingHypothesis::Hypothesis h) const
+  AsterFiniteStrainBehaviour::allocate(BehaviourWorkSpace& wk) const
   {
-    AsterStandardBehaviour::allocate(wk,h);
+    AsterStandardBehaviour::allocate(wk);
     wk.D.resize(6u,9u);
   }
 
@@ -142,7 +141,6 @@ namespace mtest
   AsterFiniteStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
 					     CurrentState& s,
 					     BehaviourWorkSpace& wk,
-					     const tfel::material::ModellingHypothesis::Hypothesis h,
 					     const real dt,
 					     const StiffnessMatrixType ktype,
 					     const bool b) const
@@ -150,7 +148,6 @@ namespace mtest
     using namespace std;
     using namespace tfel::math;
     using namespace aster;
-    typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
     static const real sqrt2 = sqrt(real(2));
     AsterInt ntens;
@@ -158,19 +155,20 @@ namespace mtest
     AsterInt nprops = s.mprops1.size() == 0 ? 1 : static_cast<AsterInt>(s.mprops1.size());
     AsterInt nstatv;
     AsterInt nummod;
-    if (h==MH::AXISYMMETRICAL){
+    const auto h = this->getHypothesis();
+    if (h==ModellingHypothesis::AXISYMMETRICAL){
       ntens = 4;
       dimension = 2u;
       nummod = 4u;
-    } else if (h==MH::PLANESTRESS){
+    } else if (h==ModellingHypothesis::PLANESTRESS){
       ntens = 4;
       dimension = 2u;
       nummod = 5u;
-    } else if (h==MH::PLANESTRAIN){
+    } else if (h==ModellingHypothesis::PLANESTRAIN){
       ntens = 4;
       dimension = 2u;
       nummod = 6u;
-    } else if (h==MH::TRIDIMENSIONAL){
+    } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
       ntens = 6;
       dimension = 3u;
       nummod = 3u;
@@ -202,15 +200,17 @@ namespace mtest
     uu0(0,0) = s.e0(0); uu1(0,0) = s.e1(0);
     uu0(1,1) = s.e0(1); uu1(1,1) = s.e1(1);
     uu0(2,2) = s.e0(2); uu1(2,2) = s.e1(2);
-    if(h==MH::AXISYMMETRICALGENERALISEDPLANESTRAIN){
+    if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       uu0(1,0) = 0.; uu1(1,0) = 0.;
       uu0(0,1) = 0.; uu1(0,1) = 0.;
       uu0(2,0) = 0.; uu1(2,0) = 0.;
       uu0(0,2) = 0.; uu1(0,2) = 0.;
       uu0(2,1) = 0.; uu1(2,1) = 0.;
       uu0(1,2) = 0.; uu1(1,2) = 0.;
-    } else if ((h==MH::AXISYMMETRICAL)||(h==MH::PLANESTRESS)||
-	       (h==MH::PLANESTRAIN)||(h==MH::GENERALISEDPLANESTRAIN)){
+    } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+	       (h==ModellingHypothesis::PLANESTRESS)||
+	       (h==ModellingHypothesis::PLANESTRAIN)||
+	       (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
       // uu0 and uu1 must be built using Fortran notations
       uu0(1,0) = s.e0(3); uu1(1,0) = s.e1(3);
       uu0(0,1) = s.e0(4); uu1(0,1) = s.e1(4);
@@ -218,7 +218,7 @@ namespace mtest
       uu0(0,2) = 0.; uu1(0,2) = 0.;
       uu0(2,1) = 0.; uu1(2,1) = 0.;
       uu0(1,2) = 0.; uu1(1,2) = 0.;
-    } else if (h==MH::TRIDIMENSIONAL){
+    } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
       // uu0 and uu1 must be built using Fortran notations
       uu0(1,0) = s.e0(3); uu1(1,0) = s.e1(3);
       uu0(0,1) = s.e0(4); uu1(0,1) = s.e1(4);

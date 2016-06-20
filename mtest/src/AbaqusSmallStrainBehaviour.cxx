@@ -46,7 +46,6 @@ namespace mtest
   AbaqusSmallStrainBehaviour::call_behaviour(tfel::math::matrix<real>& Kt,
 					     CurrentState& s,
 					     BehaviourWorkSpace& wk,
-					     const tfel::material::ModellingHypothesis::Hypothesis h,
 					     const real dt,
 					     const StiffnessMatrixType ktype,
 					     const bool b) const
@@ -54,9 +53,9 @@ namespace mtest
     using namespace std;
     using namespace tfel::math;
     using namespace abaqus;
-    typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
     static const real sqrt2 = std::sqrt(real(2));
+    const auto h = this->getHypothesis();
     if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
       throw(std::runtime_error("AbaqusSmallStrainBehaviour::call_beahviour : "
 			       "abaqus behaviours may only provide the "
@@ -64,11 +63,11 @@ namespace mtest
     }
     const AbaqusInt nprops = s.mprops1.size() == 0 ? 1 : static_cast<AbaqusInt>(s.mprops1.size());
     const AbaqusInt ntens = [&h](){
-      if (h==MH::AXISYMMETRICAL){
+      if (h==ModellingHypothesis::AXISYMMETRICAL){
 	return 4;
-      } else if (h==MH::PLANESTRESS){
+      } else if (h==ModellingHypothesis::PLANESTRESS){
 	return 3;
-      } else if (h==MH::TRIDIMENSIONAL){
+      } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6;
       } 
       throw(std::runtime_error("AbaqusSmallStrainBehaviour::call_beahviour : "
@@ -110,7 +109,7 @@ namespace mtest
       ue0(i) *= sqrt2;
       ude(i) *= sqrt2;
     }
-    if (h==MH::PLANESTRESS){
+    if (h==ModellingHypothesis::PLANESTRESS){
       std::swap(ue0[2],ue0[3]);
       std::swap(ude[2],ude[3]); 
       us[2]  = us[3]/sqrt2;
@@ -136,7 +135,7 @@ namespace mtest
     }
     const auto rb = transpose(s.r);
     // treating the consistent tangent operator
-    if(h==MH::TRIDIMENSIONAL){
+    if(h==ModellingHypothesis::TRIDIMENSIONAL){
       UmatNormaliseTangentOperator::exe(Kt,wk.D,3u);
       st2tost2<3u,AbaqusReal> K;
       for(unsigned short i=0;i!=6u;++i){
@@ -150,7 +149,7 @@ namespace mtest
 	  Kt(i,j)=nK(i,j);
 	}
       }
-    } else if (h==MH::AXISYMMETRICAL){
+    } else if (h==ModellingHypothesis::AXISYMMETRICAL){
       UmatNormaliseTangentOperator::exe(Kt,wk.D,2u);
       st2tost2<2u,AbaqusReal> K;
       for(unsigned short i=0;i!=4u;++i){
@@ -164,7 +163,7 @@ namespace mtest
 	  Kt(i,j)=nK(i,j);
 	}
       }
-    } else if (h==MH::PLANESTRESS){
+    } else if (h==ModellingHypothesis::PLANESTRESS){
       constexpr const auto zero = AbaqusReal{0};
       // D has been as a 3*3 fortran matrix. The terms associated with
       // the 2 indices are omitted.
@@ -221,7 +220,7 @@ namespace mtest
 	copy_n(wk.ivs.begin(),s.iv1.size(),s.iv1.begin());
       }
       // treating stresses
-      if (h==MH::PLANESTRESS){
+      if (h==ModellingHypothesis::PLANESTRESS){
 	us[3] = us[2]*sqrt2;
 	us[2] = real(0);
       } else {

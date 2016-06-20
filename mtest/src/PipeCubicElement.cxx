@@ -222,7 +222,7 @@ namespace mtest{
       // jacobian of the transformation
       const auto J = PipeCubicElement::jacobian(r0,r1,r2,r3,pg);
       const auto rb =
-	b.integrate(s,bwk,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,dt,mt);
+	b.integrate(s,bwk,dt,mt);
       r_dt = (g==0) ? rb.second : std::min(rb.second,r_dt);
       if(!rb.first){
 	if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){

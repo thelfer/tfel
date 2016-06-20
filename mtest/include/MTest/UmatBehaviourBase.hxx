@@ -34,8 +34,10 @@ namespace mtest
      * \param[in] b : behaviour name
      */
     UmatBehaviourBase(const Hypothesis,
-			   const std::string&,
-			   const std::string&);
+		      const std::string&,
+		      const std::string&);
+    //! \return the modelling hypothesis 
+    virtual Hypothesis getHypothesis(void) const override;
     /*!
      * \return the type of the behaviour
      */
@@ -43,54 +45,44 @@ namespace mtest
     getBehaviourType(void) const override;
     /*!
      * \return the size of a vector able to contain all the components of the driving variables
-     * \param[in] h : modelling hypothesis
      */
     virtual unsigned short
-    getDrivingVariablesSize(const Hypothesis) const override;
+    getDrivingVariablesSize(void) const override;
     /*!
      * \return the size of a vector able to contain all the components of the thermodynamic forces
-     * \param[in] h : modelling hypothesis
      */
     virtual unsigned short
-    getThermodynamicForcesSize(const Hypothesis) const override;
+    getThermodynamicForcesSize(void) const override;
     /*!
      * \return the components suffixes of a symmetric tensor
-     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getStensorComponentsSuffixes(const Hypothesis) const override;
+    getStensorComponentsSuffixes(void) const override;
     /*!
      * \return the components suffixes of a tensor
-     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getTensorComponentsSuffixes(const Hypothesis) const override;
+    getTensorComponentsSuffixes(void) const override;
     /*!
      * \return the components of the driving variables
-     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getDrivingVariablesComponents(const Hypothesis) const override;
+    getDrivingVariablesComponents(void) const override;
     /*!
      * \return the components of the thermodynamic forces
-     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getThermodynamicForcesComponents(const Hypothesis) const override;
+    getThermodynamicForcesComponents(void) const override;
     /*!
-     * \param[in] h     : modelling hypothesis
      * \param[in] cname : component name
      */
     virtual unsigned short
-    getDrivingVariableComponentPosition(const Hypothesis,
-					const std::string&) const override;
+    getDrivingVariableComponentPosition(const std::string&) const override;
     /*!
-     * \param[in] h     : modelling hypothesis
      * \param[in] cname : component name
      */
     virtual unsigned short
-    getThermodynamicForceComponentPosition(const Hypothesis,
-					   const std::string&) const override;
+    getThermodynamicForceComponentPosition(const std::string&) const override;
     /*!
      * \return the type of the behaviour
      * 0 means that the behaviour is isotropic.
@@ -110,16 +102,14 @@ namespace mtest
     getInternalStateVariablesNames(void) const override;
     /*!
      * \return the size of the array of internal variables
-     * \param[in] h : modelling hypothesis
      */
     virtual size_t
-    getInternalStateVariablesSize(const Hypothesis) const override;
+    getInternalStateVariablesSize(void) const override;
     /*!
      * \return the descriptions the internal variables
-     * \param[in] h : modelling hypothesis
      */
     virtual std::vector<std::string>
-    getInternalStateVariablesDescriptions(const Hypothesis) const override;
+    getInternalStateVariablesDescriptions(void) const override;
     /*!
      * \return the type of an internal variable
      * \param[in] n : internal variable name
@@ -128,12 +118,10 @@ namespace mtest
     getInternalStateVariableType(const std::string&) const override;
     /*!
      * \return the position of an internal variable
-     * \param[in] h : modelling hypothesis
      * \param[in] n : internal variable name
      */
     virtual unsigned short
-    getInternalStateVariablePosition(const Hypothesis,
-				     const std::string&) const override;
+    getInternalStateVariablePosition(const std::string&) const override;
     /*!
      * \return the names of external variables
      */
@@ -188,12 +176,10 @@ namespace mtest
      * \return a boolean
      * \param[out] wk : behaviour workspace
      * \param[in] s   : current state
-     * \param[in] h   : modelling hypothesis
      */
     virtual bool
     doPackagingStep(CurrentState&,
-		    BehaviourWorkSpace&,
-		    const Hypothesis) const override;
+		    BehaviourWorkSpace&) const override;
     //! destructor
     virtual ~UmatBehaviourBase();
   protected:

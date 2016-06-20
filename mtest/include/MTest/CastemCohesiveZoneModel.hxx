@@ -32,9 +32,9 @@ namespace mtest
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
-    CastemCohesiveZoneModel(const tfel::material::ModellingHypothesis::Hypothesis,
-					const std::string&,
-					const std::string&);
+    CastemCohesiveZoneModel(const Hypothesis,
+			    const std::string&,
+			    const std::string&);
     /*!
      * \brief compute the *real* rotation matrix
      * \param[in] mp : material properties
@@ -53,11 +53,9 @@ namespace mtest
     /*!
      * \brief allocate internal workspace
      * \param[in] wk : workspace
-     * \param[in] h  : modelling hypothesis
      */
     virtual void
-    allocate(BehaviourWorkSpace&,
-	     const tfel::material::ModellingHypothesis::Hypothesis) const override;
+    allocate(BehaviourWorkSpace&) const override;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
@@ -70,13 +68,11 @@ namespace mtest
      * step scaling factor.
      * \param[out] wk    : behaviour workspace
      * \param[in]  s     : current state
-     * \param[in]  h     : modelling hypothesis
      * \param[in]  ktype : type of the stiffness matrix
      */
     virtual std::pair<bool,real>
     computePredictionOperator(BehaviourWorkSpace&,
 			      const CurrentState&,
-			      const tfel::material::ModellingHypothesis::Hypothesis,
 			      const StiffnessMatrixType) const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
@@ -85,14 +81,12 @@ namespace mtest
      * step scaling factor.
      * \param[out/in] s     : current state
      * \param[out]    wk    : behaviour workspace
-     * \param[in]     h     : modelling hypothesis
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
     virtual std::pair<bool,real>
     integrate(CurrentState&,
 	      BehaviourWorkSpace&,
-	      const tfel::material::ModellingHypothesis::Hypothesis,
 	      const real,
 	      const StiffnessMatrixType) const override;
     /*!
@@ -116,13 +110,11 @@ namespace mtest
      * \param[out] Kt   : tangent operator
      * \param[in]  mp   : material properties
      * \param[in]  drot : rotation matrix (Fortran convention)
-     * \param[in]  h    : modelling hypothesis
      */
     virtual void
     computeElasticStiffness(tfel::math::matrix<real>&,
 			    const tfel::math::vector<real>&,
-			    const tfel::math::tmatrix<3u,3u,real>&,
-			    const tfel::material::ModellingHypothesis::Hypothesis) const;
+			    const tfel::math::tmatrix<3u,3u,real>&) const;
     //! the umat fonction
     tfel::system::CastemFctPtr fct;
   }; // end of struct MTest

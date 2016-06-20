@@ -66,12 +66,11 @@ namespace mtest
   } // end of AsterCohesiveZoneModel::getRotationMatrix
 
   void
-  AsterCohesiveZoneModel::allocate(BehaviourWorkSpace& wk,
-				   const tfel::material::ModellingHypothesis::Hypothesis h) const
+  AsterCohesiveZoneModel::allocate(BehaviourWorkSpace& wk) const
   {
-    const auto ndv     = this->getDrivingVariablesSize(h);
-    const auto nth     = this->getThermodynamicForcesSize(h);
-    const auto nstatev = this->getInternalStateVariablesSize(h);
+    const auto ndv     = this->getDrivingVariablesSize();
+    const auto nth     = this->getThermodynamicForcesSize();
+    const auto nstatev = this->getInternalStateVariablesSize();
     wk.kt.resize(nth,ndv);
     wk.k.resize(nth,ndv);
     wk.mps.resize(this->mpnames.size()==0 ? 1u : this->mpnames.size(),real(0));
@@ -80,7 +79,7 @@ namespace mtest
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
-    mtest::allocate(wk.cs,this->shared_from_this(),h);
+    mtest::allocate(wk.cs,this->shared_from_this());
   }
 
   void
@@ -98,31 +97,28 @@ namespace mtest
   std::pair<bool,real>
   AsterCohesiveZoneModel::computePredictionOperator(BehaviourWorkSpace& wk,
 						    const CurrentState& s,
-						    const tfel::material::ModellingHypothesis::Hypothesis h,
 						    const StiffnessMatrixType ktype) const
   {
     if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
       return {false,real(-1)};
     }
     wk.cs = s;
-    return this->call_behaviour(wk.kt,wk.cs,wk,h,real(1),ktype,false);
+    return this->call_behaviour(wk.kt,wk.cs,wk,real(1),ktype,false);
   } // end of AsterCohesiveZoneModel::computePredictionOperator
 
   std::pair<bool,real>
   AsterCohesiveZoneModel::integrate(CurrentState& s,
 				    BehaviourWorkSpace& wk,
-				    const tfel::material::ModellingHypothesis::Hypothesis h,
 				    const real dt,
 				    const StiffnessMatrixType ktype) const
   {
-    return this->call_behaviour(wk.k,s,wk,h,dt,ktype,true);
+    return this->call_behaviour(wk.k,s,wk,dt,ktype,true);
   } // end of AsterCohesiveZoneModel::integrate
 
   std::pair<bool,real>
   AsterCohesiveZoneModel::call_behaviour(tfel::math::matrix<real>& Kt,
 					 CurrentState& s,
 					 BehaviourWorkSpace& wk,
-					 const tfel::material::ModellingHypothesis::Hypothesis h,
 					 const real dt,
 					 const StiffnessMatrixType ktype,
 					 const bool b) const
@@ -130,28 +126,27 @@ namespace mtest
     using namespace std;
     using namespace tfel::math;
     using namespace aster;
-    typedef tfel::material::ModellingHypothesis MH;
     using tfel::math::vector;
     AsterInt ntens;
     AsterInt nprops = s.mprops1.size() == 0 ? 1 : static_cast<AsterInt>(s.mprops1.size());
     AsterInt nstatv;
     AsterInt nummod;
-    if (h==MH::AXISYMMETRICAL){
+    const auto h = this->getHypothesis();
+    if (h==ModellingHypothesis::AXISYMMETRICAL){
       ntens = 4;
       nummod = 4u;
-    } else if (h==MH::PLANESTRESS){
+    } else if (h==ModellingHypothesis::PLANESTRESS){
       ntens = 4;
       nummod = 5u;
-    } else if (h==MH::PLANESTRAIN){
+    } else if (h==ModellingHypothesis::PLANESTRAIN){
       ntens = 4;
       nummod = 6u;
-    } else if (h==MH::TRIDIMENSIONAL){
+    } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
       ntens = 6;
       nummod = 3u;
     } else {
-      string msg("AsterCohesiveZoneModel::call_beahviour : ");
-      msg += "unsupported hypothesis";
-      throw(runtime_error(msg));
+      throw(std::runtime_error("AsterCohesiveZoneModel::call_beahviour: "
+			       "unsupported hypothesis"));
     }
     fill(Kt.begin(),Kt.end(),0.);
     // choosing the type of stiffness matrix

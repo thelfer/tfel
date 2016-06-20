@@ -40,8 +40,7 @@ MTest_setImposedThermodynamicForce(mtest::MTest& t,
   shared_ptr<Constraint> sc;
   shared_ptr<Evolution> sev(new ConstantEvolution(v));
   sc = shared_ptr<Constraint>(new ImposedThermodynamicForce(*(t.getBehaviour()),
-								      t.getModellingHypothesis(),
-								      n,sev));
+							    n,sev));
   t.addEvolution(n,sev,false,true);
   t.addConstraint(sc);
 } // end of MTest_setImposedThermodynamicForce
@@ -66,8 +65,7 @@ MTest_setImposedThermodynamicForce2(mtest::MTest& t,
   }
   shared_ptr<Evolution> sev(new LPIEvolution(tv,ev));
   sc = shared_ptr<Constraint>(new ImposedThermodynamicForce(*(t.getBehaviour()),
-								      t.getModellingHypothesis(),
-								      n,sev));
+							    n,sev));
   t.addEvolution(n,sev,false,true);
   t.addConstraint(sc);
 } // end of MTest_setImposedThermodynamicForce
@@ -149,9 +147,7 @@ MTest_setImposedDrivingVariable(mtest::MTest& t,
   using namespace mtest;
   shared_ptr<Constraint> sc;
   shared_ptr<Evolution> sev(new ConstantEvolution(v));
-  sc = shared_ptr<Constraint>(new ImposedDrivingVariable(*(t.getBehaviour()),
-								   t.getModellingHypothesis(),
-								   n,sev));
+  sc = shared_ptr<Constraint>(new ImposedDrivingVariable(*(t.getBehaviour()),n,sev));
   t.addEvolution(n,sev,false,true);
   t.addConstraint(sc);
 } // end of MTest_setImposedDrivingVariable
@@ -175,9 +171,7 @@ MTest_setImposedDrivingVariable2(mtest::MTest& t,
     ev[i] = pv->second;
   }
   shared_ptr<Evolution> sev(new LPIEvolution(tv,ev));
-  sc = shared_ptr<Constraint>(new ImposedDrivingVariable(*(t.getBehaviour()),
-							 t.getModellingHypothesis(),
-							 n,sev));
+  sc = shared_ptr<Constraint>(new ImposedDrivingVariable(*(t.getBehaviour()),n,sev));
   t.addEvolution(n,sev,false,true);
   t.addConstraint(sc);
 } // end of MTest_setImposedDrivingVariable

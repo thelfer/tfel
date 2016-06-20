@@ -18,6 +18,7 @@
 
 @ModellingHypothesis 'PlaneStress';
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitnorton2';
+@StressEpsilon 1.e-2;
 
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
@@ -51,15 +52,15 @@
 @Test<function> 'AxialStrain' 'EELZZ0-0.5*A*SXX**E*t' 1.e-10;
 @Test<function> 'EXY' '0.'                    1.e-10;
 // tests on internal state variables
-@Test<function> 'ElasticStrainXX' 'EELXX0'  1.e-12;
-@Test<function> 'ElasticStrainYY' 'EELZZ0'  1.e-12;
-@Test<function> 'ElasticStrainZZ' 'EELZZ0'  1.e-12;
-@Test<function> 'ElasticStrainXY' '0.'      1.e-12;
-@Test<function> 'EquivalentViscoplasticStrain[0]' 'A*SXX**E*t/2' 1.e-12;
-@Test<function> 'EquivalentViscoplasticStrain[1]' 'A*SXX**E*t/2' 1.e-12;
+@Test<function> 'ElasticStrainXX' 'EELXX0'  3.e-12;
+@Test<function> 'ElasticStrainYY' 'EELZZ0'  3.e-12;
+@Test<function> 'ElasticStrainZZ' 'EELZZ0'  3.e-12;
+@Test<function> 'ElasticStrainXY' '0.'      3.e-12;
+@Test<function> 'EquivalentViscoplasticStrain[0]' 'A*SXX**E*t/2' 3.e-12;
+@Test<function> 'EquivalentViscoplasticStrain[1]' 'A*SXX**E*t/2' 3.e-12;
 // this test is a bit paranoiac since SXX is imposed
-@Test<function> 'SXX' 'SXX'     1.e-3;
+@Test<function> 'SXX' 'SXX'     1.e-2;
 // check that the mechanical equilibrium is satisfied
-@Test<function> 'SZZ' '0.'      1.e-3;
-@Test<function> 'SYY' '0.'      1.e-3;
-@Test<function> 'SXY' '0.'      1.e-3;
+@Test<function> 'SZZ' '0.'      1.e-2;
+@Test<function> 'SYY' '0.'      1.e-2;
+@Test<function> 'SXY' '0.'      1.e-2;

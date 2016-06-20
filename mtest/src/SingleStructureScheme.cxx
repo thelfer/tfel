@@ -289,12 +289,12 @@ namespace mtest{
     this->declareVariables(ivnames,true);
     this->declareVariables(this->b->getExternalStateVariablesNames(),true);
     for(const auto& n : ivnames){
-      unsigned short t = this->b->getInternalStateVariableType(n);
+      const auto t = this->b->getInternalStateVariableType(n);
       if(t==0){
 	this->ivfullnames.push_back(n);
       } else if(t==1){
 	//! suffixes of stensor components
-	const auto& sexts = this->b->getStensorComponentsSuffixes(this->hypothesis);
+	const auto& sexts = this->b->getStensorComponentsSuffixes();
 	for(decltype(sexts.size()) s=0;s!=sexts.size();++s){
 	  const auto vn = n+sexts[s];
 	  this->declareVariable(vn,true);
@@ -302,7 +302,7 @@ namespace mtest{
 	}
       } else if(t==3){
 	//! suffixes f stensor components
-	const auto& exts = this->b->getTensorComponentsSuffixes(this->hypothesis);
+	const auto& exts = this->b->getTensorComponentsSuffixes();
 	for(decltype(exts.size()) s=0;s!=exts.size();++s){
 	  const auto vn = n+exts[s];
 	  this->declareVariable(vn,true);
@@ -314,8 +314,8 @@ namespace mtest{
       }
     }
     // declaring behaviour variables
-    this->declareVariables(this->b->getDrivingVariablesComponents(this->hypothesis),true);
-    this->declareVariables(this->b->getThermodynamicForcesComponents(this->hypothesis),true);
+    this->declareVariables(this->b->getDrivingVariablesComponents(),true);
+    this->declareVariables(this->b->getThermodynamicForcesComponents(),true);
   } // end of SingleStructureScheme::setBehaviour
 
   void
@@ -393,7 +393,7 @@ namespace mtest{
     auto& scs = state.getStructureCurrentState("");
     auto& bwk = scs.getBehaviourWorkSpace();
     for(auto& s : scs.istates){
-      if(!this->b->doPackagingStep(s,bwk,this->hypothesis)){
+      if(!this->b->doPackagingStep(s,bwk)){
 	return false;
       }
     }
@@ -420,7 +420,7 @@ namespace mtest{
 			       "variable named '"+n+"'"));
     }
     const auto type = this->b->getInternalStateVariableType(n);
-    const auto pos  = this->b->getInternalStateVariablePosition(this->hypothesis,n);
+    const auto pos  = this->b->getInternalStateVariablePosition(n);
     if(type!=0){
       throw(std::runtime_error("SingleStructureScheme::setScalarInternalStateVariableInitialValue: "
 			       "internal state variable '"+n+"' is not defined"));
@@ -446,7 +446,7 @@ namespace mtest{
 			       "state variable named '"+n+"'"));
     }
     const auto type = this->b->getInternalStateVariableType(n);
-    const auto pos  = this->b->getInternalStateVariablePosition(this->hypothesis,n);
+    const auto pos  = this->b->getInternalStateVariablePosition(n);
     if(type!=1){
       throw(std::runtime_error("SingleStructureScheme::setStensorInternalStateVariableInitialValue: "
 			       "internal state variable '"+n+"' is not defined"));
@@ -478,8 +478,8 @@ namespace mtest{
       msg += n+"'";
       throw(runtime_error(msg));
     }
-    const int type           = this->b->getInternalStateVariableType(n);
-    const unsigned short pos = this->b->getInternalStateVariablePosition(this->hypothesis,n);
+    const auto type = this->b->getInternalStateVariableType(n);
+    const auto pos  = this->b->getInternalStateVariablePosition(n);
     if(type!=3){
       string msg("SingleStructureScheme::setTensorInternalStateVariableInitialValue : ");
       msg += "internal state variable '"+n+"' is not defined";

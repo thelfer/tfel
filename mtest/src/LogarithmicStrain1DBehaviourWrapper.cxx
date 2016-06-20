@@ -34,18 +34,20 @@ namespace mtest{
     k(2,1) = k(2,1)/((1+e(1))*(1+e(2)));
   }
 
-  static void
-  checkHypothesis(const LogarithmicStrain1DBehaviourWrapper::Hypothesis h){
-    using tfel::material::ModellingHypothesis;
+  LogarithmicStrain1DBehaviourWrapper::LogarithmicStrain1DBehaviourWrapper(const std::shared_ptr<Behaviour>& wb)
+    : b(wb)
+  {
+    const auto h = this->b->getHypothesis();
     if(h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       throw(std::runtime_error("LogarithmicStrain1DBehaviourWrapper::check: "
 			       "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'"));
     }
   }
-  
-  LogarithmicStrain1DBehaviourWrapper::LogarithmicStrain1DBehaviourWrapper(const std::shared_ptr<Behaviour>& wb)
-    : b(wb)
-  {}
+
+  LogarithmicStrain1DBehaviourWrapper::Hypothesis
+  LogarithmicStrain1DBehaviourWrapper::getHypothesis(void) const{
+    return this->b->getHypothesis();
+  } // end of LogarithmicStrain1DBehaviourWrapper::getHypothesis
   
   tfel::material::MechanicalBehaviourBase::BehaviourType
   LogarithmicStrain1DBehaviourWrapper::getBehaviourType(void) const
@@ -54,10 +56,9 @@ namespace mtest{
   } // end of LogarithmicStrain1DBehaviourWrapper::getBehaviourType
 
   unsigned short
-  LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesSize(const Hypothesis h) const
+  LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesSize() const
   {
-    checkHypothesis(h);
-    return this->b->getDrivingVariablesSize(h);
+    return this->b->getDrivingVariablesSize();
   } // end of LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesSize
 
   void
@@ -67,54 +68,45 @@ namespace mtest{
   } // end of LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesDefaultInitialValues
 
   unsigned short
-  LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesSize(const Hypothesis h) const
+  LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesSize() const
   {
-    checkHypothesis(h);
-    return this->b->getThermodynamicForcesSize(h);
+    return this->b->getThermodynamicForcesSize();
   } // end of LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesSize
 
   std::vector<std::string>
-  LogarithmicStrain1DBehaviourWrapper::getStensorComponentsSuffixes(const Hypothesis h) const
+  LogarithmicStrain1DBehaviourWrapper::getStensorComponentsSuffixes() const
   {
-    checkHypothesis(h);
-    return this->b->getStensorComponentsSuffixes(h);
+    return this->b->getStensorComponentsSuffixes();
   } // end of LogarithmicStrain1DBehaviourWrapper::getStensorComponentsSuffixes
 
   std::vector<std::string>
-  LogarithmicStrain1DBehaviourWrapper::getTensorComponentsSuffixes(const Hypothesis h) const
+  LogarithmicStrain1DBehaviourWrapper::getTensorComponentsSuffixes() const
   {
-    checkHypothesis(h);
-    return this->b->getTensorComponentsSuffixes(h);
+    return this->b->getTensorComponentsSuffixes();
   } // end of LogarithmicStrain1DBehaviourWrapper::getTensorComponentsSuffixes
 
   std::vector<std::string>
-  LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesComponents(const Hypothesis h) const
+  LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesComponents() const
   {
-    checkHypothesis(h);
-    return this->b->getDrivingVariablesComponents(h);
+    return this->b->getDrivingVariablesComponents();
   } // end of LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesComponents
 
   std::vector<std::string>
-  LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesComponents(const Hypothesis h) const
+  LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesComponents() const
   {
-    checkHypothesis(h);
-    return this->b->getThermodynamicForcesComponents(h);
+    return this->b->getThermodynamicForcesComponents();
   } // end of LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesComponents
 
   unsigned short
-  LogarithmicStrain1DBehaviourWrapper::getDrivingVariableComponentPosition(const Hypothesis h,
-									   const std::string& c) const
+  LogarithmicStrain1DBehaviourWrapper::getDrivingVariableComponentPosition(const std::string& c) const
   {
-    checkHypothesis(h);
-    return this->b->getDrivingVariableComponentPosition(h,c);
+    return this->b->getDrivingVariableComponentPosition(c);
   } // end of LogarithmicStrain1DBehaviourWrapper::getDrivingVariableComponentPosition
 
   unsigned short
-  LogarithmicStrain1DBehaviourWrapper::getThermodynamicForceComponentPosition(const Hypothesis h,
-									      const std::string& c) const
+  LogarithmicStrain1DBehaviourWrapper::getThermodynamicForceComponentPosition(const std::string& c) const
   {
-    checkHypothesis(h);
-    return this->b->getThermodynamicForceComponentPosition(h,c);
+    return this->b->getThermodynamicForceComponentPosition(c);
   } // end of LogarithmicStrain1DBehaviourWrapper::getThermodynamicForceComponentPosition
 
   unsigned short
@@ -143,17 +135,15 @@ namespace mtest{
   } // end of LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesNames
 
   size_t
-  LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesSize(const Hypothesis h) const
+  LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesSize() const
   {
-    checkHypothesis(h);
-    return this->b->getInternalStateVariablesSize(h);
+    return this->b->getInternalStateVariablesSize();
   } // end of LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesSize
 
   std::vector<std::string>
-  LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesDescriptions(const Hypothesis h) const
+  LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesDescriptions() const
   {
-    checkHypothesis(h);
-    return this->b->getInternalStateVariablesDescriptions(h);
+    return this->b->getInternalStateVariablesDescriptions();
   } // end of LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesDescriptions
 
   unsigned short
@@ -163,11 +153,9 @@ namespace mtest{
   } // end of LogarithmicStrain1DBehaviourWrapper::getInternalStateVariableType
 
   unsigned short
-  LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablePosition(const Hypothesis h,
-									const std::string& n) const
+  LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablePosition(const std::string& n) const
   {
-    checkHypothesis(h);
-    return this->b->getInternalStateVariablePosition(h,n);
+    return this->b->getInternalStateVariablePosition(n);
   } // end of LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablePosition
 
   std::vector<std::string>
@@ -204,10 +192,9 @@ namespace mtest{
   } // end of LogarithmicStrain1DBehaviourWrapper::setUnsignedIntegerParameter
 
   void
-  LogarithmicStrain1DBehaviourWrapper::allocate(BehaviourWorkSpace& wk,
-						const Hypothesis h) const
+  LogarithmicStrain1DBehaviourWrapper::allocate(BehaviourWorkSpace& wk) const
   {
-    this->b->allocate(wk,h);
+    this->b->allocate(wk);
   } // end of LogarithmicStrain1DBehaviourWrapper::allocate
 
   StiffnessMatrixType
@@ -225,18 +212,15 @@ namespace mtest{
 
   bool
   LogarithmicStrain1DBehaviourWrapper::doPackagingStep(CurrentState& s,
-						       BehaviourWorkSpace& wk,
-						       const Hypothesis h) const{
-    return this->b->doPackagingStep(s,wk,h);
+						       BehaviourWorkSpace& wk) const{
+    return this->b->doPackagingStep(s,wk);
   } // end of LogarithmicStrain1DBehaviourWrapper::doPackagingStep
   
   std::pair<bool,real>
   LogarithmicStrain1DBehaviourWrapper::computePredictionOperator(BehaviourWorkSpace& wk,
 								 const CurrentState& s,
-								 const Hypothesis h,
 								 const StiffnessMatrixType ktype) const
   {
-    checkHypothesis(h);
     auto cs=s;
     // logarithmic strains
     cs.e0[0] = std::log(1+s.e0[0]);
@@ -258,7 +242,7 @@ namespace mtest{
     cs.s1[0] = cs.s0[0];
     cs.s1[1] = cs.s0[1];
     cs.s1[2] = cs.s0[2];
-    const auto r = this->b->computePredictionOperator(wk,cs,h,ktype);
+    const auto r = this->b->computePredictionOperator(wk,cs,ktype);
     if(!r.first){
       return r;
     }
@@ -274,11 +258,9 @@ namespace mtest{
   std::pair<bool,real>
   LogarithmicStrain1DBehaviourWrapper::integrate(CurrentState& s,
 						 BehaviourWorkSpace& wk,
-						 const Hypothesis h,
 						 const real dt,
 						 const StiffnessMatrixType ktype) const
   {
-    checkHypothesis(h);
     real e0[3];
     real e1[3];
     real e_th0[3];
@@ -308,7 +290,7 @@ namespace mtest{
     s.e_th1[1] = std::log(1+e_th1[1]);
     s.e_th1[2] = std::log(1+e_th1[2]);
     tfel::fsalgo::copy<3u>::exe(s.s0.begin(),s.s1.begin());
-    const auto r = this->b->integrate(s,wk,h,dt,ktype);
+    const auto r = this->b->integrate(s,wk,dt,ktype);
     tfel::fsalgo::copy<3u>::exe(e0,s.e0.begin());
     tfel::fsalgo::copy<3u>::exe(e1,s.e1.begin());
     tfel::fsalgo::copy<3u>::exe(s0,s.s0.begin());
