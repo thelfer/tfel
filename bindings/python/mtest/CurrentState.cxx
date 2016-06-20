@@ -12,6 +12,8 @@
  */
 
 #include<boost/python.hpp>
+#include"TFEL/Material/ModellingHypothesis.hxx"
+#include"MTest/Behaviour.hxx"
 #include"MTest/CurrentState.hxx"
 #include"TFEL/Python/VectorConverter.hxx"
 
@@ -74,6 +76,59 @@ static auto v_size(const tfel::math::vector<mtest::CurrentState>& v)
   return v.end()-v.begin();
 }
 
+static boost::python::object
+getInternalStateVariableValue(const mtest::CurrentState& s,
+			      const std::string& n,
+			      const int i)
+{
+  auto throw_if = [](const bool b, const std::string& m){
+    if(b){throw(std::runtime_error("mtest::getInternalStateVariableValue: "+m));}
+  };
+  throw_if(s.behaviour.get()==nullptr,"no behaviour defined");
+  const auto& ivsnames = s.behaviour->getInternalStateVariablesNames();
+  throw_if(std::find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end(),
+	   "the behaviour don't declare an internal state "
+	   "variable named '"+n+"'");
+  const auto type = s.behaviour->getInternalStateVariableType(n);
+  const auto size = [&s,throw_if,type]() -> std::vector<mtest::real>::size_type {
+    if(type==0){
+      return 1;
+    } else if(type==1){
+      return tfel::material::getStensorSize(s.behaviour->getHypothesis());
+    } else if(type==3){
+      return tfel::material::getSpaceDimension(s.behaviour->getHypothesis());
+    } else if(type==3){
+      return tfel::material::getTensorSize(s.behaviour->getHypothesis());
+    }
+    throw_if(true,"unsupported variable type");
+    return 0;
+  }();
+  const auto pos = s.behaviour->getInternalStateVariablePosition(n);
+  throw_if((s.iv_1.size()<pos+size)||(s.iv0.size()<pos+size)||(s.iv1.size()<pos+size),
+	   "invalid size for state variables (bad initialization)");
+  const auto& iv = [&s,throw_if,i]() -> const tfel::math::vector<mtest::real>& {
+    throw_if((i!=1)&&(i!=0)&&(i!=-1),"invalid depth");
+    if(i==-1){
+      return s.iv_1;
+    } else if(i==0){
+      return s.iv0;
+    }
+    return s.iv1;
+  }();
+  if(type==0){
+    return boost::python::object(iv[pos]);
+  }
+  return boost::python::object(std::vector<mtest::real>(iv.begin()+pos,
+							iv.begin()+pos+size));
+}
+
+static boost::python::object
+getInternalStateVariableValue(const mtest::CurrentState& s,
+			      const std::string& n)
+{
+  return getInternalStateVariableValue(s,n,1);
+} // end of getInternalStateVariableValue
+
 void declareCurrentState(void);
 
 void declareCurrentState(void)
@@ -82,6 +137,26 @@ void declareCurrentState(void)
   using namespace boost::python;
   using namespace tfel::python;
 
+  void (*ptr)(mtest::CurrentState&,
+	      const std::string&,
+	      const mtest::real) = mtest::setInternalStateVariableValue;
+  void (*ptr2)(mtest::CurrentState&,
+	       const std::string&,
+	       const std::vector<mtest::real>&) = mtest::setInternalStateVariableValue;
+  void (*ptr3)(mtest::CurrentState&,
+	       const std::string&,
+	       const mtest::real,
+	       const int) = mtest::setInternalStateVariableValue;
+  void (*ptr4)(mtest::CurrentState&,
+	       const std::string&,
+	       const std::vector<mtest::real>&,
+	       const int) = mtest::setInternalStateVariableValue;
+  object (*ptr5)(const mtest::CurrentState&,
+  		 const std::string&) = ::getInternalStateVariableValue;
+  object (*ptr6)(const mtest::CurrentState&,
+  		 const std::string&,
+  		 const int) = ::getInternalStateVariableValue;
+  
   class_<mtest::CurrentState>("CurrentState")
     .add_property("s_1",CurrentState_gets_1)
     .add_property("s0",CurrentState_gets0)
@@ -96,10 +171,74 @@ void declareCurrentState(void)
     .add_property("iv1",CurrentState_getiv1)
     .add_property("evs0",CurrentState_getesv0)
     .add_property("desv",CurrentState_getdesv)
+    .def("setInternalStateVariableValue",ptr,
+	 "set the value of a scalar internal state variable\n"
+	 "\n"
+	 "param[in]  n: variable name\n"
+	 "param[in]  v: values\n"
+	 "\n"
+	 "This overwrites the values of the internal state variables:\n"
+	 "- at the beginning of the previous time step\n"
+	 "- at the beginning of the current time step\n"
+	 "- at the end of the current time step")
+    .def("setInternalStateVariableValue",ptr2,
+	 "set the value of an internal state variable\n"
+	 "\n"
+	 "param[in]  n: variable name\n"
+	 "param[in]  v: values\n"
+	 "\n"
+	 "This overwrites the values of the internal state variables:\n"
+	 "- at the beginning of the previous time step\n"
+	 "- at the beginning of the current time step\n"
+	 "- at the end of the current time step")
+    .def("setInternalStateVariableValue",ptr3,
+	 "set the value of a scalar internal state variable\n"
+	 "\n"
+	 "param[in]  n: variable name\n"
+	 "param[in]  v: value\n"
+	 "param[in]  d: depth\n"
+	 "\n"
+	 "The depth value has the following meaning:\n"
+	 "- -1 means that we are modifying the internal state variable\n"
+	 "  value at the beginning of the previous time step\n"
+	 "- 0 means that we are modifying the internal state variable value\n"
+	 "  at the beginning of the current time step\n"
+	 "- 1 means that we are modifying the internal state variable value\n"
+	 "  at the end of the current time step")
+    .def("setInternalStateVariableValue",ptr4,
+	 "set the value of an internal state variable\n"
+	 "\n"
+	 "param[in]  n: variable name\n"
+	 "param[in]  v: value\n"
+	 "param[in]  d: depth\n"
+	 "\n"
+	 "The depth value has the following meaning:\n"
+	 "- -1 means that we are modifying the internal state variable\n"
+	 "  value at the beginning of the previous time step\n"
+	 "- 0 means that we are modifying the internal state variable value\n"
+	 "  at the beginning of the current time step\n"
+	 "- 1 means that we are modifying the internal state variable value\n"
+	 "  at the end of the current time step")
+    .def("getInternalStateVariableValue",ptr5,
+	 "get the value of an internal state variable at the end of the time \n"
+	 "step\n"
+	 "\n"
+	 "param[in]  n: variable name")
+    .def("getInternalStateVariableValue",ptr6,
+	 "get the value of an internal state variable\n"
+	 "\n"
+	 "param[in]  n: variable name\n"
+	 "param[in]  d: depth\n"
+	 "\n"
+	 "The depth value has the following meaning:\n"
+	 "- -1 means that we request the value at the beginning of the previous time step\n"
+	 "- 0 means that we request the  value at the beginning of the current time step\n"
+	 "- 1 means that we request the  value at the end of the current time step")
     ;
-
+  
   class_<tfel::math::vector<mtest::CurrentState>>("CurrentStateVector")
-    .def("__iter__",boost::python::range(&v_begin,&v_end))
+    .def("__iter__",
+	 boost::python::range<return_internal_reference<>>(&v_begin,&v_end))
     .def("__len__",&v_size)
     .def("__getitem__",&v_getitem,return_internal_reference<>())
     .def("__setitem__",&v_setitem)

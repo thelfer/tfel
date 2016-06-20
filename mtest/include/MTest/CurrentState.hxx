@@ -21,7 +21,6 @@
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Utilities/GenTypeBase.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
 
 #include"MTest/Config.hxx"
 #include"MTest/Types.hxx"
@@ -31,7 +30,9 @@ namespace mtest
 
   // forward declaration
   struct Behaviour;
-
+  /*!
+   * an helper structure used to store information for the packaging step
+   */
   using PackagingInfo =
     tfel::utilities::GenTypeBase<tfel::meta::GenerateTypeList<tfel::math::vector<real>,
 							      tfel::math::matrix<real>>::type>;
@@ -107,7 +108,6 @@ namespace mtest
     //! information collected during the packaging stage
     std::map<std::string,PackagingInfo> packaging_info;
   }; // end of struct CurrentState
-
   /*!
    * \brief allocate memory
    * \param[out] s: state
@@ -116,7 +116,6 @@ namespace mtest
   MTEST_VISIBILITY_EXPORT void
   allocate(CurrentState&,
 	   const std::shared_ptr<const Behaviour>&);
-  
   /*!
    * \brief compute the external state variables for the current time
    * step
@@ -150,33 +149,101 @@ namespace mtest
 				const std::vector<std::string>&,
 				const real,
 				const real);
-
+  /*!
+   * \brief compute the thermal expansion (orthotropic case)
+   */
   MTEST_VISIBILITY_EXPORT void
   computeThermalExpansion(CurrentState&,
 			  const EvolutionManager&,
 			  const real,
 			  const real);
-
+  /*!
+   * \brief compute the thermal expansion (orthotropic case)
+   */
   MTEST_VISIBILITY_EXPORT void
   computeThermalExpansion(CurrentState&,
 			  const EvolutionManager&,
 			  const real,
 			  const real,
 			  const unsigned short);
-  
   /*!
    * \brief update the state for the next time step
    * \param[out] s: state
    */
   MTEST_VISIBILITY_EXPORT void
   update(CurrentState&);
-
   /*!
    * \brief revert the state to the beginning of the time step
    * \param[out] s: state
    */
   MTEST_VISIBILITY_EXPORT void
   revert(CurrentState&);
+  /*!
+   * \brief set the value of a scalar internal state variable
+   * \param[out] s: state
+   * \param[in]  n: variable name
+   * \param[in]  v: value
+   * This overwrites the values of the internal state variables:
+   * - at the beginning of the previous time step
+   * - at the beginning of the current time step
+   * - at the end of the current time step
+   */
+  MTEST_VISIBILITY_EXPORT void
+  setInternalStateVariableValue(CurrentState&,
+				const std::string&,
+				const real);
+  /*!
+   * \brief set the value of an internal state variable
+   * \param[out] s: state
+   * \param[in]  n: variable name
+   * \param[in]  v: values
+   * This overwrites the values of the internal state variables:
+   * - at the beginning of the previous time step
+   * - at the beginning of the current time step
+   * - at the end of the current time step
+   */
+  MTEST_VISIBILITY_EXPORT void
+  setInternalStateVariableValue(CurrentState&,
+				const std::string&,
+				const std::vector<real>&);
+  /*!
+   * \brief set the value of a scalar internal state variable
+   * \param[out] s: state
+   * \param[in]  n: variable name
+   * \param[in]  v: value
+   * \param[in]  d: depth
+   * The depth value has the following meaning:
+   * - -1 means that we are modifying the internal state variable
+   *   value at the beginning of the previous time step
+   * - 0 means that we are modifying the internal state variable value
+   *   at the beginning of the current time step
+   * - 1 means that we are modifying the internal state variable value
+   *   at the end of the current time step
+   */
+  MTEST_VISIBILITY_EXPORT void
+  setInternalStateVariableValue(CurrentState&,
+				const std::string&,
+				const real,
+				const int);
+  /*!
+   * \brief set the value of an internal state variable
+   * \param[out] s: state
+   * \param[in]  n: variable name
+   * \param[in]  v: values
+   * \param[in]  d: depth
+   * The depth value has the following meaning:
+   * - -1 means that we are modifying the internal state variable
+   *   value at the beginning of the previous time step
+   * - 0 means that we are modifying the internal state variable value
+   *   at the beginning of the current time step
+   * - 1 means that we are modifying the internal state variable value
+   *   at the end of the current time step
+   */
+  MTEST_VISIBILITY_EXPORT void
+  setInternalStateVariableValue(CurrentState&,
+				const std::string&,
+				const std::vector<real>&,
+				const int);
   
 } // end of namespace mtest
 

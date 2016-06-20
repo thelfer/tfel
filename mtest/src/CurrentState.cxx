@@ -223,6 +223,94 @@ namespace mtest{
     s.s1  = s.s0;
     s.iv1 = s.iv0;
   }
+
+  void setInternalStateVariableValue(CurrentState& s,
+				     const std::string& n,
+				     const real v){
+    setInternalStateVariableValue(s,n,v,-1);
+    setInternalStateVariableValue(s,n,v,0);
+    setInternalStateVariableValue(s,n,v,1);
+  }
+  
+  void setInternalStateVariableValue(CurrentState& s,
+				     const std::string& n,
+				     const real v,
+				     const int d){
+    auto throw_if = [](const bool b, const std::string& m){
+      if(b){throw(std::runtime_error("mtest::setInternalStateVariableValue: "+m));}
+    };
+    throw_if(s.behaviour.get()==nullptr,"no behaviour defined");
+    const auto& ivsnames = s.behaviour->getInternalStateVariablesNames();
+    throw_if(std::find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end(),
+	     "the behaviour don't declare an internal state "
+	     "variable named '"+n+"'");
+    const auto type = s.behaviour->getInternalStateVariableType(n);
+    throw_if(type!=0,"invalid state variable type (not scalar) for "
+	     "internal state variable '"+n+"'");
+    const auto pos  = s.behaviour->getInternalStateVariablePosition(n);
+    throw_if((s.iv_1.size()<=pos)||(s.iv0.size()<=pos)||(s.iv1.size()<=pos),
+	     "invalid size for state variables (bad initialization)");
+    auto& iv = [&s,throw_if,d]() -> tfel::math::vector<mtest::real>& {
+      throw_if((d!=1)&&(d!=0)&&(d!=-1),"invalid depth");
+      if(d==-1){
+	return s.iv_1;
+      } else if(d==0){
+	return s.iv0;
+      }
+      return s.iv1;
+    }();
+    iv[pos] = v;
+  } // end of setInternalStateVariableValue
+
+  void setInternalStateVariableValue(CurrentState& s,
+				     const std::string& n,
+				     const std::vector<real>& v){
+    setInternalStateVariableValue(s,n,v,-1);
+    setInternalStateVariableValue(s,n,v,0);
+    setInternalStateVariableValue(s,n,v,1);
+  }
+  
+  void setInternalStateVariableValue(CurrentState& s,
+				     const std::string& n,
+				     const std::vector<real>& v,
+				     const int d){
+    auto throw_if = [](const bool b, const std::string& m){
+      if(b){throw(std::runtime_error("mtest::setInternalStateVariableValue: "+m));}
+    };
+    throw_if(s.behaviour.get()==nullptr,"no behaviour defined");
+    const auto& ivsnames = s.behaviour->getInternalStateVariablesNames();
+    throw_if(std::find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end(),
+	     "the behaviour don't declare an internal state "
+	     "variable named '"+n+"'");
+    const auto type = s.behaviour->getInternalStateVariableType(n);
+    const auto size = [&s,throw_if,type]() -> std::vector<real>::size_type {
+      if(type==0){
+	return 1;
+      } else if(type==1){
+	return tfel::material::getStensorSize(s.behaviour->getHypothesis());
+      } else if(type==3){
+	return tfel::material::getSpaceDimension(s.behaviour->getHypothesis());
+      } else if(type==3){
+	return tfel::material::getTensorSize(s.behaviour->getHypothesis());
+      }
+      throw_if(true,"unsupported variable type");
+      return 0;
+    }();
+    throw_if(v.size()!=size,"bad number of values");
+    const auto pos = s.behaviour->getInternalStateVariablePosition(n);
+    throw_if((s.iv_1.size()<pos+size)||(s.iv0.size()<pos+size)||(s.iv1.size()<pos+size),
+	     "invalid size for state variables (bad initialization)");
+    auto& iv = [&s,throw_if,d]() -> tfel::math::vector<mtest::real>& {
+      throw_if((d!=1)&&(d!=0)&&(d!=-1),"invalid depth");
+      if(d==-1){
+	return s.iv_1;
+      } else if(d==0){
+	return s.iv0;
+      }
+      return s.iv1;
+    }();
+    std::copy(v.begin(),v.end(),iv.begin()+pos);
+  } // end of setInternalStateVariableValue
   
 } // end of namespace mtest
 

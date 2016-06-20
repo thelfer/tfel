@@ -15,13 +15,18 @@
 #include"MTest/CurrentState.hxx"
 #include"MTest/StructureCurrentState.hxx"
 
+static tfel::math::vector<mtest::CurrentState>&
+get_istates(mtest::StructureCurrentState& scs){
+  return scs.istates;
+}
+
 void declareStructureCurrentState(void);
 
 void declareStructureCurrentState(void)
 {
-
-  boost::python::class_<mtest::StructureCurrentState>("StructureCurrentState")
-    .def_readonly("istates",&mtest::StructureCurrentState::istates)
+  using namespace boost::python;
+  class_<mtest::StructureCurrentState>("StructureCurrentState")
+    .add_property("istates",make_function(&get_istates,return_internal_reference<>()))
     ;
 
 }
