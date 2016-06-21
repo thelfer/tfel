@@ -48,7 +48,7 @@ namespace mfront{
     enum FiniteStrainStrategy{
       UNDEFINEDSTRATEGY,
       FINITEROTATIONSMALLSTRAIN,
-      MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN,
+      MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN
     }; // end of enum FiniteStrainStrategy
     //! return the name of the interface
     static std::string 

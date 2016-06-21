@@ -74,7 +74,7 @@ private:
     using namespace std;
     using namespace mfront;
     using tfel::material::ModellingHypothesis;
-    const auto bd = BehaviourDescription{};
+    const BehaviourDescription bd;
     const auto uh  = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto psh = ModellingHypothesis::PLANESTRESS;
     TFEL_TESTS_CHECK_THROW(bd.getModellingHypotheses(),

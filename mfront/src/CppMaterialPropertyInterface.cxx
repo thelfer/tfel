@@ -192,7 +192,7 @@ namespace mfront
 	  header << ",";
 	}
       }
-      header << ")\nthrow(std::range_error);\n\n";
+      header << ");\n\n";
     }
     for(p3=params.begin();p3!=params.end();++p3){
       header << "const double& get" << *p3 << "(void) const;\n";
@@ -376,7 +376,7 @@ namespace mfront
       } else {
 	src << "void";
       }
-      src << ")\n throw(std::range_error)\n{\n";
+      src << ")\n{\n";
       if(!physicalBounds.empty()){
 	src << "using namespace std;\n";	
 	src << "// treating physical bounds\n";

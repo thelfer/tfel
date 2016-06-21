@@ -29,15 +29,9 @@ namespace tfel
     template<typename F>
     LevenbergMarquardt<F>::LevenbergMarquardt(const F f_)
       : f(f_),
-	p(f_.getNumberOfParameters()),
-	lambda0(T(1.e-3)),
-	factor(T(2)),
-	eps1(1.e-10),
-	eps2(1.e-10),
-	iter(0),
-	iterMax(100)
+	p(f_.getNumberOfParameters())
     {} // end of LevenbergMarquardt::LevenbergMarquardt
-
+    
     template<typename F>
     void
     LevenbergMarquardt<F>::setInitialDampingParameter(const T value)
@@ -179,8 +173,7 @@ namespace tfel
     } // end of execute
 
     template<typename F>
-    LevenbergMarquardt<F>::~LevenbergMarquardt()
-    {}
+    LevenbergMarquardt<F>::~LevenbergMarquardt() = default;
 
   } // end of namespace math
 

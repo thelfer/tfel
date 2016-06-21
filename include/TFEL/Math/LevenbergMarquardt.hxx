@@ -45,33 +45,24 @@ namespace tfel
 
       LevenbergMarquardt(const F);
 
-      void
-      addData(const Variable&,
-	      const T);
+      void addData(const Variable&,const T);
 
-      void
-      setInitialGuess(const Parameter&);
+      void setInitialGuess(const Parameter&);
 
-      void
-      setInitialDampingParameter(const T);
+      void setInitialDampingParameter(const T);
 
-      void
-      setFirstCriterium(const T);
+      void setFirstCriterium(const T);
 
-      void
-      setSecondCriterium(const T);
+      void setSecondCriterium(const T);
 
-      void
-      setMultiplicationFactor(const T);
+      void setMultiplicationFactor(const T);
 
-      void
-      setMaximumIteration(const T);
+      void setMaximumIteration(const T);
 
       unsigned short
       getNumberOfIterations() const;
 
-      const Parameter&
-      execute(void);
+      const Parameter& execute(void);
       
       ~LevenbergMarquardt();
 
@@ -80,13 +71,12 @@ namespace tfel
       F f;
       std::vector<std::pair<Variable,double> > data;
       Parameter p;
-      T lambda0;
-      T factor;
-      T eps1;
-      T eps2;
-      unsigned short iter;
-      unsigned short iterMax;
-
+      T lambda0 = T(1.e-3);
+      T factor = T(2);
+      T eps1 = T(1.e-10);
+      T eps2 = T(1.e-10);
+      unsigned short iter    = 0;
+      unsigned short iterMax = 100;
     }; // end of struct LevenbergMarquardt
 
   } // end of namespace math
@@ -96,4 +86,3 @@ namespace tfel
 #include"TFEL/Math/LevenbergMarquardt/LevenbergMarquardt.ixx"
 
 #endif /* LIB_LEVENBERGMARQUARDT_HXX_ */
-

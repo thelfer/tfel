@@ -26,7 +26,9 @@ namespace abaqus {
   {
 
     AbaqusException(const std::string&);
-
+    //! move constructor
+    AbaqusException(AbaqusException&&);
+    //! copy constructor
     AbaqusException(const AbaqusException&);
 
     virtual const char* 
@@ -34,18 +36,14 @@ namespace abaqus {
 
     virtual std::string 
     getMsg(void) const noexcept final;
-    
+    //! destructor    
     virtual ~AbaqusException() noexcept;
-
   private:
-    
     AbaqusException() = delete;
-
-    AbaqusException&
-    operator=(const AbaqusException&) = delete;
-
+    AbaqusException& operator=(const AbaqusException&) = delete;
+    AbaqusException& operator=(AbaqusException&&) = delete;
+    //! error message
     const std::string msg;
-    
   }; // end of struct AbaqusException
 
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusInvalidModellingHypothesis
@@ -55,6 +53,8 @@ namespace abaqus {
      * \param[in] b : behaviour name
      */
     AbaqusInvalidModellingHypothesis(const char*);
+    AbaqusInvalidModellingHypothesis(AbaqusInvalidModellingHypothesis&&);
+    AbaqusInvalidModellingHypothesis(const AbaqusInvalidModellingHypothesis&);
     //! destructor
     virtual ~AbaqusInvalidModellingHypothesis() noexcept;
     AbaqusInvalidModellingHypothesis&
@@ -65,6 +65,7 @@ namespace abaqus {
     : public AbaqusException
   {
     AbaqusInvalidNTENSValue(const unsigned short);
+    AbaqusInvalidNTENSValue(AbaqusInvalidNTENSValue&&);
     AbaqusInvalidNTENSValue(const AbaqusInvalidNTENSValue&);
     virtual ~AbaqusInvalidNTENSValue() noexcept;
   private:
@@ -77,7 +78,8 @@ namespace abaqus {
     : public AbaqusException
   {
     AbaqusInvalidDimension(const std::string&,
-			 const unsigned short);
+			   const unsigned short);
+    AbaqusInvalidDimension(AbaqusInvalidDimension&&);
     AbaqusInvalidDimension(const AbaqusInvalidDimension&);
     virtual ~AbaqusInvalidDimension() noexcept;
   private:

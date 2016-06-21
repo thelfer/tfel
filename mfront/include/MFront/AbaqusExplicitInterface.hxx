@@ -12,7 +12,7 @@
  */
 
 #ifndef LIB_MFRONT_ABAQUSEXPLICITINTERFACE_HXX
-#define LIB_MFRONT_ABAQUSEXPLICITINTERFACE_HX
+#define LIB_MFRONT_ABAQUSEXPLICITINTERFACE_HXX
 
 #include"MFront/AbaqusInterfaceBase.hxx"
 
@@ -44,7 +44,7 @@ namespace mfront{
     enum FiniteStrainStrategy{
       UNDEFINEDSTRATEGY,
       FINITEROTATIONSMALLSTRAIN,
-      MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN,
+      MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN
     }; // end of enum FiniteStrainStrategy
     /*!
      * \return the name of the interface
@@ -282,4 +282,4 @@ namespace mfront{
   
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_ABAQUSEXPLICITINTERFACE_HXX_ */
+#endif /* LIB_MFRONT_ABAQUSEXPLICITINTERFACE_HXX */

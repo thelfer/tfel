@@ -29,16 +29,15 @@ namespace std{
 
 namespace abaqus 
 {
-  
+
   AbaqusException::AbaqusException(const std::string& s)
     : msg(s)
   {} // end of AbaqusException::AbaqusException
-    
-  AbaqusException::AbaqusException(const AbaqusException& e)
-    : std::exception(),
-      msg(e.msg)
-  {} // end of AbaqusException::AbaqusException
 
+  AbaqusException::AbaqusException(AbaqusException&&) = default;
+
+  AbaqusException::AbaqusException(const AbaqusException&) = default;
+    
   const char* 
   AbaqusException::what (void) const noexcept
   { 
@@ -51,28 +50,29 @@ namespace abaqus
     return msg;
   } // end of AbaqusException::getMsg
   
-  AbaqusException::~AbaqusException() noexcept
-  {} // end of AbaqusException::~AbaqusException
+  AbaqusException::~AbaqusException() noexcept = default;
 
+  AbaqusInvalidModellingHypothesis::AbaqusInvalidModellingHypothesis(AbaqusInvalidModellingHypothesis&&) = default;
+
+  AbaqusInvalidModellingHypothesis::AbaqusInvalidModellingHypothesis(const AbaqusInvalidModellingHypothesis&) = default;
+  
   AbaqusInvalidModellingHypothesis::AbaqusInvalidModellingHypothesis(const char* b)
     : AbaqusException("current modelling hypothesis is not supported by behaviour '"+
 		      std::string(b)+"'")
   {}
 
-  AbaqusInvalidModellingHypothesis::~AbaqusInvalidModellingHypothesis() noexcept
-  {} // end of AbaqusInvalidModellingHypothesis::~AbaqusInvalidModellingHypothesis()
+  AbaqusInvalidModellingHypothesis::~AbaqusInvalidModellingHypothesis() noexcept = default;
   
   AbaqusInvalidNTENSValue::AbaqusInvalidNTENSValue(const unsigned short N)
     : AbaqusException("Invalid tensor size declared '"+
 		     std::to_string(static_cast<unsigned int>(N))+"'")
   {} // end of AbaqusInvalidNTENSValue::AbaqusInvalidNTENSValue
 
-  AbaqusInvalidNTENSValue::AbaqusInvalidNTENSValue(const AbaqusInvalidNTENSValue& e)
-    : AbaqusException(e)
-  {} // end of AbaqusInvalidNTENSValue::AbaqusInvalidNTENSValue
+  AbaqusInvalidNTENSValue::AbaqusInvalidNTENSValue(AbaqusInvalidNTENSValue&&) = default;
 
-  AbaqusInvalidNTENSValue::~AbaqusInvalidNTENSValue() noexcept
-  {} // end of AbaqusInvalidNTENSValue::~AbaqusInvalidNTENSValue()
+  AbaqusInvalidNTENSValue::AbaqusInvalidNTENSValue(const AbaqusInvalidNTENSValue&) = default;
+
+  AbaqusInvalidNTENSValue::~AbaqusInvalidNTENSValue() noexcept = default;
 
   AbaqusInvalidDimension::AbaqusInvalidDimension(const std::string& b,
 					     const unsigned short N)
@@ -80,12 +80,12 @@ namespace abaqus
 		     std::to_string(static_cast<unsigned int>(N))+"D")
   {} // end of AbaqusInvalidDimension::AbaqusInvalidDimension
 
-  AbaqusInvalidDimension::AbaqusInvalidDimension(const AbaqusInvalidDimension& e)
-    : AbaqusException(e)
-  {} // end of AbaqusInvalidDimension::AbaqusInvalidDimension
+  AbaqusInvalidDimension::AbaqusInvalidDimension(const AbaqusInvalidDimension& e) = default;
 
-  AbaqusInvalidDimension::~AbaqusInvalidDimension() noexcept
-  {} // end of AbaqusInvalidDimension::~AbaqusInvalidDimension()
+  AbaqusInvalidDimension::AbaqusInvalidDimension(AbaqusInvalidDimension&&) = default;
+
+  
+  AbaqusInvalidDimension::~AbaqusInvalidDimension() noexcept = default;
 
 } // end of namespace abaqus
 

@@ -597,7 +597,6 @@ namespace mfront{
 				     "addGenericPredictionOperatorSupport: "+m));}
     };
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
     CodeBlock tangentOperator;
     // modelling hypotheses supported by the behaviour
     const auto bmh = bd.getModellingHypotheses();
