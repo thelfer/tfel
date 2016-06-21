@@ -39,7 +39,6 @@ int main(void)
   using namespace std;
   using namespace tfel::math;
   using tfel::math::vector;
-  typedef LevenbergMarquardtEvaluatorWrapper EvaluatorWrapper;
   const double x_data[] = {0.840188,
 			   0.783099,
 			   0.911647,
@@ -61,12 +60,12 @@ int main(void)
 			  1.89371,
 			  2.52963,
 			  2.72843};
-  std::vector<string> v;
+  std::vector<std::string> v;
   v.push_back("x");
   v.push_back("p0");
   v.push_back("p1");
-  shared_ptr<Evaluator> test(new Evaluator(v,"p1*exp(p0*cos(x*x))"));
-  LevenbergMarquardt<EvaluatorWrapper> levmar(EvaluatorWrapper(test,1u,2u));
+  auto test = std::make_shared<Evaluator>(v,"p1*exp(p0*cos(x*x))");
+  LevenbergMarquardt<LevenbergMarquardtEvaluatorWrapper> levmar(LevenbergMarquardtEvaluatorWrapper(test,1u,2u));
   vector<double> x(1u);
   vector<double> p(2u);
   unsigned short i;
