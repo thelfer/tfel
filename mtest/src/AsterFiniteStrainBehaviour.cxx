@@ -173,9 +173,8 @@ namespace mtest
       dimension = 3u;
       nummod = 3u;
     } else {
-      string msg("AsterFiniteStrainBehaviour::call_beahviour : ");
-      msg += "unsupported hypothesis";
-      throw(runtime_error(msg));
+      throw(runtime_error("AsterFiniteStrainBehaviour::call_beahviour: "
+			  "unsupported hypothesis"));
     }
     fill(wk.D.begin(),wk.D.end(),0.);
     // choosing the type of stiffness matrix
@@ -200,17 +199,10 @@ namespace mtest
     uu0(0,0) = s.e0(0); uu1(0,0) = s.e1(0);
     uu0(1,1) = s.e0(1); uu1(1,1) = s.e1(1);
     uu0(2,2) = s.e0(2); uu1(2,2) = s.e1(2);
-    if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      uu0(1,0) = 0.; uu1(1,0) = 0.;
-      uu0(0,1) = 0.; uu1(0,1) = 0.;
-      uu0(2,0) = 0.; uu1(2,0) = 0.;
-      uu0(0,2) = 0.; uu1(0,2) = 0.;
-      uu0(2,1) = 0.; uu1(2,1) = 0.;
-      uu0(1,2) = 0.; uu1(1,2) = 0.;
-    } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
-	       (h==ModellingHypothesis::PLANESTRESS)||
-	       (h==ModellingHypothesis::PLANESTRAIN)||
-	       (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+    if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+	(h==ModellingHypothesis::PLANESTRESS)||
+	(h==ModellingHypothesis::PLANESTRAIN)||
+	(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
       // uu0 and uu1 must be built using Fortran notations
       uu0(1,0) = s.e0(3); uu1(1,0) = s.e1(3);
       uu0(0,1) = s.e0(4); uu1(0,1) = s.e1(4);
@@ -227,9 +219,8 @@ namespace mtest
       uu0(2,1) = s.e0(7); uu1(2,1) = s.e1(7);
       uu0(1,2) = s.e0(8); uu1(1,2) = s.e1(8);
     } else {
-      string msg("UmatFiniteStrainBehaviour::integrate : ");
-      msg += "unsupported hypothesis";
-      throw(runtime_error(msg));
+      throw(runtime_error("UmatFiniteStrainBehaviour::integrate: "
+			  "unsupported hypothesis"));
     }
     copy(s.s0.begin(),s.s0.end(),s.s1.begin());
     for(unsigned short i=3;i!=static_cast<unsigned short>(ntens);++i){
@@ -266,16 +257,6 @@ namespace mtest
     return {true,ndt};
   }
 
-  AsterFiniteStrainBehaviour::~AsterFiniteStrainBehaviour()
-  {}
+  AsterFiniteStrainBehaviour::~AsterFiniteStrainBehaviour() = default;
   
 } // end of namespace mtest
-
-
-
-
-
-
-
-
-
