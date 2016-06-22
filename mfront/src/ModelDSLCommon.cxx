@@ -19,6 +19,7 @@
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/ModelDSLCommon.hxx"
 #include"MFront/TargetsDescription.hxx"
@@ -331,8 +332,7 @@ namespace mfront{
     if(getDebugMode()){
       f.body  +="#line " + std::to_string(currentLine) + " \"" + this->fileName + "\"\n";
     }
-    for(;(this->current!=this->tokens.end())&&
-	  (openedBrackets!=0);++(this->current)){
+    for(;(this->current!=this->tokens.end())&&(openedBrackets!=0);++(this->current)){
       if(this->current->line!=currentLine){
 	currentLine=this->current->line;
 	f.body  += "\n";
@@ -340,7 +340,7 @@ namespace mfront{
 	  f.body  +="#line " + std::to_string(currentLine) + " \"" + this->fileName + "\"\n";
 	}
 	newLine = true;
-      } 
+      }
       if(this->current->value=="{"){
 	++openedBrackets;
 	f.body  +="{";
@@ -448,7 +448,6 @@ namespace mfront{
 		} else {
 		  f.depths[dv.first] = dv.second;
 		}
-		f.body  += this->current->value;
 	      } else if(this->isOutputVariable(this->current->value)){
 		f.usedVariables.insert(this->current->value);
 		auto dv = this->decomposeVariableName(this->current->value);
@@ -460,8 +459,8 @@ namespace mfront{
 		} else {
 		  f.depths[dv.first] = dv.second;
 		}
-		f.body  += this->current->value;
 	      }
+	      f.body += this->current->value;
 	    }
 	  }
 	} else {
@@ -555,7 +554,7 @@ namespace mfront{
     }  else if (mn=="setDefaultInitialValue"){
       this->checkNotEndOfFile("ModelDSLCommon::treatOutputMethod",
 			      "Expected intial value.");
-      const auto value = tfel::utilities::convert<double>(this->current->value);
+      const auto value = this->readDouble();
       auto& v = this->outputs.getVariable(this->currentVar);
       v.setAttribute(VariableDescription::initialValue,value,false);
     } else if (mn=="setDepth"){
@@ -610,7 +609,7 @@ namespace mfront{
       this->setGlossaryName(this->currentVar,gn);
     } else if (mn=="setEntryName"){
       const auto en = this->readString("ModelDSLCommon::treatInputMethod");
-      this->setGlossaryName(this->currentVar,en);
+      this->setEntryName(this->currentVar,en);
     } else if (mn=="setDepth"){
       this->checkNotEndOfFile("ModelDSLCommon::treatInputMethod",
 			      "Expected depth value.");
@@ -709,13 +708,13 @@ namespace mfront{
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatConstantMaterialPropertyMethod","(");
     if(mn=="setGlossaryName"){
-      const auto gn = this->readString("ModelDSLCommon::treatInputMethod");
+      const auto gn = this->readString("ModelDSLCommon::treatConstantMaterialPropertyMethod");
       this->setGlossaryName(this->currentVar,gn);
     } else if(mn=="setEntryName"){
-      const auto en = this->readString("ModelDSLCommon::treatInputMethod");
-      this->setGlossaryName(this->currentVar,en);
+      const auto en = this->readString("ModelDSLCommon::treatConstantMaterialPropertyMethod");
+      this->setEntryName(this->currentVar,en);
     } else {
-      throw_if(true,"unknown method (valid methods for local parameters are "
+      throw_if(true,"unknown method (valid methods for constant material properties are "
 	       "setGlossaryName and setEntryName, read "+mn+").");
     }
     this->readSpecifiedToken("ModelDSLCommon::treatConstantMaterialPropertyMethod",")");
@@ -772,17 +771,13 @@ namespace mfront{
     bd.lineNumber = this->current->line;
     bd.varNbr  = 0u;
     ++(this->current);
-    for(auto& v : this->outputs){
-      if(v.name==n){
-	this->registerBounds(v,bd,bn);
-	return;
-      }
+    if(this->outputs.contains(n)){
+      this->registerBounds(this->outputs.getVariable(n),bd,bn);
+      return;
     }
-    for(auto& v : this->inputs){
-      if(v.name==n){
-	this->registerBounds(v,bd,bn);
-	return;
-      }
+    if(this->inputs.contains(n)){
+      this->registerBounds(this->inputs.getVariable(n),bd,bn);
+      return;
     }
     throw(std::runtime_error("ModelDSLCommon::registerBounds: "
 			     "no variable named '"+n+"'"));
@@ -803,7 +798,8 @@ namespace mfront{
       ++(this->current);
       this->checkNotEndOfFile("ModelDSLCommon::registerBounds ",
 			      "Expected '*'.");
-      throw_if(this->current->value!="*","expected '*' (read '"+this->current->value+"')");
+      throw_if(this->current->value!="*",
+	       "expected '*' (read '"+this->current->value+"')");
       bd.boundsType = VariableBoundsDescription::Upper;
     } else if(this->current->value=="["){
       ++(this->current);
@@ -901,7 +897,6 @@ namespace mfront{
     }
   } // end of ModelDSLCommon::appendToSources
 
-  ModelDSLCommon::~ModelDSLCommon()
-  {} // end of ModelDSLCommon::~ModelDSLCommon
+  ModelDSLCommon::~ModelDSLCommon() = default;
 
 } // end of mfront

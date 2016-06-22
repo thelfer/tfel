@@ -17,6 +17,7 @@
 
 #include<sstream>
 #include<stdexcept>
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/AbstractModelInterface.hxx"
 
 namespace mfront{
@@ -90,55 +91,31 @@ namespace mfront{
   void
   ModelDSLBase<Child>::analyse()
   {
-    using namespace std;
-    typename CallBackContainer::const_iterator p;
-    typename VariableDescriptionContainer::const_iterator p2;
+    if(getVerboseMode()>=VERBOSE_LEVEL2){
+      getLogStream() << "ModelDSLBase<Child>::analyse: "
+		     << "begin of analysis of file '" << this->fileName << "'\n";
+    }
     MemberFuncPtr handler = nullptr;
     // strip comments from file
     this->stripComments();
     // begin treatement
     this->current = this->tokens.begin();
     while(this->current != this->tokens.end()){
-      p = this->callBacks.find(this->current->value);
+      auto p = this->callBacks.find(this->current->value);
       if(p==this->callBacks.end()){
-	bool found = false;
-	for(p2=this->outputs.begin();(p2!=this->outputs.end())&&(!found);){
-	  if(p2->name==this->current->value){
-	    found = true;
-	    this->currentVar = this->current->value;
-	    handler = &Child::treatOutputMethod;
-	  } else {
-	    ++p2;
-	  }
-	}
-	for(p2=this->inputs.begin();(p2!=this->inputs.end())&&(!found);){
-	  if(p2->name==this->current->value){
-	    found = true;
-	    this->currentVar = this->current->value;
-	    handler = &Child::treatInputMethod;
-	  } else {
-	    ++p2;
-	  }
-	}
-	for(p2=this->parameters.begin();(p2!=this->parameters.end())&&(!found);){
-	  if(p2->name==this->current->value){
-	    found = true;
-	    this->currentVar = this->current->value;
-	    handler = &Child::treatParameterMethod;
-	  } else {
-	    ++p2;
-	  }
-	}
-	for(p2=this->constantMaterialProperties.begin();(p2!=this->constantMaterialProperties.end())&&(!found);){
-	  if(p2->name==this->current->value){
-	    found = true;
-	    this->currentVar = this->current->value;
-	    handler = &Child::treatConstantMaterialPropertyMethod;
-	  } else {
-	    ++p2;
-	  }
-	}
-	if(!found){
+	if(this->outputs.contains(this->current->value)){
+	  this->currentVar = this->current->value;
+	  handler = &Child::treatOutputMethod;
+	} else if(this->inputs.contains(this->current->value)){
+	  this->currentVar = this->current->value;
+	  handler = &Child::treatInputMethod;
+	} else if(this->parameters.contains(this->current->value)){
+	  this->currentVar = this->current->value;
+	  handler = &Child::treatParameterMethod;
+	} else if(this->constantMaterialProperties.contains(this->current->value)){
+	  this->currentVar = this->current->value;
+	  handler = &Child::treatConstantMaterialPropertyMethod;
+	} else {
 	  handler = &Child::treatUnknownKeyword;
 	}
       } else {
@@ -153,6 +130,10 @@ namespace mfront{
 	throw;
       }
       this->currentComment.clear();
+    }
+    if(getVerboseMode()>=VERBOSE_LEVEL2){
+      getLogStream() << "ModelDSLBase<Child>::analyse: "
+		     << "end of analysis of file '" << this->fileName << "'\n";
     }
   } // end of ModelDSLBase<Child>::analyse
 
