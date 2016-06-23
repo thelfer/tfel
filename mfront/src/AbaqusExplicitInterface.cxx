@@ -70,7 +70,7 @@ namespace mfront{
 	  << "const " << type << "* const charLength,\n"
 	  << "const " << type << "* const props,\n"
 	  << "const " << type << "* const density,\n"
-	  << "const " << type << "* const strainInc,\n"
+	  << "      " << type << "* const strainInc,\n"
 	  << "const " << type << "* const relSpinInc,\n"
 	  << "const " << type << "* const tempOld,\n"
 	  << "const " << type << "* const stretchOld,\n"
@@ -105,7 +105,7 @@ namespace mfront{
 	  << "const " << type << "* const,\n"
 	  << "const " << type << "* const props,\n"
 	  << "const " << type << "* const density,\n"
-	  << "const " << type << "* const strainInc,\n"
+	  << "      " << type << "* const strainInc,\n"
 	  << "const " << type << "* const,\n"
 	  << "const " << type << "* const tempOld,\n"
 	  << "const " << type << "* const stretchOld,\n"
@@ -146,7 +146,7 @@ namespace mfront{
 	  << "const " << type << "* const,\n"
 	  << "const " << type << "* const,\n"
 	  << "const " << type << "* const,\n"
-	  << "const " << type << "* const,\n"
+	  << "      " << type << "* const,\n"
 	  << "const " << type << "* const,\n"
 	  << "const " << type << "* const,\n"
 	  << "const " << type << "* const,\n"
@@ -938,12 +938,13 @@ namespace mfront{
     auto dime = (h==MH::TRIDIMENSIONAL) ? "3u" : "2u";
     if(h==MH::PLANESTRESS){
       out << "constexpr const " << t << " zero = " << t <<  "(0);\n"
+	  << "constexpr const " << t << " one  = " << t <<  "(0);\n"
 	  << "stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
-	  << "                              zero,cste*(*(stretchOld+i+2*(*nblock)))};\n"
+	  << "                              one,cste*(*(stretchOld+i+3*(*nblock)))};\n"
 	  << "stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
-	  << "                              zero,cste*(*(stretchNew+i+2*(*nblock)))};\n"
+	  << "                              one,cste*(*(stretchNew+i+3*(*nblock)))};\n"
 	  << "stensor<2u," << t << "> s    = {*(stressOld+i),*(stressOld+i+*nblock),\n"
-	  << "                                zero,cste*(*(stressOld+i+2*(*nblock)))};\n";
+	  << "                                zero,cste*(*(stressOld+i+3*(*nblock)))};\n";
     } else if (h==MH::AXISYMMETRICAL){
       out << "const stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
 	  << "                                    *(stretchOld+i+2*(*nblock)),cste*(*(stretchOld+i+3*(*nblock)))};\n"
@@ -976,7 +977,8 @@ namespace mfront{
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
       out << "const " << t << " ezz_old = "
 	  << "stateOld[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
-	  << "U0[2] = std::sqrt(1+2*ezz_old);\n";
+	  << "U0[2]    = std::exp(ezz_old);\n"
+	  << "P0(2,2) += df(U0[2]*U0[2]);\n";
     }
     out << "const auto iP0 = invert(P0);\n"
 	<< "auto sk2 = convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(s,U0);\n"
@@ -993,7 +995,10 @@ namespace mfront{
       if(v.first){
 	out << "const " << t << " ezz_new = "
 	    << "stateNew[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
-	    << "U1[2] = std::sqrt(1+2*ezz_new);\n";
+	    << "U1[2]    = std::exp(ezz_new);\n"
+	    << "P1(2,2) += df(U1[2]*U1[2]);\n"
+	    << "//strain update\n"
+	    << "*(strainInc+i+2*(*(nblock))) = ezz_new-ezz_old;\n";
       } else {
 	// no axial strain
 	out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
@@ -1001,12 +1006,14 @@ namespace mfront{
 	out << "::exit(-1);\n";
       }
     }
-    out << "sk2 = 2*(T|P1);\n"
+    out << "// stress update\n"
+	<< "sk2 = 2*(T|P1);\n"
 	<< "s = convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(sk2,U1);\n";
     if(h==MH::PLANESTRESS){
       out << "*(stressNew+i)               = s[0];\n";
       out << "*(stressNew+i+   *(nblock))  = s[1];\n";
-      out << "*(stressNew+i+2*(*(nblock))) = s[3]/cste;\n";
+      out << "*(stressNew+i+2*(*(nblock))) = zero;\n";
+      out << "*(stressNew+i+3*(*(nblock))) = s[3]/cste;\n";
     } else if (h==MH::AXISYMMETRICAL){
       out << "*(stressNew+i)               = s[0];\n";
       out << "*(stressNew+i+   *(nblock))  = s[1];\n";

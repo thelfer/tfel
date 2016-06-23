@@ -214,6 +214,14 @@ L'utilitaire {\tt mfront-doc} permet de générer un fichier au format
 L'utilitaire {\tt mfront-query} permet d'obtenir en ligne commande des
 informations sur un fichier \mfront{}.
 
+\subsection{Création du module {\tt mfront}}
+
+Les fichiers de \mfront{} peuvent désormais être analysés en \python{}
+depuis le module éponyme.
+\begin{center}
+  \url{http://tfel.sourceforge.net/mfront-python.html}
+\end{center}
+
 \subsection{Développements divers}
 
 \subsubsection{Refactorisation du code}
@@ -254,10 +262,19 @@ remplacées par {\tt 12.9}.
 Les fonctionnalités de \mtest{} sont désormais accessibles en
 \python{} depuis le module éponyme.
 
-Dans les versions précédentes, un module {\tt mfront.mtest} avait ce
-rôle. Celui existe toujours pour assurer la compatibilité avec les
-versions précédentes. Son utilisation conduit cependant à un message
-d'avertissement conseillant d'utiliser le nouveau module.
+Ce module permet à la fois de traiter le point matériel et les tubes
+sous pressions.
+
+Une description de ce module est donnée à la page suivante~:
+\begin{center}
+  \url{http://tfel.sourceforge.net/mtest-python.html}
+\end{center}
+
+\paragraph{Note} Dans les versions précédentes, un module {\tt
+  mfront.mtest} avait ce rôle. Celui existe toujours pour assurer la
+compatibilité avec les versions précédentes. Son utilisation conduit
+cependant à un message d'avertissement conseillant d'utiliser le
+nouveau module.
 
 \subsection{Nouvelles méthodes d'accélération de convergence}
 
@@ -268,6 +285,25 @@ d'avertissement conseillant d'utiliser le nouveau module.
 \subsection{Passage au standard C++-11}
 
 \subsection{Nouveautés de la librairie mathématique}
+
+\subsubsection{Nouvelles méthodes dans la classes {\tt t2tot2}}
+
+La classe {\tt t2tot2} représente une transformation linéaire des
+l'espace des tenseurs non symétriques vers l'espace des tenseurs non
+symmétriques.
+
+De nouvelles méthodes retournant des valeurs remarquables de ces
+transformations ont été ajoutées~:
+\begin{itemize}
+\item {\tt Id}  renvoie l'identité~;
+\item {\tt IxI} renvoie le produit tensoriel du tenseur identité non
+  symétrique par lui-même~;
+\item {\tt K} renvoie le dérivée du déviateur d'un tenseur non
+  symétrique par rapport à ce tenseur~:
+  \[
+  \tenseurq{K}=\tenseurq{I}-\Frac{1}{3}\,\tns{I}\otimes\tns{I}
+  \]
+\end{itemize}
 
 \subsubsection{Fonctions isotropes de tenseurs et dérivées}
 
@@ -338,6 +374,14 @@ L'opération inverse est réalisée par la fonction~:
 \begin{center}
   {\tt convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress}
 \end{center}
+
+\subsection{Changement et nouveautés de TFEL/Utitilties}
+
+\subsubsection{La classe {\tt CxxTokenizer}}
+
+La classe {\tt CxxTokenizer}, à la base de la lecture des fichiers
+\mfront{} et \mtest{}, a été réécrite pour de meilleures performances
+et une plus grande conformité au standard C++.
 
 \subsection{Nouvelles options de compilation}
 

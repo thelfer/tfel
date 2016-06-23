@@ -2222,8 +2222,9 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity6-2.mtest
 	   mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity6-3.mtest
            mfront/tests/models/Makefile
-           mfront/tests/models/include/Makefile
-           mfront/tests/models/src/Makefile
+           mfront/tests/models/interfaces/Makefile
+           mfront/tests/models/interfaces/include/Makefile
+           mfront/tests/models/interfaces/src/Makefile
 	   mfront/Examples/Makefile
 	   mtest/Makefile
    	   mtest/src/Makefile

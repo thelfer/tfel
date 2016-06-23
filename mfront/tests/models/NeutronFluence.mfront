@@ -1,0 +1,22 @@
+@Parser   Model;
+@Model    NeutronFluence;
+@Author   E. BRUNON;
+@Date     2009-11-24;
+
+@Domain "MATRIX";
+
+/* Inputs */
+
+@Input Flux;
+Flux.setGlossaryName("NeutronFlux");
+Flux.setDepth(1);
+
+@Output Fluence;
+Fluence.setGlossaryName("NeutronFluence");
+Fluence.setDefaultInitialValue(0.);
+Fluence.setDepth(1);
+
+@Function Compute
+{    
+  Fluence = Fluence_1+(0.5*(Flux_1+Flux)*dt);
+}

@@ -1,0 +1,18 @@
+@Parser   Model;
+@Model    FastNeutronFluence;
+@Author   E. BRUNON;
+@Date     2009-11-24;
+
+@Input FastFlux;
+FastFlux.setGlossaryName("FastNeutronFlux (>1 MeV)");
+FastFlux.setDepth(1);
+
+@Output FastFluence;
+FastFluence.setGlossaryName("FastNeutronFluence (>1 MeV)");
+FastFluence.setDefaultInitialValue(0.);
+FastFluence.setDepth(1);
+
+@Function Compute
+{    
+  FastFluence = FastFluence_1+(0.5*(FastFlux_1+FastFlux)*dt);
+}

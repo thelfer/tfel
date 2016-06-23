@@ -1,0 +1,34 @@
+@Parser   Model;
+@Model    ConcentrationModel;
+@Material B4C;
+@Author   Helfer Thomas;
+@Date     26 Oct. 2010;
+
+/* Ouputs */
+@Output b10;
+b10.setEntryName("B10Concentration");
+b10.setDepth(1);
+
+@Output Bu;
+Bu.setGlossaryName("B10BurnUp");
+Bu.setDefaultInitialValue(0.);
+Bu.setDepth(1);
+
+/* Inputs */
+@Input c;
+c.setEntryName("CaptureReactionRate");
+c.setDepth(1);
+
+@PhysicalBounds b10 in [0:*[;
+@PhysicalBounds Bu  in [0:*[;
+@PhysicalBounds c   in [0:*[;
+
+@Function Compute
+{
+  real db10 = -b10_1*(c_1+c)*dt/(2.+0.5*(c_1+c)*dt);
+  b10  = b10_1+db10;
+  Bu   = Bu_1-db10;
+  if(b10<0){
+    b10 = 0.;
+  }
+}
