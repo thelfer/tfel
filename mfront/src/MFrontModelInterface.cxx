@@ -12,8 +12,11 @@
  */
 
 #include<fstream>
+#include<iterator>
+#include<algorithm>
 #include "TFEL/System/System.hxx"
 #include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontLogStream.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/MFrontModelInterface.hxx"
@@ -100,9 +103,10 @@ namespace mfront{
     return {false,p};
   } // end of MFrontModelInterface::treatKeyword
     
-  void MFrontModelInterface::declareReservedNames(std::set<std::string>&)
+  void MFrontModelInterface::declareReservedNames(std::set<std::string>& names)
   {
-    //    names.insert({"inputs"});
+    names.insert({"BoundsCheckBase","OutOfBoundsPolicy","setOutOfBoundsPolicy",
+	          "policy","policy_"});
   } // end of MFrontModelInterface::declareReservedNames
 
   void MFrontModelInterface::writeOutputFiles(const FileDescription&  fd,
@@ -112,23 +116,25 @@ namespace mfront{
       if(b){throw(std::runtime_error("MFrontModelInterface::writeOutputFiles: "+m));}
     };
     auto write_bounds = [&throw_if](std::ostream& out,
-				    const VariableDescription& v){
-      auto write = [&out,&v,&throw_if](const std::string& bn,const std::string& p){
+				    const VariableDescription& v,
+				    const std::string& vn){
+      auto write = [&out,&v,&vn,&throw_if](const std::string& bn,const std::string& p){
 	const auto& bd = v.getAttribute<VariableBoundsDescription>(bn);
 	if(bd.boundsType==VariableBoundsDescription::Lower){
-	  out << "tfel::material::BoundsCheckBase::lowerBoundCheck"
-	      << "(\"" << v.name << "\"," << v.name
-	      << "," << bd.lowerBound << "," << p << ");\n";
+	  out << "BoundsCheckBase::lowerBoundCheck"
+	      << "(\"" << vn << "\"," << vn
+	      << ",real(" << bd.lowerBound << ")," << p << ");\n";
 	} else if(bd.boundsType==VariableBoundsDescription::Upper){
-	  out << "tfel::material::BoundsCheckBase::upperBoundCheck"
-	      << "(\"" << v.name << "\"," << v.name
-	      << "," << bd.upperBound << "," << p << ");\n";
+	  out << "BoundsCheckBase::upperBoundCheck"
+	      << "(\"" << vn << "\"," << vn
+	      << ",real(" << bd.upperBound << ")," << p << ");\n";
 	} else if(bd.boundsType==VariableBoundsDescription::LowerAndUpper){
-	  out << "tfel::material::BoundsCheckBase::lowerAndUpperBoundsChecks"
-	      << "(\"" << v.name << "\"," << v.name
-	      << "," << bd.lowerBound << "," << bd.upperBound << "," << p << ");\n";
+	  out << "BoundsCheckBase::lowerAndUpperBoundsChecks"
+	      << "(\"" << vn << "\"," << vn
+	      << ",real(" << bd.lowerBound << "),"
+	      << "real(" << bd.upperBound << ")," << p << ");\n";
 	} else {
-	  throw_if(true,"unsupported bound type for variable '"+v.name+"'");
+	  throw_if(true,"unsupported bound type for variable '"+vn+"'");
 	}
       };
       if(v.hasAttribute(VariableDescription::bound)){
@@ -136,7 +142,7 @@ namespace mfront{
       }
       if(v.hasAttribute(VariableDescription::physicalBound)){
 	write(VariableDescription::physicalBound,
-	      "tfel::material::OutOfBoundsPolicy::Strict");
+	      "OutOfBoundsPolicy::Strict");
       }
     };
     tfel::system::systemCall::mkdir("include/MFront");
@@ -170,15 +176,21 @@ namespace mfront{
       return false;
     }();
     if(hasBounds){
-      header << "#include\"TFEL/Material/BoundsCheck.hxx\"\n\n";
+      header << "#include\"TFEL/Material/BoundsCheck.hxx\"\n";
     }
-    header << "namespace mfront{\n\n"
+    if(!md.includes.empty()){
+      header << md.includes;
+    }
+    header << "\n"
+	   << "namespace mfront{\n\n"
 	   << "/*!\n"
 	   << " * \\brief  structure implementing the "  << md.className << " model\n"
 	   << " */\n"
 	   << "template<typename real>\n"
 	   << "struct " << md.className << '\n'
-	   << "{\n";
+	   << "{\n"
+	   << "//! a simple alias\n"
+	   << "using OutOfBoundsPolicy = tfel::material::OutOfBoundsPolicy;\n";
     if(md.constantMaterialProperties.empty()){
       header << "//! default constructor\n"
 	     <<md.className << "() = default;\n";
@@ -211,7 +223,33 @@ namespace mfront{
     for(const auto& f: md.functions){
       throw_if(f.name.empty(),"unnamed function");
       throw_if(f.modifiedVariables.empty(),"no modified variable for function '"+f.name+"'");
-      throw_if(f.usedVariables.empty(),"no used variable for function '"+f.name+"'");
+      throw_if((f.usedVariables.empty())&&(!f.useTimeIncrement),
+	       "no used variable for function '"+f.name+"'");
+      const auto args = [&f](){
+	auto a = std::vector<std::string>{};
+	for(const auto& uv: f.usedVariables){
+	  a.push_back(uv);
+	}
+	if(f.useTimeIncrement){
+	  a.push_back("dt");
+	}
+	return a;
+      }();
+      header << "/*!\n"
+	     << " * \\brief implementation of " << f.name << "\n";
+      if(f.modifiedVariables.size()>1){
+	for(const auto& mv : f.modifiedVariables){
+	  header << " * \\param[out] " << mv << ": \n";
+	}
+      }
+      for(const auto& a: args){
+	header << " * \\param[out] " << a << ": \n";
+      }
+      if(f.modifiedVariables.size()==1){
+	header << "\\return the value of " << *(f.modifiedVariables.begin())
+	       << " at the end of the time step";
+      }
+      header << " */\n";
       if(f.modifiedVariables.size()==1){
 	header << "real ";
       } else {
@@ -223,13 +261,15 @@ namespace mfront{
 	  header << "real& " << mv << ",";
 	}
       }
-      for(auto puv=std::begin(f.usedVariables);puv!=std::end(f.usedVariables);){
-	header << "const real " << *puv;
-	if(++puv!=std::end(f.usedVariables)){
+      for(auto pa = std::begin(args);pa!=std::end(args);){
+	header << "const real " << *pa;
+	if(++pa!=std::end(args)){
 	  header << ",";
 	}
       }
-      header << ") const {\n";
+      header << ") const {\n"
+	     << "using namespace std;\n"
+	     << "using tfel::material::BoundsCheckBase;\n";
       if(f.modifiedVariables.size()==1){
 	header << "real " << *(f.modifiedVariables.begin()) << ";\n";
       }
@@ -241,7 +281,7 @@ namespace mfront{
 	  }
 	  return md.inputs.getVariable(dv.first);
 	}();
-	write_bounds(header,v);
+	write_bounds(header,v,vn);
       }
       header << f.body;
       for(const auto& vn : f.modifiedVariables){
@@ -249,7 +289,7 @@ namespace mfront{
 	const auto& v = [&md,&dv]() -> const VariableDescription& {
 	  return md.outputs.getVariable(dv.first);
 	}();
-	write_bounds(header,v);
+	write_bounds(header,v,vn);
       }
       if(f.modifiedVariables.size()==1){
 	header << "return " << *(f.modifiedVariables.begin()) << ";\n";
@@ -273,7 +313,14 @@ namespace mfront{
 		 p.name+"' defined at line "+std::to_string(p.lineNumber));
       }
     }
-    header << "private:\n"
+    header << "/*!\n"
+	   << " * \\brief set the out of bounds policy\n"
+	   << " * \\param[in] policy_: new policy\n"
+	   << " */\n"
+	   << "void setOutOfBoundsPolicy(const OutOfBoundsPolicy& policy_){\n"
+	   << "this->policy = policy_;\n"
+	   << "}\n // end of setOutOfBoundsPolicy\n"
+	   << "private:\n"
 	   << "//! move constructor\n"
 	   << md.className << "(" << md.className << "&&) = delete;\n"
 	   << "//! copy constructor\n"
@@ -285,8 +332,10 @@ namespace mfront{
     for(const auto& mp: md.constantMaterialProperties){
       header << "const real " << mp.name << ";\n";
     }
-    header << "};\n\n"
-      	   << "}\n\n"
+    header << "//! out of bounds policy\n"
+	   << "OutOfBoundsPolicy policy = OutOfBoundsPolicy::None;\n"
+	   << "}; // end of struct " << md.className << "\n\n"
+      	   << "} // end of namespace mfront\n\n"
 	   << "#endif /* "<< getHeaderDefine(md) << " */\n";
   } // end of MFrontModelInterface::writeOutputFiles
 
@@ -294,10 +343,6 @@ namespace mfront{
 						   const ModelDescription& md)
   {
     insert_if(td.headers,"MFront/"+getHeaderFileName(md)+".hxx");
-    // const auto lib = "MFrontModel";
-    // insert_if(td[lib].ldflags,"-lm");
-    // insert_if(td[lib].sources,getSrcFileName(md)+".cxx");
-    // insert_if(td[lib].epts,md.className);
   } // end of MFrontModelInterface::getTargetsDescription
 
   MFrontModelInterface::~MFrontModelInterface() = default;

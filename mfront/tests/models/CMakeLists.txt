@@ -1,3 +1,7 @@
+include_directories(
+  "${PROJECT_SOURCE_DIR}/include"
+  "${CMAKE_CURRENT_BINARY_DIR}/include")
+
 add_subdirectory(interfaces)
 
 macro(mfront_model)
@@ -24,7 +28,7 @@ macro(mfront_model)
     set(mfront_source "${PROJECT_SOURCE_DIR}/mfront/tests/models/${source}.mfront")
     if((CMAKE_HOST_WIN32) AND (NOT MSYS))
       add_custom_command(
-	OUTPUT  "include/MFront/${source}.hxx"
+	OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/include/MFront/${source}.hxx"
 	COMMAND "set"
 	ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;%PATH%"
 	COMMAND "set"
@@ -50,7 +54,7 @@ macro(mfront_model)
 	COMMENT "treating mfront source ${source}.mfront")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
       add_custom_command(
-	OUTPUT  "include/MFront/${source}.hxx"
+	OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/include/MFront/${source}.hxx"
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${mfront_source}"
 	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
@@ -65,8 +69,10 @@ macro(mfront_model)
 	  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
       endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    set_source_files_properties("${CMAKE_CURRENT_BINARY_DIR}/include/MFront/${source}.hxx"
+      PROPERTIES HEADER_FILE_ONLY TRUE)
   endforeach(source)
-endmacro(mfront_behaviour_check_library)
+endmacro(mfront_model)
 
 mfront_model(B4C_ConcentrationModel
   SiC_IrradiationSwellingModel_GoFaster
@@ -74,7 +80,19 @@ mfront_model(B4C_ConcentrationModel
   FastNeutronFluence
   NeutronFluence)
 
-# set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/MFront/
-# PROPERTIES HEADER_FILE_ONLY TRUE)
-#       SET_SOURCE_FILES_PROPERTIES(${TMP_FILENAME}.cxx PROPERTIES
-# OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${TMP_FILENAME}CLP.h)
+# a simple macro
+macro(tests_model test_arg)
+  add_executable(${test_arg} EXCLUDE_FROM_ALL ${test_arg}.cxx)
+  add_test(NAME ${test_arg} COMMAND ${test_arg})
+  add_dependencies(check ${test_arg})
+  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    set_property(TEST ${test_arg}
+      PROPERTY ENVIRONMENT "PATH=<TARGET_FILE_DIR:TFELMaterial>\;<TARGET_FILE_DIR:TFELMath>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
+  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  target_link_libraries(${test_arg} TFELMaterial TFELMath TFELTests)
+endmacro(tests_model)
+
+tests_model(test_model)
+set_source_files_properties(test_model.cxx
+  PROPERTIES OBJECT_DEPENDS
+  "${CMAKE_CURRENT_BINARY_DIR}/include/MFront/B4C_ConcentrationModel.hxx;${CMAKE_CURRENT_BINARY_DIR}/include/MFront/SiC_IrradiationSwellingModel_GoFaster.hxx;${CMAKE_CURRENT_BINARY_DIR}/include/MFront/UO2_Shrinkage_RAPHAEL2008.hxx;${CMAKE_CURRENT_BINARY_DIR}/include/MFront/FastNeutronFluence.hxx;${CMAKE_CURRENT_BINARY_DIR}/include/MFront/NeutronFluence.hxx")

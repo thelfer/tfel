@@ -4,4 +4,5 @@ EXTRA_DIST = CMakeLists.txt                               \
 	     SiC_IrradiationSwellingModel_GoFaster.mfront \
 	     UO2_Shrinkage_RAPHAEL2008.mfront		  \
 	     NeutronFluence.mfront			  \
-	     FastNeutronFluence.mfront
+	     FastNeutronFluence.mfront                    \
+	     test_model.cxx

@@ -40,6 +40,26 @@ namespace std{
 
 namespace mfront{
 
+  static bool is(const VariableDescriptionContainer& vc,
+		 const std::string& vn)
+  {
+    for(const auto& v : vc){
+      if(v.name==vn){
+	return true;
+      }
+      if(v.hasAttribute(VariableDescription::depth)){
+	const auto d = v.getAttribute<unsigned short>(VariableDescription::depth);
+	for(unsigned short i=1;i!=d+1;++i){
+	  if(v.name+'_'+std::to_string(i)==vn){
+	    return true;
+	  }
+	}
+      }
+    }
+    return false;
+  } // end of ModelDSLCommon::is(void)
+
+  
   ModelDSLCommon::ModelDSLCommon(){
     for(const auto& v : DSLBase::getDefaultReservedNames()){
       this->reserveName(v);
@@ -275,13 +295,13 @@ namespace mfront{
   bool
   ModelDSLCommon::isInputVariable(const std::string& v) const
   {
-    return this->inputs.contains(v);
+    return is(this->inputs,v);
   } // end of ModelDSLCommon::isInputVariable(void)
 
   bool
   ModelDSLCommon::isOutputVariable(const std::string& v) const
   {
-    return this->outputs.contains(v);
+    return is(this->outputs,v);
   } // end of ModelDSLCommon::isInputVariable(void)
   
   void

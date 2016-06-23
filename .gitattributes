@@ -3902,6 +3902,7 @@ mfront/tests/models/interfaces/src/LicosModelInterface.cxx -text
 mfront/tests/models/interfaces/src/MFrontGerminalModelInterface.cxx -text
 mfront/tests/models/interfaces/src/MFrontPleiadesModelInterfaceBase.cxx -text
 mfront/tests/models/interfaces/src/Makefile.am -text
+mfront/tests/models/test_model.cxx -text
 mfront/tests/properties/CMakeLists.txt -text
 mfront/tests/properties/ErrnoHandlingCheck.mfront -text
 mfront/tests/properties/Inconel600_YoungModulus.mfront -text
