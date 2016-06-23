@@ -3884,7 +3884,9 @@ mfront/tests/behaviours/unit-tests/ComputeThermalExpansion5.mfront -text
 mfront/tests/behaviours/unit-tests/ComputeThermalExpansion6.mfront -text
 mfront/tests/behaviours/unit-tests/Makefile.am -text
 mfront/tests/models/B4C_ConcentrationModel.mfront -text
+mfront/tests/models/CMakeLists.txt -text
 mfront/tests/models/FastNeutronFluence.mfront -text
+mfront/tests/models/Makefile.am -text
 mfront/tests/models/NeutronFluence.mfront -text
 mfront/tests/models/SiC_IrradiationSwellingModel_GoFaster.mfront -text
 mfront/tests/models/UO2_Shrinkage_RAPHAEL2008.mfront -text
