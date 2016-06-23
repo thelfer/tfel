@@ -938,7 +938,7 @@ namespace mfront{
     auto dime = (h==MH::TRIDIMENSIONAL) ? "3u" : "2u";
     if(h==MH::PLANESTRESS){
       out << "constexpr const " << t << " zero = " << t <<  "(0);\n"
-	  << "constexpr const " << t << " one  = " << t <<  "(0);\n"
+	  << "constexpr const " << t << " one  = " << t <<  "(1);\n"
 	  << "stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
 	  << "                              one,cste*(*(stretchOld+i+3*(*nblock)))};\n"
 	  << "stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
