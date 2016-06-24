@@ -204,11 +204,13 @@ namespace mfront{
      * \param[out] out: ouput stream
      * \param[in]  md:  behaviour description
      * \param[in]  t:   floatting point type
+     * \param[in]  h:   modelling hypothesis
      */
     virtual void
     writeFiniteRotationSmallStrainBehaviourCall(std::ostream&,
 						const BehaviourDescription&,
-						const std::string&) const;
+						const std::string&,
+						const Hypothesis) const;
     /*!
      * \brief write the body of the VUMAT function
      * \param[out] out: ouput stream
@@ -226,11 +228,13 @@ namespace mfront{
      * \param[out] out: ouput stream
      * \param[in]  md:  behaviour description
      * \param[in]  t:   floatting point type
+     * \param[in]  h:   modelling hypothesis
      */
     virtual void
     writeLogarithmicStrainBehaviourCall(std::ostream&,
 					const BehaviourDescription&,
-					const std::string&) const;
+					const std::string&,
+					const Hypothesis) const;
     /*!
      * \brief write the body of the VUMAT function
      * \param[out] out: ouput stream
@@ -248,11 +252,13 @@ namespace mfront{
      * \param[out] out: ouput stream
      * \param[in]  md:  behaviour description
      * \param[in]  t:   floatting point type
+     * \param[in]  h:   modelling hypothesis
      */
     virtual void
     writeFiniteStrainBehaviourCall(std::ostream&,
 				   const BehaviourDescription&,
-				   const std::string&) const;
+				   const std::string&,
+				   const Hypothesis) const;
     /*!
      * \brief write the body of the VUMAT function
      * \param[out] out: ouput stream

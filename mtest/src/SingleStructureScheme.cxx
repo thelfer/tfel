@@ -221,7 +221,8 @@ namespace mtest{
     }
     if((i=="abaqus_explicit")||(i=="abaqus_vumat")){
       auto& elm = ELM::getExternalLibraryManager();
-      const auto type = elm.getUMATBehaviourType(l,f);
+      const auto bn   = AbaqusExplicitBehaviour::getBehaviourName(f,h);
+      const auto type = elm.getUMATBehaviourType(l,bn);
       if(type==2u){
 	b = shared_ptr<Behaviour>(new AbaqusExplicitBehaviour(h,l,f));
       } else {

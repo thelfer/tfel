@@ -9,7 +9,7 @@
 @UseCastemAccelerationAlgorithm true;
 @MaximumNumberOfSubSteps 1;
 
-@Behaviour<abaqus_explicit> '@MFrontAbaqusExplicitBehavioursBuildPath@' 'LOGARITHMICSTRAINNORTONCREEP';
+@Behaviour<abaqus_explicit> '@MFrontAbaqusExplicitBehavioursBuildPath@' 'LOGARITHMICSTRAINNORTONCREEP_axis';
 @DrivingVariableEpsilon 1.e-10;
 @StressEpsilon          2.e3;
 

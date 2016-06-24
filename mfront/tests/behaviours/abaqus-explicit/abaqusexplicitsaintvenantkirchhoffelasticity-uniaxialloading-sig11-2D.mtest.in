@@ -11,7 +11,7 @@
 };
 
 @ModellingHypothesis 'Axisymmetrical';
-@Behaviour<abaqus_explicit> '@MFrontAbaqusExplicitBehavioursBuildPath@' 'SAINTVENANTKIRCHHOFFELASTICITY';
+@Behaviour<abaqus_explicit> '@MFrontAbaqusExplicitBehavioursBuildPath@' 'SAINTVENANTKIRCHHOFFELASTICITY_axis';
 @MaterialProperty<constant> 'MassDensity'  15000.;
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

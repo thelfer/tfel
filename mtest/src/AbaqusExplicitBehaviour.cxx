@@ -37,18 +37,50 @@
 namespace mtest
 {
 
+  std::string
+  AbaqusExplicitBehaviour::getBehaviourName(const std::string& b,
+					    const Hypothesis h)
+  {
+    auto ends = [&b,h](const std::string& s){
+      if(b.length()>=s.length()){
+        return b.compare(b.length()-s.length(),s.length(),s)==0;
+      }
+      return false;
+    };
+    const auto s = [h]() -> std::string {
+      if(h==tfel::material::ModellingHypothesis::AXISYMMETRICAL){
+	return "_axis";
+      } else if(h==tfel::material::ModellingHypothesis::PLANESTRAIN){
+	return "_pstrain";
+      } else if(h==tfel::material::ModellingHypothesis::PLANESTRESS){
+	return "_pstress";
+      } else if(h==tfel::material::ModellingHypothesis::TRIDIMENSIONAL){
+	return "_3D";
+      }
+      throw(std::runtime_error("AbaqusExplicitBehaviour::AbaqusExplicitBehaviour: "
+			       "invalid hypothesis."));
+    }();
+    if(!ends(s)){
+      throw(std::runtime_error("AbaqusExplicitBehaviour::AbaqusExplicitBehaviour: "
+			       "invalid function name."));
+    }
+    mfront::getLogStream() << "behaviourName : "
+			   << std::string{b.begin(),b.begin()+b.length()-s.length()} << std::endl;
+    return {b.begin(),b.begin()+b.length()-s.length()};    
+  }
+  
   AbaqusExplicitBehaviour::AbaqusExplicitBehaviour(const Hypothesis h,
 						   const std::string& l,
 						   const std::string& b)
-    : UmatBehaviourBase(h,l,b)
+    : UmatBehaviourBase(h,l,AbaqusExplicitBehaviour::getBehaviourName(b,h))
   {
-    typedef tfel::system::ExternalLibraryManager ELM;
-    auto& elm = ELM::getExternalLibraryManager();
-    this->fct = elm.getAbaqusExplicitExternalBehaviourFunction(l,b);
-    this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
-    const auto eo = elm.getUMATRequiresStiffnessTensor(l,b,this->hypothesis);
-    const auto to = elm.getUMATRequiresThermalExpansionCoefficientTensor(l,b,this->hypothesis);
-    const auto etype = elm.getUMATElasticSymmetryType(l,b);
+    auto& elm        = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    const auto bn    = AbaqusExplicitBehaviour::getBehaviourName(b,h);
+    this->fct        = elm.getAbaqusExplicitExternalBehaviourFunction(l,b);
+    this->mpnames    = elm.getUMATMaterialPropertiesNames(l,bn,this->hypothesis);
+    const auto eo    = elm.getUMATRequiresStiffnessTensor(l,bn,this->hypothesis);
+    const auto to    = elm.getUMATRequiresThermalExpansionCoefficientTensor(l,bn,this->hypothesis);
+    const auto etype = elm.getUMATElasticSymmetryType(l,bn);
     auto tmp = std::vector<std::string>{};
     tmp.emplace_back("MassDensity");
     if(etype==0u){
@@ -64,8 +96,7 @@ namespace mtest
 	 (h==ModellingHypothesis::AXISYMMETRICAL)||
 	 (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	if(eo){
-	  tmp.insert(tmp.end(),
-		     {"YoungModulus1","YoungModulus2","YoungModulus3",
+	  tmp.insert(tmp.end(),{"YoungModulus1","YoungModulus2","YoungModulus3",
 		      "PoissonRatio12","PoissonRatio23","PoissonRatio13"
 		      "ShearModulus12"});
 	}
@@ -75,8 +106,7 @@ namespace mtest
 	}
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	if(eo){
-	  tmp.insert(tmp.end(),
-		     {"YoungModulus1","YoungModulus2","YoungModulus3",
+	  tmp.insert(tmp.end(),{"YoungModulus1","YoungModulus2","YoungModulus3",
 		      "PoissonRatio12","PoissonRatio23","PoissonRatio13"
 		      "ShearModulus12","ShearModulus23","ShearModulus13"});
 	}
@@ -341,19 +371,7 @@ namespace mtest
     }
     const AbaqusInt nblock = 1;
     const auto h = this->getHypothesis();
-    const AbaqusInt ndir = [&h](){
-      switch(h){
-      case ModellingHypothesis::PLANESTRESS:
-      return 2;
-      case ModellingHypothesis::AXISYMMETRICAL:
-      case ModellingHypothesis::PLANESTRAIN:
-      case ModellingHypothesis::TRIDIMENSIONAL:
-      return 3;
-      }
-      throw(std::runtime_error("AbaqusExplicitBehaviour::integrate: "
-			       "unsupported hypothesis ("+
-			       ModellingHypothesis::toString(h)+")"));
-    }();
+    const AbaqusInt ndir = 3;
     const AbaqusInt nshr = [&h](){
       switch(h){
       case ModellingHypothesis::PLANESTRESS:
