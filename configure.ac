@@ -724,6 +724,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-159.mtest
            mfront/tests/behaviours/aster/asterdruckerprager.mtest
            mfront/tests/behaviours/aster/asterdruckerprager2.mtest
+	   mfront/tests/behaviours/aster/astercomputestressfreeexpansion.mtest
            mfront/tests/behaviours/epx/Makefile
            mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
            mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
@@ -938,6 +939,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/abaqus/abaqusdruckerprager.mtest
            mfront/tests/behaviours/abaqus/abaqusdruckerprager2.mtest
            mfront/tests/behaviours/abaqus/abaqustssf.mtest
+	   mfront/tests/behaviours/abaqus/abaquscomputestressfreeexpansion.mtest
    	   mfront/tests/behaviours/abaqus-explicit/Makefile
            mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
            mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
@@ -1355,6 +1357,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemfinitestrainsinglecrystal_numericaljacobian-159.mtest
            mfront/tests/behaviours/castem/castemanistropiclemaitreviscoplasticbehaviour.mtest
 	   mfront/tests/behaviours/castem/castemtssf.mtest
+	   mfront/tests/behaviours/castem/castemcomputestressfreeexpansion.mtest
            mfront/tests/behaviours/castem/dgibi/Makefile
            mfront/tests/behaviours/castem2/Makefile   
            mfront/tests/behaviours/castem2/castem2burger.mtest
@@ -2221,6 +2224,7 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity6-1.mtest
 	   mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity6-2.mtest
 	   mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity6-3.mtest
+	   mfront/tests/behaviours/cyrano/cyranocomputestressfreeexpansion.mtest
            mfront/tests/models/Makefile
            mfront/tests/models/interfaces/Makefile
            mfront/tests/models/interfaces/include/Makefile

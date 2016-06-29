@@ -75,12 +75,12 @@ namespace abaqus
   AbaqusInvalidNTENSValue::~AbaqusInvalidNTENSValue() noexcept = default;
 
   AbaqusInvalidDimension::AbaqusInvalidDimension(const std::string& b,
-					     const unsigned short N)
+						 const unsigned short N)
     : AbaqusException("''"+b+"' can't be used in "+
 		     std::to_string(static_cast<unsigned int>(N))+"D")
   {} // end of AbaqusInvalidDimension::AbaqusInvalidDimension
 
-  AbaqusInvalidDimension::AbaqusInvalidDimension(const AbaqusInvalidDimension& e) = default;
+  AbaqusInvalidDimension::AbaqusInvalidDimension(const AbaqusInvalidDimension&) = default;
 
   AbaqusInvalidDimension::AbaqusInvalidDimension(AbaqusInvalidDimension&&) = default;
 

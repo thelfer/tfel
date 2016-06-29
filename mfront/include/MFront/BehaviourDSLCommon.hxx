@@ -502,16 +502,12 @@ namespace mfront{
      */
     virtual void
     registerDefaultVarNames(void);
-    /*!
-     * treat the @Brick keyword
-     */
+    //! treat the @Brick keyword
     virtual void treatBrick(void);
-    /*!
-     * treat the @Model keyword
-     */
+    //! treat the @Model keyword
     virtual void treatModel();
     /*!
-     * get a model description from an mfront file
+     * \brief get a model description from an mfront file
      * \param[in] m: file
      */
     virtual void getModel(const std::string&);
@@ -521,49 +517,31 @@ namespace mfront{
     virtual void treatMembers(void) override;
     //! \brief treat the @TangentOperator keyword
     virtual void treatTangentOperator(void);
-    /*!
-     * treat the @IsTangentOperatorSymmetric keyword
-     */
+    //! treat the @IsTangentOperatorSymmetric keyword
     virtual void treatIsTangentOperatorSymmetric(void);
-    /*!
-     * treat the @Material keyword
-     */
+    //! treat the @Material keyword
+    virtual void treatMaterial(void);
+    //! treat the @Library keyword
+    virtual void treatLibrary(void);
+    //! treat the @Profiling keyword
+    virtual void treatProfiling(void);
+    //! treat the @ModellingHypothesis keyword
+    virtual void treatModellingHypothesis(void);
+    //! treat the @ModellingHypotheses keyword
+    virtual void treatModellingHypotheses(void);
+    //! treat the @UpdateAuxiliaryStateVariables keyword
+    virtual void treatUpdateAuxiliaryStateVariables(void);
+    //! treat the @ComputeStressFreeExpansion keyword
+    virtual void treatComputeStressFreeExpansion(void);
+    //! treat the @UsableInPurelyImplicitResolution keyword
     virtual void
-    treatMaterial(void);
-    /*!
-     * treat the @Library keyword
-     */
-    virtual void
-    treatLibrary(void);
-    /*!
-     * treat the @Profiling keyword
-     */
-    virtual void
-    treatProfiling(void);
-
-    virtual void
-    treatModellingHypothesis(void);
-
-    virtual void
-    treatModellingHypotheses(void);
-    
-    virtual void
-    treatUnknownKeyword(void) override;
-    
-    virtual void
-      treatUpdateAuxiliaryStateVariables(void);
-    
-    virtual void
-      treatUsableInPurelyImplicitResolution(void);
-
-    virtual void
-      treatParameter(void);
-
-    virtual void
-      treatLocalVar(void);
+    treatUsableInPurelyImplicitResolution(void);
+    //! treat the @Parameter keyword
+    virtual void treatParameter(void);
+    //! treat the @LocalVariables keyword
+    virtual void treatLocalVar(void);
     //! handle the @ComputeThermalExpansion keyword
-    virtual void
-    treatComputeThermalExpansion(void);
+    virtual void treatComputeThermalExpansion(void);
     //! handle the @ComputeStiffnessTensor keyword
     virtual void
     treatComputeStiffnessTensor(void);
@@ -934,13 +912,13 @@ namespace mfront{
 				     const std::string&,
 				     const std::string&,
 				     const std::string& = "");
-    
     /*!
      * \brief write the behaviour's computeStressFreeExpansion method, if
      * mandatory.
+     * \param[in] h : modelling hypothesis
      */
     virtual void
-    writeBehaviourComputeStressFreeExpansion(void);
+    writeBehaviourComputeStressFreeExpansion(const Hypothesis);
     /*!
      * \brief write the stiffness tensor computation evaluation 
      * from the elastic material properties.
@@ -1096,7 +1074,6 @@ namespace mfront{
 
     virtual void
     treatParameterMethod(const Hypothesis);
-    
     /*!
      * \return true if the the given variable may have methods
      * \param[in] h : modelling hypothesis
@@ -1118,14 +1095,15 @@ namespace mfront{
     virtual void
     treatUnknownVariableMethod(const Hypothesis,
 			       const std::string&);
-
+    //! method called when an unknown keyword is parsed
+    virtual void treatUnknownKeyword(void) override;
+    //! destructor
     virtual ~BehaviourDSLCommon();
-
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] n : variable name
      */
-    void
+    virtual void
     declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const Hypothesis,
 									   const std::string&);
     /*!
@@ -1199,4 +1177,3 @@ namespace mfront{
 #include"MFront/BehaviourDSLCommon.ixx"
 
 #endif /* LIB_MFRONT_MFRONTBEHAVIOURPARSERCOMMON_HXX_ */
-

@@ -113,7 +113,8 @@ set(mfront_tests_SOURCES
   IncompressiblePlaneStressGornetDesmoratBehaviour
   ImplicitSimoMieheElastoPlasticity
   T91ViscoplasticBehaviour
-  AnistropicLemaitreViscoplasticBehaviour)
+  AnistropicLemaitreViscoplasticBehaviour
+  ComputeStressFreeExpansion)
 
 mfront_dependencies(MFrontCastemBehaviours
   Inconel600_YoungModulus
@@ -599,6 +600,7 @@ test_castem(finitestrainsinglecrystal_numericaljacobian-159)
 test_castem(finitestrainsinglecrystal2-001)
 test_castem(anistropiclemaitreviscoplasticbehaviour)
 test_castem(tssf)
+test_castem(computestressfreeexpansion)
 
 if(CMAKE_CONFIGURATION_TYPES)
   foreach(conf ${CMAKE_CONFIGURATION_TYPES})

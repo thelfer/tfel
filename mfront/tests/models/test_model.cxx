@@ -29,18 +29,42 @@ struct B4CConcentrationModelTest final
 {
   B4CConcentrationModelTest()
     : tfel::tests::TestCase("MFront/Model","B4CConcentrationModelTest")
-  {} // end of B4CConcentrationModelTest
+    {} // end of B4CConcentrationModelTest
   virtual tfel::tests::TestResult
-  execute(void) override
+    execute(void) override
   {
-    mfront::B4C_ConcentrationModel<double> cm;
-    double bu  = 0;
-    double b10 = 0;
-    TFEL_TESTS_CHECK_THROW((cm.Compute(bu,b10,-1.,0.,0.,0.,3600)),
-			   tfel::material::OutOfBoundsException);
+    this->test1();
+    this->test2();
     return this->result;
   } // end of execute
+  
   virtual ~B4CConcentrationModelTest() = default;
+ private:
+  void test1(void){
+    mfront::B4C_ConcentrationModel<double> cm;
+    double bu  = 0;
+    double b10 = 5.06732753005997e+28;
+    TFEL_TESTS_CHECK_THROW((cm.Compute(bu,b10,-1.,0.,0.,0.,3600)),
+			   tfel::material::OutOfBoundsException);
+  }
+  void test2(void){
+    mfront::B4C_ConcentrationModel<double> cm;
+    const double b10_0 = 5.06732753005997e+28;
+    const double c   = 8.35838E-09;
+    const double c_1 = 8.35838E-09;
+    double bu  = 0;
+    double b10 = b10_0;
+    double t   = 0.0;
+    const double te = 41696641.0;
+    const double dt = (te-t)/100;
+    while(std::abs(te-t)>dt/2){
+      const double bu_1  = bu;
+      const double b10_1 = b10;
+      cm.Compute(bu,b10,bu_1,b10_1,c,c_1,dt);
+      t+=dt;
+      TFEL_TESTS_ASSERT(std::abs(b10-b10_0*exp(-c*t))<b10_0*1e-6);
+    }
+  }
 };
 
 TFEL_TESTS_GENERATE_PROXY(B4CConcentrationModelTest,"B4CConcentrationModelTest");

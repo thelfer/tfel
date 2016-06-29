@@ -177,7 +177,17 @@ d'orthotropie.
 
 \paragraph{Le mot clé {\tt @ComputeThermalExpansion}}
 
+\paragraph{Le mot clé {\tt @Swelling}}
+
 \paragraph{Le mot clé {\tt @AxialGrowth}}
+
+\paragraph{Le mot clé {\tt @ComputeStressFreeExpansion}} Le mot clé
+{\tt @ComputeStressFreeExpansion} permet à l'utilisateur d'implanter
+le calcul de dilatations libres quelconques. L'utilisateur doit mettre
+à jour des tenseurs d'ordre deux symétriques {\tt dl0_l0} et {\tt
+  dl1_l0} représentant respectivement la variation de longueur du
+corps par rapport à la longueur initial (en pratique, ce tenseur est
+généralement diagonal).
 
 \subsubsection{Calcul du tenseur d'élasticité}
 

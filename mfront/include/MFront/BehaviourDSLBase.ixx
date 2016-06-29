@@ -111,6 +111,8 @@ namespace mfront{
 			      &Child::treatUpdateAuxiliaryStateVariables);
     this->registerNewCallBack("@ComputeThermalExpansion",
 			      &Child::treatComputeThermalExpansion);
+    this->registerNewCallBack("@ComputeStressFreeExpansion",
+			      &Child::treatComputeStressFreeExpansion);
   } // end of BehaviourDSLBase<Child>::registerDefaultCallBacks
 
   template<typename Child>

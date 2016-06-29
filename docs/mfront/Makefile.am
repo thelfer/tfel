@@ -12,6 +12,7 @@ MFRONT_DOCS = Algorithm.md				                \
 	      ComputeStress.md				                \
 	      ComputeFinalStress.md				        \
 	      ComputeThermalExpansion.md				\
+	      ComputeStressFreeExpansion.md				\
 	      Date.md				                        \
 	      Description.md                                            \
 	      DSL.md				                        \

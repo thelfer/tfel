@@ -83,6 +83,8 @@ namespace mfront{
     //! standard code name
     static const std::string ComputeTangentOperator;
     //! standard code name
+    static const std::string ComputeStressFreeExpansion;
+    //! standard code name
     static const std::string UpdateAuxiliaryStateVariables;
     //! standard code name
     static const std::string InitializeJacobian;

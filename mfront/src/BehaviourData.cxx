@@ -36,6 +36,8 @@ namespace mfront{
   const std::string
   BehaviourData::ComputePredictor("ComputePredictor");
   const std::string
+  BehaviourData::ComputeStressFreeExpansion("ComputeStressFreeExpansion");
+  const std::string
   BehaviourData::ComputeStress("ComputeStress");
   const std::string
   BehaviourData::ComputeFinalStress("ComputeFinalStress");

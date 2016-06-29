@@ -224,6 +224,7 @@ docs/mfront/Coef.md -text
 docs/mfront/CompareToNumericalJacobian.md -text
 docs/mfront/ComputeFinalStress.md -text
 docs/mfront/ComputeStress.md -text
+docs/mfront/ComputeStressFreeExpansion.md -text
 docs/mfront/ComputeThermalExpansion.md -text
 docs/mfront/DSL.md -text
 docs/mfront/Date.md -text
@@ -1977,6 +1978,7 @@ mfront/tests/behaviours/CMakeLists.txt -text
 mfront/tests/behaviours/Chaboche.mfront -text
 mfront/tests/behaviours/Chaboche2.mfront -text
 mfront/tests/behaviours/CompressibleNeoHookeanBehaviour.mfront -text
+mfront/tests/behaviours/ComputeStressFreeExpansion.mfront -text
 mfront/tests/behaviours/DDIF2.mfront -text
 mfront/tests/behaviours/DruckerPrager.mfront -text
 mfront/tests/behaviours/DruckerPragerEcroLin.mfront -text
@@ -2195,6 +2197,7 @@ mfront/tests/behaviours/abaqus/abaqusanistropiclemaitreviscoplasticbehaviour.mte
 mfront/tests/behaviours/abaqus/abaqusburger.mtest.in -text
 mfront/tests/behaviours/abaqus/abaquschaboche.mtest.in -text
 mfront/tests/behaviours/abaqus/abaquschaboche2.mtest.in -text
+mfront/tests/behaviours/abaqus/abaquscomputestressfreeexpansion.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusdruckerprager.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusdruckerprager2.mtest.in -text
 mfront/tests/behaviours/abaqus/abaquselasticity.mtest.in -text
@@ -2624,6 +2627,7 @@ mfront/tests/behaviours/aster/asteranistropiclemaitreviscoplasticbehaviour.mtest
 mfront/tests/behaviours/aster/asterburger.mtest.in -text
 mfront/tests/behaviours/aster/asterchaboche.mtest.in -text
 mfront/tests/behaviours/aster/asterchaboche2.mtest.in -text
+mfront/tests/behaviours/aster/astercomputestressfreeexpansion.mtest.in -text
 mfront/tests/behaviours/aster/asterdruckerprager.mtest.in -text
 mfront/tests/behaviours/aster/asterdruckerprager2.mtest.in -text
 mfront/tests/behaviours/aster/asterelasticity.mtest.in -text
@@ -2800,6 +2804,7 @@ mfront/tests/behaviours/castem/castemburger.mtest.in -text
 mfront/tests/behaviours/castem/castemchaboche.mtest.in -text
 mfront/tests/behaviours/castem/castemchaboche2.mtest.in -text
 mfront/tests/behaviours/castem/castemcompressibleneohookeanbehaviour.mtest.in -text
+mfront/tests/behaviours/castem/castemcomputestressfreeexpansion.mtest.in -text
 mfront/tests/behaviours/castem/castemddif2-2.mtest.in -text
 mfront/tests/behaviours/castem/castemddif2-3.mtest.in -text
 mfront/tests/behaviours/castem/castemddif2-4.mtest.in -text
@@ -3415,6 +3420,7 @@ mfront/tests/behaviours/crossedsecant/crossedsecantviscochaboche.mtest.in -text
 mfront/tests/behaviours/crossedsecant/crossedsecantviscoplasisocin.mtest.in -text
 mfront/tests/behaviours/cyrano/CMakeLists.txt -text
 mfront/tests/behaviours/cyrano/Makefile.am -text
+mfront/tests/behaviours/cyrano/cyranocomputestressfreeexpansion.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity10.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity18.mtest.in -text

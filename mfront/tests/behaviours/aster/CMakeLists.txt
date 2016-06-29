@@ -76,7 +76,8 @@ set(mfront_tests_SOURCES
   SaintVenantKirchhoffElasticity2
   SaintVenantKirchhoffElasticity3
   FiniteStrainSingleCrystal
-  FiniteStrainSingleCrystal_NumericalJacobian)
+  FiniteStrainSingleCrystal_NumericalJacobian
+  ComputeStressFreeExpansion)
 mfront_dependencies(MFrontAsterBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
@@ -351,6 +352,7 @@ test_aster(finitestrainsinglecrystal_numericaljacobian-001)
 test_aster(finitestrainsinglecrystal_numericaljacobian-012)
 test_aster(finitestrainsinglecrystal_numericaljacobian-012-2)
 test_aster(finitestrainsinglecrystal_numericaljacobian-159)
+test_aster(computestressfreeexpansion)
 
 if(enable-python-bindings)
   test_aster_python(xx)

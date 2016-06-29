@@ -499,6 +499,26 @@ namespace mfront{
 	}
       }
     }
+    // restrictions on user defined compute stress free expansion
+    for(const auto h : this->mb.getDistinctModellingHypotheses()){
+      const auto& d = this->mb.getBehaviourData(h);
+      if(d.hasCode(BehaviourData::ComputeStressFreeExpansion)){
+	const auto& cb =
+	  d.getCodeBlock(BehaviourData::ComputeStressFreeExpansion);
+	for(const auto& v : cb.members){
+	  if(d.isLocalVariableName(v)){
+	    this->throwRuntimeError("BehaviourDSLCommon::"
+				    "endsInputFileProcessing: ",
+				    "local variables can't be used in "
+				    "@ComputeStressFreeExpansion blocks "
+				    "(local variables are not initialized yet "
+				    "when the stress free expansions "
+				    "are computed)");
+	  }
+	}
+      }
+    }
+    // calling interfaces
     for(const auto& i  : this->interfaces){
       i.second->allowDynamicallyAllocatedArrays(this->areDynamicallyAllocatedVectorsAllowed());
     }
@@ -974,8 +994,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::treatMaterial
 
-  void
-  BehaviourDSLCommon::treatLibrary(void)
+  void BehaviourDSLCommon::treatLibrary(void)
   {
     const auto& m = this->readOnlyOneToken();
     if(!CxxTokenizer::isValidIdentifier(m,true)){
@@ -985,8 +1004,7 @@ namespace mfront{
     this->mb.setLibrary(m);
   } // end of BehaviourDSLCommon::treatLibrary
     
-  void
-  BehaviourDSLCommon::treatComputeThermalExpansion(void)
+  void BehaviourDSLCommon::treatComputeThermalExpansion(void)
   {
     using ComputedMaterialProperty = BehaviourDescription::ComputedMaterialProperty;
     const std::string m("BehaviourDSLCommon::treatComputeThermalExpansion");
@@ -1947,9 +1965,9 @@ namespace mfront{
     }
     this->reserveName("smt");
     this->reserveName("smflag");
-    this->reserveName("dl_l0");
-    this->reserveName("dl_l1");
-    this->reserveName("dl_l01");
+    this->reserveName("dl0_l0");
+    this->reserveName("dl1_l0");
+    this->reserveName("dl01_l0");
     this->reserveName("alpha_Ti");
     this->reserveName("alpha0_Ti");
     this->reserveName("alpha1_Ti");
@@ -2778,13 +2796,18 @@ namespace mfront{
 			<< " class\n\n";
   }
   
-  void
-  BehaviourDSLCommon::treatUpdateAuxiliaryStateVariables(void)
+  void BehaviourDSLCommon::treatUpdateAuxiliaryStateVariables(void)
   {
     this->readCodeBlock(*this,BehaviourData::UpdateAuxiliaryStateVariables,
 			&BehaviourDSLCommon::standardModifier,true,true);
   } // end of BehaviourDSLCommon::treatUpdateAuxiliaryStateVarBase
 
+  void BehaviourDSLCommon::treatComputeStressFreeExpansion(void)
+  {
+    this->readCodeBlock(*this,BehaviourData::ComputeStressFreeExpansion,
+			&BehaviourDSLCommon::standardModifier,true,true);
+  } // end of BehaviourDSLCommon::treatComputeStressFreeExpansion
+  
   void
   BehaviourDSLCommon::writeBehaviourUpdateIntegrationVariables(const Hypothesis h)
   {
@@ -3295,17 +3318,17 @@ namespace mfront{
     }();
     const auto T = (t=="t") ? "this->T" : "this->T+this->dT";
     if(t=="t"){
-      out << "dl_l0";
+      out << "dl0_l0";
     } else {
-      out << "dl_l1";
+      out << "dl1_l0";
     }
-    out << "[" << c << "] = 1/(1+alpha"
+    out << "[" << c << "] += 1/(1+alpha"
 	<< suffix << "_Ti * (this->referenceTemperatureForThermalExpansion-" << Tref << "))*("
 	<< "alpha" << suffix << "_T_"  << t << " * (" << T << "-" << Tref << ")-"
 	<< "alpha" << suffix << "_Ti * (this->referenceTemperatureForThermalExpansion-" << Tref << "));\n";
   } // end of BehaviourDSLCommon::writeThermalExpansionComputation
   
-  void BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion(void)
+  void BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion(const Hypothesis h)
   {    
     auto eval = [](std::ostream& out,
 		   const BehaviourDescription::MaterialProperty& mp,
@@ -3316,102 +3339,110 @@ namespace mfront{
       const auto i = b ? "1" : "0";
       const auto T = b ? "this->T+this->dT" : "this->T";
       if(cmp.name.empty()){
-	out << "dl_l" << i << "[" << c << "] = "
+	out << "dl" << i << "_l0" << "[" << c << "] += "
 	    << cmp.value << "/(1+" << cmp.value << "*(this->referenceTemperatureForThermalExpansion-" << Tref << "))"
 	    << "*(" << T << "-this->referenceTemperatureForThermalExpansion);\n";
       } else {
-	out << "dl_l" << i << "[" << c << "] = (this->"
+	out << "dl" << i << "_l0"  << "[" << c << "] += (this->"
 	    << cmp.name << ")/(1+(this->" << cmp.name << ")*(this->referenceTemperatureForThermalExpansion-" << Tref << "))"
 	    << "*(" << T << "-this->referenceTemperatureForThermalExpansion);\n";
       }
     };
-    if(!this->mb.areThermalExpansionCoefficientsDefined()){
+    if((!this->mb.areThermalExpansionCoefficientsDefined())&&
+       (!this->mb.hasCode(h,BehaviourData::ComputeStressFreeExpansion))){
       return;
     }
-    if(!((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
-      this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
-			      "only finite strain or small strain behaviour are supported");
-    }
-    if(this->mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      if((this->mb.getOrthotropicAxesConvention()==
-	  tfel::material::OrthotropicAxesConvention::DEFAULT)&&
-	 (this->mb.getThermalExpansionCoefficients().size()==3u)){
-	// in this case, only tridimensional case is supported
-	const auto& hs = this->mb.getDistinctModellingHypotheses();
-	for(const auto mh:hs){
-	  if(mh!=ModellingHypothesis::TRIDIMENSIONAL){
-	    this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
-				    "An orthotropic axes convention must be choosen when "
-				    "using @ComputeThermalExpansion keyword in behaviours which "
-				    "shall be valid in other modelling hypothesis than "
-				    "'Tridimensional'.\n"
-				    "Either restrict the validity of the behaviour to "
-				    "'Tridimensional' (see @ModellingHypothesis) or "
-				    "choose and orthotropic axes convention as on option "
-				    "to the @OrthotropicBehaviour keyword");
+    if(this->mb.areThermalExpansionCoefficientsDefined()){
+      if(!((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	   (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
+	this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
+				"only finite strain or small strain behaviour are supported");
+      }
+      if(this->mb.getSymmetryType()==mfront::ORTHOTROPIC){
+	if((this->mb.getOrthotropicAxesConvention()==
+	    tfel::material::OrthotropicAxesConvention::DEFAULT)&&
+	   (this->mb.getThermalExpansionCoefficients().size()==3u)){
+	  // in this case, only tridimensional case is supported
+	  const auto& hs = this->mb.getDistinctModellingHypotheses();
+	  for(const auto mh:hs){
+	    if(mh!=ModellingHypothesis::TRIDIMENSIONAL){
+	      this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
+				      "An orthotropic axes convention must be choosen when "
+				      "using @ComputeThermalExpansion keyword in behaviours which "
+				      "shall be valid in other modelling hypothesis than "
+				      "'Tridimensional'.\n"
+				      "Either restrict the validity of the behaviour to "
+				      "'Tridimensional' (see @ModellingHypothesis) or "
+				      "choose and orthotropic axes convention as on option "
+				      "to the @OrthotropicBehaviour keyword");
+	    }
 	  }
 	}
       }
     }
     this->checkBehaviourFile();
     this->behaviourFile << "void\n"
-			<< "computeStressFreeExpansion(std::pair<StressFreeExpansionType,StressFreeExpansionType>& dl_l01)\n{\n";
+			<< "computeStressFreeExpansion(std::pair<StressFreeExpansionType,StressFreeExpansionType>& dl01_l0)\n{\n";
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using namespace tfel::math;\n";
     this->behaviourFile << "using std::vector;\n";
     writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
-		      this->behaviourFile,this->mb.getMaterialLaws());		      
-    this->behaviourFile << "auto& dl_l0 = dl_l01.first;\n";
-    this->behaviourFile << "auto& dl_l1 = dl_l01.second;\n";
-    this->behaviourFile << "dl_l0 = StressFreeExpansionType(typename StressFreeExpansionType::value_type(0));\n";
-    this->behaviourFile << "dl_l1 = StressFreeExpansionType(typename StressFreeExpansionType::value_type(0));\n";
-    const auto& acs = this->mb.getThermalExpansionCoefficients();
-    if(acs.size()==1u){
-      const auto& a = acs.front();
-      if(a.is<BehaviourDescription::ConstantMaterialProperty>()){
-	eval(this->behaviourFile,a,"0",false);
-      } else{
-	this->writeThermalExpansionCoefficientsComputations(this->behaviourFile,acs.front());
-	this->writeThermalExpansionComputation(this->behaviourFile,acs.front(),"t","0");
-      }
-      this->behaviourFile << "dl_l0[1] = dl_l0[0];\n"
-			  << "dl_l0[2] = dl_l0[0];\n";
-      if(a.is<BehaviourDescription::ConstantMaterialProperty>()){
-	eval(this->behaviourFile,a,"0",true);
-      } else{
-	this->writeThermalExpansionComputation(this->behaviourFile,acs.front(),"t_dt","0");
-      }
-      this->behaviourFile << "dl_l1[1] = dl_l1[0];\n"
-			  << "dl_l1[2] = dl_l1[0];\n";
-    } else if(acs.size()==3u){
-      if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC){
+		      this->behaviourFile,this->mb.getMaterialLaws());
+    this->behaviourFile << "auto& dl0_l0 = dl01_l0.first;\n";
+    this->behaviourFile << "auto& dl1_l0 = dl01_l0.second;\n";
+    this->behaviourFile << "dl0_l0 = StressFreeExpansionType(typename StressFreeExpansionType::value_type(0));\n";
+    this->behaviourFile << "dl1_l0 = StressFreeExpansionType(typename StressFreeExpansionType::value_type(0));\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeStressFreeExpansion)){
+      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeStressFreeExpansion) << '\n';
+    }
+    if(this->mb.areThermalExpansionCoefficientsDefined()){
+      const auto& acs = this->mb.getThermalExpansionCoefficients();
+      if(acs.size()==1u){
+	const auto& a = acs.front();
+	if(a.is<BehaviourDescription::ConstantMaterialProperty>()){
+	  eval(this->behaviourFile,a,"0",false);
+	} else{
+	  this->writeThermalExpansionCoefficientsComputations(this->behaviourFile,acs.front());
+	  this->writeThermalExpansionComputation(this->behaviourFile,acs.front(),"t","0");
+	}
+	this->behaviourFile << "dl0_l0[1] += dl0_l0[0];\n"
+			    << "dl0_l0[2] += dl0_l0[0];\n";
+	if(a.is<BehaviourDescription::ConstantMaterialProperty>()){
+	  eval(this->behaviourFile,a,"0",true);
+	} else{
+	  this->writeThermalExpansionComputation(this->behaviourFile,acs.front(),"t_dt","0");
+	}
+	this->behaviourFile << "dl1_l0[1] += dl1_l0[0];\n"
+			    << "dl1_l0[2] += dl1_l0[0];\n";
+      } else if(acs.size()==3u){
+	if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC){
+	  this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
+				  "invalid number of thermal expansion coefficients");
+	}
+	for(size_t i=0;i!=3;++i){
+	  if(!acs[i].is<BehaviourDescription::ConstantMaterialProperty>()){
+	    this->writeThermalExpansionCoefficientsComputations(this->behaviourFile,acs[i],
+								std::to_string(i));
+	  }
+	}
+	for(size_t i=0;i!=3;++i){
+	  const auto idx = std::to_string(i);
+	  if(acs[i].is<BehaviourDescription::ConstantMaterialProperty>()){
+	    eval(this->behaviourFile,acs[i],idx,false);
+	    eval(this->behaviourFile,acs[i],idx,true);
+	  } else {
+	    this->writeThermalExpansionComputation(this->behaviourFile,acs[i],"t",idx,idx);
+	    this->writeThermalExpansionComputation(this->behaviourFile,acs[i],"t_dt",idx,idx);
+	  }
+	}
+	if(this->mb.getOrthotropicAxesConvention()==tfel::material::OrthotropicAxesConvention::PIPE){
+	  this->behaviourFile << "tfel::material::convertStressFreeExpansionStrain<hypothesis,OrthotropicAxesConvention::PIPE>(dl0_l0);\n"
+			      << "tfel::material::convertStressFreeExpansionStrain<hypothesis,OrthotropicAxesConvention::PIPE>(dl1_l0);\n";
+	}
+      } else {
 	this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
-				"invalid number of thermal expansion coefficients");
+				"unsupported behaviour symmetry");
       }
-      for(size_t i=0;i!=3;++i){
-	if(!acs[i].is<BehaviourDescription::ConstantMaterialProperty>()){
-	  this->writeThermalExpansionCoefficientsComputations(this->behaviourFile,acs[i],
-							      std::to_string(i));
-	}
-      }
-      for(size_t i=0;i!=3;++i){
-	const auto idx = std::to_string(i);
-	if(acs[i].is<BehaviourDescription::ConstantMaterialProperty>()){
-	  eval(this->behaviourFile,acs[i],idx,false);
-	  eval(this->behaviourFile,acs[i],idx,true);
-	} else {
-	  this->writeThermalExpansionComputation(this->behaviourFile,acs[i],"t",idx,idx);
-	  this->writeThermalExpansionComputation(this->behaviourFile,acs[i],"t_dt",idx,idx);
-	}
-      }
-      if(this->mb.getOrthotropicAxesConvention()==tfel::material::OrthotropicAxesConvention::PIPE){
-	this->behaviourFile << "tfel::material::convertStressFreeExpansionStrain<hypothesis,OrthotropicAxesConvention::PIPE>(dl_l0);\n"
-			    << "tfel::material::convertStressFreeExpansionStrain<hypothesis,OrthotropicAxesConvention::PIPE>(dl_l1);\n";
-      }
-    } else {
-      this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
-			      "unsupported behaviour symmetry");
     }
     this->behaviourFile << "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion
@@ -3814,7 +3845,8 @@ namespace mfront{
 			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SUCCESS;\n"
 			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::FAILURE;\n"
 			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::UNRELIABLE_RESULTS;\n\n";
-    if(this->mb.areThermalExpansionCoefficientsDefined()){
+    if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+       (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
       this->behaviourFile << "using StressFreeExpansionType = "
 			  << this->mb.getStressFreeExpansionType()  << ";\n\n";
     }
@@ -3933,13 +3965,14 @@ namespace mfront{
 				"internal error : unsupported orthotropic axes convention");
       }
     }
-    if(this->mb.areThermalExpansionCoefficientsDefined()){
+    if((b)&&((this->mb.areThermalExpansionCoefficientsDefined())||
+	     (this->mb.hasCode(h,BehaviourData::ComputeStressFreeExpansion)))){
       this->behaviourFile << "static " << constexpr_c << " bool hasStressFreeExpansion = true;\n";    
     } else {
       this->behaviourFile << "static " << constexpr_c << " bool hasStressFreeExpansion = false;\n";
     }
     if(this->mb.areThermalExpansionCoefficientsDefined()){
-      this->behaviourFile << "static " << constexpr_c << " bool handlesThermalExpansion = true;\n";    
+      this->behaviourFile << "static " << constexpr_c << " bool handlesThermalExpansion = true;\n";
     } else {
       this->behaviourFile << "static " << constexpr_c << " bool handlesThermalExpansion = false;\n";
     }
@@ -4217,7 +4250,7 @@ namespace mfront{
     // from this point, all is public
     this->behaviourFile << "public:\n\n";
     this->writeBehaviourConstructors(h);
-    this->writeBehaviourComputeStressFreeExpansion();
+    this->writeBehaviourComputeStressFreeExpansion(h);
     this->writeBehaviourInitializeMethod(h);
     this->writeBehaviourSetOutOfBoundsPolicy();
     this->writeBehaviourGetModellingHypothesis();
