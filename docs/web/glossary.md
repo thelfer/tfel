@@ -119,6 +119,14 @@ Cette entrée décrit la déformation élastique.
 * unité : sans unité
 * type : tenseur symétrique
 
+# L'entrée Emissivity
+
+Cette entrée décrit Emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation.
+
+* noms  : Emissivity
+* unité : \(kg.m.T^{−3}\)
+* type : scalaire 
+
 # L'entrée EquivalentPlasticStrain
 
 Cette entrée décrit la déformation plastique équivalente.
@@ -230,6 +238,14 @@ Cette entrée décrit le flux de chaleur..
 * noms  : HeatFlux
 * unité : \(J.m^{-2}.s^{-1}\)
 * type : vecteur 
+
+# L'entrée HeatTransferCoefficient
+
+Cette entrée décrit The heat transfer coefficient is the proportionality constant between the heat flux and the temperature difference.
+
+* noms  : HeatTransferCoefficient
+* unité : \(W.m^{-2}.K^{-1}\)
+* type : scalaire 
 
 # L'entrée HillStress
 

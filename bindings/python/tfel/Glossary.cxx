@@ -52,6 +52,8 @@ return_value_policy<reference_existing_object>())
 "le déplacement")
 .def_readonly("ElasticStrain",&Glossary::ElasticStrain,
 "la déformation élastique")
+.def_readonly("Emissivity",&Glossary::Emissivity,
+"Emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation")
 .def_readonly("EquivalentPlasticStrain",&Glossary::EquivalentPlasticStrain,
 "la déformation plastique équivalente")
 .def_readonly("EquivalentStrain",&Glossary::EquivalentStrain,
@@ -78,6 +80,8 @@ return_value_policy<reference_existing_object>())
 "la taille de grain")
 .def_readonly("HeatFlux",&Glossary::HeatFlux,
 "le flux de chaleur.")
+.def_readonly("HeatTransferCoefficient",&Glossary::HeatTransferCoefficient,
+"The heat transfer coefficient is the proportionality constant between the heat flux and the temperature difference")
 .def_readonly("HillStress",&Glossary::HillStress,
 "la contrainte équivalente au sens de Hill")
 .def_readonly("HydrostaticPressure",&Glossary::HydrostaticPressure,

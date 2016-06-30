@@ -1,3 +1,15 @@
+"Emissivity"{
+ unit: "kg.m.T^{−3}";
+ type: "scalar";
+ short_description: "Emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation";
+};
+
+"HeatTransferCoefficient"{
+ unit: "W.m^{-2}.K^{-1}";
+ type: "scalar";
+ short_description:"The heat transfer coefficient is the proportionality constant between the heat flux and the temperature difference";
+};
+
 "MassDensity"{
  unit : "kg.m^{-3}";
  type : "scalar";
