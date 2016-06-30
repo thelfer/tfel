@@ -184,10 +184,11 @@ d'orthotropie.
 \paragraph{Le mot clé {\tt @ComputeStressFreeExpansion}} Le mot clé
 {\tt @ComputeStressFreeExpansion} permet à l'utilisateur d'implanter
 le calcul de dilatations libres quelconques. L'utilisateur doit mettre
-à jour des tenseurs d'ordre deux symétriques {\tt dl0_l0} et {\tt
-  dl1_l0} représentant respectivement la variation de longueur du
-corps par rapport à la longueur initial (en pratique, ce tenseur est
-généralement diagonal).
+à jour des tenseurs d'ordre deux symétriques nommés respectivement
+{\tt dl0\_l0} et {\tt dl1\_l0}. {\tt dl0\_l0} représente la variation
+de longueur du corps par rapport à la longueur initial en début de pas
+de temps, et {\tt dl1\_l0} cette variation en fin de pas. En pratique,
+ces deux tenseurs sont généralement diagonaux.
 
 \subsubsection{Calcul du tenseur d'élasticité}
 
