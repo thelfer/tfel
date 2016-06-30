@@ -328,9 +328,12 @@ namespace mfront
   std::vector<BehaviourDescription::MaterialPropertyInput>
   BehaviourDescription::getMaterialPropertyInputs(const MaterialPropertyDescription& mpd) const
   {
-    auto getVariableType = [](const BehaviourDescription& bd,
-			      const Hypothesis h,
-			      const std::string& v){
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("BehaviourDescription::MaterialPropertyInput: "+m));}
+    };
+    auto getVariableType = [&throw_if](const BehaviourDescription& bd,
+				       const Hypothesis h,
+				       const std::string& v){
       if(bd.isExternalStateVariableName(h,v)){
 	return MaterialPropertyInput::EXTERNALSTATEVARIABLE;
       } else if(bd.isMaterialPropertyName(h,v)){
@@ -338,21 +341,17 @@ namespace mfront
       } else if(bd.isParameterName(h,v)){
 	return MaterialPropertyInput::PARAMETER;
       } else {
-	throw(std::runtime_error("BehaviourDescription::getMaterialPropertyInputs: "
-				 "unsupported variable: variable '"+v+"' is "
-				 "neither an external state variable, a material "
-				 "property nor a parameter"));
+	throw_if(true,"unsupported variable: variable '"+v+"' is "
+		 "neither an external state variable, a material "
+		 "property nor a parameter");
       }
     };
     auto inputs = std::vector<MaterialPropertyInput>{};
     for(const auto& v : mpd.inputs){
-      if((mpd.glossaryNames.find(v.name)==mpd.glossaryNames.end())&&
-    	 (mpd.entryNames.find(v.name)==mpd.entryNames.end())){
-    	throw(std::runtime_error("BehaviourDescription::getMaterialPropertyInputs : "
-				 "no glossary nor entry name declared for variable "
-				 "'"+v.name+"' used by the material property "
-				 "'"+mpd.law+"'"));
-      }
+      throw_if((mpd.glossaryNames.find(v.name)==mpd.glossaryNames.end())&&
+	       (mpd.entryNames.find(v.name)==mpd.entryNames.end()),
+	       "no glossary nor entry name declared for variable "
+	       "'"+v.name+"' used by the material property '"+mpd.law+"'");
       const auto& vn = v.getExternalName(mpd.glossaryNames,mpd.entryNames);
       if(vn==tfel::glossary::Glossary::Temperature){
 	inputs.push_back({"T",tfel::glossary::Glossary::Temperature,
@@ -363,18 +362,14 @@ namespace mfront
 	  this->getVariableNameFromGlossaryNameOrEntryName(*(hs.begin()),vn);
 	const auto t = getVariableType(*this,*(hs.begin()),n);
 	for(const auto h:hs){
-	  if(this->getVariableNameFromGlossaryNameOrEntryName(h,vn)!=n){
-	    throw(std::runtime_error("BehaviourDescription::getMaterialPropertyInputs: "
-				    "the external name '"+vn+"' is associated with "
-				    "two differents variables in two distinct "
-				     "modelling hypotheses. This is not supported."));
-	  }
-	  if(getVariableType(*this,h,n)!=t){
-	    throw(std::runtime_error("BehaviourDescription::getMaterialPropertyInputs: "
-				    "the external name '"+vn+"' has two different "
-				    "types in two distinct modelling hypotheses. "
-				     "This is not supported."));
-	  }
+	  throw_if(this->getVariableNameFromGlossaryNameOrEntryName(h,vn)!=n,
+		   "the external name '"+vn+"' is associated with "
+		   "two differents variables in two distinct "
+		   "modelling hypotheses. This is not supported.");
+	  throw_if(getVariableType(*this,h,n)!=t,
+		   "the external name '"+vn+"' has two different "
+		   "types in two distinct modelling hypotheses. "
+		   "This is not supported.");
 	}
 	inputs.push_back({n,vn,t});
       }
@@ -455,8 +450,7 @@ namespace mfront
     return this->className;
   } // end of BehaviourDescription::getClassName
 
-  void
-  BehaviourDescription::appendToIncludes(const std::string& c)
+  void BehaviourDescription::appendToIncludes(const std::string& c)
   {
     this->includes+=c;
     if(!this->includes.empty()){
@@ -472,10 +466,9 @@ namespace mfront
     return this->includes;
   } // end of BehaviourDescription::getIncludes
 
-  void
-  BehaviourDescription::appendToMembers(const Hypothesis h,
-					const std::string& c,
-					const bool b)
+  void BehaviourDescription::appendToMembers(const Hypothesis h,
+					     const std::string& c,
+					     const bool b)
   {
     this->callBehaviourData(h,&BehaviourData::appendToMembers,c,b);
   } // end of BehaviourDescription::appendToMembers
@@ -893,9 +886,13 @@ namespace mfront
     this->thermalExpansionCoefficients.push_back(a2);
     this->thermalExpansionCoefficients.push_back(a3);
   } // end of BehaviourDescription::setThermalExpansionCoefficients
+
+  bool BehaviourDescription::requiresStressFreeExpansionTreatment(const Hypothesis h) const{
+    return ((this->areThermalExpansionCoefficientsDefined())||
+	    (this->hasCode(h,BehaviourData::ComputeStressFreeExpansion)));
+  } // end of BehaviourDescription::requiresStressFreeExpansionTreatment
   
-  bool
-  BehaviourDescription::areThermalExpansionCoefficientsDefined(void) const
+  bool BehaviourDescription::areThermalExpansionCoefficientsDefined(void) const
   {
     return !this->thermalExpansionCoefficients.empty();
   } // end of BehaviourDescription::areThermalExpansionCoefficientsDefined
@@ -1548,22 +1545,19 @@ namespace mfront
     return this->getData(h,&BehaviourData::isExternalStateVariableIncrementName,n);
   }  // end of BehaviourDescription::isExternalStateVariableIncrementName
 
-  bool
-  BehaviourDescription::isParameterName(const Hypothesis h,
-					const std::string& v) const
+  bool BehaviourDescription::isParameterName(const Hypothesis h,
+					     const std::string& v) const
   {
     return this->getData(h,&BehaviourData::isParameterName,v);
   } // end of BehaviourDescription::isParameterName
 
-  bool
-  BehaviourDescription::isStaticVariableName(const Hypothesis h,
-					     const std::string& n) const
+  bool BehaviourDescription::isStaticVariableName(const Hypothesis h,
+						  const std::string& n) const
   {
     return this->getData(h,&BehaviourData::isStaticVariableName,n);
   }  // end of BehaviourDescription::isStaticVariableName
 
-  void
-  BehaviourDescription::updateClassName(void)
+  void BehaviourDescription::updateClassName(void)
   {
     if((!this->behaviour.empty())||
        (!this->material.empty())){

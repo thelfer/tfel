@@ -1630,8 +1630,7 @@ namespace mfront{
 
   void BehaviourDSLCommon::treatInterface(void)
   {
-    typedef BehaviourInterfaceFactory MBIF;
-    auto& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif  = BehaviourInterfaceFactory::getBehaviourInterfaceFactory();
     auto inames = std::vector<std::string>{};
     this->readStringList(inames);
     for(const auto& i : inames){
@@ -1644,9 +1643,7 @@ namespace mfront{
   void
   BehaviourDSLCommon::setInterfaces(const std::set<std::string>& inames)
   {
-    using namespace std;
-    typedef BehaviourInterfaceFactory MBIF;
-    auto& mbif = MBIF::getBehaviourInterfaceFactory();
+    auto& mbif = BehaviourInterfaceFactory::getBehaviourInterfaceFactory();
     for(const auto& i : inames){
       if(this->interfaces.count(i)==0){
 	this->interfaces.insert({i,mbif.getInterface(i)});
@@ -1654,25 +1651,21 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::setInterfaces
 
-  void
-  BehaviourDSLCommon::treatAPrioriTimeStepScalingFactor(void){
+  void BehaviourDSLCommon::treatAPrioriTimeStepScalingFactor(void){
     this->readCodeBlock(*this,BehaviourData::APrioriTimeStepScalingFactor,
 			&BehaviourDSLCommon::standardModifier,true,true);
   }
   
-  void
-  BehaviourDSLCommon::treatIntegrator(void)
+  void BehaviourDSLCommon::treatIntegrator(void)
   {
     this->readCodeBlock(*this,BehaviourData::Integrator,
 			&BehaviourDSLCommon::standardModifier,true,true);
   } // end of BehaviourDSLCommon::treatIntegrator
 
-  void
-  BehaviourDSLCommon::treatAPosterioriTimeStepScalingFactor(void){
+  void BehaviourDSLCommon::treatAPosterioriTimeStepScalingFactor(void){
     this->readCodeBlock(*this,BehaviourData::APosterioriTimeStepScalingFactor,
 			&BehaviourDSLCommon::standardModifier,true,true);
   }
-    
   
   void BehaviourDSLCommon::treatStateVariable(void)
   {
@@ -3168,7 +3161,7 @@ namespace mfront{
     const auto& mpd = *(cmp.mpd);
     out << '(';
     if(!mpd.inputs.empty()){
-      const auto inputs = this->mb.getMaterialPropertyInputs(mpd);
+      const auto& inputs = this->mb.getMaterialPropertyInputs(mpd);
       auto pi = std::begin(inputs);
       const auto pie = std::end(inputs);
       while(pi!=pie){
@@ -3348,8 +3341,7 @@ namespace mfront{
 	    << "*(" << T << "-this->referenceTemperatureForThermalExpansion);\n";
       }
     };
-    if((!this->mb.areThermalExpansionCoefficientsDefined())&&
-       (!this->mb.hasCode(h,BehaviourData::ComputeStressFreeExpansion))){
+    if(!this->mb.requiresStressFreeExpansionTreatment(h)){
       return;
     }
     if(this->mb.areThermalExpansionCoefficientsDefined()){
@@ -3965,8 +3957,7 @@ namespace mfront{
 				"internal error : unsupported orthotropic axes convention");
       }
     }
-    if((b)&&((this->mb.areThermalExpansionCoefficientsDefined())||
-	     (this->mb.hasCode(h,BehaviourData::ComputeStressFreeExpansion)))){
+    if((b)&&(this->mb.requiresStressFreeExpansionTreatment(h))){
       this->behaviourFile << "static " << constexpr_c << " bool hasStressFreeExpansion = true;\n";    
     } else {
       this->behaviourFile << "static " << constexpr_c << " bool hasStressFreeExpansion = false;\n";

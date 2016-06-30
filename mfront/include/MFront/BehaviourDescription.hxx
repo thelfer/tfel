@@ -731,14 +731,11 @@ namespace mfront
      * \param[in] h : modelling hypothesis considered
      */
     bool hasSpecialisedMechanicalData(const Hypothesis) const;
-    /*!
-     * \return true if thermal expansion coefficient were defined
-     */
-    bool
-    areThermalExpansionCoefficientsDefined(void) const;
-    /*!
-     * \return the thermal expansion coefficients
-     */
+    //! \return true if a stress free expansion has been defined
+    bool requiresStressFreeExpansionTreatment(const Hypothesis) const;
+    //! \return true if thermal expansion coefficient were defined
+    bool areThermalExpansionCoefficientsDefined(void) const;
+    //! \return the thermal expansion coefficients
     const std::vector<MaterialProperty>&
     getThermalExpansionCoefficients(void) const;
     /*!
