@@ -44,6 +44,7 @@ static const GlossaryEntry CylindricalStress;
 static const GlossaryEntry Damage;
 static const GlossaryEntry Displacement;
 static const GlossaryEntry ElasticStrain;
+static const GlossaryEntry Emissivity;
 static const GlossaryEntry EquivalentPlasticStrain;
 static const GlossaryEntry EquivalentStrain;
 static const GlossaryEntry EquivalentViscoplasticStrain;
@@ -57,6 +58,7 @@ static const GlossaryEntry FissionDensity;
 static const GlossaryEntry GaseousSwelling;
 static const GlossaryEntry GrainSize;
 static const GlossaryEntry HeatFlux;
+static const GlossaryEntry HeatTransferCoefficient;
 static const GlossaryEntry HillStress;
 static const GlossaryEntry HydrostaticPressure;
 static const GlossaryEntry IrradiationDamage;
@@ -145,7 +147,7 @@ getKeys(void) const;
 
 protected :
 //! all glossary names (to initialise glossary entries)
-static const char * names[95];
+static const char * names[97];
 /*!
  * \brief insert a new entry
  */

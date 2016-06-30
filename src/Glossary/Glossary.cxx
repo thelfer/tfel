@@ -15,7 +15,7 @@ namespace tfel
 namespace glossary
 {
 
-const char* Glossary::names[95] = {
+const char* Glossary::names[97] = {
 "AxialGrowth",
 "AxialStrain",
 "AxialStress",
@@ -29,6 +29,7 @@ const char* Glossary::names[95] = {
 "Damage",
 "Displacement",
 "ElasticStrain",
+"Emissivity",
 "EquivalentPlasticStrain",
 "EquivalentStrain",
 "EquivalentViscoplasticStrain",
@@ -42,6 +43,7 @@ const char* Glossary::names[95] = {
 "GaseousSwelling",
 "GrainSize",
 "HeatFlux",
+"HeatTransferCoefficient",
 "HillStress",
 "HydrostaticPressure",
 "IrradiationDamage",
@@ -189,6 +191,12 @@ const GlossaryEntry Glossary::ElasticStrain("ElasticStrain","ElasticStrain",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
+const GlossaryEntry Glossary::Emissivity("Emissivity","Emissivity",
+"kg.m.T^{−3}","scalar",
+"Emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation",
+"" /* no 'description' defined */,
+"" /* no 'notes' defined */);
+
 const GlossaryEntry Glossary::EquivalentPlasticStrain("EquivalentPlasticStrain","EquivalentPlasticStrain",
 "","scalar",
 "la déformation plastique équivalente",
@@ -264,6 +272,12 @@ const GlossaryEntry Glossary::GrainSize("GrainSize","GrainSize",
 const GlossaryEntry Glossary::HeatFlux("HeatFlux","HeatFlux",
 "J.m^{-2}.s^{-1}","vector",
 "le flux de chaleur.",
+"" /* no 'description' defined */,
+"" /* no 'notes' defined */);
+
+const GlossaryEntry Glossary::HeatTransferCoefficient("HeatTransferCoefficient","HeatTransferCoefficient",
+"W.m^{-2}.K^{-1}","scalar",
+"The heat transfer coefficient is the proportionality constant between the heat flux and the temperature difference",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -628,7 +642,7 @@ const GlossaryEntry Glossary::TrescaStress("TrescaStress","TrescaStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+84,Glossary::names+86,
+const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+86,Glossary::names+88,
 "Pa","scalar",
 "la valeur maximale de la contrainte qu'un materiau peut supporter",
 "" /* no 'description' defined */,
@@ -652,7 +666,7 @@ const GlossaryEntry Glossary::VonMisesStress("VonMisesStress","VonMisesStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+89,Glossary::names+91,
+const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+91,Glossary::names+93,
 "Pa","scalar",
 "la limite d'élasticité",
 "" /* no 'description' defined */,
@@ -690,7 +704,7 @@ return glossary;
 } // end of Glossary::getGlossary
 
 Glossary::Glossary(){
-this->keys.reserve(93);
+this->keys.reserve(95);
 this->insert(Glossary::AxialGrowth);
 this->insert(Glossary::AxialStrain);
 this->insert(Glossary::AxialStress);
@@ -704,6 +718,7 @@ this->insert(Glossary::CylindricalStress);
 this->insert(Glossary::Damage);
 this->insert(Glossary::Displacement);
 this->insert(Glossary::ElasticStrain);
+this->insert(Glossary::Emissivity);
 this->insert(Glossary::EquivalentPlasticStrain);
 this->insert(Glossary::EquivalentStrain);
 this->insert(Glossary::EquivalentViscoplasticStrain);
@@ -717,6 +732,7 @@ this->insert(Glossary::FissionDensity);
 this->insert(Glossary::GaseousSwelling);
 this->insert(Glossary::GrainSize);
 this->insert(Glossary::HeatFlux);
+this->insert(Glossary::HeatTransferCoefficient);
 this->insert(Glossary::HillStress);
 this->insert(Glossary::HydrostaticPressure);
 this->insert(Glossary::IrradiationDamage);
