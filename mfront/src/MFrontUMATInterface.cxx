@@ -2172,7 +2172,6 @@ namespace mfront{
     // loop over hypothesis
     const set<Hypothesis> h = this->getModellingHypothesesToBeTreated(mb);
     for(set<Hypothesis>::const_iterator ph=h.begin();ph!=h.end();++ph){
-      
       const MechanicalBehaviourData& d = mb.getMechanicalBehaviourData(*ph);
       const VariableDescriptionContainer& persistentVarsHolder     = d.getPersistentVariables();
       const VariableDescriptionContainer& externalStateVarsHolder  = d.getExternalStateVariables();
@@ -2237,13 +2236,24 @@ namespace mfront{
       out << endl;
       ostringstream mi;
       mi << "MA = 'MATERIAU' MO";
+      int mpos = 0;
       for(vector<UMATMaterialProperty>::const_iterator pm=mprops.first.begin();
-	  pm!=mprops.first.end();){
+	  pm!=mprops.first.end();++mpos){
 	SupportedTypes::TypeFlag flag = this->getTypeFlag(pm->type);
 	if(flag!=SupportedTypes::Scalar){
-	  string msg("MFrontUMATInterface::generateGibianeDeclaration : ");
-	  msg += "material properties shall be scalars";
-	  throw(runtime_error(msg));
+	  throw(runtime_error("MFrontUMATInterface::generateGibianeDeclaration: "
+			      "material properties shall be scalars"));
+	}
+	// skipping variables V1* and V2* imposed by Cast3M
+	if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
+	  if(((*ph==ModellingHypothesis::PLANESTRESS)&&((mpos>=4)&&(mpos<=5)))||
+	     (((*ph==ModellingHypothesis::AXISYMMETRICAL)||
+	       (*ph==ModellingHypothesis::PLANESTRAIN)||
+	       (*ph==ModellingHypothesis::GENERALISEDPLANESTRAIN))&&((mpos>=7)&&(mpos<=8)))||
+	     ((*ph==ModellingHypothesis::TRIDIMENSIONAL)&&((mpos>=9)&&(mpos<=14)))){
+	    ++pm;
+	    continue;
+	  }
 	}
 	if(pm->arraySize==1){
 	  tmp = treatScalar(pm->var_name);
