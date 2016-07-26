@@ -5,7 +5,7 @@
 
 @OrthotropicBehaviour;
 @RequireStiffnessTensor;
-
+@CompareToNumericalJacobian true;
 @Theta 1.;
 @AsterCompareToNumericalTangentOperator[aster]  true;
 @AsterTangentOperatorComparisonCriterium[aster] 1.e7;
@@ -38,9 +38,7 @@ seq.setGlossaryName("HillStress");
 @Integrator{
   const real A = 8.e-67;
   const real E = 8.2;
-
   const real sigeq = sqrt(sig|H*sig);
-
   const real tmp = A*pow(sigeq,E-1.);
   real inv_sigeq(0);
   Stensor  n(0.);
@@ -48,10 +46,8 @@ seq.setGlossaryName("HillStress");
     inv_sigeq = 1/sigeq;
   }
   n  = (H*sig)*inv_sigeq;
-  
   feel += dp*n-deto;
   fp   -= tmp*sigeq*dt;
-
   // jacobian
   dfeel_ddeel += theta*dp*(H-(n^n))*D*inv_sigeq;
   dfeel_ddp    = n;
