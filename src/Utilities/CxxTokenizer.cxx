@@ -750,15 +750,14 @@ namespace tfel{
     CxxTokenizer::stripComments(void){
       using namespace std;
       TokensContainer::iterator p;    
-      for(p=this->fileTokens.begin();p!=this->fileTokens.end();++p){
+      for(p=this->fileTokens.begin();p!=this->fileTokens.end();){
 	if(p->flag==Token::Comment){
 	  if(this->comments.find(p->line)!=this->comments.end()){
 	    this->comments[p->line] += ' ';
 	  }
 	  this->comments[p->line] = p->value;
-	  p = --(this->fileTokens.erase(p));
-	}
-	if(p->flag==Token::DoxygenComment){
+	  p = this->fileTokens.erase(p);
+	} else if(p->flag==Token::DoxygenComment){
 	  TokensContainer::iterator p2 = p;
 	  ++p2;
 	  if(p2!=this->fileTokens.end()){
@@ -772,9 +771,8 @@ namespace tfel{
 	      p2->value = p->value+"\n"+p2->value;
 	    }
 	  }
-	  p = --(this->fileTokens.erase(p));
-	}
-	if(p->flag==Token::DoxygenBackwardComment){
+	  p = this->fileTokens.erase(p);
+	} else if(p->flag==Token::DoxygenBackwardComment){
 	  TokensContainer::iterator p2 = p;
 	  --p2;
 	  if(p2!=this->fileTokens.begin()){
@@ -782,7 +780,9 @@ namespace tfel{
 	      p2->comment += p->value;
 	    }
 	  }
-	  p = --(this->fileTokens.erase(p));
+	  p = this->fileTokens.erase(p);
+	} else {
+	  ++p;
 	}
       }
     } // end of CxxTokenizer::stripComments
