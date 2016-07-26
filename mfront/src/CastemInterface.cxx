@@ -1310,7 +1310,7 @@ namespace mfront{
 	  this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus2","yg2",false);
 	  this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus3","yg3",false);
 	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio12","nu12",false);
-	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio23","nu22",false);
+	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio23","nu23",false);
 	  this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio13","nu13",false);
 	  this->appendToMaterialPropertiesList(mprops,"massdensity","MassDensity","rho",false);
 	  this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion1","alp1",false);
@@ -1877,16 +1877,15 @@ namespace mfront{
 			  "internal error, unsupported behaviour type"));
     }
     // loop over hypothesis
-    const auto h = this->getModellingHypothesesToBeTreated(mb);
-    for(const auto & elem : h){
-      const auto& d = mb.getBehaviourData(elem);
+    for(const auto & h : this->getModellingHypothesesToBeTreated(mb)){
+      const auto& d = mb.getBehaviourData(h);
       const auto& persistentVarsHolder = d.getPersistentVariables();
       const auto& externalStateVarsHolder = d.getExternalStateVariables();
-      const auto mprops = this->buildMaterialPropertiesList(mb,elem);
+      const auto mprops = this->buildMaterialPropertiesList(mb,h);
       string tmp;
-      out << "** " << ModellingHypothesis::toString(elem) << " example\n";
-      if(mo.find(elem)!=mo.end()){
-	out << "** 'OPTION' 'DIMENSION' " << getSpaceDimension(elem) << " 'MODELISER' " << mo[elem] << " ;\n\n";
+      out << "** " << ModellingHypothesis::toString(h) << " example\n";
+      if(mo.find(h)!=mo.end()){
+	out << "** 'OPTION' 'DIMENSION' " << getSpaceDimension(h) << " 'MODELISER' " << mo[h] << " ;\n\n";
       }
       ostringstream mcoel;
       mcoel << "coel = 'MOTS' ";
@@ -1916,7 +1915,7 @@ namespace mfront{
       if(!persistentVarsHolder.empty()){
 	ostringstream mstatev;
 	mstatev << "statev = 'MOTS' ";
-	this->writeVariableDescriptionContainerToGibiane(mstatev,elem,persistentVarsHolder);
+	this->writeVariableDescriptionContainerToGibiane(mstatev,h,persistentVarsHolder);
 	mstatev << ";";
 	writeGibianeInstruction(out,mstatev.str());
 	out << '\n';
@@ -1925,7 +1924,7 @@ namespace mfront{
       mparam << "params = 'MOTS' 'T'";
       if(!externalStateVarsHolder.empty()){
 	mparam << " ";
-	this->writeVariableDescriptionContainerToGibiane(mparam,elem,externalStateVarsHolder);
+	this->writeVariableDescriptionContainerToGibiane(mparam,h,externalStateVarsHolder);
       }
       mparam << ";";
       writeGibianeInstruction(out,mparam.str());
@@ -1944,11 +1943,23 @@ namespace mfront{
       out << '\n';
       ostringstream mi;
       mi << "MA = 'MATERIAU' MO ";
-      for(auto pm=mprops.first.cbegin();pm!=mprops.first.cend();){
+      auto mpos = 0;
+      for(auto pm=mprops.first.cbegin();pm!=mprops.first.cend();++mpos){
 	auto flag = this->getTypeFlag(pm->type);
 	if(flag!=SupportedTypes::Scalar){
 	  throw(runtime_error("CastemInterface::generateGibianeDeclaration: "
 			      "material properties shall be scalars"));
+	}
+	// skipping variables V1* and V2* imposed by Cast3M
+	if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
+	  if(((h==ModellingHypothesis::PLANESTRESS)&&((mpos>=4)&&(mpos<=5)))||
+	     (((h==ModellingHypothesis::AXISYMMETRICAL)||
+	       (h==ModellingHypothesis::PLANESTRAIN)||
+	       (h==ModellingHypothesis::GENERALISEDPLANESTRAIN))&&((mpos>=7)&&(mpos<=8)))||
+	     ((h==ModellingHypothesis::TRIDIMENSIONAL)&&((mpos>=9)&&(mpos<=14)))){
+	    ++pm;
+	    continue;
+	  }
 	}
 	if(pm->arraySize==1){
 	  tmp = treatScalar(pm->var_name);
@@ -1967,12 +1978,12 @@ namespace mfront{
 	}
       }
       if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-	if((elem==ModellingHypothesis::PLANESTRESS)||
-	   (elem==ModellingHypothesis::AXISYMMETRICAL)||
-	   (elem==ModellingHypothesis::PLANESTRAIN)||
-	   (elem==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	if((h==ModellingHypothesis::PLANESTRESS)||
+	   (h==ModellingHypothesis::AXISYMMETRICAL)||
+	   (h==ModellingHypothesis::PLANESTRAIN)||
+	   (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	  mi << " 'DIRECTION' (1 0) 'PARALLELE'";
-	} else if(elem==ModellingHypothesis::TRIDIMENSIONAL){	    
+	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){	    
 	  mi << " 'DIRECTION' (1 0 0) (0 0 1) 'PARALLELE'";
 	}
       }
