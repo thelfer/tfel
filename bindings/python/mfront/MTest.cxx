@@ -22,6 +22,62 @@
 #include"MFront/MTestImposedDrivingVariable.hxx"
 
 static void
+MTest_setStrainEpsilon(mfront::MTest& t, const mfront::real& v){
+  using namespace tfel::material;
+  if(t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    throw(std::runtime_error("MTest::setStrainEpsilon: "
+			     "this method is only valid "
+			     "small strain behaviour"));
+  }
+  t.setDrivingVariableEpsilon(v);
+}
+
+static void
+MTest_setDeformationGradientEpsilon(mfront::MTest& t, const mfront::real& v){
+  using namespace tfel::material;
+  if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+    throw(std::runtime_error("MTest::setDeformationGradientEpsilon: "
+			     "this method is only valid "
+			     "finite strain behaviour"));
+  }
+  t.setDrivingVariableEpsilon(v);
+}
+
+static void
+MTest_setOpeningDisplacementEpsilon(mfront::MTest& t,const mfront::real& v){
+  using namespace tfel::material;
+  if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+    throw(std::runtime_error("MTest::setOpeningDisplacementEpsilon: "
+			     "this method is only valid "
+			     "for cohesize zone model"));
+  }
+  t.setDrivingVariableEpsilon(v);
+}
+
+static void
+MTest_setStressEpsilon(mfront::MTest& t,const mfront::real& v){
+  using namespace tfel::material;
+  if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+     (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
+    throw(std::runtime_error("MTest::setStressEpsilon: "
+			     "this method is only valid "
+			     "for small or finite strain behaviours"));
+  }
+  t.setThermodynamicForceEpsilon(v);
+}
+
+static void
+MTest_setCohesiveForceEpsilon(mfront::MTest& t,const mfront::real& v){
+  using namespace tfel::material;
+  if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+    throw(std::runtime_error("MTest::setCohesiveForceEpsilon: "
+			     "this method is only valid "
+			     "cohesive zone model"));
+  }
+  t.setThermodynamicForceEpsilon(v);
+}
+
+static void
 MTest_addEvolution(mfront::MTest& t,
 		   const std::string&  n,
 		   const mfront::real& v,
@@ -592,8 +648,18 @@ void declareMTest(void)
 	 &MTest::setMaximumNumberOfIterations)
     .def("setMaximumNumberOfSubSteps",
 	 &MTest::setMaximumNumberOfSubSteps)
+    .def("setStrainEpsilon",
+	 MTest_setStrainEpsilon)
+    .def("setDeformationGradientEpsilon",
+	 MTest_setDeformationGradientEpsilon)
+    .def("setOpeningDisplacementEpsilon",
+	 MTest_setOpeningDisplacementEpsilon)
     .def("setDrivingVariableEpsilon",
 	 &MTest::setDrivingVariableEpsilon)
+    .def("setStressEpsilon",
+	 MTest_setStressEpsilon)
+    .def("setCohesiveForceEpsilon",
+	 MTest_setCohesiveForceEpsilon)
     .def("setThermodynamicForceEpsilon",
 	 &MTest::setThermodynamicForceEpsilon)
     .def("setParameter",&MTest::setParameter)
