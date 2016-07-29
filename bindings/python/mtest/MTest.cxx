@@ -31,6 +31,62 @@ namespace mtest{
 }
 
 static void
+MTest_setStrainEpsilon(mtest::MTest& t, const mtest::real& v){
+  using namespace tfel::material;
+  if(t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    throw(std::runtime_error("MTest::setStrainEpsilon: "
+			     "this method is only valid "
+			     "small strain behaviour"));
+  }
+  t.setDrivingVariableEpsilon(v);
+}
+
+static void
+MTest_setDeformationGradientEpsilon(mtest::MTest& t, const mtest::real& v){
+  using namespace tfel::material;
+  if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+    throw(std::runtime_error("MTest::setDeformationGradientEpsilon: "
+			     "this method is only valid "
+			     "finite strain behaviour"));
+  }
+  t.setDrivingVariableEpsilon(v);
+}
+
+static void
+MTest_setOpeningDisplacementEpsilon(mtest::MTest& t,const mtest::real& v){
+  using namespace tfel::material;
+  if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+    throw(std::runtime_error("MTest::setOpeningDisplacementEpsilon: "
+			     "this method is only valid "
+			     "for cohesize zone model"));
+  }
+  t.setDrivingVariableEpsilon(v);
+}
+
+static void
+MTest_setStressEpsilon(mtest::MTest& t,const mtest::real& v){
+  using namespace tfel::material;
+  if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+     (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
+    throw(std::runtime_error("MTest::setStressEpsilon: "
+			     "this method is only valid "
+			     "for small or finite strain behaviours"));
+  }
+  t.setThermodynamicForceEpsilon(v);
+}
+
+static void
+MTest_setCohesiveForceEpsilon(mtest::MTest& t,const mtest::real& v){
+  using namespace tfel::material;
+  if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+    throw(std::runtime_error("MTest::setCohesiveForceEpsilon: "
+			     "this method is only valid "
+			     "cohesive zone model"));
+  }
+  t.setThermodynamicForceEpsilon(v);
+}
+
+static void
 MTest_setImposedThermodynamicForce(mtest::MTest& t,
 				   const std::string&  n,
 				   const mtest::real& v)
@@ -582,8 +638,18 @@ void declareMTest(void)
 	 &MTest::setEvolutionValue)
     .def("setDrivingVariableEpsilon",
 	 &MTest::setDrivingVariableEpsilon)
+    .def("setStrainEpsilon",
+	 MTest_setStrainEpsilon)
+    .def("setDeformationGradientEpsilon",
+	 MTest_setDeformationGradientEpsilon)
+    .def("setOpeningDisplacementEpsilon",
+	 MTest_setOpeningDisplacementEpsilon)
     .def("setThermodynamicForceEpsilon",
-     &MTest::setThermodynamicForceEpsilon)
+	 &MTest::setThermodynamicForceEpsilon)
+    .def("setStressEpsilon",
+	 MTest_setStressEpsilon)
+    .def("setCohesiveForceEpsilon",
+	 MTest_setCohesiveForceEpsilon)
     .def("setImposedStress",MTest_setImposedStress,
      (arg("name"),"values"),
      "This method specify the constant evolution of a stresses component.\n"
