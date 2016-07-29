@@ -57,8 +57,6 @@ namespace tfel{
     /*!
      * \brief a base for stensor or classes acting like stensor.
      * \param Child : child class
-     * \param N     : spatial dimension
-     * \param T     : numerical type
      */
     template<typename Child>
     struct t2tot2_base

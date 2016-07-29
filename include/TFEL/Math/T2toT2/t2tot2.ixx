@@ -53,11 +53,11 @@ namespace tfel{
 	static constexpr const T one       = T{1};
 	static constexpr const T one_third = 1/T{3};
 	static constexpr const T two_third = 2/T{3};
-	static TFEL_MATH_INLINE constexpr
 	/*!
 	 * \return the derivative of the transpose of a tensor with respect of this tensor
 	 */
-	tfel::math::t2tot2<1u,T> transpose_derivative(void){
+	static TFEL_MATH_INLINE constexpr
+          tfel::math::t2tot2<1u,T> transpose_derivative(void){
 	  return {one,zero,zero,
 	          zero,one,zero,
 	          zero,zero,one};
@@ -98,10 +98,10 @@ namespace tfel{
 	static constexpr const T one       = T{1};
 	static constexpr const T one_third = 1/T{3};
 	static constexpr const T two_third = 2/T{3};
-	static TFEL_MATH_INLINE constexpr
 	/*!
 	 * \return the derivative of the transpose of a tensor with respect of this tensor
 	 */
+	static TFEL_MATH_INLINE constexpr
 	tfel::math::t2tot2<2u,T> transpose_derivative(void){
 	  return {one,zero,zero,zero,zero,
 	          zero,one,zero,zero,zero,
@@ -151,10 +151,10 @@ namespace tfel{
 	static constexpr const T one  = T{1};
 	static constexpr const T one_third = one/T{3};
 	static constexpr const T two_third = 2/T{3};
-	static TFEL_MATH_INLINE constexpr
 	/*!
 	 * \return the derivative of the transpose of a tensor with respect of this tensor
 	 */
+	static TFEL_MATH_INLINE constexpr
 	tfel::math::t2tot2<3u,T> transpose_derivative(void){
 	  return {one,zero,zero,zero,zero,zero,zero,zero,zero,
 	          zero,one,zero,zero,zero,zero,zero,zero,zero,

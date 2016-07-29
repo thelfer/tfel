@@ -98,7 +98,7 @@ namespace tfel{
 	static void
 	exe(void *const p)
 	{
-		static_cast<void>(p);
+	  static_cast<void>(p);
 	  static_cast<T *>(p)->~T();
 	}
       };
