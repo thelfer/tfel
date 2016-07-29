@@ -14,6 +14,7 @@
 #include<algorithm>
 #include<stdexcept>
 #include<iostream>
+#include<iterator>
 #include<utility>
 #include<cstdlib>
 #include"TFEL/Utilities/ArgumentParser.hxx"
@@ -120,7 +121,7 @@ namespace tfel{
     
     void
     ArgumentParser::setArguments(const int argc,
-					    const char * const * const argv)
+				 const char * const * const argv)
     {
       if(argc<1){
 	throw(std::runtime_error("ArgumentParser::setArguments: "
@@ -128,7 +129,7 @@ namespace tfel{
       }
       this->args.clear();
       this->programName = argv[0];
-      std::copy(argv+1,argv+argc,back_inserter(this->args));
+      std::copy(argv+1,argv+argc,std::back_inserter(this->args));
     } // end of ArgumentParser::setArguments
 
     void ArgumentParser::replaceAliases(void)
