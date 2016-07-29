@@ -584,13 +584,11 @@ namespace mtest
   void
   MTestParser::handleStrainEpsilon(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
     using namespace tfel::material;
     if(t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-      string msg("MTestParser::handleStrainEpsilon: "
-		 "the @StrainEpsilon keyword is only valid "
-		 "for small strain behaviours");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTestParser::handleStrainEpsilon: "
+			       "the @StrainEpsilon keyword is only valid "
+			       "for small strain behaviours"));
     }
     this->handleDrivingVariableEpsilon(t,p);
   }
@@ -598,13 +596,11 @@ namespace mtest
   void
   MTestParser::handleDeformationGradientEpsilon(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
     using namespace tfel::material;
     if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
-      string msg("MTestParser::handleDeformationGradientEpsilon: "
-		 "the @DeformationGradientEpsilon keyword is only valid "
-		 "for finite strain behaviours");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTestParser::handleDeformationGradientEpsilon: "
+			       "the @DeformationGradientEpsilon keyword is only valid "
+			       "for finite strain behaviours"));
     }
     this->handleDrivingVariableEpsilon(t,p);
   } // end of MTestParser::handleDeformationGradientEpsilon
@@ -612,13 +608,11 @@ namespace mtest
   void
   MTestParser::handleOpeningDisplacementEpsilon(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
     using namespace tfel::material;
     if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-      string msg("MTestParser::handleOpeningDisplacementEpsilon: "
-		 "the @OpeningDisplacementEpsilon keyword is only valid "
-		 "for cohesive zone model behaviours");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTestParser::handleOpeningDisplacementEpsilon: "
+			       "the @OpeningDisplacementEpsilon keyword is only valid "
+			       "for cohesive zone model behaviours"));
     }
     this->handleDrivingVariableEpsilon(t,p);
   }
@@ -634,14 +628,12 @@ namespace mtest
   void
   MTestParser::handleStressEpsilon(MTest& t,TokensContainer::const_iterator& p)
   {
-    using namespace std;
     using namespace tfel::material;
     if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
        (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-      string msg("MTestParser::handleStressEpsilon: "
-		 "the @StressEpsilon keyword is only valid "
-		 "for small strain behaviours");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTestParser::handleStressEpsilon: "
+			       "the @StressEpsilon keyword is only valid "
+			       "for small strain behaviours"));
     }
     this->handleThermodynamicForceEpsilon(t,p);
   }

@@ -32,13 +32,12 @@ namespace castem
   static void
   CastemCheckNDIValue(const CastemInt NDI)
   {
-    using namespace std;
     if((NDI!=2)&&(NDI!=0)&&(NDI!=-1)&&
        (NDI!=-2)&&(NDI!=-3)&&(NDI!=14)){
-      ostringstream msg;
+      std::ostringstream msg;
       msg << "CastemCheckNDIValue : unsupported modelling hypothesis (" 
 	  << NDI<< ")";
-      throw(runtime_error(msg.str()));
+      throw(std::runtime_error(msg.str()));
     }
   }
 

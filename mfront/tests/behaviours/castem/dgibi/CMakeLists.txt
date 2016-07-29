@@ -6,8 +6,6 @@ if(castem_exe)
       add_test(NAME castem${test_arg}_dgibi
 	COMMAND /usr/bin/env bash exec_ktests_CAST3M_XML.sh ${test_arg})
     endmacro(test_castem)
-    if(enable-castem-pleiades)
-    endif(enable-castem-pleiades)
     if((castem_version STREQUAL "14") OR (castem_version GREATER 14))
       test_castem(pipe3D)
       test_castem(CompressibleNeoHookeanBehaviour)
