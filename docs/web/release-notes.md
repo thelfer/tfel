@@ -116,6 +116,20 @@ was greatly simplified and is now much more liable and maintainable.
       C++. `TFEL` and `MFront` are now even more standard compliant
       and portable.
 
+## Solved Tickets
+
+### [Tickets #31](https://sourceforge.net/p/tfel/tickets/31)
+
+To be consistent with the `MTest` input file keywords, the following
+methods have been added to the `MTest` class of the` mtest` `python`
+module:
+
+- `setStrainEpsilon` (valid for small strain behaviours)
+- `setDeformationGradientEpsilon` (valid for finite strain behaviours)
+- `setOpeningDisplacementEpsilon` (valid for cohesive zone models)
+- `setStressEpsilon` (valid for small and finite strain behaviours)
+- `setCohesiveForceEpsilon`  (valid for cohesive zone models)
+
 ## Systems supported
 
 Version 3.0.x of `TFEL/MFront` will be available on the following
