@@ -22,6 +22,61 @@
 #include"MFront/MTestImposedDrivingVariable.hxx"
 
 static void
+MTest_setStrain(mfront::MTest& t, const std::vector<mfront::real>& v){
+  using namespace tfel::material;
+  if(t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    throw(std::runtime_error("MTest::setStrain: "
+			     "this method is only valid "
+			     "small strain behaviour"));
+  }
+  t.setDrivingVariablesInitialValues(v);
+} // end of MTest_setStrain
+
+static void
+MTest_setDeformationGradient(mfront::MTest& t, const std::vector<mfront::real>& v){
+  using namespace tfel::material;
+  if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+    throw(std::runtime_error("MTest::setDeformationGradient: "
+			     "this method is only valid "
+			     "finite strain behaviour"));
+  }
+  t.setDrivingVariablesInitialValues(v);
+} // end of MTest_setDeformationGradient
+
+static void
+MTest_setOpeningDisplacement(mfront::MTest& t, const std::vector<mfront::real>& v){
+  using namespace tfel::material;
+  if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+    throw(std::runtime_error("MTest::setOpeningDisplacement: "
+			     "this method is only valid "
+			     "for cohesive zone models"));
+  }
+  t.setDrivingVariablesInitialValues(v);
+} // end of MTest_setOpeningDisplacement
+
+static void
+MTest_setStress(mfront::MTest& t, const std::vector<mfront::real>& v){
+  using namespace tfel::material;
+  if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+     (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
+    throw(std::runtime_error("MTest::setStress: this method is only valid "
+			     "for small or finite strain behaviours"));
+  }
+  t.setThermodynamicForcesInitialValues(v);
+} // end of MTest_setStress
+
+static void
+MTest_setCohesiveForce(mfront::MTest& t, const std::vector<mfront::real>& v){
+  using namespace tfel::material;
+  if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
+    throw(std::runtime_error("MTest::setCohesiveForce: "
+			     "this method is only valid "
+			     "for cohesive zone models"));
+  }
+  t.setThermodynamicForcesInitialValues(v);
+} // end of MTest_setCohesiveForce
+
+static void
 MTest_setStrainEpsilon(mfront::MTest& t, const mfront::real& v){
   using namespace tfel::material;
   if(t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
@@ -648,6 +703,15 @@ void declareMTest(void)
 	 &MTest::setMaximumNumberOfIterations)
     .def("setMaximumNumberOfSubSteps",
 	 &MTest::setMaximumNumberOfSubSteps)
+    .def("setDrivingVariablesInitialValues",
+	 &MTest::setDrivingVariablesInitialValues)
+    .def("setStrain",MTest_setStrain)
+    .def("setDeformationGradient",MTest_setDeformationGradient)
+    .def("setOpeningDisplacement",MTest_setOpeningDisplacement)
+    .def("setThermodynamicForcesInitialValues",
+	 &MTest::setThermodynamicForcesInitialValues)
+    .def("setCohesiveForce",MTest_setCohesiveForce)
+    .def("setStress",MTest_setStress)
     .def("setStrainEpsilon",
 	 MTest_setStrainEpsilon)
     .def("setDeformationGradientEpsilon",
