@@ -546,17 +546,6 @@ Plus de détails peuvent être trouvés à la page~:
   \url{https://sourceforge.net/p/tfel/tickets/29/}
 \end{center}
 
-\subsubsection{Ticket {\# 30}}
-
-La classe {\tt CxxTokenizer} contenait une erreur dans la méthode {\tt
-  stripComments} si le premier élément du fichier était un
-commentaire.
-
-Plus de détails peuvent être trouvés à la page~:
-\begin{center}
-  \url{https://sourceforge.net/p/tfel/tickets/30/}
-\end{center}
-
 \subsubsection{Ticket {\# 31}}
 
 Par cohérence avec le jeu de données \mtest{}, les méthodes suivantes
@@ -572,6 +561,31 @@ ont été ajoutées à la classe \python{} éponyme:
 Plus de détails peuvent être trouvés à la page~:
 \begin{center}
   \url{https://sourceforge.net/p/tfel/tickets/31/}
+\end{center}
+
+\subsubsection{Ticket {\# 32}}
+
+L'interface \python{} de \mtest{} ne permettait pas de fixer les
+valeurs initiales des inconnues (déformation, gradient de la
+déformation ou saut de déplacement suivant les cas) et des des forces
+(contrainte de Cauchy, force cohésive). Les méthodes sont {\tt
+setDrivingVariablesInitialValues} et {\tt
+setThermodynamicForcesInitialValues} ont été ajoutées pour corriger ce
+point.
+
+Par cohérence avec le jeu de données \mtest{}, les méthodes suivantes
+ont également été ajoutées à la classe \python{} éponyme:
+\begin{itemize}
+\item {\tt setStrain}
+\item {\tt setDeformationGradient}
+\item {\tt setOpeningDisplacement}
+\item {\tt setStress}
+\item {\tt setCohesiveForce}
+\end{itemize}
+
+Plus de détails peuvent être trouvés à la page~:
+\begin{center}
+  \url{https://sourceforge.net/p/tfel/tickets/32/}
 \end{center}
 
 \section{Perspectives}

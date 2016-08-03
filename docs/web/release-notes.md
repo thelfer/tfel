@@ -130,6 +130,26 @@ module:
 - `setStressEpsilon` (valid for small and finite strain behaviours)
 - `setCohesiveForceEpsilon`  (valid for cohesive zone models)
 
+### [Tickets #32](https://sourceforge.net/p/tfel/tickets/32)
+
+The `python` interface did not allow to initialize the values of the
+driving variables (deformation, deformation gradient or displacement
+jump) or the thermodynamic forces (Cauchy stress or cohesive force).
+
+The `setDrivingVariablesInitialValues` and the
+`setThermodynamicForcesInitialValues` methods were added the `MTest`
+class of the` mtest` `python` module to solve this issue.
+
+To be consistent with the `MTest` input file keywords, the following
+methods have also been added to the `MTest` class of the` mtest`
+`python` module:
+
+- `setStrain` (valid for small strain behaviours)
+- `setDeformationGradient` (valid for finite strain behaviours)
+- `setOpeningDisplacement` (valid for cohesive zone models)
+- `setStress` (valid for small and finite strain behaviours)
+- `setCohesiveForce`  (valid for cohesive zone models)
+
 ## Systems supported
 
 Version 3.0.x of `TFEL/MFront` will be available on the following
