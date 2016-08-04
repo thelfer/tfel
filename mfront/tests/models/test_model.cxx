@@ -35,9 +35,10 @@ struct B4CConcentrationModelTest final
   {
     this->test1();
     this->test2();
+    this->test3();
     return this->result;
   } // end of execute
-  
+  //! destructor
   virtual ~B4CConcentrationModelTest() = default;
  private:
   void test1(void){
@@ -63,6 +64,21 @@ struct B4CConcentrationModelTest final
       cm.Compute(bu,b10,bu_1,b10_1,c,c_1,dt);
       t+=dt;
       TFEL_TESTS_ASSERT(std::abs(b10-b10_0*exp(-c*t))<b10_0*1e-6);
+    }
+  }
+  void test3(void){
+    mfront::SiC_IrradiationSwellingModel_GoFaster<double> sm;
+    const double T = 1603.15;
+    const double f = 2.e15;
+    double n = 0;
+    double s = 0.;
+    double t = 0.0;
+    const double te = 41696641.0;
+    const double dt = (te-t)/100;
+    while(std::abs(te-t)>dt/2){
+      s=sm.compute(T,T,f,f,n,n,s,dt);
+      n+=f*dt;
+      t+=dt;
     }
   }
 };

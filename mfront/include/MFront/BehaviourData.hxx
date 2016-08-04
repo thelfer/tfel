@@ -27,7 +27,6 @@
 #include"MFront/BoundsDescription.hxx"
 #include"MFront/ThermodynamicForce.hxx"
 #include"MFront/SupportedTypes.hxx"
-#include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/StaticVariableDescription.hxx"
 #include"MFront/BehaviourAttribute.hxx"
 

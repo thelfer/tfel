@@ -509,8 +509,10 @@ namespace mfront{
     /*!
      * \brief get a model description from an mfront file
      * \param[in] m: file
+     * \return a model description
      */
-    virtual void getModel(const std::string&);
+    virtual ModelDescription
+    getModelDescription(const std::string&);
     //! \brief treat the @Private keyword
     virtual void treatPrivate(void) override;
     //! \brief treat the @Members keyword
@@ -610,19 +612,16 @@ namespace mfront{
     treatAPosterioriTimeStepScalingFactor(void);
     
     virtual void
-      treatCoef(void);
+    treatCoef(void);
 
     virtual void
-      treatUseQt(void);
+    treatUseQt(void);
 
     virtual void
-      treatBounds(void);
+    treatBounds(void);
 
     virtual void
-      treatPhysicalBounds(void);
-
-    virtual void
-    treatPredictionOperator(void);
+    treatPhysicalBounds(void);
     /*!
      * \param[out] d : bounds description
      * \param[in]  h : modelling hypothesis
@@ -631,6 +630,32 @@ namespace mfront{
     treatBounds(BoundsDescription&,
 		const Hypothesis);
 
+    virtual void
+    treatPredictionOperator(void);
+    //! treat the @Swelling keyword
+    virtual void treatSwelling(void);
+    //! treat the @AxialGrowth keyword
+    virtual void treatAxialGrowth(void);
+    /*!
+     * \brief read a swelling description.
+     *
+     * An array is expected at the current point of the file. Each
+     * token of the array is analysed throw the
+     * readStressFreeExpansionHandler method.
+     */
+    virtual std::vector<BehaviourDescription::StressFreeExpansionHandler>
+    readStressFreeExpansionHandler(void);
+    /*!
+     * \brief extract a swelling description from a token
+     * \param[in] t: treated token
+     *
+     * - if the token is a string, a mfront file is treated.
+     * - if the token is not a string, one expects an external state
+     *   variable name
+     */
+    virtual BehaviourDescription::StressFreeExpansionHandler
+    readStressFreeExpansionHandler(const tfel::utilities::Token&);
+    
     virtual void
     writeIncludes(std::ostream&);
 

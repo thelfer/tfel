@@ -1,0 +1,97 @@
+/*!
+ * \file   Swelling.cxx
+ * \brief This file describes tests related to the @Swelling keyword
+ * \author Thomas Helfer
+ * \date   03 août 2016
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
+
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+// a small trick so that the compiler refers to the original file for
+// error reports
+#line 21 "@abs_top_srcdir@/mfront/tests/unit-tests/SwellingTest.cxx.in"
+
+#include<cstdlib>
+#include<iostream>
+#include<stdexcept>
+
+#include"TFEL/Tests/TestCase.hxx"
+#include"TFEL/Tests/TestProxy.hxx"
+#include"TFEL/Tests/TestManager.hxx"
+
+#include"MFront/InitDSLs.hxx"
+#include"MFront/DSLFactory.hxx"
+#include"MFront/SearchFile.hxx"
+
+struct SwellingTest final
+  : public tfel::tests::TestCase
+{
+  SwellingTest()
+    : tfel::tests::TestCase("MFront","SwellingTest")
+  {
+    mfront::SearchFile::addSearchPaths("@top_srcdir@/mfront/tests/models");
+  } // end of SwellingTest
+
+  tfel::tests::TestResult
+  execute() override
+  {
+    const auto m = std::string{"SiC_IrradiationSwellingModel_GoFaster.mfront"};
+    // invalid file
+    this->check("@Swelling {\"ghost.mfront\"};");
+    // for isotropic swelling, one has to specify 'Linear' or 'Volume'
+    this->check("@Swelling {\""+m+"\"};");
+    // invalid number of swelling models
+    this->check("@Swelling {\""+m+"\",\""+m+"\"};");
+    // orthotropic swelling is only not allowed for orthotropic behaviours
+    this->check("@Swelling {0,0,0};");
+    // invalid token
+    this->check("@Swelling 3;");
+    // null swelling only is not allowed (isotropic case)
+    this->check("@Swelling 0;");
+    // null swelling only is not allowed (orthotropic case)
+    this->check("@OrthotropicBehaviour;@Swelling {0,0,0};");
+    // external state variable has not been declared
+    this->check("@Swelling s;");
+    // axial growth is only not allowed for orthotropic behaviours
+    this->check("@AxialGrowth {0,0,0};");
+    // the external state variables mandatory for the model are not
+    // defined
+    this->check("@Swelling \""+m+"\"};");
+    return this->result;
+  } // end of execute()
+ private:
+  void check(const std::string& s){
+    auto& f = mfront::DSLFactory::getDSLFactory();
+    auto dsl = f.createNewParser("DefaultDSL");
+    try{
+      dsl->analyseString(s);
+    }
+    catch(std::runtime_error& e){
+      TestCase::registerResult("analysing '"+s+"' has thrown as expected "
+			       "("+std::string(e.what())+")",true);
+      return;
+    }
+    TestCase::registerResult("analysing '"+s+"' did *not* throw as expected",
+			     false);
+  }
+};
+
+TFEL_TESTS_GENERATE_PROXY(SwellingTest,"SwellingTest");
+
+/* coverity [UNCAUGHT_EXCEPT]*/
+int main(void)
+{
+  mfront::initDSLs();
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("SwellingTest.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
+} // end of main

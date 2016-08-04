@@ -570,6 +570,7 @@ AC_OUTPUT([debug.sh
            mfront/src/MFrontHeader.cxx
            mfront/tests/unit-tests/Makefile
            mfront/tests/unit-tests/DSLTest2.cxx
+           mfront/tests/unit-tests/SwellingTest.cxx
 	   mfront/tests/unit-tests/BehaviourBrickRequirementManagerTest.cxx
            mfront/tests/Makefile
            mfront/tests/properties/Makefile

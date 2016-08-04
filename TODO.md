@@ -7,6 +7,11 @@
 <!-- pandoc -s --mathjax -i -t revealjs TODO -o TODO.html -->
 <!-- pandoc -t beamer -V theme:Warsow beamercea TODO -o TODO.pdf -->
 
+# Stress free expansion
+
+- stress free expansion for finite strain behaviour:
+  - appears as dl0_l0 and dl1_l0
+
 # Specific DSL
 
 - support for external material properties

@@ -35,6 +35,10 @@ namespace mfront
 
   // forward declaration
   struct LocalDataStructure;
+  // forward declaration
+  struct MaterialPropertyDescription;
+  // forward declaration
+  struct ModelDescription;
   
   /*!
    * This structure describes a mechanical behaviour
@@ -79,7 +83,95 @@ namespace mfront
      * The description of a material property from the point of
      * view of a behaviour.
      */
-    using MaterialProperty = tfel::utilities::GenTypeBase<MaterialPropertyTypes>;
+    using MaterialProperty =
+      tfel::utilities::GenTypeBase<MaterialPropertyTypes>;
+    /*!
+     * The description of a stress free expansion defined through an
+     * external state variable
+    * \note SFED_ESV: Stress Free Expansion Description _ External
+    * State Variable
+     */
+    struct SFED_ESV
+    {
+      //! variable name
+      std::string vname;
+    }; // end of SFED_ESV
+    /*!
+     * a placeholder for null swelling
+     */
+    struct NullSwelling{};
+    /*!
+     * a stress free expansion can be computed using by:
+     * - an external state variable
+     * - a  model
+     */
+    using StressFreeExpansionHandlerTypes =
+      typename tfel::meta::GenerateTypeList<SFED_ESV,
+					    NullSwelling,
+					    std::shared_ptr<ModelDescription>>::type;
+    /*!
+     * a stress free expansion handler
+     */
+    using StressFreeExpansionHandler =
+      tfel::utilities::GenTypeBase<StressFreeExpansionHandlerTypes>;
+    /*!
+     * \brief a simple wrapper around an isotropic swelling model
+     * given by a volume change
+     * \[
+     * s = \left(dV_V0/3,dV_V0/3,dV_V0/3\,0\,0\,0\right)
+     * \]
+     */
+    struct VolumeSwellingStressFreeExpansion{
+      //! volumetric stress free expansion
+      StressFreeExpansionHandler sfe;
+    }; // end of struct VolumeSwellingStressFreeExpansion
+    /*!
+     * \brief a simple wrapper around a model descripbing an axial
+     * growth.
+     * \[
+     * s = \left(0,0,dlz_lz\,0\,0\,0\right)
+     * \]
+     */
+    struct AxialGrowthStressFreeExpansion{
+      //! description of the axial growth
+      StressFreeExpansionHandler sfe;
+    }; // end of struct AxialGrowthStressFreeExpansion
+    /*!
+     * \brief a brief structure describing a stress free expansion du
+     * to an isotropic swelling given by a linear change in each
+     * material geometry:
+     * \[
+     * s = \left(dl_l,dl_l,dl_l\,0\,0\,0\right)
+     * \]
+     */
+    struct IsotropicStressFreeExpansion{
+      //! stress free expansion in each direction
+      StressFreeExpansionHandler sfe;
+    }; // end of struct IsotropicStressFreeExpansion
+    /*!
+     * \brief a brief structure describing a stress free expansion du
+     * to an orthotropic swelling
+     */
+    struct OrthotropicStressFreeExpansion{
+      //! stress free expansion in the first material direction
+      StressFreeExpansionHandler sfe0;
+      //! stress free expansion in the second material direction
+      StressFreeExpansionHandler sfe1;
+      //! stress free expansion in the third material direction
+      StressFreeExpansionHandler sfe2;
+    }; // end of struct OrthotropicStressFreeExpansion
+    /*!
+     * \brief list of a stress free expansion descriptions
+     */
+    using StressFreeExpansionDescriptionTypes =
+      typename tfel::meta::GenerateTypeList<
+	VolumeSwellingStressFreeExpansion,
+      AxialGrowthStressFreeExpansion,
+      IsotropicStressFreeExpansion,
+      OrthotropicStressFreeExpansion>::type;
+    //! description of a stress free expansion
+    using StressFreeExpansionDescription =
+      tfel::utilities::GenTypeBase<StressFreeExpansionDescriptionTypes>;
     /*!
      * \brief Available integration schemes.
      * One of the first thing a dsl shall do is to set the
@@ -752,6 +844,11 @@ namespace mfront
     void setThermalExpansionCoefficients(MaterialProperty,
 					 MaterialProperty,
 					 MaterialProperty);
+    /*!
+     * \brief add a new stress free expansion description
+     * \param[in] d: stress free expansion description
+     */
+    void addStressFreeExpansion(const StressFreeExpansionDescription&);
     /*!
      * \return the external names associated with the variables
      * contained in the given container
@@ -1447,6 +1544,10 @@ namespace mfront
      * For orthotropic behaviours, one or three thermal expansions coefficients must be defined.
      */
     std::vector<MaterialProperty> thermalExpansionCoefficients;
+    /*!
+     * \brief registred stress fress expansion descriptions
+     */
+    std::vector<StressFreeExpansionDescription> sfed;
     //! use units
     bool use_qt;
     //! type of behaviour

@@ -22,6 +22,8 @@
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/LocalDataStructure.hxx"
+#include"MFront/ModelDescription.hxx"
+#include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/BehaviourDescription.hxx"
 
 namespace mfront
@@ -887,6 +889,38 @@ namespace mfront
     this->thermalExpansionCoefficients.push_back(a3);
   } // end of BehaviourDescription::setThermalExpansionCoefficients
 
+  void BehaviourDescription::addStressFreeExpansion(const StressFreeExpansionDescription& d){
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("BehaviourDescription::addStressFreeExpansion: "+m));}
+    };
+    if(d.is<VolumeSwellingStressFreeExpansion>()){
+      auto s = d.get<VolumeSwellingStressFreeExpansion>();
+      throw_if(s.sfe.is<NullSwelling>(),
+	       "null swelling is not allowed");
+    } else if (d.is<IsotropicStressFreeExpansion>()){
+      auto s = d.get<IsotropicStressFreeExpansion>();
+      throw_if(s.sfe.is<NullSwelling>(),
+	       "null swelling is not allowed");
+    } else if (d.is<AxialGrowthStressFreeExpansion>()){
+      throw_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
+	       "axial growth is only valid for orthotropic behaviour");
+      auto s = d.get<AxialGrowthStressFreeExpansion>();
+      throw_if(s.sfe.is<NullSwelling>(),
+	       "null swelling is not allowed");
+    } else if (d.is<OrthotropicStressFreeExpansion>()){
+      throw_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
+	       "axial growth is only valid for orthotropic behaviour");
+      auto s = d.get<OrthotropicStressFreeExpansion>();
+      throw_if(s.sfe0.is<NullSwelling>()&&
+	       s.sfe1.is<NullSwelling>()&&
+	       s.sfe2.is<NullSwelling>(),
+	       "null swelling is not allowed");
+    } else {
+      throw_if(true,"internal error, unsupported stress free expansion type");
+    }
+    this->sfed.push_back(d);
+  } // end of BehaviourDescription::addStressFreeExpansion
+  
   bool BehaviourDescription::requiresStressFreeExpansionTreatment(const Hypothesis h) const{
     return ((this->areThermalExpansionCoefficientsDefined())||
 	    (this->hasCode(h,BehaviourData::ComputeStressFreeExpansion)));

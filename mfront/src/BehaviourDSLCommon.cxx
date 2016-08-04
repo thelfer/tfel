@@ -235,8 +235,8 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::readCodeBlockOptions
 
-  //  MaterialPropertyDescription
-  void BehaviourDSLCommon::getModel(const std::string& m){
+  ModelDescription
+  BehaviourDSLCommon::getModelDescription(const std::string& m){
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "BehaviourDSLCommon::treatModel: treating file '" << m << "'\n";
     }
@@ -245,24 +245,24 @@ namespace mfront{
     try{
       dsl.analyseFile(SearchFile::search(m),{},{});
     } catch(std::exception& e){
-      this->throwRuntimeError("BehaviourDSLCommon::getModel",
+      this->throwRuntimeError("BehaviourDSLCommon::getModelDescription",
 			      "error while treating file '"+m+"'\n"+
 			      std::string(e.what()));
     } catch(...){
-      this->throwRuntimeError("BehaviourDSLCommon::getModel",
+      this->throwRuntimeError("BehaviourDSLCommon::getModelDescription",
 			      "error while treating file '"+m+"'");
     }
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "BehaviourDSLCommon::treatModel: end of file '" << m << "' treatment\n";
     }
-    // return dsl.getModelDescription();
-  } // end of BehaviourDSLCommon::getModel
+    return dsl.getModelDescription();
+  } // end of BehaviourDSLCommon::getModelDescription
   
   void BehaviourDSLCommon::treatModel(void){
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "BehaviourDSLCommon::treatModel: begin\n";
     }
-    this->getModel(this->readString("BehaviourDSLCommon::treatModel"));
+    this->getModelDescription(this->readString("BehaviourDSLCommon::treatModel"));
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "BehaviourDSLCommon::treatModel: end\n";
     }
@@ -1415,6 +1415,8 @@ namespace mfront{
       if(this->current->value=="Pipe"){
 	++this->current;
 	c = OrthotropicAxesConvention::PIPE;
+      } else if(this->current->value=="Default"){
+	++this->current;
       } else {
 	this->throwRuntimeError("BehaviourDSLCommon::treatOrthotropicBehaviour",
 				"unsupported orthotropic axes convention");
@@ -2800,6 +2802,154 @@ namespace mfront{
     this->readCodeBlock(*this,BehaviourData::ComputeStressFreeExpansion,
 			&BehaviourDSLCommon::standardModifier,true,true);
   } // end of BehaviourDSLCommon::treatComputeStressFreeExpansion
+
+  void BehaviourDSLCommon::treatSwelling(void)
+  {
+    using VolumeSwelling      = BehaviourDescription::VolumeSwellingStressFreeExpansion;
+    using IsotropicSwelling   = BehaviourDescription::IsotropicStressFreeExpansion;
+    using OrthotropicSwelling = BehaviourDescription::OrthotropicStressFreeExpansion;
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("BehaviourDSLCommon::treatSwelling",m);}
+    };
+    enum {MODEL,ESV,UNDEFINEDTYPE}     stype = UNDEFINEDTYPE;
+    enum {VOLUME,LINEAR,UNDEFINED} etype = UNDEFINED;
+    this->checkNotEndOfFile("DSLBase::treatSwelling");
+    if(this->current->value=="<"){
+      auto options = std::vector<tfel::utilities::Token>{};
+      this->readList(options,"BehaviourDSLCommon::readCodeBlockOptions","<",">",true);
+      for(const auto& o: options){
+	this->checkNotEndOfFile("BehaviourDSLCommon::treatSwelling");
+	if(o.value=="Volume"){
+	  throw_if(stype!=UNDEFINEDTYPE,"error while treating option 'Volume', "
+		   "swelling type already defined");
+	  etype = VOLUME;
+	} else if(o.value=="Linear"){
+	  throw_if(stype!=UNDEFINEDTYPE,"error while treating option 'Linear', "
+		   "swelling  already defined");
+	  etype = LINEAR;
+	} else if(o.value=="Model"){
+	  throw_if(stype!=UNDEFINEDTYPE,"error while treating option "
+		   "'Model', swelling source already defined");
+	  stype = MODEL;
+	} else if(o.value=="ExternalStateVariable"){
+	  throw_if(stype!=UNDEFINEDTYPE,"error while treating option "
+		   "'ExternalStateVariale', swelling source already defined");
+	  stype = ESV;
+	} else {
+	  throw_if(true,"unsupported option '"+o.value+"'");
+	}
+      }
+    }
+    if(stype==UNDEFINEDTYPE){
+      stype=MODEL;
+    }
+    const auto sd = this->readStressFreeExpansionHandler();
+    this->readSpecifiedToken("BehaviourDSLCommon::treatSwelling",";");
+    if(sd.size()==1){
+      throw_if(etype==UNDEFINED,"the user must explicitly state if an "
+	       "isotropic swelling is given "
+	       "as a change of the linear dimension (dL/L0) "
+	       "or as a change of volume (dV/V0) using "
+	       "one of the option 'Linear' or 'Volume'");
+      throw_if(sd[0].is<BehaviourDescription::NullSwelling>(),
+	       "a null swelling is not allowed here");
+      if(etype=VOLUME){
+	VolumeSwelling vs = {sd[0]};
+	this->mb.addStressFreeExpansion(vs);
+      } else {
+	IsotropicSwelling is = {sd[0]};
+	this->mb.addStressFreeExpansion(is);
+      }
+    } else if(sd.size()==3){
+      throw_if(etype==VOLUME,"the 'Volume' option can't be used for "
+	       "an orthotropic swelling");
+      throw_if(sd[0].is<BehaviourDescription::NullSwelling>()&&
+	       sd[1].is<BehaviourDescription::NullSwelling>()&&
+	       sd[2].is<BehaviourDescription::NullSwelling>(),
+	       "all swelling component are null");
+      OrthotropicSwelling os = {sd[0],sd[1],sd[2]};
+      this->mb.addStressFreeExpansion(os);
+    } else {
+      throw_if(true,"invalid number of swelling handler (shall be 1 or 3, "+
+	       std::to_string(sd.size())+" given)");
+    }
+  } // end of BehaviourDSLCommon::treatSwelling
+
+  BehaviourDescription::StressFreeExpansionHandler
+  BehaviourDSLCommon::readStressFreeExpansionHandler(const tfel::utilities::Token& t){
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("BehaviourDSLCommon::readStressFreeExpansionHandler",m);}
+    };
+    if(t.flag==tfel::utilities::Token::String){
+      // using an external model
+      const auto md = this->getModelDescription(t.value.substr(1,t.value.size()-2));
+      // check that the variable
+      auto ptr = std::make_shared<ModelDescription>(md);
+      return BehaviourDescription::StressFreeExpansionHandler{ptr};
+    }
+    if(t.value=="0"){
+      return {BehaviourDescription::NullSwelling{}};
+    }
+    throw_if(!CxxTokenizer::isValidIdentifier(t.value,true),
+	     "unexpected token '"+t.value+"', expected "
+	     "external state variable name");
+    // using an external state variable
+    // defining modelling hypotheses
+    if(!this->mb.areModellingHypothesesDefined()){
+      this->mb.setModellingHypotheses(this->getDefaultModellingHypotheses());
+    }
+    for(const auto h : this->mb.getDistinctModellingHypotheses()){
+      throw_if(!this->mb.isExternalStateVariableName(h,t.value),
+	       "no external state variable named '"+t.value+"' "
+	       "has been declared");
+    }
+    return {BehaviourDescription::SFED_ESV{t.value}};
+  } // end of BehaviourDSLCommon::readStressFreeExpansionHandler
+  
+  std::vector<BehaviourDescription::StressFreeExpansionHandler>
+  BehaviourDSLCommon::readStressFreeExpansionHandler(void){
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("BehaviourDSLCommon::readStressFreeExpansionHandler",m);}
+    };
+    auto sda = std::vector<tfel::utilities::Token>{};
+    auto sd  = std::vector<BehaviourDescription::StressFreeExpansionHandler>{};
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatSwelling");
+    if(this->current->value=="{"){
+      this->readList(sda,"BehaviourDSLCommon::readCodeBlockOptions","{","}",true);
+    } else {
+      sda.push_back(*(this->current));
+      ++(this->current);
+    }
+    if(sda.size()==1u){
+      sd.push_back(this->readStressFreeExpansionHandler(sda[0]));
+    } else if (sda.size()==3u){
+      throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
+	       "orthotropic swelling is only  supported for "
+	       "orthotropic behaviours");
+      sd.push_back(this->readStressFreeExpansionHandler(sda[0]));
+      sd.push_back(this->readStressFreeExpansionHandler(sda[1]));
+      sd.push_back(this->readStressFreeExpansionHandler(sda[2]));
+    } else {
+      throw_if(true,"invalid number of swelling description "
+	       "(expected one or three descriptions)");
+    }
+    return sd;
+  } // end of BehaviourDSLCommon::readStressFreeExpansionHandler
+
+  void BehaviourDSLCommon::treatAxialGrowth(void){
+    using AxialGrowth = BehaviourDescription::AxialGrowthStressFreeExpansion;
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("BehaviourDSLCommon::treatAxialGrowth",m);}
+    };
+    throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
+	     "@AxialGrowth is only valid for orthotropic behaviour");
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatAxialGrowth");
+    auto s  = this->readStressFreeExpansionHandler(*(this->current));
+    ++(this->current);
+    this->readSpecifiedToken("BehaviourDSLCommon::treatAxialGrowth",";");
+    AxialGrowth ag = {s};
+    this->mb.addStressFreeExpansion(ag);
+  } // end of BehaviourDSLCommon::treatAxialGrowth
   
   void
   BehaviourDSLCommon::writeBehaviourUpdateIntegrationVariables(const Hypothesis h)

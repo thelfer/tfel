@@ -8,6 +8,7 @@ if WITH_TESTS
 testdir = $(pkgdatadir)/mfront/tests/unit-tests
 test_PROGRAMS = DSLTest                              \
 		DSLTest2                             \
+		SwellingTest                         \
 		BehaviourDataTest                    \
 		BehaviourDescriptionTest             \
 		BehaviourBrickProviderTest           \
@@ -20,6 +21,7 @@ test_PROGRAMS = DSLTest                              \
 
 DSLTest_SOURCES                     = DSLTest.cxx
 DSLTest2_SOURCES                    = DSLTest2.cxx
+SwellingTest_SOURCES                = SwellingTest.cxx
 BehaviourDataTest_SOURCES           = BehaviourDataTest.cxx
 BehaviourDescriptionTest_SOURCES    = BehaviourDescriptionTest.cxx
 BehaviourBrickProviderTest_SOURCES  = BehaviourBrickProviderTest.cxx

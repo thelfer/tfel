@@ -5,7 +5,8 @@ behaviours).
 A material decription is either a floatting point number or the name
 of an external MFront file.
 
-Orthotropic axes convention is taken into account.
+For orthotropic behaviours, the orthotropic axes convention is taken
+into account (see `OrthotropicBehaviour`).
 
 ## Example
 
@@ -20,5 +21,3 @@ Orthotropic axes convention is taken into account.
 ~~~~ {#ComputeThermalExpansion3 .cpp}
 @ComputeThermalExpansion {1.e-5,0.2e-5,1.2e-5};
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-

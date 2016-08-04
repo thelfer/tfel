@@ -216,6 +216,7 @@ docs/mfront/Algorithm.md -text
 docs/mfront/Author.md -text
 docs/mfront/AuxiliaryStateVar.md -text
 docs/mfront/AuxiliaryStateVariable.md -text
+docs/mfront/AxialGrowth.md -text
 docs/mfront/Behaviour.md -text
 docs/mfront/Bounds.md -text
 docs/mfront/Brick.md -text
@@ -333,6 +334,7 @@ docs/mfront/StateVar.md -text
 docs/mfront/StateVariable.md -text
 docs/mfront/StaticVar.md -text
 docs/mfront/StaticVariable.md -text
+docs/mfront/Swelling.md -text
 docs/mfront/TangentOperator.md -text
 docs/mfront/Theta.md -text
 docs/mfront/UpdateAuxiliaryStateVariables.md -text
@@ -3978,6 +3980,7 @@ mfront/tests/unit-tests/DSLTest2.cxx.in -text
 mfront/tests/unit-tests/LocalDataStructureTest.cxx -text
 mfront/tests/unit-tests/Makefile.am -text
 mfront/tests/unit-tests/StandardElasticityBrickTest.cxx -text
+mfront/tests/unit-tests/SwellingTest.cxx.in -text
 mfront/tests/unit-tests/TargetsDescriptionTest.cxx -text
 mfront/tests/unit-tests/mfront/test1.mfront -text
 mfront/tests/unit-tests/mfront/test2.mfront -text

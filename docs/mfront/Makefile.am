@@ -4,6 +4,7 @@ MFRONT_DOCS = Algorithm.md				                \
 	      Author.md				                        \
 	      AuxiliaryStateVar.md				        \
 	      AuxiliaryStateVariable.md			                \
+	      AxialGrowth.md			                        \
 	      Behaviour.md			                        \
 	      Bounds.md				                        \
 	      Brick.md				                        \
@@ -57,6 +58,7 @@ MFRONT_DOCS = Algorithm.md				                \
 	      StateVariable.md			                        \
 	      StaticVar.md			                        \
 	      StaticVariable.md		                                \
+	      Swelling.md		                                \
 	      TangentOperator.md		                        \
 	      Theta.md		                                        \
 	      UpdateAuxiliaryStateVars.md                               \
