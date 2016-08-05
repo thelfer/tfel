@@ -470,31 +470,33 @@ namespace mfront{
       	this->mb.setParameterDefaultValue(uh,"referenceTemperatureForThermalExpansion",293.15);
       }
     }
-    // if no orthotropic axes convention is defined, one can't compute
-    if((this->mb.getSymmetryType()==mfront::ORTHOTROPIC)&&
-       ((this->mb.areElasticMaterialPropertiesDefined())||
-	(this->mb.areThermalExpansionCoefficientsDefined()))){
-      if((this->mb.getOrthotropicAxesConvention()==
-	  tfel::material::OrthotropicAxesConvention::DEFAULT)&&
-	 (this->mb.areElasticMaterialPropertiesDefined() ?
-	  (this->mb.getElasticMaterialProperties().size()==9u) :
-	  ((this->mb.areThermalExpansionCoefficientsDefined()) ?
-	   (this->mb.getThermalExpansionCoefficients().size()==3u) : false))){
-	// in this case, only tridimensional case is supported
-	for(const auto h:this->mb.getDistinctModellingHypotheses()){
-	  if(h!=ModellingHypothesis::TRIDIMENSIONAL){
-	    this->throwRuntimeError("BehaviourDSLCommon::endsInputFileProcessing",
-				    "An orthotropic axes convention must be choosen when "
-				    "using the @ComputeStiffnessTensor or the "
-				    "@ComputeThermalExpansion keywords in behaviours which "
-				    "shall be valid in other modelling hypothesis than "
-				    "'Tridimensional'. This message was triggered because "
-				    "either the thermal expansion or to the stiffness tensor "
-				    "is orthotropic.\n"
-				    "Either restrict the validity of the behaviour to "
-				    "'Tridimensional' (see @ModellingHypothesis) or "
-				    "choose and orthotropic axes convention as on option "
-				    "to the @OrthotropicBehaviour keyword");
+    if(this->mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      // if no orthotropic axes convention is defined, one can't compute
+      // stiffness tensor, thermal expansion or stress free expansion
+      // correctly, except for the 3D modelling hypothesis
+      for(const auto h:this->mb.getDistinctModellingHypotheses()){
+	if(((this->mb.areElasticMaterialPropertiesDefined()) &&
+	    (this->mb.getElasticMaterialProperties().size()==9u)) ||
+	   ((this->mb.areThermalExpansionCoefficientsDefined()) &&
+	    (this->mb.getThermalExpansionCoefficients().size()==3u)) ||
+	   (this->mb.isStressFreeExansionAnisotropic(h))){
+	  if(this->mb.getOrthotropicAxesConvention()==
+	     tfel::material::OrthotropicAxesConvention::DEFAULT){
+	    // in this case, only tridimensional case is supported
+	    if(h!=ModellingHypothesis::TRIDIMENSIONAL){
+	      this->throwRuntimeError("BehaviourDSLCommon::endsInputFileProcessing",
+				      "An orthotropic axes convention must be choosen when "
+				      "using the @ComputeStiffnessTensor or the "
+				      "@ComputeThermalExpansion keywords in behaviours which "
+				      "shall be valid in other modelling hypothesis than "
+				      "'Tridimensional'. This message was triggered because "
+				      "either the thermal expansion or to the stiffness tensor "
+				      "is orthotropic.\n"
+				      "Either restrict the validity of the behaviour to "
+				      "'Tridimensional' (see @ModellingHypothesis) or "
+				      "choose and orthotropic axes convention as on option "
+				      "to the @OrthotropicBehaviour keyword");
+	    }
 	  }
 	}
       }
@@ -2805,14 +2807,15 @@ namespace mfront{
 
   void BehaviourDSLCommon::treatSwelling(void)
   {
-    using VolumeSwelling      = BehaviourDescription::VolumeSwellingStressFreeExpansion;
-    using IsotropicSwelling   = BehaviourDescription::IsotropicStressFreeExpansion;
-    using OrthotropicSwelling = BehaviourDescription::OrthotropicStressFreeExpansion;
+    using VolumeSwelling      = BehaviourData::VolumeSwellingStressFreeExpansion;
+    using IsotropicSwelling   = BehaviourData::IsotropicStressFreeExpansion;
+    using OrthotropicSwelling = BehaviourData::OrthotropicStressFreeExpansion;
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("BehaviourDSLCommon::treatSwelling",m);}
     };
-    enum {MODEL,ESV,UNDEFINEDTYPE}     stype = UNDEFINEDTYPE;
+    enum {MODEL,ESV,UNDEFINEDTYPE} stype = UNDEFINEDTYPE;
     enum {VOLUME,LINEAR,UNDEFINED} etype = UNDEFINED;
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("DSLBase::treatSwelling");
     if(this->current->value=="<"){
       auto options = std::vector<tfel::utilities::Token>{};
@@ -2851,31 +2854,31 @@ namespace mfront{
 	       "as a change of the linear dimension (dL/L0) "
 	       "or as a change of volume (dV/V0) using "
 	       "one of the option 'Linear' or 'Volume'");
-      throw_if(sd[0].is<BehaviourDescription::NullSwelling>(),
+      throw_if(sd[0].is<BehaviourData::NullSwelling>(),
 	       "a null swelling is not allowed here");
-      if(etype=VOLUME){
+      if(etype==VOLUME){
 	VolumeSwelling vs = {sd[0]};
-	this->mb.addStressFreeExpansion(vs);
+	this->mb.addStressFreeExpansion(uh,vs);
       } else {
 	IsotropicSwelling is = {sd[0]};
-	this->mb.addStressFreeExpansion(is);
+	this->mb.addStressFreeExpansion(uh,is);
       }
     } else if(sd.size()==3){
       throw_if(etype==VOLUME,"the 'Volume' option can't be used for "
 	       "an orthotropic swelling");
-      throw_if(sd[0].is<BehaviourDescription::NullSwelling>()&&
-	       sd[1].is<BehaviourDescription::NullSwelling>()&&
-	       sd[2].is<BehaviourDescription::NullSwelling>(),
+      throw_if(sd[0].is<BehaviourData::NullSwelling>()&&
+	       sd[1].is<BehaviourData::NullSwelling>()&&
+	       sd[2].is<BehaviourData::NullSwelling>(),
 	       "all swelling component are null");
       OrthotropicSwelling os = {sd[0],sd[1],sd[2]};
-      this->mb.addStressFreeExpansion(os);
+      this->mb.addStressFreeExpansion(uh,os);
     } else {
       throw_if(true,"invalid number of swelling handler (shall be 1 or 3, "+
 	       std::to_string(sd.size())+" given)");
     }
   } // end of BehaviourDSLCommon::treatSwelling
 
-  BehaviourDescription::StressFreeExpansionHandler
+  BehaviourData::StressFreeExpansionHandler
   BehaviourDSLCommon::readStressFreeExpansionHandler(const tfel::utilities::Token& t){
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("BehaviourDSLCommon::readStressFreeExpansionHandler",m);}
@@ -2885,10 +2888,10 @@ namespace mfront{
       const auto md = this->getModelDescription(t.value.substr(1,t.value.size()-2));
       // check that the variable
       auto ptr = std::make_shared<ModelDescription>(md);
-      return BehaviourDescription::StressFreeExpansionHandler{ptr};
+      return {ptr};
     }
     if(t.value=="0"){
-      return {BehaviourDescription::NullSwelling{}};
+      return {BehaviourData::NullSwelling{}};
     }
     throw_if(!CxxTokenizer::isValidIdentifier(t.value,true),
 	     "unexpected token '"+t.value+"', expected "
@@ -2903,16 +2906,16 @@ namespace mfront{
 	       "no external state variable named '"+t.value+"' "
 	       "has been declared");
     }
-    return {BehaviourDescription::SFED_ESV{t.value}};
+    return {BehaviourData::SFED_ESV{t.value}};
   } // end of BehaviourDSLCommon::readStressFreeExpansionHandler
   
-  std::vector<BehaviourDescription::StressFreeExpansionHandler>
+  std::vector<BehaviourData::StressFreeExpansionHandler>
   BehaviourDSLCommon::readStressFreeExpansionHandler(void){
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("BehaviourDSLCommon::readStressFreeExpansionHandler",m);}
     };
     auto sda = std::vector<tfel::utilities::Token>{};
-    auto sd  = std::vector<BehaviourDescription::StressFreeExpansionHandler>{};
+    auto sd  = std::vector<BehaviourData::StressFreeExpansionHandler>{};
     this->checkNotEndOfFile("BehaviourDSLCommon::treatSwelling");
     if(this->current->value=="{"){
       this->readList(sda,"BehaviourDSLCommon::readCodeBlockOptions","{","}",true);
@@ -2937,7 +2940,8 @@ namespace mfront{
   } // end of BehaviourDSLCommon::readStressFreeExpansionHandler
 
   void BehaviourDSLCommon::treatAxialGrowth(void){
-    using AxialGrowth = BehaviourDescription::AxialGrowthStressFreeExpansion;
+    using AxialGrowth = BehaviourData::AxialGrowthStressFreeExpansion;
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("BehaviourDSLCommon::treatAxialGrowth",m);}
     };
@@ -2948,7 +2952,7 @@ namespace mfront{
     ++(this->current);
     this->readSpecifiedToken("BehaviourDSLCommon::treatAxialGrowth",";");
     AxialGrowth ag = {s};
-    this->mb.addStressFreeExpansion(ag);
+    this->mb.addStressFreeExpansion(uh,ag);
   } // end of BehaviourDSLCommon::treatAxialGrowth
   
   void

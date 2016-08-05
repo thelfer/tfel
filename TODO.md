@@ -7,6 +7,10 @@
 <!-- pandoc -s --mathjax -i -t revealjs TODO -o TODO.html -->
 <!-- pandoc -t beamer -V theme:Warsow beamercea TODO -o TODO.pdf -->
 
+# Bounds
+
+shall be variables attributes
+
 # Stress free expansion
 
 - stress free expansion for finite strain behaviour:

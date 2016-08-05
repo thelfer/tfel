@@ -342,11 +342,10 @@ namespace mfront
 	return MaterialPropertyInput::MATERIALPROPERTY;
       } else if(bd.isParameterName(h,v)){
 	return MaterialPropertyInput::PARAMETER;
-      } else {
-	throw_if(true,"unsupported variable: variable '"+v+"' is "
-		 "neither an external state variable, a material "
-		 "property nor a parameter");
       }
+      throw_if(true,"unsupported variable: variable '"+v+"' is "
+	       "neither an external state variable, a material "
+	       "property nor a parameter");
     };
     auto inputs = std::vector<MaterialPropertyInput>{};
     for(const auto& v : mpd.inputs){
@@ -889,36 +888,28 @@ namespace mfront
     this->thermalExpansionCoefficients.push_back(a3);
   } // end of BehaviourDescription::setThermalExpansionCoefficients
 
-  void BehaviourDescription::addStressFreeExpansion(const StressFreeExpansionDescription& d){
+  void BehaviourDescription::addStressFreeExpansion(const Hypothesis h,
+						    const StressFreeExpansionDescription& sfed){
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourDescription::addStressFreeExpansion: "+m));}
+      if(c){throw(std::runtime_error("BehaviourData::addStressFreeExpansion: "+m));}
     };
-    if(d.is<VolumeSwellingStressFreeExpansion>()){
-      auto s = d.get<VolumeSwellingStressFreeExpansion>();
-      throw_if(s.sfe.is<NullSwelling>(),
-	       "null swelling is not allowed");
-    } else if (d.is<IsotropicStressFreeExpansion>()){
-      auto s = d.get<IsotropicStressFreeExpansion>();
-      throw_if(s.sfe.is<NullSwelling>(),
-	       "null swelling is not allowed");
-    } else if (d.is<AxialGrowthStressFreeExpansion>()){
+    if ((sfed.is<BehaviourData::AxialGrowthStressFreeExpansion>())&&
+	(sfed.is<BehaviourData::OrthotropicStressFreeExpansion>())){ 
       throw_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
 	       "axial growth is only valid for orthotropic behaviour");
-      auto s = d.get<AxialGrowthStressFreeExpansion>();
-      throw_if(s.sfe.is<NullSwelling>(),
-	       "null swelling is not allowed");
-    } else if (d.is<OrthotropicStressFreeExpansion>()){
-      throw_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
-	       "axial growth is only valid for orthotropic behaviour");
-      auto s = d.get<OrthotropicStressFreeExpansion>();
-      throw_if(s.sfe0.is<NullSwelling>()&&
-	       s.sfe1.is<NullSwelling>()&&
-	       s.sfe2.is<NullSwelling>(),
-	       "null swelling is not allowed");
     } else {
-      throw_if(true,"internal error, unsupported stress free expansion type");
+      throw_if(!((sfed.is<BehaviourData::VolumeSwellingStressFreeExpansion>())||
+		 (sfed.is<BehaviourData::IsotropicStressFreeExpansion>())),
+	       "internal error, unsupported stress free expansion type");
     }
-    this->sfed.push_back(d);
+    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      this->d.addStressFreeExpansion(sfed);
+      for(auto& md: this->sd){
+	md.second->addStressFreeExpansion(sfed);
+      }
+    } else {
+      this->getBehaviourData2(h).addStressFreeExpansion(sfed);
+    }
   } // end of BehaviourDescription::addStressFreeExpansion
   
   bool BehaviourDescription::requiresStressFreeExpansionTreatment(const Hypothesis h) const{
@@ -989,6 +980,11 @@ namespace mfront
 			     "internal error (unsupported behaviour type)"));
   } // end of BehaviourDescription::getStressFreeExpansionType
 
+  bool
+  BehaviourDescription::isStressFreeExansionAnisotropic(const Hypothesis h) const{
+    return this->getBehaviourData(h).isStressFreeExansionAnisotropic();
+  } // end of BehaviourDescription::isStressFreeExansionAnisotropic
+  
   void
   BehaviourDescription::checkModellingHypothesis(const Hypothesis& h) const
   {
@@ -1946,7 +1942,7 @@ namespace mfront
     }
     return this->oac;
   }
-  
+
   BehaviourDescription::~BehaviourDescription()
   {}
 

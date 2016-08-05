@@ -1246,6 +1246,53 @@ namespace mfront{
   {
     return this->privateCode;
   } // end of BehaviourData::getPrivateCode
+
+  void BehaviourData::addStressFreeExpansion(const StressFreeExpansionDescription& sfed){
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("BehaviourData::addStressFreeExpansion: "+m));}
+    };
+    if(sfed.is<VolumeSwellingStressFreeExpansion>()){
+      auto s = sfed.get<VolumeSwellingStressFreeExpansion>();
+      throw_if(s.sfe.is<NullSwelling>(),
+	       "null swelling is not allowed");
+    } else if (sfed.is<IsotropicStressFreeExpansion>()){
+      auto s = sfed.get<IsotropicStressFreeExpansion>();
+      throw_if(s.sfe.is<NullSwelling>(),
+	       "null swelling is not allowed");
+    } else if (sfed.is<AxialGrowthStressFreeExpansion>()){
+      auto s = sfed.get<AxialGrowthStressFreeExpansion>();
+      throw_if(s.sfe.is<NullSwelling>(),
+	       "null swelling is not allowed");
+    } else if (sfed.is<OrthotropicStressFreeExpansion>()){
+      auto s = sfed.get<OrthotropicStressFreeExpansion>();
+      throw_if(s.sfe0.is<NullSwelling>()&&
+	       s.sfe1.is<NullSwelling>()&&
+	       s.sfe2.is<NullSwelling>(),
+	       "null swelling is not allowed");
+    } else {
+      throw_if(true,"internal error, unsupported stress free expansion type");
+    }
+    this->sfeds.push_back(sfed);
+  } // end of BehaviourData::addStressFreeExpansion
+  
+  const std::vector<BehaviourData::StressFreeExpansionDescription>&
+  BehaviourData::getStressFreeExpansionDescription(void) const{
+    return this->sfeds;
+  } // end of BehaviourData::getStressFreeExpansionDescription
+
+  bool BehaviourData::isStressFreeExansionAnisotropic(void) const{
+    for(const auto& sfed:this->sfeds){
+      if ((sfed.is<BehaviourData::AxialGrowthStressFreeExpansion>())&&
+	  (sfed.is<BehaviourData::OrthotropicStressFreeExpansion>())){ 
+	return true;
+      } else {
+	throw(std::runtime_error("BehaviourData::isStressFreeExansionAnisotropic: "
+				 "internal error, unsupported stress "
+				 "free expansion type"));
+      }
+    }
+    return false;
+  } // end of BehaviourData::isStressFreeExansionAnisotropic
   
   BehaviourData::~BehaviourData()
   {} // end of BehaviourData::~BehaviourData

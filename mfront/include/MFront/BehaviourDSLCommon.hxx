@@ -643,7 +643,7 @@ namespace mfront{
      * token of the array is analysed throw the
      * readStressFreeExpansionHandler method.
      */
-    virtual std::vector<BehaviourDescription::StressFreeExpansionHandler>
+    virtual std::vector<BehaviourData::StressFreeExpansionHandler>
     readStressFreeExpansionHandler(void);
     /*!
      * \brief extract a swelling description from a token
@@ -653,7 +653,7 @@ namespace mfront{
      * - if the token is not a string, one expects an external state
      *   variable name
      */
-    virtual BehaviourDescription::StressFreeExpansionHandler
+    virtual BehaviourData::StressFreeExpansionHandler
     readStressFreeExpansionHandler(const tfel::utilities::Token&);
     
     virtual void

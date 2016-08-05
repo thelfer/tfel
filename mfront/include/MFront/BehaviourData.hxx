@@ -32,6 +32,9 @@
 
 namespace mfront{
 
+  // forward declaration
+  struct ModelDescription;
+
   /*!
    * This structure gathers various behaviour characteristic
    */
@@ -122,6 +125,93 @@ namespace mfront{
     //! number of evaluation of the computeDerivative method 
     //  of a Runge-Kutta algorithm
     static const std::string numberOfEvaluations;
+    /*!
+     * The description of a stress free expansion defined through an
+     * external state variable
+    * \note SFED_ESV: Stress Free Expansion Description _ External
+    * State Variable
+     */
+    struct SFED_ESV
+    {
+      //! variable name
+      std::string vname;
+    }; // end of SFED_ESV
+    /*!
+     * a placeholder for null swelling
+     */
+    struct NullSwelling{};
+    /*!
+     * a stress free expansion can be computed using by:
+     * - an external state variable
+     * - a  model
+     */
+    using StressFreeExpansionHandlerTypes =
+      typename tfel::meta::GenerateTypeList<SFED_ESV,
+					    NullSwelling,
+					    std::shared_ptr<ModelDescription>>::type;
+    /*!
+     * a stress free expansion handler
+     */
+    using StressFreeExpansionHandler =
+      tfel::utilities::GenTypeBase<StressFreeExpansionHandlerTypes>;
+    /*!
+     * \brief a simple wrapper around an isotropic swelling model
+     * given by a volume change
+     * \[
+     * s = \left(dV_V0/3,dV_V0/3,dV_V0/3\,0\,0\,0\right)
+     * \]
+     */
+    struct VolumeSwellingStressFreeExpansion{
+      //! volumetric stress free expansion
+      StressFreeExpansionHandler sfe;
+    }; // end of struct VolumeSwellingStressFreeExpansion
+    /*!
+     * \brief a simple wrapper around a model descripbing an axial
+     * growth.
+     * \[
+     * s = \left(0,0,dlz_lz\,0\,0\,0\right)
+     * \]
+     */
+    struct AxialGrowthStressFreeExpansion{
+      //! description of the axial growth
+      StressFreeExpansionHandler sfe;
+    }; // end of struct AxialGrowthStressFreeExpansion
+    /*!
+     * \brief a brief structure describing a stress free expansion du
+     * to an isotropic swelling given by a linear change in each
+     * material geometry:
+     * \[
+     * s = \left(dl_l,dl_l,dl_l\,0\,0\,0\right)
+     * \]
+     */
+    struct IsotropicStressFreeExpansion{
+      //! stress free expansion in each direction
+      StressFreeExpansionHandler sfe;
+    }; // end of struct IsotropicStressFreeExpansion
+    /*!
+     * \brief a brief structure describing a stress free expansion du
+     * to an orthotropic swelling
+     */
+    struct OrthotropicStressFreeExpansion{
+      //! stress free expansion in the first material direction
+      StressFreeExpansionHandler sfe0;
+      //! stress free expansion in the second material direction
+      StressFreeExpansionHandler sfe1;
+      //! stress free expansion in the third material direction
+      StressFreeExpansionHandler sfe2;
+    }; // end of struct OrthotropicStressFreeExpansion
+    /*!
+     * \brief list of a stress free expansion descriptions
+     */
+    using StressFreeExpansionDescriptionTypes =
+      typename tfel::meta::GenerateTypeList<
+	VolumeSwellingStressFreeExpansion,
+      AxialGrowthStressFreeExpansion,
+      IsotropicStressFreeExpansion,
+      OrthotropicStressFreeExpansion>::type;
+    //! description of a stress free expansion
+    using StressFreeExpansionDescription =
+      tfel::utilities::GenTypeBase<StressFreeExpansionDescriptionTypes>;
     /*!
      * mode used when inserting code
      */
@@ -276,6 +366,15 @@ namespace mfront{
 
     const VariableDescription&
     getStateVariableDescription(const std::string&) const;
+    /*!
+     * \return true if a least one modelling hypothesis is anisotropic
+     */
+    bool isStressFreeExansionAnisotropic(void) const;
+    /*!
+     * \return the registred stress free expansion descriptions
+     */
+    const std::vector<StressFreeExpansionDescription>&
+    getStressFreeExpansionDescription(void) const;
     /*!
      * \return true if the given member is used in a code block
      * \param[in] h : modelling hypothesis
@@ -444,6 +543,11 @@ namespace mfront{
     void
     addStaticVariable(const StaticVariableDescription&,
 		      const RegistrationStatus);
+    /*!
+     * \brief add a new stress free expansion description
+     * \param[in] sfed: stress free expansion description
+     */
+    void addStressFreeExpansion(const StressFreeExpansionDescription&);
     /*!
      * \brief check if one has to include tvector.hxx or vector.hxx
      * \param[in] b1 : requires true if one has to include tvector.hxx
@@ -806,6 +910,10 @@ namespace mfront{
     StaticVariableDescriptionContainer staticVariables;
     //! bounds of the registred variables
     std::vector<BoundsDescription> bounds;
+    /*!
+     * \brief registred stress fress expansion descriptions
+     */
+    std::vector<StressFreeExpansionDescription> sfeds;
     //! behaviour attributes
     std::map<std::string,
 	     BehaviourAttribute> attributes;
