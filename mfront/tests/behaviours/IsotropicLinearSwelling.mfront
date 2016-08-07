@@ -1,0 +1,26 @@
+@Behaviour IsotropicLinearSwelling;
+@Author Helfer Thomas;
+@Date   06/08/16;
+@Description{
+ A test for the `@Swelling` keyword with the `Linear` option.
+}
+
+// Material properties
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real   nu;
+nu.setGlossaryName("PoissonRatio");
+
+@ExternalStateVariable real s;
+s.setEntryName("LinearSwelling");
+@Swelling<Linear> s;
+
+@ProvidesSymmetricTangentOperator;
+@Integrator{
+  const auto lambda = computeLambda(young,nu);
+  const auto mu = computeMu(young,nu);
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}

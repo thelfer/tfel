@@ -374,7 +374,7 @@ namespace mfront{
      * \return the registred stress free expansion descriptions
      */
     const std::vector<StressFreeExpansionDescription>&
-    getStressFreeExpansionDescription(void) const;
+    getStressFreeExpansionDescriptions(void) const;
     /*!
      * \return true if the given member is used in a code block
      * \param[in] h : modelling hypothesis

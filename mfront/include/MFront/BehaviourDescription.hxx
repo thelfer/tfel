@@ -302,8 +302,7 @@ namespace mfront
     /*!
      * \return the behaviour type
      */
-    BehaviourType
-    getBehaviourType(void) const;
+    BehaviourType getBehaviourType(void) const;
     /*!
      * \brief set the integration scheme
      * \param[in] s: integration scheme
@@ -623,6 +622,12 @@ namespace mfront
      */
     void addStressFreeExpansion(const Hypothesis,
 				const StressFreeExpansionDescription&);
+    /*!
+     * \return the registred stress free expansion descriptions
+     * \param[in] h : modelling hypothesis
+     */
+    const std::vector<BehaviourData::StressFreeExpansionDescription>&
+    getStressFreeExpansionDescriptions(const Hypothesis) const;
     /*!
      * \return true if a least one modelling hypothesis is anisotropic
      * \param[in] h : modelling hypothesis

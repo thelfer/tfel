@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTBEHAVIOURPARSERCOMMON_HXX_
-#define LIB_MFRONT_MFRONTBEHAVIOURPARSERCOMMON_HXX_ 
+#ifndef LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX_
+#define LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX_ 
 
 #include<set>
 #include<map>
@@ -24,7 +24,6 @@
 #include<functional>
 
 #include"MFront/MFrontConfig.hxx"
-
 #include"MFront/DSLBase.hxx"
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/AbstractBehaviourDSL.hxx"
@@ -47,6 +46,9 @@ namespace mfront{
       public DSLBase,
       public SupportedTypes
   {
+    //! a simple alias
+    using OrthotropicAxesConvention =
+      tfel::material::OrthotropicAxesConvention;
     //! \return the behaviour description
     virtual const BehaviourDescription&
     getBehaviourDescription(void) const override final;
@@ -1201,4 +1203,4 @@ namespace mfront{
 
 #include"MFront/BehaviourDSLCommon.ixx"
 
-#endif /* LIB_MFRONT_MFRONTBEHAVIOURPARSERCOMMON_HXX_ */
+#endif /* LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX_ */

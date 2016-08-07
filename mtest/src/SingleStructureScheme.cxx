@@ -95,7 +95,8 @@ namespace mtest{
        (n!="ThermalExpansion2")&&(n!="ThermalExpansion3")){
       ostringstream msg;
       msg << "SingleStructureScheme::setMaterialProperty: "
-	  << "the behaviour don't declare a material property '" << n << "'.";
+	  << "the behaviour does not declare a material property '"
+	  << n << "'.";
       if(!mpnames.empty()){
 	msg << "\nThe behaviour declares:";
 	for(const auto& mp : mpnames){
@@ -128,7 +129,7 @@ namespace mtest{
     const auto& evsnames = this->b->getExternalStateVariablesNames();
     if(find(evsnames.begin(),evsnames.end(),n)==evsnames.end()){
       throw(std::runtime_error("SingleStructureScheme::setExternalStateVariable: "
-			       "the behaviour don't declare an "
+			       "the behaviour does not declare an "
 			       "external state variable named '"+n+"'"));
     }
     this->addEvolution(n,p,false,check);
@@ -417,8 +418,8 @@ namespace mtest{
     const auto& ivsnames = this->b->getInternalStateVariablesNames();
     if(std::find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
       throw(std::runtime_error("SingleStructureScheme::setScalarInternalStateVariableInitialValue : "
-			       "the behaviour don't declare an internal state "
-			       "variable named '"+n+"'"));
+			       "the behaviour does not declare an internal "
+			       "state variable named '"+n+"'"));
     }
     const auto type = this->b->getInternalStateVariableType(n);
     const auto pos  = this->b->getInternalStateVariablePosition(n);
@@ -474,10 +475,9 @@ namespace mtest{
     }
     const auto& ivsnames = this->b->getInternalStateVariablesNames();
     if(find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
-      string msg("SingleStructureScheme::setTensorInternalStateVariableInitialValue : ");
-      msg += "the behaviour don't declare an internal state variable named '";
-      msg += n+"'";
-      throw(runtime_error(msg));
+      throw(runtime_error("SingleStructureScheme::setTensorInternalStateVariableInitialValue: "
+			  "the behaviour does not declare an internal state "
+			  "variable named '"+n+"'"));
     }
     const auto type = this->b->getInternalStateVariableType(n);
     const auto pos  = this->b->getInternalStateVariablePosition(n);

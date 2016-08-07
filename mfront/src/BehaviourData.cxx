@@ -1276,9 +1276,9 @@ namespace mfront{
   } // end of BehaviourData::addStressFreeExpansion
   
   const std::vector<BehaviourData::StressFreeExpansionDescription>&
-  BehaviourData::getStressFreeExpansionDescription(void) const{
+  BehaviourData::getStressFreeExpansionDescriptions(void) const{
     return this->sfeds;
-  } // end of BehaviourData::getStressFreeExpansionDescription
+  } // end of BehaviourData::getStressFreeExpansionDescriptions
 
   bool BehaviourData::isStressFreeExansionAnisotropic(void) const{
     for(const auto& sfed:this->sfeds){
@@ -1286,9 +1286,12 @@ namespace mfront{
 	  (sfed.is<BehaviourData::OrthotropicStressFreeExpansion>())){ 
 	return true;
       } else {
-	throw(std::runtime_error("BehaviourData::isStressFreeExansionAnisotropic: "
-				 "internal error, unsupported stress "
-				 "free expansion type"));
+	if ((!sfed.is<BehaviourData::IsotropicStressFreeExpansion>())&&
+	    (!sfed.is<BehaviourData::VolumeSwellingStressFreeExpansion>())){ 
+	  throw(std::runtime_error("BehaviourData::isStressFreeExansionAnisotropic: "
+				   "internal error, unsupported stress "
+				   "free expansion type"));
+	}
       }
     }
     return false;

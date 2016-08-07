@@ -481,7 +481,7 @@ namespace mfront{
 	    (this->mb.getThermalExpansionCoefficients().size()==3u)) ||
 	   (this->mb.isStressFreeExansionAnisotropic(h))){
 	  if(this->mb.getOrthotropicAxesConvention()==
-	     tfel::material::OrthotropicAxesConvention::DEFAULT){
+	     OrthotropicAxesConvention::DEFAULT){
 	    // in this case, only tridimensional case is supported
 	    if(h!=ModellingHypothesis::TRIDIMENSIONAL){
 	      this->throwRuntimeError("BehaviourDSLCommon::endsInputFileProcessing",
@@ -2816,6 +2816,10 @@ namespace mfront{
     enum {MODEL,ESV,UNDEFINEDTYPE} stype = UNDEFINEDTYPE;
     enum {VOLUME,LINEAR,UNDEFINED} etype = UNDEFINED;
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    throw_if((!this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	     (!this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+	     "the @Swelling keyword is only valid for small or "
+	     "finite strain behaviours");
     this->checkNotEndOfFile("DSLBase::treatSwelling");
     if(this->current->value=="<"){
       auto options = std::vector<tfel::utilities::Token>{};
@@ -2945,6 +2949,10 @@ namespace mfront{
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("BehaviourDSLCommon::treatAxialGrowth",m);}
     };
+    throw_if((!this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	     (!this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+	     "the @AxialGrowth keyword is only valid for small or "
+	     "finite strain behaviours");
     throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
 	     "@AxialGrowth is only valid for orthotropic behaviour");
     this->checkNotEndOfFile("BehaviourDSLCommon::treatAxialGrowth");
@@ -3276,7 +3284,7 @@ namespace mfront{
 	this->writeMaterialPropertyCheckBoundsEvaluation(out,emps[i],f);
       }
       if(ua){
-	if(this->mb.getOrthotropicAxesConvention()==tfel::material::OrthotropicAxesConvention::PIPE){
+	if(this->mb.getOrthotropicAxesConvention()==OrthotropicAxesConvention::PIPE){
 	  out << "tfel::material::computeOrthotropicStiffnessTensor<hypothesis,"
 	      << "StiffnessTensorAlterationCharacteristic::UNALTERED,"
 	      << "OrthotropicAxesConvention::PIPE>(" << D << ",";
@@ -3286,7 +3294,7 @@ namespace mfront{
 	      << "OrthotropicAxesConvention::DEFAULT>(" << D << ",";
 	}
       } else {
-	if(this->mb.getOrthotropicAxesConvention()==tfel::material::OrthotropicAxesConvention::PIPE){
+	if(this->mb.getOrthotropicAxesConvention()==OrthotropicAxesConvention::PIPE){
 	  out << "tfel::material::computeOrthotropicStiffnessTensor<hypothesis,"
 	      << "StiffnessTensorAlterationCharacteristic::ALTERED,"
 	      << "OrthotropicAxesConvention::PIPE>(" << D << ",";
@@ -3477,6 +3485,9 @@ namespace mfront{
   
   void BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion(const Hypothesis h)
   {    
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",m);}
+    };
     auto eval = [](std::ostream& out,
 		   const BehaviourDescription::MaterialProperty& mp,
 		   const std::string& c,
@@ -3499,29 +3510,24 @@ namespace mfront{
       return;
     }
     if(this->mb.areThermalExpansionCoefficientsDefined()){
-      if(!((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	   (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
-	this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
-				"only finite strain or small strain behaviour are supported");
-      }
+      throw_if(!((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		 (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+	       "only finite strain or small strain behaviour are supported");
       if(this->mb.getSymmetryType()==mfront::ORTHOTROPIC){
 	if((this->mb.getOrthotropicAxesConvention()==
-	    tfel::material::OrthotropicAxesConvention::DEFAULT)&&
+	    OrthotropicAxesConvention::DEFAULT)&&
 	   (this->mb.getThermalExpansionCoefficients().size()==3u)){
 	  // in this case, only tridimensional case is supported
-	  const auto& hs = this->mb.getDistinctModellingHypotheses();
-	  for(const auto mh:hs){
-	    if(mh!=ModellingHypothesis::TRIDIMENSIONAL){
-	      this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
-				      "An orthotropic axes convention must be choosen when "
-				      "using @ComputeThermalExpansion keyword in behaviours which "
-				      "shall be valid in other modelling hypothesis than "
-				      "'Tridimensional'.\n"
-				      "Either restrict the validity of the behaviour to "
-				      "'Tridimensional' (see @ModellingHypothesis) or "
-				      "choose and orthotropic axes convention as on option "
-				      "to the @OrthotropicBehaviour keyword");
-	    }
+	  for(const auto mh:this->mb.getDistinctModellingHypotheses()){
+	    throw_if(mh!=ModellingHypothesis::TRIDIMENSIONAL,
+		     "an orthotropic axes convention must be choosen when "
+		     "using @ComputeThermalExpansion keyword in behaviours "
+		     "which shall be valid in other modelling hypothesis "
+		     "than 'Tridimensional'.\n"
+		     "Either restrict the validity of the behaviour to "
+		     "'Tridimensional' (see @ModellingHypothesis) or "
+		     "choose and orthotropic axes convention as on option "
+		     "to the @OrthotropicBehaviour keyword");
 	  }
 	}
       }
@@ -3561,10 +3567,8 @@ namespace mfront{
 	this->behaviourFile << "dl1_l0[1] += dl1_l0[0];\n"
 			    << "dl1_l0[2] += dl1_l0[0];\n";
       } else if(acs.size()==3u){
-	if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC){
-	  this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
-				  "invalid number of thermal expansion coefficients");
-	}
+	throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
+		 "invalid number of thermal expansion coefficients");
 	for(size_t i=0;i!=3;++i){
 	  if(!acs[i].is<BehaviourDescription::ConstantMaterialProperty>()){
 	    this->writeThermalExpansionCoefficientsComputations(this->behaviourFile,acs[i],
@@ -3581,13 +3585,89 @@ namespace mfront{
 	    this->writeThermalExpansionComputation(this->behaviourFile,acs[i],"t_dt",idx,idx);
 	  }
 	}
-	if(this->mb.getOrthotropicAxesConvention()==tfel::material::OrthotropicAxesConvention::PIPE){
-	  this->behaviourFile << "tfel::material::convertStressFreeExpansionStrain<hypothesis,OrthotropicAxesConvention::PIPE>(dl0_l0);\n"
-			      << "tfel::material::convertStressFreeExpansionStrain<hypothesis,OrthotropicAxesConvention::PIPE>(dl1_l0);\n";
+      } else {
+	throw_if(true,"unsupported behaviour symmetry");
+      }
+    }
+    for(const auto& d : this->mb.getStressFreeExpansionDescriptions(h)){
+      if (d.is<BehaviourData::AxialGrowthStressFreeExpansion>()){
+	throw_if(!((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		   (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+		 "only finite strain or small strain behaviour are supported");
+	throw_if(!this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
+		 "axial growth is only supported for orthotropic behaviours");
+	throw_if(true,"axial growth free expansion is "
+		 "not implemented yet");
+      } else if(d.is<BehaviourData::OrthotropicStressFreeExpansion>()){ 
+	throw_if(!((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		   (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+		 "only finite strain or small strain behaviour are supported");
+	throw_if(!this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
+		 "orthotropic stress free expansion is only supported "
+		 "for orthotropic behaviours");
+	throw_if(true,"orthotropic stress free expansion is "
+		 "not implemented yet");
+      } else if(d.is<BehaviourData::IsotropicStressFreeExpansion>()){
+	throw_if(!((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		   (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+		 "only finite strain or small strain behaviour are supported");
+	const auto& s =
+	  d.get<BehaviourData::IsotropicStressFreeExpansion>();
+	throw_if(s.sfe.is<BehaviourData::NullSwelling>(),
+		 "null swelling is not supported here");
+	if(s.sfe.is<BehaviourData::SFED_ESV>()){
+	  const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
+	  this->behaviourFile << "dl0_l0[0]+=this->" << ev << ";\n";
+	  this->behaviourFile << "dl0_l0[1]+=this->" << ev << ";\n";
+	  this->behaviourFile << "dl0_l0[2]+=this->" << ev << ";\n";
+	  this->behaviourFile << "dl1_l0[0]+=this->" << ev << "+this->d" << ev << ";\n";
+	  this->behaviourFile << "dl1_l0[1]+=this->" << ev << "+this->d" << ev << ";\n";
+	  this->behaviourFile << "dl1_l0[2]+=this->" << ev << "+this->d" << ev << ";\n";
+	} else {
+	  throw_if(true,"internal error, unsupported stress free expansion");
+	}
+      } else if(d.is<BehaviourData::VolumeSwellingStressFreeExpansion>()){ 
+	throw_if(!((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		   (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+		 "only finite strain or small strain behaviour are supported");
+	const auto& s =
+	  d.get<BehaviourData::VolumeSwellingStressFreeExpansion>();
+	throw_if(s.sfe.is<BehaviourData::NullSwelling>(),
+		 "null swelling is not supported here");
+	if(s.sfe.is<BehaviourData::SFED_ESV>()){
+	  const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
+	  this->behaviourFile << "dl0_l0[0]+=this->" << ev << "/3;\n";
+	  this->behaviourFile << "dl0_l0[1]+=this->" << ev << "/3;\n";
+	  this->behaviourFile << "dl0_l0[2]+=this->" << ev << "/3;\n";
+	  this->behaviourFile << "dl1_l0[0]+=(this->" << ev << "+this->d" << ev << ")/3;\n";
+	  this->behaviourFile << "dl1_l0[1]+=(this->" << ev << "+this->d" << ev << ")/3;\n";
+	  this->behaviourFile << "dl1_l0[2]+=(this->" << ev << "+this->d" << ev << ")/3;\n";
+	} else {
+	  throw_if(true,"internal error, unsupported stress free expansion");
 	}
       } else {
-	this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
-				"unsupported behaviour symmetry");
+	throw_if(true,"internal error, unsupported stress "
+		 "free expansion description");
+      }
+    }
+    if(this->mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      if(this->mb.getOrthotropicAxesConvention()==OrthotropicAxesConvention::PIPE){
+	this->behaviourFile << "tfel::material::convertStressFreeExpansionStrain<hypothesis,tfel::material::OrthotropicAxesConvention::PIPE>(dl0_l0);\n"
+			    << "tfel::material::convertStressFreeExpansionStrain<hypothesis,tfel::material::OrthotropicAxesConvention::PIPE>(dl1_l0);\n";
+      } else {
+	throw_if(this->mb.getOrthotropicAxesConvention()!=OrthotropicAxesConvention::DEFAULT,
+		 "internal error, unsupported orthotropic axes convention");
+	  for(const auto mh:this->mb.getDistinctModellingHypotheses()){
+	    throw_if(mh!=ModellingHypothesis::TRIDIMENSIONAL,
+		     "an orthotropic axes convention must be choosen when "
+		     "defining a stress free expansion in behaviours "
+		     "which shall be valid in other modelling hypothesis "
+		     "than 'Tridimensional'.\n"
+		     "Either restrict the validity of the behaviour to "
+		     "'Tridimensional' (see @ModellingHypothesis) or "
+		     "choose and orthotropic axes convention as on option "
+		     "to the @OrthotropicBehaviour keyword");
+	  }
       }
     }
     this->behaviourFile << "}\n\n";
@@ -4030,7 +4110,6 @@ namespace mfront{
   BehaviourDSLCommon::writeBehaviourTraitsSpecialisation(const Hypothesis h,
 							 const bool b)
   {
-    using tfel::material::OrthotropicAxesConvention;
     SupportedTypes::TypeSize coefSize;
     SupportedTypes::TypeSize stateVarsSize;
     SupportedTypes::TypeSize externalStateVarsSize;

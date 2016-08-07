@@ -76,7 +76,9 @@ set(mfront_tests_SOURCES
   SaintVenantKirchhoffElasticity3
   FiniteStrainSingleCrystal
   FiniteStrainSingleCrystal_NumericalJacobian
-  ComputeStressFreeExpansion)
+  ComputeStressFreeExpansion
+  IsotropicLinearSwelling
+  IsotropicVolumeSwelling)
 mfront_dependencies(MFrontAbaqusBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
@@ -271,6 +273,8 @@ test_abaqus(gursontvergaardneedlemanplasticflow)
 test_abaqus(gursontvergaardneedlemanviscoplasticflow)
 test_abaqus(anistropiclemaitreviscoplasticbehaviour)
 test_abaqus(computestressfreeexpansion)
+test_abaqus(isotropiclinearswelling)
+test_abaqus(isotropicvolumeswelling)
 # test_abaqus(saintvenantkirchhoffelasticity-uniaxialloading-sig11-2D)
 # test_abaqus(saintvenantkirchhoffelasticity-uniaxialloading-sig22-2D)
 # test_abaqus(saintvenantkirchhoffelasticity-uniaxialloading-sig33-2D)

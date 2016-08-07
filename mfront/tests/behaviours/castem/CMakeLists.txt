@@ -114,7 +114,9 @@ set(mfront_tests_SOURCES
   ImplicitSimoMieheElastoPlasticity
   T91ViscoplasticBehaviour
   AnistropicLemaitreViscoplasticBehaviour
-  ComputeStressFreeExpansion)
+  ComputeStressFreeExpansion
+  IsotropicLinearSwelling
+  IsotropicVolumeSwelling)
 
 mfront_dependencies(MFrontCastemBehaviours
   Inconel600_YoungModulus
@@ -601,6 +603,8 @@ test_castem(finitestrainsinglecrystal2-001)
 test_castem(anistropiclemaitreviscoplasticbehaviour)
 test_castem(tssf)
 test_castem(computestressfreeexpansion)
+test_castem(isotropiclinearswelling)
+test_castem(isotropicvolumeswelling)
 
 if(CMAKE_CONFIGURATION_TYPES)
   foreach(conf ${CMAKE_CONFIGURATION_TYPES})

@@ -333,14 +333,13 @@ namespace mfront
     auto throw_if = [](const bool c,const std::string& m){
       if(c){throw(std::runtime_error("BehaviourDescription::MaterialPropertyInput: "+m));}
     };
-    auto getVariableType = [&throw_if](const BehaviourDescription& bd,
-				       const Hypothesis h,
-				       const std::string& v){
-      if(bd.isExternalStateVariableName(h,v)){
+    auto getVariableType = [&throw_if,this](const Hypothesis h,
+					    const std::string& v){
+      if(this->isExternalStateVariableName(h,v)){
 	return MaterialPropertyInput::EXTERNALSTATEVARIABLE;
-      } else if(bd.isMaterialPropertyName(h,v)){
+      } else if(this->isMaterialPropertyName(h,v)){
 	return MaterialPropertyInput::MATERIALPROPERTY;
-      } else if(bd.isParameterName(h,v)){
+      } else if(this->isParameterName(h,v)){
 	return MaterialPropertyInput::PARAMETER;
       }
       throw_if(true,"unsupported variable: variable '"+v+"' is "
@@ -361,13 +360,13 @@ namespace mfront
 	auto hs = this->getDistinctModellingHypotheses();
 	const auto n =
 	  this->getVariableNameFromGlossaryNameOrEntryName(*(hs.begin()),vn);
-	const auto t = getVariableType(*this,*(hs.begin()),n);
+	const auto t = getVariableType(*(hs.begin()),n);
 	for(const auto h:hs){
 	  throw_if(this->getVariableNameFromGlossaryNameOrEntryName(h,vn)!=n,
 		   "the external name '"+vn+"' is associated with "
 		   "two differents variables in two distinct "
 		   "modelling hypotheses. This is not supported.");
-	  throw_if(getVariableType(*this,h,n)!=t,
+	  throw_if(getVariableType(h,n)!=t,
 		   "the external name '"+vn+"' has two different "
 		   "types in two distinct modelling hypotheses. "
 		   "This is not supported.");
@@ -895,9 +894,19 @@ namespace mfront
     };
     if ((sfed.is<BehaviourData::AxialGrowthStressFreeExpansion>())&&
 	(sfed.is<BehaviourData::OrthotropicStressFreeExpansion>())){ 
+      throw_if((!this->getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	       (!this->getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+	       "AxialGrowth or OrthotropicStressFreeExpansion "
+	       "are only valid for small or "
+	       "finite strain behaviours");
       throw_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
 	       "axial growth is only valid for orthotropic behaviour");
     } else {
+      throw_if((!this->getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	       (!this->getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+	       "Isotropic or VolumeSwelling "
+	       "are only valid for small or "
+	       "finite strain behaviours");
       throw_if(!((sfed.is<BehaviourData::VolumeSwellingStressFreeExpansion>())||
 		 (sfed.is<BehaviourData::IsotropicStressFreeExpansion>())),
 	       "internal error, unsupported stress free expansion type");
@@ -914,6 +923,7 @@ namespace mfront
   
   bool BehaviourDescription::requiresStressFreeExpansionTreatment(const Hypothesis h) const{
     return ((this->areThermalExpansionCoefficientsDefined())||
+	    (!this->getBehaviourData(h).getStressFreeExpansionDescriptions().empty())||
 	    (this->hasCode(h,BehaviourData::ComputeStressFreeExpansion)));
   } // end of BehaviourDescription::requiresStressFreeExpansionTreatment
   
@@ -969,6 +979,11 @@ namespace mfront
 			     "internal error (unsupported behaviour type)"));
   } // end of BehaviourDescription::getStiffnessOperatorType
 
+  const std::vector<BehaviourData::StressFreeExpansionDescription>&
+  BehaviourDescription::getStressFreeExpansionDescriptions(const Hypothesis h) const{
+    return this->getBehaviourData(h).getStressFreeExpansionDescriptions();
+  } // end of BehaviourDescription::getStressFreeExpansionDescriptions
+  
   std::string
   BehaviourDescription::getStressFreeExpansionType(void) const
   {

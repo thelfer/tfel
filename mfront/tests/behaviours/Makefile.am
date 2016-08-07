@@ -124,7 +124,9 @@ MFRONTS= DDIF2.mfront                                                      \
 	 TestComputeElasticPrediction.mfront                               \
 	 TestComputeElasticPrediction2.mfront                              \
 	 IsotropicPlasticity.mfront                                        \
-	 ComputeStressFreeExpansion.mfront
+	 ComputeStressFreeExpansion.mfront                                 \
+	 IsotropicLinearSwelling.mfront                                    \
+	 IsotropicVolumeSwelling.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)

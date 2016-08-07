@@ -278,8 +278,8 @@ namespace mtest{
     selectVariables(ivs,ivsnames,n);
     if(ivs.empty()){
       string msg("SingleStructureSchemeParser::handleInternalStateVariable : ");
-      msg += "the behaviour don't declare an internal state variable named '";
-      msg += n+"'";
+      msg += "the behaviour does not declare an internal state ";
+      msg += "variable named '"+n+"'";
       throw(runtime_error(msg));
     }
     if(ivs.size()==1){

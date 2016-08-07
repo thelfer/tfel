@@ -2017,6 +2017,7 @@ mfront/tests/behaviours/ImplicitSimoMieheElastoPlasticity.mfront -text
 mfront/tests/behaviours/IncompressibleMooneyRivlinBehaviour.mfront -text
 mfront/tests/behaviours/IncompressiblePlaneStressGornetDesmoratBehaviour.mfront -text
 mfront/tests/behaviours/IncompressiblePlaneStressMooneyRivlinBehaviour.mfront -text
+mfront/tests/behaviours/IsotropicLinearSwelling.mfront -text
 mfront/tests/behaviours/IsotropicPlasticity.mfront -text
 mfront/tests/behaviours/IsotropicStandardElasticity.mfront -text
 mfront/tests/behaviours/IsotropicStandardElasticity10.mfront -text
@@ -2031,6 +2032,7 @@ mfront/tests/behaviours/IsotropicStandardElasticity6.mfront -text
 mfront/tests/behaviours/IsotropicStandardElasticity7.mfront -text
 mfront/tests/behaviours/IsotropicStandardElasticity8.mfront -text
 mfront/tests/behaviours/IsotropicStandardElasticity9.mfront -text
+mfront/tests/behaviours/IsotropicVolumeSwelling.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity2.mfront -text
 mfront/tests/behaviours/LogarithmicStrainNortonCreep.mfront -text
@@ -2255,6 +2257,8 @@ mfront/tests/behaviours/abaqus/abaqusimplicitnorton_broyden.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusimplicitnorton_broyden2.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusimplicitnorton_levenbergmarquardt.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusimplicitorthotropiccreep.mtest.in -text
+mfront/tests/behaviours/abaqus/abaqusisotropiclinearswelling.mtest.in -text
+mfront/tests/behaviours/abaqus/abaqusisotropicvolumeswelling.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck2.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck3.mtest.in -text
@@ -2685,6 +2689,8 @@ mfront/tests/behaviours/aster/asterimplicitnorton_broyden.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton_broyden2.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton_levenbergmarquardt.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitorthotropiccreep.mtest.in -text
+mfront/tests/behaviours/aster/asterisotropiclinearswelling.mtest.in -text
+mfront/tests/behaviours/aster/asterisotropicvolumeswelling.mtest.in -text
 mfront/tests/behaviours/aster/asterlorentz.mtest.in -text
 mfront/tests/behaviours/aster/asterlorentz2.mtest.in -text
 mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck.mtest.in -text
@@ -2958,6 +2964,8 @@ mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbeha
 mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbehavioursheartesting.mtest.in -text
 mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbehaviouruniaxialtesting.mtest.in -text
 mfront/tests/behaviours/castem/castemincompressibleplanestressmooneyrivlinbehaviouruniaxialtesting.mtest.in -text
+mfront/tests/behaviours/castem/castemisotropiclinearswelling.mtest.in -text
+mfront/tests/behaviours/castem/castemisotropicvolumeswelling.mtest.in -text
 mfront/tests/behaviours/castem/castemlorentz.mtest.in -text
 mfront/tests/behaviours/castem/castemlorentz2.mtest.in -text
 mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck.mtest.in -text
@@ -3443,6 +3451,8 @@ mfront/tests/behaviours/cyrano/cyranoexternalstatevariablesboundscheck5.mtest.in
 mfront/tests/behaviours/cyrano/cyranoimplicitnorton.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoimplicitnorton2.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoimplicitnorton3.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoisotropiclinearswelling.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoisotropicvolumeswelling.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck2.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck3.mtest.in -text

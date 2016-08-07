@@ -39,6 +39,11 @@ shall be variables attributes
 - catch c errno
 - support of parameters modification through txt file
 
+## ZMAT interface
+
+- handle stress free expansion
+- finite strain tangent operator
+
 # Update documentation
 
 Installation on windows without MSYS
