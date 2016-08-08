@@ -486,8 +486,8 @@ namespace mfront{
 	    if(h!=ModellingHypothesis::TRIDIMENSIONAL){
 	      this->throwRuntimeError("BehaviourDSLCommon::endsInputFileProcessing",
 				      "An orthotropic axes convention must be choosen when "
-				      "using the @ComputeStiffnessTensor or the "
-				      "@ComputeThermalExpansion keywords in behaviours which "
+				      "using one of @ComputeStiffnessTensor, "
+				      "@ComputeThermalExpansion, @Swelling, @AxilalGrowth keywords in behaviours which "
 				      "shall be valid in other modelling hypothesis than "
 				      "'Tridimensional'. This message was triggered because "
 				      "either the thermal expansion or to the stiffness tensor "
@@ -894,7 +894,8 @@ namespace mfront{
 	  const auto& n = o.value.substr(0,pos);
 	  if(pos==o.value.size()){
 	    this->throwRuntimeError("BehaviourDSLCommon::treatBehaviourBrick",
-				    "no option given to the parameter '"+n+"'");
+				    "no option given to the "
+				    "parameter '"+n+"'");
 	  }
 	  // extracting the option
 	  parameters.insert({n,o.value.substr(pos+1)});
@@ -2810,14 +2811,15 @@ namespace mfront{
     using VolumeSwelling      = BehaviourData::VolumeSwellingStressFreeExpansion;
     using IsotropicSwelling   = BehaviourData::IsotropicStressFreeExpansion;
     using OrthotropicSwelling = BehaviourData::OrthotropicStressFreeExpansion;
+    using OrthotropicSwellingII =
+      BehaviourData::OrthotropicStressFreeExpansionII;
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("BehaviourDSLCommon::treatSwelling",m);}
     };
-    enum {MODEL,ESV,UNDEFINEDTYPE} stype = UNDEFINEDTYPE;
-    enum {VOLUME,LINEAR,UNDEFINED} etype = UNDEFINED;
+    enum {VOLUME,LINEAR,ORTHOTROPIC,UNDEFINED} etype = UNDEFINED;
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    throw_if((!this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	     (!this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+    throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	     (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
 	     "the @Swelling keyword is only valid for small or "
 	     "finite strain behaviours");
     this->checkNotEndOfFile("DSLBase::treatSwelling");
@@ -2826,50 +2828,48 @@ namespace mfront{
       this->readList(options,"BehaviourDSLCommon::readCodeBlockOptions","<",">",true);
       for(const auto& o: options){
 	this->checkNotEndOfFile("BehaviourDSLCommon::treatSwelling");
-	if(o.value=="Volume"){
-	  throw_if(stype!=UNDEFINEDTYPE,"error while treating option 'Volume', "
-		   "swelling type already defined");
+	if(o.value=="Orthotropic"){
+	  throw_if(etype!=UNDEFINED,"error while treating option "
+		   "'Orthotropic', swelling type already defined");
+	  etype = ORTHOTROPIC;
+	} else if(o.value=="Volume"){
+	  throw_if(etype!=UNDEFINED,"error while treating option "
+		   "'Volume', swelling type already defined");
 	  etype = VOLUME;
 	} else if(o.value=="Linear"){
-	  throw_if(stype!=UNDEFINEDTYPE,"error while treating option 'Linear', "
-		   "swelling  already defined");
+	  throw_if(etype!=UNDEFINED,"error while treating option "
+		   "'Linear', swelling type already defined");
 	  etype = LINEAR;
-	} else if(o.value=="Model"){
-	  throw_if(stype!=UNDEFINEDTYPE,"error while treating option "
-		   "'Model', swelling source already defined");
-	  stype = MODEL;
-	} else if(o.value=="ExternalStateVariable"){
-	  throw_if(stype!=UNDEFINEDTYPE,"error while treating option "
-		   "'ExternalStateVariale', swelling source already defined");
-	  stype = ESV;
 	} else {
 	  throw_if(true,"unsupported option '"+o.value+"'");
 	}
       }
     }
-    if(stype==UNDEFINEDTYPE){
-      stype=MODEL;
-    }
+    throw_if(etype==UNDEFINED,"the user must explicitly state if "
+	     "what kind of swelling is expected using"
+	     "one of the options 'Linear', 'Volume' or 'Orthotropic'");
     const auto sd = this->readStressFreeExpansionHandler();
     this->readSpecifiedToken("BehaviourDSLCommon::treatSwelling",";");
     if(sd.size()==1){
-      throw_if(etype==UNDEFINED,"the user must explicitly state if an "
-	       "isotropic swelling is given "
-	       "as a change of the linear dimension (dL/L0) "
-	       "or as a change of volume (dV/V0) using "
-	       "one of the option 'Linear' or 'Volume'");
       throw_if(sd[0].is<BehaviourData::NullSwelling>(),
 	       "a null swelling is not allowed here");
       if(etype==VOLUME){
 	VolumeSwelling vs = {sd[0]};
 	this->mb.addStressFreeExpansion(uh,vs);
-      } else {
+      } else if(etype==LINEAR){
 	IsotropicSwelling is = {sd[0]};
 	this->mb.addStressFreeExpansion(uh,is);
+      } else if(etype==ORTHOTROPIC){
+	throw_if(!sd[0].is<BehaviourData::SFED_ESV>(),
+		 "one expects a external state variable name here");
+	OrthotropicSwellingII os = {sd[0].get<BehaviourData::SFED_ESV>()};
+	this->mb.addStressFreeExpansion(uh,os);
+      } else {
+	throw_if(true,"internal error");
       }
     } else if(sd.size()==3){
-      throw_if(etype==VOLUME,"the 'Volume' option can't be used for "
-	       "an orthotropic swelling");
+      throw_if(etype!=ORTHOTROPIC,"the 'Orthotropic' option must be "
+	       "used for an orthotropic swelling");
       throw_if(sd[0].is<BehaviourData::NullSwelling>()&&
 	       sd[1].is<BehaviourData::NullSwelling>()&&
 	       sd[2].is<BehaviourData::NullSwelling>(),
@@ -2949,8 +2949,8 @@ namespace mfront{
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("BehaviourDSLCommon::treatAxialGrowth",m);}
     };
-    throw_if((!this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	     (!this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+    throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	     (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
 	     "the @AxialGrowth keyword is only valid for small or "
 	     "finite strain behaviours");
     throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
@@ -2959,8 +2959,7 @@ namespace mfront{
     auto s  = this->readStressFreeExpansionHandler(*(this->current));
     ++(this->current);
     this->readSpecifiedToken("BehaviourDSLCommon::treatAxialGrowth",";");
-    AxialGrowth ag = {s};
-    this->mb.addStressFreeExpansion(uh,ag);
+    this->mb.addStressFreeExpansion(uh,AxialGrowth{s});
   } // end of BehaviourDSLCommon::treatAxialGrowth
   
   void
@@ -3510,8 +3509,8 @@ namespace mfront{
       return;
     }
     if(this->mb.areThermalExpansionCoefficientsDefined()){
-      throw_if(!((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-		 (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+      throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	       (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
 	       "only finite strain or small strain behaviour are supported");
       if(this->mb.getSymmetryType()==mfront::ORTHOTROPIC){
 	if((this->mb.getOrthotropicAxesConvention()==
@@ -3591,25 +3590,67 @@ namespace mfront{
     }
     for(const auto& d : this->mb.getStressFreeExpansionDescriptions(h)){
       if (d.is<BehaviourData::AxialGrowthStressFreeExpansion>()){
-	throw_if(!((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-		   (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+		 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
 		 "only finite strain or small strain behaviour are supported");
-	throw_if(!this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
+	throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
 		 "axial growth is only supported for orthotropic behaviours");
-	throw_if(true,"axial growth free expansion is "
-		 "not implemented yet");
+	const auto& s =
+	  d.get<BehaviourData::AxialGrowthStressFreeExpansion>();
+	throw_if(s.sfe.is<BehaviourData::NullSwelling>(),
+		 "null swelling is not supported here");
+	if(s.sfe.is<BehaviourData::SFED_ESV>()){
+	  const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
+	  this->behaviourFile << "dl0_l0[2]+=this->" << ev << ";\n";
+	  this->behaviourFile << "dl1_l0[2]+=this->" << ev << "+this->d" << ev << ";\n";
+	} else {
+	  throw_if(true,"internal error, unsupported stress free expansion");
+	}
       } else if(d.is<BehaviourData::OrthotropicStressFreeExpansion>()){ 
-	throw_if(!((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-		   (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+	const auto& s =
+	  d.get<BehaviourData::OrthotropicStressFreeExpansion>();
+	auto write = [this,throw_if](const BehaviourData::StressFreeExpansionHandler& sfe,
+				     const char* const c){
+	  if(sfe.is<BehaviourData::SFED_ESV>()){
+	    const auto& ev = sfe.get<BehaviourData::SFED_ESV>().vname;
+	    this->behaviourFile << "dl0_l0[" << c << "]+=this->" << ev << ";\n";
+	    this->behaviourFile << "dl1_l0[" << c << "]+=this->" << ev << "+this->d" << ev << ";\n";
+	  } else if(!sfe.is<BehaviourData::NullSwelling>()){
+	    throw_if(true,"internal error, unsupported stress free expansion");
+	  }
+	};
+	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+		 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
 		 "only finite strain or small strain behaviour are supported");
-	throw_if(!this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
+	throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
 		 "orthotropic stress free expansion is only supported "
 		 "for orthotropic behaviours");
-	throw_if(true,"orthotropic stress free expansion is "
-		 "not implemented yet");
+	throw_if(s.sfe0.is<BehaviourData::NullSwelling>()&&
+		 s.sfe1.is<BehaviourData::NullSwelling>()&&
+		 s.sfe2.is<BehaviourData::NullSwelling>(),
+		 "null swelling is not supported here");
+	write(s.sfe0,"0");
+	write(s.sfe1,"1");
+	write(s.sfe2,"2");
+      } else if(d.is<BehaviourData::OrthotropicStressFreeExpansionII>()){ 
+	const auto& s =
+	  d.get<BehaviourData::OrthotropicStressFreeExpansionII>();
+	const auto& ev = s.esv.vname;
+	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+		 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+		 "only finite strain or small strain behaviour are supported");
+	throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
+		 "orthotropic stress free expansion is only supported "
+		 "for orthotropic behaviours");
+	this->behaviourFile << "dl0_l0[0]+=this->" << ev << "[0];\n";
+	this->behaviourFile << "dl0_l0[1]+=this->" << ev << "[1];\n";
+	this->behaviourFile << "dl0_l0[2]+=this->" << ev << "[2];\n";
+	this->behaviourFile << "dl1_l0[0]+=this->" << ev << "[0]+this->d" << ev << "[0];\n";
+	this->behaviourFile << "dl1_l0[1]+=this->" << ev << "[1]+this->d" << ev << "[1];\n";
+	this->behaviourFile << "dl1_l0[2]+=this->" << ev << "[2]+this->d" << ev << "[2];\n";
       } else if(d.is<BehaviourData::IsotropicStressFreeExpansion>()){
-	throw_if(!((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-		   (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+		 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
 		 "only finite strain or small strain behaviour are supported");
 	const auto& s =
 	  d.get<BehaviourData::IsotropicStressFreeExpansion>();
@@ -3627,8 +3668,8 @@ namespace mfront{
 	  throw_if(true,"internal error, unsupported stress free expansion");
 	}
       } else if(d.is<BehaviourData::VolumeSwellingStressFreeExpansion>()){ 
-	throw_if(!((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-		   (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+		 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
 		 "only finite strain or small strain behaviour are supported");
 	const auto& s =
 	  d.get<BehaviourData::VolumeSwellingStressFreeExpansion>();

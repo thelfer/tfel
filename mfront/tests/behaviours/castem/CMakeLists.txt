@@ -116,7 +116,10 @@ set(mfront_tests_SOURCES
   AnistropicLemaitreViscoplasticBehaviour
   ComputeStressFreeExpansion
   IsotropicLinearSwelling
-  IsotropicVolumeSwelling)
+  IsotropicVolumeSwelling
+  OrthotropicSwelling
+  OrthotropicSwelling2
+  AxialGrowth)
 
 mfront_dependencies(MFrontCastemBehaviours
   Inconel600_YoungModulus
@@ -605,6 +608,11 @@ test_castem(tssf)
 test_castem(computestressfreeexpansion)
 test_castem(isotropiclinearswelling)
 test_castem(isotropicvolumeswelling)
+test_castem(orthotropicswelling)
+test_castem(orthotropicswelling2)
+test_castem(orthotropicswelling3)
+test_castem(axialgrowth)
+test_castem(axialgrowth2)
 
 if(CMAKE_CONFIGURATION_TYPES)
   foreach(conf ${CMAKE_CONFIGURATION_TYPES})

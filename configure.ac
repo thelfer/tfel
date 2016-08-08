@@ -728,6 +728,11 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/aster/astercomputestressfreeexpansion.mtest
 	   mfront/tests/behaviours/aster/asterisotropiclinearswelling.mtest
   	   mfront/tests/behaviours/aster/asterisotropicvolumeswelling.mtest
+       	   mfront/tests/behaviours/aster/asterorthotropicswelling.mtest
+	   mfront/tests/behaviours/aster/asterorthotropicswelling2.mtest
+  	   mfront/tests/behaviours/aster/asterorthotropicswelling3.mtest
+  	   mfront/tests/behaviours/aster/asteraxialgrowth.mtest
+  	   mfront/tests/behaviours/aster/asteraxialgrowth2.mtest
            mfront/tests/behaviours/epx/Makefile
            mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
            mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
@@ -1365,6 +1370,11 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/castem/castemcomputestressfreeexpansion.mtest
 	   mfront/tests/behaviours/castem/castemisotropiclinearswelling.mtest
   	   mfront/tests/behaviours/castem/castemisotropicvolumeswelling.mtest
+     	   mfront/tests/behaviours/castem/castemorthotropicswelling.mtest
+	   mfront/tests/behaviours/castem/castemorthotropicswelling2.mtest
+  	   mfront/tests/behaviours/castem/castemorthotropicswelling3.mtest
+  	   mfront/tests/behaviours/castem/castemaxialgrowth.mtest
+  	   mfront/tests/behaviours/castem/castemaxialgrowth2.mtest
            mfront/tests/behaviours/castem/dgibi/Makefile
            mfront/tests/behaviours/castem2/Makefile   
            mfront/tests/behaviours/castem2/castem2burger.mtest
@@ -2234,6 +2244,9 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/cyrano/cyranocomputestressfreeexpansion.mtest
 	   mfront/tests/behaviours/cyrano/cyranoisotropiclinearswelling.mtest
   	   mfront/tests/behaviours/cyrano/cyranoisotropicvolumeswelling.mtest
+       	   mfront/tests/behaviours/cyrano/cyranoorthotropicswelling.mtest
+	   mfront/tests/behaviours/cyrano/cyranoorthotropicswelling2.mtest
+  	   mfront/tests/behaviours/cyrano/cyranoaxialgrowth.mtest
            mfront/tests/models/Makefile
            mfront/tests/models/interfaces/Makefile
            mfront/tests/models/interfaces/include/Makefile

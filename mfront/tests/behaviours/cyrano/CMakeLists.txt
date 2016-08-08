@@ -24,7 +24,10 @@ set(mfront_tests_SOURCES
   EllipticCreep
   ComputeStressFreeExpansion
   IsotropicLinearSwelling
-  IsotropicVolumeSwelling)
+  IsotropicVolumeSwelling
+  OrthotropicSwelling
+  OrthotropicSwelling2
+  AxialGrowth)
 mfront_dependencies(MFrontCyranoBehaviours
   YoungModulusTest_1
   YoungModulusTest_2
@@ -190,3 +193,6 @@ test_cyrano(norton_LogarithmicStrain1DWrapper-uniaxialloading-3-1D)
 test_cyrano(computestressfreeexpansion)
 test_cyrano(isotropiclinearswelling)
 test_cyrano(isotropicvolumeswelling)
+test_cyrano(axialgrowth)
+test_cyrano(orthotropicswelling)
+test_cyrano(orthotropicswelling2)

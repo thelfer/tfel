@@ -201,6 +201,15 @@ namespace mfront{
       StressFreeExpansionHandler sfe2;
     }; // end of struct OrthotropicStressFreeExpansion
     /*!
+     * \brief a brief structure describing a stress free expansion du
+     * to an orthotropic swelling described by an array of external
+     * state variables
+     */
+    struct OrthotropicStressFreeExpansionII{
+      //! stress free expansions
+      SFED_ESV esv;
+    }; // end of struct OrthotropicStressFreeExpansion
+    /*!
      * \brief list of a stress free expansion descriptions
      */
     using StressFreeExpansionDescriptionTypes =
@@ -208,7 +217,8 @@ namespace mfront{
 	VolumeSwellingStressFreeExpansion,
       AxialGrowthStressFreeExpansion,
       IsotropicStressFreeExpansion,
-      OrthotropicStressFreeExpansion>::type;
+      OrthotropicStressFreeExpansion,
+      OrthotropicStressFreeExpansionII>::type;
     //! description of a stress free expansion
     using StressFreeExpansionDescription =
       tfel::utilities::GenTypeBase<StressFreeExpansionDescriptionTypes>;

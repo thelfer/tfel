@@ -1251,24 +1251,58 @@ namespace mfront{
     auto throw_if = [](const bool c,const std::string& m){
       if(c){throw(std::runtime_error("BehaviourData::addStressFreeExpansion: "+m));}
     };
+    auto check_esv = [this,&throw_if](const SFED_ESV& h){
+      throw_if(!this->isExternalStateVariableName(h.vname),
+	       "'"+h.vname+"' is not an external state variable name");
+      const auto& ev = this->getExternalStateVariables().getVariable(h.vname);
+      throw_if(ev.arraySize!=1u,
+	       "invalid arrary size of variable '"+h.vname+"'");
+    };
+    auto check_esv2 = [this,&throw_if](const SFED_ESV& h){
+      throw_if(!this->isExternalStateVariableName(h.vname),
+	       "'"+h.vname+"' is not an external state variable name");
+      const auto& ev = this->getExternalStateVariables().getVariable(h.vname);
+      throw_if(ev.arraySize!=3u,
+	       "invalid arrary size of variable '"+h.vname+"'");
+    };
+    auto check = [&check_esv,&throw_if](const StressFreeExpansionHandler& h){
+      if(h.is<SFED_ESV>()){
+	check_esv(h.get<SFED_ESV>());
+      } else if(h.is<std::shared_ptr<ModelDescription>>()){
+#pragma message("add appropriate tests")
+      } else if (h.is<NullSwelling>()){
+	// do nothing
+      } else {
+	throw_if(true,"unsupported stress free expansion handler");
+      }
+    };
     if(sfed.is<VolumeSwellingStressFreeExpansion>()){
-      auto s = sfed.get<VolumeSwellingStressFreeExpansion>();
+      const auto& s = sfed.get<VolumeSwellingStressFreeExpansion>();
       throw_if(s.sfe.is<NullSwelling>(),
 	       "null swelling is not allowed");
+      check(s.sfe);
     } else if (sfed.is<IsotropicStressFreeExpansion>()){
-      auto s = sfed.get<IsotropicStressFreeExpansion>();
+      const auto& s = sfed.get<IsotropicStressFreeExpansion>();
       throw_if(s.sfe.is<NullSwelling>(),
 	       "null swelling is not allowed");
+      check(s.sfe);
     } else if (sfed.is<AxialGrowthStressFreeExpansion>()){
-      auto s = sfed.get<AxialGrowthStressFreeExpansion>();
+      const auto& s = sfed.get<AxialGrowthStressFreeExpansion>();
       throw_if(s.sfe.is<NullSwelling>(),
 	       "null swelling is not allowed");
+      check(s.sfe);
     } else if (sfed.is<OrthotropicStressFreeExpansion>()){
-      auto s = sfed.get<OrthotropicStressFreeExpansion>();
+      const auto& s = sfed.get<OrthotropicStressFreeExpansion>();
       throw_if(s.sfe0.is<NullSwelling>()&&
 	       s.sfe1.is<NullSwelling>()&&
 	       s.sfe2.is<NullSwelling>(),
 	       "null swelling is not allowed");
+      check(s.sfe0);
+      check(s.sfe1);
+      check(s.sfe2);
+    } else if (sfed.is<OrthotropicStressFreeExpansionII>()){
+      const auto& s = sfed.get<OrthotropicStressFreeExpansionII>();
+      check_esv2(s.esv);
     } else {
       throw_if(true,"internal error, unsupported stress free expansion type");
     }
@@ -1282,8 +1316,9 @@ namespace mfront{
 
   bool BehaviourData::isStressFreeExansionAnisotropic(void) const{
     for(const auto& sfed:this->sfeds){
-      if ((sfed.is<BehaviourData::AxialGrowthStressFreeExpansion>())&&
-	  (sfed.is<BehaviourData::OrthotropicStressFreeExpansion>())){ 
+      if ((sfed.is<BehaviourData::AxialGrowthStressFreeExpansion>())||
+	  (sfed.is<BehaviourData::OrthotropicStressFreeExpansion>())||
+	  (sfed.is<BehaviourData::OrthotropicStressFreeExpansionII>())){ 
 	return true;
       } else {
 	if ((!sfed.is<BehaviourData::IsotropicStressFreeExpansion>())&&

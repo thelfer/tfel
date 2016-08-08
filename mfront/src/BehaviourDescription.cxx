@@ -890,27 +890,28 @@ namespace mfront
   void BehaviourDescription::addStressFreeExpansion(const Hypothesis h,
 						    const StressFreeExpansionDescription& sfed){
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourData::addStressFreeExpansion: "+m));}
+      if(c){throw(std::runtime_error("BehaviourDescription::addStressFreeExpansion: "+m));}
     };
-    if ((sfed.is<BehaviourData::AxialGrowthStressFreeExpansion>())&&
-	(sfed.is<BehaviourData::OrthotropicStressFreeExpansion>())){ 
-      throw_if((!this->getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	       (!this->getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+    if ((sfed.is<BehaviourData::AxialGrowthStressFreeExpansion>())||
+	(sfed.is<BehaviourData::OrthotropicStressFreeExpansion>())||
+	(sfed.is<BehaviourData::OrthotropicStressFreeExpansionII>())){ 
+      throw_if((this->getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	       (this->getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
 	       "AxialGrowth or OrthotropicStressFreeExpansion "
 	       "are only valid for small or "
 	       "finite strain behaviours");
       throw_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
 	       "axial growth is only valid for orthotropic behaviour");
     } else {
-      throw_if((!this->getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	       (!this->getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+      throw_if((this->getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	       (this->getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
 	       "Isotropic or VolumeSwelling "
 	       "are only valid for small or "
 	       "finite strain behaviours");
-      throw_if(!((sfed.is<BehaviourData::VolumeSwellingStressFreeExpansion>())||
-		 (sfed.is<BehaviourData::IsotropicStressFreeExpansion>())),
+      throw_if((!sfed.is<BehaviourData::VolumeSwellingStressFreeExpansion>())&&
+	       (!sfed.is<BehaviourData::IsotropicStressFreeExpansion>()),
 	       "internal error, unsupported stress free expansion type");
-    }
+  }
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       this->d.addStressFreeExpansion(sfed);
       for(auto& md: this->sd){

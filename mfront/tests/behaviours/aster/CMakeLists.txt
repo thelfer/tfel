@@ -79,7 +79,10 @@ set(mfront_tests_SOURCES
   FiniteStrainSingleCrystal_NumericalJacobian
   ComputeStressFreeExpansion
   IsotropicLinearSwelling
-  IsotropicVolumeSwelling)
+  IsotropicVolumeSwelling
+  OrthotropicSwelling
+  OrthotropicSwelling2
+  AxialGrowth)
 mfront_dependencies(MFrontAsterBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
@@ -357,6 +360,11 @@ test_aster(finitestrainsinglecrystal_numericaljacobian-159)
 test_aster(computestressfreeexpansion)
 test_aster(isotropiclinearswelling)
 test_aster(isotropicvolumeswelling)
+test_aster(orthotropicswelling)
+test_aster(orthotropicswelling2)
+test_aster(orthotropicswelling3)
+test_aster(axialgrowth)
+test_aster(axialgrowth2)
 
 if(enable-python-bindings)
   test_aster_python(xx)

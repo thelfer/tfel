@@ -1,0 +1,22 @@
+@Behaviour AxialGrowth;
+@Author Helfer Thomas;
+@Date   08/08/16;
+@Description{
+ A test for the `@AxialGrowth` keyword
+}
+
+@OrthotropicBehaviour<Pipe>;
+@RequireStiffnessTensor<Altered>;
+
+@ExternalStateVariable real ag;
+ag.setGlossaryName("AxialGrowth");
+@AxialGrowth ag;
+
+@ProvidesSymmetricTangentOperator;
+@Integrator{
+  sig = D*(eto+deto);
+  if(computeTangentOperator_){
+    static_cast<void>(smt);
+    Dt = D;
+  }
+}

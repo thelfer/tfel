@@ -45,26 +45,39 @@ struct SwellingTest final
   {
     const auto m = std::string{"SiC_IrradiationSwellingModel_GoFaster.mfront"};
     // invalid file
-    this->check("@Swelling {\"ghost.mfront\"};");
+    this->check("@Swelling<Linear> {\"ghost.mfront\"};");
     // for isotropic swelling, one has to specify 'Linear' or 'Volume'
     this->check("@Swelling {\""+m+"\"};");
-    // invalid number of swelling models
-    this->check("@Swelling {\""+m+"\",\""+m+"\"};");
-    // orthotropic swelling is only not allowed for orthotropic behaviours
-    this->check("@Swelling {0,0,0};");
     // invalid token
-    this->check("@Swelling 3;");
+    this->check("@Swelling<Linear> 3;");
     // null swelling only is not allowed (isotropic case)
-    this->check("@Swelling 0;");
-    // null swelling only is not allowed (orthotropic case)
-    this->check("@OrthotropicBehaviour;@Swelling {0,0,0};");
-    // external state variable has not been declared
-    this->check("@Swelling s;");
-    // axial growth is only not allowed for orthotropic behaviours
-    this->check("@AxialGrowth {0,0,0};");
+    this->check("@Swelling<Linear> 0;");
     // the external state variables mandatory for the model are not
     // defined
-    this->check("@Swelling \""+m+"\"};");
+    this->check("@Swelling<Linear> \""+m+"\"};");
+    // external state variable has not been declared
+    this->check("@OrthotropicBehaviour;"
+		"@Swelling<Orthotropic> s;");
+    // null swelling only is not allowed (orthotropic case)
+    this->check("@OrthotropicBehaviour;"
+		"@Swelling<Orthotropic> {0,0,0};");
+    // external state variable has an invalid array size
+    this->check("OrthotropicBehaviour;"
+		"@ExternalStateVariable real s[2];"
+		"@Swelling<Orthotropic> s;");
+    // invalid number of swelling models
+    this->check("OrthotropicBehaviour;"
+		"@Swelling<Orthotropic> {\""+m+"\",\""+m+"\"};");
+    // axial growth is only not allowed for orthotropic behaviours
+    this->check("@AxialGrowth ag;");
+    // null expansion is not allowed for axial growth
+    this->check("@OrthotropicBehaviour;@AxialGrowth 0;");
+    // undefined external state variable
+    this->check("@OrthotropicBehaviour;@AxialGrowth ag;");
+    // invalid array size for the external state variable
+    this->check("@OrthotropicBehaviour;"
+		"@ExternalStateVariable real ag[2];"
+		"@AxialGrowth ag;");
     return this->result;
   } // end of execute()
  private:

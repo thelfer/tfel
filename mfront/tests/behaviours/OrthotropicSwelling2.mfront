@@ -1,0 +1,24 @@
+@Behaviour OrthotropicSwelling2;
+@Author Helfer Thomas;
+@Date   06/08/16;
+@Description{
+ A test for the `@Swelling` keyword
+}
+
+@OrthotropicBehaviour<Pipe>;
+@RequireStiffnessTensor<Altered>;
+
+@ExternalStateVariable real s0;
+s0.setEntryName("OrthotropicSwelling0");
+@ExternalStateVariable real s2;
+s2.setEntryName("OrthotropicSwelling2");
+@Swelling<Orthotropic> {s0,0,s2};
+
+@ProvidesSymmetricTangentOperator;
+@Integrator{
+  static_cast<void>(smt);
+  sig = D*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = D;
+  }
+}

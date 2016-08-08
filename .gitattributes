@@ -1975,6 +1975,7 @@ mfront/tests/CMakeLists.txt -text
 mfront/tests/Makefile.am -text
 mfront/tests/behaviours/AgeingBurger.mfront -text
 mfront/tests/behaviours/AnistropicLemaitreViscoplasticBehaviour.mfront -text
+mfront/tests/behaviours/AxialGrowth.mfront -text
 mfront/tests/behaviours/Burger.mfront -text
 mfront/tests/behaviours/CMakeLists.txt -text
 mfront/tests/behaviours/Chaboche.mfront -text
@@ -2078,6 +2079,8 @@ mfront/tests/behaviours/OrthotropicElastic6.mfront -text
 mfront/tests/behaviours/OrthotropicStandardElasticity.mfront -text
 mfront/tests/behaviours/OrthotropicStandardElasticity2.mfront -text
 mfront/tests/behaviours/OrthotropicStandardElasticity3.mfront -text
+mfront/tests/behaviours/OrthotropicSwelling.mfront -text
+mfront/tests/behaviours/OrthotropicSwelling2.mfront -text
 mfront/tests/behaviours/PlasIsoCin.mfront -text
 mfront/tests/behaviours/Plasticity.mfront -text
 mfront/tests/behaviours/PolyCrystals.mfront -text
@@ -2630,6 +2633,8 @@ mfront/tests/behaviours/aster/Makefile.am -text
 mfront/tests/behaviours/aster/asterIsotropicHomogeneousPipe.mtest.in -text
 mfront/tests/behaviours/aster/asterageingburger.mtest.in -text
 mfront/tests/behaviours/aster/asteranistropiclemaitreviscoplasticbehaviour.mtest.in -text
+mfront/tests/behaviours/aster/asteraxialgrowth.mtest.in -text
+mfront/tests/behaviours/aster/asteraxialgrowth2.mtest.in -text
 mfront/tests/behaviours/aster/asterburger.mtest.in -text
 mfront/tests/behaviours/aster/asterchaboche.mtest.in -text
 mfront/tests/behaviours/aster/asterchaboche2.mtest.in -text
@@ -2715,6 +2720,9 @@ mfront/tests/behaviours/aster/asternorton2.mtest.in -text
 mfront/tests/behaviours/aster/asterorthotropiccreep-rk42.mtest.in -text
 mfront/tests/behaviours/aster/asterorthotropiccreep-rkCastem.mtest.in -text
 mfront/tests/behaviours/aster/asterorthotropiccreep.mtest.in -text
+mfront/tests/behaviours/aster/asterorthotropicswelling.mtest.in -text
+mfront/tests/behaviours/aster/asterorthotropicswelling2.mtest.in -text
+mfront/tests/behaviours/aster/asterorthotropicswelling3.mtest.in -text
 mfront/tests/behaviours/aster/asterplasisocin.mtest.in -text
 mfront/tests/behaviours/aster/asterplasticity.mtest.in -text
 mfront/tests/behaviours/aster/asterpolycrystals.mtest.in -text
@@ -2808,6 +2816,8 @@ mfront/tests/behaviours/castem/castemT91-satohtest.mtest.in -text
 mfront/tests/behaviours/castem/castemT91-viscositytest.mtest.in -text
 mfront/tests/behaviours/castem/castemageingburger.mtest.in -text
 mfront/tests/behaviours/castem/castemanistropiclemaitreviscoplasticbehaviour.mtest.in -text
+mfront/tests/behaviours/castem/castemaxialgrowth.mtest.in -text
+mfront/tests/behaviours/castem/castemaxialgrowth2.mtest.in -text
 mfront/tests/behaviours/castem/castemburger.mtest.in -text
 mfront/tests/behaviours/castem/castemchaboche.mtest.in -text
 mfront/tests/behaviours/castem/castemchaboche2.mtest.in -text
@@ -3085,6 +3095,9 @@ mfront/tests/behaviours/castem/castemorthotropicelasticity6-6.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropicelasticity6-7.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropicelasticity6-8.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropicelasticity6-9.mtest.in -text
+mfront/tests/behaviours/castem/castemorthotropicswelling.mtest.in -text
+mfront/tests/behaviours/castem/castemorthotropicswelling2.mtest.in -text
+mfront/tests/behaviours/castem/castemorthotropicswelling3.mtest.in -text
 mfront/tests/behaviours/castem/castemplasisocin.mtest.in -text
 mfront/tests/behaviours/castem/castemplasticity.mtest.in -text
 mfront/tests/behaviours/castem/castempolycrystals.mtest.in -text
@@ -3430,6 +3443,7 @@ mfront/tests/behaviours/crossedsecant/crossedsecantviscochaboche.mtest.in -text
 mfront/tests/behaviours/crossedsecant/crossedsecantviscoplasisocin.mtest.in -text
 mfront/tests/behaviours/cyrano/CMakeLists.txt -text
 mfront/tests/behaviours/cyrano/Makefile.am -text
+mfront/tests/behaviours/cyrano/cyranoaxialgrowth.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranocomputestressfreeexpansion.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity10.mtest.in -text
@@ -3473,6 +3487,8 @@ mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity5-3.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity6-1.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity6-2.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoorthotropicelasticity6-3.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoorthotropicswelling.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoorthotropicswelling2.mtest.in -text
 mfront/tests/behaviours/epx/CMakeLists.txt -text
 mfront/tests/behaviours/epx/Makefile.am -text
 mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-shear-1-2D.mtest.in -text
