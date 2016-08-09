@@ -145,7 +145,7 @@ namespace mtest
       ntens = 6;
       nummod = 3u;
     } else {
-      throw(std::runtime_error("AsterCohesiveZoneModel::call_beahviour: "
+      throw(std::runtime_error("AsterCohesiveZoneModel::call_behaviour: "
 			       "unsupported hypothesis"));
     }
     fill(Kt.begin(),Kt.end(),0.);

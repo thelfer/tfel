@@ -57,7 +57,7 @@ namespace mtest
     static const real sqrt2 = std::sqrt(real(2));
     const auto h = this->getHypothesis();
     if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
-      throw(std::runtime_error("AbaqusSmallStrainBehaviour::call_beahviour : "
+      throw(std::runtime_error("AbaqusSmallStrainBehaviour::call_behaviour : "
 			       "abaqus behaviours may only provide the "
 			       "consistent tangent operator"));
     }
@@ -70,7 +70,7 @@ namespace mtest
       } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6;
       } 
-      throw(std::runtime_error("AbaqusSmallStrainBehaviour::call_beahviour : "
+      throw(std::runtime_error("AbaqusSmallStrainBehaviour::call_behaviour : "
 			       "unsupported hypothesis"));      
     }();
     fill(wk.D.begin(),wk.D.end(),0.);

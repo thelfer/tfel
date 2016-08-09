@@ -49,11 +49,11 @@ namespace mtest
     };
     const auto s = [h]() -> std::string {
       if(h==tfel::material::ModellingHypothesis::AXISYMMETRICAL){
-	return "_axis";
+	return "_AXIS";
       } else if(h==tfel::material::ModellingHypothesis::PLANESTRAIN){
-	return "_pstrain";
+	return "_PSTRAIN";
       } else if(h==tfel::material::ModellingHypothesis::PLANESTRESS){
-	return "_pstress";
+	return "_PSTRESS";
       } else if(h==tfel::material::ModellingHypothesis::TRIDIMENSIONAL){
 	return "_3D";
       }
@@ -64,8 +64,6 @@ namespace mtest
       throw(std::runtime_error("AbaqusExplicitBehaviour::AbaqusExplicitBehaviour: "
 			       "invalid function name."));
     }
-    mfront::getLogStream() << "behaviourName : "
-			   << std::string{b.begin(),b.begin()+b.length()-s.length()} << std::endl;
     return {b.begin(),b.begin()+b.length()-s.length()};    
   }
   
@@ -97,8 +95,8 @@ namespace mtest
 	 (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	if(eo){
 	  tmp.insert(tmp.end(),{"YoungModulus1","YoungModulus2","YoungModulus3",
-		      "PoissonRatio12","PoissonRatio23","PoissonRatio13"
-		      "ShearModulus12"});
+		"PoissonRatio12","PoissonRatio23","PoissonRatio13",
+		"ShearModulus12"});
 	}
 	if(to){
 	  tmp.insert(tmp.end(),
@@ -107,8 +105,8 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	if(eo){
 	  tmp.insert(tmp.end(),{"YoungModulus1","YoungModulus2","YoungModulus3",
-		      "PoissonRatio12","PoissonRatio23","PoissonRatio13"
-		      "ShearModulus12","ShearModulus23","ShearModulus13"});
+		"PoissonRatio12","PoissonRatio23","PoissonRatio13",
+		"ShearModulus12","ShearModulus23","ShearModulus13"});
 	}
 	if(to){
 	  tmp.insert(tmp.end(),
@@ -413,7 +411,6 @@ namespace mtest
     real enerInternNew = 0;
     real enerInelasNew = 0;
     // rotation matrix
-    tmatrix<3u,3u,real> r0;
     tmatrix<3u,3u,real> r1;
     if((h==ModellingHypothesis::PLANESTRESS)||
        (h==ModellingHypothesis::AXISYMMETRICAL)||
@@ -431,7 +428,6 @@ namespace mtest
       tfel::fsalgo::copy<5u>::exe(F1.begin(),defgradNew);
       U0.exportTab(stretchOld);
       U1.exportTab(stretchNew);
-      r0 = matrix_view(R0);
       r1 = matrix_view(R1);
       s0.changeBasis(r1);
       s0.exportTab(stressOld);
@@ -463,7 +459,6 @@ namespace mtest
       U1.exportTab(stretchNew);
       std::swap(stretchOld[4],stretchOld[5]);
       std::swap(stretchNew[4],stretchNew[5]);
-      r0 = matrix_view(R0);
       r1 = matrix_view(R1);
       s0.changeBasis(r1);
       s0.exportTab(stressOld);

@@ -2201,6 +2201,7 @@ mfront/tests/behaviours/abaqus/Makefile.am -text
 mfront/tests/behaviours/abaqus/abaqusIsotropicHomogeneousPipe.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusageingburger.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusanistropiclemaitreviscoplasticbehaviour.mtest.in -text
+mfront/tests/behaviours/abaqus/abaqusaxialgrowth.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusburger.mtest.in -text
 mfront/tests/behaviours/abaqus/abaquschaboche.mtest.in -text
 mfront/tests/behaviours/abaqus/abaquschaboche2.mtest.in -text
@@ -2280,6 +2281,8 @@ mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cfc_irradiation.mtest.in -te
 mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cfc_numericaljacobian.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusnorton.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusnorton2.mtest.in -text
+mfront/tests/behaviours/abaqus/abaqusorthotropicswelling.mtest.in -text
+mfront/tests/behaviours/abaqus/abaqusorthotropicswelling2.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusplasisocin.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusplasticity.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity-shear-1-2D.mtest.in -text

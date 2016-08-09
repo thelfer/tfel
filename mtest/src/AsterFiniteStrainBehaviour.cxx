@@ -173,7 +173,7 @@ namespace mtest
       dimension = 3u;
       nummod = 3u;
     } else {
-      throw(runtime_error("AsterFiniteStrainBehaviour::call_beahviour: "
+      throw(runtime_error("AsterFiniteStrainBehaviour::call_behaviour: "
 			  "unsupported hypothesis"));
     }
     fill(wk.D.begin(),wk.D.end(),0.);

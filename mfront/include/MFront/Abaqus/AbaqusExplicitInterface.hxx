@@ -35,6 +35,8 @@
 #include"MFront/Abaqus/AbaqusException.hxx"
 #include"MFront/Abaqus/AbaqusExplicitData.hxx"
 #include"MFront/Abaqus/AbaqusTangentOperator.hxx"
+#include"MFront/Abaqus/AbaqusComputeStiffnessTensor.hxx"
+#include"MFront/Abaqus/AbaqusComputeThermalExpansionCoefficientTensor.hxx"
 #include"MFront/Abaqus/AbaqusInterfaceExceptions.hxx"
 
 namespace abaqus{
@@ -63,13 +65,55 @@ namespace abaqus{
       tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
     //! simple alias
     using MechanicalBehaviourBase = tfel::material::MechanicalBehaviourBase; 
+    using BV = Behaviour<H,T,false>;
+    using ATraits =  AbaqusTraits<BV>;
+    //! structure in charge of initializing the stiffness operator
+    struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer
+    {
+      typedef typename BV::BehaviourData  BData;
+      TFEL_ABAQUS_INLINE static void
+	exe(BData& data,const T * const props){
+	typedef AbaqusTraits<BV> Traits;
+	const bool buas = Traits::requiresUnAlteredStiffnessTensor;
+	AbaqusComputeStiffnessTensor<AbaqusTraits<BV>::btype,H,
+				     AbaqusTraits<BV>::etype,buas>::exe(data.getStiffnessTensor(),
+									props);
+      } // end of exe
+    }; // end of struct StiffnessOperatorInitializer
+    //! structure in charge of initializing the stiffness operator
+    struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer
+    {
+      typedef typename BV::BehaviourData  BData;
+      TFEL_ABAQUS_INLINE static void
+	exe(BData& data,const T * const props){
+	const unsigned short o =
+	  AbaqusTraits<BV>::elasticPropertiesOffset;
+	AbaqusComputeThermalExpansionCoefficientTensor<AbaqusTraits<BV>::btype,H,
+						       AbaqusTraits<BV>::stype>::exe(props+o,
+										     data.getThermalExpansionCoefficientTensor());
+      } // end of exe
+    }; // end of struct ThermalExpansionCoefficientTensorInitializer
+    //! place holder for tag dispatching
+    struct TFEL_VISIBILITY_LOCAL DoNothingInitializer
+    {
+      typedef typename BV::BehaviourData  BData;
+      TFEL_ABAQUS_INLINE static void
+	exe(BData&,const T * const)
+      {}
+    }; // end of struct DoNothingInitializer
+    static constexpr const bool bs = ATraits::requiresStiffnessTensor;
+    static constexpr const bool ba = ATraits::requiresThermalExpansionCoefficientTensor;
+    typedef typename std::conditional<bs,StiffnessOperatorInitializer,
+				      DoNothingInitializer>::type SInitializer;
+    typedef typename std::conditional<ba,ThermalExpansionCoefficientTensorInitializer,
+				      DoNothingInitializer>::type AInitializer;
     /*!
      * \param[out] D: elastic stiffness
      * \param[out] d: data
      */
     TFEL_ABAQUS_INLINE2 static
-    int computeElasticPrediction(T *const D,
-				 const AbaqusExplicitData<T>& d)
+      int computeElasticPrediction(T *const D,
+				   const AbaqusExplicitData<T>& d)
     {
       //! simple alias
       using TangentOperatorTraits =
@@ -79,6 +123,8 @@ namespace abaqus{
       const tfel::math::stensor<N,T> de(zero);
       const tfel::math::stensor<N,T> s(zero);
       Behaviour<H,T,false> b(d);
+      SInitializer::exe(b,d.props);
+      AInitializer::exe(b,d.props);
       b.setBehaviourDataDrivingVariables(e);
       b.setBehaviourDataThermodynamicForces(s);
       b.setIntegrationDataDrivingVariables(de);
@@ -95,8 +141,8 @@ namespace abaqus{
      * \param[out] d: data
      */
     TFEL_ABAQUS_INLINE2 static
-    int computeElasticPrediction2(T *const D,
-				  const AbaqusExplicitData<T>& d)
+      int computeElasticPrediction2(T *const D,
+				    const AbaqusExplicitData<T>& d)
     {
       //! simple alias
       using TangentOperatorTraits =
@@ -106,6 +152,8 @@ namespace abaqus{
       const tfel::math::tensor<N,T> F1(tfel::math::tensor<N,T>::Id());
       const tfel::math::stensor<N,T> s(zero);
       Behaviour<H,T,false> b(d);
+      SInitializer::exe(b,d.props);
+      AInitializer::exe(b,d.props);
       b.setBehaviourDataDrivingVariables(F0);
       b.setIntegrationDataDrivingVariables(F1);
       b.setBehaviourDataThermodynamicForces(s);
@@ -125,18 +173,23 @@ namespace abaqus{
      * \param[out] de: strain tensor increment
      */
     TFEL_ABAQUS_INLINE2 static
-    int integrate(tfel::math::stensor<N,T>& s,
-		  const AbaqusExplicitData<T>& d,
-		  const tfel::math::stensor<N,T>& e,
-		  const tfel::math::stensor<N,T>& de)
+      int integrate(tfel::math::stensor<N,T>& s,
+		    const AbaqusExplicitData<T>& d,
+		    const tfel::math::stensor<N,T>& e,
+		    const tfel::math::stensor<N,T>& de)
     {
       //! simple alias
       using TangentOperatorTraits =
 	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>;
+      using DVInitializer = typename std::conditional<
+	tfel::material::MechanicalBehaviourTraits<BV>::hasStressFreeExpansion,
+	DrivingVariableInitialiserWithStressFreeExpansion,
+	DrivingVariableInitialiserWithoutStressFreeExpansion>::type;
       Behaviour<H,T,false> b(d);
-      b.setBehaviourDataDrivingVariables(e);
+      SInitializer::exe(b,d.props);
+      AInitializer::exe(b,d.props);
+      DVInitializer::exe(b,e,de);
       b.setBehaviourDataThermodynamicForces(s);
-      b.setIntegrationDataDrivingVariables(de);
       b.setOutOfBoundsPolicy(d.policy);
       b.initialize();
       b.checkBounds();
@@ -166,15 +219,17 @@ namespace abaqus{
      * \param[out] de: strain tensor increment
      */
     TFEL_ABAQUS_INLINE2 static
-    int integrate(tfel::math::stensor<N,T>& s,
-		  const AbaqusExplicitData<T>& d,
-		  const tfel::math::tensor<N,T>& F0,
-		  const tfel::math::tensor<N,T>& F1)
+      int integrate(tfel::math::stensor<N,T>& s,
+		    const AbaqusExplicitData<T>& d,
+		    const tfel::math::tensor<N,T>& F0,
+		    const tfel::math::tensor<N,T>& F1)
     {
       //! simple alias
       using TangentOperatorTraits =
 	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>;
       Behaviour<H,T,false> b(d);
+      SInitializer::exe(b,d.props);
+      AInitializer::exe(b,d.props);
       b.setBehaviourDataDrivingVariables(F0);
       b.setIntegrationDataDrivingVariables(F1);
       b.setBehaviourDataThermodynamicForces(s);
@@ -199,6 +254,57 @@ namespace abaqus{
       b.exportStateData(s,d);
       return 0;
     };
+  private:
+    //! An helper structure used to initialise the driving variables
+    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
+      : public AbaqusInterfaceExceptions
+      {
+	/*!
+	 * \param[out] b:    behaviour
+	 * \param[in]  e:    driving variable at the beginning of the
+	 *                   time step
+	 * \param[in]  de:   driving variable at the end of the
+	 *                   time step or driving variable increment
+	 * \param[in]  sfeh: function handling the stress-free expansion
+	 *                   at the beginning of the time step
+	 */
+	template<typename NumType>
+	  TFEL_ABAQUS_INLINE static 
+	  void exe(BV& b,
+		   tfel::math::stensor<N,NumType> e,
+		   tfel::math::stensor<N,NumType> de)
+	{
+	  typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
+	  // check that the function pointer are not null
+	  std::pair<StressFreeExpansionType,StressFreeExpansionType> s;
+	  b.computeStressFreeExpansion(s);
+	  e  -= s.first;
+	  de -= s.second-s.first;
+	  b.setBehaviourDataDrivingVariables(e);
+	  b.setIntegrationDataDrivingVariables(de);
+	} // end of exe
+      }; // end of struct DrivingVariableInitialiserWithStressFreeExpansion
+    //! An helper structure used to initialise the driving variables
+    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithoutStressFreeExpansion
+    {
+      /*!
+       * \param[out] b:    behaviour
+       * \param[in]  e:    driving variable at the beginning of the
+       *                   time step
+       * \param[in]  de:   driving variable at the end of the
+       *                   time step or driving variable increment
+       * \param[in]  sfeh: function handling the stress-free expansion
+       *                   at the beginning of the time step
+       */
+      TFEL_ABAQUS_INLINE static 
+	void exe(BV& b,
+		 const tfel::math::stensor<N,T>& e,
+		 const tfel::math::stensor<N,T>& de)
+      {
+	b.setBehaviourDataDrivingVariables(e);
+	b.setIntegrationDataDrivingVariables(de);
+      } // end of exe
+    }; // end of struct DrivingVariableInitialiserWithoutStressFreeExpansion
   }; // end of struct AbaqusExplicitInterface
       
 } // end of namespace abaqus

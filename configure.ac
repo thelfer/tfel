@@ -950,6 +950,9 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/abaqus/abaquscomputestressfreeexpansion.mtest
 	   mfront/tests/behaviours/abaqus/abaqusisotropiclinearswelling.mtest
   	   mfront/tests/behaviours/abaqus/abaqusisotropicvolumeswelling.mtest
+    	   mfront/tests/behaviours/abaqus/abaqusorthotropicswelling.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusorthotropicswelling2.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusaxialgrowth.mtest
    	   mfront/tests/behaviours/abaqus-explicit/Makefile
            mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
            mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest

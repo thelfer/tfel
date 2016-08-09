@@ -30,11 +30,11 @@ namespace mfront{
 		  const tfel::material::ModellingHypothesis::Hypothesis h){
     const auto s = [h]() -> std::string {
       if(h==tfel::material::ModellingHypothesis::AXISYMMETRICAL){
-	return "axis";
+	return "AXIS";
       } else if(h==tfel::material::ModellingHypothesis::PLANESTRAIN){
-	return "pstrain";
+	return "PSTRAIN";
       } else if(h==tfel::material::ModellingHypothesis::PLANESTRESS){
-	return "pstress";
+	return "PSTRESS";
       } else if(h==tfel::material::ModellingHypothesis::TRIDIMENSIONAL){
 	return "3D";
       }
@@ -208,7 +208,7 @@ namespace mfront{
     insert_if(d[lib].ldflags,"-lAbaqusInterface");
     insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
     for(const auto h : this->getModellingHypothesesToBeTreated(bd)){
-      insert_if(d[lib].epts,mfront::getFunctionName(name,h));
+      insert_if(d[lib].epts,mfront::getFunctionName(this->getFunctionName(name),h));
     }
   } // end of AbaqusExplicitInterface::getTargetsDescription
 
@@ -331,11 +331,11 @@ namespace mfront{
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
 
     for(const auto & h : mh){
-      out << "MFRONT_SHAREDOBJ void\n" << mfront::getFunctionName(name,h) << "_f";
+      out << "MFRONT_SHAREDOBJ void\n" << mfront::getFunctionName(this->getFunctionName(name),h) << "_f";
       writeVUMATArguments(out,"float");
       out << ";\n\n";
 
-      out << "MFRONT_SHAREDOBJ void\n" << mfront::getFunctionName(name,h);
+      out << "MFRONT_SHAREDOBJ void\n" << mfront::getFunctionName(this->getFunctionName(name),h);
       writeVUMATArguments(out,"double");
       out << ";\n\n";
     }

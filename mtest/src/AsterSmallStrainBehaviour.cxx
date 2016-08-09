@@ -78,9 +78,8 @@ namespace mtest
       dimension = 3u;
       nummod = 3u;
     } else {
-      string msg("AsterSmallStrainBehaviour::call_beahviour : ");
-      msg += "unsupported hypothesis";
-      throw(runtime_error(msg));
+      throw(runtime_error("AsterSmallStrainBehaviour::call_behaviour: "
+			  "unsupported hypothesis"));
     }
     fill(wk.D.begin(),wk.D.end(),0.);
     // choosing the type of stiffness matrix
