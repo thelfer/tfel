@@ -309,20 +309,34 @@ namespace mtest
     }
     if((h==ModellingHypothesis::PLANESTRESS)||(h==ModellingHypothesis::AXISYMMETRICAL)||
        (h==ModellingHypothesis::PLANESTRAIN)){
+      tfel::math::st2tost2<2,real> D;
+      for(unsigned short i=0;i!=4;++i){
+	for(unsigned short j=0;j!=4;++j){
+	  D(i,j)=K(i,j);
+	}
+      }
+      const auto D2 = tfel::math::change_basis(D,tfel::math::transpose(s.r));
       for(unsigned short i=0;i!=4;++i){
 	for(unsigned short j=0;j!=3;++j){
-	  m(i,j)=K(i,j);
+	  m(i,j)=D2(i,j);
 	}
-	m(i,3) = m(i,4) = K(i,3);
+	m(i,3) = m(i,4) = D2(i,3);
       }
     } else {
+      tfel::math::st2tost2<3,real> D;
+      for(unsigned short i=0;i!=6;++i){
+	for(unsigned short j=0;j!=6;++j){
+	  D(i,j)=K(i,j);
+	}
+      }
+      const auto D2 = tfel::math::change_basis(D,tfel::math::transpose(s.r));
       for(unsigned short i=0;i!=6;++i){
 	for(unsigned short j=0;j!=3;++j){
-	  m(i,j)=K(i,j);
+	  m(i,j)=D2(i,j);
 	}
-	m(i,3) = m(i,4) = K(i,3);
-	m(i,5) = m(i,6) = K(i,4);
-	m(i,7) = m(i,8) = K(i,5);
+	m(i,3) = m(i,4) = D2(i,3);
+	m(i,5) = m(i,6) = D2(i,4);
+	m(i,7) = m(i,8) = D2(i,5);
       }
     }
     return true;
@@ -410,7 +424,7 @@ namespace mtest
     const real enerInelasOld = 0;
     real enerInternNew = 0;
     real enerInelasNew = 0;
-    // rotation matrix
+    // rotation matrix from the polar decomposition
     tmatrix<3u,3u,real> r1;
     if((h==ModellingHypothesis::PLANESTRESS)||
        (h==ModellingHypothesis::AXISYMMETRICAL)||
@@ -422,6 +436,9 @@ namespace mtest
       stensor<2u,real> U0;
       stensor<2u,real> U1;
       stensor<2u,real> s0(&(s.s0[0]));
+      F0.changeBasis(s.r);
+      F0.changeBasis(s.r);
+      s0.changeBasis(s.r);
       polar_decomposition(R0,U0,F0);
       polar_decomposition(R1,U1,F1);
       tfel::fsalgo::copy<5u>::exe(F0.begin(),defgradOld);
@@ -451,6 +468,9 @@ namespace mtest
       stensor<3u,real> U0;
       stensor<3u,real> U1;
       stensor<3u,real> s0(&(s.s0[0]));
+      F0.changeBasis(s.r);
+      F0.changeBasis(s.r);
+      s0.changeBasis(s.r);
       polar_decomposition(R0,U0,F0);
       polar_decomposition(R1,U1,F1);
       convert(defgradOld,F0);
@@ -501,6 +521,7 @@ namespace mtest
 	sig[3] = stressNew[3]*sqrt2;
       }
       sig.changeBasis(transpose(r1));
+      sig.changeBasis(transpose(s.r));
       tfel::fsalgo::copy<4u>::exe(sig.begin(),s.s1.begin());
     } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
       stensor<3u,real> sig = {stressNew[0],
@@ -510,6 +531,7 @@ namespace mtest
 			      stressNew[5]*sqrt2,
 			      stressNew[4]*sqrt2};
       sig.changeBasis(transpose(r1));
+      sig.changeBasis(transpose(s.r));
       tfel::fsalgo::copy<6u>::exe(sig.begin(),s.s1.begin());
     } else {
       throw(std::runtime_error("AbaqusExplicitBehaviour::integrate: "
