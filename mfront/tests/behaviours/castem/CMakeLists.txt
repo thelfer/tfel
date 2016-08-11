@@ -117,6 +117,7 @@ set(mfront_tests_SOURCES
   ComputeStressFreeExpansion
   IsotropicLinearSwelling
   IsotropicVolumeSwelling
+  IsotropicVolumeSwelling2
   OrthotropicSwelling
   OrthotropicSwelling2
   AxialGrowth)
@@ -608,6 +609,7 @@ test_castem(tssf)
 test_castem(computestressfreeexpansion)
 test_castem(isotropiclinearswelling)
 test_castem(isotropicvolumeswelling)
+test_castem(isotropicvolumeswelling2)
 test_castem(orthotropicswelling)
 test_castem(orthotropicswelling2)
 test_castem(orthotropicswelling3)

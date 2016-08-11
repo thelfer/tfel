@@ -14,6 +14,7 @@
 
 #include<sstream>
 #include<iterator>
+#include<algorithm>
 #include<stdexcept>
 
 #include"TFEL/Glossary/Glossary.hxx"
@@ -21,6 +22,7 @@
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/PerformanceProfiling.hxx"
+#include"MFront/ModelDescription.hxx"
 #include"MFront/BehaviourData.hxx"
 
 namespace mfront{
@@ -357,6 +359,19 @@ namespace mfront{
     return this->getStateVariables().getVariable(v);
   } // end of BehaviourData::getStateVariableDescription
 
+  const VariableDescription&
+  BehaviourData::getExternalStateVariableDescription(const std::string& v) const
+  {
+    return this->getExternalStateVariables().getVariable(v);
+  } // end of BehaviourData::getExternalStateVariableDescription
+
+  const VariableDescription&
+  BehaviourData::getExternalStateVariableDescriptionByExternalName(const std::string& v) const
+  {
+    return this->getExternalStateVariables().getVariableByExternalName(v,this->glossaryNames,
+								       this->entryNames);
+  } // end of BehaviourData::getExternalStateVariableDescriptionByExternalName
+  
   void
   BehaviourData::addMaterialProperty(const VariableDescription& v,
 				   const RegistrationStatus s)
@@ -409,7 +424,7 @@ namespace mfront{
 
   void
   BehaviourData::addExternalStateVariable(const VariableDescription& v,
-					   const RegistrationStatus s)
+					  const RegistrationStatus s)
   {
     this->addVariable(this->externalStateVariables,v,s,true);
   } // end of BehaviourData::addExternalStateVariable
@@ -1265,11 +1280,67 @@ namespace mfront{
       throw_if(ev.arraySize!=3u,
 	       "invalid arrary size of variable '"+h.vname+"'");
     };
-    auto check = [&check_esv,&throw_if](const StressFreeExpansionHandler& h){
+    auto treat =
+      [&check_esv,&throw_if,this](const StressFreeExpansionHandler& h){
+      const auto& g = tfel::glossary::Glossary::getGlossary();
       if(h.is<SFED_ESV>()){
 	check_esv(h.get<SFED_ESV>());
       } else if(h.is<std::shared_ptr<ModelDescription>>()){
-#pragma message("add appropriate tests")
+	const auto& md = *(h.get<std::shared_ptr<ModelDescription>>());
+	throw_if(!md.constantMaterialProperties.empty(),
+		 "constant material properties are not supported yet");
+	throw_if(md.functions.size()!=1u,
+		 "invalid number of functions in model '"+md.className+"'");
+	throw_if(md.functions[0].name.empty(),
+		 "invalid function name");
+	throw_if(md.functions[0].modifiedVariables.size()!=1u,
+		 "invalid number of modified variables in function '"+
+		 md.functions[0].name+"' in model '"+md.className+"'");
+	// checking output
+	throw_if(md.outputs.size()!=1u,
+		 "external model must have one and only output");
+	// checking inputs
+	for(const auto& i : md.inputs){
+	  throw_if(i.arraySize!=1u,
+		   "invalid array size for model variable '"+i.name+"'");
+	  // external name
+	  const auto& n = md.getExternalName(i.name);
+	  // check that an external state variable with the same
+	  // external state variable exists
+	  const auto& evnames =
+	    this->getExternalNames(this->getExternalStateVariables());
+	  if(n==tfel::glossary::Glossary::Temperature){
+	    continue;
+	  }
+	  if((std::find(std::begin(evnames),std::end(evnames),n)==
+	      std::end(evnames))){
+	    // adding a new state variable with given external name
+	    auto v = i;
+	    v.name = md.className+"_"+v.name;
+	    if(v.type=="Field"){
+	      v.type = "real";
+	    }
+	    this->addExternalStateVariable(v,UNREGISTRED);
+	    if(g.contains(n)){
+	      this->setGlossaryName(v.name,n);
+	    } else {
+	      this->setEntryName(v.name,n);
+	    }
+	  }
+	}
+	// declaring the output has an auxiliary state variable
+	auto o = md.outputs[0];
+	const auto& on = md.getExternalName(o.name);
+	o.name = md.className+"_"+o.name;
+	if(o.type=="Field"){
+	  o.type = "real";
+	}
+	this->addAuxiliaryStateVariable(o,UNREGISTRED);
+	if(g.contains(on)){
+	  this->setGlossaryName(o.name,on);
+	} else {
+	  this->setEntryName(o.name,on);
+	}
       } else if (h.is<NullSwelling>()){
 	// do nothing
       } else {
@@ -1280,26 +1351,26 @@ namespace mfront{
       const auto& s = sfed.get<VolumeSwellingStressFreeExpansion>();
       throw_if(s.sfe.is<NullSwelling>(),
 	       "null swelling is not allowed");
-      check(s.sfe);
+      treat(s.sfe);
     } else if (sfed.is<IsotropicStressFreeExpansion>()){
       const auto& s = sfed.get<IsotropicStressFreeExpansion>();
       throw_if(s.sfe.is<NullSwelling>(),
 	       "null swelling is not allowed");
-      check(s.sfe);
+      treat(s.sfe);
     } else if (sfed.is<AxialGrowthStressFreeExpansion>()){
       const auto& s = sfed.get<AxialGrowthStressFreeExpansion>();
       throw_if(s.sfe.is<NullSwelling>(),
 	       "null swelling is not allowed");
-      check(s.sfe);
+      treat(s.sfe);
     } else if (sfed.is<OrthotropicStressFreeExpansion>()){
       const auto& s = sfed.get<OrthotropicStressFreeExpansion>();
       throw_if(s.sfe0.is<NullSwelling>()&&
 	       s.sfe1.is<NullSwelling>()&&
 	       s.sfe2.is<NullSwelling>(),
 	       "null swelling is not allowed");
-      check(s.sfe0);
-      check(s.sfe1);
-      check(s.sfe2);
+      treat(s.sfe0);
+      treat(s.sfe1);
+      treat(s.sfe2);
     } else if (sfed.is<OrthotropicStressFreeExpansionII>()){
       const auto& s = sfed.get<OrthotropicStressFreeExpansionII>();
       check_esv2(s.esv);

@@ -149,6 +149,7 @@ macro(add_mfront_behaviour_generated_source lib interface file)
       COMMAND "set"
       ARGS "PATH=$<TARGET_FILE_DIR:TFELConfig>;%PATH%"
       COMMAND "${mfront_executable}"
+      ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/models"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
@@ -160,6 +161,7 @@ macro(add_mfront_behaviour_generated_source lib interface file)
 	OUTPUT  "src/${file}.cxx"
 	OUTPUT  "src/${iprefix}${file}.cxx"
 	COMMAND "${mfront_executable}"
+	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/models"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
 	ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
@@ -170,6 +172,7 @@ macro(add_mfront_behaviour_generated_source lib interface file)
       if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
 	add_test(NAME mfront-${file}-${interface}
 	  COMMAND ${mfront_executable}
+	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/models
 	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours
 	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties
 	  ${mfront_flags}

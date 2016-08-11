@@ -813,6 +813,9 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/epx/epxmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-2D.mtest
 	   mfront/tests/behaviours/epx/epxmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D.mtest
 	   mfront/tests/behaviours/epx/epxmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D.mtest
+  	   mfront/tests/behaviours/epx/epxorthotropicswelling.mtest
+  	   mfront/tests/behaviours/epx/epxorthotropicswelling2.mtest	   
+  	   mfront/tests/behaviours/epx/epxaxialgrowth.mtest
            mfront/tests/behaviours/abaqus/Makefile
 	   mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck.mtest
            mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck2.mtest
@@ -1048,6 +1051,9 @@ AC_OUTPUT([debug.sh
    	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D.mtest
    	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D.mtest
    	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest
+	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitorthotropicswelling.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitorthotropicswelling2.mtest
+   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitaxialgrowth.mtest
 	   mfront/tests/behaviours/bricks/Makefile
 	   mfront/tests/behaviours/bricks/castem/Makefile
 	   mfront/tests/behaviours/bricks/cyrano/Makefile
@@ -1373,6 +1379,7 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/castem/castemcomputestressfreeexpansion.mtest
 	   mfront/tests/behaviours/castem/castemisotropiclinearswelling.mtest
   	   mfront/tests/behaviours/castem/castemisotropicvolumeswelling.mtest
+  	   mfront/tests/behaviours/castem/castemisotropicvolumeswelling2.mtest	   
      	   mfront/tests/behaviours/castem/castemorthotropicswelling.mtest
 	   mfront/tests/behaviours/castem/castemorthotropicswelling2.mtest
   	   mfront/tests/behaviours/castem/castemorthotropicswelling3.mtest

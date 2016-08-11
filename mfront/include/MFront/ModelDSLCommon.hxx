@@ -148,9 +148,6 @@ namespace mfront{
 				VariableBoundsDescription,
 				const std::string&);
 
-    virtual std::pair<std::string,unsigned short>
-    decomposeVariableName(const std::string&) const;
-
     virtual bool isOutputVariable(const std::string&) const;
 
     virtual bool isInputVariable(const std::string&) const;

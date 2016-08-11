@@ -377,6 +377,16 @@ namespace mfront{
     const VariableDescription&
     getStateVariableDescription(const std::string&) const;
     /*!
+     * \param[in] n: name
+     */
+    const VariableDescription&
+    getExternalStateVariableDescription(const std::string&) const;
+    /*!
+     * \param[in] n: external name
+     */
+    const VariableDescription&
+    getExternalStateVariableDescriptionByExternalName(const std::string&) const;
+    /*!
      * \return true if a least one modelling hypothesis is anisotropic
      */
     bool isStressFreeExansionAnisotropic(void) const;

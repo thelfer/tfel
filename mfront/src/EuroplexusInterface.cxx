@@ -43,10 +43,12 @@ namespace mfront{
 	<< " epx::EuroplexusReal *const,\n"
 	<< " epx::EuroplexusReal *const,\n"
       	<< " epx::EuroplexusReal *const,\n"
+	<< " epx::EuroplexusInt *const,\n"
 	<< "                char *const,\n"
 	<< " const epx::EuroplexusInt  *const,\n"
       	<< " const epx::EuroplexusInt  *const,\n"
 	<< " const epx::EuroplexusReal *const,\n"
+      	<< " const epx::EuroplexusReal *const,\n"
 	<< " const epx::EuroplexusReal *const,\n"
 	<< " const epx::EuroplexusReal *const,\n"
 	<< " const epx::EuroplexusReal *const,\n"
@@ -66,12 +68,14 @@ namespace mfront{
 	<< " epx::EuroplexusReal *const STATEV,\n"
 	<< " epx::EuroplexusReal *const DDSDDE,\n"
 	<< " epx::EuroplexusReal *const PNEWDT,\n"
+      	<< " epx::EuroplexusInt  *const BROKEN,\n"
       	<< "                char *const MSG,\n"
 	<< " const epx::EuroplexusInt  *const NSTATV,\n"
 	<< " const epx::EuroplexusInt  *const HYPOTHESIS,\n"
 	<< " const epx::EuroplexusReal *const DTIME,\n"
 	<< " const epx::EuroplexusReal *const F0,\n"
 	<< " const epx::EuroplexusReal *const F1,\n"
+      	<< " const epx::EuroplexusReal *const R,\n"
 	<< " const epx::EuroplexusReal *const PROPS,\n"
 	<< " const epx::EuroplexusInt  *const NPROPS,\n"
 	<< " const epx::EuroplexusReal *const TEMP,\n"
@@ -333,13 +337,14 @@ namespace mfront{
       this->writeLogarithmicStrainCall(out,mb,name);
     } else {
       // this->generateMTestFile1(out);
-      out << "const epx::EPXData d = {STATUS,STRESS,STATEV,DDSDDE,PNEWDT,MSG,\n"
-	  << "                        *NSTATV,*DTIME,F0,F1,PROPS,*NPROPS,\n"
+      out << "const epx::EPXData d = {STATUS,STRESS,STATEV,DDSDDE,PNEWDT,BROKEN,MSG,\n"
+	  << "                        *NSTATV,*DTIME,F0,F1,R,PROPS,*NPROPS,\n"
 	  << "                        TEMP,DTEMP,PREDEF,DPRED,*NPREDEF,\n"
 	  << "                        " << getFunctionName(name) << "_getOutOfBoundsPolicy(),\n"
 	  << "                        nullptr};\n"
 	  << "epx::EuroplexusInterface<" << mb.getClassName() << ">::exe(d,*HYPOTHESIS);\n";
-    } 
+    }
+    
     // this->generateMTestFile2(out,mb.getBehaviourType(),
     // 			     name,"",mb);
     out << "}\n\n";
@@ -470,8 +475,8 @@ namespace mfront{
     out << "} else {\n"
 	<< "epx::computeSecondPiolaKirchhoffStressFromCauchyStress(sig,STRESS,F0,*HYPOTHESIS);\n"
 	<< "}\n"
-	<< "const epx::EPXData d = {STATUS,sig,STATEV,DDSDDE,PNEWDT,MSG,\n"
-	<< "                        *NSTATV,*DTIME,eto,deto,PROPS,*NPROPS,\n"
+	<< "const epx::EPXData d = {STATUS,sig,STATEV,DDSDDE,PNEWDT,BROKEN,MSG,\n"
+	<< "                        *NSTATV,*DTIME,eto,deto,R,PROPS,*NPROPS,\n"
 	<< "                        TEMP,DTEMP,PREDEF,DPRED,*NPREDEF,\n"
 	<< "                        " << this->getFunctionName(name) << "_getOutOfBoundsPolicy(),\n"
 	<< "                        " << sfeh << "};\n"
@@ -516,7 +521,7 @@ namespace mfront{
 			       "strategy shall be used only with small "
 			       "strain behaviour"));
     }
-    const auto sfeh = "epx::EuroplexusStandardSmallStrainStressFreeExpansionHandler";
+    const auto sfeh = "epx::EuroplexusLogarithmicStrainStressFreeExpansionHandler";
     out << "epx::EuroplexusReal eto[6];\n"
 	<< "epx::EuroplexusReal deto[6];\n"
 	<< "epx::EuroplexusReal sig[6];\n"
@@ -551,8 +556,8 @@ namespace mfront{
     out << "} else {\n"
 	<< "epx::computeDualStressOfLogarithmicStrainFromCauchyStress(sig,STRESS,P0,F0,*HYPOTHESIS);\n"
 	<< "}\n"
-	<< "const epx::EPXData d = {STATUS,sig,STATEV,DDSDDE,PNEWDT,MSG,\n"
-	<< "                        *NSTATV,*DTIME,eto,deto,PROPS,*NPROPS,\n"
+	<< "const epx::EPXData d = {STATUS,sig,STATEV,DDSDDE,PNEWDT,BROKEN,MSG,\n"
+	<< "                        *NSTATV,*DTIME,eto,deto,R,PROPS,*NPROPS,\n"
 	<< "                        TEMP,DTEMP,PREDEF,DPRED,*NPREDEF,\n"
 	<< "                        " << this->getFunctionName(name) << "_getOutOfBoundsPolicy(),\n"
 	<< "                        " << sfeh << "};\n"

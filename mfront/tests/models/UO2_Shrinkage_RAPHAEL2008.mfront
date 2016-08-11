@@ -2,7 +2,7 @@
 @Model    Shrinkage_RAPHAEL2008;
 @Material UO2;
 @Author   F. Michel;
-@Date     Fev 2010;
+@Date     02/2010;
 @Description{
   "ÉTUDE ET MODELISATION DE LA DENSIFICATION EN PILE DES "
   "OXYDES NUCLEAIRES UO2 ET MOX "
@@ -12,7 +12,7 @@
 }
 
 @Output s;
-s.setEntryName("Shrinkage"); // c est un gonflement a valeur negative
+s.setEntryName("Shrinkage");
 s.setDefaultInitialValue(0.); 
 s.setDepth(1);
 
@@ -24,14 +24,14 @@ BUp.setDepth(1);
 T.setGlossaryName("Temperature");
 T.setDepth(1);
 
-@LocalParameter real Q;
-Q.setEntryName("activationTemperature");
-Q.setDefaultValue(750.);
+@LocalParameter real Ta;
+Ta.setEntryName("activationTemperature");
+Ta.setDefaultValue(750.);
 
 @Function compute
 {
   const real Tm = (T_1+T)/2;
   const real A  = max(5.e-3, -1.26e-2 + 1.8e-5*Tm ) ;
-  const real expTm = 1. + exp(-Q/Tm) ;
+  const real expTm = 1. + exp(-Ta/Tm) ;
   s = s_1 + A*( exp(-3.e-2*BUp*expTm) - exp(-3.e-2*BUp_1*expTm) ) ;
 }

@@ -35,6 +35,24 @@ namespace castem
    */
   MFRONT_CASTEM_VISIBILITY_EXPORT void
   CastemStandardSmallStrainStressFreeExpansionHandler(CastemReal * const,
+						      CastemReal * const,
+						      const CastemReal *const,
+						      const CastemReal *const,
+						      const CastemInt);
+  /*!
+   * \brief handler of stress free expansion handler for logarithmic strains
+   * \param[in,out] e  : total deformation at the beginning of the time
+   *                     step (Castem conventions)
+   * \param[in,out] de : total deformation increment over the time
+   *                     step (Castem conventions)
+   * \param[in] s0     : stress free expansion at beginning of the time
+   *                     step (TFEL conventions)
+   * \param[in] s1     : stress free expansion at end of the time
+   *                     step (TFEL conventions)
+   * \param[in] d      : spatial dimension
+   */
+  MFRONT_CASTEM_VISIBILITY_EXPORT void
+  CastemLogarithmicStrainStressFreeExpansionHandler(CastemReal * const,
 						    CastemReal * const,
 						    const CastemReal *const,
 						    const CastemReal *const,

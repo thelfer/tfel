@@ -2037,6 +2037,7 @@ mfront/tests/behaviours/IsotropicStandardElasticity7.mfront -text
 mfront/tests/behaviours/IsotropicStandardElasticity8.mfront -text
 mfront/tests/behaviours/IsotropicStandardElasticity9.mfront -text
 mfront/tests/behaviours/IsotropicVolumeSwelling.mfront -text
+mfront/tests/behaviours/IsotropicVolumeSwelling2.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity2.mfront -text
 mfront/tests/behaviours/LogarithmicStrainNortonCreep.mfront -text
@@ -2105,6 +2106,7 @@ mfront/tests/behaviours/ViscoMemoNrad.mfront -text
 mfront/tests/behaviours/ViscoPlasIsoCin.mfront -text
 mfront/tests/behaviours/abaqus-explicit/CMakeLists.txt -text
 mfront/tests/behaviours/abaqus-explicit/Makefile.am -text
+mfront/tests/behaviours/abaqus-explicit/abaqusexplicitaxialgrowth.mtest.in -text
 mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-shear-1-2D.mtest.in -text
 mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-shear-1-3D.mtest.in -text
 mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity-shear-2-2D.mtest.in -text
@@ -2151,6 +2153,8 @@ mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarith
 mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D.mtest.in -text
 mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D.mtest.in -text
 mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest.in -text
+mfront/tests/behaviours/abaqus-explicit/abaqusexplicitorthotropicswelling.mtest.in -text
+mfront/tests/behaviours/abaqus-explicit/abaqusexplicitorthotropicswelling2.mtest.in -text
 mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-shear-1-2D.mtest.in -text
 mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-shear-1-3D.mtest.in -text
 mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-shear-2-2D.mtest.in -text
@@ -3498,6 +3502,7 @@ mfront/tests/behaviours/cyrano/cyranoorthotropicswelling.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoorthotropicswelling2.mtest.in -text
 mfront/tests/behaviours/epx/CMakeLists.txt -text
 mfront/tests/behaviours/epx/Makefile.am -text
+mfront/tests/behaviours/epx/epxaxialgrowth.mtest.in -text
 mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-shear-1-2D.mtest.in -text
 mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-shear-1-3D.mtest.in -text
 mfront/tests/behaviours/epx/epxfiniterotationsmallstrainelasticity-shear-2-2D.mtest.in -text
@@ -3544,6 +3549,8 @@ mfront/tests/behaviours/epx/epxmieheapellambrechtlogarithmicstrainnortoncreep-un
 mfront/tests/behaviours/epx/epxmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D.mtest.in -text
 mfront/tests/behaviours/epx/epxmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D.mtest.in -text
 mfront/tests/behaviours/epx/epxmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest.in -text
+mfront/tests/behaviours/epx/epxorthotropicswelling.mtest.in -text
+mfront/tests/behaviours/epx/epxorthotropicswelling2.mtest.in -text
 mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-shear-1-2D.mtest.in -text
 mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-shear-1-3D.mtest.in -text
 mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-shear-2-2D.mtest.in -text

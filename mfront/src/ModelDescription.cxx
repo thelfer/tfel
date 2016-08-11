@@ -13,6 +13,7 @@
 
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"MFront/ModelDescription.hxx"
 
 namespace mfront
@@ -26,6 +27,39 @@ namespace mfront
   ModelDescription::Function&
   ModelDescription::Function::operator=(ModelDescription::Function&&) = default;
   ModelDescription::Function::~Function() = default;
+
+  std::pair<std::string,unsigned short>
+  ModelDescription::decomposeVariableName(const std::string& n) const
+  {
+    auto get = [&n](const VariableDescriptionContainer& vc)
+      -> std::pair<std::string,unsigned short>
+    {
+      using size_type = unsigned short;
+      for(const auto& v:vc){
+	if(v.name==n){
+	  return {v.name,0u};
+	}
+	const auto d = v.getAttribute<size_type>(VariableDescription::depth,0);
+	for(size_type j=1;j<=d;++j){
+	  auto fn = v.name + "_" + std::to_string(j);
+	  if(fn==n){
+	    return {v.name,j};
+	  }
+	}
+      }
+      return {};
+    };
+    auto r = get(this->outputs);
+    if(!r.first.empty()){
+      return r;
+    }
+    r = get(this->inputs);
+    if(r.first.empty()){
+      throw(std::runtime_error("decomposeVariableName: "
+			       "field name '"+n+"' has not been found"));
+    }
+    return r;
+  } // end of ModelDescription::decomposeVariableName
 
   ModelDescription::ModelDescription() = default;
   ModelDescription::ModelDescription(const ModelDescription&) = default;
@@ -108,7 +142,8 @@ namespace mfront
   void ModelDescription::setGlossaryName(const std::string& v,
 					 const std::string& g){
     this->checkVariableExistence(v);
-    if(!tfel::glossary::Glossary::getGlossary().contains(g)){
+    const auto& glossary = tfel::glossary::Glossary::getGlossary();
+    if(!glossary.contains(g)){
       throw(std::runtime_error("ModelDescription::setGlossaryName: "
 			       "no glossary name '"+g+"'"));
     }
@@ -119,7 +154,7 @@ namespace mfront
 			       "for variable '"+v+"'"));
     }
     this->reserveName(g);
-    this->glossaryNames.insert({v,g});
+    this->glossaryNames.insert({v,glossary.getGlossaryEntry(g).getKey()});
   }
 
   void ModelDescription::setEntryName(const std::string& v,

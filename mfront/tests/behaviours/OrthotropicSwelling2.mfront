@@ -5,6 +5,9 @@
  A test for the `@Swelling` keyword
 }
 
+@AbaqusFiniteStrainStrategy[abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
+@EPXFiniteStrainStrategy[epx] MieheApelLambrechtLogarithmicStrain;
+
 @OrthotropicBehaviour<Pipe>;
 @RequireStiffnessTensor<Altered>;
 
@@ -14,11 +17,16 @@ s0.setEntryName("OrthotropicSwelling0");
 s2.setEntryName("OrthotropicSwelling2");
 @Swelling<Orthotropic> {s0,0,s2};
 
-@ProvidesSymmetricTangentOperator;
-@Integrator{
+@PredictionOperator{
   static_cast<void>(smt);
+  Dt = D;
+}
+
+@Integrator{
   sig = D*(eto+deto);
-  if(computeTangentOperator_){
-    Dt = D;
-  }
+}
+
+@TangentOperator{
+  static_cast<void>(smt);
+  Dt = D;
 }

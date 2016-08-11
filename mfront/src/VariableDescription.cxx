@@ -15,6 +15,7 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"MFront/MFrontLogStream.hxx"
 #include"MFront/VariableDescription.hxx"
 
 namespace mfront{
@@ -176,6 +177,20 @@ namespace mfront{
     throw(std::runtime_error("VariableDescriptionContainer::getVariable : "
 			     "no variable named '"+n+"'"));
   }
+
+  const VariableDescription&
+  VariableDescriptionContainer::getVariableByExternalName(const std::string& n,
+							  const std::map<std::string,std::string>& gn,
+							  const std::map<std::string,std::string>& en) const
+  {
+    for(auto& v : *this){
+      if(v.getExternalName(gn,en)==n){
+	return v;
+      }
+    }
+    throw(std::runtime_error("VariableDescriptionContainer::getVariableByExternalName : "
+			     "no variable with external name '"+n+"'"));
+  } // end of VariableDescriptionContainer::getVariableByExternalName
   
   const VariableDescription&
   VariableDescriptionContainer::getVariable(const std::string& n) const

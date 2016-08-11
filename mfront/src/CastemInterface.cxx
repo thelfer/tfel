@@ -1616,7 +1616,7 @@ namespace mfront{
 	<< "_base(NTENS, DTIME,DROT,DDSDDE,eto,deto,TEMP,DTEMP,\n"
 	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
 	<< "s,PNEWDT,NDI,KINC,\n"
-	<< "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n";
+	<< "castem::CastemLogarithmicStrainStressFreeExpansionHandler);\n";
     out << "if(*KINC==1){\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
@@ -1689,7 +1689,7 @@ namespace mfront{
     	<< "_base(NTENS, DTIME,DROT,K,eto,deto,TEMP,DTEMP,\n"
     	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
     	<< "s,PNEWDT,NDI,KINC,\n"
-    	<< "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n";
+    	<< "castem::CastemLogarithmicStrainStressFreeExpansionHandler);\n";
     out << "if(*KINC==1){\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"

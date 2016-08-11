@@ -12,6 +12,8 @@
  */
 
 #include<cmath>
+#include<limits>
+#include<stdexcept>
 #include"MFront/Castem/CastemStressFreeExpansionHandler.hxx"
 
 namespace castem
@@ -45,4 +47,82 @@ namespace castem
     }
   } // end of CastemStandardSmallStrainStressFreeExpansionHandler
 
+  void CastemLogarithmicStrainStressFreeExpansionHandler(CastemReal * const e,
+							 CastemReal * const de,
+							 const CastemReal *const s0,
+							 const CastemReal *const s1,
+							 const CastemInt d)
+  {
+    static const CastemReal cste = CastemReal(2)/std::sqrt(CastemReal(2));
+    CastemReal log_s0[6];
+    CastemReal log_s1[6];
+    if(d==1){
+      log_s0[0] = std::log(1+s0[0]);
+      log_s0[1] = std::log(1+s0[1]);
+      log_s0[2] = std::log(1+s0[2]);
+      log_s1[0] = std::log(1+s1[0]);
+      log_s1[1] = std::log(1+s1[1]);
+      log_s1[2] = std::log(1+s1[2]);
+    } else if (d==2){
+      if((std::abs(s0[3])>10*std::numeric_limits<CastemReal>::min())||
+	 (std::abs(s1[3])>10*std::numeric_limits<CastemReal>::min())){
+	throw(std::runtime_error("CastemLogarithmicStrainStressFreeExpansionHandler: "
+				 "stress free expansion is assumed diagonal"));
+      } else {
+	log_s0[0] = std::log(1+s0[0]);
+	log_s0[1] = std::log(1+s0[1]);
+	log_s0[2] = std::log(1+s0[2]);
+	log_s0[3] = CastemReal(0);
+	log_s1[0] = std::log(1+s1[0]);
+	log_s1[1] = std::log(1+s1[1]);
+	log_s1[2] = std::log(1+s1[2]);
+	log_s1[3] = CastemReal(0);
+      }
+    } else if(d==3){
+      if((std::abs(s0[3])>10*std::numeric_limits<CastemReal>::min())||
+	 (std::abs(s1[3])>10*std::numeric_limits<CastemReal>::min())||
+	 (std::abs(s0[4])>10*std::numeric_limits<CastemReal>::min())||
+	 (std::abs(s1[4])>10*std::numeric_limits<CastemReal>::min())||
+	 (std::abs(s0[5])>10*std::numeric_limits<CastemReal>::min())||
+	 (std::abs(s1[5])>10*std::numeric_limits<CastemReal>::min())){
+	throw(std::runtime_error("CastemLogarithmicStrainStressFreeExpansionHandler: "
+				 "stress free expansion is assumed diagonal"));
+      } else {
+	log_s0[0] = std::log(1+s0[0]);
+	log_s0[1] = std::log(1+s0[1]);
+	log_s0[2] = std::log(1+s0[2]);
+	log_s0[3] = CastemReal(0);
+	log_s0[4] = CastemReal(0);
+	log_s0[5] = CastemReal(0);
+	log_s1[0] = std::log(1+s1[0]);
+	log_s1[1] = std::log(1+s1[1]);
+	log_s1[2] = std::log(1+s1[2]);
+	log_s1[3] = CastemReal(0);
+	log_s1[4] = CastemReal(0);
+	log_s1[5] = CastemReal(0);
+      }
+    } else {
+      throw(std::runtime_error("CastemLogarithmicStrainStressFreeExpansionHandler: "
+			       "invalid dimension"));
+    }
+    e[0]  -= log_s0[0];
+    e[1]  -= log_s0[1];
+    e[2]  -= log_s0[2];
+    de[0] -= (log_s1[0]-log_s0[0]);
+    de[1] -= (log_s1[1]-log_s0[1]);
+    de[2] -= (log_s1[2]-log_s0[2]);
+    if(d==2){
+      e[3]  -= log_s0[3]*cste;
+      de[3] -= (log_s1[3]-log_s0[3])*cste;
+    }
+    if(d==3){
+      e[3]  -= log_s0[3]*cste;
+      e[4]  -= log_s0[3]*cste;
+      e[5]  -= log_s0[5]*cste;
+      de[3] -= (log_s1[3]-log_s0[3])*cste;
+      de[4] -= (log_s1[4]-log_s0[4])*cste;
+      de[5] -= (log_s1[5]-log_s0[5])*cste;
+    }
+  } // end of CastemLogarithmicStrainStressFreeExpansionHandler
+  
 } // end of namespace castem

@@ -15,7 +15,10 @@ set(mfront_tests_SOURCES
   FiniteRotationSmallStrainElasticity
   LogarithmicStrainElasticity
   LogarithmicStrainElasticity2
-  LogarithmicStrainNortonCreep)
+  LogarithmicStrainNortonCreep
+  OrthotropicSwelling
+  OrthotropicSwelling2
+  AxialGrowth)
 
 mfront_behaviour_check_library(MFrontEuroplexusBehaviours
   epx ${mfront_tests_SOURCES})
@@ -189,3 +192,6 @@ test_epx(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D)
 test_epx(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-2D)
 test_epx(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D)
 test_epx(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D)
+test_epx(orthotropicswelling)
+test_epx(orthotropicswelling2)
+test_epx(axialgrowth)

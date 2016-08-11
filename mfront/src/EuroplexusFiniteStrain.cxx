@@ -91,9 +91,8 @@ namespace epx{
     }
   }  
 
-  void
-  computeElasticModuli(EuroplexusReal * const D,
-		       const EuroplexusInt h)
+  void computeElasticModuli(EuroplexusReal * const D,
+			    const EuroplexusInt h)
   {
     using namespace tfel::math;
     using real = EuroplexusReal;

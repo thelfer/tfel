@@ -72,11 +72,11 @@ namespace abaqus
    * \param[in] d      : spatial dimension
    */
   MFRONT_ABAQUS_VISIBILITY_EXPORT void
-  AbaqusStandardLogarithmicStrainStressFreeExpansionHandler(float * const,
-						      float * const,
-						      const float *const,
-						      const float *const,
-						      const AbaqusInt);
+  AbaqusLogarithmicStrainStressFreeExpansionHandler(float * const,
+						    float * const,
+						    const float *const,
+						    const float *const,
+						    const AbaqusInt);
   /*!
    * standard handler of stress free expansion handler for logarithmic
    * strain behaviours
@@ -91,11 +91,11 @@ namespace abaqus
    * \param[in] d      : spatial dimension
    */
   MFRONT_ABAQUS_VISIBILITY_EXPORT void
-  AbaqusStandardLogarithmicStrainStressFreeExpansionHandler(double * const,
-							    double * const,
-							    const double *const,
-							    const double *const,
-							    const AbaqusInt);
+  AbaqusLogarithmicStrainStressFreeExpansionHandler(double * const,
+						    double * const,
+						    const double *const,
+						    const double *const,
+						    const AbaqusInt);
   
 } // end of namespace abaqus
 

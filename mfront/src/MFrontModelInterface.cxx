@@ -54,40 +54,6 @@ namespace mfront{
   getHeaderFileName(const ModelDescription& md){
     return "MFront/"+getSrcFileName(md);
   } // end of getSrcFileName
-
-  static std::pair<std::string,unsigned short>
-  decomposeVariableName(const ModelDescription& md,
-			const std::string& n)
-  {
-    auto get = [&n](const VariableDescriptionContainer& vc)
-      -> std::pair<std::string,unsigned short>
-    {
-      using size_type = unsigned short;
-      for(const auto& v:vc){
-	if(v.name==n){
-	  return {v.name,0u};
-	}
-	const auto d = v.getAttribute<size_type>(VariableDescription::depth,0);
-	for(size_type j=1;j<=d;++j){
-	  auto fn = v.name + "_" + std::to_string(j);
-	  if(fn==n){
-	    return {v.name,j};
-	  }
-	}
-      }
-      return {};
-    };
-    auto r = get(md.outputs);
-    if(!r.first.empty()){
-      return r;
-    }
-    r = get(md.inputs);
-    if(r.first.empty()){
-      throw(std::runtime_error("decomposeVariableName: "
-			       "field name '"+n+"' has not been found"));
-    }
-    return r;
-  } // end of MFrontModelInterface::decomposeVariableName(const std::string& v)
   
   std::string MFrontModelInterface::getName(void){
     return "mfront";
@@ -159,7 +125,9 @@ namespace mfront{
 	   << " * \\date   "  << fd.date       << '\n'
 	   << " */\n\n"
 	   << "#ifndef "<< getHeaderDefine(md) << "\n"
-	   << "#define "<< getHeaderDefine(md) << "\n\n";
+	   << "#define "<< getHeaderDefine(md) << "\n\n"
+	   << "#include\"TFEL/Material/BoundsCheck.hxx\"\n"
+	   << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n";
     const auto hasBounds = [&md](){
       for(const auto& v: md.outputs){
 	if((v.hasAttribute(VariableDescription::bound))||
@@ -190,7 +158,7 @@ namespace mfront{
 	   << "struct " << md.className << '\n'
 	   << "{\n"
 	   << "//! a simple alias\n"
-	   << "using OutOfBoundsPolicy = tfel::material::OutOfBoundsPolicy;\n";
+	   << "typedef tfel::material::OutOfBoundsPolicy OutOfBoundsPolicy;\n";
     if(md.constantMaterialProperties.empty()){
       header << "//! default constructor\n"
 	     <<md.className << "() = default;\n";
@@ -274,7 +242,7 @@ namespace mfront{
 	header << "real " << *(f.modifiedVariables.begin()) << ";\n";
       }
       for(const auto& vn : f.usedVariables){
-	const auto dv = decomposeVariableName(md,vn);
+	const auto dv = md.decomposeVariableName(vn);
 	const auto& v = [&md,&dv]() -> const VariableDescription& {
 	  if(md.outputs.contains(dv.first)){
 	    return md.outputs.getVariable(dv.first);
@@ -285,7 +253,7 @@ namespace mfront{
       }
       header << f.body;
       for(const auto& vn : f.modifiedVariables){
-	const auto dv = decomposeVariableName(md,vn);
+	const auto dv = md.decomposeVariableName(vn);
 	const auto& v = [&md,&dv]() -> const VariableDescription& {
 	  return md.outputs.getVariable(dv.first);
 	}();
@@ -342,7 +310,7 @@ namespace mfront{
   void MFrontModelInterface::getTargetsDescription(TargetsDescription& td,
 						   const ModelDescription& md)
   {
-    insert_if(td.headers,"MFront/"+getHeaderFileName(md)+".hxx");
+    insert_if(td.headers,getHeaderFileName(md)+".hxx");
   } // end of MFrontModelInterface::getTargetsDescription
 
   MFrontModelInterface::~MFrontModelInterface() = default;

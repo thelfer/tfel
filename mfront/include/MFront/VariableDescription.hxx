@@ -236,6 +236,16 @@ namespace mfront
      */
     const VariableDescription&
     getVariable(const std::string&) const;
+    /*!
+     * \return the variable with the given name
+     * \param[in] n:  external name
+     * \param[in] gn: glossary names
+     * \param[in] en: entry names
+     */
+    const VariableDescription&
+    getVariableByExternalName(const std::string&,
+			      const std::map<std::string,std::string>&,
+			      const std::map<std::string,std::string>&) const;
     //! destructor
     ~VariableDescriptionContainer();
   }; // end of struct VariableDescription

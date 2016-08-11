@@ -172,11 +172,13 @@ namespace abaqus{
      * \param[out] e:  strain tensor
      * \param[out] de: strain tensor increment
      */
+    template<typename StreeFreeExpansionHandler>
     TFEL_ABAQUS_INLINE2 static
       int integrate(tfel::math::stensor<N,T>& s,
 		    const AbaqusExplicitData<T>& d,
 		    const tfel::math::stensor<N,T>& e,
-		    const tfel::math::stensor<N,T>& de)
+		    const tfel::math::stensor<N,T>& de,
+		    const StreeFreeExpansionHandler& sfeh)
     {
       //! simple alias
       using TangentOperatorTraits =
@@ -188,7 +190,7 @@ namespace abaqus{
       Behaviour<H,T,false> b(d);
       SInitializer::exe(b,d.props);
       AInitializer::exe(b,d.props);
-      DVInitializer::exe(b,e,de);
+      DVInitializer::exe(b,e,de,sfeh);
       b.setBehaviourDataThermodynamicForces(s);
       b.setOutOfBoundsPolicy(d.policy);
       b.initialize();
@@ -210,7 +212,7 @@ namespace abaqus{
       b.checkBounds();
       b.exportStateData(s,d);
       return 0;
-    };
+    }
     /*!
      * \brief integrate a behaviour written at small strain
      * \param[out/in] s: stress tensor
@@ -268,18 +270,18 @@ namespace abaqus{
 	 * \param[in]  sfeh: function handling the stress-free expansion
 	 *                   at the beginning of the time step
 	 */
-	template<typename NumType>
-	  TFEL_ABAQUS_INLINE static 
-	  void exe(BV& b,
-		   tfel::math::stensor<N,NumType> e,
-		   tfel::math::stensor<N,NumType> de)
+	template<typename SFEHType>
+	TFEL_ABAQUS_INLINE static 
+	void exe(BV& b,
+		 tfel::math::stensor<N,T> e,
+		 tfel::math::stensor<N,T> de,
+		 const SFEHType& sfeh)
 	{
 	  typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
 	  // check that the function pointer are not null
 	  std::pair<StressFreeExpansionType,StressFreeExpansionType> s;
 	  b.computeStressFreeExpansion(s);
-	  e  -= s.first;
-	  de -= s.second-s.first;
+	  sfeh(e,de,s.first,s.second);
 	  b.setBehaviourDataDrivingVariables(e);
 	  b.setIntegrationDataDrivingVariables(de);
 	} // end of exe
@@ -296,10 +298,12 @@ namespace abaqus{
        * \param[in]  sfeh: function handling the stress-free expansion
        *                   at the beginning of the time step
        */
+      template<typename SFEHType>
       TFEL_ABAQUS_INLINE static 
 	void exe(BV& b,
 		 const tfel::math::stensor<N,T>& e,
-		 const tfel::math::stensor<N,T>& de)
+		 const tfel::math::stensor<N,T>& de,
+		 const SFEHType&)
       {
 	b.setBehaviourDataDrivingVariables(e);
 	b.setIntegrationDataDrivingVariables(de);

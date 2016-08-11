@@ -12,6 +12,8 @@
  */
 
 #include<cmath>
+#include<limits>
+#include<stdexcept>
 #include"TFEL/Math/Stensor/StensorView.hxx"
 #include"TFEL/Math/Stensor/ConstStensorView.hxx"
 #include"MFront/Europlexus/EuroplexusStressFreeExpansionHandler.hxx"
@@ -42,4 +44,49 @@ namespace epx
     }
   } // end of EuroplexusStandardSmallStrainStressFreeExpansionHandler
 
+  void EuroplexusLogarithmicStrainStressFreeExpansionHandler(EuroplexusReal * const e,
+							     EuroplexusReal * const de,
+							     const EuroplexusReal *const s0,
+							     const EuroplexusReal *const s1,
+							     const EuroplexusInt d)
+  {
+    if(d==0){
+      tfel::math::StensorView<3u,EuroplexusReal> se(e);
+      tfel::math::StensorView<3u,EuroplexusReal> sde(de);
+      tfel::math::stensor<3u,EuroplexusReal> se0(s0);
+      tfel::math::stensor<3u,EuroplexusReal> se1(s1);
+      if((std::abs(s0[3])>10*std::numeric_limits<EuroplexusReal>::min())||
+	 (std::abs(s1[3])>10*std::numeric_limits<EuroplexusReal>::min())||
+	 (std::abs(s0[4])>10*std::numeric_limits<EuroplexusReal>::min())||
+	 (std::abs(s1[4])>10*std::numeric_limits<EuroplexusReal>::min())||
+	 (std::abs(s0[5])>10*std::numeric_limits<EuroplexusReal>::min())||
+	 (std::abs(s1[5])>10*std::numeric_limits<EuroplexusReal>::min())){
+	throw(std::runtime_error("EuroplexusLogarithmicStrainStressFreeExpansionHandler: "
+				 "stress free expansion is assumed diagonal"));
+      }
+      se[0]  -= std::log(1+se0[0]);
+      se[1]  -= std::log(1+se0[1]);
+      se[2]  -= std::log(1+se0[2]);
+      sde[0] -= std::log((1+se1[0])/(1+se0[0]));
+      sde[1] -= std::log((1+se1[1])/(1+se0[1]));
+      sde[2] -= std::log((1+se1[2])/(1+se0[2]));
+    } else {
+      tfel::math::StensorView<2u,EuroplexusReal> se(e);
+      tfel::math::StensorView<2u,EuroplexusReal> sde(de);
+      tfel::math::stensor<2u,EuroplexusReal> se0(s0);
+      tfel::math::stensor<2u,EuroplexusReal> se1(s1);
+      if((std::abs(s0[3])>10*std::numeric_limits<EuroplexusReal>::min())||
+	 (std::abs(s1[3])>10*std::numeric_limits<EuroplexusReal>::min())){
+	throw(std::runtime_error("EuroplexusLogarithmicStrainStressFreeExpansionHandler: "
+				 "stress free expansion is assumed diagonal"));
+      }
+      se[0]  -= std::log(1+se0[0]);
+      se[1]  -= std::log(1+se0[1]);
+      se[2]  -= std::log(1+se0[2]);
+      sde[0] -= std::log((1+se1[0])/(1+se0[0]));
+      sde[1] -= std::log((1+se1[1])/(1+se0[1]));
+      sde[2] -= std::log((1+se1[2])/(1+se0[2]));
+    }
+  } // end of EuroplexusLogarithmicStrainStrainStressFreeExpansionHandler
+  
 } // end of namespace epx

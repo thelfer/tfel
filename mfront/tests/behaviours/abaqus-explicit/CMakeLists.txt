@@ -15,7 +15,10 @@ set(mfront_tests_SOURCES
   SaintVenantKirchhoffElasticity3
   LogarithmicStrainElasticity
   LogarithmicStrainElasticity2
-  LogarithmicStrainNortonCreep)
+  LogarithmicStrainNortonCreep
+  OrthotropicSwelling
+  OrthotropicSwelling2
+  AxialGrowth)
 
 mfront_behaviour_check_library(MFrontAbaqusExplicitBehaviours
   abaqusexplicit ${mfront_tests_SOURCES})
@@ -189,3 +192,6 @@ test_abaqus_explicit(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialload
 test_abaqus_explicit(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-2D)
 test_abaqus_explicit(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D)
 test_abaqus_explicit(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D)
+test_abaqus_explicit(orthotropicswelling)
+test_abaqus_explicit(orthotropicswelling2)
+test_abaqus_explicit(axialgrowth)

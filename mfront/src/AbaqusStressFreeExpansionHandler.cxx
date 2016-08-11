@@ -67,11 +67,11 @@ namespace abaqus
 
   template<typename real>
   static void
-  AbaqusStandardLogarithmicStrainStressFreeExpansionHandlerImpl(real * const e,
-								real * const de,
-								const real *const s0,
-								const real *const s1,
-								const AbaqusInt d)
+  AbaqusLogarithmicStrainStressFreeExpansionHandlerImpl(real * const e,
+							real * const de,
+							const real *const s0,
+							const real *const s1,
+							const AbaqusInt d)
   {
     static const real cste = std::sqrt(real(2));
     if(d==2){
@@ -106,24 +106,24 @@ namespace abaqus
       de[4] -= (ln_e1[4]-ln_e0[4])*cste;
       de[5] -= (ln_e1[5]-ln_e0[5])*cste;
     }
-  } // end of AbaqusStandardLogarithmicStrainStressFreeExpansionHandler
+  } // end of AbaqusLogarithmicStrainStressFreeExpansionHandler
 
-  void AbaqusStandardLogarithmicStrainStressFreeExpansionHandler(float * const e,
-								 float * const de,
-								 const float *const s0,
-								 const float *const s1,
-								 const AbaqusInt d)
+  void AbaqusLogarithmicStrainStressFreeExpansionHandler(float * const e,
+							 float * const de,
+							 const float *const s0,
+							 const float *const s1,
+							 const AbaqusInt d)
   {
-    AbaqusStandardLogarithmicStrainStressFreeExpansionHandlerImpl(e,de,s0,s1,d);
+    AbaqusLogarithmicStrainStressFreeExpansionHandlerImpl(e,de,s0,s1,d);
   }
   
-  void AbaqusStandardLogarithmicStrainStressFreeExpansionHandler(double * const e,
-								 double * const de,
-								 const double *const s0,
-								 const double *const s1,
-								 const AbaqusInt d)
+  void AbaqusLogarithmicStrainStressFreeExpansionHandler(double * const e,
+							 double * const de,
+							 const double *const s0,
+							 const double *const s1,
+							 const AbaqusInt d)
   {
-    AbaqusStandardLogarithmicStrainStressFreeExpansionHandlerImpl(e,de,s0,s1,d);
+    AbaqusLogarithmicStrainStressFreeExpansionHandlerImpl(e,de,s0,s1,d);
   }
   
 } // end of namespace abaqus

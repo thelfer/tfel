@@ -807,6 +807,10 @@ namespace mfront{
 								     const std::string& t,
 								     const Hypothesis h) const
   {
+    auto throw_unsupported_hypothesis = [](){
+      throw(std::runtime_error("AbaqusExplicitInterface::writeFiniteRotationSmallStrainIntegration: "
+			       "internal error, unsupported hypothesis"));
+    };
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
     if(mh.find(h)==mh.end()){
@@ -865,11 +869,34 @@ namespace mfront{
 	  << "stensor<3u," << t << "> s  = {*(stressOld+i),*(stressOld+i+*nblock),\n"
 	  << "                              *(stressOld+i+2*(*nblock)),cste*(*(stressOld+i+3*(*nblock))),\n"
 	  << "                              cste*(*(stressOld+i+5*(*nblock))),cste*(*(stressOld+i+4*(*nblock)))};\n";
+    } else {
+      throw_unsupported_hypothesis();
     }
-    out << "auto sk2 = convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(s,U0);\n"
-	<< "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ","
+    out << "auto sk2 = convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(s,U0);\n";
+    if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+	(h==ModellingHypothesis::PLANESTRAIN)||
+	(h==ModellingHypothesis::PLANESTRESS)){
+      out << "auto sfeh = [](tfel::math::stensor<2u,"<< t<< ">& e,\n"
+	  << "tfel::math::stensor<2u,"<< t<< ">& de,\n"
+	  << "const tfel::math::stensor<2u,"<< t<< ">& dl0_l0,\n"
+	  << "const tfel::math::stensor<2u,"<< t<< ">& dl1_l0){\n"
+	  << "e -=dl0_l0;\n"
+	  << "de-=dl1_l0-dl0_l0;\n"
+	  << "};\n";
+    } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
+      out << "auto sfeh = [](tfel::math::stensor<3u,"<< t<< ">& e,\n"
+	  << "tfel::math::stensor<3u,"<< t<< ">& de,\n"
+	  << "const tfel::math::stensor<3u,"<< t<< ">& dl0_l0,\n"
+	  << "const tfel::math::stensor<3u,"<< t<< ">& dl1_l0){\n"
+	  << "e -=dl0_l0;\n"
+	  << "de-=dl1_l0-dl0_l0;\n"
+	  << "};\n";
+    } else {
+      throw_unsupported_hypothesis();
+    }
+    out << "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ","
 	<< t<< "," << mb.getClassName()
-	<< ">::integrate(sk2,d,eto,deto)!=0){\n"
+	<< ">::integrate(sk2,d,eto,deto,sfeh)!=0){\n"
 	<< "std::cerr << \"" << mb.getClassName() << ": behaviour integration failed\";\n"
 	<< "::exit(-1);\n"
 	<< "}\n";
@@ -916,7 +943,9 @@ namespace mfront{
 								       const Hypothesis h) const
   {
     // datacheck phase
-    out << "if((std::abs(*stepTime)<std::numeric_limits<" << t << ">::min())&&\n"
+    out << "static_cast<void>(defgradOld);\n"
+	<< "static_cast<void>(defgradNew);\n"
+	<< "if((std::abs(*stepTime)<std::numeric_limits<" << t << ">::min())&&\n"
 	<< "   (std::abs(*totalTime)<std::numeric_limits<" << t << ">::min())){\n"
 	<< "// packaging step\n";
     this->writeComputeElasticPrediction(out,mb,t,h);
@@ -932,6 +961,10 @@ namespace mfront{
 							     const std::string& t,
 							     const Hypothesis h) const
   {
+    auto throw_unsupported_hypothesis = [](){
+      throw(std::runtime_error("AbaqusExplicitInterface::writeLogarithmicStrainIntegration: "
+			       "internal error, unsupported hypothesis"));
+    };
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
     if(mh.find(h)==mh.end()){
@@ -1003,10 +1036,53 @@ namespace mfront{
     }
     out << "const auto iP0 = invert(P0);\n"
 	<< "auto sk2 = convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(s,U0);\n"
-	<< "stensor<" << dime << ","<< t << "> T = (sk2|iP0)/2;\n"
-	<< "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ","
+	<< "stensor<" << dime << ","<< t << "> T = (sk2|iP0)/2;\n";
+    if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+	(h==ModellingHypothesis::PLANESTRAIN)||
+	(h==ModellingHypothesis::PLANESTRESS)){
+      out << "auto sfeh = [](tfel::math::stensor<2u,"<< t<< ">& e,\n"
+	  << "tfel::math::stensor<2u,"<< t<< ">& de,\n"
+	  << "const tfel::math::stensor<2u,"<< t<< ">& dl0_l0,\n"
+	  << "const tfel::math::stensor<2u,"<< t<< ">& dl1_l0){\n"
+	  << "if((std::abs(dl0_l0[3])>10*std::numeric_limits<" << t << ">::min())||\n"
+	  << "   (std::abs(dl1_l0[3])>10*std::numeric_limits<" << t << ">::min())){\n"
+	  << "  std::cerr << \"" << mb.getClassName() << ": stress free expansion is assumed to be diagonal\" << std::endl;\n"
+	  << "  std::exit(EXIT_FAILURE);\n"
+	  << "}\n"
+	  << "e[0] -=std::log(1+dl0_l0[0]);\n"
+	  << "de[0]-=std::log((1+dl1_l0[0])/(1+dl0_l0[0]));\n"
+	  << "e[1] -=std::log(1+dl0_l0[1]);\n"
+	  << "de[1]-=std::log((1+dl1_l0[1])/(1+dl0_l0[1]));\n"
+	  << "e[2] -=std::log(1+dl0_l0[2]);\n"
+	  << "de[2]-=std::log((1+dl1_l0[2])/(1+dl0_l0[2]));\n"
+	  << "};\n";
+    } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
+      out << "auto sfeh = [](tfel::math::stensor<3u,"<< t<< ">& e,\n"
+	  << "tfel::math::stensor<3u,"<< t<< ">& de,\n"
+	  << "const tfel::math::stensor<3u,"<< t<< ">& dl0_l0,\n"
+	  << "const tfel::math::stensor<3u,"<< t<< ">& dl1_l0){\n"
+	  << "if((std::abs(dl0_l0[3])>10*std::numeric_limits<" << t << ">::min())||\n"
+	  << "   (std::abs(dl1_l0[3])>10*std::numeric_limits<" << t << ">::min())||"
+	  << "   (std::abs(dl0_l0[4])>10*std::numeric_limits<" << t << ">::min())||"
+	  << "   (std::abs(dl1_l0[4])>10*std::numeric_limits<" << t << ">::min())||"
+	  << "   (std::abs(dl0_l0[5])>10*std::numeric_limits<" << t << ">::min())||"
+	  << "   (std::abs(dl1_l0[5])>10*std::numeric_limits<" << t << ">::min())){"
+	  << "  std::cerr << \"" << mb.getClassName() << ": stress free expansion is assumed to be diagonal\" << std::endl;\n"
+	  << "  std::exit(EXIT_FAILURE);\n"
+	  << "}\n"
+	  << "e[0] -=std::log(1+dl0_l0[0]);\n"
+	  << "de[0]-=std::log((1+dl1_l0[0])/(1+dl0_l0[0]));\n"
+	  << "e[1] -=std::log(1+dl0_l0[1]);\n"
+	  << "de[1]-=std::log((1+dl1_l0[1])/(1+dl0_l0[1]));\n"
+	  << "e[2] -=std::log(1+dl0_l0[2]);\n"
+	  << "de[2]-=std::log((1+dl1_l0[2])/(1+dl0_l0[2]));\n"
+	  << "};\n";
+    } else {
+      throw_unsupported_hypothesis();
+    }
+    out << "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ","
 	<< t<< "," << mb.getClassName()
-	<< ">::integrate(T,d,eto,deto)!=0){\n"
+	<< ">::integrate(T,d,eto,deto,sfeh)!=0){\n"
 	<< "std::cerr << \"" << mb.getClassName() << ": behaviour integration failed\";\n"
 	<< "::exit(-1);\n"
 	<< "}\n";
@@ -1059,7 +1135,9 @@ namespace mfront{
 							       const Hypothesis h) const
   {
     // datacheck phase
-    out << "if((std::abs(*stepTime)<std::numeric_limits<" << t << ">::min())&&\n"
+    out << "static_cast<void>(defgradOld);\n"
+	<< "static_cast<void>(defgradNew);\n"
+	<< "if((std::abs(*stepTime)<std::numeric_limits<" << t << ">::min())&&\n"
 	<< "   (std::abs(*totalTime)<std::numeric_limits<" << t << ">::min())){\n"
 	<< "// packaging step\n";
     this->writeComputeElasticPrediction(out,mb,t,h);
@@ -1076,7 +1154,8 @@ namespace mfront{
 							  const Hypothesis h) const
   {
     // datacheck phase
-    out << "if((std::abs(*stepTime)<std::numeric_limits<" << t << ">::min())&&\n"
+    out << "static_cast<void>(stretchOld);\n"
+	<< "if((std::abs(*stepTime)<std::numeric_limits<" << t << ">::min())&&\n"
 	<< "   (std::abs(*totalTime)<std::numeric_limits<" << t << ">::min())){\n"
 	<< "// packaging step\n";
     this->writeComputeElasticPrediction(out,mb,t,h);

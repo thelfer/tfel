@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTMODELDATA_H_
-#define LIB_MFRONT_MFRONTMODELDATA_H_ 
+#ifndef LIB_MFRONT_MODELDESCRIPTION_H_
+#define LIB_MFRONT_MODELDESCRIPTION_H_ 
 
 #include<set>
 #include<map>
@@ -64,6 +64,12 @@ namespace mfront
       //! if true, the body of the function uses the time increment dt
       bool useTimeIncrement = false;
     }; // end of struct MFrontData::Function
+    /*!
+     * \brief decompose a variable name to get the basis and the depth
+     * of the variable
+     */
+    std::pair<std::string,unsigned short>
+    decomposeVariableName(const std::string&) const;
     //! defaut constructor
     ModelDescription();
     //! copy constructor
@@ -184,4 +190,4 @@ namespace mfront
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MFRONTMODELDATA_H_ */
+#endif /* LIB_MFRONT_MODELDESCRIPTION_H_ */

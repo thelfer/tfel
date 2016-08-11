@@ -261,37 +261,6 @@ namespace mfront{
     this->readSpecifiedToken("ModelDSLCommon::treatDomain",";");
   } // end of ModelDSLCommon::treatDomains(void)
 
-  std::pair<std::string,unsigned short>
-  ModelDSLCommon::decomposeVariableName(const std::string& vn) const
-  {
-    auto get = [&vn](const VariableDescriptionContainer& vc)
-      -> std::pair<std::string,unsigned short>
-    {
-      for(const auto & v : vc){
-	if(vn==v.name){
-	  return {vn,0u};
-	}
-	const auto d = v.getAttribute<unsigned short>(VariableDescription::depth,0);
-	for(unsigned short i=1;i!=d+1;++i){
-	  if(vn==v.name+"_"+std::to_string(i)){
-	    return {v.name,i};
-	  }
-	}
-      }
-      return {};
-    };
-    auto r = get(this->inputs);
-    if(!r.first.empty()){
-      return r;
-    }
-    r = get(this->outputs);
-    if(r.first.empty()){
-      this->throwRuntimeError("ModelDSLCommon::decomposeVariableName",
-			      "no decomposition found for variable '"+vn+"'");
-    }
-    return r;
-  } // end of ModelDSLCommon::getPleiadesVariableName(const std::string& v)
-
   bool
   ModelDSLCommon::isInputVariable(const std::string& v) const
   {

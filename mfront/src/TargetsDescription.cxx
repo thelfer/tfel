@@ -140,7 +140,7 @@ namespace mfront{
       mergeLibraryDescription(ld,ls);
     }
     for(const auto& h:s.headers){
-      if(find(d.headers.begin(),d.headers.end(),h)==d.headers.end()){
+      if(std::find(d.headers.begin(),d.headers.end(),h)==d.headers.end()){
 	d.headers.push_back(h);
       }
     }
