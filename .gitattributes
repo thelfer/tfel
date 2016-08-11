@@ -13,7 +13,7 @@
 /Makefile.am -text
 /README -text
 /README.md -text
-/TODO.md -text
+/TODO.org -text
 bindings/CMakeLists.txt -text
 bindings/Makefile.am -text
 bindings/python/CMakeLists.txt -text
@@ -210,6 +210,9 @@ docs/html/reveal.js/test/test-markdown.html -text
 docs/html/reveal.js/test/test-markdown.js -text
 docs/html/reveal.js/test/test.html -text
 docs/html/reveal.js/test/test.js -text
+docs/mfront-en.png -text
+docs/mfront-en.svg -text
+docs/mfront-fr.svg -text
 docs/mfront.bmp -text
 docs/mfront.ico -text
 docs/mfront/Algorithm.md -text
