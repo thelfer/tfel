@@ -56,6 +56,7 @@ namespace tfel{
 	using namespace std;
 	typedef typename MatrixTraits<MatrixType>::IndexType IndexType;
 	typedef typename MatrixTraits<MatrixType>::NumType NumType;
+	constexpr const NumType c = NumType(1)/10;
 	if(m.getNbRows()!=m.getNbCols()){
 	  throw(LUMatrixNotSquare());
 	}
@@ -91,38 +92,38 @@ namespace tfel{
 	  // search for pivot
 	  IndexType piv = i;
 	  if(p.isIdentity()){
-	    NumType cmax = abs(m(i,i));
+	    NumType cmax = std::abs(m(i,i));
 	    for(IndexType j=static_cast<IndexType>(i+1u);j!=n;++j){
-	      if(abs(m(j,i))>cmax){
-		cmax = abs(m(j,i));
+	      if(std::abs(m(j,i))>cmax){
+		cmax = std::abs(m(j,i));
 		piv = j;
 	      }
 	    }
 	    if(piv!=i){
-	      if(!((abs(m(i,i))>0.1*cmax)&&
-		   (abs(m(i,i))>eps))){
+	      if(!((std::abs(m(i,i))>c*cmax)&&
+		   (std::abs(m(i,i))>eps))){
 		d *= -1;
 		p.swap(piv,i);
 	      }
 	    }
 	  } else {
-	    NumType cmax = abs(m(p(i),i));
+	    NumType cmax = std::abs(m(p(i),i));
 	    for(IndexType j=static_cast<IndexType>(i+1u);j!=n;++j){
 	      IndexType  pj = p(j);
-	      if(abs(m(pj,i))>cmax){
-		cmax = abs(m(pj,i));
+	      if(std::abs(m(pj,i))>cmax){
+		cmax = std::abs(m(pj,i));
 		piv = j;
 	      }
 	    }
 	    if(piv!=i){
-	      if(!((abs(m(p(i),i))>0.1*cmax)&&
-		   (abs(m(p(i),i))>eps))){
+	      if(!((std::abs(m(p(i),i))>c*cmax)&&
+		   (std::abs(m(p(i),i))>eps))){
 		d *= -1;
 		p.swap(piv,i);
 	      }
 	    }
 	  }
-	  if(abs(m(p(i),i))<eps){
+	  if(std::abs(m(p(i),i))<eps){
 	    throw(LUNullPivot());
 	  }
 	  if(p.isIdentity()){
