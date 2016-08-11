@@ -14,11 +14,11 @@
 @MaterialProperty<constant> 'Ns' 4.2;
 @MaterialProperty<constant> 'Np' 1.37;
 
-@Real 'srr' 20e6;
+@Real 'srr' -20e6;
 @ImposedStress 'SRR' 'srr';
 // Initial value of the elastic strain
-@Real 'EELRR0' 0.00013333333333333333;
-@Real 'EELZZ0' -0.00004;
+@Real 'EELRR0' 'srr/YoungModulus';
+@Real 'EELZZ0' '-EELRR0*PoissonRatio';
 @InternalStateVariable 'ElasticStrain' {'EELRR0','EELZZ0','EELZZ0',0.};
 // Initial value of the total strain
 @Strain {'EELRR0','EELZZ0','EELZZ0',0.};
@@ -34,4 +34,4 @@
 // ((p+p0)**(Np+1)-p0**(Np+1)) = (Np+1)*A*seq**Ns*t
 // p=(p0**(Np+1)+(Np+1)*A*seq**Ns*t)**(1/(Np+1))-p0
 @Real 'p0' 1.e-6;
-@Test<function> 'EquivalentViscoplasticStrain' '(p0**(Np+1)+(Np+1)*A*srr**Ns*t)**(1/(Np+1))-p0' 1.e-5;
+@Test<function> 'EquivalentViscoplasticStrain' '(p0**(Np+1)+(Np+1)*A*abs(srr)**Ns*t)**(1/(Np+1))-p0' 1.e-5;

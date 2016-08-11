@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<cmath>
 #include<sstream>
 
 #include"MTest/Evolution.hxx"
@@ -44,22 +45,17 @@ namespace mtest
 			const real dt,
 			const unsigned int)
   {
-    using namespace std;
-    using tfel::tests::TestResult;
-    vector<string>::const_iterator p;
-    for(p=this->vnames.begin();p!=this->vnames.end();++p){
-      if(*p=="t"){
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("AnalyticalTest::check:"+m));}
+    };
+    for(const auto& vn:this->vnames){
+      if(vn=="t"){
 	this->f.setVariableValue("t",t+dt);
       } else{
-	map<string,shared_ptr<Evolution> >::const_iterator pev;
-	pev = this->evm->find(*p);
-	if(pev==this->evm->end()){
-	  string msg("AnalyticalTest::check : "
-		     "no evolution named '"+*p+"' defined");
-	  throw(runtime_error(msg));
-	}
-	const Evolution& ev = *(pev->second);
-	this->f.setVariableValue(*p,ev(t+dt));
+	auto pev = this->evm->find(vn);
+	throw_if(pev==this->evm->end(),"no evolution named '"+vn+"' defined");
+	const auto& ev = *(pev->second);
+	this->f.setVariableValue(vn,ev(t+dt));
       }
     }
     real v(0);
@@ -70,34 +66,33 @@ namespace mtest
     } else if(this->type==MTest::UTest::THERMODYNAMICFORCE){
       v = s(pos);
     } else {
-      string msg("AnalyticalTest::check : "
-		 "internal error (unsuported type of variable");
-      throw(runtime_error(msg));
+      throw_if(true,"internal error (unsuported type of variable");
     }
-    const real err = abs(v-this->f.getValue());
+    const auto fv = this->f.getValue();
+    throw_if(!std::isfinite(v),"invalid result for '"+this->name+"'");
+    throw_if(!std::isfinite(fv),"invalid evolution of reference value");
+    const real err = std::abs(v-fv);
     if(err>this->eps){
-      ostringstream msg;
+      std::ostringstream msg;
       msg << "AnalyticalTest::check : comparison for variable '"
 	  << this->name << "' failed for time '" << t+dt << "' "
 	  << "(computed value: '" << v << "', "
-	  << "expected value: '" << this->f.getValue() << "', "
+	  << "expected value: '" << fv << "', "
 	  << "error: '" << err << "', criterion '"
 	  << this->eps << "')";
-      this->results.append(TestResult(false,msg.str()));
+      this->results.append({false,msg.str()});
     }
   } // end of AnalyticalTest::check
 
   tfel::tests::TestResult
   AnalyticalTest::getResults() const
   {
-    using namespace std;
-    using tfel::tests::TestResult;
     if(this->results.success()){
-      ostringstream msg;
+      std::ostringstream msg;
       msg << "AnalyticalTest::check : comparison for variable '"
 	  << this->name << "' was successfull for all times (" 
 	  << "criterion '"<< this->eps << "')";
-      return TestResult(true,msg.str());
+      return {true,msg.str()};
     }
     return this->results;
   }

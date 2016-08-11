@@ -38,22 +38,21 @@
 // better.
 @Real 'A' 8.e-67; 
 @Real 'E' 8.2; 
-@Test<function> 'ERR' 'EELRR0-A*SRR**E*t'     1.e-9;
-@Test<function> 'EZZ' 'EELZZ0+0.5*A*SRR**E*t' 1.e-10;
-@Test<function> 'ETT' 'EELZZ0+0.5*A*SRR**E*t' 1.e-10;
+@Test<function> 'ERR' 'EELRR0-A*abs(SRR)**E*t'     1.e-9;
+@Test<function> 'EZZ' 'EELZZ0+0.5*A*abs(SRR)**E*t' 1.e-10;
+@Test<function> 'ETT' 'EELZZ0+0.5*A*abs(SRR)**E*t' 1.e-10;
 @Test<function> 'ERZ' '0.'                    1.e-10;
 // tests on internal state variables
 @Test<function> 'ElasticStrainRR' 'EELRR0'  1.e-12;
 @Test<function> 'ElasticStrainZZ' 'EELZZ0'  1.e-12;
 @Test<function> 'ElasticStrainTT' 'EELZZ0'  1.e-12;
 @Test<function> 'ElasticStrainRZ' '0.'      1.e-12;
-// @Test<function> 'EquivalentViscoplasticStrain' 'A*SRR**E*t' 1.e-12;
 // this test is a bit paranoiac since SRR is imposed
 @Test<function> 'SRR' 'SRR'     1.e-3;
 // check that the mechanical equilibrium is satisfied
 @Test<function> 'SZZ' '0.'      1.e-3;
 @Test<function> 'STT' '0.'      1.e-3;
 @Test<function> 'SRZ' '0.'      1.e-3;
-@Test<function> 'DeviatoricEquivalentViscoplasticStrain'  'A*SRR**E*t'  1.e-10;
+@Test<function> 'DeviatoricEquivalentViscoplasticStrain' 'A*abs(SRR)**E*t' 1.e-10;
 @Test<function> 'HydrostaticEquivalentViscoplasticStrain' '0'  1.e-10;
 @Test<function> 'Porosity' '0'  1.e-10;

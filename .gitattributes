@@ -2982,6 +2982,7 @@ mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbeha
 mfront/tests/behaviours/castem/castemincompressibleplanestressmooneyrivlinbehaviouruniaxialtesting.mtest.in -text
 mfront/tests/behaviours/castem/castemisotropiclinearswelling.mtest.in -text
 mfront/tests/behaviours/castem/castemisotropicvolumeswelling.mtest.in -text
+mfront/tests/behaviours/castem/castemisotropicvolumeswelling2.mtest.in -text
 mfront/tests/behaviours/castem/castemlorentz.mtest.in -text
 mfront/tests/behaviours/castem/castemlorentz2.mtest.in -text
 mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck.mtest.in -text

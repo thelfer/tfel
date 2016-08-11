@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<cmath>
 #include<sstream>
 
 #include"MTest/TextDataUtilities.hxx"
@@ -53,8 +54,9 @@ namespace mtest{
 				     const real dt,
 				     const unsigned int p)
   {
-    using namespace std;
-    using tfel::tests::TestResult;
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("ReferenceFileComparisonTest::check: "+m));}
+    };
     real v(0);
     if(this->type==MTest::UTest::INTERNALSTATEVARIABLE){
       v = iv(pos);
@@ -71,18 +73,19 @@ namespace mtest{
       msg << "ReferenceFileComparisonTest::check : comparison for variable '"
 	  << this->name << "' failed for time '" << t+dt << "' "
 	  << "(reference value is not available for period  '" << p << "')";
-      this->results.append(TestResult(false,msg.str()));
+      this->results.append({false,msg.str()});
     } else {
+      throw_if(!std::isfinite(v),"invalid result for '"+this->name+"'");
       const real err = std::abs(v-this->values[p]);
       if(err>this->eps){
-	ostringstream msg;
+	std::ostringstream msg;
 	msg << "ReferenceFileComparisonTest::check : comparison for variable '"
 	    << this->name << "' failed for time '" << t+dt << "' "
 	    << "(computed value: '" << v << "', "
 	    << "expected value: '" << this->values[p] << "', "
 	    << "error: '" << err << "', criterion '"
 	    << this->eps << "')";
-	this->results.append(TestResult(false,msg.str()));
+	this->results.append({false,msg.str()});
       }
     }
   } // end of ReferenceFileComparisonTest::check
@@ -95,7 +98,7 @@ namespace mtest{
       msg << "ReferenceFileComparisonTest::check : comparison for variable '"
 	  << this->name << "' was successfull for all times (" 
 	  << "criterion '"<< this->eps << "')";
-      return tfel::tests::TestResult(true,msg.str());
+      return {true,msg.str()};
     }
     return this->results;
   }
