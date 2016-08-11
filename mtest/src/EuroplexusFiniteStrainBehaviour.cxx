@@ -87,11 +87,12 @@ namespace mtest
     std::copy(s.iv0.begin(),s.iv0.end(),s.iv1.begin());
     epx::EuroplexusReal ndt(1.);
     epx::EuroplexusInt  status(0);
+    epx::EuroplexusInt  broken = 0;
     char msg[256];
     (this->fct)(&status,&(s1(0)),
 		nstatv ==0 ? nullptr : &(s.iv1(0)),
-		&Kt(0,0),&ndt,msg,
-		&nstatv,&hv,&dt,&uu0(0),&uu1(0),
+		&Kt(0,0),&ndt,&broken,msg,
+		&nstatv,&hv,&dt,&uu0(0),&uu1(0),&(s.r(0,0)),
     		nprops ==0 ? nullptr : &(s.mprops1(0)),
 		&nprops,&(s.esv0(0)),&(s.desv(0)),
 		npredef==0 ? nullptr : &(s.esv0(1)),

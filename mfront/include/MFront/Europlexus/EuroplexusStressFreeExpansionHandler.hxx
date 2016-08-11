@@ -35,10 +35,29 @@ namespace epx
    */
   MFRONT_EPX_VISIBILITY_EXPORT void
   EuroplexusStandardSmallStrainStressFreeExpansionHandler(EuroplexusReal * const,
-						     EuroplexusReal * const,
-						     const EuroplexusReal *const,
-						     const EuroplexusReal *const,
-						     const EuroplexusInt);
+							  EuroplexusReal * const,
+							  const EuroplexusReal *const,
+							  const EuroplexusReal *const,
+							  const EuroplexusInt);
+  /*!
+   * \brief handler of stress free expansion handler for behaviours
+   * based on logarithmic strains
+   * \param[in,out] e  : total deformation at the beginning of the time
+   *                     step (Europlexus conventions)
+   * \param[in,out] de : total deformation increment over the time
+   *                     step (Europlexus conventions)
+   * \param[in] s0     : stress free expansion at beginning of the time
+   *                     step (TFEL conventions)
+   * \param[in] s1     : stress free expansion at end of the time
+   *                     step (TFEL conventions)
+   * \param[in] d      : spatial dimension
+   */
+  MFRONT_EPX_VISIBILITY_EXPORT void
+  EuroplexusLogarithmicStrainStressFreeExpansionHandler(EuroplexusReal * const,
+							EuroplexusReal * const,
+							const EuroplexusReal *const,
+							const EuroplexusReal *const,
+							const EuroplexusInt);
 
 } // end of namespace epx
 

@@ -61,11 +61,13 @@ namespace epx{
     EuroplexusReal *const STATEV;
     EuroplexusReal *const DDSDDE;
     EuroplexusReal *const PNEWDT;
+    EuroplexusInt  *const BROKEN;
     char *const MSG;
     const EuroplexusInt  NSTATV;
     const EuroplexusReal DTIME;
     const EuroplexusReal *const DV0;
     const EuroplexusReal *const DV1;
+    const EuroplexusReal *const R;
     const EuroplexusReal *const PROPS;
     const EuroplexusInt  NPROPS;
     const EuroplexusReal *const TEMP;

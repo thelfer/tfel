@@ -199,7 +199,9 @@ namespace epx
       typedef typename std::conditional<ba,ThermalExpansionCoefficientTensorInitializer,
 					DoNothingInitializer>::type AInitializer;
 
-      TFEL_EPX_INLINE Integrator(const EPXData& d)
+      TFEL_EPX_INLINE Integrator(const EPXData& d,
+				 const EuroplexusReal* dv0,
+				 const EuroplexusReal* dv1)
 	: behaviour(&(d.DTIME),d.TEMP,d.DTEMP,
 		    d.PROPS+EuroplexusTraits<BV>::elasticPropertiesOffset+
 		    EuroplexusTraits<BV>::thermalExpansionPropertiesOffset,
@@ -214,7 +216,7 @@ namespace epx
 	  DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
 	SInitializer::exe(this->behaviour,d.PROPS);
 	AInitializer::exe(this->behaviour,d.PROPS);
-	DVInitializer::exe(this->behaviour,d.DV0,d.DV1,d.sfeh);
+	DVInitializer::exe(this->behaviour,dv0,dv1,d.sfeh);
 	this->behaviour.setEUROPLEXUSBehaviourDataThermodynamicForces(d.STRESS);
 	this->behaviour.setOutOfBoundsPolicy(d.op);
 	this->behaviour.initialize();

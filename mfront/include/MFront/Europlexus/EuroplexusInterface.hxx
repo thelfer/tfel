@@ -137,7 +137,75 @@ namespace epx
 	}
       } // end of CallBehaviour::exe
     };
-    
+
+    template<tfel::material::ModellingHypothesis::Hypothesis H>
+    struct StressChangeBasis
+    {
+      static void backward(const EPXData& d){
+	using namespace tfel::math;
+	constexpr const auto N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+	constexpr const auto S = tfel::math::StensorDimeToSize<N>::value;
+	const tmatrix<3u,3u,EuroplexusReal> r = {d.R[0],d.R[3],d.R[6],
+						 d.R[1],d.R[4],d.R[7],
+						 d.R[2],d.R[5],d.R[8]};
+	stensor<N,EuroplexusReal> s(d.STRESS);
+	s.changeBasis(r);
+	tfel::fsalgo::copy<S>::exe(s.begin(),d.STRESS);
+      } // end of exe
+    };
+    template<tfel::material::ModellingHypothesis::Hypothesis H>
+    struct SmallStrainChangeBasis
+      : public StressChangeBasis<H>
+    {
+      static std::pair<const EuroplexusReal*,const EuroplexusReal*>
+      forward(const EPXData& d,EuroplexusReal *const dv0,EuroplexusReal *const dv1){
+	using namespace tfel::math;
+	constexpr const auto N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+	constexpr const auto S = tfel::math::StensorDimeToSize<N>::value;
+	const tmatrix<3u,3u,EuroplexusReal> r = {d.R[0],d.R[1],d.R[2],
+						 d.R[3],d.R[4],d.R[5],
+						 d.R[6],d.R[7],d.R[8]};
+	stensor<N,EuroplexusReal> e(d.DV0);
+	stensor<N,EuroplexusReal> de(d.DV1);
+	e.changeBasis(r);
+	de.changeBasis(r);
+	tfel::fsalgo::copy<S>::exe(e.begin(), dv0);
+	tfel::fsalgo::copy<S>::exe(de.begin(),dv1);
+	return {dv0,dv1};
+      } // end of exe
+    }; // end of struct SmallStrainChangeBasis
+    template<tfel::material::ModellingHypothesis::Hypothesis H>
+    struct FiniteStrainChangeBasis
+      : public StressChangeBasis<H>
+    {
+      static std::pair<const EuroplexusReal*,const EuroplexusReal*>
+      forward(const EPXData& d,EuroplexusReal *const dv0,EuroplexusReal *const dv1){
+	using namespace tfel::math;
+	constexpr const auto N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+	constexpr const auto S = tfel::math::TensorDimeToSize<N>::value;
+	const tmatrix<3u,3u,EuroplexusReal> r = {d.R[0],d.R[1],d.R[2],
+						 d.R[3],d.R[4],d.R[5],
+						 d.R[6],d.R[7],d.R[8]};
+	tensor<N,EuroplexusReal> F0(d.DV0);
+	tensor<N,EuroplexusReal> F1(d.DV1);
+	F0.changeBasis(r);
+	F1.changeBasis(r);
+	tfel::fsalgo::copy<S>::exe(F0.begin(),dv0);
+	tfel::fsalgo::copy<S>::exe(F1.begin(),dv1);
+	return {dv0,dv1};
+      };
+    }; // end of struct FiniteStrainChangeBasis
+    //! a dummy place holder for isotropic behaviours
+    template<tfel::material::ModellingHypothesis::Hypothesis H>
+    struct DoNothing
+    {
+      static std::pair<const EuroplexusReal*,const EuroplexusReal*>
+      forward(const EPXData& d,EuroplexusReal *const,EuroplexusReal *const){
+	return {d.DV0,d.DV1};
+      } // end of forward
+      static void backward(const EPXData&){
+      } // end of forward
+    }; // end of struct DoNothing
     template<tfel::material::ModellingHypothesis::Hypothesis H>
     struct CallBehaviour2
     {
@@ -146,14 +214,25 @@ namespace epx
       {
 	typedef EuroplexusBehaviourHandler<H,Behaviour> AHandler;
 	using BV = Behaviour<H,EuroplexusReal,false>;
-	const bool bs = EuroplexusTraits<BV>::requiresStiffnessTensor;
-	const bool ba = EuroplexusTraits<BV>::requiresThermalExpansionCoefficientTensor;
+	constexpr const bool bs = EuroplexusTraits<BV>::requiresStiffnessTensor;
+	constexpr const bool ba = EuroplexusTraits<BV>::requiresThermalExpansionCoefficientTensor;
+	constexpr const auto type  = EuroplexusTraits<BV>::type;
+	constexpr const auto btype = EuroplexusTraits<BV>::btype;
 	using Integrator = typename AHandler::template Integrator<bs,ba>;
 	AHandler::checkNPROPS(d.NPROPS);
 	AHandler::checkNSTATV(d.NSTATV);
 	AHandler::checkNPREDEF(d.NPREDEF);
-	Integrator i(d);
+	EuroplexusReal dv0[EuroplexusTraits<BV>::DrivingVariableSize];
+	EuroplexusReal dv1[EuroplexusTraits<BV>::DrivingVariableSize];
+	using ChangeBasis =
+	  typename std::conditional<type==epx::ISOTROPIC,DoNothing<H>,
+				    typename std::conditional<btype==epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+							      SmallStrainChangeBasis<H>,
+							      FiniteStrainChangeBasis<H>>::type>::type;
+	auto ptr = ChangeBasis::forward(d,dv0,dv1);
+	Integrator i(d,ptr.first,ptr.second);
 	i.exe(d);
+	ChangeBasis::backward(d);	
       }
     }; // end of struct CallBehaviour
   }; // end of struct EuroplexusInterface
