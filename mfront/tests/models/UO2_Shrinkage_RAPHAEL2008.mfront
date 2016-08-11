@@ -1,4 +1,4 @@
-@Parser   Model;
+@DSL      Model;
 @Model    Shrinkage_RAPHAEL2008;
 @Material UO2;
 @Author   F. Michel;

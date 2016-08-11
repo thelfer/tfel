@@ -26,6 +26,7 @@
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 
 #include"MFront/MFront.hxx"
 #include"MFront/MFrontHeader.hxx"
@@ -1230,13 +1231,7 @@ namespace mfront{
       this->checkNotEndOfFile("BehaviourDSLCommon::treatParameterMethod");
       this->readSpecifiedToken("BehaviourDSLCommon::treatParameterMethod","(");
       this->checkNotEndOfFile("BehaviourDSLCommon::treatParameterMethod");
-      double value;
-      istringstream converter(this->current->value);
-      converter >> value;
-      if(!converter||(!converter.eof())){
-	this->throwRuntimeError("BehaviourDSLCommon::treatParameterMethod",
-				"could not read default value for parameter '"+n+"'");
-      }
+      double value = tfel::utilities::convert<double>(this->current->value);
       ++(this->current);
       this->checkNotEndOfFile("BehaviourDSLCommon::treatParameterMethod");
       this->readSpecifiedToken("BehaviourDSLCommon::treatParameterMethod",")");
@@ -2035,6 +2030,10 @@ namespace mfront{
 
   void BehaviourDSLCommon::reserveName(const std::string& n){
     this->mb.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,n);
+  }
+
+  bool BehaviourDSLCommon::isNameReserved(const std::string& n) const{
+    return this->mb.isNameReserved(n);
   }
   
   void BehaviourDSLCommon::writeIncludes(std::ostream& file) {
@@ -3549,10 +3548,11 @@ namespace mfront{
       throw_if(f.name.empty(),"unnamed function");
       throw_if((f.usedVariables.empty())&&(!f.useTimeIncrement),
 	       "no used variable for function '"+f.name+"'");
+      const auto sm = getTemporaryVariableName("sfeh");
       this->behaviourFile << "// updating " << vs << "\n"
-      << "mfront::" << md.className << "<Type> sm;\n"
-      << "sm.setOutOfBoundsPolicy(this->policy);\n"
-      << "this->" << vs << " = sm." << f.name << "(";
+      << "mfront::" << md.className << "<Type> " << sm << ";\n"
+      << "" << sm << ".setOutOfBoundsPolicy(this->policy);\n"
+      << "this->" << vs << " = " << sm << "." << f.name << "(";
       const auto args = [&f](){
 	auto a = std::vector<std::string>{};
 	for(const auto& uv: f.usedVariables){
@@ -6010,26 +6010,27 @@ namespace mfront{
     while((this->current!=this->tokens.end())&&
 	  (!endOfTreatment)){
       if(!isValidIdentifier(this->current->value)){
-	this->throwRuntimeError("DSLBase::treatParameter : ",
-				"variable given is not valid (read '"+this->current->value+"').");
+	this->throwRuntimeError("BehaviourDSLCommon::treatParameter : ",
+				"variable given is not valid (read "
+				"'"+this->current->value+"').");
       }
       const auto n = this->current->value;
       const auto lineNumber = this->current->line;
       ++(this->current);
-      this->checkNotEndOfFile("DSLBase::treatParameter");
+      this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
       unsigned short arraySize = 1u;
       if(this->current->value=="["){
 	++(this->current);
-	this->checkNotEndOfFile("DSLBase::treatParameter");
-	arraySize=this->readUnsignedShort("DSLBase::treatParameter");
+	this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
+	arraySize=this->readUnsignedShort("BehaviourDSLCommon::treatParameter");
 	if(arraySize==0u){
-	  this->throwRuntimeError("DSLBase::treatParameter",
+	  this->throwRuntimeError("BehaviourDSLCommon::treatParameter",
 				  "invalid array size");
 	}
-	this->checkNotEndOfFile("DSLBase::treatParameter");
-	this->readSpecifiedToken("DSLBase::treatParameter","]");
+	this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
+	this->readSpecifiedToken("BehaviourDSLCommon::treatParameter","]");
       }
-      this->checkNotEndOfFile("DSLBase::treatParameter");
+      this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
       if((this->current->value=="=")||
 	 (this->current->value=="{")||
 	 (this->current->value=="(")){
@@ -6039,7 +6040,7 @@ namespace mfront{
 	}
 	if(this->current->value=="("){
 	  if(arraySize!=1u){
-	    this->throwRuntimeError("DSLBase::treatParameter",
+	    this->throwRuntimeError("BehaviourDSLCommon::treatParameter",
 				    "invalid initalisation syntax for the default values "
 				    "of an array of parameters.\n"
 				    "Unexpected token '"+current->value+"'");
@@ -6047,15 +6048,15 @@ namespace mfront{
 	  ci=")";
 	}
 	++(this->current);
-	this->checkNotEndOfFile("DSLBase::treatParameter");
+	this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
 	if(arraySize!=1u){
 	  if(ci!="}"){
-	    this->readSpecifiedToken("DSLBase::treatParameter","{");
+	    this->readSpecifiedToken("BehaviourDSLCommon::treatParameter","{");
 	  }
 	  --(this->current);
-	  const auto  r = this->readArrayOfDouble("DSLBase::treatParameter");
+	  const auto  r = this->readArrayOfDouble("BehaviourDSLCommon::treatParameter");
 	  if(r.size()!=arraySize){
-	    this->throwRuntimeError("DSLBase::treatParameter",
+	    this->throwRuntimeError("BehaviourDSLCommon::treatParameter",
 				    "number of values given does not match the number of parameters "
 				    "("+std::to_string(r.size())+" vs +"+std::to_string(arraySize)+").\n");
 	  }
@@ -6070,13 +6071,13 @@ namespace mfront{
 	  std::istringstream converter(this->current->value);
 	  converter >> value;
 	  if(!converter||(!converter.eof())){
-	    this->throwRuntimeError("DSLBase::treatParameter",
+	    this->throwRuntimeError("BehaviourDSLCommon::treatParameter",
 				    "could not read default value for parameter '"+n+"'");
 	  }
 	  ++(this->current);
-	  this->checkNotEndOfFile("DSLBase::treatParameter");
+	  this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
 	  if(!ci.empty()){
-	    this->readSpecifiedToken("DSLBase::treatParameter",ci);
+	    this->readSpecifiedToken("BehaviourDSLCommon::treatParameter",ci);
 	  }
 	  for(const auto & h : mh){
 	    this->mb.addParameter(h,VariableDescription("real",n,1u,lineNumber));
@@ -6085,7 +6086,7 @@ namespace mfront{
 	}
       } else {
 	if(arraySize!=1){
-	  this->throwRuntimeError("DSLBase::treatParameter",
+	  this->throwRuntimeError("BehaviourDSLCommon::treatParameter",
 				  "default values of parameters array "
 				  "must be defined with the array. "
 				  "Unexpected token '"+current->value+"'");
@@ -6100,13 +6101,13 @@ namespace mfront{
 	endOfTreatment=true;
 	++(this->current);
       } else {
-	this->throwRuntimeError("DSLBase::treatParameter",
+	this->throwRuntimeError("BehaviourDSLCommon::treatParameter",
 				", or ; expected after '"+n+"', read '"+this->current->value+"'");
       }
     }
     if(!endOfTreatment){
       --(this->current);
-      this->throwRuntimeError("DSLBase::treatParameter",
+      this->throwRuntimeError("BehaviourDSLCommon::treatParameter",
 			      "Expected ';' before end of file");
     }
   } // end of BehaviourDSLCommon::treatParameter

@@ -1,4 +1,4 @@
-@Parser   Model;
+@DSL      Model;
 @Model    ConcentrationModel;
 @Material B4C;
 @Author   Helfer Thomas;

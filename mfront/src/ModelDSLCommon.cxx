@@ -66,9 +66,12 @@ namespace mfront{
     }
   }
 
-  void
-  ModelDSLCommon::reserveName(const std::string& n){
+  void ModelDSLCommon::reserveName(const std::string& n){
     ModelDescription::reserveName(n);
+  }
+
+  bool ModelDSLCommon::isNameReserved(const std::string& n) const{
+    return ModelDescription::isNameReserved(n);
   }
   
   AbstractDSL::DSLTarget
@@ -626,8 +629,7 @@ namespace mfront{
     this->readSpecifiedToken("ModelDSLCommon::treatInputMethod",";");
   } // end of ModelDSLCommon::treatInputMethod
 
-  void
-  ModelDSLCommon::treatParameter(void)
+  void ModelDSLCommon::treatParameter(void)
   {
     VariableDescriptionContainer gp;
     this->readVarList(gp,false);

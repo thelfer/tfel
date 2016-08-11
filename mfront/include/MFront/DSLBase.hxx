@@ -153,6 +153,16 @@ namespace mfront
      */
     virtual void reserveName(const std::string&) = 0;
     /*!
+     * \brief look if a name is reserved
+     * \param[in] n : name
+     */
+    virtual bool isNameReserved(const std::string&) const = 0;
+    /*! 
+     * \return a name which has not been reserved yet and reserve it
+     * \param[in] p: prefix
+     */
+    virtual std::string getTemporaryVariableName(const std::string&);
+    /*!
      * \brief add a static variable description
      * \param[in] v : variable description
      */
@@ -467,7 +477,7 @@ namespace mfront
      * automatically unset once the callback returns.
      */
     std::string currentComment;
-
+    
   }; // end of class DSLBase
 
 } // end of namespace mfront  

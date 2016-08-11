@@ -1,4 +1,4 @@
-@Behaviour IsotropicLinearSwelling;
+@Behaviour IsotropicLinearSwelling2;
 @Author Helfer Thomas;
 @Date   06/08/16;
 @Description{
@@ -11,9 +11,7 @@ young.setGlossaryName("YoungModulus");
 @MaterialProperty real   nu;
 nu.setGlossaryName("PoissonRatio");
 
-@ExternalStateVariable real s;
-s.setEntryName("LinearSwelling");
-@Swelling<Linear> s;
+@Swelling<Linear> "NickelAlloyPK33_ThermalExpansion_MechAlloy33.mfront";
 
 @LocalVariable stress lambda,mu;
 

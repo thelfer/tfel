@@ -1,0 +1,28 @@
+@Behaviour AxialGrowth2;
+@Author Helfer Thomas;
+@Date   08/08/16;
+@Description{
+ A test for the `@AxialGrowth` keyword
+}
+
+@AbaqusFiniteStrainStrategy[abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
+@EPXFiniteStrainStrategy[epx] MieheApelLambrechtLogarithmicStrain;
+
+@OrthotropicBehaviour<Pipe>;
+@RequireStiffnessTensor<Altered>;
+
+@AxialGrowth "Zircaloy4_AxialGrowth_BISON2014.mfront";
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = D;
+}
+
+@Integrator{
+  sig = D*(eto+deto);
+}
+
+@TangentOperator{
+  static_cast<void>(smt);
+  Dt = D;
+}

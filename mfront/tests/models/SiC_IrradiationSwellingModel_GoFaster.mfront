@@ -2,7 +2,7 @@
 @Model    IrradiationSwellingModel_GoFaster;
 @Material SiC;
 @Author   Huguet Juan;
-@Date     21 May. 2012;
+@Date     21/06/2012;
 
 @Description{
  "> E. E. Bloom, Journal of Nuclear Materials"

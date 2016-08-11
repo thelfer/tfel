@@ -1,11 +1,7 @@
-@Parser   Model;
+@DSL      Model;
 @Model    NeutronFluence;
-@Author   E. BRUNON;
-@Date     2009-11-24;
-
-@Domain "MATRIX";
-
-/* Inputs */
+@Author   Éric Brunon;
+@Date     24/11/2009;
 
 @Input Flux;
 Flux.setGlossaryName("NeutronFlux");

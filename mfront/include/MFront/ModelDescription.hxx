@@ -159,6 +159,11 @@ namespace mfront
      */
     virtual void reserveName(const std::string&);
     /*!
+     * \brief look if a name is reserved
+     * \param[in] n : name
+     */
+    virtual bool isNameReserved(const std::string&) const;
+    /*!
      * \brief register a static member name
      * \param[in] n : name
      */

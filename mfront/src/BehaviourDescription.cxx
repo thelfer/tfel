@@ -1818,6 +1818,18 @@ namespace mfront
   {
     this->callBehaviourData(h,&BehaviourData::reserveName,n,true);
   }
+
+  bool BehaviourDescription::isNameReserved(const std::string& n) const{
+    if(this->d.isNameReserved(n)){
+      return true;
+    }
+    for(auto md : this->sd){
+      if(md.second->isNameReserved(n)){
+	return true;
+      }
+    }
+    return false;
+  } // end of BehaviourDescription::isNameReserved
   
   void
   BehaviourDescription::registerMemberName(const Hypothesis h,

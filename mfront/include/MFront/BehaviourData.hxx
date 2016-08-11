@@ -765,6 +765,11 @@ namespace mfront{
      */
     void reserveName(const std::string&);
     /*!
+     * \brief look if a name is reserved
+     * \param[in] n : name
+     */
+     bool isNameReserved(const std::string&) const;
+    /*!
      * register a member name
      * \param[in] n : member name
      * \note an exception is thrown is the given name has already been

@@ -76,7 +76,11 @@ namespace mfront
 			       "name '"+n+"' already reserved"));
     }
   }
-      
+
+  bool ModelDescription::isNameReserved(const std::string& n) const{
+    return this->reservedNames.count(n)!=0;
+  }
+  
   void
   ModelDescription::registerMemberName(const std::string& n)
   {

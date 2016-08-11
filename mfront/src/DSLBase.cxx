@@ -103,6 +103,23 @@ namespace mfront
     names.push_back("mfront_errno_old");    
     return names;
   }
+
+  std::string DSLBase::getTemporaryVariableName(const std::string& p){
+    if(!this->isValidIdentifier(p)){
+      this->throwRuntimeError("DSLBase::getTemporaryVariableName",
+			      "invalid variable prefix '"+p+"'");
+    }
+    for(unsigned int i=0;i!=std::numeric_limits<unsigned int>::max();++i){
+      const auto c = p+std::to_string(i);
+      if(!this->isNameReserved(c)){
+	this->reserveName(c);
+	return c;
+      }
+    }
+    this->throwRuntimeError("DSLBase::getTemporaryVariableName",
+			    "unable to find a temporary variable");
+  }
+
   
   void
   DSLBase::openFile(const std::string& f,
@@ -471,7 +488,7 @@ namespace mfront
 			    "Cannot read type of static variable.");
     const auto name = this->current->value;
     const auto line = this->current->line;
-    if(!isValidIdentifier(name)){
+    if(!this->isValidIdentifier(name)){
       this->throwRuntimeError("DSLBase::treatIntegerConstant",
 			      "Variable name '"+name+"' is not valid.");
     }
@@ -495,7 +512,7 @@ namespace mfront
     while((this->current!=this->tokens.end())&&
 	  (!endOfTreatment)){
       const auto& varName = this->current->value;
-      if(!isValidIdentifier(this->current->value)){
+      if(!this->isValidIdentifier(this->current->value)){
 	this->throwRuntimeError("DSLBase::readVarList : ",
 				"variable given is not valid (read '"+this->current->value+"').");
       }
@@ -580,7 +597,7 @@ namespace mfront
     this->checkNotEndOfFile("DSLBase::readVarList",
 			    "Cannot read type of varName.\n");
     auto type=this->current->value;
-    if(!isValidIdentifier(type,false)){
+    if(!this->isValidIdentifier(type,false)){
       --(this->current);
       this->throwRuntimeError("DSLBase::readVarList",
 			      "given type "+type+"is not valid.");
@@ -591,7 +608,7 @@ namespace mfront
       ++(this->current);
       this->checkNotEndOfFile("DSLBase::readVarList");
       const auto t = this->current->value;
-      if(!isValidIdentifier(t,false)){
+      if(!this->isValidIdentifier(t,false)){
 	--(this->current);
 	this->throwRuntimeError("DSLBase::readVarList",
 				"given type '"+t+"' is not valid.");
@@ -607,7 +624,7 @@ namespace mfront
       type += "<";
       while(openBrackets!=0){
 	const auto t = this->current->value;
-	if((!isValidIdentifier(t,false))&&
+	if((!this->isValidIdentifier(t,false))&&
 	   (!isInteger(t))){
 	  this->throwRuntimeError("DSLBase::readVarList",
 				  "given type '"+t+"' is not valid.");
@@ -619,7 +636,7 @@ namespace mfront
 	  ++(this->current);
 	  this->checkNotEndOfFile("DSLBase::readVarList");
 	  const auto t2 = this->current->value;
-	  if((!isValidIdentifier(t2,false))&&
+	  if((!this->isValidIdentifier(t2,false))&&
 	     (!isInteger(t2))){
 	    --(this->current);
 	    this->throwRuntimeError("DSLBase::readVarList",
@@ -1025,7 +1042,7 @@ namespace mfront
     this->checkNotEndOfFile("DSLBase::treatStaticVar",
 			    "Cannot read type of static variable.");
     const auto type=this->current->value;
-    if(!isValidIdentifier(type,false)){
+    if(!this->isValidIdentifier(type,false)){
       --(this->current);
       this->throwRuntimeError("DSLBase::treatStaticVar",
 			      "type given is not valid.");
@@ -1034,7 +1051,7 @@ namespace mfront
     this->checkNotEndOfFile("DSLBase::treatStaticVar",
 			    "Cannot read variable name.");
     const auto name = this->current->value;
-    if(!isValidIdentifier(name)){
+    if(!this->isValidIdentifier(name)){
       this->throwRuntimeError("DSLBase::treatStaticVar",
 			      "Variable name '"+name+"' is not valid.");
     }
@@ -1087,14 +1104,13 @@ namespace mfront
     return CxxTokenizer::readDouble(this->current,this->tokens.end());
   } // end of DSLBase::readDouble
 
-  void
-  DSLBase::handleParameter(VariableDescriptionContainer& c,
-			   std::map<std::string,double>& v)
+  void DSLBase::handleParameter(VariableDescriptionContainer& c,
+				std::map<std::string,double>& v)
   {
     auto endOfTreatment=false;
     while((this->current!=this->tokens.end())&&
 	  (!endOfTreatment)){
-      if(!isValidIdentifier(this->current->value)){
+      if(!this->isValidIdentifier(this->current->value)){
 	this->throwRuntimeError("DSLBase::handleParameter : ",
 				"variable given is not valid (read '"+this->current->value+"').");
       }
@@ -1114,13 +1130,7 @@ namespace mfront
 	}
 	++(this->current);
 	this->checkNotEndOfFile("DSLBase::handleParameter");
-	std::istringstream converter(this->current->value);
-	double value;
-	converter >> value;
-	if(!converter||(!converter.eof())){
-	  this->throwRuntimeError("DSLBase::handleParameter",
-				  "could not read default value for parameter '"+n+"'");
-	}
+	const auto value = tfel::utilities::convert<double>(this->current->value);
 	++(this->current);
 	this->checkNotEndOfFile("DSLBase::handleParameter");
 	if(!v.insert({n,value}).second){

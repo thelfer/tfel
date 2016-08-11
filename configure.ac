@@ -1378,13 +1378,15 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/castem/castemtssf.mtest
 	   mfront/tests/behaviours/castem/castemcomputestressfreeexpansion.mtest
 	   mfront/tests/behaviours/castem/castemisotropiclinearswelling.mtest
+	   mfront/tests/behaviours/castem/castemisotropiclinearswelling2.mtest
   	   mfront/tests/behaviours/castem/castemisotropicvolumeswelling.mtest
-  	   mfront/tests/behaviours/castem/castemisotropicvolumeswelling2.mtest	   
+  	   mfront/tests/behaviours/castem/castemisotropicvolumeswelling2.mtest 
      	   mfront/tests/behaviours/castem/castemorthotropicswelling.mtest
 	   mfront/tests/behaviours/castem/castemorthotropicswelling2.mtest
   	   mfront/tests/behaviours/castem/castemorthotropicswelling3.mtest
   	   mfront/tests/behaviours/castem/castemaxialgrowth.mtest
   	   mfront/tests/behaviours/castem/castemaxialgrowth2.mtest
+    	   mfront/tests/behaviours/castem/castemaxialgrowth3.mtest
            mfront/tests/behaviours/castem/dgibi/Makefile
            mfront/tests/behaviours/castem2/Makefile   
            mfront/tests/behaviours/castem2/castem2burger.mtest

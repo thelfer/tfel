@@ -1979,6 +1979,7 @@ mfront/tests/Makefile.am -text
 mfront/tests/behaviours/AgeingBurger.mfront -text
 mfront/tests/behaviours/AnistropicLemaitreViscoplasticBehaviour.mfront -text
 mfront/tests/behaviours/AxialGrowth.mfront -text
+mfront/tests/behaviours/AxialGrowth2.mfront -text
 mfront/tests/behaviours/Burger.mfront -text
 mfront/tests/behaviours/CMakeLists.txt -text
 mfront/tests/behaviours/Chaboche.mfront -text
@@ -2022,6 +2023,7 @@ mfront/tests/behaviours/IncompressibleMooneyRivlinBehaviour.mfront -text
 mfront/tests/behaviours/IncompressiblePlaneStressGornetDesmoratBehaviour.mfront -text
 mfront/tests/behaviours/IncompressiblePlaneStressMooneyRivlinBehaviour.mfront -text
 mfront/tests/behaviours/IsotropicLinearSwelling.mfront -text
+mfront/tests/behaviours/IsotropicLinearSwelling2.mfront -text
 mfront/tests/behaviours/IsotropicPlasticity.mfront -text
 mfront/tests/behaviours/IsotropicStandardElasticity.mfront -text
 mfront/tests/behaviours/IsotropicStandardElasticity10.mfront -text
@@ -2828,6 +2830,7 @@ mfront/tests/behaviours/castem/castemageingburger.mtest.in -text
 mfront/tests/behaviours/castem/castemanistropiclemaitreviscoplasticbehaviour.mtest.in -text
 mfront/tests/behaviours/castem/castemaxialgrowth.mtest.in -text
 mfront/tests/behaviours/castem/castemaxialgrowth2.mtest.in -text
+mfront/tests/behaviours/castem/castemaxialgrowth3.mtest.in -text
 mfront/tests/behaviours/castem/castemburger.mtest.in -text
 mfront/tests/behaviours/castem/castemchaboche.mtest.in -text
 mfront/tests/behaviours/castem/castemchaboche2.mtest.in -text
@@ -2985,6 +2988,7 @@ mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbeha
 mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbehaviouruniaxialtesting.mtest.in -text
 mfront/tests/behaviours/castem/castemincompressibleplanestressmooneyrivlinbehaviouruniaxialtesting.mtest.in -text
 mfront/tests/behaviours/castem/castemisotropiclinearswelling.mtest.in -text
+mfront/tests/behaviours/castem/castemisotropiclinearswelling2.mtest.in -text
 mfront/tests/behaviours/castem/castemisotropicvolumeswelling.mtest.in -text
 mfront/tests/behaviours/castem/castemisotropicvolumeswelling2.mtest.in -text
 mfront/tests/behaviours/castem/castemlorentz.mtest.in -text
@@ -3936,8 +3940,10 @@ mfront/tests/models/CMakeLists.txt -text
 mfront/tests/models/FastNeutronFluence.mfront -text
 mfront/tests/models/Makefile.am -text
 mfront/tests/models/NeutronFluence.mfront -text
+mfront/tests/models/NickelAlloyPK33_ThermalExpansion_MechAlloy33.mfront -text
 mfront/tests/models/SiC_IrradiationSwellingModel_GoFaster.mfront -text
 mfront/tests/models/UO2_Shrinkage_RAPHAEL2008.mfront -text
+mfront/tests/models/Zircaloy4_AxialGrowth_BISON2014.mfront -text
 mfront/tests/models/interfaces/CMakeLists.txt -text
 mfront/tests/models/interfaces/Makefile.am -text
 mfront/tests/models/interfaces/include/CMakeLists.txt -text

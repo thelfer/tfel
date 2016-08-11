@@ -77,6 +77,8 @@ endmacro(mfront_model)
 mfront_model(B4C_ConcentrationModel
   SiC_IrradiationSwellingModel_GoFaster
   UO2_Shrinkage_RAPHAEL2008
+  Zircaloy4_AxialGrowth_BISON2014
+  NickelAlloyPK33_ThermalExpansion_MechAlloy33
   FastNeutronFluence
   NeutronFluence)
 

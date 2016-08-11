@@ -1,0 +1,35 @@
+@DSL      Model;
+@Model    AxialGrowth_BISON2014;
+@Material Zircaloy4;
+@Author   Thomas Helfer;
+@Date     11/08/2014;
+
+@Description
+{
+  "BISON Theory Manual"
+  "The Equations Behind Nuclear"
+  "Fuel Analysis"
+  "BISON Release 1.1"
+  J. D. Hales,R. L. Williamsonn,S. R. Novascone
+  G. Pastore,B. W. Spencer,D. S. Stafford,K. A. Gamble
+  D. M. Perez,W. Liu
+  October 2013. INL/EXT-13-29930 Rev. 1.
+}
+
+@Output ag;
+ag.setGlossaryName("AxialGrowth");
+ag.setDefaultInitialValue(0.);
+ag.setDepth(1);
+
+@Input fnf;
+fnf.setGlossaryName("FastNeutronFluence (>1 MeV)");
+fnf.setDepth(1);
+
+/* Ouputs */
+@Function compute
+{
+  const real A    = 2.1224e-4;
+  const real n    = 0.794;
+  const real fnf0 = 1.e25;
+  ag = ag_1+A*(pow(fnf/fnf0,n)-pow(fnf_1/fnf0,n));
+}

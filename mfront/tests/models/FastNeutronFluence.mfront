@@ -1,7 +1,7 @@
-@Parser   Model;
+@DSL      Model;
 @Model    FastNeutronFluence;
-@Author   E. BRUNON;
-@Date     2009-11-24;
+@Author   Éric Brunon;
+@Date     24/11/2009;
 
 @Input FastFlux;
 FastFlux.setGlossaryName("FastNeutronFlux (>1 MeV)");

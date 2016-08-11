@@ -1169,6 +1169,11 @@ namespace mfront
     void reserveName(const Hypothesis,
 		     const std::string&);
     /*!
+     * \brief look if a name is reserved
+     * \param[in] n : name
+     */
+     bool isNameReserved(const std::string&) const;
+    /*!
      * register the given member name
      * \param[in] h : hypothesis
      * \param[in] n : variable name

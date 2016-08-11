@@ -649,14 +649,17 @@ namespace mfront{
     this->completeTargetsDescription();
   }
 
-  void
-  MaterialPropertyDSL::reserveName(const std::string& n){
+  void MaterialPropertyDSL::reserveName(const std::string& n){
     if(!this->reservedNames.insert(n).second){
       this->throwRuntimeError("MaterialPropertyDSL::reserveName",
 			      "name '"+n+"' already reserved");
     }
   }
-      
+
+  bool MaterialPropertyDSL::isNameReserved(const std::string& n) const{
+    return this->reservedNames.count(n)!=0;
+  }
+  
   void
   MaterialPropertyDSL::generateOutputFiles(void)
   {

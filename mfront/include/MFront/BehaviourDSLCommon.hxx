@@ -500,6 +500,11 @@ namespace mfront{
      */
     virtual void reserveName(const std::string&) override;
     /*!
+     * \brief look if a name is reserved
+     * \param[in] n : name
+     */
+    virtual bool isNameReserved(const std::string&) const override;
+    /*!
      * register the default variable names
      */
     virtual void

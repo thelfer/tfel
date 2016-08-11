@@ -766,6 +766,10 @@ namespace mfront{
 			       "name '"+n+"' already registred"));
     }
   } // end of BehaviourData::reserveName
+
+  bool BehaviourData::isNameReserved(const std::string& n) const{
+    return this->reservedNames.count(n)!=0;
+  }
   
   void
   BehaviourData::registerMemberName(const std::string& n)

@@ -58,7 +58,12 @@ namespace mfront{
      * been registred and throws an exception if it does, register it
      * otherwise
      */
-    virtual void reserveName(const std::string&);
+    virtual void reserveName(const std::string&) override;
+    /*!
+     * \brief look if a name is reserved
+     * \param[in] n : name
+     */
+    virtual bool isNameReserved(const std::string&) const override;
     /*!
      * \return the name of the generated class
      */
