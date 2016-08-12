@@ -9,7 +9,7 @@
  */
 
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'IMPLICITMONOCRYSTAL';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'IMPLICITMONOCRYSTAL_3D';
 @MaximumNumberOfSubSteps 1;
 
 // Material properties

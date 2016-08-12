@@ -1,4 +1,4 @@
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'VISCOCHABOCHE';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'VISCOCHABOCHE_3D';
 
 @MaterialProperty<function> 'YoungModulus' '2.e5 - (1.e5*((TC - 100.)/960.)**2)';
 @MaterialProperty<constant> 'PoissonRatio'  0.3 ;    

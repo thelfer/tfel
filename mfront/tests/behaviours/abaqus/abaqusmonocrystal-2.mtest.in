@@ -9,7 +9,7 @@
  */
 
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'MONOCRYSTAL';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'MONOCRYSTAL_3D';
 @MaximumNumberOfSubSteps 1;
 
 // Material properties

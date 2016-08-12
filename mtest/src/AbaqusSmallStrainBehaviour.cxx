@@ -31,8 +31,8 @@ namespace mtest
 {
 
   AbaqusSmallStrainBehaviour::AbaqusSmallStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
-								 const std::string& l,
-								 const std::string& b)
+							 const std::string& l,
+							 const std::string& b)
     : AbaqusStandardBehaviour(h,l,b)
   {}
 

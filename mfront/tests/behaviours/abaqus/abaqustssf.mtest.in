@@ -13,7 +13,7 @@
 @MaximalTimeStepScalingFactor 1.2;
 
 @PredictionPolicy 'LinearPrediction';
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'NORTON2';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'NORTON2_3D';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

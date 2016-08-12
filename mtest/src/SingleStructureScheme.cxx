@@ -35,6 +35,7 @@
 #include"MTest/EuroplexusFiniteStrainBehaviour.hxx"
 #endif /* HAVE_EUROPLEXUS  */
 #ifdef HAVE_ABAQUS
+#include"MTest/AbaqusStandardBehaviour.hxx"
 #include"MTest/AbaqusSmallStrainBehaviour.hxx"
 #include"MTest/AbaqusExplicitBehaviour.hxx"
 #endif /* HAVE_ABAQUS  */
@@ -208,7 +209,8 @@ namespace mtest{
 #ifdef HAVE_ABAQUS
     if((i=="abaqus")||(i=="abaqus_standard")||(i=="abaqus_umat")){
       auto& elm = ELM::getExternalLibraryManager();
-      const auto type = elm.getUMATBehaviourType(l,f);
+      const auto bn   = AbaqusStandardBehaviour::getBehaviourName(f,h);
+      const auto type = elm.getUMATBehaviourType(l,bn);
       if(type==1u){
 	b = shared_ptr<Behaviour>(new AbaqusSmallStrainBehaviour(h,l,f));
 	// }  else if(type==2u){

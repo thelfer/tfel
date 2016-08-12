@@ -24,24 +24,6 @@
 #include"MFront/AbaqusExplicitInterface.hxx"
 
 namespace mfront{
-
-  static std::string
-  getFunctionName(const std::string& b,
-		  const tfel::material::ModellingHypothesis::Hypothesis h){
-    const auto s = [h]() -> std::string {
-      if(h==tfel::material::ModellingHypothesis::AXISYMMETRICAL){
-	return "AXIS";
-      } else if(h==tfel::material::ModellingHypothesis::PLANESTRAIN){
-	return "PSTRAIN";
-      } else if(h==tfel::material::ModellingHypothesis::PLANESTRESS){
-	return "PSTRESS";
-      } else if(h==tfel::material::ModellingHypothesis::TRIDIMENSIONAL){
-	return "3D";
-      }
-      throw(std::runtime_error("::getFunctionName: invalid hypothesis."));
-    }();
-    return b+"_"+s;
-  } // end of getFunctionName
   
   //! copy vumat-sp.cpp and vumat-dp locally
   static void copyVUMATFiles(void)
@@ -208,7 +190,7 @@ namespace mfront{
     insert_if(d[lib].ldflags,"-lAbaqusInterface");
     insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
     for(const auto h : this->getModellingHypothesesToBeTreated(bd)){
-      insert_if(d[lib].epts,mfront::getFunctionName(this->getFunctionName(name),h));
+      insert_if(d[lib].epts,this->getFunctionNameForHypothesis(name,h));
     }
   } // end of AbaqusExplicitInterface::getTargetsDescription
 
@@ -331,11 +313,11 @@ namespace mfront{
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
 
     for(const auto & h : mh){
-      out << "MFRONT_SHAREDOBJ void\n" << mfront::getFunctionName(this->getFunctionName(name),h) << "_f";
+      out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameForHypothesis(name,h) << "_f";
       writeVUMATArguments(out,"float");
       out << ";\n\n";
 
-      out << "MFRONT_SHAREDOBJ void\n" << mfront::getFunctionName(this->getFunctionName(name),h);
+      out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameForHypothesis(name,h);
       writeVUMATArguments(out,"double");
       out << ";\n\n";
     }
@@ -397,7 +379,7 @@ namespace mfront{
     for(const auto h : mh){
       for(const std::string t : {"float","double"}){
 	out << "MFRONT_SHAREDOBJ void\n"
-	    << mfront::getFunctionName(this->getFunctionName(name),h);
+	    << this->getFunctionNameForHypothesis(name,h);
 	if(t=="float"){
 	  out << "_f";
 	}

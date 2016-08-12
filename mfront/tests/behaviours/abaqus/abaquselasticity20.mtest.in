@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ELASTICITY3';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ELASTICITY3_3D';
 
 @Real 'E'  150.e9;
 @Real 'nu'   0.3333;

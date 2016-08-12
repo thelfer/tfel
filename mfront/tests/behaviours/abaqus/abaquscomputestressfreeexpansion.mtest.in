@@ -5,7 +5,7 @@
   "the ComputeFreeStressExpansion keyword"
 };
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'COMPUTESTRESSFREEEXPANSION';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'COMPUTESTRESSFREEEXPANSION_3D';
 
 @Real 'E'  150.e9;
 @Real 'nu'   0.3333;

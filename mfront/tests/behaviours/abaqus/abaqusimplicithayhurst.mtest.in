@@ -5,7 +5,7 @@
  * \brief 20 mai 2013
  */
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'IMPLICITHAYHURST';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'IMPLICITHAYHURST_3D';
 @MaterialProperty<constant> 'YoungModulus'      1.45000E5;
 @MaterialProperty<constant> 'PoissonRatio'         0.3;
 @MaterialProperty<constant> 'ThermalExpansion'   1.E-05;

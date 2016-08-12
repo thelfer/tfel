@@ -16,6 +16,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./castem-fr.md					   \
 	   ./epx.md						   \
 	   ./aster.md						   \
+	   ./abaqus.md						   \
 	   ./zmat.md						   \
 	   ./install.md						   \
 	   ./install-windows.md					   \

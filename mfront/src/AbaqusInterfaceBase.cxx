@@ -40,11 +40,29 @@ namespace mfront{
     return makeUpperCase(lib);
   } // end of AbaqusInterfaceBase::getLibraryName
 
-  std::string
-  AbaqusInterfaceBase::getFunctionName(const std::string& name) const
+  std::string AbaqusInterfaceBase::getFunctionName(const std::string& name) const
   {
     return makeUpperCase(name);
-  } // end of AbaqusInterfaceBase::getLibraryName
+  } // end of AbaqusInterfaceBase::getFunctionName
+
+  std::string AbaqusInterfaceBase::getFunctionNameForHypothesis(const std::string& name,
+								const Hypothesis h) const
+  {
+    const auto s = [h]() -> std::string {
+      if(h==tfel::material::ModellingHypothesis::AXISYMMETRICAL){
+	return "AXIS";
+      } else if(h==tfel::material::ModellingHypothesis::PLANESTRAIN){
+	return "PSTRAIN";
+      } else if(h==tfel::material::ModellingHypothesis::PLANESTRESS){
+	return "PSTRESS";
+      } else if(h==tfel::material::ModellingHypothesis::TRIDIMENSIONAL){
+	return "3D";
+      }
+      throw(std::runtime_error("AbaqusInterfaceBase::getFunctionNameForHypothesis: "
+			       "invalid hypothesis."));
+    }();
+    return makeUpperCase(name)+"_"+s;
+  } // end of AbaqusInterfaceBase::getFunctionNameForHypothesis
   
   std::set<tfel::material::ModellingHypothesis::Hypothesis>
   AbaqusInterfaceBase::getModellingHypothesesToBeTreated(const BehaviourDescription& mb) const
@@ -426,7 +444,8 @@ namespace mfront{
 	  out << "** " << i << ": " << mb.getExternalName(h,pv->name);
 	}
       }
-      out << "*Material, name=" << mn << '\n';
+      out << "*Material, name="
+	  << this->getFunctionNameForHypothesis(mn,h) << '\n';
       if(!b){
 	out << "*DENSITY\n<density>\n";
       }

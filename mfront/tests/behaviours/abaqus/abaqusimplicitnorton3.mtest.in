@@ -11,7 +11,7 @@
  };
 
 @ModellingHypothesis 'PlaneStress';
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'IMPLICITNORTON';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'IMPLICITNORTON_PSTRESS';
 
 @MaximumNumberOfSubSteps   1;
 @StressEpsilon 1.;

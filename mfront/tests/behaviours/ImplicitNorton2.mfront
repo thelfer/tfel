@@ -11,8 +11,8 @@
 
 @Epsilon 1.e-14;
 
-@CompareToNumericalJacobian true;
-@JacobianComparisonCriterium 1.e-8;
+// @CompareToNumericalJacobian true;
+// @JacobianComparisonCriterium 1.e-8;
 @PerturbationValueForNumericalJacobianComputation 1.e-8;
 
 @MaterialProperty stress young; /* mandatory for castem */

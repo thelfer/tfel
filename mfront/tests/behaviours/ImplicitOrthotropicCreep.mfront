@@ -5,7 +5,7 @@
 
 @OrthotropicBehaviour;
 @RequireStiffnessTensor;
-@CompareToNumericalJacobian true;
+// @CompareToNumericalJacobian true;
 @Theta 1.;
 @AsterCompareToNumericalTangentOperator[aster]  true;
 @AsterTangentOperatorComparisonCriterium[aster] 1.e7;

@@ -30,21 +30,50 @@
 namespace mtest
 {
 
+  std::string
+  AbaqusStandardBehaviour::getBehaviourName(const std::string& b,
+					    const Hypothesis h)
+  {
+    auto ends = [&b,h](const std::string& s){
+      if(b.length()>=s.length()){
+        return b.compare(b.length()-s.length(),s.length(),s)==0;
+      }
+      return false;
+    };
+    const auto s = [h]() -> std::string {
+      if(h==tfel::material::ModellingHypothesis::AXISYMMETRICAL){
+	return "_AXIS";
+      } else if(h==tfel::material::ModellingHypothesis::PLANESTRAIN){
+	return "_PSTRAIN";
+      } else if(h==tfel::material::ModellingHypothesis::PLANESTRESS){
+	return "_PSTRESS";
+      } else if(h==tfel::material::ModellingHypothesis::TRIDIMENSIONAL){
+	return "_3D";
+      }
+      throw(std::runtime_error("AbaqusStandardBehaviour::AbaqusStandardBehaviour: "
+			       "invalid hypothesis."));
+    }();
+    if(!ends(s)){
+      throw(std::runtime_error("AbaqusStandardBehaviour::AbaqusStandardBehaviour: "
+			       "invalid function name."));
+    }
+    return {b.begin(),b.begin()+b.length()-s.length()};    
+  }
+  
   AbaqusStandardBehaviour::AbaqusStandardBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
 						   const std::string& l,
 						   const std::string& b)
-    : UmatBehaviourBase(h,l,b)
+    : UmatBehaviourBase(h,l,AbaqusStandardBehaviour::getBehaviourName(b,h))
   {
     using namespace std;
-    using namespace tfel::system;
     using namespace tfel::material;
-    typedef ExternalLibraryManager ELM;
-    auto& elm = ELM::getExternalLibraryManager();
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    const auto bn = AbaqusStandardBehaviour::getBehaviourName(b,h);
     this->fct = elm.getAbaqusExternalBehaviourFunction(l,b);
-    this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
-    bool eo = elm.getUMATRequiresStiffnessTensor(l,b,this->hypothesis);
-    bool to = elm.getUMATRequiresThermalExpansionCoefficientTensor(l,b,this->hypothesis);
-    unsigned short etype = elm.getUMATElasticSymmetryType(l,b);
+    this->mpnames = elm.getUMATMaterialPropertiesNames(l,bn,this->hypothesis);
+    bool eo = elm.getUMATRequiresStiffnessTensor(l,bn,this->hypothesis);
+    bool to = elm.getUMATRequiresThermalExpansionCoefficientTensor(l,bn,this->hypothesis);
+    unsigned short etype = elm.getUMATElasticSymmetryType(l,bn);
     vector<string> tmp;
     if(etype==0u){
       if(eo){

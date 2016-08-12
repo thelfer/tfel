@@ -7,7 +7,7 @@
 
 @PredictionPolicy 'LinearPrediction';
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'IMPLICITNORTON_BROYDEN2';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'IMPLICITNORTON_BROYDEN2_3D';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

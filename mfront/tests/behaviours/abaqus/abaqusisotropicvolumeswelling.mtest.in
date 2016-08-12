@@ -5,7 +5,7 @@
   "taken into account."
 };
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ISOTROPICVOLUMESWELLING';
+@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ISOTROPICVOLUMESWELLING_3D';
 
 @MaterialProperty<constant> 'YoungModulus' 150.e9;
 @MaterialProperty<constant> 'PoissonRatio'   0.3;

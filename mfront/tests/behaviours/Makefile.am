@@ -126,8 +126,11 @@ MFRONTS= DDIF2.mfront                                                      \
 	 IsotropicPlasticity.mfront                                        \
 	 ComputeStressFreeExpansion.mfront                                 \
 	 IsotropicLinearSwelling.mfront                                    \
+	 IsotropicLinearSwelling2.mfront                                   \
 	 IsotropicVolumeSwelling.mfront                                    \
+	 IsotropicVolumeSwelling2.mfront                                   \
 	 AxialGrowth.mfront                                                \
+	 AxialGrowth2.mfront                                               \
 	 OrthotropicSwelling.mfront                                        \
 	 OrthotropicSwelling2.mfront
 

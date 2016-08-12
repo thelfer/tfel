@@ -29,6 +29,15 @@ namespace mtest
     : public UmatBehaviourBase
   {
     /*!
+     * \return the name of the behaviour by stripping the function
+     * name from the suffix describing the modelling hypothesis
+     * \param[in] h : modelling hypothesis
+     * \param[in] f : function implementation the behaviour
+     */
+    static std::string
+    getBehaviourName(const std::string&,
+		     const Hypothesis);
+    /*!
      * \param[in] h : modelling hypothesis
      * \param[in] l : library name
      * \param[in] b : behaviour name
