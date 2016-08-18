@@ -20,5 +20,11 @@ endmacro(tests_material)
 
 tests_material(boundsCheck)
 tests_material(OrthotropicAxesConventionTest)
+tests_material(AbaqusTangentOperator)
 tests_material(FiniteStrainBehaviourTangentOperator)
+tests_material(FiniteStrainBehaviourTangentOperator2)
+tests_material(FiniteStrainBehaviourTangentOperator3)
+tests_material(FiniteStrainBehaviourTangentOperator4)
+# tests_material(FiniteStrainBehaviourTangentOperator5)
+# tests_material(FiniteStrainBehaviourTangentOperator6)
 

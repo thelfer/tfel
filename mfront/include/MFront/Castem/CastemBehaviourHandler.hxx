@@ -48,7 +48,7 @@ namespace castem
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
     TangentOperatorTraits;
-    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DSIG_DD;
+    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::C_TRUESDELL;
   };
 
   template<>

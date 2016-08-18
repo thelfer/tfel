@@ -738,9 +738,7 @@ namespace mtest
       }
       return rb;
     }
-    if((this->cto)&&(mt==StiffnessMatrixType::CONSISTENTTANGENTOPERATOR)&&
-       ((btype==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	(btype==MechanicalBehaviourBase::COHESIVEZONEMODEL))){
+    if((this->cto)&&(mt==StiffnessMatrixType::CONSISTENTTANGENTOPERATOR)){
       bool ok = true;
       bwk.ne.swap(s.e1);
       bwk.ns.swap(s.s1);

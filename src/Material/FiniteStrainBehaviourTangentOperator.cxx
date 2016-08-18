@@ -23,7 +23,8 @@ namespace tfel{
     {
       return {FiniteStrainBehaviourTangentOperatorBase::DSIG_DF, 
 	  FiniteStrainBehaviourTangentOperatorBase::DSIG_DDF,
-	  FiniteStrainBehaviourTangentOperatorBase::DSIG_DD,
+	  FiniteStrainBehaviourTangentOperatorBase::C_TRUESDELL,
+	  FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI,
 	  FiniteStrainBehaviourTangentOperatorBase::ABAQUS, 
 	  FiniteStrainBehaviourTangentOperatorBase::DSIG_DDE,
 	  FiniteStrainBehaviourTangentOperatorBase::DTAU_DF, 
@@ -45,7 +46,8 @@ namespace tfel{
       case FiniteStrainBehaviourTangentOperatorBase::DS_DF:
       case FiniteStrainBehaviourTangentOperatorBase::DS_DDF:
 	return "t2tost2";
-      case FiniteStrainBehaviourTangentOperatorBase::DSIG_DD:
+      case FiniteStrainBehaviourTangentOperatorBase::C_TRUESDELL:
+      case FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI:
       case FiniteStrainBehaviourTangentOperatorBase::ABAQUS:
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DDE:
       case FiniteStrainBehaviourTangentOperatorBase::DS_DC:
@@ -64,8 +66,10 @@ namespace tfel{
 	return "DSIG_DF";
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DDF:
 	return "DSIG_DDF";
-      case FiniteStrainBehaviourTangentOperatorBase::DSIG_DD:
-	return "DSIG_DD";
+      case FiniteStrainBehaviourTangentOperatorBase::C_TRUESDELL:
+	return "C_TRUESDELL";
+      case FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI:
+	return "SPATIAL_MODULI";
       case FiniteStrainBehaviourTangentOperatorBase::ABAQUS:
 	return "ABAQUS";
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DDE:
@@ -97,12 +101,15 @@ namespace tfel{
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DDF:
 	return "derivative of the Cauchy stress with respect to "
 	  "the deformation gradient increment";
-      case FiniteStrainBehaviourTangentOperatorBase::DSIG_DD:
+      case FiniteStrainBehaviourTangentOperatorBase::C_TRUESDELL:
 	return "derivative of the Cauchy stress with respect to "
 	  "the deformation rate";
       case FiniteStrainBehaviourTangentOperatorBase::ABAQUS:
 	return "tangent moduli associated with the Jaumann rate "
 	  "of the Kirchhoff stress divided by the change of volume";
+      case FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI:
+	return "tangent moduli associated with Lie derivative of "
+	  "the Kirchhoff stress";
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DDE:
 	return "derivative of the Cauchy stress with respect to "
 	  "the small strain deformation";

@@ -151,6 +151,14 @@ namespace tfel{
     template<unsigned short N, typename T>
     template<typename T2,
 	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
+    constexpr t2tost2<N,T>::t2tost2(const std::initializer_list<T2>& init)
+      : fsarray<StensorDimeToSize<N>::value*
+		TensorDimeToSize<N>::value,T>(init)
+    {}
+    
+    template<unsigned short N, typename T>
+    template<typename T2,
+	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
     constexpr t2tost2<N,T>::t2tost2(const T2& init)
       : fsarray<StensorDimeToSize<N>::value*TensorDimeToSize<N>::value,T>(init)
     {} // end of t2tost2<N,T>::t2tost2
@@ -326,6 +334,64 @@ namespace tfel{
       return r;
     }
     
+    template<typename TensorType>
+    typename std::enable_if<
+      (tfel::meta::Implements<TensorType,TensorConcept>::cond)&&
+      (TensorTraits<TensorType>::dime==1u),
+      t2tost2<1u,typename TensorTraits<TensorType>::NumType>>::type
+    computeRateOfDeformationDerivative(const TensorType& F){
+      using value_type = typename TensorTraits<TensorType>::NumType;
+      const auto iF  = invert(F);
+      constexpr const auto zero = value_type(0);
+      return {iF[0],zero,zero,zero,iF[1],zero,zero,zero,iF[2]};
+    }
+
+    template<typename TensorType>
+    TFEL_MATH_INLINE2
+    typename std::enable_if<
+      (tfel::meta::Implements<TensorType,TensorConcept>::cond)&&
+      (TensorTraits<TensorType>::dime==2u),
+      t2tost2<2u,typename TensorTraits<TensorType>::NumType>>::type
+    computeRateOfDeformationDerivative(const TensorType& F){
+      using value_type = typename TensorTraits<TensorType>::NumType;
+      using base    = typename tfel::typetraits::BaseType<value_type>::type;
+#ifndef _MSC_VER
+      constexpr const base cste = base(1)/constexpr_fct::sqrt(base(2));
+#else
+      static const base cste = base(1)/std::sqrt(base(2));
+#endif
+      constexpr const auto zero = value_type(0);
+      const auto iF  = invert(F);
+      return {iF[0],zero,zero,iF[4],zero,
+	  zero,iF[1],zero,zero,iF[3],
+	  zero,zero,iF[2],zero,zero,
+	  iF[3]*cste,iF[4]*cste,zero,iF[1]*cste,iF[0]*cste};
+    }
+
+    template<typename TensorType>
+    TFEL_MATH_INLINE2
+    typename std::enable_if<
+      (tfel::meta::Implements<TensorType,TensorConcept>::cond)&&
+      (TensorTraits<TensorType>::dime==3u),
+      t2tost2<3u,typename TensorTraits<TensorType>::NumType>>::type
+   computeRateOfDeformationDerivative(const TensorType& F){
+      using value_type = typename TensorTraits<TensorType>::NumType;
+      using base    = typename tfel::typetraits::BaseType<value_type>::type;
+#ifndef _MSC_VER
+      constexpr const base cste = base(1)/constexpr_fct::sqrt(base(2));
+#else
+      static const base cste = base(1)/std::sqrt(base(2));
+#endif
+      constexpr const auto zero = value_type(0);
+      const auto iF  = invert(F);
+      return {iF[0],zero,zero,iF[4],zero,iF[6],zero,zero,zero,
+	  zero,iF[1],zero,zero,iF[3],zero,zero,iF[8],zero,
+	  zero,zero,iF[2],zero,zero,zero,iF[5],zero,iF[7],
+	  iF[3]*cste,iF[4]*cste,zero,iF[1]*cste,iF[0]*cste,iF[8]*cste,zero,iF[6]*cste,zero,
+	  iF[5]*cste,zero,iF[6]*cste,iF[7]*cste,zero,iF[2]*cste,iF[0]*cste,zero,iF[4]*cste,
+	  zero,iF[7]*cste,iF[8]*cste,zero,iF[5]*cste,zero,iF[3]*cste,iF[2]*cste,iF[1]*cste};      
+    }
+
   } //end of namespace math
 
 } // end of namespace tfel

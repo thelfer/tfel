@@ -7,6 +7,7 @@ testdir = $(pkgdatadir)/tests/Math/T2tost2
 
 test_PROGRAMS =	t2tost2 leftCauchyGreenTensorDerivative \
 		rightCauchyGreenTensorDerivative        \
+		RateOfDeformationDerivative             \
 		SaintVenantKirchhoffTangentOperator
 
 LDADD = -lTFELMath -lTFELException -lTFELTests \
@@ -18,6 +19,7 @@ t2tost2_SOURCES      = t2tost2.cxx
 leftCauchyGreenTensorDerivative_SOURCES     = leftCauchyGreenTensorDerivative.cxx
 rightCauchyGreenTensorDerivative_SOURCES    = rightCauchyGreenTensorDerivative.cxx
 SaintVenantKirchhoffTangentOperator_SOURCES = SaintVenantKirchhoffTangentOperator.cxx
+RateOfDeformationDerivative_SOURCES         = RateOfDeformationDerivative.cxx
 
 TESTS=$(test_PROGRAMS)
 

@@ -171,6 +171,14 @@ namespace tfel{
 	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
       TFEL_MATH_INLINE constexpr  explicit t2tost2(const T2&);
       /*!
+       * \brief default constructor 
+       * \param[in] init : values used to initialise the components of the st2tost2 
+       */
+      template<typename T2,
+	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
+      TFEL_MATH_INLINE constexpr
+      t2tost2(const std::initializer_list<T2>&);
+      /*!
        * \brief Copy Constructor
        */
       TFEL_MATH_INLINE constexpr
@@ -246,7 +254,42 @@ namespace tfel{
       t2tost2<3u,typename T2toT2Traits<T2toT2Type>::NumType>
       >::type
     convertToT2toST2(const T2toT2Type&);
-    
+
+    /*!
+     * \return compute the "derivative" of the rate of deformation
+     * \delta D = dD_dF:\delta F with \delta D = ((delta F).F^{-1}+F^{-T}.(delta F)^{T})/2
+     * \param[in] F : deformation gradient
+     */
+    template<typename TensorType>
+    TFEL_MATH_INLINE2
+    typename std::enable_if<
+      (tfel::meta::Implements<TensorType,TensorConcept>::cond)&&
+      (TensorTraits<TensorType>::dime==1u),
+      t2tost2<1u,typename TensorTraits<TensorType>::NumType>>::type
+    computeRateOfDeformationDerivative(const TensorType&);
+    /*!
+     * \return compute the derivative of the rate of deformation
+     * \param[in] F : deformation gradient
+     */
+    template<typename TensorType>
+    TFEL_MATH_INLINE2
+    typename std::enable_if<
+      (tfel::meta::Implements<TensorType,TensorConcept>::cond)&&
+      (TensorTraits<TensorType>::dime==2u),
+      t2tost2<2u,typename TensorTraits<TensorType>::NumType>>::type
+    computeRateOfDeformationDerivative(const TensorType&);
+    /*!
+     * \return compute the derivative of the rate of deformation
+     * \param[in] F : deformation gradient
+     */
+    template<typename TensorType>
+    TFEL_MATH_INLINE2
+    typename std::enable_if<
+      (tfel::meta::Implements<TensorType,TensorConcept>::cond)&&
+      (TensorTraits<TensorType>::dime==1u),
+      t2tost2<1u,typename TensorTraits<TensorType>::NumType>>::type
+    computeRateOfDeformationDerivative(const TensorType&);
+       
   } // end of namespace math
 
   namespace typetraits{

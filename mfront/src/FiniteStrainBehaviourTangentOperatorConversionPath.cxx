@@ -74,12 +74,10 @@ namespace mfront
   FiniteStrainBehaviourTangentOperatorConversionPath::getShortestPath(const std::vector<FiniteStrainBehaviourTangentOperatorConversionPath>& paths,
 								      const FiniteStrainBehaviourTangentOperatorConversionPath::TangentOperatorFlag& t)
   {
-    using namespace std;
     // shortest path 
     FiniteStrainBehaviourTangentOperatorConversionPath path;
-    vector<FiniteStrainBehaviourTangentOperatorConversionPath>::const_iterator pp;
-    for(pp=paths.begin();pp!=paths.end();++pp){
-      FiniteStrainBehaviourTangentOperatorConversionPath::const_iterator pc = pp->find(t);
+    for(auto pp=paths.begin();pp!=paths.end();++pp){
+      auto pc = pp->find(t);
       if(pc!=pp->end()){
 	++pc;
 	// we found a conversion path candidate
@@ -88,7 +86,7 @@ namespace mfront
 	  path.insert(path.begin(),pp->begin(),pc);
 	} else {
 	  // a previous path exists, select the shortest
-	  const FiniteStrainBehaviourTangentOperatorConversionPath::size_type l = pc-pp->begin();
+	  const auto l = pc-pp->begin();
 	  if(l<path.size()){
 	    path.clear();
 	    path.insert(path.begin(),pp->begin(),pc);

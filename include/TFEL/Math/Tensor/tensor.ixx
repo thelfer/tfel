@@ -441,6 +441,20 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond,
       tensor<TensorTraits<TensorType>::dime,
+	     typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+					 Power<2> >::Result>>::type
+    computeDeterminantDerivative(const TensorType& F){
+      tensor<TensorTraits<TensorType>::dime,
+	     typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+					 Power<2> >::Result> dJ;
+      computeDeterminantDerivative(dJ,F);
+      return dJ;
+    }
+
+    template<typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond,
+      tensor<TensorTraits<TensorType>::dime,
 	      typename TensorTraits<TensorType>::NumType>
       >::type
     change_basis(const TensorType& t,

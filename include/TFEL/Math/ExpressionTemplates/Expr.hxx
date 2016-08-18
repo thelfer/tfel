@@ -508,6 +508,16 @@ namespace tfel{
       rhs_storage_type b; //<! right hand side argument of the operation
     }; // end of struct Expr<ResultType,DiadicProductOperation<T1,T2,Op>>
 
+    /*!
+     * \brief evaluate an expression
+     * \return the computed value
+     * \param[in] e: expression
+     */
+    template<typename ResultType,typename Operation>
+    ResultType eval(const Expr<ResultType,Operation>& e){
+      return {e};
+    } // end of eval
+    
   } // end of namespace math
 
 } // end of namespace tfel

@@ -198,11 +198,11 @@ namespace tfel
      * with respect to the deformation gradient increment
      */
     template<unsigned short N,typename StressType>
-    struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DSIG_DD,N,StressType>
+    struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::C_TRUESDELL,N,StressType>
     {
       //! the result of the meta function
       typedef tfel::math::st2tost2<N,StressType> type;
-    }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DSIG_DD,N,StressType>
+    }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::C_TRUESDELL,N,StressType>
 
     /*!
      * \brief partial specialisation for the tangent moduli associated
@@ -210,6 +210,15 @@ namespace tfel
      */
     template<unsigned short N,typename StressType>
     struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::ABAQUS,N,StressType>
+    {
+      //! the result of the meta function
+      typedef tfel::math::st2tost2<N,StressType> type;
+    };
+    /*!
+     * \brief partial specialisation for spatial moduli
+     */
+    template<unsigned short N,typename StressType>
+    struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI,N,StressType>
     {
       //! the result of the meta function
       typedef tfel::math::st2tost2<N,StressType> type;

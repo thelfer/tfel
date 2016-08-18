@@ -351,7 +351,9 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toST2/StensorSquareDerivative.hxx                                               \
 			TFEL/Math/ST2toST2/BuildFromRotationMatrix.hxx                                               \
 			TFEL/Math/ST2toST2/ChangeBasis.hxx                                                           \
+			TFEL/Math/ST2toST2/StensorSymmetricProductDerivative.hxx                                     \
 			TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx                                                \
+			TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchoffJaumanRateModuli.hxx                        \
 			TFEL/Math/t2tost2.hxx                                                                        \
 			TFEL/Math/T2toST2/t2tost2.ixx                                                                \
 			TFEL/Math/T2toST2/T2toST2Concept.hxx                                                         \
@@ -369,6 +371,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/T2toST2/ST2toST2T2toST2ProductExpr.hxx					     \
 			TFEL/Math/T2toST2/T2toST2View.hxx                                                            \
 			TFEL/Math/T2toST2/ConstT2toST2View.hxx                                                       \
+                        TFEL/Math/T2toST2/ConvertKirchhoffStressJaumanRateModuliToKirchhoffStressDerivative.hxx      \
 			TFEL/Math/st2tot2.hxx                                                                        \
 			TFEL/Math/ST2toT2/st2tot2.ixx                                                                \
 			TFEL/Math/ST2toT2/st2tot2ResultType.hxx                                                      \

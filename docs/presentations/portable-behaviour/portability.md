@@ -161,7 +161,7 @@
 |:---------:|:-------:|
 |Cast3M     | No  |
 |Code-Aster | \(\deriv{\tenseur{\tau}}{\Delta\, \tns{F}}\) (1)  |
-|Zebulon    | `DSIG_DD` (2)  |
+|Zebulon    | \(C^{T}\) (2)  |
 
 **MFront generates convertion between consistent tangent operators :
   use the most natural one for your formalism**

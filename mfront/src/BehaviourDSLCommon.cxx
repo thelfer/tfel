@@ -2179,29 +2179,30 @@ namespace mfront{
     }
     this->mb.requiresTVectorOrVectorIncludes(b1,b2);
     if(b1){
-      this->behaviourDataFile << "#include\"TFEL/Math/tvector.hxx\"\n";
-      this->behaviourDataFile << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n";
+      this->behaviourDataFile << "#include\"TFEL/Math/tvector.hxx\"\n"
+			      << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n";
     }
     if(b2){
       this->behaviourDataFile << "#include\"TFEL/Math/vector.hxx\"\n";
     }
-    this->behaviourDataFile << "#include\"TFEL/Math/stensor.hxx\"\n";
-    this->behaviourDataFile << "#include\"TFEL/Math/Stensor/StensorConceptIO.hxx\"\n";
-    this->behaviourDataFile << "#include\"TFEL/Math/tmatrix.hxx\"\n";
-    this->behaviourDataFile << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n";
-    this->behaviourDataFile << "#include\"TFEL/Math/st2tost2.hxx\"\n";
-    this->behaviourDataFile << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
+    this->behaviourDataFile << "#include\"TFEL/Math/stensor.hxx\"\n"
+			    << "#include\"TFEL/Math/Stensor/StensorConceptIO.hxx\"\n"
+			    << "#include\"TFEL/Math/tmatrix.hxx\"\n"
+			    << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
+			    << "#include\"TFEL/Math/st2tost2.hxx\"\n"
+			    << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
     if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      this->behaviourDataFile << "#include\"TFEL/Math/tensor.hxx\"\n";
-      this->behaviourDataFile << "#include\"TFEL/Math/Tensor/TensorConceptIO.hxx\"\n";
-      this->behaviourDataFile << "#include\"TFEL/Math/t2tot2.hxx\"\n";
-      this->behaviourDataFile << "#include\"TFEL/Math/T2toT2/T2toT2ConceptIO.hxx\"\n";
-      this->behaviourDataFile << "#include\"TFEL/Math/t2tost2.hxx\"\n";
-      this->behaviourDataFile << "#include\"TFEL/Math/T2toST2/T2toST2ConceptIO.hxx\"\n";
-      this->behaviourDataFile << "#include\"TFEL/Math/st2tot2.hxx\"\n";
-      this->behaviourDataFile << "#include\"TFEL/Math/ST2toT2/ST2toT2ConceptIO.hxx\"\n";
-      this->behaviourDataFile << "#include\"TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx\"\n";
-      this->behaviourDataFile << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"\n";
+      this->behaviourDataFile << "#include\"TFEL/Math/tensor.hxx\"\n"
+			      << "#include\"TFEL/Math/Tensor/TensorConceptIO.hxx\"\n"
+			      << "#include\"TFEL/Math/t2tot2.hxx\"\n"
+			      << "#include\"TFEL/Math/T2toT2/T2toT2ConceptIO.hxx\"\n"
+			      << "#include\"TFEL/Math/t2tost2.hxx\"\n"
+			      << "#include\"TFEL/Math/T2toST2/T2toST2ConceptIO.hxx\"\n"
+			      << "#include\"TFEL/Math/st2tot2.hxx\"\n"
+			      << "#include\"TFEL/Math/ST2toT2/ST2toT2ConceptIO.hxx\"\n"
+			      << "#include\"TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx\"\n"
+			      << "#include\"TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchoffJaumanRateModuli.hxx\"\n"
+	   << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"\n";
     }
     this->behaviourDataFile << "#include\"TFEL/Material/ModellingHypothesis.hxx\"\n\n";
   }

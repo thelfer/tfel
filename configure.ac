@@ -2352,6 +2352,8 @@ AC_OUTPUT([debug.sh
 	   tests/Math/ExpressionTemplates/Makefile
 	   tests/Math/RungeKutta/Makefile
 	   tests/Math/RungeKutta/include/Makefile
+	   tests/Math/tensor/Makefile
+	   tests/Math/stensor/Makefile
 	   tests/Math/t2tot2/Makefile
 	   tests/Math/st2tost2/Makefile
 	   tests/Math/t2tost2/Makefile

@@ -45,19 +45,17 @@
     <|unfolded-io>
       \;
 
-      \ 
-
-      <math|<with|math-display|true|<text|<with|font-family|tt|color|red|(<with|math-font-family|rm|%o3>)
+      \ <math|<with|math-display|true|<text|<with|font-family|tt|color|red|(<with|math-font-family|rm|%o3>)
       >><matrix|<tformat|<table|<row|<cell|<with|math-font-family|rm|F3>*<with|math-font-family|rm|G3>+2*<with|math-font-family|rm|F0>*<with|math-font-family|rm|G0>>|<cell|<frac|<with|math-font-family|rm|F1>*<with|math-font-family|rm|G3>|<sqrt|2>>+<frac|<with|math-font-family|rm|F0>*<with|math-font-family|rm|G3>|<sqrt|2>>+<frac|<with|math-font-family|rm|F3>*<with|math-font-family|rm|G1>|<sqrt|2>>+<frac|<with|math-font-family|rm|F3>*<with|math-font-family|rm|G0>|<sqrt|2>>>|<cell|0>>|<row|<cell|<frac|<with|math-font-family|rm|F1>*<with|math-font-family|rm|G3>|<sqrt|2>>+<frac|<with|math-font-family|rm|F0>*<with|math-font-family|rm|G3>|<sqrt|2>>+<frac|<with|math-font-family|rm|F3>*<with|math-font-family|rm|G1>|<sqrt|2>>+<frac|<with|math-font-family|rm|F3>*<with|math-font-family|rm|G0>|<sqrt|2>>>|<cell|<with|math-font-family|rm|F3>*<with|math-font-family|rm|G3>+2*<with|math-font-family|rm|F1>*<with|math-font-family|rm|G1>>|<cell|0>>|<row|<cell|0>|<cell|0>|<cell|2*<with|math-font-family|rm|F2>*<with|math-font-family|rm|G2>>>>>>>>
     </unfolded-io>
 
     <\unfolded-io>
       <with|color|red|(<with|math-font-family|rm|%i>4) >
     <|unfolded-io>
-      pv:transpose(matrix([prod[1,1],prod[2,2],prod[3,3],sqrt(2)*prod[1,2]]))
+      pv:fullratsimp(transpose(matrix([prod[1,1],prod[2,2],prod[3,3],sqrt(2)*prod[1,2]])))
     <|unfolded-io>
       <math|<with|math-display|true|<text|<with|font-family|tt|color|red|(<with|math-font-family|rm|%o4>)
-      >><matrix|<tformat|<table|<row|<cell|<with|math-font-family|rm|F3>*<with|math-font-family|rm|G3>+2*<with|math-font-family|rm|F0>*<with|math-font-family|rm|G0>>>|<row|<cell|<with|math-font-family|rm|F3>*<with|math-font-family|rm|G3>+2*<with|math-font-family|rm|F1>*<with|math-font-family|rm|G1>>>|<row|<cell|2*<with|math-font-family|rm|F2>*<with|math-font-family|rm|G2>>>|<row|<cell|<sqrt|2>*<around*|(|<frac|<with|math-font-family|rm|F1>*<with|math-font-family|rm|G3>|<sqrt|2>>+<frac|<with|math-font-family|rm|F0>*<with|math-font-family|rm|G3>|<sqrt|2>>+<frac|<with|math-font-family|rm|F3>*<with|math-font-family|rm|G1>|<sqrt|2>>+<frac|<with|math-font-family|rm|F3>*<with|math-font-family|rm|G0>|<sqrt|2>>|)>>>>>>>>
+      >><matrix|<tformat|<table|<row|<cell|<with|math-font-family|rm|F3>*<with|math-font-family|rm|G3>+2*<with|math-font-family|rm|F0>*<with|math-font-family|rm|G0>>>|<row|<cell|<with|math-font-family|rm|F3>*<with|math-font-family|rm|G3>+2*<with|math-font-family|rm|F1>*<with|math-font-family|rm|G1>>>|<row|<cell|2*<with|math-font-family|rm|F2>*<with|math-font-family|rm|G2>>>|<row|<cell|<around*|(|<with|math-font-family|rm|F1>+<with|math-font-family|rm|F0>|)>*<with|math-font-family|rm|G3>+<with|math-font-family|rm|F3>*<with|math-font-family|rm|G1>+<with|math-font-family|rm|F3>*<with|math-font-family|rm|G0>>>>>>>>
     </unfolded-io>
 
     <\unfolded-io>

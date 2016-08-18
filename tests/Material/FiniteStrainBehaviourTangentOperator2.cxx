@@ -1,8 +1,8 @@
 /*! 
- * \file  tests/Material/FiniteStrainBehaviourTangentOperator.cxx
+ * \file  tests/Material/FiniteStrainBehaviourTangentOperator2.cxx
  * \brief
  * \author Helfer Thomas
- * \brief 12 juin 2014
+ * \brief 17 août 2016
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -33,13 +33,13 @@
 #include"TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchoffJaumanRateModuli.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 
-struct FiniteStrainBehaviourTangentOperator final
+struct FiniteStrainBehaviourTangentOperator2 final
   : public tfel::tests::TestCase
 {
-  FiniteStrainBehaviourTangentOperator()
+  FiniteStrainBehaviourTangentOperator2()
     : tfel::tests::TestCase("TFEL/Material",
-			    "FiniteStrainBehaviourTangentOperator")
-  {} // end of FiniteStrainBehaviourTangentOperator
+			    "FiniteStrainBehaviourTangentOperator2")
+  {} // end of FiniteStrainBehaviourTangentOperator2
   virtual tfel::tests::TestResult
   execute() override
   {
@@ -49,7 +49,6 @@ struct FiniteStrainBehaviourTangentOperator final
     return this->result;
   } // end of execute
  private:
-  // check that the perturbation approximation is ok
   template<unsigned short N>
   void check(){
     using real = double;
@@ -77,10 +76,10 @@ struct FiniteStrainBehaviourTangentOperator final
     };
     // dtau_dF
     const auto D = [&Cs,&nhb](const tfel::math::tensor<N,real>& F)
-      -> t2tot2
+      -> t2tost2
     {
-      auto toT2toT2=[](const t2tost2& s){
-	t2tot2 r;
+      auto toT2toST2=[](const t2tot2& s) -> t2tost2{
+	t2tost2 r;
 	for(unsigned short i=0;i!=3;++i){
 	  for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){
 	    r(i,j)=s(i,j);
@@ -88,7 +87,7 @@ struct FiniteStrainBehaviourTangentOperator final
 	}
 	for(unsigned short i=0;i!=tfel::math::StensorDimeToSize<N>::value-3;++i){
 	  for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){
-	    r(3+2*i,j)=r(3+2*i+1,j)=s(3+i,j)/std::sqrt(2);
+	    r(3+i,j)=(s(3+2*i,j)+s(3+2*i+1,j))/std::sqrt(2);
 	  }
 	}
 	return r;
@@ -99,15 +98,16 @@ struct FiniteStrainBehaviourTangentOperator final
       const auto dD = tfel::math::computeRateOfDeformationDerivative(F);
       const auto dW = tfel::math::computeSpinRateDerivative(F);
       const auto CtJ = tfel::math::convertSpatialModuliToKirchoffJaumanRateModuli(Cs(F),t);
-      return toT2toT2(CtJ*dD)+(t2tot2::tpld(tus)-t2tot2::tprd(tus))*dW;
+      return CtJ*dD+toT2toST2((t2tot2::tpld(tus)-t2tot2::tprd(tus))*dW);
     };
-    for(const tensor F : {tensor::Id(),{1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005}}){
-      const t2tot2 nD = this->getNumericalApproximation(nhb,F,1.e-5);
-      const t2tot2 aD = D(F);
-      for(unsigned short i=0;i!=tfel::math::TensorDimeToSize<N>::value;++i){
+    for(const tensor F : {tensor::Id(),tensor{1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005}}){
+      const t2tost2 nD = this->getNumericalApproximation(nhb,F,1.e-5);
+      const t2tost2 aD = D(F);
+      for(unsigned short i=0;i!=tfel::math::StensorDimeToSize<N>::value;++i){
 	for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){
 	  if(std::abs(aD(i,j)-nD(i,j))>eps){
-	    std::cout << aD(i,j) << " " << nD(i,j) << " " << aD(i,j)-nD(i,j) << " " << eps << std::endl;
+	    std::cout << i << " " << j << " "
+		      << aD(i,j) << " " << nD(i,j) << " " << aD(i,j)-nD(i,j) << " " << eps << std::endl;
 	  }
 	  TFEL_TESTS_ASSERT(std::abs(aD(i,j)-nD(i,j))<eps);
 	}
@@ -115,19 +115,19 @@ struct FiniteStrainBehaviourTangentOperator final
     }
   }
   template<unsigned short N,typename Behaviour,typename real>
-  tfel::math::t2tot2<N,real> getNumericalApproximation(const Behaviour& b,
-						       const tfel::math::tensor<N,real>& F,
-						       const real e){
-    tfel::math::t2tot2<N,real> r;
+  tfel::math::t2tost2<N,real> getNumericalApproximation(const Behaviour& b,
+							const tfel::math::tensor<N,real>& F,
+							const real e){
+    tfel::math::t2tost2<N,real> r;
     for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){
       tfel::math::tensor<N,real> Fp = F;
       tfel::math::tensor<N,real> Fm = F;
       Fp(j)+=e;
       Fm(j)-=e;
-      const tfel::math::tensor<N,real> tp = unsyme(b(Fp))*det(Fp);
-      const tfel::math::tensor<N,real> tm = unsyme(b(Fm))*det(Fm);
-      const tfel::math::tensor<N,real> dt = (tp-tm)/(2*e);
-      for(unsigned short i=0;i!=tfel::math::TensorDimeToSize<N>::value;++i){
+      const tfel::math::stensor<N,real> tp = b(Fp)*det(Fp);
+      const tfel::math::stensor<N,real> tm = b(Fm)*det(Fm);
+      const tfel::math::stensor<N,real> dt = (tp-tm)/(2*e);
+      for(unsigned short i=0;i!=tfel::math::StensorDimeToSize<N>::value;++i){
 	r(i,j)=dt(i);
       }
     }
@@ -135,15 +135,14 @@ struct FiniteStrainBehaviourTangentOperator final
   }
 };
 
-
-TFEL_TESTS_GENERATE_PROXY(FiniteStrainBehaviourTangentOperator,
-			  "FiniteStrainBehaviourTangentOperator");
+TFEL_TESTS_GENERATE_PROXY(FiniteStrainBehaviourTangentOperator2,
+			  "FiniteStrainBehaviourTangentOperator2");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("FiniteStrainBehaviourTangentOperator.xml");
+  m.addXMLTestOutput("FiniteStrainBehaviourTangentOperator2.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 } // end of main

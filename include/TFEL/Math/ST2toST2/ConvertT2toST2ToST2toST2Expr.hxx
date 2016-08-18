@@ -128,7 +128,7 @@ namespace tfel
 	this->v[3]  = (A(0,3)+A(0,4))*cste;
 	this->v[7]  = (A(1,3)+A(1,4))*cste;
 	this->v[11] = (A(2,3)+A(2,4))*cste;
-	this->v[15] = (A(3,3)+A(3,4))*cste;
+	this->v[15] = (A(3,3)+A(3,4))*2*cste;
       } // end of Expr
       /*!
        * \brief access operator
@@ -183,6 +183,7 @@ namespace tfel
 	using tfel::typetraits::BaseType;
 	typedef typename BaseType<value_type>::type real;
 	const real cste  = real(1)/(2*std::sqrt(real(2)));
+	const real cste2 = 2*cste;
 	this->v[0] = A(0,0);
 	this->v[1] = A(0,1);
 	this->v[2] = A(0,2);
@@ -210,15 +211,15 @@ namespace tfel
 	this->v[15] = (A(2,3)+A(2,4))*cste;
 	this->v[16] = (A(2,5)+A(2,6))*cste;
 	this->v[17] = (A(2,7)+A(2,8))*cste;
-	this->v[21] = (A(3,3)+A(3,4))*cste;
-	this->v[22] = (A(3,5)+A(3,6))*cste;
-	this->v[23] = (A(3,7)+A(3,8))*cste;
-	this->v[27] = (A(4,3)+A(4,4))*cste;
-	this->v[28] = (A(4,5)+A(4,6))*cste;
-	this->v[29] = (A(4,7)+A(4,8))*cste;
-	this->v[33] = (A(5,3)+A(5,4))*cste;
-	this->v[34] = (A(5,5)+A(5,6))*cste;
-	this->v[35] = (A(5,7)+A(5,8))*cste;
+	this->v[21] = (A(3,3)+A(3,4))*cste2;
+	this->v[22] = (A(3,5)+A(3,6))*cste2;
+	this->v[23] = (A(3,7)+A(3,8))*cste2;
+	this->v[27] = (A(4,3)+A(4,4))*cste2;
+	this->v[28] = (A(4,5)+A(4,6))*cste2;
+	this->v[29] = (A(4,7)+A(4,8))*cste2;
+	this->v[33] = (A(5,3)+A(5,4))*cste2;
+	this->v[34] = (A(5,5)+A(5,6))*cste2;
+	this->v[35] = (A(5,7)+A(5,8))*cste2;
       } // end of Expr
       /*!
        * \brief access operator

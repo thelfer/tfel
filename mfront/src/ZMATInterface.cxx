@@ -1429,7 +1429,7 @@ namespace mfront
       out << mb.getClassName() << "::SMFlag smflag = " << mb.getClassName() << "::STANDARDTANGENTOPERATOR;\n";
       break;
     case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
-      out << mb.getClassName() << "::SMFlag smflag = " << mb.getClassName() << "::DSIG_DD;\n";
+      out << mb.getClassName() << "::SMFlag smflag = " << mb.getClassName() << "::C_TRUESDELL;\n";
       break;
     default:
       string msg("ZMATInterface::writeCallMFrontBehaviour : "

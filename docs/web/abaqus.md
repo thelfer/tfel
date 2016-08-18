@@ -6,8 +6,21 @@
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underline{\underline{\mathbf{#1}}}}
 \newcommand{\tns}[1]{{\underset{\tilde{}}{\mathbf{#1}}}}
-\newcommand{\transpose}[1]{{#1^{\mathop{T}}}}
-\newcommand{\tsigma}{\underline{\sigma}}
+\newcommand{\transpose}[1]{{#1^{\mathrm{T}}}}
+\newcommand{\tsigma}{\tenseur{\sigma}}
+\newcommand{\ctsigma}{\tenseur{\hat{\sigma}}}
+\newcommand{\cD}{\tenseur{\hat{D}}}
+\newcommand{\cC}{\tenseurq{\hat{C}}}
+\newcommand{\CtJ}{\tenseurq{C}^{\tau\,J}}
+\newcommand{\CsT}{\tenseurq{C}^{\sigma\,T}}
+\newcommand{\CsG}{\tenseurq{C}^{\sigma\,G}}
+\newcommand{\CSE}{\tenseurq{C}^{\mathrm{SE}}}
+\newcommand{\Cs}{\tenseurq{C}^{s}}
+\newcommand{\Cspin}{\tenseurq{C}^{\mathrm{spin}}}
+\newcommand{\CMJ}{\tenseurq{C}^{MJ}}
+\newcommand{\tpld}[1]{\partial^{\star}_{l}\left(#1\right)}
+\newcommand{\tprd}[1]{\partial^{\star}_{r}\left(#1\right)}
+<!-- \newcommand{\paren}[1]{\left(#1\right)} -->
 
 `MFront` version 3.0 provides two interfaces for the `Abaqus/Standard`
 and `Abaqus/Explicit` finite element solvers.
@@ -58,55 +71,83 @@ Two finite strain strategies are available:
 
 ## Consistent tangent operator for finite strain behaviours
 
+Most information reported here are extracted from the book of
+Belytschko (@belytschko_nonlinear_2000).
+
 ### Isotropic case
 
 The "Abaqus User Subroutines Reference Guide" gives indicates that the
-tangent moduli required by `Abaqus/Standard` \(\tenseurq{C}^{M}\) is
+tangent moduli required by `Abaqus/Standard` \(\CMJ\) is
 closely related to \(\tenseurq{C}^{\tau\,J}\), the moduli associated
 to the Jauman rate of the Kirchoff stress :
 
 \[
-J\,\tenseurq{C}^{M}=\tenseurq{C}^{\tau\,J}
+J\,\CMJ=\CtJ
 \]
 
 where \(J\) is the derterminant of the deformation gradient
 \(\tns{F}\).
 
-By definition, \(\tenseurq{C}^{\tau\,J}\) satisfies:
+By definition, \(\CtJ\) satisfies:
 \[
-\overset{\circ}{\tenseur{\tau}}^{J}=\tenseurq{C}^{\tau\,J}\,\colon\tenseur{D}
+\overset{\circ}{\tenseur{\tau}}^{J}=\CtJ\,\colon\tenseur{D}
 \]
 where \(\tenseur{D}\) is the rate of deformation.
 
-### Link with other tangent operator
+#### Relation with the moduli associated to the Truesdell rate of the Cauchy Stress $\CsT$
 
-#### Relation with the spatial moduli $\tenseurq{C}^{c}$
+The moduli associated to the Truesdell rate of the Cauchy Stress
+\(\CsT\) is related to \(\CtJ\) by the following relationship:
 
-The spatial moduli \(\tenseurq{C}^{c}\) is related to the Lie
+\[
+\CtJ=J\,\left(\CsT+\tenseurq{C}^{\prime}\right)\quad\text{with}\quad\tenseurq{C}^{\prime}\colon\tenseur{D}=\tsigma\,.\,\tenseur{D}+\tenseur{D}\,.\,\tsigma
+\]
+
+Thus,
+
+\[
+\CMJ=\CsT+\tenseurq{C}^{\prime}
+\]
+
+#### Relation with the spatial moduli $\Cs$
+
+The spatial moduli \(\Cs\) is associated to the Lie
 derivative of the Kirchhoff stress \(\mathcal{L}\tenseur{\tau}\) ,
 which is also called the convected rate or the Oldroyd rate:
 
 \[
-\mathcal{L}\tenseur{\tau}=\tenseurq{C}^{c}\,\colon\,\tenseur{D}
+\mathcal{L}\tenseur{\tau}=\Cs\,\colon\,\tenseur{D}
 \]
 
-The relationship between \(\tenseurq{C}^{\tau\,J}\) and
-\(\tenseurq{C}^{c}\) can be expressed in component form as
+The spatial moduli is related to the moduli associated to Truesdell
+rate of the Cauchy stress \(\CsT\):
 
 \[
-\tenseurq{C}^{\tau\,J}_{ijlk}=\tenseurq{C}^{c}+I_{ik}\tau_{jl}+I_{jl}\tau_{ik}
+\CsT=J^{-1}\,\Cs
 \]
 
-where \tns{I} is the rank 2 identity tensor.
+Thus, we have:
+\[
+\CMJ = J^{-1}\Cs+\tenseurq{C}^{\prime} = J^{-1}\left(\Cs+\tenseurq{C}^{\prime\prime}\right)\quad\text{with}\quad\tenseurq{C}^{\prime\prime}\colon\tenseur{D}=\tenseur{\tau}\,.\,\tenseur{D}+\tenseur{D}\,.\,\tenseur{\tau}
+\]
 
-#### Relation with $\tenseurq{C}^{\mathrm{SE}}$ 
+<!-- The relationship between \(CsJ\) and -->
+<!-- \(\Cs\) can be expressed in component form as -->
 
-The \(\tenseurq{C}^{\mathrm{SE}}\) relates the rate of the second
+<!-- \[ -->
+<!-- CsJ_{ijlk}=\Cs+I_{ik}\tau_{jl}+I_{jl}\tau_{ik} -->
+<!-- \] -->
+
+<!-- where \tns{I} is the rank 2 identity tensor. -->
+
+#### Relation with $\CSE$ 
+
+The \(\CSE\) relates the rate of the second
 Piola-Kirchhoff stress \(\tenseur{S}\) and the Green-Lagrange strain
 rate \(\tenseur{\varepsilon}^{\mathrm{GL}}\):
 
 \[
-\tenseur{\dot{S}}=\tenseurq{C}^{\mathrm{SE}}\,\colon\,\tenseur{\dot{\varepsilon}}^{\mathrm{GL}}
+\tenseur{\dot{S}}=\CSE\,\colon\,\tenseur{\dot{\varepsilon}}^{\mathrm{GL}}
 \]
 
 As the Lie derivative of the Kirchoff stress
@@ -114,8 +155,8 @@ As the Lie derivative of the Kirchoff stress
 Piola-Kirchhoff stress rate \(\tenseur{\dot{S}}\) and the rate of
 deformation \(\tenseur{D}\) is push-forward of the Green-Lagrange
 strain rate \(\tenseur{\dot{\varepsilon}}^{\mathrm{GL}}\),
-\(\tenseurq{C}^{c}\) is the push-forward of
-\(\tenseurq{C}^{\mathrm{SE}}\):
+\(\Cs\) is the push-forward of
+\(\CSE\):
 
 \[
 C^{c}_{ijkl}=F_{im}F_{jn}F_{kp}F_{lq}C^{\mathrm{SE}}_{mnpq}
@@ -123,7 +164,99 @@ C^{c}_{ijkl}=F_{im}F_{jn}F_{kp}F_{lq}C^{\mathrm{SE}}_{mnpq}
 
 #### Link with $\deriv{\tsigma}{\tns{F}}$
 
+For all variation of the deformation gradient \(\delta\,\tns{F}\), the
+Jauman rate of the Kirchhoff stress satisfies:
+\[
+\CtJ\,\colon\delta\tenseur{D}=\delta\tenseur{\tau}-\delta\tns{W}.\tenseur{\tau}+\tenseur{\tau}.\delta\tns{W}
+\]
+
+with:
+
+- \(\delta\tns{L}= \delta\tns{F}\,.\,\tns{F}^{-1}\)
+- \(\delta\tns{W}= \frac{1}{2}\left(\delta\tns{L}-\transpose{\delta\tns{L}}\right)\)
+- \(\delta\tns{D}= \frac{1}{2}\left(\delta\tns{L}+\transpose{\delta\tns{L}}\right)\)
+
+Thus, the derivative of the Kirchoff stress with respect to the
+deformation gradient yields:
+\[
+\deriv{\tenseur{\tau}}{\tns{F}}=\CtJ\,.\,\deriv{\tenseur{D}}{\tns{F}}+\left(\tprd{\tau}-\tpld{\tau}\right)\,.\,\deriv{\tns{W}}{\tns{F}}
+\]
+
+with \(\delta\,\tenseur{D}=\deriv{\tenseur{D}}{\tns{F}}\,\colon\,\delta\,\tns{F}\) and \(\delta\,\tns{W}=\deriv{\tns{W}}{\tns{F}}\,\colon\,\delta\,\tns{F}\)
+
+\[
+\deriv{\tsigma}{\tns{F}}=\frac{1}{J}\left(\deriv{\tenseur{\tau}}{\tns{F}}-\tsigma\,\otimes\,\deriv{J}{\tns{F}}\right)
+\]
+
+### Numerical approximation of \(\CMJ\)
+
+Following @sun_numerical_2008, an numerical approximation of \(\CMJ\)
+is given by:
+\[
+\CMJ_{ijkl}\approx\frac{1}{J\,\varepsilon}\left(\tenseur{\tau}_{ij}\left(\tns{F}+\tns{\delta F}^{kl}\right)-\tenseur{\tau}_{ij}\left(\tns{F}\right)\right) \]
+
+where the perturbation \(\tns{\delta F}^{kl}\) is given by:
+
+\[
+\tns{\delta F}^{kl}=\frac{\varepsilon}{2}\left(\vec{e}_{k}\otimes\vec{e}_{l}+\vec{e}_{l}\otimes\vec{e}_{k}\right)\,.\,\tns{F}
+\]
+
+Such perturbation leads to the following rate of deformation:
+\[
+\delta\,\tenseur{D}=\left(\tns{\delta F}^{kl}\right)\,\tns{F}^{-1}=\frac{\varepsilon}{2}\left(\vec{e}_{k}\otimes\vec{e}_{l}+\vec{e}_{l}\otimes\vec{e}_{k}\right)
+\]
+
+The spin rate \(\delta\,\tenseur{W}\) associated with
+\(\tns{\delta F}^{kl}\) is null.
+
 ### Orthotropic case
+
+The orthotropic case, when an orientation is defined, is much more
+complex and poorly documented. Much of what follows is a matter of
+deduction and numerical experiments and need to be strengthened.
+
+For non-linear geometric analyses, `Abaqus/Standard` uses an
+hypoelastic based on a corotational stress formulation fully described
+in the Abaqus manual and the book of Belytschko
+[see @belytschko_nonlinear_2000].
+
+The deformation gradient is given in the corotational framework. The
+output of the `UMAT` subroutine is the corotational stress
+\(\ctsigma\) defined by:
+
+\[
+\tsigma=\tns{R}\,.\,\ctsigma\,\transpose{\tns{R}}
+\]
+
+where \(\tns{R}\) is the rotation matrix obtained by the polar
+decomposition of the deformation gradient \(\tns{F}\).
+
+For consistency, one expects the appropriate tangent operator to be be
+defined by:
+
+\[
+\ctsigma=\cC\,\colon\,\cD
+\]
+
+\(\cC\) is directly related to the to the moduli associated to the
+Green-Nagdi stress rate \(\CsG\): \(\cC\) is obtained by rotationg
+\(\CsG\) in the corotational framework.
+
+#### Relation with the moduli associated to the Truesdell rate of the Cauchy Stress $\CsT$
+
+The moduli associated with Truesdell rate of the Cauchy Stress can be
+related to the moduli associated to the Green-Nagdi stress rate.
+
+\[
+\CsG=\CsT+\tenseurq{C}^{\prime}-\tsigma\otimes\tenseur{I}+\Cspin
+\]
+
+where \(\Cspin\) is given in @simo_computational_1998.
+
+#### Relation with other moduli
+
+The previous relation can be used to relate to other moduli. See the
+section describing the isotropic case for details.
 
 # The `Abaqus/Explicit` interface
 
@@ -138,6 +271,8 @@ Two finite strain strategies are available:
 
 - 'FiniteRotationSmallStrain'
 - 'MieheApelLambrechtLogarithmicStrain'
+
+# Biblography
 
 <!-- Local IspellDict: english -->
 

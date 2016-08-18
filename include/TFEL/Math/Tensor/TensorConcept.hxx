@@ -441,7 +441,6 @@ namespace tfel{
 				  Power<3> >::Result
     >::type
     det(const TensorType&);
-
     /*!
      * \brief compute the derivative of the determinant with respect
      * to its argument.

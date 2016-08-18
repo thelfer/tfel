@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_ST2TOST2_H_
-#define LIB_TFEL_ST2TOST2_H_ 
+#ifndef LIB_TFEL_MATH_ST2TOST2_H_
+#define LIB_TFEL_MATH_ST2TOST2_H_ 
 
 #include<cstddef>
 #include<type_traits>
@@ -184,6 +184,20 @@ namespace tfel{
       static tfel::math::st2tost2<N,typename tfel::typetraits::BaseType<T>::type>
       fromRotationMatrix(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>&);
       /*!
+       * \brief compute the derivative of the symmetric tensor product:
+       * \[
+       * \frac{d}{ds1}\left(s1*s+s*s1\right)
+       * \]
+       * \param[in] s: second tensor of the product
+       */
+      template<typename StensorType>
+      static TFEL_MATH_INLINE typename std::enable_if<
+	tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond &&
+	StensorTraits<StensorType>::dime==N&&
+	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
+	tfel::math::st2tost2<N,T>>::type
+      stpd(const StensorType&);
+      /*!
        * This is a StensorConcept requirement.
        */
       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -354,5 +368,5 @@ namespace tfel{
 #include"TFEL/Math/ST2toST2/st2tost2.ixx"
 #include"TFEL/Math/ST2toST2/st2tost2ResultType.hxx"
 
-#endif /* LIB_TFEL_ST2TOST2_H_ */
+#endif /* LIB_TFEL_MATH_ST2TOST2_H_ */
 

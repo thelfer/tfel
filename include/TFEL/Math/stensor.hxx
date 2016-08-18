@@ -970,7 +970,58 @@ namespace tfel{
       >::type
     convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(const T&,
 								 const T2&);
-
+    /*!
+     * \brief return the symmetric product of two stensors as a symmetric tensor
+     * s1*s2+s2*s1
+     * \param[in] s1: first  tensor
+     * \param[in] s2: second tensor
+     */
+    template<typename StensorType1,typename StensorType2>
+    TFELMATH_VISIBILITY_EXPORT typename std::enable_if<
+      ((tfel::meta::Implements<StensorType1,StensorConcept>::cond)&&
+       (tfel::meta::Implements<StensorType2,StensorConcept>::cond)&&
+       (StensorTraits<StensorType1>::dime==1u)&&
+       (StensorTraits<StensorType2>::dime==1u)),
+      stensor<3u,typename ResultType<typename StensorTraits<StensorType1>::NumType,
+				     typename StensorTraits<StensorType2>::NumType,OpMult>::type>
+      >::type
+    symmetric_product(const StensorType1&,
+		      const StensorType2&);
+    /*!
+     * \brief return the symmetric product of two stensors as a symmetric tensor
+     * s1*s2+s2*s1
+     * \param[in] s1: first  tensor
+     * \param[in] s2: second tensor
+     */
+    template<typename StensorType1,typename StensorType2>
+    TFELMATH_VISIBILITY_EXPORT typename std::enable_if<
+      ((tfel::meta::Implements<StensorType1,StensorConcept>::cond)&&
+       (tfel::meta::Implements<StensorType2,StensorConcept>::cond)&&
+       (StensorTraits<StensorType1>::dime==2u)&&
+       (StensorTraits<StensorType2>::dime==2u)),
+      stensor<2u,typename ResultType<typename StensorTraits<StensorType1>::NumType,
+				     typename StensorTraits<StensorType2>::NumType,OpMult>::type>
+    >::type
+    symmetric_product(const StensorType1&,
+		      const StensorType2&);
+    /*!
+     * \brief return the symmetric product of two stensors as a symmetric tensor
+     * s1*s2+s2*s1
+     * \param[in] s1: first  tensor
+     * \param[in] s2: second tensor
+     */
+    template<typename StensorType1,typename StensorType2>
+    TFELMATH_VISIBILITY_EXPORT typename std::enable_if<
+      ((tfel::meta::Implements<StensorType1,StensorConcept>::cond)&&
+       (tfel::meta::Implements<StensorType2,StensorConcept>::cond)&&
+       (StensorTraits<StensorType1>::dime==3u)&&
+       (StensorTraits<StensorType2>::dime==3u)),
+      stensor<3u,typename ResultType<typename StensorTraits<StensorType1>::NumType,
+				     typename StensorTraits<StensorType2>::NumType,OpMult>::type>
+      >::type
+    symmetric_product(const StensorType1&,
+		      const StensorType2&);
+    
   } // end of namespace math
 
   namespace typetraits{

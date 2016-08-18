@@ -287,6 +287,17 @@ namespace tfel{
     >::type
     invert(const TensorType&);
     /*!
+     * \return the derivative of the determinant
+     * \param[in] F: tensor where the the determinant is evaluated
+     */
+    template<typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond,
+      tensor<TensorTraits<TensorType>::dime,
+	     typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+					 Power<2> >::Result>>::type
+     computeDeterminantDerivative(const TensorType&);
+    /*!
      * \brief rotate a tensor using a rotation matrix
      * \param[in] s: tensor to be rotated
      * \param[in] r: rotation matrix

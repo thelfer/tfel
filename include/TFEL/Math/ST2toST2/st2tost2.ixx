@@ -27,6 +27,7 @@
 #include"TFEL/Math/TinyMatrixInvert.hxx"
 #include"TFEL/Math/ST2toST2/ConvertT2toST2ToST2toST2Expr.hxx"
 #include"TFEL/Math/ST2toST2/BuildFromRotationMatrix.hxx"
+#include"TFEL/Math/ST2toST2/StensorSymmetricProductDerivative.hxx"
 #include"TFEL/Math/ST2toST2/ChangeBasis.hxx"
 
 namespace tfel{
@@ -153,6 +154,18 @@ namespace tfel{
       return Expr<st2tost2<N,T>,StensorSquareDerivativeExpr<N> >(s,C);
     }
 
+    template<unsigned short N, typename T>
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond &&
+      StensorTraits<StensorType>::dime==N&&
+      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
+      tfel::math::st2tost2<N,T>>::type
+    st2tost2<N,T>::stpd(const StensorType& s){
+      return StensorSymmetricProductDerivative<N,T>::exe(s);
+    }
+
+    
     template<unsigned short N, typename T>
     template<typename T2toST2Type>
     typename std::enable_if<

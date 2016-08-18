@@ -36,13 +36,12 @@ namespace tfel
 	DSIG_DDF, /*!< derivative of the Cauchy stress with respect to
 		    the deformation gradient increment
 		    \f$\Delta\,F = F_{1}\,F_{0}^{-1}\f$ */
-	DSIG_DD,  /*!< derivative of the Cauchy stress with respect to
-		    the deformation rate 
-		    \f$D=\frac{1}{2}\left(L+L^{tr}\right)\f$
-		    with
-		    \f$L=\dot{F}\,F^{-1}\f$
-		    This is one of the tangent operator usable in
-		    the ZeBuLoN finite element solver */
+	C_TRUESDELL,  /*!< moduli associated with Truesdell rate of the Cauchy stress
+			This is one of the tangent operator usable in
+			the ZeBuLoN finite element solver */
+	SPATIAL_MODULI, /*!< moduli associated with the Lie derivative
+			 *   of the Kirchhoff stress
+			 */
 	ABAQUS,   /*!< tangent moduli associated with the Jaumann rate
 		    of the Kirchhoff stress divided by J. This is the
 		    tangent operator for the Abaqus and Ansys finite

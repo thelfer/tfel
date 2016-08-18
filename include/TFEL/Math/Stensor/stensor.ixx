@@ -1807,6 +1807,56 @@ namespace tfel{
 	  iJ*((S[5]*U[4]+cste*S[1]*U[3]+cste*S[3]*U[0])*U[5]+S[4]*U[4]*U[4]+(S[3]*U[3]+2*S[2]*U[2]+2*S[0]*U[0])*U[4]+cste*S[5]*U[2]*U[3]+2*S[4]*U[0]*U[2])/2,
 	  iJ*(S[5]*U[5]*U[5]+(S[4]*U[4]+S[3]*U[3]+2*S[2]*U[2]+2*S[1]*U[1])*U[5]+(cste*S[0]*U[3]+cste*S[3]*U[1])*U[4]+cste*S[4]*U[2]*U[3]+2*S[5]*U[1]*U[2])/2};
     }
+
+    template<typename StensorType1,typename StensorType2>
+    TFELMATH_VISIBILITY_EXPORT typename std::enable_if<
+      ((tfel::meta::Implements<StensorType1,StensorConcept>::cond)&&
+       (tfel::meta::Implements<StensorType2,StensorConcept>::cond)&&
+       (StensorTraits<StensorType1>::dime==1u)&&
+       (StensorTraits<StensorType2>::dime==1u)),
+      stensor<3u,typename ResultType<typename StensorTraits<StensorType1>::NumType,
+				     typename StensorTraits<StensorType2>::NumType,OpMult>::type>
+      >::type
+    symmetric_product(const StensorType1& s1,
+		      const StensorType2& s2){
+      return {2*s1[0]*s2[0],2*s1[1]*s2[1],2*s1[2]*s2[2]};
+    }
+    template<typename StensorType1,typename StensorType2>
+    TFELMATH_VISIBILITY_EXPORT typename std::enable_if<
+      ((tfel::meta::Implements<StensorType1,StensorConcept>::cond)&&
+       (tfel::meta::Implements<StensorType2,StensorConcept>::cond)&&
+       (StensorTraits<StensorType1>::dime==2u)&&
+       (StensorTraits<StensorType2>::dime==2u)),
+      stensor<2u,typename ResultType<typename StensorTraits<StensorType1>::NumType,
+				     typename StensorTraits<StensorType2>::NumType,OpMult>::type>
+    >::type
+    symmetric_product(const StensorType1& s1,
+		      const StensorType2& s2){
+      return {2*s1[0]*s2[0]+s1[3]*s2[3],2*s1[1]*s2[1]+s1[3]*s2[3],
+	  2*s1[2]*s2[2],(s1[1]+s1[0])*s2[3]+s1[3]*s2[1]+s1[3]*s2[0]};
+    }
+    template<typename StensorType1,typename StensorType2>
+    TFELMATH_VISIBILITY_EXPORT typename std::enable_if<
+      ((tfel::meta::Implements<StensorType1,StensorConcept>::cond)&&
+       (tfel::meta::Implements<StensorType2,StensorConcept>::cond)&&
+       (StensorTraits<StensorType1>::dime==3u)&&
+       (StensorTraits<StensorType2>::dime==3u)),
+      stensor<3u,typename ResultType<typename StensorTraits<StensorType1>::NumType,
+				     typename StensorTraits<StensorType2>::NumType,OpMult>::type>
+      >::type
+    symmetric_product(const StensorType1& s1,
+		      const StensorType2& s2){
+      using res = typename ResultType<typename StensorTraits<StensorType1>::NumType,
+				      typename StensorTraits<StensorType2>::NumType,OpMult>::type;
+      using real =  typename tfel::typetraits::BaseType<res>::type;
+      constexpr real cste = constexpr_fct::sqrt(real(2))/2;
+      return {s1[4]*s2[4]+s1[3]*s2[3]+2*s1[0]*s2[0],
+	  s1[5]*s2[5]+s1[3]*s2[3]+2*s1[1]*s2[1],
+	  s1[5]*s2[5]+s1[4]*s2[4]+2*s1[2]*s2[2],
+	  cste*s1[4]*s2[5]+cste*s1[5]*s2[4]+(s1[1]+s1[0])*s2[3]+s1[3]*s2[1]+s1[3]*s2[0],
+	  cste*s1[3]*s2[5]+(s1[2]+s1[0])*s2[4]+cste*s1[5]*s2[3]+s1[4]*s2[2]+s1[4]*s2[0],
+	  (s1[2]+s1[1])*s2[5]+cste*s1[3]*s2[4]+cste*s1[4]*s2[3]+s1[5]*s2[2]+s1[5]*s2[1]};
+      }
     
 #endif /* LIB_TFEL_STENSOR_IXX_ */
 
