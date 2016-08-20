@@ -45,14 +45,14 @@ namespace std{
 #endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
 
 template<unsigned short N>
-struct SaintVenantKirchoffTangentOperator final
+struct SaintVenantKirchhoffTangentOperator final
   : public tfel::tests::TestCase
 {
-  SaintVenantKirchoffTangentOperator()
+  SaintVenantKirchhoffTangentOperator()
     : tfel::tests::TestCase("TFEL/Math",
-			    "SaintVenantKirchoffTangentOperator"+
+			    "SaintVenantKirchhoffTangentOperator"+
 			    std::to_string(static_cast<unsigned int>(N)))
-  {} // end of SaintVenantKirchoffTangentOperator
+  {} // end of SaintVenantKirchhoffTangentOperator
   virtual tfel::tests::TestResult
   execute() override
   {
@@ -86,7 +86,7 @@ struct SaintVenantKirchoffTangentOperator final
     tensor<N> dJ;
     computeDeterminantDerivative(dJ,F);
     t2tost2<N> dsig;
-    computeCauchyStressDerivativeFromKirchoffStressDerivative(dsig,dtau,sig,F);
+    computeCauchyStressDerivativeFromKirchhoffStressDerivative(dsig,dtau,sig,F);
     t2tost2<N> ndtau;
     t2tost2<N> ndsig;
     t2tost2<N> ndS;
@@ -140,19 +140,19 @@ struct SaintVenantKirchoffTangentOperator final
   } // end of execute
 };
 
-typedef SaintVenantKirchoffTangentOperator<1u> SaintVenantKirchoffTangentOperator_1D;
-typedef SaintVenantKirchoffTangentOperator<2u> SaintVenantKirchoffTangentOperator_2D;
-typedef SaintVenantKirchoffTangentOperator<3u> SaintVenantKirchoffTangentOperator_3D;
-TFEL_TESTS_GENERATE_PROXY(SaintVenantKirchoffTangentOperator_1D,"SaintVenantKirchoffTangentOperator-1D");
-TFEL_TESTS_GENERATE_PROXY(SaintVenantKirchoffTangentOperator_2D,"SaintVenantKirchoffTangentOperator-2D");
-TFEL_TESTS_GENERATE_PROXY(SaintVenantKirchoffTangentOperator_3D,"SaintVenantKirchoffTangentOperator-3D");
+typedef SaintVenantKirchhoffTangentOperator<1u> SaintVenantKirchhoffTangentOperator_1D;
+typedef SaintVenantKirchhoffTangentOperator<2u> SaintVenantKirchhoffTangentOperator_2D;
+typedef SaintVenantKirchhoffTangentOperator<3u> SaintVenantKirchhoffTangentOperator_3D;
+TFEL_TESTS_GENERATE_PROXY(SaintVenantKirchhoffTangentOperator_1D,"SaintVenantKirchhoffTangentOperator-1D");
+TFEL_TESTS_GENERATE_PROXY(SaintVenantKirchhoffTangentOperator_2D,"SaintVenantKirchhoffTangentOperator-2D");
+TFEL_TESTS_GENERATE_PROXY(SaintVenantKirchhoffTangentOperator_3D,"SaintVenantKirchhoffTangentOperator-3D");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void){
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
   manager.addTestOutput(std::cout);
-  manager.addXMLTestOutput("SaintVenantKirchoffTangentOperator.xml");
+  manager.addXMLTestOutput("SaintVenantKirchhoffTangentOperator.xml");
   TestResult r = manager.execute();
   if(!r.success()){
     return EXIT_FAILURE;

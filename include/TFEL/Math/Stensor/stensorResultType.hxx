@@ -35,7 +35,7 @@ namespace tfel{
     public:
       typedef typename std::conditional<tfel::typetraits::IsInvalid<ResBase_>::cond,
 					tfel::meta::InvalidType,
-					stensor<N,ResBase_> >::type type;
+					stensor<N,ResBase_>>::type type;
     };
     
     /*!

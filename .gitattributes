@@ -1129,6 +1129,7 @@ include/TFEL/Material/BoundsCheck.hxx -text
 include/TFEL/Material/DDIF2Base.hxx -text
 include/TFEL/Material/DDIF2Base.ixx -text
 include/TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx -text
+include/TFEL/Material/FiniteStrainBehaviourTangentOperator.ixx -text
 include/TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx -text
 include/TFEL/Material/GursonTvergaardNeedleman.hxx -text
 include/TFEL/Material/Hill.hxx -text
@@ -1338,7 +1339,8 @@ include/TFEL/Math/RungeKutta54.hxx -text
 include/TFEL/Math/ST2toST2/BuildFromRotationMatrix.hxx -text
 include/TFEL/Math/ST2toST2/ChangeBasis.hxx -text
 include/TFEL/Math/ST2toST2/ConstST2toST2View.hxx -text
-include/TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchoffJaumanRateModuli.hxx -text
+include/TFEL/Math/ST2toST2/ConvertKirchhoffStressDerivativeToSpatialModuli.hxx -text
+include/TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx -text
 include/TFEL/Math/ST2toST2/ConvertT2toST2ToST2toST2Expr.hxx -text
 include/TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2Concept.hxx -text
@@ -4385,6 +4387,10 @@ tests/Material/FiniteStrainBehaviourTangentOperator.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator2.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator3.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator4.cxx -text
+tests/Material/FiniteStrainBehaviourTangentOperator5.cxx -text
+tests/Material/FiniteStrainBehaviourTangentOperator6.cxx -text
+tests/Material/FiniteStrainBehaviourTangentOperator7.cxx -text
+tests/Material/FiniteStrainBehaviourTangentOperator8.cxx -text
 tests/Material/Makefile.am -text
 tests/Material/OrthotropicAxesConventionTest.cxx -text
 tests/Material/boundsCheck.cxx -text

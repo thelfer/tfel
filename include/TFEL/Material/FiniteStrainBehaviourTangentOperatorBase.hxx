@@ -54,12 +54,12 @@ namespace tfel
 		    to the deformation gradient increment
 		    \f$\Delta\,F\f$ This is the deformation gradient
 		    used by the Code-Aster finite element solver */
-	DS_DF,    /*!< derivative of the second Piola-Kirchoff stress
+	DS_DF,    /*!< derivative of the second Piola-Kirchhoff stress
 		    with respect to the deformation gradient */
-	DS_DDF,   /*!< derivative of the second Piola-Kirchoff stress
+	DS_DDF,   /*!< derivative of the second Piola-Kirchhoff stress
 		    with respect to the deformation gradient 
 		    increment */
-	DS_DC,    /*!< derivative of the second Piola-Kirchoff stress
+	DS_DC,    /*!< derivative of the second Piola-Kirchhoff stress
 		    with respect to the right Cauchy-Green tensor */
 	DS_DEGL   /*!< derivative of the Cauchy stress with respect to
 		    the Green-Lagrange strain deformation */

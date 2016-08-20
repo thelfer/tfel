@@ -35,13 +35,13 @@ nu.setGlossaryName("PoissonRatio");
 
 @Integrator{
   // Green-Lagrange tensor
-  const StrainStensor e = computeGreenLagrangeTensor(F1);
+  const auto e = computeGreenLagrangeTensor(F1);
   // second Piola–Kirchhoff stress
-  const StressStensor s = lambda*trace(e)*StrainStensor::Id()+2*mu*e;
+  const auto s = lambda*trace(e)*StrainStensor::Id()+2*mu*e;
   // convertion to Cauchy stress tensor
   sig = convertSecondPiolaKirchhoffStressToCauchyStress(s,F1);
   if(computeTangentOperator_){
-    StiffnessTensor De = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+    const auto De = eval(lambda*Stensor4::IxI()+2*mu*Stensor4::Id());
     if(smflag==DS_DEGL){
       Dt = De;
     } else if(smflag==DS_DC){
@@ -52,32 +52,23 @@ nu.setGlossaryName("PoissonRatio");
       Dt = De*t2tost2<N,strain>::dCdF(F1)*t2tot2<N,real>::tpld(F0)/2;
     } else if (smflag==DTAU_DF){
       t2tost2<N,stress> dS = De*t2tost2<N,strain>::dCdF(F1)/2;
-      t2tost2<N,stress> dtau;
-      computePushForwardDerivative(dtau,dS,s,F1); 
-      Dt = dtau;
+      Dt = computePushForwardDerivative(dS,s,F1); 
     } else if (smflag==DTAU_DDF){
-      t2tost2<N,stress> dS = De*t2tost2<N,strain>::dCdF(F1)/2;
-      t2tost2<N,stress> dtau;
-      computePushForwardDerivative(dtau,dS,s,F1);
+      const auto dS = eval(De*t2tost2<N,strain>::dCdF(F1)/2);
+      const auto dtau = computePushForwardDerivative(dS,s,F1);
       Dt = dtau*t2tot2<N,real>::tpld(F0); 
     } else if (smflag==DSIG_DF){
-      t2tost2<N,stress> dS = De*t2tost2<N,strain>::dCdF(F1)/2;
-      t2tost2<N,stress> dtau;
-      t2tost2<N,stress> dsig;
-      computePushForwardDerivative(dtau,dS,s,F1); 
-      computeCauchyStressDerivativeFromKirchoffStressDerivative(dsig,dtau,sig,F1); 
-      Dt = dsig;
+      const auto dS = eval(De*t2tost2<N,strain>::dCdF(F1)/2);
+      const auto dtau = computePushForwardDerivative(dS,s,F1); 
+      Dt = computeCauchyStressDerivativeFromKirchhoffStressDerivative(dtau,sig,F1); 
     } else if (smflag==DSIG_DDF){
-      t2tost2<N,stress> dS = De*t2tost2<N,strain>::dCdF(F1)/2;
-      t2tost2<N,stress> dtau;
-      t2tost2<N,stress> dsig;
-      computePushForwardDerivative(dtau,dS,s,F1); 
-      computeCauchyStressDerivativeFromKirchoffStressDerivative(dsig,dtau,sig,F1); 
-      Dt = dsig*t2tot2<N,real>::tpld(F0); 
+      const auto dS   = eval(De*t2tost2<N,strain>::dCdF(F1)/2);
+      const auto dtau = computePushForwardDerivative(dS,s,F1); 
+      const auto ds   = computeCauchyStressDerivativeFromKirchhoffStressDerivative(dtau,sig,F1); 
+      Dt = ds*t2tot2<N,real>::tpld(F0); 
     } else {
-      string msg("SaintVenantKirchhoffElasticity : "
-		 "unsupported tangent operator");
-      throw(runtime_error(msg));
+      throw(runtime_error("SaintVenantKirchhoffElasticity : "
+			  "unsupported tangent operator"));
     }
   }
 }

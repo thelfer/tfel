@@ -120,16 +120,16 @@ namespace tfel{
 	return "derivative of the Kirchhoff stress with respect to "
 	  "the deformation gradient increment";
       case FiniteStrainBehaviourTangentOperatorBase::DS_DF:
-	return "derivative of the second Piola-Kirchoff stress "
+	return "derivative of the second Piola-Kirchhoff stress "
 	  "with respect to the deformation gradient";
       case FiniteStrainBehaviourTangentOperatorBase::DS_DDF:
-	return "derivative of the second Piola-Kirchoff stress "
+	return "derivative of the second Piola-Kirchhoff stress "
 	  "with respect to the deformation gradient increment";
       case FiniteStrainBehaviourTangentOperatorBase::DS_DC:
-	return "derivative of the second Piola-Kirchoff stress "
+	return "derivative of the second Piola-Kirchhoff stress "
 	  "with respect to the right Cauchy-Green tensor";
       case FiniteStrainBehaviourTangentOperatorBase::DS_DEGL:
-	return "derivative of the second Piola-Kirchoff stress "
+	return "derivative of the second Piola-Kirchhoff stress "
 	  "with respect to the Green-Lagrange strain tensor";
       }
       throw(std::runtime_error("getFiniteStrainBehaviourTangentOperatorDescription : "

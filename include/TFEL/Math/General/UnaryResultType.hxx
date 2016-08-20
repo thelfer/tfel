@@ -42,7 +42,6 @@ namespace tfel{
       //! result of the binary operation.
       typedef tfel::meta::InvalidType type;
     }; // end of UnaryResultType_
-
     /*!
      * \class UnaryResultType
      * This metafunction returns the type of the result of 
@@ -68,7 +67,8 @@ namespace tfel{
     }; // end of UnaryResultType
 
     template<typename A, typename Op>
-    using isUnaryOperationResultTypeValid = std::integral_constant<bool,!tfel::typetraits::IsInvalid<typename UnaryResultType<typename std::decay<A>::type,Op>::type>::cond>;
+    using isUnaryOperationResultTypeValid =
+      std::integral_constant<bool,!tfel::typetraits::IsInvalid<typename UnaryResultType<typename std::decay<A>::type,Op>::type>::cond>;
 
   } // end of namespace math
 

@@ -37,7 +37,7 @@
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Math/st2tot2.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
-#include"TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchoffJaumanRateModuli.hxx"
+#include"TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx"
 #include"TFEL/Material/Lame.hxx"
 
 struct AbaqusTangentOperator final
@@ -86,7 +86,7 @@ struct AbaqusTangentOperator final
     {
       const auto J = det(F);
       const auto t = nhb(F)*J; // Kirchhoff stress
-      return tfel::math::convertSpatialModuliToKirchoffJaumanRateModuli(Cs(F),t)/J;
+      return tfel::math::convertSpatialModuliToKirchhoffJaumanRateModuli(Cs(F),t)/J;
     };
     const auto Cs0  = Cs(tensor::Id());
     const auto Ca0  = Ca(tensor::Id());
@@ -146,36 +146,9 @@ struct AbaqusTangentOperator final
     }
     return D;
   }
-  template<typename real>
-  inline tfel::math::tensor<1u,real>
-  getDeformationGradientPerturbation(const tfel::math::tensor<1u,real>& F,
-				     const unsigned short idx,
-				     const real e){
-    const auto c = [idx]()
-      -> std::pair<unsigned short,unsigned short>
-      {
-	return {idx,idx};
-      }();
-    tfel::math::tensor<3u,real> dF;
-    tfel::math::tvector<3u,real> ei(real(0));
-    tfel::math::tvector<3u,real> ej(real(0));
-    ei(c.first)  = real(1);
-    ej(c.second) = real(1);
-    tfel::math::tmatrix<3u,3u,real> eiej = ((ei^ej)+(ej^ei))/2;
-    tfel::math::tmatrix<3u,3u,real> m;
-    for(unsigned short i=0;i!=3;++i){
-      for(unsigned short j=0;j!=3;++j){
-	m(i,j)=0;
-	for(unsigned short k=0;k!=3;++k){
-	  m(i,j)+=e*eiej(i,k)*F(k,j);
-	}
-      }
-    }
-    return {m(0,0),m(1,1),m(2,2)};
-  } // end of getDeformationGradientPerturbation
-  template<typename real>
-  inline tfel::math::tensor<2u,real>
-  getDeformationGradientPerturbation(const tfel::math::tensor<2u,real>& F,
+  template<unsigned short N,typename real>
+  inline tfel::math::tensor<N,real>
+  getDeformationGradientPerturbation(const tfel::math::tensor<N,real>& F,
 				     const unsigned short idx,
 				     const real e){
     const auto c = [idx]()
@@ -184,66 +157,14 @@ struct AbaqusTangentOperator final
 	if((idx==0)||(idx==1)||(idx==2)){
 	  return {idx,idx};
 	}
-	return {0,1};
+	return {2*idx-3,2*idx-2};
       }();
-    tfel::math::tensor<3u,real> dF;
-    tfel::math::tvector<3u,real> ei(real(0));
-    tfel::math::tvector<3u,real> ej(real(0));
-    ei(c.first)  = real(1);
-    ej(c.second) = real(1);
-    tfel::math::tmatrix<3u,3u,real> eiej = ((ei^ej)+(ej^ei))/2;
-    tfel::math::tmatrix<3u,3u,real> m;
-    for(unsigned short i=0;i!=3;++i){
-      for(unsigned short j=0;j!=3;++j){
-	m(i,j)=0;
-	for(unsigned short k=0;k!=3;++k){
-	  m(i,j)+=e*eiej(i,k)*F(k,j);
-	}
-      }
-    }
-    if(idx>2){
-      m *= std::sqrt(real(2));
-    }
-    return {m(0,0),m(1,1),m(2,2),m(0,1),m(1,0)};
-  } // end of getDeformationGradientPerturbation
-  template<typename real>
-  inline tfel::math::tensor<3u,real>
-  getDeformationGradientPerturbation(const tfel::math::tensor<3u,real>& F,
-				     const unsigned short idx,
-				     const real e){
-    const auto c = [idx]()
-      -> std::pair<unsigned short,unsigned short>
-      {
-	if((idx==0)||(idx==1)||(idx==2)){
-	  return {idx,idx};
-	} else if(idx==3){
-	  return {0,1};
-	} else if(idx==4){
-	  return {0,2};
-	} else if(idx==5){
-	  return {1,2};
-	}
-	return {0,0};
-      }();
-    tfel::math::tensor<3u,real> dF;
-    tfel::math::tvector<3u,real> ei(real(0));
-    tfel::math::tvector<3u,real> ej(real(0));
-    ei(c.first)  = real(1);
-    ej(c.second) = real(1);
-    tfel::math::tmatrix<3u,3u,real> eiej = ((ei^ej)+(ej^ei))/2;
-    tfel::math::tmatrix<3u,3u,real> m;
-    for(unsigned short i=0;i!=3;++i){
-      for(unsigned short j=0;j!=3;++j){
-	m(i,j)=0;
-	for(unsigned short k=0;k!=3;++k){
-	  m(i,j)+=e*eiej(i,k)*F(k,j);
-	}
-      }
-    }
-    if(idx>2){
-      m *= std::sqrt(real(2));
-    }
-    return {m(0,0),m(1,1),m(2,2),m(0,1),m(1,0),m(0,2),m(2,0),m(1,2),m(2,1)};
+    tfel::math::tensor<N,real> dF;
+    tfel::math::tensor<N,real> eiej(real(0));
+    const auto v = (idx>2 ? std::sqrt(2) : real(1))*e/2;
+    eiej(c.first) +=v;
+    eiej(c.second)+=v;
+    return eiej*F;
   } // end of getDeformationGradientPerturbation
 };
 

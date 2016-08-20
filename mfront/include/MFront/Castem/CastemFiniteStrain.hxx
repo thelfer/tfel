@@ -42,7 +42,7 @@ namespace castem
 			       const CastemInt);
     /*!
      * \brief compute the Cauchy stress tensor from the second Piola
-     * Kirchoff stress.
+     * Kirchhoff stress.
      * \param[in,out] s     : stress expressed using umat conventions
      * \param[in]     F     : material deformation gradient tensor F expressed
      * as a fortran matrix
@@ -57,8 +57,8 @@ namespace castem
 						      const CastemInt,
 						      const CastemReal);
     /*!
-     * \brief compute the second Piola Kirchoff stress from the Cauchy stress.
-     * \param[out] sk2    : second Piola Kirchoff stress expressed using umat conventions
+     * \brief compute the second Piola Kirchhoff stress from the Cauchy stress.
+     * \param[out] sk2    : second Piola Kirchhoff stress expressed using umat conventions
      * \param[in]  STRESS : cauchy stress expressed using umat conventions
      * \param[in]  F      : material deformation gradient tensor F expressed
      * as a fortran matrix
@@ -74,8 +74,8 @@ namespace castem
 						      const CastemInt,
 						      const CastemReal);
     /*!
-     * \brief compute the second Piola Kirchoff stress from the Cauchy stress.
-     * \param[out] STRESS : second Piola Kirchoff stress expressed using umat conventions
+     * \brief compute the second Piola Kirchhoff stress from the Cauchy stress.
+     * \param[out] STRESS : second Piola Kirchhoff stress expressed using umat conventions
      * \param[in]  F      : material deformation gradient tensor F expressed
      * as a fortran matrix
      * \param[in]  NTENS  : number of components of the strain tensor
@@ -109,7 +109,7 @@ namespace castem
     /*!
      * \brief compute the stress dual to the logarithmic strain from the Cauchy stress.
      * \param[out] s      : stress dual to the logarithmic strain using the umat conventions
-     * \param[in]  STRESS : second Piola Kirchoff stress expressed using umat conventions
+     * \param[in]  STRESS : second Piola Kirchhoff stress expressed using umat conventions
      * \param[in]  P      : derivative of the logarithmic strain with respect to the right Cauchy tensor
      * \param[in]  F      : material deformation gradient tensor F expressed
      * as a fortran matrix

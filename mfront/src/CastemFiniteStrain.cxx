@@ -374,7 +374,7 @@ namespace castem
      using std::sqrt;
      static const CastemReal cste  = sqrt(CastemReal(2));
      static const CastemReal icste = CastemReal(1)/sqrt(CastemReal(2));
-     // now, we compute the second Piolay Kirchoff stress
+     // now, we compute the second Piolay Kirchhoff stress
      CastemReal sk2[6u];
      // first we compute the second Piola-Kirchhoff stress
      CastemFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(sk2,STRESS,F,NTENS,NDI,Fzz);

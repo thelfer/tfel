@@ -30,8 +30,8 @@ namespace epx{
 			     const EuroplexusReal * const,
 			     const EuroplexusInt);
   /*!
-   * \brief compute the second Piola-Kirchoff stress from the Cauchy stress
-   * \param[out] sig: second Piola-Kirchoff stress
+   * \brief compute the second Piola-Kirchhoff stress from the Cauchy stress
+   * \param[out] sig: second Piola-Kirchhoff stress
    * \param[in]  STRESS: Cauchy stress
    * \param[in]  F0: deformation gradient at the beginning of the time step
    * \param[in]  h: hypothesis
@@ -42,9 +42,9 @@ namespace epx{
 						    const EuroplexusReal * const,
 						    const EuroplexusInt);
   /*!
-   * \brief compute the Cauchy stress from the second Piola-Kirchoff stress
+   * \brief compute the Cauchy stress from the second Piola-Kirchhoff stress
    * \param[out] STRESS: Cauchy stress
-   * \param[in]  sig: second Piola-Kirchoff stress
+   * \param[in]  sig: second Piola-Kirchhoff stress
    * \param[in]  F1: deformation gradient at the end of the time step
    * \param[in]  h: hypothesis
    */
@@ -54,7 +54,7 @@ namespace epx{
 						    const EuroplexusReal * const,
 						    const EuroplexusInt);
   /*!
-   * \param[in/out] D:  second Piola-Kirchoff stress derivative
+   * \param[in/out] D:  second Piola-Kirchhoff stress derivative
    * \param[in]     h: hypothesis
    */
   MFRONT_EPX_VISIBILITY_EXPORT void

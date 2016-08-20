@@ -30,13 +30,11 @@ namespace tfel{
        * \param[in] F: deformation gradient
        * \param[in] t: Kirchhoff stress
        */
-      template<typename ST2toST2Type,
-	       typename TensorType,
-      	       typename StensorType>
+      template<typename ST2toST2Type,typename TensorType,typename StensorType>
       static t2tost2<1u,T>
-      exe(const ST2toST2Type CsJ,
-	  const TensorType F,
-	  const StensorType){
+      exe(const ST2toST2Type& CsJ,
+	  const TensorType& F,
+	  const StensorType&){
 	return {CsJ(0,0)/F(0),CsJ(0,1)/F(1),CsJ(0,2)/F(2),
 	        CsJ(1,0)/F(0),CsJ(1,1)/F(1),CsJ(1,2)/F(2),
 	        CsJ(2,0)/F(0),CsJ(2,1)/F(1),CsJ(2,2)/F(2)};	
@@ -50,13 +48,11 @@ namespace tfel{
        * \param[in] F: deformation gradient
        * \param[in] t: Kirchhoff stress
        */
-      template<typename ST2toST2Type,
-	       typename TensorType,
-      	       typename StensorType>
+      template<typename ST2toST2Type,typename TensorType,typename StensorType>
       static t2tost2<2u,T>
-      exe(const ST2toST2Type CsJ,
-	  const TensorType F,
-	  const StensorType t){
+      exe(const ST2toST2Type& CsJ,
+	  const TensorType& F,
+	  const StensorType& t){
 	using real    = typename tfel::typetraits::BaseType<T>::type;
 	constexpr const real icste  = 1/constexpr_fct::sqrt(real(2));
 	const auto iF = invert(F);
@@ -90,13 +86,11 @@ namespace tfel{
        * \param[in] F: deformation gradient
        * \param[in] t: Kirchhoff stress
        */
-      template<typename ST2toST2Type,
-	       typename TensorType,
-      	       typename StensorType>
+      template<typename ST2toST2Type,typename TensorType,typename StensorType>
       static t2tost2<3u,T>
-      exe(const ST2toST2Type CsJ,
-	  const TensorType F,
-	  const StensorType t){
+      exe(const ST2toST2Type& CsJ,
+	  const TensorType& F,
+	  const StensorType& t){
 	using real    = typename tfel::typetraits::BaseType<T>::type;
 	constexpr const real cste   = constexpr_fct::sqrt(real(2));
 	constexpr const real icste  = 1/constexpr_fct::sqrt(real(2));

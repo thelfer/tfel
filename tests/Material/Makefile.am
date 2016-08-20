@@ -9,10 +9,11 @@ test_PROGRAMS = boundsCheck \
 		FiniteStrainBehaviourTangentOperator  \
 		FiniteStrainBehaviourTangentOperator2 \
 		FiniteStrainBehaviourTangentOperator3 \
-		FiniteStrainBehaviourTangentOperator4
-# \
-# 		FiniteStrainBehaviourTangentOperator5 \
-# 		FiniteStrainBehaviourTangentOperator6
+		FiniteStrainBehaviourTangentOperator4 \
+		FiniteStrainBehaviourTangentOperator5 \
+		FiniteStrainBehaviourTangentOperator6 \
+		FiniteStrainBehaviourTangentOperator7 \
+		FiniteStrainBehaviourTangentOperator8
 
 LDADD = -lTFELMaterial -lTFELMath       \
 	-lTFELUtilities -lTFELException \
@@ -30,8 +31,10 @@ FiniteStrainBehaviourTangentOperator_SOURCES  = FiniteStrainBehaviourTangentOper
 FiniteStrainBehaviourTangentOperator2_SOURCES = FiniteStrainBehaviourTangentOperator2.cxx
 FiniteStrainBehaviourTangentOperator3_SOURCES = FiniteStrainBehaviourTangentOperator3.cxx
 FiniteStrainBehaviourTangentOperator4_SOURCES = FiniteStrainBehaviourTangentOperator4.cxx
-# FiniteStrainBehaviourTangentOperator5_SOURCES = FiniteStrainBehaviourTangentOperator5.cxx
-# FiniteStrainBehaviourTangentOperator6_SOURCES = FiniteStrainBehaviourTangentOperator6.cxx
+FiniteStrainBehaviourTangentOperator5_SOURCES = FiniteStrainBehaviourTangentOperator5.cxx
+FiniteStrainBehaviourTangentOperator6_SOURCES = FiniteStrainBehaviourTangentOperator6.cxx
+FiniteStrainBehaviourTangentOperator7_SOURCES = FiniteStrainBehaviourTangentOperator7.cxx
+FiniteStrainBehaviourTangentOperator8_SOURCES = FiniteStrainBehaviourTangentOperator8.cxx
 
 TESTS=$(test_PROGRAMS)
 

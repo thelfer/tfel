@@ -2201,7 +2201,7 @@ namespace mfront{
 			      << "#include\"TFEL/Math/st2tot2.hxx\"\n"
 			      << "#include\"TFEL/Math/ST2toT2/ST2toT2ConceptIO.hxx\"\n"
 			      << "#include\"TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx\"\n"
-			      << "#include\"TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchoffJaumanRateModuli.hxx\"\n"
+			      << "#include\"TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx\"\n"
 	   << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"\n";
     }
     this->behaviourDataFile << "#include\"TFEL/Material/ModellingHypothesis.hxx\"\n\n";

@@ -54,26 +54,34 @@ namespace mfront
   std::vector<FiniteStrainBehaviourTangentOperatorConversion>
   FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions(void)
   {
-    using namespace tfel::material;
-    typedef FiniteStrainBehaviourTangentOperatorBase TangentOperator;
-    typedef FiniteStrainBehaviourTangentOperatorConversion Converter;
+    using TangentOperator = tfel::material::FiniteStrainBehaviourTangentOperatorBase ;
+    using Converter = FiniteStrainBehaviourTangentOperatorConversion ;
     std::vector<Converter> converters;
     auto add = [&converters](Converter&& c){
       converters.push_back(c);
+    };
+    auto std_add = [&add](const TangentOperator::Flag op1,
+			  const TangentOperator::Flag op2){
+      const auto s1 = convertFiniteStrainBehaviourTangentOperatorFlagToString(op1);
+      const auto s2 = convertFiniteStrainBehaviourTangentOperatorFlagToString(op2);
+      add({op1,op2,
+	    "const auto tangentOperator_"+s2+" = convert<"+s2+","+s1+">(tangentOperator_"+s1+",this->F0,this->F1,this->sig);",
+	    "this->Dt = convert<"+s2+","+s1+">(tangentOperator_"+s1+",this->F0,this->F1,this->sig);"
+	    });
     };
     add({TangentOperator::DSIG_DF,TangentOperator::DSIG_DDF,
 	  "const t2tost2<N,stress> tangentOperator_DSIG_DDF = tangentOperator_DSIG_DF*t2tot2<N,real>::tpld(this->F0);",
 	  "this->Dt = tangentOperator_DSIG_DF*t2tot2<N,real>::tpld(this->F0);"});
     add({TangentOperator::DSIG_DF,TangentOperator::DTAU_DF,
 	  "t2tost2<N,stress> tangentOperator_DTAU_DF;\n"
-	  "computeKirchoffStressDerivativeFromCauchyStressDerivative(tangentOperator_DTAU_DF,tangentOperator_DSIG_DF,this->sig,this->F1);",
+	  "computeKirchhoffStressDerivativeFromCauchyStressDerivative(tangentOperator_DTAU_DF,tangentOperator_DSIG_DF,this->sig,this->F1);",
 	  "this->Dt.template set_uninitialised<t2tost2<N,stress> >();\n"
-	  "computeKirchoffStressDerivativeFromCauchyStressDerivative(this->Dt.template get<t2tost2<N,stress> >(),tangentOperator_DSIG_DF,this->sig,this->F1);"});
+	  "computeKirchhoffStressDerivativeFromCauchyStressDerivative(this->Dt.template get<t2tost2<N,stress> >(),tangentOperator_DSIG_DF,this->sig,this->F1);"});
     add({TangentOperator::DTAU_DF,TangentOperator::DSIG_DF,
 	  "t2tost2<N,stress> tangentOperator_DSIG_DF;\n"
-	  "computeCauchyStressDerivativeFromKirchoffStressDerivative(tangentOperator_DSIG_DF,tangentOperator_DTAU_DF,this->sig,this->F1);",
+	  "computeCauchyStressDerivativeFromKirchhoffStressDerivative(tangentOperator_DSIG_DF,tangentOperator_DTAU_DF,this->sig,this->F1);",
 	  "this->Dt.template set_uninitialised<t2tost2<N,stress> >();\n"
-	  "computeCauchyStressDerivativeFromKirchoffStressDerivative(this->Dt.template get<t2tost2<N,stress> >(),tangentOperator_DTAU_DF,this->sig,this->F1);"});
+	  "computeCauchyStressDerivativeFromKirchhoffStressDerivative(this->Dt.template get<t2tost2<N,stress> >(),tangentOperator_DTAU_DF,this->sig,this->F1);"});
     add({TangentOperator::DTAU_DF,TangentOperator::ABAQUS,
 	  "const auto J_ABAQUS = det(this->F1);\n"
 	  "const auto tau_ABAQUS = unsyme(this->sig/J_ABAQUS);\n"
@@ -107,9 +115,6 @@ namespace mfront
 	  "computePushForwardDerivative(tangentOperator_DTAU_DF,tangentOperator_DS_DF,tangentOperator_sk2,this->F1);",
 	  "StressStensor tangentOperator_sk2 = convertCauchyStressToSecondPiolaKirchhoffStress(this->sig,this->F1);\n"
 	  "computePushForwardDerivative(this->Dt.template get<t2tost2<N,stress> >(),tangentOperator_DS_DF,tangentOperator_sk2,this->F1);"});
-    add({TangentOperator::DS_DEGL,TangentOperator::DS_DC,
-	  "const st2tost2<N,stress> tangentOperator_DS_DC = tangentOperator_DS_DEGL/2;",
-	  "this->Dt = tangentOperator_DS_DEGL/2;"});
     add({TangentOperator::SPATIAL_MODULI,TangentOperator::DS_DEGL,
 	  "const st2tost2<N,stress> tangentOperator_DS_DEGL = pull_back(tangentOperator_SPATIAL_MODULI,this->F1);",
 	  "this->Dt = pull_back(tangentOperator_SPATIAL_MODULI,this->F1);"});
@@ -117,11 +122,8 @@ namespace mfront
 	  "const st2tost2<N,stress> tangentOperator_SPATIAL_MODULI = push_forward(tangentOperator_DS_DEGL,this->F1);",
 	  "this->Dt = push_forward(tangentOperator_DS_DEGL,this->F1);"});
     add({TangentOperator::SPATIAL_MODULI,TangentOperator::ABAQUS,
-	  "const st2tost2<N,stress> tangentOperator_ABAQUS = convertSpatialModuliToKirchoffJaumanRateModuli(tangentOperator_SPATIAL_MODULI,this->sig*det(this->F1))/det(this->F1);",
-	  "this->Dt = convertSpatialModuliToKirchoffJaumanRateModuli(tangentOperator_SPATIAL_MODULI,this->sig*det(this->F1))/det(this->F1);"});
-    add({TangentOperator::DS_DC,TangentOperator::DS_DEGL,
-	  "const st2tost2<N,stress> tangentOperator_DS_DEGL = 2*tangentOperator_DS_DC;",
-	  "this->Dt = 2*tangentOperator_DS_DC;"});
+	  "const st2tost2<N,stress> tangentOperator_ABAQUS = convertSpatialModuliToKirchhoffJaumanRateModuli(tangentOperator_SPATIAL_MODULI,this->sig*det(this->F1))/det(this->F1);",
+	  "this->Dt = convertSpatialModuliToKirchhoffJaumanRateModuli(tangentOperator_SPATIAL_MODULI,this->sig*det(this->F1))/det(this->F1);"});
     add({TangentOperator::SPATIAL_MODULI,TangentOperator::C_TRUESDELL,
 	  "const st2tost2<N,stress> tangentOperator_C_TRUESDELL = tangentOperator_SPATIAL_MODULI/(det(this->F1));",
 	  "this->Dt = tangentOperator_SPATIAL_MODULI/(det(this->F1));"});
@@ -135,6 +137,8 @@ namespace mfront
 	  "const real J = det(this->F1);\n"
 	  "const st2tost2<N,stress> Cstar=st2tost2<N,real>::dsquare(this->sig)-((this->sig)^Stensor::Id());\n"
 	  "this->Dt = st2tost2<N,real>::convert((1/J)*tangentOperator_DTAU_DF*t2tot2<N,real>::tprd(transpose(this->F1))) - Cstar;"});
+    std_add(TangentOperator::DS_DC,TangentOperator::DS_DEGL);
+    std_add(TangentOperator::DS_DEGL,TangentOperator::DS_DC);
     return converters;
   } // end of FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions
   

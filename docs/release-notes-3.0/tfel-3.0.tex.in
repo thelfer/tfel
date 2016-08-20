@@ -364,14 +364,14 @@ Trois fonctions du même nom sont également disponibles.
 \subsubsection{Implémentation de l'opération de {\tt push\_forward} et
   de {\tt pull\_back} pour les tenseurs d'ordre $4$}
 
-\subsubsection{Convertion du second tenseur de Piola-Kirchoff en
+\subsubsection{Convertion du second tenseur de Piola-Kirchhoff en
   contraintes de Cauchy exprimées dans le repère corotationnel}
 
 Le code {\tt Abaqus-Explicit} fournit le tenseur de dilatation
 \(\tenseur{U}\) et demande à ce que soit renvoyé le tenseur des
 contraintes de \nom{Cauchy} \(\tenseur{\tilde{\sigma}}\) dans le
 repère corotationnel. Ce dernier est relié au second tenseur de
-Piola-Kirchoff \(\tenseur{S}\) par la formule~:
+Piola-Kirchhoff \(\tenseur{S}\) par la formule~:
 \[
 \tenseur{\tilde{\sigma}}=\Frac{1}{\det\paren{U}}\,\tenseur{U}\,.\,\tenseur{S}\,.\,\tenseur{U}
 \]

@@ -109,7 +109,7 @@ namespace mtest
       }
     }
     dtau = dtau_ddF*t2tot2<N,real>::tpld(inv_F0);
-    computeCauchyStressDerivativeFromKirchoffStressDerivative(dsig,dtau,sig,F1);
+    computeCauchyStressDerivativeFromKirchhoffStressDerivative(dsig,dtau,sig,F1);
     for(unsigned short i=0;i!=StensorDimeToSize<N>::value;++i){  // boucle sur tau
       for(unsigned short j=0;j!=TensorDimeToSize<N>::value;++j){  // boucle sur F
     	Kt(i,j)=dsig(i,j);

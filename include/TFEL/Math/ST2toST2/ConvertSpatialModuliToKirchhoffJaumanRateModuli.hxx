@@ -1,5 +1,5 @@
 /*!
- * \file   ConvertSpatialModuliToKirchoffJaumanRateModuli.hxx
+ * \file   ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx
  * \brief    
  * \author THOMAS HELFER
  * \date   12 août 2016
@@ -47,8 +47,8 @@ namespace tfel{
        std::is_same<typename ST2toST2Traits<ST2toST2Type>::NumType,
                     typename StensorTraits<StensorType>::NumType> ::value),
       st2tost2<1u,typename ST2toST2Traits<ST2toST2Type>::NumType>>::type
-    convertSpatialModuliToKirchoffJaumanRateModuli(const ST2toST2Type& C_s,
-						   const StensorType& tau)
+    convertSpatialModuliToKirchhoffJaumanRateModuli(const ST2toST2Type& C_s,
+						    const StensorType& tau)
     {
       using NumType = typename ST2toST2Traits<ST2toST2Type>::NumType;
       st2tost2<1u,NumType> C_tJ;
@@ -82,8 +82,8 @@ namespace tfel{
        std::is_same<typename ST2toST2Traits<ST2toST2Type>::NumType,
                     typename StensorTraits<StensorType>::NumType> ::value),
       st2tost2<2u,typename ST2toST2Traits<ST2toST2Type>::NumType>>::type
-    convertSpatialModuliToKirchoffJaumanRateModuli(const ST2toST2Type& C_s,
-						   const StensorType& tau)
+    convertSpatialModuliToKirchhoffJaumanRateModuli(const ST2toST2Type& C_s,
+						    const StensorType& tau)
     {
       using NumType = typename ST2toST2Traits<ST2toST2Type>::NumType;
       using base    = typename tfel::typetraits::BaseType<NumType>::type;
@@ -130,8 +130,8 @@ namespace tfel{
        std::is_same<typename ST2toST2Traits<ST2toST2Type>::NumType,
                     typename StensorTraits<StensorType>::NumType> ::value),
       st2tost2<3u,typename ST2toST2Traits<ST2toST2Type>::NumType>>::type
-    convertSpatialModuliToKirchoffJaumanRateModuli(const ST2toST2Type& C_s,
-						   const StensorType& tau)
+    convertSpatialModuliToKirchhoffJaumanRateModuli(const ST2toST2Type& C_s,
+						    const StensorType& tau)
     {
       using NumType = typename ST2toST2Traits<ST2toST2Type>::NumType;
       using base    = typename tfel::typetraits::BaseType<NumType>::type;
@@ -175,6 +175,7 @@ namespace tfel{
       C_tJ(2,0) = C_s(2,0);
       C_tJ(2,1) = C_s(2,1);
       C_tJ(2,3) = C_s(2,3);
+      C_tJ(3,2) = C_s(3,2);
       C_tJ(4,1) = C_s(4,1);
       return C_tJ;
     }

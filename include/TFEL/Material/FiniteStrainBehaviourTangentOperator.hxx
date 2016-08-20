@@ -21,6 +21,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 
 #include"TFEL/Metaprogramming/Implements.hxx"
+#include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/Math/Forward/st2tost2.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 #include"TFEL/Math/Forward/t2tost2.hxx"
@@ -268,7 +269,6 @@ namespace tfel
       //! the result of the meta function
       typedef tfel::math::t2tost2<N,StressType> type;
     }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DDF,N,StressType>
-
     /*!
      * partial specialisation for the derivative of the second
      * Piola-Kirchhoff stress with respect to the right Cauchy-Green
@@ -280,10 +280,69 @@ namespace tfel
       //! the result of the meta function
       typedef tfel::math::st2tost2<N,StressType> type;
     }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DC,N,StressType>
-
+    /*!
+     * partial specialisation for the derivative of the second
+     * Piola-Kirchhoff stress with respect to the Green-Lagrange
+     * strain
+     */
+    template<unsigned short N,typename StressType>
+    struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DEGL,N,StressType>
+    {
+      //! the result of the meta function
+      typedef tfel::math::st2tost2<N,StressType> type;
+    }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DEGL,N,StressType>
+    //! a simple alias
+    template<FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType,
+	     unsigned short N,typename StressType>
+    using tangent_operator = typename FiniteStrainBehaviourTangentOperatorType<TangenOperatorType,N,StressType>::type;
+    /*!
+     * A generic structure for convertion between tangent operators.
+     * This structure must be specialised for each supported case.
+     */
+    template<FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType1,
+	     FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType2>
+    struct FiniteStrainBehaviourTangentOperatorConverter;
+    /*!
+     * \brief a small wrapper around the FiniteStrainBehaviourTangentOperatorConverter
+     *  structure
+     * \return the result of the convertion
+     * \param[in] K:  the initial stiffness tensor
+     * \param[in] F0: the deformation gradient
+     * \param[in] F1: the deformation gradient
+     * \param[in] s:  the Cauchy stress tensor
+     */
+    template<FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType1,
+    	     FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType2,
+    	     unsigned short N,typename StressType>
+    TFEL_MATERIAL_INLINE tangent_operator<TangenOperatorType1,N,StressType>
+    convert(const tangent_operator<TangenOperatorType2,N,StressType>&,
+    	    const tfel::math::tensor<N,tfel::typetraits::base_type<StressType>>&,
+    	    const tfel::math::tensor<N,tfel::typetraits::base_type<StressType>>&,
+    	    const tfel::math::stensor<N,StressType>&);
+    /*!
+     * \brief a small wrapper around the FiniteStrainBehaviourTangentOperatorConverter
+     *  structure
+     * \param[out] Kr: the result of the convertion
+     * \param[in]  Ks: the initial stiffness tensor
+     * \param[in]  F0:  the deformation gradient
+     * \param[in]  F1:  the deformation gradient
+     * \param[in]  s:  the Cauchy stress tensor
+     */
+    template<FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType1,
+    	     FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType2,
+    	     unsigned short N,typename StressType>
+    TFEL_MATERIAL_INLINE void
+    convert(tangent_operator<TangenOperatorType1,N,StressType>&,
+    	    const tangent_operator<TangenOperatorType2,N,StressType>&,
+    	    const tfel::math::tensor<N,tfel::typetraits::base_type<StressType>>&,
+    	    const tfel::math::tensor<N,tfel::typetraits::base_type<StressType>>&,
+    	    const tfel::math::stensor<N,StressType>&);
+    
   } // end of namespace material
 
 } // end of namespace tfel
+
+#include"TFEL/Material/FiniteStrainBehaviourTangentOperator.ixx"
 
 #endif /* LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATOR_H_ */
 

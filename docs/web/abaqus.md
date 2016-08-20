@@ -79,7 +79,7 @@ Belytschko (@belytschko_nonlinear_2000).
 The "Abaqus User Subroutines Reference Guide" gives indicates that the
 tangent moduli required by `Abaqus/Standard` \(\CMJ\) is
 closely related to \(\tenseurq{C}^{\tau\,J}\), the moduli associated
-to the Jauman rate of the Kirchoff stress :
+to the Jauman rate of the Kirchhoff stress :
 
 \[
 J\,\CMJ=\CtJ
@@ -150,7 +150,7 @@ rate \(\tenseur{\varepsilon}^{\mathrm{GL}}\):
 \tenseur{\dot{S}}=\CSE\,\colon\,\tenseur{\dot{\varepsilon}}^{\mathrm{GL}}
 \]
 
-As the Lie derivative of the Kirchoff stress
+As the Lie derivative of the Kirchhoff stress
 \(\mathcal{L}\tenseur{\tau}\) is the push-forward of the second
 Piola-Kirchhoff stress rate \(\tenseur{\dot{S}}\) and the rate of
 deformation \(\tenseur{D}\) is push-forward of the Green-Lagrange
@@ -176,7 +176,7 @@ with:
 - \(\delta\tns{W}= \frac{1}{2}\left(\delta\tns{L}-\transpose{\delta\tns{L}}\right)\)
 - \(\delta\tns{D}= \frac{1}{2}\left(\delta\tns{L}+\transpose{\delta\tns{L}}\right)\)
 
-Thus, the derivative of the Kirchoff stress with respect to the
+Thus, the derivative of the Kirchhoff stress with respect to the
 deformation gradient yields:
 \[
 \deriv{\tenseur{\tau}}{\tns{F}}=\CtJ\,.\,\deriv{\tenseur{D}}{\tns{F}}+\left(\tprd{\tau}-\tpld{\tau}\right)\,.\,\deriv{\tns{W}}{\tns{F}}

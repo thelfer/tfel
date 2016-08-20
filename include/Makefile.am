@@ -20,6 +20,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/OutOfBoundsPolicy.hxx	                                                     \
 			TFEL/Material/MechanicalBehaviour.hxx	                                                     \
 			TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx	                                     \
+			TFEL/Material/FiniteStrainBehaviourTangentOperator.ixx	                                     \
 			TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx	                             \
 			TFEL/Material/Lame.hxx			                                                     \
 			TFEL/Material/Hill.hxx			                                                     \
@@ -353,7 +354,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toST2/ChangeBasis.hxx                                                           \
 			TFEL/Math/ST2toST2/StensorSymmetricProductDerivative.hxx                                     \
 			TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx                                                \
-			TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchoffJaumanRateModuli.hxx                        \
+			TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx                       \
+			TFEL/Math/ST2toST2/ConvertKirchhoffStressDerivativeToSpatialModuli.hxx                       \
 			TFEL/Math/t2tost2.hxx                                                                        \
 			TFEL/Math/T2toST2/t2tost2.ixx                                                                \
 			TFEL/Math/T2toST2/T2toST2Concept.hxx                                                         \

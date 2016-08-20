@@ -30,7 +30,7 @@
 #include"TFEL/Math/t2tot2.hxx"
 #include"TFEL/Math/T2toT2/T2toT2ConceptIO.hxx"
 #include"TFEL/Math/T2toST2/T2toST2ConceptIO.hxx"
-#include"TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchoffJaumanRateModuli.hxx"
+#include"TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 
 struct FiniteStrainBehaviourTangentOperator2 final
@@ -97,7 +97,7 @@ struct FiniteStrainBehaviourTangentOperator2 final
       const auto tus  = unsyme(t);
       const auto dD = tfel::math::computeRateOfDeformationDerivative(F);
       const auto dW = tfel::math::computeSpinRateDerivative(F);
-      const auto CtJ = tfel::math::convertSpatialModuliToKirchoffJaumanRateModuli(Cs(F),t);
+      const auto CtJ = tfel::math::convertSpatialModuliToKirchhoffJaumanRateModuli(Cs(F),t);
       return CtJ*dD+toT2toST2((t2tot2::tpld(tus)-t2tot2::tprd(tus))*dW);
     };
     for(const tensor F : {tensor::Id(),tensor{1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005}}){

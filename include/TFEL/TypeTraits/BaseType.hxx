@@ -54,114 +54,99 @@ namespace tfel{
      */
     template<typename T>
     struct BaseType;
-
     /*!
      * \brief Partial specialisation for unsigned short
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(unsigned short);
-
     /*!
      * \brief Partial specialisation for unsigned int
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(unsigned int);
-
     /*!
      * \brief Partial specialisation for long unsigned int
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(long unsigned int);
-
     /*!
      * \brief Partial specialisation for short
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(short);
-
     /*!
      * \brief Partial specialisation for int
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(int);
-
     /*!
      * \brief Partial specialisation for long int
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(long int);
-
     /*!
      * \brief Partial specialisation for float
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(float);
-
     /*!
      * \brief Partial specialisation for double
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(double);
-
     /*!
      * \brief Partial specialisation for long double
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(long double);
-
     /*!
      * \brief Partial specialisation for Complex<unsigned short>
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(tfel::math::Complex<unsigned short>);
-
     /*!
      * \brief Partial specialisation for Complex<unsigned int>
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(tfel::math::Complex<unsigned int>);
-
     /*!
      * \brief Partial specialisation for Complex<long unsigned int>
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(tfel::math::Complex<long unsigned int>);
-
     /*!
      * \brief Partial specialisation for Complex<short>
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(tfel::math::Complex<short>);
-
     /*!
      * \brief Partial specialisation for Complex<int>
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(tfel::math::Complex<int>);
-
     /*!
      * \brief Partial specialisation for Complex<long int>
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(tfel::math::Complex<long int>);
-
     /*!
      * \brief Partial specialisation for Complex<float>
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(tfel::math::Complex<float>);
-
     /*!
      * \brief Partial specialisation for Complex<double>
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(tfel::math::Complex<double>);
-
     /*!
      * \brief Partial specialisation for Complex<long double>
      * \see   BaseType
      */
     TFEL_MATH_BASETYPE(tfel::math::Complex<long double>);
+    //! a convenient alias
+    template<typename T>
+    using base_type = typename BaseType<T>::type;
     
   } // end of namespace typetraits
 

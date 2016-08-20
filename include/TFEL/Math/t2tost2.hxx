@@ -289,7 +289,51 @@ namespace tfel{
       (TensorTraits<TensorType>::dime==1u),
       t2tost2<1u,typename TensorTraits<TensorType>::NumType>>::type
     computeRateOfDeformationDerivative(const TensorType&);
-       
+    /*!
+     * \brief compute the Cauchy stress derivative from the Kirchhoff stress derivative
+     * \param[in]  dt: Kirchhoff stress derivative
+     * \param[in]  s:  Cauchy stress
+     * \param[in]  F:  deformation gradient
+     */
+    template<typename T2toST2Type,
+   	     typename StensorType,
+   	     typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      tfel::meta::Implements<TensorType,TensorConcept>::cond&&
+      T2toST2Traits<T2toST2Type>::dime==StensorTraits<StensorType>::dime&&
+      T2toST2Traits<T2toST2Type>::dime==TensorTraits<TensorType>::dime&&
+      tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<TensorType>::NumType>::cond,
+      t2tost2<T2toST2Traits<T2toST2Type>::dime,
+	      typename ComputeBinaryResult<typename T2toST2Traits<T2toST2Type>::NumType,
+					   typename StensorTraits<StensorType>::NumType,OpPlus>::Result>>::type
+    computeCauchyStressDerivativeFromKirchhoffStressDerivative(const T2toST2Type&,
+							       const StensorType&,
+							       const TensorType&);
+    /*!
+     * \brief compute the Cauchy stress derivative from the Kirchhoff stress derivative
+     * \param[in]  dt: Kirchhoff stress derivative
+     * \param[in]  s:  Cauchy stress
+     * \param[in]  F:  deformation gradient
+     */
+    template<typename T2toST2Type,
+   	     typename StensorType,
+   	     typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<T2toST2Type,T2toST2Concept>::cond&&
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      tfel::meta::Implements<TensorType,TensorConcept>::cond&&
+      T2toST2Traits<T2toST2Type>::dime==StensorTraits<StensorType>::dime&&
+      T2toST2Traits<T2toST2Type>::dime==TensorTraits<TensorType>::dime&&
+      tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<TensorType>::NumType>::cond,
+      t2tost2<T2toST2Traits<T2toST2Type>::dime,
+	      typename ComputeBinaryResult<typename T2toST2Traits<T2toST2Type>::NumType,
+					   typename StensorTraits<StensorType>::NumType,OpPlus>::Result>>::type
+    computeKirchhoffStressDerivativeFromCauchyStressDerivative(const T2toST2Type&,
+							       const StensorType&,
+							       const TensorType&);
+    
   } // end of namespace math
 
   namespace typetraits{

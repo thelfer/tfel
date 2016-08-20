@@ -88,7 +88,7 @@ namespace tfel{
      * configuration.
      *
      * This function is typically used to compute the derivative of
-     * the Kirchoff stress tensor knowing the derivative of the second
+     * the Kirchhoff stress tensor knowing the derivative of the second
      * Piola-Kirschoff stress.
      *
      * \param[out] : derivative of the push-forward symmetric tensor
@@ -126,7 +126,7 @@ namespace tfel{
      * configuration.
      *
      * This function is typically used to compute the derivative of
-     * the Kirchoff stress tensor knowing the derivative of the second
+     * the Kirchhoff stress tensor knowing the derivative of the second
      * Piola-Kirschoff stress.
      *
      * \param[out] : derivative of the push-forward symmetric tensor
@@ -164,7 +164,7 @@ namespace tfel{
      * configuration.
      *
      * This function is typically used to compute the derivative of
-     * the Kirchoff stress tensor knowing the derivative of the second
+     * the Kirchhoff stress tensor knowing the derivative of the second
      * Piola-Kirschoff stress.
      *
      * \param[out] : derivative of the push-forward symmetric tensor
@@ -196,10 +196,10 @@ namespace tfel{
    				 const StensorType&,
    				 const TensorType&);
     /*!
-     * \brief compute the Cauchy stress derivative from the Kirchoff
+     * \brief compute the Cauchy stress derivative from the Kirchhoff
      * stress derivative with respect to the deformation gradient
      * \param[out] ds   : Cauchy stress derivative
-     * \param[in]  dt_K : Kirchoff stress derivative
+     * \param[in]  dt_K : Kirchhoff stress derivative
      * \param[in]  s    : Cauchy stress
      * \param[in]  F    : deformation gradient
      */
@@ -221,14 +221,14 @@ namespace tfel{
    				     typename StensorTraits<StensorType>::NumType,OpPlus>::Result,
    	typename T2toST2Traits<T2toST2ResultType>::NumType>::cond,
       void>::type
-    computeCauchyStressDerivativeFromKirchoffStressDerivative(T2toST2ResultType&,
-							      const T2toST2Type&,
-							      const StensorType&,
-							      const TensorType&);
+    computeCauchyStressDerivativeFromKirchhoffStressDerivative(T2toST2ResultType&,
+							       const T2toST2Type&,
+							       const StensorType&,
+							       const TensorType&);
     /*!
      * \brief compute the Kirchhoff stress derivative from the Cauchy
      * stress derivative with respect to the deformation gradient
-     * \param[out] dt_K : Kirchoff stress derivative
+     * \param[out] dt_K : Kirchhoff stress derivative
      * \param[in]  ds   : Cauchy stress derivative
      * \param[in]  s    : Cauchy stress
      * \param[in]  F    : deformation gradient
@@ -251,7 +251,7 @@ namespace tfel{
    				     typename StensorTraits<StensorType>::NumType,OpPlus>::Result,
    	typename T2toST2Traits<T2toST2ResultType>::NumType>::cond,
       void>::type
-    computeKirchoffStressDerivativeFromCauchyStressDerivative(T2toST2ResultType&,
+    computeKirchhoffStressDerivativeFromCauchyStressDerivative(T2toST2ResultType&,
 							      const T2toST2Type&,
 							      const StensorType&,
 							      const TensorType&);

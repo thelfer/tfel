@@ -251,7 +251,7 @@ namespace tfel{
    				     typename StensorTraits<StensorType>::NumType,OpPlus>::Result,
    	typename T2toST2Traits<T2toST2ResultType>::NumType>::cond,
       void>::type
-    computeCauchyStressDerivativeFromKirchoffStressDerivative(T2toST2ResultType& ds,
+    computeCauchyStressDerivativeFromKirchhoffStressDerivative(T2toST2ResultType& ds,
 							      const T2toST2Type& dt_K,
 							      const StensorType& s,
 							      const TensorType&  F)
@@ -283,7 +283,7 @@ namespace tfel{
    				     typename StensorTraits<StensorType>::NumType,OpPlus>::Result,
    	typename T2toST2Traits<T2toST2ResultType>::NumType>::cond,
       void>::type
-    computeKirchoffStressDerivativeFromCauchyStressDerivative(T2toST2ResultType& dt_K,
+    computeKirchhoffStressDerivativeFromCauchyStressDerivative(T2toST2ResultType& dt_K,
 							      const T2toST2Type& ds,
 							      const StensorType& s,
 							      const TensorType&  F)
