@@ -67,8 +67,10 @@ nu.setGlossaryName("PoissonRatio");
       const auto ds   = computeCauchyStressDerivativeFromKirchhoffStressDerivative(dtau,sig,F1); 
       Dt = ds*t2tot2<N,real>::tpld(F0); 
     } else if (smflag==ABAQUS){
-      const auto Cs = tfel::material::convert<SPATIAL_MODULI,DS_DEGL>(De,F0,F1,sig);
-      Dt = tfel::material::convert<ABAQUS,SPATIAL_MODULI>(De,F0,F1,sig);
+      const auto Cs = convert<FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI,
+			      FiniteStrainBehaviourTangentOperatorBase::DS_DEGL,N,stress>(De,F0,F1,sig);
+      Dt = convert<FiniteStrainBehaviourTangentOperatorBase::ABAQUS,
+		   FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI,N,stress>(De,F0,F1,sig);
     } else {
       throw(runtime_error("SaintVenantKirchhoffElasticity : "
 			  "unsupported tangent operator"));
