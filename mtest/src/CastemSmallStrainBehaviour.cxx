@@ -408,7 +408,7 @@ namespace mtest
       if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
 	this->computeElasticStiffness(Kt,s.mprops1,drot);
       } else {
-	UmatNormaliseTangentOperator::exe(Kt,wk.D,dimension);
+	UmatNormaliseTangentOperator::exe(&Kt(0,0),wk.D,dimension);
       }
     }
     if(!s.iv1.empty()){
@@ -521,7 +521,7 @@ namespace mtest
 	    Kt(i,j) = De(i,j);
 	  }
 	}
-	UmatNormaliseTangentOperator::exe(Kt,Kt,2u);
+	UmatNormaliseTangentOperator::exe(&Kt(0,0),Kt,2u);
       } else if (h==ModellingHypothesis::PLANESTRESS){
 	st2tost2<2u,real> De;
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
@@ -535,7 +535,7 @@ namespace mtest
 	    Kt(i,j) = De(i,j);
 	  }
 	}
-	UmatNormaliseTangentOperator::exe(Kt,Kt,2u);
+	UmatNormaliseTangentOperator::exe(&Kt(0,0),Kt,2u);
       } else if (h==ModellingHypothesis::PLANESTRAIN){
 	st2tost2<2u,real> De;
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
@@ -549,7 +549,7 @@ namespace mtest
 	    Kt(i,j) = De(i,j);
 	  }
 	}
-	UmatNormaliseTangentOperator::exe(Kt,Kt,2u);
+	UmatNormaliseTangentOperator::exe(&Kt(0,0),Kt,2u);
       } else if (h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
 	st2tost2<2u,real> De;
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
@@ -563,7 +563,7 @@ namespace mtest
 	    Kt(i,j) = De(i,j);
 	  }
 	}
-	UmatNormaliseTangentOperator::exe(Kt,Kt,2u);
+	UmatNormaliseTangentOperator::exe(&Kt(0,0),Kt,2u);
       } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
 	st2tost2<3u,real> De;
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
@@ -579,7 +579,7 @@ namespace mtest
 	    Kt(i,j) = De(i,j);
 	  }
 	}
-	UmatNormaliseTangentOperator::exe(Kt,Kt,3u);
+	UmatNormaliseTangentOperator::exe(&Kt(0,0),Kt,3u);
       } else {
 	throw(std::runtime_error("CastemSmallStrainBehaviour::integrate : "
 				 "unsupported hypothesis"));

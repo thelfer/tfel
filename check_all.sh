@@ -1,13 +1,17 @@
 #! /usr/bin/env bash
 # Exit if any error detected
 set -e
-
+# parallel build
 pbuild=no
+# fast check
+fcheck=no
 # cross compilation using mingw
 wbuild=no
-while getopts ":wj:" opt;
+while getopts ":w:fj:" opt;
 do
   case $opt in
+    f) fcheck=yes
+      ;;
     j) pbuild=yes;
        nbproc="$OPTARG";
       ;;
@@ -52,7 +56,10 @@ pushd build-check
 mkdir autotools
 pushd autotools
 mkdir install-autotools
-mkdir install-autotools-debug
+if test "x$fcheck" == "xno" ;
+then
+    mkdir install-autotools-debug
+fi
 mkdir build-autotools
 pushd build-autotools
 $src/configure --enable-python --enable-python-bindings --enable-fortran --enable-abaqus --enable-europlexus --enable-zmat --enable-tests --enable-local-castem-header --enable-cyrano --prefix=$build/build-check/autotools/install-autotools 
@@ -62,15 +69,18 @@ $make_exec distcheck
 $make_exec doc-pdf
 $make_exec install
 popd # from build-autotools
-mkdir build-autotools-debug
-pushd build-autotools-debug
-$src/configure --enable-python --enable-python-bindings --enable-fortran --enable-abaqus --enable-europlexus --enable-zmat --enable-tests --enable-local-castem-header --enable-cyrano --prefix=$build/build-check/autotools/install-autotools-debug 
-$make_exec
-$make_exec check
-$make_exec distcheck
-$make_exec doc-pdf
-$make_exec install
-popd # from build-autotools-debug
+if test "x$fcheck" == "xno" ;
+then
+    mkdir build-autotools-debug
+    pushd build-autotools-debug
+    $src/configure --enable-python --enable-python-bindings --enable-fortran --enable-abaqus --enable-europlexus --enable-zmat --enable-tests --enable-local-castem-header --enable-cyrano --prefix=$build/build-check/autotools/install-autotools-debug 
+    $make_exec
+    $make_exec check
+    $make_exec distcheck
+    $make_exec doc-pdf
+    $make_exec install
+    popd # from build-autotools-debug
+fi
 popd # from autotools
 
 mkdir cmake
@@ -78,10 +88,13 @@ pushd cmake
 tar -xvjf $build/build-check/autotools/build-autotools/tfel-$pkg_name.tar.bz2
 mkdir install-cmake
 mkdir build-cmake
-mkdir install-cmake-release
-mkdir build-cmake-release
-mkdir install-cmake-debug
-mkdir build-cmake-debug
+if test "x$fcheck" == "xno" ;
+then
+    mkdir install-cmake-release
+    mkdir build-cmake-release
+    mkdir install-cmake-debug
+    mkdir build-cmake-debug
+fi
 pushd build-cmake
 cmake ../tfel-$pkg_name/ -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-reference-doc=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake
 $make_exec 
@@ -93,28 +106,31 @@ else
 fi
 $make_exec install
 popd #from build-cmake
-pushd build-cmake-release
-cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-reference-doc=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-release
-$make_exec
-if [ test "x$pbuild" == "xyes" ];
+if test "x$fcheck" == "xno" ;
 then
-    make check ARGS="-j $nbproc"
-else
-    $make_exec check 
+    pushd build-cmake-release
+    cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-reference-doc=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-release
+    $make_exec
+    if [ test "x$pbuild" == "xyes" ];
+    then
+	make check ARGS="-j $nbproc"
+    else
+	$make_exec check 
+    fi
+    $make_exec install
+    popd #from build-cmake-release
+    pushd build-cmake-debug
+    cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Debug -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-reference-doc=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-debug
+    $make_exec
+    if [ test "x$pbuild" == "xyes" ];
+    then
+	make check ARGS="-j $nbproc"
+    else
+	$make_exec check 
+    fi
+    $make_exec install
+    popd #from build-cmake-debug
 fi
-$make_exec install
-popd #from build-cmake-release
-pushd build-cmake-debug
-cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Debug -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-reference-doc=ON -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-debug
-$make_exec
-if [ test "x$pbuild" == "xyes" ];
-then
-    make check ARGS="-j $nbproc"
-else
-    $make_exec check 
-fi
-$make_exec install
-popd #from build-cmake-debug
 
 if test "x$wbuild" == "xyes" ;
 then
@@ -159,4 +175,3 @@ fi
 
 popd #from cmake
 popd #from build-check
-

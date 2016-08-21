@@ -505,12 +505,8 @@ namespace tfel{
     pull_back(const ST2toST2Type& C,
 	      const TensorType& F)
     {
-      st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
-      typename ComputeBinaryResult<typename ST2toST2Traits<ST2toST2Type>::NumType,
-      typename TensorTraits<TensorType>::NumType,OpMult>::Result> r;
       const auto iF = invert(F);
-      push_forward(r,C,iF);
-      return r;
+      return push_forward(C,iF);
     }
     
   } //end of namespace math

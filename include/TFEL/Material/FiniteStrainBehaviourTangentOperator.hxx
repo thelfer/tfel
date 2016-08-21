@@ -216,6 +216,16 @@ namespace tfel
       typedef tfel::math::st2tost2<N,StressType> type;
     };
     /*!
+     * \brief partial specialisation for the tangent moduli associated
+     * with the Jaumann rate of the Kirchhoff stress divided by J.
+     */
+    template<unsigned short N,typename StressType>
+    struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::C_TAU_JAUMANN,N,StressType>
+    {
+      //! the result of the meta function
+      typedef tfel::math::st2tost2<N,StressType> type;
+    };
+    /*!
      * \brief partial specialisation for spatial moduli
      */
     template<unsigned short N,typename StressType>

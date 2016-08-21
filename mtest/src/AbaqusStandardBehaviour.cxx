@@ -24,7 +24,6 @@
 
 #include"MTest/CurrentState.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
-#include"MTest/UmatNormaliseTangentOperator.hxx"
 #include"MTest/AbaqusStandardBehaviour.hxx"
 
 namespace mtest
@@ -86,8 +85,7 @@ namespace mtest
     } else if(etype==1u){
       if((h==ModellingHypothesis::PLANESTRESS)||
 	 (h==ModellingHypothesis::PLANESTRAIN)||
-	 (h==ModellingHypothesis::AXISYMMETRICAL)||
-	 (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	 (h==ModellingHypothesis::AXISYMMETRICAL)){
 	if(eo){
 	  tmp.push_back("YoungModulus1");
 	  tmp.push_back("YoungModulus2");

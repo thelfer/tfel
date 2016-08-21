@@ -37,6 +37,7 @@
 #ifdef HAVE_ABAQUS
 #include"MTest/AbaqusStandardBehaviour.hxx"
 #include"MTest/AbaqusSmallStrainBehaviour.hxx"
+#include"MTest/AbaqusFiniteStrainBehaviour.hxx"
 #include"MTest/AbaqusExplicitBehaviour.hxx"
 #endif /* HAVE_ABAQUS  */
 #ifdef HAVE_CYRANO
@@ -213,8 +214,8 @@ namespace mtest{
       const auto type = elm.getUMATBehaviourType(l,bn);
       if(type==1u){
 	b = shared_ptr<Behaviour>(new AbaqusSmallStrainBehaviour(h,l,f));
-	// }  else if(type==2u){
-	// 	b = shared_ptr<Behaviour>(new AbaqusFiniteStrainBehaviour(h,l,f));
+      } else if(type==2u){
+	b = shared_ptr<Behaviour>(new AbaqusFiniteStrainBehaviour(h,l,f));
       } else {
 	ostringstream msg;
 	msg << "SingleStructureScheme::setBehaviour: "

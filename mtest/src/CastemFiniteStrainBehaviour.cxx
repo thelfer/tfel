@@ -639,10 +639,10 @@ namespace mtest
   void
   CastemFiniteStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
   {
-    std::fill(v.begin(),v.end(),real(0));
     v[0] = real(1);
     v[1] = real(1);
     v[2] = real(1);
+    std::fill(v.begin()+3,v.end(),real(0));
   } // end of CastemFiniteStrainBehaviour::setDrivingVariablesDefaultInitialValue  
 
   std::pair<bool,real>

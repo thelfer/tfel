@@ -24,7 +24,6 @@
 
 #include"MTest/CurrentState.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
-#include"MTest/UmatNormaliseTangentOperator.hxx"
 #include"MTest/EuroplexusStandardBehaviour.hxx"
 
 namespace mtest

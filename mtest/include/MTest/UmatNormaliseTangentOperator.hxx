@@ -21,7 +21,9 @@
 namespace mtest
 {
   /*!
-   *
+   * \brief normalise the tangent operator returned by:
+   * - Cast3M behaviours
+   * - Abaqus/Standard behaviours
    */
   struct UmatNormaliseTangentOperator
   {
@@ -31,7 +33,7 @@ namespace mtest
      * \param[in]  d : dimension
      */
     static void
-    exe(tfel::math::matrix<real>&,
+    exe(real* const,
 	const tfel::math::matrix<real>&,
 	const unsigned short);
   };

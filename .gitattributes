@@ -1015,6 +1015,8 @@ docs/web/img/BrittleFracturePhaseField.png -text
 docs/web/img/CastemWebSite.png -text
 docs/web/img/CastemWebSite.xcf -text
 docs/web/img/CodeAster2015Flyer.png -text
+docs/web/img/FiniteStrainTangentOperatorConvertion.dot -text
+docs/web/img/FiniteStrainTangentOperatorConvertion.svg -text
 docs/web/img/FuelRod-ddif2.png -text
 docs/web/img/FuelRod-ddif2.xcf -text
 docs/web/img/HureCast3M2014.png -text
@@ -4049,6 +4051,7 @@ mtest/CMakeLists.txt -text
 mtest/Makefile.am -text
 mtest/include/CMakeLists.txt -text
 mtest/include/MTest/AbaqusExplicitBehaviour.hxx -text
+mtest/include/MTest/AbaqusFiniteStrainBehaviour.hxx -text
 mtest/include/MTest/AbaqusSmallStrainBehaviour.hxx -text
 mtest/include/MTest/AbaqusStandardBehaviour.hxx -text
 mtest/include/MTest/AccelerationAlgorithm.hxx -text
@@ -4118,6 +4121,7 @@ mtest/include/MTest/UmatBehaviourBase.hxx -text
 mtest/include/MTest/UmatNormaliseTangentOperator.hxx -text
 mtest/include/Makefile.am -text
 mtest/src/AbaqusExplicitBehaviour.cxx -text
+mtest/src/AbaqusFiniteStrainBehaviour.cxx -text
 mtest/src/AbaqusSmallStrainBehaviour.cxx -text
 mtest/src/AbaqusStandardBehaviour.cxx -text
 mtest/src/AccelerationAlgorithm.cxx -text
@@ -4382,6 +4386,7 @@ tests/FSAlgorithms/test_FSalgorithm2.cxx -text
 tests/FSAlgorithms/transform.cxx -text
 tests/Makefile.am -text
 tests/Material/AbaqusTangentOperator.cxx -text
+tests/Material/AbaqusTangentOperator2.cxx -text
 tests/Material/CMakeLists.txt -text
 tests/Material/FiniteStrainBehaviourTangentOperator.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator2.cxx -text

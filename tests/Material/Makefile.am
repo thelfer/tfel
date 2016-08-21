@@ -6,6 +6,7 @@ testdir = $(pkgdatadir)/tests/Material
 test_PROGRAMS = boundsCheck \
 		OrthotropicAxesConventionTest         \
 		AbaqusTangentOperator                 \
+		AbaqusTangentOperator2                \
 		FiniteStrainBehaviourTangentOperator  \
 		FiniteStrainBehaviourTangentOperator2 \
 		FiniteStrainBehaviourTangentOperator3 \
@@ -27,6 +28,7 @@ LDADD = -lTFELMaterial -lTFELMath       \
 boundsCheck_SOURCES = boundsCheck.cxx               
 OrthotropicAxesConventionTest_SOURCES         = OrthotropicAxesConventionTest.cxx
 AbaqusTangentOperator_SOURCES                 = AbaqusTangentOperator.cxx
+AbaqusTangentOperator2_SOURCES                = AbaqusTangentOperator2.cxx
 FiniteStrainBehaviourTangentOperator_SOURCES  = FiniteStrainBehaviourTangentOperator.cxx
 FiniteStrainBehaviourTangentOperator2_SOURCES = FiniteStrainBehaviourTangentOperator2.cxx
 FiniteStrainBehaviourTangentOperator3_SOURCES = FiniteStrainBehaviourTangentOperator3.cxx

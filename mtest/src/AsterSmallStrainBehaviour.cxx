@@ -128,7 +128,7 @@ namespace mtest
       return {false,ndt};
     }
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){
-      UmatNormaliseTangentOperator::exe(Kt,wk.D,dimension);
+      UmatNormaliseTangentOperator::exe(&Kt(0,0),wk.D,dimension);
     }
     if(b){
       if(!s.iv0.empty()){

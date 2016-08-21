@@ -42,6 +42,10 @@ namespace tfel
 	SPATIAL_MODULI, /*!< moduli associated with the Lie derivative
 			 *   of the Kirchhoff stress
 			 */
+	C_TAU_JAUMANN,  /*!< moduli associated with the jaumann
+			 *   objective stress rate of the Kirchhoff
+			 *   stress
+			 */
 	ABAQUS,   /*!< tangent moduli associated with the Jaumann rate
 		    of the Kirchhoff stress divided by J. This is the
 		    tangent operator for the Abaqus and Ansys finite

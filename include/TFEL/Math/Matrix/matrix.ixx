@@ -116,7 +116,7 @@ namespace tfel{
     template<typename T>
     T& 
     matrix<T>::operator()(const typename matrix<T>::size_type i,
-				  const typename matrix<T>::size_type j)
+			  const typename matrix<T>::size_type j)
     {
       return tfel::math::vector<T>::operator[](i*(this->nb_cols)+j);
     }

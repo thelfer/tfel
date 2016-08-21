@@ -25,7 +25,6 @@
 
 #include"MTest/CurrentState.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
-#include"MTest/UmatNormaliseTangentOperator.hxx"
 #include"MTest/AsterFiniteStrainBehaviour.hxx"
 
 namespace mtest

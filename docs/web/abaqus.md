@@ -71,6 +71,8 @@ Two finite strain strategies are available:
 
 ## Consistent tangent operator for finite strain behaviours
 
+![Relation between tangent operators"](img/FiniteStrainTangentOperatorConvertion.svg "Supported relations between tangent operators in `MFront`")
+
 Most information reported here are extracted from the book of
 Belytschko (@belytschko_nonlinear_2000).
 

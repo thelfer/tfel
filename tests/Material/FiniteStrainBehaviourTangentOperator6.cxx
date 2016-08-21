@@ -74,7 +74,7 @@ struct FiniteStrainBehaviourTangentOperator6 final
     };
     // compute the spatial moduli through the Kirchhoff stress derivative
     const auto D =  [this,&svk,&l0,&m0](const tfel::math::tensor<N,real>& F) -> st2tost2{
-      auto convert = [this,&F](const t2tost2 DJ){
+      auto convert = [this,&F](const t2tost2& DJ){
 	auto index = [](const size_type i,const size_type j) -> size_type{
 	  // i,j are valid for the space dimension considered
 	  if((i==j)&&(i<3)){
@@ -82,15 +82,15 @@ struct FiniteStrainBehaviourTangentOperator6 final
 	  } else if((i==0)&&(j==1)){
 	    return 3;
 	  } else if((i==1)&&(j==0)){
-	    return 4;
+	    return 3;
 	  } else if((i==0)&&(j==2)){
-	    return 5;
+	    return 4;
 	  } else if((i==2)&&(j==0)){
-	    return 6;
+	    return 4;
 	  } else if((i==1)&&(j==2)){
-	    return 7;
+	    return 5;
 	  }
-	  return 8;
+	  return 5;
 	};
 	st2tost2 r;
 	for(size_type k=0;k!=3;++k){

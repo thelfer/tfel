@@ -892,12 +892,12 @@ namespace tfel
       int u = ::tfel_getUnsignedShort(lib,(f+"_BehaviourType").c_str());
       if(u==-1){
 	string msg("ExternalLibraryManager::getUMATBehaviourType : ");
-	msg += " behavour type could not be read";
+	msg += " behaviour type could not be read";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
 	msg += "\n";
 	msg += getLastWin32Error();
 #else
-	msg += "(";
+	msg += " (";
 	msg += ::dlerror();
 	msg += ")";
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
@@ -920,7 +920,7 @@ namespace tfel
       int u = ::tfel_getUnsignedShort(lib,(f+"_SymmetryType").c_str());
       if(u==-1){
 	string msg("ExternalLibraryManager::getUMATSymmetryType : ");
-	msg += " behavour type could not be read (";
+	msg += " symmetry type could not be read (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
 	  msg += getLastWin32Error();
 #else
@@ -946,7 +946,7 @@ namespace tfel
       int u = ::tfel_getUnsignedShort(lib,(f+"_ElasticSymmetryType").c_str());
       if(u==-1){
 	string msg("ExternalLibraryManager::getUMATElasticSymmetryType : ");
-	msg += " behavour type could not be read (";
+	msg += " elastic symmetry type could not be read (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
 	  msg += getLastWin32Error();
 #else

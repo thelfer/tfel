@@ -136,7 +136,7 @@ namespace mtest
     const auto rb = transpose(s.r);
     // treating the consistent tangent operator
     if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      UmatNormaliseTangentOperator::exe(Kt,wk.D,3u);
+      UmatNormaliseTangentOperator::exe(&Kt(0,0),wk.D,3u);
       st2tost2<3u,AbaqusReal> K;
       for(unsigned short i=0;i!=6u;++i){
 	for(unsigned short j=0;j!=6u;++j){
@@ -150,7 +150,7 @@ namespace mtest
 	}
       }
     } else if (h==ModellingHypothesis::AXISYMMETRICAL){
-      UmatNormaliseTangentOperator::exe(Kt,wk.D,2u);
+      UmatNormaliseTangentOperator::exe(&Kt(0,0),wk.D,2u);
       st2tost2<2u,AbaqusReal> K;
       for(unsigned short i=0;i!=4u;++i){
 	for(unsigned short j=0;j!=4u;++j){
@@ -195,7 +195,7 @@ namespace mtest
       *(p+15) = D2[8];
       // so now we have D in a conventional fortan form, so we can
       // normalise it (transpose and TFEL storage conventions !)
-      UmatNormaliseTangentOperator::exe(Kt,wk.D,2u);
+      UmatNormaliseTangentOperator::exe(&Kt(0,0),wk.D,2u);
       // the last step: rotation in the global frame
       st2tost2<2u,AbaqusReal> K;
       for(unsigned short i=0;i!=4u;++i){

@@ -101,8 +101,9 @@ libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lEuroplexusInterface
 endif
 
 if HAVE_ABAQUS
-libTFELMTest_la_SOURCES += AbaqusStandardBehaviour.cxx    \
-			   AbaqusSmallStrainBehaviour.cxx \
+libTFELMTest_la_SOURCES += AbaqusStandardBehaviour.cxx     \
+			   AbaqusSmallStrainBehaviour.cxx  \
+			   AbaqusFiniteStrainBehaviour.cxx \
 			   AbaqusExplicitBehaviour.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAbaqusInterface
 endif

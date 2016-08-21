@@ -110,6 +110,7 @@ if(HAVE_ABAQUS)
 set(TFELMTest_SOURCES
     AbaqusStandardBehaviour.cxx
     AbaqusSmallStrainBehaviour.cxx
+    AbaqusFiniteStrainBehaviour.cxx
     AbaqusExplicitBehaviour.cxx
     ${TFELMTest_SOURCES})
 set(TFELMTest_LDADD

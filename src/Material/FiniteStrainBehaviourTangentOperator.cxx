@@ -25,6 +25,7 @@ namespace tfel{
 	  FiniteStrainBehaviourTangentOperatorBase::DSIG_DDF,
 	  FiniteStrainBehaviourTangentOperatorBase::C_TRUESDELL,
 	  FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI,
+	  FiniteStrainBehaviourTangentOperatorBase::C_TAU_JAUMANN,
 	  FiniteStrainBehaviourTangentOperatorBase::ABAQUS, 
 	  FiniteStrainBehaviourTangentOperatorBase::DSIG_DDE,
 	  FiniteStrainBehaviourTangentOperatorBase::DTAU_DF, 
@@ -47,6 +48,7 @@ namespace tfel{
       case FiniteStrainBehaviourTangentOperatorBase::DS_DDF:
 	return "t2tost2";
       case FiniteStrainBehaviourTangentOperatorBase::C_TRUESDELL:
+      case FiniteStrainBehaviourTangentOperatorBase::C_TAU_JAUMANN:
       case FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI:
       case FiniteStrainBehaviourTangentOperatorBase::ABAQUS:
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DDE:
@@ -72,6 +74,8 @@ namespace tfel{
 	return "SPATIAL_MODULI";
       case FiniteStrainBehaviourTangentOperatorBase::ABAQUS:
 	return "ABAQUS";
+      case FiniteStrainBehaviourTangentOperatorBase::C_TAU_JAUMANN:
+	return "C_TAU_JAUMANN";
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DDE:
 	return "DSIG_DDE";
       case FiniteStrainBehaviourTangentOperatorBase::DTAU_DF:
@@ -107,6 +111,9 @@ namespace tfel{
       case FiniteStrainBehaviourTangentOperatorBase::ABAQUS:
 	return "tangent moduli associated with the Jaumann rate "
 	  "of the Kirchhoff stress divided by the change of volume";
+      case FiniteStrainBehaviourTangentOperatorBase::C_TAU_JAUMANN:
+	return "tangent moduli associated with the Jaumann rate "
+	  "of the Kirchhoff stress";
       case FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI:
 	return "tangent moduli associated with Lie derivative of "
 	  "the Kirchhoff stress";
