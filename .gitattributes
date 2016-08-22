@@ -1616,6 +1616,7 @@ mfront/include/MFront/Abaqus/AbaqusData.hxx -text
 mfront/include/MFront/Abaqus/AbaqusException.hxx -text
 mfront/include/MFront/Abaqus/AbaqusExplicitData.hxx -text
 mfront/include/MFront/Abaqus/AbaqusExplicitInterface.hxx -text
+mfront/include/MFront/Abaqus/AbaqusFiniteStrain.hxx -text
 mfront/include/MFront/Abaqus/AbaqusInterface.hxx -text
 mfront/include/MFront/Abaqus/AbaqusInterfaceExceptions.hxx -text
 mfront/include/MFront/Abaqus/AbaqusOrthotropicBehaviour.hxx -text
@@ -1843,6 +1844,7 @@ mfront/src/AbaqusComputeStiffnessTensor.cxx -text
 mfront/src/AbaqusComputeThermalExpansionCoefficientTensor.cxx -text
 mfront/src/AbaqusException.cxx -text
 mfront/src/AbaqusExplicitInterface.cxx -text
+mfront/src/AbaqusFiniteStrain.cxx -text
 mfront/src/AbaqusInterface.cxx -text
 mfront/src/AbaqusInterfaceBase.cxx -text
 mfront/src/AbaqusInterfaceExceptions.cxx -text
