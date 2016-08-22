@@ -156,6 +156,7 @@ if(HAVE_ABAQUS)
   install_mfront_header(MFront/Abaqus AbaqusComputeStiffnessTensor.hxx)
   install_mfront_header(MFront/Abaqus AbaqusStressFreeExpansionHandler.hxx)
   install_mfront_header(MFront/Abaqus AbaqusComputeThermalExpansionCoefficientTensor.hxx)
+  install_mfront_header(MFront/Abaqus AbaqusFiniteStrain.hxx)
 endif(HAVE_ABAQUS)
 
 if(HAVE_EUROPLEXUS)

@@ -224,6 +224,7 @@ nobase_include_HEADERS += MFront/Abaqus/Abaqus.hxx                              
 			  MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx               \
 			  MFront/Abaqus/AbaqusTangentOperator.hxx                          \
 			  MFront/Abaqus/AbaqusTangentOperator.ixx                          \
+			  MFront/Abaqus/AbaqusFiniteStrain.hxx                             \
 			  MFront/AbaqusInterfaceBase.hxx	                           \
 			  MFront/AbaqusInterface.hxx	                                   \
 			  MFront/AbaqusExplicitInterface.hxx

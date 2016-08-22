@@ -204,7 +204,8 @@ if(HAVE_ABAQUS)
     AbaqusException.cxx
     AbaqusComputeStiffnessTensor.cxx
     AbaqusStressFreeExpansionHandler.cxx
-    AbaqusComputeThermalExpansionCoefficientTensor.cxx)
+    AbaqusComputeThermalExpansionCoefficientTensor.cxx
+    AbaqusFiniteStrain.cxx)
   mfront_library(AbaqusInterface ${AbaqusInterface_SOURCES})
   target_link_libraries(AbaqusInterface
     MTestFileGenerator

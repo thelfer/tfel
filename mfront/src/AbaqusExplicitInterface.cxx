@@ -201,40 +201,6 @@ namespace mfront{
     out << "#include\"MFront/Abaqus/AbaqusExplicitInterface.hxx\"\n\n";
   } // end of AbaqusExplicitInterface::writeInterfaceSpecificIncludes
   
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  AbaqusExplicitInterface::treatKeyword(const std::string& key,
-					CxxTokenizer::TokensContainer::const_iterator current,
-					const CxxTokenizer::TokensContainer::const_iterator end)
-  {
-    auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AbaqusExplicitInterface::treatKeyword: "+m));}
-    };
-    auto read = [](const std::string& s){
-      if(s=="FiniteRotationSmallStrain"){
-	return FINITEROTATIONSMALLSTRAIN;
-      } else if(s=="MieheApelLambrechtLogarithmicStrain"){
-	return MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
-      } else {
-	throw(std::runtime_error("AbaqusExplicitInterface::treatKeyword: "
-				 "unsupported strategy '"+s+"'\n"
-				 "The only supported strategies are "
-				 "'FiniteRotationSmallStrain' and "
-				 "'MieheApelLambrechtLogarithmicStrain'"));
-      }
-    };
-    if (key=="@AbaqusFiniteStrainStrategy"){
-      throw_if(this->fss!=UNDEFINEDSTRATEGY,
-	       "a finite strain strategy has already been defined");
-      throw_if(current==end,"unexpected end of file");
-      this->fss = read(current->value);
-      throw_if(++current==end,"unexpected end of file");
-      throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
-      ++(current);
-      return {true,current};
-    }
-    return {false,current};
-  } // end of AbaqusExplicitInterface::treatKeyword
-
   void
   AbaqusExplicitInterface::endTreatment(const BehaviourDescription& mb,
 					const FileDescription& fd) const

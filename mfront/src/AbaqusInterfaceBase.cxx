@@ -40,6 +40,39 @@ namespace mfront{
     return makeUpperCase(lib);
   } // end of AbaqusInterfaceBase::getLibraryName
 
+  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  AbaqusInterfaceBase::treatKeyword(const std::string& key,
+					CxxTokenizer::TokensContainer::const_iterator current,
+					const CxxTokenizer::TokensContainer::const_iterator end)
+  {
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("AbaqusInterfaceBase::treatKeyword: "+m));}
+    };
+    auto read = [&throw_if](const std::string& s){
+      if(s=="FiniteRotationSmallStrain"){
+	return FINITEROTATIONSMALLSTRAIN;
+      } else if(s=="MieheApelLambrechtLogarithmicStrain"){
+	return MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
+      } else {
+	throw_if(true,"unsupported strategy '"+s+"'\n"
+		 "The only supported strategies are "
+		 "'FiniteRotationSmallStrain' and "
+		 "'MieheApelLambrechtLogarithmicStrain'");
+      }
+    };
+    if (key=="@AbaqusFiniteStrainStrategy"){
+      throw_if(this->fss!=UNDEFINEDSTRATEGY,
+	       "a finite strain strategy has already been defined");
+      throw_if(current==end,"unexpected end of file");
+      this->fss = read(current->value);
+      throw_if(++current==end,"unexpected end of file");
+      throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
+      ++(current);
+      return {true,current};
+    }
+    return {false,current};
+  } // end of AbaqusInterfaceBase::treatKeyword
+  
   std::string AbaqusInterfaceBase::getFunctionName(const std::string& name) const
   {
     return makeUpperCase(name);
@@ -381,7 +414,7 @@ namespace mfront{
 					      const BehaviourDescription&,
 					      const FileDescription&) const
   {} // end of AbaqusInterfaceBase::writeUMATxxAdditionalSymbols
-
+  
   void
   AbaqusInterfaceBase::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
   {

@@ -4389,6 +4389,7 @@ tests/Material/AbaqusTangentOperator.cxx -text
 tests/Material/AbaqusTangentOperator2.cxx -text
 tests/Material/CMakeLists.txt -text
 tests/Material/FiniteStrainBehaviourTangentOperator.cxx -text
+tests/Material/FiniteStrainBehaviourTangentOperator10.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator2.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator3.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator4.cxx -text
@@ -4396,6 +4397,7 @@ tests/Material/FiniteStrainBehaviourTangentOperator5.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator6.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator7.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator8.cxx -text
+tests/Material/FiniteStrainBehaviourTangentOperator9.cxx -text
 tests/Material/Makefile.am -text
 tests/Material/OrthotropicAxesConventionTest.cxx -text
 tests/Material/boundsCheck.cxx -text

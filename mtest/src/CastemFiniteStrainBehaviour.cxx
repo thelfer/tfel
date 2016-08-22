@@ -15,6 +15,11 @@
 #include<limits>
 #include<algorithm>
 
+#include<iostream>
+#include"TFEL/Math/Tensor/TensorConceptIO.hxx"
+#include"TFEL/Math/Stensor/StensorConceptIO.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
+
 #include"TFEL/Config/TFELTypes.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/t2tost2.hxx"

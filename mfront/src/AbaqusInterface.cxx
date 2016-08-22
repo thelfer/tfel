@@ -193,6 +193,10 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("AbaqusInterface::treatKeyword: "+m));}
     };
+    const auto r = AbaqusInterfaceBase::treatKeyword(key,current,end);
+    if(r.first){
+      return r;
+    }
     if (key=="@AbaqusGenerateMTestFileOnFailure"){
       this->generateMTestFile = this->readBooleanValue(key,current,end);
       return {true,current};      
@@ -234,6 +238,9 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("AbaqusInterface::endTreatment: "+m));}
     };
+    throw_if((mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	     (this->fss!=UNDEFINEDSTRATEGY),
+	     "finite strain strategy is only supported for small strain behaviours");
     throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
 	     "the abaqus interface only supports small and "
@@ -294,11 +301,13 @@ namespace mfront{
 	<< "#include\"TFEL/Config/TFELConfig.hxx\"\n\n"
 	<< "#include\"MFront/Abaqus/Abaqus.hxx\"\n"
 	<< "#include\"MFront/Abaqus/AbaqusData.hxx\"\n\n";
-
     out << "#ifdef __cplusplus\n"
 	<< "#include\"MFront/Abaqus/AbaqusTraits.hxx\"\n";
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "#include\"MFront/Abaqus/AbaqusOrthotropicBehaviour.hxx\"\n";
+    }
+    if(this->fss!=UNDEFINEDSTRATEGY){
+      out << "#include\"MFront/Abaqus/AbaqusFiniteStrain.hxx\"\n\n";
     }
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
 	<< "#endif /* __cplusplus */\n\n";
@@ -344,15 +353,6 @@ namespace mfront{
     out.open("src/"+fname);
     throw_if(!out,"could not open file '"+fname+"'");
 
-    std::string sfeh;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      sfeh = "abaqus::AbaqusStandardSmallStrainStressFreeExpansionHandler";
-    } else if (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      sfeh = "nullptr";
-    } else {
-      throw_if(true,"the abaqus interface only supports small and finite strain behaviours");
-    }
-
     out << "/*!\n"
 	<< "* \\file   "  << fname << '\n'
 	<< "* \\brief  This file implements the abaqus interface for the " 
@@ -395,147 +395,287 @@ namespace mfront{
     this->writeSetParametersFunctionsImplementations(out,name,mb);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
-    std::string dv0;
-    std::string dv1;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      dv0 = "STRAN";
-      dv1 = "DSTRAN";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      dv0 = "F0";
-      dv1 = "F1";
-    } else {
-      throw_if(true,"the abaqus interface only supports small "
-	       "and finite strain behaviours");
-    }
-
     for(const auto h: mh){
-      out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameForHypothesis(name,h);
-      writeUMATArguments(out,mb.getBehaviourType(),false);
-      out << "{\n";
-      if(((getDebugMode())||(this->compareToNumericalTangentOperator))&&(!this->generateMTestFile)){
-	out << "using namespace std;\n";
+      this->writeUMATFunctionBase(out,mb,name,h);
+      if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	 (this->fss==UNDEFINEDSTRATEGY)){
+	this->writeUMATFiniteAndSmallStrainFunction(out,mb,name,h);
+      } else if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+		(this->fss!=UNDEFINEDSTRATEGY)){
+	if(this->fss==FINITEROTATIONSMALLSTRAIN){
+	  this->writeUMATFiniteRotationSmallStrainFunction(out,mb,name,h);
+	} else {
+	  throw_if(true,"unsupported finite strain strategy");
+	}
+      } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	this->writeUMATFiniteAndSmallStrainFunction(out,mb,name,h);
+      } else {
+	throw_if(true,"the abaqus interface only supports small "
+		 "and finite strain behaviours");
       }
-      if(mb.getAttribute(BehaviourData::profiling,false)){
-	out << "using mfront::BehaviourProfiler;\n"
-	    << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
-	    << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
-	    << "Profiler::getProfiler(),\n"
-	    << "BehaviourProfiler::TOTALTIME);\n";
-      }
-      this->generateMTestFile1(out);
-      if(this->compareToNumericalTangentOperator){
-	out << "abaqus::AbaqusReal pnewdt0(*PNEWDT);\n"
-	    << "vector<abaqus::AbaqusReal> deto0(*NTENS);\n"
-	    << "vector<abaqus::AbaqusReal> sig0(*NTENS);\n"
-	    << "vector<abaqus::AbaqusReal> sv0(*NSTATV);\n"
-	    << "copy(DSTRAN,DSTRAN+*(NTENS),deto0.begin());\n"
-	    << "copy(STRESS,STRESS+*(NTENS),sig0.begin());\n"
-	    << "copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
-      }
-      out << "abaqus::AbaqusData d = {STRESS,PNEWDT,DDSDDE,STATEV,\n"
-	  << "                        *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
-	  << "                        DROT," << dv0 << "," << dv1 << ",TEMP,DTEMP,\n"
-	  << "                        PROPS,PREDEF,DPRED,\n"
-	  << getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
-	  << "if(abaqus::AbaqusInterface<tfel::material::ModellingHypothesis::"
-	  << ModellingHypothesis::toUpperCaseString(h) << ",tfel::material::" << mb.getClassName() 
-	  << ">::exe(d)!=0){\n";
-      this->generateMTestFile2(out,mb.getBehaviourType(),
-			       name,"",mb);
-      out << "*PNEWDT = -1.;\n"
-	  << "return;\n"
-	  << "}\n";
-      if(getDebugMode()){
-	out << "cout << \"Dt :\" << endl;\n"
-	    << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n"
-	    << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n"
-	    << "cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n"
-	    << "}\n"
-	    << "cout << endl;\n"
-	    << "}\n"
-	    << "cout << endl;\n";
-      }
-      if(this->compareToNumericalTangentOperator){
-	out << "// computing the tangent operator by pertubation\n"
-	    << "vector<abaqus::AbaqusReal> nD((*NTENS)*(*NTENS));\n"
-	    << "vector<abaqus::AbaqusReal> deto(*NTENS);\n"
-	    << "vector<abaqus::AbaqusReal> sigf(*NTENS);\n"
-	    << "vector<abaqus::AbaqusReal> sigb(*NTENS);\n"
-	    << "vector<abaqus::AbaqusReal> sv(*NSTATV);\n"
-	    << "vector<abaqus::AbaqusReal> D((*NTENS)*(*NTENS));\n"
-	    << "abaqus::AbaqusReal pnewdt(pnewdt0);\n"
-	    << "abaqus::AbaqusReal m;\n"
-	    << "abaqus::AbaqusReal mDt;\n"
-	    << "abaqus::AbaqusReal mnDt;\n"
-	    << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n"
-	    << "copy(deto0.begin(),deto0.end(),deto.begin());\n"
-	    << "copy(sig0.begin(),sig0.end(),sigf.begin());\n"
-	    << "copy(sv0.begin(),sv0.end(),sv.begin());\n"
-	    << "deto[i] += " << this->strainPerturbationValue << ";\n"
-	    << "D[0] = 0.;\n"
-	    << "abaqus::AbaqusData d2 = {&sigf[0],&pnewdt0,&D[0],&sv[0],\n"
-	    << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
-	    << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
-	    << "                         PROPS,PREDEF,DPRED,\n"
-	    << getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
-	    << "if(abaqus::AbaqusInterface<tfel::material::ModellingHypothesis::"
-	    << ModellingHypothesis::toUpperCaseString(h) << ","
-	    << "tfel::material::" << mb.getClassName() << ">::exe(d2)!=0){\n"
-	    << "return;\n"
-	    << "}\n"
-	    << "abaqus::AbaqusReal pnewdt(pnewdt0);\n"
-	    << "copy(deto0.begin(),deto0.end(),deto.begin());\n"
-	    << "copy(sig0.begin(),sig0.end(),sigb.begin());\n"
-	    << "copy(sv0.begin(),sv0.end(),sv.begin());\n"
-	    << "deto[i] -= " << this->strainPerturbationValue << ";\n"
-	    << "D[0] = 0.;\n"
-	    << "abaqus::AbaqusData d3 = {&sigf[0],&pnewdt0,&D[0],&sv[0],\n"
-	    << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
-	    << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
-	    << "                         PROPS,PREDEF,DPRED,\n"
-	    << "if(abaqus::AbaqusInterface<tfel::material::ModellingHypothesis::"
-	    << ModellingHypothesis::toUpperCaseString(h) << ","
-	    << "tfel::material::" << mb.getClassName() << ">::exe(d3)!=0){\n"
-	    << "return;\n"
-	    << "}\n"
-	    << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n"
-	    << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*" << this->strainPerturbationValue << ");\n"
-	    << "}\n"
-	    << "}\n"
-	    << "// comparison\n"
-	    << "m=0.;\n"
-	    << "mDt=0.;\n"
-	    << "mnDt=0.;\n"
-	    << "for(i=0;i!=(*NTENS)*(*NTENS);++i){\n"
-	    << "mDt=max(mDt,*(DDSDDE+i));\n"
-	    << "mnDt=max(mnDt,nD[i]);\n"
-	    << "m=max(m,abs(nD[i]-*(DDSDDE+i)));\n"
-	    << "}\n"
-	    << "if(m>" << this->tangentOperatorComparisonCriterion << "){\n"
-	    << "cout << \"||nDt-Dt|| = \" << m << \" (\" << 100.*m/(0.5*(mDt+mnDt)) << \"%)\"<< endl;\n"
-	    << "cout << \"Dt :\" << endl;\n"
-	    << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n"
-	    << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n"
-	    << "cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n"
-	    << "}\n"
-	    << "cout << endl;\n"
-	    << "}\n"
-	    << "cout << \"nDt :\" << endl;\n"
-	    << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n"
-	    << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n"
-	    << "cout << nD[j*(*NTENS)+i] << \" \";\n"
-	    << "}\n"
-	    << "cout << endl;\n"
-	    << "}\n"
-	    << "cout << endl;\n"
-	    << "}\n";
-      }
-      out << "}\n";
     }
     out << "} // end of extern \"C\"\n";
     out.close();
     this->writeInputFileExample(mb,fd,true);
   } // end of AbaqusInterface::endTreatment
+  
+  void AbaqusInterface::writeUMATFunctionBase(std::ostream& out,
+					      const BehaviourDescription& mb,
+					      const std::string& name,
+					      const Hypothesis h) const
+  {
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("AbaqusInterface::writeUMATFunctionBase: "+m));}
+    };
+    std::string dv0;
+    std::string dv1;
+    BehaviourDescription::BehaviourType btype;
+    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+       (this->fss==UNDEFINEDSTRATEGY)){
+      dv0 = "STRAN";
+      dv1 = "DSTRAN";
+      btype=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR;
+    } else if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	      (this->fss!=UNDEFINEDSTRATEGY)){
+      dv0 = "F0";
+      dv1 = "F1";
+      btype=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR;
+    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      dv0 = "F0";
+      dv1 = "F1";
+      btype=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR;
+    } else {
+      throw_if(true,"the abaqus interface only supports small "
+	       "and finite strain behaviours");
+    }
+    std::string sfeh;
+    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      sfeh = "abaqus::AbaqusStandardSmallStrainStressFreeExpansionHandler";
+    } else if (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      sfeh = "nullptr";
+    } else {
+      throw_if(true,"the abaqus interface only supports small and finite strain behaviours");
+    }
+    out << "static void\n" << name << "_base" << this->getFunctionNameForHypothesis("",h);
+    writeUMATArguments(out,btype,false);
+    out << "{\n";
+    if(((getDebugMode())||(this->compareToNumericalTangentOperator))&&(!this->generateMTestFile)){
+      out << "using namespace std;\n";
+    }
+    this->generateMTestFile1(out);
+    if(this->compareToNumericalTangentOperator){
+      out << "abaqus::AbaqusReal pnewdt0(*PNEWDT);\n"
+	  << "vector<abaqus::AbaqusReal> deto0(*NTENS);\n"
+	  << "vector<abaqus::AbaqusReal> sig0(*NTENS);\n"
+	  << "vector<abaqus::AbaqusReal> sv0(*NSTATV);\n"
+	  << "copy(DSTRAN,DSTRAN+*(NTENS),deto0.begin());\n"
+	  << "copy(STRESS,STRESS+*(NTENS),sig0.begin());\n"
+	  << "copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
+    }
+    out << "abaqus::AbaqusData d = {STRESS,PNEWDT,DDSDDE,STATEV,\n"
+	<< "                        *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
+	<< "                        DROT," << dv0 << "," << dv1 << ",TEMP,DTEMP,\n"
+	<< "                        PROPS,PREDEF,DPRED,\n"
+	<< getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
+	<< "if(abaqus::AbaqusInterface<tfel::material::ModellingHypothesis::"
+	<< ModellingHypothesis::toUpperCaseString(h) << ",tfel::material::" << mb.getClassName() 
+	<< ">::exe(d)!=0){\n";
+    this->generateMTestFile2(out,mb.getBehaviourType(),
+			     name,"",mb);
+    out << "*PNEWDT = -1.;\n"
+	<< "return;\n"
+	<< "}\n";
+    if(getDebugMode()){
+      out << "cout << \"Dt :\" << endl;\n"
+	  << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n"
+	  << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n"
+	  << "cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n"
+	  << "}\n"
+	  << "cout << endl;\n"
+	  << "}\n"
+	  << "cout << endl;\n";
+    }
+    if(this->compareToNumericalTangentOperator){
+      out << "// computing the tangent operator by pertubation\n"
+	  << "vector<abaqus::AbaqusReal> nD((*NTENS)*(*NTENS));\n"
+	  << "vector<abaqus::AbaqusReal> deto(*NTENS);\n"
+	  << "vector<abaqus::AbaqusReal> sigf(*NTENS);\n"
+	  << "vector<abaqus::AbaqusReal> sigb(*NTENS);\n"
+	  << "vector<abaqus::AbaqusReal> sv(*NSTATV);\n"
+	  << "vector<abaqus::AbaqusReal> D((*NTENS)*(*NTENS));\n"
+	  << "abaqus::AbaqusReal pnewdt(pnewdt0);\n"
+	  << "abaqus::AbaqusReal m;\n"
+	  << "abaqus::AbaqusReal mDt;\n"
+	  << "abaqus::AbaqusReal mnDt;\n"
+	  << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n"
+	  << "copy(deto0.begin(),deto0.end(),deto.begin());\n"
+	  << "copy(sig0.begin(),sig0.end(),sigf.begin());\n"
+	  << "copy(sv0.begin(),sv0.end(),sv.begin());\n"
+	  << "deto[i] += " << this->strainPerturbationValue << ";\n"
+	  << "D[0] = 0.;\n"
+	  << "abaqus::AbaqusData d2 = {&sigf[0],&pnewdt0,&D[0],&sv[0],\n"
+	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
+	  << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
+	  << "                         PROPS,PREDEF,DPRED,\n"
+	  << getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
+	  << "if(abaqus::AbaqusInterface<tfel::material::ModellingHypothesis::"
+	  << ModellingHypothesis::toUpperCaseString(h) << ","
+	  << "tfel::material::" << mb.getClassName() << ">::exe(d2)!=0){\n"
+	  << "return;\n"
+	  << "}\n"
+	  << "abaqus::AbaqusReal pnewdt(pnewdt0);\n"
+	  << "copy(deto0.begin(),deto0.end(),deto.begin());\n"
+	  << "copy(sig0.begin(),sig0.end(),sigb.begin());\n"
+	  << "copy(sv0.begin(),sv0.end(),sv.begin());\n"
+	  << "deto[i] -= " << this->strainPerturbationValue << ";\n"
+	  << "D[0] = 0.;\n"
+	  << "abaqus::AbaqusData d3 = {&sigf[0],&pnewdt0,&D[0],&sv[0],\n"
+	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
+	  << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
+	  << "                         PROPS,PREDEF,DPRED,\n"
+	  << "if(abaqus::AbaqusInterface<tfel::material::ModellingHypothesis::"
+	  << ModellingHypothesis::toUpperCaseString(h) << ","
+	  << "tfel::material::" << mb.getClassName() << ">::exe(d3)!=0){\n"
+	  << "return;\n"
+	  << "}\n"
+	  << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n"
+	  << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*" << this->strainPerturbationValue << ");\n"
+	  << "}\n"
+	  << "}\n"
+	  << "// comparison\n"
+	  << "m=0.;\n"
+	  << "mDt=0.;\n"
+	  << "mnDt=0.;\n"
+	  << "for(i=0;i!=(*NTENS)*(*NTENS);++i){\n"
+	  << "mDt=max(mDt,*(DDSDDE+i));\n"
+	  << "mnDt=max(mnDt,nD[i]);\n"
+	  << "m=max(m,abs(nD[i]-*(DDSDDE+i)));\n"
+	  << "}\n"
+	  << "if(m>" << this->tangentOperatorComparisonCriterion << "){\n"
+	  << "cout << \"||nDt-Dt|| = \" << m << \" (\" << 100.*m/(0.5*(mDt+mnDt)) << \"%)\"<< endl;\n"
+	  << "cout << \"Dt :\" << endl;\n"
+	  << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n"
+	  << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n"
+	  << "cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n"
+	  << "}\n"
+	  << "cout << endl;\n"
+	  << "}\n"
+	  << "cout << \"nDt :\" << endl;\n"
+	  << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n"
+	  << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n"
+	  << "cout << nD[j*(*NTENS)+i] << \" \";\n"
+	  << "}\n"
+	  << "cout << endl;\n"
+	  << "}\n"
+	  << "cout << endl;\n"
+	  << "}\n";
+    }
+    out << "}\n";
+  } // end of AbaqusInterface::writeUMATFunctionBase
+
+  void AbaqusInterface::writeUMATFiniteAndSmallStrainFunction(std::ostream& out,
+							      const BehaviourDescription& mb,
+							      const std::string& name,
+							      const Hypothesis h) const
+  {
+    out << "MFRONT_SHAREDOBJ void\n"
+	<< this->getFunctionNameForHypothesis(name,h);
+    writeUMATArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,true);
+    out << "{\n";
+    if(mb.getAttribute(BehaviourData::profiling,false)){
+      out << "using mfront::BehaviourProfiler;\n"
+	  << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
+	  << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
+	  << "Profiler::getProfiler(),\n"
+	  << "BehaviourProfiler::TOTALTIME);\n";
+    }
+    out << name << "_base" << this->getFunctionNameForHypothesis("",h)
+	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,DRPLDT,\n"
+	<< "STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,CMNAME,\n"
+	<< "NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,PNEWDT,\n"
+	<< "CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,KINC,size);\n"
+	<< "}\n\n";
+  }
+
+  void
+  AbaqusInterface::writeUMATFiniteRotationSmallStrainFunction(std::ostream& out,
+							      const BehaviourDescription& mb,
+							      const std::string& name,
+							      const Hypothesis h) const
+  {
+    if(h==ModellingHypothesis::PLANESTRESS){
+      throw(std::runtime_error("AbaqusInterface::writeUMATFiniteRotationSmallStrainFunction: "
+			       "plane stress is not supported yet"));
+    }
+    const auto ps = h==ModellingHypothesis::PLANESTRESS ? "true" : "false";
+    out << "MFRONT_SHAREDOBJ void\n"
+	<< this->getFunctionNameForHypothesis(name,h);
+    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
+    out << "{\n"
+	<< "using namespace abaqus;\n"
+	<< "AbaqusReal eto[6];\n"
+      	<< "AbaqusReal deto[6];\n"
+	<< "AbaqusReal sig[6];\n"
+	<< "AbaqusReal CSE[36];\n";
+    if(mb.getAttribute(BehaviourData::profiling,false)){
+      out << "using mfront::BehaviourProfiler;\n"
+	  << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
+	  << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
+	  << "Profiler::getProfiler(),\n"
+	  << "BehaviourProfiler::TOTALTIME);\n";
+    }
+    if(mb.getAttribute(BehaviourData::profiling,false)){
+      out << "{\n"
+	  << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	  << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
+    }
+    out << "AbaqusFiniteStrain::computeGreenLagrangeStrain(eto,DFGRD0,*NTENS," << ps << ");\n";
+    out << "AbaqusFiniteStrain::computeGreenLagrangeStrain(deto,DFGRD1,*NTENS," << ps << ");\n";
+    out << "AbaqusFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,DFGRD0,*NTENS," << ps << ",0);\n";
+    out << "for(int i=0;i!=*NTENS;++i){\n";
+    out << "deto[i] -= eto[i];\n";
+    out << "}\n";
+    if(mb.getAttribute(BehaviourData::profiling,false)){
+      out << "}\n";
+    }
+    out	<< name << "_base" << this->getFunctionNameForHypothesis("",h)
+	<< "(sig,STATEV,CSE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,DRPLDT,\n"
+	<< "eto,deto,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,CMNAME,\n"
+	<< "NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,PNEWDT,\n"
+	<< "CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,KINC,size);\n";
+    out << "if(*PNEWDT>=0.99999){\n";
+    if(mb.getAttribute(BehaviourData::profiling,false)){
+      out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	  << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
+    }
+    out << "AbaqusFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,DFGRD1,*NTENS," << ps << ",0);";
+    out << "AbaqusFiniteStrain::computeAbaqusTangentOperatorFromCSE(DDSDDE,CSE,DFGRD1,*NTENS);";
+    out << "}\n";
+    out << "}\n\n";
+  }
+  
+  void
+  AbaqusInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
+						   const std::string& name,
+						   const BehaviourDescription& mb) const
+  {
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("AbaqusInterface::writeUMATxxBehaviourTypeSymbols: "+m));}
+    };
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	<< "_BehaviourType = " ;
+    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(this->fss==UNDEFINEDSTRATEGY){
+	out << "1u;\n\n";
+      } else {
+	out << "2u;\n\n";
+      }
+    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      out << "2u;\n\n";
+    } else {
+      throw_if(true,"unsupported behaviour type");
+    }
+  } // end of AbaqusInterface::writeUMATxxBehaviourTypeSymbols
   
   void 
   AbaqusInterface::writeInterfaceSpecificIncludes(std::ostream& out,

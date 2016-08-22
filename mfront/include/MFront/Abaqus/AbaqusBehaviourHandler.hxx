@@ -220,8 +220,8 @@ namespace abaqus
 	  throwNegativeTimeStepException(Traits::getName());
 	}
 	this->behaviour.checkBounds();
-	typename BV::IntegrationResult r = BV::SUCCESS;
-	const typename BV::SMFlag smflag = AbaqusTangentOperatorFlag<AbaqusTraits<BV>::btype>::value;
+	auto r = BV::SUCCESS;
+	const auto smflag = AbaqusTangentOperatorFlag<AbaqusTraits<BV>::btype>::value;
 	auto tsf = behaviour.computeAPrioriTimeStepScalingFactor(*(d.PNEWDT));
 	*(d.PNEWDT) = tsf.second;
 	if(!tsf.first){

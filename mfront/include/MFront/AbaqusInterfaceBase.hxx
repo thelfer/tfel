@@ -23,6 +23,40 @@ namespace mfront{
   struct AbaqusInterfaceBase
     : public UMATInterfaceBase
   {
+    /*!
+     * This enum defines the various finite strain strategies
+     * available to resuse HPP laws into finite strain computations.
+     *
+     * The "finite rotation small strain" strategy is defined in the
+     * reference of the Code-Aster finite element software:
+     * [R5.03.22] Loi de comportement en grandes rotations et petites déformations
+     *
+     * The logarithmic strain strategy has been introduced by Miehe,
+     * Apel and Lambrecht:
+     * Miehe C., Apel N., Lambrecht M.: Anisotropic additive plasticity in the logarithm strain space : modular
+     * kinematic formulation and implementation based on incremental minimization principles for
+     * standard materials., Computer Methods in Applied Mechanics and Engineering, 191,
+     * pp.5383-5425, 2002.
+     * This strategy is also developped int the reference of the Code-Aster finite element software:
+     * [R5.03.24] Modèles de grandes déformations GDEF_LOG et GDEF_HYPO_ELAS
+     */
+    enum FiniteStrainStrategy{
+      UNDEFINEDSTRATEGY,
+      FINITEROTATIONSMALLSTRAIN,
+      MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN
+    }; // end of enum FiniteStrainStrategy
+    /*!
+     * \param[in] k  : keyword treated
+     * \param[in] p  : iterator to the current token
+     * \param[in] pe : iterator past the end of the file
+     * \return a pair. The first entry is true if the keyword was
+     * treated by the interface. The second entry is an iterator after
+     * the last token treated.
+     */
+    virtual std::pair<bool,CxxTokenizer::TokensContainer::const_iterator>
+    treatKeyword(const std::string&,
+		 CxxTokenizer::TokensContainer::const_iterator,
+		 const CxxTokenizer::TokensContainer::const_iterator) override;
     //! destructor
     virtual ~AbaqusInterfaceBase();
   protected:
@@ -120,6 +154,8 @@ namespace mfront{
 		const Hypothesis&,
 		const VariableDescription&,
 		const std::string&) const;
+    //! selected finite strain strategy
+    FiniteStrainStrategy fss = UNDEFINEDSTRATEGY;
   }; // end of struct AbaqusInterfaceBase
   
 } // end of namespace mfront

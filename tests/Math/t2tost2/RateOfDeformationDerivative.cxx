@@ -38,12 +38,18 @@ struct RateOfDeformationDerivativeTest final
  private:
   template<unsigned short N>
   void execute(){
-    using namespace tfel::math;
-    const double eps = 1.e-8;
-    const double prec = 1.e-14;
     const double values[9u] = {1.02,0.85,1.78,
 			       0.18,-0.16,0.05,
 			       -0.08,-0.0243,0.07654};
+    const double values2[9u] = {1,1.2,1,0,0,0,0,0,0};
+    this->execute2<N>(values);
+    this->execute2<N>(values2);
+  }
+  template<unsigned short N>
+  void execute2(const double *values){
+    using namespace tfel::math;
+    const double eps = 1.e-8;
+    const double prec = 1.e-14;
     const tensor<N,double> F{values};
     const auto iF = invert(F);
     const auto dD  = computeRateOfDeformationDerivative(F);

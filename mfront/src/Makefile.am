@@ -270,7 +270,8 @@ libAbaqusInterface_la_SOURCES = AbaqusInterfaceExceptions.cxx                   
 		                AbaqusException.cxx                                \
 			        AbaqusComputeStiffnessTensor.cxx                   \
 			        AbaqusStressFreeExpansionHandler.cxx               \
-			        AbaqusComputeThermalExpansionCoefficientTensor.cxx
+			        AbaqusComputeThermalExpansionCoefficientTensor.cxx \
+			        AbaqusFiniteStrain.cxx
 
 libAbaqusInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities          \
 			       -L$(top_builddir)/src/Exception -lTFELException          \

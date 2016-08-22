@@ -144,6 +144,58 @@ namespace mfront{
     completeBehaviourDataConstructor(std::ostream&,
 				     const Hypothesis,
 				     const BehaviourDescription&) const override;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
+     * \param[in] mb   : behaviour description
+     */
+    virtual void
+    writeUMATxxBehaviourTypeSymbols(std::ostream&,
+				    const std::string&,
+				    const BehaviourDescription&) const override;
+    /*!
+     * \brief write the call to the base function
+     * \param[in] out:  output file
+     * \param[in] mb:   mechanical behaviour description
+     * \param[in] name: name of the behaviour as defined by interface
+     *                  (generally taking into account the material
+     *                  and the behaviour name)
+     * \param[in] h:    modelling hypothesis
+     */
+    virtual void writeUMATFunctionBase(std::ostream&,
+				       const BehaviourDescription&,
+				       const std::string&,
+				       const Hypothesis) const;
+    /*!
+     * \brief write the call to the base function
+     * \param[in] out:  output file
+     * \param[in] mb:   mechanical behaviour description
+     * \param[in] name: name of the behaviour as defined by interface
+     *                  (generally taking into account the material
+     *                  and the behaviour name)
+     * \param[in] h:    modelling hypothesis
+     */
+    virtual void
+    writeUMATFiniteAndSmallStrainFunction(std::ostream&,
+					  const BehaviourDescription&,
+					  const std::string&,
+					  const Hypothesis) const;
+    /*!
+     * \brief write the call to the base function
+     * \param[in] out:  output file
+     * \param[in] mb:   mechanical behaviour description
+     * \param[in] name: name of the behaviour as defined by interface
+     *                  (generally taking into account the material
+     *                  and the behaviour name)
+     * \param[in] h:    modelling hypothesis
+     */
+    virtual void
+    writeUMATFiniteRotationSmallStrainFunction(std::ostream&,
+					       const BehaviourDescription&,
+					       const std::string&,
+					       const Hypothesis) const;
     
     bool compareToNumericalTangentOperator = false;
 

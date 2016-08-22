@@ -363,9 +363,9 @@ namespace tfel{
       constexpr const auto zero = value_type(0);
       const auto iF  = invert(F);
       return {iF[0],zero,zero,iF[4],zero,
-	  zero,iF[1],zero,zero,iF[3],
-	  zero,zero,iF[2],zero,zero,
-	  iF[3]*cste,iF[4]*cste,zero,iF[1]*cste,iF[0]*cste};
+	     zero,iF[1],zero,zero,iF[3],
+	     zero,zero,iF[2],zero,zero,
+	     iF[3]*cste,iF[4]*cste,zero,iF[1]*cste,iF[0]*cste};
     }
 
     template<typename TensorType>

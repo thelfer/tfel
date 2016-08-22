@@ -699,7 +699,7 @@ namespace tfel
 	  const DeformationGradientTensor<N,stress>& F1,
 	  const StressStensor<N,stress>& s)
       {
-	const auto J   = tfel::math::det(F1);
+	const auto J = tfel::math::det(F1);
 	Kr=tfel::math::convertSpatialModuliToKirchhoffJaumanRateModuli(Ks,J*s);
       } // end of exe
     }; // end of struct FiniteStrainBehaviourTangentOperatorConverter
@@ -786,10 +786,29 @@ namespace tfel
 	  const Source<N,stress>& Ks,
 	  const DeformationGradientTensor<N,stress>&,
 	  const DeformationGradientTensor<N,stress>& F1,
-	  const StressStensor<N,stress>&)
+	  const StressStensor<N,stress>& s)
       {
-	const auto dD = computeRateOfDeformationDerivative(F1);
-	Kr = Ks*dD;
+	// not supported by gcc 4.7.2: auto toT2toST2=[](const t2tot2& s) -> t2tost2{
+	auto toT2toST2=[&](tfel::math::t2tot2<N,stress> src){
+	  tfel::math::t2tost2<N,stress> r;
+	  for(unsigned short i=0;i!=3;++i){
+	    for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){
+	      r(i,j)=src(i,j);
+	    }
+	  }
+	  for(unsigned short i=0;i!=tfel::math::StensorDimeToSize<N>::value-3;++i){
+	    for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){
+	      r(3+i,j)=(src(3+2*i,j)+src(3+2*i+1,j))/std::sqrt(base_type<stress>(2));
+	    }
+	  }
+	  return r;
+	};
+	const auto t   = s*tfel::math::det(F1);
+	const auto tus = tfel::math::unsyme(t);
+	const auto dD = tfel::math::computeRateOfDeformationDerivative(F1);
+	const auto dW = tfel::math::computeSpinRateDerivative(F1);
+	Kr=Ks*dD+toT2toST2((tfel::math::t2tot2<N,base_type<stress>>::tpld(tus)-
+			    tfel::math::t2tot2<N,base_type<stress>>::tprd(tus))*dW);
       } // end of exe
     }; // end of struct FiniteStrainBehaviourTangentOperatorConverter
     /*!
@@ -810,11 +829,30 @@ namespace tfel
 	  const Source<N,stress>& Ks,
 	  const DeformationGradientTensor<N,stress>&,
 	  const DeformationGradientTensor<N,stress>& F1,
-	  const StressStensor<N,stress>&)
+	  const StressStensor<N,stress>& s)
       {
-	const auto dD = tfel::math::computeRateOfDeformationDerivative(F1);
-	const auto J  = tfel::math::det(F1);
-	Kr = Ks*dD*J;
+	// not supported by gcc 4.7.2: auto toT2toST2=[](const t2tot2& s) -> t2tost2{
+	auto toT2toST2=[&](tfel::math::t2tot2<N,stress> src){
+	  tfel::math::t2tost2<N,stress> r;
+	  for(unsigned short i=0;i!=3;++i){
+	    for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){
+	      r(i,j)=src(i,j);
+	    }
+	  }
+	  for(unsigned short i=0;i!=tfel::math::StensorDimeToSize<N>::value-3;++i){
+	    for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){
+	      r(3+i,j)=(src(3+2*i,j)+src(3+2*i+1,j))/std::sqrt(base_type<stress>(2));
+	    }
+	  }
+	  return r;
+	};
+	const auto J   = tfel::math::det(F1);
+	const auto t   = s*J;
+	const auto tus = tfel::math::unsyme(t);
+	const auto dD  = tfel::math::computeRateOfDeformationDerivative(F1);
+	const auto dW  = tfel::math::computeSpinRateDerivative(F1);
+	Kr=J*Ks*dD+toT2toST2((tfel::math::t2tot2<N,base_type<stress>>::tpld(tus)-
+			      tfel::math::t2tot2<N,base_type<stress>>::tprd(tus))*dW);
       } // end of exe
     }; // end of struct FiniteStrainBehaviourTangentOperatorConverter
     /*!
@@ -833,12 +871,35 @@ namespace tfel
       static TFEL_MATERIAL_INLINE void
       exe(Result<N,stress>& Kr,
 	  const Source<N,stress>& Ks,
-	  const DeformationGradientTensor<N,stress>&,
+	  const DeformationGradientTensor<N,stress>& F0,
 	  const DeformationGradientTensor<N,stress>& F1,
-	  const StressStensor<N,stress>&)
+	  const StressStensor<N,stress>& s)
       {
+	using TangentOperator = FiniteStrainBehaviourTangentOperatorBase;
+	// not supported by gcc 4.7.2: auto toT2toST2=[](const t2tot2& s) -> t2tost2{
+	auto toT2toST2=[&](tfel::math::t2tot2<N,stress> src)
+	  -> tfel::math::t2tost2<N,stress>{
+	  tfel::math::t2tost2<N,stress> r;
+	  for(unsigned short i=0;i!=3;++i){
+	    for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){
+	      r(i,j)=src(i,j);
+	    }
+	  }
+	  for(unsigned short i=0;i!=tfel::math::StensorDimeToSize<N>::value-3;++i){
+	    for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){
+	      r(3+i,j)=(src(3+2*i,j)+src(3+2*i+1,j))/std::sqrt(base_type<stress>(2));
+	    }
+	  }
+	  return r;
+	};
+	const auto CJ = convert<TangentOperator::C_TAU_JAUMANN,
+				TangentOperator::SPATIAL_MODULI>(Ks,F0,F1,s);
+	const auto t   = s*det(F1);
+	const auto tus = tfel::math::unsyme(t);
 	const auto dD = tfel::math::computeRateOfDeformationDerivative(F1);
-	Kr = Ks*dD;
+	const auto dW = tfel::math::computeSpinRateDerivative(F1);
+	Kr=CJ*dD+toT2toST2((tfel::math::t2tot2<N,base_type<stress>>::tpld(tus)-
+			    tfel::math::t2tot2<N,base_type<stress>>::tprd(tus))*dW);
       } // end of exe
     }; // end of struct FiniteStrainBehaviourTangentOperatorConverter
     /*!
