@@ -27,7 +27,14 @@ namespace mtest{
     using size_type = tfel::math::matrix<real>::size_type;
     static const real sqrt2 = sqrt(real(2));
     // normalise
-    if(d==2u){
+    if(d==1u){
+      // transpose
+      for(size_type i=0;i!=3u;++i){
+	for(size_type j=0;j!=3u;++j){
+	  *(Kt+i*4+j) = D(j,i);
+	}
+      }
+    } else if(d==2u){
       auto access = [&Kt](const size_type i,
 			  const size_type j) -> real&{
 	return *(Kt+i*4+j);

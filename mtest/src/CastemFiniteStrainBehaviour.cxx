@@ -18,18 +18,42 @@
 #include"TFEL/Config/TFELTypes.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/t2tost2.hxx"
+#include"TFEL/Math/T2toST2/T2toST2View.hxx"
+#include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Castem/Castem.hxx"
 #include"MFront/MFrontLogStream.hxx"
+#include"MFront/BehaviourSymmetryType.hxx"
 #include"MTest/Evolution.hxx"
 #include"MTest/CurrentState.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
+#include"MTest/UmatNormaliseTangentOperator.hxx"
 #include"MTest/CastemFiniteStrainBehaviour.hxx"
-#include"MFront/BehaviourSymmetryType.hxx"
 
 namespace mtest
 {
 
+  template<unsigned short N>
+  static void
+  computeTangentOperator(tfel::math::matrix<castem::CastemReal>& K,
+			 const tfel::math::matrix<castem::CastemReal>& D,
+			 const castem::CastemReal* const e0,
+			 const castem::CastemReal* const e1,
+			 const castem::CastemReal* const s1){
+    using namespace tfel::math;
+    using namespace tfel::material;
+    using TangentOperator = tfel::material::FiniteStrainBehaviourTangentOperatorBase;
+    using castem::CastemReal;
+    tensor<N,CastemReal> F0(e0);
+    tensor<N,CastemReal> F1(e1);
+    stensor<N,CastemReal> s(s1);
+    st2tost2<N,CastemReal> C;
+    UmatNormaliseTangentOperator::exe(&C(0,0),D,N);
+    T2toST2View<N,CastemReal> Kv(&K(0,0));
+    Kv = convert<TangentOperator::DSIG_DF,
+		 TangentOperator::C_TRUESDELL>(C,F0,F1,s);
+  } // end of computeTangentOperator<N>
+  
   static void
   MTestComputeIsotropicFiniteStrainStiffnessTensor2D(const real* const props,
 						     tfel::math::t2tost2<2u,real>& C)
@@ -67,7 +91,6 @@ namespace mtest
     // props[4] :'NU23'
     // props[5] :'NU13'
     // props[6] :'G12'
-    using namespace std;
     static const real cste = sqrt(real(2));
     // S11 = 1/E1
     const real S11=1/props[0];
@@ -700,8 +723,7 @@ namespace mtest
       throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
 			  "unsupported hypothesis"));
     }
-    if((wk.D.getNbRows()!=wk.k.getNbRows())||
-       (wk.D.getNbCols()!=wk.k.getNbCols())){
+    if((wk.D.getNbRows()!=ntens)||(wk.D.getNbCols()!=ntens)){
       throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
 			  "the memory has not been allocated correctly"));
     }
@@ -710,7 +732,6 @@ namespace mtest
       throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
 			  "the memory has not been allocated correctly"));
     }
-    fill(wk.D.begin(),wk.D.end(),0.);
     if(s.iv0.size()!=0){
       copy(s.iv0.begin(),s.iv0.end(),wk.ivs.begin());
     }
@@ -754,10 +775,12 @@ namespace mtest
 			  "unsupported hypothesis"));
     }
     copy(s.s0.begin(),s.s0.end(),s.s1.begin());
-    tmatrix<3u,3u,real>::size_type i;
-    for(i=3;i!=static_cast<unsigned short>(ntens);++i){
+    for(tmatrix<3u,3u,real>::size_type i=3;i!=static_cast<unsigned short>(ntens);++i){
       s.s1(i)  /= sqrt2;
     }
+    fill(wk.D.begin(),wk.D.end(),CastemReal(0));
+    // choosing the type of stiffness matrix
+    UmatBehaviourBase::initializeTangentOperator(wk.D,ktype,true);
     CastemReal ndt = std::numeric_limits<CastemReal>::max();
     (this->fct)(&(s.s1(0)),&(wk.ivs(0)),&(wk.D(0,0)),
 		nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,
@@ -771,22 +794,31 @@ namespace mtest
     if(kinc!=1){
       return {false,ndt};
     }
+    // saving state variables
+    if(!s.iv1.empty()){
+      copy_n(wk.ivs.begin(), s.iv1.size(),s.iv1.begin());
+    }
+    // turning things in standard conventions
+    for(vector<real>::size_type i=3;i!=static_cast<unsigned short>(ntens);++i){
+      s.s1(i) *= sqrt2;
+    }
     // tangent operator (...)
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 
       if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
 	this->computeElasticStiffness(wk.k,s.mprops1,drot);
       } else {
-	throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
-			    "computation of the tangent operator "
-			    "is not supported"));
+	// from C_TRUESDELL rate to DSIG_DF
+	if(ntens==3){
+	  computeTangentOperator<1u>(wk.k,wk.D,&s.e0(0),&s.e1(0),&s.s1(0));
+	} else if(ntens==4){
+	  computeTangentOperator<2u>(wk.k,wk.D,&s.e0(0),&s.e1(0),&s.s1(0));
+	} else if(ntens==6){
+	  computeTangentOperator<3u>(wk.k,wk.D,&s.e0(0),&s.e1(0),&s.s1(0));
+	} else {
+	  throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
+			      "unsupported dimension"));
+	}
       }
-    }
-    if(!s.iv1.empty()){
-      copy_n(wk.ivs.begin(), s.iv1.size(),s.iv1.begin());
-    }
-    // turning things in standard conventions
-    for(i=3;i!=static_cast<unsigned short>(ntens);++i){
-      s.s1(i) *= sqrt2;
     }
     return {true,ndt};
   } // end of CastemFiniteStrainBehaviour::integrate

@@ -493,9 +493,8 @@ namespace mtest
 	  }
 	}
       } else {
-	string msg("CastemSmallStrainBehaviour::integrate : ");
-	msg += "unsupported hypothesis";
-	throw(runtime_error(msg));
+	throw(runtime_error("CastemSmallStrainBehaviour::integrate: "
+			    "unsupported hypothesis"));
       }
     } else if(this->stype==1u){
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
