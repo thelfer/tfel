@@ -31,7 +31,7 @@ namespace mtest{
       // transpose
       for(size_type i=0;i!=3u;++i){
 	for(size_type j=0;j!=3u;++j){
-	  *(Kt+i*4+j) = D(j,i);
+	  *(Kt+i*3+j) = D(j,i);
 	}
       }
     } else if(d==2u){
