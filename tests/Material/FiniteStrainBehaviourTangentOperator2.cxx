@@ -78,7 +78,8 @@ struct FiniteStrainBehaviourTangentOperator2 final
     const auto D = [&Cs,&nhb](const tfel::math::tensor<N,real>& F)
       -> t2tost2
     {
-      auto toT2toST2=[](const t2tot2& s) -> t2tost2{
+      // not supported by gcc 4.7.2: auto toT2toST2=[](const t2tot2& s) -> t2tost2{
+      auto toT2toST2=[](t2tot2 s) -> t2tost2{
 	t2tost2 r;
 	for(unsigned short i=0;i!=3;++i){
 	  for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){

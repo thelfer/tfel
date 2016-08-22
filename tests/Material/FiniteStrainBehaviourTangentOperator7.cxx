@@ -105,8 +105,8 @@ struct FiniteStrainBehaviourTangentOperator7 final
 	  s(i,j) = v;
 	}
       };
-      auto get = [](const stensor& s,
-		    const size_type i){
+      // not supported by gcc 4.7.2:  auto get = [](const stensor& s,...
+      auto get = [](stensor s,const size_type i){
 	const double cste = std::sqrt(2.);
 	if(i>2){
 	  return s(i)/cste;
