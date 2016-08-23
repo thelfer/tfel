@@ -85,8 +85,9 @@ struct FiniteStrainBehaviourTangentOperator10 final
       return tfel::material::convert<TangentOperator::C_TAU_JAUMANN,
                                      TangentOperator::SPATIAL_MODULI>(Cs(F),tensor::Id(),F,nhb(F));
     };
-    for(const tensor F: {tensor::Id(),{1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005},
-	  {0.70,1.125,1.32,-0.24,-0.32,0.15,-0.14,-0.05,0.08}}){
+    const real v1[9u] = {1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005};
+    const real v2[9u] = {0.70,1.125,1.32,-0.24,-0.32,0.15,-0.14,-0.05,0.08};
+    for(const tensor F: {tensor::Id(),tensor{v1},tensor{v2}}){
       const auto nC = getD(nhb,F,1.e-5);
       const auto aC = CJ(F);
       for(size_type i=0;i!=tfel::math::StensorDimeToSize<N>::value;++i){

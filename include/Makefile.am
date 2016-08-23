@@ -356,6 +356,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx                                                \
 			TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx                       \
 			TFEL/Math/ST2toST2/ConvertKirchhoffStressDerivativeToSpatialModuli.hxx                       \
+			TFEL/Math/ST2toST2/UmatNormaliseTangentOperator.hxx                                          \
+			TFEL/Math/ST2toST2/UmatNormaliseTangentOperator.ixx                                          \
 			TFEL/Math/t2tost2.hxx                                                                        \
 			TFEL/Math/T2toST2/t2tost2.ixx                                                                \
 			TFEL/Math/T2toST2/T2toST2Concept.hxx                                                         \

@@ -169,8 +169,6 @@ namespace tfel{
       using NumType   = typename ST2toST2Traits<ST2toST2Type>::NumType;
       using size_type =  unsigned short;
       using real      =  typename BaseType<NumType>::type;
-      constexpr const real cste  = sqrt(real{2});
-      constexpr const real icste = real{1}/sqrt(real{2});
       auto row_index = [](size_type i,size_type j) -> size_type{
       	// i,j are valid for the space dimension considered
       	if((i==j)&&(i<3)){
@@ -208,6 +206,7 @@ namespace tfel{
       auto set = [&Ct](const size_type i,
 		       const size_type j,
 		       const NumType v){
+	constexpr const real cste  = sqrt(real{2});
       	if(((i>2)&&(j<=2))||((j>2)&&(i<=2))){
       	  Ct(i,j) = v*cste;
       	} else if((i>2)&&(j>2)){
@@ -218,6 +217,7 @@ namespace tfel{
       };
       auto get = [&C](const size_type i,
 		      const size_type j){
+	constexpr const real icste = real{1}/sqrt(real{2});
       	if(((i>2)&&(j<=2))||((j>2)&&(i<=2))){
       	  return C(i,j)*icste;
       	} else if((i>2)&&(j>2)){
