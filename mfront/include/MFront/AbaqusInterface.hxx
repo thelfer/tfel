@@ -162,10 +162,13 @@ namespace mfront{
      * \param[in] name: name of the behaviour as defined by interface
      *                  (generally taking into account the material
      *                  and the behaviour name)
+     * \param[in] sfeh: name of the function used to handle the stress
+     *                  expansion
      * \param[in] h:    modelling hypothesis
      */
     virtual void writeUMATFunctionBase(std::ostream&,
 				       const BehaviourDescription&,
+				       const std::string&,
 				       const std::string&,
 				       const Hypothesis) const;
     /*!
@@ -178,10 +181,24 @@ namespace mfront{
      * \param[in] h:    modelling hypothesis
      */
     virtual void
-    writeUMATFiniteAndSmallStrainFunction(std::ostream&,
-					  const BehaviourDescription&,
-					  const std::string&,
-					  const Hypothesis) const;
+    writeUMATSmallStrainFunction(std::ostream&,
+				 const BehaviourDescription&,
+				 const std::string&,
+				 const Hypothesis) const;
+    /*!
+     * \brief write the call to the base function
+     * \param[in] out:  output file
+     * \param[in] mb:   mechanical behaviour description
+     * \param[in] name: name of the behaviour as defined by interface
+     *                  (generally taking into account the material
+     *                  and the behaviour name)
+     * \param[in] h:    modelling hypothesis
+     */
+    virtual void
+    writeUMATFiniteStrainFunction(std::ostream&,
+				  const BehaviourDescription&,
+				  const std::string&,
+				  const Hypothesis) const;
     /*!
      * \brief write the call to the base function
      * \param[in] out:  output file

@@ -71,6 +71,14 @@ else(CMAKE_CONFIGURATION_TYPES)
     ${CMAKE_CTEST_COMMAND} -T test )
 endif(CMAKE_CONFIGURATION_TYPES)
 
+option(enable-cppcheck "analyse targets with cppcheck" OFF)
+if(enable-cppcheck)
+  message(STATUS "cppcheck support enabled")
+  set(HAVE_CPPCHECK ON)
+  include(cmake/modules/FindCppCheck.cmake)
+  include(cmake/modules/CppCheckTargets.cmake)
+endif(enable-cppcheck)
+
 # floatting point exceptions (TODO)
 
 # portable-build

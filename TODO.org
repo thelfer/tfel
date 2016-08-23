@@ -40,18 +40,24 @@ shall be variables attributes
 - catch c errno
 - support of parameters modification through txt file
 
-** Aster interface
+** =Cast3M= interface
 
-** Europlexus interface
+*** TODO Support for consistent tangent operator when using a finite strain strategy
 
-- handling of orthotropic behaviour
-- handling of broken statux
-- error messages
+** =Code_Aster= interface
+
+** =Europlexus= interface
+
+*** DONE handling of orthotropic behaviour
+    CLOSED: [2016-08-22 lun. 16:50]
+*** handling of broken status
+*** error messages
 
 ** ZMAT interface
 
-- handle stress free expansion
-- finite strain tangent operator
+*** handle stress free expansion
+*** DONE finite strain tangent operator
+    CLOSED: [2016-08-22 lun. 16:49]
 
 * Update documentation
 

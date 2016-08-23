@@ -296,6 +296,10 @@ target_link_libraries(mfront
 install(TARGETS mfront DESTINATION bin
   COMPONENT mfront)
 
+if(enable-cppcheck)
+  add_cppcheck(mfront)
+endif(enable-cppcheck)
+
 # mfront-query
 add_executable(mfront-query mfront-query.cxx
   MaterialPropertyQuery.cxx

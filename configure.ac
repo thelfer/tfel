@@ -1432,6 +1432,32 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem2/castem2stressrelaxation.mtest
            mfront/tests/behaviours/castem2/castem2viscoplasisocin.mtest
    	   mfront/tests/behaviours/castem2/castem2tssf.mtest
+	   mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-sig11-1D.mtest
+	   mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-sig22-1D.mtest
+	   mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-sig33-1D.mtest
+	   mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
+	   mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
+	   mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-sig33-2D.mtest
+	   mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-sig11-3D.mtest
+	   mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-sig22-3D.mtest
+	   mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-sig33-3D.mtest
+	   mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-shear-1-2D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-shear-2-2D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-shear-1-3D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-shear-2-3D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-shear-3-3D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-shear-4-3D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-shear-5-3D.mtest
+           mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-shear-6-3D.mtest
 	   mfront/tests/behaviours/secant/Makefile
            mfront/tests/behaviours/secant/secantchaboche2.mtest
            mfront/tests/behaviours/secant/secantchaboche.mtest
