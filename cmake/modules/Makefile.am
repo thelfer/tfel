@@ -16,4 +16,7 @@ EXTRA_DIST = autotools.cmake               \
 	     tfel.cmake                    \
 	     latex.cmake                   \
 	     cadna.cmake                   \
-	     pandoc.cmake
+	     pandoc.cmake                  \
+	     CppCheckTargets.cmake         \
+	     FindCppCheck.cmake            \
+	     FindCppCheck.cpp
