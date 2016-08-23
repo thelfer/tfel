@@ -35,6 +35,7 @@ namespace mfront{
   void
   BehaviourDSLBase<Child>::registerDefaultCallBacks(void)
   {
+    this->registerNewCallBack(";",&Child::treatLonelySeparator);
     this->registerNewCallBack("@DSL",&Child::treatParser);
     this->registerNewCallBack("@Parser",&Child::treatParser);
     this->registerNewCallBack("@Model",&Child::treatModel);

@@ -70,7 +70,7 @@ nu.setGlossaryName("PoissonRatio");
       const auto Cs = convert<FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI,
 			      FiniteStrainBehaviourTangentOperatorBase::DS_DEGL,N,stress>(De,F0,F1,sig);
       Dt = convert<FiniteStrainBehaviourTangentOperatorBase::ABAQUS,
-		   FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI,N,stress>(De,F0,F1,sig);
+		   FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI,N,stress>(Cs,F0,F1,sig);
     } else {
       throw(runtime_error("SaintVenantKirchhoffElasticity : "
 			  "unsupported tangent operator"));

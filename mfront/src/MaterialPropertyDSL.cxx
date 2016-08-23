@@ -53,6 +53,7 @@ namespace mfront{
   MaterialPropertyDSL::MaterialPropertyDSL(void)
   {
     // Call Back
+    this->registerNewCallBack(";",&MaterialPropertyDSL::treatLonelySeparator);
     this->registerNewCallBack("@Link",
 			      &MaterialPropertyDSL::treatLink);
     this->registerNewCallBack("@MaterialLaw",

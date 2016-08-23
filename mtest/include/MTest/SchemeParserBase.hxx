@@ -25,6 +25,11 @@ namespace mtest{
     : public tfel::utilities::CxxTokenizer
   {
     /*!
+     * \brief allow an lonely ';'
+     * \param[in,out] p : position in the input file
+     */
+    void handleLonelySeparator(SchemeBase&,TokensContainer::const_iterator&);
+    /*!
      * handle the @Author keyword
      * \param[in,out] p : position in the input file
      */

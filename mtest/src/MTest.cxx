@@ -724,7 +724,6 @@ namespace mtest
     auto& s = scs.istates[0];
     const auto ndv = this->b->getDrivingVariablesSize();
     const auto nth = this->b->getThermodynamicForcesSize();
-    const auto btype = this->b->getBehaviourType();
     for(size_type i=0;i!=ndv;++i){
       s.e1[i] = state.u1[i];
     }

@@ -49,13 +49,15 @@ namespace tfel{
       this->openFile(f);
     }
 
-    void
-    CxxTokenizer::treatCharAsString(const bool b){
+    void CxxTokenizer::treatCharAsString(const bool b){
       this->charAsString = b;
     } // end of CxxTokenizer::treatCharAsString
 
-    void
-    CxxTokenizer::extractNumbers(const bool){
+    void CxxTokenizer::mergeStrings(const bool b){
+      this->shallMergeStrings = b;
+    } // end of CxxTokenizer::mergeStrings
+    
+    void CxxTokenizer::extractNumbers(const bool){
     } // end of CxxTokenizer::extractNumbers
 
     void
@@ -219,8 +221,9 @@ namespace tfel{
       }
       throw_if(!found,"found no matching '"+std::string(1u,e)+
 	       "' to close string\n");
-      if(((!this->tokens.empty()) and
-	  (this->tokens.back().flag==Token::String)) and (*p=='\"')){
+      if(((!this->tokens.empty()) &&
+	  (this->tokens.back().flag==Token::String)) &&
+	 (*p=='\"') && (this->shallMergeStrings)){
 	auto& value = this->tokens.back().value;
 	this->tokens.back().value = value.substr(0,value.size()-1)+
 	  std::string(p+1,ps);
@@ -853,18 +856,16 @@ namespace tfel{
       return this->tokens.end();
     } // end of CxxTokenizer::end
 
-    void
-    CxxTokenizer::setCStyleCommentOpened(const bool b){
+    void CxxTokenizer::setCStyleCommentOpened(const bool b){
       this->cStyleCommentOpened = b;
     }
     
-    void
-    CxxTokenizer::clear(void)
+    void CxxTokenizer::clear(void)
     {
       this->cStyleCommentOpened = false;
       this->tokens.clear();
       this->comments.clear();
-    } // end of CxxTokenizer::end
+    } // end of CxxTokenizer::clear
 
     void
     CxxTokenizer::checkNotEndOfLine(const std::string& method,
@@ -883,8 +884,7 @@ namespace tfel{
 				    const CxxTokenizer::const_iterator pe)
     {
       if(p==pe){
-	std::string msg(method);
-	msg += ": unexpected end of line";
+	auto msg = method+": unexpected end of line";
 	if(!error.empty()){
 	  msg += " ("+error+")";
 	}
@@ -912,11 +912,11 @@ namespace tfel{
     {
       CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readString","",p,pe);
       if(p->flag!=Token::String){
-	throw(std::runtime_error("CxxTokenizer::readString : "
+	throw(std::runtime_error("CxxTokenizer::readString: "
 				 "expected to read a string (read '"+p->value+"')."));
       }
       if(p->value.size()<2){
-	throw(std::runtime_error("CxxTokenizer::readString : "
+	throw(std::runtime_error("CxxTokenizer::readString: "
 				 "internal error (invalid string size)"));
       }
       auto value = p->value.substr(1,p->value.size()-2);
@@ -936,7 +936,7 @@ namespace tfel{
       std::istringstream is(p->value);
       is >> res;
       if(!is&&(!is.eof())){
-	throw(std::runtime_error("CxxTokenizer::readInt : "
+	throw(std::runtime_error("CxxTokenizer::readInt: "
 				 "could not read value from token '"+p->value+"'."));
       }
 #else
@@ -944,7 +944,7 @@ namespace tfel{
 	res=convert<double>(p->value);
       }
       catch(std::exception& e){
-	throw(std::runtime_error("CxxTokenizer::readDouble : "
+	throw(std::runtime_error("CxxTokenizer::readDouble: "
 				 "could not read value from token "
 				 "'"+p->value+"' ("+std::string(e.what())+")."));
       }
@@ -963,7 +963,7 @@ namespace tfel{
       std::istringstream is(p->value);
       is >> res;
       if(!is&&(!is.eof())){
-	throw(std::runtime_error("CxxTokenizer::readInt : "
+	throw(std::runtime_error("CxxTokenizer::readInt: "
 				 "could not read value from token '"+p->value+"'."));
       }
       ++p;
@@ -980,7 +980,7 @@ namespace tfel{
       is >> res;
       if(!is&&(!is.eof())){
 	std::ostringstream msg;
-	msg << "CxxTokenizer::readUnsignedInt : ";
+	msg << "CxxTokenizer::readUnsignedInt: ";
 	msg << "could not read value from token '"+p->value+"'.\n";
 	throw(std::runtime_error(msg.str()));
       }
@@ -1031,7 +1031,7 @@ namespace tfel{
 	  CxxTokenizer::readSpecifiedToken(m,",",p,pe);
 	  CxxTokenizer::checkNotEndOfLine(m,p,pe);
 	  if(p->value=="}"){
-	    throw(std::runtime_error("CxxTokenizer::readStringArray : "
+	    throw(std::runtime_error("CxxTokenizer::readStringArray: "
 				     "unexpected token '}'"));
 	  }
 	}

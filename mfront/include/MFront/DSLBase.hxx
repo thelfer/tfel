@@ -423,6 +423,8 @@ namespace mfront
     treatDescription(void);
     virtual void
     ignoreKeyWord(const std::string&);
+    virtual void
+    treatLonelySeparator(void);
     /*!
      * \brief this method must be called at the end of the treatment:
      * - to set each libraries defined the auxiliary targets as

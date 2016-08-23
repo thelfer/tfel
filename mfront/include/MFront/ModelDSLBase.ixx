@@ -26,6 +26,7 @@ namespace mfront{
   void
   ModelDSLBase<Child>::registerDefaultCallBacks(void)
   {
+    this->registerNewCallBack(";",&Child::treatLonelySeparator);
     this->registerNewCallBack("@DSL",&Child::treatParser);
     this->registerNewCallBack("@Parser",&Child::treatParser);
     this->registerNewCallBack("@Model",&Child::treatModel);
@@ -157,7 +158,7 @@ namespace mfront{
     using namespace std;
     this->callBacks.insert(make_pair(keyword,f));
     this->registredKeyWords.insert(keyword);
-  } // end of registerCallBacks
+  } // end of registerNewCallBack
 
   template<typename Child>
   ModelDSLBase<Child>::ModelDSLBase()

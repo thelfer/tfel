@@ -41,6 +41,14 @@ namespace mtest{
     t.setAuthor(this->readUntilEndOfInstruction(p));
   } // end of SchemeParserBase::handleAuthor
 
+  void SchemeParserBase::handleLonelySeparator(SchemeBase&,TokensContainer::const_iterator& p)
+  {
+    mfront::getLogStream() << this->file << ":"
+			   << p->line << ":"
+			   << p->offset << ": warning: extra ‘;’\n";
+    ++p;
+  } // end of SchemeParserBase::handleAuthor
+  
   void SchemeParserBase::handleDate(SchemeBase& t,TokensContainer::const_iterator& p)
   {
     t.setDate(this->readUntilEndOfInstruction(p));
@@ -697,6 +705,7 @@ namespace mtest{
   void
   SchemeParserBase::registerCallBacks(void)
   {
+    this->registerCallBack(";",&SchemeParserBase::handleLonelySeparator);
     this->registerCallBack("@Author",&SchemeParserBase::handleAuthor);
     this->registerCallBack("@Date",&SchemeParserBase::handleDate);
     this->registerCallBack("@Description",&SchemeParserBase::handleDescription);

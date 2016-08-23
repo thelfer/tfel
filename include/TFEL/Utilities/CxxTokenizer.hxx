@@ -104,6 +104,11 @@ namespace tfel{
        */ 
       void treatCharAsString(const bool);
       /*!
+       * \brief set if successive strings shall be merged
+       * \param[in] b : boolean
+       */ 
+      void mergeStrings(const bool);
+      /*!
        * \brief set if tokens shall be split to extract numbers
        * \param[in] b : boolean telling numbers shall be extracted
        * from tokens
@@ -338,7 +343,10 @@ namespace tfel{
        * treatment was finised
        */
       bool cStyleCommentOpened= false;
-
+      /*!
+       * if true, successive strings are merged
+       */
+      bool shallMergeStrings = false;
     }; // end of struct CxxTokenizer
 
   } // end of namespace utilities

@@ -22,6 +22,7 @@
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 
 #include"MFront/MFront.hxx"
+#include"MFront/PedanticMode.hxx"
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/DSLBase.hxx"
 #include"MFront/SearchFile.hxx"
@@ -982,6 +983,15 @@ namespace mfront
     ++(this->current);
   } // end of DSLBase::treatDescription
 
+  void DSLBase::treatLonelySeparator(void){
+    if(getPedanticMode()){
+      getLogStream() << this->fileName << ":"
+		     << this->current->line << ":"
+		     << this->current->offset << ": warning: extra ‘;’ [-pedantic]\n";
+    }
+    ++(this->current);
+  } // end of DSLBase::treatLonelySperator
+  
   void DSLBase::treatAuthor(void)
   {
     this->authorName = this->readUntilEndOfInstruction();
