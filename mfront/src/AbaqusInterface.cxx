@@ -463,7 +463,7 @@ namespace mfront{
 	<< "return;\n"
 	<< "}\n";
     if(getDebugMode()){
-      out << "cout << \"Dt :\" << endl;\n"
+      out << "cout << \"Dt :\" << std::endl;\n"
 	  << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n"
 	  << "for(abaqus::AbaqusInt j=0;j!=*NTENS;++j){\n"
 	  << "std::cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n"
