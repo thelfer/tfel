@@ -12,6 +12,7 @@
  */
 
 #include<sstream>
+#include<algorithm>
 #include<stdexcept>
 
 #include"MFront/MFrontHeader.hxx"
@@ -87,9 +88,16 @@ namespace mfront
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   GnuplotMaterialPropertyInterface::treatKeyword(const std::string& key,
-					  tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-					  const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens)
+						 const std::vector<std::string>& i,
+						 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+						 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens)
   {
+    if(std::find(i.begin(),i.end(),"gnuplot")!=i.end()){
+      if((key!="@TestBounds")&&(key!="@Graph")){
+	throw(std::runtime_error("GnuplotMaterialPropertyInterface::treatKeyword: "
+				 "unsupported key '"+key+"'"));
+      }
+    }
     if ( key == "@TestBounds" ){
       return registerTestBounds(current,endTokens);
     } else if ( key == "@Graph"){

@@ -24,6 +24,9 @@
 #include"TFEL/Math/Stensor/ConstStensorView.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include"TFEL/Math/ST2toST2/ConstST2toST2View.hxx"
+#include"TFEL/Math/ST2toST2/UmatNormaliseTangentOperator.hxx"
+#include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
+#include"MFront/Castem/CastemTangentOperator.hxx"
 #include"MFront/Castem/CastemFiniteStrain.hxx"
 
 namespace castem
@@ -73,7 +76,6 @@ namespace castem
       e[5]=F[5]*F[8]+F[4]*F[7]+F[3]*F[6];
     }
   } // end of CastemFiniteStrain::computeGreenLagrangeStrain
-
 
   void
   CastemFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(CastemReal* const STRESS,
@@ -213,6 +215,61 @@ namespace castem
     }
   } // end of CastemFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress
 
+  void
+  CastemFiniteStrain::convertCSEtoCauchyTruesdellRateModuli(CastemReal* const DDSDDE,
+							    const CastemReal* const STRESS,
+							    const CastemReal* const F,
+							    const CastemInt NTENS,
+							    const CastemInt NDI,
+							    const CastemReal FZZ){
+    using namespace tfel::math;
+    using namespace tfel::material;
+    using TangentOperator =
+      tfel::material::FiniteStrainBehaviourTangentOperatorBase;
+    CastemCheckNDIValue(NDI);
+    if(NTENS==3u){
+      using tensor = tensor<1u,CastemReal>;
+      stensor<1u,CastemReal> s;
+      s.importTab(STRESS);
+      const auto F1  = tensor::buildFromFortranMatrix(F);
+      const auto CSE =
+	UmatNormaliseTangentOperator<1u,CastemReal>::exe(DDSDDE);
+      ST2toST2View<1u,CastemReal> CT(DDSDDE);
+      CT = convert<TangentOperator::C_TRUESDELL,
+		   TangentOperator::DS_DEGL>(CSE,tensor::Id(),F1,s);
+      CastemTangentOperator::normalize(CT);
+    } else if(NTENS==4u){
+      using tensor = tensor<2u,CastemReal>;
+      stensor<2u,CastemReal> s;
+      s.importTab(STRESS);
+      auto F1 = tensor::buildFromFortranMatrix(F);
+      if(NDI==-2){
+	F1[2]=FZZ;
+      }
+      const auto CSE =
+	UmatNormaliseTangentOperator<2u,CastemReal>::exe(DDSDDE);
+      ST2toST2View<2u,CastemReal> CT(DDSDDE);
+      CT = convert<TangentOperator::C_TRUESDELL,
+		   TangentOperator::DS_DEGL>(CSE,tensor::Id(),F1,s);
+      CastemTangentOperator::normalize(CT);
+    } else if(NTENS==6u){
+      using tensor = tensor<3u,CastemReal>;
+      stensor<3u,CastemReal> s;
+      s.importTab(STRESS);
+      const auto F1  = tensor::buildFromFortranMatrix(F);
+      const auto CSE =
+	UmatNormaliseTangentOperator<3u,CastemReal>::exe(DDSDDE);
+      ST2toST2View<3u,CastemReal> CT(DDSDDE);
+      CT = convert<TangentOperator::C_TRUESDELL,
+		   TangentOperator::DS_DEGL>(CSE,tensor::Id(),F1,s);
+      CastemTangentOperator::normalize(CT);
+    } else {
+      throw(std::runtime_error("CastemFiniteStrain::convertCSEtoCauchyTruesdellRateModuli: "
+			       "invalid NTENS value ("+std::to_string(NTENS)+")"));
+    }
+  } // end of CastemFiniteStrain::convertCSEtoCauchyTruesdellRateModuli
+
+  
   static void
   CastemFiniteStrainComputeLogarithmicStrainAndDerivative1D(CastemReal* const P,
 							  CastemReal* const E,

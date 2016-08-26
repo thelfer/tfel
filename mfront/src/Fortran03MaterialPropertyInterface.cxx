@@ -14,6 +14,7 @@
 
 #include<map>
 #include<sstream>
+#include<algorithm>
 #include<stdexcept>
 
 #include<sys/types.h>
@@ -56,12 +57,16 @@ namespace mfront
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   Fortran03MaterialPropertyInterface::treatKeyword(const std::string& key,
+						   const std::vector<std::string>& i,
 						   tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 						   const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
     auto throw_if = [](const bool b, const std::string& m){
       if(b){throw(std::runtime_error("Fortran03MaterialPropertyInterface::treatKeyword : "+m));}
     };
+    if(std::find(i.begin(),i.end(),"fortran03")!=i.end()){
+      throw_if(key!="@Module","unsupported key '"+key+"'");
+    }
     if(key=="@Module"){
       throw_if(!this->module.empty(),"module name already defined");
       throw_if(current==end,"unexpected end of file");
@@ -72,9 +77,9 @@ namespace mfront
       throw_if(current->value!=";","expected ';', read '"+current->value+"'");
       ++(current);
       this->module = p;
-      return make_pair(true,current);
+      return {true,current};
     }
-    return CMaterialPropertyInterfaceBase::treatKeyword(key,current,end);
+    return {false,current};
   } // end of treatKeyword
   
   void

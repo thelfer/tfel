@@ -13,6 +13,7 @@
 
 #include<sstream>
 #include<stdexcept>
+#include<algorithm>
 
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
@@ -68,9 +69,16 @@ namespace mfront
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CppTestMaterialPropertyInterface::treatKeyword(const std::string& key,
-					  tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-					  const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens)
+						 const std::vector<std::string>& i,
+						 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+						 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens)
   {
+    if(std::find(i.begin(),i.end(),"cpptest")!=i.end()){
+      if(key!="@TestBounds"){
+	throw(std::runtime_error("CppTestMaterialPropertyInterface::treatKeyword: "
+				 "unsupported key '"+key+"'"));
+      }
+    }
     if ( key == "@TestBounds" ){
       return registerTestBounds(current,endTokens);
     }

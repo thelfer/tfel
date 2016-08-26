@@ -258,6 +258,16 @@ namespace tfel{
     } // end of void tensor<N,T>::buildFromFortranMatrix
 
     template<unsigned short N, typename T>
+    tensor<N,T>
+    tensor<N,T>::buildFromFortranMatrix(const typename tfel::typetraits::BaseType<T>::type* const v)
+    {
+      using tfel::math::internals::BuildTensorFromFortranMatrix;
+      tensor<N,T> t;
+      BuildTensorFromFortranMatrix<N>::template exe<T>(t.begin(),v);
+      return t;
+    } // end of void tensor<N,T>::buildFromFortranMatrix
+    
+    template<unsigned short N, typename T>
     template<typename T2,
 	     typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type>
     constexpr tensor<N,T>::tensor(const T2& init)

@@ -95,6 +95,8 @@ namespace mfront{
 
     typedef void (MaterialPropertyDSL::* MemberFuncPtr)(void);
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
+    //! treat an unknown keyword
+    virtual void treatUnknownKeyword(void);
     /*!
      * \brief register a name.
      * \param[in] n : name
@@ -192,9 +194,6 @@ namespace mfront{
 
     void
     treatPhysicalBounds(void);
-
-    void
-    treatUnknownKeyword(void) override;
 
     void
     registerBounds(std::vector<VariableBoundsDescription>&);

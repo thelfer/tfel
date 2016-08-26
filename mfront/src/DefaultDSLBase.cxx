@@ -45,8 +45,7 @@ namespace mfront{
   void
   DefaultDSLBase::treatProvidesTangentOperator()
   {
-    using namespace std;
-    set<Hypothesis> h;
+    std::set<Hypothesis> h;
     this->readHypothesesList(h);
     this->readSpecifiedToken("BehaviourDSLBaseCommon::"
 			     "treatProvidesTangentOperator",";");
@@ -64,8 +63,7 @@ namespace mfront{
   void
   DefaultDSLBase::treatProvidesSymmetricTangentOperator()
   {
-    using namespace std;
-    set<Hypothesis> h;
+    std::set<Hypothesis> h;
     this->readHypothesesList(h);
     this->checkNotEndOfFile("BehaviourDSLBaseCommon::"
 			    "treatProvidesSymmetricTangentOperator");

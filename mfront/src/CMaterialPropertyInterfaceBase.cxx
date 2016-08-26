@@ -50,14 +50,6 @@ namespace mfront
   CMaterialPropertyInterfaceBase::CMaterialPropertyInterfaceBase()
   {}
   
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  CMaterialPropertyInterfaceBase::treatKeyword(const std::string&,
-					       tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-					       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
-  {
-    return {false,current};
-  } // end of treatKeyword
-
   void
   CMaterialPropertyInterfaceBase::writeHeaderPreprocessorDirectives(const MaterialPropertyDescription&)
   {

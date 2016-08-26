@@ -12,9 +12,9 @@
  */
 
 #include<algorithm>
-#include<sstream>
 #include<stdexcept>
 #include<iterator>
+#include<sstream>
 #include<string>
 #include<set>
 
@@ -59,10 +59,16 @@ namespace mfront
   {}
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  PythonMaterialPropertyInterface::treatKeyword(const std::string&,
-					 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-					 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+  PythonMaterialPropertyInterface::treatKeyword(const std::string& k,
+						const std::vector<std::string>& i,
+						tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+						const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
   {
+    if((std::find(i.begin(),i.end(),"python")!=i.end())||
+       (std::find(i.begin(),i.end(),"Python")!=i.end())){
+      throw(std::runtime_error("PythonMaterialPropertyInterface::treatKeyword: "
+			       "unsupported keyword '"+k+"'"));
+    }
     return {false,current};
   } // end of treatKeyword
 

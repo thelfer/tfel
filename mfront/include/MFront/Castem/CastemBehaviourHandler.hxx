@@ -448,7 +448,7 @@ namespace castem
 	behaviour.initialize();
 	behaviour.setOutOfBoundsPolicy(this->policy);
 	behaviour.checkBounds();
-	const typename BV::IntegrationResult r =
+	const auto r =
 	  PredictionOperatorComputer::exe(behaviour,smflag,smtype);
 	if(r==BV::FAILURE){
 	  throwPredictionComputationFailedException(Traits::getName());
@@ -493,7 +493,7 @@ namespace castem
 	BV behaviour(this->DTIME,this->TEMP,this->DTEMP,
 		     this->PROPS+CastemTraits<BV>::propertiesOffset,
 		     this->STATEV,this->PREDEF,this->DPRED);
-	typename BV::IntegrationResult r = BV::SUCCESS;
+	auto r = BV::SUCCESS;
 	try {
 	  SInitializer::exe(behaviour,PROPS);
 	  AInitializer::exe(behaviour,PROPS);
@@ -708,10 +708,13 @@ namespace castem
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef typename std::conditional<
+	  Traits::hasConsistentTangentOperator,
+	  typename std::conditional<
 	  Traits::isConsistentTangentOperatorSymmetric,
 	  SymmetricConsistentTangentOperatorComputer,
-	  GeneralConsistentTangentOperatorComputer>::type
-	  ConsistentTangentOperatorHandler;
+	  GeneralConsistentTangentOperatorComputer>::type,
+	  ConsistentTangentOperatorIsNotAvalaible
+	  >::type ConsistentTangentOperatorHandler;
 	typedef typename std::conditional<
 	  Traits::hasPredictionOperator,
 	  StandardPredictionOperatorComputer,

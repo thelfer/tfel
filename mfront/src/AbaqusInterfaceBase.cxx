@@ -41,12 +41,12 @@ namespace mfront{
   } // end of AbaqusInterfaceBase::getLibraryName
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  AbaqusInterfaceBase::treatKeyword(const std::string& key,
-					CxxTokenizer::TokensContainer::const_iterator current,
-					const CxxTokenizer::TokensContainer::const_iterator end)
+  AbaqusInterfaceBase::treatCommonKeywords(const std::string& key,
+					   CxxTokenizer::TokensContainer::const_iterator current,
+					   const CxxTokenizer::TokensContainer::const_iterator end)
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AbaqusInterfaceBase::treatKeyword: "+m));}
+      if(b){throw(std::runtime_error("AbaqusInterfaceBase::treatCommonKeywords: "+m));}
     };
     auto read = [&throw_if](const std::string& s){
       if(s=="FiniteRotationSmallStrain"){

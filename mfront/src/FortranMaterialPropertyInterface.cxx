@@ -13,6 +13,7 @@
  */
 
 #include<sstream>
+#include<algorithm>
 #include<stdexcept>
 
 #include"MFront/MFrontHeader.hxx"
@@ -35,6 +36,21 @@ namespace mfront
     : CMaterialPropertyInterfaceBase()
   {}
 
+  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  FortranMaterialPropertyInterface::treatKeyword(const std::string& key,
+						 const std::vector<std::string>& i,
+						 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+						 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+  {
+    auto throw_if = [](const bool b, const std::string& m){
+      if(b){throw(std::runtime_error("FortranMaterialPropertyInterface::treatKeyword : "+m));}
+    };
+    if(std::find(i.begin(),i.end(),"fortran")!=i.end()){
+      throw_if(key!="@Module","unsupported key '"+key+"'");
+    }
+    return {false,current};
+  }
+  
   void
   FortranMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
 							  const MaterialPropertyDescription& mpd)

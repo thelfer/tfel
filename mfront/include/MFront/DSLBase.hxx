@@ -401,8 +401,8 @@ namespace mfront
     treatLink(void);
     virtual void
     treatAuthor(void);
-    virtual void
-    treatUnknownKeyword(void);
+    //! treat an unknown keyword
+    virtual void treatUnknownKeyword(void);
     virtual void
     treatDate(void);
     virtual void

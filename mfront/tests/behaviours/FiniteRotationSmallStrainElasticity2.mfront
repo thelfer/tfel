@@ -34,15 +34,24 @@ ps.setEntryName("PreviousStress");
     cout << "ps  : " << ps << endl;
     cout << "sig : " << sig << endl;
     cout << "nr  : " << sqrt((sig-ps)|(sig-ps)) << endl;
-    string msg("invalid stress value at the beginning "
-	       "of the time step");
-    throw(runtime_error(msg));
+    throw(runtime_error("invalid stress value at the beginning "
+			"of the time step"));
   }
 }
 
+@ProvidesSymmetricTangentOperator;
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
 @Integrator{
-  static_cast<void>(computeTangentOperator_);
+  static_cast<void>(smt);
   sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
   // saving the compute stress
   ps=sig;
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
 }

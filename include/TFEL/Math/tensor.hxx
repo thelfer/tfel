@@ -140,7 +140,14 @@ namespace tfel{
       TFEL_MATH_INLINE2 static void
       buildFromFortranMatrix(tensor<N,T>&,
 			     const typename tfel::typetraits::BaseType<T>::type* const);
-
+      /*!
+       * \brief Build a tensor from a fortran matrix.
+       * \param[in] t: tensor to be filled
+       * \param[in] v: pointer to an array used to initialise the
+       * components of the tensor. This array is left unchanged.
+       */
+      TFEL_MATH_INLINE2 static tensor<N,T>
+      buildFromFortranMatrix(const typename tfel::typetraits::BaseType<T>::type* const);
       /*!
        * \brief Default Constructor 
        * \warning enabled only if storage is static

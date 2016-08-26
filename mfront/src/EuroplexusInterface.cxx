@@ -121,6 +121,7 @@ namespace mfront{
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   EuroplexusInterface::treatKeyword(const std::string& key,
+				    const std::vector<std::string>& i,
 				    tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 				    const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
@@ -141,6 +142,9 @@ namespace mfront{
 				 "'MieheApelLambrechtLogarithmicStrain'"));
       }
     };
+    if(std::find(i.begin(),i.end(),this->getName())==i.end()){
+      return {false,current};
+    }
     if ((key=="@EuroplexusFiniteStrainStrategy")||(key=="@EPXFiniteStrainStrategy")){
       throw_if(this->fss!=UNDEFINEDSTRATEGY,
 	       "a finite strain strategy has already been defined");

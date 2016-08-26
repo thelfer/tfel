@@ -117,7 +117,7 @@ namespace tfel{
     UmatNormaliseTangentOperator<N,stress>::exe(const stress* const D)
     {
       st2tost2<N,stress> r;
-      UmatNormaliseTangentOperator<N,stress>::exe(&r(0,0),D);
+      UmatNormaliseTangentOperatorBase<N,stress>::exe(&r(0,0),D);
       return r;
     }
 

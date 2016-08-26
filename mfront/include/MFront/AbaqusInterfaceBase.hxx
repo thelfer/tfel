@@ -45,6 +45,9 @@ namespace mfront{
       FINITEROTATIONSMALLSTRAIN,
       MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN
     }; // end of enum FiniteStrainStrategy
+    //! destructor
+    virtual ~AbaqusInterfaceBase();
+  protected:
     /*!
      * \param[in] k  : keyword treated
      * \param[in] p  : iterator to the current token
@@ -54,12 +57,9 @@ namespace mfront{
      * the last token treated.
      */
     virtual std::pair<bool,CxxTokenizer::TokensContainer::const_iterator>
-    treatKeyword(const std::string&,
-		 CxxTokenizer::TokensContainer::const_iterator,
-		 const CxxTokenizer::TokensContainer::const_iterator) override;
-    //! destructor
-    virtual ~AbaqusInterfaceBase();
-  protected:
+    treatCommonKeywords(const std::string&,
+			CxxTokenizer::TokensContainer::const_iterator,
+			const CxxTokenizer::TokensContainer::const_iterator);
     /*!
      * \return the name of the generated library
      * \param[in] mb : behaviour description

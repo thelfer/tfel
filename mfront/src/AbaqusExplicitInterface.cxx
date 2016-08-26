@@ -48,6 +48,18 @@ namespace mfront{
       out.close();
     }
   } // end of copyVUMATFiles
+
+  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  AbaqusExplicitInterface::treatKeyword(const std::string& key,
+					const std::vector<std::string>& i,
+					tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+					const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
+  {
+    if(std::find(i.begin(),i.end(),this->getName())==i.end()){
+      return {false,current};
+    }
+    return AbaqusInterfaceBase::treatCommonKeywords(key,current,end);
+  } // end of AbaqusExplicitInterface::treatKeyword
   
   static void
   writeVUMATArguments(std::ostream& out,

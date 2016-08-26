@@ -186,14 +186,18 @@ namespace mfront{
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   AbaqusInterface::treatKeyword(const std::string& key,
-			       tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-			       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
+				const std::vector<std::string>& i,
+				tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+				const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
     using tfel::utilities::CxxTokenizer;
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("AbaqusInterface::treatKeyword: "+m));}
     };
-    const auto r = AbaqusInterfaceBase::treatKeyword(key,current,end);
+    if(std::find(i.begin(),i.end(),this->getName())==i.end()){
+      return {false,current};
+    }
+    const auto r = AbaqusInterfaceBase::treatCommonKeywords(key,current,end);
     if(r.first){
       return r;
     }

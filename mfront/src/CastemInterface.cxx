@@ -214,13 +214,32 @@ namespace mfront{
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CastemInterface::treatKeyword(const std::string& key,
-				    tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-				    const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
+				const std::vector<std::string>& i,
+				tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+				const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
     using tfel::utilities::CxxTokenizer;
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("CastemInterface::treatKeyword : "+m));}
     };
+    if((std::find(i.begin(),i.end(),this->getName())!=i.end())||
+       (std::find(i.begin(),i.end(),"castem")!=i.end())||
+       (std::find(i.begin(),i.end(),"Castem")!=i.end())||
+       (std::find(i.begin(),i.end(),"Cast3M")!=i.end())){
+      throw_if((key!="@CastemGenerateMTestFileOnFailure")&&
+	       (key!="@UMATGenerateMTestFileOnFailure")&&
+	       (key!="@CastemUseTimeSubStepping")&&
+	       (key!="@UMATUseTimeSubStepping")&&
+	       (key!="@CastemMaximumSubStepping")&&
+	       (key!="@UMATMaximumSubStepping")&&
+	       (key!="@CastemDoSubSteppingOnInvalidResults")&&
+	       (key!="@UMATDoSubSteppingOnInvalidResults")&&
+	       (key!="@CastemFiniteStrainStrategy")&&
+	       (key!="@UMATFiniteStrainStrategy")&&
+	       (key!="@CastemFiniteStrainStrategies")&&
+	       (key!="@UMATFiniteStrainStrategies"),
+	       "unsupported keyword '"+key+"'");
+    }
     if ((key=="@CastemGenerateMTestFileOnFailure")||
 	(key=="@UMATGenerateMTestFileOnFailure")){
       this->generateMTestFile = this->readBooleanValue(key,current,end);
@@ -1524,6 +1543,7 @@ namespace mfront{
       out << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
+    out << "const auto k = std::abs(*DDSDDE)>0.5;\n";
     this->generateMTestFile1(out);
     out << "// computing the Green Lagrange strains\n";
     out << "CastemReal eto[6];\n";
@@ -1536,7 +1556,7 @@ namespace mfront{
     }
     out << "CastemFiniteStrain::computeGreenLagrangeStrain(eto,F0,*NTENS,*NDI);\n";
     out << "CastemFiniteStrain::computeGreenLagrangeStrain(deto,F1,*NTENS,*NDI);\n";
-    string c1 = "CastemFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,F0,*NTENS,*NDI";
+    const auto c1 = "CastemFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,F0,*NTENS,*NDI";
     this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c1,"std::sqrt(1+2*ezz)");
     out << "for(i=0;i!=*NTENS;++i){\n";
     out << "deto[i] -= eto[i];\n";
@@ -1554,9 +1574,13 @@ namespace mfront{
       out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
     }
-    string c2 = "CastemFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F1,*NTENS,*NDI";
+    const auto c2 = "CastemFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F1,*NTENS,*NDI";
     this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c2,"std::sqrt(1+2*ezz)");
-    out << "}\n";
+    out << "if(k){\n";
+    const auto c3 = "CastemFiniteStrain::convertCSEtoCauchyTruesdellRateModuli(DDSDDE,STRESS,F1,*NTENS,*NDI";
+    this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c3,"std::sqrt(1+2*ezz)");
+    out << "}\n"
+	<< "}\n";
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";
       this->generateMTestFile2(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,

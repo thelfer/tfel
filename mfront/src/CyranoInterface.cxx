@@ -114,19 +114,23 @@ namespace mfront{
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CyranoInterface::treatKeyword(const std::string& key,
-				    tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+				const std::vector<std::string>& i,
+				tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 				    const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
     using namespace std;
     using namespace tfel::utilities;
+    if(std::find(i.begin(),i.end(),this->getName())==i.end()){
+      return {false,current};
+    }
     if((key=="@CyranoGenerateMTestFileOnFailure")||
        (key=="@UMATGenerateMTestFileOnFailure")){
       this->generateMTestFile = this->readBooleanValue(key,current,end);
-      return make_pair(true,current);      
+      return {true,current};      
     } else if((key=="@CyranoUseTimeSubStepping")||
 	      (key=="@UMATUseTimeSubStepping")){
       this->useTimeSubStepping = this->readBooleanValue(key,current,end);
-      return make_pair(true,current);      
+      return {true,current};      
     } else if ((key=="@CyranoMaximumSubStepping")||
 	       (key=="@UMATMaximumSubStepping")){
       if(!this->useTimeSubStepping){
@@ -155,7 +159,7 @@ namespace mfront{
 			    " read '"+current->value+"'"));
       }
       ++(current);
-      return make_pair(true,current);      
+      return {true,current};      
     } else if ((key=="@CyranoDoSubSteppingOnInvalidResults")||
 	       (key=="@UMATDoSubSteppingOnInvalidResults")){
       if(!this->useTimeSubStepping){
@@ -165,7 +169,7 @@ namespace mfront{
 			    "@CyranoMaximumSubStepping"));
       }
       this->doSubSteppingOnInvalidResults = this->readBooleanValue(key,current,end);
-      return make_pair(true,current);      
+      return {true,current};      
     }
     return make_pair(false,current);
   } // end of treatKeyword

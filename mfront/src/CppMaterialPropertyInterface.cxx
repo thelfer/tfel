@@ -13,6 +13,7 @@
 
 #include<sstream>
 #include<fstream>
+#include<algorithm>
 #include<stdexcept>
 
 #include"TFEL/System/System.hxx"
@@ -38,10 +39,20 @@ namespace mfront
   {}
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  CppMaterialPropertyInterface::treatKeyword(const std::string&,
+  CppMaterialPropertyInterface::treatKeyword(const std::string& k,
+					     const std::vector<std::string>& i,
 					     tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 					     const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
   {
+    if((std::find(i.begin(),i.end(),"c++")!=i.end())||
+       (std::find(i.begin(),i.end(),"C++")!=i.end())||
+       (std::find(i.begin(),i.end(),"cxx")!=i.end())||
+       (std::find(i.begin(),i.end(),"Cxx")!=i.end())||
+       (std::find(i.begin(),i.end(),"cpp")!=i.end())||
+       (std::find(i.begin(),i.end(),"Cpp")!=i.end())){
+      throw(std::runtime_error("CastemMaterialPropertyInterface::treatKeyword: "
+			       "unsupported keyword '"+k+"'"));
+    }
     return {false,current};
   } // end of treatKeyword
 

@@ -13,6 +13,7 @@
 
 #include<sstream>
 #include<stdexcept>
+#include<algorithm>
 
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontUtilities.hxx"
@@ -41,6 +42,19 @@ namespace mfront
     return getMaterialLawLibraryNameBase(l,m);
   } // end of CMaterialPropertyInterface::getGeneratedLibraryName
 
+  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  CMaterialPropertyInterface::treatKeyword(const std::string& k,
+					   const std::vector<std::string>& i,
+					   tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+					   const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+  {
+    if(std::find(i.begin(),i.end(),"c")!=i.end()){
+      throw(std::runtime_error("CMaterialPropertyInterface::treatKeyword: "
+			       "unsupported key '"+k+"'"));
+    }
+    return {false,current};
+  } // end of CMaterialPropertyInterface::treatKeyword
+    
   void
   CMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
 						    const MaterialPropertyDescription& mpd)

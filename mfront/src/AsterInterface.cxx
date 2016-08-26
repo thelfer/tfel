@@ -80,6 +80,7 @@ namespace mfront{
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   AsterInterface::treatKeyword(const std::string& key,
+			       const std::vector<std::string>& i,
 			       tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 			       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
@@ -87,6 +88,9 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("AsterInterface::treatKeyword : "+m));}
     };
+    if(std::find(i.begin(),i.end(),this->getName())==i.end()){
+      return {false,current};
+    }
     if (key=="@AsterGenerateMTestFileOnFailure"){
       this->generateMTestFile = this->readBooleanValue(key,current,end);
       return {true,current};      

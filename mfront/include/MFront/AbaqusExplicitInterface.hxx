@@ -144,6 +144,20 @@ namespace mfront{
 			 const Hypothesis,
 			 const BehaviourDescription&) const override;
     /*!
+     * \param[in] k  : keyword treated
+     * \param[in] i:   list of interfaces to which the keyword is restricted
+     * \param[in] p  : iterator to the current token
+     * \param[in] pe : iterator past the end of the file
+     * \return a pair. The first entry is true if the keyword was
+     * treated by the interface. The second entry is an iterator after
+     * the last token treated.
+     */
+    virtual std::pair<bool,CxxTokenizer::TokensContainer::const_iterator>
+    treatKeyword(const std::string&,
+		 const std::vector<std::string>&,
+		 CxxTokenizer::TokensContainer::const_iterator,
+		 const CxxTokenizer::TokensContainer::const_iterator) override;
+    /*!
      * \param[in] out  : output file
      * \param[in] name : name of the behaviour as defined by interface
      *                   (generally taking into account the material

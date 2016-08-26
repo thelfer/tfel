@@ -1458,6 +1458,40 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-shear-4-3D.mtest
            mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-shear-5-3D.mtest
            mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-shear-6-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-shear-1-2D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-shear-2-2D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-shear-1-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-shear-2-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-shear-3-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-shear-4-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-shear-5-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity-shear-6-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-uniaxialloading-1-1D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-uniaxialloading-2-1D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-uniaxialloading-3-1D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-shear-1-2D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-shear-2-2D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-shear-1-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-shear-2-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-shear-3-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-shear-4-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-shear-5-3D.mtest
+           mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-shear-6-3D.mtest
 	   mfront/tests/behaviours/secant/Makefile
            mfront/tests/behaviours/secant/secantchaboche2.mtest
            mfront/tests/behaviours/secant/secantchaboche.mtest

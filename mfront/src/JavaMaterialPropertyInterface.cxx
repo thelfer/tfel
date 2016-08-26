@@ -87,12 +87,18 @@ namespace mfront
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   JavaMaterialPropertyInterface::treatKeyword(const std::string& key,
+					      const std::vector<std::string>& i,
 					      tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 					      const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("Fortran03MaterialPropertyInterface::treatKeyword : "+m));}
     };
+    if((std::find(i.begin(),i.end(),"java")!=i.end())||
+       (std::find(i.begin(),i.end(),"Java")!=i.end())){
+      throw_if(key!="@Package","unsupported key '"+key+"'");
+    }
+    return {false,current};
     if(key=="@Package"){
       throw_if(!this->package.empty(),"package name already defined");
       throw_if(current==end,"unexpected end of file");

@@ -159,8 +159,9 @@ namespace mfront
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   ZMATInterface::treatKeyword(const std::string&,
-				    tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-				    const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+			      const std::vector<std::string>&,
+			      tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+			      const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
   {
     return {false,current};
   }

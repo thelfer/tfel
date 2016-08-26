@@ -1321,66 +1321,66 @@ namespace mfront{
 			    "valid methods are 'setGlossaryName' or 'setEntryName'");
   } // end of BehaviourDSLCommon::treatUnknownVariableMethod
 
-  void
-  BehaviourDSLCommon::treatUnknownKeyword(void)
+  void BehaviourDSLCommon::treatUnknownKeyword(void)
   {
-    using namespace tfel::utilities;
-    std::pair<bool,CxxTokenizer::TokensContainer::const_iterator> p;
     TokensContainer::const_iterator p2;
-    bool treated = false;
-    std::string key;
+    auto treated = false;
     --(this->current);
-    key = this->current->value;
+    const auto key = this->current->value;
     ++(this->current);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
     if(this->current->value=="["){
-      std::set<std::string> s;
+      ++(this->current);
+      this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
+      auto s = std::vector<std::string>{};
       while(this->current->value!="]"){
+	this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
+	const auto t = [this](){
+	  if(this->current->flag==tfel::utilities::Token::String){
+	    return this->current->value.substr(1,this->current->value.size()-2);
+	  }
+	  return this->current->value;
+	}();
 	++(this->current);
 	this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
-	std::string t;
-	if(this->current->flag==Token::String){
-	  t = this->current->value.substr(1,this->current->value.size()-2);
-	} else {
-	  t = this->current->value;
+	if(std::find(s.begin(),s.end(),t)==s.end()){
+	  s.push_back(t);
 	}
-	if(this->interfaces.find(t)!=this->interfaces.end()){
-	  s.insert(t);
-	}
-	++(this->current);
-	if((this->current->value!="]")&&(this->current->value!=",")){
-	  this->throwRuntimeError("BehaviourDSLCommon::treatUnknownKeyword",
-				  "unexpected token '"+this->current->value+"' (expected ']' or ',').");
+	if(this->current->value!="]"){
+	  this->readSpecifiedToken("BehaviourDSLCommon::treatUnknownKeyword",",");
+	  this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
+	  if(this->current->value=="]"){
+	    this->throwRuntimeError("BehaviourDSLCommon::treatUnknownKeyword",
+				    "unexpected token ']'");
+	  }
 	}
       }
       ++(this->current);
-      if(s.empty()){
+      for(auto& i : this->interfaces){
+	auto p = i.second->treatKeyword(key,s,this->current,
+				   this->tokens.end());
+	if(p.first){
+	  if(treated){
+	    if(p2!=p.second){
+	      this->throwRuntimeError("BehaviourDSLCommon::treatUnknownKeyword",
+				      "the keyword '"+key+"' has been treated "
+				      "by two interfaces/analysers but "
+				      "results were differents");
+	    }
+	  }
+	  p2 = p.second;
+	  treated = true;
+	}
+      }
+      if(!treated){
 	this->ignoreKeyWord(key);
 	return;
       }
-      for(const auto & elem : s){
-	p = this->interfaces.at(elem)->treatKeyword(key,this->current,
-						    this->tokens.end());
-	if(!p.first){
-	  this->throwRuntimeError("BehaviourDSLCommon::treatUnknownKeyword",
-				  "the keyword '"+key+"' has not been treated "
-				  "by interface '"+elem+"'");
-	}
-	if(treated){
-	  if(p2!=p.second){
-	  this->throwRuntimeError("BehaviourDSLCommon::treatUnknownKeyword",
-				  "the keyword '"+key+"' has been treated "
-				  "by two interfaces/analysers but "
-				  "results were differents");
-	  }
-	}
-	p2 = p.second;
-	treated = true;
-      }
     } else {
       for(const auto&i : this->interfaces){
-	p = i.second->treatKeyword(key,this->current,
-				 this->tokens.end());
+	auto p = i.second->treatKeyword(key,{i.first},
+					this->current,
+					this->tokens.end());
 	if(p.first){
 	  if(treated){
 	    if(p2!=p.second){

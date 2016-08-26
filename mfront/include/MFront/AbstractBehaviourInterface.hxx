@@ -40,7 +40,6 @@ namespace mfront{
    */
   struct MFRONT_VISIBILITY_EXPORT AbstractBehaviourInterface
   {
-
     //! a simple alias
     typedef tfel::material::ModellingHypothesis ModellingHypothesis;
     //! a simple alias
@@ -53,9 +52,19 @@ namespace mfront{
      */
     virtual void
     allowDynamicallyAllocatedArrays(const bool) = 0;
-
+    /*!
+     * \brief treat a keyword
+     * \param[in] key: keyword to be treated
+     * \param[in] i:   list of interfaces to which the keyword is restricted
+     * \param[in] p:   current position in the file
+     * \param[in] pe:  iterator past the end of the file
+     * \return a pair. The first entry is true if the keyword was
+     * treated by the interface. The second entry is an iterator after
+     * the last token treated.
+     */
     virtual std::pair<bool,CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
+		 const std::vector<std::string>&,
 		 CxxTokenizer::TokensContainer::const_iterator,
 		 const CxxTokenizer::TokensContainer::const_iterator) = 0;
     /*!

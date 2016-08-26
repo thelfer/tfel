@@ -89,6 +89,29 @@ namespace castem
 						      const CastemInt,
 						      const CastemReal);
     /*!
+     * \brief compute the moduli associated to the Truesdell rate of
+     *        the Cauchy stress
+     * \param[in/out] DDSDDE: on input, CSE expressed using umat
+     *                        conventions. On output, the moduli
+     *                        associated to the Truesdell rate of the
+     *                        Cauchy stress, expressed using umat
+     *                        conventions. 
+     * \param[out] STRESS:    Cauchy stress expressed using umat
+     *                        conventions
+     * \param[in] F:          material deformation gradient tensor F 
+     *                        expressed as a fortran matrix
+     * \param[in]  NTENS  : number of components of the strain tensor
+     * \param[in]  NDI    : modelling hypothesis
+     * \param[in]  Fzz    : axial deformation gradient if mandatory
+     */    
+    static void
+    convertCSEtoCauchyTruesdellRateModuli(CastemReal* const,
+					  const CastemReal* const,
+					  const CastemReal* const,
+					  const CastemInt,
+					  const CastemInt,
+					  const CastemReal);
+    /*!
      * \brief compoute the logarithmic strain and its derivatives
      * \param[out] P     : derivative of the logarithmic strain with
      * respect to the right cauchy tensor, multiplied by two

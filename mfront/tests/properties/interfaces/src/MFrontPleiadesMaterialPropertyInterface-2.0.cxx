@@ -12,6 +12,7 @@
  */
 
 #include<sstream>
+#include<algorithm>
 #include<stdexcept>
 
 #include"TFEL/System/System.hxx"
@@ -34,11 +35,15 @@ namespace mfront {
   MFrontPleiadesMaterialPropertyInterface::MFrontPleiadesMaterialPropertyInterface() = default;
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  MFrontPleiadesMaterialPropertyInterface::treatKeyword(const std::string&,
+  MFrontPleiadesMaterialPropertyInterface::treatKeyword(const std::string& k,
+							const std::vector<std::string>& i,
 							tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 							const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) {
-    using namespace std;
-    return make_pair(false,current);
+    if(std::find(i.begin(),i.end(),"pleiades-2.0")!=i.end()){
+      throw(std::runtime_error("MFrontPleiadesMaterialPropertyInterface::treatKeyword: "
+			       "unsupported key '"+k+"'"));
+    }
+    return {false,current};
   } // end of treatKeyword
 
   MFrontPleiadesMaterialPropertyInterface::~MFrontPleiadesMaterialPropertyInterface() = default;

@@ -41,6 +41,7 @@ namespace mfront{
 				       const MaterialPropertyDescription&) override;
     /*!
      * \param[in] k  : keyword treated
+     * \param[in] i:   list of interfaces to which the keyword is restricted
      * \param[in] p  : iterator to the current token
      * \param[in] pe : iterator past the end of the file
      * \return a pair. The first entry is true if the keyword was
@@ -49,6 +50,7 @@ namespace mfront{
      */
     virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
     treatKeyword(const std::string&,
+		 const std::vector<std::string>&,
 		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
 		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
     /*!

@@ -15,6 +15,7 @@
 #include<fstream>
 #include<sstream>
 #include<stdexcept>
+#include<algorithm>
 #include<iterator>
 #include<string>
 #include<set>
@@ -90,10 +91,15 @@ namespace mfront
   ExcelMaterialPropertyInterface::~ExcelMaterialPropertyInterface() = default;
   
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  ExcelMaterialPropertyInterface::treatKeyword(const std::string&,
+  ExcelMaterialPropertyInterface::treatKeyword(const std::string& k,
+					       const std::vector<std::string>& i,
 					       tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 					       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
   {
+    if(std::find(i.begin(),i.end(),"excel")!=i.end()){
+      throw(std::runtime_error("ExcelMaterialPropertyInterface::treatKeyword: "
+			       "unsupported key '"+k+"'"));
+    }
     return {false,current};
   } // end of treatKeyword
 

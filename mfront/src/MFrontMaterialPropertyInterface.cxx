@@ -13,6 +13,7 @@
 
 #include<sstream>
 #include<stdexcept>
+#include<algorithm>
 
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontUtilities.hxx"
@@ -34,6 +35,19 @@ namespace mfront
     : CMaterialPropertyInterfaceBase()
   {}
 
+  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  MFrontMaterialPropertyInterface::treatKeyword(const std::string& k,
+						const std::vector<std::string>& i,
+						tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
+						const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+  {
+    if(std::find(i.begin(),i.end(),"mfront")!=i.end()){
+      throw(std::runtime_error("MFrontMaterialPropertyInterface::treatKeyword: "
+			       "unsupported key '"+k+"'"));
+    }
+    return {false,current};
+  } // end of treatKeyword
+  
   void
   MFrontMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
 							 const MaterialPropertyDescription& mpd)
