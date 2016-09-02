@@ -30,6 +30,7 @@ namespace mfront {
     MFrontModelInterface();
     /*!
      * \param[in]     k:  key being treated
+     * \param[in] i:   list of interfaces to which the keyword is restricted  
      * \param[in/out] p:  iterator to the token after the key being treated
      * \param[out]    pe: iterator past the end of the file
      * \return a pair. The first member of the pair is true if the
@@ -39,6 +40,7 @@ namespace mfront {
      */ 
     virtual std::pair<bool,TokensContainer::const_iterator>
     treatKeyword(const std::string&,
+		 const std::vector<std::string>&,
 		 TokensContainer::const_iterator,
 		 const TokensContainer::const_iterator) override;
     /*!

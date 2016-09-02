@@ -212,6 +212,8 @@ nobase_include_HEADERS += MFront/Abaqus/Abaqus.hxx                              
 			  MFront/Abaqus/AbaqusExplicitData.hxx                             \
 			  MFront/Abaqus/AbaqusConvert.hxx                                  \
 			  MFront/Abaqus/AbaqusOrthotropicBehaviour.hxx                     \
+			  MFront/Abaqus/AbaqusRotation.hxx                                 \
+			  MFront/Abaqus/AbaqusRotation.ixx                                 \
 			  MFront/Abaqus/AbaqusConfig.hxx                                   \
 			  MFront/Abaqus/AbaqusTraits.hxx                                   \
 			  MFront/Abaqus/AbaqusException.hxx 		                   \

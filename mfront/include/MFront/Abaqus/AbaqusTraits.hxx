@@ -35,8 +35,10 @@ namespace abaqus{
     // size of the thermodynamic force variable array (STESS)
     static constexpr unsigned short ThermodynamicForceVariableSize = 0u;
     static constexpr bool requiresStiffnessTensor             = false;
-    static constexpr bool requiresThermalExpansionCoefficientTensor = false;
-    static constexpr unsigned short propertiesOffset          = 0u;
+    static constexpr bool requiresUnAlteredStiffnessTensor    = true;
+    static constexpr bool requiresThermalExpansionCoefficientTensor  = false;
+    static constexpr unsigned short elasticPropertiesOffset          = 0u;
+    static constexpr unsigned short thermalExpansionPropertiesOffset = 0u;
     // Type of the behaviour of the material (isotropic or orthotropic)
     static constexpr AbaqusSymmetryType type   = abaqus::ISOTROPIC;
     // Type of the elastic behaviour of the material (isotropic or orthotropic)

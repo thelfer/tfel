@@ -13,6 +13,7 @@
 
 #include<cmath>
 #include<sstream>
+#include<iostream>
 #include<stdexcept>
 
 #include"TFEL/Math/tensor.hxx"
@@ -24,6 +25,9 @@
 #include"TFEL/Math/Stensor/ConstStensorView.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include"TFEL/Math/ST2toST2/ConstST2toST2View.hxx"
+#include"TFEL/Math/ST2toST2/UmatNormaliseTangentOperator.hxx"
+#include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
+#include"MFront/Abaqus/AbaqusTangentOperator.hxx"
 #include"MFront/Abaqus/AbaqusFiniteStrain.hxx"
 
 namespace abaqus
@@ -150,10 +154,10 @@ namespace abaqus
 
   void
   AbaqusFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(AbaqusReal* const s,
-								      const AbaqusReal* const F,
-								      const AbaqusInt NTENS,
-  								      const bool ps,
-								      const AbaqusReal Fzz)
+									const AbaqusReal* const F,
+									const AbaqusInt NTENS,
+									const bool ps,
+									const AbaqusReal Fzz)
   {
     // warning F is given in the fortran convention
     // (F0 F3 F6
@@ -201,43 +205,43 @@ namespace abaqus
   void
   AbaqusFiniteStrain::computeAbaqusTangentOperatorFromCSE(AbaqusReal* const D,
 							  const AbaqusReal* const CSE,
-							  const AbaqusReal* const F1,
-							  const AbaqusReal* const s,
+							  const AbaqusReal* const F,
+							  const AbaqusReal* const STRESS,
 							  const AbaqusInt NTENS,
 							  const bool ps){
-    // using namespace tfel::math;
-    // using namespace tfel::material;
-    // using TangentOperator = FiniteStrainBehaviourTangentOperatorBase;
-    // const AbaqusReal cste = std::sqrt(AbaqusReal(2));
-    // if(NTENS==4){
-    //   tensor<2u,AbaqusReal>   F = tensor<2u,AbaqusReal>::buildFromFortranMatrix(F1);
-    //   st2tost2<2u,AbaqusReal> C = {
-    // 	CSE[0],CSE[4],CSE[8] ,CSE[12],
-    // 	CSE[1],CSE[5],CSE[9] ,CSE[13],
-    // 	CSE[2],CSE[6],CSE[10],CSE[14],
-    // 	CSE[3],CSE[7],CSE[11],CSE[15]};
-    //   Dv = convert<TangentOperator::ABAQUS,
-    // 		   TangentOperator::DS_DEGL>(C,F,F,{s[0],s[1],s[2],s[3]/cste});
-    //   // now convert to abaqus      
-    // } else if(NTENS==6){
-    //   auto access = [&D](const int i,
-    // 			 const int j) -> AbaqusReal&{
-    // 	return D[6*i+j];
-    //   };
-    //   tensor<3u,AbaqusReal>   F = tensor<3u,AbaqusReal>::buildFromFortranMatrix(F1);
-    //   st2tost2<3u,AbaqusReal> C = {
-    // 	CSE[0],CSE[6] ,CSE[12],CSE[18],CSE[24],CSE[30],
-    // 	CSE[1],CSE[7] ,CSE[13],CSE[19],CSE[25],CSE[31],
-    // 	CSE[2],CSE[8] ,CSE[14],CSE[20],CSE[26],CSE[32],
-    // 	CSE[3],CSE[9] ,CSE[15],CSE[21],CSE[27],CSE[33];
-    //   	CSE[4],CSE[10],CSE[16],CSE[22],CSE[28],CSE[34];
-    // 	CSE[5],CSE[11],CSE[17],CSE[23],CSE[29],CSE[35]};
-    //   ST2toST2View<3u,AbaqusReal> Dv;
-    //   Dv = convert<TangentOperator::ABAQUS,
-    // 		   TangentOperator::DS_DEGL>(C,F,F,{s[0],s[1],s[2],s[3]/cste,s[4]/cste,s[5]/cste});
-    // }
+    using namespace tfel::math;
+    using namespace tfel::material;
+    using TangentOperator = FiniteStrainBehaviourTangentOperatorBase;
+    if(ps){
+      std::cout << "AbaqusFiniteStrain::computeAbaqusTangentOperatorFromCSE: "
+		<< "planeStress support is not yet implemented" << std::endl;
+      std::exit(-1);
+    }
+    if(NTENS==4){
+      using tensor = tensor<2u,AbaqusReal>;
+      stensor<2u,AbaqusReal> s;
+      s.importTab(STRESS);
+      auto F1 = tensor::buildFromFortranMatrix(F);
+      const auto C =
+	UmatNormaliseTangentOperator<2u,AbaqusReal>::exe(CSE);
+      ST2toST2View<2u,AbaqusReal> Ca(D);
+      Ca = convert<TangentOperator::ABAQUS,
+		   TangentOperator::DS_DEGL>(C,tensor::Id(),F1,s);
+      // now convert to abaqus      
+      AbaqusTangentOperator<AbaqusReal>::normalize(Ca);
+    } else if(NTENS==6){
+      using tensor = tensor<3u,AbaqusReal>;
+      stensor<3u,AbaqusReal> s;
+      s.importTab(STRESS);
+      auto F1 = tensor::buildFromFortranMatrix(F);
+      const auto C =
+	UmatNormaliseTangentOperator<3u,AbaqusReal>::exe(CSE);
+      ST2toST2View<3u,AbaqusReal> Ca(D);
+      Ca = convert<TangentOperator::ABAQUS,
+		   TangentOperator::DS_DEGL>(C,tensor::Id(),F1,s);
+      // now convert to abaqus      
+      AbaqusTangentOperator<AbaqusReal>::normalize(Ca);
+    }
   } // end of AbaqusFiniteStrain::computeAbaqusTangentOperatorFromCSE
-
-
   
 } // end of namespace abaqus

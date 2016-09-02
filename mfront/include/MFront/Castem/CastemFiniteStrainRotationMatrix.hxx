@@ -40,7 +40,7 @@ namespace castem
     void rotateDeformationGradientForward(const CastemReal *const,
 					  CastemReal *const);
     // compute the stiffness matrix in the global space
-    TFEL_NORETURN void rotateTangentOperatorBackward(CastemReal *const) const;
+    void rotateTangentOperatorBackward(CastemReal *const) const;
   private:
 
     CastemReal a[4];
@@ -71,7 +71,7 @@ namespace castem
     void rotateDeformationGradientBackward(const CastemReal *const,
 					   CastemReal *const);
     // compute the stiffness matrix in the global space
-    TFEL_NORETURN void rotateTangentOperatorBackward(CastemReal *const) const;
+    void rotateTangentOperatorBackward(CastemReal *const) const;
   private:
 
     CastemReal a [9];

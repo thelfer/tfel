@@ -55,8 +55,16 @@ namespace mfront{
 					tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
 					const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
   {
-    if(std::find(i.begin(),i.end(),this->getName())==i.end()){
-      return {false,current};
+    if(!i.empty()){
+      if(std::find(i.begin(),i.end(),this->getName())!=i.end()){
+	const auto keys =  AbaqusInterfaceBase::getCommonKeywords();
+	if(std::find(keys.begin(),keys.end(),key)==keys.end()){
+	  throw(std::runtime_error("AbaqusExplicitInterface::treatKeyword: "
+				   "unsupported key '"+key+"'"));
+	}
+      } else {
+	return {false,current};
+      }
     }
     return AbaqusInterfaceBase::treatCommonKeywords(key,current,end);
   } // end of AbaqusExplicitInterface::treatKeyword
@@ -217,19 +225,22 @@ namespace mfront{
   AbaqusExplicitInterface::endTreatment(const BehaviourDescription& mb,
 					const FileDescription& fd) const
   {
-    if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
-      throw(std::runtime_error("AbaqusExplicitInterface::endTreatment : "
-			       "the abaqus explicit interface only supports small and "
-			       "finite strain behaviours"));
-    }
-    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-       (this->fss==UNDEFINEDSTRATEGY)){
-      throw(std::runtime_error("AbaqusExplicitInterface::endTreatment : "
-			       "behaviours written in the small strain framework "
-			       "must be embedded in a strain strategy. See the "
-			       "'@AbaqusFiniteStrainStrategy' keyword"));
-    }
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("AbaqusExplicitInterface::endTreatment: "+m));}
+    };
+    throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+	     "the abaqus explicit interface only supports small and "
+	     "finite strain behaviours");
+    throw_if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	     (this->fss==UNDEFINEDSTRATEGY),
+	     "behaviours written in the small strain framework "
+	     "must be embedded in a strain strategy. See the "
+	     "'@AbaqusFiniteStrainStrategy' keyword");
+    throw_if((mb.getSymmetryType()!=mfront::ORTHOTROPIC)&&
+	     (this->omp!=UNDEFINEDORTHOTROPYMANAGEMENTPOLICY),
+	     "orthotropy management policy is only valid "
+	     "for orthotropic behaviour");
     // get the modelling hypotheses to be treated
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
@@ -241,10 +252,7 @@ namespace mfront{
     // header
     auto fname = "abaqusexplicit"+name+".hxx";
     std::ofstream out("include/MFront/Abaqus/"+fname);
-    if(!out){
-      throw(std::runtime_error("AbaqusExplicitInterface::endTreatment : "
-			       "could not open file '"+fname+"'"));
-    }
+    throw_if(!out,"could not open file '"+fname+"'");
 
     out << "/*!\n"
 	<< "* \\file   "  << fname << '\n'
@@ -332,6 +340,9 @@ namespace mfront{
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
+    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+      out << "#include\"MFront/Abaqus/AbaqusRotation.hxx\"\n\n";
+    }
     out << "#include\"MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx\"\n\n"
 	<< "#include\"MFront/Abaqus/AbaqusExplicitInterface.hxx\"\n\n"
 	<< "#include\"MFront/Abaqus/abaqusexplicit" << name << ".hxx\"\n\n";
@@ -412,19 +423,43 @@ namespace mfront{
   }
 
   static void writeAbaqusExplicitDataInitialisation(std::ostream& out,
-						    const std::string& n){
+						    const std::string& n,
+						    const unsigned short o){
     out << "const AbaqusExplicitData d = {*dt,props,*(density+i),\n"
 	<< "                              *(tempOld+i),\n"
-	<< "                              cview(fieldOld+i),cview(stateOld+i),\n"
-	<< "                              *(enerInternOld+i),\n"
+	<< "                              cview(fieldOld+i),";
+    if(o==0u){
+      out << "cview(stateOld+i),\n";
+    } else {
+      out << "cview(stateOld+i)+" << o << ",\n";
+    }
+    out << "                              *(enerInternOld+i),\n"
 	<< "                              *(enerInelasOld+i),\n"
 	<< "                              *(tempNew+i),\n"
-	<< "                              cdiffview(fieldNew+i,fieldOld+i),\n"
-	<< "                              view(stateNew+i),\n"
-	<< "                              *(enerInternNew+i),\n"
+	<< "                              cdiffview(fieldNew+i,fieldOld+i),\n";
+    if(o==0u){
+      out << "view(stateNew+i),\n";
+    } else {
+      out << "view(stateNew+i)+" << o << ",\n";
+    }
+    out << "                              *(enerInternNew+i),\n"
 	<< "                              *(enerInelasNew+i),\n"
 	<< "                              " << n << "_getOutOfBoundsPolicy()" << "};\n";
   } // end of writeAbaqusExplicitDataInitialisation
+
+  static void writeGetRotationMatrix(std::ostream& out,
+				     const AbaqusExplicitInterface::Hypothesis h)
+  {
+    if((h==AbaqusExplicitInterface::ModellingHypothesis::PLANESTRESS)||
+       (h==AbaqusExplicitInterface::ModellingHypothesis::AXISYMMETRICAL)||
+       (h==AbaqusExplicitInterface::ModellingHypothesis::PLANESTRAIN)){
+      out << "const auto R = abaqus::getRotationMatrix2D(cview(stateOld+i));\n";
+    } else if (h==AbaqusExplicitInterface::ModellingHypothesis::TRIDIMENSIONAL){
+      out << "const auto R = abaqus::getRotationMatrix3D(cview(stateOld+i));\n";
+    } else {
+      throw(std::runtime_error("writeGetRotationMatrix: unsupported hypothesis"));
+    }
+  }	  
   
   void
   AbaqusExplicitInterface::writeBehaviourConstructor(std::ostream& out,
@@ -665,12 +700,21 @@ namespace mfront{
 	<< " unmatched number of material properties "
 	<< "(\" << *nprops << \" given, \" << NPROPS_ << \" expected)\\n\";\n"
 	<< "::exit(-1);\n"
-	<< "}\n"
-	<< "if(*nstatev!=nstatev_){\n"
-	<< "std::cerr << \"" << mb.getClassName() << ":"
-	<< " unmatched number of internal state variables "
-	<< "(\" << *nstatev << \" given, \" << nstatev_ << \" expected)\\n\";\n"
-	<< "::exit(-1);\n"
+	<< "}\n";
+    const auto o = this->getStateVariablesOffset(mb,h);
+    if(o==0u){
+      out << "if(*nstatev!=nstatev_){\n";
+    } else {
+      out << "if(*nstatev!=nstatev_+" << o << "){\n";
+    }
+    out << "std::cerr << \"" << mb.getClassName() << ":"
+	<< " unmatched number of internal state variables ";
+    if(o==0u){    
+      out << "(\" << *nstatev << \" given, \" << nstatev_ << \" expected)\\n\";\n";
+    } else {
+      out << "(\" << *nstatev << \" given, \" << nstatev_+" << o << " << \" expected)\\n\";\n";
+    }
+    out	<< "::exit(-1);\n"
 	<< "}\n"
 	<< "if(*nfieldv!=nfieldv_){\n"
 	<< "std::cerr << \"" << mb.getClassName() << ":"
@@ -694,12 +738,19 @@ namespace mfront{
     }
     //omp support    #pragma omp parallel for
     out << "for(int i=0;i!=*nblock;++i){\n";
-    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name));
+    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
     if(h==ModellingHypothesis::PLANESTRESS){
-      out << t << " eto[3u]  = {*(strainInc+i),\n"
-	  << "*(strainInc+i+(*nblock)),\n"
-	  << "2*(*(strainInc+i+2*(*nblock)))};\n"
-	  << t << " D[9u];\n";
+      if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+	out << t << " eto[4u]  = {*(strainInc+i),\n"
+	    << "*(strainInc+i+(*nblock)),\n"
+	    << "0,\n"
+	    << "2*(*(strainInc+i+2*(*nblock)))};\n";
+      } else {
+	out << t << " eto[3u]  = {*(strainInc+i),\n"
+	    << "*(strainInc+i+(*nblock)),\n"
+	    << "2*(*(strainInc+i+2*(*nblock)))};\n";
+      }
+      out<< t << " D[9u];\n";
     } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 	       (h==ModellingHypothesis::PLANESTRAIN)){
       out << t << " eto[4u]  = {*(strainInc+i),\n"
@@ -737,26 +788,82 @@ namespace mfront{
       throw(std::runtime_error("AbaqusExplicitInterface::writeComputeElasticPrediction: "
 			       "unsupported behaviour type"));
     }
-    if(h==ModellingHypothesis::PLANESTRESS){
-      out << "*(stressNew+i)               = D[0]*eto[0]+D[3]*eto[1]+D[6]*eto[2];\n";
-      out << "*(stressNew+i+   *(nblock))  = D[1]*eto[0]+D[4]*eto[1]+D[7]*eto[2];\n";
-      out << "*(stressNew+i+2*(*(nblock))) = D[2]*eto[0]+D[5]*eto[1]+D[8]*eto[2];\n";
-    } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
-	       (h==ModellingHypothesis::PLANESTRAIN)){
-      out << "*(stressNew+i)               = D[0]*eto[0]+D[4]*eto[1]+D[8]*eto[2] +D[12]*eto[3];\n";
-      out << "*(stressNew+i+   *(nblock))  = D[1]*eto[0]+D[5]*eto[1]+D[9]*eto[2] +D[13]*eto[3];\n";
-      out << "*(stressNew+i+2*(*(nblock))) = D[2]*eto[0]+D[6]*eto[1]+D[10]*eto[2]+D[14]*eto[3];\n";
-      out << "*(stressNew+i+3*(*(nblock))) = D[3]*eto[0]+D[7]*eto[1]+D[11]*eto[2]+D[15]*eto[3];\n";
-    } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
-      out << "*(stressNew+i)               = D[0]*eto[0]+D[6]*eto[1] +D[12]*eto[2]+D[18]*eto[3]+D[24]*eto[4]+D[30]*eto[5];\n";
-      out << "*(stressNew+i+   *(nblock))  = D[1]*eto[0]+D[7]*eto[1] +D[13]*eto[2]+D[19]*eto[3]+D[25]*eto[4]+D[31]*eto[5];\n";
-      out << "*(stressNew+i+2*(*(nblock))) = D[2]*eto[0]+D[8]*eto[1] +D[14]*eto[2]+D[20]*eto[3]+D[26]*eto[4]+D[32]*eto[5];\n";
-      out << "*(stressNew+i+3*(*(nblock))) = D[3]*eto[0]+D[9]*eto[1] +D[15]*eto[2]+D[21]*eto[3]+D[27]*eto[4]+D[33]*eto[5];\n";
-      out << "*(stressNew+i+4*(*(nblock))) = D[4]*eto[0]+D[10]*eto[1]+D[16]*eto[2]+D[22]*eto[3]+D[28]*eto[4]+D[34]*eto[5];\n";
-      out << "*(stressNew+i+5*(*(nblock))) = D[5]*eto[0]+D[11]*eto[1]+D[17]*eto[2]+D[23]*eto[3]+D[29]*eto[4]+D[35]*eto[5];\n";
+    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+      if(h==ModellingHypothesis::PLANESTRESS){
+	out << "abaqus::AbaqusRotation2D<" << t << "> R(cview(stateOld+i));\n"
+	    << t << " e[4u];\n"
+	    << t << " sm[4u];\n"
+	    << t << " sg[4u];\n"
+	    << "R.rotateStrainsForward(eto,e);\n"
+	    << "*(sm)   = D[0]*e[0]+D[3]*e[1]+D[6]*e[3];\n"
+	    << "*(sm+1) = D[1]*e[0]+D[4]*e[1]+D[7]*e[3];\n"
+	    << "*(sm+2) = 0;\n"
+	    << "*(sm+3) = D[2]*e[0]+D[5]*e[1]+D[8]*e[3];\n"
+	    << "R.rotateStressesBackward(sm,sg);\n"
+	    << "*(stressNew+i)               = *(sg);\n"
+	    << "*(stressNew+i+   *(nblock))  = *(sg+1);\n"
+	    << "*(stressNew+i+2*(*(nblock))) = *(sg+3);\n";
+      } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+		 (h==ModellingHypothesis::PLANESTRAIN)){
+	out << "abaqus::AbaqusRotation2D<" << t << "> R(cview(stateOld+i));\n"
+	    << t << " e[4u];\n"
+	    << t << " sm[4u];\n"
+	    << t << " sg[4u];\n"
+	    << "R.rotateStrainsForward(eto,e);\n"
+	    << "*(sm)   = D[0]*e[0]+D[4]*e[1]+D[8]*e[2] +D[12]*e[3];\n"
+	    << "*(sm+1) = D[1]*e[0]+D[5]*e[1]+D[9]*e[2] +D[13]*e[3];\n"
+	    << "*(sm+2) = D[2]*e[0]+D[6]*e[1]+D[10]*e[2]+D[14]*e[3];\n"
+	    << "*(sm+3) = D[3]*e[0]+D[7]*e[1]+D[11]*e[2]+D[15]*e[3];\n"
+	    << "R.rotateStressesBackward(sm,sg);\n"
+	    << "*(stressNew+i)               = *(sg);\n"
+	    << "*(stressNew+i+   *(nblock))  = *(sg+1);\n"
+	    << "*(stressNew+i+2*(*(nblock))) = *(sg+2);\n"
+	    << "*(stressNew+i+3*(*(nblock))) = *(sg+3);\n";
+      } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
+	out << "abaqus::AbaqusRotation3D<" << t << "> R(cview(stateOld+i));\n"
+	    << t << " e[6u];\n"
+	    << t << " sm[6u];\n"
+	    << t << " sg[6u];\n"
+	    << "R.rotateStrainsForward(eto,e);\n"
+	    << "*sm     = D[0]*e[0]+D[6]*e[1] +D[12]*e[2]+D[18]*e[3]+D[24]*e[4]+D[30]*e[5];\n"
+	    << "*(sm+1) = D[1]*e[0]+D[7]*e[1] +D[13]*e[2]+D[19]*e[3]+D[25]*e[4]+D[31]*e[5];\n"
+	    << "*(sm+2) = D[2]*e[0]+D[8]*e[1] +D[14]*e[2]+D[20]*e[3]+D[26]*e[4]+D[32]*e[5];\n"
+	    << "*(sm+3) = D[3]*e[0]+D[9]*e[1] +D[15]*e[2]+D[21]*e[3]+D[27]*e[4]+D[33]*e[5];\n"
+	    << "*(sm+4) = D[4]*e[0]+D[10]*e[1]+D[16]*e[2]+D[22]*e[3]+D[28]*e[4]+D[34]*e[5];\n"
+	    << "*(sm+5) = D[5]*e[0]+D[11]*e[1]+D[17]*e[2]+D[23]*e[3]+D[29]*e[4]+D[35]*e[5];\n"
+	    << "R.rotateStressesBackward(sm,sg);\n"
+	    << "*(stressNew+i)               = *sg;\n"
+	    << "*(stressNew+i+   *(nblock))  = *(sg+1);\n"
+	    << "*(stressNew+i+2*(*(nblock))) = *(sg+2);\n"
+	    << "*(stressNew+i+3*(*(nblock))) = *(sg+3);\n"
+	    << "*(stressNew+i+4*(*(nblock))) = *(sg+4);\n"
+	    << "*(stressNew+i+5*(*(nblock))) = *(sg+5);\n";
+      } else {
+	throw(std::runtime_error("AbaqusExplicitInterface::writeComputeElasticPrediction: "
+				 "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'"));
+      }
     } else {
-      throw(std::runtime_error("AbaqusExplicitInterface::writeComputeElasticPrediction: "
-			       "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'"));
+      if(h==ModellingHypothesis::PLANESTRESS){
+	out << "*(stressNew+i)               = D[0]*eto[0]+D[3]*eto[1]+D[6]*eto[2];\n"
+	    << "*(stressNew+i+   *(nblock))  = D[1]*eto[0]+D[4]*eto[1]+D[7]*eto[2];\n"
+	    << "*(stressNew+i+2*(*(nblock))) = D[2]*eto[0]+D[5]*eto[1]+D[8]*eto[2];\n";
+      } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+		 (h==ModellingHypothesis::PLANESTRAIN)){
+	out << "*(stressNew+i)               = D[0]*eto[0]+D[4]*eto[1]+D[8]*eto[2] +D[12]*eto[3];\n"
+	    << "*(stressNew+i+   *(nblock))  = D[1]*eto[0]+D[5]*eto[1]+D[9]*eto[2] +D[13]*eto[3];\n"
+	    << "*(stressNew+i+2*(*(nblock))) = D[2]*eto[0]+D[6]*eto[1]+D[10]*eto[2]+D[14]*eto[3];\n"
+	    << "*(stressNew+i+3*(*(nblock))) = D[3]*eto[0]+D[7]*eto[1]+D[11]*eto[2]+D[15]*eto[3];\n";
+      } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
+	out << "*(stressNew+i)               = D[0]*eto[0]+D[6]*eto[1] +D[12]*eto[2]+D[18]*eto[3]+D[24]*eto[4]+D[30]*eto[5];\n"
+	    << "*(stressNew+i+   *(nblock))  = D[1]*eto[0]+D[7]*eto[1] +D[13]*eto[2]+D[19]*eto[3]+D[25]*eto[4]+D[31]*eto[5];\n"
+	    << "*(stressNew+i+2*(*(nblock))) = D[2]*eto[0]+D[8]*eto[1] +D[14]*eto[2]+D[20]*eto[3]+D[26]*eto[4]+D[32]*eto[5];\n"
+	    << "*(stressNew+i+3*(*(nblock))) = D[3]*eto[0]+D[9]*eto[1] +D[15]*eto[2]+D[21]*eto[3]+D[27]*eto[4]+D[33]*eto[5];\n"
+	    << "*(stressNew+i+4*(*(nblock))) = D[4]*eto[0]+D[10]*eto[1]+D[16]*eto[2]+D[22]*eto[3]+D[28]*eto[4]+D[34]*eto[5];\n"
+	    << "*(stressNew+i+5*(*(nblock))) = D[5]*eto[0]+D[11]*eto[1]+D[17]*eto[2]+D[23]*eto[3]+D[29]*eto[4]+D[35]*eto[5];\n";
+      } else {
+	throw(std::runtime_error("AbaqusExplicitInterface::writeComputeElasticPrediction: "
+				 "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'"));
+      }
     }
     out << "}\n";
   } // end of AbaqusExplicitInterface::writeComputeElasticPrediction
@@ -774,7 +881,8 @@ namespace mfront{
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
     if(mh.find(h)==mh.end()){
-      out << "std::cerr << \"" << mb.getClassName() << ": unsupported hypothesis\";\n"
+      out << "std::cerr << \"" << mb.getClassName()
+	  << ": unsupported hypothesis\";\n"
   	  << "::exit(-1);\n";
       return;
     }
@@ -783,7 +891,8 @@ namespace mfront{
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
       if(!v.first){
 	// no axial strain
-	out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
+	out << "std::cerr << \"no state variable standing for "
+	    << "the axial strain (variable with the "
 	    << "glossary name 'AxialStrain')\" << std::endl;\n";
 	out << "::exit(-1);\n";
 	return;
@@ -791,7 +900,7 @@ namespace mfront{
     }
     //omp support    #pragma omp parallel for
     out << "for(int i=0;i!=*nblock;++i){\n";
-    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name));
+    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
     if(h==ModellingHypothesis::PLANESTRESS){
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
       out << "constexpr const " << t << " zero = " << t <<  "(0);\n"
@@ -801,8 +910,8 @@ namespace mfront{
 	  << "                              zero,cste*(*(stretchOld+i+2*(*nblock)))};\n"
 	  << "stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
 	  << "                              zero,cste*(*(stretchNew+i+2*(*nblock)))};\n"
-	  << "const stensor<2u," << t << "> eto  = (square(U0)-stensor<2u," << t << ">::Id)/2;\n"
-	  << "const stensor<2u," << t << "> deto = (square(U1)-stensor<2u," << t << ">::Id())/2-eto;\n\n"
+	  << "stensor<2u," << t << "> eto  = (square(U0)-stensor<2u," << t << ">::Id)/2;\n"
+	  << "stensor<2u," << t << "> deto = (square(U1)-stensor<2u," << t << ">::Id())/2-eto;\n\n"
 	  << "stensor<2u," << t << "> s    = {*(stressOld+i),*(stressOld+i+*nblock),\n"
 	  << "                                zero,cste*(*(stressOld+i+2*(*nblock)))};\n"
 	// on affecte ezz à U0, sa valeur pour U1 étant inconnue à ce moment (ne sert à rien pour le calcul de eto et deto
@@ -813,8 +922,8 @@ namespace mfront{
 	  << "                                    *(stretchOld+i+2*(*nblock)),cste*(*(stretchOld+i+3*(*nblock)))};\n"
 	  << "const stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
 	  << "                                    *(stretchNew+i+2*(*nblock)),cste*(*(stretchNew+i+3*(*nblock)))};\n"
-	  << "const stensor<2u," << t << "> eto  = (square(U0)-stensor<2u," << t << ">::Id())/2;\n"
-	  << "const stensor<2u," << t << "> deto = (square(U1)-stensor<2u," << t << ">::Id())/2-eto;\n"
+	  << "stensor<2u," << t << "> eto  = (square(U0)-stensor<2u," << t << ">::Id())/2;\n"
+	  << "stensor<2u," << t << "> deto = (square(U1)-stensor<2u," << t << ">::Id())/2-eto;\n"
 	  << "stensor<2u," << t << "> s  = {*(stressOld+i),*(stressOld+i+*nblock),\n"
 	  << "                             *(stressOld+i+2*(*nblock)),cste*(*(stressOld+i+3*(*nblock)))};\n";
     } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
@@ -824,8 +933,8 @@ namespace mfront{
 	  << "const stensor<3u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
 	  << "                                    *(stretchNew+i+2*(*nblock)),cste*(*(stretchNew+i+3*(*nblock))),\n"
 	  << "                                    cste*(*(stretchNew+i+5*(*nblock))),cste*(*(stretchNew+i+4*(*nblock)))};\n"
-	  << "const stensor<3u," << t << "> eto  = (square(U0)-stensor<3u," << t << ">::Id())/2;\n"
-	  << "const stensor<3u," << t << "> deto = (square(U1)-stensor<3u," << t << ">::Id())/2-eto;\n"
+	  << "stensor<3u," << t << "> eto  = (square(U0)-stensor<3u," << t << ">::Id())/2;\n"
+	  << "stensor<3u," << t << "> deto = (square(U1)-stensor<3u," << t << ">::Id())/2-eto;\n"
 	  << "stensor<3u," << t << "> s  = {*(stressOld+i),*(stressOld+i+*nblock),\n"
 	  << "                              *(stressOld+i+2*(*nblock)),cste*(*(stressOld+i+3*(*nblock))),\n"
 	  << "                              cste*(*(stressOld+i+5*(*nblock))),cste*(*(stressOld+i+4*(*nblock)))};\n";
@@ -833,6 +942,12 @@ namespace mfront{
       throw_unsupported_hypothesis();
     }
     out << "auto sk2 = convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(s,U0);\n";
+    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+      writeGetRotationMatrix(out,h);
+      out << "eto.changeBasis(R);\n"
+	  << "deto.changeBasis(R);\n"
+	  << "sk2.changeBasis(R);\n";
+    }
     if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 	(h==ModellingHypothesis::PLANESTRAIN)||
 	(h==ModellingHypothesis::PLANESTRESS)){
@@ -873,6 +988,9 @@ namespace mfront{
 	    << "glossary name 'AxialStrain')\" << std::endl;\n";
 	out << "::exit(-1);\n";
       }
+    }
+    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+      out << "sk2.changeBasis(transpose(R));\n";
     }
     out << "s = convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(sk2,U1);\n";
     if(h==ModellingHypothesis::PLANESTRESS){
@@ -947,7 +1065,7 @@ namespace mfront{
 	<< "const auto df = [](const " << t << " x){return 1/(2*x);};\n"
     //omp support    #pragma omp parallel for
 	<< "for(int i=0;i!=*nblock;++i){\n";
-    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name));
+    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
     auto dime = (h==ModellingHypothesis::TRIDIMENSIONAL) ? "3u" : "2u";
     if(h==ModellingHypothesis::PLANESTRESS){
       out << "constexpr const " << t << " zero = " << t <<  "(0);\n"
@@ -977,11 +1095,20 @@ namespace mfront{
 	  << "                              *(stressOld+i+2*(*nblock)),cste*(*(stressOld+i+3*(*nblock))),\n"
 	  << "                              cste*(*(stressOld+i+5*(*nblock))),cste*(*(stressOld+i+4*(*nblock)))};\n";
     }
+    out << "auto sk2 = convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(s,U0);\n";
+    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+      writeGetRotationMatrix(out,h);
+      out << "sk2.changeBasis(R);\n";
+    }
     out << "st2tost2<" << dime << "," << t << "> P0;\n"
 	<< "st2tost2<" << dime << "," << t << "> P1;\n"
-	<< "const stensor<" << dime << "," << t << "> C0  = square(U0);\n"
-	<< "const stensor<" << dime << "," << t << "> C1  = square(U1);\n"
-	<< "stensor<" << dime << "," << t << "> eto;\n"
+	<< "stensor<" << dime << "," << t << "> C0  = square(U0);\n"
+	<< "stensor<" << dime << "," << t << "> C1  = square(U1);\n";
+    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+      out << "C0.changeBasis(R);\n"
+	  << "C1.changeBasis(R);\n";
+    }
+    out	<< "stensor<" << dime << "," << t << "> eto;\n"
 	<< "stensor<" << dime << "," << t << "> deto;\n"
 	<< "std::tie(eto ,P0) = C0.computeIsotropicFunctionAndDerivative(f,df,std::numeric_limits<" << t << ">::epsilon());\n"
 	<< "std::tie(deto,P1) = C1.computeIsotropicFunctionAndDerivative(f,df,std::numeric_limits<" << t << ">::epsilon());\n"
@@ -995,7 +1122,6 @@ namespace mfront{
 	  << "P0(2,2) += df(U0[2]*U0[2]);\n";
     }
     out << "const auto iP0 = invert(P0);\n"
-	<< "auto sk2 = convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(s,U0);\n"
 	<< "stensor<" << dime << ","<< t << "> T = (sk2|iP0)/2;\n";
     if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 	(h==ModellingHypothesis::PLANESTRAIN)||
@@ -1022,10 +1148,10 @@ namespace mfront{
 	  << "const tfel::math::stensor<3u,"<< t<< ">& dl0_l0,\n"
 	  << "const tfel::math::stensor<3u,"<< t<< ">& dl1_l0){\n"
 	  << "if((std::abs(dl0_l0[3])>10*std::numeric_limits<" << t << ">::min())||\n"
-	  << "   (std::abs(dl1_l0[3])>10*std::numeric_limits<" << t << ">::min())||"
-	  << "   (std::abs(dl0_l0[4])>10*std::numeric_limits<" << t << ">::min())||"
-	  << "   (std::abs(dl1_l0[4])>10*std::numeric_limits<" << t << ">::min())||"
-	  << "   (std::abs(dl0_l0[5])>10*std::numeric_limits<" << t << ">::min())||"
+	  << "   (std::abs(dl1_l0[3])>10*std::numeric_limits<" << t << ">::min())||\n"
+	  << "   (std::abs(dl0_l0[4])>10*std::numeric_limits<" << t << ">::min())||\n"
+	  << "   (std::abs(dl1_l0[4])>10*std::numeric_limits<" << t << ">::min())||\n"
+	  << "   (std::abs(dl0_l0[5])>10*std::numeric_limits<" << t << ">::min())||\n"
 	  << "   (std::abs(dl1_l0[5])>10*std::numeric_limits<" << t << ">::min())){"
 	  << "  std::cerr << \"" << mb.getClassName() << ": stress free expansion is assumed to be diagonal\" << std::endl;\n"
 	  << "  std::exit(EXIT_FAILURE);\n"
@@ -1064,8 +1190,11 @@ namespace mfront{
       }
     }
     out << "// stress update\n"
-	<< "sk2 = 2*(T|P1);\n"
-	<< "s = convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(sk2,U1);\n";
+	<< "sk2 = 2*(T|P1);\n";
+    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+      out << "sk2.changeBasis(transpose(R));\n";
+    }
+    out << "s = convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(sk2,U1);\n";
     if(h==ModellingHypothesis::PLANESTRESS){
       out << "*(stressNew+i)               = s[0];\n";
       out << "*(stressNew+i+   *(nblock))  = s[1];\n";
@@ -1140,7 +1269,7 @@ namespace mfront{
     }
     //omp support    #pragma omp parallel for
     out << "for(int i=0;i!=*nblock;++i){\n";
-    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name));
+    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
     if(h==ModellingHypothesis::PLANESTRESS){
       // les composantes axiales sont mises à l'identité pour pouvoir
       // réaliser le calcul de la rotation
@@ -1203,14 +1332,23 @@ namespace mfront{
 	  << "                              cste*(*(stressOld+i+4*(*nblock)))};\n";
     }
     out << "const tmatrix<3u,3u," << t << "> R1 = matrix_view(F1*invert(U1));\n"
-      	<< "s.changeBasis(transpose(R1));\n"
-	<< "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ","
+      	<< "s.changeBasis(transpose(R1));\n";
+    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+      writeGetRotationMatrix(out,h);
+      out << "FO.changeBasis(R);\n"
+	  << "F1.changeBasis(R);\n"
+	  << "s.changeBasis(R);\n";
+    }
+    out	<< "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ","
 	<< t<< "," << mb.getClassName()
 	<< ">::integrate(s,d,F0,F1)!=0){\n"
 	<< "std::cerr << \"" << mb.getClassName() << ": behaviour integration failed\";\n"
 	<< "::exit(-1);\n"
-	<< "}\n"
-      	<< "s.changeBasis(R1);\n";
+	<< "}\n";
+    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+      out << "s.changeBasis(transpose(R));\n";
+    }
+    out << "s.changeBasis(R1);\n";
     if(h==ModellingHypothesis::PLANESTRESS){
       out << "*(stressNew+i)               = s[0];\n";
       out << "*(stressNew+i+   *(nblock))  = s[1];\n";

@@ -222,23 +222,27 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("CastemInterface::treatKeyword : "+m));}
     };
-    if((std::find(i.begin(),i.end(),this->getName())!=i.end())||
-       (std::find(i.begin(),i.end(),"castem")!=i.end())||
-       (std::find(i.begin(),i.end(),"Castem")!=i.end())||
-       (std::find(i.begin(),i.end(),"Cast3M")!=i.end())){
-      throw_if((key!="@CastemGenerateMTestFileOnFailure")&&
-	       (key!="@UMATGenerateMTestFileOnFailure")&&
-	       (key!="@CastemUseTimeSubStepping")&&
-	       (key!="@UMATUseTimeSubStepping")&&
-	       (key!="@CastemMaximumSubStepping")&&
-	       (key!="@UMATMaximumSubStepping")&&
-	       (key!="@CastemDoSubSteppingOnInvalidResults")&&
-	       (key!="@UMATDoSubSteppingOnInvalidResults")&&
-	       (key!="@CastemFiniteStrainStrategy")&&
-	       (key!="@UMATFiniteStrainStrategy")&&
-	       (key!="@CastemFiniteStrainStrategies")&&
-	       (key!="@UMATFiniteStrainStrategies"),
-	       "unsupported keyword '"+key+"'");
+    if(!i.empty()){
+      if((std::find(i.begin(),i.end(),this->getName())!=i.end())||
+	 (std::find(i.begin(),i.end(),"castem")!=i.end())||
+	 (std::find(i.begin(),i.end(),"Castem")!=i.end())||
+	 (std::find(i.begin(),i.end(),"Cast3M")!=i.end())){
+	throw_if((key!="@CastemGenerateMTestFileOnFailure")&&
+		 (key!="@UMATGenerateMTestFileOnFailure")&&
+		 (key!="@CastemUseTimeSubStepping")&&
+		 (key!="@UMATUseTimeSubStepping")&&
+		 (key!="@CastemMaximumSubStepping")&&
+		 (key!="@UMATMaximumSubStepping")&&
+		 (key!="@CastemDoSubSteppingOnInvalidResults")&&
+		 (key!="@UMATDoSubSteppingOnInvalidResults")&&
+		 (key!="@CastemFiniteStrainStrategy")&&
+		 (key!="@UMATFiniteStrainStrategy")&&
+		 (key!="@CastemFiniteStrainStrategies")&&
+		 (key!="@UMATFiniteStrainStrategies"),
+		 "unsupported keyword '"+key+"'");
+      } else {
+	return {false,current};
+      }
     }
     if ((key=="@CastemGenerateMTestFileOnFailure")||
 	(key=="@UMATGenerateMTestFileOnFailure")){

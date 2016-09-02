@@ -17,6 +17,8 @@
 @OrthotropicBehaviour;
 @RequireStiffnessTensor;
 
+@AbaqusOrthotropyManagementPolicy[abaqus] MFront;
+
 @Algorithm NewtonRaphson_NumericalJacobian;
 @Theta 1.;
 @Epsilon 1.e-9;

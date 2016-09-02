@@ -20,7 +20,7 @@ namespace castem
 {
 
   CastemFiniteStrainRotationMatrix2D::CastemFiniteStrainRotationMatrix2D(const CastemReal *const V,
-								     const CastemReal *const drot)
+									 const CastemReal *const drot)
   {
     // Premier vecteur
     // a[1,1]
@@ -81,24 +81,76 @@ namespace castem
 
   void
   CastemFiniteStrainRotationMatrix2D::rotateDeformationGradientForward(const CastemReal *const F,
-								     CastemReal *const Fg)
+								             CastemReal *const Fm)
   {
-    Fg[0]=a[1]*a[1]*F[4]+a[0]*a[1]*F[3]+a[0]*a[1]*F[1]+a[0]*a[0]*F[0];
-    Fg[1]=a[1]*a[3]*F[4]+a[1]*a[2]*F[3]+a[0]*a[3]*F[1]+a[0]*a[2]*F[0];
-    Fg[2]=0;
-    Fg[3]=a[1]*a[3]*F[4]+a[0]*a[3]*F[3]+a[1]*a[2]*F[1]+a[0]*a[2]*F[0];
-    Fg[4]=a[3]*a[3]*F[4]+a[2]*a[3]*F[3]+a[2]*a[3]*F[1]+a[2]*a[2]*F[0];
-    Fg[5]=0;
-    Fg[6]=0;
-    Fg[7]=0;
-    Fg[8]=F[8];
+    Fm[0]=a[1]*a[1]*F[4]+a[0]*a[1]*F[3]+a[0]*a[1]*F[1]+a[0]*a[0]*F[0];
+    Fm[1]=a[1]*a[3]*F[4]+a[1]*a[2]*F[3]+a[0]*a[3]*F[1]+a[0]*a[2]*F[0];
+    Fm[2]=0;
+    Fm[3]=a[1]*a[3]*F[4]+a[0]*a[3]*F[3]+a[1]*a[2]*F[1]+a[0]*a[2]*F[0];
+    Fm[4]=a[3]*a[3]*F[4]+a[2]*a[3]*F[3]+a[2]*a[3]*F[1]+a[2]*a[2]*F[0];
+    Fm[5]=0;
+    Fm[6]=0;
+    Fm[7]=0;
+    Fm[8]=F[8];
   } // end of CastemFiniteStrainRotationMatrix2D::rotateDeformationGradientForward
 
   void
-  CastemFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward(CastemReal *const) const
+  CastemFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward(CastemReal *const D) const
   {
-    throw(std::runtime_error("CastemFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward : "
-			     "unimplemented feature"));
+    CastemReal MN[4][4];
+    // Première ligne
+    MN[0][0]=a[0]*a[0];
+    MN[0][1]=a[1]*a[1];
+    MN[0][2]=a[0]*a[1];
+    // Deuxième ligne
+    MN[1][0]=a[2]*a[2];
+    MN[1][1]=a[3]*a[3];
+    MN[1][2]=a[2]*a[3];
+    // Troisième ligne
+    MN[2][0]=a[0]*a[2];
+    MN[2][1]=a[1]*a[3];
+    MN[2][2]=a[0]*a[3]+a[1]*a[2];
+    // matrice N
+    CastemReal N[4][4];
+    for(unsigned short i=0;i!=2;++i){
+      for(unsigned short j=0;j!=2;++j){
+	N[i][j] = MN[i][j];
+      }
+    }
+    N[2][0]  = 0.;
+    N[2][1]  = 0.;
+    N[2][3]  = 0.;
+    N[0][2]  = 0.;
+    N[1][2]  = 0.;
+    N[3][2]  = 0.;
+    N[2][2]  = 1.;
+    for(unsigned short i=0;i!=2;++i){
+      N[3][i] = MN[2][i];
+      N[i][3] = MN[i][2];
+    }
+    N[3][3]  = MN[2][2];
+    N[3][0] *= 2;
+    N[3][1] *= 2;
+    N[3][2] *= 2;
+    // matrice temporaire
+    CastemReal t[4][4];
+    for(unsigned short i=0;i!=4;++i){
+      for(unsigned short j=0;j!=4;++j){
+	t[i][j] = 0.;
+	for(unsigned short k=0;k!=4;++k){
+	  t[i][j] += D[k*4+i]*(N[k][j]);
+	}
+      }
+    }
+    // matrice finale
+    for(unsigned short i=0;i!=4;++i){
+      for(unsigned short j=0;j!=4;++j){
+	D[j*4+i] = 0.;
+	for(unsigned short k=0;k!=4;++k){
+	  D[j*4+i] += N[k][i]*t[k][j];
+	}
+      }
+    }
   } // end of CastemFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward
 
   CastemFiniteStrainRotationMatrix3D::CastemFiniteStrainRotationMatrix3D(const CastemReal *const V,
@@ -202,10 +254,87 @@ namespace castem
   }
 
   void
-  CastemFiniteStrainRotationMatrix3D::rotateTangentOperatorBackward(CastemReal *const) const
+  CastemFiniteStrainRotationMatrix3D::rotateTangentOperatorBackward(CastemReal *const D) const
   {
-    throw(std::runtime_error("CastemFiniteStrainRotationMatrix3D::rotateTangentOperatorBackward : "
-			     "unimplemented feature"));
+    CastemReal MN[6][6];
+    // Contruction de la matrice de passage N (pour les tenseurs)
+    // Première ligne
+    MN[0][0]=a[0]*a[0];
+    MN[0][1]=a[1]*a[1];
+    MN[0][2]=a[2]*a[2];
+    MN[0][5]=a[1]*a[2];
+    MN[0][4]=a[2]*a[0];
+    MN[0][3]=a[0]*a[1];
+    // Deuxième ligne
+    MN[1][0]=a[3]*a[3];
+    MN[1][1]=a[4]*a[4];
+    MN[1][2]=a[5]*a[5];
+    MN[1][5]=a[4]*a[5];
+    MN[1][4]=a[5]*a[3];
+    MN[1][3]=a[3]*a[4];
+    // Troisième ligne
+    MN[2][0]=a[6]*a[6];
+    MN[2][1]=a[7]*a[7];
+    MN[2][2]=a[8]*a[8];
+    MN[2][5]=a[7]*a[8];
+    MN[2][4]=a[8]*a[6];
+    MN[2][3]=a[6]*a[7];
+    // Quatrième ligne
+    MN[5][0]=a[3]*a[6];
+    MN[5][1]=a[4]*a[7];
+    MN[5][2]=a[5]*a[8];
+    MN[5][5]=a[4]*a[8]+a[5]*a[7];
+    MN[5][4]=a[5]*a[6]+a[3]*a[8];
+    MN[5][3]=a[3]*a[7]+a[4]*a[6];
+    // Cinquième ligne
+    MN[4][0]=a[6]*a[0];
+    MN[4][1]=a[7]*a[1];
+    MN[4][2]=a[8]*a[2];
+    MN[4][5]=a[7]*a[2]+a[8]*a[1];
+    MN[4][4]=a[8]*a[0]+a[6]*a[2];
+    MN[4][3]=a[6]*a[1]+a[7]*a[0];
+    // Sixième ligne
+    MN[3][0]=a[0]*a[3];
+    MN[3][1]=a[1]*a[4];
+    MN[3][2]=a[2]*a[5];
+    MN[3][5]=a[1]*a[5]+a[2]*a[4];
+    MN[3][4]=a[2]*a[3]+a[0]*a[5];
+    MN[3][3]=a[0]*a[4]+a[1]*a[3];
+    // matrice N
+    CastemReal N[6][6];
+    for(unsigned short i=0;i!=6;++i){
+      for(unsigned short j=0;j!=6;++j){
+	N[i][j] = MN[i][j];
+      }
+    }
+    N[3][0] *= 2;
+    N[3][1] *= 2;
+    N[3][2] *= 2;
+    N[4][0] *= 2;
+    N[4][1] *= 2;
+    N[4][2] *= 2;
+    N[5][0] *= 2;
+    N[5][1] *= 2;
+    N[5][2] *= 2;
+    // matrice temporaire
+    CastemReal t[6][6];
+    for(unsigned short i=0;i!=6;++i){
+      for(unsigned short j=0;j!=6;++j){
+	t[i][j] = 0.;
+	for(unsigned short k=0;k!=6;++k){
+	  t[i][j] += D[k*6+i]*(N[k][j]);
+	}
+      }
+    }
+    // matrice finale
+    for(unsigned short i=0;i!=6;++i){
+      for(unsigned short j=0;j!=6;++j){
+	D[j*6+i] = 0.;
+	for(unsigned short k=0;k!=6;++k){
+	  D[j*6+i] += N[k][i]*t[k][j];
+	}
+      }
+    }
   } // end of CastemFiniteStrainRotationMatrix3D::rotateTangentOperatorBackward
 
 } // end of namespace castem

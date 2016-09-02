@@ -13,6 +13,7 @@
 
 #include<cassert>
 #include<iterator>
+#include<algorithm>
 
 #include"TFEL/System/System.hxx"
 
@@ -27,8 +28,21 @@ namespace mfront{
   MFrontGerminalModelInterface::getName(void)
   {
     return "germinal";
-  } // end of MFrontPleiadesModelInterfaceBase::getName(void)
+  } // end of MFrontGerminalModelInterface::getName(void)
 
+  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  MFrontGerminalModelInterface::treatKeyword(const std::string& k,
+					     const std::vector<std::string>& i,
+					     TokensContainer::const_iterator c,
+					     const TokensContainer::const_iterator)
+  {
+    if(std::find(i.begin(),i.end(),"germinal")!=i.end()){
+      throw(std::runtime_error("MFrontGerminalModelInterface::treatKeyword: "
+			       "unsupported key '"+k+"'"));
+    }
+    return {false,c};
+  } // end of MFrontGerminalModelInterface::treatKeyword
+  
   void
   MFrontGerminalModelInterface::setOutputFileNames(const ModelDescription& md)
   {

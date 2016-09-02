@@ -45,6 +45,7 @@ namespace mfront{
     virtual void declareReservedNames(std::set<std::string>&) = 0;
     /*!
      * \param[in] k  : keyword treated
+     * \param[in] i:   list of interfaces to which the keyword is restricted  
      * \param[in] p  : iterator to the current token
      * \param[in] pe : iterator past the end of the file
      * \return a pair. The first entry is true if the keyword was
@@ -53,6 +54,7 @@ namespace mfront{
      */
     virtual std::pair<bool,TokensContainer::const_iterator>
     treatKeyword(const std::string&,
+		 const std::vector<std::string>&,
 		 TokensContainer::const_iterator,
 		 const TokensContainer::const_iterator) = 0;
     /*!

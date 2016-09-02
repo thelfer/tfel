@@ -645,14 +645,14 @@ namespace mfront{
       i=0;
       for(auto puv=f.usedVariables.begin();puv!=f.usedVariables.end();++puv,++i){
 	const auto& v = [&md,puv](){
-	  for(const auto& v : md.outputs){
-	    if(*puv==v.name){
-	      return v;
+	  for(const auto& vo : md.outputs){
+	    if(*puv==vo.name){
+	      return vo;
 	    }
 	  }
-	  for(const auto& v : md.inputs){
-	    if(*puv==v.name){
-	      return v;
+	  for(const auto& vi : md.inputs){
+	    if(*puv==vi.name){
+	      return vi;
 	    }
 	  }
 	  throw(std::runtime_error("MFrontModelInterface::writeSrcFile: "
@@ -1628,14 +1628,16 @@ namespace mfront{
   } // end of MFrontModelInterface::writeAssignDefaultValue
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  MFrontModelInterface::treatKeyword(const std::string&,
-				     tfel::utilities::CxxTokenizer::TokensContainer::const_iterator c,
-				     const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+  MFrontModelInterface::treatKeyword(const std::string& k,
+				     const std::vector<std::string>& i,
+				     TokensContainer::const_iterator c,
+				     const TokensContainer::const_iterator)
   {
-    using namespace std;
-    using namespace tfel::utilities;
-    typedef CxxTokenizer::TokensContainer::const_iterator TokenConstIterator;
-    return pair<bool,TokenConstIterator>(false,c);
+    if(std::find(i.begin(),i.end(),"licos")!=i.end()){
+      throw(std::runtime_error("LicosModelInterface::treatKeyword: "
+			       "unsupported key '"+k+"'"));
+    }
+    return {false,c};
   } // end of MFrontModelInterface::treatKeyword
 
   std::string

@@ -56,13 +56,15 @@ namespace mtest
     using tfel::math::vector;
     static const real sqrt2 = std::sqrt(real(2));
     const auto h = this->getHypothesis();
-    if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
-      throw(std::runtime_error("AbaqusSmallStrainBehaviour::call_behaviour : "
-			       "abaqus behaviours may only provide the "
-			       "consistent tangent operator"));
-    }
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("AbaqusSmallStrainBehaviour::"
+				     "call_behaviour: "+m));}
+    };
+    throw_if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR,
+	     "abaqus behaviours only provide the "
+	     "consistent tangent operator");
     const AbaqusInt nprops = s.mprops1.size() == 0 ? 1 : static_cast<AbaqusInt>(s.mprops1.size());
-    const AbaqusInt ntens = [&h](){
+    const AbaqusInt ntens = [&h,&throw_if](){
       if (h==ModellingHypothesis::AXISYMMETRICAL){
 	return 4;
       } else if (h==ModellingHypothesis::PLANESTRESS){
@@ -70,8 +72,7 @@ namespace mtest
       } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6;
       } 
-      throw(std::runtime_error("AbaqusSmallStrainBehaviour::call_behaviour : "
-			       "unsupported hypothesis"));      
+      throw_if(true,"unsupported hypothesis");
     }();
     fill(wk.D.begin(),wk.D.end(),0.);
     // using a local copy of material properties to handle the
@@ -82,6 +83,28 @@ namespace mtest
     }
     // using a local copy of internal state variables to handle the
     // case where s.iv0 is empty
+    if((this->stype==1u)&&(this->omp==2u)){
+      if((h==ModellingHypothesis::PLANESTRESS)||
+	 (h==ModellingHypothesis::AXISYMMETRICAL)||
+	 (h==ModellingHypothesis::PLANESTRAIN)){
+	throw_if(s.iv0.size()<2,
+		 "invalid number of state variables");
+	s.iv0[0] = s.r(0,0);
+	s.iv0[1] = s.r(1,0);
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	throw_if(s.iv0.size()<6,
+		 "invalid number of state variables");
+	s.iv0[0] = s.r(0,0);
+	s.iv0[1] = s.r(1,0);
+	s.iv0[2] = s.r(2,0);
+	s.iv0[3] = s.r(0,1);
+	s.iv0[4] = s.r(1,1);
+	s.iv0[5] = s.r(2,1);
+      } else {
+	throw_if(true,"unsupported hypothesis ("+
+		 ModellingHypothesis::toString(h)+")");
+      }
+    }
     copy(s.iv0.begin(),s.iv0.end(),wk.ivs.begin());
     const auto nstatv = static_cast<AbaqusInt>(wk.ivs.size());
     // rotation matrix, set to identity
@@ -101,9 +124,11 @@ namespace mtest
       ue0(i) -= s.e_th0(i);
       ude(i) -= s.e_th1(i)-s.e_th0(i);
     }
-    ue0.changeBasis(s.r);
-    ude.changeBasis(s.r);
-    us.changeBasis(s.r);
+    if((this->stype==1u)&&(this->omp!=2u)){
+      ue0.changeBasis(s.r);
+      ude.changeBasis(s.r);
+      us.changeBasis(s.r);
+    }
     // abaqus standard convention
     for(AbaqusInt i=3;i!=s.e1.size();++i){
       ue0(i) *= sqrt2;
@@ -137,30 +162,34 @@ namespace mtest
     // treating the consistent tangent operator
     if(h==ModellingHypothesis::TRIDIMENSIONAL){
       UmatNormaliseTangentOperator::exe(&Kt(0,0),wk.D,3u);
-      st2tost2<3u,AbaqusReal> K;
-      for(unsigned short i=0;i!=6u;++i){
-	for(unsigned short j=0;j!=6u;++j){
-	  K(i,j)=Kt(i,j);
+      if((this->stype==1u)&&(this->omp!=2u)){
+	st2tost2<3u,AbaqusReal> K;
+	for(unsigned short i=0;i!=6u;++i){
+	  for(unsigned short j=0;j!=6u;++j){
+	    K(i,j)=Kt(i,j);
+	  }
 	}
-      }
-      const auto nK = change_basis(K,rb);
-      for(unsigned short i=0;i!=6u;++i){
-	for(unsigned short j=0;j!=6u;++j){
-	  Kt(i,j)=nK(i,j);
+	const auto nK = change_basis(K,rb);
+	for(unsigned short i=0;i!=6u;++i){
+	  for(unsigned short j=0;j!=6u;++j){
+	    Kt(i,j)=nK(i,j);
+	  }
 	}
       }
     } else if (h==ModellingHypothesis::AXISYMMETRICAL){
       UmatNormaliseTangentOperator::exe(&Kt(0,0),wk.D,2u);
-      st2tost2<2u,AbaqusReal> K;
-      for(unsigned short i=0;i!=4u;++i){
-	for(unsigned short j=0;j!=4u;++j){
-	  K(i,j)=Kt(i,j);
+      if((this->stype==1u)&&(this->omp!=2u)){
+	st2tost2<2u,AbaqusReal> K;
+	for(unsigned short i=0;i!=4u;++i){
+	  for(unsigned short j=0;j!=4u;++j){
+	    K(i,j)=Kt(i,j);
+	  }
 	}
-      }
-      const auto nK = change_basis(K,rb);
-      for(unsigned short i=0;i!=4u;++i){
-	for(unsigned short j=0;j!=4u;++j){
-	  Kt(i,j)=nK(i,j);
+	const auto nK = change_basis(K,rb);
+	for(unsigned short i=0;i!=4u;++i){
+	  for(unsigned short j=0;j!=4u;++j){
+	    Kt(i,j)=nK(i,j);
+	  }
 	}
       }
     } else if (h==ModellingHypothesis::PLANESTRESS){
@@ -196,23 +225,23 @@ namespace mtest
       // so now we have D in a conventional fortan form, so we can
       // normalise it (transpose and TFEL storage conventions !)
       UmatNormaliseTangentOperator::exe(&Kt(0,0),wk.D,2u);
-      // the last step: rotation in the global frame
-      st2tost2<2u,AbaqusReal> K;
-      for(unsigned short i=0;i!=4u;++i){
-	for(unsigned short j=0;j!=4u;++j){
-	  K(i,j)=Kt(i,j);
+      if((this->stype==1u)&&(this->omp!=2u)){
+	// the last step: rotation in the global frame
+	st2tost2<2u,AbaqusReal> K;
+	for(unsigned short i=0;i!=4u;++i){
+	  for(unsigned short j=0;j!=4u;++j){
+	    K(i,j)=Kt(i,j);
+	  }
 	}
-      }
-      const auto nK = change_basis(K,rb);
-      for(unsigned short i=0;i!=4u;++i){
-	for(unsigned short j=0;j!=4u;++j){
-	  Kt(i,j)=nK(i,j);
+	const auto nK = change_basis(K,rb);
+	for(unsigned short i=0;i!=4u;++i){
+	  for(unsigned short j=0;j!=4u;++j){
+	    Kt(i,j)=nK(i,j);
+	  }
 	}
       }
     } else {
-      throw(std::runtime_error("AbaqusSmallStrainBehaviour::"
-			       "call_behaviour: normalise, "
-			       "unsupported modelling hypothesis"));
+      throw_if(true,"unsupported modelling hypothesis");
     }
     if(b){
       // treating internal state variables
@@ -229,7 +258,9 @@ namespace mtest
 	  us[i] *= sqrt2;
 	}
       }
-      us.changeBasis(rb);
+      if((this->stype==1u)&&(this->omp!=2u)){
+	us.changeBasis(rb);
+      }
       copy(us.begin(),us.begin()+s.s1.size(),s.s1.begin());
     }
     return {true,ndt};

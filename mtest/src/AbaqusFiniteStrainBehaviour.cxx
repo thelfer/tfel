@@ -35,7 +35,13 @@ namespace mtest
 							   const std::string& l,
 							   const std::string& b)
     : AbaqusStandardBehaviour(h,l,b)
-  {}
+  {
+    if((this->stype==1u)&&(this->omp!=2u)){
+      throw(std::runtime_error("AbaqusFiniteStrainBehaviour::AbaqusFiniteStrainBehaviour: "
+			       "orthotropic finite strain behaviour is only supported "
+			       "with the 'MFront' orthotropy management policy"));
+    }
+  }
 
   void
   AbaqusFiniteStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
@@ -62,13 +68,15 @@ namespace mtest
     using tfel::material::convert;
     static const real sqrt2 = std::sqrt(real(2));
     const auto h = this->getHypothesis();
-    if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
-      throw(std::runtime_error("AbaqusFiniteStrainBehaviour::call_behaviour : "
-			       "abaqus behaviours may only provide the "
-			       "consistent tangent operator"));
-    }
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("AbaqusSmallStrainBehaviour::"
+				     "call_behaviour: "+m));}
+    };
+    throw_if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR,
+	     "abaqus behaviours only provide the "
+	     "consistent tangent operator");
     const AbaqusInt nprops = s.mprops1.size() == 0 ? 1 : static_cast<AbaqusInt>(s.mprops1.size());
-    const AbaqusInt ntens = [&h](){
+    const AbaqusInt ntens = [&h,&throw_if](){
       if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 	  (h==ModellingHypothesis::PLANESTRAIN)){
 	return 4;
@@ -77,8 +85,7 @@ namespace mtest
       } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6;
       } 
-      throw(std::runtime_error("AbaqusFiniteStrainBehaviour::call_behaviour : "
-			       "unsupported hypothesis"));      
+      throw_if(true,"unsupported hypothesis");
     }();
     fill(wk.D.begin(),wk.D.end(),0.);
     // using a local copy of material properties to handle the
@@ -89,6 +96,28 @@ namespace mtest
     }
     // using a local copy of internal state variables to handle the
     // case where s.iv0 is empty
+    if((this->stype==1u)&&(this->omp==2u)){
+      if((h==ModellingHypothesis::PLANESTRESS)||
+	 (h==ModellingHypothesis::AXISYMMETRICAL)||
+	 (h==ModellingHypothesis::PLANESTRAIN)){
+	throw_if(s.iv0.size()<2,
+		 "invalid number of state variables");
+	s.iv0[0] = s.r(0,0);
+	s.iv0[1] = s.r(1,0);
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	throw_if(s.iv0.size()<6,
+		 "invalid number of state variables");
+	s.iv0[0] = s.r(0,0);
+	s.iv0[1] = s.r(1,0);
+	s.iv0[2] = s.r(2,0);
+	s.iv0[3] = s.r(0,1);
+	s.iv0[4] = s.r(1,1);
+	s.iv0[5] = s.r(2,1);
+      } else {
+	throw_if(true,"unsupported hypothesis ("+
+		 ModellingHypothesis::toString(h)+")");
+      }
+    }
     copy(s.iv0.begin(),s.iv0.end(),wk.ivs.begin());
     const auto nstatv = static_cast<AbaqusInt>(wk.ivs.size());
     // rotation matrix, set to identity
@@ -214,9 +243,7 @@ namespace mtest
 						       stensor<2u,double>(&s.s1[0]));
       std::copy(ds.begin(),ds.end(),Kt.begin());
     } else {
-      throw(std::runtime_error("AbaqusFiniteStrainBehaviour::"
-			       "call_behaviour: normalise, "
-			       "unsupported modelling hypothesis"));
+      throw_if(true,"unsupported modelling hypothesis");
     }
     return {true,ndt};
   }

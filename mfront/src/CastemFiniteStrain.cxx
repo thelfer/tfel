@@ -287,9 +287,9 @@ namespace castem
 
   static void
   CastemFiniteStrainComputeLogarithmicStrainAndDerivative2D(CastemReal* const P,
-							  CastemReal* const E,
-							  const CastemReal* const F,
-							  const CastemInt NDI)
+							    CastemReal* const E,
+							    const CastemReal* const F,
+							    const CastemInt NDI)
   {
     using namespace tfel::math;
     using std::log;

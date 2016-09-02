@@ -36,7 +36,7 @@ namespace mfront{
   {
     /*!
      * \param[in] k  : keyword to be treated
-     * \param[in] i:   list of interfaces to which the keyword is restricted     
+     * \param[in] i:   list of interfaces to which the keyword is restricted  
      * \param[in] p  : iterator to the current token
      * \param[in] pe : iterator past the end of the file
      * \return a pair. The first entry is true if the keyword was

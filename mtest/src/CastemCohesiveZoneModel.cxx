@@ -246,7 +246,8 @@ namespace mtest
       }
     } else if(this->stype==1u){
       throw(runtime_error("CastemCohesiveZoneModel::integrate: "
-			  "invalid behaviour type (orthotropic type is not supported yet)"));
+			  "invalid behaviour type (orthotropic type "
+			  "is not supported yet)"));
     } else {
       throw(runtime_error("CastemCohesiveZoneModel::integrate: "
 			  "invalid behaviour type (neither "

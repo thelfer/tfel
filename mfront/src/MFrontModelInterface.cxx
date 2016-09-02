@@ -62,10 +62,15 @@ namespace mfront{
   MFrontModelInterface::MFrontModelInterface() = default;
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  MFrontModelInterface::treatKeyword(const std::string&,
+  MFrontModelInterface::treatKeyword(const std::string& k,
+				     const std::vector<std::string>& i,
 				     TokensContainer::const_iterator p,
 				     const TokensContainer::const_iterator)
   {
+    if(std::find(i.begin(),i.end(),"mfront")!=i.end()){
+      throw(std::runtime_error("MfrontMaterialPropertyInterface::"
+			       "treatKeyword: unsupported key '"+k+"'"));
+    }
     return {false,p};
   } // end of MFrontModelInterface::treatKeyword
     

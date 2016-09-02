@@ -91,9 +91,9 @@ namespace tfel
     {} // end of ExternalLibraryManager::ExternalLibraryManager
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-   HINSTANCE__*
+    HINSTANCE__*
 #else
-   void *
+    void *
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     ExternalLibraryManager::loadLibrary(const std::string& name,
 					const bool b)
@@ -180,20 +180,16 @@ namespace tfel
     {
       using namespace std;
       vector<string> h;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       const int nb = ::tfel_getUnsignedShort(lib,(f+"_nModellingHypotheses").c_str());
       char ** res;
       if(nb==-1){
 	string msg("ExternalLibraryManager::getSupportedModellingHypotheses : ");
 	msg += " number of modelling hypotheses could not be read (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -203,9 +199,9 @@ namespace tfel
 	string msg("ExternalLibraryManager::getSupportedModellingHypotheses : ");
 	msg += "modelling hypotheses could not be read (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -231,9 +227,9 @@ namespace tfel
 	string msg("ExternalLibraryManager::setOutOfBoundsPolicy : ");
 	msg += " can't get the '"+f+"_setOutOfBoundsPolicy' function (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-	  msg += ::GetLastError();
+	msg += ::GetLastError();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -257,20 +253,16 @@ namespace tfel
 					 const double v)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       int (TFEL_ADDCALL_PTR fct)(const char*const,const double);
       fct = ::tfel_getSetParameterFunction(lib,(f+"_setParameter").c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -289,20 +281,16 @@ namespace tfel
 					 const int v)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       int (TFEL_ADDCALL_PTR fct)(const char*const,const int);
       fct = ::tfel_getSetIntegerParameterFunction(lib,(f+"_setIntegerParameter").c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -321,20 +309,16 @@ namespace tfel
 					 const unsigned short v)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       int (TFEL_ADDCALL_PTR fct)(const char*const,const unsigned short);
       fct = ::tfel_getSetUnsignedShortParameterFunction(lib,(f+"_setUnsignedShortParameter").c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -354,11 +338,7 @@ namespace tfel
 					 const double v)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       int (TFEL_ADDCALL_PTR fct)(const char*const,const double);
       fct = ::tfel_getSetParameterFunction(lib,(f+"_"+h+"_setParameter").c_str());
       if(fct==nullptr){
@@ -368,9 +348,9 @@ namespace tfel
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -390,11 +370,7 @@ namespace tfel
 					 const int v)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       int (TFEL_ADDCALL_PTR fct)(const char*const,const int);
       fct = ::tfel_getSetIntegerParameterFunction(lib,(f+"_"+h+"_setIntegerParameter").c_str());
       if(fct==nullptr){
@@ -404,9 +380,9 @@ namespace tfel
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -426,11 +402,7 @@ namespace tfel
 					 const unsigned short v)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       int (TFEL_ADDCALL_PTR fct)(const char*const,const unsigned short);
       fct = ::tfel_getSetUnsignedShortParameterFunction(lib,(f+"_"+h+"_setUnsignedShortParameter").c_str());
       if(fct==nullptr){
@@ -440,9 +412,9 @@ namespace tfel
 	string msg("ExternalLibraryManager::setParameter : ");
 	msg += " can't get the '"+f+"_setParameter' function (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -460,20 +432,15 @@ namespace tfel
     {
       using namespace std;
       int res;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       res = ::tfel_getCastemFunctionNumberOfVariables(lib,f.c_str());
       if(res<0){
 	string msg("ExternalLibraryManager::getCastemFunctionNumberOfVariables : ");
 	msg += " number of variables could not be read (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -489,11 +456,7 @@ namespace tfel
       using namespace std;
       ExternalLibraryManagerCheckModellingHypothesisName(h);
       int res;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       res = ::tfel_getUMATRequiresStiffnessTensor(lib,(f+"_"+h).c_str());
       if(res<0){
 	res = ::tfel_getUMATRequiresStiffnessTensor(lib,f.c_str());
@@ -502,9 +465,9 @@ namespace tfel
 	string msg("ExternalLibraryManager::getUMATRequiresStiffnessTensor : ");
 	msg += "information could not be read (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -520,64 +483,30 @@ namespace tfel
       return false;
     } // end of ExternalLibraryManager::getUMATRequiresStiffnessTensor
  
-   bool
-   ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor(const std::string& l,
-									    const std::string& f,
-									    const std::string& h)
-   {
-     using namespace std;
-     ExternalLibraryManagerCheckModellingHypothesisName(h);
-     int res;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-     HINSTANCE__* lib = this->loadLibrary(l);
-#else
-     void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-     res = ::tfel_getUMATRequiresThermalExpansionCoefficientTensor(lib,(f+"_"+h).c_str());
-     if(res<0){
-       res = ::tfel_getUMATRequiresThermalExpansionCoefficientTensor(lib,f.c_str());
-     }
-     if(res<0){
-       string msg("ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor : ");
-       msg += "information could not be read (";
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-       msg += getLastWin32Error();
-#else
-       msg += ::dlerror();
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-       msg += ")";
-       throw(runtime_error(msg));
-     }
-     if(res==1){
-       return true;
-     }
-     if(res!=0){
-       string msg("ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor : ");
-       msg += "invalid returned value";
-       throw(runtime_error(msg));
-     }
-     return false;
-   } // end of ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor
-
     bool
-    ExternalLibraryManager::checkIfAsterBehaviourSavesTangentOperator(const std::string& l,
-								      const std::string& f)
+    ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor(const std::string& l,
+									     const std::string& f,
+									     const std::string& h)
     {
       using namespace std;
+      ExternalLibraryManagerCheckModellingHypothesisName(h);
       int res;
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
       HINSTANCE__* lib = this->loadLibrary(l);
 #else
       void * lib = this->loadLibrary(l);
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-      res = ::tfel_checkIfAsterBehaviourSavesTangentOperator(lib,f.c_str());
+      res = ::tfel_getUMATRequiresThermalExpansionCoefficientTensor(lib,(f+"_"+h).c_str());
       if(res<0){
-	string msg("ExternalLibraryManager::checkIfAsterBehaviourSaveTangentOperator : ");
+	res = ::tfel_getUMATRequiresThermalExpansionCoefficientTensor(lib,f.c_str());
+      }
+      if(res<0){
+	string msg("ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor : ");
 	msg += "information could not be read (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -586,13 +515,72 @@ namespace tfel
 	return true;
       }
       if(res!=0){
-	string msg("ExternalLibraryManager::checkIfAsterBehaviourSaveTangentOperator : ");
+	string msg("ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor : ");
 	msg += "invalid returned value";
 	throw(runtime_error(msg));
       }
       return false;
+    } // end of ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor
+
+    bool
+    ExternalLibraryManager::checkIfAsterBehaviourSavesTangentOperator(const std::string& l,
+								      const std::string& f)
+    {
+      using namespace std;
+      int res;
+      const auto lib = this->loadLibrary(l);
+      res = ::tfel_checkIfAsterBehaviourSavesTangentOperator(lib,f.c_str());
+      if(res<0){
+	string msg("ExternalLibraryManager::"
+		   "checkIfAsterBehaviourSaveTangentOperator: "
+		   "information could not be read (");
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+	msg += getLastWin32Error();
+#else
+	msg += ::dlerror();
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      if(res==1){
+	return true;
+      }
+      if(res!=0){
+	throw(runtime_error("ExternalLibraryManager::"
+			    "checkIfAsterBehaviourSaveTangentOperator: "
+			    "invalid returned value"));
+      }
+      return false;
     } // end of ExternalLibraryManager::checkIfAsterBehaviourSaveTangentOperator
 
+    unsigned short
+    ExternalLibraryManager::getAbaqusOrthotropyManagementPolicy(const std::string& l,
+								const std::string& f)
+    {
+      using namespace std;
+      const auto lib = this->loadLibrary(l);
+      const auto s   = f+"_OrthotropyManagementPolicy";
+      const auto res = ::tfel_getUnsignedShort(lib,s.c_str());
+      if(res<0){
+	string msg("ExternalLibraryManager::"
+		   "getAbaqusOrthotropyManagementPolicy: "
+		   "information could not be read (");
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+	msg += getLastWin32Error();
+#else
+	msg += ::dlerror();
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      if((res!=0)&&(res!=1)&&(res!=2)){
+	throw(runtime_error("ExternalLibraryManager::"
+			    "getAbaqusOrthotropyManagementPolicy: "
+			    "invalid returned value"));
+      }
+      return static_cast<unsigned short>(res);
+    } // end of ExternalLibraryManager::getAbaqusOrthotropyManagementPolicy
+    
     std::vector<std::string>
     ExternalLibraryManager::getCastemFunctionVariables(const std::string& l,
 						       const std::string& f)
@@ -609,12 +597,7 @@ namespace tfel
 						       const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       unsigned short nb = this->getCastemFunctionNumberOfVariables(l,f);
       char ** res = ::tfel_getCastemFunctionVariables(lib,f.c_str());
       char **p;
@@ -622,9 +605,9 @@ namespace tfel
 	string msg("ExternalLibraryManager::getCastemFunctionNumberOfVariables : ");
 	msg += " variables names could not be read (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -636,22 +619,18 @@ namespace tfel
 
     CyranoFctPtr
     ExternalLibraryManager::getCyranoFunction(const std::string& l,
-					    const std::string& f)
+					      const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       CyranoFctPtr fct = ::tfel_getCyranoFunction(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCyranoFunction : ");
 	msg += " could not load Cyrano function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -661,22 +640,18 @@ namespace tfel
 
     AbaqusFctPtr
     ExternalLibraryManager::getAbaqusExternalBehaviourFunction(const std::string& l,
-					    const std::string& f)
+							       const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       AbaqusFctPtr fct = ::tfel_getAbaqusExternalBehaviourFunction(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getAbaqusExternalBehaviourFunction : ");
 	msg += " could not load Abaqus external behaviour '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -686,21 +661,17 @@ namespace tfel
 
     AbaqusExplicitFctPtr
     ExternalLibraryManager::getAbaqusExplicitExternalBehaviourFunction(const std::string& l,
-					    const std::string& f)
+								       const std::string& f)
     {
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       AbaqusExplicitFctPtr fct = ::tfel_getAbaqusExplicitExternalBehaviourFunction(lib,f.c_str());
       if(fct==nullptr){
 	std::string msg("ExternalLibraryManager::getAbaqusExplicitExternalBehaviourFunction : ");
 	msg += " could not load AbaqusExplicit external behaviour '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(std::runtime_error(msg));
@@ -710,22 +681,18 @@ namespace tfel
 
     CastemFctPtr
     ExternalLibraryManager::getCastemExternalBehaviourFunction(const std::string& l,
-					    const std::string& f)
+							       const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       CastemFctPtr fct = ::tfel_getCastemExternalBehaviourFunction(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCastemExternalBehaviourFunction : ");
 	msg += " could not load castem external behaviour '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -738,19 +705,15 @@ namespace tfel
 					     const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       AsterFctPtr fct = ::tfel_getAsterFunction(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getAsterFunction : ");
 	msg += " could not load Aster function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -762,19 +725,15 @@ namespace tfel
     ExternalLibraryManager::getEuroplexusFunction(const std::string& l,
 						  const std::string& f)
     {
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       EuroplexusFctPtr fct = ::tfel_getEuroplexusFunction(lib,f.c_str());
       if(fct==nullptr){
 	std::string msg("ExternalLibraryManager::getEuroplexusFunction : ");
 	msg += " could not load Europlexus function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(std::runtime_error(msg));
@@ -791,11 +750,7 @@ namespace tfel
     {
       using namespace std;
       ExternalLibraryManagerCheckModellingHypothesisName(h);
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       ExternalLibraryManagerCheckModellingHypothesisName(h);
       int nb = ::tfel_getUnsignedShort(lib,(f+"_"+h+"_n"+n).c_str());
       if(nb==-1){
@@ -806,9 +761,9 @@ namespace tfel
 	string msg("ExternalLibraryManager::getUMATNames : ");
 	msg += " number of variables names could not be read (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -821,9 +776,9 @@ namespace tfel
 	string msg("ExternalLibraryManager::getUMATNames : ");
 	msg += "variables names could not be read (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -838,12 +793,7 @@ namespace tfel
     {
       using namespace std;
       ExternalLibraryManagerCheckModellingHypothesisName(h);
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       int b = ::tfel_getBool(lib,(f+"_"+h+"_UsableInPurelyImplicitResolution").c_str());
       if(b==-1){
 	b = ::tfel_getBool(lib,(f+"_UsableInPurelyImplicitResolution").c_str());
@@ -863,12 +813,7 @@ namespace tfel
 										const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       int b = ::tfel_getBool(lib,(f+"_UsesGenericPlaneStressAlgorithm").c_str());
       if(b==-1){
 	return false;
@@ -884,11 +829,7 @@ namespace tfel
 						 const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       int u = ::tfel_getUnsignedShort(lib,(f+"_BehaviourType").c_str());
       if(u==-1){
 	string msg("ExternalLibraryManager::getUMATBehaviourType : ");
@@ -911,20 +852,15 @@ namespace tfel
 						const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       int u = ::tfel_getUnsignedShort(lib,(f+"_SymmetryType").c_str());
       if(u==-1){
 	string msg("ExternalLibraryManager::getUMATSymmetryType : ");
 	msg += " symmetry type could not be read (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -937,20 +873,15 @@ namespace tfel
 						       const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       int u = ::tfel_getUnsignedShort(lib,(f+"_ElasticSymmetryType").c_str());
       if(u==-1){
 	string msg("ExternalLibraryManager::getUMATElasticSymmetryType : ");
 	msg += " elastic symmetry type could not be read (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -966,12 +897,7 @@ namespace tfel
       using namespace std;
       ExternalLibraryManagerCheckModellingHypothesisName(h);
       vector<int> types;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       int nb = ::tfel_getUnsignedShort(lib,(f+"_"+h+"_nInternalStateVariables").c_str());
       if(nb==-1){
 	nb = ::tfel_getUnsignedShort(lib,(f+"_nInternalStateVariables").c_str());
@@ -981,9 +907,9 @@ namespace tfel
 	string msg("ExternalLibraryManager::getUMATInternalStateVariablesTypes : ");
 	msg += " number of variables names could not be read (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -996,9 +922,9 @@ namespace tfel
 	string msg("ExternalLibraryManager::getUMATInternalStateVariablesTypes : ");
 	msg += "internal state variables types could not be read (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1046,20 +972,15 @@ namespace tfel
 					      const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CastemFunctionPtr fct = ::tfel_getCastemFunction(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCastemFunction : ");
 	msg += " could not load castem function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1072,20 +993,15 @@ namespace tfel
 					  const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction0Ptr fct = ::tfel_getCFunction0(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction0 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1098,20 +1014,15 @@ namespace tfel
 					  const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction1Ptr fct = ::tfel_getCFunction1(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction1 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1124,20 +1035,15 @@ namespace tfel
 					  const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction2Ptr fct = ::tfel_getCFunction2(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction2 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1150,20 +1056,15 @@ namespace tfel
 					  const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction3Ptr fct = ::tfel_getCFunction3(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction3 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1176,20 +1077,15 @@ namespace tfel
 					  const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction4Ptr fct  = ::tfel_getCFunction4(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction4 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1202,20 +1098,15 @@ namespace tfel
 					  const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction5Ptr fct = ::tfel_getCFunction5(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction5 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1228,20 +1119,15 @@ namespace tfel
 					  const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction6Ptr fct = ::tfel_getCFunction6(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction6 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1254,20 +1140,15 @@ namespace tfel
 					  const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction7Ptr fct = ::tfel_getCFunction7(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction7 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1280,20 +1161,15 @@ namespace tfel
 					  const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction8Ptr fct = ::tfel_getCFunction8(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction8 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1306,20 +1182,15 @@ namespace tfel
 					  const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction9Ptr fct = ::tfel_getCFunction9(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction9 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1332,20 +1203,15 @@ namespace tfel
 					   const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction10Ptr fct = ::tfel_getCFunction10(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction10 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1358,20 +1224,15 @@ namespace tfel
 					   const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction11Ptr fct = ::tfel_getCFunction11(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction11 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1384,20 +1245,15 @@ namespace tfel
 					   const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction12Ptr fct = ::tfel_getCFunction12(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction12 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1410,20 +1266,15 @@ namespace tfel
 					   const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction13Ptr fct = ::tfel_getCFunction13(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction13 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1436,20 +1287,15 @@ namespace tfel
 					   const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction14Ptr fct = ::tfel_getCFunction14(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction14 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1462,20 +1308,15 @@ namespace tfel
 					   const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       CFunction15Ptr fct = ::tfel_getCFunction15(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction15 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1485,23 +1326,18 @@ namespace tfel
 
     FortranFunction0Ptr
     ExternalLibraryManager::getFortranFunction0(const std::string& l,
-					  const std::string& f)
+						const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       FortranFunction0Ptr fct = ::tfel_getFortranFunction0(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction0 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1511,23 +1347,18 @@ namespace tfel
 
     FortranFunction1Ptr
     ExternalLibraryManager::getFortranFunction1(const std::string& l,
-					  const std::string& f)
+						const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       FortranFunction1Ptr fct = ::tfel_getFortranFunction1(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction1 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1537,23 +1368,18 @@ namespace tfel
 
     FortranFunction2Ptr
     ExternalLibraryManager::getFortranFunction2(const std::string& l,
-					  const std::string& f)
+						const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       FortranFunction2Ptr fct = ::tfel_getFortranFunction2(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction2 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1563,23 +1389,18 @@ namespace tfel
 
     FortranFunction3Ptr
     ExternalLibraryManager::getFortranFunction3(const std::string& l,
-					  const std::string& f)
+						const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       FortranFunction3Ptr fct = ::tfel_getFortranFunction3(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction3 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1589,23 +1410,18 @@ namespace tfel
 
     FortranFunction4Ptr
     ExternalLibraryManager::getFortranFunction4(const std::string& l,
-					  const std::string& f)
+						const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       FortranFunction4Ptr fct  = ::tfel_getFortranFunction4(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction4 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1615,23 +1431,18 @@ namespace tfel
 
     FortranFunction5Ptr
     ExternalLibraryManager::getFortranFunction5(const std::string& l,
-					  const std::string& f)
+						const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       FortranFunction5Ptr fct = ::tfel_getFortranFunction5(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction5 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1641,23 +1452,18 @@ namespace tfel
 
     FortranFunction6Ptr
     ExternalLibraryManager::getFortranFunction6(const std::string& l,
-					  const std::string& f)
+						const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       FortranFunction6Ptr fct = ::tfel_getFortranFunction6(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction6 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1667,23 +1473,18 @@ namespace tfel
 
     FortranFunction7Ptr
     ExternalLibraryManager::getFortranFunction7(const std::string& l,
-					  const std::string& f)
+						const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       FortranFunction7Ptr fct = ::tfel_getFortranFunction7(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction7 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1693,23 +1494,18 @@ namespace tfel
 
     FortranFunction8Ptr
     ExternalLibraryManager::getFortranFunction8(const std::string& l,
-					  const std::string& f)
+						const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       FortranFunction8Ptr fct = ::tfel_getFortranFunction8(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction8 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1719,23 +1515,18 @@ namespace tfel
 
     FortranFunction9Ptr
     ExternalLibraryManager::getFortranFunction9(const std::string& l,
-					  const std::string& f)
+						const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       FortranFunction9Ptr fct = ::tfel_getFortranFunction9(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction9 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1745,23 +1536,18 @@ namespace tfel
 
     FortranFunction10Ptr
     ExternalLibraryManager::getFortranFunction10(const std::string& l,
-					   const std::string& f)
+						 const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       FortranFunction10Ptr fct = ::tfel_getFortranFunction10(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction10 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1771,23 +1557,18 @@ namespace tfel
 
     FortranFunction11Ptr
     ExternalLibraryManager::getFortranFunction11(const std::string& l,
-					   const std::string& f)
+						 const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       FortranFunction11Ptr fct = ::tfel_getFortranFunction11(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction11 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1797,23 +1578,18 @@ namespace tfel
 
     FortranFunction12Ptr
     ExternalLibraryManager::getFortranFunction12(const std::string& l,
-					   const std::string& f)
+						 const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       FortranFunction12Ptr fct = ::tfel_getFortranFunction12(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction12 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1823,23 +1599,18 @@ namespace tfel
 
     FortranFunction13Ptr
     ExternalLibraryManager::getFortranFunction13(const std::string& l,
-					   const std::string& f)
+						 const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       FortranFunction13Ptr fct = ::tfel_getFortranFunction13(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction13 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1849,23 +1620,18 @@ namespace tfel
 
     FortranFunction14Ptr
     ExternalLibraryManager::getFortranFunction14(const std::string& l,
-					   const std::string& f)
+						 const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-
+      const auto lib = this->loadLibrary(l);
       FortranFunction14Ptr fct = ::tfel_getFortranFunction14(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction14 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));
@@ -1875,22 +1641,18 @@ namespace tfel
 
     FortranFunction15Ptr
     ExternalLibraryManager::getFortranFunction15(const std::string& l,
-					   const std::string& f)
+						 const std::string& f)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      const auto lib = this->loadLibrary(l);
       FortranFunction15Ptr fct = ::tfel_getFortranFunction15(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction15 : ");
 	msg += " could not load function '"+f+"' (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	  msg += getLastWin32Error();
+	msg += getLastWin32Error();
 #else
-	  msg += ::dlerror();
+	msg += ::dlerror();
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 	msg += ")";
 	throw(runtime_error(msg));

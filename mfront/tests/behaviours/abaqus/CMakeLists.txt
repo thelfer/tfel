@@ -76,12 +76,20 @@ set(mfront_tests_SOURCES
   SaintVenantKirchhoffElasticity3
   FiniteStrainSingleCrystal
   FiniteStrainSingleCrystal_NumericalJacobian
+  FiniteRotationSmallStrainElasticity
+  FiniteRotationSmallStrainElasticity2
   ComputeStressFreeExpansion
   IsotropicLinearSwelling
   IsotropicVolumeSwelling
   OrthotropicSwelling
   OrthotropicSwelling2
-  AxialGrowth)
+  AxialGrowth
+  AbaqusAxialGrowth
+  AbaqusAxialGrowth2
+  AbaqusOrthotropicSwelling
+  AbaqusOrthotropicSwelling2
+  AbaqusOrthotropicElastic
+  AbaqusOrthotropicElastic2)
 mfront_dependencies(MFrontAbaqusBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
@@ -329,6 +337,33 @@ test_abaqus(saintvenantkirchhoffelasticity3-shear-3-3D)
 test_abaqus(saintvenantkirchhoffelasticity3-shear-4-3D)
 test_abaqus(saintvenantkirchhoffelasticity3-shear-5-3D)
 test_abaqus(saintvenantkirchhoffelasticity3-shear-6-3D)
+test_abaqus(finiterotationsmallstrainelasticity-uniaxialloading-1-2D)
+test_abaqus(finiterotationsmallstrainelasticity-uniaxialloading-2-2D)
+test_abaqus(finiterotationsmallstrainelasticity-uniaxialloading-3-2D)
+test_abaqus(finiterotationsmallstrainelasticity-shear-1-2D)
+test_abaqus(finiterotationsmallstrainelasticity-shear-2-2D)
+test_abaqus(finiterotationsmallstrainelasticity-uniaxialloading-1-3D)
+test_abaqus(finiterotationsmallstrainelasticity-uniaxialloading-2-3D)
+test_abaqus(finiterotationsmallstrainelasticity-uniaxialloading-3-3D)
+test_abaqus(finiterotationsmallstrainelasticity-shear-1-3D)
+test_abaqus(finiterotationsmallstrainelasticity-shear-2-3D)
+test_abaqus(finiterotationsmallstrainelasticity-shear-3-3D)
+test_abaqus(finiterotationsmallstrainelasticity-shear-4-3D)
+test_abaqus(finiterotationsmallstrainelasticity-shear-5-3D)
+test_abaqus(finiterotationsmallstrainelasticity-shear-6-3D)
+test_abaqus(finiterotationsmallstrainelasticity2-uniaxialloading-1-2D)
+test_abaqus(finiterotationsmallstrainelasticity2-uniaxialloading-2-2D)
+test_abaqus(finiterotationsmallstrainelasticity2-shear-1-2D)
+test_abaqus(finiterotationsmallstrainelasticity2-shear-2-2D)
+test_abaqus(finiterotationsmallstrainelasticity2-uniaxialloading-1-3D)
+test_abaqus(finiterotationsmallstrainelasticity2-uniaxialloading-2-3D)
+test_abaqus(finiterotationsmallstrainelasticity2-uniaxialloading-3-3D)
+test_abaqus(finiterotationsmallstrainelasticity2-shear-1-3D)
+test_abaqus(finiterotationsmallstrainelasticity2-shear-2-3D)
+test_abaqus(finiterotationsmallstrainelasticity2-shear-3-3D)
+test_abaqus(finiterotationsmallstrainelasticity2-shear-4-3D)
+test_abaqus(finiterotationsmallstrainelasticity2-shear-5-3D)
+test_abaqus(finiterotationsmallstrainelasticity2-shear-6-3D)
 test_abaqus(finitestrainsinglecrystal-001)
 test_abaqus(finitestrainsinglecrystal-012)
 test_abaqus(finitestrainsinglecrystal-012-2)
@@ -337,3 +372,16 @@ test_abaqus(finitestrainsinglecrystal_numericaljacobian-001)
 test_abaqus(finitestrainsinglecrystal_numericaljacobian-012)
 test_abaqus(finitestrainsinglecrystal_numericaljacobian-012-2)
 test_abaqus(finitestrainsinglecrystal_numericaljacobian-159)
+test_abaqus(axialgrowth-omp)
+test_abaqus(elasticity14-omp)
+test_abaqus(elasticity6-omp)
+test_abaqus(elasticity10-omp)
+test_abaqus(elasticity22-omp)
+test_abaqus(orthotropicswelling2-omp)
+test_abaqus(elasticity11-omp)
+test_abaqus(elasticity23-omp)
+test_abaqus(orthotropicswelling-omp)
+test_abaqus(elasticity12-omp)
+test_abaqus(elasticity25-omp)
+test_abaqus(elasticity13-omp)
+test_abaqus(elasticity27-omp)

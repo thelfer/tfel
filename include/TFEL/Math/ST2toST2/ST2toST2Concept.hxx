@@ -10,8 +10,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef ST2TOST2_CONCEPT_LIB_
-#define ST2TOST2_CONCEPT_LIB_ 1
+#ifndef TFEL_MATH_ST2TOST2_CONCEPT_LIB_
+#define TFEL_MATH_ST2TOST2_CONCEPT_LIB_ 1
 
 #include<type_traits>
 
@@ -22,6 +22,7 @@
 #include"TFEL/Math/General/ConceptRebind.hxx"
 #include"TFEL/Math/Forward/ST2toST2Concept.hxx"
 #include"TFEL/Math/Forward/TensorConcept.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2TransposeExpr.hxx"
 
 namespace tfel{
 
@@ -145,6 +146,17 @@ namespace tfel{
     push_forward(ST2toST2Type&,
 		 const ST2toST2Type2&,
 		 const TensorType&);
+
+    /*!
+     * \return a transposed view of  the tensor
+     */
+    template<typename T>
+    TFEL_MATH_INLINE auto
+    transpose(T&& t)
+    -> typename std::enable_if<
+       tfel::meta::Implements<typename std::decay<T>::type,ST2toST2Concept>::cond,
+       Expr<typename ST2toST2Type<T>::type,
+            ST2toST2TransposeExpr<decltype(t)>>>::type;
     
   } // end of namespace math
 
@@ -152,4 +164,4 @@ namespace tfel{
 
 #include"TFEL/Math/ST2toST2/ST2toST2Concept.ixx"
 
-#endif /* ST2TOST2_CONCEPT_LIB_ */
+#endif /* TFEL_MATH_ST2TOST2_CONCEPT_LIB_ */

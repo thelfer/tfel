@@ -5,16 +5,16 @@ if WITH_TESTS
 
 testdir = $(pkgdatadir)/tests/Math/st2tost2
 
-test_PROGRAMS =	st2tost2      \
-		st2tost2-2    \
-		st2tost2-3    \
-		ST2toST2ChangeBasis         \
-		ST2toST2FromTinyMatrixView  \
-		ST2toST2FromTinyMatrixView2 \
-		ST2toST2PushForward         \
-		StensorSquareDerivative     \
-		ConvertToTangentModuliTest
-
+test_PROGRAMS =	st2tost2                                 \
+		st2tost2-2                               \
+		st2tost2-3                               \
+		ST2toST2ChangeBasis                      \
+		ST2toST2FromTinyMatrixView               \
+		ST2toST2FromTinyMatrixView2              \
+		ST2toST2PushForward                      \
+		StensorSquareDerivative                  \
+		ConvertToTangentModuliTest               \
+		ConvertLogarithmicStrainTangentOperator
 LDADD = -lTFELMath -lTFELException -lTFELTests \
 	-L$(top_builddir)/src/Tests            \
 	-L$(top_builddir)/src/Math             \
@@ -29,6 +29,7 @@ ST2toST2FromTinyMatrixView2_SOURCES = ST2toST2FromTinyMatrixView2.cxx
 ST2toST2PushForward_SOURCES = ST2toST2PushForward.cxx
 StensorSquareDerivative_SOURCES = StensorSquareDerivative.cxx
 ConvertToTangentModuliTest_SOURCES = ConvertToTangentModuliTest.cxx
+ConvertLogarithmicStrainTangentOperator_SOURCES = ConvertLogarithmicStrainTangentOperator.cxx
 
 TESTS=$(test_PROGRAMS)
 

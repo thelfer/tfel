@@ -88,8 +88,19 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("AsterInterface::treatKeyword : "+m));}
     };
-    if(std::find(i.begin(),i.end(),this->getName())==i.end()){
-      return {false,current};
+    if(!i.empty()){
+      if(std::find(i.begin(),i.end(),this->getName())!=i.end()){
+	throw_if((key!="@AsterGenerateMTestFileOnFailure")&&
+		 (key!="@AsterCompareToNumericalTangentOperator")&&
+		 (key!="@AsterTangentOperatorComparisonCriterium")&&
+		 (key!="@AsterTangentOperatorComparisonCriterion")&&
+		 (key!="@AsterStrainPerturbationValue")&&
+		 (key!="@AsterSaveTangentOperator")&&
+		 (key!="@AsterErrorReport"),
+		 "unsupported key '"+key+"'");
+      } else {
+	return {false,current};
+      }
     }
     if (key=="@AsterGenerateMTestFileOnFailure"){
       this->generateMTestFile = this->readBooleanValue(key,current,end);

@@ -47,6 +47,17 @@ namespace tfel{
       }
       return a;
     }
+
+    template<typename T>
+    auto transpose(T&& t)
+    -> typename std::enable_if<
+       tfel::meta::Implements<typename std::decay<T>::type,ST2toST2Concept>::cond,
+       Expr<typename ST2toST2Type<T>::type,
+            ST2toST2TransposeExpr<decltype(t)>>>::type{
+      return Expr<typename ST2toST2Type<T>::type,
+		  ST2toST2TransposeExpr<decltype(t)>>(std::forward<T>(t));
+    }
+
     
   } // end of namespace math
 

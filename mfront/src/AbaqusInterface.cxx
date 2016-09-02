@@ -194,8 +194,19 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("AbaqusInterface::treatKeyword: "+m));}
     };
-    if(std::find(i.begin(),i.end(),this->getName())==i.end()){
-      return {false,current};
+    if(!i.empty()){
+      if(std::find(i.begin(),i.end(),this->getName())!=i.end()){
+	auto keys =  AbaqusInterfaceBase::getCommonKeywords();
+	keys.insert(keys.end(),{"@AbaqusGenerateMTestFileOnFailure",
+	      "@AbaqusCompareToNumericalTangentOperator",
+	      "@AbaqusTangentOperatorComparisonCriterium",
+	      "@AbaqusTangentOperatorComparisonCriterion",
+	      "@AbaqusStrainPerturbationValue"});
+	throw_if(std::find(keys.begin(),keys.end(),key)==keys.end(),
+		 "unsupported key '"+key+"'");
+      } else {
+	return {false,current};
+      }
     }
     const auto r = AbaqusInterfaceBase::treatCommonKeywords(key,current,end);
     if(r.first){
@@ -254,6 +265,20 @@ namespace mfront{
 	       "unsupported feature @AbaqusSaveTangentOperator "
 	       "and @AbaqusCompareToNumericalTangentOperator : "
 	       "those are only valid for small strain beahviours");
+    }
+    throw_if((mb.getSymmetryType()!=mfront::ORTHOTROPIC)&&
+	     (this->omp!=UNDEFINEDORTHOTROPYMANAGEMENTPOLICY),
+	     "orthotropy management policy is only valid "
+	     "for orthotropic behaviour");
+    if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      if(((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	  (this->fss!=UNDEFINEDSTRATEGY))||
+	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+	throw_if(this->omp!=MFRONTORTHOTROPYMANAGEMENTPOLICY,
+		 "orthotropic finite strain behaviours are only supported with the "
+		 "'MFront' othotropy management policy. See the "
+		 "'@AbaqusOrthotropycManagementPolicy' for details");
+      }
     }
     // get the modelling hypotheses to be treated
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
@@ -377,6 +402,9 @@ namespace mfront{
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
+    if(this->omp!=UNDEFINEDORTHOTROPYMANAGEMENTPOLICY){
+      out << "#include\"MFront/Abaqus/AbaqusRotation.hxx\"\n\n";
+    }
     out << "#include\"MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx\"\n\n"
 	<< "#include\"MFront/Abaqus/AbaqusInterface.hxx\"\n\n"
 	<< "#include\"MFront/Abaqus/abaqus" << name << ".hxx\"\n\n";
@@ -408,7 +436,7 @@ namespace mfront{
 	if(this->fss==FINITEROTATIONSMALLSTRAIN){
 	  this->writeUMATFiniteRotationSmallStrainFunction(out,mb,name,h);
 	} else {
-	  throw_if(true,"unsupported finite strain strategy");
+	  throw_if(true,"unsupported finite strain strategy !");
 	}
       } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
 	this->writeUMATFiniteStrainFunction(out,mb,name,h);
@@ -431,32 +459,162 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("AbaqusInterface::writeUMATFunctionBase: "+m));}
     };
-    std::string dv0;
-    std::string dv1;
-    BehaviourDescription::BehaviourType btype;
-    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-       (this->fss==UNDEFINEDSTRATEGY)){
-      dv0 = "STRAN";
-      dv1 = "DSTRAN";
-      btype=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR;
-    } else if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	      (this->fss!=UNDEFINEDSTRATEGY)){
-      dv0 = "F0";
-      dv1 = "F1";
-      btype=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR;
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      dv0 = "F0";
-      dv1 = "F1";
-      btype=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR;
-    } else {
-      throw_if(true,"the abaqus interface only supports small "
-	       "and finite strain behaviours");
-    }
+    std::string dv0,dv1,sig,statev,nstatev;
+    const auto btype = mb.getBehaviourType();
     out << "static void\n" << name << "_base" << this->getFunctionNameForHypothesis("",h);
     writeUMATArguments(out,btype,false);
     out << "{\n";
-    out << "abaqus::AbaqusData d = {STRESS,PNEWDT,DDSDDE,STATEV,\n"
-	<< "                        *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
+    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+      if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    	// turning the deformation and the deformation gradient
+    	// increment to the material frame
+    	if(h==ModellingHypothesis::PLANESTRESS){
+	  out << "if(*NSTATV<2){\n"
+	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
+	      << "          << \"invalid number of state variables\\n\";\n"
+	      << "*PNEWDT = -1.;\n"
+	      << "return;\n"
+	      << "}\n"
+	      << "abaqus::AbaqusRotation2D<abaqus::AbaqusReal> R(STATEV);\n"
+    	      << "const abaqus::AbaqusReal eto[4u]  = {*STRAN ,*(STRAN+1) ,0,*(STRAN+2)};\n"
+    	      << "const abaqus::AbaqusReal deto[4u] = {*DSTRAN,*(DSTRAN+1),0,*(DSTRAN+2)};\n"
+    	      << "abaqus::AbaqusReal sg[4u] = {*STRESS ,*(STRESS+1) ,0,*(STRESS+2)};\n"
+    	      << "abaqus::AbaqusReal e[4u];\n"
+    	      << "abaqus::AbaqusReal de[4u];\n"
+    	      << "abaqus::AbaqusReal sm[4u];\n"
+    	      << "R.rotateStrainsForward(eto,e);\n"
+    	      << "R.rotateStrainsForward(deto,de);\n"
+    	      << "R.rotateStressesForward(sg,sm);\n"
+    	      << "e[2]=e[3];\n"
+    	      << "e[3]=e[0];\n"
+    	      << "de[2]=de[3];\n"
+    	      << "de[3]=de[0];\n"
+    	      << "sm[2]=sm[3];\n"
+    	      << "sm[3]=0;\n"
+	      << "const abaqus::AbaqusInt nstatev = *NSTATV-2;\n";
+	  statev="STATEV+2";
+    	} else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+    		   (h==ModellingHypothesis::PLANESTRAIN)){
+    	  out << "if(*NSTATV<2){\n"
+	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
+	      << "          << \"invalid number of state variables\\n\";\n"
+	      << "*PNEWDT = -1.;\n"
+	      << "return;\n"
+	      << "}\n"
+	      << "abaqus::AbaqusRotation2D<abaqus::AbaqusReal> R(STATEV);\n"
+    	      << "abaqus::AbaqusReal e[4u];\n"
+    	      << "abaqus::AbaqusReal de[4u];\n"
+    	      << "abaqus::AbaqusReal sm[4u];\n"
+    	      << "R.rotateStrainsForward(STRAN,e);\n"
+    	      << "R.rotateStrainsForward(DSTRAN,de);\n"
+    	      << "R.rotateStressesForward(STRESS,sm);\n"
+	      << "const abaqus::AbaqusInt nstatev = *NSTATV-2;\n";
+	  statev="STATEV+2";
+    	} else if (h==ModellingHypothesis::TRIDIMENSIONAL){
+    	  out << "if(*NSTATV<6){\n"
+	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
+	      << "          << \"invalid number of state variables\\n\";\n"
+	      << "*PNEWDT = -1.;\n"
+	      << "return;\n"
+	      << "}\n"
+	      << "abaqus::AbaqusRotation3D<abaqus::AbaqusReal> R(STATEV);\n"
+    	      << "abaqus::AbaqusReal e[6u];\n"
+    	      << "abaqus::AbaqusReal de[6u];\n"
+    	      << "abaqus::AbaqusReal sm[6u];\n"
+    	      << "R.rotateStrainsForward(STRAN,e);\n"
+    	      << "R.rotateStrainsForward(DSTRAN,de);\n"
+    	      << "R.rotateStressesForward(STRESS,sm);\n"
+	      << "const abaqus::AbaqusInt nstatev = *NSTATV-6;\n";
+	  statev="STATEV+6";	    
+    	} else {
+    	  throw_if(true,"unsupported hypothesis");
+    	}
+    	dv0 = "e";
+    	dv1 = "de";
+    	sig = "sm";
+	nstatev = "nstatev";
+      } else if(btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    	// turning the deformation gradients to the material frame
+    	if(h==ModellingHypothesis::PLANESTRESS){
+    	  out << "if(*NSTATV<2){\n"
+	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
+	      << "          << \"invalid number of state variables\\n\";\n"
+	      << "*PNEWDT = -1.;\n"
+	      << "return;\n"
+	      << "}\n"
+	      << "abaqus::AbaqusRotation2D<abaqus::AbaqusReal> R(STATEV);\n"
+    	      << "abaqus::AbaqusReal Fm0[9u];\n"
+	      << "abaqus::AbaqusReal Fm1[9u];\n"
+    	      << "abaqus::AbaqusReal sg[4u] = {*STRESS ,*(STRESS+1) ,0,*(STRESS+2)};\n"
+    	      << "abaqus::AbaqusReal sm[4u];\n"
+    	      << "R.rotateDeformationGradientForward(F0,Fm0);\n"
+    	      << "R.rotateDeformationGradientForward(F1,Fm1);\n"
+    	      << "R.rotateStressesForward(sg,sm);\n"
+    	      << "sm[2]=sm[3];\n"
+    	      << "sm[3]=0;\n"
+	      << "const abaqus::AbaqusInt nstatev = *NSTATV-2;\n";
+	  statev="STATEV+2";
+    	} else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+    		   (h==ModellingHypothesis::PLANESTRAIN)){
+    	  out << "if(*NSTATV<2){\n"
+	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
+	      << "          << \"invalid number of state variables\\n\";\n"
+	      << "*PNEWDT = -1.;\n"
+	      << "return;\n"
+	      << "}\n"
+	      << "abaqus::AbaqusRotation2D<abaqus::AbaqusReal> R(STATEV);\n"
+    	      << "abaqus::AbaqusReal Fm0[9u];\n"
+	      << "abaqus::AbaqusReal Fm1[9u];\n"
+    	      << "abaqus::AbaqusReal sm[4u];\n"
+    	      << "R.rotateDeformationGradientForward(F0,Fm0);\n"
+    	      << "R.rotateDeformationGradientForward(F1,Fm1);\n"
+     	      << "R.rotateStressesForward(STRESS,sm);\n"
+	      << "const abaqus::AbaqusInt nstatev = *NSTATV-2;\n";
+	  statev="STATEV+2";
+    	} else if (h==ModellingHypothesis::TRIDIMENSIONAL){
+    	  out << "if(*NSTATV<6){\n"
+	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
+	      << "          << \"invalid number of state variables\\n\";\n"
+	      << "*PNEWDT = -1.;\n"
+	      << "return;\n"
+	      << "}\n"
+	      << "abaqus::AbaqusRotation3D<abaqus::AbaqusReal> R(STATEV);\n"
+    	      << "abaqus::AbaqusReal Fm0[9u];\n"
+	      << "abaqus::AbaqusReal Fm1[9u];\n"
+     	      << "abaqus::AbaqusReal sm[6u];\n"
+    	      << "R.rotateDeformationGradientForward(F0,Fm0);\n"
+    	      << "R.rotateDeformationGradientForward(F1,Fm1);\n"
+     	      << "R.rotateStressesForward(STRESS,sm);\n"
+	      << "const abaqus::AbaqusInt nstatev = *NSTATV-6;\n";
+	  statev="STATEV+6";
+    	} else {
+    	  throw_if(true,"unsupported hypothesis");
+    	}
+	dv0 = "Fm0";
+	dv1 = "Fm1";
+	sig = "sm";
+	nstatev = "nstatev";
+      } else {
+    	throw_if(true,"the abaqus interface only supports small "
+    		 "and finite strain behaviours");
+      }
+    } else {
+      if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	dv0 = "STRAN";
+	dv1 = "DSTRAN";
+      } else if(btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	dv0 = "F0";
+	dv1 = "F1";
+      } else {
+    	throw_if(true,"the abaqus interface only supports small "
+    		 "and finite strain behaviours");
+      }
+      sig = "STRESS";
+      statev="STATEV";
+      nstatev="*NSTATV";
+    }
+    out << "abaqus::AbaqusData d = {" << sig << ",PNEWDT,DDSDDE," << statev << ",\n"
+	<< "                        *NTENS,*NPROPS," << nstatev << ",*DTIME,\n"
 	<< "                        DROT," << dv0 << "," << dv1 << ",TEMP,DTEMP,\n"
 	<< "                        PROPS,PREDEF,DPRED,\n"
 	<< getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
@@ -466,6 +624,37 @@ namespace mfront{
     out << "*PNEWDT = -1.;\n"
 	<< "return;\n"
 	<< "}\n";
+    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+      if(h==ModellingHypothesis::PLANESTRESS){
+	out << "abaqus::AbaqusReal D[16u] = {DDSDDE[0],DDSDDE[3],0,DDSDDE[6],\n"
+	    << "                             DDSDDE[1],DDSDDE[4],0,DDSDDE[7],\n"
+	    << "                             0,0,0,0,\n"
+	    << "                             DDSDDE[2],DDSDDE[5],0,DDSDDE[8]};\n"
+	    << "sm[3]=sm[2];\n"
+	    << "sm[2]=0;\n"
+	    << "R.rotateStressesBackward(sm,sg);\n"
+	    << "R.rotateTangentOperatorBackward(D);\n"
+	    << "STRESS[0]=sg[0];\n"
+	    << "STRESS[1]=sg[1];\n"
+	    << "STRESS[2]=sg[3];\n"
+	    << "DDSDDE[0]=D[0];\n"
+	    << "DDSDDE[1]=D[4];\n"
+	    << "DDSDDE[2]=D[12];\n"
+	    << "DDSDDE[3]=D[1];\n"
+	    << "DDSDDE[4]=D[5];\n"
+	    << "DDSDDE[5]=D[13];\n"
+	    << "DDSDDE[6]=D[3];\n"
+	    << "DDSDDE[7]=D[7];\n"
+	    << "DDSDDE[8]=D[15];\n";
+      } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+		 (h==ModellingHypothesis::PLANESTRAIN)||
+		 (h==ModellingHypothesis::TRIDIMENSIONAL)){
+	out << "R.rotateStressesBackward(sm,STRESS);\n"
+	    << "R.rotateTangentOperatorBackward(DDSDDE);\n";
+      } else {
+	throw_if(true,"unsupported hypothesis");
+      }
+    }
     if(getDebugMode()){
       out << "std::cout << \"Dt :\" << std::endl;\n"
 	  << "for(abaqus::AbaqusInt i=0;i!=*NTENS;++i){\n"
@@ -476,7 +665,7 @@ namespace mfront{
 	  << "}\n"
 	  << "std::cout << std::endl;\n";
     }
-    out << "}\n";
+    out << "}\n\n";
   } // end of AbaqusInterface::writeUMATFunctionBase
 
   void AbaqusInterface::writeUMATFiniteStrainFunction(std::ostream& out,
@@ -532,16 +721,20 @@ namespace mfront{
 	  << "std::copy(STRESS,STRESS+*(NTENS),sig0.begin());\n"
 	  << "std::copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
     }
-    this->generateMTestFile1(out);
+    if(this->generateMTestFile){
+      this->generateMTestFile1(out);
+    }
     out << name << "_base" << this->getFunctionNameForHypothesis("",h)
 	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,DRPLDT,\n"
 	<< "STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,CMNAME,\n"
 	<< "NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,PNEWDT,\n"
-	<< "CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,KINC,size);\n"
-	<< "if(*PNEWDT<1){\n";
-    this->generateMTestFile2(out,mb.getBehaviourType(),
-			     name,"",mb);
-    out << "}";
+	<< "CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,KINC,size);\n";
+    if(this->generateMTestFile){
+      out << "if(*PNEWDT<1){\n";
+      this->generateMTestFile2(out,mb.getBehaviourType(),
+			       name,"",mb);
+      out << "}\n";
+    }
     if(this->compareToNumericalTangentOperator){
       out << "// computing the tangent operator by pertubation\n"
 	  << "std::vector<abaqus::AbaqusReal> nD((*NTENS)*(*NTENS));\n"
@@ -640,7 +833,6 @@ namespace mfront{
 	<< "using namespace abaqus;\n"
 	<< "AbaqusReal eto[6];\n"
       	<< "AbaqusReal deto[6];\n"
-	<< "AbaqusReal sig[6];\n"
 	<< "AbaqusReal CSE[36];\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -664,7 +856,7 @@ namespace mfront{
       out << "}\n";
     }
     out	<< name << "_base" << this->getFunctionNameForHypothesis("",h)
-	<< "(sig,STATEV,CSE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,DRPLDT,\n"
+	<< "(STRESS,STATEV,CSE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,DRPLDT,\n"
 	<< "eto,deto,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,CMNAME,\n"
 	<< "NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,PNEWDT,\n"
 	<< "CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,KINC,size);\n";
@@ -673,8 +865,8 @@ namespace mfront{
       out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
     }
-    out << "AbaqusFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,DFGRD1,*NTENS," << ps << ",0);";
-    out << "AbaqusFiniteStrain::computeAbaqusTangentOperatorFromCSE(DDSDDE,CSE,DFGRD1,*NTENS);";
+    out << "AbaqusFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,DFGRD1,*NTENS," << ps << ",0);\n";
+    out << "AbaqusFiniteStrain::computeAbaqusTangentOperatorFromCSE(DDSDDE,CSE,DFGRD1,STRESS,*NTENS," << ps << ");\n";
     out << "}\n";
     out << "}\n\n";
   }

@@ -14,7 +14,8 @@
  "after the integration."
 }
                            
-@UMATFiniteStrainStrategy FiniteRotationSmallStrain;
+@CastemFiniteStrainStrategy[castem] FiniteRotationSmallStrain;
+@AbaqusFiniteStrainStrategy[abaqus] FiniteRotationSmallStrain;
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");

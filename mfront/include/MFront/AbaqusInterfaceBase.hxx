@@ -45,9 +45,26 @@ namespace mfront{
       FINITEROTATIONSMALLSTRAIN,
       MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN
     }; // end of enum FiniteStrainStrategy
+    /*!
+     * This enum defines how orthotropy is handled by the behaviour
+     */
+    enum OrthotropyManagementPolicy{
+      UNDEFINEDORTHOTROPYMANAGEMENTPOLICY,
+      NATIVEORTHOTROPYMANAGEMENTPOLICY,
+      MFRONTORTHOTROPYMANAGEMENTPOLICY
+    }; // end of enum FiniteStrainStrategy
     //! destructor
     virtual ~AbaqusInterfaceBase();
   protected:
+    /*!
+     * \brief return the state variable offset used for variables used
+     * internally by the abaqus interface
+     * \param[in] mb: behaviour description
+     * \param[in] : behaviour description
+     */
+    virtual unsigned short
+    getStateVariablesOffset(const BehaviourDescription&,
+			    const Hypothesis) const;
     /*!
      * \param[in] k  : keyword treated
      * \param[in] p  : iterator to the current token
@@ -60,6 +77,10 @@ namespace mfront{
     treatCommonKeywords(const std::string&,
 			CxxTokenizer::TokensContainer::const_iterator,
 			const CxxTokenizer::TokensContainer::const_iterator);
+    /*!
+     * \return the list of supported keywords
+     */
+    std::vector<std::string> getCommonKeywords(void) const;
     /*!
      * \return the name of the generated library
      * \param[in] mb : behaviour description
@@ -91,6 +112,19 @@ namespace mfront{
 				 const Hypothesis,
 				 const BehaviourDescription&,
 				 const FileDescription&) const override;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
+     * \param[in] mb   : behaviour description
+     * \param[in] fd   : file description
+     */
+    virtual void
+    writeUMATxxSpecificSymbols(std::ostream&,
+			       const std::string&,
+			       const BehaviourDescription&,
+			       const FileDescription&) const;
     /*!
      * \param[in] out : output file
      */
@@ -156,6 +190,8 @@ namespace mfront{
 		const std::string&) const;
     //! selected finite strain strategy
     FiniteStrainStrategy fss = UNDEFINEDSTRATEGY;
+    //! selected orthotropy management policy
+    OrthotropyManagementPolicy omp = UNDEFINEDORTHOTROPYMANAGEMENTPOLICY;
   }; // end of struct AbaqusInterfaceBase
   
 } // end of namespace mfront

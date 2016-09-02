@@ -66,6 +66,10 @@ namespace mtest
   {
     using namespace std;
     using namespace tfel::material;
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("AbaqusStandardBehaviour::"
+				     "AbaqusStandardBehaviour: "+m));}
+    };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     const auto bn = AbaqusStandardBehaviour::getBehaviourName(b,h);
     this->fct = elm.getAbaqusExternalBehaviourFunction(l,b);
@@ -73,6 +77,35 @@ namespace mtest
     bool eo = elm.getUMATRequiresStiffnessTensor(l,bn,this->hypothesis);
     bool to = elm.getUMATRequiresThermalExpansionCoefficientTensor(l,bn,this->hypothesis);
     unsigned short etype = elm.getUMATElasticSymmetryType(l,bn);
+    if(this->stype==1u){
+      this->omp = elm.getAbaqusOrthotropyManagementPolicy(l,bn);
+      if(this->omp==2u){
+	auto aivs = std::vector<std::string>{};
+	if((h==ModellingHypothesis::PLANESTRESS)||
+	   (h==ModellingHypothesis::PLANESTRAIN)||
+	   (h==ModellingHypothesis::AXISYMMETRICAL)||
+	   (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	  aivs = {"FirstOrthotropicDirection_1",
+		  "FirstOrthotropicDirection_2"};
+	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	  aivs = {"FirstOrthotropicDirection_1",
+		  "FirstOrthotropicDirection_2",
+		  "FirstOrthotropicDirection_3",
+		  "SecondOrthotropicDirection_1",
+		  "SecondOrthotropicDirection_2",
+		  "SecondOrthotropicDirection_3"};
+	} else {
+	  throw_if(true,"unsupported modelling hypothesis");
+	}
+	for(const auto& iv: aivs){
+	  throw_if(std::find(this->ivnames.begin(),this->ivnames.end(),iv)!=
+		   this->ivnames.end(),
+		   iv+" is a reserved name");
+	  this->ivtypes.insert(this->ivtypes.begin(),0);
+	}
+	this->ivnames.insert(this->ivnames.begin(),aivs.begin(),aivs.end());
+      }
+    }
     vector<string> tmp;
     if(etype==0u){
       if(eo){
@@ -118,13 +151,11 @@ namespace mtest
 	  tmp.push_back("ThermalExpansion3");
 	}
       } else { 
-	throw(std::runtime_error("AbaqusStandardBehaviour::AbaqusStandardBehaviour : "
-				 "unsupported modelling hypothesis"));
+	throw_if(true,"unsupported modelling hypothesis");
       }
     } else {
-      throw(std::runtime_error("AbaqusStandardBehaviour::AbaqusStandardBehaviour : "
-			       "unsupported behaviour type "
-			       "(neither isotropic nor orthotropic)"));
+      throw_if(true,"unsupported behaviour type "
+	       "(neither isotropic nor orthotropic)");
     }
     this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
   }

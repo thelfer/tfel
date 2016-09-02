@@ -81,9 +81,9 @@ private:
     for(unsigned short i=0;i!=3u;++i){
       stensor<1u,double> ls(s);
       ls[i] +=   eps;
-      stensor<1u,double> ppf = positive_part(ls);
+      const auto ppf = positive_part(ls);
       ls[i] -= 2.*eps;
-      stensor<1u,double> ppb = positive_part(ls);
+      const auto ppb = positive_part(ls);
       ls[i] +=   eps;
       for(unsigned short j=0;j!=3u;++j){
 	ndpp(j,i) = (ppf(j)-ppb(j))/(2.*eps);
@@ -153,9 +153,9 @@ private:
     for(unsigned short i=0;i!=4u;++i){
       stensor<2u,double> ls(s);
       ls[i] +=   eps;
-      stensor<2u,double> ppf = positive_part(ls);
+      const auto ppf = positive_part(ls);
       ls[i] -= 2.*eps;
-      stensor<2u,double> ppb = positive_part(ls);
+      const auto ppb = positive_part(ls);
       ls[i] +=   eps;
       for(unsigned short j=0;j!=4u;++j){
 	ndpp(j,i) = (ppf(j)-ppb(j))/(2.*eps);
@@ -302,11 +302,11 @@ private:
     for(unsigned short i=0;i!=3u;++i){
       stensor<1u,double> ls(s);
       ls[i] +=   eps;
-      stensor<1u,double> ppf = positive_part(ls);
-      stensor<1u,double> npf = negative_part(ls);
+      const auto ppf = positive_part(ls);
+      const auto npf = negative_part(ls);
       ls[i] -= 2.*eps;
-      stensor<1u,double> ppb = positive_part(ls);
-      stensor<1u,double> npb = negative_part(ls);
+      const auto ppb = positive_part(ls);
+      const auto npb = negative_part(ls);
       ls[i] +=   eps;
       for(unsigned short j=0;j!=3u;++j){
 	ndpp(j,i) = (ppf(j)-ppb(j))/(2.*eps);
@@ -384,11 +384,11 @@ private:
     for(unsigned short i=0;i!=4u;++i){
       stensor<2u,double> ls(s);
       ls[i] +=   eps;
-      stensor<2u,double> ppf = positive_part(ls);
-      stensor<2u,double> npf = negative_part(ls);
+      const auto ppf = positive_part(ls);
+      const auto npf = negative_part(ls);
       ls[i] -= 2.*eps;
-      stensor<2u,double> ppb = positive_part(ls);
-      stensor<2u,double> npb = negative_part(ls);
+      const auto ppb = positive_part(ls);
+      const auto npb = negative_part(ls);
       ls[i] +=   eps;
       for(unsigned short j=0;j!=4u;++j){
 	ndpp(j,i) = (ppf(j)-ppb(j))/(2.*eps);
@@ -469,12 +469,12 @@ private:
     for(unsigned short i=0;i!=6u;++i){
       stensor<3u,double> ls(s);
       ls[i] +=   eps;
-      stensor<3u,double> ppf = positive_part(ls);
-      stensor<3u,double> npf = negative_part(ls);
-      ls[i] -= 2.*eps;
-      stensor<3u,double> ppb = positive_part(ls);
-      stensor<3u,double> npb = negative_part(ls);
-      ls[i] +=   eps;
+      const auto ppf = positive_part(ls);
+      const auto npf = negative_part(ls);
+      ls[i] -= 2*eps;
+      const auto ppb = positive_part(ls);
+      const auto npb = negative_part(ls);
+      ls[i] += eps;
       for(unsigned short j=0;j!=6u;++j){
 	ndpp(j,i) = (ppf(j)-ppb(j))/(2.*eps);
 	ndnp(j,i) = (npf(j)-npb(j))/(2.*eps);
@@ -512,15 +512,9 @@ TFEL_TESTS_GENERATE_PROXY(DecompositionInPositiveAndNegativePartsTest3D,
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(void)
 {
-  using namespace std;
-  using namespace tfel::tests;
-  auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
-  manager.addXMLTestOutput("stensor10.xml");
-  TestResult r = manager.execute();
-  if(!r.success()){
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("stensor10.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 

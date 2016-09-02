@@ -340,6 +340,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toST2/ST2toST2ConceptPushForward.ixx                                            \
 			TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx                                                     \
 			TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx                                             \
+			TFEL/Math/ST2toST2/ST2toST2TransposeExpr.hxx                                                 \
 			TFEL/Math/ST2toST2/st2tost2ResultType.hxx                                                    \
 			TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx                                            \
 			TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx                                           \
@@ -356,6 +357,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx                                                \
 			TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx                       \
 			TFEL/Math/ST2toST2/ConvertKirchhoffStressDerivativeToSpatialModuli.hxx                       \
+			TFEL/Math/ST2toST2/ConvertLogarithmicStrainTangentOperator.hxx                               \
 			TFEL/Math/ST2toST2/UmatNormaliseTangentOperator.hxx                                          \
 			TFEL/Math/ST2toST2/UmatNormaliseTangentOperator.ixx                                          \
 			TFEL/Math/t2tost2.hxx                                                                        \

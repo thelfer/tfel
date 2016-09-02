@@ -129,23 +129,31 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("EuroplexusInterface::treatKeyword: "+m));}
     };
-    auto read = [](const std::string& s){
-      if(s=="FiniteRotationSmallStrain"){
-	return FINITEROTATIONSMALLSTRAIN;
-      } else if(s=="MieheApelLambrechtLogarithmicStrain"){
-	return MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
+    if(!i.empty()){
+      if(std::find(i.begin(),i.end(),this->getName())!=i.end()){
+	throw_if((key!="@EuroplexusFiniteStrainStrategy")&&
+		 (key!="@EPXFiniteStrainStrategy")&&
+		 (key!="@EuroplexusGenerateMTestFileOnFailure")&&
+		 (key!="@EPXGenerateMTestFileOnFailure"),
+		 "unsupported key '"+key+"'");
       } else {
-	throw(std::runtime_error("EuroplexusInterface::treatKeyword: "
-				 "unsupported strategy '"+s+"'\n"
-				 "The only supported strategies are "
-				 "'FiniteRotationSmallStrain' and "
-				 "'MieheApelLambrechtLogarithmicStrain'"));
+	return {false,current};
       }
-    };
-    if(std::find(i.begin(),i.end(),this->getName())==i.end()){
-      return {false,current};
     }
     if ((key=="@EuroplexusFiniteStrainStrategy")||(key=="@EPXFiniteStrainStrategy")){
+      auto read = [](const std::string& s){
+	if(s=="FiniteRotationSmallStrain"){
+	  return FINITEROTATIONSMALLSTRAIN;
+	} else if(s=="MieheApelLambrechtLogarithmicStrain"){
+	  return MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
+	} else {
+	  throw(std::runtime_error("EuroplexusInterface::treatKeyword: "
+				   "unsupported strategy '"+s+"'\n"
+				   "The only supported strategies are "
+				   "'FiniteRotationSmallStrain' and "
+				   "'MieheApelLambrechtLogarithmicStrain'"));
+	}
+      };
       throw_if(this->fss!=UNDEFINEDSTRATEGY,
 	       "a finite strain strategy has already been defined");
       throw_if(current==end,"unexpected end of file");

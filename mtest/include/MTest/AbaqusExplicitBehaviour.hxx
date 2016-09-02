@@ -114,6 +114,8 @@ namespace mtest
   protected:
     //! the abaqus fonction
     tfel::system::AbaqusExplicitFctPtr fct;
+    //! orthotropy management policy
+    unsigned short omp = 0u;
   }; // end of struct Behaviour
   
 } // end of namespace mtest

@@ -163,78 +163,87 @@ namespace mfront{
     }
   } // end of ModelDSLCommon::writeOutputFiles
 
-  void
-  ModelDSLCommon::treatUnknownKeyword(void)
+  void ModelDSLCommon::treatUnknownKeyword(void)
   {
-    auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("ModelDSLCommon::treatUnknownKeyword: "+m));}
-    };
+    TokensContainer::const_iterator p2;
     auto treated = false;
-    auto p2 = TokensContainer::const_iterator{};
     --(this->current);
     const auto key = this->current->value;
     ++(this->current);
     this->checkNotEndOfFile("ModelDSLCommon::treatUnknownKeyword");
     if(this->current->value=="["){
-      auto s = std::set<std::string>{};
+      ++(this->current);
+      this->checkNotEndOfFile("ModelDSLCommon::treatUnknownKeyword");
+      auto s = std::vector<std::string>{};
       while(this->current->value!="]"){
+	this->checkNotEndOfFile("ModelDSLCommon::treatUnknownKeyword");
+	const auto t = [this](){
+	  if(this->current->flag==tfel::utilities::Token::String){
+	    return this->current->value.substr(1,this->current->value.size()-2);
+	  }
+	  return this->current->value;
+	}();
 	++(this->current);
 	this->checkNotEndOfFile("ModelDSLCommon::treatUnknownKeyword");
-	std::string t;
-	if(this->current->flag==tfel::utilities::Token::String){
-	  t = this->current->value.substr(1,this->current->value.size()-2);
-	} else {
-	  t = this->current->value;
+	if(std::find(s.begin(),s.end(),t)==s.end()){
+	  s.push_back(t);
 	}
-	if(this->interfaces.find(t)!=this->interfaces.end()){
-	  s.insert(t);
+	if(this->current->value!="]"){
+	  this->readSpecifiedToken("ModelDSLCommon::treatUnknownKeyword",",");
+	  this->checkNotEndOfFile("ModelDSLCommon::treatUnknownKeyword");
+	  if(this->current->value=="]"){
+	    this->throwRuntimeError("ModelDSLCommon::treatUnknownKeyword",
+				    "unexpected token ']'");
+	  }
 	}
-	++(this->current);
-	throw_if((this->current->value!="]")&&(this->current->value!=","),
-		 "unexpected token '"+this->current->value+"' "
-		 "(expected ']' or ',').");
       }
       ++(this->current);
-      if(s.empty()){
-	this->ignoreKeyWord(key);
-      } else {
-	for(const auto & i : s){
-	  const auto p = interfaces.at(i)->treatKeyword(key,this->current,
-						this->tokens.end());
-	  throw_if(!p.first,"the keyword '"+key+"' has not been treated "
-		   "by interface '"+i+"'");
-	  if(treated){
-	    throw_if(p2!=p.second,"the keyword '"+key+"' has been treated "
-		     "by two interfaces but results were different");
-	  }
-	  p2 = p.second;
-	  treated = true;
-	}
-	this->current = p2;
-      }
-    } else {
-      for(const auto& i : this->interfaces){
-	auto p = i.second->treatKeyword(key,this->current,
-					this->tokens.end());
+      for(auto& i : this->interfaces){
+	auto p = i.second->treatKeyword(key,s,this->current,
+				   this->tokens.end());
 	if(p.first){
 	  if(treated){
-	    throw_if(p2!=p.second,"the keyword '"+key+"' has been treated "
-		     "by two interfaces but results were different");
+	    if(p2!=p.second){
+	      this->throwRuntimeError("ModelDSLCommon::treatUnknownKeyword",
+				      "the keyword '"+key+"' has been treated "
+				      "by two interfaces/analysers but "
+				      "results were differents");
+	    }
 	  }
 	  p2 = p.second;
 	  treated = true;
 	}
       }
       if(!treated){
-	DSLBase::treatUnknownKeyword();
+	this->ignoreKeyWord(key);
+	return;
       }
-      this->current = p2;
+    } else {
+      for(const auto&i : this->interfaces){
+	auto p = i.second->treatKeyword(key,{i.first},
+					this->current,
+					this->tokens.end());
+	if(p.first){
+	  if(treated){
+	    if(p2!=p.second){
+	      this->throwRuntimeError("ModelDSLCommon::treatUnknownKeyword",
+				      "the keyword '"+key+"' has been treated "
+				      "by two interfaces/analysers but "
+				      "results were differents");
+	    }
+	  }
+	  p2 = p.second;
+	  treated = true;
+	}
+      }
     }
-
+    if(!treated){
+      DSLBase::treatUnknownKeyword();
+    }
+    this->current = p2;
   } // end of ModelDSLCommon::treatUnknownKeyword
 
-  void
-  ModelDSLCommon::treatDomain(void)
+  void ModelDSLCommon::treatDomain(void)
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::treatDomain: "+m));}

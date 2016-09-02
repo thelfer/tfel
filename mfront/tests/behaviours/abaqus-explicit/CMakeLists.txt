@@ -18,7 +18,11 @@ set(mfront_tests_SOURCES
   LogarithmicStrainNortonCreep
   OrthotropicSwelling
   OrthotropicSwelling2
-  AxialGrowth)
+  AxialGrowth
+  AbaqusAxialGrowth
+  AbaqusAxialGrowth2
+  AbaqusOrthotropicSwelling
+  AbaqusOrthotropicSwelling2)
 
 mfront_behaviour_check_library(MFrontAbaqusExplicitBehaviours
   abaqusexplicit ${mfront_tests_SOURCES})

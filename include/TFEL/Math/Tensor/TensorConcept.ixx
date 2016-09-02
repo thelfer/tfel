@@ -879,8 +879,7 @@ namespace tfel{
       (TensorTraits<typename std::decay<TensorType>::type>::dime==1u),
       Expr<tensor<1u,typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType>,
 	   TensorTransposeExpr1D<decltype(t)>>>::type{
-      using NumType = typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType;
-      return Expr<tensor<1u,NumType>,
+      return Expr<tensor<1u,typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType>,
 		  TensorTransposeExpr1D<decltype(t)>>(std::forward<TensorType>(t));
      } // end of transpose
 
@@ -892,8 +891,7 @@ namespace tfel{
       (TensorTraits<typename std::decay<TensorType>::type>::dime==2u),
       Expr<tensor<2u,typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType>,
 	   TensorTransposeExpr2D<decltype(t)>>>::type{
-      using NumType = typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType;
-      return Expr<tensor<2u,NumType>,
+      return Expr<tensor<2u,typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType>,
 		  TensorTransposeExpr2D<decltype(t)>>(std::forward<TensorType>(t));
     } // end of transpose
 
@@ -905,8 +903,7 @@ namespace tfel{
       (TensorTraits<typename std::decay<TensorType>::type>::dime==3u),
       Expr<tensor<3u,typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType>,
 	   TensorTransposeExpr3D<decltype(t)>>>::type{
-      using NumType = typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType;
-      return Expr<tensor<3u,NumType>,
+      return Expr<tensor<3u,typename TensorTraits<typename std::decay<decltype(t)>::type>::NumType>,
 		  TensorTransposeExpr3D<decltype(t)>>(std::forward<TensorType>(t));
     } // end of transpose
   

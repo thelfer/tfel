@@ -48,19 +48,18 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("AbaqusInterfaceBase::treatCommonKeywords: "+m));}
     };
-    auto read = [&throw_if](const std::string& s){
-      if(s=="FiniteRotationSmallStrain"){
-	return FINITEROTATIONSMALLSTRAIN;
-      } else if(s=="MieheApelLambrechtLogarithmicStrain"){
-	return MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
-      } else {
+    if (key=="@AbaqusFiniteStrainStrategy"){
+      auto read = [&throw_if](const std::string& s){
+	if(s=="FiniteRotationSmallStrain"){
+	  return FINITEROTATIONSMALLSTRAIN;
+	} else if(s=="MieheApelLambrechtLogarithmicStrain"){
+	  return MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
+	}
 	throw_if(true,"unsupported strategy '"+s+"'\n"
 		 "The only supported strategies are "
 		 "'FiniteRotationSmallStrain' and "
 		 "'MieheApelLambrechtLogarithmicStrain'");
-      }
-    };
-    if (key=="@AbaqusFiniteStrainStrategy"){
+      };
       throw_if(this->fss!=UNDEFINEDSTRATEGY,
 	       "a finite strain strategy has already been defined");
       throw_if(current==end,"unexpected end of file");
@@ -70,8 +69,50 @@ namespace mfront{
       ++(current);
       return {true,current};
     }
+    if (key=="@AbaqusOrthotropyManagementPolicy"){
+      auto read = [&throw_if](const std::string& s){
+	if(s=="Native"){
+	  return NATIVEORTHOTROPYMANAGEMENTPOLICY;
+	} else if(s=="MFront"){
+	  return MFRONTORTHOTROPYMANAGEMENTPOLICY;
+	}
+	throw_if(true,"unsupported orthotropy management policy '"+s+"'\n"
+		 "The only supported policies are "
+		 "'MFront' and 'Native'");
+      };
+      throw_if(this->omp!=UNDEFINEDORTHOTROPYMANAGEMENTPOLICY,
+	       "an orthotropy management policy has already been defined");
+      throw_if(current==end,"unexpected end of file");
+      this->omp = read(current->value);
+      throw_if(++current==end,"unexpected end of file");
+      throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
+      ++(current);
+      return {true,current};
+    }
     return {false,current};
-  } // end of AbaqusInterfaceBase::treatKeyword
+  } // end of AbaqusInterfaceBase::treatCommonKeyword
+
+  unsigned short
+  AbaqusInterfaceBase::getStateVariablesOffset(const BehaviourDescription&,
+					       const Hypothesis h) const{
+    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+      if((h==tfel::material::ModellingHypothesis::AXISYMMETRICAL)||
+	 (h==tfel::material::ModellingHypothesis::PLANESTRAIN)||
+	 (h==tfel::material::ModellingHypothesis::PLANESTRESS)){
+	return 2u;
+      } else if(h==tfel::material::ModellingHypothesis::TRIDIMENSIONAL){
+	return 6u;
+      }
+      throw(std::runtime_error("AbaqusInterfaceBase::getStateVariablesOffset: "
+			       "invalid hypothesis"));
+    }
+    return 0u;
+  }
+  
+  std::vector<std::string>
+  AbaqusInterfaceBase::getCommonKeywords(void) const{
+    return {"@AbaqusFiniteStrainStrategy","@AbaqusOrthotropyManagementPolicy"};
+  } // end of AbaqusInterfaceBase::getCommonKeywords
   
   std::string AbaqusInterfaceBase::getFunctionName(const std::string& name) const
   {
@@ -250,8 +291,8 @@ namespace mfront{
 
   void
   AbaqusInterfaceBase::writeAbaqusBehaviourTraits(std::ostream& out,
-					      const BehaviourDescription& mb,
-					      const tfel::material::ModellingHypothesis::Hypothesis h) const
+						  const BehaviourDescription& mb,
+						  const tfel::material::ModellingHypothesis::Hypothesis h) const
   {
     using namespace std;
     using namespace tfel::material;
@@ -331,7 +372,8 @@ namespace mfront{
     } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "static " << constexpr_c << " AbaqusSymmetryType type = abaqus::ORTHOTROPIC;\n";
     } else {
-      throw(std::runtime_error("AbaqusInterfaceBase::endTreatment: unsupported behaviour type.\n"
+      throw(std::runtime_error("AbaqusInterfaceBase::writeAbaqusBehaviourTraits: "
+			       "unsupported behaviour type.\n"
 			       "The abaqus interface only support isotropic or orthotropic "
 			       "behaviour at this time."));
     }
@@ -370,7 +412,8 @@ namespace mfront{
 	out << "static " << constexpr_c << " unsigned short thermalExpansionPropertiesOffset = 0u;\n"; 
       }
     } else {
-      throw(std::runtime_error("AbaqusInterfaceBase::endTreatment: unsupported behaviour type.\n"
+      throw(std::runtime_error("AbaqusInterfaceBase::writeAbaqusBehaviourTraits: "
+			       "unsupported behaviour type.\n"
 			       "The abaqus interface only support isotropic or "
 			       "orthotropic behaviour at this time."));
     }
@@ -414,6 +457,28 @@ namespace mfront{
 					      const BehaviourDescription&,
 					      const FileDescription&) const
   {} // end of AbaqusInterfaceBase::writeUMATxxAdditionalSymbols
+
+  void AbaqusInterfaceBase::writeUMATxxSpecificSymbols(std::ostream& out,
+						       const std::string& name,
+						       const BehaviourDescription& mb,
+						       const FileDescription&) const
+  {
+    if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	    << "_OrthotropyManagementPolicy = 2u;\n\n";    
+      } else if(this->omp==NATIVEORTHOTROPYMANAGEMENTPOLICY){
+	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	    << "_OrthotropyManagementPolicy = 1u;\n\n";    
+      } else if(this->omp==UNDEFINEDORTHOTROPYMANAGEMENTPOLICY){
+	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	    << "_OrthotropyManagementPolicy = 0u;\n\n";    
+      } else {
+	throw(std::runtime_error("AbaqusInterfaceBase::writeUMATxxSpecificSymbols: "
+				 "unsupported orthotropy management policy"));
+      }
+    }
+  }
   
   void
   AbaqusInterfaceBase::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const

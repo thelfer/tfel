@@ -345,6 +345,23 @@ namespace tfel
       checkIfAsterBehaviourSavesTangentOperator(const std::string&,
 						const std::string&);
       /*!
+       * \return the orthotropy management policy for the Abaqus and
+       * Abaqus/Explicit interface. See the associated documentation
+       * for details.
+       *
+       * The return value has the following meaning:
+       * 
+       * - 0: unspecified policy (equivalent to native)
+       * - 1: native policy (equivalent to native)
+       * - 2: mfront policy
+       *
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      unsigned short
+      getAbaqusOrthotropyManagementPolicy(const std::string&,
+					  const std::string&);
+      /*!
        * \param[in] l : name of the library
        * \param[in] f : function name
        */

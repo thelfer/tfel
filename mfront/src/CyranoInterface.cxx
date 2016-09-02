@@ -120,8 +120,10 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::utilities;
-    if(std::find(i.begin(),i.end(),this->getName())==i.end()){
-      return {false,current};
+    if(!i.empty()){
+      if(std::find(i.begin(),i.end(),this->getName())==i.end()){
+	return {false,current};
+      }
     }
     if((key=="@CyranoGenerateMTestFileOnFailure")||
        (key=="@UMATGenerateMTestFileOnFailure")){

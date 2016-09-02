@@ -55,14 +55,6 @@ namespace mfront{
     this->hasSpecializedDomain  = false;
   } // end of MFrontPleiadesModelInterfaceBase::MFrontPleiadesModelInterfaceBase
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  MFrontPleiadesModelInterfaceBase::treatKeyword(const std::string&,
-						 TokensContainer::const_iterator c,
-						 const TokensContainer::const_iterator)
-  {
-    return {false,c};
-  } // end of MFrontPleiadesModelInterfaceBase::treatKeyword
-
   void MFrontPleiadesModelInterfaceBase::declareReservedNames(std::set<std::string>& v)
   {
     v.insert({"msg","oss","mesh","nodes","mesh","node_k","gnode_k","dt",

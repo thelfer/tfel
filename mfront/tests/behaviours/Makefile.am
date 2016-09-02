@@ -132,7 +132,13 @@ MFRONTS= DDIF2.mfront                                                      \
 	 AxialGrowth.mfront                                                \
 	 AxialGrowth2.mfront                                               \
 	 OrthotropicSwelling.mfront                                        \
-	 OrthotropicSwelling2.mfront
+	 OrthotropicSwelling2.mfront                                       \
+	 AbaqusAxialGrowth.mfront                                          \
+	 AbaqusAxialGrowth2.mfront                                         \
+	 AbaqusOrthotropicElastic.mfront                                   \
+	 AbaqusOrthotropicElastic2.mfront                                  \
+	 AbaqusOrthotropicSwelling.mfront                                  \
+	 AbaqusOrthotropicSwelling2.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)

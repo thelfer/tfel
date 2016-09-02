@@ -45,6 +45,11 @@ namespace tfel{
       static constexpr bool cond = std::is_base_of<concept<T>,T>::value;
     };
 
+    template<typename T, template<typename> class concept>
+    constexpr bool implements(void){
+      return Implements<T,concept>::cond;
+    }
+    
   } // end of namespace meta
 
 } // end of namespace tfel

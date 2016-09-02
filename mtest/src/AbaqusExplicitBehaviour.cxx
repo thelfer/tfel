@@ -14,6 +14,7 @@
 #include<cmath>
 #include<ostream>
 #include<sstream>
+#include<iterator>
 #include<algorithm>
 
 #include"TFEL/Math/tensor.hxx"
@@ -72,6 +73,10 @@ namespace mtest
 						   const std::string& b)
     : UmatBehaviourBase(h,l,AbaqusExplicitBehaviour::getBehaviourName(b,h))
   {
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("AbaqusExplicitBehaviour::"
+				     "AbaqusExplicitBehaviour:"+m));}
+    };
     auto& elm        = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     const auto bn    = AbaqusExplicitBehaviour::getBehaviourName(b,h);
     this->fct        = elm.getAbaqusExplicitExternalBehaviourFunction(l,b);
@@ -79,6 +84,35 @@ namespace mtest
     const auto eo    = elm.getUMATRequiresStiffnessTensor(l,bn,this->hypothesis);
     const auto to    = elm.getUMATRequiresThermalExpansionCoefficientTensor(l,bn,this->hypothesis);
     const auto etype = elm.getUMATElasticSymmetryType(l,bn);
+    if(this->stype==1u){
+      this->omp = elm.getAbaqusOrthotropyManagementPolicy(l,bn);
+      if(this->omp==2u){
+	auto aivs = std::vector<std::string>{};
+	if((h==ModellingHypothesis::PLANESTRESS)||
+	   (h==ModellingHypothesis::PLANESTRAIN)||
+	   (h==ModellingHypothesis::AXISYMMETRICAL)||
+	   (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	  aivs = {"FirstOrthotropicDirection_1",
+		  "FirstOrthotropicDirection_2"};
+	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	  aivs = {"FirstOrthotropicDirection_1",
+		  "FirstOrthotropicDirection_2",
+		  "FirstOrthotropicDirection_3",
+		  "SecondOrthotropicDirection_1",
+		  "SecondOrthotropicDirection_2",
+		  "SecondOrthotropicDirection_3"};
+	} else {
+	  throw_if(true,"unsupported modelling hypothesis");
+	}
+	for(const auto& iv: aivs){
+	  throw_if(std::find(this->ivnames.begin(),this->ivnames.end(),iv)!=
+		   this->ivnames.end(),
+		   iv+" is a reserved name");
+	  this->ivtypes.insert(this->ivtypes.begin(),0);
+	}
+	this->ivnames.insert(this->ivnames.begin(),aivs.begin(),aivs.end());
+      }
+    }
     auto tmp = std::vector<std::string>{};
     tmp.emplace_back("MassDensity");
     if(etype==0u){
@@ -146,7 +180,8 @@ namespace mtest
     wk.D.resize(nth,nth);
     wk.kt.resize(nth,ndv);
     wk.k.resize(nth,ndv);
-    wk.mps.resize(this->mpnames.size()==0 ? 1u : this->mpnames.size(),real(0));
+    wk.mps.resize(this->mpnames.size()==0 ? 1u :
+		  this->mpnames.size(),real(0));
     wk.evs.resize(this->evnames.size());
     mtest::allocate(wk.cs,this->shared_from_this());
   } // end of AbaqusExplicitBehaviour::allocate
@@ -162,6 +197,10 @@ namespace mtest
 					   BehaviourWorkSpace& wk) const{
     using tfel::math::matrix;
     using abaqus::AbaqusInt;
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("AbaqusExplicitBehaviour::"
+				     "doPackagingStep:"+m));}
+    };
     matrix<real> K;
     const auto h = this->getHypothesis();
     if((h==ModellingHypothesis::PLANESTRESS)||
@@ -171,12 +210,11 @@ namespace mtest
     } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
       K.resize(6u,6u,0);
     } else {
-      throw(std::runtime_error("AbaqusExplicitBehaviour::doPackagingStep: "
-			       "unsupported hypothesis ("+
-			       ModellingHypothesis::toString(h)+")"));
+      throw_if(true,"unsupported hypothesis ("+
+	       ModellingHypothesis::toString(h)+")");
     }
     const AbaqusInt nblock = 1;
-    const AbaqusInt ndir = [&h](){
+    const AbaqusInt ndir = [&h,&throw_if](){
       switch(h){
       case ModellingHypothesis::PLANESTRESS:
       return 2;
@@ -185,11 +223,10 @@ namespace mtest
       case ModellingHypothesis::TRIDIMENSIONAL:
       return 3;
       }
-      throw(std::runtime_error("AbaqusExplicitBehaviour::doPackagingStep: "
-			       "unsupported hypothesis ("+
-			       ModellingHypothesis::toString(h)+")"));
+      throw_if(true,"unsupported hypothesis ("+
+	       ModellingHypothesis::toString(h)+")");
     }();
-    const AbaqusInt nshr = [&h](){
+    const AbaqusInt nshr = [&h,&throw_if](){
       switch(h){
       case ModellingHypothesis::PLANESTRESS:
       case ModellingHypothesis::AXISYMMETRICAL:
@@ -198,11 +235,11 @@ namespace mtest
       case ModellingHypothesis::TRIDIMENSIONAL:
       return 3;
       }
-      throw(std::runtime_error("AbaqusExplicitBehaviour::doPackagingStep: "
-			       "unsupported hypothesis ("+
-			       ModellingHypothesis::toString(h)+")"));
+      throw_if(true,"unsupported hypothesis ("+
+	       ModellingHypothesis::toString(h)+")");
     }();
-    const auto nprops  = s.mprops1.size() == 1 ? 1 : static_cast<AbaqusInt>(s.mprops1.size())-1;
+    const auto nprops  = s.mprops1.size() == 1 ? 1 :
+      static_cast<AbaqusInt>(s.mprops1.size())-1;
     const auto nstatv  = static_cast<AbaqusInt>(s.iv1.size());
     const auto nfieldv = static_cast<AbaqusInt>(s.esv0.size())-1;
     const auto density   = s.mprops1[0];
@@ -218,7 +255,28 @@ namespace mtest
     for(decltype(wk.evs.size()) i=0;i!=wk.evs.size();++i){
       wk.evs[i] = s.esv0(i)+s.desv(i);
     }
-    std::copy(s.iv0.begin(),s.iv0.end(),s.iv1.begin());
+    if(this->omp==2u){
+      if((h==ModellingHypothesis::PLANESTRESS)||
+	 (h==ModellingHypothesis::AXISYMMETRICAL)||
+	 (h==ModellingHypothesis::PLANESTRAIN)){
+	throw_if(s.iv0.size()<2,
+		 "invalid number of state variables");
+	s.iv0[0] = s.r(0,0);
+	s.iv0[1] = s.r(1,0);
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	throw_if(s.iv0.size()<6,
+		 "invalid number of state variables");
+	s.iv0[0] = s.r(0,0);
+	s.iv0[1] = s.r(1,0);
+	s.iv0[2] = s.r(2,0);
+	s.iv0[3] = s.r(0,1);
+	s.iv0[4] = s.r(1,1);
+	s.iv0[5] = s.r(2,1);
+      } else {
+	throw_if(true,"unsupported hypothesis ("+
+		 ModellingHypothesis::toString(h)+")");
+      }
+    }
     const real stressOld[6u] = {0,0,0,0,0,0};
     real stressNew[6u] = {0,0,0,0,0,0};
     const real stretchOld[6u] = {1,1,1,0,0,0};
@@ -267,9 +325,8 @@ namespace mtest
 	K(4,i) = stressNew[5];
 	K(5,i) = stressNew[4];
       } else {
-	throw(std::runtime_error("AbaqusExplicitBehaviour::doPackagingStep: "
-				 "unsupported hypothesis ("+
-				 ModellingHypothesis::toString(h)+")"));
+	throw_if(true,"unsupported hypothesis ("+
+		 ModellingHypothesis::toString(h)+")");
       }
     }
     if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
@@ -289,7 +346,8 @@ namespace mtest
     s.packaging_info.insert({n,matrix<real>()});
     auto& m = s.packaging_info.at(n).get<matrix<real>>();
     const real cste = std::sqrt(real{2});
-    if((h==ModellingHypothesis::PLANESTRESS)||(h==ModellingHypothesis::AXISYMMETRICAL)||
+    if((h==ModellingHypothesis::PLANESTRESS)||
+       (h==ModellingHypothesis::AXISYMMETRICAL)||
        (h==ModellingHypothesis::PLANESTRAIN)){
       m.resize(4u,5u);
       for(unsigned short i=0;i!=4;++i){
@@ -303,11 +361,13 @@ namespace mtest
 	K(i,5) /= 2*cste;
       }
     } else {
-      throw(std::runtime_error("AbaqusExplicitBehaviour::computePredictionOperator: "
+      throw(std::runtime_error("AbaqusExplicitBehaviour::"
+			       "computePredictionOperator: "
 			       "no 'InitialElasticStiffness' found. "
 			       "Was the packaging step done ?"));
     }
-    if((h==ModellingHypothesis::PLANESTRESS)||(h==ModellingHypothesis::AXISYMMETRICAL)||
+    if((h==ModellingHypothesis::PLANESTRESS)||
+       (h==ModellingHypothesis::AXISYMMETRICAL)||
        (h==ModellingHypothesis::PLANESTRAIN)){
       tfel::math::st2tost2<2,real> D;
       for(unsigned short i=0;i!=4;++i){
@@ -350,7 +410,8 @@ namespace mtest
     if(ktype==StiffnessMatrixType::ELASTIC){
       const auto p = s.packaging_info.find("InitialElasticStiffness");
       if(p==s.packaging_info.end()){
-	throw(std::runtime_error("AbaqusExplicitBehaviour::computePredictionOperator: "
+	throw(std::runtime_error("AbaqusExplicitBehaviour::"
+				 "computePredictionOperator: "
 				 "no 'InitialElasticStiffness' found. "
 				 "Was the packaging step done ?"));
       }
@@ -369,22 +430,23 @@ namespace mtest
     using namespace tfel::math;
     using abaqus::AbaqusInt;
     static const real sqrt2 = std::sqrt(real(2));
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("AbaqusExplicitBehaviour::"
+				     "integrate:"+m));}
+    };
     if(ktype==StiffnessMatrixType::ELASTIC){
       const auto p = s.packaging_info.find("InitialElasticStiffness");
-      if(p==s.packaging_info.end()){
-	throw(std::runtime_error("AbaqusExplicitBehavi8our::integrate: "
-				 "no 'InitialElasticStiffness' found. "
-				 "Was the packaging step done ?"));
-      }
+      throw_if(p==s.packaging_info.end(),
+	       "no 'InitialElasticStiffness' found. "
+	       "Was the packaging step done ?");
       wk.k = p->second.get<tfel::math::matrix<real>>();
     } else {
-      throw(std::runtime_error("AbaqusExplicitBehaviour::integrate: "
-			       "unsupported stiffness matrix type"));
+      throw_if(true,"unsupported stiffness matrix type");
     }
     const AbaqusInt nblock = 1;
     const auto h = this->getHypothesis();
     const AbaqusInt ndir = 3;
-    const AbaqusInt nshr = [&h](){
+    const AbaqusInt nshr = [&h,&throw_if](){
       switch(h){
       case ModellingHypothesis::PLANESTRESS:
       case ModellingHypothesis::AXISYMMETRICAL:
@@ -393,11 +455,11 @@ namespace mtest
       case ModellingHypothesis::TRIDIMENSIONAL:
       return 3;
       }
-      throw(std::runtime_error("AbaqusExplicitBehaviour::integrate: "
-			       "unsupported hypothesis ("+
-			       ModellingHypothesis::toString(h)+")"));
+      throw_if(true,"unsupported hypothesis ("+
+	       ModellingHypothesis::toString(h)+")");
     }();
-    const auto nprops  = s.mprops1.size() == 1 ? 1 : static_cast<AbaqusInt>(s.mprops1.size())-1;
+    const auto nprops  = s.mprops1.size() == 1 ? 1 :
+      static_cast<AbaqusInt>(s.mprops1.size())-1;
     const auto nstatv  = static_cast<AbaqusInt>(s.iv0.size());
     const auto nfieldv = static_cast<AbaqusInt>(s.esv0.size())-1;
     const auto density   = s.mprops1[0];
@@ -411,6 +473,28 @@ namespace mtest
     }
     for(decltype(wk.evs.size()) i=0;i!=wk.evs.size();++i){
       wk.evs[i] = s.esv0(i)+s.desv(i);
+    }
+    if(this->omp==2u){
+      if((h==ModellingHypothesis::PLANESTRESS)||
+	 (h==ModellingHypothesis::AXISYMMETRICAL)||
+	 (h==ModellingHypothesis::PLANESTRAIN)){
+	throw_if(s.iv0.size()<2,
+		 "invalid number of state variables");
+	s.iv0[0] = s.r(0,0);
+	s.iv0[1] = s.r(1,0);
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	throw_if(s.iv0.size()<6,
+		 "invalid number of state variables");
+	s.iv0[0] = s.r(0,0);
+	s.iv0[1] = s.r(1,0);
+	s.iv0[2] = s.r(2,0);
+	s.iv0[3] = s.r(0,1);
+	s.iv0[4] = s.r(1,1);
+	s.iv0[5] = s.r(2,1);
+      } else {
+	throw_if(true,"unsupported hypothesis ("+
+		 ModellingHypothesis::toString(h)+")");
+      }
     }
     std::copy(s.iv0.begin(),s.iv0.end(),s.iv1.begin());
     const real strainInc[6u] = {0,0,0,0,0,0};
@@ -436,9 +520,11 @@ namespace mtest
       stensor<2u,real> U0;
       stensor<2u,real> U1;
       stensor<2u,real> s0(&(s.s0[0]));
-      F0.changeBasis(s.r);
-      F0.changeBasis(s.r);
-      s0.changeBasis(s.r);
+      if(this->omp!=2u){
+	F0.changeBasis(s.r);
+	F0.changeBasis(s.r);
+	s0.changeBasis(s.r);
+      }
       polar_decomposition(R0,U0,F0);
       polar_decomposition(R1,U1,F1);
       tfel::fsalgo::copy<5u>::exe(F0.begin(),defgradOld);
@@ -468,9 +554,11 @@ namespace mtest
       stensor<3u,real> U0;
       stensor<3u,real> U1;
       stensor<3u,real> s0(&(s.s0[0]));
-      F0.changeBasis(s.r);
-      F0.changeBasis(s.r);
-      s0.changeBasis(s.r);
+      if(this->omp!=2u){
+	F0.changeBasis(s.r);
+	F0.changeBasis(s.r);
+	s0.changeBasis(s.r);
+      }
       polar_decomposition(R0,U0,F0);
       polar_decomposition(R1,U1,F1);
       convert(defgradOld,F0);
@@ -521,7 +609,9 @@ namespace mtest
 	sig[3] = stressNew[3]*sqrt2;
       }
       sig.changeBasis(transpose(r1));
-      sig.changeBasis(transpose(s.r));
+      if(this->omp!=2u){
+	sig.changeBasis(transpose(s.r));
+      }
       tfel::fsalgo::copy<4u>::exe(sig.begin(),s.s1.begin());
     } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
       stensor<3u,real> sig = {stressNew[0],
@@ -531,7 +621,9 @@ namespace mtest
 			      stressNew[5]*sqrt2,
 			      stressNew[4]*sqrt2};
       sig.changeBasis(transpose(r1));
-      sig.changeBasis(transpose(s.r));
+      if(this->omp!=2u){
+	sig.changeBasis(transpose(s.r));
+      }
       tfel::fsalgo::copy<6u>::exe(sig.begin(),s.s1.begin());
     } else {
       throw(std::runtime_error("AbaqusExplicitBehaviour::integrate: "

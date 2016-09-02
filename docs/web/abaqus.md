@@ -23,11 +23,23 @@
 <!-- \newcommand{\paren}[1]{\left(#1\right)} -->
 
 `MFront` version 3.0 provides two interfaces for the `Abaqus/Standard`
-and `Abaqus/Explicit` finite element solvers.
+and `Abaqus/Explicit` finite element solvers. Those interfaces are
+fairly features complete:
+
+- isotropic and orthotropic materials are supported.
+- small and finite strain behaviours are supported.
+
+These interfaces have been extensively tested through `MTest`. Tests
+on `Abaqus/Standard` and `Abaqus/Explicit` shows that MFront
+behaviours are efficient (to the extent allowed by the `UMAT` and
+`VUMAT` interfaces respectively) and reliable.
+
+However, `Abaqus/Standard` and `Abaqus/Explicit` have a long history. 
 
 # Main features
 
-The introduction material describe the main features available
+The introduction material describe the main features of `Abaqus/Standard`
+and `Abaqus/Explicit` interfaces.
 
 ## Supported behaviours
 
@@ -71,7 +83,7 @@ Two finite strain strategies are available:
 
 ## Consistent tangent operator for finite strain behaviours
 
-![Relation between tangent operators"](img/FiniteStrainTangentOperatorConvertion.svg "Supported relations between tangent operators in `MFront`")
+!["Relation between tangent operators"](img/FiniteStrainTangentOperatorConvertion.svg "Supported relations between tangent operators in `MFront`")
 
 Most information reported here are extracted from the book of
 Belytschko (@belytschko_nonlinear_2000).

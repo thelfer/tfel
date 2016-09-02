@@ -119,8 +119,10 @@ namespace mtest
 		   const bool) const = 0;
     //! the abaqus fonction
     tfel::system::AbaqusFctPtr fct;
+    //! orthotropy management policy
+    unsigned short omp = 0u;
     //! save tangent operator
-    bool savesTangentOperator;
+    bool savesTangentOperator = false;
   }; // end of struct Behaviour
   
 } // end of namespace mtest

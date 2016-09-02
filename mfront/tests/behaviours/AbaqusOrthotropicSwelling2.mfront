@@ -1,0 +1,33 @@
+@Behaviour AbaqusOrthotropicSwelling2;
+@Author Helfer Thomas;
+@Date   06/08/16;
+@Description{
+ A test for the `@Swelling` keyword  and the `MFront`
+ orthotropy managment policy.
+}
+
+@OrthotropicBehaviour<Pipe>;
+@RequireStiffnessTensor<Altered>;
+
+@AbaqusFiniteStrainStrategy[abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
+@AbaqusOrthotropyManagementPolicy[abaqus,abaqusexplicit] MFront;
+
+@ExternalStateVariable real s0;
+s0.setEntryName("OrthotropicSwelling0");
+@ExternalStateVariable real s2;
+s2.setEntryName("OrthotropicSwelling2");
+@Swelling<Orthotropic> {s0,0,s2};
+
+@PredictionOperator{
+  static_cast<void>(smt);
+  Dt = D;
+}
+
+@Integrator{
+  sig = D*(eto+deto);
+}
+
+@TangentOperator{
+  static_cast<void>(smt);
+  Dt = D;
+}

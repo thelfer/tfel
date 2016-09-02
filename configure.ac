@@ -939,6 +939,33 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-shear-4-3D.mtest
            mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-shear-5-3D.mtest
            mfront/tests/behaviours/abaqus/abaqussaintvenantkirchhoffelasticity3-shear-6-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity-shear-1-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity-shear-2-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity-shear-1-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity-shear-2-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity-shear-3-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity-shear-4-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity-shear-5-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity-shear-6-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity2-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity2-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity2-shear-1-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity2-shear-2-2D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity2-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity2-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity2-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity2-shear-1-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity2-shear-2-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity2-shear-3-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity2-shear-4-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity2-shear-5-3D.mtest
+           mfront/tests/behaviours/abaqus/abaqusfiniterotationsmallstrainelasticity2-shear-6-3D.mtest
            mfront/tests/behaviours/abaqus/abaqusfinitestrainsinglecrystal-001.mtest
            mfront/tests/behaviours/abaqus/abaqusfinitestrainsinglecrystal-012.mtest
            mfront/tests/behaviours/abaqus/abaqusfinitestrainsinglecrystal-012-2.mtest
@@ -956,6 +983,19 @@ AC_OUTPUT([debug.sh
     	   mfront/tests/behaviours/abaqus/abaqusorthotropicswelling.mtest
       	   mfront/tests/behaviours/abaqus/abaqusorthotropicswelling2.mtest
       	   mfront/tests/behaviours/abaqus/abaqusaxialgrowth.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusaxialgrowth-omp.mtest
+      	   mfront/tests/behaviours/abaqus/abaquselasticity14-omp.mtest
+      	   mfront/tests/behaviours/abaqus/abaquselasticity6-omp.mtest
+      	   mfront/tests/behaviours/abaqus/abaquselasticity10-omp.mtest
+      	   mfront/tests/behaviours/abaqus/abaquselasticity22-omp.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusorthotropicswelling2-omp.mtest
+      	   mfront/tests/behaviours/abaqus/abaquselasticity11-omp.mtest
+      	   mfront/tests/behaviours/abaqus/abaquselasticity23-omp.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusorthotropicswelling-omp.mtest
+      	   mfront/tests/behaviours/abaqus/abaquselasticity12-omp.mtest
+      	   mfront/tests/behaviours/abaqus/abaquselasticity25-omp.mtest
+      	   mfront/tests/behaviours/abaqus/abaquselasticity13-omp.mtest
+      	   mfront/tests/behaviours/abaqus/abaquselasticity27-omp.mtest
    	   mfront/tests/behaviours/abaqus-explicit/Makefile
            mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
            mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
