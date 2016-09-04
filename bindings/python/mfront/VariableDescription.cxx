@@ -15,12 +15,13 @@
 #include"MFront/VariableDescription.hxx"
 #include"TFEL/Python/VectorConverter.hxx"
 
-mfront::VariableDescriptionContainer::size_type
+static mfront::VariableDescriptionContainer::size_type
 VariableDescriptionContainer_size(const mfront::VariableDescriptionContainer& v)
 {
   return v.size();
 }
 
+void declareVariableDescription(void);
 void declareVariableDescription(void){
   using namespace boost::python;
   using namespace mfront;

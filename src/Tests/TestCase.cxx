@@ -50,8 +50,7 @@ namespace tfel
       this->result.append(TestResult(b,n));
     } // end of TestCase::registerResult    
 
-    TestCase::~TestCase()
-    {} // end of TestCase::~TestCase
+    TestCase::~TestCase() = default;
 
   } // end of namespace tests
 

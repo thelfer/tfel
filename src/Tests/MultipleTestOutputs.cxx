@@ -63,8 +63,7 @@ namespace tfel
       }
     } // end of MultipleTestOutputs::endTestSuite
   
-    MultipleTestOutputs::~MultipleTestOutputs()
-    {} // end of MultipleTestOutputs::~MultipleTestOutputs
+    MultipleTestOutputs::~MultipleTestOutputs() = default;
 
   } // end of namespace tests
 

@@ -77,7 +77,7 @@ struct FiniteStrainBehaviourTangentOperator3 final
       const auto t = nhb(F)*det(F);
       return tfel::math::convertSpatialModuliToKirchhoffJaumanRateModuli(Cs(F),t);
     };
-    for(const tensor F : {tensor::Id(),tensor{1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005}}){
+    for(const tensor& F : {tensor::Id(),tensor{1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005}}){
       const auto t = nhb(F)*det(F);
       const t2tost2 nD = this->getNumericalApproximation(nhb,F,1.e-5);
       const t2tost2 aD = tfel::math::ConvertKirchhoffStressJaumanRateModuliToKirchhoffStressDerivative<N,double>::exe(CtJ(F),F,t);

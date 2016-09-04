@@ -137,7 +137,7 @@ struct FiniteStrainBehaviourTangentOperator7 final
       }
       return C_SE;
     };
-    for(const tensor F : {tensor::Id(),tensor{1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005}}){
+    for(const tensor& F : {tensor::Id(),tensor{1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005}}){
       const tensor F0 = tensor::Id();
       const auto s   = nhb(F);
       const auto Cs  = computeCs(F);

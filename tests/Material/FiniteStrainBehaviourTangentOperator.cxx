@@ -123,7 +123,7 @@ struct FiniteStrainBehaviourTangentOperator final
       return toT2toT2(CtJ*dD)+(t2tot2::tpld(tus)-t2tot2::tprd(tus))*dW;
     };
     const real v1[9u] = {1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005};
-    for(const tensor F : {tensor::Id(),tensor{v1}}){
+    for(const tensor& F : {tensor::Id(),tensor{v1}}){
       const t2tot2 nD = ::getNumericalApproximation(nhb,F,1.e-5);
       const t2tot2 aD = D(F);
       for(unsigned short i=0;i!=tfel::math::TensorDimeToSize<N>::value;++i){

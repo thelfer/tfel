@@ -24,25 +24,24 @@ namespace tfel
   namespace tests
   {
     
-    TestManager&
-    TestManager::getTestManager()
+    TestManager& TestManager::getTestManager()
     {
       static TestManager m;
       return m;
     } // end of TestManager::getTestManager()
 
     void
-    TestManager::addTestOutput(const TestOutputPtr& o)
+    TestManager::addTestOutput(TestOutputPtr o)
     {
       if(this->default_outputs.get()==nullptr){
-	this->default_outputs = MultipleTestOutputsPtr(new MultipleTestOutputs());
+	this->default_outputs = std::make_shared<MultipleTestOutputs>();
       }
       this->default_outputs->addTestOutput(o);
     } // end of TestManager::addTestOutput
 
     void
     TestManager::addTestOutput(const std::string& n,
-			       const TestOutputPtr& o)
+			       TestOutputPtr o)
     {
       auto p = this->outputs.find(n);
       if(p==this->outputs.end()){
@@ -93,16 +92,12 @@ namespace tfel
     } // end of TestManager::addTestOutput
 
     void
-    TestManager::addTest(const std::string& n,
-			 const TestPtr& t)
+    TestManager::addTest(const std::string& n,TestPtr t)
     {
-      using namespace std;
-      typedef map<string,TestSuitePtr>::value_type MVType;
-      map<string,TestSuitePtr>::iterator p;
-      p = this->tests.find(n);
+      auto p = this->tests.find(n);
       if(p==this->tests.end()){
-	TestSuitePtr s(new TestSuite(n));
-	p = this->tests.insert(MVType(n,s)).first;
+	auto s = std::make_shared<TestSuite>(n);
+	p = this->tests.insert({n,s}).first;
       }
       p->second->add(t);
     } // end of TestManager::addTest
@@ -113,9 +108,9 @@ namespace tfel
       using namespace std;
       using namespace std::chrono;
       TestResult r;
-      for(auto p=this->tests.begin();p!=this->tests.end();++p){
+      for(const auto& t: this->tests){
 	MultipleTestOutputsPtr output;
-	const auto& n = p->first;
+	const auto& n = t.first;
 	auto p2 = this->outputs.find(n);
 	if(p2!=this->outputs.end()){
 	  output = p2->second;
@@ -128,7 +123,7 @@ namespace tfel
 	  output = this->default_outputs;
 	}
 	const auto start = high_resolution_clock::now();
-	r.append(p->second->execute(*output));
+	r.append(t.second->execute(*output));
 	const auto stop = high_resolution_clock::now();
 	const auto nsec = duration_cast<nanoseconds>(stop-start).count();
 	r.setTestDuration(1.e-9*nsec);
@@ -136,8 +131,7 @@ namespace tfel
       return r;
     } // end of TestManager::execute()
 
-    TestManager::TestManager()
-    {} // end of TestManager::~TestManager
+    TestManager::TestManager() = default;
 
   } // end of namespace tests
 

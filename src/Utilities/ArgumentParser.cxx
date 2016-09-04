@@ -171,7 +171,7 @@ namespace tfel{
     {
       for(auto& a : this->args){
 	auto& an = a.as_string();
-	const auto pos = an.find("=");
+	const auto pos = an.find('=');
 	if(pos!=std::string::npos){
 	  const auto option = an.substr(pos+1,std::string::npos);
 	  an.erase(pos,std::string::npos);

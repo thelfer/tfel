@@ -50,7 +50,7 @@ namespace mfront{
   std::vector<LocalDataStructure::Hypothesis>
   LocalDataStructure::getSpecialisedHypotheses(void) const{
     auto mh = std::vector<Hypothesis>{};
-    for(const auto v:this->sv){
+    for(const auto& v:this->sv){
       mh.push_back(v.first);
     }
     return mh;

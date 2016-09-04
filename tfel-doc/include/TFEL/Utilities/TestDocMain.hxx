@@ -32,11 +32,11 @@ namespace tfel{
 
       TestDocMain(const int, const char *const *const);
 
-      void treatUnknownArgument(void);
+      virtual void treatUnknownArgument(void) override;
       
-      int execute(void);
+      virtual int execute(void);
       
-      ~TestDocMain();
+      virtual ~TestDocMain();
 
     private :
       

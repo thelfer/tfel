@@ -684,8 +684,8 @@ namespace mfront{
 			  << "msg << \"" << md.className << "::" << f.name << "::operator() : \"\n"
 			  << "<< \"input '" << v.name << "' is over its physical upper bound (\" << "
 			  << v.name << " << \" > " << bd.upperBound << ").\\n\";\n";
-	    this->srcFile << "throw(runtime_error(msg.str()));\n",
-	      this->srcFile << "}\n";
+	    this->srcFile << "throw(runtime_error(msg.str()));\n";
+	    this->srcFile << "}\n";
 	  }
 	}
 	if(v.hasAttribute(VariableDescription::bound)){
@@ -857,7 +857,7 @@ namespace mfront{
     this->srcFile << "}\n";
     this->srcFile << "}\n";
     this->srcFile << "ActivableObjectBase::handleSpecialisationData(data);\n";
-    for(const auto p : md.parameters){
+    for(const auto& p : md.parameters){
       const auto name = this->getVariableName(p.name,md);
       this->srcFile << "ptr = md.find(" << name << ");\n";
       this->srcFile << "if(ptr==md.end()){\n";

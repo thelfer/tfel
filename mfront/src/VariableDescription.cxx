@@ -121,7 +121,7 @@ namespace mfront{
 
   bool VariableDescriptionContainer::contains(const std::string& n) const
   {
-    for(const auto v : *this){
+    for(const auto& v : *this){
       if(v.name==n){
 	return true;
       }

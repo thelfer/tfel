@@ -30,12 +30,11 @@ static const char * const constexpr_c = "const";
 namespace mfront
 {
 
-  void
-  writeMaterialLaws(const std::string&,
-		    std::ostream& srcFile,
-		    const std::vector<std::string>& materialLaws)
+  void writeMaterialLaws(const std::string&,
+			 std::ostream& srcFile,
+			 const std::vector<std::string>& materialLaws)
   {
-    for(const auto l : materialLaws){
+    for(const auto& l : materialLaws){
       srcFile << "using mfront::" << l << ";\n"
 	      << "using mfront::" << l << "_checkBounds;\n";
     }

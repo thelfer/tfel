@@ -52,67 +52,57 @@ namespace tfel
        * add a test output
        * \param o : output to be added
        */
-      void
-      addTestOutput(const TestOutputPtr&);
+      void addTestOutput(TestOutputPtr);
       /*!
        * add a test output
        * \param o : output to be added
        * \param b : colourised output
        */
-      void
-      addTestOutput(std::ostream&,
-		    const bool = true);
+      void addTestOutput(std::ostream&,
+			 const bool = true);
       /*!
        * add a test output to the specified file 
        * \param f : file name
        */
-      void
-      addTestOutput(const std::string&);
+      void addTestOutput(const std::string&);
       /*!
        * add a test output to the specified file 
        * \param f : file name
        */
-      void
-      addXMLTestOutput(const std::string&);
+      void addXMLTestOutput(const std::string&);
       /*!
        * add a test output to the specified test suite
        * \param n : name of the test suite
        * \param o : output to be added
        */
-      void
-      addTestOutput(const std::string&,
-		    const TestOutputPtr&);
+      void addTestOutput(const std::string&,
+			 TestOutputPtr);
       /*!
        * add a test output to the specified test suite
        * \param n : name of the test suite
        * \param o : output to be added
        * \param b : colourised output
        */
-      void
-      addTestOutput(const std::string&,
-		    std::ostream&,
-		    const bool = true);
+      void addTestOutput(const std::string&,
+			 std::ostream&,
+			 const bool = true);
       /*!
        * add a test output to the specified file
        * \param n : name of the test suite
        * \param f : file name
        */
-      void
-      addTestOutput(const std::string&,
-		    const std::string&);
+      void addTestOutput(const std::string&,
+			 const std::string&);
       /*!
        * add a test to the specified test suite
        * \param g : group of the test
        * \param t : test to be added
        */
-      void
-      addTest(const std::string&,
-	      const TestPtr&);
+      void addTest(const std::string&,TestPtr);
       /*!
        * execute registred tests
        */
-      TestResult
-      execute(void);
+      TestResult execute(void);
     private:
       //! a simple alias
       typedef std::shared_ptr<MultipleTestOutputs> MultipleTestOutputsPtr;
@@ -123,18 +113,10 @@ namespace tfel
        * Singleton pattern.
        */
       TFEL_VISIBILITY_LOCAL TestManager();
-      /*!
-       * copy constructor (disabled)
-       * \param src : object to be copied
-       */
-      TFEL_VISIBILITY_LOCAL TestManager(const TestManager&);
-      /*!
-       * assignement operator (disabled)
-       * \param src : object to be assigned
-       * \return a reference to this object
-       */
-      TFEL_VISIBILITY_LOCAL TestManager&
-      operator=(const TestManager&);
+      TestManager(TestManager&&) = delete;
+      TestManager(const TestManager&) = delete;
+      TestManager& operator=(TestManager&&) = delete;
+      TestManager& operator=(const TestManager&) = delete;
       //! outputs used by default
       MultipleTestOutputsPtr default_outputs;
       //! "per test suite" outputs

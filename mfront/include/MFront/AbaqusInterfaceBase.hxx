@@ -124,7 +124,7 @@ namespace mfront{
     writeUMATxxSpecificSymbols(std::ostream&,
 			       const std::string&,
 			       const BehaviourDescription&,
-			       const FileDescription&) const;
+			       const FileDescription&) const override;
     /*!
      * \param[in] out : output file
      */

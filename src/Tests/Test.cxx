@@ -19,8 +19,7 @@ namespace tfel
   namespace tests
   {
     
-    Test::~Test()
-    {} // end of Test::~Test
+    Test::~Test() = default;
 
   } // end of namespace tests
 

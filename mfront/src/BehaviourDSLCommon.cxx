@@ -3512,7 +3512,6 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion(const Hypothesis h)
   {
     const auto& bd  = this->mb.getBehaviourData(h);
-    const auto& evs = bd.getExternalStateVariables();
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",m);}
     };

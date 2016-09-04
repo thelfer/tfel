@@ -64,7 +64,7 @@ namespace mtest
       DEFAULT
     } scheme = DEFAULT;
     friend struct tfel::utilities::ArgumentParserBase<MTestMain>;
-    void treatUnknownArgument(void);
+    virtual void treatUnknownArgument(void) override;
     void treatVerbose(void);
     void treatScheme(void);
     void treatXMLOutput(void);

@@ -98,14 +98,13 @@ namespace tfel
     TestResult::duration(void) const
     {
       double r(this->test_duration);
-      for(auto p=this->begin();p!=this->end();++p){
-	r += p->duration();
+      for(const auto& t:*this){
+	r += t.duration();
       }
       return r;
     }
-
-    TestResult::~TestResult(void)
-    {}
+  
+    TestResult::~TestResult(void) = default;
 
     std::ostream&
     operator << (std::ostream& os,const TestResult& r)

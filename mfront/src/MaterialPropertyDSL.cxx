@@ -607,7 +607,6 @@ namespace mfront{
 	auto key = this->current->value;
 	this->currentComment = this->current->comment;
 	++(this->current);
-	auto b = this->current;
 	try {
 	  (this->*handler)();
        	} catch(const std::exception& e){

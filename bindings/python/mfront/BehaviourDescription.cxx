@@ -16,26 +16,26 @@
 #include<boost/python.hpp>
 #include"MFront/BehaviourDescription.hxx"
 
-std::vector<tfel::material::ModellingHypothesis::Hypothesis>
+static std::vector<tfel::material::ModellingHypothesis::Hypothesis>
 getModellingHypotheses(const mfront::BehaviourDescription& bd){
   const auto& mh = bd.getModellingHypotheses();
   return {mh.begin(),mh.end()};
 }
 
-std::vector<tfel::material::ModellingHypothesis::Hypothesis>
+static std::vector<tfel::material::ModellingHypothesis::Hypothesis>
 getDistinctModellingHypotheses(const mfront::BehaviourDescription& bd){
   const auto& mh = bd.getDistinctModellingHypotheses();
   return {mh.begin(),mh.end()};
 }
 
-void
+static void
 setModellingHypotheses1(mfront::BehaviourDescription& bd,
 			   const std::vector<tfel::material::ModellingHypothesis::Hypothesis>& mh){
   using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
   bd.setModellingHypotheses(std::set<Hypothesis>{mh.begin(),mh.end()});
 }
 
-void
+static void
 setModellingHypotheses2(mfront::BehaviourDescription& bd,
 			   const std::vector<tfel::material::ModellingHypothesis::Hypothesis>& mh,
 					     const bool b){
@@ -135,6 +135,7 @@ hasAttribute(const mfront::BehaviourDescription& d,
   return d.hasAttribute(h,n);
 }
   
+void declareBehaviourDescription(void);
 void declareBehaviourDescription(void){
   using namespace boost::python;
   using namespace mfront;

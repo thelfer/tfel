@@ -126,8 +126,7 @@ namespace tfel
       return r;
     } // end of TestSuite::execute
 
-    TestSuite::~TestSuite()
-    {} // end of TestSuite::~TestSuite()
+    TestSuite::~TestSuite() = default;
 
   } // end of namespace tests
 

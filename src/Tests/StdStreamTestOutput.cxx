@@ -169,8 +169,7 @@ namespace tfel
       }
     } // end of StdStreamTestOutput::endTestSuite
   
-    StdStreamTestOutput::~StdStreamTestOutput()
-    {} // end of StdStreamTestOutput::~StdStreamTestOutput
+    StdStreamTestOutput::~StdStreamTestOutput() = default;
 
   } // end of namespace tests
 

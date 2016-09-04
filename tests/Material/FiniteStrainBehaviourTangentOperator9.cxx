@@ -97,7 +97,7 @@ struct FiniteStrainBehaviourTangentOperator9 final
       }
       return r;
     };
-    for(const tensor F : {tensor::Id(),tensor{1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005}}){
+    for(const tensor& F : {tensor::Id(),tensor{1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005}}){
       const auto nD = getNumericalApproximation(F,1.e-5);
       const auto aD = D(F);
       for(size_type i=0;i!=tfel::math::StensorDimeToSize<N>::value;++i){

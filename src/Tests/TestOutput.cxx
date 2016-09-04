@@ -19,8 +19,7 @@ namespace tfel
   namespace tests
   {
     
-    TestOutput::~TestOutput()
-    {} // end of TestOutput::~TestOutput
+    TestOutput::~TestOutput() = default;
 
   } // end of namespace tests
 

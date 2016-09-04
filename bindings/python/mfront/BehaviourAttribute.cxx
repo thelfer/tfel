@@ -30,6 +30,7 @@ static void add_def(boost::python::class_<mfront::BehaviourAttribute>& w,
 	 return_value_policy<copy_const_reference>());
 }
 
+void declareBehaviourAttribute(void);
 
 void declareBehaviourAttribute(void){
   using namespace boost::python;

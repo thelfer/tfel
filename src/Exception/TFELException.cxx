@@ -18,8 +18,7 @@ namespace tfel{
 
   namespace exception{
     
-    TFELException::~TFELException() noexcept
-    {}
+    TFELException::~TFELException() noexcept = default;
 
   } // end of namespace exception
 

@@ -96,7 +96,7 @@ namespace mfront{
     typedef void (MaterialPropertyDSL::* MemberFuncPtr)(void);
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
     //! treat an unknown keyword
-    virtual void treatUnknownKeyword(void);
+    virtual void treatUnknownKeyword(void) override;
     /*!
      * \brief register a name.
      * \param[in] n : name

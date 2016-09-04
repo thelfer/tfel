@@ -98,7 +98,6 @@ namespace mfront
        (std::find(i.begin(),i.end(),"Java")!=i.end())){
       throw_if(key!="@Package","unsupported key '"+key+"'");
     }
-    return {false,current};
     if(key=="@Package"){
       throw_if(!this->package.empty(),"package name already defined");
       throw_if(current==end,"unexpected end of file");

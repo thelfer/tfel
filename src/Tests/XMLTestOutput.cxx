@@ -148,13 +148,11 @@ namespace tfel
     void
     XMLTestOutput::endTestSuite(const TestResult&)
     {
-      using namespace std;
-      this->os << "</testsuite>" << endl;
+      this->os << "</testsuite>" << std::endl;
       this->os.close();
     } // end of XMLTestOutput::endTestSuite
   
-    XMLTestOutput::~XMLTestOutput()
-    {} // end of XMLTestOutput::~XMLTestOutput
+    XMLTestOutput::~XMLTestOutput() = default;
 
   } // end of namespace tests
 
