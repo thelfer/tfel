@@ -57,7 +57,7 @@ namespace mfront
   }
 
   std::string
-  OctaveMaterialPropertyInterface::getName(void)
+  OctaveMaterialPropertyInterface::getName()
   {
     return "octave";
   }

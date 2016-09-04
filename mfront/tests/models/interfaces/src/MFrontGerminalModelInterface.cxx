@@ -25,7 +25,7 @@
 namespace mfront{
 
   std::string
-  MFrontGerminalModelInterface::getName(void)
+  MFrontGerminalModelInterface::getName()
   {
     return "germinal";
   } // end of MFrontGerminalModelInterface::getName(void)
@@ -53,7 +53,7 @@ namespace mfront{
   } // end of MFrontGerminalModelInterface::setOutputFileNames(void)
 
   std::string
-  MFrontGerminalModelInterface::getApplicationName(void) const
+  MFrontGerminalModelInterface::getApplicationName() const
   {
     return "Germinal";
   } // end of MFrontGerminalModelInterface::getLibraryBaseName
@@ -171,7 +171,7 @@ namespace mfront{
   } // end of MFrontGerminalModelInterface::generateDomainsList
 
   void
-  MFrontGerminalModelInterface::buildDomainName(void){
+  MFrontGerminalModelInterface::buildDomainName(){
     this->srcFile << "// building current zone name\n";
     this->srcFile << "string domainName = *ptr;\n";
   }

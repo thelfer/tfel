@@ -27,7 +27,7 @@ namespace mtest
   {} // end of CastemAccelerationAlgorithm::CastemAccelerationAlgorithm
 
   std::string
-  CastemAccelerationAlgorithm::getName(void) const
+  CastemAccelerationAlgorithm::getName() const
   {
     return "Cast3M";
   } // end of CastemAccelerationAlgorithm::getName

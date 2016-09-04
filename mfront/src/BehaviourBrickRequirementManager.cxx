@@ -78,7 +78,7 @@ namespace mfront{
     } // end of RequirementManager::RequirementManager
 
     std::vector<std::string>
-    RequirementManager::getUnresolvedRequirements(void) const{
+    RequirementManager::getUnresolvedRequirements() const{
       auto rn = std::vector<std::string>{};
       for(const auto& r:this->requirements){
 	if(!this->hasProvider(*r)){

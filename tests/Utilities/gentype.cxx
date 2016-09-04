@@ -42,7 +42,7 @@ struct GenTypeTest final
     using namespace tfel::utilities;
   
     typedef GenerateTypeList<int,string>::type HoldedTypes;
-    typedef GenTypeBase<HoldedTypes> MyGenType;
+    using MyGenType = GenTypeBase<HoldedTypes>;
 
     MyGenType test;
     MyGenType test2(string("string1"));
@@ -85,7 +85,7 @@ struct GenTypeTest final
 TFEL_TESTS_GENERATE_PROXY(GenTypeTest,"GenType");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using namespace tfel::tests;

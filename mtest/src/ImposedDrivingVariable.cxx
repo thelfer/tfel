@@ -35,7 +35,7 @@ namespace mtest
   {} // end of ImposedDrivingVariable::ImposedDrivingVariable
 
   unsigned short
-  ImposedDrivingVariable::getNumberOfLagrangeMultipliers(void) const
+  ImposedDrivingVariable::getNumberOfLagrangeMultipliers() const
   {
     return 1u;
   } // end of ImposedDrivingVariable::getNumberOfLagrangeMultipliers

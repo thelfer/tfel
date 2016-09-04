@@ -186,7 +186,7 @@ struct DSLTest final
 TFEL_TESTS_GENERATE_PROXY(DSLTest,"DSLTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   mfront::initDSLs();
   auto& m = tfel::tests::TestManager::getTestManager();

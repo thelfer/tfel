@@ -115,7 +115,7 @@ namespace mfront{
     return r;
   } // end of MFrontModelInterface::getVariableName(const std::string& v)
 
-  MFrontModelInterface::MFrontModelInterface(void)
+  MFrontModelInterface::MFrontModelInterface()
     : hasDefaultConstructor(false)
   {} // end of MFrontModelInterface::MFrontModelInterface
 
@@ -171,7 +171,7 @@ namespace mfront{
   }
 
   void
-  MFrontModelInterface::openOutputFiles(void)
+  MFrontModelInterface::openOutputFiles()
   {
     using namespace std;
     using namespace tfel::system;
@@ -201,7 +201,7 @@ namespace mfront{
   } // end of MFrontModelInterface::openOutputFiles()
 
   void
-  MFrontModelInterface::closeOutputFiles(void)
+  MFrontModelInterface::closeOutputFiles()
   {
     if(this->headerFile.is_open()){
       this->headerFile.close();
@@ -1641,7 +1641,7 @@ namespace mfront{
   } // end of MFrontModelInterface::treatKeyword
 
   std::string
-  MFrontModelInterface::getName(void)
+  MFrontModelInterface::getName()
   {
     return "@application@";
   } // end of MFrontModelInterface::getName(void)

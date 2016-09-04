@@ -44,7 +44,7 @@ struct FSArrayTest final
     return this->result;
   } // end of execute
 #if (!defined _MSC_VER) && (!defined _LIBCPP_VERSION)
-  void test1(void)
+  void test1()
   {
     using namespace std;
     using namespace tfel::math;
@@ -79,10 +79,10 @@ struct FSArrayTest final
     TFEL_TESTS_ASSERT(*(a5.rbegin()+1)==3);
     TFEL_TESTS_ASSERT(*(a5.rbegin()+2)==5);
   } // end of test1
-  void test2(void)
+  void test2()
   {
     using namespace tfel::math;
-    typedef unsigned short usint;
+    using usint = unsigned short;
     constexpr fsarray<3u,unsigned short> a1{{usint(2),usint(3),usint(4)}};
     constexpr fsarray<3u,int> a2{a1};
     TFEL_TESTS_ASSERT(structify<a1[0]>::value==2);
@@ -92,10 +92,10 @@ struct FSArrayTest final
     TFEL_TESTS_ASSERT(structify<a2[1]>::value==3);
     TFEL_TESTS_ASSERT(structify<a2[2]>::value==4);
   } // end of test2
-  void test3(void)
+  void test3()
   {
     using namespace tfel::math;
-    typedef unsigned short usint;
+    using usint = unsigned short;
     constexpr fsarray<3u,unsigned short> a1{{usint(2),usint(3),usint(4)}};
     constexpr fsarray<3u,int> a2{a1};
   }  
@@ -105,7 +105,7 @@ struct FSArrayTest final
 TFEL_TESTS_GENERATE_PROXY(FSArrayTest,"FSArrayTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   using namespace std;
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();

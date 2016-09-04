@@ -70,7 +70,7 @@ private:
   using Hypothesis                = ModellingHypothesis::Hypothesis;
   
   // check that the behaviour description fails appropriately
-  void test1(void){
+  void test1(){
     using namespace std;
     using namespace mfront;
     using tfel::material::ModellingHypothesis;
@@ -91,7 +91,7 @@ private:
     TFEL_TESTS_CHECK_THROW(bd.getClassName(),runtime_error);
   } // end of test1
 
-  void test2(void (BehaviourDescription::*m)(void)){
+  void test2(void (BehaviourDescription::*m)()){
     using namespace mfront;
     auto bd = BehaviourDescription{};
     (bd.*m)();
@@ -209,7 +209,7 @@ TFEL_TESTS_GENERATE_PROXY(BehaviourDescriptionTest,
 			  "BehaviourDescriptionTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace tfel::tests;
   TestManager& manager = TestManager::getTestManager();

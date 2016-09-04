@@ -163,12 +163,12 @@ struct InvertTest3D final
 
 }; // end of InvertTest3D
 
-typedef InvertTest2D<float>       FloatInvertTest2D;
-typedef InvertTest2D<double>      DoubleInvertTest2D;
-typedef InvertTest2D<long double> LongDoubleInvertTest2D;
-typedef InvertTest3D<float>       FloatInvertTest3D;
-typedef InvertTest3D<double>      DoubleInvertTest3D;
-typedef InvertTest3D<long double> LongDoubleInvertTest3D;
+using FloatInvertTest2D = InvertTest2D<float>;
+using DoubleInvertTest2D = InvertTest2D<double>;
+using LongDoubleInvertTest2D = InvertTest2D<long double>;
+using FloatInvertTest3D = InvertTest3D<float>;
+using DoubleInvertTest3D = InvertTest3D<double>;
+using LongDoubleInvertTest3D = InvertTest3D<long double>;
 
 TFEL_TESTS_GENERATE_PROXY(FloatInvertTest2D,
 			  "InvertTest2D<float>");
@@ -185,7 +185,7 @@ TFEL_TESTS_GENERATE_PROXY(LongDoubleInvertTest3D,
 
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();

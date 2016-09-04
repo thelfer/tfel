@@ -165,7 +165,7 @@ namespace mtest
   }
   
   void
-  MTestParser::displayKeyWordsList(void) const
+  MTestParser::displayKeyWordsList() const
   {
     using namespace std;
     using namespace tfel::utilities;
@@ -192,7 +192,7 @@ namespace mtest
   } // end of MTestParser::displayKeywordsList
 
   void
-  MTestParser::displayKeyWordsHelp(void) const
+  MTestParser::displayKeyWordsHelp() const
   {
     auto keys  = this->getKeyWordsList();
     std::cout << "% `MTest` keywords\n\n";

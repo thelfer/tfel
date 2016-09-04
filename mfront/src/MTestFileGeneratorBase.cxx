@@ -36,7 +36,7 @@ namespace mfront{
   {} // end of MTestFileGeneratorBase::InternalStateVariable::~InternalStateVariable
 
   unsigned int
-  MTestFileGeneratorBase::getIdentifier(void)
+  MTestFileGeneratorBase::getIdentifier()
   {
     static unsigned int i = 0;
     return ++i;

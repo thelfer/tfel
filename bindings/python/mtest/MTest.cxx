@@ -578,9 +578,9 @@ getInternalStateVariableValue2(const mtest::MTestCurrentState& s,
   return getInternalStateVariableValue1(s,n,1);
 } // end of getInternalStateVariableValue
 
-void declareMTest(void);
+void declareMTest();
 
-void declareMTest(void)
+void declareMTest()
 {
   using namespace boost;
   using namespace boost::python;
@@ -673,7 +673,7 @@ void declareMTest(void)
 	 "- 1 means that we request the  value at the end of the current time step")
     ;
   
-  TestResult (MTest:: *pm)(void) = &MTest::execute;
+  TestResult (MTest:: *pm)() = &MTest::execute;
   void (MTest:: *pm2)(StudyCurrentState&,
 		      SolverWorkSpace&,
 		      const real,

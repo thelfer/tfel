@@ -132,12 +132,12 @@ struct TinyMatrixInvertTest3D final
 
 }; // end of TinyMatrixInvertTest3D
 
-typedef TinyMatrixInvertTest2D<float>       FloatTinyMatrixInvertTest2D;
-typedef TinyMatrixInvertTest2D<double>      DoubleTinyMatrixInvertTest2D;
-typedef TinyMatrixInvertTest2D<long double> LongDoubleTinyMatrixInvertTest2D;
-typedef TinyMatrixInvertTest3D<float>       FloatTinyMatrixInvertTest3D;
-typedef TinyMatrixInvertTest3D<double>      DoubleTinyMatrixInvertTest3D;
-typedef TinyMatrixInvertTest3D<long double> LongDoubleTinyMatrixInvertTest3D;
+using FloatTinyMatrixInvertTest2D = TinyMatrixInvertTest2D<float>;
+using DoubleTinyMatrixInvertTest2D = TinyMatrixInvertTest2D<double>;
+using LongDoubleTinyMatrixInvertTest2D = TinyMatrixInvertTest2D<long double>;
+using FloatTinyMatrixInvertTest3D = TinyMatrixInvertTest3D<float>;
+using DoubleTinyMatrixInvertTest3D = TinyMatrixInvertTest3D<double>;
+using LongDoubleTinyMatrixInvertTest3D = TinyMatrixInvertTest3D<long double>;
 
 TFEL_TESTS_GENERATE_PROXY(FloatTinyMatrixInvertTest2D,
 			  "TinyMatrixInvertTest2D<float>");
@@ -154,7 +154,7 @@ TFEL_TESTS_GENERATE_PROXY(LongDoubleTinyMatrixInvertTest3D,
 
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();

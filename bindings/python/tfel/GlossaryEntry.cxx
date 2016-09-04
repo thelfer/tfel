@@ -15,10 +15,10 @@
 
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 
-void declareGlossaryEntry(void);
+void declareGlossaryEntry();
 
 void
-declareGlossaryEntry(void)
+declareGlossaryEntry()
 {
   using namespace boost;
   using namespace boost::python;

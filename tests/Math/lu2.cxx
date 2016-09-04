@@ -88,16 +88,16 @@ bool TinyMatrixSolveTest2()
 }
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using namespace tfel::tests;
-  typedef TestFunctionWrapper<TinyMatrixSolveTest<long double> >  Wrapper1;
-  typedef TestFunctionWrapper<TinyMatrixSolveTest<double> >       Wrapper2;
-  typedef TestFunctionWrapper<TinyMatrixSolveTest<float> >        Wrapper3;
-  typedef TestFunctionWrapper<TinyMatrixSolveTest2<long double> > Wrapper4;
-  typedef TestFunctionWrapper<TinyMatrixSolveTest2<double> >      Wrapper5;
-  typedef TestFunctionWrapper<TinyMatrixSolveTest2<float> >       Wrapper6;
+  using Wrapper1 = TestFunctionWrapper<TinyMatrixSolveTest<long double> >;
+  using Wrapper2 = TestFunctionWrapper<TinyMatrixSolveTest<double> >;
+  using Wrapper3 = TestFunctionWrapper<TinyMatrixSolveTest<float> >;
+  using Wrapper4 = TestFunctionWrapper<TinyMatrixSolveTest2<long double> >;
+  using Wrapper5 = TestFunctionWrapper<TinyMatrixSolveTest2<double> >;
+  using Wrapper6 = TestFunctionWrapper<TinyMatrixSolveTest2<float> >;
   //  typedef TestFunctionWrapper<test2> Wrapper2;
   auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);

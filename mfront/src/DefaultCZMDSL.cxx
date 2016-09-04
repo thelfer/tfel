@@ -44,19 +44,19 @@ namespace mfront{
   }
 
   std::string
-  DefaultCZMDSL::getDescription(void)
+  DefaultCZMDSL::getDescription()
   {
     return "this parser is the most generic one as it does not make any restriction "
            "on the behaviour or the integration method that may be used";
   } // end of DefaultCZMDSL::getDescription
   
   std::string
-  DefaultCZMDSL::getName(void)
+  DefaultCZMDSL::getName()
   {
     return "DefaultCZMDSL";
   }
 
-  void DefaultCZMDSL::writeBehaviourParserSpecificIncludes(void)
+  void DefaultCZMDSL::writeBehaviourParserSpecificIncludes()
   {
     DefaultDSLBase::writeBehaviourParserSpecificIncludes();
     this->behaviourFile << "#include\"TFEL/Math/tmatrix.hxx\"\n";

@@ -58,7 +58,7 @@ struct abs_compare{
 };
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
 
   using namespace tfel::fsalgo;

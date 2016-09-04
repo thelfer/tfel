@@ -31,7 +31,7 @@ namespace tfel
       {} // end of Variable::Variable
 
       double
-      Variable::getValue(void) const
+      Variable::getValue() const
       {
 	return this->v[this->pos];
       } // end of Variable::getValue

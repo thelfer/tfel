@@ -94,7 +94,7 @@ struct Is_same{
 template<typename T, class Test>
 class Mytest{
 
-  typedef typename Test::template test<T> my_test_class;
+  using my_test_class = typename Test::template test<T>;
 
 public:
 
@@ -103,7 +103,7 @@ public:
 };
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
 
   using namespace tfel::meta;
 

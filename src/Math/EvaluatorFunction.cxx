@@ -82,7 +82,7 @@ namespace tfel
       {} // end of EvaluatorFunction1P1V<f>::EvaluatorFunction1P1V
 
       double
-      EvaluatorFunction1P1V::getValue(void) const
+      EvaluatorFunction1P1V::getValue() const
       {
 	return (*(this->f))(this->n,this->expr->getValue());
       } // end of EvaluatorFunction1P1V::getValue(void) const
@@ -131,7 +131,7 @@ namespace tfel
       {} // end of EvaluatorFunction2P1V::EvaluatorFunction2P1V
 
       double
-      EvaluatorFunction2P1V::getValue(void) const
+      EvaluatorFunction2P1V::getValue() const
       {
 	return (*(this->f))(this->n,this->m,this->expr->getValue());
       } // end of EvaluatorFunction2P1V::getValue(void) const
@@ -179,7 +179,7 @@ namespace tfel
       {} // end of EvaluatorFunction1P2V::EvaluatorFunction1P2V
 
       double
-      EvaluatorFunction1P2V::getValue(void) const
+      EvaluatorFunction1P2V::getValue() const
       {
 	return (*(this->f))(this->n,this->e1->getValue(),this->e2->getValue());
       } // end of EvaluatorFunction1P2V::getValue(void) const
@@ -233,7 +233,7 @@ namespace tfel
       {} // end of EvaluatorFunction2P2V::EvaluatorFunction2P2V
 
       double
-      EvaluatorFunction2P2V::getValue(void) const
+      EvaluatorFunction2P2V::getValue() const
       {
 	return (*(this->f))(this->n,this->m,
 			    this->e1->getValue(),

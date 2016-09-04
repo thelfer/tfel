@@ -135,8 +135,8 @@ hasAttribute(const mfront::BehaviourDescription& d,
   return d.hasAttribute(h,n);
 }
   
-void declareBehaviourDescription(void);
-void declareBehaviourDescription(void){
+void declareBehaviourDescription();
+void declareBehaviourDescription(){
   using namespace boost::python;
   using namespace mfront;
   class_<BehaviourDescription>("BehaviourDescription")

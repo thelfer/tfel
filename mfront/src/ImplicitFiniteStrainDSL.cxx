@@ -22,13 +22,13 @@ namespace mfront{
   } // end of ImplicitFiniteStrainDSL::ImplicitFiniteStrainDSL
 
   std::string
-  ImplicitFiniteStrainDSL::getName(void)
+  ImplicitFiniteStrainDSL::getName()
   {
     return "ImplicitFiniteStrain";
   } // end of ImplicitFiniteStrainDSL::getName
 
   std::string
-  ImplicitFiniteStrainDSL::getDescription(void)
+  ImplicitFiniteStrainDSL::getDescription()
   {
     return "this parser provides a generic integrator based on a theta method.";
   } // end of ImplicitFiniteStrainDSL::getDescription

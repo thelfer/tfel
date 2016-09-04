@@ -78,7 +78,7 @@ namespace mfront{
   } // end of StandardElasticityBrick::StandardElasticityBrick
 
   void 
-  StandardElasticityBrick::endTreatment(void) const
+  StandardElasticityBrick::endTreatment() const
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("StandardElasticityBrick::endTreatment: "+m));}
@@ -266,7 +266,7 @@ namespace mfront{
   } // end of StandardElasticityBrick::declareComputeElasticPredictionMethod
   
   void
-  StandardElasticityBrick::declareComputeStressWhenStiffnessTensorIsDefined(void) const{
+  StandardElasticityBrick::declareComputeStressWhenStiffnessTensorIsDefined() const{
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     CodeBlock smts,sets;
     smts.code = "this->sig=(this->D)*(this->eel+theta*(this->deel));\n";
@@ -325,7 +325,7 @@ namespace mfront{
   } // end of StandardElasticityBrick::treatIsotropicBehaviour
 
   void
-  StandardElasticityBrick::treatOrthotropicBehaviour(void) const
+  StandardElasticityBrick::treatOrthotropicBehaviour() const
   {
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "StandardElasticityBrick::treatOrthotropic: begin\n";
@@ -660,7 +660,7 @@ namespace mfront{
   }
   
   std::vector<tfel::material::ModellingHypothesis::Hypothesis> 
-  StandardElasticityBrick::getSupportedModellingHypotheses(void) const
+  StandardElasticityBrick::getSupportedModellingHypotheses() const
   {
     auto dmh = this->dsl.getDefaultModellingHypotheses();
     std::vector<ModellingHypothesis::Hypothesis> mh(dmh.begin(),dmh.end());

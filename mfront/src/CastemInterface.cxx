@@ -164,7 +164,7 @@ namespace mfront{
   } // end of getCastemModellingHypothesisIndex
 
   std::string
-  CastemInterface::getName(void)
+  CastemInterface::getName()
   {
     return "umat";
   }
@@ -186,7 +186,7 @@ namespace mfront{
   } // end of CastemInterface::getLibraryName
 
   std::string
-  CastemInterface::getInterfaceName(void) const
+  CastemInterface::getInterfaceName() const
   {
     return "Castem";
   } // end of CastemInterface::getInterfaceName
@@ -510,7 +510,7 @@ namespace mfront{
   CastemInterface::getModellingHypothesesToBeTreated(const BehaviourDescription& mb) const
   {
     using tfel::material::ModellingHypothesis;
-    typedef ModellingHypothesis::Hypothesis Hypothesis;
+    using Hypothesis = ModellingHypothesis::Hypothesis;
     const Hypothesis sh[6u] = {ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 			       ModellingHypothesis::AXISYMMETRICAL,
 			       ModellingHypothesis::PLANESTRESS,

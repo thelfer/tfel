@@ -65,7 +65,7 @@ struct T2tot2Test_1D final
 TFEL_TESTS_GENERATE_PROXY(T2tot2Test_1D,"T2tot2Test-1D");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
   m.addXMLTestOutput("t2tot2.xml");

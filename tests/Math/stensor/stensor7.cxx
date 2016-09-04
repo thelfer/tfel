@@ -115,7 +115,7 @@ struct STensorTest7 final
 TFEL_TESTS_GENERATE_PROXY(STensorTest7,"STensorTest7");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   using namespace std;
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();

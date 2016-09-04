@@ -60,13 +60,13 @@ bool QRDecompTest()
 } // end of QRDecompTest
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using namespace tfel::tests;
-  typedef TestFunctionWrapper<QRDecompTest<long double> >  Wrapper1;
-  typedef TestFunctionWrapper<QRDecompTest<double> >       Wrapper2;
-  typedef TestFunctionWrapper<QRDecompTest<float> >        Wrapper3;
+  using Wrapper1 = TestFunctionWrapper<QRDecompTest<long double> >;
+  using Wrapper2 = TestFunctionWrapper<QRDecompTest<double> >;
+  using Wrapper3 = TestFunctionWrapper<QRDecompTest<float> >;
   auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);
   manager.addXMLTestOutput("qr.xml");

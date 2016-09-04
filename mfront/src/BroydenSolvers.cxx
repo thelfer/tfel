@@ -19,7 +19,7 @@
 namespace mfront{
 
   std::vector<std::string>
-  MFrontBroydenSolverBase::getReservedNames(void) const
+  MFrontBroydenSolverBase::getReservedNames() const
   {
     using namespace std;
     vector<string> n;
@@ -41,37 +41,37 @@ namespace mfront{
   } // end of MFrontBroydenSolverBase::getReservedNames
 
   bool
-  MFrontBroydenSolverBase::usesJacobian(void) const
+  MFrontBroydenSolverBase::usesJacobian() const
   {
     return true;
   } // end of MFrontBroydenSolverBase::usesJacobian
 
   bool
-  MFrontBroydenSolverBase::usesJacobianInvert(void) const
+  MFrontBroydenSolverBase::usesJacobianInvert() const
   {
     return true;
   } // end of MFrontBroydenSolverBase::usesJacobianInvert
 
   bool
-  MFrontBroydenSolverBase::requiresNumericalJacobian(void) const
+  MFrontBroydenSolverBase::requiresNumericalJacobian() const
   {
     return false;
   }
 
   bool
-  MFrontBroydenSolverBase::allowsJacobianInitialisation(void) const
+  MFrontBroydenSolverBase::allowsJacobianInitialisation() const
   {
     return true;
   }
 
   bool
-  MFrontBroydenSolverBase::allowsJacobianInvertInitialisation(void) const
+  MFrontBroydenSolverBase::allowsJacobianInvertInitialisation() const
   {
     return false;
   }
 
   bool
-  MFrontBroydenSolverBase::requiresJacobianToBeReinitialisedToIdentityAtEachIterations(void) const
+  MFrontBroydenSolverBase::requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const
   {
     return false;
   }
@@ -228,7 +228,7 @@ namespace mfront{
   {} // end of  MFrontBroydenSolverBase::~MFrontBroydenSolverBase()
 
   bool
-  MFrontBroydenSolver::usesPowellDogLegAlgorithm(void) const
+  MFrontBroydenSolver::usesPowellDogLegAlgorithm() const
   {
     return false;
   }
@@ -237,7 +237,7 @@ namespace mfront{
   {} // end of MFrontBroydenSolver::~MFrontBroydenSolver
 
   bool
-  MFrontPowellDogLegBroydenSolver::usesPowellDogLegAlgorithm(void) const
+  MFrontPowellDogLegBroydenSolver::usesPowellDogLegAlgorithm() const
   {
     return true;
   }

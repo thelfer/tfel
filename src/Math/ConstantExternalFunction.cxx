@@ -30,7 +30,7 @@ namespace tfel
       {} // end of ConstantExternalFunction::ConstantExternalFunction
 
       double
-      ConstantExternalFunction::getValue(void) const
+      ConstantExternalFunction::getValue() const
       {
 	return this->value;
       } // end of ConstantExternalFunction::getValue
@@ -48,7 +48,7 @@ namespace tfel
       }
 
       std::vector<double>::size_type
-      ConstantExternalFunction::getNumberOfVariables(void) const
+      ConstantExternalFunction::getNumberOfVariables() const
       {
 	return 0u;
       }
@@ -74,7 +74,7 @@ namespace tfel
       } // end of ConstantExternalFunction:: differentiate
 
       std::shared_ptr<ExternalFunction>
-      ConstantExternalFunction::resolveDependencies(void) const
+      ConstantExternalFunction::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ConstantExternalFunction(this->value));
       }

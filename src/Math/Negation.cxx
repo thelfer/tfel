@@ -27,7 +27,7 @@ namespace tfel
       {} // end of Negation::Negation
       
       double
-      Negation::getValue(void) const
+      Negation::getValue() const
       {
 	return -(this->expr->getValue());
       } // end of Negation::getValue(void)

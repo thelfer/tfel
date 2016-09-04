@@ -194,7 +194,7 @@ TFEL_TESTS_GENERATE_PROXY(STensorTest8_2D,"STensorTest8-2D");
 TFEL_TESTS_GENERATE_PROXY(STensorTest8_3D,"STensorTest8-3D");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   using namespace std;
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();

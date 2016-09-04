@@ -14,7 +14,7 @@
 #include"runge_kutta2-header.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
 

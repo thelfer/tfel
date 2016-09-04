@@ -50,7 +50,7 @@ namespace std{
 
 namespace mfront{
 
-  MaterialPropertyDSL::MaterialPropertyDSL(void)
+  MaterialPropertyDSL::MaterialPropertyDSL()
   {
     // Call Back
     this->registerNewCallBack(";",&MaterialPropertyDSL::treatLonelySeparator);
@@ -92,7 +92,7 @@ namespace mfront{
 
   
   AbstractDSL::DSLTarget
-  MaterialPropertyDSL::getTargetType(void) const{
+  MaterialPropertyDSL::getTargetType() const{
     return MATERIALPROPERTYDSL;
   }
 
@@ -115,7 +115,7 @@ namespace mfront{
   }
 
   std::string
-  MaterialPropertyDSL::getClassName(void) const
+  MaterialPropertyDSL::getClassName() const
   {
     return this->className;
   } // end of MaterialPropertyDSL::getClassName
@@ -130,7 +130,7 @@ namespace mfront{
   std::string
   MaterialPropertyDSL::getDescription()
   {
-    typedef MaterialPropertyInterfaceFactory MLIF;
+    using MLIF = mfront::MaterialPropertyInterfaceFactory;
     auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     const auto& ai = mlif.getRegistredInterfaces();
     auto p2  = ai.cbegin();
@@ -149,13 +149,13 @@ namespace mfront{
   } // end of MaterialPropertyDSL::getDescription
 
   std::string
-  MaterialPropertyDSL::getName(void)
+  MaterialPropertyDSL::getName()
   {
     return "MaterialLaw";
   } // end of MaterialPropertyDSL::getName(void)
 
   void
-  MaterialPropertyDSL::treatMaterial(void)
+  MaterialPropertyDSL::treatMaterial()
   {
     if(!this->material.empty()){
       this->throwRuntimeError("MaterialPropertyDSL::treatMaterial",
@@ -169,7 +169,7 @@ namespace mfront{
   } // end of MaterialPropertyDSL::treatMaterial
 
   void
-  MaterialPropertyDSL::treatLibrary(void)
+  MaterialPropertyDSL::treatLibrary()
   {
     if(!this->library.empty()){
       this->throwRuntimeError("MaterialPropertyDSL::treatLibrary",
@@ -184,7 +184,7 @@ namespace mfront{
   } // end of MFrontLibraryLawParser::treatLibrary
 
   void
-  MaterialPropertyDSL::treatConstant(void)
+  MaterialPropertyDSL::treatConstant()
   {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatConstant",
 			    "Cannot read variable name.");
@@ -201,7 +201,7 @@ namespace mfront{
   } // end of MaterialPropertyDSL::treatConstant
 
   void
-  MaterialPropertyDSL::treatParameter(void)
+  MaterialPropertyDSL::treatParameter()
   {
     // note : we shall use the DSLBase::handleParameter method
     std::string parameter;
@@ -223,7 +223,7 @@ namespace mfront{
   } // MaterialPropertyDSL::treatParameter
 
   void
-  MaterialPropertyDSL::treatLaw(void)
+  MaterialPropertyDSL::treatLaw()
   {
     if(!this->className.empty()){
       this->throwRuntimeError("MaterialPropertyDSL::treatLaw",
@@ -245,7 +245,7 @@ namespace mfront{
   void
   MaterialPropertyDSL::addInterface(const std::string& i)
   {
-    typedef MaterialPropertyInterfaceFactory MLIF;
+    using MLIF = mfront::MaterialPropertyInterfaceFactory;
     if(this->interfaces.find(i)==this->interfaces.end()){
       auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
       this->interfaces.insert({i,mlif.getInterface(i)});
@@ -255,7 +255,7 @@ namespace mfront{
   void
   MaterialPropertyDSL::setInterfaces(const std::set<std::string>& inames) 
   {
-    typedef MaterialPropertyInterfaceFactory MLIF;
+    using MLIF = mfront::MaterialPropertyInterfaceFactory;
     auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     // searching i2 depedencies
     for(const auto& i: inames){
@@ -267,7 +267,7 @@ namespace mfront{
   } // end of MaterialPropertyDSL::setInterface
 
   void
-  MaterialPropertyDSL::treatInterface(void) 
+  MaterialPropertyDSL::treatInterface() 
   {
     using namespace tfel::utilities;
     this->checkNotEndOfFile("MaterialPropertyDSL::treatInterface",
@@ -282,7 +282,7 @@ namespace mfront{
   } // end of MaterialPropertyDSL::treatInterface
 
   void
-  MaterialPropertyDSL::treatFunction(void)
+  MaterialPropertyDSL::treatFunction()
   {
     using namespace std;
     unsigned int openedBrackets = 0;
@@ -430,7 +430,7 @@ namespace mfront{
   }
 
   void
-  MaterialPropertyDSL::treatMethod(void) 
+  MaterialPropertyDSL::treatMethod() 
   {
     using namespace std;
     using namespace tfel::utilities;
@@ -562,7 +562,7 @@ namespace mfront{
   }
   
   void
-  MaterialPropertyDSL::analyse(void)
+  MaterialPropertyDSL::analyse()
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("MaterialPropertyDSL::analyse: "+m));}
@@ -646,7 +646,7 @@ namespace mfront{
   }
   
   void
-  MaterialPropertyDSL::generateOutputFiles(void)
+  MaterialPropertyDSL::generateOutputFiles()
   {
     using namespace tfel::system;
     auto throw_if = [](const bool b,const std::string& m){
@@ -668,7 +668,7 @@ namespace mfront{
   } // end of MaterialPropertyDSL::generateOutputFiles
 
   void
-  MaterialPropertyDSL::treatInput(void)
+  MaterialPropertyDSL::treatInput()
   {
     VariableDescriptionContainer ninputs;
     this->readVarList(ninputs,"real",false);
@@ -679,7 +679,7 @@ namespace mfront{
   } // end of MaterialPropertyDSL::treatInput
 
   void
-  MaterialPropertyDSL::treatOutput(void)
+  MaterialPropertyDSL::treatOutput()
   {
     if(!this->output.empty()){
       this->throwRuntimeError("MaterialPropertyDSL::treatOutput",
@@ -690,13 +690,13 @@ namespace mfront{
   } // end of MaterialPropertyDSL::treatOutput
 
   void
-  MaterialPropertyDSL::treatBounds(void)
+  MaterialPropertyDSL::treatBounds()
   {
     this->registerBounds(this->bounds);
   } // end of MaterialPropertyDSL::treatBounds
 
   void
-  MaterialPropertyDSL::treatPhysicalBounds(void)
+  MaterialPropertyDSL::treatPhysicalBounds()
   {
     this->registerBounds(this->physicalBounds);
   } // end of MaterialPropertyDSL::treatPhysicalBounds
@@ -796,7 +796,7 @@ namespace mfront{
     container.push_back(boundsDescription);
   } // end of MaterialPropertyDSL::registerBounds
   
-  void MaterialPropertyDSL::treatUnknownKeyword(void)
+  void MaterialPropertyDSL::treatUnknownKeyword()
   {
     TokensContainer::const_iterator p2;
     auto treated = false;
@@ -877,7 +877,7 @@ namespace mfront{
   } // end of MaterialPropertyDSL::treatUnknownKeyword
 
   const MaterialPropertyDescription&
-  MaterialPropertyDSL::getMaterialPropertyDescription(void) const
+  MaterialPropertyDSL::getMaterialPropertyDescription() const
   {
     return *this;
   } // end of MaterialPropertyDSL::getMaterialPropertyDescription

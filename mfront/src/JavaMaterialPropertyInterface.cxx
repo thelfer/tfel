@@ -77,7 +77,7 @@ namespace mfront
   } // end of getJavaClassFileName
   
   std::string
-  JavaMaterialPropertyInterface::getName(void)
+  JavaMaterialPropertyInterface::getName()
   {
     return "java";
   }

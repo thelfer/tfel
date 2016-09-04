@@ -15,7 +15,7 @@
 
 #include"TFEL/System/ExternalLibraryManager.hxx"
 
-void declareExternalLibraryManager(void);
+void declareExternalLibraryManager();
 
 static void
 ELM_loadLibrary(tfel::system::ExternalLibraryManager& elm,
@@ -87,12 +87,12 @@ ELM_setDoubleParameter2(tfel::system::ExternalLibraryManager& elm,
   elm.setParameter(l,n,h,p,v);
 }
 
-void declareExternalLibraryManager(void)
+void declareExternalLibraryManager()
 {
   using namespace boost;
   using namespace boost::python;
   using namespace tfel::system;
-  typedef ExternalLibraryManager ELM;
+  using ELM = tfel::system::ExternalLibraryManager;
   class_<ELM,noncopyable>("ExternalLibraryManager",no_init)
     .def("getExternalLibraryManager",ELM::getExternalLibraryManager,
 	 return_value_policy<reference_existing_object>())

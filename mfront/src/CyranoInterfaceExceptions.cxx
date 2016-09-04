@@ -160,7 +160,7 @@ namespace cyrano{
   } // end of CyranoInterfaceExceptions::checkNTENSValue
 
   void
-  CyranoInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage(void)
+  CyranoInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage()
   {
     using namespace std;
     cout << "CyranoInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage : "

@@ -26,7 +26,7 @@
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using tfel::fsalgo::iota;

@@ -98,7 +98,7 @@ struct ParserTest final
 TFEL_TESTS_GENERATE_PROXY(ParserTest,"Parser");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();

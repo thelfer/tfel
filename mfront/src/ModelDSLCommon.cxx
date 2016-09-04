@@ -75,12 +75,12 @@ namespace mfront{
   }
   
   AbstractDSL::DSLTarget
-  ModelDSLCommon::getTargetType(void) const{
+  ModelDSLCommon::getTargetType() const{
     return MODELDSL;
   }
 
   std::string
-  ModelDSLCommon::getClassName(void) const
+  ModelDSLCommon::getClassName() const
   {
     return this->className;
   } // end of ModelDSLCommon::getClassName
@@ -92,7 +92,7 @@ namespace mfront{
   } // end of ModelDSLCommon::addStaticVariableDescription
 
   void
-  ModelDSLCommon::treatMaterial(void)
+  ModelDSLCommon::treatMaterial()
   {
     if(!ModelDescription::material.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatMaterial",
@@ -109,7 +109,7 @@ namespace mfront{
   } // end of ModelDSLCommon::treatMaterial
 
   void
-  ModelDSLCommon::treatLibrary(void)
+  ModelDSLCommon::treatLibrary()
   {
     const auto& l = this->readOnlyOneToken();
     if(!CxxTokenizer::isValidIdentifier(l,true)){
@@ -123,7 +123,7 @@ namespace mfront{
     this->library = l;
   } // end of ModelDSLCommon::treatLibrary
 
-  void ModelDSLCommon::treatModel(void)
+  void ModelDSLCommon::treatModel()
   {
     if(!this->className.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatModel",
@@ -152,7 +152,7 @@ namespace mfront{
   } // end of ModelDSLCommon::setInterfaces
 
   void
-  ModelDSLCommon::generateOutputFiles(void)
+  ModelDSLCommon::generateOutputFiles()
   {
     if(this->interfaces.empty()){
       this->throwRuntimeError("ModelDSLCommon::generateOutputFiles",
@@ -163,7 +163,7 @@ namespace mfront{
     }
   } // end of ModelDSLCommon::writeOutputFiles
 
-  void ModelDSLCommon::treatUnknownKeyword(void)
+  void ModelDSLCommon::treatUnknownKeyword()
   {
     TokensContainer::const_iterator p2;
     auto treated = false;
@@ -243,7 +243,7 @@ namespace mfront{
     this->current = p2;
   } // end of ModelDSLCommon::treatUnknownKeyword
 
-  void ModelDSLCommon::treatDomain(void)
+  void ModelDSLCommon::treatDomain()
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::treatDomain: "+m));}
@@ -259,7 +259,7 @@ namespace mfront{
   } // end of ModelDSLCommon::treatDomain(void)
 
   void
-  ModelDSLCommon::treatDomains(void)
+  ModelDSLCommon::treatDomains()
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::treatDomains: "+m));}
@@ -286,7 +286,7 @@ namespace mfront{
   } // end of ModelDSLCommon::isInputVariable(void)
   
   void
-  ModelDSLCommon::treatFunction(void)
+  ModelDSLCommon::treatFunction()
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::treatFunction: "+m));}
@@ -493,7 +493,7 @@ namespace mfront{
   } // end of ModelDSLCommon::treatFunction(void)
 
   void
-  ModelDSLCommon::treatOutput(void)
+  ModelDSLCommon::treatOutput()
   {
     if(!this->functions.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatInput",
@@ -509,7 +509,7 @@ namespace mfront{
   } // end of ModelDSLCommon::treatOutput(void)
 
   void
-  ModelDSLCommon::treatInput(void)
+  ModelDSLCommon::treatInput()
   {
     if(!this->functions.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatInput",
@@ -525,7 +525,7 @@ namespace mfront{
   } // end of ModelDSLCommon::treatInput(void)
 
   void
-  ModelDSLCommon::treatOutputMethod(void) 
+  ModelDSLCommon::treatOutputMethod() 
   {
     if(!this->functions.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatOutputMethod: ",
@@ -586,7 +586,7 @@ namespace mfront{
   } // end of ModelDSLCommon::treatOutputMethod
 
   void
-  ModelDSLCommon::treatInputMethod(void) 
+  ModelDSLCommon::treatInputMethod() 
   {
     if(!this->functions.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
@@ -638,7 +638,7 @@ namespace mfront{
     this->readSpecifiedToken("ModelDSLCommon::treatInputMethod",";");
   } // end of ModelDSLCommon::treatInputMethod
 
-  void ModelDSLCommon::treatParameter(void)
+  void ModelDSLCommon::treatParameter()
   {
     VariableDescriptionContainer gp;
     this->readVarList(gp,false);
@@ -649,13 +649,13 @@ namespace mfront{
   } // end of ModelDSLCommon::treatParameter(void)
 
   void
-  ModelDSLCommon::treatLocalParameter(void)
+  ModelDSLCommon::treatLocalParameter()
   {
     this->treatParameter();
   }
     
   void
-  ModelDSLCommon::treatParameterMethod(void) 
+  ModelDSLCommon::treatParameterMethod() 
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::treatParameterMethod: "+m));}
@@ -685,7 +685,7 @@ namespace mfront{
   } // end of ModelDSLCommon::treatParameterMethod
 
   void
-  ModelDSLCommon::treatConstantMaterialProperty(void)
+  ModelDSLCommon::treatConstantMaterialProperty()
   {
     VariableDescriptionContainer cmp;
     this->readVarList(cmp,"real",false);
@@ -696,7 +696,7 @@ namespace mfront{
   } // end of ModelDSLCommon::treatConstantMaterialProperty(void)
 
   void
-  ModelDSLCommon::treatConstantMaterialPropertyMethod(void) 
+  ModelDSLCommon::treatConstantMaterialPropertyMethod() 
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::treatConstantMaterialPropertyMethod: "+m));}
@@ -722,7 +722,7 @@ namespace mfront{
   } // end of ModelDSLCommon::treatConstantMaterialPropertyMethod
 
   void
-  ModelDSLCommon::readDefaultValue(void)
+  ModelDSLCommon::readDefaultValue()
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::readDefaultValue: "+m));}
@@ -751,13 +751,13 @@ namespace mfront{
   } // end of ModelDSLCommon::readDefaultValue
 
   void
-  ModelDSLCommon::treatBounds(void)
+  ModelDSLCommon::treatBounds()
   {
     this->registerBounds(VariableDescription::bound);
   } // end of ModelDSLCommon::treatBounds
 
   void
-  ModelDSLCommon::treatPhysicalBounds(void)
+  ModelDSLCommon::treatPhysicalBounds()
   {
     this->registerBounds(VariableDescription::physicalBound);
   } // end of ModelDSLCommon::treatPhysicalBounds

@@ -22,7 +22,7 @@
 #include"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using namespace tfel::math;

@@ -73,7 +73,7 @@ namespace tfel
     } // end of rfstream::open
 
     void
-    rfstream::close(void)
+    rfstream::close()
     {
       using namespace std;
       if(*(this->get())==-1){
@@ -90,7 +90,7 @@ namespace tfel
     } // end of rfstream::close
 
     int
-    rfstream::getFileDescriptor(void) const
+    rfstream::getFileDescriptor() const
     {
       return *(this->get());
     } // end of rfstream::getFileDescriptor

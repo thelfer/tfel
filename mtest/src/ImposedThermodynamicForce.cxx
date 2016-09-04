@@ -34,7 +34,7 @@ namespace mtest
   {} // end of ImposedThermodynamicForce::ImposedThermodynamicForce
 
   unsigned short
-  ImposedThermodynamicForce::getNumberOfLagrangeMultipliers(void) const
+  ImposedThermodynamicForce::getNumberOfLagrangeMultipliers() const
   {
     return 0u;
   } // end of ImposedThermodynamicForce::getNumberOfLagrangeMultipliers

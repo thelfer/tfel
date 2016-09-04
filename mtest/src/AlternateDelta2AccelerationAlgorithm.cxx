@@ -129,7 +129,7 @@ namespace mtest
   } // end of AlternateDelta2AccelerationAlgorithm::execute
 
   void
-  AlternateDelta2AccelerationAlgorithm::postExecuteTasks(void)
+  AlternateDelta2AccelerationAlgorithm::postExecuteTasks()
   {} // end of AccelerationAlgorithm::postExecuteTaks
 
   AlternateDelta2AccelerationAlgorithm::~AlternateDelta2AccelerationAlgorithm()

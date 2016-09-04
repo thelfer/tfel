@@ -26,7 +26,7 @@ namespace mtest
   {} // end of SteffensenAccelerationAlgorithm::SteffensenAccelerationAlgorithm
     
   std::string
-  SteffensenAccelerationAlgorithm::getName(void) const
+  SteffensenAccelerationAlgorithm::getName() const
   {
     return "Steffensen";
   } // end of SteffensenAccelerationAlgorithm::getName
@@ -73,7 +73,7 @@ namespace mtest
   } // end of SteffensenAccelerationAlgorithm::initialize
 
   void
-  SteffensenAccelerationAlgorithm::preExecuteTasks(void)
+  SteffensenAccelerationAlgorithm::preExecuteTasks()
   {} // end of SteffensenAccelerationAlgorithm::preExecuteTasks
 
   void
@@ -106,7 +106,7 @@ namespace mtest
   } // end of SteffensenAccelerationAlgorithm::execute
 
   void
-  SteffensenAccelerationAlgorithm::postExecuteTasks(void)
+  SteffensenAccelerationAlgorithm::postExecuteTasks()
   {} // end of SteffensenAccelerationAlgorithm::postExecuteTasks
 
   SteffensenAccelerationAlgorithm::~SteffensenAccelerationAlgorithm()

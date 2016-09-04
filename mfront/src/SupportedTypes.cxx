@@ -26,10 +26,10 @@ namespace mfront{
    * \return a map between type names and Supported::TypeFlags
    */
   static std::map<std::string,SupportedTypes::TypeFlag> &
-  SupportedTypes_getFlags(void)
+  SupportedTypes_getFlags()
   {
     using namespace std;
-    typedef SupportedTypes::TypeFlag TypeFlag;
+    using TypeFlag = SupportedTypes::TypeFlag;
     static map<string,TypeFlag> flags = {{"real",SupportedTypes::Scalar},
 					 {"frequency",SupportedTypes::Scalar},
 					 {"stress",SupportedTypes::Scalar},
@@ -58,7 +58,7 @@ namespace mfront{
   } // end of SupportedTypes_getFlags
 
   const std::map<std::string,SupportedTypes::TypeFlag>&
-  SupportedTypes::getTypeFlags(void){
+  SupportedTypes::getTypeFlags(){
     return SupportedTypes_getFlags();
   } // end of SupportedTypes::getTypeFlags
   
@@ -173,7 +173,7 @@ namespace mfront{
     : areDynamicallyAllocatedVectorsAllowed_(true)
   {}
 
-  void SupportedTypes::reset(void)
+  void SupportedTypes::reset()
   {
     this->areDynamicallyAllocatedVectorsAllowed_ = true;
   } // end of SupportedTypes::reset
@@ -241,22 +241,22 @@ namespace mfront{
     }
   }
 
-  int SupportedTypes::TypeSize::getScalarSize(void) const
+  int SupportedTypes::TypeSize::getScalarSize() const
   {
     return this->scalarSize;
   }
 
-  int SupportedTypes::TypeSize::getTVectorSize(void) const
+  int SupportedTypes::TypeSize::getTVectorSize() const
   {
     return this->tvectorSize;
   }
     
-  int SupportedTypes::TypeSize::getStensorSize(void) const
+  int SupportedTypes::TypeSize::getStensorSize() const
   {
     return this->stensorSize;
   }
 
-  int SupportedTypes::TypeSize::getTensorSize(void) const
+  int SupportedTypes::TypeSize::getTensorSize() const
   {
     return this->tensorSize;
   }
@@ -277,7 +277,7 @@ namespace mfront{
   } // end of SupportedTypes::TypeSize::operator!=
 
   bool
-  SupportedTypes::TypeSize::isNull(void) const
+  SupportedTypes::TypeSize::isNull() const
   {
     return ((this->getScalarSize()==0)  && (this->getStensorSize()==0)&&
 	    (this->getTVectorSize()==0) && (this->getTensorSize()==0));
@@ -321,7 +321,7 @@ namespace mfront{
   } // end of SupportedTypes::useDynamicallyAllocatedVector
 
   bool
-  SupportedTypes::areDynamicallyAllocatedVectorsAllowed(void) const
+  SupportedTypes::areDynamicallyAllocatedVectorsAllowed() const
   {
     return this->areDynamicallyAllocatedVectorsAllowed_;
   } // end of SupportedTypes::areDynamicallyAllocatedVectorsAllowed

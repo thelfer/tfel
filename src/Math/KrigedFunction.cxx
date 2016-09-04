@@ -26,7 +26,7 @@ namespace tfel
     {
       
       void
-      KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException(void)
+      KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException()
       {
 	using namespace std;
 	string msg("KrigedFunctionBase::");
@@ -36,7 +36,7 @@ namespace tfel
       } // end of KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException
 
       void
-      KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables(void)
+      KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables()
       {
 	using namespace std;
 	string msg("KrigedFunctionException::");

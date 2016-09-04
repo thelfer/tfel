@@ -37,14 +37,14 @@ struct CadnaTest final
     return this->result;
   } // end of execute
  private:
-  void test1(void){
+  void test1(){
     using namespace tfel::math;
     TFEL_TESTS_STATIC_ASSERT((std::is_same<ResultType<cdouble,cdouble,OpDiv>::type,
 			      cdouble>::value));
     TFEL_TESTS_STATIC_ASSERT((std::is_same<ComputeBinaryResult<cdouble&&,cdouble&&,OpDiv>::Result,
 			      cdouble>::value));
   }
-  void test2(void){
+  void test2(){
     using namespace tfel::math;
     const qt<Mass,cdouble> m1(100.);
     const qt<Mass,cdouble> m2(100.);
@@ -61,7 +61,7 @@ struct CadnaTest final
 TFEL_TESTS_GENERATE_PROXY(CadnaTest,"CadnaTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace tfel::tests;
   auto& m = TestManager::getTestManager();

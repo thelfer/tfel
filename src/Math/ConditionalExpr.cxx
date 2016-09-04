@@ -32,7 +32,7 @@ namespace tfel
       {} // end of ConditionalExpr::ConditionalExpr
       
       double
-      ConditionalExpr::getValue(void) const
+      ConditionalExpr::getValue() const
       {
 	if(this->c->getValue()){
 	  return this->a->getValue();

@@ -32,7 +32,7 @@ namespace mtest
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::material;
-    typedef ExternalLibraryManager ELM;
+    using ELM = tfel::system::ExternalLibraryManager;
     const auto& nh = ModellingHypothesis::toString(h);
     auto& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getAsterFunction(l,b);
@@ -89,7 +89,7 @@ namespace mtest
   } // end of AsterCohesiveZoneModel::setDrivingVariablesDefaultInitialValue  
 
   StiffnessMatrixType
-  AsterCohesiveZoneModel::getDefaultStiffnessMatrixType(void) const
+  AsterCohesiveZoneModel::getDefaultStiffnessMatrixType() const
   {
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
   }

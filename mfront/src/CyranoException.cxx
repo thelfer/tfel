@@ -40,13 +40,13 @@ namespace cyrano
   {} // end of CyranoException::CyranoException
 
   const char* 
-  CyranoException::what (void) const noexcept
+  CyranoException::what () const noexcept
   { 
     return msg.c_str(); 
   } // end of CyranoException::what
 
   std::string
-  CyranoException::getMsg(void) const noexcept
+  CyranoException::getMsg() const noexcept
   {
     return msg;
   } // end of CyranoException::getMsg

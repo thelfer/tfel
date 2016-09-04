@@ -187,7 +187,7 @@ namespace mtest
   } // end of AbaqusExplicitBehaviour::allocate
 
   StiffnessMatrixType
-  AbaqusExplicitBehaviour::getDefaultStiffnessMatrixType(void) const
+  AbaqusExplicitBehaviour::getDefaultStiffnessMatrixType() const
   {
     return StiffnessMatrixType::ELASTIC;
   }

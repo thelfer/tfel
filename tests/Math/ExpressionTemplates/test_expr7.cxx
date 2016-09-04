@@ -26,7 +26,7 @@
 #include"TFEL/Math/General/BasicOperations.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using namespace tfel::math;

@@ -46,7 +46,7 @@ namespace mfront
 {
 
   std::string
-  Fortran03MaterialPropertyInterface::getName(void)
+  Fortran03MaterialPropertyInterface::getName()
   {
     return "fortran03";
   }
@@ -156,15 +156,15 @@ namespace mfront
   } // end of Fortran03MaterialPropertyInterface::writeSrcPreprocessorDirectives
 
   void
-  Fortran03MaterialPropertyInterface::writeBeginHeaderNamespace(void)
+  Fortran03MaterialPropertyInterface::writeBeginHeaderNamespace()
   {} // end of Fortran03MaterialPropertyInterface::writeBeginHeaderNamespace
   
   void
-  Fortran03MaterialPropertyInterface::writeEndHeaderNamespace(void)
+  Fortran03MaterialPropertyInterface::writeEndHeaderNamespace()
   {} // end of Fortran03MaterialPropertyInterface::writeEndHeaderNamespace(void)
 
   void
-  Fortran03MaterialPropertyInterface::writeBeginSrcNamespace(void)
+  Fortran03MaterialPropertyInterface::writeBeginSrcNamespace()
   {
     this->srcFile << "#ifdef __cplusplus\n";
     this->srcFile << "extern \"C\"{\n";
@@ -172,7 +172,7 @@ namespace mfront
   } // end of Fortran03MaterialPropertyInterface::writeBeginSrcNamespace
   
   void
-  Fortran03MaterialPropertyInterface::writeEndSrcNamespace(void)
+  Fortran03MaterialPropertyInterface::writeEndSrcNamespace()
   {
     this->srcFile << "#ifdef __cplusplus\n";
     this->srcFile << "} // end of extern \"C\"\n";
@@ -187,7 +187,7 @@ namespace mfront
   } // end of Fortran03MaterialPropertyInterface::getFunctionName
 
   bool
-  Fortran03MaterialPropertyInterface::requiresCheckBoundsFunction(void) const
+  Fortran03MaterialPropertyInterface::requiresCheckBoundsFunction() const
   {
     return false;
   }

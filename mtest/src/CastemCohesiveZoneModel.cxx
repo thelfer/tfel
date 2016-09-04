@@ -33,7 +33,7 @@ namespace mtest
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::material;
-    typedef ExternalLibraryManager ELM;
+    using ELM = tfel::system::ExternalLibraryManager;
     const auto& nh = ModellingHypothesis::toString(h);
     auto& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getCastemExternalBehaviourFunction(l,b);
@@ -90,7 +90,7 @@ namespace mtest
   } // end of CastemCohesiveZoneModel::setDrivingVariablesDefaultInitialValue  
 
   StiffnessMatrixType
-  CastemCohesiveZoneModel::getDefaultStiffnessMatrixType(void) const
+  CastemCohesiveZoneModel::getDefaultStiffnessMatrixType() const
   {
     return StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;
   }

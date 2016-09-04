@@ -48,7 +48,7 @@ private:
 TFEL_TESTS_GENERATE_PROXY(ConvertLogarithmicStrainTangentOperator,
 			  "ConvertLogarithmicStrainTangentOperator");
 
-int main(void)
+int main()
 {
   auto& manager = tfel::tests::TestManager::getTestManager();
   manager.addTestOutput(std::cout);

@@ -53,13 +53,13 @@ namespace mfront{
   } // end of IsotropicMisesCreepDSL::getDescription
 
   std::string
-  IsotropicMisesCreepDSL::getName(void)
+  IsotropicMisesCreepDSL::getName()
   {
     return "IsotropicMisesCreep";
   }
 
   void
-  IsotropicMisesCreepDSL::endsInputFileProcessing(void)
+  IsotropicMisesCreepDSL::endsInputFileProcessing()
   {
     using namespace std;
     IsotropicBehaviourDSLBase::endsInputFileProcessing();

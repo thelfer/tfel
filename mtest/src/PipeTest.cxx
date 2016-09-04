@@ -347,7 +347,7 @@ namespace mtest{
 		 "number of elements",r,false);
   } // end of PipeTest::setNumberOfElements
 
-  const PipeMesh& PipeTest::getMesh(void) const{
+  const PipeMesh& PipeTest::getMesh() const{
     return this->mesh;
   }
   
@@ -416,7 +416,7 @@ namespace mtest{
     }
   } // end of PipeTest::addReferenceFileComparisonTest
   
-  void PipeTest::completeInitialisation(void)
+  void PipeTest::completeInitialisation()
   {
     checkValue(mesh.inner_radius,"inner radius");
     checkValue(mesh.outer_radius,"outer radius");
@@ -499,7 +499,7 @@ namespace mtest{
   } // end of PipeTest::completeInitialisation
 
   PipeTest::size_type
-  PipeTest::getNumberOfNodes(void) const
+  PipeTest::getNumberOfNodes() const
   {
     if(this->mesh.number_of_elements<=0){
       throw(std::runtime_error("PipeTest::getNumberOfNodes: "
@@ -523,7 +523,7 @@ namespace mtest{
   }
   
   PipeTest::size_type
-  PipeTest::getNumberOfUnknowns(void) const
+  PipeTest::getNumberOfUnknowns() const
   {
     return this->getNumberOfNodes()+1;
   } // end of PipeTest::getNumberOfUnknowns
@@ -660,19 +660,19 @@ namespace mtest{
   } // end of PipeTest::initializeCurrentState
 
   std::string
-  PipeTest::name(void) const
+  PipeTest::name() const
   {
     return "pipe test";
   } // end of PipeTest::name
   
   std::string
-  PipeTest::classname(void) const
+  PipeTest::classname() const
   {
     return "MTest";
   }
 
   tfel::tests::TestResult
-  PipeTest::execute(void)
+  PipeTest::execute()
   {
     auto report = [](const StudyCurrentState& s,const bool bs){
       if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
@@ -989,7 +989,7 @@ namespace mtest{
     return {true,r_dt};
   } // end of PipeTest::computeStiffnessMatrixAndResidual
 
-  void PipeTest::performSmallStrainAnalysis(void){
+  void PipeTest::performSmallStrainAnalysis(){
     this->hpp=true;
   } // en dof PipeTest::performSmallStrainAnalysis
   
@@ -1273,7 +1273,7 @@ namespace mtest{
   } // end of PipeTest::setModellingHypothesis
 
   void
-  PipeTest::setDefaultModellingHypothesis(void)
+  PipeTest::setDefaultModellingHypothesis()
   {
     if(this->hypothesis!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       throw(std::runtime_error("PipeTest::setDefaultModellingHypothesis: "

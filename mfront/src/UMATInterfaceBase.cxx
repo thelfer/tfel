@@ -239,17 +239,17 @@ namespace mfront
   } // end of UMATInterfaceBase::exportThermodynamicForce
   
   std::vector<std::pair<std::string,std::string>>
-  UMATInterfaceBase::getBehaviourConstructorsAdditionalVariables(void) const{
+  UMATInterfaceBase::getBehaviourConstructorsAdditionalVariables() const{
     return {};
   } // end of UMATInterfaceBase::getBehaviourConstructorsAdditionalVariables
 			 
   std::vector<std::pair<std::string,std::string>>
-  UMATInterfaceBase::getBehaviourDataConstructorAdditionalVariables(void) const{
+  UMATInterfaceBase::getBehaviourDataConstructorAdditionalVariables() const{
     return {};
   } // end of UMATInterfaceBase::getBehaviourDataConstructorAdditionalVariables
 
   std::vector<std::pair<std::string,std::string>>
-  UMATInterfaceBase::getIntegrationDataConstructorAdditionalVariables(void) const{
+  UMATInterfaceBase::getIntegrationDataConstructorAdditionalVariables() const{
     return {};
   } // end of UMATInterfaceBase::getIntegrationDataConstructorAdditionalVariables
   

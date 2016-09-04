@@ -57,13 +57,13 @@ namespace tfel
     } // end of LevenbergMarquardtExternalFunctionWrapper::LevenbergMarquardtExternalFunctionWrapper
 
     LevenbergMarquardtExternalFunctionWrapper::size_type
-    LevenbergMarquardtExternalFunctionWrapper::getNumberOfVariables(void) const
+    LevenbergMarquardtExternalFunctionWrapper::getNumberOfVariables() const
     {
       return this->nv;
     } // end of LevenbergMarquardtExternalFunctionWrapper::getNumberOfVariables()
 
     LevenbergMarquardtExternalFunctionWrapper::size_type
-    LevenbergMarquardtExternalFunctionWrapper::getNumberOfParameters(void) const
+    LevenbergMarquardtExternalFunctionWrapper::getNumberOfParameters() const
     {
       return this->np;
     } // end of LevenbergMarquardtExternalFunctionWrapper::getNumberOfParameters()

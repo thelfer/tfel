@@ -79,7 +79,7 @@ TFEL_TESTS_GENERATE_PROXY(CxxMaterialPropertyInterfaceTest,
 			  "CxxMaterialPropertyInterfaceTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   auto& manager = tfel::tests::TestManager::getTestManager();
   manager.addTestOutput(std::cout);

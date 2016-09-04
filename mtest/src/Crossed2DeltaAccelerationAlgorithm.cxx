@@ -129,7 +129,7 @@ namespace mtest
   } // end of Crossed2DeltaAccelerationAlgorithm::execute
 
   void
-  Crossed2DeltaAccelerationAlgorithm::postExecuteTasks(void)
+  Crossed2DeltaAccelerationAlgorithm::postExecuteTasks()
   {} // end of AccelerationAlgorithm::postExecuteTaks
 
   Crossed2DeltaAccelerationAlgorithm::~Crossed2DeltaAccelerationAlgorithm()

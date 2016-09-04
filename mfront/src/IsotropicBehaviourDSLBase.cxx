@@ -90,7 +90,7 @@ namespace mfront{
   {} // end of IsotropicBehaviourDSLBase::~IsotropicBehaviourDSLBase()
 
   void
-  IsotropicBehaviourDSLBase::treatTheta(void)
+  IsotropicBehaviourDSLBase::treatTheta()
   {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double v;
@@ -114,7 +114,7 @@ namespace mfront{
   } // end of IsotropicBehaviourDSLBase::treatTheta
 
   void
-  IsotropicBehaviourDSLBase::treatEpsilon(void)
+  IsotropicBehaviourDSLBase::treatEpsilon()
   {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double epsilon;
@@ -138,7 +138,7 @@ namespace mfront{
   } // IsotropicBehaviourDSLBase::treatEpsilon
 
   void
-  IsotropicBehaviourDSLBase::treatIterMax(void)
+  IsotropicBehaviourDSLBase::treatIterMax()
   {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     unsigned short iterMax;
@@ -154,7 +154,7 @@ namespace mfront{
   } // end of IsotropicBehaviourDSLBase::treatIterMax
 
   void
-  IsotropicBehaviourDSLBase::writeBehaviourParserSpecificIncludes(void)
+  IsotropicBehaviourDSLBase::writeBehaviourParserSpecificIncludes()
   {
     this->checkBehaviourFile();
     this->behaviourFile << "#include\"TFEL/Math/General/BaseCast.hxx\"\n";
@@ -184,14 +184,14 @@ namespace mfront{
   } // end of IsotropicBehaviourDSLBase::flowRuleVariableModifier
 
   void
-  IsotropicBehaviourDSLBase::treatFlowRule(void)
+  IsotropicBehaviourDSLBase::treatFlowRule()
   {
     this->readCodeBlock(*this,BehaviourData::FlowRule,
 			&IsotropicBehaviourDSLBase::flowRuleVariableModifier,true,false);
   } // end of IsotropicBehaviourDSLBase::treatFlowRule
 
   void
-  IsotropicBehaviourDSLBase::endsInputFileProcessing(void)
+  IsotropicBehaviourDSLBase::endsInputFileProcessing()
   {
     using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -229,7 +229,7 @@ namespace mfront{
     }
   } // end of IsotropicBehaviourDSLBase::endsInputFileProcessing
 
-  void IsotropicBehaviourDSLBase::treatExternalStateVariable(void)
+  void IsotropicBehaviourDSLBase::treatExternalStateVariable()
   {
     VariableDescriptionContainer ev;
     std::set<Hypothesis> h;
@@ -249,7 +249,7 @@ namespace mfront{
   } // end of IsotropicBehaviourDSLBase::treatExternalStateVariable
 
   void
-  IsotropicBehaviourDSLBase::writeBehaviourParserSpecificTypedefs(void)
+  IsotropicBehaviourDSLBase::writeBehaviourParserSpecificTypedefs()
   {
     this->checkBehaviourFile();
     this->behaviourFile << "typedef typename tfel::math::ComputeBinaryResult<"

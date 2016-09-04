@@ -130,7 +130,7 @@ namespace mtest
   }
 
   StiffnessMatrixType
-  CastemStandardBehaviour::getDefaultStiffnessMatrixType(void) const
+  CastemStandardBehaviour::getDefaultStiffnessMatrixType() const
   {
     return StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;    
   } // end of CastemStandardBehaviour::getDefaultStiffnessMatrixType

@@ -21,13 +21,13 @@ namespace mfront{
   } // end of ImplicitDSLII::ImplicitDSLII
 
   std::string
-  ImplicitDSLII::getName(void)
+  ImplicitDSLII::getName()
   {
     return "ImplicitII";
   } // end of ImplicitDSLII::getName
 
   std::string
-  ImplicitDSLII::getDescription(void)
+  ImplicitDSLII::getDescription()
   {
     return "this parser provides a generic integrator based on a theta method.";
   } // end of ImplicitDSLII::getDescription

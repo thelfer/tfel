@@ -638,7 +638,7 @@ namespace mtest
   {
     using namespace tfel::system;
     using namespace tfel::material;
-    typedef ExternalLibraryManager ELM;
+    using ELM = tfel::system::ExternalLibraryManager;
     if(h==ModellingHypothesis::PLANESTRESS){
       auto& elm = ELM::getExternalLibraryManager();
       if(elm.checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm(l,b)){

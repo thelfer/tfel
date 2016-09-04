@@ -50,7 +50,7 @@ LM_STATIC void test(double & v,
 } // end of test
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using namespace tfel::math;

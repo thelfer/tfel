@@ -15,9 +15,9 @@
 
 #include"TFEL/Tests/TestResult.hxx"
 
-void declareTestResult(void);
+void declareTestResult();
 
-void declareTestResult(void)
+void declareTestResult()
 {
   using namespace boost;
   using namespace boost::python;

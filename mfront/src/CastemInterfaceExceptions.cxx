@@ -150,7 +150,7 @@ namespace castem{
   } // end of CastemInterfaceExceptions::checkNTENSValue
 
   void
-  CastemInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage(void)
+  CastemInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage()
   {
     std::cout << "CastemInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage : "
 	      << "invalid value for the NDI parameter" << std::endl;    

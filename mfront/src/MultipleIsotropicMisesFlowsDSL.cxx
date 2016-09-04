@@ -45,7 +45,7 @@ namespace mfront{
   }
 
   std::string
-  MultipleIsotropicMisesFlowsDSL::getName(void)
+  MultipleIsotropicMisesFlowsDSL::getName()
   {
     return "MultipleIsotropicMisesFlows";
   }
@@ -61,7 +61,7 @@ namespace mfront{
   } // end of MultipleIsotropicMisesFlowsDSL::getDescription
 
   void
-  MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificIncludes(void)
+  MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificIncludes()
   {
     this->checkBehaviourFile();
     this->behaviourFile << "#include\"TFEL/Math/General/BaseCast.hxx\"\n";
@@ -377,7 +377,7 @@ namespace mfront{
   }
 
   void
-  MultipleIsotropicMisesFlowsDSL::treatFlowRule(void)
+  MultipleIsotropicMisesFlowsDSL::treatFlowRule()
   {
     using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;

@@ -63,7 +63,7 @@ namespace mfront{
 	  "initializeParameter","initializeInputIFieldDouble"});
   } // end of MFrontPleiadesModelInterfaceBase::declareReservedNames
 
-  void MFrontPleiadesModelInterfaceBase::openOutputFiles(void)
+  void MFrontPleiadesModelInterfaceBase::openOutputFiles()
   {
     using namespace std;
     using namespace tfel::system;
@@ -90,7 +90,7 @@ namespace mfront{
   } // end of MFrontPleiadesModelInterfaceBase::openOutputFiles()
 
   void
-  MFrontPleiadesModelInterfaceBase::closeOutputFiles(void)
+  MFrontPleiadesModelInterfaceBase::closeOutputFiles()
   {
     this->headerFile.close();
     this->srcFile.close();

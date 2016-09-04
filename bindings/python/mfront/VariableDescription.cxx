@@ -21,8 +21,8 @@ VariableDescriptionContainer_size(const mfront::VariableDescriptionContainer& v)
   return v.size();
 }
 
-void declareVariableDescription(void);
-void declareVariableDescription(void){
+void declareVariableDescription();
+void declareVariableDescription(){
   using namespace boost::python;
   using namespace mfront;
   class_<VariableDescription>("VariableDescription")

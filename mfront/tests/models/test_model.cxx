@@ -31,7 +31,7 @@ struct B4CConcentrationModelTest final
     : tfel::tests::TestCase("MFront/Model","B4CConcentrationModelTest")
     {} // end of B4CConcentrationModelTest
   virtual tfel::tests::TestResult
-    execute(void) override
+    execute() override
   {
     this->test1();
     this->test2();
@@ -41,14 +41,14 @@ struct B4CConcentrationModelTest final
   //! destructor
   virtual ~B4CConcentrationModelTest() = default;
  private:
-  void test1(void){
+  void test1(){
     mfront::B4C_ConcentrationModel<double> cm;
     double bu  = 0;
     double b10 = 5.06732753005997e+28;
     TFEL_TESTS_CHECK_THROW((cm.Compute(bu,b10,-1.,0.,0.,0.,3600)),
 			   tfel::material::OutOfBoundsException);
   }
-  void test2(void){
+  void test2(){
     mfront::B4C_ConcentrationModel<double> cm;
     const double b10_0 = 5.06732753005997e+28;
     const double c   = 8.35838E-09;
@@ -66,7 +66,7 @@ struct B4CConcentrationModelTest final
       TFEL_TESTS_ASSERT(std::abs(b10-b10_0*exp(-c*t))<b10_0*1e-6);
     }
   }
-  void test3(void){
+  void test3(){
     mfront::SiC_IrradiationSwellingModel_GoFaster<double> sm;
     const double T = 1603.15;
     const double f = 2.e15;
@@ -85,7 +85,7 @@ struct B4CConcentrationModelTest final
 
 TFEL_TESTS_GENERATE_PROXY(B4CConcentrationModelTest,"B4CConcentrationModelTest");
 
-int main(void){
+int main(){
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
   m.addXMLTestOutput("test-model.xml");

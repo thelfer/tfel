@@ -26,7 +26,7 @@ namespace mfront
 {
 
   std::string
-  CMaterialPropertyInterface::getName(void)
+  CMaterialPropertyInterface::getName()
   {
     return "c";
   }
@@ -86,7 +86,7 @@ namespace mfront
   } // end of CMaterialPropertyInterface::getSrcFileName
   
   void
-  CMaterialPropertyInterface::writeBeginHeaderNamespace(void)
+  CMaterialPropertyInterface::writeBeginHeaderNamespace()
   {
     this->headerFile << "#ifdef __cplusplus\n";
     this->headerFile << "extern \"C\"{\n";
@@ -94,7 +94,7 @@ namespace mfront
   } // end of CMaterialPropertyInterface::writeBeginHeaderNamespace
   
   void
-  CMaterialPropertyInterface::writeEndHeaderNamespace(void)
+  CMaterialPropertyInterface::writeEndHeaderNamespace()
   {
     this->headerFile << "#ifdef __cplusplus\n";
     this->headerFile << "} /* end of extern \"C\" */\n";
@@ -102,7 +102,7 @@ namespace mfront
   } // end of CMaterialPropertyInterface::writeEndHeaderNamespace(void)
 
   void
-  CMaterialPropertyInterface::writeBeginSrcNamespace(void)
+  CMaterialPropertyInterface::writeBeginSrcNamespace()
   {
     this->srcFile << "#ifdef __cplusplus\n";
     this->srcFile << "extern \"C\"{\n";
@@ -110,7 +110,7 @@ namespace mfront
   } // end of CMaterialPropertyInterface::writeBeginSrcNamespace
   
   void
-  CMaterialPropertyInterface::writeEndSrcNamespace(void)
+  CMaterialPropertyInterface::writeEndSrcNamespace()
   {
     this->srcFile << "#ifdef __cplusplus\n";
     this->srcFile << "} // end of extern \"C\"\n";
@@ -125,7 +125,7 @@ namespace mfront
   } // end of CMaterialPropertyInterface::getFunctionName
   
   bool
-  CMaterialPropertyInterface::requiresCheckBoundsFunction(void) const
+  CMaterialPropertyInterface::requiresCheckBoundsFunction() const
   {
     return false;
   }

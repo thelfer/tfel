@@ -56,7 +56,7 @@ TFEL_TESTS_GENERATE_PROXY(TVector6,
 			  "TVector6");
 
 /* coverity [root_function]*/
-int main(void)
+int main()
 {
   auto& manager = tfel::tests::TestManager::getTestManager();
   manager.addTestOutput(std::cout);

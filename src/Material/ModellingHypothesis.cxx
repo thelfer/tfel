@@ -22,7 +22,7 @@ namespace tfel
   {
     
     const std::vector<ModellingHypothesis::Hypothesis>&
-    ModellingHypothesis::getModellingHypotheses(void)
+    ModellingHypothesis::getModellingHypotheses()
     {
       static std::vector<Hypothesis> h{AXISYMMETRICALGENERALISEDPLANESTRAIN,
 	  AXISYMMETRICALGENERALISEDPLANESTRESS,

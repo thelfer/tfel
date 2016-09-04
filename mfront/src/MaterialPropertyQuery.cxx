@@ -39,7 +39,7 @@ namespace mfront{
   } // end of MaterialPropertyQuery::MaterialPropertyQuery
 
   void
-  MaterialPropertyQuery::registerCommandLineCallBacks(void){
+  MaterialPropertyQuery::registerCommandLineCallBacks(){
     using Parser = tfel::utilities::ArgumentParserBase<MaterialPropertyQuery>;
     Parser::registerNewCallBack("--verbose",&MaterialPropertyQuery::treatVerbose,
 				"set verbose output",true);
@@ -84,7 +84,7 @@ namespace mfront{
 				"show all the specific targets");
   } // end of MaterialPropertyQuery::registerCommandLineCallBacks
 
-  void MaterialPropertyQuery::treatStandardQuery(void){
+  void MaterialPropertyQuery::treatStandardQuery(){
     using namespace std;
     const auto& q = this->getCurrentCommandLineArgument();
     const auto& qn = q.as_string();
@@ -134,7 +134,7 @@ namespace mfront{
     }
   } // end of MaterialPropertyQuery::treatStandardQuery
   
-  void MaterialPropertyQuery::treatGeneratedSources(void)
+  void MaterialPropertyQuery::treatGeneratedSources()
   {
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&,const MaterialPropertyDescription&){
@@ -148,7 +148,7 @@ namespace mfront{
     this->queries.push_back({"generated-sources",q});
   } // end of MaterialPropertyQuery::treatGeneratedSources
 
-  void MaterialPropertyQuery::treatGeneratedHeaders(void)
+  void MaterialPropertyQuery::treatGeneratedHeaders()
   {
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&,const MaterialPropertyDescription&){
@@ -160,7 +160,7 @@ namespace mfront{
     this->queries.push_back({"generated-headers",q});
   } // end of MaterialPropertyQuery::treatGeneratedHeaders
 
-  void MaterialPropertyQuery::treatCppFlags(void)
+  void MaterialPropertyQuery::treatCppFlags()
   {
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&,const MaterialPropertyDescription&){
@@ -174,7 +174,7 @@ namespace mfront{
     this->queries.push_back({"cppflags",q});
   } // end of MaterialPropertyQuery::treatCppFlags
 
-  void MaterialPropertyQuery::treatLibrariesDependencies(void)
+  void MaterialPropertyQuery::treatLibrariesDependencies()
   {
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&,const MaterialPropertyDescription&){
@@ -188,7 +188,7 @@ namespace mfront{
     this->queries.push_back({"libraries-dependencies",q});
   } // end of MaterialPropertyQuery::treatLibrariesDependencies
 
-  void MaterialPropertyQuery::treatSpecificTargets(void)
+  void MaterialPropertyQuery::treatSpecificTargets()
   {
     auto ldsl = this->dsl;
     auto l = [ldsl](const FileDescription&,const MaterialPropertyDescription&){
@@ -206,7 +206,7 @@ namespace mfront{
     this->queries.push_back({"specific-targets",l});
   } // end of MaterialPropertyQuery::treatSpecificTargets
   
-  void MaterialPropertyQuery::exe(void)
+  void MaterialPropertyQuery::exe()
   {
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       getLogStream() << "Treating file '" << this->file << "'" << std::endl;
@@ -229,7 +229,7 @@ namespace mfront{
     return *(this->currentArgument);
   }
   
-  void MaterialPropertyQuery::treatUnknownArgument(void)
+  void MaterialPropertyQuery::treatUnknownArgument()
   {
     if(!MFrontBase::treatUnknownArgumentBase()){
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
@@ -243,12 +243,12 @@ namespace mfront{
   }
 
   std::string
-  MaterialPropertyQuery::getVersionDescription(void) const{
+  MaterialPropertyQuery::getVersionDescription() const{
     return MFrontHeader::getHeader();
   }
 
   std::string 
-  MaterialPropertyQuery::getUsageDescription(void) const
+  MaterialPropertyQuery::getUsageDescription() const
   {
     auto usage = std::string("Usage: ");
     usage += this->programName;

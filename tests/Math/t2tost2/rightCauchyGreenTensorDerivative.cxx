@@ -90,15 +90,15 @@ struct RightCauchyGreenTensorDerivative final
   } // end of execute
 };
 
-typedef RightCauchyGreenTensorDerivative<1u> RightCauchyGreenTensorDerivative_1D;
-typedef RightCauchyGreenTensorDerivative<2u> RightCauchyGreenTensorDerivative_2D;
-typedef RightCauchyGreenTensorDerivative<3u> RightCauchyGreenTensorDerivative_3D;
+using RightCauchyGreenTensorDerivative_1D = RightCauchyGreenTensorDerivative<1U>;
+using RightCauchyGreenTensorDerivative_2D = RightCauchyGreenTensorDerivative<2U>;
+using RightCauchyGreenTensorDerivative_3D = RightCauchyGreenTensorDerivative<3U>;
 TFEL_TESTS_GENERATE_PROXY(RightCauchyGreenTensorDerivative_1D,"RightCauchyGreenTensorDerivative-1D");
 TFEL_TESTS_GENERATE_PROXY(RightCauchyGreenTensorDerivative_2D,"RightCauchyGreenTensorDerivative-2D");
 TFEL_TESTS_GENERATE_PROXY(RightCauchyGreenTensorDerivative_3D,"RightCauchyGreenTensorDerivative-3D");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
   manager.addTestOutput(std::cout);

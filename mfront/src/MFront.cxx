@@ -93,13 +93,13 @@ namespace mfront{
   }
 
   std::string 
-  MFront::getVersionDescription(void) const
+  MFront::getVersionDescription() const
   {
     return MFrontHeader::getHeader();
   }
 
   std::string 
-  MFront::getUsageDescription(void) const
+  MFront::getUsageDescription() const
   {
     return "Usage: "+this->programName+" [options] [files]";
   }
@@ -111,11 +111,11 @@ namespace mfront{
   }
 
   void
-  MFront::doNothing(void)
+  MFront::doNothing()
   {} // end of MFront::doNothing
   
   void
-  MFront::treatUnknownArgument(void)
+  MFront::treatUnknownArgument()
   {
     if(!MFrontBase::treatUnknownArgumentBase()){
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
@@ -131,27 +131,27 @@ namespace mfront{
 
 #ifdef MFRONT_MAKE_SUPPORT  
   void
-  MFront::treatMake(void)
+  MFront::treatMake()
   {
     this->genMake = true;
   } // end of MFront::treatMake
 
   void
-  MFront::treatBuild(void)
+  MFront::treatBuild()
   {
     this->genMake   = true;
     this->buildLibs = true;
   } // end of MFront::treatBuild
 
   void
-  MFront::treatClean(void)
+  MFront::treatClean()
   {
     this->genMake   = true;
     this->cleanLibs = true;
   } // end of MFront::treatBuild
 
   void
-  MFront::treatOMake(void)
+  MFront::treatOMake()
   {
     this->genMake = true;
     const auto level = this->currentArgument->getOption();
@@ -173,7 +173,7 @@ namespace mfront{
   } // end of MFront::treatOMake
 
   void
-  MFront::treatOBuild(void)
+  MFront::treatOBuild()
   {
     this->genMake   = true;
     this->buildLibs = true;
@@ -198,7 +198,7 @@ namespace mfront{
 #endif /* MFRONT_MAKE_SUPPORT */
   
   void
-  MFront::treatListParsers(void)
+  MFront::treatListParsers()
   {
     std::cout << "available dsl: \n";
     auto& parserFactory = DSLFactory::getDSLFactory();
@@ -216,7 +216,7 @@ namespace mfront{
   } // end of MFront::treatListParsers
 
   void
-  MFront::treatSilentBuild(void)
+  MFront::treatSilentBuild()
   {
     const auto& o = this->currentArgument->getOption();
     if(o.empty()){
@@ -239,7 +239,7 @@ namespace mfront{
 #ifdef MFRONT_MAKE_SUPPORT
   
   void
-  MFront::treatTarget(void)
+  MFront::treatTarget()
   {
     using tfel::utilities::tokenize;
     const auto& t = tokenize(this->currentArgument->getOption(),',');
@@ -254,7 +254,7 @@ namespace mfront{
   } // end of MFront::treatTarget
 
   void
-  MFront::treatOTarget(void)
+  MFront::treatOTarget()
   {
     if(this->currentArgument==this->args.end()){
       throw(std::runtime_error("MFront::treatTarget: "
@@ -269,14 +269,14 @@ namespace mfront{
   
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
   void
-  MFront::treatWin32(void)
+  MFront::treatWin32()
   {
     this->opts.sys = "win32";
   } // end of MFront::treatWin32
 #endif /* __CYGWIN__ */
 
   void 
-  MFront::registerArgumentCallBacks(void)
+  MFront::registerArgumentCallBacks()
   {
     this->registerNewCallBack("--no-terminate-handler",&MFront::doNothing,
 			      "don't set a terminate handler");
@@ -366,7 +366,7 @@ namespace mfront{
   } // end of MFront::MFront
 
   void
-  MFront::treatDefine(void)
+  MFront::treatDefine()
   {
     const auto& o = this->currentArgument->getOption();
     if(o.empty()){
@@ -377,7 +377,7 @@ namespace mfront{
   } // end of MFront::treatDefine
   
   void
-  MFront::treatHelpCommandsList(void)
+  MFront::treatHelpCommandsList()
   {
     using tfel::utilities::TerminalColors;
     auto& f = DSLFactory::getDSLFactory();
@@ -412,7 +412,7 @@ namespace mfront{
   } // end of MFront::treatHelpCommandsList
 
   void
-  MFront::treatHelpCommands(void)
+  MFront::treatHelpCommands()
   {
     auto& f = DSLFactory::getDSLFactory();
     const auto& o = this->currentArgument->getOption();
@@ -443,7 +443,7 @@ namespace mfront{
   } // end of MFront::treatHelpCommands
   
   void
-  MFront::treatHelpCommand(void)
+  MFront::treatHelpCommand()
   {
     auto& f = DSLFactory::getDSLFactory();
     const auto& o = this->currentArgument->getOption();
@@ -495,13 +495,13 @@ namespace mfront{
 
 #ifdef MFRONT_MAKE_SUPPORT
   void
-  MFront::treatNoDeps(void)
+  MFront::treatNoDeps()
   {
     this->opts.nodeps = true;
   } // end of MFront::treatNoDeps
 #endif /* MFRONT_MAKE_SUPPORT */
 
-  void MFront::treatNoMelt(void)
+  void MFront::treatNoMelt()
   {
     this->opts.melt = false;
   } // end of MFront::treatNoMelt
@@ -550,7 +550,7 @@ namespace mfront{
   } // end of MFront::treatFile(void)
 
   void
-  MFront::analyseTargetsFile(void){
+  MFront::analyseTargetsFile(){
     using tfel::system::dirStringSeparator;
     MFrontLockGuard lock;
     const auto file = "src"+dirStringSeparator()+"targets.lst";
@@ -569,7 +569,7 @@ namespace mfront{
   
 #ifdef MFRONT_MAKE_SUPPORT
   static const char*
-  getMakeCommand(void){
+  getMakeCommand(){
     const char * emake = ::getenv("MAKE");
     if(emake!=nullptr){
       return emake;
@@ -631,7 +631,7 @@ namespace mfront{
   } // end of MFront::buildLibraries
 
   void
-  MFront::cleanLibraries(void)
+  MFront::cleanLibraries()
   {
     callMake("clean");
   } // end of MFront::cleanLibraries
@@ -661,7 +661,7 @@ namespace mfront{
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
 
   void
-  MFront::writeTargetsDescription(void) const
+  MFront::writeTargetsDescription() const
   {
     using tfel::system::dirStringSeparator;
     MFrontLockGuard lock;
@@ -671,7 +671,7 @@ namespace mfront{
   } // end of MFront::writeTargetDescription
   
   void
-  MFront::exe(void)
+  MFront::exe()
   {
     tfel::system::systemCall::mkdir("src");
     tfel::system::systemCall::mkdir("include");

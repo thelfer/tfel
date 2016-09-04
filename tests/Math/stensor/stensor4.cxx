@@ -27,7 +27,7 @@
 #include"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   using namespace std;
   using namespace tfel::math;
   const stensor<1>  Id  = stensor<1>::Id();

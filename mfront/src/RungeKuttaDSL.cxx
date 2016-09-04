@@ -111,7 +111,7 @@ namespace mfront{
    * the time step
    */
   static std::function<std::string(const BehaviourDescription::MaterialPropertyInput&)>&
-  modifyVariableForStiffnessTensorComputation(void){
+  modifyVariableForStiffnessTensorComputation(){
     using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
     static Modifier m = [](const BehaviourDescription::MaterialPropertyInput& i){
@@ -257,7 +257,7 @@ namespace mfront{
     this->mb.setIntegrationScheme(BehaviourDescription::EXPLICITSCHEME);
   }
 
-  void RungeKuttaDSL::writeBehaviourParserSpecificIncludes(void)
+  void RungeKuttaDSL::writeBehaviourParserSpecificIncludes()
   {
     auto b1 = false;
     auto b2 = false;
@@ -273,7 +273,7 @@ namespace mfront{
   }
 
   void
-  RungeKuttaDSL::treatUpdateAuxiliaryStateVariables(void)
+  RungeKuttaDSL::treatUpdateAuxiliaryStateVariables()
   {
     this->readCodeBlock(*this,BehaviourData::UpdateAuxiliaryStateVariables,
 			&RungeKuttaDSL::standardModifier,true,true);
@@ -358,7 +358,7 @@ namespace mfront{
   } // end of RungeKuttaDSL::computeStressVariableModifier2
 
   void
-  RungeKuttaDSL::treatComputeStress(void)
+  RungeKuttaDSL::treatComputeStress()
   {
     this->readCodeBlock(*this,BehaviourData::ComputeStress,
 			BehaviourData::ComputeFinalStress,
@@ -407,14 +407,14 @@ namespace mfront{
     BehaviourDSLCommon::treatUnknownVariableMethod(h,n);
   } // end of RungeKuttaDSL::treatUnknowVariableMethod
 
-  void RungeKuttaDSL::treatDerivative(void)
+  void RungeKuttaDSL::treatDerivative()
   {
     this->readCodeBlock(*this,BehaviourData::ComputeDerivative,
 			&RungeKuttaDSL::computeStressVariableModifier1,true,true);
   } // end of RungeKuttaDSL::treatDerivative
 
   void
-  RungeKuttaDSL::treatEpsilon(void)
+  RungeKuttaDSL::treatEpsilon()
   {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(this->mb.hasParameter(h,"epsilon")){
@@ -442,7 +442,7 @@ namespace mfront{
   } // end of RungeKuttaDSL::treatEpsilon
 
   void
-  RungeKuttaDSL::treatMinimalTimeStep(void)
+  RungeKuttaDSL::treatMinimalTimeStep()
   {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(this->mb.hasParameter(h,"dtmin")){
@@ -469,18 +469,18 @@ namespace mfront{
     this->mb.setParameterDefaultValue(h,"dtmin",dtmin);
   } // end of RungeKuttaDSL::treatEpsilon
 
-  void RungeKuttaDSL::setDefaultAlgorithm(void)
+  void RungeKuttaDSL::setDefaultAlgorithm()
   {
-    typedef unsigned short ushort;
+    using ushort = unsigned short;
     this->mb.setAttribute(BehaviourData::algorithm,
 			  std::string("RungeKutta5/4"),false);
     this->mb.setAttribute(BehaviourData::numberOfEvaluations,
 			  ushort(6u),false);
   } // end of RungeKuttaDSL::setDefaultAlgorithm
 
-  void RungeKuttaDSL::treatAlgorithm(void)
+  void RungeKuttaDSL::treatAlgorithm()
   {
-    typedef unsigned short ushort;
+    using ushort = unsigned short;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("RungeKuttaDSL::treatAlgorithm",
 			    "Cannot read algorithm name.");
@@ -529,13 +529,13 @@ namespace mfront{
   }
 
   std::string
-  RungeKuttaDSL::getName(void)
+  RungeKuttaDSL::getName()
   {
     return "RungeKutta";
   }
 
   std::string
-  RungeKuttaDSL::getDescription(void)
+  RungeKuttaDSL::getDescription()
   {
     return "this parser provides a generic integrator based on one of the many "
            "Runge-Kutta algorithm. Avalailable algorithms are 'euler', 'rk2', 'rk4' "
@@ -543,7 +543,7 @@ namespace mfront{
   } // end of RungeKuttaDSL::getDescription
 
   void
-  RungeKuttaDSL::endsInputFileProcessing(void)
+  RungeKuttaDSL::endsInputFileProcessing()
   {
     BehaviourDSLCommon::endsInputFileProcessing();
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -717,7 +717,7 @@ namespace mfront{
   } // end of RungeKuttaDSL::writeBehaviourLocalVariablesInitialisation
   
   void
-  RungeKuttaDSL::writeBehaviourParserSpecificTypedefs(void)
+  RungeKuttaDSL::writeBehaviourParserSpecificTypedefs()
   {
     this->checkBehaviourFile();
   }

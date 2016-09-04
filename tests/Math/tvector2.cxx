@@ -20,7 +20,7 @@
 #include"TFEL/Math/tmatrix.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   
   using namespace std;
   using namespace tfel::math;

@@ -199,7 +199,7 @@ private:
 TFEL_TESTS_GENERATE_PROXY(ConvertToTangentModuliTest,
 			  "ConvertToTangentModuliTest");
 
-int main(void)
+int main()
 {
   auto& manager = tfel::tests::TestManager::getTestManager();
   manager.addTestOutput(std::cout);

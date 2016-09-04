@@ -261,7 +261,7 @@ namespace mtest{
   }
 
   unsigned short
-  SchemeBase::getDimension(void) const
+  SchemeBase::getDimension() const
   {
     if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       throw(std::runtime_error("SchemeBase::getDimension: "
@@ -384,7 +384,7 @@ namespace mtest{
   } // end of SchemeBase::setStiffnessUpdatingPolicy
 
   void
-  SchemeBase::completeInitialisation(void)
+  SchemeBase::completeInitialisation()
   {
     if(this->initialisationFinished){
       throw(std::runtime_error("SchemeBase::completeInitialisation : "
@@ -506,7 +506,7 @@ namespace mtest{
     this->output = o;
   }
 
-  bool SchemeBase::isOutputFileNameDefined(void) const
+  bool SchemeBase::isOutputFileNameDefined() const
   {
     return !this->output.empty();
   }
@@ -531,7 +531,7 @@ namespace mtest{
     this->residualFileName = o;
   }
 
-  bool SchemeBase::isResidualFileNameDefined(void) const
+  bool SchemeBase::isResidualFileNameDefined() const
   {
     return !this->residualFileName.empty();
   }
@@ -556,12 +556,12 @@ namespace mtest{
     this->xmlFileName = o;
   }
   
-  bool SchemeBase::isXMLOutputFileNameDefined(void) const
+  bool SchemeBase::isXMLOutputFileNameDefined() const
   {
     return !this->xmlFileName.empty();
   }
 
-  std::string SchemeBase::getXMLOutputFileName(void) const
+  std::string SchemeBase::getXMLOutputFileName() const
   {
     if(this->xmlFileName.empty()){
       throw(std::runtime_error("SchemeBase::getXMLOutputFileName : "

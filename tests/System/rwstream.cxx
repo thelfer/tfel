@@ -24,14 +24,14 @@
 #include"TFEL/System/wfstream.hxx"
 #include"TFEL/System/rfstream.hxx"
 
-static void write(void){
+static void write(){
   tfel::system::wfstream f("test.bin");
   f << "toto" << 12.;
   f << "tutu";
   f.close();
 }
 
-static void read (void)
+static void read ()
 {
   tfel::system::rfstream r("test.bin");
   char c[5];
@@ -48,7 +48,7 @@ static void read (void)
 } // end of main
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   write();
   read();

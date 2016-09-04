@@ -86,7 +86,7 @@ namespace mfront{
   } // end of writeEPXArguments
   
   std::string
-  EuroplexusInterface::getName(void)
+  EuroplexusInterface::getName()
   {
     return "epx";
   }
@@ -108,7 +108,7 @@ namespace mfront{
   } // end of EuroplexusInterface::getLibraryName
 
   std::string
-  EuroplexusInterface::getInterfaceName(void) const
+  EuroplexusInterface::getInterfaceName() const
   {
     return "Europlexus";
   } // end of EuroplexusInterface::getInterfaceName

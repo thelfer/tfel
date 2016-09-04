@@ -40,13 +40,13 @@ namespace epx
   {} // end of EuroplexusException::EuroplexusException
 
   const char* 
-  EuroplexusException::what (void) const noexcept
+  EuroplexusException::what () const noexcept
   { 
     return msg.c_str(); 
   } // end of EuroplexusException::what
 
   std::string
-  EuroplexusException::getMsg(void) const noexcept
+  EuroplexusException::getMsg() const noexcept
   {
     return msg;
   } // end of EuroplexusException::getMsg

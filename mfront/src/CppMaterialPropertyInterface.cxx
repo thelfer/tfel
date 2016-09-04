@@ -30,7 +30,7 @@ namespace mfront
 {
 
   std::string
-  CppMaterialPropertyInterface::getName(void)
+  CppMaterialPropertyInterface::getName()
   {
     return "c++";
   }

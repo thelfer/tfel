@@ -29,7 +29,7 @@
 
 struct my_function
 {
-  typedef int return_type;
+  using return_type = int;
   static return_type
   apply(const int v)
   {
@@ -44,7 +44,7 @@ struct my_function
 
 struct my_function2
 {
-  typedef int return_type;
+  using return_type = int;
   static return_type
   apply(const int v1,
 	const int v2)
@@ -77,7 +77,7 @@ struct GenTypeTest2 final
     using namespace tfel::utilities;
     
     typedef GenerateTypeList<int,string>::type HoldedTypes;
-    typedef GenTypeBase<HoldedTypes> MyGenType;
+    using MyGenType = GenTypeBase<HoldedTypes>;
     
     MyGenType g;
     MyGenType g2;
@@ -99,7 +99,7 @@ struct GenTypeTest2 final
 TFEL_TESTS_GENERATE_PROXY(GenTypeTest2,"GenType");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using namespace tfel::tests;

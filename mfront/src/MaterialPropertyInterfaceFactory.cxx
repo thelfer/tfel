@@ -29,21 +29,21 @@ namespace mfront{
   } // end of MaterialPropertyInterfaceFactory::getMaterialPropertyInterfaceFactory
 
   MaterialPropertyInterfaceFactory::InterfaceDependencyContainer&
-  MaterialPropertyInterfaceFactory::getDependenciesMap(void) const
+  MaterialPropertyInterfaceFactory::getDependenciesMap() const
   {
     static InterfaceDependencyContainer map;
     return map;
   } // end of MaterialPropertyInterfaceFactory::getDependenciesMap
 
   MaterialPropertyInterfaceFactory::InterfaceCreatorsContainer&
-  MaterialPropertyInterfaceFactory::getInterfaceCreatorsMap(void) const
+  MaterialPropertyInterfaceFactory::getInterfaceCreatorsMap() const
   {
     static InterfaceCreatorsContainer map;
     return map;
   } // end of MaterialPropertyInterfaceFactory::getInterfaceCreatorsMap
 
   MaterialPropertyInterfaceFactory::AliasContainer&
-  MaterialPropertyInterfaceFactory::getAliasesMap(void) const
+  MaterialPropertyInterfaceFactory::getAliasesMap() const
   {
     static AliasContainer map;
     return map;
@@ -53,7 +53,7 @@ namespace mfront{
   {}
 
   std::vector<std::string>
-  MaterialPropertyInterfaceFactory::getRegistredInterfaces(void) const
+  MaterialPropertyInterfaceFactory::getRegistredInterfaces() const
   {
     using namespace std;
     vector<string> res;

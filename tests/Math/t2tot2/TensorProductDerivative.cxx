@@ -104,15 +104,15 @@ struct TensorProductDerivative final
   } // end of execute
 };
 
-typedef TensorProductDerivative<1u> TensorProductDerivative_1D;
-typedef TensorProductDerivative<2u> TensorProductDerivative_2D;
-typedef TensorProductDerivative<3u> TensorProductDerivative_3D;
+using TensorProductDerivative_1D = TensorProductDerivative<1U>;
+using TensorProductDerivative_2D = TensorProductDerivative<2U>;
+using TensorProductDerivative_3D = TensorProductDerivative<3U>;
 TFEL_TESTS_GENERATE_PROXY(TensorProductDerivative_1D,"TensorProductDerivative-1D");
 TFEL_TESTS_GENERATE_PROXY(TensorProductDerivative_2D,"TensorProductDerivative-2D");
 TFEL_TESTS_GENERATE_PROXY(TensorProductDerivative_3D,"TensorProductDerivative-3D");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
   manager.addTestOutput(std::cout);

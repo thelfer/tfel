@@ -64,7 +64,7 @@ TFEL_TESTS_GENERATE_PROXY(TVector7,
 			  "TVector7");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();

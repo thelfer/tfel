@@ -18,8 +18,8 @@
 #include"MFront/BehaviourDescription.hxx"
 #include"MFront/AbstractBehaviourDSL.hxx"
 
-void declareAbstractBehaviourDSL(void);
-void declareAbstractBehaviourDSL(void){
+void declareAbstractBehaviourDSL();
+void declareAbstractBehaviourDSL(){
   using namespace boost::python;
   using namespace mfront;
   class_<AbstractBehaviourDSL,std::shared_ptr<AbstractBehaviourDSL>,

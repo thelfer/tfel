@@ -37,7 +37,7 @@ f(const tfel::math::tvector<2,double>& x)
   return y;
 }
 
-BROYDEN_STATIC void test(void)
+BROYDEN_STATIC void test()
 {
   using namespace std;
   using namespace tfel::math;
@@ -59,7 +59,7 @@ BROYDEN_STATIC void test(void)
   A(1,1) = 4*(4*res(1)*res(1)*res(1)+1);
 }
 
-BROYDEN_STATIC void test2(void)
+BROYDEN_STATIC void test2()
 {
   using namespace std;
   using namespace tfel::math;
@@ -73,7 +73,7 @@ BROYDEN_STATIC void test2(void)
 }
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   test();
   test2();

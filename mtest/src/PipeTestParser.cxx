@@ -157,7 +157,7 @@ namespace mtest
   }
   
   void
-  PipeTestParser::displayKeyWordsList(void) const
+  PipeTestParser::displayKeyWordsList() const
   {
     using namespace std;
     using namespace tfel::utilities;
@@ -184,7 +184,7 @@ namespace mtest
   } // end of PipeTestParser::displayKeywordsList
 
   void
-  PipeTestParser::displayKeyWordsHelp(void) const
+  PipeTestParser::displayKeyWordsHelp() const
   {
     auto keys  = this->getKeyWordsList();
     std::cout << "% `PipeTest` keywords\n\n";

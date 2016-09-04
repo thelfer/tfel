@@ -186,7 +186,7 @@ namespace mtest
   } // end of AbaqusStandardBehaviour::allocate
 
   StiffnessMatrixType
-  AbaqusStandardBehaviour::getDefaultStiffnessMatrixType(void) const
+  AbaqusStandardBehaviour::getDefaultStiffnessMatrixType() const
   {
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
   }

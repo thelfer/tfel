@@ -108,7 +108,7 @@ namespace mtest
   } // end of CrossedSecantAccelerationAlgorithm::execute
 
   void
-  CrossedSecantAccelerationAlgorithm::postExecuteTasks(void)
+  CrossedSecantAccelerationAlgorithm::postExecuteTasks()
   {} // end of AccelerationAlgorithm::postExecuteTaks
 
   CrossedSecantAccelerationAlgorithm::~CrossedSecantAccelerationAlgorithm()

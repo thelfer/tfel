@@ -41,7 +41,7 @@ struct PipeTestUnitTest final
     return this->result;
   } // end of execute()
  private:
-  void test1(void){
+  void test1(){
     mtest::PipeTest t;
     TFEL_TESTS_CHECK_THROW(t.setInnerRadius(-4.),
 			   std::runtime_error);
@@ -63,7 +63,7 @@ struct PipeTestUnitTest final
     TFEL_TESTS_CHECK_THROW(t.setNumberOfElements(10),
     			   std::runtime_error);
   }
-  void test2(void){
+  void test2(){
     mtest::PipeTest t;
     t.setOuterRadius(4.5e-3);
     TFEL_TESTS_CHECK_THROW(t.setInnerRadius(5.e-3),
@@ -74,7 +74,7 @@ struct PipeTestUnitTest final
 TFEL_TESTS_GENERATE_PROXY(PipeTestUnitTest,"PipeTestUnitTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace tfel::tests;
   auto& m = TestManager::getTestManager();

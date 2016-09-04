@@ -24,7 +24,7 @@ namespace tfel
     {
 
       void
-      ExternalCFunctionException::throwUnimplementedDifferentiateFunctionException(void)
+      ExternalCFunctionException::throwUnimplementedDifferentiateFunctionException()
       {
 	throw(std::runtime_error("ExternalCFunctionException::"
 				 "throwUnimplementedDifferentiateFunctionException: "
@@ -32,7 +32,7 @@ namespace tfel
       } // end of ExternalCFunctionException::throwUnimplementedDifferentiateFunctionException(void)
 
       void
-      ExternalCFunctionException::throwInvalidCreateFunctionByChangingParametersIntoVariables(void)
+      ExternalCFunctionException::throwInvalidCreateFunctionByChangingParametersIntoVariables()
       {
 	throw(std::runtime_error("ExternalCFunctionException::"
 				 "throwInvalidCreateFunctionByChangingParametersIntoVariables : "
@@ -83,7 +83,7 @@ namespace tfel
       {} // endo of ExternalCFunction<0u>::getParametersNames
 
       std::vector<double>::size_type
-      ExternalCFunctionBase<0u>::getNumberOfVariables(void) const
+      ExternalCFunctionBase<0u>::getNumberOfVariables() const
       {
 	return 0u;
       } // end of ExternalCFunctionBase<0u>::etNumberOfVariables(void) const
@@ -115,7 +115,7 @@ namespace tfel
       {} // end of ExternalCFunction<0u>::ExternalCFunction
       
       double
-      ExternalCFunction<0u>::getValue(void) const
+      ExternalCFunction<0u>::getValue() const
       {
 	return (*(this->f))();
       } // end of ExternalCFunction<0u>::getValue(void) const
@@ -125,7 +125,7 @@ namespace tfel
       {} // end of ExternalCFunction(FunctionPtr f_)
 
       double
-      ExternalCFunction<1u>::getValue(void) const
+      ExternalCFunction<1u>::getValue() const
       {
 	return (*(this->f))(this->variables[0]);
       } // end of getValue(void) const
@@ -135,7 +135,7 @@ namespace tfel
       {} // end of ExternalCFunction(FunctionPtr f_)
 
       double
-      ExternalCFunction<2u>::getValue(void) const
+      ExternalCFunction<2u>::getValue() const
       {
 	return (*(this->f))(this->variables[0],this->variables[1]);
       } // end of getValue(void) const
@@ -145,7 +145,7 @@ namespace tfel
       {} // end of ExternalCFunction(FunctionPtr f_)
 
       double
-      ExternalCFunction<3u>::getValue(void) const
+      ExternalCFunction<3u>::getValue() const
       {
 	return (*(this->f))(this->variables[0],this->variables[1],
 			    this->variables[2]);
@@ -156,7 +156,7 @@ namespace tfel
       {} // end of ExternalCFunction<4u>::ExternalCFunction(FunctionPtr f_)
 
       double
-      ExternalCFunction<4u>::getValue(void) const
+      ExternalCFunction<4u>::getValue() const
       {
 	return (*(this->f))(this->variables[0],this->variables[1],
 			    this->variables[2],this->variables[3]);
@@ -167,7 +167,7 @@ namespace tfel
       {} // end of ExternalCFunction(FunctionPtr f_)
       
       double
-      ExternalCFunction<5u>::getValue(void) const
+      ExternalCFunction<5u>::getValue() const
       {
 	return (*(this->f))(this->variables[0],this->variables[1],
 			    this->variables[2],this->variables[3],
@@ -179,7 +179,7 @@ namespace tfel
       {} // end of ExternalCFunction(FunctionPtr f_)
 
       double
-      ExternalCFunction<6u>::getValue(void) const
+      ExternalCFunction<6u>::getValue() const
       {
 	return (*(this->f))(this->variables[0],this->variables[1],
 			    this->variables[2],this->variables[3],
@@ -191,7 +191,7 @@ namespace tfel
       {} // end of ExternalCFunction<7u>::ExternalCFunction(FunctionPtr f_)
 
       double
-      ExternalCFunction<7u>::getValue(void) const
+      ExternalCFunction<7u>::getValue() const
       {
 	return (*(this->f))(this->variables[0],this->variables[1],
 			    this->variables[2],this->variables[3],
@@ -204,7 +204,7 @@ namespace tfel
       {} // end of ExternalCFunction(FunctionPtr f_)
 
       double
-      ExternalCFunction<8u>::getValue(void) const
+      ExternalCFunction<8u>::getValue() const
       {
 	return (*(this->f))(this->variables[0],this->variables[1],
 			    this->variables[2],this->variables[3],
@@ -217,7 +217,7 @@ namespace tfel
       {} // end of ExternalCFunction(FunctionPtr f_)
       
       double
-      ExternalCFunction<9u>::getValue(void) const
+      ExternalCFunction<9u>::getValue() const
       {
 	return (*(this->f))(this->variables[0],this->variables[1],
 			    this->variables[2],this->variables[3],
@@ -231,7 +231,7 @@ namespace tfel
       {} // end of ExternalCFunction(FunctionPtr f_)
 
       double
-      ExternalCFunction<10u>::getValue(void) const
+      ExternalCFunction<10u>::getValue() const
       {
 	return (*(this->f))(this->variables[0],this->variables[1],
 			    this->variables[2],this->variables[3],
@@ -245,7 +245,7 @@ namespace tfel
       {} // end of ExternalCFunction<11u>::ExternalCFunction(FunctionPtr f_)
 
       double
-      ExternalCFunction<11u>::getValue(void) const
+      ExternalCFunction<11u>::getValue() const
       {
 	return (*(this->f))(this->variables[0],this->variables[1],
 			    this->variables[2],this->variables[3],
@@ -260,7 +260,7 @@ namespace tfel
       {} // end of ExternalCFunction<12u>::ExternalCFunction(FunctionPtr f_)
 
       double
-      ExternalCFunction<12u>::getValue(void) const
+      ExternalCFunction<12u>::getValue() const
       {
 	return (*(this->f))(this->variables[0],this->variables[1],
 			    this->variables[2],this->variables[3],
@@ -275,7 +275,7 @@ namespace tfel
       {} // end of ExternalCFunction(FunctionPtr f_)
 
       double
-      ExternalCFunction<13u>::getValue(void) const
+      ExternalCFunction<13u>::getValue() const
       {
 	return (*(this->f))(this->variables[0],this->variables[1],
 			    this->variables[2],this->variables[3],
@@ -292,7 +292,7 @@ namespace tfel
 	 // ExternalCFunction<14u>::ExternalCFunction(FunctionPtr f_)
       
       double
-      ExternalCFunction<14u>::getValue(void) const
+      ExternalCFunction<14u>::getValue() const
       {
 	return (*(this->f))(this->variables[0],this->variables[1],
 			    this->variables[2],this->variables[3],
@@ -308,7 +308,7 @@ namespace tfel
       {} // end of ExternalCFunction<15u>::ExternalCFunction(FunctionPtr f_)
 
       double
-      ExternalCFunction<15u>::getValue(void) const
+      ExternalCFunction<15u>::getValue() const
       {
 	return (*(this->f))(this->variables[0],this->variables[1],
 			    this->variables[2],this->variables[3],
@@ -321,97 +321,97 @@ namespace tfel
       } // end of getValue(void) const
       
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<0u>::resolveDependencies(void) const
+      ExternalCFunction<0u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<0u>(this->f));
       } // end of ExternalCFunction<0u>::resolveDependencies(void) const
 
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<1u>::resolveDependencies(void) const
+      ExternalCFunction<1u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<1u>(this->f));
       } // end of ExternalCFunction<1u>::resolveDependencies(void) const
 
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<2u>::resolveDependencies(void) const
+      ExternalCFunction<2u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<2u>(this->f));
       } // end of ExternalCFunction<2u>::resolveDependencies(void) const
 
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<3u>::resolveDependencies(void) const
+      ExternalCFunction<3u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<3u>(this->f));
       } // end of ExternalCFunction<3u>::resolveDependencies(void) const
 
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<4u>::resolveDependencies(void) const
+      ExternalCFunction<4u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<4u>(this->f));
       } // end of ExternalCFunction<4u>::resolveDependencies(void) const
 
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<5u>::resolveDependencies(void) const
+      ExternalCFunction<5u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<5u>(this->f));
       } // end of ExternalCFunction<5u>::resolveDependencies(void) const
 
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<6u>::resolveDependencies(void) const
+      ExternalCFunction<6u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<6u>(this->f));
       } // end of ExternalCFunction<6u>::resolveDependencies(void) const
 
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<7u>::resolveDependencies(void) const
+      ExternalCFunction<7u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<7u>(this->f));
       } // end of ExternalCFunction<7u>::resolveDependencies(void) const
 
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<8u>::resolveDependencies(void) const
+      ExternalCFunction<8u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<8u>(this->f));
       } // end of ExternalCFunction<8u>::resolveDependencies(void) const
 
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<9u>::resolveDependencies(void) const
+      ExternalCFunction<9u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<9u>(this->f));
       } // end of ExternalCFunction<9u>::resolveDependencies(void) const
 
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<10u>::resolveDependencies(void) const
+      ExternalCFunction<10u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<10u>(this->f));
       } // end of ExternalCFunction<10u>::resolveDependencies(void) const
 
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<11u>::resolveDependencies(void) const
+      ExternalCFunction<11u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<11u>(this->f));
       } // end of ExternalCFunction<11u>::resolveDependencies(void) const
 
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<12u>::resolveDependencies(void) const
+      ExternalCFunction<12u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<12u>(this->f));
       } // end of ExternalCFunction<12u>::resolveDependencies(void) const
 
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<13u>::resolveDependencies(void) const
+      ExternalCFunction<13u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<13u>(this->f));
       } // end of ExternalCFunction<13u>::resolveDependencies(void) const
 
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<14u>::resolveDependencies(void) const
+      ExternalCFunction<14u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<14u>(this->f));
       } // end of ExternalCFunction<14u>::resolveDependencies(void) const
 
       std::shared_ptr<ExternalFunction>
-      ExternalCFunction<15u>::resolveDependencies(void) const
+      ExternalCFunction<15u>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCFunction<15u>(this->f));
       } // end of ExternalCFunction<15u>::resolveDependencies(void) const

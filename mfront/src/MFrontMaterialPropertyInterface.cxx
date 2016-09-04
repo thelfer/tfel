@@ -26,7 +26,7 @@ namespace mfront
 {
 
   std::string
-  MFrontMaterialPropertyInterface::getName(void)
+  MFrontMaterialPropertyInterface::getName()
   {
     return "mfront";
   }
@@ -85,25 +85,25 @@ namespace mfront
   } // end of MFrontMaterialPropertyInterface::getSrcFileName
   
   void
-  MFrontMaterialPropertyInterface::writeBeginHeaderNamespace(void)
+  MFrontMaterialPropertyInterface::writeBeginHeaderNamespace()
   {
     this->headerFile << "namespace mfront{\n\n";
   } // end of MFrontMaterialPropertyInterface::writeBeginHeaderNamespace
   
   void
-  MFrontMaterialPropertyInterface::writeEndHeaderNamespace(void)
+  MFrontMaterialPropertyInterface::writeEndHeaderNamespace()
   {
     this->headerFile << "} // end of namespace mfront\n\n";
   } // end of MFrontMaterialPropertyInterface::writeEndHeaderNamespace(void)
 
   void
-  MFrontMaterialPropertyInterface::writeBeginSrcNamespace(void)
+  MFrontMaterialPropertyInterface::writeBeginSrcNamespace()
   {
     this->srcFile << "namespace mfront{\n";
   } // end of MFrontMaterialPropertyInterface::writeBeginSrcNamespace
   
   void
-  MFrontMaterialPropertyInterface::writeEndSrcNamespace(void)
+  MFrontMaterialPropertyInterface::writeEndSrcNamespace()
   {
     this->srcFile << "} // end of namespace mfront\n";
   } // end of MFrontMaterialPropertyInterface::writeEndSrcNamespace(void)
@@ -116,7 +116,7 @@ namespace mfront
   } // end of MFrontMaterialPropertyInterface::getFunctionName
   
   bool
-  MFrontMaterialPropertyInterface::requiresCheckBoundsFunction(void) const
+  MFrontMaterialPropertyInterface::requiresCheckBoundsFunction() const
   {
     return true;
   }

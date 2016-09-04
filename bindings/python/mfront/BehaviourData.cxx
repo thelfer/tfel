@@ -52,7 +52,7 @@ getVariablesNames(const mfront::BehaviourData& d){
   return {n.begin(),n.end()};
 }
 
-void declareBehaviourData(void){
+void declareBehaviourData(){
   using namespace boost::python;
   using namespace mfront;
 

@@ -117,7 +117,7 @@ TFEL_TESTS_GENERATE_PROXY(FiniteStrainBehaviourTangentOperator3,
 			  "FiniteStrainBehaviourTangentOperator3");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);

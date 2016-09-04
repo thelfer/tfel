@@ -129,9 +129,9 @@ getInternalStateVariableValue(const mtest::CurrentState& s,
   return getInternalStateVariableValue(s,n,1);
 } // end of getInternalStateVariableValue
 
-void declareCurrentState(void);
+void declareCurrentState();
 
-void declareCurrentState(void)
+void declareCurrentState()
 {
   using namespace boost;
   using namespace boost::python;

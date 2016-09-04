@@ -55,7 +55,7 @@ struct StensorComputeEigenvectors final
 private:
 
   template<typename T>
-  void test(void)
+  void test()
   {
     using namespace tfel::math;
     using namespace tfel::math::internals;
@@ -113,7 +113,7 @@ private:
   }
 
   template<typename T>
-  void test2(void)
+  void test2()
   {
     using namespace tfel::math;
     using namespace tfel::math::internals;
@@ -150,7 +150,7 @@ private:
   }
 
   template<typename T>
-  void test3(void)
+  void test3()
   {
     using namespace tfel::math;
     const unsigned int nb_boucles = 1000000;
@@ -183,7 +183,7 @@ TFEL_TESTS_GENERATE_PROXY(StensorComputeEigenvectors,
 			  "StensorComputeEigenvectors");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();

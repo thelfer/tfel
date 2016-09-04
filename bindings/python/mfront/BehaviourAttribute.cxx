@@ -21,18 +21,18 @@ static void add_def(boost::python::class_<mfront::BehaviourAttribute>& w,
 {
   using namespace boost::python;
   using namespace mfront;
-  bool (BehaviourAttribute:: *is_ptr)(void) const =
+  bool (BehaviourAttribute:: *is_ptr)() const =
     &BehaviourAttribute::is<T>;
-  const T& (BehaviourAttribute:: *get_ptr)(void) const =
+  const T& (BehaviourAttribute:: *get_ptr)() const =
     &BehaviourAttribute::get<T>;
   w.def(("is"+n).c_str(),is_ptr)
     .def(("get"+n).c_str(),get_ptr,
 	 return_value_policy<copy_const_reference>());
 }
 
-void declareBehaviourAttribute(void);
+void declareBehaviourAttribute();
 
-void declareBehaviourAttribute(void){
+void declareBehaviourAttribute(){
   using namespace boost::python;
   using namespace mfront;
   using namespace tfel::python;

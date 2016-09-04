@@ -110,7 +110,7 @@ namespace mfront{
   }
   
   std::vector<std::string>
-  AbaqusInterfaceBase::getCommonKeywords(void) const{
+  AbaqusInterfaceBase::getCommonKeywords() const{
     return {"@AbaqusFiniteStrainStrategy","@AbaqusOrthotropyManagementPolicy"};
   } // end of AbaqusInterfaceBase::getCommonKeywords
   

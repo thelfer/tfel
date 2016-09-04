@@ -26,7 +26,7 @@ namespace mtest
   {} // end of IronsTuckAccelerationAlgorithm::IronsTuckAccelerationAlgorithm
 
   std::string
-  IronsTuckAccelerationAlgorithm::getName(void) const{
+  IronsTuckAccelerationAlgorithm::getName() const{
     return "Irons-Tuck";
   }
     
@@ -70,7 +70,7 @@ namespace mtest
   } // end of IronsTuckAccelerationAlgorithm::initialize
 
   void
-  IronsTuckAccelerationAlgorithm::preExecuteTasks(void)
+  IronsTuckAccelerationAlgorithm::preExecuteTasks()
   {} // end of IronsTuckAccelerationAlgorithm::preExecuteTasks
 
   void
@@ -100,7 +100,7 @@ namespace mtest
   } // end of IronsTuckAccelerationAlgorithm::execute
 
   void
-  IronsTuckAccelerationAlgorithm::postExecuteTasks(void)
+  IronsTuckAccelerationAlgorithm::postExecuteTasks()
   {} // end of IronsTuckAccelerationAlgorithm::postExecuteTasks
 
   IronsTuckAccelerationAlgorithm::~IronsTuckAccelerationAlgorithm()

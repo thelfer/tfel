@@ -21,7 +21,7 @@
 namespace mfront{
 
   std::vector<std::string>
-  PowellDogLegAlgorithmBase::getReservedNames(void)
+  PowellDogLegAlgorithmBase::getReservedNames()
   {
     using namespace std;
     vector<string> n;

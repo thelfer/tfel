@@ -31,13 +31,13 @@ namespace tfel
     {} // end of TestCase::~TestCase
 
     std::string
-    TestCase::classname(void) const
+    TestCase::classname() const
     {
       return this->gname;
     } // end of TestCase::classname
 
     std::string
-    TestCase::name(void) const
+    TestCase::name() const
     {
       return this->tname;
     } // end of TestCase::~TestCase

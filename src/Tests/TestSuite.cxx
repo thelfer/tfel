@@ -40,7 +40,7 @@ namespace tfel
     {} // end of TestSuite::TestSuite
 
     std::string
-    TestSuite::name(void) const
+    TestSuite::name() const
     {
       return this->sname;
     } // end of TestSuite::name
@@ -52,7 +52,7 @@ namespace tfel
     } // end of TestSuite::execute
 
     TestResult
-    TestSuite::execute(void)
+    TestSuite::execute()
     {
       using namespace std;
       using namespace std::chrono;

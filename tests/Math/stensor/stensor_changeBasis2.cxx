@@ -37,7 +37,7 @@ struct StensorChangeBasis2Test final
   {
     using namespace std;
     using namespace tfel::math;
-    typedef double real;
+    using real = double;
     const real eps = 1.e-4;
     const real pi = 4.0 * atan(1.0);  
     tmatrix<3u,3u,real> r;
@@ -114,7 +114,7 @@ TFEL_TESTS_GENERATE_PROXY(StensorChangeBasis2Test,
 			  "StensorChangeBasis2Test");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();

@@ -108,15 +108,15 @@ struct StensorProductDerivative final
   } // end of execute
 };
 
-typedef StensorProductDerivative<1u> StensorProductDerivative_1D;
-typedef StensorProductDerivative<2u> StensorProductDerivative_2D;
-typedef StensorProductDerivative<3u> StensorProductDerivative_3D;
+using StensorProductDerivative_1D = StensorProductDerivative<1U>;
+using StensorProductDerivative_2D = StensorProductDerivative<2U>;
+using StensorProductDerivative_3D = StensorProductDerivative<3U>;
 TFEL_TESTS_GENERATE_PROXY(StensorProductDerivative_1D,"StensorProductDerivative-1D");
 TFEL_TESTS_GENERATE_PROXY(StensorProductDerivative_2D,"StensorProductDerivative-2D");
 TFEL_TESTS_GENERATE_PROXY(StensorProductDerivative_3D,"StensorProductDerivative-3D");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   using namespace tfel::tests;
   TestManager& manager = TestManager::getTestManager();
   manager.addTestOutput(std::cout);

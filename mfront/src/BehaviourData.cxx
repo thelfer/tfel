@@ -164,13 +164,13 @@ namespace mfront{
   {} // end of BehaviourData::CodeBlocksAggregator::CodeBlocksAggregator
 
   bool
-  BehaviourData::CodeBlocksAggregator::isMutable(void) const
+  BehaviourData::CodeBlocksAggregator::isMutable() const
   {
     return this->is_mutable;
   } // end of BehaviourData::CodeBlocksAggregator::isMutable
 
   void
-  BehaviourData::CodeBlocksAggregator::update(void)
+  BehaviourData::CodeBlocksAggregator::update()
   {
     // updating code
     this->cblock.code  = cblock_begin;
@@ -278,7 +278,7 @@ namespace mfront{
   } // end of BehaviourData::CodeBlocksAggregator::set
 
   void
-  BehaviourData::CodeBlocksAggregator::check(void) const
+  BehaviourData::CodeBlocksAggregator::check() const
   {
     if(!this->is_mutable){
       throw(std::runtime_error("BehaviourData::CodeBlocksAggregator::set : "
@@ -287,7 +287,7 @@ namespace mfront{
   } // end of BehaviourData::CodeBlocksAggregator::check
 
   const CodeBlock&
-  BehaviourData::CodeBlocksAggregator::get(void) const
+  BehaviourData::CodeBlocksAggregator::get() const
   {
     this->is_mutable = false;
     return this->cblock;
@@ -330,13 +330,13 @@ namespace mfront{
   } // end of BehaviourData::addStaticVariable
 
   const StaticVariableDescriptionContainer&
-  BehaviourData::getStaticVariables(void) const
+  BehaviourData::getStaticVariables() const
   {
     return this->staticVariables;
   } // end of BehaviourData::getStaticVariables
 
   const std::vector<BoundsDescription>&
-  BehaviourData::getBounds(void) const
+  BehaviourData::getBounds() const
   {
     return this->bounds;
   } // end of BehaviourData::getBoundsDescriptions
@@ -450,7 +450,7 @@ namespace mfront{
   }
 
   bool
-  BehaviourData::hasParameters(void) const
+  BehaviourData::hasParameters() const
   {
     return !this->parameters.empty();
   }
@@ -558,19 +558,19 @@ namespace mfront{
   } // end of BehaviourData::isParameterName
 
   const VariableDescriptionContainer&
-  BehaviourData::getMaterialProperties(void) const
+  BehaviourData::getMaterialProperties() const
   {
     return this->materialProperties;
   } // end of BehaviourData::getMaterialProperties
 
   const VariableDescriptionContainer&
-  BehaviourData::getPersistentVariables(void) const
+  BehaviourData::getPersistentVariables() const
   {
     return this->persistentVariables;
   } // end of BehaviourData::getPersistentVariables
 
   std::set<std::string>
-  BehaviourData::getVariablesNames(void) const{
+  BehaviourData::getVariablesNames() const{
     auto getNames = [](std::set<std::string>& r,
 		       const VariableDescriptionContainer& c){
       for(const auto& v : c){
@@ -595,7 +595,7 @@ namespace mfront{
   BehaviourData::getVariables(const std::string& t) const
   {
     using namespace std;
-    const VariableDescriptionContainer& (BehaviourData::* m)(void) const;
+    const VariableDescriptionContainer& (BehaviourData::* m)() const;
     if(t=="MaterialProperty"){
       m = &BehaviourData::getMaterialProperties;
     } else if(t=="PersistentVariable"){
@@ -619,37 +619,37 @@ namespace mfront{
   } // end of BehaviourData::getIntegrationVariables
 
   const VariableDescriptionContainer&
-  BehaviourData::getIntegrationVariables(void) const
+  BehaviourData::getIntegrationVariables() const
   {
     return this->integrationVariables;
   } // end of BehaviourData::getIntegrationVariables
 
   const VariableDescriptionContainer&
-  BehaviourData::getStateVariables(void) const
+  BehaviourData::getStateVariables() const
   {
     return this->stateVariables;
   } // end of BehaviourData::getStateVariables
 
   const VariableDescriptionContainer&
-  BehaviourData::getAuxiliaryStateVariables(void) const
+  BehaviourData::getAuxiliaryStateVariables() const
   {
     return this->auxiliaryStateVariables;
   } // end of BehaviourData::getAuxiliaryStateVariables
 
   const VariableDescriptionContainer&
-  BehaviourData::getExternalStateVariables(void) const
+  BehaviourData::getExternalStateVariables() const
   {
     return this->externalStateVariables;
   } // end of BehaviourData::getExternalStateVariables
 
   const VariableDescriptionContainer&
-  BehaviourData::getLocalVariables(void) const
+  BehaviourData::getLocalVariables() const
   {
     return this->localVariables;
   } // end of BehaviourData::getLocalVariables
   
   bool
-  BehaviourData::isUsableInPurelyImplicitResolution(void) const
+  BehaviourData::isUsableInPurelyImplicitResolution() const
   {
     return this->usableInPurelyImplicitResolution;
   } // end of BehaviourData::isUsableInPurelyImplicitResolution
@@ -667,7 +667,7 @@ namespace mfront{
   } // end of BehaviourData::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
 
   const std::set<std::string>&
-  BehaviourData::getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution(void) const
+  BehaviourData::getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution() const
   {
     return this->pupirv;
   } // end of BehaviourData::getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution
@@ -824,13 +824,13 @@ namespace mfront{
   } // end of BehaviourData::registerStaticMemberName
   
   const std::set<std::string>&
-  BehaviourData::getRegistredMembersNames(void) const
+  BehaviourData::getRegistredMembersNames() const
   {
     return this->membersNames;
   } // end of BehaviourData::getRegistredMemberNames
 
   const std::set<std::string>&
-  BehaviourData::getRegistredStaticMembersNames(void) const
+  BehaviourData::getRegistredStaticMembersNames() const
   {
     return this->staticMembersNames;
   } // end of BehaviourData::getRegistredStaticMemberNames
@@ -1231,7 +1231,7 @@ namespace mfront{
   } // end of BehaviourData::getVariableNameFromGlossaryNameOrEntryName
 
   const VariableDescriptionContainer&
-  BehaviourData::getParameters(void) const
+  BehaviourData::getParameters() const
   {
     return this->parameters;
   } // end of BehaviourData::getParameters
@@ -1246,7 +1246,7 @@ namespace mfront{
     }
   } // end of BehaviourData::appendToMembers
 
-  const std::string BehaviourData::getMembers(void) const
+  const std::string BehaviourData::getMembers() const
   {
     return this->members;
   } // end of BehaviourData::getMembers
@@ -1261,7 +1261,7 @@ namespace mfront{
     }
   } // end of BehaviourData::appendToPrivateCode
 
-  const std::string BehaviourData::getPrivateCode(void) const
+  const std::string BehaviourData::getPrivateCode() const
   {
     return this->privateCode;
   } // end of BehaviourData::getPrivateCode
@@ -1385,11 +1385,11 @@ namespace mfront{
   } // end of BehaviourData::addStressFreeExpansion
   
   const std::vector<BehaviourData::StressFreeExpansionDescription>&
-  BehaviourData::getStressFreeExpansionDescriptions(void) const{
+  BehaviourData::getStressFreeExpansionDescriptions() const{
     return this->sfeds;
   } // end of BehaviourData::getStressFreeExpansionDescriptions
 
-  bool BehaviourData::isStressFreeExansionAnisotropic(void) const{
+  bool BehaviourData::isStressFreeExansionAnisotropic() const{
     for(const auto& sfed:this->sfeds){
       if ((sfed.is<BehaviourData::AxialGrowthStressFreeExpansion>())||
 	  (sfed.is<BehaviourData::OrthotropicStressFreeExpansion>())||

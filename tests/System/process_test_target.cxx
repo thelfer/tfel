@@ -15,7 +15,7 @@
 #include<unistd.h>
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   sleep(1);
   return EXIT_SUCCESS;

@@ -95,7 +95,7 @@ namespace tfel
     }
 
     double
-    TestResult::duration(void) const
+    TestResult::duration() const
     {
       double r(this->test_duration);
       for(const auto& t:*this){

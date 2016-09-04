@@ -71,7 +71,7 @@ namespace mfront
   } // end of SearchFile::addSearchPaths
 
   const std::vector<std::string>&
-  SearchFile::getSearchPaths(void)
+  SearchFile::getSearchPaths()
   {
     return SearchFile::getSearchFile().paths;
   } // end of SearchFile::getSearchPaths

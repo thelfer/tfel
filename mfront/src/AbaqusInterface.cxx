@@ -172,13 +172,13 @@ namespace mfront{
   } // end of writeUMATArguments
   
   std::string
-  AbaqusInterface::getName(void)
+  AbaqusInterface::getName()
   {
     return "abaqus";
   }
   
   std::string
-  AbaqusInterface::getInterfaceName(void) const
+  AbaqusInterface::getInterfaceName() const
   {
     return "Abaqus";
   } // end of AbaqusInterface::getInterfaceName
@@ -903,7 +903,7 @@ namespace mfront{
   } // end of AbaqusInterface::writeInterfaceSpecificIncludes
 
   std::vector<std::pair<std::string,std::string>>
-  AbaqusInterface::getBehaviourDataConstructorAdditionalVariables(void) const{
+  AbaqusInterface::getBehaviourDataConstructorAdditionalVariables() const{
     return {{"DR","increment of rigid body rotation"}};
   } // end of AbaqusInterface::getBehaviourDataConstructorAdditionalVariables
 

@@ -36,7 +36,7 @@ static const char * const constexpr_c = "const";
 namespace mfront{
 
   std::string
-  AsterInterface::getName(void)
+  AsterInterface::getName()
   {
     return "aster";
   }
@@ -59,7 +59,7 @@ namespace mfront{
   } // end of AsterInterface::getLibraryName
 
   std::string
-  AsterInterface::getInterfaceName(void) const
+  AsterInterface::getInterfaceName() const
   {
     return "Aster";
   } // end of AsterInterface::getInterfaceName
@@ -146,7 +146,7 @@ namespace mfront{
   {
     using namespace std;
     using tfel::material::ModellingHypothesis;
-    typedef ModellingHypothesis::Hypothesis Hypothesis;
+    using Hypothesis = ModellingHypothesis::Hypothesis;
     // treatment 
     set<Hypothesis> h;
     // modelling hypotheses handled by the behaviour

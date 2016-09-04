@@ -152,12 +152,12 @@ PipeTest_setElementType(mtest::PipeTest& t,
   }
 } // end of PipeTest_setElementType
 
-void declarePipeTest(void);
+void declarePipeTest();
 
-void declarePipeTest(void)
+void declarePipeTest()
 {
   using namespace mtest;
-  tfel::tests::TestResult (PipeTest:: *pm)(void) = &PipeTest::execute;
+  tfel::tests::TestResult (PipeTest:: *pm)() = &PipeTest::execute;
   void (PipeTest:: *pm2)(StudyCurrentState&,
   			 SolverWorkSpace&,
   			 const real,

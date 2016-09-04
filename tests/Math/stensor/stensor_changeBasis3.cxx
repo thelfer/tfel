@@ -41,7 +41,7 @@ struct StensorChangeBasis3Test final
 #if (!defined _MSC_VER) && (!defined _LIBCPP_VERSION)
     using namespace std;
     using namespace tfel::math;
-    typedef double real;
+    using real = double;
     const real eps = 1.e-4;
     const real pi = 4.0 * atan(1.0);  
     unsigned short i,j,k,t;
@@ -103,7 +103,7 @@ TFEL_TESTS_GENERATE_PROXY(StensorChangeBasis3Test,
 			  "StensorChangeBasis3Test");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();

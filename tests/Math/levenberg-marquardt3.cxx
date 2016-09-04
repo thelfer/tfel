@@ -52,7 +52,7 @@ LM_STATIC double f(const double x)
 }
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using namespace tfel::math;

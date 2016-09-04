@@ -235,7 +235,7 @@ private:
     TFEL_TESTS_ASSERT(r.find("seq")!=r.end());
   }
 
-  void test3(void){
+  void test3(){
     using namespace std;
     BehaviourData bd;
     TFEL_TESTS_ASSERT(!bd.hasAttribute("attr1"));
@@ -263,7 +263,7 @@ private:
     TFEL_TESTS_ASSERT(a2.is<bool>());
     TFEL_TESTS_ASSERT(a3.is<unsigned short>());
   } // end of test3
-  void test4(void){
+  void test4(){
     BehaviourData bd;
     bd.reserveName("young");
     const auto v  = VariableDescription{"real","young",1,0u};
@@ -277,7 +277,7 @@ TFEL_TESTS_GENERATE_PROXY(BehaviourDataTest,
 			  "BehaviourDataTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);

@@ -293,9 +293,9 @@ private:
   }
 };
 
-typedef TensorProductCheck<1u> TensorProductCheck1D;
-typedef TensorProductCheck<2u> TensorProductCheck2D;
-typedef TensorProductCheck<3u> TensorProductCheck3D;
+using TensorProductCheck1D = TensorProductCheck<1U>;
+using TensorProductCheck2D = TensorProductCheck<2U>;
+using TensorProductCheck3D = TensorProductCheck<3U>;
 TFEL_TESTS_GENERATE_PROXY(TensorProductCheck1D,
 			  "TensorProductCheck1D");
 TFEL_TESTS_GENERATE_PROXY(TensorProductCheck2D,
@@ -304,7 +304,7 @@ TFEL_TESTS_GENERATE_PROXY(TensorProductCheck3D,
 			  "TensorProductCheck3D");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   auto& manager = tfel::tests::TestManager::getTestManager();
   manager.addTestOutput(std::cout);

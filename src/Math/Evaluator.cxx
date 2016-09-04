@@ -421,7 +421,7 @@ namespace tfel
       this->extOpGenerators.insert(make_pair(name,f));
     } // end of FunctionGeneratorManager::insert
     
-    Evaluator::FunctionGeneratorManager::FunctionGeneratorManager(void)
+    Evaluator::FunctionGeneratorManager::FunctionGeneratorManager()
     {
       this->fctGenerators.insert({"exp",&StandardFctGenerator<exp>});
       this->fctGenerators.insert({"abs",&StandardFctGenerator<fabs>});
@@ -445,7 +445,7 @@ namespace tfel
     } // end of Evaluator::FunctionGeneratorManager::FunctionGeneratorManager
 
     Evaluator::FunctionGeneratorManager&
-    Evaluator::getFunctionGeneratorManager(void)
+    Evaluator::getFunctionGeneratorManager()
     {
       static FunctionGeneratorManager m;
       return m;
@@ -502,7 +502,7 @@ namespace tfel
     } // end of Evaluator::checkCyclicDependency
 
     void
-    Evaluator::checkCyclicDependency(void) const
+    Evaluator::checkCyclicDependency() const
     {
       std::vector<std::string> names;
       this->expr->checkCyclicDependency(names);
@@ -1092,7 +1092,7 @@ namespace tfel
     }//end of Evaluator::setVariableValue
 
     double
-    Evaluator::getValue(void) const
+    Evaluator::getValue() const
     {
       if(this->expr.get()==nullptr){
 	throw(std::runtime_error("Evaluator::getValue: "
@@ -1102,7 +1102,7 @@ namespace tfel
     }//end of Evaluator::getValue
 
     std::vector<std::string>
-    Evaluator::getVariablesNames(void) const
+    Evaluator::getVariablesNames() const
     {
       auto res = std::vector<std::string>{};
       res.resize(this->positions.size());
@@ -1115,7 +1115,7 @@ namespace tfel
     } // end of Evaluator::getVariablesNames
 
     std::vector<double>::size_type
-    Evaluator::getNumberOfVariables(void) const
+    Evaluator::getNumberOfVariables() const
     {
       return this->variables.size();
     } // end of Evaluator::getNumberOfVariables(void) const;
@@ -1332,14 +1332,14 @@ namespace tfel
     } // end of Evaluator::resolveDependencies() const
 
     void
-    Evaluator::removeDependencies(void)
+    Evaluator::removeDependencies()
     {
       this->checkCyclicDependency();
       this->expr = this->expr->resolveDependencies(this->variables);
     } // end of Evaluator::removeDependencies() const
 
     std::shared_ptr<tfel::math::parser::ExternalFunctionManager>
-    Evaluator::getExternalFunctionManager(void)
+    Evaluator::getExternalFunctionManager()
     {
       return this->manager;
     } // end of Evaluator::getExternalFunctionManager

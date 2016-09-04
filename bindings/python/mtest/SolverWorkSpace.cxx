@@ -14,9 +14,9 @@
 #include<boost/python.hpp>
 #include"MTest/SolverWorkSpace.hxx"
 
-void declareSolverWorkSpace(void);
+void declareSolverWorkSpace();
 
-void declareSolverWorkSpace(void)
+void declareSolverWorkSpace()
 {
   boost::python::class_<mtest::SolverWorkSpace,
 			boost::noncopyable>("SolverWorkSpace")

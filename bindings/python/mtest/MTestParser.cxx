@@ -16,7 +16,7 @@
 #include"MTest/MTest.hxx"
 #include"MTest/MTestParser.hxx"
 
-void declareMTestParser(void);
+void declareMTestParser();
 
 static void execute(mtest::MTestParser& p,mtest::MTest& m,const std::string& f){
   p.execute(m,f,{},{});
@@ -34,7 +34,7 @@ static void execute3(mtest::MTestParser& p,mtest::MTest& m,const std::string& f,
 }
 
 
-void declareMTestParser(void)
+void declareMTestParser()
 {
   using namespace boost;
   using namespace boost::python;

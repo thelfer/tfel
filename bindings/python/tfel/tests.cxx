@@ -13,7 +13,7 @@
 
 #include<boost/python.hpp>
 
-void declareTestResult(void);
+void declareTestResult();
 
 BOOST_PYTHON_MODULE(tests)
 {

@@ -27,14 +27,14 @@ namespace mfront{
   } // end of BehaviourInterfaceFactory::getBehaviourInterfaceFactory
 
   BehaviourInterfaceFactory::InterfaceCreatorsContainer&
-  BehaviourInterfaceFactory::getInterfaceCreatorsMap(void) const
+  BehaviourInterfaceFactory::getInterfaceCreatorsMap() const
   {
     static InterfaceCreatorsContainer map;
     return map;
   } // end of BehaviourInterfaceFactory::getInterfaceCreatorsMap
 
   std::vector<std::string>
-  BehaviourInterfaceFactory::getRegistredInterfaces(void) const
+  BehaviourInterfaceFactory::getRegistredInterfaces() const
   {
     using namespace std;
     vector<string> res;
@@ -110,7 +110,7 @@ namespace mfront{
   {} // end of BehaviourInterfaceFactory::~BehaviourInterfaceFactory()
   
   BehaviourInterfaceFactory::AliasContainer&
-  BehaviourInterfaceFactory::getAliasesMap(void) const
+  BehaviourInterfaceFactory::getAliasesMap() const
   {
     static AliasContainer map;
     return map;

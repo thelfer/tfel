@@ -82,7 +82,7 @@ struct BehaviourBrickProviderTest final
   //   const auto p = MaterialLawProvider{};
   //   TFEL_TESTS_ASSERT(p.getIdentifier()==ProviderIdentifier::MATERIALLAW);
   // } // end of test3
-  void test4(void){
+  void test4(){
     using namespace mfront::bbrick;
     const MaterialPropertyProvider p{"stress","young","YoungModulus",1u};
     TFEL_TESTS_ASSERT(p.name=="young");
@@ -110,7 +110,7 @@ struct BehaviourBrickProviderTest final
     TFEL_TESTS_CHECK_THROW(p.handleRequirement(Requirement{"real","YoungModulus",1u,
 	    {ProviderIdentifier::MATERIALPROPERTY}},true),std::runtime_error);
   }
-  void test5(void){
+  void test5(){
     using namespace mfront::bbrick;
     RequirementManager m;
     m.addMaterialPropertyProvider("real","young","YoungModulus",1u);
@@ -127,7 +127,7 @@ TFEL_TESTS_GENERATE_PROXY(BehaviourBrickProviderTest,
 			  "BehaviourBrickProviderTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace tfel::tests;
   TestManager& manager = TestManager::getTestManager();

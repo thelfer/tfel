@@ -28,7 +28,7 @@
 #include<windows.h>
 #endif
 
-typedef void (*FuncPtr)(void);
+using FuncPtr = void (*)();
 typedef std::map<std::string,std::pair<FuncPtr,std::string> > CallBacksContainer;
 
 static std::string
@@ -49,13 +49,13 @@ handleSpace(const std::string& p)
 }
 
 static std::string
-getTFELHOME(void);
+getTFELHOME();
 
 static std::string
-libDir(void);
+libDir();
 
 static std::string
-includeDir(void);
+includeDir();
 
 static void
 registerCallBack(const std::string&,
@@ -63,65 +63,65 @@ registerCallBack(const std::string&,
 		 const std::string&);
 
 static void
-treatCompilerFlags(void);
+treatCompilerFlags();
 
 static void
-treatOFlags0(void);
+treatOFlags0();
 
 static void
-treatOFlags(void);
+treatOFlags();
 
 static void
-treatOFlags2(void);
+treatOFlags2();
 
 #ifdef HAVE_CASTEM
 static void
-treatCastem(void);
+treatCastem();
 #endif /* HAVE_CASTEM */
 
 #ifdef HAVE_ZMAT
 static void
-treatZMAT(void);
+treatZMAT();
 #endif /* HAVE_ZMAT */
 
 static void
-treatExceptions(void);
+treatExceptions();
 
 static void
-treatMath(void);
+treatMath();
 
 static void
-treatMathCubicSpline(void);
+treatMathCubicSpline();
 
 static void
-treatMathKriging(void);
+treatMathKriging();
 
 static void
-treatMathParser(void);
+treatMathParser();
 
 static void
-treatMathInterpreter(void);
+treatMathInterpreter();
 
 static void
-treatUtilities(void);
+treatUtilities();
 
 static void
-treatGlossary(void);
+treatGlossary();
 
 static void
-treatFiniteElement(void);
+treatFiniteElement();
 
 static void
-treatAll(void);
+treatAll();
 
 static void
-treatCppFlags(void);
+treatCppFlags();
 
 static void
-treatIncludes(void);
+treatIncludes();
 
 static void
-treatLibs(void);
+treatLibs();
 
 static void
 listOptions(std::ostream&);
@@ -130,10 +130,10 @@ TFEL_NORETURN static void
 treatUnknownOption(const std::string&);
 
 TFEL_NORETURN static void
-treatHelp(void);
+treatHelp();
 
 TFEL_NORETURN static void
-treatLicences(void);
+treatLicences();
 
 static CallBacksContainer callBacksContainer;
 static bool compilerflags   = false;
@@ -190,7 +190,7 @@ getValueInRegistry(std::string &value)
 #endif
 
 static std::string
-getTFELHOME(void)
+getTFELHOME()
 {
   using namespace std;
 #if defined _WIN32 || defined _WIN64
@@ -216,7 +216,7 @@ getTFELHOME(void)
 }
 
 static std::string
-libDir(void)
+libDir()
 {
   using namespace std;
   const string prefix(PREFIXDIR);
@@ -246,7 +246,7 @@ libDir(void)
 } // end of libDir
 
 static std::string
-includeDir(void)
+includeDir()
 {
   using namespace std;
   const string prefix(PREFIXDIR);
@@ -272,39 +272,39 @@ registerCallBack(const std::string& key,
 } // end of registerNewCallBack
 
 static void
-treatCompilerFlags(void)
+treatCompilerFlags()
 {
   compilerflags = true;
 } // end of treatCompilerFlags
 
 static void
-treatOFlags0(void)
+treatOFlags0()
 {
   oflags0 = true;
 } // end of treatOFlags
 
 static void
-treatOFlags(void)
+treatOFlags()
 {
   oflags0 = true;
   oflags  = true;
 } // end of treatOFlags
 
 static void
-treatOFlags2(void)
+treatOFlags2()
 {
   oflags2 = true;
 } // end of treatOFlags2
 
 static void
-treatWarning(void)
+treatWarning()
 {
   warning = true;
 } // end of treatWarning
 
 #ifdef HAVE_CASTEM
 static void
-treatCastem(void)
+treatCastem()
 {
   castem = true;
 } // end of treatCastem
@@ -312,27 +312,27 @@ treatCastem(void)
 
 #ifdef HAVE_ZMAT
 static void
-treatZMAT(void)
+treatZMAT()
 {
   zmat = true;
 } // end of treatZMAT
 #endif /* HAVE_ZMAT */
 
 static void
-treatExceptions(void)
+treatExceptions()
 {
   exceptions = true;
 } // end of treatExceptions
 
 static void
-treatMath(void)
+treatMath()
 {
   exceptions = true;
   math       = true;
 } // end of treatMath
 
 static void
-treatMathKriging(void)
+treatMathKriging()
 {
   exceptions = true;
   math       = true;
@@ -340,7 +340,7 @@ treatMathKriging(void)
 } // end of treatMathKriging
 
 static void
-treatMathCubicSpline(void)
+treatMathCubicSpline()
 {
   exceptions = true;
   math       = true;
@@ -348,7 +348,7 @@ treatMathCubicSpline(void)
 } // end of treatMathCubicSpline
 
 static void
-treatMathParser(void)
+treatMathParser()
 {
   exceptions  = true;
   math        = true;
@@ -357,7 +357,7 @@ treatMathParser(void)
 } // end of treatMathParser
 
 static void
-treatMathInterpreter(void)
+treatMathInterpreter()
 {
   exceptions      = true;
   math            = true;
@@ -367,19 +367,19 @@ treatMathInterpreter(void)
 } // end of treatMathInterpreter
 
 static void
-treatUtilities(void)
+treatUtilities()
 {
   utilities = true;
 } // end of treatUtilities
 
 static void
-treatGlossary(void)
+treatGlossary()
 {
   glossary = true;
 } // end of treatGlossary
 
 static void
-treatFiniteElement(void)
+treatFiniteElement()
 {
   exceptions    = true;
   math          = true;
@@ -387,14 +387,14 @@ treatFiniteElement(void)
 } // end of treatFiniteElement
 
 static void
-treatSystem(void)
+treatSystem()
 {
   exceptions    = true;
   lsystem        = true;
 } // end of treatFiniteElement
 
 static void
-treatMaterial(void)
+treatMaterial()
 {
   exceptions  = true;
   math        = true;
@@ -403,19 +403,19 @@ treatMaterial(void)
 } // end of treatMaterial
 
 static void
-treatMFrontProfiling(void)
+treatMFrontProfiling()
 {
   mfront_profiling  = true;
 } // end of treatMFrontProfiling
 
 static void
-treatTests(void)
+treatTests()
 {
   tests  = true;
 } // end of treatTests
 
 static void
-treatAll(void)
+treatAll()
 {
   exceptions   = true;
   math         = true;
@@ -428,20 +428,20 @@ treatAll(void)
 } // end of treatAll
 
 static void
-treatCppFlags(void)
+treatCppFlags()
 {
   cppflags = true;
 } // end of treatCppFlags
 
 static void
-treatIncludes(void)
+treatIncludes()
 {
   incs = true;
 } // end of treatIncludes
 
 
 static void
-treatLibs(void)
+treatLibs()
 {
   libs = true;
 } // end of treatLibs
@@ -463,7 +463,7 @@ listOptions(std::ostream& os)
 } // end of listOptions
 
 TFEL_NORETURN static void
-treatVersion(void)
+treatVersion()
 {
   using namespace std;
   cout << "tfel-config " << VERSION 
@@ -473,7 +473,7 @@ treatVersion(void)
 } // end of treatHelp
 
 TFEL_NORETURN static void
-treatHelp(void)
+treatHelp()
 {
   using namespace std;
   cout << "usage : tfel-config [options]" << endl;
@@ -491,7 +491,7 @@ treatUnknownOption(const std::string& o)
 } // end of treatUnknownOption
 
 TFEL_NORETURN static void
-treatLicences(void)
+treatLicences()
 {
   using namespace std;
   cout << "Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights reserved." << endl;

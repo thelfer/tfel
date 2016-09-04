@@ -87,9 +87,9 @@ SchemeBase_printOutput(mtest::SchemeBase& s,
 
 
 
-void declareSchemeBase(void);
+void declareSchemeBase();
 
-void declareSchemeBase(void)
+void declareSchemeBase()
 {
   using namespace mtest;
 

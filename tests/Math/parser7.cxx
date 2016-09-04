@@ -52,19 +52,19 @@ struct TestFunction final
   } // end of TestFunction
 
   virtual std::string
-  name(void) const override
+  name() const override
   {
     return fn;
   }
 
   virtual std::string
-  classname(void) const override
+  classname() const override
   {
     return "TFEL/Math";
   }
 
   virtual tfel::tests::TestResult
-  execute(void) override
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -95,7 +95,7 @@ private:
 
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using namespace tfel::tests;

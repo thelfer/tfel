@@ -97,7 +97,7 @@ namespace mtest
   } // end of CyranoBehaviour::getRotationMatrix
 
   StiffnessMatrixType
-  CyranoBehaviour::getDefaultStiffnessMatrixType(void) const
+  CyranoBehaviour::getDefaultStiffnessMatrixType() const
   {
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
   } // end of CyranoBehaviour::getDefaultStiffnessMatrixType

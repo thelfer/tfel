@@ -35,20 +35,20 @@ namespace tfel
     {} // end of IntegerEvaluator::TNegation::TNegation
 
     bool
-    IntegerEvaluator::TNegation::isOperator(void) const
+    IntegerEvaluator::TNegation::isOperator() const
     {
       return false;
     }
     
     std::shared_ptr<tfel::math::parser::IntegerExpr>
-    IntegerEvaluator::TNegation::analyse(void)
+    IntegerEvaluator::TNegation::analyse()
     {
       using namespace tfel::math::parser;
       return std::shared_ptr<IntegerExpr>(new Negation(this->expr->analyse()));
     }
 
     void
-    IntegerEvaluator::TNegation::reduce(void)
+    IntegerEvaluator::TNegation::reduce()
     {
       this->expr->reduce();
     }
@@ -61,7 +61,7 @@ namespace tfel
     {} // end of IntegerEvaluator::TNegation::Negation::Negation
     
     int
-    IntegerEvaluator::TNegation::Negation::getValue(void) const
+    IntegerEvaluator::TNegation::Negation::getValue() const
     {
       return -(this->expr->getValue());
     } // end of IntegerEvaluator::TNegation::Negation::getValue(void)
@@ -85,23 +85,23 @@ namespace tfel
 
     
     std::string
-    IntegerEvaluator::TOperator::getOperatorType(void) const
+    IntegerEvaluator::TOperator::getOperatorType() const
     {
       return this->type;
     } // end of IntegerEvaluator::TOperator::getOperatorType(void) const
      
     bool
-    IntegerEvaluator::TOperator::isOperator(void) const
+    IntegerEvaluator::TOperator::isOperator() const
     {
       return true;
     } // end of IntegerEvaluator::TOperator::isOperator(void) const
     
     void
-    IntegerEvaluator::TOperator::reduce(void)
+    IntegerEvaluator::TOperator::reduce()
     {} // end of IntegerEvaluator::TOperator::reduce(void)
     
     std::shared_ptr<tfel::math::parser::IntegerExpr>
-    IntegerEvaluator::TOperator::analyse(void)
+    IntegerEvaluator::TOperator::analyse()
     {
       throw(std::runtime_error("IntegerEvaluator::TOperator : invalid call"));
     } // end of IntegerEvaluator::TOperator::analyse(void)
@@ -148,7 +148,7 @@ namespace tfel
       
     template<typename Op>
     int
-    IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>::getValue(void) const
+    IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>::getValue() const
     {
       return Op::apply(this->a->getValue(),this->b->getValue());
     } // end of IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>::getValue
@@ -169,20 +169,20 @@ namespace tfel
     {} // end of IntegerEvaluator::TBinaryOperation::TBinaryOperation
     
     bool
-    IntegerEvaluator::TBinaryOperation::isOperator(void) const
+    IntegerEvaluator::TBinaryOperation::isOperator() const
     {
       return false;
     } // end of IntegerEvaluator::TBinaryOperation::isOperator(void) const
     
     void
-    IntegerEvaluator::TBinaryOperation::reduce(void)
+    IntegerEvaluator::TBinaryOperation::reduce()
     {
       a->reduce();
       b->reduce();
     } // end of IntegerEvaluator::TBinaryOperation::reduce(void)
      
     std::shared_ptr<tfel::math::parser::IntegerExpr>
-    IntegerEvaluator::TBinaryOperation::analyse(void)
+    IntegerEvaluator::TBinaryOperation::analyse()
     {
       using namespace std;
       using namespace tfel::math::parser;
@@ -214,17 +214,17 @@ namespace tfel
     {}
     
     bool
-    IntegerEvaluator::TVariable::isOperator(void) const
+    IntegerEvaluator::TVariable::isOperator() const
     {
       return false;
     }
     
     void
-    IntegerEvaluator::TVariable::reduce(void)
+    IntegerEvaluator::TVariable::reduce()
     {}
 
     std::shared_ptr<tfel::math::parser::IntegerExpr>
-    IntegerEvaluator::TVariable::analyse(void)
+    IntegerEvaluator::TVariable::analyse()
     {
       using namespace tfel::math::parser;
       return std::shared_ptr<IntegerExpr>(new Variable(this->vars,this->pos));
@@ -236,7 +236,7 @@ namespace tfel
     {} // end of IntegerEvaluator::TVariable::Variable::Variable
     
     int
-    IntegerEvaluator::TVariable::Variable::getValue(void) const
+    IntegerEvaluator::TVariable::Variable::getValue() const
     {
       return this->v[this->pos];
     } // end of IntegerEvaluator::TVariable::Variable::getValue
@@ -249,7 +249,7 @@ namespace tfel
     } // end of IntegerEvaluator::TVariable::Variable::clone
 
     bool
-    IntegerEvaluator::TGroup::isOperator(void) const
+    IntegerEvaluator::TGroup::isOperator() const
     {
       return false;
     }
@@ -261,7 +261,7 @@ namespace tfel
     } // end of IntegerEvaluator::TGroup::add
 
     void
-    IntegerEvaluator::TGroup::reduce(void)
+    IntegerEvaluator::TGroup::reduce()
     {
       using namespace std;
       auto p  = this->subExpr.begin();
@@ -281,7 +281,7 @@ namespace tfel
     }
     
     std::shared_ptr<tfel::math::parser::IntegerExpr>
-    IntegerEvaluator::TGroup::analyse(void)
+    IntegerEvaluator::TGroup::analyse()
     {
       using namespace std;
       if(this->subExpr.size()!=1u){
@@ -389,19 +389,19 @@ namespace tfel
     {}
     
     bool
-    IntegerEvaluator::TNumber::isOperator(void) const
+    IntegerEvaluator::TNumber::isOperator() const
     {
       return false;
     }
     
     std::shared_ptr<tfel::math::parser::IntegerExpr>
-    IntegerEvaluator::TNumber::analyse(void)
+    IntegerEvaluator::TNumber::analyse()
     {
       return parser::IntegerExprPtr(new Number(value));
     }
     
     void
-    IntegerEvaluator::TNumber::reduce(void)
+    IntegerEvaluator::TNumber::reduce()
     {}
 
     IntegerEvaluator::TNumber::Number::Number(const int v)

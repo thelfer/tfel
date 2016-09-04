@@ -41,7 +41,7 @@ LIBRARYDESCRIPTION_ADDPROPERTY_HELPERFUNCTIONS(ldflags)
 LIBRARYDESCRIPTION_ADDPROPERTY_HELPERFUNCTIONS(epts)
 LIBRARYDESCRIPTION_ADDPROPERTY_HELPERFUNCTIONS(deps)
 
-void declareLibraryDescription(void){
+void declareLibraryDescription(){
   using namespace boost::python;
   using namespace mfront;
 

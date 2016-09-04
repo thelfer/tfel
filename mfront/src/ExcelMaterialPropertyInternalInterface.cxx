@@ -18,7 +18,7 @@ namespace mfront
 {
 
   std::string
-  ExcelMaterialPropertyInternalInterface::getName(void)
+  ExcelMaterialPropertyInternalInterface::getName()
   {
     return "excel-internal";
   }
@@ -61,7 +61,7 @@ namespace mfront
   } // end of ExcelMaterialPropertyInternalInterface::writePreprocessorDirectives
 
   std::string
-  ExcelMaterialPropertyInternalInterface::getCallingConvention(void) const{
+  ExcelMaterialPropertyInternalInterface::getCallingConvention() const{
     return "MFRONT_EXCEL_CALLING_CONVENTION";
   }
   

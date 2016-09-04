@@ -27,22 +27,22 @@
 #define TFEL_TESTS_STATIC
 #endif
 
-TFEL_TESTS_STATIC bool test1(void)
+TFEL_TESTS_STATIC bool test1()
 {
   return true;
 }
 
-TFEL_TESTS_STATIC bool test2(void)
+TFEL_TESTS_STATIC bool test2()
 {
   return false;
 }
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace tfel::tests;
-  typedef TestFunctionWrapper<test1> Wrapper1;
-  typedef TestFunctionWrapper<test2> Wrapper2;
+  using Wrapper1 = TestFunctionWrapper<test1>;
+  using Wrapper2 = TestFunctionWrapper<test2>;
   std::shared_ptr<Test> a(new Wrapper1("test1"));
   std::shared_ptr<Test> b(new Wrapper2("test2"));
   TestSuite suite1("suite1");

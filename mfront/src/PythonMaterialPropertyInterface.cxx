@@ -50,7 +50,7 @@ namespace mfront
 {
 
   std::string
-  PythonMaterialPropertyInterface::getName(void)
+  PythonMaterialPropertyInterface::getName()
   {
     return "python";
   }

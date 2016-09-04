@@ -55,7 +55,7 @@ namespace mfront{
     return "MFront/"+getSrcFileName(md);
   } // end of getSrcFileName
   
-  std::string MFrontModelInterface::getName(void){
+  std::string MFrontModelInterface::getName(){
     return "mfront";
   } // end of MFrontModelInterface::getName
 

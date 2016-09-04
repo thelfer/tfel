@@ -23,7 +23,7 @@
 #include"TFEL/Math/qt.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
 
   using namespace tfel::math;
   using namespace std;

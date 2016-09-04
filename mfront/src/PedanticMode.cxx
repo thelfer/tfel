@@ -21,7 +21,7 @@ namespace mfront{
     return b;
   }
 
-  bool getPedanticMode(void)
+  bool getPedanticMode()
   {
     return getMFrontPedanticMode();
   }

@@ -47,7 +47,7 @@ namespace mfront{
   }
 
   std::string
-  IsotropicMisesPlasticFlowDSL::getName(void)
+  IsotropicMisesPlasticFlowDSL::getName()
   {
     return "IsotropicPlasticMisesFlow";
   }
@@ -61,7 +61,7 @@ namespace mfront{
   } // end of IsotropicMisesPlasticFlowDSL::getDescription
 
   void
-  IsotropicMisesPlasticFlowDSL::endsInputFileProcessing(void)
+  IsotropicMisesPlasticFlowDSL::endsInputFileProcessing()
   {
     using namespace std;
     IsotropicBehaviourDSLBase::endsInputFileProcessing();

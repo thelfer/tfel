@@ -155,7 +155,7 @@ namespace mtest{
   {
     using namespace std;
     using namespace tfel::system;
-    typedef ExternalLibraryManager ELM;
+    using ELM = tfel::system::ExternalLibraryManager;
     std::shared_ptr<Behaviour> b;
 #ifdef HAVE_CASTEM
     if((i=="castem")||(i=="umat")){
@@ -366,7 +366,7 @@ namespace mtest{
   }
 
   std::shared_ptr<Behaviour>
-  SingleStructureScheme::getBehaviour(void){
+  SingleStructureScheme::getBehaviour(){
     if(this->b.get()==nullptr){
       throw(std::runtime_error("SingleStructureScheme::getBehaviour: "
 			       "no behaviour defined"));
@@ -375,7 +375,7 @@ namespace mtest{
   }
 
   void
-  SingleStructureScheme::completeInitialisation(void)
+  SingleStructureScheme::completeInitialisation()
   {
     SchemeBase::completeInitialisation();
     if(this->b.get()==nullptr){
@@ -406,7 +406,7 @@ namespace mtest{
   } // end of SingleStructureScheme::doPackagingStep
   
   StiffnessMatrixType
-  SingleStructureScheme::getDefaultStiffnessMatrixType(void) const{
+  SingleStructureScheme::getDefaultStiffnessMatrixType() const{
     return this->b->getDefaultStiffnessMatrixType();
   } // end of SingleStructureScheme::getDefaultStiffnessMatrixType
 

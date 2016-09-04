@@ -183,7 +183,7 @@ TFEL_TESTS_GENERATE_PROXY(TargetsDescriptionTest,
 			  "TargetsDescriptionTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);

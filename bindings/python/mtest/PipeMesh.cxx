@@ -17,7 +17,7 @@
 
 void declarePipeMesh();
 
-void declarePipeMesh(void)
+void declarePipeMesh()
 {
 
   boost::python::enum_<mtest::PipeMesh::ElementType>("PipeMeshElementType")

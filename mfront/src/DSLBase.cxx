@@ -151,13 +151,13 @@ namespace mfront
   } // end of DSLBase::openFile
 
   const FileDescription&
-  DSLBase::getFileDescription(void) const
+  DSLBase::getFileDescription() const
   {
     return *this;
   } // end of DSLBase::getFileDescription
 
   const TargetsDescription&
-  DSLBase::getTargetsDescription(void) const{
+  DSLBase::getTargetsDescription() const{
     return this->td;
   } // end of DSLBase::getTargetsDescription
 
@@ -443,7 +443,7 @@ namespace mfront
   } // end of DSLBase::readSpecifiedToken
 
   std::string
-  DSLBase::readUntilEndOfInstruction(void)
+  DSLBase::readUntilEndOfInstruction()
   {
     auto res = std::string{};
     while((this->current!=this->tokens.end())&&
@@ -468,7 +468,7 @@ namespace mfront
   }
 
   std::string
-  DSLBase::readOnlyOneToken(void)
+  DSLBase::readOnlyOneToken()
   {
     this->checkNotEndOfFile("DSLBase::readOnlyOneToken",
 			    "Expected a word.");
@@ -773,7 +773,7 @@ namespace mfront
   } // end of DSLBase::readStringOrArrayOfString
 
   void
-  DSLBase::treatLink(void){
+  DSLBase::treatLink(){
     const auto nlink = readStringOrArrayOfString("DSLBase::treatLink");
     this->readSpecifiedToken("DSLBase::treatLink",";");
 #pragma message("DSLBase::treatLink: unimplemented feature")
@@ -794,7 +794,7 @@ namespace mfront
     }
   } // end of DSLBase::callMFront
 
-  void DSLBase::treatMFront(void){
+  void DSLBase::treatMFront(){
     this->readSpecifiedToken("DSLBase::treatMfront","{");
     const auto vfiles = this->readStringOrArrayOfString("DSLBase::treatMfront");
     auto vinterfaces = std::vector<std::string>{};
@@ -928,7 +928,7 @@ namespace mfront
   } // end of DSLBase::handleMaterialLaw
 
   void
-  DSLBase::treatMaterialLaw(void){
+  DSLBase::treatMaterialLaw(){
     const auto vfiles = this->readStringOrArrayOfString("DSLBase::treatMaterialLaw");
     this->readSpecifiedToken("DSLBase::treatMaterialLaw",";");
     for(const auto& f : vfiles){
@@ -937,7 +937,7 @@ namespace mfront
   } // end of DSLBase::treatMaterialLaw
 
   void
-  DSLBase::treatDescription(void)
+  DSLBase::treatDescription()
   {
     this->readSpecifiedToken("DSLBase::treatDescription","{");
     this->checkNotEndOfFile("DSLBase::treatDescription");
@@ -983,7 +983,7 @@ namespace mfront
     ++(this->current);
   } // end of DSLBase::treatDescription
 
-  void DSLBase::treatLonelySeparator(void){
+  void DSLBase::treatLonelySeparator(){
     if(getPedanticMode()){
       getLogStream() << this->fileName << ":"
 		     << this->current->line << ":"
@@ -992,38 +992,38 @@ namespace mfront
     ++(this->current);
   } // end of DSLBase::treatLonelySperator
   
-  void DSLBase::treatAuthor(void)
+  void DSLBase::treatAuthor()
   {
     this->authorName = this->readUntilEndOfInstruction();
   } // end of DSLBase::treatAuthor
 
-  void DSLBase::treatDate(void)
+  void DSLBase::treatDate()
   {
     this->date = this->readUntilEndOfInstruction();
   } // end of DSLBase::treatDate
 
-  void DSLBase::treatUnknownKeyword(void)
+  void DSLBase::treatUnknownKeyword()
   {
     --(this->current);
     this->throwRuntimeError("DSLBase::treatUnknownKeyword",
 			    "unknown keyword (read '"+this->current->value+"')");
   } // end of DSLBase::treatUnknownKeyword
 
-  void DSLBase::treatIncludes(void)
+  void DSLBase::treatIncludes()
   {
     CodeBlockParserOptions options;
     this->appendToIncludes(this->readNextBlock(options).code);
   }
 
   void
-  DSLBase::treatSources(void)
+  DSLBase::treatSources()
   {
     CodeBlockParserOptions options;
     this->appendToSources(this->readNextBlock(options).code);
   } // end of DSLBase::treatSources(void)
 
   void
-  DSLBase::treatMembers(void)
+  DSLBase::treatMembers()
   {
     CodeBlockParserOptions options;
     options.qualifyStaticVariables = true;
@@ -1032,7 +1032,7 @@ namespace mfront
   }
 
   void
-  DSLBase::treatPrivate(void)
+  DSLBase::treatPrivate()
   {
     CodeBlockParserOptions options;
     options.qualifyStaticVariables = true;
@@ -1041,13 +1041,13 @@ namespace mfront
   } // end of DSLBase::treatSources(void)
 
   void
-  DSLBase::treatParser(void)
+  DSLBase::treatParser()
   {
     this->readUntilEndOfInstruction();
   } // end of DSLBase::treatParser
 
   void
-  DSLBase::treatStaticVar(void)
+  DSLBase::treatStaticVar()
   {
     this->checkNotEndOfFile("DSLBase::treatStaticVar",
 			    "Cannot read type of static variable.");
@@ -1108,7 +1108,7 @@ namespace mfront
     ++(this->current);
   } // end of DSLBase::ignoreKeyWord
 
-  double DSLBase::readDouble(void)
+  double DSLBase::readDouble()
   {
     this->checkNotEndOfFile("DSLBase::readDouble");
     return CxxTokenizer::readDouble(this->current,this->tokens.end());

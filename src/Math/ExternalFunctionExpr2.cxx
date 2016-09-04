@@ -45,7 +45,7 @@ namespace tfel
       } // end of ExternalFunctionExpr2::ExternalFunctionExpr2
 
       double
-      ExternalFunctionExpr2::getValue(void) const
+      ExternalFunctionExpr2::getValue() const
       {
 	using namespace std;
 	using namespace tfel::math::parser;

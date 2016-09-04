@@ -28,31 +28,31 @@ namespace mfront
   {} // end of FiniteStrainBehaviourTangentOperatorConversion::FiniteStrainBehaviourTangentOperatorConversion
 
   FiniteStrainBehaviourTangentOperatorConversion::TangentOperatorFlag
-  FiniteStrainBehaviourTangentOperatorConversion::from(void) const
+  FiniteStrainBehaviourTangentOperatorConversion::from() const
   {
     return this->b; 
   } // end of FiniteStrainBehaviourTangentOperatorConversion::from
 
   FiniteStrainBehaviourTangentOperatorConversion::TangentOperatorFlag
-  FiniteStrainBehaviourTangentOperatorConversion::to(void) const
+  FiniteStrainBehaviourTangentOperatorConversion::to() const
   {
     return this->e;
   } // end of FiniteStrainBehaviourTangentOperatorConversion::to
 
   const std::string&
-  FiniteStrainBehaviourTangentOperatorConversion::getIntermediateConversion(void) const
+  FiniteStrainBehaviourTangentOperatorConversion::getIntermediateConversion() const
   {
     return this->c;
   }
 
   const std::string&
-  FiniteStrainBehaviourTangentOperatorConversion::getFinalConversion(void) const
+  FiniteStrainBehaviourTangentOperatorConversion::getFinalConversion() const
   {
     return this->cf;
   }
 
   std::vector<FiniteStrainBehaviourTangentOperatorConversion>
-  FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions(void)
+  FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions()
   {
     using TangentOperator = tfel::material::FiniteStrainBehaviourTangentOperatorBase ;
     using Converter = FiniteStrainBehaviourTangentOperatorConversion ;

@@ -26,7 +26,7 @@
 const double prec = 1.e-12;
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   
   using namespace tfel::math;
 

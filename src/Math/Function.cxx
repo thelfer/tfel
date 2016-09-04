@@ -48,7 +48,7 @@ namespace tfel
       {} // end of Function::~Function
 
       void
-      StandardFunctionBase::throwUnimplementedDifferentiateFunctionException(void)
+      StandardFunctionBase::throwUnimplementedDifferentiateFunctionException()
       {
 	throw(std::runtime_error("StandardFunctionBase::"
 				 "throwUnimplementedDifferentiateFunctionException : "

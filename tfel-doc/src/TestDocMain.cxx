@@ -153,7 +153,7 @@ namespace tfel
     } // end of TestDocMain::TestDocMain
 
     void
-    TestDocMain::treatUnknownArgument(void)
+    TestDocMain::treatUnknownArgument()
     {
       using namespace std;
       const auto& s = this->currentArgument->as_string();
@@ -173,7 +173,7 @@ namespace tfel
     } // end of TestDocMain::treatUnknownArgument
 
     void 
-    TestDocMain::registerArgumentCallBacks(void)
+    TestDocMain::registerArgumentCallBacks()
     {
       this->registerNewCallBack("--lang",&TestDocMain::treatLang,
 				"specify output language (french,english)",true);
@@ -203,32 +203,32 @@ namespace tfel
 				"generate latex file");
     } // end of TestDocMain::registerArgumentCallBacks
 
-    void TestDocMain::treatLaTeX(void)
+    void TestDocMain::treatLaTeX()
     {
       this->latex=true;
     }
 
-    void TestDocMain::treatMarkdown(void)
+    void TestDocMain::treatMarkdown()
     {
       this->markdown=true;
     }
     
-    void TestDocMain::treatMTest(void)
+    void TestDocMain::treatMTest()
     {
       this->mtest=true;
     }
 
-    void TestDocMain::treatFragment(void)
+    void TestDocMain::treatFragment()
     {
       this->opts.standAlone=false;
     }
 
-    void TestDocMain::treatSplit(void)
+    void TestDocMain::treatSplit()
     {
       this->opts.split=true;
     }
 
-    void TestDocMain::treatLogFile(void)
+    void TestDocMain::treatLogFile()
     {
       using namespace std;
       if(!this->logFile.empty()){
@@ -245,7 +245,7 @@ namespace tfel
     } // end of TestDocMain::treatLogFile
 
     void
-    TestDocMain::treatPrefix(void)
+    TestDocMain::treatPrefix()
     {
       using namespace std;
       if(!this->opts.prefix.empty()){
@@ -262,7 +262,7 @@ namespace tfel
     } // end of TestDocMain::treatPrefix
 
     void
-    TestDocMain::treatSrc(void)
+    TestDocMain::treatSrc()
     {
       using namespace std;
       if(!this->srcdir.empty()){
@@ -279,7 +279,7 @@ namespace tfel
     } // end of TestDocMain::treatSrc
 
     void
-    TestDocMain::treatLang(void)
+    TestDocMain::treatLang()
     {
       using namespace std;
       if(!this->opts.lang.empty()){
@@ -296,7 +296,7 @@ namespace tfel
     } // end of TestDocMain::treatLang
 
     void
-    TestDocMain::treatKeyFile(void)
+    TestDocMain::treatKeyFile()
     {
       using namespace std;
       const auto& f = this->currentArgument->getOption();
@@ -304,7 +304,7 @@ namespace tfel
     } // end of TestDocMain::treatKeyFile
 
     void
-    TestDocMain::treatCategoryFile(void)
+    TestDocMain::treatCategoryFile()
     {
       using namespace std;
       const auto& f = this->currentArgument->getOption();
@@ -312,7 +312,7 @@ namespace tfel
     } // end of TestDocMain::treatCategoryFile
 
     void
-    TestDocMain::treatTranslationFile(void)
+    TestDocMain::treatTranslationFile()
     {
       using namespace std;
       const auto& f = this->currentArgument->getOption();
@@ -320,14 +320,14 @@ namespace tfel
     } // end of TestDocMain::treatTranslationFile
 
     std::string 
-    TestDocMain::getVersionDescription(void) const
+    TestDocMain::getVersionDescription() const
     {
       using namespace std;
       return "1.1";
     }
     
     std::string 
-    TestDocMain::getUsageDescription(void) const
+    TestDocMain::getUsageDescription() const
     {
       using namespace std;
       string usage("Usage : tfel-doc [options] output");
@@ -335,7 +335,7 @@ namespace tfel
     }
 
     int
-    TestDocMain::execute(void)
+    TestDocMain::execute()
     {
       using namespace std;
       using namespace tfel::utilities;

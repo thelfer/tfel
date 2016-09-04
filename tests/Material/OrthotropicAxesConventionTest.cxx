@@ -60,7 +60,7 @@ struct OrthotropicAxesConventionTest final
   using Hypothesis = ModellingHypothesis::Hypothesis;
   using OrthotropicAxesConvention = tfel::material::OrthotropicAxesConvention;
   template<Hypothesis h,OrthotropicAxesConvention c>
-  void test1(void){
+  void test1(){
     using tfel::math::stensor;
     using namespace tfel::material;
     stensor<ModellingHypothesisToSpaceDimension<h>::value,int> s(0);
@@ -71,7 +71,7 @@ struct OrthotropicAxesConventionTest final
     TFEL_TESTS_CHECK_EQUAL(s[2],3);
   }
   template<Hypothesis h,OrthotropicAxesConvention c>
-  void test2(void){
+  void test2(){
     using tfel::math::stensor;
     using namespace tfel::material;
     stensor<ModellingHypothesisToSpaceDimension<h>::value,int> s(0);
@@ -86,7 +86,7 @@ struct OrthotropicAxesConventionTest final
 TFEL_TESTS_GENERATE_PROXY(OrthotropicAxesConventionTest,"OrthotropicAxesConvention");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   auto& manager = tfel::tests::TestManager::getTestManager();
   manager.addTestOutput(std::cout);

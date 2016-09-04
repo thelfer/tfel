@@ -25,7 +25,7 @@
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using uishort = unsigned short;
   std::vector<uishort> v(10);

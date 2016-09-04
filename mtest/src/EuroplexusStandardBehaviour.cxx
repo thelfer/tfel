@@ -37,7 +37,7 @@ namespace mtest
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::material;
-    typedef ExternalLibraryManager ELM;
+    using ELM = tfel::system::ExternalLibraryManager;
     auto& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getEuroplexusFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
@@ -141,7 +141,7 @@ namespace mtest
   } // end of EuroplexusStandardBehaviour::allocate
 
   StiffnessMatrixType
-  EuroplexusStandardBehaviour::getDefaultStiffnessMatrixType(void) const
+  EuroplexusStandardBehaviour::getDefaultStiffnessMatrixType() const
   {
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
   }

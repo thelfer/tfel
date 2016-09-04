@@ -32,7 +32,7 @@ struct DontDeclareAnyThing
 struct DeclareProcessIdVector
 {
   static void
-  declare(void)
+  declare()
   {
     using namespace tfel::system;
     using namespace tfel::python;

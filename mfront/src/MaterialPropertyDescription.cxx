@@ -17,7 +17,7 @@ namespace mfront
 {
 
   std::vector<std::string>
-  MaterialPropertyDescription::getInputVariablesExternalNames(void)
+  MaterialPropertyDescription::getInputVariablesExternalNames()
   {
     return this->inputs.getExternalNames(this->glossaryNames,
 					 this->entryNames);

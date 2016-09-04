@@ -22,7 +22,7 @@
 #include"TFEL/Math/tvector.hxx"
 
 /* coverity [root_function]*/
-int main(void){
+int main(){
   using namespace std;
   using namespace tfel::math;
   using acceleration = qt<Acceleration,int>;

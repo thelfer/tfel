@@ -109,15 +109,15 @@ namespace mfront{
       }
     } // end of StandardProvider::StandardProvider
     
-    std::string StandardProvider::getVariableType(void) const {
+    std::string StandardProvider::getVariableType() const {
       return this->type;
     }
     
-    std::string StandardProvider::getExternalName(void) const {
+    std::string StandardProvider::getExternalName() const {
       return this->ename;
     }
     
-    unsigned short StandardProvider::getArraySize(void) const{
+    unsigned short StandardProvider::getArraySize() const{
       return this->asize; 
     }
     
@@ -136,7 +136,7 @@ namespace mfront{
     {} // end of MaterialPropertyProvider::MaterialPropertyProvider
     
     ProviderIdentifier
-    MaterialPropertyProvider::getIdentifier(void) const{
+    MaterialPropertyProvider::getIdentifier() const{
       return ProviderIdentifier::MATERIALPROPERTY;
     } // end of MaterialPropertyProvider::getIdentifier
 
@@ -177,7 +177,7 @@ namespace mfront{
     {} // end of AuxiliaryStateVariableProvider::AuxiliaryStateVariableProvider
     
     ProviderIdentifier
-    AuxiliaryStateVariableProvider::getIdentifier(void) const{
+    AuxiliaryStateVariableProvider::getIdentifier() const{
       return ProviderIdentifier::AUXILIARYSTATEVARIABLE;
     } // end of AuxiliaryStateVariableProvider::getIdentifier
 
@@ -196,7 +196,7 @@ namespace mfront{
     {} // end of ExternalStateVariableProvider::ExternalStateVariableProvider
     
     ProviderIdentifier
-    ExternalStateVariableProvider::getIdentifier(void) const{
+    ExternalStateVariableProvider::getIdentifier() const{
       return ProviderIdentifier::EXTERNALSTATEVARIABLE;
     } // end of ExternalStateVariableProvider::getIdentifier
 
@@ -215,7 +215,7 @@ namespace mfront{
     {} // end of IntegrationVariableProvider::IntegrationVariableProvider
     
     ProviderIdentifier
-    IntegrationVariableProvider::getIdentifier(void) const{
+    IntegrationVariableProvider::getIdentifier() const{
       return ProviderIdentifier::INTEGRATIONVARIABLE;
     } // end of IntegrationVariableProvider::getIdentifier
 
@@ -234,7 +234,7 @@ namespace mfront{
     {} // end of LocalVariableProvider::LocalVariableProvider
     
     ProviderIdentifier
-    LocalVariableProvider::getIdentifier(void) const{
+    LocalVariableProvider::getIdentifier() const{
       return ProviderIdentifier::LOCALVARIABLE;
     } // end of LocalVariableProvider::getIdentifier
 
@@ -261,20 +261,20 @@ namespace mfront{
 	ename(e)
     {} // end of StaticVariableProvider::StaticVariableProvider
     
-    std::string StaticVariableProvider::getVariableType(void) const {
+    std::string StaticVariableProvider::getVariableType() const {
       return this->type;
     }
     
-    std::string StaticVariableProvider::getExternalName(void) const {
+    std::string StaticVariableProvider::getExternalName() const {
       return this->ename;
     }
     
-    unsigned short StaticVariableProvider::getArraySize(void) const{
+    unsigned short StaticVariableProvider::getArraySize() const{
       return 1u; 
     }
     
     ProviderIdentifier
-    StaticVariableProvider::getIdentifier(void) const{
+    StaticVariableProvider::getIdentifier() const{
       return ProviderIdentifier::STATICVARIABLE;
     } // end of StaticVariableProvider::getIdentifier
 
@@ -307,20 +307,20 @@ namespace mfront{
       }
     } // end of ParameterProvider::ParameterProvider
     
-    std::string ParameterProvider::getVariableType(void) const {
+    std::string ParameterProvider::getVariableType() const {
       return this->type;
     }
     
-    std::string ParameterProvider::getExternalName(void) const {
+    std::string ParameterProvider::getExternalName() const {
       return this->ename;
     }
     
-    unsigned short ParameterProvider::getArraySize(void) const{
+    unsigned short ParameterProvider::getArraySize() const{
       return 1u; 
     }
     
     ProviderIdentifier
-    ParameterProvider::getIdentifier(void) const{
+    ParameterProvider::getIdentifier() const{
       return ProviderIdentifier::PARAMETER;
     } // end of ParameterProvider::getIdentifier
 

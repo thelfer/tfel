@@ -47,7 +47,7 @@ namespace mtest{
   } // end of FunctionEvolution::operator()
 
   bool
-  FunctionEvolution::isConstant(void) const
+  FunctionEvolution::isConstant() const
   {
     const auto& args = this->f.getVariablesNames();
     std::vector<std::string>::size_type i;

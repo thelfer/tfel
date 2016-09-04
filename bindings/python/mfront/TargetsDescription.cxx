@@ -33,7 +33,7 @@ static void TargetsDescription_setHeaders(mfront::TargetsDescription& t,
   t.headers = h;
 }
 
-void declareTargetsDescription(void){
+void declareTargetsDescription(){
   using namespace boost::python;
   using namespace mfront;
   using Op1 = LibraryDescription& (TargetsDescription::*)(const std::string&, 

@@ -31,14 +31,14 @@ namespace mfront{
   }
 
   std::string
-  DefaultDSL::getDescription(void)
+  DefaultDSL::getDescription()
   {
     return "this parser is the most generic one as it does not make any restriction "
            "on the behaviour or the integration method that may be used";
   } // end of DefaultDSL::getDescription
   
   std::string
-  DefaultDSL::getName(void)
+  DefaultDSL::getName()
   {
     return "DefaultDSL";
   }

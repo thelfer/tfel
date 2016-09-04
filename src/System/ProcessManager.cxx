@@ -198,7 +198,7 @@ namespace tfel
     ProcessManager::createProcess(ProcessManager::Command& cmd)
     {
       using namespace std;
-      typedef StreamMap::value_type MVType;
+      using MVType = StreamMap::value_type;
       int  cfd[2]; //< pipe to the child
       int  ffd[2]; //< pipe to the father
       pid_t pid;
@@ -275,7 +275,7 @@ namespace tfel
 				  const std::map<std::string,std::string>& e)
     {
       using namespace std;
-      typedef StreamMap::value_type MVType;
+      using MVType = StreamMap::value_type;
       vector<string> tmp;
       char buf[3];
       int  cfd[2]; //< pipe to the child
@@ -771,7 +771,7 @@ namespace tfel
     } // end of ProcessManager::findProcess
 
     void
-    ProcessManager::cleanUp(void)
+    ProcessManager::cleanUp()
     {
       // clean up
       this->processes.clear();

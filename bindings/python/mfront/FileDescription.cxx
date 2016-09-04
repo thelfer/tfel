@@ -14,7 +14,7 @@
 #include<boost/python.hpp>
 #include"MFront/FileDescription.hxx"
 
-void declareFileDescription(void){
+void declareFileDescription(){
   using namespace boost::python;
   using namespace mfront;
   class_<mfront::FileDescription>("FileDescription")

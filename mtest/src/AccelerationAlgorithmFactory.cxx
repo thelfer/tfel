@@ -32,7 +32,7 @@ namespace mtest
 
   template<typename T>
   static std::shared_ptr<AccelerationAlgorithm>
-  buildAlgorithmConstructor(void)
+  buildAlgorithmConstructor()
   {
     return std::shared_ptr<AccelerationAlgorithm>(new T());
   } // end of buildAlgoritmConstructor

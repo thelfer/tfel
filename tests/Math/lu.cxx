@@ -90,15 +90,15 @@ bool LUSolveTest2()
 }
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using namespace tfel::tests;
-  typedef TestFunctionWrapper<LUSolveTest<long double> >  Wrapper1;
-  typedef TestFunctionWrapper<LUSolveTest<double> >       Wrapper2;
-  typedef TestFunctionWrapper<LUSolveTest<float> >        Wrapper3;
-  typedef TestFunctionWrapper<LUSolveTest2<double> >      Wrapper4;
-  typedef TestFunctionWrapper<LUSolveTest2<float> >       Wrapper5;
+  using Wrapper1 = TestFunctionWrapper<LUSolveTest<long double> >;
+  using Wrapper2 = TestFunctionWrapper<LUSolveTest<double> >;
+  using Wrapper3 = TestFunctionWrapper<LUSolveTest<float> >;
+  using Wrapper4 = TestFunctionWrapper<LUSolveTest2<double> >;
+  using Wrapper5 = TestFunctionWrapper<LUSolveTest2<float> >;
   //  typedef TestFunctionWrapper<test2> Wrapper2;
   auto& manager = TestManager::getTestManager();
   manager.addTestOutput(cout);

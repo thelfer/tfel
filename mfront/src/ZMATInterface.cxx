@@ -89,8 +89,8 @@ namespace mfront
   static VariableDescriptionContainer
   getAllStateVariables(const BehaviourDescription& mb)
   {
-    typedef ZMATInterface::ModellingHypothesis ModellingHypothesis;
-    typedef ZMATInterface::Hypothesis Hypothesis;
+    using ModellingHypothesis = ZMATInterface::ModellingHypothesis;
+    using Hypothesis = ZMATInterface::Hypothesis;
     auto s = VariableDescriptionContainer{};
     for(const Hypothesis h : {ModellingHypothesis::TRIDIMENSIONAL,
 	  ModellingHypothesis::GENERALISEDPLANESTRAIN,
@@ -117,7 +117,7 @@ namespace mfront
   static std::string
   getSpaceDimensionSuffix(const ZMATInterface::Hypothesis h)
   {
-    typedef ZMATInterface::ModellingHypothesis ModellingHypothesis;
+    using ModellingHypothesis = ZMATInterface::ModellingHypothesis;
     if(h==ModellingHypothesis::TRIDIMENSIONAL){
       return "3D";
     } else if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
@@ -142,7 +142,7 @@ namespace mfront
   } // end of UMATInterface::getLibraryName
 
   std::string
-  ZMATInterface::getName(void)
+  ZMATInterface::getName()
   {
     return "zmat";
   }

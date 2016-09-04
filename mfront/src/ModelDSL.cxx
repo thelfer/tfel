@@ -18,13 +18,13 @@ namespace mfront
 {
 
   std::string
-  ModelDSL::getName(void)
+  ModelDSL::getName()
   {
     return "Model";
   } // end of MaterialPropertyDSL::getName(void)
 
   std::string
-  ModelDSL::getDescription(void)
+  ModelDSL::getDescription()
   {
     return "this parser is used to define simple material models";
   } // end of ModelDSL::getDescription
@@ -39,7 +39,7 @@ namespace mfront
   } // end of ModelDSL::setInterfaces
 
   ModelDescription
-  ModelDSL::getModelDescription(void) const{
+  ModelDSL::getModelDescription() const{
     return *this;
   } // end of ModelDSL::getModelDescription
   

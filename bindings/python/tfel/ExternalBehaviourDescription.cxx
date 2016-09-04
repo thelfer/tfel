@@ -14,9 +14,9 @@
 #include<boost/python.hpp>
 #include"TFEL/System/ExternalBehaviourDescription.hxx"
 
-void declareExternalBehaviourDescription(void);
+void declareExternalBehaviourDescription();
 
-void declareExternalBehaviourDescription(void)
+void declareExternalBehaviourDescription()
 {
   using namespace boost;
   using namespace boost::python;

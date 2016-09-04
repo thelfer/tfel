@@ -21,7 +21,7 @@ namespace mfront{
     return b;
   }
 
-  bool getDebugMode(void)
+  bool getDebugMode()
   {
     return getMFrontDebugMode();
   }

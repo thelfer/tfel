@@ -39,7 +39,7 @@ namespace tfel
     } // end of ChildProcess::~ChildProcess
 
     pid_t
-    ChildProcess::getPid(void) const
+    ChildProcess::getPid() const
     {
       return this->pid;
     } // end of ChildProcess::getPid
@@ -51,13 +51,13 @@ namespace tfel
     } // end of ChildProcess::setPid
 
     int
-    ChildProcess::getInputStream(void) const
+    ChildProcess::getInputStream() const
     {
       return this->inputStream;
     } // end of ChildProcess::getOuputStream
 
     int
-    ChildProcess::getOutputStream(void) const
+    ChildProcess::getOutputStream() const
     {
       return this->outputStream;
     } // end of ChildProcess::getOuputStream

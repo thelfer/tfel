@@ -27,7 +27,7 @@
 #include"TFEL/Math/stensor.hxx"
 
 template<typename T>
-void test(void)
+void test()
 {
   using namespace std;
   using namespace tfel::math;
@@ -85,7 +85,7 @@ void test(void)
 }
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace tfel::math;
 

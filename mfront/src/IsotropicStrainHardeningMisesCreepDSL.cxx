@@ -45,7 +45,7 @@ namespace mfront{
   }
 
   std::string
-  IsotropicStrainHardeningMisesCreepDSL::getName(void)
+  IsotropicStrainHardeningMisesCreepDSL::getName()
   {
     return "IsotropicStrainHardeningMisesCreep";
   }
@@ -59,7 +59,7 @@ namespace mfront{
   } // end of IsotropicStrainHardeningMisesCreepDSL::getDescription
 
   void
-  IsotropicStrainHardeningMisesCreepDSL::endsInputFileProcessing(void)
+  IsotropicStrainHardeningMisesCreepDSL::endsInputFileProcessing()
   {
     IsotropicBehaviourDSLBase::endsInputFileProcessing();
     auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;

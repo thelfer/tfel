@@ -14,10 +14,10 @@
 #include<boost/python.hpp>
 
 void
-declareGlossaryEntry(void);
+declareGlossaryEntry();
 
 void
-declareGlossary(void);
+declareGlossary();
 
 BOOST_PYTHON_MODULE(glossary)
 {

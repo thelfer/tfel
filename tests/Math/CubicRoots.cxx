@@ -113,7 +113,7 @@ void solve(const double a3,const double a2,const double a1,const double a0)
 }
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
 
   using namespace std;

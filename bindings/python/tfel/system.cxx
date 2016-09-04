@@ -13,9 +13,9 @@
 
 #include<boost/python.hpp>
 #ifndef _WIN32
-void declareProcessManagerCommand(void);
+void declareProcessManagerCommand();
 #endif /* _WIN32 */
-void declareExternalLibraryManager(void);
+void declareExternalLibraryManager();
 
 BOOST_PYTHON_MODULE(system)
 {

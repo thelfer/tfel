@@ -111,7 +111,7 @@ namespace mfront{
   } // end of ImplicitDSLBase::ImplicitDSLBase
 
   const NonLinearSystemSolver&
-  ImplicitDSLBase::getSolver(void) const
+  ImplicitDSLBase::getSolver() const
   {
     if(this->solver.get()==nullptr){
       this->throwRuntimeError("ImplicitBase::getSolver",
@@ -225,7 +225,7 @@ namespace mfront{
     BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(h);
   } // end of writeBehaviourLocalVariablesInitialisation
   
-  void ImplicitDSLBase::treatStateVariable(void)
+  void ImplicitDSLBase::treatStateVariable()
   {
     VariableDescriptionContainer v;
     auto hs = std::set<Hypothesis>{};
@@ -237,7 +237,7 @@ namespace mfront{
     }
   }
 
-  void ImplicitDSLBase::treatIntegrationVariable(void)
+  void ImplicitDSLBase::treatIntegrationVariable()
   {
     VariableDescriptionContainer v;
     auto hs = std::set<Hypothesis>{};
@@ -249,7 +249,7 @@ namespace mfront{
     }
   }
 
-  void ImplicitDSLBase::treatInitJacobian(void)
+  void ImplicitDSLBase::treatInitJacobian()
   {
     if(this->solver.get()==nullptr){
       this->throwRuntimeError("ImplicitDSLBase::treatInitJacobian",
@@ -265,7 +265,7 @@ namespace mfront{
 			&ImplicitDSLBase::standardModifier,true,true);
   } // end of ImplicitDSLBase::treatInitJacobian
 
-  void ImplicitDSLBase::treatInitJacobianInvert(void)
+  void ImplicitDSLBase::treatInitJacobianInvert()
   {
     if(this->solver.get()==nullptr){
       this->throwRuntimeError("ImplicitDSLBase::treatInitJacobianInvert",
@@ -357,7 +357,7 @@ namespace mfront{
   } // end of ImplicitDSLBase::isCallableVariable
 
   void
-  ImplicitDSLBase::treatCompareToNumericalJacobian(void)
+  ImplicitDSLBase::treatCompareToNumericalJacobian()
   {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("ImplicitDSLBase::treatCompareToNumericalJacobian : ",
@@ -375,7 +375,7 @@ namespace mfront{
   } // end of ImplicitDSLBase::treatCompareToNumericalJacobian
   
   void
-  ImplicitDSLBase::treatJacobianComparisonCriterion(void)
+  ImplicitDSLBase::treatJacobianComparisonCriterion()
   {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(!this->mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
@@ -403,7 +403,7 @@ namespace mfront{
 				      jacobianComparisonCriterion);
   } // ImplicitDSLBase::treatJacobianComparisonCriterion
 
-  void ImplicitDSLBase::treatAlgorithm(void)
+  void ImplicitDSLBase::treatAlgorithm()
   {
     const auto& f = NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
     if(this->solver.get()!=nullptr){
@@ -423,7 +423,7 @@ namespace mfront{
   } // end of ImplicitDSLBase::treatAlgorithm
 
   void
-  ImplicitDSLBase::treatTheta(void)
+  ImplicitDSLBase::treatTheta()
   {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double theta;
@@ -449,7 +449,7 @@ namespace mfront{
   } // end of ImplicitDSLBase::treatTheta
 
   void
-  ImplicitDSLBase::treatEpsilon(void)
+  ImplicitDSLBase::treatEpsilon()
   {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double epsilon;
@@ -475,7 +475,7 @@ namespace mfront{
   } // ImplicitDSLBase::treatEpsilon
 
   void
-  ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation(void)
+  ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation()
   {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double epsilon;
@@ -500,7 +500,7 @@ namespace mfront{
   } // ImplicitDSLBase::treatEpsilon
 
   void
-  ImplicitDSLBase::treatIterMax(void)
+  ImplicitDSLBase::treatIterMax()
   {
     using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -720,7 +720,7 @@ namespace mfront{
   } // end of ImplicitDSLBase::predictorAnalyser
 
   void
-  ImplicitDSLBase::treatIntegrator(void)
+  ImplicitDSLBase::treatIntegrator()
   {
     this->readCodeBlock(*this,BehaviourData::Integrator,
 			&ImplicitDSLBase::integratorVariableModifier,
@@ -728,7 +728,7 @@ namespace mfront{
   } // end of ImplicitDSLBase::treatIntegrator
 
   void
-  ImplicitDSLBase::treatPredictor(void)
+  ImplicitDSLBase::treatPredictor()
   {
     using namespace std;
     this->readCodeBlock(*this,BehaviourData::ComputePredictor,
@@ -737,7 +737,7 @@ namespace mfront{
   } // end of ImplicitDSLBase::treatPredictor
 
   void
-  ImplicitDSLBase::treatComputeStress(void)
+  ImplicitDSLBase::treatComputeStress()
   {
     /*
      * Most behaviours will only rely the @ComputeStress keyword to
@@ -756,14 +756,14 @@ namespace mfront{
   } // end of ImplicitDSLBase::treatComputeStress
 
   void
-  ImplicitDSLBase::treatComputeFinalStress(void)
+  ImplicitDSLBase::treatComputeFinalStress()
   {
     this->readCodeBlock(*this,BehaviourData::ComputeFinalStress,
 			&ImplicitDSLBase::computeStressVariableModifier2,true,true);
   } // end of ImplicitDSLBase::treatComputeFinalStress
 
   void
-  ImplicitDSLBase::treatMaximumIncrementValuePerIteration(void)
+  ImplicitDSLBase::treatMaximumIncrementValuePerIteration()
   {
     using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -787,7 +787,7 @@ namespace mfront{
     this->mb.setParameterDefaultValue(h,"maximum_increment_value_per_iteration",value);
   } // end of ImplicitDSLBase::treatMaximumIncrementValuePerIteration
 
-  void ImplicitDSLBase::writeBehaviourParserSpecificIncludes(void)
+  void ImplicitDSLBase::writeBehaviourParserSpecificIncludes()
   {
     bool has_scalar  = false;
     bool has_scalar_array  = false;
@@ -867,7 +867,7 @@ namespace mfront{
     }
   } // end of ImplicitDSLBase::writeBehaviourParserSpecificIncludes(void)
   
-  void ImplicitDSLBase::writeBehaviourParserSpecificTypedefs(void)
+  void ImplicitDSLBase::writeBehaviourParserSpecificTypedefs()
   {
     this->checkBehaviourFile();
     BehaviourDSLCommon::writeBehaviourParserSpecificTypedefs();
@@ -1828,7 +1828,7 @@ namespace mfront{
   }
 
   void
-  ImplicitDSLBase::endsInputFileProcessing(void)
+  ImplicitDSLBase::endsInputFileProcessing()
   {
     using namespace tfel::glossary;
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;

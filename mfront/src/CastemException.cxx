@@ -35,7 +35,7 @@ namespace castem
   {} // end of CastemException::CastemException
     
   const char* 
-  CastemException::what (void) const noexcept
+  CastemException::what () const noexcept
   { 
     return msg.c_str(); 
   } // end of CastemException::what

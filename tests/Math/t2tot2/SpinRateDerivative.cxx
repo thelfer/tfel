@@ -118,7 +118,7 @@ TFEL_TESTS_GENERATE_PROXY(SpinRateDerivativeTest,
 			  "SpinRateDerivativeTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   auto& manager = tfel::tests::TestManager::getTestManager();
   manager.addTestOutput(std::cout);

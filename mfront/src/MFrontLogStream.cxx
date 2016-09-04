@@ -32,7 +32,7 @@ namespace mfront
     void
     setLogStream(std::ostream&);
     std::ostream&
-    getStream(void);
+    getStream();
   private:
     std::ostream* s;
     std::shared_ptr<std::ofstream> ps;
@@ -74,7 +74,7 @@ namespace mfront
   } // end of LogStream::setLogStream
 
   std::ostream&
-  LogStream::getStream(void)
+  LogStream::getStream()
   {
     if(this->ps.get()==nullptr){
       return *s;
@@ -83,7 +83,7 @@ namespace mfront
   } // end of LogStream::getStream(void)
 
   LogStream&
-  LogStream::getLogStream(void)
+  LogStream::getLogStream()
   {
     static LogStream log;
     return log;

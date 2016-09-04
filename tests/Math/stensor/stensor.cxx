@@ -21,11 +21,11 @@
 #include"TFEL/Math/stensor.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   using namespace std;  
   using namespace tfel::math;
   using namespace tfel::typetraits;
-  typedef stensor<1> stensor1;
+  using stensor1 = stensor<1>;
   typedef stensor<1,int> stensor2;
   const stensor1 v1 = {4.,1.,25.};
   const stensor2 v2 = {2,1,5};

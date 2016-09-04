@@ -34,7 +34,7 @@
 namespace mfront
 {
 
-  void initDSLs(void)
+  void initDSLs()
   {
     static bool init = false;
     static std::mutex m;

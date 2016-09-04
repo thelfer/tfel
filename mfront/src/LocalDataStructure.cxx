@@ -48,7 +48,7 @@ namespace mfront{
   } // end of LocalDataStructure::addVariable
 
   std::vector<LocalDataStructure::Hypothesis>
-  LocalDataStructure::getSpecialisedHypotheses(void) const{
+  LocalDataStructure::getSpecialisedHypotheses() const{
     auto mh = std::vector<Hypothesis>{};
     for(const auto& v:this->sv){
       mh.push_back(v.first);

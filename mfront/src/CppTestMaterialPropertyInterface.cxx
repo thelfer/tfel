@@ -56,7 +56,7 @@ namespace mfront
   }
   
   std::string
-  CppTestMaterialPropertyInterface::getName(void)
+  CppTestMaterialPropertyInterface::getName()
   {
     return "cpptest";
   }

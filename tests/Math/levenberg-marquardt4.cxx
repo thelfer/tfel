@@ -33,7 +33,7 @@
 #include"TFEL/Math/LevenbergMarquardt/LevenbergMarquardtEvaluatorWrapper.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
 #if  __GNUC__ != 3
   using namespace std;

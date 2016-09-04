@@ -21,7 +21,7 @@ namespace tfel{
   namespace utilities{
     
     std::map<std::string,std::map<std::string,std::string> >&
-    getTypeMap(void)
+    getTypeMap()
     {
       using namespace std;
       static map<string,map<string,string> > t;
@@ -37,7 +37,7 @@ namespace tfel{
     }
 
     std::map<std::string,std::map<std::string,std::string> >&
-    getCategoriesMap(void)
+    getCategoriesMap()
     {
       using namespace std;
       static map<string,map<string,string> > c;
@@ -52,7 +52,7 @@ namespace tfel{
     }
 
     std::map<std::string,std::map<std::string,std::string> >&
-    getKeysMap(void)
+    getKeysMap()
     {
       using namespace std;
       static map<string,map<string,string> > k;
@@ -67,7 +67,7 @@ namespace tfel{
     }
 
     std::map<std::string,std::map<std::string,std::string> >&
-    getTranslationsMap(void)
+    getTranslationsMap()
     {
       using namespace std;
       static map<string,map<string,string> > k;

@@ -54,7 +54,7 @@ private:
 TFEL_TESTS_GENERATE_PROXY(MyTest,"TestSuite1");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using namespace tfel::tests;

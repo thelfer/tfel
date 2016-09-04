@@ -19,7 +19,7 @@
 namespace mfront{
 
   std::vector<std::string>
-  SecondBroydenSolver::getReservedNames(void) const
+  SecondBroydenSolver::getReservedNames() const
   {
     return {"fzeros2",
 	"fzeros3",
@@ -34,37 +34,37 @@ namespace mfront{
   } // end of SecondBroydenSolver::getReservedNames
 
   bool
-  SecondBroydenSolver::usesJacobian(void) const
+  SecondBroydenSolver::usesJacobian() const
   {
     return false;
   } // end of SecondBroydenSolver::usesJacobian
 
   bool
-  SecondBroydenSolver::usesJacobianInvert(void) const
+  SecondBroydenSolver::usesJacobianInvert() const
   {
     return true;
   } // end of SecondBroydenSolver::usesJacobianInvert
 
   bool
-  SecondBroydenSolver::allowsJacobianInitialisation(void) const
+  SecondBroydenSolver::allowsJacobianInitialisation() const
   {
     return false;
   } // end of SecondBroydenSolver::allowsJacobianInitialisation
 
   bool
-  SecondBroydenSolver::allowsJacobianInvertInitialisation(void) const
+  SecondBroydenSolver::allowsJacobianInvertInitialisation() const
   {
     return true;
   } // end of SecondBroydenSolver::allowsJacobianInvertInitialisation
 
   bool
-  SecondBroydenSolver::requiresJacobianToBeReinitialisedToIdentityAtEachIterations(void) const
+  SecondBroydenSolver::requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const
   {
     return false;
   } // end of SecondBroydenSolver::allowsJacobianInitialisation
 
   bool
-  SecondBroydenSolver::requiresNumericalJacobian(void) const
+  SecondBroydenSolver::requiresNumericalJacobian() const
   {
     return false;
   }

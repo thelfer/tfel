@@ -38,9 +38,9 @@ pySetVerboseMode(const std::string& m){
   }
 }
 
-void declareMFrontLogStream(void);
+void declareMFrontLogStream();
 
-void declareMFrontLogStream(void)
+void declareMFrontLogStream()
 {
   using namespace boost;
   using namespace boost::python;

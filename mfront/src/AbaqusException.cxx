@@ -39,13 +39,13 @@ namespace abaqus
   AbaqusException::AbaqusException(const AbaqusException&) = default;
     
   const char* 
-  AbaqusException::what (void) const noexcept
+  AbaqusException::what () const noexcept
   { 
     return msg.c_str(); 
   } // end of AbaqusException::what
 
   std::string
-  AbaqusException::getMsg(void) const noexcept
+  AbaqusException::getMsg() const noexcept
   {
     return msg;
   } // end of AbaqusException::getMsg

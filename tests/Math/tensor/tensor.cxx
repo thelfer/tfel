@@ -71,7 +71,7 @@ struct TensorTest final
   {
     using namespace std;  
     using namespace tfel::math;  
-    typedef tensor<1>                tensor1;
+    using tensor1 = tensor<1>;
     typedef tensor<1,unsigned short> tensor2;
     tensor1 v1;
     tensor2 v2;
@@ -220,7 +220,7 @@ struct TensorTest4 final
   {
     using namespace std;
     using namespace tfel::math;
-    typedef double real;
+    using real = double;
     const real eps = 10.*numeric_limits<real>::epsilon();
     tensor<3u,real> t;
     for(unsigned short i=0;i!=t.size();++i){
@@ -239,11 +239,11 @@ struct TensorTest5_1D final
     : tfel::tests::TestCase("TFEL/Math","TensorTest5_3D")
   {} // end of TensorTest5
   virtual tfel::tests::TestResult
-  execute(void) override
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
-    typedef double real;
+    using real = double;
     const real eps = 10.*numeric_limits<real>::epsilon();
     tensor<1u,real> t;
     for(unsigned short i=0;i!=t.size();++i){
@@ -270,11 +270,11 @@ struct TensorTest5_2D final
     : tfel::tests::TestCase("TFEL/Math","TensorTest5_2D")
   {} // end of TensorTest5
   virtual tfel::tests::TestResult
-  execute(void) override
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
-    typedef double real;
+    using real = double;
     const real eps = 10.*numeric_limits<real>::epsilon();
     tensor<2u,real> t;
     for(unsigned short i=0;i!=t.size();++i){
@@ -301,11 +301,11 @@ struct TensorTest5_3D final
     : tfel::tests::TestCase("TFEL/Math","TensorTest5_3D")
   {} // end of TensorTest5
   virtual tfel::tests::TestResult
-  execute(void) override
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
-    typedef double real;
+    using real = double;
     const real eps = 10.*numeric_limits<real>::epsilon();
     tensor<3u,real> t;
     for(unsigned short i=0;i!=t.size();++i){
@@ -332,11 +332,11 @@ struct TensorTest6 final
     : tfel::tests::TestCase("TFEL/Math","TensorTest6")
   {} // end of TensorTest5
   virtual tfel::tests::TestResult
-  execute(void) override
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
-    typedef double real;
+    using real = double;
     const real eps = 10.*numeric_limits<real>::epsilon();
     tensor<3u,real> t;
     for(unsigned short i=0;i!=t.size();++i){
@@ -363,11 +363,11 @@ struct TensorTest7
     : tfel::tests::TestCase("TFEL/Math","TensorTest7")
   {} // end of TensorTest7
   virtual tfel::tests::TestResult
-  execute(void) override
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
-    typedef double real;
+    using real = double;
     const real cste = real(1)/sqrt(real(2));
     const real eps  = 100.*numeric_limits<real>::epsilon();
     typedef TensorViewFromStensor<const stensor<3u,real>&>::type TensorView;
@@ -401,11 +401,11 @@ struct TensorTest8<1u> final
     : tfel::tests::TestCase("TFEL/Math","TensorTest8<1>")
   {} // end of TensorTest8
   virtual tfel::tests::TestResult
-  execute(void) override
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
-    typedef double real;
+    using real = double;
     const real eps  = 10.*numeric_limits<real>::epsilon();
     stensor<1u,real> s;
     tensor<1u,real> t;
@@ -431,11 +431,11 @@ struct TensorTest8<2u> final
     : tfel::tests::TestCase("TFEL/Math","TensorTest8<2>")
   {} // end of TensorTest8
   virtual tfel::tests::TestResult
-  execute(void) override
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
-    typedef double real;
+    using real = double;
     const real cste = real(1)/sqrt(real(2));
     const real eps  = 1e-12;
     stensor<2u,real> s;
@@ -464,11 +464,11 @@ struct TensorTest8<3u> final
     : tfel::tests::TestCase("TFEL/Math","TensorTest8<3>")
   {} // end of TensorTest8
   virtual tfel::tests::TestResult
-  execute(void) override
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
-    typedef double real;
+    using real = double;
     const real cste = real(1)/sqrt(real(2));
     const real eps  = 100.*numeric_limits<real>::epsilon();
     stensor<3u,real> s;
@@ -505,11 +505,11 @@ struct TensorTest9<1u> final
     : tfel::tests::TestCase("TFEL/Math","TensorTest9<1>")
   {} // end of TensorTest9
   virtual tfel::tests::TestResult
-  execute(void) override
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
-    typedef double real;
+    using real = double;
     const real eps  = 10.*numeric_limits<real>::epsilon();
     stensor<1u,real> s;
     tensor<1u,real> t;
@@ -535,11 +535,11 @@ struct TensorTest9<2u> final
     : tfel::tests::TestCase("TFEL/Math","TensorTest9<2>")
   {} // end of TensorTest9
   virtual tfel::tests::TestResult
-  execute(void) override
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
-    typedef double real;
+    using real = double;
     const real cste = real(1)/sqrt(real(2));
     const real eps  = 1e-12;
     stensor<2u,real> s;
@@ -568,11 +568,11 @@ struct TensorTest9<3u>
     : tfel::tests::TestCase("TFEL/Math","TensorTest9<3>")
   {} // end of TensorTest9
   virtual tfel::tests::TestResult
-  execute(void) override
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
-    typedef double real;
+    using real = double;
     const real cste = real(1)/sqrt(real(2));
     const real eps  = 10.*numeric_limits<real>::epsilon();
     stensor<3u,real> s;
@@ -599,12 +599,12 @@ struct TensorTest9<3u>
 
 TFEL_TESTS_GENERATE_PROXY(TensorTest,"TensorTest");
 TFEL_TESTS_GENERATE_PROXY(TensorTest2,"TensorTest2");
-typedef TensorTest3_1D<float>  TensorTest3Float1D;
-typedef TensorTest3_1D<double> TensorTest3Double1D;
-typedef TensorTest3_2D<float>  TensorTest3Float2D;
-typedef TensorTest3_2D<double> TensorTest3Double2D;
-typedef TensorTest3_3D<float>  TensorTest3Float3D;
-typedef TensorTest3_3D<double> TensorTest3Double3D;
+using TensorTest3Float1D = TensorTest3_1D<float>;
+using TensorTest3Double1D = TensorTest3_1D<double>;
+using TensorTest3Float2D = TensorTest3_2D<float>;
+using TensorTest3Double2D = TensorTest3_2D<double>;
+using TensorTest3Float3D = TensorTest3_3D<float>;
+using TensorTest3Double3D = TensorTest3_3D<double>;
 TFEL_TESTS_GENERATE_PROXY(TensorTest3Float1D,"TensorTest3<1u,float>");
 TFEL_TESTS_GENERATE_PROXY(TensorTest3Double1D,"TensorTest3<1u,double>");
 TFEL_TESTS_GENERATE_PROXY(TensorTest3Float2D,"TensorTest3<2u,float>");
@@ -617,21 +617,21 @@ TFEL_TESTS_GENERATE_PROXY(TensorTest5_2D,"TensorTest5_2D");
 TFEL_TESTS_GENERATE_PROXY(TensorTest5_3D,"TensorTest5_3D");
 TFEL_TESTS_GENERATE_PROXY(TensorTest6,"TensorTest6");
 TFEL_TESTS_GENERATE_PROXY(TensorTest7,"TensorTest7");
-typedef TensorTest8<1u>  TensorTest8_1D;
-typedef TensorTest8<2u>  TensorTest8_2D;
-typedef TensorTest8<3u>  TensorTest8_3D;
+using TensorTest8_1D = TensorTest8<1U>;
+using TensorTest8_2D = TensorTest8<2U>;
+using TensorTest8_3D = TensorTest8<3U>;
 TFEL_TESTS_GENERATE_PROXY(TensorTest8_1D,"TensorTest8_1D");
 TFEL_TESTS_GENERATE_PROXY(TensorTest8_2D,"TensorTest8_2D");
 TFEL_TESTS_GENERATE_PROXY(TensorTest8_3D,"TensorTest8_3D");
-typedef TensorTest9<1u>  TensorTest9_1D;
-typedef TensorTest9<2u>  TensorTest9_2D;
-typedef TensorTest9<3u>  TensorTest9_3D;
+using TensorTest9_1D = TensorTest9<1U>;
+using TensorTest9_2D = TensorTest9<2U>;
+using TensorTest9_3D = TensorTest9<3U>;
 TFEL_TESTS_GENERATE_PROXY(TensorTest9_1D,"TensorTest9_1D");
 TFEL_TESTS_GENERATE_PROXY(TensorTest9_2D,"TensorTest9_2D");
 TFEL_TESTS_GENERATE_PROXY(TensorTest9_3D,"TensorTest9_3D");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
   manager.addTestOutput(std::cout);

@@ -15,7 +15,7 @@
 #include"MTest/StudyCurrentState.hxx"
 #include"MTest/StructureCurrentState.hxx"
 
-void declareStudyCurrentState(void);
+void declareStudyCurrentState();
 
 #define TFEL_PYTHON_STUDYCURRENTSTATEGETTER( X )	      \
   static tfel::math::vector<mtest::real>		      \
@@ -37,7 +37,7 @@ getStructureCurrentState(mtest::StudyCurrentState& s,
 }
 
 
-void declareStudyCurrentState(void)
+void declareStudyCurrentState()
 {
   using mtest::StudyCurrentState;
     

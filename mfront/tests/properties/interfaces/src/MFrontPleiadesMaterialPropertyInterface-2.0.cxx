@@ -27,7 +27,7 @@
 
 namespace mfront {
 
-  std::string MFrontPleiadesMaterialPropertyInterface::getName(void) {
+  std::string MFrontPleiadesMaterialPropertyInterface::getName() {
     return "pleiades-2.0";
     // TODO: make a MFrontPleiadesMaterialPropertyInterface.cxx.in and use @PACKAGE_VERSION@
   }

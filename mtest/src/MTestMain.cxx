@@ -54,7 +54,7 @@ namespace mtest
      * \brief main entry point
      * \return EXIT_SUCESS on success
      */
-    int execute(void);
+    int execute();
     //! destructor
     ~MTestMain();
   protected:
@@ -64,24 +64,24 @@ namespace mtest
       DEFAULT
     } scheme = DEFAULT;
     friend struct tfel::utilities::ArgumentParserBase<MTestMain>;
-    virtual void treatUnknownArgument(void) override;
-    void treatVerbose(void);
-    void treatScheme(void);
-    void treatXMLOutput(void);
-    void treatResultFileOutput(void);
-    void treatResidualFileOutput(void);
-    TFEL_NORETURN void treatHelpCommandsList(void);
-    TFEL_NORETURN void treatHelpCommands(void);
-    TFEL_NORETURN void treatHelpCommand(void);
-    void treatEnableFloatingPointExceptions(void);
+    virtual void treatUnknownArgument() override;
+    void treatVerbose();
+    void treatScheme();
+    void treatXMLOutput();
+    void treatResultFileOutput();
+    void treatResidualFileOutput();
+    TFEL_NORETURN void treatHelpCommandsList();
+    TFEL_NORETURN void treatHelpCommands();
+    TFEL_NORETURN void treatHelpCommand();
+    void treatEnableFloatingPointExceptions();
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     void treatBacktrace();
 #endif
     virtual std::string 
-    getVersionDescription(void) const override;
+    getVersionDescription() const override;
     virtual std::string 
-    getUsageDescription(void) const override;
-    void registerArgumentCallBacks(void);
+    getUsageDescription() const override;
+    void registerArgumentCallBacks();
     //! input files
     std::vector<std::string> inputs;
     //! external commands
@@ -108,7 +108,7 @@ namespace mtest
   }
 
   void 
-  MTestMain::registerArgumentCallBacks(void)
+  MTestMain::registerArgumentCallBacks()
   {
     this->registerNewCallBack("--verbose",&MTestMain::treatVerbose,
 			      "set verbose output",true);
@@ -154,7 +154,7 @@ namespace mtest
   }
 
   void
-  MTestMain::treatScheme(void)
+  MTestMain::treatScheme()
   {
     if(this->currentArgument->getOption().empty()){
       throw(std::runtime_error("MTestMain::treatScheme: "
@@ -176,7 +176,7 @@ namespace mtest
   } // end of MTestMain::treatScheme
   
   void
-  MTestMain::treatEnableFloatingPointExceptions(void)
+  MTestMain::treatEnableFloatingPointExceptions()
   {
     // mathematical
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__||defined __APPLE__)
@@ -190,7 +190,7 @@ namespace mtest
 
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
   void
-  MTestMain::treatBacktrace(void)
+  MTestMain::treatBacktrace()
   {
     using namespace tfel::system;
     // posix signals
@@ -205,7 +205,7 @@ namespace mtest
 #endif
 
   void
-  MTestMain::treatVerbose(void)
+  MTestMain::treatVerbose()
   {
     if(this->currentArgument->getOption().empty()){
       mfront::setVerboseMode(mfront::VERBOSE_LEVEL1);
@@ -233,7 +233,7 @@ namespace mtest
   } // end of MTestMain::treatVerbose
 
   void
-  MTestMain::treatXMLOutput(void)
+  MTestMain::treatXMLOutput()
   {
     if(this->currentArgument->getOption().empty()){
       this->xml_output = true;
@@ -251,7 +251,7 @@ namespace mtest
   } // end of MTestMain::treatXMLOutput
 
   void
-  MTestMain::treatResultFileOutput(void)
+  MTestMain::treatResultFileOutput()
   {
     if(this->currentArgument->getOption().empty()){
       this->result_file_output = true;
@@ -269,7 +269,7 @@ namespace mtest
   } // end of MTestMain::treatResultFileOutput
 
   void
-  MTestMain::treatResidualFileOutput(void)
+  MTestMain::treatResidualFileOutput()
   {
     if(this->currentArgument->getOption().empty()){
       this->residual_file_output = true;
@@ -287,7 +287,7 @@ namespace mtest
   } // end of MTestMain::treatResidualFileOutput
 
   void
-  MTestMain::treatHelpCommandsList(void)
+  MTestMain::treatHelpCommandsList()
   {
     if((this->scheme==MTEST)||(this->scheme==DEFAULT)){
       MTestParser().displayKeyWordsList();
@@ -298,7 +298,7 @@ namespace mtest
   } // end of MTestMain::treatHelpCommandsList
 
   void
-  MTestMain::treatHelpCommands(void)
+  MTestMain::treatHelpCommands()
   {
     if((this->scheme==MTEST)||(this->scheme==DEFAULT)){
       MTestParser().displayKeyWordsHelp();
@@ -323,7 +323,7 @@ namespace mtest
     ::exit(EXIT_SUCCESS);
   }
 
-  void MTestMain::treatUnknownArgument(void)
+  void MTestMain::treatUnknownArgument()
   {
     const auto& a = this->currentArgument->as_string();
     if(a[0]=='-'){
@@ -370,19 +370,19 @@ namespace mtest
   } // end of MTestMain::treatUnknownArgument()
 
   std::string 
-  MTestMain::getVersionDescription(void) const
+  MTestMain::getVersionDescription() const
   {
     return "mtest is an behaviour testing utility";
   }
 
   std::string 
-  MTestMain::getUsageDescription(void) const
+  MTestMain::getUsageDescription() const
   {
     return "Usage : mtest [options] [filesusage]";
   }
 
   int
-  MTestMain::execute(void)
+  MTestMain::execute()
   {
     auto mtest = [](const std::string& f,
 		    const std::vector<std::string>& e,

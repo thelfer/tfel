@@ -83,7 +83,7 @@ namespace mfront
   } // end of readExcelInterface
     
   std::string
-  ExcelMaterialPropertyInterface::getName(void)
+  ExcelMaterialPropertyInterface::getName()
   {
     return "excel";
   }

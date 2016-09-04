@@ -62,7 +62,7 @@ namespace tfel{
     return p;
   }
   
-  std::string getInstallPath(void){
+  std::string getInstallPath(){
 #if defined _WIN32 || defined _WIN64
     // check in the registry (installation through NSIS)
     std::string rpath;

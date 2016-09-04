@@ -155,7 +155,7 @@ namespace mfront{
   static void
   getData(std::vector<Data>& data,
 	  const BehaviourDescription& mb,
-	  const VariableDescriptionContainer& (BehaviourData::* m)(void) const,
+	  const VariableDescriptionContainer& (BehaviourData::* m)() const,
 	  const tfel::material::ModellingHypothesis::Hypothesis h)
   {
     using namespace std;
@@ -197,7 +197,7 @@ namespace mfront{
 
   static std::vector<Data>
   getData(const BehaviourDescription& mb,
-	  const VariableDescriptionContainer& (BehaviourData::* m)(void) const)
+	  const VariableDescriptionContainer& (BehaviourData::* m)() const)
   {
     using namespace std;
     using namespace tfel::material;
@@ -444,7 +444,7 @@ namespace mfront{
   } // end of BehaviourDocumentationGenerator::BehaviourDocumentationGenerator
 
   void
-  BehaviourDocumentationGenerator::registerCommandLineCallBacks(void){
+  BehaviourDocumentationGenerator::registerCommandLineCallBacks(){
     using namespace std;
     using Parser = tfel::utilities::ArgumentParserBase<BehaviourDocumentationGenerator>;
     Parser::registerNewCallBack("--verbose",&BehaviourDocumentationGenerator::treatVerbose,
@@ -457,7 +457,7 @@ namespace mfront{
 				"output a web version of the file");
   } // end of BehaviourDocumentationGenerator::registerCommandLineCallBacks
   
-  void BehaviourDocumentationGenerator::treatUnknownArgument(void)
+  void BehaviourDocumentationGenerator::treatUnknownArgument()
   {
     if(!MFrontBase::treatUnknownArgumentBase()){
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
@@ -476,12 +476,12 @@ namespace mfront{
   }
 
   std::string
-  BehaviourDocumentationGenerator::getVersionDescription(void) const{
+  BehaviourDocumentationGenerator::getVersionDescription() const{
     return MFrontHeader::getHeader();
   } // end of BehaviourDocumentationGenerator::getVersionDescription
 
   std::string 
-  BehaviourDocumentationGenerator::getUsageDescription(void) const
+  BehaviourDocumentationGenerator::getUsageDescription() const
   {
     using namespace std;
     string usage("Usage : ");
@@ -491,7 +491,7 @@ namespace mfront{
   } // end of BehaviourDocumentationGenerator::getUsageDescription
 
   void
-  BehaviourDocumentationGenerator::treatWeb(void)
+  BehaviourDocumentationGenerator::treatWeb()
   {
     using namespace std;
     if(this->otype!=FULL){
@@ -502,7 +502,7 @@ namespace mfront{
   } // end of BehaviourDocumentationGenerator::treatWeb
 
   void
-  BehaviourDocumentationGenerator::exe(void)
+  BehaviourDocumentationGenerator::exe()
   {
     using namespace std;
     if(getVerboseMode()>=VERBOSE_LEVEL2){

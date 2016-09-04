@@ -110,7 +110,7 @@ namespace mtest
   } // end of SecantAccelerationAlgorithm::execute
 
   void
-  SecantAccelerationAlgorithm::postExecuteTasks(void)
+  SecantAccelerationAlgorithm::postExecuteTasks()
   {} // end of AccelerationAlgorithm::postExecuteTaks
 
   SecantAccelerationAlgorithm::~SecantAccelerationAlgorithm()

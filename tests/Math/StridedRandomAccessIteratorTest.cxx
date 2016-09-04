@@ -44,12 +44,12 @@ struct StridedRandomAccessIteratorTest final
     return this->result;
   } // end of execute
  private:
-  void test1(void){
+  void test1(){
     constexpr const double eps = std::numeric_limits<double>::epsilon();
     using array    = std::array<double,12>;
     using iterator = tfel::math::StridedRandomAccessIterator<array::const_iterator>;
-    const array values = {0,1,2,3,4,5,
-			  6,7,8,9,10,11};
+    const array values = {{0,1,2,3,4,5,
+			  6,7,8,9,10,11}};
     auto b = iterator(values.begin(),3);
     auto b2 = iterator(values.begin()+1,4);
     const auto e = iterator(values.end(),3);
@@ -68,12 +68,12 @@ struct StridedRandomAccessIteratorTest final
     TFEL_TESTS_ASSERT(std::abs(v[2]-6)<eps);
     TFEL_TESTS_ASSERT(std::abs(v[3]-9)<eps);
   }
-  void test2(void){
+  void test2(){
     constexpr const double eps = std::numeric_limits<double>::epsilon();
     using array    = std::array<double,12>;
     using iterator = tfel::math::StridedRandomAccessIterator<array::iterator>;
-    array values = {0,1,2,3,4,5,
-		    6,7,8,9,10,11};
+    array values = {{0,1,2,3,4,5,
+		    6,7,8,9,10,11}};
     auto b = iterator(values.begin(),3);
     const auto e = iterator(values.end(),3);
     std::fill(b,e,0);
@@ -96,7 +96,7 @@ TFEL_TESTS_GENERATE_PROXY(StridedRandomAccessIteratorTest,
 			  "StridedRandomAccessIteratorTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
   m.addXMLTestOutput("StridedRandomAccessIteratorTest.xml");

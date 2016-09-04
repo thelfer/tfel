@@ -116,13 +116,13 @@ namespace mtest
   } // end of MTest::readInputFile
 
   std::string
-  MTest::name(void) const
+  MTest::name() const
   {
     return "unit behaviour test";
   } // end of MTest::name
   
   std::string
-  MTest::classname(void) const
+  MTest::classname() const
   {
     return "MTest";
   }
@@ -232,7 +232,7 @@ namespace mtest
   } // end of MTest::getVariableTypeAndPosition
 
   void
-  MTest::setDefaultModellingHypothesis(void)
+  MTest::setDefaultModellingHypothesis()
   {
     using tfel::material::ModellingHypothesis;
     if(this->hypothesis!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
@@ -537,7 +537,7 @@ namespace mtest
   } // end of MTest::getNumberOfUnknowns
 
   tfel::tests::TestResult
-  MTest::execute(void)
+  MTest::execute()
   {
     auto report = [](const StudyCurrentState& s,const bool bs){
       if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){

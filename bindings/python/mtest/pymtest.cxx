@@ -14,17 +14,17 @@
 #include<boost/python.hpp>
 #include"MTest/SolverOptions.hxx"
 
-void declareSchemeBase(void);
-void declareSingleStructureScheme(void);
-void declareMTest(void);
-void declareMTestParser(void);
-void declarePipeMesh(void);
-void declarePipeTest(void);
-void declareCurrentState(void);
-void declareStructureCurrentState(void);
-void declareStudyCurrentState(void);
-void declareSolverWorkSpace(void);
-void declareMFrontLogStream(void);
+void declareSchemeBase();
+void declareSingleStructureScheme();
+void declareMTest();
+void declareMTestParser();
+void declarePipeMesh();
+void declarePipeTest();
+void declareCurrentState();
+void declareStructureCurrentState();
+void declareStudyCurrentState();
+void declareSolverWorkSpace();
+void declareMFrontLogStream();
 
 BOOST_PYTHON_MODULE(_mtest)
 {

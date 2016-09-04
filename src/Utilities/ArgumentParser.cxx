@@ -45,7 +45,7 @@ namespace tfel{
       this->setArguments(argc,argv);
     }
 
-    void ArgumentParser::treatHelp(void)
+    void ArgumentParser::treatHelp()
     {
       std::cout << this->getUsageDescription() << "\n\n";
       std::cout << "Available options are : \n";
@@ -71,13 +71,13 @@ namespace tfel{
       std::exit(EXIT_SUCCESS);
     }
 
-    void ArgumentParser::treatVersion(void)
+    void ArgumentParser::treatVersion()
     {
       std::cout << this->getVersionDescription() << std::endl;
       std::exit(EXIT_SUCCESS);
     }
 
-    void ArgumentParser::registerDefaultCallBacks(void)
+    void ArgumentParser::registerDefaultCallBacks()
     {
       this->registerCallBack("--help","-h",{"Display this message",
 	    std::bind(std::mem_fn(&ArgumentParser::treatHelp),this),false});
@@ -132,7 +132,7 @@ namespace tfel{
       std::copy(argv+1,argv+argc,std::back_inserter(this->args));
     } // end of ArgumentParser::setArguments
 
-    void ArgumentParser::replaceAliases(void)
+    void ArgumentParser::replaceAliases()
     {
       for(auto p=args.begin();p!=args.end();){
 	const auto& pn = p->as_string();
@@ -167,7 +167,7 @@ namespace tfel{
     }
 
     void
-    ArgumentParser::stripArguments(void)
+    ArgumentParser::stripArguments()
     {
       for(auto& a : this->args){
 	auto& an = a.as_string();
@@ -189,14 +189,14 @@ namespace tfel{
     } // end of ArgumentParser::stripArguments
 
     void
-    ArgumentParser::treatUnknownArgument(void)
+    ArgumentParser::treatUnknownArgument()
     {
       throw(std::runtime_error("ArgumentParser::treatUnknownArg: '"+
 			       this->currentArgument->as_string()+
 			       "' is not a valid argument"));
     } // end of ArgumentParser::treatUnknownArgument
   
-    void ArgumentParser::parseArguments(void)
+    void ArgumentParser::parseArguments()
     {
       auto comp = [](const Argument& a,
 		     const char* const s){

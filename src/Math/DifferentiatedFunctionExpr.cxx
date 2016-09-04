@@ -49,7 +49,7 @@ namespace tfel
       } // end of DifferentiatedFunctionExpr::DifferentiatedFunctionExpr
 
       std::shared_ptr<ExternalFunction>
-      DifferentiatedFunctionExpr::getDerivative(void) const
+      DifferentiatedFunctionExpr::getDerivative() const
       {
 	using namespace std;
 	using namespace tfel::math::parser;
@@ -62,7 +62,7 @@ namespace tfel
       } // end of DifferentiatedFunctionExpr::getDerivative
       
       double
-      DifferentiatedFunctionExpr::getValue(void) const
+      DifferentiatedFunctionExpr::getValue() const
       {
 	using namespace std;
 	using namespace tfel::math::parser;

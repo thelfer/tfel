@@ -109,7 +109,7 @@ namespace mfront{
   } // end of MFrontBase
 
   void
-  MFrontBase::treatSearchPath(void)
+  MFrontBase::treatSearchPath()
   {
     const auto& o = this->getCurrentCommandLineArgument().getOption();
     if(o.empty()){
@@ -120,7 +120,7 @@ namespace mfront{
   }
 
   bool
-  MFrontBase::treatUnknownArgumentBase(void){
+  MFrontBase::treatUnknownArgumentBase(){
     const auto& a = this->getCurrentCommandLineArgument();
     const auto& an = a.as_string();
     if(an[0]=='-'){
@@ -167,7 +167,7 @@ namespace mfront{
   } // end of MFrontBase::treatUnknownArgument
 
   void
-  MFrontBase::treatVerbose(void)
+  MFrontBase::treatVerbose()
   {
     if(getCurrentCommandLineArgument().getOption().empty()){
       setVerboseMode(VERBOSE_LEVEL1);
@@ -195,19 +195,19 @@ namespace mfront{
   }
 
   void
-  MFrontBase::treatDebug(void)
+  MFrontBase::treatDebug()
   {
     setDebugMode(true);
   }
 
   void
-  MFrontBase::treatPedantic(void)
+  MFrontBase::treatPedantic()
   {
     setPedanticMode(true);
   }
 
   void
-  MFrontBase::treatWarning(void)
+  MFrontBase::treatWarning()
   {}
 
   void
@@ -220,7 +220,7 @@ namespace mfront{
   } // end of MFrontBase::setInterface
   
   void
-  MFrontBase::treatInterface(void)
+  MFrontBase::treatInterface()
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("MFrontBase::treatInterface: "+m));}

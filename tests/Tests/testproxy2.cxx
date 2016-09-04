@@ -31,7 +31,7 @@ TFEL_TESTS_FUNCTION(test1,"TFEL/Tests","suite1")
 }
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using namespace tfel::tests;

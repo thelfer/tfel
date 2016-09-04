@@ -23,7 +23,7 @@
 template<typename T>
 struct ConstIteratorHolder
 {
-  typedef typename T::const_iterator const_iterator;
+  using const_iterator = typename T::const_iterator;
 };
 
 struct DoNothing
@@ -37,7 +37,7 @@ struct Expr
 {};
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   Expr<std::vector<double> >::const_iterator p;
   static_cast<void>(p);
   return EXIT_SUCCESS;

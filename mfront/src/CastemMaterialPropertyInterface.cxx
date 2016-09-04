@@ -45,7 +45,7 @@ namespace mfront
 {
   
   std::string
-  CastemMaterialPropertyInterface::getName(void)
+  CastemMaterialPropertyInterface::getName()
   {
     return "castem";
   }

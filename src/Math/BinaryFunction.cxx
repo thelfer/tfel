@@ -26,7 +26,7 @@ namespace tfel
     {
 
       void
-      StandardBinaryFunctionBase::throwUnimplementedDifferentiateFunctionException(void)
+      StandardBinaryFunctionBase::throwUnimplementedDifferentiateFunctionException()
       {
 	using namespace std;
 	string msg("StandardBinaryFunctionBase::");

@@ -15,9 +15,9 @@
 #include"TFEL/Python/VectorConverter.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
-void declareModellingHypothesis(void);
+void declareModellingHypothesis();
 
-void declareModellingHypothesis(void)
+void declareModellingHypothesis()
 {
   using namespace boost::python;
   using namespace tfel::material;

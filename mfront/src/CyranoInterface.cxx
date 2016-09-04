@@ -37,7 +37,7 @@ static const char * const constexpr_c = "const";
 namespace mfront{
 
   std::string
-  CyranoInterface::getName(void)
+  CyranoInterface::getName()
   {
     return "cyrano";
   }
@@ -81,7 +81,7 @@ namespace mfront{
   } // end of CyranoInterface::getLibraryName
 
   std::string
-  CyranoInterface::getInterfaceName(void) const
+  CyranoInterface::getInterfaceName() const
   {
     return "Cyrano";
   } // end of CyranoInterface::getInterfaceName
@@ -234,7 +234,7 @@ namespace mfront{
   {
     using namespace std;
     using tfel::material::ModellingHypothesis;
-    typedef ModellingHypothesis::Hypothesis Hypothesis;
+    using Hypothesis = ModellingHypothesis::Hypothesis;
     // treatment 
     set<Hypothesis> h;
     // modelling hypotheses handled by the behaviour
@@ -278,7 +278,7 @@ namespace mfront{
     using namespace tfel::system;
     using namespace tfel::utilities;
     using tfel::material::ModellingHypothesis;
-    typedef ModellingHypothesis::Hypothesis Hypothesis;
+    using Hypothesis = ModellingHypothesis::Hypothesis;
     // check
     if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       throw(runtime_error("CyranoInterface::endTreatment : "

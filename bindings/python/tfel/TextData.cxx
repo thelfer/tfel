@@ -15,7 +15,7 @@
 
 #include<TFEL/Utilities/TextData.hxx>
 
-void declareTextData(void);
+void declareTextData();
 
 void declareTextData()
 {

@@ -103,7 +103,7 @@ namespace tfel
     } // end of TestManager::addTest
 
     TestResult
-    TestManager::execute(void)
+    TestManager::execute()
     {
       using namespace std;
       using namespace std::chrono;

@@ -13,8 +13,8 @@
 
 #include<boost/python.hpp>
 
-void declareModellingHypothesis(void);
-void declareOutOfBoundsPolicy(void);
+void declareModellingHypothesis();
+void declareOutOfBoundsPolicy();
 
 BOOST_PYTHON_MODULE(material)
 {

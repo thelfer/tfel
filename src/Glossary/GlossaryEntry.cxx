@@ -136,7 +136,7 @@ namespace tfel
     GlossaryEntry::GlossaryEntry(GlossaryEntry&&) = default;
 
     void
-    GlossaryEntry::check(void) const
+    GlossaryEntry::check() const
     {
       if(this->names.empty()){
 	throw(std::runtime_error("GlossaryEntry::check : "
@@ -152,43 +152,43 @@ namespace tfel
     } // end of GlossaryEntry::check
 
     const std::string&
-    GlossaryEntry::getKey(void) const
+    GlossaryEntry::getKey() const
     {
       return this->key;
     }
 
     const std::vector<std::string>&
-    GlossaryEntry::getNames(void) const
+    GlossaryEntry::getNames() const
     {
       return this->names;
     }
 
     const std::string&
-    GlossaryEntry::getUnit(void) const
+    GlossaryEntry::getUnit() const
     {
       return this->unit;
     }
 
     const std::string&
-    GlossaryEntry::getType(void) const
+    GlossaryEntry::getType() const
     {
       return this->type;
     }
 
     const std::string&
-    GlossaryEntry::getShortDescription(void) const
+    GlossaryEntry::getShortDescription() const
     {
       return this->short_description;
     }
 
     const std::vector<std::string>&
-    GlossaryEntry::getDescription(void) const
+    GlossaryEntry::getDescription() const
     {
       return this->description;
     }
 
     const std::vector<std::string>&
-    GlossaryEntry::getNotes(void) const
+    GlossaryEntry::getNotes() const
     {
       return this->notes;
     }

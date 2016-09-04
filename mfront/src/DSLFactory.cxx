@@ -29,14 +29,14 @@ namespace mfront{
   }
 
   DSLFactory::DescriptionPtrContainer&
-  DSLFactory::getDescriptionMap(void)
+  DSLFactory::getDescriptionMap()
   {
     static DescriptionPtrContainer map;
     return map;
   } // end of DSLFactory::getDescriptionMap
 
   DSLFactory::ParserCreatorsContainer&
-  DSLFactory::getMap(void)
+  DSLFactory::getMap()
   {
     static ParserCreatorsContainer map;
     return map;
@@ -46,7 +46,7 @@ namespace mfront{
   {} // end of DSLFactory::DSLFactory
 
   std::vector<std::string>
-  DSLFactory::getRegistredParsers(void)
+  DSLFactory::getRegistredParsers()
   {
     using namespace std;
     ParserCreatorsContainer::const_iterator p;

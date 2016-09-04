@@ -29,7 +29,7 @@ struct TFEL_VISIBILITY_EXPORT GenType
 {
   using tfel::utilities::GenTypeBase<HoldedTypes>::operator =;
 
-  std::string dumpToString(void) const;
+  std::string dumpToString() const;
 
   void dump(std::ostream&) const;
 
@@ -46,7 +46,7 @@ struct TFEL_VISIBILITY_EXPORT GenType
 
 struct GenType::DumpToString
 {
-  typedef std::string return_type;
+  using return_type = std::string;
 
   template<typename T>
   static return_type
@@ -61,7 +61,7 @@ struct GenType::DumpToString
 
 struct GenType::Dump
 {
-  typedef void return_type;
+  using return_type = void;
 
   Dump(std::ostream& s)
     : stream(s)
@@ -86,7 +86,7 @@ private:
 
 struct GenType::Load
 {
-  typedef void return_type;
+  using return_type = void;
 
   Load(const std::string& s)
     : value(s)
@@ -108,7 +108,7 @@ private:
 };
 
 std::string
-GenType::dumpToString(void) const
+GenType::dumpToString() const
 {
   using namespace tfel::utilities;
   return apply<DumpToString>(*this);
@@ -181,7 +181,7 @@ struct GenTypeTest3 final
 TFEL_TESTS_GENERATE_PROXY(GenTypeTest3,"GenType");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using namespace tfel::tests;

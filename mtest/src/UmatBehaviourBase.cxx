@@ -57,7 +57,7 @@ namespace mtest
   }
 
   UmatBehaviourBase::Hypothesis
-  UmatBehaviourBase::getHypothesis(void) const{
+  UmatBehaviourBase::getHypothesis() const{
     return ModellingHypothesis::fromString(this->hypothesis);
   } // end of UmatBehaviourBase::getHypothesis
   
@@ -69,7 +69,7 @@ namespace mtest
   } // end of UmatBehaviourBase::setOutOfBoundsPolicy
   
   tfel::material::MechanicalBehaviourBase::BehaviourType
-  UmatBehaviourBase::getBehaviourType(void) const
+  UmatBehaviourBase::getBehaviourType() const
   {
     using namespace tfel::material;
     switch(this->type){
@@ -87,7 +87,7 @@ namespace mtest
   } // end of UmatBehaviourBase::getBehaviourType
 
   unsigned short
-  UmatBehaviourBase::getDrivingVariablesSize(void) const
+  UmatBehaviourBase::getDrivingVariablesSize() const
   {
     const auto h = this->getHypothesis();
     if(this->type==1){
@@ -372,7 +372,7 @@ namespace mtest
   } // end of UmatBehaviourBase::getThermodynamicForceComponentPosition
 
   unsigned short
-  UmatBehaviourBase::getSymmetryType(void) const
+  UmatBehaviourBase::getSymmetryType() const
   {
     if(this->stype==0){
       return 0u;
@@ -385,19 +385,19 @@ namespace mtest
   } // end of UmatBehaviourBase::getSymmetryType
 
   std::vector<std::string>
-  UmatBehaviourBase::getMaterialPropertiesNames(void) const
+  UmatBehaviourBase::getMaterialPropertiesNames() const
   {
     return this->mpnames;
   }
 
   std::vector<std::string>
-  UmatBehaviourBase::getInternalStateVariablesNames(void) const
+  UmatBehaviourBase::getInternalStateVariablesNames() const
   {
     return this->ivnames;
   }
 
   std::vector<std::string>
-  UmatBehaviourBase::getExternalStateVariablesNames(void) const
+  UmatBehaviourBase::getExternalStateVariablesNames() const
   {
     return this->evnames;
   }

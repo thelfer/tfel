@@ -183,12 +183,12 @@ namespace mfront
   }
 
   std::set<std::string>&
-  ModelDescription::getReservedNames(void){
+  ModelDescription::getReservedNames(){
     return this->reservedNames;
   }
   
   const std::set<std::string>&
-  ModelDescription::getReservedNames(void) const{
+  ModelDescription::getReservedNames() const{
     return this->reservedNames;
   }
   

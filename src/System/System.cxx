@@ -120,13 +120,13 @@ namespace tfel
 #endif /* (defined _WIN32) || (defined _WIN64) */
 
     char
-    dirSeparator(void)
+    dirSeparator()
     {
       return '/';
     } // end of systemCall::dirSeparator
 
     const std::string&
-    dirStringSeparator(void)
+    dirStringSeparator()
     {
       using namespace std;
       static string s(1u,dirSeparator());
@@ -565,7 +565,7 @@ namespace tfel
     } // end of systemCall::copyFile
     
     std::string
-    systemCall::getCurrentWorkingDirectory(void)
+    systemCall::getCurrentWorkingDirectory()
     {
       using namespace std;
       char *name  = nullptr;
@@ -595,7 +595,7 @@ namespace tfel
 
 #if !(defined _WIN32 || defined _WIN64 )
     std::string
-    systemCall::getHostName(void)
+    systemCall::getHostName()
     {
       using namespace std;
       char *name  = nullptr;
@@ -619,7 +619,7 @@ namespace tfel
     } // end of systemCall::getHostName
 
     std::string
-    systemCall::getUserName(void)
+    systemCall::getUserName()
     {
       const char * const l = ::getlogin();
       if(l!=nullptr){

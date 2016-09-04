@@ -27,7 +27,7 @@ namespace mfront{
   } // end of ModelInterfaceFactory::getModelInterfaceFactory
 
   ModelInterfaceFactory::InterfaceCreatorsContainer&
-  ModelInterfaceFactory::getInterfaceCreatorsMap(void) const
+  ModelInterfaceFactory::getInterfaceCreatorsMap() const
   {
     static InterfaceCreatorsContainer map;
     return map;
@@ -37,7 +37,7 @@ namespace mfront{
   {}
 
   std::vector<std::string>
-  ModelInterfaceFactory::getRegistredInterfaces(void) const
+  ModelInterfaceFactory::getRegistredInterfaces() const
   {
     using namespace std;
     auto res = vector<string>{};

@@ -38,7 +38,7 @@ namespace tfel{
 			       "volatile","wchar_t","while"};
 
     unsigned short
-    getNumberOfCxxKeywords(void)
+    getNumberOfCxxKeywords()
     {
       return sizeof(reservedCxxKeywords)/sizeof(char*);
     }

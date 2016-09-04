@@ -18,12 +18,12 @@ namespace tfel{
 
   namespace math{
 
-    void StridedRandomAccessIteratorBase::throwNullStrideException(void){
+    void StridedRandomAccessIteratorBase::throwNullStrideException(){
       throw(std::runtime_error("StridedRandomAccessIteratorBase::throwNullStrideException: "
 			       "null stride"));
     } // end of StridedRandomAccessIteratorBase::throwNullStrideException
     
-    void StridedRandomAccessIteratorBase::throwUmatchedStrideException(void){
+    void StridedRandomAccessIteratorBase::throwUmatchedStrideException(){
       throw(std::runtime_error("StridedRandomAccessIteratorBase::throwUmatchedStrideException: "
 			       "unmatched stride"));
     } // end of StridedRandomAccessIteratorBase::throwUmatchedStrideException

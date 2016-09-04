@@ -172,9 +172,9 @@ SingleStructureScheme_setInternalStateVariableInitialValue2(mtest::SingleStructu
   }
 }
 
-void declareSingleStructureScheme(void);
+void declareSingleStructureScheme();
 
-void declareSingleStructureScheme(void)
+void declareSingleStructureScheme()
 {
   using namespace mtest;
   void (SingleStructureScheme::* ptr1)(const std::string&,

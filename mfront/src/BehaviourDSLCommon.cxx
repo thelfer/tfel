@@ -82,12 +82,12 @@ namespace mfront{
   {} // end of BehaviourDSLCommon::CodeBlockOptions::~CodeBlockOptions
 
   const BehaviourDescription&
-  BehaviourDSLCommon::getBehaviourDescription(void) const{
+  BehaviourDSLCommon::getBehaviourDescription() const{
     return this->mb;
   } // end of BehaviourDSLCommon::getBehaviourDescription
 
   std::string
-  BehaviourDSLCommon::getClassName(void) const
+  BehaviourDSLCommon::getClassName() const
   {
     return this->mb.getClassName();
   } // end of BehaviourDSLCommon::getClassName
@@ -286,7 +286,7 @@ namespace mfront{
     return md;
   } // end of BehaviourDSLCommon::getModelDescription
   
-  void BehaviourDSLCommon::treatModel(void){
+  void BehaviourDSLCommon::treatModel(){
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "BehaviourDSLCommon::treatModel: begin\n";
     }
@@ -322,7 +322,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::addStaticVariableDescription
 
   std::set<BehaviourDSLCommon::Hypothesis>
-  BehaviourDSLCommon::getDefaultModellingHypotheses(void) const
+  BehaviourDSLCommon::getDefaultModellingHypotheses() const
   {
     return {ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 	ModellingHypothesis::AXISYMMETRICAL,
@@ -371,7 +371,7 @@ namespace mfront{
   }
 
   void
-  BehaviourDSLCommon::endsInputFileProcessing(void)
+  BehaviourDSLCommon::endsInputFileProcessing()
   {
     using namespace mfront::bbrick;
     const auto& g = tfel::glossary::Glossary::getGlossary();
@@ -654,7 +654,7 @@ namespace mfront{
   }
   
   void
-  BehaviourDSLCommon::doPedanticChecks(void) const
+  BehaviourDSLCommon::doPedanticChecks() const
   {
     const auto& hs = this->mb.getDistinctModellingHypotheses();
     auto& log = getLogStream();
@@ -710,7 +710,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::pedanticChecks
 
   void 
-  BehaviourDSLCommon::generateOutputFiles(void)
+  BehaviourDSLCommon::generateOutputFiles()
   {
     tfel::system::systemCall::mkdir("src");
     tfel::system::systemCall::mkdir("include");
@@ -869,7 +869,7 @@ namespace mfront{
     return this->standardModifier(h,var,addThisPtr);
   } // end of BehaviourDSLCommon::tangentOperatorVariableModifier
 
-  void BehaviourDSLCommon::treatPrivate(void){
+  void BehaviourDSLCommon::treatPrivate(){
     auto hs = std::set<Hypothesis>{};
     this->readHypothesesList(hs);
     const auto beg = this->current;
@@ -886,7 +886,7 @@ namespace mfront{
     }
   } // end of void BehaviourDSLCommon::treatPrivate(void)
 
-  void BehaviourDSLCommon::treatMembers(void){
+  void BehaviourDSLCommon::treatMembers(){
     auto hs = std::set<Hypothesis>{};
     this->readHypothesesList(hs);
     const auto beg = this->current;
@@ -903,7 +903,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::treatMembers
   
-  void BehaviourDSLCommon::treatBrick(void)
+  void BehaviourDSLCommon::treatBrick()
   {
     auto& f = AbstractBehaviourBrickFactory::getFactory();
     AbstractBehaviourBrick::Parameters parameters;
@@ -939,7 +939,7 @@ namespace mfront{
     this->bricks.emplace_back(f.get(b,*this,this->mb,parameters));
   } // end of BehaviourDSLCommon::treatBrick
   
-  void BehaviourDSLCommon::treatTangentOperator(void)
+  void BehaviourDSLCommon::treatTangentOperator()
   {
     using namespace std;
     using namespace tfel::material;
@@ -996,7 +996,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::treatTangentOperator
 
-  void BehaviourDSLCommon::treatIsTangentOperatorSymmetric(void)
+  void BehaviourDSLCommon::treatIsTangentOperatorSymmetric()
   {
     auto hs = std::set<Hypothesis>{};
     this->readHypothesesList(hs);
@@ -1010,7 +1010,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatTangentOperator
 
   void
-  BehaviourDSLCommon::treatMaterial(void)
+  BehaviourDSLCommon::treatMaterial()
   {
     const auto& m = this->readOnlyOneToken();
     if(!CxxTokenizer::isValidIdentifier(m,true)){
@@ -1025,7 +1025,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::treatMaterial
 
-  void BehaviourDSLCommon::treatLibrary(void)
+  void BehaviourDSLCommon::treatLibrary()
   {
     const auto& m = this->readOnlyOneToken();
     if(!CxxTokenizer::isValidIdentifier(m,true)){
@@ -1035,7 +1035,7 @@ namespace mfront{
     this->mb.setLibrary(m);
   } // end of BehaviourDSLCommon::treatLibrary
     
-  void BehaviourDSLCommon::treatComputeThermalExpansion(void)
+  void BehaviourDSLCommon::treatComputeThermalExpansion()
   {
     using ComputedMaterialProperty = BehaviourDescription::ComputedMaterialProperty;
     const std::string m("BehaviourDSLCommon::treatComputeThermalExpansion");
@@ -1078,7 +1078,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatComputeThermalExpansion
 
   void
-  BehaviourDSLCommon::treatElasticMaterialProperties(void){
+  BehaviourDSLCommon::treatElasticMaterialProperties(){
     if(this->mb.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,false)){
       this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
 			      "@ElasticMaterialProperties can not be used along with "
@@ -1124,7 +1124,7 @@ namespace mfront{
   }
   
   void
-  BehaviourDSLCommon::readElasticMaterialProperties(void){
+  BehaviourDSLCommon::readElasticMaterialProperties(){
     const auto& emps =
       this->readMaterialPropertyOrArrayOfMaterialProperties("BehaviourDSLCommon::readElasticMaterialProperties");
     this->readSpecifiedToken("BehaviourDSLCommon::readElasticMaterialProperties",";");
@@ -1147,7 +1147,7 @@ namespace mfront{
   }
   
   void
-  BehaviourDSLCommon::treatComputeStiffnessTensor(void)
+  BehaviourDSLCommon::treatComputeStiffnessTensor()
   {
     if(this->mb.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,false)){
       this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
@@ -1162,7 +1162,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatComputeStiffnessTensor
 
   void
-  BehaviourDSLCommon::treatModellingHypothesis(void)
+  BehaviourDSLCommon::treatModellingHypothesis()
   {
     this->checkNotEndOfFile("BehaviourDSLCommon::treatModellingHypothesis");
     const auto h = ModellingHypothesis::fromString(this->current->value);
@@ -1180,7 +1180,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatModellingHypothesis
 
   void
-  BehaviourDSLCommon::treatModellingHypotheses(void)
+  BehaviourDSLCommon::treatModellingHypotheses()
   {
     using namespace tfel::utilities;
     auto hypotheses = std::set<Hypothesis>{};
@@ -1204,7 +1204,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatModellingHypotheses
 
   void
-  BehaviourDSLCommon::treatUsableInPurelyImplicitResolution(void)
+  BehaviourDSLCommon::treatUsableInPurelyImplicitResolution()
   {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->readSpecifiedToken("BehaviourDSLCommon::treatUsableInPurelyImplicitResolution",";");
@@ -1321,7 +1321,7 @@ namespace mfront{
 			    "valid methods are 'setGlossaryName' or 'setEntryName'");
   } // end of BehaviourDSLCommon::treatUnknownVariableMethod
 
-  void BehaviourDSLCommon::treatUnknownKeyword(void)
+  void BehaviourDSLCommon::treatUnknownKeyword()
   {
     TokensContainer::const_iterator p2;
     auto treated = false;
@@ -1402,7 +1402,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatUnknownKeyword
 
   void
-  BehaviourDSLCommon::treatUseQt(void)
+  BehaviourDSLCommon::treatUseQt()
   {
     this->checkNotEndOfFile("BehaviourDSLCommon::treatUseQt : ",
 			    "Expected 'true' or 'false'.");
@@ -1419,7 +1419,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatUseQt
 
   void
-  BehaviourDSLCommon::treatIsotropicBehaviour(void)
+  BehaviourDSLCommon::treatIsotropicBehaviour()
   {
     if(this->mb.getSymmetryType()!=mfront::ISOTROPIC){
       this->throwRuntimeError("BehaviourDSLCommon::treatIsotropicBehaviour",
@@ -1429,7 +1429,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatIsotropicBehaviour
 
   void
-  BehaviourDSLCommon::treatOrthotropicBehaviour(void)
+  BehaviourDSLCommon::treatOrthotropicBehaviour()
   {
     using namespace tfel::material;
     OrthotropicAxesConvention c = OrthotropicAxesConvention::DEFAULT;
@@ -1454,7 +1454,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatOrthotropicBehaviour
 
   void
-  BehaviourDSLCommon::treatIsotropicElasticBehaviour(void)
+  BehaviourDSLCommon::treatIsotropicElasticBehaviour()
   {
     this->readSpecifiedToken("BehaviourDSLCommon::treatIsotropicElasticBehaviour",";");
     if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC){
@@ -1465,7 +1465,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatIsotropicElasticBehaviour
 
   void
-  BehaviourDSLCommon::treatRequireStiffnessOperator(void)
+  BehaviourDSLCommon::treatRequireStiffnessOperator()
   {
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       getLogStream() << "BehaviourDSLCommon::treatRequireStiffnessOperator : "
@@ -1476,7 +1476,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatRequireStiffnessOperator
 
   void
-  BehaviourDSLCommon::treatStiffnessTensorOption(void)
+  BehaviourDSLCommon::treatStiffnessTensorOption()
   {
     this->readSpecifiedToken("BehaviourDSLCommon::treatStiffnessTensorOption","<");
     this->checkNotEndOfFile("BehaviourDSLCommon::treatStiffnessTensorOption");
@@ -1494,7 +1494,7 @@ namespace mfront{
   }
   
   void
-  BehaviourDSLCommon::treatRequireStiffnessTensor(void)
+  BehaviourDSLCommon::treatRequireStiffnessTensor()
   {
     if(this->mb.hasAttribute(BehaviourDescription::computesStiffnessTensor)){
       this->throwRuntimeError("BehaviourDSLCommon::treatRequireStiffnessTensor",
@@ -1510,13 +1510,13 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatRequireStiffnessTensor
 
   void
-  BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor(void)
+  BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor()
   {
     this->readSpecifiedToken("BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor",";");
     this->mb.setAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,true,false);
   } // end of BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor
 
-  void BehaviourDSLCommon::treatBehaviour(void)
+  void BehaviourDSLCommon::treatBehaviour()
   {
     const auto& b = this->readOnlyOneToken();
     this->mb.setBehaviourName(b);
@@ -1640,7 +1640,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::addVariableList
 
-  void BehaviourDSLCommon::treatCoef(void)
+  void BehaviourDSLCommon::treatCoef()
   {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
@@ -1648,14 +1648,14 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatCoef
 
   void
-  BehaviourDSLCommon::treatLocalVar(void)
+  BehaviourDSLCommon::treatLocalVar()
   {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
     this->readVariableList(v,h,&BehaviourDescription::addLocalVariables,true,true);
   } // end of BehaviourDSLCommon::treatLocalVar
 
-  void BehaviourDSLCommon::treatInterface(void)
+  void BehaviourDSLCommon::treatInterface()
   {
     auto& mbif  = BehaviourInterfaceFactory::getBehaviourInterfaceFactory();
     auto inames = std::vector<std::string>{};
@@ -1678,37 +1678,37 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::setInterfaces
 
-  void BehaviourDSLCommon::treatAPrioriTimeStepScalingFactor(void){
+  void BehaviourDSLCommon::treatAPrioriTimeStepScalingFactor(){
     this->readCodeBlock(*this,BehaviourData::APrioriTimeStepScalingFactor,
 			&BehaviourDSLCommon::standardModifier,true,true);
   }
   
-  void BehaviourDSLCommon::treatIntegrator(void)
+  void BehaviourDSLCommon::treatIntegrator()
   {
     this->readCodeBlock(*this,BehaviourData::Integrator,
 			&BehaviourDSLCommon::standardModifier,true,true);
   } // end of BehaviourDSLCommon::treatIntegrator
 
-  void BehaviourDSLCommon::treatAPosterioriTimeStepScalingFactor(void){
+  void BehaviourDSLCommon::treatAPosterioriTimeStepScalingFactor(){
     this->readCodeBlock(*this,BehaviourData::APosterioriTimeStepScalingFactor,
 			&BehaviourDSLCommon::standardModifier,true,true);
   }
   
-  void BehaviourDSLCommon::treatStateVariable(void)
+  void BehaviourDSLCommon::treatStateVariable()
   {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
     this->readVariableList(v,h,&BehaviourDescription::addStateVariables,true,false);
   }
 
-  void BehaviourDSLCommon::treatAuxiliaryStateVariable(void)
+  void BehaviourDSLCommon::treatAuxiliaryStateVariable()
   {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
     this->readVariableList(v,h,&BehaviourDescription::addAuxiliaryStateVariables,true,false);
   }
 
-  void BehaviourDSLCommon::treatExternalStateVariable(void)
+  void BehaviourDSLCommon::treatExternalStateVariable()
   {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
@@ -1716,7 +1716,7 @@ namespace mfront{
   }
 
   void
-  BehaviourDSLCommon::treatBounds(void)
+  BehaviourDSLCommon::treatBounds()
   {
     auto hs = std::set<Hypothesis>{};
     this->readHypothesesList(hs);
@@ -1731,7 +1731,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatBounds
 
   void
-  BehaviourDSLCommon::treatPhysicalBounds(void)
+  BehaviourDSLCommon::treatPhysicalBounds()
   {
     auto hs = std::set<Hypothesis>{};
     this->readHypothesesList(hs);
@@ -1938,7 +1938,7 @@ namespace mfront{
     this->readSpecifiedToken("BehaviourDSLCommon::treatBounds",";");
   } // end of BehaviourDSLCommon::treatBounds
   
-  void BehaviourDSLCommon::registerDefaultVarNames(void)
+  void BehaviourDSLCommon::registerDefaultVarNames()
   {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     // all available tangent operators for finite strain behaviours
@@ -2158,7 +2158,7 @@ namespace mfront{
 			    << "_BEHAVIOUR_DATA_HXX */\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataStandardTFELIncludes(void)
+  void BehaviourDSLCommon::writeBehaviourDataStandardTFELIncludes()
   {
     auto b1 = false;
     auto b2 = false;
@@ -2207,7 +2207,7 @@ namespace mfront{
     this->behaviourDataFile << "#include\"TFEL/Material/ModellingHypothesis.hxx\"\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataDefaultMembers(void)
+  void BehaviourDSLCommon::writeBehaviourDataDefaultMembers()
   {
     this->checkBehaviourDataFile();
     if(this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
@@ -2228,7 +2228,7 @@ namespace mfront{
     this->behaviourDataFile << "temperature T;\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataStandardTFELTypedefs(void)
+  void BehaviourDSLCommon::writeBehaviourDataStandardTFELTypedefs()
   {
     this->checkBehaviourDataFile();
     this->behaviourDataFile << "static " << constexpr_c << " unsigned short TVectorSize = N;\n";
@@ -2242,7 +2242,7 @@ namespace mfront{
     this->behaviourDataFile << '\n';
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataDisabledConstructors(void)
+  void BehaviourDSLCommon::writeBehaviourDataDisabledConstructors()
   {
     this->checkBehaviourDataFile();
   }
@@ -2358,7 +2358,7 @@ namespace mfront{
     }
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataPublicMembers(void)
+  void BehaviourDSLCommon::writeBehaviourDataPublicMembers()
   {
     this->checkBehaviourDataFile();
     if(this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
@@ -2379,7 +2379,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::writeBehaviourDataPublicMembers
 
-  void BehaviourDSLCommon::writeBehaviourDataClassHeader(void) 
+  void BehaviourDSLCommon::writeBehaviourDataClassHeader() 
   {
     this->checkBehaviourDataFile();
     this->behaviourDataFile << "/*!\n";
@@ -2398,7 +2398,7 @@ namespace mfront{
     this->behaviourDataFile << "*/\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataForwardDeclarations(void)
+  void BehaviourDSLCommon::writeBehaviourDataForwardDeclarations()
   {
     using namespace std;
     this->checkBehaviourDataFile();
@@ -2585,7 +2585,7 @@ namespace mfront{
     this->behaviourDataFile << "}\n\n";
   } //  BehaviourDSLCommon::writeBehaviourDataOutputOperator
 
-  void BehaviourDSLCommon::writeBehaviourDataFileBegin(void)
+  void BehaviourDSLCommon::writeBehaviourDataFileBegin()
   {
     this->checkBehaviourDataFile();
     this->writeBehaviourDataFileHeader();
@@ -2619,7 +2619,7 @@ namespace mfront{
     this->writeBehaviourDataOutputOperator(h);
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataFileEnd(void)
+  void BehaviourDSLCommon::writeBehaviourDataFileEnd()
   {
     this->writeNamespaceEnd(this->behaviourDataFile);
     this->writeBehaviourDataFileHeaderEnd();
@@ -2632,7 +2632,7 @@ namespace mfront{
     }
   }
 
-  void BehaviourDSLCommon::writeBehaviourForwardDeclarations(void)
+  void BehaviourDSLCommon::writeBehaviourForwardDeclarations()
   {
     this->checkBehaviourFile();
     this->behaviourFile << "// Forward Declaration\n";
@@ -2821,19 +2821,19 @@ namespace mfront{
 			<< " class\n\n";
   }
   
-  void BehaviourDSLCommon::treatUpdateAuxiliaryStateVariables(void)
+  void BehaviourDSLCommon::treatUpdateAuxiliaryStateVariables()
   {
     this->readCodeBlock(*this,BehaviourData::UpdateAuxiliaryStateVariables,
 			&BehaviourDSLCommon::standardModifier,true,true);
   } // end of BehaviourDSLCommon::treatUpdateAuxiliaryStateVarBase
 
-  void BehaviourDSLCommon::treatComputeStressFreeExpansion(void)
+  void BehaviourDSLCommon::treatComputeStressFreeExpansion()
   {
     this->readCodeBlock(*this,BehaviourData::ComputeStressFreeExpansion,
 			&BehaviourDSLCommon::standardModifier,true,true);
   } // end of BehaviourDSLCommon::treatComputeStressFreeExpansion
 
-  void BehaviourDSLCommon::treatSwelling(void)
+  void BehaviourDSLCommon::treatSwelling()
   {
     using VolumeSwelling      = BehaviourData::VolumeSwellingStressFreeExpansion;
     using IsotropicSwelling   = BehaviourData::IsotropicStressFreeExpansion;
@@ -2941,7 +2941,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::readStressFreeExpansionHandler
   
   std::vector<BehaviourData::StressFreeExpansionHandler>
-  BehaviourDSLCommon::readStressFreeExpansionHandler(void){
+  BehaviourDSLCommon::readStressFreeExpansionHandler(){
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("BehaviourDSLCommon::readStressFreeExpansionHandler",m);}
     };
@@ -2970,7 +2970,7 @@ namespace mfront{
     return sd;
   } // end of BehaviourDSLCommon::readStressFreeExpansionHandler
 
-  void BehaviourDSLCommon::treatAxialGrowth(void){
+  void BehaviourDSLCommon::treatAxialGrowth(){
     using AxialGrowth = BehaviourData::AxialGrowthStressFreeExpansion;
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto throw_if = [this](const bool b,const std::string& m){
@@ -3145,7 +3145,7 @@ namespace mfront{
     this->behaviourFile << "}\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourDisabledConstructors(void)
+  void BehaviourDSLCommon::writeBehaviourDisabledConstructors()
   {    
     this->checkBehaviourFile();
     this->behaviourFile << "//! \\brief Default constructor (disabled)\n"
@@ -3158,7 +3158,7 @@ namespace mfront{
 			<< this->mb.getClassName()<< "&) = delete;\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourSetOutOfBoundsPolicy(void)
+  void BehaviourDSLCommon::writeBehaviourSetOutOfBoundsPolicy()
   {
     this->checkBehaviourFile();
     this->behaviourFile << "/*!\n"
@@ -3935,7 +3935,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::writeBehaviourParameterInitialisation
 
-  void BehaviourDSLCommon::writeBehaviourDataMainVariablesSetters(void)
+  void BehaviourDSLCommon::writeBehaviourDataMainVariablesSetters()
   {
     this->checkBehaviourDataFile();
     for(const auto& i : this->interfaces){
@@ -3945,7 +3945,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::writeBehaviourDataMainVariablesSetters
 
-  void BehaviourDSLCommon::writeIntegrationDataMainVariablesSetters(void)
+  void BehaviourDSLCommon::writeIntegrationDataMainVariablesSetters()
   {
     this->checkIntegrationDataFile();
     for(const auto& i : this->interfaces){
@@ -4014,7 +4014,7 @@ namespace mfront{
   }
 
   
-  void BehaviourDSLCommon::writeBehaviourPolicyVariable(void)
+  void BehaviourDSLCommon::writeBehaviourPolicyVariable()
   {    
     this->checkBehaviourFile();
     this->behaviourFile << "//! policy for treating out of bounds conditions\n"
@@ -4133,7 +4133,7 @@ namespace mfront{
 			<< "}\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourDestructor(void) 
+  void BehaviourDSLCommon::writeBehaviourDestructor() 
   {    
     this->checkBehaviourFile();
     this->behaviourFile << "/*!\n"
@@ -4161,7 +4161,7 @@ namespace mfront{
     this->behaviourFile << "}\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourIncludes(void) {    
+  void BehaviourDSLCommon::writeBehaviourIncludes() {    
     this->checkBehaviourFile();
     this->behaviourFile << "#include<string>\n"
 			<< "#include<iostream>\n"
@@ -4210,7 +4210,7 @@ namespace mfront{
     }
   } // end of void BehaviourDSLCommon::writeBehaviourPrivate
 
-  void BehaviourDSLCommon::writeBehaviourStandardTFELTypedefs(void)
+  void BehaviourDSLCommon::writeBehaviourStandardTFELTypedefs()
   {
     using namespace tfel::material;
     this->checkBehaviourFile();
@@ -4257,7 +4257,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::writeBehaviourStandardTFELTypedefs
 
-  void BehaviourDSLCommon::writeBehaviourTraits(void)
+  void BehaviourDSLCommon::writeBehaviourTraits()
   {
     this->checkBehaviourFile();
     const auto& ah = ModellingHypothesis::getModellingHypotheses();
@@ -4452,12 +4452,12 @@ namespace mfront{
   }
 
   void 
-  BehaviourDSLCommon::writeBehaviourParserSpecificInheritanceRelationship(void)
+  BehaviourDSLCommon::writeBehaviourParserSpecificInheritanceRelationship()
   {
     this->behaviourFile << '\n';
   }
 
-  void BehaviourDSLCommon::writeBehaviourParserSpecificTypedefs(void)
+  void BehaviourDSLCommon::writeBehaviourParserSpecificTypedefs()
   {
     // Empty member meant to be overriden in Child if necessary
   }
@@ -4467,12 +4467,12 @@ namespace mfront{
     // Empty member meant to be overriden in Child if necessary
   }
 
-  void BehaviourDSLCommon::writeBehaviourParserSpecificIncludes(void)
+  void BehaviourDSLCommon::writeBehaviourParserSpecificIncludes()
   {
     // Empty member meant to be overriden in Child if necessary
   }
 
-  void BehaviourDSLCommon::writeBehaviourParametersInitializers(void)
+  void BehaviourDSLCommon::writeBehaviourParametersInitializers()
   {
     if(!this->mb.hasParameters()){
       return;
@@ -4597,7 +4597,7 @@ namespace mfront{
   }
 
   void
-  BehaviourDSLCommon::writeBehaviourFileBegin(void)
+  BehaviourDSLCommon::writeBehaviourFileBegin()
   {
     this->checkBehaviourFile();
     this->writeBehaviourFileHeader();
@@ -4678,7 +4678,7 @@ namespace mfront{
   }
 
   void
-  BehaviourDSLCommon::writeBehaviourFileEnd(void)
+  BehaviourDSLCommon::writeBehaviourFileEnd()
   {
     this->checkBehaviourFile();
     this->writeBehaviourTraits();
@@ -5078,7 +5078,7 @@ namespace mfront{
 			      << "_INTEGRATION_DATA_HXX */\n";
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataStandardTFELIncludes(void)
+  void BehaviourDSLCommon::writeIntegrationDataStandardTFELIncludes()
   {
     bool b1 = false;
     bool b2 = false;
@@ -5113,7 +5113,7 @@ namespace mfront{
     }
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataDefaultMembers(void)
+  void BehaviourDSLCommon::writeIntegrationDataDefaultMembers()
   {
     this->checkIntegrationDataFile();
     this->integrationDataFile << "protected: \n\n";
@@ -5140,7 +5140,7 @@ namespace mfront{
 			      << "temperature dT;\n\n";
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataStandardTFELTypedefs(void)
+  void BehaviourDSLCommon::writeIntegrationDataStandardTFELTypedefs()
   {
     this->checkIntegrationDataFile();
     this->integrationDataFile << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
@@ -5154,7 +5154,7 @@ namespace mfront{
     this->integrationDataFile << '\n';
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataDisabledConstructors(void)
+  void BehaviourDSLCommon::writeIntegrationDataDisabledConstructors()
   {
     this->checkIntegrationDataFile();
   }
@@ -5245,7 +5245,7 @@ namespace mfront{
 			      << "}\n\n";
   } // end of BehaviourDSLCommon::writeIntegrationDataScaleOpeartors
 
-  void BehaviourDSLCommon::writeIntegrationDataClassHeader(void) 
+  void BehaviourDSLCommon::writeIntegrationDataClassHeader() 
   {
     this->checkIntegrationDataFile();
     this->integrationDataFile << "/*!\n"
@@ -5264,7 +5264,7 @@ namespace mfront{
     this->integrationDataFile << "*/\n";
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataForwardDeclarations(void)
+  void BehaviourDSLCommon::writeIntegrationDataForwardDeclarations()
   {
     using namespace std;
     this->checkIntegrationDataFile();
@@ -5422,7 +5422,7 @@ namespace mfront{
 				     "d","",this->fileName,false);
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataFileBegin(void)
+  void BehaviourDSLCommon::writeIntegrationDataFileBegin()
   {
     this->checkIntegrationDataFile();
     this->writeIntegrationDataFileHeader();
@@ -5452,14 +5452,14 @@ namespace mfront{
     this->writeIntegrationDataOutputOperator(h);
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataFileEnd(void)
+  void BehaviourDSLCommon::writeIntegrationDataFileEnd()
   {
     this->checkIntegrationDataFile();
     this->writeNamespaceEnd(this->integrationDataFile);
     this->writeIntegrationDataFileHeaderEnd();
   } // end of BehaviourDSLCommon::writeIntegrationDataFileEnd
 
-  void BehaviourDSLCommon::checkSrcFile(void) const {
+  void BehaviourDSLCommon::checkSrcFile() const {
     using namespace std;
     if((!this->integrationDataFile)||
        (!this->integrationDataFile.good())){
@@ -5469,7 +5469,7 @@ namespace mfront{
     }
   }
 
-  void BehaviourDSLCommon::writeSrcFileHeader(void){
+  void BehaviourDSLCommon::writeSrcFileHeader(){
     using namespace std;
     this->checkSrcFile();
     this->srcFile << "/*!\n";
@@ -5563,7 +5563,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::writeSrcFileStaticVariables
   
   void
-  BehaviourDSLCommon::writeSrcFileUserDefinedCode(void)
+  BehaviourDSLCommon::writeSrcFileUserDefinedCode()
   {
     const auto& s = this->mb.getSources();
     this->checkBehaviourFile();
@@ -5573,7 +5573,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::writeSrcFileUserDefinedCode
 
   void
-  BehaviourDSLCommon::writeSrcFileParametersInitializers(void)
+  BehaviourDSLCommon::writeSrcFileParametersInitializers()
   {
     if(!this->mb.hasParameters()){
       return;
@@ -5890,7 +5890,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::writeSrcFileParametersInitializer
   
   void
-  BehaviourDSLCommon::writeSrcFileBehaviourProfiler(void)
+  BehaviourDSLCommon::writeSrcFileBehaviourProfiler()
   {
     if(this->mb.getAttribute(BehaviourData::profiling,false)){
       this->checkSrcFile();
@@ -5904,7 +5904,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::writeSrcFileBehaviourProfiler
 
-  void BehaviourDSLCommon::writeSrcFile(void)
+  void BehaviourDSLCommon::writeSrcFile()
   {
     using namespace std;
     this->writeSrcFileHeader();
@@ -5936,7 +5936,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::predictionOperatorVariableModifier
 
-  void BehaviourDSLCommon::treatProfiling(void)
+  void BehaviourDSLCommon::treatProfiling()
   {
     const bool b = 
       this->readBooleanValue("BehaviourDSLCommon::treatProfiling");
@@ -5944,7 +5944,7 @@ namespace mfront{
     this->mb.setAttribute(BehaviourData::profiling,b,false);
   } // end of BehaviourDSLCommon::treatProfiling
 
-  void BehaviourDSLCommon::treatPredictionOperator(void)
+  void BehaviourDSLCommon::treatPredictionOperator()
   {
     using namespace std;
     using namespace tfel::material;
@@ -6002,7 +6002,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatPredictionOperator
 
   void
-  BehaviourDSLCommon::treatParameter(void)
+  BehaviourDSLCommon::treatParameter()
   {
     std::set<Hypothesis> mh;
     this->readHypothesesList(mh);
@@ -6113,14 +6113,14 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatParameter
 
   void
-  BehaviourDSLCommon::treatInitLocalVariables(void)
+  BehaviourDSLCommon::treatInitLocalVariables()
   {
     this->readCodeBlock(*this,BehaviourData::InitializeLocalVariables,
 			&BehaviourDSLCommon::standardModifier,true,true);
   } // end of BehaviourDSLCommon:treatInitLocalVariables
 
   void
-  BehaviourDSLCommon::treatMinimalTimeStepScalingFactor(void){
+  BehaviourDSLCommon::treatMinimalTimeStepScalingFactor(){
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double r_dt;
     this->checkNotEndOfFile("ImplicitDSLBase::treatMinimalTimeStepScalingFactor",
@@ -6146,7 +6146,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatMinimalTimeStepScalingFactor
 
   void
-  BehaviourDSLCommon::treatMaximalTimeStepScalingFactor(void){
+  BehaviourDSLCommon::treatMaximalTimeStepScalingFactor(){
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double r_dt;
     this->checkNotEndOfFile("ImplicitDSLBase::treatMaximalTimeStepScalingFactor",
@@ -6180,7 +6180,7 @@ namespace mfront{
   }
 
   void
-  BehaviourDSLCommon::setMinimalTangentOperator(void)
+  BehaviourDSLCommon::setMinimalTangentOperator()
   {
     if(this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       for(const auto & h : this->mb.getDistinctModellingHypotheses()){
@@ -6217,7 +6217,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::setMinimalTangentOperator
 
   void
-  BehaviourDSLCommon::setComputeFinalStressFromComputeFinalStressCandidateIfNecessary(void)
+  BehaviourDSLCommon::setComputeFinalStressFromComputeFinalStressCandidateIfNecessary()
   {
     // first treating specialised mechanical data
     for(const auto & h : this->mb.getDistinctModellingHypotheses()){

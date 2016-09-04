@@ -26,7 +26,7 @@
 namespace mfront{
   
   //! copy vumat-sp.cpp and vumat-dp locally
-  static void copyVUMATFiles(void)
+  static void copyVUMATFiles()
   {
     std::ofstream out;
     MFrontLockGuard lock;
@@ -188,7 +188,7 @@ namespace mfront{
   } // end of writeVUMATArguments
   
   std::string
-  AbaqusExplicitInterface::getName(void)
+  AbaqusExplicitInterface::getName()
   {
     return "abaqusexplicit";
   }
@@ -1371,7 +1371,7 @@ namespace mfront{
   }
   
   std::string
-  AbaqusExplicitInterface::getInterfaceName(void) const
+  AbaqusExplicitInterface::getInterfaceName() const
   {
     return "AbaqusExplicit";
   } // end of AbaqusExplicitInterface::getInterfaceName

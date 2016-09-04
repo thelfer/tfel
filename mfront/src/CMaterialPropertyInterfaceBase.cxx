@@ -96,7 +96,7 @@ namespace mfront
   } // end of CMaterialPropertyInterfaceBase::writeOutputFiles
 
   std::string
-  CMaterialPropertyInterfaceBase::getCallingConvention(void) const{
+  CMaterialPropertyInterfaceBase::getCallingConvention() const{
     return "";
   }
   

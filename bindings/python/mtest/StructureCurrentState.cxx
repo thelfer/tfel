@@ -20,9 +20,9 @@ get_istates(mtest::StructureCurrentState& scs){
   return scs.istates;
 }
 
-void declareStructureCurrentState(void);
+void declareStructureCurrentState();
 
-void declareStructureCurrentState(void)
+void declareStructureCurrentState()
 {
   using namespace boost::python;
   class_<mtest::StructureCurrentState>("StructureCurrentState")

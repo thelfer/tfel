@@ -45,7 +45,7 @@ namespace mtest{
     }
   } // end of StudyCurrentState::update
 
-  void StudyCurrentState::revert(void){
+  void StudyCurrentState::revert(){
     this->u1  = this->u0;
     this->u10 = this->u0;
     for(auto& p: this->s){

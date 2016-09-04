@@ -56,13 +56,13 @@ namespace tfel
     } // end of LevenbergMarquardtEvaluatorWrapper::LevenbergMarquardtEvaluatorWrapper
 
     LevenbergMarquardtEvaluatorWrapper::size_type
-    LevenbergMarquardtEvaluatorWrapper::getNumberOfVariables(void) const
+    LevenbergMarquardtEvaluatorWrapper::getNumberOfVariables() const
     {
       return this->nv;
     } // end of LevenbergMarquardtEvaluatorWrapper::getNumberOfVariables()
 
     LevenbergMarquardtEvaluatorWrapper::size_type
-    LevenbergMarquardtEvaluatorWrapper::getNumberOfParameters(void) const
+    LevenbergMarquardtEvaluatorWrapper::getNumberOfParameters() const
     {
       return this->np;
     } // end of LevenbergMarquardtEvaluatorWrapper::getNumberOfParameters()

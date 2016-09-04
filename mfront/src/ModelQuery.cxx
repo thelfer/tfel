@@ -41,7 +41,7 @@ namespace mfront{
   } // end of ModelQuery::ModelQuery
 
   void
-  ModelQuery::registerCommandLineCallBacks(void){
+  ModelQuery::registerCommandLineCallBacks(){
     using Parser = tfel::utilities::ArgumentParserBase<ModelQuery>;
     Parser::registerNewCallBack("--verbose",&ModelQuery::treatVerbose,
 				"set verbose output",true);
@@ -79,7 +79,7 @@ namespace mfront{
 				"show all the specific targets");
   } // end of ModelQuery::registerCommandLineCallBacks
 
-  void ModelQuery::treatStandardQuery(void){
+  void ModelQuery::treatStandardQuery(){
     const auto& qn = this->getCurrentCommandLineArgument().as_string();
     if(qn=="--author"){
       this->queries.push_back({"author",[](const FileDescription& fd,
@@ -149,7 +149,7 @@ namespace mfront{
     }
   } // end of ModelQuery::treatStandardQuery
   
-  void ModelQuery::treatGeneratedSources(void)
+  void ModelQuery::treatGeneratedSources()
   {
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&,const ModelDescription&){
@@ -163,7 +163,7 @@ namespace mfront{
     this->queries.push_back({"generated-sources",q});
   } // end of ModelQuery::treatGeneratedSources
 
-  void ModelQuery::treatGeneratedHeaders(void)
+  void ModelQuery::treatGeneratedHeaders()
   {
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&,const ModelDescription&){
@@ -175,7 +175,7 @@ namespace mfront{
     this->queries.push_back({"generated-headers",q});
   } // end of ModelQuery::treatGeneratedHeaders
 
-  void ModelQuery::treatCppFlags(void)
+  void ModelQuery::treatCppFlags()
   {
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&,const ModelDescription&){
@@ -189,7 +189,7 @@ namespace mfront{
     this->queries.push_back({"cppflags",q});
   } // end of ModelQuery::treatCppFlags
 
-  void ModelQuery::treatLibrariesDependencies(void)
+  void ModelQuery::treatLibrariesDependencies()
   {
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&,const ModelDescription&){
@@ -203,7 +203,7 @@ namespace mfront{
     this->queries.push_back({"libraries-dependencies",q});
   } // end of ModelQuery::treatLibrariesDependencies
 
-  void ModelQuery::treatSpecificTargets(void)
+  void ModelQuery::treatSpecificTargets()
   {
     auto ldsl = this->dsl;
     auto l = [ldsl](const FileDescription&,const ModelDescription&){
@@ -221,7 +221,7 @@ namespace mfront{
     this->queries.push_back({"specific-targets",l});
   } // end of ModelQuery::treatSpecificTargets
   
-  void ModelQuery::exe(void)
+  void ModelQuery::exe()
   {
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       getLogStream() << "Treating file '" << this->file << "'" << std::endl;
@@ -244,7 +244,7 @@ namespace mfront{
     return *(this->currentArgument);
   }
   
-  void ModelQuery::treatUnknownArgument(void)
+  void ModelQuery::treatUnknownArgument()
   {
     if(!MFrontBase::treatUnknownArgumentBase()){
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
@@ -258,12 +258,12 @@ namespace mfront{
   }
 
   std::string
-  ModelQuery::getVersionDescription(void) const{
+  ModelQuery::getVersionDescription() const{
     return MFrontHeader::getHeader();
   }
 
   std::string 
-  ModelQuery::getUsageDescription(void) const
+  ModelQuery::getUsageDescription() const
   {
     auto usage = std::string("Usage: ");
     usage += this->programName;

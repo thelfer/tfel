@@ -44,7 +44,7 @@ struct ComputeStiffnessTensorTest final
     return this->result;
   } // end of execute()
  private:
-  void test1(void){
+  void test1(){
     this->check("Implicit","@RequireStiffnessTensor;"
 		"@ComputeStiffnessTensor {150e9,0.3};");
     this->check("Implicit","@ComputeStiffnessTensor {150e9,0.3};"
@@ -76,7 +76,7 @@ struct ComputeStiffnessTensorTest final
 		"                         0.3,0.3,0.3,"
 		"                         150e9,150e9,150e9};");
   }
-  void test2(void){
+  void test2(){
     const auto h = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto& f = mfront::DSLFactory::getDSLFactory();
     auto dsl = std::dynamic_pointer_cast<mfront::AbstractBehaviourDSL>(f.createNewParser("Implicit"));
@@ -92,7 +92,7 @@ struct ComputeStiffnessTensorTest final
     TFEL_TESTS_ASSERT(bd.hasGlossaryName("nu"));
     TFEL_TESTS_ASSERT(bd.getExternalName("nu")=="PoissonRatio");
   }
-  void test3(void){
+  void test3(){
     const auto h = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto& f = mfront::DSLFactory::getDSLFactory();
     auto dsl = std::dynamic_pointer_cast<mfront::AbstractBehaviourDSL>(f.createNewParser("Implicit"));
@@ -136,7 +136,7 @@ TFEL_TESTS_GENERATE_PROXY(ComputeStiffnessTensorTest,
 			  "ComputeStiffnessTensorTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   mfront::initDSLs();
   auto& m = tfel::tests::TestManager::getTestManager();

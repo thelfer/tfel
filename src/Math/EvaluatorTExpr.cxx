@@ -30,12 +30,12 @@ namespace tfel
     {} // end of Evaluator::TNegLogicalExpr::TNegLogicalExpr
 
     void
-    Evaluator::TNegLogicalExpr::reduce(void){
+    Evaluator::TNegLogicalExpr::reduce(){
       this->e->reduce();
     } // end of Evaluator::TNegLogicalExpr::reduce
     
     std::shared_ptr<tfel::math::parser::LogicalExpr>
-    Evaluator::TNegLogicalExpr::analyse(void){
+    Evaluator::TNegLogicalExpr::analyse(){
       using namespace tfel::math::parser;
       return std::shared_ptr<LogicalExpr>(new NegLogicalExpression(this->e->analyse()));
     } // end of struct Evaluator::TNegLogicalExpr
@@ -48,20 +48,20 @@ namespace tfel
     {} // end of Evaluator::TNegation::TNegation
 
     bool
-    Evaluator::TNegation::isOperator(void) const
+    Evaluator::TNegation::isOperator() const
     {
       return false;
     }
     
     parser::ExprPtr
-    Evaluator::TNegation::analyse(void)
+    Evaluator::TNegation::analyse()
     {
       using namespace tfel::math::parser;
       return ExprPtr(new Negation(this->expr->analyse()));
     }
 
     void
-    Evaluator::TNegation::reduce(void)
+    Evaluator::TNegation::reduce()
     {
       this->expr->reduce();
     }
@@ -74,23 +74,23 @@ namespace tfel
     {} // end of Evaluator::TOperator::TOperator(const std::string& t_)
     
     std::string
-    Evaluator::TOperator::getOperatorType(void) const
+    Evaluator::TOperator::getOperatorType() const
     {
       return this->type;
     } // end of Evaluator::TOperator::getOperatorType(void) const
      
     bool
-    Evaluator::TOperator::isOperator(void) const
+    Evaluator::TOperator::isOperator() const
     {
       return true;
     } // end of Evaluator::TOperator::isOperator(void) const
     
     void
-    Evaluator::TOperator::reduce(void)
+    Evaluator::TOperator::reduce()
     {} // end of Evaluator::TOperator::reduce(void)
     
     parser::ExprPtr
-    Evaluator::TOperator::analyse(void)
+    Evaluator::TOperator::analyse()
     {
       throw(std::runtime_error("Evaluator::TOperator : invalid call"));
     } // end of Evaluator::TOperator::analyse(void)
@@ -105,20 +105,20 @@ namespace tfel
     {} // end of Evaluator::TBinaryOperation::TBinaryOperation
     
     bool
-    Evaluator::TBinaryOperation::isOperator(void) const
+    Evaluator::TBinaryOperation::isOperator() const
     {
       return false;
     } // end of Evaluator::TBinaryOperation::isOperator(void) const
     
     void
-    Evaluator::TBinaryOperation::reduce(void)
+    Evaluator::TBinaryOperation::reduce()
     {
       a->reduce();
       b->reduce();
     } // end of Evaluator::TBinaryOperation::reduce(void)
      
     parser::ExprPtr
-    Evaluator::TBinaryOperation::analyse(void)
+    Evaluator::TBinaryOperation::analyse()
     {
       using namespace tfel::math::parser;
       if(op->getOperatorType()=="+"){
@@ -151,24 +151,24 @@ namespace tfel
     {}
     
     bool
-    Evaluator::TVariable::isOperator(void) const
+    Evaluator::TVariable::isOperator() const
     {
       return false;
     }
     
     void
-    Evaluator::TVariable::reduce(void)
+    Evaluator::TVariable::reduce()
     {}
 
     parser::ExprPtr
-    Evaluator::TVariable::analyse(void)
+    Evaluator::TVariable::analyse()
     {
       using namespace tfel::math::parser;
       return ExprPtr(new Variable(this->vars,this->pos));
     }  
 
     bool
-    Evaluator::TGroup::isOperator(void) const
+    Evaluator::TGroup::isOperator() const
     {
       return false;
     }
@@ -180,7 +180,7 @@ namespace tfel
     } // end of Evaluator::TGroup::add
 
     void
-    Evaluator::TGroup::reduce(void)
+    Evaluator::TGroup::reduce()
     {
       using namespace std;
       auto p  = this->subExpr.begin();
@@ -203,7 +203,7 @@ namespace tfel
     }
     
     parser::ExprPtr
-    Evaluator::TGroup::analyse(void)
+    Evaluator::TGroup::analyse()
     {
       if(this->subExpr.size()!=1u){
 	throw(std::runtime_error("TGroup::analyse : "
@@ -276,19 +276,19 @@ namespace tfel
     {}
     
     bool
-    Evaluator::TFunction::isOperator(void) const
+    Evaluator::TFunction::isOperator() const
     {
       return false;
     }
 
     parser::ExprPtr
-    Evaluator::TFunction::analyse(void)
+    Evaluator::TFunction::analyse()
     {
       return (this->f)(this->arg->analyse());
     }
     
     void
-    Evaluator::TFunction::reduce(void){
+    Evaluator::TFunction::reduce(){
       this->arg->reduce();
     }
     
@@ -302,20 +302,20 @@ namespace tfel
     {}
     
     bool
-    Evaluator::TBinaryFunction::isOperator(void) const
+    Evaluator::TBinaryFunction::isOperator() const
     {
       return false;
     }
     
     parser::ExprPtr
-    Evaluator::TBinaryFunction::analyse(void)
+    Evaluator::TBinaryFunction::analyse()
     {
       return (this->f)(this->arg1->analyse(),
 		       this->arg2->analyse());
     }
     
     void
-    Evaluator::TBinaryFunction::reduce(void){
+    Evaluator::TBinaryFunction::reduce(){
       this->arg1->reduce();
       this->arg2->reduce();
     }
@@ -328,20 +328,20 @@ namespace tfel
     {}
     
     bool
-    Evaluator::TNumber::isOperator(void) const
+    Evaluator::TNumber::isOperator() const
     {
       return false;
     }
     
     parser::ExprPtr
-    Evaluator::TNumber::analyse(void)
+    Evaluator::TNumber::analyse()
     {
       using namespace tfel::math::parser;
       return ExprPtr(new Number(this->value));
     }
     
     void
-    Evaluator::TNumber::reduce(void)
+    Evaluator::TNumber::reduce()
     {}
 
     Evaluator::TExternalFunctionExpr::TExternalFunctionExpr(const std::string& fname,
@@ -353,13 +353,13 @@ namespace tfel
     {} // end of TExternalFunctionExpr
 
     bool
-    Evaluator::TExternalFunctionExpr::isOperator(void) const
+    Evaluator::TExternalFunctionExpr::isOperator() const
     {
       return false;
     }
 
     parser::ExprPtr
-    Evaluator::TExternalFunctionExpr::analyse(void)
+    Evaluator::TExternalFunctionExpr::analyse()
     {
       using namespace tfel::math::parser;
       auto r = std::vector<ExprPtr>{};
@@ -370,7 +370,7 @@ namespace tfel
     }
       
     void
-    Evaluator::TExternalFunctionExpr::reduce(void)
+    Evaluator::TExternalFunctionExpr::reduce()
     {
       for(auto& a : this->args){
 	a->reduce();
@@ -389,13 +389,13 @@ namespace tfel
     {} // end of TDifferentiatedFunctionExpr
 
     bool
-    Evaluator::TDifferentiatedFunctionExpr::isOperator(void) const
+    Evaluator::TDifferentiatedFunctionExpr::isOperator() const
     {
       return false;
     }
     
     parser::ExprPtr
-    Evaluator::TDifferentiatedFunctionExpr::analyse(void)
+    Evaluator::TDifferentiatedFunctionExpr::analyse()
     {
       using namespace tfel::math::parser;
       auto r = std::vector<ExprPtr>{};
@@ -406,7 +406,7 @@ namespace tfel
     }
 
     void
-    Evaluator::TDifferentiatedFunctionExpr::reduce(void)
+    Evaluator::TDifferentiatedFunctionExpr::reduce()
     {
       for(auto& a : this->args){
 	a->reduce();
@@ -422,13 +422,13 @@ namespace tfel
     {} // end of Evaluator::TConditionalExpr::TConditionalExpr
 
     bool
-    Evaluator::TConditionalExpr::isOperator(void) const
+    Evaluator::TConditionalExpr::isOperator() const
     {
       return false;
     } // end of Evaluator::TConditionalExpr::isOperator
     
     void
-    Evaluator::TConditionalExpr::reduce(void)
+    Evaluator::TConditionalExpr::reduce()
     {
       this->c->reduce();
       this->a->reduce();
@@ -436,7 +436,7 @@ namespace tfel
     } // end of Evaluator::TConditionalExpr::reduce
 
     parser::ExprPtr
-    Evaluator::TConditionalExpr::analyse(void)
+    Evaluator::TConditionalExpr::analyse()
     {
       using namespace tfel::math::parser;
       return ExprPtr(new ConditionalExpr(this->c->analyse(),
@@ -457,13 +457,13 @@ namespace tfel
     {} // end of Evaluator::TExternalOperator::TExternalOperator
 
     bool
-    Evaluator::TExternalOperator::isOperator(void) const
+    Evaluator::TExternalOperator::isOperator() const
     {
       return false;
     } // end of Evaluator::TExternalOperator::isOperator(void) const
     
     parser::ExprPtr
-    Evaluator::TExternalOperator::analyse(void)
+    Evaluator::TExternalOperator::analyse()
     {
       using namespace tfel::math::parser;
       auto r = std::vector<ExprPtr>{};
@@ -474,7 +474,7 @@ namespace tfel
     } // end of Evaluator::TExternalOperator::analyse(void)
     
     void
-    Evaluator::TExternalOperator::reduce(void)
+    Evaluator::TExternalOperator::reduce()
     {
       for(auto& a : this->args){
 	a->reduce();

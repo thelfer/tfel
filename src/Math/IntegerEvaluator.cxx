@@ -365,7 +365,7 @@ namespace tfel
     }//end of IntegerEvaluator::setVariableValue
 
     int
-    IntegerEvaluator::getValue(void) const
+    IntegerEvaluator::getValue() const
     {
       using namespace std;
       if(this->expr.get()==nullptr){
@@ -378,7 +378,7 @@ namespace tfel
     }//end of IntegerEvaluator::getValue
 
     std::vector<std::string>
-    IntegerEvaluator::getVariablesNames(void) const
+    IntegerEvaluator::getVariablesNames() const
     {
       using namespace std;
       typedef map<vector<int>::size_type,string>::value_type MVType;
@@ -396,7 +396,7 @@ namespace tfel
     } // end of IntegerEvaluator::getVariablesNames
 
     std::vector<int>::size_type
-    IntegerEvaluator::getNumberOfVariables(void) const
+    IntegerEvaluator::getNumberOfVariables() const
     {
       return this->variables.size();
     } // end of IntegerEvaluator::getNumberOfVariables(void) const;

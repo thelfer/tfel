@@ -59,7 +59,7 @@ analyseFile3(mfront::AbstractDSL& dsl,
   dsl.analyseFile(f,args,s);
 }
 
-void declareAbstractDSL(void){
+void declareAbstractDSL(){
   using namespace boost::python;
   using namespace mfront;
   enum_<AbstractDSL::DSLTarget>("DSLTarget")

@@ -40,13 +40,13 @@ namespace aster
   {} // end of AsterException::AsterException
 
   const char* 
-  AsterException::what (void) const noexcept
+  AsterException::what () const noexcept
   { 
     return msg.c_str(); 
   } // end of AsterException::what
 
   std::string
-  AsterException::getMsg(void) const noexcept
+  AsterException::getMsg() const noexcept
   {
     return msg;
   } // end of AsterException::getMsg

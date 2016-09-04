@@ -19,7 +19,7 @@ namespace tfel{
   namespace material{
     
     std::vector<FiniteStrainBehaviourTangentOperatorBase::Flag>
-    getFiniteStrainBehaviourTangentOperatorFlags(void)
+    getFiniteStrainBehaviourTangentOperatorFlags()
     {
       return {FiniteStrainBehaviourTangentOperatorBase::DSIG_DF, 
 	  FiniteStrainBehaviourTangentOperatorBase::DSIG_DDF,

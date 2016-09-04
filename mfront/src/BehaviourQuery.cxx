@@ -69,7 +69,7 @@ namespace mfront{
   } // end of BehaviourQuery::BehaviourQuery
 
   void
-  BehaviourQuery::registerCommandLineCallBacks(void){
+  BehaviourQuery::registerCommandLineCallBacks(){
     using namespace std;
     using Parser = tfel::utilities::ArgumentParserBase<BehaviourQuery>;
     Parser::registerNewCallBack("--verbose",&BehaviourQuery::treatVerbose,
@@ -130,7 +130,7 @@ namespace mfront{
   } // end of BehaviourQuery::registerCommandLineCallBacks
 
   void
-  BehaviourQuery::treatStandardQuery(void){
+  BehaviourQuery::treatStandardQuery(){
     using namespace std;
     using namespace tfel::utilities;
     using tfel::material::ModellingHypothesis;
@@ -247,7 +247,7 @@ const Hypothesis){
   }
 
   void
-  BehaviourQuery::treatStandardQuery2(void){
+  BehaviourQuery::treatStandardQuery2(){
     using namespace std;
     using namespace tfel::utilities;
     using tfel::material::ModellingHypothesis;
@@ -340,7 +340,7 @@ const Hypothesis){
 
   template<const VariableDescriptionContainer& (BehaviourData::* m)(void) const>
   typename BehaviourQuery::query
-  BehaviourQuery::generateVariablesListQuery(void){
+  BehaviourQuery::generateVariablesListQuery(){
     return [](const FileDescription&,
 	      const BehaviourDescription& bd,
 	      const Hypothesis h){
@@ -371,7 +371,7 @@ const Hypothesis){
   }
 
   void
-  BehaviourQuery::treatGeneratedSources(void)
+  BehaviourQuery::treatGeneratedSources()
   {
     using namespace std;
     auto ldsl = this->dsl;
@@ -389,7 +389,7 @@ const Hypothesis){
   } // end of BehaviourQuery::treatGeneratedSources
 
   void
-  BehaviourQuery::treatGeneratedHeaders(void)
+  BehaviourQuery::treatGeneratedHeaders()
   {
     using namespace std;
     auto ldsl = this->dsl;
@@ -405,7 +405,7 @@ const Hypothesis){
   } // end of BehaviourQuery::treatGeneratedHeaders
 
   void
-  BehaviourQuery::treatCppFlags(void)
+  BehaviourQuery::treatCppFlags()
   {
     using namespace std;
     auto ldsl = this->dsl;
@@ -423,7 +423,7 @@ const Hypothesis){
   } // end of BehaviourQuery::treatCppFlags
 
   void
-  BehaviourQuery::treatLibrariesDependencies(void)
+  BehaviourQuery::treatLibrariesDependencies()
   {
     using namespace std;
     auto ldsl = this->dsl;
@@ -441,7 +441,7 @@ const Hypothesis){
   } // end of BehaviourQuery::treatLibrariesDependencies
 
   void
-  BehaviourQuery::treatSpecificTargets(void)
+  BehaviourQuery::treatSpecificTargets()
   {
     using namespace std;
     auto ldsl = this->dsl;
@@ -463,7 +463,7 @@ const Hypothesis){
   } // end of BehaviourQuery::treatSpecificTargets
 
   void
-  BehaviourQuery::treatModellingHypothesis(void)
+  BehaviourQuery::treatModellingHypothesis()
   {
     using namespace std;
     const auto& o = this->getCurrentCommandLineArgument().getOption();
@@ -480,7 +480,7 @@ const Hypothesis){
   } // end of BehaviourQuery::treatModellingHypothesis
 
   void
-  BehaviourQuery::exe(void)
+  BehaviourQuery::exe()
   {
     using namespace std;
     if(getVerboseMode()>=VERBOSE_LEVEL2){
@@ -530,7 +530,7 @@ const Hypothesis){
     return *(this->currentArgument);
   }
   
-  void BehaviourQuery::treatUnknownArgument(void)
+  void BehaviourQuery::treatUnknownArgument()
   {
     if(!MFrontBase::treatUnknownArgumentBase()){
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
@@ -543,11 +543,11 @@ const Hypothesis){
     }
   }
 
-  std::string BehaviourQuery::getVersionDescription(void) const{
+  std::string BehaviourQuery::getVersionDescription() const{
     return MFrontHeader::getHeader();
   }
 
-  std::string BehaviourQuery::getUsageDescription(void) const
+  std::string BehaviourQuery::getUsageDescription() const
   {
     auto usage = std::string("Usage : ");
     usage += this->programName;

@@ -713,7 +713,7 @@ namespace tfel{
     } // end of CxxTokenizer::splitLine
 
     void
-    CxxTokenizer::stripComments(void){
+    CxxTokenizer::stripComments(){
       for(auto p=this->tokens.begin();p!=this->tokens.end();){
 	if(p->flag==Token::Comment){
 	  if(this->comments.find(p->line)!=this->comments.end()){
@@ -845,13 +845,13 @@ namespace tfel{
     } // end of CxxTokenizer::begin
     
     CxxTokenizer::const_iterator
-    CxxTokenizer::begin(void) const
+    CxxTokenizer::begin() const
     {
       return this->tokens.begin();
     } // end of CxxTokenizer::begin
 
     CxxTokenizer::const_iterator
-    CxxTokenizer::end(void) const
+    CxxTokenizer::end() const
     {
       return this->tokens.end();
     } // end of CxxTokenizer::end
@@ -860,7 +860,7 @@ namespace tfel{
       this->cStyleCommentOpened = b;
     }
     
-    void CxxTokenizer::clear(void)
+    void CxxTokenizer::clear()
     {
       this->cStyleCommentOpened = false;
       this->tokens.clear();

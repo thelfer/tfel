@@ -46,7 +46,7 @@ struct T2tot2SpecialValuesTest final
     return this->result;
   } // end of execute
  private:
-  void testId(void){
+  void testId(){
     using namespace tfel::math;
     using size_type = typename t2tot2<N,double>::size_type;
     const auto id   = t2tot2<N,double>::Id();
@@ -57,7 +57,7 @@ struct T2tot2SpecialValuesTest final
       }
     }
   }
-  void testIdxId(void){
+  void testIdxId(){
     using namespace tfel::math;
     using size_type = typename t2tot2<N,double>::size_type;
     const auto IdxId = t2tot2<N,double>::IxI();
@@ -68,7 +68,7 @@ struct T2tot2SpecialValuesTest final
       }
     }
   }
-  void testIdxId2(void){
+  void testIdxId2(){
     using namespace tfel::math;
     using size_type = typename t2tot2<N,double>::size_type;
     const auto IdxId  = t2tot2<N,double>::IxI();
@@ -79,7 +79,7 @@ struct T2tot2SpecialValuesTest final
       }
     }
   }
-  void testK(void){
+  void testK(){
     using namespace tfel::math;
     using size_type = typename t2tot2<N,double>::size_type;
     const auto k = t2tot2<N,double>::K();
@@ -95,7 +95,7 @@ struct T2tot2SpecialValuesTest final
       }
     }
   }
-  void testK2(void){
+  void testK2(){
     using namespace tfel::math;
     using size_type = typename t2tot2<N,double>::size_type;
     const auto k  = t2tot2<N,double>::K();
@@ -119,7 +119,7 @@ TFEL_TESTS_GENERATE_PROXY(T2tot2SpecialValuesTest3D,
 			  "T2tot2SpecialValuesTest-3D");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
   m.addXMLTestOutput("t2tot2-specialvalues.xml");

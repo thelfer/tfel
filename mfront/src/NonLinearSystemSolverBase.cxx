@@ -20,7 +20,7 @@
 namespace mfront{
 
   std::vector<std::string>
-  NonLinearSystemSolverBase::getReservedNames(void) const
+  NonLinearSystemSolverBase::getReservedNames() const
   {
     using namespace std;
     vector<string> n;

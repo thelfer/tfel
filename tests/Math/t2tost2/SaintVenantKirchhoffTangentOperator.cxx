@@ -140,15 +140,15 @@ struct SaintVenantKirchhoffTangentOperator final
   } // end of execute
 };
 
-typedef SaintVenantKirchhoffTangentOperator<1u> SaintVenantKirchhoffTangentOperator_1D;
-typedef SaintVenantKirchhoffTangentOperator<2u> SaintVenantKirchhoffTangentOperator_2D;
-typedef SaintVenantKirchhoffTangentOperator<3u> SaintVenantKirchhoffTangentOperator_3D;
+using SaintVenantKirchhoffTangentOperator_1D = SaintVenantKirchhoffTangentOperator<1U>;
+using SaintVenantKirchhoffTangentOperator_2D = SaintVenantKirchhoffTangentOperator<2U>;
+using SaintVenantKirchhoffTangentOperator_3D = SaintVenantKirchhoffTangentOperator<3U>;
 TFEL_TESTS_GENERATE_PROXY(SaintVenantKirchhoffTangentOperator_1D,"SaintVenantKirchhoffTangentOperator-1D");
 TFEL_TESTS_GENERATE_PROXY(SaintVenantKirchhoffTangentOperator_2D,"SaintVenantKirchhoffTangentOperator-2D");
 TFEL_TESTS_GENERATE_PROXY(SaintVenantKirchhoffTangentOperator_3D,"SaintVenantKirchhoffTangentOperator-3D");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void){
+int main(){
   using namespace tfel::tests;
   auto& manager = TestManager::getTestManager();
   manager.addTestOutput(std::cout);

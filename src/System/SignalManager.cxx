@@ -176,7 +176,7 @@ namespace tfel
     {}
 
     void
-    SignalManager::eraseHandlers(void)
+    SignalManager::eraseHandlers()
     {
       using namespace std;
       map<int,map<unsigned short,SignalHandler *> >::const_iterator p;

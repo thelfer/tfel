@@ -18,7 +18,7 @@ namespace tfel{
 
   namespace math{
 
-    void DifferenceRandomAccessIteratorBase::throwInconsistentIteratorDifference(void){
+    void DifferenceRandomAccessIteratorBase::throwInconsistentIteratorDifference(){
       throw(std::runtime_error("DifferenceRandomAccessIteratorBase::"
 			       "throwInconsistentIteratorDifference: "
 			       "inconsistent iterator difference"));

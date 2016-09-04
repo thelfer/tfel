@@ -15,9 +15,9 @@
 
 #include"TFEL/Material/OutOfBoundsPolicy.hxx"
 
-void declareOutOfBoundsPolicy(void);
+void declareOutOfBoundsPolicy();
 
-void declareOutOfBoundsPolicy(void)
+void declareOutOfBoundsPolicy()
 {
   using namespace boost::python;
   using namespace tfel::material;

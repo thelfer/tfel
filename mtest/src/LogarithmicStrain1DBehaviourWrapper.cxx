@@ -45,12 +45,12 @@ namespace mtest{
   }
 
   LogarithmicStrain1DBehaviourWrapper::Hypothesis
-  LogarithmicStrain1DBehaviourWrapper::getHypothesis(void) const{
+  LogarithmicStrain1DBehaviourWrapper::getHypothesis() const{
     return this->b->getHypothesis();
   } // end of LogarithmicStrain1DBehaviourWrapper::getHypothesis
   
   tfel::material::MechanicalBehaviourBase::BehaviourType
-  LogarithmicStrain1DBehaviourWrapper::getBehaviourType(void) const
+  LogarithmicStrain1DBehaviourWrapper::getBehaviourType() const
   {
     return this->b->getBehaviourType();
   } // end of LogarithmicStrain1DBehaviourWrapper::getBehaviourType
@@ -110,13 +110,13 @@ namespace mtest{
   } // end of LogarithmicStrain1DBehaviourWrapper::getThermodynamicForceComponentPosition
 
   unsigned short
-  LogarithmicStrain1DBehaviourWrapper::getSymmetryType(void) const
+  LogarithmicStrain1DBehaviourWrapper::getSymmetryType() const
   {
     return this->b->getSymmetryType();
   } // end of LogarithmicStrain1DBehaviourWrapper::getSymmetryType
 
   std::vector<std::string>
-  LogarithmicStrain1DBehaviourWrapper::getMaterialPropertiesNames(void) const
+  LogarithmicStrain1DBehaviourWrapper::getMaterialPropertiesNames() const
   {
     return this->b->getMaterialPropertiesNames();
   } // end of LogarithmicStrain1DBehaviourWrapper::getMaterialPropertiesNames
@@ -129,7 +129,7 @@ namespace mtest{
   } // end of LogarithmicStrain1DBehaviourWrapper::setOptionalMaterialPropertiesDefaultValues
 
   std::vector<std::string>
-  LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesNames(void) const 
+  LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesNames() const 
   {
     return this->b->getInternalStateVariablesNames();
   } // end of LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesNames
@@ -159,7 +159,7 @@ namespace mtest{
   } // end of LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablePosition
 
   std::vector<std::string>
-  LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablesNames(void) const 
+  LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablesNames() const 
   {
     return this->b->getExternalStateVariablesNames();
   } // end of LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablesNames
@@ -198,7 +198,7 @@ namespace mtest{
   } // end of LogarithmicStrain1DBehaviourWrapper::allocate
 
   StiffnessMatrixType
-  LogarithmicStrain1DBehaviourWrapper::getDefaultStiffnessMatrixType(void) const
+  LogarithmicStrain1DBehaviourWrapper::getDefaultStiffnessMatrixType() const
   {
     return this->b->getDefaultStiffnessMatrixType();
   } // end of LogarithmicStrain1DBehaviourWrapper::getDefaultStiffnessMatrixType

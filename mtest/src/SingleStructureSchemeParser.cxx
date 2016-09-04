@@ -372,7 +372,7 @@ namespace mtest{
   } // end of SingleStructureSchemeParser::registerCallBack
   
   void
-  SingleStructureSchemeParser::registerCallBacks(void){
+  SingleStructureSchemeParser::registerCallBacks(){
     this->registerCallBack("@Behaviour",&SingleStructureSchemeParser::handleBehaviour);
     this->registerCallBack("@MaterialProperty",
 			   &SingleStructureSchemeParser::handleMaterialProperty);
@@ -420,7 +420,7 @@ namespace mtest{
   } // end of SingleStructureSchemeParser::treatKeyword
 
   std::vector<std::string>
-  SingleStructureSchemeParser::getKeyWordsList(void) const
+  SingleStructureSchemeParser::getKeyWordsList() const
   {
     auto keys = std::vector<std::string>{};
     for(const auto& k : this->callbacks){

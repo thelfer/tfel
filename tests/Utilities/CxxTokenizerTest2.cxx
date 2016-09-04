@@ -67,7 +67,7 @@ struct CxxTokenizerTest2 final
       TFEL_TESTS_ASSERT(t[i].flag==Token::Standard);
     }
   }
-  void check2(void){
+  void check2(){
     CxxTokenizer t;
     TFEL_TESTS_CHECK_THROW(t.parseString("'a"),std::runtime_error);
     TFEL_TESTS_CHECK_THROW(t.parseString("'\a"),std::runtime_error);
@@ -81,7 +81,7 @@ struct CxxTokenizerTest2 final
     TFEL_TESTS_ASSERT(t[0].value=="'a'");
     TFEL_TESTS_ASSERT(t[0].flag==Token::Char);
   }
-  void check3(void){
+  void check3(){
     CxxTokenizer t;
     TFEL_TESTS_CHECK_THROW(t.parseString("a\\n"),std::runtime_error);
     //    t.parseString("a\\nb"),std::runtime_error);
@@ -91,7 +91,7 @@ struct CxxTokenizerTest2 final
 TFEL_TESTS_GENERATE_PROXY(CxxTokenizerTest2,"CxxTokenizer2");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);

@@ -72,7 +72,7 @@ namespace mfront
 {
 
   void
-  initInterfaces(void)
+  initInterfaces()
   {
 
     MaterialPropertyInterfaceProxy<CMaterialPropertyInterface> cLawProxy;

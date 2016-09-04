@@ -24,7 +24,7 @@ namespace mtest{
     : evm(evm_)
   {
     using namespace tfel::system;
-    typedef ExternalLibraryManager ELM;
+    using ELM = tfel::system::ExternalLibraryManager;
     auto& elm = ELM::getExternalLibraryManager();
     this->f = elm.getCastemFunction(l,fn);
     if(elm.getCastemFunctionNumberOfVariables(l,fn)!=0u){
@@ -54,7 +54,7 @@ namespace mtest{
   } // end of CastemEvolution::operator()
 
   bool
-  CastemEvolution::isConstant(void) const
+  CastemEvolution::isConstant() const
   {
     using namespace std;
     vector<string>::size_type i;

@@ -83,7 +83,7 @@ namespace tfel
       {} // end of NegLogicalExpression::NegLogicalOperation
 
       bool
-      NegLogicalExpression::getValue(void) const
+      NegLogicalExpression::getValue() const
       {
 	return !this->a->getValue();
       } // end of NegLogicalExpression::getValue(void) const

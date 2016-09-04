@@ -76,7 +76,7 @@ struct Expr5Test final
 TFEL_TESTS_GENERATE_PROXY(Expr5Test,"Expr5Test");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using namespace tfel::tests;

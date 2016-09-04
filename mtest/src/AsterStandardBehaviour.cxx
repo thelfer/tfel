@@ -38,7 +38,7 @@ namespace mtest
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::material;
-    typedef ExternalLibraryManager ELM;
+    using ELM = tfel::system::ExternalLibraryManager;
     auto& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getAsterFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
@@ -199,7 +199,7 @@ namespace mtest
   } // end of AsterStandardBehaviour::allocate
 
   StiffnessMatrixType
-  AsterStandardBehaviour::getDefaultStiffnessMatrixType(void) const
+  AsterStandardBehaviour::getDefaultStiffnessMatrixType() const
   {
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
   }

@@ -68,7 +68,7 @@ namespace tfel
       } // end of OpDiv::apply
 
       void
-      BinaryOperationBase::throwUnimplementedDifferentiateFunctionException(void)
+      BinaryOperationBase::throwUnimplementedDifferentiateFunctionException()
       {
 	throw(std::runtime_error("BinaryOperationBase::"
 				 "throwUnimplementedDifferentiateFunctionException : "

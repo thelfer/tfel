@@ -23,7 +23,7 @@ namespace mfront{
   {} // end of MFrontNewtonRaphsonSolverBase::MFrontNewtonRaphsonSolverBase()
 
   std::vector<std::string>
-  MFrontNewtonRaphsonSolverBase::getReservedNames(void) const
+  MFrontNewtonRaphsonSolverBase::getReservedNames() const
   {
     using namespace std;
     auto n = vector<string>{};
@@ -41,31 +41,31 @@ namespace mfront{
   } // end of MFrontNewtonRaphsonSolverBase::getReservedNames
 
   bool
-  MFrontNewtonRaphsonSolverBase::usesJacobian(void) const
+  MFrontNewtonRaphsonSolverBase::usesJacobian() const
   {
     return true;
   } // end of MFrontNewtonRaphsonSolverBase::usesJacobian
 
   bool
-  MFrontNewtonRaphsonSolverBase::usesJacobianInvert(void) const
+  MFrontNewtonRaphsonSolverBase::usesJacobianInvert() const
   {
     return false;
   } // end of MFrontNewtonRaphsonSolverBase::usesJacobianInvert
 
   bool
-  MFrontNewtonRaphsonSolverBase::allowsJacobianInitialisation(void) const
+  MFrontNewtonRaphsonSolverBase::allowsJacobianInitialisation() const
   {
     return false;
   } // end of MFrontNewtonRaphsonSolverBase::allowsJacobianInitialisation
 
   bool
-  MFrontNewtonRaphsonSolverBase::allowsJacobianInvertInitialisation(void) const
+  MFrontNewtonRaphsonSolverBase::allowsJacobianInvertInitialisation() const
   {
     return false;
   } // end of MFrontNewtonRaphsonSolverBase::allowsJacobianInvertInitialisation
 
   bool
-  MFrontNewtonRaphsonSolverBase::requiresJacobianToBeReinitialisedToIdentityAtEachIterations(void) const
+  MFrontNewtonRaphsonSolverBase::requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const
   {
     return !this->requiresNumericalJacobian();
   } // end of MFrontNewtonRaphsonSolverBase::requiresJacobianToBeReinitialisedToIdentityAtEachIterations
@@ -263,13 +263,13 @@ namespace mfront{
   {} // end of  MFrontNewtonRaphsonSolverBase::~MFrontNewtonRaphsonSolverBase()
 
   bool
-  MFrontNewtonRaphsonSolver::requiresNumericalJacobian(void) const
+  MFrontNewtonRaphsonSolver::requiresNumericalJacobian() const
   {
     return false;
   }
 
   bool
-  MFrontNewtonRaphsonSolver::usesPowellDogLegAlgorithm(void) const
+  MFrontNewtonRaphsonSolver::usesPowellDogLegAlgorithm() const
   {
     return false;
   }
@@ -278,13 +278,13 @@ namespace mfront{
   {} // end of MFrontNewtonRaphsonSolver::~MFrontNewtonRaphsonSolver
 
   bool
-  MFrontNewtonRaphsonNumericalJacobianSolver::requiresNumericalJacobian(void) const
+  MFrontNewtonRaphsonNumericalJacobianSolver::requiresNumericalJacobian() const
   {
     return true;
   }
 
   bool
-  MFrontNewtonRaphsonNumericalJacobianSolver::usesPowellDogLegAlgorithm(void) const
+  MFrontNewtonRaphsonNumericalJacobianSolver::usesPowellDogLegAlgorithm() const
   {
     return false;
   }
@@ -293,13 +293,13 @@ namespace mfront{
   {} // end of MFrontNewtonRaphsonSolver::~MFrontNewtonRaphsonSolver
 
   bool
-  MFrontPowellDogLegNewtonRaphsonSolver::requiresNumericalJacobian(void) const
+  MFrontPowellDogLegNewtonRaphsonSolver::requiresNumericalJacobian() const
   {
     return false;
   }
 
   bool
-  MFrontPowellDogLegNewtonRaphsonSolver::usesPowellDogLegAlgorithm(void) const
+  MFrontPowellDogLegNewtonRaphsonSolver::usesPowellDogLegAlgorithm() const
   {
     return true;
   }
@@ -308,13 +308,13 @@ namespace mfront{
   {} // end of MFrontPowellDogLegNewtonRaphsonSolver::~MFrontPowellDogLegNewtonRaphsonSolver
 
   bool
-  MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver::requiresNumericalJacobian(void) const
+  MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver::requiresNumericalJacobian() const
   {
     return true;
   }
 
   bool
-  MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver::usesPowellDogLegAlgorithm(void) const
+  MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver::usesPowellDogLegAlgorithm() const
   {
     return true;
   }

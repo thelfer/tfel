@@ -35,7 +35,7 @@ struct TVectorTest5 final
   {} // end of TVectorTest
 
   virtual tfel::tests::TestResult
-  execute(void) override
+  execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -52,7 +52,7 @@ TFEL_TESTS_GENERATE_PROXY(TVectorTest5,
 			  "TVectorTest5");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   using namespace tfel::tests;

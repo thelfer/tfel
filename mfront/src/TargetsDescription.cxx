@@ -102,32 +102,32 @@ namespace mfront{
   } // end of TargetsDescription::operator[]
 
   TargetsDescription::iterator
-  TargetsDescription::begin(void) {
+  TargetsDescription::begin() {
     return this->libraries.begin();
   }
 
   TargetsDescription::iterator
-  TargetsDescription::end(void) {
+  TargetsDescription::end() {
     return this->libraries.end();
   }
   
   TargetsDescription::const_iterator
-  TargetsDescription::begin(void) const {
+  TargetsDescription::begin() const {
     return this->libraries.cbegin();
   }
 
   TargetsDescription::const_iterator
-  TargetsDescription::cbegin(void) const {
+  TargetsDescription::cbegin() const {
     return this->libraries.cbegin();
   }
 
   TargetsDescription::const_iterator
-  TargetsDescription::end(void) const {
+  TargetsDescription::end() const {
     return this->libraries.cend();
   }
 
   TargetsDescription::const_iterator
-  TargetsDescription::cend(void) const {
+  TargetsDescription::cend() const {
     return this->libraries.cend();
   }
   

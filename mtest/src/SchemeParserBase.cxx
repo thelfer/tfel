@@ -703,7 +703,7 @@ namespace mtest{
   }
   
   void
-  SchemeParserBase::registerCallBacks(void)
+  SchemeParserBase::registerCallBacks()
   {
     this->registerCallBack(";",&SchemeParserBase::handleLonelySeparator);
     this->registerCallBack("@Author",&SchemeParserBase::handleAuthor);
@@ -783,7 +783,7 @@ namespace mtest{
   } // end of SchemeParserBase::treatKeyword
 
   std::vector<std::string>
-  SchemeParserBase::getKeyWordsList(void) const
+  SchemeParserBase::getKeyWordsList() const
   {
     auto keys = std::vector<std::string>{};
     for(const auto& k : this->callbacks){

@@ -19,7 +19,7 @@
 namespace mfront{
 
   std::vector<std::string>
-  MFrontLevenbergMarquartSolverBase::getReservedNames(void) const
+  MFrontLevenbergMarquartSolverBase::getReservedNames() const
   {
     return {"levmar_jacobian_1","levmar_fzeros_1",
 	"levmar_error","levmar_m","levmar_sm",
@@ -60,31 +60,31 @@ namespace mfront{
   }
 
   bool
-  MFrontLevenbergMarquartSolverBase::usesJacobian(void) const
+  MFrontLevenbergMarquartSolverBase::usesJacobian() const
   {
     return true;
   } // end of MFrontLevenbergMarquartSolverBase::usesJacobian
 
   bool
-  MFrontLevenbergMarquartSolverBase::usesJacobianInvert(void) const
+  MFrontLevenbergMarquartSolverBase::usesJacobianInvert() const
   {
     return false;
   } // end of MFrontLevenbergMarquartSolverBase::usesJacobianInvert
 
   bool
-  MFrontLevenbergMarquartSolverBase::allowsJacobianInitialisation(void) const
+  MFrontLevenbergMarquartSolverBase::allowsJacobianInitialisation() const
   {
     return false;
   } // end of MFrontLevenbergMarquartSolverBase::allowsJacobianInitialisation
 
   bool
-  MFrontLevenbergMarquartSolverBase::allowsJacobianInvertInitialisation(void) const
+  MFrontLevenbergMarquartSolverBase::allowsJacobianInvertInitialisation() const
   {
     return false;
   } // end of MFrontLevenbergMarquartSolverBase::allowsJacobianInvertInitialisation
 
   bool
-  MFrontLevenbergMarquartSolverBase::requiresJacobianToBeReinitialisedToIdentityAtEachIterations(void) const
+  MFrontLevenbergMarquartSolverBase::requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const
   {
     return !this->requiresNumericalJacobian();
   } // end of MFrontLevenbergMarquartSolverBase::requiresJacobianToBeReinitialisedToIdentityAtEachIterations
@@ -261,7 +261,7 @@ namespace mfront{
 
 
   bool
-  MFrontLevenbergMarquartSolver::requiresNumericalJacobian(void) const
+  MFrontLevenbergMarquartSolver::requiresNumericalJacobian() const
   {
     return false;
   }
@@ -270,7 +270,7 @@ namespace mfront{
   {} // end of MFrontLevenbergMarquartSolver::~MFrontLevenbergMarquartSolver
 
   bool
-  MFrontLevenbergMarquartNumericalJacobianSolver::requiresNumericalJacobian(void) const
+  MFrontLevenbergMarquartNumericalJacobianSolver::requiresNumericalJacobian() const
   {
     return true;
   }

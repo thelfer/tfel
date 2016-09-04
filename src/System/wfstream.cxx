@@ -73,7 +73,7 @@ namespace tfel
     } // end of wfstream::open
 
     void
-    wfstream::close(void)
+    wfstream::close()
     {
       using namespace std;
       if(*(this->get())==-1){
@@ -90,7 +90,7 @@ namespace tfel
     } // end of wfstream::close
 
     int
-    wfstream::getFileDescriptor(void) const
+    wfstream::getFileDescriptor() const
     {
       return *(this->get());
     } // end of wfstream::getFileDescriptor
