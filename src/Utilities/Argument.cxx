@@ -60,8 +60,7 @@ namespace tfel
       return option;
     }
 
-    Argument::~Argument() noexcept
-    {}
+    Argument::~Argument() noexcept = default;
 
   } // end of namespace utilities
 

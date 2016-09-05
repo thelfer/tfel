@@ -1958,8 +1958,7 @@ namespace mfront
     return this->oac;
   }
 
-  BehaviourDescription::~BehaviourDescription()
-  {}
+  BehaviourDescription::~BehaviourDescription() = default;
 
   void
   setElasticSymmetryType(BehaviourDescription& bd,

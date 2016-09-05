@@ -608,7 +608,6 @@ namespace mfront{
 														   const tfel::material::ModellingHypothesis::Hypothesis)
   {} // end of NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds
 
-  NonLinearSystemSolverBase::~NonLinearSystemSolverBase()
-  {} // end of NonLinearSystemSolverBase::~NonLinearSystemSolverBase
+  NonLinearSystemSolverBase::~NonLinearSystemSolverBase() = default;
 
 } // end of namespace mfront

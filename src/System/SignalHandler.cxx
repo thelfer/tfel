@@ -25,8 +25,7 @@ namespace tfel
       return new FctSignalHandler(f);
     } // end of sigPtrFun
 
-    SignalHandler::~SignalHandler()
-    {} // end of SignalHandler()::~SignalHandler(){
+    SignalHandler::~SignalHandler() = default;
 
     FctSignalHandler::FctSignalHandler(const Fct f_)
       : f(f_)
@@ -38,8 +37,7 @@ namespace tfel
       (*(this->f))(s);
     } // end of FctSignalHandler::execute
 
-    FctSignalHandler::~FctSignalHandler()
-    {} // end of FctSignalHandler::~FctSignalHandler
+    FctSignalHandler::~FctSignalHandler() = default;
 
   } // end of system
   

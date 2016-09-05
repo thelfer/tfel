@@ -198,12 +198,10 @@ namespace tfel
       return this->key;
     } // end of operator std::string
 
-    GlossaryEntry::~GlossaryEntry()
-    {} // end of GlossaryEntry::~GlossaryEntry
+    GlossaryEntry::~GlossaryEntry() = default;
     
-    bool
-    operator < (const GlossaryEntry& e1,
-	        const GlossaryEntry& e2)
+    bool operator < (const GlossaryEntry& e1,
+		     const GlossaryEntry& e2)
     {
       return e1.key < e2.key;
     }

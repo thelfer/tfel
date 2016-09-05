@@ -630,7 +630,6 @@ namespace mfront{
     }
   } // end of SupportedTypes::writeVariableDeclaration
 
-  SupportedTypes::~SupportedTypes()
-  {} // end of SupportedTypes::~SupportedTypes
+  SupportedTypes::~SupportedTypes() = default;
 
 } // end of namespace mfront

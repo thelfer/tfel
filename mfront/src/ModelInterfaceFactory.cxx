@@ -33,8 +33,7 @@ namespace mfront{
     return map;
   } // end of ModelInterfaceFactory::getInterfaceCreatorsMap
 
-  ModelInterfaceFactory::ModelInterfaceFactory()
-  {}
+  ModelInterfaceFactory::ModelInterfaceFactory() = default;
 
   std::vector<std::string>
   ModelInterfaceFactory::getRegistredInterfaces() const
@@ -86,7 +85,6 @@ namespace mfront{
     return c();
   }
 
-  ModelInterfaceFactory::~ModelInterfaceFactory()
-  {} // end of ModelInterfaceFactory::~ModelInterfaceFactory()
+  ModelInterfaceFactory::~ModelInterfaceFactory() = default;
 
 } // end of namespace mfront

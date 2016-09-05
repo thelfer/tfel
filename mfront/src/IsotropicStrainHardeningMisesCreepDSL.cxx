@@ -236,8 +236,7 @@ namespace mfront{
     this->behaviourFile << "}\n";
   } // end of IsotropicStrainHardeningMisesCreepDSL::writeBehaviourParserSpecificInitializeMethodPart
 
-  IsotropicStrainHardeningMisesCreepDSL::~IsotropicStrainHardeningMisesCreepDSL()
-  {} // end of ~IsotropicStrainHardeningMisesCreepDSL
+  IsotropicStrainHardeningMisesCreepDSL::~IsotropicStrainHardeningMisesCreepDSL() = default;
 
 } // end of namespace mfront
 

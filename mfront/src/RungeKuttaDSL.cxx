@@ -2273,7 +2273,6 @@ namespace mfront{
     this->behaviourFile << "} // end of " << this->mb.getClassName() << "::integrate\n\n";
   } // end of void RungeKuttaDSL::writeBehaviourIntegrator(void)
 
-  RungeKuttaDSL::~RungeKuttaDSL()
-  {} // end of ~RungeKuttaDSL
+  RungeKuttaDSL::~RungeKuttaDSL() = default;
 
 } // end of namespace mfront

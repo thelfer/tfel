@@ -21,7 +21,6 @@ namespace mfront{
     return BEHAVIOURDSL;
   }
 
-  AbstractBehaviourDSL::~AbstractBehaviourDSL()
-  {}
+  AbstractBehaviourDSL::~AbstractBehaviourDSL() = default;
 
 } // end of namespace mfront

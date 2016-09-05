@@ -89,8 +89,7 @@ namespace tfel
       return Kriging<2u,double>::operator()(v);
     } // end of Kriging2D::operator()
       
-    Kriging2D::~Kriging2D()
-    {} // end of Kriging2D::~Kriging2D
+    Kriging2D::~Kriging2D() = default;
 
   } // end of namespace math
 

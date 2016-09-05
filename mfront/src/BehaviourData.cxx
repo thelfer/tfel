@@ -293,9 +293,7 @@ namespace mfront{
     return this->cblock;
   } // end of BehaviourData::CodeBlocksAggregator::get
 
-  BehaviourData::CodeBlocksAggregator::~CodeBlocksAggregator()
-  {} // end of BehaviourData::CodeBlocksAggregator::~CodeBlocksAggregator()
-
+  BehaviourData::CodeBlocksAggregator::~CodeBlocksAggregator() = default;
   BehaviourData::BehaviourData()
     : usableInPurelyImplicitResolution(false)
   {
@@ -1407,7 +1405,6 @@ namespace mfront{
     return false;
   } // end of BehaviourData::isStressFreeExansionAnisotropic
   
-  BehaviourData::~BehaviourData()
-  {} // end of BehaviourData::~BehaviourData
+  BehaviourData::~BehaviourData() = default;
 
 } // end of namespace mfront

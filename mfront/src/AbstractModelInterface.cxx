@@ -16,7 +16,6 @@
 
 namespace mfront{
 
-  AbstractModelInterface::~AbstractModelInterface()
-  {} // end of AbstractModelInterface::~AbstractModelInterface()
+  AbstractModelInterface::~AbstractModelInterface() = default;
 
 } // end of namespace mfront

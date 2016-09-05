@@ -12,7 +12,7 @@
  */
 
 #include<sys/types.h>
-#include<signal.h>
+#include<csignal>
 
 #include"TFEL/System/ChildProcess.hxx"
 
@@ -66,8 +66,7 @@ namespace tfel
       : SystemError(strerror(errno))
     {} // end of ChildProcessCreationFailedException::ChildProcessCreationFailedException
 
-    ChildProcessCreationFailedException::~ChildProcessCreationFailedException() noexcept
-    {} // end of ChildProcessCreationFailedException::ChildProcessCreationFailedException
+    ChildProcessCreationFailedException::~ChildProcessCreationFailedException() noexcept = default;
 
   } // end of namespace system
 

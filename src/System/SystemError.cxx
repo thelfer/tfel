@@ -28,8 +28,7 @@ namespace tfel
       return this->msg.c_str();
     }
 
-    SystemError::~SystemError() noexcept
-    {} // end of SystemError::~SystemError
+    SystemError::~SystemError() noexcept = default;
 
   } // end of namespace system
 

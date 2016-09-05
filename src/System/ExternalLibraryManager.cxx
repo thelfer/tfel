@@ -1660,8 +1660,7 @@ namespace tfel
       return fct;
     }
     
-    ExternalLibraryManager::~ExternalLibraryManager()
-    {} // end of ExternalLibraryManager::~ExternalLibraryManager
+    ExternalLibraryManager::~ExternalLibraryManager() = default;
 
   } // end of namespace system
 

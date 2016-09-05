@@ -16,7 +16,6 @@
 
 namespace mfront{
 
-  AbstractBehaviourInterface::~AbstractBehaviourInterface()
-  {}
+  AbstractBehaviourInterface::~AbstractBehaviourInterface() = default;
 
 } // end of namespace mfront

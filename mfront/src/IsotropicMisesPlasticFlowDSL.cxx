@@ -253,7 +253,6 @@ namespace mfront{
     this->behaviourFile << "}\n";
   } // end of IsotropicMisesPlasticFlowDSL::writeBehaviourParserSpecificInitializeMethodPart
 
-  IsotropicMisesPlasticFlowDSL::~IsotropicMisesPlasticFlowDSL()
-  {} // end of ~IsotropicMisesPlasticFlowDSL
+  IsotropicMisesPlasticFlowDSL::~IsotropicMisesPlasticFlowDSL() = default;
   
 } // end of namespace mfront

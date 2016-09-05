@@ -1046,8 +1046,7 @@ namespace tfel{
       return this->tokens.size();
     } // end of CxxTokenizer::size
 
-    CxxTokenizer::~CxxTokenizer()
-    {} // end of CxxTokenizer::~CxxTokenizer
+    CxxTokenizer::~CxxTokenizer() = default;
 
   } // end of namespace utilities
 

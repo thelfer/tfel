@@ -15,7 +15,6 @@
 
 namespace mfront{
 
-  VariableBoundsDescription::~VariableBoundsDescription() noexcept
-  {} // end of VariableBoundsDescription::~VariableBoundsDescription
+  VariableBoundsDescription::~VariableBoundsDescription() noexcept = default;
 
 }

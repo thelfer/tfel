@@ -93,8 +93,7 @@ namespace tfel
 					   this->a1*(vy)+this->b1);
     } // end of FactorizedKriging1D1D::operator()
       
-    FactorizedKriging1D1D::~FactorizedKriging1D1D()
-    {} // end of FactorizedKriging1D1D::~FactorizedKriging1D1D
+    FactorizedKriging1D1D::~FactorizedKriging1D1D() = default;
 
   } // end of namespace math
 

@@ -49,9 +49,8 @@ namespace mfront{
     return map;
   } // end of MaterialPropertyInterfaceFactory::getAliasesMap
 
-  MaterialPropertyInterfaceFactory::MaterialPropertyInterfaceFactory()
-  {}
-
+  MaterialPropertyInterfaceFactory::MaterialPropertyInterfaceFactory() = default;
+  
   std::vector<std::string>
   MaterialPropertyInterfaceFactory::getRegistredInterfaces() const
   {
@@ -154,8 +153,6 @@ namespace mfront{
     return c();
   }
 
-  MaterialPropertyInterfaceFactory::~MaterialPropertyInterfaceFactory()
-  {} // end of MaterialPropertyInterfaceFactory::~MaterialPropertyInterfaceFactory()
-  
+  MaterialPropertyInterfaceFactory::~MaterialPropertyInterfaceFactory() = default;  
 
 } // end of namespace mfront

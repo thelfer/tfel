@@ -102,8 +102,7 @@ namespace mfront{
     return this->attributes;
   } // end of VariableDescription::getAttributes
   
-  VariableDescription::~VariableDescription()
-  {} // end of VariableDescription::~VariableDescription
+  VariableDescription::~VariableDescription() = default;
 
   VariableDescriptionContainer::VariableDescriptionContainer() = default;
   
@@ -204,7 +203,6 @@ namespace mfront{
 			     "no variable named '"+n+"'"));
   }
 
-  VariableDescriptionContainer::~VariableDescriptionContainer()
-  {} // end of VariableDescriptionContainer::~VariableDescriptionContainer
+  VariableDescriptionContainer::~VariableDescriptionContainer() = default;
 
 } // end of namespace mfront

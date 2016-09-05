@@ -106,8 +106,7 @@ namespace mfront{
     return c();
   }
 
-  BehaviourInterfaceFactory::~BehaviourInterfaceFactory()
-  {} // end of BehaviourInterfaceFactory::~BehaviourInterfaceFactory()
+  BehaviourInterfaceFactory::~BehaviourInterfaceFactory() = default;
   
   BehaviourInterfaceFactory::AliasContainer&
   BehaviourInterfaceFactory::getAliasesMap() const

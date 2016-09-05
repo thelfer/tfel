@@ -57,11 +57,9 @@ namespace mfront
     return true;
   }
 
-  DSLBase::VariableModifier::~VariableModifier()
-  {} // end of DSLBase::VariableModifier::~VariableModifier
+  DSLBase::VariableModifier::~VariableModifier() = default;
 
-  DSLBase::WordAnalyser::~WordAnalyser()
-  {} // end of DSLBase::WordAnalyser::~WordAnalyser
+  DSLBase::WordAnalyser::~WordAnalyser() = default;
 
   DSLBase::CodeBlockParserOptions::CodeBlockParserOptions()
     : modifier(nullptr),
@@ -74,8 +72,7 @@ namespace mfront
       registerLine(true)
   {}
 
-  DSLBase::CodeBlockParserOptions::~CodeBlockParserOptions() noexcept
-  {} // end of DSLBase::CodeBlockParserOptions::~CodeBlockParserOptions()
+  DSLBase::CodeBlockParserOptions::~CodeBlockParserOptions() noexcept = default;
 
   DSLBase::DSLBase()
     : AbstractDSL()
@@ -161,8 +158,7 @@ namespace mfront
     return this->td;
   } // end of DSLBase::getTargetsDescription
 
-  DSLBase::~DSLBase()
-  {} // end of DSLBase::~DSLBase
+  DSLBase::~DSLBase() = default;
   
   void
   DSLBase::readNextBlock(CodeBlock& res1,

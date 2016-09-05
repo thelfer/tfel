@@ -23,8 +23,7 @@ namespace tfel
     LUException::LUException(LUException&&) = default;
     LUException::LUException(const LUException&) = default;
     
-    LUException::~LUException() noexcept
-    {} // end of LUException::~LUException
+    LUException::~LUException() noexcept = default;
 
     LUMatrixNotSquare::LUMatrixNotSquare() = default;
     LUMatrixNotSquare::LUMatrixNotSquare(LUMatrixNotSquare&&) = default;
@@ -36,8 +35,7 @@ namespace tfel
       return "LUDecomp::exe : matrix is not square";
     } // end of LUMatrixNotSquare::what
 
-    LUMatrixNotSquare::~LUMatrixNotSquare() noexcept
-    {} // end of LUMatrixNotSquare::~LUMatrixNotSquare
+    LUMatrixNotSquare::~LUMatrixNotSquare() noexcept = default;
 
     LUUnmatchedSize::LUUnmatchedSize() = default;
     LUUnmatchedSize::LUUnmatchedSize(LUUnmatchedSize&&) = default;
@@ -49,8 +47,7 @@ namespace tfel
       return "LUDecomp::exe : matrix size and permutation size does not match";
     } // end of LUUnmatchedSize::what
 
-    LUUnmatchedSize::~LUUnmatchedSize() noexcept
-    {} // end of LUUnmatchedSize::~LUUnmatchedSize
+    LUUnmatchedSize::~LUUnmatchedSize() noexcept = default;
 
     LUInvalidMatrixSize::LUInvalidMatrixSize() = default;
     LUInvalidMatrixSize::LUInvalidMatrixSize(LUInvalidMatrixSize&&) = default;
@@ -62,8 +59,7 @@ namespace tfel
       return "LUDecomp : null matrix size";
     } // end of LUInvalidMatrixSize::what
 
-    LUInvalidMatrixSize::~LUInvalidMatrixSize() noexcept
-    {} // end of LUInvalidMatrixSize::~LUInvalidMatrixSize
+    LUInvalidMatrixSize::~LUInvalidMatrixSize() noexcept = default;
 
     LUNullPivot::LUNullPivot() = default;
     LUNullPivot::LUNullPivot(LUNullPivot&&) = default;
@@ -75,8 +71,7 @@ namespace tfel
       return "LUDecomp::back_substitute : null pivot";
     } // end of LUNullPivot::LUNullPivot
 
-    LUNullPivot::~LUNullPivot() noexcept
-    {} // end of LUNullPivot::~LUNullPivot
+    LUNullPivot::~LUNullPivot() noexcept = default;
 
     LUNullDeterminant::LUNullDeterminant() = default;
     LUNullDeterminant::LUNullDeterminant(LUNullDeterminant&&) = default;
@@ -88,8 +83,7 @@ namespace tfel
       return "LUDecomp::back_substitute : null pivot";
     } // end of LUNullDeterminant::LUNullDeterminant
 
-    LUNullDeterminant::~LUNullDeterminant() noexcept
-    {} // end of LUNullDeterminant::~LUNullDeterminant
+    LUNullDeterminant::~LUNullDeterminant() noexcept = default;
 
   } // end of namespace math
 

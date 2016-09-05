@@ -47,7 +47,6 @@ namespace mfront{
     this->behaviourFile << "#include\"TFEL/Math/tensor.hxx\"\n";
   } // end of DefaultFiniteStrainDSL::writeBehaviourParserSpecificIncludes
 
-  DefaultFiniteStrainDSL::~DefaultFiniteStrainDSL()
-  {} // end of DefaultFiniteStrainDSL::~DefaultFiniteStrainDSL
+  DefaultFiniteStrainDSL::~DefaultFiniteStrainDSL() = default;
 
 } // end of namespace mfront  

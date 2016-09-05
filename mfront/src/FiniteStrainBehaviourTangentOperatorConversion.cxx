@@ -103,7 +103,6 @@ namespace mfront
     return converters;
   } // end of FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions
   
-  FiniteStrainBehaviourTangentOperatorConversion::~FiniteStrainBehaviourTangentOperatorConversion() noexcept
-  {} // end of FiniteStrainBehaviourTangentOperatorConversion::~FiniteStrainBehaviourTangentOperatorConversion
+  FiniteStrainBehaviourTangentOperatorConversion::~FiniteStrainBehaviourTangentOperatorConversion() noexcept = default;
 
 } // end of namespace mfront

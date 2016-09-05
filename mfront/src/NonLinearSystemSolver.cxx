@@ -15,7 +15,6 @@
 
 namespace mfront{
 
-  NonLinearSystemSolver::~NonLinearSystemSolver()
-  {} // end of NonLinearSystemSolver::~NonLinearSystemSolver
+  NonLinearSystemSolver::~NonLinearSystemSolver() = default;
 
 } // end of namespace mfront

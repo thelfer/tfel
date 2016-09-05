@@ -18,23 +18,18 @@ namespace tfel{
 
   namespace math{
 
-    MathException::~MathException() noexcept
-    {}
+    MathException::~MathException() noexcept = default;
 
-    MathRunTimeException::~MathRunTimeException() noexcept
-    {}
+    MathRunTimeException::~MathRunTimeException() noexcept = default;
 
-    const char*
-    InvalidTimeStepException::what() const noexcept
+    const char* InvalidTimeStepException::what() const noexcept
     {
       return "invalid time step";
     } // end of InvalidTimeStepException::what
 
-    InvalidTimeStepException::~InvalidTimeStepException() noexcept
-    {} // end of InvalidTimeStepException::InvalidTimeStepException
+    InvalidTimeStepException::~InvalidTimeStepException() noexcept = default;
 
-    MathDivergenceException::~MathDivergenceException() noexcept
-    {}
+    MathDivergenceException::~MathDivergenceException() noexcept = default;
 
     const char*
     MaximumNumberOfIterationsReachedException::what() const noexcept
@@ -42,8 +37,7 @@ namespace tfel{
       return "maximum number of iterations reached";
     } // end of MaximumNumberOfIterationsReachedException::what
 
-    MaximumNumberOfIterationsReachedException::~MaximumNumberOfIterationsReachedException() noexcept
-    {} // end of MaximumNumberOfIterationsReachedException::MaximumNumberOfIterationsReachedException
+    MaximumNumberOfIterationsReachedException::~MaximumNumberOfIterationsReachedException() noexcept = default;
 
     const char*
     SingularJacobianException::what() const noexcept
@@ -51,8 +45,7 @@ namespace tfel{
       return "jacobian is not invertible";
     } // end of SingularJacobianException::what
 
-    SingularJacobianException::~SingularJacobianException() noexcept
-    {} // end of SingularJacobianException::SingularJacobianException
+    SingularJacobianException::~SingularJacobianException() noexcept = default;
 
   } // end of namespace math
 

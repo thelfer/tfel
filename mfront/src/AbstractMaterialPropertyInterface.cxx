@@ -16,7 +16,6 @@
 
 namespace mfront{
 
-  AbstractMaterialPropertyInterface::~AbstractMaterialPropertyInterface()
-  {} // end of AbstractMaterialPropertyInterface::~AbstractMaterialPropertyInterface()
+  AbstractMaterialPropertyInterface::~AbstractMaterialPropertyInterface() = default;
 
 } // end of namespace mfront

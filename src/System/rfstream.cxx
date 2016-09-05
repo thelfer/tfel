@@ -29,10 +29,7 @@ namespace tfel
 	std::shared_ptr<int>(new int(-1))
     {} // end of rfstream::rfstream
 
-    rfstream::rfstream(const rfstream& src)
-      : basic_rstream<rfstream,stream_traits<rfstream> >(src),
-	std::shared_ptr<int>(src)
-    {} // end of rfstream::rfstream
+    rfstream::rfstream(const rfstream& src) = default;
 
     rfstream &
     rfstream::operator=(const rfstream& src)
@@ -69,7 +66,7 @@ namespace tfel
 	msg += "failed to open file "+name+".";
 	systemCall::throwSystemError(msg,errno);
       }
-      shared_ptr<int>::operator=(shared_ptr<int>(new int(fd)));
+      shared_ptr<int>::operator=(std::make_shared<int>(fd));
     } // end of rfstream::open
 
     void
@@ -100,6 +97,6 @@ namespace tfel
       this->close();
     } // end of rfstream::~rfstream
     
-  } // end of namespace System  
+  } // end of namespace system  
   
 } // end of namespace tfel  

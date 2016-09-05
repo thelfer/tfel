@@ -38,10 +38,12 @@ namespace tfel
       while(r>0){
 	ssize_t w = 0;           //< number of written blocks
 	while((w=::write(fd,start,r))==-1){
-	  if(errno==EINTR)
+	  if(errno==EINTR){
 	    continue;
-	  if(errno!=EAGAIN)
+	  }
+	  if(errno!=EAGAIN){
 	    systemCall::throwSystemError("BlockingStreamWriter::write : write failed",errno);
+	  }
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #pragma message("windows port")
 #else
@@ -68,6 +70,6 @@ namespace tfel
       }
     } // end of NonBlockingStreamWriter::write
 
-  } // end of namespace System  
+  } // end of namespace system  
 
 } // end of namespace tfel  

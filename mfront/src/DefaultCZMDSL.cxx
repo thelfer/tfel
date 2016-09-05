@@ -65,7 +65,6 @@ namespace mfront{
     this->behaviourFile << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n";
   } // end of DefaultCZMDSL::writeBehaviourParserSpecificIncludes
 
-  DefaultCZMDSL::~DefaultCZMDSL()
-  {} // end of DefaultCZMDSL::~DefaultCZMDSL
+  DefaultCZMDSL::~DefaultCZMDSL() = default;
 
 } // end of namespace mfront  

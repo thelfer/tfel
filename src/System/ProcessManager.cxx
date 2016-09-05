@@ -22,7 +22,7 @@
 #include<cstring>
 #include<cassert>
 
-#include<signal.h>
+#include<csignal>
 #include<unistd.h>
 #include<sys/wait.h>
 #include<fcntl.h>
@@ -38,8 +38,7 @@ namespace tfel
   namespace system
   {
 
-    ProcessManager::Command::~Command()
-    {} // end of ProcessManager::Command::~Command
+    ProcessManager::Command::~Command() = default;
     
     ProcessManager::ProcessManager()
       : shallStopOnSignals(false)

@@ -1981,8 +1981,7 @@ namespace mfront{
     this->setMinimalTangentOperator();
   } // end of ImplicitDSLBase::endsInputFileProcessing(void)
 
-  ImplicitDSLBase::~ImplicitDSLBase()
-  {} // end of ~ImplicitDSLBase
+  ImplicitDSLBase::~ImplicitDSLBase() = default;
 
 } // end of namespace mfront  
 

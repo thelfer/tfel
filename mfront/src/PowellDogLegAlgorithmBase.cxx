@@ -140,7 +140,6 @@ namespace mfront{
     out << "}" << endl;
   } // end of ImplicitDSLBase::writePowellDogLegStep
 
-  PowellDogLegAlgorithmBase::~PowellDogLegAlgorithmBase()
-  {} // end o fPowellDogLegAlgorithmBase::~PowellDogLegAlgorithmBase
+  PowellDogLegAlgorithmBase::~PowellDogLegAlgorithmBase() = default;
 
 }

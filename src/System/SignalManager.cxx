@@ -116,7 +116,6 @@ namespace tfel
       waitpid(pid,&status,0);
       // tells the father to die
       write(fd,"OK",2u);
-      return;
     } // end of SignalManager::callGdb
 
     void
@@ -161,14 +160,14 @@ namespace tfel
       }
       close(res[1]);
       while((readChar=read(res[0],buf,2u))==-1){
-	if(errno!=EINTR)
+	if(errno!=EINTR){
 	  break;
+	}
       }
       close(res[0]);  
       assert(readChar>0);
       static_cast<void>(readChar); // disable a warning in icpc when NDEBUG is defined
       waitpid(pid,&status,0);
-      return;
     } // end of SignalManager::printBackTrace
     
     SignalManager::SignalManager()
@@ -275,6 +274,6 @@ namespace tfel
       }
     } // end of SignalManager::treatAction
 
-  } // end of system
+  } // end of namespace system
   
-} // end of tfel
+} // end of namespace tfel

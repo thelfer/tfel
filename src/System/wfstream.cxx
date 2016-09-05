@@ -28,10 +28,7 @@ namespace tfel
 	std::shared_ptr<int>(new int(-1))
     {} // end of wfstream::wfstream
 
-    wfstream::wfstream(const wfstream& src)
-      : basic_wstream<wfstream,stream_traits<wfstream> >(src),
-	std::shared_ptr<int>(src)
-    {} // end of wfstream::wfstream
+    wfstream::wfstream(const wfstream&) = default;
 
     wfstream &
     wfstream::operator=(const wfstream& src)
@@ -45,7 +42,9 @@ namespace tfel
       return *this;
     } // end of wfstream::operator
 
-    wfstream::wfstream(const std::string& name, const int flags,const mode_t mode)
+    wfstream::wfstream(const std::string& name,
+		       const int flags,
+		       const mode_t mode)
       : basic_wstream<wfstream,stream_traits<wfstream> >(),
 	std::shared_ptr<int>(new int(-1))
     {
@@ -69,7 +68,7 @@ namespace tfel
 	msg += "failed to open file "+name+".";
 	systemCall::throwSystemError(msg,errno);
       }
-      shared_ptr<int>::operator=(shared_ptr<int>(new int(fd)));
+      shared_ptr<int>::operator=(std::make_shared<int>(fd));
     } // end of wfstream::open
 
     void
@@ -100,6 +99,6 @@ namespace tfel
       this->close();
     } // end of wfstream::~wfstream
     
-  } // end of namespace System  
+  } // end of namespace system  
   
 } // end of namespace tfel  

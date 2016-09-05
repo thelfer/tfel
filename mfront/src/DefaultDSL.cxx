@@ -37,13 +37,11 @@ namespace mfront{
            "on the behaviour or the integration method that may be used";
   } // end of DefaultDSL::getDescription
   
-  std::string
-  DefaultDSL::getName()
+  std::string DefaultDSL::getName()
   {
     return "DefaultDSL";
   }
 
-  DefaultDSL::~DefaultDSL()
-  {} // end of DefaultDSL::~DefaultDSL
+  DefaultDSL::~DefaultDSL() = default;
 
 } // end of namespace mfront  

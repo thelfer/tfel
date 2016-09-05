@@ -105,8 +105,7 @@ namespace tfel
       return Kriging<3u,double>::operator()(v);
     } // end of Kriging3D::operator()
       
-    Kriging3D::~Kriging3D()
-    {} // end of Kriging3D::~Kriging3D
+    Kriging3D::~Kriging3D() = default;
 
   } // end of namespace math
 

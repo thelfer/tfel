@@ -11,7 +11,7 @@
  * project under specific licensing conditions. 
  */
 
-#include<time.h>
+#include<ctime>
 #include<string>
 #include<iterator>
 #include <iomanip>

@@ -61,7 +61,7 @@ namespace tfel
       }
     } // end of NonBlockingStreamReader::read
 
-  } // end of namespace System  
+  } // end of namespace system  
   
 } // end of namespace tfel  
 

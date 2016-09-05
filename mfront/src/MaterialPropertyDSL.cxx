@@ -935,8 +935,7 @@ namespace mfront{
     }
   } // end of MaterialPropertyDSL::addMaterialLaw
 
-  MaterialPropertyDSL::~MaterialPropertyDSL()
-  {} // end of MaterialPropertyDSL::~MaterialPropertyDSL
+  MaterialPropertyDSL::~MaterialPropertyDSL() = default;
 
 } // end of namespace mfront  
 

@@ -25,8 +25,7 @@ namespace tfel
       return "geometricDiscretization : invalid density";
     } // end of GeometricDiscretizationInvalidDensity::what
 
-    GeometricDiscretizationInvalidDensity::~GeometricDiscretizationInvalidDensity() noexcept
-    {} // end of GeometricDiscretizationInvalidDensity::~GeometricDiscretizationInvalidDensity
+    GeometricDiscretizationInvalidDensity::~GeometricDiscretizationInvalidDensity() noexcept = default;
 
     const char*
     GeometricDiscretizationInvalidLength::what() const noexcept
@@ -34,8 +33,7 @@ namespace tfel
       return "geometricDiscretization : invalid length";
     } // end of GeometricDiscretizationInvalidLength::what
 
-    GeometricDiscretizationInvalidLength::~GeometricDiscretizationInvalidLength() noexcept
-    {} // end of GeometricDiscretizationInvalidLength::~GeometricDiscretizationInvalidLength
+    GeometricDiscretizationInvalidLength::~GeometricDiscretizationInvalidLength() noexcept = default;
 
     const char*
     GeometricDiscretizationInvalidNumberOfElements::what() const noexcept

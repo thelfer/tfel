@@ -81,7 +81,6 @@ namespace mfront{
     }
   } // end of DefaultDSLBase::treatProvidesSymmetricTangentOperator
 
-  DefaultDSLBase::~DefaultDSLBase()
-  {} // end of DefaultDSLBase::~DefaultDSLBase
+  DefaultDSLBase::~DefaultDSLBase() = default;
 
 } // end of namespace mfront  
