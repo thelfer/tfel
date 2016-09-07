@@ -187,6 +187,30 @@ namespace mfront{
      * \param[in]  h:   modelling hypothesis
      */
     virtual void
+    writeNativeBehaviourCall(std::ostream&,
+			     const BehaviourDescription&,
+			     const std::string&,
+			     const Hypothesis) const;
+    /*!
+     * \brief write the body of the VUMAT function
+     * \param[out] out: ouput stream
+     * \param[in]  md:  behaviour description
+     * \param[in]  t:   floatting point type
+     * \param[in]  h:   modelling hypothesis
+     */
+    virtual void
+    writeNativeBehaviourIntegration(std::ostream&,
+				    const BehaviourDescription&,
+				    const std::string&,
+				    const Hypothesis) const;
+    /*!
+     * \brief write the body of the VUMAT function
+     * \param[out] out: ouput stream
+     * \param[in]  md:  behaviour description
+     * \param[in]  t:   floatting point type
+     * \param[in]  h:   modelling hypothesis
+     */
+    virtual void
     writeFiniteRotationSmallStrainBehaviourCall(std::ostream&,
 						const BehaviourDescription&,
 						const std::string&,

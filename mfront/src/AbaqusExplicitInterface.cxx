@@ -399,7 +399,9 @@ namespace mfront{
 	}
 	this->writeChecks(out,mb,t,h);
 	if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	  if(this->fss==FINITEROTATIONSMALLSTRAIN){
+	  if(this->fss==NATIVEFINITESTRAINSTRATEGY){
+	    this->writeNativeBehaviourCall(out,mb,t,h);
+	  } else if(this->fss==FINITEROTATIONSMALLSTRAIN){
 	    this->writeFiniteRotationSmallStrainBehaviourCall(out,mb,t,h);
 	  } else if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
 	    this->writeLogarithmicStrainBehaviourCall(out,mb,t,h);
@@ -869,6 +871,163 @@ namespace mfront{
   } // end of AbaqusExplicitInterface::writeComputeElasticPrediction
 
   void
+  AbaqusExplicitInterface::writeNativeBehaviourCall(std::ostream& out,
+						    const BehaviourDescription& mb,
+						    const std::string& t,
+						    const Hypothesis h) const
+  {
+    // datacheck phase
+    out << "static_cast<void>(defgradOld);\n"
+	<< "static_cast<void>(defgradNew);\n"
+	<< "if((std::abs(*stepTime)<std::numeric_limits<" << t << ">::min())&&\n"
+	<< "   (std::abs(*totalTime)<std::numeric_limits<" << t << ">::min())){\n"
+	<< "// packaging step\n";
+    this->writeComputeElasticPrediction(out,mb,t,h);
+    out << "} else {\n"
+	<< "// behaviour integration\n";
+    this->writeNativeBehaviourIntegration(out,mb,t,h);
+    out << "}\n";      
+  }
+  
+  void
+  AbaqusExplicitInterface::writeNativeBehaviourIntegration(std::ostream& out,
+						  const BehaviourDescription& mb,
+						  const std::string& t,
+						  const Hypothesis h) const
+  {
+    auto throw_unsupported_hypothesis = [](){
+      throw(std::runtime_error("AbaqusExplicitInterface::writeNativeBehaviourIntegration: "
+			       "internal error, unsupported hypothesis"));
+    };
+    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
+    const auto name =  mb.getLibrary()+mb.getClassName();
+    if(mh.find(h)==mh.end()){
+      out << "std::cerr << \"" << mb.getClassName()
+	  << ": unsupported hypothesis\";\n"
+  	  << "::exit(-1);\n";
+      return;
+    }
+    if(h==ModellingHypothesis::PLANESTRESS){
+      // axial strain !
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      if(!v.first){
+	// no axial strain
+	out << "std::cerr << \"no state variable standing for "
+	    << "the axial strain (variable with the "
+	    << "glossary name 'AxialStrain')\" << std::endl;\n";
+	out << "::exit(-1);\n";
+	return;
+      }
+    }
+    //omp support    #pragma omp parallel for
+    out << "for(int i=0;i!=*nblock;++i){\n";
+    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
+    out << "constexpr const " << t << " zero = " << t <<  "(0);\n";
+    if(h==ModellingHypothesis::PLANESTRESS){
+      // axial strain !
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      if(v.first){
+	out << "const " << t << " ezz_old = "
+	    << "stateOld[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n";
+      } else {
+	// no axial strain
+	out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
+	    << "glossary name 'AxialStrain')\" << std::endl;\n";
+	out << "::exit(-1);\n";
+      }
+      out << "const stensor<2u," << t << "> eto  = {zero,zero,zero,zero};\n"
+	  << "const stensor<2u," << t << "> deto = {*(strainInc+i),*(strainInc+i+*nblock),\n"
+	  << "                                     zero,cste*(*(strainInc+i+2*(*nblock)))};\n"
+	  << "stensor<2u," << t << "> s    = {*(stressOld+i),*(stressOld+i+*nblock),\n"
+	  << "                                zero,cste*(*(stressOld+i+2*(*nblock)))};\n";
+    } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+	       (h==ModellingHypothesis::PLANESTRAIN)){
+      out << "const stensor<2u," << t << "> eto  = {zero,zero,zero,zero};\n"
+	  << "const stensor<2u," << t << "> deto = {*(strainInc+i),*(strainInc+i+*nblock),\n"
+	  << "                                      *(strainInc+i+2*(*nblock)),cste*(*(strainInc+i+3*(*nblock)))};\n"
+	  << "stensor<2u," << t << "> s  = {*(stressOld+i),*(stressOld+i+*nblock),\n"
+	  << "                             *(stressOld+i+2*(*nblock)),cste*(*(stressOld+i+3*(*nblock)))};\n";
+    } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
+      out << "const stensor<3u," << t << "> eto  = {zero,zero,zero,zero,zero,zero};\n"
+	  << "const stensor<3u," << t << "> deto = {*(strainInc+i),*(strainInc+i+*nblock),\n"
+	  << "                                      *(strainInc+i+2*(*nblock)),cste*(*(strainInc+i+3*(*nblock))),\n"
+	  << "                                      cste*(*(strainInc+i+5*(*nblock))),cste*(*(strainInc+i+4*(*nblock)))};\n"
+	  << "stensor<3u," << t << "> s  = {*(stressOld+i),*(stressOld+i+*nblock),\n"
+	  << "                              *(stressOld+i+2*(*nblock)),cste*(*(stressOld+i+3*(*nblock))),\n"
+	  << "                              cste*(*(stressOld+i+5*(*nblock))),cste*(*(stressOld+i+4*(*nblock)))};\n";
+    } else {
+      throw_unsupported_hypothesis();
+    }
+    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+      writeGetRotationMatrix(out,h);
+      out << "deto.changeBasis(R);\n"
+	  << "s.changeBasis(R);\n";
+    }
+    if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+	(h==ModellingHypothesis::PLANESTRAIN)||
+	(h==ModellingHypothesis::PLANESTRESS)){
+      out << "auto sfeh = [](tfel::math::stensor<2u,"<< t<< ">&,\n"
+	  << "tfel::math::stensor<2u,"<< t<< ">& de,\n"
+	  << "const tfel::math::stensor<2u,"<< t<< ">& dl0_l0,\n"
+	  << "const tfel::math::stensor<2u,"<< t<< ">& dl1_l0){\n"
+	  << "de-=dl1_l0-dl0_l0;\n"
+	  << "};\n";
+    } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
+      out << "auto sfeh = [](tfel::math::stensor<3u,"<< t<< ">&,\n"
+	  << "tfel::math::stensor<3u,"<< t<< ">& de,\n"
+	  << "const tfel::math::stensor<3u,"<< t<< ">& dl0_l0,\n"
+	  << "const tfel::math::stensor<3u,"<< t<< ">& dl1_l0){\n"
+	  << "de-=dl1_l0-dl0_l0;\n"
+	  << "};\n";
+    } else {
+      throw_unsupported_hypothesis();
+    }
+    out << "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ","
+	<< t<< "," << mb.getClassName()
+	<< ">::integrate(s,d,eto,deto,sfeh)!=0){\n"
+	<< "std::cerr << \"" << mb.getClassName() << ": behaviour integration failed\";\n"
+	<< "::exit(-1);\n"
+	<< "}\n";
+    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+      out << "s.changeBasis(transpose(R));\n";
+    }
+    if(h==ModellingHypothesis::PLANESTRESS){
+      // axial strain !
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      if(v.first){
+	out << "const " << t << " ezz_new = "
+	    << "stateNew[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
+	    << "//strain update\n"
+	    << "*(strainInc+i+2*(*(nblock))) = ezz_new-ezz_old;\n";
+      } else {
+	// no axial strain
+	out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
+	    << "glossary name 'AxialStrain')\" << std::endl;\n";
+	out << "::exit(-1);\n";
+      }
+    }
+    if(h==ModellingHypothesis::PLANESTRESS){
+      out << "*(stressNew+i)               = s[0];\n";
+      out << "*(stressNew+i+   *(nblock))  = s[1];\n";
+      out << "*(stressNew+i+2*(*(nblock))) = s[3]/cste;\n";
+    } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+	       (h==ModellingHypothesis::PLANESTRAIN)){
+      out << "*(stressNew+i)               = s[0];\n";
+      out << "*(stressNew+i+   *(nblock))  = s[1];\n";
+      out << "*(stressNew+i+2*(*(nblock))) = s[2];\n";
+      out << "*(stressNew+i+3*(*(nblock))) = s[3]/cste;\n";
+    } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
+      out << "*(stressNew+i)               = s[0];\n";
+      out << "*(stressNew+i+   *(nblock))  = s[1];\n";
+      out << "*(stressNew+i+2*(*(nblock))) = s[2];\n";
+      out << "*(stressNew+i+3*(*(nblock))) = s[3]/cste;\n";
+      out << "*(stressNew+i+4*(*(nblock))) = s[5]/cste;\n";
+      out << "*(stressNew+i+5*(*(nblock))) = s[4]/cste;\n";
+    }
+    out << "}\n";
+  }
+
+  void
   AbaqusExplicitInterface::writeFiniteRotationSmallStrainIntegration(std::ostream& out,
 								     const BehaviourDescription& mb,
 								     const std::string& t,
@@ -981,7 +1140,9 @@ namespace mfront{
       if(v.first){
 	out << "const " << t << " ezz_new = "
 	    << "stateNew[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
-	    << "U1[2] = std::sqrt(1+2*ezz_new);\n";
+	    << "U1[2] = std::sqrt(1+2*ezz_new);\n"
+	    << "//strain update\n"
+	    << "*(strainInc+i+2*(*(nblock))) = std::log(U1[2]/U0[2]);\n";
       } else {
 	// no axial strain
 	out << "std::cerr << \"no state variable standing for the axial strain (variable with the "

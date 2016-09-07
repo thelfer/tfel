@@ -88,7 +88,8 @@ There are also cases of misuses of the generated libraries that can be
   not*. Indeed the `Native` finite strain strategy will use:
 	- the Jauman rate if no orientation is defined. In this case,
 	  all internal state variables are rotated appropriately.
-	- the corotationnal frame if an orientation is defined.
+	- the corotationnal frame defined through the polar decomposition
+      of the deformation gradient if an orientation is defined.
 - For `Abaqus/Standard`, the usage of the `Native` finite strain
   strategy *without orientation* is **not** compatible with
   `Abaqus/Explicit` because the latter always uses a corotationnal
@@ -342,7 +343,7 @@ Those strategies have some theoretical drawbacks
 (hypoelasticity, etc...) and are not portable from one code to
 another.
 
-### `MFront` specific finite strain strategies
+### Recommended finite strain strategies
 
 Two other finite strain strategies are available in `MFront` for the
 `Abaqus/Standard` interface (see the `@AbaqusFiniteStrainStrategy`
@@ -352,7 +353,8 @@ keyword):
   described in @doghri_mechanics_2000,@edf_loi_2013
 - 'MieheApelLambrechtLogarithmicStrain': this finite strain strategy
   is fully described in @miehe_anisotropic_2002 and
-  @edf_modeles_2013.
+  @edf_modeles_2013. This finite strain strategy is yet to be
+  implemented.
 
 Those two strategies use lagrangian tensors, which automatically
 ensures the objectivity of the behaviour.
@@ -603,8 +605,20 @@ error)**.
 
 ## Finite strain strategies
 
-The finite strain strategies described for `Abaqus/Standard` are also
-available for the `Abaqus/Explicit` interface:
+As for `Abaqus/Standard`, user may choose one of the finite strain
+strategies available through `MFront`.
+
+### The `Native` finite strain strategy
+
+The `Native` finite strain strategy relies on build-in
+`Abaqus/Explicit` facilities to integrate the behaviours written in
+rate form, i.e. it will integrate the behaviour using a corotationnal
+approach based on the polar decomposition of the deformation gradient.
+
+### Recommended finite strain strategies
+
+The other finite strain strategies described for `Abaqus/Standard` are
+also available for the `Abaqus/Explicit` interface:
 
 - 'FiniteRotationSmallStrain'
 - 'MieheApelLambrechtLogarithmicStrain'
