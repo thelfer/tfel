@@ -243,5 +243,73 @@ namespace abaqus
       AbaqusTangentOperator<AbaqusReal>::normalize(Ca);
     }
   } // end of AbaqusFiniteStrain::computeAbaqusTangentOperatorFromCSE
+
+  void
+  AbaqusFiniteStrain::applyNativeFiniteStrainCorrection(AbaqusReal* DDSDDE,
+							const AbaqusReal* const F1,
+							const AbaqusReal* const s,
+							const AbaqusInt NTENS)
+  {
+    using namespace tfel::math;
+    // 1/J d(Js)/dde = ds/dde+1/J*(s^dJ_dde)
+    auto set = [&DDSDDE,NTENS](const AbaqusInt i,
+			     const AbaqusInt j,
+			     const AbaqusReal v){
+      *(DDSDDE+i+j*NTENS)=v;
+    };
+    if(NTENS==3u){
+      // plane stress
+      const auto F = tensor<2u,AbaqusReal>::buildFromFortranMatrix(F1);
+      const auto iJ = 1/det(F);
+      set(0,0,(*(s+0))*iJ);
+      set(1,0,(*(s+1))*iJ);
+      set(2,0,(*(s+2))*iJ);
+      set(0,1,(*(s+0))*iJ);
+      set(1,1,(*(s+1))*iJ);
+      set(2,1,(*(s+2))*iJ);
+    } else if(NTENS==4u){
+      const auto  F = tensor<2u,AbaqusReal>::buildFromFortranMatrix(F1);
+      const auto iJ = 1/det(F);
+      // plane strain, axisymmetrical
+      set(0,0,(*(s+0))*iJ);
+      set(1,0,(*(s+1))*iJ);
+      set(2,0,(*(s+2))*iJ);
+      set(3,0,(*(s+3))*iJ);
+      set(0,1,(*(s+0))*iJ);
+      set(1,1,(*(s+1))*iJ);
+      set(2,1,(*(s+2))*iJ);
+      set(3,1,(*(s+3))*iJ);
+      set(0,2,(*(s+0))*iJ);
+      set(1,2,(*(s+1))*iJ);
+      set(2,2,(*(s+2))*iJ);
+      set(3,2,(*(s+3))*iJ);
+    } else if(NTENS==6u){
+      // tridimensional
+      const auto F = tensor<3u,AbaqusReal>::buildFromFortranMatrix(F1);
+      const auto iJ = 1/det(F);
+      set(0,0,(*(s+0))*iJ);
+      set(1,0,(*(s+1))*iJ);
+      set(2,0,(*(s+2))*iJ);
+      set(3,0,(*(s+3))*iJ);
+      set(4,0,(*(s+4))*iJ);
+      set(5,0,(*(s+5))*iJ);
+      set(0,1,(*(s+0))*iJ);
+      set(1,1,(*(s+1))*iJ);
+      set(2,1,(*(s+2))*iJ);
+      set(3,1,(*(s+3))*iJ);
+      set(4,1,(*(s+4))*iJ);
+      set(5,1,(*(s+5))*iJ);
+      set(0,2,(*(s+0))*iJ);
+      set(1,2,(*(s+1))*iJ);
+      set(2,2,(*(s+2))*iJ);
+      set(3,2,(*(s+3))*iJ);
+      set(4,2,(*(s+4))*iJ);
+      set(5,2,(*(s+5))*iJ);
+    } else {
+      throw(std::runtime_error("AbaqusFiniteStrain::applyNativeFiniteStrainCorrection: "
+			       "invalid NTENS value ("+std::to_string(NTENS)+")"));
+    }
+  } // end of AbaqusFiniteStrain::applyNativeFiniteStrainCorrection
+
   
 } // end of namespace abaqus

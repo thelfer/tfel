@@ -183,8 +183,7 @@ namespace tfel
 
     struct TFEL_VISIBILITY_LOCAL Evaluator::ExternalFunctionRegister
     {
-      ExternalFunctionRegister()
-      {} // end of Evaluator::ExternalFunctionRegister()
+      ExternalFunctionRegister() = default;
     }; // end of struct Evaluator::ExternalFunctionRegister
 
     Evaluator::ExternalFunctionRegister Evaluator::externalFunctionRegister;

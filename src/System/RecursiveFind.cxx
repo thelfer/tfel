@@ -116,7 +116,7 @@ namespace tfel
 	  if(stat(file.c_str(),&buf)==0){
 	    if(S_ISREG(buf.st_mode)){
 	      if(regexec(&re,p->d_name,0,nullptr,0)==0){
-		r[name].push_back(p->d_name);
+		r[name].emplace_back(p->d_name);
 	      }
 	    } else if(S_ISDIR(buf.st_mode)){
 	      if((strcmp(p->d_name,".") !=0)&&

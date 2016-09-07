@@ -27,6 +27,32 @@ namespace tfel{
       UNALTERED,
       ALTERED
     }; // end of enum struct StiffnessTensorAlterationCharacteristic
+
+    /*!
+     * a simple metafunction which returns the more naturel stiffness
+     * tensor alteration characteristic for a given hypothesis
+     * \tparam H: modelling hypothesis
+     */
+    template<ModellingHypothesis::Hypothesis H>
+    struct GetDefaultStiffnessTensorAlterationCharacteristic
+    {
+      static constexpr const auto value =
+	StiffnessTensorAlterationCharacteristic::UNALTERED;
+    }; 
+
+    template<>
+    struct GetDefaultStiffnessTensorAlterationCharacteristic<ModellingHypothesis::PLANESTRESS>
+    {
+      static constexpr const auto value =
+	StiffnessTensorAlterationCharacteristic::ALTERED;
+    }; 
+
+    template<>
+    struct GetDefaultStiffnessTensorAlterationCharacteristic<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS>
+    {
+      static constexpr const auto value =
+	StiffnessTensorAlterationCharacteristic::ALTERED;
+    }; 
     
     /*!
      * \brief compute the altered stiffness tensor from the unaltered

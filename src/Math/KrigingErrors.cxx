@@ -24,22 +24,19 @@ namespace tfel
       : std::runtime_error(std::string("number of locations is different from number of values"))
     {} // end of KrigingErrorInvalidLength::KrigingErrorInvalidLength()
 
-    KrigingErrorInvalidLength::~KrigingErrorInvalidLength() noexcept
-    {} // end of KrigingErrorInvalidLength::~KrigingErrorInvalidLength
+    KrigingErrorInvalidLength::~KrigingErrorInvalidLength() noexcept = default;
 
     KrigingErrorNoDataSpecified::KrigingErrorNoDataSpecified()
       : std::runtime_error(std::string("no data specified"))
     {} // end of KrigingErrorNoDataSpecified::KrigingErrorNoDataSpecified()
     
-    KrigingErrorNoDataSpecified::~KrigingErrorNoDataSpecified() noexcept
-    {} // end of KrigingErrorNoDataSpecified::~KrigingErrorNoDataSpecified
+    KrigingErrorNoDataSpecified::~KrigingErrorNoDataSpecified() noexcept = default;
 
     KrigingErrorInsufficientData::KrigingErrorInsufficientData()
       : std::runtime_error(std::string("insufficient data"))
     {} // end of KrigingErrorInsufficientData::KrigingErrorInsufficientData()
 
-    KrigingErrorInsufficientData::~KrigingErrorInsufficientData() noexcept
-    {} // end of KrigingErrorInsufficientData::~KrigingErrorInsufficientData()
+    KrigingErrorInsufficientData::~KrigingErrorInsufficientData() noexcept = default;
 
   } // end of namespace math
 

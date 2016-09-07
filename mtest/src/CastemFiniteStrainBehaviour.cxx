@@ -15,7 +15,6 @@
 #include<limits>
 #include<algorithm>
 
-#include<iostream>
 #include"TFEL/Math/Tensor/TensorConceptIO.hxx"
 #include"TFEL/Math/Stensor/StensorConceptIO.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
@@ -24,6 +23,7 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/t2tost2.hxx"
 #include"TFEL/Math/T2toST2/T2toST2View.hxx"
+#include"TFEL/Material/StiffnessTensor.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Castem/Castem.hxx"
@@ -59,584 +59,124 @@ namespace mtest
 		 TangentOperator::C_TRUESDELL>(C,F0,F1,s);
   } // end of computeTangentOperator<N>
   
-  static void
-  MTestComputeIsotropicFiniteStrainStiffnessTensor2D(const real* const props,
-						     tfel::math::t2tost2<2u,real>& C)
-  {
-    using namespace std;
-    static const real cste = sqrt(real(2));
-    const real E   = props[0];
-    const real n   = props[1];
-    const real l   = E*n/((1.-2.*n)*(1+n));
-    const real G   = E/(2*(1+n));
-    const real C11 = l+2*G;
-    fill(C.begin(),C.end(),real(0.));
-    C(0,0)=C11;
-    C(0,1)=l;
-    C(0,2)=l;
-    C(1,0)=l;
-    C(1,1)=C11;
-    C(1,2)=l;
-    C(2,0)=l;
-    C(2,1)=l;
-    C(2,2)=C11;
-    C(3,3)=cste*G/2;    
-    C(3,4)=cste*G/2;
-  }
-
-  static void
-  CastemComputeOrthotropicFiniteStrainStiffnessTensor2D(const real* const props,
-						      tfel::math::t2tost2<2u,real>& C)
-  {
-    using namespace std;
-    // props[0] :'YG1'
-    // props[1] :'YG2'
-    // props[2] :'YG3'
-    // props[3] :'NU12'
-    // props[4] :'NU23'
-    // props[5] :'NU13'
-    // props[6] :'G12'
-    static const real cste = sqrt(real(2));
-    // S11 = 1/E1
-    const real S11=1/props[0];
-    // S22 = 1/E2
-    const real S22=1/props[1];
-    // S22 = 1/E3
-    const real S33=1/props[2];
-    // S12 = -n12/E1
-    const real S12=-props[3]/props[0];
-    // S13 = -n13/E1
-    const real S13=-props[5]/props[0];
-    // S23 = -n23/E2
-    const real S23=-props[4]/props[1];
-    const real detS=S11*S22*S33+2*S23*S13*S12-S11*S23*S23-S22*S13*S13-S33*S12*S12;
-    // Matrice de raideur
-    fill(C.begin(),C.end(),real(0.));
-    C(0,0)=(S22*S33-S23*S23)/detS;
-    C(0,1)=(S13*S23-S12*S33)/detS;
-    C(0,2)=(S12*S23-S13*S22)/detS;
-    C(1,0)=(S13*S23-S12*S33)/detS;
-    C(1,1)=(S11*S33-S13*S13)/detS;
-    C(1,2)=(S12*S13-S11*S23)/detS;
-    C(2,0)=(S12*S23-S13*S22)/detS;
-    C(2,1)=(S12*S13-S11*S23)/detS;
-    C(2,2)=(S11*S22-S12*S12)/detS;
-    C(3,3)=cste*props[6]/2;
-    C(3,4)=cste*props[6]/2;
-  } // end of struct CastemComputeStiffnessTensor
-
   /*!
    * This structure is in charge of computing a stiffness operator
    * from the material properties given by Cast3M.  The resulting
    * operator uses MFront representation of tensors and symmetric
    * tensors.
+   * \param[in] H: modelling hypothesis
+   * \param[in] S: material symmetry
    */
   template<tfel::material::ModellingHypothesis::Hypothesis,
 	   mfront::BehaviourSymmetryType>
   struct MTestCastemComputeFiniteStrainStiffnessTensor;
 
-  template<>
-  struct MTestCastemComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-						     mfront::ISOTROPIC>
+  template<tfel::material::ModellingHypothesis::Hypothesis H>
+  struct MTestCastemComputeFiniteStrainStiffnessTensor<H,mfront::ISOTROPIC>
   {
+    static constexpr const auto N =
+      tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+    static constexpr const auto STAC =
+      tfel::material::GetDefaultStiffnessTensorAlterationCharacteristic<H>::value;
     static void
-    exe(const real* const props,
-	tfel::math::t2tost2<1u,real>& C)
+    exe(tfel::math::T2toST2View<N,real>& C,const real* const props)
     {
-      using namespace std;
-      const real E = props[0];
-      const real n = props[1];
-      const real l = E*n/((1.-2.*n)*(1+n));
-      const real G = E/(1+n);
-      const real C11 = l+G;
-      C(0,0)=C11;
-      C(0,1)=l;
-      C(0,2)=l;
-      C(1,0)=l;
-      C(1,1)=C11;
-      C(1,2)=l;
-      C(2,0)=l;
-      C(2,1)=l;
-      C(2,2)=C11;
+      using namespace tfel::material;
+      using TangentOperator = FiniteStrainBehaviourTangentOperatorBase;
+      tfel::math::st2tost2<N,real> D;
+      computeIsotropicStiffnessTensorII<N,STAC>(D,props[0],props[1]);
+      const auto id = tfel::math::tensor<N,real>::Id();
+      const auto s  = tfel::math::stensor<N,real>(real(0));
+      C = convert<TangentOperator::DSIG_DF,
+		  TangentOperator::C_TRUESDELL>(D,id,id,s);
     } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
-  }; 
+  };
+
+  //! an helper structure for finite strain orthotropic stiffness tensor
+  template<unsigned short N>
+  struct MTestCastemComputeFiniteStrainOrhtotropicStiffnessTensorBase;
 
   template<>
-  struct MTestCastemComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRESS,
-						     mfront::ISOTROPIC>
+  struct MTestCastemComputeFiniteStrainOrhtotropicStiffnessTensorBase<1u>
   {
-    static void
-    exe(const real* const props,
-	tfel::math::t2tost2<2u,real>& C)
+    template<tfel::material::StiffnessTensorAlterationCharacteristic STAC>
+    static tfel::math::st2tost2<1u,real>
+    getStiffnessTensor(const real* const props)
     {
-      using namespace std;
-      static const real cste = sqrt(real(2));
-      const real E   = props[0];
-      const real n   = props[1];
-      const real C1  = E/(1+n*n);
-      const real C2  = n*C1;
-      const real C3  = (1-n)*C1;
-      fill(C.begin(),C.end(),real(0.));
-      C(0,0)=C1;
-      C(0,1)=C2;
-      C(1,0)=C2;
-      C(1,1)=C1;
-      C(3,3)=cste*C3/2;
-      C(3,4)=cste*C3/2;    
-    } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
-  }; 
-  
-  template<>
-  struct MTestCastemComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICAL,
-						     mfront::ISOTROPIC>
-  {
-    static void
-    exe(const real* const props,
-	tfel::math::t2tost2<2u,real>& C)
-    {
-      MTestComputeIsotropicFiniteStrainStiffnessTensor2D(props,C);
+      using namespace tfel::material;
+      tfel::math::st2tost2<1u,real> C;
+      computeOrthotropicStiffnessTensorII<1u,STAC>(C,props[0],props[1],props[2],
+						   props[3],props[4],props[5],
+						   props[0],props[1],props[2]);
+      return C;
     } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
   };
 
   template<>
-  struct MTestCastemComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRAIN,
-						     mfront::ISOTROPIC>
+  struct MTestCastemComputeFiniteStrainOrhtotropicStiffnessTensorBase<2u>
   {
-    static void
-    exe(const real* const props,
-	tfel::math::t2tost2<2u,real>& C)
+    template<tfel::material::StiffnessTensorAlterationCharacteristic STAC>
+    static tfel::math::st2tost2<2u,real>
+    getStiffnessTensor(const real* const props)
     {
-      MTestComputeIsotropicFiniteStrainStiffnessTensor2D(props,C);
-    } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
-  };
-
-  template<>
-  struct MTestCastemComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
-						     mfront::ISOTROPIC>
-  {
-    static void
-    exe(const real* const props,
-	tfel::math::t2tost2<2u,real>& C)
-    {
-      MTestComputeIsotropicFiniteStrainStiffnessTensor2D(props,C);
-    } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
-  };
-
-  template<>
-  struct MTestCastemComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
-						     mfront::ISOTROPIC>
-  {
-    static void
-    exe(const real* const props,
-	tfel::math::t2tost2<3u,real>& C)
-    {
-      using namespace std;
-      static const real cste = sqrt(real(2));
-      const real E = props[0];
-      const real n = props[1];
-      const real l = E*n/((1.-2.*n)*(1+n));
-      const real G = E/(2*(1+n));
-      const real C11 = l+2*G;
-      fill(C.begin(),C.end(),real(0.));
-      C(0,0)=C11;
-      C(0,1)=l;
-      C(0,2)=l;
-      C(1,0)=l;
-      C(1,1)=C11;
-      C(1,2)=l;
-      C(2,0)=l;
-      C(2,1)=l;
-      C(2,2)=C11;
-      C(3,3)=cste*G/2;
-      C(3,4)=cste*G/2;
-      C(4,5)=cste*G/2;
-      C(4,6)=cste*G/2;
-      C(5,7)=cste*G/2;
-      C(5,8)=cste*G/2;
+      using namespace tfel::material;
+      tfel::math::st2tost2<2u,real> C;
+      computeOrthotropicStiffnessTensorII<2u,STAC>(C,props[0],props[1],props[2],
+						   props[3],props[4],props[5],
+						   props[6],props[6],props[6]);
+      return C;
     } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
   };
   
   template<>
-  struct MTestCastemComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-						     mfront::ORTHOTROPIC>
+  struct MTestCastemComputeFiniteStrainOrhtotropicStiffnessTensorBase<3u>
   {
-    static void
-    exe(const real* const props,
-	tfel::math::t2tost2<1u,real>& C)
+    template<tfel::material::StiffnessTensorAlterationCharacteristic STAC>
+    static tfel::math::st2tost2<3u,real>
+    getStiffnessTensor(const real* const props)
     {
-      // Matrice de souplesse
-      // props[0] :'YG1'
-      // props[1] :'YG2'
-      // props[2] :'YG3'
-      // props[3] :'NU12'
-      // props[4] :'NU23'
-      // props[5] :'NU13'
-      using namespace std;
-      // S11 = 1/E1
-      const real S11=1/props[0];
-      // S22 = 1/E2
-      const real S22=1/props[1];
-      // S22 = 1/E3
-      const real S33=1/props[2];
-      // S12 = -n12/E1
-      const real S12=-props[3]/props[0];
-      // S13 = -n13/E1
-      const real S13=-props[5]/props[0];
-      // S23 = -n23/E2
-      const real S23=-props[4]/props[1];
-      const real detS=S11*S22*S33+2*S23*S13*S12-S11*S23*S23-S22*S13*S13-S33*S12*S12;
-      // Matrice de raideur
-      C(0,0)=(S22*S33-S23*S23)/detS;
-      C(0,1)=(S13*S23-S12*S33)/detS;
-      C(0,2)=(S12*S23-S13*S22)/detS;
-      C(1,0)=(S13*S23-S12*S33)/detS;
-      C(1,1)=(S11*S33-S13*S13)/detS;
-      C(1,2)=(S12*S13-S11*S23)/detS;
-      C(2,0)=(S12*S23-S13*S22)/detS;
-      C(2,1)=(S12*S13-S11*S23)/detS;
-      C(2,2)=(S11*S22-S12*S12)/detS;
+      using namespace tfel::material;
+      tfel::math::st2tost2<3u,real> C;
+      computeOrthotropicStiffnessTensorII<3u,STAC>(C,props[0],props[1],props[2],
+						   props[3],props[4],props[5],
+						   props[6],props[7],props[8]);
+      return C;
     } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
   };
 
-  template<>
-  struct MTestCastemComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRESS,
-						     mfront::ORTHOTROPIC>
-  {
-    static void
-    exe(const real* const props,
-	tfel::math::t2tost2<2u,real>& C)
-    {
-      using namespace std;
-      static const real cste = sqrt(real(2));
-      // props[0] :'YG1'
-      // props[1] :'YG2'
-      // props[2] :'NU12'
-      // props[3] :'G12'
-      // props[6] :'YG3'
-      // props[7] :'NU23'
-      // props[8] :'NU13'
-      using namespace std;
-      // S11 = 1/E1
-      const real S11=1/props[0];
-      // S22 = 1/E2
-      const real S22=1/props[1];
-      // S22 = 1/E3
-      const real S33=1/props[6];
-      // S12 = -n12/E1
-      const real S12=-props[2]/props[0];
-      // S13 = -n13/E1
-      const real S13=-props[8]/props[0];
-      // S23 = -n23/E2
-      const real S23=-props[7]/props[1];
-      const real inv_detS=1/(S11*S22*S33+2*S23*S13*S12-S11*S23*S23-S22*S13*S13-S33*S12*S12);
-      // Matrice de raideur
-      fill(C.begin(),C.end(),real(0.));
-      const real C00=(S22*S33-S23*S23)*inv_detS;
-      const real C01=(S13*S23-S12*S33)*inv_detS;
-      const real C02=(S12*S23-S13*S22)*inv_detS;
-      const real C10=(S13*S23-S12*S33)*inv_detS;
-      const real C11=(S11*S33-S13*S13)*inv_detS;
-      const real C12=(S12*S13-S11*S23)*inv_detS;
-      const real C20=(S12*S23-S13*S22)*inv_detS;
-      const real C21=(S12*S13-S11*S23)*inv_detS;
-      const real C22=(S11*S22-S12*S12)*inv_detS;
-      const real tmp20 = C20/C22;
-      const real tmp21 = C21/C22;
-      C(0,0)=C00-C02*tmp20;
-      C(0,1)=C01-C02*tmp21;
-      C(1,0)=C10-C12*tmp20;
-      C(1,1)=C11-C12*tmp21;
-      C(3,3)=cste*props[3];
-      C(3,4)=cste*props[3];    
-    } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
-  };
-
-  template<>
-  struct MTestCastemComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::AXISYMMETRICAL,
-						     mfront::ORTHOTROPIC>
-  {
-    static void
-    exe(const real* const props,
-	tfel::math::t2tost2<2u,real>& C)
-    {
-      CastemComputeOrthotropicFiniteStrainStiffnessTensor2D(props,C);
-    } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
-  };
-
-  template<>
-  struct MTestCastemComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::PLANESTRAIN,
-						     mfront::ORTHOTROPIC>
-  {
-    static void
-    exe(const real* const props,
-	tfel::math::t2tost2<2u,real>& C)
-    {
-      CastemComputeOrthotropicFiniteStrainStiffnessTensor2D(props,C);
-    } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
-  };
-
-  template<>
-  struct MTestCastemComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
-						     mfront::ORTHOTROPIC>
-  {
-    static void
-    exe(const real* const props,
-	tfel::math::t2tost2<2u,real>& C)
-    {
-      CastemComputeOrthotropicFiniteStrainStiffnessTensor2D(props,C);
-    } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
-  };
-
-  template<>
-  struct MTestCastemComputeFiniteStrainStiffnessTensor<tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
-						     mfront::ORTHOTROPIC>
-  {
-    static void
-    exe(const real* const props,
-	tfel::math::t2tost2<3u,real>& C)
-    {
-      // props[0] :'YG1'
-      // props[1] :'YG2'
-      // props[2] :'YG3'
-      // props[3] :'NU12'
-      // props[4] :'NU23'
-      // props[5] :'NU13'
-      // props[6] :'G12'
-      // props[7] :'G23'
-      // props[8] :'G13'
-      using namespace std;
-      static const real cste = sqrt(real(2));
-      // S11 = 1/E1
-      const real S11=1/props[0];
-      // S22 = 1/E2
-      const real S22=1/props[1];
-      // S22 = 1/E3
-      const real S33=1/props[2];
-      // S12 = -n12/E1
-      const real S12=-props[3]/props[0];
-      // S13 = -n13/E1
-      const real S13=-props[5]/props[0];
-      // S23 = -n23/E2
-      const real S23=-props[4]/props[1];
-      const real detS=S11*S22*S33+2*S23*S13*S12-S11*S23*S23-S22*S13*S13-S33*S12*S12;
-      // Matrice de raideur
-      fill(C.begin(),C.end(),real(0.));
-      C(0,0)=(S22*S33-S23*S23)/detS;
-      C(1,1)=(S11*S33-S13*S13)/detS;
-      C(2,2)=(S11*S22-S12*S12)/detS;
-      C(0,1)=C(1,0)=(S13*S23-S12*S33)/detS;
-      C(0,2)=C(2,0)=(S12*S23-S13*S22)/detS;
-      C(1,2)=C(2,1)=(S12*S13-S11*S23)/detS;
-      C(3,3)=cste*props[6]/2;
-      C(3,4)=cste*props[6]/2;
-      C(4,5)=cste*props[7]/2;
-      C(4,6)=cste*props[7]/2;
-      C(5,7)=cste*props[8]/2;
-      C(5,8)=cste*props[8]/2;
-    } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
-  };
-
-  // struct MTestCastemfiniteStrainRotationMatrix2D
-  // {
-  //   MTestCastemfiniteStrainRotationMatrix2D(const real *const);
-  //   // compute the stiffness matrix in the global space
-  //   void rotateStiffnessMatrixBackward(real *const) const;
-  // private:
-  //   real MN[3][3];
-  // }; // end of struct MTestCastemfiniteStrainRotationMatrix2D
+  template<tfel::material::ModellingHypothesis::Hypothesis H>
+  using MTestCastemComputeFiniteStrainOrhtotropicStiffnessTensorBaseII = MTestCastemComputeFiniteStrainOrhtotropicStiffnessTensorBase<tfel::material::ModellingHypothesisToSpaceDimension<H>::value>;
   
-  // struct MTestCastemfiniteStrainRotationMatrix3D
-  // {
-    
-  //   MTestCastemfiniteStrainRotationMatrix3D(const real *const);
-  //   // compute the stiffness matrix in the global space
-  //   void rotateStiffnessMatrixBackward(real *const) const;
-  // private:
-  //   real MN[6][6];
-  // }; // end of struct MTestCastemfiniteStrainRotationMatrix3D
-
-  // // Constructeur
-  // // drot : Matrice de passage élement/global
-  // MTestCastemfiniteStrainRotationMatrix2D::MTestCastemfiniteStrainRotationMatrix2D(const real *const drot)
-  // {
-  //   // Matrice de passage matériau/global
-  //   real a[4];
-  //   // // Premier vecteur
-  //   // a[1,1]
-  //   a[0]=drot[0];
-  //   // a[2,1]
-  //   a[1]=drot[1];
-  //   // Deuxième vecteur :
-  //   //   Produit vectoriel
-  //   // a[1,2]
-  //   a[2]=-a[1];
-  //   // a[2,2]
-  //   a[3]=a[0];
-  //   // Contruction de la matrice de passage N (pour les tenseurs)
-  //   // Première ligne
-  //   MN[0][0]=a[0]*a[0];
-  //   MN[0][1]=a[1]*a[1];
-  //   MN[0][2]=a[0]*a[1];
-  //   // Deuxième ligne
-  //   MN[1][0]=a[2]*a[2];
-  //   MN[1][1]=a[3]*a[3];
-  //   MN[1][2]=a[2]*a[3];
-  //   // Troisième ligne
-  //   MN[2][0]=a[0]*a[2];
-  //   MN[2][1]=a[1]*a[3];
-  //   MN[2][2]=a[0]*a[3]+a[1]*a[2];
-  // } // end of MTestCastemfiniteStrainRotationMatrix2D::MTestCastemfiniteStrainRotationMatrix2D
-
-  // // Calcul de la déformation dans le repère global
-  // // D^g=tN:D^m:N
-  // void
-  // MTestCastemfiniteStrainRotationMatrix2D::rotateStiffnessMatrixBackward(real *const D) const
-  // {
-  //   // matrice N
-  //   real N[4][4];
-  //   for(unsigned short i=0;i!=2;++i){
-  //     for(unsigned short j=0;j!=2;++j){
-  // 	N[i][j] = MN[i][j];
-  //     }
-  //   }
-  //   N[2][0]  = 0.;
-  //   N[2][1]  = 0.;
-  //   N[2][3]  = 0.;
-  //   N[0][2]  = 0.;
-  //   N[1][2]  = 0.;
-  //   N[3][2]  = 0.;
-  //   N[2][2]  = 1.;
-  //   for(unsigned short i=0;i!=2;++i){
-  //     N[3][i] = MN[2][i];
-  //     N[i][3] = MN[i][2];
-  //   }
-  //   N[3][3]  = MN[2][2];
-  //   N[3][0] *= real(2.);
-  //   N[3][1] *= real(2.);
-  //   N[3][2] *= real(2.);
-  //   // matrice temporaire
-  //   using namespace std;
-  //   real t[4][4];
-  //   for(unsigned short i=0;i!=4;++i){
-  //     for(unsigned short j=0;j!=4;++j){
-  // 	t[i][j] = 0.;
-  // 	for(unsigned short k=0;k!=4;++k){
-  // 	  t[i][j] += D[k*4+i]*(N[k][j]);
-  // 	}
-  //     }
-  //   }
-  //   // matrice finale
-  //   for(unsigned short i=0;i!=4;++i){
-  //     for(unsigned short j=0;j!=4;++j){
-  // 	D[j*4+i] = 0.;
-  // 	for(unsigned short k=0;k!=4;++k){
-  // 	  D[j*4+i] += N[k][i]*t[k][j];
-  // 	}
-  //     }
-  //   }
-  // } // end of MTestCastemfiniteStrainRotationMatrix2D::rotateStiffnessMatrixBackward
-
-  // // Constructeur
-  // // drot : Matrice de passage élement/global
-  // MTestCastemfiniteStrainRotationMatrix3D::MTestCastemfiniteStrainRotationMatrix3D(const real *const drot)
-  // {
-  //   // Contruction de la matrice de passage N (pour les tenseurs)
-  //   // Première ligne
-  //   MN[0][0]=drot[0]*drot[0];
-  //   MN[0][1]=drot[1]*drot[1];
-  //   MN[0][2]=drot[2]*drot[2];
-  //   MN[0][5]=drot[1]*drot[2];
-  //   MN[0][4]=drot[2]*drot[0];
-  //   MN[0][3]=drot[0]*drot[1];
-
-  //   // Deuxième ligne
-  //   MN[1][0]=drot[3]*drot[3];
-  //   MN[1][1]=drot[4]*drot[4];
-  //   MN[1][2]=drot[5]*drot[5];
-  //   MN[1][5]=drot[4]*drot[5];
-  //   MN[1][4]=drot[5]*drot[3];
-  //   MN[1][3]=drot[3]*drot[4];
-
-  //   // Troisième ligne
-  //   MN[2][0]=drot[6]*drot[6];
-  //   MN[2][1]=drot[7]*drot[7];
-  //   MN[2][2]=drot[8]*drot[8];
-  //   MN[2][5]=drot[7]*drot[8];
-  //   MN[2][4]=drot[8]*drot[6];
-  //   MN[2][3]=drot[6]*drot[7];
-
-  //   // Quatrième ligne
-  //   MN[5][0]=drot[3]*drot[6];
-  //   MN[5][1]=drot[4]*drot[7];
-  //   MN[5][2]=drot[5]*drot[8];
-  //   MN[5][5]=drot[4]*drot[8]+drot[5]*drot[7];
-  //   MN[5][4]=drot[5]*drot[6]+drot[3]*drot[8];
-  //   MN[5][3]=drot[3]*drot[7]+drot[4]*drot[6];
-
-  //   // Cinquième ligne
-  //   MN[4][0]=drot[6]*drot[0];
-  //   MN[4][1]=drot[7]*drot[1];
-  //   MN[4][2]=drot[8]*drot[2];
-  //   MN[4][5]=drot[7]*drot[2]+drot[8]*drot[1];
-  //   MN[4][4]=drot[8]*drot[0]+drot[6]*drot[2];
-  //   MN[4][3]=drot[6]*drot[1]+drot[7]*drot[0];
-
-  //   // Sixième ligne
-  //   MN[3][0]=drot[0]*drot[3];
-  //   MN[3][1]=drot[1]*drot[4];
-  //   MN[3][2]=drot[2]*drot[5];
-  //   MN[3][5]=drot[1]*drot[5]+drot[2]*drot[4];
-  //   MN[3][4]=drot[2]*drot[3]+drot[0]*drot[5];
-  //   MN[3][3]=drot[0]*drot[4]+drot[1]*drot[3];
-  // } // end of MTestCastemfiniteStrainRotationMatrix3D::MTestCastemfiniteStrainRotationMatrix3D
-
-  // // compute the stiffness matrix in the global space
-  // void
-  // MTestCastemfiniteStrainRotationMatrix3D::rotateStiffnessMatrixBackward(real *const D) const
-  // {
-  //   // matrice N
-  //   real N[6][6];
-  //   for(unsigned short i=0;i!=6;++i){
-  //     for(unsigned short j=0;j!=6;++j){
-  // 	N[i][j] = MN[i][j];
-  //     }
-  //   }
-  //   N[3][0] *= real(2.);
-  //   N[3][1] *= real(2.);
-  //   N[3][2] *= real(2.);
-  //   N[4][0] *= real(2.);
-  //   N[4][1] *= real(2.);
-  //   N[4][2] *= real(2.);
-  //   N[5][0] *= real(2.);
-  //   N[5][1] *= real(2.);
-  //   N[5][2] *= real(2.);
-  //   // matrice temporaire
-  //   real t[6][6];
-  //   for(unsigned short i=0;i!=6;++i){
-  //     for(unsigned short j=0;j!=6;++j){
-  // 	t[i][j] = 0.;
-  // 	for(unsigned short k=0;k!=6;++k){
-  // 	  t[i][j] += D[k*6+i]*(N[k][j]);
-  // 	}
-  //     }
-  //   }
-  //   // matrice finale
-  //   for(unsigned short i=0;i!=6;++i){
-  //     for(unsigned short j=0;j!=6;++j){
-  // 	D[j*6+i] = 0.;
-  // 	for(unsigned short k=0;k!=6;++k){
-  // 	  D[j*6+i] += N[k][i]*t[k][j];
-  // 	}
-  //     }
-  //   }
-  // } // end of MTestCastemfiniteStrainRotationMatrix3D::rotateStiffnessMatrixBackward
+  template<tfel::material::ModellingHypothesis::Hypothesis H>
+  struct MTestCastemComputeFiniteStrainStiffnessTensor<H,mfront::ORTHOTROPIC>
+    : public MTestCastemComputeFiniteStrainOrhtotropicStiffnessTensorBaseII<H>
+  {
+    using Base = MTestCastemComputeFiniteStrainOrhtotropicStiffnessTensorBaseII<H>;
+    static constexpr const auto N =
+      tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+    static constexpr const auto STAC =
+      tfel::material::GetDefaultStiffnessTensorAlterationCharacteristic<H>::value;
+    static void
+    exe(tfel::math::T2toST2View<N,real>& C,
+	const tfel::math::tmatrix<3u,3u,real>& r,
+	const real* const props)
+    {
+      using namespace tfel::material;
+      using TangentOperator = FiniteStrainBehaviourTangentOperatorBase;
+      auto D  = tfel::math::change_basis(Base::template getStiffnessTensor<STAC>(props),
+					 tfel::math::transpose(r));
+      const auto id = tfel::math::tensor<N,real>::Id();
+      const auto s  = tfel::math::stensor<N,real>(real(0));
+      C = convert<TangentOperator::DSIG_DF,
+		  TangentOperator::C_TRUESDELL>(D,id,id,s);
+    } // end of struct MTestCastemComputeFiniteStrainStiffnessTensor
+  };
 
   static tfel::material::ModellingHypothesis::Hypothesis
   getEffectiveModellingHypothesis(const tfel::material::ModellingHypothesis::Hypothesis& h,
 				  const std::string& l,
 				  const std::string& b)
   {
-    using namespace tfel::system;
     using namespace tfel::material;
     using ELM = tfel::system::ExternalLibraryManager;
     if(h==ModellingHypothesis::PLANESTRESS){
@@ -831,145 +371,72 @@ namespace mtest
   void
   CastemFiniteStrainBehaviour::computeElasticStiffness(tfel::math::matrix<real>& Kt,
 						       const tfel::math::vector<real>& mp,
-						       const tfel::math::tmatrix<3u,3u,real>&) const
+						       const tfel::math::tmatrix<3u,3u,real>& r) const
   {
-    using namespace std;
     using namespace tfel::math;
-    tmatrix<3u,3u,real>::size_type i,j;
     const auto h = this->getHypothesis();    
     if(this->stype==0u){
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-	t2tost2<1u,real> De;
+	T2toST2View<1u,real> De(&Kt(0,0));
 	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-						    mfront::ISOTROPIC>::exe(&mp(0),De);
-	for(i=0;i!=3u;++i){
-	  for(j=0;j!=3u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
+						      mfront::ISOTROPIC>::exe(De,&mp(0));
       } else if (h==ModellingHypothesis::AXISYMMETRICAL){
-	t2tost2<2u,real> De;
+	T2toST2View<2u,real> De(&Kt(0,0));
 	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::AXISYMMETRICAL,
-						    mfront::ISOTROPIC>::exe(&mp(0),De);
-	for(i=0;i!=4u;++i){
-	  for(j=0;j!=5u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
+						    mfront::ISOTROPIC>::exe(De,&mp(0));
       } else if (h==ModellingHypothesis::PLANESTRESS){
-	t2tost2<2u,real> De;
+	T2toST2View<2u,real> De(&Kt(0,0));
 	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::PLANESTRESS,
-						    mfront::ISOTROPIC>::exe(&mp(0),De);
-	for(i=0;i!=4u;++i){
-	  for(j=0;j!=5u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
+						    mfront::ISOTROPIC>::exe(De,&mp(0));
       } else if (h==ModellingHypothesis::PLANESTRAIN){
-	t2tost2<2u,real> De;
+	T2toST2View<2u,real> De(&Kt(0,0));
 	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::PLANESTRAIN,
-						    mfront::ISOTROPIC>::exe(&mp(0),De);
-	for(i=0;i!=4u;++i){
-	  for(j=0;j!=5u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
+						    mfront::ISOTROPIC>::exe(De,&mp(0));
       } else if (h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
-	t2tost2<2u,real> De;
+	T2toST2View<2u,real> De(&Kt(0,0));
 	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::GENERALISEDPLANESTRAIN,
-						    mfront::ISOTROPIC>::exe(&mp(0),De);
-	for(i=0;i!=4u;++i){
-	  for(j=0;j!=5u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
+						    mfront::ISOTROPIC>::exe(De,&mp(0));
       } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
-	t2tost2<3u,real> De;
+	T2toST2View<3u,real> De(&Kt(0,0));
 	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::TRIDIMENSIONAL,
-						    mfront::ISOTROPIC>::exe(&mp(0),De);
-	for(i=0;i!=6u;++i){
-	  for(j=0;j!=9u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
+						    mfront::ISOTROPIC>::exe(De,&mp(0));
       } else {
-	throw(runtime_error("CastemFiniteStrainBehaviour::computeElasticMatrix: "
-			    "unsupported hypothesis"));
+	throw(std::runtime_error("CastemFiniteStrainBehaviour::computeElasticMatrix: "
+				 "unsupported hypothesis"));
       }
     } else if(this->stype==1u){
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      	t2tost2<1u,real> De;
+      	T2toST2View<1u,real> De(&Kt(0,0));
       	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
-						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
-      	for(i=0;i!=3u;++i){
-      	  for(j=0;j!=3u;++j){
-      	    Kt(i,j) = De(i,j);
-      	  }
-      	}
+						      mfront::ORTHOTROPIC>::exe(De,r,&mp(0));
       } else if (h==ModellingHypothesis::AXISYMMETRICAL){
-      	t2tost2<2u,real> De;
+      	T2toST2View<2u,real> De(&Kt(0,0));
       	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::AXISYMMETRICAL,
-						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
-//      	MTestCastemfiniteStrainRotationMatrix2D m(&drot(0,0));
-#pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
-      	for(i=0;i!=4u;++i){
-      	  for(j=0;j!=5u;++j){
-      	    Kt(i,j) = De(i,j);
-      	  }
-      	}
+						      mfront::ORTHOTROPIC>::exe(De,r,&mp(0));
       } else if (h==ModellingHypothesis::PLANESTRESS){
-      	t2tost2<2u,real> De;
+      	T2toST2View<2u,real> De(&Kt(0,0));
       	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::PLANESTRESS,
-						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
-//      	MTestCastemfiniteStrainRotationMatrix2D m(&drot(0,0));
-#pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
-      	for(i=0;i!=4u;++i){
-      	  for(j=0;j!=5u;++j){
-      	    Kt(i,j) = De(i,j);
-      	  }
-      	}
+						    mfront::ORTHOTROPIC>::exe(De,r,&mp(0));
       } else if (h==ModellingHypothesis::PLANESTRAIN){
-      	t2tost2<2u,real> De;
+      	T2toST2View<2u,real> De(&Kt(0,0));
       	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::PLANESTRAIN,
-						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
-//      	MTestCastemfiniteStrainRotationMatrix2D m(&drot(0,0));
-#pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
-      	for(i=0;i!=4u;++i){
-      	  for(j=0;j!=5u;++j){
-      	    Kt(i,j) = De(i,j);
-      	  }
-      	}
+						    mfront::ORTHOTROPIC>::exe(De,r,&mp(0));
       } else if (h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
-      	t2tost2<2u,real> De;
+      	T2toST2View<2u,real> De(&Kt(0,0));
       	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::GENERALISEDPLANESTRAIN,
-						    mfront::ORTHOTROPIC>::exe(&mp(0),De);
-//      	MTestCastemfiniteStrainRotationMatrix2D m(&drot(0,0));
-#pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
-      	for(i=0;i!=4u;++i){
-      	  for(j=0;j!=5u;++j){
-      	    Kt(i,j) = De(i,j);
-      	  }
-      	}
+						    mfront::ORTHOTROPIC>::exe(De,r,&mp(0));
       } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
-      	t2tost2<3u,real> De;
+      	T2toST2View<3u,real> De(&Kt(0,0));
       	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::TRIDIMENSIONAL,
-						      mfront::ORTHOTROPIC>::exe(&mp(0),De);
-	//      	MTestCastemfiniteStrainRotationMatrix3D m(&drot(0,0));
-#pragma message("to be implemented : m.rotateStiffnessMatrixBackward(&De(0,0));")
-      	for(i=0;i!=6u;++i){
-      	  for(j=0;j!=9u;++j){
-      	    Kt(i,j) = De(i,j);
-      	  }
-      	}
+						      mfront::ORTHOTROPIC>::exe(De,r,&mp(0));
       } else {
-	throw(runtime_error("CastemFiniteStrainBehaviour::computeElasticMatrix: "
-			    "unsupported modelling hypothesis"));
+	throw(std::runtime_error("CastemFiniteStrainBehaviour::computeElasticMatrix: "
+				 "unsupported modelling hypothesis"));
       }
     } else {
-      throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
-			  "invalid behaviour type (neither isotropic or orthotropic)"));
+      throw(std::runtime_error("CastemFiniteStrainBehaviour::integrate: "
+			       "invalid behaviour type (neither isotropic or orthotropic)"));
     }
-
   }
 
   void

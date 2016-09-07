@@ -27,6 +27,6 @@ namespace tfel{
 			       "invalid dimension"));
     }
 
-  } // end of namespace tfel
+  } // end of namespace math
 
-} // end of namespace math
+} // end of namespace tfel

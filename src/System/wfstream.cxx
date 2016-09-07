@@ -85,7 +85,7 @@ namespace tfel
 	  systemCall::throwSystemError(msg,errno);
 	}
       }
-      shared_ptr<int>::operator=(shared_ptr<int>(new int(-1)));
+      shared_ptr<int>::operator=(std::make_shared<int>(-1));
     } // end of wfstream::close
 
     int

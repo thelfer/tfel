@@ -39,6 +39,6 @@ namespace tfel
 
     FctSignalHandler::~FctSignalHandler() = default;
 
-  } // end of system
+  } // end of namespace system
   
-} // end of tfel
+} // end of namespace tfel

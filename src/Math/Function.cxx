@@ -44,8 +44,7 @@ namespace tfel
     namespace parser
     {
 
-      Function::~Function()
-      {} // end of Function::~Function
+      Function::~Function() = default;
 
       void
       StandardFunctionBase::throwUnimplementedDifferentiateFunctionException()

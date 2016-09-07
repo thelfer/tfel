@@ -1334,7 +1334,7 @@ namespace mfront{
       auto s = std::vector<std::string>{};
       while(this->current->value!="]"){
 	this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
-	const auto t = [this](){
+	const auto t = [this]() -> std::string {
 	  if(this->current->flag==tfel::utilities::Token::String){
 	    return this->current->value.substr(1,this->current->value.size()-2);
 	  }

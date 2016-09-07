@@ -25,9 +25,8 @@ namespace tfel
 
     namespace parser{
 
-      IntegerExpr::~IntegerExpr()
-      {} // end of IntegerExpr::~IntegerExpr
-
+      IntegerExpr::~IntegerExpr() = default;
+      
     }
     
     IntegerEvaluator::TNegation::TNegation(std::shared_ptr<IntegerEvaluator::TExpr> e)
@@ -53,8 +52,7 @@ namespace tfel
       this->expr->reduce();
     }
 
-    IntegerEvaluator::TNegation::~TNegation()
-    {}
+    IntegerEvaluator::TNegation::~TNegation() = default;
 
     IntegerEvaluator::TNegation::Negation::Negation(const std::shared_ptr<tfel::math::parser::IntegerExpr> e)
       : expr(e)
@@ -73,8 +71,7 @@ namespace tfel
       return std::shared_ptr<IntegerExpr>(new Negation(this->expr->clone(v)));
     }
     
-    IntegerEvaluator::TNegation::Negation::~Negation()
-    {} // end of IntegerEvaluator::TNegation::Negation::~Negation()
+    IntegerEvaluator::TNegation::Negation::~Negation() = default;
     
     IntegerEvaluator::TOperator::TOperator(const std::string& t_)
       : type(t_)
@@ -143,8 +140,7 @@ namespace tfel
     {} // end of IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>::BinaryOperation 
       
     template<typename Op>
-    IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>::~BinaryOperation()
-    {} // end of IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>::~BinaryOperation()
+    IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>::~BinaryOperation() = default;
       
     template<typename Op>
     int
@@ -199,14 +195,12 @@ namespace tfel
 			  "invalid operation type  '"+op->getOperatorType()+"'"));
     } // end of IntegerEvaluator::TBinaryOperation::analyse(void)
     
-    IntegerEvaluator::TBinaryOperation::~TBinaryOperation()
-    {} // end of IntegerEvaluator::TBinaryOperation::~TBinaryOperation()
+    IntegerEvaluator::TBinaryOperation::~TBinaryOperation() = default;
 
     IntegerEvaluator::TVariable::TVariable(const std::string& name,
 					   IntegerEvaluator & e)
       : vars(e.variables), pos(e.registerVariable(name))
     {} // end of IntegerEvaluator::TVariable::TVariable
-
 
     IntegerEvaluator::TVariable::TVariable(const std::vector<int>::size_type ppos,
 					   std::vector<int>& vvars)
@@ -283,16 +277,14 @@ namespace tfel
     std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TGroup::analyse()
     {
-      using namespace std;
       if(this->subExpr.size()!=1u){
-	string msg("TGroup::analyse : tgroup has not been reduced.");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("TGroup::analyse: "
+				 "tgroup has not been reduced."));
       }
       return (this->subExpr[0])->analyse();
     }
     
-    IntegerEvaluator::TGroup::~TGroup()
-    {}
+    IntegerEvaluator::TGroup::~TGroup() = default;
 
     void
     IntegerEvaluator::TGroup::reduce(const std::string& op)
@@ -310,8 +302,8 @@ namespace tfel
 	    next     = p+1;
 	    if(p==this->subExpr.begin()){
 	      if(op!="-"){
-		string msg("TGroup::reduce group began with an operator "+op);
-		throw(runtime_error(msg));
+		throw(std::runtime_error("TGroup::reduce: group began "
+					 "with an operator "+op));
 	      } else {
 		if(next==this->subExpr.end()){
 		  string msg("TGroup::reduce group ends by operator "+op);

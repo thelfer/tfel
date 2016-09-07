@@ -30,15 +30,12 @@ namespace tfel
       EvaluatorFunctionBase::differentiate(const std::vector<double>::size_type,
 					   const std::vector<double>&) const
       {
-	using namespace std;
-	string msg("EvaluatorFunctionBase::differentiate : ");
-	msg += "unimplemented feature";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("EvaluatorFunctionBase::differentiate: "
+				 "unimplemented feature"));
       } // end of EvaluatorFunctionBase::differentiate
 
-      EvaluatorFunctionBase::~EvaluatorFunctionBase()
-      {} // end of EvaluatorFunctionBase::~EvaluatorFunctionBase
-
+      EvaluatorFunctionBase::~EvaluatorFunctionBase() = default;
+      
       EvaluatorFunction1VBase::EvaluatorFunction1VBase(const std::shared_ptr<Expr> e)
 	: expr(e)
       {} // end of EvaluatorFunction1VBase::EvaluatorFunction1VBase
@@ -49,8 +46,7 @@ namespace tfel
 	this->expr->checkCyclicDependency(names);
       } // end of EvaluatorFunction1VBase::checkCyclicDependency
 
-      EvaluatorFunction1VBase::~EvaluatorFunction1VBase()
-      {} // end of EvaluatorFunction1VBase::~EvaluatorFunction1VBase()
+      EvaluatorFunction1VBase::~EvaluatorFunction1VBase() = default;
 
       EvaluatorFunction2VBase::EvaluatorFunction2VBase(const std::shared_ptr<Expr> e1_,
 						       const std::shared_ptr<Expr> e2_)
@@ -70,8 +66,7 @@ namespace tfel
 	mergeVariablesNames(names,e1_vars);
       } // end of EvaluatorFunction2VBase::checkCyclicDependency
 
-      EvaluatorFunction2VBase::~EvaluatorFunction2VBase()
-      {} // end of EvaluatorFunction2VBase::~EvaluatorFunction2VBase()
+      EvaluatorFunction2VBase::~EvaluatorFunction2VBase() = default;
 
       EvaluatorFunction1P1V::EvaluatorFunction1P1V(const EvaluatorProxyFunctionPtr1P1V f_,
 						   const int n_,
@@ -117,8 +112,7 @@ namespace tfel
 							       this->expr->createFunctionByChangingParametersIntoVariables(v,params,pos)));
       } // end of EvaluatorFunction1P1V::createFunctionByChangingParametersIntoVariables
 
-      EvaluatorFunction1P1V::~EvaluatorFunction1P1V()
-      {} // end of EvaluatorFunction2P1V::~EvaluatorFunction2P1V()
+      EvaluatorFunction1P1V::~EvaluatorFunction1P1V() = default;
 
       EvaluatorFunction2P1V::EvaluatorFunction2P1V(const EvaluatorProxyFunctionPtr2P1V f_,
 						   const int n_,
@@ -166,8 +160,7 @@ namespace tfel
 							       this->expr->createFunctionByChangingParametersIntoVariables(v,params,pos)));
       } // end of EvaluatorFunction2P1V::createFunctionByChangingParametersIntoVariables
 
-      EvaluatorFunction2P1V::~EvaluatorFunction2P1V()
-      {} // end of EvaluatorFunction2P1V::~EvaluatorFunction2P1V()
+      EvaluatorFunction2P1V::~EvaluatorFunction2P1V() = default;
 
       EvaluatorFunction1P2V::EvaluatorFunction1P2V(const EvaluatorProxyFunctionPtr1P2V f_,
 						   const int n_,
@@ -218,8 +211,7 @@ namespace tfel
 							       this->e2->createFunctionByChangingParametersIntoVariables(v,params,pos)));
       } // end of EvaluatorFunction1P2V::createFunctionByChangingParametersIntoVariables
 
-      EvaluatorFunction1P2V::~EvaluatorFunction1P2V()
-      {} // end of EvaluatorFunction2P2V::~EvaluatorFunction2P2V()
+      EvaluatorFunction1P2V::~EvaluatorFunction1P2V() = default;
 
       EvaluatorFunction2P2V::EvaluatorFunction2P2V(const EvaluatorProxyFunctionPtr2P2V f_,
 						   const int n_,
@@ -275,8 +267,7 @@ namespace tfel
 							       this->e2->createFunctionByChangingParametersIntoVariables(v,params,pos)));
       } // end of EvaluatorFunction2P2V::createFunctionByChangingParametersIntoVariables
 
-      EvaluatorFunction2P2V::~EvaluatorFunction2P2V()
-      {} // end of EvaluatorFunction2P2V::~EvaluatorFunction2P2V()
+      EvaluatorFunction2P2V::~EvaluatorFunction2P2V() = default;
 
       double
       EvaluatorFunctionWrapper<0u>::apply(const EvaluatorFunctionWrapper<0u>::type f,

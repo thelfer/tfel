@@ -77,8 +77,7 @@ namespace tfel
 	this->expr->getParametersNames(p);
       } // end of Negation::getParametersNames
 
-      Negation::~Negation()
-      {} // end of Negation::~Negation()
+      Negation::~Negation() = default;
 
     } // end of namespace parser
 

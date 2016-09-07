@@ -35,6 +35,7 @@ namespace mfront{
   static void
   writeUMATArguments(std::ostream& out,
 		     const BehaviourDescription::BehaviourType& t,
+		     const AbaqusInterface::FiniteStrainStrategy fss,
 		     const bool f)
   {
     if(f){
@@ -111,7 +112,9 @@ namespace mfront{
 	  << " const abaqus::AbaqusReal *const DROT,\n"
 	  << "       abaqus::AbaqusReal *const PNEWDT,\n"
 	  << " const abaqus::AbaqusReal *const,\n";
-      if(t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      if((t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
+	 ((t==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	  (fss==AbaqusInterfaceBase::NATIVEFINITESTRAINSTRATEGY))){
 	out << " const abaqus::AbaqusReal *const F0,\n"
 	    << " const abaqus::AbaqusReal *const F1,\n";
       } else {
@@ -429,10 +432,10 @@ namespace mfront{
 
     for(const auto h: mh){
       if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	 (this->fss==UNDEFINEDSTRATEGY)){
+	 ((this->fss==UNDEFINEDSTRATEGY)||(this->fss==NATIVEFINITESTRAINSTRATEGY))){
 	this->writeUMATSmallStrainFunction(out,mb,name,h);
       } else if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		(this->fss!=UNDEFINEDSTRATEGY)){
+		((this->fss!=UNDEFINEDSTRATEGY)&&(this->fss!=NATIVEFINITESTRAINSTRATEGY))){
 	if(this->fss==FINITEROTATIONSMALLSTRAIN){
 	  this->writeUMATFiniteRotationSmallStrainFunction(out,mb,name,h);
 	} else {
@@ -462,7 +465,7 @@ namespace mfront{
     std::string dv0,dv1,sig,statev,nstatev;
     const auto btype = mb.getBehaviourType();
     out << "static void\n" << name << "_base" << this->getFunctionNameForHypothesis("",h);
-    writeUMATArguments(out,btype,false);
+    writeUMATArguments(out,btype,this->fss,false);
     out << "{\n";
     if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
       if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
@@ -677,7 +680,7 @@ namespace mfront{
     this->writeUMATFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,true);
+    writeUMATArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,this->fss,true);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -703,7 +706,7 @@ namespace mfront{
     this->writeUMATFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,true);
+    writeUMATArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,this->fss,true);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -810,6 +813,9 @@ namespace mfront{
 	  << "std::cout << std::endl;\n"
 	  << "}\n";
     }
+    if(this->fss==NATIVEFINITESTRAINSTRATEGY){
+	out << "abaqus::AbaqusFiniteStrain::applyNativeFiniteStrainCorrection(DDSDDE,DFGRD1,STRESS,*NTENS);\n";
+    }
     out << "}\n\n";
   }
   
@@ -828,7 +834,7 @@ namespace mfront{
     this->writeUMATFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
+    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,this->fss,true);
     out << "{\n"
 	<< "using namespace abaqus;\n"
 	<< "AbaqusReal eto[6];\n"
@@ -998,7 +1004,9 @@ namespace mfront{
       out << "static_cast<void>(ABAQUSDR);\n";
     };
     if((mb.getSymmetryType()==mfront::ORTHOTROPIC)||
-       (mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+       ((mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
+	((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	 (this->fss!=NATIVEFINITESTRAINSTRATEGY)))){
       do_nothing();
       return;
     }
@@ -1019,8 +1027,8 @@ namespace mfront{
     }
     // rotate variables
     out << "const tfel::math::tmatrix<3u,3u,real> abaqus_dr = {ABAQUSDR[0],ABAQUSDR[1],ABAQUSDR[2],\n"
-      "                                                   ABAQUSDR[3],ABAQUSDR[4],ABAQUSDR[5],\n"
-      "                                                   ABAQUSDR[6],ABAQUSDR[7],ABAQUSDR[8]};\n";
+      "                                                        ABAQUSDR[3],ABAQUSDR[4],ABAQUSDR[5],\n"
+      "                                                        ABAQUSDR[6],ABAQUSDR[7],ABAQUSDR[8]};\n";
     for(const auto& v:d.getPersistentVariables()){
       const auto flag = this->getTypeFlag(v.type);
       if((flag==SupportedTypes::Stensor)||

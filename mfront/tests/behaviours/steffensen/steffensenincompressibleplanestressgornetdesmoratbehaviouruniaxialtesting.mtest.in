@@ -8,6 +8,7 @@
 @AccelerationAlgorithm 'Steffensen';
 @ModellingHypothesis 'PlaneStress';
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatincompressibleplanestressgornetdesmoratbehaviour';
+@StressEpsilon 1.e-8;
 
 @Real 'C_1' '0.183';
 @Real 'C_2' '0.0034';
@@ -27,5 +28,5 @@
 
 @Times {0.,1 in 20};
 
-@Test<function> 'SYY' '2*(FYY**2 - 1/FYY)*(H1*exp(H3*(FYY**2+2/FYY-3)**2)+3*H2/(FYY*sqrt(2*FYY+1/FYY**2)))' 1.e-8;
+@Test<function> 'SYY' '2*(FYY**2 - 1/FYY)*(H1*exp(H3*(FYY**2+2/FYY-3)**2)+3*H2/(FYY*sqrt(2*FYY+1/FYY**2)))' 1.e-7;
 @Test<function> {'SXX':'0','SZZ':'0.','SXY':'0.'} 1.e-7;

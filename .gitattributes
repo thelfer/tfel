@@ -94,6 +94,7 @@ bindings/python/tfel/utilities.cxx -text
 bindings/python/tfel/vector.cxx -text
 /bootstrap.sh -text
 /check_all.sh -text
+/cland-tidy.md -text
 /clean.sh -text
 cmake/Makefile.am -text
 cmake/ToolChain-i586-mingw32msvc.cmake -text

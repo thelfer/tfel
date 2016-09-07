@@ -41,8 +41,7 @@ namespace tfel
       return "geometricDiscretization : invalid number of elements";
     } // end of GeometricDiscretizationInvalidNumberOfElements::what
 
-    GeometricDiscretizationInvalidNumberOfElements::~GeometricDiscretizationInvalidNumberOfElements() noexcept
-    {} // end of GeometricDiscretizationInvalidNumberOfElements::~GeometricDiscretizationInvalidNumberOfElements
+    GeometricDiscretizationInvalidNumberOfElements::~GeometricDiscretizationInvalidNumberOfElements() noexcept = default;
 
   } // end of namespace math
 

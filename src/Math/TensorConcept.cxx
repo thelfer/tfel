@@ -24,8 +24,7 @@ namespace tfel{
       return "invalid index used in tensor access";
     } // end of TensorInvalidIndexException::what
 
-    TensorInvalidIndexException::~TensorInvalidIndexException() noexcept
-    {} // end of TensorInvalidIndexException::~TensorInvalidIndexException
+    TensorInvalidIndexException::~TensorInvalidIndexException() noexcept = default;
 
     const char*
     TensorInvalidIndexesException::what() const noexcept
@@ -33,8 +32,7 @@ namespace tfel{
       return "invalid index used in tensor access";
     } // end of TensorInvalidIndexesException::what() const
 
-    TensorInvalidIndexesException::~TensorInvalidIndexesException() noexcept
-    {} // end of TensorInvalidIndexesException::~TensorInvalidIndexesException() throw
+    TensorInvalidIndexesException::~TensorInvalidIndexesException() noexcept = default;
     
   } // end of namespace math
 

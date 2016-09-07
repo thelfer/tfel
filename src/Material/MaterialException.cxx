@@ -20,8 +20,7 @@ namespace tfel{
   
   namespace material {
 
-    MaterialException::~MaterialException() noexcept
-    {} // end of MaterialException::~MaterialException
+    MaterialException::~MaterialException() noexcept = default;
 
     DivergenceException::DivergenceException(const char* const msg){
       std::cerr << "DivergenceException::DivergenceException: " << msg << std::endl;
@@ -35,10 +34,9 @@ namespace tfel{
     DivergenceException::what() const noexcept
     {
       return "DivergenceException";
-    } // end of DivergenceException::~DivergenceException
+    } // end of DivergenceException::what
     
-    DivergenceException::~DivergenceException() noexcept
-    {} // end of DivergenceException::~DivergenceException
+    DivergenceException::~DivergenceException() noexcept = default;
 
     OutOfBoundsException::OutOfBoundsException(std::string m)
       : msg(std::forward<std::string>(m))
@@ -50,8 +48,7 @@ namespace tfel{
       return this->msg.c_str();
     } // end of DivergenceException::~DivergenceException
 
-    OutOfBoundsException::~OutOfBoundsException() noexcept
-    {} // end of OutOfBoundsException::~OutOfBoundsException
+    OutOfBoundsException::~OutOfBoundsException() noexcept = default;
 
   } // end of namespace material
 

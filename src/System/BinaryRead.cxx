@@ -14,7 +14,7 @@
 #include"TFEL/System/BinaryRead.hxx"
 
 #define TFEL_SYSTEM_BINARY_READ_SRC(X)                                 \
-    void binary_read(const int f,X& v)                                 \
+    void binary_read(const int f,X& v)			               \
     {                                                                  \
       if(::read(f,static_cast<void*>(&v),sizeof(X))==-1){              \
 	systemCall::throwSystemError("BinaryReader<"#X">::exe",errno); \

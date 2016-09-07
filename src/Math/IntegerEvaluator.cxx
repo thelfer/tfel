@@ -35,8 +35,7 @@ namespace tfel
   namespace math
   {
 
-    IntegerEvaluator::TExpr::~TExpr()
-    {} // end of IntegerEvaluator::IntegerEvaluator::~TExpr()
+    IntegerEvaluator::TExpr::~TExpr() = default;
 
     void
     IntegerEvaluator::checkNotEndOfExpression(const std::string& method,
@@ -326,20 +325,16 @@ namespace tfel
       return pos;
     } // end of IntegerEvaluator::registerVariable
 
-    IntegerEvaluator::~IntegerEvaluator()
-    {}
+    IntegerEvaluator::~IntegerEvaluator() = default;
 
     void
     IntegerEvaluator::setVariableValue(const std::string& vname,
 				       const int value)
     {
-      using namespace std;
-      map<string,vector<int>::size_type>::iterator p;
-      p = this->positions.find(vname);
+      auto p = this->positions.find(vname);
       if(p==this->positions.end()){
-	string msg("IntegerEvaluator::setVariableValue : variable '");
-	msg += vname + "' does not exist";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("IntegerEvaluator::setVariableValue: "
+				 "variable '"+vname+"' does not exist"));
       }
       this->variables[p->second] = value;
     }//end of IntegerEvaluator::setVariableValue
@@ -367,30 +362,23 @@ namespace tfel
     int
     IntegerEvaluator::getValue() const
     {
-      using namespace std;
       if(this->expr.get()==nullptr){
-	string msg("IntegerEvaluator::getValue : ");
-	msg += "uninitialized expression.";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("IntegerEvaluator::getValue: "
+				 "uninitialized expression."));
       }
-      int v = this->expr->getValue();
-      return v;
+      return this->expr->getValue();
     }//end of IntegerEvaluator::getValue
 
     std::vector<std::string>
     IntegerEvaluator::getVariablesNames() const
     {
-      using namespace std;
-      typedef map<vector<int>::size_type,string>::value_type MVType;
-      vector<string> res;
-      map<string,vector<int>::size_type>::const_iterator p;
-      map<vector<int>::size_type,string>::const_iterator p2;
-      map<vector<int>::size_type,string> vnames;
-      for(p=this->positions.begin();p!=this->positions.end();++p){
-	vnames.insert(MVType(p->second,p->first));
+      auto res = std::vector<std::string>{};
+      auto vnames = std::map<std::vector<int>::size_type,std::string>{};
+      for(const auto& p : this->positions){
+	vnames.insert({p.second,p.first});
       }
-      for(p2=vnames.begin();p2!=vnames.end();++p2){
-	res.push_back(p2->second);
+      for(const auto& n : vnames){
+	res.push_back(n.second);
       }
       return res;
     } // end of IntegerEvaluator::getVariablesNames

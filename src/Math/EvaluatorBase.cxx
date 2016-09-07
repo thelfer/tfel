@@ -90,7 +90,7 @@ namespace tfel
 	  std::copy(b,p2,std::back_inserter(word));
 	  res.push_back(word);
 	}
-	res.push_back(w);
+	res.emplace_back(w);
 	++p2;
 	b=p2;
       }
@@ -123,13 +123,13 @@ namespace tfel
 	      ++p2;
 	      if(p2!=p2e){
 		if(*p2=='*'){
-		  res.push_back("**");
+		  res.emplace_back("**");
 		  ++p2;
 		} else {
-		  res.push_back("*");
+		  res.emplace_back("*");
 		}
 	      } else {
-		res.push_back("*");
+		res.emplace_back("*");
 	      }
 	      b=p2;
 	    } else if(*p2=='|'){
@@ -140,7 +140,7 @@ namespace tfel
 	      throw_if(p2==p2e,"unexpected end of string");
 	      throw_if(*p2!='|',"expected character '|' "
 		       "(read '"+std::string(1u,*p2)+"')");
-	      res.push_back("||");
+	      res.emplace_back("||");
 	      ++p2;
 	      b=p2;
 	    } else if(*p2=='&'){
@@ -151,7 +151,7 @@ namespace tfel
 	      throw_if(p2==p2e,"unexpected end of string");
 	      throw_if(*p2!='&',"expected character "
 		       "'&&' (read '"+std::string(1u,*p2)+"')");
-	      res.push_back("&&");
+	      res.emplace_back("&&");
 	      ++p2;
 	      b=p2;
 	    } else if(*p2=='>'){
@@ -161,13 +161,13 @@ namespace tfel
 	      ++p2;
 	      if(p2!=p2e){
 		if(*p2=='='){
-		  res.push_back(">=");
+		  res.emplace_back(">=");
 		  ++p2;
 		} else {
-		  res.push_back(">");
+		  res.emplace_back(">");
 		}
 	      } else {
-		res.push_back(">");
+		res.emplace_back(">");
 	      }
 	      b=p2;
 	    } else if(*p2=='<'){
@@ -177,13 +177,13 @@ namespace tfel
 	      ++p2;
 	      if(p2!=p2e){
 		if(*p2=='='){
-		  res.push_back("<=");
+		  res.emplace_back("<=");
 		  ++p2;
 		} else {
-		  res.push_back("<");
+		  res.emplace_back("<");
 		}
 	      } else {
-		res.push_back("<");
+		res.emplace_back("<");
 	      }
 	      b=p2;
 	    } else if(*p2=='='){
@@ -193,13 +193,13 @@ namespace tfel
 	      ++p2;
 	      if(p2!=p2e){
 		if(*p2=='='){
-		  res.push_back("==");
+		  res.emplace_back("==");
 		  ++p2;
 		} else {
-		  res.push_back("=");
+		  res.emplace_back("=");
 		}
 	      } else {
-		res.push_back("=");
+		res.emplace_back("=");
 	      }
 	      b=p2;
 	    } else if(*p2=='/'){
@@ -236,8 +236,7 @@ namespace tfel
 	EvaluatorBase::splitAtTokenSeperator(this->tokens);
       } // end of EvaluatorBase::analyse
 
-      EvaluatorBase::~EvaluatorBase()
-      {} // end of EvaluatorBase::~EvaluatorBase()
+      EvaluatorBase::~EvaluatorBase() = default;
 
     } // end of namespace parser
 

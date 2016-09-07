@@ -100,13 +100,9 @@ namespace tfel
     {
       using namespace std;
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      typedef map<string,HINSTANCE__*>::value_type MVType;
-      map<string,HINSTANCE__*>::const_iterator p;
 #else 
-      typedef map<string,void *>::value_type MVType;
-      map<string,void*>::const_iterator p;
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */      
-      p=this->librairies.find(name);
+      auto p=this->librairies.find(name);
       if(p==librairies.end()){
 	// this library has not been 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
@@ -130,7 +126,7 @@ namespace tfel
 	} else if((lib==nullptr)&&(b)){
 	  return lib;
 	}
-	this->librairies.insert(MVType(name,lib));
+	this->librairies.insert({name,lib});
 	return lib;
       }
       return p->second;
@@ -613,7 +609,7 @@ namespace tfel
 	throw(runtime_error(msg));
       }
       for(p=res;p!=res+nb;++p){
-	vars.push_back(*p);
+	vars.emplace_back(*p);
       }
     } // end of ExternalLibraryManager::getCastemFunctionVariables
 
@@ -801,10 +797,7 @@ namespace tfel
       if(b==-1){
 	return false;
       }
-      if(b==1){
-	return true;
-      }
-      return false;
+      return (b==1);
     } // end of ExternalLibraryManager::isUMATBehaviourUsableInPurelyImplicitResolution
 
 

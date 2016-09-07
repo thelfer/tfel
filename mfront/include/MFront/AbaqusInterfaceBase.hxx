@@ -42,6 +42,7 @@ namespace mfront{
      */
     enum FiniteStrainStrategy{
       UNDEFINEDSTRATEGY,
+      NATIVEFINITESTRAINSTRATEGY,
       FINITEROTATIONSMALLSTRAIN,
       MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN
     }; // end of enum FiniteStrainStrategy

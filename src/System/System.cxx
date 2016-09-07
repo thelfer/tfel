@@ -410,7 +410,7 @@ namespace tfel
       while((p=readdir(dir))!=nullptr){
 	if((strcmp(p->d_name,".")!=0)&&
 	   (strcmp(p->d_name,"..")!=0)){
-	  o.push_back(p->d_name);
+	  o.emplace_back(p->d_name);
 	}
       }
       vector<string>::const_iterator po;
@@ -600,7 +600,7 @@ namespace tfel
       using namespace std;
       char *name  = nullptr;
       size_t size = 16u;
-      while(1){
+      while(true){
 	name = static_cast<char *>(realloc(name,size));
 	if(name==nullptr){
 	  throw(SystemError("systemCall::getHostName : out of memory"));

@@ -23,8 +23,7 @@ namespace tfel{
       return "RunTimeProperties exception : RunTimeProperties does not match";
     } // end of RuntimeCheckFailure::what
 
-    RuntimeCheckFailure::~RuntimeCheckFailure() noexcept
-    {} // end of RuntimeCheckFailure::~RuntimeCheckFailure
+    RuntimeCheckFailure::~RuntimeCheckFailure() noexcept = default;
 
   } // end of namespace math
 } // end of namespace tfel

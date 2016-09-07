@@ -99,7 +99,11 @@ namespace mtest
       for(vector<real>::size_type id=0;id!=this->sta_du1.size();++id){
 	if((abs(this->sta_du2[id])>it_eps)&&
 	   (abs(this->sta_du1[id])>it_eps)){
-	  u1[id] =  this->sta_u1[id]+1/(1/(this->sta_du2[id])-1/(this->sta_du1[id]));
+	  const auto i1 = 1/(this->sta_du2[id]);
+	  const auto i2 = 1/(this->sta_du1[id]);
+	  if(abs(i1-i2)>it_eps){
+	    u1[id] =  this->sta_u1[id]+1/(i1-i2);
+	  }
 	}
       }
     }
