@@ -4,6 +4,7 @@
 
 ---
 nocite: |
+	@asali_numerical_2016@
 	@hure_intergranular_2016@
 	@saouma16:_effec@
 	@honorio_multiscale_2016@
