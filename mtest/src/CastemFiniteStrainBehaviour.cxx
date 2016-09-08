@@ -74,9 +74,9 @@ namespace mtest
   template<tfel::material::ModellingHypothesis::Hypothesis H>
   struct MTestCastemComputeFiniteStrainStiffnessTensor<H,mfront::ISOTROPIC>
   {
-    static constexpr const auto N =
+    static constexpr const unsigned short N =
       tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-    static constexpr const auto STAC =
+    static constexpr const tfel::material::StiffnessTensorAlterationCharacteristic STAC =
       tfel::material::GetDefaultStiffnessTensorAlterationCharacteristic<H>::value;
     static void
     exe(tfel::math::T2toST2View<N,real>& C,const real* const props)
@@ -152,9 +152,9 @@ namespace mtest
     : public MTestCastemComputeFiniteStrainOrhtotropicStiffnessTensorBaseII<H>
   {
     using Base = MTestCastemComputeFiniteStrainOrhtotropicStiffnessTensorBaseII<H>;
-    static constexpr const auto N =
+    static constexpr const unsigned short N =
       tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-    static constexpr const auto STAC =
+    static constexpr const tfel::material::StiffnessTensorAlterationCharacteristic STAC =
       tfel::material::GetDefaultStiffnessTensorAlterationCharacteristic<H>::value;
     static void
     exe(tfel::math::T2toST2View<N,real>& C,
