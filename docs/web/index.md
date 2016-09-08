@@ -4,7 +4,8 @@
 
 <div id="slideshow">
   <ul class="slides">
-    <li><img src="img/AbaqusFLD.png" width="620" height="320" alt="Simulation of a Punching test" /></li>
+	<li><img src="img/VeRCoRs.png" width="620" height="320" alt="Simulation of the VeRCoRs mock-up of a nuclear building" /></li>
+  <li><img src="img/AbaqusFLD.png" width="620" height="320" alt="Simulation of a Punching test" /></li>
     <li><img src="img/BrittleFracturePhaseField.png" width="620" height="320" alt="Phase field modelling of brittle fracture" /></li>
     <li><img src="img/FuelRod-ddif2.png" width="620" height="320" alt="Fuel pellet cracking" /></li>
     <li><img src="img/172_5pc.png" width="620" height="320" alt="Polycrystals computation" /></li>

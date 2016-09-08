@@ -119,6 +119,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/epx.png                                           \
 	   ./img/UnilateralMazars.svg                              \
 	   ./img/FiniteStrainTangentOperatorConvertion.svg         \
+	   ./img/VeRCoRs.png                                       \
 	   ./media/epx1.mp4                                        \
 	   ./media/epx2.mp4                                        \
 	   ./media/abaqus-explicit.mp4                             \
