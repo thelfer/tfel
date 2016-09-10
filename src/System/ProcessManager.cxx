@@ -723,7 +723,7 @@ namespace tfel
     {
       auto pid = this->createProcess(cmd,in,out,e);
       const auto p  = static_cast<const ProcessManager&>(*this).findProcess(pid);
-      assert(p!=this->processes.rcend());
+      assert(p!=this->processes.rend());
       auto cond = p->isRunning;
       while(cond){
 	cond = p->isRunning;

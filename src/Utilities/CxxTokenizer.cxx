@@ -89,7 +89,7 @@ namespace tfel{
 	if(b){throw(std::runtime_error("CxxTokenizer::parseStream: "+m));}
       };
       auto get_line = [&throw_if](std::istream& file,
-				  Token::size_type& ln){
+				  Token::size_type& ln) -> std::string{
 	auto line = std::string{};
 	auto c = true;
 	while(c){

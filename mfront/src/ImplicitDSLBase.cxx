@@ -140,7 +140,7 @@ namespace mfront{
   void ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation(const Hypothesis h)
   {
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    Modifier mts = [](const MaterialPropertyInput& i){
+    Modifier mts = [](const MaterialPropertyInput& i) -> std::string{
       if((i.type==MaterialPropertyInput::TEMPERATURE)||
 	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
 	return "this->"+i.name + "+theta*(this->d" + i.name+')';
@@ -152,7 +152,7 @@ namespace mfront{
 				 "unsupported input type for variable '"+i.name+"'"));
       }
     };
-    Modifier ets = [](const MaterialPropertyInput& i){
+    Modifier ets = [](const MaterialPropertyInput& i) -> std::string {
       if((i.type==MaterialPropertyInput::TEMPERATURE)||
 	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
 	return "this->"+i.name + "+this->d" + i.name;
@@ -1859,11 +1859,11 @@ namespace mfront{
     if((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false))&&
        (this->mb.getElasticSymmetryType()==ISOTROPIC)&&
        (this->mb.areElasticMaterialPropertiesDefined())){
-      auto add_lv = [](BehaviourDescription& bd,
-		       const std::string& t,
-		       const std::string& n,
-		       const std::string& g,
-		       const std::string d){
+      auto add_lv = [&h](BehaviourDescription& bd,
+			 const std::string& t,
+			 const std::string& n,
+			 const std::string& g,
+			 const std::string d){
 	auto r = bd.checkVariableExistence(n,"Parameter",false);
 	if(!r.first){
 	  VariableDescription v(t,n,1u,0u);

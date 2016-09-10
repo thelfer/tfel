@@ -60,28 +60,30 @@ consequence, those interfaces are not compatible "out of the box":
 i.e. one cannot restart a simulation with `Abaqus/Explicit` after a
 computation with `Abaqus/Standard` without precautions.
 
-## Pitfalls
-
 `MFront` strives to provides behaviours that can be used "just-like"
-other `UMAT` and `VUMAT` subroutines, but there are in some cases
-(namely finite strain orthotropic behaviours) where we were obliged to
-make some unusual choices that are described in this document for
-various reasons:
+other `UMAT` and `VUMAT` subroutines, but there are some cases (namely
+finite strain orthotropic behaviours) where we were obliged to make
+some unusual choices that are described in this document for various
+reasons:
 
 - ensure the compatibility between the `Abaqus/Standard` and
   `Abaqus/Explicit`.
 - have optimal performances.
 
-There are also cases of misuses of the generated libraries that can be
-*not* prevented by `MFront`. The most important ones are the following:
+## Pitfalls
 
-- For `Abaqus/Standard`, small strain isotropic behaviour cannot be
-  used in finite strain analyses "out of the box". **One shall use one
-  of the finite strain strategies available** (See the
+There are also cases of misuses of the generated libraries that can
+*not* be prevented by `MFront`. The most important ones are the
+following:
+
+- For `Abaqus/Standard`, small strain isotropic behaviour can be used
+  in finite strain analyses "out of the box". However, if a behaviour
+  is meant to be used only for finite strain analyses, we recommend
+  using **one one of the finite strain strategies available** (See the
   `@AbaqusFiniteStrainStrategy` keyword and the section dedicated to
   finite strain strategies below). The `Native` finite strain strategy
   will use the `Abaqus/Standard` functionalities to integrate the
-  behaviour in "rate-form". This strategy adds a correction to the
+  behaviour in "rate-form" and also adds a correction to the
   tangent operator (see below for details). *The user must then be
   aware that when using the `Native` finite strain strategy, results
   will depend on the fact that an orientation is defined or
@@ -90,13 +92,17 @@ There are also cases of misuses of the generated libraries that can be
 	  all internal state variables are rotated appropriately.
 	- the corotationnal frame defined through the polar decomposition
       of the deformation gradient if an orientation is defined.
+  Futhermore, behaviours using the `Native` finite strain strategy (or
+  no strategy at all) can not be ported to other solver. If
+  portability is an issue, consider using one of the other finite
+  strain strategy (see below).
 - For `Abaqus/Standard`, the usage of the `Native` finite strain
   strategy *without orientation* is **not** compatible with
   `Abaqus/Explicit` because the latter always uses a corotationnal
   frame to integrate the behaviour in rate-form (and not the the
-  Jauman rate).
-- For `Abaqus/Standard`, the number of field variables can not be
-  checked.
+  Jauman rate as `Abaqus/Standard` without orientation).
+- For `Abaqus/Standard`, the number of field variables (corresponding
+  to external state variables in `MFront`) can not be checked.
 - For `Abaqus/Standard`, one shall *not* combine the `MFront`
   orthotropy policy with the definition of an orientation.
 - For `Abaqus/Standard`, one have to use the `MFront` orthotropy
@@ -221,7 +227,7 @@ compile_cpp = [cppCmd,
 
 Here is an extract of the generated input file for a `MFront`
 behaviour named `Plasticity` for the plane strain modelling
-hypothesis:
+hypothesis for the `Abaqus/Standard` solver:
 
 ~~~~{.pure}
 ** Example for the 'PlaneStrain' modelling hypothesis
@@ -291,9 +297,10 @@ For finite strain analyses, small strain behaviours can be written in
 rate form. Without orientation, the behaviour in integrated in the
 Jauman framework. If an orientation, the behaviour is integrated in a
 corotational basis. This is different from `Abaqus/Explicit` which
-uses a corotational basis in each cases. Indeed, for behaviours
-written in rate form, `Abaqus/Standard` and `Abaqus/Explicit` are only
-compatible if an orientation is defined.
+uses a corotational basis in each cases. Indeed, *for behaviours
+written in rate form* and using the `Native` finite strain strategy,
+`Abaqus/Standard` and `Abaqus/Explicit` are only compatible if an
+orientation is defined.
 
 ## Finite strain behaviours and orthotropy management policy
 
@@ -334,8 +341,8 @@ described in this paragraph.
 ### The `Native` finite strain strategy
 
 Among them is the `Native` finite strain strategy which relies on
-build-in `Abaqus/Standard` facilities to integrate the behaviours written in
-rate form. The `Native` finite strain strategy will use:
+build-in `Abaqus/Standard` facilities to integrate the behaviours
+written in rate form. The `Native` finite strain strategy will use:
   - the Jauman rate if no orientation is defined.
   - the corotationnal frame if an orientation is defined.
 
@@ -390,11 +397,6 @@ available (natively or via `MFront`) in `Cast3M`, `Code_Aster`,
 
 ## Consistent tangent operator for finite strain behaviours
 
-!["Relation between tangent operators"](img/FiniteStrainTangentOperatorConvertion.svg "Supported relations between tangent operators in `MFront`")
-
-Most information reported here are extracted from the book of
-Belytschko (@belytschko_nonlinear_2000).
-
 ### Isotropic case
 
 The "Abaqus User Subroutines Reference Guide" gives indicates that the
@@ -414,6 +416,95 @@ By definition, \(\CtJ\) satisfies:
 \overset{\circ}{\tenseur{\tau}}^{J}=\CtJ\,\colon\tenseur{D}
 \]
 where \(\tenseur{D}\) is the rate of deformation.
+
+### Orthotropic case
+
+The orthotropic case, when an orientation is defined, is much more
+complex and poorly documented. Much of what follows is a matter of
+deduction and numerical experiments and need to be strengthened.
+
+For non-linear geometric analyses, `Abaqus/Standard` uses an
+hypoelastic based on a corotational stress formulation fully described
+in the Abaqus manual and the book of Belytschko
+[see @belytschko_nonlinear_2000].
+
+The deformation gradient is given in the corotational framework. The
+output of the `UMAT` subroutine is the corotational stress
+\(\ctsigma\) defined by:
+
+\[
+\tsigma=\tns{R}\,.\,\ctsigma\,\transpose{\tns{R}}
+\]
+
+where \(\tns{R}\) is the rotation matrix obtained by the polar
+decomposition of the deformation gradient \(\tns{F}\).
+
+For consistency, one expects the appropriate tangent operator to be be
+defined by:
+
+\[
+\ctau=\Frac{1}{J}\cCtau\,\colon\,\cD
+\]
+
+\(\cCtau\) can be directly related to the moduli associated to the
+corotational Cauchy stress \(\cC\). \(\cC\) is then related to the
+to the moduli associated to the Green-Nagdi stress rate \(\CsG\):
+\(\cC\) is obtained by rotationg \(\CsG\) in the corotational
+framework.
+
+# The `Abaqus/Explicit` interface
+
+Using `Abaqus/Explicit`, computations can be performed using single
+(the default) or double precision. The user thus must choose the
+appropriate generic file for calling `MFront` behaviours:
+
+- the `vumat-sp.cpp` file is used for single precision.
+- the `vumat-dp.cpp` file is used for double precision.
+
+*For double precision computation, the user must pass the `double`
+`both` command line arguments to `Abaqus/Explicit` so that both the
+packaging steps and the resolution are performed in double precision*
+(by default, if only the `double` command line argument is passed to
+`Abaqus/Explicit`, the packaging step is performed in single precision
+and the resolution is performed in double precision).
+
+**It is important to carefully respect those instructions: otherwise,
+`Abaqus/Explicit` will crash due to a memory corruption (segmentation
+error)**.
+
+## Finite strain strategies
+
+As for `Abaqus/Standard`, user may choose one of the finite strain
+strategies available through `MFront`.
+
+### The `Native` finite strain strategy
+
+The `Native` finite strain strategy relies on build-in
+`Abaqus/Explicit` facilities to integrate the behaviours written in
+rate form, i.e. it will integrate the behaviour using a corotationnal
+approach based on the polar decomposition of the deformation gradient.
+
+### Recommended finite strain strategies
+
+The other finite strain strategies described for `Abaqus/Standard` are
+also available for the `Abaqus/Explicit` interface:
+
+- 'FiniteRotationSmallStrain'
+- 'MieheApelLambrechtLogarithmicStrain'
+
+## Energies
+
+<!-- - Internal energy per unit mass -->
+<!-- - Dissipated inelastic energy per unit mass -->
+
+# Appendix
+
+!["Relation between tangent operators"](img/FiniteStrainTangentOperatorConvertion.svg "Supported relations between tangent operators in `MFront`")
+
+Most information reported here are extracted from the book of
+Belytschko (@belytschko_nonlinear_2000).
+
+## Relations between tangent operator
 
 #### Relation with the moduli associated to the Truesdell rate of the Cauchy Stress $\CsT$
 
@@ -530,41 +621,6 @@ Such perturbation leads to the following rate of deformation:
 The spin rate \(\delta\,\tenseur{W}\) associated with
 \(\tns{\delta F}^{kl}\) is null.
 
-### Orthotropic case
-
-The orthotropic case, when an orientation is defined, is much more
-complex and poorly documented. Much of what follows is a matter of
-deduction and numerical experiments and need to be strengthened.
-
-For non-linear geometric analyses, `Abaqus/Standard` uses an
-hypoelastic based on a corotational stress formulation fully described
-in the Abaqus manual and the book of Belytschko
-[see @belytschko_nonlinear_2000].
-
-The deformation gradient is given in the corotational framework. The
-output of the `UMAT` subroutine is the corotational stress
-\(\ctsigma\) defined by:
-
-\[
-\tsigma=\tns{R}\,.\,\ctsigma\,\transpose{\tns{R}}
-\]
-
-where \(\tns{R}\) is the rotation matrix obtained by the polar
-decomposition of the deformation gradient \(\tns{F}\).
-
-For consistency, one expects the appropriate tangent operator to be be
-defined by:
-
-\[
-\ctau=\Frac{1}{J}\cCtau\,\colon\,\cD
-\]
-
-\(\cCtau\) can be directly related to the moduli associated to the
-corotational Cauchy stress \(\cC\). \(\cC\) is then related to the
-to the moduli associated to the Green-Nagdi stress rate \(\CsG\):
-\(\cC\) is obtained by rotationg \(\CsG\) in the corotational
-framework.
-
 #### Relation with the moduli associated to the Truesdell rate of the Cauchy Stress $\CsT$
 
 The moduli associated with Truesdell rate of the Cauchy Stress can be
@@ -582,51 +638,6 @@ of the \(\Cspin\) moduli is awkward and is not currently supported by
 
 The previous relation can be used to relate to other moduli. See the
 section describing the isotropic case for details.
-
-# The `Abaqus/Explicit` interface
-
-Using `Abaqus/Explicit`, computations can be performed using single
-(the default) or double precision. The user thus must choose the
-appropriate generic file for calling `MFront` behaviours:
-
-- the `vumat-sp.cpp` file is used for single precision.
-- the `vumat-dp.cpp` file is used for double precision.
-
-*For double precision computation, the user must pass the `double`
-`both` command line arguments to `Abaqus/Explicit` so that both the
-packaging steps and the resolution are performed in double precision*
-(by default, if only the `double` command line argument is passed to
-`Abaqus/Explicit`, the packaging step is performed in single precision
-and the resolution is performed in double precision).
-
-**It is important to carefully respect those instructions: otherwise,
-`Abaqus/Explicit` will crash due to a memory corruption (segmentation
-error)**.
-
-## Finite strain strategies
-
-As for `Abaqus/Standard`, user may choose one of the finite strain
-strategies available through `MFront`.
-
-### The `Native` finite strain strategy
-
-The `Native` finite strain strategy relies on build-in
-`Abaqus/Explicit` facilities to integrate the behaviours written in
-rate form, i.e. it will integrate the behaviour using a corotationnal
-approach based on the polar decomposition of the deformation gradient.
-
-### Recommended finite strain strategies
-
-The other finite strain strategies described for `Abaqus/Standard` are
-also available for the `Abaqus/Explicit` interface:
-
-- 'FiniteRotationSmallStrain'
-- 'MieheApelLambrechtLogarithmicStrain'
-
-## Energies
-
-<!-- - Internal energy per unit mass -->
-<!-- - Dissipated inelastic energy per unit mass -->
 
 # Biblography
 

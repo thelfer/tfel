@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_STENSOR_IXX_
-#define LIB_TFEL_STENSOR_IXX_ 
+#ifndef _LIB_TFEL_MATH_STENSOR_IXX_
+#define _LIB_TFEL_MATH_STENSOR_IXX_ 
 
 #include <cmath>
 #include <iterator>
@@ -33,8 +33,6 @@
 namespace tfel{
 
   namespace math {
-
-#ifndef DOXYGENSPECIFIC
 
     namespace internals{
       template<unsigned short N>
@@ -1313,7 +1311,7 @@ namespace tfel{
 				       >::cond,
       stensor<N,T> >::type
     stensor<N,T>::buildFromVectorsSymmetricDiadicProduct(const VectorType&  v1,
-								 const VectorType2& v2)
+							 const VectorType2& v2)
     {
       stensor<N,T> s;
       tfel::math::internals::BuildStensorFromVectorsSymmetricDiadicProduct<N>::exe(s,v1,v2);
@@ -1858,10 +1856,8 @@ namespace tfel{
 	  (s1[2]+s1[1])*s2[5]+cste*s1[3]*s2[4]+cste*s1[4]*s2[3]+s1[5]*s2[2]+s1[5]*s2[1]};
       }
     
-#endif /* LIB_TFEL_STENSOR_IXX_ */
-
   } //end of namespace math
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_STENSOR_IXX_ */
+#endif /* _LIB_TFEL_MATH_STENSOR_IXX_ */

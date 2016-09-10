@@ -18,6 +18,7 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Castem/Castem.hxx"
 #include"MFront/MFrontLogStream.hxx"
@@ -31,216 +32,6 @@
 
 namespace mtest
 {
-
-  struct MTestCastemRotationMatrix2D
-  {
-    MTestCastemRotationMatrix2D(const real *const,
-			      const real *const);
-    // compute the stiffness matrix in the global space
-    void rotateStiffnessMatrixBackward(real *const) const;
-  private:
-    real MN[3][3];
-  }; // end of struct MTestCastemRotationMatrix2D
-  
-  struct MTestCastemRotationMatrix3D
-  {
-    
-    MTestCastemRotationMatrix3D(const real *const,
-			      const real *const);
-    // compute the stiffness matrix in the global space
-    void rotateStiffnessMatrixBackward(real *const) const;
-  private:
-    real MN[6][6];
-  }; // end of struct MTestCastemRotationMatrix3D
-
-  // Constructeur
-  // drot : Matrice de passage élement/global
-  MTestCastemRotationMatrix2D::MTestCastemRotationMatrix2D(const real *const V,
-						       const real *const drot)
-  {
-    // Matrice de passage matériau/global
-    real a[4];
-    // // Premier vecteur
-    // a[1,1]
-    a[0]=drot[0]*V[0]+drot[3]*V[1];
-    // a[2,1]
-    a[1]=drot[1]*V[0]+drot[4]*V[1];
-    // Deuxième vecteur :
-    //   Produit vectoriel
-    // a[1,2]
-    a[2]=-a[1];
-    // a[2,2]
-    a[3]=a[0];
-    // Contruction de la matrice de passage N (pour les tenseurs)
-    // Première ligne
-    MN[0][0]=a[0]*a[0];
-    MN[0][1]=a[1]*a[1];
-    MN[0][2]=a[0]*a[1];
-    // Deuxième ligne
-    MN[1][0]=a[2]*a[2];
-    MN[1][1]=a[3]*a[3];
-    MN[1][2]=a[2]*a[3];
-    // Troisième ligne
-    MN[2][0]=a[0]*a[2];
-    MN[2][1]=a[1]*a[3];
-    MN[2][2]=a[0]*a[3]+a[1]*a[2];
-  } // end of MTestCastemRotationMatrix2D::MTestCastemRotationMatrix2D
-
-  // Calcul de la déformation dans le repère global
-  // D^g=tN:D^m:N
-  void
-  MTestCastemRotationMatrix2D::rotateStiffnessMatrixBackward(real *const D) const
-  {
-    // matrice N
-    real N[4][4];
-    for(unsigned short i=0;i!=2;++i){
-      for(unsigned short j=0;j!=2;++j){
-	N[i][j] = MN[i][j];
-      }
-    }
-    N[2][0]  = 0.;
-    N[2][1]  = 0.;
-    N[2][3]  = 0.;
-    N[0][2]  = 0.;
-    N[1][2]  = 0.;
-    N[3][2]  = 0.;
-    N[2][2]  = 1.;
-    for(unsigned short i=0;i!=2;++i){
-      N[3][i] = MN[2][i];
-      N[i][3] = MN[i][2];
-    }
-    N[3][3]  = MN[2][2];
-    N[3][0] *= real(2.);
-    N[3][1] *= real(2.);
-    N[3][2] *= real(2.);
-    // matrice temporaire
-    using namespace std;
-    real t[4][4];
-    for(unsigned short i=0;i!=4;++i){
-      for(unsigned short j=0;j!=4;++j){
-	t[i][j] = 0.;
-	for(unsigned short k=0;k!=4;++k){
-	  t[i][j] += D[k*4+i]*(N[k][j]);
-	}
-      }
-    }
-    // matrice finale
-    for(unsigned short i=0;i!=4;++i){
-      for(unsigned short j=0;j!=4;++j){
-	D[j*4+i] = 0.;
-	for(unsigned short k=0;k!=4;++k){
-	  D[j*4+i] += N[k][i]*t[k][j];
-	}
-      }
-    }
-  } // end of MTestCastemRotationMatrix2D::rotateStiffnessMatrixBackward
-
-  // Constructeur
-  // drot : Matrice de passage élement/global
-  MTestCastemRotationMatrix3D::MTestCastemRotationMatrix3D(const real *const V,
-						       const real *const drot)
-  {
-    // Matrice de passage matériau/global
-    real a[9];
-    
-    // Premier vecteur
-    a[0]=drot[0]*V[0]+drot[3]*V[1]+drot[6]*V[2];
-    a[1]=drot[1]*V[0]+drot[4]*V[1]+drot[7]*V[2];
-    a[2]=drot[2]*V[0]+drot[5]*V[1]+drot[8]*V[2];
-    // Deuxième vecteur
-    a[3]=drot[0]*V[3]+drot[3]*V[4]+drot[6]*V[5];
-    a[4]=drot[1]*V[3]+drot[4]*V[4]+drot[7]*V[5];
-    a[5]=drot[2]*V[3]+drot[5]*V[4]+drot[8]*V[5];
-    // Troisième vecteur :
-    //   produit vectoriel des deux premiers
-    a[6]=a[1]*a[5]-a[4]*a[2];
-    a[7]=a[2]*a[3]-a[5]*a[0];
-    a[8]=a[0]*a[4]-a[3]*a[1];
-    // Contruction de la matrice de passage N (pour les tenseurs)
-    // Première ligne
-    MN[0][0]=a[0]*a[0];
-    MN[0][1]=a[1]*a[1];
-    MN[0][2]=a[2]*a[2];
-    MN[0][5]=a[1]*a[2];
-    MN[0][4]=a[2]*a[0];
-    MN[0][3]=a[0]*a[1];
-    // Deuxième ligne
-    MN[1][0]=a[3]*a[3];
-    MN[1][1]=a[4]*a[4];
-    MN[1][2]=a[5]*a[5];
-    MN[1][5]=a[4]*a[5];
-    MN[1][4]=a[5]*a[3];
-    MN[1][3]=a[3]*a[4];
-    // Troisième ligne
-    MN[2][0]=a[6]*a[6];
-    MN[2][1]=a[7]*a[7];
-    MN[2][2]=a[8]*a[8];
-    MN[2][5]=a[7]*a[8];
-    MN[2][4]=a[8]*a[6];
-    MN[2][3]=a[6]*a[7];
-    // Quatrième ligne
-    MN[5][0]=a[3]*a[6];
-    MN[5][1]=a[4]*a[7];
-    MN[5][2]=a[5]*a[8];
-    MN[5][5]=a[4]*a[8]+a[5]*a[7];
-    MN[5][4]=a[5]*a[6]+a[3]*a[8];
-    MN[5][3]=a[3]*a[7]+a[4]*a[6];
-    // Cinquième ligne
-    MN[4][0]=a[6]*a[0];
-    MN[4][1]=a[7]*a[1];
-    MN[4][2]=a[8]*a[2];
-    MN[4][5]=a[7]*a[2]+a[8]*a[1];
-    MN[4][4]=a[8]*a[0]+a[6]*a[2];
-    MN[4][3]=a[6]*a[1]+a[7]*a[0];
-    // Sixième ligne
-    MN[3][0]=a[0]*a[3];
-    MN[3][1]=a[1]*a[4];
-    MN[3][2]=a[2]*a[5];
-    MN[3][5]=a[1]*a[5]+a[2]*a[4];
-    MN[3][4]=a[2]*a[3]+a[0]*a[5];
-    MN[3][3]=a[0]*a[4]+a[1]*a[3];
-  } // end of MTestCastemRotationMatrix3D::MTestCastemRotationMatrix3D
-
-  // compute the stiffness matrix in the global space
-  void
-  MTestCastemRotationMatrix3D::rotateStiffnessMatrixBackward(real *const D) const
-  {
-    // matrice N
-    real N[6][6];
-    for(unsigned short i=0;i!=6;++i){
-      for(unsigned short j=0;j!=6;++j){
-	N[i][j] = MN[i][j];
-      }
-    }
-    N[3][0] *= real(2.);
-    N[3][1] *= real(2.);
-    N[3][2] *= real(2.);
-    N[4][0] *= real(2.);
-    N[4][1] *= real(2.);
-    N[4][2] *= real(2.);
-    N[5][0] *= real(2.);
-    N[5][1] *= real(2.);
-    N[5][2] *= real(2.);
-    // matrice temporaire
-    real t[6][6];
-    for(unsigned short i=0;i!=6;++i){
-      for(unsigned short j=0;j!=6;++j){
-	t[i][j] = 0.;
-	for(unsigned short k=0;k!=6;++k){
-	  t[i][j] += D[k*6+i]*(N[k][j]);
-	}
-      }
-    }
-    // matrice finale
-    for(unsigned short i=0;i!=6;++i){
-      for(unsigned short j=0;j!=6;++j){
-	D[j*6+i] = 0.;
-	for(unsigned short k=0;k!=6;++k){
-	  D[j*6+i] += N[k][i]*t[k][j];
-	}
-      }
-    }
-  } // end of MTestCastemRotationMatrix3D::rotateStiffnessMatrixBackward
 
   static tfel::material::ModellingHypothesis::Hypothesis
   getEffectiveModellingHypothesis(const tfel::material::ModellingHypothesis::Hypothesis& h,
@@ -429,7 +220,6 @@ namespace mtest
     using namespace std;
     using namespace tfel::math;
     using castem::CastemComputeStiffnessTensor;
-    tmatrix<3u,3u,real>::size_type i,j;
     const auto h = this->getHypothesis();
     if(this->stype==0u){
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
@@ -437,61 +227,37 @@ namespace mtest
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
 				   ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 				   castem::ISOTROPIC,false>::exe(De,&mp(0));
-	for(i=0;i!=3u;++i){
-	  for(j=0;j!=3u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
+	ST2toST2View<1u,real>(&Kt(0,0)) = De;
       } else if (h==ModellingHypothesis::AXISYMMETRICAL){
 	st2tost2<2u,real> De;
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
 				   ModellingHypothesis::AXISYMMETRICAL,
 				   castem::ISOTROPIC,false>::exe(De,&mp(0));
-	for(i=0;i!=4u;++i){
-	  for(j=0;j!=4u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
+	ST2toST2View<2u,real>(&Kt(0,0)) = De;
       } else if (h==ModellingHypothesis::PLANESTRESS){
 	st2tost2<2u,real> De;
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
 				   ModellingHypothesis::PLANESTRESS,
 				   castem::ISOTROPIC,false>::exe(De,&mp(0));
-	for(i=0;i!=4u;++i){
-	  for(j=0;j!=4u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
+	ST2toST2View<2u,real>(&Kt(0,0)) = De;
       } else if (h==ModellingHypothesis::PLANESTRAIN){
 	st2tost2<2u,real> De;
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
 				   ModellingHypothesis::PLANESTRAIN,
 				   castem::ISOTROPIC,false>::exe(De,&mp(0));
-	for(i=0;i!=4u;++i){
-	  for(j=0;j!=4u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
+	ST2toST2View<2u,real>(&Kt(0,0)) = De;
       } else if (h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
 	st2tost2<2u,real> De;
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
 				   ModellingHypothesis::GENERALISEDPLANESTRAIN,
 				   castem::ISOTROPIC,false>::exe(De,&mp(0));
-	for(i=0;i!=4u;++i){
-	  for(j=0;j!=4u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
+	ST2toST2View<2u,real>(&Kt(0,0)) = De;
       } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
 	st2tost2<3u,real> De;
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
 				   ModellingHypothesis::TRIDIMENSIONAL,
 				   castem::ISOTROPIC,false>::exe(De,&mp(0));
-	for(i=0;i!=6u;++i){
-	  for(j=0;j!=6u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
+	ST2toST2View<3u,real>(&Kt(0,0)) = De;
       } else {
 	throw(runtime_error("CastemSmallStrainBehaviour::integrate: "
 			    "unsupported hypothesis"));
@@ -502,83 +268,37 @@ namespace mtest
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
 				   ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 				   castem::ORTHOTROPIC,false>::exe(De,&mp(0));
-	for(i=0;i!=3u;++i){
-	  for(j=0;j!=3u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
+	ST2toST2View<1u,real>(&Kt(0,0)) = De;
       } else if (h==ModellingHypothesis::AXISYMMETRICAL){
 	st2tost2<2u,real> De;
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
-				   ModellingHypothesis::AXISYMMETRICAL,
-				   castem::ORTHOTROPIC,false>::exe(De,&mp(0));
-	De(3,3) /= 2; // On passe en format castem
-	MTestCastemRotationMatrix2D m(&mp(7),&drot(0,0));
-	m.rotateStiffnessMatrixBackward(&De(0,0));
-	for(i=0;i!=4u;++i){
-	  for(j=0;j!=4u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
-	UmatNormaliseTangentOperator::exe(&Kt(0,0),Kt,2u);
+				     ModellingHypothesis::AXISYMMETRICAL,
+				     castem::ORTHOTROPIC,false>::exe(De,&mp(0));
+	ST2toST2View<2u,real>(&Kt(0,0)) = change_basis(De,drot);
       } else if (h==ModellingHypothesis::PLANESTRESS){
 	st2tost2<2u,real> De;
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
 				   ModellingHypothesis::PLANESTRESS,
 				   castem::ORTHOTROPIC,false>::exe(De,&mp(0));
-	De(3,3) /= 2; // On passe en format castem
-	MTestCastemRotationMatrix2D m(&mp(4),&drot(0,0));
-	m.rotateStiffnessMatrixBackward(&De(0,0));
-	for(i=0;i!=4u;++i){
-	  for(j=0;j!=4u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
-	UmatNormaliseTangentOperator::exe(&Kt(0,0),Kt,2u);
+	ST2toST2View<2u,real>(&Kt(0,0)) = change_basis(De,drot);
       } else if (h==ModellingHypothesis::PLANESTRAIN){
 	st2tost2<2u,real> De;
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
 				   ModellingHypothesis::PLANESTRAIN,
 				   castem::ORTHOTROPIC,false>::exe(De,&mp(0));
-	De(3,3) /= 2; // On passe en format castem
-	MTestCastemRotationMatrix2D m(&mp(7),&drot(0,0));
-	m.rotateStiffnessMatrixBackward(&De(0,0));
-	for(i=0;i!=4u;++i){
-	  for(j=0;j!=4u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
-	UmatNormaliseTangentOperator::exe(&Kt(0,0),Kt,2u);
+	ST2toST2View<2u,real>(&Kt(0,0)) = change_basis(De,drot);
       } else if (h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
 	st2tost2<2u,real> De;
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
 				   ModellingHypothesis::GENERALISEDPLANESTRAIN,
 				   castem::ORTHOTROPIC,false>::exe(De,&mp(0));
-	De(3,3) /= 2; // On passe en format castem
-	MTestCastemRotationMatrix2D m(&mp(7),&drot(0,0));
-	m.rotateStiffnessMatrixBackward(&De(0,0));
-	for(i=0;i!=4u;++i){
-	  for(j=0;j!=4u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
-	UmatNormaliseTangentOperator::exe(&Kt(0,0),Kt,2u);
+	ST2toST2View<2u,real>(&Kt(0,0)) = change_basis(De,drot);
       } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
 	st2tost2<3u,real> De;
 	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
 				   ModellingHypothesis::TRIDIMENSIONAL,
 				   castem::ORTHOTROPIC,false>::exe(De,&mp(0));
-	MTestCastemRotationMatrix3D m(&mp(9),&drot(0,0));
-	De(3,3) /= 2; // On passe en format castem
-	De(4,4) /= 2; // On passe en format castem
-	De(5,5) /= 2; // On passe en format castem
-	m.rotateStiffnessMatrixBackward(&De(0,0));
-	for(i=0;i!=6u;++i){
-	  for(j=0;j!=6u;++j){
-	    Kt(i,j) = De(i,j);
-	  }
-	}
-	UmatNormaliseTangentOperator::exe(&Kt(0,0),Kt,3u);
+	ST2toST2View<3u,real>(&Kt(0,0)) = change_basis(De,drot);
       } else {
 	throw(std::runtime_error("CastemSmallStrainBehaviour::integrate : "
 				 "unsupported hypothesis"));

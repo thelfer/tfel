@@ -292,7 +292,7 @@ namespace mfront{
       if(b){throw(std::runtime_error("ModelDSLCommon::treatFunction: "+m));}
     };
     auto isStaticMemberName = [](const ModelDescription& d,
-				 const std::string& n){
+				 const std::string& n) -> bool{
       for(const auto& v : d.staticMemberNames){
 	if(v==n){
 	  return true;
@@ -301,7 +301,7 @@ namespace mfront{
       return false;
     };
     auto isMemberName = [](const ModelDescription& d,
-			   const std::string& n){
+			   const std::string& n) -> bool{
       for(const auto& v : d.memberNames){
 	if(v==n){
 	  return true;
