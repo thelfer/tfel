@@ -14,6 +14,7 @@
 #ifndef LIB_MTEST_SINGLESTRUCTURESCHEME_HXX_
 #define LIB_MTEST_SINGLESTRUCTURESCHEME_HXX_
 
+#include"TFEL/Utilities/Data.hxx"
 #include"TFEL/Material/OutOfBoundsPolicy.hxx"
 #include"MTest/Config.hxx"
 #include"MTest/Types.hxx"
@@ -30,30 +31,35 @@ namespace mtest{
   struct MTEST_VISIBILITY_EXPORT SingleStructureScheme
     : public SchemeBase
   {
+    using Parameters = tfel::utilities::Data;
     //! default constructor
     SingleStructureScheme();
     /*!
      * \brief set the behaviour
-     * \param[in] i : interface
-     * \param[in] l : library name
-     * \param[in] f : function
+     * \param[in] i: interface
+     * \param[in] l: library name
+     * \param[in] f: function
+     * \param[in] d: parameters
      */
     virtual void
     setBehaviour(const std::string&,
 		 const std::string&,
-		 const std::string&);
+		 const std::string&,
+		 const Parameters& = Parameters());
     /*!
      * \brief set the behaviour
-     * \param[in] w : behaviour wrapper
-     * \param[in] i : interface
-     * \param[in] l : library name
-     * \param[in] f : function
+     * \param[in] w: behaviour wrapper
+     * \param[in] i: interface
+     * \param[in] l: library name
+     * \param[in] f: function
+     * \param[in] d: parameters
      */
     virtual void
     setBehaviour(const std::string&,
 		 const std::string&,
 		 const std::string&,
-		 const std::string&);
+		 const std::string&,
+		 const Parameters&  = Parameters());
     /*!
      * \brief define a material property
      * \param[in] n     : evolution name

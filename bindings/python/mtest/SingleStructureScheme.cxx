@@ -172,27 +172,51 @@ SingleStructureScheme_setInternalStateVariableInitialValue2(mtest::SingleStructu
   }
 }
 
+static void
+SingleStructureScheme_setBehaviour(mtest::SingleStructureScheme& s,
+				   const std::string& i,
+				   const std::string& l,
+				   const std::string& f){
+  s.setBehaviour(i,l,f);
+}
+
+static void
+SingleStructureScheme_setBehaviour2(mtest::SingleStructureScheme& s,
+				    const std::string& w,
+				    const std::string& i,
+				    const std::string& l,
+				    const std::string& f){
+  s.setBehaviour(w,i,l,f);
+}
+
 void declareSingleStructureScheme();
 
 void declareSingleStructureScheme()
 {
   using namespace mtest;
+  using Parameters = SingleStructureScheme::Parameters;
   void (SingleStructureScheme::* ptr1)(const std::string&,
 				       const std::string&,
-				       const std::string&) =
+				       const std::string&,
+				       const Parameters&) =
     &SingleStructureScheme::setBehaviour;
   void (SingleStructureScheme::* ptr2)(const std::string&,
 				       const std::string&,
 				       const std::string&,
-				       const std::string&) =
+				       const std::string&,
+				       const Parameters&) =
     &SingleStructureScheme::setBehaviour;
   boost::python::class_<SingleStructureScheme,boost::noncopyable,
 			boost::python::bases<SchemeBase>>("SingleStructureScheme",
 							  boost::python::no_init)
-    .def("setBehaviour",ptr1,
+    .def("setBehaviour",ptr1)
+    .def("setBehaviour",ptr2)
+    .def("setBehaviour",SingleStructureScheme_setBehaviour,
 	 "This method declares the behaviour used for the "
 	 "test.\n"
-	 "* The first parameter (string) specify the interface "
+	 "* The first parameter (string) specify a wrapper "
+	 "aroung the behaviour.\n"
+	 "* The second parameter (string) specify the interface "
 	 "used by the behaviour. Supported interfaces are:\n"
 	 "- 'umat'\n"
 	 "- 'cyrano'\n"
@@ -200,7 +224,18 @@ void declareSingleStructureScheme()
 	 "* The second parameter (string) is the path to the "
 	 "dynamic library which implement the selected behaviour.\n"
 	 "* The third parameter (string) is the name of the function.")
-    .def("setBehaviour",ptr2)
+    .def("setBehaviour",SingleStructureScheme_setBehaviour2,
+	 "This method declares the behaviour used for the "
+	 "test.\n"
+	 "* The first parameter (string) specify the interface "
+	 "used by the behaviour. Supported interfaces are:\n"
+	 "- 'umat'\n"
+	 "- 'cyrano'\n"
+	 "- 'aster'\n"
+	 "- 'abaqus'\n"
+	 "* The second parameter (string) is the path to the "
+	 "dynamic library which implement the selected behaviour.\n"
+	 "* The third parameter (string) is the name of the function.")
     .def("handleThermalExpansion",
 	 &SingleStructureScheme::setHandleThermalExpansion,
 	 "This method override the (de)activation of the thermal "

@@ -104,8 +104,6 @@ namespace tfel
 		   const std::string&,
 		   const std::string&,
 		   const unsigned short);
-
-
       /*!
        * \param[in] l : name of the library
        * \param[in] s : name of function or mechanical behaviour
@@ -119,7 +117,6 @@ namespace tfel
 		   const std::string&,
 		   const std::string&,
 		   const double);
-
       /*!
        * set the value of an integer parameter
        * \param[in] l : name of the library

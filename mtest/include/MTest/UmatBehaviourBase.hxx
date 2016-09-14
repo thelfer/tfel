@@ -22,11 +22,42 @@ namespace mtest
 {
 
   /*!
+   * a class gathering all the relevant information about an Umat
+   * behaviour.
+   */
+  struct UmatBehaviourDescription{
+    UmatBehaviourDescription();
+    UmatBehaviourDescription(UmatBehaviourDescription&&);
+    UmatBehaviourDescription(const UmatBehaviourDescription&);
+    UmatBehaviourDescription&
+    operator=(UmatBehaviourDescription&&);
+    UmatBehaviourDescription&
+    operator=(const UmatBehaviourDescription&);
+    //! library
+    std::string library;
+    //! function
+    std::string behaviour;
+    //! names of the material properties
+    std::vector<std::string> mpnames;
+    //! names of the internal state variables
+    std::vector<std::string> ivnames;
+    //! types of the internal state variables
+    std::vector<int> ivtypes;
+    //! names of the external state variables
+    std::vector<std::string> evnames;
+    //! type of of law 
+    unsigned short type;
+    //! symmetry of of behaviour (isotropic or orthotropic)
+    unsigned short stype;
+  };
+  
+  /*!
    * A class to handle mechanical beheaviours written using the umat
    * interface
    */
   struct UmatBehaviourBase
-    : public Behaviour
+    : public Behaviour,
+      public UmatBehaviourDescription
   {
     /*!
      * \param[in] h : modelling hypothesis
@@ -36,6 +67,12 @@ namespace mtest
     UmatBehaviourBase(const Hypothesis,
 		      const std::string&,
 		      const std::string&);
+    /*!
+     * \param[in] umb: behaviour description
+     * \param[in] h:   modelling hypothesis
+     */
+    UmatBehaviourBase(const UmatBehaviourDescription&,
+		      const Hypothesis);
     //! \return the modelling hypothesis 
     virtual Hypothesis getHypothesis(void) const override;
     /*!
@@ -195,22 +232,6 @@ namespace mtest
 			      const bool) const;
     //! hypothesis
     const std::string hypothesis;
-    //! library
-    const std::string library;
-    //! function
-    const std::string behaviour;
-    //! names of the material properties
-    std::vector<std::string> mpnames;
-    //! names of the internal state variables
-    std::vector<std::string> ivnames;
-    //! types of the internal state variables
-    std::vector<int> ivtypes;
-    //! names of the external state variables
-    std::vector<std::string> evnames;
-    //! type of of law 
-    unsigned short type;
-    //! symmetry of of behaviour (isotropic or orthotropic)
-    unsigned short stype;
   }; // end of struct Behaviour
   
 } // end of namespace mtest

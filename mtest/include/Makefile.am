@@ -32,6 +32,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/CastemSmallStrainBehaviour.hxx            \
 			 MTest/CastemFiniteStrainBehaviour.hxx           \
 			 MTest/CastemCohesiveZoneModel.hxx               \
+			 MTest/MistralBehaviour.hxx                      \
 			 MTest/AsterStandardBehaviour.hxx                \
 			 MTest/AsterSmallStrainBehaviour.hxx             \
 			 MTest/AsterFiniteStrainBehaviour.hxx            \

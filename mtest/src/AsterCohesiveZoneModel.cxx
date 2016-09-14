@@ -38,22 +38,12 @@ namespace mtest
     this->fct = elm.getAsterFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,nh);
     if(this->type!=3u){
-      string msg("AsterCohesiveZoneModel::AsterCohesiveZoneModel : ");
-      msg += "unsupported hypothesis";
-      throw(runtime_error(msg));
+      throw(runtime_error("AsterCohesiveZoneModel::AsterCohesiveZoneModel: "
+			  "unsupported hypothesis"));
     }
-    if(this->stype==0){
-      // this->mpnames.insert(this->mpnames.begin(),"NormalThermalExpansion");
-      // this->mpnames.insert(this->mpnames.begin(),"MassDensity");
-      // // Those are the conventions used by Cast3M. The ASTERInterface
-      // // exchanges the 'NormalStiffness' and the 'TangentialStiffness'
-      // // material properties to match MFront conventions
-      // this->mpnames.insert(this->mpnames.begin(),"NormalStiffness");
-      // this->mpnames.insert(this->mpnames.begin(),"TangentialStiffness");
-    } else {
-      string msg("AsterCohesiveZoneModel::AsterCohesiveZoneModel : "
-		 "unsupported symmetry type");
-      throw(runtime_error(msg));
+    if(this->stype!=0){
+      throw(runtime_error("AsterCohesiveZoneModel::AsterCohesiveZoneModel : "
+			  "unsupported symmetry type"));
     }
   }
 

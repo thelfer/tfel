@@ -98,7 +98,7 @@ namespace mtest{
     /*!
      * \return the list of evolutions
      */
-    std::shared_ptr<EvolutionManager>
+    const EvolutionManager&
     getEvolutions() const;
     /*!
      * \brief add a new evolution

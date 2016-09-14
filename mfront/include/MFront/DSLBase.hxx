@@ -463,6 +463,8 @@ namespace mfront
      * `completeTargetsDescription` method.
      */
     TargetsDescription td;
+    //! additional linker flags
+    std::vector<std::string> ldflags;
     //! auxiliary target descriptions
     std::vector<TargetsDescription> atds;
     //! integer constants

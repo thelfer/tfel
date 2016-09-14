@@ -81,6 +81,12 @@ namespace mtest
     virtual void
     setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
 					       const EvolutionManager&) const override;
+    /*!
+     * \return the string passed to the UMAT function through the
+     * CMNAME parameter.
+     */
+    virtual const char*
+    getBehaviourNameForUMATFunctionCall(void) const override;
     //! destructor
     virtual ~CastemFiniteStrainBehaviour();
   protected:

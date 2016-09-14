@@ -13,6 +13,7 @@
 
 #include<cmath>
 #include<limits>
+#include<cstring>
 #include<algorithm>
 
 #include"TFEL/Math/tmatrix.hxx"
@@ -62,6 +63,11 @@ namespace mtest
       }
     }
   }
+
+  CastemSmallStrainBehaviour::CastemSmallStrainBehaviour(const UmatBehaviourDescription& umb,
+							 const Hypothesis h)
+    : CastemStandardBehaviour(umb,h)
+  {} // end of CastemSmallStrainBehaviour::CastemSmallStrainBehaviour
   
   void
   CastemSmallStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
@@ -180,17 +186,20 @@ namespace mtest
       ude(i)  *= sqrt2;
     }
     auto ndt = std::numeric_limits<CastemReal>::max();
+    const auto name = this->getBehaviourNameForUMATFunctionCall();
+    const real time[2] = {0,dt};
     (this->fct)(&(s.s1(0)),&wk.ivs(0),&(wk.D(0,0)),
 		nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,
-		&ue0(0),&ude(0),nullptr,&dt,
+		&ue0(0),&ude(0),time,&dt,
 		&(s.esv0(0))  ,&(s.desv(0)),
 		&(s.esv0(0))+1,&(s.desv(0))+1,
-		nullptr,&ndi,nullptr,&ntens,&nstatv,
+		name,&ndi,nullptr,&ntens,&nstatv,
 		&(s.mprops1(0)),
 		&nprops,nullptr,&drot(0,0),&ndt,
 		nullptr,nullptr,nullptr,nullptr,nullptr,
-		nullptr,nullptr,nullptr,&kinc,0);
+		nullptr,nullptr,nullptr,&kinc,
+		name==nullptr ? 0 : ::strlen(name));
     if(kinc!=1){
       return {false,ndt};
     }
@@ -331,9 +340,13 @@ namespace mtest
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"PlateWidth",0.);
     }
   } // end of CastemSmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues
-      
-  CastemSmallStrainBehaviour::~CastemSmallStrainBehaviour()
-  {}
+
+  const char*
+  CastemSmallStrainBehaviour::getBehaviourNameForUMATFunctionCall(void) const{
+    return nullptr;
+  } // end of CastemSmallStrainBehaviour::getBehaviourNameForUMATFunctionCall
+  
+  CastemSmallStrainBehaviour::~CastemSmallStrainBehaviour() = default;
   
 } // end of namespace mtest
 

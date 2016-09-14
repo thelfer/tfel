@@ -11,6 +11,13 @@
  * project under specific licensing conditions. 
  */
 
+#include<cmath>
+#include<vector>
+#include<string>
+#include<cstdlib>
+#include<iostream>
+#include<iterator>
+#include<algorithm>
 #include<sstream>
 
 #include"TFEL/System/ExternalLibraryManager.hxx"
@@ -25,6 +32,7 @@
 #include"MTest/CastemSmallStrainBehaviour.hxx"
 #include"MTest/CastemFiniteStrainBehaviour.hxx"
 #include"MTest/CastemCohesiveZoneModel.hxx"
+#include"MTest/MistralBehaviour.hxx"
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ASTER
 #include"MTest/AsterSmallStrainBehaviour.hxx"
@@ -47,7 +55,7 @@
 #include"MTest/SingleStructureScheme.hxx"
 
 namespace mtest{
-
+  
   static void
   checkIfDeclared(const std::vector<std::string>& names,
 		  const EvolutionManager& m,
@@ -151,127 +159,130 @@ namespace mtest{
   SingleStructureScheme_getBehaviour(const std::string& i,
 				     const std::string& l,
 				     const std::string& f,
+				     const SingleStructureScheme::Parameters& d,
 				     const tfel::material::ModellingHypothesis::Hypothesis h)
   {
-    using namespace std;
-    using namespace tfel::system;
     using ELM = tfel::system::ExternalLibraryManager;
-    std::shared_ptr<Behaviour> b;
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("SingleStructureScheme::getBehaviour:"+m));}
+    };
+    auto check_no_parameters = [&throw_if,&d]{
+      if(d.empty()){return;}
+      throw_if(!d.is<std::map<std::string,
+	                      SingleStructureScheme::Parameters>>(),
+	       "unsupported parameters type");
+      const auto& p = d.get<std::map<std::string,SingleStructureScheme::Parameters>>();
+      throw_if(!p.empty(),"no parameter expected");
+    };
+    auto b = std::shared_ptr<Behaviour>{};
 #ifdef HAVE_CASTEM
     if((i=="castem")||(i=="umat")){
+      check_no_parameters();
       auto& elm = ELM::getExternalLibraryManager();
       const auto type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
-	b = shared_ptr<Behaviour>(new CastemSmallStrainBehaviour(h,l,f));
+	b = std::shared_ptr<Behaviour>(new CastemSmallStrainBehaviour(h,l,f));
       } else if(type==2u){
-	b = shared_ptr<Behaviour>(new CastemFiniteStrainBehaviour(h,l,f));
+	b = std::shared_ptr<Behaviour>(new CastemFiniteStrainBehaviour(h,l,f));
       } else if(type==3u){
-	b = shared_ptr<Behaviour>(new CastemCohesiveZoneModel(h,l,f));
+	b = std::shared_ptr<Behaviour>(new CastemCohesiveZoneModel(h,l,f));
       } else {
-	ostringstream msg;
-	msg << "SingleStructureScheme::setBehaviour: "
-	  "unsupported behaviour type (" << type << ")";
-	throw(runtime_error(msg.str()));
+	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }
+    }
+    if(i=="mistral"){
+      b = MistralBehaviour::buildMistralBehaviour(l,f,d,h);
     }
 #endif
 #ifdef HAVE_ASTER
     if(i=="aster"){
+      check_no_parameters();
       auto& elm = ELM::getExternalLibraryManager();
       const auto type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
-	b = shared_ptr<Behaviour>(new AsterSmallStrainBehaviour(h,l,f));
+	b = std::shared_ptr<Behaviour>(new AsterSmallStrainBehaviour(h,l,f));
       } else if(type==2u){
-	b = shared_ptr<Behaviour>(new AsterFiniteStrainBehaviour(h,l,f));
+	b = std::shared_ptr<Behaviour>(new AsterFiniteStrainBehaviour(h,l,f));
       } else if(type==3u){
-	b = shared_ptr<Behaviour>(new AsterCohesiveZoneModel(h,l,f));
+	b = std::shared_ptr<Behaviour>(new AsterCohesiveZoneModel(h,l,f));
       } else {
-	ostringstream msg;
-	msg << "SingleStructureScheme::setBehaviour: "
-	  "unsupported behaviour type (" << type << ")";
-	throw(runtime_error(msg.str()));
+	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }
     }
 #endif
 #ifdef HAVE_EUROPLEXUS
     if((i=="europlexus")||(i=="epx")){
+      check_no_parameters();
       auto& elm = ELM::getExternalLibraryManager();
       const auto type = elm.getUMATBehaviourType(l,f);
       if(type==2u){
-	b = shared_ptr<Behaviour>(new EuroplexusFiniteStrainBehaviour(h,l,f));
+	b = std::shared_ptr<Behaviour>(new EuroplexusFiniteStrainBehaviour(h,l,f));
       } else {
-	ostringstream msg;
-	msg << "SingleStructureScheme::setBehaviour: "
-	  "unsupported behaviour type (" << type << ")";
-	throw(runtime_error(msg.str()));
+	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }
     }
 #endif
 #ifdef HAVE_ABAQUS
     if((i=="abaqus")||(i=="abaqus_standard")||(i=="abaqus_umat")){
+      check_no_parameters();
       auto& elm = ELM::getExternalLibraryManager();
       const auto bn   = AbaqusStandardBehaviour::getBehaviourName(f,h);
       const auto type = elm.getUMATBehaviourType(l,bn);
       if(type==1u){
-	b = shared_ptr<Behaviour>(new AbaqusSmallStrainBehaviour(h,l,f));
+	b = std::shared_ptr<Behaviour>(new AbaqusSmallStrainBehaviour(h,l,f));
       } else if(type==2u){
-	b = shared_ptr<Behaviour>(new AbaqusFiniteStrainBehaviour(h,l,f));
+	b = std::shared_ptr<Behaviour>(new AbaqusFiniteStrainBehaviour(h,l,f));
       } else {
-	ostringstream msg;
-	msg << "SingleStructureScheme::setBehaviour: "
-	  "unsupported behaviour type (" << type << ")";
-	throw(runtime_error(msg.str()));
+	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }
     }
     if((i=="abaqus_explicit")||(i=="abaqus_vumat")){
+      check_no_parameters();
       auto& elm = ELM::getExternalLibraryManager();
       const auto bn   = AbaqusExplicitBehaviour::getBehaviourName(f,h);
       const auto type = elm.getUMATBehaviourType(l,bn);
       if(type==2u){
-	b = shared_ptr<Behaviour>(new AbaqusExplicitBehaviour(h,l,f));
+	b = std::shared_ptr<Behaviour>(new AbaqusExplicitBehaviour(h,l,f));
       } else {
-	ostringstream msg;
-	msg << "SingleStructureScheme::setBehaviour: "
-	  "unsupported behaviour type (" << type << ")";
-	throw(runtime_error(msg.str()));
+	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }
     }
 #endif
 #ifdef HAVE_CYRANO
     if(i=="cyrano"){
-      b = shared_ptr<Behaviour>(new CyranoBehaviour(h,l,f));
+      check_no_parameters();
+      b = std::shared_ptr<Behaviour>(new CyranoBehaviour(h,l,f));
     }
 #endif
-    if(b.get()==nullptr){
-      throw(runtime_error("SingleStructureScheme::setBehaviour: "
-			  "unknown interface '"+i+"'"));
-    }
+    throw_if(b.get()==nullptr,"unknown interface '"+i+"'");
     return b;
   }
   
   void
   SingleStructureScheme::setBehaviour(const std::string& i,
 				      const std::string& l,
-				      const std::string& f)
+				      const std::string& f,
+				      const Parameters& d)
   {
     using MH = tfel::material::ModellingHypothesis;
     if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
       this->setDefaultModellingHypothesis();
     }
-    this->setBehaviour(SingleStructureScheme_getBehaviour(i,l,f,this->hypothesis));
+    this->setBehaviour(SingleStructureScheme_getBehaviour(i,l,f,d,this->hypothesis));
   }
 
   void
   SingleStructureScheme::setBehaviour(const std::string& w,
 				      const std::string& i,
 				      const std::string& l,
-				      const std::string& f)
+				      const std::string& f,
+				      const Parameters& d)
   {
     using MH = tfel::material::ModellingHypothesis;
     if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
       this->setDefaultModellingHypothesis();
     }
-    auto bp = SingleStructureScheme_getBehaviour(i,l,f,this->hypothesis);
+    auto bp = SingleStructureScheme_getBehaviour(i,l,f,d,this->hypothesis);
     if(w=="LogarithmicStrain1D"){
       auto wp = std::shared_ptr<Behaviour>(new LogarithmicStrain1DBehaviourWrapper(bp));
       this->setBehaviour(wp);

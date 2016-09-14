@@ -327,12 +327,13 @@ namespace mtest
     // choosing the type of stiffness matrix
     UmatBehaviourBase::initializeTangentOperator(wk.D,ktype,true);
     CastemReal ndt = std::numeric_limits<CastemReal>::max();
+    const auto name = this->getBehaviourNameForUMATFunctionCall();
     (this->fct)(&(s.s1(0)),&(wk.ivs(0)),&(wk.D(0,0)),
 		nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,&dt,
 		&(s.esv0(0))  ,&(s.desv(0)),
 		&(s.esv0(0))+1,&(s.desv(0))+1,
-		nullptr,&ndi,nullptr,&ntens,&nstatv,&(s.mprops1(0)),
+		name,&ndi,nullptr,&ntens,&nstatv,&(s.mprops1(0)),
 		&nprops,nullptr,&drot(0,0),&ndt,
 		nullptr,&uu0(0,0),&uu1(0,0),nullptr,nullptr,
 		nullptr,nullptr,nullptr,&kinc,0);
@@ -460,9 +461,13 @@ namespace mtest
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"PlateWidth",0.);
     }
   } // end of MTestCastemFiniteStrainStrainBehaviour::setOptionalMaterialPropertiesDefaultValues
-      
-  CastemFiniteStrainBehaviour::~CastemFiniteStrainBehaviour()
-  {}
+
+  const char*
+  CastemFiniteStrainBehaviour::getBehaviourNameForUMATFunctionCall(void) const{
+    return nullptr;
+  } // end of CastemFiniteStrainBehaviour::getBehaviourNameForUMATFunctionCall
+  
+  CastemFiniteStrainBehaviour::~CastemFiniteStrainBehaviour() = default;
   
 } // end of namespace mtest
 

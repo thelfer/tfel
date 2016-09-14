@@ -18,8 +18,7 @@
 namespace mtest{
 
   FunctionEvolution::FunctionEvolution(const std::string& f_,
-						 const std::shared_ptr<std::map<std::string,
-											std::shared_ptr<Evolution> > >& evm_)
+				       const EvolutionManager& evm_)
     : evm(evm_),
       f(f_)
   {} // end of FunctionEvolution::FunctionEvolution
@@ -33,8 +32,8 @@ namespace mtest{
       if(args[i]=="t"){
 	this->f.setVariableValue("t",t);
       } else {
-	auto pev = evm->find(args[i]);
-	if(pev==evm->end()){
+	auto pev = evm.find(args[i]);
+	if(pev==evm.end()){
 	  throw(std::runtime_error("FunctionEvolution::operator(): "
 				   "can't evaluate argument '"+args[i]+"'"));
 	} else {
@@ -55,8 +54,8 @@ namespace mtest{
       if(args[i]=="t"){
 	return false;
       } else {
-	auto pev = evm->find(args[i]);
-	if(pev==evm->end()){
+	auto pev = evm.find(args[i]);
+	if(pev==evm.end()){
 	  throw(std::runtime_error("FunctionEvolution::operator(): "
 				   "can't evaluate argument '"+args[i]+"'"));
 	} else {

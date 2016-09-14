@@ -36,6 +36,12 @@ namespace mtest
 			       const std::string&,
 			       const std::string&);
     /*!
+     * \param[in] umb: behaviour description
+     * \param[in] h:   modelling hypothesis
+     */
+    CastemSmallStrainBehaviour(const UmatBehaviourDescription&,
+			       const Hypothesis);
+    /*!
      * \param[out] v : initial values of the driving variables
      */
     virtual void
@@ -81,6 +87,12 @@ namespace mtest
     virtual void
     setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
 					       const EvolutionManager&) const override;
+    /*!
+     * \return the string passed to the UMAT function through the
+     * CMNAME parameter.
+     */
+    virtual const char*
+    getBehaviourNameForUMATFunctionCall(void) const override;
     //! destructor
     virtual ~CastemSmallStrainBehaviour();
   protected:

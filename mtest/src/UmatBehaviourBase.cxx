@@ -23,14 +23,19 @@
 namespace mtest
 {
 
+  UmatBehaviourDescription::UmatBehaviourDescription() = default;
+  UmatBehaviourDescription::UmatBehaviourDescription(UmatBehaviourDescription&&) = default;
+  UmatBehaviourDescription::UmatBehaviourDescription(const UmatBehaviourDescription&) = default;
+  UmatBehaviourDescription&
+  UmatBehaviourDescription::operator=(UmatBehaviourDescription&&) = default;
+  UmatBehaviourDescription&
+  UmatBehaviourDescription::operator=(const UmatBehaviourDescription&) = default;
+  
   UmatBehaviourBase::UmatBehaviourBase(const Hypothesis h,
 				       const std::string& l,
 				       const std::string& b)
-    : hypothesis(ModellingHypothesis::toString(h)),
-      library(l),
-      behaviour(b)
+    : hypothesis(ModellingHypothesis::toString(h))
   {
-    using namespace tfel::material;
     using namespace tfel::system;
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     const auto& hh = elm.getSupportedModellingHypotheses(l,b);
@@ -43,6 +48,8 @@ namespace mtest
       }
       throw(std::runtime_error(msg));
     }
+    this->library   = l;
+    this->behaviour = b;
     this->type  = elm.getUMATBehaviourType(l,b);
     this->stype = elm.getUMATSymmetryType(l,b);
     if(this->stype>=2u){
@@ -56,6 +63,18 @@ namespace mtest
     this->evnames.insert(this->evnames.begin(),"Temperature");
   }
 
+  UmatBehaviourBase::UmatBehaviourBase(const UmatBehaviourDescription& umb,
+				       const Hypothesis h)
+    : UmatBehaviourDescription(umb),
+      hypothesis(ModellingHypothesis::toString(h))
+  {
+    if(this->stype>=2u){
+      throw(std::runtime_error("UmatBehaviourBase::UmatBehaviourBase : "
+			       "unsupported behaviour type "
+			       "(neither isotropic nor orthotropic)"));
+    }
+  }
+  
   UmatBehaviourBase::Hypothesis
   UmatBehaviourBase::getHypothesis() const{
     return ModellingHypothesis::fromString(this->hypothesis);

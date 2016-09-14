@@ -31,8 +31,7 @@ namespace mtest
      * \param[in] : 
      */
     FunctionEvolution(const std::string&,
-			   const std::shared_ptr<std::map<std::string,
-							  std::shared_ptr<Evolution> > >&);
+		      const EvolutionManager&);
     /*!
      * \return the value of the evolution
      * at the given time
@@ -62,8 +61,7 @@ namespace mtest
     virtual ~FunctionEvolution();
   private:
     //! externally defined evolutions
-    std::shared_ptr<std::map<std::string,
-			     std::shared_ptr<Evolution>>> evm;
+    const EvolutionManager& evm;
     //! Evaluator
     mutable tfel::math::Evaluator f;
   };

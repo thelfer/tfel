@@ -22,6 +22,14 @@ namespace tfel{
 
     MaterialException::~MaterialException() noexcept = default;
 
+    MaterialException::MaterialException(const char* const msg){
+      std::cerr << "MaterialException::MaterialException: " << msg << std::endl;
+    }
+
+    MaterialException::MaterialException(const std::string& msg){
+      std::cerr << "MaterialException::MaterialException: " << msg << std::endl;
+    }
+    
     DivergenceException::DivergenceException(const char* const msg){
       std::cerr << "DivergenceException::DivergenceException: " << msg << std::endl;
     }

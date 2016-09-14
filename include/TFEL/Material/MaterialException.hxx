@@ -26,6 +26,8 @@ namespace tfel{
       : public tfel::exception::TFELException 
     {
       MaterialException() = default;
+      MaterialException(const char* const);
+      MaterialException(const std::string&);
       MaterialException(MaterialException&&)      = default;
       MaterialException(const MaterialException&) = default;
       virtual ~MaterialException() noexcept;

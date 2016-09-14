@@ -352,12 +352,15 @@ namespace tfel{
 	}
 	return *this;
       }
+      //! \return true if empty
+      bool empty(void) const{
+	return this->index==tfel::meta::TLSize<List>::value;
+      }
       //! copy a GenType (calls the assignement operator).
       /*
        * \param const GenTypeBase&, the object to which it is compared.
        */
-      bool 
-      copy(const GenTypeBase& src)
+      bool copy(const GenTypeBase& src)
       {
 	using namespace tfel::meta;
 	this->operator=(src);

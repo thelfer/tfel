@@ -59,10 +59,10 @@ namespace mtest{
     pev->second->setValue(t,v);
   } // end of SchemeBase::setEvolutionValue
 
-  std::shared_ptr<EvolutionManager>
+  const EvolutionManager&
   SchemeBase::getEvolutions() const
   {
-    return this->evm;
+    return *(this->evm);
   } // end of SchemeBase::getEvolutions() const
 
   

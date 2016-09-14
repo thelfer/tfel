@@ -19,27 +19,25 @@
 
 namespace mtest
 {
-  
-  CastemStandardBehaviour::CastemStandardBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
-							 const std::string& l,
-							 const std::string& b)
-    : UmatBehaviourBase(h,l,b)
-  {
+
+  static void setMaterialProperties(UmatBehaviourDescription& umb,
+				    const tfel::material::ModellingHypothesis::Hypothesis h){
+    using tfel::material::ModellingHypothesis;
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
-    this->fct = elm.getCastemExternalBehaviourFunction(l,b);
-    this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
-    if(this->stype==0){
-      this->mpnames.insert(this->mpnames.begin(),{
+    umb.mpnames = elm.getUMATMaterialPropertiesNames(umb.library,umb.behaviour,
+						     ModellingHypothesis::toString(h));
+    if(umb.stype==0){
+      umb.mpnames.insert(umb.mpnames.begin(),{
 	  "YoungModulus","PoissonRatio","MassDensity","ThermalExpansion"});
     } else {
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-	this->mpnames.insert(this->mpnames.begin(),{
+	umb.mpnames.insert(umb.mpnames.begin(),{
 	    "YoungModulus1","YoungModulus2","YoungModulus3",
 	    "PoissonRatio12","PoissonRatio23","PoissonRatio13",
 	    "MassDensity",
 	    "ThermalExpansion1","ThermalExpansion2","ThermalExpansion3"});
       } else if(h==ModellingHypothesis::PLANESTRESS){
-	this->mpnames.insert(this->mpnames.begin(),{
+	umb.mpnames.insert(umb.mpnames.begin(),{
 	    "YoungModulus1","YoungModulus2","PoissonRatio12",
 	    "ShearModulus12","V1X","V1Y","YoungModulus3",
 	    "PoissonRatio23","PoissonRatio13","MassDensity",
@@ -47,25 +45,43 @@ namespace mtest
       } else if((h==ModellingHypothesis::PLANESTRAIN)||
 		(h==ModellingHypothesis::AXISYMMETRICAL)||
 		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
-	this->mpnames.insert(this->mpnames.begin(),{
+	umb.mpnames.insert(umb.mpnames.begin(),{
 	    "YoungModulus1","YoungModulus2","YoungModulus3",
 	    "PoissonRatio12","PoissonRatio23","PoissonRatio13",
 	    "ShearModulus12","V1X","V1Y","MassDensity",
             "ThermalExpansion1","ThermalExpansion2","ThermalExpansion3"});
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	this->mpnames.insert(this->mpnames.begin(),{
+	umb.mpnames.insert(umb.mpnames.begin(),{
 	    "YoungModulus1","YoungModulus2","YoungModulus3",
 	    "PoissonRatio12","PoissonRatio23","PoissonRatio13",
 	    "ShearModulus12","ShearModulus23","ShearModulus13",
 	    "V1X","V1Y","V1Z","V2X","V2Y","V2Z","MassDensity",
             "ThermalExpansion1","ThermalExpansion2","ThermalExpansion3"});
       } else {
-	throw(std::runtime_error("CastemStandardBehaviour::CastemStandardBehaviour : "
+	throw(std::runtime_error("setMaterialProperties: "
 				 "unsupported hypothesis"));
       }
     }
-  }
+  } // end of setMaterialProperties
+  
+  CastemStandardBehaviour::CastemStandardBehaviour(const Hypothesis h,
+						   const std::string& l,
+						   const std::string& b)
+    : UmatBehaviourBase(h,l,b)
+  {
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    this->fct = elm.getCastemExternalBehaviourFunction(l,b);
+    setMaterialProperties(*this,h);
+  } // end of CastemStandardBehaviour::CastemStandardBehaviour
 
+  CastemStandardBehaviour::CastemStandardBehaviour(const UmatBehaviourDescription& umb,
+						   const Hypothesis h)
+    : UmatBehaviourBase(umb,h)
+  {
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    this->fct = elm.getCastemExternalBehaviourFunction(this->library,this->behaviour);
+  } // end of CastemStandardBehaviour::CastemStandardBehaviour
+  
   tfel::math::tmatrix<3u,3u,real>
   CastemStandardBehaviour::getRotationMatrix(const tfel::math::vector<real>& mp,
 					     const tfel::math::tmatrix<3u,3u,real>& r) const

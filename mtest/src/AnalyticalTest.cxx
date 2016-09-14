@@ -24,8 +24,7 @@ namespace mtest
 				 const std::string& v,
 				 const MTest::UTest::TestedVariable t,
 				 const unsigned short p,
-				 std::shared_ptr<std::map<std::string,
-				                          std::shared_ptr<Evolution> > > evm_,
+				 const EvolutionManager& evm_,
 				 const real eps_)
     : f(f_),
       name(v),
@@ -52,8 +51,8 @@ namespace mtest
       if(vn=="t"){
 	this->f.setVariableValue("t",t+dt);
       } else{
-	auto pev = this->evm->find(vn);
-	throw_if(pev==this->evm->end(),"no evolution named '"+vn+"' defined");
+	auto pev = this->evm.find(vn);
+	throw_if(pev==this->evm.end(),"no evolution named '"+vn+"' defined");
 	const auto& ev = *(pev->second);
 	this->f.setVariableValue(vn,ev(t+dt));
       }

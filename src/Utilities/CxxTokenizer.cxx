@@ -955,7 +955,7 @@ namespace tfel{
 
     int
     CxxTokenizer::readInt(CxxTokenizer::const_iterator& p, 
-			     const CxxTokenizer::const_iterator pe)
+			  const CxxTokenizer::const_iterator pe)
       
     {
       int res;

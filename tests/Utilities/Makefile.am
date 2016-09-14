@@ -9,6 +9,7 @@ test_PROGRAMS = gentype           \
 		gentype3          \
 		CxxTokenizerTest  \
 		CxxTokenizerTest2 \
+		DataTest          \
 		StringAlgorithms
 
 LDADD = -lTFELUtilities -lTFELException  \
@@ -22,6 +23,7 @@ gentype2_SOURCES          = gentype2.cxx
 gentype3_SOURCES          = gentype3.cxx
 CxxTokenizerTest_SOURCES  = CxxTokenizerTest.cxx
 CxxTokenizerTest2_SOURCES = CxxTokenizerTest2.cxx
+DataTest_SOURCES          = DataTest.cxx
 StringAlgorithms_SOURCES  = StringAlgorithms.cxx
 
 TESTS=$(test_PROGRAMS)

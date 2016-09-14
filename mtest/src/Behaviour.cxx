@@ -22,27 +22,24 @@ namespace mtest
 
   void
   Behaviour::setOptionalMaterialPropertyDefaultValue(EvolutionManager& mp,
-							  const EvolutionManager& evm,
-							  const std::string& n,
-							  const real v)
+						     const EvolutionManager& evm,
+						     const std::string& n,
+						     const real v)
   {
-    using namespace std;
     if(evm.find(n)==evm.end()){
       if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
 	auto& log = mfront::getLogStream();
 	log << "MTestStandardUmatBehaviour::setOptionalMaterialPropertiesDefaultValues : "
-	    << "set material property '" << n << "' to default value" << endl;
+	    << "set material property '" << n << "' to default value\n";
       }
-      if(!mp.insert({n,shared_ptr<Evolution>(new ConstantEvolution(v))}).second){
-	string msg("MTestStandardUmatBehaviour::setOptionalMaterialPropertiesDefaultValues : "
-		   "default value for material property '"+n+"' already declared");
-	throw(runtime_error(msg));
+      if(!mp.insert({n,make_evolution(v)}).second){
+	throw(std::runtime_error("MTestStandardUmatBehaviour::setOptionalMaterialPropertiesDefaultValues: "
+				 "default value for material property '"+n+"' already declared"));
       }
     }
   } // end of Behaviour::setOptionalMaterialPropertyDefaultValue
 
-  Behaviour::~Behaviour()
-  {} // end of Behaviour::~Behaviour
+  Behaviour::~Behaviour() = default;
 
 } // end of namespace mtest
 

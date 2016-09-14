@@ -36,6 +36,12 @@ namespace mtest
 			    const std::string&,
 			    const std::string&);
     /*!
+     * \param[in] umb: behaviour description
+     * \param[in] h:   modelling hypothesis
+     */
+    CastemStandardBehaviour(const UmatBehaviourDescription&,
+			    const Hypothesis);
+    /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
     virtual StiffnessMatrixType
@@ -44,8 +50,7 @@ namespace mtest
      * \brief allocate internal workspace
      * \param[out] wk : workspace
      */
-    virtual void
-    allocate(BehaviourWorkSpace&) const override;
+    virtual void allocate(BehaviourWorkSpace&) const override;
     /*!
      * \brief compute the *real* rotation matrix
      * \param[in] mp : material properties
@@ -69,6 +74,12 @@ namespace mtest
     virtual void
     setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
 					       const EvolutionManager&) const override;
+    /*!
+     * \return the string passed to the UMAT function through the
+     * CMNAME parameter.
+     */
+    virtual const char*
+    getBehaviourNameForUMATFunctionCall(void) const = 0;
     /*!
      * destructor
      */

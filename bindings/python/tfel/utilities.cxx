@@ -13,9 +13,11 @@
 
 #include<boost/python.hpp>
 
+void declareData();
 void declareTextData();
 
 BOOST_PYTHON_MODULE(utilities)
 {
+  declareData();
   declareTextData();
 }

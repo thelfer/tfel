@@ -124,12 +124,18 @@ namespace mtest
     virtual std::vector<std::string>
     getMaterialPropertiesNames(void) const = 0;
     /*!
-     * \brief some interfaces requires dummy material properties to be
-     * declared. For example, the Cast3M finite element solver
-     * requires the mass density and some extra material properties
-     * describing orthotropic axes to be declared.  This method is
-     * meant to automatically declare those if they are not defined by
-     * the user.
+     * \brief This method solves two issues:
+     * 
+     * - Some interface requires dummy material properties to be
+     *   declared. For example, the Cast3M finite element solver
+     *   requires the mass density and some extra material properties
+     *   describing orthotropic axes to be declared.  This method is
+     *   meant to automatically declare those if they are not defined
+     *   by the user.
+     * - Some interface (mistral) uses an external files which gives
+     *   the values of some material properties. This method is used
+     *   to pass thoses values to MTest.
+     *
      * \param[out] mp  : evolution manager where 
      * \param[in]  evm : evolution manager
      */

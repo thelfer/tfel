@@ -16,7 +16,7 @@
 #include"MTest/SingleStructureSchemeParser.hxx"
 
 namespace mtest{
-
+  
   static void
   selectVariables(std::vector<std::string>& r,
 		  const std::vector<std::string>& names,
@@ -111,9 +111,11 @@ namespace mtest{
     this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",p,
 			    this->tokens.end());
 #ifdef HAVE_CASTEM
-    if((p->value=="umat")||
-       (p->value=="castem")){
+    if((p->value=="umat")||(p->value=="castem")){
       i = "castem";
+    }
+    if(p->value=="mistral"){
+      i="mistral";
     }
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ASTER
@@ -156,12 +158,18 @@ namespace mtest{
 			     this->tokens.end());
     const auto& l = this->readString(p,this->tokens.end());
     const auto& f = this->readString(p,this->tokens.end());
+    this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",p,
+			    this->tokens.end());
+    tfel::utilities::Data d;
+    if(p->value=="{"){
+      d = tfel::utilities::Data::read(p,this->tokens.end());
+    }
     this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",";",p,
 			     this->tokens.end());
     if(w.empty()){
-      t.setBehaviour(i,l,f);
+      t.setBehaviour(i,l,f,d);
     } else {
-      t.setBehaviour(w,i,l,f);
+      t.setBehaviour(w,i,l,f,d);
     }
   } // end of SingleStructureSchemeParser::handleBehaviour
 

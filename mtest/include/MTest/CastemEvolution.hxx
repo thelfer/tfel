@@ -43,8 +43,7 @@ namespace mtest
      */
     CastemEvolution(const std::string&,
 		    const std::string&,
-		    const std::shared_ptr<std::map<std::string,
-						   std::shared_ptr<Evolution> > >&);
+		    const EvolutionManager&);
     /*!
      * \return the value of the CastemEvolution
      * at the given time
@@ -74,8 +73,7 @@ namespace mtest
     virtual ~CastemEvolution();
   protected:
     //! externally defined evolutions
-    std::shared_ptr<std::map<std::string,
-					 std::shared_ptr<Evolution> > > evm;
+    const EvolutionManager& evm;
     //! the castem function
     tfel::system::CastemFunctionPtr f;
     //! names of the variables

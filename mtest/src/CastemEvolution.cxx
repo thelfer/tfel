@@ -18,9 +18,8 @@
 namespace mtest{
 
   CastemEvolution::CastemEvolution(const std::string& l,
-					     const std::string& fn,
-					     const std::shared_ptr<std::map<std::string,
-											std::shared_ptr<Evolution> > >& evm_)
+				   const std::string& fn,
+				   const EvolutionManager& evm_)
     : evm(evm_)
   {
     using namespace tfel::system;
@@ -39,12 +38,10 @@ namespace mtest{
     using namespace std;
     vector<string>::size_type i;
     for(i=0;i!=this->vnames.size();++i){
-      map<string,shared_ptr<Evolution> >::const_iterator pev;
-      pev = evm->find(vnames[i]);
-      if(pev==evm->end()){
-	string msg("CastemEvolution::operator() : ");
-	msg += "can't evaluate argument '"+vnames[i]+"'";
-	throw(runtime_error(msg));
+      auto pev = this->evm.find(vnames[i]);
+      if(pev==this->evm.end()){
+	throw(runtime_error("CastemEvolution::operator(): "
+			    "can't evaluate argument '"+vnames[i]+"'"));
       } else {
 	const Evolution& ev = *(pev->second);
 	args[i] = ev(t);
@@ -59,12 +56,10 @@ namespace mtest{
     using namespace std;
     vector<string>::size_type i;
     for(i=0;i!=this->vnames.size();++i){
-      map<string,shared_ptr<Evolution> >::const_iterator pev;
-      pev = evm->find(vnames[i]);
-      if(pev==evm->end()){
-	string msg("CastemEvolution::operator() : ");
-	msg += "can't evaluate argument '"+vnames[i]+"'";
-	throw(runtime_error(msg));
+      auto pev = this->evm.find(vnames[i]);
+      if(pev==this->evm.end()){
+	throw(runtime_error("CastemEvolution::operator(): "
+			    "can't evaluate argument '"+vnames[i]+"'"));
       } else {
 	const Evolution& ev = *(pev->second);
 	if(!ev.isConstant()){

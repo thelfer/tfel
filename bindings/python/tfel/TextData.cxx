@@ -13,7 +13,7 @@
 
 #include<boost/python.hpp>
 
-#include<TFEL/Utilities/TextData.hxx>
+#include"TFEL/Utilities/TextData.hxx"
 
 void declareTextData();
 

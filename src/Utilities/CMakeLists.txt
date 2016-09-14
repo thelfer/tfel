@@ -5,6 +5,7 @@ set(TFELUtilities_SOURCES
     TextData.cxx
     GenTypeCastError.cxx
     Token.cxx
+    Data.cxx
     CxxKeywords.cxx
     TerminalColors.cxx
     CxxTokenizer.cxx

@@ -29,7 +29,8 @@ math_la_LIBADD  = -L@top_builddir@/src/Math -lTFELMath         \
 		  -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 math_la_LDFLAGS = -module
 
-utilities_la_SOURCES = utilities.cxx      \
+utilities_la_SOURCES = utilities.cxx \
+		       Data.cxx      \
 		       TextData.cxx
 utilities_la_LIBADD  = -L@top_builddir@/src/Utilities -lTFELUtilities         \
 		  @BOOST_LIBS@ @BOOST_PYTHON_LIBS@             \

@@ -9,6 +9,7 @@ lib_LTLIBRARIES = libTFELUtilities.la
 libTFELUtilities_la_SOURCES = TextData.cxx           \
 			      GenTypeCastError.cxx   \
 			      Token.cxx              \
+			      Data.cxx               \
 			      CxxKeywords.cxx        \
 			      CxxTokenizer.cxx       \
 			      TerminalColors.cxx     \

@@ -17,6 +17,7 @@ tfel_python_module(tests tests.cxx
 target_link_libraries(py_tfel_tests TFELTests)
 
 tfel_python_module(utilities utilities.cxx
+  Data.cxx
   TextData.cxx)
 target_link_libraries(py_tfel_utilities TFELUtilities)
 

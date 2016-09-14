@@ -52,7 +52,7 @@
 
 namespace mtest
 {
-
+  
   MTestParser::MTestParser()
   {
     this->registerCallBacks();
@@ -467,7 +467,7 @@ namespace mtest
 									  ttype,pos,eps));
 	} else {
 	  const auto ef = static_cast<std::string>(c.second);
-	  test = shared_ptr<MTest::UTest>(new ReferenceFileComparisonTest(*data,*(t.getEvolutions()),
+	  test = shared_ptr<MTest::UTest>(new ReferenceFileComparisonTest(*data,t.getEvolutions(),
 									  ef,c.first,ttype,pos,eps));
 	}
 	t.addTest(test);

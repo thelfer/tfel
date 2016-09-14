@@ -45,8 +45,7 @@ namespace mtest{
 			const std::string&,
 			const MTest::UTest::TestedVariable,
 			const unsigned short,
-			std::shared_ptr<std::map<std::string,
-						 std::shared_ptr<Evolution> > >,
+			const EvolutionManager&,
 			const real);
     /*!
      * \param[in] e  : strains
@@ -86,8 +85,7 @@ namespace mtest{
     //! position of variable
     const unsigned short pos;
     //! external evolution
-    const std::shared_ptr<std::map<std::string,
-				   std::shared_ptr<Evolution> > > evm;
+    const EvolutionManager evm;
     //! criterium value
     const real eps;
   }; 

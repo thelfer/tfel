@@ -78,6 +78,7 @@ if(HAVE_CASTEM)
     CastemSmallStrainBehaviour.cxx
     CastemFiniteStrainBehaviour.cxx
     CastemCohesiveZoneModel.cxx
+    MistralBehaviour.cxx
     ${TFELMTest_SOURCES})
   set(TFELMTest_LDADD
     CastemInterface

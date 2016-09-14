@@ -489,7 +489,7 @@ namespace mtest{
       this->checkNotEndOfLine("SchemeParserBase::handleTimes",p,
 			      this->tokens.end());
       if(p->flag==tfel::utilities::Token::String){
-	times = eval(d,*(t.getEvolutions()),
+	times = eval(d,t.getEvolutions(),
 		     this->readString(p,this->tokens.end()));
       } else {
 	times = d.getColumn(this->readUnsignedInt(p,this->tokens.end()));
@@ -553,8 +553,8 @@ namespace mtest{
       tfel::math::Evaluator ev(f);
       for(const auto& v : ev.getVariablesNames()){
 	const auto evs = t.getEvolutions();
-	const auto pev = evs->find(v);
-	if(pev==evs->end()){
+	const auto pev = evs.find(v);
+	if(pev==evs.end()){
 	  throw(std::runtime_error("SchemeParserBase::readDouble: "
 				   "no evolution named '"+v+"' defined"));
 	}
@@ -655,7 +655,7 @@ namespace mtest{
       auto tv = std::vector<double>{};
       auto vv = std::vector<double>{};
       if(p->flag==tfel::utilities::Token::String){
-	tv = eval(data,*(t.getEvolutions()),
+	tv = eval(data,t.getEvolutions(),
 		  this->readString(p,this->tokens.end()));
       } else {
 	tv = data.getColumn(readUnsignedInt(p,this->tokens.end()));
@@ -663,7 +663,7 @@ namespace mtest{
       this->readSpecifiedToken("SchemeParserBase::parseEvolution",":",p,
 			       this->tokens.end());
       if(p->flag==tfel::utilities::Token::String){
-	vv = eval(data,*(t.getEvolutions()),
+	vv = eval(data,t.getEvolutions(),
 		  this->readString(p,this->tokens.end()));
       } else {
 	vv = data.getColumn(readUnsignedInt(p,this->tokens.end()));

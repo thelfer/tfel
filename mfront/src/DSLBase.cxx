@@ -768,13 +768,12 @@ namespace mfront
     return {1u,this->readString(m)};
   } // end of DSLBase::readStringOrArrayOfString
 
-  void
-  DSLBase::treatLink(){
+  void DSLBase::treatLink(){
     const auto nlink = readStringOrArrayOfString("DSLBase::treatLink");
     this->readSpecifiedToken("DSLBase::treatLink",";");
-#pragma message("DSLBase::treatLink: unimplemented feature")
-    throw(std::runtime_error("DSLBase::treatLink: "
-			     "unimplemented feature"));
+    for(const auto& l: nlink){
+      insert_if(this->ldflags,l);
+    }
   } // end of DSLBase::treatLink
 
   void
@@ -1166,6 +1165,11 @@ namespace mfront
   } // end of DSLBase::handleParameter
 
   void DSLBase::completeTargetsDescription(){
+    for(auto& l : this->td){
+      l.ldflags.insert(l.ldflags.end(),
+		       this->ldflags.begin(),
+		       this->ldflags.end());
+    }
     for(const auto& t : this->atds){
       for(const auto& al : t){
 	for(auto& l : this->td){
@@ -1178,6 +1182,7 @@ namespace mfront
     for(const auto& t : this->atds){
       mergeTargetsDescription(this->td,t,false);      
     }
+    this->ldflags.clear();
     this->atds.clear();
   } // end of DSLBase::completeTargetsDescription()
 
