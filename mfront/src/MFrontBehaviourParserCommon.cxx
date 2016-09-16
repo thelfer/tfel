@@ -3444,13 +3444,13 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeBehaviourStaticMethods(const Hypothesis)
   {    
     this->checkBehaviourFile();
-    this->behaviourFile << "public:\n\n"
-			<< "static BehaviourIntegrationErrorReport&\n"
-			<< "getBehaviourIntegrationErrorReport(void){\n"
-			<< "return " << this->mb.getClassName()
-			<< "BehaviourIntegrationErrorReportHandler::getBehaviourIntegrationErrorReport();\n"
-			<< "}\n\n"
-			<< "private:\n\n";
+    // this->behaviourFile << "public:\n\n"
+    // 			<< "static BehaviourIntegrationErrorReport&\n"
+    // 			<< "getBehaviourIntegrationErrorReport(void){\n"
+    // 			<< "return " << this->mb.getClassName()
+    // 			<< "BehaviourIntegrationErrorReportHandler::getBehaviourIntegrationErrorReport();\n"
+    // 			<< "}\n\n"
+    this->behaviourFile << "private:\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourStaticMethods
   
   void MFrontBehaviourParserCommon::writeBehaviourStaticVariables(const Hypothesis h)
@@ -3634,7 +3634,7 @@ namespace mfront{
     this->behaviourFile << "#include\"TFEL/Material/MechanicalBehaviour.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/MechanicalBehaviourTraits.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"" << endl;
-    this->behaviourFile << "#include\"TFEL/Material/BehaviourIntegrationErrorReport.hxx\"" << endl;
+    // this->behaviourFile << "#include\"TFEL/Material/BehaviourIntegrationErrorReport.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/BoundsCheck.hxx\"" << endl;
     this->behaviourFile << "#include\"TFEL/Material/Lame.hxx\"" << endl;
     if(this->mb.getSymmetryType()==ORTHOTROPIC){
@@ -4063,14 +4063,14 @@ namespace mfront{
   MFrontBehaviourParserCommon::writeBehaviourIntegrationErrorReportHandler()
   {
     this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n"
-			<< " * \\brief a structure in charge of holding integration error reports\n"
-			<< " */\n"
-			<< "struct " << mb.getClassName() << "BehaviourIntegrationErrorReportHandler\n"
-			<< "{\n"
-			<< "static BehaviourIntegrationErrorReport&\n"
-			<< "getBehaviourIntegrationErrorReport(void);\n"
-			<< "};\n\n";
+    // this->behaviourFile << "/*!\n"
+    // 			<< " * \\brief a structure in charge of holding integration error reports\n"
+    // 			<< " */\n"
+    // 			<< "struct " << mb.getClassName() << "BehaviourIntegrationErrorReportHandler\n"
+    // 			<< "{\n"
+    // 			<< "static BehaviourIntegrationErrorReport&\n"
+    // 			<< "getBehaviourIntegrationErrorReport(void);\n"
+    // 			<< "};\n\n";
   } // end of MFrontBehaviourParserCommon::writeBehaviourIntegrationErrorReportHandler
   
   void MFrontBehaviourParserCommon::writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis)
@@ -5297,11 +5297,11 @@ namespace mfront{
   void MFrontBehaviourParserCommon::writeSrcFileBehaviourIntegrationErrorReportHandler()
   {
     this->checkSrcFile();
-    this->srcFile << "BehaviourIntegrationErrorReport&\n"
-		  << mb.getClassName() << "BehaviourIntegrationErrorReportHandler::getBehaviourIntegrationErrorReport(void){\n"
-		  << "static BehaviourIntegrationErrorReportHandler h;\n"
-		  << "return h.getBehaviourIntegrationErrorReport();\n"
-		  << "}\n\n";
+    // this->srcFile << "BehaviourIntegrationErrorReport&\n"
+    // 		  << mb.getClassName() << "BehaviourIntegrationErrorReportHandler::getBehaviourIntegrationErrorReport(void){\n"
+    // 		  << "static BehaviourIntegrationErrorReportHandler h;\n"
+    // 		  << "return h.getBehaviourIntegrationErrorReport();\n"
+    // 		  << "}\n\n";
   } // end of MFrontBehaviourParserCommon::writeSrcFileBehaviourIntegrationErrorReportHandler
   
   void MFrontBehaviourParserCommon::writeSrcFile(void)

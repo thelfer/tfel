@@ -874,10 +874,10 @@ namespace mfront
 										const std::string& name,
 										const MechanicalBehaviourDescription& mb) const
   {
-    out << "MFRONT_SHAREDOBJ const tfel::material::BehaviourIntegrationErrorReport& MFRONT_CALLING_CONVENTION\n"
-	<< getFunctionName(name) << "_getIntegrationErrorReport(){\n"
-	<< "return tfel::material::" << mb.getClassName() + "BehaviourIntegrationErrorReportHandler::getBehaviourIntegrationErrorReport();\n"
-	<< "}\n";
+    // out << "MFRONT_SHAREDOBJ const tfel::material::BehaviourIntegrationErrorReport& MFRONT_CALLING_CONVENTION\n"
+    // 	<< getFunctionName(name) << "_getIntegrationErrorReport(){\n"
+    // 	<< "return tfel::material::" << mb.getClassName() + "BehaviourIntegrationErrorReportHandler::getBehaviourIntegrationErrorReport();\n"
+    // 	<< "}\n";
   } // end of MFrontUMATInterfaceBase::writeGetOutOfBoundsPolicyFunctionImplementation    
     
   void

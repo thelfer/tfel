@@ -393,7 +393,7 @@ namespace mfront{
     out << "#endif /* __cplusplus */\n\n";
 
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
-    this->writeGetIntegrationErrorReportFunctionDeclaration(out,name);
+    // this->writeGetIntegrationErrorReportFunctionDeclaration(out,name);
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
     
     this->writeCyranoFunctionDeclaration(out,name);

@@ -386,7 +386,7 @@ namespace mfront{
 
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
-    this->writeGetIntegrationErrorReportFunctionDeclaration(out,name);
+    // this->writeGetIntegrationErrorReportFunctionDeclaration(out,name);
 
     out << "MFRONT_SHAREDOBJ void MFRONT_CALLING_CONVENTION\naster"
 	<< makeLowerCase(name) << "("

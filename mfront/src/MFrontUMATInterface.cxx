@@ -841,7 +841,7 @@ namespace mfront{
     out << "extern \"C\"{\n";
     out << "#endif /* __cplusplus */\n\n";
 
-    this->writeGetIntegrationErrorReportFunctionDeclaration(out,name);
+    // this->writeGetIntegrationErrorReportFunctionDeclaration(out,name);
     
     if(mb.getBehaviourType()==MechanicalBehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       if(this->finiteStrainStrategies.empty()){
