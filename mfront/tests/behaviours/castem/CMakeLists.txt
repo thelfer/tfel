@@ -107,6 +107,7 @@ set(mfront_tests_SOURCES
   Tvergaard
   SaintVenantKirchhoffElasticity
   SaintVenantKirchhoffElasticity2
+  OrthotropicSaintVenantKirchhoffElasticity
   CompressibleNeoHookeanBehaviour
   IncompressibleMooneyRivlinBehaviour
   IncompressiblePlaneStressMooneyRivlinBehaviour

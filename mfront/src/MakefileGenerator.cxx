@@ -363,11 +363,11 @@ namespace mfront{
     }
     m << "\n";
     if(o.sys=="win32"){
-      m << "\t" << sb << "rm -f *.o *.dll *.d\n";
+      m << "\t" << sb << "rm -f *.o *.dll *.d *.d.*\n";
     } else if(o.sys=="apple"){
-      m << "\t" << sb << "rm -f *.o *.bundle *.d\n";
+      m << "\t" << sb << "rm -f *.o *.bundle *.d *.d*\n";
     } else {
-      m << "\t" << sb << "rm -f *.o *.so *.d\n";
+      m << "\t" << sb << "rm -f *.o *.so *.d *.d.*\n";
     }
     if(p5!=t.specific_targets.end()){
       for(const auto& cmd : p5->second.second){

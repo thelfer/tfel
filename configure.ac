@@ -996,6 +996,9 @@ AC_OUTPUT([debug.sh
       	   mfront/tests/behaviours/abaqus/abaquselasticity25-omp.mtest
       	   mfront/tests/behaviours/abaqus/abaquselasticity13-omp.mtest
       	   mfront/tests/behaviours/abaqus/abaquselasticity27-omp.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusorthotropicsaintvenantkirchhoffelasticity-3D-sig11.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusorthotropicsaintvenantkirchhoffelasticity-3D-sig11-2.mtest
+      	   mfront/tests/behaviours/abaqus/abaqusorthotropicsaintvenantkirchhoffelasticity-3D-sig11-3.mtest
    	   mfront/tests/behaviours/abaqus-explicit/Makefile
            mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
            mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
@@ -1427,6 +1430,7 @@ AC_OUTPUT([debug.sh
   	   mfront/tests/behaviours/castem/castemaxialgrowth.mtest
   	   mfront/tests/behaviours/castem/castemaxialgrowth2.mtest
     	   mfront/tests/behaviours/castem/castemaxialgrowth3.mtest
+           mfront/tests/behaviours/castem/castemorthotropicsaintvenantkirchhoffelasticity-3D-sig11.mtest
            mfront/tests/behaviours/castem/dgibi/Makefile
            mfront/tests/behaviours/castem2/Makefile   
            mfront/tests/behaviours/castem2/castem2burger.mtest
@@ -1532,6 +1536,7 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-shear-4-3D.mtest
            mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-shear-5-3D.mtest
            mfront/tests/behaviours/castem2/castem2finiterotationsmallstrainelasticity2-shear-6-3D.mtest
+           mfront/tests/behaviours/castem2/castem2orthotropicsaintvenantkirchhoffelasticity-3D-sig11.mtest
 	   mfront/tests/behaviours/secant/Makefile
            mfront/tests/behaviours/secant/secantchaboche2.mtest
            mfront/tests/behaviours/secant/secantchaboche.mtest
@@ -2370,6 +2375,8 @@ AC_OUTPUT([debug.sh
 	   mtest/tests/Makefile
 	   mtest/tests/unit-tests/Makefile
 	   mtest/tests/unit-tests/MTestParserTest.cxx
+	   mtest/tests/mtest/Makefile
+  	   mtest/tests/mtest/castem/Makefile
 	   mtest/tests/ptest/Makefile
 	   mtest/tests/ptest/castem/Makefile
    	   mtest/tests/ptest/castem/castemelasticity-linear.ptest

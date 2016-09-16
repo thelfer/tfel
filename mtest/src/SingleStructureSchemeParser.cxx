@@ -117,6 +117,9 @@ namespace mtest{
     if(p->value=="mistral"){
       i="mistral";
     }
+    if(p->value=="castem_umat_small_strain"){
+      i=p->value;
+    }
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ASTER
     if(p->value=="aster"){

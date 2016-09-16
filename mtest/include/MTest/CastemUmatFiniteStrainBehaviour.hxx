@@ -1,5 +1,5 @@
 /*! 
- * \file  mtest/include/MTest/CastemUmatSmallStrainBehaviour.hxx
+ * \file  mtest/include/MTest/CastemUmatFiniteStrainBehaviour.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 07 avril 2013
@@ -11,14 +11,13 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_CASTEMUMATSMALLSTRAINBEHAVIOUR_H_
-#define LIB_MTEST_CASTEMUMATSMALLSTRAINBEHAVIOUR_H_ 
+#ifndef LIB_MTEST_CASTEMUMATFINITESTRAINBEHAVIOUR_H_
+#define LIB_MTEST_CASTEMUMATFINITESTRAINBEHAVIOUR_H_ 
 
 #include<memory>
 #include"TFEL/Utilities/Data.hxx"
-#include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MTest/CastemUmatStandardBehaviour.hxx"
-#include"MTest/CastemSmallStrainBehaviour.hxx"
+#include"MTest/CastemFiniteStrainBehaviour.hxx"
 
 namespace mtest
 {
@@ -27,8 +26,8 @@ namespace mtest
    * A class to handle mechanical beheaviours written using the umat
    * interface
    */
-  struct TFEL_VISIBILITY_LOCAL CastemUmatSmallStrainBehaviour
-    : public CastemSmallStrainBehaviour,
+  struct TFEL_VISIBILITY_LOCAL CastemUmatFiniteStrainBehaviour
+    : public CastemFiniteStrainBehaviour,
       public CastemUmatStandardBehaviour
   {
     //! a simple alias
@@ -40,16 +39,16 @@ namespace mtest
      * \param[in] h: modelling hypothesis
      */
     static std::shared_ptr<Behaviour>
-    buildCastemUmatSmallStrainBehaviour(const std::string&,
-					const std::string&,
-					const Parameters&,
-					const Hypothesis);
+    buildCastemUmatFiniteStrainBehaviour(const std::string&,
+					 const std::string&,
+					 const Parameters&,
+					 const Hypothesis);
     /*!
      * \param[in] bd: umat behaviour description
      * \param[in] cn: material name
      * \param[in] h:  modelling hypothesis
      */
-    CastemUmatSmallStrainBehaviour(const UmatBehaviourDescription&,
+    CastemUmatFiniteStrainBehaviour(const UmatBehaviourDescription&,
 				   const std::string&,
 				   const Hypothesis);
     /*!
@@ -61,7 +60,7 @@ namespace mtest
      *   describing orthotropic axes to be declared.  This method is
      *   meant to automatically declare those if they are not defined
      *   by the user.
-     * - Some interface (CastemUmatSmallStrain) uses an external files which gives
+     * - Some interface (CastemUmatFiniteStrain) uses an external files which gives
      *   the values of some material properties. This method is used
      *   to pass thoses values to MTest.
      *
@@ -78,7 +77,7 @@ namespace mtest
     virtual const char*
     getBehaviourNameForUMATFunctionCall(void) const override;
     //! destructor
-    virtual ~CastemUmatSmallStrainBehaviour();
+    virtual ~CastemUmatFiniteStrainBehaviour();
   protected:
     //! material name
     char mname[16u];
@@ -86,4 +85,4 @@ namespace mtest
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_CASTEMUMATSMALLSTRAINBEHAVIOUR_H_ */
+#endif /* LIB_MTEST_CASTEMUMATFINITESTRAINBEHAVIOUR_H_ */

@@ -33,6 +33,8 @@
 #include"MTest/CastemFiniteStrainBehaviour.hxx"
 #include"MTest/CastemCohesiveZoneModel.hxx"
 #include"MTest/MistralBehaviour.hxx"
+#include"MTest/CastemUmatSmallStrainBehaviour.hxx"
+#include"MTest/CastemUmatFiniteStrainBehaviour.hxx"
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ASTER
 #include"MTest/AsterSmallStrainBehaviour.hxx"
@@ -192,6 +194,12 @@ namespace mtest{
     }
     if(i=="mistral"){
       b = MistralBehaviour::buildMistralBehaviour(l,f,d,h);
+    }
+    if(i=="castem_umat_small_strain"){
+      b = CastemUmatSmallStrainBehaviour::buildCastemUmatSmallStrainBehaviour(l,f,d,h);
+    }
+    if(i=="castem_umat_finite_strain"){
+      b = CastemUmatFiniteStrainBehaviour::buildCastemUmatFiniteStrainBehaviour(l,f,d,h);
     }
 #endif
 #ifdef HAVE_ASTER

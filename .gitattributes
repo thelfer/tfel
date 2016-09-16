@@ -2123,6 +2123,7 @@ mfront/tests/behaviours/OrthotropicElastic3.mfront -text
 mfront/tests/behaviours/OrthotropicElastic4.mfront -text
 mfront/tests/behaviours/OrthotropicElastic5.mfront -text
 mfront/tests/behaviours/OrthotropicElastic6.mfront -text
+mfront/tests/behaviours/OrthotropicSaintVenantKirchhoffElasticity.mfront -text
 mfront/tests/behaviours/OrthotropicStandardElasticity.mfront -text
 mfront/tests/behaviours/OrthotropicStandardElasticity2.mfront -text
 mfront/tests/behaviours/OrthotropicStandardElasticity3.mfront -text
@@ -2369,6 +2370,9 @@ mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cfc_irradiation.mtest.in -te
 mfront/tests/behaviours/abaqus/abaqusmonocrystal_dd_cfc_numericaljacobian.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusnorton.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusnorton2.mtest.in -text
+mfront/tests/behaviours/abaqus/abaqusorthotropicsaintvenantkirchhoffelasticity-3D-sig11-2.mtest.in -text
+mfront/tests/behaviours/abaqus/abaqusorthotropicsaintvenantkirchhoffelasticity-3D-sig11-3.mtest.in -text
+mfront/tests/behaviours/abaqus/abaqusorthotropicsaintvenantkirchhoffelasticity-3D-sig11.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusorthotropicswelling-omp.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusorthotropicswelling.mtest.in -text
 mfront/tests/behaviours/abaqus/abaqusorthotropicswelling2-omp.mtest.in -text
@@ -3191,6 +3195,7 @@ mfront/tests/behaviours/castem/castemorthotropicelasticity6-6.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropicelasticity6-7.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropicelasticity6-8.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropicelasticity6-9.mtest.in -text
+mfront/tests/behaviours/castem/castemorthotropicsaintvenantkirchhoffelasticity-3D-sig11.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropicswelling.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropicswelling2.mtest.in -text
 mfront/tests/behaviours/castem/castemorthotropicswelling3.mtest.in -text
@@ -3322,6 +3327,7 @@ mfront/tests/behaviours/castem2/castem2monocrystal_dd_cfc_irradiation.mtest.in -
 mfront/tests/behaviours/castem2/castem2monocrystal_dd_cfc_numericaljacobian.mtest.in -text
 mfront/tests/behaviours/castem2/castem2norton.mtest.in -text
 mfront/tests/behaviours/castem2/castem2norton2.mtest.in -text
+mfront/tests/behaviours/castem2/castem2orthotropicsaintvenantkirchhoffelasticity-3D-sig11.mtest.in -text
 mfront/tests/behaviours/castem2/castem2plasisocin.mtest.in -text
 mfront/tests/behaviours/castem2/castem2plasticity.mtest.in -text
 mfront/tests/behaviours/castem2/castem2saintvenantkirchhoffelasticity-shear-1-2D.mtest.in -text
@@ -4196,7 +4202,9 @@ mtest/include/MTest/CastemEvolution.hxx -text
 mtest/include/MTest/CastemFiniteStrainBehaviour.hxx -text
 mtest/include/MTest/CastemSmallStrainBehaviour.hxx -text
 mtest/include/MTest/CastemStandardBehaviour.hxx -text
+mtest/include/MTest/CastemUmatFiniteStrainBehaviour.hxx -text
 mtest/include/MTest/CastemUmatSmallStrainBehaviour.hxx -text
+mtest/include/MTest/CastemUmatStandardBehaviour.hxx -text
 mtest/include/MTest/Config.hxx -text
 mtest/include/MTest/Constraint.hxx -text
 mtest/include/MTest/Crossed2DeltaAccelerationAlgorithm.hxx -text
@@ -4269,7 +4277,9 @@ mtest/src/CastemEvolution.cxx -text
 mtest/src/CastemFiniteStrainBehaviour.cxx -text
 mtest/src/CastemSmallStrainBehaviour.cxx -text
 mtest/src/CastemStandardBehaviour.cxx -text
+mtest/src/CastemUmatFiniteStrainBehaviour.cxx -text
 mtest/src/CastemUmatSmallStrainBehaviour.cxx -text
+mtest/src/CastemUmatStandardBehaviour.cxx -text
 mtest/src/Constraint.cxx -text
 mtest/src/Crossed2DeltaAccelerationAlgorithm.cxx -text
 mtest/src/Crossed2DeltabisAccelerationAlgorithm.cxx -text
@@ -4317,6 +4327,11 @@ mtest/src/UmatBehaviourBase.cxx -text
 mtest/src/UmatNormaliseTangentOperator.cxx -text
 mtest/tests/CMakeLists.txt -text
 mtest/tests/Makefile.am -text
+mtest/tests/mtest/CMakeLists.txt -text
+mtest/tests/mtest/Makefile.am -text
+mtest/tests/mtest/castem/CMakeLists.txt -text
+mtest/tests/mtest/castem/Makefile.am -text
+mtest/tests/mtest/castem/umat.f -text
 mtest/tests/ptest/CMakeLists.txt -text
 mtest/tests/ptest/Makefile.am -text
 mtest/tests/ptest/castem/CMakeLists.txt -text

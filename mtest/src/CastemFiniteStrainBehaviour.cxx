@@ -204,6 +204,11 @@ namespace mtest
     }
   } // end of CastemFiniteStrainBehaviour::CastemFiniteStrainBehaviour
 
+  CastemFiniteStrainBehaviour::CastemFiniteStrainBehaviour(const UmatBehaviourDescription& umb,
+							   const Hypothesis h)
+    : CastemStandardBehaviour(umb,h)
+  {} // end of CastemFiniteStrainBehaviour::CastemFiniteStrainBehaviour
+  
   void
   CastemFiniteStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
   {

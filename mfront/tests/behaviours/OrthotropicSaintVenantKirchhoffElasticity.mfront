@@ -1,0 +1,30 @@
+@DSL DefaultFiniteStrainDSL;
+@Behaviour OrthotropicSaintVenantKirchhoffElasticity;
+@Author T. Helfer;
+@Date 15/09/2016;
+@Description{
+  This file implements an orthotropic version
+  of the Saint-Venant Kirchhoff hyperelastic behaviour.
+}
+@OrthotropicBehaviour<Pipe>;
+@AbaqusOrthotropyManagementPolicy[abaqus,abaqus_explicit] MFront;
+@ComputeStiffnessTensor{7.8e+10,2.64233e+11,3.32e+11,
+    0.13,0.24,0.18,
+    4.8e+10,1.16418e+11,7.8e+10};
+
+@PredictionOperator<DS_DEGL>{
+  Dt = D;
+}
+@Integrator{
+  const auto e = computeGreenLagrangeTensor(F1);
+  // second Piola–Kirchhoff stress
+  const auto s = D*e;
+  // conversion to Cauchy stress tensor
+  sig = convertSecondPiolaKirchhoffStressToCauchyStress(s,F1);
+}
+
+@TangentOperator<DS_DEGL>{
+  static_cast<void>(smt); // suppression d'un warning : la matrice
+			  // tangente est toujours l'élastique
+  Dt = D;
+}

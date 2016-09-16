@@ -89,6 +89,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 SaintVenantKirchhoffElasticity.mfront                             \
 	 SaintVenantKirchhoffElasticity2.mfront                            \
 	 SaintVenantKirchhoffElasticity3.mfront                            \
+	 OrthotropicSaintVenantKirchhoffElasticity.mfront                  \
 	 LogarithmicStrainElasticity.mfront                                \
 	 LogarithmicStrainElasticity2.mfront                               \
 	 LogarithmicStrainPlasticity.mfront                                \

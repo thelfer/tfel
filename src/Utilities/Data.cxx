@@ -230,7 +230,7 @@ namespace tfel{
       };
       throw_if(!d.is<std::vector<Data>>(),"invalid data type");
       const auto& vd = d.get<std::vector<Data>>();
-      auto r = std::vector<std::string>>{};
+      auto r = std::vector<std::string>{};
       r.reserve(vd.size());
       for(const auto&w : vd){
 	throw_if(!w.is<std::string>(),"invalid data type");

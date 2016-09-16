@@ -74,6 +74,7 @@ set(mfront_tests_SOURCES
   SaintVenantKirchhoffElasticity
   SaintVenantKirchhoffElasticity2
   SaintVenantKirchhoffElasticity3
+  OrthotropicSaintVenantKirchhoffElasticity
   FiniteStrainSingleCrystal
   FiniteStrainSingleCrystal_NumericalJacobian
   FiniteRotationSmallStrainElasticity
@@ -385,3 +386,6 @@ test_abaqus(elasticity12-omp)
 test_abaqus(elasticity25-omp)
 test_abaqus(elasticity13-omp)
 test_abaqus(elasticity27-omp)
+test_abaqus(orthotropicsaintvenantkirchhoffelasticity-3D-sig11)
+test_abaqus(orthotropicsaintvenantkirchhoffelasticity-3D-sig11-2)
+test_abaqus(orthotropicsaintvenantkirchhoffelasticity-3D-sig11-3)

@@ -29,7 +29,7 @@ namespace tfel
 	std::shared_ptr<int>(new int(-1))
     {} // end of rfstream::rfstream
 
-    rfstream::rfstream(const rfstream& src) = default;
+    rfstream::rfstream(const rfstream&) = default;
 
     rfstream &
     rfstream::operator=(const rfstream& src)

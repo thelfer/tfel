@@ -11,6 +11,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
+
 #include<string>
 #include<fstream>
 #include<stdexcept>
@@ -34,6 +36,8 @@ namespace mfront{
 			      &DefaultDSLBase::treatTangentOperator);
     this->registerNewCallBack("@IsTangentOperatorSymmetric",
 			      &DefaultDSLBase::treatIsTangentOperatorSymmetric);
+    this->registerNewCallBack("@ComputeStiffnessTensor",
+			      &DefaultDSLBase::treatComputeStiffnessTensor);
   }
 
   void
@@ -42,6 +46,39 @@ namespace mfront{
     BehaviourDSLCommon::writeBehaviourParserSpecificIncludes();
   } // end of DefaultDSLBase::writeBehaviourParserSpecificIncludes
 
+  void DefaultDSLBase::endsInputFileProcessing()
+  {
+    BehaviourDSLCommon::endsInputFileProcessing();
+    if(this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false)){
+      const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      auto D = VariableDescription("StiffnessTensor","D",1u,0u); 
+      D.description = "stiffness tensor computed from elastic "
+	"material properties";
+      this->mb.addLocalVariable(h,D,BehaviourData::ALREADYREGISTRED);
+    }
+  } // end of DefaultDSLBase::endsInputFileProcessing()
+  
+  void DefaultDSLBase::writeBehaviourLocalVariablesInitialisation(const Hypothesis)
+  {
+    using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
+    Modifier ets = [](const MaterialPropertyInput& i) -> std::string {
+      if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	return "this->"+i.name + "+this->d" + i.name;
+      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::PARAMETER)){
+	return "this->"+i.name;
+      } else {
+	throw(std::runtime_error("DefaultDSLBase::writeBehaviourLocalVariablesInitialisation: "
+				 "unsupported input type for variable '"+i.name+"'"));
+      }
+    };
+    if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
+      this->behaviourFile << "// stiffness tensor at the end of the time step\n";
+      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",ets);
+    }
+  }
+  
   void
   DefaultDSLBase::treatProvidesTangentOperator()
   {

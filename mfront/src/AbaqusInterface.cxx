@@ -280,7 +280,7 @@ namespace mfront{
 	throw_if(this->omp!=MFRONTORTHOTROPYMANAGEMENTPOLICY,
 		 "orthotropic finite strain behaviours are only supported with the "
 		 "'MFront' othotropy management policy. See the "
-		 "'@AbaqusOrthotropycManagementPolicy' for details");
+		 "'@AbaqusOrthotropyManagementPolicy' for details");
       }
     }
     // get the modelling hypotheses to be treated

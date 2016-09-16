@@ -80,6 +80,15 @@ namespace tfel
 	return this->v[i];
       } // end of operator()
       /*!
+       * \brief access operator
+       * \param[in] i : index
+       */
+      TFEL_MATH_INLINE const value_type&
+      operator[](const unsigned short i) const
+      {
+	return this->v[i];
+      } // end of operator[]
+      /*!
        * \return the runtime properties
        */
       TFEL_MATH_INLINE RunTimeProperties
@@ -136,6 +145,15 @@ namespace tfel
       {
 	return this->v[i];
       } // end of operator()
+      /*!
+       * \brief access operator
+       * \param[in] i : index
+       */
+      TFEL_MATH_INLINE const value_type&
+      operator[](const unsigned short i) const
+      {
+	return this->v[i];
+      } // end of operator[]
       /*!
        * \return the runtime properties
        */
@@ -195,6 +213,15 @@ namespace tfel
       {
 	return this->v[i];
       } // end of operator()
+      /*!
+       * \brief access operator
+       * \param[in] i : index
+       */
+      TFEL_MATH_INLINE const value_type&
+      operator[](const unsigned short i) const
+      {
+	return this->v[i];
+      } // end of operator[]
       /*!
        * \return the runtime properties
        */

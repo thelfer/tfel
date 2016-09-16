@@ -1827,8 +1827,7 @@ namespace mfront{
     this->behaviourFile << '\n';
   }
 
-  void
-  ImplicitDSLBase::endsInputFileProcessing()
+  void ImplicitDSLBase::endsInputFileProcessing()
   {
     using namespace tfel::glossary;
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;

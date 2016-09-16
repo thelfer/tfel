@@ -249,12 +249,11 @@ namespace mtest
 					  const Hypothesis h)
   {
     const auto md = readMistralFile(l,f,p,h);
-    std::shared_ptr<MistralBehaviour>
-      ptr(new MistralBehaviour(md,md.cvalues,
-			       md.young_modulus,
-			       md.poisson_ratio,
-			       md.SENSIP1,md.SENSIP2,md.ICBASE,h));
-    return ptr;    
+    std::shared_ptr<MistralBehaviour> ptr(new MistralBehaviour(md,md.cvalues,
+							       md.young_modulus,
+							       md.poisson_ratio,
+							       md.SENSIP1,md.SENSIP2,md.ICBASE,h));
+    return ptr;
   } // end of MistralBehaviour::buildMistralBehaviour
     
   MistralBehaviour::MistralBehaviour(const UmatBehaviourDescription& bd,

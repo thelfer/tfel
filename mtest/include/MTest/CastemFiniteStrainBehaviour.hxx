@@ -35,6 +35,12 @@ namespace mtest
 				const std::string&,
 				const std::string&);
     /*!
+     * \param[in] umb: behaviour description
+     * \param[in] h:   modelling hypothesis
+     */
+    CastemFiniteStrainBehaviour(const UmatBehaviourDescription&,
+				const Hypothesis);
+    /*!
      * \param[out] v : initial values of the driving variables
      */
     virtual void

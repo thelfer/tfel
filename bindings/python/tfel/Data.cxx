@@ -56,11 +56,11 @@ convert_python_object_to_data(tfel::utilities::Data& d,
   using boost::python::list;
   using boost::python::dict;
   if(is<int>(o)){
-    d = Data(extract<int>(o)());
+    d = Data(boost::python::extract<int>(o)());
   } else if(is<double>(o)){
-    d = Data(extract<double>(o)());
+    d = Data(boost::python::extract<double>(o)());
   } else if(is<std::string>(o)){
-    d = Data(extract<std::string>(o)());
+    d = Data(boost::python::extract<std::string>(o)());
   } else {
     throw(std::runtime_error("convert_python_object_to_data: "
 			     "unsupported conversion"));

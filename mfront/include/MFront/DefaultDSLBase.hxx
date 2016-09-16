@@ -21,22 +21,18 @@ namespace mfront{
   struct DefaultDSLBase
     : public BehaviourDSLBase<DefaultDSLBase>
   {
-
     DefaultDSLBase();
-
     virtual ~DefaultDSLBase();
-
   protected:
-
+    virtual void endsInputFileProcessing() override;
     virtual void
     writeBehaviourParserSpecificIncludes(void) override;
-    
+    virtual void
+    writeBehaviourLocalVariablesInitialisation(const Hypothesis) override;
     virtual void
     treatProvidesTangentOperator(void);
-
     virtual void
     treatProvidesSymmetricTangentOperator(void);
-
   }; // end of struct DefaultDSLBase
 
 } // end of namespace mfront  

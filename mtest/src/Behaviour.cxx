@@ -29,11 +29,11 @@ namespace mtest
     if(evm.find(n)==evm.end()){
       if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
 	auto& log = mfront::getLogStream();
-	log << "MTestStandardUmatBehaviour::setOptionalMaterialPropertiesDefaultValues : "
+	log << "Behaviour::setOptionalMaterialPropertiesDefaultValues : "
 	    << "set material property '" << n << "' to default value\n";
       }
       if(!mp.insert({n,make_evolution(v)}).second){
-	throw(std::runtime_error("MTestStandardUmatBehaviour::setOptionalMaterialPropertiesDefaultValues: "
+	throw(std::runtime_error("Behaviour::setOptionalMaterialPropertiesDefaultValues: "
 				 "default value for material property '"+n+"' already declared"));
       }
     }
