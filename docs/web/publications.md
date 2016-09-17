@@ -4,6 +4,8 @@
 
 ---
 nocite: |
+	@michel_3d_2016
+	@bary_thermoviscoelastic_2016
 	@asali_numerical_2016@
 	@hure_intergranular_2016@
 	@saouma16:_effec@

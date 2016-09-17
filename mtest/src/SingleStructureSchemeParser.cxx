@@ -117,7 +117,8 @@ namespace mtest{
     if(p->value=="mistral"){
       i="mistral";
     }
-    if(p->value=="castem_umat_small_strain"){
+    if((p->value=="mistral")||(p->value=="castem_umat_small_strain")||
+       (p->value=="castem_umat_finite_strain")){
       i=p->value;
     }
 #endif /* HAVE_CASTEM */

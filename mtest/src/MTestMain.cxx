@@ -369,20 +369,17 @@ namespace mtest
     this->inputs.push_back(this->currentArgument->as_string());
   } // end of MTestMain::treatUnknownArgument()
 
-  std::string 
-  MTestMain::getVersionDescription() const
+  std::string MTestMain::getVersionDescription() const
   {
     return "mtest is an behaviour testing utility";
   }
 
-  std::string 
-  MTestMain::getUsageDescription() const
+  std::string MTestMain::getUsageDescription() const
   {
     return "Usage : mtest [options] [filesusage]";
   }
 
-  int
-  MTestMain::execute()
+  int MTestMain::execute()
   {
     auto mtest = [](const std::string& f,
 		    const std::vector<std::string>& e,
@@ -412,6 +409,19 @@ namespace mtest
 	ext   = i.substr(pos); 
       } else {
 	tname = i;
+      }
+      if(tname.back()=='/'){
+	throw(std::runtime_error("MTestMain::execute: "
+				 "invalid input file name '"+i+"'"));
+      }
+      const auto pos2 = tname.rfind('/');
+      if(pos2!=string::npos){
+	tname = tname.substr(pos2+1);
+      }
+      if(tname.empty()){
+	throw(std::runtime_error("MTestMain::execute: "
+				 "invalid input file name '"+i+"'"));
+	
       }
       auto t = std::shared_ptr<SchemeBase>{};
       if(this->scheme==MTEST){

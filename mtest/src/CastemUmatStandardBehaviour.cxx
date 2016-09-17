@@ -78,7 +78,7 @@ namespace mtest{
     // optional material properties names
     auto ompnames = std::vector<std::string>{};
     if(md.stype==0u){
-      mmpnames.insert(mmpnames.begin(),{"YOUNG","NU"});
+      mmpnames.insert(mmpnames.begin(),{"YOUN","NU"});
       ompnames.insert(ompnames.begin(),{"RHO","ALPA"});
     } else if (md.stype==1u){
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
@@ -115,6 +115,9 @@ namespace mtest{
       return tfel::utilities::extract<std::vector<std::string>>(pd->second);
     };
     const auto mpnames = get("C_MATERIAU");
+    for(const auto& n : mpnames){
+      throw_if(n.size()>4u,"invalid material property name '"+n+"'");
+    }
     throw_if(mpnames.size()<mmpnames.size(),
 	     "invalid number of material properties");
     for(decltype(mpnames.size()) i=0;i!=mmpnames.size();++i){

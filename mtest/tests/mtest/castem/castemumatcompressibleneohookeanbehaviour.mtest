@@ -1,0 +1,38 @@
+@Author Thomas Helfer;
+@Date   16 sept. 2016;
+@Description{
+  Test of the Neo-Hookean
+  behaviour based on the work of L. Gornet.
+  Ecole Centrale de Nantes (2006)
+};
+
+@UseCastemAccelerationAlgorithm true;
+@Behaviour<castem_umat_finite_strain> @CASTEMUMATLIBRARY@ 'umat_'{
+ 'NUME_LOI'   : 32,
+ 'SYMETRIE'   : 'ISOTROPE',
+ 'C_MATERIAU' : {'YOUN','NU','C1','C2'}
+};
+
+@Real 'C_C' '1.e6';
+@Real 'C_D' '1.e-10';
+@Real 'E'   '2.*(2.*C_C)*(1.+0.5)';
+
+@MaterialProperty<constant> 'YOUN' '100*E';
+@MaterialProperty<constant> 'NU'     0.49999;
+@MaterialProperty<constant> 'C1' 'C_C';
+@MaterialProperty<constant> 'C2' 'C_D';
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+
+@ImposedDeformationGradient 'FZZ' {0:1,1:3};
+@ImposedDeformationGradient 'FXY' 0;
+@ImposedDeformationGradient 'FYX' 0;
+@ImposedDeformationGradient 'FXZ' 0;
+@ImposedDeformationGradient 'FZX' 0;
+@ImposedDeformationGradient 'FYZ' 0;
+@ImposedDeformationGradient 'FZY' 0;
+
+@Times {0.,1 in 10};
+
+@Test<function> {'SZZ':'(FZZ**2-1/FZZ)*2*C_C'} 1.e3;
+@Test<function> {'SXX':'0.','SYY':'0.','SXY':'0.','SXZ':'0.','SYZ':'0.'} 1.e-2;

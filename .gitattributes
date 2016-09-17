@@ -4331,6 +4331,11 @@ mtest/tests/mtest/CMakeLists.txt -text
 mtest/tests/mtest/Makefile.am -text
 mtest/tests/mtest/castem/CMakeLists.txt -text
 mtest/tests/mtest/castem/Makefile.am -text
+mtest/tests/mtest/castem/castemumatcompressibleneohookeanbehaviour.mtest -text
+mtest/tests/mtest/castem/castemumatelastic.mtest -text
+mtest/tests/mtest/castem/castemumatincompressiblemooneyrivlin.mtest -text
+mtest/tests/mtest/castem/mooney.f -text
+mtest/tests/mtest/castem/neohoo.f -text
 mtest/tests/mtest/castem/umat.f -text
 mtest/tests/ptest/CMakeLists.txt -text
 mtest/tests/ptest/Makefile.am -text

@@ -72,6 +72,7 @@ namespace mtest
   protected:
     /*!
      * \param[in] bd: umat behaviour description
+     * \param[in] cn: material name
      * \param[in] mp: behaviour parameters (defined through material
      *                properties)
      * \param[in] yg: Young modulus
@@ -82,6 +83,7 @@ namespace mtest
      * \param[in] h:  modelling hypothesis
      */
     MistralBehaviour(const UmatBehaviourDescription&,
+		     const std::string&,
 		     const std::vector<double>&,
 		     const std::pair<double,double>&,
 		     const std::pair<double,double>&,
@@ -96,6 +98,7 @@ namespace mtest
     const std::pair<double,double> young_modulus;
     //! Poisson ratio
     const std::pair<double,double> poisson_ratio;
+    char mname[16];
     const int SENSIP1;
     const int SENSIP2;
     const int ICBASE;

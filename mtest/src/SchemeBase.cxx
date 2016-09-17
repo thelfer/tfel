@@ -472,9 +472,8 @@ namespace mtest{
     }    
   } // end of SchemeBase::completeInitialisation
   
-  void
-  SchemeBase::declareVariable(const std::string& v,
-			      const bool check)
+  void SchemeBase::declareVariable(const std::string& v,
+				   const bool check)
   {
     if(find(this->vnames.begin(),this->vnames.end(),v)!=
        this->vnames.end()){
@@ -487,17 +486,15 @@ namespace mtest{
     }
   }
 
-  void
-  SchemeBase::declareVariables(const std::vector<std::string>& v,
-			       const bool check)
+  void SchemeBase::declareVariables(const std::vector<std::string>& v,
+				    const bool check)
   {
     for(const auto& n : v){
       this->declareVariable(n,check);
     }
   }
 
-  void
-  SchemeBase::setOutputFileName(const std::string& o)
+  void SchemeBase::setOutputFileName(const std::string& o)
   {
     if(!this->output.empty()){
       throw(std::runtime_error("SchemeBase::setOutputFileName: "
@@ -511,8 +508,7 @@ namespace mtest{
     return !this->output.empty();
   }
   
-  void
-  SchemeBase::setOutputFilePrecision(const unsigned int p)
+  void SchemeBase::setOutputFilePrecision(const unsigned int p)
   {
     if(this->oprec!=-1){
       throw(std::runtime_error("SchemeBase::setOutputFileName: "
@@ -521,8 +517,7 @@ namespace mtest{
     this->oprec = static_cast<int>(p);
   }
 
-  void
-  SchemeBase::setResidualFileName(const std::string& o)
+  void SchemeBase::setResidualFileName(const std::string& o)
   {
     if(!this->residualFileName.empty()){
       throw(std::runtime_error("SchemeBase::setResidualFileName : "
@@ -536,8 +531,7 @@ namespace mtest{
     return !this->residualFileName.empty();
   }
   
-  void
-  SchemeBase::setResidualFilePrecision(const unsigned int p)
+  void SchemeBase::setResidualFilePrecision(const unsigned int p)
   {
     if(this->rprec!=-1){
       throw(std::runtime_error("SchemeBase::setResidualFileName: "
@@ -546,8 +540,7 @@ namespace mtest{
     this->rprec = static_cast<int>(p);
   }
 
-  void
-  SchemeBase::setXMLOutputFileName(const std::string& o)
+  void SchemeBase::setXMLOutputFileName(const std::string& o)
   {
     if(!this->xmlFileName.empty()){
       throw(std::runtime_error("SchemeBase::setXMLOutputFileName : "

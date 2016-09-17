@@ -526,7 +526,6 @@ namespace mfront{
 	const auto& m = mps.first.back();
 	msize  = m.offset;
 	msize += this->getTypeSize(m.type,m.arraySize);
-	msize -= mps.second;
       }
       const auto& persistentVarsHolder = d.getPersistentVariables();
       auto vs = SupportedTypes::TypeSize{};

@@ -29,6 +29,7 @@ namespace mtest
     std::pair<double,double> poisson_ratio;
     //! values of the material properties
     std::vector<double> cvalues;
+    std::string mname;
     int SENSIP1;
     int SENSIP2;
     int ICBASE;
@@ -63,6 +64,16 @@ namespace mtest
       const auto v = d.get<int>();
       return v;
     };
+    throw_if(mp.find("NUME_LOI")==mp.end(),
+	     "NUME_LOI not specified");
+    const auto& d = mp.at("NUME_LOI");
+    throw_if(!d.is<int>(),"parameter 'NUME_LOI' must be an integer");
+    const auto& n = d.get<int>();
+    throw_if((n<0)||(n>9999),"invalid value for parameter 'NUME_LOI' ("+std::to_string(n)+")");
+    const auto ns = std::to_string(n);
+    throw_if(ns.size()>4,"invalid convertion of parameter 'NUME_LOI'");
+    md.mname = std::string(16,' ');
+    std::copy(ns.rbegin(),ns.rend(),md.mname.rbegin());
     // mistral parameters file
     const auto& m = [&mp,&throw_if](){
       auto p = mp.find("mistral_parameters_file");
@@ -249,7 +260,8 @@ namespace mtest
 					  const Hypothesis h)
   {
     const auto md = readMistralFile(l,f,p,h);
-    std::shared_ptr<MistralBehaviour> ptr(new MistralBehaviour(md,md.cvalues,
+    std::shared_ptr<MistralBehaviour> ptr(new MistralBehaviour(md,md.mname,
+							       md.cvalues,
 							       md.young_modulus,
 							       md.poisson_ratio,
 							       md.SENSIP1,md.SENSIP2,md.ICBASE,h));
@@ -257,6 +269,7 @@ namespace mtest
   } // end of MistralBehaviour::buildMistralBehaviour
     
   MistralBehaviour::MistralBehaviour(const UmatBehaviourDescription& bd,
+				     const std::string& cn, 
 				     const std::vector<double>& cvalues,
 				     const std::pair<double,double>& yg,
 				     const std::pair<double,double>& nu,
@@ -271,7 +284,13 @@ namespace mtest
       SENSIP1(SENSIP1_),
       SENSIP2(SENSIP2_),
       ICBASE(ICBASE_)
-  {} // end of MistralBehaviour::MistralBehaviour
+  {
+    if(cn.size()!=16u){
+      throw(std::runtime_error("MistralBehaviour::MistralBehaviour: "
+			       "invalid size for the material name"));
+    }
+    std::copy(cn.begin(),cn.end(),this->mname);
+  } // end of MistralBehaviour::MistralBehaviour
 
   void
   MistralBehaviour::setOptionalMaterialPropertiesDefaultValues(EvolutionManager& mp,
@@ -340,7 +359,7 @@ namespace mtest
 
   const char*
   MistralBehaviour::getBehaviourNameForUMATFunctionCall(void) const{
-    return "              94";
+    return this->mname;
   } // end of MistralBehaviour::getBehaviourNameForUMATFunctionCall
   
   MistralBehaviour::~MistralBehaviour() = default;

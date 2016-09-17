@@ -396,42 +396,42 @@ C
      &                DFGRD0, DFGRD1, KSTEP, KINC )
 
 C
-      ELSE IF (K4ILOI.EQ.'  33') THEN
-C
-        CALL GDGD (STRESS, STATEV, DDSDDE, STRAN, DSTRAN,
-     &                   TIME, DTIME, TEMP, DTEMP, PREDEF, DPRED,
-     &                   NDI, NSHR, NTENS, NSTATV, PROPS, NPROPS,
-     &                   DFGRD0, DFGRD1, KSTEP, KINC,SSE,spd,scd,rpl,
-     &                   DDSDDT,DRPLDE,DRPLDT,cmname,coords,drot,PNEWDT,
-     &                   celent,NOEL, NPT, LAYER, KSPT )
-      ELSE  IF (K4ILOI.EQ.'  34') THEN
-       CALL HARTS (STRESS, STATEV, DDSDDE, STRAN, DSTRAN,
-     &                   TIME, DTIME, TEMP, DTEMP, PREDEF, DPRED,
-     &                   NDI, NSHR, NTENS, NSTATV, PROPS, NPROPS,
-     &                   DFGRD0, DFGRD1, KSTEP, KINC,SSE,spd,scd,rpl,
-     &                   DDSDDT,DRPLDE,DRPLDT,cmname,coords,drot,PNEWDT,
-     &                   celent,NOEL, NPT, LAYER, KSPT )
-C      
-      ELSE  IF (K4ILOI.EQ.'  35') THEN
-C      
-       CALL BIDERM (STRESS, STATEV, DDSDDE, STRAN, DSTRAN,
-     &                   TIME, DTIME, TEMP, DTEMP, PREDEF, DPRED,
-     &                   NDI, NSHR, NTENS, NSTATV, PROPS, NPROPS,
-     &                   DFGRD0, DFGRD1, KSTEP, KINC,SSE,spd,scd,rpl,
-     &                   DDSDDT,DRPLDE,DRPLDT,cmname,coords,drot,PNEWDT,
-     &                   celent,NOEL, NPT, LAYER, KSPT ) 
-      ELSE IF (K4ILOI.EQ.'  36') THEN
-C
-      CALL HUITCH (STRESS, STATEV, DDSDDE, STRAN, DSTRAN,
-     &                   TIME, DTIME, TEMP, DTEMP, PREDEF, DPRED,
-     &                   NDI, NSHR, NTENS, NSTATV, PROPS, NPROPS,
-     &                   DFGRD0, DFGRD1, KSTEP, KINC,SSE,spd,scd,rpl,
-     &                   DDSDDT,DRPLDE,DRPLDT,cmname,coords,drot,PNEWDT,
-     &                   celent,NOEL, NPT, LAYER, KSPT )     
-C=======================================================================
-C     Modele externe non reconnu
-C=======================================================================
-C
+c$$$      ELSE IF (K4ILOI.EQ.'  33') THEN
+c$$$C
+c$$$        CALL GDGD (STRESS, STATEV, DDSDDE, STRAN, DSTRAN,
+c$$$     &                   TIME, DTIME, TEMP, DTEMP, PREDEF, DPRED,
+c$$$     &                   NDI, NSHR, NTENS, NSTATV, PROPS, NPROPS,
+c$$$     &                   DFGRD0, DFGRD1, KSTEP, KINC,SSE,spd,scd,rpl,
+c$$$     &                   DDSDDT,DRPLDE,DRPLDT,cmname,coords,drot,PNEWDT,
+c$$$     &                   celent,NOEL, NPT, LAYER, KSPT )
+c$$$      ELSE  IF (K4ILOI.EQ.'  34') THEN
+c$$$       CALL HARTS (STRESS, STATEV, DDSDDE, STRAN, DSTRAN,
+c$$$     &                   TIME, DTIME, TEMP, DTEMP, PREDEF, DPRED,
+c$$$     &                   NDI, NSHR, NTENS, NSTATV, PROPS, NPROPS,
+c$$$     &                   DFGRD0, DFGRD1, KSTEP, KINC,SSE,spd,scd,rpl,
+c$$$     &                   DDSDDT,DRPLDE,DRPLDT,cmname,coords,drot,PNEWDT,
+c$$$     &                   celent,NOEL, NPT, LAYER, KSPT )
+c$$$C      
+c$$$      ELSE  IF (K4ILOI.EQ.'  35') THEN
+c$$$C      
+c$$$       CALL BIDERM (STRESS, STATEV, DDSDDE, STRAN, DSTRAN,
+c$$$     &                   TIME, DTIME, TEMP, DTEMP, PREDEF, DPRED,
+c$$$     &                   NDI, NSHR, NTENS, NSTATV, PROPS, NPROPS,
+c$$$     &                   DFGRD0, DFGRD1, KSTEP, KINC,SSE,spd,scd,rpl,
+c$$$     &                   DDSDDT,DRPLDE,DRPLDT,cmname,coords,drot,PNEWDT,
+c$$$     &                   celent,NOEL, NPT, LAYER, KSPT ) 
+c$$$      ELSE IF (K4ILOI.EQ.'  36') THEN
+c$$$C
+c$$$      CALL HUITCH (STRESS, STATEV, DDSDDE, STRAN, DSTRAN,
+c$$$     &                   TIME, DTIME, TEMP, DTEMP, PREDEF, DPRED,
+c$$$     &                   NDI, NSHR, NTENS, NSTATV, PROPS, NPROPS,
+c$$$     &                   DFGRD0, DFGRD1, KSTEP, KINC,SSE,spd,scd,rpl,
+c$$$     &                   DDSDDT,DRPLDE,DRPLDT,cmname,coords,drot,PNEWDT,
+c$$$     &                   celent,NOEL, NPT, LAYER, KSPT )     
+c$$$C=======================================================================
+c$$$C     Modele externe non reconnu
+c$$$C=======================================================================
+c$$$C
       ELSE
 C
          KINC = -2
