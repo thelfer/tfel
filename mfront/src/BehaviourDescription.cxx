@@ -11,7 +11,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
 #include<string>
 #include<sstream>
 #include<stdexcept>
@@ -550,20 +549,24 @@ namespace mfront
     }
     return true;
   } // end of BehaviourDescription::isMaterialPropertyConstantDuringTheTimeStep
-  
-  bool
-  BehaviourDescription::areElasticMaterialPropertiesConstantDuringTheTimeStep() const{
+
+  bool BehaviourDescription::areElasticMaterialPropertiesConstantDuringTheTimeStep() const{
     if(!this->areElasticMaterialPropertiesDefined()){
       throw(std::runtime_error("BehaviourDescription::getElasticMaterialProperties: "
 			       "no elastic material property defined"));
     }
-    for(const auto& mp : this->elasticMaterialProperties){
+    return this->areMaterialPropertiesConstantDuringTheTimeStep(this->elasticMaterialProperties);
+  } // end of BehaviourDescription::areElasticMaterialPropertiesConstantDuringTheTimeStep
+
+  bool
+  BehaviourDescription::areMaterialPropertiesConstantDuringTheTimeStep(const std::vector<MaterialProperty>& mps) const{
+    for(const auto& mp : mps){
       if(!this->isMaterialPropertyConstantDuringTheTimeStep(mp)){
 	return false;
       }
     }
     return true;
-  } // end of BehaviourDescription::areElasticMaterialPropertiesConstantDuringTheTimeStep
+  } // end of BehaviourDescription::areMaterialPropertiesConstantDuringTheTimeStep
   
   const std::vector<BehaviourDescription::MaterialProperty>&
   BehaviourDescription::getElasticMaterialProperties() const
@@ -630,8 +633,7 @@ namespace mfront
     this->elasticMaterialProperties.swap(lemps);
   } // end of BehaviourDescription::setElasticMaterialProperties
     
-  BehaviourSymmetryType
-  BehaviourDescription::getElasticSymmetryType() const
+  BehaviourSymmetryType BehaviourDescription::getElasticSymmetryType() const
   {
     if(!this->estypeIsDefined){
       this->estype = this->getSymmetryType();
@@ -640,8 +642,7 @@ namespace mfront
     return this->estype;
   } // end of BehaviourDescription::getElasticSymmetryType
 
-  void
-  BehaviourDescription::setElasticSymmetryType(const BehaviourSymmetryType t)
+  void BehaviourDescription::setElasticSymmetryType(const BehaviourSymmetryType t)
   {
     if(this->estypeIsDefined){
       throw(std::runtime_error("BehaviourDescription::setElasticSymmetryType: "
@@ -657,14 +658,12 @@ namespace mfront
     this->estypeIsDefined=true;
   } // end of BehaviourDescription::setElasticSymmetryType
 
-  bool
-  BehaviourDescription::isElasticSymmetryTypeDefined() const
+  bool BehaviourDescription::isElasticSymmetryTypeDefined() const
   {
     return this->estypeIsDefined;
   } // end of BehaviourDescription::isElasticSymmetryTypeDefined
 
-  BehaviourSymmetryType
-  BehaviourDescription::getSymmetryType() const
+  BehaviourSymmetryType BehaviourDescription::getSymmetryType() const
   {
     if(!this->stypeIsDefined){
       this->stype = mfront::ISOTROPIC;
@@ -673,8 +672,7 @@ namespace mfront
     return this->stype;
   } // end of BehaviourDescription::getSymmetryType
 
-  void
-  BehaviourDescription::setSymmetryType(const BehaviourSymmetryType t)
+  void BehaviourDescription::setSymmetryType(const BehaviourSymmetryType t)
   {
     if(this->stypeIsDefined){
       throw(std::runtime_error("BehaviourDescription::setSymmetryType: "
@@ -684,14 +682,36 @@ namespace mfront
     this->stypeIsDefined=true;
   } // end of BehaviourDescription::setSymmetryType
   
-  bool
-  BehaviourDescription::isSymmetryTypeDefined() const
+  bool BehaviourDescription::isSymmetryTypeDefined() const
   {
     return this->stypeIsDefined;
   } // end of BehaviourDescription::setSymmetryType
+
+  void BehaviourDescription::addHillTensor(const VariableDescription& v,
+					   const std::vector<MaterialProperty>& hcs){
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("BehaviourDescription::addHillTensor: "+m));}
+    };
+    throw_if((this->type!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)&&
+	     (this->type!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR),
+	     "this method is only valid for small and finite strain behaviours");
+    throw_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
+	     "the behaviour is not orthotropic.");
+    throw_if(hcs.size()!=6u,"invalid number of Hill coefficients");
+    throw_if(v.arraySize!=1u,"invalid array size");
+    throw_if(v.type!="tfel::math::st2tost2<N,stress>","invalid type");
+    this->addLocalVariable(ModellingHypothesis::UNDEFINEDHYPOTHESIS,v);
+    HillTensor h;
+    h.name = v.name;
+    std::copy(hcs.begin(),hcs.end(),std::back_inserter(h.c));
+    this->hillTensors.push_back(std::move(h));
+  } // end of BehaviourDescription::addHillTensor
+
+  const std::vector<BehaviourDescription::HillTensor>& BehaviourDescription::getHillTensors(void){
+    return this->hillTensors;
+  } // end of BehaviourDescription::getHillTensors
   
-  void
-  BehaviourDescription::declareAsASmallStrainStandardBehaviour()
+  void BehaviourDescription::declareAsASmallStrainStandardBehaviour()
   {
     if(!this->mvariables.empty()){
       throw(std::runtime_error("BehaviourDescription::declareAsASmallStrainStandardBehaviour: "

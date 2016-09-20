@@ -22,6 +22,7 @@
 #include"MFront/Castem/CastemInterfaceExceptions.hxx"
 
 #include"MFront/Castem/CastemOutOfBoundsPolicy.hxx"
+#include"MFront/Castem/CastemIsotropicBehaviour.hxx"
 #include"MFront/Castem/CastemOrthotropicBehaviour.hxx"
 #include"MFront/Castem/CastemComputeThermalExpansionCoefficientTensor.hxx"
 #include"MFront/Castem/CastemGetModellingHypothesis.hxx"
@@ -115,8 +116,8 @@ namespace castem{
   template<template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct CastemInterfaceDispatch<SMALLSTRAINSTANDARDBEHAVIOUR,
-			       tfel::material::ModellingHypothesis::PLANESTRESS,
-			       Behaviour>
+				 tfel::material::ModellingHypothesis::PLANESTRESS,
+				 Behaviour>
     : public CastemInterfaceExceptions
   {
     TFEL_CASTEM_INLINE2 static
@@ -135,23 +136,24 @@ namespace castem{
       using namespace std;
       using namespace tfel::meta;
       typedef tfel::material::ModellingHypothesis MH;
-      typedef Behaviour<MH::PLANESTRESS,CastemReal,false> BV;
+      using BV    = Behaviour<MH::PLANESTRESS,CastemReal,false>;
+      using GPSBV = Behaviour<MH::GENERALISEDPLANESTRAIN,CastemReal,false>;
       typedef CastemTraits<BV> Traits;
-      if(tfel::material::MechanicalBehaviourTraits<BV>::is_defined){
-	typedef typename std::conditional<Traits::stype==castem::ISOTROPIC,
-			    CastemIsotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
-							  MH::PLANESTRESS,Behaviour>,
-			    CastemOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
-							    MH::PLANESTRESS,Behaviour> >::type Handler;
-	CastemInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
-	Handler::exe(DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,
-		     PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
-		     STRESS,PNEWDT,op,sfeh);
-      } else { 
-	CastemGenericPlaneStressHandler<Behaviour>::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-							TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-							STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
-      }
+      constexpr const bool usesGenericPlaneStressHandler = 
+	(!tfel::material::MechanicalBehaviourTraits<BV>::is_defined)&&
+	(tfel::material::MechanicalBehaviourTraits<GPSBV>::is_defined);
+      using Handler = typename
+	std::conditional<usesGenericPlaneStressHandler,
+			 CastemGenericPlaneStressHandler<Behaviour>,
+			 typename std::conditional<Traits::stype==castem::ISOTROPIC,
+						   CastemIsotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
+										   MH::PLANESTRESS,Behaviour>,
+						   CastemOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
+										     MH::PLANESTRESS,Behaviour> >::type>::type;
+      CastemInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
+      Handler::exe(DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,
+		   PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,
+		   STRESS,PNEWDT,op,sfeh);
     }
   };
 

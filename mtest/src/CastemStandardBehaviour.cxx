@@ -27,8 +27,14 @@ namespace mtest
     umb.mpnames = elm.getUMATMaterialPropertiesNames(umb.library,umb.behaviour,
 						     ModellingHypothesis::toString(h));
     if(umb.stype==0){
-      umb.mpnames.insert(umb.mpnames.begin(),{
-	  "YoungModulus","PoissonRatio","MassDensity","ThermalExpansion"});
+      if(h==ModellingHypothesis::PLANESTRESS){
+	umb.mpnames.insert(umb.mpnames.begin(),{
+	    "YoungModulus","PoissonRatio","MassDensity",
+	    "ThermalExpansion","PlateWidth"});
+      } else {
+	umb.mpnames.insert(umb.mpnames.begin(),{
+	    "YoungModulus","PoissonRatio","MassDensity","ThermalExpansion"});
+      }
     } else {
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	umb.mpnames.insert(umb.mpnames.begin(),{
@@ -198,6 +204,7 @@ namespace mtest
 	}
       }
     }
+    Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"PlateWidth",1.);
   } // end of CastemStandardBehaviour::setOptionalMaterialPropertiesDefaultValues
 
   CastemStandardBehaviour::~CastemStandardBehaviour()

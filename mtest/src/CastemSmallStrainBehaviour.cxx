@@ -68,6 +68,16 @@ namespace mtest
 							 const Hypothesis h)
     : CastemStandardBehaviour(umb,h)
   {} // end of CastemSmallStrainBehaviour::CastemSmallStrainBehaviour
+
+  void CastemSmallStrainBehaviour::allocate(BehaviourWorkSpace& wk) const
+  {
+    CastemStandardBehaviour::allocate(wk);
+    if((this->usesGenericPlaneStressAlgorithm)&&(this->stype==0u)){
+      wk.mps.resize(this->mpnames.size()+1);
+    } else {
+      wk.mps.resize(this->mpnames.size());
+    }
+  } // end f CastemSmallStrainBehaviour::allocate
   
   void
   CastemSmallStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
@@ -112,9 +122,64 @@ namespace mtest
     using tfel::math::vector;
     using castem::CastemComputeStiffnessTensor;
     static const real sqrt2 = sqrt(real(2));
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("CastemSmallStrainBehaviour::call_behaviour: "+m));}
+    };
     const auto h = this->usesGenericPlaneStressAlgorithm ?
                    ModellingHypothesis::PLANESTRESS :this->getHypothesis();
     const auto nprops = static_cast<CastemInt>(s.mprops1.size());
+    if(this->usesGenericPlaneStressAlgorithm){
+      if(this->stype==0u){
+	throw_if(wk.mps.size()!=s.mprops1.size()+1,
+		 "temporary material properties vector was not allocated properly");
+	throw_if(s.mprops1.size()<3,"invalid number of material properties");
+	wk.mps[0] = s.mprops1[0];
+	wk.mps[1] = s.mprops1[1];
+	wk.mps[2] = s.mprops1[2];
+	wk.mps[3] = s.mprops1[3];
+	// plate width
+	wk.mps[4] = CastemReal(1);
+	std::copy(s.mprops1.begin()+4u,s.mprops1.end(),wk.mps.begin()+5u);
+      } else if(this->stype==1u){
+	throw_if(wk.mps.size()!=s.mprops1.size(),
+		 "temporary material properties vector was not allocated properly");
+	throw_if(s.mprops1.size()<13,"invalid number of material properties");
+	// YoungModulus1
+	wk.mps[0]  = s.mprops1[0];
+	// YoungModulus2
+	wk.mps[1]  = s.mprops1[1];
+	// PoissonRatio12
+	wk.mps[2]  = s.mprops1[3];
+	// ShearModulus12
+	wk.mps[3]  = s.mprops1[6];
+	// V1X
+	wk.mps[4]  = s.mprops1[7];
+	// V1Y
+	wk.mps[5]  = s.mprops1[8];
+	// YoungModulus3
+	wk.mps[6]  = s.mprops1[2];
+	// PoissonRatio23
+	wk.mps[7]  = s.mprops1[4];
+	// PoissonRatio13
+	wk.mps[8]  = s.mprops1[5];
+	// MassDensity
+	wk.mps[9]  = s.mprops1[9];
+	// ThermalExpansion1
+	wk.mps[10] = s.mprops1[10];
+	// ThermalExpansion2
+	wk.mps[11] = s.mprops1[11];
+	// ThermalExpansion3 (does not exists in mps)
+	// plate width
+	wk.mps[12] = CastemReal(1);
+	std::copy(s.mprops1.begin()+13u,s.mprops1.end(),wk.mps.begin()+13u);
+      } else {
+	throw_if(true,"unsupported symmetry type");
+      }	
+    } else {
+      throw_if(wk.mps.size()!=s.mprops1.size(),
+	       "temporary material properties vector was not allocated properly");
+      std::copy(s.mprops1.begin(),s.mprops1.end(),wk.mps.begin());
+    }
     CastemInt ntens,ndi,nstatv;
     unsigned short dimension;
     if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
@@ -142,20 +207,14 @@ namespace mtest
       ntens = 6;
       dimension = 3u;
     } else {
-      throw(runtime_error("CastemSmallStrainBehaviour::integrate: "
-			  "unsupported hypothesis"));
+      throw_if(true,"unsupported hypothesis");
     }
-    if((wk.D.getNbRows()!=Kt.getNbRows())||
-       (wk.D.getNbCols()!=Kt.getNbCols())){
-      throw(runtime_error("CastemSmallStrainBehaviour::integrate: "
-			  "the memory has not been allocated correctly"));
-    }
-    if(((s.iv0.size()==0)&&(wk.ivs.size()!=1u))||
-       ((s.iv0.size()!=0)&&(s.iv0.size()!=wk.ivs.size()))){
-      throw(runtime_error("CastemSmallStrainBehaviour::integrate: "
-			  "the memory has not been allocated correctly (2)"));
-    }
-    fill(wk.D.begin(),wk.D.end(),0.);
+    throw_if((wk.D.getNbRows()!=Kt.getNbRows())||(wk.D.getNbCols()!=Kt.getNbCols()),
+	     "the memory has not been allocated correctly");
+    throw_if(((s.iv0.size()==0)&&(wk.ivs.size()!=1u))||
+	     ((s.iv0.size()!=0)&&(s.iv0.size()!=wk.ivs.size())),
+	     "the memory has not been allocated correctly (2)");
+    std::fill(wk.D.begin(),wk.D.end(),0.);
     // choosing the type of stiffness matrix
     UmatBehaviourBase::initializeTangentOperator(wk.D,ktype,b);
     // state variable initial values
@@ -195,7 +254,7 @@ namespace mtest
 		&(s.esv0(0))  ,&(s.desv(0)),
 		&(s.esv0(0))+1,&(s.desv(0))+1,
 		name,&ndi,nullptr,&ntens,&nstatv,
-		&(s.mprops1(0)),
+		&(wk.mps(0)),
 		&nprops,nullptr,&drot(0,0),&ndt,
 		nullptr,nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,&kinc,
@@ -268,7 +327,7 @@ namespace mtest
 				   castem::ISOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<3u,real>(&Kt(0,0)) = De;
       } else {
-	throw(runtime_error("CastemSmallStrainBehaviour::integrate: "
+	throw(runtime_error("CastemSmallStrainBehaviour::computeElasticStiffness: "
 			    "unsupported hypothesis"));
       }
     } else if(this->stype==1u){
@@ -309,11 +368,11 @@ namespace mtest
 				   castem::ORTHOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<3u,real>(&Kt(0,0)) = change_basis(De,drot);
       } else {
-	throw(std::runtime_error("CastemSmallStrainBehaviour::integrate : "
+	throw(std::runtime_error("CastemSmallStrainBehaviour::computeElasticStiffness : "
 				 "unsupported hypothesis"));
       }
     } else {
-      throw(std::runtime_error("CastemSmallStrainBehaviour::integrate : "
+      throw(std::runtime_error("CastemSmallStrainBehaviour::computeElasticStiffness : "
 			       "invalid behaviour type (neither "
 			       "isotropic or orthotropic)"));
     }
@@ -321,9 +380,8 @@ namespace mtest
 
   void
   CastemSmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues(EvolutionManager& mp,
-									    const EvolutionManager& evm) const
+									 const EvolutionManager& evm) const
   {
-    const auto h = this->getHypothesis();
     CastemStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(mp,evm);
     if(this->stype==0){
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion",0.);
@@ -335,9 +393,6 @@ namespace mtest
       throw(std::runtime_error("CastemSmallStrainBehaviour::"
 			       "setOptionalMaterialPropertiesDefaultValues: "
 			       "unsupported symmetry type"));
-    }
-    if(h==ModellingHypothesis::PLANESTRESS){
-      Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"PlateWidth",0.);
     }
   } // end of CastemSmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues
 

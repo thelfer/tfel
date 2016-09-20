@@ -45,7 +45,7 @@ namespace castem
      * behaviour (isotropic or not).
      */
     TFEL_CASTEM_INLINE2 static
-    void exe(const CastemInt  *const NTENS, const CastemReal *const DTIME,
+    void exe(const CastemReal *const DTIME,
 	     const CastemReal *const DROT,  CastemReal *const DDSDDE,
 	     const CastemReal *const STRAN, const CastemReal *const DSTRAN,
 	     const CastemReal *const TEMP,  const CastemReal *const DTEMP,
@@ -67,7 +67,6 @@ namespace castem
       typedef typename std::conditional<Traits::stype==castem::ISOTROPIC,
 	TreatPlaneStressIsotropicBehaviour,
 	TreatPlaneStressOrthotropicBehaviour>::type Handler;
-      CastemInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       if(std::abs(*DDSDDE)>0){
 	throwTangentOperatorNotAvailableThroughGenericPlaneStressHandler(MTraits::getName());
       }
@@ -177,6 +176,7 @@ namespace castem
 	throwPlaneStressMaximumNumberOfIterationsReachedException(Traits::getName());
       }
       copy<4>::exe(s,STRESS);
+      STRESS[2]=0;
       std::copy(v.begin(),v.end(),STATEV);
       STATEV[*NSTATV-1] += dez;
     } // end of exe
@@ -255,8 +255,19 @@ namespace castem
 	       const StressFreeExpansionHandler& sfeh)
       {
 	using namespace tfel::material;
-	const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
-	typedef CastemIsotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour> BehaviourHandler;
+	using BehaviourHandler = CastemIsotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
+								 ModellingHypothesis::GENERALISEDPLANESTRAIN,Behaviour>;
+	using BV = Behaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN,CastemReal,false>;
+	constexpr const auto offset  = CastemTraits<BV>::propertiesOffset;
+	constexpr const auto nprops  = MechanicalBehaviourTraits<BV>::material_properties_nb;
+	static_assert(offset==4u,"invalid offset value");
+	CastemReal nPROPS[offset+nprops];
+	nPROPS[0]  = PROPS[0];
+	nPROPS[1]  = PROPS[1];
+	nPROPS[2]  = PROPS[2];
+	nPROPS[3]  = PROPS[3];
+	// skipping the plate width
+	tfel::fsalgo::copy<nprops>::exe(PROPS+5,nPROPS+4);
 	const CastemReal y = PROPS[0]; // Young Modulus
 	const CastemReal n = PROPS[1]; // Poisson ratio
 	const CastemReal c1 = -n/(1-n);
@@ -264,7 +275,7 @@ namespace castem
 	CastemGenericPlaneStressHandler::template exe<BehaviourHandler>(c1,c1,c3,
 								      DTIME,DROT,DDSDDE,
 								      STRAN,DSTRAN,TEMP,
-								      DTEMP,PROPS,NPROPS,
+								      DTEMP,nPROPS,NPROPS,
 								      PREDEF,DPRED,STATEV,
 								      NSTATV,STRESS,PNEWDT,op,sfeh);
       } // end of exe
@@ -287,15 +298,13 @@ namespace castem
       {
 	using namespace tfel::meta;
 	using namespace tfel::material;
-	const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
-	using tfel::fsalgo::copy;
+	constexpr const auto H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
 	typedef Behaviour<H,CastemReal,false> BV;
-	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef CastemOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour> BehaviourHandler;
-	const unsigned short offset  = CastemTraits<BV>::propertiesOffset;
-	const unsigned short nprops  = Traits::material_properties_nb;
-	const unsigned short NPROPS_ = offset+nprops == 0 ? 1u : offset+nprops; 
-	CastemReal nPROPS[NPROPS_];
+	constexpr const auto offset  = CastemTraits<BV>::propertiesOffset;
+	constexpr const auto nprops  = MechanicalBehaviourTraits<BV>::material_properties_nb;
+	static_assert(offset==13u,"invalid offset value");
+	CastemReal nPROPS[offset+nprops];
 	nPROPS[0]  = PROPS[0];
 	nPROPS[1]  = PROPS[1];
 	nPROPS[2]  = PROPS[6];
@@ -308,9 +317,10 @@ namespace castem
 	nPROPS[9]  = PROPS[9];
 	nPROPS[10]  = PROPS[10];
 	nPROPS[11]  = PROPS[11];
+	// thermal expansion in the third direction
 	nPROPS[12] = CastemReal(0);
-	copy<nprops>::exe(PROPS+13,nPROPS+13);
-
+	// skipping the plate width
+	tfel::fsalgo::copy<nprops>::exe(PROPS+13,nPROPS+13);
 	// S11 = 1/E1
 	const CastemReal S11=1/nPROPS[0];
 	// S22 = 1/E2

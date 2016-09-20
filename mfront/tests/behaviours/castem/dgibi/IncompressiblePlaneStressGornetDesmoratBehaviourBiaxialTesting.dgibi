@@ -74,7 +74,7 @@ SU = 'DALLER' L1 L2 L3 L4 ;
 * l'operateur de convergence mecanique de PASAPAS-INCREME.
 *
 *
-coel2D = 'MOTS' 'YOUN' 'NU' 'RHO' 'ALPH' 'H1  ' 'H2  ' 'H3  ';
+coel2D = 'MOTS' 'YOUN' 'NU' 'RHO' 'ALPH'  'DIM3' 'H1  ' 'H2  ' 'H3  ';
 
 MO = MODE SU 'MECANIQUE' 'ELASTIQUE' 'ISOTROPE'
        'NON_LINEAIRE' 'UTILISATEUR'
@@ -107,7 +107,7 @@ H1 = 0.142236  ;
 H2 = 1.5854659E-2   ;
 H3 = 3.4946541E-4   ;
 *
-MA = MATE MO 'YOUN' YOU 'NU  ' XNU 'RHO ' 0. 'ALPHA' 0.
+MA = MATE MO 'YOUN' YOU 'NU  ' XNU 'RHO ' 0. 'ALPHA' 0.  'DIM3' 1.
              'H1' H1 'H2' H2 'H3' H3 ;
 
 *======================================================================*

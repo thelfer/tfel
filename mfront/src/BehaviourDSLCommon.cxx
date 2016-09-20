@@ -91,8 +91,7 @@ namespace mfront{
     return this->mb.getClassName();
   } // end of BehaviourDSLCommon::getClassName
 
-  void
-  BehaviourDSLCommon::addMaterialLaw(const std::string& m)
+  void BehaviourDSLCommon::addMaterialLaw(const std::string& m)
   {
     this->mb.addMaterialLaw(m);
   } // end of BehaviourDSLCommon::addMaterialLaw
@@ -1145,8 +1144,7 @@ namespace mfront{
     this->mb.setElasticMaterialProperties(emps);
   }
   
-  void
-  BehaviourDSLCommon::treatComputeStiffnessTensor()
+  void BehaviourDSLCommon::treatComputeStiffnessTensor()
   {
     if(this->mb.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,false)){
       this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
@@ -1160,8 +1158,37 @@ namespace mfront{
     this->mb.setAttribute(BehaviourDescription::computesStiffnessTensor,true,true);
   } // end of BehaviourDSLCommon::treatComputeStiffnessTensor
 
-  void
-  BehaviourDSLCommon::treatModellingHypothesis()
+  void BehaviourDSLCommon::treatHillTensor()
+  {
+    if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC){
+      this->throwRuntimeError("BehaviourDSLCommon::treatHillTensor",
+			      "the mechanical behaviour must be orthotropic to define "
+			      "a Hill tensor.");
+    }
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatModellingHypothesis");
+    // variable name
+    if(!this->isValidIdentifier(this->current->value)){
+      this->throwRuntimeError("BehaviourDSLCommon::treatHillTensor: ",
+			      "variable name is not valid "
+			      "(read '"+this->current->value+"').");
+    }
+    auto v = VariableDescription{"tfel::math::st2tost2<N,stress>",
+				 this->current->value,
+				 1u,this->current->line};
+    v.description = "Hill tensor";
+    ++(this->current);
+    // Hill coefficients
+    const auto& hcs =
+      this->readMaterialPropertyOrArrayOfMaterialProperties("BehaviourDSLCommon::treatHillTensor");
+    this->readSpecifiedToken("BehaviourDSLCommon::treatHillTensor",";");
+    if(hcs.size()!=6u){
+      this->throwRuntimeError("BehaviourDSLCommon::treatHillTensor",
+			      "invalid number of hill coefficients");
+    }
+    this->mb.addHillTensor(v,hcs);
+  } // end of BehaviourDSLCommon::treatHillTensor
+  
+  void BehaviourDSLCommon::treatModellingHypothesis()
   {
     this->checkNotEndOfFile("BehaviourDSLCommon::treatModellingHypothesis");
     const auto h = ModellingHypothesis::fromString(this->current->value);
@@ -3257,10 +3284,36 @@ namespace mfront{
     }
   }
 
-  void
-  BehaviourDSLCommon::writeStiffnessTensorComputation(std::ostream& out,
-						      const std::string& D,
+  void BehaviourDSLCommon::writeHillTensorComputation(std::ostream& out,
+						      const std::string& H,
+						      const BehaviourDescription::HillTensor& h,
 						      std::function<std::string(const MaterialPropertyInput&)>& f)
+  {
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("BehaviourDSLCommon::writeHillTensorComputation",m);}
+    };
+    throw_if(this->mb.getSymmetryType()==mfront::ISOTROPIC,
+	     "material is not orthotropic");
+    for(decltype(h.c.size()) i=0;i!=h.c.size();++i){
+      this->writeMaterialPropertyCheckBoundsEvaluation(out,h.c[i],f);
+    }
+    if(this->mb.getOrthotropicAxesConvention()==OrthotropicAxesConvention::PIPE){
+      out << H << " = tfel::material::computeHillTensor<hypothesis,"
+	  << "OrthotropicAxesConvention::PIPE,stress>(";
+    } else {
+      out << H << " = tfel::material::computeHillTensor<hypothesis,"
+	  << "OrthotropicAxesConvention::DEFAULT,stress>(";
+    }
+    for(decltype(h.c.size()) i=0;i!=h.c.size();){
+      this->writeMaterialPropertyEvaluation(out,h.c[i],f);
+      if(++i!=h.c.size()){out << ",\n";}
+    }
+    out << ");\n";
+  } // end of BehaviourDSLCommon::writeHillTensorComputation
+  
+  void BehaviourDSLCommon::writeStiffnessTensorComputation(std::ostream& out,
+							   const std::string& D,
+							   std::function<std::string(const MaterialPropertyInput&)>& f)
   {
     const auto& emps = this->mb.getElasticMaterialProperties();
     if((this->mb.getSymmetryType()==mfront::ISOTROPIC)&&

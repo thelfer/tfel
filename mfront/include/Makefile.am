@@ -143,7 +143,7 @@ nobase_include_HEADERS += castem.h
 endif 
 
 nobase_include_HEADERS += MFront/Castem/Castem.hxx                                         \
-			  MFront/Castem/CastemConfig.hxx				       \
+			  MFront/Castem/CastemConfig.hxx				   \
 			  MFront/Castem/CastemTraits.hxx                                   \
 			  MFront/Castem/CastemException.hxx                                \
 			  MFront/Castem/CastemGetModellingHypothesis.hxx                   \
@@ -157,7 +157,7 @@ nobase_include_HEADERS += MFront/Castem/Castem.hxx                              
 			  MFront/Castem/CastemOrthotropicBehaviourHandler.hxx              \
 			  MFront/Castem/CastemGenericPlaneStressHandler.hxx                \
 			  MFront/Castem/CastemRotationMatrix.hxx                           \
-			  MFront/Castem/CastemFiniteStrainRotationMatrix.hxx               \
+			  MFront/Castem/CastemIsotropicBehaviour.hxx                       \
 			  MFront/Castem/CastemOrthotropicBehaviour.hxx                     \
 			  MFront/Castem/CastemComputeStiffnessTensor.hxx                   \
 			  MFront/Castem/CastemComputeThermalExpansionCoefficientTensor.hxx \

@@ -1,12 +1,6 @@
-/*!
- * \file   implicit.mfront
- * \brief  
- * 
- * \author Helfer Thomas
- * \date   21 sep 2008
- */
-
 @DSL Implicit;
+@Author Thomas Helfer;
+@Date   21/09/2008;
 @Behaviour ImplicitNorton;
 @Description{
   This file implements the Norton law, described as:

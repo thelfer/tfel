@@ -11,10 +11,12 @@
  * project under specific licensing conditions. 
  */
 
-#include"TFEL/Math/st2tost2.hxx"
-
 #ifndef LIB_TFEL_MATERIAL_HILL_H_
 #define LIB_TFEL_MATERIAL_HILL_H_ 
+
+#include"TFEL/Math/st2tost2.hxx"
+#include"TFEL/Material/ModellingHypothesis.hxx"
+#include"TFEL/Material/OrthotropicAxesConvention.hxx"
 
 namespace tfel
 {
@@ -24,31 +26,72 @@ namespace tfel
 
     /*!
      * \brief compute the Hill tensor.
-     * \tparam    N : space dimension
-     * \tparam    T : underlying type
-     * \param[in] F : orthotropic coefficient
-     * \param[in] G : orthotropic coefficient
-     * \param[in] H : orthotropic coefficient
-     * \param[in] L : orthotropic coefficient
-     * \param[in] M : orthotropic coefficient
-     * \param[in] N : orthotropic coefficient
+     * \tparam    N:      space dimension
+     * \tparam    stress: underlying type
+     * \param[in] H_F:    orthotropic coefficient
+     * \param[in] H_G:    orthotropic coefficient
+     * \param[in] H_H:    orthotropic coefficient
+     * \param[in] H_L:    orthotropic coefficient
+     * \param[in] H_M:    orthotropic coefficient
+     * \param[in] H_N:    orthotropic coefficient
      * This function builds the Hill Tensor defined by :
      * \f[\left(
      * \begin{array}{cccccc}
-     * F+H & -F  & -H  & 0 & 0 & 0 \\
-     * -F  & G+F & -G  & 0 & 0 & 0 \\
-     * -H  & -G  & H+G & 0 & 0 & 0 \\
-     * 0   & 0   & 0   & L & 0 & 0 \\
-     * 0   & 0   & 0   & 0 & M & 0 \\
-     * 0   & 0   & 0   & 0 & 0 & N \\
+     * H_F+H_H & -H_F  & -H_H  & 0 & 0 & 0 \\
+     * -H_F  & H_G+H_F & -H_G  & 0 & 0 & 0 \\
+     * -H_H  & -H_G  & H_H+H_G & 0 & 0 & 0 \\
+     * 0   & 0   & 0   & H_L & 0 & 0 \\
+     * 0   & 0   & 0   & 0 & H_M & 0 \\
+     * 0   & 0   & 0   & 0 & 0 & H_N \\
      * \end{array}
      * \right)
      * \f]
      * if \f$\sigma\f$ is a second order symetric tensor (stensor), 
-     * \f$\sigma|H*\sigma\f$ computes the Hill stress :
+     * \f$\sigma|H_H*\sigma\f$ computes the Hill stress :
      * \f[
-     * F\left(\sigma_{11}-\sigma_{22}\right)^2+G\left(\sigma_{22}-\sigma_{33}\right)^2+H\left(\sigma_{33}-\sigma_{11}\right)^2
-     * + 2L\sigma_{12}^{2} + 2M\sigma_{13}^{2} + 2N\sigma_{23}^{2}
+     * H_F\left(\sigma_{11}-\sigma_{22}\right)^2+H_G\left(\sigma_{22}-\sigma_{33}\right)^2+H_H\left(\sigma_{33}-\sigma_{11}\right)^2
+     * + 2H_L\sigma_{12}^{2} + 2H_M\sigma_{13}^{2} + 2H_N\sigma_{23}^{2}
+     * \f]
+     *
+     * \warning This convention is given in the book of H_Lemaître et
+     * Chaboche and seems to differ from the one described in most
+     * other books.
+     *
+     * \return an object of type st2tost2
+     */    
+    template<unsigned short N,typename stress>
+    tfel::math::st2tost2<N,stress>
+    hillTensor(const stress,const stress,const stress,
+	       const stress,const stress,const stress);
+    /*!
+     * \brief compute the Hill tensor.
+     *
+     * \tparam    H:      modelling hypothesis
+     * \tparam    c:      orthotropic axis convention
+     * \tparam    stress: stress type
+     * \param[in] H_F:    orthotropic coefficient
+     * \param[in] H_G:    orthotropic coefficient
+     * \param[in] H_H:    orthotropic coefficient
+     * \param[in] H_L:    orthotropic coefficient
+     * \param[in] H_M:    orthotropic coefficient
+     * \param[in] H_N:    orthotropic coefficient
+     * This function builds the Hill Tensor defined by :
+     * \f[\left(
+     * \begin{array}{cccccc}
+     * H_F+H_H & -H_F  & -H_H  & 0 & 0 & 0 \\
+     * -H_F  & H_G+H_F & -H_G  & 0 & 0 & 0 \\
+     * -H_H  & -H_G  & H_H+H_G & 0 & 0 & 0 \\
+     * 0   & 0   & 0   & H_L & 0 & 0 \\
+     * 0   & 0   & 0   & 0 & H_M & 0 \\
+     * 0   & 0   & 0   & 0 & 0 & H_N \\
+     * \end{array}
+     * \right)
+     * \f]
+     * if \f$\sigma\f$ is a second order symetric tensor (stensor), 
+     * \f$\sigma|H_H*\sigma\f$ computes the Hill stress :
+     * \f[
+     * H_F\left(\sigma_{11}-\sigma_{22}\right)^2+H_G\left(\sigma_{22}-\sigma_{33}\right)^2+H_H\left(\sigma_{33}-\sigma_{11}\right)^2
+     * + 2H_L\sigma_{12}^{2} + 2H_M\sigma_{13}^{2} + 2H_N\sigma_{23}^{2}
      * \f]
      *
      * \warning This convention is given in the book of Lemaître et
@@ -57,16 +100,13 @@ namespace tfel
      *
      * \return an object of type st2tost2
      */    
-    template<unsigned short N,
-	     typename T>
-    tfel::math::st2tost2<N,T>
-    hillTensor(const T,
-	       const T,
-	       const T,
-	       const T,
-	       const T,
-	       const T);
+    template<ModellingHypothesis::Hypothesis H,
+	     OrthotropicAxesConvention c,typename stress>
+    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,stress>
+    computeHillTensor(const stress,const stress,const stress,
+		      const stress,const stress,const stress);
 
+    
   } // end of namespace material
 
 } // end of namespace tfel

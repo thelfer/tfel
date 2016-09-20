@@ -462,9 +462,6 @@ namespace mtest
 			       "setOptionalMaterialPropertiesDefaultValues : "
 			       "unsupported symmetry type"));
     }
-    if(h==ModellingHypothesis::PLANESTRESS){
-      Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"PlateWidth",0.);
-    }
   } // end of MTestCastemFiniteStrainStrainBehaviour::setOptionalMaterialPropertiesDefaultValues
 
   const char*

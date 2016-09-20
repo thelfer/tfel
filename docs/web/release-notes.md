@@ -45,6 +45,62 @@ Minor fixes.
 A full description of the 2.0.3 release can be found
 [here](documents/tfel/tfel-2.0.3.pdf) (in french).
 
+## Version 2.0.4 (20/09/2015)
+
+### Improvements
+
+- Improved MTest python bindings: new wrapped methods `setStrain`,
+  `setDeformationGradient`, `setOpeningDisplacement`, `setStress`,
+  `setCohesiveForce`, `setStrainEpsilon`, etc.). See also
+  [Ticket #32](https://sourceforge.net/p/tfel/tickets/32/).
+- New entries in glossary: `Emissivity` and `HeatTransfertCoefficient`
+- Better support for the clang compiler.
+- in `TFEL/Math`, add the `t2tot2::transpose_derivative` method which
+  compute the derivative of the transpose of a tensor with respect to
+  this tensor.
+- in `MFront`, the keyword `@DSL` is now on alias for `@Parser`
+- in `MTest`, the rotation matrix relating the reference frame to the
+  material frame can now be defined using either the Euler angles or
+  the Miller indices:
+
+  Example:
+  `@RotationMatrix<Miller> {1,5,9};`
+
+### Fixes
+
+- Fix of [Ticket #12](https://sourceforge.net/p/tfel/tickets/12/):
+  consistent tangent operator was not correctly converted in
+  `MTestAsterFiniteStrainBehaviour`.
+- Fix of [Ticket #15](https://sourceforge.net/p/tfel/tickets/15/): the
+  definition of the `F77_FUNC` macros when using `CMake` is now more
+  portable.
+- Fix of [Ticket #18](https://sourceforge.net/p/tfel/tickets/18/): the
+  altered stiffness tensor in plane stress was not correctly computed
+  (corrections in the
+  `UMATComputeOrthotropicPlaneStressUnAlteredStiffnessTensor`, and
+  `AsterComputeOrthotropicPlaneStressAlteredStiffnessTensor` classes)
+- Fix a small typo in the `MonoCrystal_DD_CC_Irradiation` when
+  defining the convergence criterion value (`@Epsilon 1.e-0; ->
+  @Epsilon 1.e-10;`)
+- Fix of [Ticket #21](https://sourceforge.net/p/tfel/tickets/21/): the
+  `t2tot2::trpd` method used to call the `TensorProductLeftDerivative`
+  class rather than the `TensorProductRightDerivative` class.
+- Fix of [Ticket #22](https://sourceforge.net/p/tfel/tickets/22/): a
+  typo leading to incorrect results was fixed.
+- Fix of [Ticket #25](https://sourceforge.net/p/tfel/tickets/25/): the
+  initial value of the driving variable were not written when
+  generating a `MTest` file in case of integration failure (see the
+  `UMATGenerateMTestFileOnFailure` and
+  `AsterGenerateMTestFileOnFailure` keywords for details).
+- Fix of [Ticket #27](https://sourceforge.net/p/tfel/tickets/27/): in
+  `tfel-config`, add missing dependencies of `TFELMaterial` to
+  `TFELUtilities`.
+- Fix of [Ticket #30](https://sourceforge.net/p/tfel/tickets/30/): the
+  `CxxTokenizer::stripComments` method was corrected to correctly
+  handle the case where the first token of a file is a comment.
+- Fix of [Ticket #32](https://sourceforge.net/p/tfel/tickets/32/):
+  some methods of the `MTest` class were not wrapped in `python`.
+
 # Versions 2.1.x
 
 The 2.1.x versions will be the last versions based build on C++98.

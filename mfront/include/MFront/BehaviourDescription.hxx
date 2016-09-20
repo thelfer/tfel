@@ -16,6 +16,7 @@
 
 #include<set>
 #include<map>
+#include<vector>
 #include<memory>
 
 #include"TFEL/Utilities/GenTypeBase.hxx"
@@ -86,6 +87,15 @@ namespace mfront
      */
     using MaterialProperty =
       tfel::utilities::GenTypeBase<MaterialPropertyTypes>;
+    /*!
+     * structure used to defined a Hill tensor
+     */
+    struct HillTensor{
+      //! name of the Hill tensor
+      std::string name;
+      //! Hill coeffients
+      std::vector<MaterialProperty> c;
+    }; // end of struct HillTensor
     /*!
      * \brief Available integration schemes.
      * One of the first thing a dsl shall do is to set the
@@ -377,6 +387,29 @@ namespace mfront
      * over the time step
      */
     bool areElasticMaterialPropertiesConstantDuringTheTimeStep(void) const;
+    /*!
+     * \return true if the given material properties are constant over
+     * the time step
+     * \param[in] mps: list of material propertiesx
+     */
+    bool areMaterialPropertiesConstantDuringTheTimeStep(const std::vector<MaterialProperty>&) const;
+    /*!
+     * \brief add a new Hill tensor
+     * \param[in] v:   variable description
+     * \param[in] hcs: Hill tensor coefficents
+     * \pre the behaviour must be either small strain or finite strain
+     * \pre the material must be orthotropic
+     * \pre the number of Hill tensor coefficients must be 6
+     * \pre the variable name must be valid and unused yet
+     * \pre the type of the variable must be "tfel::math::st2tost2<N,stress>"
+     * \pre the array size of the variable must be 1
+     */
+    void addHillTensor(const VariableDescription&,
+		       const std::vector<MaterialProperty>&);
+    /*!
+     * \return the list of Hill tensors that have been defined
+     */
+    const std::vector<HillTensor>& getHillTensors(void);
     /*!
      * \return a mechanical behaviour data associated with the
      * given modelling hypothesis
@@ -1475,6 +1508,10 @@ namespace mfront
      * For orthotropic behaviours, one or three thermal expansions coefficients must be defined.
      */
     std::vector<MaterialProperty> thermalExpansionCoefficients;
+    /*!
+     * \brief list of all Hill tensors defined
+     */
+    std::vector<HillTensor> hillTensors;
     //! use units
     bool use_qt;
     //! type of behaviour

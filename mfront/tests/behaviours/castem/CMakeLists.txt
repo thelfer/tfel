@@ -62,6 +62,7 @@ set(mfront_tests_SOURCES
   ImplicitNorton
   ImplicitNorton2
   ImplicitNorton3
+  ImplicitNorton4
   ImplicitFiniteStrainNorton
   ImplicitNorton_Broyden
   ImplicitNorton_Broyden2
@@ -72,6 +73,7 @@ set(mfront_tests_SOURCES
   OrthotropicCreep_rk42
   OrthotropicCreep_rkCastem
   ImplicitOrthotropicCreep
+  ImplicitOrthotropicCreep2
   StrainHardeningCreep
   Lorentz
   Lorentz2
@@ -371,6 +373,8 @@ test_castem(implicitnorton3)
 test_castem(implicitnorton-planestress)
 test_castem(implicitnorton-planestress2)
 test_castem(implicitnorton-levenbergmarquardt)
+test_castem(implicitnorton4-planestress)
+test_castem(implicitorthotropiccreep2-planestress)
 test_castem(stressrelaxation)
 test_castem(norton-euler)
 test_castem(norton-rk2)

@@ -124,9 +124,13 @@ namespace mfront{
       out << " const abaqus::AbaqusInt  *const,\n"
 	  << " const abaqus::AbaqusInt  *const,\n"
 	  << " const abaqus::AbaqusInt  *const,\n"
-	  << " const abaqus::AbaqusInt  *const,\n"
-	  << " const abaqus::AbaqusInt  *const,\n"
-	  << "       abaqus::AbaqusInt  *const,\n"
+	  << " const abaqus::AbaqusInt  *const,\n";
+      if(t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << " const abaqus::AbaqusInt  *const KSTEP,\n";
+      } else {
+	out << " const abaqus::AbaqusInt  *const,\n";
+      }
+      out << "       abaqus::AbaqusInt  *const,\n"
 	  << "const int)";
     }
   } // end of writeUMATArguments
@@ -173,6 +177,15 @@ namespace mfront{
 	<< "       abaqus::AbaqusInt  *const,\n"
 	<< "const int)";
   } // end of writeUMATArguments
+
+  static void writeFiniteStrainAnalysisCheck(std::ostream& out,
+					     const std::string& n){
+    out << "if(KSTEP[2]!=1){\n"
+	<< "std::cerr << \"the " << n << " behaviour is only valid in finite strain analysis\\n\";\n"
+	<< "*PNEWDT=-1;\n"
+	<< "return;\n"
+	<< "}\n";
+  }
   
   std::string
   AbaqusInterface::getName()
@@ -689,6 +702,7 @@ namespace mfront{
 	  << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
+    writeFiniteStrainAnalysisCheck(out,name);    
     out << name << "_base" << this->getFunctionNameForHypothesis("",h)
 	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,DRPLDT,\n"
 	<< "STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,CMNAME,\n"
@@ -852,6 +866,7 @@ namespace mfront{
 	  << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
     }
+    writeFiniteStrainAnalysisCheck(out,name);
     out << "AbaqusFiniteStrain::computeGreenLagrangeStrain(eto,DFGRD0,*NTENS," << ps << ");\n";
     out << "AbaqusFiniteStrain::computeGreenLagrangeStrain(deto,DFGRD1,*NTENS," << ps << ");\n";
     out << "AbaqusFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,DFGRD0,*NTENS," << ps << ",0);\n";

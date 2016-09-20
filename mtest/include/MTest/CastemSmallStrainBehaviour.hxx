@@ -93,6 +93,11 @@ namespace mtest
      */
     virtual const char*
     getBehaviourNameForUMATFunctionCall(void) const override;
+    /*!
+     * \brief allocate internal workspace
+     * \param[out] wk : workspace
+     */
+    virtual void allocate(BehaviourWorkSpace&) const override;
     //! destructor
     virtual ~CastemSmallStrainBehaviour();
   protected:

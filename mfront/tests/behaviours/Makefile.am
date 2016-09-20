@@ -31,6 +31,7 @@ MFRONTS= DDIF2.mfront                                                      \
          ImplicitNorton.mfront                                             \
          ImplicitNorton2.mfront                                            \
          ImplicitNorton3.mfront                                            \
+         ImplicitNorton4.mfront                                            \
          ImplicitFiniteStrainNorton.mfront                                 \
          ImplicitNorton_Broyden.mfront                                     \
          ImplicitNorton_Broyden2.mfront                                    \
@@ -51,6 +52,7 @@ MFRONTS= DDIF2.mfront                                                      \
          OrthotropicCreep_rk42.mfront                                      \
          OrthotropicCreep_rkCastem.mfront                                  \
          ImplicitOrthotropicCreep.mfront                                   \
+         ImplicitOrthotropicCreep2.mfront                                  \
          StrainHardeningCreep.mfront                                       \
          Mazars.mfront                                                     \
          UnilateralMazars.mfront                                           \

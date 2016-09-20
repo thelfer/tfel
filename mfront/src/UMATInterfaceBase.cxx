@@ -98,14 +98,12 @@ namespace mfront
 						    const std::string& v,
 						    const bool b) const
   {
-    using namespace std;
     const auto flag = this->getTypeFlag(t);
     if(flag!=SupportedTypes::Scalar){
-      string msg("UMATMaterialProperty::UMATMaterialProperty : "
-		 "material properties shall be scalars");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("UMATMaterialProperty::UMATMaterialProperty: "
+			       "material properties shall be scalars"));
     }
-    SupportedTypes::TypeSize o;
+    auto o = SupportedTypes::TypeSize{};
     if(!l.empty()){
       const auto& m = l.back();
       o  = m.offset;

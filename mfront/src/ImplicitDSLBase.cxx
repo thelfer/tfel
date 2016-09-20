@@ -105,13 +105,13 @@ namespace mfront{
 			      &ImplicitDSLBase::treatComputeStiffnessTensor);
     this->registerNewCallBack("@ElasticMaterialProperties",
 			      &ImplicitDSLBase::treatElasticMaterialProperties);
+    this->registerNewCallBack("@HillTensor",&ImplicitDSLBase::treatHillTensor);
     this->disableCallBack("@ComputedVar");
     this->disableCallBack("@UseQt");
     this->mb.setIntegrationScheme(BehaviourDescription::IMPLICITSCHEME);
   } // end of ImplicitDSLBase::ImplicitDSLBase
 
-  const NonLinearSystemSolver&
-  ImplicitDSLBase::getSolver() const
+  const NonLinearSystemSolver& ImplicitDSLBase::getSolver() const
   {
     if(this->solver.get()==nullptr){
       this->throwRuntimeError("ImplicitBase::getSolver",
@@ -120,8 +120,7 @@ namespace mfront{
     return *(this->solver);
   }
   
-  void
-  ImplicitDSLBase::treatUnknownKeyword()
+  void ImplicitDSLBase::treatUnknownKeyword()
   {
     --(this->current);
     const auto& key = this->current->value;
@@ -140,7 +139,7 @@ namespace mfront{
   void ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation(const Hypothesis h)
   {
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    Modifier mts = [](const MaterialPropertyInput& i) -> std::string{
+    Modifier mts = [this](const MaterialPropertyInput& i) -> std::string{
       if((i.type==MaterialPropertyInput::TEMPERATURE)||
 	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
 	return "this->"+i.name + "+theta*(this->d" + i.name+')';
@@ -148,11 +147,11 @@ namespace mfront{
 		 (i.type==MaterialPropertyInput::PARAMETER)){
 	return "this->"+i.name;
       } else {
-	throw(std::runtime_error("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation: "
-				 "unsupported input type for variable '"+i.name+"'"));
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"unsupported input type for variable '"+i.name+"'");
       }
     };
-    Modifier ets = [](const MaterialPropertyInput& i) -> std::string {
+    Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
       if((i.type==MaterialPropertyInput::TEMPERATURE)||
 	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
 	return "this->"+i.name + "+this->d" + i.name;
@@ -160,8 +159,8 @@ namespace mfront{
 		 (i.type==MaterialPropertyInput::PARAMETER)){
 	return "this->"+i.name;
       } else {
-	throw(std::runtime_error("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation: "
-				 "unsupported input type for variable '"+i.name+"'"));
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"unsupported input type for variable '"+i.name+"'");
       }
     };
     if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
@@ -172,12 +171,24 @@ namespace mfront{
 	this->writeStiffnessTensorComputation(this->behaviourFile,"this->D_tdt",ets);
       }
     }
+    for(const auto& ht : this->mb.getHillTensors()){
+      if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"Hill tensors shall only be defined for finite strain "
+				"or small strain behaviours");
+      }      
+      this->writeHillTensorComputation(this->behaviourFile,"this->"+ht.name,ht,mts);
+      if(!this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)){
+	this->writeHillTensorComputation(this->behaviourFile,"this->"+ht.name+"_tdt",ht,ets);
+      }
+    }
     if((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false))&&
        (this->mb.getElasticSymmetryType()==ISOTROPIC)&&
        (this->mb.areElasticMaterialPropertiesDefined())){
       const auto& emps = this->mb.getElasticMaterialProperties();
       if(emps.size()!=2u){
-	this->throwRuntimeError("BehaviourDSLCommon::writeStiffnessTensorComputation",
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
 				"invalid number of material properties");
       }
       if(!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()){
@@ -1771,6 +1782,17 @@ namespace mfront{
 	init += "D_tdt(D),\n";
       }
     }
+    for(const auto& ht : this->mb.getHillTensors()){
+      if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"Hill tensors shall only be defined for finite strain "
+				"or small strain behaviours");
+      }      
+      if(this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)){
+	init += ht.name+"_tdt("+ht.name+"),\n";
+      }
+    }
     init += "zeros(real(0)),\nfzeros(real(0))";
     return init;
   }
@@ -1887,6 +1909,20 @@ namespace mfront{
       add_lv(this->mb,"real","nu_tdt","","Poisson ratio at t+dt");
       add_lv(this->mb,"stress","lambda_tdt","","first Lamé coefficient at t+dt");
       add_lv(this->mb,"stress","mu_tdt","","shear modulus at t+dt");
+    }
+    for(const auto& ht : this->mb.getHillTensors()){
+      if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"Hill tensors shall only be defined for finite strain "
+				"or small strain behaviours");
+      }      
+      const auto hn = ht.name+"_tdt";
+      auto  H_tdt = this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c) ?
+	VariableDescription("tfel::math::st2tost2<N,stress>&",hn,1u,0u) :
+	VariableDescription("tfel::math::st2tost2<N,stress>", hn,1u,0u);
+      H_tdt.description = "Hill tensor '"+ht.name+"' at the end of the time step";
+      this->mb.addLocalVariable(h,H_tdt);
     }
     // create the compute final stress code is necessary
     this->setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();

@@ -1178,9 +1178,11 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemimplicitnorton.mtest
            mfront/tests/behaviours/castem/castemimplicitnorton2.mtest
            mfront/tests/behaviours/castem/castemimplicitnorton3.mtest
+           mfront/tests/behaviours/castem/castemimplicitnorton4-planestress.mtest
            mfront/tests/behaviours/castem/castemimplicitnorton-planestress.mtest
            mfront/tests/behaviours/castem/castemimplicitnorton-planestress2.mtest
-           mfront/tests/behaviours/castem/castemimplicitnorton-levenbergmarquardt.mtest	   
+           mfront/tests/behaviours/castem/castemimplicitnorton-levenbergmarquardt.mtest
+           mfront/tests/behaviours/castem/castemimplicitorthotropiccreep2-planestress.mtest
            mfront/tests/behaviours/castem/castemnorton-euler.mtest
            mfront/tests/behaviours/castem/castemnorton-rk2.mtest
            mfront/tests/behaviours/castem/castemnorton-rk4.mtest

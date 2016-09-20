@@ -145,6 +145,7 @@ namespace mtest
       }
     }
     AbaqusReal ndt = std::numeric_limits<AbaqusReal>::max();
+    const AbaqusInt KSTEP [3u] = {0,0,0};
     (this->fct)(&us(0),wk.ivs.size() == 0 ? nullptr : &wk.ivs(0),&(wk.D(0,0)),
 		nullptr,nullptr,nullptr,nullptr,
 		nullptr,nullptr,nullptr,
@@ -154,7 +155,7 @@ namespace mtest
 		nullptr,nullptr,nullptr,&ntens,&nstatv,&(wk.mps(0)),
 		&nprops,nullptr,&drot(0,0),&ndt,
 		nullptr,nullptr,nullptr,nullptr,nullptr,
-		nullptr,nullptr,nullptr,nullptr,0);
+		nullptr,nullptr,KSTEP,nullptr,0);
     if(ndt<1.){
       return {false,ndt};
     }

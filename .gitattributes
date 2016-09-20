@@ -1701,12 +1701,12 @@ mfront/include/MFront/Castem/CastemComputeThermalExpansionCoefficientTensor.hxx 
 mfront/include/MFront/Castem/CastemConfig.hxx -text
 mfront/include/MFront/Castem/CastemException.hxx -text
 mfront/include/MFront/Castem/CastemFiniteStrain.hxx -text
-mfront/include/MFront/Castem/CastemFiniteStrainRotationMatrix.hxx -text
 mfront/include/MFront/Castem/CastemGenericPlaneStressHandler.hxx -text
 mfront/include/MFront/Castem/CastemGetModellingHypothesis.hxx -text
 mfront/include/MFront/Castem/CastemInterface.hxx -text
 mfront/include/MFront/Castem/CastemInterfaceDispatch.hxx -text
 mfront/include/MFront/Castem/CastemInterfaceExceptions.hxx -text
+mfront/include/MFront/Castem/CastemIsotropicBehaviour.hxx -text
 mfront/include/MFront/Castem/CastemIsotropicBehaviourHandler.hxx -text
 mfront/include/MFront/Castem/CastemOrthotropicBehaviour.hxx -text
 mfront/include/MFront/Castem/CastemOrthotropicBehaviourHandler.hxx -text
@@ -1902,7 +1902,6 @@ mfront/src/CastemComputeStiffnessTensor.cxx -text
 mfront/src/CastemComputeThermalExpansionCoefficientTensor.cxx -text
 mfront/src/CastemException.cxx -text
 mfront/src/CastemFiniteStrain.cxx -text
-mfront/src/CastemFiniteStrainRotationMatrix.cxx -text
 mfront/src/CastemGetModellingHypothesis.cxx -text
 mfront/src/CastemInterface.cxx -text
 mfront/src/CastemInterfaceExceptions.cxx -text
@@ -2055,10 +2054,12 @@ mfront/tests/behaviours/ImplicitMonoCrystal.mfront -text
 mfront/tests/behaviours/ImplicitNorton.mfront -text
 mfront/tests/behaviours/ImplicitNorton2.mfront -text
 mfront/tests/behaviours/ImplicitNorton3.mfront -text
+mfront/tests/behaviours/ImplicitNorton4.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden2.mfront -text
 mfront/tests/behaviours/ImplicitNorton_LevenbergMarquardt.mfront -text
 mfront/tests/behaviours/ImplicitOrthotropicCreep.mfront -text
+mfront/tests/behaviours/ImplicitOrthotropicCreep2.mfront -text
 mfront/tests/behaviours/ImplicitSimoMieheElastoPlasticity.mfront -text
 mfront/tests/behaviours/IncompressibleMooneyRivlinBehaviour.mfront -text
 mfront/tests/behaviours/IncompressiblePlaneStressGornetDesmoratBehaviour.mfront -text
@@ -3066,6 +3067,8 @@ mfront/tests/behaviours/castem/castemimplicitnorton-planestress2.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitnorton.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitnorton2.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitnorton3.mtest.in -text
+mfront/tests/behaviours/castem/castemimplicitnorton4-planestress.mtest.in -text
+mfront/tests/behaviours/castem/castemimplicitorthotropiccreep2-planestress.mtest.in -text
 mfront/tests/behaviours/castem/castemimplicitsimomieheelastoplasticity.mtest.in -text
 mfront/tests/behaviours/castem/castemincompressiblemooneyrivlinbehaviour.mtest.in -text
 mfront/tests/behaviours/castem/castemincompressibleplanestressgornetdesmoratbehaviourbiaxialtesting.mtest.in -text

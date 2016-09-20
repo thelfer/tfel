@@ -14,14 +14,9 @@
 #ifndef LIB_MFRONT_CASTEMORTHOTROPICBEHAVIOUR_H_
 #define LIB_MFRONT_CASTEMORTHOTROPICBEHAVIOUR_H_ 
 
+#include"TFEL/Material/ModellingHypothesis.hxx"
 #include"MFront/Castem/CastemConfig.hxx"
 #include"MFront/Castem/CastemTraits.hxx"
-
-#ifndef _MSC_VER
-#define CastemORTHOTROPICBEHAVIOUR_CONSTEXPR constexpr
-#else
-#define CastemORTHOTROPICBEHAVIOUR_CONSTEXPR const
-#endif
 
 namespace castem
 {
@@ -31,42 +26,78 @@ namespace castem
    * \param[in] Type : behaviour type
    * \param[in] N    : spatial dimension
    */
-  template<CastemBehaviourType Type,
-	   unsigned short N>
-  struct CastemOrthotropicOffset;
+  template<unsigned short N>
+  struct CastemOrthotropicOffsetBase;
 
   template<>
   struct MFRONT_CASTEM_VISIBILITY_EXPORT
-  CastemOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,1u>
+  CastemOrthotropicOffsetBase<1u>
   {
     // 6 elastic coefficients
     //   mass density
     // 3 thermal expansion coefficients
-    static CastemORTHOTROPICBEHAVIOUR_CONSTEXPR unsigned short value = 10u;
-  }; // end of struct CastemOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,1u>
+    static constexpr unsigned short value = 10u;
+  }; // end of struct CastemOrthotropicOffsetBase<1u>
 
   template<>
   struct MFRONT_CASTEM_VISIBILITY_EXPORT
-  CastemOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,2u>
+  CastemOrthotropicOffsetBase<2u>
   {
     // 7 elastic coefficients
     // 2 components of direction
     //   mass density
     // 3 thermal expansion coefficients
-    static CastemORTHOTROPICBEHAVIOUR_CONSTEXPR unsigned short value = 13u;
-  }; // end of struct CastemOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,2u>
+    static constexpr unsigned short value = 13u;
+  }; // end of struct CastemOrthotropicOffsetBase<2u>
 
   template<>
   struct MFRONT_CASTEM_VISIBILITY_EXPORT
-  CastemOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,3u>
+  CastemOrthotropicOffsetBase<3u>
   {
     // 9 elastic coefficients
     // 6 components of direction
     //   mass density
     // 3 thermal expansion coefficients
-    static CastemORTHOTROPICBEHAVIOUR_CONSTEXPR unsigned short value = 19u;
-  }; // end of struct CastemOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,3u>
+    static constexpr unsigned short value = 19u;
+  }; // end of struct CastemOrthotropicOffsetBase<3u>
+  
+  template<CastemBehaviourType Type,tfel::material::ModellingHypothesis::Hypothesis H>
+  struct CastemOrthotropicOffset;
 
+  template<tfel::material::ModellingHypothesis::Hypothesis H>
+  struct CastemOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,H>
+    : public CastemOrthotropicOffsetBase<tfel::material::ModellingHypothesisToSpaceDimension<H>::value>
+  {};
+
+  template<>
+  struct CastemOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,
+				 tfel::material::ModellingHypothesis::PLANESTRESS>
+  {
+    // 7 elastic coefficients
+    // 2 components of direction
+    //   mass density
+    // 2 thermal expansion coefficients
+    // 1 axial dimension
+    static constexpr unsigned short value = 13u;
+  };
+
+  template<tfel::material::ModellingHypothesis::Hypothesis H>
+  struct CastemOrthotropicOffset<FINITESTRAINSTANDARDBEHAVIOUR,H>
+    : public CastemOrthotropicOffsetBase<tfel::material::ModellingHypothesisToSpaceDimension<H>::value>
+  {};
+
+  template<>
+  struct CastemOrthotropicOffset<FINITESTRAINSTANDARDBEHAVIOUR,
+				 tfel::material::ModellingHypothesis::PLANESTRESS>
+  {
+    // 7 elastic coefficients
+    // 2 components of direction
+    //   mass density
+    // 2 thermal expansion coefficients
+    // 1 axial dimension
+    static constexpr unsigned short value = 13u;
+  };
+  
 } // end of namespace castem
 
 #endif /* LIB_MFRONT_CASTEMORTHOTROPICBEHAVIOUR_H_ */

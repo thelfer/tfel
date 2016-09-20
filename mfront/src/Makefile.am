@@ -207,7 +207,6 @@ libCastemInterface_la_SOURCES = CastemInterfaceExceptions.cxx                   
 			        CastemComputeStiffnessTensor.cxx                   \
 			        CastemComputeThermalExpansionCoefficientTensor.cxx \
 			        CastemRotationMatrix.cxx                           \
-			        CastemFiniteStrainRotationMatrix.cxx               \
 			        CastemTangentOperator.cxx                          \
 		                CastemOutOfBoundsPolicy.cxx                        \
 		                CastemGetModellingHypothesis.cxx                   \

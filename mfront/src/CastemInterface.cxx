@@ -30,7 +30,7 @@
 #include"MFront/CastemInterface.hxx"
 
 #ifndef _MSC_VER
-static const char * const constexpr_c = "constexpr";
+static const char * const constexpr_c = "constexpr const";
 #else
 static const char * const constexpr_c = "const";
 #endif
@@ -1327,6 +1327,9 @@ namespace mfront{
 	this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio","nu",false);
 	this->appendToMaterialPropertiesList(mprops,"massdensity","MassDensity","rho",false);
 	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion","alph",false);
+	if(h==ModellingHypothesis::PLANESTRESS){
+	  this->appendToMaterialPropertiesList(mprops,"length","PlateWidth","dim3",false);
+	}
       } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
 	if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	  this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus1","yg1",false);
@@ -1352,7 +1355,7 @@ namespace mfront{
 	  this->appendToMaterialPropertiesList(mprops,"massdensity","MassDensity","rho",false);
 	  this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion1","alp1",false);
 	  this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion2","alp2",false);
-	  this->appendToMaterialPropertiesList(mprops,"length","PlateWidth","epai",false);
+	  this->appendToMaterialPropertiesList(mprops,"length","PlateWidth","dim3",false);
 	} else if((h==ModellingHypothesis::AXISYMMETRICAL)||
 		  (h==ModellingHypothesis::PLANESTRAIN)||
 		  (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
@@ -2131,12 +2134,21 @@ namespace mfront{
     }
     out << "static " << constexpr_c << " unsigned short material_properties_nb = " << msize << ";\n";
     if(mb.getSymmetryType()==mfront::ISOTROPIC){
-      out << "static " << constexpr_c << " unsigned short propertiesOffset = 4u;\n";
+      if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	out << "static " << constexpr_c << " unsigned short propertiesOffset = CastemIsotropicOffset<castem::SMALLSTRAINSTANDARDBEHAVIOUR,H>::value;\n";
+      } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "static " << constexpr_c << " unsigned short propertiesOffset = CastemIsotropicOffset<castem::FINITESTRAINSTANDARDBEHAVIOUR,H>::value;\n";
+      } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
+	out << "static " << constexpr_c << " unsigned short propertiesOffset = CastemIsotropicOffset<castem::COHESIVEZONEMODEL,H>::value;\n";
+      } else {
+	throw(runtime_error("CastemInterface::writeUMATBehaviourTraits: "
+			    "unsupported behaviour type"));
+      }
     } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
-	// something needs to be done here
-	out << "static " << constexpr_c << " unsigned short propertiesOffset = CastemOrthotropicOffset<castem::SMALLSTRAINSTANDARDBEHAVIOUR,N>::value;\n";
+      if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	out << "static " << constexpr_c << " unsigned short propertiesOffset = CastemOrthotropicOffset<castem::SMALLSTRAINSTANDARDBEHAVIOUR,H>::value;\n";
+      } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << "static " << constexpr_c << " unsigned short propertiesOffset = CastemOrthotropicOffset<castem::FINITESTRAINSTANDARDBEHAVIOUR,H>::value;\n";
       } else {
 	throw(runtime_error("CastemInterface::writeUMATBehaviourTraits: "
 			    "unsupported behaviour type"));

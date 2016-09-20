@@ -19,7 +19,6 @@
 #endif /* LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_H_ */
 
 #include"MFront/Castem/CastemRotationMatrix.hxx"
-#include"MFront/Castem/CastemFiniteStrainRotationMatrix.hxx"
 
 namespace castem
 {
@@ -320,7 +319,6 @@ namespace castem
       CastemBehaviourHandler::checkNSTATV(*NSTATV);
       ThermalExpansionCoefficientCheck::exe(PROPS[10]);
       ThermalExpansionCoefficientCheck::exe(PROPS[11]);
-      ThermalExpansionCoefficientCheck::exe(PROPS[12]);
       m.rotateStressesForward(STRESS,s);
       m.rotateStrainsForward(STRAN,e);
       m.rotateStrainsForward(DSTRAN,de);
@@ -526,7 +524,7 @@ namespace castem
       CastemReal s[4];
       CastemReal F0m[9];
       CastemReal F1m[9];
-      CastemFiniteStrainRotationMatrix2D m(PROPS+7,DROT);
+      CastemRotationMatrix2D m(PROPS+7,DROT);
       CastemBehaviourHandler::checkNPROPS(*NPROPS);
       CastemBehaviourHandler::checkNSTATV(*NSTATV);
       ThermalExpansionCoefficientCheck::exe(PROPS[10]);
@@ -600,7 +598,7 @@ namespace castem
       CastemReal s[4];
       CastemReal F0m[9];
       CastemReal F1m[9];
-      CastemFiniteStrainRotationMatrix2D m(PROPS+4,DROT);
+      CastemRotationMatrix2D m(PROPS+4,DROT);
       CastemBehaviourHandler::checkNPROPS(*NPROPS);
       CastemBehaviourHandler::checkNSTATV(*NSTATV);
       ThermalExpansionCoefficientCheck::exe(PROPS[10]);
@@ -671,7 +669,7 @@ namespace castem
       CastemReal F0m[9];
       CastemReal F1m[9];
       // Passage au repère matériau
-      CastemFiniteStrainRotationMatrix3D m(PROPS+9,DROT);
+      CastemRotationMatrix3D m(PROPS+9,DROT);
       m.rotateStressesForward(STRESS,sm);
       m.rotateDeformationGradientForward(F0,F0m);
       m.rotateDeformationGradientForward(F1,F1m);

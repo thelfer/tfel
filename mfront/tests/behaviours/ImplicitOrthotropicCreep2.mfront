@@ -1,0 +1,38 @@
+@DSL       Implicit;
+@Behaviour ImplicitOrthotropicCreep2;
+@Author    Helfer Thomas;
+@Date      19/09/16;
+
+@OrthotropicBehaviour<Pipe>;
+@Brick   "StandardElasticity";
+@Epsilon 1.e-12;
+
+@ComputeStiffnessTensor<UnAltered> {100e9,0.3};
+@HillTensor H {0.371,0.629,4.052,1.5,1.5,1.5};
+
+@StateVariable real p;
+p.setGlossaryName("EquivalentViscoplasticStrain");
+
+@AuxiliaryStateVariable real seq;
+seq.setGlossaryName("HillStress");
+
+@Integrator{
+  const real A = 8.e-67;
+  const real E = 8.2;
+  const auto sigeq = sqrt(sig|H*sig);
+  const auto tmp = A*pow(sigeq,E-1.);
+  if(sigeq > D(0,0)*1.e-12){
+    const auto inv_sigeq = 1/sigeq;
+    const auto n  = (H*sig)*inv_sigeq;
+    feel += dp*n;
+    fp   -= tmp*sigeq*dt;
+    // jacobian
+    dfeel_ddeel += theta*dp*(H-(n^n))*D*inv_sigeq;
+    dfeel_ddp    = n;
+    dfp_ddeel    = -theta*tmp*E*dt*(n|D);
+  }
+}
+
+@UpdateAuxiliaryStateVars{
+  seq = sqrt(sig|H_tdt*sig);
+}

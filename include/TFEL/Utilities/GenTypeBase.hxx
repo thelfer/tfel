@@ -277,16 +277,14 @@ namespace tfel{
       : public tfel::utilities::internals::GenTypeSpecializedMethods<GenTypeBase<List>,List>
     {
       //! Default constructor.
-      TFEL_INLINE
-      GenTypeBase()
+      TFEL_INLINE GenTypeBase()
 	: index(tfel::meta::TLSize<List>::value)
       {}
-      template<typename T1>
-      TFEL_INLINE
-      GenTypeBase(const T1& v,
-		  typename std::enable_if<
-		  tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
-		  bool>::type = true)
+      template<typename T1,
+	       typename std::enable_if<
+		 tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
+		 bool>::type = true>
+      TFEL_INLINE GenTypeBase(const T1& v)
 	: index(tfel::meta::TLSize<List>::value)
       {
 	this->template set<T1>(v);
@@ -295,8 +293,7 @@ namespace tfel{
       /*
        * \param const GenTypeBase&, the source.
        */
-      TFEL_INLINE
-      GenTypeBase(const GenTypeBase& src)
+      TFEL_INLINE GenTypeBase(const GenTypeBase& src)
 	: index(src.index)
       {
 	using namespace tfel::meta;
@@ -311,8 +308,7 @@ namespace tfel{
       /*
        * \param const GenTypeBase&, the right-hand side.
        */
-      TFEL_INLINE
-      GenTypeBase&
+      TFEL_INLINE GenTypeBase&
       operator=(const GenTypeBase& src)
       {
 	using namespace tfel::meta;

@@ -36,9 +36,15 @@ namespace tfel{
      * Data extracted from json like structure
      */
     struct TFELUTILITIES_VISIBILITY_EXPORT Data
-      : public tfel::utilities::GenTypeBase<DataTypes>
+      : public GenTypeBase<DataTypes>
     {
-      using tfel::utilities::GenTypeBase<DataTypes>::GenTypeBase;
+      template<typename T1,
+	       typename std::enable_if<
+		 tfel::meta::TLCountNbrOfT<T1,DataTypes>::value==1, 
+		 bool>::type = true>
+      TFEL_INLINE Data(const T1& v)
+	: GenTypeBase<DataTypes>(v)
+      {}
       /*!
        * \brief read a JSON-like structure
        * \return the values read

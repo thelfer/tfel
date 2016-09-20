@@ -552,23 +552,20 @@ namespace mfront{
     //! handle the @ComputeThermalExpansion keyword
     virtual void treatComputeThermalExpansion(void);
     //! handle the @ComputeStiffnessTensor keyword
-    virtual void
-    treatComputeStiffnessTensor(void);
+    virtual void treatComputeStiffnessTensor(void);
     //! handle the @ElasticMaterialProperties keyword
-    virtual void
-    treatElasticMaterialProperties(void);
+    virtual void treatElasticMaterialProperties(void);
     /*! 
      * \brief read the elastic material properties and assign them to
      * the behaviour Description
      */
-    virtual void
-    readElasticMaterialProperties(void);
+    virtual void readElasticMaterialProperties(void);
+    //! handle the @HillTensor keyword
+    virtual void treatHillTensor(void);
     
-    virtual void
-      treatInitLocalVariables(void);
+    virtual void treatInitLocalVariables(void);
 
-    virtual void
-      treatOrthotropicBehaviour(void);
+    virtual void treatOrthotropicBehaviour(void);
 
     virtual void
       treatIsotropicElasticBehaviour(void);
@@ -962,6 +959,19 @@ namespace mfront{
     writeStiffnessTensorComputation(std::ostream&,
 				    const std::string&,
 				    std::function<std::string(const MaterialPropertyInput&)>&);
+    /*!
+     * \brief write the Hill tensor computation evaluation 
+     * from the elastic material properties.
+     * \param[out] out: output stream
+     * \param[in]  H:   name of the Hill tensor variable to be computed
+     * \param[in]  h:   Hill tensor definition
+     * \param[in]  f:   function used to handle the variables of the material properties.
+     */
+    virtual void
+    writeHillTensorComputation(std::ostream&,
+			       const std::string&,
+			       const BehaviourDescription::HillTensor&,
+			       std::function<std::string(const MaterialPropertyInput&)>&);
     /*!
      * \brief write the initalize method . This method is called after that
      * the main variables were set.

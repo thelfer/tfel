@@ -15,17 +15,9 @@
 
 namespace castem
 {
-
-  // Constructeur
-  // V : Matrice de passage matériau/élement
-  //     (deux premiers vecteurs)
-  // drot : Matrice de passage élement/global
   CastemRotationMatrix2D::CastemRotationMatrix2D(const CastemReal *const V,
-					     const CastemReal *const drot)
+						 const CastemReal *const drot)
   {
-    // Matrice de passage matériau/global
-    CastemReal a[4];
-
     // Premier vecteur
     // a[1,1]
     a[0]=drot[0]*V[0]+drot[3]*V[1];
@@ -37,115 +29,83 @@ namespace castem
     a[2]=-a[1];
     // a[2,2]
     a[3]=a[0];
+  } // end of CastemRotationMatrix2D::CastemRotationMatrix2D
+    
+  // Compute strains in the material space
+  void
+  CastemRotationMatrix2D::rotateStrainsForward(const CastemReal *const e,
+					       CastemReal *const em)
+  {
+    em[0]=a[0]*a[1]*e[3]+a[1]*a[1]*e[1]+a[0]*a[0]*e[0];
+    em[1]=a[2]*a[3]*e[3]+a[3]*a[3]*e[1]+a[2]*a[2]*e[0];
+    em[2]=e[2];
+    em[3]=(a[0]*a[3]+a[1]*a[2])*e[3]+2*a[1]*a[3]*e[1]+2*a[0]*a[2]*e[0];
+  } // end of CastemRotationMatrix2D::rotateStrainsForward
 
-    // Contruction de la matrice de passage N (pour les tenseurs)
+  // Compute strains back in the global space
+  void
+  CastemRotationMatrix2D::rotateStrainsBackward(const CastemReal *const e,
+						CastemReal *const eg)
+  {
+    eg[0]=a[0]*a[2]*e[3]+a[2]*a[2]*e[1]+a[0]*a[0]*e[0];
+    eg[1]=a[1]*a[3]*e[3]+a[3]*a[3]*e[1]+a[1]*a[1]*e[0];
+    eg[2]=e[2];
+    eg[3]=(a[0]*a[3]+a[1]*a[2])*e[3]+2*a[2]*a[3]*e[1]+2*a[0]*a[1]*e[0];
+  } // end of CastemRotationMatrix2D::rotateStrainsBackward
+
+  // Compute stresses in the material space
+  void
+  CastemRotationMatrix2D::rotateStressesForward(const CastemReal *const s,
+						CastemReal *const sm)
+  {
+    sm[0]=2*a[0]*a[1]*s[3]+a[1]*a[1]*s[1]+a[0]*a[0]*s[0];
+    sm[1]=2*a[2]*a[3]*s[3]+a[3]*a[3]*s[1]+a[2]*a[2]*s[0];
+    sm[2]=s[2];
+    sm[3]=(a[0]*a[3]+a[1]*a[2])*s[3]+a[1]*a[3]*s[1]+a[0]*a[2]*s[0];
+  } // end of CastemRotationMatrix2D::rotateStressesForward
+
+  // Compute stresses back in the global space
+  void
+  CastemRotationMatrix2D::rotateStressesBackward(const CastemReal *const s,
+						 CastemReal *const sg)
+  {
+    sg[0]=2*a[0]*a[2]*s[3]+a[2]*a[2]*s[1]+a[0]*a[0]*s[0];
+    sg[1]=2*a[1]*a[3]*s[3]+a[3]*a[3]*s[1]+a[1]*a[1]*s[0];
+    sg[2]=s[2];
+    sg[3]=(a[0]*a[3]+a[1]*a[2])*s[3]+a[2]*a[3]*s[1]+a[0]*a[1]*s[0];
+  } // end of CastemRotationMatrix2D::rotateStressesBackward
+
+  void
+  CastemRotationMatrix2D::rotateDeformationGradientForward(const CastemReal *const F,
+							   CastemReal *const Fm)
+  {
+    Fm[0]=a[1]*a[1]*F[4]+a[0]*a[1]*F[3]+a[0]*a[1]*F[1]+a[0]*a[0]*F[0];
+    Fm[1]=a[1]*a[3]*F[4]+a[1]*a[2]*F[3]+a[0]*a[3]*F[1]+a[0]*a[2]*F[0];
+    Fm[2]=0;
+    Fm[3]=a[1]*a[3]*F[4]+a[0]*a[3]*F[3]+a[1]*a[2]*F[1]+a[0]*a[2]*F[0];
+    Fm[4]=a[3]*a[3]*F[4]+a[2]*a[3]*F[3]+a[2]*a[3]*F[1]+a[2]*a[2]*F[0];
+    Fm[5]=0;
+    Fm[6]=0;
+    Fm[7]=0;
+    Fm[8]=F[8];
+  } // end of CastemRotationMatrix2D::rotateDeformationGradientForward
+
+  void
+  CastemRotationMatrix2D::rotateTangentOperatorBackward(CastemReal *const D) const
+  {
+    CastemReal MN[4][4];
     // Première ligne
     MN[0][0]=a[0]*a[0];
     MN[0][1]=a[1]*a[1];
     MN[0][2]=a[0]*a[1];
-
     // Deuxième ligne
     MN[1][0]=a[2]*a[2];
     MN[1][1]=a[3]*a[3];
     MN[1][2]=a[2]*a[3];
-
     // Troisième ligne
     MN[2][0]=a[0]*a[2];
     MN[2][1]=a[1]*a[3];
     MN[2][2]=a[0]*a[3]+a[1]*a[2];
-  } // end of CastemRotationMatrix2D::CastemRotationMatrix2D
-
-  // Calcul des déformations dans le repère matériau
-  // e^m=N:e^g
-  // eg : Déformations dans le repère global
-  // em : Déformations dans le repère matériau
-  void
-  CastemRotationMatrix2D::rotateStrainsForward(const CastemReal *const eg,
-					     CastemReal *const em) {
-    // e11
-    em[0]=MN[0][0]*eg[0]+MN[0][1]*eg[1]
-      +MN[0][2]*eg[3];
-    // e22
-    em[1]=MN[1][0]*eg[0]+MN[1][1]*eg[1]
-      +MN[1][2]*eg[3];
-    // g12
-    em[3]=2*(MN[2][0]*eg[0]+MN[2][1]*eg[1])
-      +MN[2][2]*eg[3];
-
-    // e33
-    em[2]=eg[2];
-  } // end of CastemRotationMatrix2D::rotateStrainsForward
-
-
-  // Calcul des contraintes dans le repère global
-  // s^g=N^T:s^m
-  // sm : Contraintes dans le repère matériau
-  // sg : Contraintes dans le repère global
-  void
-  CastemRotationMatrix2D::rotateStressesBackward(const CastemReal *const sm,
-					       CastemReal *const sg){
-    // s11
-    sg[0]=MN[0][0]*sm[0]+MN[1][0]*sm[1]
-      +2*MN[2][0]*sm[3];
-    // s22
-    sg[1]=MN[0][1]*sm[0]+MN[1][1]*sm[1]
-      +2*MN[2][1]*sm[3];
-    // s12
-    sg[3]=MN[0][2]*sm[0]+MN[1][2]*sm[1]
-      +MN[2][2]*sm[3];
-
-    // s33
-    sg[2]=sm[2];
-  } // end of CastemRotationMatrix2D::rotateStressesBackward
-
-  // Calcul des contraintes dans le repère matériau
-  // s^m=M:s^g
-  // sg : Contraintes dans le repère global
-  // sm : Contraintes dans le repère matériau
-  void
-  CastemRotationMatrix2D::rotateStressesForward(const CastemReal *const sg,
-					      CastemReal *const sm){
-    // s11
-    sm[0]=MN[0][0]*sg[0]+MN[0][1]*sg[1]
-      +2*MN[0][2]*sg[3];
-    // s22
-    sm[1]=MN[1][0]*sg[0]+MN[1][1]*sg[1]
-      +2*MN[1][2]*sg[3];
-    // s12
-    sm[3]=MN[2][0]*sg[0]+MN[2][1]*sg[1]
-      +MN[2][2]*sg[3];
-
-    // s33
-    sm[2]=sg[2];
-  } // end of CastemRotationMatrix2D::rotateStressesForward
-
-  // Calcul des déformations dans le repère global
-  // e^g=M^T:e^m
-  // em : Contraintes dans le repère matériau
-  // eg : Contraintes dans le repère global
-  void
-  CastemRotationMatrix2D::rotateStrainsBackward(const CastemReal *const em,
-					      CastemReal *const eg)
-  {
-    // e11
-    eg[0]=MN[0][0]*em[0]+MN[1][0]*em[1]
-      +MN[2][0]*em[3];
-    // e22
-    eg[1]=MN[0][1]*em[0]+MN[1][1]*em[1]
-      +MN[2][1]*em[3];
-    // g12
-    eg[3]=2*(MN[0][2]*em[0]+MN[1][2]*em[1])
-      +MN[2][2]*em[3];
-
-    // e33
-    eg[2]=em[2];
-  } // end of CastemRotationMatrix2D:::rotateStrainsBackward
-
-  // Calcul de la déformation dans le repère global
-  // D^g=tN:D^m:N
-  void
-  CastemRotationMatrix2D::rotateTangentOperatorBackward(CastemReal *const D) const
-  {
     // matrice N
     CastemReal N[4][4];
     for(unsigned short i=0;i!=2;++i){
@@ -165,9 +125,9 @@ namespace castem
       N[i][3] = MN[i][2];
     }
     N[3][3]  = MN[2][2];
-    N[3][0] *= CastemReal(2.);
-    N[3][1] *= CastemReal(2.);
-    N[3][2] *= CastemReal(2.);
+    N[3][0] *= 2;
+    N[3][1] *= 2;
+    N[3][2] *= 2;
     // matrice temporaire
     CastemReal t[4][4];
     for(unsigned short i=0;i!=4;++i){
@@ -189,15 +149,9 @@ namespace castem
     }
   } // end of CastemRotationMatrix2D::rotateTangentOperatorBackward
 
-  // Constructeur
-  // V : Matrice de passage matériau/élement
-  //     (deux premiers vecteurs)
-  // drot : Matrice de passage élement/global
   CastemRotationMatrix3D::CastemRotationMatrix3D(const CastemReal *const V,
-					     const CastemReal *const drot)
+						 const CastemReal *const drot)
   {
-    // Matrice de passage matériau/global
-    CastemReal a[9];
     // Premier vecteur
     a[0]=drot[0]*V[0]+drot[3]*V[1]+drot[6]*V[2];
     a[1]=drot[1]*V[0]+drot[4]*V[1]+drot[7]*V[2];
@@ -211,7 +165,94 @@ namespace castem
     a[6]=a[1]*a[5]-a[4]*a[2];
     a[7]=a[2]*a[3]-a[5]*a[0];
     a[8]=a[0]*a[4]-a[3]*a[1];
+  } // end of CastemRotationMatrix3D::CastemRotationMatrix3D
 
+  // Compute strains in the material space
+  void
+  CastemRotationMatrix3D::rotateStrainsForward(const CastemReal *const e,
+					       CastemReal *const em)
+  {
+    em[0]=a[1]*a[2]*e[5]+a[0]*a[2]*e[4]+a[0]*a[1]*e[3]+a[2]*a[2]*e[2]+a[1]*a[1]*e[1]+a[0]*a[0]*e[0];
+    em[1]=a[4]*a[5]*e[5]+a[3]*a[5]*e[4]+a[3]*a[4]*e[3]+a[5]*a[5]*e[2]+a[4]*a[4]*e[1]+a[3]*a[3]*e[0];
+    em[2]=a[7]*a[8]*e[5]+a[6]*a[8]*e[4]+a[6]*a[7]*e[3]+a[8]*a[8]*e[2]+a[7]*a[7]*e[1]+a[6]*a[6]*e[0];
+    em[3]=(a[1]*a[5]+a[2]*a[4])*e[5]+(a[0]*a[5]+a[2]*a[3])*e[4]+(a[0]*a[4]+a[1]*a[3])*e[3]+2*a[2]*a[5]*e[2]+2*a[1]*a[4]*e[1]+2*a[0]*a[3]*e[0];
+    em[4]=(a[1]*a[8]+a[2]*a[7])*e[5]+(a[0]*a[8]+a[2]*a[6])*e[4]+(a[0]*a[7]+a[1]*a[6])*e[3]+2*a[2]*a[8]*e[2]+2*a[1]*a[7]*e[1]+2*a[0]*a[6]*e[0];
+    em[5]=(a[4]*a[8]+a[5]*a[7])*e[5]+(a[3]*a[8]+a[5]*a[6])*e[4]+(a[3]*a[7]+a[4]*a[6])*e[3]+2*a[5]*a[8]*e[2]+2*a[4]*a[7]*e[1]+2*a[3]*a[6]*e[0];
+  } // end of CastemRotationMatrix3D::rotateStrainsForward
+
+  // Compute strains back in the global space
+  void
+  CastemRotationMatrix3D::rotateStrainsBackward(const CastemReal *const e,
+						CastemReal *const eg)
+  {
+    eg[0]=a[3]*a[6]*e[5]+a[0]*a[6]*e[4]+a[0]*a[3]*e[3]+a[6]*a[6]*e[2]+a[3]*a[3]*e[1]+a[0]*a[0]*e[0];
+    eg[1]=a[4]*a[7]*e[5]+a[1]*a[7]*e[4]+a[1]*a[4]*e[3]+a[7]*a[7]*e[2]+a[4]*a[4]*e[1]+a[1]*a[1]*e[0];
+    eg[2]=a[5]*a[8]*e[5]+a[2]*a[8]*e[4]+a[2]*a[5]*e[3]+a[8]*a[8]*e[2]+a[5]*a[5]*e[1]+a[2]*a[2]*e[0];
+    eg[3]=(a[3]*a[7]+a[4]*a[6])*e[5]+(a[0]*a[7]+a[1]*a[6])*e[4]+(a[0]*a[4]+a[1]*a[3])*e[3]+2*a[6]*a[7]*e[2]+2*a[3]*a[4]*e[1]+2*a[0]*a[1]*e[0];
+    eg[4]=(a[3]*a[8]+a[5]*a[6])*e[5]+(a[0]*a[8]+a[2]*a[6])*e[4]+(a[0]*a[5]+a[2]*a[3])*e[3]+2*a[6]*a[8]*e[2]+2*a[3]*a[5]*e[1]+2*a[0]*a[2]*e[0];
+    eg[5]=(a[4]*a[8]+a[5]*a[7])*e[5]+(a[1]*a[8]+a[2]*a[7])*e[4]+(a[1]*a[5]+a[2]*a[4])*e[3]+2*a[7]*a[8]*e[2]+2*a[4]*a[5]*e[1]+2*a[1]*a[2]*e[0];
+  } // end of CastemRotationMatrix3D::rotateStrainsBackward
+    
+  // Compute stresses in the material space
+  void
+  CastemRotationMatrix3D::rotateStressesForward(const CastemReal *const s,
+						CastemReal *const sm)
+  {
+    sm[0]=2*a[1]*a[2]*s[5]+2*a[0]*a[2]*s[4]+2*a[0]*a[1]*s[3]+a[2]*a[2]*s[2]+a[1]*a[1]*s[1]+a[0]*a[0]*s[0];
+    sm[1]=2*a[4]*a[5]*s[5]+2*a[3]*a[5]*s[4]+2*a[3]*a[4]*s[3]+a[5]*a[5]*s[2]+a[4]*a[4]*s[1]+a[3]*a[3]*s[0]; 
+    sm[2]=2*a[7]*a[8]*s[5]+2*a[6]*a[8]*s[4]+2*a[6]*a[7]*s[3]+a[8]*a[8]*s[2]+a[7]*a[7]*s[1]+a[6]*a[6]*s[0];
+    sm[3]=(a[1]*a[5]+a[2]*a[4])*s[5]+(a[2]*a[3]+a[0]*a[5])*s[4]+(a[0]*a[4]+a[1]*a[3])*s[3]+a[2]*a[5]*s[2]+a[1]*a[4]*s[1]+a[0]*a[3]*s[0];
+    sm[4]=(a[1]*a[8]+a[2]*a[7])*s[5]+(a[2]*a[6]+a[0]*a[8])*s[4]+(a[0]*a[7]+a[1]*a[6])*s[3]+a[2]*a[8]*s[2]+a[1]*a[7]*s[1]+a[0]*a[6]*s[0];
+    sm[5]=(a[4]*a[8]+a[5]*a[7])*s[5]+(a[5]*a[6]+a[3]*a[8])*s[4]+(a[3]*a[7]+a[4]*a[6])*s[3]+a[5]*a[8]*s[2]+a[4]*a[7]*s[1]+a[3]*a[6]*s[0];
+  } // end of CastemRotationMatrix3D::rotateStressesForward
+
+  // Compute stresses back in the global space
+  void
+  CastemRotationMatrix3D::rotateStressesBackward(const CastemReal *const s,
+						 CastemReal *const sg)
+  {
+    sg[0]=2*a[3]*a[6]*s[5]+2*a[0]*a[6]*s[4]+2*a[0]*a[3]*s[3]+a[6]*a[6]*s[2]+a[3]*a[3]*s[1]+a[0]*a[0]*s[0];
+    sg[1]=2*a[4]*a[7]*s[5]+2*a[1]*a[7]*s[4]+2*a[1]*a[4]*s[3]+a[7]*a[7]*s[2]+a[4]*a[4]*s[1]+a[1]*a[1]*s[0];
+    sg[2]=2*a[5]*a[8]*s[5]+2*a[2]*a[8]*s[4]+2*a[2]*a[5]*s[3]+a[8]*a[8]*s[2]+a[5]*a[5]*s[1]+a[2]*a[2]*s[0];
+    sg[3]=(a[3]*a[7]+a[4]*a[6])*s[5]+(a[1]*a[6]+a[0]*a[7])*s[4]+(a[0]*a[4]+a[1]*a[3])*s[3]+a[6]*a[7]*s[2]+a[3]*a[4]*s[1]+a[0]*a[1]*s[0];
+    sg[4]=(a[3]*a[8]+a[5]*a[6])*s[5]+(a[2]*a[6]+a[0]*a[8])*s[4]+(a[0]*a[5]+a[2]*a[3])*s[3]+a[6]*a[8]*s[2]+a[3]*a[5]*s[1]+a[0]*a[2]*s[0]; 
+    sg[5]=(a[4]*a[8]+a[5]*a[7])*s[5]+(a[2]*a[7]+a[1]*a[8])*s[4]+(a[1]*a[5]+a[2]*a[4])*s[3]+a[7]*a[8]*s[2]+a[4]*a[5]*s[1]+a[1]*a[2]*s[0]; 
+  } // end of CastemRotationMatrix3D::rotateStressesBackward
+
+  void
+  CastemRotationMatrix3D::rotateDeformationGradientForward(const CastemReal *const F,
+							   CastemReal *const Fm)
+  {
+    Fm[0]=a[2]*a[2]*F[8]+a[1]*a[2]*F[7]+a[0]*a[2]*F[6]+a[1]*a[2]*F[5]+a[1]*a[1]*F[4]+a[0]*a[1]*F[3]+a[0]*a[2]*F[2]+a[0]*a[1]*F[1]+a[0]*a[0]*F[0];
+    Fm[1]=a[2]*a[5]*F[8]+a[2]*a[4]*F[7]+a[2]*a[3]*F[6]+a[1]*a[5]*F[5]+a[1]*a[4]*F[4]+a[1]*a[3]*F[3]+a[0]*a[5]*F[2]+a[0]*a[4]*F[1]+a[0]*a[3]*F[0];
+    Fm[2]=a[2]*a[8]*F[8]+a[2]*a[7]*F[7]+a[2]*a[6]*F[6]+a[1]*a[8]*F[5]+a[1]*a[7]*F[4]+a[1]*a[6]*F[3]+a[0]*a[8]*F[2]+a[0]*a[7]*F[1]+a[0]*a[6]*F[0];
+    Fm[3]=a[2]*a[5]*F[8]+a[1]*a[5]*F[7]+a[0]*a[5]*F[6]+a[2]*a[4]*F[5]+a[1]*a[4]*F[4]+a[0]*a[4]*F[3]+a[2]*a[3]*F[2]+a[1]*a[3]*F[1]+a[0]*a[3]*F[0];
+    Fm[4]=a[5]*a[5]*F[8]+a[4]*a[5]*F[7]+a[3]*a[5]*F[6]+a[4]*a[5]*F[5]+a[4]*a[4]*F[4]+a[3]*a[4]*F[3]+a[3]*a[5]*F[2]+a[3]*a[4]*F[1]+a[3]*a[3]*F[0];
+    Fm[5]=a[5]*a[8]*F[8]+a[5]*a[7]*F[7]+a[5]*a[6]*F[6]+a[4]*a[8]*F[5]+a[4]*a[7]*F[4]+a[4]*a[6]*F[3]+a[3]*a[8]*F[2]+a[3]*a[7]*F[1]+a[3]*a[6]*F[0];
+    Fm[6]=a[2]*a[8]*F[8]+a[1]*a[8]*F[7]+a[0]*a[8]*F[6]+a[2]*a[7]*F[5]+a[1]*a[7]*F[4]+a[0]*a[7]*F[3]+a[2]*a[6]*F[2]+a[1]*a[6]*F[1]+a[0]*a[6]*F[0];
+    Fm[7]=a[5]*a[8]*F[8]+a[4]*a[8]*F[7]+a[3]*a[8]*F[6]+a[5]*a[7]*F[5]+a[4]*a[7]*F[4]+a[3]*a[7]*F[3]+a[5]*a[6]*F[2]+a[4]*a[6]*F[1]+a[3]*a[6]*F[0];
+    Fm[8]=a[8]*a[8]*F[8]+a[7]*a[8]*F[7]+a[6]*a[8]*F[6]+a[7]*a[8]*F[5]+a[7]*a[7]*F[4]+a[6]*a[7]*F[3]+a[6]*a[8]*F[2]+a[6]*a[7]*F[1]+a[6]*a[6]*F[0];
+  } // end of CastemRotationMatrix3D::rotateDeformationGradientForward
+
+  void
+  CastemRotationMatrix3D::rotateDeformationGradientBackward(const CastemReal *const F,
+							    CastemReal *const Fg)
+  {
+    Fg[0]=a[6]*a[6]*F[8]+a[3]*a[6]*F[7]+a[0]*a[6]*F[6]+a[3]*a[6]*F[5]+a[3]*a[3]*F[4]+a[0]*a[3]*F[3]+a[0]*a[6]*F[2]+a[0]*a[3]*F[1]+a[0]*a[0]*F[0];
+    Fg[1]=a[6]*a[7]*F[8]+a[4]*a[6]*F[7]+a[1]*a[6]*F[6]+a[3]*a[7]*F[5]+a[3]*a[4]*F[4]+a[1]*a[3]*F[3]+a[0]*a[7]*F[2]+a[0]*a[4]*F[1]+a[0]*a[1]*F[0];
+    Fg[2]=a[6]*a[8]*F[8]+a[5]*a[6]*F[7]+a[2]*a[6]*F[6]+a[3]*a[8]*F[5]+a[3]*a[5]*F[4]+a[2]*a[3]*F[3]+a[0]*a[8]*F[2]+a[0]*a[5]*F[1]+a[0]*a[2]*F[0];
+    Fg[3]=a[6]*a[7]*F[8]+a[3]*a[7]*F[7]+a[0]*a[7]*F[6]+a[4]*a[6]*F[5]+a[3]*a[4]*F[4]+a[0]*a[4]*F[3]+a[1]*a[6]*F[2]+a[1]*a[3]*F[1]+a[0]*a[1]*F[0];
+    Fg[4]=a[7]*a[7]*F[8]+a[4]*a[7]*F[7]+a[1]*a[7]*F[6]+a[4]*a[7]*F[5]+a[4]*a[4]*F[4]+a[1]*a[4]*F[3]+a[1]*a[7]*F[2]+a[1]*a[4]*F[1]+a[1]*a[1]*F[0];
+    Fg[5]=a[7]*a[8]*F[8]+a[5]*a[7]*F[7]+a[2]*a[7]*F[6]+a[4]*a[8]*F[5]+a[4]*a[5]*F[4]+a[2]*a[4]*F[3]+a[1]*a[8]*F[2]+a[1]*a[5]*F[1]+a[1]*a[2]*F[0];
+    Fg[6]=a[6]*a[8]*F[8]+a[3]*a[8]*F[7]+a[0]*a[8]*F[6]+a[5]*a[6]*F[5]+a[3]*a[5]*F[4]+a[0]*a[5]*F[3]+a[2]*a[6]*F[2]+a[2]*a[3]*F[1]+a[0]*a[2]*F[0];
+    Fg[7]=a[7]*a[8]*F[8]+a[4]*a[8]*F[7]+a[1]*a[8]*F[6]+a[5]*a[7]*F[5]+a[4]*a[5]*F[4]+a[1]*a[5]*F[3]+a[2]*a[7]*F[2]+a[2]*a[4]*F[1]+a[1]*a[2]*F[0];
+    Fg[8]=a[8]*a[8]*F[8]+a[5]*a[8]*F[7]+a[2]*a[8]*F[6]+a[5]*a[8]*F[5]+a[5]*a[5]*F[4]+a[2]*a[5]*F[3]+a[2]*a[8]*F[2]+a[2]*a[5]*F[1]+a[2]*a[2]*F[0];
+  }
+
+  void
+  CastemRotationMatrix3D::rotateTangentOperatorBackward(CastemReal *const D) const
+  {
+    CastemReal MN[6][6];
     // Contruction de la matrice de passage N (pour les tenseurs)
     // Première ligne
     MN[0][0]=a[0]*a[0];
@@ -220,7 +261,6 @@ namespace castem
     MN[0][5]=a[1]*a[2];
     MN[0][4]=a[2]*a[0];
     MN[0][3]=a[0]*a[1];
-
     // Deuxième ligne
     MN[1][0]=a[3]*a[3];
     MN[1][1]=a[4]*a[4];
@@ -228,7 +268,6 @@ namespace castem
     MN[1][5]=a[4]*a[5];
     MN[1][4]=a[5]*a[3];
     MN[1][3]=a[3]*a[4];
-
     // Troisième ligne
     MN[2][0]=a[6]*a[6];
     MN[2][1]=a[7]*a[7];
@@ -236,7 +275,6 @@ namespace castem
     MN[2][5]=a[7]*a[8];
     MN[2][4]=a[8]*a[6];
     MN[2][3]=a[6]*a[7];
-
     // Quatrième ligne
     MN[5][0]=a[3]*a[6];
     MN[5][1]=a[4]*a[7];
@@ -244,7 +282,6 @@ namespace castem
     MN[5][5]=a[4]*a[8]+a[5]*a[7];
     MN[5][4]=a[5]*a[6]+a[3]*a[8];
     MN[5][3]=a[3]*a[7]+a[4]*a[6];
-
     // Cinquième ligne
     MN[4][0]=a[6]*a[0];
     MN[4][1]=a[7]*a[1];
@@ -252,7 +289,6 @@ namespace castem
     MN[4][5]=a[7]*a[2]+a[8]*a[1];
     MN[4][4]=a[8]*a[0]+a[6]*a[2];
     MN[4][3]=a[6]*a[1]+a[7]*a[0];
-
     // Sixième ligne
     MN[3][0]=a[0]*a[3];
     MN[3][1]=a[1]*a[4];
@@ -260,98 +296,6 @@ namespace castem
     MN[3][5]=a[1]*a[5]+a[2]*a[4];
     MN[3][4]=a[2]*a[3]+a[0]*a[5];
     MN[3][3]=a[0]*a[4]+a[1]*a[3];
-  } // end of CastemRotationMatrix3D::CastemRotationMatrix3D
-
-  // Calcul des déformations dans le repère matériau
-  // e^m=N:e^g
-  // eg : Déformations dans le repère global
-  // em : Déformations dans le repère matériau
-  void
-  CastemRotationMatrix3D::rotateStrainsForward(const CastemReal *const eg,
-					     CastemReal *const em)
-  {
-    em[0]=MN[0][0]*eg[0]+MN[0][1]*eg[1]+MN[0][2]*eg[2]
-      +MN[0][3]*eg[3]+MN[0][4]*eg[4]+MN[0][5]*eg[5];
-    em[1]=MN[1][0]*eg[0]+MN[1][1]*eg[1]+MN[1][2]*eg[2]
-      +MN[1][3]*eg[3]+MN[1][4]*eg[4]+MN[1][5]*eg[5];
-    em[2]=MN[2][0]*eg[0]+MN[2][1]*eg[1]+MN[2][2]*eg[2]
-      +MN[2][3]*eg[3]+MN[2][4]*eg[4]+MN[2][5]*eg[5];
-    em[3]=2*(MN[3][0]*eg[0]+MN[3][1]*eg[1]+MN[3][2]*eg[2])
-      +MN[3][3]*eg[3]+MN[3][4]*eg[4]+MN[3][5]*eg[5];
-    em[4]=2*(MN[4][0]*eg[0]+MN[4][1]*eg[1]+MN[4][2]*eg[2])
-      +MN[4][3]*eg[3]+MN[4][4]*eg[4]+MN[4][5]*eg[5];
-    em[5]=2*(MN[5][0]*eg[0]+MN[5][1]*eg[1]+MN[5][2]*eg[2])
-      +MN[5][3]*eg[3]+MN[5][4]*eg[4]+MN[5][5]*eg[5];
-  } // end of CastemRotationMatrix3D::rotateStrainForward
-
-  // Calcul des contraintes dans le repère global
-  // s^g=N^T:s^m
-  // sm : Contraintes dans le repère matériau
-  // sg : Contraintes dans le repère global
-  void
-  CastemRotationMatrix3D::rotateStressesBackward(const CastemReal *const sm,
-					       CastemReal *const sg){
-    sg[0]=MN[0][0]*sm[0]+MN[1][0]*sm[1]+MN[2][0]*sm[2]
-      +2*(MN[3][0]*sm[3]+MN[4][0]*sm[4]+MN[5][0]*sm[5]);
-    sg[1]=MN[0][1]*sm[0]+MN[1][1]*sm[1]+MN[2][1]*sm[2]
-      +2*(MN[3][1]*sm[3]+MN[4][1]*sm[4]+MN[5][1]*sm[5]);
-    sg[2]=MN[0][2]*sm[0]+MN[1][2]*sm[1]+MN[2][2]*sm[2]
-      +2*(MN[3][2]*sm[3]+MN[4][2]*sm[4]+MN[5][2]*sm[5]);
-    sg[3]=MN[0][3]*sm[0]+MN[1][3]*sm[1]+MN[2][3]*sm[2]
-      +MN[3][3]*sm[3]+MN[4][3]*sm[4]+MN[5][3]*sm[5];
-    sg[4]=MN[0][4]*sm[0]+MN[1][4]*sm[1]+MN[2][4]*sm[2]
-      +MN[3][4]*sm[3]+MN[4][4]*sm[4]+MN[5][4]*sm[5];
-    sg[5]=MN[0][5]*sm[0]+MN[1][5]*sm[1]+MN[2][5]*sm[2]
-      +MN[3][5]*sm[3]+MN[4][5]*sm[4]+MN[5][5]*sm[5];
-  } // end of CastemRotationMatrix3D::rotateStressesBackward
-
-  // Calcul des contraintes dans le repère matériau
-  // s^m=M:s^g
-  // sg : Contraintes dans le repère global
-  // sm : Contraintes dans le repère matériau
-  void
-  CastemRotationMatrix3D::rotateStressesForward(const CastemReal *const sg,
-				              CastemReal *const sm){
-    sm[0]=MN[0][0]*sg[0]+MN[0][1]*sg[1]+MN[0][2]*sg[2]
-      +2*(MN[0][3]*sg[3]+MN[0][4]*sg[4]+MN[0][5]*sg[5]);
-    sm[1]=MN[1][0]*sg[0]+MN[1][1]*sg[1]+MN[1][2]*sg[2]
-      +2*(MN[1][3]*sg[3]+MN[1][4]*sg[4]+MN[1][5]*sg[5]);
-    sm[2]=MN[2][0]*sg[0]+MN[2][1]*sg[1]+MN[2][2]*sg[2]
-      +2*(MN[2][3]*sg[3]+MN[2][4]*sg[4]+MN[2][5]*sg[5]);
-    sm[3]=MN[3][0]*sg[0]+MN[3][1]*sg[1]+MN[3][2]*sg[2]
-      +MN[3][3]*sg[3]+MN[3][4]*sg[4]+MN[3][5]*sg[5];
-    sm[4]=MN[4][0]*sg[0]+MN[4][1]*sg[1]+MN[4][2]*sg[2]
-      +MN[4][3]*sg[3]+MN[4][4]*sg[4]+MN[4][5]*sg[5];
-    sm[5]=MN[5][0]*sg[0]+MN[5][1]*sg[1]+MN[5][2]*sg[2]
-      +MN[5][3]*sg[3]+MN[5][4]*sg[4]+MN[5][5]*sg[5];
-  } // end of CastemRotationMatrix3D::rotateStressesForward
-
-  // Calcul des déformations dans le repère global
-  // e^g=M^T:e^m
-  // em : Contraintes dans le repère matériau
-  // eg : Contraintes dans le repère global
-  void
-  CastemRotationMatrix3D::rotateStrainsBackward(const CastemReal *const em,
-					      CastemReal *const eg)
-  {
-    eg[0]=MN[0][0]*em[0]+MN[1][0]*em[1]+MN[2][0]*em[2]
-      +MN[3][0]*em[3]+MN[4][0]*em[4]+MN[5][0]*em[5];
-    eg[1]=MN[0][1]*em[0]+MN[1][1]*em[1]+MN[2][1]*em[2]
-      +MN[3][1]*em[3]+MN[4][1]*em[4]+MN[5][1]*em[5];
-    eg[2]=MN[0][2]*em[0]+MN[1][2]*em[1]+MN[2][2]*em[2]
-      +MN[3][2]*em[3]+MN[4][2]*em[4]+MN[5][2]*em[5];
-    eg[3]=2*(MN[0][3]*em[0]+MN[1][3]*em[1]+MN[2][3]*em[2])
-      +MN[3][3]*em[3]+MN[4][3]*em[4]+MN[5][3]*em[5];
-    eg[4]=2*(MN[0][4]*em[0]+MN[1][4]*em[1]+MN[2][4]*em[2])
-      +MN[3][4]*em[3]+MN[4][4]*em[4]+MN[5][4]*em[5];
-    eg[5]=2*(MN[0][5]*em[0]+MN[1][5]*em[1]+MN[2][5]*em[2])
-      +MN[3][5]*em[3]+MN[4][5]*em[4]+MN[5][5]*em[5];
-  } // end of CastemRotationMatrix3D::rotateStrainBackward
-
-  // compute the stiffness matrix in the global space
-  void
-  CastemRotationMatrix3D::rotateTangentOperatorBackward(CastemReal *const D) const
-  {
     // matrice N
     CastemReal N[6][6];
     for(unsigned short i=0;i!=6;++i){
@@ -359,15 +303,15 @@ namespace castem
 	N[i][j] = MN[i][j];
       }
     }
-    N[3][0] *= CastemReal(2.);
-    N[3][1] *= CastemReal(2.);
-    N[3][2] *= CastemReal(2.);
-    N[4][0] *= CastemReal(2.);
-    N[4][1] *= CastemReal(2.);
-    N[4][2] *= CastemReal(2.);
-    N[5][0] *= CastemReal(2.);
-    N[5][1] *= CastemReal(2.);
-    N[5][2] *= CastemReal(2.);
+    N[3][0] *= 2;
+    N[3][1] *= 2;
+    N[3][2] *= 2;
+    N[4][0] *= 2;
+    N[4][1] *= 2;
+    N[4][2] *= 2;
+    N[5][0] *= 2;
+    N[5][1] *= 2;
+    N[5][2] *= 2;
     // matrice temporaire
     CastemReal t[6][6];
     for(unsigned short i=0;i!=6;++i){

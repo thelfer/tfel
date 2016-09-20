@@ -23,26 +23,27 @@ namespace castem
   struct MFRONT_CASTEM_VISIBILITY_EXPORT CastemRotationMatrix2D
   {
     CastemRotationMatrix2D(const CastemReal *const,
-			 const CastemReal *const);
-    
+				     const CastemReal *const);
+    // Compute strains in the material space
+    void rotateStrainsForward(const CastemReal *const,
+			      CastemReal *const);
+    // Compute strains back in the global space
+    void rotateStrainsBackward(const CastemReal *const,
+			       CastemReal *const);
     // Compute stresses in the material space
     void rotateStressesForward(const CastemReal *const,
-			             CastemReal *const);
+			       CastemReal *const);
     // Compute stresses back in the global space
     void rotateStressesBackward(const CastemReal *const,
-                                      CastemReal *const);
-
+				CastemReal *const);
     // Compute strain in the material space
-    void rotateStrainsForward(const CastemReal *const,
-                                    CastemReal *const);
-    // Compute stresses back in the global space
-    void rotateStrainsBackward(const CastemReal *const,
-                                     CastemReal *const);
+    void rotateDeformationGradientForward(const CastemReal *const,
+					  CastemReal *const);
     // compute the stiffness matrix in the global space
     void rotateTangentOperatorBackward(CastemReal *const) const;
   private:
 
-    CastemReal MN[4][4];
+    CastemReal a[4];
   
   }; // end of struct CastemRotationMatrix2D
   
@@ -50,27 +51,30 @@ namespace castem
   {
     
     CastemRotationMatrix3D(const CastemReal *const,
-			 const CastemReal *const);
-    
+				     const CastemReal *const);
+    // Compute strains in the material space
+    void rotateStrainsForward(const CastemReal *const,
+			      CastemReal *const);
+    // Compute strains back in the global space
+    void rotateStrainsBackward(const CastemReal *const,
+			       CastemReal *const);
     // Compute stresses in the material space
     void rotateStressesForward(const CastemReal *const,
-			             CastemReal *const);
+			       CastemReal *const);
     // Compute stresses back in the global space
     void rotateStressesBackward(const CastemReal *const,
-                                      CastemReal *const);
-
+				CastemReal *const);
     // Compute strain in the material space
-    void rotateStrainsForward(const CastemReal *const,
-                                    CastemReal *const);
+    void rotateDeformationGradientForward(const CastemReal *const,
+					  CastemReal *const);
     // Compute stresses back in the global space
-    void rotateStrainsBackward(const CastemReal *const,
-                                     CastemReal *const);
+    void rotateDeformationGradientBackward(const CastemReal *const,
+					   CastemReal *const);
     // compute the stiffness matrix in the global space
     void rotateTangentOperatorBackward(CastemReal *const) const;
-
   private:
 
-    CastemReal MN[6][6];
+    CastemReal a [9];
   
   }; // end of struct CastemRotationMatrix3D
 

@@ -160,7 +160,6 @@ if(HAVE_CASTEM)
 	CastemComputeStiffnessTensor.cxx
 	CastemComputeThermalExpansionCoefficientTensor.cxx
 	CastemRotationMatrix.cxx
-	CastemFiniteStrainRotationMatrix.cxx
 	CastemTangentOperator.cxx
 	CastemOutOfBoundsPolicy.cxx
 	CastemGetModellingHypothesis.cxx
