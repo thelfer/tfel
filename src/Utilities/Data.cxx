@@ -23,7 +23,7 @@ namespace tfel{
     Data::Data(Data&&) = default;
     Data& Data::operator=(const Data&) = default;
     Data& Data::operator=(Data&&) = default;
-    Data::~Data() noexcept = default;
+    Data::~Data() = default;
 
     Data Data::read_value(CxxTokenizer::const_iterator& p,
 			  const CxxTokenizer::const_iterator pe){
