@@ -80,6 +80,12 @@ Tref.setDefaultValue(293.15);
   b = (tKeq_tr>s_y+R*p);
 } // end of @InitLocalVars
 
+@PredictionOperator<DS_DEGL>{
+  static_cast<void>(smt);
+  const auto lambda = computeLambda(young,nu);
+  Dt = 2*mu*Stensor4::Id()+lambda*Stensor4::IxI();
+}
+
 @Integrator{
   if(b){
     // plastic loading

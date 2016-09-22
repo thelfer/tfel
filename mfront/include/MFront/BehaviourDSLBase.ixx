@@ -116,6 +116,8 @@ namespace mfront{
 			      &Child::treatComputeStressFreeExpansion);
     this->registerNewCallBack("@Swelling",&Child::treatSwelling);
     this->registerNewCallBack("@AxialGrowth",&Child::treatAxialGrowth);
+    this->registerNewCallBack("@InternalEnergy",&Child::treatInternalEnergy);
+    this->registerNewCallBack("@DissipatedEnergy",&Child::treatDissipatedEnergy);
   } // end of BehaviourDSLBase<Child>::registerDefaultCallBacks
 
   template<typename Child>

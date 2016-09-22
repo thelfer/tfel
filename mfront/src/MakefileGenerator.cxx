@@ -101,11 +101,10 @@ namespace mfront{
     return res;
   } // end of getLibrarySourcesAndDependencies
   
-  void
-  generateMakeFile(const TargetsDescription& t,
-		   const GeneratorOptions& o,
-		   const std::string& d,
-		   const std::string& f){
+  void generateMakeFile(const TargetsDescription& t,
+			const GeneratorOptions& o,
+			const std::string& d,
+			const std::string& f){
     using namespace std;
     using namespace tfel::system;
     if(getVerboseMode()>=VERBOSE_LEVEL2){

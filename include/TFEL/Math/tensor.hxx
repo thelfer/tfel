@@ -167,12 +167,15 @@ namespace tfel{
        * \param init, pointer to an array used to initialise the
        * components of the tensor. This array is left unchanged.
        */
+      template<typename InputIterator,
+	       typename std::enable_if<std::is_same<typename std::iterator_traits<InputIterator>::value_type,
+						    typename tfel::typetraits::BaseType<T>::type>::value,
+				       bool>::type = true>
       TFEL_MATH_INLINE explicit
-      tensor(const typename tfel::typetraits::BaseType<T>::type* const init)
+      tensor(const InputIterator p)
       {
-	typedef typename tfel::typetraits::BaseType<T>::type base;
-	TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
-	tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(init,reinterpret_cast<base*>(this->v));
+	using base = tfel::typetraits::base_type<T>;
+	tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(p,reinterpret_cast<base*>(this->v));
       }
       /*!
        * \brief Default Constructor 

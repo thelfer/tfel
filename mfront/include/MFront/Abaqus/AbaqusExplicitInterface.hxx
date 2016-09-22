@@ -123,8 +123,8 @@ namespace abaqus{
       const tfel::math::stensor<N,T> de(zero);
       const tfel::math::stensor<N,T> s(zero);
       Behaviour<H,T,false> b(d);
-      SInitializer::exe(b,d.props);
-      AInitializer::exe(b,d.props);
+      SInitializer::exe(b,d.eth_props);
+      AInitializer::exe(b,d.eth_props);
       b.setBehaviourDataDrivingVariables(e);
       b.setBehaviourDataThermodynamicForces(s);
       b.setIntegrationDataDrivingVariables(de);
@@ -152,8 +152,8 @@ namespace abaqus{
       const tfel::math::tensor<N,T> F1(tfel::math::tensor<N,T>::Id());
       const tfel::math::stensor<N,T> s(zero);
       Behaviour<H,T,false> b(d);
-      SInitializer::exe(b,d.props);
-      AInitializer::exe(b,d.props);
+      SInitializer::exe(b,d.eth_props);
+      AInitializer::exe(b,d.eth_props);
       b.setBehaviourDataDrivingVariables(F0);
       b.setIntegrationDataDrivingVariables(F1);
       b.setBehaviourDataThermodynamicForces(s);
@@ -188,8 +188,8 @@ namespace abaqus{
 	DrivingVariableInitialiserWithStressFreeExpansion,
 	DrivingVariableInitialiserWithoutStressFreeExpansion>::type;
       Behaviour<H,T,false> b(d);
-      SInitializer::exe(b,d.props);
-      AInitializer::exe(b,d.props);
+      SInitializer::exe(b,d.eth_props);
+      AInitializer::exe(b,d.eth_props);
       DVInitializer::exe(b,e,de,sfeh);
       b.setBehaviourDataThermodynamicForces(s);
       b.setOutOfBoundsPolicy(d.policy);
@@ -230,8 +230,8 @@ namespace abaqus{
       using TangentOperatorTraits =
 	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>;
       Behaviour<H,T,false> b(d);
-      SInitializer::exe(b,d.props);
-      AInitializer::exe(b,d.props);
+      SInitializer::exe(b,d.eth_props);
+      AInitializer::exe(b,d.eth_props);
       b.setBehaviourDataDrivingVariables(F0);
       b.setIntegrationDataDrivingVariables(F1);
       b.setBehaviourDataThermodynamicForces(s);

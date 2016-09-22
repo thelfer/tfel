@@ -1982,9 +1982,13 @@ namespace mfront{
     this->reserveName("src2");
     this->reserveName("policy_value");
     this->reserveName("integrate");
+    this->reserveName("Psi_s");
+    this->reserveName("Psi_d");
     this->mb.registerMemberName(h,"computeStress");
     this->mb.registerMemberName(h,"computeFinalStress");
     this->mb.registerMemberName(h,"computeStressFreeExpansion");
+    this->mb.registerMemberName(h,"computeInternalEnergy");
+    this->mb.registerMemberName(h,"computeDissipatedEnergy");
     this->mb.registerMemberName(h,"computeFdF");
     this->mb.registerMemberName(h,"updateIntegrationVariables");
     this->mb.registerMemberName(h,"updateStateVariables");
@@ -3084,6 +3088,46 @@ namespace mfront{
     }
   } // end of  BehaviourDSLCommon::writeBehaviourUpdateAuxiliaryStateVariables
 
+  void BehaviourDSLCommon::writeBehaviourComputeInternalEnergy(const Hypothesis h){
+    this->behaviourFile << "/*!\n"
+			<< "* \\brief Update the internal energy at end of the time step\n"
+      			<< "* \\param[in] Psi_s: internal energy at end of the time step\n"
+			<< "*/\n"
+			<< "void\n"
+			<< "computeInternalEnergy(real& Psi_s)";
+    if(this->mb.hasCode(h,BehaviourData::ComputeInternalEnergy)){
+      this->behaviourFile << "{\n"
+			  << "using namespace std;\n"
+			  << "using namespace tfel::math;\n";
+      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeInternalEnergy",
+			this->behaviourFile,this->mb.getMaterialLaws());		      
+      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeInternalEnergy)
+			  << "\n}\n\n";
+    } else {
+      this->behaviourFile << "\n{\nPsi_s=0;\n}\n\n";
+    }
+  } // end of BehaviourDSLCommon::writeBehaviourComputeInternalEnergy
+
+  void BehaviourDSLCommon::writeBehaviourComputeDissipatedEnergy(const Hypothesis h){
+    this->behaviourFile << "/*!\n"
+			<< "* \\brief Update the dissipated energy at end of the time step\n"
+      			<< "* \\param[in] Psi_d: dissipated energy at end of the time step\n"
+			<< "*/\n"
+			<< "void\n"
+			<< "computeDissipatedEnergy(real& Psi_d)";
+    if(this->mb.hasCode(h,BehaviourData::ComputeDissipatedEnergy)){
+      this->behaviourFile << "{\n"
+			  << "using namespace std;\n"
+			  << "using namespace tfel::math;\n";
+      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeDissipatedEnergy",
+			this->behaviourFile,this->mb.getMaterialLaws());		      
+      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeDissipatedEnergy)
+			  << "\n}\n\n";
+    } else {
+      this->behaviourFile << "\n{\nPsi_d=0;\n}\n\n";
+    }
+  } // end of BehaviourDSLCommon::writeBehaviourComputeDissipatedEnergy
+  
   bool
   BehaviourDSLCommon::hasUserDefinedTangentOperatorCode(const Hypothesis h) const
   {
@@ -4699,6 +4743,8 @@ namespace mfront{
     this->writeBehaviourUpdateIntegrationVariables(h);
     this->writeBehaviourUpdateStateVariables(h);
     this->writeBehaviourUpdateAuxiliaryStateVariables(h);
+    this->writeBehaviourComputeInternalEnergy(h);
+    this->writeBehaviourComputeDissipatedEnergy(h);
     this->writeBehaviourAdditionalMembers(h);
     this->writeBehaviourPrivate(h);
     this->writeBehaviourDisabledConstructors();
@@ -6268,6 +6314,16 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::setMinimalTangentOperator
 
+  void BehaviourDSLCommon::treatInternalEnergy(void){
+    this->readCodeBlock(*this,BehaviourData::ComputeInternalEnergy,
+			&BehaviourDSLCommon::standardModifier,true,true);
+  } // end of BehaviourDSLCommon::treatInternalEnergy
+
+  void BehaviourDSLCommon::treatDissipatedEnergy(void){
+    this->readCodeBlock(*this,BehaviourData::ComputeDissipatedEnergy,
+			&BehaviourDSLCommon::standardModifier,true,true);
+  } // end of BehaviourDSLCommon::treatDissipatedEnergy
+  
   void
   BehaviourDSLCommon::setComputeFinalStressFromComputeFinalStressCandidateIfNecessary()
   {

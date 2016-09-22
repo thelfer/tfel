@@ -279,46 +279,29 @@ namespace mfront{
     using namespace tfel::utilities;
     using tfel::material::ModellingHypothesis;
     using Hypothesis = ModellingHypothesis::Hypothesis;
-    // check
-    if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      throw(runtime_error("CyranoInterface::endTreatment : "
-			  "the cyrano interface only supports "
-			  "small strain behaviours"));
-    }
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("Cyrano::endTreatment: "+m));}
+    };
     // get the modelling hypotheses to be treated
     const auto& h = this->getModellingHypothesesToBeTreated(mb);
-
-    string name;
-    if(!mb.getLibrary().empty()){
-      name += mb.getLibrary();
-    }
-    name += mb.getClassName();
-
+    const auto name = mb.getLibrary()+mb.getClassName();
     // some checks
-    if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      throw(runtime_error("CyranoInterface::endTreatment: "
-			  "only small strain behaviours "
-			  "are supported."));
-    }
-
-    if(mb.getSymmetryType()!=mb.getElasticSymmetryType()){
-      string msg("CyranoInterface::endTreatment : ");
-      msg += "the type of the behaviour (isotropic or orthotropic) does not ";
-      msg += "match the the type of its elastic behaviour.\n";
-      msg += "This is not allowed here :\n";
-      msg += "- an isotropic behaviour must have an isotropic elastic behaviour\n";
-      msg += "- an orthotropic behaviour must have an orthotropic elastic behaviour";
-      throw(runtime_error(msg));
+    throw_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+	     "the cyrano interface only supports "
+	     "small strain behaviours");
+    if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
+      throw_if(mb.getSymmetryType()!=mb.getElasticSymmetryType(),
+	       "the type of the behaviour (isotropic or orthotropic) does not "
+	       "match the the type of its elastic behaviour.\n"
+	       "This is not allowed here :\n"
+	       "- an isotropic behaviour must have an isotropic elastic behaviour\n"
+	       "- an orthotropic behaviour must have an orthotropic elastic behaviour");
     }
     if(this->useTimeSubStepping){
-      if(this->maximumSubStepping==0u){
-	string msg("CyranoInterface::endTreatment : ");
-	msg += "use of time sub stepping requested but MaximumSubStepping is zero.\n";
-	msg += "Please use the @CyranoMaximumSubStepping directive";
-	throw(runtime_error(msg));
-      }
+      throw_if(this->maximumSubStepping==0u,
+	       "use of time sub stepping requested but MaximumSubStepping is zero.\n"
+	       "Please use the @CyranoMaximumSubStepping directive");
     }
-
     // create the output directories
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Cyrano");
@@ -329,12 +312,7 @@ namespace mfront{
     fileName += ".hxx";
 
     ofstream out("include/MFront/Cyrano/"+fileName);
-    if(!out){
-      string msg("CyranoInterface::endTreatment : ");
-      msg += "could not open file ";
-      msg += fileName;
-      throw(runtime_error(msg));
-    }
+    throw_if(!out,"could not open file '"+fileName+"'");
   
     out << "/*!\n";
     out << "* \\file   "  << fileName << endl;

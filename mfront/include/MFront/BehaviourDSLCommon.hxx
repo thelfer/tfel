@@ -540,6 +540,10 @@ namespace mfront{
     virtual void treatModellingHypotheses(void);
     //! treat the @UpdateAuxiliaryStateVariables keyword
     virtual void treatUpdateAuxiliaryStateVariables(void);
+    //! treat the @InternalEnergy keyword
+    virtual void treatInternalEnergy(void);
+    //! treat the @DissipatedEnergy keyword
+    virtual void treatDissipatedEnergy(void);
     //! treat the @ComputeStressFreeExpansion keyword
     virtual void treatComputeStressFreeExpansion(void);
     //! treat the @UsableInPurelyImplicitResolution keyword
@@ -1014,6 +1018,18 @@ namespace mfront{
 
     virtual void
     writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis);
+    /*!
+     * \brief write the computeInternalEnergy method
+     * \param[in] h: modelling hypothesis
+     */
+    virtual void
+      writeBehaviourComputeInternalEnergy(const Hypothesis);
+    /*!
+     * \brief write the computeInternalEnergy method
+     * \param[in] h: modelling hypothesis
+     */
+    virtual void
+    writeBehaviourComputeDissipatedEnergy(const Hypothesis);
     //! \brief write the getTimeStepScalingFactor method
     virtual void
     writeBehaviourGetTimeStepScalingFactor(void);

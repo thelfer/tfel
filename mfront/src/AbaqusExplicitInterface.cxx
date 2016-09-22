@@ -427,7 +427,7 @@ namespace mfront{
   static void writeAbaqusExplicitDataInitialisation(std::ostream& out,
 						    const std::string& n,
 						    const unsigned short o){
-    out << "const AbaqusExplicitData d = {*dt,props,*(density+i),\n"
+    out << "const AbaqusExplicitData d = {*dt,props+offset,props,*(density+i),\n"
 	<< "                              *(tempOld+i),\n"
 	<< "                              cview(fieldOld+i),";
     if(o==0u){
@@ -1436,12 +1436,12 @@ namespace mfront{
       // réaliser le calcul de la rotation
       out << "const stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
 	  << "                                    1,cste*(*(stretchNew+i+2*(*nblock)))};\n"
-	  << "const tensor<2u," << t << "> F0 = {*(defgradOld+i),*(defgradOld+i+*nblock),1,\n"
-	  << "                                   *(defgradOld+i+2*(*nblock)),\n"
-	  << "                                   *(defgradOld+i+3*(*nblock))};\n"
-	  << "const tensor<2u," << t << "> F1 = {*(defgradNew+i),*(defgradNew+i+*nblock),1,\n"
-	  << "                                   *(defgradNew+i+2*(*nblock)),\n"
-	  << "                                   *(defgradNew+i+3*(*nblock))};\n"
+	  << "tensor<2u," << t << "> F0 = {*(defgradOld+i),*(defgradOld+i+*nblock),1,\n"
+	  << "                             *(defgradOld+i+2*(*nblock)),\n"
+	  << "                             *(defgradOld+i+3*(*nblock))};\n"
+	  << "tensor<2u," << t << "> F1 = {*(defgradNew+i),*(defgradNew+i+*nblock),1,\n"
+	  << "                             *(defgradNew+i+2*(*nblock)),\n"
+	  << "                             *(defgradNew+i+3*(*nblock))};\n"
 	  << "stensor<2u," << t << "> s = {*(stressOld+i),*(stressOld+i+*nblock),\n"
 	  << "                             0,cste*(*(stressOld+i+2*(*nblock)))};\n";
     } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
@@ -1449,14 +1449,14 @@ namespace mfront{
       out << "const stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"
 	  << "                                    *(stretchNew+i+2*(*nblock)),\n"
 	  << "                                    cste*(*(stretchNew+i+3*(*nblock)))};\n"
-	  << "const tensor<2u," << t << "> F0 = {*(defgradOld+i),*(defgradOld+i+*nblock),\n"
-	  << "                                   *(defgradOld+i+2*(*nblock)),\n"
-	  << "                                   *(defgradOld+i+3*(*nblock)),\n"
-	  << "                                   *(defgradOld+i+4*(*nblock))};\n"
-	  << "const tensor<2u," << t << "> F1 = {*(defgradNew+i),*(defgradNew+i+*nblock),\n"
-	  << "                                   *(defgradNew+i+2*(*nblock)),\n"
-	  << "                                   *(defgradNew+i+3*(*nblock)),\n"
-	  << "                                   *(defgradNew+i+4*(*nblock))};\n"
+	  << "tensor<2u," << t << "> F0 = {*(defgradOld+i),*(defgradOld+i+*nblock),\n"
+	  << "                             *(defgradOld+i+2*(*nblock)),\n"
+	  << "                             *(defgradOld+i+3*(*nblock)),\n"
+	  << "                             *(defgradOld+i+4*(*nblock))};\n"
+	  << "tensor<2u," << t << "> F1 = {*(defgradNew+i),*(defgradNew+i+*nblock),\n"
+	  << "                             *(defgradNew+i+2*(*nblock)),\n"
+	  << "                             *(defgradNew+i+3*(*nblock)),\n"
+	  << "                             *(defgradNew+i+4*(*nblock))};\n"
 	  << "stensor<2u," << t << "> s  = {*(stressOld+i),*(stressOld+i+*nblock),\n"
 	  << "                              *(stressOld+i+2*(*nblock)),\n"
 	  << "                              cste*(*(stressOld+i+3*(*nblock)))};\n";
@@ -1468,24 +1468,24 @@ namespace mfront{
 	  << "                                    cste*(*(stretchNew+i+3*(*nblock))),\n"
 	  << "                                    cste*(*(stretchNew+i+5*(*nblock))),\n"
 	  << "                                    cste*(*(stretchNew+i+4*(*nblock)))};\n"
-	  << "const tensor<3u," << t << "> F0 = {*(defgradOld+i),\n"
-	  << "                                   *(defgradOld+i+*nblock),\n"
-	  << "                                   *(defgradOld+i+2*(*nblock)),\n"
-	  << "                                   *(defgradOld+i+3*(*nblock)),\n"
-	  << "                                   *(defgradOld+i+6*(*nblock)),\n"
-	  << "                                   *(defgradOld+i+8*(*nblock)),\n"
-	  << "                                   *(defgradOld+i+5*(*nblock)),\n"
-	  << "                                   *(defgradOld+i+4*(*nblock)),\n"
-	  << "                                   *(defgradOld+i+7*(*nblock))};\n"
-	  << "const tensor<3u," << t << "> F1 = {*(defgradNew+i),\n"
-	  << "                                   *(defgradNew+i+*nblock),\n"
-	  << "                                   *(defgradNew+i+2*(*nblock)),\n"
-	  << "                                   *(defgradNew+i+3*(*nblock)),\n"
-	  << "                                   *(defgradNew+i+6*(*nblock)),\n"
-	  << "                                   *(defgradNew+i+8*(*nblock)),\n"
-	  << "                                   *(defgradNew+i+5*(*nblock)),\n"
-	  << "                                   *(defgradNew+i+4*(*nblock)),\n"
-	  << "                                   *(defgradNew+i+7*(*nblock))};\n"
+	  << "tensor<3u," << t << "> F0 = {*(defgradOld+i),\n"              // F11 0
+	  << "                             *(defgradOld+i+*nblock),\n"      // F22 1
+	  << "                             *(defgradOld+i+2*(*nblock)),\n"  // F33 2
+	  << "                             *(defgradOld+i+3*(*nblock)),\n"  // F12 3
+	  << "                             *(defgradOld+i+6*(*nblock)),\n"  // F21 6
+	  << "                             *(defgradOld+i+8*(*nblock)),\n"  // F13 8
+	  << "                             *(defgradOld+i+5*(*nblock)),\n"  // F31 5
+	  << "                             *(defgradOld+i+4*(*nblock)),\n"  // F23 4
+	  << "                             *(defgradOld+i+7*(*nblock))};\n" // F32 7
+	  << "tensor<3u," << t << "> F1 = {*(defgradNew+i),\n"
+	  << "                             *(defgradNew+i+*nblock),\n"
+	  << "                             *(defgradNew+i+2*(*nblock)),\n"
+	  << "                             *(defgradNew+i+3*(*nblock)),\n"
+	  << "                             *(defgradNew+i+6*(*nblock)),\n"
+	  << "                             *(defgradNew+i+8*(*nblock)),\n"
+	  << "                             *(defgradNew+i+5*(*nblock)),\n"
+	  << "                             *(defgradNew+i+4*(*nblock)),\n"
+	  << "                             *(defgradNew+i+7*(*nblock))};\n"
 	  << "stensor<3u," << t << "> s  = {*(stressOld+i),*(stressOld+i+*nblock),\n"
 	  << "                              *(stressOld+i+2*(*nblock)),\n"
 	  << "                              cste*(*(stressOld+i+3*(*nblock))),\n"
@@ -1496,7 +1496,7 @@ namespace mfront{
       	<< "s.changeBasis(transpose(R1));\n";
     if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
       writeGetRotationMatrix(out,h);
-      out << "FO.changeBasis(R);\n"
+      out << "F0.changeBasis(R);\n"
 	  << "F1.changeBasis(R);\n"
 	  << "s.changeBasis(R);\n";
     }

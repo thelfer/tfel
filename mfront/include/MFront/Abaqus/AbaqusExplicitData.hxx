@@ -26,9 +26,16 @@ namespace abaqus{
       tfel::math::StridedRandomAccessIterator< const T*>;
     using diff_strided_const_iterator =
       tfel::math::DifferenceRandomAccessIterator<strided_const_iterator>;
-    // time increment
+    //! time increment
     const T dt;
+    //! material properties
     const const_iterator props;
+    /*!
+     * \brief properties used to compute the stiffness tensor or the
+     * thermal expansion, if required (@RequireStiffnessTensor or
+     * @RequireThermalExpansionTensor)
+     */
+    const const_iterator eth_props;
     const T density;
     const T tempOld;
     const strided_const_iterator fieldOld;

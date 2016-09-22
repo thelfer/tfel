@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_TYPELIST_H_
 #define LIB_TFEL_TYPELIST_H_ 
 
+#include<cstddef>
 #include"TFEL/Config/TFELConfig.hxx"
 
 namespace tfel{

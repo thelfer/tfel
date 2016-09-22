@@ -46,6 +46,10 @@ namespace mfront{
   const std::string
   BehaviourData::ComputeFinalStressCandidate("ComputeFinalStressCandidate");
   const std::string
+  BehaviourData::ComputeInternalEnergy("ComputeInternalEnergy");
+  const std::string
+  BehaviourData::ComputeDissipatedEnergy("ComputeDissipatedEnergy");
+  const std::string
   BehaviourData::APrioriTimeStepScalingFactor("APrioriTimeStepScalingFactor");
   const std::string
   BehaviourData::Integrator("Integrator");

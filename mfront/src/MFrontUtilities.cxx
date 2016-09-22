@@ -69,7 +69,7 @@ namespace mfront{
        const tfel::utilities::CxxTokenizer::const_iterator pe)
   {
     auto c = p;
-    auto r = tfel::utilities::CxxTokenizer::CxxTokenizer::readDouble(c,pe);
+    auto r = tfel::utilities::CxxTokenizer::readDouble(c,pe);
     p=c;
     return r;
   } // end of read
@@ -80,9 +80,10 @@ namespace mfront{
        const tfel::utilities::CxxTokenizer::const_iterator pe)
   {
     auto c = p;
-    const auto r = tfel::utilities::CxxTokenizer::CxxTokenizer::readString(c,pe);
+    const auto r = tfel::utilities::CxxTokenizer::readString(c,pe);
     p=c;
-    return tfel::utilities::replace_all(r,"\\\"","\"");
+    const auto v = tfel::utilities::replace_all(r,"\\\"","\"");
+    return v;
   } // end of read
 
   template<>
@@ -92,6 +93,9 @@ namespace mfront{
   {
     auto c = p;
     auto r = tfel::utilities::CxxTokenizer::readStringArray(c,pe);
+    for(auto&s : r){
+      s = tfel::utilities::replace_all(s,"\\\"","\"");;
+    }
     p=c;
     return r;
   } // end of read

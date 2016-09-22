@@ -88,7 +88,7 @@ namespace mfront{
 	  << " abaqus::AbaqusReal *const,\n"
 	  << " abaqus::AbaqusReal *const,\n"
 	  << " abaqus::AbaqusReal *const,\n";
-      if(t!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      if(t==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
 	out << " const abaqus::AbaqusReal *const STRAN,\n"
 	    << " const abaqus::AbaqusReal *const DSTRAN,\n";
       } else {
@@ -112,9 +112,7 @@ namespace mfront{
 	  << " const abaqus::AbaqusReal *const DROT,\n"
 	  << "       abaqus::AbaqusReal *const PNEWDT,\n"
 	  << " const abaqus::AbaqusReal *const,\n";
-      if((t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
-	 ((t==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	  (fss==AbaqusInterfaceBase::NATIVEFINITESTRAINSTRATEGY))){
+      if(t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
 	out << " const abaqus::AbaqusReal *const F0,\n"
 	    << " const abaqus::AbaqusReal *const F1,\n";
       } else {
@@ -125,7 +123,9 @@ namespace mfront{
 	  << " const abaqus::AbaqusInt  *const,\n"
 	  << " const abaqus::AbaqusInt  *const,\n"
 	  << " const abaqus::AbaqusInt  *const,\n";
-      if(t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      if((t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
+	 ((fss!=AbaqusInterfaceBase::NATIVEFINITESTRAINSTRATEGY)&&
+	  (fss!=AbaqusInterfaceBase::UNDEFINEDSTRATEGY))){
 	out << " const abaqus::AbaqusInt  *const KSTEP,\n";
       } else {
 	out << " const abaqus::AbaqusInt  *const,\n";
@@ -178,15 +178,6 @@ namespace mfront{
 	<< "const int)";
   } // end of writeUMATArguments
 
-  static void writeFiniteStrainAnalysisCheck(std::ostream& out,
-					     const std::string& n){
-    out << "if(KSTEP[2]!=1){\n"
-	<< "std::cerr << \"the " << n << " behaviour is only valid in finite strain analysis\\n\";\n"
-	<< "*PNEWDT=-1;\n"
-	<< "return;\n"
-	<< "}\n";
-  }
-  
   std::string
   AbaqusInterface::getName()
   {
@@ -480,6 +471,17 @@ namespace mfront{
     out << "static void\n" << name << "_base" << this->getFunctionNameForHypothesis("",h);
     writeUMATArguments(out,btype,this->fss,false);
     out << "{\n";
+    if((btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
+       ((btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	((this->fss!=AbaqusInterfaceBase::NATIVEFINITESTRAINSTRATEGY)&&
+	 (this->fss!=AbaqusInterfaceBase::UNDEFINEDSTRATEGY)))){
+      out << "if(KSTEP[2]!=1){\n"
+	  << "std::cerr << \"the " << name << " behaviour is only "
+	  << "valid in finite strain analysis\\n\";\n"
+	  << "*PNEWDT=-1;\n"
+	  << "return;\n"
+	  << "}\n";
+    }
     if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
       if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
     	// turning the deformation and the deformation gradient
@@ -693,7 +695,7 @@ namespace mfront{
     this->writeUMATFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,this->fss,true);
+    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,this->fss,true);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -702,7 +704,6 @@ namespace mfront{
 	  << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
-    writeFiniteStrainAnalysisCheck(out,name);    
     out << name << "_base" << this->getFunctionNameForHypothesis("",h)
 	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,DRPLDT,\n"
 	<< "STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,CMNAME,\n"
@@ -866,13 +867,15 @@ namespace mfront{
 	  << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
     }
-    writeFiniteStrainAnalysisCheck(out,name);
-    out << "AbaqusFiniteStrain::computeGreenLagrangeStrain(eto,DFGRD0,*NTENS," << ps << ");\n";
-    out << "AbaqusFiniteStrain::computeGreenLagrangeStrain(deto,DFGRD1,*NTENS," << ps << ");\n";
-    out << "AbaqusFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,DFGRD0,*NTENS," << ps << ",0);\n";
-    out << "for(int i=0;i!=*NTENS;++i){\n";
-    out << "deto[i] -= eto[i];\n";
-    out << "}\n";
+    
+    out << "static_cast<void>(STRAN);\n"
+	<< "static_cast<void>(DSTRAN);\n"
+	<< "AbaqusFiniteStrain::computeGreenLagrangeStrain(eto,DFGRD0,*NTENS," << ps << ");\n"
+	<< "AbaqusFiniteStrain::computeGreenLagrangeStrain(deto,DFGRD1,*NTENS," << ps << ");\n"
+	<< "AbaqusFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,DFGRD0,*NTENS," << ps << ",0);\n"
+	<< "for(int i=0;i!=*NTENS;++i){\n"
+	<< "deto[i] -= eto[i];\n"
+	<< "}\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "}\n";
     }

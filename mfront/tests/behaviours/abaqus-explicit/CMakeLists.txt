@@ -22,7 +22,8 @@ set(mfront_tests_SOURCES
   AbaqusAxialGrowth
   AbaqusAxialGrowth2
   AbaqusOrthotropicSwelling
-  AbaqusOrthotropicSwelling2)
+  AbaqusOrthotropicSwelling2
+  ImplicitSimoMieheElastoPlasticity)
 
 mfront_behaviour_check_library(MFrontAbaqusExplicitBehaviours
   abaqusexplicit ${mfront_tests_SOURCES})
@@ -199,3 +200,4 @@ test_abaqus_explicit(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialload
 test_abaqus_explicit(orthotropicswelling)
 test_abaqus_explicit(orthotropicswelling2)
 test_abaqus_explicit(axialgrowth)
+test_abaqus_explicit(implicitsimomieheelastoplasticity)

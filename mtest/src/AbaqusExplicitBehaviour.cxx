@@ -633,7 +633,6 @@ namespace mtest
     return {true,real(1)};
   } // end of AbaqusExplicitBehaviour::integrate
 
-  AbaqusExplicitBehaviour::~AbaqusExplicitBehaviour()
-  {}
+  AbaqusExplicitBehaviour::~AbaqusExplicitBehaviour() = default;
   
 } // end of namespace mtest

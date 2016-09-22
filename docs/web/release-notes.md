@@ -45,7 +45,7 @@ Minor fixes.
 A full description of the 2.0.3 release can be found
 [here](documents/tfel/tfel-2.0.3.pdf) (in french).
 
-## Version 2.0.4 (20/09/2015)
+## Version 2.0.4 (22/09/2015)
 
 ### Improvements
 

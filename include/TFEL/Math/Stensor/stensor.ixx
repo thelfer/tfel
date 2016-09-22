@@ -1467,12 +1467,7 @@ namespace tfel{
     absolute_value(const StensorType& s,
 		  const bool)
     {
-      typedef typename StensorTraits<StensorType>::NumType NumType;
-      stensor<1u,NumType> l;
-      l(0) = std::abs(s(0));
-      l(1) = std::abs(s(1));
-      l(2) = std::abs(s(2));
-      return l;
+      return {std::abs(s(0)),std::abs(s(1)),std::abs(s(2))};
     }
 
     template<typename StensorType>
@@ -1509,11 +1504,9 @@ namespace tfel{
 		  const bool)
     {
       typedef typename StensorTraits<StensorType>::NumType NumType;
-      stensor<1u,NumType> l;
-      l(0) = std::max(s(0),NumType(0));
-      l(1) = std::max(s(1),NumType(0));
-      l(2) = std::max(s(2),NumType(0));
-      return l;
+      return {std::max(s(0),NumType(0)),
+	  std::max(s(1),NumType(0)),
+	  std::max(s(2),NumType(0))};
     }
 
     template<typename StensorType>
@@ -1550,11 +1543,9 @@ namespace tfel{
 		  const bool)
     {
       typedef typename StensorTraits<StensorType>::NumType NumType;
-      stensor<1u,NumType> l;
-      l(0) = std::min(s(0),NumType(0));
-      l(1) = std::min(s(1),NumType(0));
-      l(2) = std::min(s(2),NumType(0));
-      return l;
+      return {std::min(s(0),NumType(0)),
+	  std::min(s(1),NumType(0)),
+	  std::min(s(2),NumType(0))};
     }
 
     template<typename StensorType>

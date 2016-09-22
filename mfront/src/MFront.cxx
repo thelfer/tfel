@@ -624,8 +624,7 @@ namespace mfront{
 #endif
   }
   
-  void
-  MFront::buildLibraries(const std::string& target)
+  void MFront::buildLibraries(const std::string& target)
   {
     callMake(target.c_str());
   } // end of MFront::buildLibraries
@@ -670,8 +669,7 @@ namespace mfront{
     file << this->targets;
   } // end of MFront::writeTargetDescription
   
-  void
-  MFront::exe()
+  void MFront::exe()
   {
     tfel::system::systemCall::mkdir("src");
     tfel::system::systemCall::mkdir("include");

@@ -2180,6 +2180,7 @@ mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstraine
 mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-uniaxialloading-2-3D.mtest.in -text
 mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-uniaxialloading-3-2D.mtest.in -text
 mfront/tests/behaviours/abaqus-explicit/abaqusexplicitfiniterotationsmallstrainelasticity2-uniaxialloading-3-3D.mtest.in -text
+mfront/tests/behaviours/abaqus-explicit/abaqusexplicitimplicitsimomieheelastoplasticity.mtest.in -text
 mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-2D.mtest.in -text
 mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D.mtest.in -text
 mfront/tests/behaviours/abaqus-explicit/abaqusexplicitmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-2D.mtest.in -text

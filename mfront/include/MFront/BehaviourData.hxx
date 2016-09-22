@@ -92,6 +92,10 @@ namespace mfront{
     static const std::string InitializeJacobian;
     //! standard code name
     static const std::string InitializeJacobianInvert;
+    //! standard code name
+    static const std::string ComputeInternalEnergy;
+    //! standard code name
+    static const std::string ComputeDissipatedEnergy;
     /*
      * normalised attribute names
      * \note properties name begins with a lower case
