@@ -1097,7 +1097,7 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitorthotropicswelling.mtest
    	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitorthotropicswelling2.mtest
    	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitaxialgrowth.mtest
-	   mfront/tests/behaviours/abaqus-explicit/abaqusimplicitsimomiehe.mtest
+	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitimplicitsimomieheelastoplasticity.mtest
 	   mfront/tests/behaviours/bricks/Makefile
 	   mfront/tests/behaviours/bricks/castem/Makefile
 	   mfront/tests/behaviours/bricks/cyrano/Makefile
