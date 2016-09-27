@@ -17,6 +17,7 @@
 #include<fstream>
 #include<algorithm>
 #include<iterator>
+#include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Utilities/TextData.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 
@@ -30,28 +31,37 @@ namespace tfel
 		       const std::string& format)
     {
       using namespace std;
-      auto get_legends = [](std::vector<std::string>& r,
-			    const std::string& l){
-	istringstream tokenizer(l);
-	copy(istream_iterator<string>(tokenizer),
-	     istream_iterator<string>(),back_inserter(r));
+      auto get_legends = [](const std::string& l){
+	std::vector<std::string> r;
+	CxxTokenizer t;
+	t.treatCharAsString(true);
+	t.parseString(l);
+	t.stripComments();
+	std::for_each(t.begin(),t.end(),[&r](const Token& w){
+	    if(w.flag==Token::String){
+	      r.push_back(w.value.substr(1,w.value.size()-2));
+	    } else {
+	      r.push_back(w.value);
+	    }
+	  });
+	return r;
       };
-      auto add_line = [](std::vector<Line>& vl,
-			 const std::string& l,
-			 const unsigned short n){
+      auto add_line = [this](const std::string& l,
+			     const Token::size_type n){
 	Line nl;
-	nl.nbr = n;
-	vl.push_back(nl);
-	istringstream tokenizer(l);
-	copy(istream_iterator<string>(tokenizer),
-	     istream_iterator<string>(),back_inserter(vl.back().tokens));
-	if(vl.back().tokens.empty()){
-	  vl.pop_back();
-	}
+	CxxTokenizer t;
+	t.treatCharAsString(true);
+	t.parseString(l);
+	t.stripComments();
+	std::for_each(t.begin(),t.end(),[&nl,&n](const Token& w){
+	    nl.tokens.push_back(w);
+	    nl.tokens.back().line = n;
+	  });
+	this->lines.push_back(std::move(nl));
       };
       bool firstLine;
       bool firstComments;
-      unsigned short nbr;
+      size_type nbr;
       std::ifstream f{file};
       if(!f){
 	throw(std::runtime_error("TextData::TextData: "
@@ -73,13 +83,13 @@ namespace tfel
 	  if(format.empty()){
 	    line.erase(line.begin());
 	    if(firstLine){
-	      get_legends(this->legends,line);
+	      this->legends = get_legends(line);
 	    }
 	    this->preamble.push_back(line);
 	  }
 	} else {
 	  if(((format=="gnuplot")||(format=="alcyone"))&&(firstLine)){
-	    get_legends(this->legends,line);
+	    this->legends = get_legends(line);
 	    bool all_numbers = true;
 	    for(const auto& l:this->legends){
 	      try{
@@ -93,10 +103,10 @@ namespace tfel
 	    }
 	    if(all_numbers){
 	      this->legends.clear();
-	      add_line(this->lines,line,nbr);
+	      add_line(line,nbr);
 	    }
 	  } else {
-	    add_line(this->lines,line,nbr);
+	    add_line(line,nbr);
 	    firstComments = false;
 	  }
 	}
@@ -118,13 +128,11 @@ namespace tfel
     } // end of TextData::getPreamble
 
     std::string
-    TextData::getLegend(const unsigned short c) const
+    TextData::getLegend(const size_type c) const
     {
-      using namespace std;
       if(c==0){
-	string msg("TextData::getLegend : ");
-	msg += "invalid column index";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("TextData::getLegend: "
+				 "invalid column index"));
       }
       if(c>=this->legends.size()+1){
 	return "";
@@ -133,22 +141,19 @@ namespace tfel
       return this->legends[--c2];
     } // end of TextData::getLegend
 
-    unsigned short
-    TextData::findColumn(const std::string& name) const
+    TextData::size_type
+    TextData::findColumn(const std::string& n) const
     {
-      using namespace std;
-      vector<string>::const_iterator p;
-      p = find(this->legends.begin(),this->legends.end(),name);
+      auto p = std::find(this->legends.begin(),this->legends.end(),n);
       if(p==this->legends.end()){
-	string msg("TextData::findColumn : ");
-	msg += "no column named '"+name+"' found'.";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("TextData::findColumn: "
+				 "no column named '"+n+"' found'."));
       }
-      return static_cast<unsigned short>(p-this->legends.begin()+1);
+      return static_cast<size_type>(p-this->legends.begin()+1);
     } // end of TextData::findColumn
 
     std::vector<double>
-    TextData::getColumn(const unsigned short i) const
+    TextData::getColumn(const size_type i) const
     {
       std::vector<double> tab;
       this->getColumn(tab,i);
@@ -157,7 +162,7 @@ namespace tfel
 
     void
     TextData::getColumn(std::vector<double>& tab,
-			const unsigned short i) const
+			const size_type i) const
     {
       tab.clear();
       tab.reserve(this->lines.size());
@@ -167,17 +172,14 @@ namespace tfel
 				 "column '0' requested (column numbers begins at '1')."));
       }
       // treatment
-      auto line=this->lines.begin();
-      for(int j=0;line!=this->lines.end();++line,++j){
-	assert(line->tokens.begin()!=line->tokens.end());
-	if(line->tokens.size()<i){
-	  std::ostringstream msg;
-	  msg << "TextData::getColumn : line '" 
-	      << line->nbr << "' "
-	      << "does not have '" << i << "' columns.";
-	  throw(std::runtime_error(msg.str()));
+      for(const auto& l : this->lines){
+	auto n  = l.tokens.empty() ? 0 : l.tokens[0].line;
+	if(l.tokens.size()<i){
+	  throw(std::runtime_error("TextData::getColumn : "
+				   "line '"+std::to_string(n)+ "' "
+				   "does not have '"+std::to_string(i)+"' columns."));
 	}
-	tab.push_back(this->readDouble(line->tokens.begin()+i-1u,line->nbr));
+	tab.push_back(convert<double>(l.tokens.at(i-1u).value));
       }
     } // end of TextData::getColumn
 
@@ -192,31 +194,17 @@ namespace tfel
     {
       return this->lines.end();
     } // end of TextData::end()
-      
-    double
-    TextData::readDouble(const std::vector<std::string>::const_iterator current,
-			 const unsigned short l) const
-    {
-      using namespace std;
-      double res;
-      istringstream is(*current);
-      is >> res;
-      if(!is&&(!is.eof())){
-	ostringstream msg;
-	msg << "TextData::readDouble : ";
-	msg << "could not read value from token '"+*current+"'.\n";
-	msg << "Error at line : " << l;
-	throw(runtime_error(msg.str()));
-      }
-      return res;
-    } // end of TextData::readDouble
 
-    void
-    TextData::skipLines(const unsigned short n)
+    void TextData::skipLines(const Token::size_type n)
     {
-      using namespace std;
-      auto p = this->lines. begin();
-      while((p->nbr<=n+1)&&(p!=this->lines.end())){
+      auto get_line = [](const Line& l) -> Token::size_type{
+	return l.tokens.empty() ? 0 : l.tokens[0].line;
+      };
+      if(this->lines.empty()){
+	return;
+      }
+      auto p  = this->lines.begin();
+      while((get_line(*p)<=n+1)&&(p!=this->lines.end())){
 	++p;
       }
       lines.erase(lines.begin(),p);

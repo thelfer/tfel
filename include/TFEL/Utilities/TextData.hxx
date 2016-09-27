@@ -18,6 +18,7 @@
 #include<string>
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Utilities/Token.hxx"
 
 namespace tfel
 {
@@ -30,6 +31,8 @@ namespace tfel
      */
     struct TFELUTILITIES_VISIBILITY_EXPORT TextData
     {
+      //! a simple alias
+      using size_type = Token::size_type;
       /*!
        * \brief helper class in charge of storing of line of data line
        * starting with '#' ared considered comments and not stored.
@@ -38,10 +41,8 @@ namespace tfel
        */
       struct Line
       {
-	//! line number
-	unsigned short nbr;
 	//! line tokens
-	std::vector<std::string> tokens;
+	std::vector<Token> tokens;
       }; // end of struct Line
       /*!
        * \brief constructor
@@ -67,7 +68,7 @@ namespace tfel
        * a double
        */
       std::vector<double>
-      getColumn(const unsigned short) const;
+      getColumn(const size_type) const;
       /*!
        * \brief extract the specified column, converting all values to
        * double
@@ -77,17 +78,15 @@ namespace tfel
        * specified column number or if a value can't be converted to
        * a double
        */
-      void
-      getColumn(std::vector<double>&,
-		const unsigned short) const;
+      void getColumn(std::vector<double>&,
+		     const size_type) const;
       /*!
        * \return the column having the specified title
        * \param[in] name : column title
        * \throw std::runtime_error if no column with the specified
        * title is found
        */
-      unsigned short
-      findColumn(const std::string&) const;
+      size_type findColumn(const std::string&) const;
       /*!
        * \return the legend associated to the curves
        */
@@ -99,7 +98,7 @@ namespace tfel
        * \throw std::runtime_error if no title is found
        */
       std::string
-      getLegend(const unsigned short c) const;
+      getLegend(const size_type c) const;
       /*!
        * \return an iterator to the first line
        */
@@ -119,24 +118,13 @@ namespace tfel
        * skip the first lines of the file
        * \param[in] n : number of lines to be skipped
        */
-      void skipLines(const unsigned short);
+      void skipLines(const Token::size_type);
     private:
       TextData() = delete;
       TextData(TextData&&) = delete;
       TextData(const TextData&) = delete;
       TextData& operator = (TextData&&) = delete;
       TextData& operator = (const TextData&) = delete;
-      /*!
-       * \brief extract a double from a token
-       * \param[in] current : iterator to the token
-       * \param[in] l       : line number
-       * \return the extracted value
-       * \throw std::runtime_error if the token can't be converted to
-       * a double
-       */
-      TFEL_VISIBILITY_LOCAL double
-      readDouble(const std::vector<std::string>::const_iterator,
-		 const unsigned short) const;
       //! list of all tokens of the file, sorted by line
       std::vector<Line>        lines;
       //! list of column titles

@@ -21,29 +21,21 @@ namespace tfel
   namespace tests
   {
 
-    TestResult::TestResult()
-      : d(),
-	test_duration(0.),
-	s(true)
-    {} // end of TestResult::TestResult
+    TestResult::TestResult() = default;
 
     TestResult::TestResult(const bool b)
-      : d(),
-	test_duration(0.),
-	s(b)
+      : s(b)
     {} // end of TestResult::TestResult
 
     TestResult::TestResult(const bool b,
 			   const char * const c)
       : d(c),
-	test_duration(0.),
 	s(b)
     {} // end of TestResult::TestResult
     
     TestResult::TestResult(const bool b,
 			   const std::string& c)
       : d(c),
-	test_duration(0.),
 	s(b)
     {} // end of TestResult::TestResult
     
@@ -52,8 +44,7 @@ namespace tfel
     TestResult& TestResult::operator = (const TestResult&) = default;
     TestResult& TestResult::operator = (TestResult&&) = default;
 
-    bool
-    TestResult::success() const
+    bool TestResult::success() const
     {
      return this->s;
     } // end of TestResult::succees
@@ -67,37 +58,32 @@ namespace tfel
     TestResult::const_iterator
     TestResult::begin() const
     {
-      using namespace std;
-      return vector<TestResult>::begin();
+      return std::vector<TestResult>::begin();
     } // end of TestResult::begin()
 
     TestResult::const_iterator
     TestResult::end() const
     {
-      using namespace std;
-      return vector<TestResult>::end();
+      return std::vector<TestResult>::end();
     } // end of TestResult::end()
 
     void
     TestResult::append(const TestResult& r)
     {
-      using namespace std;
       if(!r.success()){
 	this->s = false;
       }
-      vector<TestResult>::push_back(r);
+      std::vector<TestResult>::push_back(r);
     } // end of TestResult::end()
 
-    void
-    TestResult::setTestDuration(const double td)
+    void TestResult::setTestDuration(const double td)
     {
       this->test_duration = td;
     }
 
-    double
-    TestResult::duration() const
+    double TestResult::duration() const
     {
-      double r(this->test_duration);
+      auto  r = this->test_duration;
       for(const auto& t:*this){
 	r += t.duration();
       }
@@ -109,18 +95,16 @@ namespace tfel
     std::ostream&
     operator << (std::ostream& os,const TestResult& r)
     {
-      using namespace std;
-      TestResult::const_iterator p;
       os << "Result : ";
       if(r.success()){
-	os << "SUCCESS";
+	os << "SUCCESS\n";
       } else {
-	os << "FAILED";
+	os << "FAILED\n";
       }
-      os << endl;
-      os << "Details : " << r.details() << endl;
-      for(p=r.begin();p!=r.end();++p){
-	os << *p << endl;
+      os << '\n';
+      os << "Details : " << r.details() << '\n';
+      for(const auto& t : r){
+	os << t << '\n';
       }
       return os;
     } // end of operator <<  

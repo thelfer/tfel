@@ -106,7 +106,7 @@ namespace tfel
 		const char c2){
       std::string s(c);
       std::string::size_type p  = 0u;
-      if(s.size()==0){
+      if(s.empty()){
 	return "";
       }
       while((p=s.find(c1,p))!=std::string::npos){
@@ -116,13 +116,12 @@ namespace tfel
       return s;
     }
 
-    void
-    replace_all(std::string& s,
-		const char c,
-		const std::string& n){
+    void replace_all(std::string& s,
+		     const char c,
+		     const std::string& n){
       std::string::size_type p  = 0u;
       std::string::size_type ns = n.size();
-      if((s.size()==0)||(ns==0)){
+      if((s.empty())||(ns==0)){
 	return;
       }
       while((p=s.find(c,p))!=std::string::npos){

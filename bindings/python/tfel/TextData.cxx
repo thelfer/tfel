@@ -23,7 +23,7 @@ void declareTextData()
   using namespace tfel::utilities;
 
   std::vector<double>
-    (TextData:: *getColumn)(const unsigned short) const = &TextData::getColumn;
+    (TextData:: *getColumn)(const Token::size_type) const = &TextData::getColumn;
 
   class_<TextData,boost::noncopyable>("TextData",no_init)
     .def(init<std::string>())

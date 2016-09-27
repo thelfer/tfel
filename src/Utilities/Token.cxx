@@ -21,8 +21,8 @@ namespace tfel{
     Token::Token() = default;
     Token::Token(const Token&) = default;
     Token::Token(Token&&) = default;
-    Token& Token::operator=(const Token&) = default;
     Token& Token::operator=(Token&&) = default;
+    Token& Token::operator=(const Token&) = default;
 
     Token::Token(const std::string& v,
 		 const size_type l,

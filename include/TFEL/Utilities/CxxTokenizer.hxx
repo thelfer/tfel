@@ -104,6 +104,11 @@ namespace tfel{
        */ 
       void treatCharAsString(const bool);
       /*!
+       * \brief set if '.' shall be treated as as sperator
+       * \param[in] b : boolean telling if '.' shall be treated as as sperator
+       */ 
+      void treatDotAsSeparator(const bool);
+      /*!
        * \brief set if successive strings shall be merged
        * \param[in] b : boolean
        */ 
@@ -333,6 +338,8 @@ namespace tfel{
       TokensContainer tokens;
       //! store all the comments of a line
       std::map<Token::size_type,std::string> comments;
+      //! treat '.' as a c++ separator
+      bool dotAsSeparator = true;
       /*!
        * if true, one consider that single quote can be used to define
        * a string

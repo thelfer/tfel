@@ -108,9 +108,9 @@ namespace tfel
       //! detail
       std::string d;
       //! test duration
-      double test_duration;
+      double test_duration = 0.;
       //! success of the test
-      bool s;
+      bool s = true;
     }; // end of struct 
     
     std::ostream&

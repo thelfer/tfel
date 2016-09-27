@@ -53,6 +53,10 @@ namespace tfel{
       this->charAsString = b;
     } // end of CxxTokenizer::treatCharAsString
 
+    void CxxTokenizer::treatDotAsSeparator(const bool b){
+      this->dotAsSeparator = b;
+    } // end of CxxTokenizer::treatCharAsString
+    
     void CxxTokenizer::mergeStrings(const bool b){
       this->shallMergeStrings = b;
     } // end of CxxTokenizer::mergeStrings
@@ -60,8 +64,7 @@ namespace tfel{
     void CxxTokenizer::extractNumbers(const bool){
     } // end of CxxTokenizer::extractNumbers
 
-    void
-    CxxTokenizer::openFile(const std::string& f)
+    void CxxTokenizer::openFile(const std::string& f)
     {
       auto throw_if = [](const bool b, const std::string& m){
 	if(b){throw(std::runtime_error("CxxTokenizer::openFile: "+m));}
@@ -72,18 +75,16 @@ namespace tfel{
       this->parseStream(file,n," of file '"+f+"'");
     }
 
-    void
-    CxxTokenizer::parseString(const std::string& s)
+    void CxxTokenizer::parseString(const std::string& s)
     {
       std::istringstream iss(s);
       Token::size_type n{0};
       this->parseStream(iss,n," of string '"+s+"'");
     } // end of CxxTokenizer::parseOneString
     
-    void
-    CxxTokenizer::parseStream(std::istream& in,
-			      Token::size_type& n,
-			      const std::string& from)
+    void CxxTokenizer::parseStream(std::istream& in,
+				   Token::size_type& n,
+				   const std::string& from)
     {
       auto throw_if = [](const bool b, const std::string& m){
 	if(b){throw(std::runtime_error("CxxTokenizer::parseStream: "+m));}
@@ -130,19 +131,38 @@ namespace tfel{
       }
     }
 
-    static bool is_cxx_separator(const std::string::value_type& c){
-      using ctype = std::string::value_type;
-      constexpr const std::array<ctype,26> s = {{'?',';','/','!','&','*',
-						 '|','{','}','[',']','(',
-						 ')','%','=','^',',',':',
-						 '<','>','\'','\"',
-						 '+','-','\\','.'}};
-      return std::find(std::begin(s),std::end(s),c)!=std::end(s);
-    }
-    
-    static bool is_cxx_separator_or_space(const std::string::value_type& c){
-      return ((std::isspace(c)) or (is_cxx_separator(c)));
-    }
+    struct is_cxx_separator
+    {
+      is_cxx_separator(const bool b)
+	: treat_dot_as_separator(b)
+      {}
+      bool operator()(const std::string::value_type& c) const{
+	using ctype = std::string::value_type;
+	constexpr const std::array<ctype,26> s = {{'?',';','/','!','&','*',
+						   '|','{','}','[',']','(',
+						   ')','%','=','^',',',':',
+						   '<','>','\'','\"',
+						   '+','-','\\','.'}};
+	if(this->treat_dot_as_separator){
+	  return std::find(std::begin(s),std::end(s),c)!=std::end(s);
+	}
+	const auto e = std::prev(std::end(s));
+	return std::find(std::begin(s),e,c)!=e;
+      }
+    protected:
+      bool treat_dot_as_separator = true;
+    };
+
+    struct is_cxx_separator_or_space
+      :public is_cxx_separator      
+    {
+      is_cxx_separator_or_space(const bool b)
+	: is_cxx_separator(b)
+      {}
+      bool operator()(const std::string::value_type& c) const{
+	return ((std::isspace(c)) or (is_cxx_separator::operator()(c)));
+      }
+    }; // end of struct is_cxx_separator_or_space
     
     static void advance(Token::size_type& o,
 			std::string::const_iterator& p,
@@ -563,7 +583,7 @@ namespace tfel{
       advance(o,p,1);
       ignore_space(o,p,pe);
       throw_if(p==pe,"lonely ‘#’");
-      auto pn = std::find_if(p,pe,is_cxx_separator_or_space);
+      auto pn = std::find_if(p,pe,is_cxx_separator_or_space(this->dotAsSeparator));
       throw_if(p==pn,"unexpected token '"+std::string(1u,*p)+"'");
       const auto key = std::string{p,pn};
       throw_if(!is_preprocessor_keyword('#'+key),
@@ -629,7 +649,7 @@ namespace tfel{
 	      this->tokens.emplace_back("->",n,o,Token::Standard);
 	      advance(o,p,2u);
 	    }
-	  } else if(((p==b)||(is_cxx_separator_or_space(*(std::prev(p)))))&&
+	  } else if(((p==b)||(is_cxx_separator_or_space(this->dotAsSeparator)(*(std::prev(p)))))&&
 		    ((pn!=pe)&&((*pn=='.')||(std::isdigit(*pn))))){
 	    this->readNumber(o,p,pe,n);
 	  } else {
@@ -661,7 +681,7 @@ namespace tfel{
 	} else if(std::isdigit(*p)){
 	  this->readNumber(o,p,pe,n);
 	} else{
-	  auto pw = std::find_if(p,pe,is_cxx_separator_or_space);
+	  auto pw = std::find_if(p,pe,is_cxx_separator_or_space(this->dotAsSeparator));
 	  if(p==pw){
 	    this->tokens.emplace_back(std::string(1u,*p),n,Token::Standard);	      
 	    advance(o,p,1u);

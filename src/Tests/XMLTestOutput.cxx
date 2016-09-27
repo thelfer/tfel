@@ -33,7 +33,7 @@ namespace tfel
       using namespace std;
       string::size_type p  = 0u;
       string::size_type ns = n.size();
-      if((s.size()==0)||(ns==0)){
+      if((s.empty())||(ns==0)){
 	return;
       }
       while((p=s.find(c,p))!=string::npos){
