@@ -241,6 +241,21 @@ namespace tfel
       getUMATBehaviourType(const std::string&,
 			   const std::string&);
       /*!
+       * \return the kinematic assumption used by the behaviour
+       * \see MechanicalBehaviourBase::Kinematic
+       * The value returned are the following
+       * 0 : undefined kinematic
+       * 1 : standard small strain behaviour kinematic
+       * 2 : cohesive zone model kinematic
+       * 3 : standard finite strain kinematic (F-Cauchy)
+       * 4 : ptest finite strain kinematic (eto-pk1)
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      unsigned short
+      getUMATBehaviourKinematic(const std::string&,
+				const std::string&);
+      /*!
        * \return the symmetry of the behaviour (isotropic or
        * orthotropic) If the returned value is 0, the beahviour is
        * isotropic. If the returned value is 1, the beahviour is

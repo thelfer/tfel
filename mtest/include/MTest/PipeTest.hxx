@@ -402,6 +402,13 @@ namespace mtest{
 		   const real);
     //! destructor
     virtual ~PipeTest();
+  protected:
+    /*!
+     * \brief check that the behaviour is consistent with the
+     * modelling hypothesis
+     * \param[in] bp : pointer to the behaviour
+     */
+    virtual void checkBehaviourConsistency(const std::shared_ptr<Behaviour>&) override;
   private:
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;

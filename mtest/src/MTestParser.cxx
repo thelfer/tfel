@@ -585,7 +585,9 @@ namespace mtest
   MTestParser::handleStrainEpsilon(MTest& t,TokensContainer::const_iterator& p)
   {
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	 ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+	  (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1)))){
       throw(std::runtime_error("MTestParser::handleStrainEpsilon: "
 			       "the @StrainEpsilon keyword is only valid "
 			       "for small strain behaviours"));
@@ -597,7 +599,8 @@ namespace mtest
   MTestParser::handleDeformationGradientEpsilon(MTest& t,TokensContainer::const_iterator& p)
   {
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(!((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+	 (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY))){
       throw(std::runtime_error("MTestParser::handleDeformationGradientEpsilon: "
 			       "the @DeformationGradientEpsilon keyword is only valid "
 			       "for finite strain behaviours"));
@@ -713,7 +716,9 @@ namespace mtest
   MTestParser::handleImposedStrain(MTest& t,TokensContainer::const_iterator& p)
   {
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	 ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+	  (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1)))){
       throw(std::runtime_error("MTestParser::handleImposedStrain: "
 			       "the @ImposedStrain keyword is only valid "
 			       "for small strain behaviours"));
@@ -729,6 +734,11 @@ namespace mtest
       throw(std::runtime_error("MTestParser::handleImposedDeformationGradient: "
 			       "the @ImposedDeformationGradient keyword is only valid "
 			       "for finite strain behaviours"));
+    }
+    if(t.getBehaviourKinematic()!=MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY){
+      throw(std::runtime_error("MTestParser::handleImposedDeformationGradient: "
+			       "the @ImposedDeformationGradient keyword is only valid "
+			       "invalid finite strain kinematic"));
     }
     this->handleImposedDrivingVariable(t,p);
   }
@@ -765,8 +775,9 @@ namespace mtest
   MTestParser::handleStrain(MTest& t,TokensContainer::const_iterator& p)
   {
     using namespace tfel::material;
-    if(t.getBehaviour()->getBehaviourType()!=
-       MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	 ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+	  (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1)))){
       throw(std::runtime_error("MTestParser::handleStrain: "
 			       "the @Strain keyword is only valid "
 			       "for small strain behaviours"));
@@ -778,7 +789,8 @@ namespace mtest
   MTestParser::handleDeformationGradient(MTest& t,TokensContainer::const_iterator& p)
   {
     using namespace tfel::material;
-    if(t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(!((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+	 (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY))){
       throw(std::runtime_error("MTestParser::handleDeformationGradient: "
 			       "the @DeformationGradient keyword is only valid "
 			       "for finite strain behaviours"));

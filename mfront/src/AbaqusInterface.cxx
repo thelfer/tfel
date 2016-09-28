@@ -917,6 +917,29 @@ namespace mfront{
       throw_if(true,"unsupported behaviour type");
     }
   } // end of AbaqusInterface::writeUMATxxBehaviourTypeSymbols
+
+  void
+  AbaqusInterface::writeUMATxxBehaviourKinematicSymbols(std::ostream& out,
+						   const std::string& name,
+						   const BehaviourDescription& mb) const
+  {
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("AbaqusInterface::writeUMATxxBehaviourKinematicSymbols: "+m));}
+    };
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	<< "_BehaviourKinematic = " ;
+    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(this->fss==UNDEFINEDSTRATEGY){
+	out << "1u;\n\n";
+      } else {
+	out << "3u;\n\n";
+      }
+    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      out << "3u;\n\n";
+    } else {
+      throw_if(true,"unsupported behaviour type");
+    }
+  } // end of AbaqusInterface::writeUMATxxBehaviourKinematicSymbols
   
   void 
   AbaqusInterface::writeInterfaceSpecificIncludes(std::ostream& out,

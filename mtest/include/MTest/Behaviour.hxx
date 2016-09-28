@@ -66,6 +66,11 @@ namespace mtest
     virtual tfel::material::MechanicalBehaviourBase::BehaviourType
     getBehaviourType(void) const = 0;
     /*!
+     * \return the type of the behaviour
+     */
+    virtual tfel::material::MechanicalBehaviourBase::Kinematic
+    getBehaviourKinematic(void) const = 0;
+    /*!
      * \return the size of a vector able to contain all the components of the driving variables
      */
     virtual unsigned short

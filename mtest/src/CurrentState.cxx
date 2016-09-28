@@ -72,12 +72,13 @@ namespace mtest{
 				 const real t,
 				 const real dt){
     if(s.behaviour.get()==nullptr){
-      throw(std::runtime_error("mtest::computeThermalExpanstion: "
+      throw(std::runtime_error("mtest::computeMaterialProperties: "
 			       "uninitialised state"));
     }
     if(s.mprops1.size()!=mpnames.size()){
       throw(std::runtime_error("computeMaterialProperties:"
-			       "CurrentState variable was not initialized appropriately"));
+			       "CurrentState variable was not "
+			       "initialized appropriately"));
     }
     std::vector<real>::size_type i=0;
     for(const auto& mpn : mpnames){
@@ -111,7 +112,8 @@ namespace mtest{
     if((s.esv0.size()!=esvnames.size())||
        (s.desv.size()!=esvnames.size())){
       throw(std::runtime_error("computeExternalStateVariables:"
-			       "CurrentState variable was not initialized appropriately"));
+			       "CurrentState variable was not "
+			       "initialized appropriately"));
     }
     std::vector<real>::size_type i=0;
     for(const auto& evn : esvnames){

@@ -46,6 +46,16 @@ namespace tfel{
 	COHESIVEZONEMODEL             =  3
       }; // end of enum MFrontBehaviourType
       /*!
+       * An indication of the kinematic of the behaviour treated
+       */
+      enum Kinematic {
+	UNDEFINEDKINEMATIC             =  0,
+	SMALLSTRAINKINEMATIC           =  1,
+	COHESIVEZONEKINEMATIC          =  2,
+	FINITESTRAINKINEMATIC_F_CAUCHY =  3,
+	FINITESTRAINKINEMATIC_ETO_PK1  =  4,
+      }; // end of enum MFrontBehaviourType
+      /*!
        * \brief return values of the integrate method
        */
       enum IntegrationResult{

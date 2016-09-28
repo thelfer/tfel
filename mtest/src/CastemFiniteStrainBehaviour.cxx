@@ -447,9 +447,8 @@ namespace mtest
 
   void
   CastemFiniteStrainBehaviour::setOptionalMaterialPropertiesDefaultValues(EvolutionManager& mp,
-									     const EvolutionManager& evm) const
+									  const EvolutionManager& evm) const
   {
-    const auto h = this->getHypothesis();
     CastemStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(mp,evm);
     if(this->stype==0){
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion",0.);

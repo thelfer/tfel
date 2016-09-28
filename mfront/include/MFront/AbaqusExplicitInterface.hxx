@@ -169,6 +169,17 @@ namespace mfront{
 				    const std::string&,
 				    const BehaviourDescription&) const override;
     /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
+     * \param[in] mb   : behaviour description
+     */
+    virtual void
+    writeUMATxxBehaviourKinematicSymbols(std::ostream&,
+					 const std::string&,
+					 const BehaviourDescription&) const override;
+    /*!
      * \param[out] out: ouput stream
      * \param[in]  md:  behaviour description
      * \param[in]  t:   floatting point type

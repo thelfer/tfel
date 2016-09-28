@@ -1070,6 +1070,28 @@ namespace mfront{
 			       "unsupported behaviour type"));
     }
   } // end of EuroplexusInterface::writeUMATxxBehaviourTypeSymbols
+
+  void
+  EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols(std::ostream& out,
+						       const std::string& name,
+						       const BehaviourDescription& mb) const
+  {
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	<< "_BehaviourKinematic = " ;
+    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(this->fss==UNDEFINEDSTRATEGY){
+	throw(std::runtime_error("EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols: "
+				 "behaviours written in the small strain framework "
+				 "must be embedded in a strain strategy"));
+      }
+      out << "3u;\n\n";
+    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      out << "3u;\n\n";
+    } else {
+      throw(std::runtime_error("EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols: "
+			       "unsupported behaviour type"));
+    }
+  } // end of EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols
   
   void
   EuroplexusInterface::writeUMATxxAdditionalSymbols(std::ostream&,

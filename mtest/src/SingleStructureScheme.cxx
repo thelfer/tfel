@@ -97,7 +97,7 @@ namespace mtest{
 					     const bool check)
   {
     using namespace std;
-    if(this->b.get()==nullptr){
+    if(this->b==nullptr){
       throw(std::runtime_error("SingleStructureScheme::setMaterialProperty: "
 			       "no behaviour defined"));
     }
@@ -134,7 +134,7 @@ namespace mtest{
 						  const EvolutionPtr p,
 						  const bool check)
   {
-    if(this->b.get()==nullptr){
+    if(this->b==nullptr){
       throw(std::runtime_error("SingleStructureScheme::setExternalStateVariable: "
 			       "no behaviour defined"));
     }
@@ -150,7 +150,7 @@ namespace mtest{
   void
   SingleStructureScheme::setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy p)
   {
-    if(this->b.get()==nullptr){
+    if(this->b==nullptr){
       throw(std::runtime_error("SingleStructureScheme::setOutOfBoundsPolicy: "
 			       "no behaviour defined"));
     }
@@ -299,14 +299,18 @@ namespace mtest{
 			       "unknown wrapper '"+w+"'"));
     }
   }
+
+  void SingleStructureScheme::checkBehaviourConsistency(const std::shared_ptr<Behaviour>&)
+  {}
   
   void
   SingleStructureScheme::setBehaviour(const std::shared_ptr<Behaviour>& bp)
   {
-    if(this->b.get()!=nullptr){
+    if(this->b!=nullptr){
       throw(std::runtime_error("SingleStructureScheme::setBehaviour: "
 			       "behaviour already defined"));
     }
+    this->checkBehaviourConsistency(bp);
     this->b = bp;
     const auto& ivnames = this->b->getInternalStateVariablesNames();
     this->declareVariables(this->b->getMaterialPropertiesNames(),true);
@@ -346,7 +350,7 @@ namespace mtest{
   SingleStructureScheme::setParameter(const std::string& n,
 				      const double v)
   {
-    if(this->b.get()==nullptr){
+    if(this->b==nullptr){
       throw(std::runtime_error("SingleStructureScheme::setParameter: "
 			       "no behaviour defined"));
     }
@@ -357,7 +361,7 @@ namespace mtest{
   SingleStructureScheme::setIntegerParameter(const std::string& n,
 					     const int v)
   {
-    if(this->b.get()==nullptr){
+    if(this->b==nullptr){
       throw(std::runtime_error("SingleStructureScheme::setIntegerParameter: "
 			       "no behaviour defined"));
     }
@@ -368,7 +372,7 @@ namespace mtest{
   SingleStructureScheme::setUnsignedIntegerParameter(const std::string& n,
 						     const unsigned int v)
   {
-    if(this->b.get()==nullptr){
+    if(this->b==nullptr){
       throw(std::runtime_error("SingleStructureScheme::setUnsignedIntegerParameter: "
 			       "no behaviour defined"));
     }
@@ -377,16 +381,25 @@ namespace mtest{
 
   tfel::material::MechanicalBehaviourBase::BehaviourType
   SingleStructureScheme::getBehaviourType() const{
-    if(this->b.get()==nullptr){
+    if(this->b==nullptr){
       throw(std::runtime_error("SingleStructureScheme::getBehaviourType: "
 			       "no behaviour defined"));
     }
     return this->b->getBehaviourType();
   }
 
+  tfel::material::MechanicalBehaviourBase::Kinematic
+  SingleStructureScheme::getBehaviourKinematic() const{
+    if(this->b==nullptr){
+      throw(std::runtime_error("SingleStructureScheme::getBehaviourKinematic: "
+			       "no behaviour defined"));
+    }
+    return this->b->getBehaviourKinematic();
+  }
+  
   std::shared_ptr<Behaviour>
   SingleStructureScheme::getBehaviour(){
-    if(this->b.get()==nullptr){
+    if(this->b==nullptr){
       throw(std::runtime_error("SingleStructureScheme::getBehaviour: "
 			       "no behaviour defined"));
     }
@@ -397,8 +410,8 @@ namespace mtest{
   SingleStructureScheme::completeInitialisation()
   {
     SchemeBase::completeInitialisation();
-    if(this->b.get()==nullptr){
-      throw(std::runtime_error("MTest::completeInitialisation : "
+    if(this->b==nullptr){
+      throw(std::runtime_error("MTest::completeInitialisation: "
 			       "no behaviour defined"));
     }
     // check if material properties and external state variables are declared
@@ -433,13 +446,13 @@ namespace mtest{
   SingleStructureScheme::setScalarInternalStateVariableInitialValue(const std::string& n,
 								    const real v)
   {
-    if(this->b.get()==nullptr){
+    if(this->b==nullptr){
       throw(std::runtime_error("SingleStructureScheme::setScalarInternalStateVariableInitialValue: "
 			       "no behaviour defined"));
     }
     const auto& ivsnames = this->b->getInternalStateVariablesNames();
     if(std::find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end()){
-      throw(std::runtime_error("SingleStructureScheme::setScalarInternalStateVariableInitialValue : "
+      throw(std::runtime_error("SingleStructureScheme::setScalarInternalStateVariableInitialValue: "
 			       "the behaviour does not declare an internal "
 			       "state variable named '"+n+"'"));
     }
@@ -459,7 +472,7 @@ namespace mtest{
   SingleStructureScheme::setStensorInternalStateVariableInitialValues(const std::string& n,
 								      const std::vector<real>& v)
   {
-    if(this->b.get()==nullptr){
+    if(this->b==nullptr){
       throw(std::runtime_error("SingleStructureScheme::setStensorInternalStateVariableInitialValue: "
 			       "no behaviour defined"));
     }
@@ -477,7 +490,7 @@ namespace mtest{
     }
     const auto N = tfel::material::getStensorSize(this->hypothesis);
     if(v.size()!=N){
-      throw(std::runtime_error("SingleStructureScheme::setStensorInternalStateVariableInitialValues : "
+      throw(std::runtime_error("SingleStructureScheme::setStensorInternalStateVariableInitialValues: "
 			       "invalid values size"));
     }
     if(this->iv_t0.size()<pos+N){
@@ -491,7 +504,7 @@ namespace mtest{
 								     const std::vector<real>& v)
   {
     using namespace std;
-    if(this->b.get()==nullptr){
+    if(this->b==nullptr){
       throw(runtime_error("SingleStructureScheme::setTensorInternalStateVariableInitialValue: "
 			  "no behaviour defined"));
     }
@@ -504,15 +517,13 @@ namespace mtest{
     const auto type = this->b->getInternalStateVariableType(n);
     const auto pos  = this->b->getInternalStateVariablePosition(n);
     if(type!=3){
-      string msg("SingleStructureScheme::setTensorInternalStateVariableInitialValue : ");
-      msg += "internal state variable '"+n+"' is not defined";
-      throw(runtime_error(msg));
+      throw(runtime_error("SingleStructureScheme::setTensorInternalStateVariableInitialValue: "
+			  "internal state variable '"+n+"' is not defined"));
     }
-    const unsigned short N = tfel::material::getTensorSize(this->hypothesis);
+    const auto N = tfel::material::getTensorSize(this->hypothesis);
     if(v.size()!=N){
-      string msg("SingleStructureScheme::setTensorInternalStateVariableInitialValues : "
-		 "invalid values size");
-      throw(runtime_error(msg));
+      throw(runtime_error("SingleStructureScheme::setTensorInternalStateVariableInitialValues: "
+			  "invalid values size"));
     }
     if(this->iv_t0.size()<pos+N){
       this->iv_t0.resize(pos+N,0.);
@@ -537,7 +548,9 @@ namespace mtest{
   				    this->b->getExternalStateVariablesNames(),t,dt);
       // thermal expansion
       if((this->handleThermalExpansion)&&
-	 (this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)){
+	 ((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	  ((this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+	   (this->b->getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1)))){
 	if(this->b->getSymmetryType()==0){
 	  // isotropic case
 	  computeThermalExpansion(s,*(this->evm),t,dt);

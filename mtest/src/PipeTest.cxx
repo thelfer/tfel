@@ -557,7 +557,7 @@ namespace mtest{
   void
   PipeTest::initializeCurrentState(StudyCurrentState& s) const
   {
-    if(this->b.get()==nullptr){
+    if(this->b==nullptr){
       throw(std::runtime_error("PipeTest::initializeCurrentState: "
     			       "mechanical behaviour not set"));
     }
@@ -989,7 +989,37 @@ namespace mtest{
     return {true,r_dt};
   } // end of PipeTest::computeStiffnessMatrixAndResidual
 
+  void PipeTest::checkBehaviourConsistency(const std::shared_ptr<Behaviour>& bp){
+    using tfel::material::MechanicalBehaviourBase;
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("PipeTest::setBehaviour: "+m));}
+    };
+    throw_if(bp==nullptr,"null behaviour pointer");
+    if(this->hpp){
+      throw_if(bp->getBehaviourType()!=
+	       MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR,
+	       "the behaviour must be a small strain one "
+	       "when performing small strain analysis");
+    } else {
+      throw_if(bp->getBehaviourType()!=
+	       MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR,
+	       "the behaviour must be a finite strain one "
+	       "when performing a finite strain analysis");
+      throw_if(bp->getBehaviourKinematic()!=
+	       MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1,
+	       "the behaviour must have the ETO_PK1 kinematic");
+    }
+  }
+  
   void PipeTest::performSmallStrainAnalysis(){
+    using tfel::material::MechanicalBehaviourBase;
+    if(this->b!=nullptr){
+      if(this->b->getBehaviourType()!=
+	 MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+	throw(std::runtime_error("PipeTest::performSmallStrainAnalysis: "
+				 "the behaviour must be small strain"));
+      }
+    }
     this->hpp=true;
   } // en dof PipeTest::performSmallStrainAnalysis
   

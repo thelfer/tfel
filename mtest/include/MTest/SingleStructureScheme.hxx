@@ -87,6 +87,9 @@ namespace mtest{
     //! \return the behaviour type
     virtual tfel::material::MechanicalBehaviourBase::BehaviourType
     getBehaviourType(void) const;
+    //! \return the behaviour kinematic
+    virtual tfel::material::MechanicalBehaviourBase::Kinematic
+    getBehaviourKinematic(void) const;
     //! \return the behaviour
     virtual std::shared_ptr<Behaviour>
     getBehaviour(void);
@@ -164,6 +167,12 @@ namespace mtest{
     //! destructor
     virtual ~SingleStructureScheme();
   protected:
+    /*!
+     * \brief check that the behaviour is consistent with the
+     * modelling hypothesis
+     * \param[in] bp : pointer to the behaviour
+     */
+    virtual void checkBehaviourConsistency(const std::shared_ptr<Behaviour>&);
     /*!
      * \brief set the behaviour
      * \param[in] bp : pointer to the behaviour

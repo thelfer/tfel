@@ -216,6 +216,17 @@ namespace mfront{
      *                   (generally taking into account the material
      *                    and the behaviour name)
      * \param[in] mb   : behaviour description
+     */
+    virtual void
+    writeUMATxxBehaviourKinematicSymbols(std::ostream&,
+					 const std::string&,
+					 const BehaviourDescription&) const override;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
+     * \param[in] mb   : behaviour description
      * \param[in] fd   : file description
      * \param[in] h    : modelling hypothesis
      */

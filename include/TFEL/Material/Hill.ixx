@@ -106,7 +106,7 @@ namespace tfel
 				       stress>
       {
 	//! \brief space dimension
-	static constexpr const auto N =
+	static constexpr const unsigned short N =
 	  tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
 	//! \brief return type
 	using result_type = tfel::math::st2tost2<N,stress>;

@@ -12,6 +12,10 @@
  */
 
 #include<cmath>
+#include<sstream>
+#include<iterator>
+#include<stdexcept>
+#include<algorithm>
 #include"TFEL/FSAlgorithm/copy.hxx"
 #include"MTest/CurrentState.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
@@ -37,10 +41,17 @@ namespace mtest{
   LogarithmicStrain1DBehaviourWrapper::LogarithmicStrain1DBehaviourWrapper(const std::shared_ptr<Behaviour>& wb)
     : b(wb)
   {
+    using tfel::material::MechanicalBehaviourBase;
     const auto h = this->b->getHypothesis();
     if(h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      throw(std::runtime_error("LogarithmicStrain1DBehaviourWrapper::check: "
+      throw(std::runtime_error("LogarithmicStrain1DBehaviourWrapper::"
+			       "LogarithmicStrain1DBehaviourWrapper: "
 			       "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'"));
+    }
+    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+      throw(std::runtime_error("LogarithmicStrain1DBehaviourWrapper::"
+			       "LogarithmicStrain1DBehaviourWrapper: "
+			       "the underlying behaviour must be small strain"));
     }
   }
 
@@ -52,9 +63,17 @@ namespace mtest{
   tfel::material::MechanicalBehaviourBase::BehaviourType
   LogarithmicStrain1DBehaviourWrapper::getBehaviourType() const
   {
-    return this->b->getBehaviourType();
+    using tfel::material::MechanicalBehaviourBase;
+    return MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR;
   } // end of LogarithmicStrain1DBehaviourWrapper::getBehaviourType
 
+  tfel::material::MechanicalBehaviourBase::Kinematic
+  LogarithmicStrain1DBehaviourWrapper::getBehaviourKinematic() const
+  {
+    using tfel::material::MechanicalBehaviourBase;
+    return MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1;
+  } // end of LogarithmicStrain1DBehaviourWrapper::getBehaviourKinematic
+  
   unsigned short
   LogarithmicStrain1DBehaviourWrapper::getDrivingVariablesSize() const
   {

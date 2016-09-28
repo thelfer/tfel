@@ -841,6 +841,28 @@ namespace tfel
     } // end of ExternalLibraryManager::getUMATBehaviourType
 
     unsigned short
+    ExternalLibraryManager::getUMATBehaviourKinematic(const std::string& l,
+						      const std::string& f)
+    {
+      const auto lib = this->loadLibrary(l);
+      int u = ::tfel_getUnsignedShort(lib,(f+"_BehaviourKinematic").c_str());
+      if(u==-1){
+	std::string msg("ExternalLibraryManager::getUMATBehaviourKinematic : ");
+	msg += " behaviour type could not be read";
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+	msg += "\n";
+	msg += getLastWin32Error();
+#else
+	msg += " (";
+	msg += ::dlerror();
+	msg += ")";
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+	throw(std::runtime_error(msg));
+      }
+      return static_cast<unsigned short>(u);
+    } // end of ExternalLibraryManager::getUMATBehaviourKinematic
+    
+    unsigned short
     ExternalLibraryManager::getUMATSymmetryType(const std::string& l,
 						const std::string& f)
     {

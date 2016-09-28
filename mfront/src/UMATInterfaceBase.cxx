@@ -1290,6 +1290,7 @@ namespace mfront
     this->writeUMATxxSourceFileSymbols(out,name,mb,fd);
     this->writeUMATxxSupportedModellingHypothesis(out,name,mb);
     this->writeUMATxxBehaviourTypeSymbols(out,name,mb);
+    this->writeUMATxxBehaviourKinematicSymbols(out,name,mb);
     this->writeUMATxxSymmetryTypeSymbols(out,name,mb);
     this->writeUMATxxElasticSymmetryTypeSymbols(out,name,mb);
     this->writeUMATxxSpecificSymbols(out,name,mb,fd);
@@ -1338,6 +1339,27 @@ namespace mfront
     }
   } // end of UMATInterfaceBase::writeUMATxxBehaviourTypeSymbols
 
+  void
+  UMATInterfaceBase::writeUMATxxBehaviourKinematicSymbols(std::ostream& out,
+							  const std::string& name,
+							  const BehaviourDescription& mb) const
+  {
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	<< "_BehaviourKinematic = " ;
+    if(mb.getBehaviourType()==BehaviourDescription::GENERALBEHAVIOUR){
+      out << "0u;\n\n";
+    } else if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      out << "1u;\n\n";
+    } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
+      out << "2u;\n\n";
+    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      out << "3u;\n\n";
+    } else {
+      throw(std::runtime_error("UMATInterfaceBase::writeUMATxxBehaviourKinematicSymbols: "
+			       "unsupported behaviour type."));
+    }
+  } // end of UMATInterfaceBase::writeUMATxxBehaviourKinematicSymbols
+  
   void
   UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(std::ostream& out,
 							     const std::string& name,

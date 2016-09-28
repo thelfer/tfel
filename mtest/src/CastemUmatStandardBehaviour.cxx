@@ -35,6 +35,11 @@ namespace mtest{
     md.behaviour = f;
     throw_if((t!=1u)&&(t!=2u),"invalid behaviour");
     md.type=t;
+    if(t==1u){
+      md.kinematic=1u;
+    } else {
+      md.kinematic=3u;
+    }
     throw_if(!p.is<std::map<std::string,tfel::utilities::Data>>(),
 	     "invalid parameters type");
     const auto& mp = p.get<std::map<std::string,tfel::utilities::Data>>();

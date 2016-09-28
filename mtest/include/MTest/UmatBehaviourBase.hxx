@@ -47,6 +47,8 @@ namespace mtest
     std::vector<std::string> evnames;
     //! type of of law 
     unsigned short type;
+    //! type of of law 
+    unsigned short kinematic;
     //! symmetry of of behaviour (isotropic or orthotropic)
     unsigned short stype;
   };
@@ -80,6 +82,11 @@ namespace mtest
      */
     virtual tfel::material::MechanicalBehaviourBase::BehaviourType
     getBehaviourType(void) const override;
+    /*!
+     * \return the type of the behaviour
+     */
+    virtual tfel::material::MechanicalBehaviourBase::Kinematic
+    getBehaviourKinematic(void) const override;
     /*!
      * \return the size of a vector able to contain all the components of the driving variables
      */

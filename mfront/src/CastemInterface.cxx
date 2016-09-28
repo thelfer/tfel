@@ -854,6 +854,8 @@ namespace mfront{
 	}
 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	    << "_BehaviourType = 1u;\n\n";
+	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	    << "_BehaviourKinematic = 1u;\n\n";
 	out << "MFRONT_SHAREDOBJ unsigned short umat"
 	    << makeLowerCase(name) << "_Interface = 1u;\n\n";
       } else {
@@ -871,6 +873,8 @@ namespace mfront{
 	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_frst") 
 		<< "_BehaviourType = 2u;\n\n";
+	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_frst") 
+		<< "_BehaviourKinematic = 3u;\n\n";
 	    out << "MFRONT_SHAREDOBJ unsigned short umat"
 		<< makeLowerCase(name+"_frst") << "_Interface = 2u;\n\n";
 	    if(this->finiteStrainStrategies.size()==1u){
@@ -886,6 +890,8 @@ namespace mfront{
 	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 		  << "_BehaviourType = 2u;\n\n";
+	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+		  << "_BehaviourKinematic = 3u;\n\n";
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
 		  << makeLowerCase(name) << "_Interface = 2u;\n\n";
 	    }
@@ -902,6 +908,8 @@ namespace mfront{
 	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_malls") 
 		<< "_BehaviourType = 2u;\n\n";
+	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_malls") 
+		<< "_BehaviourKinematic = 3u;\n\n";
 	    out << "MFRONT_SHAREDOBJ unsigned short umat"
 		<< makeLowerCase(name+"_malls") << "_Interface = 2u;\n\n";
 	    if(this->finiteStrainStrategies.size()==1u){
@@ -917,6 +925,8 @@ namespace mfront{
 	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 		  << "_BehaviourType = 2u;\n\n";
+	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+		  << "_BehaviourKinematic = 3u;\n\n";
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
 		  << makeLowerCase(name) << "_Interface = 2u;\n\n";
 	    }
@@ -933,6 +943,8 @@ namespace mfront{
 	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_log1D") 
 		<< "_BehaviourType = 1u;\n\n";
+	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_log1D") 
+		<< "_BehaviourKinematic = 4u;\n\n";
 	    out << "MFRONT_SHAREDOBJ unsigned short umat"
 		<< makeLowerCase(name+"_log1D") << "_Interface = 1u;\n\n";
 	    if(this->finiteStrainStrategies.size()==1u){
@@ -948,6 +960,8 @@ namespace mfront{
 	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 		  << "_BehaviourType = 1u;\n\n";
+	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+		  << "_BehaviourKinematic = 4u;\n\n";
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
 		  << makeLowerCase(name) << "_Interface = 1u;\n\n";
 	    }
@@ -964,6 +978,8 @@ namespace mfront{
 	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_ss") 
 		<< "_BehaviourType = 1u;\n\n";
+	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_ss") 
+		<< "_BehaviourKinematic = 1u;\n\n";
 	    out << "MFRONT_SHAREDOBJ unsigned short umat"
 		<< makeLowerCase(name+"_ss") << "_Interface = 1u;\n\n";
 	    if(this->finiteStrainStrategies.size()==1u){
@@ -979,13 +995,14 @@ namespace mfront{
 	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 		  << "_BehaviourType = 1u;\n\n";
+	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+		<< "_BehaviourKinematic = 1u;\n\n";
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
 		  << makeLowerCase(name) << "_Interface = 1u;\n\n";
 	    }
 	  } else {
-	    string msg("CastemInterface::endTreatment : "
-		       "internal error, unsupported finite strain strategy");
-	    throw(runtime_error(msg));
+	    throw(runtime_error("CastemInterface::endTreatment : "
+				"internal error, unsupported finite strain strategy"));
 	  }
 	}
 	if((this->finiteStrainStrategies.size()!=1u)&&
@@ -1003,6 +1020,8 @@ namespace mfront{
 	  }
 	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	      << "_BehaviourType = 1u;\n\n";
+	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	      << "_BehaviourKinematic = 1u;\n\n";
 	  out << "MFRONT_SHAREDOBJ unsigned short umat"
 	      << makeLowerCase(name) << "_Interface = 1u;\n\n";
 	}
@@ -1021,13 +1040,18 @@ namespace mfront{
       if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){ 
 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	    << "_BehaviourType = 2u;\n\n";
+	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	    << "_BehaviourKinematic = 3u;\n\n";
 	out << "MFRONT_SHAREDOBJ unsigned short umat"
 	    << makeLowerCase(name) << "_Interface = 2u;\n\n";
       } else {
-	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
-	      << "_BehaviourType = 3u;\n\n";
-	  out << "MFRONT_SHAREDOBJ unsigned short umat"
-	      << makeLowerCase(name) << "_Interface = 1u;\n\n";
+	// cohesize zone model
+	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	    << "_BehaviourType = 3u;\n\n";
+	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	    << "_BehaviourKinematic = 2u;\n\n";
+	out << "MFRONT_SHAREDOBJ unsigned short umat"
+	    << makeLowerCase(name) << "_Interface = 1u;\n\n";
       }
     }
 
@@ -1430,9 +1454,15 @@ namespace mfront{
 
   void
   CastemInterface::writeUMATxxBehaviourTypeSymbols(std::ostream&,
-						       const std::string&,
-						       const BehaviourDescription&) const
+						   const std::string&,
+						   const BehaviourDescription&) const
   {} // end of CastemInterface::writeUMATxxBehaviourTypeSymbols
+
+  void
+  CastemInterface::writeUMATxxBehaviourKinematicSymbols(std::ostream&,
+						   const std::string&,
+						   const BehaviourDescription&) const
+  {} // end of CastemInterface::writeUMATxxBehaviourKinematicSymbols
 
   void
   CastemInterface::writeUMATxxAdditionalSymbols(std::ostream&,

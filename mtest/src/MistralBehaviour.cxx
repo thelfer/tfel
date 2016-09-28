@@ -49,6 +49,7 @@ namespace mtest
     md.library = l;
     md.behaviour = f;
     md.type=1u;
+    md.kinematic=1u;
     throw_if(!parameters.is<std::map<std::string,
 	                             MistralBehaviour::Parameters>>(),
 	     "invalid parameters type");
@@ -80,10 +81,10 @@ namespace mtest
       throw_if(p==mp.end(),"no mistral parameters file defined. "
 	       "You shall defined a parameter named "
 	       "'mistral_parameters_file'");
-      const auto& d = p->second;
-      throw_if(!d.is<std::string>(),
+      const auto& f = p->second;
+      throw_if(!f.is<std::string>(),
 	       "invalid type for parameter 'mistral_parameters_file'");
-      return d.get<std::string>();
+      return f.get<std::string>();
     }();
     // orthotropy management
     md.SENSIP1 = get_int_parameter("SENSIP1");
@@ -113,9 +114,10 @@ namespace mtest
       return v;
     };
     auto get_array = [&pe,&get_int,&get_double](CxxTokenizer::const_iterator& c){
-      const auto n = get_int(c);
+      const auto size = get_int(c);
       auto v = std::vector<double>{};
-      for(int i=0;i!=n;++i){
+      v.reserve(size);
+      for(int i=0;i!=size;++i){
 	v.push_back(get_double(c));
       }
       return v;
@@ -200,9 +202,9 @@ namespace mtest
     md.mpnames.insert(md.mpnames.end(),{"SENSIP1","SENSIP2","ICBASE"});
     for(decltype(md.cvalues.size()) i=0;i!=md.cvalues.size();++i){
       const auto idx = i+1;
-      const auto n = ((idx<10) ? "P00" : ((idx<100) ? "P0" : "P"))+
+      const auto mpn = ((idx<10) ? "P00" : ((idx<100) ? "P0" : "P"))+
 	std::to_string(idx);
-      md.mpnames.push_back(std::move(n));
+      md.mpnames.push_back(std::move(mpn));
     }
     // internal state variables
     md.ivnames.insert(md.ivnames.end(),{"ETH1","ETH2","ETH3","ETH4","ETH5","ETH6"});

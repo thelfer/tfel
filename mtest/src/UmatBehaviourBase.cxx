@@ -50,8 +50,9 @@ namespace mtest
     }
     this->library   = l;
     this->behaviour = b;
-    this->type  = elm.getUMATBehaviourType(l,b);
-    this->stype = elm.getUMATSymmetryType(l,b);
+    this->type       = elm.getUMATBehaviourType(l,b);
+    this->kinematic  = elm.getUMATBehaviourKinematic(l,b);
+    this->stype      = elm.getUMATSymmetryType(l,b);
     if(this->stype>=2u){
       throw(std::runtime_error("UmatBehaviourBase::UmatBehaviourBase : "
 			       "unsupported behaviour type "
@@ -101,10 +102,30 @@ namespace mtest
     case 3:
       return MechanicalBehaviourBase::COHESIVEZONEMODEL;
     }
-    throw(std::runtime_error("UmatBehaviourBase::getBehaviourType : "
+    throw(std::runtime_error("UmatBehaviourBase::getBehaviourType: "
 			     "unsupported behaviour type"));
   } // end of UmatBehaviourBase::getBehaviourType
 
+  tfel::material::MechanicalBehaviourBase::Kinematic
+  UmatBehaviourBase::getBehaviourKinematic() const
+  {
+    using namespace tfel::material;
+    switch(this->kinematic){
+    case 0:
+      return MechanicalBehaviourBase::UNDEFINEDKINEMATIC;
+    case 1:
+      return MechanicalBehaviourBase::SMALLSTRAINKINEMATIC;
+    case 2:
+      return MechanicalBehaviourBase::COHESIVEZONEKINEMATIC;
+    case 3:
+      return MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY;
+    case 4:
+      return MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1;
+    }
+    throw(std::runtime_error("UmatBehaviourBase::getBehaviourKinematic: "
+			     "unsupported behaviour type"));
+  } // end of UmatBehaviourBase::getBehaviourKinematic
+  
   unsigned short
   UmatBehaviourBase::getDrivingVariablesSize() const
   {
@@ -312,14 +333,12 @@ namespace mtest
 	  c.push_back("Ut");
 	}
       } else {
-	string msg("UmatBehaviourBase::getDrivingVariablesComponents : "
-		   "unsupported modelling hypothesis");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesComponents: "
+				 "unsupported modelling hypothesis"));
       }
     } else {
-      string msg("UmatBehaviourBase::getDrivingVariablesComponents : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesComponents: "
+			       "unsupported behaviour type"));
     }
     return c;
   } // end of UmatBehaviourBase::getDrivingVariablesComponents
@@ -566,19 +585,15 @@ namespace mtest
   UmatBehaviourBase::getInternalStateVariablePosition(const std::string& n) const
   {
     using namespace std;
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("UmatBehaviourBase::getInternalStateVariablePosition: "+m));}
+    };
     const auto h = this->getHypothesis();    
     auto p=find(this->ivnames.begin(),this->ivnames.end(),n);
-    if(p==this->ivnames.end()){
-      string msg("UmatBehaviourBase::getInternalStateVariablePosition : ");
-      msg += "no internal variable named '"+n+"' declared";
-      throw(runtime_error(msg));
-    }
-    if(this->ivnames.size()!=this->ivtypes.size()){
-      string msg("UmatBehaviourBase::getInternalStateVariablePosition : "
-		 "the number of internal variables names and "
-		 "the number of internal variables types do not match");
-      throw(runtime_error(msg));
-    }
+    throw_if(p==this->ivnames.end(),"no internal variable named '"+n+"' declared");
+    throw_if(this->ivnames.size()!=this->ivtypes.size(),
+	     "the number of internal variables names and "
+	     "the number of internal variables types do not match");
     vector<string>::size_type i  = 0;
     vector<string>::size_type ie = p-this->ivnames.begin();
     unsigned short s = 0;
@@ -596,9 +611,7 @@ namespace mtest
 	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	  s+=6;
 	} else {
-	  string msg("UmatBehaviourBase::getInternalStateVariablePosition : "
-		     "invalid dimension");
-	  throw(runtime_error(msg));
+	  throw_if(true,"invalid dimension");
 	}
       } else if(t==3){
 	if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
@@ -610,14 +623,10 @@ namespace mtest
 	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	  s+=9;
 	} else {
-	  string msg("UmatBehaviourBase::getInternalStateVariablePosition : "
-		     "invalid dimension");
-	  throw(runtime_error(msg));
+	  throw_if(true,"invalid dimension");
 	}
       } else {
-	string msg("UmatBehaviourBase::getInternalStateVariablePosition : "
-		   "unsupported internal variable type");
-	throw(runtime_error(msg));
+	throw_if(true,"unsupported internal variable type");
       }
       ++i;
     }
@@ -700,7 +709,6 @@ namespace mtest
     return true;
   } // end of UmatBehaviourBase::doPackagingStep
   
-  UmatBehaviourBase::~UmatBehaviourBase()
-  {}
+  UmatBehaviourBase::~UmatBehaviourBase() = default;
   
 } // end of namespace mtest
