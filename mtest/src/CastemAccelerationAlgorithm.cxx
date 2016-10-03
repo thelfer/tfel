@@ -159,7 +159,6 @@ namespace mtest
   CastemAccelerationAlgorithm::postExecuteTasks()
   {} // end of CastemAccelerationAlgorithm::postExecuteTasks
 
-  CastemAccelerationAlgorithm::~CastemAccelerationAlgorithm()
-  {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
+  CastemAccelerationAlgorithm::~CastemAccelerationAlgorithm() = default;
 
 } // end of namespace mtest

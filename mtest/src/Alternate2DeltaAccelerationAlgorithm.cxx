@@ -147,7 +147,6 @@ namespace mtest
   Alternate2DeltaAccelerationAlgorithm::postExecuteTasks()
   {} // end of AccelerationAlgorithm::postExecuteTaks
 
-  Alternate2DeltaAccelerationAlgorithm::~Alternate2DeltaAccelerationAlgorithm()
-  {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
+  Alternate2DeltaAccelerationAlgorithm::~Alternate2DeltaAccelerationAlgorithm() = default;
 
 } // end of namespace mtest

@@ -17,7 +17,6 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
-#include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Aster/Aster.hxx"
 #include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
 
@@ -142,16 +141,6 @@ namespace mtest
     return {true,ndt};
   }
 
-  AsterSmallStrainBehaviour::~AsterSmallStrainBehaviour()
-  {}
+  AsterSmallStrainBehaviour::~AsterSmallStrainBehaviour() = default;
   
 } // end of namespace mtest
-
-
-
-
-
-
-
-
-

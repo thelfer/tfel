@@ -41,80 +41,56 @@ namespace mtest
     using ELM = tfel::system::ExternalLibraryManager;
     auto& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getAsterFunction(l,b);
-    this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
-    bool eo = elm.getUMATRequiresStiffnessTensor(l,b,this->hypothesis);
-    bool to = elm.getUMATRequiresThermalExpansionCoefficientTensor(l,b,this->hypothesis);
-    unsigned short etype = elm.getUMATElasticSymmetryType(l,b);
     this->savesTangentOperator = elm.checkIfAsterBehaviourSavesTangentOperator(l,b);
     vector<string> tmp;
-    if(etype==0u){
-      if(eo){
-	tmp.push_back("YoungModulus");
-	tmp.push_back("PoissonRatio");
+    if(this->etype==0u){
+      if(this->requiresStiffnessTensor){
+	tmp.insert(tmp.end(),{"YoungModulus","PoissonRatio"});
       }
-      if(to){
+      if(this->requiresThermalExpansionCoefficientTensor){
 	tmp.push_back("ThermalExpansion");
       }
-    } else if(etype==1u){
+    } else if(this->etype==1u){
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-	if(eo){
-	  tmp.push_back("YoungModulus1");
-	  tmp.push_back("YoungModulus2");
-	  tmp.push_back("YoungModulus3");
-	  tmp.push_back("PoissonRatio12");
-	  tmp.push_back("PoissonRatio23");
-	  tmp.push_back("PoissonRatio13");
+	if(this->requiresStiffnessTensor){
+	  tmp.insert(tmp.end(),{"YoungModulus1","YoungModulus2","YoungModulus3",
+		"PoissonRatio12","PoissonRatio23","PoissonRatio13"});
 	}
-	if(to){
-	  tmp.push_back("ThermalExpansion1");
-	  tmp.push_back("ThermalExpansion2");
-	  tmp.push_back("ThermalExpansion3");
+	if(this->requiresThermalExpansionCoefficientTensor){
+	  tmp.insert(tmp.end(),{"ThermalExpansion1",
+		"ThermalExpansion2","ThermalExpansion3"});
 	}
       } else if((h==ModellingHypothesis::PLANESTRESS)||
 		(h==ModellingHypothesis::PLANESTRAIN)||
 		(h==ModellingHypothesis::AXISYMMETRICAL)||
 		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
-	if(eo){
-	  tmp.push_back("YoungModulus1");
-	  tmp.push_back("YoungModulus2");
-	  tmp.push_back("YoungModulus3");
-	  tmp.push_back("PoissonRatio12");
-	  tmp.push_back("PoissonRatio23");
-	  tmp.push_back("PoissonRatio13");
-	  tmp.push_back("ShearModulus12");
+	if(this->requiresStiffnessTensor){
+	  tmp.insert(tmp.end(),{"YoungModulus1","YoungModulus2","YoungModulus3",
+		"PoissonRatio12","PoissonRatio23",
+		"PoissonRatio13","ShearModulus12"});
 	}
-	if(to){
-	  tmp.push_back("ThermalExpansion1");
-	  tmp.push_back("ThermalExpansion2");
-	  tmp.push_back("ThermalExpansion3");
+	if(this->requiresThermalExpansionCoefficientTensor){
+	  tmp.insert(tmp.end(),{"ThermalExpansion1",
+		"ThermalExpansion2","ThermalExpansion3"});
 	}
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	if(eo){
-	  tmp.push_back("YoungModulus1");
-	  tmp.push_back("YoungModulus2");
-	  tmp.push_back("YoungModulus3");
-	  tmp.push_back("PoissonRatio12");
-	  tmp.push_back("PoissonRatio23");
-	  tmp.push_back("PoissonRatio13");
-	  tmp.push_back("ShearModulus12");
-	  tmp.push_back("ShearModulus23");
-	  tmp.push_back("ShearModulus13");
+	if(this->requiresStiffnessTensor){
+	  tmp.insert(tmp.end(),{"YoungModulus1","YoungModulus2","YoungModulus3",
+		"PoissonRatio12","PoissonRatio23","PoissonRatio13",
+		"ShearModulus12","ShearModulus23","ShearModulus13"});
 	}
-	if(to){
-	  tmp.push_back("ThermalExpansion1");
-	  tmp.push_back("ThermalExpansion2");
-	  tmp.push_back("ThermalExpansion3");
+	if(this->requiresThermalExpansionCoefficientTensor){
+	  tmp.insert(tmp.end(),{"ThermalExpansion1",
+		"ThermalExpansion2","ThermalExpansion3"});
 	}
       } else { 
-	string msg("AsterStandardBehaviour::AsterStandardBehaviour : "
-		   "unsupported modelling hypothesis");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("AsterStandardBehaviour::AsterStandardBehaviour: "
+				 "unsupported modelling hypothesis"));
       }
     } else {
-      string msg("AsterStandardBehaviour::AsterStandardBehaviour : "
-		 "unsupported behaviour type "
-		 "(neither isotropic nor orthotropic)");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("AsterStandardBehaviour::AsterStandardBehaviour : "
+			       "unsupported behaviour type "
+			       "(neither isotropic nor orthotropic)"));
     }
     this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
   }
@@ -225,7 +201,6 @@ namespace mtest
     return this->call_behaviour(wk.k,s,wk,dt,ktype,true);
   } // end of AsterStandardBehaviour::integrate
 
-  AsterStandardBehaviour::~AsterStandardBehaviour()
-  {}
+  AsterStandardBehaviour::~AsterStandardBehaviour() = default;
   
 } // end of namespace mtest

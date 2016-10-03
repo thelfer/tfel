@@ -9,7 +9,6 @@
 
 namespace mtest{
   
-  Scheme::~Scheme()
-  {} // end of Scheme::~Scheme()
+  Scheme::~Scheme() = default;
   
 } // end of namespace mtest

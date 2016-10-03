@@ -113,7 +113,6 @@ namespace mtest
   SecantAccelerationAlgorithm::postExecuteTasks()
   {} // end of AccelerationAlgorithm::postExecuteTaks
 
-  SecantAccelerationAlgorithm::~SecantAccelerationAlgorithm()
-  {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
+  SecantAccelerationAlgorithm::~SecantAccelerationAlgorithm() = default;
 
 } // end of namespace mtest

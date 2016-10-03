@@ -19,7 +19,6 @@
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
-#include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Abaqus/Abaqus.hxx"
 #include"MFront/Abaqus/AbaqusComputeStiffnessTensor.hxx"
 
@@ -249,7 +248,6 @@ namespace mtest
     return {true,ndt};
   }
 
-  AbaqusFiniteStrainBehaviour::~AbaqusFiniteStrainBehaviour()
-  {}
+  AbaqusFiniteStrainBehaviour::~AbaqusFiniteStrainBehaviour() = default;
   
 } // end of namespace mtest

@@ -16,6 +16,7 @@
 
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
+#include"TFEL/System/ExternalBehaviourDescription.hxx"
 #include"MTest/Behaviour.hxx"
 
 namespace mtest
@@ -25,7 +26,17 @@ namespace mtest
    * a class gathering all the relevant information about an Umat
    * behaviour.
    */
-  struct UmatBehaviourDescription{
+  struct UmatBehaviourDescription
+    : tfel::system::ExternalBehaviourData
+  {
+    /*!
+     * \param[in] l: library name
+     * \param[in] b: behaviour name
+     * \param[in] h: modelling hypothesis
+     */
+    UmatBehaviourDescription(const std::string&,
+			     const std::string&,
+			     const std::string&);
     UmatBehaviourDescription();
     UmatBehaviourDescription(UmatBehaviourDescription&&);
     UmatBehaviourDescription(const UmatBehaviourDescription&);
@@ -37,20 +48,6 @@ namespace mtest
     std::string library;
     //! function
     std::string behaviour;
-    //! names of the material properties
-    std::vector<std::string> mpnames;
-    //! names of the internal state variables
-    std::vector<std::string> ivnames;
-    //! types of the internal state variables
-    std::vector<int> ivtypes;
-    //! names of the external state variables
-    std::vector<std::string> evnames;
-    //! type of of law 
-    unsigned short type;
-    //! type of of law 
-    unsigned short kinematic;
-    //! symmetry of of behaviour (isotropic or orthotropic)
-    unsigned short stype;
   };
   
   /*!

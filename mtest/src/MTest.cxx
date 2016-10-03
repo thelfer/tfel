@@ -97,22 +97,16 @@ namespace mtest
     }
   } // end of updateStiffnessAndResidual
   
-  MTest::UTest::~UTest()
-  {}
+  MTest::UTest::~UTest() = default;
 
   MTest::MTest()
-    : rm(real(0)),
-      isRmDefined(false),
-      toeps(-1),
-      pv(-1),
-      cto(false)
+    : rm(real(0))
   {}
 
   void MTest::readInputFile(const std::string& f,
 			    const std::vector<std::string>& ecmds,
 			    const std::map<std::string,std::string>& s){
-    MTestParser p;
-    p.execute(*this,f,ecmds,s);
+    MTestParser().execute(*this,f,ecmds,s);
   } // end of MTest::readInputFile
 
   std::string
@@ -121,8 +115,7 @@ namespace mtest
     return "unit behaviour test";
   } // end of MTest::name
   
-  std::string
-  MTest::classname() const
+  std::string MTest::classname() const
   {
     return "MTest";
   }
@@ -517,8 +510,7 @@ namespace mtest
     wk.du.resize(psz,0.);
   } // end of MTest::initializeWorkSpace
   
-  size_t
-  MTest::getNumberOfUnknowns() const
+  size_t MTest::getNumberOfUnknowns() const
   {
     using tfel::math::vector;
     if(!this->initialisationFinished){
@@ -921,12 +913,11 @@ namespace mtest
     return fc;
   } // end of MTest::getFailedCriteriaDiagnostic
 
-  void
-  MTest::computeLoadingCorrection(StudyCurrentState&,
-				  SolverWorkSpace&,
-				  const SolverOptions&,
-				  const real,
-				  const real) const
+  void MTest::computeLoadingCorrection(StudyCurrentState&,
+				       SolverWorkSpace&,
+				       const SolverOptions&,
+				       const real,
+				       const real) const
   {} // end of MTest::computeLoadingCorrection
   
   void MTest::postConvergence(StudyCurrentState& state,

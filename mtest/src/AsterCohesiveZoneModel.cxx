@@ -37,7 +37,7 @@ namespace mtest
     auto& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getAsterFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,nh);
-    if(this->type!=3u){
+    if(this->btype!=3u){
       throw(runtime_error("AsterCohesiveZoneModel::AsterCohesiveZoneModel: "
 			  "unsupported hypothesis"));
     }
@@ -215,8 +215,7 @@ namespace mtest
 								     const EvolutionManager& ) const
   {} // end of AsterCohesiveZoneModel::setOptionalMaterialPropertiesDefaultValues
       
-  AsterCohesiveZoneModel::~AsterCohesiveZoneModel()
-  {}
+  AsterCohesiveZoneModel::~AsterCohesiveZoneModel() = default;
   
 } // end of namespace mtest
 

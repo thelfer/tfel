@@ -18,7 +18,6 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
-#include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Abaqus/Abaqus.hxx"
 #include"MFront/Abaqus/AbaqusComputeStiffnessTensor.hxx"
 
@@ -267,7 +266,6 @@ namespace mtest
     return {true,ndt};
   }
 
-  AbaqusSmallStrainBehaviour::~AbaqusSmallStrainBehaviour()
-  {}
+  AbaqusSmallStrainBehaviour::~AbaqusSmallStrainBehaviour() = default;
   
 } // end of namespace mtest

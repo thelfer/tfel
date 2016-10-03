@@ -59,7 +59,7 @@ namespace mtest
     return {b.begin(),b.begin()+b.length()-s.length()};    
   }
   
-  AbaqusStandardBehaviour::AbaqusStandardBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
+  AbaqusStandardBehaviour::AbaqusStandardBehaviour(const Hypothesis h,
 						   const std::string& l,
 						   const std::string& b)
     : UmatBehaviourBase(h,l,AbaqusStandardBehaviour::getBehaviourName(b,h))
@@ -73,10 +73,6 @@ namespace mtest
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     const auto bn = AbaqusStandardBehaviour::getBehaviourName(b,h);
     this->fct = elm.getAbaqusExternalBehaviourFunction(l,b);
-    this->mpnames = elm.getUMATMaterialPropertiesNames(l,bn,this->hypothesis);
-    bool eo = elm.getUMATRequiresStiffnessTensor(l,bn,this->hypothesis);
-    bool to = elm.getUMATRequiresThermalExpansionCoefficientTensor(l,bn,this->hypothesis);
-    unsigned short etype = elm.getUMATElasticSymmetryType(l,bn);
     if(this->stype==1u){
       this->omp = elm.getAbaqusOrthotropyManagementPolicy(l,bn);
       if(this->omp==2u){
@@ -107,48 +103,35 @@ namespace mtest
       }
     }
     vector<string> tmp;
-    if(etype==0u){
-      if(eo){
-	tmp.push_back("YoungModulus");
-	tmp.push_back("PoissonRatio");
+    if(this->etype==0u){
+      if(this->requiresStiffnessTensor){
+	tmp.insert(tmp.end(),{"YoungModulus","PoissonRatio"});
       }
-      if(to){
+      if(this->requiresThermalExpansionCoefficientTensor){
 	tmp.push_back("ThermalExpansion");
       }
-    } else if(etype==1u){
+    } else if(this->etype==1u){
       if((h==ModellingHypothesis::PLANESTRESS)||
 	 (h==ModellingHypothesis::PLANESTRAIN)||
 	 (h==ModellingHypothesis::AXISYMMETRICAL)){
-	if(eo){
-	  tmp.push_back("YoungModulus1");
-	  tmp.push_back("YoungModulus2");
-	  tmp.push_back("YoungModulus3");
-	  tmp.push_back("PoissonRatio12");
-	  tmp.push_back("PoissonRatio23");
-	  tmp.push_back("PoissonRatio13");
-	  tmp.push_back("ShearModulus12");
+	if(this->requiresStiffnessTensor){
+	  tmp.insert(tmp.end(),{"YoungModulus1","YoungModulus2","YoungModulus3",
+		"PoissonRatio12","PoissonRatio23",
+		"PoissonRatio13","ShearModulus12"});
 	}
-	if(to){
-	  tmp.push_back("ThermalExpansion1");
-	  tmp.push_back("ThermalExpansion2");
-	  tmp.push_back("ThermalExpansion3");
+	if(this->requiresThermalExpansionCoefficientTensor){
+	  tmp.insert(tmp.end(),{"ThermalExpansion1",
+		"ThermalExpansion2","ThermalExpansion3"});
 	}
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	if(eo){
-	  tmp.push_back("YoungModulus1");
-	  tmp.push_back("YoungModulus2");
-	  tmp.push_back("YoungModulus3");
-	  tmp.push_back("PoissonRatio12");
-	  tmp.push_back("PoissonRatio23");
-	  tmp.push_back("PoissonRatio13");
-	  tmp.push_back("ShearModulus12");
-	  tmp.push_back("ShearModulus23");
-	  tmp.push_back("ShearModulus13");
+	if(this->requiresStiffnessTensor){
+	  tmp.insert(tmp.end(),{"YoungModulus1","YoungModulus2","YoungModulus3",
+		"PoissonRatio12","PoissonRatio23","PoissonRatio13",
+		"ShearModulus12","ShearModulus23","ShearModulus13"});
 	}
-	if(to){
-	  tmp.push_back("ThermalExpansion1");
-	  tmp.push_back("ThermalExpansion2");
-	  tmp.push_back("ThermalExpansion3");
+	if(this->requiresThermalExpansionCoefficientTensor){
+	  tmp.insert(tmp.end(),{"ThermalExpansion1",
+		"ThermalExpansion2","ThermalExpansion3"});
 	}
       } else { 
 	throw_if(true,"unsupported modelling hypothesis");
@@ -212,7 +195,6 @@ namespace mtest
     return this->call_behaviour(wk.k,s,wk,dt,ktype,true);
   } // end of AbaqusStandardBehaviour::integrate
 
-  AbaqusStandardBehaviour::~AbaqusStandardBehaviour()
-  {}
+  AbaqusStandardBehaviour::~AbaqusStandardBehaviour() = default;
   
 } // end of namespace mtest

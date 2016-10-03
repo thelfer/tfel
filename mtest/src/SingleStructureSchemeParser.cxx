@@ -272,7 +272,7 @@ namespace mtest{
 							      TokensContainer::const_iterator& p)
   {
     const auto n = this->readString(p,this->tokens.end());
-    const unsigned int v = this->readUnsignedInt(p,this->tokens.end());
+    const auto v = this->readUnsignedInt(p,this->tokens.end());
     t.setUnsignedIntegerParameter(n,v);
     this->readSpecifiedToken("SingleStructureSchemeParser::handleUnsignedIntegerParameter",";",
 			     p,this->tokens.end());
@@ -441,7 +441,6 @@ namespace mtest{
     return keys;
   } // end of SingleStructureSchemeParser::getKeyWordsList
   
-  SingleStructureSchemeParser::~SingleStructureSchemeParser()
-  {} // end of SingleStructureSchemeParser::~SingleStructureSchemeParser()
+  SingleStructureSchemeParser::~SingleStructureSchemeParser() = default;
   
 } // end of namespace mtest

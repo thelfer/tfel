@@ -103,7 +103,6 @@ namespace mtest{
     return this->results;
   }
 
-  ReferenceFileComparisonTest::~ReferenceFileComparisonTest()
-  {} // end of ReferenceFileComparisonTest::~ReferenceFileComparisonTest
+  ReferenceFileComparisonTest::~ReferenceFileComparisonTest() = default;
 
 }

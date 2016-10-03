@@ -77,13 +77,9 @@ namespace mtest
       if(c){throw(std::runtime_error("AbaqusExplicitBehaviour::"
 				     "AbaqusExplicitBehaviour:"+m));}
     };
-    auto& elm        = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
-    const auto bn    = AbaqusExplicitBehaviour::getBehaviourName(b,h);
-    this->fct        = elm.getAbaqusExplicitExternalBehaviourFunction(l,b);
-    this->mpnames    = elm.getUMATMaterialPropertiesNames(l,bn,this->hypothesis);
-    const auto eo    = elm.getUMATRequiresStiffnessTensor(l,bn,this->hypothesis);
-    const auto to    = elm.getUMATRequiresThermalExpansionCoefficientTensor(l,bn,this->hypothesis);
-    const auto etype = elm.getUMATElasticSymmetryType(l,bn);
+    auto& elm     = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    const auto bn = AbaqusExplicitBehaviour::getBehaviourName(b,h);
+    this->fct     = elm.getAbaqusExplicitExternalBehaviourFunction(l,b);
     if(this->stype==1u){
       this->omp = elm.getAbaqusOrthotropyManagementPolicy(l,bn);
       if(this->omp==2u){
@@ -115,34 +111,34 @@ namespace mtest
     }
     auto tmp = std::vector<std::string>{};
     tmp.emplace_back("MassDensity");
-    if(etype==0u){
-      if(eo){
+    if(this->etype==0u){
+      if(this->requiresStiffnessTensor){
 	tmp.insert(tmp.end(),{"YoungModulus","PoissonRatio"});
       }
-      if(to){
+      if(this->requiresThermalExpansionCoefficientTensor){
 	tmp.push_back("ThermalExpansion");
       }
-    } else if(etype==1u){
+    } else if(this->etype==1u){
       if((h==ModellingHypothesis::PLANESTRESS)||
 	 (h==ModellingHypothesis::PLANESTRAIN)||
 	 (h==ModellingHypothesis::AXISYMMETRICAL)||
 	 (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
-	if(eo){
+	if(this->requiresStiffnessTensor){
 	  tmp.insert(tmp.end(),{"YoungModulus1","YoungModulus2","YoungModulus3",
 		"PoissonRatio12","PoissonRatio23","PoissonRatio13",
 		"ShearModulus12"});
 	}
-	if(to){
+	if(this->requiresThermalExpansionCoefficientTensor){
 	  tmp.insert(tmp.end(),
 		     {"ThermalExpansion1","ThermalExpansion2","ThermalExpansion3"});
 	}
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	if(eo){
+	if(this->requiresStiffnessTensor){
 	  tmp.insert(tmp.end(),{"YoungModulus1","YoungModulus2","YoungModulus3",
 		"PoissonRatio12","PoissonRatio23","PoissonRatio13",
 		"ShearModulus12","ShearModulus23","ShearModulus13"});
 	}
-	if(to){
+	if(this->requiresThermalExpansionCoefficientTensor){
 	  tmp.insert(tmp.end(),
 		     {"ThermalExpansion1","ThermalExpansion2","ThermalExpansion3"});
 	}

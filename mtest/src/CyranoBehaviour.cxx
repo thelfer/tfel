@@ -37,40 +37,31 @@ namespace mtest
     using namespace tfel::material;
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     this->fct = elm.getCyranoFunction(l,b);
-    this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,this->hypothesis);
-    const bool b1 = elm.getUMATRequiresStiffnessTensor(l,b,this->hypothesis);
-    const bool b2 = elm.getUMATRequiresThermalExpansionCoefficientTensor(l,b,this->hypothesis);
+    auto tmp = std::vector<std::string>{};
     if(this->stype==0){
-      if(b1){
-	this->mpnames.push_back("YoungModulus");
-	this->mpnames.push_back("PoissonRatio");
+      if(this->requiresStiffnessTensor){
+	tmp.insert(tmp.end(),{"YoungModulus","PoissonRatio"});
       }
-      if(b2){
-	this->mpnames.push_back("ThermalExpansion");
+      if(this->requiresThermalExpansionCoefficientTensor){
+	tmp.push_back("ThermalExpansion");
       }
     } else {
-      std::vector<std::string> tmp;
       if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
     	 (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
-    	if(b1){
-	  tmp.push_back("YoungModulus1");
-	  tmp.push_back("YoungModulus2");
-	  tmp.push_back("YoungModulus3");
-	  tmp.push_back("PoissonRatio12");
-	  tmp.push_back("PoissonRatio23");
-	  tmp.push_back("PoissonRatio13");
+    	if(this->requiresStiffnessTensor){
+	  tmp.insert(tmp.end(),{"YoungModulus1","YoungModulus2","YoungModulus3",
+		"PoissonRatio12","PoissonRatio23","PoissonRatio13"});
 	}
-	if(b2){
-	  tmp.push_back("ThermalExpansion1");
-	  tmp.push_back("ThermalExpansion2");
-	  tmp.push_back("ThermalExpansion3");
+	if(this->requiresThermalExpansionCoefficientTensor){
+	  tmp.insert(tmp.end(),{"ThermalExpansion1",
+		"ThermalExpansion2","ThermalExpansion3"});
 	}
       } else {
-    	throw(std::runtime_error("UmatStandardBehaviour::UmatStandardBehaviour: "
+    	throw(std::runtime_error("CyranoBehaviour::CyranoBehaviour: "
 				 "unsupported hypothesis"));
       }
-      this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
     }
+    this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
   }
 
   void
@@ -105,8 +96,7 @@ namespace mtest
   void
   CyranoBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
   {
-    using namespace std;
-    fill(v.begin(),v.end(),real(0));
+    std::fill(v.begin(),v.end(),real(0));
   } // end of CyranoBehaviour::setDrivingVariablesDefaultInitialValue  
 
   std::pair<bool,real>
@@ -248,8 +238,7 @@ namespace mtest
     return {true,1};
   } // end of CyranoBehaviour::integrate
       
-  CyranoBehaviour::~CyranoBehaviour()
-  {}
+  CyranoBehaviour::~CyranoBehaviour() = default;
   
 } // end of namespace mtest
 

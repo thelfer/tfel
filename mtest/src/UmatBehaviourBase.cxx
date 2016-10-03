@@ -30,37 +30,28 @@ namespace mtest
   UmatBehaviourDescription::operator=(UmatBehaviourDescription&&) = default;
   UmatBehaviourDescription&
   UmatBehaviourDescription::operator=(const UmatBehaviourDescription&) = default;
+
+  UmatBehaviourDescription::UmatBehaviourDescription(const std::string& l,
+						     const std::string& b,
+						     const std::string& h)
+    : library(l),
+      behaviour(b)
+  {
+    using namespace tfel::system;
+    ExternalBehaviourData::operator=(ExternalBehaviourDescription(l,b,h));
+  }
   
   UmatBehaviourBase::UmatBehaviourBase(const Hypothesis h,
 				       const std::string& l,
 				       const std::string& b)
-    : hypothesis(ModellingHypothesis::toString(h))
+    : UmatBehaviourDescription(l,b,ModellingHypothesis::toString(h)),
+      hypothesis(ModellingHypothesis::toString(h))
   {
-    using namespace tfel::system;
-    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
-    const auto& hh = elm.getSupportedModellingHypotheses(l,b);
-    if(find(hh.begin(),hh.end(),this->hypothesis)==hh.end()){
-      std::string msg("UmatBehaviourBase::UmatBehaviourBase : "
-		      "unsupported modelling hypothesis '"+this->hypothesis+"'. "
-		      "Supported modelling hypotheses are:");
-      for(const auto& vh : hh){
-	msg += "\n'"+vh+"'";
-      }
-      throw(std::runtime_error(msg));
-    }
-    this->library   = l;
-    this->behaviour = b;
-    this->type       = elm.getUMATBehaviourType(l,b);
-    this->kinematic  = elm.getUMATBehaviourKinematic(l,b);
-    this->stype      = elm.getUMATSymmetryType(l,b);
     if(this->stype>=2u){
       throw(std::runtime_error("UmatBehaviourBase::UmatBehaviourBase : "
 			       "unsupported behaviour type "
 			       "(neither isotropic nor orthotropic)"));
     }
-    this->ivnames = elm.getUMATInternalStateVariablesNames(l,b,this->hypothesis);
-    this->ivtypes = elm.getUMATInternalStateVariablesTypes(l,b,this->hypothesis);
-    this->evnames = elm.getUMATExternalStateVariablesNames(l,b,this->hypothesis);
     this->evnames.insert(this->evnames.begin(),"Temperature");
   }
 
@@ -76,13 +67,11 @@ namespace mtest
     }
   }
   
-  UmatBehaviourBase::Hypothesis
-  UmatBehaviourBase::getHypothesis() const{
+  UmatBehaviourBase::Hypothesis UmatBehaviourBase::getHypothesis() const{
     return ModellingHypothesis::fromString(this->hypothesis);
   } // end of UmatBehaviourBase::getHypothesis
   
-  void
-  UmatBehaviourBase::setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy p) const
+  void UmatBehaviourBase::setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy p) const
   {
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     elm.setOutOfBoundsPolicy(this->library,this->behaviour,p);
@@ -92,7 +81,7 @@ namespace mtest
   UmatBehaviourBase::getBehaviourType() const
   {
     using namespace tfel::material;
-    switch(this->type){
+    switch(this->btype){
     case 0:
       return MechanicalBehaviourBase::GENERALBEHAVIOUR;
     case 1:
@@ -130,7 +119,7 @@ namespace mtest
   UmatBehaviourBase::getDrivingVariablesSize() const
   {
     const auto h = this->getHypothesis();
-    if(this->type==1){
+    if(this->btype==1){
       // small strain behaviours
       if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
 	 (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
@@ -146,7 +135,7 @@ namespace mtest
 	throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesSize : "
 				 "unsupported modelling hypothesis"));
       }
-    } else if(this->type==2){
+    } else if(this->btype==2){
       // finite strain behaviours
       if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
 	 (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
@@ -162,7 +151,7 @@ namespace mtest
 	throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesSize : "
 				 "unsupported modelling hypothesis"));
       }
-    } else if(this->type==3){
+    } else if(this->btype==3){
       // cohesive zone models
       if((h==ModellingHypothesis::PLANESTRAIN)||
 	 (h==ModellingHypothesis::PLANESTRESS)||
@@ -184,7 +173,7 @@ namespace mtest
   UmatBehaviourBase::getThermodynamicForcesSize() const
   {
     const auto h = this->getHypothesis();
-    if(this->type==1){
+    if(this->btype==1){
       // small strain behaviours
       if ((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
 	  (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
@@ -200,7 +189,7 @@ namespace mtest
 	throw(std::runtime_error("UmatBehaviourBase::getThermodynamicForcesSize : "
 				 "unsupported modelling hypothesis"));
       }
-    } else if(this->type==2){
+    } else if(this->btype==2){
       // finite strain behaviours
       if ((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
 	  (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
@@ -216,7 +205,7 @@ namespace mtest
 	throw(std::runtime_error("UmatBehaviourBase::getThermodynamicForcesSize : "
 				 "unsupported modelling hypothesis"));
       }
-    } else if(this->type==3){
+    } else if(this->btype==3){
       // cohesive zone models
       if((h==ModellingHypothesis::PLANESTRAIN)||
 	 (h==ModellingHypothesis::PLANESTRESS)||
@@ -310,17 +299,17 @@ namespace mtest
     using namespace std;
     const auto h = this->getHypothesis();
     vector<string> c;
-    if(this->type==1){
+    if(this->btype==1){
       const auto exts = this->getStensorComponentsSuffixes();
       for(const auto& e : exts){
 	c.push_back("E"+e);
       }
-    } else if(this->type==2){
+    } else if(this->btype==2){
       const auto exts = this->getTensorComponentsSuffixes();
       for(const auto& e : exts){
 	c.push_back("F"+e);
       }
-    } else if(this->type==3){
+    } else if(this->btype==3){
       if((h==ModellingHypothesis::TRIDIMENSIONAL)||
 	 (h==ModellingHypothesis::PLANESTRAIN)||
 	 (h==ModellingHypothesis::PLANESTRESS)||
@@ -349,12 +338,12 @@ namespace mtest
     using namespace std;
     const auto h = this->getHypothesis();
     vector<string> c;							   
-    if((this->type==1)||(this->type==2)){
+    if((this->btype==1)||(this->btype==2)){
       const auto exts = this->getStensorComponentsSuffixes();
       for(const auto& e : exts){
 	c.push_back("S"+e);
       }
-    } else if(this->type==3){
+    } else if(this->btype==3){
       if((h==ModellingHypothesis::TRIDIMENSIONAL)||
 	 (h==ModellingHypothesis::PLANESTRAIN)||
 	 (h==ModellingHypothesis::PLANESTRESS)||

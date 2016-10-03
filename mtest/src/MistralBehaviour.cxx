@@ -48,7 +48,7 @@ namespace mtest
     MistralBehaviourDescription md;
     md.library = l;
     md.behaviour = f;
-    md.type=1u;
+    md.btype=1u;
     md.kinematic=1u;
     throw_if(!parameters.is<std::map<std::string,
 	                             MistralBehaviour::Parameters>>(),
@@ -81,10 +81,10 @@ namespace mtest
       throw_if(p==mp.end(),"no mistral parameters file defined. "
 	       "You shall defined a parameter named "
 	       "'mistral_parameters_file'");
-      const auto& f = p->second;
-      throw_if(!f.is<std::string>(),
+      const auto& mf = p->second;
+      throw_if(!mf.is<std::string>(),
 	       "invalid type for parameter 'mistral_parameters_file'");
-      return f.get<std::string>();
+      return mf.get<std::string>();
     }();
     // orthotropy management
     md.SENSIP1 = get_int_parameter("SENSIP1");

@@ -19,7 +19,6 @@
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/t2tost2.hxx"
 #include"TFEL/Math/T2toST2/T2toST2ConceptIO.hxx"
-#include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Aster/Aster.hxx"
 #include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
 

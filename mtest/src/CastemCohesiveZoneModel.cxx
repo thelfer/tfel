@@ -38,10 +38,9 @@ namespace mtest
     auto& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getCastemExternalBehaviourFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,nh);
-    if(this->type!=3u){
-      string msg("CastemCohesiveZoneModel::CastemCohesiveZoneModel : ");
-      msg += "unsupported hypothesis";
-      throw(runtime_error(msg));
+    if(this->btype!=3u){
+      throw(runtime_error("CastemCohesiveZoneModel::CastemCohesiveZoneModel: "
+			  "invalid behaviour type"));
     }
     if(this->stype==0){
       this->mpnames.insert(this->mpnames.begin(),"NormalThermalExpansion");

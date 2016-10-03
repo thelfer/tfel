@@ -113,7 +113,6 @@ namespace mtest
   SteffensenAccelerationAlgorithm::postExecuteTasks()
   {} // end of SteffensenAccelerationAlgorithm::postExecuteTasks
 
-  SteffensenAccelerationAlgorithm::~SteffensenAccelerationAlgorithm()
-  {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
+  SteffensenAccelerationAlgorithm::~SteffensenAccelerationAlgorithm() = default;
 
 } // end of namespace mtest

@@ -792,7 +792,6 @@ namespace mtest{
     return keys;
   } // end of SchemeParserBase::getKeyWordsList
     
-  SchemeParserBase::~SchemeParserBase()
-  {} // end of SchemeParserBase::~SchemeParserBase()
+  SchemeParserBase::~SchemeParserBase() = default;
   
 } // end of namespace mtest

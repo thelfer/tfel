@@ -34,7 +34,7 @@ namespace mtest{
     md.library = l;
     md.behaviour = f;
     throw_if((t!=1u)&&(t!=2u),"invalid behaviour");
-    md.type=t;
+    md.btype=t;
     if(t==1u){
       md.kinematic=1u;
     } else {

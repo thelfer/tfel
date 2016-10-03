@@ -20,21 +20,18 @@ namespace mtest
 
   unsigned short
   AccelerationAlgorithm::convertToUnsignedShort(const std::string& m,
-						     const std::string& v)
+						const std::string& v)
   {
-    using namespace std;
-    istringstream converter(v);
+    std::istringstream converter(v);
     unsigned short res;
     converter >> res;
     if((!converter)&&(!converter.eof())){
-      string msg(m+" : "
-		 "can't convert string '"+v+"' to unsigned short");
-      throw(runtime_error(msg));
+      throw(std::runtime_error(m+": can't convert string '"+v+"' "
+			       "to unsigned short"));
     }
     return res;
   }
 
-  AccelerationAlgorithm::~AccelerationAlgorithm()
-  {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
+  AccelerationAlgorithm::~AccelerationAlgorithm() = default;
 
 } // end of namespace mtest
