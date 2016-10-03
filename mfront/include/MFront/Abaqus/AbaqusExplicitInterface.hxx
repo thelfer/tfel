@@ -239,7 +239,7 @@ namespace abaqus{
       b.initialize();
       b.checkBounds();
       const auto smf = TangentOperatorTraits::ABAQUS;
-      T r_dt;
+      auto r_dt = T{};
       auto tsf = b.computeAPrioriTimeStepScalingFactor(r_dt);
       if(!tsf.first){
 	return -1;

@@ -193,7 +193,7 @@ namespace epx
 	tfel::fsalgo::copy<S>::exe(F0.begin(),dv0);
 	tfel::fsalgo::copy<S>::exe(F1.begin(),dv1);
 	return {dv0,dv1};
-      };
+      }
     }; // end of struct FiniteStrainChangeBasis
     //! a dummy place holder for isotropic behaviours
     template<tfel::material::ModellingHypothesis::Hypothesis H>

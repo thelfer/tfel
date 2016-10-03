@@ -109,7 +109,7 @@ namespace tfel{
      *      vector must be a string
      */
     template<>
-    std::vector<std::string>
+    TFELUTILITIES_VISIBILITY_EXPORT std::vector<std::string>
     extract<std::vector<std::string>>(const Data&);
     
   } // end of namespace utilities

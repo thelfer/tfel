@@ -24,46 +24,17 @@ namespace tfel
 
   namespace system
   {
-
+    
     /*!
-     * A structure containing the information that could be retrieved
-     * by the ExternalLibraryManger class about a given behaviour for
-     * a given hypothesis.
+     * A structure containing the information  a given behaviour 
      */
-    struct ExternalBehaviourDescription
+    struct TFELSYSTEM_VISIBILITY_EXPORT ExternalBehaviourData
     {
-      /*!
-       * a small enumeration telling which interface was used
-       */
-      enum Interface{
-	UMAT,
-	ASTER,
-	CYRANO
-      };
-      /*!
-       * \param[in] l : library
-       * \param[in] f : function
-       * \param[in] h : hypothesis
-       */
-      TFELSYSTEM_VISIBILITY_EXPORT
-      ExternalBehaviourDescription(const std::string&,
-				   const std::string&,
-				   const std::string&);
-      //! default constructor
-      TFELSYSTEM_VISIBILITY_EXPORT
-      ExternalBehaviourDescription();
-      //! assignement (disabled)
-      TFELSYSTEM_VISIBILITY_EXPORT ExternalBehaviourDescription&
-      operator=(const ExternalBehaviourDescription&);
-      //! move assignement (disabled)
-      TFELSYSTEM_VISIBILITY_EXPORT ExternalBehaviourDescription&
-      operator=(ExternalBehaviourDescription&&);
-      //! copy constructor
-      TFELSYSTEM_VISIBILITY_EXPORT
-      ExternalBehaviourDescription(const ExternalBehaviourDescription&);
-      //! move constructor
-      TFELSYSTEM_VISIBILITY_EXPORT
-      ExternalBehaviourDescription(ExternalBehaviourDescription&&);
+      ExternalBehaviourData();
+      ExternalBehaviourData(ExternalBehaviourData&&);
+      ExternalBehaviourData(const ExternalBehaviourData&);
+      ExternalBehaviourData& operator=(ExternalBehaviourData&&);
+      ExternalBehaviourData& operator=(const ExternalBehaviourData&);
       //! names of the material properties
       std::vector<std::string> mpnames;
       //! names of the internal state variables
@@ -75,13 +46,22 @@ namespace tfel
       //! source file
       std::string source;
       /*!
-       * \brief behaviourDescription type
-       * 0 : general behaviourDescription
-       * 1 : small strain behaviourDescription
-       * 2 : finite strain behaviourDescription
+       * \brief behaviour type
+       * 0 : general behaviour
+       * 1 : small strain behaviour
+       * 2 : finite strain behaviour
        * 3 : cohesive zone model
        */
       unsigned short btype = 0;
+      /*!
+       * \brief behaviour kinematic
+       * 0 : undefined kinematic
+       * 1 : small strain kinematic
+       * 2 : cohesive zone model kinematic
+       * 3 : standard finite strain kinematic (F-Cauchy)
+       * 4 : PTest,Alcyone, Cyrano 1D finite strain kinematic (eto-PK1)
+       */
+      unsigned short kinematic = 0;
       /*!
        * symmetry type:
        * - If stype is equal to 0, the behaviour is isotropic.
@@ -103,12 +83,63 @@ namespace tfel
        * caller must provide the thermal expansion coefficients tensor
        */
       bool requiresThermalExpansionCoefficientTensor = false;
+    };
+    
+    /*!
+     * A structure containing the information that could be retrieved
+     * by the ExternalLibraryManger class about a given behaviour for
+     * a given hypothesis.
+     */
+    struct TFELSYSTEM_VISIBILITY_EXPORT ExternalBehaviourDescription
+      : public ExternalBehaviourData
+    {
+      /*!
+       * \param[in] l : library
+       * \param[in] f : function
+       * \param[in] h : hypothesis
+       */
+      TFELSYSTEM_VISIBILITY_EXPORT
+      ExternalBehaviourDescription(const std::string&,
+				   const std::string&,
+				   const std::string&);
+      //! default constructor
+      ExternalBehaviourDescription();
+      //! copy constructor
+      ExternalBehaviourDescription(const ExternalBehaviourDescription&);
+      //! move constructor
+      ExternalBehaviourDescription(ExternalBehaviourDescription&&);
+      //! assignement
+      ExternalBehaviourDescription&
+      operator=(const ExternalBehaviourDescription&);
+      //! move assignement
+      ExternalBehaviourDescription&
+      operator=(ExternalBehaviourDescription&&);
       //! destructor
-      TFELSYSTEM_VISIBILITY_EXPORT ~ExternalBehaviourDescription();
+      ~ExternalBehaviourDescription();
     };
     
   } // end of namespace system
 
 } // end of namespace tfel
+
+extern "C"{
+  /*!
+   * \author DeltaCAD
+   * \brief retrieving the information from a behaviour
+   * \param[in] d: data to be fetched
+   * \param[in] l: library
+   * \param[in] b: behaviour
+   * \param[in] h: modelling hypothesis
+   *
+   * \return nullptr on success, an error message otherwise.\n
+   * If an error message is set, it must be freed  using std::free
+   * If the allocation of the error message fails, std::exit is called
+   */
+  char* getExternalBehaviourData(tfel::system::ExternalBehaviourData *const,
+				 const char* const,
+				 const char* const,
+				 const char* const);
+  
+} // end of extern "C"
 
 #endif /* LIB_TFEL_SYSTEM_EXTERNALBEHAVIOURDESCRIPTION_H_ */

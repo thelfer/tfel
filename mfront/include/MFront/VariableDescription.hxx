@@ -72,7 +72,7 @@ namespace mfront
     VariableDescription(const std::string&,
 			const std::string&,
 			const unsigned short,
-			const unsigned int);
+			const size_t);
     /*!
      * \return the name used to call the variable from outside
      * (pleiades application, mtest, etc..)
@@ -148,7 +148,7 @@ namespace mfront
     //  contains a value greater than 1
     unsigned short arraySize;
     //! line at wich the variable has been declared
-    unsigned int lineNumber;
+    size_t lineNumber;
   private:
     //! variable attributes
     std::map<std::string,VariableAttribute> attributes;

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_MATH_STENSOR_IXX_
-#define _LIB_TFEL_MATH_STENSOR_IXX_ 
+#ifndef LIB_TFEL_MATH_STENSOR_IXX
+#define LIB_TFEL_MATH_STENSOR_IXX 
 
 #include <cmath>
 #include <iterator>
@@ -1851,4 +1851,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* _LIB_TFEL_MATH_STENSOR_IXX_ */
+#endif /* LIB_TFEL_MATH_STENSOR_IXX */

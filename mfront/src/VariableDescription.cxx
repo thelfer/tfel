@@ -31,7 +31,7 @@ namespace mfront{
   VariableDescription::VariableDescription(const std::string& t,
 					   const std::string& n,
 					   const unsigned short s,
-					   const unsigned int l)
+					   const size_t l)
     : type(t),
       name(n),
       arraySize(s),

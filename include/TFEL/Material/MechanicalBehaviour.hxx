@@ -53,7 +53,7 @@ namespace tfel{
 	SMALLSTRAINKINEMATIC           =  1,
 	COHESIVEZONEKINEMATIC          =  2,
 	FINITESTRAINKINEMATIC_F_CAUCHY =  3,
-	FINITESTRAINKINEMATIC_ETO_PK1  =  4,
+	FINITESTRAINKINEMATIC_ETO_PK1  =  4
       }; // end of enum MFrontBehaviourType
       /*!
        * \brief return values of the integrate method
