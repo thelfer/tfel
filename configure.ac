@@ -10,7 +10,7 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 # Automake specific stuff
-AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects subdir-objects subdir-objects])
+AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects subdir-objects subdir-objects subdir-objects])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 # ok, this is ugly, but is sufficient for our needs
@@ -2435,6 +2435,13 @@ AC_OUTPUT([debug.sh
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile
 	   tfel-doc/include/Makefile
+	   tfel-check/tests/pass/Makefile
+	   tfel-check/tests/unitTest/Makefile
+	   tfel-check/tests/xfail/Makefile
+	   tfel-check/tests/Makefile
+	   tfel-check/include/Makefile
+	   tfel-check/src/Makefile
+	   tfel-check/Makefile
 	   bindings/Makefile
 	   bindings/python/Makefile
 	   bindings/python/std/Makefile

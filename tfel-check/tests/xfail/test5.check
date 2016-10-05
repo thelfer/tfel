@@ -1,0 +1,2 @@
+@Command './test5';
+@Test 'test4.ref' 'test4.ref' 'A' 'B' 'C' 'D';

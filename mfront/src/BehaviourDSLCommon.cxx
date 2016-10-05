@@ -1634,17 +1634,17 @@ namespace mfront{
   } // end of BehaviourDSLCommon::readVariableList
 
   void
-  BehaviourDSLCommon::addVariableList(const std::set<Hypothesis>& h,
+  BehaviourDSLCommon::addVariableList(const std::set<Hypothesis>& hypotheses,
 				      const VariableDescriptionContainer& v,
 				      void (BehaviourDescription::* m)(const Hypothesis,
 								       const VariableDescriptionContainer&,
 								       const BehaviourData::RegistrationStatus),
 				      const bool b)
   {
-    for(const auto & elem : h){
+    for(const auto & h : hypotheses){
       if(!b){
-	if(!this->mb.getAttribute<bool>(elem,BehaviourData::allowsNewUserDefinedVariables,true)){
-	  const auto cbn = this->mb.getCodeBlockNames(elem);
+	if(!this->mb.getAttribute<bool>(h,BehaviourData::allowsNewUserDefinedVariables,true)){
+	  const auto cbn = this->mb.getCodeBlockNames(h);
 	  if(cbn.empty()){
 	    this->throwRuntimeError("BehaviourDSLCommon::readVariableList : ",
 				    "no more variable can be defined. This may mean that "
@@ -1662,7 +1662,7 @@ namespace mfront{
 	  }
 	}
       }
-      (this->mb.*m)(elem,v,BehaviourData::UNREGISTRED);
+      (this->mb.*m)(h,v,BehaviourData::UNREGISTRED);
     }
   } // end of BehaviourDSLCommon::addVariableList
 

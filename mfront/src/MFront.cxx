@@ -558,13 +558,20 @@ namespace mfront{
     if(!test){
       return;
     }
-    tfel::utilities::CxxTokenizer tokenizer{file};
-    auto c = tokenizer.begin();
-    const auto t = read<TargetsDescription>(c,tokenizer.end());
-    if(getVerboseMode()>=VERBOSE_LEVEL2){
-      getLogStream() << t << std::endl;
+    try{
+      tfel::utilities::CxxTokenizer tokenizer{file};
+      auto c = tokenizer.begin();
+      const auto t = read<TargetsDescription>(c,tokenizer.end());
+      if(getVerboseMode()>=VERBOSE_LEVEL2){
+	getLogStream() << t << std::endl;
+      }
+      mergeTargetsDescription(this->targets,t,false);
+    } catch(std::exception& e){
+      getLogStream() << "can't read file '" << file << "': "
+		     << e.what() << '\n';
+    } catch(...){
+      getLogStream() << "can't read file '" << file << "'\n";
     }
-    mergeTargetsDescription(this->targets,t,false);
   }
   
 #ifdef MFRONT_MAKE_SUPPORT
@@ -659,13 +666,16 @@ namespace mfront{
   } // end of MFront::generateDefsFile
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
 
-  void
-  MFront::writeTargetsDescription() const
+  void MFront::writeTargetsDescription() const
   {
     using tfel::system::dirStringSeparator;
     MFrontLockGuard lock;
     std::ofstream file{"src"+dirStringSeparator()+"targets.lst"};
     file.exceptions(std::ios::badbit|std::ios::failbit);
+    if(!file){
+      getLogStream() << "can't open file '" << file << "'";
+      return;
+    }
     file << this->targets;
   } // end of MFront::writeTargetDescription
   

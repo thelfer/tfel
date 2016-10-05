@@ -170,6 +170,7 @@ namespace mtest{
     }
     this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",";",p,
 			     this->tokens.end());
+    mfront::getLogStream() << l << " " << f << std::endl;
     if(w.empty()){
       t.setBehaviour(i,l,f,d);
     } else {

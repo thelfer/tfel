@@ -132,7 +132,6 @@ namespace mtest
   Crossed2DeltaAccelerationAlgorithm::postExecuteTasks()
   {} // end of AccelerationAlgorithm::postExecuteTaks
 
-  Crossed2DeltaAccelerationAlgorithm::~Crossed2DeltaAccelerationAlgorithm()
-  {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
+  Crossed2DeltaAccelerationAlgorithm::~Crossed2DeltaAccelerationAlgorithm() = default;
 
 } // end of namespace mtest

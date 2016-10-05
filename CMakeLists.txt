@@ -253,7 +253,8 @@ add_subdirectory(src)
 add_subdirectory(bindings)
 
 if(UNIX AND (NOT CYGWIN))
-add_subdirectory(tfel-doc)
+  add_subdirectory(tfel-doc)
+  add_subdirectory(tfel-check)
 endif(UNIX AND (NOT CYGWIN))
 
 add_subdirectory(mfront)

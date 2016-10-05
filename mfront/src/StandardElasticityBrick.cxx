@@ -97,7 +97,6 @@ namespace mfront{
     if(b.first){
       throw_if(!b.second,"'eel' is not declared for all specialisation of the behaviour");
       this->bd.checkVariableExistence("eel","IntegrationVariable");
-      this->bd.checkVariablePosition("eel","IntegrationVariable",0u);
       this->bd.checkVariableGlossaryName("eel",Glossary::ElasticStrain);
     } else {
       VariableDescription eel("StrainStensor","eel",1u,0u);
@@ -507,6 +506,7 @@ namespace mfront{
     };
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
+    this->bd.checkVariablePosition("eel","IntegrationVariable",0u);
     CodeBlock tangentOperator;
     // modelling hypotheses supported by the behaviour
     const auto bmh = bd.getModellingHypotheses();
@@ -675,7 +675,6 @@ namespace mfront{
     return mh;
   } // end of StandardElasticityBrick::getSupportedModellingHypothesis
 
-  StandardElasticityBrick::~StandardElasticityBrick()
-  {} // end of StandardElasticityBrick::~StandardElasticityBrick
+  StandardElasticityBrick::~StandardElasticityBrick() = default;
 
 } // end of namespace mfront

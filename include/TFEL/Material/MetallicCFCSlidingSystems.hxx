@@ -35,7 +35,7 @@ namespace tfel
       //! a simple alias
       typedef NumType real;
       //! number of sliding systems
-      static constexpr unsigned short Nss = 12;
+      static constexpr const unsigned short Nss = 12;
       //! tensor of directional sense
       tfel::math::tvector<Nss,tfel::math::tensor<3u,real> >  mu;
       //! symmetric tensor of directional sense

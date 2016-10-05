@@ -94,8 +94,8 @@ void test(void){
   T begin;
   T end;
 
-  y(0) = 1.f;
-  y(1) = 0.f;
+  y(0) = T{1};
+  y(1) = T{0};
 
   rk.set_mu(10.f);
   rk.set_h(1.e-2f);

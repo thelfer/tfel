@@ -192,9 +192,9 @@ namespace mfront
   
   static void
   checkThermalExpansionCoefficientArgument(BehaviourDescription& bd,
-							       BehaviourDescription::MaterialProperty& a,
-							       const tfel::glossary::GlossaryEntry& e,
-							       const std::string& n)
+					   BehaviourDescription::MaterialProperty& a,
+					   const tfel::glossary::GlossaryEntry& e,
+					   const std::string& n)
   {
     declareParameter(bd,a,e,n);
     if(!a.is<BehaviourDescription::ComputedMaterialProperty>()){
@@ -931,7 +931,7 @@ namespace mfront
       throw_if((!sfed.is<BehaviourData::VolumeSwellingStressFreeExpansion>())&&
 	       (!sfed.is<BehaviourData::IsotropicStressFreeExpansion>()),
 	       "internal error, unsupported stress free expansion type");
-  }
+    }
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       this->d.addStressFreeExpansion(sfed);
       for(auto& md: this->sd){
@@ -1141,7 +1141,8 @@ namespace mfront
 					      const VariableDescriptionContainer& v,
 					      const BehaviourData::RegistrationStatus s)
   {
-    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &, const BehaviourData::RegistrationStatus);
+    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &,
+						 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addMaterialProperty;
     this->addVariables(h,v,s,f);
   }
@@ -1151,7 +1152,8 @@ namespace mfront
 					    const VariableDescription& v,
 					    const BehaviourData::RegistrationStatus s)
   {
-    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &, const BehaviourData::RegistrationStatus);
+    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &,
+						 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addMaterialProperty;
     this->addVariable(h,v,s,f);
   }
@@ -1161,7 +1163,8 @@ namespace mfront
 						const VariableDescriptionContainer& v,
 						const BehaviourData::RegistrationStatus s)
   {
-    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &, const BehaviourData::RegistrationStatus);
+    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &,
+						 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addIntegrationVariable;
     this->addVariables(h,v,s,f);
   }
@@ -1171,7 +1174,8 @@ namespace mfront
 					  const VariableDescriptionContainer& v,
 					  const BehaviourData::RegistrationStatus s)
   {
-    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &, const BehaviourData::RegistrationStatus);
+    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &,
+						 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addStateVariable;
     this->addVariables(h,v,s,f);
   }
@@ -1181,7 +1185,8 @@ namespace mfront
 					       const VariableDescription& v,
 					       const BehaviourData::RegistrationStatus s)
   {
-    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &, const BehaviourData::RegistrationStatus);
+    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &,
+						 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addIntegrationVariable;
     this->addVariable(h,v,s,f);
   }
@@ -1191,7 +1196,8 @@ namespace mfront
 					 const VariableDescription& v,
 					 const BehaviourData::RegistrationStatus s)
   {
-    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &, const BehaviourData::RegistrationStatus);
+    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &,
+						 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addStateVariable;
     this->addVariable(h,v,s,f);
   }
@@ -1201,7 +1207,8 @@ namespace mfront
 						   const VariableDescriptionContainer& v,
 						   const BehaviourData::RegistrationStatus s)
   {
-    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &, const BehaviourData::RegistrationStatus);
+    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &,
+						 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addAuxiliaryStateVariable;
     this->addVariables(h,v,s,f);
   }
@@ -1211,7 +1218,8 @@ namespace mfront
 						  const VariableDescription& v,
 						  const BehaviourData::RegistrationStatus s)
   {
-    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &, const BehaviourData::RegistrationStatus);
+    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &,
+						 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addAuxiliaryStateVariable;
     this->addVariable(h,v,s,f);
   }
@@ -1221,7 +1229,8 @@ namespace mfront
 						  const VariableDescriptionContainer& v,
 						  const BehaviourData::RegistrationStatus s)
   {
-    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &, const BehaviourData::RegistrationStatus);
+    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &,
+						 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addExternalStateVariable;
     this->addVariables(h,v,s,f);
   }
@@ -1231,7 +1240,8 @@ namespace mfront
 						 const VariableDescription& v,
 						 const BehaviourData::RegistrationStatus s)
   {
-    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &, const BehaviourData::RegistrationStatus);
+    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &,
+						 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addExternalStateVariable;
     this->addVariable(h,v,s,f);
   }
@@ -1241,7 +1251,8 @@ namespace mfront
 					  const VariableDescriptionContainer& v,
 					  const BehaviourData::RegistrationStatus s)
   {
-    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &, const BehaviourData::RegistrationStatus);
+    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &,
+						 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addLocalVariable;
     this->addVariables(h,v,s,f);
   }
@@ -1251,7 +1262,8 @@ namespace mfront
 					 const VariableDescription& v,
 					 const BehaviourData::RegistrationStatus s)
   {
-    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &, const BehaviourData::RegistrationStatus);
+    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &,
+						 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addLocalVariable;
     this->addVariable(h,v,s,f);
   }
@@ -1261,7 +1273,8 @@ namespace mfront
 				     const VariableDescription& v,
 				     const BehaviourData::RegistrationStatus s)
   {
-    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &, const BehaviourData::RegistrationStatus);
+    using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &,
+						 const BehaviourData::RegistrationStatus);
     mptr f = &BehaviourData::addParameter;
     this->addVariable(h,v,s,f);
   }
@@ -1325,8 +1338,8 @@ namespace mfront
 						 const double v)
   {
     void (BehaviourData:: *m)(const std::string&,
-				 const unsigned short,
-				 const double)
+			      const unsigned short,
+			      const double)
       = &BehaviourData::setParameterDefaultValue;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       (this->d.*m)(n,i,v);
@@ -1475,8 +1488,7 @@ namespace mfront
     return true;
   } // end of BehaviourDescription::areAllMechanicalDataSpecialised
 
-  bool
-  BehaviourDescription::hasSpecialisedMechanicalData(const Hypothesis h) const
+  bool BehaviourDescription::hasSpecialisedMechanicalData(const Hypothesis h) const
   {
     if(this->getModellingHypotheses().find(h)==this->getModellingHypotheses().end()){
       throw(std::runtime_error("BehaviourDescription::areAllMechanicalDataSpecialised: "
@@ -1486,9 +1498,8 @@ namespace mfront
     return this->sd.find(h)!=this->sd.end();
   }
 
-  void
-  BehaviourDescription::requiresTVectorOrVectorIncludes(bool& b1,
-							bool& b2) const
+  void BehaviourDescription::requiresTVectorOrVectorIncludes(bool& b1,
+							    bool& b2) const
   {
     b1 = b2 = false;
     if(this->hypotheses.empty()){
@@ -1523,7 +1534,7 @@ namespace mfront
 
   bool
   BehaviourDescription::isMemberUsedInCodeBlocks(const Hypothesis h,
-						   const std::string& v) const
+						 const std::string& v) const
   {
     return this->getData(h,&BehaviourData::isMemberUsedInCodeBlocks,v);
   } // end of BehaviourDescription::isMaterialPropertyName
@@ -1767,7 +1778,7 @@ namespace mfront
 
   bool
   BehaviourDescription::isUsedAsEntryName(const Hypothesis h,
-					const std::string& n) const
+					  const std::string& n) const
   {
     return this->getBehaviourData(h).isUsedAsEntryName(n);
   } // end of BehaviourDescription::isEntryName
@@ -1894,7 +1905,7 @@ namespace mfront
     std::pair<bool,bool> r = {true,false};
     for(const auto h : mh){
       const auto& bd = this->getBehaviourData(h);
-      const auto f = bd.getVariables(c).contains(n);
+      const auto  f  = bd.getVariables(c).contains(n);
       if(!f&&b){
 	throw(std::runtime_error("BehaviourDescription::checkVariableExistence: "
 				 "no '"+c+"' named '"+n+"' found for at "

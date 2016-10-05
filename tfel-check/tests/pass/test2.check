@@ -1,0 +1,17 @@
+@Command "./test2";
+
+@TestType Relative;
+@Precision 1.e-4;
+@Test 'test2.ref' 'test2.res' 2;
+
+@TestType Absolute;
+@Precision 1.;
+@Test 'test2.ref' 'test2.res' 3;
+
+@TestType RelativeAndAbsolute;
+@Precision 1.e-3 1.;
+@Test 'test2.ref' 'test2.res' 1;
+
+@TestType RelativeAndAbsolute;
+@Precision 1.e-4 1.;
+@Test 'test2.ref' 'test2.res' 2;

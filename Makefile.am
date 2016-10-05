@@ -3,7 +3,7 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = include src mfront mtest tests bindings cmake docs
 
 if !TFEL_WIN
-SUBDIRS += tfel-doc
+SUBDIRS += tfel-doc tfel-check
 endif
 
 doc-install: doc

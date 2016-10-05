@@ -32,29 +32,20 @@ namespace mtest
 
   void
   Alternate2DeltaAccelerationAlgorithm::setParameter(const std::string& p,
-						    const std::string& v)
+						     const std::string& v)
   {
-    using namespace std;
-    const string m = "Alternate2DeltaAccelerationAlgorithm::setParameter";
+    const std::string m = "Alternate2DeltaAccelerationAlgorithm::setParameter";
+    auto throw_if = [&m](const bool c, const std::string& msg){
+      if(c){throw(std::runtime_error(m+": "+msg));}
+    };
     if(p=="AccelerationTrigger"){
-      const unsigned short i =
-	AccelerationAlgorithm::convertToUnsignedShort(m,v);
-      if(this->asat!=-1){
-	string msg("Alternate2DeltaAccelerationAlgorithm::setParameter : "
-		   "the castem acceleration trigger has already "
-		   "been defined");
-	throw(runtime_error(msg));
-      }
-      if(i<2){
-	string msg("Alternate2DeltaAccelerationAlgorithm::setParameter",
-		   "invalid acceleration trigger value.");
-	throw(runtime_error(msg));
-      }
+      const auto i = AccelerationAlgorithm::convertToUnsignedShort(m,v);
+      throw_if(this->asat!=-1,"the castem acceleration trigger "
+	       "has already been defined");
+      throw_if(i<2,"invalid acceleration trigger value");
       this->asat = i;
     } else {
-      string msg("Alternate2DeltaAccelerationAlgorithm::setParameter : "
-		 "invalid parameter '"+p+"'.");
-      throw(runtime_error(msg));
+      throw_if(true,"invalid parameter '"+p+"'");
     }
   } // end of Alternate2DeltaAccelerationAlgorithm::setParameter
 

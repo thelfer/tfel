@@ -16,6 +16,7 @@
 #include"MFront/AbstractBehaviourBrick.hxx"
 #include"MFront/AbstractBehaviourBrickFactory.hxx"
 #include"MFront/StandardElasticityBrick.hxx"
+#include"MFront/FiniteStrainSingleCrystalBrick.hxx"
 
 namespace mfront
 {
@@ -32,15 +33,15 @@ namespace mfront
   AbstractBehaviourBrickFactory&
   AbstractBehaviourBrickFactory::getFactory()
   {
-    static AbstractBehaviourBrickFactory factory;
-    return factory;
+    static AbstractBehaviourBrickFactory f;
+    return f;
   }
   
   std::shared_ptr<AbstractBehaviourBrick>
   AbstractBehaviourBrickFactory::get(const std::string& a,
-			     AbstractBehaviourDSL& dsl,
-			     BehaviourDescription& mb,
-			     const AbstractBehaviourBrick::Parameters& p) const
+				     AbstractBehaviourDSL& dsl,
+				     BehaviourDescription& mb,
+				     const AbstractBehaviourBrick::Parameters& p) const
   {
     auto pc = this->constructors.find(a);
     if(pc==this->constructors.end()){
@@ -52,13 +53,16 @@ namespace mfront
 
   AbstractBehaviourBrickFactory::AbstractBehaviourBrickFactory()
   {
-    this->registerAbstractBehaviourBrick("StandardElasticity",
-					 buildBehaviourBrickConstructor<StandardElasticityBrick>);
+    auto add = [this](const char* n,const constructor c){
+      this->registerAbstractBehaviourBrick(n,c);
+    };
+    add("StandardElasticity",buildBehaviourBrickConstructor<StandardElasticityBrick>);
+    add("FiniteStrainSingleCrystal",buildBehaviourBrickConstructor<FiniteStrainSingleCrystalBrick>);
   } // end of AbstractBehaviourBrickFactory::AbstractBehaviourBrickFactory
 
   void
   AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick(const std::string& a,
-			       const constructor c)
+								const constructor c)
   {
     if(!this->constructors.insert({a,c}).second){
       throw(std::runtime_error("AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick : "
