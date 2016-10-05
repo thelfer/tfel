@@ -157,7 +157,9 @@ namespace mfront
 			       "an external name has already been set "
 			       "for variable '"+v+"'"));
     }
-    this->reserveName(g);
+    if(v!=g){
+      this->reserveName(g);
+    }
     this->glossaryNames.insert({v,glossary.getGlossaryEntry(g).getKey()});
   }
 
@@ -178,7 +180,9 @@ namespace mfront
 			       "an external name has already been set "
 			       "for variable '"+v+"'"));
     }
-    this->reserveName(e);
+    if(v!=e){
+      this->reserveName(e);
+    }
     this->entryNames.insert({v,e});
   }
 
