@@ -123,6 +123,22 @@ namespace tfel
 } // end of namespace tfel
 
 extern "C"{
+
+  /*!
+   * \author DeltaCAD
+   * \brief build a new behaviour data
+   * \note the behaviour data must be freed using
+   * `freeExternalBehaviourData`
+   */
+  TFELSYSTEM_VISIBILITY_EXPORT tfel::system::ExternalBehaviourData*
+  newExternalBehaviourData();
+  /*!
+   * \author DeltaCAD
+   * \brief build a new behaviour data
+   * \note  the behaviour data 
+   */
+  TFELSYSTEM_VISIBILITY_EXPORT void
+  freeExternalBehaviourData(tfel::system::ExternalBehaviourData*);
   /*!
    * \author DeltaCAD
    * \brief retrieving the information from a behaviour
@@ -135,10 +151,11 @@ extern "C"{
    * If an error message is set, it must be freed  using std::free
    * If the allocation of the error message fails, std::exit is called
    */
-  char* getExternalBehaviourData(tfel::system::ExternalBehaviourData *const,
-				 const char* const,
-				 const char* const,
-				 const char* const);
+  TFELSYSTEM_VISIBILITY_EXPORT char*
+  getExternalBehaviourData(tfel::system::ExternalBehaviourData *const,
+			   const char* const,
+			   const char* const,
+			   const char* const);
   
 } // end of extern "C"
 

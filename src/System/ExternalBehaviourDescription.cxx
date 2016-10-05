@@ -92,5 +92,14 @@ extern "C"{
     }
     return nullptr;
   }
+
+  tfel::system::ExternalBehaviourData*
+  newExternalBehaviourData(){
+    return new tfel::system::ExternalBehaviourData;
+  }
+
+  void freeExternalBehaviourData(tfel::system::ExternalBehaviourData* ptr){
+    delete ptr;
+  }
   
 } // end of extern "C"
