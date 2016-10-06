@@ -21,19 +21,6 @@
 #include"VanadiumAlloy_YoungModulus_SRMA-cxx.hxx"
 #include"VanadiumAlloy_PoissonRatio_SRMA-cxx.hxx"
 
-#ifdef _MSC_VER
-int setenv(const char *name, const char *value, int overwrite)
-{
-  int errcode = 0;
-  if (!overwrite) {
-    size_t envsize = 0;
-    errcode = getenv_s(&envsize, NULL, 0, name);
-    if (errcode || envsize) return errcode;
-  }
-  return _putenv_s(name, value);
-}
-#endif /* _MSC_VER */
-
 struct CxxMaterialPropertyInterfaceTest final
   : public tfel::tests::TestCase
 {
@@ -51,16 +38,15 @@ struct CxxMaterialPropertyInterfaceTest final
     const auto n = [](const double T){
       return 0.3272  * (1.-3.056e-5*(T-293.15));
     };
-    const auto e_c  = mfront::ErrnoHandlingCheck();
     const auto mp_y = mfront::VanadiumAlloy_YoungModulus_SRMA();
     const auto mp_n = mfront::VanadiumAlloy_PoissonRatio_SRMA();
     TFEL_TESTS_ASSERT(std::abs(mp_y(900)-y(900))<1.e-14*y(900));
     TFEL_TESTS_ASSERT(std::abs(mp_n(900)-n(900))<1.e-14*n(900));
     TFEL_TESTS_CHECK_THROW(mp_y(-900),std::range_error);
     TFEL_TESTS_CHECK_THROW(mp_n(-900),std::range_error);
-#if ((!defined _WIN32) && (!defined _WIN64)) || (!defined __CYGWIN__) 
+#if (!defined _WIN32)
+    const auto e_c  = mfront::ErrnoHandlingCheck();
     unsetenv("OUT_OF_BOUNDS_POLICY");
-#endif
     TFEL_TESTS_ASSERT(std::abs(mp_y(50)-y(50))<1.e-14*y(50));
     setenv("OUT_OF_BOUNDS_POLICY","NONE",1);
     TFEL_TESTS_ASSERT(std::abs(mp_y(50)-y(50))<1.e-14*y(50));
@@ -71,6 +57,7 @@ struct CxxMaterialPropertyInterfaceTest final
     TFEL_TESTS_CHECK_THROW(mp_n(50),std::range_error);
     TFEL_TESTS_CHECK_THROW(e_c(-2),std::runtime_error);
     TFEL_TESTS_CHECK_THROW(e_c(2),std::runtime_error);
+#endif
     return this->result;
   } // end of execute
 };
