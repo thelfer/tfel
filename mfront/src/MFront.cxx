@@ -670,10 +670,11 @@ namespace mfront{
   {
     using tfel::system::dirStringSeparator;
     MFrontLockGuard lock;
-    std::ofstream file{"src"+dirStringSeparator()+"targets.lst"};
+    const auto fn = "src"+dirStringSeparator()+"targets.lst";
+    std::ofstream file{fn};
     file.exceptions(std::ios::badbit|std::ios::failbit);
     if(!file){
-      getLogStream() << "can't open file '" << file << "'";
+      getLogStream() << "can't open file '" << fn << "'";
       return;
     }
     file << this->targets;

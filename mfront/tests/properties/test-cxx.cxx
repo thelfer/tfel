@@ -1,5 +1,5 @@
 /*! 
- * \file   test-c
+ * \file   test-cxx
  * \author Helfer Thomas
  * \date   16 jan 2010
  */
@@ -58,7 +58,7 @@ struct CxxMaterialPropertyInterfaceTest final
     TFEL_TESTS_ASSERT(std::abs(mp_n(900)-n(900))<1.e-14*n(900));
     TFEL_TESTS_CHECK_THROW(mp_y(-900),std::range_error);
     TFEL_TESTS_CHECK_THROW(mp_n(-900),std::range_error);
-#ifndef _MSC_VER
+#if ((!defined _WIN32) && (!defined _WIN64)) || (!defined __CYGWIN__) 
     unsetenv("OUT_OF_BOUNDS_POLICY");
 #endif
     TFEL_TESTS_ASSERT(std::abs(mp_y(50)-y(50))<1.e-14*y(50));

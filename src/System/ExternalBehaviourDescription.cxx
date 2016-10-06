@@ -75,7 +75,24 @@ extern "C"{
 				 const char* const f,
 				 const char* const h){
     auto report = [](const char *e){
-      const auto msg = ::strndup(e,255);
+      auto strndup = [](const char *s, size_t n) -> char *
+      {
+	if (s == nullptr) {
+	  return nullptr;
+	}
+	auto length = ::strlen(s);
+	if (length > n){
+	  length = n;
+	}
+	char *copy = static_cast<char *>(::malloc(length + 1));
+	if (copy == nullptr){
+	  return nullptr;
+	}
+	::memcpy(copy, s, length);
+	copy[length] = '\0';
+	return copy;
+      };
+      const auto msg = strndup(e,255);
       if(msg==nullptr){
 	::fprintf(stderr,"getExternalBehaviourData: generating "
 		  "error message failed, aborting\n");

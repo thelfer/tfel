@@ -977,7 +977,7 @@ namespace tfel{
      * \param[in] s2: second tensor
      */
     template<typename StensorType1,typename StensorType2>
-    TFELMATH_VISIBILITY_EXPORT typename std::enable_if<
+    typename std::enable_if<
       ((tfel::meta::Implements<StensorType1,StensorConcept>::cond)&&
        (tfel::meta::Implements<StensorType2,StensorConcept>::cond)&&
        (StensorTraits<StensorType1>::dime==1u)&&
@@ -994,7 +994,7 @@ namespace tfel{
      * \param[in] s2: second tensor
      */
     template<typename StensorType1,typename StensorType2>
-    TFELMATH_VISIBILITY_EXPORT typename std::enable_if<
+    typename std::enable_if<
       ((tfel::meta::Implements<StensorType1,StensorConcept>::cond)&&
        (tfel::meta::Implements<StensorType2,StensorConcept>::cond)&&
        (StensorTraits<StensorType1>::dime==2u)&&
@@ -1011,7 +1011,7 @@ namespace tfel{
      * \param[in] s2: second tensor
      */
     template<typename StensorType1,typename StensorType2>
-    TFELMATH_VISIBILITY_EXPORT typename std::enable_if<
+    typename std::enable_if<
       ((tfel::meta::Implements<StensorType1,StensorConcept>::cond)&&
        (tfel::meta::Implements<StensorType2,StensorConcept>::cond)&&
        (StensorTraits<StensorType1>::dime==3u)&&

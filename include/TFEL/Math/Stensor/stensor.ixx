@@ -1798,7 +1798,7 @@ namespace tfel{
     }
 
     template<typename StensorType1,typename StensorType2>
-    TFELMATH_VISIBILITY_EXPORT typename std::enable_if<
+    typename std::enable_if<
       ((tfel::meta::Implements<StensorType1,StensorConcept>::cond)&&
        (tfel::meta::Implements<StensorType2,StensorConcept>::cond)&&
        (StensorTraits<StensorType1>::dime==1u)&&
@@ -1811,7 +1811,7 @@ namespace tfel{
       return {2*s1[0]*s2[0],2*s1[1]*s2[1],2*s1[2]*s2[2]};
     }
     template<typename StensorType1,typename StensorType2>
-    TFELMATH_VISIBILITY_EXPORT typename std::enable_if<
+    typename std::enable_if<
       ((tfel::meta::Implements<StensorType1,StensorConcept>::cond)&&
        (tfel::meta::Implements<StensorType2,StensorConcept>::cond)&&
        (StensorTraits<StensorType1>::dime==2u)&&
@@ -1825,7 +1825,7 @@ namespace tfel{
 	  2*s1[2]*s2[2],(s1[1]+s1[0])*s2[3]+s1[3]*s2[1]+s1[3]*s2[0]};
     }
     template<typename StensorType1,typename StensorType2>
-    TFELMATH_VISIBILITY_EXPORT typename std::enable_if<
+    typename std::enable_if<
       ((tfel::meta::Implements<StensorType1,StensorConcept>::cond)&&
        (tfel::meta::Implements<StensorType2,StensorConcept>::cond)&&
        (StensorTraits<StensorType1>::dime==3u)&&
