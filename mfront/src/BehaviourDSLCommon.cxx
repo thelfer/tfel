@@ -26,6 +26,7 @@
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
+#include"TFEL/Utilities/Data.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 
 #include"MFront/MFront.hxx"
@@ -905,6 +906,7 @@ namespace mfront{
   {
     auto& f = AbstractBehaviourBrickFactory::getFactory();
     AbstractBehaviourBrick::Parameters parameters;
+    AbstractBehaviourBrick::DataMap data;
     if(this->current->value=="<"){
       auto options = std::vector<tfel::utilities::Token>{};
       this->readList(options,"BehaviourDSLCommon::treatBehaviourBrick",
@@ -933,8 +935,11 @@ namespace mfront{
     this->checkNotEndOfFile("BehaviourDSLCommon::treatIsTangentOperatorSymmetric : ",
   			    "Expected 'true' or 'false'.");
     const auto& b = this->readString("BehaviourDSLCommon::treatBehaviourBrick");
+    if(this->current->value=="{"){
+      data = AbstractBehaviourBrick::Data::read(this->current,this->tokens.end()).get<AbstractBehaviourBrick::DataMap>();
+    }
     this->readSpecifiedToken("BehaviourDSLCommon::treatBehaviourBrick",";");
-    this->bricks.emplace_back(f.get(b,*this,this->mb,parameters));
+    this->bricks.emplace_back(f.get(b,*this,this->mb,parameters,data));
   } // end of BehaviourDSLCommon::treatBrick
   
   void BehaviourDSLCommon::treatTangentOperator()

@@ -20,6 +20,13 @@
 #include<vector>
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
+namespace tfel{
+  namespace utilities{
+    // forward declaration
+    struct Data;
+  }
+}
+
 namespace mfront
 {
 
@@ -32,7 +39,6 @@ namespace mfront
     // forward declaration
     struct RequirementManager;
   } // end of namespace bbrick
-  
   
   /*!
    * BehaviourBrick are ready-to use block used to build a complex
@@ -49,9 +55,13 @@ namespace mfront
      * The key   is the parameter name.
      * The value is the parameter value.
      */
-    typedef std::map<std::string,std::string> Parameters;
+    using  Parameters = std::map<std::string,std::string>;
     //! a simple alias
-    typedef Parameters::value_type Parameter;
+    using Parameter   = Parameters::value_type;
+    //! a simple alias
+    using Data    = tfel::utilities::Data;
+    //! a simple alias
+    using DataMap = std::map<std::string,Data>;
     /*!
      * \brief return the name of the brick
      */

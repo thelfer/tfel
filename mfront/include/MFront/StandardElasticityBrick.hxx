@@ -60,10 +60,12 @@ namespace mfront{
      * \param[in] dsl_ : calling domain specific language
      * \param[in] bd_  : mechanical behaviour description
      * \param[in] p    : parameters
+     * \param[in] d    : data
      */
     StandardElasticityBrick(AbstractBehaviourDSL&,
 			    BehaviourDescription&,
-			    const Parameters&);
+			    const Parameters&,
+    			    const DataMap&);
     //! \return the name of the brick
     virtual std::string getName() const override;
     /*!

@@ -28,7 +28,8 @@ namespace mfront{
 
   StandardElasticityBrick::StandardElasticityBrick(AbstractBehaviourDSL& dsl_,
 						   BehaviourDescription& mb_,
-						   const AbstractBehaviourBrick::Parameters& p)
+						   const Parameters& p,
+						   const DataMap& d)
     : BehaviourBrickBase(dsl_,mb_)
   {
     auto throw_if = [](const bool b,const std::string& m){
@@ -37,10 +38,11 @@ namespace mfront{
     // reserve some specific variables
     this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"sebdata");
     // basic checks
+    throw_if(!d.empty(),"this behaviour brick does not expect any data");
     throw_if(this->bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
-	     "this BehaviourBrick is only usable for small strain behaviours");
+	     "this behaviour brick is only usable for small strain behaviours");
     throw_if(this->bd.getIntegrationScheme()!=BehaviourDescription::IMPLICITSCHEME,
-	     "this BehaviourBrick is only usable in implicit schemes");
+	     "this behaviour brick is only usable in implicit schemes");
     // parameters
     for(auto pp=p.cbegin();pp!=p.cend();++pp){
       if(pp->first=="Isotropic"){

@@ -35,26 +35,30 @@ namespace mfront
   {
     //! a simple alias
     typedef std::shared_ptr<AbstractBehaviourBrick> (* constructor)(AbstractBehaviourDSL&,
-									BehaviourDescription&,
-									const AbstractBehaviourBrick::Parameters&);
+								    BehaviourDescription&,
+								    const AbstractBehaviourBrick::Parameters&,
+								    const AbstractBehaviourBrick::DataMap&);
     /*!
      * \return the uniq instance of the AbstractBehaviourBrick factory
      */
     static AbstractBehaviourBrickFactory&
     getFactory();
     /*!
-     * \return the requested AbstractBehaviourBrick
-     * \param[in]     a   : AbstractBehaviourBrick name
-     * \param[in,out] dsl : calling domain specific language
-     * \param[in,out] mb  : mechanical behaviour description to be
+     * \return the requested behaviour brick
+     * \param[in]     a:   behaviour brick name
+     * \param[in,out] dsl: calling domain specific language
+     * \param[in,out] mb:  mechanical behaviour description to be
      * treated
-     * \param[out]    p   : parameters
+     * \param[out]    p:   parameters
+     * \param[out]    d:   data
+
      */
     std::shared_ptr<AbstractBehaviourBrick>
     get(const std::string&,
 	AbstractBehaviourDSL&,
 	BehaviourDescription&,
-	const AbstractBehaviourBrick::Parameters&) const;
+	const AbstractBehaviourBrick::Parameters&,
+	const AbstractBehaviourBrick::DataMap&) const;
     /*!
      * \param[in] a : AbstractBehaviourBrick name 
      * \param[in] c : AbstractBehaviourBrick constructor 

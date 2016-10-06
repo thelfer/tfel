@@ -28,7 +28,8 @@ namespace mfront{
 
   FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick(AbstractBehaviourDSL& dsl_,
 								 BehaviourDescription& mb_,
-								 const AbstractBehaviourBrick::Parameters& p)
+								 const Parameters& p,
+								 const DataMap&)
     : BehaviourBrickBase(dsl_,mb_)
   {
     auto throw_if = [](const bool b,const std::string& m){
@@ -60,6 +61,18 @@ namespace mfront{
 	     "elastic symmetry type must be orthortropic");
     // reserve some specific variables
     this->bd.reserveName(h,"fsscb_data");
+    this->bd.reserveName(h,"fsscb_ss");
+    this->bd.reserveName(h,"fsscb_tprd");
+    this->bd.reserveName(h,"fsscb_dfeel_dinv_dFp");
+    this->bd.reserveName(h,"fsscb_dC_dFe");
+    this->bd.reserveName(h,"fsscb_dS_dFe");
+    this->bd.reserveName(h,"fsscb_dtau_dFe");
+    this->bd.reserveName(h,"fsscb_dFe_dDF_tot");
+    this->bd.reserveName(h,"fsscb_dfeel_dDF");
+    this->bd.reserveName(h,"fsscb_Je");
+    this->bd.reserveName(h,"fsscb_Jg");
+    this->bd.reserveName(h,"fsscb_dinv_Fp_dDF");
+    this->bd.reserveName(h,"fsscb_dFe_dDF");
     // declaring the elastic strain as the first integration variable
     throw_if(!this->bd.getBehaviourData(h).getIntegrationVariables().empty(),
 	     "no integration variable shall be declared before declaring the "
@@ -100,40 +113,38 @@ namespace mfront{
     d.addVariable(h,{"Tensor","inv_dFp"});
     d.addVariable(h,{"real","J_inv_dFp"});
     d.addVariable(h,{"StrainStensor","tmp"});
-    d.addVariable(h,{"tfel::math::t2tot2<N,real>","tprd"});
-    d.addVariable(h,{"tfel::math::t2tost2<N,real>","dfeel_dinv_dFp"});
     // local data values initialisation
     CodeBlock init;
     init.code =
-      "fsscb_data.dF    = (this->F1)*invert(this->F0);\n"
-      "fsscb_data.Fe0   = this->Fe;\n"
-      "fsscb_data.Fe_tr = (fsscb_data.dF)*(fsscb_data.Fe0);\n"
+      "this->fsscb_data.dF    = (this->F1)*invert(this->F0);\n"
+      "this->fsscb_data.Fe0   = this->Fe;\n"
+      "this->fsscb_data.Fe_tr = (this->fsscb_data.dF)*(this->fsscb_data.Fe0);\n"
       "this->eel = computeGreenLagrangeTensor(this->Fe);\n";
     init.members  = {"F0","F1","Fe","eel"};
     this->bd.setCode(h,BehaviourData::BeforeInitializeLocalVariables,
     		     init,BehaviourData::CREATEORAPPEND,
     		     BehaviourData::AT_END);
     CodeBlock integrator;
-    integrator.code = "fsscb_data.S = (this->D)*(this->eel+this->deel);\n"
-      "fsscb_data.tmp = StrainStensor::Id() + 2*(this->eel+this->deel);\n"
+    integrator.code = "this->fsscb_data.S = (this->D)*(this->eel+this->deel);\n"
+      "this->fsscb_data.tmp = StrainStensor::Id() + 2*(this->eel+this->deel);\n"
       "// Mandel stress tensor\n"
-      "  const StressTensor M = (StrainStensor::Id() + 2*(this->eel+this->deel))*(fsscb_data.S);\n"
+      "  const StressTensor M = (StrainStensor::Id() + 2*(this->eel+this->deel))*(this->fsscb_data.S);\n"
       "// Mandel stress tensor derivative\n"
-      "const st2tot2<N,real> dM_ddeel(2*st2tot2<N,real>::tpld(fsscb_data.S)+\n"
-      "				        st2tot2<N,real>::tprd(fsscb_data.tmp,this->D));\n"
-      "const auto& ss = SlidingSystems::getSlidingSystems();\n"
-      "fsscb_data.inv_dFp = Tensor::Id();\n"
-      "for(unsigned short i=0;i!=12;++i){\n"
-      "  fsscb_data.inv_dFp -= dg[i]*ss.mu[i];\n"
+      "const st2tot2<N,real> dM_ddeel(2*st2tot2<N,real>::tpld(this->fsscb_data.S)+\n"
+      "				        st2tot2<N,real>::tprd(this->fsscb_data.tmp,this->D));\n"
+      "const auto& fsscb_ss = SlidingSystems::getSlidingSystems();\n"
+      "this->fsscb_data.inv_dFp = Tensor::Id();\n"
+      "for(unsigned short i=0;i!=SlidingSystems::Nss;++i){\n"
+      "  this->fsscb_data.inv_dFp -= (this->dg[i])*fsscb_ss.mu[i];\n"
       "}\n"
-      "fsscb_data.J_inv_dFp = det(fsscb_data.inv_dFp);\n"
-      "fsscb_data.inv_dFp /= CubicRoots::cbrt(fsscb_data.J_inv_dFp);\n"
-      "this->Fe = (fsscb_data.Fe_tr)*(fsscb_data.inv_dFp);\n"
+      "this->fsscb_data.J_inv_dFp = det(this->fsscb_data.inv_dFp);\n"
+      "this->fsscb_data.inv_dFp /= CubicRoots::cbrt(this->fsscb_data.J_inv_dFp);\n"
+      "this->Fe = (this->fsscb_data.Fe_tr)*(this->fsscb_data.inv_dFp);\n"
       "feel = this->eel+this->deel-computeGreenLagrangeTensor(this->Fe);\n"
-      "fsscb_data.tprd = t2tot2<N,real>::tprd(fsscb_data.Fe_tr);\n"
-      "fsscb_data.dfeel_dinv_dFp = t2tost2<N,real>::dCdF(this->Fe)*fsscb_data.tprd;\n"
-      "for(unsigned short i=0;i!=12;++i){\n"
-      "  dfeel_ddg(i) = (fsscb_data.dfeel_dinv_dFp)*ss.mu[i]/2;\n"
+      "const t2tot2<N,real> fsscb_tprd = t2tot2<N,real>::tprd(this->fsscb_data.Fe_tr);\n"
+      "const t2tost2<N,real> fsscb_dfeel_dinv_dFp = t2tost2<N,real>::dCdF(this->Fe)*fsscb_tprd;\n"
+      "for(unsigned short i=0;i!=SlidingSystems::Nss;++i){\n"
+      "  dfeel_ddg(i) = (fsscb_dfeel_dinv_dFp)*fsscb_ss.mu[i]/2;\n"
       "}\n";
     integrator.members  = {"eel","Fe","D"};
     this->bd.setCode(h,BehaviourData::Integrator,
@@ -141,43 +152,45 @@ namespace mfront{
     		     BehaviourData::AT_BEGINNING);
     CodeBlock fs;
     fs.code = 
-      "const auto& ss = SlidingSystems::getSlidingSystems();\n"
-      "fsscb_data.inv_dFp = Tensor::Id();\n"
-      "for(unsigned short i=0;i!=12;++i){\n"
-      "  fsscb_data.inv_dFp -= dg[i]*ss.mu[i];\n"
+      "const auto& fsscb_ss = SlidingSystems::getSlidingSystems();\n"
+      "this->fsscb_data.inv_dFp = Tensor::Id();\n"
+      "for(unsigned short i=0;i!=SlidingSystems::Nss;++i){\n"
+      "  this->fsscb_data.inv_dFp -= dg[i]*fsscb_ss.mu[i];\n"
       "}\n"
-      "fsscb_data.J_inv_dFp = det(fsscb_data.inv_dFp);\n"
-      "fsscb_data.inv_dFp /= CubicRoots::cbrt(fsscb_data.J_inv_dFp);\n"
-      "this->Fe = (fsscb_data.Fe_tr)*(fsscb_data.inv_dFp);\n"
-      "fsscb_data.S = (this->D)*(this->eel);\n"
-      "this->sig = convertSecondPiolaKirchhoffStressToCauchyStress(fsscb_data.S,this->Fe);\n";
+      "this->fsscb_data.J_inv_dFp = det(this->fsscb_data.inv_dFp);\n"
+      "this->fsscb_data.inv_dFp /= CubicRoots::cbrt(this->fsscb_data.J_inv_dFp);\n"
+      "this->Fe = (this->fsscb_data.Fe_tr)*(this->fsscb_data.inv_dFp);\n"
+      "this->fsscb_data.S = (this->D)*(this->eel);\n"
+      "this->sig = convertSecondPiolaKirchhoffStressToCauchyStress(this->fsscb_data.S,this->Fe);\n";
     fs.members  = {"sig","Fe","D"};
     this->bd.setCode(h,BehaviourData::ComputeFinalStress,
     		     fs,BehaviourData::CREATE,
     		     BehaviourData::AT_BEGINNING);
     // tangent operator
-    //   CodeBlock to;
-    //   to.code = 
-    //   static_cast<void>(smt);
-    //   const SlidingSystems& ss = SlidingSystems::getSlidingSystems();
-    //   const t2tost2<N,stress> dC_dFe = t2tost2<N,real>::dCdF(Fe);
-    //   const t2tost2<N,stress> dS_dFe = 0.5*D*dC_dFe;
-    //   t2tost2<N,stress> dtau_dFe;
-    //   computePushForwardDerivative(dtau_dFe,dS_dFe,S,Fe); 
-    //   const t2tot2<N,real>  dFe_dDF_tot = t2tot2<N,real>::tpld(inv_dFp,t2tot2<N,real>::tpld(Fe0));
-    //   const t2tost2<N,real> dfeel_dDF  = -0.5*dC_dFe*dFe_dDF_tot;
-    //   st2tost2<N,real> Je;
-    //   tvector<12u,Stensor> Jg;
-    //   getPartialJacobianInvert(Je,Jg);
-    //   t2tot2<N,real> dinv_Fp_dDF((ss.mu[0])^(Jg[0]|dfeel_dDF));
-    //   for(unsigned short i=1;i!=12;++i){
-    //     dinv_Fp_dDF += (ss.mu[i])^(Jg[i]|dfeel_dDF);
-    //   }
-    //   const t2tot2<N,real> dFe_dDF=
-    //     dFe_dDF_tot+t2tot2<N,real>::tprd(Fe_tr,dinv_Fp_dDF);
-    //   Dt = dtau_dFe*dFe_dDF;
-    // }
-    this->bd.addLocalDataStructure(d,BehaviourData::ALREADYREGISTRED);
+    CodeBlock to;
+    to.code = 
+      "static_cast<void>(smt);\n"
+      "const auto& fsscb_ss = SlidingSystems::getSlidingSystems();\n"
+      "const t2tost2<N,stress> fsscb_dC_dFe = t2tost2<N,real>::dCdF(this->Fe);\n"
+      "const t2tost2<N,stress> fsscb_dS_dFe = 0.5*(this->D)*fsscb_dC_dFe;\n"
+      "const auto fsscb_dtau_dFe = computePushForwardDerivative(fsscb_dS_dFe,this->fsscb_data.fsscb_S,this->Fe); \n"
+      "const t2tot2<N,real> fsscb_dFe_dDF_tot = t2tot2<N,real>::tpld(this->fsscb_data.inv_dFp,t2tot2<N,real>::tpld(this->fsscb_data.Fe0));\n"
+      "const t2tost2<N,real> fsscb_dfeel_dDF  = -0.5*(fsscb_dC_dFe)*(fsscb_dFe_dDF_tot);\n"
+      "st2tost2<N,real> fsscb_Je;\n"
+      "tvector<SlidingSystems::Nss,Stensor> fsscb_Jg;\n"
+      "getPartialJacobianInvert(fsscb_Je,fsscb_Jg);\n"
+      "t2tot2<N,real> fsscb_dinv_Fp_dDF = (fsscb_ss.mu[0])^(fsscb_Jg[0]|fsscb_dfeel_dDF);\n"
+      "for(unsigned short i=1;i!=SlidingSystems::Nss;++i){\n"
+      "  fsscb_dinv_Fp_dDF += (fsscb_ss.mu[i])^(fsscb_Jg[i]|fsscb_dfeel_dDF);\n"
+      "}\n"
+      "const t2tot2<N,real> fsscb_dFe_dDF=\n"
+      "  fsscb_dFe_dDF_tot+t2tot2<N,real>::tprd(this->fsscb_data.Fe_tr,fsscb_dinv_Fp_dDF);\n"
+      "Dt = fsscb_dtau_dFe*fsscb_dFe_dDF;\n";
+    to.members  = {"Fe","D"};
+    this->bd.setCode(h,BehaviourData::BehaviourData::ComputeTangentOperator+"-DTAU_DDF",
+    		     to,BehaviourData::CREATE,
+    		     BehaviourData::AT_BEGINNING);
+  this->bd.addLocalDataStructure(d,BehaviourData::ALREADYREGISTRED);
   } // end of FiniteStrainSingleCrystalBrick::endTreatment
   
   std::string FiniteStrainSingleCrystalBrick::getName() const{

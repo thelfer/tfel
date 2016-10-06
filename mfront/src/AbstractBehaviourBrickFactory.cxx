@@ -13,6 +13,7 @@
 
 #include<stdexcept>
 
+#include"TFEL/Utilities/Data.hxx"
 #include"MFront/AbstractBehaviourBrick.hxx"
 #include"MFront/AbstractBehaviourBrickFactory.hxx"
 #include"MFront/StandardElasticityBrick.hxx"
@@ -25,9 +26,10 @@ namespace mfront
   static std::shared_ptr<AbstractBehaviourBrick>
   buildBehaviourBrickConstructor(AbstractBehaviourDSL& dsl,
 				 BehaviourDescription& mb,
-				 const AbstractBehaviourBrick::Parameters& p)
+				 const AbstractBehaviourBrick::Parameters& p,
+				 const AbstractBehaviourBrick::DataMap& d)
   {
-    return std::shared_ptr<AbstractBehaviourBrick>(new T(dsl,mb,p));
+    return std::shared_ptr<AbstractBehaviourBrick>(new T(dsl,mb,p,d));
   } // end of buildAlgoritmConstructor
 
   AbstractBehaviourBrickFactory&
@@ -41,14 +43,15 @@ namespace mfront
   AbstractBehaviourBrickFactory::get(const std::string& a,
 				     AbstractBehaviourDSL& dsl,
 				     BehaviourDescription& mb,
-				     const AbstractBehaviourBrick::Parameters& p) const
+				     const AbstractBehaviourBrick::Parameters& p,
+				     const AbstractBehaviourBrick::DataMap& d) const
   {
     auto pc = this->constructors.find(a);
     if(pc==this->constructors.end()){
       throw(std::runtime_error("AbstractBehaviourBrickFactory::getAbstractBehaviourBrick : "
 			       "no AbstractBehaviourBrick '"+a+"' registred"));
     }
-    return (*(pc->second))(dsl,mb,p);
+    return (*(pc->second))(dsl,mb,p,d);
   }
 
   AbstractBehaviourBrickFactory::AbstractBehaviourBrickFactory()
