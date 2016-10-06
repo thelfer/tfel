@@ -6,6 +6,8 @@
  */
 
 #include<sstream>
+#include<stdexcept>
+
 #include "TFELCheck/Test.hxx"
 
 namespace tfel_check {
