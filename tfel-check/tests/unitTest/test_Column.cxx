@@ -9,10 +9,11 @@
  * Copyright © 2013
  */
 
+#include<cmath>
+#include<string>
 #include<memory>
 #include<fstream>
-#include<string>
-#include<cmath>
+#include<stdexcept>
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
