@@ -119,7 +119,7 @@ namespace mtest
   UmatBehaviourBase::getDrivingVariablesSize() const
   {
     const auto h = this->getHypothesis();
-    if(this->btype==1){
+    if((this->btype==1)||((this->btype==2u)&&(this->kinematic==4u))){
       // small strain behaviours
       if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
 	 (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
@@ -173,7 +173,7 @@ namespace mtest
   UmatBehaviourBase::getThermodynamicForcesSize() const
   {
     const auto h = this->getHypothesis();
-    if(this->btype==1){
+    if((this->btype==1)||((this->btype==2u)&&(this->kinematic==4u))){
       // small strain behaviours
       if ((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
 	  (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
@@ -299,7 +299,7 @@ namespace mtest
     using namespace std;
     const auto h = this->getHypothesis();
     vector<string> c;
-    if(this->btype==1){
+    if((this->btype==1)||((this->btype==2u)&&(this->kinematic==4u))){
       const auto exts = this->getStensorComponentsSuffixes();
       for(const auto& e : exts){
 	c.push_back("E"+e);

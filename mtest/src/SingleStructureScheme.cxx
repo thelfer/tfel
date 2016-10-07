@@ -31,6 +31,7 @@
 #ifdef HAVE_CASTEM
 #include"MTest/CastemSmallStrainBehaviour.hxx"
 #include"MTest/CastemFiniteStrainBehaviour.hxx"
+#include"MTest/CastemFiniteStrainBehaviour2.hxx"
 #include"MTest/CastemCohesiveZoneModel.hxx"
 #include"MTest/MistralBehaviour.hxx"
 #include"MTest/CastemUmatSmallStrainBehaviour.hxx"
@@ -181,11 +182,18 @@ namespace mtest{
     if((i=="castem")||(i=="umat")){
       check_no_parameters();
       auto& elm = ELM::getExternalLibraryManager();
-      const auto type = elm.getUMATBehaviourType(l,f);
+      const auto type  = elm.getUMATBehaviourType(l,f);
+      const auto ktype = elm.getUMATBehaviourKinematic(l,f);
       if(type==1u){
 	b = std::shared_ptr<Behaviour>(new CastemSmallStrainBehaviour(h,l,f));
       } else if(type==2u){
-	b = std::shared_ptr<Behaviour>(new CastemFiniteStrainBehaviour(h,l,f));
+	if(ktype==3u){
+	  b = std::shared_ptr<Behaviour>(new CastemFiniteStrainBehaviour(h,l,f));
+	} else if (ktype==4u){
+	  b = std::shared_ptr<Behaviour>(new CastemFiniteStrainBehaviour2(h,l,f));
+	} else {
+	  throw_if(true,"unsupported kinematic");
+	}
       } else if(type==3u){
 	b = std::shared_ptr<Behaviour>(new CastemCohesiveZoneModel(h,l,f));
       } else {
@@ -258,8 +266,21 @@ namespace mtest{
 #endif
 #ifdef HAVE_CYRANO
     if(i=="cyrano"){
+      auto& elm = ELM::getExternalLibraryManager();
+      const auto btype = elm.getUMATBehaviourType(l,f);
+      const auto ktype = elm.getUMATBehaviourKinematic(l,f);
       check_no_parameters();
-      b = std::shared_ptr<Behaviour>(new CyranoBehaviour(h,l,f));
+      if(btype==1u){
+	b = std::shared_ptr<Behaviour>(new CyranoBehaviour(h,l,f));
+      } else if(btype==2u){
+	if(ktype==3u){
+	  b = std::shared_ptr<Behaviour>(new CyranoBehaviour(h,l,f));
+	} else {
+	  throw_if(true,"unsupported behaviour kinematic");
+	}
+      } else {
+	throw_if(true,"unsupported behaviour type");
+      }
     }
 #endif
     throw_if(b.get()==nullptr,"unknown interface '"+i+"'");

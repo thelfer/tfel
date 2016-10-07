@@ -82,6 +82,7 @@ if HAVE_CASTEM
 libTFELMTest_la_SOURCES += CastemStandardBehaviour.cxx         \
 			   CastemSmallStrainBehaviour.cxx      \
 			   CastemFiniteStrainBehaviour.cxx     \
+			   CastemFiniteStrainBehaviour2.cxx    \
 			   CastemCohesiveZoneModel.cxx         \
 			   CastemUmatStandardBehaviour.cxx     \
 			   CastemUmatSmallStrainBehaviour.cxx  \

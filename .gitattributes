@@ -4217,6 +4217,7 @@ mtest/include/MTest/CastemAccelerationAlgorithm.hxx -text
 mtest/include/MTest/CastemCohesiveZoneModel.hxx -text
 mtest/include/MTest/CastemEvolution.hxx -text
 mtest/include/MTest/CastemFiniteStrainBehaviour.hxx -text
+mtest/include/MTest/CastemFiniteStrainBehaviour2.hxx -text
 mtest/include/MTest/CastemSmallStrainBehaviour.hxx -text
 mtest/include/MTest/CastemStandardBehaviour.hxx -text
 mtest/include/MTest/CastemUmatFiniteStrainBehaviour.hxx -text
@@ -4292,6 +4293,7 @@ mtest/src/CastemAccelerationAlgorithm.cxx -text
 mtest/src/CastemCohesiveZoneModel.cxx -text
 mtest/src/CastemEvolution.cxx -text
 mtest/src/CastemFiniteStrainBehaviour.cxx -text
+mtest/src/CastemFiniteStrainBehaviour2.cxx -text
 mtest/src/CastemSmallStrainBehaviour.cxx -text
 mtest/src/CastemStandardBehaviour.cxx -text
 mtest/src/CastemUmatFiniteStrainBehaviour.cxx -text

@@ -24,7 +24,6 @@
 #include"MTest/CyranoBehaviour.hxx"
 #include"MFront/Cyrano/CyranoComputeStiffnessTensor.hxx"
 
-
 namespace mtest
 {
 

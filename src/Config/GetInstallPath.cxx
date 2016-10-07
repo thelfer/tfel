@@ -73,12 +73,12 @@ namespace tfel{
       }
     }
 #endif
-    const char * const path = ::getenv("TFELHOME");
+    const auto path = ::getenv("TFELHOME");
     if(path!=nullptr){
       return handleSpace(path);
     }
 #if defined _WIN32 || defined _WIN64
-    throw(std::runtime_error("tfel-config getTFELHOME: "
+    throw(std::runtime_error("tfel::getInstallPath: "
 			     "no TFELHOME registry key defined and no TFEHOME "
 			     "environment variable defined"));
 #else

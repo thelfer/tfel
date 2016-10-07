@@ -121,8 +121,10 @@ struct UMATBehaviourDescriptionTest final
     using namespace tfel::glossary;
     const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
 						"umatnorton_log1d","AxisymmetricalGeneralisedPlaneStrain"};
-    // should small strain behaviour
-    TFEL_TESTS_ASSERT(b.btype==1u);
+    // should finite strain behaviour
+    TFEL_TESTS_ASSERT(b.btype==2u);
+    // should have ETO/PK1 kinematic
+    TFEL_TESTS_ASSERT(b.kinematic==4u);
     // behaviour shall be isotropic
     TFEL_TESTS_ASSERT(b.stype==0u);
     // elastic behaviour shall be isotropic
@@ -155,6 +157,8 @@ struct UMATBehaviourDescriptionTest final
 						"umatfinitestrainsinglecrystal","Tridimensional"};
     // should finite strain behaviour
     TFEL_TESTS_ASSERT(b.btype==2u);
+    // should have standard kinematic
+    TFEL_TESTS_ASSERT(b.kinematic==3u);
     // behaviour shall be orthotropic
     TFEL_TESTS_ASSERT(b.stype==1u);
     // elastic behaviour shall be orthotropic
