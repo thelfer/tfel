@@ -396,32 +396,32 @@ namespace mfront
 	  if(p6->boundsType==VariableBoundsDescription::Lower){
 	    src << "if(" << p6->varName<< " < "<< p6->lowerBound << "){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is below its physical lower bound\";\n";
+	    src << "msg << \"" << name << " : "  << p6->varName << " is below its physical lower bound \";\n";
 	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" < " << p6->lowerBound << " )\";\n";
+		<< " << \" < " << p6->lowerBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "}\n";
 	  } else if(p6->boundsType==VariableBoundsDescription::Upper){
 	    src << "if(" << p6->varName<< " > "<< p6->upperBound << "){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is beyond its physical upper bound\";\n";
+	    src << "msg << \"" << name << " : "  << p6->varName << " is beyond its physical upper bound \";\n";
 	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" > " << p6->upperBound << " )\";\n";
+		<< " << \" > " << p6->upperBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "}\n";
 	  } else {
 	    src << "if(" << p6->varName<< " < "<< p6->lowerBound << "){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is below its physical lower bound\";\n";
+	    src << "msg << \"" << name << " : "  << p6->varName << " is below its physical lower bound \";\n";
 	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" < " << p6->lowerBound << " )\";\n";
+		<< " << \" < " << p6->lowerBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "}\n";
 	    src << "if(" << p6->varName<< " > "<< p6->upperBound << "){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is beyond its physical upper bound\";\n";
+	    src << "msg << \"" << name << " : "  << p6->varName << " is beyond its physical upper bound \";\n";
 	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" > " << p6->upperBound << " )\";\n";
+		<< " << \" > " << p6->upperBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "}\n";
 	  }
@@ -437,14 +437,14 @@ namespace mfront
 	    src << "if(policy!=nullptr){\n";
 	    src << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is below its lower bound\";\n";
+	    src << "msg << \"" << name << " : "  << p6->varName << " is below its lower bound \";\n";
 	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" < " << p6->lowerBound << " )\";\n";
+		<< " << \" < " << p6->lowerBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "} else if(strcmp(policy,\"WARNING\")==0){\n";
-	    src << "cerr << \"" << p6->varName << " is below its lower bound\";\n";
+	    src << "cerr << \"" << p6->varName << " is below its lower bound \";\n";
 	    src << "cerr << \"(\" << " << p6->varName 
-		<< " << \" < " << p6->lowerBound << " )\";\n";
+		<< " << \" < " << p6->lowerBound << ")\\n\";\n";
 	    src << "}\n";
 	    src << "}\n";
 	    src << "}\n";
@@ -455,14 +455,14 @@ namespace mfront
 	    src << "if(policy!=nullptr){\n";
 	    src << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is beyond its upper bound\";\n";
+	    src << "msg << \"" << name << " : "  << p6->varName << " is beyond its upper bound \";\n";
 	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" > " << p6->upperBound << " )\";\n";
+		<< " << \" > " << p6->upperBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "} else if(strcmp(policy,\"WARNING\")==0){\n";
-	    src << "cerr << \"" << p6->varName << " is beyond its upper bound\";\n";
+	    src << "cerr << \"" << p6->varName << " is beyond its upper bound \";\n";
 	    src << "cerr << \"(\" << " << p6->varName 
-		<< " << \" > " << p6->upperBound << " )\";\n";
+		<< " << \" > " << p6->upperBound << ")\\n\";\n";
 	    src << "}\n";
 	    src << "}\n";
 	    src << "}\n";
@@ -473,14 +473,14 @@ namespace mfront
 	    src << "if(policy!=nullptr){\n";
 	    src << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is below its lower bound\";\n";
+	    src << "msg << \"" << name << " : "  << p6->varName << " is below its lower bound \";\n";
 	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" < " << p6->lowerBound << " )\";\n";
+		<< " << \" < " << p6->lowerBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "} else if(strcmp(policy,\"WARNING\")==0){\n";
-	    src << "cerr << \"" << p6->varName << " is below its lower bound\";\n";
+	    src << "cerr << \"" << p6->varName << " is below its lower bound \";\n";
 	    src << "cerr << \"(\" << " << p6->varName 
-		<< " << \" < " << p6->lowerBound << " )\";\n";
+		<< " << \" < " << p6->lowerBound << ")\\n\";\n";
 	    src << "}\n";
 	    src << "}\n";
 	    src << "}\n";
@@ -490,14 +490,14 @@ namespace mfront
 	    src << "if(policy!=nullptr){\n";
 	    src << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is beyond its upper bound\";\n";
+	    src << "msg << \"" << name << " : "  << p6->varName << " is beyond its upper bound \";\n";
 	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" > " << p6->upperBound << " )\";\n";
+		<< " << \" > " << p6->upperBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "} else if(strcmp(policy,\"WARNING\")==0){\n";
-	    src << "cerr << \"" << p6->varName << " is beyond its upper bound\";\n";
+	    src << "cerr << \"" << p6->varName << " is beyond its upper bound \";\n";
 	    src << "cerr << \"(\" << " << p6->varName 
-		<< " << \" > " << p6->upperBound << " )\";\n";
+		<< " << \" > " << p6->upperBound << ")\\n\";\n";
 	    src << "}\n";
 	    src << "}\n";
 	    src << "}\n";

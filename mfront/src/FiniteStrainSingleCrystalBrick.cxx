@@ -59,20 +59,6 @@ namespace mfront{
     }
     throw_if(this->bd.getElasticSymmetryType()!=mfront::ORTHOTROPIC,
 	     "elastic symmetry type must be orthortropic");
-    // reserve some specific variables
-    this->bd.reserveName(h,"fsscb_data");
-    this->bd.reserveName(h,"fsscb_ss");
-    this->bd.reserveName(h,"fsscb_tprd");
-    this->bd.reserveName(h,"fsscb_dfeel_dinv_dFp");
-    this->bd.reserveName(h,"fsscb_dC_dFe");
-    this->bd.reserveName(h,"fsscb_dS_dFe");
-    this->bd.reserveName(h,"fsscb_dtau_dFe");
-    this->bd.reserveName(h,"fsscb_dFe_dDF_tot");
-    this->bd.reserveName(h,"fsscb_dfeel_dDF");
-    this->bd.reserveName(h,"fsscb_Je");
-    this->bd.reserveName(h,"fsscb_Jg");
-    this->bd.reserveName(h,"fsscb_dinv_Fp_dDF");
-    this->bd.reserveName(h,"fsscb_dFe_dDF");
     // declaring the elastic strain as the first integration variable
     throw_if(!this->bd.getBehaviourData(h).getIntegrationVariables().empty(),
 	     "no integration variable shall be declared before declaring the "
@@ -88,6 +74,20 @@ namespace mfront{
     this->bd.setEntryName(h,"Fe","ElasticPartOfTheDeformationGradient");
     // additional includes
     this->bd.appendToIncludes("#include\"TFEL/Math/General/CubicRoots.hxx\"");
+    // reserve some specific variables
+    this->bd.reserveName(h,"fsscb_data");
+    this->bd.reserveName(h,"fsscb_ss");
+    this->bd.reserveName(h,"fsscb_tprd");
+    this->bd.reserveName(h,"fsscb_dfeel_dinv_dFp");
+    this->bd.reserveName(h,"fsscb_dC_dFe");
+    this->bd.reserveName(h,"fsscb_dS_dFe");
+    this->bd.reserveName(h,"fsscb_dtau_dFe");
+    this->bd.reserveName(h,"fsscb_dFe_dDF_tot");
+    this->bd.reserveName(h,"fsscb_dfeel_dDF");
+    this->bd.reserveName(h,"fsscb_Je");
+    this->bd.reserveName(h,"fsscb_Jg");
+    this->bd.reserveName(h,"fsscb_dinv_Fp_dDF");
+    this->bd.reserveName(h,"fsscb_dFe_dDF");
   } // end of FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick
 
   void 

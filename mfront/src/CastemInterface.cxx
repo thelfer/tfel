@@ -942,7 +942,7 @@ namespace mfront{
 	      }
 	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_log1D") 
-		<< "_BehaviourType = 1u;\n\n";
+		<< "_BehaviourType = 2u;\n\n";
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_log1D") 
 		<< "_BehaviourKinematic = 4u;\n\n";
 	    out << "MFRONT_SHAREDOBJ unsigned short umat"
@@ -959,7 +959,7 @@ namespace mfront{
 		}
 	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
-		  << "_BehaviourType = 1u;\n\n";
+		  << "_BehaviourType = 2u;\n\n";
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 		  << "_BehaviourKinematic = 4u;\n\n";
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
