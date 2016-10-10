@@ -84,13 +84,16 @@ set(mfront_tests_SOURCES
   IsotropicVolumeSwelling
   OrthotropicSwelling
   OrthotropicSwelling2
-  AxialGrowth
-  AbaqusAxialGrowth
-  AbaqusAxialGrowth2
-  AbaqusOrthotropicSwelling
-  AbaqusOrthotropicSwelling2
-  AbaqusOrthotropicElastic
-  AbaqusOrthotropicElastic2)
+  AxialGrowth)
+if(NOT WIN32)
+  list(APPEND mfront_tests_SOURCES
+       AbaqusAxialGrowth
+       AbaqusAxialGrowth2
+       AbaqusOrthotropicSwelling	
+       AbaqusOrthotropicSwelling2
+       AbaqusOrthotropicElastic
+       AbaqusOrthotropicElastic2)
+endif(NOT WIN32)
 mfront_dependencies(MFrontAbaqusBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
@@ -373,19 +376,21 @@ test_abaqus(finitestrainsinglecrystal_numericaljacobian-001)
 test_abaqus(finitestrainsinglecrystal_numericaljacobian-012)
 test_abaqus(finitestrainsinglecrystal_numericaljacobian-012-2)
 test_abaqus(finitestrainsinglecrystal_numericaljacobian-159)
-test_abaqus(axialgrowth-omp)
-test_abaqus(elasticity14-omp)
-test_abaqus(elasticity6-omp)
-test_abaqus(elasticity10-omp)
-test_abaqus(elasticity22-omp)
-test_abaqus(orthotropicswelling2-omp)
-test_abaqus(elasticity11-omp)
-test_abaqus(elasticity23-omp)
-test_abaqus(orthotropicswelling-omp)
-test_abaqus(elasticity12-omp)
-test_abaqus(elasticity25-omp)
-test_abaqus(elasticity13-omp)
-test_abaqus(elasticity27-omp)
+if(NOT WIN32)
+  test_abaqus(axialgrowth-omp)
+  test_abaqus(elasticity14-omp)
+  test_abaqus(elasticity6-omp)
+  test_abaqus(elasticity10-omp)
+  test_abaqus(elasticity22-omp)
+  test_abaqus(orthotropicswelling2-omp)
+  test_abaqus(elasticity11-omp)
+  test_abaqus(elasticity23-omp)
+  test_abaqus(orthotropicswelling-omp)
+  test_abaqus(elasticity12-omp)
+  test_abaqus(elasticity25-omp)
+  test_abaqus(elasticity13-omp)
+  test_abaqus(elasticity27-omp)
+endif(NOT WIN32)
 test_abaqus(orthotropicsaintvenantkirchhoffelasticity-3D-sig11)
 test_abaqus(orthotropicsaintvenantkirchhoffelasticity-3D-sig11-2)
 test_abaqus(orthotropicsaintvenantkirchhoffelasticity-3D-sig11-3)
