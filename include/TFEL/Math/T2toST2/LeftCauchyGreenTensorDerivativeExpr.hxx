@@ -15,9 +15,9 @@
 #define LIB_TFEL_MATH_LEFTCAUCHYGREENTENSORDERIVATIVEEXPR_H_ 
 
 #include<cmath>
-
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"TFEL/Math/T2toST2/T2toST2Concept.hxx"
 
@@ -108,8 +108,7 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
 							     typename T2toST2Traits<T2toST2Type>::NumType>::cond));
-	using tfel::math::constexpr_fct::sqrt;
-	constexpr value_type sqrt2 = sqrt(value_type{2});
+	constexpr const auto cste = Cste<value_type>::sqrt2;
 	constexpr value_type zero{0};
 	this->v[0]=2*F[0];
 	this->v[1]=this->v[2]=zero;
@@ -121,11 +120,11 @@ namespace tfel{
 	this->v[10]=this->v[11]=zero;
 	this->v[12]=2*F[2];
 	this->v[13]=this->v[14]=zero;
-	this->v[15]=sqrt2*F[4];
-	this->v[16]=sqrt2*F[3];
+	this->v[15]=cste*F[4];
+	this->v[16]=cste*F[3];
 	this->v[17]=zero;
-	this->v[18]=sqrt2*F[1];
-	this->v[19]=sqrt2*F[0];
+	this->v[18]=cste*F[1];
+	this->v[19]=cste*F[0];
       } // end of Expr
       /*!
        * \brief access operator
@@ -168,8 +167,7 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
 							     typename T2toST2Traits<T2toST2Type>::NumType>::cond));
-	using tfel::math::constexpr_fct::sqrt;
-	constexpr value_type sqrt2 = sqrt(value_type{2});
+	constexpr const auto cste = Cste<value_type>::sqrt2;
 	constexpr value_type zero{0};
 	this->v[0]=2*F[0];
 	this->v[1]=this->v[2]=zero;
@@ -188,33 +186,33 @@ namespace tfel{
 	this->v[24]=2*F[6];
 	this->v[25]=zero;
 	this->v[26]=2*F[8];
-	this->v[27]=sqrt2*F[4];
-	this->v[28]=sqrt2*F[3];
+	this->v[27]=cste*F[4];
+	this->v[28]=cste*F[3];
 	this->v[29]=zero;
-	this->v[30]=sqrt2*F[1];
-	this->v[31]=sqrt2*F[0];
-	this->v[32]=sqrt2*F[7];
+	this->v[30]=cste*F[1];
+	this->v[31]=cste*F[0];
+	this->v[32]=cste*F[7];
 	this->v[33]=zero;
-	this->v[34]=sqrt2*F[5];
+	this->v[34]=cste*F[5];
 	this->v[35]=zero;
-	this->v[36]=sqrt2*F[6];
+	this->v[36]=cste*F[6];
 	this->v[37]=zero;
-	this->v[38]=sqrt2*F[5];
-	this->v[39]=sqrt2*F[8];
+	this->v[38]=cste*F[5];
+	this->v[39]=cste*F[8];
 	this->v[40]=zero;
-	this->v[41]=sqrt2*F[2];
-	this->v[42]=sqrt2*F[0];
+	this->v[41]=cste*F[2];
+	this->v[42]=cste*F[0];
 	this->v[43]=zero;
-	this->v[44]=sqrt2*F[3];
+	this->v[44]=cste*F[3];
 	this->v[45]=zero;
-	this->v[46]=sqrt2*F[8];
-	this->v[47]=sqrt2*F[7];
+	this->v[46]=cste*F[8];
+	this->v[47]=cste*F[7];
 	this->v[48]=zero;
-	this->v[49]=sqrt2*F[6];
+	this->v[49]=cste*F[6];
 	this->v[50]=zero;
-	this->v[51]=sqrt2*F[4];
-	this->v[52]=sqrt2*F[2];
-	this->v[53]=sqrt2*F[1];
+	this->v[51]=cste*F[4];
+	this->v[52]=cste*F[2];
+	this->v[53]=cste*F[1];
       } // end of Expr
       /*!
        * \brief access operator
@@ -234,4 +232,3 @@ namespace tfel{
 } // end of namespace math
 
 #endif /* LIB_TFEL_MATH_LEFTCAUCHYGREENTENSORDERIVATIVEEXPR_H_ */
-

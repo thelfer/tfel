@@ -207,14 +207,8 @@ namespace tfel{
       >::type
     syme(const T& t){
       typedef typename TensorTraits<T>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      constexpr real cste = constexpr_fct::sqrt(real(2))/real(2);
-      stensor<2u,NumType> s;
-      s[0] = t[0];
-      s[1] = t[1];
-      s[2] = t[2];
-      s[3] = cste*(t[3]+t[4]);
-      return s;
+      constexpr const auto icste = Cste<NumType>::isqrt2;
+      return {t[0],t[1],t[2],icste*(t[3]+t[4])};
     }
 
     template<class T>
@@ -226,16 +220,8 @@ namespace tfel{
     syme(const T& t)
     {
       typedef typename TensorTraits<T>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      constexpr real cste = constexpr_fct::sqrt(real(2))/real(2);
-      stensor<3u,NumType> s;
-      s[0] = t[0];
-      s[1] = t[1];
-      s[2] = t[2];
-      s[3] = cste*(t[3]+t[4]);
-      s[4] = cste*(t[5]+t[6]);
-      s[5] = cste*(t[7]+t[8]);
-      return s;
+      constexpr const auto icste = Cste<NumType>::isqrt2;
+      return {t[0],t[1],t[2],icste*(t[3]+t[4]),icste*(t[5]+t[6]),icste*(t[7]+t[8])};
     }
 
     template<class T>
@@ -246,12 +232,7 @@ namespace tfel{
       stensor<1u,typename TensorTraits<T>::NumType> >::type
     computeRightCauchyGreenTensor(const T& t)
     {
-      typedef typename TensorTraits<T>::NumType real;
-      stensor<1u,real> r;
-      r[0] = t[0]*t[0];
-      r[1] = t[1]*t[1];
-      r[2] = t[2]*t[2];
-      return r;
+      return {t[0]*t[0],t[1]*t[1],t[2]*t[2]};
     }
   
     template<class T>
@@ -263,13 +244,8 @@ namespace tfel{
       >::type
     computeRightCauchyGreenTensor(const T& t){
       typedef typename TensorTraits<T>::NumType real;
-      constexpr real cste = constexpr_fct::sqrt(real(2));
-      stensor<2u,real> r;
-      r[0] = t[0]*t[0]+t[4]*t[4];
-      r[1] = t[1]*t[1]+t[3]*t[3];
-      r[2] = t[2]*t[2];
-      r[3] = cste*(t[1]*t[4]+t[0]*t[3]);
-      return r;
+      constexpr const auto cste = Cste<real>::sqrt2;
+      return {t[0]*t[0]+t[4]*t[4],t[1]*t[1]+t[3]*t[3],t[2]*t[2],cste*(t[1]*t[4]+t[0]*t[3])};
     }
     
     template<class T>
@@ -282,15 +258,13 @@ namespace tfel{
     computeRightCauchyGreenTensor(const T& t)
     {
       typedef typename TensorTraits<T>::NumType real;
-      constexpr real cste = constexpr_fct::sqrt(real(2));
-      stensor<3u,real> r;
-      r[0] = t[0]*t[0]+t[4]*t[4]+t[6]*t[6];
-      r[1] = t[1]*t[1]+t[3]*t[3]+t[8]*t[8];
-      r[2] = t[2]*t[2]+t[5]*t[5]+t[7]*t[7];
-      r[3] = cste*(t[6]*t[8]+t[1]*t[4]+t[0]*t[3]);
-      r[4] = cste*(t[4]*t[7]+t[2]*t[6]+t[0]*t[5]);
-      r[5] = cste*(t[2]*t[8]+t[1]*t[7]+t[3]*t[5]);
-      return r;
+      constexpr const auto cste = Cste<real>::sqrt2;
+      return {t[0]*t[0]+t[4]*t[4]+t[6]*t[6],
+	  t[1]*t[1]+t[3]*t[3]+t[8]*t[8],
+	  t[2]*t[2]+t[5]*t[5]+t[7]*t[7],
+	  cste*(t[6]*t[8]+t[1]*t[4]+t[0]*t[3]),
+	  cste*(t[4]*t[7]+t[2]*t[6]+t[0]*t[5]),
+	  cste*(t[2]*t[8]+t[1]*t[7]+t[3]*t[5])};
     }
 
     template<class T>
@@ -301,12 +275,7 @@ namespace tfel{
       stensor<1u,typename TensorTraits<T>::NumType> >::type
     computeLeftCauchyGreenTensor(const T& t)
     {
-      typedef typename TensorTraits<T>::NumType real;
-      stensor<1u,real> r;
-      r[0] = t[0]*t[0];
-      r[1] = t[1]*t[1];
-      r[2] = t[2]*t[2];
-      return r;
+      return {t[0]*t[0],t[1]*t[1],t[2]*t[2]};
     }
   
     template<class T>
@@ -318,13 +287,9 @@ namespace tfel{
       >::type
     computeLeftCauchyGreenTensor(const T& t){
       typedef typename TensorTraits<T>::NumType real;
-      constexpr real cste = constexpr_fct::sqrt(real(2));
-      stensor<2u,real> r;
-      r[0] = t[0]*t[0]+t[3]*t[3];
-      r[1] = t[1]*t[1]+t[4]*t[4];
-      r[2] = t[2]*t[2];
-      r[3] = cste*(t[0]*t[4]+t[1]*t[3]);
-      return r;
+      constexpr const auto cste = Cste<real>::sqrt2;
+      return {t[0]*t[0]+t[3]*t[3],t[1]*t[1]+t[4]*t[4],t[2]*t[2],
+	  cste*(t[0]*t[4]+t[1]*t[3])};
     }
     
     template<class T>
@@ -337,15 +302,13 @@ namespace tfel{
     computeLeftCauchyGreenTensor(const T& t)
     {
       typedef typename TensorTraits<T>::NumType real;
-      constexpr real cste = constexpr_fct::sqrt(real(2));
-      stensor<3u,real> r;
-      r[0] = t[0]*t[0]+t[3]*t[3]+t[5]*t[5];
-      r[1] = t[1]*t[1]+t[4]*t[4]+t[7]*t[7];
-      r[2] = t[2]*t[2]+t[6]*t[6]+t[8]*t[8];
-      r[3] = cste*(t[5]*t[7]+t[0]*t[4]+t[1]*t[3]);
-      r[4] = cste*(t[3]*t[8]+t[0]*t[6]+t[2]*t[5]);
-      r[5] = cste*(t[1]*t[8]+t[2]*t[7]+t[4]*t[6]);
-      return r;
+      constexpr const auto cste = Cste<real>::sqrt2;
+      return {t[0]*t[0]+t[3]*t[3]+t[5]*t[5],
+	  t[1]*t[1]+t[4]*t[4]+t[7]*t[7],
+	  t[2]*t[2]+t[6]*t[6]+t[8]*t[8],
+	  cste*(t[5]*t[7]+t[0]*t[4]+t[1]*t[3]),
+	  cste*(t[3]*t[8]+t[0]*t[6]+t[2]*t[5]),
+	  cste*(t[1]*t[8]+t[2]*t[7]+t[4]*t[6])};
     }
 
     template<class T>
@@ -370,12 +333,11 @@ namespace tfel{
       >::type
     computeGreenLagrangeTensor(const T& t){
       using NumType = typename TensorTraits<T>::NumType;
-      using real    = typename tfel::typetraits::BaseType<NumType>::type;
-      constexpr real cste = constexpr_fct::sqrt(real(2))/2;
+      constexpr const auto icste = Cste<NumType>::isqrt2;
       return {(t[0]*t[0]+t[4]*t[4]-1)/2,
 	  (t[1]*t[1]+t[3]*t[3]-1)/2,
 	  (t[2]*t[2]-1)/2,
-	  cste*(t[0]*t[3]+t[1]*t[4])};
+	  icste*(t[0]*t[3]+t[1]*t[4])};
     }
     
     template<class T>
@@ -388,14 +350,13 @@ namespace tfel{
     computeGreenLagrangeTensor(const T& t)
     {
       using NumType = typename TensorTraits<T>::NumType;
-      using real    = typename tfel::typetraits::BaseType<NumType>::type;
-      constexpr real cste = constexpr_fct::sqrt(real(2))/2;
+      constexpr const auto icste = Cste<NumType>::isqrt2;
       return {(t[0]*t[0]+t[4]*t[4]+t[6]*t[6]-1)/2,
 	  (t[1]*t[1]+t[3]*t[3]+t[8]*t[8]-1)/2,
 	  (t[2]*t[2]+t[5]*t[5]+t[7]*t[7]-1)/2,
-	  cste*(t[6]*t[8]+t[1]*t[4]+t[0]*t[3]),
-	  cste*(t[4]*t[7]+t[2]*t[6]+t[0]*t[5]),
-	  cste*(t[2]*t[8]+t[1]*t[7]+t[3]*t[5])};
+	  icste*(t[6]*t[8]+t[1]*t[4]+t[0]*t[3]),
+	  icste*(t[4]*t[7]+t[2]*t[6]+t[0]*t[5]),
+	  icste*(t[2]*t[8]+t[1]*t[7]+t[3]*t[5])};
     }
 
     template<typename T,typename T2>
@@ -407,15 +368,9 @@ namespace tfel{
        (tfel::typetraits::IsFundamentalNumericType<typename TensorTraits<T2>::NumType>::cond)),
       stensor<1u,typename StensorTraits<T>::NumType>
       >::type
-    pushForward(const T&  p,
-		const T2& F)
+    pushForward(const T&  p,const T2& F)
     {
-      typedef typename StensorTraits<T>::NumType NumType;
-      stensor<1u,NumType> s;
-      s[0] = p[0]*F[0]*F[0];
-      s[1] = p[1]*F[1]*F[1];
-      s[2] = p[2]*F[2]*F[2];
-      return s;
+      return {p[0]*F[0]*F[0],p[1]*F[1]*F[1],p[2]*F[2]*F[2]};
     } // end of pushForward
 
     template<typename T,typename T2>
@@ -431,14 +386,11 @@ namespace tfel{
 		const T2& F)
     {
       typedef typename StensorTraits<T>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      constexpr real cste = constexpr_fct::sqrt(real(2));
-      stensor<2u,NumType> s;
-      s[0] = p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
-      s[1] = p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
-      s[2] = p[2]*F[2]*F[2];
-      s[3] = (p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1];
-      return s;
+      constexpr const auto cste = Cste<NumType>::sqrt2;
+      return {p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0],
+	  p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1],
+	  p[2]*F[2]*F[2],
+	  (p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1]};
     } // end of pushForward
 
     template<typename T,typename T2>
@@ -454,16 +406,13 @@ namespace tfel{
 		const T2& F)
     {
       typedef typename StensorTraits<T>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      constexpr real cste = constexpr_fct::sqrt(real(2));
-      stensor<3u,NumType> s;
-      s[0] = p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
-      s[1] = p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
-      s[2] = p[1]*F[8]*F[8]+(cste*p[3]*F[6]+cste*p[5]*F[2])*F[8]+p[0]*F[6]*F[6]+cste*p[4]*F[2]*F[6]+p[2]*F[2]*F[2];
-      s[3] = (cste*p[2]*F[5]+p[5]*F[3]+p[4]*F[0])*F[7]+(p[4]*F[4]+p[5]*F[1])*F[5]+(p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1];
-      s[4] = (p[5]*F[5]+cste*p[1]*F[3]+p[3]*F[0])*F[8]+(p[4]*F[5]+p[3]*F[3]+cste*p[0]*F[0])*F[6]+cste*p[2]*F[2]*F[5]+p[5]*F[2]*F[3]+p[4]*F[0]*F[2];
-      s[5] = (p[5]*F[7]+p[3]*F[4]+cste*p[1]*F[1])*F[8]+(p[4]*F[6]+cste*p[2]*F[2])*F[7]+(cste*p[0]*F[4]+p[3]*F[1])*F[6]+p[4]*F[2]*F[4]+p[5]*F[1]*F[2];
-      return s;
+      constexpr const auto cste = Cste<NumType>::sqrt2;
+      return {p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0],
+	  p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1],
+	  p[1]*F[8]*F[8]+(cste*p[3]*F[6]+cste*p[5]*F[2])*F[8]+p[0]*F[6]*F[6]+cste*p[4]*F[2]*F[6]+p[2]*F[2]*F[2],
+	  (cste*p[2]*F[5]+p[5]*F[3]+p[4]*F[0])*F[7]+(p[4]*F[4]+p[5]*F[1])*F[5]+(p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1],
+	  (p[5]*F[5]+cste*p[1]*F[3]+p[3]*F[0])*F[8]+(p[4]*F[5]+p[3]*F[3]+cste*p[0]*F[0])*F[6]+cste*p[2]*F[2]*F[5]+p[5]*F[2]*F[3]+p[4]*F[0]*F[2],
+	  (p[5]*F[7]+p[3]*F[4]+cste*p[1]*F[1])*F[8]+(p[4]*F[6]+cste*p[2]*F[2])*F[7]+(cste*p[0]*F[4]+p[3]*F[1])*F[6]+p[4]*F[2]*F[4]+p[5]*F[1]*F[2]};
     } // end of pushForward
 
     template<typename T,typename T2>
@@ -478,12 +427,7 @@ namespace tfel{
     push_forward(const T&  p,
 		const T2& F)
     {
-      typedef typename StensorTraits<T>::NumType NumType;
-      stensor<1u,NumType> s;
-      s[0] = p[0]*F[0]*F[0];
-      s[1] = p[1]*F[1]*F[1];
-      s[2] = p[2]*F[2]*F[2];
-      return s;
+      return {p[0]*F[0]*F[0],p[1]*F[1]*F[1],p[2]*F[2]*F[2]};
     } // end of push_forward
 
     template<typename T,typename T2>
@@ -499,14 +443,11 @@ namespace tfel{
 		const T2& F)
     {
       typedef typename StensorTraits<T>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      constexpr real cste = constexpr_fct::sqrt(real(2));
-      stensor<2u,NumType> s;
-      s[0] = p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
-      s[1] = p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
-      s[2] = p[2]*F[2]*F[2];
-      s[3] = (p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1];
-      return s;
+      constexpr const auto cste = Cste<NumType>::sqrt2;
+      return {p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0],
+	  p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1],
+	  p[2]*F[2]*F[2],
+	  (p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1]};
     } // end of push_forward
 
     template<typename T,typename T2>
@@ -522,16 +463,13 @@ namespace tfel{
 		const T2& F)
     {
       typedef typename StensorTraits<T>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      constexpr real cste = constexpr_fct::sqrt(real(2));
-      stensor<3u,NumType> s;
-      s[0] = p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0];
-      s[1] = p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1];
-      s[2] = p[1]*F[8]*F[8]+(cste*p[3]*F[6]+cste*p[5]*F[2])*F[8]+p[0]*F[6]*F[6]+cste*p[4]*F[2]*F[6]+p[2]*F[2]*F[2];
-      s[3] = (cste*p[2]*F[5]+p[5]*F[3]+p[4]*F[0])*F[7]+(p[4]*F[4]+p[5]*F[1])*F[5]+(p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1];
-      s[4] = (p[5]*F[5]+cste*p[1]*F[3]+p[3]*F[0])*F[8]+(p[4]*F[5]+p[3]*F[3]+cste*p[0]*F[0])*F[6]+cste*p[2]*F[2]*F[5]+p[5]*F[2]*F[3]+p[4]*F[0]*F[2];
-      s[5] = (p[5]*F[7]+p[3]*F[4]+cste*p[1]*F[1])*F[8]+(p[4]*F[6]+cste*p[2]*F[2])*F[7]+(cste*p[0]*F[4]+p[3]*F[1])*F[6]+p[4]*F[2]*F[4]+p[5]*F[1]*F[2];
-      return s;
+      constexpr const auto cste = Cste<NumType>::sqrt2;
+      return {p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0],
+	  p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1],
+	  p[1]*F[8]*F[8]+(cste*p[3]*F[6]+cste*p[5]*F[2])*F[8]+p[0]*F[6]*F[6]+cste*p[4]*F[2]*F[6]+p[2]*F[2]*F[2],
+	  (cste*p[2]*F[5]+p[5]*F[3]+p[4]*F[0])*F[7]+(p[4]*F[4]+p[5]*F[1])*F[5]+(p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1],
+	  (p[5]*F[5]+cste*p[1]*F[3]+p[3]*F[0])*F[8]+(p[4]*F[5]+p[3]*F[3]+cste*p[0]*F[0])*F[6]+cste*p[2]*F[2]*F[5]+p[5]*F[2]*F[3]+p[4]*F[0]*F[2],
+	  (p[5]*F[7]+p[3]*F[4]+cste*p[1]*F[1])*F[8]+(p[4]*F[6]+cste*p[2]*F[2])*F[7]+(cste*p[0]*F[4]+p[3]*F[1])*F[6]+p[4]*F[2]*F[4]+p[5]*F[1]*F[2]};
     } // end of push_forward
 
     template<typename T,typename T2>
@@ -546,12 +484,7 @@ namespace tfel{
     convertCauchyStressToSecondPiolaKirchhoffStress(const T&  s,
 						    const T2& F)
     {
-      typedef typename StensorTraits<T>::NumType stress;
-      stensor<1u,stress> p;
-      p[0] = s[0]*F[1]*F[2]/(F[0]);
-      p[1] = s[1]*F[0]*F[2]/(F[1]);
-      p[2] = s[2]*F[0]*F[1]/(F[2]);
-      return p;
+      return {s[0]*F[1]*F[2]/(F[0]),s[1]*F[0]*F[2]/(F[1]),s[2]*F[0]*F[1]/(F[2])};
     } // end of convertCauchyStressToSecondPiolaKirchhoffStress
 
     template<typename T,typename T2>
@@ -567,16 +500,13 @@ namespace tfel{
 						    const T2& F)
     {
       typedef typename StensorTraits<T>::NumType stress;
-      typedef typename tfel::typetraits::BaseType<stress>::type real;
-      constexpr real cste = constexpr_fct::sqrt(real(2));
-      const tensor<2u,typename TensorTraits<T2>::NumType> iF = invert(F);
-      const real J = det(F);
-      stensor<2u,stress> p;
-      p[0] = (s[1]*iF[3]*iF[3]+cste*s[3]*iF[0]*iF[3]+s[0]*iF[0]*iF[0])*J;
-      p[1] = (s[0]*iF[4]*iF[4]+cste*s[3]*iF[1]*iF[4]+s[1]*iF[1]*iF[1])*J;
-      p[2] = s[2]*iF[2]*iF[2]*J;
-      p[3] = ((s[3]*iF[3]+cste*s[0]*iF[0])*iF[4]+cste*s[1]*iF[1]*iF[3]+s[3]*iF[0]*iF[1])*J;
-      return p;
+      constexpr const auto cste = Cste<stress>::sqrt2;
+      const auto iF = invert(F);
+      const auto J = det(F);
+      return {(s[1]*iF[3]*iF[3]+cste*s[3]*iF[0]*iF[3]+s[0]*iF[0]*iF[0])*J,
+	  (s[0]*iF[4]*iF[4]+cste*s[3]*iF[1]*iF[4]+s[1]*iF[1]*iF[1])*J,
+	  s[2]*iF[2]*iF[2]*J,
+	  ((s[3]*iF[3]+cste*s[0]*iF[0])*iF[4]+cste*s[1]*iF[1]*iF[3]+s[3]*iF[0]*iF[1])*J};
     } // end of convertCauchyStressToSecondPiolaKirchhoffStress
 
     template<typename T,typename T2>
@@ -592,18 +522,15 @@ namespace tfel{
 						    const T2& F)
     {
       typedef typename StensorTraits<T>::NumType stress;
-      typedef typename tfel::typetraits::BaseType<stress>::type real;
-      constexpr real cste = constexpr_fct::sqrt(real(2));
-      const tensor<3u,typename TensorTraits<T2>::NumType> iF = invert(F);
-      const real J = det(F);
-      stensor<3u,stress> p;
-      p[0] = (s[2]*iF[5]*iF[5]+(cste*s[5]*iF[3]+cste*s[4]*iF[0])*iF[5]+s[1]*iF[3]*iF[3]+cste*s[3]*iF[0]*iF[3]+s[0]*iF[0]*iF[0])*J;
-      p[1] = (s[2]*iF[7]*iF[7]+(cste*s[4]*iF[4]+cste*s[5]*iF[1])*iF[7]+s[0]*iF[4]*iF[4]+cste*s[3]*iF[1]*iF[4]+s[1]*iF[1]*iF[1])*J;
-      p[2] = (s[1]*iF[8]*iF[8]+(cste*s[3]*iF[6]+cste*s[5]*iF[2])*iF[8]+s[0]*iF[6]*iF[6]+cste*s[4]*iF[2]*iF[6]+s[2]*iF[2]*iF[2])*J;
-      p[3] = ((cste*s[2]*iF[5]+s[5]*iF[3]+s[4]*iF[0])*iF[7]+(s[4]*iF[4]+s[5]*iF[1])*iF[5]+(s[3]*iF[3]+cste*s[0]*iF[0])*iF[4]+cste*s[1]*iF[1]*iF[3]+s[3]*iF[0]*iF[1])*J;
-      p[4] = ((s[5]*iF[5]+cste*s[1]*iF[3]+s[3]*iF[0])*iF[8]+(s[4]*iF[5]+s[3]*iF[3]+cste*s[0]*iF[0])*iF[6]+cste*s[2]*iF[2]*iF[5]+s[5]*iF[2]*iF[3]+s[4]*iF[0]*iF[2])*J;
-      p[5] = ((s[5]*iF[7]+s[3]*iF[4]+cste*s[1]*iF[1])*iF[8]+(s[4]*iF[6]+cste*s[2]*iF[2])*iF[7]+(cste*s[0]*iF[4]+s[3]*iF[1])*iF[6]+s[4]*iF[2]*iF[4]+s[5]*iF[1]*iF[2])*J;
-      return p;
+      constexpr const auto cste = Cste<stress>::sqrt2;
+      const auto iF = invert(F);
+      const auto J = det(F);
+      return {(s[2]*iF[5]*iF[5]+(cste*s[5]*iF[3]+cste*s[4]*iF[0])*iF[5]+s[1]*iF[3]*iF[3]+cste*s[3]*iF[0]*iF[3]+s[0]*iF[0]*iF[0])*J,
+	  (s[2]*iF[7]*iF[7]+(cste*s[4]*iF[4]+cste*s[5]*iF[1])*iF[7]+s[0]*iF[4]*iF[4]+cste*s[3]*iF[1]*iF[4]+s[1]*iF[1]*iF[1])*J,
+	  (s[1]*iF[8]*iF[8]+(cste*s[3]*iF[6]+cste*s[5]*iF[2])*iF[8]+s[0]*iF[6]*iF[6]+cste*s[4]*iF[2]*iF[6]+s[2]*iF[2]*iF[2])*J,
+	  ((cste*s[2]*iF[5]+s[5]*iF[3]+s[4]*iF[0])*iF[7]+(s[4]*iF[4]+s[5]*iF[1])*iF[5]+(s[3]*iF[3]+cste*s[0]*iF[0])*iF[4]+cste*s[1]*iF[1]*iF[3]+s[3]*iF[0]*iF[1])*J,
+	  ((s[5]*iF[5]+cste*s[1]*iF[3]+s[3]*iF[0])*iF[8]+(s[4]*iF[5]+s[3]*iF[3]+cste*s[0]*iF[0])*iF[6]+cste*s[2]*iF[2]*iF[5]+s[5]*iF[2]*iF[3]+s[4]*iF[0]*iF[2])*J,
+	  ((s[5]*iF[7]+s[3]*iF[4]+cste*s[1]*iF[1])*iF[8]+(s[4]*iF[6]+cste*s[2]*iF[2])*iF[7]+(cste*s[0]*iF[4]+s[3]*iF[1])*iF[6]+s[4]*iF[2]*iF[4]+s[5]*iF[1]*iF[2])*J};
     } // end of convertCauchyStressToSecondPiolaKirchhoffStress
 
     template<typename T,typename T2>
@@ -618,14 +545,10 @@ namespace tfel{
     convertSecondPiolaKirchhoffStressToCauchyStress(const T&  p,
 						    const T2& F)
     {
-      typedef typename StensorTraits<T>::NumType stress;
-      typedef typename tfel::typetraits::BaseType<stress>::type real;
-      stensor<1u,stress> s;
-      const real inv_J = 1/(F[0]*F[1]*F[2]);
-      s[0] = p[0]*F[0]*F[0]*inv_J;
-      s[1] = p[1]*F[1]*F[1]*inv_J;
-      s[2] = p[2]*F[2]*F[2]*inv_J;
-      return s;
+      const auto iJ = 1/(F[0]*F[1]*F[2]);
+      return {p[0]*F[0]*F[0]*iJ,
+	  p[1]*F[1]*F[1]*iJ,
+	  p[2]*F[2]*F[2]*iJ};
     } // end of convertSecondPiolaKirchhoffStressToCauchyStress
 
     template<typename T,typename T2>
@@ -641,15 +564,12 @@ namespace tfel{
 						    const T2& F)
     {
       typedef typename StensorTraits<T>::NumType stress;
-      typedef typename tfel::typetraits::BaseType<stress>::type real;
-      constexpr real cste = constexpr_fct::sqrt(real(2));
-      stensor<2u,stress> s;
-      const real inv_J = 1/det(F);
-      s[0] = (p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0])*inv_J;
-      s[1] = (p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1])*inv_J;
-      s[2] = p[2]*F[2]*F[2]*inv_J;
-      s[3] = ((p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1])*inv_J;
-      return s;
+      constexpr const auto cste = Cste<stress>::sqrt2;
+      const auto iJ = 1/det(F);
+      return {(p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0])*iJ,
+	  (p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1])*iJ,
+	  p[2]*F[2]*F[2]*iJ,
+	  ((p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1])*iJ};
     } // end of convertSecondPiolaKirchhoffStressToCauchyStress
 
     template<typename T,typename T2>
@@ -665,17 +585,14 @@ namespace tfel{
 						    const T2& F)
     {
       typedef typename StensorTraits<T>::NumType stress;
-      typedef typename tfel::typetraits::BaseType<stress>::type real;
-      constexpr real cste = constexpr_fct::sqrt(real(2));
-      stensor<3u,stress> s;
-      const real inv_J = 1/det(F);
-      s[0] = (p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0])*inv_J;
-      s[1] = (p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1])*inv_J;
-      s[2] = (p[1]*F[8]*F[8]+(cste*p[3]*F[6]+cste*p[5]*F[2])*F[8]+p[0]*F[6]*F[6]+cste*p[4]*F[2]*F[6]+p[2]*F[2]*F[2])*inv_J;
-      s[3] = ((cste*p[2]*F[5]+p[5]*F[3]+p[4]*F[0])*F[7]+(p[4]*F[4]+p[5]*F[1])*F[5]+(p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1])*inv_J;
-      s[4] = ((p[5]*F[5]+cste*p[1]*F[3]+p[3]*F[0])*F[8]+(p[4]*F[5]+p[3]*F[3]+cste*p[0]*F[0])*F[6]+cste*p[2]*F[2]*F[5]+p[5]*F[2]*F[3]+p[4]*F[0]*F[2])*inv_J;
-      s[5] = ((p[5]*F[7]+p[3]*F[4]+cste*p[1]*F[1])*F[8]+(p[4]*F[6]+cste*p[2]*F[2])*F[7]+(cste*p[0]*F[4]+p[3]*F[1])*F[6]+p[4]*F[2]*F[4]+p[5]*F[1]*F[2])*inv_J;
-      return s;
+      constexpr const auto cste = Cste<stress>::sqrt2;
+      const auto iJ = 1/det(F);
+      return {(p[2]*F[5]*F[5]+(cste*p[5]*F[3]+cste*p[4]*F[0])*F[5]+p[1]*F[3]*F[3]+cste*p[3]*F[0]*F[3]+p[0]*F[0]*F[0])*iJ,
+	  (p[2]*F[7]*F[7]+(cste*p[4]*F[4]+cste*p[5]*F[1])*F[7]+p[0]*F[4]*F[4]+cste*p[3]*F[1]*F[4]+p[1]*F[1]*F[1])*iJ,
+	  (p[1]*F[8]*F[8]+(cste*p[3]*F[6]+cste*p[5]*F[2])*F[8]+p[0]*F[6]*F[6]+cste*p[4]*F[2]*F[6]+p[2]*F[2]*F[2])*iJ,
+	  ((cste*p[2]*F[5]+p[5]*F[3]+p[4]*F[0])*F[7]+(p[4]*F[4]+p[5]*F[1])*F[5]+(p[3]*F[3]+cste*p[0]*F[0])*F[4]+cste*p[1]*F[1]*F[3]+p[3]*F[0]*F[1])*iJ,
+	  ((p[5]*F[5]+cste*p[1]*F[3]+p[3]*F[0])*F[8]+(p[4]*F[5]+p[3]*F[3]+cste*p[0]*F[0])*F[6]+cste*p[2]*F[2]*F[5]+p[5]*F[2]*F[3]+p[4]*F[0]*F[2])*iJ,
+	  ((p[5]*F[7]+p[3]*F[4]+cste*p[1]*F[1])*F[8]+(p[4]*F[6]+cste*p[2]*F[2])*F[7]+(cste*p[0]*F[4]+p[3]*F[1])*F[6]+p[4]*F[2]*F[4]+p[5]*F[1]*F[2])*iJ};
     } // end of convertSecondPiolaKirchhoffStressToCauchyStress
 
     template<typename TensorType>

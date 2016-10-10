@@ -92,7 +92,7 @@ namespace tfel
 			const real theta)
     {
       using namespace std;
-      constexpr real cste = tfel::math::constexpr_fct::sqrt(real(2));
+      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
       const real a[4]  = {s(0),s(1),s(2),s(3)*cste};
       const real cost  = cos(theta);
       const real sint  = sin(theta);
@@ -110,10 +110,10 @@ namespace tfel
 			const real theta)
     {
       using namespace std;
-      constexpr real cste  = tfel::math::constexpr_fct::sqrt(real(2));
-      constexpr real cste2 = 1/cste;
-      const real a[6]  = {s(0),s(1),s(2),s(3)*cste2,
-			  s(4)*cste2,s(5)*cste2};
+      constexpr const auto cste  = tfel::math::Cste<real>::sqrt2;
+      constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
+      const real a[6]  = {s(0),s(1),s(2),s(3)*icste,
+			  s(4)*icste,s(5)*icste};
       const real cost  = cos(theta);
       const real sint  = sin(theta);
       const real alpha = cost*a[0]+sint*a[3];
@@ -138,9 +138,9 @@ namespace tfel
 			const real theta)
     {
       using namespace std;
-      constexpr real cste  = tfel::math::constexpr_fct::sqrt(real(2));
-      constexpr real cste2 = 1/cste;
-      const real a[4]  = {s(0),s(1),s(2),s(3)*cste2};
+      constexpr const auto cste  = tfel::math::Cste<real>::sqrt2;
+      constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
+      const real a[4]  = {s(0),s(1),s(2),s(3)*icste};
       const real cost  = cos(theta);
       const real sint  = sin(theta);
       const real alpha = cost*a[0]-sint*a[3];
@@ -157,10 +157,10 @@ namespace tfel
 			const real theta)
     {
       using namespace std;
-      constexpr real cste  = tfel::math::constexpr_fct::sqrt(real(2));
-      constexpr real cste2 = 1/cste;
-      const real a[6]  = {s(0),s(1),s(2),s(3)*cste2,
-			  s(4)*cste2,s(5)*cste2};
+      constexpr const auto cste  = tfel::math::Cste<real>::sqrt2;
+      constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
+      const real a[6]  = {s(0),s(1),s(2),s(3)*icste,
+			  s(4)*icste,s(5)*icste};
       const real cost  = cos(theta);
       const real sint  = sin(theta);
       const real alpha = cost*a[0]-sint*a[3];

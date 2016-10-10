@@ -19,6 +19,7 @@
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 
 namespace tfel{
@@ -43,13 +44,11 @@ namespace tfel{
 	template<typename T>
 	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
 	{
-	  using real = typename tfel::typetraits::BaseType<T>::type;
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr real CSTE_1_SQRT2 = real(1)/sqrt(real(2));
+	  constexpr const auto icste = Cste<T>::isqrt2;
 	  target[0] = src[0];
 	  target[1] = src[1];
 	  target[2] = src[2];
-	  target[3] = src[3]*CSTE_1_SQRT2;
+	  target[3] = src[3]*icste;
 	}
       };
 
@@ -58,15 +57,13 @@ namespace tfel{
 	template<typename T>
 	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
 	{
-	  using real = typename tfel::typetraits::BaseType<T>::type;
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr real CSTE_1_SQRT2 = real(1)/sqrt(real(2));
+	  constexpr const auto icste = Cste<T>::isqrt2;
 	  target[0] = src[0];
 	  target[1] = src[1];
 	  target[2] = src[2];
-	  target[3] = src[3]*CSTE_1_SQRT2;
-	  target[4] = src[4]*CSTE_1_SQRT2;
-	  target[5] = src[5]*CSTE_1_SQRT2;
+	  target[3] = src[3]*icste;
+	  target[4] = src[4]*icste;
+	  target[5] = src[5]*icste;
 	}
       };
 
@@ -86,13 +83,11 @@ namespace tfel{
 	template<typename T>
 	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
 	{
-	  using real = typename tfel::typetraits::BaseType<T>::type;
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr real CSTE_SQRT2 = sqrt(real(2));
+	  constexpr const auto cste = Cste<T>::sqrt2;
 	  target[0] = src[0];
 	  target[1] = src[1];
 	  target[2] = src[2];
-	  target[3] = src[3]*CSTE_SQRT2;
+	  target[3] = src[3]*cste;
 	}
       };
 
@@ -101,15 +96,13 @@ namespace tfel{
 	template<typename T>
 	TFEL_MATH_INLINE static void exe(const T* const src,T * const target)
 	{
-	  using real = typename tfel::typetraits::BaseType<T>::type;
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr real CSTE_SQRT2 = sqrt(real(2));
+	  constexpr const auto cste = Cste<T>::sqrt2;
 	  target[0] = src[0];
 	  target[1] = src[1];
 	  target[2] = src[2];
-	  target[3] = src[3]*CSTE_SQRT2;
-	  target[4] = src[4]*CSTE_SQRT2;
-	  target[5] = src[5]*CSTE_SQRT2;
+	  target[3] = src[3]*cste;
+	  target[4] = src[4]*cste;
+	  target[5] = src[5]*cste;
 	}
       };
 

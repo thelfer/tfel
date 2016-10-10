@@ -179,7 +179,7 @@ namespace tfel
 	const real v = m(i,c);
 	n += v*v;
       }
-      return sqrt(n);
+      return std::sqrt(n);
     }
 
   } // end of namespace math

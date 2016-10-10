@@ -70,13 +70,9 @@ namespace tfel{
 	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
 	tfel::math::st2tost2<3u,T>>::type
       exe(const StensorType& s){
-	using real = typename tfel::typetraits::BaseType<T>::type;
-#ifndef _MSC_VER
-	constexpr const real icste = 1/tfel::math::constexpr_fct::sqrt(real(2));
-#else
-	static const real icste = 1/std::sqrt(real(2));
-#endif
-	constexpr const real zero = real(0);
+	using real = tfel::typetraits::base_type<T>;
+	constexpr const auto icste = Cste<T>::isqrt2;
+	constexpr const auto zero = real(0);
 	return {2*s[0],zero,zero,s[3],s[4],zero,
 	    zero,2*s[1],zero,s[3],zero,s[5],
 	    zero,zero,2*s[2],zero,s[4],s[5],
@@ -87,6 +83,7 @@ namespace tfel{
     }; // end of struct StensorSymmetricProductDerivative<3u,T>
     
   } // end of namespace math
+  
 } // end of namespace tfel
 
 #endif /* LIB_STENSORSYMMETRICPRODUCTDERIVATIVE_HXX_ */

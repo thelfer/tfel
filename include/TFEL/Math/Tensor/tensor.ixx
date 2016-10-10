@@ -21,7 +21,7 @@
 
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include"TFEL/Math/General/Abs.hxx"
-#include"TFEL/Math/General/ConstExprMathFunctions.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/Tensor/TensorChangeBasis.hxx"
 
@@ -406,15 +406,13 @@ namespace tfel{
     invert(const TensorType& t){
       typedef typename TensorTraits<TensorType>::NumType T;
       typedef typename tfel::typetraits::BaseType<T>::type base;
-      typedef typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
-					  Power<2> >::Result T2;
       typedef typename ComputeBinaryResult<base,T,OpDiv>::Result T3;
       tensor<2u,T3> t2;
-      T2 det = t(0)*t(1)-t(3)*t(4);
-      t2(0) = t(1)/det;
-      t2(1) = t(0)/det;
-      t2(3) = -t(3)/det;
-      t2(4) = -t(4)/det;
+      const auto id = base(1)/(t(0)*t(1)-t(3)*t(4));
+      t2(0) =  t(1)*id;
+      t2(1) =  t(0)*id;
+      t2(3) = -t(3)*id;
+      t2(4) = -t(4)*id;
       t2(2) = base(1)/t(2);
       return t2;
     }
@@ -429,12 +427,9 @@ namespace tfel{
     invert(const TensorType& t){
       typedef typename TensorTraits<TensorType>::NumType T;
       typedef typename tfel::typetraits::BaseType<T>::type base;
-      typedef typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
-					  Power<3> >::Result T2;
-      typedef typename ComputeBinaryResult<base,T2,OpDiv>::Result T3;
       typedef typename ComputeBinaryResult<base,T,OpDiv>::Result  T4;
       tensor<3u,T4> t2;
-      const T3 id = base(1)/det(t);
+      const auto id = base(1)/det(t);
       t2(0) = (t(1)*t(2)-t(7)*t(8))*id;
       t2(1) = (t(0)*t(2)-t(5)*t(6))*id;
       t2(2) = (t(0)*t(1)-t(3)*t(4))*id;
@@ -497,8 +492,7 @@ namespace tfel{
       >::type
     unsyme(const T& s){
       using value_type = typename StensorTraits<T>::NumType;
-      using base_type  = typename tfel::typetraits::BaseType<value_type>::type;
-      constexpr base_type cste = base_type(1)/constexpr_fct::sqrt(base_type(2));
+      constexpr const auto cste = Cste<value_type>::isqrt2;
       tensor<2u,value_type> r;
       r[0] = s[0];
       r[1] = s[1];
@@ -515,8 +509,7 @@ namespace tfel{
       >::type
     unsyme(const T& s){
       using value_type = typename StensorTraits<T>::NumType;
-      using base_type  = typename tfel::typetraits::BaseType<value_type>::type;
-      constexpr base_type cste = base_type(1)/constexpr_fct::sqrt(base_type(2));
+      constexpr const auto cste = Cste<value_type>::isqrt2;
       tensor<3u,value_type> r;
       r[0] = s[0];
       r[1] = s[1];
@@ -532,4 +525,3 @@ namespace tfel{
 } // end of namespace tfel
 
 #endif /* LIB_TFEL_TENSOR_IXX_ */
-

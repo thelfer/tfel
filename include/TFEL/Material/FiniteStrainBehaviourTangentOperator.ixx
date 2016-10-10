@@ -13,6 +13,7 @@
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/t2tost2.hxx"
 #include"TFEL/Math/st2tost2.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx"
 
 /*!
@@ -105,7 +106,7 @@ namespace tfel
 	// i,j are valid for the space dimension considered
 	tfel::math::tensor<N,real> dF;
 	tfel::math::tensor<N,real> ekel(real(0));
-	const auto v = ((idx>2) ? std::sqrt(2) : real(1))/2;
+	const auto v = ((idx>2) ? tfel::math::Cste<real>::sqrt2 : real(1))/2;
 	ekel(c.first)+=v;
 	ekel(c.second)+=v;
 	return ekel*F;
@@ -821,7 +822,7 @@ namespace tfel
 	  }
 	  for(unsigned short i=0;i!=tfel::math::StensorDimeToSize<N>::value-3;++i){
 	    for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){
-	      r(3+i,j)=(src(3+2*i,j)+src(3+2*i+1,j))/std::sqrt(base_type<stress>(2));
+	      r(3+i,j)=(src(3+2*i,j)+src(3+2*i+1,j))*tfel::math::Cste<stress>::isqrt2;
 	    }
 	  }
 	  return r;
@@ -864,7 +865,7 @@ namespace tfel
 	  }
 	  for(unsigned short i=0;i!=tfel::math::StensorDimeToSize<N>::value-3;++i){
 	    for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){
-	      r(3+i,j)=(src(3+2*i,j)+src(3+2*i+1,j))/std::sqrt(base_type<stress>(2));
+	      r(3+i,j)=(src(3+2*i,j)+src(3+2*i+1,j))*tfel::math::Cste<stress>::isqrt2;
 	    }
 	  }
 	  return r;
@@ -910,7 +911,7 @@ namespace tfel
 	  }
 	  for(unsigned short i=0;i!=tfel::math::StensorDimeToSize<N>::value-3;++i){
 	    for(unsigned short j=0;j!=tfel::math::TensorDimeToSize<N>::value;++j){
-	      r(3+i,j)=(src(3+2*i,j)+src(3+2*i+1,j))/std::sqrt(base_type<stress>(2));
+	      r(3+i,j)=(src(3+2*i,j)+src(3+2*i+1,j))*tfel::math::Cste<stress>::isqrt2;;
 	    }
 	  }
 	  return r;

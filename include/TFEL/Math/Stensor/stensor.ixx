@@ -21,6 +21,7 @@
 
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include"TFEL/Math/General/Abs.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 
@@ -36,7 +37,7 @@ namespace tfel{
 
     namespace internals{
       template<unsigned short N>
-      class StensorComputeEigenVectors_;
+      struct StensorComputeEigenVectors_;
 
       template<unsigned short N>
       struct StensorDeterminant;
@@ -71,8 +72,7 @@ namespace tfel{
 	static TFEL_MATH_INLINE typename ComputeUnaryResult<T,Power<3> >::Result
 	exe(const tfel::math::stensor<3u,T>& s)
 	{
-	  typedef typename tfel::typetraits::BaseType<T>::type real;
-	  constexpr real cste = constexpr_fct::sqrt(real(2));
+	  constexpr const auto cste = Cste<T>::sqrt2;
 	  return (T(2)*s(0)*s(1)*s(2)+cste*s(3)*s(4)*s(5)-s(2)*s(3)*s(3)-s(1)*s(4)*s(4)-s(0)*s(5)*s(5))/real(2);
 	}
       }; // end of struct StensorDeterminant
@@ -130,18 +130,17 @@ namespace tfel{
 	  typedef typename tfel::typetraits::BaseType<T>::type base;
 	  typedef typename ComputeBinaryResult<base,T,OpDiv>::Result T2;
 	  typedef typename ComputeUnaryResult<T,Power<3> >::Result T3;
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr base two          = base(2);
-	  constexpr base one_half     = base(1)/two;
-	  constexpr base inv_sqrt_two = base(1)/sqrt(two);
+	  constexpr const base two      = base(2);
+	  constexpr const base one_half = base(1)/two;
+	  constexpr const base icste    = Cste<base>::isqrt2;
 	  stensor<3u,T2> inv;
-	  const T3 inv_det = base(1)/det(s);
-	  inv(0)=(s(1)*s(2)-s(5)*s(5)*one_half)*inv_det;
-	  inv(1)=(s(0)*s(2)-s(4)*s(4)*one_half)*inv_det;
-	  inv(2)=(s(0)*s(1)-s(3)*s(3)*one_half)*inv_det;
-	  inv(3)=(inv_sqrt_two*s(4)*s(5)-s(2)*s(3))*inv_det;
-	  inv(4)=(inv_sqrt_two*s(3)*s(5)-s(1)*s(4))*inv_det;
-	  inv(5)=(inv_sqrt_two*s(3)*s(4)-s(0)*s(5))*inv_det;
+	  const T3 iJ = base(1)/det(s);
+	  inv(0)=(s(1)*s(2)-s(5)*s(5)*one_half)*iJ;
+	  inv(1)=(s(0)*s(2)-s(4)*s(4)*one_half)*iJ;
+	  inv(2)=(s(0)*s(1)-s(3)*s(3)*one_half)*iJ;
+	  inv(3)=(icste*s(4)*s(5)-s(2)*s(3))*iJ;
+	  inv(4)=(icste*s(3)*s(5)-s(1)*s(4))*iJ;
+	  inv(5)=(icste*s(3)*s(4)-s(0)*s(5))*iJ;
 	  return inv;
 	}
       };
@@ -158,7 +157,6 @@ namespace tfel{
 	  tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
 	  void>::type
 	exe(stensor<1u,T>& s,const MatrixType& m){
-	  using namespace std;
 	  s[0] = m(0,0);
 	  s[1] = m(1,1);
 	  s[2] = m(2,2);
@@ -174,9 +172,7 @@ namespace tfel{
 	  tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
 	  void>::type
 	exe(stensor<2u,T>& s,const MatrixType& m){
-	  typedef typename tfel::typetraits::BaseType<T>::type real;
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr real cste = sqrt(real(2))/(real(2));
+	  constexpr const auto cste = Cste<T>::isqrt2/2;
 	  s[0] = m(0,0);
 	  s[1] = m(1,1);
 	  s[2] = m(2,2);
@@ -193,9 +189,7 @@ namespace tfel{
 	  tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
 	  void>::type
 	exe(stensor<3u,T>& s,const MatrixType& m){
-	  typedef typename tfel::typetraits::BaseType<T>::type real;
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr real cste = sqrt(real(2))/(real(2));
+	  constexpr const auto cste = Cste<T>::isqrt2/2;
 	  s[0] = m(0,0);
 	  s[1] = m(1,1);
 	  s[2] = m(2,2);
@@ -236,9 +230,7 @@ namespace tfel{
 	    >::cond,
 	  void>::type
 	exe(stensor<2u,T>& s,const VectorType& v){
-	  typedef typename tfel::typetraits::BaseType<T>::type real;
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr real cste = sqrt(real(2));
+	  constexpr const auto cste = Cste<T>::sqrt2;
 	  s[0] = v(0)*v(0);
 	  s[1] = v(1)*v(1);
 	  s[2] = v(2)*v(2);
@@ -257,9 +249,7 @@ namespace tfel{
 	    >::cond,
 	  void>::type
 	exe(stensor<3u,T>& s,const VectorType& v){
-	  typedef typename tfel::typetraits::BaseType<T>::type real;
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr real cste = sqrt(real(2));
+	  constexpr const auto cste = Cste<T>::sqrt2;
 	  s[0] = v(0)*v(0);
 	  s[1] = v(1)*v(1);
 	  s[2] = v(2)*v(2);
@@ -288,7 +278,6 @@ namespace tfel{
 	exe(stensor<1u,T>& s,
 	    const VectorType& v1,
 	    const VectorType2& v2){
-	  using namespace std;
 	  s[0] = 2*v1(0)*v2(0);
 	  s[1] = 2*v1(1)*v2(1);
 	  s[2] = 2*v1(2)*v2(2);
@@ -311,9 +300,7 @@ namespace tfel{
 	exe(stensor<2u,T>& s,
 	    const VectorType& v1,
 	    const VectorType2& v2){
-	  typedef typename tfel::typetraits::BaseType<T>::type real;
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr real cste = sqrt(real(2));
+	  constexpr const auto cste = Cste<T>::sqrt2;
 	  s[0] = 2*v1(0)*v2(0);
 	  s[1] = 2*v1(1)*v2(1);
 	  s[2] = 2*v1(2)*v2(2);
@@ -337,9 +324,7 @@ namespace tfel{
 	exe(stensor<3u,T>& s,
 	    const VectorType& v1,
 	    const VectorType2& v2){
-	  typedef typename tfel::typetraits::BaseType<T>::type real;
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr real cste = sqrt(real(2));
+	  constexpr const auto cste = Cste<T>::sqrt2;
 	  s[0] = 2*v1(0)*v2(0);
 	  s[1] = 2*v1(1)*v2(1);
 	  s[2] = 2*v1(2)*v2(2);
@@ -372,9 +357,7 @@ namespace tfel{
 	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL void
 	exe(stensor<2u,T>& s,const T& v1,const T& v2,const T& v3,
 	    const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m){
-	  typedef typename tfel::typetraits::BaseType<T>::type real;
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr real cste = sqrt(real(2));
+	  constexpr const auto cste = Cste<T>::sqrt2;
 	  s[0] = v1*m(0,0)*m(0,0)+v2*m(0,1)*m(0,1);
 	  s[1] = v1*m(1,0)*m(1,0)+v2*m(1,1)*m(1,1);
 	  s[2] = v3;
@@ -389,9 +372,7 @@ namespace tfel{
 	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL void
 	exe(stensor<3u,T>& s,const T& v1,const T& v2,const T& v3,
 	    const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m){
-	  typedef typename tfel::typetraits::BaseType<T>::type real;
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr real cste = sqrt(real(2));
+	  constexpr const auto cste = Cste<T>::sqrt2;
 	  s[0] =  v1*m(0,0)*m(0,0)+v2*m(0,1)*m(0,1)+v3*m(0,2)*m(0,2);
 	  s[1] =  v1*m(1,0)*m(1,0)+v2*m(1,1)*m(1,1)+v3*m(1,2)*m(1,2);
 	  s[2] =  v1*m(2,0)*m(2,0)+v2*m(2,1)*m(2,1)+v3*m(2,2)*m(2,2);
@@ -416,9 +397,7 @@ namespace tfel{
 	  (tfel::typetraits::IsAssignableTo<BaseType,
 					    typename StensorTraits<StensorType>::NumType>::cond),
 	  void>::type
-	exe(StensorType& n0,
-	    StensorType& n1,
-	    StensorType& n2,
+	exe(StensorType& n0,StensorType& n1,StensorType& n2,
 	    const tfel::math::tmatrix<3u,3u,BaseType>&)
 	{
 	  n0(0) = BaseType(1);
@@ -445,9 +424,7 @@ namespace tfel{
 	  (tfel::typetraits::IsAssignableTo<BaseType,
 					    typename StensorTraits<StensorType>::NumType>::cond),
 	  void>::type
-	exe(StensorType& n0,
-	    StensorType& n1,
-	    StensorType& n2,
+	exe(StensorType& n0,StensorType& n1,StensorType& n2,
 	    const tfel::math::tmatrix<3u,3u,BaseType>& m)
 	{
 	  using namespace tfel::math;
@@ -502,7 +479,7 @@ namespace tfel{
 			    const NumType eps)
 	{
 	  using namespace std;
-	  if(abs(x)<100*numeric_limits<NumType>::min()){
+	  if(std::abs(x)<100*numeric_limits<NumType>::min()){
 	    return NumType(0);
 	  }
 	  return regularization_function(x/eps)/x;
@@ -514,7 +491,7 @@ namespace tfel{
 	regularization_function(const NumType x)
 	{
 	  using namespace std;
-	  if(abs(x)>1){
+	  if(std::abs(x)>1){
 	    return NumType(1);
 	  }
 	  return x*x*(4-x*x)/3;
@@ -565,19 +542,17 @@ namespace tfel{
 									 NumType,OpDiv>::Result,
 					    typename ST2toST2Traits<ST2toST2Type>::NumType>::cond),
 	  void>::type
-	exe(ST2toST2Type& dn0_ds,
-	    ST2toST2Type& dn1_ds,
-	    ST2toST2Type& dn2_ds,
+	exe(ST2toST2Type& dn0_ds,ST2toST2Type& dn1_ds,ST2toST2Type& dn2_ds,
 	    const tfel::math::tvector<3u,NumType>& vp,
 	    const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<NumType>::type>& m,
 	    const NumType eps)
 	{
 	  typedef typename tfel::typetraits::BaseType<NumType>::type base;
 	  typedef typename ComputeBinaryResult<base,NumType,OpDiv>::Result InvNumType;
-	  constexpr base cste = base(1)/constexpr_fct::sqrt(base(2));
+	  constexpr const auto icste = Cste<base>::isqrt2;
 	  const tvector<3u,base> v0 = m.template column_view<0u>();
 	  const tvector<3u,base> v1 = m.template column_view<1u>();
-	  const stensor<2u,base> n01 = stensor<2u,base>::buildFromVectorsSymmetricDiadicProduct(v0,v1)*cste;
+	  const stensor<2u,base> n01 = stensor<2u,base>::buildFromVectorsSymmetricDiadicProduct(v0,v1)*icste;
 	  dn0_ds = regularized_inverse(vp(0)-vp(1),eps)*(n01^n01);
 	  dn1_ds = -dn0_ds;
 	  dn2_ds = st2tost2<2u,InvNumType>(InvNumType(0));
@@ -598,17 +573,14 @@ namespace tfel{
 									 NumType,OpDiv>::Result,
 					    typename ST2toST2Traits<ST2toST2Type>::NumType>::cond),
 	  void>::type
-	exe(ST2toST2Type& dn0_ds,
-	    ST2toST2Type& dn1_ds,
-	    ST2toST2Type& dn2_ds,
+	exe(ST2toST2Type& dn0_ds,ST2toST2Type& dn1_ds,ST2toST2Type& dn2_ds,
 	    const tfel::math::tvector<3u,NumType>& vp,
 	    const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<NumType>::type>& m,
 	    const NumType eps)
 	{
 	  using namespace tfel::math;
 	  typedef typename tfel::typetraits::BaseType<NumType>::type base;
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr base cste = base(1)/sqrt(base(2));
+	  constexpr const auto cste = Cste<base>::isqrt2;
 	  const tvector<3u,base> v0 = m.template column_view<0u>();
 	  const tvector<3u,base> v1 = m.template column_view<1u>();
 	  const tvector<3u,base> v2 = m.template column_view<2u>();
@@ -690,13 +662,13 @@ namespace tfel{
 	  using base    = typename tfel::typetraits::BaseType<real>::type;
 	  using tvector = tfel::math::tvector<3u,real>;
 	  using stensor = tfel::math::stensor<2u,real>;
-	  constexpr const base cste = tfel::math::constexpr_fct::sqrt(base(2));
+	  constexpr const base cste = Cste<base>::sqrt2;
 	  stensor  n0,n1,n2;
 	  stensor::computeEigenTensors(n0,n1,n2,m);
 	  const tvector v0 = m.template column_view<0u>();
 	  const tvector v1 = m.template column_view<1u>();
 	  const auto n01 = stensor::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
-	  if(abs(vp(0)-vp(1))>eps){
+	  if(std::abs(vp(0)-vp(1))>eps){
 	    d = (n0^n0)*df(vp(0))+(n1^n1)*df(vp(1))+(n2^n2)*df(vp(2))+
 	      (f(vp(0))-f(vp(1)))/(vp(0)-vp(1))*(n01^n01);
 	  } else {
@@ -737,11 +709,11 @@ namespace tfel{
 	  using tvector = tfel::math::tvector<3u,real>;
 	  using stensor  = tfel::math::stensor<3u,real>;
 	  using st2tost2 = tfel::math::st2tost2<3u,real>;
-	  constexpr const base cste = tfel::math::constexpr_fct::sqrt(base(2));
-	  if((abs(vp(0)-vp(1))<eps)&&(abs(vp(0)-vp(2))<eps)){
+	  constexpr const base cste = Cste<base>::sqrt2;
+	  if((std::abs(vp(0)-vp(1))<eps)&&(std::abs(vp(0)-vp(2))<eps)){
 	    const auto vpm = (vp(0)+vp(1)+vp(2))/3;
 	    d = st2tost2::Id()*df(vpm);
-	  } else if(abs(vp(0)-vp(1))<eps){
+	  } else if(std::abs(vp(0)-vp(1))<eps){
 	    const tvector v0 = m.template column_view<0u>();
 	    const tvector v1 = m.template column_view<1u>();
 	    const tvector v2 = m.template column_view<2u>();
@@ -753,7 +725,7 @@ namespace tfel{
 	    const auto vpm = (vp(0)+vp(1))/2;
 	    d = (((n0^n0)+(n1^n1)+(n01^n01))*df(vpm)+(n2^n2)*df(vp(2))+
 		 (f(vp(0))-f(vp(2)))/(vpm-vp(2))*((n02^n02)+(n12^n12)));
-	  } else if(abs(vp(0)-vp(2))<eps){
+	  } else if(std::abs(vp(0)-vp(2))<eps){
 	    const tvector v0 = m.template column_view<0u>();
 	    const tvector v1 = m.template column_view<1u>();
 	    const tvector v2 = m.template column_view<2u>();
@@ -765,7 +737,7 @@ namespace tfel{
 	    const auto vpm = (vp(0)+vp(2))/2;
 	    d = (((n0^n0)+(n2^n2)+(n02^n02))*df(vpm)+(n1^n1)*df(vp(1))+
 		 (f(vp(0))-f(vp(1)))/(vpm-vp(1))*((n01^n01)+(n12^n12)));
-	  } else if(abs(vp(1)-vp(2))<eps){
+	  } else if(std::abs(vp(1)-vp(2))<eps){
 	    const tvector v0 = m.template column_view<0u>();
 	    const tvector v1 = m.template column_view<1u>();
 	    const tvector v2 = m.template column_view<2u>();
@@ -1616,9 +1588,8 @@ namespace tfel{
       using T2   = typename ComputeBinaryResult<T,T,OpMult>::Result;
       using base = typename tfel::typetraits::BaseType<T>::type;
       typedef typename StensorTraits<StensorType>::NumType T;
-      using constexpr_fct::sqrt;
-      constexpr base cste     = sqrt(base(2));
-      constexpr base one_half = 1/(base(2));
+      constexpr const base cste     = Cste<base>::sqrt2;
+      constexpr const base one_half = 1/(base(2));
       return stensor<3u,T2>{(s(4)*s(4)+s(3)*s(3)+2*s(0)*s(0))*one_half,
 	  (s(5)*s(5)+s(3)*s(3)+2*s(1)*s(1))*one_half,
 	  (s(5)*s(5)+s(4)*s(4)+2*s(2)*s(2))*one_half,
@@ -1731,7 +1702,7 @@ namespace tfel{
     convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(const T&  s,
 								 const T2& U){
       typedef typename tfel::typetraits::BaseType<typename StensorTraits<T>::NumType>::type real;
-      constexpr real cste = constexpr_fct::sqrt(real(2));
+      constexpr real cste = Cste<real>::sqrt2;
       const auto J  = det(U);
       const auto iU = invert(U);
       return {J*(s[2]*iU[4]*iU[4]+(cste*s[5]*iU[3]+2*s[4]*iU[0])*iU[4]+s[1]*iU[3]*iU[3]+2*s[3]*iU[0]*iU[3]+2*s[0]*iU[0]*iU[0])/2,
@@ -1787,7 +1758,7 @@ namespace tfel{
     convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(const T&  S,
 								 const T2& U){
       typedef typename tfel::typetraits::BaseType<typename StensorTraits<T>::NumType>::type real;
-      constexpr real cste = constexpr_fct::sqrt(real(2));
+      constexpr real cste = Cste<real>::sqrt2;
       const auto iJ  = 1/det(U);
       return {iJ*(S[2]*U[4]*U[4]+(cste*S[5]*U[3]+2*S[4]*U[0])*U[4]+S[1]*U[3]*U[3]+2*S[3]*U[0]*U[3]+2*S[0]*U[0]*U[0])/2,
 	  iJ*(S[2]*U[5]*U[5]+(cste*S[4]*U[3]+2*S[5]*U[1])*U[5]+S[0]*U[3]*U[3]+2*S[3]*U[1]*U[3]+2*S[1]*U[1]*U[1])/2,
@@ -1837,14 +1808,13 @@ namespace tfel{
 		      const StensorType2& s2){
       using res = typename ResultType<typename StensorTraits<StensorType1>::NumType,
 				      typename StensorTraits<StensorType2>::NumType,OpMult>::type;
-      using real =  typename tfel::typetraits::BaseType<res>::type;
-      constexpr real cste = constexpr_fct::sqrt(real(2))/2;
+      constexpr const auto icste = Cste<res>::isqrt2;
       return {s1[4]*s2[4]+s1[3]*s2[3]+2*s1[0]*s2[0],
 	  s1[5]*s2[5]+s1[3]*s2[3]+2*s1[1]*s2[1],
 	  s1[5]*s2[5]+s1[4]*s2[4]+2*s1[2]*s2[2],
-	  cste*s1[4]*s2[5]+cste*s1[5]*s2[4]+(s1[1]+s1[0])*s2[3]+s1[3]*s2[1]+s1[3]*s2[0],
-	  cste*s1[3]*s2[5]+(s1[2]+s1[0])*s2[4]+cste*s1[5]*s2[3]+s1[4]*s2[2]+s1[4]*s2[0],
-	  (s1[2]+s1[1])*s2[5]+cste*s1[3]*s2[4]+cste*s1[4]*s2[3]+s1[5]*s2[2]+s1[5]*s2[1]};
+	  icste*s1[4]*s2[5]+icste*s1[5]*s2[4]+(s1[1]+s1[0])*s2[3]+s1[3]*s2[1]+s1[3]*s2[0],
+	  icste*s1[3]*s2[5]+(s1[2]+s1[0])*s2[4]+icste*s1[5]*s2[3]+s1[4]*s2[2]+s1[4]*s2[0],
+	  (s1[2]+s1[1])*s2[5]+icste*s1[3]*s2[4]+icste*s1[4]*s2[3]+s1[5]*s2[2]+s1[5]*s2[1]};
       }
     
   } //end of namespace math

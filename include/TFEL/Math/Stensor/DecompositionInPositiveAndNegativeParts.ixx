@@ -15,6 +15,8 @@
 #ifndef LIB_TFEL_MATH_STENSOR_DECOMPOSITIONINPOSITIVEANDNEGATIVEPARTS_IXX_
 #define LIB_TFEL_MATH_STENSOR_DECOMPOSITIONINPOSITIVEANDNEGATIVEPARTS_IXX_ 
 
+#include"TFEL/Math/General/MathConstants.hxx"
+
 namespace tfel{
 
   namespace math{
@@ -35,9 +37,7 @@ namespace tfel{
 
     }
 
-    template<typename DPPType,
-	     typename PPType,
-	     typename StensorType>
+    template<typename DPPType,typename PPType,typename StensorType>
     typename std::enable_if<
       tfel::meta::Implements<DPPType,ST2toST2Concept>::cond&&
       tfel::meta::Implements<PPType,StensorConcept>::cond&&
@@ -58,7 +58,7 @@ namespace tfel{
       using std::abs;
       typedef typename StensorTraits<StensorType>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      const real one_half = real(1)/(real(2));
+      constexpr const auto one_half = real(1)/(real(2));
       dpp(0,1) = dpp(0,2) = dpp(1,0) = dpp(1,2) = dpp(2,0) = dpp(2,1) = real(0);
       if(abs(s(0))<eps){
 	dpp(0,0) = one_half;
@@ -117,8 +117,8 @@ namespace tfel{
       using tfel::math::internals::stensor_pneg;
       typedef typename StensorTraits<StensorType>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      constexpr real cste     = constexpr_fct::sqrt(real(2));
-      constexpr real one_half = real(1)/(real(2));
+      constexpr const auto cste     = Cste<real>::sqrt2;
+      constexpr const auto one_half = real(1)/(real(2));
       stensor<2u,NumType> ls(s); // local copy of s
       stensor<2u,real> n0;
       stensor<2u,real> n1;
@@ -193,8 +193,8 @@ namespace tfel{
       using tfel::math::internals::stensor_pneg;
       typedef typename StensorTraits<StensorType>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      constexpr real cste     = constexpr_fct::sqrt(real(2));
-      constexpr real one_half = real(1)/(real(2));
+      constexpr const auto cste     = Cste<real>::sqrt2;
+      constexpr const auto one_half = real(1)/(real(2));
       stensor<3u,NumType> ls(s); // local copy of s
       stensor<3u,real> n0;
       stensor<3u,real> n1;
@@ -435,8 +435,8 @@ namespace tfel{
       using tfel::math::internals::stensor_pneg;
       typedef typename StensorTraits<StensorType>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      constexpr real cste     = constexpr_fct::sqrt(real(2));
-      constexpr real one_half = real(1)/(real(2));
+      constexpr const auto cste     = Cste<real>::sqrt2;
+      constexpr const auto one_half = real(1)/(real(2));
       stensor<2u,NumType> ls(s); // local copy of s
       stensor<2u,real> n0;
       stensor<2u,real> n1;
@@ -540,8 +540,8 @@ namespace tfel{
       using tfel::math::internals::stensor_pneg;
       typedef typename StensorTraits<StensorType>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      constexpr real cste     = constexpr_fct::sqrt(real(2));
-      constexpr real one_half = real(1)/(real(2));
+      constexpr const auto cste     = Cste<real>::sqrt2;
+      constexpr const auto one_half = real(1)/(real(2));
       stensor<3u,NumType> ls(s); // local copy of s
       stensor<3u,real> n0;
       stensor<3u,real> n1;

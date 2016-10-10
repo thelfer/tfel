@@ -194,7 +194,7 @@ namespace tfel{
 	const T v = vec(i);
 	n += v*v;
       }
-      return sqrt(real(n));
+      return std::sqrt(real(n));
     }
     
   } // end of namespace math

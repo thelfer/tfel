@@ -235,7 +235,7 @@ namespace tfel{
     norm(const tvector<N,T>& vec)
     {
       typedef typename ResultType<T,T,OpMult>::type squareT;
-      return sqrt(real(dotProduct<N>::exe(vec.begin(),vec.begin(),squareT(0u))));
+      return std::sqrt(real(dotProduct<N>::exe(vec.begin(),vec.begin(),squareT(0u))));
     }
 
     template<unsigned short N,typename T>
@@ -346,7 +346,7 @@ namespace tfel{
 	y(1) =         - x(2)*x(1)*inv_norm2_x;
 	y(2) = real(1) - x(2)*x(2)*inv_norm2_x;
       }
-      const T tmp = sqrt(y|y);
+      const T tmp = std::sqrt(y|y);
       y(0) /=tmp;
       y(1) /=tmp;
       y(2) /=tmp; 

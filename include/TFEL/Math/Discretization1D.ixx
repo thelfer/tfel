@@ -38,14 +38,14 @@ namespace tfel
       typedef typename T::value_type real;
       typename T::iterator p;
       const real l    = xe - xb;
-      if(abs(l)<100*numeric_limits<real>::min()){
+      if(std::abs(l)<100*numeric_limits<real>::min()){
 	throw(GeometricDiscretizationInvalidLength());
       }
-      if((abs(db)<100*numeric_limits<real>::min())||
-	 (abs(de)<100*numeric_limits<real>::min())){
+      if((std::abs(db)<100*numeric_limits<real>::min())||
+	 (std::abs(de)<100*numeric_limits<real>::min())){
 	throw(GeometricDiscretizationInvalidDensity());
       }
-      if(abs(l)<100*numeric_limits<real>::min()){
+      if(std::abs(l)<100*numeric_limits<real>::min()){
 	throw(GeometricDiscretizationInvalidLength());
       }
       if(n<=0){
@@ -60,11 +60,11 @@ namespace tfel
       real re = real(1);
       real s  = real(0);
       if(rde<rdb){
-	r = 1. + xaux-sqrt(xaux*(2+xaux));
+	r = 1. + xaux-std::sqrt(xaux*(2+xaux));
       } else {
-	r = 1 + xaux+sqrt(xaux*(2+xaux));
+	r = 1 + xaux+std::sqrt(xaux*(2+xaux));
       }
-      if(abs(r-1)>1.e-5){
+      if(std::abs(r-1)>1.e-5){
 	rf=(1.-r)/(1.-pow(r,static_cast<real>(n)));
       } else{
 	rf=1./(static_cast<real>(n));

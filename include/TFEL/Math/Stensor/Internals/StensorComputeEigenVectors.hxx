@@ -57,19 +57,19 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT((std::is_same<typename VectorTraits<VectorType>::NumType,T>::cond));
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  if(abs(s[0]-vp)<10*numeric_limits<T>::min()){
+	  if(std::abs(s[0]-vp)<10*numeric_limits<T>::min()){
 	    v(0)=T(1);
 	    v(1)=T(0);
 	    v(2)=T(0);
 	    return true;
 	  }
-	  if(abs(s[1]-vp)<10*numeric_limits<T>::min()){
+	  if(std::abs(s[1]-vp)<10*numeric_limits<T>::min()){
 	    v(0)=T(0);
 	    v(1)=T(1);
 	    v(2)=T(0);
 	    return true;
 	  }
-	  if(abs(s[2]-vp)<10*numeric_limits<T>::min()){
+	  if(std::abs(s[2]-vp)<10*numeric_limits<T>::min()){
 	    v(0)=T(0);
 	    v(1)=T(0);
 	    v(2)=T(1);
@@ -114,8 +114,7 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr T M_sqrt2 = sqrt(T{2}); 
+	  constexpr const auto cste = Cste<T>::sqrt2; 
 	  T s0 = s_0 - vp;
 	  T s1 = s_1 - vp;
 	  if(std::abs(s3)<std::max(std::min(s_0,s_1)*std::numeric_limits<T>::epsilon(),
@@ -135,13 +134,13 @@ namespace tfel{
 	      return false;
 	    }
 	    y=T{1};
-	    x=-s3/(M_sqrt2*s0);
+	    x=-s3/(cste*s0);
 	  } else {
 	    if(std::abs(s1)<100*std::numeric_limits<T>::min()){
 	      return false;
 	    }
 	    x=T{1};
-	    y=-s3/(M_sqrt2*s1);	    
+	    y=-s3/(cste*s1);	    
 	  }
 	  s0 = std::sqrt(x*x+y*y);
 	  if(s0<100*std::numeric_limits<T>::min()){
@@ -160,20 +159,20 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr T M1_sqrt2  = T{1}/sqrt(T{2}); 
+	  constexpr const auto icste = Cste<T>::isqrt2;
 	  T tmp;
 	  T y0;
 	  T y1;
 	  // first eigenvalue
-	  y0 = s[0]*m(0,0)+s[3]*M1_sqrt2*m(1,0)-vp(0)*m(0,0);
-	  y1 = s[1]*m(1,0)+s[3]*M1_sqrt2*m(0,0)-vp(0)*m(1,0);
+	  y0 = s[0]*m(0,0)+s[3]*icste*m(1,0)-vp(0)*m(0,0);
+	  y1 = s[1]*m(1,0)+s[3]*icste*m(0,0)-vp(0)*m(1,0);
 	  tmp = std::sqrt(y0*y0+y1*y1);
 	  if(tmp>100*std::numeric_limits<T>::epsilon()){
 	    return false;
 	  }
 	  // second eigenvalue
-	  y0 = s[0]*m(0,1)+s[3]*M1_sqrt2*m(1,1)-vp(1)*m(0,1);
-	  y1 = s[1]*m(1,1)+s[3]*M1_sqrt2*m(0,1)-vp(1)*m(1,1);
+	  y0 = s[0]*m(0,1)+s[3]*icste*m(1,1)-vp(1)*m(0,1);
+	  y1 = s[1]*m(1,1)+s[3]*icste*m(0,1)-vp(1)*m(1,1);
 	  tmp = std::sqrt(y0*y0+y1*y1);
 	  if(tmp>100*std::numeric_limits<T>::epsilon()){
 	    return false;
@@ -189,7 +188,7 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT((std::is_same<typename VectorTraits<VectorType>::NumType,T>::value));
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  if(abs(s[2]-vp)<10*numeric_limits<T>::min()){
+	  if(std::abs(s[2]-vp)<10*numeric_limits<T>::min()){
 	    v(0)=0;
 	    v(1)=0;
 	    v(2)=1;
@@ -333,13 +332,12 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  // Assume that vp is a single eigenvalue
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr T M1_sqrt2  = T{1}/sqrt(T{2}); 
+	  constexpr const auto icste = Cste<T>::isqrt2;
 	  const T a = src[0]-vp;
-	  const T b = src[3]*M1_sqrt2;
-	  const T c = src[4]*M1_sqrt2;
+	  const T b = src[3]*icste;
+	  const T c = src[4]*icste;
 	  const T d = src[1]-vp;
-	  const T e = src[5]*M1_sqrt2;
+	  const T e = src[5]*icste;
 	  const T f = src[2]-vp;
 	  const T det3=a*d-b*b;
 	  const T det2=a*f-c*c;
@@ -403,30 +401,29 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr T M1_sqrt2  = T{1}/sqrt(T{2}); 
+	  constexpr const auto icste = Cste<T>::isqrt2;
 	  T y0,y1,y2;
 	  T tmp;
 	  // first eigenvalue
-	  y0 = s[0]*m(0,0)+s[3]*M1_sqrt2*m(1,0)+s[4]*M1_sqrt2*m(2,0)-vp(0)*m(0,0);
-	  y1 = s[1]*m(1,0)+s[3]*M1_sqrt2*m(0,0)+s[5]*M1_sqrt2*m(2,0)-vp(0)*m(1,0);
-	  y2 = s[2]*m(2,0)+s[4]*M1_sqrt2*m(0,0)+s[5]*M1_sqrt2*m(1,0)-vp(0)*m(2,0);
+	  y0 = s[0]*m(0,0)+s[3]*icste*m(1,0)+s[4]*icste*m(2,0)-vp(0)*m(0,0);
+	  y1 = s[1]*m(1,0)+s[3]*icste*m(0,0)+s[5]*icste*m(2,0)-vp(0)*m(1,0);
+	  y2 = s[2]*m(2,0)+s[4]*icste*m(0,0)+s[5]*icste*m(1,0)-vp(0)*m(2,0);
 	  tmp = norm(y0,y1,y2);
 	  if(tmp>100*std::numeric_limits<T>::epsilon()){
 	    return false;
 	  }
 	  // second eigenvalue
-	  y0 = s[0]*m(0,1)+s[3]*M1_sqrt2*m(1,1)+s[4]*M1_sqrt2*m(2,1)-vp(1)*m(0,1);
-	  y1 = s[1]*m(1,1)+s[3]*M1_sqrt2*m(0,1)+s[5]*M1_sqrt2*m(2,1)-vp(1)*m(1,1);
-	  y2 = s[2]*m(2,1)+s[4]*M1_sqrt2*m(0,1)+s[5]*M1_sqrt2*m(1,1)-vp(1)*m(2,1);
+	  y0 = s[0]*m(0,1)+s[3]*icste*m(1,1)+s[4]*icste*m(2,1)-vp(1)*m(0,1);
+	  y1 = s[1]*m(1,1)+s[3]*icste*m(0,1)+s[5]*icste*m(2,1)-vp(1)*m(1,1);
+	  y2 = s[2]*m(2,1)+s[4]*icste*m(0,1)+s[5]*icste*m(1,1)-vp(1)*m(2,1);
 	  tmp = norm(y0,y1,y2);
 	  if(tmp>100*std::numeric_limits<T>::epsilon()){
 	    return false;
 	  }
 	  // third eigenvalue
-	  y0 = s[0]*m(0,2)+s[3]*M1_sqrt2*m(1,2)+s[4]*M1_sqrt2*m(2,2)-vp(2)*m(0,2);
-	  y1 = s[1]*m(1,2)+s[3]*M1_sqrt2*m(0,2)+s[5]*M1_sqrt2*m(2,2)-vp(2)*m(1,2);
-	  y2 = s[2]*m(2,2)+s[4]*M1_sqrt2*m(0,2)+s[5]*M1_sqrt2*m(1,2)-vp(2)*m(2,2);
+	  y0 = s[0]*m(0,2)+s[3]*icste*m(1,2)+s[4]*icste*m(2,2)-vp(2)*m(0,2);
+	  y1 = s[1]*m(1,2)+s[3]*icste*m(0,2)+s[5]*icste*m(2,2)-vp(2)*m(1,2);
+	  y2 = s[2]*m(2,2)+s[4]*icste*m(0,2)+s[5]*icste*m(1,2)-vp(2)*m(2,2);
 	  tmp = norm(y0,y1,y2);
 	  if(tmp>1000*std::numeric_limits<T>::epsilon()){
 	    return false;
@@ -453,11 +450,11 @@ namespace tfel{
 	  using tfel::math::tvector;
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  constexpr T rel_prec  = 100*std::numeric_limits<T>::epsilon();
-	  constexpr T one_third = T(1)/T(3);
+	  constexpr const auto rel_prec  = 100*std::numeric_limits<T>::epsilon();
+	  constexpr const auto one_third = T(1)/T(3);
 	  StensorComputeEigenValues_<3u>::exe(s,vp(0),vp(1),vp(2),b);
-	  const T tr = (s[0]+s[1]+s[2])*one_third;
-	  const T mvp  = max(max(abs(vp(0)-tr),abs(vp(1)-tr)),abs(vp(2)-tr));
+	  const auto tr  = (s[0]+s[1]+s[2])*one_third;
+	  const auto mvp = max(max(std::abs(vp(0)-tr),std::abs(vp(1)-tr)),std::abs(vp(2)-tr));
 	  const bool bsmall = ((mvp<100*std::numeric_limits<T>::min())||
 			       (mvp*std::numeric_limits<T>::epsilon()<100*std::numeric_limits<T>::min()));
   	  if(bsmall){
@@ -469,16 +466,16 @@ namespace tfel{
 	    return true;
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
 	  }
-	  const T inv_mvp = T(1)/mvp;
+	  const auto imvp = T(1)/mvp;
 	  tvector<6u,T> s2(s);
 	  tvector<3u,T> vp2(vp);
-	  vp2(0) = (vp(0) - tr) * inv_mvp;
-	  vp2(1) = (vp(1) - tr) * inv_mvp;
-	  vp2(2) = (vp(2) - tr) * inv_mvp;
-	  s2    *= inv_mvp;
-	  s2(0) -= tr * inv_mvp;
-	  s2(1) -= tr * inv_mvp;
-	  s2(2) -= tr * inv_mvp;
+	  vp2(0) = (vp(0) - tr) * imvp;
+	  vp2(1) = (vp(1) - tr) * imvp;
+	  vp2(2) = (vp(2) - tr) * imvp;
+	  s2    *= imvp;
+	  s2(0) -= tr * imvp;
+	  s2(1) -= tr * imvp;
+	  s2(2) -= tr * imvp;
 	  const T prec = max(rel_prec,100*std::numeric_limits<T>::min());
 	  if((std::abs(vp2(0)-vp2(1))<=prec)&&
 	     (std::abs(vp2(0)-vp2(2))<=prec)){
@@ -490,13 +487,13 @@ namespace tfel{
 	    return true;
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
 	  }
-	  if((abs(vp2(0)-vp2(1))>prec)&&
-	     (abs(vp2(0)-vp2(2))>prec)){
+	  if((std::abs(vp2(0)-vp2(1))>prec)&&
+	     (std::abs(vp2(0)-vp2(2))>prec)){
 	    // vp0 is single	    
 	    if(computeEigenVector(s2.begin(),vp2(0),vec(0,0),vec(1,0),vec(2,0))==false){
 	      return false;
 	    }
-	    if(abs(vp2(1)-vp2(2))>prec){
+	    if(std::abs(vp2(1)-vp2(2))>prec){
 	      //vp1 is single
 	      if(computeEigenVector(s2.begin(),vp2(1),vec(0,1),vec(1,1),vec(2,1))==false){
 		return false;
@@ -516,10 +513,10 @@ namespace tfel{
 #else
 	    return true;
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
-	  } else if((abs(vp2(1)-vp2(0))>prec)&&
-		    (abs(vp2(1)-vp2(2))>prec)){
+	  } else if((std::abs(vp2(1)-vp2(0))>prec)&&
+		    (std::abs(vp2(1)-vp2(2))>prec)){
 	    // vp1 is single, vp0 and vp2 are equal
-	    assert(abs(vp2(0)-vp2(2))<prec);
+	    assert(std::abs(vp2(0)-vp2(2))<prec);
 	    if(computeEigenVector(s2.begin(),vp2(1),vec(0,1),vec(1,1),vec(2,1))==false){
 	      return false;
 	    }
@@ -533,8 +530,8 @@ namespace tfel{
 	    return true;
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
 	  } 
-	  assert((abs(vp2(2)-vp2(0))>prec)&&(abs(vp2(2)-vp2(1))>prec));
-	  assert(abs(vp2(0)-vp2(1))<prec);
+	  assert((std::abs(vp2(2)-vp2(0))>prec)&&(std::abs(vp2(2)-vp2(1))>prec));
+	  assert(std::abs(vp2(0)-vp2(1))<prec);
 	  if(computeEigenVector(s2.begin(),vp2(2),vec(0,2),vec(1,2),vec(2,2))==false){
 	    return false;
 	  }

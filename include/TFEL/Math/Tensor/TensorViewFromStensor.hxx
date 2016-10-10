@@ -62,10 +62,8 @@ namespace tfel
       ValueType
       operator()(const unsigned short i) const
       {
-	using constexpr_fct::sqrt;
 	using traits = StensorTraits<typename std::decay<T>::type>;
-	using real = typename tfel::typetraits::BaseType<ValueType>::type;
-	constexpr real cste = real(1)/sqrt(real(2));
+	constexpr const auto icste = Cste<ValueType>::isqrt2;
 	switch(i){
 	case 0:
 	  return this->s(0);
@@ -78,19 +76,19 @@ namespace tfel
 	  if(traits::dime<2){
 	    throw(TensorInvalidIndexException());
 	  }
-	  return this->s(3)*cste;
+	  return this->s(3)*icste;
 	case 5:
 	case 6:
 	  if(traits::dime<3){
 	    throw(TensorInvalidIndexException());
 	  }
-	  return this->s(4)*cste;
+	  return this->s(4)*icste;
 	case 7:
 	case 8:
 	  if(traits::dime<3){
 	    throw(TensorInvalidIndexException());
 	  }
-	  return this->s(5)*cste;
+	  return this->s(5)*icste;
 	}
 	throw(TensorInvalidIndexException());
       } // end of operator() const

@@ -62,8 +62,7 @@ namespace tfel
       static TFEL_MATH_INLINE T
       covariance(const typename KrigingVariable<3u,T>::type& v)
       {
-	using namespace std;
-	return sqrt(v(0)*v(0)+v(1)*v(1)+v(2)*v(2));
+	return std::sqrt(v(0)*v(0)+v(1)*v(1)+v(2)*v(2));
       } // end of covariance
 
       typedef T (*Drifts)(const typename KrigingVariable<3u,T>::type&);

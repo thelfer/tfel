@@ -240,19 +240,18 @@ namespace tfel{
       >::type
     convertToT2toST2(const T2toT2Type& t){
       using value_type = typename T2toT2Traits<T2toT2Type>::NumType;
-      using base_type  = typename tfel::typetraits::BaseType<value_type>::type;
-      constexpr base_type cste = base_type(1)/constexpr_fct::sqrt(base_type(2));
+      constexpr const auto icste = Cste<value_type>::isqrt2;
       t2tost2<2u,value_type> r;
       r(0,0) = t(0,0);
       r(0,3) = t(0,3);
       r(0,4) = t(0,4);
       r(0,1) = t(0,1);
       r(0,2) = t(0,2);
-      r(3,0) = (t(3,0)+t(4,0))*cste;
-      r(3,3) = (t(3,3)+t(4,3))*cste;
-      r(3,4) = (t(3,4)+t(4,4))*cste;
-      r(3,1) = (t(3,1)+t(4,1))*cste;
-      r(3,2) = (t(3,2)+t(4,2))*cste;
+      r(3,0) = (t(3,0)+t(4,0))*icste;
+      r(3,3) = (t(3,3)+t(4,3))*icste;
+      r(3,4) = (t(3,4)+t(4,4))*icste;
+      r(3,1) = (t(3,1)+t(4,1))*icste;
+      r(3,2) = (t(3,2)+t(4,2))*icste;
       r(1,0) = t(1,0);
       r(1,3) = t(1,3);
       r(1,4) = t(1,4);
@@ -274,8 +273,7 @@ namespace tfel{
       >::type
     convertToT2toST2(const T2toT2Type& t){
       using value_type = typename T2toT2Traits<T2toT2Type>::NumType;
-      using base_type  = typename tfel::typetraits::BaseType<value_type>::type;
-      constexpr base_type cste = base_type(1)/constexpr_fct::sqrt(base_type(2));
+      constexpr const auto icste = Cste<value_type>::isqrt2;
       t2tost2<3u,value_type> r;
       r(0,0) = t(0,0);
       r(0,3) = t(0,3);
@@ -286,24 +284,24 @@ namespace tfel{
       r(0,6) = t(0,6);
       r(0,8) = t(0,8);
       r(0,2) = t(0,2);
-      r(3,0) = (t(3,0)+t(4,0))*cste;
-      r(3,3) = (t(3,3)+t(4,3))*cste;
-      r(3,5) = (t(3,5)+t(4,5))*cste;
-      r(3,4) = (t(3,4)+t(4,4))*cste;
-      r(3,1) = (t(3,1)+t(4,1))*cste;
-      r(3,7) = (t(3,7)+t(4,7))*cste;
-      r(3,6) = (t(3,6)+t(4,6))*cste;
-      r(3,8) = (t(3,8)+t(4,8))*cste;
-      r(3,2) = (t(3,2)+t(4,2))*cste;
-      r(4,0) = (t(5,0)+t(6,0))*cste;
-      r(4,3) = (t(5,3)+t(6,3))*cste;
-      r(4,5) = (t(5,5)+t(6,5))*cste;
-      r(4,4) = (t(5,4)+t(6,4))*cste;
-      r(4,1) = (t(5,1)+t(6,1))*cste;
-      r(4,7) = (t(5,7)+t(6,7))*cste;
-      r(4,6) = (t(5,6)+t(6,6))*cste;
-      r(4,8) = (t(5,8)+t(6,8))*cste;
-      r(4,2) = (t(5,2)+t(6,2))*cste;
+      r(3,0) = (t(3,0)+t(4,0))*icste;
+      r(3,3) = (t(3,3)+t(4,3))*icste;
+      r(3,5) = (t(3,5)+t(4,5))*icste;
+      r(3,4) = (t(3,4)+t(4,4))*icste;
+      r(3,1) = (t(3,1)+t(4,1))*icste;
+      r(3,7) = (t(3,7)+t(4,7))*icste;
+      r(3,6) = (t(3,6)+t(4,6))*icste;
+      r(3,8) = (t(3,8)+t(4,8))*icste;
+      r(3,2) = (t(3,2)+t(4,2))*icste;
+      r(4,0) = (t(5,0)+t(6,0))*icste;
+      r(4,3) = (t(5,3)+t(6,3))*icste;
+      r(4,5) = (t(5,5)+t(6,5))*icste;
+      r(4,4) = (t(5,4)+t(6,4))*icste;
+      r(4,1) = (t(5,1)+t(6,1))*icste;
+      r(4,7) = (t(5,7)+t(6,7))*icste;
+      r(4,6) = (t(5,6)+t(6,6))*icste;
+      r(4,8) = (t(5,8)+t(6,8))*icste;
+      r(4,2) = (t(5,2)+t(6,2))*icste;
       r(1,0) = t(1,0);
       r(1,3) = t(1,3);
       r(1,5) = t(1,5);
@@ -313,15 +311,15 @@ namespace tfel{
       r(1,6) = t(1,6);
       r(1,8) = t(1,8);
       r(1,2) = t(1,2);
-      r(5,0) = (t(7,0)+t(8,0))*cste;
-      r(5,3) = (t(7,3)+t(8,3))*cste;
-      r(5,5) = (t(7,5)+t(8,5))*cste;
-      r(5,4) = (t(7,4)+t(8,4))*cste;
-      r(5,1) = (t(7,1)+t(8,1))*cste;
-      r(5,7) = (t(7,7)+t(8,7))*cste;
-      r(5,6) = (t(7,6)+t(8,6))*cste;
-      r(5,8) = (t(7,8)+t(8,8))*cste;
-      r(5,2) = (t(7,2)+t(8,2))*cste;
+      r(5,0) = (t(7,0)+t(8,0))*icste;
+      r(5,3) = (t(7,3)+t(8,3))*icste;
+      r(5,5) = (t(7,5)+t(8,5))*icste;
+      r(5,4) = (t(7,4)+t(8,4))*icste;
+      r(5,1) = (t(7,1)+t(8,1))*icste;
+      r(5,7) = (t(7,7)+t(8,7))*icste;
+      r(5,6) = (t(7,6)+t(8,6))*icste;
+      r(5,8) = (t(7,8)+t(8,8))*icste;
+      r(5,2) = (t(7,2)+t(8,2))*icste;
       r(2,0) = t(2,0);
       r(2,3) = t(2,3);
       r(2,5) = t(2,5);
@@ -354,18 +352,13 @@ namespace tfel{
       t2tost2<2u,typename TensorTraits<TensorType>::NumType>>::type
     computeRateOfDeformationDerivative(const TensorType& F){
       using value_type = typename TensorTraits<TensorType>::NumType;
-      using base    = typename tfel::typetraits::BaseType<value_type>::type;
-#ifndef _MSC_VER
-      constexpr const base cste = base(1)/constexpr_fct::sqrt(base(2));
-#else
-      static const base cste = base(1)/std::sqrt(base(2));
-#endif
+      constexpr const auto icste = Cste<value_type>::isqrt2;
       constexpr const auto zero = value_type(0);
       const auto iF  = invert(F);
       return {iF[0],zero,zero,iF[4],zero,
-	     zero,iF[1],zero,zero,iF[3],
-	     zero,zero,iF[2],zero,zero,
-	     iF[3]*cste,iF[4]*cste,zero,iF[1]*cste,iF[0]*cste};
+	  zero,iF[1],zero,zero,iF[3],
+	  zero,zero,iF[2],zero,zero,
+	  iF[3]*icste,iF[4]*icste,zero,iF[1]*icste,iF[0]*icste};
     }
 
     template<typename TensorType>
@@ -376,20 +369,15 @@ namespace tfel{
       t2tost2<3u,typename TensorTraits<TensorType>::NumType>>::type
    computeRateOfDeformationDerivative(const TensorType& F){
       using value_type = typename TensorTraits<TensorType>::NumType;
-      using base    = typename tfel::typetraits::BaseType<value_type>::type;
-#ifndef _MSC_VER
-      constexpr const base cste = base(1)/constexpr_fct::sqrt(base(2));
-#else
-      static const base cste = base(1)/std::sqrt(base(2));
-#endif
+      constexpr const auto icste = Cste<value_type>::isqrt2;
       constexpr const auto zero = value_type(0);
       const auto iF  = invert(F);
       return {iF[0],zero,zero,iF[4],zero,iF[6],zero,zero,zero,
 	  zero,iF[1],zero,zero,iF[3],zero,zero,iF[8],zero,
 	  zero,zero,iF[2],zero,zero,zero,iF[5],zero,iF[7],
-	  iF[3]*cste,iF[4]*cste,zero,iF[1]*cste,iF[0]*cste,iF[8]*cste,zero,iF[6]*cste,zero,
-	  iF[5]*cste,zero,iF[6]*cste,iF[7]*cste,zero,iF[2]*cste,iF[0]*cste,zero,iF[4]*cste,
-	  zero,iF[7]*cste,iF[8]*cste,zero,iF[5]*cste,zero,iF[3]*cste,iF[2]*cste,iF[1]*cste};      
+	  iF[3]*icste,iF[4]*icste,zero,iF[1]*icste,iF[0]*icste,iF[8]*icste,zero,iF[6]*icste,zero,
+	  iF[5]*icste,zero,iF[6]*icste,iF[7]*icste,zero,iF[2]*icste,iF[0]*icste,zero,iF[4]*icste,
+	  zero,iF[7]*icste,iF[8]*icste,zero,iF[5]*icste,zero,iF[3]*icste,iF[2]*icste,iF[1]*icste};
     }
 
     template<typename T2toST2Type,typename StensorType,typename TensorType>

@@ -18,6 +18,7 @@
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include"TFEL/Math/ST2toST2/ConstST2toST2View.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 
 namespace tfel{
@@ -42,12 +43,7 @@ namespace tfel{
     void
     UmatNormaliseTangentOperatorBase<2u,stress>::exe(stress* const K,
 						     const stress* const D){
-      using real = tfel::typetraits::base_type<stress>;
-#ifndef _MSC_VER
-      constexpr const real cste = tfel::math::constexpr_fct::sqrt(real(2));
-#else
-      static const real cste = std::sqrt(real(2));
-#endif
+      constexpr const auto cste = Cste<stress>::sqrt2;
       ST2toST2View<2u,stress> k(K);
       ConstST2toST2View<2u,stress> d(D);
       // transpose
@@ -69,12 +65,7 @@ namespace tfel{
     void
     UmatNormaliseTangentOperatorBase<3u,stress>::exe(stress* const K,
 						     const stress* const D){
-      using real = tfel::typetraits::base_type<stress>;
-#ifndef _MSC_VER
-      constexpr const real cste = tfel::math::constexpr_fct::sqrt(real(2));
-#else
-      static const real cste = std::sqrt(real(2));
-#endif
+      constexpr const auto cste = Cste<stress>::sqrt2;
       ST2toST2View<3u,stress> k(K);
       ConstST2toST2View<3u,stress> d(D);
       // transpose

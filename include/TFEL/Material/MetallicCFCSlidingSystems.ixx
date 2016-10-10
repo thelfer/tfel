@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATERIAL_METALLICCFCSLIDINGSYSTEMS_IXX_
 #define LIB_TFEL_MATERIAL_METALLICCFCSLIDINGSYSTEMS_IXX_ 
 
+#include"TFEL/Math/General/MathConstants.hxx"
 
 namespace tfel
 {
@@ -34,8 +35,8 @@ namespace tfel
     {
       using namespace tfel::math;
       using namespace tfel::fsalgo;
-      const real coefm=real(1)/sqrt(real(2));
-      const real coefn=real(1)/sqrt(real(3));
+      const real coefm = Cste<real>::isqrt2;
+      const real coefn = Cste<real>::isqrt3;
       // sliding systems
       const real nx[Nss]={ 1.0,1.0,1.0, 1.0, 1.0, 1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0};
       const real ny[Nss]={ 1.0,1.0,1.0,-1.0,-1.0,-1.0, 1.0, 1.0, 1.0,-1.0,-1.0,-1.0};

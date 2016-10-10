@@ -3,13 +3,19 @@
  * \brief    
  * \author THOMAS HELFER
  * \date   15 avril 2016
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
  */
 
 #ifndef LIB_TFEL_MATH_ST2TOST2_PUSH_FORWARD_IXX_
 #define LIB_TFEL_MATH_ST2TOST2_PUSH_FORWARD_IXX_
 
 #include"TFEL/TypeTraits/BaseType.hxx"
-#include"TFEL/Math/General/ConstExprMathFunctions.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 
 namespace tfel{
 
@@ -56,12 +62,9 @@ namespace tfel{
 		 const ST2toST2Type2& C,
 		 const TensorType& F)
     {
-      using tfel::typetraits::BaseType;
-      using tfel::math::constexpr_fct::sqrt;
       using NumType = typename ST2toST2Traits<ST2toST2Type>::NumType;
-      typedef typename BaseType<NumType>::type real;
-      constexpr const real cste  = sqrt(real{2});
-      constexpr const real icste = real{1}/sqrt(real{2});
+      constexpr const auto cste  = Cste<NumType>::sqrt2;
+      constexpr const auto icste = Cste<NumType>::isqrt2;
       Ct(0,0) = F[0]*F[0]*F[0]*F[0]*C(0,0)+F[0]*F[0]*F[0]*F[3]*C(0,3)*icste+
       F[0]*F[0]*F[3]*F[0]*C(0,3)*icste+F[0]*F[0]*F[3]*F[3]*C(0,1)+
       F[0]*F[3]*F[0]*F[0]*C(3,0)*icste+F[0]*F[3]*F[0]*F[3]*C(3,3)/2+
@@ -164,11 +167,8 @@ namespace tfel{
 		 const ST2toST2Type2& C,
 		 const TensorType& F)
     {
-      using tfel::typetraits::BaseType;
-      using tfel::math::constexpr_fct::sqrt;
       using NumType   = typename ST2toST2Traits<ST2toST2Type>::NumType;
       using size_type =  unsigned short;
-      using real      =  typename BaseType<NumType>::type;
       auto row_index = [](size_type i,size_type j) -> size_type{
       	// i,j are valid for the space dimension considered
       	if((i==j)&&(i<3)){
@@ -206,7 +206,7 @@ namespace tfel{
       auto set = [&Ct](const size_type i,
 		       const size_type j,
 		       const NumType v){
-	constexpr const real cste  = sqrt(real{2});
+	constexpr const auto cste  = Cste<NumType>::sqrt2;
       	if(((i>2)&&(j<=2))||((j>2)&&(i<=2))){
       	  Ct(i,j) = v*cste;
       	} else if((i>2)&&(j>2)){
@@ -217,7 +217,7 @@ namespace tfel{
       };
       auto get = [&C](const size_type i,
 		      const size_type j){
-	constexpr const real icste = real{1}/sqrt(real{2});
+	constexpr const auto icste = Cste<NumType>::isqrt2;
       	if(((i>2)&&(j<=2))||((j>2)&&(i<=2))){
       	  return C(i,j)*icste;
       	} else if((i>2)&&(j>2)){

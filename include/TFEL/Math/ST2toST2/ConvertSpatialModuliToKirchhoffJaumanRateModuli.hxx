@@ -128,12 +128,7 @@ namespace tfel{
 						    const StensorType& tau)
     {
       using NumType = typename ST2toST2Traits<ST2toST2Type>::NumType;
-      using base    = typename tfel::typetraits::BaseType<NumType>::type;
-#ifndef _MSC_VER
-      constexpr const base icste = 1/tfel::math::constexpr_fct::sqrt(base(2));
-#else
-      static const base icste = 1/std::sqrt(base(2));
-#endif
+      constexpr const auto icste = Cste<NumType>::isqrt2;
       st2tost2<3u,NumType> C_tJ;
       C_tJ(0,0) = C_s(0,0)+2*tau[0];
       C_tJ(1,1) = C_s(1,1)+2*tau[1];

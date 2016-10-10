@@ -16,6 +16,7 @@
 
 #include"TFEL/FSAlgorithm/copy.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 
 namespace tfel
 {
@@ -112,7 +113,8 @@ namespace tfel
 							     typename ST2toST2Traits<ST2toST2ResultType>::NumType>::cond));
 	using tfel::typetraits::BaseType;
 	typedef typename BaseType<value_type>::type real;
-	const real cste  = real(1)/(2*std::sqrt(real(2)));
+	constexpr const auto icste  = Cste<value_type>::sqrt2;
+	constexpr const auto icste2 = Cste<value_type>::sqrt2/(real(2));
 	this->v[0]  = A(0,0);
 	this->v[1]  = A(0,1);
 	this->v[2]  = A(0,2);
@@ -125,10 +127,10 @@ namespace tfel
 	this->v[12] = A(3,0);
 	this->v[13] = A(3,1);
 	this->v[14] = A(3,2);
-	this->v[3]  = (A(0,3)+A(0,4))*cste;
-	this->v[7]  = (A(1,3)+A(1,4))*cste;
-	this->v[11] = (A(2,3)+A(2,4))*cste;
-	this->v[15] = (A(3,3)+A(3,4))*2*cste;
+	this->v[3]  = (A(0,3)+A(0,4))*icste2;
+	this->v[7]  = (A(1,3)+A(1,4))*icste2;
+	this->v[11] = (A(2,3)+A(2,4))*icste2;
+	this->v[15] = (A(3,3)+A(3,4))*icste;
       } // end of Expr
       /*!
        * \brief access operator
@@ -182,8 +184,8 @@ namespace tfel
 							     typename ST2toST2Traits<ST2toST2ResultType>::NumType>::cond));
 	using tfel::typetraits::BaseType;
 	typedef typename BaseType<value_type>::type real;
-	const real cste  = real(1)/(2*std::sqrt(real(2)));
-	const real cste2 = 2*cste;
+	constexpr const auto icste  = Cste<value_type>::sqrt2;
+	constexpr const auto icste2 = Cste<value_type>::sqrt2/(real(2));
 	this->v[0] = A(0,0);
 	this->v[1] = A(0,1);
 	this->v[2] = A(0,2);
@@ -202,24 +204,24 @@ namespace tfel
 	this->v[30] = A(5,0);
 	this->v[31] = A(5,1);
 	this->v[32] = A(5,2);
-	this->v[3]  = (A(0,3)+A(0,4))*cste;
-	this->v[4]  = (A(0,5)+A(0,6))*cste;
-	this->v[5]  = (A(0,7)+A(0,8))*cste;
-	this->v[9]  = (A(1,3)+A(1,4))*cste;
-	this->v[10] = (A(1,5)+A(1,6))*cste;
-	this->v[11] = (A(1,7)+A(1,8))*cste;
-	this->v[15] = (A(2,3)+A(2,4))*cste;
-	this->v[16] = (A(2,5)+A(2,6))*cste;
-	this->v[17] = (A(2,7)+A(2,8))*cste;
-	this->v[21] = (A(3,3)+A(3,4))*cste2;
-	this->v[22] = (A(3,5)+A(3,6))*cste2;
-	this->v[23] = (A(3,7)+A(3,8))*cste2;
-	this->v[27] = (A(4,3)+A(4,4))*cste2;
-	this->v[28] = (A(4,5)+A(4,6))*cste2;
-	this->v[29] = (A(4,7)+A(4,8))*cste2;
-	this->v[33] = (A(5,3)+A(5,4))*cste2;
-	this->v[34] = (A(5,5)+A(5,6))*cste2;
-	this->v[35] = (A(5,7)+A(5,8))*cste2;
+	this->v[3]  = (A(0,3)+A(0,4))*icste2;
+	this->v[4]  = (A(0,5)+A(0,6))*icste2;
+	this->v[5]  = (A(0,7)+A(0,8))*icste2;
+	this->v[9]  = (A(1,3)+A(1,4))*icste2;
+	this->v[10] = (A(1,5)+A(1,6))*icste2;
+	this->v[11] = (A(1,7)+A(1,8))*icste2;
+	this->v[15] = (A(2,3)+A(2,4))*icste2;
+	this->v[16] = (A(2,5)+A(2,6))*icste2;
+	this->v[17] = (A(2,7)+A(2,8))*icste2;
+	this->v[21] = (A(3,3)+A(3,4))*icste;
+	this->v[22] = (A(3,5)+A(3,6))*icste;
+	this->v[23] = (A(3,7)+A(3,8))*icste;
+	this->v[27] = (A(4,3)+A(4,4))*icste;
+	this->v[28] = (A(4,5)+A(4,6))*icste;
+	this->v[29] = (A(4,7)+A(4,8))*icste;
+	this->v[33] = (A(5,3)+A(5,4))*icste;
+	this->v[34] = (A(5,5)+A(5,6))*icste;
+	this->v[35] = (A(5,7)+A(5,8))*icste;
       } // end of Expr
       /*!
        * \brief access operator

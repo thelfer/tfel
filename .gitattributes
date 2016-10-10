@@ -1234,6 +1234,7 @@ include/TFEL/Math/General/DotProduct.hxx -text
 include/TFEL/Math/General/EmptyRunTimeProperties.hxx -text
 include/TFEL/Math/General/Forward/General.hxx -text
 include/TFEL/Math/General/LogicalOperations.hxx -text
+include/TFEL/Math/General/MathConstants.hxx -text
 include/TFEL/Math/General/NegObjectRandomAccessConstIterator.hxx -text
 include/TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx -text
 include/TFEL/Math/General/ObjectObjectRandomAccessConstIteratorSpecialisation.hxx -text

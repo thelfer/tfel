@@ -18,10 +18,10 @@
 #include<cmath>
 
 #include"TFEL/Config/TFELConfig.hxx"
-
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Math/General/ResultType.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Tensor/TensorConcept.hxx"
@@ -118,9 +118,7 @@ namespace tfel{
       operator()(const size_type i) const 
       {
 	typedef typename StensorProductExprBase<A,B>::NumType T;
-	typedef typename tfel::typetraits::BaseType<T>::type base;
-	using constexpr_fct::sqrt;
-	constexpr base cste = base(1)/sqrt(base(2));
+	constexpr const auto icste = Cste<T>::isqrt2;
 	switch(i){
 	case 0:
 	  return (this->a(3)*this->b(3))/2+this->a(0)*this->b(0);
@@ -129,9 +127,9 @@ namespace tfel{
 	case 2:
 	  return this->a(2)*this->b(2);
 	case 3:
-	  return ((this->a(0)*this->b(3))+(this->a(3)*this->b(1)))*cste;
+	  return ((this->a(0)*this->b(3))+(this->a(3)*this->b(1)))*icste;
 	case 4:
-	  return ((this->a(1)*this->b(3))+(this->a(3)*this->b(0)))*cste;
+	  return ((this->a(1)*this->b(3))+(this->a(3)*this->b(0)))*icste;
 	}
 	return T(0);
       } // end of operator()
@@ -160,9 +158,7 @@ namespace tfel{
       operator()(const size_type i) const 
       {
 	typedef typename StensorProductExprBase<A,B>::NumType T;
-	typedef typename tfel::typetraits::BaseType<T>::type base;
-	using constexpr_fct::sqrt;
-	constexpr base cste = base(1)/sqrt(base(2));
+	constexpr const auto icste = Cste<T>::isqrt2;
 	switch(i){
 	case 0:
 	  return (this->a(4)*this->b(4))/2+(this->a(3)*this->b(3))/2+this->a(0)*this->b(0);
@@ -171,17 +167,17 @@ namespace tfel{
 	case 2:
 	  return (this->a(5)*this->b(5))/2+(this->a(4)*this->b(4))/2+this->a(2)*this->b(2);
 	case 3:
-	  return (this->a(4)*this->b(5))/2+(this->a(0)*this->b(3)+this->a(3)*this->b(1))*cste;
+	  return (this->a(4)*this->b(5))/2+(this->a(0)*this->b(3)+this->a(3)*this->b(1))*icste;
 	case 4:
-	  return (this->a(5)*this->b(4))/2+(this->a(1)*this->b(3)+this->a(3)*this->b(0))*cste;
+	  return (this->a(5)*this->b(4))/2+(this->a(1)*this->b(3)+this->a(3)*this->b(0))*icste;
 	case 5:
-	  return (this->a(3)*this->b(5))/2+(this->a(0)*this->b(4)+this->a(4)*this->b(2))*cste;
+	  return (this->a(3)*this->b(5))/2+(this->a(0)*this->b(4)+this->a(4)*this->b(2))*icste;
 	case 6:
-	  return (this->a(5)*this->b(3))/2+(this->a(2)*this->b(4)+this->a(4)*this->b(0))*cste;
+	  return (this->a(5)*this->b(3))/2+(this->a(2)*this->b(4)+this->a(4)*this->b(0))*icste;
 	case 7:
-	  return (this->a(3)*this->b(4))/2+(this->a(1)*this->b(5)+this->a(5)*this->b(2))*cste;
+	  return (this->a(3)*this->b(4))/2+(this->a(1)*this->b(5)+this->a(5)*this->b(2))*icste;
 	case 8:
-	  return (this->a(4)*this->b(3))/2+(this->a(2)*this->b(5)+this->a(5)*this->b(1))*cste;
+	  return (this->a(4)*this->b(3))/2+(this->a(2)*this->b(5)+this->a(5)*this->b(1))*icste;
 	}
 	return T(0);
       } // end of operator()

@@ -18,6 +18,7 @@
 #include<cmath>
 
 #include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 
 namespace tfel{
@@ -43,8 +44,7 @@ namespace tfel{
 	template<typename T, typename T2>
 	static void exe(T* s,const tfel::math::tmatrix<3u,3u,T2>& m)
 	{
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr const T2 cste = sqrt(T2{2});
+	  constexpr const auto cste = Cste<T2>::sqrt2;
 	  T tmp[3];
 	  // Works begin
 	  tmp[0]  = cste*m(0,0)*m(1,0)*s[3]+m(1,0)*m(1,0)*s[1]+m(0,0)*m(0,0)*s[0];
@@ -63,8 +63,7 @@ namespace tfel{
 	template<typename T, typename T2>
 	static void exe(T* s,const tfel::math::tmatrix<3u,3u,T2>& m)
 	{
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr T2 cste = sqrt(T2{2});
+	  constexpr const auto cste = Cste<T2>::sqrt2;
 	  T tmp[6];
 	  const T2 a = m(0,0);
 	  const T2 b = m(0,1);
@@ -92,7 +91,6 @@ namespace tfel{
 	  s[5] = tmp[5];
 	}
       };
-      
 
     } // end of namespace internals
 

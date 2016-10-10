@@ -38,8 +38,7 @@ namespace tfel{
     >::type
     norm(const T1& v)
     {
-      using namespace std;
-      return sqrt(real(v|v));
+      return std::sqrt(real(v|v));
     }
 
   } // end of namespace math

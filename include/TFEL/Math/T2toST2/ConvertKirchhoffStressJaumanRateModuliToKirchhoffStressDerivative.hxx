@@ -53,8 +53,7 @@ namespace tfel{
       exe(const ST2toST2Type& CsJ,
 	  const TensorType& F,
 	  const StensorType& t){
-	using real    = typename tfel::typetraits::BaseType<T>::type;
-	constexpr const real icste  = 1/constexpr_fct::sqrt(real(2));
+	constexpr const auto icste = Cste<T>::isqrt2;
 	const auto iF = invert(F);
 	return {(CsJ(0,3)*iF[3])*icste+(t[3]*iF[3])*icste+CsJ(0,0)*iF[0],
 	    (CsJ(0,3)*iF[4])*icste-(t[3]*iF[4])*icste+CsJ(0,1)*iF[1],
@@ -91,10 +90,9 @@ namespace tfel{
       exe(const ST2toST2Type& CsJ,
 	  const TensorType& F,
 	  const StensorType& t){
-	using real    = typename tfel::typetraits::BaseType<T>::type;
-	constexpr const real cste   = constexpr_fct::sqrt(real(2));
-	constexpr const real icste  = 1/constexpr_fct::sqrt(real(2));
-	constexpr const real icste2 = icste/2;
+	constexpr const auto cste   = Cste<T>::sqrt2;
+	constexpr const auto icste  = Cste<T>::isqrt2;
+	constexpr const auto icste2 = icste/2;
 	const auto iF = invert(F);
 	return {(cste*t[4]*iF[5]+cste*t[3]*iF[3])/2+(CsJ(0,4)*iF[5])*icste+(CsJ(0,3)*iF[3])*icste+CsJ(0,0)*iF[0],
 	    (CsJ(0,5)*iF[7])*icste+(CsJ(0,3)*iF[4])*icste-(t[3]*iF[4])*icste+CsJ(0,1)*iF[1],

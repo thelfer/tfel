@@ -17,6 +17,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 
 namespace tfel{
@@ -59,9 +60,8 @@ namespace tfel{
 	template<typename T>
 	static TFEL_MATH_INLINE2 tfel::math::st2tost2<2u,T>
 	exe(const tfel::math::tmatrix<3,3,T>& r){
-	  using tfel::math::constexpr_fct::sqrt;
 	  tfel::math::st2tost2<2u,T> s;
-	  constexpr const T cste = sqrt(T{2});
+	  constexpr const auto cste = Cste<T>::sqrt2;
 	  constexpr const T zero = T{0};
 	  constexpr const T one  = T{1};
 	  // tmp[0]  = cste*r(0,0)*r(1,0)*s[3]+r(1,0)*r(1,0)*s[1]+r(0,0)*r(0,0)*s[0];
@@ -101,8 +101,7 @@ namespace tfel{
 	template<typename T>
 	static TFEL_MATH_INLINE2 tfel::math::st2tost2<3u,T>
 	exe(const tfel::math::tmatrix<3,3,T>& r){
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr const T cste = sqrt(T{2});
+	  constexpr const auto cste = Cste<T>::sqrt2;
 	  tfel::math::st2tost2<3u,T> s;
 	  const T a = r(0,0);
 	  const T b = r(0,1);

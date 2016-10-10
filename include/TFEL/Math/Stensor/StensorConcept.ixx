@@ -115,13 +115,13 @@ namespace tfel{
 	  typedef typename tfel::typetraits::BaseType<NumType>::type base;
 	  constexpr base one_third = base(1)/base(3);
 	  constexpr base cste      = base(3)/base(2);
-	  const NumType tr = one_third*trace(s);
-	  return sqrt(cste*(SigmaEqImplBase::square(s(0)-tr)+
-			    SigmaEqImplBase::square(s(1)-tr)+
-			    SigmaEqImplBase::square(s(2)-tr)+
-			    SigmaEqImplBase::square(s(3))   +
-			    SigmaEqImplBase::square(s(4))   +
-			    SigmaEqImplBase::square(s(5))));
+	  const auto tr = one_third*trace(s);
+	  return std::sqrt(cste*(SigmaEqImplBase::square(s(0)-tr)+
+				 SigmaEqImplBase::square(s(1)-tr)+
+				 SigmaEqImplBase::square(s(2)-tr)+
+				 SigmaEqImplBase::square(s(3))   +
+				 SigmaEqImplBase::square(s(4))   +
+				 SigmaEqImplBase::square(s(5))));
 	}
       };
 
@@ -148,8 +148,8 @@ namespace tfel{
 	static typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
 	exe(const StensorType& s)
 	{
-	  return tfel::math::abs(s(0))+tfel::math::abs(s(1))+tfel::math::abs(s(2))
-	    +tfel::math::abs(s(3));
+	  return tfel::math::abs(s(0))+tfel::math::abs(s(1))+
+	    tfel::math::abs(s(2))+tfel::math::abs(s(3));
 	}
       };
 
