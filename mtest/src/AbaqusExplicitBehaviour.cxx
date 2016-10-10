@@ -518,7 +518,7 @@ namespace mtest
       stensor<2u,real> s0(&(s.s0[0]));
       if(this->omp!=2u){
 	F0.changeBasis(s.r);
-	F0.changeBasis(s.r);
+	F1.changeBasis(s.r);
 	s0.changeBasis(s.r);
       }
       polar_decomposition(R0,U0,F0);
@@ -552,7 +552,7 @@ namespace mtest
       stensor<3u,real> s0(&(s.s0[0]));
       if(this->omp!=2u){
 	F0.changeBasis(s.r);
-	F0.changeBasis(s.r);
+	F1.changeBasis(s.r);
 	s0.changeBasis(s.r);
       }
       polar_decomposition(R0,U0,F0);
