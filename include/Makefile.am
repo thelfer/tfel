@@ -266,7 +266,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Matrix/TMatrixView.hxx                                                             \
 			TFEL/Math/Matrix/ConstTMatrixView.hxx                                                        \
 	                TFEL/Math/General/ConceptRebind.hxx                                                          \
-	                TFEL/Math/General/ConstExprMathFunctions.hxx                                                 \
+	                TFEL/Math/General/MathConstants.hxx                                                          \
+			TFEL/Math/General/ConstExprMathFunctions.hxx                                                 \
 			TFEL/Math/General/LogicalOperations.hxx                                                      \
 			TFEL/Math/General/AbsCompare.hxx	                                                     \
 			TFEL/Math/General/Abs.hxx      	                                                             \
@@ -409,6 +410,14 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/LevenbergMarquardt/FSLevenbergMarquardt.ixx                                        \
 			TFEL/Math/ExpressionTemplates/Expr.hxx							     \
 			TFEL/Math/ExpressionTemplates/StandardOperations.hxx					     \
+			TFEL/Math/AccelerationAlgorithms/UAnderson.hxx						     \
+			TFEL/Math/AccelerationAlgorithms/CovarianceMatrix.hxx					     \
+			TFEL/Math/AccelerationAlgorithms/FAnderson.hxx						     \
+			TFEL/Math/AccelerationAlgorithms/UAnderson.ixx						     \
+			TFEL/Math/AccelerationAlgorithms/CovarianceMatrix.ixx					     \
+			TFEL/Math/AccelerationAlgorithms/FAnderson.ixx						     \
+			TFEL/Math/AccelerationAlgorithms/AndersonBase.hxx					     \
+			TFEL/Math/AccelerationAlgorithms/AndersonBase.ixx					     \
 			TFEL/Math/cadna.hxx					                                     \
 			TFEL/Metaprogramming/Forward/TypeList.hxx                                                    \
 			TFEL/Metaprogramming/IsConstCallable.hxx                                                     \

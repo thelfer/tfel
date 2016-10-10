@@ -42,8 +42,7 @@ namespace tfel{
     {}
 
     template<typename T>
-    vector<T>&
-    vector<T>::operator=(const vector<T>& src)
+    vector<T>& vector<T>::operator=(const vector<T>& src)
     {
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->size(),src.size());
@@ -53,8 +52,7 @@ namespace tfel{
     }
 
     template<typename T>
-    vector<T>&
-    vector<T>::operator+=(const vector<T>& src)
+    vector<T>& vector<T>::operator+=(const vector<T>& src)
     {
       size_type i;
 #ifndef NO_RUNTIME_CHECK_BOUNDS

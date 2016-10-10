@@ -1179,6 +1179,14 @@ include/TFEL/Material/ThermalBehaviour.hxx -text
 include/TFEL/Material/ThermalBehaviourData.hxx -text
 include/TFEL/Material/ThermoMechanicalBehaviour.hxx -text
 include/TFEL/Material/material.doxygen -text
+include/TFEL/Math/AccelerationAlgorithms/AndersonBase.hxx -text
+include/TFEL/Math/AccelerationAlgorithms/AndersonBase.ixx -text
+include/TFEL/Math/AccelerationAlgorithms/CovarianceMatrix.hxx -text
+include/TFEL/Math/AccelerationAlgorithms/CovarianceMatrix.ixx -text
+include/TFEL/Math/AccelerationAlgorithms/FAnderson.hxx -text
+include/TFEL/Math/AccelerationAlgorithms/FAnderson.ixx -text
+include/TFEL/Math/AccelerationAlgorithms/UAnderson.hxx -text
+include/TFEL/Math/AccelerationAlgorithms/UAnderson.ixx -text
 include/TFEL/Math/Bindings/atlas.hxx -text
 include/TFEL/Math/Broyden.hxx -text
 include/TFEL/Math/Broyden2.hxx -text
