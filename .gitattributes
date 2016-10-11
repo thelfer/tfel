@@ -4243,6 +4243,7 @@ mtest/include/MTest/CyranoBehaviour.hxx -text
 mtest/include/MTest/EuroplexusFiniteStrainBehaviour.hxx -text
 mtest/include/MTest/EuroplexusStandardBehaviour.hxx -text
 mtest/include/MTest/Evolution.hxx -text
+mtest/include/MTest/FAndersonAccelerationAlgorithm.hxx -text
 mtest/include/MTest/FunctionEvolution.hxx -text
 mtest/include/MTest/GenericSolver.hxx -text
 mtest/include/MTest/ImposedDrivingVariable.hxx -text
@@ -4278,6 +4279,7 @@ mtest/include/MTest/StudyCurrentState.ixx -text
 mtest/include/MTest/StudyParameter.hxx -text
 mtest/include/MTest/TextDataUtilities.hxx -text
 mtest/include/MTest/Types.hxx -text
+mtest/include/MTest/UAndersonAccelerationAlgorithm.hxx -text
 mtest/include/MTest/UmatBehaviourBase.hxx -text
 mtest/include/MTest/UmatNormaliseTangentOperator.hxx -text
 mtest/include/Makefile.am -text
@@ -4318,6 +4320,7 @@ mtest/src/CyranoBehaviour.cxx -text
 mtest/src/EuroplexusFiniteStrainBehaviour.cxx -text
 mtest/src/EuroplexusStandardBehaviour.cxx -text
 mtest/src/Evolution.cxx -text
+mtest/src/FAndersonAccelerationAlgorithm.cxx -text
 mtest/src/FunctionEvolution.cxx -text
 mtest/src/GenericSolver.cxx -text
 mtest/src/ImposedDrivingVariable.cxx -text
@@ -4351,6 +4354,7 @@ mtest/src/StructureCurrentState.cxx -text
 mtest/src/Study.cxx -text
 mtest/src/StudyCurrentState.cxx -text
 mtest/src/TextDataUtilities.cxx -text
+mtest/src/UAndersonAccelerationAlgorithm.cxx -text
 mtest/src/UmatBehaviourBase.cxx -text
 mtest/src/UmatNormaliseTangentOperator.cxx -text
 mtest/tests/CMakeLists.txt -text

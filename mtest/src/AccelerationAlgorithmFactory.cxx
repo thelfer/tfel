@@ -25,6 +25,8 @@
 #include"MTest/CrossedDelta2AccelerationAlgorithm.hxx"
 #include"MTest/Crossed2DeltaAccelerationAlgorithm.hxx"
 #include"MTest/Crossed2DeltabisAccelerationAlgorithm.hxx"
+#include"MTest/UAndersonAccelerationAlgorithm.hxx"
+#include"MTest/FAndersonAccelerationAlgorithm.hxx"
 #include"MTest/AccelerationAlgorithmFactory.hxx"
 
 namespace mtest
@@ -71,6 +73,8 @@ namespace mtest
     this->registerAlgorithm("Crossed2Deltabis",buildAlgorithmConstructor<Crossed2DeltabisAccelerationAlgorithm>);
     this->registerAlgorithm("Steffensen",buildAlgorithmConstructor<SteffensenAccelerationAlgorithm>);
     this->registerAlgorithm("IronsTuck",buildAlgorithmConstructor<IronsTuckAccelerationAlgorithm>);
+    this->registerAlgorithm("UAnderson",buildAlgorithmConstructor<UAndersonAccelerationAlgorithm>);
+    this->registerAlgorithm("FAnderson",buildAlgorithmConstructor<FAndersonAccelerationAlgorithm>);
   } // end of AccelerationAlgorithmFactory::AccelerationAlgorithmFactory
 
   void

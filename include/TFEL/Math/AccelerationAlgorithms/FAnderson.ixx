@@ -22,12 +22,13 @@ namespace tfel{
     // uO,uN: Old and new displacement field
     // Df: Rsidual force field
     template<typename Field,typename real>
-    void FAnderson<Field,real>::newIter(Field*&uN,Field*&Df) {
+    void FAnderson<Field,real>::newIter(Field*&uO,Field*&uN,Field*&Df) {
       // Reseting the Covariance matrix with a new vector
       if (this->n<this->size()) {
 	++(this->n);
       }
       this->reset();
+      uO=uN;
       // Projection
       if (this->size() == this->n) {
 	uN=this->u[0];
@@ -39,6 +40,7 @@ namespace tfel{
 	if (this->alt == this->alMax) {
 	  this->cM.weightsGSchmidtD(this->w);
 	  anderson::linear_combinaison(*uN,this->u,this->w,this->n);
+	  uO=uN;
 	  this->alt=1;
 	} else {
 	  if (this->alMax>1) {
@@ -63,9 +65,9 @@ namespace tfel{
     // uN: Old and new displacement field
     // Df: Residual force field
     template<typename Field,typename real>
-    void FAnderson<Field,real>::restart(Field*&uN,Field*&Df) {
+    void FAnderson<Field,real>::restart(Field*&uO,Field*&uN,Field*&Df) {
       this->alloc();
-      uN=this->u[0];
+      uO=uN=this->u[0];
       Df=this->D[0];
       this->alt=this->alMax;
     }

@@ -48,6 +48,8 @@ set(TFELMTest_SOURCES
   SecantAccelerationAlgorithm.cxx
   SteffensenAccelerationAlgorithm.cxx
   IronsTuckAccelerationAlgorithm.cxx
+  UAndersonAccelerationAlgorithm.cxx
+  FAndersonAccelerationAlgorithm.cxx
   MTest.cxx
   PipeTest.cxx
   PipeLinearElement.cxx

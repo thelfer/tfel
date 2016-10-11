@@ -43,6 +43,8 @@ libTFELMTest_la_SOURCES = Study.cxx                                 \
 			  CastemAccelerationAlgorithm.cxx           \
 			  IronsTuckAccelerationAlgorithm.cxx        \
 			  SteffensenAccelerationAlgorithm.cxx       \
+			  UAndersonAccelerationAlgorithm.cxx        \
+			  FAndersonAccelerationAlgorithm.cxx        \
 			  MTest.cxx                                 \
 			  PipeTest.cxx                              \
 			  PipeLinearElement.cxx                     \

@@ -28,10 +28,10 @@ namespace tfel{
       using AndersonBase<Field,real>::AndersonBase;
       //! Displacement fields for a new iteration
       //! \param uO,uN Old and new displacement field
-      void newIter(Field*&uN,Field*&Df);
+      void newIter(Field*&uO,Field*&uN,Field*&Df);
       //! First Iteration of a new time step
       //! \param uO,uN Old and new displacement field
-      void restart(Field*&uN,Field*&Df);
+      void restart(Field*&uO,Field*&uN,Field*&Df);
     }; // end of struct FAnderson
     
   } // end of namespace math

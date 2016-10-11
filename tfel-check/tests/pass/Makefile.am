@@ -38,11 +38,11 @@ EXTRA_DIST = test1.check     \
 	     test2.check     \
 	     test3.ref       \
 	     test3.check     \
-	     test4.ref     \
+	     test4.ref       \
 	     test4.check     \
-	     test5.ref     \
+	     test5.ref       \
 	     test5.check     \
-	     test6.ref     \
+	     test6.ref       \
 	     test6.check     \
 	     Alcyone1D.res   \
 	     Alcyone1D.ref   \
