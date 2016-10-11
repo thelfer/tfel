@@ -103,7 +103,7 @@ tests_math(discretization1D)
 tests_math(levenberg-marquardt)
 tests_math(levenberg-marquardt2)
 tests_math(levenberg-marquardt3)
-tests_math(ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest)
+tests_math(CorotationnalCauchyStressToSecondPioloKirchhoffStressTest)
 tests_math(StridedRandomAccessIteratorTest)
 tests_math(DifferenceRandomAccessIteratorTest)
 

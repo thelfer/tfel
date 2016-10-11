@@ -4583,7 +4583,7 @@ tests/Material/Makefile.am -text
 tests/Material/OrthotropicAxesConventionTest.cxx -text
 tests/Material/boundsCheck.cxx -text
 tests/Math/CMakeLists.txt -text
-tests/Math/ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest.cxx -text
+tests/Math/CorotationnalCauchyStressToSecondPioloKirchhoffStressTest.cxx -text
 tests/Math/CubicRoots.cxx -text
 tests/Math/CubicSplineTest.cxx -text
 tests/Math/DifferenceRandomAccessIteratorTest.cxx -text

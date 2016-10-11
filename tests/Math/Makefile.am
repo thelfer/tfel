@@ -66,7 +66,7 @@ test_PROGRAMS = hill                                     \
 		levenberg-marquardt4                     \
 		discretization1D                         \
 		TensorProductCheck                       \
-                ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest \
+                CorotationnalCauchyStressToSecondPioloKirchhoffStressTest \
 		StridedRandomAccessIteratorTest          \
 		DifferenceRandomAccessIteratorTest
 
