@@ -5,6 +5,7 @@
   "account for an orthotropic material."
 };
 
+@AccelerationAlgorithm 'Cast3M';
 @Behaviour<epx> '@MFrontEuroplexusBehavioursBuildPath@' 'OrthotropicSwelling2';
 
 @Real 'E1'   '7.8e+10';

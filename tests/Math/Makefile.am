@@ -115,7 +115,7 @@ levenberg_marquardt_SOURCES   = levenberg-marquardt.cxx
 levenberg_marquardt2_SOURCES  = levenberg-marquardt2.cxx
 levenberg_marquardt3_SOURCES  = levenberg-marquardt3.cxx
 TensorProductCheck_SOURCES    = TensorProductCheck.cxx
-ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest_SOURCES = ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest.cxx
+CorotationnalCauchyStressToSecondPioloKirchhoffStressTest_SOURCES = CorotationnalCauchyStressToSecondPioloKirchhoffStressTest.cxx
 StridedRandomAccessIteratorTest_SOURCES    = StridedRandomAccessIteratorTest.cxx
 DifferenceRandomAccessIteratorTest_SOURCES = DifferenceRandomAccessIteratorTest.cxx
 

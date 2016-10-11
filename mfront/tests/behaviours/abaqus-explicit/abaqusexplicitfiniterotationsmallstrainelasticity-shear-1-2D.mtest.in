@@ -6,6 +6,7 @@
  */
 
 @ModellingHypothesis 'Axisymmetrical';
+@AccelerationAlgorithm 'Cast3M';
 @Behaviour<abaqus_explicit> '@MFrontAbaqusExplicitBehavioursBuildPath@' 'FINITEROTATIONSMALLSTRAINELASTICITY_AXIS';
 @MaterialProperty<constant> 'MassDensity'  15000.;
 @MaterialProperty<constant> 'YoungModulus'   215.e9;

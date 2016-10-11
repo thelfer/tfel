@@ -44,7 +44,6 @@ convert_data_to_python_object(const tfel::utilities::Data& d)
   }
   throw(runtime_error("convert_data_to_python_object: "
 		      "unsupported conversion"));
-  return object();
 } // end of convert_data_to_python_object
 
 static void

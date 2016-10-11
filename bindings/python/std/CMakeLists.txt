@@ -1,7 +1,7 @@
 include_directories("${PROJECT_SOURCE_DIR}/bindings/python/include")
 include_directories("${PROJECT_SOURCE_DIR}/include")
-include_directories("${Boost_INCLUDE_DIRS}")
-include_directories("${PYTHON_INCLUDE_DIRS}")
+include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
+include_directories(SYSTEM "${PYTHON_INCLUDE_DIRS}")
 
 link_directories("${Boost_LIBRARY_DIRS}")
 link_directories("${PYTHON_LIBRARY_PATH}")

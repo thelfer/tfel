@@ -11,6 +11,7 @@
 };
 
 @ModellingHypothesis 'Axisymmetrical';
+@AccelerationAlgorithm 'Cast3M';
 @Behaviour<epx> '@MFrontEuroplexusBehavioursBuildPath@' 'SaintVenantKirchhoffElasticity';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

@@ -30,4 +30,7 @@ target_link_libraries(TFELCheck
   TFELMath TFELUtilities TFELSystem)
 
 add_executable(tfel-check tfel-check.cxx)
-target_link_libraries(tfel-check TFELCheck TFELUtilities TFELSystem)
+target_link_libraries(tfel-check
+  TFELCheck TFELUtilities TFELSystem)
+install(TARGETS tfel-check DESTINATION bin
+  COMPONENT core)
