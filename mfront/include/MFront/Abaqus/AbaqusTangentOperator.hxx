@@ -41,7 +41,7 @@ namespace abaqus
    * operator to follow the umat interface
    */
   template<typename real>
-  struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusTangentOperator
+  struct AbaqusTangentOperator
   {
     /*!
      * \brief normalize the tangent operator in 1D
@@ -194,14 +194,8 @@ namespace abaqus
       template<typename Behaviour,typename real>
       static void exe(const Behaviour& bv,real *const DDSDDE)
       {
-#ifndef _MSC_VER
-	using tfel::math::constexpr_fct::sqrt;
-	constexpr real cste
-	  = real(1)/tfel::math::constexpr_fct::sqrt(real(2));
-#else
-	const real cste = real(1)/std::sqrt(real(2));
-#endif
-	constexpr const real one_half = real(1)/real(2);
+	constexpr const auto cste = tfel::math::Cste<real>::isqrt2;
+	TFEL_CONSTEXPR const auto one_half = real(1)/real(2);
 	constexpr const unsigned short N = 2u;
 	using  TangentOperatorType = typename AbaqusTangentOperatorType<AbaqusTraits<Behaviour>::btype,real,N>::type;
 	auto Dt = static_cast<const TangentOperatorType&>(bv.getTangentOperator());

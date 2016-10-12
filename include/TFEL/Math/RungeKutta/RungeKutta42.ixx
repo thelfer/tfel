@@ -86,8 +86,8 @@ namespace tfel
     void
     RungeKutta42<N,Child,Scalar>::iterate(void)
     {
-      static constexpr Scalar cste1_6 = Scalar(1)/Scalar(6);
-      static constexpr Scalar cste1_3 = Scalar(1)/Scalar(3);
+      TFEL_CONSTEXPR const Scalar cste1_6 = Scalar(1)/Scalar(6);
+      TFEL_CONSTEXPR const Scalar cste1_3 = Scalar(1)/Scalar(3);
       Scalar t = this->ti; // current time
       Scalar t_;           // intermediate time
       Scalar e = 0;        // error norm

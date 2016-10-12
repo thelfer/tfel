@@ -60,9 +60,9 @@ namespace tfel{
       }
 
       void increm(void){
-	constexpr T Cste_1_2 = T{1}/T{2};
-	constexpr T Cste_1_3 = T{1}/T{3};
-	constexpr T Cste_1_6 = T{1}/T{6};
+	TFEL_CONSTEXPR const auto Cste_1_2 = T{1}/T{2};
+	TFEL_CONSTEXPR const auto Cste_1_3 = T{1}/T{3};
+	TFEL_CONSTEXPR const auto Cste_1_6 = T{1}/T{6};
 	static_cast<Func&>(*this).computeF(t,y);
 	k1  = h*f;
 	tmp = y+Cste_1_2*k1;

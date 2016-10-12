@@ -39,7 +39,7 @@ namespace tfel{
       }
 
       TFEL_MATH_INLINE2 void increm(void){
-	constexpr auto one_half = T{1}/T{2};
+	TFEL_CONSTEXPR const auto one_half = T{1}/T{2};
 	static_cast<Func &>(*this).computeF(t,y);
 	k1 = y+one_half*h*f;
 	static_cast<Func &>(*this).computeF(t+one_half*h,k1);

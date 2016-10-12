@@ -68,8 +68,8 @@ namespace tfel{
 	{
 	  typedef typename StensorTraits<T>::NumType NumType;
 	  typedef typename tfel::typetraits::BaseType<NumType>::type base;
-	  constexpr base one_third = base{1}/base{3};
-	  constexpr base cste      = base{3}/base{2};
+	  TFEL_CONSTEXPR const auto one_third = base{1}/base{3};
+	  TFEL_CONSTEXPR const auto cste      = base{3}/base{2};
 	  const NumType tr = one_third*trace(s);
 	  return std::sqrt(cste*(SigmaEqImplBase::square(s(0)-tr)+
 				 SigmaEqImplBase::square(s(1)-tr)+
@@ -90,9 +90,9 @@ namespace tfel{
 	{
 	  typedef typename StensorTraits<T>::NumType NumType;
 	  typedef typename tfel::typetraits::BaseType<NumType>::type base;
-	  constexpr base one_third = base(1)/base(3);
-	  constexpr base cste      = base(3)/base(2);
-	  const NumType tr = one_third*trace(s);
+	  TFEL_CONSTEXPR const auto one_third = base(1)/base(3);
+	  TFEL_CONSTEXPR const auto cste      = base(3)/base(2);
+	  const auto tr = one_third*trace(s);
 	  return std::sqrt(cste*(SigmaEqImplBase::square(s(0)-tr)+
 				 SigmaEqImplBase::square(s(1)-tr)+
 				 SigmaEqImplBase::square(s(2)-tr)+
@@ -113,8 +113,8 @@ namespace tfel{
 	{
 	  typedef typename StensorTraits<T>::NumType NumType;
 	  typedef typename tfel::typetraits::BaseType<NumType>::type base;
-	  constexpr base one_third = base(1)/base(3);
-	  constexpr base cste      = base(3)/base(2);
+	  TFEL_CONSTEXPR const auto one_third = base(1)/base(3);
+	  TFEL_CONSTEXPR const auto cste      = base(3)/base(2);
 	  const auto tr = one_third*trace(s);
 	  return std::sqrt(cste*(SigmaEqImplBase::square(s(0)-tr)+
 				 SigmaEqImplBase::square(s(1)-tr)+
@@ -200,7 +200,7 @@ namespace tfel{
       using Result  = typename StensorType<T>::type;
       using NumType = typename StensorTraits<T>::NumType;
       using real    = typename tfel::typetraits::BaseType<NumType>::type;
-      constexpr real one_third = real{1}/real{3};
+      TFEL_CONSTEXPR const auto one_third = real{1}/real{3};
       const NumType tr = one_third*trace(s);
       return Result{s(0)-tr,s(1)-tr,s(2)-tr};
     }
@@ -216,7 +216,7 @@ namespace tfel{
       using Result  = typename StensorType<T>::type;
       using NumType = typename StensorTraits<T>::NumType;
       using real    = typename tfel::typetraits::BaseType<NumType>::type;
-      constexpr real one_third = real{1}/real{3};
+      TFEL_CONSTEXPR const auto one_third = real{1}/real{3};
       const NumType tr = one_third*trace(s);
       return Result{s(0)-tr,s(1)-tr,s(2)-tr,s(3)};
     }

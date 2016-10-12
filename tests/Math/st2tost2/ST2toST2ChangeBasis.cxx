@@ -107,11 +107,11 @@ private:
   template<unsigned short N>
   void test(const tfel::math::tmatrix<3u,3u,double>& r){
     using st2tost2 = tfel::math::st2tost2<N,double>;
-    constexpr const double e = 100*std::numeric_limits<double>::epsilon();
-    constexpr const double y = 150.e9;
-    constexpr const double n =   0.3;
-    constexpr const double l = n*y/((1+n)*(1-2*n));
-    constexpr const double m = y/(2*(1+n));
+    TFEL_CONSTEXPR const double e = 100*std::numeric_limits<double>::epsilon();
+    TFEL_CONSTEXPR const double y = 150.e9;
+    TFEL_CONSTEXPR const double n =   0.3;
+    TFEL_CONSTEXPR const double l = n*y/((1+n)*(1-2*n));
+    TFEL_CONSTEXPR const double m = y/(2*(1+n));
     const st2tost2 D  = l*st2tost2::IxI()+m*st2tost2::Id();
     const st2tost2 D2 = change_basis(D,r);
     auto p  = D.begin();
@@ -130,7 +130,7 @@ private:
 	    const tfel::math::st2tost2<N,double>& D,
 	    const tfel::math::stensor<N,double>& e){
     using stensor = tfel::math::stensor<N,double>;
-    constexpr const double eps = 100*std::numeric_limits<double>::epsilon();
+    TFEL_CONSTEXPR const double eps = 100*std::numeric_limits<double>::epsilon();
     // first computation of the stress
     const stensor ns = change_basis(D*e,r);
     // second computation of the stress

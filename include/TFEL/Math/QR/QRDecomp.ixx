@@ -160,7 +160,7 @@ namespace tfel
 			      const VectorType& d)
     {
       using real = typename MatrixTraits<MatrixType>::NumType;
-      constexpr real eps = 100*std::numeric_limits<real>::min();
+      TFEL_CONSTEXPR real eps = 100*std::numeric_limits<real>::min();
       QRDecomp::back_substitute(v,a,d,eps);
     }
     

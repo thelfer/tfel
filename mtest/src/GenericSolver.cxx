@@ -267,7 +267,7 @@ namespace mtest{
 			       "negative time step"));
     }
     // almost bone
-    constexpr real aone = 1-10*std::numeric_limits<real>::epsilon();
+    TFEL_CONSTEXPR real aone = 1-10*std::numeric_limits<real>::epsilon();
     bool end = false;
     if(o.dynamic_time_step_scaling){
       if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){

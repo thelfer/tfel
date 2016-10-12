@@ -130,8 +130,8 @@ namespace tfel{
 	  typedef typename tfel::typetraits::BaseType<T>::type base;
 	  typedef typename ComputeBinaryResult<base,T,OpDiv>::Result T2;
 	  typedef typename ComputeUnaryResult<T,Power<3> >::Result T3;
-	  constexpr const base two      = base(2);
-	  constexpr const base one_half = base(1)/two;
+	  TFEL_CONSTEXPR const base two      = base(2);
+	  TFEL_CONSTEXPR const base one_half = base(1)/two;
 	  constexpr const base icste    = Cste<base>::isqrt2;
 	  stensor<3u,T2> inv;
 	  const T3 iJ = base(1)/det(s);
@@ -1569,7 +1569,7 @@ namespace tfel{
       using T    =  typename StensorTraits<StensorType>::NumType;
       using T2   = typename ComputeBinaryResult<T,T,OpMult>::Result;
       using base = typename tfel::typetraits::BaseType<T>::type;
-      constexpr base one_half = 1/base(2);
+      TFEL_CONSTEXPR const base one_half = 1/base(2);
       return stensor<2u,T2>{(s(3)*s(3)+2*s(0)*s(0))*one_half,
 	  (s(3)*s(3)+2*s(1)*s(1))*one_half,
 	  s(2)*s(2),(s(1)+s(0))*s(3)};
@@ -1589,7 +1589,7 @@ namespace tfel{
       using base = typename tfel::typetraits::BaseType<T>::type;
       typedef typename StensorTraits<StensorType>::NumType T;
       constexpr const base cste     = Cste<base>::sqrt2;
-      constexpr const base one_half = 1/(base(2));
+      TFEL_CONSTEXPR const base one_half = 1/(base(2));
       return stensor<3u,T2>{(s(4)*s(4)+s(3)*s(3)+2*s(0)*s(0))*one_half,
 	  (s(5)*s(5)+s(3)*s(3)+2*s(1)*s(1))*one_half,
 	  (s(5)*s(5)+s(4)*s(4)+2*s(2)*s(2))*one_half,

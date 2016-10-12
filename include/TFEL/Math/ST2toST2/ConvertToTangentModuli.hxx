@@ -74,7 +74,7 @@ namespace tfel{
 				      typename TensorTraits<TensorType>::NumType,
 				      OpMult>::type;
       using base = typename tfel::typetraits::BaseType<res>::type;
-      constexpr const auto icste2 = Cste<res>::isqrt2/base(2);
+      TFEL_CONSTEXPR const auto icste2 = Cste<res>::isqrt2/base(2);
       st2tost2<2u,res> C;
       C(0,0) = K(0,0)*F(0)+K(0,3)*F(3);
       C(0,3) = (K(0,0)*F(4)+K(0,3)*F(1)+K(0,4)*F(0)+K(0,1)*F(3))*icste2;
@@ -112,7 +112,7 @@ namespace tfel{
 				      typename TensorTraits<TensorType>::NumType,
 				      OpMult>::type;
       using base = typename tfel::typetraits::BaseType<res>::type;
-      constexpr const auto icste2 = Cste<res>::isqrt2/base(2);
+      TFEL_CONSTEXPR const auto icste2 = Cste<res>::isqrt2/base(2);
       st2tost2<3u,res> C;
       C(0,0) = K(0,0)*F(0)+K(0,3)*F(3)+K(0,5)*F(5);
       C(0,3) = (K(0,0)*F(4)+K(0,3)*F(1)+K(0,5)*F(7)+K(0,4)*F(0)+K(0,1)*F(3)+K(0,7)*F(5))*icste2;

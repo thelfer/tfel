@@ -529,7 +529,7 @@ namespace mtest
     // saving the read values
     tfel::math::tmatrix<3u,3u,real> rm;
     if(choice==MILLER){
-      constexpr const real cste = 180. / M_PI;
+	  TFEL_CONSTEXPR const real cste = 180. / M_PI;
       this->readSpecifiedToken("MTestParser::handleRotationMatrix","{",
 			       p,this->tokens.end());
       const auto h = this->readInt(p,this->tokens.end());
