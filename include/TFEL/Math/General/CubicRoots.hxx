@@ -23,7 +23,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/TypeTraits/IsReal.hxx"
 #include"TFEL/TypeTraits/IsFundamentalNumericType.hxx"
-#include"TFEL/Math/General/ConstExprMathFunctions.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 
 namespace tfel{
   

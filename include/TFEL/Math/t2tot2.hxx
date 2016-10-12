@@ -196,20 +196,20 @@ namespace tfel{
       /*!
        * \return the derivative of the transpose of a tensor with respect of this tensor
        */
-      static TFEL_MATH_INLINE constexpr
+      static TFEL_MATH_INLINE TFEL_CONSTEXPR
       tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type>
       transpose_derivative(void);
       //! \return the identity
-      static TFEL_MATH_INLINE constexpr
+      static TFEL_MATH_INLINE TFEL_CONSTEXPR
       tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type> Id(void);
       //! \return Id2^Id2, where Id2 is the identity tensor 
-      static TFEL_MATH_INLINE constexpr
+      static TFEL_MATH_INLINE TFEL_CONSTEXPR
       tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type> IxI(void);
       /*!
        * \return Id4-Id2^Id2/3, where Id4 is the identity of t2tot2 and
        * Id2 is the identity tensor
        */
-      static TFEL_MATH_INLINE constexpr
+      static TFEL_MATH_INLINE TFEL_CONSTEXPR
       tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type> K(void);
       //! This is a T2toT2 concept requirement.
       typedef EmptyRunTimeProperties RunTimeProperties;
