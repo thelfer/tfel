@@ -284,4 +284,10 @@
 #undef max
 #endif
 
+#ifndef _MSC_VER
+#define TFEL_CONSTEXPR constexpr
+#else
+#define TFEL_CONSTEXPR
+#endif
+
 #endif /* LIB_TFEL_CONFIG_HXX_ */

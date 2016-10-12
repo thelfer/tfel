@@ -160,7 +160,7 @@ namespace tfel{
 	: is_cxx_separator(b)
       {}
       bool operator()(const std::string::value_type& c) const{
-	return ((std::isspace(c)) or (is_cxx_separator::operator()(c)));
+	return ((std::isspace(c)) || (is_cxx_separator::operator()(c)));
       }
     }; // end of struct is_cxx_separator_or_space
     

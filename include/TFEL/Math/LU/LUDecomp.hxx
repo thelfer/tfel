@@ -56,7 +56,7 @@ namespace tfel{
 	using namespace std;
 	typedef typename MatrixTraits<MatrixType>::IndexType IndexType;
 	typedef typename MatrixTraits<MatrixType>::NumType NumType;
-	constexpr const NumType c = NumType(1)/10;
+	TFEL_CONSTEXPR const NumType c = NumType(1)/10;
 	if(m.getNbRows()!=m.getNbCols()){
 	  throw(LUMatrixNotSquare());
 	}
