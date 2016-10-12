@@ -56,8 +56,9 @@ namespace tfel{
 			  "path to TFEL shall not contain space as "
 			  "MinGW can't handle it (Found '"+p+"'). "
 			  "Please change TFEL installation directory"));
-#endif
+#else
       return '"'+p+'"';
+#endif
     }
     return p;
   }

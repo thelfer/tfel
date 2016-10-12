@@ -71,7 +71,7 @@ namespace tfel{
       template<typename T>
       static TFEL_MATH_INLINE T
       cbrt(const T x){
-	constexpr T one_third = T(1)/T(3);
+	TFEL_CONSTEXPR const auto one_third = T(1)/T(3);
 	if(x<0){
 	  return -std::pow(-x,one_third);
 	}
@@ -111,14 +111,14 @@ namespace tfel{
 		 const T a1,
 		 const T a0)
       {	
-	static constexpr T C_1_2       = T{1}/T{2};
-	static constexpr T C_1_3       = T{1}/T{3};
-	static constexpr T C_2_3       = T{2}*C_1_3;
-	static constexpr T C_m1_27     = T{-1}/T{27};
-	static constexpr T C_2_27      = T{2}/T{27};
-	static constexpr T C_27_2      = T{27}/T{2};
-	static constexpr T C_3SQRT3_2  = constexpr_fct::sqrt(T{3})*T(3)/T(2);
-	static constexpr T C_SQRT3_3   = constexpr_fct::sqrt(T{3})*C_1_3;
+	TFEL_CONSTEXPR const auto C_1_2       = T{1}/T{2};
+	TFEL_CONSTEXPR const auto C_1_3       = T{1}/T{3};
+	TFEL_CONSTEXPR const auto C_2_3       = T{2}*C_1_3;
+	TFEL_CONSTEXPR const auto C_m1_27     = T{-1}/T{27};
+	TFEL_CONSTEXPR const auto C_2_27      = T{2}/T{27};
+	TFEL_CONSTEXPR const auto C_27_2      = T{27}/T{2};
+	TFEL_CONSTEXPR const auto C_3SQRT3_2  = Cste<T>::sqrt3*T(3)/T(2);
+	TFEL_CONSTEXPR const auto C_SQRT3_3   = Cste<T>::sqrt3*C_1_3;
 	const T prec = 100*std::numeric_limits<T>::min();
 	if(std::abs(a3)<=prec){
 	  return 0u;

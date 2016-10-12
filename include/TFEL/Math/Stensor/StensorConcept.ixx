@@ -232,7 +232,7 @@ namespace tfel{
       using Result  = typename StensorType<T>::type;
       using NumType = typename StensorTraits<T>::NumType;
       using real    = typename tfel::typetraits::BaseType<NumType>::type;
-      constexpr real one_third = real{1}/real{3};
+      TFEL_CONSTEXPR const auto one_third = real{1}/real{3};
       const NumType tr = one_third*trace(s);
       return Result{s(0)-tr,s(1)-tr,s(2)-tr,s(3),s(4),s(5)};
     }

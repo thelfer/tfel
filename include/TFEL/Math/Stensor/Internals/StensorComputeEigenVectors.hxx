@@ -175,7 +175,7 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  constexpr T one_half   = T{1}/T{2};
+	  TFEL_CONSTEXPR const auto one_half   = T{1}/T{2};
 	  const T tr   = one_half*(s0 + s1);
 	  const T tmp  = s0 - s1;
 	  const T tmp2 = std::sqrt(one_half*(tmp*tmp*one_half+s3*s3));
@@ -285,8 +285,8 @@ namespace tfel{
 	  using tfel::math::tvector;
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  constexpr const auto rel_prec  = 100*std::numeric_limits<T>::epsilon();
-	  constexpr const auto one_third = T(1)/T(3);
+	  TFEL_CONSTEXPR const auto rel_prec  = 100*std::numeric_limits<T>::epsilon();
+	  TFEL_CONSTEXPR const auto one_third = T(1)/T(3);
 	  StensorComputeEigenValues_<3u>::exe(s,vp(0),vp(1),vp(2),b);
 	  const auto tr  = (s[0]+s[1]+s[2])*one_third;
 	  const auto mvp = max(max(std::abs(vp(0)-tr),std::abs(vp(1)-tr)),std::abs(vp(2)-tr));

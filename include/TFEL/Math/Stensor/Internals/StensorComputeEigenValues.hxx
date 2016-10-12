@@ -86,9 +86,9 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr T M_1_SQRT2 = 1/sqrt(T{2});
-	  constexpr T one_half  = T{1}/T{2};
-	  constexpr T one_third = T{1}/T{3};
+	  constexpr const auto icste = Cste<T>::isqrt2;
+	  TFEL_CONSTEXPR T one_half  = T{1}/T{2};
+	  TFEL_CONSTEXPR T one_third = T{1}/T{3};
 	  stensor<3u,T> s(v);
 	  stensor<3u,T> s2(deviator(s));
 	  const T vmax = *(fsalgo::max_element<6u>::exe(s2.begin()));
@@ -96,10 +96,10 @@ namespace tfel{
   	  if(n){
 	    s2 *= T(1)/vmax;
 	  }
-	  constexpr T p3 = -1.;	
-	  constexpr T p2 = 0.;
+	  constexpr auto p3 = T{-1};
+	  constexpr auto p2 = T{ 0};
 	  const T p1 =  one_half*(s2[5]*s2[5]+s2[4]*s2[4]+s2[3]*s2[3])-(s2[0]*(s2[2]+s2[1])+s2[1]*s2[2]);
-	  const T p0 = -one_half*(s2[0]*s2[5]*s2[5]+s2[1]*s2[4]*s2[4]+s2[2]*s2[3]*s2[3])+M_1_SQRT2*(s2[3]*s2[4]*s2[5])+s2[0]*s2[1]*s2[2];
+	  const T p0 = -one_half*(s2[0]*s2[5]*s2[5]+s2[1]*s2[4]*s2[4]+s2[2]*s2[3]*s2[3])+icste*(s2[3]*s2[4]*s2[5])+s2[0]*s2[1]*s2[2];
 	  const unsigned short nb = CubicRoots::exe(vp1,vp2,vp3,p3,p2,p1,p0,b);
 	  if(nb==0u){
 	    throw(StensorEigenValuesComputationFailureException());

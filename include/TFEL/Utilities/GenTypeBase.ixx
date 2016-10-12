@@ -157,7 +157,6 @@ namespace tfel{
 		const GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
-	    return return_type();
 	  }
 	  static return_type
 	  apply(T&,
@@ -165,21 +164,18 @@ namespace tfel{
 		const GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
-	    return return_type();
 	  }
 	  static return_type
 	  apply(GenTypeBase<List>&,
 		GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
-	    return return_type();
 	  }
 	  static return_type
 	  apply(T&,GenTypeBase<List>&,
 		GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
-	    return return_type();
 	  }
 	}; // end of struct EndRecursion
       

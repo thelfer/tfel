@@ -49,10 +49,10 @@ namespace tfel{
        */
       template<typename T>
       struct ComputeSpecialT2toT2Values<1u,T>{
-	static constexpr const T zero      = T{0};
-	static constexpr const T one       = T{1};
-	static constexpr const T one_third = 1/T{3};
-	static constexpr const T two_third = 2/T{3};
+	static TFEL_CONSTEXPR const auto zero      = T{0};
+	static TFEL_CONSTEXPR const auto one       = T{1};
+	static TFEL_CONSTEXPR const auto one_third = 1/T{3};
+	static TFEL_CONSTEXPR const auto two_third = 2/T{3};
 	/*!
 	 * \return the derivative of the transpose of a tensor with respect of this tensor
 	 */
@@ -94,10 +94,10 @@ namespace tfel{
        */
       template<typename T>
       struct ComputeSpecialT2toT2Values<2u,T>{
-	static constexpr const T zero      = T{0};
-	static constexpr const T one       = T{1};
-	static constexpr const T one_third = 1/T{3};
-	static constexpr const T two_third = 2/T{3};
+	static TFEL_CONSTEXPR const auto zero      = T{0};
+	static TFEL_CONSTEXPR const auto one       = T{1};
+	static TFEL_CONSTEXPR const auto one_third = 1/T{3};
+	static TFEL_CONSTEXPR const auto two_third = 2/T{3};
 	/*!
 	 * \return the derivative of the transpose of a tensor with respect of this tensor
 	 */
@@ -147,10 +147,10 @@ namespace tfel{
        */
       template<typename T>
       struct ComputeSpecialT2toT2Values<3u,T>{
-	static constexpr const T zero = T{0};
-	static constexpr const T one  = T{1};
-	static constexpr const T one_third = one/T{3};
-	static constexpr const T two_third = 2/T{3};
+	static TFEL_CONSTEXPR const auto zero = T{0};
+	static TFEL_CONSTEXPR const auto one  = T{1};
+	static TFEL_CONSTEXPR const auto one_third = one/T{3};
+	static TFEL_CONSTEXPR const auto two_third = 2/T{3};
 	/*!
 	 * \return the derivative of the transpose of a tensor with respect of this tensor
 	 */

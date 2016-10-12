@@ -98,7 +98,6 @@ namespace tfel
        * \param[in] f : function
        * \param[in] h : hypothesis
        */
-      TFELSYSTEM_VISIBILITY_EXPORT
       ExternalBehaviourDescription(const std::string&,
 				   const std::string&,
 				   const std::string&);
