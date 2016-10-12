@@ -14,10 +14,18 @@
 #ifndef LIB_TFEL_MATH_UANDERSON_IXX
 #define LIB_TFEL_MATH_UANDERSON_IXX
 
+#include<utility>
+
 namespace tfel{
 
   namespace math{
 
+    //! constructor
+    template<typename Field,typename real>
+    UAnderson<Field,real>::UAnderson(const typename AndersonBase<Field,real>::Allocator a)
+      : AndersonBase<Field,real>(std::move(a))
+    {} // end of UAnderson<Field,real>::UAnderson
+    
     // Displacement fields for a new iteration
     // uO,uN: Old and new displacement field
     template<typename Field,typename real>

@@ -24,8 +24,8 @@ namespace tfel{
     struct UAnderson
       : public AndersonBase<Field,real>
     {
-      //! inheriting constructor
-      using AndersonBase<Field,real>::AndersonBase;
+      //! constructor
+      UAnderson(const typename AndersonBase<Field,real>::Allocator);
       //! Displacement fields for a new iteration
       //! \param uO,uN Old and new displacement field
       //! \param Df Rsidual force field

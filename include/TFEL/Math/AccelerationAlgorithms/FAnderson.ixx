@@ -14,10 +14,17 @@
 #ifndef LIB_TFEL_MATH_FANDERSON_IXX
 #define LIB_TFEL_MATH_FANDERSON_IXX
 
+#include<utility>
+
 namespace tfel{
 
   namespace math{
 
+    template<typename Field,typename real>
+    FAnderson<Field,real>::FAnderson(const typename AndersonBase<Field,real>::Allocator a)
+      : AndersonBase<Field,real>(std::move(a))
+    {} // end of FAnderson<Field,real>::FAnderson
+    
     // Displacement fields for a new iteration
     // uO,uN: Old and new displacement field
     // Df: Rsidual force field
