@@ -22,56 +22,49 @@ namespace abaqus
   void
   AbaqusTangentOperator<real>::normalize(tfel::math::ST2toST2View<2u,real>& Dt)
   {
-#ifndef _MSC_VER
-    constexpr const real cste = 1/(tfel::math::constexpr_fct::sqrt(real(2)));
-#else
-    static const real cste = 1/(std::sqrt(real(2)));
-#endif
-    Dt(0,3) *= cste;
-    Dt(1,3) *= cste;
-    Dt(2,3) *= cste;
-    Dt(3,0) *= cste;
-    Dt(3,1) *= cste;
-    Dt(3,2) *= cste;
-    Dt(3,3) /= 2;
+    constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
+    Dt(0,3) *= icste;
+    Dt(1,3) *= icste;
+    Dt(2,3) *= icste;
+    Dt(3,0) *= icste;
+    Dt(3,1) *= icste;
+    Dt(3,2) *= icste;
+    Dt(3,3) /= real(2);
   } // end of AbaqusTangentOperator<real>::normalize
   
   template<typename real>
   void
   AbaqusTangentOperator<real>::normalize(tfel::math::ST2toST2View<3u,real>& Dt)
   {
-#ifndef _MSC_VER
-    constexpr const real cste = 1/(tfel::math::constexpr_fct::sqrt(real(2)));
-#else
-    static const real cste = 1/(std::sqrt(real(2)));
-#endif
-    Dt(0,3) *= cste;
-    Dt(1,3) *= cste;
-    Dt(2,3) *= cste;
-    Dt(0,4) *= cste;
-    Dt(1,4) *= cste;
-    Dt(2,4) *= cste;
-    Dt(0,5) *= cste;
-    Dt(1,5) *= cste;
-    Dt(2,5) *= cste;
-    Dt(3,0) *= cste;
-    Dt(3,1) *= cste;
-    Dt(3,2) *= cste;
-    Dt(4,0) *= cste;
-    Dt(4,1) *= cste;
-    Dt(4,2) *= cste;
-    Dt(5,0) *= cste;
-    Dt(5,1) *= cste;
-    Dt(5,2) *= cste;
-    Dt(3,3) /= 2;
-    Dt(3,4) /= 2;
-    Dt(3,5) /= 2;
-    Dt(4,3) /= 2;
-    Dt(4,4) /= 2;
-    Dt(4,5) /= 2;
-    Dt(5,3) /= 2;
-    Dt(5,4) /= 2;
-    Dt(5,5) /= 2;
+    constexpr      const auto icste     = tfel::math::Cste<real>::isqrt2;
+    TFEL_CONSTEXPR const auto one_half  = real(1)/real(2);
+    Dt(0,3) *= icste;
+    Dt(1,3) *= icste;
+    Dt(2,3) *= icste;
+    Dt(0,4) *= icste;
+    Dt(1,4) *= icste;
+    Dt(2,4) *= icste;
+    Dt(0,5) *= icste;
+    Dt(1,5) *= icste;
+    Dt(2,5) *= icste;
+    Dt(3,0) *= icste;
+    Dt(3,1) *= icste;
+    Dt(3,2) *= icste;
+    Dt(4,0) *= icste;
+    Dt(4,1) *= icste;
+    Dt(4,2) *= icste;
+    Dt(5,0) *= icste;
+    Dt(5,1) *= icste;
+    Dt(5,2) *= icste;
+    Dt(3,3) *= one_half;
+    Dt(3,4) *= one_half;
+    Dt(3,5) *= one_half;
+    Dt(4,3) *= one_half;
+    Dt(4,4) *= one_half;
+    Dt(4,5) *= one_half;
+    Dt(5,3) *= one_half;
+    Dt(5,4) *= one_half;
+    Dt(5,5) *= one_half;
   } // end of struct AbaqusTangentOperator
 
   template<typename real>

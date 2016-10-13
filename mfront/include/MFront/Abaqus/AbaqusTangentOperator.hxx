@@ -17,7 +17,7 @@
 #include<type_traits>
 
 #include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
-#include"TFEL/Math/General/ConstExprMathFunctions.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Material/MechanicalBehaviourTraits.hxx"
 
@@ -165,27 +165,19 @@ namespace abaqus
       static void exe(const Behaviour& bv,
 		      real *const DDSDDE)
       {
-#if (not defined _MSC_VER) && (not defined __INTEL_COMPILER)
-	using tfel::math::constexpr_fct::sqrt;
-	constexpr const real one   = real(1);
-	constexpr const real two   = real(2);
-	constexpr const real sqrt2 = sqrt(two);
-	constexpr const real cste = one/sqrt2;
-#else
-	const real cste = real(1)/std::sqrt(real(2));
-#endif
-	constexpr const real one_half = real(1)/real(2);
-	constexpr const unsigned short N = 2u;
-	using  TangentOperatorType = typename AbaqusTangentOperatorType<AbaqusTraits<Behaviour>::btype,real,N>::type;
+	using  TangentOperatorType
+	  = typename AbaqusTangentOperatorType<AbaqusTraits<Behaviour>::btype,real,2u>::type;
+	constexpr      const auto icste = tfel::math::Cste<real>::isqrt2;
+	TFEL_CONSTEXPR const auto one_half = real(1)/real(2);
 	auto Dt = static_cast<const TangentOperatorType&>(bv.getTangentOperator());
 	DDSDDE[0] = Dt(0,0);
 	DDSDDE[1] = Dt(1,0);
-	DDSDDE[2] = Dt(3,0)*cste;
+	DDSDDE[2] = Dt(3,0)*icste;
 	DDSDDE[3] = Dt(0,1);
 	DDSDDE[4] = Dt(1,1);
-	DDSDDE[5] = Dt(3,1)*cste;
-	DDSDDE[6] = Dt(0,3)*cste;
-	DDSDDE[7] = Dt(1,3)*cste;
+	DDSDDE[5] = Dt(3,1)*icste;
+	DDSDDE[6] = Dt(0,3)*icste;
+	DDSDDE[7] = Dt(1,3)*icste;
 	DDSDDE[8] = Dt(3,3)*one_half;
       } // end of exe	  
     };
@@ -194,19 +186,19 @@ namespace abaqus
       template<typename Behaviour,typename real>
       static void exe(const Behaviour& bv,real *const DDSDDE)
       {
-	constexpr const auto cste = tfel::math::Cste<real>::isqrt2;
+	using  TangentOperatorType =
+	  typename AbaqusTangentOperatorType<AbaqusTraits<Behaviour>::btype,real,2u>::type;
+	constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
 	TFEL_CONSTEXPR const auto one_half = real(1)/real(2);
-	constexpr const unsigned short N = 2u;
-	using  TangentOperatorType = typename AbaqusTangentOperatorType<AbaqusTraits<Behaviour>::btype,real,N>::type;
 	auto Dt = static_cast<const TangentOperatorType&>(bv.getTangentOperator());
 	DDSDDE[0] = Dt(0,0);
 	DDSDDE[1] = Dt(0,1);
-	DDSDDE[2] = Dt(0,3)*cste;
+	DDSDDE[2] = Dt(0,3)*icste;
 	DDSDDE[3] = Dt(1,0);
 	DDSDDE[4] = Dt(1,1);
-	DDSDDE[5] = Dt(1,3)*cste;
-	DDSDDE[6] = Dt(3,0)*cste;
-	DDSDDE[7] = Dt(3,1)*cste;
+	DDSDDE[5] = Dt(1,3)*icste;
+	DDSDDE[6] = Dt(3,0)*icste;
+	DDSDDE[7] = Dt(3,1)*icste;
 	DDSDDE[8] = Dt(3,3)*one_half;
       } // end of exe	  
     };

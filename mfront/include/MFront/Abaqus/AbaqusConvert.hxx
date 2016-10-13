@@ -8,6 +8,8 @@
 #ifndef LIB_MFRONT_ABAQUS_ABAQUSCONVERT_HXX
 #define LIB_MFRONT_ABAQUS_ABAQUSCONVERT_HXX
 
+#include"TFEL/Math/General/MathConstants.hxx"
+
 namespace abaqus{
 
   /*!
@@ -57,17 +59,11 @@ namespace abaqus{
     template<typename T>
     static inline void
     exe(tfel::math::stensor<2u,T>& e,const AbaqusReal* const v){
-#if defined __INTEL_COMPILER
-      const AbaqusReal cste =
-	1/tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
-#else
-      constexpr const AbaqusReal cste =
-	1/tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
-#endif
+      constexpr const auto icste = tfel::math::Cste<AbaqusReal>::isqrt2;
       e[0]=v[0];
       e[1]=v[1];
       e[2]=AbaqusReal{0};
-      e[3]=v[2]*cste;
+      e[3]=v[2]*icste;
     } // end of exe
     /*!
      * \tparam T: type of the thermodynamique forces
@@ -117,13 +113,7 @@ namespace abaqus{
     template<typename T>
     static inline void
     exe(tfel::math::stensor<2u,T>& s,const AbaqusReal* const v){
-#if defined __INTEL_COMPILER
-      const AbaqusReal cste =
-	tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
-#else
-      constexpr const AbaqusReal cste =
-	tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
-#endif
+      constexpr const auto cste = tfel::math::Cste<AbaqusReal>::sqrt2;
       s[0]=v[0];
       s[1]=v[1];
       s[2]=AbaqusReal{0};
@@ -167,16 +157,10 @@ namespace abaqus{
     template<typename T>
     static inline void
     exe(AbaqusReal* const v,const tfel::math::stensor<2u,T>& s){
-#if defined __INTEL_COMPILER
-      const AbaqusReal cste =
-	1/tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
-#else
-      constexpr const AbaqusReal cste =
-	1/tfel::math::constexpr_fct::sqrt(AbaqusReal(2));
-#endif
+      constexpr const auto icste = tfel::math::Cste<AbaqusReal>::isqrt2;
       v[0]=s[0];
       v[1]=s[1];
-      v[2]=s[3]*cste;
+      v[2]=s[3]*icste;
     } // end of exe
   }; // end of struct UMATExportThermodynamicForces
 
