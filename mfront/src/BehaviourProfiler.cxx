@@ -98,8 +98,7 @@ namespace mfront
   static std::string
   getCodeBlockName(const unsigned int c)
   {
-    using namespace std;
-    string n;
+    auto n = std::string{};
     switch(c){
     case BehaviourProfiler::FLOWRULE:
       n = "FlowRule";
@@ -162,8 +161,8 @@ namespace mfront
       n = "TotalTime";
       break;
     default:
-      string msg("getCodeBlockName : no name associated with the given code block");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("getCodeBlockName : no name associated "
+			       "with the given code block"));
     }
     return n;
   }

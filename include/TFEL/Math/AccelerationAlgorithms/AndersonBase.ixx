@@ -27,7 +27,7 @@ namespace tfel{
     // flags: Plane construction method
     template<typename Field,typename real>
     AndersonBase<Field,real>::AndersonBase(const Allocator a)
-      : ma(a)
+      : ma(a),n(0)
     {}
 
     //! \return the Last displacement field

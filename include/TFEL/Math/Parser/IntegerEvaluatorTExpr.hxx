@@ -207,13 +207,14 @@ namespace tfel
 	: public tfel::math::parser::IntegerExpr
       {
 	Number(const int);
+	Number(Number&&) = default;
+	Number(const Number&) = default;
+	Number& operator=(Number&&) = delete;
+	Number& operator=(const Number&) = delete;
 	virtual parser::IntegerExprPtr
 	  clone(const std::vector<int>&) const override;
 	virtual int
 	  getValue(void) const override;
-      private:
-	Number& operator=(const Number&);
-	Number& operator=(Number&&);
 	const int value;
       }; // end of struct Number
       TNumber(const int v);

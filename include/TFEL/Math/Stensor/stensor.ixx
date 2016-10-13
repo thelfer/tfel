@@ -1030,7 +1030,7 @@ namespace tfel{
 						StensorType& n2,
 						const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m)
     {
-      return tfel::math::internals::StensorComputeEigenValuesDerivatives<N>::exe(n0,n1,n2,m);      
+      return stensor<N,T>::computeEigenTensors(n0,n1,n2,m);
     } // end of stensor<N,T>::computeEigenValuesDerivatives
 
     template<unsigned short N,typename T>
@@ -1266,9 +1266,9 @@ namespace tfel{
 	typename ComputeUnaryResult<typename VectorTraits<VectorType>::NumType,Power<2> >::Result,T
       >::cond,
       stensor<N,T> >::type
-    stensor<N,T>::buildFromVectorDiadicProduct(const VectorType& v){
+    stensor<N,T>::buildFromVectorDiadicProduct(const VectorType& vec){
       stensor<N,T> s;
-      tfel::math::internals::BuildStensorFromVectorDiadicProduct<N>::exe(s,v);
+      tfel::math::internals::BuildStensorFromVectorDiadicProduct<N>::exe(s,vec);
       return s;
     }
 

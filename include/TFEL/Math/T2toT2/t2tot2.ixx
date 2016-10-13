@@ -60,13 +60,7 @@ namespace tfel{
 	 */
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
           tfel::math::t2tot2<1u,T> transpose_derivative(void){
-#ifdef _MSC_VER
-	const auto zero      = T{0};
-	const auto one       = T{1};
-#endif
-	  return {one,zero,zero,
-	          zero,one,zero,
-	          zero,zero,one};
+	  return ComputeSpecialT2toT2Values<1u,T>::Id();
 	}
 	//! \return the identity
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR

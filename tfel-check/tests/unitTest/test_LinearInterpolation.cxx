@@ -29,7 +29,7 @@ struct test_LinearInterpolation final
   virtual tfel::tests::TestResult
   execute() override
   {
-    constexpr const double eps = 1.e-14;
+    TFEL_CONSTEXPR const double eps = 1.e-14;
     tfel_check::LinearInterpolation i;
     i.interpolate({1.,2.},{2.,4.});
     TFEL_TESTS_ASSERT(std::abs(3.-i.getValue(1.5))<eps);

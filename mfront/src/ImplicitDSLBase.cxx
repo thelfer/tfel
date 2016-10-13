@@ -562,15 +562,15 @@ namespace mfront{
 
   std::string
   ImplicitDSLBase::integratorVariableModifier(const Hypothesis h,
-						       const std::string& var,
-						       const bool addThisPtr)
+					      const std::string& var,
+					      const bool addThisPtr)
   {
-    using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
     if(d.isIntegrationVariableIncrementName(var)){
       if(this->mb.hasAttribute(h,var.substr(1)+"_normalisation_factor")){
 	const auto& s = d.getStateVariableDescription(var.substr(1));
-	const auto& nf = this->mb.getAttribute<string>(h,var.substr(1)+"_normalisation_factor");
+	const auto& nf = this->mb.getAttribute<std::string>(h,var.substr(1)+
+							    "_normalisation_factor");
 	if(s.arraySize==1u){
 	  if(addThisPtr){
 	    return "(("+nf+")*(this->"+var+"))";
@@ -598,7 +598,6 @@ namespace mfront{
 							   const std::string& var,
 							   const bool addThisPtr)
   {
-    using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
     if(this->mb.isDrivingVariableName(var)||(var=="T")|
        (d.isExternalStateVariableName(var))){
@@ -611,19 +610,11 @@ namespace mfront{
     if(d.isIntegrationVariableName(var)){
       if(this->mb.hasAttribute(h,var+"_normalisation_factor")){
 	const auto& s = d.getStateVariableDescription(var);
-	const auto& nf = this->mb.getAttribute<string>(h,var+"_normalisation_factor");
-	if(s.arraySize==1u){
-	  if(addThisPtr){
-	    return "(this->"+var+"+(this->theta)*(("+nf+")*(this->d"+var+")))";
-	  } else {
-	    return "("+var+"+("+nf+")*(this->theta)*d"+var+")";
-	  }
+	const auto& nf = this->mb.getAttribute<std::string>(h,var+"_normalisation_factor");
+	if(addThisPtr){
+	  return "(this->"+var+"+(this->theta)*(("+nf+")*(this->d"+var+")))";
 	} else {
-	  if(addThisPtr){
-	    return "(this->"+var+"+(this->theta)*(("+nf+")*(this->d"+var+")))";
-	  } else {
-	    return "("+var+"+("+nf+")*(this->theta)*d"+var+")";
-	  }
+	  return "("+var+"+("+nf+")*(this->theta)*d"+var+")";
 	}
       } else {
 	if(addThisPtr){

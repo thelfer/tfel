@@ -922,7 +922,7 @@ namespace mfront{
     //omp support    #pragma omp parallel for
     out << "for(int i=0;i!=*nblock;++i){\n";
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
-    out << "constexpr const " << t << " zero = " << t <<  "(0);\n";
+    out << "TFEL_CONSTEXPR const " << t << " zero = " << t <<  "(0);\n";
     if(h==ModellingHypothesis::PLANESTRESS){
       // axial strain !
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
@@ -1062,7 +1062,7 @@ namespace mfront{
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
     if(h==ModellingHypothesis::PLANESTRESS){
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
-      out << "constexpr const " << t << " zero = " << t <<  "(0);\n"
+      out << "TFEL_CONSTEXPR const " << t << " zero = " << t <<  "(0);\n"
 	  << "const " << t << " ezz_old = "
 	  << "stateOld[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
 	  << "stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
@@ -1229,8 +1229,8 @@ namespace mfront{
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
     auto dime = (h==ModellingHypothesis::TRIDIMENSIONAL) ? "3u" : "2u";
     if(h==ModellingHypothesis::PLANESTRESS){
-      out << "constexpr const " << t << " zero = " << t <<  "(0);\n"
-	  << "constexpr const " << t << " one  = " << t <<  "(1);\n"
+      out << "TFEL_CONSTEXPR const " << t << " zero = " << t <<  "(0);\n"
+	  << "TFEL_CONSTEXPR const " << t << " one  = " << t <<  "(1);\n"
 	  << "stensor<2u," << t << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
 	  << "                              one,cste*(*(stretchOld+i+3*(*nblock)))};\n"
 	  << "stensor<2u," << t << "> U1 = {*(stretchNew+i),*(stretchNew+i+*nblock),\n"

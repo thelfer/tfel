@@ -625,13 +625,6 @@ namespace tfel{
 	  this->try_join(o,p,pe,n,'<','=');
 	} else if(*p=='>'){
 	  this->try_join(o,p,pe,n,'>','=');
-	} else if(*p=='.'){
-	  auto pn = std::next(p);
-	  if((pn!=pe)&&(std::isdigit(*pn))){
-	    this->readNumber(o,p,pe,n);
-	  } else {
-	    this->try_join(o,p,pe,n,'.','*');
-	  }
 	} else if(*p==':'){
 	  this->try_join(o,p,pe,n,':');
 	} else if((*p=='+')||(*p=='-')){
@@ -674,12 +667,10 @@ namespace tfel{
 	  if((pn!=pe)&&(std::isdigit(*pn))){
 	    this->readNumber(o,p,pe,n);
 	  } else {
-	    this->try_join(o,p,pe,n,'*');
+	    this->try_join(o,p,pe,n,'.','*');
 	  }
 	} else if(*p=='|'){
 	  this->try_join(o,p,pe,n,'|','=');
-	} else if(std::isdigit(*p)){
-	  this->readNumber(o,p,pe,n);
 	} else{
 	  auto pw = std::find_if(p,pe,is_cxx_separator_or_space(this->dotAsSeparator));
 	  if(p==pw){
@@ -702,7 +693,7 @@ namespace tfel{
 	if(b){throw(std::runtime_error("CxxTokenizer::splitLine: "+m));}
       };
       auto b        = line.begin();
-      auto p        = line.begin();
+      auto p        = b;
       const auto pe = line.end();
       // offset in line
       auto o = Token::size_type{};

@@ -861,8 +861,6 @@ namespace mfront{
 	  << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
 	  << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
-    }
-    if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "{\n"
 	  << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";

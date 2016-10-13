@@ -63,9 +63,9 @@ namespace tfel
       } // end of Number::createFunctionByChangingParametersIntoVariables
 
       std::shared_ptr<Expr>
-      Number::resolveDependencies(const std::vector<double>&) const
+      Number::resolveDependencies(const std::vector<double>& v) const
       {
-	return std::shared_ptr<Expr>(new Number(this->value));
+	return this->clone(v);
       } // end of Number::resolveDependencies
 
     } // end of namespace parser

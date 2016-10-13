@@ -56,22 +56,21 @@ namespace tfel
     {
       using namespace std;
       using namespace std::chrono;
-      vector<TestPtr>::iterator p;
       TestResult r;
-      for(p=this->tests.begin();p!=tests.end();++p){
+      for(const auto& t : this->tests){
 	TestResult r1;
 	const auto start = high_resolution_clock::now();
 	try{
-	  r1 = (*p)->execute();
+	  r1 = t->execute();
 	} catch(exception& e){
-	  string msg("test '"+(*p)->name());
+	  string msg("test '"+t->name());
 	  msg += "' has thrown an exception (";
 	  msg += e.what();
 	  msg += ")";
 	  cerr << msg << endl;
 	  r1 = TestResult(false,msg);
 	} catch(...){
-	  string msg("test '"+(*p)->name());
+	  string msg("test '"+t->name());
 	  msg += "' has thrown an unknown exception";
 	  cerr << msg << endl;
 	  r1 = TestResult(false,msg);
@@ -89,20 +88,19 @@ namespace tfel
     {
       using namespace std;
       using namespace std::chrono;
-      vector<TestPtr>::iterator p;
       o.beginTestSuite(this->name());
       TestResult r;
       bool success =true;
-      for(p=this->tests.begin();p!=tests.end();++p){
+      for(const auto& t : this->tests){
 	TestResult r1;
 	const auto start = high_resolution_clock::now();
 	try{
-	  r1 = (*p)->execute();
+	  r1 = t->execute();
 	  if(!r1.success()){
 	    success = false;
 	  }
 	} catch(exception& e){
-	  string msg("test '"+(*p)->name());
+	  string msg("test '"+t->name());
 	  msg += "' has thrown an exception (";
 	  msg += e.what();
 	  msg += ")";
@@ -110,7 +108,7 @@ namespace tfel
 	  r1 = TestResult(false,msg);
 	  success = false;
 	} catch(...){
-	  string msg("test '"+(*p)->name());
+	  string msg("test '"+t->name());
 	  msg += "' has thrown an unknown exception";
 	  cerr << msg << endl;
 	  r1 = TestResult(false,msg);
@@ -119,7 +117,7 @@ namespace tfel
 	const auto stop = high_resolution_clock::now();
 	const auto nsec = duration_cast<nanoseconds>(stop-start).count();
 	r1.setTestDuration(1.e-9*nsec);
-	o.addTest((*p)->classname(),(*p)->name(),r1);
+	o.addTest(t->classname(),t->name(),r1);
 	r.append(r1);
       }
       o.endTestSuite(TestResult(success));

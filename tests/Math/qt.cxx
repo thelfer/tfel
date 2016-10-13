@@ -27,12 +27,6 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
-#if (!defined _MSC_VER) && (!defined __INTEL_COMPILER)
-#define TFEL_CONSTEXPR constexpr
-#else
-#define TFEL_CONSTEXPR const
-#endif
-
 struct qtTest final
   : public tfel::tests::TestCase
 {

@@ -221,7 +221,7 @@ namespace mfront{
     this->behaviourFile << "using namespace std;\n";
     this->behaviourFile << "using tfel::material::computeElasticStiffness;\n";
     this->behaviourFile << "using tfel::math::st2tost2;\n";
-    this->behaviourFile << "constexpr real prec = std::numeric_limits<strain>::epsilon()/100;\n";
+    this->behaviourFile << "TFEL_CONSTEXPR real prec = std::numeric_limits<strain>::epsilon()/100;\n";
     this->behaviourFile << "if(smt==CONSISTENTTANGENTOPERATOR){\n";
     this->behaviourFile << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n";
     this->behaviourFile << "if(this->dp>prec){\n";

@@ -777,8 +777,7 @@ namespace mfront
   BehaviourDescription::addLocalDataStructure(const LocalDataStructure& lds,
 					      const BehaviourData::RegistrationStatus s){
     auto gs = [](const std::vector<LocalDataStructure::Variable>& vars){
-      auto r = std::string{};
-      r = "struct{\n";
+      auto r = std::string("struct{\n");
       for(const auto& v : vars){
 	r += v.type +' '+v.name+";\n";
       }
