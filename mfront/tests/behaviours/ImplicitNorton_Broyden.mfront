@@ -52,8 +52,8 @@ p.setGlossaryName("EquivalentViscoplasticStrain");
 } // end of @ComputeStresss
 
 @Integrator{
-  constexpr real cste      = real{3}/real{2};
-  constexpr real one_third = real{1}/real{3};
+  TFEL_CONSTEXPR const real cste      = real{3}/real{2};
+  TFEL_CONSTEXPR const real one_third = real{1}/real{3};
   static const Stensor4 M(Stensor4::Id()-one_third*(Stensor::Id()^Stensor::Id()));
   constexpr real A = 8.e-67;
   constexpr real E = 8.2;

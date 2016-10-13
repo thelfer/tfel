@@ -47,7 +47,7 @@ nu.setGlossaryName("PoissonRatio");
 }
 
 @Derivative{
-  constexpr real cste = real{3}/real{2};
+  TFEL_CONSTEXPR const auto cste = real{3}/real{2};
   const real sigeq = sigmaeq(sig);
   if(sigeq>1.e9){
     return false;

@@ -60,7 +60,7 @@ sigr.setEntryName("FractureStress");
 } // end of @ComputeStresss
 
 @Integrator{
-  constexpr real cste = real{3}/real{2};
+  TFEL_CONSTEXPR real cste = real{3}/real{2};
   const stress Rp = -0.5*young;
   // fracture strain
   const Stensor de_fis = de0*n0+de1*n1+de2*n2;
