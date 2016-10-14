@@ -196,7 +196,7 @@ namespace abaqus{
       b.initialize();
       b.checkBounds();
       const auto smf = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
-      T r_dt;
+      auto r_dt = std::numeric_limits<T>::max();
       auto tsf = b.computeAPrioriTimeStepScalingFactor(r_dt);
       if(!tsf.first){
 	return -1;
@@ -239,7 +239,7 @@ namespace abaqus{
       b.initialize();
       b.checkBounds();
       const auto smf = TangentOperatorTraits::ABAQUS;
-      auto r_dt = T{};
+      auto r_dt = std::numeric_limits<T>::max();
       auto tsf = b.computeAPrioriTimeStepScalingFactor(r_dt);
       if(!tsf.first){
 	return -1;
