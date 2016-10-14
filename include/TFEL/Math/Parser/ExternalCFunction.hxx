@@ -105,7 +105,9 @@ namespace tfel
       ExternalCFunctionBase<N>::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
       {
 	ExternalCFunctionException::throwInvalidCreateFunctionByChangingParametersIntoVariables();
-	return std::shared_ptr<ExternalFunction>();
+#ifndef _MSC_VER
+	return {};
+#endif
       }
 
       template<unsigned short N>

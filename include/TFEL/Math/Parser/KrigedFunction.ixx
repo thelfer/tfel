@@ -123,7 +123,9 @@ namespace tfel
       KrigedFunction<N>::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
       {
 	KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables();
+#ifndef _MSC_VER
 	return {};
+#endif
       } // end of KrigedFunction<N>::createFunctionByChangingParametersIntoVariables
 
       template<unsigned short N>
