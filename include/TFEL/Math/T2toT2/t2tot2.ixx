@@ -50,10 +50,10 @@ namespace tfel{
       template<typename T>
       struct ComputeSpecialT2toT2Values<1u,T>{
 #ifndef _MSC_VER
-	static TFEL_CONSTEXPR const auto zero      = T{0};
-	static TFEL_CONSTEXPR const auto one       = T{1};
-	static TFEL_CONSTEXPR const auto one_third = T{1}/T{3};
-	static TFEL_CONSTEXPR const auto two_third = T{2}/T{3};
+	static TFEL_CONSTEXPR const T zero      = T{0};
+	static TFEL_CONSTEXPR const T one       = T{1};
+	static TFEL_CONSTEXPR const T one_third = T{1}/T{3};
+	static TFEL_CONSTEXPR const T two_third = T{2}/T{3};
 #endif
 	/*!
 	 * \return the derivative of the transpose of a tensor with respect of this tensor
@@ -66,8 +66,8 @@ namespace tfel{
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<1u,T> Id(void){
 #ifdef _MSC_VER
-	const auto zero      = T{0};
-	const auto one       = T{1};
+	const auto zero = T{0};
+	const auto one  = T{1};
 #endif
 	  return { one,zero,zero,
 		  zero, one,zero,
@@ -77,8 +77,8 @@ namespace tfel{
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<1u,T> IxI(void){
 #ifdef _MSC_VER
-	const auto zero      = T{0};
-	const auto one       = T{1};
+	const auto zero = T{0};
+	const auto one  = T{1};
 #endif
 	  return {one,one,one,
 		  one,one,one,
@@ -107,10 +107,10 @@ namespace tfel{
       template<typename T>
       struct ComputeSpecialT2toT2Values<2u,T>{
 #ifndef _MSC_VER
-	static TFEL_CONSTEXPR const auto zero      = T{0};
-	static TFEL_CONSTEXPR const auto one       = T{1};
-	static TFEL_CONSTEXPR const auto one_third = T{1}/T{3};
-	static TFEL_CONSTEXPR const auto two_third = T{2}/T{3};
+	static TFEL_CONSTEXPR const T zero      = T{0};
+	static TFEL_CONSTEXPR const T one       = T{1};
+	static TFEL_CONSTEXPR const T one_third = T{1}/T{3};
+	static TFEL_CONSTEXPR const T two_third = T{2}/T{3};
 #endif
 	/*!
 	 * \return the derivative of the transpose of a tensor with respect of this tensor
@@ -118,8 +118,8 @@ namespace tfel{
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<2u,T> transpose_derivative(void){
 #ifdef _MSC_VER
-	const auto zero      = T{0};
-	const auto one       = T{1};
+	const auto zero = T{0};
+	const auto one  = T{1};
 #endif
 	  return {one,zero,zero,zero,zero,
 	          zero,one,zero,zero,zero,
@@ -131,8 +131,8 @@ namespace tfel{
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<2u,T> Id(void){
 #ifdef _MSC_VER
-	const auto zero      = T{0};
-	const auto one       = T{1};
+	const auto zero = T{0};
+	const auto one  = T{1};
 #endif
 	  return {one,zero,zero,zero,zero,
 		  zero,one,zero,zero,zero,
@@ -144,8 +144,8 @@ namespace tfel{
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<2u,T> IxI(void){
 #ifdef _MSC_VER
-	const auto zero      = T{0};
-	const auto one       = T{1};
+	const auto zero = T{0};
+	const auto one  = T{1};
 #endif
 	  return {one,one,one,zero,zero,
 		  one,one,one,zero,zero,
@@ -180,10 +180,10 @@ namespace tfel{
       template<typename T>
       struct ComputeSpecialT2toT2Values<3u,T>{
 #ifndef _MSC_VER
-	static TFEL_CONSTEXPR const auto zero      = T{0};
-	static TFEL_CONSTEXPR const auto one       = T{1};
-	static TFEL_CONSTEXPR const auto one_third = T{1}/T{3};
-	static TFEL_CONSTEXPR const auto two_third = T{2}/T{3};
+	static TFEL_CONSTEXPR const T zero = T{0};
+	static TFEL_CONSTEXPR const T one  = T{1};
+	static TFEL_CONSTEXPR const T one_third = T{1}/T{3};
+	static TFEL_CONSTEXPR const T two_third = T{2}/T{3};
 #endif
 	/*!
 	 * \return the derivative of the transpose of a tensor with respect of this tensor
@@ -191,8 +191,8 @@ namespace tfel{
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<3u,T> transpose_derivative(void){
 #ifdef _MSC_VER
-	const auto zero      = T{0};
-	const auto one       = T{1};
+	const auto zero = T{0};
+	const auto one  = T{1};
 #endif
 	  return {one,zero,zero,zero,zero,zero,zero,zero,zero,
 	          zero,one,zero,zero,zero,zero,zero,zero,zero,
@@ -208,8 +208,8 @@ namespace tfel{
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<3u,T> Id(void){
 #ifdef _MSC_VER
-	const auto zero      = T{0};
-	const auto one       = T{1};
+	const auto zero = T{0};
+	const auto one  = T{1};
 #endif
 	  return {one,zero,zero,zero,zero,zero,zero,zero,zero,
 		  zero,one,zero,zero,zero,zero,zero,zero,zero,
@@ -225,8 +225,8 @@ namespace tfel{
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<3u,T> IxI(void){
 #ifdef _MSC_VER
-	const auto zero      = T{0};
-	const auto one       = T{1};
+	const auto zero = T{0};
+	const auto one  = T{1};
 #endif
 	  return {one,one,one,zero,zero,zero,zero,zero,zero,
 		  one,one,one,zero,zero,zero,zero,zero,zero,
