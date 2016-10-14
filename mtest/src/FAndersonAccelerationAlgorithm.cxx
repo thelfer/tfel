@@ -73,11 +73,11 @@ namespace mtest
 
   void
   FAndersonAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
-					  const tfel::math::vector<real>& du,
+					  const tfel::math::vector<real>&,
 					  const tfel::math::vector<real>& r,
 					  const real,
 					  const real,
-					  const unsigned short iter)
+					  const unsigned short)
   {
     auto print = [](const char* n,const tfel::math::vector<real>& v){
       auto& os = mfront::getLogStream();

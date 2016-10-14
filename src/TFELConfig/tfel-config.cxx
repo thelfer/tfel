@@ -42,8 +42,9 @@ handleSpace(const std::string& p)
 	       "MinGW can't handle it (Found '"+p+"'). "
 	       "Please change TFEL installation directory");
     throw(runtime_error(msg));
-#endif
+#else
     return '"'+p+'"';
+#endif
   }
   return p;
 }
@@ -211,8 +212,9 @@ getTFELHOME()
 	     "no TFELHOME registry key defined and no TFEHOME "
 	     "environment variable defined");
   throw(runtime_error(msg));
-#endif
+#else
   return "";
+#endif
 }
 
 static std::string

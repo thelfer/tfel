@@ -25,8 +25,6 @@
 int main(){
   using namespace std;
   using namespace tfel::math;
-  using acceleration = qt<Acceleration,int>;
-  using mass  = qt<Mass,int>;
   using force = qt<Force>;
   using avector = tvector<5,acceleration>;
   using fvector = tvector<5,force>;
