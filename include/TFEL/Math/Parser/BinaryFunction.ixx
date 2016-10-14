@@ -90,7 +90,9 @@ namespace tfel
 					       const std::vector<double>&) const
       {
 	StandardBinaryFunctionBase::throwUnimplementedDifferentiateFunctionException();
-	return std::shared_ptr<Expr>();
+#ifndef _MSC_VER
+	return {};
+#endif
       } // end of StandardBinaryFunction<f>::differentiate
 
       template<double (*f)(const double,const double)>

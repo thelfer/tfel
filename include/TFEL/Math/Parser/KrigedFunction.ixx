@@ -96,7 +96,9 @@ namespace tfel
       KrigedFunction<N>::differentiate(const std::vector<double>::size_type) const
       {
 	KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException();
+#ifndef _MSC_VER
 	return {};
+#endif
       } // end of KrigedFunction<N>::differentiate
 
       template<unsigned short N>
@@ -104,7 +106,9 @@ namespace tfel
       KrigedFunction<N>::differentiate(const std::string&) const
       {
 	KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException();
+#ifndef _MSC_VER
 	return {};
+#endif
       } // end of KrigedFunction<N>::differentiate
 
       template<unsigned short N>

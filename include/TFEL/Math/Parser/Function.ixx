@@ -120,7 +120,9 @@ namespace tfel
 			    const std::vector<double>&)
       {
 	StandardFunctionBase::throwUnimplementedDifferentiateFunctionException();
-	return std::shared_ptr<Expr>();
+#ifndef _MSC_VER
+	return {};
+#endif
       }
       
       template<StandardFunctionPtr f>

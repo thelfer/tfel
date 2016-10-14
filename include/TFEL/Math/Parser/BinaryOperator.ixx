@@ -99,7 +99,9 @@ namespace tfel
 				   const std::vector<double>&)
       {
 	BinaryOperationBase::throwUnimplementedDifferentiateFunctionException();
-	return std::shared_ptr<Expr>(0);
+#ifndef _MSC_VER
+	return {};
+#endif
       } // end of differentiateBinaryOperation
 
       template<>
