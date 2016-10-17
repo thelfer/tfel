@@ -24,7 +24,7 @@ namespace tfel_check {
   
   void RelativeAndAbsoluteComparison::compare() {
     using namespace std;
-    static const double eps = 100. * numeric_limits<double>::min();
+    TFEL_CONSTEXPR const double eps = 100. * numeric_limits<double>::min();
     unsigned int errorAbsLineNumber = 0;
     unsigned int errorRelLineNumber = 0;
     unsigned int errorLinesCount = 0;

@@ -1627,11 +1627,11 @@ namespace mfront{
     }   
   } // end of MFrontModelInterface::writeAssignDefaultValue
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  std::pair<bool,MFrontModelInterface::tokens_iterator>
   MFrontModelInterface::treatKeyword(const std::string& k,
 				     const std::vector<std::string>& i,
-				     TokensContainer::const_iterator c,
-				     const TokensContainer::const_iterator)
+				     tokens_iterator c,
+				     const tokens_iterator)
   {
     if(std::find(i.begin(),i.end(),"licos")!=i.end()){
       throw(std::runtime_error("LicosModelInterface::treatKeyword: "

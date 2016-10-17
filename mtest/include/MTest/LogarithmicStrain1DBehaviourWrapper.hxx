@@ -43,18 +43,13 @@ namespace mtest
 					    const EvolutionManager&,
 					    const std::string&,
 					    const real);
+    //! \return the type of the behaviour
+    virtual BehaviourType getBehaviourType(void) const override;
+    //! \return the type of the behaviour
+    virtual Kinematic getBehaviourKinematic(void) const override;
     /*!
-     * \return the type of the behaviour
-     */
-    virtual tfel::material::MechanicalBehaviourBase::BehaviourType
-    getBehaviourType(void) const override;
-    /*!
-     * \return the type of the behaviour
-     */
-    virtual tfel::material::MechanicalBehaviourBase::Kinematic
-    getBehaviourKinematic(void) const override;
-    /*!
-     * \return the size of a vector able to contain all the components of the driving variables
+     * \return the size of a vector able to contain all the components
+     * of the driving variables
      */
     virtual unsigned short
     getDrivingVariablesSize() const override;

@@ -49,13 +49,13 @@ namespace mtest
       return false;
     };
     const auto s = [h]() -> std::string {
-      if(h==tfel::material::ModellingHypothesis::AXISYMMETRICAL){
+      if(h==ModellingHypothesis::AXISYMMETRICAL){
 	return "_AXIS";
-      } else if(h==tfel::material::ModellingHypothesis::PLANESTRAIN){
+      } else if(h==ModellingHypothesis::PLANESTRAIN){
 	return "_PSTRAIN";
-      } else if(h==tfel::material::ModellingHypothesis::PLANESTRESS){
+      } else if(h==ModellingHypothesis::PLANESTRESS){
 	return "_PSTRESS";
-      } else if(h==tfel::material::ModellingHypothesis::TRIDIMENSIONAL){
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return "_3D";
       }
       throw(std::runtime_error("AbaqusExplicitBehaviour::AbaqusExplicitBehaviour: "
@@ -425,7 +425,7 @@ namespace mtest
   {
     using namespace tfel::math;
     using abaqus::AbaqusInt;
-    static const real sqrt2 = std::sqrt(real(2));
+    constexpr const auto sqrt2 = Cste<real>::sqrt2;
     auto throw_if = [](const bool c, const std::string& m){
       if(c){throw(std::runtime_error("AbaqusExplicitBehaviour::"
 				     "integrate:"+m));}

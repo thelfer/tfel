@@ -812,8 +812,8 @@ namespace mfront
 
   bool
   UMATInterfaceBase::readBooleanValue(const std::string& key,
-				      tfel::utilities::CxxTokenizer::TokensContainer::const_iterator& current,
-				      const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end) const
+				      tokens_iterator& current,
+				      const tokens_iterator end) const
   {
     auto throw_if = [&key](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("UMATInterfaceBase::readBooleanValue: "+m+

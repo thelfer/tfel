@@ -65,7 +65,7 @@ namespace mfront{
     static void
     writeComparisonToNumericalJacobian(std::ostream&,
 				       const BehaviourDescription&,
-				       const tfel::material::ModellingHypothesis::Hypothesis,
+				       const Hypothesis,
 				       const std::string&);
     /*!
      * \return write the code limiting the value of the increment of
@@ -78,7 +78,7 @@ namespace mfront{
     static void
     writeLimitsOnIncrementValues(std::ostream&,
 				 const BehaviourDescription&,
-				 const tfel::material::ModellingHypothesis::Hypothesis,
+				 const Hypothesis,
 				 const std::string&);
     /*!
      * \return write the code limiting the value of the increment of
@@ -90,7 +90,7 @@ namespace mfront{
     static void
     writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(std::ostream&,
 								    const BehaviourDescription&,
-								    const tfel::material::ModellingHypothesis::Hypothesis);
+								    const Hypothesis);
     /*!
      * \return write the code limiting the value of the increment of
      * a state variable based on physical bounds
@@ -101,7 +101,7 @@ namespace mfront{
     static void
     writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(std::ostream&,
 										    const BehaviourDescription&,
-										    const tfel::material::ModellingHypothesis::Hypothesis);
+										    const Hypothesis);
     /*!
      * \return reserved names that ought to be used by on the non
      * linear system solvers:

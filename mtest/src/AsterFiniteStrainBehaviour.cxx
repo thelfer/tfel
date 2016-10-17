@@ -115,9 +115,9 @@ namespace mtest
     }
   }
 
-  AsterFiniteStrainBehaviour::AsterFiniteStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
-								 const std::string& l,
-								 const std::string& b)
+  AsterFiniteStrainBehaviour::AsterFiniteStrainBehaviour(const Hypothesis h,
+							 const std::string& l,
+							 const std::string& b)
     : AsterStandardBehaviour(h,l,b)
   {}
 
@@ -147,7 +147,7 @@ namespace mtest
     using namespace tfel::math;
     using namespace aster;
     using tfel::math::vector;
-    static const real sqrt2 = sqrt(real(2));
+    constexpr const auto sqrt2 = Cste<real>::sqrt2;
     AsterInt ntens;
     AsterInt dimension;
     AsterInt nprops = s.mprops1.size() == 0 ? 1 : static_cast<AsterInt>(s.mprops1.size());

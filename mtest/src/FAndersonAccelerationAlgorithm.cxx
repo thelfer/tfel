@@ -34,8 +34,7 @@ namespace mtest
   FAndersonAccelerationAlgorithm::setParameter(const std::string& p,
 						 const std::string& v)
   {
-    const std::string m = "FAndersonAccelerationAlgorithm::"
-      "setParameterAbaqusExplicitBehaviour";
+    const std::string m = "FAndersonAccelerationAlgorithm::setParameter";
     auto throw_if = [&m](const bool c, const std::string& msg){
       if(c){throw(std::runtime_error(m+": "+msg));}
     };

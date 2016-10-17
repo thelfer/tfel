@@ -31,27 +31,27 @@ namespace mfront{
 
     template<typename InputIterator>
     MaterialPropertyInterfaceProxy(const InputIterator,
-			    const InputIterator);
+				   const InputIterator);
 
     MaterialPropertyInterfaceProxy(const std::string&,
-			    const std::string&);
+				   const std::string&);
 
     template<typename InputIterator>
     MaterialPropertyInterfaceProxy(const std::string&,
-			    const InputIterator,
-			    const InputIterator);
+				   const InputIterator,
+				   const InputIterator);
 
     template<typename InputIterator>
     MaterialPropertyInterfaceProxy(const InputIterator,
-			    const InputIterator,
-			    const std::string&);
+				   const InputIterator,
+				   const std::string&);
 
     template<typename InputIterator,
 	     typename InputIterator2>
     MaterialPropertyInterfaceProxy(const InputIterator,
-			    const InputIterator,
-			    const InputIterator2,
-			    const InputIterator2);
+				   const InputIterator,
+				   const InputIterator2,
+				   const InputIterator2);
 
     static std::shared_ptr<AbstractMaterialPropertyInterface>
     createInterface();

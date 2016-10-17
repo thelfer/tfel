@@ -81,8 +81,8 @@ namespace mfront{
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   AsterInterface::treatKeyword(const std::string& key,
 			       const std::vector<std::string>& i,
-			       tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-			       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
+			       tokens_iterator current,
+			       const tokens_iterator end)
   {
     using tfel::utilities::CxxTokenizer;
     auto throw_if = [](const bool b,const std::string& m){
@@ -141,14 +141,11 @@ namespace mfront{
     return {false,current};
   } // end of treatKeyword
 
-  std::set<tfel::material::ModellingHypothesis::Hypothesis>
+  std::set<AsterInterface::Hypothesis>
   AsterInterface::getModellingHypothesesToBeTreated(const BehaviourDescription& mb) const
   {
-    using namespace std;
-    using tfel::material::ModellingHypothesis;
-    using Hypothesis = ModellingHypothesis::Hypothesis;
     // treatment 
-    set<Hypothesis> h;
+    std::set<Hypothesis> h;
     // modelling hypotheses handled by the behaviour
     const auto& bh = mb.getModellingHypotheses();
     if(bh.find(ModellingHypothesis::GENERALISEDPLANESTRAIN)!=bh.end()){
@@ -167,19 +164,18 @@ namespace mfront{
       h.insert(ModellingHypothesis::TRIDIMENSIONAL);
     }
     if(h.empty()){
-      string msg("AsterInterfaceModellingHypothesesToBeTreated : "
-		 "no hypotheses selected. This means that the given beahviour "
-		 "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
-		 "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
-		 "make sense to use the Aster interface");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("AsterInterfaceModellingHypothesesToBeTreated : "
+			       "no hypotheses selected. This means that the given beahviour "
+			       "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
+			       "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
+			       "make sense to use the Aster interface"));
     }
     return h;
   } // end of AsterInterface::getModellingHypothesesToBeTreated
 
   void
   AsterInterface::endTreatment(const BehaviourDescription& mb,
-				      const FileDescription& fd) const
+			       const FileDescription& fd) const
   {
     using namespace std;
     using namespace tfel::system;
@@ -188,18 +184,18 @@ namespace mfront{
     if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL))){
-      string msg("AsterInterface::endTreatment : "
-		 "the aster interface only supports small and finite strain behaviours and cohesive zone models");
-      throw(runtime_error(msg));
+      throw(runtime_error("AsterInterface::endTreatment : "
+			  "the aster interface only supports "
+			  "small and finite strain behaviours "
+			  "and cohesive zone models"));
     }
     if((this->compareToNumericalTangentOperator)||
        (this->savesTangentOperator)){
       if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	string msg("AsterInterface::endTreatment : "
-		   "unsupported feature @AsterSaveTangentOperator "
-		   "and @AsterCompareToNumericalTangentOperator : "
-		   "those are only valid for small strain beahviours");
-	throw(runtime_error(msg));
+	throw(runtime_error("AsterInterface::endTreatment : "
+			    "unsupported feature @AsterSaveTangentOperator "
+			    "and @AsterCompareToNumericalTangentOperator : "
+			    "those are only valid for small strain beahviours"));
       }
     }
     // get the modelling hypotheses to be treated
@@ -818,11 +814,10 @@ namespace mfront{
 
   void
   AsterInterface::writeAsterBehaviourTraits(std::ostream& out,
-						  const BehaviourDescription& mb,
-						  const tfel::material::ModellingHypothesis::Hypothesis h) const
+					    const BehaviourDescription& mb,
+					    const Hypothesis h) const
   {
     using namespace std;
-    using namespace tfel::material;
     const auto mvs = mb.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(mb,h);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){

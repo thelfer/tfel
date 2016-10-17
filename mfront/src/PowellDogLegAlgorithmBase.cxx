@@ -23,25 +23,17 @@ namespace mfront{
   std::vector<std::string>
   PowellDogLegAlgorithmBase::getReservedNames()
   {
-    using namespace std;
-    vector<string> n;
-    n.push_back("pdl_g");
-    n.push_back("pdl_g2");
-    n.push_back("pdl_0");
-    n.push_back("pdl_1");
-    n.push_back("pdl_2");
-    n.push_back("pdl_3");
-    n.push_back("pdl_alpha");
-    n.push_back("pdl_cste");
-    n.push_back("powell_dogleg_trust_region_size_inv");
-    return n;
+    return {"pdl_g","pdl_g2","pdl_0",
+	"pdl_1","pdl_2","pdl_3",
+	"pdl_alpha","pdl_cste",
+	"powell_dogleg_trust_region_size_inv"};
   } // end of PowellDogLegAlgorithmBase::getReservedNames
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  std::pair<bool,PowellDogLegAlgorithmBase::tokens_iterator>
   PowellDogLegAlgorithmBase::treatSpecificKeywords(BehaviourDescription& mb,
-							 const std::string& key,
-							 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator p,
-							 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator pe)
+						   const std::string& key,
+						   const tokens_iterator p,
+						   const tokens_iterator pe)
   {
     using namespace std;
     using namespace tfel::material;
@@ -89,7 +81,7 @@ namespace mfront{
   void
   PowellDogLegAlgorithmBase::writePowellDogLegStep(std::ostream& out,
 							 const BehaviourDescription& mb,
-							 const tfel::material::ModellingHypothesis::Hypothesis h,
+							 const Hypothesis h,
 							 const std::string& B,
 							 const std::string& f,
 							 const std::string& pn)

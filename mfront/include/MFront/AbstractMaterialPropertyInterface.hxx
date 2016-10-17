@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_ABSTRACTMATERIALPROPERTYINTERFACE_HXX_
-#define LIB_ABSTRACTMATERIALPROPERTYINTERFACE_HXX_ 
+#ifndef LIB_MFRONT_ABSTRACTMATERIALPROPERTYINTERFACE_HXX_
+#define LIB_MFRONT_ABSTRACTMATERIALPROPERTYINTERFACE_HXX_ 
 
 #include<map>
 #include<string>
@@ -34,6 +34,9 @@ namespace mfront{
 
   struct MFRONT_VISIBILITY_EXPORT AbstractMaterialPropertyInterface
   {
+    //! a simple alias
+    using tokens_iterator =
+      tfel::utilities::CxxTokenizer::TokensContainer::const_iterator;
     /*!
      * \param[in] k  : keyword to be treated
      * \param[in] i:   list of interfaces to which the keyword is restricted  
@@ -43,11 +46,11 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    virtual std::pair<bool,tokens_iterator>
     treatKeyword(const std::string&,
 		 const std::vector<std::string>&,		 
-		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) = 0;
+		 tokens_iterator,
+		 const tokens_iterator) = 0;
     /*!
      * \brief generate the output files
      * \param[in] mpd : material property description
@@ -68,4 +71,4 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* LIB_ABSTRACTMATERIALPROPERTYINTERFACE_HXX_ */
+#endif /* LIB_MFRONT_ABSTRACTMATERIALPROPERTYINTERFACE_HXX_ */

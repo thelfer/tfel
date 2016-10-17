@@ -31,6 +31,8 @@ namespace mtest
       public CastemUmatStandardBehaviour
   {
     //! a simple alias
+    using Hypothesis = CastemFiniteStrainBehaviour::Hypothesis;
+    //! a simple alias
     using Parameters = tfel::utilities::Data;
     /*!
      * \param[in] l: library

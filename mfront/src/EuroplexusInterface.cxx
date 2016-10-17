@@ -122,8 +122,8 @@ namespace mfront{
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   EuroplexusInterface::treatKeyword(const std::string& key,
 				    const std::vector<std::string>& i,
-				    tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-				    const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
+				    tokens_iterator current,
+				    const tokens_iterator end)
   {
     using tfel::utilities::CxxTokenizer;
     auto throw_if = [](const bool b,const std::string& m){
@@ -170,10 +170,9 @@ namespace mfront{
     return {false,current};
   } // end of treatKeyword
 
-  std::set<tfel::material::ModellingHypothesis::Hypothesis>
+  std::set<EuroplexusInterface::Hypothesis>
   EuroplexusInterface::getModellingHypothesesToBeTreated(const BehaviourDescription& mb) const
   {
-    using tfel::material::ModellingHypothesis;
     // treatment 
     std::set<ModellingHypothesis::Hypothesis> mh;
     // modelling hypotheses handled by the behaviour
@@ -891,10 +890,9 @@ namespace mfront{
   void
   EuroplexusInterface::writeEuroplexusBehaviourTraits(std::ostream& out,
 						      const BehaviourDescription& mb,
-						      const tfel::material::ModellingHypothesis::Hypothesis h) const
+						      const Hypothesis h) const
   {
     using namespace std;
-    using namespace tfel::material;
     const auto mvs = mb.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(mb,h);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){

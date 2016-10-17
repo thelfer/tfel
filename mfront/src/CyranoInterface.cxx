@@ -115,8 +115,8 @@ namespace mfront{
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CyranoInterface::treatKeyword(const std::string& key,
 				const std::vector<std::string>& i,
-				tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-				    const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
+				tokens_iterator current,
+				const tokens_iterator end)
   {
     using namespace std;
     using namespace tfel::utilities;
@@ -229,14 +229,11 @@ namespace mfront{
     return res;
   } // end of CyranoInterface::buildMaterialPropertiesList
 
-  std::set<tfel::material::ModellingHypothesis::Hypothesis>
+  std::set<CyranoInterface::Hypothesis>
   CyranoInterface::getModellingHypothesesToBeTreated(const BehaviourDescription& mb) const
   {
-    using namespace std;
-    using tfel::material::ModellingHypothesis;
-    using Hypothesis = ModellingHypothesis::Hypothesis;
     // treatment 
-    set<Hypothesis> h;
+    std::set<Hypothesis> h;
     // modelling hypotheses handled by the behaviour
     const auto& bh = mb.getModellingHypotheses();
     // cyrano only supports the AxisymmetricalGeneralisedPlaneStrain
@@ -248,11 +245,11 @@ namespace mfront{
       h.insert(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
     }
     if(h.empty()){
-      throw(runtime_error("CyranoInterface::getModellingHypothesesToBeTreated : "
-			  "no hypotheses selected. This means that the given beahviour "
-			  "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
-			  "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
-			  "make sense to use the Cyrano interface"));
+      throw(std::runtime_error("CyranoInterface::getModellingHypothesesToBeTreated : "
+			       "no hypotheses selected. This means that the given beahviour "
+			       "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
+			       "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
+			       "make sense to use the Cyrano interface"));
     }
     return h;
   } // end of CyranoInterface::getModellingHypothesesToBeTreated
@@ -272,13 +269,11 @@ namespace mfront{
   
   void
   CyranoInterface::endTreatment(const BehaviourDescription& mb,
-				       const FileDescription& fd) const
+				const FileDescription& fd) const
   {
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::utilities;
-    using tfel::material::ModellingHypothesis;
-    using Hypothesis = ModellingHypothesis::Hypothesis;
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("Cyrano::endTreatment: "+m));}
     };

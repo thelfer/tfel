@@ -30,6 +30,10 @@ namespace mtest
    */
   struct CastemUmatStandardBehaviour
   {
+    //! a simple alias
+    using ModellingHypothesis = tfel::material::ModellingHypothesis;
+    //! a simple alias
+    using Hypothesis = ModellingHypothesis::Hypothesis;
   protected:
     /*!
      * \param[in] l: library
@@ -43,7 +47,7 @@ namespace mtest
 				     const std::string&,
 				     const tfel::utilities::Data&,
 				     const int,
-				     const tfel::material::ModellingHypothesis::Hypothesis);
+				     const Hypothesis);
     /*!
      * \param[in] mp: material properties
      * \param[in] evm: currently defined evolution
@@ -54,7 +58,7 @@ namespace mtest
     setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
 					       const EvolutionManager&,
 					       const int,
-					       const tfel::material::ModellingHypothesis::Hypothesis);
+					       const Hypothesis);
     
   }; // end of struct CastemUmatStandardBehaviour
 

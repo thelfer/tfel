@@ -46,6 +46,8 @@ namespace mfront{
     typedef ModellingHypothesis::Hypothesis Hypothesis;
     //! a simple alias
     using CxxTokenizer = tfel::utilities::CxxTokenizer;
+    //! a simple alias
+    using tokens_iterator = CxxTokenizer::TokensContainer::const_iterator;
     /*!
      * set if dynamically allocated arrays are allowed
      * \param[in] b : boolean
@@ -62,11 +64,11 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,CxxTokenizer::TokensContainer::const_iterator>
+    virtual std::pair<bool,tokens_iterator>
     treatKeyword(const std::string&,
 		 const std::vector<std::string>&,
-		 CxxTokenizer::TokensContainer::const_iterator,
-		 const CxxTokenizer::TokensContainer::const_iterator) = 0;
+		 tokens_iterator,
+		 const tokens_iterator) = 0;
     /*!
      * \return true if the interface handles the given modelling hypothesis
      * \param[in] h  : modelling hypothesis

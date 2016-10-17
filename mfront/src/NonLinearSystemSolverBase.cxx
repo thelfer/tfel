@@ -22,24 +22,18 @@ namespace mfront{
   std::vector<std::string>
   NonLinearSystemSolverBase::getReservedNames() const
   {
-    using namespace std;
-    vector<string> n;
-    n.push_back("error");
-    n.push_back("iter");
-    n.push_back("iterMax");
-    n.push_back("converged");
-    return n;
+    return {"error","iter","iterMax","converged"};
   } // end of NonLinearSystemSolverBase::getReservedNames
 
   std::string
   NonLinearSystemSolverBase::getJacobianPart(const BehaviourDescription& mb,
-						   const VariableDescription&  v1,
-						   const VariableDescription&  v2,
-						   const SupportedTypes::TypeSize& n,
-						   const SupportedTypes::TypeSize& n2,
-						   const SupportedTypes::TypeSize& n3,
-						   const std::string& j,
-						   const std::string& p)
+					     const VariableDescription&  v1,
+					     const VariableDescription&  v2,
+					     const SupportedTypes::TypeSize& n,
+					     const SupportedTypes::TypeSize& n2,
+					     const SupportedTypes::TypeSize& n3,
+					     const std::string& j,
+					     const std::string& p)
   {
     using namespace std;
     ostringstream d;
@@ -87,9 +81,9 @@ namespace mfront{
 
   void
   NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(std::ostream& out,
-								      const BehaviourDescription& mb,
-								      const tfel::material::ModellingHypothesis::Hypothesis h,
-								      const std::string& nj)
+								const BehaviourDescription& mb,
+								const Hypothesis h,
+								const std::string& nj)
   {
     const auto& d = mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
@@ -114,7 +108,7 @@ namespace mfront{
 	      out << "// numerical derivative of variable f" << p->name 
 		  << " by variable " << p2->name << "\n";
 	      out << NonLinearSystemSolverBase::getJacobianPart(mb,*p,*p2,n,n2,n3,
-								      nj,"n");
+								nj,"n");
 	      n3 += mb.getTypeSize(p2->type,p2->arraySize);
 	    }
 	  }
@@ -204,9 +198,9 @@ namespace mfront{
 
   void
   NonLinearSystemSolverBase::writeLimitsOnIncrementValues(std::ostream& out,
-								const BehaviourDescription& mb,
-								const tfel::material::ModellingHypothesis::Hypothesis h,
-								const std::string& v)
+							  const BehaviourDescription& mb,
+							  const Hypothesis h,
+							  const std::string& v)
   {
     using namespace std;
     const auto& d = mb.getBehaviourData(h);
@@ -265,8 +259,8 @@ namespace mfront{
   
   void
   NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(std::ostream& out,
-  												   const BehaviourDescription& mb,
-  												   const tfel::material::ModellingHypothesis::Hypothesis h)
+											     const BehaviourDescription& mb,
+											     const Hypothesis h)
   {
     using namespace std;
     const auto& d = mb.getBehaviourData(h);
@@ -604,8 +598,8 @@ namespace mfront{
 
   void
   NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(std::ostream&,
-														   const BehaviourDescription&,
-														   const tfel::material::ModellingHypothesis::Hypothesis)
+													     const BehaviourDescription&,
+													     const Hypothesis)
   {} // end of NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds
 
   NonLinearSystemSolverBase::~NonLinearSystemSolverBase() = default;

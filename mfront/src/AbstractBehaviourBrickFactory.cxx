@@ -17,6 +17,7 @@
 #include"MFront/AbstractBehaviourBrick.hxx"
 #include"MFront/AbstractBehaviourBrickFactory.hxx"
 #include"MFront/StandardElasticityBrick.hxx"
+#include"MFront/DDIF2Brick.hxx"
 #include"MFront/FiniteStrainSingleCrystalBrick.hxx"
 
 namespace mfront
@@ -29,7 +30,7 @@ namespace mfront
 				 const AbstractBehaviourBrick::Parameters& p,
 				 const AbstractBehaviourBrick::DataMap& d)
   {
-    return std::shared_ptr<AbstractBehaviourBrick>(new T(dsl,mb,p,d));
+    return std::make_shared<T>(dsl,mb,p,d);
   } // end of buildAlgoritmConstructor
 
   AbstractBehaviourBrickFactory&
@@ -59,6 +60,7 @@ namespace mfront
     auto add = [this](const char* n,const constructor c){
       this->registerAbstractBehaviourBrick(n,c);
     };
+    add("DDIF2",buildBehaviourBrickConstructor<DDIF2Brick>);
     add("StandardElasticity",buildBehaviourBrickConstructor<StandardElasticityBrick>);
     add("FiniteStrainSingleCrystal",buildBehaviourBrickConstructor<FiniteStrainSingleCrystalBrick>);
   } // end of AbstractBehaviourBrickFactory::AbstractBehaviourBrickFactory

@@ -16,6 +16,7 @@
 #include<stdexcept>
 #include<algorithm>
 
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"MFront/UmatSmallStrainMTestFileGenerator.hxx"
 
 namespace mfront
@@ -68,6 +69,8 @@ namespace mfront
   {
     using namespace std;
     using namespace tfel::material;
+    constexpr const auto cste  = tfel::math::Cste<real>::sqrt2;
+    constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
     const auto& n = this->getStrainComponentsNames();
     vector<string>::const_iterator p;
     unsigned short i;
@@ -83,7 +86,7 @@ namespace mfront
       if(i<3){
 	os << this->stress[i];
       } else {
-	os << (this->stress[i])*sqrt(2.);
+	os << (this->stress[i])*cste;
       }
       if(++i!=this->getStensorSize()){
 	os << ",";
@@ -109,8 +112,8 @@ namespace mfront
 	}
       } else {
 	os << "@ImposedStrain<evolution> '" << *p << "' {" 
-	   << t0 << ":" << this->eto[i]/sqrt(2.) << ","
-	   << t1 << ":" << (this->eto[i]+this->deto[i])/sqrt(2.) << "};\n";
+	   << t0 << ":" << this->eto[i]*icste << ","
+	   << t1 << ":" << (this->eto[i]+this->deto[i])*icste << "};\n";
       }
     }
     os << endl;

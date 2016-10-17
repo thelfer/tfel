@@ -224,8 +224,7 @@ namespace mtest
 			     "no variable name '"+n+"'"));
   } // end of MTest::getVariableTypeAndPosition
 
-  void
-  MTest::setDefaultModellingHypothesis()
+  void MTest::setDefaultModellingHypothesis()
   {
     using tfel::material::ModellingHypothesis;
     if(this->hypothesis!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){

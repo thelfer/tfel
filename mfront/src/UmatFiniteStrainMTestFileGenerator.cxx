@@ -15,7 +15,7 @@
 #include<ostream>
 #include<stdexcept>
 #include<algorithm>
-
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"MFront/UmatFiniteStrainMTestFileGenerator.hxx"
 
 namespace mfront
@@ -92,6 +92,7 @@ namespace mfront
   UmatFiniteStrainMTestFileGenerator::writeDrivingVariables(std::ostream& os) const
   {
     using namespace std;
+    constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
     const auto& n = this->getDeformationGradientComponentsNames();
     vector<string>::const_iterator p;
     unsigned short i;
@@ -108,7 +109,7 @@ namespace mfront
       if(i<3){
 	os << this->stress[i];
       } else {
-	os << (this->stress[i])*sqrt(2.);
+	os << (this->stress[i])*cste;
       }
       if(++i!=this->getStensorSize()){
 	os << ",";

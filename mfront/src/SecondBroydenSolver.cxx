@@ -69,11 +69,11 @@ namespace mfront{
     return false;
   }
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  std::pair<bool,SecondBroydenSolver::tokens_iterator>
   SecondBroydenSolver::treatSpecificKeywords(BehaviourDescription&,
-						   const std::string&,
-						   const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator p,
-						   const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+					     const std::string&,
+					     const tokens_iterator p,
+					     const tokens_iterator)
   {
     return {false,p};
   } // end of MFrontLevenbergMarquartSolverBase::treatSpecificKeywords
@@ -84,14 +84,14 @@ namespace mfront{
 
   void
   SecondBroydenSolver::writeSpecificMembers(std::ostream&,
-						  const BehaviourDescription&,
-						  const tfel::material::ModellingHypothesis::Hypothesis) const
+					    const BehaviourDescription&,
+					    const Hypothesis) const
   {} // end of SecondBroydenSolver::writeSpecificMembers
 
   void
   SecondBroydenSolver::writeSpecificInitializeMethodPart(std::ostream& out,
-							       const BehaviourDescription& mb,
-							       const tfel::material::ModellingHypothesis::Hypothesis h) const
+							 const BehaviourDescription& mb,
+							 const Hypothesis h) const
   {
     using namespace std;
     const auto& d = mb.getBehaviourData(h);
@@ -114,8 +114,8 @@ namespace mfront{
   
   void
   SecondBroydenSolver::writeResolutionAlgorithm(std::ostream& out,
-						      const BehaviourDescription& mb,
-						      const tfel::material::ModellingHypothesis::Hypothesis h) const
+						const BehaviourDescription& mb,
+						const Hypothesis h) const
   {
     using namespace std;
     const string btype = mb.getBehaviourTypeFlag();
@@ -201,7 +201,6 @@ namespace mfront{
     out << "}\n";
   } // end of SecondBroydenSolver::writeResolutionAlgorithm
 
-  SecondBroydenSolver::~SecondBroydenSolver()
-  {} // end of  SecondBroydenSolver::~SecondBroydenSolver()
+  SecondBroydenSolver::~SecondBroydenSolver() = default;
   
 } // end of namespace mfront

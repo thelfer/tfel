@@ -61,11 +61,11 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    virtual std::pair<bool,tokens_iterator>
     treatKeyword(const std::string&,
 		 const std::vector<std::string>&,
-		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
+		 tokens_iterator,
+		 const tokens_iterator) override;
     /*!
      * \brief write output files
      * \param[in] mb        : mechanical behaviour description
@@ -173,7 +173,7 @@ namespace mfront{
      * \return the list of modelling hypotheses treated by the interface
      * \param[in] mb : behaviour description
      */
-    std::set<tfel::material::ModellingHypothesis::Hypothesis>
+    std::set<Hypothesis>
     getModellingHypothesesToBeTreated(const BehaviourDescription&) const override;
 
     bool useTimeSubStepping;

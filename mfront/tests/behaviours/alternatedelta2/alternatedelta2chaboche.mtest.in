@@ -9,7 +9,7 @@
 @MaximumNumberOfSubSteps 1.;
 
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatchaboche';
-@StrainEpsilon '3e-7';
+@StrainEpsilon '4e-7';
 @StressEpsilon '145200.*3e-7';
 
 @MaterialProperty<constant> 'YoungModulus' 145200. ; 
@@ -34,6 +34,6 @@
 @Times {0.,0.4 in 1,1.435 in 12};
 
 @Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche-aster.ref'
-            {'EXX':2,'EYY':3} 5.e-5 ; 
+            {'EXX':2,'EYY':3} 8.e-5 ; 
 @Test<file> '@top_srcdir@/mfront/tests/behaviours/references/chaboche-aster.ref'
             {'SXX':8} 1.e0 ; 

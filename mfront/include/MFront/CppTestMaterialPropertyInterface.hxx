@@ -41,11 +41,11 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    virtual std::pair<bool,tokens_iterator>
     treatKeyword(const std::string&,
 		 const std::vector<std::string>&,
-		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
+		 tokens_iterator,
+		 const tokens_iterator) override;
     /*!
      * \brief : fill the target descripton
      * \param[out] d   : target description
@@ -65,13 +65,13 @@ namespace mfront{
     
   private:
 
-    std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-    registerTestBounds(tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-			const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
+    std::pair<bool,tokens_iterator>
+    registerTestBounds(tokens_iterator,
+			const tokens_iterator);
 
-    tfel::utilities::CxxTokenizer::TokensContainer::const_iterator
-    nextToken(tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-	      tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
+    tokens_iterator
+    nextToken(tokens_iterator,
+	      tokens_iterator,
 	      const std::string &msg="");
 
     std::ofstream srcFile;

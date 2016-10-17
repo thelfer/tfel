@@ -194,8 +194,8 @@ namespace mfront{
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   AbaqusInterface::treatKeyword(const std::string& key,
 				const std::vector<std::string>& i,
-				tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-				const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
+				tokens_iterator current,
+				const tokens_iterator end)
   {
     using tfel::utilities::CxxTokenizer;
     auto throw_if = [](const bool b,const std::string& m){

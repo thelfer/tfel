@@ -152,11 +152,11 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,CxxTokenizer::TokensContainer::const_iterator>
+    virtual std::pair<bool,tokens_iterator>
     treatKeyword(const std::string&,
 		 const std::vector<std::string>&,
-		 CxxTokenizer::TokensContainer::const_iterator,
-		 const CxxTokenizer::TokensContainer::const_iterator) override;
+		 tokens_iterator,
+		 const tokens_iterator) override;
     /*!
      * \param[in] out  : output file
      * \param[in] name : name of the behaviour as defined by interface

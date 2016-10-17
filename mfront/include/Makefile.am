@@ -102,6 +102,7 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/RungeKuttaDSL.hxx                                      \
 			MFront/PerformanceProfiling.hxx			              \
 			MFront/StandardElasticityBrick.hxx                            \
+			MFront/DDIF2Brick.hxx                                         \
 			MFront/FiniteStrainSingleCrystalBrick.hxx                     \
 			MFront/NonLinearSystemSolver.hxx                              \
 			MFront/NonLinearSystemSolverBase.hxx                          \

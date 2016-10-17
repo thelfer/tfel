@@ -846,6 +846,24 @@ namespace mfront{
   void RungeKuttaDSL::writeBehaviourRK54Integrator(const Hypothesis h)
   {
     const auto& d = this->mb.getBehaviourData(h);
+    auto shallUpdateExternalValues = [this,d,h](){
+      const auto uvs = getVariablesUsedDuringIntegration(this->mb,h);
+      for(const auto& mv : this->mb.getMainVariables()){
+	const auto& dv = mv.first;
+	if(uvs.find(dv.name)!=uvs.end()){
+	  return true;
+	}
+      }
+      if(uvs.find("T")!=uvs.end()){
+	return true;
+      }
+      for(const auto& v : d.getExternalStateVariables()){
+	if(uvs.find(v.name)!=uvs.end()){
+	  return true;
+	}
+      }
+      return false;
+    }();
     //! all registred variables used in ComputeDerivatives and ComputeStress blocks
     auto uvs = d.getCodeBlock(BehaviourData::ComputeDerivative).members;
     const auto& uvs2 = d.getCodeBlock(BehaviourData::ComputeStress).members;
@@ -858,11 +876,13 @@ namespace mfront{
     } else {
       eev = ERRORSUMMATIONEVALUATION;
     }
-    this->behaviourFile << "TFEL_CONSTEXPR const auto cste1_2         = real{1}/real{2};\n"
-			<< "TFEL_CONSTEXPR const auto cste1_4         = real{1}/real{4};\n"
-			<< "TFEL_CONSTEXPR const auto cste3_8         = real{3}/real{8};\n"
+    if(shallUpdateExternalValues){
+      this->behaviourFile << "TFEL_CONSTEXPR const auto cste1_2         = real{1}/real{2};\n"
+			  << "TFEL_CONSTEXPR const auto cste3_8         = real{3}/real{8};\n"
+			  << "TFEL_CONSTEXPR const auto cste12_13       = Type(12)/Type(13);\n";
+    }    
+    this->behaviourFile << "TFEL_CONSTEXPR const auto cste1_4         = real{1}/real{4};\n"
 			<< "TFEL_CONSTEXPR const auto cste3_32        = real{3}/real{32};\n"
-			<< "TFEL_CONSTEXPR const auto cste12_13       = Type(12)/Type(13);\n"
 			<< "TFEL_CONSTEXPR const auto cste1932_2197   = Type(1932)/Type(2197);\n"
 			<< "TFEL_CONSTEXPR const auto cste7200_2197   = Type(7200)/Type(2197);\n"
 			<< "TFEL_CONSTEXPR const auto cste7296_2197   = Type(7296)/Type(2197);\n"

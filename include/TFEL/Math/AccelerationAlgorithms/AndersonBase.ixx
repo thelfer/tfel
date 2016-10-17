@@ -30,12 +30,16 @@ namespace tfel{
       : ma(a),n(0)
     {}
 
-    //! \return the Last displacement field
     template<typename Field,typename real>
-    const Field* AndersonBase<Field,real>::getU() const {
-      return this->u[this->n-1];
+    const std::vector<Field*>& AndersonBase<Field,real>::getU() const {
+      return this->u;
     }
 
+    template<typename Field,typename real>
+    const std::vector<Field*>& AndersonBase<Field,real>::getD() const {
+      return this->D;
+    }
+    
     // Set Anderson algorithm
     // at Anderson acceleration type
     // Nmax Method order

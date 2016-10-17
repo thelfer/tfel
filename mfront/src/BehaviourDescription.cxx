@@ -159,7 +159,7 @@ namespace mfront
       bd.setParameterDefaultValue(h,n,cmp.value);
       bd.setGlossaryName(h,n,e.getKey());
     }
-  } // end of BehaviourDescription::declareParameter
+  } // end of declareParameter
   
   static void
   checkElasticMaterialProperty(BehaviourDescription& bd,

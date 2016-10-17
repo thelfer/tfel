@@ -38,7 +38,11 @@ namespace mfront{
   struct MFRONT_VISIBILITY_EXPORT AbstractModelInterface
   {
     //! a simple alias
-    using TokensContainer = tfel::utilities::CxxTokenizer::TokensContainer;
+    using CxxTokenizer    = tfel::utilities::CxxTokenizer;
+    //! a simple alias
+    using TokensContainer = CxxTokenizer::TokensContainer;
+    //! a simple alias
+    using tokens_iterator = CxxTokenizer::TokensContainer::const_iterator;
     /*!
      * \param[out] names: reserved names
      */
@@ -52,11 +56,11 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,TokensContainer::const_iterator>
+    virtual std::pair<bool,tokens_iterator>
     treatKeyword(const std::string&,
 		 const std::vector<std::string>&,
-		 TokensContainer::const_iterator,
-		 const TokensContainer::const_iterator) = 0;
+		 tokens_iterator,
+		 const tokens_iterator) = 0;
     /*!
      * \brief : fill the target descripton
      * \param[out] td: target description

@@ -39,9 +39,9 @@ namespace std{
 namespace mfront
 {
 
-  tfel::utilities::CxxTokenizer::TokensContainer::const_iterator
-  CppTestMaterialPropertyInterface::nextToken(tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-				       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens,
+  CppTestMaterialPropertyInterface::tokens_iterator
+  CppTestMaterialPropertyInterface::nextToken(tokens_iterator current,
+				       const tokens_iterator endTokens,
 				       const std::string &msg)
   {
     using namespace std;
@@ -61,17 +61,15 @@ namespace mfront
     return "cpptest";
   }
 
-  CppTestMaterialPropertyInterface::CppTestMaterialPropertyInterface()
-  {}
+  CppTestMaterialPropertyInterface::CppTestMaterialPropertyInterface() = default;
 
-  CppTestMaterialPropertyInterface::~CppTestMaterialPropertyInterface()
-  {}
+  CppTestMaterialPropertyInterface::~CppTestMaterialPropertyInterface() = default;
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CppTestMaterialPropertyInterface::treatKeyword(const std::string& key,
 						 const std::vector<std::string>& i,
-						 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-						 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens)
+						 tokens_iterator current,
+						 const tokens_iterator endTokens)
   {
     if(std::find(i.begin(),i.end(),"cpptest")!=i.end()){
       if(key!="@TestBounds"){
@@ -86,8 +84,8 @@ namespace mfront
   } // end of treatKeyword
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  CppTestMaterialPropertyInterface::registerTestBounds(tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-						const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens)
+  CppTestMaterialPropertyInterface::registerTestBounds(tokens_iterator current,
+						       const tokens_iterator endTokens)
   {
     using namespace std;
     string msg("CppTestMaterialPropertyInterface::registerTestBounds : ");

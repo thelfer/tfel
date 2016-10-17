@@ -30,13 +30,8 @@ namespace mfront{
     : public SupportedTypes,
       public AbstractBehaviourInterface
   {
-    //! a simple alias
-    typedef tfel::material::ModellingHypothesis ModellingHypothesis;
-    //! a simple alias
-    typedef ModellingHypothesis::Hypothesis Hypothesis;
-
+    // constructor
     UMATInterfaceBase();
-
     /*!
      * set if dynamically allocated arrays are allowed
      * \param[in] b : boolean
@@ -273,8 +268,8 @@ namespace mfront{
 
     virtual bool
     readBooleanValue(const std::string&,
-		     tfel::utilities::CxxTokenizer::TokensContainer::const_iterator&,
-		     const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) const;
+		     tokens_iterator&,
+		     const tokens_iterator) const;
     /*!
      * \return a pair which first member gives the position of the
      * material properties in the values given through the interface

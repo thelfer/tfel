@@ -26,8 +26,6 @@ namespace tfel{
       struct GenTypeBaseApply
       {
 
-      public:
-      
 	typedef typename T::return_type return_type;
 
       private:
@@ -235,8 +233,8 @@ namespace tfel{
 	{
 	  typedef typename tfel::meta::TLFindNthElt<List,N>::type current_value1;
 	  typedef typename tfel::meta::TLFindNthElt<List,M>::type current_value2;
-	  const bool b1 = v1.template is<current_value1>();
-	  const bool b2 = v2.template is<current_value2>();
+	  const auto b1 = v1.template is<current_value1>();
+	  const auto b2 = v2.template is<current_value2>();
 	  if(b1&&b2){
 	    return T::apply(v1.template get<current_value1>(),
 			    v2.template get<current_value2>());
@@ -255,8 +253,8 @@ namespace tfel{
 	{
 	  typedef typename tfel::meta::TLFindNthElt<List,N>::type current_value1;
 	  typedef typename tfel::meta::TLFindNthElt<List,M>::type current_value2;
-	  const bool b1 = v1.template is<current_value1>();
-	  const bool b2 = v2.template is<current_value2>();
+	  const auto b1 = v1.template is<current_value1>();
+	  const auto b2 = v2.template is<current_value2>();
 	  if(b1&&b2){
 	    return f(v1.template get<current_value1>(),
 		     v2.template get<current_value2>());
@@ -274,8 +272,8 @@ namespace tfel{
 	{
 	  typedef typename tfel::meta::TLFindNthElt<List,N>::type current_value1;
 	  typedef typename tfel::meta::TLFindNthElt<List,M>::type current_value2;
-	  bool b1 = v1.template is<current_value1>();
-	  bool b2 = v2.template is<current_value2>();
+	  const auto b1 = v1.template is<current_value1>();
+	  const auto b2 = v2.template is<current_value2>();
 	  if(b1&&b2){
 	    return T::apply(v1.template get<current_value1>(),
 			    v2.template get<current_value2>());
@@ -294,8 +292,8 @@ namespace tfel{
 	{
 	  typedef typename tfel::meta::TLFindNthElt<List,N>::type current_value1;
 	  typedef typename tfel::meta::TLFindNthElt<List,M>::type current_value2;
-	  bool b1 = v1.template is<current_value1>();
-	  bool b2 = v2.template is<current_value2>();
+	  const auto b1 = v1.template is<current_value1>();
+	  const auto b2 = v2.template is<current_value2>();
 	  if(b1&&b2){
 	    return f(v1.template get<current_value1>(),
 		     v2.template get<current_value2>());
@@ -311,83 +309,66 @@ namespace tfel{
     
     } // end of namespace internals
 
-    template<typename T,
-	     typename List>
+    template<typename T,typename List>
     typename T::return_type
     apply(const GenTypeBase<List>& v)
     {
-      using namespace tfel::utilities::internals;
-      return GenTypeBaseApply<T,List>::apply(v);
+      return internals::GenTypeBaseApply<T,List>::apply(v);
     }
 
-    template<typename T,
-	     typename List>
+    template<typename T,typename List>
     typename T::return_type
-    apply(T& f,
-	  const GenTypeBase<List>& v)
+    apply(T& f,const GenTypeBase<List>& v)
     {
-      using namespace tfel::utilities::internals;
-      return GenTypeBaseApply<T,List>::apply(f,v);
+      return internals::GenTypeBaseApply<T,List>::apply(f,v);
     }
 
-    template<typename T,
-	     typename List>
+    template<typename T,typename List>
     typename T::return_type
     apply(const GenTypeBase<List>& v1,
 	  const GenTypeBase<List>& v2)
     {
-      using namespace tfel::utilities::internals;
-      return GenTypeBaseApplyII<T,List>::apply(v1,v2);
+      return internals::GenTypeBaseApplyII<T,List>::apply(v1,v2);
     }
 
-    template<typename T,
-	     typename List>
+    template<typename T,typename List>
     typename T::return_type
     apply(T& f,
 	  const GenTypeBase<List>& v1,
 	  const GenTypeBase<List>& v2)
     {
-      using namespace tfel::utilities::internals;
-      return GenTypeBaseApplyII<T,List>::apply(f,v1,v2);
+      return internals::GenTypeBaseApplyII<T,List>::apply(f,v1,v2);
     }
 
-    template<typename T,
-	     typename List>
+    template<typename T,typename List>
     typename T::return_type
     apply(GenTypeBase<List>& v)
     {
-      using namespace tfel::utilities::internals;
-      return GenTypeBaseApply<T,List>::apply(v);
+      return internals::GenTypeBaseApply<T,List>::apply(v);
     }
 
-    template<typename T,
-	     typename List>
+    template<typename T,typename List>
     typename T::return_type
     apply(T& f,
 	  GenTypeBase<List>& v)
     {
-      using namespace tfel::utilities::internals;
-      return GenTypeBaseApply<T,List>::apply(f,v);
+      return internals::GenTypeBaseApply<T,List>::apply(f,v);
     }
 
-    template<typename T,
-	     typename List>
+    template<typename T,typename List>
     typename T::return_type
     apply(GenTypeBase<List>& v1,
 	  GenTypeBase<List>& v2)
     {
-      using namespace tfel::utilities::internals;
-      return GenTypeBaseApplyII<T,List>::apply(v1,v2);
+      return internals::GenTypeBaseApplyII<T,List>::apply(v1,v2);
     }
 
-    template<typename T,
-	     typename List>
+    template<typename T,typename List>
     typename T::return_type
     apply(T& f,GenTypeBase<List>& v1,
 	  GenTypeBase<List>& v2)
     {
-      using namespace tfel::utilities::internals;
-      return GenTypeBaseApplyII<T,List>::apply(f,v1,v2);
+      return internals::GenTypeBaseApplyII<T,List>::apply(f,v1,v2);
     }
 
     template<typename List>

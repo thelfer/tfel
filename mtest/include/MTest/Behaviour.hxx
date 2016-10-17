@@ -46,6 +46,10 @@ namespace mtest
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
+    //! a simple alias
+    using BehaviourType = tfel::material::MechanicalBehaviourBase::BehaviourType;
+    //! a simple alias
+    using Kinematic     = tfel::material::MechanicalBehaviourBase::Kinematic;
     //! \return the modelling hypothesis 
     virtual Hypothesis getHypothesis(void) const = 0;
     /*!
@@ -60,21 +64,12 @@ namespace mtest
 					    const EvolutionManager&,
 					    const std::string&,
 					    const real);
-    /*!
-     * \return the type of the behaviour
-     */
-    virtual tfel::material::MechanicalBehaviourBase::BehaviourType
-    getBehaviourType(void) const = 0;
-    /*!
-     * \return the type of the behaviour
-     */
-    virtual tfel::material::MechanicalBehaviourBase::Kinematic
-    getBehaviourKinematic(void) const = 0;
-    /*!
-     * \return the size of a vector able to contain all the components of the driving variables
-     */
-    virtual unsigned short
-    getDrivingVariablesSize(void) const = 0;
+    //! \return the type of the behaviour
+    virtual BehaviourType getBehaviourType(void) const = 0;
+    //! \return the type of the behaviour
+    virtual Kinematic getBehaviourKinematic(void) const = 0;
+    //! \return the size of a vector able to contain all the components of the driving variables
+    virtual unsigned short getDrivingVariablesSize(void) const = 0;
     /*!
      * \param[out] v : initial values of the driving variables
      * \note : the vector shall have been correctly allocated

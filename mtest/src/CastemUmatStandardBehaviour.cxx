@@ -25,11 +25,10 @@ namespace mtest{
 								const std::string& f,
 								const tfel::utilities::Data& p,
 								const int t,
-								const tfel::material::ModellingHypothesis::Hypothesis h){
+								const Hypothesis h){
     auto throw_if = [](const bool b,const std::string& msg){
       if(b){throw(std::runtime_error("CastemUmatStandardBehaviour::buildCastemUmatStandardBehaviour: "+msg));};
     };
-    using ModellingHypothesis = tfel::material::ModellingHypothesis;
     UmatBehaviourDescription md;
     md.library = l;
     md.behaviour = f;
@@ -160,9 +159,8 @@ namespace mtest{
   CastemUmatStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(EvolutionManager& mp,
 									  const EvolutionManager& evm,
 									  const int stype,
-									  const tfel::material::ModellingHypothesis::Hypothesis h)
+									  const Hypothesis h)
   {
-    using tfel::material::ModellingHypothesis;
     auto setOptionalMaterialPropertyDefaultValue = [&mp,&evm](const std::string& n,
 							      const real v){
       if(evm.find(n)==evm.end()){

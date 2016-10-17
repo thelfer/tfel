@@ -34,9 +34,9 @@ namespace mfront{
     //! constructor
     AbstractBehaviourDSL() = default;
     //! a simple alias
-    typedef tfel::material::ModellingHypothesis ModellingHypothesis;
+    using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
-    typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
+    using Hypothesis =  ModellingHypothesis::Hypothesis;
     //! \return the target of the dsl
     virtual DSLTarget getTargetType(void) const override final;
     //! \return the behaviour description

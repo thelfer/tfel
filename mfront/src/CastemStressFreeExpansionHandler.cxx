@@ -14,6 +14,7 @@
 #include<cmath>
 #include<limits>
 #include<stdexcept>
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"MFront/Castem/CastemStressFreeExpansionHandler.hxx"
 
 namespace castem
@@ -25,8 +26,7 @@ namespace castem
 							   const CastemReal *const s1,
 							   const CastemInt d)
   {
-    using namespace std;
-    static const CastemReal cste = CastemReal(2)/sqrt(CastemReal(2));
+    constexpr const auto cste = tfel::math::Cste<CastemReal>::sqrt2;
     e[0]  -= s0[0];
     e[1]  -= s0[1];
     e[2]  -= s0[2];
@@ -53,7 +53,7 @@ namespace castem
 							 const CastemReal *const s1,
 							 const CastemInt d)
   {
-    static const CastemReal cste = CastemReal(2)/std::sqrt(CastemReal(2));
+    constexpr const auto cste = tfel::math::Cste<CastemReal>::sqrt2;
     CastemReal log_s0[6];
     CastemReal log_s1[6];
     if(d==1){

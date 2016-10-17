@@ -4879,7 +4879,6 @@ namespace mfront{
 				  << "::computePredictionOperator_" << ktype << ": \"\n"
 				  << "\"computing the prediction operator '"
 				  << ktype << "' is not supported\"));\n"
-				  << "return FAILURE;\n"
 				  << "}\n\n";
 	    } else {
 	      this->behaviourFile << "IntegrationResult computePredictionOperator_" << ktype << "(const SMType smt){\n";
@@ -4918,7 +4917,6 @@ namespace mfront{
 			    << "throw(runtime_error(\"" << this->mb.getClassName()
 			    << "::computePredictionOperator: \"\n"
 			    << "\"unsupported prediction operator flag\"));\n"
-			    << "return FAILURE;\n"
 			    << "}\n\n";
       }
     } else {
@@ -4998,7 +4996,6 @@ namespace mfront{
 				  << "msg += \"computing the tangent operator '"
 				  << ktype << "' is not supported\";\n"
 				  << "throw(runtime_error(msg));\n"
-				  << "return false;\n"
 				  << "}\n\n";
 	    } else {
 	      this->behaviourFile << "bool computeConsistentTangentOperator_" << ktype << "(const SMType smt){\n";
@@ -5037,7 +5034,6 @@ namespace mfront{
 			    << "throw(std::runtime_error(\"" << this->mb.getClassName()
 			    << "::computeConsistentTangentOperator : \"\n"
 			    << "\"unsupported tangent operator flag\"));\n"
-			    << "return false;\n"
 			    << "}\n\n";
       }
     } else {

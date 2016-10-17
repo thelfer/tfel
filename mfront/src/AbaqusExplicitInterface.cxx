@@ -52,8 +52,8 @@ namespace mfront{
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   AbaqusExplicitInterface::treatKeyword(const std::string& key,
 					const std::vector<std::string>& i,
-					tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-					const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
+					tokens_iterator current,
+					const tokens_iterator end)
   {
     if(!i.empty()){
       if(std::find(i.begin(),i.end(),this->getName())!=i.end()){
@@ -379,7 +379,7 @@ namespace mfront{
 	    << "using abaqus::AbaqusTraits;\n"
 	    << "using tfel::material::" << mb.getClassName() << ";\n"
 	    << "using AbaqusExplicitData = abaqus::AbaqusExplicitData<" << t << ">;\n"
-	    << "static const " << t << " cste = std::sqrt(" << t << "{2});\n"
+	    << "TFEL_CONSTEXPR const auto cste = Cste<" << t << ">::sqrt2;\n"
 	    << "auto view = [&nblock](" << t << "* v){\n"
 	    << "  return AbaqusExplicitData::strided_iterator(v,*nblock);\n"
 	    << "};\n"
@@ -677,16 +677,16 @@ namespace mfront{
 	<< "constexpr const unsigned short NPROPS_  = offset+nprops_ == 0 ? 1u : offset+nprops_;\n"
 	<< "constexpr const unsigned short nstatev_ = Traits::internal_variables_nb;\n"
 	<< "constexpr const unsigned short nfieldv_ = Traits::external_variables_nb;\n";
-    if((h==tfel::material::ModellingHypothesis::AXISYMMETRICAL)||
-       (h==tfel::material::ModellingHypothesis::PLANESTRAIN)||
-       (h==tfel::material::ModellingHypothesis::PLANESTRESS)){
+    if((h==ModellingHypothesis::AXISYMMETRICAL)||
+       (h==ModellingHypothesis::PLANESTRAIN)||
+       (h==ModellingHypothesis::PLANESTRESS)){
       out << "if(*ndir+*nshr!=4){\n"
 	  << "std::cerr << \"" << mb.getClassName() << ":"
 	  << " invalid number of components for symmetric tensors "
 	  << "(\" << *ndir+*nshr << \" given, \" << 4 << \" expected)\\n\";\n"
 	  << "::exit(-1);\n"
 	  << "}\n";
-    } else if(h==tfel::material::ModellingHypothesis::TRIDIMENSIONAL){
+    } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
       out << "if(*ndir+*nshr!=6){\n"
 	  << "std::cerr << \"" << mb.getClassName() << ":"
 	  << " invalid number of components for symmetric tensors "

@@ -28,6 +28,11 @@ namespace mfront{
    */
   struct PowellDogLegAlgorithmBase
   {
+    //! a simple alias
+    using tokens_iterator =
+      tfel::utilities::CxxTokenizer::TokensContainer::const_iterator;
+    //! a simple alias
+    using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
   protected:
     /*!
      * \return the reserved names
@@ -41,11 +46,11 @@ namespace mfront{
      * \param[in] p       : current position in file (after keyword)
      * \param[in] pe      : end of file
      */
-    static std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    static std::pair<bool,tokens_iterator>
     treatSpecificKeywords(BehaviourDescription&,
 			  const std::string& key,
-			  const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-			  const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator);
+			  const tokens_iterator,
+			  const tokens_iterator);
     /*!
      * \brief method called at the end of the input file processing.
      * Solver can use it to declared additional parameters
@@ -65,7 +70,7 @@ namespace mfront{
     static void
     writePowellDogLegStep(std::ostream&,
 			  const BehaviourDescription&,
-			  const tfel::material::ModellingHypothesis::Hypothesis,
+			  const Hypothesis,
 			  const std::string&,
 			  const std::string&,
 			  const std::string&);

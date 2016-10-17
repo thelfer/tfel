@@ -39,8 +39,8 @@ namespace mfront
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   FortranMaterialPropertyInterface::treatKeyword(const std::string& key,
 						 const std::vector<std::string>& i,
-						 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-						 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+						 tokens_iterator current,
+						 const tokens_iterator)
   {
     auto throw_if = [](const bool b, const std::string& m){
       if(b){throw(std::runtime_error("FortranMaterialPropertyInterface::treatKeyword : "+m));}

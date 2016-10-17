@@ -29,11 +29,13 @@ namespace mfront{
     : public    NonLinearSystemSolverBase,
       protected PowellDogLegAlgorithmBase
   {
+    //! a simple alias
+    using NonLinearSystemSolverBase::tokens_iterator;
+    //! a simple alias
+    using Hypothesis = NonLinearSystemSolverBase::Hypothesis;
     //! Constructors
     MFrontNewtonRaphsonSolverBase();
-    /*!
-     * \return the reserved names
-     */
+    //! \return the reserved names
     virtual std::vector<std::string>
     getReservedNames(void) const override;
     /*!
@@ -78,11 +80,11 @@ namespace mfront{
      * \param[in] p       : current position in file (after keyword)
      * \param[in] pe      : end of file
      */
-    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    virtual std::pair<bool,tokens_iterator>
     treatSpecificKeywords(BehaviourDescription&,
 			  const std::string&,
-			  const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-			  const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
+			  const tokens_iterator,
+			  const tokens_iterator) override;
     /*!
      * \brief method called at the end of the input file processing.
      * Solver can use it to declared additional parameters
@@ -102,7 +104,7 @@ namespace mfront{
     virtual void
     writeSpecificInitializeMethodPart(std::ostream&,
 				      const BehaviourDescription&,
-				      const tfel::material::ModellingHypothesis::Hypothesis) const override;
+				      const Hypothesis) const override;
     /*!
      * \brief write the algorithm specific members
      * \param[in] out : output file
@@ -112,7 +114,7 @@ namespace mfront{
     virtual void
     writeSpecificMembers(std::ostream&,
 			 const BehaviourDescription&,
-			 const tfel::material::ModellingHypothesis::Hypothesis) const override;
+			 const Hypothesis) const override;
     /*!
      * \brief write the resolution algorithm
      * \param[in] out : output file
@@ -122,7 +124,7 @@ namespace mfront{
     virtual void
     writeResolutionAlgorithm(std::ostream&,
 			     const BehaviourDescription&,
-			     const tfel::material::ModellingHypothesis::Hypothesis) const override;
+			     const Hypothesis) const override;
   protected:
     /*!
      * destructor

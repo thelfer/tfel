@@ -73,8 +73,8 @@ namespace mfront{
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontNewtonRaphsonSolverBase::treatSpecificKeywords(BehaviourDescription& mb,
 						       const std::string& key,
-						       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator p,
-						       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator pe)
+						       const tokens_iterator p,
+						       const tokens_iterator pe)
   {
     using namespace std;
     using tfel::utilities::CxxTokenizer;
@@ -118,19 +118,19 @@ namespace mfront{
   void
   MFrontNewtonRaphsonSolverBase::writeSpecificInitializeMethodPart(std::ostream&,
 								   const BehaviourDescription&,
-								   const tfel::material::ModellingHypothesis::Hypothesis) const
+								   const Hypothesis) const
   {} // end of MFrontNewtonRaphsonSolverBase::writeSpecificMembers
 
   void
   MFrontNewtonRaphsonSolverBase::writeSpecificMembers(std::ostream&,
 						      const BehaviourDescription&,
-						      const tfel::material::ModellingHypothesis::Hypothesis) const
+						      const Hypothesis) const
   {} // end of MFrontNewtonRaphsonSolverBase::writeSpecificMembers
 
   void
   MFrontNewtonRaphsonSolverBase::writeResolutionAlgorithm(std::ostream& out,
 							  const BehaviourDescription& mb,
-							  const tfel::material::ModellingHypothesis::Hypothesis h) const
+							  const Hypothesis h) const
   {
     
     using namespace std;

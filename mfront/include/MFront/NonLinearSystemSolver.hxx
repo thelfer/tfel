@@ -33,6 +33,12 @@ namespace mfront
    */
   struct NonLinearSystemSolver
   {
+    //! a simple alias
+    using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
+    //! a simple alias
+    using CxxTokenizer = tfel::utilities::CxxTokenizer;
+    //! a simple alias
+    using tokens_iterator = CxxTokenizer::TokensContainer::const_iterator;
     /*!
      * \return the reserved names
      */
@@ -88,11 +94,11 @@ namespace mfront
      * \param[in] p       : current position in file (after keyword)
      * \param[in] pe      : end of file
      */
-    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    virtual std::pair<bool,tokens_iterator>
     treatSpecificKeywords(BehaviourDescription&,
 			  const std::string&,
-			  const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-			  const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) = 0;
+			  const tokens_iterator,
+			  const tokens_iterator) = 0;
     /*!
      * \brief method called at the end of the input file processing.
      * Solver can use it to declared additional parameters
@@ -112,7 +118,7 @@ namespace mfront
     virtual void
     writeSpecificInitializeMethodPart(std::ostream&,
 				      const BehaviourDescription&,
-				      const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+				      const Hypothesis) const = 0;
     /*!
      * \brief write the algorithm specific members
      * \param[in] out : output file
@@ -122,7 +128,7 @@ namespace mfront
     virtual void
     writeSpecificMembers(std::ostream&,
 			 const BehaviourDescription&,
-			 const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+			 const Hypothesis) const = 0;
     /*!
      * \brief write the resolution algorithm
      * \param[in] out : output file
@@ -132,7 +138,7 @@ namespace mfront
     virtual void
     writeResolutionAlgorithm(std::ostream&,
 			     const BehaviourDescription&,
-			     const tfel::material::ModellingHypothesis::Hypothesis) const = 0;
+			     const Hypothesis) const = 0;
     /*!
      * destructor
      */

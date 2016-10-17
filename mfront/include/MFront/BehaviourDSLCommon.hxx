@@ -809,7 +809,8 @@ namespace mfront{
     virtual void
     writeIntegrationDataOutputOperator(const Hypothesis);
 
-    void checkBehaviourFile(void) const;
+    virtual void
+    checkBehaviourFile(void) const;
 
     virtual void
     writeBehaviourStandardTFELTypedefs(void);

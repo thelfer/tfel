@@ -41,8 +41,8 @@ namespace mfront
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CppMaterialPropertyInterface::treatKeyword(const std::string& k,
 					     const std::vector<std::string>& i,
-					     tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-					     const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+					     tokens_iterator current,
+					     const tokens_iterator)
   {
     if((std::find(i.begin(),i.end(),"c++")!=i.end())||
        (std::find(i.begin(),i.end(),"C++")!=i.end())||

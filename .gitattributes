@@ -1758,6 +1758,7 @@ mfront/include/MFront/Cyrano/CyranoOutOfBoundsPolicy.hxx -text
 mfront/include/MFront/Cyrano/CyranoTraits.hxx -text
 mfront/include/MFront/Cyrano/cyrano.doxygen -text
 mfront/include/MFront/CyranoInterface.hxx -text
+mfront/include/MFront/DDIF2Brick.hxx -text
 mfront/include/MFront/DSLBase.hxx -text
 mfront/include/MFront/DSLBase.ixx -text
 mfront/include/MFront/DSLFactory.hxx -text
@@ -1941,6 +1942,7 @@ mfront/src/CyranoGetModellingHypothesis.cxx -text
 mfront/src/CyranoInterface.cxx -text
 mfront/src/CyranoInterfaceExceptions.cxx -text
 mfront/src/CyranoOutOfBoundsPolicy.cxx -text
+mfront/src/DDIF2Brick.cxx -text
 mfront/src/DSLBase.cxx -text
 mfront/src/DSLFactory.cxx -text
 mfront/src/DSLUtilities.cxx -text

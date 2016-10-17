@@ -35,7 +35,9 @@ namespace mfront
   struct MTESTFILEGENERATOR_VISIBILITY_EXPORT MTestFileGeneratorBase
   {
     //! a simple alias
-    typedef double real;
+    using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
+    //! a simple alias
+    using real = double;
     /*!
      * \return an uniq identifier
      */
@@ -50,7 +52,7 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      */
     virtual void
-    setModellingHypothesis(const tfel::material::ModellingHypothesis::Hypothesis);
+    setModellingHypothesis(const Hypothesis);
     /*!
      * \brief add a computed time
      * \param[in] t : time
@@ -213,7 +215,7 @@ namespace mfront
       real values[9];
     }; // end of struct InternalStateVariable
     //! modelling hypothesis
-    tfel::material::ModellingHypothesis::Hypothesis hypothesis;
+    Hypothesis hypothesis;
     //! real time step
     std::set<real> times;
     //! internal state variable

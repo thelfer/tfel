@@ -24,9 +24,9 @@
 namespace mtest
 {
 
-  AsterCohesiveZoneModel::AsterCohesiveZoneModel(const tfel::material::ModellingHypothesis::Hypothesis h,
-									   const std::string& l,
-									   const std::string& b)
+  AsterCohesiveZoneModel::AsterCohesiveZoneModel(const Hypothesis h,
+						 const std::string& l,
+						 const std::string& b)
     : UmatBehaviourBase(h,l,b)
   {
     using namespace std;

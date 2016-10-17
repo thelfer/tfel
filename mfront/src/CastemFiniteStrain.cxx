@@ -25,6 +25,7 @@
 #include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include"TFEL/Math/ST2toST2/ConstST2toST2View.hxx"
 #include"TFEL/Math/ST2toST2/UmatNormaliseTangentOperator.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include"MFront/Castem/CastemTangentOperator.hxx"
 #include"MFront/Castem/CastemFiniteStrain.hxx"
@@ -293,8 +294,7 @@ namespace castem
   {
     using namespace tfel::math;
     using std::log;
-    using std::sqrt;
-    static const CastemReal cste = sqrt(CastemReal(2));
+    constexpr const auto cste = Cste<CastemReal>::sqrt2;
     CastemCheckNDIValue(NDI);
     tvector<3u,CastemReal>    vp;
     tvector<3u,CastemReal>    log_vp;
@@ -342,7 +342,7 @@ namespace castem
   {
     using namespace tfel::math;
     using std::log;
-    static const CastemReal cste = sqrt(CastemReal(2));
+    constexpr const auto cste = Cste<CastemReal>::sqrt2;
     tvector<3u,CastemReal>    vp,log_vp;
     stensor<3u,CastemReal>    n0,n1,n2;
     tmatrix<3u,3u,CastemReal> m;
@@ -428,9 +428,8 @@ namespace castem
 									  const CastemReal Fzz)
    {
      using namespace tfel::math;
-     using std::sqrt;
-     static const CastemReal cste  = sqrt(CastemReal(2));
-     static const CastemReal icste = CastemReal(1)/sqrt(CastemReal(2));
+     constexpr const auto cste  = Cste<CastemReal>::sqrt2;
+     constexpr const auto icste = Cste<CastemReal>::isqrt2;
      // now, we compute the second Piolay Kirchhoff stress
      CastemReal sk2[6u];
      // first we compute the second Piola-Kirchhoff stress
@@ -468,7 +467,7 @@ namespace castem
    {
      using namespace tfel::math;
      using std::sqrt;
-     static const CastemReal cste = CastemReal(1)/sqrt(CastemReal(2));
+     constexpr const auto icste = Cste<CastemReal>::isqrt2;
      // first we compute the second Piola-Kirchhoff stress
      if(NTENS==3u){
        STRESS[0] = s[0] * P[0];
@@ -478,14 +477,14 @@ namespace castem
        stensor<2u,CastemReal> T;
        T.importTab(s);
        StensorView<2u,CastemReal>{STRESS} = T|ConstST2toST2View<2u,CastemReal>{P};
-       STRESS[3] *= cste;
+       STRESS[3] *= icste;
      } else {
        stensor<3u,CastemReal> T;
        T.importTab(s);
        StensorView<3u,CastemReal>{STRESS} = T|ConstST2toST2View<3u,CastemReal>{P};
-       STRESS[3] *= cste;
-       STRESS[4] *= cste;
-       STRESS[5] *= cste;
+       STRESS[3] *= icste;
+       STRESS[4] *= icste;
+       STRESS[5] *= icste;
      }
      // now, we compute the cauchy stress
      CastemFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,F,NTENS,NDI,Fzz);

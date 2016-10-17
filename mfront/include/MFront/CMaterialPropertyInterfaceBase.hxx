@@ -17,8 +17,6 @@
 #include<string>
 #include<fstream>
 
-#include"TFEL/Utilities/CxxTokenizer.hxx"
-
 #include"MFront/LawFunction.hxx"
 #include"MFront/VariableBoundsDescription.hxx"
 #include"MFront/AbstractMaterialPropertyInterface.hxx"

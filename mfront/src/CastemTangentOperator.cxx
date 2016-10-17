@@ -16,6 +16,7 @@
 
 #include"TFEL/Math/t2tost2.hxx"
 #include"TFEL/Math/st2tost2.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"MFront/Castem/CastemTangentOperator.hxx"
 
 
@@ -29,14 +30,13 @@ namespace castem
   void
   CastemTangentOperator::normalize(tfel::math::ST2toST2View<2u,CastemReal>& Dt)
   {
-    using namespace std;
-    static const CastemReal inv_sqrt2 = CastemReal(1)/std::sqrt(CastemReal(2));
-    Dt(0,3) *= inv_sqrt2;
-    Dt(1,3) *= inv_sqrt2;
-    Dt(2,3) *= inv_sqrt2;
-    Dt(3,0) *= inv_sqrt2;
-    Dt(3,1) *= inv_sqrt2;
-    Dt(3,2) *= inv_sqrt2;
+    constexpr const auto icste = tfel::math::Cste<CastemReal>::isqrt2;
+    Dt(0,3) *= icste;
+    Dt(1,3) *= icste;
+    Dt(2,3) *= icste;
+    Dt(3,0) *= icste;
+    Dt(3,1) *= icste;
+    Dt(3,2) *= icste;
     Dt(3,3) *= 0.5;
   } // end of CastemTangentOperator::normalize
   
@@ -46,26 +46,25 @@ namespace castem
   void
   CastemTangentOperator::normalize(tfel::math::ST2toST2View<3u,CastemReal>& Dt)
   {
-    using namespace std;
-    static const CastemReal inv_sqrt2 = CastemReal(1)/std::sqrt(CastemReal(2));
-    Dt(0,3) *= inv_sqrt2;
-    Dt(1,3) *= inv_sqrt2;
-    Dt(2,3) *= inv_sqrt2;
-    Dt(0,4) *= inv_sqrt2;
-    Dt(1,4) *= inv_sqrt2;
-    Dt(2,4) *= inv_sqrt2;
-    Dt(0,5) *= inv_sqrt2;
-    Dt(1,5) *= inv_sqrt2;
-    Dt(2,5) *= inv_sqrt2;
-    Dt(3,0) *= inv_sqrt2;
-    Dt(3,1) *= inv_sqrt2;
-    Dt(3,2) *= inv_sqrt2;
-    Dt(4,0) *= inv_sqrt2;
-    Dt(4,1) *= inv_sqrt2;
-    Dt(4,2) *= inv_sqrt2;
-    Dt(5,0) *= inv_sqrt2;
-    Dt(5,1) *= inv_sqrt2;
-    Dt(5,2) *= inv_sqrt2;
+    constexpr const auto icste = tfel::math::Cste<CastemReal>::isqrt2;
+    Dt(0,3) *= icste;
+    Dt(1,3) *= icste;
+    Dt(2,3) *= icste;
+    Dt(0,4) *= icste;
+    Dt(1,4) *= icste;
+    Dt(2,4) *= icste;
+    Dt(0,5) *= icste;
+    Dt(1,5) *= icste;
+    Dt(2,5) *= icste;
+    Dt(3,0) *= icste;
+    Dt(3,1) *= icste;
+    Dt(3,2) *= icste;
+    Dt(4,0) *= icste;
+    Dt(4,1) *= icste;
+    Dt(4,2) *= icste;
+    Dt(5,0) *= icste;
+    Dt(5,1) *= icste;
+    Dt(5,2) *= icste;
     Dt(3,3) *= 0.5;
     Dt(3,4) *= 0.5;
     Dt(3,5) *= 0.5;

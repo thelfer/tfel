@@ -17,10 +17,10 @@
 
 #include<set>
 #include<map>
+#include<memory>
 #include<string>
 
 #include"MFront/MFrontConfig.hxx"
-#include<memory>
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
 #include"MFront/CodeBlock.hxx"

@@ -157,11 +157,11 @@ namespace mfront
   } // end of ZMATInterface::allowDynamicallyAllocatedArrays
 
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  std::pair<bool,ZMATInterface::tokens_iterator>
   ZMATInterface::treatKeyword(const std::string& key,
 			      const std::vector<std::string>& i,
-			      tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-			      const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+			      tokens_iterator current,
+			      const tokens_iterator)
   {
     if(std::find(i.begin(),i.end(),this->getName())!=i.end()){
       throw(std::runtime_error("ZMATInterface::treatKeyword: "

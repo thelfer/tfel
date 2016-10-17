@@ -124,9 +124,9 @@ namespace mfront
 	    EXTERNALSTATEVARIABLE,PARAMETER} type;
     }; // end of 
     //! a simple alias
-    typedef tfel::material::ModellingHypothesis ModellingHypothesis;
+    using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
-    typedef tfel::material::ModellingHypothesis::Hypothesis Hypothesis;
+    using  Hypothesis = ModellingHypothesis::Hypothesis;
     //! a simple alias
     typedef BehaviourData::Mode Mode;
     //! a simple alias
@@ -416,7 +416,7 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      */
     const BehaviourData&
-    getBehaviourData(const ModellingHypothesis::Hypothesis&) const;
+    getBehaviourData(const Hypothesis&) const;
     /*!
      * \return true if modelling hypotheses are defined.
      */

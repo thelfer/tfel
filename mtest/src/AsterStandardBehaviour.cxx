@@ -29,9 +29,9 @@
 namespace mtest
 {
 
-  AsterStandardBehaviour::AsterStandardBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
-							   const std::string& l,
-							   const std::string& b)
+  AsterStandardBehaviour::AsterStandardBehaviour(const Hypothesis h,
+						 const std::string& l,
+						 const std::string& b)
     : UmatBehaviourBase(h,l,b),
       savesTangentOperator(false)
   {

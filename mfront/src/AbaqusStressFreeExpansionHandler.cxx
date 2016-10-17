@@ -13,6 +13,7 @@
 
 #include<cmath>
 #include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx"
 
 namespace abaqus
@@ -26,7 +27,7 @@ namespace abaqus
 							  const real *const s1,
 							  const AbaqusInt d)
   {
-    static const real cste = std::sqrt(real(2));
+    constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
     e[0]  -= s0[0];
     e[1]  -= s0[1];
     e[2]  -= s0[2];
@@ -73,7 +74,7 @@ namespace abaqus
 							const real *const s1,
 							const AbaqusInt d)
   {
-    static const real cste = std::sqrt(real(2));
+    constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
     if(d==2){
       // s0 and s1 are given using TFEL conventions
       tfel::math::stensor<2u,real> e0(s0);

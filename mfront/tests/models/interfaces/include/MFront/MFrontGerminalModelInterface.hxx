@@ -34,11 +34,11 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,TokensContainer::const_iterator>
+    virtual std::pair<bool,tokens_iterator>
     treatKeyword(const std::string&,
 		 const std::vector<std::string>&,
-		 TokensContainer::const_iterator,
-		 const TokensContainer::const_iterator) override;
+		 tokens_iterator,
+		 const tokens_iterator) override;
     
   private:
 

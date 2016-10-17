@@ -74,23 +74,19 @@ namespace mtest
 		      const Hypothesis);
     //! \return the modelling hypothesis 
     virtual Hypothesis getHypothesis(void) const override;
+    //! \return the type of the behaviour
+    virtual BehaviourType getBehaviourType(void) const override;
+    //! \return the type of the behaviour
+    virtual Kinematic getBehaviourKinematic(void) const override;
     /*!
-     * \return the type of the behaviour
-     */
-    virtual tfel::material::MechanicalBehaviourBase::BehaviourType
-    getBehaviourType(void) const override;
-    /*!
-     * \return the type of the behaviour
-     */
-    virtual tfel::material::MechanicalBehaviourBase::Kinematic
-    getBehaviourKinematic(void) const override;
-    /*!
-     * \return the size of a vector able to contain all the components of the driving variables
+     * \return the size of a vector able to contain all the components
+     * of the driving variables
      */
     virtual unsigned short
     getDrivingVariablesSize(void) const override;
     /*!
-     * \return the size of a vector able to contain all the components of the thermodynamic forces
+     * \return the size of a vector able to contain all the components
+     * of the thermodynamic forces
      */
     virtual unsigned short
     getThermodynamicForcesSize(void) const override;

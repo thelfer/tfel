@@ -105,6 +105,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 			   BehaviourBrickRequirementManager.cxx                   \
 			   BehaviourBrickProvider.cxx                             \
 		           StandardElasticityBrick.cxx                            \
+		           DDIF2Brick.cxx                                         \
 			   FiniteStrainSingleCrystalBrick.cxx                     \
 		           LocalDataStructure.cxx                                 \
 		           AbstractBehaviourBrickFactory.cxx                      \

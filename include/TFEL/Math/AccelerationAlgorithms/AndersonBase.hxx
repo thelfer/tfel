@@ -35,8 +35,8 @@ namespace tfel{
       AndersonBase(const Allocator);
       //! Destructor
       virtual~AndersonBase();
-      //! \return the last displacement field
-      const Field*getU() const;
+      const std::vector<Field*>& getU() const;
+      const std::vector<Field*>& getD() const;
       //! Set Anderson algorithm
       //! \param Nmax:  method order
       //! \param alMax: alternance order

@@ -11,6 +11,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
+
 #include<limits>
 #include<ostream>
 #include<iterator>
@@ -34,8 +36,7 @@ namespace mtest
   UAndersonAccelerationAlgorithm::setParameter(const std::string& p,
 						 const std::string& v)
   {
-    const std::string m = "UAndersonAccelerationAlgorithm::"
-      "setParameterAbaqusExplicitBehaviour";
+    const std::string m = "UAndersonAccelerationAlgorithm::setParameter";
     auto throw_if = [&m](const bool c, const std::string& msg){
       if(c){throw(std::runtime_error(m+": "+msg));}
     };
@@ -69,12 +70,13 @@ namespace mtest
   void UAndersonAccelerationAlgorithm::preExecuteTasks()
   {
     this->a->restart(this->uO,this->uN);
+    std::cout << "UAndersonAccelerationAlgorithm::preExecuteTasks: " << this->uO << " " << this->uN << std::endl;
   } // end of UAndersonAccelerationAlgorithm::preExecuteTasks
 
   void
   UAndersonAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
 					  const tfel::math::vector<real>& du,
-					  const tfel::math::vector<real>& r,
+					  const tfel::math::vector<real>&,
 					  const real,
 					  const real,
 					  const unsigned short iter)
@@ -84,12 +86,24 @@ namespace mtest
     //   std::copy(v.begin(),v.end(),std::ostream_iterator<real>(os," "));
     //   os << std::endl;
     // };
+    // auto pos = [this](const tfel::math::vector<real> * ptr){
+    //   const auto& u = this->a->getU();
+    //   const auto& d = this->a->getD();
+    //   auto p = std::find(u.begin(),u.end(),ptr);
+    //   if(p!=u.end()){
+    // 	return "u"+std::to_string(p-u.begin());
+    //   }
+    //   p = std::find(d.begin(),d.end(),ptr);
+    //   return "d"+std::to_string(p-d.begin());
+    // };
+    // std::cout << "UAndersonAccelerationAlgorithm::execute before: " << pos(this->uO) << " " << pos(this->uN) << std::endl;
     if(iter==1u){
       *(this->uO) = u1-du;
     }
     *(this->uN) = u1;
     this->a->newIter(this->uO,this->uN);
     u1 = *(this->uO);
+    //    std::cout << "UAndersonAccelerationAlgorithm::execute after: " << pos(this->uO) << " " << pos(this->uN) << std::endl;
   } // end of UAndersonAccelerationAlgorithm::execute
 
   void UAndersonAccelerationAlgorithm::postExecuteTasks()

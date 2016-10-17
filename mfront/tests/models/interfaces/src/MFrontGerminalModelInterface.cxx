@@ -30,11 +30,11 @@ namespace mfront{
     return "germinal";
   } // end of MFrontGerminalModelInterface::getName(void)
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  std::pair<bool,MFrontGerminalModelInterface::tokens_iterator>
   MFrontGerminalModelInterface::treatKeyword(const std::string& k,
 					     const std::vector<std::string>& i,
-					     TokensContainer::const_iterator c,
-					     const TokensContainer::const_iterator)
+					     tokens_iterator c,
+					     const tokens_iterator)
   {
     if(std::find(i.begin(),i.end(),"germinal")!=i.end()){
       throw(std::runtime_error("MFrontGerminalModelInterface::treatKeyword: "

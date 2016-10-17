@@ -79,8 +79,8 @@ namespace mfront{
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontBroydenSolverBase::treatSpecificKeywords(BehaviourDescription& mb,
 						 const std::string& key,
-						 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator p,
-						 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator pe)
+						 const tokens_iterator p,
+						 const tokens_iterator pe)
   {
     if(this->usesPowellDogLegAlgorithm()){
       return PowellDogLegAlgorithmBase::treatSpecificKeywords(mb,key,p,pe);
@@ -99,13 +99,13 @@ namespace mfront{
   void
   MFrontBroydenSolverBase::writeSpecificMembers(std::ostream&,
 						const BehaviourDescription&,
-						const tfel::material::ModellingHypothesis::Hypothesis) const
+						const Hypothesis) const
   {} // end of MFrontBroydenSolverBase::writeSpecificMembers
 
   void
   MFrontBroydenSolverBase::writeSpecificInitializeMethodPart(std::ostream& out,
 							     const BehaviourDescription& mb,
-							     const tfel::material::ModellingHypothesis::Hypothesis h) const
+							     const Hypothesis h) const
   {
     const auto& d = mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
@@ -127,7 +127,7 @@ namespace mfront{
   void
   MFrontBroydenSolverBase::writeResolutionAlgorithm(std::ostream& out,
 						    const BehaviourDescription& mb,
-						    const tfel::material::ModellingHypothesis::Hypothesis h) const
+						    const Hypothesis h) const
   {
     const auto btype = mb.getBehaviourTypeFlag();
     const auto& d = mb.getBehaviourData(h);

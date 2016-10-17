@@ -58,11 +58,11 @@ namespace mfront
   PythonMaterialPropertyInterface::PythonMaterialPropertyInterface()
   {}
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  std::pair<bool,PythonMaterialPropertyInterface::tokens_iterator>
   PythonMaterialPropertyInterface::treatKeyword(const std::string& k,
 						const std::vector<std::string>& i,
-						tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-						const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+						tokens_iterator current,
+						const tokens_iterator)
   {
     if((std::find(i.begin(),i.end(),"python")!=i.end())||
        (std::find(i.begin(),i.end(),"Python")!=i.end())){
@@ -71,9 +71,6 @@ namespace mfront
     }
     return {false,current};
   } // end of treatKeyword
-
-  PythonMaterialPropertyInterface::~PythonMaterialPropertyInterface()
-  {}
 
   void
   PythonMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
@@ -489,4 +486,6 @@ namespace mfront
     wrapper.close();
   } // end of PythonMaterialPropertyInterface::writeSrcFile(void)
 
+  PythonMaterialPropertyInterface::~PythonMaterialPropertyInterface() = default;
+  
 } // end of namespace mfront

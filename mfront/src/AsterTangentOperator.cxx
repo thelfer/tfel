@@ -16,6 +16,7 @@
 
 #include"TFEL/Math/t2tost2.hxx"
 #include"TFEL/Math/st2tost2.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
 #include"MFront/Aster/AsterTangentOperator.hxx"
 
 namespace aster
@@ -156,40 +157,38 @@ namespace aster
   void
   AsterTangentOperator::normalize(tfel::math::ST2toST2View<2u,AsterReal>& Dt)
   {
-    using namespace std;
-    static const AsterReal inv_sqrt2 = AsterReal(1)/std::sqrt(AsterReal(2));
-    Dt(0,3) *= inv_sqrt2;
-    Dt(1,3) *= inv_sqrt2;
-    Dt(2,3) *= inv_sqrt2;
-    Dt(3,0) *= inv_sqrt2;
-    Dt(3,1) *= inv_sqrt2;
-    Dt(3,2) *= inv_sqrt2;
+    constexpr const auto icste = tfel::math::Cste<AsterReal>::isqrt2;
+    Dt(0,3) *= icste;
+    Dt(1,3) *= icste;
+    Dt(2,3) *= icste;
+    Dt(3,0) *= icste;
+    Dt(3,1) *= icste;
+    Dt(3,2) *= icste;
     Dt(3,3) *= 0.5;
   } // end of AsterTangentOperator::normalize
   
   void
   AsterTangentOperator::normalize(tfel::math::ST2toST2View<3u,AsterReal>& Dt)
   {
-    using namespace std;
-    static const AsterReal inv_sqrt2 = AsterReal(1)/std::sqrt(AsterReal(2));
-    Dt(0,3) *= inv_sqrt2;
-    Dt(1,3) *= inv_sqrt2;
-    Dt(2,3) *= inv_sqrt2;
-    Dt(0,4) *= inv_sqrt2;
-    Dt(1,4) *= inv_sqrt2;
-    Dt(2,4) *= inv_sqrt2;
-    Dt(0,5) *= inv_sqrt2;
-    Dt(1,5) *= inv_sqrt2;
-    Dt(2,5) *= inv_sqrt2;
-    Dt(3,0) *= inv_sqrt2;
-    Dt(3,1) *= inv_sqrt2;
-    Dt(3,2) *= inv_sqrt2;
-    Dt(4,0) *= inv_sqrt2;
-    Dt(4,1) *= inv_sqrt2;
-    Dt(4,2) *= inv_sqrt2;
-    Dt(5,0) *= inv_sqrt2;
-    Dt(5,1) *= inv_sqrt2;
-    Dt(5,2) *= inv_sqrt2;
+    constexpr const auto icste = tfel::math::Cste<AsterReal>::isqrt2;
+    Dt(0,3) *= icste;
+    Dt(1,3) *= icste;
+    Dt(2,3) *= icste;
+    Dt(0,4) *= icste;
+    Dt(1,4) *= icste;
+    Dt(2,4) *= icste;
+    Dt(0,5) *= icste;
+    Dt(1,5) *= icste;
+    Dt(2,5) *= icste;
+    Dt(3,0) *= icste;
+    Dt(3,1) *= icste;
+    Dt(3,2) *= icste;
+    Dt(4,0) *= icste;
+    Dt(4,1) *= icste;
+    Dt(4,2) *= icste;
+    Dt(5,0) *= icste;
+    Dt(5,1) *= icste;
+    Dt(5,2) *= icste;
     Dt(3,3) *= 0.5;
     Dt(3,4) *= 0.5;
     Dt(3,5) *= 0.5;

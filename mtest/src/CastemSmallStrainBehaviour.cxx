@@ -121,7 +121,7 @@ namespace mtest
     using namespace castem;
     using tfel::math::vector;
     using castem::CastemComputeStiffnessTensor;
-    static const real sqrt2 = sqrt(real(2));
+    constexpr const auto sqrt2 = Cste<real>::sqrt2;
     auto throw_if = [](const bool c, const std::string& m){
       if(c){throw(std::runtime_error("CastemSmallStrainBehaviour::call_behaviour: "+m));}
     };

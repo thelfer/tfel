@@ -74,10 +74,10 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,CxxTokenizer::TokensContainer::const_iterator>
+    virtual std::pair<bool,tokens_iterator>
     treatCommonKeywords(const std::string&,
-			CxxTokenizer::TokensContainer::const_iterator,
-			const CxxTokenizer::TokensContainer::const_iterator);
+			tokens_iterator,
+			const tokens_iterator);
     /*!
      * \return the list of supported keywords
      */
@@ -97,7 +97,7 @@ namespace mfront{
     virtual void
     writeAbaqusBehaviourTraits(std::ostream&,
 			       const BehaviourDescription&,
-			       const tfel::material::ModellingHypothesis::Hypothesis) const;
+			       const Hypothesis) const;
     /*!
      * \param[in] out  : output file
      * \param[in] name : name of the behaviour as defined by interface
@@ -169,7 +169,7 @@ namespace mfront{
      * \return the list of modelling hypotheses treated by the interface
      * \param[in] mb : behaviour description
      */
-    virtual std::set<tfel::material::ModellingHypothesis::Hypothesis>
+    virtual std::set<Hypothesis>
     getModellingHypothesesToBeTreated(const BehaviourDescription&) const override;
     /*!
      * \return the input file example

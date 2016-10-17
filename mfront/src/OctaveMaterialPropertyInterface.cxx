@@ -64,11 +64,11 @@ namespace mfront
 
   OctaveMaterialPropertyInterface::OctaveMaterialPropertyInterface() = default;
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  std::pair<bool,OctaveMaterialPropertyInterface::tokens_iterator>
   OctaveMaterialPropertyInterface::treatKeyword(const std::string& k,
 						const std::vector<std::string>& i,
-						tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-						const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+						tokens_iterator current,
+						const tokens_iterator)
   {
     if(std::find(i.begin(),i.end(),"octave")!=i.end()){
       throw(std::runtime_error("OctaveMaterialPropertyInterface::treatKeyword: "

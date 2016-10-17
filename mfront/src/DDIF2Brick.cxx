@@ -1,5 +1,5 @@
 /*! 
- * \file  StandardElasticityBrick.cxx
+ * \file  DDIF2Brick.cxx
  * \brief
  * \author Helfer Thomas
  * \date   20 oct. 2014
@@ -22,18 +22,18 @@
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
 #include "MFront/NonLinearSystemSolver.hxx"
-#include "MFront/StandardElasticityBrick.hxx"
+#include "MFront/DDIF2Brick.hxx"
 
 namespace mfront{
 
-  StandardElasticityBrick::StandardElasticityBrick(AbstractBehaviourDSL& dsl_,
-						   BehaviourDescription& mb_,
-						   const Parameters& p,
-						   const DataMap& d)
+  DDIF2Brick::DDIF2Brick(AbstractBehaviourDSL& dsl_,
+			 BehaviourDescription& mb_,
+			 const Parameters& p,
+			 const DataMap& d)
     : BehaviourBrickBase(dsl_,mb_)
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("StandardElasticityBrick::StandardElasticityBrick: "+m));}
+      if(b){throw(std::runtime_error("DDIF2Brick::DDIF2Brick: "+m));}
     };
     // reserve some specific variables
     this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"sebdata");
@@ -77,18 +77,18 @@ namespace mfront{
       this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"prediction_stress");
       this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"prediction_strain");
     }
-  } // end of StandardElasticityBrick::StandardElasticityBrick
+  } // end of DDIF2Brick::DDIF2Brick
 
   void 
-  StandardElasticityBrick::endTreatment() const
+  DDIF2Brick::endTreatment() const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("StandardElasticityBrick::endTreatment: "+m));}
+      if(b){throw(std::runtime_error("DDIF2Brick::endTreatment: "+m));}
     };
     using tfel::glossary::Glossary; 
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      getLogStream() << "StandardElasticityBrick::endTreatment: begin\n";
+      getLogStream() << "DDIF2Brick::endTreatment: begin\n";
     }
     LocalDataStructure d;
     d.name = "sebdata";
@@ -147,10 +147,10 @@ namespace mfront{
     		     integrator,BehaviourData::CREATEORAPPEND,
     		     BehaviourData::AT_END);
     this->bd.addLocalDataStructure(d,BehaviourData::ALREADYREGISTRED);
-  } // end of StandardElasticityBrick::endTreatment
+  } // end of DDIF2Brick::endTreatment
 
   void 
-  StandardElasticityBrick::declareComputeElasticPredictionMethod(const LocalDataStructure& d) const
+  DDIF2Brick::declareComputeElasticPredictionMethod(const LocalDataStructure& d) const
   {
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     for(const auto h:this->bd.getDistinctModellingHypotheses()){
@@ -163,6 +163,8 @@ namespace mfront{
 	  if((this->bd.getElasticSymmetryType()!=mfront::ISOTROPIC)&&
 	     (this->bd.getElasticSymmetryType()!=mfront::ORTHOTROPIC)){
 	    m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\"));\n";
+#pragma message("HERE")
+	    //	    m += "return {};\n";
 	  } else {
 	    if(this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
 	      m += "StrainStensor prediction_stress;\n";
@@ -177,6 +179,8 @@ namespace mfront{
 	      m += "return prediction_stress;\n";
 	    } else {
 	      m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\"));\n";
+#pragma message("HERE")
+	      //	      m += "return {};\n";
 	    }
 	  }
 	} else{
@@ -193,7 +197,7 @@ namespace mfront{
 	    m += "return prediction_stress;\n";
     	  } else {
     	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-    	      throw(std::runtime_error("StandardElasticityBrick::declareComputeElasticPredictionMethod: "
+    	      throw(std::runtime_error("DDIF2Brick::declareComputeElasticPredictionMethod: "
     				       "the stiffness tensor must be defined for "
     				       "orthotropic behaviours"));
     	    }
@@ -205,6 +209,8 @@ namespace mfront{
 	  if((this->bd.getElasticSymmetryType()!=mfront::ISOTROPIC)&&
 	     (this->bd.getElasticSymmetryType()!=mfront::ORTHOTROPIC)){
 	    m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\"));\n";
+#pragma message("HERE")
+	    //	    m += "return {};\n";
 	  } else {
 	    if(this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
 	      m += "StrainStensor prediction_stress;\n";
@@ -233,7 +239,7 @@ namespace mfront{
 	    m += "return prediction_stress;\n";
 	  } else {
 	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-	      throw(std::runtime_error("StandardElasticityBrick::declareComputeElasticPredictionMethod: "
+	      throw(std::runtime_error("DDIF2Brick::declareComputeElasticPredictionMethod: "
 				       "the stiffness tensor must be defined for "
 				       "orthotropic behaviours"));
 	    }
@@ -251,7 +257,7 @@ namespace mfront{
 	      "2*("+mu+")*(this->eel+(this->theta)*(this->deto));\n";
     	  } else {
     	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-    	      throw(std::runtime_error("StandardElasticityBrick::declareComputeElasticPredictionMethod: "
+    	      throw(std::runtime_error("DDIF2Brick::declareComputeElasticPredictionMethod: "
     				       "the stiffness tensor must be defined for "
     				       "orthotropic behaviours"));
     	    }
@@ -261,10 +267,10 @@ namespace mfront{
       m+= "}\n";
       this->bd.appendToMembers(h,m,false);
     }  
-  } // end of StandardElasticityBrick::declareComputeElasticPredictionMethod
+  } // end of DDIF2Brick::declareComputeElasticPredictionMethod
   
   void
-  StandardElasticityBrick::declareComputeStressWhenStiffnessTensorIsDefined() const{
+  DDIF2Brick::declareComputeStressWhenStiffnessTensorIsDefined() const{
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     CodeBlock smts,sets;
     smts.code = "this->sig=(this->D)*(this->eel+theta*(this->deel));\n";
@@ -275,15 +281,15 @@ namespace mfront{
     this->bd.setCode(h,BehaviourData::ComputeFinalStress,
 		     sets,BehaviourData::CREATE,
 		     BehaviourData::AT_BEGINNING,false);
-  } // end of StandardElasticityBrick::declareComputeStressWhenStiffnessTensorIsDefined
+  } // end of DDIF2Brick::declareComputeStressWhenStiffnessTensorIsDefined
   
   void
-  StandardElasticityBrick::treatIsotropicBehaviour(LocalDataStructure& d) const
+  DDIF2Brick::treatIsotropicBehaviour(LocalDataStructure& d) const
   {
     using tfel::glossary::Glossary; 
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      getLogStream() << "StandardElasticityBrick::treatIsotropicBehaviour: begin\n";
+      getLogStream() << "DDIF2Brick::treatIsotropicBehaviour: begin\n";
     }
     this->bd.appendToIncludes("#include\"TFEL/Material/Lame.hxx\"");
     CodeBlock smts;
@@ -320,28 +326,28 @@ namespace mfront{
     this->bd.setCode(uh,BehaviourData::ComputeFinalStress,
 		     sets,BehaviourData::CREATE,
 		     BehaviourData::AT_BEGINNING,false);
-  } // end of StandardElasticityBrick::treatIsotropicBehaviour
+  } // end of DDIF2Brick::treatIsotropicBehaviour
 
   void
-  StandardElasticityBrick::treatOrthotropicBehaviour() const
+  DDIF2Brick::treatOrthotropicBehaviour() const
   {
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      getLogStream() << "StandardElasticityBrick::treatOrthotropic: begin\n";
+      getLogStream() << "DDIF2Brick::treatOrthotropic: begin\n";
     }
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(!this->bd.hasAttribute(BehaviourDescription::requiresStiffnessTensor)){
       this->bd.setAttribute(h,BehaviourDescription::requiresStiffnessTensor,true);
     }
     if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-      throw(std::runtime_error("StandardElasticityBrick::treatOrthotropicBehaviour: "
+      throw(std::runtime_error("DDIF2Brick::treatOrthotropicBehaviour: "
 			       "the stiffness tensor must be defined for "
 			       "orthotropic behaviours"));
     }
-  } // end of StandardElasticityBrick::treatOrthotropicBehaviour
+  } // end of DDIF2Brick::treatOrthotropicBehaviour
 
 
   void
-  StandardElasticityBrick::addAxisymmetricalGeneralisedPlaneStressSupport(LocalDataStructure& d) const{
+  DDIF2Brick::addAxisymmetricalGeneralisedPlaneStressSupport(LocalDataStructure& d) const{
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto agps = ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS;
     VariableDescription etozz("strain","etozz",1u,0u);
@@ -423,7 +429,7 @@ namespace mfront{
   }
 
   void
-  StandardElasticityBrick::addPlaneStressSupport(LocalDataStructure& d) const{
+  DDIF2Brick::addPlaneStressSupport(LocalDataStructure& d) const{
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto ps = ModellingHypothesis::PLANESTRESS;
     d.addVariable(ps,{"stress","szz"});
@@ -498,9 +504,9 @@ namespace mfront{
   }
 
   void
-  StandardElasticityBrick::addGenericTangentOperatorSupport(const LocalDataStructure& d) const{
+  DDIF2Brick::addGenericTangentOperatorSupport(const LocalDataStructure& d) const{
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("StandardElasticityBrick::"
+      if(b){throw(std::runtime_error("DDIF2Brick::"
 				     "addGenericTangentOperatorSupport: "+m));}
     };
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -590,9 +596,9 @@ namespace mfront{
   }
 
   void
-  StandardElasticityBrick::addGenericPredictionOperatorSupport(const LocalDataStructure& d) const{
+  DDIF2Brick::addGenericPredictionOperatorSupport(const LocalDataStructure& d) const{
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("StandardElasticityBrick::"
+      if(b){throw(std::runtime_error("DDIF2Brick::"
 				     "addGenericPredictionOperatorSupport: "+m));}
     };
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -653,16 +659,15 @@ namespace mfront{
 		     BehaviourData::AT_BEGINNING);
   }
   
-  std::string
-  StandardElasticityBrick::getName() const{
-    return "Elasticity";
+  std::string DDIF2Brick::getName() const{
+    return "DDIF2";
   }
   
-  std::vector<StandardElasticityBrick::Hypothesis> 
-  StandardElasticityBrick::getSupportedModellingHypotheses() const
+  std::vector<tfel::material::ModellingHypothesis::Hypothesis> 
+  DDIF2Brick::getSupportedModellingHypotheses() const
   {
     auto dmh = this->dsl.getDefaultModellingHypotheses();
-    std::vector<Hypothesis> mh(dmh.begin(),dmh.end());
+    std::vector<ModellingHypothesis::Hypothesis> mh(dmh.begin(),dmh.end());
     if(this->pss){
       if(this->dsl.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
 	mh.push_back(ModellingHypothesis::PLANESTRESS);
@@ -672,8 +677,8 @@ namespace mfront{
       }
     }
     return mh;
-  } // end of StandardElasticityBrick::getSupportedModellingHypothesis
+  } // end of DDIF2Brick::getSupportedModellingHypothesis
 
-  StandardElasticityBrick::~StandardElasticityBrick() = default;
+  DDIF2Brick::~DDIF2Brick() = default;
 
 } // end of namespace mfront

@@ -215,8 +215,8 @@ namespace mfront{
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CastemInterface::treatKeyword(const std::string& key,
 				const std::vector<std::string>& i,
-				tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-				const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator end)
+				tokens_iterator current,
+				const tokens_iterator end)
   {
     using tfel::utilities::CxxTokenizer;
     auto throw_if = [](const bool b,const std::string& m){
@@ -506,10 +506,9 @@ namespace mfront{
     return res;
   }
 
-  std::set<tfel::material::ModellingHypothesis::Hypothesis>
+  std::set<CastemInterface::Hypothesis>
   CastemInterface::getModellingHypothesesToBeTreated(const BehaviourDescription& mb) const
   {
-    using tfel::material::ModellingHypothesis;
     using Hypothesis = ModellingHypothesis::Hypothesis;
     const Hypothesis sh[6u] = {ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 			       ModellingHypothesis::AXISYMMETRICAL,

@@ -188,7 +188,7 @@ namespace mtest
     return h;
   } // end of getEffectiveModellingHypothesis
 
-  CastemFiniteStrainBehaviour::CastemFiniteStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
+  CastemFiniteStrainBehaviour::CastemFiniteStrainBehaviour(const Hypothesis h,
 								 const std::string& l,
 								 const std::string& b)
     : CastemStandardBehaviour(getEffectiveModellingHypothesis(h,l,b),l,b)
@@ -245,7 +245,7 @@ namespace mtest
     using namespace tfel::math;
     using namespace castem;
     using tfel::math::vector;
-    static const real sqrt2 = sqrt(real(2));
+    constexpr const auto sqrt2 = Cste<real>::sqrt2;
     const auto h = this->usesGenericPlaneStressAlgorithm ?
                    ModellingHypothesis::PLANESTRESS :this->getHypothesis();
     CastemInt ntens,ndi;

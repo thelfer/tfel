@@ -25,9 +25,9 @@
 namespace mtest
 {
 
-  CastemCohesiveZoneModel::CastemCohesiveZoneModel(const tfel::material::ModellingHypothesis::Hypothesis h,
-									   const std::string& l,
-									   const std::string& b)
+  CastemCohesiveZoneModel::CastemCohesiveZoneModel(const Hypothesis h,
+						   const std::string& l,
+						   const std::string& b)
     : UmatBehaviourBase(h,l,b)
   {
     using namespace std;

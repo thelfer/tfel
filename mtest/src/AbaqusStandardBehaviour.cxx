@@ -40,13 +40,13 @@ namespace mtest
       return false;
     };
     const auto s = [h]() -> std::string {
-      if(h==tfel::material::ModellingHypothesis::AXISYMMETRICAL){
+      if(h==ModellingHypothesis::AXISYMMETRICAL){
 	return "_AXIS";
-      } else if(h==tfel::material::ModellingHypothesis::PLANESTRAIN){
+      } else if(h==ModellingHypothesis::PLANESTRAIN){
 	return "_PSTRAIN";
-      } else if(h==tfel::material::ModellingHypothesis::PLANESTRESS){
+      } else if(h==ModellingHypothesis::PLANESTRESS){
 	return "_PSTRESS";
-      } else if(h==tfel::material::ModellingHypothesis::TRIDIMENSIONAL){
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return "_3D";
       }
       throw(std::runtime_error("AbaqusStandardBehaviour::AbaqusStandardBehaviour: "

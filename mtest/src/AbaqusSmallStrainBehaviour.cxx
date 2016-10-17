@@ -29,7 +29,7 @@
 namespace mtest
 {
 
-  AbaqusSmallStrainBehaviour::AbaqusSmallStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
+  AbaqusSmallStrainBehaviour::AbaqusSmallStrainBehaviour(const Hypothesis h,
 							 const std::string& l,
 							 const std::string& b)
     : AbaqusStandardBehaviour(h,l,b)
@@ -53,7 +53,7 @@ namespace mtest
     using namespace tfel::math;
     using namespace abaqus;
     using tfel::math::vector;
-    static const real sqrt2 = std::sqrt(real(2));
+    constexpr const auto sqrt2 = Cste<real>::sqrt2;
     const auto h = this->getHypothesis();
     auto throw_if = [](const bool c, const std::string& m){
       if(c){throw(std::runtime_error("AbaqusSmallStrainBehaviour::"

@@ -108,6 +108,7 @@ set(TFELMFront_SOURCES
     BehaviourBrickRequirementManager.cxx
     BehaviourBrickBase.cxx
     StandardElasticityBrick.cxx
+    DDIF2Brick.cxx
     FiniteStrainSingleCrystalBrick.cxx
     LocalDataStructure.cxx
     PerformanceProfiling.cxx

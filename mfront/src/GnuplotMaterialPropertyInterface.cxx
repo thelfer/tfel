@@ -47,9 +47,9 @@ namespace mfront
   GnuplotMaterialPropertyInterface::dataFile::operator=(GnuplotMaterialPropertyInterface::dataFile&&) = default;
   GnuplotMaterialPropertyInterface::dataFile::~dataFile() = default;
   
-  tfel::utilities::CxxTokenizer::TokensContainer::const_iterator
-  GnuplotMaterialPropertyInterface::nextToken(tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-				       const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens,
+  GnuplotMaterialPropertyInterface::tokens_iterator
+  GnuplotMaterialPropertyInterface::nextToken(tokens_iterator current,
+				       const tokens_iterator endTokens,
 				       const std::string &msg) {
     using namespace std;
     string what(msg) ;
@@ -86,11 +86,11 @@ namespace mfront
     return res;
   }
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  std::pair<bool,GnuplotMaterialPropertyInterface::tokens_iterator>
   GnuplotMaterialPropertyInterface::treatKeyword(const std::string& key,
 						 const std::vector<std::string>& i,
-						 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-						 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens)
+						 tokens_iterator current,
+						 const tokens_iterator endTokens)
   {
     if(std::find(i.begin(),i.end(),"gnuplot")!=i.end()){
       if((key!="@TestBounds")&&(key!="@Graph")){
@@ -106,9 +106,9 @@ namespace mfront
     return {false,current};
   } // end of treatKeyword
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  GnuplotMaterialPropertyInterface::registerTestBounds(tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-						const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens)
+  std::pair<bool,GnuplotMaterialPropertyInterface::tokens_iterator>
+  GnuplotMaterialPropertyInterface::registerTestBounds(tokens_iterator current,
+						const tokens_iterator endTokens)
   {
     using namespace std;
     string msg("GnuplotMaterialPropertyInterface::registerTestBounds : ");
@@ -202,9 +202,9 @@ namespace mfront
     return make_pair(true,++current);
   } // end of registerTestBounds
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  GnuplotMaterialPropertyInterface::registerGraph(tfel::utilities::CxxTokenizer::TokensContainer::const_iterator current,
-					   const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator endTokens)
+  std::pair<bool,GnuplotMaterialPropertyInterface::tokens_iterator>
+  GnuplotMaterialPropertyInterface::registerGraph(tokens_iterator current,
+						  const tokens_iterator endTokens)
   {
     using namespace std;
     string msg("GnuplotMaterialPropertyInterface::registerGraph : ");

@@ -42,8 +42,8 @@ namespace mfront{
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   AbaqusInterfaceBase::treatCommonKeywords(const std::string& key,
-					   CxxTokenizer::TokensContainer::const_iterator current,
-					   const CxxTokenizer::TokensContainer::const_iterator end)
+					   tokens_iterator current,
+					   const tokens_iterator end)
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("AbaqusInterfaceBase::treatCommonKeywords: "+m));}
@@ -98,11 +98,11 @@ namespace mfront{
   AbaqusInterfaceBase::getStateVariablesOffset(const BehaviourDescription&,
 					       const Hypothesis h) const{
     if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
-      if((h==tfel::material::ModellingHypothesis::AXISYMMETRICAL)||
-	 (h==tfel::material::ModellingHypothesis::PLANESTRAIN)||
-	 (h==tfel::material::ModellingHypothesis::PLANESTRESS)){
+      if((h==ModellingHypothesis::AXISYMMETRICAL)||
+	 (h==ModellingHypothesis::PLANESTRAIN)||
+	 (h==ModellingHypothesis::PLANESTRESS)){
 	return 2u;
-      } else if(h==tfel::material::ModellingHypothesis::TRIDIMENSIONAL){
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6u;
       }
       throw(std::runtime_error("AbaqusInterfaceBase::getStateVariablesOffset: "
@@ -125,13 +125,13 @@ namespace mfront{
 								const Hypothesis h) const
   {
     const auto s = [h]() -> std::string {
-      if(h==tfel::material::ModellingHypothesis::AXISYMMETRICAL){
+      if(h==ModellingHypothesis::AXISYMMETRICAL){
 	return "AXIS";
-      } else if(h==tfel::material::ModellingHypothesis::PLANESTRAIN){
+      } else if(h==ModellingHypothesis::PLANESTRAIN){
 	return "PSTRAIN";
-      } else if(h==tfel::material::ModellingHypothesis::PLANESTRESS){
+      } else if(h==ModellingHypothesis::PLANESTRESS){
 	return "PSTRESS";
-      } else if(h==tfel::material::ModellingHypothesis::TRIDIMENSIONAL){
+      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return "3D";
       }
       throw(std::runtime_error("AbaqusInterfaceBase::getFunctionNameForHypothesis: "
@@ -140,11 +140,10 @@ namespace mfront{
     return makeUpperCase(name)+"_"+s;
   } // end of AbaqusInterfaceBase::getFunctionNameForHypothesis
   
-  std::set<tfel::material::ModellingHypothesis::Hypothesis>
+  std::set<AbaqusInterfaceBase::Hypothesis>
   AbaqusInterfaceBase::getModellingHypothesesToBeTreated(const BehaviourDescription& mb) const
   {
-    using tfel::material::ModellingHypothesis;
-    auto h = std::set<ModellingHypothesis::Hypothesis>{};
+    auto h = std::set<Hypothesis>{};
     const auto& bh = mb.getModellingHypotheses();
     if(bh.find(ModellingHypothesis::AXISYMMETRICAL)!=bh.end()){
       h.insert(ModellingHypothesis::AXISYMMETRICAL);
@@ -294,10 +293,9 @@ namespace mfront{
   void
   AbaqusInterfaceBase::writeAbaqusBehaviourTraits(std::ostream& out,
 						  const BehaviourDescription& mb,
-						  const tfel::material::ModellingHypothesis::Hypothesis h) const
+						  const Hypothesis h) const
   {
     using namespace std;
-    using namespace tfel::material;
     const auto mvs = mb.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(mb,h);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
@@ -554,12 +552,12 @@ namespace mfront{
 	int i=1;
 	if(this->omp!=UNDEFINEDORTHOTROPYMANAGEMENTPOLICY){
 	  if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
-	    if((h==tfel::material::ModellingHypothesis::AXISYMMETRICAL)||
-	       (h==tfel::material::ModellingHypothesis::PLANESTRAIN)||
-	       (h==tfel::material::ModellingHypothesis::PLANESTRESS)){
+	    if((h==ModellingHypothesis::AXISYMMETRICAL)||
+	       (h==ModellingHypothesis::PLANESTRAIN)||
+	       (h==ModellingHypothesis::PLANESTRESS)){
 	      out << i++ << ", FirstOrthotropicAxis_1\n";
 	      out << i++ << ", FirstOrthotropicAxis_2\n";
-	    } else if(h==tfel::material::ModellingHypothesis::TRIDIMENSIONAL){
+	    } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	      out << i++ << ", FirstOrthotropicAxis_1\n";
 	      out << i++ << ", FirstOrthotropicAxis_2\n";
 	      out << i++ << ", FirstOrthotropicAxis_3\n";

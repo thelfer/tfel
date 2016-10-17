@@ -30,9 +30,9 @@
 namespace mtest
 {
 
-  EuroplexusFiniteStrainBehaviour::EuroplexusFiniteStrainBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
-								 const std::string& l,
-								 const std::string& b)
+  EuroplexusFiniteStrainBehaviour::EuroplexusFiniteStrainBehaviour(const Hypothesis h,
+								   const std::string& l,
+								   const std::string& b)
     : EuroplexusStandardBehaviour(h,l,b)
   {}
 

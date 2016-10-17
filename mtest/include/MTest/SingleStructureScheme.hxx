@@ -85,11 +85,9 @@ namespace mtest{
 			     const EvolutionPtr,
 			     const bool);
     //! \return the behaviour type
-    virtual tfel::material::MechanicalBehaviourBase::BehaviourType
-    getBehaviourType(void) const;
+    virtual BehaviourType getBehaviourType(void) const;
     //! \return the behaviour kinematic
-    virtual tfel::material::MechanicalBehaviourBase::Kinematic
-    getBehaviourKinematic(void) const;
+    virtual Kinematic getBehaviourKinematic(void) const;
     //! \return the behaviour
     virtual std::shared_ptr<Behaviour>
     getBehaviour(void);

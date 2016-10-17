@@ -27,7 +27,7 @@
 namespace mtest
 {
 
-  CyranoBehaviour::CyranoBehaviour(const tfel::material::ModellingHypothesis::Hypothesis h,
+  CyranoBehaviour::CyranoBehaviour(const Hypothesis h,
 				   const std::string& l,
 				   const std::string& b)
     : UmatBehaviourBase(h,l,b)

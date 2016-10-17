@@ -20,8 +20,7 @@ namespace mfront{
   template<typename Interface>
   ModelInterfaceProxy<Interface>::ModelInterfaceProxy()
   {
-    typedef ModelInterfaceFactory MBIF;
-    auto& mbif = MBIF::getModelInterfaceFactory();
+    auto& mbif = ModelInterfaceFactory::getModelInterfaceFactory();
     mbif.registerInterfaceCreator(Interface::getName(),&createInterface);
   }
   

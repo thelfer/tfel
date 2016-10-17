@@ -89,11 +89,11 @@ namespace mfront{
     return !this->requiresNumericalJacobian();
   } // end of MFrontLevenbergMarquartSolverBase::requiresJacobianToBeReinitialisedToIdentityAtEachIterations
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  std::pair<bool,MFrontLevenbergMarquartSolverBase::tokens_iterator>
   MFrontLevenbergMarquartSolverBase::treatSpecificKeywords(BehaviourDescription&,
 							   const std::string&,
-							   const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator p,
-							   const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+							   const tokens_iterator p,
+							   const tokens_iterator)
   {
     return {false,p};
   } // end of MFrontLevenbergMarquartSolverBase::treatSpecificKeywords
@@ -101,19 +101,19 @@ namespace mfront{
   void
   MFrontLevenbergMarquartSolverBase::writeSpecificInitializeMethodPart(std::ostream&,
 								       const BehaviourDescription&,
-								       const tfel::material::ModellingHypothesis::Hypothesis) const
+								       const Hypothesis) const
   {} // end of MFrontLevenbergMarquartSolverBase::writeSpecificInitializeMethodPart
 
   void
   MFrontLevenbergMarquartSolverBase::writeSpecificMembers(std::ostream&,
 						      const BehaviourDescription&,
-						      const tfel::material::ModellingHypothesis::Hypothesis) const
+						      const Hypothesis) const
   {} // end of MFrontLevenbergMarquartSolverBase::writeSpecificMembers
 
   void
   MFrontLevenbergMarquartSolverBase::writeResolutionAlgorithm(std::ostream& out,
 							      const BehaviourDescription& mb,
-							      const tfel::material::ModellingHypothesis::Hypothesis h) const
+							      const Hypothesis h) const
   {
     using namespace std;
     const string btype = mb.getBehaviourTypeFlag();

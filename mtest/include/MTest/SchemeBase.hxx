@@ -42,7 +42,16 @@ namespace mtest{
       USERDEFINEDTIMES,
       EVERYPERIOD
     }; // end of enum OutputFrequency      
+    //! a simple alias
+    using ModellingHypothesis = tfel::material::ModellingHypothesis;
+    //! a simple alias
+    using Hypothesis   = ModellingHypothesis::Hypothesis;
+    //! a simple alias
     using EvolutionPtr = std::shared_ptr<Evolution>;
+    //! a simple alias
+    using BehaviourType = tfel::material::MechanicalBehaviourBase::BehaviourType;
+    //! a simple alias
+    using Kinematic     = tfel::material::MechanicalBehaviourBase::Kinematic;
     SchemeBase();
     SchemeBase(SchemeBase&&) = delete;
     SchemeBase(const SchemeBase&) = delete;
@@ -184,7 +193,7 @@ namespace mtest{
     virtual unsigned short
     getDimension(void) const;
     //! \return the modelling hypothesis
-    virtual tfel::material::ModellingHypothesis::Hypothesis
+    virtual ModellingHypothesis::Hypothesis
     getModellingHypothesis(void) const;
     /*!
      * \brief set the stiffness updating policy
@@ -234,8 +243,6 @@ namespace mtest{
     //! destructor
     virtual ~SchemeBase();
   protected:
-    //! a simple alias
-    using ModellingHypothesis = tfel::material::ModellingHypothesis;
     /*!
      * complete the initialisation. This method must be called once.
      * \note this method must be called by the derived class.
