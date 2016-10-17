@@ -29,14 +29,12 @@ namespace tfel
 
     TestResult::TestResult(const bool b,
 			   const char * const c)
-      : d(c),
-	s(b)
+      : d(c),s(b)
     {} // end of TestResult::TestResult
     
     TestResult::TestResult(const bool b,
 			   const std::string& c)
-      : d(c),
-	s(b)
+      : d(c),s(b)
     {} // end of TestResult::TestResult
     
     TestResult::TestResult(const TestResult&)  = default;

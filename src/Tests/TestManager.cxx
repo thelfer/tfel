@@ -30,8 +30,7 @@ namespace tfel
       return m;
     } // end of TestManager::getTestManager()
 
-    void
-    TestManager::addTestOutput(TestOutputPtr o)
+    void TestManager::addTestOutput(TestOutputPtr o)
     {
       if(this->default_outputs.get()==nullptr){
 	this->default_outputs = std::make_shared<MultipleTestOutputs>();
@@ -39,60 +38,46 @@ namespace tfel
       this->default_outputs->addTestOutput(o);
     } // end of TestManager::addTestOutput
 
-    void
-    TestManager::addTestOutput(const std::string& n,
-			       TestOutputPtr o)
+    void TestManager::addTestOutput(const std::string& n,
+				    TestOutputPtr o)
     {
       auto p = this->outputs.find(n);
       if(p==this->outputs.end()){
-	MultipleTestOutputsPtr out(new MultipleTestOutputs());
+	auto out = std::make_shared<MultipleTestOutputs>();
 	p = this->outputs.insert({n,out}).first;
       }
       p->second->addTestOutput(o);
     } // end of TestManager::addTestOutput
 
-    void
-    TestManager::addTestOutput(std::ostream& o,
-			       const bool b)
+    void TestManager::addTestOutput(std::ostream& o,const bool b)
     {
-      TestOutputPtr output(new StdStreamTestOutput(o,b));
-      this->addTestOutput(output);
+      this->addTestOutput(std::make_shared<StdStreamTestOutput>(o,b));
     } // end of TestManager::addTestOutput
 
-    void
-    TestManager::addTestOutput(const std::string& n,
-			       std::ostream& o,
-			       const bool b)
+    void TestManager::addTestOutput(const std::string& n,
+				    std::ostream& o,
+				    const bool b)
     {
-      TestOutputPtr output(new StdStreamTestOutput(o,b));
-      this->addTestOutput(n,output);
+      this->addTestOutput(n,std::make_shared<StdStreamTestOutput>(o,b));
     } // end of TestManager::addTestOutput
 
-    void
-    TestManager::addTestOutput(const std::string& f)
+    void TestManager::addTestOutput(const std::string& f)
     {
-      TestOutputPtr o(new StdStreamTestOutput(f));
-      this->addTestOutput(o);
+      this->addTestOutput(std::make_shared<StdStreamTestOutput>(f));
     } // end of TestManager::addTestOutput
 
-    void
-    TestManager::addXMLTestOutput(const std::string& f)
+    void TestManager::addXMLTestOutput(const std::string& f)
     {
-      using namespace std;
-      TestOutputPtr o(new XMLTestOutput(f));
-      this->addTestOutput(o);
+      this->addTestOutput(std::make_shared<XMLTestOutput>(f));
     } // end of TestManager::addTestOutput
 
-    void
-    TestManager::addTestOutput(const std::string& n,
-			       const std::string& f)
+    void TestManager::addTestOutput(const std::string& n,
+				    const std::string& f)
     {
-      TestOutputPtr o(new StdStreamTestOutput(f));
-      this->addTestOutput(n,o);
+      this->addTestOutput(n,std::make_shared<StdStreamTestOutput>(f));
     } // end of TestManager::addTestOutput
 
-    void
-    TestManager::addTest(const std::string& n,TestPtr t)
+    void TestManager::addTest(const std::string& n,TestPtr t)
     {
       auto p = this->tests.find(n);
       if(p==this->tests.end()){
@@ -102,10 +87,8 @@ namespace tfel
       p->second->add(t);
     } // end of TestManager::addTest
 
-    TestResult
-    TestManager::execute()
+    TestResult TestManager::execute()
     {
-      using namespace std;
       using namespace std::chrono;
       TestResult r;
       for(const auto& t: this->tests){
@@ -115,15 +98,16 @@ namespace tfel
 	if(p2!=this->outputs.end()){
 	  output = p2->second;
 	} else{
-	  if(this->default_outputs.get()==nullptr){
-	    throw(std::runtime_error("TestManager::execute: "
-				     "no output defined for "
-				     "test suite '"+n+"'"));
+	  if(this->default_outputs!=nullptr){
+	    output = this->default_outputs;
 	  }
-	  output = this->default_outputs;
 	}
 	const auto start = high_resolution_clock::now();
-	r.append(t.second->execute(*output));
+	if(output!=nullptr){
+	  r.append(t.second->execute(*output));
+	} else {
+	  r.append(t.second->execute());
+	}
 	const auto stop = high_resolution_clock::now();
 	const auto nsec = duration_cast<nanoseconds>(stop-start).count();
 	r.setTestDuration(1.e-9*nsec);
