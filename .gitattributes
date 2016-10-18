@@ -1850,6 +1850,7 @@ mfront/include/MFront/PedanticMode.hxx -text
 mfront/include/MFront/PerformanceProfiling.hxx -text
 mfront/include/MFront/PowellDogLegAlgorithmBase.hxx -text
 mfront/include/MFront/PythonMaterialPropertyInterface.hxx -text
+mfront/include/MFront/RungeKuttaDSL.hxx -text
 mfront/include/MFront/RungeKuttaDSLBase.hxx -text
 mfront/include/MFront/RungeKuttaFiniteStrainDSL.hxx -text
 mfront/include/MFront/SearchFile.hxx -text
