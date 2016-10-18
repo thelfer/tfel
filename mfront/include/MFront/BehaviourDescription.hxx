@@ -288,8 +288,9 @@ namespace mfront
     /*!
      * \brief set the behaviour to be a finite strain standard
      * behaviour
+     * \param[in] b: if true, declare F and dF as members
      */
-    void declareAsAFiniteStrainStandardBehaviour(void);
+    void declareAsAFiniteStrainStandardBehaviour(const bool);
     /*!
      * \brief set the behaviour to be a cohesive zone model
      */

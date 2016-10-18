@@ -24,163 +24,165 @@ namespace mtest{
   struct MTEST_VISIBILITY_EXPORT SchemeParserBase
     : public tfel::utilities::CxxTokenizer
   {
+    //! a simple alias
+    using tokens_iterator = TokensContainer::const_iterator;
     /*!
      * \brief allow an lonely ';'
      * \param[in,out] p : position in the input file
      */
-    void handleLonelySeparator(SchemeBase&,TokensContainer::const_iterator&);
+    void handleLonelySeparator(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @Author keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void handleAuthor(SchemeBase&,TokensContainer::const_iterator&);
+    virtual void handleAuthor(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @Date keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void handleDate(SchemeBase&,TokensContainer::const_iterator&);
+    virtual void handleDate(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @OutputFrequency keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void handleOutputFrequency(SchemeBase&,TokensContainer::const_iterator&);
+    virtual void handleOutputFrequency(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @Description keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void handleDescription(SchemeBase&,TokensContainer::const_iterator&);
+    virtual void handleDescription(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @PredictionPolicy keyword
      * \param[in,out] p : position in the input file
      */
     virtual void 
-    handlePredictionPolicy(SchemeBase&,TokensContainer::const_iterator&);
+    handlePredictionPolicy(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @Times keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void handleTimes(SchemeBase&,TokensContainer::const_iterator&);
+    virtual void handleTimes(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @Real keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void handleReal(SchemeBase&,TokensContainer::const_iterator&);
+    virtual void handleReal(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @StiffnessMatrixType keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void handleStiffnessMatrixType(SchemeBase&,TokensContainer::const_iterator&);
+    virtual void handleStiffnessMatrixType(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @StiffnessUpdatePolicy keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void handleStiffnessUpdatePolicy(SchemeBase&,TokensContainer::const_iterator&);
+    virtual void handleStiffnessUpdatePolicy(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @UseCastemAccelerationAlgorithm keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleUseCastemAccelerationAlgorithm(SchemeBase&,TokensContainer::const_iterator&);
+    handleUseCastemAccelerationAlgorithm(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @CastemAccelerationTrigger keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleCastemAccelerationTrigger(SchemeBase&,TokensContainer::const_iterator&);
+    handleCastemAccelerationTrigger(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @CastemAccelerationAlgorithm keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleCastemAccelerationPeriod(SchemeBase&,TokensContainer::const_iterator&);
+    handleCastemAccelerationPeriod(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @AccelerationAlgorithm keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleAccelerationAlgorithm(SchemeBase&,TokensContainer::const_iterator&);
+    handleAccelerationAlgorithm(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @AccelerationAlgorithmParameter keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleAccelerationAlgorithmParameter(SchemeBase&,TokensContainer::const_iterator&);
+    handleAccelerationAlgorithmParameter(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @DynamicTimeStepScaling keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleDynamicTimeStepScaling(SchemeBase&,TokensContainer::const_iterator&);
+    handleDynamicTimeStepScaling(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @MaximalTimeStep keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleMaximalTimeStep(SchemeBase&,TokensContainer::const_iterator&);
+    handleMaximalTimeStep(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @MinimalTimeStep keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleMinimalTimeStep(SchemeBase&,TokensContainer::const_iterator&);
+    handleMinimalTimeStep(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @MaximalTimeStepScalingFactor keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleMaximalTimeStepScalingFactor(SchemeBase&,TokensContainer::const_iterator&);
+    handleMaximalTimeStepScalingFactor(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @MinimalTimeStepScalingFactor keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleMinimalTimeStepScalingFactor(SchemeBase&,TokensContainer::const_iterator&);
+    handleMinimalTimeStepScalingFactor(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @MaximumNumberOfIterations keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void handleMaximumNumberOfIterations(SchemeBase&,TokensContainer::const_iterator&);
+    virtual void handleMaximumNumberOfIterations(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @MaximumNumberOfSubSteps keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void handleMaximumNumberOfSubSteps(SchemeBase&,TokensContainer::const_iterator&);
+    virtual void handleMaximumNumberOfSubSteps(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @Evolution keyword
      * \param[in,out] p : position in the input file
      */
     virtual void 
-    handleEvolution(SchemeBase&,TokensContainer::const_iterator&);
+    handleEvolution(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @OutputFile keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleOutputFile(SchemeBase&,TokensContainer::const_iterator&);
+    handleOutputFile(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @XMLOutputFile keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleXMLOutputFile(SchemeBase&,TokensContainer::const_iterator&);
+    handleXMLOutputFile(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @OutputFilePrecision keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleOutputFilePrecision(SchemeBase&,TokensContainer::const_iterator&);
+    handleOutputFilePrecision(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @ResidualFile keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleResidualFile(SchemeBase&,TokensContainer::const_iterator&);
+    handleResidualFile(SchemeBase&,tokens_iterator&);
     /*!
      * handle the @ResidualFilePrecision keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleResidualFilePrecision(SchemeBase&,TokensContainer::const_iterator&);
+    handleResidualFilePrecision(SchemeBase&,tokens_iterator&);
     //! destructor
     ~SchemeParserBase();
   protected:
@@ -202,20 +204,20 @@ namespace mtest{
      * \param[in,out] p : position in the input file
      */
     virtual std::string
-    readUntilEndOfInstruction(TokensContainer::const_iterator&);
+    readUntilEndOfInstruction(tokens_iterator&);
     /*!
      * \return a real value
      * \param[in] t : structure to be filled
      * \param[in,out] p : position in the input file
      */
-    virtual real readDouble(SchemeBase&,TokensContainer::const_iterator&);
+    virtual real readDouble(SchemeBase&,tokens_iterator&);
     /*!
      * read a time
      * \param[in,out] t : structure to be filled
      * \param[in,out] p : position in the input file
      */
     virtual real
-    readTime(SchemeBase&,TokensContainer::const_iterator&);
+    readTime(SchemeBase&,tokens_iterator&);
     /*!
      * \brief parse an evolution
      * \param[in,out] t    : structure to be filled
@@ -225,13 +227,13 @@ namespace mtest{
     std::shared_ptr<Evolution>
     parseEvolution(SchemeBase&,
 		   const std::string&,
-		   TokensContainer::const_iterator&);
+		   tokens_iterator&);
     /*!
      * \brief try to read the type of an evolution
      * \param[in,out] p : position in the input file
      */
     std::string
-    readEvolutionType(TokensContainer::const_iterator&);
+    readEvolutionType(tokens_iterator&);
     /*!
      * read an array
      * The expected size of the array is given by the output vector
@@ -242,17 +244,17 @@ namespace mtest{
     void
     readArrayOfSpecifiedSize(std::vector<real>&,
 			     SchemeBase&,
-			     TokensContainer::const_iterator&);
+			     tokens_iterator&);
     /*!
      * \brief treat the current keyword
      * \param[in,out] p : position in the input file
      */
-    bool treatKeyword(SchemeBase&,TokensContainer::const_iterator&);
+    bool treatKeyword(SchemeBase&,tokens_iterator&);
     //! \return the list of keywords
     std::vector<std::string> getKeyWordsList(void) const;
     //! a simple alias
     using CallBack = void (SchemeParserBase::*)(SchemeBase&,
-						TokensContainer::const_iterator&);
+						tokens_iterator&);
     //! callbacks
     std::map<std::string,CallBack> callbacks;
     //! input file

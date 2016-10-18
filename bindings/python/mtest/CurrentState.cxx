@@ -95,7 +95,7 @@ getInternalStateVariableValue(const mtest::CurrentState& s,
       return 1;
     } else if(type==1){
       return tfel::material::getStensorSize(s.behaviour->getHypothesis());
-    } else if(type==3){
+    } else if(type==2){
       return tfel::material::getSpaceDimension(s.behaviour->getHypothesis());
     } else if(type==3){
       return tfel::material::getTensorSize(s.behaviour->getHypothesis());

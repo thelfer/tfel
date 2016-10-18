@@ -81,7 +81,7 @@ namespace mtest{
 
   void
   SingleStructureSchemeParser::handleHandleThermalExpansion(SingleStructureScheme& t,
-							    TokensContainer::const_iterator& p)
+							    tokens_iterator& p)
   {
     bool b;
     this->checkNotEndOfLine("SingleStructureSchemeParser::handleHandleThermalExpansion",
@@ -102,7 +102,7 @@ namespace mtest{
   
   void
   SingleStructureSchemeParser::handleBehaviour(SingleStructureScheme& t,
-					       TokensContainer::const_iterator& p)
+					       tokens_iterator& p)
   {
     auto i = std::string{}; // interface
     auto w = std::string{}; // wrapper
@@ -180,7 +180,7 @@ namespace mtest{
 
   void
   SingleStructureSchemeParser::handleMaterialProperty(SingleStructureScheme& t,
-						      TokensContainer::const_iterator& p)
+						      tokens_iterator& p)
   {
     using namespace std;
     using namespace tfel::utilities;
@@ -229,7 +229,7 @@ namespace mtest{
   
   void
   SingleStructureSchemeParser::handleOutOfBoundsPolicy(SingleStructureScheme& t,
-						       TokensContainer::const_iterator& p)
+						       tokens_iterator& p)
   {
     const std::string& s = this->readString(p,this->tokens.end());
     this->readSpecifiedToken("SingleStructureSchemeParser::handlePredictionPolicy",";",
@@ -248,7 +248,7 @@ namespace mtest{
 
   void
   SingleStructureSchemeParser::handleParameter(SingleStructureScheme& t,
-					       TokensContainer::const_iterator& p)
+					       tokens_iterator& p)
   {
     const auto n = this->readString(p,this->tokens.end());
     const real v = this->readDouble(t,p);
@@ -259,7 +259,7 @@ namespace mtest{
 
   void
   SingleStructureSchemeParser::handleIntegerParameter(SingleStructureScheme& t,
-						      TokensContainer::const_iterator& p)
+						      tokens_iterator& p)
   {
     const auto n = this->readString(p,this->tokens.end());
     const int  v = this->readInt(p,this->tokens.end());
@@ -270,7 +270,7 @@ namespace mtest{
   
   void
   SingleStructureSchemeParser::handleUnsignedIntegerParameter(SingleStructureScheme& t,
-							      TokensContainer::const_iterator& p)
+							      tokens_iterator& p)
   {
     const auto n = this->readString(p,this->tokens.end());
     const auto v = this->readUnsignedInt(p,this->tokens.end());
@@ -281,7 +281,7 @@ namespace mtest{
 
   void
   SingleStructureSchemeParser::handleInternalStateVariable(SingleStructureScheme& t,
-							   TokensContainer::const_iterator& p)
+							   tokens_iterator& p)
   {
     using namespace std;
     shared_ptr<Behaviour> b(t.getBehaviour());
@@ -316,7 +316,7 @@ namespace mtest{
       }
       if(uniform){
 	vector<string>::const_iterator pn;
-	const TokensContainer::const_iterator p2 = p;
+	const tokens_iterator p2 = p;
 	for(pn=ivs.begin();pn!=ivs.end();++pn){
 	  p=p2;
 	  this->setInternalStateVariableValue(t,p,*pn);
@@ -342,7 +342,7 @@ namespace mtest{
 
   void
   SingleStructureSchemeParser::handleExternalStateVariable(SingleStructureScheme& t,
-							   TokensContainer::const_iterator& p)
+							   tokens_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
     const auto& n = this->readString(p,this->tokens.end());
@@ -354,7 +354,7 @@ namespace mtest{
     
   void
   SingleStructureSchemeParser::setInternalStateVariableValue(SingleStructureScheme& t,
-							     TokensContainer::const_iterator& p,
+							     tokens_iterator& p,
 							     const std::string& n){
     using namespace std;
     const int type = t.getBehaviour()->getInternalStateVariableType(n);
@@ -407,7 +407,7 @@ namespace mtest{
   
   bool
   SingleStructureSchemeParser::treatKeyword(SingleStructureScheme& t,
-					    TokensContainer::const_iterator& p)
+					    tokens_iterator& p)
   {
     auto pc = this->callbacks.find(p->value);
     if(pc==this->callbacks.end()){

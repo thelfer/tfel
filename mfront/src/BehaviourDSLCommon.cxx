@@ -848,8 +848,8 @@ namespace mfront{
 
   std::string
   BehaviourDSLCommon::standardModifier(const Hypothesis h,
-					  const std::string& var,
-					  const bool addThisPtr)
+				       const std::string& var,
+				       const bool addThisPtr)
   {
     if((this->mb.isExternalStateVariableIncrementName(h,var))||(var=="dT")){
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(h,var.substr(1));
@@ -862,8 +862,8 @@ namespace mfront{
     
   std::string
   BehaviourDSLCommon::tangentOperatorVariableModifier(const Hypothesis h,
-							 const std::string& var,
-							 const bool addThisPtr)
+						      const std::string& var,
+						      const bool addThisPtr)
   {
     return this->standardModifier(h,var,addThisPtr);
   } // end of BehaviourDSLCommon::tangentOperatorVariableModifier
@@ -2138,6 +2138,7 @@ namespace mfront{
 	 << "typedef typename Types::StressTensor                      StressTensor;\n"
 	 << "typedef typename Types::ThermalExpansionCoefficientTensor ThermalExpansionCoefficientTensor;\n"
 	 << "typedef typename Types::DeformationGradientTensor         DeformationGradientTensor;\n"
+      	 << "typedef typename Types::DeformationGradientRateTensor     DeformationGradientRateTensor;\n"
       // tangent operator
 	 << "typedef " << this->mb.getTangentOperatorType() << " TangentOperator;\n";
   } // end of BehaviourDSLCommon::writeStandardTFELTypedefs

@@ -235,9 +235,11 @@ namespace mfront{
       return "StressRateStensor";
     } else if (type=="StrainStensor"){
       return "StrainRateStensor";
+    } else if (type=="DeformationGradientTensor"){
+      return "DeformationGradientRateTensor";
     } else {
       throw(std::runtime_error("SupportedTypes::getTimeDerivativeType: "
-			       "internal error, unsupported type"));
+			       "internal error, unsupported type '"+type+"'"));
     }
   }
 

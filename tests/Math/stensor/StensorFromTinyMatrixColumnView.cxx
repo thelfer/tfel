@@ -36,4 +36,5 @@ int main()
   ms(2) = 3.;
   s += ms;
   ms2 = ms + 2. * s;
+  return EXIT_SUCCESS;
 } // end of main

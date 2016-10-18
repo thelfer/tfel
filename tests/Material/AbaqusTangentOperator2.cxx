@@ -125,7 +125,7 @@ struct AbaqusTangentOperator2 final
       st2tost2 C_SE;
       for(size_type i=0;i!=3;++i){
 	for(size_type j=0;j!=3;++j){
-	  if(((i==1)&&(j==0))||((i==2)&&(j==1))||((i==2)&&(j==1))){
+	  if(((i==1)&&(j==0))||((i==2)&&(j==1))){
 	    continue;
 	  }
 	  const auto rij = index(i,j);

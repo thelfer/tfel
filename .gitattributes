@@ -1850,7 +1850,8 @@ mfront/include/MFront/PedanticMode.hxx -text
 mfront/include/MFront/PerformanceProfiling.hxx -text
 mfront/include/MFront/PowellDogLegAlgorithmBase.hxx -text
 mfront/include/MFront/PythonMaterialPropertyInterface.hxx -text
-mfront/include/MFront/RungeKuttaDSL.hxx -text
+mfront/include/MFront/RungeKuttaDSLBase.hxx -text
+mfront/include/MFront/RungeKuttaFiniteStrainDSL.hxx -text
 mfront/include/MFront/SearchFile.hxx -text
 mfront/include/MFront/SecondBroydenSolver.hxx -text
 mfront/include/MFront/StandardElasticityBrick.hxx -text
@@ -2016,6 +2017,8 @@ mfront/src/PerformanceProfiling.cxx -text
 mfront/src/PowellDogLegAlgorithmBase.cxx -text
 mfront/src/PythonMaterialPropertyInterface.cxx -text
 mfront/src/RungeKuttaDSL.cxx -text
+mfront/src/RungeKuttaDSLBase.cxx -text
+mfront/src/RungeKuttaFiniteStrainDSL.cxx -text
 mfront/src/SearchFile.cxx -text
 mfront/src/SecondBroydenSolver.cxx -text
 mfront/src/StandardElasticityBrick.cxx -text

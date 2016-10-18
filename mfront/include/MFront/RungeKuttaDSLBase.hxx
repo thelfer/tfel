@@ -1,6 +1,6 @@
 /*!
- * \file   mfront/include/MFront/RungeKuttaDSL.hxx
- * \brief  This file declares the RungeKuttaDSL class
+ * \file   mfront/include/MFront/RungeKuttaDSLBase.hxx
+ * \brief  This file declares the RungeKuttaDSLBase class
  * \author Helfer Thomas
  * \date   10 Nov 2006
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
@@ -11,26 +11,24 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTRUNGEKUTTAPARSER_H_
-#define LIB_MFRONTRUNGEKUTTAPARSER_H_ 
+#ifndef LIB_MFRONT_RUNGEKUTTADSLBASE_H_
+#define LIB_MFRONT_RUNGEKUTTADSLBASE_H_ 
 
 #include<string>
 #include"MFront/BehaviourDSLBase.hxx"
 
 namespace mfront{
 
-  struct RungeKuttaDSL
-    : public BehaviourDSLBase<RungeKuttaDSL>
+  struct RungeKuttaDSLBase
+    : public BehaviourDSLBase<RungeKuttaDSLBase>
   {
-    static std::string 
-    getName(void);
 
     static std::string 
     getDescription(void);
-
-    RungeKuttaDSL();
-
-    ~RungeKuttaDSL();
+    //! constructor
+    RungeKuttaDSLBase();
+    //! destructor
+    ~RungeKuttaDSLBase();
 
   private:
 
@@ -61,6 +59,8 @@ namespace mfront{
     virtual void treatAlgorithm(void);
 
     virtual void treatComputeStress(void);
+
+    virtual void treatComputeFinalStress(void);
 
     virtual void
     treatUpdateAuxiliaryStateVariables(void) override;
@@ -101,7 +101,7 @@ namespace mfront{
     virtual void
     setDefaultAlgorithm(void);
 
-    friend struct BehaviourDSLBase<RungeKuttaDSL>;
+    friend struct BehaviourDSLBase<RungeKuttaDSLBase>;
 
     // error normalisation factors
     std::map<std::string,std::string> enf;
@@ -110,5 +110,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* LIB_MFRONTRUNGEKUTTAPARSER_H_ */
+#endif /* LIB_MFRONT_RUNGEKUTTADSLBASE_H_ */
 

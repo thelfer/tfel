@@ -22,55 +22,55 @@ namespace mtest{
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleBehaviour(SingleStructureScheme&,TokensContainer::const_iterator&);
+    handleBehaviour(SingleStructureScheme&,tokens_iterator&);
     /*!
      * handle the @Parameter keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleParameter(SingleStructureScheme&,TokensContainer::const_iterator&);
+    handleParameter(SingleStructureScheme&,tokens_iterator&);
     /*!
      * handle the @IntegerParameter keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleIntegerParameter(SingleStructureScheme&,TokensContainer::const_iterator&);
+    handleIntegerParameter(SingleStructureScheme&,tokens_iterator&);
     /*!
      * handle the @UnsignedIntegerParameter keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleUnsignedIntegerParameter(SingleStructureScheme&,TokensContainer::const_iterator&);
+    handleUnsignedIntegerParameter(SingleStructureScheme&,tokens_iterator&);
     /*!
      * handle the @OutOfBoundsPolicy keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleOutOfBoundsPolicy(SingleStructureScheme&,TokensContainer::const_iterator&);
+    handleOutOfBoundsPolicy(SingleStructureScheme&,tokens_iterator&);
     /*!
      * handle the @MaterialProperty keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleMaterialProperty(SingleStructureScheme&,TokensContainer::const_iterator&);
+    handleMaterialProperty(SingleStructureScheme&,tokens_iterator&);
     /*!
      * handle the @HandleThermalExpansion keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleHandleThermalExpansion(SingleStructureScheme&,TokensContainer::const_iterator&);
+    handleHandleThermalExpansion(SingleStructureScheme&,tokens_iterator&);
     /*!
      * handle the @InternalStateVariable keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleInternalStateVariable(SingleStructureScheme&,TokensContainer::const_iterator&);
+    handleInternalStateVariable(SingleStructureScheme&,tokens_iterator&);
     /*!
      * handle the @ExternalStateVariable keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleExternalStateVariable(SingleStructureScheme&,TokensContainer::const_iterator&);
+    handleExternalStateVariable(SingleStructureScheme&,tokens_iterator&);
     //! destructor
     ~SingleStructureSchemeParser();
   protected:
@@ -80,7 +80,7 @@ namespace mtest{
      */
     void
     setInternalStateVariableValue(SingleStructureScheme&,
-				  TokensContainer::const_iterator&,
+				  tokens_iterator&,
 				  const std::string&);
     /*!
      * register the call backs associated with each command
@@ -91,13 +91,13 @@ namespace mtest{
      * \brief treat the current keyword
      * \param[in,out] p : position in the input file
      */
-    bool treatKeyword(SingleStructureScheme&,TokensContainer::const_iterator&);
+    bool treatKeyword(SingleStructureScheme&,tokens_iterator&);
     //! \return the list of keywords
     std::vector<std::string> getKeyWordsList(void) const;
   private:
     //! a simple alias
     using CallBack = void (SingleStructureSchemeParser::*)(SingleStructureScheme&,
-							   TokensContainer::const_iterator&);
+							   tokens_iterator&);
     //! callbacks
     std::map<std::string,CallBack> callbacks;
     /*!

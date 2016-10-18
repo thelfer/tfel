@@ -25,7 +25,7 @@ namespace mfront{
     : DefaultDSLBase()
   {
     this->mb.setDSLName("DefaultFiniteStrain");
-    this->mb.declareAsAFiniteStrainStandardBehaviour();
+    this->mb.declareAsAFiniteStrainStandardBehaviour(false);
   }
 
   std::string

@@ -73,7 +73,9 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           IsotropicMisesCreepDSL.cxx                             \
 		           IsotropicStrainHardeningMisesCreepDSL.cxx              \
 		           IsotropicMisesPlasticFlowDSL.cxx                       \
+		           RungeKuttaDSLBase.cxx                                  \
 		           RungeKuttaDSL.cxx                                      \
+		           RungeKuttaFiniteStrainDSL.cxx                          \
 		           ImplicitDSLBase.cxx                                    \
 		           ImplicitDSL.cxx                                        \
 		           ImplicitDSLII.cxx                                      \

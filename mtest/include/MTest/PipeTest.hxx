@@ -33,7 +33,6 @@ namespace tfel{
   }
 }
 
-
 namespace mtest{
 
   // forward declaration

@@ -39,7 +39,16 @@ struct BehaviourDescriptionTest final
     using namespace mfront;
     this->test1();
     this->test2(&BehaviourDescription::declareAsASmallStrainStandardBehaviour);
-    this->test2(&BehaviourDescription::declareAsAFiniteStrainStandardBehaviour);
+    {
+      auto bd = BehaviourDescription{};
+      bd.declareAsAFiniteStrainStandardBehaviour(true);
+      TFEL_TESTS_CHECK_THROW(bd.declareAsASmallStrainStandardBehaviour(),
+			     std::runtime_error);
+      TFEL_TESTS_CHECK_THROW(bd.declareAsAFiniteStrainStandardBehaviour(true),
+			     std::runtime_error);
+      TFEL_TESTS_CHECK_THROW(bd.declareAsACohesiveZoneModel(),
+			     std::runtime_error);
+    }
     this->test2(&BehaviourDescription::declareAsACohesiveZoneModel);
     this->test3(&BehaviourDescription::addMaterialProperty);
     this->test3(&BehaviourDescription::addStateVariable);
@@ -97,7 +106,7 @@ private:
     (bd.*m)();
     TFEL_TESTS_CHECK_THROW(bd.declareAsASmallStrainStandardBehaviour(),
 			   std::runtime_error);
-    TFEL_TESTS_CHECK_THROW(bd.declareAsAFiniteStrainStandardBehaviour(),
+    TFEL_TESTS_CHECK_THROW(bd.declareAsAFiniteStrainStandardBehaviour(true),
 			   std::runtime_error);
     TFEL_TESTS_CHECK_THROW(bd.declareAsACohesiveZoneModel(),
 			   std::runtime_error);
@@ -147,7 +156,7 @@ private:
     BehaviourDescription bd2;
     bd2.declareAsASmallStrainStandardBehaviour();
     TFEL_TESTS_CHECK_THROW(bd2.declareAsASmallStrainStandardBehaviour(), runtime_error);
-    TFEL_TESTS_CHECK_THROW(bd2.declareAsAFiniteStrainStandardBehaviour(), runtime_error);
+    TFEL_TESTS_CHECK_THROW(bd2.declareAsAFiniteStrainStandardBehaviour(false), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd2.declareAsACohesiveZoneModel(), runtime_error);
     TFEL_TESTS_ASSERT(bd2.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR);
     TFEL_TESTS_ASSERT(bd2.isDrivingVariableName("eto"));
@@ -161,10 +170,10 @@ private:
     TFEL_TESTS_ASSERT(bd2.getTangentOperatorType() == "StiffnessTensor");
     TFEL_TESTS_ASSERT(bd2.getStressFreeExpansionType() == "StrainStensor");
     BehaviourDescription bd3;
-    bd3.declareAsAFiniteStrainStandardBehaviour();
+    bd3.declareAsAFiniteStrainStandardBehaviour(true);
     TFEL_TESTS_ASSERT(bd3.getBehaviourType() == BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR);
     TFEL_TESTS_CHECK_THROW(bd3.declareAsASmallStrainStandardBehaviour(), runtime_error);
-    TFEL_TESTS_CHECK_THROW(bd3.declareAsAFiniteStrainStandardBehaviour(), runtime_error);
+    TFEL_TESTS_CHECK_THROW(bd3.declareAsAFiniteStrainStandardBehaviour(true), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd3.declareAsACohesiveZoneModel(), runtime_error);
     TFEL_TESTS_ASSERT(bd3.isDrivingVariableName("F"));
     TFEL_TESTS_ASSERT(bd3.getMainVariables().size() == 1);
@@ -179,7 +188,7 @@ private:
     bd4.declareAsACohesiveZoneModel();
     TFEL_TESTS_ASSERT(bd4.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL);
     TFEL_TESTS_CHECK_THROW(bd4.declareAsASmallStrainStandardBehaviour(), runtime_error);
-    TFEL_TESTS_CHECK_THROW(bd4.declareAsAFiniteStrainStandardBehaviour(), runtime_error);
+    TFEL_TESTS_CHECK_THROW(bd4.declareAsAFiniteStrainStandardBehaviour(false), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd4.declareAsACohesiveZoneModel(), runtime_error);
     TFEL_TESTS_ASSERT(bd4.isDrivingVariableName("u"));
     TFEL_TESTS_ASSERT(bd4.getMainVariables().size() == 1);

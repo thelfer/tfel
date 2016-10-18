@@ -242,9 +242,6 @@ namespace mfront{
       } else if(c->value=="epts"){
 	++c;
 	get_vector(epts,c,pe,"epts");
-      } else if(c->value=="epts"){
-	++c;
-	get_vector(epts,c,pe,"epts");
       } else if(c->value=="deps"){
 	++c;
 	get_vector(deps,c,pe,"deps");

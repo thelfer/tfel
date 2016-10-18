@@ -86,129 +86,136 @@ namespace mtest
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleRadialLoading(PipeTest&,TokensContainer::const_iterator&);
+    handleRadialLoading(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @AxialLoading keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleAxialLoading(PipeTest&,TokensContainer::const_iterator&);
+    handleAxialLoading(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @InnerRadius keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleInnerRadius(PipeTest&,TokensContainer::const_iterator&);
+    handleInnerRadius(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @OuterRadius keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleOuterRadius(PipeTest&,TokensContainer::const_iterator&);
+    handleOuterRadius(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @NumberOfElements keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleNumberOfElements(PipeTest&,TokensContainer::const_iterator&);
+    handleNumberOfElements(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @ElementType keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleElementType(PipeTest&,TokensContainer::const_iterator&);
+    handleElementType(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @PerformSmallStrainAnalysis keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handlePerformSmallStrainAnalysis(PipeTest&,TokensContainer::const_iterator&);
+    handlePerformSmallStrainAnalysis(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @InnerPressureEvolution keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleInnerPressureEvolution(PipeTest&,TokensContainer::const_iterator&);
+    handleInnerPressureEvolution(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @OuterPressureEvolution keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleOuterPressureEvolution(PipeTest&,TokensContainer::const_iterator&);
+    handleOuterPressureEvolution(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @OuterRadiusEvolution keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleOuterRadiusEvolution(PipeTest&,TokensContainer::const_iterator&);
+    handleOuterRadiusEvolution(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @AxialForceEvolution keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleAxialForceEvolution(PipeTest&,TokensContainer::const_iterator&);
+    handleAxialForceEvolution(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @AxialGrowthEvolution keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleAxialGrowthEvolution(PipeTest&,TokensContainer::const_iterator&);
+    handleAxialGrowthEvolution(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @FillingPressure keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleFillingPressure(PipeTest&,TokensContainer::const_iterator&);
+    handleFillingPressure(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @FillingTemperature keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleFillingTemperature(PipeTest&,TokensContainer::const_iterator&);
+    handleFillingTemperature(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @DisplacementEpsilon keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleDisplacementEpsilon(PipeTest&,TokensContainer::const_iterator&);
+    handleDisplacementEpsilon(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @ResidualEpsilon keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleResidualEpsilon(PipeTest&,TokensContainer::const_iterator&);
+    handleResidualEpsilon(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @Profile keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleProfile(PipeTest&,TokensContainer::const_iterator&);
+    handleProfile(PipeTest&,tokens_iterator&);
     /*!
      * \brief handle the @Test keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */
     virtual void
-    handleTest(PipeTest&,TokensContainer::const_iterator&);
+    handleTest(PipeTest&,tokens_iterator&);
+    /*!
+     * \brief handle the @AdditionalOutputs keyword
+     * \param[out]    t: test
+     * \param[in,out] p: position in the input file
+     */
+    virtual void
+    handleAdditionalOutputs(PipeTest&,tokens_iterator&);
     //! a simple alias
     typedef void (PipeTestParser::* CallBack)(PipeTest&,
-					      TokensContainer::const_iterator&);
+					      tokens_iterator&);
     /*!
      * execute mtest parser after reading a file or parsing a string
      * \param[out] t: structure to be filled
@@ -223,7 +230,7 @@ namespace mtest
      * \brief treat the current keyword
      * \param[in,out] p: position in the input file
      */
-    bool treatKeyword(PipeTest&,TokensContainer::const_iterator&);
+    bool treatKeyword(PipeTest&,tokens_iterator&);
   private:
     //! callbacks
     std::map<std::string,CallBack> callbacks;

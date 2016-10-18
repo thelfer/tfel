@@ -65,7 +65,7 @@ private:
     }
     const auto CG   = computeRightCauchyGreenTensor(F);
     const auto e_gl = 0.5*(CG-stensor<N,double>::Id());
-    const stensor<N,double> S    = D*e_gl;
+    const auto S  = eval(D*e_gl);
     const auto dC = t2tost2<N,double>::dCdF(F);
     const auto dS = 0.5*D*dC;
     t2tost2<N,double> K;
@@ -75,21 +75,21 @@ private:
     st2tost2<N,double> C2;
     for(size_type i=0;i!=3u;++i){
       for(size_type j=0;j!=3u;++j){
-	int rij  = index(i,j,N);
-	int rij2 = index2(i,j,N);
+	const auto rij  = index(i,j,N);
+	const auto rij2 = index2(i,j,N);
 	if(rij==-1){
 	  continue;
 	}
 	for(size_type k=0;k!=3u;++k){
 	  for(size_type l=0;l!=3u;++l){
-	    int rkl = index(k,l,N);
+	    const auto rkl = index(k,l,N);
 	    if(rkl==-1){
 	      continue;
 	    }
 	    C1(rij,rkl)=double{0};
 	    for(size_type m=0;m!=3u;++m){
-	      int rkm = index(k,m,N);
-	      int rlm = index(l,m,N);
+	      const auto rkm = index(k,m,N);
+	      const auto rlm = index(l,m,N);
 	      if(rkm==-1){
 		continue;
 	      }
@@ -107,20 +107,20 @@ private:
     }
     for(size_type i=0;i!=3u;++i){
       for(size_type j=0;j!=3u;++j){
-	int rij  = index2(i,j,N);
+	const auto rij  = index2(i,j,N);
 	if(rij==-1){
 	  continue;
 	}
-	int rij1 = index(i,j,N);
-	int rij2 = index(j,i,N);
+	const auto rij1 = index(i,j,N);
+	const auto rij2 = index(j,i,N);
 	for(size_type k=0;k!=3u;++k){
 	  for(size_type l=0;l!=3u;++l){
-	    int rkl  = index2(k,l,N);
+	    const auto rkl  = index2(k,l,N);
 	    if(rkl==-1){
 	      continue;
 	    }
-	    int rkl1 = index(k,l,N);
-	    int rkl2 = index(l,k,N);
+	    const auto rkl1 = index(k,l,N);
+	    const auto rkl2 = index(l,k,N);
 	    C2(rij,rkl)=(C1(rij1,rkl1)+C1(rij1,rkl2)+
 			 C1(rij2,rkl1)+C1(rij2,rkl2))/4;
 	  }

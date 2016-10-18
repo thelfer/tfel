@@ -47,6 +47,7 @@
  * \param X : code to be evaluated
  * \param Y : exeception execpted to be thrown
  */
+//-V:TFEL_TESTS_CHECK_THROW:565
 #define TFEL_TESTS_CHECK_THROW(X,Y)				\
   {                                                             \
     bool hasThrown = false;                                     \

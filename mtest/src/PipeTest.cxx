@@ -373,11 +373,10 @@ namespace mtest{
     setCurrentPosition(*(this->evm),s.position);
   } // end of PipeTest::setGaussPointPositionForEvolutionsEvaluation
 
-  void
-  PipeTest::addIntegralTest(const std::string& n,
-			    const tfel::utilities::TextData& d,
-			    const unsigned short c,
-			    const real e){
+  void PipeTest::addIntegralTest(const std::string& n,
+				 const tfel::utilities::TextData& d,
+				 const unsigned short c,
+				 const real e){
     
     if((n=="InnerDisplacement")||(n=="OuterDisplacement")||(n=="AxialGrowth")){
       this->tests.push_back(std::shared_ptr<UTest>(new IntegralTest(n,d,c,e)));      
@@ -387,11 +386,10 @@ namespace mtest{
     }
   } // end of PipeTest::addIntegralTest
 
-  void
-  PipeTest::addProfileTest(const std::string& n,
-			   const tfel::utilities::TextData& d,
-			   const unsigned short c,
-			   const real e){
+  void PipeTest::addProfileTest(const std::string& n,
+				const tfel::utilities::TextData& d,
+				const unsigned short c,
+				const real e){
     
     if(n=="SRR"){
       this->tests.push_back(std::shared_ptr<UTest>(new StressProfileTest(n,0u,d,c,e)));
@@ -528,8 +526,7 @@ namespace mtest{
     return this->getNumberOfNodes()+1;
   } // end of PipeTest::getNumberOfUnknowns
 
-  void
-  PipeTest::setDisplacementEpsilon(const real e){
+  void PipeTest::setDisplacementEpsilon(const real e){
     if(this->options.eeps>0){
       throw(std::runtime_error("PipeTest::setDisplacementEpsilon: "
 			       "criterion value already set"));
@@ -541,8 +538,7 @@ namespace mtest{
     this->options.eeps=e;
   } // end of PipeTest::setDisplacementEpsilon
 
-  void
-  PipeTest::setResidualEpsilon(const real s)
+  void PipeTest::setResidualEpsilon(const real s)
   {
     if(this->options.seps>0){
       throw(std::runtime_error("PipeTest::setResidualEpsilon: the epsilon "
@@ -1236,9 +1232,8 @@ namespace mtest{
     }
   } // end of PipeTest::postConvergence
 
-  void
-  PipeTest::addProfile(const std::string& f,
-		       const std::vector<std::string>& cn)
+  void PipeTest::addProfile(const std::string& f,
+			    const std::vector<std::string>& cn)
   {
     auto ph = PipeProfileHandler{};
     ph.out = std::shared_ptr<std::ostream>(new std::ofstream(f));
@@ -1288,8 +1283,7 @@ namespace mtest{
     this->profiles.push_back(ph);
   } // end of PipeTest::addProfile
 
-  void
-  PipeTest::setModellingHypothesis(const std::string& h)
+  void PipeTest::setModellingHypothesis(const std::string& h)
   {
     if(h!="AxisymmetricalGeneralisedPlaneStrain"){
       throw(std::runtime_error("PipeTest::setModellingHypothesis: "
@@ -1302,8 +1296,7 @@ namespace mtest{
     this->hypothesis=ModellingHypothesis::fromString(h);
   } // end of PipeTest::setModellingHypothesis
 
-  void
-  PipeTest::setDefaultModellingHypothesis()
+  void PipeTest::setDefaultModellingHypothesis()
   {
     if(this->hypothesis!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       throw(std::runtime_error("PipeTest::setDefaultModellingHypothesis: "
@@ -1312,8 +1305,7 @@ namespace mtest{
     this->hypothesis=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
   } // end of PipeTest::setDefaultModellingHypothesis
 
-  void
-  PipeTest::setAxialLoading(const PipeTest::AxialLoading ph){
+  void PipeTest::setAxialLoading(const PipeTest::AxialLoading ph){
     if(this->al!=DEFAULTAXIALLOADING){
       throw(std::runtime_error("PipeTest::setAxialLoading: "
 			       "modelling hypothesis already defined"));
@@ -1321,8 +1313,7 @@ namespace mtest{
     this->al=ph;
   } // end of PipeTest::setAxialLoading
 
-  void
-  PipeTest::setRadialLoading(const PipeTest::RadialLoading t){
+  void PipeTest::setRadialLoading(const PipeTest::RadialLoading t){
     if(this->rl!=DEFAULTLOADINGTYPE){
       throw(std::runtime_error("PipeTest::setRadialLoading: "
 			       "loading type already defined"));
@@ -1330,8 +1321,7 @@ namespace mtest{
     this->rl=t;
   } // end of PipeTest::setRadialLoading
   
-  void
-  PipeTest::setElementType(const PipeMesh::ElementType ph){
+  void PipeTest::setElementType(const PipeMesh::ElementType ph){
     if(this->mesh.etype!=PipeMesh::DEFAULT){
       throw(std::runtime_error("PipeTest::setElementType: "
 			       "element type already defined"));
@@ -1339,8 +1329,7 @@ namespace mtest{
     this->mesh.etype=ph;
   } // end of PipeTest::setElementType
   
-  void
-  PipeTest::setInnerPressureEvolution(std::shared_ptr<Evolution> p)
+  void PipeTest::setInnerPressureEvolution(std::shared_ptr<Evolution> p)
   {
     if(this->rl==IMPOSEDOUTERRADIUS){
       throw(std::runtime_error("PipeTest::setInnerPressureEvolution: "
@@ -1356,8 +1345,7 @@ namespace mtest{
     this->inner_pressure = p;
   } // end of PipeTest::setInnerPressureEvolution
 
-  void
-  PipeTest::setOuterPressureEvolution(std::shared_ptr<Evolution> p)
+  void PipeTest::setOuterPressureEvolution(std::shared_ptr<Evolution> p)
   {
     if(this->outer_pressure.get()!=nullptr){
       throw(std::runtime_error("PipeTest::setOuterPressureEvolution: "
@@ -1366,8 +1354,7 @@ namespace mtest{
     this->outer_pressure = p;
   } // end of PipeTest::setOuterPressureEvolution
 
-  void
-  PipeTest::setAxialForceEvolution(std::shared_ptr<Evolution> f)
+  void PipeTest::setAxialForceEvolution(std::shared_ptr<Evolution> f)
   {
     if(this->al!=IMPOSEDAXIALFORCE){
       throw(std::runtime_error("PipeTest::setAxialForceEvolution: "
@@ -1382,8 +1369,7 @@ namespace mtest{
     this->axial_force = f;
   } // end of PipeTest::setAxialForceEvolution
 
-  void
-  PipeTest::setAxialGrowthEvolution(std::shared_ptr<Evolution> f)
+  void PipeTest::setAxialGrowthEvolution(std::shared_ptr<Evolution> f)
   {
     if(this->al!=IMPOSEDAXIALGROWTH){
       throw(std::runtime_error("PipeTest::setAxialGrowthEvolution: "
@@ -1398,8 +1384,7 @@ namespace mtest{
     this->axial_growth = f;
   } // end of PipeTest::setAxialGrowthEvolution
   
-  void
-  PipeTest::setOuterRadiusEvolution(std::shared_ptr<Evolution> e)
+  void PipeTest::setOuterRadiusEvolution(std::shared_ptr<Evolution> e)
   {
     if(this->rl!=IMPOSEDOUTERRADIUS){
       throw(std::runtime_error("PipeTest::setOuterRadiusEvolution: "
@@ -1414,8 +1399,7 @@ namespace mtest{
     this->orev = e;
   } // end of PipeTest::setOuterRadiusEvolution
 
-  void
-  PipeTest::setFillingPressure(const real p)
+  void PipeTest::setFillingPressure(const real p)
   {
     if(this->rl!=TIGHTPIPE){
       throw(std::runtime_error("PipeTest::setFillingPressure: "
@@ -1435,8 +1419,7 @@ namespace mtest{
     this->p0 = p;
   } // end of PipeTest::setFillingPressure
 
-  void
-  PipeTest::setFillingTemperature(const real T)
+  void PipeTest::setFillingTemperature(const real T)
   {
     if(this->rl!=TIGHTPIPE){
       throw(std::runtime_error("PipeTest::setFillingTemperature: "
@@ -1456,9 +1439,8 @@ namespace mtest{
     this->T0 = T;
   } // end of PipeTest::setFillingTemperature
   
-  void
-  PipeTest::printOutput(const real t,const StudyCurrentState& state,
-			const bool o) const{
+  void PipeTest::printOutput(const real t,const StudyCurrentState& state,
+			     const bool o) const{
     if((!o)&&(this->output_frequency==USERDEFINEDTIMES)){
       return;
     }
@@ -1478,6 +1460,9 @@ namespace mtest{
       if(this->al==IMPOSEDAXIALGROWTH){
 	this->out << " " << state.getEvolution("AxialForce")(t);
       }
+      // for(const auto& ao: this->additionalOutputs){
+      // 	oa->printOutput(out,state);
+      // }
       this->out << std::endl;
     }
   } // end of PipeTest::printOutput

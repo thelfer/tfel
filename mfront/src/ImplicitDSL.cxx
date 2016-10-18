@@ -28,20 +28,17 @@ namespace mfront{
     this->mb.setGlossaryName(h,"eel","ElasticStrain");
   } // end of ImplicitDSL::ImplicitDSL
 
-  std::string
-  ImplicitDSL::getName()
+  std::string ImplicitDSL::getName()
   {
     return "Implicit";
   } // end of ImplicitDSL::getName
 
-  std::string
-  ImplicitDSL::getDescription()
+  std::string ImplicitDSL::getDescription()
   {
     return "this parser provides a generic integrator based on a theta method.";
   } // end of ImplicitDSL::getDescription
 
-  ImplicitDSL::~ImplicitDSL()
-  {}
+  ImplicitDSL::~ImplicitDSL() = default;
 
 } // end of namespace mfront  
 

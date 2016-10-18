@@ -81,8 +81,7 @@ namespace mtest
     virtual ~MTestParser();
   protected:
     //! a simple alias
-    typedef void (MTestParser::* CallBack)(MTest&,
-					   TokensContainer::const_iterator&);
+    typedef void (MTestParser::* CallBack)(MTest&,tokens_iterator&);
     /*!
      * execute mtest parser after reading a file or parsing a string
      * \param[out] t : structure to be filled
@@ -98,168 +97,168 @@ namespace mtest
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleCompareToNumericalTangentOperator(MTest&,TokensContainer::const_iterator&);
+    handleCompareToNumericalTangentOperator(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @TangentOperatorComparisonCriterium keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleTangentOperatorComparisonCriterium(MTest&,TokensContainer::const_iterator&);
+    handleTangentOperatorComparisonCriterium(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @NumericalTangentOperatorPerturbationValue keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleNumericalTangentOperatorPerturbationValue(MTest&,TokensContainer::const_iterator&);
+    handleNumericalTangentOperatorPerturbationValue(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @Test keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleTest(MTest&,TokensContainer::const_iterator&);
+    handleTest(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @RotationMatrix keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleRotationMatrix(MTest&,TokensContainer::const_iterator&);
+    handleRotationMatrix(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @StrainEpsilon keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleStrainEpsilon(MTest&,TokensContainer::const_iterator&);
+    handleStrainEpsilon(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @DeformationGradientEpsilon keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleDeformationGradientEpsilon(MTest&,TokensContainer::const_iterator&);
+    handleDeformationGradientEpsilon(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @OpeningDisplacementEpsilon keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleOpeningDisplacementEpsilon(MTest&,TokensContainer::const_iterator&);
+    handleOpeningDisplacementEpsilon(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @DrivingVariableEpsilon keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleDrivingVariableEpsilon(MTest&,TokensContainer::const_iterator&);
+    handleDrivingVariableEpsilon(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @StressEpsilon keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleStressEpsilon(MTest&,TokensContainer::const_iterator&);
+    handleStressEpsilon(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @CohesiveForceEpsilon keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleCohesiveForceEpsilon(MTest&,TokensContainer::const_iterator&);
+    handleCohesiveForceEpsilon(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @ThermodynamicForceEpsilon keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleThermodynamicForceEpsilon(MTest&,TokensContainer::const_iterator&);
+    handleThermodynamicForceEpsilon(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @ModellingHypothesis keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleModellingHypothesis(MTest&,TokensContainer::const_iterator&);
+    handleModellingHypothesis(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @Strain keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleStrain(MTest&,TokensContainer::const_iterator&);
+    handleStrain(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @DeformationGradient keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleDeformationGradient(MTest&,TokensContainer::const_iterator&);
+    handleDeformationGradient(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @OpeningDisplacement keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleOpeningDisplacement(MTest&,TokensContainer::const_iterator&);
+    handleOpeningDisplacement(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @DrivingVariable keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleDrivingVariable(MTest&,TokensContainer::const_iterator&);
+    handleDrivingVariable(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @Stress keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleStress(MTest&,TokensContainer::const_iterator&);
+    handleStress(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @CohesiveForce keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleCohesiveForce(MTest&,TokensContainer::const_iterator&);
+    handleCohesiveForce(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @ThermodynamicForce keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleThermodynamicForce(MTest&,TokensContainer::const_iterator&);
+    handleThermodynamicForce(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @ImposedStress keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleImposedStress(MTest&,TokensContainer::const_iterator&);
+    handleImposedStress(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @ImposedCohesiveForce keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleImposedCohesiveForce(MTest&,TokensContainer::const_iterator&);
+    handleImposedCohesiveForce(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @ImposedThermodynamicForce keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleImposedThermodynamicForce(MTest&,TokensContainer::const_iterator&);
+    handleImposedThermodynamicForce(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @ImposedStrain keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleImposedStrain(MTest&,TokensContainer::const_iterator&);
+    handleImposedStrain(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @ImposedDeformationGradient keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleImposedDeformationGradient(MTest&,TokensContainer::const_iterator&);
+    handleImposedDeformationGradient(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @ImposedOpeningDisplacement keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleImposedOpeningDisplacement(MTest&,TokensContainer::const_iterator&);
+    handleImposedOpeningDisplacement(MTest&,tokens_iterator&);
     /*!
      * \brief handle the @ImposedDrivingVariable keyword
      * \param[in,out] p : position in the input file
      */
     virtual void
-    handleImposedDrivingVariable(MTest&,TokensContainer::const_iterator&);
+    handleImposedDrivingVariable(MTest&,tokens_iterator&);
     /*!
      * \brief treat the current keyword
      * \param[in,out] p : position in the input file
      */
-    bool treatKeyword(MTest&,TokensContainer::const_iterator&);
+    bool treatKeyword(MTest&,tokens_iterator&);
   private:
     //! callbacks
     std::map<std::string,CallBack> callbacks;

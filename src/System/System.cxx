@@ -530,34 +530,33 @@ namespace tfel
     void
     systemCall::copyFile(const std::string& src,const std::string& dest)
     {
-      using namespace std;
       struct stat srcInfos;
       if(::stat(src.c_str(),&srcInfos)==-1){
 	systemCall::throwSystemError("systemCall::copyFile : can't stat file "+src,errno);
       }
       if(!S_ISREG(srcInfos.st_mode)){
-	string msg("systemCall::copyFile : source '"+src+"' is not a regular file");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("systemCall::copyFile : source '"+src+"' "
+				 "is not a regular file"));
       }
       // simple check
       if(src==dest){
 	return;
       }
       // do the copy
-      ofstream out(dest.c_str(),ios_base::binary);
-      ifstream in(src.c_str(),ios_base::binary);
+      std::ofstream out(dest.c_str(),std::ios_base::binary);
+      std::ifstream in(src.c_str(),std::ios_base::binary);
       if(!in){
-	string msg("systemCall::copyFile : can't open file "+src+" in read mode.");
-	throw(SystemError(msg));
+	throw(SystemError("systemCall::copyFile : can't open file "
+			  "'"+src+"' in read mode."));
       }
       if(!out){
-	string msg("systemCall::copyFile : can't open file "+dest+" in write mode.");
-	throw(SystemError(msg));
+	throw(SystemError("systemCall::copyFile : can't open file "
+			  "'"+dest+"' in write mode."));
       }
       // local copy of the file
       if(srcInfos.st_size!=0){
 	// file is not empty
-	out.exceptions(ifstream::failbit | ifstream::badbit);
+	out.exceptions(std::ifstream::failbit |std::ifstream::badbit);
 	out << in.rdbuf();
       }
       in.close();
@@ -571,24 +570,26 @@ namespace tfel
       char *name  = nullptr;
       size_t size = 16u;
       while(1){
-	name=static_cast<char *>(realloc(name,size));
-	if(name==nullptr){
+	auto ptr = static_cast<char *>(realloc(name,size));
+	if(ptr==nullptr){
+	  if(name!=nullptr){::free(name);}
 	  throw(SystemError("systemCall::getCurrentWorkingDirectory : out of memory"));
 	}
-	
+	name = ptr;
 #if defined _WIN32 || defined _WIN64 
 	if (_getcwd(name, size) != nullptr) {
 #else
-		if(::getcwd(name,size)!=nullptr){
+	  if(::getcwd(name,size)!=nullptr){
 #endif
 	  break;
 	}
 	if(errno!=ERANGE){
+	  if(name!=nullptr){::free(name);}
 	  systemCall::throwSystemError("systemCall::getCurrentWorkingDirectory ",errno);
 	}
 	size*=2u;
       }
-      const string res(name);
+      const auto res = std::string{name};
       ::free(name);
       return res;
     } // end of systemCall::getCurrentWorkingDirectory
@@ -601,19 +602,22 @@ namespace tfel
       char *name  = nullptr;
       size_t size = 16u;
       while(true){
-	name = static_cast<char *>(realloc(name,size));
-	if(name==nullptr){
+	auto ptr = static_cast<char *>(realloc(name,size));
+	if(ptr==nullptr){
+	  if(name!=nullptr){::free(name);}
 	  throw(SystemError("systemCall::getHostName : out of memory"));
 	}
+	name = ptr;
 	if(::gethostname(name,size)==0){
 	  break;
 	}
 	if(errno!=ENAMETOOLONG){
+	  if(name!=nullptr){::free(name);}
 	  systemCall::throwSystemError("systemCall::getHostName ",errno);
 	}
 	size*=2u;
       }
-      const string res(name);
+      const auto res = std::string{name};
       ::free(name);
       return res;
     } // end of systemCall::getHostName
@@ -638,9 +642,8 @@ namespace tfel
 #else
 	  if (::chdir(name.c_str()) == -1) {
 #endif
-	string msg("systemCall::changeCurrentWorkingDirectory : ");
-	msg += "can't change to directory "+name+".";
-	systemCall::throwSystemError(msg,errno);
+	systemCall::throwSystemError("systemCall::changeCurrentWorkingDirectory : "
+				     "can't change to directory "+name+".",errno);
       }
     } // end of systemCall::changeCurrentWorkingDirectory
 

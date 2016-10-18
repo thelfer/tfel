@@ -222,35 +222,35 @@ namespace mtest
 						   const tfel::math::vector<real>& mp,
 						   const tfel::math::tmatrix<3u,3u,real>&) const
   {
-    using namespace std;
     using namespace tfel::math;
     if(this->stype==0u){
       const auto h = this->getHypothesis();
+      const auto zero = real(0);
       if((h==ModellingHypothesis::PLANESTRESS)||(h==ModellingHypothesis::PLANESTRAIN)||
 	 (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	Kt(0,0) = mp(1);
-	Kt(0,1) = real(0);
-	Kt(1,0) = real(0);
+	Kt(0,1) = zero;
+	Kt(1,0) = zero;
 	Kt(1,1) = mp(0);
       } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
 	Kt(0,0) = mp(1);
 	Kt(1,1) = mp(0);
 	Kt(2,2) = mp(0);
-	Kt(0,1) = Kt(0,2) = real(0);
-	Kt(1,0) = Kt(1,2) = real(0);
-	Kt(2,0) = Kt(2,1) = real(0);
+	Kt(0,1) = Kt(0,2) = zero;
+	Kt(1,0) = Kt(1,2) = zero;
+	Kt(2,0) = Kt(2,1) = zero;
       } else {
-	throw(runtime_error("CastemCohesiveZoneModel::integrate: "
-			    "unsupported hypothesis"));
+	throw(std::runtime_error("CastemCohesiveZoneModel::integrate: "
+				 "unsupported hypothesis"));
       }
     } else if(this->stype==1u){
-      throw(runtime_error("CastemCohesiveZoneModel::integrate: "
-			  "invalid behaviour type (orthotropic type "
-			  "is not supported yet)"));
+      throw(std::runtime_error("CastemCohesiveZoneModel::integrate: "
+			       "invalid behaviour type (orthotropic type "
+			       "is not supported yet)"));
     } else {
-      throw(runtime_error("CastemCohesiveZoneModel::integrate: "
-			  "invalid behaviour type (neither "
-			  "isotropic or orthotropic)"));
+      throw(std::runtime_error("CastemCohesiveZoneModel::integrate: "
+			       "invalid behaviour type (neither "
+			       "isotropic or orthotropic)"));
     }
   }
 

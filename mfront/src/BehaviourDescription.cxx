@@ -731,8 +731,7 @@ namespace mfront
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"sig");
   }
 
-  void
-  BehaviourDescription::declareAsAFiniteStrainStandardBehaviour()
+  void BehaviourDescription::declareAsAFiniteStrainStandardBehaviour(const bool b)
   {
     if(!this->mvariables.empty()){
       throw(std::runtime_error("BehaviourDescription::declareAsAFiniteStrainStandardBehaviour: "
@@ -747,6 +746,10 @@ namespace mfront
     sig.type = "StressStensor";
     this->mvariables.insert({F,sig});
     this->type = BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR;
+    if(b){
+      this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"F");
+      this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"dF");
+    }
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"F0");
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"F1");
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"sig");
@@ -847,10 +850,8 @@ namespace mfront
   {
     for(const auto& v : this->getMainVariables()){
       const auto& dv = v.first;
-      if(dv.increment_known){
-	if("d"+dv.name==n){
-	  return true;
-	}
+      if("d"+dv.name==n){
+	return true;
       }
     }
     return false;

@@ -99,7 +99,9 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/IsotropicStrainHardeningMisesCreepDSL.hxx              \
 			MFront/IsotropicMisesPlasticFlowDSL.hxx                       \
 			MFront/MultipleIsotropicMisesFlowsDSL.hxx                     \
+			MFront/RungeKuttaDSLBase.hxx                                  \
 			MFront/RungeKuttaDSL.hxx                                      \
+			MFront/RungeKuttaFiniteStrainDSL.hxx                          \
 			MFront/PerformanceProfiling.hxx			              \
 			MFront/StandardElasticityBrick.hxx                            \
 			MFront/DDIF2Brick.hxx                                         \

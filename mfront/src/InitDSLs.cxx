@@ -24,6 +24,7 @@
 #include"MFront/MaterialPropertyDSL.hxx"
 #include"MFront/MultipleIsotropicMisesFlowsDSL.hxx"
 #include"MFront/RungeKuttaDSL.hxx"
+#include"MFront/RungeKuttaFiniteStrainDSL.hxx"
 #include"MFront/ImplicitDSL.hxx"
 #include"MFront/ImplicitDSLII.hxx"
 #include"MFront/ImplicitFiniteStrainDSL.hxx"
@@ -52,9 +53,10 @@ namespace mfront
 	    "MaterialPropertyParser"});
       DSLProxy<MultipleIsotropicMisesFlowsDSL>  proxy6("MultipleIsotropicMisesFlowsParser");
       DSLProxy<RungeKuttaDSL>  proxy7(std::vector<std::string>{"RungeKuttaParser"});
-      DSLProxy<ImplicitDSL>    proxy8("ImplicitParser");
-      DSLProxy<ImplicitDSLII>  proxy9("ImplicitParserII");
-      DSLProxy<ModelDSL>       proxy10("ModelParser");
+      DSLProxy<RungeKuttaFiniteStrainDSL>  proxy8;;
+      DSLProxy<ImplicitDSL>    proxy9("ImplicitParser");
+      DSLProxy<ImplicitDSLII>  proxy10("ImplicitParserII");
+      DSLProxy<ModelDSL>       proxy11("ModelParser");
       // CZM
       DSLProxy<DefaultCZMDSL> proxy100(std::vector<std::string>{"DefaultCZMParser","DefaultCZM"});
       // FiniteStrain

@@ -36,12 +36,12 @@ namespace mtest{
     return "";
   }
   
-  void SchemeParserBase::handleAuthor(SchemeBase& t,TokensContainer::const_iterator& p)
+  void SchemeParserBase::handleAuthor(SchemeBase& t,tokens_iterator& p)
   {
     t.setAuthor(this->readUntilEndOfInstruction(p));
   } // end of SchemeParserBase::handleAuthor
 
-  void SchemeParserBase::handleLonelySeparator(SchemeBase&,TokensContainer::const_iterator& p)
+  void SchemeParserBase::handleLonelySeparator(SchemeBase&,tokens_iterator& p)
   {
     mfront::getLogStream() << this->file << ":"
 			   << p->line << ":"
@@ -49,13 +49,13 @@ namespace mtest{
     ++p;
   } // end of SchemeParserBase::handleAuthor
   
-  void SchemeParserBase::handleDate(SchemeBase& t,TokensContainer::const_iterator& p)
+  void SchemeParserBase::handleDate(SchemeBase& t,tokens_iterator& p)
   {
     t.setDate(this->readUntilEndOfInstruction(p));
   } // end of SchemeParserBase::handleDate
   
   void
-  SchemeParserBase::handleDescription(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleDescription(SchemeBase& t,tokens_iterator& p)
   {
     using namespace std;
     using namespace tfel::utilities;
@@ -70,7 +70,7 @@ namespace mtest{
 	     (openedBrackets==1u)))&&
 	  (p!=this->tokens.end())){
       if(p->value=="{"){
-	TokensContainer::const_iterator previous = p;
+	tokens_iterator previous = p;
 	--previous;
 	if((previous->value.size()>0)&&
 	   (previous->value[previous->value.size()-1]!='\\')){
@@ -78,7 +78,7 @@ namespace mtest{
 	}
       }
       if(p->value=="}"){
-	TokensContainer::const_iterator previous = p;
+	tokens_iterator previous = p;
 	--previous;
 	if((previous->value.size()>0)&&
 	   (previous->value[previous->value.size()-1]!='\\')){
@@ -109,7 +109,7 @@ namespace mtest{
   } // end of SchemeParserBase::Description
 
   void
-  SchemeParserBase::handleXMLOutputFile(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleXMLOutputFile(SchemeBase& t,tokens_iterator& p)
   {
     t.setXMLOutputFileName(this->readString(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleXMLOutputFiles",";",
@@ -117,7 +117,7 @@ namespace mtest{
   } // end of SchemeParserBase::handleXMLOutputFile
   
   void
-  SchemeParserBase::handleOutputFile(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleOutputFile(SchemeBase& t,tokens_iterator& p)
   {
     t.setOutputFileName(this->readString(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleOutputFiles",";",
@@ -125,7 +125,7 @@ namespace mtest{
   } // end of SchemeParserBase::handleOutputFile
 
   void
-  SchemeParserBase::handleOutputFilePrecision(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleOutputFilePrecision(SchemeBase& t,tokens_iterator& p)
   {
     t.setOutputFilePrecision(this->readUnsignedInt(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleOutputFilePrecisions",";",
@@ -133,7 +133,7 @@ namespace mtest{
   } // end of SchemeParserBase::handleOutputFilePrecision
 
   void
-  SchemeParserBase::handleResidualFile(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleResidualFile(SchemeBase& t,tokens_iterator& p)
   {
     t.setResidualFileName(this->readString(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleResidualFiles",";",
@@ -141,7 +141,7 @@ namespace mtest{
   } // end of SchemeParserBase::handleResidualFile
 
   void
-  SchemeParserBase::handleResidualFilePrecision(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleResidualFilePrecision(SchemeBase& t,tokens_iterator& p)
   {
     t.setResidualFilePrecision(this->readUnsignedInt(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleResidualFilePrecisions",";",
@@ -149,7 +149,7 @@ namespace mtest{
   } // end of SchemeParserBase::handleResidualFilePrecision
 
   void
-  SchemeParserBase::handleReal(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleReal(SchemeBase& t,tokens_iterator& p)
   {
     const auto& v = this->readString(p,this->tokens.end());
     if(!this->isValidIdentifier(v)){
@@ -163,7 +163,7 @@ namespace mtest{
     t.addEvolution(v,mpev,true,true);
   }
   
-  void SchemeParserBase::handlePredictionPolicy(SchemeBase& t,TokensContainer::const_iterator& p)
+  void SchemeParserBase::handlePredictionPolicy(SchemeBase& t,tokens_iterator& p)
   {
     PredictionPolicy ppolicy;
     this->checkNotEndOfLine("handlePredictionPolicy",
@@ -191,7 +191,7 @@ namespace mtest{
   }
 
   void
-  SchemeParserBase::handleStiffnessMatrixType(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleStiffnessMatrixType(SchemeBase& t,tokens_iterator& p)
   {
     using namespace std;
     StiffnessMatrixType ktype;
@@ -214,7 +214,7 @@ namespace mtest{
   }
 
   void
-  SchemeParserBase::handleUseCastemAccelerationAlgorithm(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleUseCastemAccelerationAlgorithm(SchemeBase& t,tokens_iterator& p)
   {
     using namespace std;
     bool useCastemAcceleration;
@@ -235,7 +235,7 @@ namespace mtest{
   }
 
   void
-  SchemeParserBase::handleCastemAccelerationTrigger(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleCastemAccelerationTrigger(SchemeBase& t,tokens_iterator& p)
   {
     int cat = static_cast<int>(this->readUnsignedInt(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleCastemAccelerationTrigger",";",
@@ -244,7 +244,7 @@ namespace mtest{
   } // end of SchemeParserBase::handleCastemAccelerationTrigger
 
   void
-  SchemeParserBase::handleCastemAccelerationPeriod(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleCastemAccelerationPeriod(SchemeBase& t,tokens_iterator& p)
   {
     using namespace std;
     int cap = static_cast<int>(this->readUnsignedInt(p,this->tokens.end()));
@@ -254,7 +254,7 @@ namespace mtest{
   } // end of SchemeParserBase::handleCastemAccelerationPeriod
 
   void
-  SchemeParserBase::handleAccelerationAlgorithm(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleAccelerationAlgorithm(SchemeBase& t,tokens_iterator& p)
   {
     this->checkNotEndOfLine("SchemeParserBase::handleAccelerationAlgorithm",
 			    p,this->tokens.end());
@@ -265,7 +265,7 @@ namespace mtest{
   }
 
   void
-  SchemeParserBase::handleAccelerationAlgorithmParameter(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleAccelerationAlgorithmParameter(SchemeBase& t,tokens_iterator& p)
   {
     this->checkNotEndOfLine("SchemeParserBase::handleAccelerationAlgorithmParameter",
 			    p,this->tokens.end());
@@ -281,7 +281,7 @@ namespace mtest{
 
 
   void
-  SchemeParserBase::handleStiffnessUpdatePolicy(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleStiffnessUpdatePolicy(SchemeBase& t,tokens_iterator& p)
   {
     StiffnessUpdatingPolicy ks;
     const auto& type = this->readString(p,this->tokens.end());
@@ -301,7 +301,7 @@ namespace mtest{
   }
 
   void
-  SchemeParserBase::handleMaximumNumberOfIterations(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleMaximumNumberOfIterations(SchemeBase& t,tokens_iterator& p)
   {
     t.setMaximumNumberOfIterations(this->readUnsignedInt(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleMaximumNumberOfIterations",";",
@@ -309,7 +309,7 @@ namespace mtest{
   } // end of SchemeParserBase::handleMaximumNumberOfIterations
 
   void
-  SchemeParserBase::handleMaximumNumberOfSubSteps(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleMaximumNumberOfSubSteps(SchemeBase& t,tokens_iterator& p)
   {
     t.setMaximumNumberOfSubSteps(this->readUnsignedInt(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleMaximumNumberOfSubSteps",";",
@@ -318,7 +318,7 @@ namespace mtest{
 
   void
   SchemeParserBase::handleOutputFrequency(SchemeBase& t,
-					  TokensContainer::const_iterator& p)
+					  tokens_iterator& p)
   {
     const auto v = this->readString(p,this->tokens.end());
     if(v=="UserDefinedTimes"){
@@ -335,7 +335,7 @@ namespace mtest{
   
   void
   SchemeParserBase::handleDynamicTimeStepScaling(SchemeBase& t,
-						 TokensContainer::const_iterator& p)
+						 tokens_iterator& p)
   {
     this->checkNotEndOfLine("SchemeParserBase::handleDynamicTimeStepScaling",
 			    p,this->tokens.end());
@@ -355,7 +355,7 @@ namespace mtest{
   
   void
   SchemeParserBase::handleMaximalTimeStep(SchemeBase& t,
-					  TokensContainer::const_iterator& p)
+					  tokens_iterator& p)
   {
     t.setMaximalTimeStep(this->readDouble(t,p));
     this->readSpecifiedToken("SchemeParserBase::handleMaximalTimeStep",";",
@@ -364,7 +364,7 @@ namespace mtest{
 
   void
   SchemeParserBase::handleMinimalTimeStep(SchemeBase& t,
-					  TokensContainer::const_iterator& p)
+					  tokens_iterator& p)
   {
     t.setMinimalTimeStep(this->readDouble(t,p));
     this->readSpecifiedToken("SchemeParserBase::handleMinimalTimeStep",";",
@@ -373,7 +373,7 @@ namespace mtest{
 
   void
   SchemeParserBase::handleMinimalTimeStepScalingFactor(SchemeBase& t,
-						       TokensContainer::const_iterator& p)
+						       tokens_iterator& p)
   {
     t.setMinimalTimeStepScalingFactor(this->readDouble(t,p));
     this->readSpecifiedToken("SchemeParserBase::handleMinimalTimeStepScalingFactor",";",
@@ -382,7 +382,7 @@ namespace mtest{
 
   void
   SchemeParserBase::handleMaximalTimeStepScalingFactor(SchemeBase& t,
-						       TokensContainer::const_iterator& p)
+						       tokens_iterator& p)
   {
     t.setMaximalTimeStepScalingFactor(this->readDouble(t,p));
     this->readSpecifiedToken("SchemeParserBase::handleMaximalTimeStepScalingFactor",";",
@@ -390,7 +390,7 @@ namespace mtest{
   }
   
   std::string
-  SchemeParserBase::readUntilEndOfInstruction(TokensContainer::const_iterator& p)
+  SchemeParserBase::readUntilEndOfInstruction(tokens_iterator& p)
   {
     auto res = std::string{};
     this->checkNotEndOfLine("SchemeParserBase::readUntilEndOfInstruction",
@@ -413,7 +413,7 @@ namespace mtest{
   }
 
   void
-  SchemeParserBase::handleTimes(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleTimes(SchemeBase& t,tokens_iterator& p)
   {
     using namespace std;
     enum {ARRAY,FILE} entry_type = ARRAY;
@@ -533,7 +533,7 @@ namespace mtest{
   }
 
   void
-  SchemeParserBase::handleEvolution(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::handleEvolution(SchemeBase& t,tokens_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
     const auto& n = this->readString(p,this->tokens.end());
@@ -543,7 +543,7 @@ namespace mtest{
   }
 
   real
-  SchemeParserBase::readDouble(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::readDouble(SchemeBase& t,tokens_iterator& p)
   {
     this->checkNotEndOfLine("SchemeParserBase::readDouble",p,
 			    this->tokens.end());
@@ -576,7 +576,7 @@ namespace mtest{
 
   real
   SchemeParserBase::readTime(SchemeBase& t,
-			     TokensContainer::const_iterator& p)
+			     tokens_iterator& p)
   {
     return this->readDouble(t,p);
   } // end of SchemeParserBase::readTime
@@ -584,7 +584,7 @@ namespace mtest{
   void
   SchemeParserBase::readArrayOfSpecifiedSize(std::vector<real>& v,
 					     SchemeBase& t,
-					     TokensContainer::const_iterator& p)
+					     tokens_iterator& p)
   {
     this->readSpecifiedToken("SchemeParserBase::readArrayOfSpecifiedSize","{",p,
 			     this->tokens.end());
@@ -603,7 +603,7 @@ namespace mtest{
   std::shared_ptr<Evolution>
   SchemeParserBase::parseEvolution(SchemeBase& t,
 				   const std::string& type,
-				   TokensContainer::const_iterator& p)
+				   tokens_iterator& p)
   {
     auto ev = std::shared_ptr<Evolution>{};
     this->checkNotEndOfLine("SchemeParserBase::parseEvolution",p,
@@ -677,7 +677,7 @@ namespace mtest{
   } // end of SchemeParserBase::parseEvolution
 
   std::string
-  SchemeParserBase::readEvolutionType(TokensContainer::const_iterator& p)
+  SchemeParserBase::readEvolutionType(tokens_iterator& p)
   {
     this->checkNotEndOfLine("SchemeParserBase::readEvolutionType",p,
 			    this->tokens.end());
@@ -757,7 +757,7 @@ namespace mtest{
   } // end of SchemeParserBase::registerCallBacks
 
   bool
-  SchemeParserBase::treatKeyword(SchemeBase& t,TokensContainer::const_iterator& p)
+  SchemeParserBase::treatKeyword(SchemeBase& t,tokens_iterator& p)
   {
     auto pc = this->callbacks.find(p->value);
     if(pc==this->callbacks.end()){

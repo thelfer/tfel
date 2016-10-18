@@ -120,7 +120,7 @@ namespace mtest
   } // end of PipeTestParser::execute
 
   bool
-  PipeTestParser::treatKeyword(PipeTest& t, TokensContainer::const_iterator& p)
+  PipeTestParser::treatKeyword(PipeTest& t, tokens_iterator& p)
   {
     auto pc = this->callbacks.find(p->value);
     if(pc==this->callbacks.end()){
@@ -264,6 +264,7 @@ namespace mtest
     this->registerCallBack("@ResidualEpsilon",&PipeTestParser::handleResidualEpsilon);
     this->registerCallBack("@Profile",&PipeTestParser::handleProfile);
     this->registerCallBack("@Test",&PipeTestParser::handleTest);
+    this->registerCallBack("@AdditionalOutputs",&PipeTestParser::handleAdditionalOutputs);
   }
 
   void
@@ -275,7 +276,7 @@ namespace mtest
 
   void
   PipeTestParser::handleRadialLoading(PipeTest& t,
-				    TokensContainer::const_iterator& p)
+				    tokens_iterator& p)
   {
     this->checkNotEndOfLine("PipeTestParser::handleRadialLoading",
 			    p,this->tokens.end());
@@ -300,7 +301,7 @@ namespace mtest
   
   void
   PipeTestParser::handleAxialLoading(PipeTest& t,
-				     TokensContainer::const_iterator& p)
+				     tokens_iterator& p)
   {
     this->checkNotEndOfLine("PipeTestParser::handleAxialLoading",
 			    p,this->tokens.end());
@@ -328,7 +329,7 @@ namespace mtest
 
   void
   PipeTestParser::handleInnerRadius(PipeTest& t,
-				    TokensContainer::const_iterator& p)
+				    tokens_iterator& p)
   {
     this->checkNotEndOfLine("PipeTestParser::handleInnerRadius",
 			    p,this->tokens.end());
@@ -341,7 +342,7 @@ namespace mtest
 
   void
   PipeTestParser::handleOuterRadius(PipeTest& t,
-				    TokensContainer::const_iterator& p)
+				    tokens_iterator& p)
   {
     this->checkNotEndOfLine("PipeTestParser::handleOuterRadius",
 			    p,this->tokens.end());
@@ -354,7 +355,7 @@ namespace mtest
   
   void
   PipeTestParser::handleNumberOfElements(PipeTest& t,
-					 TokensContainer::const_iterator& p)
+					 tokens_iterator& p)
   {
     this->checkNotEndOfLine("PipeTestParser::handleNumberOfElements",
 			    p,this->tokens.end());
@@ -367,7 +368,7 @@ namespace mtest
 
   void
   PipeTestParser::handleElementType(PipeTest& t,
-				    TokensContainer::const_iterator& p)
+				    tokens_iterator& p)
   {
     this->checkNotEndOfLine("PipeTestParser::handleElementType",
 			    p,this->tokens.end());
@@ -392,7 +393,7 @@ namespace mtest
 
   void
   PipeTestParser::handlePerformSmallStrainAnalysis(PipeTest& t,
-						   TokensContainer::const_iterator& p)
+						   tokens_iterator& p)
   {
     this->checkNotEndOfLine("PipeTestParser::handlePerformSmallStrainAnalysis",
 			    p,this->tokens.end());
@@ -411,7 +412,7 @@ namespace mtest
 
   void
   PipeTestParser::handleInnerPressureEvolution(PipeTest& t,
-					       TokensContainer::const_iterator& p)
+					       tokens_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
     this->checkNotEndOfLine("PipeTestParser::handleInnerPressureEvolution",p,
@@ -426,7 +427,7 @@ namespace mtest
 
   void
   PipeTestParser::handleOuterPressureEvolution(PipeTest& t,
-					       TokensContainer::const_iterator& p)
+					       tokens_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
     this->checkNotEndOfLine("PipeTestParser::handleOuterPressureEvolution",p,
@@ -441,7 +442,7 @@ namespace mtest
 
   void
   PipeTestParser::handleOuterRadiusEvolution(PipeTest& t,
-					       TokensContainer::const_iterator& p)
+					       tokens_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
     this->checkNotEndOfLine("PipeTestParser::handleOuterRadiusEvolution",p,
@@ -456,7 +457,7 @@ namespace mtest
   
   void
   PipeTestParser::handleAxialForceEvolution(PipeTest& t,
-					       TokensContainer::const_iterator& p)
+					       tokens_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
     this->checkNotEndOfLine("PipeTestParser::handleAxialForceEvolution",p,
@@ -471,7 +472,7 @@ namespace mtest
 
   void
   PipeTestParser::handleAxialGrowthEvolution(PipeTest& t,
-					     TokensContainer::const_iterator& p)
+					     tokens_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
     this->checkNotEndOfLine("PipeTestParser::handleAxialGrowthEvolution",p,
@@ -486,7 +487,7 @@ namespace mtest
 
   void
   PipeTestParser::handleFillingPressure(PipeTest& t,
-					TokensContainer::const_iterator& p)
+					tokens_iterator& p)
   {
     t.setFillingPressure(this->readDouble(t,p));
     this->checkNotEndOfLine("PipeTestParser::handleFillingPressure",
@@ -497,7 +498,7 @@ namespace mtest
 
   void
   PipeTestParser::handleFillingTemperature(PipeTest& t,
-					   TokensContainer::const_iterator& p)
+					   tokens_iterator& p)
   {
     t.setFillingTemperature(this->readDouble(t,p));
     this->checkNotEndOfLine("PipeTestParser::handleFillingTemperature",
@@ -508,7 +509,7 @@ namespace mtest
   
   void
   PipeTestParser::handleDisplacementEpsilon(PipeTest& t,
-					    TokensContainer::const_iterator& p)
+					    tokens_iterator& p)
   {
     this->checkNotEndOfLine("PipeTestParser::handleDisplacementEpsilon",p,
 			    this->tokens.end());
@@ -521,7 +522,7 @@ namespace mtest
 
   void
   PipeTestParser::handleResidualEpsilon(PipeTest& t,
-					TokensContainer::const_iterator& p)
+					tokens_iterator& p)
   {
     this->checkNotEndOfLine("PipeTestParser::handleResidualEpsilon",p,
 			    this->tokens.end());
@@ -534,7 +535,7 @@ namespace mtest
 
   void
   PipeTestParser::handleProfile(PipeTest& t,
-				TokensContainer::const_iterator& p)
+				tokens_iterator& p)
   {
     this->checkNotEndOfLine("PipeTestParser::handleProfile",p,
 			    this->tokens.end());
@@ -575,7 +576,7 @@ namespace mtest
   }
 
   void
-  PipeTestParser::handleTest(PipeTest& t,TokensContainer::const_iterator& p)
+  PipeTestParser::handleTest(PipeTest& t,tokens_iterator& p)
   {
     this->readSpecifiedToken("PipeTestParser::handleTest","<",
 			     p,this->tokens.end());
@@ -666,8 +667,18 @@ namespace mtest
     this->readSpecifiedToken("PipeTestParser::handleTest",";",
 			     p,this->tokens.end());
   } // end of PipeTestParser::handleTest
+
+  void PipeTestParser::handleAdditionalOutputs(PipeTest& t,tokens_iterator& p){
+    this->checkNotEndOfLine("PipeTestParser::handleAdditionalOutputs",
+			    p,this->tokens.end());
+    tfel::utilities::Data d;
+    if(p->value=="{"){
+      d = tfel::utilities::Data::read(p,this->tokens.end());
+    }
+    this->readSpecifiedToken("PipeTestParser::handleAdditionalOutputs",
+			     ";",p,this->tokens.end());
+  } // end of PipeTestParser::handleAdditionalOutput
   
-  PipeTestParser::~PipeTestParser()
-  {} // end of PipeTestParser::~PipeTestParser()
+  PipeTestParser::~PipeTestParser() = default;
 
 } // end namespace mtest

@@ -69,7 +69,7 @@ MTest_setOpeningDisplacement(mtest::MTest& t, const std::vector<mtest::real>& v)
 static void
 MTest_setStress(mtest::MTest& t, const std::vector<mtest::real>& v){
   using namespace tfel::material;
-  if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+  if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
      (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
     throw(std::runtime_error("MTest::setStress: this method is only valid "
 			     "for small or finite strain behaviours"));
@@ -544,7 +544,7 @@ getInternalStateVariableValue1(const mtest::MTestCurrentState& t,
       return 1;
     } else if(type==1){
       return tfel::material::getStensorSize(s.behaviour->getHypothesis());
-    } else if(type==3){
+    } else if(type==2){
       return tfel::material::getSpaceDimension(s.behaviour->getHypothesis());
     } else if(type==3){
       return tfel::material::getTensorSize(s.behaviour->getHypothesis());

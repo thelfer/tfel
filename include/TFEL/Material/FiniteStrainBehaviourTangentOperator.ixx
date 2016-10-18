@@ -616,7 +616,7 @@ namespace tfel
       {
 	for(size_type k=0;k!=3;++k){
 	  for(size_type l=0;l!=3;++l){
-	    if(((k==1)&&(l==0))||((k==2)&&(l==1))||((k==2)&&(l==1))){
+	    if(((k==1)&&(l==0))||((k==2)&&(l==1))){
 	      continue;
 	    }
 	    const auto rkl = FiniteStrainBehaviourTangentOperatorConverterBase::index(k,l);
@@ -777,7 +777,7 @@ namespace tfel
 	const auto iJ = 1/tfel::math::det(F1);
 	for(size_type k=0;k!=3;++k){
 	  for(size_type l=0;l!=3;++l){
-	    if(((k==1)&&(l==0))||((k==2)&&(l==1))||((k==2)&&(l==1))){
+	    if(((k==1)&&(l==0))||((k==2)&&(l==1))){
 	      continue;
 	    }
 	    const auto rkl = FiniteStrainBehaviourTangentOperatorConverterBase::index(k,l);
