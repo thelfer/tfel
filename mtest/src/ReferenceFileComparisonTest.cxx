@@ -22,13 +22,11 @@ namespace mtest{
   ReferenceFileComparisonTest::ReferenceFileComparisonTest(const tfel::utilities::TextData& d,
 							   const unsigned int c,
 							   const std::string& v,
-							   const MTest::UTest::TestedVariable t,
-							   const unsigned short p,
+							   const std::function<real (const CurrentState&)>& g,
 							   const real eps_)
     : values(d.getColumn(c)),
       name(v),
-      type(t),
-      pos(p),
+      get(g),
       eps(eps_)
   {} // ReferenceFileComparisonTest::ReferenceFileComparisonTest
 
@@ -36,38 +34,23 @@ namespace mtest{
 							   const EvolutionManager& e,
 							   const std::string& f,
 							   const std::string& v,
-							   const MTest::UTest::TestedVariable t,
-							   const unsigned short p,
+							   const std::function<real (const CurrentState&)>& g,							   
 							   const real eps_)
     : values(eval(d,e,f)),
       name(v),
-      type(t),
-      pos(p),
+      get(g),
       eps(eps_)
   {} // ReferenceFileComparisonTest::ReferenceFileComparisonTest
   
-  void
-  ReferenceFileComparisonTest::check(const tfel::math::vector<real>& e,
-				     const tfel::math::vector<real>& s,
-				     const tfel::math::vector<real>& iv,
-				     const real t,
-				     const real dt,
-				     const unsigned int p)
+  void ReferenceFileComparisonTest::check(const CurrentState& s,
+					  const real t,
+					  const real dt,
+					  const unsigned int p)
   {
     auto throw_if = [](const bool c, const std::string& m){
       if(c){throw(std::runtime_error("ReferenceFileComparisonTest::check: "+m));}
     };
-    real v(0);
-    if(this->type==MTest::UTest::INTERNALSTATEVARIABLE){
-      v = iv(pos);
-    } else if(this->type==MTest::UTest::DRIVINGVARIABLE){
-      v = e(pos);
-    } else if(this->type==MTest::UTest::THERMODYNAMICFORCE){
-      v = s(pos);
-    } else {
-      throw(std::runtime_error("ReferenceFileComparisonTest::check: "
-			       "internal error (unsuported type of variable"));
-    }
+    const real v = get(s);
     if(p>=this->values.size()){
       std::ostringstream msg;
       msg << "ReferenceFileComparisonTest::check : comparison for variable '"

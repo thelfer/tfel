@@ -335,32 +335,10 @@ namespace mtest{
     this->b = bp;
     const auto& ivnames = this->b->getInternalStateVariablesNames();
     this->declareVariables(this->b->getMaterialPropertiesNames(),true);
-    this->declareVariables(ivnames,true);
     this->declareVariables(this->b->getExternalStateVariablesNames(),true);
-    for(const auto& n : ivnames){
-      const auto t = this->b->getInternalStateVariableType(n);
-      if(t==0){
-	this->ivfullnames.push_back(n);
-      } else if(t==1){
-	//! suffixes of stensor components
-	const auto& sexts = this->b->getStensorComponentsSuffixes();
-	for(decltype(sexts.size()) s=0;s!=sexts.size();++s){
-	  const auto vn = n+sexts[s];
-	  this->declareVariable(vn,true);
-	  this->ivfullnames.push_back(vn);
-	}
-      } else if(t==3){
-	//! suffixes f stensor components
-	const auto& exts = this->b->getTensorComponentsSuffixes();
-	for(decltype(exts.size()) s=0;s!=exts.size();++s){
-	  const auto vn = n+exts[s];
-	  this->declareVariable(vn,true);
-	  this->ivfullnames.push_back(vn);
-	}
-      } else {
-	throw(std::runtime_error("SingleStructureScheme::setBehaviour: "
-				 "unsupported variable type for variable '"+n+"'"));
-      }
+    this->ivfullnames = this->b->expandInternalStateVariablesNames();
+    for(const auto& n : this->ivfullnames){
+      this->declareVariable(n,true);
     }
     // declaring behaviour variables
     this->declareVariables(this->b->getDrivingVariablesComponents(),true);

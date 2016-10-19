@@ -54,25 +54,13 @@ namespace mtest
     struct UTest
     {
       /*!
-       * Type of variable tested
-       */
-      enum TestedVariable{
-	INTERNALSTATEVARIABLE,
-	DRIVINGVARIABLE,
-	THERMODYNAMICFORCE
-      };
-      /*!
-       * \param[in] e  : driving variabless
-       * \param[in] s  : thermodynamic forces
-       * \param[in] iv : internal state variables
-       * \param[in] t  : time
-       * \param[in] dt : time increment
-       * \param[in] p  : period
+       * \param[in] s:  state
+       * \param[in] t:  time
+       * \param[in] dt: time increment
+       * \param[in] p:  period
        */
       virtual void
-      check(const tfel::math::vector<real>&,
-	    const tfel::math::vector<real>&,
-	    const tfel::math::vector<real>&,
+      check(const CurrentState&,
 	    const real,
 	    const real,
 	    const unsigned int) = 0;
@@ -314,16 +302,6 @@ namespace mtest
      */
     virtual void
     setThermodynamicForceEpsilon(const real);
-    /*!
-     * \return the type and the position of the given variable
-     * \param[out] type : type of the variable
-     * \param[out] pos  : position of the variable
-     * \param[in]  n    : name of the variable
-     */
-    void
-    getVariableTypeAndPosition(UTest::TestedVariable&,
-			       unsigned short&,
-			       const std::string&);
     /*!
      * \brief add a new test
      * \param[in] t : test to be added

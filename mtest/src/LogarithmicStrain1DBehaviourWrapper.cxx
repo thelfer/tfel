@@ -99,6 +99,12 @@ namespace mtest{
   } // end of LogarithmicStrain1DBehaviourWrapper::getStensorComponentsSuffixes
 
   std::vector<std::string>
+  LogarithmicStrain1DBehaviourWrapper::getVectorComponentsSuffixes() const
+  {
+    return this->b->getVectorComponentsSuffixes();
+  } // end of LogarithmicStrain1DBehaviourWrapper::getVectorComponentsSuffixes
+  
+  std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getTensorComponentsSuffixes() const
   {
     return this->b->getTensorComponentsSuffixes();
@@ -153,6 +159,12 @@ namespace mtest{
     return this->b->getInternalStateVariablesNames();
   } // end of LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesNames
 
+  std::vector<std::string>
+  LogarithmicStrain1DBehaviourWrapper::expandInternalStateVariablesNames() const 
+  {
+    return this->b->expandInternalStateVariablesNames();
+  } // end of LogarithmicStrain1DBehaviourWrapper::expandInternalStateVariablesNames
+  
   size_t
   LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesSize() const
   {

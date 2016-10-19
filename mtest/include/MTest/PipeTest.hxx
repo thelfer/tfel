@@ -374,6 +374,29 @@ namespace mtest{
     virtual void printOutput(const real,const StudyCurrentState&,
 			     const bool) const override;
     /*!
+     * \brief compute the minium and maximum values of a scalar
+     * variable
+     * \param[in] s: structure state 
+     * \param[in] n: variable name
+     */
+    virtual std::pair<real,real>
+    computeMinimumAndMaximumValues(const StudyCurrentState&,
+				   const std::string&) const;
+    /*!
+     * \brief compute the maximum value of a scalar variable
+     * \param[in] s: structure state 
+     * \param[in] n: variable name
+     */
+    virtual real computeMinimumValue(const StudyCurrentState&,
+				     const std::string&) const;
+    /*!
+     * \brief compute the maximum value of a scalar variable
+     * \param[in] s: structure state 
+     * \param[in] n: variable name
+     */
+    virtual real computeMaximumValue(const StudyCurrentState&,
+				     const std::string&) const;
+    /*!
      * \brief add a test comparing to results stored in a reference
      * file to the computed ones
      * \param[in] n: named of the variable tested 

@@ -22,32 +22,25 @@ namespace mtest
 
   AnalyticalTest::AnalyticalTest(const std::string& f_,
 				 const std::string& v,
-				 const MTest::UTest::TestedVariable t,
-				 const unsigned short p,
+				 const std::function<real (const CurrentState&)>& g,
 				 const EvolutionManager& evm_,
 				 const real eps_)
     : f(f_),
       name(v),
-      type(t),
-      pos(p),
+      get(g),
       evm(evm_),
       eps(eps_)
-  {
-    this->vnames = this->f.getVariablesNames();
-  } // AnalyticalTest::AnalyticalTest
+  {} // AnalyticalTest::AnalyticalTest
 
   void
-  AnalyticalTest::check(const tfel::math::vector<real>& e,
-			const tfel::math::vector<real>& s,
-			const tfel::math::vector<real>& iv,
-			const real t,
-			const real dt,
+  AnalyticalTest::check(const CurrentState& s,
+			const real t,const real dt,
 			const unsigned int)
   {
     auto throw_if = [](const bool c, const std::string& m){
       if(c){throw(std::runtime_error("AnalyticalTest::check:"+m));}
     };
-    for(const auto& vn:this->vnames){
+    for(const auto& vn:this->f.getVariablesNames()){
       if(vn=="t"){
 	this->f.setVariableValue("t",t+dt);
       } else{
@@ -57,16 +50,7 @@ namespace mtest
 	this->f.setVariableValue(vn,ev(t+dt));
       }
     }
-    real v(0);
-    if(this->type==MTest::UTest::INTERNALSTATEVARIABLE){
-      v = iv(pos);
-    } else if(this->type==MTest::UTest::DRIVINGVARIABLE){
-      v = e(pos);
-    } else if(this->type==MTest::UTest::THERMODYNAMICFORCE){
-      v = s(pos);
-    } else {
-      throw_if(true,"internal error (unsuported type of variable");
-    }
+    const real v = get(s);
     const auto fv = this->f.getValue();
     throw_if(!std::isfinite(v),"invalid result for '"+this->name+"'");
     throw_if(!std::isfinite(fv),"invalid evolution of reference value");
@@ -96,7 +80,6 @@ namespace mtest
     return this->results;
   }
 
-  AnalyticalTest::~AnalyticalTest()
-  {} // end of AnalyticalTest::~AnalyticalTest
+  AnalyticalTest::~AnalyticalTest() = default;
 
 } // end of namespace mtest

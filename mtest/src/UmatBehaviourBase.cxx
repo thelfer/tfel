@@ -227,25 +227,19 @@ namespace mtest
   UmatBehaviourBase::getStensorComponentsSuffixes() const
   {
     const auto h = this->getHypothesis();
-    std::vector<std::string> c;						  
+    auto c = std::vector<std::string>{};
     if((h==ModellingHypothesis::TRIDIMENSIONAL)||
        (h==ModellingHypothesis::PLANESTRAIN)||
        (h==ModellingHypothesis::PLANESTRESS)||
        (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
-      c.push_back("XX");
-      c.push_back("YY");
-      c.push_back("ZZ");
-      c.push_back("XY");
+      c.insert(c.end(),{"XX","YY","ZZ","XY"});
       if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	c.push_back("XZ");
-	c.push_back("YZ");
+	c.insert(c.end(),{"XZ","YZ"});
       }
     } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 	       (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
 	       (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
-      c.push_back("RR");
-      c.push_back("ZZ");
-      c.push_back("TT");
+      c.insert(c.end(),{"RR","ZZ","TT"});
       if(h==ModellingHypothesis::AXISYMMETRICAL){
 	c.push_back("RZ");
       }
@@ -257,34 +251,44 @@ namespace mtest
   } // end of UmatBehaviourBase::getStensorComponentsSuffixes
 
   std::vector<std::string>
+  UmatBehaviourBase::getVectorComponentsSuffixes() const
+  {
+    const auto h = this->getHypothesis();
+    if(h==ModellingHypothesis::TRIDIMENSIONAL){
+      return {"X","Y","Z"};
+    } else if((h==ModellingHypothesis::PLANESTRAIN)||
+	      (h==ModellingHypothesis::PLANESTRESS)||
+	      (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+      return {"X","Y"};
+    } else if (h==ModellingHypothesis::AXISYMMETRICAL){
+      return {"R","Z"};
+    } else if ((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	       (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
+      return {"R"};
+    }
+    throw(std::runtime_error("UmatBehaviourBase::VectorComponentsSuffixes : "
+			     "unsupported modelling hypothesis"));
+  } // end of UmatBehaviourBase::getVectorComponentsSuffixes
+
+  std::vector<std::string>
   UmatBehaviourBase::getTensorComponentsSuffixes() const
   {
     const auto h = this->getHypothesis();
-    std::vector<std::string> c;						  
+    auto c = std::vector<std::string>{};
     if((h==ModellingHypothesis::TRIDIMENSIONAL)||
        (h==ModellingHypothesis::PLANESTRAIN)||
        (h==ModellingHypothesis::PLANESTRESS)||
        (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
-      c.push_back("XX");
-      c.push_back("YY");
-      c.push_back("ZZ");
-      c.push_back("XY");
-      c.push_back("YX");
+      c.insert(c.end(),{"XX","YY","ZZ","XY","YX"});
       if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	c.push_back("XZ");
-	c.push_back("ZX");
-	c.push_back("YZ");
-	c.push_back("ZY");
+	c.insert(c.end(),{"XZ","ZX","YZ","ZY"});
       }
     } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 	       (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
 	       (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
-      c.push_back("RR");
-      c.push_back("ZZ");
-      c.push_back("TT");
+      c.insert(c.end(),{"RR","ZZ","TT"});
       if(h==ModellingHypothesis::AXISYMMETRICAL){
-	c.push_back("RZ");
-	c.push_back("ZR");
+	c.insert(c.end(),{"RZ","ZR"});
       }
     } else {
       throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesComponents : "
@@ -292,13 +296,12 @@ namespace mtest
     }
     return c;
   } // end of UmatBehaviourBase::getTensorComponentsSuffixes
-
+  
   std::vector<std::string>
   UmatBehaviourBase::getDrivingVariablesComponents() const
   {
-    using namespace std;
     const auto h = this->getHypothesis();
-    vector<string> c;
+    auto c = std::vector<std::string>{};
     if((this->btype==1)||((this->btype==2u)&&(this->kinematic==4u))){
       const auto exts = this->getStensorComponentsSuffixes();
       for(const auto& e : exts){
@@ -316,8 +319,7 @@ namespace mtest
 	 (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
 	c.push_back("Un");
 	if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	  c.push_back("Ut1");
-	  c.push_back("Ut2");
+	  c.insert(c.end(),{"Ut1","Ut2"});
 	} else {
 	  c.push_back("Ut");
 	}
@@ -412,17 +414,44 @@ namespace mtest
   } // end of UmatBehaviourBase::getSymmetryType
 
   std::vector<std::string>
-  UmatBehaviourBase::getMaterialPropertiesNames() const
-  {
+  UmatBehaviourBase::getMaterialPropertiesNames() const {
     return this->mpnames;
   }
 
   std::vector<std::string>
-  UmatBehaviourBase::getInternalStateVariablesNames() const
-  {
+  UmatBehaviourBase::getInternalStateVariablesNames() const {
     return this->ivnames;
   }
 
+  std::vector<std::string>
+  UmatBehaviourBase::expandInternalStateVariablesNames() const {
+    auto ivfullnames = std::vector<std::string>{};
+    for(const auto& n : this->ivnames){
+      const auto t = this->getInternalStateVariableType(n);
+      if(t==0){
+	ivfullnames.push_back(n);
+      } else if(t==1){
+	//! suffixes of stensor components
+	const auto& sexts = this->getStensorComponentsSuffixes();
+	for(decltype(sexts.size()) s=0;s!=sexts.size();++s){
+	  const auto vn = n+sexts[s];
+	  ivfullnames.push_back(vn);
+	}
+      } else if(t==3){
+	//! suffixes f stensor components
+	const auto& exts = this->getTensorComponentsSuffixes();
+	for(decltype(exts.size()) s=0;s!=exts.size();++s){
+	  const auto vn = n+exts[s];
+	  ivfullnames.push_back(vn);
+	}
+      } else {
+	throw(std::runtime_error("UmatBehaviourBase::expandInternalStateVariablesNames: "
+				 "unsupported variable type for variable '"+n+"'"));
+      }
+    }
+    return ivfullnames;
+  }
+  
   std::vector<std::string>
   UmatBehaviourBase::getExternalStateVariablesNames() const
   {

@@ -1207,11 +1207,10 @@ namespace mtest{
     }
   } // end of PipeTest::computeLoadingCorrection
   
-  void
-  PipeTest::postConvergence(StudyCurrentState& state,
-			    const real t,
-			    const real dt,
-			    const unsigned int p) const
+  void PipeTest::postConvergence(StudyCurrentState& state,
+				 const real t,
+				 const real dt,
+				 const unsigned int p) const
   {
     // current pipe state
     auto& scs = state.getStructureCurrentState("");
@@ -1232,11 +1231,38 @@ namespace mtest{
     }
   } // end of PipeTest::postConvergence
 
+  std::pair<real,real>
+  PipeTest::computeMinimumAndMaximumValues(const StudyCurrentState& state,
+					   const std::string& n) const{
+    // current pipe state
+    auto& scs = state.getStructureCurrentState("");
+    auto g = buildValueExtractor(*(this->b),n);
+    auto vmin =  std::numeric_limits<real>::max();
+    auto vmax = -std::numeric_limits<real>::max();
+    // loop over the elements
+    for(size_type i=0;i!=getNumberOfGaussPoints(this->mesh);++i){
+      const auto  v = g(scs.istates[i]);
+      vmin = std::min(vmin,v);
+      vmax = std::min(vmax,v);
+    }
+    return {vmin,vmax};
+  } // end of PipeTest::computeMinimumAndMaximumValues
+
+  real PipeTest::computeMinimumValue(const StudyCurrentState& state,
+				     const std::string& n) const {
+    return this->computeMinimumAndMaximumValues(state,n).first;
+  } // end of PipeTest::computeMaximumValue
+  
+  real PipeTest::computeMaximumValue(const StudyCurrentState& state,
+				     const std::string& n) const {
+    return this->computeMinimumAndMaximumValues(state,n).second;
+  } // end of PipeTest::computeMaximumValue
+  
   void PipeTest::addProfile(const std::string& f,
 			    const std::vector<std::string>& cn)
   {
     auto ph = PipeProfileHandler{};
-    ph.out = std::shared_ptr<std::ostream>(new std::ofstream(f));
+    ph.out = std::make_shared<std::ofstream>(f);
     if(!(*(ph.out))){
       throw(std::runtime_error("PipeTest::addProfile: "
 			       "can't open file '"+f+"'"));

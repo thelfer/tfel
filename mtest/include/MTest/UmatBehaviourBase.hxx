@@ -96,6 +96,11 @@ namespace mtest
     virtual std::vector<std::string>
     getStensorComponentsSuffixes(void) const override;
     /*!
+     * \return the components suffixes of a vector
+     */
+    virtual std::vector<std::string>
+    getVectorComponentsSuffixes(void) const override;
+    /*!
      * \return the components suffixes of a tensor
      */
     virtual std::vector<std::string>
@@ -132,19 +137,16 @@ namespace mtest
      */
     virtual std::vector<std::string>
     getMaterialPropertiesNames(void) const override;
-    /*!
-     * \return the names of internal variables
-     */
+    //! \return the names of internal variables
     virtual std::vector<std::string>
     getInternalStateVariablesNames(void) const override;
-    /*!
-     * \return the size of the array of internal variables
-     */
+    //! \return expand the names of internal variables
+    virtual std::vector<std::string>
+    expandInternalStateVariablesNames() const override;
+    //! \return the size of the array of internal variables
     virtual size_t
     getInternalStateVariablesSize(void) const override;
-    /*!
-     * \return the descriptions the internal variables
-     */
+    //! \return the descriptions the internal variables
     virtual std::vector<std::string>
     getInternalStateVariablesDescriptions(void) const override;
     /*!

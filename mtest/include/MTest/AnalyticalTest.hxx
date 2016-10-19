@@ -34,19 +34,17 @@ namespace mtest{
   {
     /*!
      * constructor
-     * \param[in] f_   : function
-     * \param[in] v    : variable
-     * \param[in] vt   : variable type
-     * \param[in] vp   : variable position
-     * \param[in] evm_ : user defined evolution
-     * \param[in] eps : criterium value
+     * \param[in] f_:   function
+     * \param[in] v:    variable name
+     * \param[in] g:    getter
+     * \param[in] evm_: user defined evolution
+     * \param[in] eps:  criterium value
      */
     AnalyticalTest(const std::string&,
-			const std::string&,
-			const MTest::UTest::TestedVariable,
-			const unsigned short,
-			const EvolutionManager&,
-			const real);
+		   const std::string&,
+		   const std::function<real(const CurrentState&)>&,
+		   const EvolutionManager&,
+		   const real);
     /*!
      * \param[in] e  : strains
      * \param[in] s  : strains
@@ -55,16 +53,10 @@ namespace mtest{
      * \param[in] dt : time increment
      * \param[in] p  : period
      */
-    virtual void
-    check(const tfel::math::vector<real>&,
-	  const tfel::math::vector<real>&,
-	  const tfel::math::vector<real>&,
-	  const real,
-	  const real,
-	  const unsigned int) override;
-    /*!
-     * \return the results of the test
-     */
+    virtual void check(const CurrentState&,
+		       const real,const real,
+		       const unsigned int) override;
+    //! \return the results of the test
     virtual tfel::tests::TestResult
     getResults() const override;
     //! destructor
@@ -76,14 +68,10 @@ namespace mtest{
     tfel::math::Evaluator f;
     //! results of the test
     tfel::tests::TestResult results;
-    //! variable names of the evaluator
-    std::vector<std::string> vnames;
     //! variable name
     const std::string name;
-    //! type of variable
-    const TestedVariable type;
-    //! position of variable
-    const unsigned short pos;
+    //! value getter
+    std::function<real(const CurrentState&)> get;
     //! external evolution
     const EvolutionManager evm;
     //! criterium value

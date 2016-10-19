@@ -313,7 +313,7 @@ namespace mtest{
     }();
     std::copy(v.begin(),v.end(),iv.begin()+pos);
   } // end of setInternalStateVariableValue
-  
+
 } // end of namespace mtest
 
 

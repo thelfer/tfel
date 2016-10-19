@@ -87,6 +87,11 @@ namespace mtest
     virtual std::vector<std::string>
     getStensorComponentsSuffixes(void) const = 0;
     /*!
+     * \return the components suffixes of a vector
+     */
+    virtual std::vector<std::string>
+    getVectorComponentsSuffixes(void) const = 0;
+    /*!
      * \return the components suffixes of a tensor
      */
     virtual std::vector<std::string>
@@ -142,11 +147,12 @@ namespace mtest
     virtual void
     setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
 					       const EvolutionManager&) const = 0;
-    /*!
-     * \return the number of internal variables
-     */
+    //! \return the names of internal variables
     virtual std::vector<std::string>
     getInternalStateVariablesNames(void) const  = 0;
+    //! \return expand the names of internal variables
+    virtual std::vector<std::string>
+    expandInternalStateVariablesNames() const = 0;
     /*!
      * \return the size of the array of internal variables
      */
@@ -266,6 +272,15 @@ namespace mtest
     //! destructor
     virtual ~Behaviour();
   }; // end of struct Behaviour
+
+  /*!
+   * \return an object able to extract a specific value from the
+   * current state
+   * \param[in] b: behaviour
+   * \param[in] n: variable name
+   */
+  MTEST_VISIBILITY_EXPORT std::function<real(const CurrentState&)>
+  buildValueExtractor(const Behaviour&,const std::string&);
   
 } // end of namespace mtest
 

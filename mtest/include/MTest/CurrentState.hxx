@@ -33,9 +33,8 @@ namespace mtest
   /*!
    * an helper structure used to store information for the packaging step
    */
-  using PackagingInfo =
-    tfel::utilities::GenTypeBase<tfel::meta::GenerateTypeList<tfel::math::vector<real>,
-							      tfel::math::matrix<real>>::type>;
+  using PackagingInfo = tfel::utilities::GenType<tfel::math::vector<real>,
+						 tfel::math::matrix<real>>;
   
   /*!
    * structure containing the state of the material.
@@ -45,6 +44,13 @@ namespace mtest
    */
   struct MTEST_VISIBILITY_EXPORT  CurrentState
   {
+    //! variable type
+    enum PostProcessingVariableType{
+      EXTERNALSTATEVARIABLE,
+      INTERNALSTATEVARIABLE,
+      DRIVINGVARIABLE,
+      THERMODYNAMICFORCE
+    }; // end of VariableType
     //! default constructor
     CurrentState();
     //! copy constructor

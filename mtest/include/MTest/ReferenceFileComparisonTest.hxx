@@ -44,8 +44,7 @@ namespace mtest{
     ReferenceFileComparisonTest(const tfel::utilities::TextData&,
 				const unsigned int,
 				const std::string&,
-				const MTest::UTest::TestedVariable,
-				const unsigned short,
+				const std::function<real(const CurrentState&)>&,
 				const real);
     /*!
      * constructor
@@ -61,27 +60,18 @@ namespace mtest{
 				const EvolutionManager&,
 				const std::string&,
 				const std::string&,
-				const MTest::UTest::TestedVariable,
-				const unsigned short,
+				const std::function<real(const CurrentState&)>&,
 				const real);
     /*!
-     * \param[in] e  : strains
-     * \param[in] s  : strains
-     * \param[in] iv : internal state variables
-     * \param[in] t  : time
-     * \param[in] dt : time increment
-     * \param[in] p  : period
+     * \param[in] s:  state
+     * \param[in] t:  time
+     * \param[in] dt: time increment
+     * \param[in] p:  period
      */
-    virtual void
-    check(const tfel::math::vector<real>&,
-	  const tfel::math::vector<real>&,
-	  const tfel::math::vector<real>&,
-	  const real,
-	  const real,
-	  const unsigned int) override;
-    /*!
-     * \return the results of the test
-     */
+    virtual void check(const CurrentState&,
+		       const real,const real,
+		       const unsigned int) override;
+    //! \return the results of the test
     virtual tfel::tests::TestResult
     getResults() const override;
     //! destructor
@@ -97,10 +87,8 @@ namespace mtest{
     tfel::tests::TestResult results;
     //! variable name
     const std::string name;
-    //! type of variable
-    const TestedVariable type;
-    //! position of variable
-    const unsigned short pos;
+    //! value getter
+    std::function<real(const CurrentState&)> get;
     //! criterium value
     const real eps;
   }; 

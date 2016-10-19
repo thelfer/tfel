@@ -105,8 +105,7 @@ namespace mtest
     this->execute(t);
   }
   
-  void
-  MTestParser::execute(MTest& t)
+  void MTestParser::execute(MTest& t)
   {
     auto p = this->tokens.cbegin();
     while(p!=tokens.end()){
@@ -340,19 +339,19 @@ namespace mtest
 			     p,this->tokens.end());
   } // end of MTestParser::handleNumericalTangentOperatorPerturbationValue  
 
-  void
-  MTestParser::handleTest(MTest& t,tokens_iterator& p)
+  void MTestParser::handleTest(MTest& t,tokens_iterator& p)
   {
     using namespace std;
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("MTestParser::handleTest: "+m));}
+    };
     this->readSpecifiedToken("MTestParser::handleTest","<",
 			     p,this->tokens.end());
     this->checkNotEndOfLine("MTestParser::handleTest",p,
 			    this->tokens.end());
     const auto& type = p->value;
-    if((type!="function")&&(type!="file")){
-      throw(std::runtime_error("MTestParser::handleTest: "
-			       "invalid test type '"+type+"'"));
-    }
+    throw_if((type!="function")&&(type!="file"),
+	     "invalid test type '"+type+"'");
     ++p;
     this->readSpecifiedToken("MTestParser::handleTest",">",
 			     p,this->tokens.end());
@@ -382,36 +381,25 @@ namespace mtest
 				     p,this->tokens.end());	
 	    this->checkNotEndOfLine("MTestParser::handleTest",p,
 				    this->tokens.end());
-	    if(p->value=="}"){
-	      string msg("MTestParser::handleTest: "
-			 "unexpected token '}'");
-	      throw(runtime_error(msg));
-	    }
+	    throw_if(p->value=="}","unexpected token '}'");
 	  }
 	}
 	this->readSpecifiedToken("MTestParser::handleTest","}",
 				 p,this->tokens.end());	
       }
       const real eps = this->readDouble(t,p);
-      if(eps<0){
-	throw(std::runtime_error("MTestParser::handleTest: "
-				 "invalid criterion value"));
-      }
-      map<string,string>::const_iterator pf;
-      for(pf=functions.begin();pf!=functions.end();++pf){
-	MTest::UTest::TestedVariable ttype;
-	unsigned short pos;
-	t.getVariableTypeAndPosition(ttype,pos,pf->first);
-	shared_ptr<MTest::UTest> test;
-	test = shared_ptr<MTest::UTest>(new AnalyticalTest(pf->second,pf->first,
-							   ttype,pos,t.getEvolutions(),eps));
+      throw_if(eps<0,"invalid criterion value");
+      for(const auto& f : functions){
+	const auto& g = buildValueExtractor(*(t.getBehaviour()),f.first);
+	auto test = std::make_shared<AnalyticalTest>(f.second,f.first,g,
+						     t.getEvolutions(),eps);
 	t.addTest(test);
       }
-    } else if (type=="file"){
+  } else if (type=="file"){
       const auto& f = this->readString(p,this->tokens.end());
       this->checkNotEndOfLine("MTestParser::handleTest",p,
 			      this->tokens.end());
-      using gentype=tfel::utilities::GenTypeBase<tfel::meta::GenerateTypeList<std::string,unsigned short>::type>;
+      using gentype=tfel::utilities::GenType<std::string,unsigned short>;
       map<string,gentype> columns; 
       if(p->flag==tfel::utilities::Token::String){
 	const auto& v = this->readString(p,this->tokens.end());
@@ -439,41 +427,28 @@ namespace mtest
 				     p,this->tokens.end());	
 	    this->checkNotEndOfLine("MTestParser::handleTest",p,
 				    this->tokens.end());
-	    if(p->value=="}"){
-	      string msg("MTestParser::handleTest: "
-			 "unexpected token '}'");
-	      throw(runtime_error(msg));
-	    }
+	    throw_if(p->value=="}","unexpected token '}'");
 	  }
 	}
 	this->readSpecifiedToken("MTestParser::handleTest","}",
 				 p,this->tokens.end());	
       }
       const real eps = this->readDouble(t,p);
-      if(eps<0){
-	throw(runtime_error("MTestParser::handleTest: "
-			    "invalid criterion value"));
-      }
-      shared_ptr<tfel::utilities::TextData> data(new tfel::utilities::TextData(f));
+      throw_if(eps<0,"invalid criterion value");
+      auto data = std::make_shared<tfel::utilities::TextData>(f);
       for(const auto& c : columns){
-	MTest::UTest::TestedVariable ttype;
-	unsigned short pos;
-	t.getVariableTypeAndPosition(ttype,pos,c.first);
-	std::shared_ptr<MTest::UTest> test;
+	const auto& g = buildValueExtractor(*(t.getBehaviour()),c.first);
 	if(c.second.is<unsigned short>()){
 	  const auto cn = static_cast<unsigned short>(c.second);
-	  test = shared_ptr<MTest::UTest>(new ReferenceFileComparisonTest(*data,cn,c.first,
-									  ttype,pos,eps));
+	  t.addTest(std::make_shared<ReferenceFileComparisonTest>(*data,cn,c.first,g,eps));
 	} else {
 	  const auto ef = static_cast<std::string>(c.second);
-	  test = shared_ptr<MTest::UTest>(new ReferenceFileComparisonTest(*data,t.getEvolutions(),
-									  ef,c.first,ttype,pos,eps));
+	  t.addTest(std::make_shared<ReferenceFileComparisonTest>(*data,t.getEvolutions(),
+								  ef,c.first,g,eps));
 	}
-	t.addTest(test);
       }
-    } else {
-      throw(runtime_error("MTestParser::handleTest: "
-			  "invalid test type '"+type+"'"));
+  } else {
+    throw_if(true,"invalid test type '"+type+"'");
     }
     this->readSpecifiedToken("MTestParser::handleTest",";",
 			     p,this->tokens.end());

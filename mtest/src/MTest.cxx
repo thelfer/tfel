@@ -191,39 +191,6 @@ namespace mtest
     this->rm = r;
   }
 
-  void
-  MTest::getVariableTypeAndPosition(UTest::TestedVariable& type,
-				    unsigned short& pos,
-				    const std::string& n)
-  {
-    if(this->b.get()==nullptr){
-      throw(std::runtime_error("MTest::getVariableTypeAndPosition : "
-			       "no behaviour defined"));
-    }
-    const auto enames = this->b->getDrivingVariablesComponents();
-    const auto snames = this->b->getThermodynamicForcesComponents();
-    auto p= std::find(enames.begin(),enames.end(),n);
-    if(p!=enames.end()){
-      pos  = static_cast<unsigned short>(p-enames.begin());
-      type = MTest::UTest::DRIVINGVARIABLE;
-      return;
-    } 
-    p=std::find(snames.begin(),snames.end(),n);
-    if(p!=snames.end()){
-      pos  = static_cast<unsigned short>(p-snames.begin());
-      type = MTest::UTest::THERMODYNAMICFORCE;
-      return;
-    } 
-    p=std::find(this->ivfullnames.begin(),this->ivfullnames.end(),n);
-    if(p!=this->ivfullnames.end()){
-      pos  = static_cast<unsigned short>(p-this->ivfullnames.begin());
-      type = MTest::UTest::INTERNALSTATEVARIABLE;
-      return;
-    } 
-    throw(std::runtime_error("MTest::getVariableTypeAndPosition : "
-			     "no variable name '"+n+"'"));
-  } // end of MTest::getVariableTypeAndPosition
-
   void MTest::setDefaultModellingHypothesis()
   {
     using tfel::material::ModellingHypothesis;
@@ -930,7 +897,7 @@ namespace mtest
     }
     auto& s = scs.istates[0];
     for(const auto& test : this->tests){
-      test->check(state.u1,s.s1,s.iv1,t,dt,p);
+      test->check(s,t,dt,p);
     }
   } // end of MTest::postConvergence
   
