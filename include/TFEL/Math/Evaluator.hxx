@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_EVALUATOR_HXX_
-#define LIB_TFEL_MATH_EVALUATOR_HXX_ 
+#ifndef LIB_TFEL_MATH_EVALUATOR_HXX
+#define LIB_TFEL_MATH_EVALUATOR_HXX 
 
 #include<map>
 #include<memory>
@@ -199,11 +199,10 @@ namespace tfel
       resolveDependencies(void) const override;
       virtual void
       removeDependencies(void);
-      virtual void
-      setVariableValue(const std::vector<double>::size_type,
-		       const double) override;
-      virtual void
-      setVariableValue(const std::string&,const double);
+      virtual void setVariableValue(const std::vector<double>::size_type,
+				    const double) override;
+      virtual void setVariableValue(const std::string&,const double);
+      virtual void setVariableValue(const char* const,const double);
       virtual std::shared_ptr<ExternalFunction>
       createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const override;
       virtual std::shared_ptr<ExternalFunction>
@@ -339,4 +338,4 @@ namespace tfel
 #include"TFEL/Math/Evaluator.ixx"
 #include"TFEL/Math/Parser/EvaluatorTExpr.hxx"
 
-#endif /* LIB_TFEL_MATH_EVALUATOR_HXX_ */
+#endif /* LIB_TFEL_MATH_EVALUATOR_HXX */

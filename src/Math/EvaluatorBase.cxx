@@ -226,8 +226,7 @@ namespace tfel
 	t.swap(res);
       }
 
-      void
-      EvaluatorBase::analyse(const std::string& expr)
+      void EvaluatorBase::analyse(const std::string& expr)
       {
 	std::istringstream tokenizer(expr);
 	std::copy(std::istream_iterator<std::string>(tokenizer),
