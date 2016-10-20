@@ -453,24 +453,33 @@ namespace tfel
       return std::min(a,b);
     } // end of Evaluator::min
 
-    void
-    Evaluator::checkCyclicDependency(std::vector<std::string>& names) const
+    void Evaluator::checkCyclicDependency(std::vector<std::string>& names) const
     {
+      if(this->expr==nullptr){
+	throw(std::runtime_error("Evaluator::checkCyclicDependency: "
+				 "uninitialized evaluator"));
+      }
       this->expr->checkCyclicDependency(names);
     } // end of Evaluator::checkCyclicDependency
 
-    void
-    Evaluator::checkCyclicDependency(const std::string& name) const
+    void  Evaluator::checkCyclicDependency(const std::string& name) const
     {
       std::vector<std::string> names(1,name);
+      if(this->expr==nullptr){
+	throw(std::runtime_error("Evaluator::checkCyclicDependency: "
+				 "uninitialized evaluator"));
+      }
       this->expr->checkCyclicDependency(names);
     } // end of Evaluator::checkCyclicDependency
 
-    void
-    Evaluator::checkCyclicDependency() const
+    void Evaluator::checkCyclicDependency() const
     {
-      std::vector<std::string> names;
-      this->expr->checkCyclicDependency(names);
+      std::vector<std::string> names; 
+      if(this->expr==nullptr){
+	throw(std::runtime_error("Evaluator::checkCyclicDependency: "
+				 "uninitialized evaluator"));
+      }
+     this->expr->checkCyclicDependency(names);
     } // end of Evaluator::checkCyclicDependency
 
     template<typename T>
@@ -1126,22 +1135,23 @@ namespace tfel
       this->expr = std::make_shared<parser::Number>(v);
     } // end of Evaluator::Evaluator
 
-    void Evaluator::setFunction(const std::string& f)
-    {
+    void Evaluator::clear(){
       this->variables.clear();
       this->positions.clear();
       this->expr.reset();
       this->manager.reset();
+    }
+    
+    void Evaluator::setFunction(const std::string& f)
+    {
+      this->clear();
       this->analyse(f,false);
     } // end of Evaluator::setFunction
 
     void Evaluator::setFunction(const std::vector<std::string>& vars,
 				const std::string& f)
     {
-      this->variables.clear();
-      this->positions.clear();
-      this->expr.reset();
-      this->manager.reset();
+      this->clear();
       this->variables.resize(vars.size());
       auto pos = std::vector<double>::size_type{0u};
       for(auto p = vars.cbegin();p!=vars.cend();++p){
@@ -1163,9 +1173,7 @@ namespace tfel
     Evaluator::setFunction(const std::string& f,
 			   std::shared_ptr<tfel::math::parser::ExternalFunctionManager>& m)
     {
-      this->variables.clear();
-      this->positions.clear();
-      this->expr.reset();
+      this->clear();
       this->manager = m;
       this->analyse(f,false);
     } // end of Evaluator::setFunction
@@ -1178,9 +1186,7 @@ namespace tfel
       auto throw_if = [](const bool c, const std::string& msg){
 	if(c){throw(std::runtime_error("Evaluator::treatGroup: "+msg));}
       };
-      this->variables.clear();
-      this->positions.clear();
-      this->expr.reset();
+      this->clear();
       this->manager = m;
       this->variables.resize(vars.size());
       auto pos = std::vector<double>::size_type{};
@@ -1293,7 +1299,7 @@ namespace tfel
 				       "ParametersIntoVariables: "+m));}
       };
       std::set<std::string> ev_params;
-      throw_if(this->variables.size()==this->positions.size(),
+      throw_if(this->variables.size()!=this->positions.size(),
 	       "internal error: variables size is not equal to the positions size");
       this->getParametersNames(ev_params);
       for(const auto& p : params){
@@ -1318,6 +1324,10 @@ namespace tfel
 
     void Evaluator::getParametersNames(std::set<std::string>& n) const
     {
+      if(this->expr==nullptr){
+	throw(std::runtime_error("Evaluator::getParametersNames: "
+				 "uninitialized evaluator"));
+      }
       return this->expr->getParametersNames(n);
     } // end of Evaluator::getParametersNames
 

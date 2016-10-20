@@ -37,6 +37,8 @@ namespace mtest{
 
   // forward declaration
   struct PipeProfileHandler;
+  // forward declaration
+  struct GasEquationOfState;
   
   /*!
    * a study describing mechanical tests on pipes
@@ -182,6 +184,11 @@ namespace mtest{
      * \param[in] p : filling temperature evolution
      */
     virtual void setFillingTemperature(const real);
+    /*!
+     * \brief set the gas equation of state
+     * \param[in] e: equation of state
+     */
+    virtual void setGasEquationOfState(const std::string&);
     /*!
      * \brief set displacement criterion value
      * \param[in] e: criterion value
@@ -447,6 +454,8 @@ namespace mtest{
     std::vector<PipeProfileHandler> profiles;
     //! mesh data
     PipeMesh mesh;
+    //! user defined gas equation of state
+    std::unique_ptr<GasEquationOfState> gseq;
     //! outer radius evolution
     std::shared_ptr<Evolution> orev;
     //! axial growth evolution
@@ -457,8 +466,10 @@ namespace mtest{
     std::shared_ptr<Evolution> inner_pressure;
     //! outer pressure
     std::shared_ptr<Evolution> outer_pressure;
+    //! initial number of moles (tight pipe modelling)
+    real n0 = -1;
     //! initial pressure (tight pipe modelling)
-    real p0 = -1;
+    real P0 = -1;
     //! initial temperature (tight pipe modelling)
     real T0 = -1;
     //! pipe modelling hypothesis

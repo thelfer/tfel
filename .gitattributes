@@ -4251,6 +4251,7 @@ mtest/include/MTest/EuroplexusStandardBehaviour.hxx -text
 mtest/include/MTest/Evolution.hxx -text
 mtest/include/MTest/FAndersonAccelerationAlgorithm.hxx -text
 mtest/include/MTest/FunctionEvolution.hxx -text
+mtest/include/MTest/GasEquationOfState.hxx -text
 mtest/include/MTest/GenericSolver.hxx -text
 mtest/include/MTest/ImposedDrivingVariable.hxx -text
 mtest/include/MTest/ImposedThermodynamicForce.hxx -text
@@ -4328,6 +4329,7 @@ mtest/src/EuroplexusStandardBehaviour.cxx -text
 mtest/src/Evolution.cxx -text
 mtest/src/FAndersonAccelerationAlgorithm.cxx -text
 mtest/src/FunctionEvolution.cxx -text
+mtest/src/GasEquationOfState.cxx -text
 mtest/src/GenericSolver.cxx -text
 mtest/src/ImposedDrivingVariable.cxx -text
 mtest/src/ImposedThermodynamicForce.cxx -text
@@ -4442,6 +4444,7 @@ mtest/tests/ptest/references/nortonpipe1D-stresses-quadratic.ref -text
 mtest/tests/ptest/references/orthotropic-elastic-profile-quadratic.ref -text
 mtest/tests/unit-tests/CMakeLists.txt -text
 mtest/tests/unit-tests/EvolutionTest.cxx -text
+mtest/tests/unit-tests/GasEquationOfStateTest.cxx -text
 mtest/tests/unit-tests/MTestParserTest.cxx.in -text
 mtest/tests/unit-tests/Makefile.am -text
 mtest/tests/unit-tests/PipeTest.cxx -text

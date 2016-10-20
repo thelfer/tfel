@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_MTEST_H_
-#define LIB_MTEST_MTEST_H_ 
+#ifndef LIB_MTEST_MTEST_H
+#define LIB_MTEST_MTEST_H 
 
 #include<map>
 #include<string>
@@ -334,9 +334,7 @@ namespace mtest
      */
     virtual void printOutput(const real,const StudyCurrentState&,
 			     const bool) const override;
-    /*!
-     * destructor
-     */
+    //! destructor
     ~MTest();
   protected:
     //! \brief set the modelling hypothesis to the default one
@@ -375,5 +373,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_MTEST_H_ */
+#endif /* LIB_MTEST_MTEST_H */
 

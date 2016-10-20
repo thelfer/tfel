@@ -87,10 +87,12 @@ macro(test_mtest test_arg)
   add_test(NAME ${test_arg} COMMAND ${test_arg})
   add_dependencies(check ${test_arg})
   target_link_libraries(${test_arg}
-    TFELMTest TFELMaterial TFELMath
-    TFELSystem  TFELGlossary
-    TFELUtilities TFELException TFELTests)
+    TFELMTest      TFELMaterial
+    TFELMathParser TFELMath
+    TFELSystem     TFELGlossary
+    TFELUtilities  TFELException TFELTests)
 endmacro(test_mtest)
 
 test_mtest(PipeTest)
 test_mtest(EvolutionTest)
+test_mtest(GasEquationOfStateTest)

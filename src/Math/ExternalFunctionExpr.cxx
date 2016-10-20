@@ -132,19 +132,15 @@ namespace tfel
 	    p3!=this->args.end();++p3,++p4){
 	  *p4 = (*p3)->clone(v);
 	}
-        shared_ptr<Expr> df_(new ExternalFunctionExpr2(p2->second->differentiate(i),
-						     nargs));
-        shared_ptr<Expr> df = shared_ptr<Expr>(new BinaryOperation<OpMult>(df_,
-								       (*p)->differentiate(pos,v)));
+	auto df  = std::shared_ptr<Expr>{};
+        auto df_ = std::make_shared<ExternalFunctionExpr2>(p2->second->differentiate(i),nargs);
+        df  = std::make_shared<BinaryOperation<OpMult>>(df_,(*p)->differentiate(pos,v));
         ++p;
         ++i;
-        while(p!=this->args.end()){
-	  df_  = shared_ptr<Expr>(new ExternalFunctionExpr2(p2->second->differentiate(i),
-							  nargs));
-	  shared_ptr<Expr> df2 = shared_ptr<Expr>(new BinaryOperation<OpMult>(df_,
-									  (*p)->differentiate(pos,v)));
-      
-          df = shared_ptr<Expr>(new BinaryOperation<OpPlus>(df,df2));
+	while(p!=this->args.end()){
+	  df_      = std::make_shared<ExternalFunctionExpr2>(p2->second->differentiate(i),nargs);
+	  auto df2 = std::make_shared<BinaryOperation<OpMult>>(df_,(*p)->differentiate(pos,v));
+          df = std::make_shared<BinaryOperation<OpPlus>>(df,df2);
 	  ++p;
 	  ++i;
         }
@@ -162,7 +158,7 @@ namespace tfel
         for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
 	  *p2 = (*p)->clone(v);
 	}
-        return shared_ptr<Expr>(new ExternalFunctionExpr(this->name,nargs,this->manager));	
+        return std::make_shared<ExternalFunctionExpr>(this->name,nargs,this->manager);	
       } // end of ExternalFunctionExpr::clone
 
       std::shared_ptr<Expr>
@@ -234,21 +230,17 @@ namespace tfel
       void
       ExternalFunctionExpr::getParametersNames(std::set<std::string>& p) const
       {
-	using namespace std;
-	vector<shared_ptr<Expr> >::const_iterator pa;
-	ExternalFunctionManager::iterator pf;
 	if(this->args.size()==0){
 	  p.insert(this->name);
 	} else {
-	  pf = this->manager->find(this->name);
+	  auto pf = this->manager->find(this->name);
 	  if(pf==this->manager->end()){
-	    string msg("ExternalFunctionExpr::getParametersNames : ");
-	    msg += "no function '"+this->name+"' declared";
-	    throw(runtime_error(msg));
+	    throw(std::runtime_error("ExternalFunctionExpr::getParametersNames: "
+				     "no function '"+this->name+"' declared"));
 	  }
 	  pf->second->getParametersNames(p);
-	  for(pa=this->args.begin();pa!=this->args.end();++pa){
-	    (*pa)->getParametersNames(p);
+	  for(const auto& a :this->args){
+	    a->getParametersNames(p);
 	  }
 	}
       } // end of ExternalFunctionExpr::getParametersNames(std::set<std::string>&) const;
@@ -260,30 +252,27 @@ namespace tfel
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         vector<shared_ptr<Expr> >::const_iterator p;
         vector<shared_ptr<Expr> >::iterator p2;
-	ExternalFunctionManager::iterator p3;
         for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
 	  *p2 = (*p)->resolveDependencies(v);
 	}
-	p3=this->manager->find(this->name);
+	auto p3 = this->manager->find(this->name);
 	if(p3==this->manager->end()){
-	  string msg("ExternalFunctionExpr::getValue : ");
-	  msg += "unknown function '"+this->name+"'";
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("ExternalFunctionExpr::getValue: "
+				   "unknown function '"+this->name+"'"));
 	}
 	if(p3->second->getNumberOfVariables()!=this->args.size()){
-	  ostringstream msg;
+	  std::ostringstream msg;
 	  msg << "ExternalFunctionExpr::getValue : "
 	      << "invalid number of arguments for function '"
 	      << this->name << "' (" 
 	      << this->args.size() << " given, "
 	      << p3->second->getNumberOfVariables() << " required)";
-	  throw(runtime_error(msg.str()));
+	  throw(std::runtime_error(msg.str()));
 	}
-        return shared_ptr<Expr>(new ExternalFunctionExpr2(p3->second->resolveDependencies(),nargs));	
+        return std::make_shared<ExternalFunctionExpr2>(p3->second->resolveDependencies(),nargs);
       } // end of ExternalFunctionExpr::resolveDependencies
 
-      ExternalFunctionExpr::~ExternalFunctionExpr()
-      {} // end of ExternalFunctionExpr::~ExternalFunctionExpr
+      ExternalFunctionExpr::~ExternalFunctionExpr() = default;
       
     } // end of namespace parser
 

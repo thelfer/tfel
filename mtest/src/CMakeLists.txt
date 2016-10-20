@@ -61,7 +61,8 @@ set(TFELMTest_SOURCES
   SchemeParserBase.cxx
   SingleStructureSchemeParser.cxx
   MTestParser.cxx
-  PipeTestParser.cxx)
+  PipeTestParser.cxx
+  GasEquationOfState.cxx)
 
 set(TFELMTest_LDADD
   MFrontLogStream

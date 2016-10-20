@@ -225,6 +225,8 @@ namespace tfel
       convert(const std::string&);
       static bool TFEL_VISIBILITY_LOCAL
       isNumber(const std::string&);
+      //! \brief clear the object
+      TFEL_VISIBILITY_LOCAL void clear(void);
       void TFEL_VISIBILITY_LOCAL
       treatDiff(std::vector<std::string>::const_iterator&,
 		const std::vector<std::string>::const_iterator,

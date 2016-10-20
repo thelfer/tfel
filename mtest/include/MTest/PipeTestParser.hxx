@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_PIPETESTPARSER_H_
-#define LIB_MTEST_PIPETESTPARSER_H_ 
+#ifndef LIB_MTEST_PIPETESTPARSER_H
+#define LIB_MTEST_PIPETESTPARSER_H 
 
 #include<map>
 #include<string>
@@ -165,6 +165,13 @@ namespace mtest
     virtual void
     handleAxialGrowthEvolution(PipeTest&,tokens_iterator&);
     /*!
+     * \brief handle the GasEquationOfState keyword
+     * \param[out]    t: test
+     * \param[in,out] p: position in the input file
+     */
+    virtual void
+    handleGasEquationOfState(PipeTest&,tokens_iterator&);
+    /*!
      * \brief handle the @FillingPressure keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
@@ -244,5 +251,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_PIPETESTPARSER_H_ */
+#endif /* LIB_MTEST_PIPETESTPARSER_H */
 

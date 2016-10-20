@@ -26,6 +26,7 @@
 #include"MTest/StudyCurrentState.hxx"
 #include"MTest/StructureCurrentState.hxx"
 #include"MTest/GenericSolver.hxx"
+#include"MTest/GasEquationOfState.hxx"
 #include"MTest/PipeLinearElement.hxx"
 #include"MTest/PipeQuadraticElement.hxx"
 #include"MTest/PipeCubicElement.hxx"
@@ -439,13 +440,13 @@ namespace mtest{
       this->al=ENDCAPEFFECT;
     }
     if(this->al==IMPOSEDAXIALFORCE){
-      if(this->axial_force.get()==nullptr){
+      if(this->axial_force==nullptr){
 	throw(std::runtime_error("PipeTest::completeInitialisation: "
 				 "the axial force evolution must be defined"));
       }
     }
     if(this->al==IMPOSEDAXIALGROWTH){
-      if(this->axial_growth.get()==nullptr){
+      if(this->axial_growth==nullptr){
 	this->axial_growth = make_evolution(real(0));
       }
     }
@@ -453,14 +454,14 @@ namespace mtest{
       this->rl=IMPOSEDPRESSURE;
     }
     if(this->rl==IMPOSEDOUTERRADIUS){
-      if(this->orev.get()==nullptr){
+      if(this->orev==nullptr){
 	throw(std::runtime_error("PipeTest::completeInitialisation: "
 				 "the outer radius evolution must be defined"));
       }
     } else {
       if((this->rl!=TIGHTPIPE)&&(this->al!=IMPOSEDAXIALFORCE)&&(this->al!=IMPOSEDAXIALGROWTH)){
-	if((this->inner_pressure.get()==nullptr)&&
-	   (this->outer_pressure.get()==nullptr)){
+	if((this->inner_pressure==nullptr)&&
+	   (this->outer_pressure==nullptr)){
 	  throw(std::runtime_error("PipeTest::completeInitialisation: "
 				   "either an inner pressure evolution or "
 				   "an outer pressure evolution must be defined"));
@@ -468,7 +469,7 @@ namespace mtest{
       }
     }
     if(this->rl==TIGHTPIPE){
-      if(this->p0<0){
+      if(this->P0<0){
 	throw(std::runtime_error("PipeTest::completeInitialisation: "
 				 "filling pressure not set"));
       }
@@ -492,6 +493,14 @@ namespace mtest{
       if(this->al==IMPOSEDAXIALGROWTH){
 	this->out << "# " << c << "th column : axial force" << std::endl;
 	++c;
+      }
+    }
+    if(this->rl!=TIGHTPIPE){
+      if(this->gseq!=nullptr){
+	constexpr const real pi = 3.14159265358979323846;
+	const auto Ri = this->mesh.inner_radius;
+	const auto V  = pi*Ri*Ri;
+	this->n0 = this->gseq->computeNumberOfMoles(this->P0,V,this->T0);
       }
     }
   } // end of PipeTest::completeInitialisation
@@ -550,8 +559,7 @@ namespace mtest{
     this->options.seps = s;
   }
   
-  void
-  PipeTest::initializeCurrentState(StudyCurrentState& s) const
+  void PipeTest::initializeCurrentState(StudyCurrentState& s) const
   {
     if(this->b==nullptr){
       throw(std::runtime_error("PipeTest::initializeCurrentState: "
@@ -705,7 +713,7 @@ namespace mtest{
       if(this->rl==TIGHTPIPE){ 
 	state.addEvolution("InnerPressure",
 			   std::shared_ptr<Evolution>(new LPIEvolution({*pt,*pt2},
-								       {this->p0,this->p0})));
+								       {this->P0,this->P0})));
       }
       if(this->al==IMPOSEDAXIALGROWTH){ 
 	state.addEvolution("AxialForce",
@@ -751,7 +759,7 @@ namespace mtest{
       if(!state.containsEvolution("InnerPressure")){
 	state.addEvolution("InnerPressure",
 			   std::shared_ptr<Evolution>(new LPIEvolution({ti,te},
-								       {this->p0,this->p0})));
+								       {this->P0,this->P0})));
       }
     }
     if(this->al==IMPOSEDAXIALFORCE){
@@ -872,7 +880,7 @@ namespace mtest{
     const auto& ezz = state.u1[n];
     /* external forces */
     if((this->rl==IMPOSEDOUTERRADIUS)||
-       ((this->rl==IMPOSEDPRESSURE)&&(this->inner_pressure.get()!=nullptr))){
+       ((this->rl==IMPOSEDPRESSURE)&&(this->inner_pressure!=nullptr))){
       const auto Pi  = (this->rl==IMPOSEDPRESSURE) ?
 	(*(this->inner_pressure))(t+dt) : state.getEvolution("InnerPressure")(t+dt);
       const auto Ri_ = (this->hpp) ? Ri : Ri+state.u1[0];
@@ -905,7 +913,12 @@ namespace mtest{
       }
       const auto T = (*(pT->second))(t+dt);
       if(this->hpp){
-	const auto Pi = this->p0*(T/this->T0);
+	const auto Pi = [this,T,Ri_](){
+	  if(this->gseq==nullptr){
+	    return this->P0*(T/this->T0);
+	  }
+	  return this->gseq->computePressure(pi*Ri_*Ri_,this->n0,T);
+	}();
 	// for post-processing
 	state.getEvolution("InnerPressure").setValue(t+dt,Pi);
 	r(0) -= 2*pi*Pi*Ri_;
@@ -913,23 +926,47 @@ namespace mtest{
 	  r(n) -= pi*Ri_*Ri_*Pi;
 	}
       } else {
-	const auto tmp = pi*(this->p0)*(T/this->T0)*Ri*Ri;
-	// for post-processing
-	const auto Pi_  = (this->p0)*(T/this->T0)*Ri*Ri/(Ri_*Ri_)/(1+ezz);
-	state.getEvolution("InnerPressure").setValue(t+dt,Pi_);
-	r(0) -=  2*tmp/Ri_;
-	if(mt!=StiffnessMatrixType::NOSTIFFNESS){
-	  k(0,0) +=  2*tmp/(Ri_*Ri_);
-	}
-	if(this->al==ENDCAPEFFECT){
-	  r(n) -= tmp/(1+ezz);
+	if(this->gseq==nullptr){
+	  const auto tmp = pi*(this->P0)*(T/this->T0)*Ri*Ri;
+	  // for post-processing
+	  const auto Pi_  = (this->P0)*(T/this->T0)*Ri*Ri/(Ri_*Ri_)/(1+ezz);
+	  state.getEvolution("InnerPressure").setValue(t+dt,Pi_);
+	  r(0) -=  2*tmp/Ri_;
 	  if(mt!=StiffnessMatrixType::NOSTIFFNESS){
-	    k(n,n) += tmp/((1+ezz)*(1+ezz));
+	    k(0,0) +=  2*tmp/(Ri_*Ri_);
 	  }
-	}	
+	  if(this->al==ENDCAPEFFECT){
+	    r(n) -= tmp/(1+ezz);
+	    if(mt!=StiffnessMatrixType::NOSTIFFNESS){
+	      k(n,n) += tmp/((1+ezz)*(1+ezz));
+	    }
+	  }
+	} else {
+	  const size_type ln = n-1;
+	  const auto V       = pi*Ri_*Ri_*(1+ezz);
+	  const auto dV_du   = 2*pi*Ri_*(1+ezz);
+	  const auto dV_dezz =   pi*Ri_*Ri_*(1+ezz);
+	  const auto Pi = this->gseq->computePressure(V,this->n0,T);
+	  const auto K  =
+	    this->gseq->computeIsothermalBulkModulus(V,this->n0,T);
+	  const auto dP_dV = -K/V;
+	  r(ln) += 2*pi*Pi*(1+ezz)*Ri_;
+	  if(mt!=StiffnessMatrixType::NOSTIFFNESS){
+	    k(ln,ln) += 2*pi*(1+ezz)*(Pi+dP_dV*dV_du);
+	    k(ln,n)  += 2*pi*Ri_*(Pi+dP_dV*dV_dezz);
+	  }
+	  if(this->al==ENDCAPEFFECT){
+	    r(n)    +=   pi*Ri_*Ri_*Pi;
+	    if(mt!=StiffnessMatrixType::NOSTIFFNESS){
+	      k(n,ln) += pi*Ri_*(2*Pi+Ri_*dP_dV*dV_du);
+	    }
+	  }
+	  throw(std::runtime_error("PipeTest::computeStiffnessMatrixAndResidual: "
+				   "unsupported case"));
+	}
       }
     }
-    if(this->outer_pressure.get()!=nullptr){
+    if(this->outer_pressure!=nullptr){
       const size_type ln = n-1;
       const auto Pe  = (*(this->outer_pressure))(t+dt);
       const auto Re_ = (this->hpp) ? Re : Re+state.u1[ln];
@@ -1355,113 +1392,85 @@ namespace mtest{
     this->mesh.etype=ph;
   } // end of PipeTest::setElementType
   
-  void PipeTest::setInnerPressureEvolution(std::shared_ptr<Evolution> p)
-  {
-    if(this->rl==IMPOSEDOUTERRADIUS){
-      throw(std::runtime_error("PipeTest::setInnerPressureEvolution: "
-			       "inner pressure evolution can't be set"));
-    }
+  void PipeTest::setInnerPressureEvolution(std::shared_ptr<Evolution> p){
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("PipeTest::setInnerPressureEvolution: "+m));}
+    };
+    throw_if(this->rl==IMPOSEDOUTERRADIUS,"inner pressure evolution can't be set");
     if(this->rl==DEFAULTLOADINGTYPE){
       this->setRadialLoading(IMPOSEDPRESSURE);
     }
-    if(this->inner_pressure.get()!=nullptr){
-      throw(std::runtime_error("PipeTest::setInnerPressureEvolution: "
-			       "inner pressure evolution already set"));
-    }
+    throw_if(this->inner_pressure!=nullptr,"inner pressure evolution already set");
     this->inner_pressure = p;
   } // end of PipeTest::setInnerPressureEvolution
 
-  void PipeTest::setOuterPressureEvolution(std::shared_ptr<Evolution> p)
-  {
-    if(this->outer_pressure.get()!=nullptr){
+  void PipeTest::setOuterPressureEvolution(std::shared_ptr<Evolution> p){
+    if(this->outer_pressure!=nullptr){
       throw(std::runtime_error("PipeTest::setOuterPressureEvolution: "
 			       "outer pressure evolution already set"));
     }
     this->outer_pressure = p;
   } // end of PipeTest::setOuterPressureEvolution
 
-  void PipeTest::setAxialForceEvolution(std::shared_ptr<Evolution> f)
-  {
-    if(this->al!=IMPOSEDAXIALFORCE){
-      throw(std::runtime_error("PipeTest::setAxialForceEvolution: "
-			       "axial force evolution can be set "
-			       "only if the pipe modelling hypothesis is "
-			       "'ImposedAxialForce'"));
-    }
-    if(this->axial_force.get()!=nullptr){
-      throw(std::runtime_error("PipeTest::setAxialForceEvolution: "
-			       "axial force evolution already set"));
-    }
+  void PipeTest::setAxialForceEvolution(std::shared_ptr<Evolution> f){
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("PipeTest::setAxialForceEvolution: "+m));}
+    };
+    throw_if(this->al!=IMPOSEDAXIALFORCE,"axial force evolution can be set "
+	     "only if the pipe modelling hypothesis is 'ImposedAxialForce'");
+    throw_if(this->axial_force!=nullptr,"axial force evolution already set");
     this->axial_force = f;
   } // end of PipeTest::setAxialForceEvolution
 
-  void PipeTest::setAxialGrowthEvolution(std::shared_ptr<Evolution> f)
-  {
-    if(this->al!=IMPOSEDAXIALGROWTH){
-      throw(std::runtime_error("PipeTest::setAxialGrowthEvolution: "
-			       "axial growth evolution can be set "
-			       "only if the pipe modelling hypothesis is "
-			       "'ImposedAxialGrowth'"));
-    }
-    if(this->axial_growth.get()!=nullptr){
-      throw(std::runtime_error("PipeTest::setAxialGrowthEvolution: "
-			       "axial growth evolution already set"));
-    }
+  void PipeTest::setAxialGrowthEvolution(std::shared_ptr<Evolution> f){
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("PipeTest::setOuterRadiusEvolution: "+m));}
+    };
+    throw_if(this->al!=IMPOSEDAXIALGROWTH,"axial growth evolution can be set "
+	     "only if the pipe modelling hypothesis is 'ImposedAxialGrowth'");
+    throw_if(this->axial_growth!=nullptr,"axial growth evolution already set");
     this->axial_growth = f;
   } // end of PipeTest::setAxialGrowthEvolution
   
-  void PipeTest::setOuterRadiusEvolution(std::shared_ptr<Evolution> e)
-  {
-    if(this->rl!=IMPOSEDOUTERRADIUS){
-      throw(std::runtime_error("PipeTest::setOuterRadiusEvolution: "
-			       "outer radius evolution can be set "
-			       "only if the loding type is "
-			       "'ImposedOuterRadius'"));
-    }
-    if(this->orev.get()!=nullptr){
-      throw(std::runtime_error("PipeTest::setOuterRadiusEvolution: "
-			       "axial force evolution already set"));
-    }
+  void PipeTest::setOuterRadiusEvolution(std::shared_ptr<Evolution> e){
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("PipeTest::setOuterRadiusEvolution: "+m));}
+    };
+    throw_if(this->rl!=IMPOSEDOUTERRADIUS,"outer radius evolution can be set "
+	     "only if the loading type is 'ImposedOuterRadius'");
+    throw_if(this->orev!=nullptr,"axial force evolution already set");
     this->orev = e;
   } // end of PipeTest::setOuterRadiusEvolution
 
-  void PipeTest::setFillingPressure(const real p)
-  {
-    if(this->rl!=TIGHTPIPE){
-      throw(std::runtime_error("PipeTest::setFillingPressure: "
-			       "filling pressure can be set "
-			       "only if the loding type is "
-			       "'TightPipe'"));
-    }
-    if(this->p0>=0){
-      throw(std::runtime_error("PipeTest::setFillingPressure: "
-			       "filling pressure already set "));
-    }
-    if(p<0){
-      throw(std::runtime_error("PipeTest::setFillingPressure: "
-			       "invalid  filling pressure value ('"+
-			       std::to_string(p)+"') "));
-    }
-    this->p0 = p;
+  void PipeTest::setGasEquationOfState(const std::string& e){
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("PipeTest::setGasEquationOfState: "+m));}
+    };
+    throw_if(this->rl!=TIGHTPIPE,"the gas equation of state is only meaningfull "
+	     "if the radial loading type is 'TightPipe'");
+    throw_if(this->gseq!=nullptr,"gas equation of state already defined");
+    this->gseq = std::unique_ptr<GasEquationOfState>(new GasEquationOfState(e,*(this->evm)));
+  } // end of PipeTest::setGasEquationOfState
+  
+  void PipeTest::setFillingPressure(const real p){
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("PipeTest::setFillingPressure: "+m));}
+    };
+    throw_if(this->rl!=TIGHTPIPE,"filling pressure can be set "
+	     "only if the loading type is 'TightPipe'");
+    throw_if(this->P0>=0,"filling pressure already set ");
+    throw_if(p<0,"invalid  filling pressure value ('"+std::to_string(p)+"') ");
+    this->P0 = p;
   } // end of PipeTest::setFillingPressure
 
-  void PipeTest::setFillingTemperature(const real T)
-  {
-    if(this->rl!=TIGHTPIPE){
-      throw(std::runtime_error("PipeTest::setFillingTemperature: "
-			       "filling temperature can be set "
-			       "only if the loding type is "
-			       "'TightPipe'"));
-    }
-    if(this->T0>=0){
-      throw(std::runtime_error("PipeTest::setFillingTemperature: "
-			       "filling temperature already set "));
-    }
-    if(T<0){
-      throw(std::runtime_error("PipeTest::setFillingTemperature: "
-			       "invalid  filling temperature value ('"+
-			       std::to_string(T)+"') "));
-    }
+  void PipeTest::setFillingTemperature(const real T){
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("PipeTest::setFillingTemperature: "+m));}
+    };
+    throw_if(this->rl!=TIGHTPIPE,"filling temperature can be set "
+	     "only if the loading type is 'TightPipe'");
+    throw_if(this->T0>=0,"filling temperature already set ");
+    throw_if(T<0,"invalid  filling temperature value ('"+std::to_string(T)+"') ");
     this->T0 = T;
   } // end of PipeTest::setFillingTemperature
   

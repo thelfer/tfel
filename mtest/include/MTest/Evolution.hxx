@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_MTESTEVOLUTION_H_
-#define LIB_MTEST_MTESTEVOLUTION_H_ 
+#ifndef LIB_MTEST_MTESTEVOLUTION_H
+#define LIB_MTEST_MTESTEVOLUTION_H 
 
 #include<map>
 #include<vector>
@@ -163,5 +163,5 @@ namespace mtest
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_MTESTEVOLUTION_H_ */
+#endif /* LIB_MTEST_MTESTEVOLUTION_H */
 

@@ -73,6 +73,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/SchemeParserBase.hxx	                 \
 			 MTest/SingleStructureSchemeParser.hxx	         \
 			 MTest/MTestParser.hxx                           \
-			 MTest/PipeTestParser.hxx
+			 MTest/PipeTestParser.hxx                        \
+			 MTest/GasEquationOfState.hxx
 
 EXTRA_DIST = CMakeLists.txt

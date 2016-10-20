@@ -23,6 +23,14 @@
 #include"MTest/PipeProfileHandler.hxx"
 #include"MTest/PipeTest.hxx"
 
+static boost::python::tuple
+PipeTest_computeMinimumAndMaximumValues(const mtest::PipeTest& t,
+					const mtest::StudyCurrentState& s,
+					const std::string& n){
+  const auto r = t.computeMinimumAndMaximumValues(s,n);
+  return boost::python::make_tuple(r.first,r.second);
+} // end of PipeTest_computeMinimumAndMaximumValues
+
 static void
 PipeTest_setInnerPressureEvolution(mtest::PipeTest& t,
 				   const mtest::real& v)
@@ -244,6 +252,10 @@ void declarePipeTest()
      "method for details.\n")
     .def("setElementType",&PipeTest_setElementType)
     .def("addProfile",&PipeTest::addProfile)
+    .def("computeMinimumValue",&PipeTest::computeMinimumValue)
+    .def("computeMaximumValue",&PipeTest::computeMaximumValue)
+    .def("computeMinimumAndMaximumValues",&PipeTest::computeMaximumValue)
+    .def("setGasEquationOfState",&PipeTest::setGasEquationOfState)
     .def("getMesh",&PipeTest::getMesh,
 	 boost::python::return_value_policy<boost::python::copy_const_reference>(),
 	 "This method returns the underlying mesh")

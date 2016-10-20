@@ -56,7 +56,8 @@ libTFELMTest_la_SOURCES = Study.cxx                                 \
 			  SchemeParserBase.cxx                      \
 			  SingleStructureSchemeParser.cxx           \
 			  MTestParser.cxx                           \
-			  PipeTestParser.cxx
+			  PipeTestParser.cxx                        \
+			  GasEquationOfState.cxx
 
 libTFELMTest_la_LIBADD  = -L$(top_builddir)/mfront/src -lMFrontLogStream  \
 			  -L$(top_builddir)/src/Material -lTFELMaterial   \
