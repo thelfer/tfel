@@ -18,6 +18,7 @@
 #include<map>
 #include<string>
 #include<vector>
+#include<functional>
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/GenTypeBase.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
@@ -38,6 +39,9 @@ namespace tfel{
     struct TFELUTILITIES_VISIBILITY_EXPORT Data
       : public GenTypeBase<DataTypes>
     {
+      //! a simple alias
+      using CallBack = std::function<void(const Data&)>;
+      //! constructor from a value
       template<typename T1,
 	       typename std::enable_if<
 		 tfel::meta::TLCountNbrOfT<T1,DataTypes>::value==1, 
@@ -53,6 +57,18 @@ namespace tfel{
        */
       static Data read(CxxTokenizer::const_iterator&,
 		       const CxxTokenizer::const_iterator);
+      /*!
+       * \brief read a map. For each read key, a callback must
+       * available to treat the associated data. The result of the
+       * treatment is stored in the returned value.
+       * \return treated values
+       * \param[in/out] p:  current position in the tokens stream
+       * \param[in]     pe: past-the-end iterator
+       * \param[in]     callbacks: list of call-backs
+       */
+      static void parse(CxxTokenizer::const_iterator&,
+			const CxxTokenizer::const_iterator,
+			const std::map<std::string,CallBack>&);
       /*!
        * \brief read a standard value (string,double,int)
        * \return the values read

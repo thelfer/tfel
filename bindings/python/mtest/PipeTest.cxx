@@ -254,7 +254,7 @@ void declarePipeTest()
     .def("addProfile",&PipeTest::addProfile)
     .def("computeMinimumValue",&PipeTest::computeMinimumValue)
     .def("computeMaximumValue",&PipeTest::computeMaximumValue)
-    .def("computeMinimumAndMaximumValues",&PipeTest::computeMaximumValue)
+    .def("computeMinimumAndMaximumValues",PipeTest_computeMinimumAndMaximumValues)
     .def("setGasEquationOfState",&PipeTest::setGasEquationOfState)
     .def("getMesh",&PipeTest::getMesh,
 	 boost::python::return_value_policy<boost::python::copy_const_reference>(),

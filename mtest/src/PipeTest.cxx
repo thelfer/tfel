@@ -485,13 +485,17 @@ namespace mtest{
 	"# third  column : outer radius\n"
 	"# fourth column : inner radius displacement\n"
 	"# fifth  column : outer radius displacement\n"
-	"# sixth  column : axial displacement" << std::endl;
+	"# sixth  column : axial displacement\n";
       if((this->rl==IMPOSEDOUTERRADIUS)||(this->rl==TIGHTPIPE)){
-	this->out << "# " << c << "th column : inner pressure" << std::endl;
+	this->out << "# " << c << "th column : inner pressure\n";
 	++c;
       }
       if(this->al==IMPOSEDAXIALGROWTH){
-	this->out << "# " << c << "th column : axial force" << std::endl;
+	this->out << "# " << c << "th column : axial force\n";
+	++c;
+      }
+      for(const auto& ao: this->aoutputs){
+	this->out << "# " << c << "th column : " << ao.d << '\n';
 	++c;
       }
     }
@@ -1068,25 +1072,23 @@ namespace mtest{
     return n;
   }
   
-  real
-  PipeTest::getErrorNorm(const tfel::math::vector<real>& du) const
+  real PipeTest::getErrorNorm(const tfel::math::vector<real>& du) const
   {
     return PipeTest_getErrorNorm(du,this->getNumberOfUnknowns());
   } // end of 
 
-  bool
-  PipeTest::checkConvergence(const StudyCurrentState& state,
-			     const tfel::math::vector<real>& du,
-			     const tfel::math::vector<real>& r,
-			     const SolverOptions&,
-			     const unsigned int iter,
-			     const real t,
-			     const real dt) const
+  bool PipeTest::checkConvergence(const StudyCurrentState& state,
+				  const tfel::math::vector<real>& du,
+				  const tfel::math::vector<real>& r,
+				  const SolverOptions&,
+				  const unsigned int iter,
+				  const real t,
+				  const real dt) const
   {
     auto report = [&iter](std::ostream& os,
 			  const real ne,
 			  const real nr){
-      os << "iteration " << iter << " : " << ne << " " << nr << std::endl;
+      os << "iteration " << iter << " : " << ne << " " << nr << '\n';
     };
     constexpr const real pi = 3.14159265358979323846;
     const auto Re = this->mesh.outer_radius;
@@ -1285,6 +1287,27 @@ namespace mtest{
     return {vmin,vmax};
   } // end of PipeTest::computeMinimumAndMaximumValues
 
+  void PipeTest::addOutput(const std::string& t,
+			   const std::string& n){
+    if(t=="minimum_value"){
+      this->aoutputs.push_back({"minimum value of '"+n+"'" ,
+	    [this,n](std::ostream& os,const StudyCurrentState& s){
+	    os << this->computeMinimumValue(s,n);
+	  }});
+    } else if(t=="maximum_value"){
+      this->aoutputs.push_back({"maximum value of '"+n+"'" ,
+	    [this,n](std::ostream& os,const StudyCurrentState& s){
+	    os << this->computeMaximumValue(s,n);
+	  }});
+    } else {
+      throw(std::runtime_error("PipeTest::addAdditionalOutput: "
+			       "invalid additional output type '"+t+"'.\n"
+			       "Valid additional output types are:\n"
+			       "- minimum_value\n"
+			       "- maximum_value\n"));
+    }
+  } // end of PipeTest::addAdditionalOutput
+  
   real PipeTest::computeMinimumValue(const StudyCurrentState& state,
 				     const std::string& n) const {
     return this->computeMinimumAndMaximumValues(state,n).first;
@@ -1495,10 +1518,11 @@ namespace mtest{
       if(this->al==IMPOSEDAXIALGROWTH){
 	this->out << " " << state.getEvolution("AxialForce")(t);
       }
-      // for(const auto& ao: this->additionalOutputs){
-      // 	oa->printOutput(out,state);
-      // }
-      this->out << std::endl;
+      for(const auto& ao: this->aoutputs){
+      	this->out << " ";
+	ao.f(out,state);
+      }
+      this->out << '\n';
     }
   } // end of PipeTest::printOutput
 

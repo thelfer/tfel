@@ -11,6 +11,8 @@
  * with the sources of TFEL. CEA or EDF may also distribute this 
  * project under specific licensing conditions. 
  */
+#include<iostream>
+#include<algorithm>
 
 #include"TFEL/Utilities/Data.hxx"
 
@@ -129,7 +131,8 @@ namespace tfel{
 	    p = std::prev(p,2);
 	    return read_map(p,pe);
 	  } else {
-	    throw_if(p->value!=",","expected ',' or ':', read '"+p->value+"'");
+	    throw_if((p->value!=",")&&(p->value!="}"),
+		     "expected ',' or ':' or '}', read '"+p->value+"'");
 	    p = std::prev(p,2);
 	    return read_vector(p,pe);
 	  }
@@ -143,6 +146,45 @@ namespace tfel{
       }
     }
 
+    void Data::parse(CxxTokenizer::const_iterator& p,
+		     const CxxTokenizer::const_iterator pe,
+		     const std::map<std::string,CallBack>& callbacks){
+      auto throw_if = [](const bool b,const std::string& msg){
+	if(b){throw(std::runtime_error("Data::parse: "+msg));}
+      };
+      auto get = [&callbacks,throw_if](const std::string& k){
+	std::for_each(callbacks.begin(),callbacks.end(),
+		      [](std::map<std::string,CallBack>::const_reference& v){
+			std::cout << "'" << v.first << "'" << std::endl;
+		      });
+	const auto pc = callbacks.find(k);
+	throw_if(pc==callbacks.end(),"unsupported key '"+k+"'");
+	return pc->second;
+      };
+      CxxTokenizer::readSpecifiedToken("Data::parse","{",p,pe);
+      CxxTokenizer::checkNotEndOfLine("Data::parse",p,pe);
+      while(p->value!="}"){
+	throw_if(p->flag!=Token::String,"expected a string");
+	const auto k = CxxTokenizer::readString(p,pe);
+	auto c = get(k);
+	CxxTokenizer::readSpecifiedToken("Data::parse",":",p,pe);
+	CxxTokenizer::checkNotEndOfLine("Data::parse",p,pe);
+	try{
+	  c(Data::read(p,pe));
+	} catch(std::exception& e){
+	  throw(std::runtime_error("Data::read: error while treating key '"+k+"'.\n"+
+				   std::string(e.what())));
+	}
+	CxxTokenizer::checkNotEndOfLine("Data::parse",p,pe);
+	if(p->value!="}"){
+	  CxxTokenizer::readSpecifiedToken("Data::parse",",",p,pe);
+	  CxxTokenizer::checkNotEndOfLine("Data::parse",p,pe);
+	  throw_if(p->value=="}","unexpected token '"+p->value+"'");
+	}
+      }
+      CxxTokenizer::readSpecifiedToken("Data::parse","}",p,pe);
+    } // end of Data::read
+    
     struct TFEL_VISIBILITY_LOCAL DataComparator
     {
       typedef bool return_type;

@@ -205,7 +205,7 @@ namespace mtest
     }
     if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
       auto& log = mfront::getLogStream();
-      log << "No hypothesis defined, using default" << std::endl;
+      log << "No hypothesis defined, using default\n";
     }
     this->hypothesis = ModellingHypothesis::TRIDIMENSIONAL;
   }
@@ -691,7 +691,7 @@ namespace mtest
       if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
   	auto& log = mfront::getLogStream();
   	log << "MTest::computeStiffnessMatrixAndResidual : "
-  	    << "behaviour intregration failed" << std::endl;
+  	    << "behaviour intregration failed\n";
       }
       return rb;
     }
@@ -808,7 +808,7 @@ namespace mtest
           os << " ";
         }
       }
-      os << ")" << std::endl;
+      os << ")\n";
     };
     const auto& scs = state.getStructureCurrentState("");
     if(scs.istates.size()!=1u){

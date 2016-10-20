@@ -664,12 +664,32 @@ namespace mtest
   } // end of PipeTestParser::handleTest
 
   void PipeTestParser::handleAdditionalOutputs(PipeTest& t,tokens_iterator& p){
+    using tfel::utilities::Data;
     this->checkNotEndOfLine("PipeTestParser::handleAdditionalOutputs",
 			    p,this->tokens.end());
-    tfel::utilities::Data d;
-    if(p->value=="{"){
-      d = tfel::utilities::Data::read(p,this->tokens.end());
-    }
+    auto handle_min = [&t](const Data& v){
+      if(v.is<std::string>()){
+	t.addOutput("minimum_value",v.get<std::string>());
+      } else {
+	for(const auto& f : tfel::utilities::extract<std::vector<std::string>>(v)){
+	  t.addOutput("minimum_value",f);
+	}
+      }
+    };
+    auto handle_max = [&t](const Data& v){
+      if(v.is<std::string>()){
+	t.addOutput("maximum_value",v.get<std::string>());
+      } else {
+	for(const auto& f : tfel::utilities::extract<std::vector<std::string>>(v)){
+	  t.addOutput("maximum_value",f);
+	}
+      }
+    };
+    tfel::utilities::Data::parse(p,this->tokens.end(),
+				 {{"minimum_value",handle_min},
+				  {"minimum_values",handle_min},
+				  {"maximum_value",handle_max},
+				  {"maximum_values",handle_max}});
     this->readSpecifiedToken("PipeTestParser::handleAdditionalOutputs",
 			     ";",p,this->tokens.end());
   } // end of PipeTestParser::handleAdditionalOutput

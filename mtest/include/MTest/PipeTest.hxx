@@ -429,6 +429,14 @@ namespace mtest{
 		   const tfel::utilities::TextData&,
 		   const unsigned short,
 		   const real);
+    /*!
+     * \brief add a output
+     * \param[in] t: type of output (minimum_value, maximum_value,
+     *               minimum_and_maximum_value)
+     * \param[in] n: name of the output
+     */
+    virtual void addOutput(const std::string&,
+			   const std::string&);
     //! destructor
     virtual ~PipeTest();
   protected:
@@ -448,6 +456,15 @@ namespace mtest{
      */
     virtual void
     setGaussPointPositionForEvolutionsEvaluation(const CurrentState&) const override;
+    //! description of an additional
+    struct AdditionalOutput{
+      //! description
+      std::string d;
+      //! functor
+      std::function<void(std::ostream&,const StudyCurrentState&)> f;
+    };
+    //! additional outputs
+    std::vector<AdditionalOutput> aoutputs;
     //! list of tests
     std::vector<std::shared_ptr<UTest>> tests;
     //! registred profile
