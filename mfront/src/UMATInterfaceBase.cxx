@@ -1365,8 +1365,6 @@ namespace mfront
 							     const std::string& name,
 							     const BehaviourDescription& mb) const
   {
-    using namespace std;
-    using namespace tfel::material;
     auto ih = this->getModellingHypothesesToBeTreated(mb);
     if(ih.empty()){
       out << "MFRONT_SHAREDOBJ unsigned short "  << this->getFunctionName(name)
@@ -1395,6 +1393,9 @@ namespace mfront
 							  const BehaviourDescription& mb) const
   {
     using namespace std;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("UMATInterfaceBase::writeUMATxxMaterialPropertiesSymbols: "+m));}
+    };
     const auto mprops = this->buildMaterialPropertiesList(mb,h);
     if(mprops.first.empty()){
       out << "MFRONT_SHAREDOBJ unsigned short "  << this->getSymbolName(name,h)
@@ -1404,25 +1405,15 @@ namespace mfront
     } else {
       const auto& last = mprops.first.back();
       SupportedTypes::TypeSize s;
-      if((mprops.second.getTensorSize()!=0)||(mprops.second.getStensorSize()!=0)||
-	 (mprops.second.getTVectorSize()!=0)){
-	string msg("UMATInterface::writeUMATxxMaterialPropertiesSymbols : "
-		   "internal error : the material properties shall all be scalars");
-	throw(runtime_error(msg));
-      }
+      throw_if((mprops.second.getTensorSize()!=0)||(mprops.second.getStensorSize()!=0)||
+	       (mprops.second.getTVectorSize()!=0),
+	       "internal error : the material properties shall all be scalars");
       s  = last.offset;
       s += this->getTypeSize(last.type,last.arraySize);
       s -= mprops.second;
-      if((s.getTensorSize()!=0)||(s.getStensorSize()!=0)||(s.getTVectorSize()!=0)){
-	string msg("UMATInterface::writeUMATxxMaterialPropertiesSymbols : "
-		   "internal error : the material properties shall all be scalars");
-	throw(runtime_error(msg));
-      }
-      if(s.getScalarSize()<0){
-	string msg("UMATInterface::writeUMATxxMaterialPropertiesSymbols : "
-		   "internal error : negative number of the material properties");
-	throw(runtime_error(msg));
-      }
+      throw_if((s.getTensorSize()!=0)||(s.getStensorSize()!=0)||(s.getTVectorSize()!=0),
+	       "internal error : the material properties shall all be scalars");
+      throw_if(s.getScalarSize()<0,"internal error : negative number of the material properties");
       vector<UMATMaterialProperty>::size_type ib=0; /* index of the first element which
 						     * is not imposed by the material properties */
       bool found = false;
@@ -1434,10 +1425,7 @@ namespace mfront
 	}
       }
       if(!found){
-	if(s.getScalarSize()!=0){
-	  throw(runtime_error("UMATInterface::writeUMATxxMaterialPropertiesSymbols: "
-			      "internal error : inconsistent offset declaration"));
-	}
+	throw_if(s.getScalarSize()!=0,"internal error : inconsistent offset declaration");
 	out << "MFRONT_SHAREDOBJ unsigned short "  << this->getSymbolName(name,h)
 	    << "_nMaterialProperties = 0u;\n\n";
 	out << "MFRONT_SHAREDOBJ const char * const *"  << this->getSymbolName(name,h)

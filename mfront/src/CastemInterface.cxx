@@ -537,7 +537,7 @@ namespace mfront{
 
   void
   CastemInterface::writeGetOutOfBoundsPolicyFunctionImplementation(std::ostream& out,
-								 const std::string& name) const
+								   const std::string& name) const
   {
     out << "static tfel::material::OutOfBoundsPolicy&\n"
 	<< getFunctionName(name) << "_getOutOfBoundsPolicy(void){\n"
@@ -550,10 +550,9 @@ namespace mfront{
   
   void
   CastemInterface::writeSetOutOfBoundsPolicyFunctionImplementation2(std::ostream& out,
-								  const std::string& name,
-								  const std::string& name2) const
+								    const std::string& name,
+								    const std::string& name2) const
   {
-    this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionName(name2) << "_setOutOfBoundsPolicy(const int p){\n"
 	<< this->getFunctionName(name) << "_setOutOfBoundsPolicy(p);\n"
@@ -562,29 +561,28 @@ namespace mfront{
   
   void
   CastemInterface::endTreatment(const BehaviourDescription& mb,
-			      const FileDescription& fd) const
+				const FileDescription& fd) const
   {
     using namespace std;
     using namespace tfel::system;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("CastemInterface::endTreatment: "+m));}
+    };
     // get the modelling hypotheses to be treated
     const auto& h = this->getModellingHypothesesToBeTreated(mb);
     // some consistency checks
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-      if(mb.getSymmetryType()!=mb.getElasticSymmetryType()){
-	throw(runtime_error("CastemInterface::endTreatment: "
-			    "the type of the behaviour (isotropic or orthotropic) does not "
-			    "match the the type of its elastic behaviour.\n"
-			    "This is not allowed here:\n"
-			    "- an isotropic behaviour must have an isotropic elastic behaviour\n"
-			    "- an orthotropic behaviour must have an orthotropic elastic behaviour"));
-      }
+      throw_if(mb.getSymmetryType()!=mb.getElasticSymmetryType(),
+	       "the type of the behaviour (isotropic or orthotropic) does not "
+	       "match the the type of its elastic behaviour.\n"
+	       "This is not allowed here:\n"
+	       "- an isotropic behaviour must have an isotropic elastic behaviour\n"
+	       "- an orthotropic behaviour must have an orthotropic elastic behaviour");
     }
     if(this->useTimeSubStepping){
-      if(this->maximumSubStepping==0u){
-	throw(runtime_error("CastemInterface::endTreatment: "
-			    "use of time sub stepping requested but MaximumSubStepping is zero.\n"
-			    "Please use the @CastemMaximumSubStepping directive"));
-      }
+      throw_if(this->maximumSubStepping==0u,
+	       "use of time sub stepping requested but MaximumSubStepping is zero.\n"
+	       "Please use the @CastemMaximumSubStepping directive");
     }
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Castem");
@@ -595,11 +593,8 @@ namespace mfront{
 
     auto fileName = "umat"+name+".hxx";
 
-    ofstream out("include/MFront/Castem/"+fileName);
-    if(!out){
-      throw(runtime_error("CastemInterface::endTreatment: "
-			  "could not open file '"+fileName+"'"));
-    }
+    std::ofstream out("include/MFront/Castem/"+fileName);
+    throw_if(!out,"could not open file '"+fileName+"'");
   
     out << "/*!\n";
     out << "* \\file   "  << fileName << '\n';
@@ -652,57 +647,29 @@ namespace mfront{
     out << "extern \"C\"{\n";
     out << "#endif /* __cplusplus */\n\n";
 
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->finiteStrainStrategies.empty()){
-	this->writeSetParametersFunctionsDeclarations(out,name,mb);
-	this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
-      } else {
-	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
-	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
-	    this->writeSetParametersFunctionsDeclarations(out,name+"_frst",mb);
-	    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_frst");
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeSetParametersFunctionsDeclarations(out,name,mb);
-	      this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
-	    }
-	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
-	    this->writeSetParametersFunctionsDeclarations(out,name+"_malls",mb);
-	    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_malls");
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeSetParametersFunctionsDeclarations(out,name,mb);
-	      this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
-	    }
-	  } else if(*pfss==LOGARITHMICSTRAIN1D){
-	    this->writeSetParametersFunctionsDeclarations(out,name+"_log1D",mb);
-	    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_log1D");
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeSetParametersFunctionsDeclarations(out,name,mb);
-	      this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
-	    }
-	  } else if(*pfss==NONE){
-	    this->writeSetParametersFunctionsDeclarations(out,name+"_ss",mb);
-	    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_ss");
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeSetParametersFunctionsDeclarations(out,name,mb);
-	      this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
-	    }
-	  } else {
-	    throw(runtime_error("CastemInterface::endTreatment: "
-				"internal error, unsupported finite strain strategy"));
-	  }
-	}
-	if((this->finiteStrainStrategies.size()!=1u)&&
-	   (find(this->finiteStrainStrategies.begin(),
-		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
-	  this->writeSetParametersFunctionsDeclarations(out,name,mb);
-	  this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
+    this->writeSetParametersFunctionsDeclarations(out,name,mb);
+    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
+    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+       (!this->finiteStrainStrategies.empty())){
+      for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
+	if(*pfss==FINITEROTATIONSMALLSTRAIN){
+	  this->writeSetParametersFunctionsDeclarations(out,name+"_frst",mb);
+	  this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_frst");
+	} else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	  this->writeSetParametersFunctionsDeclarations(out,name+"_malls",mb);
+	  this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_malls");
+	} else if(*pfss==LOGARITHMICSTRAIN1D){
+	  this->writeSetParametersFunctionsDeclarations(out,name+"_log1D",mb);
+	  this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_log1D");
+	} else if(*pfss==NONE){
+	  this->writeSetParametersFunctionsDeclarations(out,name+"_ss",mb);
+	  this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_ss");
+	} else {
+	  throw_if(true,"internal error, unsupported finite strain strategy");
 	}
       }
-    } else {
-      this->writeSetParametersFunctionsDeclarations(out,name,mb);
-      this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
     }
-
+    
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       if(this->finiteStrainStrategies.empty()){
 	this->writeCastemFunctionDeclaration(out,name);
@@ -729,8 +696,7 @@ namespace mfront{
 	      this->writeCastemFunctionDeclaration(out,name);
 	    }
 	  } else {
-	    throw(runtime_error("CastemInterface::endTreatment: "
-				"internal error, unsupported finite strain strategy"));
+	    throw_if(true,"internal error, unsupported finite strain strategy");
 	  }
 	}
 	if((this->finiteStrainStrategies.size()!=1u)&&
@@ -774,11 +740,9 @@ namespace mfront{
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
     if(this->generateMTestFile){
-      if((mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	 (mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
-	throw(runtime_error("CastemInterface::endTreatment: "
-			    "unsupported behaviour type"));
-      }
+      throw_if((mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	       (mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+	       "MTest file generation is not unsupported for this behaviour type");
       out << "#include\"MFront/Castem/CastemGetModellingHypothesis.hxx\"\n";
     }
     if((find(this->finiteStrainStrategies.begin(),this->finiteStrainStrategies.end(),
@@ -793,55 +757,14 @@ namespace mfront{
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     out << "#include\"MFront/Castem/umat" << name << ".hxx\"\n\n";
 
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->finiteStrainStrategies.empty()){
-	this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
-      } else {
-	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
-	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
-	    if(this->finiteStrainStrategies.size()==1){
-	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
-	    } else {
-	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name+"_frst");
-	    }
-	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
-	    if(this->finiteStrainStrategies.size()==1){
-	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
-	    } else {
-	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name+"_malls");
-	    }
-	  } else if(*pfss==LOGARITHMICSTRAIN1D){
-	    if(this->finiteStrainStrategies.size()==1){
-	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
-	    } else {
-	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name+"_log1D");
-	    }
-	  } else if(*pfss==NONE){
-	    if(this->finiteStrainStrategies.size()==1){
-	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
-	    } else {
-	      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name+"_ss");
-	    }
-	  } else {
-	    throw(std::runtime_error("MFrontCastemInterface::endTreatment : "
-				     "internal error, unsupported finite strain strategy"));
-	  }
-	}
-	if((this->finiteStrainStrategies.size()!=1u)&&
-	   (find(this->finiteStrainStrategies.begin(),
-		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
-	  this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
-	}
-      }
-    } else {
-      this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
-    }
+    this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
     
     out << "extern \"C\"{\n\n";
 
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       if(this->finiteStrainStrategies.empty()){
 	this->generateUMATxxGeneralSymbols(out,name,mb,fd);
+	UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);
 	if(!mb.areAllMechanicalDataSpecialised(h)){
 	  const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	  this->generateUMATxxSymbols(out,name,uh,mb,fd);
@@ -861,6 +784,7 @@ namespace mfront{
 	for(const auto fss : this->finiteStrainStrategies){
 	  if(fss==FINITEROTATIONSMALLSTRAIN){
 	    this->generateUMATxxGeneralSymbols(out,name+"_frst",mb,fd);
+	    UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name+"_frst",mb);	      
 	    if(!mb.areAllMechanicalDataSpecialised(h)){
 	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	      this->generateUMATxxSymbols(out,name+"_frst",uh,mb,fd);
@@ -878,6 +802,7 @@ namespace mfront{
 		<< makeLowerCase(name+"_frst") << "_Interface = 2u;\n\n";
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
+	      UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);
 	      if(!mb.areAllMechanicalDataSpecialised(h)){
 		const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 		this->generateUMATxxSymbols(out,name,uh,mb,fd);
@@ -895,7 +820,8 @@ namespace mfront{
 		  << makeLowerCase(name) << "_Interface = 2u;\n\n";
 	    }
 	  } else if(fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
-	      this->generateUMATxxGeneralSymbols(out,name+"_malls",mb,fd);
+	    this->generateUMATxxGeneralSymbols(out,name+"_malls",mb,fd);
+	    UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name+"_malls",mb);
 	    if(!mb.areAllMechanicalDataSpecialised(h)){
 	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	      this->generateUMATxxSymbols(out,name+"_malls",uh,mb,fd);
@@ -913,6 +839,7 @@ namespace mfront{
 		<< makeLowerCase(name+"_malls") << "_Interface = 2u;\n\n";
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
+	      UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);	      
 	      if(!mb.areAllMechanicalDataSpecialised(h)){
 		const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 		this->generateUMATxxSymbols(out,name,uh,mb,fd);
@@ -930,14 +857,17 @@ namespace mfront{
 		  << makeLowerCase(name) << "_Interface = 2u;\n\n";
 	    }
 	  } else if(fss==LOGARITHMICSTRAIN1D){
-	      this->generateUMATxxGeneralSymbols(out,name+"_log1D",mb,fd);
+	    const auto agps = ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
+	    this->generateUMATxxGeneralSymbols(out,name+"_log1D",mb,fd);
 	    if(!mb.areAllMechanicalDataSpecialised(h)){
-	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+	      const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	      this->generateUMATxxSymbols(out,name+"_log1D",uh,mb,fd);
-	    }
+	    }	    
 	    for(const auto & elem : h){
-	      if(mb.hasSpecialisedMechanicalData(elem)){
-		this->generateUMATxxSymbols(out,name+"_log1D",elem,mb,fd);
+	      if(elem==agps){
+		if(mb.hasSpecialisedMechanicalData(elem)){
+		  this->generateUMATxxSymbols(out,name+"_log1D",elem,mb,fd);
+		}
 	      }
 	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_log1D") 
@@ -946,10 +876,24 @@ namespace mfront{
 		<< "_BehaviourKinematic = 4u;\n\n";
 	    out << "MFRONT_SHAREDOBJ unsigned short umat"
 		<< makeLowerCase(name+"_log1D") << "_Interface = 1u;\n\n";
+	    out << "MFRONT_SHAREDOBJ unsigned short "  << this->getFunctionName(name+"_log1D")
+		<< "_nModellingHypotheses = " << 1u << "u;\n\n";
+	    out << "MFRONT_SHAREDOBJ const char * \n"
+		<< this->getFunctionName(name+"_log1D")
+		<< "_ModellingHypotheses[1u] = {\""
+		<< ModellingHypothesis::toString(agps)
+		<< "\"};\n";
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
+	      out << "MFRONT_SHAREDOBJ unsigned short "  << this->getFunctionName(name)
+		  << "_nModellingHypotheses = " << 1u << "u;\n\n";
+	      out << "MFRONT_SHAREDOBJ const char * \n"
+		  << this->getFunctionName(name)
+		  << "_ModellingHypotheses[1u] = {\""
+		  << ModellingHypothesis::toString(agps)
+		  << "\"};\n";
 	      if(!mb.areAllMechanicalDataSpecialised(h)){
-		const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+		const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 		this->generateUMATxxSymbols(out,name,uh,mb,fd);
 	      }
 	      for(const auto & elem : h){
@@ -966,8 +910,9 @@ namespace mfront{
 	    }
 	  } else if(fss==NONE){
 	    this->generateUMATxxGeneralSymbols(out,name+"_ss",mb,fd);
+	    UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name+"_ss",mb);	      
 	    if(!mb.areAllMechanicalDataSpecialised(h)){
-	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+	      const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	      this->generateUMATxxSymbols(out,name+"_ss",uh,mb,fd);
 	    }
 	    for(const auto & elem : h){
@@ -994,20 +939,20 @@ namespace mfront{
 	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 		  << "_BehaviourType = 1u;\n\n";
-	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
+	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 		<< "_BehaviourKinematic = 1u;\n\n";
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
 		  << makeLowerCase(name) << "_Interface = 1u;\n\n";
 	    }
 	  } else {
-	    throw(runtime_error("CastemInterface::endTreatment : "
-				"internal error, unsupported finite strain strategy"));
+	    throw_if(true,"internal error, unsupported finite strain strategy");
 	  }
 	}
 	if((this->finiteStrainStrategies.size()!=1u)&&
 	   (find(this->finiteStrainStrategies.begin(),
 		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
 	  this->generateUMATxxGeneralSymbols(out,name,mb,fd);
+	  UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);
 	  if(!mb.areAllMechanicalDataSpecialised(h)){
 	    const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	    this->generateUMATxxSymbols(out,name,uh,mb,fd);
@@ -1027,6 +972,7 @@ namespace mfront{
       }
     } else {
       this->generateUMATxxGeneralSymbols(out,name,mb,fd);
+      UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);      
       if(!mb.areAllMechanicalDataSpecialised(h)){
 	const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	this->generateUMATxxSymbols(out,name,uh,mb,fd);
@@ -1054,59 +1000,34 @@ namespace mfront{
       }
     }
 
+    this->writeSetParametersFunctionsImplementations(out,name,mb);
+    this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->finiteStrainStrategies.empty()){
-	this->writeSetParametersFunctionsImplementations(out,name,mb);
-	this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
-      } else {
-	for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
-	  if(*pfss==FINITEROTATIONSMALLSTRAIN){
-	    this->writeSetParametersFunctionsImplementations(out,name+"_frst",mb);
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeSetParametersFunctionsImplementations(out,name,mb);
-	      this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_frst");
-	    } else {
-	      this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name+"_frst");
-	    }
-	  } else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
-	    this->writeSetParametersFunctionsImplementations(out,name+"_malls",mb);
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeSetParametersFunctionsImplementations(out,name,mb);
-	      this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_malls");
-	    } else {
-	      this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name+"_malls");
-	    }
-	  } else if(*pfss==LOGARITHMICSTRAIN1D){
-	    this->writeSetParametersFunctionsImplementations(out,name+"_log1D",mb);
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeSetParametersFunctionsImplementations(out,name,mb);
-	      this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_log1D");
-	    } else {
-	      this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name+"_log1D");
-	    }
-	  } else if(*pfss==NONE){
-	    this->writeSetParametersFunctionsImplementations(out,name+"_ss",mb);
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeSetParametersFunctionsImplementations(out,name,mb);
-	      this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_ss");
-	    } else {
-	      this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name+"_ss");
-	    }
-	  } else {
-	    throw(runtime_error("CastemInterface::endTreatment: "
-				"internal error, unsupported finite strain strategy"));
+      for(pfss=this->finiteStrainStrategies.begin();pfss!=this->finiteStrainStrategies.end();++pfss){
+	if(*pfss==FINITEROTATIONSMALLSTRAIN){
+	  this->writeSetParametersFunctionsImplementations(out,name+"_frst",mb);
+	  if(this->finiteStrainStrategies.size()!=1u){
+	    this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_frst");
 	  }
-	}
-	if((this->finiteStrainStrategies.size()!=1u)&&
-	   (find(this->finiteStrainStrategies.begin(),
-		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
-	  this->writeSetParametersFunctionsImplementations(out,name,mb);
-	  this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
+	} else if(*pfss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	  this->writeSetParametersFunctionsImplementations(out,name+"_malls",mb);
+	  if(this->finiteStrainStrategies.size()!=1u){
+	    this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_malls");
+	  }
+	} else if(*pfss==LOGARITHMICSTRAIN1D){
+	  this->writeSetParametersFunctionsImplementations(out,name+"_log1D",mb);
+	  if(this->finiteStrainStrategies.size()!=1u){
+	    this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_log1D");
+	  }
+	} else if(*pfss==NONE){
+	  this->writeSetParametersFunctionsImplementations(out,name+"_ss",mb);
+	  if(this->finiteStrainStrategies.size()!=1u){
+	    this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_ss");
+	  }
+	} else {
+	  throw_if(true,"internal error, unsupported finite strain strategy");
 	}
       }
-    } else {
-      this->writeSetParametersFunctionsImplementations(out,name,mb);
-      this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
     }
 
     out << "static void \numat"
@@ -1168,8 +1089,7 @@ namespace mfront{
 				      &CastemInterface::writeStandardCastemFunction);
 	    }
 	  } else {
-	    throw(runtime_error("CastemInterface::endTreatment: "
-				"internal error, unsupported finite strain strategy"));
+	    throw_if(true,"internal error, unsupported finite strain strategy");
 	  }
 	}
 	if((this->finiteStrainStrategies.size()!=1u)&&
@@ -1451,16 +1371,19 @@ namespace mfront{
     return res;
   } // end of CastemInterface::buildMaterialPropertiesList
 
-  void
-  CastemInterface::writeUMATxxBehaviourTypeSymbols(std::ostream&,
-						   const std::string&,
-						   const BehaviourDescription&) const
+  void CastemInterface::writeUMATxxSupportedModellingHypothesis(std::ostream&,
+								const std::string&,
+								const BehaviourDescription&) const
+  {} // end of CastemInterface::::writeUMATxxSupportedModellingHypothesis
+
+  void CastemInterface::writeUMATxxBehaviourTypeSymbols(std::ostream&,
+							const std::string&,
+							const BehaviourDescription&) const
   {} // end of CastemInterface::writeUMATxxBehaviourTypeSymbols
 
-  void
-  CastemInterface::writeUMATxxBehaviourKinematicSymbols(std::ostream&,
-						   const std::string&,
-						   const BehaviourDescription&) const
+  void CastemInterface::writeUMATxxBehaviourKinematicSymbols(std::ostream&,
+							     const std::string&,
+							     const BehaviourDescription&) const
   {} // end of CastemInterface::writeUMATxxBehaviourKinematicSymbols
 
   void

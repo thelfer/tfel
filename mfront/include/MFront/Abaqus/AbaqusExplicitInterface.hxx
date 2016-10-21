@@ -135,7 +135,7 @@ namespace abaqus{
       const auto r   = b.computePredictionOperator(smf,Behaviour<H,T,false>::ELASTIC);
       ExtractAndConvertTangentOperator<H>::exe(b,D);
       return (r==Behaviour<H,T,false>::SUCCESS) ? 0 : 1;
-    };
+    }
     /*!
      * \param[out] D: elastic stiffness
      * \param[out] d: data
@@ -164,7 +164,7 @@ namespace abaqus{
       const auto r   = b.computePredictionOperator(smf,Behaviour<H,T,false>::ELASTIC);
       ExtractAndConvertTangentOperator<H>::exe(b,D);
       return (r==Behaviour<H,T,false>::SUCCESS) ? 0 : 1;
-    };
+    }
     /*!
      * \brief integrate a behaviour written at small strain
      * \param[out/in] s: stress tensor
@@ -255,7 +255,7 @@ namespace abaqus{
       b.checkBounds();
       b.exportStateData(s,d);
       return 0;
-    };
+    }
   private:
     //! An helper structure used to initialise the driving variables
     struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
