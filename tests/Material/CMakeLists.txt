@@ -32,4 +32,5 @@ tests_material(FiniteStrainBehaviourTangentOperator7)
 tests_material(FiniteStrainBehaviourTangentOperator8)
 tests_material(FiniteStrainBehaviourTangentOperator9)
 tests_material(FiniteStrainBehaviourTangentOperator10)
+tests_material(FiniteStrainBehaviourTangentOperator11)
 

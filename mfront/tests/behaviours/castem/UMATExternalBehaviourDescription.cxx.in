@@ -29,6 +29,7 @@
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
+#include"TFEL/System/ExternalLibraryManager.hxx"
 #include"TFEL/System/ExternalBehaviourDescription.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
@@ -58,6 +59,7 @@ struct UMATBehaviourDescriptionTest final
     this->test2();
     this->test3();
     this->test4();
+    this->test5();
     return this->result;
   }
  private:
@@ -187,6 +189,15 @@ struct UMATBehaviourDescriptionTest final
     // additional attributes
     TFEL_TESTS_ASSERT(b.requiresStiffnessTensor);
     TFEL_TESTS_ASSERT(!b.requiresThermalExpansionCoefficientTensor);
+  }
+  void test5(){
+    using namespace tfel::system;
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    const auto l = "@MFrontCastemBehavioursBuildPath@";
+    const auto f = "umatnorton_log1d";
+    const auto mh = elm.getSupportedModellingHypotheses(l,f);
+    TFEL_TESTS_ASSERT(mh.size()==1u);
+    TFEL_TESTS_ASSERT(mh.at(0)=="AxisymmetricalGeneralisedPlaneStrain");
   }
 };
   

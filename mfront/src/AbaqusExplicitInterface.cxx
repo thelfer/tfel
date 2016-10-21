@@ -674,7 +674,7 @@ namespace mfront{
 	<< "constexpr const unsigned short offset  = (AbaqusTraits<BV>::elasticPropertiesOffset+\n"
 	<< "                                          AbaqusTraits<BV>::thermalExpansionPropertiesOffset);\n"
 	<< "constexpr const unsigned short nprops_  = AbaqusTraits<BV>::material_properties_nb;\n"
-	<< "constexpr const unsigned short NPROPS_  = offset+nprops_ == 0 ? 1u : offset+nprops_;\n"
+	<< "constexpr const unsigned short NPROPS_  = offset+nprops_;\n"
 	<< "constexpr const unsigned short nstatev_ = Traits::internal_variables_nb;\n"
 	<< "constexpr const unsigned short nfieldv_ = Traits::external_variables_nb;\n";
     if((h==ModellingHypothesis::AXISYMMETRICAL)||

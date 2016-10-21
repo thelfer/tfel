@@ -4580,6 +4580,7 @@ tests/Material/AbaqusTangentOperator2.cxx -text
 tests/Material/CMakeLists.txt -text
 tests/Material/FiniteStrainBehaviourTangentOperator.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator10.cxx -text
+tests/Material/FiniteStrainBehaviourTangentOperator11.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator2.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator3.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator4.cxx -text

@@ -268,7 +268,7 @@ namespace abaqus
     }; // end of struct Integrator
 
     TFEL_ABAQUS_INLINE2 static void
-      checkNPROPS(const AbaqusInt NPROPS)
+    checkNPROPS(const AbaqusInt NPROPS)
     {
       using namespace std;
       using namespace tfel::material;
@@ -277,7 +277,7 @@ namespace abaqus
       const unsigned short offset  = (AbaqusTraits<BV>::elasticPropertiesOffset+
 				      AbaqusTraits<BV>::thermalExpansionPropertiesOffset);
       const unsigned short nprops  = AbaqusTraits<BV>::material_properties_nb;
-      const unsigned short NPROPS_ = offset+nprops == 0 ? 1u : offset+nprops; 
+      const unsigned short NPROPS_ = offset+nprops; 
       const bool is_defined_       = Traits::is_defined;
       //Test if the nb of properties matches Behaviour requirements
       if((NPROPS!=NPROPS_)&&is_defined_){
