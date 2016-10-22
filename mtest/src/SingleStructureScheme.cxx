@@ -333,7 +333,6 @@ namespace mtest{
     }
     this->checkBehaviourConsistency(bp);
     this->b = bp;
-    const auto& ivnames = this->b->getInternalStateVariablesNames();
     this->declareVariables(this->b->getMaterialPropertiesNames(),true);
     this->declareVariables(this->b->getExternalStateVariablesNames(),true);
     this->ivfullnames = this->b->expandInternalStateVariablesNames();

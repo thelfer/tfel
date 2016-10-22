@@ -73,11 +73,9 @@ struct GenTypeTest2 final
   execute() override final
   {
     using namespace std;
-    using namespace tfel::meta;
     using namespace tfel::utilities;
     
-    typedef GenerateTypeList<int,string>::type HoldedTypes;
-    using MyGenType = GenTypeBase<HoldedTypes>;
+    using MyGenType = GenType<int, string>;
     
     MyGenType g;
     MyGenType g2;

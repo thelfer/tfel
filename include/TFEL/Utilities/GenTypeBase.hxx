@@ -13,8 +13,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_GENTYPEBASE_H_
-#define LIB_TFEL_GENTYPEBASE_H_ 
+#ifndef LIB_TFEL_UTILITIES_GENTYPEBASE_H
+#define LIB_TFEL_UTILITIES_GENTYPEBASE_H 
 
 #include<cmath>
 #include<limits>
@@ -27,34 +27,18 @@
 #include"TFEL/Utilities/GenTypeCastError.hxx"
 
 namespace tfel{
-  
+
   namespace utilities{
     
     namespace internals{
       
-      //! a simple trait class for some minimalistic optimisation.
-      /*
-       * \see GenTypePODDestroy, for an example of such optimisation.
-       * \author Helfer Thomas.
-       * \date   20 Apr. 2007.
-       */
-      template<typename T>
-      struct TFEL_VISIBILITY_LOCAL GenTypeTraits
-      {
-	/*
-	 * a boolean saying if the type in argument is a plain old
-	 * data type.
-	 */ 
-	static constexpr bool isFundamentalType = false;
-      };
-
       //! a helper function for destroying a plain old data type.
       /*
        * \author Helfer Thomas.
        * \date   20 Apr. 2007.
        */
       template<typename T>
-      struct TFEL_VISIBILITY_LOCAL GenTypePODDestroy
+      struct TFEL_VISIBILITY_LOCAL GenTypeTrivialDestroy
       {
 	//! the helper function.
 	/*
@@ -127,65 +111,6 @@ namespace tfel{
 	  new (p) T(tmp2);
 	}
       };
-      
-      //! An helper class to fill the runtime methods of a GenType.
-      /*
-       * \param unsigned short N, the current index.
-       * \param typename List, a list of types.
-       * \author Helfer Thomas.
-       * \date   20 Apr. 2007.
-       */
-      template<typename List,typename... Types>
-      struct TFEL_VISIBILITY_LOCAL GenTypeRunTimeMethods
-	: public GenTypeRunTimeMethods<typename List::Next,Types...,typename List::Current>
-      {};
-
-      //! A partial specialisation to end the recursion.
-      /*
-       * \author Helfer Thomas.
-       * \date   20 Apr. 2007.
-       */
-      template<typename... Types>
-      struct TFEL_VISIBILITY_LOCAL GenTypeRunTimeMethods<tfel::meta::TLE,Types...>
-      {
-	//! choose the function used to destroy the N-1 type of the typelist.
-	template<typename T>
-	using GenTypeDestroy = typename std::conditional<GenTypeTraits<T>::isFundamentalType,
-							 GenTypePODDestroy<T>,
-							 GenTypeGenericDestroy<T>>::type ; 
-	//! size of the typelise
-	static constexpr const auto N = sizeof...(Types);
-	//! a simple alias.
-        using DestructorPtr      = void (*)(void *const);
-	//! a simple alias.
-	using AssignOperatorPtr  = void (*)(void *const,const void* const);
-	//! a simple alias.
-	using CopyConstructorPtr = void (*)(void *const,const void* const);
-	/*!
-	 * \param[in] i: index
-	 * \return a pointer to a specific destructor
-	 */
-	DestructorPtr get_destructor(const unsigned short i){
-	  constexpr const DestructorPtr m[N] = {&GenTypeDestroy<Types>::exe...};
-	  return (i>=N) ? nullptr : m[i];
-	}
-	/*!
-	 * \param[in] i: index
-	 * \return a pointer to a copy constructor
-	 */
-	CopyConstructorPtr get_copy_constructor(const unsigned short i){
-	  constexpr const CopyConstructorPtr m[N] = {&GenTypeCopy<Types>::exe...};
-	  return (i>=N) ? nullptr : m[i];
-	}
-	/*!
-	 * \param[in] i: index
-	 * \return a pointer to an assignement operator
-	 */
-	AssignOperatorPtr get_assignement_operator(const unsigned short i){
-	  constexpr const AssignOperatorPtr  m[N] = {&GenTypeAssign<Types>::exe...};
-	  return (i>=N) ? nullptr : m[i];
-	}
-      };
 
       //! an helper class to a add methods to a GenType for a specific type.
       /*
@@ -199,7 +124,7 @@ namespace tfel{
        * \date   20 Apr. 2007.
        */
       template<typename Child,typename T>
-      class GenTypeSpecializedAccessor
+      struct GenTypeSpecializedAccessor
       {};
 
       //! an helper class to a add methods to a GenType.
@@ -241,6 +166,80 @@ namespace tfel{
       template<typename Child>
       class GenTypeSpecializedMethods<Child,tfel::meta::TLE>
       {};
+
+    } // end of namespace internals
+    
+  } // end of namespace utilities
+
+} // end of namespace tfel
+
+#ifdef _MSC_VER
+#include "TFEL/Utilities/GenTypeBase_MSC.hxx"
+#else 
+
+namespace tfel{
+
+  namespace utilities{
+
+    namespace internals{
+
+      //! An helper class to fill the runtime methods of a GenType.
+      /*
+       * \param unsigned short N, the current index.
+       * \param typename List, a list of types.
+       * \author Helfer Thomas.
+       * \date   20 Apr. 2007.
+       */
+      template<typename List,typename... Types>
+      struct TFEL_VISIBILITY_LOCAL GenTypeRunTimeMethods
+	: public GenTypeRunTimeMethods<typename List::Next,Types...,typename List::Current>
+      {};
+
+      //! A partial specialisation to end the recursion.
+      /*
+       * \author Helfer Thomas.
+       * \date   20 Apr. 2007.
+       */
+      template<typename... Types>
+      struct TFEL_VISIBILITY_LOCAL GenTypeRunTimeMethods<tfel::meta::TLE,Types...>
+      {
+	//! choose the function used to destroy the N-1 type of the typelist.
+	template<typename T>
+	using GenTypeDestroy = typename std::conditional<std::is_trivial<T>::value,
+							 GenTypeTrivialDestroy<T>,
+							 GenTypeGenericDestroy<T>>::type ; //! size of the typelise
+	static constexpr const auto N = sizeof...(Types);
+	//! a simple alias.
+        using DestructorPtr      = void (*)(void *const);
+	//! a simple alias.
+	using AssignOperatorPtr  = void (*)(void *const,const void* const);
+	//! a simple alias.
+	using CopyConstructorPtr = void (*)(void *const,const void* const);
+	/*!
+	 * \param[in] i: index
+	 * \return a pointer to a specific destructor
+	 */
+	DestructorPtr get_destructor(const unsigned short i){
+	  constexpr const DestructorPtr m[N] = {&GenTypeDestroy<Types>::exe...};
+	  return (i>=N) ? nullptr : m[i];
+	}
+	/*!
+	 * \param[in] i: index
+	 * \return a pointer to a copy constructor
+	 */
+	CopyConstructorPtr get_copy_constructor(const unsigned short i){
+	  constexpr const CopyConstructorPtr m[N] = {&GenTypeCopy<Types>::exe...};
+	  return (i>=N) ? nullptr : m[i];
+	}
+	/*!
+	 * \param[in] i: index
+	 * \return a pointer to an assignement operator
+	 */
+	AssignOperatorPtr get_assignement_operator(const unsigned short i){
+	  constexpr const AssignOperatorPtr  m[N] = {&GenTypeAssign<Types>::exe...};
+	  return (i>=N) ? nullptr : m[i];
+	}
+      };
 
     } // end of namespace internals
 
@@ -479,6 +478,16 @@ namespace tfel{
       TFEL_STATIC_ASSERT((tfel::meta::TLElementsAreUnique<List>::cond));
     };
 
+  } // end of namespace utilities
+
+} // end of namespace tfel
+  
+#endif /* _MSC_VER */
+
+namespace tfel{
+
+  namespace utilities{
+
     /*!
      * Apply function T::apply to a GenTypeBase for the type holded by the
      * GenTypeBase.
@@ -535,8 +544,7 @@ namespace tfel{
      */
     template<typename T,typename List>
     typename T::return_type
-    apply(const GenTypeBase<List>&,
-	  const GenTypeBase<List>&);
+    apply(const GenTypeBase<List>&,const GenTypeBase<List>&);
 
     /*!
      * Apply functor T to a GenTypeBase for the types holded by the
@@ -616,8 +624,7 @@ namespace tfel{
      */
     template<typename T,typename List>
     typename T::return_type
-    apply(GenTypeBase<List>&,
-	  GenTypeBase<List>&);
+    apply(GenTypeBase<List>&,GenTypeBase<List>&);
 
     /*!
      * Apply functor T to a GenTypeBase for the types holded by the
@@ -638,8 +645,7 @@ namespace tfel{
      */
     template<typename T,typename List>
     typename T::return_type
-    apply(T&,GenTypeBase<List>&,
-	  GenTypeBase<List>&);
+    apply(T&,GenTypeBase<List>&,GenTypeBase<List>&);
 
     template<typename... Types>
     using GenType = GenTypeBase<typename tfel::meta::GenerateTypeList<Types...>::type>;
@@ -651,4 +657,4 @@ namespace tfel{
 #include"TFEL/Utilities/GenTypeBase.ixx"
 #include"TFEL/Utilities/GenTypeSpecialisation.ixx"
 
-#endif /* LIB_TFEL_GENTYPEBASE_H_ */
+#endif /* LIB_TFEL_UTILITIES_GENTYPEBASE_H */

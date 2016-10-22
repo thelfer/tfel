@@ -12,21 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_GENTYPESPECIALISATION_I_
-#define LIB_TFEL_GENTYPESPECIALISATION_I_ 
-
-//! an helper macro to specialize GenTypeTraits for plain old data types.
-#define TFEL_UTILITIES_GENTYPETRAITS(X)                \
-      /*                                               \
-       * \brief  specialisation for X                  \
-       * \author Helfer Thomas                         \
-       * \date   20 Apr. 2007                          \
-       */                                              \
-      template<>                                       \
-      struct GenTypeTraits< X >                        \
-      {                                                \
-	static constexpr bool isFundamentalType = true;    \
-      }
+#ifndef LIB_TFEL_GENTYPESPECIALISATION_I
+#define LIB_TFEL_GENTYPESPECIALISATION_I
 
 //! an helper macro to specialize GenTypeSpecializedAccessor.
 #define TFEL_UTILITIES_GENTYPESPECIALIZEDACCESSOR(X,Y)                  \
@@ -75,17 +62,6 @@ namespace tfel{
   namespace utilities{
 
     namespace internals{
-      
-      TFEL_UTILITIES_GENTYPETRAITS(bool);
-      TFEL_UTILITIES_GENTYPETRAITS(unsigned short);
-      TFEL_UTILITIES_GENTYPETRAITS(unsigned int);
-      TFEL_UTILITIES_GENTYPETRAITS(long unsigned int);
-      TFEL_UTILITIES_GENTYPETRAITS(short);
-      TFEL_UTILITIES_GENTYPETRAITS(int);
-      TFEL_UTILITIES_GENTYPETRAITS(long int);
-      TFEL_UTILITIES_GENTYPETRAITS(float);
-      TFEL_UTILITIES_GENTYPETRAITS(double);
-      TFEL_UTILITIES_GENTYPETRAITS(long double);
 
       TFEL_UTILITIES_GENTYPESPECIALIZEDACCESSOR(bool,Bool);
       TFEL_UTILITIES_GENTYPESPECIALIZEDACCESSOR(unsigned short,UShort);
@@ -155,4 +131,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_GENTYPESPECIALISATION_I_ */
+#endif /* LIB_TFEL_GENTYPESPECIALISATION_I */

@@ -358,13 +358,12 @@ namespace aster
       struct PredictionOperatorIsNotAvalaible
       {
 	typedef Behaviour<H,AsterReal,false> BV;
-	static typename BV::IntegrationResult
+	[[ noreturn ]] static typename BV::IntegrationResult
 	exe(BV&,const typename BV::SMFlag,
 	    const typename BV::SMType)
 	{
 	  typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
 	  throwPredictionOperatorIsNotAvalaible(Traits::getName());
-	  return BV::FAILURE;
 	} // end of exe	  
       };
       

@@ -33,7 +33,7 @@ nu.setGlossaryName("PoissonRatio");
 @PredictionOperator<DS_DEGL>{
   static_cast<void>(smt); // suppression d'un warning : la matrice de
 			  // prédiction est toujours l'élastique
-  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  Dt = Stensor4(lambda*Stensor4::IxI()+2*mu*Stensor4::Id());
 }
 
 @Integrator{

@@ -43,7 +43,7 @@ struct FiniteStrainBehaviourTangentOperator11 final
   virtual tfel::tests::TestResult
   execute() override
   {
-    using tfel::material::FiniteStrainBehaviourTangentOperator;
+    using namespace tfel::material;
     FiniteStrainBehaviourTangentOperator<1u,double> Dt;
     Dt = tfel::math::st2tost2<1u,double>::Id();
     return this->result;

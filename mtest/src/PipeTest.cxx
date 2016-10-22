@@ -917,7 +917,7 @@ namespace mtest{
       }
       const auto T = (*(pT->second))(t+dt);
       if(this->hpp){
-	const auto Pi = [this,T,Ri_](){
+	const auto Pi = [this,T,Ri_,pi](){
 	  if(this->gseq==nullptr){
 	    return this->P0*(T/this->T0);
 	  }

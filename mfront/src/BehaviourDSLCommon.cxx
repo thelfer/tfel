@@ -4833,7 +4833,6 @@ namespace mfront{
 			  << "throw(std::runtime_error(\"" << this->mb.getClassName()
 			  << "::computePredictionOperator: \"\n"
 			  << "\"unsupported prediction operator flag\"));\n"
-			  << "return FAILURE;\n"
 			  << "}\n\n";
       return;
     }

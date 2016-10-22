@@ -1607,6 +1607,7 @@ include/TFEL/Utilities/CxxTokenizer.ixx -text
 include/TFEL/Utilities/Data.hxx -text
 include/TFEL/Utilities/GenTypeBase.hxx -text
 include/TFEL/Utilities/GenTypeBase.ixx -text
+include/TFEL/Utilities/GenTypeBase_MSC.hxx -text
 include/TFEL/Utilities/GenTypeCastError.hxx -text
 include/TFEL/Utilities/GenTypeSpecialisation.ixx -text
 include/TFEL/Utilities/StringAlgorithms.hxx -text
