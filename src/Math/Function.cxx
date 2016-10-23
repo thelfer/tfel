@@ -59,143 +59,125 @@ namespace tfel
 						      const int e)
       {
 
-	using namespace std;
-	ostringstream msg;
-	msg << "StandardFunctionBase::throwInvalidCallException : "
-	    << "call to function failed for value " << v << "("
-	    <<  strerror(e)
-	    << ")";
-	throw(runtime_error(msg.str()));
+	throw(std::runtime_error("StandardFunctionBase::throwInvalidCallException: "
+				 "call to function failed for value "+std::to_string(v)+
+				 " ("+std::string(strerror(e))+")"));
       } // end of struct StandardFunctionBase::throwInvalidCallException()
 
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(exp)
       {
-	using namespace std;
-	shared_ptr<Expr> ce(expr->clone(v));
-	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> expe(new StandardFunction< ::exp >(ce));
-	return shared_ptr<Expr>(new BinaryOperation<OpMult>(expe,de));
+	auto ce = expr->clone(v);
+	auto de = expr->differentiate(pos,v);
+	auto expe = std::make_shared<StandardFunction< ::exp >>(ce);
+	return std::make_shared<BinaryOperation<OpMult>>(expe,de);
       } // end of differentiateFunction
 
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(sin)
       {
-	using namespace std;
-	shared_ptr<Expr> ce(expr->clone(v));
-	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> cose(new StandardFunction< ::cos >(ce));
-	return shared_ptr<Expr>(new BinaryOperation<OpMult>(cose,de));
+	auto ce = expr->clone(v);
+	auto de = expr->differentiate(pos,v);
+	auto cose = std::make_shared<StandardFunction< ::cos >>(ce);
+	return std::make_shared<BinaryOperation<OpMult>>(cose,de);
       } // end of differentiateFunction
 
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(cos)
       {
-	using namespace std;
-	shared_ptr<Expr> ce(expr->clone(v));
-	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> sine(new StandardFunction< ::sin >(ce));
-	return shared_ptr<Expr>(new BinaryOperation<OpMult>(shared_ptr<Expr>(new Negation(sine)),de));
+	auto ce = expr->clone(v);
+	auto de = expr->differentiate(pos,v);
+	auto sine= std::make_shared<StandardFunction< ::sin >>(ce);
+	return std::make_shared<BinaryOperation<OpMult>>(std::make_shared<Negation>(sine),de);
       } // end of differentiateFunction
 
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(tan)
       {
-	using namespace std;
-	shared_ptr<Expr> ce(expr->clone(v));
-	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> tane(new StandardFunction< ::tan >(ce));
-	shared_ptr<Expr> tan2e(new BinaryOperation<OpMult>(tane,tane));
-	shared_ptr<Expr> tan2e_(new BinaryOperation<OpPlus>(shared_ptr<Expr>(new Number(1.)),tan2e));
-	return shared_ptr<Expr>(new BinaryOperation<OpMult>(tan2e_,de));
+	auto ce = expr->clone(v);
+	auto de = expr->differentiate(pos,v);
+	auto tane= std::make_shared<StandardFunction< ::tan >>(ce);
+	auto tan2e= std::make_shared<BinaryOperation<OpMult>>(tane,tane);
+	auto tan2e_= std::make_shared<BinaryOperation<OpPlus>>(std::make_shared<Number>(1.),tan2e);
+	return std::make_shared<BinaryOperation<OpMult>>(tan2e_,de);
       } // end of differentiateFunction
 
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(sqrt)
       {
-	using namespace std;
-	shared_ptr<Expr> ce(expr->clone(v));
-	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> sqrte(new StandardFunction< ::sqrt >(ce));
-	shared_ptr<Expr> sqrte_(new BinaryOperation<OpDiv>(shared_ptr<Expr>(new Number(0.5)),
-							 sqrte));
-	return shared_ptr<Expr>(new BinaryOperation<OpMult>(sqrte_,de));
+	auto ce = expr->clone(v);
+	auto de = expr->differentiate(pos,v);
+	auto sqrte= std::make_shared<StandardFunction< ::sqrt >>(ce);
+	auto sqrte_= std::make_shared<BinaryOperation<OpDiv>>(std::make_shared<Number>(0.5),
+							      sqrte);
+	return std::make_shared<BinaryOperation<OpMult>>(sqrte_,de);
       } // end of differentiateFunction
 
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(log)
       {
-	using namespace std;
-	shared_ptr<Expr> ce(expr->clone(v));
-	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	return shared_ptr<Expr>(new BinaryOperation<OpDiv>(de,ce));
+	auto ce = expr->clone(v);
+	auto de = expr->differentiate(pos,v);
+	return std::make_shared<BinaryOperation<OpDiv>>(de,ce);
       } // end of differentiateFunction
 
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(log10)
       {
-	using namespace std;
-	using namespace std;
-	static double ln10 = log(10.);
-	shared_ptr<Expr> ce(expr->clone(v));
-	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> de_(new BinaryOperation<OpMult>(shared_ptr<Expr>(new Number(ln10)),de));
-	return shared_ptr<Expr>(new BinaryOperation<OpDiv>(de_,ce));
+	static double ln10 = std::log(10.);
+	auto ce = expr->clone(v);
+	auto de = expr->differentiate(pos,v);
+	auto de_= std::make_shared<BinaryOperation<OpMult>>(std::make_shared<Number>(ln10),de);
+	return std::make_shared<BinaryOperation<OpDiv>>(de_,ce);
       } // end of differentiateFunction
 
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(asin)
       {
-	using namespace std;
-	shared_ptr<Expr> ce(expr->clone(v));
-	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> den1(new BinaryOperation<OpMult>(ce,ce));
-	shared_ptr<Expr> den2(new BinaryOperation<OpMinus>(shared_ptr<Expr>(new Number(1.)),den1));
-	shared_ptr<Expr> den3(new StandardFunction< ::sqrt>(den2));
-	return shared_ptr<Expr>(new BinaryOperation<OpDiv>(de,den3));
+	auto ce = expr->clone(v);
+	auto de = expr->differentiate(pos,v);
+	auto den1= std::make_shared<BinaryOperation<OpMult>>(ce,ce);
+	auto den2= std::make_shared<BinaryOperation<OpMinus>>(std::make_shared<Number>(1.),den1);
+	auto den3= std::make_shared<StandardFunction< ::sqrt>>(den2);
+	return std::make_shared<BinaryOperation<OpDiv>>(de,den3);
       } // end of differentiateFunction
 
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(acos)
       {
-	using namespace std;
-	shared_ptr<Expr> ce(expr->clone(v));
-	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> num1(new Number(-1.));
-	shared_ptr<Expr> num2(new BinaryOperation<OpMult>(num1,de));
-	shared_ptr<Expr> den1(new BinaryOperation<OpMult>(ce,ce));
-	shared_ptr<Expr> den2(new BinaryOperation<OpMinus>(shared_ptr<Expr>(new Number(1.)),den1));
-	shared_ptr<Expr> den3(new StandardFunction< ::sqrt>(den2));
-	return shared_ptr<Expr>(new BinaryOperation<OpDiv>(num2,den3));
+	auto ce = expr->clone(v);
+	auto de = expr->differentiate(pos,v);
+	auto num1= std::make_shared<Number>(-1.);
+	auto num2= std::make_shared<BinaryOperation<OpMult>>(num1,de);
+	auto den1= std::make_shared<BinaryOperation<OpMult>>(ce,ce);
+	auto den2= std::make_shared<BinaryOperation<OpMinus>>(std::make_shared<Number>(1.),den1);
+	auto den3= std::make_shared<StandardFunction< ::sqrt >>(den2);
+	return std::make_shared<BinaryOperation<OpDiv>>(num2,den3);
       } // end of differentiateFunction
 
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(atan)
       {
-	using namespace std;
-	shared_ptr<Expr> ce(expr->clone(v));
-	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> den1(new BinaryOperation<OpMult>(ce,ce));
-	shared_ptr<Expr> den2(new BinaryOperation<OpPlus>(shared_ptr<Expr>(new Number(1.)),den1));
-	return shared_ptr<Expr>(new BinaryOperation<OpDiv>(de,den2));
+	auto ce = expr->clone(v);
+	auto de = expr->differentiate(pos,v);
+	auto den1= std::make_shared<BinaryOperation<OpMult>>(ce,ce);
+	auto den2= std::make_shared<BinaryOperation<OpPlus>>(std::make_shared<Number>(1.),den1);
+	return std::make_shared<BinaryOperation<OpDiv>>(de,den2);
       } // end of differentiateFunction
 
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(sinh)
       {
-	using namespace std;
-	shared_ptr<Expr> ce(expr->clone(v));
-	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> coshe(new StandardFunction< ::cosh >(ce));
-	return shared_ptr<Expr>(new BinaryOperation<OpMult>(coshe,de));
+	auto ce = expr->clone(v);
+	auto de = expr->differentiate(pos,v);
+	auto coshe= std::make_shared<StandardFunction< ::cosh >>(ce);
+	return std::make_shared<BinaryOperation<OpMult>>(coshe,de);
       } // end of differentiateFunction
 
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(cosh)
       {
-	using namespace std;
-	shared_ptr<Expr> ce(expr->clone(v));
-	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> sinhe(new StandardFunction< ::sinh >(ce));
-	return shared_ptr<Expr>(new BinaryOperation<OpMult>(sinhe,de));
+	auto ce = expr->clone(v);
+	auto de = expr->differentiate(pos,v);
+	auto sinhe= std::make_shared<StandardFunction< ::sinh >>(ce);
+	return std::make_shared<BinaryOperation<OpMult>>(sinhe,de);
       } // end of differentiateFunction
 
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(tanh)
       {
-	using namespace std;
-	shared_ptr<Expr> ce(expr->clone(v));
-	shared_ptr<Expr> de(expr->differentiate(pos,v));
-	shared_ptr<Expr> coshe(new StandardFunction< ::cosh >(ce));
-	shared_ptr<Expr> coshe2(new BinaryOperation<OpMult>(coshe,coshe));
-	return shared_ptr<Expr>(new BinaryOperation<OpDiv>(de,coshe2));
+	auto ce = expr->clone(v);
+	auto de = expr->differentiate(pos,v);
+	auto coshe= std::make_shared<StandardFunction< ::cosh >>(ce);
+	auto coshe2= std::make_shared<BinaryOperation<OpMult>>(coshe,coshe);
+	return std::make_shared<BinaryOperation<OpDiv>>(de,coshe2);
       } // end of differentiateFunction
 
     } // end of namespace parser

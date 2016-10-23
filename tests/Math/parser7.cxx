@@ -91,7 +91,7 @@ private:
 }; // end of struct TestFunction
 
 #define TFEL_MATH_PARSER7_TESTFUNCTION(F,XA,XB,DX) \
-  manager.addTest("parser7",shared_ptr<Test>(new TestFunction< ::F >(#F,XA,XB,DX)))
+  manager.addTest("parser7",std::make_shared<TestFunction< ::F >>(#F,XA,XB,DX))
 
 
 /* coverity [UNCAUGHT_EXCEPT]*/

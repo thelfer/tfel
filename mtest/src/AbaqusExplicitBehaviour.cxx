@@ -234,8 +234,7 @@ namespace mtest
       throw_if(true,"unsupported hypothesis ("+
 	       ModellingHypothesis::toString(h)+")");
     }();
-    const auto nprops  = s.mprops1.size() == 1 ? 1 :
-      static_cast<AbaqusInt>(s.mprops1.size())-1;
+    const auto nprops  = static_cast<AbaqusInt>(s.mprops1.size())-1;
     const auto nstatv  = static_cast<AbaqusInt>(s.iv1.size());
     const auto nfieldv = static_cast<AbaqusInt>(s.esv0.size())-1;
     const auto density   = s.mprops1[0];

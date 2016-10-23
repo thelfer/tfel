@@ -133,7 +133,7 @@ namespace tfel{
 
     struct is_cxx_separator
     {
-      is_cxx_separator(const bool b)
+      explicit is_cxx_separator(const bool b)
 	: treat_dot_as_separator(b)
       {}
       bool operator()(const std::string::value_type& c) const{
@@ -156,7 +156,7 @@ namespace tfel{
     struct is_cxx_separator_or_space
       :public is_cxx_separator      
     {
-      is_cxx_separator_or_space(const bool b)
+      explicit is_cxx_separator_or_space(const bool b)
 	: is_cxx_separator(b)
       {}
       bool operator()(const std::string::value_type& c) const{

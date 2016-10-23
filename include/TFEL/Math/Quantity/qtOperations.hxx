@@ -94,7 +94,7 @@ namespace tfel{
     template<typename unit,typename T1, typename T2>
     TFEL_MATH_INLINE constexpr
     qt<unit,typename tfel::typetraits::Promote<T1,T2>::type>
-    operator + (const qt<unit,T1>,qt<unit,T2>);
+    operator + (const qt<unit,T1>,const qt<unit,T2>);
 
     /*!									      
      * \brief Partial specialisation for substraction of two qt having the same unit          

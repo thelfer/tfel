@@ -109,8 +109,7 @@ namespace mtest
     MTestParser().execute(*this,f,ecmds,s);
   } // end of MTest::readInputFile
 
-  std::string
-  MTest::name() const
+  std::string MTest::name() const
   {
     return "unit behaviour test";
   } // end of MTest::name
@@ -126,8 +125,7 @@ namespace mtest
     this->constraints.push_back(c);
   }
 
-  void
-  MTest::setDrivingVariableEpsilon(const real e)
+  void MTest::setDrivingVariableEpsilon(const real e)
   {
     if(this->options.eeps>0){
       throw(std::runtime_error("MTest::setDrivingVariableEpsilon: the epsilon "
@@ -140,8 +138,7 @@ namespace mtest
     this->options.eeps = e;
   }
 
-  void
-  MTest::setThermodynamicForceEpsilon(const real s)
+  void MTest::setThermodynamicForceEpsilon(const real s)
   {
     if(this->options.seps>0){
       throw(std::runtime_error("MTest::setThermodynamicForceEpsilon: the epsilon "
@@ -264,11 +261,11 @@ namespace mtest
 	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
 	shared_ptr<Evolution>  eev;
 	if(this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
-	  eev = shared_ptr<Evolution>(new ConstantEvolution(1.));
+	  eev = make_evolution(1.);
 	} else {
-	  eev = shared_ptr<Evolution>(new ConstantEvolution(0.));
+	  eev = make_evolution(0.);
 	}
-	shared_ptr<Constraint> ec(new ImposedDrivingVariable(2,eev));
+	auto ec = std::make_shared<ImposedDrivingVariable>(2,eev);
 	this->constraints.push_back(ec);
       }	else {
 	throw(std::runtime_error("MTest::completeInitialisation : "
@@ -282,19 +279,19 @@ namespace mtest
 	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
 	shared_ptr<Evolution>  eev;
 	if(this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
-	  eev = shared_ptr<Evolution>(new ConstantEvolution(1.));
+	  eev = make_evolution(1.);
 	} else {
-	  eev = shared_ptr<Evolution>(new ConstantEvolution(0.));
+	  eev = make_evolution(0.);
 	}
-	shared_ptr<Constraint> ec(new ImposedDrivingVariable(1,eev));
+	auto ec = std::make_shared<ImposedDrivingVariable>(1,eev);
 	shared_ptr<Evolution>  sev;
 	auto pev = this->evm->find("AxialStress");
 	if(pev!=this->evm->end()){
 	  sev = pev->second;
 	} else {
-	  sev = shared_ptr<Evolution>(new ConstantEvolution(0.));
+	  sev = make_evolution(0.);
 	}
-	shared_ptr<Constraint> sc(new ImposedThermodynamicForce(1,sev));
+	auto sc = std::make_shared<ImposedThermodynamicForce>(1,sev);
 	this->constraints.push_back(ec);
 	this->constraints.push_back(sc);
       } else {
@@ -309,13 +306,13 @@ namespace mtest
 	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
 	shared_ptr<Evolution>  eev;
 	if(this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
-	  eev = shared_ptr<Evolution>(new ConstantEvolution(1.));
+	  eev = make_evolution(1.);
 	} else {
-	  eev = shared_ptr<Evolution>(new ConstantEvolution(0.));
+	  eev = make_evolution(0.);
 	}
-	shared_ptr<Constraint> ec(new ImposedDrivingVariable(2,eev));
-	shared_ptr<Evolution>  sev(new ConstantEvolution(0.));
-	shared_ptr<Constraint> sc(new ImposedThermodynamicForce(2,sev));
+	auto ec  = std::make_shared<ImposedDrivingVariable>(2,eev);
+	auto sev = make_evolution(0.);
+	auto sc  = std::make_shared<ImposedThermodynamicForce>(2,sev);
 	this->constraints.push_back(ec);
 	this->constraints.push_back(sc);
       } else {

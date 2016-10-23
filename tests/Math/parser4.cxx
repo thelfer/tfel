@@ -36,11 +36,11 @@ int main()
   vector<string> nvar(1,"b");
   set<string> n;
   set<string> n2;
-  shared_ptr<ExternalFunctionManager> manager(new ExternalFunctionManager());
-  manager->operator[]("a") = shared_ptr<ExternalFunction>(new Evaluator("12",manager));
-  shared_ptr<Evaluator> f(new Evaluator(var,"2*exp(a*x)",manager));
-  shared_ptr<Evaluator> g(new Evaluator(var,"2*b*exp(a*x)",manager));
-  shared_ptr<ExternalFunction> h = g->createFunctionByChangingParametersIntoVariables(nvar);
+  auto manager = std::make_shared<ExternalFunctionManager>();
+  manager->operator[]("a") = std::make_shared<Evaluator>("12",manager);
+  auto f = std::make_shared<Evaluator>(var,"2*exp(a*x)",manager);
+  auto g = std::make_shared<Evaluator>(var,"2*b*exp(a*x)",manager);
+  auto h = g->createFunctionByChangingParametersIntoVariables(nvar);
   cout << "h : " << h->getNumberOfVariables() << endl;
   h->setVariableValue(0,1.5);
   h->setVariableValue(1,2.54);

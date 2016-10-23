@@ -34,10 +34,12 @@ namespace tfel_check {
   void AreaComparison::compare() {
     using size_type = std::vector<double>::size_type;
     // interpolation before integration
-    std::shared_ptr<Column> colInterpolatedTmpA(new Column(*(this->colIntegralInterpolated)));
-    std::shared_ptr<Column> colInterpolatedA(colInterpolatedTmpA); /**!< abscissa column for .ref */
+    auto colInterpolatedTmpA =
+      std::make_shared<Column>(*(this->colIntegralInterpolated));
+    auto colInterpolatedA(colInterpolatedTmpA); /**!< abscissa column for .ref */
 
-    std::shared_ptr<Column> colInterpolatedTmpB(new Column(*(this->colIntegralInterpolated)));
+    auto colInterpolatedTmpB =
+      std::make_shared<Column>(*(this->colIntegralInterpolated));
     std::shared_ptr<Column> colInterpolatedB(colInterpolatedTmpB); /**!< abscissa column for .res */
 
     colInterpolatedA->setFilename(this->c1->getFilename());

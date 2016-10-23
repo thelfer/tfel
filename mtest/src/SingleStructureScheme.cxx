@@ -185,17 +185,17 @@ namespace mtest{
       const auto type  = elm.getUMATBehaviourType(l,f);
       const auto ktype = elm.getUMATBehaviourKinematic(l,f);
       if(type==1u){
-	b = std::shared_ptr<Behaviour>(new CastemSmallStrainBehaviour(h,l,f));
+	b = std::make_shared<CastemSmallStrainBehaviour>(h,l,f);
       } else if(type==2u){
 	if(ktype==3u){
-	  b = std::shared_ptr<Behaviour>(new CastemFiniteStrainBehaviour(h,l,f));
+	  b = std::make_shared<CastemFiniteStrainBehaviour>(h,l,f);
 	} else if (ktype==4u){
-	  b = std::shared_ptr<Behaviour>(new CastemFiniteStrainBehaviour2(h,l,f));
+	  b = std::make_shared<CastemFiniteStrainBehaviour2>(h,l,f);
 	} else {
 	  throw_if(true,"unsupported kinematic");
 	}
       } else if(type==3u){
-	b = std::shared_ptr<Behaviour>(new CastemCohesiveZoneModel(h,l,f));
+	b = std::make_shared<CastemCohesiveZoneModel>(h,l,f);
       } else {
 	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }
@@ -216,11 +216,11 @@ namespace mtest{
       auto& elm = ELM::getExternalLibraryManager();
       const auto type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
-	b = std::shared_ptr<Behaviour>(new AsterSmallStrainBehaviour(h,l,f));
+	b = std::make_shared<AsterSmallStrainBehaviour>(h,l,f);
       } else if(type==2u){
-	b = std::shared_ptr<Behaviour>(new AsterFiniteStrainBehaviour(h,l,f));
+	b = std::make_shared<AsterFiniteStrainBehaviour>(h,l,f);
       } else if(type==3u){
-	b = std::shared_ptr<Behaviour>(new AsterCohesiveZoneModel(h,l,f));
+	b = std::make_shared<AsterCohesiveZoneModel>(h,l,f);
       } else {
 	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }
@@ -232,7 +232,7 @@ namespace mtest{
       auto& elm = ELM::getExternalLibraryManager();
       const auto type = elm.getUMATBehaviourType(l,f);
       if(type==2u){
-	b = std::shared_ptr<Behaviour>(new EuroplexusFiniteStrainBehaviour(h,l,f));
+	b = std::make_shared<EuroplexusFiniteStrainBehaviour>(h,l,f);
       } else {
 	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }
@@ -245,9 +245,9 @@ namespace mtest{
       const auto bn   = AbaqusStandardBehaviour::getBehaviourName(f,h);
       const auto type = elm.getUMATBehaviourType(l,bn);
       if(type==1u){
-	b = std::shared_ptr<Behaviour>(new AbaqusSmallStrainBehaviour(h,l,f));
+	b = std::make_shared<AbaqusSmallStrainBehaviour>(h,l,f);
       } else if(type==2u){
-	b = std::shared_ptr<Behaviour>(new AbaqusFiniteStrainBehaviour(h,l,f));
+	b = std::make_shared<AbaqusFiniteStrainBehaviour>(h,l,f);
       } else {
 	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }
@@ -258,7 +258,7 @@ namespace mtest{
       const auto bn   = AbaqusExplicitBehaviour::getBehaviourName(f,h);
       const auto type = elm.getUMATBehaviourType(l,bn);
       if(type==2u){
-	b = std::shared_ptr<Behaviour>(new AbaqusExplicitBehaviour(h,l,f));
+	b = std::make_shared<AbaqusExplicitBehaviour>(h,l,f);
       } else {
 	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }
@@ -271,10 +271,10 @@ namespace mtest{
       const auto ktype = elm.getUMATBehaviourKinematic(l,f);
       check_no_parameters();
       if(btype==1u){
-	b = std::shared_ptr<Behaviour>(new CyranoBehaviour(h,l,f));
+	b = std::make_shared<CyranoBehaviour>(h,l,f);
       } else if(btype==2u){
 	if(ktype==3u){
-	  b = std::shared_ptr<Behaviour>(new CyranoBehaviour(h,l,f));
+	  b = std::make_shared<CyranoBehaviour>(h,l,f);
 	} else {
 	  throw_if(true,"unsupported behaviour kinematic");
 	}

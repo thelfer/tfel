@@ -47,9 +47,7 @@ SingleStructureScheme_addEvolution3(mtest::SingleStructureScheme& t,
 				    const bool b1,
 				    const bool b2)
 {
-  using namespace std;
-  using namespace mtest;
-  shared_ptr<Evolution> pev(new FunctionEvolution(f,t.getEvolutions()));
+  auto pev = std::make_shared<mtest::FunctionEvolution>(f,t.getEvolutions());
   t.addEvolution(n,pev,b1,b2);
 }
 
@@ -59,8 +57,7 @@ SingleStructureScheme_setMaterialProperty(mtest::SingleStructureScheme& t,
 					  const mtest::real& v,
 					  const bool b)
 {
-  using namespace mtest;
-  std::shared_ptr<Evolution> pev(new ConstantEvolution(v));
+  auto pev = mtest::make_evolution(v);
   t.setMaterialProperty(n,pev,b);
 }
 
@@ -70,10 +67,7 @@ SingleStructureScheme_setMaterialProperty2(mtest::SingleStructureScheme& t,
 					   const std::string& f,
 					   const bool b)
 {
-  using namespace mtest;
-  using mtest::real;
-  std::shared_ptr<Evolution> mpev;
-  mpev = std::shared_ptr<Evolution>(new FunctionEvolution(f,t.getEvolutions()));
+  auto mpev = std::make_shared<mtest::FunctionEvolution>(f,t.getEvolutions());
   t.setMaterialProperty(n,mpev,b);
 }
 
@@ -83,8 +77,7 @@ SingleStructureScheme_setMaterialProperty3(mtest::SingleStructureScheme& t,
 					   const std::string& f,
 					   const bool b)
 {
-  using namespace mtest;
-  std::shared_ptr<Evolution> pev(new FunctionEvolution(f,t.getEvolutions()));
+  auto pev = std::make_shared<mtest::FunctionEvolution>(f,t.getEvolutions());
   t.setMaterialProperty(n,pev,b);
 }
 
@@ -95,9 +88,7 @@ SingleStructureScheme_setCastemMaterialProperty(mtest::SingleStructureScheme& t,
 						const std::string& f,
 						const bool b)
 {
-  using namespace mtest;
-  std::shared_ptr<Evolution> mpev;
-  mpev = std::shared_ptr<Evolution>(new CastemEvolution(l,f,t.getEvolutions()));
+  auto mpev = std::make_shared<mtest::CastemEvolution>(l,f,t.getEvolutions());
   t.setMaterialProperty(n,mpev,b);
 }
 
@@ -107,8 +98,7 @@ SingleStructureScheme_setExternalStateVariable(mtest::SingleStructureScheme& t,
 					       const mtest::real& v,
 					       const bool b)
 {
-  using namespace mtest;
-  std::shared_ptr<Evolution> pev(new ConstantEvolution(v));
+  auto pev = mtest::make_evolution(v);
   t.setExternalStateVariable(n,pev,b);
 }
 
@@ -119,15 +109,7 @@ SingleStructureScheme_setExternalStateVariable2(mtest::SingleStructureScheme& t,
 						mtest::real>& values,
 						const bool b)
 {
-  using namespace mtest;
-  std::vector<real> tv(values.size());
-  std::vector<real> ev(values.size());
-  std::vector<real>::size_type i = 0;
-  for(const auto& v : values){
-    std::tie(tv[i],ev[i]) = v;
-    ++i;
-  }
-  std::shared_ptr<Evolution> pev(new LPIEvolution(tv,ev));
+  auto pev = mtest::make_evolution(values);
   t.setExternalStateVariable(n,pev,b);
 }
 
@@ -137,8 +119,7 @@ SingleStructureScheme_setExternalStateVariable3(mtest::SingleStructureScheme& t,
 						const std::string& f,
 						const bool b)
 {
-  using namespace mtest;
-  std::shared_ptr<Evolution> pev(new FunctionEvolution(f,t.getEvolutions()));
+  auto pev = std::make_shared<mtest::FunctionEvolution>(f,t.getEvolutions());
   t.setExternalStateVariable(n,pev,b);
 }
 

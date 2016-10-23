@@ -92,25 +92,22 @@ namespace tfel
         vector<shared_ptr<Expr> >::iterator p4;
 	unsigned short i = 0;
 	if(args.size()==0){
-	  return shared_ptr<Expr>(new Number(0.));
+	  return std::make_shared<Number>(0.);
 	}
         for(p3=this->args.begin(),p4=nargs.begin();
 	    p3!=this->args.end();++p3,++p4){
 	  *p4 = (*p3)->clone(v);
 	}
-        shared_ptr<Expr> df_(new ExternalFunctionExpr2(this->f->differentiate(i),
-						     nargs));
-        shared_ptr<Expr> df = shared_ptr<Expr>(new BinaryOperation<OpMult>(df_,
-								       (*p)->differentiate(pos,v)));
-        ++p;
-        ++i;
+        auto df_ = std::make_shared<ExternalFunctionExpr2>(this->f->differentiate(i),nargs);
+	std::shared_ptr<Expr> df  =
+	  std::make_shared<BinaryOperation<OpMult>>(df_,(*p)->differentiate(pos,v));
+	++p;
+	++i;
         while(p!=this->args.end()){
-	  df_  = shared_ptr<Expr>(new ExternalFunctionExpr2(this->f->differentiate(i),
-							  nargs));
-	  shared_ptr<Expr> df2 = shared_ptr<Expr>(new BinaryOperation<OpMult>(df_,
-									  (*p)->differentiate(pos,v)));
-      
-          df = shared_ptr<Expr>(new BinaryOperation<OpPlus>(df,df2));
+	  df_  = std::make_shared<ExternalFunctionExpr2>(this->f->differentiate(i),nargs);
+	  std::shared_ptr<Expr> df2 =
+	    std::make_shared<BinaryOperation<OpMult>>(df_,(*p)->differentiate(pos,v));
+	  df = std::make_shared<BinaryOperation<OpPlus>>(df,df2);
 	  ++p;
 	  ++i;
         }
@@ -130,7 +127,7 @@ namespace tfel
         for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
 	  *p2 = (*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
 	}
-        return shared_ptr<Expr>(new ExternalFunctionExpr2(this->f,nargs));
+        return std::make_shared<ExternalFunctionExpr2>(this->f,nargs);
       } // end of ExternalFunctionExpr2::createFunctionByChangingParametersIntoVariables
 
       std::shared_ptr<Expr>
@@ -143,7 +140,7 @@ namespace tfel
         for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
 	  *p2 = (*p)->clone(v);
 	}
-        return shared_ptr<Expr>(new ExternalFunctionExpr2(this->f,nargs));	
+        return std::make_shared<ExternalFunctionExpr2>(this->f,nargs);	
       } // end of ExternalFunctionExpr2::clone
 
       std::shared_ptr<Expr>
@@ -156,11 +153,10 @@ namespace tfel
         for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
 	  *p2 = (*p)->resolveDependencies(v);
 	}
-        return shared_ptr<Expr>(new ExternalFunctionExpr2(this->f->resolveDependencies(),nargs));	
+        return std::make_shared<ExternalFunctionExpr2>(this->f->resolveDependencies(),nargs);	
       } // end of ExternalFunctionExpr2::resolveDependencies
 
-      ExternalFunctionExpr2::~ExternalFunctionExpr2()
-      {} // end of ExternalFunctionExpr2::~ExternalFunctionExpr2
+      ExternalFunctionExpr2::~ExternalFunctionExpr2() = default;
 
     } // end of namespace parser
 

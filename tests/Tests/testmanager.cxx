@@ -48,12 +48,11 @@ int main()
   using Wrapper1 = TestFunctionWrapper<test1>;
   using Wrapper2 = TestFunctionWrapper<test2>;
   auto& manager = TestManager::getTestManager();
-  shared_ptr<Test> a(new Wrapper1("test1"));
-  shared_ptr<Test> b(new Wrapper2("test2"));
+  auto a = std::make_shared<Wrapper1>("test1");
+  auto b = std::make_shared<Wrapper2>("test2");
   ofstream f("testmanager-3.txt");
   if(!f){
-    string msg("can't open file 'testmanager-3.txt'");
-    throw(runtime_error(msg));
+    throw(runtime_error("can't open file 'testmanager-3.txt'"));
   }
   manager.addTest("suite1",a);
   manager.addTest("suite1",b);
@@ -62,7 +61,7 @@ int main()
   manager.addTestOutput("suite1","testmanager-1.txt");
   manager.addTestOutput("testmanager-2.txt");
   manager.addTestOutput("suite3",f,false);
-  TestResult r = manager.execute();
+  auto r = manager.execute();
   assert(!r.success());
   return EXIT_SUCCESS;
 } // end of main

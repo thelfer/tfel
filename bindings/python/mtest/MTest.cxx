@@ -152,13 +152,9 @@ MTest_setImposedThermodynamicForce(mtest::MTest& t,
 				   const std::string&  n,
 				   const mtest::real& v)
 {
-  using namespace std;
   using namespace mtest;
-  using std::shared_ptr; 
-  shared_ptr<Constraint> sc;
-  shared_ptr<Evolution> sev(new ConstantEvolution(v));
-  sc = shared_ptr<Constraint>(new ImposedThermodynamicForce(*(t.getBehaviour()),
-							    n,sev));
+  auto sev = make_evolution(v);
+  auto sc  = std::make_shared<ImposedThermodynamicForce>(*(t.getBehaviour()),n,sev);
   t.addEvolution(n,sev,false,true);
   t.addConstraint(sc);
 } // end of MTest_setImposedThermodynamicForce
@@ -169,21 +165,9 @@ MTest_setImposedThermodynamicForce2(mtest::MTest& t,
 				   const std::map<mtest::real,
 						  mtest::real>& v)
 {
-  using namespace std;
   using namespace mtest;
-  using mtest::real;
-  shared_ptr<Constraint> sc;
-  vector<real> tv(v.size());
-  vector<real> ev(v.size());
-  vector<real>::size_type i;
-  map<real,real>::const_iterator pv;
-  for(pv=v.begin(),i=0;pv!=v.end();++pv,++i){
-    tv[i] = pv->first;
-    ev[i] = pv->second;
-  }
-  shared_ptr<Evolution> sev(new LPIEvolution(tv,ev));
-  sc = shared_ptr<Constraint>(new ImposedThermodynamicForce(*(t.getBehaviour()),
-							    n,sev));
+  auto sev = make_evolution(v);
+  auto sc  = std::make_shared<ImposedThermodynamicForce>(*(t.getBehaviour()),n,sev);
   t.addEvolution(n,sev,false,true);
   t.addConstraint(sc);
 } // end of MTest_setImposedThermodynamicForce
@@ -193,14 +177,12 @@ MTest_setImposedStress(mtest::MTest& t,
 		       const std::string&  n,
 		       const mtest::real& v)
 {
-  using namespace std;
   using namespace tfel::material;
   if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
      (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-    string msg("MTest::handleImposedStress : "
-	       "the setImposedStress method is only valid "
-	       "for small and finite strain behaviours");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("MTest::handleImposedStress : "
+			     "the setImposedStress method is only valid "
+			     "for small and finite strain behaviours"));
   }
   MTest_setImposedThermodynamicForce(t,n,v);
 }
@@ -211,14 +193,12 @@ MTest_setImposedStress2(mtest::MTest& t,
 			const std::map<mtest::real,
 			mtest::real>& v)
 {
-  using namespace std;
   using namespace tfel::material;
   if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
      (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-    string msg("MTestParser::handleImposedStress : "
-	       "the setImposedStress method is only valid "
-	       "for small and finite strain behaviours");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("MTestParser::handleImposedStress : "
+			     "the setImposedStress method is only valid "
+			     "for small and finite strain behaviours"));
   }
   MTest_setImposedThermodynamicForce2(t,n,v);
 }
@@ -228,13 +208,11 @@ MTest_setImposedCohesiveForce(mtest::MTest& t,
 			      const std::string&  n,
 			      const mtest::real& v)
 {
-  using namespace std;
   using namespace tfel::material;
   if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-    string msg("MTestParser::handleImposedCohesiveForce : "
-	       "the setImposedCohesiveForce method is only valid "
-	       "for small strain behaviours");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("MTestParser::handleImposedCohesiveForce : "
+			     "the setImposedCohesiveForce method is only valid "
+			     "for small strain behaviours"));
   }
   MTest_setImposedThermodynamicForce(t,n,v);
 }
@@ -245,13 +223,11 @@ MTest_setImposedCohesiveForce2(mtest::MTest& t,
 			       const std::map<mtest::real,
 			       mtest::real>& v)
 {
-  using namespace std;
   using namespace tfel::material;
   if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-    string msg("MTestParser::handleImposedCohesiveForce : "
-	       "the setImposedCohesiveForce method is only valid "
-	       "for small strain behaviours");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("MTestParser::handleImposedCohesiveForce: "
+			     "the setImposedCohesiveForce method is only valid "
+			     "for small strain behaviours"));
   }
   MTest_setImposedThermodynamicForce2(t,n,v);
 }
@@ -261,11 +237,9 @@ MTest_setImposedDrivingVariable(mtest::MTest& t,
 				const std::string&  n,
 				const mtest::real& v)
 {
-  using namespace std;
   using namespace mtest;
-  shared_ptr<Constraint> sc;
-  shared_ptr<Evolution> sev(new ConstantEvolution(v));
-  sc = shared_ptr<Constraint>(new ImposedDrivingVariable(*(t.getBehaviour()),n,sev));
+  auto sev = make_evolution(v);
+  auto sc = std::make_shared<ImposedDrivingVariable>(*(t.getBehaviour()),n,sev);
   t.addEvolution(n,sev,false,true);
   t.addConstraint(sc);
 } // end of MTest_setImposedDrivingVariable
@@ -276,20 +250,9 @@ MTest_setImposedDrivingVariable2(mtest::MTest& t,
 				 const std::map<mtest::real,
 				 mtest::real>& v)
 {
-  using namespace std;
   using namespace mtest;
-  using mtest::real;
-  shared_ptr<Constraint> sc;
-  vector<real> tv(v.size());
-  vector<real> ev(v.size());
-  vector<real>::size_type i;
-  map<real,real>::const_iterator pv;
-  for(pv=v.begin(),i=0;pv!=v.end();++pv,++i){
-    tv[i] = pv->first;
-    ev[i] = pv->second;
-  }
-  shared_ptr<Evolution> sev(new LPIEvolution(tv,ev));
-  sc = shared_ptr<Constraint>(new ImposedDrivingVariable(*(t.getBehaviour()),n,sev));
+  auto sev = make_evolution(v);
+  auto sc  = std::make_shared<ImposedDrivingVariable>(*(t.getBehaviour()),n,sev);
   t.addEvolution(n,sev,false,true);
   t.addConstraint(sc);
 } // end of MTest_setImposedDrivingVariable

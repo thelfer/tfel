@@ -29,9 +29,7 @@
 	 * set an object of type X.                                     \
 	 * \param const X&, the source                                  \
 	 */                                                             \
-	TFEL_INLINE                                                     \
-	void                                                            \
-	set##Y(const X& src)                                            \
+	TFEL_INLINE void set##Y(const X& src)                           \
 	{                                                               \
 	  static_cast<Child *>(this)->template set< X >(src);	        \
 	}                                                               \
@@ -39,9 +37,7 @@
 	 * get an object of type X.                                     \
 	 * \return X&                                                   \
 	 */                                                             \
-	TFEL_INLINE                                                     \
-	X&                                                              \
-	get##Y(void)                                                    \
+	TFEL_INLINE X& get##Y(void)                                     \
 	{                                                               \
 	  return static_cast<Child *>(this)->template get< X >();       \
 	}                                                               \
@@ -49,9 +45,7 @@
 	 * get an object of type X (const version).                     \
 	 * \return const X&                                             \
  	 */                                                             \
-	TFEL_INLINE                                                     \
-	const X&                                                        \
-	get##Y(void) const                                              \
+	TFEL_INLINE const X& get##Y(void) const                         \
 	{                                                               \
 	  return static_cast<const Child *>(this)->template get< X >();	\
 	}                                                               \
@@ -88,8 +82,7 @@ namespace tfel{
 	 * \return Child&, a reference to this.
 	 * \warning, this does not work yet.
 	 */
-	Child&
-	operator=(const char* const  c)
+	Child& operator=(const char* const  c)
 	{
 	  static_cast<Child *>(this)->template set<std::string>(c);
 	  return static_cast<Child &>(*this);
@@ -98,9 +91,7 @@ namespace tfel{
 	 * set an object of type std::string.
 	 * \param const std::string&, the source
 	 */
-	TFEL_INLINE
-	void
-	setString(const std::string& src)
+	TFEL_INLINE void setString(const std::string& src)
 	{
 	  static_cast<Child *>(this)->template set<std::string>(src);
 	}
@@ -108,8 +99,7 @@ namespace tfel{
 	 * get an object of type std::string.
 	 * \return std::string&
 	 */
-	TFEL_INLINE	std::string&
-	getString(void)
+	TFEL_INLINE std::string& getString(void)
 	{
 	  return static_cast<Child *>(this)->template get<std::string>();
 	}
@@ -117,9 +107,7 @@ namespace tfel{
 	 * get an object of type std::string (const version).
 	 * \return const std::string&
  	 */
-	TFEL_INLINE
-	const std::string&
-	getString(void) const
+	TFEL_INLINE const std::string& getString(void) const
 	{
 	  return static_cast<const Child *>(this)->template get<std::string>();
 	}

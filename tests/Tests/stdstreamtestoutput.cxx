@@ -44,8 +44,8 @@ int main()
   using namespace tfel::tests;
   using Wrapper1 = TestFunctionWrapper<test1>;
   using Wrapper2 = TestFunctionWrapper<test2>;
-  std::shared_ptr<Test> a(new Wrapper1("test1"));
-  std::shared_ptr<Test> b(new Wrapper2("test2"));
+  auto a = std::make_shared<Wrapper1>("test1");
+  auto b = std::make_shared<Wrapper2>("test2");
   StdStreamTestOutput output1("stdstreamtestoutput1.txt");
   StdStreamTestOutput output2("stdstreamtestoutput2.txt");
   StdStreamTestOutput output3("stdstreamtestoutput3.txt");

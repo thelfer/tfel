@@ -55,8 +55,8 @@ struct ParserTest final
     map<string,double>::const_iterator p3;
     values["u"] = 3.987;
     values["v"] = 4.32;
-    shared_ptr<ExternalFunctionManager> manager(new ExternalFunctionManager());
-    shared_ptr<ExternalFunctionManager> fmanager(new ExternalFunctionManager());
+    auto manager  = std::make_shared<ExternalFunctionManager>();
+    auto fmanager = std::make_shared<ExternalFunctionManager>();
     vars.push_back("x");
     vars.push_back("y");
     try{
@@ -65,24 +65,22 @@ struct ParserTest final
       for(p=vars.begin();p!=vars.end();++p){
 	p2 = find(v1.begin(),v1.end(),*p);
 	if(p2==v1.end()){
-	  string msg("unsued variable '"+*p+"'");
-	  throw(runtime_error(msg));
+	  throw(runtime_error("unsued variable '"+*p+"'"));
 	}
 	v1.erase(p2);
       }
       for(p=v1.begin();p!=v1.end();++p){
 	p3 = values.find(*p);
 	if(p3==values.end()){
-	  string msg("unknown external value '"+*p+"'");
-	  throw(runtime_error(msg));
+	  throw(runtime_error("unknown external value '"+*p+"'"));
 	}
 	ostringstream os;
 	os << p3->second;
-	fmanager->operator[](*p) = shared_ptr<ExternalFunction>(new Evaluator(os.str())); 
+	fmanager->operator[](*p) = std::make_shared<Evaluator>(os.str()); 
       }
-      manager->operator[]("f") = shared_ptr<ExternalFunction>(new Evaluator(vars,f,fmanager)); 
-      manager->operator[]("u") = shared_ptr<ExternalFunction>(new Evaluator("1.2"));
-      manager->operator[]("v") = shared_ptr<ExternalFunction>(new Evaluator("2."));
+      manager->operator[]("f") = std::make_shared<Evaluator>(vars,f,fmanager); 
+      manager->operator[]("u") = std::make_shared<Evaluator>("1.2");
+      manager->operator[]("v") = std::make_shared<Evaluator>("2.");
       Evaluator ev(vector<string>(),"f(u,v)",manager);
       ev.removeDependencies();
       TFEL_TESTS_ASSERT(ev.getVariablesNames().empty());

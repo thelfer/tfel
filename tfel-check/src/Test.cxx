@@ -157,10 +157,10 @@ namespace tfel_check {
       }
     } else if (this->interpolation->isConform() && this->comparison->getName() != "area") {
 
-      std::shared_ptr<Column> colInterpolatedTmpA(new Column(*(this->ci)));
+      auto colInterpolatedTmpA = std::make_shared<Column>(*(this->ci));
       std::shared_ptr<Column> ci1(colInterpolatedTmpA); /**!< abscissa column for .ref */
 
-      std::shared_ptr<Column> colInterpolatedTmpB(new Column(*(this->ci)));
+      auto colInterpolatedTmpB = std::make_shared<Column>(*(this->ci));
       std::shared_ptr<Column> ci2(colInterpolatedTmpB); /**!< abscissa column for .res */
 
       // Opening the files to get the times columns

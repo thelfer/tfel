@@ -58,7 +58,7 @@ namespace tfel_check {
   }
 
   std::shared_ptr<Interpolation> SplineLocalInterpolation::clone() const {
-    return std::shared_ptr<Interpolation>(new SplineLocalInterpolation(*this));
+    return std::make_shared<SplineLocalInterpolation>(*this);
   }
 
 } /* namespace tfel_check */

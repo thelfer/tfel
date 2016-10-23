@@ -34,26 +34,25 @@ struct ParserTest final
   virtual tfel::tests::TestResult
   execute() override
   {
-    using namespace std;
     using namespace tfel::math;
     using namespace tfel::math::parser;
-    vector<string> var(1,"x");
-    shared_ptr<ExternalFunctionManager> manager(new ExternalFunctionManager());
-    manager->operator[]("u") = shared_ptr<ExternalFunction>(new Evaluator(var,"cos(x)",manager));
-    manager->operator[]("g") = shared_ptr<ExternalFunction>(new Evaluator(var,"f(x)",manager));
-    manager->operator[]("f") = shared_ptr<ExternalFunction>(new Evaluator(var,"f(x)",manager));
-    TFEL_TESTS_CHECK_THROW(manager->operator[]("f")->checkCyclicDependency("f"),exception);
-    manager->operator[]("f") = shared_ptr<ExternalFunction>(new Evaluator(var,"g(x)",manager));
-    TFEL_TESTS_CHECK_THROW(manager->operator[]("f")->checkCyclicDependency("f"),exception);
-    manager->operator[]("f") = shared_ptr<ExternalFunction>(new Evaluator(var,"g(f(x))",manager));
-    TFEL_TESTS_CHECK_THROW(manager->operator[]("f")->checkCyclicDependency("f"),exception);
-    manager->operator[]("f") = shared_ptr<ExternalFunction>(new Evaluator(var,"g(u(g(x)))",manager));
-    TFEL_TESTS_CHECK_THROW(manager->operator[]("f")->checkCyclicDependency("f"),exception);
-    manager->operator[]("f") = shared_ptr<ExternalFunction>(new Evaluator(var,"g(u(f(x)))",manager));
-    TFEL_TESTS_CHECK_THROW(manager->operator[]("f")->checkCyclicDependency("f"),exception);
-    manager->operator[]("f") = shared_ptr<ExternalFunction>(new Evaluator(var,"g(f(x)+1)",manager));
-    manager->operator[]("g") = shared_ptr<ExternalFunction>(new Evaluator(var,"sinh(x)",manager));
-    TFEL_TESTS_CHECK_THROW(manager->operator[]("f")->checkCyclicDependency("f"),exception);
+    std::vector<std::string> var(1,"x");
+    auto m = std::make_shared<ExternalFunctionManager>();
+    m->operator[]("u") = std::make_shared<Evaluator>(var,"cos(x)",m);
+    m->operator[]("g") = std::make_shared<Evaluator>(var,"f(x)",m);
+    m->operator[]("f") = std::make_shared<Evaluator>(var,"f(x)",m);
+    TFEL_TESTS_CHECK_THROW(m->operator[]("f")->checkCyclicDependency("f"),std::exception);
+    m->operator[]("f") = std::make_shared<Evaluator>(var,"g(x)",m);
+    TFEL_TESTS_CHECK_THROW(m->operator[]("f")->checkCyclicDependency("f"),std::exception);
+    m->operator[]("f") = std::make_shared<Evaluator>(var,"g(f(x))",m);
+    TFEL_TESTS_CHECK_THROW(m->operator[]("f")->checkCyclicDependency("f"),std::exception);
+    m->operator[]("f") = std::make_shared<Evaluator>(var,"g(u(g(x)))",m);
+    TFEL_TESTS_CHECK_THROW(m->operator[]("f")->checkCyclicDependency("f"),std::exception);
+    m->operator[]("f") = std::make_shared<Evaluator>(var,"g(u(f(x)))",m);
+    TFEL_TESTS_CHECK_THROW(m->operator[]("f")->checkCyclicDependency("f"),std::exception);
+    m->operator[]("f") = std::make_shared<Evaluator>(var,"g(f(x)+1)",m);
+    m->operator[]("g") = std::make_shared<Evaluator>(var,"sinh(x)",m);
+    TFEL_TESTS_CHECK_THROW(m->operator[]("f")->checkCyclicDependency("f"),std::exception);
     return this->result;
   } // end of execute
 };
@@ -64,11 +63,10 @@ TFEL_TESTS_GENERATE_PROXY(ParserTest,
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main()
 {
-  using namespace tfel::tests;
-  auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(std::cout);
-  manager.addXMLTestOutput("Parser9.xml");
-  TestResult r = manager.execute();
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("Parser9.xml");
+  auto r = m.execute();
   if(!r.success()){
     return EXIT_FAILURE;
   }

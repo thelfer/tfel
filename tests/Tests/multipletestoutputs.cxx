@@ -46,10 +46,10 @@ int main()
   using namespace tfel::tests;
   using Wrapper1 = TestFunctionWrapper<test1>;
   using Wrapper2 = TestFunctionWrapper<test2>;
-  shared_ptr<Test> a(new Wrapper1("test1"));
-  shared_ptr<Test> b(new Wrapper2("test2"));
+  auto a = std::make_shared<Wrapper1>("test1");
+  auto b = std::make_shared<Wrapper2>("test2");
   MultipleTestOutputs output;
-  output.addTestOutput(shared_ptr<TestOutput>(new StdStreamTestOutput("multipletestoutputs.txt")));
+  output.addTestOutput(std::make_shared<StdStreamTestOutput>("multipletestoutputs.txt"));
   TestSuite suite1("suite1");
   suite1.add(a);
   suite1.add(b);

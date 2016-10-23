@@ -450,7 +450,7 @@ namespace tfel_check {
     }
     while (this->current != this->line->end()) {
 
-      std::shared_ptr<Test> test(new Test());
+      auto test = std::make_shared<Test>();
       test->setComparison(comparison);
       test->setPrec(this->prec);
       test->setPrecision2(this->precision2);
@@ -706,7 +706,6 @@ namespace tfel_check {
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::utilities;
-    using namespace tfel_check;
     ProcessManager manager;
     vector<Test>::iterator p;
     map<string, vector<Test> >::iterator p2;

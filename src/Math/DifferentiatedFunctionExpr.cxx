@@ -51,12 +51,9 @@ namespace tfel
       std::shared_ptr<ExternalFunction>
       DifferentiatedFunctionExpr::getDerivative() const
       {
-	using namespace std;
-	using namespace tfel::math::parser;
-	vector<vector<double>::size_type>::const_iterator p;
-	shared_ptr<ExternalFunction> df = this->f;
-	for(p=this->pvar.begin();p!=this->pvar.end();++p){
-	  df = df->differentiate(*p);
+	auto df = this->f;
+	for(const auto& p : this->pvar){
+	  df = df->differentiate(p);
 	}
 	return df;
       } // end of DifferentiatedFunctionExpr::getDerivative
@@ -68,7 +65,7 @@ namespace tfel
 	using namespace tfel::math::parser;
 	vector<shared_ptr<Expr> >::const_iterator p;
 	vector<shared_ptr<Expr> >::size_type i;
-	shared_ptr<ExternalFunction> df = this->getDerivative();
+	auto df = this->getDerivative();
 	for(p=this->args.begin(),i=0u;p!=this->args.end();++p,++i){
 	  const double val = (*p)->getValue();
 	  df->setVariableValue(i,val);
@@ -79,13 +76,11 @@ namespace tfel
       void
       DifferentiatedFunctionExpr::checkCyclicDependency(std::vector<std::string>& names) const
       {
-	using namespace std;
-	vector<shared_ptr<Expr> >::const_iterator p;
-	vector<string> v(names);
+	std::vector<std::string> v(names);
 	this->f->checkCyclicDependency(names);
-	for(p=this->args.begin();p!=this->args.end();++p){
-	  vector<string> n(v);
-	  (*p)->checkCyclicDependency(n);
+	for(const auto& a : this->args){
+	  std::vector<std::string> n(v);
+	  a->checkCyclicDependency(n);
 	  mergeVariablesNames(names,n);
 	}
       } // end of DifferentiatedFunctionExpr::checkCyclicDependency
@@ -95,33 +90,31 @@ namespace tfel
 						const std::vector<double>& v) const
       {
 	using namespace std;
-	using namespace std;
 	vector<shared_ptr<Expr> > nargs(this->args.size());
         auto p = this->args.begin();
 	vector<shared_ptr<Expr> >::const_iterator p3;
         vector<shared_ptr<Expr> >::iterator p4;
 	unsigned short i = 0;
 	if(args.size()==0){
-	  return shared_ptr<Expr>(new Number(0.));
+	  return std::make_shared<Number>(0.);
 	}
         for(p3=this->args.begin(),p4=nargs.begin();
 	    p3!=this->args.end();++p3,++p4){
 	  *p4 = (*p3)->clone(v);
 	}
-	shared_ptr<ExternalFunction> ndf = this->getDerivative();
-        shared_ptr<Expr> df_(new ExternalFunctionExpr2(ndf->differentiate(i),
-						     nargs));
-        shared_ptr<Expr> df = shared_ptr<Expr>(new BinaryOperation<OpMult>(df_,
-								       (*p)->differentiate(pos,v)));
+	auto ndf = this->getDerivative();
+        auto df_ = std::make_shared<ExternalFunctionExpr2>(ndf->differentiate(i),
+							   nargs);
+	std::shared_ptr<Expr> df =
+	  std::make_shared<BinaryOperation<OpMult>>(df_,(*p)->differentiate(pos,v));
         ++p;
         ++i;
         while(p!=this->args.end()){
-	  df_  = shared_ptr<Expr>(new ExternalFunctionExpr2(ndf->differentiate(i),
-							  nargs));
-	  shared_ptr<Expr> df2 = shared_ptr<Expr>(new BinaryOperation<OpMult>(df_,
-									  (*p)->differentiate(pos,v)));
-      
-          df = shared_ptr<Expr>(new BinaryOperation<OpPlus>(df,df2));
+	  df_  = std::make_shared<ExternalFunctionExpr2>(ndf->differentiate(i),
+							 nargs);
+	  std::shared_ptr<Expr> df2 =
+	    std::make_shared<BinaryOperation<OpMult>>(df_,(*p)->differentiate(pos,v));
+	  df = std::make_shared<BinaryOperation<OpPlus>>(df,df2);
 	  ++p;
 	  ++i;
         }
@@ -182,11 +175,9 @@ namespace tfel
       void
       DifferentiatedFunctionExpr::getParametersNames(std::set<std::string>& p) const
       {
-	using namespace std;
-        vector<shared_ptr<Expr> >::const_iterator pt;
 	this->f->getParametersNames(p);
-        for(pt=this->args.begin();pt!=this->args.end();++pt){
-	  (*pt)->getParametersNames(p);
+        for(const auto& a : this->args){
+	  a->getParametersNames(p);
 	}
       } // end of DifferentiatedFunctionExpr::getParametersNames
 
@@ -200,11 +191,10 @@ namespace tfel
         for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
 	  *p2 = (*p)->resolveDependencies(v);
 	}
-        return shared_ptr<Expr>(new ExternalFunctionExpr2(this->getDerivative(),nargs));	
+        return std::make_shared<ExternalFunctionExpr2>(this->getDerivative(),nargs);
       } // end of DifferentiatedFunctionExpr::resolveDependencies
 
-      DifferentiatedFunctionExpr::~DifferentiatedFunctionExpr()
-      {} // end of DifferentiatedFunctionExpr::~DifferentiatedFunctionExpr()
+      DifferentiatedFunctionExpr::~DifferentiatedFunctionExpr() = default;
 
     } // end of namespace parser
 

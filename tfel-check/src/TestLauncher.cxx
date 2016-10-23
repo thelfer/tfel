@@ -392,7 +392,6 @@ namespace tfel_check {
 
   bool TestLauncher::execute(void) {
     using namespace tfel::utilities;
-    using namespace tfel_check;
     tfel::system::ProcessManager manager;
     bool gsuccess = true; /* global success indicator : false only
 			     if comparison fails or when command

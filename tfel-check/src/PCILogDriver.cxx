@@ -25,7 +25,7 @@ namespace tfel_check {
 
   PCILogDriver::PCILogDriver(const std::string& f)
   {
-    this->log = std::shared_ptr<std::ostream>{new std::ofstream{f}};
+    this->log = std::make_shared<std::ofstream>(f);
     if (!this->log->good()){
       throw(std::runtime_error("PCILogDriver::PCILogDriver: "
 			       "can't open file '"+f+"'"));

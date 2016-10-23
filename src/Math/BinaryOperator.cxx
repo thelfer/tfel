@@ -28,20 +28,17 @@ namespace tfel
     namespace parser
     {
 
-      double
-      OpPlus::apply(const double a,const double b)
+      double OpPlus::apply(const double a,const double b)
       {
 	return a+b;
       } // end of OpPlus::apply
 
-      double
-      OpMinus::apply(const double a,const double b)
+      double OpMinus::apply(const double a,const double b)
       {
 	return a-b;
       } // end of OpMinus::apply
 
-      double
-      OpMult::apply(const double a,const double b)
+      double OpMult::apply(const double a,const double b)
       {
 	return a*b;
       } // end of OpMult::apply
@@ -49,22 +46,16 @@ namespace tfel
       double
       OpDiv::apply(const double a,const double b)
       {
-	using namespace std;
-	if(fabs(b)<std::numeric_limits<double>::min()){
-	  ostringstream value;
-	  value << b;
-	  string msg("OpDiv::apply : second argument is too small (");
-	  msg += value.str()+")";
-	  throw(runtime_error(msg));
+	if(std::abs(b)<std::numeric_limits<double>::min()){
+	  throw(std::runtime_error("OpDiv::apply : second argument is too small "
+				   "("+std::to_string(b)+")"));
 	}
 	return a/b;
       } // end of OpDiv::apply
 
-      double
-      OpPower::apply(const double a,const double b)
+      double OpPower::apply(const double a,const double b)
       {
-	using namespace std;
-	return pow(a,b);
+	return std::pow(a,b);
       } // end of OpDiv::apply
 
       void
@@ -82,10 +73,9 @@ namespace tfel
 					   const std::vector<double>::size_type pos,
 					   const std::vector<double>& v)
       {
-	using std::shared_ptr;
-	shared_ptr<Expr> da = a->differentiate(pos,v);
-	shared_ptr<Expr> db = b->differentiate(pos,v);
-	return shared_ptr<Expr>(new BinaryOperation<OpPlus>(da,db));
+	auto da = a->differentiate(pos,v);
+	auto db = b->differentiate(pos,v);
+	return std::make_shared<BinaryOperation<OpPlus>>(da,db);
       } // end of differentiateBinaryOperation<OpPlus>
 
       template<>
@@ -95,8 +85,8 @@ namespace tfel
 					    const std::vector<double>::size_type pos,
 					    const std::vector<double>& v)
       {
-	return std::shared_ptr<Expr>(new BinaryOperation<OpMinus>(a->differentiate(pos,v),
-								  b->differentiate(pos,v)));
+	return std::make_shared<BinaryOperation<OpMinus>>(a->differentiate(pos,v),
+							  b->differentiate(pos,v));
       } // end of differentiateBinaryOperation<OpMinus>
 
       template<>
@@ -106,10 +96,9 @@ namespace tfel
 					   const std::vector<double>::size_type pos,
 					   const std::vector<double>& v)
       {
-	using std::shared_ptr;
-	shared_ptr<Expr> d1(new BinaryOperation<OpMult>(a->differentiate(pos,v),b->clone(v)));
-	shared_ptr<Expr> d2(new BinaryOperation<OpMult>(a->clone(v),b->differentiate(pos,v)));
-	return shared_ptr<Expr>(new BinaryOperation<OpPlus>(d1,d2));
+	auto d1 = std::make_shared<BinaryOperation<OpMult>>(a->differentiate(pos,v),b->clone(v));
+	auto d2 = std::make_shared<BinaryOperation<OpMult>>(a->clone(v),b->differentiate(pos,v));
+	return std::make_shared<BinaryOperation<OpPlus>>(d1,d2);
       } // end of differentiateBinaryOperation<OpMult>
 
       template<>
@@ -119,12 +108,11 @@ namespace tfel
 					  const std::vector<double>::size_type pos,
 					  const std::vector<double>& v)
       {
-	using std::shared_ptr;
-	shared_ptr<Expr> d1(new BinaryOperation<OpDiv>(a->differentiate(pos,v),b->clone(v)));
-	shared_ptr<Expr> d2num(new BinaryOperation<OpMult>(a->clone(v),b->differentiate(pos,v)));
-	shared_ptr<Expr> d2den(new BinaryOperation<OpMult>(b->clone(v),b->clone(v)));
-	shared_ptr<Expr> d2(new BinaryOperation<OpDiv>(d2num,d2den));
-	return shared_ptr<Expr>(new BinaryOperation<OpMinus>(d1,d2));
+	auto d1    = std::make_shared<BinaryOperation<OpDiv>>(a->differentiate(pos,v),b->clone(v));
+	auto d2num = std::make_shared<BinaryOperation<OpMult>>(a->clone(v),b->differentiate(pos,v));
+	auto d2den = std::make_shared<BinaryOperation<OpMult>>(b->clone(v),b->clone(v));
+	auto d2    = std::make_shared<BinaryOperation<OpDiv>>(d2num,d2den);
+	return std::make_shared<BinaryOperation<OpMinus>>(d1,d2);
       } // end of differentiateBinaryOperation<OpDiv>
 
       template<>
@@ -134,18 +122,17 @@ namespace tfel
 					    const std::vector<double>::size_type  pos,
 					    const std::vector<double>& v)
       {
-	using std::shared_ptr;
-	shared_ptr<Expr> ca = a->clone(v);
-	shared_ptr<Expr> cb = b->clone(v);
-	shared_ptr<Expr> l(new BinaryOperation<OpPower>(ca,cb));
-	shared_ptr<Expr> da(a->differentiate(pos,v));
-	shared_ptr<Expr> db(b->differentiate(pos,v));
-	shared_ptr<Expr> lna(new StandardFunction<log>(ca));
-	shared_ptr<Expr> r1(new BinaryOperation<OpMult>(db,lna));
-	shared_ptr<Expr> r21(new BinaryOperation<OpDiv>(da,ca));
-	shared_ptr<Expr> r2(new BinaryOperation<OpMult>(cb,r21));
-	shared_ptr<Expr> r(new BinaryOperation<OpPlus>(r1,r2));
-	return shared_ptr<Expr>(new BinaryOperation<OpMult>(l,r));
+	auto ca  = a->clone(v);
+	auto cb  = b->clone(v);
+	auto l   = std::make_shared<BinaryOperation<OpPower>>(ca,cb);
+	auto da  = a->differentiate(pos,v);
+	auto db  = b->differentiate(pos,v);
+	auto lna = std::make_shared<StandardFunction<log>>(ca);
+	auto r1  = std::make_shared<BinaryOperation<OpMult>>(db,lna);
+	auto r21 = std::make_shared<BinaryOperation<OpDiv>>(da,ca);
+	auto r2  = std::make_shared<BinaryOperation<OpMult>>(cb,r21);
+	auto r   = std::make_shared<BinaryOperation<OpPlus>>(r1,r2);
+	return std::make_shared<BinaryOperation<OpMult>>(l,r);
       } // end of differentiateBinaryOperation<OpPower>
 
     } // end of namespace parser

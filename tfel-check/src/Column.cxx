@@ -114,7 +114,7 @@ namespace tfel_check {
 
   void Column::setFilename(std::string file) {
     this->f = file;
-    this->data.reset(new tfel::utilities::TextData(file,"alcyone"));
+    this->data = std::make_shared<tfel::utilities::TextData>(file,"alcyone");
     if (this->byName) {
       const auto& l = data->getLegends();
       if(std::find(l.begin(),l.end(),this->name)!=l.end()){

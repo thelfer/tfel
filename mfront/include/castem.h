@@ -15,6 +15,9 @@
  * project under specific licensing conditions. 
  */
 
+#ifndef LIB_CASTEM_H
+#define LIB_CASTEM_H
+
 #if (defined UNIX32) || ((defined _WIN32) && (!defined _WIN64))
 typedef int cast_int;
 typedef float cast_float;
@@ -36,3 +39,5 @@ typedef long cast_long;
 typedef double cast_double;
 #endif
 #endif
+
+#endif /* LIB_CASTEM_H */
