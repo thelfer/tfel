@@ -69,7 +69,7 @@ int main(const int argc, const char *const *const argv)
 	exit(EXIT_SUCCESS);
       }
     }
-    for(auto q : bgens){
+    for(const auto& q : bgens){
       q->exe();
     }
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__

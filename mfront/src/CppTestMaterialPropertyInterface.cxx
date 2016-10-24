@@ -233,21 +233,25 @@ namespace mfront
     // on boucle sur toutes les variables pour recuperer les bornes
     if(testBounds.empty()){
       // we use bounds
-      if(tests.empty())
-	throw runtime_error("MaterialPropertyDSL::writeTestFile:\nNo bounds defined to draw graph !") ;
-    }else tests=testBounds;
+      if(tests.empty()){
+	throw(runtime_error("MaterialPropertyDSL::writeTestFile:\n"
+			    "No bounds defined to draw graph !"));
+      }
+    } else {
+      tests=testBounds;
+    }
     
-    for(auto p6=tests.begin();p6!=tests.end();++p6){
-      if(p6->boundsType==VariableBoundsDescription::Lower){
+    for(const auto& t : tests){
+      if(t.boundsType==VariableBoundsDescription::Lower){
 	throw runtime_error("MaterialPropertyDSL::writeTestFile:\nNo upper bound defined to draw graph !") ;
       }
-      if(p6->boundsType==VariableBoundsDescription::Upper){
+      if(t.boundsType==VariableBoundsDescription::Upper){
 	throw runtime_error("MaterialPropertyDSL::writeTestFile:\nNo lower bound defined to draw graph !") ;
       }
-      this->srcFile<<"  const double " << p6->varName << "_min = " << p6->lowerBound << " ;" <<endl;
-      this->srcFile<<"  const double " << p6->varName << "_max = " << p6->upperBound << " ;" <<endl;
-      this->srcFile<<"  const double " << p6->varName << "_moy = (" 
-		   << p6->varName << "_max - " << p6->varName << "_min)/2. ;" <<endl;
+      this->srcFile<<"  const double " << t.varName << "_min = " << t.lowerBound << " ;" <<endl;
+      this->srcFile<<"  const double " << t.varName << "_max = " << t.upperBound << " ;" <<endl;
+      this->srcFile<<"  const double " << t.varName << "_moy = (" 
+		   << t.varName << "_max - " << t.varName << "_min)/2. ;" <<endl;
     }
     // fichier csv
     string csvFileName = name ;

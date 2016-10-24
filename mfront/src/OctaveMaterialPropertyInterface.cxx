@@ -77,9 +77,6 @@ namespace mfront
     return {false,current};
   } // end of treatKeyword
 
-  OctaveMaterialPropertyInterface::~OctaveMaterialPropertyInterface()
-  {}
-
   void
   OctaveMaterialPropertyInterface::getTargetsDescription(TargetsDescription& td,
 							 const MaterialPropertyDescription& mpd)
@@ -202,112 +199,110 @@ namespace mfront
       out << "using namespace std;\n";
       if(!mpd.physicalBounds.empty()){
 	out << "// treating physical bounds\n";
-	for(auto p5=mpd.physicalBounds.begin();
-	    p5!=mpd.physicalBounds.end();++p5){
-	  if(p5->boundsType==VariableBoundsDescription::Lower){
-	    out << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
-	    out << "error(\"" << name << " :"  << p5->varName 
+	for(const auto& b : mpd.physicalBounds){
+	  if(b.boundsType==VariableBoundsDescription::Lower){
+	    out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
+	    out << "error(\"" << name << " :"  << b.varName 
 			  << " is below its physical lower bound.\");\n";
-	    out << "return -" << p5->varNbr << ";\n";
+	    out << "return -" << b.varNbr << ";\n";
 	    out << "}\n";
-	  } else if(p5->boundsType==VariableBoundsDescription::Upper){
-	    out << "if(" << p5->varName<< " > "<< p5->upperBound << "){\n";
-	    out << "error(\"" << name << " : " << p5->varName 
+	  } else if(b.boundsType==VariableBoundsDescription::Upper){
+	    out << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
+	    out << "error(\"" << name << " : " << b.varName 
 			  << " is over its physical upper bound.\");\n";
-	    out << "return -" << p5->varNbr << ";\n";
+	    out << "return -" << b.varNbr << ";\n";
 	    out << "}\n";
 	  } else {
-	    out << "if((" << p5->varName<< " < "<< p5->lowerBound << ")||"
-			   << "(" << p5->varName<< " > "<< p5->upperBound << ")){\n";
-	    out << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
-	    out << "error(\"" << name << " : " << p5->varName 
+	    out << "if((" << b.varName<< " < "<< b.lowerBound << ")||"
+			   << "(" << b.varName<< " > "<< b.upperBound << ")){\n";
+	    out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
+	    out << "error(\"" << name << " : " << b.varName 
 			  << " is below its physical lower bound.\");\n";
 	    out << "}\n";
-	    out << "if(" << p5->varName<< " > "<< p5->upperBound << "){\n";
-	    out << "error(\"" << name << " : " << p5->varName 
+	    out << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
+	    out << "error(\"" << name << " : " << b.varName 
 			  << " is over its physical upper bound.\");\n";
 	    out << "}\n";
-	    out << "return -" << p5->varNbr << ";\n";
+	    out << "return -" << b.varNbr << ";\n";
 	    out << "}\n";
 	  }
 	}
       }
       if(!mpd.bounds.empty()){
 	out << "// treating standard bounds\n";
-	for(auto p5=mpd.bounds.begin();
-	    p5!=mpd.bounds.end();++p5){
-	  if(p5->boundsType==VariableBoundsDescription::Lower){
-	    out << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
+	for(const auto& b : mpd.bounds){
+	  if(b.boundsType==VariableBoundsDescription::Lower){
+	    out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
 	    out << "const octave_value policy = get_global_value("
 			  << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\", true);\n";
 	    out << "if(policy.is_defined()){\n";
 	    out << "if(policy.is_string()){\n";
-	    out << "string msg(\"" << name << " : " << p5->varName 
+	    out << "string msg(\"" << name << " : " << b.varName 
 			  << " is below its physical lower bound.\");\n";
 	    out << "if(policy.string_value()==\"STRICT\"){\n";
 	    out << "error(msg.c_str());\n";
-	    out << "return -" << p5->varNbr << ";\n";
+	    out << "return -" << b.varNbr << ";\n";
 	    out << "} if(policy.string_value()==\"WARNING\"){\n";
 	    out << "octave_stdout << msg << \"\\n\";\n";
 	    out << "} else {\n";
-	    out << "return " << p5->varNbr << ";\n";
+	    out << "return " << b.varNbr << ";\n";
 	    out << "}\n";
 	    out << "} else {\n";
-	    out << "return " << p5->varNbr << ";\n";
+	    out << "return " << b.varNbr << ";\n";
 	    out << "}\n";
 	    out << "} else {\n";
-	    out << "return " << p5->varNbr << ";\n";
+	    out << "return " << b.varNbr << ";\n";
 	    out << "}\n";
-	    out << "return " << p5->varNbr << ";\n";
+	    out << "return " << b.varNbr << ";\n";
 	    out << "}\n";
-	  } else if(p5->boundsType==VariableBoundsDescription::Upper){
-	    out << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
+	  } else if(b.boundsType==VariableBoundsDescription::Upper){
+	    out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
 	    out << "const octave_value policy = get_global_value("
 			  << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\", true);\n";
 	    out << "if(policy.is_defined()){\n";
 	    out << "if(policy.is_string()){\n";
-	    out << "string msg(\"" << p5->varName 
+	    out << "string msg(\"" << b.varName 
 			  << " is over its physical upper bound.\");\n";
 	    out << "if(policy.string_value()==\"STRICT\"){\n";
 	    out << "error(msg.c_str());\n";
-	    out << "return -" << p5->varNbr << ";\n";
+	    out << "return -" << b.varNbr << ";\n";
 	    out << "} if(policy.string_value()==\"WARNING\"){\n";
 	    out << "octave_stdout << msg << \"\\n\";\n";
 	    out << "} else {\n";
-	    out << "return " << p5->varNbr << ";\n";
+	    out << "return " << b.varNbr << ";\n";
 	    out << "}\n";
 	    out << "} else {\n";
-	    out << "return " << p5->varNbr << ";\n";
+	    out << "return " << b.varNbr << ";\n";
 	    out << "}\n";
 	    out << "} else {\n";
-	    out << "return " << p5->varNbr << ";\n";
+	    out << "return " << b.varNbr << ";\n";
 	    out << "}\n";
-	    out << "return " << p5->varNbr << ";\n";
+	    out << "return " << b.varNbr << ";\n";
 	    out << "}\n";
 	  } else {
-	    out << "if((" << p5->varName<< " < "<< p5->lowerBound << ")||"
-			  << "(" << p5->varName<< " > "<< p5->upperBound << ")){\n";
+	    out << "if((" << b.varName<< " < "<< b.lowerBound << ")||"
+			  << "(" << b.varName<< " > "<< b.upperBound << ")){\n";
 	    out << "const octave_value policy = get_global_value("
 			  << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\", true);\n";
 	    out << "if(policy.is_defined()){\n";
 	    out << "if(policy.is_string()){\n";
-	    out << "string msg(\"" << p5->varName 
+	    out << "string msg(\"" << b.varName 
 			  << " is out of its bounds.\");\n";
 	    out << "if(policy.string_value()==\"STRICT\"){\n";
 	    out << "error(msg.c_str());\n";
-	    out << "return -" << p5->varNbr << ";\n";
+	    out << "return -" << b.varNbr << ";\n";
 	    out << "} if(policy.string_value()==\"WARNING\"){\n";
 	    out << "octave_stdout << msg << \"\\n\";\n";
 	    out << "} else {\n";
-	    out << "return " << p5->varNbr << ";\n";
+	    out << "return " << b.varNbr << ";\n";
 	    out << "}\n";
 	    out << "} else {\n";
-	    out << "return " << p5->varNbr << ";\n";
+	    out << "return " << b.varNbr << ";\n";
 	    out << "}\n";
 	    out << "} else {\n";
-	    out << "return " << p5->varNbr << ";\n";
+	    out << "return " << b.varNbr << ";\n";
 	    out << "}\n";
-	    out << "return " << p5->varNbr << ";\n";
+	    out << "return " << b.varNbr << ";\n";
 	    out << "}\n";
 	  }
 	}
@@ -531,5 +526,7 @@ namespace mfront
     OctaveMaterialPropertyInterface::replace(res,'"',' ');
     return res;
   } // end of OctaveMaterialPropertyInterface::treatDescriptionString
+
+  OctaveMaterialPropertyInterface::~OctaveMaterialPropertyInterface() = default;
 
 } // end of namespace mfront

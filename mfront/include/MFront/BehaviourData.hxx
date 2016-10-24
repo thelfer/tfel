@@ -895,7 +895,7 @@ namespace mfront{
      * \param[in] bi : if true, register variable increment name
      */
     void
-    addVariable(VariableDescriptionContainer& v,
+    addVariable(VariableDescriptionContainer&,
 		const VariableDescription&,
 		const RegistrationStatus,
 		const bool);

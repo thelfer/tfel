@@ -25,15 +25,12 @@
 namespace mfront
 {
 
-  std::string
-  CMaterialPropertyInterface::getName()
+  std::string CMaterialPropertyInterface::getName()
   {
     return "c";
   }
 
-  CMaterialPropertyInterface::CMaterialPropertyInterface()
-    : CMaterialPropertyInterfaceBase()
-  {}
+  CMaterialPropertyInterface::CMaterialPropertyInterface() = default;
 
   std::string
   CMaterialPropertyInterface::getGeneratedLibraryName(const std::string& l,
@@ -85,32 +82,28 @@ namespace mfront
     return material.empty() ? className : material+"_"+className;
   } // end of CMaterialPropertyInterface::getSrcFileName
   
-  void
-  CMaterialPropertyInterface::writeBeginHeaderNamespace()
+  void CMaterialPropertyInterface::writeBeginHeaderNamespace()
   {
     this->headerFile << "#ifdef __cplusplus\n";
     this->headerFile << "extern \"C\"{\n";
     this->headerFile << "#endif /* __cplusplus */\n\n";
   } // end of CMaterialPropertyInterface::writeBeginHeaderNamespace
   
-  void
-  CMaterialPropertyInterface::writeEndHeaderNamespace()
+  void CMaterialPropertyInterface::writeEndHeaderNamespace()
   {
     this->headerFile << "#ifdef __cplusplus\n";
     this->headerFile << "} /* end of extern \"C\" */\n";
     this->headerFile << "#endif /* __cplusplus */\n\n";
   } // end of CMaterialPropertyInterface::writeEndHeaderNamespace(void)
 
-  void
-  CMaterialPropertyInterface::writeBeginSrcNamespace()
+  void CMaterialPropertyInterface::writeBeginSrcNamespace()
   {
     this->srcFile << "#ifdef __cplusplus\n";
     this->srcFile << "extern \"C\"{\n";
     this->srcFile << "#endif /* __cplusplus */\n\n";
   } // end of CMaterialPropertyInterface::writeBeginSrcNamespace
   
-  void
-  CMaterialPropertyInterface::writeEndSrcNamespace()
+  void CMaterialPropertyInterface::writeEndSrcNamespace()
   {
     this->srcFile << "#ifdef __cplusplus\n";
     this->srcFile << "} // end of extern \"C\"\n";
@@ -124,8 +117,7 @@ namespace mfront
     return material.empty() ? className : material+"_"+className;
   } // end of CMaterialPropertyInterface::getFunctionName
   
-  bool
-  CMaterialPropertyInterface::requiresCheckBoundsFunction() const
+  bool CMaterialPropertyInterface::requiresCheckBoundsFunction() const
   {
     return false;
   }
@@ -140,7 +132,6 @@ namespace mfront
     return material+"_"+className+"_checkBounds";
   } // end of CMaterialPropertyInterface::getCheckBoundsFunctionName
   
-  CMaterialPropertyInterface::~CMaterialPropertyInterface()
-  {} // end of CMaterialPropertyInterface::~CMaterialPropertyInterface
+  CMaterialPropertyInterface::~CMaterialPropertyInterface() = default;
 
 } // end of namespace mfront

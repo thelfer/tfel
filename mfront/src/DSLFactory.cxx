@@ -21,8 +21,7 @@
 
 namespace mfront{
 
-  DSLFactory&
-  DSLFactory::getDSLFactory()
+  DSLFactory& DSLFactory::getDSLFactory()
   {
     static DSLFactory f;
     return f;
@@ -47,7 +46,6 @@ namespace mfront{
   std::vector<std::string>
   DSLFactory::getRegistredParsers()
   {
-    ParserCreatorsContainer::const_iterator p;
     auto res = std::vector<std::string>{};
     for(const auto& p  :  this->getMap()){
       res.push_back(p.first);
@@ -60,7 +58,6 @@ namespace mfront{
 				    const DSLFactory::ParserCreator f,
 				    const DSLFactory::DescriptionPtr f2)
   {
-    using namespace std;
     if(!this->getMap().insert({n,f}).second){
       throw(std::runtime_error("DSLFactory::registerParserCreator: "
 			       "a dsl named '"+n+"' has already been registred"));

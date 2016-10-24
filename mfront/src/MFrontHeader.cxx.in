@@ -11,80 +11,65 @@
 
 namespace mfront{
   
-  std::string
-  MFrontHeader::getVersionName(void)
+  std::string MFrontHeader::getVersionName()
   {
     return "@PACKAGE_NAME@";
   }
 
-  std::string
-  MFrontHeader::getVersionNumber(void)
+  std::string MFrontHeader::getVersionNumber()
   {
     return "@TFEL_VERSION@";
   }
 
-  std::string
-  MFrontHeader::getBugReportAdress(void)
+  std::string MFrontHeader::getBugReportAdress()
   {
     return "@PACKAGE_BUGREPORT@";
   }
 
-  std::string
-  MFrontHeader::getCompilerName(void)
+  std::string MFrontHeader::getCompilerName()
   {
     return "@CXX@";
   }
 
-  std::string
-  MFrontHeader::getBuildCpu(void)
+  std::string MFrontHeader::getBuildCpu()
   {
     return "@build_cpu@";
   }
 
-  std::string
-  MFrontHeader::getBuildOs(void)
+  std::string MFrontHeader::getBuildOs()
   {
     return "@build_os@";
   }
 
-  std::string
-  MFrontHeader::getHostCpu(void)
+  std::string MFrontHeader::getHostCpu()
   {
     return "@host_cpu@";
   }
 
-  std::string
-  MFrontHeader::getHostOs(void)
+  std::string MFrontHeader::getHostOs()
   {
     return "@host_os@";
   }
 
-  std::string
-  MFrontHeader::getTargetCpu(void)
+  std::string MFrontHeader::getTargetCpu()
   {
     return "@target_cpu@";
   }
 
-  std::string
-  MFrontHeader::getTargetOs(void)
+  std::string MFrontHeader::getTargetOs()
   {
     return "@target_os@";
   }
 
-  std::string
-  MFrontHeader::getHeader(const std::string& s)
+  std::string MFrontHeader::getHeader(const std::string& s)
   {
-    using namespace std;
-
-    string target_cpu = getTargetCpu();
-    string build_cpu  = getBuildCpu();
-    string host_cpu   = getHostCpu();
-    string target_os = getTargetOs();
-    string build_os  = getBuildOs();
-    string host_os   = getHostOs();
-
-    string header;
-
+    const auto target_cpu = getTargetCpu();
+    const auto build_cpu  = getBuildCpu();
+    const auto host_cpu   = getHostCpu();
+    const auto target_os = getTargetOs();
+    const auto build_os  = getBuildOs();
+    const auto host_os   = getHostOs();
+    auto header = std::string{};
     header  = s;
     header += getVersionName();
     header += "\n";
@@ -146,9 +131,7 @@ namespace mfront{
     header += "Please submit bug at " ;
     header +=  getBugReportAdress() ;
     header +=  "\n";
-
     return header;
-
   }
 
 } // end of namespace mfront

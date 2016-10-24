@@ -1282,7 +1282,7 @@ namespace mtest{
     for(size_type i=0;i!=getNumberOfGaussPoints(this->mesh);++i){
       const auto  v = g(scs.istates[i]);
       vmin = std::min(vmin,v);
-      vmax = std::min(vmax,v);
+      vmax = std::max(vmax,v);
     }
     return {vmin,vmax};
   } // end of PipeTest::computeMinimumAndMaximumValues

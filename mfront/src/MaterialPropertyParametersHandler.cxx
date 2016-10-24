@@ -142,4 +142,4 @@ namespace mfront{
     return n+"MaterialPropertyHandler";
   }
 
-}
+} // end of namespace mfront

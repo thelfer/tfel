@@ -25,8 +25,7 @@ namespace mtest
     : asat(-1)      
   {} // end of Alternate2DeltaAccelerationAlgorithm::Alternate2DeltaAccelerationAlgorithm
     
-  std::string
-  Alternate2DeltaAccelerationAlgorithm::getName() const{
+  std::string Alternate2DeltaAccelerationAlgorithm::getName() const{
     return "crossed secant";
   }
 
@@ -65,18 +64,16 @@ namespace mtest
     }
   } // end of Alternate2DeltaAccelerationAlgorithm::initialize
 
-  void
-  Alternate2DeltaAccelerationAlgorithm::preExecuteTasks()
-  {
-  } // end of AccelerationAlgorithm::preExecuteTaks
+  void Alternate2DeltaAccelerationAlgorithm::preExecuteTasks()
+  {} // end of AccelerationAlgorithm::preExecuteTaks
 
   void
   Alternate2DeltaAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
-					    const tfel::math::vector<real>& rx,
-					    const tfel::math::vector<real>& ,
-					    const real eeps,
-					    const real ,
-					    const unsigned short iter)
+						const tfel::math::vector<real>& rx,
+						const tfel::math::vector<real>& ,
+						const real eeps,
+						const real ,
+						const unsigned short iter)
   {
     using namespace std;
     const real asa_eps = 100*(eeps*numeric_limits<real>::epsilon());
@@ -134,8 +131,7 @@ namespace mtest
     }
   } // end of Alternate2DeltaAccelerationAlgorithm::execute
 
-  void
-  Alternate2DeltaAccelerationAlgorithm::postExecuteTasks()
+  void Alternate2DeltaAccelerationAlgorithm::postExecuteTasks()
   {} // end of AccelerationAlgorithm::postExecuteTaks
 
   Alternate2DeltaAccelerationAlgorithm::~Alternate2DeltaAccelerationAlgorithm() = default;

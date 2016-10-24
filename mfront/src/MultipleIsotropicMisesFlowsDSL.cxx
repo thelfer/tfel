@@ -22,8 +22,7 @@
 
 namespace mfront{
 
-  MultipleIsotropicMisesFlowsDSL::FlowHandler::~FlowHandler() noexcept
-  {} // end of MultipleIsotropicMisesFlowsDSL::FlowHandler::~FlowHandler
+  MultipleIsotropicMisesFlowsDSL::FlowHandler::~FlowHandler() noexcept = default;
 
   MultipleIsotropicMisesFlowsDSL::MultipleIsotropicMisesFlowsDSL()
   {
@@ -380,7 +379,7 @@ namespace mfront{
   MultipleIsotropicMisesFlowsDSL::treatFlowRule()
   {
     using namespace std;
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     FlowHandler flow;
     this->checkNotEndOfFile("MultipleIsotropicMisesFlowsDSL::treatFlowRule",
     			    "Expected flow rule name.");
@@ -483,22 +482,20 @@ namespace mfront{
     this->behaviourFile << "}\n";
   } // end of MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificInitializeMethodPart
 
-  void
-  MultipleIsotropicMisesFlowsDSL::writeBehaviourComputeTangentOperator(const Hypothesis)
+  void MultipleIsotropicMisesFlowsDSL::writeBehaviourComputeTangentOperator(const Hypothesis)
   {
-    this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n";
-    this->behaviourFile << "using namespace std;\n";
-    this->behaviourFile << "using tfel::material::computeElasticStiffness;\n";
-    this->behaviourFile << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";
-    this->behaviourFile << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n";
-    this->behaviourFile << "return true;\n";
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "return false;\n";
-    this->behaviourFile << "}\n\n";
+    this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n"
+			<< "using namespace std;\n"
+			<< "using tfel::material::computeElasticStiffness;\n"
+			<< "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
+			<< "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n"
+			<< "return true;\n"
+			<< "}\n"
+			<< "return false;\n"
+			<< "}\n\n";
   }
 
-  MultipleIsotropicMisesFlowsDSL::~MultipleIsotropicMisesFlowsDSL()
-  {} // end of ~MultipleIsotropicMisesFlowsDSL
+  MultipleIsotropicMisesFlowsDSL::~MultipleIsotropicMisesFlowsDSL() = default;
 
 } // end of namespace mfront
 

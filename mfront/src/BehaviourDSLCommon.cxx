@@ -978,7 +978,7 @@ namespace mfront{
 	    << "invalid tangent operator type '"+ktype+"'. Valid tanget operator type are :\n";
 	for(const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()){
 	  msg << "- " << convertFiniteStrainBehaviourTangentOperatorFlagToString(to) << " : "
-	      << getFiniteStrainBehaviourTangentOperatorDescription(to) << endl;
+	      << getFiniteStrainBehaviourTangentOperatorDescription(to) << '\n';
 	}
 	throw(runtime_error(msg.str()));
       }
@@ -2504,8 +2504,7 @@ namespace mfront{
 				<< ModellingHypothesis::toUpperCaseString(h) << ",Type,false>\n";
       }
     }
-    this->behaviourDataFile << "{\n";
-    this->behaviourDataFile << endl;
+    this->behaviourDataFile << "{\n\n";
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       this->behaviourDataFile << "static " << constexpr_c << " ModellingHypothesis::Hypothesis hypothesis = " 
 			      << "ModellingHypothesis::"
@@ -2712,7 +2711,7 @@ namespace mfront{
     using namespace std;
     this->checkBehaviourFile();
     this->behaviourFile << "/*!\n";
-    this->behaviourFile << "* \\class " << this->mb.getClassName()    << endl;
+    this->behaviourFile << "* \\class " << this->mb.getClassName() << '\n';
     this->behaviourFile << "* \\brief This class implements the " 
 			<< this->mb.getClassName() << " behaviour.\n";
     this->behaviourFile << "* \\param hypothesis, modelling hypothesis.\n";
@@ -2722,20 +2721,20 @@ namespace mfront{
 			  << "saying if quantities are use.\n";
     }
     if(!this->authorName.empty()){
-      this->behaviourFile << "* \\author " << this->authorName << endl;
+      this->behaviourFile << "* \\author " << this->authorName << '\n';
     }
     if(!this->date.empty()){
-      this->behaviourFile << "* \\date   " << this->date << endl;
+      this->behaviourFile << "* \\date   " << this->date << '\n';
     }
     if(!this->description.empty()){
-      this->behaviourFile << this->description << endl;
+      this->behaviourFile << this->description << '\n';
     }
     this->behaviourFile << "*/\n";
     const string btype = this->mb.getBehaviourTypeFlag();
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(this->mb.useQt()){
 	this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
-	this->behaviourFile << "class " << this->mb.getClassName() << endl;
+	this->behaviourFile << "class " << this->mb.getClassName() << '\n';
 	this->behaviourFile << ": public MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>,\n";
 	if(this->mb.getAttribute(BehaviourData::profiling,false)){
 	  this->behaviourFile << "public "
@@ -2799,15 +2798,13 @@ namespace mfront{
 			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>";
       }
     }
-    this->behaviourFile << "{\n";
-    this->behaviourFile << endl;
+    this->behaviourFile << "{\n\n";
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       this->behaviourFile << "static " << constexpr_c << " ModellingHypothesis::Hypothesis hypothesis = " 
 			  << "ModellingHypothesis::"
 			  << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }
-    this->behaviourFile << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n";
-    this->behaviourFile << endl;
+    this->behaviourFile << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n\n";
     this->behaviourFile << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);\n";
     this->behaviourFile << "TFEL_STATIC_ASSERT(tfel::typetraits::"
 			<< "IsFundamentalNumericType<Type>::cond);\n";
@@ -3142,8 +3139,8 @@ namespace mfront{
       // all available tangent operators for finite strain behaviours
       const auto tos = getFiniteStrainBehaviourTangentOperatorFlags();
       // search tangent operators defined by the user
-      for(auto pt=tos.cbegin();pt!=tos.cend();++pt){
-	const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(*pt);
+      for(const auto& t : tos){
+	const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
 	if(this->mb.hasCode(h,BehaviourData::ComputeTangentOperator+'-'+ktype)){
 	  return true;
 	}
@@ -4884,7 +4881,7 @@ namespace mfront{
 	      this->behaviourFile << "IntegrationResult computePredictionOperator_" << ktype << "(const SMType smt){\n";
 	      auto pc = path.begin();
 	      this->behaviourFile << "using namespace tfel::math;\n";
-	      this->behaviourFile << "// computing " << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from()) << endl;
+	      this->behaviourFile << "// computing " << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from()) << '\n';
 	      const auto k = convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from());
 	      this->behaviourFile << "this->computePredictionOperator_" << k << "(smt);\n"
 				  << "const " << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from()) << "<N,stress>"
@@ -6034,9 +6031,8 @@ namespace mfront{
     }
     if(addThisPtr){
       return "(this->"+var+")";
-    } else {
-      return var;
     }
+    return var;
   } // end of BehaviourDSLCommon::predictionOperatorVariableModifier
 
   void BehaviourDSLCommon::treatProfiling()

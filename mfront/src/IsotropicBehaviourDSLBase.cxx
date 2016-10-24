@@ -76,21 +76,14 @@ namespace mfront{
   bool
   IsotropicBehaviourDSLBase::isModellingHypothesisSupported(const Hypothesis h) const
   {
-    if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-       (h==ModellingHypothesis::AXISYMMETRICAL)||
-       (h==ModellingHypothesis::PLANESTRAIN)||
-       (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)||
-       (h==ModellingHypothesis::TRIDIMENSIONAL)){
-      return true;
-    }
-    return false;
+    return ((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+	    (h==ModellingHypothesis::AXISYMMETRICAL)||
+	    (h==ModellingHypothesis::PLANESTRAIN)||
+	    (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)||
+	    (h==ModellingHypothesis::TRIDIMENSIONAL));
   } // end of IsotropicBehaviourDSLBase::isModellingHypothesisSupported
 
-  IsotropicBehaviourDSLBase::~IsotropicBehaviourDSLBase()
-  {} // end of IsotropicBehaviourDSLBase::~IsotropicBehaviourDSLBase()
-
-  void
-  IsotropicBehaviourDSLBase::treatTheta()
+  void IsotropicBehaviourDSLBase::treatTheta()
   {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double v;
@@ -113,10 +106,9 @@ namespace mfront{
     this->mb.setParameterDefaultValue(h,"theta",v);
   } // end of IsotropicBehaviourDSLBase::treatTheta
 
-  void
-  IsotropicBehaviourDSLBase::treatEpsilon()
+  void IsotropicBehaviourDSLBase::treatEpsilon()
   {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double epsilon;
     this->checkNotEndOfFile("IsotropicBehaviourDSLBase::treatEpsilon",
 			    "Cannot read epsilon value.");
@@ -137,12 +129,10 @@ namespace mfront{
     this->mb.setParameterDefaultValue(h,"epsilon",epsilon);
   } // IsotropicBehaviourDSLBase::treatEpsilon
 
-  void
-  IsotropicBehaviourDSLBase::treatIterMax()
+  void IsotropicBehaviourDSLBase::treatIterMax()
   {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    unsigned short iterMax;
-    iterMax = this->readUnsignedShort("IsotropicBehaviourDSLBase::treatIterMax");
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto iterMax = this->readUnsignedShort("IsotropicBehaviourDSLBase::treatIterMax");
     if(iterMax==0){
       this->throwRuntimeError("IsotropicBehaviourDSLBase::treatIterMax",
 			      "invalid value for parameter 'iterMax'");
@@ -153,8 +143,7 @@ namespace mfront{
     this->mb.setParameterDefaultValue(h,"iterMax",iterMax);
   } // end of IsotropicBehaviourDSLBase::treatIterMax
 
-  void
-  IsotropicBehaviourDSLBase::writeBehaviourParserSpecificIncludes()
+  void IsotropicBehaviourDSLBase::writeBehaviourParserSpecificIncludes()
   {
     this->checkBehaviourFile();
     this->behaviourFile << "#include\"TFEL/Math/General/BaseCast.hxx\"\n";
@@ -183,8 +172,7 @@ namespace mfront{
     return var;
   } // end of IsotropicBehaviourDSLBase::flowRuleVariableModifier
 
-  void
-  IsotropicBehaviourDSLBase::treatFlowRule()
+  void IsotropicBehaviourDSLBase::treatFlowRule()
   {
     this->readCodeBlock(*this,BehaviourData::FlowRule,
 			&IsotropicBehaviourDSLBase::flowRuleVariableModifier,true,false);
@@ -193,11 +181,10 @@ namespace mfront{
   void
   IsotropicBehaviourDSLBase::endsInputFileProcessing()
   {
-    using namespace std;
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(getVerboseMode()>=VERBOSE_DEBUG){
       auto& log = getLogStream();
-      log << "IsotropicBehaviourDSLBase::endsInputFileProcessing : begin" << endl;
+      log << "IsotropicBehaviourDSLBase::endsInputFileProcessing : begin\n";
     }
     BehaviourDSLCommon::endsInputFileProcessing();
     if(!this->mb.hasParameter(h,"theta")){
@@ -225,7 +212,7 @@ namespace mfront{
     		     BehaviourData::BODY);
     if(getVerboseMode()>=VERBOSE_DEBUG){
       auto& log = getLogStream();
-      log << "IsotropicBehaviourDSLBase::endsInputFileProcessing : end" << endl;
+      log << "IsotropicBehaviourDSLBase::endsInputFileProcessing : end\n";
     }
   } // end of IsotropicBehaviourDSLBase::endsInputFileProcessing
 
@@ -253,39 +240,38 @@ namespace mfront{
   {
     this->checkBehaviourFile();
     this->behaviourFile << "typedef typename tfel::math::ComputeBinaryResult<"
-			<< "strain,time,tfel::math::OpDiv>::Result DstrainDt;\n";
-    this->behaviourFile << "typedef typename tfel::math::ComputeBinaryResult<"
+			<< "strain,time,tfel::math::OpDiv>::Result DstrainDt;\n"
+			<< "typedef typename tfel::math::ComputeBinaryResult<"
 			<< "DstrainDt,stress,tfel::math::OpDiv>::Result DF_DSEQ_TYPE;\n\n";
   } // end of IsotropicBehaviourDSLBase::writeBehaviourParserSpecificTypedefs
 
   void IsotropicBehaviourDSLBase::writeBehaviourComputePredictionOperator(const Hypothesis h)
   {
-    using namespace std;
-    const string btype = this->mb.getBehaviourTypeFlag();
+    const auto btype = this->mb.getBehaviourTypeFlag();
     if(!this->mb.hasCode(h,BehaviourData::ComputePredictionOperator)){
-      this->behaviourFile << "IntegrationResult" << endl
+      this->behaviourFile << "IntegrationResult\n"
 			  << "computePredictionOperator(const SMFlag smflag, const SMType smt) override{\n";
       this->behaviourFile << "using namespace std;\n";
       if(this->mb.useQt()){
 	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			    << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){" << endl;
+			    << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n";
       } else {
 	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			    << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){" << endl;
+			    << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n";
       }
       this->behaviourFile << "throw(runtime_error(\"" << this->mb.getClassName()
 			  << "::computePredictionOperator : "
-			  << "invalid tangent operator flag\"));" << endl
-			  << "}" << endl;
-      this->behaviourFile << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";
-      this->behaviourFile << "Dt = (this->lambda)*Stensor4::IxI()+2*(this->mu)*Stensor4::Id();\n";
-      this->behaviourFile << "} else {\n";
-      this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::computePredictionOperator : \");\n";
-      this->behaviourFile << "msg +=\"unimplemented feature\";\n";
-      this->behaviourFile << "throw(runtime_error(msg));\n";
-      this->behaviourFile << "}\n\n";
-      this->behaviourFile << "return SUCCESS;\n";
-      this->behaviourFile << "}\n\n";
+			  << "invalid tangent operator flag\"));\n"
+			  << "}\n"
+			  << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
+			  << "Dt = (this->lambda)*Stensor4::IxI()+2*(this->mu)*Stensor4::Id();\n"
+			  << "} else {\n"
+			  << "string msg(\"" << this->mb.getClassName() << "::computePredictionOperator : \");\n"
+			  << "msg +=\"unimplemented feature\";\n"
+			  << "throw(runtime_error(msg));\n"
+			  << "}\n\n"
+			  << "return SUCCESS;\n"
+			  << "}\n\n";
     } else {
       BehaviourDSLCommon::writeBehaviourComputePredictionOperator(h);
     }
@@ -294,4 +280,6 @@ namespace mfront{
   void IsotropicBehaviourDSLBase::writeBehaviourComputeTangentOperator(const Hypothesis)
   {} // end of IsotropicBehaviourDSLBase::writeBehaviourComputeTangentOperator
 
+  IsotropicBehaviourDSLBase::~IsotropicBehaviourDSLBase() = default;
+  
 } // end of namespace mfront

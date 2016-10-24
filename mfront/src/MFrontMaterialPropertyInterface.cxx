@@ -25,15 +25,12 @@
 namespace mfront
 {
 
-  std::string
-  MFrontMaterialPropertyInterface::getName()
+  std::string MFrontMaterialPropertyInterface::getName()
   {
     return "mfront";
   }
 
-  MFrontMaterialPropertyInterface::MFrontMaterialPropertyInterface()
-    : CMaterialPropertyInterfaceBase()
-  {}
+  MFrontMaterialPropertyInterface::MFrontMaterialPropertyInterface() = default;
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontMaterialPropertyInterface::treatKeyword(const std::string& k,
@@ -84,26 +81,22 @@ namespace mfront
     return material+"_"+className+"-mfront";
   } // end of MFrontMaterialPropertyInterface::getSrcFileName
   
-  void
-  MFrontMaterialPropertyInterface::writeBeginHeaderNamespace()
+  void MFrontMaterialPropertyInterface::writeBeginHeaderNamespace()
   {
     this->headerFile << "namespace mfront{\n\n";
   } // end of MFrontMaterialPropertyInterface::writeBeginHeaderNamespace
   
-  void
-  MFrontMaterialPropertyInterface::writeEndHeaderNamespace()
+  void MFrontMaterialPropertyInterface::writeEndHeaderNamespace()
   {
     this->headerFile << "} // end of namespace mfront\n\n";
   } // end of MFrontMaterialPropertyInterface::writeEndHeaderNamespace(void)
 
-  void
-  MFrontMaterialPropertyInterface::writeBeginSrcNamespace()
+  void MFrontMaterialPropertyInterface::writeBeginSrcNamespace()
   {
     this->srcFile << "namespace mfront{\n";
   } // end of MFrontMaterialPropertyInterface::writeBeginSrcNamespace
   
-  void
-  MFrontMaterialPropertyInterface::writeEndSrcNamespace()
+  void MFrontMaterialPropertyInterface::writeEndSrcNamespace()
   {
     this->srcFile << "} // end of namespace mfront\n";
   } // end of MFrontMaterialPropertyInterface::writeEndSrcNamespace(void)
@@ -115,8 +108,7 @@ namespace mfront
     return material.empty() ? law : material+'_'+law;
   } // end of MFrontMaterialPropertyInterface::getFunctionName
   
-  bool
-  MFrontMaterialPropertyInterface::requiresCheckBoundsFunction() const
+  bool MFrontMaterialPropertyInterface::requiresCheckBoundsFunction() const
   {
     return true;
   }
@@ -128,7 +120,6 @@ namespace mfront
     return this->getFunctionName(material,className)+"_checkBounds";
   } // end of MFrontMaterialPropertyInterface::getCheckBoundsFunctionName
   
-  MFrontMaterialPropertyInterface::~MFrontMaterialPropertyInterface()
-  {} // end of MFrontMaterialPropertyInterface::~MFrontMaterialPropertyInterface
+  MFrontMaterialPropertyInterface::~MFrontMaterialPropertyInterface() = default;
 
 } // end of namespace mfront

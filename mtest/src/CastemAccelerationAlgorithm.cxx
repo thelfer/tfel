@@ -36,40 +36,24 @@ namespace mtest
   CastemAccelerationAlgorithm::setParameter(const std::string& p,
 						 const std::string& v)
   {
-    using namespace std;
-    const string m = "CastemAccelerationAlgorithm::setParameter";
+    const std::string m = "CastemAccelerationAlgorithm::setParameter";
+    auto throw_if = [&m](const bool c, const std::string& msg){
+      if(c){throw(std::runtime_error(m+": "+msg));}
+    };
     if(p=="AccelerationTrigger"){
-      const unsigned short i = AccelerationAlgorithm::convertToUnsignedShort(m,v);
-      if(this->cat!=-1){
-	string msg("CastemAccelerationAlgorithm::setParameter : "
-		   "the castem acceleration trigger has already "
-		   "been defined");
-	throw(runtime_error(msg));
-      }
-      if(i<3){
-	string msg("CastemAccelerationAlgorithm::setParameter : ",
-		   "invalid acceleration trigger value.");
-	throw(runtime_error(msg));
-      }
+      const auto i = AccelerationAlgorithm::convertToUnsignedShort(m,v);
+      throw_if(this->cat!=-1,"the castem acceleration trigger "
+	       "has already been defined");
+      throw_if(i<3,"invalid acceleration trigger value.");
       this->cat = i;
     } else if(p=="AccelerationPeriod"){
-      const unsigned short i = AccelerationAlgorithm::convertToUnsignedShort(m,v);
-      if(this->cap!=-1){
-	string msg("MTest::setCastemAccelerationPeriod : "
-		   "the castem acceleration period has already "
-		   "been defined");
-	throw(runtime_error(msg));
-      }
-      if(i==0){
-	string msg("MTest::setCastemAccelerationPeriod : ",
-		   "invalid acceleration period value.");
-	throw(runtime_error(msg));
-      }
+      const auto i = AccelerationAlgorithm::convertToUnsignedShort(m,v);
+      throw_if(this->cap!=-1,"the castem acceleration period "
+	       "has already been defined");
+      throw_if(i==0,"invalid acceleration period value.");
       this->cap = i;
     } else {
-      string msg("CastemAccelerationAlgorithm::setParameter : "
-		 "invalid parameter '"+p+"'.");
-      throw(runtime_error(msg));
+      throw_if(true,"invalid parameter '"+p+"'.");
     }
   } // end of CastemAccelerationAlgorithm::setParameter
 
@@ -96,8 +80,7 @@ namespace mtest
     }
   } // end of CastemAccelerationAlgorithm::initialize
 
-  void
-  CastemAccelerationAlgorithm::preExecuteTasks()
+  void CastemAccelerationAlgorithm::preExecuteTasks()
   {} // end of CastemAccelerationAlgorithm::preExecuteTasks
 
   void
@@ -155,8 +138,7 @@ namespace mtest
     }
   } // end of CastemAccelerationAlgorithm::execute
 
-  void
-  CastemAccelerationAlgorithm::postExecuteTasks()
+  void CastemAccelerationAlgorithm::postExecuteTasks()
   {} // end of CastemAccelerationAlgorithm::postExecuteTasks
 
   CastemAccelerationAlgorithm::~CastemAccelerationAlgorithm() = default;

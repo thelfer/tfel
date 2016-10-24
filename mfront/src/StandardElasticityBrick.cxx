@@ -44,29 +44,29 @@ namespace mfront{
     throw_if(this->bd.getIntegrationScheme()!=BehaviourDescription::IMPLICITSCHEME,
 	     "this behaviour brick is only usable in implicit schemes");
     // parameters
-    for(auto pp=p.cbegin();pp!=p.cend();++pp){
-      if(pp->first=="Isotropic"){
-	this->checkThatParameterHasNoValue(*pp);
+    for(const auto& pp : p){
+      if(pp.first=="Isotropic"){
+	this->checkThatParameterHasNoValue(pp);
 	setElasticSymmetryType(this->bd,mfront::ISOTROPIC);
-      } else if(pp->first=="Orthotropic"){
+      } else if(pp.first=="Orthotropic"){
 	// this is also checked later during the call of
 	// setElasticSymmetryType call
 	throw_if(this->bd.getSymmetryType()!=mfront::ORTHOTROPIC,
 		 "using the orthotropic behaviour requires that the "
 		 "behaviour has not been declared orthotropic");
-	this->checkThatParameterHasNoValue(*pp);
+	this->checkThatParameterHasNoValue(pp);
 	setElasticSymmetryType(this->bd,mfront::ORTHOTROPIC);
-      } else if(pp->first=="NoPlaneStressSupport"){
-	this->checkThatParameterHasNoValue(*pp);
+      } else if(pp.first=="NoPlaneStressSupport"){
+	this->checkThatParameterHasNoValue(pp);
 	this->pss = false;
-      } else if(pp->first=="NoGenericTangentOperator"){
-	this->checkThatParameterHasNoValue(*pp);
+      } else if(pp.first=="NoGenericTangentOperator"){
+	this->checkThatParameterHasNoValue(pp);
 	this->gto = false;
-      } else if(pp->first=="NoGenericPredictionOperator"){
-	this->checkThatParameterHasNoValue(*pp);
+      } else if(pp.first=="NoGenericPredictionOperator"){
+	this->checkThatParameterHasNoValue(pp);
 	this->gpo = false;
       } else {
-	throw_if(true,"unsupported parameter '"+pp->first+"'");
+	throw_if(true,"unsupported parameter '"+pp.first+"'");
       }
     }
     if(this->pss){

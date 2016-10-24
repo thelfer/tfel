@@ -47,8 +47,7 @@ namespace mfront
     return header;
   } // end of transformHeaderName
   
-  CMaterialPropertyInterfaceBase::CMaterialPropertyInterfaceBase()
-  {}
+  CMaterialPropertyInterfaceBase::CMaterialPropertyInterfaceBase() = default;
   
   void
   CMaterialPropertyInterfaceBase::writeHeaderPreprocessorDirectives(const MaterialPropertyDescription&)
@@ -60,9 +59,6 @@ namespace mfront
   CMaterialPropertyInterfaceBase::writeSrcPreprocessorDirectives(const MaterialPropertyDescription&)
   {} // end of CMaterialPropertyInterfaceBase::writeSrcPreprocessorDirectives
   
-  CMaterialPropertyInterfaceBase::~CMaterialPropertyInterfaceBase()
-  {}
-
   void
   CMaterialPropertyInterfaceBase::writeOutputFiles(const MaterialPropertyDescription& mpd,
 						   const FileDescription& fd)
@@ -293,5 +289,7 @@ namespace mfront
     os << "return std::nan(\"" << this->getFunctionName(mpd.material,mpd.className)
        << ": invalid call to a C function (errno is not null)\");\n";
   } // CMaterialPropertyInterfaceBase::writeCErrorTreatment
+
+  CMaterialPropertyInterfaceBase::~CMaterialPropertyInterfaceBase() = default;
   
 } // end of namespace mfront

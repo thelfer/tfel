@@ -210,8 +210,7 @@ namespace mfront{
     out << "}\n";
   } // end of MFrontBroydenSolverBase::writeResolutionAlgorithm
 
-  MFrontBroydenSolverBase::~MFrontBroydenSolverBase()
-  {} // end of  MFrontBroydenSolverBase::~MFrontBroydenSolverBase()
+  MFrontBroydenSolverBase::~MFrontBroydenSolverBase() = default;
 
   bool MFrontBroydenSolver::usesPowellDogLegAlgorithm() const
   {

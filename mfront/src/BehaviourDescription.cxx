@@ -1340,10 +1340,10 @@ namespace mfront
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       (this->d.*m)(n,i,v);
       for(auto md : this->sd){
-	(md.second.get()->*m)(n,v,i);
+	(md.second.get()->*m)(n,i,v);
       }
     } else {
-      (this->getBehaviourData2(h).*m)(n,v,i);
+      (this->getBehaviourData2(h).*m)(n,i,v);
     }
   }
 

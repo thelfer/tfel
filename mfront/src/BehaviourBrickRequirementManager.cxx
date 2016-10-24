@@ -128,12 +128,12 @@ namespace mfront{
     
     void RequirementManager::addRequirement(const Requirement& r){
       throwIfRequirementIsAlreadyDefined(this->requirements,r);
-      this->addRequirement(std::shared_ptr<Requirement>(new Requirement(r)));
+      this->addRequirement(std::make_shared<Requirement>(r));
     }
 
     void RequirementManager::addRequirement(Requirement&& r){
       throwIfRequirementIsAlreadyDefined(this->requirements,r);
-      this->addRequirement(std::shared_ptr<Requirement>(new Requirement(std::move(r))));
+      this->addRequirement(std::make_shared<Requirement>(std::move(r)));
     }
     
     std::vector<std::shared_ptr<Provider>>::const_iterator
@@ -304,5 +304,6 @@ namespace mfront{
 
     RequirementManager::~RequirementManager() = default;
     
-  }
-}
+  } // end of namspace bbrick
+  
+} // end of namspace mfront

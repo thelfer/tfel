@@ -79,5 +79,4 @@ namespace mfront{
     return p!=d.end();
   }
   
-  
-} // end of mfront
+} // end of namespace mfront

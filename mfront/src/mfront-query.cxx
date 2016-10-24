@@ -104,13 +104,13 @@ int main(const int argc, const char *const *const argv)
 	std::exit(EXIT_SUCCESS);
       }
     }
-    for(auto q : mpqueries){
+    for(const auto& q : mpqueries){
       q->exe();
     }
-    for(auto q : bqueries){
+    for(const auto& q : bqueries){
       q->exe();
     }
-    for(auto q : mqueries){
+    for(const auto& q : mqueries){
       q->exe();
     }
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__

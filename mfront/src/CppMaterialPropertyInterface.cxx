@@ -56,9 +56,6 @@ namespace mfront
     return {false,current};
   } // end of treatKeyword
 
-  CppMaterialPropertyInterface::~CppMaterialPropertyInterface()
-  {}
-
   void
   CppMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
 						      const MaterialPropertyDescription& mpd)
@@ -372,8 +369,7 @@ namespace mfront
     }
     src << "return " << output << ";\n";
     src << "} // end of " << name << "::operator()\n\n";
-    if((!bounds.empty())||
-       (!physicalBounds.empty())){
+    if((!bounds.empty())||(!physicalBounds.empty())){
       src << "void\n";
       src << name;
       src << "::checkBounds(";
@@ -391,37 +387,36 @@ namespace mfront
       if(!physicalBounds.empty()){
 	src << "using namespace std;\n";	
 	src << "// treating physical bounds\n";
-	for(auto p6=physicalBounds.cbegin();
-	    p6!=physicalBounds.cend();++p6){
-	  if(p6->boundsType==VariableBoundsDescription::Lower){
-	    src << "if(" << p6->varName<< " < "<< p6->lowerBound << "){\n";
+	for(const auto& b : physicalBounds){
+	  if(b.boundsType==VariableBoundsDescription::Lower){
+	    src << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is below its physical lower bound \";\n";
-	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" < " << p6->lowerBound << ")\";\n";
+	    src << "msg << \"" << name << " : "  << b.varName << " is below its physical lower bound \";\n";
+	    src << "msg << \"(\" << " << b.varName 
+		<< " << \" < " << b.lowerBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "}\n";
-	  } else if(p6->boundsType==VariableBoundsDescription::Upper){
-	    src << "if(" << p6->varName<< " > "<< p6->upperBound << "){\n";
+	  } else if(b.boundsType==VariableBoundsDescription::Upper){
+	    src << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is beyond its physical upper bound \";\n";
-	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" > " << p6->upperBound << ")\";\n";
+	    src << "msg << \"" << name << " : "  << b.varName << " is beyond its physical upper bound \";\n";
+	    src << "msg << \"(\" << " << b.varName 
+		<< " << \" > " << b.upperBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "}\n";
 	  } else {
-	    src << "if(" << p6->varName<< " < "<< p6->lowerBound << "){\n";
+	    src << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is below its physical lower bound \";\n";
-	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" < " << p6->lowerBound << ")\";\n";
+	    src << "msg << \"" << name << " : "  << b.varName << " is below its physical lower bound \";\n";
+	    src << "msg << \"(\" << " << b.varName 
+		<< " << \" < " << b.lowerBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "}\n";
-	    src << "if(" << p6->varName<< " > "<< p6->upperBound << "){\n";
+	    src << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is beyond its physical upper bound \";\n";
-	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" > " << p6->upperBound << ")\";\n";
+	    src << "msg << \"" << name << " : "  << b.varName << " is beyond its physical upper bound \";\n";
+	    src << "msg << \"(\" << " << b.varName 
+		<< " << \" > " << b.upperBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "}\n";
 	  }
@@ -429,75 +424,75 @@ namespace mfront
       }
       if(!bounds.empty()){
 	src << "// treating standard bounds\n";
-	for(auto p6=bounds.cbegin();p6!=bounds.cend();++p6){
-	  if(p6->boundsType==VariableBoundsDescription::Lower){
-	    src << "if(" << p6->varName<< " < "<< p6->lowerBound << "){\n";
+	for(const auto& b : bounds){
+	  if(b.boundsType==VariableBoundsDescription::Lower){
+	    src << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
 	    src << "const char * const policy = "
 		<< "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n";
 	    src << "if(policy!=nullptr){\n";
 	    src << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is below its lower bound \";\n";
-	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" < " << p6->lowerBound << ")\";\n";
+	    src << "msg << \"" << name << " : "  << b.varName << " is below its lower bound \";\n";
+	    src << "msg << \"(\" << " << b.varName 
+		<< " << \" < " << b.lowerBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "} else if(strcmp(policy,\"WARNING\")==0){\n";
-	    src << "cerr << \"" << p6->varName << " is below its lower bound \";\n";
-	    src << "cerr << \"(\" << " << p6->varName 
-		<< " << \" < " << p6->lowerBound << ")\\n\";\n";
+	    src << "cerr << \"" << b.varName << " is below its lower bound \";\n";
+	    src << "cerr << \"(\" << " << b.varName 
+		<< " << \" < " << b.lowerBound << ")\\n\";\n";
 	    src << "}\n";
 	    src << "}\n";
 	    src << "}\n";
-	  } else if(p6->boundsType==VariableBoundsDescription::Upper){
-	    src << "if(" << p6->varName<< " > "<< p6->upperBound << "){\n";
+	  } else if(b.boundsType==VariableBoundsDescription::Upper){
+	    src << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
 	    src << "const char * const policy = "
 		<< "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n";
 	    src << "if(policy!=nullptr){\n";
 	    src << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is beyond its upper bound \";\n";
-	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" > " << p6->upperBound << ")\";\n";
+	    src << "msg << \"" << name << " : "  << b.varName << " is beyond its upper bound \";\n";
+	    src << "msg << \"(\" << " << b.varName 
+		<< " << \" > " << b.upperBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "} else if(strcmp(policy,\"WARNING\")==0){\n";
-	    src << "cerr << \"" << p6->varName << " is beyond its upper bound \";\n";
-	    src << "cerr << \"(\" << " << p6->varName 
-		<< " << \" > " << p6->upperBound << ")\\n\";\n";
+	    src << "cerr << \"" << b.varName << " is beyond its upper bound \";\n";
+	    src << "cerr << \"(\" << " << b.varName 
+		<< " << \" > " << b.upperBound << ")\\n\";\n";
 	    src << "}\n";
 	    src << "}\n";
 	    src << "}\n";
 	  } else {
-	    src << "if(" << p6->varName<< " < "<< p6->lowerBound << "){\n";
+	    src << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
 	    src << "const char * const policy = "
 		<< "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n";
 	    src << "if(policy!=nullptr){\n";
 	    src << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is below its lower bound \";\n";
-	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" < " << p6->lowerBound << ")\";\n";
+	    src << "msg << \"" << name << " : "  << b.varName << " is below its lower bound \";\n";
+	    src << "msg << \"(\" << " << b.varName 
+		<< " << \" < " << b.lowerBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "} else if(strcmp(policy,\"WARNING\")==0){\n";
-	    src << "cerr << \"" << p6->varName << " is below its lower bound \";\n";
-	    src << "cerr << \"(\" << " << p6->varName 
-		<< " << \" < " << p6->lowerBound << ")\\n\";\n";
+	    src << "cerr << \"" << b.varName << " is below its lower bound \";\n";
+	    src << "cerr << \"(\" << " << b.varName 
+		<< " << \" < " << b.lowerBound << ")\\n\";\n";
 	    src << "}\n";
 	    src << "}\n";
 	    src << "}\n";
-	    src << "if(" << p6->varName<< " > "<< p6->upperBound << "){\n";
+	    src << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
 	    src << "const char * const policy = "
 		<< "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n";
 	    src << "if(policy!=nullptr){\n";
 	    src << "if(strcmp(policy,\"STRICT\")==0){\n";
 	    src << "ostringstream msg;\n";
-	    src << "msg << \"" << name << " : "  << p6->varName << " is beyond its upper bound \";\n";
-	    src << "msg << \"(\" << " << p6->varName 
-		<< " << \" > " << p6->upperBound << ")\";\n";
+	    src << "msg << \"" << name << " : "  << b.varName << " is beyond its upper bound \";\n";
+	    src << "msg << \"(\" << " << b.varName 
+		<< " << \" > " << b.upperBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "} else if(strcmp(policy,\"WARNING\")==0){\n";
-	    src << "cerr << \"" << p6->varName << " is beyond its upper bound \";\n";
-	    src << "cerr << \"(\" << " << p6->varName 
-		<< " << \" > " << p6->upperBound << ")\\n\";\n";
+	    src << "cerr << \"" << b.varName << " is beyond its upper bound \";\n";
+	    src << "cerr << \"(\" << " << b.varName 
+		<< " << \" > " << b.upperBound << ")\\n\";\n";
 	    src << "}\n";
 	    src << "}\n";
 	    src << "}\n";
@@ -523,4 +518,6 @@ namespace mfront
     src.close();
   } // end of CppMaterialPropertyInterface::writeSrcFile(void)
 
+  CppMaterialPropertyInterface::~CppMaterialPropertyInterface() = default;
+  
 } // end of namespace mfront

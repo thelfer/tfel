@@ -609,7 +609,6 @@ namespace mfront{
     }
     if(d.isIntegrationVariableName(var)){
       if(this->mb.hasAttribute(h,var+"_normalisation_factor")){
-	const auto& s = d.getStateVariableDescription(var);
 	const auto& nf = this->mb.getAttribute<std::string>(h,var+"_normalisation_factor");
 	if(addThisPtr){
 	  return "(this->"+var+"+(this->theta)*(("+nf+")*(this->d"+var+")))";
@@ -679,21 +678,13 @@ namespace mfront{
 	      return false;
 	    }
 	    --previous;
-	    if(previous->value=="this"){
-	      return true;
-	    } else {
-	      return false;
-	    }
+	    return previous->value=="this";
 	  } else if(previous->value=="::"){
 	    if(previous==this->begin()){
 	      return false;
 	    }
 	    --previous;
-	    if(previous->value==this->mb.getClassName()){
-	      return true;
-	    } else {
-	      return false;
-	    }
+	    return previous->value==this->mb.getClassName();
 	  }
 	  return true;
 	}

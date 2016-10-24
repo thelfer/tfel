@@ -28,7 +28,7 @@ namespace mtest
   /*!
    * register the acceleration algorithms
    */
-  struct AccelerationAlgorithmFactory
+  struct MTEST_VISIBILITY_EXPORT AccelerationAlgorithmFactory
   {
     //! a simple alias
     typedef std::shared_ptr<AccelerationAlgorithm> (* constructor)(void);
