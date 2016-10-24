@@ -242,9 +242,8 @@ namespace mfront
 					    "double","python");
     }
     if(!inputs.empty()){
-      unsigned short i;
-      for(auto p3=inputs.begin();p3!=inputs.end();++p3){
-	this->srcFile << "real " << p3->name << ";\n";
+      for(const auto& i : inputs){
+	this->srcFile << "real " << i.name << ";\n";
       }
       if(!bounds.empty()){
 	this->srcFile << "#ifndef PYTHON_NO_BOUNDS_CHECK\n";
@@ -252,6 +251,7 @@ namespace mfront
 	this->srcFile << "#endif /* PYTHON_NO_BOUNDS_CHECK */\n";
       }
       this->srcFile << "if(!PyArg_ParseTuple(py_args_,\"";
+      unsigned short i;
       for(i=0;i!=inputs.size();++i){
 	this->srcFile << "d";
       }
@@ -268,33 +268,33 @@ namespace mfront
 	this->srcFile << "#ifndef PYTHON_NO_BOUNDS_CHECK\n";
 	if(!physicalBounds.empty()){
 	  this->srcFile << "// treating physical bounds\n";
-	  for(auto p5=physicalBounds.begin();p5!=physicalBounds.end();++p5){
-	    if(p5->boundsType==VariableBoundsDescription::Lower){
-	      this->srcFile << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
+	  for(const auto& b : physicalBounds){
+	    if(b.boundsType==VariableBoundsDescription::Lower){
+	      this->srcFile << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
 	      this->srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
-			    << p5->varName << " is below its physical lower bound (\"\n << "
-			    << p5->varName << " << \"<" << p5->lowerBound << ").\";\n";
+			    << b.varName << " is below its physical lower bound (\"\n << "
+			    << b.varName << " << \"<" << b.lowerBound << ").\";\n";
 	      this->srcFile << "return throwPythonRuntimeException(msg.str());\n";
 	      this->srcFile << "}\n";
-	    } else if(p5->boundsType==VariableBoundsDescription::Upper){
-	      this->srcFile << "if(" << p5->varName<< " > "<< p5->upperBound << "){\n";
+	    } else if(b.boundsType==VariableBoundsDescription::Upper){
+	      this->srcFile << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
 	      this->srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
-			    << p5->varName << " is beyond its physical upper bound (\"\n << "
-			    << p5->varName << " << \">" << p5->upperBound << ").\";\n";
+			    << b.varName << " is beyond its physical upper bound (\"\n << "
+			    << b.varName << " << \">" << b.upperBound << ").\";\n";
 	      this->srcFile << "return throwPythonRuntimeException(msg.str());\n";
 	      this->srcFile << "}\n";
 	    } else {
-	      this->srcFile << "if((" << p5->varName<< " < "<< p5->lowerBound << ")||"
-			    << "(" << p5->varName<< " > "<< p5->upperBound << ")){\n";
-	      this->srcFile << "if(" << p5->varName<< " < " << p5->lowerBound << "){\n";
+	      this->srcFile << "if((" << b.varName<< " < "<< b.lowerBound << ")||"
+			    << "(" << b.varName<< " > "<< b.upperBound << ")){\n";
+	      this->srcFile << "if(" << b.varName<< " < " << b.lowerBound << "){\n";
 	      this->srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
-			    << p5->varName << " is below its physical lower bound (\"\n << "
-			    << p5->varName << " << \"<" << p5->lowerBound << ").\";\n";
+			    << b.varName << " is below its physical lower bound (\"\n << "
+			    << b.varName << " << \"<" << b.lowerBound << ").\";\n";
 	      this->srcFile << "return throwPythonRuntimeException(msg.str());\n";
 	      this->srcFile << "} else {\n";
 	      this->srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
-			    << p5->varName << " is beyond its physical upper bound (\"\n << "
-			    << p5->varName << " << \">" << p5->upperBound << ").\";\n";
+			    << b.varName << " is beyond its physical upper bound (\"\n << "
+			    << b.varName << " << \">" << b.upperBound << ").\";\n";
 	      this->srcFile << "return throwPythonRuntimeException(msg.str());\n";
 	      this->srcFile << "}\n";
 	      this->srcFile << "}\n";
@@ -303,10 +303,10 @@ namespace mfront
 	}
 	if(!bounds.empty()){
 	  this->srcFile << "// treating standard bounds\n";
-	  for(auto p5=bounds.begin();p5!=bounds.end();++p5){
-	    if((p5->boundsType==VariableBoundsDescription::Lower)||
-	       (p5->boundsType==VariableBoundsDescription::LowerAndUpper)){
-	      this->srcFile << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
+	  for(const auto& b : bounds){
+	    if((b.boundsType==VariableBoundsDescription::Lower)||
+	       (b.boundsType==VariableBoundsDescription::LowerAndUpper)){
+	      this->srcFile << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
 	      this->srcFile << "policy = "
 			    << "::getenv(\"PYTHON_OUT_OF_BOUNDS_POLICY\");\n";
 	      this->srcFile << "if(policy!=nullptr){\n";
@@ -314,8 +314,8 @@ namespace mfront
 			    << "(strcmp(policy,\"WARNING\")==0)){\n";
 	      this->srcFile << "ostringstream msg;\n";
 	      this->srcFile << "msg << \"" << name << " : "
-			    << p5->varName << " is below its lower bound (\"\n << "
-			    << p5->varName << " << \"<" << p5->lowerBound << ").\";\n";
+			    << b.varName << " is below its lower bound (\"\n << "
+			    << b.varName << " << \"<" << b.lowerBound << ").\";\n";
 	      this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
 	      this->srcFile << "return throwPythonRuntimeException(msg.str());\n";
 	      this->srcFile << "} else {\n";
@@ -325,9 +325,9 @@ namespace mfront
 	      this->srcFile << "}\n";
 	      this->srcFile << "}\n";
 	    }
-	    if((p5->boundsType==VariableBoundsDescription::Upper)||
-	       (p5->boundsType==VariableBoundsDescription::LowerAndUpper)){
-	      this->srcFile << "if(" << p5->varName<< " > "<< p5->upperBound << "){\n";
+	    if((b.boundsType==VariableBoundsDescription::Upper)||
+	       (b.boundsType==VariableBoundsDescription::LowerAndUpper)){
+	      this->srcFile << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
 	      this->srcFile << "policy = "
 			    << "::getenv(\"PYTHON_OUT_OF_BOUNDS_POLICY\");\n";
 	      this->srcFile << "if(policy!=nullptr){\n";
@@ -335,8 +335,8 @@ namespace mfront
 			    << "(strcmp(policy,\"WARNING\")==0)){\n";
 	      this->srcFile << "ostringstream msg;\n";
 	      this->srcFile << "msg << \"" << name << " : "
-			    << p5->varName << " is over its upper bound (\"\n << "
-			    << p5->varName << " << \">" << p5->upperBound << ").\";\n";
+			    << b.varName << " is over its upper bound (\"\n << "
+			    << b.varName << " << \">" << b.upperBound << ").\";\n";
 	      this->srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
 	      this->srcFile << "return throwPythonRuntimeException(msg.str());\n";
 	      this->srcFile << "} else {\n";
@@ -440,8 +440,8 @@ namespace mfront
       wrapper << description << endl;
     }
     wrapper << " */\n\n";
-    for(auto p7=interfaces.begin();p7!=interfaces.end();++p7){
-      wrapper << "#include\"" << *p7 << "-python.hxx\"\n";
+    for(const auto& i : interfaces){
+      wrapper << "#include\"" << i << "-python.hxx\"\n";
     }
     wrapper << endl;
 #ifndef _WIN32
@@ -453,9 +453,9 @@ namespace mfront
     } else {
       wrapper << "static PyMethodDef MaterialLawMethods[] = {\n";
     }
-    for(auto p7=interfaces.begin();p7!=interfaces.end();++p7){
-      wrapper << "{\"" << *p7 << "\"," << *p7 << "_wrapper,METH_VARARGS,\n"
-	      << "\"compute the " << *p7 <<  " law.\"},\n";
+    for(const auto& i : interfaces){
+      wrapper << "{\"" << i << "\"," << i << "_wrapper,METH_VARARGS,\n"
+	      << "\"compute the " << i <<  " law.\"},\n";
     }
     wrapper << "{NULL, NULL, 0, NULL} /* Sentinel */\n};\n\n";
 #ifndef _WIN32

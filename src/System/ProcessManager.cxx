@@ -197,7 +197,6 @@ namespace tfel
     ProcessManager::createProcess(ProcessManager::Command& cmd)
     {
       using namespace std;
-      using MVType = StreamMap::value_type;
       int  cfd[2]; //< pipe to the child
       int  ffd[2]; //< pipe to the father
       pid_t pid;
@@ -239,8 +238,9 @@ namespace tfel
 	sigprocmask(SIG_SETMASK,&oSigSet,nullptr);
 	// wait that the father has made its administrative job
 	while((readChar=read(cfd[0],buf,2u))==-1){
-	  if(errno!=EINTR)
+	  if(errno!=EINTR){
 	    break;
+	  }
 	}
 	assert(readChar==2);
 	if(!cmd.execute(cfd[0],ffd[1])){
@@ -252,8 +252,8 @@ namespace tfel
       close(ffd[1]);
       close(cfd[0]);
       // registering
-      this->inputs.insert(MVType(pid,cfd[1]));
-      this->outputs.insert(MVType(pid,ffd[0]));
+      this->inputs.insert({pid,cfd[1]});
+      this->outputs.insert({pid,ffd[0]});
       Process proc;
       proc.id = pid;
       proc.isRunning = true;
@@ -274,7 +274,6 @@ namespace tfel
 				  const std::map<std::string,std::string>& e)
     {
       using namespace std;
-      using MVType = StreamMap::value_type;
       vector<string> tmp;
       char buf[3];
       int  cfd[2]; //< pipe to the child
@@ -377,10 +376,10 @@ namespace tfel
       close(cfd[0]);
       // registering
       if(in[0]!=-1){
-	ins.insert(MVType(pid,in[1]));
+	ins.insert({pid,in[1]});
       }
       if(out[0]!=-1){
-	outs.insert(MVType(pid,out[0]));
+	outs.insert({pid,out[0]});
       }
       Process proc;
       proc.id = pid;

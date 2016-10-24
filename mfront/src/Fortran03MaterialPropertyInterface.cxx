@@ -115,8 +115,8 @@ namespace mfront
   void
   Fortran03MaterialPropertyInterface::writeInterfaceSpecificVariables(const VariableDescriptionContainer& inputs)
   {
-    for(auto p=inputs.begin();p!=inputs.end();++p){
-      this->srcFile << "const double " << p->name << " =  *(_mfront_var_" << p->name << ");\n";
+    for(const auto& i :inputs){
+      this->srcFile << "const double " << i.name << " =  *(_mfront_var_" << i.name << ");\n";
     }
   } // end of Fortran03MaterialPropertyInterface::writeInterfaceSpecificVariables
 
@@ -283,7 +283,6 @@ namespace mfront
     fm.close();
   }
   
-  Fortran03MaterialPropertyInterface::~Fortran03MaterialPropertyInterface()
-  {} // end of Fortran03MaterialPropertyInterface::~Fortran03MaterialPropertyInterface
+  Fortran03MaterialPropertyInterface::~Fortran03MaterialPropertyInterface() = default;
 
 } // end of namespace mfront

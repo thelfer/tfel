@@ -27,14 +27,13 @@ namespace tfel
 
       IntegerExpr::~IntegerExpr() = default;
       
-    }
+    } // end of namespace parser
     
     IntegerEvaluator::TNegation::TNegation(std::shared_ptr<IntegerEvaluator::TExpr> e)
       : expr(std::move(e))
     {} // end of IntegerEvaluator::TNegation::TNegation
 
-    bool
-    IntegerEvaluator::TNegation::isOperator() const
+    bool IntegerEvaluator::TNegation::isOperator() const
     {
       return false;
     }
@@ -46,8 +45,7 @@ namespace tfel
       return std::shared_ptr<IntegerExpr>(new Negation(this->expr->analyse()));
     }
 
-    void
-    IntegerEvaluator::TNegation::reduce()
+    void IntegerEvaluator::TNegation::reduce()
     {
       this->expr->reduce();
     }
@@ -58,8 +56,7 @@ namespace tfel
       : expr(e)
     {} // end of IntegerEvaluator::TNegation::Negation::Negation
     
-    int
-    IntegerEvaluator::TNegation::Negation::getValue() const
+    int IntegerEvaluator::TNegation::Negation::getValue() const
     {
       return -(this->expr->getValue());
     } // end of IntegerEvaluator::TNegation::Negation::getValue(void)
@@ -79,7 +76,6 @@ namespace tfel
 
     IntegerEvaluator::TOperator::TOperator(const TOperator&) = default;
     IntegerEvaluator::TOperator::TOperator(TOperator&&) = default;
-
     
     std::string
     IntegerEvaluator::TOperator::getOperatorType() const
@@ -87,14 +83,12 @@ namespace tfel
       return this->type;
     } // end of IntegerEvaluator::TOperator::getOperatorType(void) const
      
-    bool
-    IntegerEvaluator::TOperator::isOperator() const
+    bool IntegerEvaluator::TOperator::isOperator() const
     {
       return true;
     } // end of IntegerEvaluator::TOperator::isOperator(void) const
     
-    void
-    IntegerEvaluator::TOperator::reduce()
+    void IntegerEvaluator::TOperator::reduce()
     {} // end of IntegerEvaluator::TOperator::reduce(void)
     
     std::shared_ptr<tfel::math::parser::IntegerExpr>
@@ -164,14 +158,12 @@ namespace tfel
       : a(std::move(a_)), op(op_), b(std::move(b_))
     {} // end of IntegerEvaluator::TBinaryOperation::TBinaryOperation
     
-    bool
-    IntegerEvaluator::TBinaryOperation::isOperator() const
+    bool IntegerEvaluator::TBinaryOperation::isOperator() const
     {
       return false;
     } // end of IntegerEvaluator::TBinaryOperation::isOperator(void) const
     
-    void
-    IntegerEvaluator::TBinaryOperation::reduce()
+    void IntegerEvaluator::TBinaryOperation::reduce()
     {
       a->reduce();
       b->reduce();
@@ -180,19 +172,18 @@ namespace tfel
     std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TBinaryOperation::analyse()
     {
-      using namespace std;
       using namespace tfel::math::parser;
       if(op->getOperatorType()=="+"){
-	return shared_ptr<IntegerExpr>(new BinaryOperation<IntegerOpPlus>(a->analyse(),b->analyse()));
+	return std::make_shared<BinaryOperation<IntegerOpPlus>>(a->analyse(),b->analyse());
       } else if(op->getOperatorType()=="-"){
-	return shared_ptr<IntegerExpr>(new BinaryOperation<IntegerOpMinus>(a->analyse(),b->analyse()));
+	return std::make_shared<BinaryOperation<IntegerOpMinus>>(a->analyse(),b->analyse());
       } else if(op->getOperatorType()=="*"){
-	return shared_ptr<IntegerExpr>(new BinaryOperation<IntegerOpMult>(a->analyse(),b->analyse()));
+	return std::make_shared<BinaryOperation<IntegerOpMult>>(a->analyse(),b->analyse());
       } else if(op->getOperatorType()=="/"){
-	return shared_ptr<IntegerExpr>(new BinaryOperation<IntegerOpDiv>(a->analyse(),b->analyse()));
+	return std::make_shared<BinaryOperation<IntegerOpDiv>>(a->analyse(),b->analyse());
       }
-      throw(runtime_error("IntegerEvaluator::TBinaryOperation : "
-			  "invalid operation type  '"+op->getOperatorType()+"'"));
+      throw(std::runtime_error("IntegerEvaluator::TBinaryOperation : "
+			       "invalid operation type  '"+op->getOperatorType()+"'"));
     } // end of IntegerEvaluator::TBinaryOperation::analyse(void)
     
     IntegerEvaluator::TBinaryOperation::~TBinaryOperation() = default;
@@ -207,14 +198,12 @@ namespace tfel
       : vars(vvars), pos(ppos)
     {}
     
-    bool
-    IntegerEvaluator::TVariable::isOperator() const
+    bool IntegerEvaluator::TVariable::isOperator() const
     {
       return false;
     }
     
-    void
-    IntegerEvaluator::TVariable::reduce()
+    void IntegerEvaluator::TVariable::reduce()
     {}
 
     std::shared_ptr<tfel::math::parser::IntegerExpr>
@@ -229,8 +218,7 @@ namespace tfel
       : v(v_), pos(p_)
     {} // end of IntegerEvaluator::TVariable::Variable::Variable
     
-    int
-    IntegerEvaluator::TVariable::Variable::getValue() const
+    int IntegerEvaluator::TVariable::Variable::getValue() const
     {
       return this->v[this->pos];
     } // end of IntegerEvaluator::TVariable::Variable::getValue
@@ -242,8 +230,7 @@ namespace tfel
       return std::shared_ptr<IntegerExpr>(new Variable(v_,this->pos));
     } // end of IntegerEvaluator::TVariable::Variable::clone
 
-    bool
-    IntegerEvaluator::TGroup::isOperator() const
+    bool IntegerEvaluator::TGroup::isOperator() const
     {
       return false;
     }
@@ -254,10 +241,8 @@ namespace tfel
       this->subExpr.push_back(e);
     } // end of IntegerEvaluator::TGroup::add
 
-    void
-    IntegerEvaluator::TGroup::reduce()
+    void IntegerEvaluator::TGroup::reduce()
     {
-      using namespace std;
       auto p  = this->subExpr.begin();
       auto pe = this->subExpr.end();
       while(p!=pe){
@@ -286,11 +271,13 @@ namespace tfel
     
     IntegerEvaluator::TGroup::~TGroup() = default;
 
-    void
-    IntegerEvaluator::TGroup::reduce(const std::string& op)
+    void IntegerEvaluator::TGroup::reduce(const std::string& op)
     {
       using namespace std;
       using namespace tfel::math::parser;
+      auto throw_if = [](const bool b, const std::string& m){
+	if(b){throw(std::runtime_error("IntegerEvaluator::TGroup::reduce: "+m));}
+      };
       auto p  = this->subExpr.begin();
       vector<shared_ptr<IntegerEvaluator::TExpr> >::iterator previous;
       vector<shared_ptr<IntegerEvaluator::TExpr> >::iterator next;
@@ -302,69 +289,39 @@ namespace tfel
 	    next     = p+1;
 	    if(p==this->subExpr.begin()){
 	      if(op!="-"){
-		throw(std::runtime_error("TGroup::reduce: group began "
-					 "with an operator "+op));
+		throw_if(true,"group began with an operator '"+op+"'");
 	      } else {
-		if(next==this->subExpr.end()){
-		  string msg("TGroup::reduce group ends by operator "+op);
-		  throw(runtime_error(msg));
-		}
-		if((*next)->isOperator()){
-		  string msg("TGroup::reduce group two successive operators");
-		  throw(runtime_error(msg));
-		}
-		*next = shared_ptr<IntegerEvaluator::TExpr>(new TNegation(*next));
+		throw_if(next==this->subExpr.end(),
+			 "group ends by operator '"+op+"'");
+		throw_if((*next)->isOperator(),"group two successive operators");
+		*next = std::make_shared<TNegation>(*next);
 		this->subExpr.erase(p);
 		p = this->subExpr.begin();
 	      }
 	    } else {
-	      if(next==this->subExpr.end()){
-		string msg("TGroup::reduce group ends by operator "+op);
-		throw(runtime_error(msg));
-	      }
+	      throw_if(next==this->subExpr.end(),"group ends by operator '"+op+"'");
 	      if((*previous)->isOperator()){
-		if(op!="-"){
-		  string msg("TGroup::reduce group two successive operators");
-		  throw(runtime_error(msg));
-		}
-		shared_ptr<TOperator> po = shared_ptr<TOperator>(dynamic_cast<TOperator *>(previous->get()));
-		if(po->getOperatorType()!="+"){
-		  string msg("TGroup::reduce group two successive operators");
-		  throw(runtime_error(msg));
-		}
-		if((*next)->isOperator()){
-		  string msg("TGroup::reduce group three successive operators");
-		  throw(runtime_error(msg));
-		}
-		*p = shared_ptr<IntegerEvaluator::TExpr>(new TNegation(*next));
+		throw_if(op!="-","group two successive operators");
+		auto po = shared_ptr<TOperator>(dynamic_cast<TOperator *>(previous->get()));
+		throw_if(po->getOperatorType()!="+","group two successive operators");
+		throw_if((*next)->isOperator(),"group three successive operators");
+		*p = std::make_shared<TNegation>(*next);
 		p=this->subExpr.erase(next);
 		--p;
 	      } else {  
 		if((*next)->isOperator()){
-		  if(op=="-"){
-		    string msg("TGroup::reduce group two successive operators");
-		    throw(runtime_error(msg));
-		  }
+		  throw_if(op=="-","group two successive operators");
 		  TOperator * const no = dynamic_cast<TOperator *>(next->get());
-		  if(no->getOperatorType()!="-"){
-		    string msg("TGroup::reduce group two successive operators");
-		    throw(runtime_error(msg));
-		  }
+		  throw_if(no->getOperatorType()!="-","group two successive operators");
 		  auto nnext = next+1;
-		  if(nnext==this->subExpr.end()){
-		    string msg("TGroup::reduce group ends by operator "+op);
-		    throw(runtime_error(msg));
-		  }
-		  if((*nnext)->isOperator()){
-		    string msg("TGroup::reduce group two successive operators");
-		    throw(runtime_error(msg));
-		  }
-		  *nnext = shared_ptr<IntegerEvaluator::TExpr>(new TNegation(*nnext));
+		  throw_if(nnext==this->subExpr.end(),"group ends by operator "+op);
+		  throw_if((*nnext)->isOperator(),"group two successive operators");
+		  *nnext = std::make_shared<TNegation>(*nnext);
 		  next=this->subExpr.erase(next);
 		  p = next-1;
 		  previous=next-2;
 		}
-		*previous = shared_ptr<IntegerEvaluator::TExpr>(new TBinaryOperation(*previous,o,*next));
+		*previous = std::make_shared<TBinaryOperation>(*previous,o,*next);
 		++next;
 		p=this->subExpr.erase(p,next);
 		--p;
@@ -380,8 +337,7 @@ namespace tfel
       : value(v)
     {}
     
-    bool
-    IntegerEvaluator::TNumber::isOperator() const
+    bool IntegerEvaluator::TNumber::isOperator() const
     {
       return false;
     }
@@ -392,16 +348,14 @@ namespace tfel
       return parser::IntegerExprPtr(new Number(value));
     }
     
-    void
-    IntegerEvaluator::TNumber::reduce()
+    void IntegerEvaluator::TNumber::reduce()
     {}
 
     IntegerEvaluator::TNumber::Number::Number(const int v)
       : value(v)
     {} // end of IntegerEvaluator::TNumber::Number::Number
     
-    int
-    IntegerEvaluator::TNumber::Number::getValue() const
+    int IntegerEvaluator::TNumber::Number::getValue() const
     {
       return this->value;
     } // end of IntegerEvaluator::TNumber::Number::getValue
@@ -410,7 +364,7 @@ namespace tfel
     IntegerEvaluator::TNumber::Number::clone(const std::vector<int>&) const
     {
       using namespace tfel::math::parser;
-      return std::shared_ptr<IntegerExpr>(new Number(this->value));
+      return std::make_shared<Number>(this->value);
     } // end of IntegerEvaluator::TNumber::Number::clone
     
   } // end of namespace math

@@ -95,8 +95,9 @@ namespace tfel
       close(ffd[1]);
       // waiting for the child to do its job
       while((readChar=read(ffd[0],buf,2u))==-1){
-	if(errno!=EINTR)
+	if(errno!=EINTR){
 	  break;
+	}
       }
       close(ffd[0]);
       if(readChar>0){

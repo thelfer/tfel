@@ -25,41 +25,33 @@ namespace mfront{
   std::vector<std::string>
   MFrontNewtonRaphsonSolverBase::getReservedNames() const
   {
-    using namespace std;
-    auto n = vector<string>{};
+    auto n = std::vector<std::string>{};
     if(this->usesPowellDogLegAlgorithm()){
-      const vector<string>& n2 =
-	PowellDogLegAlgorithmBase::getReservedNames();
+      const auto& n2 = PowellDogLegAlgorithmBase::getReservedNames();
       n.insert(n.end(),n2.begin(),n2.end());
-      n.push_back("tjacobian");
-      n.push_back("tfzeros");
+      n.insert(n.end(),{"tjacobian","tfzeros"});
     }
-    n.push_back("permutation_vector");
-    n.push_back("integrate_one_half");
-    n.push_back("computeFdF_ok");
+    n.insert(n.end(),{"permutation_vector",
+	  "integrate_one_half","computeFdF_ok"});
     return n;
   } // end of MFrontNewtonRaphsonSolverBase::getReservedNames
 
-  bool
-  MFrontNewtonRaphsonSolverBase::usesJacobian() const
+  bool MFrontNewtonRaphsonSolverBase::usesJacobian() const
   {
     return true;
   } // end of MFrontNewtonRaphsonSolverBase::usesJacobian
 
-  bool
-  MFrontNewtonRaphsonSolverBase::usesJacobianInvert() const
+  bool MFrontNewtonRaphsonSolverBase::usesJacobianInvert() const
   {
     return false;
   } // end of MFrontNewtonRaphsonSolverBase::usesJacobianInvert
 
-  bool
-  MFrontNewtonRaphsonSolverBase::allowsJacobianInitialisation() const
+  bool MFrontNewtonRaphsonSolverBase::allowsJacobianInitialisation() const
   {
     return false;
   } // end of MFrontNewtonRaphsonSolverBase::allowsJacobianInitialisation
 
-  bool
-  MFrontNewtonRaphsonSolverBase::allowsJacobianInvertInitialisation() const
+  bool MFrontNewtonRaphsonSolverBase::allowsJacobianInvertInitialisation() const
   {
     return false;
   } // end of MFrontNewtonRaphsonSolverBase::allowsJacobianInvertInitialisation
@@ -106,31 +98,26 @@ namespace mfront{
     return {false,p};
   } // end of MFrontNewtonRaphsonSolverBase::treatSpecificKeywords
 
-  void
-  MFrontNewtonRaphsonSolverBase::endsInputFileProcessing(BehaviourDescription& mb) const
+  void MFrontNewtonRaphsonSolverBase::endsInputFileProcessing(BehaviourDescription& mb) const
   {
-    using namespace std;
     if(this->usesPowellDogLegAlgorithm()){
       return PowellDogLegAlgorithmBase::endsInputFileProcessing(mb);
     }
   } // end of MFrontNewtonRaphsonSolverBase::endsInputFileProcessing
 
-  void
-  MFrontNewtonRaphsonSolverBase::writeSpecificInitializeMethodPart(std::ostream&,
-								   const BehaviourDescription&,
-								   const Hypothesis) const
+  void MFrontNewtonRaphsonSolverBase::writeSpecificInitializeMethodPart(std::ostream&,
+									const BehaviourDescription&,
+									const Hypothesis) const
   {} // end of MFrontNewtonRaphsonSolverBase::writeSpecificMembers
 
-  void
-  MFrontNewtonRaphsonSolverBase::writeSpecificMembers(std::ostream&,
-						      const BehaviourDescription&,
-						      const Hypothesis) const
+  void MFrontNewtonRaphsonSolverBase::writeSpecificMembers(std::ostream&,
+							   const BehaviourDescription&,
+							   const Hypothesis) const
   {} // end of MFrontNewtonRaphsonSolverBase::writeSpecificMembers
 
-  void
-  MFrontNewtonRaphsonSolverBase::writeResolutionAlgorithm(std::ostream& out,
-							  const BehaviourDescription& mb,
-							  const Hypothesis h) const
+  void MFrontNewtonRaphsonSolverBase::writeResolutionAlgorithm(std::ostream& out,
+							       const BehaviourDescription& mb,
+							       const Hypothesis h) const
   {
     
     using namespace std;
@@ -259,67 +246,54 @@ namespace mfront{
     out << "}" << endl;
   } // end of MFrontNewtonRaphsonSolverBase::writeResolutionAlgorithm
 
-  MFrontNewtonRaphsonSolverBase::~MFrontNewtonRaphsonSolverBase()
-  {} // end of  MFrontNewtonRaphsonSolverBase::~MFrontNewtonRaphsonSolverBase()
+  MFrontNewtonRaphsonSolverBase::~MFrontNewtonRaphsonSolverBase() = default;
 
-  bool
-  MFrontNewtonRaphsonSolver::requiresNumericalJacobian() const
+  bool MFrontNewtonRaphsonSolver::requiresNumericalJacobian() const
   {
     return false;
   }
 
-  bool
-  MFrontNewtonRaphsonSolver::usesPowellDogLegAlgorithm() const
+  bool MFrontNewtonRaphsonSolver::usesPowellDogLegAlgorithm() const
   {
     return false;
   }
 
-  MFrontNewtonRaphsonSolver::~MFrontNewtonRaphsonSolver()
-  {} // end of MFrontNewtonRaphsonSolver::~MFrontNewtonRaphsonSolver
+  MFrontNewtonRaphsonSolver::~MFrontNewtonRaphsonSolver() = default;
 
-  bool
-  MFrontNewtonRaphsonNumericalJacobianSolver::requiresNumericalJacobian() const
+  bool MFrontNewtonRaphsonNumericalJacobianSolver::requiresNumericalJacobian() const
   {
     return true;
   }
 
-  bool
-  MFrontNewtonRaphsonNumericalJacobianSolver::usesPowellDogLegAlgorithm() const
+  bool MFrontNewtonRaphsonNumericalJacobianSolver::usesPowellDogLegAlgorithm() const
   {
     return false;
   }
 
-  MFrontNewtonRaphsonNumericalJacobianSolver::~MFrontNewtonRaphsonNumericalJacobianSolver()
-  {} // end of MFrontNewtonRaphsonSolver::~MFrontNewtonRaphsonSolver
+  MFrontNewtonRaphsonNumericalJacobianSolver::~MFrontNewtonRaphsonNumericalJacobianSolver() = default;
 
-  bool
-  MFrontPowellDogLegNewtonRaphsonSolver::requiresNumericalJacobian() const
+  bool MFrontPowellDogLegNewtonRaphsonSolver::requiresNumericalJacobian() const
   {
     return false;
   }
 
-  bool
-  MFrontPowellDogLegNewtonRaphsonSolver::usesPowellDogLegAlgorithm() const
+  bool MFrontPowellDogLegNewtonRaphsonSolver::usesPowellDogLegAlgorithm() const
   {
     return true;
   }
 
-  MFrontPowellDogLegNewtonRaphsonSolver::~MFrontPowellDogLegNewtonRaphsonSolver()
-  {} // end of MFrontPowellDogLegNewtonRaphsonSolver::~MFrontPowellDogLegNewtonRaphsonSolver
+  MFrontPowellDogLegNewtonRaphsonSolver::~MFrontPowellDogLegNewtonRaphsonSolver() = default;
 
-  bool
-  MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver::requiresNumericalJacobian() const
+  bool MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver::requiresNumericalJacobian() const
   {
     return true;
   }
 
-  bool
-  MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver::usesPowellDogLegAlgorithm() const
+  bool MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver::usesPowellDogLegAlgorithm() const
   {
     return true;
   }
 
-  MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver::~MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver()
-  {} // end of MFrontPowellDogLegNewtonRaphsonSolver::~MFrontPowellDogLegNewtonRaphsonSolver
+  MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver::~MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver() = default;
   
 } // end of namespace mfront

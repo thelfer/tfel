@@ -25,30 +25,22 @@ namespace tfel
     namespace parser
     {
 
-      void
-      StandardBinaryFunctionBase::throwUnimplementedDifferentiateFunctionException()
+      void StandardBinaryFunctionBase::throwUnimplementedDifferentiateFunctionException()
       {
-	using namespace std;
-	string msg("StandardBinaryFunctionBase::");
-	msg += "throwUnimplementedDifferentiateFunctionException : ";
-	msg += "unimplemented feature";
-	throw(runtime_error(msg));
-      } // end of StandardBinaryFunctionBase::throwUnimplementedDifferentiateFunctionException()
+	throw(std::runtime_error("StandardBinaryFunctionBase::"
+				 "throwUnimplementedDifferentiateFunctionException: "
+				 "unimplemented feature"));
+      } // end of StandardBinaryFunctionBase::throwUnimplementedDifferentiateFunctionException
 
-      void
-      StandardBinaryFunctionBase::throwInvalidCallException(const int e)
+      void StandardBinaryFunctionBase::throwInvalidCallException(const int e)
       {
+	throw(std::runtime_error("StandardBinaryFunctionBase::"
+				 "throwInvalidCallException: "
+				 "call to function failed "
+				 "("+std::string(strerror(e))+")"));
+      } // end of struct StandardBinaryFunctionBase::throwInvalidCallException
 
-	using namespace std;
-	string msg("StandardBinaryFunctionBase::throwInvalidCallException : ");
-	msg += "call to function failed (";
-	msg += strerror(e);
-	msg += ")";
-	throw(runtime_error(msg));
-      } // end of struct StandardBinaryFunctionBase::throwInvalidCallException()
-
-      BinaryFunction::~BinaryFunction()
-      {} // end of BinaryFunction::~BinaryFunction
+      BinaryFunction::~BinaryFunction() = default;
 
     } // end of namespace parser
 

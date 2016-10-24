@@ -26,6 +26,11 @@ namespace mfront
    */
   struct MFRONT_VISIBILITY_EXPORT FileDescription
   {
+    FileDescription();
+    FileDescription(FileDescription&&);
+    FileDescription(const FileDescription&);
+    FileDescription& operator=(FileDescription&&);
+    FileDescription& operator=(const FileDescription&);
     std::string fileName;    
     std::string authorName;
     std::string date;
@@ -33,8 +38,8 @@ namespace mfront
     ~FileDescription();
   }; // end of struct FileDescription
 
-  //! typedef provided
-  typedef FileDescription GenericData;
+  //! typedef provided for backward compatibility
+  using GenericData = FileDescription;
 
 } // end of namespace mfront
 

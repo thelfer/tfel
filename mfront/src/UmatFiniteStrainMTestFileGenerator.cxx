@@ -134,8 +134,7 @@ namespace mfront
     os << endl;
   } // end of UmatFiniteStrainMTestFileGenerator::writeDrivingVariables
   
-  UmatFiniteStrainMTestFileGenerator::~UmatFiniteStrainMTestFileGenerator()
-  {} // end of UmatFiniteStrainMTestFileGenerator::UmatFiniteStrainMTestFileGenerator
+  UmatFiniteStrainMTestFileGenerator::~UmatFiniteStrainMTestFileGenerator() = default;
 
 } // end of namespace mfront
 

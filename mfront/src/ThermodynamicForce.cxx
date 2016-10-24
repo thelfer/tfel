@@ -15,7 +15,6 @@
 
 namespace mfront{
   
-  ThermodynamicForce::~ThermodynamicForce() noexcept
-  {}
+  ThermodynamicForce::~ThermodynamicForce() noexcept = default;
 
 } // end of namespace mfront

@@ -95,7 +95,7 @@ namespace tfel
 	vector<shared_ptr<Expr> >::const_iterator p3;
         vector<shared_ptr<Expr> >::iterator p4;
 	unsigned short i = 0;
-	if(args.size()==0){
+	if(args.empty()){
 	  return std::make_shared<Number>(0.);
 	}
         for(p3=this->args.begin(),p4=nargs.begin();

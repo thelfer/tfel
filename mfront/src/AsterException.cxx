@@ -51,8 +51,7 @@ namespace aster
     return msg;
   } // end of AsterException::getMsg
   
-  AsterException::~AsterException() noexcept
-  {} // end of AsterException::~AsterException
+  AsterException::~AsterException() noexcept = default;
 
   AsterInvalidNTENSValue::AsterInvalidNTENSValue(const unsigned short N)
     : AsterException("Invalid tensor size declared '"+
@@ -63,8 +62,7 @@ namespace aster
     : AsterException(e)
   {} // end of AsterInvalidNTENSValue::AsterInvalidNTENSValue
 
-  AsterInvalidNTENSValue::~AsterInvalidNTENSValue() noexcept
-  {} // end of AsterInvalidNTENSValue::~AsterInvalidNTENSValue()
+  AsterInvalidNTENSValue::~AsterInvalidNTENSValue() noexcept = default;
 
   AsterInvalidDimension::AsterInvalidDimension(const std::string& b,
 					       const unsigned short N)

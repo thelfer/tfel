@@ -76,20 +76,20 @@ namespace mfront
   {
     // shortest path 
     FiniteStrainBehaviourTangentOperatorConversionPath path;
-    for(auto pp=paths.begin();pp!=paths.end();++pp){
-      auto pc = pp->find(t);
-      if(pc!=pp->end()){
+    for(const auto& p : paths){
+      auto pc = p.find(t);
+      if(pc!=p.end()){
 	++pc;
 	// we found a conversion path candidate
 	if(path.empty()){
 	  // no previous path
-	  path.insert(path.begin(),pp->begin(),pc);
+	  path.insert(path.begin(),p.begin(),pc);
 	} else {
 	  // a previous path exists, select the shortest
-	  const auto l = pc-pp->begin();
+	  const auto l = pc-p.begin();
 	  if(l<path.size()){
 	    path.clear();
-	    path.insert(path.begin(),pp->begin(),pc);
+	    path.insert(path.begin(),p.begin(),pc);
 	  }
 	}
       }

@@ -649,8 +649,7 @@ namespace mfront{
     out << "#include\"MFront/Aster/Aster.hxx\"\n\n";
   } // end of AsterInterface::writeInterfaceSpecificIncludes
 
-  AsterInterface::~AsterInterface()
-  {}
+  AsterInterface::~AsterInterface() = default;
 
   void
   AsterInterface::getTargetsDescription(TargetsDescription& d,

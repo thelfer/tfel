@@ -84,8 +84,9 @@ namespace mfront
   void
   FortranMaterialPropertyInterface::writeInterfaceSpecificVariables(const VariableDescriptionContainer& inputs)
   {
-    for(auto p=inputs.begin();p!=inputs.end();++p){
-      this->srcFile << "const mfront_fortran_real8 " << p->name << " =  *(_mfront_var_" << p->name << ");\n";
+    for(const auto& i : inputs){
+      this->srcFile << "const mfront_fortran_real8 " << i.name
+		    << " =  *(_mfront_var_" << i.name << ");\n";
     }
   } // end of FortranMaterialPropertyInterface::writeInterfaceSpecificVariables
 
@@ -181,7 +182,6 @@ namespace mfront
 	    makeUpperCase(material+"_"+className)) + "_CHECKBOUNDS_F77";
   } // end of FortranMaterialPropertyInterface::getCheckBoundsFunctionName
   
-  FortranMaterialPropertyInterface::~FortranMaterialPropertyInterface()
-  {} // end of FortranMaterialPropertyInterface::~FortranMaterialPropertyInterface
+  FortranMaterialPropertyInterface::~FortranMaterialPropertyInterface() = default;
 
 } // end of namespace mfront

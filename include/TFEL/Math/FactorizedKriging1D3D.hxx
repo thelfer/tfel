@@ -29,7 +29,7 @@ namespace tfel
     struct TFELMATHKRIGING_VISIBILITY_EXPORT FactorizedKriging1D3D
       : private FactorizedKriging<1u,3u,double,
 				  KrigingPieceWiseLinearModel1D<double>,
-				  KrigingModelAdaptator<KrigingDefaultModel<3u,double> > >,
+				  KrigingModelAdaptator<KrigingDefaultModel<3u,double>>>,
       	private KrigingUtilities
     {
       
@@ -45,16 +45,19 @@ namespace tfel
 			    const tfel::math::vector<double>&,
 			    const tfel::math::vector<double>&);
       
-      double
-      operator()(const double,
-		 const double,
-		 const double,
-		 const double) const;
+      double operator()(const double,
+			const double,
+			const double,
+			const double) const;
       
       ~FactorizedKriging1D3D();
 
     private:
 
+      //! a simple alias
+      using FK = FactorizedKriging<1u,3u,double,
+				   KrigingPieceWiseLinearModel1D<double>,
+				   KrigingModelAdaptator<KrigingDefaultModel<3u,double>>>;
       //! normalisation coefficient
       double a0;
       //! normalisation coefficient

@@ -16,8 +16,7 @@
 namespace mfront
 {
 
-  DrivingVariable::~DrivingVariable() noexcept
-  {}
+  DrivingVariable::~DrivingVariable() noexcept = default;
 
   bool
   DrivingVariable::operator < (const DrivingVariable& o) const

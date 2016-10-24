@@ -24,7 +24,8 @@ namespace tfel
     const std::vector<ModellingHypothesis::Hypothesis>&
     ModellingHypothesis::getModellingHypotheses()
     {
-      static std::vector<Hypothesis> h{AXISYMMETRICALGENERALISEDPLANESTRAIN,
+      static std::vector<ModellingHypothesis::Hypothesis> h{
+	AXISYMMETRICALGENERALISEDPLANESTRAIN,
 	  AXISYMMETRICALGENERALISEDPLANESTRESS,
 	  AXISYMMETRICAL,
 	  PLANESTRESS,
@@ -34,23 +35,18 @@ namespace tfel
       return h;
     } // end of ModellingHypothesis::getModellingHypotheses
 
-    bool
-    ModellingHypothesis::isModellingHypothesis(const std::string& h)
+    bool ModellingHypothesis::isModellingHypothesis(const std::string& h)
     {
-      if((h=="AxisymmetricalGeneralisedPlaneStrain")||
-	 (h=="AxisymmetricalGeneralisedPlaneStress")||
-	 (h=="Axisymmetrical")||
-	 (h=="PlaneStress")||
-	 (h=="PlaneStrain")||
-	 (h=="GeneralisedPlaneStrain")||
-	 (h=="Tridimensional")){
-	return true;
-      }
-      return false;
+      return ((h=="AxisymmetricalGeneralisedPlaneStrain")||
+	      (h=="AxisymmetricalGeneralisedPlaneStress")||
+	      (h=="Axisymmetrical")||
+	      (h=="PlaneStress")||
+	      (h=="PlaneStrain")||
+	      (h=="GeneralisedPlaneStrain")||
+	      (h=="Tridimensional"));
     } // end of ModellingHypothesis::isModellingHypothesis
 
-    std::string
-    ModellingHypothesis::toString(const Hypothesis h)
+    std::string ModellingHypothesis::toString(const Hypothesis h)
     {
       if(h==AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	return "AxisymmetricalGeneralisedPlaneStrain";

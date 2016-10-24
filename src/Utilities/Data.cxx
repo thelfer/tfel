@@ -187,7 +187,7 @@ namespace tfel{
     
     struct TFEL_VISIBILITY_LOCAL DataComparator
     {
-      typedef bool return_type;
+      using return_type = bool;
       // default implementation
       template<typename T1,typename T2>
       static typename std::enable_if<!std::is_same<T1,T2>::value,bool>::type

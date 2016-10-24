@@ -23,8 +23,7 @@ namespace tfel
     namespace parser
     {
     
-      ExternalFunction::~ExternalFunction()
-      {} // end of ExternalFunction::~ExternalFunction()
+      ExternalFunction::~ExternalFunction() = default;
       
     } // end of namespace parser
 

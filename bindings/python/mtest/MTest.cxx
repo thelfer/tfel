@@ -28,7 +28,7 @@ namespace mtest{
     : public StudyCurrentState
   {};
 
-}
+} // end of namespace mtest
 
 static void
 MTest_setStrain(mtest::MTest& t, const std::vector<mtest::real>& v){
@@ -360,10 +360,9 @@ static void
 MTest_setRotationMatrix1(mtest::MTest& t,
 			 const std::vector<std::vector<mtest::real> >& m,
 			 const bool b){
-  typedef tfel::math::tmatrix<3u,3u,mtest::real> matrix;
-  matrix r;
-  for(matrix::size_type i = 0; i!=3;++i){
-    for(matrix::size_type j = 0; j!=3;++j){
+  tfel::math::tmatrix<3u,3u,mtest::real> r;
+  for(decltype(r.size()) i = 0; i!=3;++i){
+    for(decltype(r.size()) j = 0; j!=3;++j){
       r(i,j) = m[i][j];
     }
   }
@@ -496,7 +495,7 @@ getInternalStateVariableValue1(const mtest::MTestCurrentState& t,
 			     "uninitialized state"));
   }
   auto& s = sc.istates[0];
-  throw_if(s.behaviour.get()==nullptr,"no behaviour defined");
+  throw_if(s.behaviour==nullptr,"no behaviour defined");
   const auto& ivsnames = s.behaviour->getInternalStateVariablesNames();
   throw_if(std::find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end(),
 	   "the behaviour don't declare an internal state "

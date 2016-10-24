@@ -401,8 +401,8 @@ namespace mfront{
 	auto umrqs = std::vector<std::string>{};
 	const auto& urs = r.getUnresolvedRequirements();
 	for(const auto& n : urs){
-	  const auto s = SupportedTypes{};
-	  const auto ur = r.getRequirement(n);
+	  const auto  s  = SupportedTypes{};
+	  const auto& ur = r.getRequirement(n);
 	  if((s.getTypeFlag(ur.type)!=SupportedTypes::Scalar)||
 	     (find(ur.aproviders.begin(),ur.aproviders.end(),
 		   ProviderIdentifier::MATERIALPROPERTY)==ur.aproviders.end())){
@@ -417,7 +417,7 @@ namespace mfront{
 	  this->throwRuntimeError("BehaviourDSLCommon::endsInputFileProcessing",msg);
 	}
 	for(const auto& n : urs){
-	  const auto ur = r.getRequirement(n);
+	  const auto& ur = r.getRequirement(n);
 	  this->mb.addMaterialProperty(h,{ur.type,ur.name,ur.asize,0u});
 	  if(!g.contains(ur.name)){
 	    this->mb.setEntryName(h,ur.name,ur.name);
@@ -3661,7 +3661,7 @@ namespace mfront{
 	  a.push_back(uv);
 	}
 	if(f.useTimeIncrement){
-	  a.push_back("dt");
+	  a.emplace_back("dt");
 	}
 	return a;
       }();
@@ -4803,8 +4803,8 @@ namespace mfront{
       // all available tangent operators for finite strain behaviours
       const auto tos = getFiniteStrainBehaviourTangentOperatorFlags();
       // search tangent operators defined by the user
-      for(auto pt=tos.cbegin();pt!=tos.cend();++pt){
-	const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(*pt);
+      for(const auto& t : tos){
+	const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
 	if(mb.hasCode(h,BehaviourData::ComputePredictionOperator+'-'+ktype)){
 	  return true;
 	}
@@ -6319,12 +6319,12 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::setMinimalTangentOperator
 
-  void BehaviourDSLCommon::treatInternalEnergy(void){
+  void BehaviourDSLCommon::treatInternalEnergy(){
     this->readCodeBlock(*this,BehaviourData::ComputeInternalEnergy,
 			&BehaviourDSLCommon::standardModifier,true,true);
   } // end of BehaviourDSLCommon::treatInternalEnergy
 
-  void BehaviourDSLCommon::treatDissipatedEnergy(void){
+  void BehaviourDSLCommon::treatDissipatedEnergy(){
     this->readCodeBlock(*this,BehaviourData::ComputeDissipatedEnergy,
 			&BehaviourDSLCommon::standardModifier,true,true);
   } // end of BehaviourDSLCommon::treatDissipatedEnergy

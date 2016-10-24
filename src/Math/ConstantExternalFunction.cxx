@@ -29,8 +29,7 @@ namespace tfel
 	: value(v)
       {} // end of ConstantExternalFunction::ConstantExternalFunction
 
-      double
-      ConstantExternalFunction::getValue() const
+      double ConstantExternalFunction::getValue() const
       {
 	return this->value;
       } // end of ConstantExternalFunction::getValue
@@ -39,12 +38,9 @@ namespace tfel
       ConstantExternalFunction::setVariableValue(const std::vector<double>::size_type pos,
 						 const double)
       {
-	using namespace std;
-	ostringstream msg;
-	msg << "ConstantExternalFunction::setVariableValue : "
-	    << "invalid index " << pos 
-	    << " (function has no  variable).";
-	throw(runtime_error(msg.str()));
+	throw(std::runtime_error("ConstantExternalFunction::setVariableValue: "
+				 "invalid index "+std::to_string(pos)+
+				 " (function has no  variable)."));
       }
 
       std::vector<double>::size_type
@@ -64,19 +60,19 @@ namespace tfel
       std::shared_ptr<ExternalFunction>
       ConstantExternalFunction::differentiate(const std::vector<double>::size_type) const
       {
-	return std::shared_ptr<ExternalFunction>(new ConstantExternalFunction(0.));
+	return std::make_shared<ConstantExternalFunction>(0.);
       } // end of ConstantExternalFunction:: differentiate
 
       std::shared_ptr<ExternalFunction>
       ConstantExternalFunction::differentiate(const std::string&) const
       {
-	return std::shared_ptr<ExternalFunction>(new ConstantExternalFunction(0.));
+	return std::make_shared<ConstantExternalFunction>(0.);
       } // end of ConstantExternalFunction:: differentiate
 
       std::shared_ptr<ExternalFunction>
       ConstantExternalFunction::resolveDependencies() const
       {
-	return std::shared_ptr<ExternalFunction>(new ConstantExternalFunction(this->value));
+	return std::make_shared<ConstantExternalFunction>(this->value);
       }
 
       std::shared_ptr<ExternalFunction>
@@ -102,8 +98,7 @@ namespace tfel
       ConstantExternalFunction::getParametersNames(std::set<std::string>&) const
       {} // endo of ConstantExternalFunction::getParametersNames
 
-      ConstantExternalFunction::~ConstantExternalFunction()
-      {} // end of ConstantExternalFunction::~ConstantExternalFunction()
+      ConstantExternalFunction::~ConstantExternalFunction() = default;
       
     } // end of namespace parser
 

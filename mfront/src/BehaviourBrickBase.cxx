@@ -22,13 +22,11 @@ namespace mfront{
 
   BehaviourBrickBase::BehaviourBrickBase(AbstractBehaviourDSL& dsl_,
 					 BehaviourDescription& bd_)
-    : dsl(dsl_),
-      bd(bd_)
+    : dsl(dsl_),bd(bd_)
   {} // end of BehaviourBrickBase::BehaviourBrickBase
 
-  void
-  BehaviourBrickBase::addRequirements(bbrick::RequirementManager&,
-				      const Hypothesis) const
+  void BehaviourBrickBase::addRequirements(bbrick::RequirementManager&,
+					   const Hypothesis) const
   {} // end of BehaviourBrickBase::addRequirements
   
   void
@@ -83,7 +81,6 @@ namespace mfront{
     this->bd.addLocalVariable(h,v);
   } // end of BehaviourBrickBase::addLocalVariable
 
-  BehaviourBrickBase::~BehaviourBrickBase()
-  {} // end of BehaviourBrickBase::~BehaviourBrickBase
+  BehaviourBrickBase::~BehaviourBrickBase() = default;
 
-}
+} // end of namespace mfront

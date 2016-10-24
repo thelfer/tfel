@@ -34,45 +34,35 @@ namespace epx
     : msg(s)
   {} // end of EuroplexusException::EuroplexusException
     
-  EuroplexusException::EuroplexusException(const EuroplexusException& e)
-    : std::exception(),
-      msg(e.msg)
-  {} // end of EuroplexusException::EuroplexusException
+  EuroplexusException::EuroplexusException(const EuroplexusException&) = default;
 
-  const char* 
-  EuroplexusException::what () const noexcept
+  const char* EuroplexusException::what () const noexcept
   { 
     return msg.c_str(); 
   } // end of EuroplexusException::what
 
-  std::string
-  EuroplexusException::getMsg() const noexcept
+  std::string EuroplexusException::getMsg() const noexcept
   {
     return msg;
   } // end of EuroplexusException::getMsg
   
-  EuroplexusException::~EuroplexusException() noexcept
-  {} // end of EuroplexusException::~EuroplexusException
+  EuroplexusException::~EuroplexusException() noexcept = default;
 
   EuroplexusInvalidModellingHypothesis::EuroplexusInvalidModellingHypothesis(const char* b)
     : EuroplexusException("current modelling hypothesis is not supported by behaviour '"+
 			  std::string(b)+"'")
   {}
 
-  EuroplexusInvalidModellingHypothesis::~EuroplexusInvalidModellingHypothesis() noexcept
-  {} // end of EuroplexusInvalidModellingHypothesis::~EuroplexusInvalidModellingHypothesis()
+  EuroplexusInvalidModellingHypothesis::~EuroplexusInvalidModellingHypothesis() noexcept = default;
   
   EuroplexusInvalidNTENSValue::EuroplexusInvalidNTENSValue(const unsigned short N)
     : EuroplexusException("Invalid tensor size declared '"+
 			  std::to_string(static_cast<unsigned int>(N))+"'")
   {} // end of EuroplexusInvalidNTENSValue::EuroplexusInvalidNTENSValue
 
-  EuroplexusInvalidNTENSValue::EuroplexusInvalidNTENSValue(const EuroplexusInvalidNTENSValue& e)
-    : EuroplexusException(e)
-  {} // end of EuroplexusInvalidNTENSValue::EuroplexusInvalidNTENSValue
-
-  EuroplexusInvalidNTENSValue::~EuroplexusInvalidNTENSValue() noexcept
-  {} // end of EuroplexusInvalidNTENSValue::~EuroplexusInvalidNTENSValue()
+  EuroplexusInvalidNTENSValue::EuroplexusInvalidNTENSValue(const EuroplexusInvalidNTENSValue&) = default;
+  
+  EuroplexusInvalidNTENSValue::~EuroplexusInvalidNTENSValue() noexcept = default;
 
   EuroplexusInvalidDimension::EuroplexusInvalidDimension(const std::string& b,
 							 const unsigned short N)
@@ -80,12 +70,9 @@ namespace epx
 			  std::to_string(static_cast<unsigned int>(N))+"D")
   {} // end of EuroplexusInvalidDimension::EuroplexusInvalidDimension
 
-  EuroplexusInvalidDimension::EuroplexusInvalidDimension(const EuroplexusInvalidDimension& e)
-    : EuroplexusException(e)
-  {} // end of EuroplexusInvalidDimension::EuroplexusInvalidDimension
+  EuroplexusInvalidDimension::EuroplexusInvalidDimension(const EuroplexusInvalidDimension&) = default;
 
-  EuroplexusInvalidDimension::~EuroplexusInvalidDimension() noexcept
-  {} // end of EuroplexusInvalidDimension::~EuroplexusInvalidDimension()
+  EuroplexusInvalidDimension::~EuroplexusInvalidDimension() noexcept = default;
 
 } // end of namespace epx
 

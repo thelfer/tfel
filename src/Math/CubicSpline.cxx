@@ -25,8 +25,7 @@ namespace tfel
       return "CubicSpline : undefined collocation points";
     } // end of CubicSplineUninitialised::what
 
-    CubicSplineUninitialised::~CubicSplineUninitialised() noexcept
-    {} // end of CubicSplineUninitialised::~CubicSplineUninitialised
+    CubicSplineUninitialised::~CubicSplineUninitialised() noexcept = default;
 
     const char*
     CubicSplineNullPivot::what() const noexcept
@@ -34,8 +33,7 @@ namespace tfel
       return "CubicSpline : null pivot";
     } // end of CubicSplineNullPivot::what
 
-    CubicSplineNullPivot::~CubicSplineNullPivot() noexcept
-    {} // end of CubicSplineNullPivot::CubicSplineNullPivot
+    CubicSplineNullPivot::~CubicSplineNullPivot() noexcept = default;
 
     const char*
     CubicSplineInvalidAbscissaVectorSize::what() const noexcept
@@ -43,8 +41,7 @@ namespace tfel
       return "CubicSpline : abscissa size is smaller than 1";
     } // end of CubicSplineInvalidAbscissaVectorSize::what
     
-    CubicSplineInvalidAbscissaVectorSize::~CubicSplineInvalidAbscissaVectorSize() noexcept
-    {} // end of CubicSplineInvalidAbscissaVectorSize::~CubicSplineInvalidAbscissaVectorSize
+    CubicSplineInvalidAbscissaVectorSize::~CubicSplineInvalidAbscissaVectorSize() noexcept = default;
 
     const char*
     CubicSplineInvalidOrdinateVectorSize::what() const noexcept
@@ -52,26 +49,21 @@ namespace tfel
       return "CubicSpline : ordinate size is smaller than 1";
     } // end of CubicSplineInvalidOrdinateVectorSize::what
 
-    CubicSplineInvalidOrdinateVectorSize::~CubicSplineInvalidOrdinateVectorSize() noexcept
-    {} // end of CubicSplineInvalidOrdinateVectorSize::~CubicSplineInvalidOrdinateVectorSize
+    CubicSplineInvalidOrdinateVectorSize::~CubicSplineInvalidOrdinateVectorSize() noexcept = default;
     
-    const char*
-    CubicSplineInvalidInputs::what() const noexcept
+    const char* CubicSplineInvalidInputs::what() const noexcept
     {
       return "CubicSpline : abscissa and ordinate vectors don't have the same size";
     } // end of CubicSplineInvalidInputs::what
 
-    CubicSplineInvalidInputs::~CubicSplineInvalidInputs() noexcept
-    {} // end of CubicSplineInvalidInputs::~CubicSplineInvalidInputs
+    CubicSplineInvalidInputs::~CubicSplineInvalidInputs() noexcept = default;
 
-    const char*
-    CubicSplineUnorderedAbscissaVector::what() const noexcept
+    const char* CubicSplineUnorderedAbscissaVector::what() const noexcept
     {
       return "CubicSpline : abscissa vector is not ordered";
     } // end of CubicSplineUnorderedAbscissaVector::what
 
-    CubicSplineUnorderedAbscissaVector::~CubicSplineUnorderedAbscissaVector() noexcept
-    {} // end of CubicSplineUnorderedAbscissaVector::~CubicSplineUnorderedAbscissaVector
+    CubicSplineUnorderedAbscissaVector::~CubicSplineUnorderedAbscissaVector() noexcept = default;
 
   } // end of namespace math
 

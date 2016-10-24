@@ -13,11 +13,14 @@
 
 #include"MFront/FileDescription.hxx"
 
-namespace mfront
-{
-  
-  FileDescription::~FileDescription()
-  {} // end of FileDescription::~FileDescription
+namespace mfront{
+
+  FileDescription::FileDescription() = default;
+  FileDescription::FileDescription(FileDescription&&) = default;
+  FileDescription::FileDescription(const FileDescription&) = default;
+  FileDescription& FileDescription::operator=(FileDescription&&) = default;
+  FileDescription& FileDescription::operator=(const FileDescription&) = default;
+  FileDescription::~FileDescription() = default;
 
 } // end of namespace mfront
 

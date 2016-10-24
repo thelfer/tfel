@@ -114,8 +114,7 @@ namespace tfel
 	: f(f_)
       {} // end of ExternalCFunction<0u>::ExternalCFunction
       
-      double
-      ExternalCFunction<0u>::getValue() const
+      double ExternalCFunction<0u>::getValue() const
       {
 	return (*(this->f))();
       } // end of ExternalCFunction<0u>::getValue(void) const

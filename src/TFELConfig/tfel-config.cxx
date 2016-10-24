@@ -29,19 +29,17 @@
 #endif
 
 using FuncPtr = void (*)();
-typedef std::map<std::string,std::pair<FuncPtr,std::string> > CallBacksContainer;
+using CallBacksContainer = std::map<std::string,std::pair<FuncPtr,std::string>>;
 
 static std::string
 handleSpace(const std::string& p)
 {
-  using namespace std;
   if(find(p.begin(),p.end(),' ')!=p.end()){
 #if defined _WIN32 || defined _WIN64
-    string msg("tfel-config handleSpace: "
-	       "path to TFEL shall not contain space as "
-	       "MinGW can't handle it (Found '"+p+"'). "
-	       "Please change TFEL installation directory");
-    throw(runtime_error(msg));
+    throw(std::runtime_error("tfel-config handleSpace: "
+			     "path to TFEL shall not contain space as "
+			     "MinGW can't handle it (Found '"+p+"'). "
+			     "Please change TFEL installation directory"));
 #else
     return '"'+p+'"';
 #endif
@@ -247,12 +245,10 @@ libDir()
   return handleSpace(lib);
 } // end of libDir
 
-static std::string
-includeDir()
+static std::string includeDir()
 {
-  using namespace std;
-  const string prefix(PREFIXDIR);
-  string inc(INCLUDEDIR);
+  const std::string prefix(PREFIXDIR);
+  std::string inc(INCLUDEDIR);
   const auto& th = getTFELHOME();
   if(!th.empty()){
     return th+"/include";
@@ -269,88 +265,75 @@ registerCallBack(const std::string& key,
 		 const FuncPtr& f,
 		 const std::string& description)
 {
-  using namespace std;
-  callBacksContainer.insert(make_pair(key,make_pair(f,description)));
+  callBacksContainer.insert({key,{f,description}});
 } // end of registerNewCallBack
 
-static void
-treatCompilerFlags()
+static void treatCompilerFlags()
 {
   compilerflags = true;
 } // end of treatCompilerFlags
 
-static void
-treatOFlags0()
+static void treatOFlags0()
 {
   oflags0 = true;
 } // end of treatOFlags
 
-static void
-treatOFlags()
+static void treatOFlags()
 {
   oflags0 = true;
   oflags  = true;
 } // end of treatOFlags
 
-static void
-treatOFlags2()
+static void treatOFlags2()
 {
   oflags2 = true;
 } // end of treatOFlags2
 
-static void
-treatWarning()
+static void treatWarning()
 {
   warning = true;
 } // end of treatWarning
 
 #ifdef HAVE_CASTEM
-static void
-treatCastem()
+static void treatCastem()
 {
   castem = true;
 } // end of treatCastem
 #endif /* HAVE_CASTEM */
 
 #ifdef HAVE_ZMAT
-static void
-treatZMAT()
+static void treatZMAT()
 {
   zmat = true;
 } // end of treatZMAT
 #endif /* HAVE_ZMAT */
 
-static void
-treatExceptions()
+static void treatExceptions()
 {
   exceptions = true;
 } // end of treatExceptions
 
-static void
-treatMath()
+static void treatMath()
 {
   exceptions = true;
   math       = true;
 } // end of treatMath
 
-static void
-treatMathKriging()
+static void treatMathKriging()
 {
   exceptions = true;
   math       = true;
   mathKriging = true;
 } // end of treatMathKriging
 
-static void
-treatMathCubicSpline()
+static void treatMathCubicSpline()
 {
   exceptions = true;
   math       = true;
   mathCubicSpline = true;
 } // end of treatMathCubicSpline
 
-static void
-treatMathParser()
+static void treatMathParser()
 {
   exceptions  = true;
   math        = true;
@@ -358,8 +341,7 @@ treatMathParser()
   mathParser  = true;
 } // end of treatMathParser
 
-static void
-treatMathInterpreter()
+static void treatMathInterpreter()
 {
   exceptions      = true;
   math            = true;
@@ -368,35 +350,30 @@ treatMathInterpreter()
   mathInterpreter = true;
 } // end of treatMathInterpreter
 
-static void
-treatUtilities()
+static void treatUtilities()
 {
   utilities = true;
 } // end of treatUtilities
 
-static void
-treatGlossary()
+static void treatGlossary()
 {
   glossary = true;
 } // end of treatGlossary
 
-static void
-treatFiniteElement()
+static void treatFiniteElement()
 {
   exceptions    = true;
   math          = true;
   finiteElement = true;
 } // end of treatFiniteElement
 
-static void
-treatSystem()
+static void treatSystem()
 {
   exceptions    = true;
   lsystem        = true;
 } // end of treatFiniteElement
 
-static void
-treatMaterial()
+static void treatMaterial()
 {
   exceptions  = true;
   math        = true;
@@ -404,20 +381,17 @@ treatMaterial()
   material    = true;
 } // end of treatMaterial
 
-static void
-treatMFrontProfiling()
+static void treatMFrontProfiling()
 {
   mfront_profiling  = true;
 } // end of treatMFrontProfiling
 
-static void
-treatTests()
+static void treatTests()
 {
   tests  = true;
 } // end of treatTests
 
-static void
-treatAll()
+static void treatAll()
 {
   exceptions   = true;
   math         = true;
@@ -429,27 +403,23 @@ treatAll()
   mfront_profiling = true;
 } // end of treatAll
 
-static void
-treatCppFlags()
+static void treatCppFlags()
 {
   cppflags = true;
 } // end of treatCppFlags
 
-static void
-treatIncludes()
+static void treatIncludes()
 {
   incs = true;
 } // end of treatIncludes
 
 
-static void
-treatLibs()
+static void treatLibs()
 {
   libs = true;
 } // end of treatLibs
 
-static void
-listOptions(std::ostream& os)
+static void listOptions(std::ostream& os)
 {
   using namespace std;
   CallBacksContainer::const_iterator p;
@@ -464,8 +434,7 @@ listOptions(std::ostream& os)
   }
 } // end of listOptions
 
-TFEL_NORETURN static void
-treatVersion()
+TFEL_NORETURN static void treatVersion()
 {
   using namespace std;
   cout << "tfel-config " << VERSION 
@@ -474,8 +443,7 @@ treatVersion()
   exit(EXIT_SUCCESS);
 } // end of treatHelp
 
-TFEL_NORETURN static void
-treatHelp()
+TFEL_NORETURN static void treatHelp()
 {
   using namespace std;
   cout << "usage : tfel-config [options]" << endl;
@@ -483,8 +451,7 @@ treatHelp()
   exit(EXIT_SUCCESS);
 } // end of treatHelp
 
-TFEL_NORETURN static void
-treatUnknownOption(const std::string& o)
+TFEL_NORETURN static void treatUnknownOption(const std::string& o)
 {
   using namespace std;
   cerr << "unknown option " << o << endl;
@@ -492,8 +459,7 @@ treatUnknownOption(const std::string& o)
   exit(EXIT_FAILURE);
 } // end of treatUnknownOption
 
-TFEL_NORETURN static void
-treatLicences()
+TFEL_NORETURN static void treatLicences()
 {
   using namespace std;
   cout << "Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights reserved." << endl;

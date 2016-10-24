@@ -13,7 +13,7 @@
  */
 
 #ifdef HAVE_FENV
-#include "fenv.h"
+#include<cfenv>
 #endif /* LIB_TFEL_MATH_CONFIG_HXX_ */
 
 #ifndef LIB_TFEL_MATH_CONFIG_HXX_

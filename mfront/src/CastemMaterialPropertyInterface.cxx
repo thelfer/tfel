@@ -68,8 +68,7 @@ namespace mfront
     return {false,current};
   } // end of treatKeyword
 
-  CastemMaterialPropertyInterface::~CastemMaterialPropertyInterface()
-  {}
+  CastemMaterialPropertyInterface::~CastemMaterialPropertyInterface() = default;
 
   void
   CastemMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
@@ -263,9 +262,9 @@ namespace mfront
       out << name << "_setParameter(const char *const p,";
       out << "const double v";
       out << "){\n";
-      for(auto pp=params.begin();pp!=params.end();++pp){
-	out << "if(strcmp(\"" << *pp << "\",p)==0){\n";
-	out << "castem::" <<  hn << "::get" << hn << "()." << *pp << " = v;\n";
+      for(const auto& p : params){
+	out << "if(strcmp(\"" << p << "\",p)==0){\n";
+	out << "castem::" <<  hn << "::get" << hn << "()." << p << " = v;\n";
 	out << "return 1;\n";
 	out << "}\n";
       }	
@@ -317,121 +316,118 @@ namespace mfront
     }
     if(!physicalBounds.empty()){
       out << "// treating physical bounds\n";
-      for(auto p5=physicalBounds.begin();
-	  p5!=physicalBounds.end();++p5){
-	if(p5->boundsType==VariableBoundsDescription::Lower){
-	  out << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
+      for(const auto& b : physicalBounds){
+	if(b.boundsType==VariableBoundsDescription::Lower){
+	  out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
 	  out << "cerr << \"" << name << " : "
-			      << p5->varName << " is below its physical lower bound (\"\n << "
-			      << p5->varName << " << \"<" << p5->lowerBound << ").\\n\";\n";
+	      << b.varName << " is below its physical lower bound (\"\n << "
+	      << b.varName << " << \"<" << b.lowerBound << ").\\n\";\n";
 	  out << "return nan(\""
-			      << name << " : "
-			      << p5->varName << " is not physically valid.\");\n";
+	      << name << " : "
+	      << b.varName << " is not physically valid.\");\n";
 	  out << "}\n";
-	} else if(p5->boundsType==VariableBoundsDescription::Upper){
-	  out << "if(" << p5->varName<< " > "<< p5->upperBound << "){\n";
+	} else if(b.boundsType==VariableBoundsDescription::Upper){
+	  out << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
 	  out << "cerr << \"" << name << " : "
-			      << p5->varName << " is below its physical upper bound (\"\n << "
-			      << p5->varName << " << \">" << p5->upperBound << ").\\n\";\n";
+	      << b.varName << " is below its physical upper bound (\"\n << "
+	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n";
 	  out << "return nan(\""
-			      << name << " : "
-			      << p5->varName << " is not physically valid.\");\n";
+	      << name << " : "
+	      << b.varName << " is not physically valid.\");\n";
 	  out << "}\n";
 	} else {
-	  out << "if((" << p5->varName<< " < "<< p5->lowerBound << ")||"
-			      << "(" << p5->varName<< " > "<< p5->upperBound << ")){\n";
-	  out << "if(" << p5->varName<< " < " << p5->lowerBound << "){\n";
+	  out << "if((" << b.varName<< " < "<< b.lowerBound << ")||"
+	      << "(" << b.varName<< " > "<< b.upperBound << ")){\n";
+	  out << "if(" << b.varName<< " < " << b.lowerBound << "){\n";
 	  out << "cerr << \"" << name << " : "
-			      << p5->varName << " is below its physical lower bound (\"\n << "
-			      << p5->varName << " << \"<" << p5->lowerBound << ").\\n\";\n";
+	      << b.varName << " is below its physical lower bound (\"\n << "
+	      << b.varName << " << \"<" << b.lowerBound << ").\\n\";\n";
 	  out << "} else {\n";
 	  out << "cerr << \"" << name << " : "
-			      << p5->varName << " is over its physical upper bound (\"\n << "
-			      << p5->varName << " << \">" << p5->upperBound << ").\\n\";\n";
+	      << b.varName << " is over its physical upper bound (\"\n << "
+	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n";
 	  out << "}\n";
 	  out << "return nan(\""
-			      << name << " : "
-			      << p5->varName << " is not physically valid.\");\n";
+	      << name << " : "
+	      << b.varName << " is not physically valid.\");\n";
 	  out << "}\n";
 	}
       }
     }
     if(!bounds.empty()){
       out << "// treating standard bounds\n";
-      for(auto p5=bounds.begin();
-	  p5!=bounds.end();++p5){
-	if(p5->boundsType==VariableBoundsDescription::Lower){
-	  out << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
+      for(const auto& b : bounds){
+	if(b.boundsType==VariableBoundsDescription::Lower){
+	  out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
 	  out << "const char * const policy = "
-			      << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
+	      << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
 	  out << "if(policy!=nullptr){\n";
 	  out << "if(strcmp(policy,\"STRICT\")==0){\n";
 	  out << "return nan(\""
-			      << name << " : "
-			      << p5->varName << " is out of bounds.\");\n";
+	      << name << " : "
+	      << b.varName << " is out of bounds.\");\n";
 	  out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
 	  out << "cerr << \"" << name << " : "
-			      << p5->varName << " is below its lower bound (\"\n << "
-			      << p5->varName << " << \"<" << p5->lowerBound << ").\\n\";\n";
+	      << b.varName << " is below its lower bound (\"\n << "
+	      << b.varName << " << \"<" << b.lowerBound << ").\\n\";\n";
 	  out << "}\n";
 	  out << "}\n";
 	  out << "}\n";
-	} else if(p5->boundsType==VariableBoundsDescription::Upper){
-	  out << "if(" << p5->varName<< " > "<< p5->upperBound << "){\n";
+	} else if(b.boundsType==VariableBoundsDescription::Upper){
+	  out << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
 	  out << "const char * const policy = "
-			      << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
+	      << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
 	  out << "if(policy!=nullptr){\n";
 	  out << "if(strcmp(policy,\"STRICT\")==0){\n";
 	  out << "cerr << \"" << name << " : "
-			      << p5->varName << " is over its upper bound (\"\n << "
-			      << p5->varName << " << \">" << p5->upperBound << ").\\n\";\n";
+	      << b.varName << " is over its upper bound (\"\n << "
+	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n";
 	  out << "return nan(\""
-			      << name << " : "
-			      << p5->varName << " is out of bounds.\");\n";
+	      << name << " : "
+	      << b.varName << " is out of bounds.\");\n";
 	  out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
 	  out << "cerr << \"" << name << " : "
-			      << p5->varName << " is over its upper bound (\"\n << "
-			      << p5->varName << " << \">" << p5->upperBound << ").\\n\";\n";
+	      << b.varName << " is over its upper bound (\"\n << "
+	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n";
 	  out << "}\n";
 	  out << "}\n";
 	  out << "}\n";
 	} else {
-	  out << "if((" << p5->varName<< " < "<< p5->lowerBound << ")||"
-			      << "(" << p5->varName<< " > "<< p5->upperBound << ")){\n";
+	  out << "if((" << b.varName<< " < "<< b.lowerBound << ")||"
+	      << "(" << b.varName<< " > "<< b.upperBound << ")){\n";
 	  out << "const char * const policy = "
-			      << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
+	      << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
 	  out << "if(policy!=nullptr){\n";
 	  out << "if(strcmp(policy,\"STRICT\")==0){\n";
-	  out << "if(" << p5->varName<< " < " << p5->lowerBound << "){\n";
+	  out << "if(" << b.varName<< " < " << b.lowerBound << "){\n";
 	  out << "cerr << \"" << name << " : "
-			      << p5->varName << " is below its lower bound (\"\n << "
-			      << p5->varName << " << \"<" << p5->lowerBound << ").\\n\";\n";
+	      << b.varName << " is below its lower bound (\"\n << "
+	      << b.varName << " << \"<" << b.lowerBound << ").\\n\";\n";
 	  out << "} else {\n";
 	  out << "cerr << \"" << name << " : "
-			      << p5->varName << " is over its upper bound (\"\n << "
-			      << p5->varName << " << \">" << p5->upperBound << ").\\n\";\n";
+	      << b.varName << " is over its upper bound (\"\n << "
+	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n";
 	  out << "}\n";
 	  out << "return nan(\""
-			      << name << " : "
-			      << p5->varName << " is out of bounds.\");\n";
+	      << name << " : "
+	      << b.varName << " is out of bounds.\");\n";
 	  out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
-	  out << "if(" << p5->varName<< " < "<< p5->lowerBound << "){\n";
+	  out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
 	  out << "cerr << \"" << name << " : "
-			      << p5->varName << " is below its lower bound (\"\n << "
-			      << p5->varName << " << \"<" << p5->lowerBound << ").\\n\";\n";
-	  out << "} else {\n";
-	  out << "cerr << \"" << name << " : "
-			      << p5->varName << " is over its upper bound (\"\n << "
-			      << p5->varName << " << \">" << p5->upperBound << ").\\n\";\n";
-	  out << "}\n";
-	  out << "}\n";
-	  out << "}\n";
-	  out << "}\n";
+	      << b.varName << " is below its lower bound (\"\n << "
+	      << b.varName << " << \"<" << b.lowerBound << ").\\n\";\n"
+	      << "} else {\n"
+	      << "cerr << \"" << name << " : "
+	      << b.varName << " is over its upper bound (\"\n << "
+	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n"
+	      << "}\n"
+	      << "}\n"
+	      << "}\n"
+	      << "}\n";
 	}
       }
     }
-    if((!physicalBounds.empty())||
-       (!bounds.empty())){
+    if((!physicalBounds.empty())||(!bounds.empty())){
       out << "#endif /* NO_CASTEM_BOUNDS_CHECK */\n";
     }
     out << function.body;

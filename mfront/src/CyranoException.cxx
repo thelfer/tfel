@@ -51,8 +51,7 @@ namespace cyrano
     return msg;
   } // end of CyranoException::getMsg
   
-  CyranoException::~CyranoException() noexcept
-  {} // end of CyranoException::~CyranoException
+  CyranoException::~CyranoException() noexcept = default;
 
   CyranoIntegrationFailed::CyranoIntegrationFailed()
     : CyranoException("behaviour integration failed")
@@ -62,37 +61,28 @@ namespace cyrano
     : CyranoException("behaviour integration failed : "+m)
   {} // end of CyranoIntegrationFailed::CyranoIntegrationFailed
 
-  CyranoIntegrationFailed::CyranoIntegrationFailed(const CyranoIntegrationFailed& e)
-    : CyranoException(e)
-  {} // end of CyranoIntegrationFailed::CyranoIntegrationFailed
+  CyranoIntegrationFailed::CyranoIntegrationFailed(const CyranoIntegrationFailed&) = default;
 
-  CyranoIntegrationFailed::~CyranoIntegrationFailed() noexcept
-  {} // end of CyranoIntegrationFailed::~CyranoIntegrationFailed()
+  CyranoIntegrationFailed::~CyranoIntegrationFailed() noexcept = default;
 
   CyranoInvalidNTENSValue::CyranoInvalidNTENSValue(const unsigned short N)
     : CyranoException("Invalid tensor size declared '"+
 		      std::to_string(static_cast<unsigned int>(N))+"'")
   {} // end of CyranoInvalidNTENSValue::CyranoInvalidNTENSValue
 
-  CyranoInvalidNTENSValue::CyranoInvalidNTENSValue(const CyranoInvalidNTENSValue& e)
-    : CyranoException(e)
-  {} // end of CyranoInvalidNTENSValue::CyranoInvalidNTENSValue
+  CyranoInvalidNTENSValue::CyranoInvalidNTENSValue(const CyranoInvalidNTENSValue&) = default;
 
-  CyranoInvalidNTENSValue::~CyranoInvalidNTENSValue() noexcept
-  {} // end of CyranoInvalidNTENSValue::~CyranoInvalidNTENSValue()
+  CyranoInvalidNTENSValue::~CyranoInvalidNTENSValue() noexcept = default;
 
   CyranoInvalidDimension::CyranoInvalidDimension(const std::string& b,
-					     const unsigned short N)
+						 const unsigned short N)
     : CyranoException("''"+b+"' can't be used in "+
 		      std::to_string(static_cast<unsigned int>(N))+"D")
   {} // end of CyranoInvalidDimension::CyranoInvalidDimension
 
-  CyranoInvalidDimension::CyranoInvalidDimension(const CyranoInvalidDimension& e)
-    : CyranoException(e)
-  {} // end of CyranoInvalidDimension::CyranoInvalidDimension
+  CyranoInvalidDimension::CyranoInvalidDimension(const CyranoInvalidDimension&) = default;
 
-  CyranoInvalidDimension::~CyranoInvalidDimension() noexcept
-  {} // end of CyranoInvalidDimension::~CyranoInvalidDimension()
+  CyranoInvalidDimension::~CyranoInvalidDimension() noexcept = default;
 
 } // end of namespace cyrano
 

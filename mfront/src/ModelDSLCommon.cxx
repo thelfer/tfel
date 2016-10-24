@@ -479,7 +479,7 @@ namespace mfront{
     throw_if((this->current==tokens.end())&&(openedBrackets!=0),
 	     "unexpected end of file while reading body of function '"+f.name+"'");
     throw_if(openedBrackets!=0,"parenthesis still opened at the end of function '"+f.name+"'");
-    throw_if(f.modifiedVariables.size()==0,"function " + f.name + " does not change any variable.");
+    throw_if(f.modifiedVariables.empty(),"function " + f.name + " does not change any variable.");
     for(const auto& df: this->functions){
       throw_if(df.name==f.name,"function " + f.name + " already declared.");
     }
@@ -899,4 +899,4 @@ namespace mfront{
 
   ModelDSLCommon::~ModelDSLCommon() = default;
 
-} // end of mfront
+} // end of namespace mfront

@@ -95,10 +95,8 @@ namespace mfront
     for(const auto& v : SupportedTypes::getTypeFlags()){
       names.push_back(v.first);
     }
-    names.push_back("policy");
-    names.push_back("errno");
-    names.push_back("mfront_errno");
-    names.push_back("mfront_errno_old");    
+    names.insert(names.end(),{"policy","errno",
+	  "mfront_errno","mfront_errno_old"});
     return names;
   }
 
@@ -221,7 +219,7 @@ namespace mfront
       }
       b.description += this->current->comment;
     }
-    if(analyser.get()!=nullptr){
+    if(analyser!=nullptr){
       analyser->exe(this->current->value);
     }
     if(smn.find(this->current->value)!=smn.end()){
@@ -245,7 +243,7 @@ namespace mfront
 	 (previous->value=="::")){
 	currentValue = this->current->value;
       } else {
-	if(modifier.get()!=nullptr){
+	if(modifier!=nullptr){
 	  currentValue = modifier->exe(this->current->value,addThisPtr);
 	} else {
 	  if(addThisPtr){
@@ -293,7 +291,7 @@ namespace mfront
 	}
 	b.description += this->current->comment;
       }
-      if(analyser.get()!=nullptr){
+      if(analyser!=nullptr){
 	analyser->exe(this->current->value);
       }
       if(smn.find(this->current->value)!=smn.end()){
@@ -317,7 +315,7 @@ namespace mfront
 	   (previous->value=="::")){
 	  currentValue = this->current->value;
 	} else {
-	  if(modifier.get()!=nullptr){
+	  if(modifier!=nullptr){
 	    currentValue = modifier->exe(this->current->value,addThisPtr);	    
 	  } else {
 	    if(addThisPtr){
@@ -541,13 +539,13 @@ namespace mfront
 	}
 	tfel::math::IntegerEvaluator ev(array_size);
 	const auto& vars = ev.getVariablesNames();
-	for(auto pv=vars.begin();pv!=vars.end();++pv){
-	  auto pvv = this->integerConstants.find(*pv);
+	for(const auto& v:vars){
+	  auto pvv = this->integerConstants.find(v);
 	  if(pvv==this->integerConstants.end()){
 	    this->throwRuntimeError("DSLBase::readVarList : ",
-				    "unknown constant '"+*pv+"'");
+				    "unknown constant '"+v+"'");
 	  }
-	  ev.setVariableValue(*pv,pvv->second);
+	  ev.setVariableValue(v,pvv->second);
 	}
 	const auto iv = ev.getValue();
 	if(iv<=0){

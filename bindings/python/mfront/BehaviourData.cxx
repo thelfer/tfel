@@ -36,13 +36,13 @@ getBooleanAttribute(const mfront::BehaviourData& d,
 
 static const std::vector<std::string>
 getRegistredMembersNames(const mfront::BehaviourData& d){
-  const auto n = d.getRegistredMembersNames();
+  const auto& n = d.getRegistredMembersNames();
   return {n.begin(),n.end()};
 }
 
 static const std::vector<std::string>
 getRegistredStaticMembersNames(const mfront::BehaviourData& d){
-  const auto n = d.getRegistredStaticMembersNames();
+  const auto& n = d.getRegistredStaticMembersNames();
   return {n.begin(),n.end()};
 }
 

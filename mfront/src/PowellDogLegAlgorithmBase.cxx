@@ -134,4 +134,4 @@ namespace mfront{
 
   PowellDogLegAlgorithmBase::~PowellDogLegAlgorithmBase() = default;
 
-}
+} // end of namespace mfront

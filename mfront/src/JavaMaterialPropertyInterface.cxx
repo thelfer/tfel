@@ -118,8 +118,7 @@ namespace mfront
     return {false,current};
   } // end of treatKeyword
 
-  JavaMaterialPropertyInterface::~JavaMaterialPropertyInterface()
-  {}
+  JavaMaterialPropertyInterface::~JavaMaterialPropertyInterface() = default;
 
   void
   JavaMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,

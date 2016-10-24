@@ -24,18 +24,15 @@ namespace tfel
     namespace parser
     {
 
-      Expr::~Expr()
-      {} // end of Expr::~Expr
+      Expr::~Expr() = default;
 
       void
       mergeVariablesNames(std::vector<std::string>& v,
 			  const std::vector<std::string>& nv)
       {
-	using namespace std;
-	vector<string>::const_iterator p;
-	for(p=nv.begin();p!=nv.end();++p){
-	  if(find(v.begin(),v.end(),*p)==v.end()){
-	    v.push_back(*p);
+	for(const auto& vn : nv){
+	  if(std::find(v.begin(),v.end(),vn)==v.end()){
+	    v.push_back(vn);
 	  }
 	}
       } // end of mergeVariablesNames

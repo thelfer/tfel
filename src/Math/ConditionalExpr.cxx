@@ -31,8 +31,7 @@ namespace tfel
 	: c(c_),a(a_),b(b_)
       {} // end of ConditionalExpr::ConditionalExpr
       
-      double
-      ConditionalExpr::getValue() const
+      double ConditionalExpr::getValue() const
       {
 	if(this->c->getValue()){
 	  return this->a->getValue();
@@ -43,10 +42,9 @@ namespace tfel
       void
       ConditionalExpr::checkCyclicDependency(std::vector<std::string>& vars) const
       {
-	using namespace std;
-	vector<string> a_vars(vars);
-	vector<string> b_vars(vars);
-	vector<string> c_vars(vars);
+	std::vector<std::string> a_vars(vars);
+	std::vector<std::string> b_vars(vars);
+	std::vector<std::string> c_vars(vars);
 	this->c->checkCyclicDependency(c_vars);
 	this->a->checkCyclicDependency(a_vars);
 	this->b->checkCyclicDependency(b_vars);
@@ -58,34 +56,33 @@ namespace tfel
       std::shared_ptr<Expr>
       ConditionalExpr::resolveDependencies(const std::vector<double>&v) const
       {
-	return std::shared_ptr<Expr>(new ConditionalExpr(this->c->resolveDependencies(v),
-							 this->a->resolveDependencies(v),
-							 this->b->resolveDependencies(v)));
+	return std::make_shared<ConditionalExpr>(this->c->resolveDependencies(v),
+						 this->a->resolveDependencies(v),
+						 this->b->resolveDependencies(v));
       }// end of ConditionalExpr::resolveDependencies
 
-      void
-      ConditionalExpr::getParametersNames(std::set<std::string>& p) const
+      void ConditionalExpr::getParametersNames(std::set<std::string>& p) const
       {
 	this->c->getParametersNames(p);
 	this->a->getParametersNames(p);
 	this->b->getParametersNames(p);
-      } // end of ConditionalExpr::getParametersNames(std::set<std::string>&)
+      } // end of ConditionalExpr::getParametersNames
 
       std::shared_ptr<Expr>
       ConditionalExpr::differentiate(const std::vector<double>::size_type pos,
 				     const std::vector<double>& v) const
       {
-	return std::shared_ptr<Expr>(new ConditionalExpr(this->c->clone(v),
-							 this->a->differentiate(pos,v),
-							 this->b->differentiate(pos,v)));
+	return std::make_shared<ConditionalExpr>(this->c->clone(v),
+						 this->a->differentiate(pos,v),
+						 this->b->differentiate(pos,v));
       } // end of ConditionalExpr::differentiate
 
       std::shared_ptr<Expr>
       ConditionalExpr::clone(const std::vector<double>& v) const
       {
-	return std::shared_ptr<Expr>(new ConditionalExpr(this->c->clone(v),
-							 this->a->clone(v),
-							 this->b->clone(v)));
+	return std::make_shared<ConditionalExpr>(this->c->clone(v),
+						 this->a->clone(v),
+						 this->b->clone(v));
       } // end of ConditionalExpr::clone
 
       
@@ -95,15 +92,13 @@ namespace tfel
 								       const std::map<std::string,
 								       std::vector<double>::size_type>& pos) const
       {
-	using std::shared_ptr;
-	shared_ptr<LogicalExpr> nc = this->c->createFunctionByChangingParametersIntoVariables(v,p,pos);
-	shared_ptr<Expr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
-	shared_ptr<Expr> nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
-	return shared_ptr<Expr>(new ConditionalExpr(nc,na,nb));
+	auto nc = this->c->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	auto na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	auto nb = this->b->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	return std::make_shared<ConditionalExpr>(nc,na,nb);
       } // end of ConditionalExpr::createFunctionByChangingParametersIntoVariables
 
-      ConditionalExpr::~ConditionalExpr()
-      {} // end of ConditionalExpr::~ConditionalExpr()
+      ConditionalExpr::~ConditionalExpr() = default;
 
     } // end of namespace parser
 

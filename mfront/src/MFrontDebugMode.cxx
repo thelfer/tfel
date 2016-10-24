@@ -31,5 +31,5 @@ namespace mfront{
     getMFrontDebugMode() = b;
   }
 
-}
+} // end of namespace mfront
 

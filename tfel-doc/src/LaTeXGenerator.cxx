@@ -40,7 +40,7 @@ namespace tfel
       if(l!="english"){
 	cerr << TerminalColors::Red;
 	cerr << "getSectionHeaderTranslation : unsupported language'"+l
-	     << "', using default" << endl;
+	     << "', using default\n";
 	cerr << TerminalColors::Reset;
       }
       return s;
@@ -79,10 +79,10 @@ namespace tfel
 			  const std::string& l)
     {
       using namespace std;
-      out << "\\subsection{Test " << toLaTeX(t. name) << "}" << endl;
+      out << "\\subsection{Test " << toLaTeX(t. name) << "}\n";
       out << endl;
-      out << "\\begin{center}" << endl;
-      out << "\\begin{tabular}[!h]{lcp{0.65\\linewidth}}" << endl;
+      out << "\\begin{center}\n";
+      out << "\\begin{tabular}[!h]{lcp{0.65\\linewidth}}\n";
       out << capitalize(getTranslation("author",l));
       if(!t.author.empty()){
 	out << " &:& " << t.author << "\\\\"<< endl;
@@ -109,39 +109,39 @@ namespace tfel
 	      << "}{\\texttt{\\$\\{prefix\\}/" << toLaTeX(t.install) << "}}\\\\"<< endl;
 	}
       }
-      out << "\\end{tabular}" << endl;
-      out << "\\end{center}" << endl;
+      out << "\\end{tabular}\n";
+      out << "\\end{center}\n";
       out << endl;
 
       if(!t.keys.empty()){
-	out << "\\begin{center}" << endl;
-	out << "\\begin{tabular}[!h]{|l|l|}" << endl;
+	out << "\\begin{center}\n";
+	out << "\\begin{tabular}[!h]{|l|l|}\n";
 	out << "\\hline"    << endl;
 	out << "\\multicolumn{1}{|c|}{" << capitalize(getTranslation("category",l)) 
-	    << "} & \\multicolumn{1}{|c|}{" << capitalize(getTranslation("keyword",l)) << "} \\\\" << endl;
+	    << "} & \\multicolumn{1}{|c|}{" << capitalize(getTranslation("keyword",l)) << "} \\\\\n";
 	out << "\\hline"    << endl;
 	out << "\\hline"    << endl; 
 	for(const auto& k : t.keys){
 	  const auto key1 = getKeyValue(k.first,l);
 	  if(k.second.empty()){
 	    out << getIndexCommand(key1,"general") << endl;
-	    out << capitalize(key1) << " & \\\\" << endl;
+	    out << capitalize(key1) << " & \\\\\n";
 	  } else {
 	    auto p3 = k.second.begin();
 	    auto key2 = getKeyValue(*p3,l);
 	    out << getIndexCommand(key1,key2,"general") << endl;
-	    out << capitalize(key1) << " & " << capitalize(key2) << "\\\\" << endl;
+	    out << capitalize(key1) << " & " << capitalize(key2) << "\\\\\n";
 	    ++p3;
 	    for(;p3!=k.second.end();++p3){
 	      key2 = getKeyValue(*p3,l);
 	      out << getIndexCommand(key1,key2,"general") << endl;;
-	      out << " & " << capitalize(key2) << "\\\\" << endl;
+	      out << " & " << capitalize(key2) << "\\\\\n";
 	    }
 	  }
 	  out << "\\hline"    << endl; 
 	}
-	out << "\\end{tabular}" << endl;
-	out << "\\end{center}" << endl;
+	out << "\\end{tabular}\n";
+	out << "\\end{center}\n";
 	out << endl;
       }
 
@@ -150,7 +150,7 @@ namespace tfel
 	  out << "\\paragraph{" << getTranslation("Tested model",l) << "}"
 	      << " " << getTranslation("The model tested is:",l) << endl
 	      << t.models.begin()->first 
-	      << getIndexCommand(t.models.begin()->first,"models") << "." << endl;
+	      << getIndexCommand(t.models.begin()->first,"models") << ".\n";
 	  for(auto pm2=t.models.begin()->second.begin();
 	      pm2!=t.models.begin()->second.end();++pm2){
 	    out << getIndexCommand(t.models.begin()->first,*pm2,"models") << endl;
@@ -158,15 +158,15 @@ namespace tfel
 	} else {
 	  out << "\\paragraph{" << getTranslation("List of tested models",l) << "}"
 	      << " " << getTranslation("The models tested are:",l) << endl;
-	  out << "\\begin{itemize}" << endl;
-	  for(auto pm=t.models.begin();pm!=t.models.end();++pm){
-	    out << "\\item " << pm->first << getIndexCommand(pm->first,"models");
-	    for(auto pm2=pm->second.begin();pm2!=pm->second.end();++pm2){
-	      out << getIndexCommand(pm->first,*pm2,"models") << endl;
+	  out << "\\begin{itemize}\n";
+	  for(const auto& m : t.models){
+	    out << "\\item " << m.first << getIndexCommand(m.first,"models");
+	    for(const auto& m2 : m.second){
+	      out << getIndexCommand(m.first,m2,"models") << endl;
 	    }
-	    out << "~;" << endl;
+	    out << "~;\n";
 	  }
-	  out << "\\end{itemize}" << endl;
+	  out << "\\end{itemize}\n";
 	}
       }
       auto pd = t.descriptions.find(l);
@@ -186,7 +186,7 @@ namespace tfel
       if(l!="french"){
 	cerr << TerminalColors::Red;
 	cerr << "getBabelPackage : unsupported language '" << l << 
-	  "', using default" << endl;
+	  "', using default\n";
 	cerr << TerminalColors::Reset;
 	return "";
       }

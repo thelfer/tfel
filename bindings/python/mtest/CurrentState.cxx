@@ -84,7 +84,7 @@ getInternalStateVariableValue(const mtest::CurrentState& s,
   auto throw_if = [](const bool b, const std::string& m){
     if(b){throw(std::runtime_error("mtest::getInternalStateVariableValue: "+m));}
   };
-  throw_if(s.behaviour.get()==nullptr,"no behaviour defined");
+  throw_if(s.behaviour==nullptr,"no behaviour defined");
   const auto& ivsnames = s.behaviour->getInternalStateVariablesNames();
   throw_if(std::find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end(),
 	   "the behaviour don't declare an internal state "

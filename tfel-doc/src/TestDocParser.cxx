@@ -47,8 +47,8 @@ namespace tfel{
 	  TestDocumentation t;
 	  this->readString(t.name,p);
 	  for(const auto& td : tests){
-	    for(auto p3=td.second.begin();p3!=td.second.end();++p3){
-	      if(t.name==p3->name){
+	    for(const auto& d : td.second){
+	      if(t.name==d.name){
 		throw(runtime_error("TestDocParser::addDocumentation : "
 				    "test '"+t.name+"' already described"));	  
 	      }
@@ -238,8 +238,7 @@ namespace tfel{
       this->readSpecifiedToken("}",p);
     }
 
-    TestDocParser::~TestDocParser() noexcept
-    {} // end of MTestDocParser::~MTestDocParser
+    TestDocParser::~TestDocParser() noexcept = default;
 
   } // end of namespace utilities
 

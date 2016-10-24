@@ -378,8 +378,7 @@ namespace tfel
       return EXIT_SUCCESS;
     }
 
-    TestDocMain::~TestDocMain()
-    {} // end of TestDocMain::~TestDocMain()
+    TestDocMain::~TestDocMain() = default;
 
   } // end of namespace utilities
   

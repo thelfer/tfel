@@ -262,7 +262,7 @@ namespace mfront{
 
   void ImplicitDSLBase::treatInitJacobian()
   {
-    if(this->solver.get()==nullptr){
+    if(this->solver==nullptr){
       this->throwRuntimeError("ImplicitDSLBase::treatInitJacobian",
 			      "undefined algorithm. Please use the '@Algorithm' "
 			      "keyword to define one.");
@@ -278,7 +278,7 @@ namespace mfront{
 
   void ImplicitDSLBase::treatInitJacobianInvert()
   {
-    if(this->solver.get()==nullptr){
+    if(this->solver==nullptr){
       this->throwRuntimeError("ImplicitDSLBase::treatInitJacobianInvert",
 			      "undefined algorithm. Please use the '@Algorithm' "
 			      "keyword to define one.");
@@ -417,7 +417,7 @@ namespace mfront{
   void ImplicitDSLBase::treatAlgorithm()
   {
     const auto& f = NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
-    if(this->solver.get()!=nullptr){
+    if(this->solver!=nullptr){
       this->throwRuntimeError("ImplicitDSLBase::treatAlgorithm",
 			      "an algorithm has already been defined.");
     }
@@ -1844,7 +1844,7 @@ namespace mfront{
   {
     using namespace tfel::glossary;
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    if(this->solver.get()==nullptr){
+    if(this->solver==nullptr){
       const auto& f = NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
       this->solver = f.getSolver("NewtonRaphson");
     }

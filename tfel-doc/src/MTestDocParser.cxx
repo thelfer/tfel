@@ -36,7 +36,7 @@ namespace tfel{
       if(r.find(c)==r.end()){
 	ptest = r.insert({c,std::vector<TestDocumentation>()}).first;
       }
-      ptest->second.push_back(TestDocumentation());
+      ptest->second.emplace_back(TestDocumentation());
       auto& t = ptest->second.back();
       t.name    = this->file;
       t.date    = this->date;
@@ -44,8 +44,7 @@ namespace tfel{
       t.descriptions.insert({"english",this->description});
     } // end of MTestDocParser::execute
 
-    MTestDocParser::~MTestDocParser()
-    {} // end of MTestDocParser::~MTestDocParser
+    MTestDocParser::~MTestDocParser() = default;
 
   } // end of namespace utilities
 

@@ -358,7 +358,7 @@ namespace aster
       struct PredictionOperatorIsNotAvalaible
       {
 	typedef Behaviour<H,AsterReal,false> BV;
-	[[ noreturn ]] static typename BV::IntegrationResult
+	TFEL_NORETURN static typename BV::IntegrationResult
 	exe(BV&,const typename BV::SMFlag,
 	    const typename BV::SMType)
 	{

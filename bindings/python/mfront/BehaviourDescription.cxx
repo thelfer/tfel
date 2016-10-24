@@ -30,7 +30,7 @@ getDistinctModellingHypotheses(const mfront::BehaviourDescription& bd){
 
 static void
 setModellingHypotheses1(mfront::BehaviourDescription& bd,
-			   const std::vector<tfel::material::ModellingHypothesis::Hypothesis>& mh){
+			const std::vector<tfel::material::ModellingHypothesis::Hypothesis>& mh){
   using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
   bd.setModellingHypotheses(std::set<Hypothesis>{mh.begin(),mh.end()});
 }

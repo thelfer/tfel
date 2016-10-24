@@ -930,7 +930,7 @@ namespace tfel
 	  auto pt = p;
 	  ++pt;
 	  if((pt!=pe)&&(*pt=="(")){
-	    if(this->manager.get()!=nullptr){
+	    if(this->manager!=nullptr){
 	      this->addExternalFunctionToGroup(g.get(),p,pe,b);
 	    } else {
 	      string msg("Evaluator::treatGroup2 : unknown function '"+*p+"'");
@@ -1013,7 +1013,7 @@ namespace tfel
       if(pos>=this->variables.size()){
 	std::ostringstream msg;
 	msg << "Evaluator::setVariableValue : position '" << pos << "' is invalid ";
-	if(this->variables.size()==0){
+	if(this->variables.empty()){
 	  msg << "(function has no variable).";
 	} else if(this->variables.size()==1){
 	  msg << "(function has one variable).";
@@ -1085,19 +1085,18 @@ namespace tfel
 	positions(src.positions)
     {
       this->manager = src.manager;
-      if(src.expr.get()!=nullptr){
+      if(src.expr!=nullptr){
 	this->expr = src.expr->clone(this->variables);
       }
     } // end of Evaluator::Evaluator
 
-    Evaluator&
-    Evaluator::operator = (const Evaluator& src)
+    Evaluator& Evaluator::operator = (const Evaluator& src)
     {
       if(this!=&src){
 	this->variables = src.variables;
 	this->positions = src.positions;
 	this->manager   = src.manager;
-	if(src.expr.get()!=nullptr){
+	if(src.expr!=nullptr){
 	  this->expr = src.expr->clone(this->variables);
 	} else {
 	  this->expr.reset();
@@ -1154,16 +1153,16 @@ namespace tfel
       this->clear();
       this->variables.resize(vars.size());
       auto pos = std::vector<double>::size_type{0u};
-      for(auto p = vars.cbegin();p!=vars.cend();++p){
-	if(this->positions.find(*p)!=this->positions.end()){
+      for(const auto& v: vars){
+	if(this->positions.find(v)!=this->positions.end()){
 	  throw(std::runtime_error("Evaluator::setFunction: "
-				   "variable '"+*p+"' multiply defined."));
+				   "variable '"+v+"' multiply defined."));
 	}
-	if(!Evaluator::isValidIdentifier(*p)){
+	if(!Evaluator::isValidIdentifier(v)){
 	  throw(std::runtime_error("Evaluator::setFunction: "
-				   "variable '"+*p+"' is not valid."));
+				   "variable '"+v+"' is not valid."));
 	}
-	this->positions[*p]=pos;
+	this->positions[v]=pos;
 	++pos;
       }
       this->analyse(f,true);
@@ -1211,14 +1210,14 @@ namespace tfel
       }
       pev->variables.resize(this->variables.size());
       pev->positions = this->positions;
-      if(this->variables.size()==0){
+      if(this->variables.empty()){
 	// no variable
 	pev->expr = std::make_shared<parser::Number>(0.);
       } else {
 	if(pos>=this->variables.size()){
 	  std::ostringstream msg;
 	  msg << "Evaluator::differentiate : position '" << pos << "' is invalid ";
-	  if(this->variables.size()==0){
+	  if(this->variables.empty()){
 	    msg << "(function has no variable).";
 	  } else if(this->variables.size()==1){
 	    msg << "(function has one variable).";
@@ -1280,10 +1279,10 @@ namespace tfel
       std::set<std::string> ev_params;
       nparams.clear();
       this->getParametersNames(ev_params);
-      for(auto p=params.begin();p!=params.end();++p){
-	if(ev_params.find(*p)!=ev_params.end()){
-	  if(find(nparams.begin(),nparams.end(),*p)==nparams.end()){
-	    nparams.push_back(*p);
+      for(const auto& p:params){
+	if(ev_params.find(p)!=ev_params.end()){
+	  if(std::find(nparams.begin(),nparams.end(),p)==nparams.end()){
+	    nparams.push_back(p);
 	  }
 	}
       }

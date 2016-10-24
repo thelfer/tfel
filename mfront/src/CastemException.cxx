@@ -40,8 +40,7 @@ namespace castem
     return msg.c_str(); 
   } // end of CastemException::what
 
-  CastemException::~CastemException() noexcept
-  {} // end of CastemException::~CastemException
+  CastemException::~CastemException() noexcept = default;
 
   CastemIntegrationFailed::CastemIntegrationFailed()
     : CastemException("behaviour integration failed")
@@ -51,21 +50,16 @@ namespace castem
     : CastemException("behaviour integration failed : "+m)
   {} // end of CastemIntegrationFailed::CastemIntegrationFailed
 
-  CastemIntegrationFailed::CastemIntegrationFailed(const CastemIntegrationFailed& e)
-    : CastemException(e)
-  {} // end of CastemIntegrationFailed::CastemIntegrationFailed
+  CastemIntegrationFailed::CastemIntegrationFailed(const CastemIntegrationFailed&) = default;
 
-  CastemIntegrationFailed::~CastemIntegrationFailed() noexcept
-  {} // end of CastemIntegrationFailed::~CastemIntegrationFailed()
+  CastemIntegrationFailed::~CastemIntegrationFailed() noexcept = default;
 
   CastemInvalidNTENSValue::CastemInvalidNTENSValue(const unsigned short N)
     : CastemException("Invalid tensor size declared '"+
 		    std::to_string(static_cast<unsigned int>(N))+"'")
   {} // end of CastemInvalidNTENSValue::CastemInvalidNTENSValue
 
-  CastemInvalidNTENSValue::CastemInvalidNTENSValue(const CastemInvalidNTENSValue& e)
-    : CastemException(e)
-  {} // end of CastemInvalidNTENSValue::CastemInvalidNTENSValue
+  CastemInvalidNTENSValue::CastemInvalidNTENSValue(const CastemInvalidNTENSValue&) = default;
 
   CastemInvalidNTENSValue::~CastemInvalidNTENSValue() noexcept
   {} // end of CastemInvalidNTENSValue::~CastemInvalidNTENSValue()
@@ -76,12 +70,9 @@ namespace castem
 		    std::to_string(static_cast<unsigned int>(N))+"D")
   {} // end of CastemInvalidDimension::CastemInvalidDimension
 
-  CastemInvalidDimension::CastemInvalidDimension(const CastemInvalidDimension& e)
-    : CastemException(e)
-  {} // end of CastemInvalidDimension::CastemInvalidDimension
+  CastemInvalidDimension::CastemInvalidDimension(const CastemInvalidDimension&) = default;
 
-  CastemInvalidDimension::~CastemInvalidDimension() noexcept
-  {} // end of CastemInvalidDimension::~CastemInvalidDimension()
+  CastemInvalidDimension::~CastemInvalidDimension() noexcept = default;
 
 } // end of namespace castem
 

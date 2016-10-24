@@ -42,37 +42,32 @@ namespace mfront{
     return map;
   } // end of DSLFactory::getMap
 
-  DSLFactory::DSLFactory()
-  {} // end of DSLFactory::DSLFactory
+  DSLFactory::DSLFactory()= default;
 
   std::vector<std::string>
   DSLFactory::getRegistredParsers()
   {
-    using namespace std;
     ParserCreatorsContainer::const_iterator p;
-    vector<string> res;
-    for(p  = this->getMap().begin();
-	p != this->getMap().end();++p){
-      res.push_back(p->first);
+    auto res = std::vector<std::string>{};
+    for(const auto& p  :  this->getMap()){
+      res.push_back(p.first);
     }
     return res;
   }
 
   void
-  DSLFactory::registerParserCreator(const std::string& parserName,
+  DSLFactory::registerParserCreator(const std::string& n,
 				    const DSLFactory::ParserCreator f,
 				    const DSLFactory::DescriptionPtr f2)
   {
     using namespace std;
-    if(!this->getMap().insert(make_pair(parserName,f)).second){
-      string msg("DSLFactory::registerParserCreator : ");
-      msg += "a parser named "+parserName+" has already been registred";
-      throw(runtime_error(msg));
+    if(!this->getMap().insert({n,f}).second){
+      throw(std::runtime_error("DSLFactory::registerParserCreator: "
+			       "a dsl named '"+n+"' has already been registred"));
     }
-    if(!this->getDescriptionMap().insert(make_pair(parserName,f2)).second){
-      string msg("DSLFactory::registerParserCreator : ");
-      msg += "a parser named "+parserName+" has already been registred";
-      throw(runtime_error(msg));
+    if(!this->getDescriptionMap().insert({n,f2}).second){
+      throw(std::runtime_error("DSLFactory::registerParserCreator: "
+			       "a parser named "+n+" has already been registred"));
     }
   } // end of DSLFactory::registerParserCreator
 
@@ -106,7 +101,6 @@ namespace mfront{
     return c();
   }
 
-  DSLFactory::~DSLFactory()
-  {} // end of DSLFactory::~DSLFactory
+  DSLFactory::~DSLFactory() = default;
 
 } // end of namespace mfront

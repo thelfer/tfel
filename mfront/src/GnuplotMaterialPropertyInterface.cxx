@@ -62,17 +62,14 @@ namespace mfront
     return current;
   }
 
-  std::string
-  GnuplotMaterialPropertyInterface::getName()
+  std::string GnuplotMaterialPropertyInterface::getName()
   {
     return "gnuplot";
   }
 
-  GnuplotMaterialPropertyInterface::GnuplotMaterialPropertyInterface()
-  {}
+  GnuplotMaterialPropertyInterface::GnuplotMaterialPropertyInterface() = default;
 
-  GnuplotMaterialPropertyInterface::~GnuplotMaterialPropertyInterface()
-  {}
+  GnuplotMaterialPropertyInterface::~GnuplotMaterialPropertyInterface() = default;
   
   std::string
   GnuplotMaterialPropertyInterface::eraseQuote(const std::string& in)

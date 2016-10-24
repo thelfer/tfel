@@ -38,7 +38,7 @@ namespace mfront{
       return;
     }
     if(std::find(d.begin(),d.end(),v)==d.end()){
-      d.push_back(v);
+      d.emplace_back(v);
     }
   }
   

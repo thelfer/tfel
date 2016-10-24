@@ -1070,11 +1070,11 @@ namespace mfront{
 		  << "auto& activestate = msavedmd.get<map<string,string> >(\"ActiveState\",true);\n"
 		  << "if(this->isActive()){\n" 
 		  << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n"
-		  << "activestate.insert(MVType(*ptr,\"true\"));\n"
+		  << "activestate.insert({*ptr,\"true\"});\n"
 		  << "}\n"
 		  << "} else {\n"
 		  << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n"
-		  << "activestate.insert(MVType(*ptr,\"false\"));\n"
+		  << "activestate.insert({*ptr,\"false\"});\n"
 		  << "}\n"
 		  << "}\n"
 		  << "}\n\n";

@@ -20,58 +20,46 @@ namespace tfel
   namespace utilities
   {
 
-    void
-    ParserBase::checkNotEndOfFile(const_iterator p)
+    void ParserBase::checkNotEndOfFile(const_iterator p)
     {
-      using namespace std;
       if(p==this->end()){
-	string msg("ParserBase::checkNotEndOfFile : ");
-	msg += "unexpected end of file";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("ParserBase::checkNotEndOfFile: "
+				 "unexpected end of file"));
       }
     } // end of ParserBase::checkNotEndOfFile
 
-    void
-    ParserBase::readSpecifiedToken(const std::string& v,
-				   const_iterator& p)
+    void ParserBase::readSpecifiedToken(const std::string& v,
+					const_iterator& p)
     {
-      using namespace std;
       this->checkNotEndOfFile(p);
       if(p->value!=v){
-	string msg("ParserBase::readSpecifiedToken : ");
-	msg += "expected token '"+v+"', read '"+p->value+"'";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("ParserBase::readSpecifiedToken: "
+				 "expected token '"+v+"',"
+				 "read '"+p->value+"'"));
       }
       ++p;
     } // end of ParserBase::readSpecifiedToken
       
-    void
-    ParserBase::readString(std::string& s,
+    void ParserBase::readString(std::string& s,
 			   const_iterator& p)
     {
-      using namespace std;
-      using namespace tfel::utilities;
       this->checkNotEndOfFile(p);
-      if(p->flag!=Token::String){
-	string msg("TestParser::readString : ");
-	msg += "expected to read a string";
-	throw(runtime_error(msg));
+      if(p->flag!=tfel::utilities::Token::String){
+	throw(std::runtime_error("TestParser::readString: "
+				 "expected to read a string"));
       }
       s = p->value.substr(1,p->value.size()-2);
       ++p;      
     } // end of ParserBase::readString
       
-    std::string
-    ParserBase::readString(const_iterator& p)
+    std::string ParserBase::readString(const_iterator& p)
     {
-      using namespace std;
       std::string r;
       this->readString(r,p);
       return r;
     } // end of ParserBase::readString
 
-    ParserBase::~ParserBase() noexcept
-    {} // end of ParserBase::~ParserBase
+    ParserBase::~ParserBase() noexcept = default;
 
   } // end of namespace utilities
 

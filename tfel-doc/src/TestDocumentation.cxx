@@ -30,9 +30,7 @@ namespace tfel{
     TestDocumentation&
     TestDocumentation::operator=(TestDocumentation&&) = default;
 
-
-    TestDocumentation::~TestDocumentation()
-    {} // end of TestDocumentation::~TestDocumentation
+    TestDocumentation::~TestDocumentation() = default;
 
   } // end of namespace utilities
 

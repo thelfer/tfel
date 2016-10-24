@@ -85,17 +85,15 @@ namespace tfel
       ExternalFunctionExpr2::differentiate(const std::vector<double>::size_type pos,
 					   const std::vector<double>& v) const
       {
-	using namespace std;
-	vector<shared_ptr<Expr> > nargs(this->args.size());
+	std::vector<std::shared_ptr<Expr>> nargs(this->args.size());
         auto p = this->args.begin();
-	vector<shared_ptr<Expr> >::const_iterator p3;
-        vector<shared_ptr<Expr> >::iterator p4;
 	unsigned short i = 0;
-	if(args.size()==0){
+	if(this->args.empty()){
 	  return std::make_shared<Number>(0.);
 	}
-        for(p3=this->args.begin(),p4=nargs.begin();
-	    p3!=this->args.end();++p3,++p4){
+	auto p3 = this->args.begin();
+	auto p4 = nargs.begin();
+        for(;p3!=this->args.end();++p3,++p4){
 	  *p4 = (*p3)->clone(v);
 	}
         auto df_ = std::make_shared<ExternalFunctionExpr2>(this->f->differentiate(i),nargs);

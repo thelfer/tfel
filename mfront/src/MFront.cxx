@@ -633,7 +633,7 @@ namespace mfront{
   
   void MFront::buildLibraries(const std::string& target)
   {
-    callMake(target.c_str());
+    callMake(target);
   } // end of MFront::buildLibraries
 
   void
@@ -799,7 +799,6 @@ namespace mfront{
 #endif /* MFRONT_MAKE_SUPPORT */
   } // end of MFront::exe
 
-  MFront::~MFront()
-  {} // end of MFront::~MFront
+  MFront::~MFront() = default;
 
 } // end of namespace mfront

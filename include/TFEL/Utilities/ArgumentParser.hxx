@@ -60,7 +60,7 @@ namespace tfel
 	//! action performed
 	std::function<void(void)> c;
 	//! flag, true if the callback has an option
-	const bool hasOption;
+	const bool hasOption = false;
       };
       //! default constructor
       ArgumentParser();

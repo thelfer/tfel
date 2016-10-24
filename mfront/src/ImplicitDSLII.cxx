@@ -20,19 +20,16 @@ namespace mfront{
     this->mb.declareAsASmallStrainStandardBehaviour();
   } // end of ImplicitDSLII::ImplicitDSLII
 
-  std::string
-  ImplicitDSLII::getName()
+  std::string ImplicitDSLII::getName()
   {
     return "ImplicitII";
   } // end of ImplicitDSLII::getName
 
-  std::string
-  ImplicitDSLII::getDescription()
+  std::string ImplicitDSLII::getDescription()
   {
     return "this parser provides a generic integrator based on a theta method.";
   } // end of ImplicitDSLII::getDescription
 
-  ImplicitDSLII::~ImplicitDSLII() noexcept
-  {}
+  ImplicitDSLII::~ImplicitDSLII() noexcept = default;
 
 } // end of namespace mfront  

@@ -16,7 +16,6 @@
 
 namespace mfront{
 
-  AbstractDSL::~AbstractDSL()
-  {}
+  AbstractDSL::~AbstractDSL() = default;
 
 } // end of namespace mfront

@@ -25,65 +25,48 @@ namespace tfel
     namespace parser
     {
 
-      bool
-      OpEqual::apply(const double a,
-		     const double b)
+      bool OpEqual::apply(const double a,const double b)
       {
-	using namespace std;
-	return abs(a-b) < 10*numeric_limits<double>::min();
+	return std::abs(a-b) < 10*std::numeric_limits<double>::min();
       } // end of OpEqual::apply
 
-      bool
-      OpGreater::apply(const double a,
-		       const double b)
+      bool OpGreater::apply(const double a,const double b)
       {
 	return a > b;
       } // end of OpGreater::apply
 
-      bool
-      OpGreaterOrEqual::apply(const double a,
-			      const double b)
+      bool OpGreaterOrEqual::apply(const double a,const double b)
       {
 	return a >= b;
       } // end of OpGreaterOrEqual::apply
 
-      bool
-      OpLesser::apply(const double a,
-		      const double b)
+      bool OpLesser::apply(const double a,const double b)
       {
 	return a < b;
       } // end of OpLesser::apply
 
-      bool
-      OpLesserOrEqual::apply(const double a,
-			     const double b)
+      bool OpLesserOrEqual::apply(const double a,const double b)
       {
 	return a <= b;
       } // end of OpLesserOrEqual::apply
 
-      bool
-      OpAnd::apply(const bool a,
-		   const bool b)
+      bool OpAnd::apply(const bool a,const bool b)
       {
 	return a && b;
       } // end of OpAnd::apply
       
-      bool
-      OpOr::apply(const bool a,
-		  const bool b)
+      bool OpOr::apply(const bool a,const bool b)
       {
 	return a || b;
       } // end of OpAnd::apply
       
-      LogicalExpr::~LogicalExpr()
-      {} // end of LogicalExpr::~LogicalExpr()
+      LogicalExpr::~LogicalExpr() = default;
 
       NegLogicalExpression::NegLogicalExpression(const std::shared_ptr<LogicalExpr> a_)
 	: a(a_)
       {} // end of NegLogicalExpression::NegLogicalOperation
 
-      bool
-      NegLogicalExpression::getValue() const
+      bool NegLogicalExpression::getValue() const
       {
 	return !this->a->getValue();
       } // end of NegLogicalExpression::getValue(void) const
@@ -103,28 +86,25 @@ namespace tfel
       std::shared_ptr<LogicalExpr>
       NegLogicalExpression::clone(const std::vector<double>& v) const
       {
-	return std::shared_ptr<LogicalExpr>(new NegLogicalExpression(this->a->clone(v)));
+	return std::make_shared<NegLogicalExpression>(this->a->clone(v));
       }
 
       std::shared_ptr<LogicalExpr>
       NegLogicalExpression::createFunctionByChangingParametersIntoVariables(const std::vector<double>& v,
-										  const std::vector<std::string>& p,
-										  const std::map<std::string,
-										  std::vector<double>::size_type>& pos) const
+									    const std::vector<std::string>& p,
+									    const std::map<std::string,
+									    std::vector<double>::size_type>& pos) const
       {
-	using std::shared_ptr;
-	shared_ptr<LogicalExpr> na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
-	return shared_ptr<LogicalExpr>(new NegLogicalExpression(na));
+	auto na = this->a->createFunctionByChangingParametersIntoVariables(v,p,pos);
+	return std::make_shared<NegLogicalExpression>(na);
       }
 
-      void
-      NegLogicalExpression::getParametersNames(std::set<std::string>& p) const
+      void NegLogicalExpression::getParametersNames(std::set<std::string>& p) const
       {
 	this->a->getParametersNames(p);
       } // end of NegLogicalExpression::getParametersNames
       
-      NegLogicalExpression::~NegLogicalExpression()
-      {}
+      NegLogicalExpression::~NegLogicalExpression() = default;
 
     } // end of namespace parser
 

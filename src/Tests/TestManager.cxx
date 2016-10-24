@@ -32,7 +32,7 @@ namespace tfel
 
     void TestManager::addTestOutput(TestOutputPtr o)
     {
-      if(this->default_outputs.get()==nullptr){
+      if(this->default_outputs==nullptr){
 	this->default_outputs = std::make_shared<MultipleTestOutputs>();
       }
       this->default_outputs->addTestOutput(o);

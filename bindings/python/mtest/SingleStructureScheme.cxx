@@ -133,7 +133,7 @@ SingleStructureScheme_setInternalStateVariableInitialValue1(mtest::SingleStructu
 static void
 SingleStructureScheme_setInternalStateVariableInitialValue2(mtest::SingleStructureScheme& s,
 							   const std::string&  n,
-							   const std::vector<mtest::real> v){
+							   const std::vector<mtest::real>& v){
   const auto& b   = *(s.getBehaviour());
   const auto type = b.getInternalStateVariableType(n);
   if(type==0){

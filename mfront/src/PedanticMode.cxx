@@ -31,5 +31,5 @@ namespace mfront{
     getMFrontPedanticMode() = b;
   }
 
-}
+} // end of namespace mfront
 

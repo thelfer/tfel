@@ -16,7 +16,6 @@
 
 namespace mfront {
 
-  AbstractBehaviourBrick::~AbstractBehaviourBrick()
-  {} // end of AbstractBehaviourBrick::~AbstractBehaviourBrick
+  AbstractBehaviourBrick::~AbstractBehaviourBrick() = default;
 
 } // end of namespace mfront

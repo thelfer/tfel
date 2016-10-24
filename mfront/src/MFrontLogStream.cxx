@@ -24,15 +24,11 @@ namespace mfront
 
   struct LogStream
   {
-    static LogStream&
-    getLogStream();
+    static LogStream& getLogStream();
     LogStream();
-    void
-    setLogStream(const std::string&);
-    void
-    setLogStream(std::ostream&);
-    std::ostream&
-    getStream();
+    void setLogStream(const std::string&);
+    void setLogStream(std::ostream&);
+    std::ostream& getStream();
   private:
     std::ostream* s;
     std::shared_ptr<std::ofstream> ps;
@@ -42,82 +38,69 @@ namespace mfront
     : s(&std::cout)
   {} // end of LogStream::LogStream()
 
-  void
-  LogStream::setLogStream(std::ostream& os)
+  void LogStream::setLogStream(std::ostream& os)
   {
-    using namespace std;
-    if(this->ps.get()!=nullptr){
+    if(this->ps!=nullptr){
       this->ps->close();
     }
-    this->ps = shared_ptr<ofstream>();
+    this->ps = std::make_shared<std::ofstream>();
     this->s = &os;
   } // end of 
 
-  void
-  LogStream::setLogStream(const std::string& f)
+  void LogStream::setLogStream(const std::string& f)
   {
-    using namespace std;
-    if(this->ps.get()!=nullptr){
+    if(this->ps!=nullptr){
       this->ps->close();
     }
-    this->ps = shared_ptr<ofstream>(new ofstream(f));
-    if(this->ps.get()==nullptr){
-      string msg("LogStream::setLogStream : ");
-      msg += "can't allocate ofstream obect";
-      throw(runtime_error(msg));
+    this->ps = std::make_shared<std::ofstream>(f);
+    if(this->ps==nullptr){
+      throw(std::runtime_error("LogStream::setLogStream: "
+			       "can't allocate ofstream obect"));
     }
-    if(!(*(this->ps.get()))){
-      string msg("LogStream::setLogStream : ");
-      msg += "can't open file '"+f+"'";
-      throw(runtime_error(msg));
+    if(!(*(this->ps))){
+      throw(std::runtime_error("LogStream::setLogStream: "
+			       "can't open file '"+f+"'"));
     }
   } // end of LogStream::setLogStream
 
-  std::ostream&
-  LogStream::getStream()
+  std::ostream& LogStream::getStream()
   {
-    if(this->ps.get()==nullptr){
+    if(this->ps==nullptr){
       return *s;
     }
     return *(this->ps);
   } // end of LogStream::getStream(void)
 
-  LogStream&
-  LogStream::getLogStream()
+  LogStream& LogStream::getLogStream()
   {
     static LogStream log;
     return log;
   } // end of LogStream::getLogStream
 
-  VerboseLevel&
-  getVerboseMode()
+  VerboseLevel& getVerboseMode()
   {
     static VerboseLevel verboseMode = VERBOSE_LEVEL1;
     return verboseMode;
   } // end of getVerboseMode()
 
-  void
-  setVerboseMode(const VerboseLevel l)
+  void setVerboseMode(const VerboseLevel l)
   {
     getVerboseMode()=l;
   } // end of setVerboseMode
   
-  std::ostream&
-  getLogStream()
+  std::ostream& getLogStream()
   {
     auto& log = LogStream::getLogStream();
     return log.getStream();
   } // end of function getLogStream
 
-  void
-  setLogStream(const std::string& f)
+  void setLogStream(const std::string& f)
   {
     auto& log = LogStream::getLogStream();
     log.setLogStream(f);
   } // end of function setLogStream
 
-  void
-  setLogStream(std::ostream& os){
+  void setLogStream(std::ostream& os){
     auto& log = LogStream::getLogStream();
     log.setLogStream(os);
   } // end of function setLogStream

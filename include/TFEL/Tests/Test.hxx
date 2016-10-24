@@ -34,27 +34,24 @@ namespace tfel
        * return the name of the test
        * \return the name of the test
        */
-      virtual std::string
-      name(void) const = 0;
+      virtual std::string name() const = 0;
       /*! 
        * return the group of the test
        * \return the group of the test
        */
-      virtual std::string
-      classname(void) const = 0;
+      virtual std::string classname() const = 0;
       /*! 
        * execute test
        * \return the results of the test
        */
-      virtual TestResult
-      execute(void) = 0;
+      virtual TestResult execute() = 0;
       /*! 
        * destructor
        */
       virtual ~Test();
     }; // end of struct Test
     
-  } // end of namespace test
+  } // end of namespace tests
 
 } // end of namespace tfel
 

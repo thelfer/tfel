@@ -108,8 +108,7 @@ namespace mfront{
     }
   } // end of MFrontBase
 
-  void
-  MFrontBase::treatSearchPath()
+  void MFrontBase::treatSearchPath()
   {
     const auto& o = this->getCurrentCommandLineArgument().getOption();
     if(o.empty()){
@@ -140,11 +139,10 @@ namespace mfront{
 	    if(s1.empty()){
 	      return false;
 	    }
-	    const auto s2 = o;
 	    if(getVerboseMode()>=VERBOSE_LEVEL2){
-	      getLogStream() << "substituting '" << s1 << "' by '" << s2 << "'\n";
+	      getLogStream() << "substituting '" << s1 << "' by '" << o << "'\n";
 	    }
-	    if(!this->substitutions.insert({s1,s2}).second){
+	    if(!this->substitutions.insert({s1,o}).second){
 	      throw(std::runtime_error("MFrontBase::treatUnknownArgumentBase: "
 				       "a substitution for '"+s1+"' has "
 				       "already been defined"));
@@ -166,8 +164,7 @@ namespace mfront{
     return true;
   } // end of MFrontBase::treatUnknownArgument
 
-  void
-  MFrontBase::treatVerbose()
+  void MFrontBase::treatVerbose()
   {
     if(getCurrentCommandLineArgument().getOption().empty()){
       setVerboseMode(VERBOSE_LEVEL1);
@@ -194,24 +191,20 @@ namespace mfront{
     }
   }
 
-  void
-  MFrontBase::treatDebug()
+  void MFrontBase::treatDebug()
   {
     setDebugMode(true);
   }
 
-  void
-  MFrontBase::treatPedantic()
+  void MFrontBase::treatPedantic()
   {
     setPedanticMode(true);
   }
 
-  void
-  MFrontBase::treatWarning()
+  void MFrontBase::treatWarning()
   {}
 
-  void
-  MFrontBase::setInterface(const std::string& i){
+  void MFrontBase::setInterface(const std::string& i){
     if(!this->interfaces.insert(i).second){
       throw(std::runtime_error("MFrontBase::treatInterface : "
 			       "the interface '"+i+"' has "
@@ -219,8 +212,7 @@ namespace mfront{
     }
   } // end of MFrontBase::setInterface
   
-  void
-  MFrontBase::treatInterface()
+  void MFrontBase::treatInterface()
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("MFrontBase::treatInterface: "+m));}
@@ -233,7 +225,6 @@ namespace mfront{
     }
   } // end of MFrontBase::treatInterface
 
-  MFrontBase::~MFrontBase()
-  {} // end of MFrontBase::~MFrontBase()
+  MFrontBase::~MFrontBase() = default;
 
 } // end of namespace mfront

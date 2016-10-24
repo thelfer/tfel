@@ -32,8 +32,7 @@ namespace std{
 
 namespace mfront{
 
-  MTestFileGeneratorBase::InternalStateVariable::~InternalStateVariable()
-  {} // end of MTestFileGeneratorBase::InternalStateVariable::~InternalStateVariable
+  MTestFileGeneratorBase::InternalStateVariable::~InternalStateVariable() = default;
 
   unsigned int
   MTestFileGeneratorBase::getIdentifier()
@@ -491,7 +490,6 @@ namespace mfront{
 			     "unsupported modelling hypothesis"));
   } // end of MTestFileGeneratorBase::getTensorSize
 
-  MTestFileGeneratorBase::~MTestFileGeneratorBase()
-  {} // end of MTestFileGeneratorBase::~MTestFileGeneratorBase
+  MTestFileGeneratorBase::~MTestFileGeneratorBase() = default;
 
 } // end of namespace mfront

@@ -279,7 +279,7 @@ namespace mfront
     auto p = this->sd.find(h);
     if(p==this->sd.end()){
       // copy of the default description
-      p=this->sd.insert({h,MBDPtr{new BehaviourData{this->d}}}).first;
+      p=this->sd.insert({h,std::make_shared<BehaviourData>(this->d)}).first;
     }
     return *(p->second);
   } // end of BehaviourDescription::getBehaviourData2
@@ -1286,34 +1286,30 @@ namespace mfront
     return this->getData(h,&BehaviourData::hasGlossaryName,v);
   } // end of BehaviourDescription::hasGlossaryName
   
-  bool
-  BehaviourDescription::hasEntryName(const Hypothesis h,
-				     const std::string& v) const
+  bool BehaviourDescription::hasEntryName(const Hypothesis h,
+					  const std::string& v) const
   {
     return this->getData(h,&BehaviourData::hasEntryName,v);
   } // end of BehaviourDescription::hasEntryName
   
-  bool
-  BehaviourDescription::hasParameter(const Hypothesis h,
-				     const std::string& v) const
+  bool BehaviourDescription::hasParameter(const Hypothesis h,
+					  const std::string& v) const
   {
     return this->getData(h,&BehaviourData::hasParameter,v);
   } // end of BehaviourDescription::hasParameter
 
-  bool
-  BehaviourDescription::hasParameters(const Hypothesis h) const
+  bool BehaviourDescription::hasParameters(const Hypothesis h) const
   {
     return this->getBehaviourData(h).hasParameters();
   } // end of BehaviourDescription::hasParameters
 
-  bool
-  BehaviourDescription::hasParameters() const
+  bool BehaviourDescription::hasParameters() const
   {
     if(this->d.hasParameters()){
       return true;
     }
-    for(auto p=this->sd.begin();p!=this->sd.end();++p){
-      if(p->second->hasParameters()){
+    for(const auto& ld : this->sd){
+      if(ld.second->hasParameters()){
 	return true;
       }
     }

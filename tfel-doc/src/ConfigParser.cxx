@@ -25,8 +25,7 @@ namespace tfel{
 	   const std::string& n1)
     {
       using namespace std;
-      typedef map<string,string>::value_type MVType;
-      if(!m["english"].insert(MVType(n1,n1)).second){
+      if(!m["english"].insert({n1,n1}).second){
 	string msg("insert : ");
 	msg += "category '"+n1+"' already declared";
 	throw(runtime_error(msg));
@@ -40,13 +39,12 @@ namespace tfel{
 	   const std::string& l)
     {
       using namespace std;
-      typedef map<string,string>::value_type MVType;
       if(m["english"].find(n1)==m["english"].end()){
 	string msg("insert : ");
 	msg += "category '"+n1+"' undeclared";
 	throw(runtime_error(msg));
       }
-      if(!m[l].insert(MVType(n1,n2)).second){
+      if(!m[l].insert({n1,n2}).second){
 	string msg("insert : ");
 	msg += "category '"+n1+"' already declared";
 	throw(runtime_error(msg));
@@ -57,26 +55,22 @@ namespace tfel{
     ConfigParser::execute(std::map<std::string,std::map<std::string,std::string> >& m,
 			  const std::string& f)
     {
-      using namespace std;
-      using namespace tfel::utilities;
-      const_iterator p;
-      const_iterator pe;
       this->openFile(f);
+      auto p  = this->begin();
+      const auto pe = this->end();
       try{
 	this->stripComments();
-	p  = this->begin();
-	pe = this->end();
 	this->checkNotEndOfFile(p);
 	while(p!=pe){
-	  string key;
+	  std::string key;
 	  this->readString(key,p);
 	  insert(m,key);
 	  this->checkNotEndOfFile(p);
 	  this->readSpecifiedToken("{",p);
 	  this->checkNotEndOfFile(p);
 	  while(p->value!="}"){
-	    string l;
-	    string v;
+	    std::string l;
+	    std::string v;
 	    this->readString(l,p);
 	    this->checkNotEndOfFile(p);
 	    this->readSpecifiedToken(":",p);
@@ -87,8 +81,7 @@ namespace tfel{
 	    if(p->value!="}"){
 	      this->readSpecifiedToken(",",p);
 	      if(p->value!="}"){
-		string msg("ConfigParser::execute");
-		throw(runtime_error(msg));
+		throw(std::runtime_error("ConfigParser::execute"));
 	      }
 	    }
 	    insert(m,key,v,l);
@@ -97,20 +90,19 @@ namespace tfel{
 	  this->checkNotEndOfFile(p);
 	  this->readSpecifiedToken(";",p);
 	}
-      } catch(exception& e){
-	ostringstream msg;
+      } catch(std::exception& e){
+	std::ostringstream msg;
 	msg << "ConfigParser::execute : "
 	    << e.what();
 	if(p!=this->end()){
 	  msg << "\nError at line " << p->line
 	      << " of file '" << f << "'";
 	}
-	throw(runtime_error(msg.str()));
+	throw(std::runtime_error(msg.str()));
       }
     } // end of ConfigParser::execute
 
-    ConfigParser::~ConfigParser() noexcept
-    {} // end of ConfigParser::~ConfigParser
+    ConfigParser::~ConfigParser() noexcept = default;
 
   } // end of namespace utilities
 

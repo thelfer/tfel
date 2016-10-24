@@ -25,8 +25,7 @@ namespace tfel{
 	return "eigen value computation failed";
       }
 
-      StensorEigenValuesComputationFailureException::~StensorEigenValuesComputationFailureException() noexcept
-      {} // end of StensorEigenValuesComputationFailureException::~StensorEigenValuesComputationFailureException
+      StensorEigenValuesComputationFailureException::~StensorEigenValuesComputationFailureException() noexcept = default;
 
     } // end of namespace internals
   } // end of namespace math

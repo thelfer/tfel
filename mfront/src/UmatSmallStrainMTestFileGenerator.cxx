@@ -119,8 +119,7 @@ namespace mfront
     os << endl;
   } // end of UmatSmallStrainMTestFileGenerator::writeDrivingVariables
   
-  UmatSmallStrainMTestFileGenerator::~UmatSmallStrainMTestFileGenerator()
-  {} // end of UmatSmallStrainMTestFileGenerator::UmatSmallStrainMTestFileGenerator
+  UmatSmallStrainMTestFileGenerator::~UmatSmallStrainMTestFileGenerator() = default;
 
 } // end of namespace mfront
 

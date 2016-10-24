@@ -430,12 +430,11 @@ namespace mfront{
     out << "mg.setModellingHypothesis(cyrano::getModellingHypothesis(*NDI));\n";
   }
   
-  CyranoInterface::~CyranoInterface()
-  {}
+  CyranoInterface::~CyranoInterface() = default;
 
   void
   CyranoInterface::getTargetsDescription(TargetsDescription& d,
-				       const BehaviourDescription& bd){
+					 const BehaviourDescription& bd){
     const auto lib  = CyranoInterface::getLibraryName(bd);
     const auto name = ((!bd.getLibrary().empty()) ? bd.getLibrary() : "") + bd.getClassName();
 #ifdef _WIN32

@@ -28,22 +28,21 @@ static bool is(const boost::python::object& o){
 static boost::python::object
 convert_data_to_python_object(const tfel::utilities::Data& d)
 {
-  using namespace std;
   using namespace boost::python;
   using namespace tfel::utilities;
   if(d.is<int>()){
     return object(d.get<int>());
   } else if(d.is<double>()){
     return object(d.get<double>());
-  } else if(d.is<string>()){
-    return object(d.get<string>());
-  } else if(d.is<vector<Data> >()){
-    return object(d.get<vector<Data> >());
-  } else if(d.is<map<string,Data>>()){
-    return object(d.get<map<string,Data>>());
+  } else if(d.is<std::string>()){
+    return object(d.get<std::string>());
+  } else if(d.is<std::vector<Data> >()){
+    return object(d.get<std::vector<Data> >());
+  } else if(d.is<std::map<std::string,Data>>()){
+    return object(d.get<std::map<std::string,Data>>());
   }
-  throw(runtime_error("convert_data_to_python_object: "
-		      "unsupported conversion"));
+  throw(std::runtime_error("convert_data_to_python_object: "
+			   "unsupported conversion"));
 } // end of convert_data_to_python_object
 
 static void
@@ -80,8 +79,8 @@ static void data_add_def(boost::python::class_<tfel::utilities::Data>& w,
 {
   using namespace boost::python;
   using namespace tfel::utilities;
-  bool (Data:: *is_ptr)(void) const = &Data::is<T>;
-  const T& (Data:: *get_ptr)(void) const = &Data::get<T>;
+  bool (Data:: *is_ptr)() const = &Data::is<T>;
+  const T& (Data:: *get_ptr)() const = &Data::get<T>;
   w.def(("is"+n).c_str(),is_ptr)
     .def(("get"+n).c_str(),get_ptr,
 	 return_value_policy<copy_const_reference>());

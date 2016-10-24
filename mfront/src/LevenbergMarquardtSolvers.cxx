@@ -256,27 +256,21 @@ namespace mfront{
     out << "}\n";
   } // end of MFrontLevenbergMarquartSolverBase::writeResolutionAlgorithm
 
-  MFrontLevenbergMarquartSolverBase::~MFrontLevenbergMarquartSolverBase()
-  {} // end of  MFrontLevenbergMarquartSolverBase::~MFrontLevenbergMarquartSolverBase()
+  MFrontLevenbergMarquartSolverBase::~MFrontLevenbergMarquartSolverBase() = default;
 
-
-  bool
-  MFrontLevenbergMarquartSolver::requiresNumericalJacobian() const
+  bool MFrontLevenbergMarquartSolver::requiresNumericalJacobian() const
   {
     return false;
   }
 
-  MFrontLevenbergMarquartSolver::~MFrontLevenbergMarquartSolver()
-  {} // end of MFrontLevenbergMarquartSolver::~MFrontLevenbergMarquartSolver
+  MFrontLevenbergMarquartSolver::~MFrontLevenbergMarquartSolver() = default;
 
-  bool
-  MFrontLevenbergMarquartNumericalJacobianSolver::requiresNumericalJacobian() const
+  bool MFrontLevenbergMarquartNumericalJacobianSolver::requiresNumericalJacobian() const
   {
     return true;
   }
 
-  MFrontLevenbergMarquartNumericalJacobianSolver::~MFrontLevenbergMarquartNumericalJacobianSolver()
-  {} // end of MFrontLevenbergMarquartSolver::~MFrontLevenbergMarquartSolver
+  MFrontLevenbergMarquartNumericalJacobianSolver::~MFrontLevenbergMarquartNumericalJacobianSolver() = default;
   
 } // end of namespace mfront
 

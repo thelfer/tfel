@@ -1124,9 +1124,6 @@ namespace mfront{
     out << "#include\"MFront/Castem/Castem.hxx\"\n\n";
   } // end of CastemInterface::writeInterfaceSpecificIncludes
 
-  CastemInterface::~CastemInterface()
-  {}
-
   void
   CastemInterface::getTargetsDescription(TargetsDescription& d,
 					 const BehaviourDescription& bd)
@@ -2145,5 +2142,7 @@ namespace mfront{
     test << "*NDI==" << getCastemModellingHypothesisIndex(h);
     return test.str();
   }
+
+  CastemInterface::~CastemInterface() = default;
 
 } // end of namespace mfront

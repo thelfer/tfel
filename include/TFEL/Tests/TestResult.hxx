@@ -101,7 +101,7 @@ namespace tfel
       /*!
        * \return test duration
        */
-      double duration(void) const;
+      double duration() const;
       //! destructor
       ~TestResult();
     private:

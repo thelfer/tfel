@@ -21,51 +21,38 @@ namespace mfront{
   std::vector<std::string>
   MFrontBroydenSolverBase::getReservedNames() const
   {
-    using namespace std;
-    vector<string> n;
+    auto n = std::vector<std::string>{};
     if(this->usesPowellDogLegAlgorithm()){
-      const vector<string>& n2 =
-	PowellDogLegAlgorithmBase::getReservedNames();
+      const auto& n2 = PowellDogLegAlgorithmBase::getReservedNames();
       n.insert(n.end(),n2.begin(),n2.end());
-      n.push_back("tjacobian");
-      n.push_back("tfzeros");
-      n.push_back("integrate_one_half");
+      n.insert(n.end(),{"tjacobian","tfzeros","integrate_one_half"});
     }
-    n.push_back("jacobian2");
-    n.push_back("fzeros2");
-    n.push_back("Dzeros");
-    n.push_back("broyden_inv");
-    n.push_back("integrate_one_half");
-    n.push_back("computeFdF_ok");
+    n.insert(n.end(),{"jacobian2","fzeros2","Dzeros",
+	  "broyden_inv","integrate_one_half","computeFdF_ok"});
     return n;
   } // end of MFrontBroydenSolverBase::getReservedNames
 
-  bool
-  MFrontBroydenSolverBase::usesJacobian() const
+  bool MFrontBroydenSolverBase::usesJacobian() const
   {
     return true;
   } // end of MFrontBroydenSolverBase::usesJacobian
 
-  bool
-  MFrontBroydenSolverBase::usesJacobianInvert() const
+  bool MFrontBroydenSolverBase::usesJacobianInvert() const
   {
     return true;
   } // end of MFrontBroydenSolverBase::usesJacobianInvert
 
-  bool
-  MFrontBroydenSolverBase::requiresNumericalJacobian() const
+  bool MFrontBroydenSolverBase::requiresNumericalJacobian() const
   {
     return false;
   }
 
-  bool
-  MFrontBroydenSolverBase::allowsJacobianInitialisation() const
+  bool MFrontBroydenSolverBase::allowsJacobianInitialisation() const
   {
     return true;
   }
 
-  bool
-  MFrontBroydenSolverBase::allowsJacobianInvertInitialisation() const
+  bool MFrontBroydenSolverBase::allowsJacobianInvertInitialisation() const
   {
     return false;
   }
@@ -102,10 +89,9 @@ namespace mfront{
 						const Hypothesis) const
   {} // end of MFrontBroydenSolverBase::writeSpecificMembers
 
-  void
-  MFrontBroydenSolverBase::writeSpecificInitializeMethodPart(std::ostream& out,
-							     const BehaviourDescription& mb,
-							     const Hypothesis h) const
+  void MFrontBroydenSolverBase::writeSpecificInitializeMethodPart(std::ostream& out,
+								  const BehaviourDescription& mb,
+								  const Hypothesis h) const
   {
     const auto& d = mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
@@ -227,22 +213,18 @@ namespace mfront{
   MFrontBroydenSolverBase::~MFrontBroydenSolverBase()
   {} // end of  MFrontBroydenSolverBase::~MFrontBroydenSolverBase()
 
-  bool
-  MFrontBroydenSolver::usesPowellDogLegAlgorithm() const
+  bool MFrontBroydenSolver::usesPowellDogLegAlgorithm() const
   {
     return false;
   }
 
-  MFrontBroydenSolver::~MFrontBroydenSolver()
-  {} // end of MFrontBroydenSolver::~MFrontBroydenSolver
+  MFrontBroydenSolver::~MFrontBroydenSolver() = default;
 
-  bool
-  MFrontPowellDogLegBroydenSolver::usesPowellDogLegAlgorithm() const
+  bool MFrontPowellDogLegBroydenSolver::usesPowellDogLegAlgorithm() const
   {
     return true;
   }
 
-  MFrontPowellDogLegBroydenSolver::~MFrontPowellDogLegBroydenSolver()
-  {} // end of MFrontBroydenSolver::~MFrontPowellDogLegBroydenSolver
+  MFrontPowellDogLegBroydenSolver::~MFrontPowellDogLegBroydenSolver() = default;
   
 } // end of namespace mfront

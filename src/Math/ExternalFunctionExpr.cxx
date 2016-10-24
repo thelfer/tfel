@@ -110,7 +110,7 @@ namespace tfel
         vector<shared_ptr<Expr> >::const_iterator p3;
         vector<shared_ptr<Expr> >::iterator p4;
 	unsigned short i = 0;
-	if(args.size()==0){
+	if(args.empty()){
 	  return shared_ptr<Expr>(new Number(0.));
 	}
 	p2=this->manager->find(this->name);
@@ -176,7 +176,7 @@ namespace tfel
 	vector<string>::size_type i;
 	std::shared_ptr<ExternalFunction> nf;
 	ExternalFunctionManager::iterator pf;
-	if(this->args.size()==0){
+	if(this->args.empty()){
 	  if(find(params.begin(),params.end(),this->name)!=params.end()){
 	    p3 = pos.find(this->name);
 	    if(p3==pos.end()){
@@ -230,7 +230,7 @@ namespace tfel
       void
       ExternalFunctionExpr::getParametersNames(std::set<std::string>& p) const
       {
-	if(this->args.size()==0){
+	if(this->args.empty()){
 	  p.insert(this->name);
 	} else {
 	  auto pf = this->manager->find(this->name);

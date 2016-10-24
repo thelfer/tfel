@@ -20,8 +20,6 @@ namespace mfront{
   LawFunction::LawFunction(const LawFunction&) = default;
   LawFunction& LawFunction::operator=(LawFunction&&) = default;
   LawFunction& LawFunction::operator=(const LawFunction&) = default;
-  
-  LawFunction::~LawFunction()
-  {} // end of LawFunction::~LawFunction
+  LawFunction::~LawFunction() = default;
 
 } // end of namespace mfront

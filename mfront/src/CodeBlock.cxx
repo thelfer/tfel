@@ -22,5 +22,5 @@ namespace mfront{
   CodeBlock& CodeBlock::operator=(const CodeBlock&) = default;
   CodeBlock::~CodeBlock() = default;
 
-}
+} // end of namespace mfront
 
