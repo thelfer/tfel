@@ -156,19 +156,15 @@ namespace mfront{
     }
   }
   
-  void
-  BehaviourData::throwUndefinedAttribute(const std::string& n)
+  void BehaviourData::throwUndefinedAttribute(const std::string& n)
   {
     throw(std::runtime_error("BehaviourData::getAttribute : "
 			     "no attribute named '"+n+"'"));
   } // end of BehaviourData::throwUndefinedAttribute
   
-  BehaviourData::CodeBlocksAggregator::CodeBlocksAggregator()
-    : is_mutable(true)
-  {} // end of BehaviourData::CodeBlocksAggregator::CodeBlocksAggregator
+  BehaviourData::CodeBlocksAggregator::CodeBlocksAggregator() = default;
 
-  bool
-  BehaviourData::CodeBlocksAggregator::isMutable() const
+  bool BehaviourData::CodeBlocksAggregator::isMutable() const
   {
     return this->is_mutable;
   } // end of BehaviourData::CodeBlocksAggregator::isMutable
@@ -281,8 +277,7 @@ namespace mfront{
     this->set(c,p,b);
   } // end of BehaviourData::CodeBlocksAggregator::set
 
-  void
-  BehaviourData::CodeBlocksAggregator::check() const
+  void BehaviourData::CodeBlocksAggregator::check() const
   {
     if(!this->is_mutable){
       throw(std::runtime_error("BehaviourData::CodeBlocksAggregator::set : "
@@ -457,8 +452,7 @@ namespace mfront{
     return !this->parameters.empty();
   }
 
-  bool
-  BehaviourData::isMemberUsedInCodeBlocks(const std::string& v) const
+  bool BehaviourData::isMemberUsedInCodeBlocks(const std::string& v) const
   {
     for(const auto& c : this->cblocks){
       const auto& m = c.second.get().members;
@@ -855,31 +849,28 @@ namespace mfront{
 			     "no variable named '"+n+"'"));
   } // end of BehaviourData::checkVariableName
 
-  void
-  BehaviourData::setCode(const std::string& n,
-			 const CodeBlock& c,
-			 const Mode m,
-			 const Position p,
-			 const bool b)
+  void BehaviourData::setCode(const std::string& n,
+			      const CodeBlock& c,
+			      const Mode m,
+			      const Position p,
+			      const bool b)
   {
-    using namespace std;
     auto pc = this->cblocks.find(n);
     if(pc==this->cblocks.end()){
       pc = this->cblocks.insert({n,CodeBlocksAggregator{}}).first;
     } else {
       if(m==CREATE){
-	string msg("BehaviourData::setCode : "
-		   "a code block named '"+n+"' already exists.\n"
-		   "If you wanted to append this new code to the "
-		   "existing one, you shall use the 'Append' option.\n"
-		   "You can also replace it with 'Replace' option "
-		   "(assuming you know what you are doing).\n");
-	throw(runtime_error(msg));
+	throw(std::runtime_error("BehaviourData::setCode : "
+				 "a code block named '"+n+"' already exists.\n"
+				 "If you wanted to append this new code to the "
+				 "existing one, you shall use the 'Append' option.\n"
+				 "You can also replace it with 'Replace' option "
+				 "(assuming you know what you are doing).\n"));
       } else if(m==CREATEORREPLACE){
 	if(!pc->second.isMutable()){
-	  string msg("BehaviourData::setCode : "
-		     "the code block named '"+n+"' is not modifiable");
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("BehaviourData::setCode: "
+				   "the code block named '"+n+"' "
+				   "is not modifiable"));
 	}
 	this->cblocks.erase(pc);
 	pc = this->cblocks.insert({n,CodeBlocksAggregator{}}).first;
@@ -889,7 +880,6 @@ namespace mfront{
     }
     pc->second.set(c,p,b);
   } // end of BehaviourData::setCode
-
 
   const CodeBlock&
   BehaviourData::getCodeBlock(const std::string& n) const
@@ -904,8 +894,8 @@ namespace mfront{
 
   std::string
   BehaviourData::getCode(const std::string& n,
-				   const std::string& cn,
-				   const bool b) const
+			 const std::string& cn,
+			 const bool b) const
   {
     if(!b){
       return this->getCodeBlock(n).code;

@@ -47,6 +47,12 @@ namespace tfel{
 	}
 	return true;
       };
+      if(p->value=="true"){
+	return Data(true);
+      }
+      if(p->value=="false"){
+	return Data(false);
+      }
       if(p->flag==Token::String){
 	return Data(CxxTokenizer::readString(p,pe));
       }
@@ -97,7 +103,14 @@ namespace tfel{
       CxxTokenizer::checkNotEndOfLine("Data::read",p,pe);
       std::map<std::string,Data> r;
       while(p->value!="}"){
-	const auto k = CxxTokenizer::readString(p,pe);
+	const auto k = [&p,pe](){
+	  if(p->flag!=Token::String){
+	    auto c = p;
+	    ++p;
+	    return c->value;
+	  }
+	  return CxxTokenizer::readString(p,pe);
+	}();
 	CxxTokenizer::readSpecifiedToken("Data::read",":",p,pe);
 	const auto v = Data::read(p,pe);
 	if(p->value==","){
@@ -123,21 +136,16 @@ namespace tfel{
 	++p;
 	// vector or map
 	CxxTokenizer::checkNotEndOfLine("Data::read",p,pe);
-	if(p->flag==Token::String){
-	  // map or string vector
-	  ++p;
-	  CxxTokenizer::checkNotEndOfLine("Data::read",p,pe);
-	  if(p->value==":"){
-	    p = std::prev(p,2);
-	    return read_map(p,pe);
-	  } else {
-	    throw_if((p->value!=",")&&(p->value!="}"),
-		     "expected ',' or ':' or '}', read '"+p->value+"'");
-	    p = std::prev(p,2);
-	    return read_vector(p,pe);
-	  }
+	// map or string vector
+	++p;
+	CxxTokenizer::checkNotEndOfLine("Data::read",p,pe);
+	if(p->value==":"){
+	  p = std::prev(p,2);
+	  return read_map(p,pe);
 	} else {
-	  p = std::prev(p,1);
+	  throw_if((p->value!=",")&&(p->value!="}"),
+		   "expected ',' or ':' or '}', read '"+p->value+"'");
+	  p = std::prev(p,2);
 	  return read_vector(p,pe);
 	}
       } else {
@@ -164,8 +172,14 @@ namespace tfel{
       CxxTokenizer::readSpecifiedToken("Data::parse","{",p,pe);
       CxxTokenizer::checkNotEndOfLine("Data::parse",p,pe);
       while(p->value!="}"){
-	throw_if(p->flag!=Token::String,"expected a string");
-	const auto k = CxxTokenizer::readString(p,pe);
+	const auto k = [&p,pe](){
+	  if(p->flag!=Token::String){
+	    auto c = p;
+	    ++p;
+	    return c->value;
+	  }
+	  return CxxTokenizer::readString(p,pe);
+	}();
 	auto c = get(k);
 	CxxTokenizer::readSpecifiedToken("Data::parse",":",p,pe);
 	CxxTokenizer::checkNotEndOfLine("Data::parse",p,pe);

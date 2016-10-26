@@ -29,10 +29,12 @@
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/VariableDescription.hxx"
 #include"MFront/StaticVariableDescription.hxx"
-#include"MFront/MaterialPropertyDescription.hxx"
 
 namespace mfront
 {
+
+  // forward declaration
+  struct MaterialPropertyDescription;
 
   /*!
    * base structure for domain specific languages
@@ -373,58 +375,42 @@ namespace mfront
      * \param[in] f : file in which the material law is
      * implemented. This must be the full path.
      */
-    virtual MaterialPropertyDescription
-    handleMaterialLaw(const std::string&);
-    /*!
-     * \return the material property description generated from
-     * a mfront files. The file is searched using the SearchFile class.
-     * \param[in] files: list of files
-     * \note this method calls handleMaterialLaw method internally.
-     */
-    std::shared_ptr<MaterialPropertyDescription>
-    getMaterialPropertyDescription(const std::string&);
-    /*!
-     * \return the material property description generated from a list of mfront files
-     * \param[in] files: list of files
-     * \note this is a small wrapper aroung getMaterialPropertyDescription
-     */
-    virtual std::vector<std::shared_ptr<MaterialPropertyDescription>>
-    getMaterialPropertiesDescriptions(const std::vector<std::string>&);
-
-    virtual void
-    treatMFront(void);
-    virtual void
-    treatImport(void);
-    virtual void
-    treatMaterialLaw(void);
-    virtual void
-    treatLink(void);
-    virtual void
-    treatAuthor(void);
+    virtual std::shared_ptr<MaterialPropertyDescription>
+    handleMaterialPropertyDescription(const std::string&);
+    //! handle keyword @
+    virtual void treatMFront(void);
+    //! handle keyword @
+    virtual void treatImport(void);
+    //! handle keyword @
+    virtual void treatMaterialLaw(void);
+    //! handle keyword @
+    virtual void treatLink(void);
+    //! handle keyword @
+    virtual void treatAuthor(void);
     //! treat an unknown keyword
     virtual void treatUnknownKeyword(void);
-    virtual void
-    treatDate(void);
-    virtual void
-    treatIncludes(void);
-    virtual void
-    treatSources(void);
-    virtual void
-    treatPrivate(void);
-    virtual void
-    treatMembers(void);
-    virtual void
-    treatParser(void);
-    virtual void
-    treatStaticVar(void);
-    virtual void
-    treatIntegerConstant(void);
-    virtual void
-    treatDescription(void);
-    virtual void
-    ignoreKeyWord(const std::string&);
-    virtual void
-    treatLonelySeparator(void);
+    //! handle keyword @
+    virtual void treatDate(void);
+    //! handle keyword @
+    virtual void treatIncludes(void);
+    //! handle keyword @
+    virtual void treatSources(void);
+    //! handle keyword @
+    virtual void treatPrivate(void);
+    //! handle keyword @
+    virtual void treatMembers(void);
+    //! handle keyword @
+    virtual void treatParser(void);
+    //! handle keyword @
+    virtual void treatStaticVar(void);
+    //! handle keyword @
+    virtual void treatIntegerConstant(void);
+    //! handle keyword @
+    virtual void treatDescription(void);
+    //! handle keyword @
+    virtual void ignoreKeyWord(const std::string&);
+    //! handle keyword @
+    virtual void treatLonelySeparator(void);
     /*!
      * \brief this method must be called at the end of the treatment:
      * - to set each libraries defined the auxiliary targets as

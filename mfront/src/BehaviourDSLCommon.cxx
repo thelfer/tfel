@@ -45,6 +45,7 @@
 #include"MFront/AbstractBehaviourBrick.hxx"
 #include"MFront/AbstractBehaviourBrickFactory.hxx"
 #include"MFront/TargetsDescription.hxx"
+#include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/ModelDSL.hxx"
 #include"MFront/MFrontModelInterface.hxx"
 #include"MFront/BehaviourDSLCommon.hxx"
@@ -86,8 +87,7 @@ namespace mfront{
     return this->mb;
   } // end of BehaviourDSLCommon::getBehaviourDescription
 
-  std::string
-  BehaviourDSLCommon::getClassName() const
+  std::string BehaviourDSLCommon::getClassName() const
   {
     return this->mb.getClassName();
   } // end of BehaviourDSLCommon::getClassName
@@ -107,26 +107,23 @@ namespace mfront{
     this->mb.appendToMembers(ModellingHypothesis::UNDEFINEDHYPOTHESIS,c,true);
   } // end of BehaviourDSLCommon::appendToMembers
 
-  void
-  BehaviourDSLCommon::appendToPrivateCode(const std::string& c)
+  void BehaviourDSLCommon::appendToPrivateCode(const std::string& c)
   {
     this->mb.appendToPrivateCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,c,true);
   } // end of BehaviourDSLCommon::appendToPrivateCode
 
-  void
-  BehaviourDSLCommon::appendToSources(const std::string& c)
+  void BehaviourDSLCommon::appendToSources(const std::string& c)
   {
     this->mb.appendToSources(c);
   } // end of BehaviourDSLCommon::appendToSources
 
-  void
-  BehaviourDSLCommon::appendToHypothesesList(std::set<Hypothesis>& h,
-					     const std::string& v) const
+  void BehaviourDSLCommon::appendToHypothesesList(std::set<Hypothesis>& h,
+						  const std::string& v) const
   {
     if(v==".+"){
       const auto& ash = ModellingHypothesis::getModellingHypotheses();
-      for(const auto & elem : ash){
-	this->appendToHypothesesList(h,ModellingHypothesis::toString(elem));
+      for(const auto & lh : ash){
+	this->appendToHypothesesList(h,ModellingHypothesis::toString(lh));
       }
     } else {
       const auto nh = ModellingHypothesis::fromString(v);
@@ -151,9 +148,8 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::appendToHypothesesList
 
-  void
-  BehaviourDSLCommon::readCodeBlockOptions(CodeBlockOptions& o,
-					      const bool s)
+  void BehaviourDSLCommon::readCodeBlockOptions(CodeBlockOptions& o,
+						const bool s)
   {
     using namespace tfel::utilities;
     using namespace tfel::material;
@@ -237,6 +233,11 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::readCodeBlockOptions
 
+  std::shared_ptr<MaterialPropertyDescription>
+  BehaviourDSLCommon::handleMaterialPropertyDescription(const std::string& f){
+    return DSLBase::handleMaterialPropertyDescription(f);
+  } // end of BehaviourDSLCommon::handleMaterialPropertyDescription
+  
   ModelDescription
   BehaviourDSLCommon::getModelDescription(const std::string& f){
     if(getVerboseMode()>=VERBOSE_DEBUG){
@@ -369,8 +370,7 @@ namespace mfront{
     this->completeTargetsDescription();
   }
 
-  void
-  BehaviourDSLCommon::endsInputFileProcessing()
+  void BehaviourDSLCommon::endsInputFileProcessing()
   {
     using namespace mfront::bbrick;
     const auto& g = tfel::glossary::Glossary::getGlossary();
@@ -437,7 +437,7 @@ namespace mfront{
 	if(this->mb.hasSpecialisedMechanicalData(h)){
 	  log << " (specialised)";
 	}
-	log << std::endl;	    
+	log << '\n';	    
       }
     }
     // time step scaling factors
@@ -600,36 +600,36 @@ namespace mfront{
     using namespace tfel::glossary;
     const auto& glossary = Glossary::getGlossary();
     auto& log = getLogStream();
-    for(const auto & elem : v){
+    for(const auto & vd : v){
       if(b1){
-	const auto p = uv.find(elem.name);
+	const auto p = uv.find(vd.name);
 	if(p==uv.end()){
-	  log << "- " << t << " '" << elem.name << "' is unused.\n";
+	  log << "- " << t << " '" << vd.name << "' is unused.\n";
 	} else {
 	  if(b4&&p->second==1){
-	    log << "- " << t << " '" << elem.name << "' is used in one code block only.\n";
+	    log << "- " << t << " '" << vd.name << "' is used in one code block only.\n";
 	  }
 	}
       }
       if(b2){
-	if(uv.find("d"+elem.name)==uv.end()){
-	  log << "- " << t << " increment 'd" << elem.name << "' is unused.\n";
+	if(uv.find("d"+vd.name)==uv.end()){
+	  log << "- " << t << " increment 'd" << vd.name << "' is unused.\n";
 	}
       }
       if(b3){
-	if((!md.hasGlossaryName(elem.name))&&
-	   (!md.hasEntryName(elem.name))){
-	  log << "- " << t << " '" << elem.name << "' has no glossary name.\n";
+	if((!md.hasGlossaryName(vd.name))&&
+	   (!md.hasEntryName(vd.name))){
+	  log << "- " << t << " '" << vd.name << "' has no glossary name.\n";
 	}
       }
-      if(elem.description.empty()){
+      if(vd.description.empty()){
 	auto hasDoc = false;
-	if(md.hasGlossaryName(elem.name)){
-	  const auto& e = glossary.getGlossaryEntry(md.getExternalName(elem.name));
+	if(md.hasGlossaryName(vd.name)){
+	  const auto& e = glossary.getGlossaryEntry(md.getExternalName(vd.name));
 	  hasDoc = (!e.getShortDescription().empty()) || (!e.getDescription().empty());
 	}
 	if(!hasDoc){
-	  log << "- " << t << " '" << elem.name << "' has no description.\n";
+	  log << "- " << t << " '" << vd.name << "' has no description.\n";
 	}
       }
     }
@@ -645,9 +645,9 @@ namespace mfront{
 			const std::map<std::string,unsigned short>& uv)
   {
     auto& log = getLogStream();
-    for(const auto & elem : v){
-      if(uv.find(elem.name)==uv.end()){
-	log << "- static variable '" << elem.name << "' is unused.\n";
+    for(const auto & vd : v){
+      if(uv.find(vd.name)==uv.end()){
+	log << "- static variable '" << vd.name << "' is unused.\n";
       }
     }      
   }
@@ -708,8 +708,7 @@ namespace mfront{
     log << "\n# End of pedantic checks\n";
   } // end of BehaviourDSLCommon::pedanticChecks
 
-  void 
-  BehaviourDSLCommon::generateOutputFiles()
+  void BehaviourDSLCommon::generateOutputFiles()
   {
     tfel::system::systemCall::mkdir("src");
     tfel::system::systemCall::mkdir("include");
@@ -785,35 +784,35 @@ namespace mfront{
       }
       this->writeBehaviourClass(h);
     }
-    for(const auto & elem : hh){
-      if(mb.hasSpecialisedMechanicalData(elem)){
+    for(const auto & h : hh){
+      if(mb.hasSpecialisedMechanicalData(h)){
 	if(getVerboseMode()>=VERBOSE_DEBUG){
 	  auto& log = getLogStream();
 	  log << "BehaviourDSLCommon::writeOutputFiles : "
-	      << "treating hypothesis '" << ModellingHypothesis::toString(elem)
+	      << "treating hypothesis '" << ModellingHypothesis::toString(h)
 	      << "'\n";
 	}
 	// Generating BehaviourData's outputClass
 	if(getVerboseMode()>=VERBOSE_DEBUG){
 	  auto& log = getLogStream();
 	  log << "BehaviourDSLCommon::writeOutputFiles : writing behaviour data "
-	      << "for hypothesis '" << ModellingHypothesis::toString(elem) << "'\n";
+	      << "for hypothesis '" << ModellingHypothesis::toString(h) << "'\n";
 	}
-	this->writeBehaviourDataClass(elem);
+	this->writeBehaviourDataClass(h);
 	// Generating IntegrationData's outputClass
 	if(getVerboseMode()>=VERBOSE_DEBUG){
 	  auto& log = getLogStream();
 	  log << "BehaviourDSLCommon::writeOutputFiles : writing integration data "
-	      << "for hypothesis '" << ModellingHypothesis::toString(elem) << "'\n";
+	      << "for hypothesis '" << ModellingHypothesis::toString(h) << "'\n";
 	}
-	this->writeIntegrationDataClass(elem);
+	this->writeIntegrationDataClass(h);
 	// Generating behaviour's outputClass
 	if(getVerboseMode()>=VERBOSE_DEBUG){
 	  auto& log = getLogStream();
 	  log << "BehaviourDSLCommon::writeOutputFiles : writing behaviour class "
-	      << "for hypothesis '" << ModellingHypothesis::toString(elem) << "'\n";
+	      << "for hypothesis '" << ModellingHypothesis::toString(h) << "'\n";
 	}
-	this->writeBehaviourClass(elem);
+	this->writeBehaviourClass(h);
       }
     }
     this->writeBehaviourDataFileEnd();
@@ -934,7 +933,14 @@ namespace mfront{
     }
     this->checkNotEndOfFile("BehaviourDSLCommon::treatIsTangentOperatorSymmetric : ",
   			    "Expected 'true' or 'false'.");
-    const auto& b = this->readString("BehaviourDSLCommon::treatBehaviourBrick");
+    const auto b = [this](){
+      if(this->current->flag==tfel::utilities::Token::String){
+	return this->readString("BehaviourDSLCommon::treatBehaviourBrick");
+      }
+      const auto r = this->current->value;
+      ++(this->current);
+      return r;
+    }();
     if(this->current->value=="{"){
       data = AbstractBehaviourBrick::Data::read(this->current,this->tokens.end()).get<AbstractBehaviourBrick::DataMap>();
     }
@@ -1095,7 +1101,8 @@ namespace mfront{
 					      const tfel::utilities::Token& t){
     if(t.flag==tfel::utilities::Token::String){
       BehaviourDescription::ComputedMaterialProperty mp;
-      mp.mpd = this->getMaterialPropertyDescription(t.value.substr(1,t.value.size()-2));
+      const auto f = t.value.substr(1,t.value.size()-2);
+      mp.mpd = this->handleMaterialPropertyDescription(f);
       return mp;
     }
     BehaviourDescription::ConstantMaterialProperty mp;
@@ -1495,8 +1502,7 @@ namespace mfront{
     this->mb.setElasticSymmetryType(mfront::ISOTROPIC);
   } // end of BehaviourDSLCommon::treatIsotropicElasticBehaviour
 
-  void
-  BehaviourDSLCommon::treatRequireStiffnessOperator()
+  void BehaviourDSLCommon::treatRequireStiffnessOperator()
   {
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       getLogStream() << "BehaviourDSLCommon::treatRequireStiffnessOperator : "
@@ -1506,8 +1512,7 @@ namespace mfront{
     this->treatRequireStiffnessTensor();
   } // end of BehaviourDSLCommon::treatRequireStiffnessOperator
 
-  void
-  BehaviourDSLCommon::treatStiffnessTensorOption()
+  void BehaviourDSLCommon::treatStiffnessTensorOption()
   {
     this->readSpecifiedToken("BehaviourDSLCommon::treatStiffnessTensorOption","<");
     this->checkNotEndOfFile("BehaviourDSLCommon::treatStiffnessTensorOption");
@@ -2670,38 +2675,38 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourForwardDeclarations()
   {
     this->checkBehaviourFile();
-    this->behaviourFile << "// Forward Declaration\n";
-    this->behaviourFile << "template<ModellingHypothesis::Hypothesis,typename Type,bool use_qt>\n";
-    this->behaviourFile << "class " << this->mb.getClassName() << ";\n\n";
+    this->behaviourFile << "// Forward Declaration\n"
+			<< "template<ModellingHypothesis::Hypothesis,typename Type,bool use_qt>\n"
+			<< "class " << this->mb.getClassName() << ";\n\n";
     if(this->mb.useQt()){
-      this->behaviourFile << "// Forward Declaration\n";
-      this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
-      this->behaviourFile << "std::ostream&\n operator <<(std::ostream&,";
-      this->behaviourFile << "const " << this->mb.getClassName() << "<hypothesis,Type,use_qt>&);\n\n";
+      this->behaviourFile << "// Forward Declaration\n"
+			  << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
+			  << "std::ostream&\n operator <<(std::ostream&,"
+			  << "const " << this->mb.getClassName() << "<hypothesis,Type,use_qt>&);\n\n";
     } else {
-      this->behaviourFile << "// Forward Declaration\n";
-      this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
-      this->behaviourFile << "std::ostream&\n operator <<(std::ostream&,";
-      this->behaviourFile << "const " << this->mb.getClassName() << "<hypothesis,Type,false>&);\n\n";
+      this->behaviourFile << "// Forward Declaration\n"
+			  << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n"
+			  << "std::ostream&\n operator <<(std::ostream&,"
+			  << "const " << this->mb.getClassName() << "<hypothesis,Type,false>&);\n\n";
     }
     // maintenant, il faut déclarer toutes les spécialisations partielles...
-    const auto& h = this->mb.getModellingHypotheses();
-    for(const auto & elem : h){
-      if(this->mb.hasSpecialisedMechanicalData(elem)){
+    const auto& mh = this->mb.getModellingHypotheses();
+    for(const auto & h : mh){
+      if(this->mb.hasSpecialisedMechanicalData(h)){
 	if(this->mb.useQt()){
-	  this->behaviourFile << "// Forward Declaration\n";
-	  this->behaviourFile << "template<typename Type,bool use_qt>\n";
-	  this->behaviourFile << "std::ostream&\n operator <<(std::ostream&,";
-	  this->behaviourFile << "const " << this->mb.getClassName() 
+	  this->behaviourFile << "// Forward Declaration\n"
+			      << "template<typename Type,bool use_qt>\n"
+			      << "std::ostream&\n operator <<(std::ostream&,"
+			      << "const " << this->mb.getClassName() 
 			      << "<ModellingHypothesis::"
-			      << ModellingHypothesis::toUpperCaseString(elem) << ",Type,use_qt>&);\n\n";
+			      << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>&);\n\n";
 	} else {
-	  this->behaviourFile << "// Forward Declaration\n";
-	  this->behaviourFile << "template<typename Type>\n";
-	  this->behaviourFile << "std::ostream&\n operator <<(std::ostream&,";
-	  this->behaviourFile << "const " << this->mb.getClassName() 
+	  this->behaviourFile << "// Forward Declaration\n"
+			      << "template<typename Type>\n"
+			      << "std::ostream&\n operator <<(std::ostream&,"
+			      << "const " << this->mb.getClassName() 
 			      << "<ModellingHypothesis::"
-			      << ModellingHypothesis::toUpperCaseString(elem) << ",Type,false>&);\n\n";
+			      << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>&);\n\n";
 	}
       }
     }
@@ -3022,8 +3027,7 @@ namespace mfront{
     this->mb.addStressFreeExpansion(uh,AxialGrowth{s});
   } // end of BehaviourDSLCommon::treatAxialGrowth
   
-  void
-  BehaviourDSLCommon::writeBehaviourUpdateIntegrationVariables(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourUpdateIntegrationVariables(const Hypothesis h)
   {
     const auto& d = this->mb.getBehaviourData(h);
     this->checkBehaviourFile();
@@ -3037,8 +3041,8 @@ namespace mfront{
       for(const auto& v : d.getIntegrationVariables()){
 	if(!d.isStateVariableName(v.name)){
 	  if(d.isMemberUsedInCodeBlocks(v.name)){
-	    this->behaviourFile << "this->"  << v.name << " += ";
-	    this->behaviourFile << "this->d" << v.name << ";\n";
+	    this->behaviourFile << "this->"  << v.name << " += "
+				<< "this->d" << v.name << ";\n";
 	  }
 	}
       }
@@ -3048,8 +3052,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::writeBehaviourUpdateIntegrationVariables
 
-  void
-  BehaviourDSLCommon::writeBehaviourUpdateStateVariables(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourUpdateStateVariables(const Hypothesis h)
   {
     const auto& d = this->mb.getBehaviourData(h);
     this->checkBehaviourFile();
@@ -3061,8 +3064,8 @@ namespace mfront{
     if(!d.getStateVariables().empty()){
       this->behaviourFile << "{\n";
       for(const auto & v : d.getStateVariables()){
-	this->behaviourFile << "this->"  << v.name << " += ";
-	this->behaviourFile << "this->d" << v.name << ";\n";
+	this->behaviourFile << "this->"  << v.name << " += "
+			    << "this->d" << v.name << ";\n";
       }
       this->behaviourFile << "}\n\n";
     } else {
@@ -4892,9 +4895,9 @@ namespace mfront{
 	      for(;pc!=path.end();){
 		const auto converter = *pc;
 		if(++pc==path.end()){
-		  this->behaviourFile << converter.getFinalConversion() << endl;
+		  this->behaviourFile << converter.getFinalConversion() << '\n';
 		} else {
-		  this->behaviourFile << converter.getIntermediateConversion() << endl;
+		  this->behaviourFile << converter.getIntermediateConversion() << '\n';
 		}
 	      }
 	      this->behaviourFile << "return SUCCESS;\n"
@@ -4998,7 +5001,7 @@ namespace mfront{
 	      this->behaviourFile << "bool computeConsistentTangentOperator_" << ktype << "(const SMType smt){\n";
 	      auto pc = path.begin();
 	      this->behaviourFile << "using namespace tfel::math;\n";
-	      this->behaviourFile << "// computing " << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from()) << endl;
+	      this->behaviourFile << "// computing " << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from()) << '\n';
 	      const auto k = convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from());
 	      this->behaviourFile << "this->computeConsistentTangentOperator_" << k << "(smt);\n"
 				  << "const " << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from()) << "<N,stress>"
@@ -5009,9 +5012,9 @@ namespace mfront{
 	      for(;pc!=path.end();){
 		const auto converter = *pc;
 		if(++pc==path.end()){
-		  this->behaviourFile << converter.getFinalConversion() << endl;
+		  this->behaviourFile << converter.getFinalConversion() << '\n';
 		} else {
-		  this->behaviourFile << converter.getIntermediateConversion() << endl;
+		  this->behaviourFile << converter.getIntermediateConversion() << '\n';
 		}
 	      }
 	      this->behaviourFile << "return true;\n"
@@ -5366,43 +5369,41 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeIntegrationDataForwardDeclarations()
   {
-    using namespace std;
     this->checkIntegrationDataFile();
-    this->integrationDataFile << "// Forward Declaration\n";
-    this->integrationDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
-    this->integrationDataFile << "class " << this->mb.getClassName() << "IntegrationData;\n\n";
-
+    this->integrationDataFile << "// Forward Declaration\n"
+			      << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
+			      << "class " << this->mb.getClassName() << "IntegrationData;\n\n";
     if(this->mb.useQt()){
-      this->integrationDataFile << "// Forward Declaration\n";
-      this->integrationDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
-      this->integrationDataFile << "std::ostream&\n operator <<(std::ostream&,";
-      this->integrationDataFile << "const " << this->mb.getClassName() 
+      this->integrationDataFile << "// Forward Declaration\n"
+				<< "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
+				<< "std::ostream&\n operator <<(std::ostream&,"
+				<< "const " << this->mb.getClassName() 
 				<< "IntegrationData<hypothesis,Type,use_qt>&);\n\n";
     } else {
-      this->integrationDataFile << "// Forward Declaration\n";
-      this->integrationDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
-      this->integrationDataFile << "std::ostream&\n operator <<(std::ostream&,";
-      this->integrationDataFile << "const " << this->mb.getClassName() 
+      this->integrationDataFile << "// Forward Declaration\n"
+				<< "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n"
+				<< "std::ostream&\n operator <<(std::ostream&,"
+				<< "const " << this->mb.getClassName() 
 				<< "IntegrationData<hypothesis,Type,false>&);\n\n";
     }
     // maintenant, il faut déclarer toutes les spécialisations partielles...
-    const auto& h = this->mb.getModellingHypotheses();
-    for(const auto & elem : h){
-      if(this->mb.hasSpecialisedMechanicalData(elem)){
+    const auto& mh = this->mb.getModellingHypotheses();
+    for(const auto & h : mh){
+      if(this->mb.hasSpecialisedMechanicalData(h)){
 	if(this->mb.useQt()){
-	  this->integrationDataFile << "// Forward Declaration\n";
-	  this->integrationDataFile << "template<typename Type,bool use_qt>\n";
-	  this->integrationDataFile << "std::ostream&\n operator <<(std::ostream&,";
-	  this->integrationDataFile << "const " << this->mb.getClassName() 
+	  this->integrationDataFile << "// Forward Declaration\n"
+				    << "template<typename Type,bool use_qt>\n"
+				    << "std::ostream&\n operator <<(std::ostream&,"
+				    << "const " << this->mb.getClassName() 
 				    << "IntegrationData<ModellingHypothesis::"
-				    << ModellingHypothesis::toUpperCaseString(elem) << ",Type,use_qt>&);\n\n";
+				    << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>&);\n\n";
 	} else {
-	  this->integrationDataFile << "// Forward Declaration\n";
-	  this->integrationDataFile << "template<typename Type>\n";
-	  this->integrationDataFile << "std::ostream&\n operator <<(std::ostream&,";
-	  this->integrationDataFile << "const " << this->mb.getClassName() 
+	  this->integrationDataFile << "// Forward Declaration\n"
+				    << "template<typename Type>\n"
+				    << "std::ostream&\n operator <<(std::ostream&,"
+				    << "const " << this->mb.getClassName() 
 				    << "IntegrationData<ModellingHypothesis::"
-				    << ModellingHypothesis::toUpperCaseString(elem) << ",Type,false>&);\n\n";
+				    << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>&);\n\n";
 	}
       }
     }
@@ -5433,8 +5434,7 @@ namespace mfront{
 				  << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>\n";
       }
     }
-    this->integrationDataFile << "{\n";
-    this->integrationDataFile << endl;
+    this->integrationDataFile << "{\n\n";
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       this->integrationDataFile << "static " << constexpr_c << " ModellingHypothesis::Hypothesis hypothesis = " 
 				<< "ModellingHypothesis::"
@@ -5506,15 +5506,12 @@ namespace mfront{
   } // end of BehaviourDSLCommon::writeIntegrationDataOutputOperator()
 
   void BehaviourDSLCommon::writeIntegrationDataClassEnd() {    
-    using namespace std;
     this->checkIntegrationDataFile();
     this->integrationDataFile << "}; // end of " << this->mb.getClassName() << "IntegrationData" 
-			      << "class\n";
-    this->integrationDataFile << endl;
+			      << "class\n\n";
   }
 
   void BehaviourDSLCommon::writeIntegrationDataExternalStateVariables(const Hypothesis h) {
-    using namespace std;
     const auto& md = this->mb.getBehaviourData(h);
     this->checkIntegrationDataFile();
     this->writeVariablesDeclarations(this->integrationDataFile,
@@ -5570,36 +5567,32 @@ namespace mfront{
   }
 
   void BehaviourDSLCommon::writeSrcFileHeader(){
-    using namespace std;
     this->checkSrcFile();
-    this->srcFile << "/*!\n";
-    this->srcFile << "* \\file   " << this->srcFileName << endl;
-    this->srcFile << "* \\brief  " << "this file implements the " 
-		  << this->mb.getClassName() << " Behaviour.\n";
-    this->srcFile << "*         File generated by ";
-    this->srcFile << MFrontHeader::getVersionName() << " ";
-    this->srcFile << "version " << MFrontHeader::getVersionNumber();
-    this->srcFile << endl;
+    this->srcFile << "/*!\n"
+		  << "* \\file   " << this->srcFileName << '\n'
+		  << "* \\brief  " << "this file implements the " 
+		  << this->mb.getClassName() << " Behaviour.\n"
+		  << "*         File generated by "
+		  << MFrontHeader::getVersionName() << " "
+		  << "version " << MFrontHeader::getVersionNumber()
+		  << '\n';
     if(!this->authorName.empty()){
-      this->srcFile << "* \\author " << this->authorName << endl;
+      this->srcFile << "* \\author " << this->authorName << '\n';
     }
     if(!this->date.empty()){
-      this->srcFile << "* \\date   " << this->date       << endl;
+      this->srcFile << "* \\date   " << this->date       << '\n';
     }
-    this->srcFile << " */\n";
-    this->srcFile << endl;
+    this->srcFile << " */\n\n";
     if(this->mb.hasParameters()){
-      this->srcFile << "#include<string>\n";
-      this->srcFile << "#include<cstring>\n";
-      this->srcFile << "#include<sstream>\n";
-      this->srcFile << "#include<fstream>\n";
-      this->srcFile << "#include<stdexcept>\n";
-      this->srcFile << endl;
+      this->srcFile << "#include<string>\n"
+		    << "#include<cstring>\n"
+		    << "#include<sstream>\n"
+		    << "#include<fstream>\n"
+		    << "#include<stdexcept>\n\n";
     }
-    this->srcFile << "#include\"" << this->behaviourDataFileName   << "\"\n";
-    this->srcFile << "#include\"" << this->integrationDataFileName << "\"\n";
-    this->srcFile << "#include\"" << this->behaviourFileName       << "\"\n";
-    this->srcFile << endl;
+    this->srcFile << "#include\"" << this->behaviourDataFileName   << "\"\n"
+		  << "#include\"" << this->integrationDataFileName << "\"\n"
+		  << "#include\"" << this->behaviourFileName       << "\"\n\n";
   } // end of BehaviourDSLCommon::writeSrcFileHeader()
 
   void BehaviourDSLCommon::writeSrcFileStaticVariables(const Hypothesis h){
@@ -6006,24 +5999,23 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeSrcFile()
   {
-    using namespace std;
     this->writeSrcFileHeader();
     this->writeSrcFileUserDefinedCode();
     this->writeNamespaceBegin(this->srcFile);
     this->writeSrcFileBehaviourProfiler();
     this->writeSrcFileParametersInitializers();
     // modelling hypotheses handled by the behaviour
-    const auto& h = this->mb.getModellingHypotheses();
-    for(const auto & elem : h){
-      this->writeSrcFileStaticVariables(elem);
+    const auto& mh = this->mb.getModellingHypotheses();
+    for(const auto & h : mh){
+      this->writeSrcFileStaticVariables(h);
     }
     this->writeNamespaceEnd(this->srcFile);
   } // end of BehaviourDSLCommon::writeSrcFile(void)
 
   std::string
   BehaviourDSLCommon::predictionOperatorVariableModifier(const Hypothesis h,
-							    const std::string& var,
-							    const bool addThisPtr)
+							 const std::string& var,
+							 const bool addThisPtr)
   {
     if(this->mb.isIntegrationVariableIncrementName(h,var)){
       this->throwRuntimeError("BehaviourDSLCommon::predictionOperatorVariableModifier : ",
@@ -6037,8 +6029,7 @@ namespace mfront{
 
   void BehaviourDSLCommon::treatProfiling()
   {
-    const bool b = 
-      this->readBooleanValue("BehaviourDSLCommon::treatProfiling");
+    const auto b = this->readBooleanValue("BehaviourDSLCommon::treatProfiling");
     this->readSpecifiedToken("BehaviourDSLCommon::treatProfiling",";");
     this->mb.setAttribute(BehaviourData::profiling,b,false);
   } // end of BehaviourDSLCommon::treatProfiling
@@ -6079,7 +6070,7 @@ namespace mfront{
 	    << "invalid tangent operator type '"+ktype+"'. Valid tanget operator type are :\n";
 	for(const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()){
 	  msg << "- " << convertFiniteStrainBehaviourTangentOperatorFlagToString(to) << " : "
-	      << getFiniteStrainBehaviourTangentOperatorDescription(to) << endl;
+	      << getFiniteStrainBehaviourTangentOperatorDescription(to) << '\n';
 	}
 	throw(runtime_error(msg.str()));
       }

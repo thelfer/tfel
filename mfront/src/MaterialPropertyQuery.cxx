@@ -64,14 +64,6 @@ namespace mfront{
     for(const auto& q : sq){
       Parser::registerNewCallBack(q.first,&MaterialPropertyQuery::treatStandardQuery,q.second);
     }
-    // const vector<pair<const char*,const char*>> sq2 = {
-    //   {"--attribute-type","display an attribute type"},
-    //   {"--attribute-value","display an attribute value"},
-    //   {"--parameter-type","display a parameter type"},
-    //   {"--parameter-default-value","display a parameter default value"}};
-    // for(const auto& q : sq2){
-    //   Parser::registerNewCallBack(q.first,&MaterialPropertyQuery::treatStandardQuery2,q.second,true);
-    // }
     Parser::registerNewCallBack("--generated-sources",&MaterialPropertyQuery::treatGeneratedSources,
 				"show all the generated sources");
     Parser::registerNewCallBack("--generated-headers",&MaterialPropertyQuery::treatGeneratedHeaders,
@@ -256,7 +248,6 @@ namespace mfront{
     return usage;
   }
 
-  MaterialPropertyQuery::~MaterialPropertyQuery()
-  {} // end of MaterialPropertyQuery::~MaterialPropertyQuery
+  MaterialPropertyQuery::~MaterialPropertyQuery() = default;
   
 }

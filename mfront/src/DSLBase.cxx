@@ -860,30 +860,9 @@ namespace mfront
     }
     return res;
   } // end of DSLBase::readSpecifiedValues
-
-    /*!
-   * \return the material property description generated from a list of mfront files
-   * \param[in] files: list of files
-   */
-  std::vector<std::shared_ptr<MaterialPropertyDescription>>
-  DSLBase::getMaterialPropertiesDescriptions(const std::vector<std::string>& files)
-  {
-    auto mpds = std::vector<std::shared_ptr<MaterialPropertyDescription>>{};
-    for(const auto & f : files){
-      mpds.push_back(this->getMaterialPropertyDescription(f));
-    }
-    return mpds;
-  }
-
-  std::shared_ptr<MaterialPropertyDescription>
-  DSLBase::getMaterialPropertyDescription(const std::string& file)
-  {
-    const auto& f = SearchFile::search(file);
-    return std::make_shared<MaterialPropertyDescription>(this->handleMaterialLaw(f));
-  }
   
-  MaterialPropertyDescription
-  DSLBase::handleMaterialLaw(const std::string& f)
+  std::shared_ptr<MaterialPropertyDescription>
+  DSLBase::handleMaterialPropertyDescription(const std::string& f)
   {
     // getting informations the source files
     MaterialPropertyDSL mp;
@@ -904,33 +883,32 @@ namespace mfront
       m.setInterface("mfront");
       const auto t = m.treatFile(path);
       if(!t.specific_targets.empty()){
-	this->throwRuntimeError("DSLBase::handleMaterialLaw",
+	this->throwRuntimeError("DSLBase::handleMaterialPropertyDescription",
 				"error while treating file '"+f+"'.\n"
 				"Specific targets are not supported");
       }
       this->atds.push_back(t);
     } catch(std::exception& e){
-      this->throwRuntimeError("DSLBase::handleMaterialLaw",
+      this->throwRuntimeError("DSLBase::handleMaterialPropertyDescription",
 			      "error while treating file '"+f+"'\n"+
 			      std::string(e.what()));
     } catch(...){
-      this->throwRuntimeError("DSLBase::handleMaterialLaw",
+      this->throwRuntimeError("DSLBase::handleMaterialPropertyDescription",
 			      "error while treating file '"+f+"'");
     }
-    return mp.getMaterialPropertyDescription();
+    const auto& m = mp.getMaterialPropertyDescription();
+    return std::make_shared<MaterialPropertyDescription>(m);
   } // end of DSLBase::handleMaterialLaw
 
-  void
-  DSLBase::treatMaterialLaw(){
+  void DSLBase::treatMaterialLaw(){
     const auto vfiles = this->readStringOrArrayOfString("DSLBase::treatMaterialLaw");
     this->readSpecifiedToken("DSLBase::treatMaterialLaw",";");
     for(const auto& f : vfiles){
-      this->handleMaterialLaw(f);
+      this->handleMaterialPropertyDescription(f);
     }
   } // end of DSLBase::treatMaterialLaw
 
-  void
-  DSLBase::treatDescription()
+  void DSLBase::treatDescription()
   {
     this->readSpecifiedToken("DSLBase::treatDescription","{");
     this->checkNotEndOfFile("DSLBase::treatDescription");

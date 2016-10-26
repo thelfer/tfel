@@ -14,12 +14,14 @@
 #ifndef LIB_MFRONT_DDIF2BRICKBEHAVIOURBRICK_H_
 #define LIB_MFRONT_DDIF2BRICKBEHAVIOURBRICK_H_ 
 
-#include "MFront/BehaviourBrickBase.hxx"
+#include "MFront/StandardElasticityBrick.hxx"
 
 namespace mfront{
 
   // forward declaration
   struct AbstractBehaviourDSL;
+  // forward declaration
+  struct MaterialPropertyDescription;
   // forward declaration
   struct BehaviourDescription;
   // forward declaration
@@ -53,7 +55,7 @@ namespace mfront{
    *   provided.
    */
   struct DDIF2Brick
-    : public BehaviourBrickBase
+    : public StandardElasticityBrick
   {
     /*!
      * \brief constructor
@@ -63,9 +65,9 @@ namespace mfront{
      * \param[in] d    : data
      */
     DDIF2Brick(AbstractBehaviourDSL&,
-			    BehaviourDescription&,
-			    const Parameters&,
-    			    const DataMap&);
+	       BehaviourDescription&,
+	       const Parameters&,
+	       const DataMap&);
     //! \return the name of the brick
     virtual std::string getName() const override;
     /*!
@@ -76,61 +78,13 @@ namespace mfront{
     //! ends the file treatment
     virtual void 
     endTreatment(void) const override;
-    /*!
-     * destructor
-     */
+    //! destructor
     virtual ~DDIF2Brick();
   protected:
-    /*!
-     * \brief declared the computeStress and computeFinalStress when the
-     * requiresStiffnessTensor attribute has been set.
-     */
-    virtual void
-    declareComputeStressWhenStiffnessTensorIsDefined(void) const;
-    /*!
-     * treat the case of isotropic behaviours
-     * \param[in] d: local data structure
-     */
-    virtual void
-    treatIsotropicBehaviour(LocalDataStructure&) const;
-    /*!
-     * treat the case of isotropic behaviours
-     */
-    virtual void
-    treatOrthotropicBehaviour(void) const;
-    /*!
-     * \brief add support for the AXISYMMETRICALGENERALISEDPLANESTRESS
-     * modelling hypothesis
-     * \param[in] d: local data structure
-     */
-    virtual void
-    addAxisymmetricalGeneralisedPlaneStressSupport(LocalDataStructure&) const;
-    /*!
-     * \brief add support for the PLANESTRESS modelling hypothesis
-     * \param[in] d: local data structure
-     */
-    virtual void addPlaneStressSupport(LocalDataStructure&) const;
-    /*!
-     * \brief add the generic tangent operator computation
-     * \param[in] d: local data structure
-     */
-    virtual void addGenericTangentOperatorSupport(const LocalDataStructure&) const;
-    /*!
-     * \brief add the generic prediction operator computation
-     * \param[in] d: local data structure
-     */
-    virtual void addGenericPredictionOperatorSupport(const LocalDataStructure&) const;
-    /*! 
-     * \brief declare the compute elastic prediction method
-     * \param[in] d: local data structure
-     */
-    virtual void declareComputeElasticPredictionMethod(const LocalDataStructure&) const;
-    //! plane stress support; 
-    bool pss = true;
-    //! generic prediction operator support
-    bool gto = true;
-    //! generic tangent operator support
-    bool gpo = true;
+    //! fracture stress
+    std::shared_ptr<MaterialPropertyDescription> sr;
+    //! softening slope
+    std::shared_ptr<MaterialPropertyDescription> rp;
   }; // end of struct DDIF2Brick
 
 } // end of namespace mfront

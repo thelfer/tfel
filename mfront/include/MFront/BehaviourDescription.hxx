@@ -1256,9 +1256,19 @@ namespace mfront
      * \param[in] v: variable name
      * \param[in] g: glossary name
      */
-    void
-    checkVariableGlossaryName(const std::string&,
-			      const std::string&) const;
+    void checkVariableGlossaryName(const std::string&,
+				   const std::string&) const;
+    /*!
+     * \brief check variable entry name.
+     * The variable must exists for all modelling hypothesis and have
+     * the given entry name. If not, an exception is thrown. If
+     * another variable has the given entry name, an exception if
+     * thrown.
+     * \param[in] v: variable name
+     * \param[in] g: entry name
+     */
+    void checkVariableEntryName(const std::string&,
+				const std::string&) const;
     /*!
      * \brief check a variable position. Throw an exception if this
      * check is not satisfied.
@@ -1268,10 +1278,9 @@ namespace mfront
      * \pre The number of variables of the given type must be greater
      * than the position given, otherwise an exception is thrown
      */
-    void
-    checkVariablePosition(const std::string&,
-			  const std::string&,
-			  const size_t);
+    void checkVariablePosition(const std::string&,
+			       const std::string&,
+			       const size_t);
     //! destructor
     ~BehaviourDescription();
   private:

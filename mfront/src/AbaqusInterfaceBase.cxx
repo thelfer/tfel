@@ -176,9 +176,9 @@ namespace mfront{
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       const auto ah = this->getModellingHypothesesToBeTreated(mb);
       set<Hypothesis> uh;
-      for(const auto & elem : ah){
-	if(!mb.hasSpecialisedMechanicalData(elem)){
-	  uh.insert(elem);
+      for(const auto &lh : ah){
+	if(!mb.hasSpecialisedMechanicalData(lh)){
+	  uh.insert(lh);
 	}
       }
       if(uh.empty()){
@@ -189,8 +189,8 @@ namespace mfront{
       // material properties for all the selected hypothesis
       auto mpositions = vector<pair<vector<UMATMaterialProperty>,
 				    SupportedTypes::TypeSize>>{};
-      for(const auto & elem : uh){
-	mpositions.push_back(this->buildMaterialPropertiesList(mb,elem));
+      for(const auto & lh : uh){
+	mpositions.push_back(this->buildMaterialPropertiesList(mb,lh));
       }
       auto ph=uh.begin();
       auto pum = mpositions.begin();

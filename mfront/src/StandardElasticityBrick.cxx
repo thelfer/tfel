@@ -16,6 +16,7 @@
 
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
+#include "TFEL/Utilities/Data.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/LocalDataStructure.hxx"
@@ -38,7 +39,7 @@ namespace mfront{
     // reserve some specific variables
     this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"sebdata");
     // basic checks
-    throw_if(!d.empty(),"this behaviour brick does not expect any data");
+
     throw_if(this->bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
 	     "this behaviour brick is only usable for small strain behaviours");
     throw_if(this->bd.getIntegrationScheme()!=BehaviourDescription::IMPLICITSCHEME,
@@ -56,19 +57,25 @@ namespace mfront{
 		 "behaviour has not been declared orthotropic");
 	this->checkThatParameterHasNoValue(pp);
 	setElasticSymmetryType(this->bd,mfront::ORTHOTROPIC);
-      } else if(pp.first=="NoPlaneStressSupport"){
-	this->checkThatParameterHasNoValue(pp);
-	this->pss = false;
-      } else if(pp.first=="NoGenericTangentOperator"){
-	this->checkThatParameterHasNoValue(pp);
-	this->gto = false;
-      } else if(pp.first=="NoGenericPredictionOperator"){
-	this->checkThatParameterHasNoValue(pp);
-	this->gpo = false;
       } else {
 	throw_if(true,"unsupported parameter '"+pp.first+"'");
       }
     }
+    // options
+    auto update = [throw_if,&d](bool& b,const char* n){
+      if(d.count(n)!=0){
+	const auto& v = d.at(n);
+	throw_if(!v.is<bool>(),"invalid type for option '"+std::string(n)+"'");
+	b = v.get<bool>();
+      }
+    };
+    this->checkOptionsNames(d,{"plane_stress_support",
+	  "generic_tangent_operator",
+	  "generic_prediction_operator"},
+      this->getName());
+    update(this->pss,"plane_stress_support");
+    update(this->gto,"generic_tangent_operator");
+    update(this->gpo,"generic_tangent_operator");
     if(this->pss){
       this->bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"etozz");
       this->bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"detozz");
@@ -306,7 +313,7 @@ namespace mfront{
 	"this->sebdata.mu=tfel::material::computeMu(this->young,this->nu);\n";
       this->bd.setCode(uh,BehaviourData::BeforeInitializeLocalVariables,
 		       init,BehaviourData::CREATE,
-		       BehaviourData::AT_BEGINNING,false);
+		       BehaviourData::AT_BEGINNING,true);
       // Hooke law
       smts.code =
 	"this->sig=(this->sebdata.lambda)*trace(this->eel+theta*(this->deel))*Stensor::Id()+"

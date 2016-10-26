@@ -569,7 +569,7 @@ namespace mfront{
       if(b){throw(std::runtime_error("CastemInterface::endTreatment: "+m));}
     };
     // get the modelling hypotheses to be treated
-    const auto& h = this->getModellingHypothesesToBeTreated(mb);
+    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     // some consistency checks
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       throw_if(mb.getSymmetryType()!=mb.getElasticSymmetryType(),
@@ -630,12 +630,12 @@ namespace mfront{
 
     out << "namespace castem{\n\n";
 
-    if(!mb.areAllMechanicalDataSpecialised(h)){
+    if(!mb.areAllMechanicalDataSpecialised(mh)){
       this->writeUMATBehaviourTraits(out,mb,ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-    for(const auto & elem : h){
-      if(mb.hasSpecialisedMechanicalData(elem)){
-	this->writeUMATBehaviourTraits(out,mb,elem);
+    for(const auto & h : mh){
+      if(mb.hasSpecialisedMechanicalData(h)){
+	this->writeUMATBehaviourTraits(out,mb,h);
       }
     }
 
@@ -765,13 +765,13 @@ namespace mfront{
       if(this->finiteStrainStrategies.empty()){
 	this->generateUMATxxGeneralSymbols(out,name,mb,fd);
 	UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);
-	if(!mb.areAllMechanicalDataSpecialised(h)){
+	if(!mb.areAllMechanicalDataSpecialised(mh)){
 	  const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	  this->generateUMATxxSymbols(out,name,uh,mb,fd);
 	}
-	for(const auto & elem : h){
-	  if(mb.hasSpecialisedMechanicalData(elem)){
-	    this->generateUMATxxSymbols(out,name,elem,mb,fd);
+	for(const auto & h : mh){
+	  if(mb.hasSpecialisedMechanicalData(h)){
+	    this->generateUMATxxSymbols(out,name,h,mb,fd);
 	  }
 	}
 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
@@ -785,13 +785,13 @@ namespace mfront{
 	  if(fss==FINITEROTATIONSMALLSTRAIN){
 	    this->generateUMATxxGeneralSymbols(out,name+"_frst",mb,fd);
 	    UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name+"_frst",mb);	      
-	    if(!mb.areAllMechanicalDataSpecialised(h)){
+	    if(!mb.areAllMechanicalDataSpecialised(mh)){
 	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	      this->generateUMATxxSymbols(out,name+"_frst",uh,mb,fd);
 	    }
-	    for(const auto & elem : h){
-	      if(mb.hasSpecialisedMechanicalData(elem)){
-		this->generateUMATxxSymbols(out,name+"_frst",elem,mb,fd);
+	    for(const auto & h : mh){
+	      if(mb.hasSpecialisedMechanicalData(h)){
+		this->generateUMATxxSymbols(out,name+"_frst",h,mb,fd);
 	      }
 	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_frst") 
@@ -803,13 +803,13 @@ namespace mfront{
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
 	      UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);
-	      if(!mb.areAllMechanicalDataSpecialised(h)){
+	      if(!mb.areAllMechanicalDataSpecialised(mh)){
 		const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 		this->generateUMATxxSymbols(out,name,uh,mb,fd);
 	      }
-	      for(const auto & elem : h){
-		if(mb.hasSpecialisedMechanicalData(elem)){
-		  this->generateUMATxxSymbols(out,name,elem,mb,fd);
+	      for(const auto & h : mh){
+		if(mb.hasSpecialisedMechanicalData(h)){
+		  this->generateUMATxxSymbols(out,name,h,mb,fd);
 		}
 	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
@@ -822,13 +822,13 @@ namespace mfront{
 	  } else if(fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
 	    this->generateUMATxxGeneralSymbols(out,name+"_malls",mb,fd);
 	    UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name+"_malls",mb);
-	    if(!mb.areAllMechanicalDataSpecialised(h)){
+	    if(!mb.areAllMechanicalDataSpecialised(mh)){
 	      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	      this->generateUMATxxSymbols(out,name+"_malls",uh,mb,fd);
 	    }
-	    for(const auto & elem : h){
-	      if(mb.hasSpecialisedMechanicalData(elem)){
-		this->generateUMATxxSymbols(out,name+"_malls",elem,mb,fd);
+	    for(const auto & h : mh){
+	      if(mb.hasSpecialisedMechanicalData(h)){
+		this->generateUMATxxSymbols(out,name+"_malls",h,mb,fd);
 	      }
 	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_malls") 
@@ -840,13 +840,13 @@ namespace mfront{
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
 	      UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);	      
-	      if(!mb.areAllMechanicalDataSpecialised(h)){
+	      if(!mb.areAllMechanicalDataSpecialised(mh)){
 		const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 		this->generateUMATxxSymbols(out,name,uh,mb,fd);
 	      }
-	      for(const auto & elem : h){
-		if(mb.hasSpecialisedMechanicalData(elem)){
-		  this->generateUMATxxSymbols(out,name,elem,mb,fd);
+	      for(const auto & h : mh){
+		if(mb.hasSpecialisedMechanicalData(h)){
+		  this->generateUMATxxSymbols(out,name,h,mb,fd);
 		}
 	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
@@ -859,14 +859,14 @@ namespace mfront{
 	  } else if(fss==LOGARITHMICSTRAIN1D){
 	    const auto agps = ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
 	    this->generateUMATxxGeneralSymbols(out,name+"_log1D",mb,fd);
-	    if(!mb.areAllMechanicalDataSpecialised(h)){
+	    if(!mb.areAllMechanicalDataSpecialised(mh)){
 	      const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	      this->generateUMATxxSymbols(out,name+"_log1D",uh,mb,fd);
 	    }	    
-	    for(const auto & elem : h){
-	      if(elem==agps){
-		if(mb.hasSpecialisedMechanicalData(elem)){
-		  this->generateUMATxxSymbols(out,name+"_log1D",elem,mb,fd);
+	    for(const auto & h : mh){
+	      if(h==agps){
+		if(mb.hasSpecialisedMechanicalData(h)){
+		  this->generateUMATxxSymbols(out,name+"_log1D",h,mb,fd);
 		}
 	      }
 	    }
@@ -892,13 +892,13 @@ namespace mfront{
 		  << "_ModellingHypotheses[1u] = {\""
 		  << ModellingHypothesis::toString(agps)
 		  << "\"};\n";
-	      if(!mb.areAllMechanicalDataSpecialised(h)){
+	      if(!mb.areAllMechanicalDataSpecialised(mh)){
 		const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 		this->generateUMATxxSymbols(out,name,uh,mb,fd);
 	      }
-	      for(const auto & elem : h){
-		if(mb.hasSpecialisedMechanicalData(elem)){
-		  this->generateUMATxxSymbols(out,name,elem,mb,fd);
+	      for(const auto & h : mh){
+		if(mb.hasSpecialisedMechanicalData(h)){
+		  this->generateUMATxxSymbols(out,name,h,mb,fd);
 		}
 	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
@@ -911,13 +911,13 @@ namespace mfront{
 	  } else if(fss==NONE){
 	    this->generateUMATxxGeneralSymbols(out,name+"_ss",mb,fd);
 	    UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name+"_ss",mb);	      
-	    if(!mb.areAllMechanicalDataSpecialised(h)){
+	    if(!mb.areAllMechanicalDataSpecialised(mh)){
 	      const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	      this->generateUMATxxSymbols(out,name+"_ss",uh,mb,fd);
 	    }
-	    for(const auto & elem : h){
-	      if(mb.hasSpecialisedMechanicalData(elem)){
-		this->generateUMATxxSymbols(out,name+"_ss",elem,mb,fd);
+	    for(const auto & h : mh){
+	      if(mb.hasSpecialisedMechanicalData(h)){
+		this->generateUMATxxSymbols(out,name+"_ss",h,mb,fd);
 	      }
 	    }
 	    out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name+"_ss") 
@@ -928,13 +928,13 @@ namespace mfront{
 		<< makeLowerCase(name+"_ss") << "_Interface = 1u;\n\n";
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
-	      if(!mb.areAllMechanicalDataSpecialised(h)){
+	      if(!mb.areAllMechanicalDataSpecialised(mh)){
 		const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 		this->generateUMATxxSymbols(out,name,uh,mb,fd);
 	      }
-	      for(const auto & elem : h){
-		if(mb.hasSpecialisedMechanicalData(elem)){
-		  this->generateUMATxxSymbols(out,name,elem,mb,fd);
+	      for(const auto & h : mh){
+		if(mb.hasSpecialisedMechanicalData(h)){
+		  this->generateUMATxxSymbols(out,name,h,mb,fd);
 		}
 	      }
 	      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
@@ -953,13 +953,13 @@ namespace mfront{
 		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
 	  this->generateUMATxxGeneralSymbols(out,name,mb,fd);
 	  UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);
-	  if(!mb.areAllMechanicalDataSpecialised(h)){
+	  if(!mb.areAllMechanicalDataSpecialised(mh)){
 	    const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	    this->generateUMATxxSymbols(out,name,uh,mb,fd);
 	  }
-	  for(const auto & elem : h){
-	    if(mb.hasSpecialisedMechanicalData(elem)){
-	      this->generateUMATxxSymbols(out,name,elem,mb,fd);
+	  for(const auto & h : mh){
+	    if(mb.hasSpecialisedMechanicalData(h)){
+	      this->generateUMATxxSymbols(out,name,h,mb,fd);
 	    }
 	  }
 	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
@@ -973,13 +973,13 @@ namespace mfront{
     } else {
       this->generateUMATxxGeneralSymbols(out,name,mb,fd);
       UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);      
-      if(!mb.areAllMechanicalDataSpecialised(h)){
+      if(!mb.areAllMechanicalDataSpecialised(mh)){
 	const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	this->generateUMATxxSymbols(out,name,uh,mb,fd);
       }
-      for(const auto & elem : h){
-	if(mb.hasSpecialisedMechanicalData(elem)){
-	  this->generateUMATxxSymbols(out,name,elem,mb,fd);
+      for(const auto & h : mh){
+	if(mb.hasSpecialisedMechanicalData(h)){
+	  this->generateUMATxxSymbols(out,name,h,mb,fd);
 	}
       }
       if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){ 
@@ -1214,9 +1214,9 @@ namespace mfront{
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       const auto ah = this->getModellingHypothesesToBeTreated(mb);
       set<Hypothesis> uh;
-      for(const auto & elem : ah){
-	if(!mb.hasSpecialisedMechanicalData(elem)){
-	  uh.insert(elem);
+      for(const auto & lh : ah){
+	if(!mb.hasSpecialisedMechanicalData(lh)){
+	  uh.insert(lh);
 	}
       }
       if(uh.empty()){
@@ -1227,8 +1227,8 @@ namespace mfront{
       // material properties for all the selected hypothesis
       auto mpositions = vector<pair<vector<UMATMaterialProperty>,
 				    SupportedTypes::TypeSize> >{};
-      for(const auto & elem : uh){
-	mpositions.push_back(this->buildMaterialPropertiesList(mb,elem));
+      for(const auto & lh : uh){
+	mpositions.push_back(this->buildMaterialPropertiesList(mb,lh));
       }
       auto ph=uh.cbegin();
       auto pum = mpositions.cbegin();
@@ -1745,39 +1745,39 @@ namespace mfront{
 							      const Hypothesis h,
 							      const VariableDescriptionContainer& v) const
   {
-    for(const auto & elem : v){
-      const auto flag = this->getTypeFlag(elem.type);
+    for(const auto & vd : v){
+      const auto flag = this->getTypeFlag(vd.type);
       std::string tmp;
       tmp += ' ';
       if(flag==SupportedTypes::Scalar){
-	if(elem.arraySize==1){
-	  tmp += treatScalar(elem.name);
+	if(vd.arraySize==1){
+	  tmp += treatScalar(vd.name);
 	} else {
-	  for(unsigned short j=0;j!=elem.arraySize;){
-	    tmp += treatScalar(elem.name,j);
-	    if(++j!=elem.arraySize){
+	  for(unsigned short j=0;j!=vd.arraySize;){
+	    tmp += treatScalar(vd.name,j);
+	    if(++j!=vd.arraySize){
 	      tmp += ' ';
 	    }
 	  }
 	}
       } else if(flag==SupportedTypes::Stensor){
-	if(elem.arraySize==1){
-	  tmp += treatStensor(h,elem.name);
+	if(vd.arraySize==1){
+	  tmp += treatStensor(h,vd.name);
 	} else {
-	  for(unsigned short j=0;j!=elem.arraySize;){
-	    tmp += treatStensor(h,elem.name,j);
-	    if(++j!=elem.arraySize){
+	  for(unsigned short j=0;j!=vd.arraySize;){
+	    tmp += treatStensor(h,vd.name,j);
+	    if(++j!=vd.arraySize){
 	      tmp += ' ';
 	    }
 	  }
 	}
       } else if(flag==SupportedTypes::Tensor){
-	if(elem.arraySize==1){
-	  tmp += treatTensor(h,elem.name);
+	if(vd.arraySize==1){
+	  tmp += treatTensor(h,vd.name);
 	} else {
-	  for(unsigned short j=0;j!=elem.arraySize;){
-	    tmp += treatTensor(h,elem.name,j);
-	    if(++j!=elem.arraySize){
+	  for(unsigned short j=0;j!=vd.arraySize;){
+	    tmp += treatTensor(h,vd.name,j);
+	    if(++j!=vd.arraySize){
 	      tmp += ' ';
 	    }
 	  }

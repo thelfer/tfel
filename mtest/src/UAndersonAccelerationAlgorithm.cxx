@@ -11,8 +11,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
-
 #include<limits>
 #include<ostream>
 #include<iterator>
@@ -70,7 +68,6 @@ namespace mtest
   void UAndersonAccelerationAlgorithm::preExecuteTasks()
   {
     this->a->restart(this->uO,this->uN);
-    std::cout << "UAndersonAccelerationAlgorithm::preExecuteTasks: " << this->uO << " " << this->uN << std::endl;
   } // end of UAndersonAccelerationAlgorithm::preExecuteTasks
 
   void
@@ -96,14 +93,12 @@ namespace mtest
     //   p = std::find(d.begin(),d.end(),ptr);
     //   return "d"+std::to_string(p-d.begin());
     // };
-    // std::cout << "UAndersonAccelerationAlgorithm::execute before: " << pos(this->uO) << " " << pos(this->uN) << std::endl;
     if(iter==1u){
       *(this->uO) = u1-du;
     }
     *(this->uN) = u1;
     this->a->newIter(this->uO,this->uN);
     u1 = *(this->uO);
-    //    std::cout << "UAndersonAccelerationAlgorithm::execute after: " << pos(this->uO) << " " << pos(this->uN) << std::endl;
   } // end of UAndersonAccelerationAlgorithm::execute
 
   void UAndersonAccelerationAlgorithm::postExecuteTasks()

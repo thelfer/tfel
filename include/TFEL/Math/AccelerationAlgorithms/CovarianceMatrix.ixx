@@ -14,6 +14,7 @@
 #ifndef LIB_COVARIANCEMATRIX_IXX
 #define LIB_COVARIANCEMATRIX_IXX
 
+#include<limits>
 #include<stdexcept>
 
 namespace tfel{
@@ -131,8 +132,8 @@ namespace tfel{
 	  }
 
 	  // Degeneration
-	  if (*ej < C[0]*1e-14) {
-	    // cerr << "Dégénéré " << (int)i << endl;
+	  TFEL_CONSTEXPR const real eps = 100*std::numeric_limits<real>::epsilon();
+	  if (*ej < C[0]*eps*eps) {
 	    *ej=0;
 	  }
 	}

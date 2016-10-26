@@ -40,8 +40,7 @@ namespace mfront{
     }
   } // end of ModelQuery::ModelQuery
 
-  void
-  ModelQuery::registerCommandLineCallBacks(){
+  void ModelQuery::registerCommandLineCallBacks(){
     using Parser = tfel::utilities::ArgumentParserBase<ModelQuery>;
     Parser::registerNewCallBack("--verbose",&ModelQuery::treatVerbose,
 				"set verbose output",true);
@@ -271,7 +270,6 @@ namespace mfront{
     return usage;
   }
 
-  ModelQuery::~ModelQuery()
-  {} // end of ModelQuery::~ModelQuery
+  ModelQuery::~ModelQuery() = default;
   
 }

@@ -16,6 +16,12 @@
 
 #include"MFront/AbstractBehaviourBrick.hxx"
 
+namespace tfel{
+  namespace glossary{
+    struct GlossaryEntry;
+  } // end of namespace glossary
+} // end of namespace tfel
+
 namespace mfront{
 
   //! forward declaration
@@ -51,25 +57,39 @@ namespace mfront{
     //! destructor
     virtual ~BehaviourBrickBase();
   protected:
+    //! a simple alias
+    using GlossaryEntry = tfel::glossary::GlossaryEntry;
+    /*!
+     * \brief check that the options names are in a given set
+     * of keys.
+     * \param[in] d: options
+     * \param[in] k: supported keys
+     * \param[in] b: calling brick name
+     */
+    static void checkOptionsNames(const DataMap&,
+				  const std::vector<std::string>&,
+				  const std::string&);
     /*!
      * \brief throw an exception if the given parameter has a value
      * \param[in] p : parameter
      */
     virtual void
     checkThatParameterHasNoValue(const Parameter&) const;
-    // /*!
-    //  * Check if a local variable (L), a paramater (P), a material
-    //  * property (M), a material law (ML) with the given glossary name
-    //  * has been defined.
-    //  * \return the type of the variable and 
-    //  */
-    // virtual std::pair<bool,std::string>
-    // isLVPMMLDefined(const std::string&);
     /*!
      * \brief add a new material property
      * \param[in] t: type of the material property
      * \param[in] n: name of the variable
      * \param[in] g: glossary name
+     */
+    virtual void
+    addMaterialPropertyIfNotDefined(const std::string&,
+				    const std::string&,
+				    const GlossaryEntry&) const;
+    /*!
+     * \brief add a new material property
+     * \param[in] t: type of the material property
+     * \param[in] n: name of the variable
+     * \param[in] e: entry name
      */
     virtual void
     addMaterialPropertyIfNotDefined(const std::string&,
@@ -80,9 +100,26 @@ namespace mfront{
      * \param[in] t: type of the material property
      * \param[in] n: name of the variable
      */
-    virtual void
-    addLocalVariable(const std::string&,
-		     const std::string&) const;
+    virtual void addLocalVariable(const std::string&,
+				  const std::string&) const;
+    /*!
+     * \brief add a new material property
+     * \param[in] n: name of the variable
+     * \param[in] e: entry name
+     * \param[in] p: parameter default value
+     */
+    virtual void addParameter(const std::string&,
+			      const GlossaryEntry& e,
+			      const double) const;
+    /*!
+     * \brief add a new material property
+     * \param[in] n: name of the variable
+     * \param[in] e: entry name
+     * \param[in] p: parameter default value
+     */
+    virtual void addParameter(const std::string&,
+			      const std::string&,
+			      const double) const;
     //! calling domain specific language
     AbstractBehaviourDSL& dsl;
     //! mechanical behaviour description of which the BehaviourBrick acts

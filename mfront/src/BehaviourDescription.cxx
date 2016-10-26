@@ -1032,8 +1032,8 @@ namespace mfront
 	  << "the '@ModellingHypothesis' or "
 	  << "the '@ModellingHypotheses' keywords for details.\n";
       msg << "Supported modelling hypotheses are :";
-      for(const auto & elem : this->hypotheses){
-	msg << "\n- '" << ModellingHypothesis::toString(elem) << "'";
+      for(const auto & lh : this->hypotheses){
+	msg << "\n- '" << ModellingHypothesis::toString(lh) << "'";
       }
       throw(std::runtime_error(msg.str()));
     }
@@ -1625,13 +1625,12 @@ namespace mfront
     }
   } // end of BehaviourDescription::updateClassName
   
-  void
-  BehaviourDescription::setCode(const Hypothesis h,
-				const std::string& n,
-				const CodeBlock& c,
-				const Mode m,
-				const Position p,
-				const bool b)
+  void BehaviourDescription::setCode(const Hypothesis h,
+				     const std::string& n,
+				     const CodeBlock& c,
+				     const Mode m,
+				     const Position p,
+				     const bool b)
   {
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(getVerboseMode()>=VERBOSE_DEBUG){
@@ -1877,10 +1876,10 @@ namespace mfront
   std::pair<bool,bool>
   BehaviourDescription::checkVariableExistence(const std::string& v) const
   {
-    const auto& h = this->getDistinctModellingHypotheses();
+    const auto& mh = this->getDistinctModellingHypotheses();
     std::pair<bool,bool> r{true,false};
-    for(const auto & elem : h){
-      const auto& bdata = this->getBehaviourData(elem);
+    for(const auto & h : mh){
+      const auto& bdata = this->getBehaviourData(h);
       const auto& vn = bdata.getVariablesNames();
       const bool b = vn.find(v)!=vn.end();
       r.first  = r.first  && b;
@@ -1916,25 +1915,40 @@ namespace mfront
     return r;
   }
 
-  void
-  BehaviourDescription::checkVariableGlossaryName(const std::string& n,
-						  const std::string& g) const
+  void BehaviourDescription::checkVariableGlossaryName(const std::string& n,
+						       const std::string& g) const
   {
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("BehaviourDescription::"
+				     "checkVariableGlossaryName: "+m));}
+    };
     for(const auto & h : this->getDistinctModellingHypotheses()){
       const auto& bdata = this->getBehaviourData(h);
-      if(!bdata.hasGlossaryName(n)){
-	throw(std::runtime_error("BehaviourDescription::VariableGlossaryName: "
-				 "no glossary name associated with variable '"+n+"'"));
-      }
+      throw_if(!bdata.hasGlossaryName(n),
+	       "no glossary name associated with variable '"+n+"'");
       const auto& en = bdata.getExternalName(n);
-      if(en!=g){
-	throw(std::runtime_error("BehaviourDescription::VariableGlossaryName: "
-				 "the glossary name associated with "
-				 "variable '"+n+"' is not '"+g+"', but '"+en+"'"));
-      }
+      throw_if(en!=g,"the glossary name associated with "
+	       "variable '"+n+"' is not '"+g+"', but '"+en+"'");
     }
   } // end of BehaviourDescription::checkVariableGlossaryName
 
+  void BehaviourDescription::checkVariableEntryName(const std::string& n,
+						    const std::string& e) const
+  {
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("BehaviourDescription::"
+				     "checkVariableEntryName: "+m));}
+    };
+    for(const auto & h : this->getDistinctModellingHypotheses()){
+      const auto& bdata = this->getBehaviourData(h);
+      throw_if(!bdata.hasEntryName(n),
+	       "no entry name associated with variable '"+n+"'");
+      const auto& en = bdata.getExternalName(n);
+      throw_if(en!=e,"the entry name associated with "
+	       "variable '"+n+"' is not '"+e+"', but '"+en+"'");
+    }
+  } // end of BehaviourDescription::checkVariableEntryName
+  
   void
   BehaviourDescription::checkVariablePosition(const std::string& n,
 					      const std::string& c,

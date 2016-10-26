@@ -231,8 +231,8 @@ namespace mfront{
      */
     enum Mode
     {
-      CREATE,               /*!< create a code block. Return an errur
-			      if if fails */
+      CREATE,               /*!< create a code block. Return an error
+			         if if fails */
       CREATEORREPLACE,      /*!< create a code block or replace 
 			     *   it if it already exists. If the
 			     *   code is to be replaced, all 
@@ -820,11 +820,11 @@ namespace mfront{
       CodeBlocksAggregator& operator=(CodeBlocksAggregator&&) = default;
       CodeBlocksAggregator& operator=(const CodeBlocksAggregator&) = default;
       /*!
-     * setter
-     * \param[in] c : code
-     * \param[in] p : position
-     * \param[in] b : if true, the code can be overriden or completed
-     */
+       * setter
+       * \param[in] c : code
+       * \param[in] p : position
+       * \param[in] b : if true, the code can be overriden or completed
+       */
       void set(const CodeBlock&,
 	       const Position,
 	       const bool);
@@ -837,25 +837,16 @@ namespace mfront{
       void replace(const CodeBlock&,
 		   const Position,
 		   const bool);
-      /*!
-       * \return the code block
-       */
-      const CodeBlock&
-      get(void) const;
-      /*!
-       * \return true if the code is mutable
-       */
-      bool isMutable(void) const;
+      //! \return the code block
+      const CodeBlock& get() const;
+      //! \return true if the code is mutable
+      bool isMutable() const;
       //! destructor
       ~CodeBlocksAggregator();
     private:
-      /*! 
-       * \brief update the code block
-       */
+      //! \brief update the code block
       void update(void);
-      /*!
-       * check that the get function was not already called.
-       */ 
+      //! check that the get function was not already called.
       void check(void) const;
       //! beginnig of the block
       std::string cblock_begin;
@@ -869,12 +860,10 @@ namespace mfront{
       std::string cdoc_body;
       //! end of the doc
       std::string cdoc_end;
-      /*!
-       * resulting code block
-       */
+      //! resulting code block
       CodeBlock cblock;
       //! get already called
-      mutable bool is_mutable;
+      mutable bool is_mutable = true;
     };
     /*!
      * \brief throw an exception saying that no attribute with the given name exists

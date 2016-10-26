@@ -37,39 +37,38 @@ namespace mfront{
 
   static std::string
   getCodeBlocksDocumentation(const BehaviourDescription& mb){
-    using namespace std;
     using tfel::material::ModellingHypothesis;
-    ostringstream out;
-    const auto& h = mb.getModellingHypotheses();
+    std::ostringstream out;
+    const auto& mh = mb.getModellingHypotheses();
     const auto& dh = mb.getDistinctModellingHypotheses();
     if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
-      const BehaviourData& d =
+      const auto& d =
 	mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
       const auto& cn = d.getCodeBlockNames();
-      for(const auto & elem : cn){
-	const auto& c = d.getCodeBlock(elem);
+      for(const auto &n : cn){
+	const auto& c = d.getCodeBlock(n);
 	if(!c.description.empty()){
-	  out <<"### " << elem << " description" << endl;
-	  out << c.description << endl << endl;
+	  out <<"### " << n << " description\n"
+	      << c.description << "\n\n";
 	}
 	if(getVerboseMode()>=VERBOSE_DEBUG){
-	  out <<"### " << elem << " listing" << endl;
-	  out << endl;
-	  out << "~~~~~~~ {.cpp}" << endl;
-	  out << c.code << endl;
-	  out << "~~~~~~~ " << endl;
+	  out <<"### " << n << " listing\n"
+	      << '\n'
+	      << "~~~~~~~ {.cpp}\n"
+	      << c.code << '\n'
+	      << "~~~~~~~ \n";
 	}
       }
     }
-    for(const auto & elem : h){
-      if(elem!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	const BehaviourData& d = mb.getBehaviourData(elem);
+    for(const auto & h : mh){
+      if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	const auto& d = mb.getBehaviourData(h);
 	const auto& cn = d.getCodeBlockNames();
 	for(const auto & cn_pcn : cn){
 	  bool print = true;
 	  const auto& c = d.getCodeBlock(cn_pcn);
 	  if(dh.find(ModellingHypothesis::UNDEFINEDHYPOTHESIS)!=dh.end()){
-	    const BehaviourData& duh =
+	    const auto& duh =
 	      mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
 	    if(duh.hasCode(cn_pcn)){
 	      const auto& cuh = duh.getCodeBlock(cn_pcn).code;
@@ -78,15 +77,15 @@ namespace mfront{
 	  }
 	  if(print){
 	    if(!c.description.empty()){
-	      out <<"### " << cn_pcn << " description(" << ModellingHypothesis::toString(elem) << ")" << endl;
-	      out << c.description << endl << endl;
+	      out <<"### " << cn_pcn << " description(" << ModellingHypothesis::toString(h) << ")\n"
+		  << c.description << "\n\n";
 	    }
 	    if(getVerboseMode()>=VERBOSE_DEBUG){
-	      out <<"### " << cn_pcn << " listing (" << ModellingHypothesis::toString(elem) << ")" << endl;
-	      out << endl;
-	      out << "~~~~~~~ {.cpp} "<< endl;
-	      out << c.code << endl;
-	      out << "~~~~~~~ "<< endl;
+	      out <<"### " << cn_pcn << " listing (" << ModellingHypothesis::toString(h) << ")\n"
+		  << '\n'
+		  << "~~~~~~~ {.cpp} \n"
+		  << c.code << '\n'
+		  << "~~~~~~~ \n";
 	    }
 	  }
 	}
@@ -158,7 +157,6 @@ namespace mfront{
 	  const VariableDescriptionContainer& (BehaviourData::* m)() const,
 	  const tfel::material::ModellingHypothesis::Hypothesis h)
   {
-    using namespace std;
     const auto& d = mb.getBehaviourData(h);
     const auto& mdata = (d.*m)();
     for(auto pv=mdata.begin();pv!=mdata.end();++pv){
@@ -183,9 +181,8 @@ namespace mfront{
 	   (pd->type         != pv->type)||
 	   (pd->externalName != d.getExternalName(pv->name))||
 	   (pd->arraySize    != pv->arraySize)){
-	  string msg("getData : ");
-	  msg += "inconsistent data across hypothesis for variable '"+pd->name+"'";
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("getData : inconsistent data across "
+				   "hypothesis for variable '"+pd->name+"'"));
 	}
       }
       if(!pv->description.empty()){
@@ -199,11 +196,10 @@ namespace mfront{
   getData(const BehaviourDescription& mb,
 	  const VariableDescriptionContainer& (BehaviourData::* m)() const)
   {
-    using namespace std;
     using namespace tfel::material;
     using namespace tfel::glossary;
     const auto& glossary = Glossary::getGlossary();
-    vector<Data> data;
+    auto data = std::vector<Data>{};
     const auto& dh = mb.getDistinctModellingHypotheses();
     for(const auto & h : dh){
       getData(data,mb,m,h);
@@ -212,12 +208,12 @@ namespace mfront{
     for(auto& d:data){
       if(glossary.contains(d.externalName)){
 	const auto& e = glossary.getGlossaryEntry(d.externalName);
-	ostringstream os;
+	std::ostringstream os;
 	os << e.getShortDescription();
 	// const auto& cd = e.getDescription();
 	// for(const auto & cd_pcd : cd){
 	//   if(!cd_pcd.empty()){
-	//     os << cd_pcd << endl;	    
+	//     os << cd_pcd << '\n';	    
 	//   }
 	// }
 	d.description += os.str();
@@ -271,12 +267,12 @@ namespace mfront{
 	    const std::vector<Data>& data,
 	    const std::string& language = "english")
   {
-    using namespace std;
     using namespace tfel::material;
     if(data.empty()){
       return;
     }
-    auto translations = map<string,map<string,string> >{};
+    auto translations = std::map<std::string,
+				 std::map<std::string,std::string>>{};
     auto& en = translations["english"]; 
     auto& fr = translations["french"]; 
     en["variable name"] = "variable name";
@@ -296,81 +292,81 @@ namespace mfront{
     const auto& l = translations[language];
     if(getVerboseMode()>=VERBOSE_DEBUG){
       auto& log = getLogStream();
-      log << "printData : begin" << endl;
+      log << "printData : begin\n";
     }
     const auto& dh = mb.getDistinctModellingHypotheses();
-    set<string> cbnames;
-    vector<ModellingHypothesis::Hypothesis>::const_iterator pvh;
-    for(const auto & elem : dh){
-      const auto& d = mb.getBehaviourData(elem);
+    auto cbnames = std::set<std::string>{};
+    for(const auto & h : dh){
+      const auto& d = mb.getBehaviourData(h);
       const auto& cn = d.getCodeBlockNames();
       cbnames.insert(cn.begin(),cn.end());
     }
-    os << "###  " << title << endl << endl;
+    os << "###  " << title << "\n\n";
     for(const auto& d : data){
-      os << "* " << d.externalName << ":" << endl;
+      os << "* " << d.externalName << ":\n";
       if(d.externalName!=d.name){
-	os << "\t+ " << map_at(l,"variable name") << ": " << d.name << endl; 
+	os << "\t+ " << map_at(l,"variable name") << ": " << d.name << '\n'; 
       }
-      os << "\t+ " << map_at(l,"variable type") << ": " << d.type << endl; 
+      os << "\t+ " << map_at(l,"variable type") << ": " << d.type << '\n'; 
       if(d.arraySize!=1u){
-	os << "\t+ " << map_at(l,"array size") << ": " << d.arraySize << endl;
+	os << "\t+ " << map_at(l,"array size") << ": " << d.arraySize << '\n';
       }
       if(d.hypotheses.size()!=dh.size()){
 	os << "\t+ " << map_at(l,"defined for") << " ";
-	for(pvh=d.hypotheses.begin();pvh!=d.hypotheses.end();){
+	for(auto pvh=d.hypotheses.begin();pvh!=d.hypotheses.end();){
 	  os << ModellingHypothesis::toString(*pvh);
 	  if(++pvh!=d.hypotheses.end()){
 	    os << ", ";
 	  }
 	}
-	os << endl;
+	os << '\n';
       }
       if(!d.description.empty()){
-	os << "\t+ " << map_at(l,"description") << ": " << d.description << endl;
+	os << "\t+ " << map_at(l,"description") << ": " << d.description << '\n';
       }
-      for(pvh=d.hypotheses.begin();pvh!=d.hypotheses.end();++pvh){
-	if(mb.isParameterName(*pvh,d.name)){
-	  if(*pvh==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      for(const auto& h : d.hypotheses){
+	if(mb.isParameterName(h,d.name)){
+	  if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
 	    os << "\t+ " << map_at(l,"default value") << ": ";
 	  } else {
-	    os << "\t+ " << map_at(l,"default value for")+" "+ModellingHypothesis::toString(*pvh)+" : ";
+	    os << "\t+ " << map_at(l,"default value for")+" "+ModellingHypothesis::toString(h)+": ";
 	  }
 	  if(d.type=="real"){
-	    const auto& p = mb.getBehaviourData(*pvh).getParameters().getVariable(d.name);
+	    const auto& p = mb.getBehaviourData(h).getParameters().getVariable(d.name);
 	    if(p.arraySize==1u){
-	      os << mb.getFloattingPointParameterDefaultValue(*pvh,d.name);
+	      os << mb.getFloattingPointParameterDefaultValue(h,d.name);
 	    } else {
 	      for(unsigned short i=0;i!=p.arraySize;){
-		os << mb.getFloattingPointParameterDefaultValue(*pvh,d.name,i);
+		os << mb.getFloattingPointParameterDefaultValue(h,d.name,i);
 		if(++i!=p.arraySize){
 		  os << " ";
 		}
 	      }
 	    }
 	  } else if(d.type=="int"){
-	    os << mb.getIntegerParameterDefaultValue(*pvh,d.name);
+	    os << mb.getIntegerParameterDefaultValue(h,d.name);
 	  } else {
-	    os << mb.getUnsignedShortParameterDefaultValue(*pvh,d.name);
+	    os << mb.getUnsignedShortParameterDefaultValue(h,d.name);
 	  }
-	  os << endl;
+	  os << '\n';
 	}
       }
       // codes blocks referring to the current variable
-      auto vcb  = map<string,vector<ModellingHypothesis::Hypothesis> >{};
-      auto dvcb = map<string,vector<ModellingHypothesis::Hypothesis> >{};
+      auto vcb  = std::map<std::string,std::vector<ModellingHypothesis::Hypothesis>>{};
+      auto dvcb = std::map<std::string,std::vector<ModellingHypothesis::Hypothesis>>{};
       for(const auto & cbname : cbnames){
-      	for(const auto & elem : dh){
-      	  const auto& bd = mb.getBehaviourData(elem);
-	  const bool b = bd.isIntegrationVariableName(d.name)||bd.isExternalStateVariableName(d.name);
+      	for(const auto & h : dh){
+      	  const auto& bd = mb.getBehaviourData(h);
+	  const bool b = (bd.isIntegrationVariableName(d.name)||
+			  bd.isExternalStateVariableName(d.name));
 	  if(bd.hasCode(cbname)){
 	    const auto& cb = bd.getCodeBlock(cbname);
 	    if(cb.members.find(d.name)!=cb.members.end()){
-	      vcb[cbname].push_back(elem);
+	      vcb[cbname].push_back(h);
 	    }
 	    if(b){
 	      if(cb.members.find("d"+d.name)!=cb.members.end()){
-		dvcb[cbname].push_back(elem);
+		dvcb[cbname].push_back(h);
 	      }
 	    }
 	  }
@@ -383,7 +379,7 @@ namespace mfront{
 	    os << pc->first;
 	    if(pc->second.size()!=dh.size()){
 	      os << " (";
-	      for(pvh=pc->second.begin();pvh!=pc->second.end();){
+	      for(auto pvh=pc->second.begin();pvh!=pc->second.end();){
 		os << ModellingHypothesis::toString(*pvh);
 		if(++pvh!=pc->second.end()){
 		  os << ", ";
@@ -395,7 +391,7 @@ namespace mfront{
 	      os << ", ";
 	    }
 	  }
-	  os << endl;
+	  os << '\n';
 	}
 	if(!dvcb.empty()){
 	  os << "\t+ increment (or rate) used in ";
@@ -403,7 +399,7 @@ namespace mfront{
 	    os << pc->first;
 	    if(pc->second.size()!=dh.size()){
 	      os << " (";
-	      for(pvh=pc->second.begin();pvh!=pc->second.end();){
+	      for(auto pvh=pc->second.begin();pvh!=pc->second.end();){
 		os << ModellingHypothesis::toString(*pvh);
 		if(++pvh!=pc->second.end()){
 		  os << ", ";
@@ -415,14 +411,14 @@ namespace mfront{
 	      os << ", ";
 	    }
 	  }
-	  os << endl;
+	  os << '\n';
 	}
       }
     }
     // bounds
     if(getVerboseMode()>=VERBOSE_DEBUG){
       auto& log = getLogStream();
-      log << "printData : end" << endl;
+      log << "printData : end\n";
     }
   }
   
@@ -431,9 +427,9 @@ namespace mfront{
 								   std::shared_ptr<AbstractBehaviourDSL> d,
 								   const std::string& f)
     : tfel::utilities::ArgumentParserBase<BehaviourDocumentationGenerator>(argc,argv),
-      dsl(d),
-      file(f),
-      otype(BehaviourDocumentationGenerator::FULL)
+    dsl(d),
+    file(f),
+    otype(BehaviourDocumentationGenerator::FULL)
   {
     this->registerCommandLineCallBacks();
     this->parseArguments();
@@ -506,7 +502,7 @@ namespace mfront{
   {
     using namespace std;
     if(getVerboseMode()>=VERBOSE_LEVEL2){
-      getLogStream() << "Treating file '" << this->file << "'" << endl;
+      getLogStream() << "Treating file '" << this->file << "'\n";
     }
     // analysing the file
     this->dsl->analyseFile(this->file,this->ecmds,this->substitutions);
@@ -514,7 +510,7 @@ namespace mfront{
     const auto& mb = this->dsl->getBehaviourDescription();
     if(getVerboseMode()>=VERBOSE_DEBUG){
       auto& log = getLogStream();
-      log << "BehaviourDocumentationGenerator::exe : begin" << endl;
+      log << "BehaviourDocumentationGenerator::exe : begin\n";
     }
     const auto name = (!mb.getLibrary().empty()) ? mb.getLibrary() + mb.getClassName() : mb.getClassName();
     ofstream out(name+".md");
@@ -537,7 +533,7 @@ namespace mfront{
     out.close();
     if(getVerboseMode()>=VERBOSE_DEBUG){
       auto& log = getLogStream();
-      log << "BehaviourDocumentationGenerator::exe : end" << endl;
+      log << "BehaviourDocumentationGenerator::exe : end\n";
     }
   } // end of BehaviourDocumentationGenerator::exe
 
@@ -546,21 +542,19 @@ namespace mfront{
 						  const BehaviourDescription& mb,
 						  const FileDescription& fd) const
   {
-    using namespace std;
     using namespace tfel::utilities;
-    ifstream f(this->file);
+    std::ifstream f(this->file);
     if(!f){
-      string msg("BehaviourDocumentationGenerator::writeWebOutput: "
-		 "can't open file '"+this->file+"'");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("BehaviourDocumentationGenerator::writeWebOutput: "
+			       "can't open file '"+this->file+"'"));
     }
-    out << "# " << mb.getClassName() << " behaviour description" << endl << endl;
-    out << "* file   : " << fd.fileName   << endl;
-    out << "* author : ";
+    out << "# " << mb.getClassName() << " behaviour description\n\n"
+	<< "* file   : " << fd.fileName   << '\n'
+	<< "* author : ";
     if(!fd.authorName.empty()){
-      out << fd.authorName << endl;
+      out << fd.authorName << '\n';
     } else {
-      out << "(unspecified)" << endl;
+      out << "(unspecified)\n";
     }
     out << "* date   : ";
     if(!fd.date.empty()){
@@ -569,28 +563,28 @@ namespace mfront{
       out << "(unspecified)";
     }
     if(mb.hasAttribute(BehaviourData::algorithm)){
-      out << "* algorithme: " << mb.getAttribute<string>(BehaviourData::algorithm) << endl;
+      out << "* algorithme: " << mb.getAttribute<std::string>(BehaviourData::algorithm) << '\n';
     }
-    out << endl << endl;
+    out << "\n\n";
     if(!fd.description.empty()){
       const auto d = tokenize(fd.description,'\n');
       for(const auto& l : d){
 	if((l.size()>=2)&&((l)[0]=='*')&&((l)[1]==' ')){
-	  out << l.substr(2) << endl;
+	  out << l.substr(2) << '\n';
 	} else {
-	  out << l << endl;
+	  out << l << '\n';
 	}
       }
     } else {
       out << "No description specified";
     }
-    out << endl;
-    out << "## Source code"<< endl;
-    out << endl;
-    out << "~~~~ {#" << mb.getClassName() << " .cpp .numberLines}" << endl;
-    out << f.rdbuf() << endl;
-    out << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
-    out << endl;
+    out << '\n'
+	<< "## Source code\n"
+	<< '\n'
+	<< "~~~~ {#" << mb.getClassName() << " .cpp .numberLines}\n"
+	<< f.rdbuf() << '\n'
+	<< "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+	<< '\n';
   } // end of BehaviourDocumentationGenerator::writeWebOutput
 
   void
@@ -601,13 +595,13 @@ namespace mfront{
     using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::material;
-    out << "# " << mb.getClassName() << " behaviour description" << endl << endl;
-    out << "* file   : " << fd.fileName   << endl;
-    out << "* author : ";
+    out << "# " << mb.getClassName() << " behaviour description\n\n"
+	<< "* file   : " << fd.fileName   << '\n'
+	<< "* author : ";
     if(!fd.authorName.empty()){
-      out << fd.authorName << endl;
+      out << fd.authorName << '\n';
     } else {
-      out << "(unspecified)" << endl;
+      out << "(unspecified)\n";
     }
     out << "* date   : ";
     if(!fd.date.empty()){
@@ -615,54 +609,54 @@ namespace mfront{
     } else {
       out << "(unspecified)";
     }
-    out << endl << endl;
+    out << "\n\n";
     if(!fd.description.empty()){
       const auto d = tokenize(fd.description,'\n');
       for(const auto& l : d){
 	if((l.size()>=2)&&((l)[0]=='*')&&((l)[1]==' ')){
-	  out << l.substr(2) << endl;
+	  out << l.substr(2) << '\n';
 	} else {
-	  out << l << endl;
+	  out << l << '\n';
 	}
       }
     } else {
       out << "No description specified";
     }
-    out << endl << endl;
-    out << "### List of supported Hypotheses" << endl << endl;
-    const auto& h = mb.getModellingHypotheses();
+    out << "\n\n"
+	<< "### List of supported Hypotheses\n\n";
+    const auto& mh = mb.getModellingHypotheses();
     const auto& dh = mb.getDistinctModellingHypotheses();
-    for(const auto & elem : h){
-      out << "* " <<  ModellingHypothesis::toString(elem);
-      if(dh.find(elem)!=dh.end()){
+    for(const auto & h : mh){
+      out << "* " <<  ModellingHypothesis::toString(h);
+      if(dh.find(h)!=dh.end()){
 	out << ", specialised";
       }
-      out << endl;
+      out << '\n';
     }
-    out << endl;
-    out << "## Variables" << endl << endl;
-    out << endl;
+    out << '\n'
+	<< "## Variables\n\n"
+	<< '\n';
     printData(out,mb,"Material properties",
 	      getData(mb,&BehaviourData::getMaterialProperties));
-    out << endl;
+    out << '\n';
     printData(out,mb,"State variables",
 	      getData(mb,&BehaviourData::getPersistentVariables));
-    out << endl;
+    out << '\n';
     printData(out,mb,"External state variables",
 	      getData(mb,&BehaviourData::getExternalStateVariables));
-    out << endl;
+    out << '\n';
     if(mb.hasParameters()){
       printData(out,mb,"Parameters",
 		getData(mb,&BehaviourData::getParameters));
     }
-    out << endl;
+    out << '\n';
     printData(out,mb,"Local variables",
 	      getData(mb,&BehaviourData::getLocalVariables));
-    out << endl;
+    out << '\n';
     const auto code = getCodeBlocksDocumentation(mb);
     if(!code.empty()!=0){
-      out << "## Code documentation" << endl << endl;
-      out <<  code << endl;
+      out << "## Code documentation\n\n"
+	  <<  code << '\n';
     }
     
   } // end of BehaviourDocumentationGenerator::writeFullOutput

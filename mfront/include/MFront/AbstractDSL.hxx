@@ -28,6 +28,8 @@ namespace mfront{
   struct FileDescription;
   // forward declaration
   struct TargetsDescription;
+  // forward declaration
+  struct MaterialPropertyDescription;
 
   /*!
    * Interface class for all domain specific languages.
@@ -52,22 +54,19 @@ namespace mfront{
      * \note The keywords and arguments specificed on the command
      * line are appended at the beginning of the file.
      */
-    virtual void
-    analyseFile(const std::string&,
-		const std::vector<std::string>&,
-		const std::map<std::string,std::string>&) = 0;
+    virtual void analyseFile(const std::string&,
+			     const std::vector<std::string>&,
+			     const std::map<std::string,std::string>&) = 0;
     /*!
      * \brief analyse the specified string.
      * \param[in] s : analyse a string
      */
-    virtual void
-    analyseString(const std::string&) = 0;
+    virtual void analyseString(const std::string&) = 0;
     /*!
      * \return the target description
      * \note This method shall be called *after* the analyseFile method
      */
-    virtual const TargetsDescription&
-    getTargetsDescription(void) const = 0;
+    virtual const TargetsDescription& getTargetsDescription(void) const = 0;
     /*!
      * \brief treat the specified file.
      * \note This method shall be called *after* the analyseFile method
@@ -77,14 +76,12 @@ namespace mfront{
      * \brief set list of interfaces
      * \param[in] inames : list of interfaces
      */
-    virtual void
-    setInterfaces(const std::set<std::string>&) = 0;
+    virtual void setInterfaces(const std::set<std::string>&) = 0;
     /*!
      * \brief return the list of keywords usable with this parser
      * \param[out] k : the list of keywords registred for this parser
      */
-    virtual void
-    getKeywordsList(std::vector<std::string>&) const = 0;
+    virtual void getKeywordsList(std::vector<std::string>&) const = 0;
     //! destructor
     virtual ~AbstractDSL();
   };

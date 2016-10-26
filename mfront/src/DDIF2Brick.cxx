@@ -16,6 +16,7 @@
 
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
+#include "TFEL/Utilities/Data.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/LocalDataStructure.hxx"
@@ -30,634 +31,171 @@ namespace mfront{
 			 BehaviourDescription& mb_,
 			 const Parameters& p,
 			 const DataMap& d)
-    : BehaviourBrickBase(dsl_,mb_)
+    : StandardElasticityBrick(dsl_,mb_,p,DataMap())
   {
+    using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("DDIF2Brick::DDIF2Brick: "+m));}
     };
+    std::function<std::string(const MaterialPropertyInput&)> ets =
+      [this,throw_if](const MaterialPropertyInput& i) -> std::string {
+      if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	return "this->"+i.name + "+this->d" + i.name;
+      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::PARAMETER)){
+	return "this->"+i.name;
+      }
+      throw_if(true,"unsupported input type for variable '"+i.name+"'");
+    };
+    // undefined hypothesis
+    constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     // reserve some specific variables
-    this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"sebdata");
-    // basic checks
-    throw_if(!d.empty(),"this behaviour brick does not expect any data");
-    throw_if(this->bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
-	     "this behaviour brick is only usable for small strain behaviours");
-    throw_if(this->bd.getIntegrationScheme()!=BehaviourDescription::IMPLICITSCHEME,
-	     "this behaviour brick is only usable in implicit schemes");
-    // parameters
-    for(const auto& pp : p){
-      if(pp.first=="Isotropic"){
-	this->checkThatParameterHasNoValue(pp);
-	setElasticSymmetryType(this->bd,mfront::ISOTROPIC);
-      } else if(pp.first=="Orthotropic"){
-	// this is also checked later during the call of
-	// setElasticSymmetryType call
-	throw_if(this->bd.getSymmetryType()!=mfront::ORTHOTROPIC,
-		 "using the orthotropic behaviour requires that the "
-		 "behaviour has not been declared orthotropic");
-	this->checkThatParameterHasNoValue(pp);
-	setElasticSymmetryType(this->bd,mfront::ORTHOTROPIC);
-      } else if(pp.first=="NoPlaneStressSupport"){
-	this->checkThatParameterHasNoValue(pp);
-	this->pss = false;
-      } else if(pp.first=="NoGenericTangentOperator"){
-	this->checkThatParameterHasNoValue(pp);
-	this->gto = false;
-      } else if(pp.first=="NoGenericPredictionOperator"){
-	this->checkThatParameterHasNoValue(pp);
-	this->gpo = false;
+    this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"ddif2bdata");
+    // reserve some specific variables
+    this->bd.appendToIncludes("#include\"TFEL/Material/DDIF2Base.hxx\"");
+    VariableDescription ef("strain","ef",3u,0u);
+    ef.description = "fracture strain";
+    this->bd.addStateVariable(uh,ef);
+    this->bd.setEntryName(uh,"ef","FractureStrain");
+    VariableDescription efm("strain","efm",3u,0u);
+    efm.description = "fracture strain";
+    this->bd.addAuxiliaryStateVariable(uh,efm);
+    this->bd.setEntryName(uh,"efm","MaximumFractureStrain");
+    VariableDescription nf("StrainStensor","nf",3u,0u);
+    this->bd.addLocalVariable(uh,nf);
+    // data
+    this->checkOptionsNames(d,{"fracture_stress","softening_slope"},
+			    this->getName());
+    CodeBlock init;
+    if(d.count("fracture_stress")){
+      const auto& s = d.at("fracture_stress");
+      if(s.is<double>()){
+	const auto v = s.get<double>();
+	throw_if(v<0,"invalid fracture stress");
+	this->addParameter("sigr","FractureStress",s.get<double>());
+      } else if(s.is<std::string>()){
+	const auto& f = s.get<std::string>();
+	this->addLocalVariable("stress","sigr");
+	this->sr = this->dsl.handleMaterialPropertyDescription(f);
+	BehaviourDescription::ComputedMaterialProperty mp_sr;
+	mp_sr.mpd  = this->sr;
+	std::ostringstream ssigr;
+	ssigr << "this->sigr = ";
+	this->dsl.writeMaterialPropertyEvaluation(ssigr,mp_sr,ets);
+	ssigr << ";\n";
+	init.code += ssigr.str();
       } else {
-	throw_if(true,"unsupported parameter '"+pp.first+"'");
+	throw_if(true,"invalid type for data 'fracture_stress'");
       }
     }
-    if(this->pss){
-      this->bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"etozz");
-      this->bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"detozz");
-      this->bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"sigzz");
-      this->bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"dsigzz");
-      this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"prediction_stress");
-      this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"prediction_strain");
+    if(d.count("softening_slope")){
+      const auto& s = d.at("softening_slope");
+      if(s.is<double>()){
+	const auto v = s.get<double>();
+	throw_if(v>0,"invalid fracture stress");
+	this->addParameter("Rp","SofteningSlope",s.get<double>());
+      } else if(s.is<std::string>()){
+	const auto& f = s.get<std::string>();
+	this->addLocalVariable("stress","Rp");
+	this->rp = this->dsl.handleMaterialPropertyDescription(f);
+	BehaviourDescription::ComputedMaterialProperty mp_rp;
+	mp_rp.mpd  = this->rp;
+	std::ostringstream srp;
+	srp << "this->Rp = ";
+	this->dsl.writeMaterialPropertyEvaluation(srp,mp_rp,ets);
+	srp << ";\n";
+	init.code += srp.str();
+      } else {
+	throw_if(true,"invalid type for data 'softening_slope'");
+      }
+    }
+    if(!init.code.empty()){
+      this->bd.setCode(uh,BehaviourData::BeforeInitializeLocalVariables,
+		       init,BehaviourData::CREATEORAPPEND,
+		       BehaviourData::AT_END);
     }
   } // end of DDIF2Brick::DDIF2Brick
 
-  void 
-  DDIF2Brick::endTreatment() const
+  void DDIF2Brick::endTreatment() const
   {
+    using tfel::glossary::Glossary; 
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("DDIF2Brick::endTreatment: "+m));}
     };
-    using tfel::glossary::Glossary; 
-    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "DDIF2Brick::endTreatment: begin\n";
     }
+    // fracture properties
+    if(this->sr==nullptr){
+      this->addMaterialPropertyIfNotDefined("stress","sigr","FractureStress");
+    }
+    if(this->rp==nullptr){
+      this->addMaterialPropertyIfNotDefined("stress","Rp","SofteningSlope");
+    }
     LocalDataStructure d;
-    d.name = "sebdata";
+    d.name = "ddif2bdata";
+    d.addVariable(uh,{"StressStensor","sig"});
+    // modelling hypotheses supported by the brick
+    const auto smh = this->getSupportedModellingHypotheses();
     // modelling hypotheses supported by the behaviour
-    const auto bmh = bd.getModellingHypotheses();
-    // deformation strain
-    const auto b = this->bd.checkVariableExistence("eel");
-    if(b.first){
-      throw_if(!b.second,"'eel' is not declared for all specialisation of the behaviour");
-      this->bd.checkVariableExistence("eel","IntegrationVariable");
-      this->bd.checkVariableGlossaryName("eel",Glossary::ElasticStrain);
-    } else {
-      VariableDescription eel("StrainStensor","eel",1u,0u);
-      eel.description = "elastic strain";
-      this->bd.addStateVariable(uh,eel);
-      this->bd.setGlossaryName(uh,"eel",Glossary::ElasticStrain);
+    const auto bmh = this->bd.getModellingHypotheses();
+    for(const auto& h : bmh){
+      throw_if(std::find(smh.begin(),smh.end(),h)==smh.end(),
+	       "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'");
     }
-    // treating material properties and stress computation
-    if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
-       (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
-      this->declareComputeStressWhenStiffnessTensorIsDefined();
-    } else {
-      if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-    	this->treatIsotropicBehaviour(d);	
-      } else if(this->bd.getElasticSymmetryType()==mfront::ORTHOTROPIC){
-    	this->treatOrthotropicBehaviour();
-      } else {
-	throw_if(true,"unsupported elastic symmetry type");
-      }
-    }
-    // plane stress support
-    if(this->pss){
-      const bool agps = bmh.count(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=0;
-      const bool ps   = bmh.count(ModellingHypothesis::PLANESTRESS)!=0;
-      if(agps){
-	this->addPlaneStressSupport(d);
-      }
-      if(ps){
-	this->addAxisymmetricalGeneralisedPlaneStressSupport(d);
-      }
-    }
-    // declaring the computeElasticPrediction member
-    this->declareComputeElasticPredictionMethod(d);
-    // prediction operator
-    if(this->gpo){
-      this->addGenericPredictionOperatorSupport(d);
-    }
-    // tangent operator
-    if(this->gto){
-      this->addGenericTangentOperatorSupport(d);
-    }
-    // implicit equation associated with the elastic strain
+    StandardElasticityBrick::endTreatment();
+    // init local variables
+    CodeBlock init;
+    init.code = "for(unsigned short idx=0;idx!=3;++idx){\n"
+      "this->nf[idx]      = Stensor(real(0));\n"
+      "this->nf[idx][idx] = real(1);\n"
+      "}\n";
+    this->bd.setCode(uh,BehaviourData::BeforeInitializeLocalVariables,
+    		     init,BehaviourData::CREATEORAPPEND,
+    		     BehaviourData::AT_END);
+    // implicit equation associated with the crack strains
+    const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
     CodeBlock integrator;
-    integrator.code = "feel -= this->deto;\n";
+    integrator.code = "feel += ((this->def)[0])*(this->nf[0])+((this->def)[1])*(this->nf[1])+((this->def)[2])*(this->nf[2]);\n";
+    if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
+      const std::string young = this->bd.areElasticMaterialPropertiesDefined() ?
+	"this->young_tdt" : "this->young";
+      const std::string lambda = this->bd.areElasticMaterialPropertiesDefined() ?
+	"this->lambda_tdt" : "this->sebdata.lambda";
+      const std::string mu = this->bd.areElasticMaterialPropertiesDefined() ?
+	"this->mu_tdt" : "this->sebdata.mu";
+      integrator.code +=
+	"this->ddif2bdata.sig=("+lambda+"*trace(this->eel+deel))*StrainStensor::Id()+\n"
+	"                     2*"+mu+"*(this->eel+this->deel);\n"
+	"this->dfeel_ddef(0)(0) = real(1);\n"
+	"this->dfeel_ddef(0)(0) = real(1);\n"
+	"this->dfeel_ddef(1)(1) = real(1);\n"
+	"this->dfeel_ddef(2)(2) = real(1);\n"
+	"for(unsigned short idx=0;idx!=3;++idx){\n"
+	"auto dfe_ddeel = dfef_ddeel(idx);\n"
+	"DDIF2Base::treatFracture(dfe_ddeel,dfef_ddef(idx,idx),fef(idx),\n"
+	"		          this->efm(idx),this->ef(idx),(this->def)(idx),\n"
+	"                         this->ddif2bdata.sig,this->nf(idx),\n"
+	"		          this->sigr,this->Rp,\n"
+	"		          "+young+","+lambda+','+mu+");\n"
+	"}\n";
+    }
+    /* fracture */
     this->bd.setCode(uh,BehaviourData::Integrator,
     		     integrator,BehaviourData::CREATEORAPPEND,
     		     BehaviourData::AT_END);
+    /* update auxiliary state variables */
+    CodeBlock uasv;
+    uasv.code = "this->efm[0]=std::max(this->efm[0],this->ef[0]);\n"
+      "this->efm[1]=std::max(this->efm[1],this->ef[1]);\n"
+      "this->efm[2]=std::max(this->efm[2],this->ef[2]);\n";
+    this->bd.setCode(uh,BehaviourData::UpdateAuxiliaryStateVariables,
+    		     uasv,BehaviourData::CREATEORAPPEND,
+    		     BehaviourData::AT_END);
     this->bd.addLocalDataStructure(d,BehaviourData::ALREADYREGISTRED);
   } // end of DDIF2Brick::endTreatment
-
-  void 
-  DDIF2Brick::declareComputeElasticPredictionMethod(const LocalDataStructure& d) const
-  {
-    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    for(const auto h:this->bd.getDistinctModellingHypotheses()){
-      std::string m =
-    	"//! \\brief return an elastic prediction of the stresses\n"
-    	"StressStensor computeElasticPrediction(void) const{\n";
-      if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
-    	if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
-    	   (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
-	  if((this->bd.getElasticSymmetryType()!=mfront::ISOTROPIC)&&
-	     (this->bd.getElasticSymmetryType()!=mfront::ORTHOTROPIC)){
-	    m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\"));\n";
-#pragma message("HERE")
-	    //	    m += "return {};\n";
-	  } else {
-	    if(this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
-	      m += "StrainStensor prediction_stress;\n";
-	      m += "StrainStensor prediction_strain = this->eel+(this->theta)*this->deto;\n";
-	      m += "prediction_stress(0) = (this->D(0,0)-((this->D(0,1))*(this->D(1,0)))/(this->D(1,1)))*prediction_strain(0)+\n";
-	      m += "                       (this->D(0,2)-((this->D(0,1))*(this->D(1,2)))/(this->D(1,1)))*prediction_strain(2)+\n";
-	      m += "                       (this->D(0,1))/(this->D(1,1))*(this->sigzz+(this->theta)*(this->dsigzz));\n";
-	      m += "prediction_stress(1) = this->sigzz+(this->theta)*(this->dsigzz);\n";
-	      m += "prediction_stress(2) = (this->D(2,0)-((this->D(2,1))*(this->D(1,0)))/(this->D(1,1)))*prediction_strain(0)+\n";
-	      m += "                       (this->D(2,2)-((this->D(2,1))*(this->D(1,2)))/(this->D(1,1)))*prediction_strain(2)+\n";
-	      m += "                       (this->D(2,1))/(this->D(1,1))*(this->sigzz+(this->theta)*(this->dsigzz));\n";
-	      m += "return prediction_stress;\n";
-	    } else {
-	      m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\"));\n";
-#pragma message("HERE")
-	      //	      m += "return {};\n";
-	    }
-	  }
-	} else{
-    	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-	    const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
-	    const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
-	    m += "StrainStensor prediction_stress;\n";
-	    m += "StrainStensor prediction_strain = this->eel+(this->theta)*this->deto;\n";
-	    m += "prediction_stress(0) = 2*("+mu+")*(("+lambda+")/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(2))+prediction_strain(0))+\n";
-	    m += "("+lambda+")/("+lambda+"+2*("+mu+"))*(this->sigzz+theta*(this->dsigzz));\n";
-	    m += "prediction_stress(2) = 2*("+mu+")*(("+lambda+")/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(2))+prediction_strain(2))+\n";
-	    m += "("+lambda+")/("+lambda+"+2*("+mu+"))*(this->sigzz+theta*(this->dsigzz));\n";
-	    m += "prediction_stress(1) = this->sigzz+theta*(this->dsigzz);\n";
-	    m += "return prediction_stress;\n";
-    	  } else {
-    	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-    	      throw(std::runtime_error("DDIF2Brick::declareComputeElasticPredictionMethod: "
-    				       "the stiffness tensor must be defined for "
-    				       "orthotropic behaviours"));
-    	    }
-    	  }
-	}
-      } else if (h==ModellingHypothesis::PLANESTRESS){
-	if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
-	   (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
-	  if((this->bd.getElasticSymmetryType()!=mfront::ISOTROPIC)&&
-	     (this->bd.getElasticSymmetryType()!=mfront::ORTHOTROPIC)){
-	    m += "throw(std::runtime_error(\"computeElasticPrediction: unsupported case\"));\n";
-#pragma message("HERE")
-	    //	    m += "return {};\n";
-	  } else {
-	    if(this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
-	      m += "StrainStensor prediction_stress;\n";
-	      m += "StrainStensor prediction_strain = this->eel+(this->theta)*this->deto;\n";
-	      m += "prediction_stress(0) = (this->D(0,0)-((this->D(0,2))*(this->D(2,0)))/(this->D(2,2)))*prediction_strain(0)+\n";
-	      m += "                       (this->D(0,1)-((this->D(0,2))*(this->D(2,1)))/(this->D(2,2)))*prediction_strain(1);\n";
-	      m += "prediction_stress(1) = (this->D(1,0)-((this->D(1,2))*(this->D(2,0)))/(this->D(2,2)))*prediction_strain(0)+\n";
-	      m += "                       (this->D(1,1)-((this->D(1,2))*(this->D(2,1)))/(this->D(2,2)))*prediction_strain(1);\n";
-	      m += "prediction_stress(2) = stress(0);\n";
-	      m += "prediction_stress(3) = stress(0);\n";
-	      m += "return prediction_stress;\n";
-	    } else {
-	      m += "return (this->D)*(this->eel+(this->theta)*this->deto);";
-	    }
-	  }
-	} else {
-	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-	    const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
-	    const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
-	    m += "StrainStensor prediction_stress;\n";
-	    m += "StressStensor prediction_strain = this->eel+(this->theta)*this->deto;\n";
-	    m += "prediction_stress(0) = 2*("+mu+")*(("+lambda+")/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(1))+prediction_strain(0));\n";
-	    m += "prediction_stress(1) = 2*("+mu+")*(("+lambda+")/("+lambda+"+2*("+mu+"))*(prediction_strain(0)+prediction_strain(1))+prediction_strain(1));\n";
-	    m += "prediction_stress(2) = stress(0);\n";
-	    m += "prediction_stress(3) = 2*("+mu+")*prediction_strain(3);\n";
-	    m += "return prediction_stress;\n";
-	  } else {
-	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-	      throw(std::runtime_error("DDIF2Brick::declareComputeElasticPredictionMethod: "
-				       "the stiffness tensor must be defined for "
-				       "orthotropic behaviours"));
-	    }
-	  }
-	}
-      } else {
-    	if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
-    	   (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
-	  m += "return (this->D)*(this->eel+(this->theta)*this->deto);";
-    	} else {
-    	  if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-	    const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
-	    const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
-	    m+= "return "+lambda+"*trace(this->eel+(this->theta)*(this->deto))*Stensor::Id()+"
-	      "2*("+mu+")*(this->eel+(this->theta)*(this->deto));\n";
-    	  } else {
-    	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-    	      throw(std::runtime_error("DDIF2Brick::declareComputeElasticPredictionMethod: "
-    				       "the stiffness tensor must be defined for "
-    				       "orthotropic behaviours"));
-    	    }
-    	  }
-    	}
-      }
-      m+= "}\n";
-      this->bd.appendToMembers(h,m,false);
-    }  
-  } // end of DDIF2Brick::declareComputeElasticPredictionMethod
-  
-  void
-  DDIF2Brick::declareComputeStressWhenStiffnessTensorIsDefined() const{
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    CodeBlock smts,sets;
-    smts.code = "this->sig=(this->D)*(this->eel+theta*(this->deel));\n";
-    sets.code = "this->sig=(this->D)*(this->eel);\n";
-    this->bd.setCode(h,BehaviourData::ComputeStress,
-		     smts,BehaviourData::CREATE,
-		     BehaviourData::AT_BEGINNING,false);
-    this->bd.setCode(h,BehaviourData::ComputeFinalStress,
-		     sets,BehaviourData::CREATE,
-		     BehaviourData::AT_BEGINNING,false);
-  } // end of DDIF2Brick::declareComputeStressWhenStiffnessTensorIsDefined
-  
-  void
-  DDIF2Brick::treatIsotropicBehaviour(LocalDataStructure& d) const
-  {
-    using tfel::glossary::Glossary; 
-    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    if(getVerboseMode()>=VERBOSE_DEBUG){
-      getLogStream() << "DDIF2Brick::treatIsotropicBehaviour: begin\n";
-    }
-    this->bd.appendToIncludes("#include\"TFEL/Material/Lame.hxx\"");
-    CodeBlock smts;
-    CodeBlock sets;
-    if(this->bd.areElasticMaterialPropertiesDefined()){
-      smts.code =
-	"this->sig=this->lambda*trace(this->eel+theta*(this->deel))*Stensor::Id()+"
-	"2*(this->mu)*(this->eel+theta*(this->deel));\n";
-      sets.code =
-	"this->sig=this->lambda_tdt*trace(this->eel)*Stensor::Id()+2*(this->mu_tdt)*this->eel;";
-    } else {
-      this->addMaterialPropertyIfNotDefined("stress","young",Glossary::YoungModulus);
-      this->addMaterialPropertyIfNotDefined("real","nu",Glossary::PoissonRatio);
-      d.addVariable(uh,{"stress","lambda"});
-      d.addVariable(uh,{"stress","mu"});
-      // local variable initialisation
-      CodeBlock init;
-      init.code = "// initialisation Lame's coefficient\n"
-	"this->sebdata.lambda=tfel::material::computeLambda(this->young,this->nu);\n"
-	"this->sebdata.mu=tfel::material::computeMu(this->young,this->nu);\n";
-      this->bd.setCode(uh,BehaviourData::BeforeInitializeLocalVariables,
-		       init,BehaviourData::CREATE,
-		       BehaviourData::AT_BEGINNING,false);
-      // Hooke law
-      smts.code =
-	"this->sig=(this->sebdata.lambda)*trace(this->eel+theta*(this->deel))*Stensor::Id()+"
-	"2*(this->sebdata.mu)*(this->eel+theta*(this->deel));\n";
-      sets.code =
-	"this->sig=(this->sebdata.lambda)*trace(this->eel)*Stensor::Id()+2*(this->sebdata.mu)*this->eel;";
-    }
-    this->bd.setCode(uh,BehaviourData::ComputeStress,
-		     smts,BehaviourData::CREATE,
-		     BehaviourData::AT_BEGINNING,false);
-    this->bd.setCode(uh,BehaviourData::ComputeFinalStress,
-		     sets,BehaviourData::CREATE,
-		     BehaviourData::AT_BEGINNING,false);
-  } // end of DDIF2Brick::treatIsotropicBehaviour
-
-  void
-  DDIF2Brick::treatOrthotropicBehaviour() const
-  {
-    if(getVerboseMode()>=VERBOSE_DEBUG){
-      getLogStream() << "DDIF2Brick::treatOrthotropic: begin\n";
-    }
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    if(!this->bd.hasAttribute(BehaviourDescription::requiresStiffnessTensor)){
-      this->bd.setAttribute(h,BehaviourDescription::requiresStiffnessTensor,true);
-    }
-    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-      throw(std::runtime_error("DDIF2Brick::treatOrthotropicBehaviour: "
-			       "the stiffness tensor must be defined for "
-			       "orthotropic behaviours"));
-    }
-  } // end of DDIF2Brick::treatOrthotropicBehaviour
-
-
-  void
-  DDIF2Brick::addAxisymmetricalGeneralisedPlaneStressSupport(LocalDataStructure& d) const{
-    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    const auto agps = ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS;
-    VariableDescription etozz("strain","etozz",1u,0u);
-    etozz.description = "axial strain";
-    d.addVariable(agps,{"stress","szz"});
-    this->bd.addStateVariable(agps,etozz,BehaviourData::ALREADYREGISTRED);
-    this->bd.setGlossaryName(agps,"etozz",tfel::glossary::Glossary::AxialStrain);
-    VariableDescription sigzz("strain","sigzz",1u,0u);
-    etozz.description = "axial stress";
-    this->bd.addExternalStateVariable(agps,sigzz,BehaviourData::ALREADYREGISTRED);
-    this->bd.setGlossaryName(agps,"sigzz",tfel::glossary::Glossary::AxialStress);
-    CodeBlock integrator;
-    // The brick contains a reference to an abstract behaviour dsl.
-    // We need to know if we have to define the jacobian terms. So we
-    // downcast it to the ImplicitDSLBase class have access to the
-    // solver. See the getSolver call below.
-    const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
-    if((this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,false))||
-       (this->bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))){
-      const std::string D =
-	this->bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false) ? "D_tdt" : "D"; 
-      integrator.code +=
-	"// the generalised plane stress equation is satisfied at the end of the time step\n"
-	"this->sebdata.szz = (this->"+D+"(1,1))*(this->eel(1)+this->deel(1))+(this->"+D+"(1,0))*(this->eel(0)+this->deel(0))+(this->"+D+"(1,2))*(this->eel(2)+this->deel(2));\n"
-	"fetozz   = (this->sebdata.szz-this->sigzz-this->dsigzz)/(this->"+D+"(1,1));\n"
-	"// modification of the partition of strain\n"
-	"feel(1) -= this->detozz;\n";
-      if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
-	integrator.code +=
-	  "// jacobian\n"
-	  "dfeel_ddetozz(1) = -1;\n"
-	  "dfetozz_ddetozz  = real(0);\n"
-	  "dfetozz_ddeel(1) = 1;\n"
-	  "dfetozz_ddeel(0) = (this->"+D+"(1,0))/(this->"+D+"(1,1));\n"
-	  "dfetozz_ddeel(2) = (this->"+D+"(1,2))/(this->"+D+"(1,1));\n";
-      }
-    } else {
-      if(this->bd.areElasticMaterialPropertiesDefined()){
-	integrator.code +=
-	  "// the generalised plane stress equation is satisfied at the end of the time step\n"
-	  "this->sebdata.szz =   (this->lambda_tdt+2*(this->mu_tdt))*(this->eel(1)+this->deel(1))"
-	  "                   + (this->lambda_tdt)*(this->eel(0)+this->deel(0)+this->eel(2)+this->deel(2));\n"
-	  "fetozz   = (this->sebdata.szz-this->sigzz-this->dsigzz)/this->young_tdt;\n"
-	  "// modification of the partition of strain\n"
-	  "feel(1) -= this->detozz;\n";
-	if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
-	  integrator.code +=
-	    "// jacobian\n"
-	    "dfeel_ddetozz(1) = -1;\n"
-	    "dfetozz_ddetozz  = real(0);\n"
-	    "dfetozz_ddeel(1) = (this->lambda_tdt+2*(this->mu_tdt))/this->young_tdt;\n"
-	    "dfetozz_ddeel(0) = this->lambda_tdt/this->young_tdt;\n"
-	    "dfetozz_ddeel(2) = this->lambda_tdt/this->young_tdt;\n";
-	}
-      } else {
-	const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
-	const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
-	integrator.code +=
-	  "// the generalised plane stress equation is satisfied at the end of the time step\n"
-	  "this->sebdata.szz =   ("+lambda+"+2*("+mu+"))*(this->eel(1)+this->deel(1))"
-	  "                   + ("+lambda+")*(this->eel(0)+this->deel(0)+this->eel(2)+this->deel(2));\n"
-	  "fetozz   = (this->sebdata.szz-this->sigzz-this->dsigzz)/this->young;\n"
-	  "// modification of the partition of strain\n"
-	  "feel(1) -= this->detozz;\n";
-	if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
-	  integrator.code +=
-	    "// jacobian\n"
-	    "dfeel_ddetozz(1) = -1;\n"
-	    "dfetozz_ddetozz  = real(0);\n"
-	    "dfetozz_ddeel(1) = ("+lambda+"+2*("+mu+"))/this->young;\n"
-	    "dfetozz_ddeel(0) = "+lambda+"/this->young;\n"
-	    "dfetozz_ddeel(2) = "+lambda+"/this->young;\n";
-	}
-      }
-    }
-    this->bd.setCode(agps,BehaviourData::Integrator,
-		     integrator,BehaviourData::CREATEORAPPEND,
-		     BehaviourData::AT_END);
-  }
-
-  void
-  DDIF2Brick::addPlaneStressSupport(LocalDataStructure& d) const{
-    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    const auto ps = ModellingHypothesis::PLANESTRESS;
-    d.addVariable(ps,{"stress","szz"});
-    VariableDescription etozz("strain","etozz",1u,0u);
-    etozz.description = "axial strain";
-    this->bd.addStateVariable(ps,etozz,BehaviourData::ALREADYREGISTRED);
-    this->bd.setGlossaryName(ps,"etozz",tfel::glossary::Glossary::AxialStrain);
-    CodeBlock integrator;
-    const auto& idsl = dynamic_cast<ImplicitDSLBase&>(this->dsl);
-    if((this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,false))||
-       (this->bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false))){
-      const std::string D =
-	this->bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false) ? "D_tdt" : "D"; 
-      integrator.code +=
-	"// the plane stress equation is satisfied at the end of the time step\n"
-	"fetozz   = this->eel(2)+this->deel(2)+"
-	"           ((this->"+D+"(2,0))/(this->"+D+"(2,2)))*(this->eel(0)+this->deel(0))+"
-	"           ((this->"+D+"(2,1))/(this->"+D+"(2,2)))*(this->eel(1)+this->deel(1));\n"
-	"// modification of the partition of strain\n"
-	"feel(2)          -= this->detozz;\n";
-      if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
-	integrator.code +=
-	  "// jacobian\n"
-	  "dfeel_ddetozz(2)  = -1;\n"
-	  "dfetozz_ddetozz   = real(0);\n"
-	  "dfetozz_ddeel(2)  = 1;\n"
-	  "dfetozz_ddeel(0)  = (this->"+D+"(1,0))/(this->"+D+"(1,1));\n"
-	  "dfetozz_ddeel(1)  = (this->"+D+"(2,0))/(this->"+D+"(1,1));\n";
-      }
-    } else {
-      if(this->bd.areElasticMaterialPropertiesDefined()){
-	integrator.code +=
-	  "// the plane stress equation is satisfied at the end of the time step\n"
-	  "this->sebdata.szz = (this->lambda_tdt+2*(this->mu_tdt))*(this->eel(2)+this->deel(2))+"
-	  "                   (this->lambda_tdt)*(this->eel(0)+this->deel(0)+this->eel(1)+this->deel(1));\n"
-	  "fetozz   = this->sebdata.szz/(this->young_tdt);\n"
-	  "// modification of the partition of strain\n"
-	  "feel(2) -= detozz;\n";
-	if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
-	  integrator.code +=
-	    "// jacobian\n"
-	    "dfeel_ddetozz(2) = -1;\n"
-	    "dfetozz_ddetozz  = real(0);\n"
-	    "dfetozz_ddeel(2) = (this->lambda_tdt+2*(this->mu_tdt))/this->young_tdt;\n"
-	    "dfetozz_ddeel(0) = this->lambda_tdt/this->young_tdt;\n"
-	    "dfetozz_ddeel(1) = this->lambda_tdt/this->young_tdt;\n";
-	}
-      } else {
-	const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda";
-	const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu";
-	integrator.code +=
-	  "// the plane stress equation is satisfied at the end of the time step\n"
-	  "this->sebdata.szz = ("+lambda+"+2*("+mu+"))*(this->eel(2)+this->deel(2))+"
-	  "                   ("+lambda+")*(this->eel(0)+this->deel(0)+this->eel(1)+this->deel(1));\n"
-	  "fetozz   = this->sebdata.szz/(this->young);\n"
-	  "// modification of the partition of strain\n"
-	  "feel(2) -= detozz;\n";
-	if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
-	  integrator.code +=
-	    "// jacobian\n"
-	    "dfeel_ddetozz(2) = -1;\n"
-	    "dfetozz_ddetozz  = real(0);\n"
-	    "dfetozz_ddeel(2) = ("+lambda+"+2*("+mu+"))/this->young;\n"
-	    "dfetozz_ddeel(0) = "+lambda+"/this->young;\n"
-	    "dfetozz_ddeel(1) = "+lambda+"/this->young;\n";
-	}
-      }
-    }
-    this->bd.setCode(ps,BehaviourData::Integrator,
-		     integrator,BehaviourData::CREATEORAPPEND,
-		     BehaviourData::AT_END);
-  }
-
-  void
-  DDIF2Brick::addGenericTangentOperatorSupport(const LocalDataStructure& d) const{
-    auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("DDIF2Brick::"
-				     "addGenericTangentOperatorSupport: "+m));}
-    };
-    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
-    this->bd.checkVariablePosition("eel","IntegrationVariable",0u);
-    CodeBlock tangentOperator;
-    // modelling hypotheses supported by the behaviour
-    const auto bmh = bd.getModellingHypotheses();
-    if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
-       (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
-      const bool agps = bmh.count(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=0;
-      const bool ps   = bmh.count(ModellingHypothesis::PLANESTRESS)!=0;
-      if(agps || ps){
-	if(this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-	  if(!this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
-	    this->bd.setAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,true,false);
-	  }
-	  throw_if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresUnAlteredStiffnessTensor),
-		   "genertic tangent operator support for "
-		   "plane stress hypotheses requires the use of an unaltered stiffness tensor");
-	}
-      }
-      const std::string D = this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false) ?
-	"this->D" : "this->D_tdt";
-      tangentOperator.code =
-	"if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-	"  this->Dt = "+D+";\n";
-      if(idsl.getSolver().usesJacobian()){
-	tangentOperator.code +=
-	  "} else if (smt==CONSISTENTTANGENTOPERATOR){\n"
-	  "  Stensor4 Je;\n"
-	  "  getPartialJacobianInvert(Je);\n"
-	  "  this->Dt = ("+D+")*Je;\n";
-      }
-      tangentOperator.code +=
-	"} else {\n"
-	"  return false;\n"
-	"}";
-    } else {
-      if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-	const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda_tdt";
-	const std::string mu     = d.contains(uh,"mu") ? "this->sebdata.mu" : "this->mu_tdt";
-	tangentOperator.code =
-	  "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-	  "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,"+lambda+","+mu+");\n";
-	if(idsl.getSolver().usesJacobian()){
-	  tangentOperator.code +=
-	    "} else if (smt==CONSISTENTTANGENTOPERATOR){\n"
-	    "  StiffnessTensor Hooke;\n"
-	    "  Stensor4 Je;\n"
-	    "  computeElasticStiffness<N,Type>::exe(Hooke,"+lambda+","+mu+");\n"
-	    "  getPartialJacobianInvert(Je);\n"
-	    "  Dt = Hooke*Je;\n";
-	}
-	tangentOperator.code +=
-	  "} else {\n"
-	  "  return false;\n"
-	  "}";
-      } else if(this->bd.getElasticSymmetryType()==mfront::ORTHOTROPIC){
-	throw_if(!this->bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false),
-		 "orthotropic behaviour shall require the stiffness tensor");
-	tangentOperator.code =
-	  "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-	  "  this->Dt = this->D_tdt;\n";
-	if(idsl.getSolver().usesJacobian()){
-	  tangentOperator.code +=
-	    "} else if (smt==CONSISTENTTANGENTOPERATOR){\n"
-	    "  Stensor4 Je;\n"
-	    "  getPartialJacobianInvert(Je);\n"
-	    "  this->Dt = (this->D_tdt)*Je;\n";
-	}
-	tangentOperator.code +=
-	  "} else {\n"
-	  "  return false;\n"
-	  "}";
-      } else {
-	throw_if(true,"unsupported elastic symmetry type");
-      }
-    }
-    this->bd.setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-			  BehaviourData::hasConsistentTangentOperator,
-			  true,true);
-    this->bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-		     BehaviourData::ComputeTangentOperator,
-		     tangentOperator,BehaviourData::CREATEORAPPEND,
-		     BehaviourData::AT_BEGINNING);
-  }
-
-  void
-  DDIF2Brick::addGenericPredictionOperatorSupport(const LocalDataStructure& d) const{
-    auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("DDIF2Brick::"
-				     "addGenericPredictionOperatorSupport: "+m));}
-    };
-    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    CodeBlock tangentOperator;
-    // modelling hypotheses supported by the behaviour
-    const auto bmh = bd.getModellingHypotheses();
-    if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
-       (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
-      const bool agps = bmh.count(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=0;
-      const bool ps   = bmh.count(ModellingHypothesis::PLANESTRESS)!=0;
-      if(agps || ps){
-	if(this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-	  if(!this->bd.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
-	    this->bd.setAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,true,false);
-	  }
-	  throw_if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresUnAlteredStiffnessTensor),
-		   "genertic tangent operator support for "
-		   "plane stress hypotheses requires the use of an unaltered stiffness tensor");
-	}
-      }
-      const std::string D = this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false) ?
-	"this->D" : "this->D_tdt";
-      tangentOperator.code =
-	"if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-	"  this->Dt = "+D+";\n"
-	"} else {\n"
-	"  return FAILURE;\n"
-	"}";
-    } else {
-      if(this->bd.getElasticSymmetryType()==mfront::ISOTROPIC){
-	const std::string lambda = d.contains(uh,"lambda") ? "this->sebdata.lambda" : "this->lambda_tdt";
-	const std::string mu     = d.contains(uh,"mu")     ? "this->sebdata.mu"     : "this->mu_tdt";
-	tangentOperator.code =
-	  "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-	  "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,"+lambda+","+mu+");\n"
-	  "} else {\n"
-	  "  return FAILURE;\n"
-	  "}";
-      } else if(this->bd.getElasticSymmetryType()==mfront::ORTHOTROPIC){
-	throw_if(!this->bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false),
-		 "orthotropic behaviour shall require the stiffness tensor");
-	tangentOperator.code =
-	  "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-	  "  this->Dt = this->D_tdt;\n"
-	  "} else {\n"
-	  "  return FAILURE;\n"
-	  "}";
-      } else {
-	throw_if(true,"unsupported elastic symmetry type");
-      }
-    }
-    this->bd.setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-			  BehaviourData::hasPredictionOperator,
-			  true,true);
-    this->bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-		     BehaviourData::ComputePredictionOperator,
-		     tangentOperator,BehaviourData::CREATEORAPPEND,
-		     BehaviourData::AT_BEGINNING);
-  }
   
   std::string DDIF2Brick::getName() const{
     return "DDIF2";
@@ -666,17 +204,8 @@ namespace mfront{
   std::vector<tfel::material::ModellingHypothesis::Hypothesis> 
   DDIF2Brick::getSupportedModellingHypotheses() const
   {
-    auto dmh = this->dsl.getDefaultModellingHypotheses();
-    std::vector<ModellingHypothesis::Hypothesis> mh(dmh.begin(),dmh.end());
-    if(this->pss){
-      if(this->dsl.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
-	mh.push_back(ModellingHypothesis::PLANESTRESS);
-      }
-      if(this->dsl.isModellingHypothesisSupported(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
-	mh.push_back(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
-      }
-    }
-    return mh;
+    const auto mh = this->dsl.getDefaultModellingHypotheses();
+    return {mh.begin(),mh.end()};
   } // end of DDIF2Brick::getSupportedModellingHypothesis
 
   DDIF2Brick::~DDIF2Brick() = default;

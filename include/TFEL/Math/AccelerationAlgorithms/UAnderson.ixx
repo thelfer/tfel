@@ -78,7 +78,7 @@ namespace tfel{
       this->alloc();
       uO=this->D[0];
       uN=this->u[0];
-      this->alt=1;//this->alMax;
+      this->alt=this->alMax;
     }
     
   } // end of namespace math

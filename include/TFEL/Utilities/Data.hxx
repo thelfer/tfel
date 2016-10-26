@@ -30,7 +30,7 @@ namespace tfel{
     // forward declaration
     struct Data;
     //! list of all type handled by the Data structure
-    using DataTypes = tfel::meta::GenerateTypeList<int,double,std::string,
+    using DataTypes = tfel::meta::GenerateTypeList<bool,int,double,std::string,
 						   std::vector<Data>,
 						   std::map<std::string,Data>>::type;
     /*!
@@ -42,13 +42,7 @@ namespace tfel{
       //! a simple alias
       using CallBack = std::function<void(const Data&)>;
       //! constructor from a value
-      template<typename T1,
-	       typename std::enable_if<
-		 tfel::meta::TLCountNbrOfT<T1,DataTypes>::value==1, 
-		 bool>::type = true>
-      TFEL_INLINE Data(const T1& v)
-	: GenTypeBase<DataTypes>(v)
-      {}
+      using GenTypeBase::GenTypeBase;
       /*!
        * \brief read a JSON-like structure
        * \return the values read
