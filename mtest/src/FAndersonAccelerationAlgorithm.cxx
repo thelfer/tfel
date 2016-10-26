@@ -78,13 +78,7 @@ namespace mtest
 					  const real,
 					  const unsigned short)
   {
-    auto print = [](const char* n,const tfel::math::vector<real>& v){
-      auto& os = mfront::getLogStream();
-      os << n << ": ";
-      std::copy(v.begin(),v.end(),std::ostream_iterator<real>(os," "));
-      os << std::endl;
-    };
-    // for the first iterator, this->uO==this->uN
+    // for the first iteration, this->uO==this->uN
     *(this->uN) = u1;
     *(this->Df) = r;
     this->a->newIter(this->uO,this->uN,this->Df);

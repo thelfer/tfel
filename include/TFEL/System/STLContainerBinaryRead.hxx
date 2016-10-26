@@ -43,10 +43,10 @@ namespace tfel
     {
       static void exe(const int f,std::vector<T,Allocator>& res)
       {
-	const auto s = binary_read<typename vector<T,Allocator>::size_type>(f);
+	const auto s = binary_read<typename std::vector<T,Allocator>::size_type>(f);
 	res.clear();
 	res.resize(s);
-	for(const auto& v : res){
+	for(auto& v : res){
 	  binary_read(f,v);
 	}
       }

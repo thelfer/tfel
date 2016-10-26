@@ -78,23 +78,8 @@ namespace mtest
 					  const real,
 					  const unsigned short iter)
   {
-    // auto print = [](const tfel::math::vector<real>& v){
-    //   auto& os = mfront::getLogStream();
-    //   std::copy(v.begin(),v.end(),std::ostream_iterator<real>(os," "));
-    //   os << std::endl;
-    // };
-    // auto pos = [this](const tfel::math::vector<real> * ptr){
-    //   const auto& u = this->a->getU();
-    //   const auto& d = this->a->getD();
-    //   auto p = std::find(u.begin(),u.end(),ptr);
-    //   if(p!=u.end()){
-    // 	return "u"+std::to_string(p-u.begin());
-    //   }
-    //   p = std::find(d.begin(),d.end(),ptr);
-    //   return "d"+std::to_string(p-d.begin());
-    // };
     if(iter==1u){
-      *(this->uO) = u1-du;
+      *(this->uO) = u1-du;      
     }
     *(this->uN) = u1;
     this->a->newIter(this->uO,this->uN);
