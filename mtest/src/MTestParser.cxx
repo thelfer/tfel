@@ -58,8 +58,7 @@ namespace mtest
     this->registerCallBacks();
   }
 
-  void
-  MTestParser::parseString(MTest& t,const std::string& f)
+  void MTestParser::parseString(MTest& t,const std::string& f)
   {
     this->file = "user defined string";
     this->treatCharAsString(true);
@@ -68,10 +67,9 @@ namespace mtest
     this->execute(t);
   } // end of MTestParser::parseString
 
-  void
-  MTestParser::execute(MTest& t,const std::string& f,
-		       const std::vector<std::string>& ecmds,
-		       const std::map<std::string,std::string>& s)
+  void MTestParser::execute(MTest& t,const std::string& f,
+			    const std::vector<std::string>& ecmds,
+			    const std::map<std::string,std::string>& s)
   {
     this->file = f;
     this->treatCharAsString(true);
@@ -126,8 +124,7 @@ namespace mtest
     }
   } // end of MTestParser::execute
 
-  bool
-  MTestParser::treatKeyword(MTest& t, tokens_iterator& p)
+  bool MTestParser::treatKeyword(MTest& t, tokens_iterator& p)
   {
     const auto pc = this->callbacks.find(p->value);
     if(pc==this->callbacks.end()){
@@ -152,8 +149,7 @@ namespace mtest
     return true;
   } // end of MTestParser::treatKeyword
 
-  std::vector<std::string>
-  MTestParser::getKeyWordsList() const{
+  std::vector<std::string> MTestParser::getKeyWordsList() const{
     auto keys  = SchemeParserBase::getKeyWordsList();
     auto keys2 = SingleStructureSchemeParser::getKeyWordsList();
     keys.insert(keys.end(),keys2.begin(),keys2.end());
@@ -163,8 +159,7 @@ namespace mtest
     return keys;
   }
   
-  void
-  MTestParser::displayKeyWordsList() const
+  void MTestParser::displayKeyWordsList() const
   {
     using namespace std;
     using namespace tfel::utilities;
@@ -190,8 +185,7 @@ namespace mtest
     }
   } // end of MTestParser::displayKeywordsList
 
-  void
-  MTestParser::displayKeyWordsHelp() const
+  void MTestParser::displayKeyWordsHelp() const
   {
     auto keys  = this->getKeyWordsList();
     std::cout << "% `MTest` keywords\n\n";
@@ -211,8 +205,7 @@ namespace mtest
     }
   } // end of MTestParser::displayKeywordsHelp
 
-  void
-  MTestParser::displayKeyWordDescription(const std::string& k) const
+  void MTestParser::displayKeyWordDescription(const std::string& k) const
   {
     auto keys  = this->getKeyWordsList();
     if(std::find(keys.begin(),keys.end(),k)==keys.end()){
@@ -234,8 +227,7 @@ namespace mtest
     std::cout << desc.rdbuf();
   }
   
-  void
-  MTestParser::registerCallBacks()
+  void MTestParser::registerCallBacks()
   {
     SchemeParserBase::registerCallBacks();
     SingleStructureSchemeParser::registerCallBacks();
@@ -288,9 +280,8 @@ namespace mtest
 			   &MTestParser::handleNumericalTangentOperatorPerturbationValue);
   }
 
-  void
-  MTestParser::registerCallBack(const std::string& k,
-				const MTestParser::CallBack& p)
+  void MTestParser::registerCallBack(const std::string& k,
+				     const MTestParser::CallBack& p)
   {
     this->callbacks.insert({k,p});
   }
@@ -555,8 +546,7 @@ namespace mtest
     t.setRotationMatrix(rm);
   } // end of MTestParser::handleRotationMatrix
 
-  void
-  MTestParser::handleStrainEpsilon(MTest& t,tokens_iterator& p)
+  void MTestParser::handleStrainEpsilon(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
     if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
@@ -569,8 +559,7 @@ namespace mtest
     this->handleDrivingVariableEpsilon(t,p);
   }
 
-  void
-  MTestParser::handleDeformationGradientEpsilon(MTest& t,tokens_iterator& p)
+  void MTestParser::handleDeformationGradientEpsilon(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
     if(!((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
@@ -582,8 +571,7 @@ namespace mtest
     this->handleDrivingVariableEpsilon(t,p);
   } // end of MTestParser::handleDeformationGradientEpsilon
 
-  void
-  MTestParser::handleOpeningDisplacementEpsilon(MTest& t,tokens_iterator& p)
+  void MTestParser::handleOpeningDisplacementEpsilon(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
     if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
@@ -594,16 +582,14 @@ namespace mtest
     this->handleDrivingVariableEpsilon(t,p);
   }
 
-  void
-  MTestParser::handleDrivingVariableEpsilon(MTest& t,tokens_iterator& p)
+  void MTestParser::handleDrivingVariableEpsilon(MTest& t,tokens_iterator& p)
   {
     t.setDrivingVariableEpsilon(this->readDouble(t,p));
     this->readSpecifiedToken("MTestParser::handleDrivingVariableEpsilon",";",
 			     p,this->tokens.end());
   } // end of MTestParser::handleDrivingVariableEpsilon
 
-  void
-  MTestParser::handleStressEpsilon(MTest& t,tokens_iterator& p)
+  void MTestParser::handleStressEpsilon(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
     if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
@@ -615,8 +601,7 @@ namespace mtest
     this->handleThermodynamicForceEpsilon(t,p);
   }
 
-  void
-  MTestParser::handleCohesiveForceEpsilon(MTest& t,tokens_iterator& p)
+  void MTestParser::handleCohesiveForceEpsilon(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
     if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
@@ -627,26 +612,22 @@ namespace mtest
     this->handleThermodynamicForceEpsilon(t,p);
   }
 
-  void
-  MTestParser::handleThermodynamicForceEpsilon(MTest& t,tokens_iterator& p)
+  void MTestParser::handleThermodynamicForceEpsilon(MTest& t,tokens_iterator& p)
   {
     t.setThermodynamicForceEpsilon(this->readDouble(t,p));
     this->readSpecifiedToken("MTestParser::handleThermodynamicForceEpsilon",";",
 			     p,this->tokens.end());
   }
 
-  void
-  MTestParser::handleModellingHypothesis(MTest& t,tokens_iterator& p)
+  void MTestParser::handleModellingHypothesis(MTest& t,tokens_iterator& p)
   {
     t.setModellingHypothesis(this->readString(p,this->tokens.end()));
     this->readSpecifiedToken("MTestParser::handleModellingHypothesis",";",p,
 			     this->tokens.end());
   }
   
-  void
-  MTestParser::handleImposedStress(MTest& t,tokens_iterator& p)
+  void MTestParser::handleImposedStress(MTest& t,tokens_iterator& p)
   {
-    using namespace tfel::utilities;
     using namespace tfel::material;
     if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
        (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
@@ -657,10 +638,8 @@ namespace mtest
     this->handleImposedThermodynamicForce(t,p);
   } // end of MTestParser::handleImposedStress
 
-  void
-  MTestParser::handleImposedCohesiveForce(MTest& t,tokens_iterator& p)
+  void MTestParser::handleImposedCohesiveForce(MTest& t,tokens_iterator& p)
   {
-    using namespace tfel::utilities;
     using namespace tfel::material;
     if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
       throw(std::runtime_error("MTestParser::handleImposedCohesiveForce: "
@@ -670,8 +649,7 @@ namespace mtest
     this->handleImposedThermodynamicForce(t,p);
   } // end of MTestParser::handleImposedCohesiveForce
 
-  void
-  MTestParser::handleImposedThermodynamicForce(MTest& t,tokens_iterator& p)
+  void MTestParser::handleImposedThermodynamicForce(MTest& t,tokens_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
     const auto& c = this->readString(p,this->tokens.end());
@@ -686,8 +664,7 @@ namespace mtest
 			     p,this->tokens.end());
   } // end of MTestParser::handleImposedStress
 
-  void
-  MTestParser::handleImposedStrain(MTest& t,tokens_iterator& p)
+  void MTestParser::handleImposedStrain(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
     if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
@@ -700,8 +677,7 @@ namespace mtest
     this->handleImposedDrivingVariable(t,p);
   }
 
-  void
-  MTestParser::handleImposedDeformationGradient(MTest& t,tokens_iterator& p)
+  void MTestParser::handleImposedDeformationGradient(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
     if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
@@ -717,8 +693,7 @@ namespace mtest
     this->handleImposedDrivingVariable(t,p);
   }
 
-  void
-  MTestParser::handleImposedOpeningDisplacement(MTest& t,tokens_iterator& p)
+  void MTestParser::handleImposedOpeningDisplacement(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
     if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
@@ -729,8 +704,7 @@ namespace mtest
     this->handleImposedDrivingVariable(t,p);
   }
 
-  void
-  MTestParser::handleImposedDrivingVariable(MTest& t,tokens_iterator& p)
+  void MTestParser::handleImposedDrivingVariable(MTest& t,tokens_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
     const auto& c = this->readString(p,this->tokens.end());
@@ -745,8 +719,7 @@ namespace mtest
     t.addConstraint(sc);
   } // end of MTestParser::handleImposedDrivingVariable
     
-  void
-  MTestParser::handleStrain(MTest& t,tokens_iterator& p)
+  void MTestParser::handleStrain(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
     if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
@@ -759,8 +732,7 @@ namespace mtest
     this->handleDrivingVariable(t,p);
   }
 
-  void
-  MTestParser::handleDeformationGradient(MTest& t,tokens_iterator& p)
+  void MTestParser::handleDeformationGradient(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
     if(!((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
@@ -772,8 +744,7 @@ namespace mtest
     this->handleDrivingVariable(t,p);
   }
 
-  void
-  MTestParser::handleOpeningDisplacement(MTest& t,tokens_iterator& p)
+  void MTestParser::handleOpeningDisplacement(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
     if(t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
@@ -784,8 +755,7 @@ namespace mtest
     this->handleDrivingVariable(t,p);
   }
       
-  void
-  MTestParser::handleDrivingVariable(MTest& t,tokens_iterator& p)
+  void MTestParser::handleDrivingVariable(MTest& t,tokens_iterator& p)
   {
     const auto N = t.getBehaviour()->getDrivingVariablesSize();
     std::vector<real> e_t0;
@@ -796,8 +766,7 @@ namespace mtest
     t.setDrivingVariablesInitialValues(e_t0);
   } // end of MTestParser::handleDrivingVariable
 
-  void
-  MTestParser::handleStress(MTest& t,tokens_iterator& p)
+  void MTestParser::handleStress(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
     if((t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
@@ -809,8 +778,7 @@ namespace mtest
     this->handleThermodynamicForce(t,p);
   }
 
-  void
-  MTestParser::handleCohesiveForce(MTest& t,tokens_iterator& p)
+  void MTestParser::handleCohesiveForce(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
     if(t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
@@ -821,8 +789,7 @@ namespace mtest
     this->handleThermodynamicForce(t,p);
   }
 
-  void
-  MTestParser::handleThermodynamicForce(MTest& t,tokens_iterator& p)
+  void MTestParser::handleThermodynamicForce(MTest& t,tokens_iterator& p)
   {
     const auto N = t.getBehaviour()->getThermodynamicForcesSize();
     std::vector<real> s_t0;
@@ -833,7 +800,6 @@ namespace mtest
     t.setThermodynamicForcesInitialValues(s_t0);
   } // end of MTestParser::handleThermodynamicForce
 
-  MTestParser::~MTestParser()
-  {} // end of MTestParser::~MTestParser()
+  MTestParser::~MTestParser() = default;
 
 } // end namespace mtest

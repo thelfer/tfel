@@ -1,0 +1,456 @@
+/*! 
+ * \file  polycrystals_DD_CFC.mtest
+ * \brief test polycrystal BZ 30 grains DD_CFC cf. mfron03f
+ * \author jmp
+ * \brief 12 juin 2013
+ */
+
+@Real 'G'     80000.;
+@Real 'nu'    0.3;
+@Real 'young' 'G*2.6';
+
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatpolycrystals_dd_cfc';
+@Parameter 'epsilon' 1.e-8;
+@StrainEpsilon 1.e-10;
+@StressEpsilon 1.e-3;
+
+@AccelerationAlgorithm 'UAnderson';
+@StiffnessMatrixType 'Elastic' ;
+
+@MaterialProperty<constant> 'YoungModulus1'     'young';
+@MaterialProperty<constant> 'YoungModulus2'     'young';
+@MaterialProperty<constant> 'YoungModulus3'     'young';
+@MaterialProperty<constant> 'PoissonRatio12'       'nu';
+@MaterialProperty<constant> 'PoissonRatio13'       'nu';
+@MaterialProperty<constant> 'PoissonRatio23'       'nu';
+@MaterialProperty<constant> 'ShearModulus12'    'G';
+@MaterialProperty<constant> 'ShearModulus13'    'G';
+@MaterialProperty<constant> 'ShearModulus23'    'G';
+
+@MaterialProperty<constant> 'tauf'   80.;
+@MaterialProperty<constant> 'pn'     20.;
+@MaterialProperty<constant> 'y'      2.5E-7;
+@MaterialProperty<constant> 'gamma0' 1.E-3;
+@MaterialProperty<constant> 'a'      0.13;
+@MaterialProperty<constant> 'b'      0.005;
+@MaterialProperty<constant> 'Mu'     'G';
+
+@Real 'rho0' '1.e5*2.54e-7*2.54e-7' ;
+
+@InternalStateVariable 'omega[0]'  'rho0';
+@InternalStateVariable 'omega[1]'  'rho0';
+@InternalStateVariable 'omega[2]'  'rho0';
+@InternalStateVariable 'omega[3]'  'rho0';
+@InternalStateVariable 'omega[4]'  'rho0';
+@InternalStateVariable 'omega[5]'  'rho0';
+@InternalStateVariable 'omega[6]'  'rho0';
+@InternalStateVariable 'omega[7]'  'rho0';
+@InternalStateVariable 'omega[8]'  'rho0';
+@InternalStateVariable 'omega[9]'  'rho0';
+
+@InternalStateVariable 'omega[10]' 'rho0';
+@InternalStateVariable 'omega[11]' 'rho0';
+@InternalStateVariable 'omega[13]'  'rho0';
+@InternalStateVariable 'omega[14]'  'rho0';
+@InternalStateVariable 'omega[15]'  'rho0';
+@InternalStateVariable 'omega[16]'  'rho0';
+@InternalStateVariable 'omega[17]'  'rho0';
+@InternalStateVariable 'omega[18]'  'rho0';
+@InternalStateVariable 'omega[19]'  'rho0';
+
+@InternalStateVariable 'omega[10]' 'rho0';
+@InternalStateVariable 'omega[11]' 'rho0';
+@InternalStateVariable 'omega[13]'  'rho0';
+@InternalStateVariable 'omega[14]'  'rho0';
+@InternalStateVariable 'omega[15]'  'rho0';
+@InternalStateVariable 'omega[16]'  'rho0';
+@InternalStateVariable 'omega[17]'  'rho0';
+@InternalStateVariable 'omega[18]'  'rho0';
+@InternalStateVariable 'omega[19]'  'rho0';
+
+@InternalStateVariable 'omega[20]' 'rho0';
+@InternalStateVariable 'omega[21]' 'rho0';
+@InternalStateVariable 'omega[23]'  'rho0';
+@InternalStateVariable 'omega[24]'  'rho0';
+@InternalStateVariable 'omega[25]'  'rho0';
+@InternalStateVariable 'omega[26]'  'rho0';
+@InternalStateVariable 'omega[27]'  'rho0';
+@InternalStateVariable 'omega[28]'  'rho0';
+@InternalStateVariable 'omega[29]'  'rho0';
+
+@InternalStateVariable 'omega[30]' 'rho0';
+@InternalStateVariable 'omega[31]' 'rho0';
+@InternalStateVariable 'omega[33]'  'rho0';
+@InternalStateVariable 'omega[34]'  'rho0';
+@InternalStateVariable 'omega[35]'  'rho0';
+@InternalStateVariable 'omega[36]'  'rho0';
+@InternalStateVariable 'omega[37]'  'rho0';
+@InternalStateVariable 'omega[38]'  'rho0';
+@InternalStateVariable 'omega[39]'  'rho0';
+
+@InternalStateVariable 'omega[40]' 'rho0';
+@InternalStateVariable 'omega[41]' 'rho0';
+@InternalStateVariable 'omega[43]'  'rho0';
+@InternalStateVariable 'omega[44]'  'rho0';
+@InternalStateVariable 'omega[45]'  'rho0';
+@InternalStateVariable 'omega[46]'  'rho0';
+@InternalStateVariable 'omega[47]'  'rho0';
+@InternalStateVariable 'omega[48]'  'rho0';
+@InternalStateVariable 'omega[49]'  'rho0';
+
+@InternalStateVariable 'omega[50]' 'rho0';
+@InternalStateVariable 'omega[51]' 'rho0';
+@InternalStateVariable 'omega[53]'  'rho0';
+@InternalStateVariable 'omega[54]'  'rho0';
+@InternalStateVariable 'omega[55]'  'rho0';
+@InternalStateVariable 'omega[56]'  'rho0';
+@InternalStateVariable 'omega[57]'  'rho0';
+@InternalStateVariable 'omega[58]'  'rho0';
+@InternalStateVariable 'omega[59]'  'rho0';
+
+@InternalStateVariable 'omega[60]' 'rho0';
+@InternalStateVariable 'omega[61]' 'rho0';
+@InternalStateVariable 'omega[63]'  'rho0';
+@InternalStateVariable 'omega[64]'  'rho0';
+@InternalStateVariable 'omega[65]'  'rho0';
+@InternalStateVariable 'omega[66]'  'rho0';
+@InternalStateVariable 'omega[67]'  'rho0';
+@InternalStateVariable 'omega[68]'  'rho0';
+@InternalStateVariable 'omega[69]'  'rho0';
+
+@InternalStateVariable 'omega[70]' 'rho0';
+@InternalStateVariable 'omega[71]' 'rho0';
+@InternalStateVariable 'omega[73]'  'rho0';
+@InternalStateVariable 'omega[74]'  'rho0';
+@InternalStateVariable 'omega[75]'  'rho0';
+@InternalStateVariable 'omega[76]'  'rho0';
+@InternalStateVariable 'omega[77]'  'rho0';
+@InternalStateVariable 'omega[78]'  'rho0';
+@InternalStateVariable 'omega[79]'  'rho0';
+
+@InternalStateVariable 'omega[80]' 'rho0';
+@InternalStateVariable 'omega[81]' 'rho0';
+@InternalStateVariable 'omega[83]'  'rho0';
+@InternalStateVariable 'omega[84]'  'rho0';
+@InternalStateVariable 'omega[85]'  'rho0';
+@InternalStateVariable 'omega[86]'  'rho0';
+@InternalStateVariable 'omega[87]'  'rho0';
+@InternalStateVariable 'omega[88]'  'rho0';
+@InternalStateVariable 'omega[89]'  'rho0';
+
+@InternalStateVariable 'omega[90]' 'rho0';
+@InternalStateVariable 'omega[91]' 'rho0';
+@InternalStateVariable 'omega[93]'  'rho0';
+@InternalStateVariable 'omega[94]'  'rho0';
+@InternalStateVariable 'omega[95]'  'rho0';
+@InternalStateVariable 'omega[96]'  'rho0';
+@InternalStateVariable 'omega[97]'  'rho0';
+@InternalStateVariable 'omega[98]'  'rho0';
+@InternalStateVariable 'omega[99]'  'rho0';
+
+
+@InternalStateVariable 'omega[100]'  'rho0';
+@InternalStateVariable 'omega[101]'  'rho0';
+@InternalStateVariable 'omega[102]'  'rho0';
+@InternalStateVariable 'omega[103]'  'rho0';
+@InternalStateVariable 'omega[104]'  'rho0';
+@InternalStateVariable 'omega[105]'  'rho0';
+@InternalStateVariable 'omega[106]'  'rho0';
+@InternalStateVariable 'omega[107]'  'rho0';
+@InternalStateVariable 'omega[108]'  'rho0';
+@InternalStateVariable 'omega[109]'  'rho0';
+
+@InternalStateVariable 'omega[110]' 'rho0';
+@InternalStateVariable 'omega[111]' 'rho0';
+@InternalStateVariable 'omega[113]'  'rho0';
+@InternalStateVariable 'omega[114]'  'rho0';
+@InternalStateVariable 'omega[115]'  'rho0';
+@InternalStateVariable 'omega[116]'  'rho0';
+@InternalStateVariable 'omega[117]'  'rho0';
+@InternalStateVariable 'omega[118]'  'rho0';
+@InternalStateVariable 'omega[119]'  'rho0';
+
+@InternalStateVariable 'omega[110]' 'rho0';
+@InternalStateVariable 'omega[111]' 'rho0';
+@InternalStateVariable 'omega[113]'  'rho0';
+@InternalStateVariable 'omega[114]'  'rho0';
+@InternalStateVariable 'omega[115]'  'rho0';
+@InternalStateVariable 'omega[116]'  'rho0';
+@InternalStateVariable 'omega[117]'  'rho0';
+@InternalStateVariable 'omega[118]'  'rho0';
+@InternalStateVariable 'omega[119]'  'rho0';
+
+@InternalStateVariable 'omega[120]' 'rho0';
+@InternalStateVariable 'omega[121]' 'rho0';
+@InternalStateVariable 'omega[123]'  'rho0';
+@InternalStateVariable 'omega[124]'  'rho0';
+@InternalStateVariable 'omega[125]'  'rho0';
+@InternalStateVariable 'omega[126]'  'rho0';
+@InternalStateVariable 'omega[127]'  'rho0';
+@InternalStateVariable 'omega[128]'  'rho0';
+@InternalStateVariable 'omega[129]'  'rho0';
+
+@InternalStateVariable 'omega[130]' 'rho0';
+@InternalStateVariable 'omega[131]' 'rho0';
+@InternalStateVariable 'omega[133]'  'rho0';
+@InternalStateVariable 'omega[134]'  'rho0';
+@InternalStateVariable 'omega[135]'  'rho0';
+@InternalStateVariable 'omega[136]'  'rho0';
+@InternalStateVariable 'omega[137]'  'rho0';
+@InternalStateVariable 'omega[138]'  'rho0';
+@InternalStateVariable 'omega[139]'  'rho0';
+
+@InternalStateVariable 'omega[140]' 'rho0';
+@InternalStateVariable 'omega[141]' 'rho0';
+@InternalStateVariable 'omega[143]'  'rho0';
+@InternalStateVariable 'omega[144]'  'rho0';
+@InternalStateVariable 'omega[145]'  'rho0';
+@InternalStateVariable 'omega[146]'  'rho0';
+@InternalStateVariable 'omega[147]'  'rho0';
+@InternalStateVariable 'omega[148]'  'rho0';
+@InternalStateVariable 'omega[149]'  'rho0';
+
+@InternalStateVariable 'omega[150]' 'rho0';
+@InternalStateVariable 'omega[151]' 'rho0';
+@InternalStateVariable 'omega[153]'  'rho0';
+@InternalStateVariable 'omega[154]'  'rho0';
+@InternalStateVariable 'omega[155]'  'rho0';
+@InternalStateVariable 'omega[156]'  'rho0';
+@InternalStateVariable 'omega[157]'  'rho0';
+@InternalStateVariable 'omega[158]'  'rho0';
+@InternalStateVariable 'omega[159]'  'rho0';
+
+@InternalStateVariable 'omega[160]' 'rho0';
+@InternalStateVariable 'omega[161]' 'rho0';
+@InternalStateVariable 'omega[163]'  'rho0';
+@InternalStateVariable 'omega[164]'  'rho0';
+@InternalStateVariable 'omega[165]'  'rho0';
+@InternalStateVariable 'omega[166]'  'rho0';
+@InternalStateVariable 'omega[167]'  'rho0';
+@InternalStateVariable 'omega[168]'  'rho0';
+@InternalStateVariable 'omega[169]'  'rho0';
+
+@InternalStateVariable 'omega[170]' 'rho0';
+@InternalStateVariable 'omega[171]' 'rho0';
+@InternalStateVariable 'omega[173]'  'rho0';
+@InternalStateVariable 'omega[174]'  'rho0';
+@InternalStateVariable 'omega[175]'  'rho0';
+@InternalStateVariable 'omega[176]'  'rho0';
+@InternalStateVariable 'omega[177]'  'rho0';
+@InternalStateVariable 'omega[178]'  'rho0';
+@InternalStateVariable 'omega[179]'  'rho0';
+
+@InternalStateVariable 'omega[180]' 'rho0';
+@InternalStateVariable 'omega[181]' 'rho0';
+@InternalStateVariable 'omega[183]'  'rho0';
+@InternalStateVariable 'omega[184]'  'rho0';
+@InternalStateVariable 'omega[185]'  'rho0';
+@InternalStateVariable 'omega[186]'  'rho0';
+@InternalStateVariable 'omega[187]'  'rho0';
+@InternalStateVariable 'omega[188]'  'rho0';
+@InternalStateVariable 'omega[189]'  'rho0';
+
+@InternalStateVariable 'omega[190]' 'rho0';
+@InternalStateVariable 'omega[191]' 'rho0';
+@InternalStateVariable 'omega[193]'  'rho0';
+@InternalStateVariable 'omega[194]'  'rho0';
+@InternalStateVariable 'omega[195]'  'rho0';
+@InternalStateVariable 'omega[196]'  'rho0';
+@InternalStateVariable 'omega[197]'  'rho0';
+@InternalStateVariable 'omega[198]'  'rho0';
+@InternalStateVariable 'omega[199]'  'rho0';
+
+
+
+
+@InternalStateVariable 'omega[200]'  'rho0';
+@InternalStateVariable 'omega[201]'  'rho0';
+@InternalStateVariable 'omega[202]'  'rho0';
+@InternalStateVariable 'omega[203]'  'rho0';
+@InternalStateVariable 'omega[204]'  'rho0';
+@InternalStateVariable 'omega[205]'  'rho0';
+@InternalStateVariable 'omega[206]'  'rho0';
+@InternalStateVariable 'omega[207]'  'rho0';
+@InternalStateVariable 'omega[208]'  'rho0';
+@InternalStateVariable 'omega[209]'  'rho0';
+
+@InternalStateVariable 'omega[210]' 'rho0';
+@InternalStateVariable 'omega[211]' 'rho0';
+@InternalStateVariable 'omega[213]'  'rho0';
+@InternalStateVariable 'omega[214]'  'rho0';
+@InternalStateVariable 'omega[215]'  'rho0';
+@InternalStateVariable 'omega[216]'  'rho0';
+@InternalStateVariable 'omega[217]'  'rho0';
+@InternalStateVariable 'omega[218]'  'rho0';
+@InternalStateVariable 'omega[219]'  'rho0';
+
+@InternalStateVariable 'omega[210]' 'rho0';
+@InternalStateVariable 'omega[211]' 'rho0';
+@InternalStateVariable 'omega[213]'  'rho0';
+@InternalStateVariable 'omega[214]'  'rho0';
+@InternalStateVariable 'omega[215]'  'rho0';
+@InternalStateVariable 'omega[216]'  'rho0';
+@InternalStateVariable 'omega[217]'  'rho0';
+@InternalStateVariable 'omega[218]'  'rho0';
+@InternalStateVariable 'omega[219]'  'rho0';
+
+@InternalStateVariable 'omega[220]' 'rho0';
+@InternalStateVariable 'omega[221]' 'rho0';
+@InternalStateVariable 'omega[223]'  'rho0';
+@InternalStateVariable 'omega[224]'  'rho0';
+@InternalStateVariable 'omega[225]'  'rho0';
+@InternalStateVariable 'omega[226]'  'rho0';
+@InternalStateVariable 'omega[227]'  'rho0';
+@InternalStateVariable 'omega[228]'  'rho0';
+@InternalStateVariable 'omega[229]'  'rho0';
+
+@InternalStateVariable 'omega[230]' 'rho0';
+@InternalStateVariable 'omega[231]' 'rho0';
+@InternalStateVariable 'omega[233]'  'rho0';
+@InternalStateVariable 'omega[234]'  'rho0';
+@InternalStateVariable 'omega[235]'  'rho0';
+@InternalStateVariable 'omega[236]'  'rho0';
+@InternalStateVariable 'omega[237]'  'rho0';
+@InternalStateVariable 'omega[238]'  'rho0';
+@InternalStateVariable 'omega[239]'  'rho0';
+
+@InternalStateVariable 'omega[240]' 'rho0';
+@InternalStateVariable 'omega[241]' 'rho0';
+@InternalStateVariable 'omega[243]'  'rho0';
+@InternalStateVariable 'omega[244]'  'rho0';
+@InternalStateVariable 'omega[245]'  'rho0';
+@InternalStateVariable 'omega[246]'  'rho0';
+@InternalStateVariable 'omega[247]'  'rho0';
+@InternalStateVariable 'omega[248]'  'rho0';
+@InternalStateVariable 'omega[249]'  'rho0';
+
+@InternalStateVariable 'omega[250]' 'rho0';
+@InternalStateVariable 'omega[251]' 'rho0';
+@InternalStateVariable 'omega[253]'  'rho0';
+@InternalStateVariable 'omega[254]'  'rho0';
+@InternalStateVariable 'omega[255]'  'rho0';
+@InternalStateVariable 'omega[256]'  'rho0';
+@InternalStateVariable 'omega[257]'  'rho0';
+@InternalStateVariable 'omega[258]'  'rho0';
+@InternalStateVariable 'omega[259]'  'rho0';
+
+@InternalStateVariable 'omega[260]' 'rho0';
+@InternalStateVariable 'omega[261]' 'rho0';
+@InternalStateVariable 'omega[263]'  'rho0';
+@InternalStateVariable 'omega[264]'  'rho0';
+@InternalStateVariable 'omega[265]'  'rho0';
+@InternalStateVariable 'omega[266]'  'rho0';
+@InternalStateVariable 'omega[267]'  'rho0';
+@InternalStateVariable 'omega[268]'  'rho0';
+@InternalStateVariable 'omega[269]'  'rho0';
+
+@InternalStateVariable 'omega[270]' 'rho0';
+@InternalStateVariable 'omega[271]' 'rho0';
+@InternalStateVariable 'omega[273]'  'rho0';
+@InternalStateVariable 'omega[274]'  'rho0';
+@InternalStateVariable 'omega[275]'  'rho0';
+@InternalStateVariable 'omega[276]'  'rho0';
+@InternalStateVariable 'omega[277]'  'rho0';
+@InternalStateVariable 'omega[278]'  'rho0';
+@InternalStateVariable 'omega[279]'  'rho0';
+
+@InternalStateVariable 'omega[280]' 'rho0';
+@InternalStateVariable 'omega[281]' 'rho0';
+@InternalStateVariable 'omega[283]'  'rho0';
+@InternalStateVariable 'omega[284]'  'rho0';
+@InternalStateVariable 'omega[285]'  'rho0';
+@InternalStateVariable 'omega[286]'  'rho0';
+@InternalStateVariable 'omega[287]'  'rho0';
+@InternalStateVariable 'omega[288]'  'rho0';
+@InternalStateVariable 'omega[289]'  'rho0';
+
+@InternalStateVariable 'omega[290]' 'rho0';
+@InternalStateVariable 'omega[291]' 'rho0';
+@InternalStateVariable 'omega[293]'  'rho0';
+@InternalStateVariable 'omega[294]'  'rho0';
+@InternalStateVariable 'omega[295]'  'rho0';
+@InternalStateVariable 'omega[296]'  'rho0';
+@InternalStateVariable 'omega[297]'  'rho0';
+@InternalStateVariable 'omega[298]'  'rho0';
+@InternalStateVariable 'omega[299]'  'rho0';
+
+
+
+@InternalStateVariable 'omega[300]'  'rho0';
+@InternalStateVariable 'omega[301]'  'rho0';
+@InternalStateVariable 'omega[302]'  'rho0';
+@InternalStateVariable 'omega[303]'  'rho0';
+@InternalStateVariable 'omega[304]'  'rho0';
+@InternalStateVariable 'omega[305]'  'rho0';
+@InternalStateVariable 'omega[306]'  'rho0';
+@InternalStateVariable 'omega[307]'  'rho0';
+@InternalStateVariable 'omega[308]'  'rho0';
+@InternalStateVariable 'omega[309]'  'rho0';
+
+@InternalStateVariable 'omega[310]' 'rho0';
+@InternalStateVariable 'omega[311]' 'rho0';
+@InternalStateVariable 'omega[313]'  'rho0';
+@InternalStateVariable 'omega[314]'  'rho0';
+@InternalStateVariable 'omega[315]'  'rho0';
+@InternalStateVariable 'omega[316]'  'rho0';
+@InternalStateVariable 'omega[317]'  'rho0';
+@InternalStateVariable 'omega[318]'  'rho0';
+@InternalStateVariable 'omega[319]'  'rho0';
+
+@InternalStateVariable 'omega[310]' 'rho0';
+@InternalStateVariable 'omega[311]' 'rho0';
+@InternalStateVariable 'omega[313]'  'rho0';
+@InternalStateVariable 'omega[314]'  'rho0';
+@InternalStateVariable 'omega[315]'  'rho0';
+@InternalStateVariable 'omega[316]'  'rho0';
+@InternalStateVariable 'omega[317]'  'rho0';
+@InternalStateVariable 'omega[318]'  'rho0';
+@InternalStateVariable 'omega[319]'  'rho0';
+
+@InternalStateVariable 'omega[320]' 'rho0';
+@InternalStateVariable 'omega[321]' 'rho0';
+@InternalStateVariable 'omega[323]'  'rho0';
+@InternalStateVariable 'omega[324]'  'rho0';
+@InternalStateVariable 'omega[325]'  'rho0';
+@InternalStateVariable 'omega[326]'  'rho0';
+@InternalStateVariable 'omega[327]'  'rho0';
+@InternalStateVariable 'omega[328]'  'rho0';
+@InternalStateVariable 'omega[329]'  'rho0';
+
+@InternalStateVariable 'omega[330]' 'rho0';
+@InternalStateVariable 'omega[331]' 'rho0';
+@InternalStateVariable 'omega[333]'  'rho0';
+@InternalStateVariable 'omega[334]'  'rho0';
+@InternalStateVariable 'omega[335]'  'rho0';
+@InternalStateVariable 'omega[336]'  'rho0';
+@InternalStateVariable 'omega[337]'  'rho0';
+@InternalStateVariable 'omega[338]'  'rho0';
+@InternalStateVariable 'omega[339]'  'rho0';
+
+@InternalStateVariable 'omega[340]' 'rho0';
+@InternalStateVariable 'omega[341]' 'rho0';
+@InternalStateVariable 'omega[343]'  'rho0';
+@InternalStateVariable 'omega[344]'  'rho0';
+@InternalStateVariable 'omega[345]'  'rho0';
+@InternalStateVariable 'omega[346]'  'rho0';
+@InternalStateVariable 'omega[347]'  'rho0';
+@InternalStateVariable 'omega[348]'  'rho0';
+@InternalStateVariable 'omega[349]'  'rho0';
+
+@InternalStateVariable 'omega[350]' 'rho0';
+@InternalStateVariable 'omega[351]' 'rho0';
+@InternalStateVariable 'omega[353]'  'rho0';
+@InternalStateVariable 'omega[354]'  'rho0';
+@InternalStateVariable 'omega[355]'  'rho0';
+@InternalStateVariable 'omega[356]'  'rho0';
+@InternalStateVariable 'omega[357]'  'rho0';
+@InternalStateVariable 'omega[358]'  'rho0';
+@InternalStateVariable 'omega[359]'  'rho0';
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@ImposedStrain 'EZZ' {0.: 0., 1. : 0.05 };
+
+@Times {0.,1. in 100};
+
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/polycrystals_dd_cfc.ref' {'SZZ':10} 2. ;

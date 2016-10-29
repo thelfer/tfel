@@ -158,7 +158,7 @@ namespace tfel{
     void
     convertStressFreeExpansionStrain(tfel::math::stensor<ModellingHypothesisToSpaceDimension<mh>::value,T>& s)
     {
-      tfel::material::internals::OrthotropicAxesConventionConverter<mh,c>::convert(s);
+      internals::OrthotropicAxesConventionConverter<mh,c>::convert(s);
     } // end of convert
 
     template<ModellingHypothesis::Hypothesis H,
@@ -170,9 +170,9 @@ namespace tfel{
 					   const RealType   n12,const RealType   n23,const RealType n13,
 					   const StressType G12,const StressType G23,const StressType G13)
     {
-      tfel::material::internals::ComputeOrthotropicStiffnessTensor<H,smt,c>::exe(C,E1,E2,E3,
-										 n12,n23,n13,
-										 G12,G23,G13);
+      internals::ComputeOrthotropicStiffnessTensor<H,smt,c>::exe(C,E1,E2,E3,
+								 n12,n23,n13,
+								 G12,G23,G13);
     }
     
   } // end of namespace material

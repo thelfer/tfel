@@ -53,8 +53,7 @@ namespace mtest
     }
   } // end of UAndersonAccelerationAlgorithm::setParameter
 
-  void
-  UAndersonAccelerationAlgorithm::initialize(const unsigned short psz)
+  void UAndersonAccelerationAlgorithm::initialize(const unsigned short psz)
   {
     this->a = std::unique_ptr<UAnderson>(new UAnderson([psz](){
 	  return new tfel::math::vector<real>(psz);

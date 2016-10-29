@@ -16,6 +16,7 @@
 
 #include<limits>
 #include<stdexcept>
+#include"TFEL/Config/TFELConfig.hxx"
 
 namespace tfel{
   
@@ -71,11 +72,11 @@ namespace tfel{
       template<typename real>
       typename CovarianceMatrix<real>::pointer
       CovarianceMatrix<real>::getLine(const size_type i) {
-	if (i >= this->Nmax) {
+	if(i >= this->Nmax) {
 	  throw(std::runtime_error("CovarianceMatrix<real>::getLine: "
 				   "line index cannot exceed the matrix size"));
 	}
-	if (i>this->N) {
+	if(i>this->N) {
 	  throw(std::runtime_error("CovarianceMatrix<real>::getLine: "
 				   "internal error (missing lines)"));
 	}
@@ -90,51 +91,48 @@ namespace tfel{
 	pointer ai = this->a.begin();
 	const_pointer Di  = this->C.begin()+((N+2)*(N-1))/2;
 	const_pointer Dii = Di;
-	for (size_type i=0; i<N; ai+=i,Dii-=N-i,++i,--Di) {
-  
-	  // Ratio ei.xj/ej.ej
+	for (size_type i=0; i<this->N;++i) {
+  	  // Ratio ei.xj/ej.ej
 	  pointer aij=ai;
-	  const_pointer Dij=Di;
-	  pointer ej=ne.begin();
-	  for (size_type j=0; j<i; ++j,++aij,++ej,Dij-=N-j) {
-	    if (*ej > 0) {
-	      *aij=*Dij;
-	      const_pointer Dik = Di;
+	  const_pointer Dij=Di-i;
+	  for (size_type j=0; j<i;++j,Dij-=N-j) {
+	    if (ne[j] > 0) {
+	      aij[j]=*Dij;
+	      const_pointer Dik = Di-i;
 	      const_pointer ajk = this->a.begin()+(j*(j-1))/2;
-	      for (size_type k=0; k<j; ++k,++ajk,Dik-=N-k) {
-		*aij-=*ajk*(*Dik);
+	      for (size_type k=0;k<j;++k,Dik-=N-k) {
+		aij[j]-=ajk[k]*(*Dik);
 	      }
-	      *aij/=*ej;
-	    }
-	    else {
-	      *aij=0;
+	      aij[j]/=ne[j];
+	    } else {
+	      aij[j]=0;
 	    }
 	  }
-
 	  // Alpha(ji) Coefficient
 	  aij=ai;
-	  for (size_type j=0; j<i; ++j,++aij) {
-	    size_type k;
+	  for (size_type j=0;j<i;++j) {
 	    const_pointer akj = this->a.begin()+((j+3)*j)/2;
-	    const_pointer aik;
-	    for (k=j+1,aik=ai+k; k<i; akj+=k,++aik,++k) {
-	      *aij-=*aik*(*akj);
+	    for (size_type k=j+1; k<i; akj+=k,++k) {
+	      aij[j]-=ai[k]*(*akj);
 	    }
 	  }
 
 	  // Norm
-	  ej=ne.begin()+i;
-	  *ej=*Dii;
+	  ne[i]=*Dii;
 	  aij=ai;
-	  Dij=Di;
-	  for (size_type j=0; j<i; ++j,++aij,Dij-=N-j) {
-	    *ej-=*aij*(*Dij);
+	  Dij=Di-i;
+	  for (size_type j=0; j<i;++j,Dij-=N-j) {
+	    ne[i]-=aij[j]*(*Dij);
 	  }
 
 	  // Degeneration
 	  TFEL_CONSTEXPR const real eps = 100*std::numeric_limits<real>::epsilon();
-	  if (*ej < C[0]*eps*eps) {
-	    *ej=0;
+	  if (ne[i] < C[0]*eps*eps) {
+	    ne[i]=0;
+	  }
+	  if(i+1!=this->N){
+	    ai+=i;
+	    Dii-=N-i;
 	  }
 	}
       }
@@ -147,37 +145,35 @@ namespace tfel{
       void
       CovarianceMatrix<real>::weightsGSchmidtD(std::vector<real>& w) {
 	this->GSFactorD();
-	pointer wN=w.begin()+this->N-1;
-	size_type i = 0;
-	pointer iw = wN;
-	const_pointer nei =ne.begin();
-	for (;i<this->N;++i,--iw,++nei) {
-	  if (*nei > 0) {
-	    *iw=1;
+	auto rw = w.rbegin()+(this->Nmax-this->N);
+	for (size_type i = 0;i!=this->N;++i) {
+	  if (ne[i] > 0) {
+	    rw[i]=1;
 	    const_pointer aij=this->a.begin()+(i*(i-1))/2;
-	    for (size_type j=0; j<i; ++j,++aij) {
-	      *iw-=*aij;
+	    for (size_type j=0; j<i; ++j) {
+	      rw[i]-=aij[j];
 	    }
-	    *iw/=*nei;
-	  }
-	  else {
-	    *iw=0;
+	    rw[i]/=ne[i];
+	  } else {
+	    rw[i]=0;
 	  }
 	}
 
 	real d=0;
-	for (i=0,iw=wN; i<N; ++i,--iw) {
-	  const_pointer aji=this->a.begin()+((i+3)*i)/2;
-	  size_type j;
-	  const_pointer jw;
-	  for (j=i+1,jw=iw-1; j<N; aji+=j,++j,--jw) {
-	    *iw-=*aji*(*jw);
+	for (size_type i=0;i!=N; ++i) {
+	  if(i+1!=N){
+	    const_pointer aji=this->a.begin()+((i+3)*i)/2;
+	    for (size_type j=i+1; j!=this->N; ++j) {
+	      rw[i]-=*aji*rw[j];
+	      if(j+1!=this->N){
+		aji+=j;
+	      }
+	    }
 	  }
-	  d+=*iw;
+	  d+=rw[i];
 	}
-
-	for (i=0,iw=w.begin(); i<N; ++i,++iw) {
-	  *iw/=d;
+	for (size_type i=0;i!=this->N;++i) {
+	  rw[i]/=d;
 	}
       }
 

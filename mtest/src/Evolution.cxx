@@ -19,21 +19,18 @@
 namespace mtest
 {
   
-  Evolution::~Evolution()
-  {} // end of Evolution::~Evolution()
+  Evolution::~Evolution() = default;
 
   ConstantEvolution::ConstantEvolution(const real v)
     : value(v)
   {}
 
-  real
-  ConstantEvolution::operator()(const real) const
+  real ConstantEvolution::operator()(const real) const
   {
     return this->value;
   } // end of ConstantEvolution::operator()
 
-  bool
-  ConstantEvolution::isConstant() const
+  bool ConstantEvolution::isConstant() const
   {
     return true;
   } // end of ConstantEvolution::isConstant
@@ -50,18 +47,15 @@ namespace mtest
 			     "for constant evolution"));
   }
 
-  ConstantEvolution::~ConstantEvolution()
-  {} // end of ConstantEvolution::~ConstantEvolution
+  ConstantEvolution::~ConstantEvolution() = default;
 
   LPIEvolution::LPIEvolution(const std::vector<real>& t,
 			     const std::vector<real>& v)
   {
-    using namespace std;
     if(t.size()!=v.size()){
-      string msg("LPIEvolution::LPIEvolution : "
-		 "the number of values of the times don't match "
-		 "the number of values of the evolution");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("LPIEvolution::LPIEvolution : "
+			       "the number of values of the times don't match "
+			       "the number of values of the evolution"));
     }
     auto pt = t.begin();
     auto pv = v.begin();
@@ -79,14 +73,12 @@ namespace mtest
 			     "for LPI evolution"));
   }
   
-  void LPIEvolution::setValue(const real t,
-			      const real v)
+  void LPIEvolution::setValue(const real t,const real v)
   {
     this->values[t] = v;
   }
 
-  real
-  LPIEvolution::operator()(const real t) const
+  real LPIEvolution::operator()(const real t) const
   {
     if(this->values.empty()){
       throw(std::runtime_error("LPILoadingEvolution::getValue: "
@@ -115,17 +107,14 @@ namespace mtest
     return (y1-y0)/(x1-x0)*(t-x0)+y0;
   }
 
-  bool
-  LPIEvolution::isConstant() const
+  bool LPIEvolution::isConstant() const
   {
     return (this->values.size()==1);
   } // end of LPIEvolution::isLPI
 
-  LPIEvolution::~LPIEvolution()
-  {}
+  LPIEvolution::~LPIEvolution() = default;
 
-  std::shared_ptr<Evolution>
-  make_evolution(const real v){
+  std::shared_ptr<Evolution> make_evolution(const real v){
     return std::shared_ptr<Evolution>{new ConstantEvolution(v)};
   }
 

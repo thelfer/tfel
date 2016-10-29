@@ -298,8 +298,7 @@ namespace mtest{
     v = nv;
   } // end of setMeshValue
 
-  static void
-  insert(EvolutionManager& evm,const std::string& n, const real v){
+  static void insert(EvolutionManager& evm,const std::string& n, const real v){
     if(evm.find(n)!=evm.end()){
       throw(std::runtime_error("insert: variable 'n' already declared"));
     }
@@ -509,8 +508,7 @@ namespace mtest{
     }
   } // end of PipeTest::completeInitialisation
 
-  PipeTest::size_type
-  PipeTest::getNumberOfNodes() const
+  PipeTest::size_type PipeTest::getNumberOfNodes() const
   {
     if(this->mesh.number_of_elements<=0){
       throw(std::runtime_error("PipeTest::getNumberOfNodes: "
@@ -667,14 +665,12 @@ namespace mtest{
     }
   } // end of PipeTest::initializeCurrentState
 
-  std::string
-  PipeTest::name() const
+  std::string PipeTest::name() const
   {
     return "pipe test";
   } // end of PipeTest::name
   
-  std::string
-  PipeTest::classname() const
+  std::string PipeTest::classname() const
   {
     return "MTest";
   }
@@ -745,33 +741,30 @@ namespace mtest{
     return tr; 
   }
 
-  void
-  PipeTest::execute(StudyCurrentState& state,
-		    SolverWorkSpace& wk,
-		    const real ti,
-		    const real te) const
+  void PipeTest::execute(StudyCurrentState& state,
+			 SolverWorkSpace& wk,
+			 const real ti,
+			 const real te) const
   {
+    using vector = std::vector<real>;
     if(this->rl==IMPOSEDOUTERRADIUS){
       if(!state.containsEvolution("InnerPressure")){
 	// first call with this study state
-	state.addEvolution("InnerPressure",
-			   std::shared_ptr<Evolution>(new LPIEvolution({ti,te},
-								       {real(0),real(0)})));
+	state.addEvolution("InnerPressure",std::make_shared<LPIEvolution>(vector{ti,te},
+									  vector{real(0),real(0)}));
       }
     }
     if(this->rl==TIGHTPIPE){ 
       if(!state.containsEvolution("InnerPressure")){
-	state.addEvolution("InnerPressure",
-			   std::shared_ptr<Evolution>(new LPIEvolution({ti,te},
-								       {this->P0,this->P0})));
+	state.addEvolution("InnerPressure",std::make_shared<LPIEvolution>(vector{ti,te},
+									  vector{this->P0,this->P0}));
       }
     }
     if(this->al==IMPOSEDAXIALFORCE){
       if(!state.containsEvolution("AxialForce")){
 	// first call with this study state
-	state.addEvolution("AxialForce",
-			   std::shared_ptr<Evolution>(new LPIEvolution({ti,te},
-								       {real(0),real(0)})));
+	state.addEvolution("AxialForce",std::make_shared<LPIEvolution>(vector{ti,te},
+								       vector{real(0),real(0)}));
       }
     }
     GenericSolver().execute(state,wk,*this,this->options,ti,te);

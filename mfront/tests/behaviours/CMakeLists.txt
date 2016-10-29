@@ -13,6 +13,8 @@ if(HAVE_CASTEM)
   add_subdirectory(crosseddelta2)
   add_subdirectory(crossed2delta)
   add_subdirectory(crossed2deltabis)
+  add_subdirectory(uanderson)
+  add_subdirectory(fanderson)
 endif(HAVE_CASTEM)
 
 if(HAVE_ASTER)

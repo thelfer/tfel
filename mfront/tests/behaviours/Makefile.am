@@ -3,7 +3,7 @@ SUBDIRS = unit-tests bricks                              \
 	  steffensen ironstuck  alternatesecant          \
 	  alternatedelta2 alternate2delta crossedsecant  \
 	  crosseddelta2 crossed2delta crossed2deltabis   \
-	  abaqus  abaqus-explicit
+	  abaqus  abaqus-explicit uanderson fanderson
 
 MFRONTS= DDIF2.mfront                                                      \
          MaterialPropertiesBoundsCheck.mfront                              \

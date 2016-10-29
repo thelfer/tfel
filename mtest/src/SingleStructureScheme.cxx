@@ -344,9 +344,8 @@ namespace mtest{
     this->declareVariables(this->b->getThermodynamicForcesComponents(),true);
   } // end of SingleStructureScheme::setBehaviour
 
-  void
-  SingleStructureScheme::setParameter(const std::string& n,
-				      const double v)
+  void SingleStructureScheme::setParameter(const std::string& n,
+					   const double v)
   {
     if(this->b==nullptr){
       throw(std::runtime_error("SingleStructureScheme::setParameter: "
@@ -355,9 +354,8 @@ namespace mtest{
     this->b->setParameter(n,v);
   }
 
-  void
-  SingleStructureScheme::setIntegerParameter(const std::string& n,
-					     const int v)
+  void SingleStructureScheme::setIntegerParameter(const std::string& n,
+						  const int v)
   {
     if(this->b==nullptr){
       throw(std::runtime_error("SingleStructureScheme::setIntegerParameter: "
@@ -571,8 +569,7 @@ namespace mtest{
     }
   } // end of SingleStructureScheme::prepare
 
-  void
-  SingleStructureScheme::setHandleThermalExpansion(const bool b1)
+  void SingleStructureScheme::setHandleThermalExpansion(const bool b1)
   {
     if(!this->handleThermalExpansion){
       throw(std::runtime_error("SingleStructureScheme::setHandleThermalExpansion: "
