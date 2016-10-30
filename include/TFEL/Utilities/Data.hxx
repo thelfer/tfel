@@ -18,6 +18,7 @@
 #include<map>
 #include<string>
 #include<vector>
+#include<utility>
 #include<functional>
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/GenTypeBase.hxx"
@@ -42,7 +43,14 @@ namespace tfel{
       //! a simple alias
       using CallBack = std::function<void(const Data&)>;
       //! constructor from a value
-      using GenTypeBase::GenTypeBase;
+      template<typename T1,
+	       typename std::enable_if<
+		 tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,
+					   DataTypes>::value==1, 
+		 bool>::type = true>
+      TFEL_INLINE Data(T1&& v)
+	: GenTypeBase<DataTypes>(std::forward<T1>(v))
+      {}
       /*!
        * \brief read a JSON-like structure
        * \return the values read
