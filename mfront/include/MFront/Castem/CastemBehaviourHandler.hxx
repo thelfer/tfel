@@ -59,35 +59,62 @@ namespace castem
     TangentOperatorTraits;
     static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
-
+  /*!
+   * \brief a metafunction returning the type of the tangent operator
+   * \tparam btype: behaviour type
+   * \tparam N:     space dimension
+   */
   template<CastemBehaviourType btype,unsigned short N>
   struct CastemTangentOperatorType;
-
+  /*!
+   * \brief partial specialialisation of the
+   * `CastemTangentOperatorType` type for small strain behaviours
+   * \tparam N: space dimension
+   */
   template<unsigned short N>
   struct CastemTangentOperatorType<castem::SMALLSTRAINSTANDARDBEHAVIOUR,N>
   {
+    //! type of the tangent operator
     using type      = tfel::math::st2tost2<N,CastemReal>;
+    //! type used to map the tangent operator to an array
     using view_type = tfel::math::ST2toST2View<N,CastemReal>;
   };
-
+  /*!
+   * \brief partial specialialisation of the
+   * `CastemTangentOperatorType` type for finite strain behaviours
+   * \tparam N: space dimension
+   */
   template<unsigned short N>
   struct CastemTangentOperatorType<castem::FINITESTRAINSTANDARDBEHAVIOUR,N>
   {
+    //! type of the tangent operator
     using type      = tfel::math::st2tost2<N,CastemReal>;
+    //! type used to map the tangent operator to an array
     using view_type = tfel::math::ST2toST2View<N,CastemReal>;
   };
-
+  /*!
+   * \brief partial specialialisation of the
+   * `CastemTangentOperatorType` type for cohesive zone models
+   * \tparam N: space dimension
+   */
   template<unsigned short N>
   struct CastemTangentOperatorType<castem::COHESIVEZONEMODEL,N>
   {
+    //! type of the tangent operator
     using type      = tfel::math::tmatrix<N,N,CastemReal>;
+    //! type used to map the tangent operator to an array
     using view_type = tfel::math::TMatrixView<N,N,CastemReal>;
   };
-  
   /*!
-   * structure in charge of calling the behaviour integrate method.
+   * \brief structure in charge of calling the behaviour integrate
+   * method.
+   *
    * This structure handles two cases wether or not we shall handle
    * local substepping.
+   *
+   * \tparam type:      behaviour type
+   * \tparam H:         modelling hypothesis
+   * \tparam Behaviour: behaviour class
    */
   template<CastemBehaviourType type,
 	   tfel::material::ModellingHypothesis::Hypothesis H,

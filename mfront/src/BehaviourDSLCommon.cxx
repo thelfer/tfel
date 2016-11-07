@@ -933,7 +933,7 @@ namespace mfront{
     }
     this->checkNotEndOfFile("BehaviourDSLCommon::treatIsTangentOperatorSymmetric : ",
   			    "Expected 'true' or 'false'.");
-    const auto b = [this](){
+    const auto b = [this]() -> std::string {
       if(this->current->flag==tfel::utilities::Token::String){
 	return this->readString("BehaviourDSLCommon::treatBehaviourBrick");
       }
@@ -6091,8 +6091,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::treatPredictionOperator
 
-  void
-  BehaviourDSLCommon::treatParameter()
+  void BehaviourDSLCommon::treatParameter()
   {
     std::set<Hypothesis> mh;
     this->readHypothesesList(mh);

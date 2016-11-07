@@ -103,7 +103,7 @@ namespace tfel{
       CxxTokenizer::checkNotEndOfLine("Data::read",p,pe);
       std::map<std::string,Data> r;
       while(p->value!="}"){
-	const auto k = [&p,pe](){
+	const auto k = [&p,pe]() -> std::string {
 	  if(p->flag!=Token::String){
 	    auto c = p;
 	    ++p;
@@ -172,7 +172,7 @@ namespace tfel{
       CxxTokenizer::readSpecifiedToken("Data::parse","{",p,pe);
       CxxTokenizer::checkNotEndOfLine("Data::parse",p,pe);
       while(p->value!="}"){
-	const auto k = [&p,pe](){
+	const auto k = [&p,pe]() -> std::string {
 	  if(p->flag!=Token::String){
 	    auto c = p;
 	    ++p;

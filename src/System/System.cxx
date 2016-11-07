@@ -384,13 +384,12 @@ namespace tfel
       }
     } // end of systemCall::unlinkx
 
-    void
-    systemCall::rmdir(const std::string& d)
+    void systemCall::rmdir(const std::string& d)
     {
 #if defined _WIN32 || defined _WIN64 
-		System_rmdir(d);
+      System_rmdir(d);
 #else
-		using namespace std;
+      using namespace std;
       struct stat dInfos;
       vector<string> o;
       if(::stat(d.c_str(),&dInfos)==-1){
@@ -433,10 +432,7 @@ namespace tfel
     } // end of systemCall::rmdir
 
 #if !(defined _WIN32 || defined _WIN64 )
-    void
-    systemCall::write(const int f,
-		      const void* const v,
-		      size_t s)
+    void systemCall::write(const int f,const void* const v,size_t s)
     {
       /*
        * code adapated from C. Blaess
@@ -468,8 +464,7 @@ namespace tfel
     } // end of systemCall::write
 #endif /* !(defined _WIN32 || defined _WIN64 ) */
 
-    std::string
-    systemCall::fileType(const mode_t mode)
+    std::string systemCall::fileType(const mode_t mode)
     {
       using namespace std;
       if(S_ISDIR(mode)){
@@ -479,13 +474,13 @@ namespace tfel
       } else if(S_ISCHR(mode)){
 	return "character device";
 #if !(defined _WIN32 || defined _WIN64 )
-	  }
-	  else if (S_ISBLK(mode)) {
-		  return "block device";
-	  }
-	  else if (S_ISFIFO(mode)) {
-		  return "fifo";
-	  } else if(S_ISLNK(mode)){
+      }
+      else if (S_ISBLK(mode)) {
+	return "block device";
+      }
+      else if (S_ISFIFO(mode)) {
+	return "fifo";
+      } else if(S_ISLNK(mode)){
 	return "symbolic link";
       } else if(S_ISSOCK(mode)){
 	return "socket";
@@ -511,7 +506,7 @@ namespace tfel
 #if defined _WIN32 || defined _WIN64 
 #pragma message("windows port")
 #else
-	  DIR *dir = opendir(src.c_str());
+      DIR *dir = opendir(src.c_str());
       if(dir==nullptr){
 	systemCall::throwSystemError("systemCall::copy, can't open directory "+src,
 				     errno);

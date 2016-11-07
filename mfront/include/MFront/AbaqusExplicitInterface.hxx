@@ -1,5 +1,5 @@
 /*!
- * \file   AbaqusExplicitInterface.hxx
+ * \file   mfront/include/MFront/AbaqusExplicitInterface.hxx
  * \brief    
  * \author THOMAS HELFER
  * \date   16 mars 2016

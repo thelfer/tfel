@@ -13,7 +13,9 @@ namespace tfel{
        */
       template<unsigned short N,typename List>
       struct TFEL_VISIBILITY_LOCAL GenTypeRunTimeMethods
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	: public GenTypeRunTimeMethods<N-1,List>
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
       {
 	//! Default constructor
 	/*

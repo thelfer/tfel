@@ -42,8 +42,11 @@ namespace tfel
       static constexpr unsigned short dime = T2toT2Traits<T_type>::dime;
     };
 
-    /*
-     * Partial Specialisation of ComputeBinaryResult_ for t2tot2's operation
+    /*!
+     * \brief partial specialisation of ComputeBinaryResult_ for t2tot2's operation
+     * \tparam A:  left hand side
+     * \tparam B:  right hand side
+     * \tparam Op: operation
      */
     template<typename A, typename B,typename Op>
     class ComputeBinaryResult_<T2toT2Tag,T2toT2Tag,A,B,Op>
@@ -58,8 +61,11 @@ namespace tfel
 					Expr<Result,BinaryOperation<A,B,Op>>>::type Handle;
     };
 
-    /*
-     * Partial Specialisation of ComputeBinaryResult_ for scalar-t2tot2 operations
+    /*!
+     * \brief partial specialisation of ComputeBinaryResult_ for scalar-t2tot2 operations
+     * \tparam A:  left hand side
+     * \tparam B:  right hand side
+     * \tparam Op: operation
      */
     template<typename A, typename B,typename Op>
     class ComputeBinaryResult_<ScalarTag,T2toT2Tag,A,B,Op>
@@ -73,8 +79,11 @@ namespace tfel
 					Expr<Result,ScalarObjectOperation<A,B,Op>>>::type Handle;
     };
 
-    /*
-     * Partial Specialisation of ComputeBinaryResult_ for t2tot2-scalar operations
+    /*!
+     * \brief partial specialisation of ComputeBinaryResult_ for t2tot2-scalar operations
+     * \tparam A:  left hand side
+     * \tparam B:  right hand side
+     * \tparam Op: operation
      */
     template<typename A, typename B,typename Op>
     class ComputeBinaryResult_<T2toT2Tag,ScalarTag,A,B,Op>
@@ -88,8 +97,11 @@ namespace tfel
 					Expr<Result,ObjectScalarOperation<A,B,Op>>>::type Handle;
     };
 
-    /*
-     * Partial Specialisation of ComputeBinaryResult_ for T2toT2-T2toT2 operations
+    /*!
+     * \brief partial specialisation of ComputeBinaryResult_ for T2toT2-T2toT2 operations
+     * \tparam A:  left hand side
+     * \tparam B:  right hand side
+     * \tparam Op: operation
      */
     template<typename A, typename B>
     class ComputeBinaryResult_<T2toT2Tag,T2toT2Tag,A,B,OpMult>
@@ -103,9 +115,11 @@ namespace tfel
 					DummyHandle,
 					Expr<Result,T2toT2T2toT2ProductExpr<T2toT2Traits<Result>::dime> > >::type Handle;
     };
-
-    /*
-     * Partial Specialisation of ComputeBinaryResult_ for T2toT2-Tensor operations
+    /*!
+     * \brief partial specialisation of ComputeBinaryResult_ for T2toT2-Tensor operations
+     * \tparam A:  left hand side
+     * \tparam B:  right hand side
+     * \tparam Op: operation
      */
     template<typename A, typename B>
     class ComputeBinaryResult_<T2toT2Tag,TensorTag,A,B,OpMult>
@@ -121,7 +135,7 @@ namespace tfel
     };
 
     /*
-     * Partial Specialisation of ComputeBinaryResult_ for Tensor-T2toT2 operations
+     * \brief partial specialisation of ComputeBinaryResult_ for Tensor-T2toT2 operations
      */
     template<typename A, typename B>
     class ComputeBinaryResult_<TensorTag,T2toT2Tag,A,B,OpMult>
@@ -135,9 +149,10 @@ namespace tfel
 					DummyHandle,
 					Expr<Result,TensorT2toT2ProductExpr<TensorTraits<Result>::dime> > >:: type Handle;
     };
-
-    /*
-     * Partial Specialisation of ComputeUnaryResult_ for t2tot2s
+    /*!
+     * \brief partial specialisation of `ComputeUnaryResult_` for
+     * `T2toT2`'s object 
+     * \tparam A: object
      */
     template<typename A>
     struct ComputeUnaryResult_<T2toT2Tag,UnaryOperatorTag,A,OpNeg>

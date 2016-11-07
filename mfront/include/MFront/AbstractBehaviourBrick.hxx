@@ -1,5 +1,5 @@
 /*! 
- * \file   mfront/include/MFront/BehaviourBrick.hxx
+ * \file   mfront/include/MFront/AbstractBehaviourBrick.hxx
  * \brief
  * \author Helfer Thomas
  * \date   October 20, 2014

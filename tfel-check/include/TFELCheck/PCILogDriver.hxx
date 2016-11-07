@@ -39,9 +39,6 @@ namespace tfel_check {
     PCILogDriver(PCILogDriver&&);
     //! copy constructor
     PCILogDriver(const PCILogDriver&);
-
-    virtual ~PCILogDriver();
-
     /*!
      * \brief Append a message to log.
      * Append a message to log (to be implemented by inherited class).
@@ -75,9 +72,9 @@ namespace tfel_check {
      *
      */
     virtual void terminate();
-
+    //! destructor
+    virtual ~PCILogDriver();
   protected:
-
     /*!
      * \brief get current ostream
      *

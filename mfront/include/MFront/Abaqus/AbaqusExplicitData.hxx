@@ -32,8 +32,9 @@ namespace abaqus{
     const const_iterator props;
     /*!
      * \brief properties used to compute the stiffness tensor or the
-     * thermal expansion, if required (@RequireStiffnessTensor or
-     * @RequireThermalExpansionTensor)
+     * thermal expansion, if required (see the
+     * `@RequireStiffnessTensor` or `@RequireThermalExpansionTensor`
+     * `MFront` keywords)
      */
     const const_iterator eth_props;
     const T density;

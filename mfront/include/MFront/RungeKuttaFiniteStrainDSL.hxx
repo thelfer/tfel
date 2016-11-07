@@ -20,22 +20,21 @@ namespace mfront
 {
 
   /*!
-   *
+   * \brief a structure describing a dsl dedicated to the
+   * implementation of finite strain behaviours using explicit
+   * algorithms.
    */
   struct RungeKuttaFiniteStrainDSL
     : public RungeKuttaDSLBase
   {
-
+    //! \return the name of the dsl
+    static std::string getName(void);
+    //! \return the description of the dsl
+    static std::string getDescription(void);
+    //! constructor
     RungeKuttaFiniteStrainDSL();
-
-    static std::string 
-    getName(void);
-
-    static std::string 
-    getDescription(void);
-
+    //! destructor
     virtual ~RungeKuttaFiniteStrainDSL() noexcept;
-
   }; // end of struct RungeKuttaFiniteStrainDSL
 
 } // end of namespace mfront

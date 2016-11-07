@@ -1,6 +1,7 @@
 /*! 
- * \file  Glossary.hxx
- * \brief
+ * \file  include/TFEL/Glossary/Forward/Glossary.hxx
+ * \brief this file brings forward declaration of the Glossary and
+ * GlossaryEntry classes
  * \author Helfer Thomas
  * \brief 25 sept. 2014
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 

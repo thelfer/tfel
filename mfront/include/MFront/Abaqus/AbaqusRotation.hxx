@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/include/MFront/Abaqus/AbaqusRotationMatrix.hxx
+ * \file   mfront/include/MFront/Abaqus/AbaqusRotation.hxx
  * \brief  This file declares the AbaqusRotationMatrix class
  * \author É. Castelier
  * \date   17 mar 2008

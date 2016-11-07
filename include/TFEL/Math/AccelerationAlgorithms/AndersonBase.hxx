@@ -1,5 +1,5 @@
 /*!
- * \file   AndersonBase.ixx
+ * \file   AndersonBase.hxx
  * \brief    
  * \author Étienne Castelier
  * \date 25 févr. 2016

@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/tests/models/include/MFront/MFrontGerminalModelInterface.hxx
+ * \file   mfront/tests/models/interfaces/include/MFront/MFrontGerminalModelInterface.hxx
  * \brief  This file declares the MFrontGerminalModelInterface class
  * \author Helfer Thomas
  * \date   10 Nov 2006

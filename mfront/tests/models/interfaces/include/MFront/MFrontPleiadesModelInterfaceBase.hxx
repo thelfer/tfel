@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/tests/models/include/MFront/MFrontPleiadesModelInterfaceBase.hxx
+ * \file   mfront/tests/models/interfaces/include/MFront/MFrontPleiadesModelInterfaceBase.hxx
  * \brief  This file declares the MFrontPleiadesModelinterface class
  * \author Helfer Thomas
  * \date   10 Nov 2006

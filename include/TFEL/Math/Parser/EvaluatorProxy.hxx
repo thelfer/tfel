@@ -4,7 +4,13 @@
 * 
 * \author Helfer Thomas
 * \date   13 jan 2009
-*/
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
 
 #ifndef LIB_TFEL_MATH_EVALUATORPROXY_HXX_
 #define LIB_TFEL_MATH_EVALUATORPROXY_HXX_ 
@@ -85,8 +91,7 @@ namespace tfel
 	EvaluatorProxy2P2V(const std::string&);
       }; // end of struct EvaluatorProxy2P2V
 
-      template<unsigned short N,
-	       typename EvaluatorFunctionWrapper<N>::type f>
+      template<unsigned short N, typename EvaluatorFunctionWrapper<N>::type f>
       struct TFEL_VISIBILITY_LOCAL EvaluatorProxyNV
       {
 	EvaluatorProxyNV(const std::string&);
@@ -129,9 +134,3 @@ namespace tfel
 #include"TFEL/Math/Parser/EvaluatorProxy.ixx"
 
 #endif /* LIB_TFEL_MATH_EVALUATORPROXY_HXX_ */
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
- */

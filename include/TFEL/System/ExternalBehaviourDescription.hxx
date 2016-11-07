@@ -1,5 +1,5 @@
 /*!
- * \file   include/TFEL/System/ExternaBehaviourDescription.hxx
+ * \file   include/TFEL/System/ExternalBehaviourDescription.hxx
  * \brief    
  * \author Helfer Thomas
  * \date   15 June 2015

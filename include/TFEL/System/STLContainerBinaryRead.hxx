@@ -28,6 +28,23 @@ namespace tfel
   namespace system
   {
 
+    template<typename charT,typename traits,typename Alloc>
+    struct BinaryReader<std::basic_string<charT,traits,Alloc>>
+    {
+      static void exe(const int f,std::basic_string<charT,traits,Alloc>& res)
+      {
+	using string = std::basic_string<charT,traits,Alloc>;
+	using size_type  = typename string::size_type;
+	using value_type = typename string::value_type;
+	auto s = binary_read<size_type>(f);
+	res.clear();
+	res.resize(s);
+	if(::read(f,&res[0],s*sizeof(value_type))==-1){
+	  systemCall::throwSystemError("BinaryReader<T>::exe",errno);
+	}
+      }
+    };
+
     template<typename T1,typename T2>
     struct BinaryReader<std::pair<T1,T2>>
     {
@@ -60,7 +77,7 @@ namespace tfel
 	const auto s = binary_read<typename std::list<T,Allocator>::size_type>(f);
 	res.clear();
 	res.resize(s);
-	for(const auto& v : res){
+	for(auto& v : res){
 	  binary_read(f,v);
 	}
       }
@@ -80,35 +97,16 @@ namespace tfel
       }
     };
 
-    template<typename charT,typename traits,typename Alloc>
-    struct BinaryReader<std::basic_string<charT,traits,Alloc> >
-    {
-      static void exe(const int f,std::basic_string<charT,traits,Alloc>& res)
-      {
-	typedef typename std::basic_string<charT,traits,Alloc>::size_type  size_type;
-	typedef typename std::basic_string<charT,traits,Alloc>::value_type value_type;
-	size_type s = binary_read<size_type>(f);
-	res.clear();
-	res.resize(s);
-	::read(f,&res[0],s*sizeof(value_type));
-      }
-    };
-
     template<typename Key,typename Data,typename Compare,typename Alloc>
     struct BinaryReader<std::map<Key,Data,Compare,Alloc> >
     {
-      static void exe(const int f,
-		      std::map<Key,Data,Compare,Alloc>& res)
+      static void exe(const int f,std::map<Key,Data,Compare,Alloc>& res)
       {
-	typename std::map<Key,Data,Compare,Alloc>::size_type s;
-	binary_read(f,s);
+	using size_type = typename std::map<Key,Data,Compare,Alloc>::size_type;
+	auto s = binary_read<size_type>(f);
 	res.clear();
-	for(decltype(s) i=0;i!=s;++i){
-	  Key  key;
-	  Data data;
-	  binary_read(f,key);
-	  binary_read(f,data);
-	  res.insert({key,data});
+	for(size_type i=0;i!=s;++i){
+	  res.insert({binary_read<Key>(f),binary_read<Data>(f)});
 	}
       }
     }; // end of BinaryReader<std::map...>

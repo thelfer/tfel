@@ -48,8 +48,8 @@ namespace tfel
 
       struct TFELSYSTEM_VISIBILITY_EXPORT Command
       {
-	virtual bool execute(const StreamId,
-			     const StreamId) = 0;
+	virtual bool execute(const StreamId,const StreamId) = 0;
+	//! destructor
 	virtual ~Command();
       }; // end of struct Command
 

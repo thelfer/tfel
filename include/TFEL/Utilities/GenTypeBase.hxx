@@ -140,8 +140,12 @@ namespace tfel{
        */
       template<typename Child,typename List>
       class GenTypeSpecializedMethods
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	: public GenTypeSpecializedMethods<Child,typename List::Next>,
 	  public GenTypeSpecializedAccessor<Child,typename List::Current>
+#else  /* DOXYGEN_SHOULD_SKIP_THIS */
+	  public GenTypeSpecializedAccessor<Child,typename List::Current>
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
       {
 	//! a simple alias.
 	typedef typename List::Current Current;
@@ -192,7 +196,9 @@ namespace tfel{
        */
       template<typename List,typename... Types>
       struct TFEL_VISIBILITY_LOCAL GenTypeRunTimeMethods
-	: public GenTypeRunTimeMethods<typename List::Next,Types...,typename List::Current>
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+      	: public GenTypeRunTimeMethods<typename List::Next,Types...,typename List::Current>
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
       {};
 
       //! A partial specialisation to end the recursion.

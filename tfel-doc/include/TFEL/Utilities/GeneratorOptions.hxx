@@ -1,5 +1,5 @@
 /*!
- * \file   GeneratorOptions.hxx
+ * \file   tfel-doc/include/TFEL/Utilities/GeneratorOptions.hxx
  * \brief    
  * \author THOMAS HELFER
  * \date   21 août 2015

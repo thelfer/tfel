@@ -72,8 +72,7 @@ namespace tfel
        * \param const mode_t, opening mode.
        */
 #if defined _WIN32 || defined _WIN64
-      static void
-      mkdir(const std::string&);
+      static void mkdir(const std::string&);
 #else 
       static void
       mkdir(const std::string&,const mode_t = S_IRWXU|S_IRWXG);
@@ -91,10 +90,10 @@ namespace tfel
       static void
       rmdir(const std::string&);
 
-      static void
-      write(const int,const void* const,size_t);
-
-      /*
+#if !(defined _WIN32 || defined _WIN64 )
+      static void write(const int,const void* const,size_t);
+#endif /* !(defined _WIN32 || defined _WIN64 ) */
+      /*!
        * copy a file or a directory.
        * This command is equivalent to the shell command 'cp -R'.
        * \param const std::string&, src.

@@ -1,5 +1,5 @@
 /*!
- * \file   GeneratorOptions.hxx
+ * \file   mfront/include/MFront/GeneratorOptions.hxx
  * \brief    
  * \author THOMAS HELFER
  * \date   16 août 2015

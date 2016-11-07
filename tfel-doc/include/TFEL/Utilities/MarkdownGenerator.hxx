@@ -1,5 +1,5 @@
 /*! 
- * \file  tfel-doc/include/TFEL/Utilities/MarkdownConvertion.hxx
+ * \file  tfel-doc/include/TFEL/Utilities/MarkdownGenerator.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 03 mai 2011

@@ -15,11 +15,13 @@ LDADD = -lTFELSystem -lTFELException -lTFELTests \
 if !TFEL_WIN
 test_PROGRAMS   = process_test_target \
 		  process             \
-		  rwstream
+		  rwstream            \
+		  binary_write
 
 process_test_target_SOURCES = process_test_target.cxx
 process_SOURCES             = process.cxx
 rwstream_SOURCES            = rwstream.cxx
+binary_write_SOURCES        = binary_write.cxx
 
 if HAVE_CASTEM
 test_PROGRAMS               += CastemParameterTest \

@@ -1,11 +1,8 @@
 /*!
- * \file Test.hxx
- * \class Test
+ * \file  tfel-check/include/TFELCheck/Test.hxx
  * \brief Represents a single test between two columns
  * \date 29 mai 2013
  * \author Remy Petkantchin
- * Copyright © CEA <2013>
- *
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
