@@ -901,6 +901,7 @@ namespace mfront{
     };
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
+    const auto ivoffset = this->getStateVariablesOffset(mb,h);
     if(mh.find(h)==mh.end()){
       out << "std::cerr << \"" << mb.getClassName()
 	  << ": unsupported hypothesis\";\n"
@@ -921,7 +922,7 @@ namespace mfront{
     }
     //omp support    #pragma omp parallel for
     out << "for(int i=0;i!=*nblock;++i){\n";
-    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
+    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),ivoffset);
     out << "TFEL_CONSTEXPR const " << t << " zero = " << t <<  "(0);\n";
     if(h==ModellingHypothesis::PLANESTRESS){
       // axial strain !
@@ -1024,6 +1025,9 @@ namespace mfront{
       out << "*(stressNew+i+4*(*(nblock))) = s[5]/cste;\n";
       out << "*(stressNew+i+5*(*(nblock))) = s[4]/cste;\n";
     }
+    if(ivoffset!=0u){
+      out << "tfel::fsalgo::copy<" << ivoffset << ">::exe(cview(stateOld+i),view(stateNew+i));\n";
+    }
     out << "}\n";
   }
 
@@ -1039,6 +1043,7 @@ namespace mfront{
     };
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
+    const auto ivoffset = this->getStateVariablesOffset(mb,h);
     if(mh.find(h)==mh.end()){
       out << "std::cerr << \"" << mb.getClassName()
 	  << ": unsupported hypothesis\";\n"
@@ -1059,7 +1064,7 @@ namespace mfront{
     }
     //omp support    #pragma omp parallel for
     out << "for(int i=0;i!=*nblock;++i){\n";
-    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
+    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),ivoffset);
     if(h==ModellingHypothesis::PLANESTRESS){
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
       out << "TFEL_CONSTEXPR const " << t << " zero = " << t <<  "(0);\n"
@@ -1172,6 +1177,9 @@ namespace mfront{
       out << "*(stressNew+i+4*(*(nblock))) = s[5]/cste;\n";
       out << "*(stressNew+i+5*(*(nblock))) = s[4]/cste;\n";
     }
+    if(ivoffset!=0u){
+      out << "tfel::fsalgo::copy<" << ivoffset << ">::exe(cview(stateOld+i),view(stateNew+i));\n";
+    }
     out << "}\n";
   }
   
@@ -1206,6 +1214,7 @@ namespace mfront{
     };
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
+    const auto ivoffset = this->getStateVariablesOffset(mb,h);
     if(mh.find(h)==mh.end()){
       out << "std::cerr << \"" << mb.getClassName() << ": unsupported hypothesis\";\n"
   	  << "::exit(-1);\n";
@@ -1226,7 +1235,7 @@ namespace mfront{
 	<< "const auto df = [](const " << t << " x){return 1/(2*x);};\n"
     //omp support    #pragma omp parallel for
 	<< "for(int i=0;i!=*nblock;++i){\n";
-    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
+    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),ivoffset);
     auto dime = (h==ModellingHypothesis::TRIDIMENSIONAL) ? "3u" : "2u";
     if(h==ModellingHypothesis::PLANESTRESS){
       out << "TFEL_CONSTEXPR const " << t << " zero = " << t <<  "(0);\n"
@@ -1375,6 +1384,9 @@ namespace mfront{
       out << "*(stressNew+i+4*(*(nblock))) = s[5]/cste;\n";
       out << "*(stressNew+i+5*(*(nblock))) = s[4]/cste;\n";
     }
+    if(ivoffset!=0u){
+      out << "tfel::fsalgo::copy<" << ivoffset << ">::exe(cview(stateOld+i),view(stateNew+i));\n";
+    }
     out << "}\n";
   }
   
@@ -1423,6 +1435,7 @@ namespace mfront{
   {
     const auto name =  mb.getLibrary()+mb.getClassName();
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
+    const auto ivoffset = this->getStateVariablesOffset(mb,h);
     if(mh.find(h)==mh.end()){
       out << "std::cerr << \"" << mb.getClassName() << ": unsupported hypothesis\";\n"
   	  << "::exit(-1);\n";
@@ -1430,7 +1443,7 @@ namespace mfront{
     }
     //omp support    #pragma omp parallel for
     out << "for(int i=0;i!=*nblock;++i){\n";
-    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
+    writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),ivoffset);
     if(h==ModellingHypothesis::PLANESTRESS){
       // les composantes axiales sont mises à l'identité pour pouvoir
       // réaliser le calcul de la rotation
@@ -1527,6 +1540,9 @@ namespace mfront{
       out << "*(stressNew+i+3*(*(nblock))) = s[3]/cste;\n";
       out << "*(stressNew+i+4*(*(nblock))) = s[5]/cste;\n";
       out << "*(stressNew+i+5*(*(nblock))) = s[4]/cste;\n";
+    }
+    if(ivoffset!=0u){
+      out << "tfel::fsalgo::copy<" << ivoffset << ">::exe(cview(stateOld+i),view(stateNew+i));\n";
     }
     out << "}\n";
   }

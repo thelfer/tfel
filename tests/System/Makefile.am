@@ -12,8 +12,10 @@ LDADD = -lTFELSystem -lTFELException -lTFELTests \
 	-L$(top_builddir)/src/Exception          \
 	-L$(top_builddir)/src/Tests
 
+test_PROGRAMS   = ThreadPoolTest
+
 if !TFEL_WIN
-test_PROGRAMS   = process_test_target \
+test_PROGRAMS  += process_test_target \
 		  process             \
 		  rwstream            \
 		  binary_write
@@ -40,9 +42,10 @@ src/%-castem.cxx : %.mfront
 
 endif
 
-TESTS=$(test_PROGRAMS)
-
 endif
+
+ThreadPoolTest_SOURCES = ThreadPoolTest.cxx
+TESTS=$(test_PROGRAMS)
 
 clean-local:
 	-rm -fr src include

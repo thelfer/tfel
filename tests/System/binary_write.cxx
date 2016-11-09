@@ -22,8 +22,7 @@ struct BinaryReadWriteTest final
   : public tfel::tests::TestCase
 {
    BinaryReadWriteTest()
-    : tfel::tests::TestCase("TFEL/Math",
-			    "BinaryReadWriteTest")
+    : tfel::tests::TestCase("TFEL/System","BinaryReadWriteTest")
   {} // end of BinaryReadWriteTest
   virtual tfel::tests::TestResult
   execute() override

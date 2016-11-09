@@ -57,7 +57,7 @@ namespace tfel{
     }; // end of ComputeBinaryResult_
 
     /*!
-     * \class ComputeBinaryResult.
+     * \class ComputeBinaryResult
      * A metafunction to manage binary operations.
      * Binary operations are central part of tfel::math which makes
      * heavy use of expression templates.

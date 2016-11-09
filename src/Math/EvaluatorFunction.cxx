@@ -23,8 +23,7 @@ namespace tfel
     namespace parser
     {
     
-      EvaluatorFunctionBase::EvaluatorFunctionBase()
-      {} // end of EvaluatorFunctionBase::EvaluatorFunctionBase
+      EvaluatorFunctionBase::EvaluatorFunctionBase() = default;
 
       std::shared_ptr<Expr>
       EvaluatorFunctionBase::differentiate(const std::vector<double>::size_type,

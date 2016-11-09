@@ -53,7 +53,7 @@ namespace tfel{
 	{
 	  using namespace std;
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename VectorTraits<VectorType>::NumType>::cond);
-	  TFEL_STATIC_ASSERT((std::is_same<typename VectorTraits<VectorType>::NumType,T>::cond));
+	  TFEL_STATIC_ASSERT((std::is_same<typename VectorTraits<VectorType>::NumType,T>::value));
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  if(std::abs(s[0]-vp)<10*numeric_limits<T>::min()){

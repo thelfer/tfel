@@ -37,23 +37,31 @@
 namespace tfel{
 
   namespace math{
-
+    
+    /*!
+     * \brief a traits class for tensors. This shall be specialised
+     * for classes implementing the tensor concept (@see TensorConcept).
+     * \tparam T: class
+     */
     template<class T>
     struct TensorTraits{
+      //! numeric type using by the tensor
       typedef tfel::meta::InvalidType NumType;
-      typedef unsigned short          IndexType;
+      //! index type
+      typedef unsigned short IndexType;
+      //! space dimension
       static constexpr unsigned short dime = 0u;
     };
 
     /*!
      * \class TensorTag
-     * \brief Helper class to characterise tensors.
+     * \brief an helper class to characterize tensors.
      */ 
     struct TensorTag
     {}; // end of TensorTag
 
     /*!
-     * exception thrown if invalid index is given
+     * \brief exception thrown if invalid index is given
      */
     struct TFELMATH_VISIBILITY_EXPORT TensorInvalidIndexException
       : public MathRunTimeException
@@ -66,7 +74,7 @@ namespace tfel{
     }; // end of struct TensorInvalidIndexException
     
     /*!
-     * exception thrown if invalid indexes were given
+     * \brief exception thrown if invalid indexes were given
      */
     struct TFELMATH_VISIBILITY_EXPORT TensorInvalidIndexesException
       : public MathRunTimeException
@@ -78,6 +86,9 @@ namespace tfel{
       virtual ~TensorInvalidIndexesException() noexcept;
     }; // end of struct TensorInvalidIndexesException
 
+    /*!
+     * The base class which implements the tensor concept
+     */
     template<class T>
     struct TensorConcept 
     {

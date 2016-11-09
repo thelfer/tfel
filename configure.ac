@@ -101,6 +101,18 @@ case $host in
         ;;
 esac
 
+if test "x$TFEL_WIN" != "xyes";
+then
+    AX_PTHREAD([],
+	       [AC_MSG_ERROR("'pthread' library not found. 'pthread' is mandatory for threading operations on Unix plateforms.")])
+    TFEL_THREAD_FLAGS=$PTHREAD_CFLAGS
+    TFEL_THREAD_LIBS=$PTHREAD_LIBS
+    AC_MSG_RESULT("threads flags:   $TFEL_THREAD_FLAGS")
+    AC_MSG_RESULT("threads library: $TFEL_THREAD_LIBS")
+    AC_SUBST(TFEL_THREAD_FLAGS)
+    AC_SUBST(TFEL_THREAD_LIBS)
+fi
+
 if test "x$TFEL_WIN" = "xyes" -a "x$TFEL_ARCH32" = "xyes" ;
 then
     # When compiling against Cast3M, a 32 bits compiler can be used on a

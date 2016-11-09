@@ -21,6 +21,8 @@ if(UNIX)
       wfstream.cxx
       BinaryRead.cxx
       BinaryWrite.cxx
+      ThreadPool.cxx
+      ThreadedTaskResult.cxx
       ${TFELSystem_SOURCES})
   if(CYGWIN)
     set(TFELSystem_SOURCES
@@ -39,7 +41,7 @@ endif(UNIX)
 
 tfel_library(TFELSystem ${TFELSystem_SOURCES})
 if(TFEL_DL_LIBRARY)
-  target_link_libraries(TFELSystem TFELException ${TFEL_DL_LIBRARY})
+  target_link_libraries(TFELSystem TFELException ${TFEL_DL_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 else(TFEL_DL_LIBRARY)
-  target_link_libraries(TFELSystem TFELException)
+  target_link_libraries(TFELSystem TFELException Threads::Threads)
 endif(TFEL_DL_LIBRARY)

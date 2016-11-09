@@ -92,8 +92,9 @@ namespace tfel
 			const real theta)
     {
       using namespace std;
-      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
-      const real a[4]  = {s(0),s(1),s(2),s(3)*cste};
+      constexpr const auto cste  = tfel::math::Cste<real>::sqrt2;
+      constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
+      const real a[4]  = {s(0),s(1),s(2),s(3)*icste};
       const real cost  = cos(theta);
       const real sint  = sin(theta);
       const real alpha = cost*a[0]+sint*a[3];

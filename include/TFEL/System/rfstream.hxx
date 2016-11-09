@@ -30,43 +30,48 @@ namespace tfel
 
   namespace system
   {
+
+    // forward declaration
     struct rfstream;
 
+    /*!
+     * \brief partial specialisation of the `stream_traits` for the
+     * `rfstream` class.
+     */
     template<>
     struct stream_traits<rfstream>
     {
       static constexpr bool isBlocking = false;
     }; // end of stream_traits<rfstream>
-    
+
+    /*!
+     * \brief a simple wrapper around stream
+     */
     struct TFELSYSTEM_VISIBILITY_EXPORT rfstream
-      : public basic_rstream<rfstream,stream_traits<rfstream> >,
+      : public basic_rstream<rfstream,stream_traits<rfstream>>,
 	protected std::shared_ptr<int>
     {
 
-      // default constructor
+      //! default constructor
       rfstream();
 
-      // copy constructor
+      //! copy constructor
       rfstream(const rfstream&);
 
       // assignement operator
-      rfstream &
-      operator=(const rfstream&);
+      rfstream& operator=(const rfstream&);
 
       rfstream(const std::string&,
 	       const int=O_RDONLY);
 
-      void
-      open(const std::string&,
-	   const int=O_RDONLY);
+      void open(const std::string&,
+		const int=O_RDONLY);
 
-      void
-      close(void);
+      void close(void);
 
-      int
-      getFileDescriptor(void) const;
+      int getFileDescriptor(void) const;
 
-      // destructor
+      //! destructor
       ~rfstream();
 
     }; // end of struct basic_wstream

@@ -24,6 +24,8 @@ if(HAVE_FENV_H)
   add_definitions("-DHAVE_FENV")
 endif(HAVE_FENV_H)
 
+find_package(Threads)
+
 if(UNIX)
   # This is used in mtest tests files
   set(TFEL_LOCAL_LIBRARY_PREFIX "./")

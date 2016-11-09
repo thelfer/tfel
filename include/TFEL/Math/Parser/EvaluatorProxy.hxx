@@ -91,7 +91,7 @@ namespace tfel
 	EvaluatorProxy2P2V(const std::string&);
       }; // end of struct EvaluatorProxy2P2V
 
-      template<unsigned short N, typename EvaluatorFunctionWrapper<N>::type f>
+      template<unsigned short N,typename EvaluatorFunctionWrapper<N>::type f>
       struct TFEL_VISIBILITY_LOCAL EvaluatorProxyNV
       {
 	EvaluatorProxyNV(const std::string&);

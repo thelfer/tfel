@@ -1558,6 +1558,10 @@ include/TFEL/System/SignalManager.hxx -text
 include/TFEL/System/System.hxx -text
 include/TFEL/System/SystemError.hxx -text
 include/TFEL/System/SystemError.ixx -text
+include/TFEL/System/ThreadPool.hxx -text
+include/TFEL/System/ThreadPool.ixx -text
+include/TFEL/System/ThreadedTaskResult.hxx -text
+include/TFEL/System/ThreadedTaskResult.ixx -text
 include/TFEL/System/basic_rstream.hxx -text
 include/TFEL/System/basic_rstream.ixx -text
 include/TFEL/System/basic_wstream.hxx -text
@@ -1616,6 +1620,7 @@ include/TFEL/Utilities/TextData.hxx -text
 include/TFEL/Utilities/Token.hxx -text
 m4/aster-machine-type.m4 -text
 m4/ax_cxx_compile_stdcxx_11.m4 -text
+m4/ax_pthread.m4 -text
 m4/castem-unix-type.m4 -text
 m4/castem.m4 -text
 m4/check_boost.m4 -text
@@ -4956,6 +4961,8 @@ src/System/SignalHandler.cxx -text
 src/System/SignalManager.cxx -text
 src/System/System.cxx -text
 src/System/SystemError.cxx -text
+src/System/ThreadPool.cxx -text
+src/System/ThreadedTaskResult.cxx -text
 src/System/basic_rstream.cxx -text
 src/System/basic_wstream.cxx -text
 src/System/getFunction-win.cxx -text

@@ -39,13 +39,24 @@ namespace tfel
       }
 #endif /* __SUNPRO_CC */
 
+      /*!
+       * a base class which offers a default implementation of the
+       * `differentiate` method
+       */
       struct EvaluatorFunctionBase
 	: public Function
       {
+	//! constructor
 	EvaluatorFunctionBase();
+	/*!
+	 * \brief default implementation of the `differentiate`
+	 * method. This throws a `std::runtime_error` stating that
+	 * no suitable implementation exists.
+	 */
 	virtual std::shared_ptr<Expr>
 	differentiate(const std::vector<double>::size_type,
 		      const std::vector<double>&) const override;
+	//! destructor
 	virtual ~EvaluatorFunctionBase();
       }; // end of struct EvaluatorFunctionBase
 

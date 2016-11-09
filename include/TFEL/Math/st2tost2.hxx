@@ -51,13 +51,19 @@ namespace tfel{
     template<unsigned short N>
     struct ConvertT2toST2ToST2toST2Expr;
 
-    /*
-     * Partial specialisation for st2tost2
+    /*!
+     * \brief partial specialisation of the `ST2toST2Traits` class for
+     * `st2tost2`.
+     * \tparam N: space dimension
+     * \tparam T: numeric type
      */
     template<unsigned short N,typename T>
-    struct ST2toST2Traits<st2tost2<N,T> >{
+    struct ST2toST2Traits<st2tost2<N,T>>{
+      //! a simple alias
       typedef T              NumType;
+      //! a simple alias
       typedef unsigned short IndexType;
+      //! a simple alias
       static constexpr unsigned short dime = N;
     };
 

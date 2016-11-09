@@ -463,6 +463,10 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/System/rfstream.hxx                                                                     \
 			TFEL/System/wfstream.hxx                                                                     \
 			TFEL/System/getFunction.h                                                                    \
+			TFEL/System/ThreadPool.hxx                                                                   \
+			TFEL/System/ThreadPool.ixx                                                                   \
+			TFEL/System/ThreadedTaskResult.hxx                                                           \
+			TFEL/System/ThreadedTaskResult.ixx                                                           \
 			TFEL/Utilities/Argument.hxx                                                                  \
 			TFEL/Utilities/ArgumentParser.hxx                                                            \
 			TFEL/Utilities/ArgumentParserBase.hxx                                                        \

@@ -66,40 +66,35 @@ namespace tfel
 	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunction2P2VGenerator<f>);
       } // end of EvaluatorProxy2P2V::EvaluatorProxy2P2V
 
-      template<unsigned short N,
-	       typename EvaluatorFunctionWrapper<N>::type f>
+      template<unsigned short N,typename EvaluatorFunctionWrapper<N>::type f>
       EvaluatorProxyNV<N,f>::EvaluatorProxyNV(const std::string& name)
       {
 	using namespace tfel::math;
 	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunctionNVGenerator<N,f>);
       } // end of EvaluatorProxyNV::EvaluatorProxyNV
 
-      template<unsigned short N,
-	       typename EvaluatorFunctionWrapper<N>::type1P f>
+      template<unsigned short N,typename EvaluatorFunctionWrapper<N>::type1P f>
       EvaluatorProxy1PNV<N,f>::EvaluatorProxy1PNV(const std::string& name)
       {
 	using namespace tfel::math;
 	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunction1PNVGenerator<N,f>);
       } // end of EvaluatorProxy1PNV::EvaluatorProxy1PNV
 
-      template<unsigned short N,
-	       typename EvaluatorFunctionWrapper<N>::type2P f>
+      template<unsigned short N,typename EvaluatorFunctionWrapper<N>::type2P f>
       EvaluatorProxy2PNV<N,f>::EvaluatorProxy2PNV(const std::string& name)
       {
 	using namespace tfel::math;
 	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunction2PNVGenerator<N,f>);
       } // end of EvaluatorProxy2PNV::EvaluatorProxy2PNV
 
-      template<unsigned short N,
-	       typename EvaluatorFunctionWrapper<N>::type1UP f>
+      template<unsigned short N,typename EvaluatorFunctionWrapper<N>::type1UP f>
       EvaluatorProxy1UPNV<N,f>::EvaluatorProxy1UPNV(const std::string& name)
       {
 	using namespace tfel::math;
 	Evaluator::getFunctionGeneratorManager().insert(name,&EvaluatorFunction1UPNVGenerator<N,f>);
       } // end of EvaluatorProxy1UPNV::EvaluatorProxy1UPNV
 
-      template<unsigned short N,
-	       typename EvaluatorFunctionWrapper<N>::type2UP f>
+      template<unsigned short N,typename EvaluatorFunctionWrapper<N>::type2UP f>
       EvaluatorProxy2UPNV<N,f>::EvaluatorProxy2UPNV(const std::string& name)
       {
 	using namespace tfel::math;

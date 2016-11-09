@@ -32,20 +32,25 @@ namespace tfel
   namespace system
   {
 
+    /*!
+     * \brief a class used to handle external processes
+     */
     struct TFELSYSTEM_VISIBILITY_EXPORT ProcessManager
     {
 
-      // a simple alias
+      //! a simple alias
       typedef pid_t ProcessId;
-      // a simple alias
+      //! a simple alias
       typedef int   StreamId;
-      // a simple alias
+      //! a simple alias
       typedef std::map<ProcessId,StreamId> StreamMap;
-      // a simple alias
+      //! a simple alias
       typedef rstreamView<true> rstream;
-      // a simple alias
+      //! a simple alias
       typedef wstreamView<true> wstream;
-
+      /*!
+       * \brief base class to pass commands to sub processes
+       */
       struct TFELSYSTEM_VISIBILITY_EXPORT Command
       {
 	virtual bool execute(const StreamId,const StreamId) = 0;
@@ -63,7 +68,7 @@ namespace tfel
       virtual void
       sendSignal(const ProcessId,const int = SIGTERM);
 
-      /*;
+      /*!
        * create a new process
        * \param const std::string&, command to be executed. The first word
        * is the program name, the others options
