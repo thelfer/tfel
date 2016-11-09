@@ -5197,6 +5197,7 @@ tests/System/CastemParameterTest.cxx -text
 tests/System/CastemSourceTest.cxx -text
 tests/System/Makefile.am -text
 tests/System/Test.mfront -text
+tests/System/ThreadPoolTest.cxx -text
 tests/System/binary_write.cxx -text
 tests/System/process.cxx -text
 tests/System/process_test_target.cxx -text
