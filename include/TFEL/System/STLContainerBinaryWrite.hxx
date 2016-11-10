@@ -83,7 +83,8 @@ namespace tfel
       static void exe(const int f,const basic_string& v)
       {
 	//! a simple alias
-	using value_type = typename basic_string::value_type;
+	using value_type =
+	  typename std::basic_string<charT,traits,Alloc>::value_type;
 	binary_write(f,v.size());
 	systemCall::write(f,&v[0],v.size()*sizeof(value_type));
       }

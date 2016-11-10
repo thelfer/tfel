@@ -33,9 +33,10 @@ namespace tfel
     {
       static void exe(const int f,std::basic_string<charT,traits,Alloc>& res)
       {
-	using string = std::basic_string<charT,traits,Alloc>;
-	using size_type  = typename string::size_type;
-	using value_type = typename string::value_type;
+	using size_type  =
+	  typename std::basic_string<charT,traits,Alloc>::size_type;
+	using value_type =
+	  typename std::basic_string<charT,traits,Alloc>::value_type;
 	auto s = binary_read<size_type>(f);
 	res.clear();
 	res.resize(s);
@@ -106,7 +107,9 @@ namespace tfel
 	auto s = binary_read<size_type>(f);
 	res.clear();
 	for(size_type i=0;i!=s;++i){
-	  res.insert({binary_read<Key>(f),binary_read<Data>(f)});
+          auto k = binary_read<Key>(f);
+          auto v = binary_read<Data>(f);
+          res.insert({std::move(k),std::move(v)});
 	}
       }
     }; // end of BinaryReader<std::map...>
