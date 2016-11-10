@@ -5,7 +5,9 @@ set(TFELSystem_SOURCES
     ExternalLibraryManager.cxx
     ExternalBehaviourDescription.cxx
     System.cxx
-    SystemError.cxx)
+    SystemError.cxx
+    ThreadPool.cxx
+    ThreadedTaskResult.cxx)
 
 if(UNIX)
   set(TFELSystem_SOURCES
@@ -21,8 +23,6 @@ if(UNIX)
       wfstream.cxx
       BinaryRead.cxx
       BinaryWrite.cxx
-      ThreadPool.cxx
-      ThreadedTaskResult.cxx
       ${TFELSystem_SOURCES})
   if(CYGWIN)
     set(TFELSystem_SOURCES
