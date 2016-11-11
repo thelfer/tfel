@@ -232,12 +232,14 @@ docs/mfront/CMakeLists.txt -text
 docs/mfront/Coef.md -text
 docs/mfront/CompareToNumericalJacobian.md -text
 docs/mfront/ComputeFinalStress.md -text
+docs/mfront/ComputeStiffnessTensor.md -text
 docs/mfront/ComputeStress.md -text
 docs/mfront/ComputeStressFreeExpansion.md -text
 docs/mfront/ComputeThermalExpansion.md -text
 docs/mfront/DSL.md -text
 docs/mfront/Date.md -text
 docs/mfront/Description.md -text
+docs/mfront/ElasticMaterialProperties.md -text
 docs/mfront/Epsilon.md -text
 docs/mfront/ExternalStateVar.md -text
 docs/mfront/ExternalStateVariable.md -text

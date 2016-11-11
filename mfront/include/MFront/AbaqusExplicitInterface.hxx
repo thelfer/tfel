@@ -297,6 +297,13 @@ namespace mfront{
 				  const BehaviourDescription&,
 				  const std::string&,
 				  const Hypothesis) const;
+    /*!
+     * \param[out] out: ouput stream
+     * \param[in]  md:  behaviour description
+     */
+    virtual void writeIntegrateLoop(std::ostream&,
+				    const BehaviourDescription&) const;
+    
   };
   
 } // end of namespace mfront

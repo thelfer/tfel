@@ -27,9 +27,9 @@ namespace tfel{
     {
     protected:
       //! thr
-      static void throwBadCastException(void);
+      TFEL_NORETURN static void throwBadCastException(void);
       //! thr
-      static void throwNullException(void);
+      TFEL_NORETURN static void throwNullException(void);
     }; // end of struct ThreadedTaskResultBase
     /*!
      * \brief a class standing for the result of a taks

@@ -9,14 +9,16 @@ MFRONT_DOCS = Algorithm.md				                \
 	      Bounds.md				                        \
 	      Brick.md				                        \
 	      Coef.md				                        \
-	      CompareToNumericalJacobian.md		                \
-	      ComputeStress.md				                \
 	      ComputeFinalStress.md				        \
-	      ComputeThermalExpansion.md				\
+	      ComputeStiffnessTensor.md			                \
+	      ComputeStress.md				                \
 	      ComputeStressFreeExpansion.md				\
+	      ComputeThermalExpansion.md				\
+	      CompareToNumericalJacobian.md		                \
 	      Date.md				                        \
 	      Description.md                                            \
 	      DSL.md				                        \
+	      ElasticMaterialProperties.md                              \
 	      Epsilon.md                                                \
 	      ExternalStateVar.md                                       \
 	      ExternalStateVariable.md                                  \

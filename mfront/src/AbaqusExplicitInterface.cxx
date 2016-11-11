@@ -55,15 +55,18 @@ namespace mfront{
 					tokens_iterator current,
 					const tokens_iterator end)
   {
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("AbaqusExplicitInterface::treatKeyword: "+m));}
+    };
     if(!i.empty()){
-      if(std::find(i.begin(),i.end(),this->getName())!=i.end()){
-	const auto keys =  AbaqusInterfaceBase::getCommonKeywords();
-	if(std::find(keys.begin(),keys.end(),key)==keys.end()){
-	  throw(std::runtime_error("AbaqusExplicitInterface::treatKeyword: "
-				   "unsupported key '"+key+"'"));
-	}
-      } else {
+      if(std::find(i.begin(),i.end(),this->getName())==i.end()){
 	return {false,current};
+      }
+      auto keys =  AbaqusInterfaceBase::getCommonKeywords();
+      keys.push_back("AbaqusParallelizationPolicy");
+      if(std::find(keys.begin(),keys.end(),key)==keys.end()){
+	throw(std::runtime_error("AbaqusExplicitInterface::treatKeyword: "
+				 "unsupported key '"+key+"'"));
       }
     }
     return AbaqusInterfaceBase::treatCommonKeywords(key,current,end);
@@ -738,7 +741,6 @@ namespace mfront{
       out << "std::cerr << \"" << mb.getClassName() << ": unsupported hypothesis\\n\";\n"
 	  << "::exit(-1);\n";
     }
-    //omp support    #pragma omp parallel for
     out << "for(int i=0;i!=*nblock;++i){\n";
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
     if(h==ModellingHypothesis::PLANESTRESS){
@@ -870,11 +872,20 @@ namespace mfront{
     out << "}\n";
   } // end of AbaqusExplicitInterface::writeComputeElasticPrediction
 
-  void
-  AbaqusExplicitInterface::writeNativeBehaviourCall(std::ostream& out,
-						    const BehaviourDescription& mb,
-						    const std::string& t,
-						    const Hypothesis h) const
+  void AbaqusExplicitInterface::writeIntegrateLoop(std::ostream& out,
+						   const BehaviourDescription& mb) const
+  {
+    // parallel policy
+    //    const auto ppolicy = mb.getAttribute<std::string>("AbaqusExplicit::ParallelPolicy","None");
+    out << "for(int i=0;i!=*nblock;++i){\n"
+	<< "integrate(i);\n"
+	<< "}\n";
+  }
+  
+  void AbaqusExplicitInterface::writeNativeBehaviourCall(std::ostream& out,
+							 const BehaviourDescription& mb,
+							 const std::string& t,
+							 const Hypothesis h) const
   {
     // datacheck phase
     out << "static_cast<void>(defgradOld);\n"
@@ -920,8 +931,7 @@ namespace mfront{
 	return;
       }
     }
-    //omp support    #pragma omp parallel for
-    out << "for(int i=0;i!=*nblock;++i){\n";
+    out << "auto integrate = [&](const int i){\n";
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),ivoffset);
     out << "TFEL_CONSTEXPR const " << t << " zero = " << t <<  "(0);\n";
     if(h==ModellingHypothesis::PLANESTRESS){
@@ -1028,7 +1038,8 @@ namespace mfront{
     if(ivoffset!=0u){
       out << "tfel::fsalgo::copy<" << ivoffset << ">::exe(cview(stateOld+i),view(stateNew+i));\n";
     }
-    out << "}\n";
+    out << "};\n";
+    this->writeIntegrateLoop(out,mb);
   }
 
   void
@@ -1062,8 +1073,7 @@ namespace mfront{
 	return;
       }
     }
-    //omp support    #pragma omp parallel for
-    out << "for(int i=0;i!=*nblock;++i){\n";
+    out << "auto integrate = [&](const int i){\n";
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),ivoffset);
     if(h==ModellingHypothesis::PLANESTRESS){
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
@@ -1180,7 +1190,8 @@ namespace mfront{
     if(ivoffset!=0u){
       out << "tfel::fsalgo::copy<" << ivoffset << ">::exe(cview(stateOld+i),view(stateNew+i));\n";
     }
-    out << "}\n";
+    out << "};\n";
+    this->writeIntegrateLoop(out,mb);
   }
   
   void
@@ -1233,8 +1244,7 @@ namespace mfront{
     }
     out << "const auto  f = [](const " << t << " x){return std::log(x)/2;};\n"
 	<< "const auto df = [](const " << t << " x){return 1/(2*x);};\n"
-    //omp support    #pragma omp parallel for
-	<< "for(int i=0;i!=*nblock;++i){\n";
+	<< "auto integrate = [&](const int i){\n";
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),ivoffset);
     auto dime = (h==ModellingHypothesis::TRIDIMENSIONAL) ? "3u" : "2u";
     if(h==ModellingHypothesis::PLANESTRESS){
@@ -1322,7 +1332,7 @@ namespace mfront{
 	  << "   (std::abs(dl0_l0[4])>10*std::numeric_limits<" << t << ">::min())||\n"
 	  << "   (std::abs(dl1_l0[4])>10*std::numeric_limits<" << t << ">::min())||\n"
 	  << "   (std::abs(dl0_l0[5])>10*std::numeric_limits<" << t << ">::min())||\n"
-	  << "   (std::abs(dl1_l0[5])>10*std::numeric_limits<" << t << ">::min())){"
+	  << "   (std::abs(dl1_l0[5])>10*std::numeric_limits<" << t << ">::min())){\n"
 	  << "  std::cerr << \"" << mb.getClassName() << ": stress free expansion is assumed to be diagonal\" << std::endl;\n"
 	  << "  std::exit(EXIT_FAILURE);\n"
 	  << "}\n"
@@ -1387,7 +1397,8 @@ namespace mfront{
     if(ivoffset!=0u){
       out << "tfel::fsalgo::copy<" << ivoffset << ">::exe(cview(stateOld+i),view(stateNew+i));\n";
     }
-    out << "}\n";
+    out << "};\n";
+    this->writeIntegrateLoop(out,mb);
   }
   
   void
@@ -1441,8 +1452,7 @@ namespace mfront{
   	  << "::exit(-1);\n";
       return;
     }
-    //omp support    #pragma omp parallel for
-    out << "for(int i=0;i!=*nblock;++i){\n";
+    out << "auto integrate = [&](const int i){\n";
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),ivoffset);
     if(h==ModellingHypothesis::PLANESTRESS){
       // les composantes axiales sont mises à l'identité pour pouvoir
@@ -1544,7 +1554,8 @@ namespace mfront{
     if(ivoffset!=0u){
       out << "tfel::fsalgo::copy<" << ivoffset << ">::exe(cview(stateOld+i),view(stateNew+i));\n";
     }
-    out << "}\n";
+    out << "};\n";
+    this->writeIntegrateLoop(out,mb);
   }
   
   std::string

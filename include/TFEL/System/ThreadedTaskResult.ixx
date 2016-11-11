@@ -14,6 +14,7 @@
 #ifndef LIB_THREADEDTASKRESULT_IXX_
 #define LIB_THREADEDTASKRESULT_IXX_
 
+#include<memory>
 #include<utility>
 
 namespace tfel{

@@ -184,11 +184,10 @@ namespace mfront{
 			  const FileDescription&,
 			  const bool) const;
     
-    virtual void
-    writeDepvar(std::ostream&,int&,
-		const Hypothesis&,
-		const VariableDescription&,
-		const std::string&) const;
+    virtual void writeDepvar(std::ostream&,int&,
+			     const Hypothesis&,
+			     const VariableDescription&,
+			     const std::string&) const;
     //! selected finite strain strategy
     FiniteStrainStrategy fss = UNDEFINEDSTRATEGY;
     //! selected orthotropy management policy
