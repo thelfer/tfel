@@ -31,7 +31,7 @@ namespace mfront {
     /*!
      * \param[in]     k:  key being treated
      * \param[in] i:   list of interfaces to which the keyword is restricted  
-     * \param[in/out] p:  iterator to the token after the key being treated
+     * \param[in,out] p:  iterator to the token after the key being treated
      * \param[out]    pe: iterator past the end of the file
      * \return a pair. The first member of the pair is true if the
      * keyword was handled by interface. The second member of the pair

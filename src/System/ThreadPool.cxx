@@ -41,7 +41,11 @@ namespace tfel{
 	};
 	this->workers.emplace_back(f);
       }
-    }    
+    }
+
+    ThreadPool::size_type ThreadPool::getNumberOfThreads() const{
+      return this->workers.size();
+    } // end of ThreadPool::getNumberOfThreads
 
     ThreadPool::~ThreadPool()
     {

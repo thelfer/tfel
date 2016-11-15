@@ -212,8 +212,9 @@ namespace mfront{
   CastemInterface::CastemInterface()
   {}
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  CastemInterface::treatKeyword(const std::string& key,
+  std::pair<bool,CastemInterface::tokens_iterator>
+  CastemInterface::treatKeyword(BehaviourDescription&,
+				const std::string& key,
 				const std::vector<std::string>& i,
 				tokens_iterator current,
 				const tokens_iterator end)

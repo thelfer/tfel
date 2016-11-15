@@ -151,7 +151,7 @@ namespace mfront{
   MFRONT_VISIBILITY_EXPORT void
   mergeTargetsDescription(TargetsDescription&,
 			  const TargetsDescription&,
-			  const bool b);
+			  const bool);
   /*!
    * \brief write a target description to a stream
    * \param[out] os : output stream

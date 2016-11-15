@@ -93,7 +93,7 @@ namespace mtest
      * \return a pair. The first member is true if the integration was
      * successfull, false otherwise. The second member contains a time
      * step scaling factor.
-     * \param[in/out] s     : current state
+     * \param[in,out] s     : current state
      * \param[out]    wk    : behaviour workspace
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix

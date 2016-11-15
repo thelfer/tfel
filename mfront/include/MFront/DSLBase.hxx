@@ -207,26 +207,35 @@ namespace mfront
     virtual void importFile(const std::string&,
 			    const std::vector<std::string>&,
 			    const std::map<std::string,std::string>&) = 0;
-    /*!
-     * destructor
-     */
+    //! destructor
     virtual ~DSLBase();
-
-    void
-    checkNotEndOfFile(const std::string&,
-		      const std::string& = "") const;
-
-    void
-    readSpecifiedToken(const std::string&,
-		       const std::string&);
-
+    /*!
+     * \brief check that the end of file in not reached yet
+     * \param[in] m: calling method name
+     * \param[in] e: error message
+     */
+    void checkNotEndOfFile(const std::string&,
+			   const std::string& = "") const;
+    /*!
+     * \brief read a specified token and advance to the next token
+     * \param[in] m: calling method name
+     * \param[in] v: expected value
+     */
+    void readSpecifiedToken(const std::string&,
+			    const std::string&);
+    /*!
+     * \brief throw an std::runtime_error
+     * \param[in] m: calling method name
+     * \param[in] e: error message
+     */
     TFEL_NORETURN void
     throwRuntimeError(const std::string&,
 		      const std::string&) const;
-
-    std::string
-    readUntilEndOfInstruction(void);
-
+    /*!
+     * \return concatenate all the tokens from the current position up
+     * to the first ';' token
+     */
+    std::string readUntilEndOfInstruction(void);
     /*!
      * read an unsigned short in the file
      * \param[in] m : calling method

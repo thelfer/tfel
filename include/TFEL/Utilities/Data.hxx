@@ -54,7 +54,7 @@ namespace tfel{
       /*!
        * \brief read a JSON-like structure
        * \return the values read
-       * \param[in/out] p:  current position in the tokens stream
+       * \param[in,out] p:  current position in the tokens stream
        * \param[in]     pe: past-the-end iterator
        */
       static Data read(CxxTokenizer::const_iterator&,
@@ -64,7 +64,7 @@ namespace tfel{
        * available to treat the associated data. The result of the
        * treatment is stored in the returned value.
        * \return treated values
-       * \param[in/out] p:  current position in the tokens stream
+       * \param[in,out] p:  current position in the tokens stream
        * \param[in]     pe: past-the-end iterator
        * \param[in]     callbacks: list of call-backs
        */
@@ -74,7 +74,7 @@ namespace tfel{
       /*!
        * \brief read a standard value (string,double,int)
        * \return the values read
-       * \param[in/out] p:  current position in the tokens stream
+       * \param[in,out] p:  current position in the tokens stream
        * \param[in]     pe: past-the-end iterator
        */
       static Data read_value(CxxTokenizer::const_iterator&,
@@ -82,7 +82,7 @@ namespace tfel{
       /*!
        * \brief read a map
        * \return the values read
-       * \param[in/out] p:  current position in the tokens stream
+       * \param[in,out] p:  current position in the tokens stream
        * \param[in]     pe: past-the-end iterator
        */
       static Data read_vector(CxxTokenizer::const_iterator&,
@@ -90,7 +90,7 @@ namespace tfel{
       /*!
        * \brief read a map
        * \return the values read
-       * \param[in/out] p:  current position in the tokens stream
+       * \param[in,out] p:  current position in the tokens stream
        * \param[in]     pe: past-the-end iterator
        */
       static Data read_map(CxxTokenizer::const_iterator&,

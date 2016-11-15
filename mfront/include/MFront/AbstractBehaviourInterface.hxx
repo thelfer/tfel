@@ -56,6 +56,7 @@ namespace mfront{
     allowDynamicallyAllocatedArrays(const bool) = 0;
     /*!
      * \brief treat a keyword
+     * \param[out/in] bd: behaviour description
      * \param[in] key: keyword to be treated
      * \param[in] i:   list of interfaces to which the keyword is restricted
      * \param[in] p:   current position in the file
@@ -65,7 +66,8 @@ namespace mfront{
      * the last token treated.
      */
     virtual std::pair<bool,tokens_iterator>
-    treatKeyword(const std::string&,
+    treatKeyword(BehaviourDescription&,
+		 const std::string&,
 		 const std::vector<std::string>&,
 		 tokens_iterator,
 		 const tokens_iterator) = 0;

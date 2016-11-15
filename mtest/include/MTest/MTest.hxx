@@ -230,8 +230,8 @@ namespace mtest
 				const real,
 				const real) const override;
     /*!
-     * \param[in/out]  s: current structure state
-     * \param[in/out] wk: solver workspace
+     * \param[in,out]  s: current structure state
+     * \param[in,out] wk: solver workspace
      * \param[in] o:  solver options
      * \param[in] t:  current time
      * \param[in] dt: time increment

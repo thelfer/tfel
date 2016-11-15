@@ -84,6 +84,7 @@ namespace mfront{
      */
     CastemInterface();
     /*!
+     * \param[in,out] mb: behaviour description
      * \param[in] k:  keyword treated
      * \param[in] i:  list of interfaces to which the keyword is restricted
      * \param[in] p:  iterator to the current token
@@ -93,7 +94,8 @@ namespace mfront{
      * the last token treated.
      */
     virtual std::pair<bool,tokens_iterator>
-    treatKeyword(const std::string&,
+    treatKeyword(BehaviourDescription&,
+		 const std::string&,
 		 const std::vector<std::string>&,
 		 tokens_iterator,
 		 const tokens_iterator) override;

@@ -353,13 +353,12 @@ namespace mfront
     return b;
   } // end of DSLBase::readNextBlock
 
-  void
-  DSLBase::throwRuntimeError(const std::string& method,
-				const std::string& m) const
+  void DSLBase::throwRuntimeError(const std::string& m,
+				  const std::string& e) const
   {
-    auto msg = method;
-    if(!m.empty()){
-      msg +=": " + m;
+    auto msg = m;
+    if(!e.empty()){
+      msg +=": " + e;
     }
     if(!this->tokens.empty()){
       auto t = this->current;
@@ -391,20 +390,19 @@ namespace mfront
     this->current = ocurrent;
   }
 
-  void
-  DSLBase::checkNotEndOfFile(const std::string& method,
-			     const std::string& error) const{
+  void DSLBase::checkNotEndOfFile(const std::string& m,
+				  const std::string& e) const{
     if(this->current==this->tokens.end()){
       auto msg = std::string{};
       msg += "unexpected end of file.";
-      if(!error.empty()){
-	msg += "\n"+error;
+      if(!e.empty()){
+	msg += "\n"+e;
       }
       if(!this->tokens.empty()){
 	const auto previous = std::prev(this->current);
 	msg += "\nError at line " + std::to_string(previous->line);
       }
-      this->throwRuntimeError(method,msg);
+      this->throwRuntimeError(m,msg);
     }
   } // end of DSLBase::checkNotEndOfFile
 
@@ -422,9 +420,8 @@ namespace mfront
     return value;
   } // end of DSLBase::readUnsignedShort
 
-  void
-  DSLBase::readSpecifiedToken(const std::string& m,
-			      const std::string& v)
+  void DSLBase::readSpecifiedToken(const std::string& m,
+				   const std::string& v)
   {
     this->checkNotEndOfFile(m,"expected '"+v+"'.");
     if(this->current->value!=v){
@@ -436,8 +433,7 @@ namespace mfront
     ++(this->current);
   } // end of DSLBase::readSpecifiedToken
 
-  std::string
-  DSLBase::readUntilEndOfInstruction()
+  std::string DSLBase::readUntilEndOfInstruction()
   {
     auto res = std::string{};
     while((this->current!=this->tokens.end())&&

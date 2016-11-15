@@ -352,6 +352,42 @@ namespace tfel{
 	       typename TensorTraits<TensorType>::NumType,OpMult>::Result>>::type
     pull_back(const ST2toST2Type&,
 	      const TensorType&);
+    /*!
+     * \brief compute the second derivative of the determinant of a
+     * symmetric tensor
+     * \param[in] s: tensor
+     */
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==1u&&
+      tfel::typetraits::IsScalar<typename StensorTraits<StensorType>::NumType>::cond,
+      st2tost2<1u,typename StensorTraits<StensorType>::NumType>>::type
+    computeDeterminantSecondDerivative(const StensorType&);
+    /*!
+     * \brief compute the second derivative of the determinant of a
+     * symmetric tensor
+     * \param[in] s: tensor
+     */
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==2u&&
+      tfel::typetraits::IsScalar<typename StensorTraits<StensorType>::NumType>::cond,
+      st2tost2<2u,typename StensorTraits<StensorType>::NumType>>::type
+    computeDeterminantSecondDerivative(const StensorType&);
+    /*!
+     * \brief compute the second derivative of the determinant of a
+     * symmetric tensor
+     * \param[in] s: tensor
+     */
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==3u&&
+      tfel::typetraits::IsScalar<typename StensorTraits<StensorType>::NumType>::cond,
+      st2tost2<3u,typename StensorTraits<StensorType>::NumType>>::type
+    computeDeterminantSecondDerivative(const StensorType&);
     
   } // end of namespace math
 

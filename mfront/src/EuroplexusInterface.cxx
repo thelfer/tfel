@@ -119,8 +119,9 @@ namespace mfront{
     return name;
   } // end of EuroplexusInterface::getLibraryName
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  EuroplexusInterface::treatKeyword(const std::string& key,
+  std::pair<bool,EuroplexusInterface::tokens_iterator>
+  EuroplexusInterface::treatKeyword(BehaviourDescription&,
+				    const std::string& key,
 				    const std::vector<std::string>& i,
 				    tokens_iterator current,
 				    const tokens_iterator end)

@@ -39,11 +39,13 @@ namespace tfel{
      */
     struct TFELSYSTEM_VISIBILITY_EXPORT ThreadPool
     {
+      //! a simple alias
+      using size_type = std::vector<std::thread>::size_type;
       /*!
        * \brief constructor
        * \param[in] n: number of thread to be created
        */
-      ThreadPool(const size_t);
+      ThreadPool(const size_type);
       /*!
        * \brief add a new task
        * \param[in] f: task
@@ -52,6 +54,8 @@ namespace tfel{
       template<typename F, typename... Args>
       std::future<ThreadedTaskResult<typename std::result_of<F(Args...)>::type>>
       addTask(F&&, Args&&...);
+      //! \return the number of threads managed by the ppol
+      size_type getNumberOfThreads() const;
       //! destructor
       ~ThreadPool();
     private:

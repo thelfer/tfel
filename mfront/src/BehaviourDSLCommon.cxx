@@ -1395,8 +1395,8 @@ namespace mfront{
       }
       ++(this->current);
       for(auto& i : this->interfaces){
-	auto p = i.second->treatKeyword(key,s,this->current,
-				   this->tokens.end());
+	auto p = i.second->treatKeyword(this->mb,key,s,this->current,
+					this->tokens.end());
 	if(p.first){
 	  if(treated){
 	    if(p2!=p.second){
@@ -1416,7 +1416,7 @@ namespace mfront{
       }
     } else {
       for(const auto&i : this->interfaces){
-	auto p = i.second->treatKeyword(key,{i.first},
+	auto p = i.second->treatKeyword(this->mb,key,{i.first},
 					this->current,
 					this->tokens.end());
 	if(p.first){

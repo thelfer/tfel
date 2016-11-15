@@ -1555,7 +1555,7 @@ namespace mfront
    * \brief set the elastic symmetry of a material if not already
    * defined. If already defined, check that the symmetry is the same
    * as the one given in argument
-   * \param[in/out] bd: behaviour description
+   * \param[in,out] bd: behaviour description
    * \param[in]     s:  symmetry type
    */
   MFRONT_VISIBILITY_EXPORT void

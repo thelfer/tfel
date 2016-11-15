@@ -54,7 +54,7 @@ namespace epx{
 						    const EuroplexusReal * const,
 						    const EuroplexusInt);
   /*!
-   * \param[in/out] D:  second Piola-Kirchhoff stress derivative
+   * \param[in,out] D:  second Piola-Kirchhoff stress derivative
    * \param[in]     h: hypothesis
    */
   MFRONT_EPX_VISIBILITY_EXPORT void

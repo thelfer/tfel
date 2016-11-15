@@ -112,8 +112,9 @@ namespace mfront{
       maximumSubStepping(0u)
   {} // end of CyranoInterface::CyranoInterface
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  CyranoInterface::treatKeyword(const std::string& key,
+  std::pair<bool,CyranoInterface::tokens_iterator>
+  CyranoInterface::treatKeyword(BehaviourDescription&,
+				const std::string& key,
 				const std::vector<std::string>& i,
 				tokens_iterator current,
 				const tokens_iterator end)

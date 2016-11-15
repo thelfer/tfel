@@ -35,10 +35,9 @@ namespace mfront{
   }
 
   template<typename T>
-  void
-  read(T& r,
-       tfel::utilities::CxxTokenizer::const_iterator& p,
-       const tfel::utilities::CxxTokenizer::const_iterator pe){
+  void read(T& r,
+	    tfel::utilities::CxxTokenizer::const_iterator& p,
+	    const tfel::utilities::CxxTokenizer::const_iterator pe){
     r = read<T>(p,pe);
   } // end of read
   

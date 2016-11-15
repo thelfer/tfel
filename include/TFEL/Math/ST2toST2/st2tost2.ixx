@@ -508,6 +508,55 @@ namespace tfel{
       const auto iF = invert(F);
       return push_forward(C,iF);
     }
+
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==1u&&
+      tfel::typetraits::IsScalar<typename StensorTraits<StensorType>::NumType>::cond,
+      st2tost2<1u,typename StensorTraits<StensorType>::NumType>>::type
+    computeDeterminantSecondDerivative(const StensorType& s)
+    {
+      using NumType = typename StensorTraits<StensorType>::NumType;
+      constexpr const auto zero  = NumType{0};
+      return{zero,s[2],s[1],
+	  s[2],zero,s[0],
+	  s[1],s[0],zero};
+    } // end of computeDeterminantSecondDerivative
+
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==2u&&
+      tfel::typetraits::IsScalar<typename StensorTraits<StensorType>::NumType>::cond,
+      st2tost2<2u,typename StensorTraits<StensorType>::NumType>>::type
+    computeDeterminantSecondDerivative(const StensorType& s){
+      using NumType = typename StensorTraits<StensorType>::NumType;
+      constexpr const auto zero  = NumType{0};
+      return {zero,s[2],s[1],zero,
+	  s[2],zero,s[0],zero,
+	  s[1],s[0],zero,-s[3],
+	  zero,zero,-s[3],-s[2]};
+    } // end of computeDeterminantSecondDerivative
+
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
+      StensorTraits<StensorType>::dime==3u&&
+      tfel::typetraits::IsScalar<typename StensorTraits<StensorType>::NumType>::cond,
+      st2tost2<3u,typename StensorTraits<StensorType>::NumType>>::type
+    computeDeterminantSecondDerivative(const StensorType& s){
+      using NumType = typename StensorTraits<StensorType>::NumType;
+      constexpr const auto zero  = NumType{0};
+      constexpr const auto icste = Cste<NumType>::isqrt2;
+      return {zero,s[2],s[1],zero,zero,-s[5],
+	  s[2],zero,s[0],zero,-s[4],zero,
+	  s[1],s[0],zero,-s[3],zero,zero,
+	  zero,zero,-s[3],-s[2],s[5]*icste,s[4]*icste,
+	  zero,-s[4],zero,s[5]*icste,-s[1],s[3]*icste,
+	  -s[5],zero,zero,s[4]*icste,s[3]*icste,-s[0]};
+    } // end of computeDeterminantSecondDerivative
+
     
   } //end of namespace math
 

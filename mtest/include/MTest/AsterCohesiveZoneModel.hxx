@@ -111,7 +111,7 @@ namespace mtest
      * successfull, false otherwise. The second member contains a time
      * step scaling factor.
      * \param[out]    Kt    : tangent operator
-     * \param[in/out] s     : current state
+     * \param[in,out] s     : current state
      * \param[out]    wk    : work space
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix

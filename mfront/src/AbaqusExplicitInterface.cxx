@@ -23,6 +23,9 @@
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/AbaqusExplicitInterface.hxx"
 
+static const std::string
+AbaqusExplicitParallelizationPolicy = "AbaqusExplicit::ParallelizationPolicy";
+
 namespace mfront{
   
   //! copy vumat-sp.cpp and vumat-dp locally
@@ -49,8 +52,9 @@ namespace mfront{
     }
   } // end of copyVUMATFiles
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  AbaqusExplicitInterface::treatKeyword(const std::string& key,
+  std::pair<bool,AbaqusExplicitInterface::tokens_iterator>
+  AbaqusExplicitInterface::treatKeyword(BehaviourDescription& bd,
+					const std::string& key,
 					const std::vector<std::string>& i,
 					tokens_iterator current,
 					const tokens_iterator end)
@@ -63,11 +67,24 @@ namespace mfront{
 	return {false,current};
       }
       auto keys =  AbaqusInterfaceBase::getCommonKeywords();
-      keys.push_back("AbaqusParallelizationPolicy");
+      keys.push_back("@AbaqusExplicitParallelizationPolicy");
       if(std::find(keys.begin(),keys.end(),key)==keys.end()){
 	throw(std::runtime_error("AbaqusExplicitInterface::treatKeyword: "
 				 "unsupported key '"+key+"'"));
       }
+    }
+    if(key=="@AbaqusExplicitParallelizationPolicy"){
+      throw_if(bd.hasAttribute("AbaqusExplicit::ParallelizationPolicy"),
+	       "parallelization policy already defined");
+      throw_if((current->value!="None")&&
+	       (current->value!="ThreadPool"),
+	       "invalid parallelization policy '"+current->value+"'");
+      bd.setAttribute(AbaqusExplicitParallelizationPolicy,
+		      current->value,false);
+      throw_if(++current==end,"unexpected end of file");
+      throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
+      ++(current);
+      return {true,current};
     }
     return AbaqusInterfaceBase::treatCommonKeywords(key,current,end);
   } // end of AbaqusExplicitInterface::treatKeyword
@@ -247,6 +264,8 @@ namespace mfront{
     // get the modelling hypotheses to be treated
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
+    const auto ppolicy =
+      mb.getAttribute<std::string>(AbaqusExplicitParallelizationPolicy,"None");
     // output directories
     tfel::system::systemCall::mkdir("include/MFront");
     tfel::system::systemCall::mkdir("include/MFront/Abaqus");
@@ -268,7 +287,7 @@ namespace mfront{
     const auto header = this->getHeaderDefine(mb);
     out << "#ifndef "<< header << "\n"
 	<< "#define "<< header << "\n\n"
-	<< "#include\"TFEL/Config/TFELConfig.hxx\"\n\n"
+	<< "#include\"TFEL/Config/TFELConfig.hxx\"\n"
 	<< "#include\"MFront/Abaqus/Abaqus.hxx\"\n\n"
 	<< "#ifdef __cplusplus\n"
 	<< "#include\"MFront/Abaqus/AbaqusTraits.hxx\"\n";
@@ -338,6 +357,9 @@ namespace mfront{
 	<< "#include<cstdlib>\n";
     this->getExtraSrcIncludes(out,mb);
 
+    if(ppolicy=="ThreadPool"){
+      out << "#include\"TFEL/System/ThreadPool.hxx\"\n";
+    }
     out << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n"
 	<< "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
@@ -352,6 +374,16 @@ namespace mfront{
 
     this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
     
+    if(ppolicy=="ThreadPool"){
+      out << "static size_t getAbaqusExplicitNumberOfThreads(void){\n"
+	  << "const auto nthreads = ::getenv(\"ABAQUSEXPLICIT_NTHREADS\");\n"
+	  << "if(nthreads==nullptr){\n"
+	  << "return 4;\n"
+	  << "}\n"
+	  << "return std::stoi(nthreads);\n"
+	  << "}\n\n";
+    }
+
     out << "extern \"C\"{\n\n";
  
     this->generateUMATxxGeneralSymbols(out,name,mb,fd);
@@ -400,6 +432,9 @@ namespace mfront{
 	      << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	      << "BehaviourProfiler::TOTALTIME);\n";
 	}
+	if(ppolicy=="ThreadPool"){
+	  out << "static tfel::system::ThreadPool pool(getAbaqusExplicitNumberOfThreads());\n";
+	}	
 	this->writeChecks(out,mb,t,h);
 	if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
 	  if(this->fss==NATIVEFINITESTRAINSTRATEGY){
@@ -873,13 +908,33 @@ namespace mfront{
   } // end of AbaqusExplicitInterface::writeComputeElasticPrediction
 
   void AbaqusExplicitInterface::writeIntegrateLoop(std::ostream& out,
-						   const BehaviourDescription& mb) const
+						   const BehaviourDescription& bd) const
   {
+    
     // parallel policy
-    //    const auto ppolicy = mb.getAttribute<std::string>("AbaqusExplicit::ParallelPolicy","None");
-    out << "for(int i=0;i!=*nblock;++i){\n"
-	<< "integrate(i);\n"
-	<< "}\n";
+    const auto ppolicy = bd.getAttribute<std::string>(AbaqusExplicitParallelizationPolicy,"None");
+    if(ppolicy=="None"){
+      out << "for(int i=0;i!=*nblock;++i){\n"
+	  << "integrate(i);\n"
+	  << "}\n";
+    } else if(ppolicy=="ThreadPool"){
+      out << "auto integrate2 = [&integrate,nblock](const int b, const int e){\n"
+	  << "for(int i=b;i!=e;++i){\n"
+	  << "integrate(i);\n"
+	  << "}\n"
+	  << "};\n"
+	  << "const auto nthreads = pool.getNumberOfThreads();\n"
+	  << "const auto ntasks   = nthreads/(*nblock);\n"
+	  << "for(tfel::system::ThreadPool::size_type i=0;i!=nthreads;++i){\n"
+	  << "pool.addTask(integrate2,i*ntasks,(i+1)*ntasks);\n"
+	  << "}\n"
+	  << "if(*nblock-ntasks*nthreads!=0){\n"
+	  << "pool.addTask(integrate2,nthreads*ntasks,*nblock);\n"
+	  << "}\n";
+    } else {
+      throw(std::runtime_error("AbaqusExplicitInterface::writeIntegrateLoop: "
+			       "internal error (unsupported parallelization policy"));
+    }
   }
   
   void AbaqusExplicitInterface::writeNativeBehaviourCall(std::ostream& out,

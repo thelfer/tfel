@@ -19,15 +19,16 @@
 
 namespace mfront{
 
+  /*!
+   * \brief a dsl dedicated to isotropic mises plastic flows
+   */
   struct IsotropicMisesPlasticFlowDSL
     : public IsotropicBehaviourDSLBase
   {
-
-    static std::string 
-    getName(void);
-
-    static std::string
-    getDescription(void);
+    //! \return the name of the dsl
+    static std::string getName(void);
+    //! \return a description of the dsl
+    static std::string getDescription(void);
 
     virtual void
     endsInputFileProcessing(void) override;
@@ -43,9 +44,9 @@ namespace mfront{
 
     virtual void
     writeBehaviourComputeTangentOperator(const Hypothesis) override;
-
+    //! constructor
     IsotropicMisesPlasticFlowDSL();
-
+    //! desctructor
     virtual ~IsotropicMisesPlasticFlowDSL();
   };
 

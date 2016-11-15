@@ -89,7 +89,7 @@ namespace tfel{
 
     /*!
      * \brief replace all occurences of character c by n
-     * \param[in/out] s : original string
+     * \param[in,out] s : original string
      * \param[in]     c : character to be changed
      * \param[in]     n : replacement character
      * \return a copy of c where all occurences of c have

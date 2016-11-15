@@ -1,5 +1,5 @@
 /*!
- * \file   ConvertLogarithmicStrainTangentOperator.cxx
+ * \file   ConvertLogarithmicStrainTangentOperatorTest.cxx
  * \brief    
  * \author THOMAS HELFER
  * \date   29 août 2016
@@ -24,13 +24,13 @@
 #include"TFEL/Material/Lame.hxx"
 #include"TFEL/Math/ST2toST2/ConvertLogarithmicStrainTangentOperator.hxx"
 
-struct ConvertLogarithmicStrainTangentOperator
+struct ConvertLogarithmicStrainTangentOperatorTest
   : public tfel::tests::TestCase
 {
   
-  ConvertLogarithmicStrainTangentOperator()
-    : tfel::tests::TestCase("TFEL/Math","ConvertToTangentModuli")
-  {} // end of ConvertToTangentModuli
+  ConvertLogarithmicStrainTangentOperatorTest()
+    : tfel::tests::TestCase("TFEL/Math","ConvertLogarithmicStrainTangentOperator")
+  {} // end of ConvertLogarithmicStrainTangentOperatorTest
   
   tfel::tests::TestResult
   execute()
@@ -43,16 +43,15 @@ struct ConvertLogarithmicStrainTangentOperator
 private:
   
   
-}; // end of ConvertLogarithmicStrainTangentOperator
+}; // end of ConvertLogarithmicStrainTangentOperatorTest
 
-TFEL_TESTS_GENERATE_PROXY(ConvertLogarithmicStrainTangentOperator,
-			  "ConvertLogarithmicStrainTangentOperator");
+TFEL_TESTS_GENERATE_PROXY(ConvertLogarithmicStrainTangentOperatorTest,
+			  "ConvertLogarithmicStrainTangentOperatorTest");
 
 int main()
 {
-  auto& manager = tfel::tests::TestManager::getTestManager();
-  manager.addTestOutput(std::cout);
-  manager.addXMLTestOutput("ConvertToTangentModuli.xml");
-  const auto r = manager.execute();
-  return r.success() ? EXIT_SUCCESS : EXIT_FAILURE;
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("ConvertLogarithmicStrainTangentOperator.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

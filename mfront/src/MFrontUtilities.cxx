@@ -42,10 +42,9 @@ namespace mfront{
     }
   }
   
-  void
-  write(std::ostream& os,
-	const std::vector<std::string>& v,
-	const std::string& id){
+  void write(std::ostream& os,
+	     const std::vector<std::string>& v,
+	     const std::string& id){
     using tfel::utilities::replace_all;
     if(v.empty()){
       return;
@@ -64,9 +63,8 @@ namespace mfront{
   } // end of write
 
   template<>
-  double
-  read(tfel::utilities::CxxTokenizer::const_iterator& p,
-       const tfel::utilities::CxxTokenizer::const_iterator pe)
+  double read(tfel::utilities::CxxTokenizer::const_iterator& p,
+	      const tfel::utilities::CxxTokenizer::const_iterator pe)
   {
     auto c = p;
     auto r = tfel::utilities::CxxTokenizer::readDouble(c,pe);

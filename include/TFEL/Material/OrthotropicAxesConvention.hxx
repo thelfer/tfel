@@ -48,7 +48,7 @@ namespace tfel{
      * \tparam mh       : modelling hypothesis
      * \tparam c        : convention for the orthotropic axes
      * \tparam T        : type holded by the tensor
-     * \param[in/out] s : stensor
+     * \param[in,out] s : stensor
      */
     template<ModellingHypothesis::Hypothesis mh,OrthotropicAxesConvention c,typename T>
     void convertStressFreeExpansionStrain(tfel::math::stensor<ModellingHypothesisToSpaceDimension<mh>::value,T>&);

@@ -803,6 +803,8 @@ docs/tex/texmf/tex/latex/mathematiques.sty -text
 docs/tex/texmf/tex/latex/mecanique.sty -text
 docs/tex/texmf/tex/latex/multind.sty -text
 docs/tex/texmf/tex/latex/presentation.sty -text
+docs/texmacs/ComputeDeterminantSecondDerivative.tm -text
+docs/texmacs/ComputeDeterminantSecondDerivative2.tm -text
 docs/texmacs/DeformationRateDerivative2D.tm -text
 docs/texmacs/DeformationRateDerivative3D.tm -text
 docs/texmacs/FiniteRotationSmallStrain1D.tm -text
@@ -5116,6 +5118,7 @@ tests/Math/qt2.cxx -text
 tests/Math/qt3.cxx -text
 tests/Math/solve.cxx -text
 tests/Math/st2tost2/CMakeLists.txt -text
+tests/Math/st2tost2/ComputeDeterminantSecondDerivativeTest.cxx -text
 tests/Math/st2tost2/ConvertLogarithmicStrainTangentOperator.cxx -text
 tests/Math/st2tost2/ConvertToTangentModuliTest.cxx -text
 tests/Math/st2tost2/Makefile.am -text
@@ -5160,9 +5163,11 @@ tests/Math/t2tost2/leftCauchyGreenTensorDerivative.cxx -text
 tests/Math/t2tost2/rightCauchyGreenTensorDerivative.cxx -text
 tests/Math/t2tost2/t2tost2.cxx -text
 tests/Math/t2tot2/CMakeLists.txt -text
+tests/Math/t2tot2/ComputeTensorDeterminantSecondDerivativeTest.cxx -text
 tests/Math/t2tot2/Makefile.am -text
 tests/Math/t2tot2/SpinRateDerivative.cxx -text
 tests/Math/t2tot2/TensorProductDerivative.cxx -text
+tests/Math/t2tot2/TensorSquareDerivative.cxx -text
 tests/Math/t2tot2/TransposeDerivative.cxx -text
 tests/Math/t2tot2/VelocityGradientDerivative.cxx -text
 tests/Math/t2tot2/t2tot2-specialvalues.cxx -text

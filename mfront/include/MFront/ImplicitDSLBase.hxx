@@ -91,22 +91,14 @@ namespace mfront{
     virtual void
     treatUnknownVariableMethod(const Hypothesis,
 			       const std::string&) override;
-    /*!
-     *
-     */
-    virtual void
-    treatStateVariable(void) override;
-    /*!
-     *
-     */
-    virtual void
-    treatIntegrationVariable(void);
-
-    virtual void
-    treatIntegrator(void) override;
-
-    virtual void
-    treatComputeFinalStress(void);
+    //! \brief treat the @StateVariable keyword
+    virtual void treatStateVariable(void) override;
+    //! \brief treat the @IntegrationVariable keyword
+    virtual void treatIntegrationVariable(void);
+    //! \brief treat the @Integrator keyword
+    virtual void  treatIntegrator(void) override;
+    //! \brief treat the @ComputeFinalStress keyword
+    virtual void treatComputeFinalStress(void);
 
     virtual void endsInputFileProcessing(void) override;
 
@@ -137,29 +129,29 @@ namespace mfront{
     virtual void writeComputeNumericalJacobian(const Hypothesis);
 
     virtual void writeGetPartialJacobianInvert(const Hypothesis);
-
+    //! \brief treat the @Theta keyword
     virtual void treatTheta(void);
-
+    //! \brief treat the @IterMax keyword
     virtual void treatIterMax(void);
-
+    //! \brief treat the @Epsilon keyword
     virtual void treatEpsilon(void);
-
+    //! \brief treat the @PerturbationValueForNumericalJacobianComputation keyword
     virtual void treatPerturbationValueForNumericalJacobianComputation(void);
-
+    //! \brief treat the @Algorithm keyword
     virtual void treatAlgorithm(void);
-
+    //! \brief treat the @Predictor keyword
     virtual void treatPredictor(void);
-
+    //! \brief treat the @ComputeStress keyword
     virtual void treatComputeStress(void);
-
+    //! \brief treat the @CompareToNumericalJacobian keyword
     virtual void treatCompareToNumericalJacobian(void);
-
+    //! \brief treat the @JacobianComparisonCriterion keyword
     virtual void treatJacobianComparisonCriterion(void);
-
+    //! \brief treat the @InitJacobian keyword
     virtual void treatInitJacobian(void);
-
+    //! \brief treat the @InitJacobianInvert keyword
     virtual void treatInitJacobianInvert(void);
-
+    //! \brief treat the @MaximumIncrementValuePerIteration keyword
     virtual void treatMaximumIncrementValuePerIteration(void);
     /*!
      * \return true if the the given variable may have methods

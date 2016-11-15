@@ -91,7 +91,7 @@ namespace castem
     /*!
      * \brief compute the moduli associated to the Truesdell rate of
      *        the Cauchy stress
-     * \param[in/out] DDSDDE: on input, CSE expressed using umat
+     * \param[in,out] DDSDDE: on input, CSE expressed using umat
      *                        conventions. On output, the moduli
      *                        associated to the Truesdell rate of the
      *                        Cauchy stress, expressed using umat

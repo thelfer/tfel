@@ -78,8 +78,9 @@ namespace mfront{
       errorReport(true)
   {} // end of AsterInterface::AsterInterface()
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  AsterInterface::treatKeyword(const std::string& key,
+  std::pair<bool,AsterInterface::tokens_iterator>
+  AsterInterface::treatKeyword(BehaviourDescription&,
+			       const std::string& key,
 			       const std::vector<std::string>& i,
 			       tokens_iterator current,
 			       const tokens_iterator end)

@@ -1,19 +1,19 @@
 /*!
  * \file   mfront/include/MFront/BehaviourDSLCommon.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Helfer Thomas
  * \date   05 mai 2008
- * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX_
-#define LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX_ 
+#define LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX_
 
 #include<set>
 #include<map>
@@ -80,7 +80,7 @@ namespace mfront{
      * \param[in] s : substitutions patterns inserted (those
      * substitutions are given through command-line options such as
      * `--@YYY@=XXX`)
-     * 
+     *
      */
     virtual void
     analyseFile(const std::string&,
@@ -115,9 +115,9 @@ namespace mfront{
        * destructor
        */
       virtual ~StandardVariableModifier();
-      
+
     private:
-      
+
       T& instance;
       const Hypothesis hypothesis;
       const MPtr mptr;
@@ -154,9 +154,9 @@ namespace mfront{
        * destructor
        */
       virtual ~StandardWordAnalyser();
-      
+
     private:
-      
+
       T& instance;
       const MPtr mptr;
       const Hypothesis hypothesis;
@@ -420,7 +420,7 @@ namespace mfront{
     standardModifier(const Hypothesis,
 		     const std::string&,
 		     const bool);
-    
+
     virtual std::string
     predictionOperatorVariableModifier(const Hypothesis,
 				       const std::string&,const bool);
@@ -448,9 +448,9 @@ namespace mfront{
      * \return the array of material properties
      */
     virtual std::vector<BehaviourDescription::MaterialProperty>
-    readMaterialPropertyOrArrayOfMaterialProperties(const std::string& m);      
+    readMaterialPropertyOrArrayOfMaterialProperties(const std::string& m);
     /*!
-     * 
+     *
      */
     virtual void
     readStringList(std::vector<std::string>&);
@@ -525,9 +525,9 @@ namespace mfront{
      */
     virtual void
     registerDefaultVarNames(void);
-    //! treat the @Brick keyword
+    //!\brief treat the @Brick keyword
     virtual void treatBrick(void);
-    //! treat the @Model keyword
+    //!\brief treat the @Model keyword
     virtual void treatModel();
     /*!
      * \brief get a model description from an mfront file
@@ -542,32 +542,32 @@ namespace mfront{
     virtual void treatMembers(void) override;
     //! \brief treat the @TangentOperator keyword
     virtual void treatTangentOperator(void);
-    //! treat the @IsTangentOperatorSymmetric keyword
+    //! \brief treat the @IsTangentOperatorSymmetric keyword
     virtual void treatIsTangentOperatorSymmetric(void);
-    //! treat the @Material keyword
+    //! \brief treat the @Material keyword
     virtual void treatMaterial(void);
-    //! treat the @Library keyword
+    //! \brief treat the @Library keyword
     virtual void treatLibrary(void);
-    //! treat the @Profiling keyword
+    //! \brief treat the @Profiling keyword
     virtual void treatProfiling(void);
-    //! treat the @ModellingHypothesis keyword
+    //! \brief treat the @ModellingHypothesis keyword
     virtual void treatModellingHypothesis(void);
-    //! treat the @ModellingHypotheses keyword
+    //! \brief treat the @ModellingHypotheses keyword
     virtual void treatModellingHypotheses(void);
-    //! treat the @UpdateAuxiliaryStateVariables keyword
+    //! \brief treat the @UpdateAuxiliaryStateVariables keyword
     virtual void treatUpdateAuxiliaryStateVariables(void);
-    //! treat the @InternalEnergy keyword
+    //! \brief treat the @InternalEnergy keyword
     virtual void treatInternalEnergy(void);
-    //! treat the @DissipatedEnergy keyword
+    //! \brief treat the @DissipatedEnergy keyword
     virtual void treatDissipatedEnergy(void);
-    //! treat the @ComputeStressFreeExpansion keyword
+    //! \brief treat the @ComputeStressFreeExpansion keyword
     virtual void treatComputeStressFreeExpansion(void);
-    //! treat the @UsableInPurelyImplicitResolution keyword
+    //! \brief treat the @UsableInPurelyImplicitResolution keyword
     virtual void
     treatUsableInPurelyImplicitResolution(void);
-    //! treat the @Parameter keyword
+    //! \brief treat the @Parameter keyword
     virtual void treatParameter(void);
-    //! treat the @LocalVariables keyword
+    //! \brief treat the @LocalVariables keyword
     virtual void treatLocalVar(void);
     //! handle the @ComputeThermalExpansion keyword
     virtual void treatComputeThermalExpansion(void);
@@ -575,90 +575,69 @@ namespace mfront{
     virtual void treatComputeStiffnessTensor(void);
     //! handle the @ElasticMaterialProperties keyword
     virtual void treatElasticMaterialProperties(void);
-    /*! 
+    /*!
      * \brief read the elastic material properties and assign them to
      * the behaviour Description
      */
     virtual void readElasticMaterialProperties(void);
-    //! handle the @HillTensor keyword
+    //! \brief handle the @HillTensor keyword
     virtual void treatHillTensor(void);
-    
+    //! \brief handle the @InitLocalVariables keyword
     virtual void treatInitLocalVariables(void);
-
+    //! \brief handle the @OrthotropicBehaviour keyword
     virtual void treatOrthotropicBehaviour(void);
+    //! \brief handle the @IsotropicElasticBehaiour keyword
+    virtual void treatIsotropicElasticBehaviour(void);
+    //! \brief handle the @IsotropicBehaviour keyword
+    virtual void treatIsotropicBehaviour(void);
+    //! \brief handle the @RequireStiffnessOperator keyword
+    virtual void treatRequireStiffnessOperator(void);
+    //! \brief handle the @RequireStiffnessTensor keyword
+    virtual void treatRequireStiffnessTensor(void);
 
-    virtual void
-      treatIsotropicElasticBehaviour(void);
-
-    virtual void
-      treatIsotropicBehaviour(void);
-
-    virtual void
-    treatRequireStiffnessOperator(void);
-
-    virtual void
-    treatRequireStiffnessTensor(void);
-
-    virtual void
-    treatStiffnessTensorOption(void);
-    
+    virtual void  treatStiffnessTensorOption(void);
+    //! \brief handle the @RequireThermalExpansionCoefficientTensor keyword
     virtual void
     treatRequireThermalExpansionCoefficientTensor(void);
-
-    virtual void
-      treatBehaviour(void);
-
-    virtual void
-      treatInterface(void);
-
-    virtual void
-    treatStateVariable(void);
-
-    virtual void
-    treatAuxiliaryStateVariable(void);  
-
-    virtual void
-      treatExternalStateVariable(void);
+    //! \brief handle the @Behaviour keyword
+    virtual void treatBehaviour(void);
+    //! \brief handle the @Interface keyword
+    virtual void treatInterface(void);
+    //! \brief handle the @StateVariable keyword
+    virtual void treatStateVariable(void);
+    //! \brief handle the @AuxiliaryStateVariable keyword
+    virtual void treatAuxiliaryStateVariable(void);
+    //! \brief handle the @ExternalStateVariable keyword
+    virtual void treatExternalStateVariable(void);
     //! \brief treat the @MinimalTimeStepScalingFactor keyword
-    virtual void
-    treatMinimalTimeStepScalingFactor(void);
+    virtual void treatMinimalTimeStepScalingFactor(void);
     //! \brief treat the @MaximalTimeStepScalingFactor keyword
-    virtual void
-    treatMaximalTimeStepScalingFactor(void);
+    virtual void treatMaximalTimeStepScalingFactor(void);
     //! \brief treat the @APrioriTimeStepScalingFactor keyword
-    virtual void
-    treatAPrioriTimeStepScalingFactor(void);
+    virtual void treatAPrioriTimeStepScalingFactor(void);
     //! \brief treat the @Integrator keyword
-    virtual void
-    treatIntegrator(void);
+    virtual void treatIntegrator(void);
     //! \brief treat the @APosterioriTimeStepScalingFactor keyword
-    virtual void
-    treatAPosterioriTimeStepScalingFactor(void);
-    
-    virtual void
-    treatCoef(void);
-
-    virtual void
-    treatUseQt(void);
-
-    virtual void
-    treatBounds(void);
-
-    virtual void
-    treatPhysicalBounds(void);
+    virtual void treatAPosterioriTimeStepScalingFactor(void);
+    //! \brief treat the @MaterialProperty and the @Coef keywords
+    virtual void treatCoef(void);
+    //! \brief treat the @UseQt keyword
+    virtual void treatUseQt(void);
+    //! \brief treat the @Bounds keyword
+    virtual void treatBounds(void);
+    //! \brief treat the @PhysicalBounds keyword
+    virtual void treatPhysicalBounds(void);
     /*!
      * \param[out] d : bounds description
      * \param[in]  h : modelling hypothesis
      */
-    virtual void
-    treatBounds(BoundsDescription&,
-		const Hypothesis);
-
-    virtual void
-    treatPredictionOperator(void);
-    //! treat the @Swelling keyword
+    virtual void treatBounds(BoundsDescription&,
+			     const Hypothesis);
+    //! \brief treat the @PredictionOperator keyword
+    virtual void treatPredictionOperator(void);
+    //! \brief treat the @Swelling keyword
     virtual void treatSwelling(void);
-    //! treat the @AxialGrowth keyword
+    //! \brief treat the @AxialGrowth keyword
     virtual void treatAxialGrowth(void);
     /*!
      * \brief read a swelling description.
@@ -679,43 +658,42 @@ namespace mfront{
      */
     virtual BehaviourData::StressFreeExpansionHandler
     readStressFreeExpansionHandler(const tfel::utilities::Token&);
-    
-    virtual void
-    writeIncludes(std::ostream&);
+
+    virtual void writeIncludes(std::ostream&);
 
     virtual void
     writeNamespaceBegin(std::ostream&);
-    
+
     virtual void
     writeNamespaceEnd(std::ostream&);
-    
+
     virtual void
-    writeStandardTFELTypedefs(std::ostream&); 
-    
+    writeStandardTFELTypedefs(std::ostream&);
+
     virtual void
     checkBehaviourDataFile(void) const;
-    
+
     virtual void
     writeBehaviourDataStandardTFELTypedefs(void);
-    
+
     virtual void
     writeBehaviourDataStandardTFELIncludes(void);
-    
+
     virtual void
     writeBehaviourDataFileHeader(void);
-    
+
     virtual void
     writeBehaviourDataFileHeaderBegin(void);
-    
+
     virtual void
     writeBehaviourDataFileHeaderEnd(void);
-    
+
     virtual void
     writeBehaviourDataClassHeader(void);
-    
+
     virtual void
     writeBehaviourDataDisabledConstructors(void);
-    
+
     virtual void
     writeBehaviourDataConstructors(const Hypothesis);
     /*!
@@ -723,13 +701,13 @@ namespace mfront{
      */
     virtual void
     writeBehaviourDataMainVariablesSetters(void);
-    
+
     virtual void
     writeBehaviourDataClassBegin(const Hypothesis);
-    
+
     virtual void
     writeBehaviourDataClassEnd(void);
-    
+
     virtual void
     writeBehaviourDataDefaultMembers(void);
 
@@ -741,7 +719,7 @@ namespace mfront{
 
     virtual void
     writeBehaviourDataAssignementOperator(const Hypothesis);
-    
+
     virtual void
     writeBehaviourDataOutputOperator(const Hypothesis);
 
@@ -759,7 +737,7 @@ namespace mfront{
 
     virtual void
     writeBehaviourDataClass(const Hypothesis);
-    
+
     virtual void
     writeBehaviourDataForwardDeclarations(void);
 
@@ -839,7 +817,7 @@ namespace mfront{
 
     virtual void
     writeBehaviourFileHeaderEnd(void);
-    
+
     virtual void
     writeBehaviourFileBegin(void);
 
@@ -970,7 +948,7 @@ namespace mfront{
     virtual void
     writeBehaviourComputeStressFreeExpansion(const Hypothesis);
     /*!
-     * \brief write the stiffness tensor computation evaluation 
+     * \brief write the stiffness tensor computation evaluation
      * from the elastic material properties.
      * \param[out] out: output stream
      * \param[in]  D:   name of the stiffness tensor variable
@@ -981,7 +959,7 @@ namespace mfront{
 				    const std::string&,
 				    std::function<std::string(const MaterialPropertyInput&)>&);
     /*!
-     * \brief write the Hill tensor computation evaluation 
+     * \brief write the Hill tensor computation evaluation
      * from the elastic material properties.
      * \param[out] out: output stream
      * \param[in]  H:   name of the Hill tensor variable to be computed
@@ -1073,7 +1051,7 @@ namespace mfront{
      */
     virtual void
     writeBehaviourComputeAPosterioriTimeStepScalingFactorII(const Hypothesis);
-    
+
     virtual void
     writeBehaviourUpdateExternalStateVariables(const Hypothesis);
 
@@ -1143,10 +1121,13 @@ namespace mfront{
 
     virtual void
     writeBehaviourGetTangentOperator();
-    
+
     virtual void
     writeBehaviourTangentOperator();
-
+    /*!
+     * \brief treat methods associated with parameters
+     * \param[in] h : modelling hypothesis
+     */
     virtual void
     treatParameterMethod(const Hypothesis);
     /*!
@@ -1242,12 +1223,12 @@ namespace mfront{
     std::ofstream behaviourDataFile;
     std::ofstream integrationDataFile;
     std::ofstream srcFile;
-    
+
     bool useStateVarTimeDerivative;
     bool explicitlyDeclaredUsableInPurelyImplicitResolution;
   }; // end of struct BehaviourDSLCommon
 
-} // end of namespace mfront  
+} // end of namespace mfront
 
 #include"MFront/BehaviourDSLCommon.ixx"
 

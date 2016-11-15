@@ -315,6 +315,42 @@ namespace tfel{
 	     typename TensorTraits<TensorType>::NumType>
     >::type
     computeSpinRateDerivative(const TensorType&);
+    /*!
+     * \brief compute the second derivative of the determinant of a
+     * symmetric tensor
+     * \param[in] s: tensor
+     */
+    template<typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond&&
+      TensorTraits<TensorType>::dime==1u&&
+      tfel::typetraits::IsScalar<typename TensorTraits<TensorType>::NumType>::cond,
+      t2tot2<1u,typename TensorTraits<TensorType>::NumType>>::type
+    computeDeterminantSecondDerivative(const TensorType&);
+    /*!
+     * \brief compute the second derivative of the determinant of a
+     * symmetric tensor
+     * \param[in] s: tensor
+     */
+    template<typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond&&
+      TensorTraits<TensorType>::dime==2u&&
+      tfel::typetraits::IsScalar<typename TensorTraits<TensorType>::NumType>::cond,
+      t2tot2<2u,typename TensorTraits<TensorType>::NumType>>::type
+    computeDeterminantSecondDerivative(const TensorType&);
+    /*!
+     * \brief compute the second derivative of the determinant of a
+     * symmetric tensor
+     * \param[in] s: tensor
+     */
+    template<typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond&&
+      TensorTraits<TensorType>::dime==3u&&
+      tfel::typetraits::IsScalar<typename TensorTraits<TensorType>::NumType>::cond,
+      t2tot2<3u,typename TensorTraits<TensorType>::NumType>>::type
+    computeDeterminantSecondDerivative(const TensorType&);
     
   } // end of namespace math
 

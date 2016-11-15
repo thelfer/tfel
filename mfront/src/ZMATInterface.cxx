@@ -158,7 +158,8 @@ namespace mfront
 
 
   std::pair<bool,ZMATInterface::tokens_iterator>
-  ZMATInterface::treatKeyword(const std::string& key,
+  ZMATInterface::treatKeyword(BehaviourDescription&,
+			      const std::string& key,
 			      const std::vector<std::string>& i,
 			      tokens_iterator current,
 			      const tokens_iterator)

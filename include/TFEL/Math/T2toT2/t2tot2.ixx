@@ -555,6 +555,56 @@ namespace tfel{
       const res r = res::tpld(iF)-res::tprd(itF,dt);
       return r/2;
     }
+
+    template<typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond&&
+      TensorTraits<TensorType>::dime==1u&&
+      tfel::typetraits::IsScalar<typename TensorTraits<TensorType>::NumType>::cond,
+      t2tot2<1u,typename TensorTraits<TensorType>::NumType>>::type
+    computeDeterminantSecondDerivative(const TensorType& t){
+      using NumType = typename TensorTraits<TensorType>::NumType;
+      constexpr const auto zero  = NumType{0};
+      return{zero,t[2],t[1],
+	  t[2],zero,t[0],
+	  t[1],t[0],zero};
+    } // end of computeDeterminantSecondDerivative
+
+    template<typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond&&
+      TensorTraits<TensorType>::dime==2u&&
+      tfel::typetraits::IsScalar<typename TensorTraits<TensorType>::NumType>::cond,
+      t2tot2<2u,typename TensorTraits<TensorType>::NumType>>::type
+    computeDeterminantSecondDerivative(const TensorType& t){
+      using NumType = typename TensorTraits<TensorType>::NumType;
+      constexpr const auto zero  = NumType{0};
+      return {zero,t[2],t[1],zero,zero,
+	  t[2],zero,t[0],zero,zero,
+	  t[1],t[0],zero,-t[4],-t[3],
+	  zero,zero,-t[3],-t[2],zero,
+	  zero,zero,-t[4],zero,-t[2]};
+    } // end of computeDeterminantSecondDerivative
+
+    template<typename TensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<TensorType,TensorConcept>::cond&&
+      TensorTraits<TensorType>::dime==3u&&
+      tfel::typetraits::IsScalar<typename TensorTraits<TensorType>::NumType>::cond,
+      t2tot2<3u,typename TensorTraits<TensorType>::NumType>>::type
+    computeDeterminantSecondDerivative(const TensorType& t){
+      using NumType = typename TensorTraits<TensorType>::NumType;
+      constexpr const auto zero  = NumType{0};
+      return {zero,t[2],t[1],zero,zero,zero,zero,-t[8],-t[7],
+	  t[2],zero,t[0],zero,zero,-t[6],-t[5],zero,zero,
+	  t[1],t[0],zero,-t[4],-t[3],zero,zero,zero,zero,
+	  zero,zero,-t[3],-t[2],zero,t[8],zero,zero,t[5],
+	  zero,zero,-t[4],zero,-t[2],zero,t[7],t[6],zero,
+	  zero,-t[5],zero,t[7],zero,-t[1],zero,t[3],zero,
+	  zero,-t[6],zero,zero,t[8],zero,-t[1],zero,t[4],
+	  -t[7],zero,zero,zero,t[5],t[4],zero,-t[0],zero,
+	  -t[8],zero,zero,t[6],zero,zero,t[3],zero,-t[0]};
+    } // end of computeDeterminantSecondDerivative
     
   } //end of namespace math
 
