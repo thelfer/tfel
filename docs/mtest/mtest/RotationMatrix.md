@@ -15,6 +15,20 @@ corresponds to a way of defining the rotation matrix:
   miller indices. In this case, the user must provide an array of
   three integers.
 
+### Special case for the Abaqus/Standard and Abaqus/Explicit interface
+
+The `Abaqus/Standard` and `Abaqus/Explicit` interfaces introduce the
+notion of othrothropy management policy (see the documentation of
+thoses interfaces). In particular, if the behaviour uses the `MFront`
+orthotropic management policy, the material orientation has to be
+given in the first internal state variables. Those internal state
+variables are not accessible by the end user.
+
+`MTest` handles this specific case and extracts the appropriate
+information from the rotation matrix given with the `@RotationMatrix`
+keywords and copy them to the first internal state variables
+automatically.
+
 ## Example
 
 ~~~~ {.cpp}

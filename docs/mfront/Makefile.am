@@ -17,6 +17,7 @@ MFRONT_DOCS = Algorithm.md				                \
 	      CompareToNumericalJacobian.md		                \
 	      Date.md				                        \
 	      Description.md                                            \
+	      DissipatedEnergy.md                                       \
 	      DSL.md				                        \
 	      ElasticMaterialProperties.md                              \
 	      Epsilon.md                                                \
@@ -33,6 +34,7 @@ MFRONT_DOCS = Algorithm.md				                \
 	      InitializeLocalVariables.md                               \
 	      IntegrationVariable.md                                    \
 	      Interface.md                                              \
+	      InternalEnergy.md                                         \
 	      IsotropicBehaviour.md                                     \
 	      IsotropicElasticBehaviour.md                              \
 	      IterMax.md                                                \

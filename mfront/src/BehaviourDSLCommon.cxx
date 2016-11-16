@@ -1439,8 +1439,7 @@ namespace mfront{
     this->current = p2;
   } // end of BehaviourDSLCommon::treatUnknownKeyword
 
-  void
-  BehaviourDSLCommon::treatUseQt()
+  void BehaviourDSLCommon::treatUseQt()
   {
     this->checkNotEndOfFile("BehaviourDSLCommon::treatUseQt : ",
 			    "Expected 'true' or 'false'.");
@@ -1456,8 +1455,7 @@ namespace mfront{
     this->readSpecifiedToken("BehaviourDSLCommon::treatUseQt",";");
   } // end of BehaviourDSLCommon::treatUseQt
 
-  void
-  BehaviourDSLCommon::treatIsotropicBehaviour()
+  void BehaviourDSLCommon::treatIsotropicBehaviour()
   {
     if(this->mb.getSymmetryType()!=mfront::ISOTROPIC){
       this->throwRuntimeError("BehaviourDSLCommon::treatIsotropicBehaviour",
@@ -1466,8 +1464,7 @@ namespace mfront{
     this->readSpecifiedToken("BehaviourDSLCommon::treatIsotropicBehaviour",";");
   } // end of BehaviourDSLCommon::treatIsotropicBehaviour
 
-  void
-  BehaviourDSLCommon::treatOrthotropicBehaviour()
+  void BehaviourDSLCommon::treatOrthotropicBehaviour()
   {
     using namespace tfel::material;
     OrthotropicAxesConvention c = OrthotropicAxesConvention::DEFAULT;
@@ -1491,8 +1488,7 @@ namespace mfront{
     this->mb.setOrthotropicAxesConvention(c);
   } // end of BehaviourDSLCommon::treatOrthotropicBehaviour
 
-  void
-  BehaviourDSLCommon::treatIsotropicElasticBehaviour()
+  void BehaviourDSLCommon::treatIsotropicElasticBehaviour()
   {
     this->readSpecifiedToken("BehaviourDSLCommon::treatIsotropicElasticBehaviour",";");
     if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC){
@@ -3099,8 +3095,7 @@ namespace mfront{
 			<< "* \\brief Update the internal energy at end of the time step\n"
       			<< "* \\param[in] Psi_s: internal energy at end of the time step\n"
 			<< "*/\n"
-			<< "void\n"
-			<< "computeInternalEnergy(real& Psi_s)";
+			<< "void computeInternalEnergy(real& Psi_s) const";
     if(this->mb.hasCode(h,BehaviourData::ComputeInternalEnergy)){
       this->behaviourFile << "{\n"
 			  << "using namespace std;\n"
@@ -3119,8 +3114,7 @@ namespace mfront{
 			<< "* \\brief Update the dissipated energy at end of the time step\n"
       			<< "* \\param[in] Psi_d: dissipated energy at end of the time step\n"
 			<< "*/\n"
-			<< "void\n"
-			<< "computeDissipatedEnergy(real& Psi_d)";
+			<< "void computeDissipatedEnergy(real& Psi_d) const";
     if(this->mb.hasCode(h,BehaviourData::ComputeDissipatedEnergy)){
       this->behaviourFile << "{\n"
 			  << "using namespace std;\n"
@@ -4537,9 +4531,10 @@ namespace mfront{
     } else {
       this->behaviourFile << "false;\n";
     }
-    this->behaviourFile << "static " << constexpr_c << " bool hasAPosterioriTimeStepScalingFactor = ";
+    // internal enery
+    this->behaviourFile << "static " << constexpr_c << " bool hasComputeInternalEnergy = ";
     if(b){
-      if(this->mb.getAttribute<bool>(h,BehaviourData::hasAPosterioriTimeStepScalingFactor,false)){
+      if(this->mb.hasCode(h,BehaviourData::ComputeInternalEnergy)){
 	this->behaviourFile << "true;\n";
       } else {
 	this->behaviourFile << "false;\n";
@@ -4547,6 +4542,18 @@ namespace mfront{
     } else {
       this->behaviourFile << "false;\n";
     }
+    // dissipated energy
+    this->behaviourFile << "static " << constexpr_c << " bool hasComputeDissipatedEnergy = ";
+    if(b){
+      if(this->mb.hasCode(h,BehaviourData::ComputeDissipatedEnergy)){
+	this->behaviourFile << "true;\n";
+      } else {
+	this->behaviourFile << "false;\n";
+      }
+    } else {
+      this->behaviourFile << "false;\n";
+    }
+    // name of the class
     this->behaviourFile << "/*!\n"
 			<< "* \\return the name of the class.\n"
 			<< "*/\n"
@@ -4753,8 +4760,6 @@ namespace mfront{
     this->writeBehaviourUpdateIntegrationVariables(h);
     this->writeBehaviourUpdateStateVariables(h);
     this->writeBehaviourUpdateAuxiliaryStateVariables(h);
-    this->writeBehaviourComputeInternalEnergy(h);
-    this->writeBehaviourComputeDissipatedEnergy(h);
     this->writeBehaviourAdditionalMembers(h);
     this->writeBehaviourPrivate(h);
     this->writeBehaviourDisabledConstructors();
@@ -4771,6 +4776,8 @@ namespace mfront{
     this->writeBehaviourComputeAPrioriTimeStepScalingFactor();
     this->writeBehaviourIntegrator(h);
     this->writeBehaviourComputeAPosterioriTimeStepScalingFactor();
+    this->writeBehaviourComputeInternalEnergy(h);
+    this->writeBehaviourComputeDissipatedEnergy(h);
     this->writeBehaviourComputeTangentOperator(h);
     this->writeBehaviourGetTangentOperator();
     this->writeBehaviourUpdateExternalStateVariables(h);

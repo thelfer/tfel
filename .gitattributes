@@ -239,6 +239,7 @@ docs/mfront/ComputeThermalExpansion.md -text
 docs/mfront/DSL.md -text
 docs/mfront/Date.md -text
 docs/mfront/Description.md -text
+docs/mfront/DissipatedEnergy.md -text
 docs/mfront/ElasticMaterialProperties.md -text
 docs/mfront/Epsilon.md -text
 docs/mfront/ExternalStateVar.md -text
@@ -300,6 +301,7 @@ docs/mfront/InitializeJacobianInvert.md -text
 docs/mfront/InitializeLocalVariables.md -text
 docs/mfront/IntegrationVariable.md -text
 docs/mfront/Interface.md -text
+docs/mfront/InternalEnergy.md -text
 docs/mfront/IsotropicBehaviour.md -text
 docs/mfront/IsotropicElasticBehaviour.md -text
 docs/mfront/IterMax.md -text

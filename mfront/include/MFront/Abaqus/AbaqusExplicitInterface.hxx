@@ -66,6 +66,7 @@ namespace abaqus{
     //! simple alias
     using MechanicalBehaviourBase = tfel::material::MechanicalBehaviourBase; 
     using BV = Behaviour<H,T,false>;
+    using MTraits =  tfel::material::MechanicalBehaviourTraits<BV>;
     using ATraits =  AbaqusTraits<BV>;
     //! structure in charge of initializing the stiffness operator
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer
@@ -73,10 +74,9 @@ namespace abaqus{
       typedef typename BV::BehaviourData  BData;
       TFEL_ABAQUS_INLINE static void
 	exe(BData& data,const T * const props){
-	typedef AbaqusTraits<BV> Traits;
-	const bool buas = Traits::requiresUnAlteredStiffnessTensor;
-	AbaqusComputeStiffnessTensor<AbaqusTraits<BV>::btype,H,
-				     AbaqusTraits<BV>::etype,buas>::exe(data.getStiffnessTensor(),
+	const bool buas = ATraits::requiresUnAlteredStiffnessTensor;
+	AbaqusComputeStiffnessTensor<ATraits::btype,H,
+				     ATraits::etype,buas>::exe(data.getStiffnessTensor(),
 									props);
       } // end of exe
     }; // end of struct StiffnessOperatorInitializer
@@ -87,10 +87,10 @@ namespace abaqus{
       TFEL_ABAQUS_INLINE static void
 	exe(BData& data,const T * const props){
 	const unsigned short o =
-	  AbaqusTraits<BV>::elasticPropertiesOffset;
-	AbaqusComputeThermalExpansionCoefficientTensor<AbaqusTraits<BV>::btype,H,
-						       AbaqusTraits<BV>::stype>::exe(props+o,
-										     data.getThermalExpansionCoefficientTensor());
+	  ATraits::elasticPropertiesOffset;
+	AbaqusComputeThermalExpansionCoefficientTensor<ATraits::btype,H,
+						       ATraits::stype>::exe(props+o,
+									    data.getThermalExpansionCoefficientTensor());
       } // end of exe
     }; // end of struct ThermalExpansionCoefficientTensorInitializer
     //! place holder for tag dispatching
@@ -101,12 +101,47 @@ namespace abaqus{
 	exe(BData&,const T * const)
       {}
     }; // end of struct DoNothingInitializer
+    //! structure in charge of calling the computeInternalEnergy method
+    struct TFEL_VISIBILITY_LOCAL InternalEnergyComputer
+    {
+      TFEL_ABAQUS_INLINE static void
+      exe(T& e,const BV& b,const T& rho)
+      {
+	auto Psi_s=e*rho;
+	b.computeInternalEnergy(Psi_s);
+	e = Psi_s/rho;
+      }
+    };
+    //! structure in charge of calling the computeDissipatedEnergy method
+    struct TFEL_VISIBILITY_LOCAL DissipatedEnergyComputer
+    {
+      TFEL_ABAQUS_INLINE static void
+      exe(T& e,const BV& b,const T& rho)
+      {
+	auto Psi_d=e*rho;
+	b.computeDissipatedEnergy(Psi_d);
+	e = Psi_d/rho;
+      }
+    };
+    //! place holder for tag dispatching
+    struct TFEL_VISIBILITY_LOCAL DoNothingEnergyComputer
+    {
+      TFEL_ABAQUS_INLINE static void
+      exe(T&,const BV&,const T&)
+      {}
+    }; // end of struct DoNothingEnergyComputer
     static constexpr const bool bs = ATraits::requiresStiffnessTensor;
     static constexpr const bool ba = ATraits::requiresThermalExpansionCoefficientTensor;
-    typedef typename std::conditional<bs,StiffnessOperatorInitializer,
-				      DoNothingInitializer>::type SInitializer;
-    typedef typename std::conditional<ba,ThermalExpansionCoefficientTensorInitializer,
-				      DoNothingInitializer>::type AInitializer;
+    static constexpr const bool bi = MTraits::hasComputeInternalEnergy;
+    static constexpr const bool bd = MTraits::hasComputeDissipatedEnergy;
+    using SInitializer = typename std::conditional<bs,StiffnessOperatorInitializer,
+						   DoNothingInitializer>::type;
+    using AInitializer = typename std::conditional<ba,ThermalExpansionCoefficientTensorInitializer,
+						   DoNothingInitializer>::type;
+    using IEnergyComputer = typename std::conditional<bi,InternalEnergyComputer,
+						      DoNothingEnergyComputer>::type;
+    using DEnergyComputer = typename std::conditional<bi,DissipatedEnergyComputer,
+						      DoNothingEnergyComputer>::type;
     /*!
      * \param[out] D: elastic stiffness
      * \param[out] d: data
@@ -211,6 +246,8 @@ namespace abaqus{
       }
       b.checkBounds();
       b.exportStateData(s,d);
+      IEnergyComputer::exe(d.enerInternNew,b,d.density);
+      DEnergyComputer::exe(d.enerInelasNew,b,d.density);
       return 0;
     }
     /*!
@@ -254,6 +291,8 @@ namespace abaqus{
       }
       b.checkBounds();
       b.exportStateData(s,d);
+      IEnergyComputer::exe(d.enerInternNew,b,d.density);
+      DEnergyComputer::exe(d.enerInelasNew,b,d.density);
       return 0;
     }
   private:

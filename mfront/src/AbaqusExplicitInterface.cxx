@@ -217,8 +217,10 @@ namespace mfront{
   AbaqusExplicitInterface::getTargetsDescription(TargetsDescription& d,
 						 const BehaviourDescription& bd)
   {
+    const auto ppolicy =
+      bd.getAttribute<std::string>(AbaqusExplicitParallelizationPolicy,"None");
     const auto lib  = this->getLibraryName(bd);
-    const auto name = bd.getLibrary()+bd.getClassName(); 
+    const auto name = bd.getLibrary()+bd.getClassName();
 #ifdef _WIN32
     const std::string tfel_config = "tfel-config.exe";
 #else /* WIN32 */
@@ -228,7 +230,11 @@ namespace mfront{
     insert_if(d[lib].sources,"abaqusexplicit"+name+".cxx");
     d.headers.push_back("MFront/Abaqus/abaqusexplicit"+name+".hxx");
     insert_if(d[lib].ldflags,"-lAbaqusInterface");
-    insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
+    if(ppolicy=="ThreadPool"){
+      insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --system --mfront-profiling)");
+    } else {
+      insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
+    }
     for(const auto h : this->getModellingHypothesesToBeTreated(bd)){
       insert_if(d[lib].epts,this->getFunctionNameForHypothesis(name,h));
     }
