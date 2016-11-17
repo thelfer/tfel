@@ -59,7 +59,7 @@ struct ComputeTensorDeterminantSecondDerivativeTest final
   void test2(const double* values){
     using namespace tfel::math;
     using Tensor    = tensor<N,double>;
-    using size_type = typename Tensor::size_type;
+    using size_type = typename tensor<N,double>::size_type;
     const double eps  = 1.e-5;
     const double prec = 1.e-10;
     const Tensor s(values);
@@ -91,10 +91,9 @@ struct ComputeTensorDeterminantSecondDerivativeTest final
   void test3(const double* values){
     using namespace tfel::math;
     using Tensor  = tensor<N,double>;
-    using Tensor   = tensor<N,double>;
-    //    using Tensor4 = t2tot2<N,double>;
-    using size_type = typename Tensor::size_type;
-    //    const double prec = 1.e-10;
+    using Tensor4 = t2tot2<N,double>;
+    using size_type = typename tensor<N,double>::size_type;
+    const double prec = 1.e-10;
     const tensor<N,double> s(values);
     const Tensor s2 = s*s;
     const Tensor s3 = s2*s;
@@ -102,22 +101,22 @@ struct ComputeTensorDeterminantSecondDerivativeTest final
     const auto i2 = (i1*i1-trace(s*s))/2;
     const auto i3 = det(s);
     const Tensor c = s3-i1*s2+i2*s-i3*Tensor::Id();
-    // const auto dJ2 = computeDeterminantSecondDerivative(s);
-    //    const Tensor id = Tensor::Id();
-    // const t2tot2<N,double> dJ2_2 =
-    //   Tensor4::tpld(s)+Tensor4::tprd(s)-(s^id)-i1*Tensor4::Id()
-    //   +(id^(i1*id-s));
+    const auto dJ2 = computeDeterminantSecondDerivative(s);
+       const Tensor id = Tensor::Id();
+    const t2tot2<N,double> dJ2_2 =
+      Tensor4::tpld(s)+Tensor4::tprd(s)-(s^id)-i1*Tensor4::Id()
+      +(id^(i1*id-transpose(s)));
     for(size_type i=0;i!=s.size();++i){
       TFEL_TESTS_ASSERT(std::abs(c(i))<100*std::numeric_limits<double>::epsilon());
-      // for(size_type j=0;j!=s.size();++j){
-      // 	TFEL_TESTS_ASSERT(std::abs(dJ2_2(i,j)-dJ2(i,j))<prec);
-      // 	if(std::abs(dJ2_2(i,j)-dJ2(i,j))>prec){
-      // 	  std::cout << "Error " << N << " (" << i << ", " << j << ") "
-      // 		    << "[" << i*TensorDimeToSize<N>::value+j << "]: "
-      // 		    << dJ2_2(i,j) << " vs " << dJ2(i,j) << " "
-      // 		    << std::abs(dJ2_2(i,j)-dJ2(i,j)) << std::endl;
-      // 	}
-      // }
+      for(size_type j=0;j!=s.size();++j){
+      	TFEL_TESTS_ASSERT(std::abs(dJ2_2(i,j)-dJ2(i,j))<prec);
+      	if(std::abs(dJ2_2(i,j)-dJ2(i,j))>prec){
+      	  std::cout << "Error " << N << " (" << i << ", " << j << ") "
+      		    << "[" << i*TensorDimeToSize<N>::value+j << "]: "
+      		    << dJ2_2(i,j) << " vs " << dJ2(i,j) << " "
+      		    << std::abs(dJ2_2(i,j)-dJ2(i,j)) << std::endl;
+      	}
+      }
     }
   }
 }; // end of ComputeTensorDeterminantSecondDerivativeTest

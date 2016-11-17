@@ -50,8 +50,8 @@ struct ComputeDeterminantSecondDerivativeTest final
   template<unsigned short N>
   void test2(const double* values){
     using namespace tfel::math;
-    using Stensor = stensor<N,double>;
-    using size_type = typename Stensor::size_type;
+    using Stensor   = stensor<N,double>;
+    using size_type = typename stensor<N,double>::size_type;
     const double eps  = 1.e-5;
     const double prec = 1.e-10;
     const Stensor s(values);
@@ -85,7 +85,7 @@ struct ComputeDeterminantSecondDerivativeTest final
     using Stensor  = stensor<N,double>;
     using Tensor   = tensor<N,double>;
     using Stensor4 = st2tost2<N,double>;
-    using size_type = typename Stensor::size_type;
+    using size_type = typename stensor<N,double>::size_type;
     const double prec = 1.e-10;
     const stensor<N,double> s(values);
     const Tensor s2 = s*s;
