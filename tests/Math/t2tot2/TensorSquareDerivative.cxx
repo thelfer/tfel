@@ -54,7 +54,7 @@ struct TensorSquareDerivativeTest final
   void test(const double* values){
     using namespace tfel::math;
     using Tensor    = tensor<N,double>;
-    using size_type = typename Tensor::size_type;
+    using size_type = typename tensor<N,double>::size_type;
     const double eps  = 1.e-5;
     const double prec = 1.e-10;
     const Tensor s(values);
