@@ -1,0 +1,43 @@
+@DSL DefaultDSL;
+@Behaviour IsotropicLinearHardeningPlasticity;
+@Author Thomas Helfer;
+@Date   14/10/2016;
+@Description{
+  An explicit implementation of a simple
+  isotropic plasticity behaviour.
+}
+
+@AbaqusFiniteStrainStrategy[abaqus,abaqusexplicit] Native;
+
+@StateVariable StrainStensor eel;
+eel.setGlossaryName("ElasticStrain");
+@StateVariable StrainStensor a;
+
+@Parameter young = 70000.;
+@Parameter nu    =  0.34;
+@Parameter s0    =  300.;
+@Parameter C     =  1000.;
+
+@PredictionOperator{
+  const auto lambda = computeLambda(young,nu);
+  const auto mu     = computeMu(young,nu);
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@Integrator{
+  static_cast<void>(computeTangentOperator_);
+  const auto lambda = computeLambda(young,nu);
+  const auto mu     = computeMu(young,nu);
+  const auto X      = C*a;
+  const auto s      = 2*mu*deviator(eel)-X;
+  const auto seq    = sigmaeq(s);
+  if(seq-s0>stress{0}){
+    const auto n  = (3*s)/(2*seq);
+    const auto dp = 2*mu*(n|deto)/(3*(mu+C));
+    a   += dp*n;
+    eel += deto-dp*n;
+  } else {
+    eel += deto;
+  }
+  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+}

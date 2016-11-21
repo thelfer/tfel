@@ -134,6 +134,8 @@ docs/CMakeLists.txt -text
 docs/Makefile.am -text
 docs/doxygen/CMakeLists.txt -text
 docs/doxygen/Makefile.am -text
+docs/gallery/behaviours/plasticity/IsotropicLinearHardeningPlasticity.mfront -text
+docs/gallery/behaviours/plasticity/IsotropicLinearKinematicHardeningPlasticity.mfront -text
 docs/html/Makefile.am -text
 docs/html/reveal.js/.travis.yml -text
 docs/html/reveal.js/Gruntfile.js -text

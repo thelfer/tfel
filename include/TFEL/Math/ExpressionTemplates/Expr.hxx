@@ -523,4 +523,3 @@ namespace tfel{
 } // end of namespace tfel
 
 #endif /* LIB_TFEL_MATH_EXPRESSION_EXPR_H_ */
-

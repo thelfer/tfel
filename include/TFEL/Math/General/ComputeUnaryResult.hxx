@@ -58,6 +58,9 @@ namespace tfel{
     //! an alias of the handler of an unary operation
     template<typename T1,typename Op>
     using UnaryOperationHandler = typename ComputeUnaryResult<T1,Op>::Handle;
+    //! an alias
+    template<typename T1, typename Op>
+    using isUnaryOperationResultTypeValid = std::integral_constant<bool,!tfel::typetraits::IsInvalid<UnaryOperationResult<T1,Op>>::cond>;
 
   } // end of namespace math
 

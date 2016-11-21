@@ -66,10 +66,6 @@ namespace tfel{
       typedef typename UnaryResultType_<TagA,TagOp,A_,Op>::type type;
     }; // end of UnaryResultType
 
-    template<typename A, typename Op>
-    using isUnaryOperationResultTypeValid =
-      std::integral_constant<bool,!tfel::typetraits::IsInvalid<typename UnaryResultType<typename std::decay<A>::type,Op>::type>::cond>;
-
   } // end of namespace math
 
 } // end of namespace tfel  

@@ -1173,16 +1173,16 @@ namespace mfront{
 	for(const auto& fss : this->finiteStrainStrategies){
 	  if(fss==FINITEROTATIONSMALLSTRAIN){
 	    b.push_back(base+"_frst");
-	    b.push_back(name+"_frst");
+	    //	    b.push_back(name+"_frst");
 	  } else if(fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
 	    b.push_back(base+"_malls");
-	    b.push_back(name+"_malls");
+	    //	    b.push_back(name+"_malls");
 	  } else if(fss==LOGARITHMICSTRAIN1D){
 	    b.push_back(base+"_log1D");
-	    b.push_back(name+"_log1D");
+	    //	    b.push_back(name+"_log1D");
 	  } else if(fss==NONE){
 	    b.push_back(base+"_ss");
-	    b.push_back(name+"_ss");
+	    //	    b.push_back(name+"_ss");
 	  } else {
 	    throw(runtime_error("CastemInterface::getGeneratedEntryPoints: "
 				"internal error, unsupported finite strain strategy"));
@@ -1196,12 +1196,12 @@ namespace mfront{
 	   (find(this->finiteStrainStrategies.begin(),
 		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
 	  b.push_back(base);
-	  b.push_back(name);
+	  //	  b.push_back(name);
 	}
       }
     } else {
       b.push_back(base);
-      b.push_back(name);
+      //      b.push_back(name);
     }
     insert_if(d[lib].epts,b);
   } // end of CastemInterface::getTargetsDescription
