@@ -14,9 +14,9 @@
 @Theta 0.5;
 @Epsilon 1.E-8 ;
 
-@MaterialProperty stress young; /* mandatory for castem */
+@MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
-@MaterialProperty real nu;    /* mandatory for castem */
+@MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
 
 @StateVariable real      ksi              ;  // Phase proportion

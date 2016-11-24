@@ -1,4 +1,4 @@
-@Parser   MaterialLaw;
+@DSL   MaterialLaw;
 @Material Inconel600;
 @Law      YoungModulus ;
 @Author   S. BEJAOUI;

@@ -1,12 +1,13 @@
-SUBDIRS=tex html tfel mfront   \
-	mtest ptest            \
-	presentations          \
-	release-notes-2.0      \
-	release-notes-2.0.3    \
-	release-notes-2.0.4    \
-	release-notes-3.0      \
-        tutorial web doxygen
+SUBDIRS = tex html tfel mfront   \
+	  mtest ptest            \
+	  presentations          \
+	  release-notes-2.0      \
+	  release-notes-2.0.3    \
+	  release-notes-2.0.4    \
+	  release-notes-3.0      \
+	  gallery tutorial web   \
+	  doxygen
 
-EXTRA_DIST=CMakeLists.txt \
-	   mfront.bmp     \
-	   mfront.ico
+EXTRA_DIST = CMakeLists.txt \
+	     mfront.bmp     \
+	     mfront.ico

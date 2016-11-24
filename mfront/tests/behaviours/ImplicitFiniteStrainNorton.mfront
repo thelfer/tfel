@@ -18,9 +18,9 @@
   25/09/2013
 }
 
-@MaterialProperty stress young; /* mandatory for castem */
+@MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
-@MaterialProperty real nu;    /* mandatory for castem */
+@MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
 
 @StateVariable StrainStensor eel;

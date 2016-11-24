@@ -18,13 +18,13 @@ eel.setGlossaryName("ElasticStrain");
 @StateVariable strain p;
 p.setGlossaryName("EquivalentPlasticStrain");
 
-@Parameter young = 150e9;
+@Parameter young =  70.e9;
 young.setGlossaryName("YoungModulus");
-@Parameter nu    =  0.3;
+@Parameter nu    =   0.34;
 nu.setGlossaryName("PoissonRatio");
-@Parameter H     =  102e9;
+@Parameter H     =  10.e9;
 H.setEntryName("HardeningSlope");
-@Parameter s0    =  102.e6;
+@Parameter s0    =  300.e6;
 s0.setGlossaryName("YieldStress");
 
 /*!
@@ -48,26 +48,25 @@ s0.setGlossaryName("YieldStress");
 @Integrator{
   const auto lambda = computeLambda(young,nu);
   const auto mu     = computeMu(young,nu);
-  const auto se     = 2*mu*deviator(eel+deto);
+  eel += deto;
+  const auto se     = 2*mu*deviator(eel);
   const auto seq_e  = sigmaeq(se);
   const auto b      = seq_e-s0-H*p>stress{0};
   if(b){
     const auto iseq_e = 1/seq_e;
     const auto n      = eval(3*se/(2*seq_e));
     const auto cste   = 1/(H+3*mu);
-    dp = (seq_e-s0-H*p)*cste;
-    eel += deto-dp*n;
+    dp   = (seq_e-s0-H*p)*cste;
+    eel -= dp*n;
     if(computeTangentOperator_){
       if(smt==CONSISTENTTANGENTOPERATOR){
-	Dt = (lambda*Stensor4::IxI()+
-	      2*mu*(Stensor4::Id()-2*mu*(dp*iseq_e*(Stensor4::M()-(n^n))+
-					 cste*(n^n))));
+	Dt = (lambda*Stensor4::IxI()+2*mu*Stensor4::Id()
+	      -4*mu*mu*(dp*iseq_e*(Stensor4::M()-(n^n))+cste*(n^n)));
       } else {
 	Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
       }
     }
   } else {
-    eel += deto;
     if(computeTangentOperator_){
       Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
     }

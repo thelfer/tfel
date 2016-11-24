@@ -27,9 +27,9 @@
 @UMATUseTimeSubStepping[umat] true;
 @UMATMaximumSubStepping[umat] 20;
 
-@MaterialProperty stress young; /* mandatory for castem */
+@MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
-@MaterialProperty real nu;    /* mandatory for castem */
+@MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
 
 @LocalVariable real     lambda;

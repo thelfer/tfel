@@ -561,6 +561,9 @@ AC_OUTPUT([debug.sh
 	   docs/html/Makefile
 	   docs/tex/Makefile
 	   docs/web/Makefile
+   	   docs/gallery/Makefile
+      	   docs/gallery/behaviours/Makefile
+       	   docs/gallery/behaviours/plasticity/Makefile
 	   docs/doxygen/Makefile
 	   cmake/Makefile
 	   cmake/modules/Makefile

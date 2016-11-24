@@ -13,9 +13,9 @@
 #include"TFEL/Material/DDIF2Base.hxx"
 }
 
-@MaterialProperty stress young; /* mandatory for castem */
+@MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
-@MaterialProperty real nu;    /* mandatory for castem */
+@MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
 
 @MaterialProperty real A;

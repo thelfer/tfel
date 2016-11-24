@@ -30,11 +30,11 @@
 #include"TFEL/Math/General/CubicRoots.hxx"
 }
 
-@MaterialProperty stress young; /* mandatory for castem */
+@MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
-@MaterialProperty real nu;    /* mandatory for castem */
+@MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
-@MaterialProperty thermalexpansion alpha;    /* mandatory for castem */
+@MaterialProperty thermalexpansion alpha;
 alpha.setGlossaryName("ThermalExpansion");
 
 @MaterialProperty stress s_y;

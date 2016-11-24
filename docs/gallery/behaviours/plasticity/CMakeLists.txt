@@ -1,0 +1,2 @@
+install_mfront_data(gallery/plasticity IsotropicLinearHardeningPlasticity.mfront)
+install_mfront_data(gallery/plasticity IsotropicLinearKinematicHardeningPlasticity.mfront)
