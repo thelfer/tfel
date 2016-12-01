@@ -29,22 +29,18 @@ namespace mtest
 						 const std::string& b)
     : UmatBehaviourBase(h,l,b)
   {
-    using namespace std;
-    using namespace tfel::system;
-    using namespace tfel::material;
-    using ELM = tfel::system::ExternalLibraryManager;
-    const auto& nh = ModellingHypothesis::toString(h);
-    auto& elm = ELM::getExternalLibraryManager();
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("AsterCohesiveZoneModel::"
+				     "AsterCohesiveZoneModel: "+m));}
+    };
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    throw_if(elm.getInterface(l,b)!="Aster",
+	     "invalid interface '"+elm.getInterface(l,b)+"'");
     this->fct = elm.getAsterFunction(l,b);
+    const auto& nh = ModellingHypothesis::toString(h);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,nh);
-    if(this->btype!=3u){
-      throw(runtime_error("AsterCohesiveZoneModel::AsterCohesiveZoneModel: "
-			  "unsupported hypothesis"));
-    }
-    if(this->stype!=0){
-      throw(runtime_error("AsterCohesiveZoneModel::AsterCohesiveZoneModel : "
-			  "unsupported symmetry type"));
-    }
+    throw_if(this->btype!=3u,"unsupported hypothesis");
+    throw_if(this->stype!=0,"unsupported symmetry type");
   }
 
   tfel::math::tmatrix<3u,3u,real>

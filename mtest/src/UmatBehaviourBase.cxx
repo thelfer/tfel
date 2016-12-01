@@ -408,7 +408,7 @@ namespace mtest
     } else if(this->stype==1){
       return 1u;
     }
-    throw(std::runtime_error("UmatBehaviourBase::UmatBehaviourBase : "
+    throw(std::runtime_error("UmatBehaviourBase::getSymmetryType: "
 			     "unsupported behaviour type "
 			     "(neither isotropic nor orthotropic)"));
   } // end of UmatBehaviourBase::getSymmetryType

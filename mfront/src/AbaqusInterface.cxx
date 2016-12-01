@@ -178,14 +178,12 @@ namespace mfront{
 	<< "const int)";
   } // end of writeUMATArguments
 
-  std::string
-  AbaqusInterface::getName()
+  std::string AbaqusInterface::getName()
   {
     return "abaqus";
   }
   
-  std::string
-  AbaqusInterface::getInterfaceName() const
+  std::string AbaqusInterface::getInterfaceName() const
   {
     return "Abaqus";
   } // end of AbaqusInterface::getInterfaceName

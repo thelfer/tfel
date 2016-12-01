@@ -58,8 +58,7 @@ namespace mfront{
     return lib;
   } // end of AsterInterface::getLibraryName
 
-  std::string
-  AsterInterface::getInterfaceName() const
+  std::string AsterInterface::getInterfaceName() const
   {
     return "Aster";
   } // end of AsterInterface::getInterfaceName

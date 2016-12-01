@@ -34,7 +34,13 @@ namespace mtest
 							   const std::string& b)
     : UmatBehaviourBase(h,l,b)
   {
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("EuroplexusStandardBehaviour::"
+				     "EuroplexusStandardBehaviour: "+m));}
+    };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    throw_if(elm.getInterface(l,b)!="Europlexus",
+	     "invalid interface '"+elm.getInterface(l,b)+"'");
     this->fct = elm.getEuroplexusFunction(l,b);
     auto tmp = std::vector<std::string>{};
     if(this->etype==0u){

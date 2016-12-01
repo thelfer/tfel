@@ -36,14 +36,12 @@ static const char * const constexpr_c = "const";
 
 namespace mfront{
 
-  std::string
-  CyranoInterface::getName()
+  std::string CyranoInterface::getName()
   {
     return "cyrano";
   }
 
-  int
-  CyranoInterface::getModellingHypothesisIdentifier(const Hypothesis h)
+  int CyranoInterface::getModellingHypothesisIdentifier(const Hypothesis h)
   {
     switch(h){
     case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
@@ -80,8 +78,7 @@ namespace mfront{
     return lib;
   } // end of CyranoInterface::getLibraryName
 
-  std::string
-  CyranoInterface::getInterfaceName() const
+  std::string CyranoInterface::getInterfaceName() const
   {
     return "Cyrano";
   } // end of CyranoInterface::getInterfaceName

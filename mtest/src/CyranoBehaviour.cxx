@@ -32,9 +32,12 @@ namespace mtest
 				   const std::string& b)
     : UmatBehaviourBase(h,l,b)
   {
-    using namespace tfel::system;
-    using namespace tfel::material;
-    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("CyranoBehaviour::CyranoBehaviour: "+m));}
+    };
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    throw_if(elm.getInterface(l,b)!="Cyrano",
+	     "invalid interface '"+elm.getInterface(l,b)+"'");
     this->fct = elm.getCyranoFunction(l,b);
     auto tmp = std::vector<std::string>{};
     if(this->stype==0){
@@ -63,8 +66,7 @@ namespace mtest
     this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
   }
 
-  void
-  CyranoBehaviour::allocate(BehaviourWorkSpace& wk) const
+  void CyranoBehaviour::allocate(BehaviourWorkSpace& wk) const
   {
     const auto nstatev = this->getInternalStateVariablesSize();
     wk.D.resize(3u,3u);

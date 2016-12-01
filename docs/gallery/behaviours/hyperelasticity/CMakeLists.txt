@@ -1,0 +1,1 @@
+install_gallery(hyperelasticity SaintVenantKirchhoffElasticity.mfront)

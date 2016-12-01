@@ -563,7 +563,11 @@ AC_OUTPUT([debug.sh
 	   docs/web/Makefile
    	   docs/gallery/Makefile
       	   docs/gallery/behaviours/Makefile
+       	   docs/gallery/behaviours/hyperelasticity/Makefile
+       	   docs/gallery/behaviours/damage/Makefile
        	   docs/gallery/behaviours/plasticity/Makefile
+       	   docs/gallery/behaviours/viscoelasticity/Makefile
+       	   docs/gallery/behaviours/viscoplasticity/Makefile
 	   docs/doxygen/Makefile
 	   cmake/Makefile
 	   cmake/modules/Makefile

@@ -64,14 +64,14 @@ namespace mtest
 						   const std::string& b)
     : UmatBehaviourBase(h,l,AbaqusStandardBehaviour::getBehaviourName(b,h))
   {
-    using namespace std;
-    using namespace tfel::material;
     auto throw_if = [](const bool c, const std::string& m){
       if(c){throw(std::runtime_error("AbaqusStandardBehaviour::"
 				     "AbaqusStandardBehaviour: "+m));}
     };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     const auto bn = AbaqusStandardBehaviour::getBehaviourName(b,h);
+    throw_if(elm.getInterface(l,bn)!="Abaqus",
+	     "invalid interface '"+elm.getInterface(l,bn)+"'");
     this->fct = elm.getAbaqusExternalBehaviourFunction(l,b);
     if(this->stype==1u){
       this->omp = elm.getAbaqusOrthotropyManagementPolicy(l,bn);
@@ -102,7 +102,7 @@ namespace mtest
 	this->ivnames.insert(this->ivnames.begin(),aivs.begin(),aivs.end());
       }
     }
-    vector<string> tmp;
+    auto tmp = std::vector<std::string>{};
     if(this->etype==0u){
       if(this->requiresStiffnessTensor){
 	tmp.insert(tmp.end(),{"YoungModulus","PoissonRatio"});

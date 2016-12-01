@@ -30,18 +30,16 @@ namespace mtest
 						   const std::string& b)
     : UmatBehaviourBase(h,l,b)
   {
-    using namespace std;
-    using namespace tfel::system;
-    using namespace tfel::material;
-    using ELM = tfel::system::ExternalLibraryManager;
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("CastemCohesiveZoneModel::CastemCohesiveZoneModel: "+m));}
+    };
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    throw_if(elm.getInterface(l,b)!="Castem",
+	     "invalid interface '"+elm.getInterface(l,b)+"'");
     const auto& nh = ModellingHypothesis::toString(h);
-    auto& elm = ELM::getExternalLibraryManager();
     this->fct = elm.getCastemExternalBehaviourFunction(l,b);
     this->mpnames = elm.getUMATMaterialPropertiesNames(l,b,nh);
-    if(this->btype!=3u){
-      throw(runtime_error("CastemCohesiveZoneModel::CastemCohesiveZoneModel: "
-			  "invalid behaviour type"));
-    }
+    throw_if(this->btype!=3u,"invalid behaviour type");
     if(this->stype==0){
       this->mpnames.insert(this->mpnames.begin(),"NormalThermalExpansion");
       this->mpnames.insert(this->mpnames.begin(),"MassDensity");
@@ -51,9 +49,7 @@ namespace mtest
       this->mpnames.insert(this->mpnames.begin(),"NormalStiffness");
       this->mpnames.insert(this->mpnames.begin(),"TangentialStiffness");
     } else {
-      string msg("CastemCohesiveZoneModel::CastemCohesiveZoneModel : "
-		 "unsupported symmetry type");
-      throw(runtime_error(msg));
+      throw_if(true,"unsupported symmetry type");
     }
   }
 

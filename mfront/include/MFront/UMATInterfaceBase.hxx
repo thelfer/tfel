@@ -505,6 +505,7 @@ namespace mfront{
 					 const std::string&,
 					 const BehaviourDescription&) const;
     /*!
+     * \brief write the symbols associated with the source file
      * \param[in] out  : output file
      * \param[in] name : behaviour name
      * \param[in] mb   : behaviour description
@@ -515,6 +516,18 @@ namespace mfront{
 				 const std::string&,
 				 const BehaviourDescription&,
 				 const FileDescription&) const;
+    /*!
+     * \brief write the symbols associated with the interface name
+     * \param[in] out  : output file
+     * \param[in] name : behaviour name
+     * \param[in] mb   : behaviour description
+     * \param[in] fd   : file description
+     */
+    virtual void
+    writeUMATxxInterfaceNameSymbols(std::ostream&,
+				    const std::string&,
+				    const BehaviourDescription&,
+				    const FileDescription&) const;
     /*!
      * \param[in] out   : output file
      * \param[in] name  : name of the behaviour as defined by interface

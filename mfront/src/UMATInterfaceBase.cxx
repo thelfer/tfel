@@ -1288,6 +1288,7 @@ namespace mfront
 						  const FileDescription & fd) const
   {
     this->writeUMATxxSourceFileSymbols(out,name,mb,fd);
+    this->writeUMATxxInterfaceNameSymbols(out,name,mb,fd);
     this->writeUMATxxSupportedModellingHypothesis(out,name,mb);
     this->writeUMATxxBehaviourTypeSymbols(out,name,mb);
     this->writeUMATxxBehaviourKinematicSymbols(out,name,mb);
@@ -1619,19 +1620,29 @@ namespace mfront
   	<< "\";\n\n";
   }
 
+  void
+  UMATInterfaceBase::writeUMATxxInterfaceNameSymbols(std::ostream& out,
+						     const std::string& name,
+						     const BehaviourDescription&,
+						     const mfront::FileDescription&) const
+  {
+    out << "MFRONT_SHAREDOBJ const char *\n"
+  	<< this->getFunctionName(name) << "_interface = \""
+  	<< this->getInterfaceName()	<< "\";\n\n";
+  }
+  
   std::map<UMATInterfaceBase::Hypothesis,std::string>
   UMATInterfaceBase::gatherModellingHypothesesAndTests(const BehaviourDescription& mb) const
   {
-    using namespace std;
-    const auto h = this->getModellingHypothesesToBeTreated(mb);
-    auto res = map<Hypothesis,string>{};
-    auto h1 = set<Hypothesis>{};
-    auto h2 = set<Hypothesis>{};
-    for(const auto & elem : h){
-      if(!mb.hasSpecialisedMechanicalData(elem)){
-	h1.insert(elem);
+    const auto mh = this->getModellingHypothesesToBeTreated(mb);
+    auto res = std::map<Hypothesis,std::string>{};
+    auto h1 =  std::set<Hypothesis>{};
+    auto h2 =  std::set<Hypothesis>{};
+    for(const auto & h : mh){
+      if(!mb.hasSpecialisedMechanicalData(h)){
+	h1.insert(h);
       } else {
-	h2.insert(elem);
+	h2.insert(h);
       }
     }
     if(!h1.empty()){
@@ -1640,7 +1651,7 @@ namespace mfront
 	      this->getModellingHypothesisTest(*(h1.begin()))});
       } else {
 	auto p = h1.begin();
-	string r = "("+this->getModellingHypothesisTest(*(h1.begin()))+")";
+	std::string r = "("+this->getModellingHypothesisTest(*(h1.begin()))+")";
 	++p;
 	for(;p!=h1.end();++p){
 	  r += "||("+this->getModellingHypothesisTest(*p)+")";
@@ -1648,8 +1659,8 @@ namespace mfront
 	res.insert({ModellingHypothesis::UNDEFINEDHYPOTHESIS,r});
       }
     }
-    for(const auto & elem : h2){
-      res.insert({elem,this->getModellingHypothesisTest(elem)});
+    for(const auto & h : h2){
+      res.insert({h,this->getModellingHypothesisTest(h)});
     }
     return res;
   } // end of UMATInterface::gatherModellingHypothesesAndTests

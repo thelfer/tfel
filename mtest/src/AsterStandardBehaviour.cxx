@@ -35,14 +35,15 @@ namespace mtest
     : UmatBehaviourBase(h,l,b),
       savesTangentOperator(false)
   {
-    using namespace std;
-    using namespace tfel::system;
-    using namespace tfel::material;
-    using ELM = tfel::system::ExternalLibraryManager;
-    auto& elm = ELM::getExternalLibraryManager();
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("AsterStandardBehaviour::AsterStandardBehaviour: "+m));}
+    };
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    throw_if(elm.getInterface(l,b)!="Aster",
+	     "invalid interface '"+elm.getInterface(l,b)+"'");
     this->fct = elm.getAsterFunction(l,b);
     this->savesTangentOperator = elm.checkIfAsterBehaviourSavesTangentOperator(l,b);
-    vector<string> tmp;
+    auto tmp = std::vector<std::string>{};
     if(this->etype==0u){
       if(this->requiresStiffnessTensor){
 	tmp.insert(tmp.end(),{"YoungModulus","PoissonRatio"});
@@ -84,13 +85,10 @@ namespace mtest
 		"ThermalExpansion2","ThermalExpansion3"});
 	}
       } else { 
-	throw(std::runtime_error("AsterStandardBehaviour::AsterStandardBehaviour: "
-				 "unsupported modelling hypothesis"));
+	throw_if(true,"unsupported modelling hypothesis");
       }
     } else {
-      throw(std::runtime_error("AsterStandardBehaviour::AsterStandardBehaviour : "
-			       "unsupported behaviour type "
-			       "(neither isotropic nor orthotropic)"));
+      throw_if(true,"unsupported behaviour type (neither isotropic nor orthotropic)");
     }
     this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
   }

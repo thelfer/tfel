@@ -32,12 +32,14 @@ namespace tfel
   namespace system
   {
 
+    /*!
+     * \brief Structure in charge of loading external function and
+     * retrieving information from shared libraries.
+     */
     struct TFELSYSTEM_VISIBILITY_EXPORT ExternalLibraryManager
     {
-
-      static ExternalLibraryManager&
-      getExternalLibraryManager();
-
+      //! \return the uniq instance of this class
+      static ExternalLibraryManager& getExternalLibraryManager();
       /*!
        * \brief a wrapper around the ::dlopen system call
        * \param[in] name : name of the library
@@ -49,13 +51,11 @@ namespace tfel
        * name as a key. This name is used in the methods of this call 
        */
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-      HINSTANCE__*
-      loadLibrary(const std::string&,
-		  const bool = false);
+      HINSTANCE__* loadLibrary(const std::string&,
+			       const bool = false);
 #else
-      void *
-      loadLibrary(const std::string&,
-		  const bool = false);
+      void * loadLibrary(const std::string&,
+			 const bool = false);
 #endif /* LIB_EXTERNALLIBRARYMANAGER_H_ */
 
       /*!
@@ -66,19 +66,16 @@ namespace tfel
       void setOutOfBoundsPolicy(const std::string&,
 				const std::string&,
 				const tfel::material::OutOfBoundsPolicy);
-      
       /*!
        * \param[in] l : name of the library
        * \param[in] s : name of function or mechanical behaviour
        * \param[in] p : parameter name
        * \param[in] v : value
        */
-      void
-      setParameter(const std::string&,
-		   const std::string&,
-		   const std::string&,
-		   const double);
-
+      void setParameter(const std::string&,
+			const std::string&,
+			const std::string&,
+			const double);
       /*!
        * set the value of an integer parameter
        * \param[in] l : name of the library
@@ -86,12 +83,10 @@ namespace tfel
        * \param[in] p : parameter name
        * \param[in] v : value
        */
-      void
-      setParameter(const std::string&,
-		   const std::string&,
-		   const std::string&,
-		   const int);
-
+      void setParameter(const std::string&,
+			const std::string&,
+			const std::string&,
+			const int);
       /*!
        * set the value of an unsigned short parameter
        * \param[in] l : name of the library
@@ -99,11 +94,10 @@ namespace tfel
        * \param[in] p : parameter name
        * \param[in] v : value
        */
-      void
-      setParameter(const std::string&,
-		   const std::string&,
-		   const std::string&,
-		   const unsigned short);
+      void setParameter(const std::string&,
+			const std::string&,
+			const std::string&,
+			const unsigned short);
       /*!
        * \param[in] l : name of the library
        * \param[in] s : name of function or mechanical behaviour
@@ -111,28 +105,24 @@ namespace tfel
        * \param[in] p : parameter name
        * \param[in] v : value
        */
-      void
-      setParameter(const std::string&,
-		   const std::string&,
-		   const std::string&,
-		   const std::string&,
-		   const double);
+      void setParameter(const std::string&,
+			const std::string&,
+			const std::string&,
+			const std::string&,
+			const double);
       /*!
        * set the value of an integer parameter
        * \param[in] l : name of the library
        * \param[in] s : name of function or mechanical behaviour
        * \param[in] h : modelling hypothesis
- 
-       * \param[in] p : parameter name
+        * \param[in] p : parameter name
        * \param[in] v : value
        */
-      void
-      setParameter(const std::string&,
-		   const std::string&,
-		   const std::string&,
-		   const std::string&,
-		   const int);
-
+      void setParameter(const std::string&,
+			const std::string&,
+			const std::string&,
+			const std::string&,
+			const int);
       /*!
        * set the value of an unsigned short parameter
        * \param[in] l : name of the library
@@ -141,24 +131,29 @@ namespace tfel
        * \param[in] p : parameter name
        * \param[in] v : value
        */
-      void
-      setParameter(const std::string&,
-		   const std::string&,
-		   const std::string&,
-		   const std::string&,
-		   const unsigned short);
-
+      void setParameter(const std::string&,
+			const std::string&,
+			const std::string&,
+			const std::string&,
+			const unsigned short);
       /*!
        * \return the src of the function or the mechanical behaviour
-       * \param[in] l : name of the library
-       * \param[in] s : name of function or mechanical behaviour
+       * \param[in] l: name of the library
+       * \param[in] s: name of function or mechanical behaviour
        * This function looks for the symbol s+'_src' in the library
        * and expect it to a pointer to characters.
        * If the symbol is not found, an empty string is returned.
        */
-      std::string
-      getSource(const std::string&,
-		const std::string&);
+      std::string getSource(const std::string&,const std::string&);
+      /*!
+       * \return the interface of the function or the mechanical behaviour
+       * \param[in] l: name of the library
+       * \param[in] s: name of function or mechanical behaviour
+       * This function looks for the symbol s+'_interface' in the library
+       * and expect it to a pointer to characters.
+       * If the symbol is not found, an empty string is returned.
+       */
+      std::string getInterface(const std::string&,const std::string&);
       /*!
        * \return the list of supported modelling hypotheses
        * \param[in] l : name of the library
@@ -174,44 +169,37 @@ namespace tfel
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
-      bool
-      contains(const std::string&,
-	       const std::string&);
+      bool contains(const std::string&,const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
-      CyranoFctPtr
-      getCyranoFunction(const std::string&,
-			const std::string&);
+      CyranoFctPtr getCyranoFunction(const std::string&,
+				     const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
-      AsterFctPtr
-      getAsterFunction(const std::string&,
-		       const std::string&);
+      AsterFctPtr getAsterFunction(const std::string&,
+				   const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
-      EuroplexusFctPtr
-      getEuroplexusFunction(const std::string&,
-			    const std::string&);
+      EuroplexusFctPtr getEuroplexusFunction(const std::string&,
+					     const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
-      CastemFctPtr
-      getCastemExternalBehaviourFunction(const std::string&,
-					 const std::string&);
+      CastemFctPtr getCastemExternalBehaviourFunction(const std::string&,
+						      const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
-      AbaqusFctPtr
-      getAbaqusExternalBehaviourFunction(const std::string&,
-					 const std::string&);
+      AbaqusFctPtr getAbaqusExternalBehaviourFunction(const std::string&,
+						      const std::string&);
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
@@ -222,10 +210,9 @@ namespace tfel
       /*!
        * \note the loadLibrary must have already been called with this name
        */
-      bool
-      isUMATBehaviourUsableInPurelyImplicitResolution(const std::string&,
-						      const std::string&,
-						      const std::string&);
+      bool isUMATBehaviourUsableInPurelyImplicitResolution(const std::string&,
+							   const std::string&,
+							   const std::string&);
       /*!
        * \return the type of the behaviour
        * \see MechanicalBehaviourBase::BehaviourType

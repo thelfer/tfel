@@ -1619,8 +1619,7 @@ namespace mfront{
     this->writeIntegrateLoop(out,mb);
   }
   
-  std::string
-  AbaqusExplicitInterface::getInterfaceName() const
+  std::string AbaqusExplicitInterface::getInterfaceName() const
   {
     return "AbaqusExplicit";
   } // end of AbaqusExplicitInterface::getInterfaceName

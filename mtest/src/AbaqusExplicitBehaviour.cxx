@@ -81,6 +81,8 @@ namespace mtest
     };
     auto& elm     = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     const auto bn = AbaqusExplicitBehaviour::getBehaviourName(b,h);
+    throw_if(elm.getInterface(l,bn)!="AbaqusExplicit",
+	     "invalid interface '"+elm.getInterface(l,bn)+"'");
     this->fct     = elm.getAbaqusExplicitExternalBehaviourFunction(l,b);
     if(this->stype==1u){
       this->omp = elm.getAbaqusOrthotropyManagementPolicy(l,bn);

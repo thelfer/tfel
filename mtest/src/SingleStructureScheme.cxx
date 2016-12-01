@@ -165,23 +165,22 @@ namespace mtest{
 				     const SingleStructureScheme::Parameters& d,
 				     const tfel::material::ModellingHypothesis::Hypothesis h)
   {
-    using ELM = tfel::system::ExternalLibraryManager;
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("SingleStructureScheme::getBehaviour:"+m));}
+      if(c){throw(std::runtime_error("SingleStructureScheme::getBehaviour: "+m));}
     };
     auto check_no_parameters = [&throw_if,&d]{
       if(d.empty()){return;}
-      throw_if(!d.is<std::map<std::string,
-	                      SingleStructureScheme::Parameters>>(),
+      throw_if(!d.is<std::map<std::string,SingleStructureScheme::Parameters>>(),
 	       "unsupported parameters type");
       const auto& p = d.get<std::map<std::string,SingleStructureScheme::Parameters>>();
       throw_if(!p.empty(),"no parameter expected");
     };
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    throw_if(!elm.contains(l,f),"behaviour '"+f+"' not defined in library '"+l+"'");
     auto b = std::shared_ptr<Behaviour>{};
 #ifdef HAVE_CASTEM
     if((i=="castem")||(i=="umat")){
       check_no_parameters();
-      auto& elm = ELM::getExternalLibraryManager();
       const auto type  = elm.getUMATBehaviourType(l,f);
       const auto ktype = elm.getUMATBehaviourKinematic(l,f);
       if(type==1u){
@@ -213,7 +212,6 @@ namespace mtest{
 #ifdef HAVE_ASTER
     if(i=="aster"){
       check_no_parameters();
-      auto& elm = ELM::getExternalLibraryManager();
       const auto type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
 	b = std::make_shared<AsterSmallStrainBehaviour>(h,l,f);
@@ -229,7 +227,6 @@ namespace mtest{
 #ifdef HAVE_EUROPLEXUS
     if((i=="europlexus")||(i=="epx")){
       check_no_parameters();
-      auto& elm = ELM::getExternalLibraryManager();
       const auto type = elm.getUMATBehaviourType(l,f);
       if(type==2u){
 	b = std::make_shared<EuroplexusFiniteStrainBehaviour>(h,l,f);
@@ -241,7 +238,6 @@ namespace mtest{
 #ifdef HAVE_ABAQUS
     if((i=="abaqus")||(i=="abaqus_standard")||(i=="abaqus_umat")){
       check_no_parameters();
-      auto& elm = ELM::getExternalLibraryManager();
       const auto bn   = AbaqusStandardBehaviour::getBehaviourName(f,h);
       const auto type = elm.getUMATBehaviourType(l,bn);
       if(type==1u){
@@ -253,9 +249,8 @@ namespace mtest{
       }
     }
     if((i=="abaqus_explicit")||(i=="abaqus_vumat")){
-      check_no_parameters();
-      auto& elm = ELM::getExternalLibraryManager();
       const auto bn   = AbaqusExplicitBehaviour::getBehaviourName(f,h);
+      check_no_parameters();
       const auto type = elm.getUMATBehaviourType(l,bn);
       if(type==2u){
 	b = std::make_shared<AbaqusExplicitBehaviour>(h,l,f);
@@ -266,7 +261,6 @@ namespace mtest{
 #endif
 #ifdef HAVE_CYRANO
     if(i=="cyrano"){
-      auto& elm = ELM::getExternalLibraryManager();
       const auto btype = elm.getUMATBehaviourType(l,f);
       const auto ktype = elm.getUMATBehaviourKinematic(l,f);
       check_no_parameters();
@@ -287,28 +281,24 @@ namespace mtest{
     return b;
   }
   
-  void
-  SingleStructureScheme::setBehaviour(const std::string& i,
-				      const std::string& l,
-				      const std::string& f,
-				      const Parameters& d)
+  void SingleStructureScheme::setBehaviour(const std::string& i,
+					   const std::string& l,
+					   const std::string& f,
+					   const Parameters& d)
   {
-    using MH = tfel::material::ModellingHypothesis;
-    if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
+    if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       this->setDefaultModellingHypothesis();
     }
     this->setBehaviour(SingleStructureScheme_getBehaviour(i,l,f,d,this->hypothesis));
   }
 
-  void
-  SingleStructureScheme::setBehaviour(const std::string& w,
-				      const std::string& i,
-				      const std::string& l,
-				      const std::string& f,
-				      const Parameters& d)
+  void SingleStructureScheme::setBehaviour(const std::string& w,
+					   const std::string& i,
+					   const std::string& l,
+					   const std::string& f,
+					   const Parameters& d)
   {
-    using MH = tfel::material::ModellingHypothesis;
-    if(this->hypothesis==MH::UNDEFINEDHYPOTHESIS){
+    if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       this->setDefaultModellingHypothesis();
     }
     auto bp = SingleStructureScheme_getBehaviour(i,l,f,d,this->hypothesis);
@@ -324,8 +314,7 @@ namespace mtest{
   void SingleStructureScheme::checkBehaviourConsistency(const std::shared_ptr<Behaviour>&)
   {}
   
-  void
-  SingleStructureScheme::setBehaviour(const std::shared_ptr<Behaviour>& bp)
+  void SingleStructureScheme::setBehaviour(const std::shared_ptr<Behaviour>& bp)
   {
     if(this->b!=nullptr){
       throw(std::runtime_error("SingleStructureScheme::setBehaviour: "

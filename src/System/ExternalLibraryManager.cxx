@@ -87,8 +87,7 @@ namespace tfel
       return externalLibraryManager;
     } // end of ExternalLibraryManager::getExternalLibraryManager()
 
-    ExternalLibraryManager::ExternalLibraryManager()
-    {} // end of ExternalLibraryManager::ExternalLibraryManager
+    ExternalLibraryManager::ExternalLibraryManager() = default;
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
     HINSTANCE__*
@@ -132,9 +131,8 @@ namespace tfel
       return p->second;
     } // end of ExternalLibraryManager::loadLibrary
 
-    bool
-    ExternalLibraryManager::contains(const std::string& l,
-				     const std::string& s)
+    bool ExternalLibraryManager::contains(const std::string& l,
+					  const std::string& s)
     {
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
       HINSTANCE__* lib = this->loadLibrary(l);
@@ -151,14 +149,13 @@ namespace tfel
     ExternalLibraryManager::getSource(const std::string& l,
 				      const std::string& f)
     {
-      using namespace std;
-      string s;
+      auto s = std::string{};
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-      const char* const *p  = (const char* const *) ::GetProcAddress(lib,(f+"_src").c_str());
+      auto lib = this->loadLibrary(l);
+      const auto p  = (const char* const *) ::GetProcAddress(lib,(f+"_src").c_str());
 #else
-      void * lib = this->loadLibrary(l);
-      void * p   = ::dlsym(lib,(f+"_src").c_str());
+      auto lib = this->loadLibrary(l);
+      auto p   = ::dlsym(lib,(f+"_src").c_str());
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
       if(p!=nullptr){
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
@@ -170,6 +167,27 @@ namespace tfel
       return s;
     } // end of ExternalLibraryManager::getSource
 
+    std::string ExternalLibraryManager::getInterface(const std::string& l,
+						     const std::string& f)
+    {
+      auto s = std::string{};
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+      auto lib = this->loadLibrary(l);
+      const auto p  = (const char* const *) ::GetProcAddress(lib,(f+"_interface").c_str());
+#else
+      auto lib = this->loadLibrary(l);
+      auto p   = ::dlsym(lib,(f+"_interface").c_str());
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      if(p!=nullptr){
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+	s = *p;
+#else
+	s = *(static_cast<const char* const *>(p));
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      }
+      return s;
+    } // end of ExternalLibraryManager::getInterface
+    
     std::vector<std::string>
     ExternalLibraryManager::getSupportedModellingHypotheses(const std::string& l,
 							    const std::string& f)

@@ -76,6 +76,10 @@ namespace mtest
     : UmatBehaviourBase(h,l,b)
   {
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    if(elm.getInterface(l,b)!="Castem"){
+      throw(std::runtime_error("CastemStandardBehaviour::CastemStandardBehaviour: "
+			       "invalid interface '"+elm.getInterface(l,b)+"'"));
+    }
     this->fct = elm.getCastemExternalBehaviourFunction(l,b);
     setMaterialProperties(*this,h);
   } // end of CastemStandardBehaviour::CastemStandardBehaviour

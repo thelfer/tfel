@@ -55,6 +55,13 @@ macro(install_mfront_data dir file)
 	  COMPONENT mfront)
 endmacro(install_mfront_data)
 
+macro(install_gallery dir file)
+  install_mfront_data("gallery/${dir}" "${file}")
+  install(FILES ${file}
+          DESTINATION "share/doc/tfel/web/gallery/${dir}"
+	  COMPONENT web)
+endmacro(install_gallery)
+
 macro(tfel_library_internal name component)
   if(${ARGC} LESS 2)
     message(FATAL_ERROR "tfel_library_internal : no source specified")

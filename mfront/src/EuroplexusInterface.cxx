@@ -85,8 +85,7 @@ namespace mfront{
 	<< " const epx::EuroplexusInt  *const NPREDEF)";
   } // end of writeEPXArguments
   
-  std::string
-  EuroplexusInterface::getName()
+  std::string EuroplexusInterface::getName()
   {
     return "epx";
   }
@@ -107,8 +106,7 @@ namespace mfront{
     return lib;
   } // end of EuroplexusInterface::getLibraryName
 
-  std::string
-  EuroplexusInterface::getInterfaceName() const
+  std::string EuroplexusInterface::getInterfaceName() const
   {
     return "Europlexus";
   } // end of EuroplexusInterface::getInterfaceName
@@ -141,7 +139,8 @@ namespace mfront{
 	return {false,current};
       }
     }
-    if ((key=="@EuroplexusFiniteStrainStrategy")||(key=="@EPXFiniteStrainStrategy")){
+    if ((key=="@EuroplexusFiniteStrainStrategy")||
+	(key=="@EPXFiniteStrainStrategy")){
       auto read = [](const std::string& s){
 	if(s=="FiniteRotationSmallStrain"){
 	  return FINITEROTATIONSMALLSTRAIN;
