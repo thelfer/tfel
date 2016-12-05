@@ -13,8 +13,9 @@ young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
 
-@LocalVariable stress lambda; //<! Premier coefficient de Lamé
-@LocalVariable stress mu;     //<! Second  coefficient de Lamé
+@LocalVariable stress lambda;   //<! Premier coefficient de Lamé
+@LocalVariable stress mu;       //<! Second  coefficient de Lamé
+@LocalVariable StrainStensor e; //<! Déformation de Green-Lagrange
 
 // Nous déclarons le second tenseur de Piola-Kirchhoff en tant que
 // variable locale pour le réutiliser dans le calcul de l'opérateur
@@ -47,7 +48,7 @@ nu.setGlossaryName("PoissonRatio");
   /*!
    * Nous calculons ensuite le tenseur de Green-Lagrange
    */
-  const StrainStensor e = computeGreenLagrangeTensor(F1);
+  e = computeGreenLagrangeTensor(F1);
   // second Piola–Kirchhoff stress
   s = lambda*trace(e)*StrainStensor::Id()+2*mu*e;
   // conversion to Cauchy stress tensor
@@ -80,4 +81,9 @@ nu.setGlossaryName("PoissonRatio");
   t2tost2<N,stress> dtau;
   computePushForwardDerivative(dtau,dS,s,F1); 
   Dt = dtau;
+}
+
+@InternalEnergy{
+  const auto tr = trace(e);
+  Psi_s = lambda*tr*tr/2+mu*(e|e);
 }

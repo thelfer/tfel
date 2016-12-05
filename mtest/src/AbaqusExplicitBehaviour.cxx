@@ -113,6 +113,13 @@ namespace mtest
 	this->ivnames.insert(this->ivnames.begin(),aivs.begin(),aivs.end());
       }
     }
+    for(const auto& iv: {"InternalEnergy","DissipatedEnergy"}){
+      throw_if(std::find(this->ivnames.begin(),this->ivnames.end(),iv)!=
+	       this->ivnames.end(),
+	       std::string(iv)+" is a reserved name");
+      this->ivnames.emplace_back(iv);
+      this->ivtypes.push_back(0);
+    }
     auto tmp = std::vector<std::string>{};
     tmp.emplace_back("MassDensity");
     if(this->etype==0u){
@@ -239,7 +246,7 @@ namespace mtest
 	       ModellingHypothesis::toString(h)+")");
     }();
     const auto nprops  = static_cast<AbaqusInt>(s.mprops1.size())-1;
-    const auto nstatv  = static_cast<AbaqusInt>(s.iv1.size());
+    const auto nstatv  = static_cast<AbaqusInt>(s.iv1.size())-2;
     const auto nfieldv = static_cast<AbaqusInt>(s.esv0.size())-1;
     const auto density   = s.mprops1[0];
     const real stepTime  = 0;
@@ -284,8 +291,6 @@ namespace mtest
     const real defgradNew[9u]  = {1,1,1,0,0,0,0,0,0};
     const real enerInternOld = 0;
     const real enerInelasOld = 0;
-    real enerInternNew = 0;
-    real enerInelasNew = 0;
     for(AbaqusInt i=0;i!=ndir+nshr;++i){
       real strainInc[6u] = {0,0,0,0,0,0};
       strainInc[i] = 1;
@@ -297,13 +302,13 @@ namespace mtest
 		  defgradOld,
 		  s.esv0.size()==1 ? nullptr : &(s.esv0[0])+1,
 		  stressOld,
-		  s.iv0.empty() ? nullptr : &(s.iv0[0]),
-		  &enerInternOld,&enerInelasOld,
+		  nstatv == 0 ? nullptr : &(s.iv0[0]),
+		  &s.iv0[nstatv],&s.iv0[nstatv+1],
 		  &(wk.evs[0]),stretchNew,defgradNew,
 		  wk.evs.size()==1 ? nullptr : &(wk.evs[0])+1,
 		  stressNew,
-		  s.iv1.empty()? nullptr : &(s.iv1[0]),
-		  &enerInternNew,&enerInelasNew,0);
+		  nstatv == 0 ? nullptr : &(s.iv1[0]),
+		  &s.iv1[nstatv],&s.iv1[nstatv+1],0);
       if(h==ModellingHypothesis::PLANESTRESS){
 	const auto idx = (i==2) ? 3 : i;
 	K(0,idx) = stressNew[0];
@@ -457,9 +462,8 @@ namespace mtest
       throw_if(true,"unsupported hypothesis ("+
 	       ModellingHypothesis::toString(h)+")");
     }();
-    const auto nprops  = s.mprops1.size() == 1 ? 1 :
-      static_cast<AbaqusInt>(s.mprops1.size())-1;
-    const auto nstatv  = static_cast<AbaqusInt>(s.iv0.size());
+    const auto nprops  = static_cast<AbaqusInt>(s.mprops1.size())-1;
+    const auto nstatv  = static_cast<AbaqusInt>(s.iv0.size())-2;
     const auto nfieldv = static_cast<AbaqusInt>(s.esv0.size())-1;
     const auto density   = s.mprops1[0];
     const real stepTime  = 1;
@@ -585,13 +589,13 @@ namespace mtest
 		defgradOld,
 		s.esv0.size()==1 ? nullptr : &(s.esv0[0])+1,
 		stressOld,
-		s.iv0.empty() ? nullptr : &(s.iv0[0]),
-		&enerInternOld,&enerInelasOld,
+		nstatv == 0 ? nullptr : &(s.iv0[0]),
+		&s.iv0[nstatv],&s.iv0[nstatv+1],
 		&(wk.evs[0]),stretchNew,defgradNew,
 		wk.evs.size()==1 ? nullptr : &(wk.evs[0])+1,
 		stressNew,
-		s.iv1.empty() ? nullptr : &(s.iv1[0]),
-		&enerInternNew,&enerInelasNew,0);
+		nstatv == 0 ? nullptr : &(s.iv1[0]),
+		&s.iv1[nstatv],&s.iv1[nstatv+1],0);
     if((h==ModellingHypothesis::PLANESTRESS)||
        (h==ModellingHypothesis::AXISYMMETRICAL)||
        (h==ModellingHypothesis::PLANESTRAIN)){

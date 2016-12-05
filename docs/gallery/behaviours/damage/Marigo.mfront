@@ -20,9 +20,25 @@ nu.setGlossaryName("PoissonRatio");
 @Parameter Yw = 75e3;
 @Parameter g  = 0.2;
 
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu     = computeMu(young,nu);
+}
+
+@PredictionOperator{
+  if(smt==ELASTIC){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  } else if(smt==SECANTOPERATOR){
+    Dt = (1-d)*(lambda*Stensor4::IxI()+2*mu*Stensor4::Id());
+  } else {
+    return FAILURE;
+  }
+}
+
 @Integrator{
-  const auto lambda = computeLambda(young,nu);
-  const auto mu     = computeMu(young,nu);
   const auto e  = eval(eto+deto);
   const auto tr = trace(e);
   const auto Y  = tr*tr*lambda/2+mu*(e|e);
@@ -31,13 +47,16 @@ nu.setGlossaryName("PoissonRatio");
     d = min((1+g)*(1-sqrt(Yw/Y)),real(1));
   }
   sig = (1-d)*(lambda*tr*Stensor::Id()+2*mu*e);
-  if(computeTangentOperator_){
-    if(smt==ELASTIC){
-      Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
-    } else if(smt==SECANTOPERATOR){
-      Dt = (1-d)*(lambda*Stensor4::IxI()+2*mu*Stensor4::Id());
-    } else {
-      return FAILURE;
-    }
+}
+
+@TangentOperator{
+  if(smt==ELASTIC){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  } else if(smt==SECANTOPERATOR){
+    Dt = (1-d)*(lambda*Stensor4::IxI()+2*mu*Stensor4::Id());
+  } else if(smt==CONSISTENTTANGENTOPERATOR){
+    Dt = (1-d)*(lambda*Stensor4::IxI()+2*mu*Stensor4::Id());
+  } else {
+    return FAILURE;
   }
 }
