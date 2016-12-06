@@ -7,7 +7,6 @@
   "Generalised Maxwell law"
 }
 
-// Number of viscoplastic flows
 @IntegerConstant Nv = 3;
 
 @MaterialProperty real k0;
@@ -25,13 +24,23 @@ taui.setEntryName("TimeScale");
 @StateVariable StressStensor sej[Nv];
 sej.setEntryName("ViscoelasticStress");
 
-@ProvidesSymmetricTangentOperator;
+@LocalVariable stress l0;
+@LocalVariable stress d[2];
+
+@InitLocalVariables{
+  l0 = k0-2*mu0/3;
+}
+
+@PredictionOperator{
+  Dt = l0*Stensor4::IxI()+2*mu0*Stensor4::Id();
+}
+
 @Integrator{
-  const StrainStensor eto_ = eto+deto;
-  const auto l0 = k0-2*mu0/3;
-  sig = l0*trace(eto_)*StrainStensor::Id()+2*mu0*eto_;
+  const auto id = Stensor::Id();
+  const auto e = eto+deto;
+  d   = {l0,2*mu0};
+  sig = d[0]*trace(e)*id+d[1]*e;
   if(dt>0){
-    stress d[2] = {l0,2*mu0};
     for(unsigned short i=0;i!=Nv;++i){
       const auto edt = exp(-dt/taui[i]);
       const auto c   =  taui[i]*(1-edt)/dt;
@@ -41,15 +50,16 @@ sej.setEntryName("ViscoelasticStress");
       d[0] += c1-c2/3;
       d[1] += c2;
       // updating stresses
-      sej[i]  = deviator(sej[i])*edt+c2*deviator(deto)+pj*StrainStensor::Id();
+      sej[i]  = deviator(sej[i])*edt+c2*deviator(deto)+pj*id;
       sig    += sej[i];
     }
-    if(smt==CONSISTENTTANGENTOPERATOR){
-      Dt = d[0]*Stensor4::IxI()+d[1]*Stensor4::Id();
-    }
+  }
+}
+
+@TangentOperator{
+  if(smt==CONSISTENTTANGENTOPERATOR){
+    Dt = d[0]*Stensor4::IxI()+d[1]*Stensor4::Id();
   } else {
-    if(computeTangentOperator_){
-      Dt = l0*Stensor4::IxI()+2*mu0*Stensor4::Id();
-    }
+    Dt = l0*Stensor4::IxI()+2*mu0*Stensor4::Id();
   }
 }
