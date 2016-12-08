@@ -234,18 +234,11 @@ namespace mfront
 			     "no attribute named '"+n+"'"));
   } // end of BehaviourDescription::throwUndefinedAttribute
 
-  BehaviourDescription::BehaviourDescription()
-    : use_qt(false),
-      type(BehaviourDescription::GENERALBEHAVIOUR),
-      // By default, a behaviour is isotropic 
-      stype(mfront::ISOTROPIC),
-      stypeIsDefined(false),
-      // By default, a behaviour is isotropic 
-      estype(mfront::ISOTROPIC),
-      estypeIsDefined(false),
-      ischeme(UNDEFINEDINTEGRATIONSCHEME)
-  {} // end of BehaviourDescription::BehaviourDescription()
+  BehaviourDescription::BehaviourDescription() = default;
 
+  BehaviourDescription::BehaviourDescription(const BehaviourDescription&) = default;
+
+  
   const BehaviourData&
   BehaviourDescription::getBehaviourData(const Hypothesis& h) const
   {
@@ -336,6 +329,12 @@ namespace mfront
 					    const std::string& v){
       if(this->isExternalStateVariableName(h,v)){
 	return MaterialPropertyInput::EXTERNALSTATEVARIABLE;
+      } else if(this->isAuxiliaryStateVariableName(h,v)){
+	const auto& bd = this->getBehaviourData(h);
+	const auto& av = bd.getAuxiliaryStateVariableDescription(v);
+	throw_if(!av.getAttribute<bool>("ComputedByExternalModel",false),
+		 "only auxiliary state variable computed by a model are allowed here");
+	return MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL;
       } else if(this->isMaterialPropertyName(h,v)){
 	return MaterialPropertyInput::MATERIALPROPERTY;
       } else if(this->isParameterName(h,v)){
@@ -343,7 +342,8 @@ namespace mfront
       }
       throw_if(true,"unsupported variable: variable '"+v+"' is "
 	       "neither an external state variable, a material "
-	       "property nor a parameter");
+	       "property nor a parameter nor an auxiliary "
+	       "state variable evaluated by an external model");
     };
     auto inputs = std::vector<MaterialPropertyInput>{};
     for(const auto& v : mpd.inputs){
@@ -923,14 +923,14 @@ namespace mfront
       throw_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
 	       "axial growth is only valid for orthotropic behaviour");
     } else {
+      throw_if((!sfed.is<BehaviourData::VolumeSwellingStressFreeExpansion>())&&
+	       (!sfed.is<BehaviourData::IsotropicStressFreeExpansion>()),
+	       "internal error, unsupported stress free expansion type");
       throw_if((this->getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
 	       (this->getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
 	       "Isotropic or VolumeSwelling "
 	       "are only valid for small or "
 	       "finite strain behaviours");
-      throw_if((!sfed.is<BehaviourData::VolumeSwellingStressFreeExpansion>())&&
-	       (!sfed.is<BehaviourData::IsotropicStressFreeExpansion>()),
-	       "internal error, unsupported stress free expansion type");
     }
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       this->d.addStressFreeExpansion(sfed);
@@ -1136,6 +1136,34 @@ namespace mfront
     }
   } // end of BehaviourDescription::setModellingHypotheses
 
+  const std::vector<ModelDescription>&
+  BehaviourDescription::getModelsDescriptions() const{
+    return this->models;
+  }
+  
+  void BehaviourDescription::addModelDescription(const ModelDescription& md){
+    const auto& g = tfel::glossary::Glossary::getGlossary();
+    constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    for(auto ov : md.outputs){
+      const auto en = md.getExternalName(ov.name);
+      auto dov = ov;
+      dov.name = "d"+ov.name;
+      if(ov.type=="Field"){
+	ov.type="real";
+	dov.type="real";
+      }
+      ov.setAttribute("ComputedByExternalModel",true,false);
+      this->addAuxiliaryStateVariable(uh,ov,BehaviourData::UNREGISTRED);
+      if(g.contains(en)){
+	this->setGlossaryName(uh,ov.name,en);
+      } else {
+	this->setEntryName(uh,ov.name,en);
+      }
+      this->addLocalVariable(uh,dov,BehaviourData::UNREGISTRED);
+    }
+    this->models.push_back(md);
+  } // end of BehaviourDescription::addModelDescription
+  
   void
   BehaviourDescription::addMaterialProperties(const Hypothesis h,
 					      const VariableDescriptionContainer& v,
@@ -1756,9 +1784,8 @@ namespace mfront
     this->callBehaviourData(h,&BehaviourData::setGlossaryName,n,g,true);
   } // end of BehaviourDescription::setGlossaryName
 
-  bool
-  BehaviourDescription::isGlossaryNameUsed(const Hypothesis h,
-					   const std::string& n) const
+  bool BehaviourDescription::isGlossaryNameUsed(const Hypothesis h,
+						const std::string& n) const
   {
     return this->getBehaviourData(h).isGlossaryNameUsed(n);
   } // end of BehaviourDescription::isGlossaryName
@@ -1792,10 +1819,9 @@ namespace mfront
     return this->getBehaviourData(h).getVariableNameFromGlossaryNameOrEntryName(n);
   } // end of BehaviourDescription::getVariableNameFromGlossaryNameOrEntryName
 
-  void
-  BehaviourDescription::setAttribute(const std::string& n,
-				     const BehaviourAttribute& a,
-				     const bool b)
+  void BehaviourDescription::setAttribute(const std::string& n,
+					  const BehaviourAttribute& a,
+					  const bool b)
   {
     if(b){
       auto p=this->attributes.find(n);
@@ -1813,8 +1839,7 @@ namespace mfront
     }
   } // end of BehaviourDescription::setAttribute
 
-  bool
-  BehaviourDescription::hasAttribute(const std::string& n) const
+  bool BehaviourDescription::hasAttribute(const std::string& n) const
   {
     return this->attributes.count(n)!=0u;
   } // end of BehaviourDescription::hasAttribute

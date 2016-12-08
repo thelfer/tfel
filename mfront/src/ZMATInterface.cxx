@@ -208,10 +208,9 @@ namespace mfront
     return h;
   } // edn of ZMATInterface::getModellingHypothesesToBeTreated
 
-  void 
-  ZMATInterface::exportMechanicalData(std::ostream& out,
-				      const Hypothesis h,
-				      const BehaviourDescription& mb) const
+  void ZMATInterface::exportMechanicalData(std::ostream& out,
+					   const Hypothesis h,
+					   const BehaviourDescription& mb) const
   {
     using namespace std;
     const auto& d = mb.getBehaviourData(h);

@@ -117,7 +117,6 @@ namespace mfront{
   VariableDescriptionContainer&
   VariableDescriptionContainer::operator=(const VariableDescriptionContainer&) = default;
 
-
   bool VariableDescriptionContainer::contains(const std::string& n) const
   {
     for(const auto& v : *this){

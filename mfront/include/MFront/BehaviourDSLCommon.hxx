@@ -1119,11 +1119,26 @@ namespace mfront{
     virtual void
     writeBehaviourComputeTangentOperator(const Hypothesis);
 
-    virtual void
-    writeBehaviourGetTangentOperator();
+    virtual void writeBehaviourGetTangentOperator();
 
-    virtual void
-    writeBehaviourTangentOperator();
+    virtual void writeBehaviourTangentOperator();
+    /*!
+     * \brief write the call to a model
+     * \param[out] out: output stream
+     * \param[in]  h:   hypothesis
+     * \param[in]  md:  model description
+     * \param[in]  vo:  name of the variable containing the result
+     * \param[in]  vs:  name of the variable containing the value of the
+     *                  variable modified by the model at the beginning
+     *                  of the time step
+     * \param[in]  bn:  base name for temporary variable 
+     */
+    virtual void writeModelCall(std::ostream&,
+				const Hypothesis,
+				const ModelDescription&,
+				const std::string&,
+				const std::string&,
+				const std::string&);
     /*!
      * \brief treat methods associated with parameters
      * \param[in] h : modelling hypothesis

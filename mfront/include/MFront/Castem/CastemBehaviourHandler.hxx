@@ -570,12 +570,11 @@ namespace castem
 	}
       }
 	
-      void
-      integrate2(CastemReal *const stress,
-		 CastemReal *const statev,
-		 CastemReal *const ddsdde,
-		 CastemReal *const pnewdt,
-		 const typename Behaviour<H,CastemReal,false>::SMType smtype)
+      void integrate2(CastemReal *const stress,
+		      CastemReal *const statev,
+		      CastemReal *const ddsdde,
+		      CastemReal *const pnewdt,
+		      const typename Behaviour<H,CastemReal,false>::SMType smtype)
       {
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
@@ -601,7 +600,7 @@ namespace castem
 	iData.scale(bData,0.5);
 	unsigned short subSteps   = 1u;
 	unsigned short iterations = 2u;
-	const typename BV::SMFlag smflag = CastemTangentOperatorFlag<CastemTraits<BV>::btype>::value;
+	const auto smflag = CastemTangentOperatorFlag<CastemTraits<BV>::btype>::value;
 	*pnewdt=0.5;
 	while((iterations!=0)&&
 	      (subSteps!=CastemTraits<BV>::maximumSubStepping)){
@@ -944,4 +943,3 @@ namespace castem
 #include"MFront/Castem/CastemOrthotropicBehaviourHandler.hxx"
 
 #endif /* LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_H_ */
-

@@ -63,6 +63,7 @@ namespace mfront{
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
     Modifier ets = [](const MaterialPropertyInput& i) -> std::string {
       if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
 	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
 	return "this->"+i.name + "+this->d" + i.name;
       } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||

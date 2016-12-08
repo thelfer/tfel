@@ -40,6 +40,7 @@ namespace mfront{
     std::function<std::string(const MaterialPropertyInput&)> ets =
       [this,throw_if](const MaterialPropertyInput& i) -> std::string {
       if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
 	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
 	return "this->"+i.name + "+this->d" + i.name;
       } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||

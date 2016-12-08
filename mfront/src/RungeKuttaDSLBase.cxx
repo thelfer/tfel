@@ -129,6 +129,8 @@ namespace mfront{
       if((i.type==MaterialPropertyInput::TEMPERATURE)||
 	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
 	return "this->"+i.name + "_";
+      } else if (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL){
+	return "(this->"+i.name + "+(t/(this->dt))*(this->d"+i.name+"))";
       } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
 		 (i.type==MaterialPropertyInput::PARAMETER)){
 	return "this->"+i.name;
@@ -151,6 +153,7 @@ namespace mfront{
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
     static Modifier m = [](const BehaviourDescription::MaterialPropertyInput& i){
       if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
 	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
 	return "this->"+i.name + "+this->d" + i.name;
       } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
@@ -693,6 +696,7 @@ namespace mfront{
       this->behaviourFile << "// the stiffness tensor at the beginning of the time step\n";
       Modifier bts = [](const MaterialPropertyInput& i){
 	if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	   (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
 	   (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)||
 	   (i.type==MaterialPropertyInput::MATERIALPROPERTY)||
 	   (i.type==MaterialPropertyInput::PARAMETER)){

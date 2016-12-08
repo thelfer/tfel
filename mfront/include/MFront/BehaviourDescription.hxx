@@ -121,6 +121,7 @@ namespace mfront
       std::string ename;
       //! variable type
       enum {TEMPERATURE,MATERIALPROPERTY,
+	    AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL,
 	    EXTERNALSTATEVARIABLE,PARAMETER} type;
     }; // end of 
     //! a simple alias
@@ -141,20 +142,17 @@ namespace mfront
     static const std::string requiresThermalExpansionCoefficientTensor;
     //! attribute name
     static const std::string setRequireThermalExpansionCoefficientTensor;
-    /*!
-     * constructor
-     */
+    //! constructor
     BehaviourDescription();
+    //! copy constructor
+    BehaviourDescription(const BehaviourDescription&);
     /*!
      * \brief set the behaviour name
      * \param[in] b : behaviour name
      */
     void setBehaviourName(const std::string&);
-    /*!
-     * \return the behaviour name
-     */
-    const std::string&
-    getBehaviourName(void) const;
+    //! \return the behaviour name
+    const std::string& getBehaviourName(void) const;
     /*!
      * \brief set the dsl name
      * \param[in] b : dsl name
@@ -163,8 +161,7 @@ namespace mfront
     /*!
      * \return the dsl name
      */
-    const std::string&
-    getDSLName(void) const;
+    const std::string& getDSLName(void) const;
     /*!
      * \brief set the material name
      * \param[in] m : material name
@@ -180,21 +177,15 @@ namespace mfront
      * \param[in] l : library name
      */
     void setLibrary(const std::string&);
-    /*!
-     * \return the library name
-     */
-    const std::string&
-    getLibrary(void) const;
+    //! \return the library name
+    const std::string& getLibrary(void) const;
     /*!
      * \brief set the class name
      * \param[in] n : class name
      */
     void setClassName(const std::string&);
-    /*!
-     * \return the class name
-     */
-    const std::string&
-    getClassName(void) const;
+    //! \return the class name
+    const std::string& getClassName(void) const;
     /*!
      * \return the inputs of a material property
      * \param[in] mpd: material property description
@@ -206,9 +197,7 @@ namespace mfront
      * \param[in] s : sources
      */
     void appendToSources(const std::string&);
-    /*!
-     * \return the material
-     */
+    //! \return the material name
     const std::string& getSources(void) const;
     /*!
      * \brief append the given code to the members
@@ -220,9 +209,7 @@ namespace mfront
     void appendToMembers(const Hypothesis,
 			 const std::string&,
 			 const bool);
-    /*!
-     * \return the aditional members
-     */
+    //! \return the aditional members
     const std::string getMembers(const Hypothesis) const;
     /*!
      * \brief append the given code to the members
@@ -246,12 +233,17 @@ namespace mfront
     /*!
      * \return the material
      */
-    const std::string&
-    getIncludes(void) const;
+    const std::string& getIncludes(void) const;
     /*!
      * add a material law
      */
     void addMaterialLaw(const std::string&);
+    /*!
+     * \brief add a model description.
+     * All outputs of the model are automatically added as auxiliary state variables
+     * \param[in] md: model description
+     */
+    void addModelDescription(const ModelDescription&);
     /*!
      * add a local data structure
      * \param[in] lds: local data structure
@@ -271,14 +263,12 @@ namespace mfront
      * \note using this method means that the behaviour type is always
      * 'GENERALBEHAVIOUR'. This can't be changed afterwards.
      */
-    void
-    addMainVariable(const DrivingVariable&,
-		    const ThermodynamicForce&);
+    void addMainVariable(const DrivingVariable&,
+			 const ThermodynamicForce&);
     /*!
      * \return the main variables of the behaviour
      */
-    const std::map<DrivingVariable,
-		   ThermodynamicForce>&
+    const std::map<DrivingVariable,ThermodynamicForce>&
     getMainVariables(void) const;
     /*!
      * \brief set the behaviour to be a small strain standard
@@ -298,18 +288,15 @@ namespace mfront
     /*!
      * \return the type of the stiffness operator
      */
-    std::string
-    getTangentOperatorType(void) const;
+    std::string getTangentOperatorType(void) const;
 
     bool useQt(void) const;
 
     void setUseQt(const bool);
 
-    bool
-    isDrivingVariableName(const std::string&) const;
+    bool isDrivingVariableName(const std::string&) const;
 
-    bool
-    isDrivingVariableIncrementName(const std::string&) const;
+    bool isDrivingVariableIncrementName(const std::string&) const;
     /*!
      * \return the behaviour type
      */
@@ -318,26 +305,15 @@ namespace mfront
      * \brief set the integration scheme
      * \param[in] s: integration scheme
      */
-    void
-    setIntegrationScheme(const IntegrationScheme);
-    /*!
-     * \return the integration scheme used
-     */
-    IntegrationScheme
-    getIntegrationScheme(void) const;
-    /*!
-     * \return a string describing the behaviour type
-     */
-    std::string
-    getBehaviourTypeFlag(void) const;
-    /*!
-     * \return the symmetry type of the behaviour
-     */
-    BehaviourSymmetryType
-    getSymmetryType() const;
+    void setIntegrationScheme(const IntegrationScheme);
+    //! \return the integration scheme used
+    IntegrationScheme getIntegrationScheme(void) const;
+    //! \return a string describing the behaviour type
+    std::string getBehaviourTypeFlag(void) const;
+    //! \return the symmetry type of the behaviour
+    BehaviourSymmetryType getSymmetryType() const;
 
-    void
-    setSymmetryType(const BehaviourSymmetryType);
+    void setSymmetryType(const BehaviourSymmetryType);
     /*!
      * \brief set the orthotropic axes convention.
      * \param[in] c : new value for the orthotropic axes convention.
@@ -356,8 +332,7 @@ namespace mfront
     
     bool isSymmetryTypeDefined() const;
 
-    BehaviourSymmetryType
-    getElasticSymmetryType() const;
+    BehaviourSymmetryType getElasticSymmetryType() const;
 
     void setElasticSymmetryType(const BehaviourSymmetryType);
     
@@ -368,6 +343,10 @@ namespace mfront
      */
     bool
     isMaterialPropertyConstantDuringTheTimeStep(const MaterialProperty&) const;
+    /*!
+     * \return registred models
+     */
+    const std::vector<ModelDescription>& getModelsDescriptions() const;
     /*!
      * \brief set the elastic material properties
      * \param[in] emps : elastic material properties
@@ -416,19 +395,14 @@ namespace mfront
      * given modelling hypothesis
      * \param[in] h : modelling hypothesis
      */
-    const BehaviourData&
-    getBehaviourData(const Hypothesis&) const;
-    /*!
-     * \return true if modelling hypotheses are defined.
-     */
-    bool
-    areModellingHypothesesDefined(void) const;
+    const BehaviourData& getBehaviourData(const Hypothesis&) const;
+    //! \return true if modelling hypotheses are defined.
+    bool areModellingHypothesesDefined(void) const;
     /*!
      * \return all the modelling hypotheses supported by the
      * behaviour.
      */
-    const std::set<Hypothesis>&
-    getModellingHypotheses(void) const;
+    const std::set<Hypothesis>& getModellingHypotheses(void) const;
     /*!
      * \return all the modelling hypotheses which are distinct.
      *
@@ -440,15 +414,13 @@ namespace mfront
      * This method has been introduced for iteration purpose in
      * behaviour dsls.
      */
-    std::set<Hypothesis>
-    getDistinctModellingHypotheses(void) const;
+    std::set<Hypothesis> getDistinctModellingHypotheses(void) const;
     /*!
      * \return true if the given modelling hypothesis is supported
      * \param[in] h : modelling hypothesis
      * \see hasSpecialisedMechanicalData
      */
-    bool
-    isModellingHypothesisSupported(const Hypothesis) const;
+    bool isModellingHypothesisSupported(const Hypothesis) const;
     /*!
      * \brief set the list of supported modelling hypotheses
      * \param[in] h : supported modelling hypotheses
@@ -460,9 +432,8 @@ namespace mfront
      *   exception is thrown.
      * - if b is false, an exception is thrown.
      */
-    void
-    setModellingHypotheses(const std::set<Hypothesis>&,
-			   const bool b = false);
+    void setModellingHypotheses(const std::set<Hypothesis>&,
+				const bool b = false);
     /*!
      * \brief add material properties
      * \param[in] h : modelling hypothesis
@@ -644,11 +615,8 @@ namespace mfront
     addParameter(const Hypothesis,
 		 const VariableDescription&,
 		 const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
-    /*!
-     * \return a type suitable for storing stress-free expansion
-     */
-    std::string
-    getStressFreeExpansionType(void) const;
+    //! \return a type suitable for storing stress-free expansion
+    std::string getStressFreeExpansionType(void) const;
     /*!
      * \brief add a new stress free expansion description
      * \param[in] h : modelling hypothesis
@@ -673,80 +641,71 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    isMaterialPropertyName(const Hypothesis,
-			   const std::string&) const;
+    bool isMaterialPropertyName(const Hypothesis,
+				const std::string&) const;
     /*!
      * \return true if the given name is the one of a local variable.
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    isLocalVariableName(const Hypothesis,
-			const std::string&) const;
+    bool isLocalVariableName(const Hypothesis,
+			     const std::string&) const;
     /*!
      * \return true if the given name is the one of an persistent
      * variable.
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    isPersistentVariableName(const Hypothesis,
-			      const std::string&) const;
+    bool isPersistentVariableName(const Hypothesis,
+				  const std::string&) const;
     /*!
      * \return true if the given name is the one of an integration
      * variable.
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    isIntegrationVariableName(const Hypothesis,
-			      const std::string&) const;
+    bool isIntegrationVariableName(const Hypothesis,
+				   const std::string&) const;
     /*!
      * \return true if the given name is the one of an integration
      * variable increment.
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    isIntegrationVariableIncrementName(const Hypothesis,
-				       const std::string&) const;
+    bool isIntegrationVariableIncrementName(const Hypothesis,
+					    const std::string&) const;
     /*!
      * \return true if the given name is the one of an state
      * variable.
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    isStateVariableName(const Hypothesis,
-			const std::string&) const;
+    bool isStateVariableName(const Hypothesis,
+			     const std::string&) const;
     /*!
      * \return true if the given name is the one of an state
      * variable increment.
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    isStateVariableIncrementName(const Hypothesis,
-				 const std::string&) const;
+    bool isStateVariableIncrementName(const Hypothesis,
+				      const std::string&) const;
     /*!
      * \return true if the given name is the one of an auxiliary
      * internal state variable.
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    isAuxiliaryStateVariableName(const Hypothesis,
-				 const std::string&) const;
+    bool isAuxiliaryStateVariableName(const Hypothesis,
+				      const std::string&) const;
     /*!
      * \return true if the given name is the one of an external state
      * variable.
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    isExternalStateVariableName(const Hypothesis,
-				const std::string&) const;
+    bool isExternalStateVariableName(const Hypothesis,
+				     const std::string&) const;
     /*!
      * \return true if the given name is the one of an external state
      * variable increment
@@ -761,16 +720,14 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    isStaticVariableName(const Hypothesis,
-			 const std::string&) const;
+    bool isStaticVariableName(const Hypothesis,
+			      const std::string&) const;
     /*!
      * \brief check if one has to include tvector.hxx or vector.hxx
      * \param[in] b1 : requires true if one has to include tvector.hxx
      * \param[in] b2 : requires true if one has to include vector.hxx
      */
-    void
-    requiresTVectorOrVectorIncludes(bool&,bool&) const;
+    void requiresTVectorOrVectorIncludes(bool&,bool&) const;
     /*!
      * \return true if all mechanical data are specialised
      * This means that the default mechanical data is useless
@@ -825,10 +782,9 @@ namespace mfront
      * \param[in]  h : modelling Hypothesis
      * \param[in]  v : variables for which external names are requested
      */
-    void
-    getExternalNames(std::vector<std::string>&,
-		     const Hypothesis,
-		     const VarContainer&) const;
+    void getExternalNames(std::vector<std::string>&,
+			  const Hypothesis,
+			  const VarContainer&) const;
     /*!
      * get the external names associated with the variables
      * contained in the given container
@@ -836,25 +792,22 @@ namespace mfront
      * \param[in]  h : modelling Hypothesis
      * \param[in]  v : variables for which external names are requested
      */
-    void
-    appendExternalNames(std::vector<std::string>&,
-			const Hypothesis,
-			const VarContainer&) const;
+    void appendExternalNames(std::vector<std::string>&,
+			     const Hypothesis,
+			     const VarContainer&) const;
     /*!
      * \return true if the given member is used in a code block
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    isMemberUsedInCodeBlocks(const Hypothesis,
-			     const std::string&) const;
+    bool isMemberUsedInCodeBlocks(const Hypothesis,
+				  const std::string&) const;
     /*!
      * \return true if the given name is a parameter name
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    isParameterName(const Hypothesis,
+    bool  isParameterName(const Hypothesis,
 		    const std::string&) const;
     /*!
      * \param[in] h : modelling hypothesis
@@ -1519,35 +1472,35 @@ namespace mfront
      */
     std::vector<MaterialProperty> thermalExpansionCoefficients;
     /*!
+     * elastic material properties
+     * For isotropic   behaviours, only two elastic material properties must be defined.
+     * For orthotropic behaviours, two or nine elastic material properties must be defined.
+     */
+    std::vector<ModelDescription> models;
+    /*!
      * \brief list of all Hill tensors defined
      */
     std::vector<HillTensor> hillTensors;
     //! use units
-    bool use_qt;
+    bool use_qt = false;
     //! type of behaviour
-    BehaviourType type;
+    BehaviourType type = GENERALBEHAVIOUR;
     //! symmetry of behaviour (isotropic or orthotropic)
-    mutable BehaviourSymmetryType stype;
+    mutable BehaviourSymmetryType stype = mfront::ISOTROPIC;
     //! orthotropic axes convention
     tfel::material::OrthotropicAxesConvention oac =
       tfel::material::OrthotropicAxesConvention::DEFAULT;
     //!flag telling if the orthotropic axes convention has been defined
     mutable bool oacIsDefined = false;
     //! flag telling the behaviour symmetry has been defined
-    mutable bool stypeIsDefined;
-    /*!
-     * symmetry of elastic behaviour (isotropic or orthotropic)
-     */
-    mutable BehaviourSymmetryType estype;
+    mutable bool stypeIsDefined = false;
+    //! symmetry of elastic behaviour (isotropic or orthotropic)
+    mutable BehaviourSymmetryType estype = mfront::ISOTROPIC;
     //! flag telling the elastic symmetry has been defined
-    mutable bool estypeIsDefined;
-    /*!
-     * integration schemes
-     */
-    IntegrationScheme ischeme;
-    /*!
-     * list of material laws used
-     */
+    mutable bool estypeIsDefined = false;
+    //! integration schemes
+    IntegrationScheme ischeme = UNDEFINEDINTEGRATIONSCHEME;
+    //! list of material laws used
     std::vector<std::string> materialLaws;
   }; // end of struct BehaviourDescription
 

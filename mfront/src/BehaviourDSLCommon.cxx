@@ -72,6 +72,87 @@ static const char * const constexpr_c = "const";
 #endif
 
 namespace mfront{
+
+  void BehaviourDSLCommon::writeModelCall(std::ostream& out,
+					  const Hypothesis h,
+					  const ModelDescription& md,
+					  const std::string& vo,
+					  const std::string& vs,
+					  const std::string& bn){
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("BehaviourDSLCommon::writeModelCall",m);}
+    };
+    auto write_variable = [throw_if,&md,&out](const std::string& v,
+					      const unsigned short d){
+      if(d==0){
+	out << "this->" << v << "+this->d" << v;
+      } else if(d==1){
+	out << "this->" << v;
+      } else {
+	throw_if(true,"invalid depth for the temperature '"+v+"' "
+		 "in model '"+md.className+"'");
+      }
+    };
+    const auto& bd  = this->mb.getBehaviourData(h);
+    throw_if(md.outputs.size()!=1u,
+	     "invalid number of outputs for model '"+md.className+"'");
+    throw_if(!md.constantMaterialProperties.empty(),
+	     "constant material properties are not supported yet");
+    throw_if(md.functions.size()!=1u,
+	     "invalid number of functions in model '"+md.className+"'");
+    const auto& f = md.functions[0];
+    throw_if(f.modifiedVariables.empty(),"no modified variable for function '"+f.name+"'");
+    throw_if(f.modifiedVariables.size()!=1u,
+	     "invalid number of functions in model '"+md.className+"'");
+    throw_if(f.name.empty(),"unnamed function");
+    throw_if((f.usedVariables.empty())&&(!f.useTimeIncrement),
+	     "no used variable for function '"+f.name+"'");
+    const auto sm = this->getTemporaryVariableName(bn);
+    out << "// updating " << vs << "\n"
+	<< "mfront::" << md.className << "<Type> " << sm << ";\n"
+	<< "" << sm << ".setOutOfBoundsPolicy(this->policy);\n"
+	<< "this->" << vo << " = " << sm << "." << f.name << "(";
+    const auto args = [&f](){
+      auto a = std::vector<std::string>{};
+      for(const auto& uv: f.usedVariables){
+	a.push_back(uv);
+      }
+      if(f.useTimeIncrement){
+	a.emplace_back("dt");
+      }
+      return a;
+    }();
+    const auto asvn =
+      bd.getExternalNames(bd.getAuxiliaryStateVariables());
+    for(auto pa = std::begin(args);pa!=std::end(args);){
+      if(*pa=="dt"){
+	out << "this->dt";
+	++pa;
+	continue;
+      }
+      const auto  a  = md.decomposeVariableName(*pa);
+      const auto& ea = md.getExternalName(a.first);
+      if(ea==bd.getExternalName(vs)){
+	throw_if(a.second!=1,"invalid depth for variable '"+a.first+"' "
+		 "in model '"+md.className+"'");
+	out << "this->" << vs;
+      } else if(ea==tfel::glossary::Glossary::Temperature){
+	write_variable("T",a.second);
+      } else if(std::find(std::begin(asvn),std::end(asvn),ea)!=std::end(asvn)){
+	const auto& av = bd.getAuxiliaryStateVariableDescriptionByExternalName(ea);
+	throw_if(!av.getAttribute<bool>("ComputedByExternalModel",false),
+		 "only auxiliary state variable computed by a model are allowed here");
+	write_variable(av.name,a.second);
+      } else {
+	const auto& en = bd.getExternalStateVariableDescriptionByExternalName(ea);
+	write_variable(en.name,a.second);
+      }
+      if(++pa!=std::end(args)){
+	out << ",";
+      }
+    }
+    out << ");\n";
+  }
   
   BehaviourDSLCommon::CodeBlockOptions::CodeBlockOptions()
     : p(BehaviourData::BODY),
@@ -238,8 +319,7 @@ namespace mfront{
     return DSLBase::handleMaterialPropertyDescription(f);
   } // end of BehaviourDSLCommon::handleMaterialPropertyDescription
   
-  ModelDescription
-  BehaviourDSLCommon::getModelDescription(const std::string& f){
+  ModelDescription BehaviourDSLCommon::getModelDescription(const std::string& f){
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "BehaviourDSLCommon::treatModel: treating file '" << f << "'\n";
     }
@@ -290,7 +370,8 @@ namespace mfront{
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "BehaviourDSLCommon::treatModel: begin\n";
     }
-    this->getModelDescription(this->readString("BehaviourDSLCommon::treatModel"));
+    auto md = this->getModelDescription(this->readString("BehaviourDSLCommon::treatModel"));
+    this->mb.addModelDescription(md);
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "BehaviourDSLCommon::treatModel: end\n";
     }
@@ -315,8 +396,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::treatUnsupportedCodeBlockOptions  
 
-  void
-  BehaviourDSLCommon::addStaticVariableDescription(const StaticVariableDescription& v)
+  void BehaviourDSLCommon::addStaticVariableDescription(const StaticVariableDescription& v)
   {
     this->mb.addStaticVariable(ModellingHypothesis::UNDEFINEDHYPOTHESIS,v);
   } // end of BehaviourDSLCommon::addStaticVariableDescription
@@ -331,16 +411,14 @@ namespace mfront{
 	ModellingHypothesis::TRIDIMENSIONAL};
   } // end of BehaviourDSLCommon::getDefaultModellingHypotheses
 
-  bool
-  BehaviourDSLCommon::isModellingHypothesisSupported(const Hypothesis) const
+  bool BehaviourDSLCommon::isModellingHypothesisSupported(const Hypothesis) const
   {
     return true;
   } // end of BehaviourDSLCommon::isModellingHypothesesSupported
 
-  void
-  BehaviourDSLCommon::analyseFile(const std::string& fileName_,
-				  const std::vector<std::string>& ecmds,
-				  const std::map<std::string,std::string>& s)
+  void BehaviourDSLCommon::analyseFile(const std::string& fileName_,
+				       const std::vector<std::string>& ecmds,
+				       const std::map<std::string,std::string>& s)
   {
     this->importFile(fileName_,ecmds,s);
     // Adding some stuff
@@ -3069,22 +3147,33 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::writeBehaviourUpdateStateVariables
 
-  void
-  BehaviourDSLCommon::writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis h) 
+  void BehaviourDSLCommon::writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis h) 
   {
     this->behaviourFile << "/*!\n"
 			<< "* \\brief Update auxiliary state variables at end of integration\n"
 			<< "*/\n"
 			<< "void\n"
 			<< "updateAuxiliaryStateVariables(void)";
-    if(this->mb.hasCode(h,BehaviourData::UpdateAuxiliaryStateVariables)){
+    const auto& em = this->mb.getModelsDescriptions();
+    if((this->mb.hasCode(h,BehaviourData::UpdateAuxiliaryStateVariables))||(!em.empty())){
       this->behaviourFile << "{\n"
 			  << "using namespace std;\n"
 			  << "using namespace tfel::math;\n";
-      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourUpdateAuxiliaryStateVariables",
-			this->behaviourFile,this->mb.getMaterialLaws());		      
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::UpdateAuxiliaryStateVariables)
-			  << "\n}\n\n";
+      for(const auto& m: em){
+	if(m.outputs.size()==1){
+	  const auto vn = m.outputs[0].name;
+	  this->behaviourFile << "this->" << vn << " += this->d" << vn << ";\n";
+	} else {
+	  this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourUpdateAuxiliaryStateVariables",
+				  "only models with one output are supported");
+	}
+      }
+      if(this->mb.hasCode(h,BehaviourData::UpdateAuxiliaryStateVariables)){
+	writeMaterialLaws("BehaviourDSLCommon::writeBehaviourUpdateAuxiliaryStateVariables",
+			  this->behaviourFile,this->mb.getMaterialLaws());		      
+	this->behaviourFile << this->mb.getCode(h,BehaviourData::UpdateAuxiliaryStateVariables) << "\n";
+      }
+      this->behaviourFile << "}\n\n";
     } else {
       this->behaviourFile << "\n{}\n\n";
     }
@@ -3271,6 +3360,28 @@ namespace mfront{
 
   void BehaviourDSLCommon::writeBehaviourConstructors(const Hypothesis h)
   {    
+    auto write_body = [this,h](){
+      this->behaviourFile << "\n{\n"
+      << "using namespace std;\n"
+      << "using namespace tfel::math;\n"
+      << "using std::vector;\n";
+      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourConstructors",
+			this->behaviourFile,this->mb.getMaterialLaws());		      
+      this->writeBehaviourParameterInitialisation(h);
+      // calling models
+      for(const auto& m:this->mb.getModelsDescriptions()){
+	if(m.outputs.size()==1){
+	  const auto vn = m.outputs[0].name;
+	  this->writeModelCall(this->behaviourFile,h,m,"d"+vn,vn,"em");
+	  this->behaviourFile << "this->d" << vn << " -= this->" << vn << ";\n";
+	} else {
+	  this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourInitializeMethod",
+				  "only models with one output are supported yet");
+	}
+      }
+      this->writeBehaviourLocalVariablesInitialisation(h);
+      this->behaviourFile << "}\n\n";
+    };
     this->checkBehaviourFile();
     // initializers
     const auto& init = this->getBehaviourConstructorsInitializers(h);;
@@ -3302,28 +3413,12 @@ namespace mfront{
     if(!init.empty()){
       this->behaviourFile << ",\n" <<init;
     }
-    this->behaviourFile << "\n{\n"
-			<< "using namespace std;\n"
-			<< "using namespace tfel::math;\n"
-			<< "using std::vector;\n";
-    writeMaterialLaws("BehaviourDSLCommon::writeBehaviourConstructors",
-		      this->behaviourFile,this->mb.getMaterialLaws());
-    this->writeBehaviourParameterInitialisation(h);
-    this->writeBehaviourLocalVariablesInitialisation(h);
-    this->behaviourFile << "}\n\n";
+    write_body();
     // constructor specific to interfaces
     for(const auto& i : this->interfaces){
       if(i.second->isModellingHypothesisHandled(h,this->mb)){
 	i.second->writeBehaviourConstructor(this->behaviourFile,this->mb,init);
-	this->behaviourFile << "\n{\n"
-			    << "using namespace std;\n"
-			    << "using namespace tfel::math;\n"
-			    << "using std::vector;\n";
-	writeMaterialLaws("BehaviourDSLCommon::writeBehaviourConstructors",
-			  this->behaviourFile,this->mb.getMaterialLaws());		      
-	this->writeBehaviourParameterInitialisation(h);
-	this->writeBehaviourLocalVariablesInitialisation(h);
-	this->behaviourFile << "}\n\n";
+	write_body();
       }
     }
   }
@@ -3629,73 +3724,6 @@ namespace mfront{
 	    << "*(" << T << "-this->referenceTemperatureForThermalExpansion);\n";
       }
     };
-    auto write_model_call = [this,&throw_if,&bd](const ModelDescription& md,
-						 const std::string& vs){
-      throw_if(md.outputs.size()!=1u,
-	       "invalid number of outputs for model '"+md.className+"'");
-      throw_if(!md.constantMaterialProperties.empty(),
-	       "constant material properties are not supported yet");
-      throw_if(md.functions.size()!=1u,
-	       "invalid number of functions in model '"+md.className+"'");
-      const auto& f = md.functions[0];
-      throw_if(f.modifiedVariables.empty(),"no modified variable for function '"+f.name+"'");
-      throw_if(f.modifiedVariables.size()!=1u,
-	       "invalid number of functions in model '"+md.className+"'");
-      throw_if(f.name.empty(),"unnamed function");
-      throw_if((f.usedVariables.empty())&&(!f.useTimeIncrement),
-	       "no used variable for function '"+f.name+"'");
-      const auto sm = getTemporaryVariableName("sfeh");
-      this->behaviourFile << "// updating " << vs << "\n"
-      << "mfront::" << md.className << "<Type> " << sm << ";\n"
-      << "" << sm << ".setOutOfBoundsPolicy(this->policy);\n"
-      << "this->" << vs << " = " << sm << "." << f.name << "(";
-      const auto args = [&f](){
-	auto a = std::vector<std::string>{};
-	for(const auto& uv: f.usedVariables){
-	  a.push_back(uv);
-	}
-	if(f.useTimeIncrement){
-	  a.emplace_back("dt");
-	}
-	return a;
-      }();
-      for(auto pa = std::begin(args);pa!=std::end(args);){
-	if(*pa=="dt"){
-	  this->behaviourFile << "this->dt";
-	  ++pa;
-	  continue;
-	}
-	const auto  a  = md.decomposeVariableName(*pa);
-	const auto& ea = md.getExternalName(a.first);
-	if(ea==bd.getExternalName(vs)){
-	  throw_if(a.second!=1,"invalid depth for variable '"+a.first+"' "
-		   "in model '"+md.className+"'");
-	  this->behaviourFile << "this->" << vs;
-	} else if(ea==tfel::glossary::Glossary::Temperature){
-	  if(a.second==0){
-	    this->behaviourFile << "this->T+this->dT";
-	  } else if(a.second==1){
-	    this->behaviourFile << "this->T";
-	  } else {
-	    throw_if(true,"invalid depth for the temperature '"+a.first+"' "
-		     "in model '"+md.className+"'");
-	  }
-	} else {
-	  const auto& en = bd.getExternalStateVariableDescriptionByExternalName(ea);
-	  if(a.second==0){
-	    this->behaviourFile << "this->" << en.name << "+this->d" << en.name;
-	  } else if(a.second==1){
-	    this->behaviourFile << "this->" << en.name;
-	  } else {
-	    throw_if(true,"invalid depth for variable '"+a.first+"' of model '"+md.className+"'");
-	  }
-	}
-	if(++pa!=std::end(args)){
-	  this->behaviourFile << ",";
-	}
-      }
-      this->behaviourFile << ");\n";
-    };
     if(!this->mb.requiresStressFreeExpansionTreatment(h)){
       return;
     }
@@ -3804,7 +3832,7 @@ namespace mfront{
 	  const auto vs = md.className+"_"+md.outputs[0].name;	  
 	  this->behaviourFile << "dl0_l0[2]+=this->" << vs << ";\n";
 	  this->behaviourFile << "dl0_l0[0]=dl0_l0[1]=real(1)/std::sqrt(1+dl0_l0[2])-real(1);\n";
-	  write_model_call(md,vs);
+	  this->writeModelCall(this->behaviourFile,h,md,vs,vs,"sfeh");
 	  this->behaviourFile << "dl1_l0[2]+=this->" << vs << ";\n";
 	  this->behaviourFile << "dl1_l0[0]=dl1_l0[1]=real(1)/std::sqrt(1+dl1_l0[2])-real(1);\n";
 	} else {
@@ -3813,8 +3841,8 @@ namespace mfront{
       } else if(d.is<BehaviourData::OrthotropicStressFreeExpansion>()){ 
 	const auto& s =
 	  d.get<BehaviourData::OrthotropicStressFreeExpansion>();
-	auto write = [this,throw_if,&write_model_call](const BehaviourData::StressFreeExpansionHandler& sfe,
-						      const char* const c){
+	auto write = [this,throw_if,h](const BehaviourData::StressFreeExpansionHandler& sfe,
+				       const char* const c){
 	  if(sfe.is<BehaviourData::SFED_ESV>()){
 	    const auto& ev = sfe.get<BehaviourData::SFED_ESV>().vname;
 	    this->behaviourFile << "dl0_l0[" << c << "]+=this->" << ev << ";\n";
@@ -3825,7 +3853,7 @@ namespace mfront{
 		     "invalid number of outputs for model '"+md.className+"'");
 	    const auto vs = md.className+"_"+md.outputs[0].name;	  
 	    this->behaviourFile << "dl0_l0[" << c << "]+=this->" << vs << ";\n";
-	    write_model_call(md,vs);
+	    this->writeModelCall(this->behaviourFile,h,md,vs,vs,"sfeh");
 	    this->behaviourFile << "dl1_l0[" << c << "]+=this->" << vs << ";\n";
 	  } else if(!sfe.is<BehaviourData::NullSwelling>()){
 	    throw_if(true,"internal error, unsupported stress free expansion");
@@ -3885,7 +3913,7 @@ namespace mfront{
 	  this->behaviourFile << "dl0_l0[0]+=this->" << vs << ";\n"
 			      << "dl0_l0[1]+=this->" << vs << ";\n"
 			      << "dl0_l0[2]+=this->" << vs << ";\n";
-	  write_model_call(md,vs);
+	  this->writeModelCall(this->behaviourFile,h,md,vs,vs,"sfeh");
 	  this->behaviourFile << "dl1_l0[0]+=this->" << vs << ";\n"
 			      << "dl1_l0[1]+=this->" << vs << ";\n"
 			      << "dl1_l0[2]+=this->" << vs << ";\n";
@@ -3917,7 +3945,7 @@ namespace mfront{
 	  this->behaviourFile << "dl0_l0[0]+=this->" << vs << "/3;\n"
 			      << "dl0_l0[1]+=this->" << vs << "/3;\n"
 			      << "dl0_l0[2]+=this->" << vs << "/3;\n";
-	  write_model_call(md,vs);
+	  this->writeModelCall(this->behaviourFile,h,md,vs,vs,"sfeh");
 	  this->behaviourFile << "dl1_l0[0]+=this->" << vs << "/3;\n"
 			      << "dl1_l0[1]+=this->" << vs << "/3;\n"
 			      << "dl1_l0[2]+=this->" << vs << "/3;\n";
@@ -3963,7 +3991,7 @@ namespace mfront{
 			<< "using namespace tfel::math;\n"
 			<< "using std::vector;\n";
     writeMaterialLaws("BehaviourDSLCommon::writeBehaviourInitializeMethod",
-		      this->behaviourFile,this->mb.getMaterialLaws());		      
+		      this->behaviourFile,this->mb.getMaterialLaws());
     if(this->mb.hasCode(h,BehaviourData::BeforeInitializeLocalVariables)){
       if(this->mb.getAttribute(BehaviourData::profiling,false)){
 	writeStandardPerformanceProfilingBegin(this->behaviourFile,this->mb.getClassName(),
@@ -6208,8 +6236,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::treatParameter
 
-  void
-  BehaviourDSLCommon::treatInitLocalVariables()
+  void BehaviourDSLCommon::treatInitLocalVariables()
   {
     this->readCodeBlock(*this,BehaviourData::InitializeLocalVariables,
 			&BehaviourDSLCommon::standardModifier,true,true);

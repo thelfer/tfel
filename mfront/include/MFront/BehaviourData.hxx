@@ -377,9 +377,18 @@ namespace mfront{
 
     const VariableDescription&
     getIntegrationVariableDescription(const std::string&) const;
-
+    /*!
+     * \return the state variable associated with the given name
+     * \param[in] n: name
+     */
     const VariableDescription&
     getStateVariableDescription(const std::string&) const;
+    /*!
+     * \return the state variable associated with the given name
+     * \param[in] n: name
+     */
+    const VariableDescription&
+    getAuxiliaryStateVariableDescription(const std::string&) const;
     /*!
      * \param[in] n: name
      */
@@ -390,6 +399,11 @@ namespace mfront{
      */
     const VariableDescription&
     getExternalStateVariableDescriptionByExternalName(const std::string&) const;
+    /*!
+     * \param[in] n: external name
+     */
+    const VariableDescription&
+    getAuxiliaryStateVariableDescriptionByExternalName(const std::string&) const;
     /*!
      * \return true if a least one modelling hypothesis is anisotropic
      */

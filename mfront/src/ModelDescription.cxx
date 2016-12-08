@@ -81,8 +81,7 @@ namespace mfront
     return this->reservedNames.count(n)!=0;
   }
   
-  void
-  ModelDescription::registerMemberName(const std::string& n)
+  void ModelDescription::registerMemberName(const std::string& n)
   {
     this->reserveName(n);
     if(!this->memberNames.insert(n).second){
@@ -91,8 +90,7 @@ namespace mfront
     }
   } // end of ModelDescription::registerMemberName
 
-  void
-  ModelDescription::registerStaticMemberName(const std::string& n)
+  void ModelDescription::registerStaticMemberName(const std::string& n)
   {
     this->reserveName(n);
     if(!this->staticMemberNames.insert(n).second){
@@ -115,8 +113,7 @@ namespace mfront
     return n;
   } // end of ModelDescription::getExternalName
   
-  void
-  ModelDescription::checkVariableExistence(const std::string& v) const{
+  void ModelDescription::checkVariableExistence(const std::string& v) const{
     if((!this->inputs.contains(v))&&
        (!this->outputs.contains(v))&&
        (!this->parameters.contains(v))&&

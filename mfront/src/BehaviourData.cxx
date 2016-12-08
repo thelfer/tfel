@@ -368,6 +368,19 @@ namespace mfront{
     return this->getExternalStateVariables().getVariableByExternalName(v,this->glossaryNames,
 								       this->entryNames);
   } // end of BehaviourData::getExternalStateVariableDescriptionByExternalName
+
+  const VariableDescription&
+  BehaviourData::getAuxiliaryStateVariableDescription(const std::string& v) const
+  {
+    return this->getAuxiliaryStateVariables().getVariable(v);
+  } // end of BehaviourData::getAuxiliaryStateVariableDescription
+  
+  const VariableDescription&
+  BehaviourData::getAuxiliaryStateVariableDescriptionByExternalName(const std::string& v) const
+  {
+    return this->getAuxiliaryStateVariables().getVariableByExternalName(v,this->glossaryNames,
+									this->entryNames);
+  } // end of BehaviourData::getAuxiliaryStateVariableDescriptionByExternalName
   
   void
   BehaviourData::addMaterialProperty(const VariableDescription& v,
@@ -410,44 +423,38 @@ namespace mfront{
     }
   } // end of BehaviourData::addStateVariable
 
-  void
-  BehaviourData::addAuxiliaryStateVariable(const VariableDescription& v,
-					   const RegistrationStatus s)
+  void BehaviourData::addAuxiliaryStateVariable(const VariableDescription& v,
+						const RegistrationStatus s)
   {
     this->addVariable(this->auxiliaryStateVariables,v,s,false);
     this->addVariable(this->persistentVariables,v,
 		      ALREADYREGISTRED,true);
   } // end of BehaviourData::addAuxiliaryStateVariable
 
-  void
-  BehaviourData::addExternalStateVariable(const VariableDescription& v,
-					  const RegistrationStatus s)
+  void BehaviourData::addExternalStateVariable(const VariableDescription& v,
+					       const RegistrationStatus s)
   {
     this->addVariable(this->externalStateVariables,v,s,true);
   } // end of BehaviourData::addExternalStateVariable
 
-  void
-  BehaviourData::addLocalVariable(const VariableDescription& v,
-				  const RegistrationStatus s)
+  void BehaviourData::addLocalVariable(const VariableDescription& v,
+				       const RegistrationStatus s)
   {
     this->addVariable(this->localVariables,v,s,false);
   } // end of BehaviourData::addLocalVariable
 
-  void
-  BehaviourData::addParameter(const VariableDescription& v,
-			      const RegistrationStatus s)
+  void BehaviourData::addParameter(const VariableDescription& v,
+				   const RegistrationStatus s)
   {
     this->addVariable(this->parameters,v,s,false);
   } // end of BehaviourData::addParameter
 
-  bool
-  BehaviourData::hasParameter(const std::string& n) const
+  bool BehaviourData::hasParameter(const std::string& n) const
   {
     return this->parameters.contains(n);
   }
 
-  bool
-  BehaviourData::hasParameters() const
+  bool BehaviourData::hasParameters() const
   {
     return !this->parameters.empty();
   }
