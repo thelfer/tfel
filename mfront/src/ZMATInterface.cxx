@@ -1179,21 +1179,26 @@ namespace mfront
 	    out << "this->" << isv.name << ".initialize(this,\"" << isv.name 
 		<< "\",this->tsz(),1);\n"; 
 	  } else {
-	    out << "this->" << isv.name << ".initialize(this,\"" << isv.name 
-		<< "\"," << isv.arraySize << "*(this->tsz()),1);\n"; 
+	    for(unsigned short i=0;i!=isv.arraySize;++i){
+	      out << "this->" << isv.name << "[" << i << "].initialize(this,\""
+		  << isv.name << std::to_string(i)
+		  << "\",this->tsz(),1);\n";
+	    }
 	  }
 	} else if (flag==SupportedTypes::Tensor){
 	  if(isv.arraySize==1u){
-	    out << "this->" << isv.name << ".initialize(this,\"" << isv.name 
-		<< "\",this->utsz(),1);\n"; 
+	    out << "this->" << isv.name << ".initialize(this,\""
+		<< isv.name << "\",this->utsz(),1);\n"; 
 	  } else {
-	    out << "this->" << isv.name << ".initialize(this,\"" << isv.name 
-		<< "\"," << isv.arraySize << "*(this->uts()),1);\n"; 
+	    for(unsigned short i=0;i!=isv.arraySize;++i){
+	      out << "this->" << isv.name << "[" << i << "].initialize(this,\""
+		  << isv.name << std::to_string(i)
+		  << "\",this->uts(),1);\n";
+	    }
 	  }
 	} else {
-	  string msg("ZMATInterface::endTreatment : "
-		     "unsupported state variable type");
-	  throw(runtime_error(msg));
+	  throw(runtime_error("ZMATInterface::endTreatment: "
+			      "unsupported state variable type"));
 	}
       }
     }
