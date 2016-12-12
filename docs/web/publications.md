@@ -4,6 +4,7 @@
 
 ---
 nocite: |
+	@torelli_multiaxial_2016
 	@michel_3d_2016
 	@bary_thermoviscoelastic_2016
 	@asali_numerical_2016@

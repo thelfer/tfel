@@ -277,7 +277,7 @@ namespace abaqus
       const unsigned short offset  = (AbaqusTraits<BV>::elasticPropertiesOffset+
 				      AbaqusTraits<BV>::thermalExpansionPropertiesOffset);
       const unsigned short nprops  = AbaqusTraits<BV>::material_properties_nb;
-      const unsigned short NPROPS_ = offset+nprops; 
+      const unsigned short NPROPS_ = offset+nprops ==0 ? 1 : offset+nprops; 
       const bool is_defined_       = Traits::is_defined;
       //Test if the nb of properties matches Behaviour requirements
       if((NPROPS!=NPROPS_)&&is_defined_){

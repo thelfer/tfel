@@ -457,8 +457,7 @@ namespace mfront
     return res;
   }
 
-  std::string
-  DSLBase::readOnlyOneToken()
+  std::string DSLBase::readOnlyOneToken()
   {
     this->checkNotEndOfFile("DSLBase::readOnlyOneToken",
 			    "Expected a word.");
@@ -472,8 +471,7 @@ namespace mfront
     return res;
   } // end of DSLBase::readOnlyOneToken
 
-  void
-  DSLBase::treatIntegerConstant()
+  void DSLBase::treatIntegerConstant()
   {
     this->checkNotEndOfFile("DSLBase::treatIntegerConstant",
 			    "Cannot read type of static variable.");
@@ -982,15 +980,13 @@ namespace mfront
     this->appendToIncludes(this->readNextBlock(options).code);
   }
 
-  void
-  DSLBase::treatSources()
+  void DSLBase::treatSources()
   {
     CodeBlockParserOptions options;
     this->appendToSources(this->readNextBlock(options).code);
   } // end of DSLBase::treatSources(void)
 
-  void
-  DSLBase::treatMembers()
+  void DSLBase::treatMembers()
   {
     CodeBlockParserOptions options;
     options.qualifyStaticVariables = true;
@@ -998,8 +994,7 @@ namespace mfront
     this->appendToMembers(this->readNextBlock(options).code);
   }
 
-  void
-  DSLBase::treatPrivate()
+  void DSLBase::treatPrivate()
   {
     CodeBlockParserOptions options;
     options.qualifyStaticVariables = true;
@@ -1007,14 +1002,12 @@ namespace mfront
     this->appendToPrivateCode(this->readNextBlock(options).code);
   } // end of DSLBase::treatSources(void)
 
-  void
-  DSLBase::treatParser()
+  void DSLBase::treatParser()
   {
     this->readUntilEndOfInstruction();
   } // end of DSLBase::treatParser
 
-  void
-  DSLBase::treatStaticVar()
+  void DSLBase::treatStaticVar()
   {
     this->checkNotEndOfFile("DSLBase::treatStaticVar",
 			    "Cannot read type of static variable.");
@@ -1041,8 +1034,7 @@ namespace mfront
     this->addStaticVariableDescription(StaticVariableDescription(type,name,line,value.second));
   } // end of DSLBase::treatStaticVar
 
-  void
-  DSLBase::ignoreKeyWord(const std::string& key)
+  void DSLBase::ignoreKeyWord(const std::string& key)
   {
     this->checkNotEndOfFile("DSLBase::ignoreKeyWord",
 			    "error while treating keyword '"+key+"' ");
@@ -1080,61 +1072,6 @@ namespace mfront
     this->checkNotEndOfFile("DSLBase::readDouble");
     return CxxTokenizer::readDouble(this->current,this->tokens.end());
   } // end of DSLBase::readDouble
-
-  void DSLBase::handleParameter(VariableDescriptionContainer& c,
-				std::map<std::string,double>& v)
-  {
-    auto endOfTreatment=false;
-    while((this->current!=this->tokens.end())&&
-	  (!endOfTreatment)){
-      if(!this->isValidIdentifier(this->current->value)){
-	this->throwRuntimeError("DSLBase::handleParameter : ",
-				"variable given is not valid (read '"+this->current->value+"').");
-      }
-      const auto n = this->current->value;
-      const auto lineNumber = this->current->line;
-      ++(this->current);
-      this->checkNotEndOfFile("DSLBase::handleParameter");
-      if((this->current->value=="=")||
-	 (this->current->value=="{")||
-	 (this->current->value=="(")){
-	std::string ci; // closing initializer
-	if(this->current->value=="{"){
-	  ci="}";
-	}
-	if(this->current->value=="("){
-	  ci=")";
-	}
-	++(this->current);
-	this->checkNotEndOfFile("DSLBase::handleParameter");
-	const auto value = tfel::utilities::convert<double>(this->current->value);
-	++(this->current);
-	this->checkNotEndOfFile("DSLBase::handleParameter");
-	if(!v.insert({n,value}).second){
-	  this->throwRuntimeError("DSLBase::handleParameter",
-				  "default value already defined for parameter '"+n+"'");
-	}
-	if(!ci.empty()){
-	  this->readSpecifiedToken("DSLBase::handleParameter",ci);
-	}
-      }
-      if(this->current->value==","){
-	++(this->current);
-      } else if (this->current->value==";"){
-	endOfTreatment=true;
-	++(this->current);
-      } else {
-	this->throwRuntimeError("DSLBase::handleParameter",
-				", or ; expected after '"+n+"'");
-      }
-      c.push_back(VariableDescription("real",n,1u,lineNumber));
-    }
-    if(!endOfTreatment){
-      --(this->current);
-      this->throwRuntimeError("DSLBase::handleParameter",
-			      "Expected ';' before end of file");
-    }
-  } // end of DSLBase::handleParameter
 
   void DSLBase::completeTargetsDescription(){
     for(auto& l : this->td){

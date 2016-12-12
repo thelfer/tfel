@@ -19,10 +19,8 @@ dl_l.setDepth(1);
 @Input T;
 T.setGlossaryName("Temperature");
 
-@Parameter real c1;
-c1.setDefaultValue(1.699e-5);
-@Parameter real c2;
-c2.setDefaultValue(5.177e-3);
+@Parameter c1 = 1.699e-5;
+@Parameter c2 = 5.177e-3;
 
 @Function compute
 {

@@ -640,22 +640,52 @@ namespace mfront{
 
   void ModelDSLCommon::treatParameter()
   {
+    auto endOfTreatment=false;
+    while((this->current!=this->tokens.end())&&
+	  (!endOfTreatment)){
+      if(!this->isValidIdentifier(this->current->value)){
+	this->throwRuntimeError("DSLBase::handleParameter : ",
+				"variable given is not valid (read '"+this->current->value+"').");
+      }
+      const auto n = this->current->value;
+      const auto lineNumber = this->current->line;
+      VariableDescription v("real",n,1u,lineNumber);
+      ++(this->current);
+      this->checkNotEndOfFile("DSLBase::handleParameter");
+      auto value = this->readInitialisationValue<double>(n,false);
+      if(value.first){
+	v.setAttribute(VariableDescription::defaultValue,value.second,false);
+      }
+      if(this->current->value==","){
+	++(this->current);
+      } else if (this->current->value==";"){
+	endOfTreatment=true;
+	++(this->current);
+      } else {
+	this->throwRuntimeError("DSLBase::handleParameter",
+				", or ; expected after '"+n+"'");
+      }
+      this->registerMemberName(v.name);
+      this->parameters.push_back(v);
+    }
+    if(!endOfTreatment){
+      --(this->current);
+      this->throwRuntimeError("DSLBase::handleParameter",
+			      "Expected ';' before end of file");
+    }
+  } // end of ModelDSLCommon::treatParameter(void)
+
+  void ModelDSLCommon::treatLocalParameter()
+  {
     VariableDescriptionContainer gp;
     this->readVarList(gp,false);
     for(const auto& v : gp){
       this->registerMemberName(v.name);
       this->parameters.push_back(v);
     }
-  } // end of ModelDSLCommon::treatParameter(void)
-
-  void
-  ModelDSLCommon::treatLocalParameter()
-  {
-    this->treatParameter();
-  }
+  } // end of ModelDSLCommon::treatLocalParameter()
     
-  void
-  ModelDSLCommon::treatParameterMethod() 
+  void ModelDSLCommon::treatParameterMethod() 
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::treatParameterMethod: "+m));}
@@ -684,8 +714,7 @@ namespace mfront{
     this->readSpecifiedToken("ModelDSLCommon::treatParameterMethod",";");
   } // end of ModelDSLCommon::treatParameterMethod
 
-  void
-  ModelDSLCommon::treatConstantMaterialProperty()
+  void ModelDSLCommon::treatConstantMaterialProperty()
   {
     VariableDescriptionContainer cmp;
     this->readVarList(cmp,"real",false);
@@ -695,8 +724,7 @@ namespace mfront{
     }
   } // end of ModelDSLCommon::treatConstantMaterialProperty(void)
 
-  void
-  ModelDSLCommon::treatConstantMaterialPropertyMethod() 
+  void ModelDSLCommon::treatConstantMaterialPropertyMethod() 
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::treatConstantMaterialPropertyMethod: "+m));}
@@ -721,8 +749,7 @@ namespace mfront{
     this->readSpecifiedToken("ModelDSLCommon::treatConstantMaterialPropertyMethod",";");
   } // end of ModelDSLCommon::treatConstantMaterialPropertyMethod
 
-  void
-  ModelDSLCommon::readDefaultValue()
+  void ModelDSLCommon::readDefaultValue()
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::readDefaultValue: "+m));}

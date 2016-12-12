@@ -74,7 +74,7 @@ namespace mtest
     throw_if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR,
 	     "abaqus behaviours only provide the "
 	     "consistent tangent operator");
-    const AbaqusInt nprops = static_cast<AbaqusInt>(s.mprops1.size());
+    const AbaqusInt nprops = s.mprops1.empty() ? 1 : static_cast<AbaqusInt>(s.mprops1.size());
     const AbaqusInt ntens = [&h,&throw_if](){
       if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 	  (h==ModellingHypothesis::PLANESTRAIN)){

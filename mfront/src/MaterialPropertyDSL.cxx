@@ -148,14 +148,12 @@ namespace mfront{
     return msg;
   } // end of MaterialPropertyDSL::getDescription
 
-  std::string
-  MaterialPropertyDSL::getName()
+  std::string MaterialPropertyDSL::getName()
   {
     return "MaterialLaw";
   } // end of MaterialPropertyDSL::getName(void)
 
-  void
-  MaterialPropertyDSL::treatMaterial()
+  void MaterialPropertyDSL::treatMaterial()
   {
     if(!this->material.empty()){
       this->throwRuntimeError("MaterialPropertyDSL::treatMaterial",
@@ -168,8 +166,7 @@ namespace mfront{
     }
   } // end of MaterialPropertyDSL::treatMaterial
 
-  void
-  MaterialPropertyDSL::treatLibrary()
+  void MaterialPropertyDSL::treatLibrary()
   {
     if(!this->library.empty()){
       this->throwRuntimeError("MaterialPropertyDSL::treatLibrary",
@@ -183,8 +180,7 @@ namespace mfront{
     this->library = l;
   } // end of MFrontLibraryLawParser::treatLibrary
 
-  void
-  MaterialPropertyDSL::treatConstant()
+  void MaterialPropertyDSL::treatConstant()
   {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatConstant",
 			    "Cannot read variable name.");
@@ -200,30 +196,26 @@ namespace mfront{
     this->addStaticVariableDescription(StaticVariableDescription("real",name,line,value.second));
   } // end of MaterialPropertyDSL::treatConstant
 
-  void
-  MaterialPropertyDSL::treatParameter()
+  void MaterialPropertyDSL::treatParameter()
   {
-    // note : we shall use the DSLBase::handleParameter method
-    std::string parameter;
     this->checkNotEndOfFile("MaterialPropertyDSL::treatParameter",
 			    "Expected parameter name.");
-    parameter = this->current->value;
-    if(!isValidIdentifier(parameter)){
+    const auto p = this->current->value;
+    if(!isValidIdentifier(p)){
       this->throwRuntimeError("DSLBase::treatParameter",
-			      "parameter name '"+parameter+"' is not valid.");
+			      "parameter name '"+p+"' is not valid.");
     }
     ++(this->current);
-    const auto value = this->readInitialisationValue<double>(parameter,false);
+    const auto value = this->readInitialisationValue<double>(p,false);
     if(value.first){
-      this->parametersValues.insert(make_pair(parameter,value.second));
+      this->parametersValues.insert({p,value.second});
     }
     this->readSpecifiedToken("MaterialPropertyDSL::treatParameter",";");
-    this->reserveName(parameter);
-    this->parameters.push_back(parameter);
+    this->reserveName(p);
+    this->parameters.push_back(p);
   } // MaterialPropertyDSL::treatParameter
 
-  void
-  MaterialPropertyDSL::treatLaw()
+  void MaterialPropertyDSL::treatLaw()
   {
     if(!this->className.empty()){
       this->throwRuntimeError("MaterialPropertyDSL::treatLaw",
@@ -266,13 +258,11 @@ namespace mfront{
     }
   } // end of MaterialPropertyDSL::setInterface
 
-  void
-  MaterialPropertyDSL::treatInterface() 
+  void MaterialPropertyDSL::treatInterface() 
   {
-    using namespace tfel::utilities;
     this->checkNotEndOfFile("MaterialPropertyDSL::treatInterface",
 			    "Expected interface name.");
-    if(this->current->flag==Token::String){
+    if(this->current->flag==tfel::utilities::Token::String){
       this->addInterface(this->current->value.substr(1,this->current->value.size()-2));
     } else {
       this->addInterface(this->current->value);
@@ -281,8 +271,7 @@ namespace mfront{
     this->readSpecifiedToken("MaterialPropertyDSL::treatInterface",";");
   } // end of MaterialPropertyDSL::treatInterface
 
-  void
-  MaterialPropertyDSL::treatFunction()
+  void MaterialPropertyDSL::treatFunction()
   {
     using namespace std;
     unsigned int openedBrackets = 0;
@@ -429,8 +418,7 @@ namespace mfront{
     }
   }
 
-  void
-  MaterialPropertyDSL::treatMethod() 
+  void MaterialPropertyDSL::treatMethod() 
   {
     using namespace std;
     using namespace tfel::utilities;
@@ -543,26 +531,23 @@ namespace mfront{
     this->readSpecifiedToken("MaterialPropertyDSL::treatMethod",";");
   } // end of MaterialPropertyDSL::treatMethod
 
-  void
-  MaterialPropertyDSL::importFile(const std::string& fileName_,
-				  const std::vector<std::string>& ecmds,
-				  const std::map<std::string,std::string>& s) 
+  void MaterialPropertyDSL::importFile(const std::string& fileName_,
+				       const std::vector<std::string>& ecmds,
+				       const std::map<std::string,std::string>& s) 
   {
     this->fileName = fileName_;
     this->openFile(this->fileName,ecmds,s);
     this->analyse();
   }
 
-  void
-  MaterialPropertyDSL::analyseString(const std::string& s)
+  void MaterialPropertyDSL::analyseString(const std::string& s)
   {
     this->fileName = "user defined string";
     this->parseString(s);
     this->analyse();
   }
   
-  void
-  MaterialPropertyDSL::analyse()
+  void MaterialPropertyDSL::analyse()
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("MaterialPropertyDSL::analyse: "+m));}
@@ -622,10 +607,9 @@ namespace mfront{
     }
   }
 
-  void
-  MaterialPropertyDSL::analyseFile(const std::string& fileName_,
-				   const std::vector<std::string>& ecmds,
-				   const std::map<std::string,std::string>& s) 
+  void MaterialPropertyDSL::analyseFile(const std::string& fileName_,
+					const std::vector<std::string>& ecmds,
+					const std::map<std::string,std::string>& s) 
   {
     this->importFile(fileName_,ecmds,s);
     for(const auto & i : this->interfaces){
@@ -645,8 +629,7 @@ namespace mfront{
     return this->reservedNames.count(n)!=0;
   }
   
-  void
-  MaterialPropertyDSL::generateOutputFiles()
+  void MaterialPropertyDSL::generateOutputFiles()
   {
     using namespace tfel::system;
     auto throw_if = [](const bool b,const std::string& m){
@@ -667,8 +650,7 @@ namespace mfront{
     }
   } // end of MaterialPropertyDSL::generateOutputFiles
 
-  void
-  MaterialPropertyDSL::treatInput()
+  void MaterialPropertyDSL::treatInput()
   {
     VariableDescriptionContainer ninputs;
     this->readVarList(ninputs,"real",false);
@@ -678,8 +660,7 @@ namespace mfront{
     }
   } // end of MaterialPropertyDSL::treatInput
 
-  void
-  MaterialPropertyDSL::treatOutput()
+  void MaterialPropertyDSL::treatOutput()
   {
     if(!this->output.empty()){
       this->throwRuntimeError("MaterialPropertyDSL::treatOutput",
@@ -689,14 +670,12 @@ namespace mfront{
     this->reserveName(this->output);
   } // end of MaterialPropertyDSL::treatOutput
 
-  void
-  MaterialPropertyDSL::treatBounds()
+  void MaterialPropertyDSL::treatBounds()
   {
     this->registerBounds(this->bounds);
   } // end of MaterialPropertyDSL::treatBounds
 
-  void
-  MaterialPropertyDSL::treatPhysicalBounds()
+  void MaterialPropertyDSL::treatPhysicalBounds()
   {
     this->registerBounds(this->physicalBounds);
   } // end of MaterialPropertyDSL::treatPhysicalBounds

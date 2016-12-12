@@ -25,14 +25,13 @@ namespace mfront{
   DSLBase::readInitialisationValue(const std::string& n,
 				      const bool b)
   {
-    using namespace std;
-    pair<bool,T> value;
+    std::pair<bool,T> value;
     this->checkNotEndOfFile("DSLBase::readInitialisationValue",
 			    "unexpected end of file");
     if((this->current->value=="=")||
        (this->current->value=="{")||
        (this->current->value=="(")){
-      string ci; // closing initializer
+      std::string ci; // closing initializer
       if(this->current->value=="{"){
 	ci="}";
       }
@@ -42,7 +41,7 @@ namespace mfront{
       this->readSpecifiedToken("DSLBase::readInitialisationValue","=");
       this->checkNotEndOfFile("DSLBase::readInitialisationValue",
 			      "Expected to read the value of variable '"+n+"'");
-      istringstream tmp(this->current->value);
+      std::istringstream tmp(this->current->value);
       tmp >> value.second;
       if(!tmp&&(!tmp.eof())){
 	this->throwRuntimeError("DSLBase::readInitialisationValue",
@@ -55,9 +54,9 @@ namespace mfront{
       value.first=true;
     } else {
       if(b){
-	string msg("DSLBase::readInitialisationValue : ");
-	msg += "expected '=', '{', '(' token, read '"+current->value+"'";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("DSLBase::readInitialisationValue: "
+				 "expected '=', '{', '(' token, "
+				 "read '"+current->value+"'"));
       }
       value.first=false;
     }

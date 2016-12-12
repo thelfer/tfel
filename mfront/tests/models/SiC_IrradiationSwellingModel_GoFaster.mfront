@@ -9,8 +9,7 @@
  "> 258-263 (198) 7-19"
 }
 
-@Parameter real Phi0;
-Phi0.setDefaultValue(0.3396e25);
+@Parameter Phi0 = 0.3396e25;
 
 @Output s;
 s.setGlossaryName("IrradiationInducedSwelling");

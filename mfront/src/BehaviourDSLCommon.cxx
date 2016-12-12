@@ -1319,8 +1319,7 @@ namespace mfront{
     this->mb.setModellingHypotheses(hypotheses);
   } // end of BehaviourDSLCommon::treatModellingHypotheses
 
-  void
-  BehaviourDSLCommon::treatUsableInPurelyImplicitResolution()
+  void BehaviourDSLCommon::treatUsableInPurelyImplicitResolution()
   {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->readSpecifiedToken("BehaviourDSLCommon::treatUsableInPurelyImplicitResolution",";");
@@ -1332,8 +1331,7 @@ namespace mfront{
     this->mb.setUsableInPurelyImplicitResolution(h,true);
   } // end of BehaviourDSLCommon::treatUsableInPurelyImplicitResolution
 
-  void
-  BehaviourDSLCommon::treatParameterMethod(const Hypothesis h)
+  void BehaviourDSLCommon::treatParameterMethod(const Hypothesis h)
   {
     using namespace std;
     using namespace tfel::utilities;

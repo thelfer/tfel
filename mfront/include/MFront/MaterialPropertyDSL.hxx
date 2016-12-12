@@ -36,17 +36,17 @@ namespace mfront{
       protected MaterialPropertyDescription
   {
     //! \return the target of the dsl
-    virtual DSLTarget getTargetType(void) const override final;
+    virtual DSLTarget getTargetType() const override final;
     /*!
      * return the name of the parser
      */
     static std::string 
-    getName(void);
+    getName();
     /*!
      * return a description of the parser
      */
     static std::string
-    getDescription(void);
+    getDescription();
     /*!
      * default constructor
      */
@@ -86,17 +86,17 @@ namespace mfront{
 			    const std::map<std::string,std::string>&) override;
     
     virtual const MaterialPropertyDescription&
-    getMaterialPropertyDescription(void) const;
+    getMaterialPropertyDescription() const;
 
     //! destructor
     virtual ~MaterialPropertyDSL();
 
   protected:
 
-    typedef void (MaterialPropertyDSL::* MemberFuncPtr)(void);
+    typedef void (MaterialPropertyDSL::* MemberFuncPtr)();
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
     //! treat an unknown keyword
-    virtual void treatUnknownKeyword(void) override;
+    virtual void treatUnknownKeyword() override;
     /*!
      * \brief register a name.
      * \param[in] n : name
@@ -110,11 +110,11 @@ namespace mfront{
     /*!
      * method called by the analyseFile and analyseString method
      */
-    virtual void analyse(void);
+    virtual void analyse();
     /*!
      * \return the name of the generated class
      */
-    virtual std::string getClassName(void) const override;
+    virtual std::string getClassName() const override;
     /*!
      * \brief add a material law
      * \param[in] m : added material law name
@@ -140,7 +140,7 @@ namespace mfront{
      * \brief write the output files.
      * \note this shall be called after the analyseFile method.
      */
-    virtual void generateOutputFiles(void) override;
+    virtual void generateOutputFiles() override;
     /*!
      * \brief add a static variable description
      * \param[in] v : variable description
@@ -148,57 +148,39 @@ namespace mfront{
     virtual void
     addStaticVariableDescription(const StaticVariableDescription&) override;
 
-    void
-    addInterface(const std::string&);
-    /*!
-     * treat the material keyword
-     */
-    virtual void
-    treatMaterial(void);
-    /*!
-     * treat the library keyword
-     */
-    virtual void
-    treatLibrary(void);
-
-    void
-    treatOutput(void);
-
-    void
-    treatInput(void);
-
-    void
-    treatLaw(void);
-
-    void
-    treatFunction(void);
-
+    virtual void addInterface(const std::string&);
+    //! treat the @Material keyword
+    virtual void treatMaterial();
+    //! treat the @Library keyword
+    virtual void treatLibrary();
+    //! treat the @Output keyword
+    virtual void treatOutput();
+    //! treat the @Input keyword
+    virtual void treatInput();
+    //! treat the @Law keyword
+    virtual void treatLaw();
+    //! treat the @Function keyword
+    virtual void treatFunction();
     /*!
      * treat the setGlossaryName and the setEntryName method for
      * inputs or output.
      */
-    void
-    treatMethod(void);
+    virtual void treatMethod();
+    //! treat the @Interface keyword
+    virtual void treatInterface();
+    //! treat the @Parameter keyword
+    virtual void treatParameter();
+    //! treat the @Constant keyword
+    virtual void treatConstant();
+    //! treat the @Bounds keyword
+    virtual void treatBounds();
+    //! treat the @PhysicalBounds keyword
+    virtual void treatPhysicalBounds();
 
-    void
-    treatInterface(void);
-
-    void
-    treatParameter(void);
-
-    void
-    treatConstant(void);
-
-    void
-    treatBounds(void);
-
-    void
-    treatPhysicalBounds(void);
-
-    void
+    virtual void
     registerBounds(std::vector<VariableBoundsDescription>&);
     
-    void
+    virtual void
     registerNewCallBack(const std::string&,const MemberFuncPtr);
     /*!
      * list of registred interfaces
@@ -213,7 +195,6 @@ namespace mfront{
      * map of callbacks used during the file interpretation
      */
     CallBackContainer callBacks;
-
     /*!
      * a temporary object used to store the name of the variable on
      * which a method is called
