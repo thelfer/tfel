@@ -103,13 +103,8 @@ namespace tfel{
         tfel::typetraits::IsFundamentalNumericType<T>::cond,
 	unsigned short
 	>::type
-      find_roots(T& x1,
-		 T& x2,
-		 T& x3,
-		 const T a3,
-		 const T a2,
-		 const T a1,
-		 const T a0)
+      find_roots(T& x1,T& x2,T& x3,
+		 const T a3,const T a2,const T a1,const T a0)
       {	
 	TFEL_CONSTEXPR const auto C_1_2       = T{1}/T{2};
 	TFEL_CONSTEXPR const auto C_1_3       = T{1}/T{3};
@@ -225,30 +220,16 @@ namespace tfel{
         tfel::typetraits::IsFundamentalNumericType<T>::cond,
 	unsigned short
 	>::type
-      exe(T& x1,
-	  T& x2,
-	  T& x3,
-	  const T a3,
-	  const T a2,
-	  const T a1,
-	  const T a0,
+      exe(T& x1,T& x2,T& x3,
+	  const T a3,const T a2,const T a1,const T a0,
 	  const bool b = false)
       {
-	const unsigned short nb = CubicRoots::find_roots(x1,x2,x3,a3,a2,a1,a0);
+	const auto nb = CubicRoots::find_roots(x1,x2,x3,a3,a2,a1,a0);
 	if((nb>0)&&(b)){
-	  T tmp3 = x1;
-	  if(improve_x(a3,a2,a1,a0,x1)==false){
-	    x1 = tmp3;
-	  }
+	  CubicRoots::improve(x1,a3,a2,a1,a0);
 	  if(nb==3u){
-	    tmp3 = x2;
-	    if(improve_x(a3,a2,a1,a0,x2)==false){
-	      x2 = tmp3;
-	    }
-	    tmp3 = x3;
-	    if(improve_x(a3,a2,a1,a0,x3)==false){
-	      x3 = tmp3;
-	    }
+	    CubicRoots::improve(x2,a3,a2,a1,a0);
+	    CubicRoots::improve(x3,a3,a2,a1,a0);
 	  }
 	}
 	return nb;
@@ -257,31 +238,38 @@ namespace tfel{
     protected:
 
       template<typename T>
-      static bool improve_x(const T a3, const T a2, const T a1, const T a0, T& x)
+      static void improve(T& vp, const T a3, const T a2, const T a1, const T a0)
       {
-	T df = T(3)*a3*x*x+T(2)*a2*x+a1;
-	T f  = a3*x*x*x+a2*x*x+a1*x+a0;
-	T x1;
-	const T prec = 10*std::max(std::numeric_limits<T>::min(),
-				   std::abs(x)*std::numeric_limits<T>::epsilon());
-	const unsigned short iter_max = 50;
-	unsigned short iter;
-	if(std::abs(df)<100*std::numeric_limits<T>::min()){
-	  return false;
+	using integer = unsigned short;
+	auto f  = [&a3,&a2,&a1,&a0](const T x){
+	  return ((a3*x+a2)*x+a1)*x+a0;
+	};
+	auto df = [&a3,&a2,&a1,&a0](const T x){
+	  return (3*a3*x+2*a2)*x+a1;
+	};
+	TFEL_CONSTEXPR const auto emin = std::numeric_limits<T>::min();
+	TFEL_CONSTEXPR const auto eps  = std::numeric_limits<T>::epsilon();
+	const auto prec = 10*std::max(emin,std::abs(vp)*eps);
+	auto x   = vp;
+	auto dfv = df(x);
+	constexpr const integer iter_max = 50;
+	if(std::abs(dfv)<100*emin){
+	  return;
 	}
-	x1   = x-f/df;
-	iter = 0;
+	auto x1 = x-f(x)/dfv;
+	auto iter = integer(0);
 	while((std::abs(x1-x)>prec)&&(iter<iter_max)){
 	  x  = x1;
-	  df = T(3)*a3*x*x+T(2)*a2*x+a1;
-	  f  = a3*x*x*x+a2*x*x+a1*x+a0;
-	  if(std::abs(df)<100*std::numeric_limits<T>::min()){
-	    return false;
+	  dfv = df(x);
+	  if(std::abs(dfv)<100*emin){
+	    return;
 	  }
-	  x1 = x-f/df;
+	  x1 = x-f(x)/dfv;
 	  ++iter;
 	}
-	return true;
+	if(std::abs(f(x))<std::abs(f(vp))){
+	  vp = x;
+	}
       }
 
     };

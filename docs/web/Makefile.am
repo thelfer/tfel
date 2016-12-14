@@ -37,6 +37,8 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./publications.md					   \
 	   ./CONTRIBUTING.md					   \
 	   ./release-notes.md					   \
+	   ./release-notes-3.0.md				   \
+	   ./pandoc-crossref.yaml                                  \
 	   ./TODO.md						   \
 	   ./BehaviourBricks.md				           \
 	   ./DefaultCZMDSL-keywords.md				   \
@@ -118,10 +120,13 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/AbaqusFLD.pdf                                     \
 	   ./img/BrittleFracturePhaseField.png                     \
 	   ./img/epx.png                                           \
+	   ./img/epx-bars.png                                      \
 	   ./img/UnilateralMazars.svg                              \
 	   ./img/FiniteStrainTangentOperatorConvertion.svg         \
 	   ./img/VeRCoRs.png                                       \
 	   ./img/AbaqusRotSigTest.png                              \
+	   ./img/FissurationPastille.png                           \
+	   ./img/anderson-withwithoutacceleration.svg              \
 	   ./media/epx1.mp4                                        \
 	   ./media/epx2.mp4                                        \
 	   ./media/abaqus-explicit.mp4                             \

@@ -1218,7 +1218,7 @@ namespace mfront{
 	    << "stateNew[i+" << v.second.getValueForDimension(2) << "*(*nblock)];\n"
 	    << "U1[2] = std::sqrt(1+2*ezz_new);\n"
 	    << "//strain update\n"
-	    << "*(strainInc+i+2*(*(nblock))) = std::log(U1[2]/U0[2]);\n";
+	    << "*(strainInc+i+2*(*(nblock))) = std::log1p(U1[2]/U0[2]-1);\n";
       } else {
 	// no axial strain
 	out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
@@ -1303,7 +1303,7 @@ namespace mfront{
 	return;
       }
     }
-    out << "const auto  f = [](const " << t << " x){return std::log(x)/2;};\n"
+    out << "const auto  f = [](const " << t << " x){return std::log1p(x-1)/2;};\n"
 	<< "const auto df = [](const " << t << " x){return 1/(2*x);};\n"
 	<< "auto integrate = [&](const int i){\n";
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),ivoffset);
@@ -1376,12 +1376,12 @@ namespace mfront{
 	  << "  std::cerr << \"" << mb.getClassName() << ": stress free expansion is assumed to be diagonal\" << std::endl;\n"
 	  << "  std::exit(EXIT_FAILURE);\n"
 	  << "}\n"
-	  << "e[0] -=std::log(1+dl0_l0[0]);\n"
-	  << "de[0]-=std::log((1+dl1_l0[0])/(1+dl0_l0[0]));\n"
-	  << "e[1] -=std::log(1+dl0_l0[1]);\n"
-	  << "de[1]-=std::log((1+dl1_l0[1])/(1+dl0_l0[1]));\n"
-	  << "e[2] -=std::log(1+dl0_l0[2]);\n"
-	  << "de[2]-=std::log((1+dl1_l0[2])/(1+dl0_l0[2]));\n"
+	  << "e[0] -=std::log1p(dl0_l0[0]);\n"
+	  << "de[0]-=std::log1p((dl1_l0[0]-dl0_l0[0])/(1+dl0_l0[0]));\n"
+	  << "e[1] -=std::log1p(dl0_l0[1]);\n"
+	  << "de[1]-=std::log1p((dl1_l0[1]-dl0_l0[1])/(1+dl0_l0[1]));\n"
+	  << "e[2] -=std::log1p(dl0_l0[2]);\n"
+	  << "de[2]-=std::log1p((dl1_l0[2]-dl0_l0[2])/(1+dl0_l0[2]));\n"
 	  << "};\n";
     } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
       out << "auto sfeh = [](tfel::math::stensor<3u,"<< t<< ">& e,\n"
@@ -1397,12 +1397,12 @@ namespace mfront{
 	  << "  std::cerr << \"" << mb.getClassName() << ": stress free expansion is assumed to be diagonal\" << std::endl;\n"
 	  << "  std::exit(EXIT_FAILURE);\n"
 	  << "}\n"
-	  << "e[0] -=std::log(1+dl0_l0[0]);\n"
-	  << "de[0]-=std::log((1+dl1_l0[0])/(1+dl0_l0[0]));\n"
-	  << "e[1] -=std::log(1+dl0_l0[1]);\n"
-	  << "de[1]-=std::log((1+dl1_l0[1])/(1+dl0_l0[1]));\n"
-	  << "e[2] -=std::log(1+dl0_l0[2]);\n"
-	  << "de[2]-=std::log((1+dl1_l0[2])/(1+dl0_l0[2]));\n"
+	  << "e[0] -=std::log1p(dl0_l0[0]);\n"
+	  << "de[0]-=std::log1p((dl1_l0[0]-dl0_l0[0])/(1+dl0_l0[0]));\n"
+	  << "e[1] -=std::log1p(dl0_l0[1]);\n"
+	  << "de[1]-=std::log1p((dl1_l0[1]-dl0_l0[1])/(1+dl0_l0[1]));\n"
+	  << "e[2] -=std::log1p(dl0_l0[2]);\n"
+	  << "de[2]-=std::log1p((dl1_l0[2]-dl0_l0[2])/(1+dl0_l0[2]));\n"
 	  << "};\n";
     } else {
       throw_unsupported_hypothesis();

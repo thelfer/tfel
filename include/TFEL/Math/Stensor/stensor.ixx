@@ -964,7 +964,7 @@ namespace tfel{
     // computeEigenValues
     template<unsigned short N,typename T>
     void stensor<N,T>::computeEigenValues(T& vp1,T& vp2,T& vp3,
-						  const bool b) const 
+					  const bool b) const 
     {
       TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename tfel::typetraits::BaseType<T>::type>::cond);
       TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<typename tfel::typetraits::BaseType<T>::type>::cond);

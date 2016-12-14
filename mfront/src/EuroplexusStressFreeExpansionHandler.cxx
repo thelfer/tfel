@@ -64,12 +64,12 @@ namespace epx
 	throw(std::runtime_error("EuroplexusLogarithmicStrainStressFreeExpansionHandler: "
 				 "stress free expansion is assumed diagonal"));
       }
-      se[0]  -= std::log(1+se0[0]);
-      se[1]  -= std::log(1+se0[1]);
-      se[2]  -= std::log(1+se0[2]);
-      sde[0] -= std::log((1+se1[0])/(1+se0[0]));
-      sde[1] -= std::log((1+se1[1])/(1+se0[1]));
-      sde[2] -= std::log((1+se1[2])/(1+se0[2]));
+      se[0]  -= std::log1p(se0[0]);
+      se[1]  -= std::log1p(se0[1]);
+      se[2]  -= std::log1p(se0[2]);
+      sde[0] -= std::log1p((se1[0]-se0[0])/(1+se0[0]));
+      sde[1] -= std::log1p((se1[1]-se0[1])/(1+se0[1]));
+      sde[2] -= std::log1p((se1[2]-se0[2])/(1+se0[2]));
     } else {
       tfel::math::StensorView<2u,EuroplexusReal> se(e);
       tfel::math::StensorView<2u,EuroplexusReal> sde(de);
@@ -80,12 +80,12 @@ namespace epx
 	throw(std::runtime_error("EuroplexusLogarithmicStrainStressFreeExpansionHandler: "
 				 "stress free expansion is assumed diagonal"));
       }
-      se[0]  -= std::log(1+se0[0]);
-      se[1]  -= std::log(1+se0[1]);
-      se[2]  -= std::log(1+se0[2]);
-      sde[0] -= std::log((1+se1[0])/(1+se0[0]));
-      sde[1] -= std::log((1+se1[1])/(1+se0[1]));
-      sde[2] -= std::log((1+se1[2])/(1+se0[2]));
+      se[0]  -= std::log1p(se0[0]);
+      se[1]  -= std::log1p(se0[1]);
+      se[2]  -= std::log1p(se0[2]);
+      sde[0] -= std::log1p((se1[0]-se0[0])/(1+se0[0]));
+      sde[1] -= std::log1p((se1[1]-se0[1])/(1+se0[1]));
+      sde[2] -= std::log1p((se1[2]-se0[2])/(1+se0[2]));
     }
   } // end of EuroplexusLogarithmicStrainStrainStressFreeExpansionHandler
   

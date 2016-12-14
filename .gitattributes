@@ -149,6 +149,7 @@ docs/gallery/behaviours/plasticity/CMakeLists.txt -text
 docs/gallery/behaviours/plasticity/IsotropicLinearHardeningPlasticity.mfront -text
 docs/gallery/behaviours/plasticity/IsotropicLinearKinematicHardeningPlasticity.mfront -text
 docs/gallery/behaviours/plasticity/Makefile.am -text
+docs/gallery/behaviours/plasticity/OrthotropicLinearHardeningPlasticity.mfront -text
 docs/gallery/behaviours/viscoelasticity/CMakeLists.txt -text
 docs/gallery/behaviours/viscoelasticity/GeneralizedMaxwell.mfront -text
 docs/gallery/behaviours/viscoelasticity/Makefile.am -text
@@ -1065,6 +1066,7 @@ docs/web/img/CastemWebSite.xcf -text
 docs/web/img/CodeAster2015Flyer.png -text
 docs/web/img/FiniteStrainTangentOperatorConvertion.dot -text
 docs/web/img/FiniteStrainTangentOperatorConvertion.svg -text
+docs/web/img/FissurationPastille.png -text
 docs/web/img/FuelRod-ddif2.png -text
 docs/web/img/FuelRod-ddif2.xcf -text
 docs/web/img/HureCast3M2014.png -text
@@ -1094,10 +1096,12 @@ docs/web/img/Win64.png -text
 docs/web/img/Win64.xcf -text
 docs/web/img/abaqus-isotropichardening1.png -text
 docs/web/img/abaqus-isotropichardening2.png -text
+docs/web/img/anderson-withwithoutacceleration.svg -text
 docs/web/img/arrows.png -text
 docs/web/img/background.svg -text
 docs/web/img/cyrano-mfront.eps -text
 docs/web/img/cyrano-mfront.svg -text
+docs/web/img/epx-bars.png -text
 docs/web/img/epx.png -text
 docs/web/img/hsnv125.png -text
 docs/web/img/hsnv125.xcf -text
@@ -1137,8 +1141,10 @@ docs/web/mtest-python.md -text
 docs/web/mtest.md -text
 docs/web/news.md -text
 docs/web/packages.md -text
+docs/web/pandoc-crossref.yaml -text
 docs/web/parameters.md -text
 docs/web/publications.md -text
+docs/web/release-notes-3.0.md -text
 docs/web/release-notes.md -text
 docs/web/robots.txt -text
 docs/web/svn.md -text

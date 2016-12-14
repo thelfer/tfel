@@ -124,10 +124,10 @@ namespace epx{
     TFEL_CONSTEXPR const EuroplexusReal eps = 100*std::numeric_limits<EuroplexusReal>::epsilon();
     using stensor = tfel::math::stensor<N,EuroplexusReal>;
     using tensor  = tfel::math::tensor<N,EuroplexusReal>;
-    const auto f  = [](const EuroplexusReal x){return std::log(1+x)/2;};
-    const auto df = [](const EuroplexusReal x){return 1/(2*(1+x));};
-    const stensor C = computeRightCauchyGreenTensor(tensor(F))-stensor::Id();
-    std::tie(e,p)   = C.computeIsotropicFunctionAndDerivative(f,df,eps);
+    const auto f  = [](const EuroplexusReal x){return std::log1p(x-1)/2;};
+    const auto df = [](const EuroplexusReal x){return 1/(2*x);};
+    const auto C  = computeRightCauchyGreenTensor(tensor(F));
+    std::tie(e,p) = C.computeIsotropicFunctionAndDerivative(f,df,eps);
   } // end of doComputeLogarithmicStrainAndDerivative
 
   void

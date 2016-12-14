@@ -21,6 +21,7 @@
 
 - [IsotropicLinearHardeningPlasticity](gallery/plasticity/IsotropicLinearHardeningPlasticity.mfront)
 - [IsotropicLinearKinematicHardeningPlasticity](gallery/plasticity/IsotropicLinearKinematicHardeningPlasticity.mfront)
+- [OrthotropicLinearHardeningPlasticity](gallery/plasticity/OrthotropicLinearHardeningPlasticity.mfront)
 
 ## Viscoplasticity
 

@@ -266,8 +266,7 @@ namespace tfel{
 	  return true;
 	}
 
-	template<typename VectorType,
-		 typename T>
+	template<typename VectorType,typename T>
 	static bool computeEigenVector(VectorType& v,const T* const src,const T vp)
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename VectorTraits<VectorType>::NumType>::cond);

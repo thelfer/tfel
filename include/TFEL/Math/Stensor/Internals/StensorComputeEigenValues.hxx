@@ -66,10 +66,10 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  const T one_half = T(1)/T(2);
-	  T tr    = v[0] + v[1];
-	  T tmp   = v[0] - v[1];
-	  T delta = tmp*tmp*0.25+(v[3]*v[3])*one_half;
+	  TFEL_CONSTEXPR const auto one_half = T(1)/T(2);
+	  const auto tr    = v[0] + v[1];
+	  const auto tmp   = v[0] - v[1];
+	  const auto delta = (tmp*tmp*one_half+(v[3]*v[3]))*one_half;
 	  vp1 = one_half*tr+std::sqrt(delta); 
 	  vp2 = one_half*tr-std::sqrt(delta); 
 	  vp3 = *(v+2);
@@ -100,7 +100,7 @@ namespace tfel{
 	  constexpr auto p2 = T{ 0};
 	  const T p1 =  one_half*(s2[5]*s2[5]+s2[4]*s2[4]+s2[3]*s2[3])-(s2[0]*(s2[2]+s2[1])+s2[1]*s2[2]);
 	  const T p0 = -one_half*(s2[0]*s2[5]*s2[5]+s2[1]*s2[4]*s2[4]+s2[2]*s2[3]*s2[3])+icste*(s2[3]*s2[4]*s2[5])+s2[0]*s2[1]*s2[2];
-	  const unsigned short nb = CubicRoots::exe(vp1,vp2,vp3,p3,p2,p1,p0,b);
+	  const auto nb = CubicRoots::exe(vp1,vp2,vp3,p3,p2,p1,p0,b);
 	  if(nb==0u){
 	    throw(StensorEigenValuesComputationFailureException());
 	  } else if(nb==1u){

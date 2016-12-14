@@ -42,3 +42,27 @@ this project under specific licensing conditions.
 
 Copyright (C) 2006-2013 CEA/DEN. All rights reserved. 
 Copyright (C) 2014-2015 CEA/DEN, EDF R&D. All rights reserved. 
+
+# How to cite `TFEL/MFront`
+
+If you use `TFEL/MFront` in your research, please cite the following
+paper:
+
+~~~~~~~~~
+@article{helfer_introducing_2015,
+	title = {Introducing the open-source mfront code generator: Application to mechanical behaviours and material knowledge management within the {PLEIADES} fuel element modelling platform},
+	volume = {70},
+	issn = {0898-1221},
+	url = {http://www.sciencedirect.com/science/article/pii/S0898122115003132},
+	doi = {10.1016/j.camwa.2015.06.027},
+	shorttitle = {Introducing the open-source mfront code generator},
+	pages = {994--1023},
+	number = {5},
+	journaltitle = {Computers \& Mathematics with Applications},
+	shortjournal = {Computers \& Mathematics with Applications},
+	author = {Helfer, Thomas and Michel, Bruno and Proix, Jean-Michel and Salvo, Maxime and Sercombe, Jérôme and Casella, Michel},
+	urldate = {2016-09-22},
+	date = {2015-09},
+	keywords = {Domain specific languages, Implicit integration schemes, Material knowledge management, Mechanical behaviour integration, Single crystal plasticity},
+}
+~~~~~~~~~

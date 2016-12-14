@@ -1653,12 +1653,12 @@ namespace mfront{
 	<< "*KINC=-7;\n"
 	<< "return;\n"
 	<< "}\n";
-    out << "eto[0]=std::log(1+*STRAN);\n";
-    out << "eto[1]=std::log(1+*(STRAN+1));\n";
-    out << "eto[2]=std::log(1+*(STRAN+2));\n";
-    out << "deto[0]=std::log(1+*STRAN+*DSTRAN)-eto[0];\n";
-    out << "deto[1]=std::log(1+*(STRAN+1)+*(DSTRAN+1))-eto[1];\n";
-    out << "deto[2]=std::log(1+*(STRAN+2)+*(DSTRAN+2))-eto[2];\n";
+    out << "eto[0]=std::log1p(*STRAN);\n";
+    out << "eto[1]=std::log1p(*(STRAN+1));\n";
+    out << "eto[2]=std::log1p(*(STRAN+2));\n";
+    out << "deto[0]=std::log1p(*STRAN+*DSTRAN)-eto[0];\n";
+    out << "deto[1]=std::log1p(*(STRAN+1)+*(DSTRAN+1))-eto[1];\n";
+    out << "deto[2]=std::log1p(*(STRAN+2)+*(DSTRAN+2))-eto[2];\n";
     out << "s[0]=(*STRESS)*(1+*STRAN);\n";
     out << "s[1]=(*(STRESS+1))*(1+*(STRAN+1));\n";
     out << "s[2]=(*(STRESS+2))*(1+*(STRAN+2));\n";

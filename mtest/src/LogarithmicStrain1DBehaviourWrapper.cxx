@@ -252,20 +252,27 @@ namespace mtest{
 								 const CurrentState& s,
 								 const StiffnessMatrixType ktype) const
   {
+    const auto eps = std::numeric_limits<real>::epsilon();
     auto cs=s;
     // logarithmic strains
-    cs.e0[0] = std::log(1+s.e0[0]);
-    cs.e0[1] = std::log(1+s.e0[1]);
-    cs.e0[2] = std::log(1+s.e0[2]);
+    if((1+s.e0[0]<eps)||(1+s.e0[1]<eps)||(1+s.e0[2]<eps)||
+       (1+s.e1[0]<eps)||(1+s.e1[1]<eps)||(1+s.e1[2]<eps)||
+       (1+s.e_th0[0]<eps)||(1+s.e_th0[1]<eps)||(1+s.e_th0[2]<eps)||
+       (1+s.e_th1[0]<eps)||(1+s.e_th1[1]<eps)||(1+s.e_th1[2]<eps)){
+      return {false,0.5};
+    }
+    cs.e0[0] = std::log1p(s.e0[0]);
+    cs.e0[1] = std::log1p(s.e0[1]);
+    cs.e0[2] = std::log1p(s.e0[2]);
     cs.e1[0] = cs.e0[0];
     cs.e1[1] = cs.e0[1];
     cs.e1[2] = cs.e0[2];
-    cs.e_th0[0] = std::log(1+s.e_th0[0]);
-    cs.e_th0[1] = std::log(1+s.e_th0[1]);
-    cs.e_th0[2] = std::log(1+s.e_th0[2]);
-    cs.e_th1[0] = std::log(1+s.e_th1[0]);
-    cs.e_th1[1] = std::log(1+s.e_th1[1]);
-    cs.e_th1[2] = std::log(1+s.e_th1[2]);
+    cs.e_th0[0] = std::log1p(s.e_th0[0]);
+    cs.e_th0[1] = std::log1p(s.e_th0[1]);
+    cs.e_th0[2] = std::log1p(s.e_th0[2]);
+    cs.e_th1[0] = std::log1p(s.e_th1[0]);
+    cs.e_th1[1] = std::log1p(s.e_th1[1]);
+    cs.e_th1[2] = std::log1p(s.e_th1[2]);
     // stresses
     cs.s0[0] = s.s0[0]*(1+s.e0[0]);
     cs.s0[1] = s.s0[1]*(1+s.e0[1]);
@@ -292,6 +299,14 @@ namespace mtest{
 						 const real dt,
 						 const StiffnessMatrixType ktype) const
   {
+    const auto eps = std::numeric_limits<real>::epsilon();
+    // logarithmic strains
+    if((1+s.e0[0]<eps)||(1+s.e0[1]<eps)||(1+s.e0[2]<eps)||
+       (1+s.e1[0]<eps)||(1+s.e1[1]<eps)||(1+s.e1[2]<eps)||
+       (1+s.e_th0[0]<eps)||(1+s.e_th0[1]<eps)||(1+s.e_th0[2]<eps)||
+       (1+s.e_th1[0]<eps)||(1+s.e_th1[1]<eps)||(1+s.e_th1[2]<eps)){
+      return {false,0.5};
+    }
     real e0[3];
     real e1[3];
     real e_th0[3];
@@ -301,12 +316,12 @@ namespace mtest{
     tfel::fsalgo::copy<3u>::exe(s.e0.begin(),e0);
     tfel::fsalgo::copy<3u>::exe(s.e1.begin(),e1);
     tfel::fsalgo::copy<3u>::exe(s.s0.begin(),s0);
-    s.e0[0] = std::log(1+e0[0]);
-    s.e0[1] = std::log(1+e0[1]);
-    s.e0[2] = std::log(1+e0[2]);
-    s.e1[0] = std::log(1+e1[0]);
-    s.e1[1] = std::log(1+e1[1]);
-    s.e1[2] = std::log(1+e1[2]);
+    s.e0[0] = std::log1p(e0[0]);
+    s.e0[1] = std::log1p(e0[1]);
+    s.e0[2] = std::log1p(e0[2]);
+    s.e1[0] = std::log1p(e1[0]);
+    s.e1[1] = std::log1p(e1[1]);
+    s.e1[2] = std::log1p(e1[2]);
     // stresses
     s.s0[0] = s0[0]*(1+e0[0]);
     s.s0[1] = s0[1]*(1+e0[1]);
@@ -314,12 +329,12 @@ namespace mtest{
     // thermal strain
     tfel::fsalgo::copy<3u>::exe(s.e_th0.begin(),e_th0);
     tfel::fsalgo::copy<3u>::exe(s.e_th1.begin(),e_th1);
-    s.e_th0[0] = std::log(1+e_th0[0]);
-    s.e_th0[1] = std::log(1+e_th0[1]);
-    s.e_th0[2] = std::log(1+e_th0[2]);
-    s.e_th1[0] = std::log(1+e_th1[0]);
-    s.e_th1[1] = std::log(1+e_th1[1]);
-    s.e_th1[2] = std::log(1+e_th1[2]);
+    s.e_th0[0] = std::log1p(e_th0[0]);
+    s.e_th0[1] = std::log1p(e_th0[1]);
+    s.e_th0[2] = std::log1p(e_th0[2]);
+    s.e_th1[0] = std::log1p(e_th1[0]);
+    s.e_th1[1] = std::log1p(e_th1[1]);
+    s.e_th1[2] = std::log1p(e_th1[2]);
     tfel::fsalgo::copy<3u>::exe(s.s0.begin(),s.s1.begin());
     const auto r = this->b->integrate(s,wk,dt,ktype);
     tfel::fsalgo::copy<3u>::exe(e0,s.e0.begin());
@@ -343,7 +358,6 @@ namespace mtest{
     return r;
   } // end of LogarithmicStrain1DBehaviourWrapper::integrate
   
-  LogarithmicStrain1DBehaviourWrapper::~LogarithmicStrain1DBehaviourWrapper()
-  {} // end of LogarithmicStrain1DBehaviourWrapper::~LogarithmicStrain1DBehaviourWrapper()
+  LogarithmicStrain1DBehaviourWrapper::~LogarithmicStrain1DBehaviourWrapper() = default;
   
 } // end of namespace mtest

@@ -234,9 +234,14 @@ namespace mtest{
 	   (ne  >100*numeric_limits<real>::min())&&
 	   (nep >100*numeric_limits<real>::min())&&
 	   (nep2>100*numeric_limits<real>::min())){
-	  log << "convergence, after " << iter << " iterations, "
-	      << "order " << std::log(ne/nep)/std::log(nep/nep2)
-	      << "\n\n";
+	  if(std::abs(std::log(nep/nep2))>100*std::numeric_limits<real>::min()){
+	    log << "convergence, after " << iter << " iterations, "
+		<< "order " << std::log(ne/nep)/std::log(nep/nep2)
+		<< "\n\n";
+	  } else {
+	    log << "convergence, after " << iter << " iterations, "
+		<< "order undefined\n\n";
+	  }
 	} else {
 	  log << "convergence, after " << iter << " iterations, "
 	      << "order undefined\n\n";

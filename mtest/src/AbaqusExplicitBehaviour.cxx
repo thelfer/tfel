@@ -289,8 +289,6 @@ namespace mtest
     const real stretchNew[6u] = {1,1,1,0,0,0};
     const real defgradOld[9u]  = {1,1,1,0,0,0,0,0,0};
     const real defgradNew[9u]  = {1,1,1,0,0,0,0,0,0};
-    const real enerInternOld = 0;
-    const real enerInelasOld = 0;
     for(AbaqusInt i=0;i!=ndir+nshr;++i){
       real strainInc[6u] = {0,0,0,0,0,0};
       strainInc[i] = 1;
@@ -507,10 +505,6 @@ namespace mtest
     real stretchNew[6u]      = {1,1,1,0,0,0};
     real defgradOld[9u]      = {1,1,1,0,0,0,0,0,0};
     real defgradNew[9u]      = {1,1,1,0,0,0,0,0,0};
-    const real enerInternOld = 0;
-    const real enerInelasOld = 0;
-    real enerInternNew = 0;
-    real enerInelasNew = 0;
     // rotation matrix from the polar decomposition
     tmatrix<3u,3u,real> r1;
     if((h==ModellingHypothesis::PLANESTRESS)||
