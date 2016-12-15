@@ -79,9 +79,7 @@ namespace tfel{
       return handleSpace(path);
     }
 #if defined _WIN32 || defined _WIN64
-    throw(std::runtime_error("tfel::getInstallPath: "
-			     "no TFELHOME registry key defined and no TFEHOME "
-			     "environment variable defined"));
+    return "";
 #else
     return PREFIXDIR;
 #endif
