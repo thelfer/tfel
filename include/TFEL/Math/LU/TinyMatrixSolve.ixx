@@ -113,8 +113,7 @@ namespace tfel{
 			       tvector<1u,T>& b,
 			       const T eps)
     {
-      using namespace std;
-      if(abs(m(0,0))<eps){
+      if(std::abs(m(0,0))<eps){
 	throw(LUNullDeterminant());
       }
       b(0) /= m(0,0);
@@ -127,13 +126,12 @@ namespace tfel{
 			       tvector<2u,T>& b,
 			       const T eps)
     {
-      using namespace std;
-      const T det = m(0,0)*m(1,1) - m(0,1)*m(1,0);
-      if(abs(det)<eps){
+      const auto det = m(0,0)*m(1,1) - m(0,1)*m(1,0);
+      if(std::abs(det)<eps){
 	throw(LUNullDeterminant());
       }
-      const T b0 = b(0);
-      const T b1 = b(1);
+      const auto b0 = b(0);
+      const auto b1 = b(1);
       b(0) = ( m(1,1)*b0 - m(0,1)*b1)/det;
       b(1) = (-m(1,0)*b0 + m(0,0)*b1)/det;
     } // end of TinyMatrixSolve<2u,T>::exe
@@ -145,15 +143,15 @@ namespace tfel{
 			       tvector<3u,T>& b,
 			       const T eps)
     {
-      using namespace std;
-      const T det = m(0,0)*(m(1,1)*m(2,2) - m(1,2)*m(2,1)) - m(0,1)*(m(1,0)*m(2,2) - m(1,2)*m(2,0))
+      const auto det = m(0,0)*(m(1,1)*m(2,2) - m(1,2)*m(2,1))
+	- m(0,1)*(m(1,0)*m(2,2) - m(1,2)*m(2,0))
 	+ m(0,2)*(m(1,0)*m(2,1) - m(1,1)*m(2,0));
-      if(abs(det)<eps){
+      if(std::abs(det)<eps){
 	throw(LUNullDeterminant());
       }
-      const T b0 = b(0);
-      const T b1 = b(1);
-      const T b2 = b(2);
+      const auto b0 = b(0);
+      const auto b1 = b(1);
+      const auto b2 = b(2);
       b(0) = ((m(1,1)*m(2,2)-m(1,2)*m(2,1))*b0-(m(0,1)*m(2,2)-m(0,2)*m(2,1))*b1+(m(0,1)*m(1,2)-m(0,2)*m(1,1))*b2)/det;
       b(1) = ((m(1,2)*m(2,0)-m(1,0)*m(2,2))*b0+(m(0,0)*m(2,2)-m(0,2)*m(2,0))*b1-(m(0,0)*m(1,2)-m(0,2)*m(1,0))*b2)/det;
       b(2) = ((m(1,0)*m(2,1)-m(1,1)*m(2,0))*b0-(m(0,0)*m(2,1)-m(0,1)*m(2,0))*b1+(m(0,0)*m(1,1)-m(0,1)*m(1,0))*b2)/det;

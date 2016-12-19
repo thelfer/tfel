@@ -27,17 +27,17 @@
  * \author Helfer Thomas
  * \date   28 jun 2006 
  */
-#define TFEL_MATH_IS_ASSIGNABLE_(X,Y)                                           \
-    /*!                                                                         \
-     * \brief Partial specialisation for X and Y                                \
-     * \see   IsAssignableTo                                                    \
-     */                                                                         \
-    template<>                                                                  \
-    struct IsAssignableTo< X , Y >                                              \
-    {                                                                           \
-      /*!									\
-       *  Result								\
-       */									\
+#define TFEL_MATH_IS_ASSIGNABLE_(X,Y)                                               \
+    /*!                                                                             \
+     * \brief Partial specialisation for X and Y                                    \
+     * \see   IsAssignableTo                                                        \
+     */                                                                             \
+    template<>                                                                      \
+    struct IsAssignableTo< X , Y >                                                  \
+    {                                                                               \
+      /*!									    \
+       *  Result								    \
+       */									    \
       static constexpr bool cond = std::is_same<Promote< X , Y >::type, Y >::value; \
     }
 
@@ -88,9 +88,7 @@ namespace tfel{
     template<typename A,typename B>
     struct IsAssignableTo
     {
-      /*!
-       *  Result
-       */
+      //! result
       static constexpr bool cond = false;
     };
 
@@ -116,7 +114,6 @@ namespace tfel{
   } // end of namespace typetraits
 
 } // end of namespace tfel
-  
 
 #endif /* LIB_TFEL_IS_ASSIGNABLETO_HXX_ */
 
