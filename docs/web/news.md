@@ -2,6 +2,46 @@
 % Helfer Thomas
 % May 27, 2016
 
+# TFEL version 3.0 has been released the 16/12/2016.
+
+From a user point of view, TFEL 3.0 brings many game-changing features:
+
+- New mechanical behaviour interfaces to several finite element
+  solvers (`Europlexus`, `Abaqus/Standard`, `Abaqus/Explicit`,
+  `CalculiX`)
+- The support of behaviours bricks.
+- The ability to simulate pipes using a rigourous finite strain
+  framework in `MTest`.
+- The introduction of various accelerations algorithms used for
+  solving the mechanical equilibrium when the consistent tangent
+  operator is not available.
+- The development of a stable API (application programming interface)
+  in `C++` and `python` which allow building external tools upon
+  `MFront` and `MTest`. This point is illustrated by the development
+  by EDF MMC in the Material Ageing Plateform of a new identification
+  tool which is particularly interesting.
+
+Many improvements for mechanical behaviours have also been made:
+
+- Definition and automatic computation of elastic material properties
+  from external MFront files.
+- Support for the automatic computation of the thermal expansion and
+  swelling in the mechanical behaviour.
+- Better support for orthotropic behaviours with the notion of
+  orthotropic convention which affects various keywords
+  (`@ComputeStiffnessTensor`, `@ComputeThermalExpansion`, `@Swelling`,
+  `@AxialGrowth`, `@HillTensor` etc..).
+- An initial support of non local mechanical behaviours.
+- Time steps management from the mechanical behaviour.
+- Consistent tangent operator support in the Cast3M interface.
+- Easier computations of isotropic functions of symmetric tensors and
+  their derivatives.
+- New material properties interfaces for various programming languages
+  (`fortran03`, `java`, `GNU/Octave`).
+
+A detailed version of the release notes is available
+[here](http://tfel.sourceforge.net/release-notes-3.0.html).
+
 # A new behaviour implementation, called `UnilateralMazars` (1 June 2016)
 
 ![](img/UnilateralMazars.svg "")
@@ -20,10 +60,12 @@ MFront.
 
 # Progress in the Abaqus Explicit interface (VUMAT) (28 May 2016)
 
-<video style="display:block; margin: 0 auto;" width="640" height="320" controls>
-  <source src="media/abaqus-explicit.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<div id="abaqus-video">
+  <video style="display:block; margin: 0 auto;" width="640" height="320" controls>
+    <source src="media/abaqus-explicit.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
 
 The Abaqus Explicit interface is becoming quite usable du to the
 extensive testing efforts of D. Deloison (Airbus). Here is an example
@@ -51,10 +93,12 @@ been developed.
 simulation software dedicated to the analysis of fast transient
 phenomena involving structures and fluids in interaction.
 
-<video style="display:block; margin: 0 auto;" width="640" height="320" controls>
-  <source src="media/epx2.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<div id="epx-video">
+  <video style="display:block; margin: 0 auto;" width="640" height="320" controls>
+    <source src="media/epx2.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
 
 See the [dedicated page](epx.html) for more information.
 

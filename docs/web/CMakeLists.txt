@@ -58,6 +58,8 @@ pandoc_html(mfront-python "--toc" "--toc-depth=3")
 pandoc_html(Norton-web)
 pandoc_html(Norton-full)
 pandoc_html(coverity-scan)
+pandoc_html(hyperelasticity "--toc")
+pandoc_html(release-notes-3.0 "--toc" "--toc-depth=2")
 
 # mfront keywords
 
@@ -75,7 +77,6 @@ pandoc_html(Model-keywords "--toc" "--toc-depth=1")
 pandoc_html(MultipleIsotropicMisesFlows-keywords "--toc" "--toc-depth=1")
 pandoc_html(RungeKutta-keywords "--toc" "--toc-depth=1")
 pandoc_html(BehaviourBricks "--toc" "--toc-depth=2")
-pandoc_html(release-notes-3.0 "--toc" "--toc-depth=2")
 
 # mtest keywords
 
