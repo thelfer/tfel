@@ -1816,6 +1816,20 @@ namespace tfel{
 	  icste*s1[3]*s2[5]+(s1[2]+s1[0])*s2[4]+icste*s1[5]*s2[3]+s1[4]*s2[2]+s1[4]*s2[0],
 	  (s1[2]+s1[1])*s2[5]+icste*s1[3]*s2[4]+icste*s1[4]*s2[3]+s1[5]*s2[2]+s1[5]*s2[1]};
       }
+
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      stensor<StensorTraits<StensorType>::dime,
+	      typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,
+					  Power<2> >::Result>>::type
+    computeDeterminantDerivative(const StensorType& s){
+      stensor<StensorTraits<StensorType>::dime,
+	      typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,
+					  Power<2> >::Result> dJ;
+      computeDeterminantDerivative(dJ,s);
+      return dJ;
+    }
     
   } //end of namespace math
 

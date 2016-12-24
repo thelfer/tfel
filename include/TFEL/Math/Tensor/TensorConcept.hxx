@@ -509,7 +509,6 @@ namespace tfel{
       void>::type
     computeDeterminantDerivative(TensorResultType&,
 				 const TensorType&);
-
     /*!
      * \brief provide the polar decomposition of a tensor
      * \param[out] rotation

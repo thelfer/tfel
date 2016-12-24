@@ -18,9 +18,12 @@
 #include"TFEL/Metaprogramming/Implements.hxx"
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
-
+#include"TFEL/TypeTraits/IsAssignableTo.hxx"
 #include"TFEL/Math/General/ConceptRebind.hxx"
+#include"TFEL/Math/General/ComputeUnaryResult.hxx"
 #include"TFEL/Math/General/Abs.hxx"
+#include"TFEL/Math/General/MathConstants.hxx"
+#include"TFEL/Math/power.hxx"
 
 namespace tfel{
 
@@ -125,7 +128,64 @@ namespace tfel{
      */
     TFELMATH_VISIBILITY_EXPORT unsigned short
     getStensorSize(const unsigned short);
-    
+    /*!
+     * \brief compute the derivative of the determinant with respect
+     * to its argument.
+     * \param[out] : determinant derivative
+     * \param[in]  : argument
+     */
+    template<typename StensorResultType,
+	     typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorResultType,StensorConcept>::cond &&
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      StensorTraits<StensorType>::dime == 1u&&
+      StensorTraits<StensorResultType>::dime == 1u&&
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,
+								   Power<2> >::Result,
+				       typename StensorTraits<StensorResultType>::NumType>::cond,
+      void>::type
+    computeDeterminantDerivative(StensorResultType&,
+				const StensorType&);
+    /*!
+     * \brief compute the derivative of the determinant with respect
+     * to its argument.
+     * \param[out] : determinant derivative
+     * \param[in]  : argument
+     */
+    template<typename StensorResultType,
+	     typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorResultType,StensorConcept>::cond &&
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      StensorTraits<StensorType>::dime == 2u&&
+      StensorTraits<StensorResultType>::dime == 2u&&
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,
+								   Power<2> >::Result,
+				       typename StensorTraits<StensorResultType>::NumType>::cond,
+      void>::type
+    computeDeterminantDerivative(StensorResultType&,
+				 const StensorType&);
+    /*!
+     * \brief compute the derivative of the determinant with respect
+     * to its argument.
+     * \param[out] : determinant derivative
+     * \param[in]  : argument
+     */
+    template<typename StensorResultType,
+	     typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorResultType,StensorConcept>::cond &&
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      StensorTraits<StensorType>::dime == 3u&&
+      StensorTraits<StensorResultType>::dime == 3u&&
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,
+								   Power<2> >::Result,
+				       typename StensorTraits<StensorResultType>::NumType>::cond,
+      void>::type
+    computeDeterminantDerivative(StensorResultType&,
+				 const StensorType&);
+
   } // end of namespace math
 
 } // end of namespace tfel

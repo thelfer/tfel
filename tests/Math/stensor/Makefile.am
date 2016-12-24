@@ -20,7 +20,9 @@ test_PROGRAMS = stensor                                  \
 		stensor_eigenvectors                     \
 		stensor_eigenvectors2                    \
 		stensor_isotropic_function               \
-		StensorFromTinyMatrixColumnView
+		StensorFromTinyMatrixColumnView          \
+		InvariantsDerivatives                    \
+		StensorComputeJacobianDerivativeTest
 
 LDADD = -L$(top_builddir)/src/Math      \
 	-L$(top_builddir)/src/Utilities \
@@ -47,6 +49,8 @@ stensor_eigenvectors_SOURCES  = stensor_eigenvectors.cxx
 stensor_eigenvectors2_SOURCES = stensor_eigenvectors2.cxx
 stensor_isotropic_function_SOURCES = stensor_isotropic_function.cxx
 StensorFromTinyMatrixColumnView_SOURCES = StensorFromTinyMatrixColumnView.cxx
+InvariantsDerivatives_SOURCES = InvariantsDerivatives.cxx
+StensorComputeJacobianDerivativeTest_SOURCES = StensorComputeJacobianDerivativeTest.cxx
 
 TESTS=$(test_PROGRAMS)
 

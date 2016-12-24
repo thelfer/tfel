@@ -5171,7 +5171,9 @@ tests/Math/st2tot2/StensorProductDerivative.cxx -text
 tests/Math/st2tot2/StensorProductDerivative2.cxx -text
 tests/Math/st2tot2/st2tot2.cxx -text
 tests/Math/stensor/CMakeLists.txt -text
+tests/Math/stensor/InvariantsDerivatives.cxx -text
 tests/Math/stensor/Makefile.am -text
+tests/Math/stensor/StensorComputeJacobianDerivativeTest.cxx -text
 tests/Math/stensor/StensorFromTinyMatrixColumnView.cxx -text
 tests/Math/stensor/stensor.cxx -text
 tests/Math/stensor/stensor10.cxx -text
@@ -5209,6 +5211,7 @@ tests/Math/t2tot2/t2tot2-specialvalues.cxx -text
 tests/Math/t2tot2/t2tot2.cxx -text
 tests/Math/tensor/CMakeLists.txt -text
 tests/Math/tensor/Makefile.am -text
+tests/Math/tensor/TensorComputeJacobianDerivativeTest.cxx -text
 tests/Math/tensor/tensor.cxx -text
 tests/Math/tensor/tensor2.cxx -text
 tests/Math/tensor/tensor3.cxx -text

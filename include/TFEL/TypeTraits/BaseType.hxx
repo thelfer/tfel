@@ -152,6 +152,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-
 #endif /* LIB_TFEL_BASETYPE_H_ */
-

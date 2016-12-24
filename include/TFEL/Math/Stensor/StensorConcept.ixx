@@ -237,6 +237,71 @@ namespace tfel{
       return Result{s(0)-tr,s(1)-tr,s(2)-tr,s(3),s(4),s(5)};
     }
 
+    template<typename StensorResultType,
+	     typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorResultType,StensorConcept>::cond &&
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      StensorTraits<StensorType>::dime == 1u&&
+      StensorTraits<StensorResultType>::dime == 1u&&
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,
+								   Power<2> >::Result,
+				       typename StensorTraits<StensorResultType>::NumType>::cond,
+      void>::type
+    computeDeterminantDerivative(StensorResultType& dJ,
+				 const StensorType& s)
+    {
+      dJ[0] = s[1]*s[2];
+      dJ[1] = s[0]*s[2];
+      dJ[2] = s[0]*s[1];
+    } // end of ComputeDeterminantDerivative
+
+    template<typename StensorResultType,
+	     typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorResultType,StensorConcept>::cond &&
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      StensorTraits<StensorType>::dime == 2u&&
+      StensorTraits<StensorResultType>::dime == 2u&&
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,
+								   Power<2> >::Result,
+				       typename StensorTraits<StensorResultType>::NumType>::cond,
+      void>::type
+    computeDeterminantDerivative(StensorResultType& dJ,
+				 const StensorType& s)
+    {
+      dJ[0] = s[1]*s[2];
+      dJ[1] = s[0]*s[2];
+      dJ[2] = s[0]*s[1]-s[3]*s[3]/2;
+      dJ[3] = -s[3]*s[2];
+    } // end of ComputeDeterminantDerivative
+
+    template<typename StensorResultType,
+	     typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorResultType,StensorConcept>::cond &&
+      tfel::meta::Implements<StensorType,StensorConcept>::cond &&
+      StensorTraits<StensorType>::dime == 3u&&
+      StensorTraits<StensorResultType>::dime == 3u&&
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,
+								   Power<2> >::Result,
+				       typename StensorTraits<StensorResultType>::NumType>::cond,
+      void>::type
+    computeDeterminantDerivative(StensorResultType& dJ,
+				 const StensorType& s)
+    {
+      using NumType = typename StensorTraits<StensorType>::NumType;
+      using real    = tfel::typetraits::base_type<NumType>;
+      TFEL_CONSTEXPR const auto one_half = real(1)/real(2);
+      TFEL_CONSTEXPR const auto icste    = Cste<real>::isqrt2;
+      dJ[0]=s[1]*s[2]-s[5]*s[5]*one_half;
+      dJ[1]=s[0]*s[2]-s[4]*s[4]*one_half;
+      dJ[2]=s[0]*s[1]-s[3]*s[3]*one_half; 
+      dJ[3]=icste*s[4]*s[5]-s[2]*s[3];
+      dJ[4]=icste*s[3]*s[5]-s[1]*s[4];
+      dJ[5]=icste*s[3]*s[4]-s[0]*s[5]; 
+    } // end of ComputeDeterminantDerivative
+    
   } // end of namespace math
 
 } // end of namespace tfel

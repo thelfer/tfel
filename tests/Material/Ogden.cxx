@@ -3,6 +3,12 @@
  * \brief    
  * \author THOMAS HELFER
  * \date   20 déc. 2016
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
  */
 
 #ifdef NDEBUG
@@ -55,11 +61,60 @@ struct Ogden final
     this->check<1u>();
     this->check<2u>();
     this->check<3u>();
+    this->check2<1u>();
+    this->check2<2u>();
+    this->check2<3u>();
     return this->result;
   } // end of execute
  private:
   template<unsigned short N>
   void check(){
+    using namespace tfel::math;
+    using real    = double;
+    using Stensor  = stensor<N,real>;
+    using Stensor4 = st2tost2<N,real>;
+    const real alpha = 28.8;
+    const real mu    = 0.4e6;
+    const auto a = alpha/2;
+    auto f = [&a](const real x){
+      return a*pow(x,a-1);
+    };
+    auto df = [&a](const real x){
+      return a*(a-1)*pow(x,a-2);
+    };
+    auto sf = [&alpha,&mu,&a,&f,&df](const Stensor& C) -> Stensor{
+      Stensor n0,n1,n2;
+      tvector<3u,real> vp;
+      tmatrix<3u,3u,real> m;
+      C.computeEigenVectors(vp,m);
+      Stensor::computeEigenTensors(n0,n1,n2,m);
+      return f(vp(0))*n0+f(vp(1))*n1+f(vp(2))*n2;
+    };
+    for(const auto C : {Stensor::Id(),Stensor{1.2,0.95,0.67,0.324,-0.675,-0.2}}){
+       const auto ndf_dC = getNumericalApproximation(sf,C,1.e-6);
+      /* invariants and derivatives */
+      Stensor4 df_dC;
+      tvector<3u,real> vp;
+      tmatrix<3u,3u,real> m;
+      C.computeEigenVectors(vp,m);
+      Stensor::computeIsotropicFunctionDerivative(df_dC,f,df,
+						  vp,m,1.e-12);
+      const auto eps = 1.e-9*(*(std::max_element(df_dC.begin(),df_dC.end())));
+      for(unsigned short i=0;i!=tfel::math::StensorDimeToSize<N>::value;++i){
+	for(unsigned short j=0;j!=tfel::math::StensorDimeToSize<N>::value;++j){
+	  if(std::abs(df_dC(i,j)-ndf_dC(i,j))>eps){
+	    std::cout << i << " " << j << " "
+		      << df_dC(i,j) << " " << ndf_dC(i,j)
+		      << " " << df_dC(i,j)-ndf_dC(i,j)
+		      << " " << eps << std::endl;
+	  }
+	  TFEL_TESTS_ASSERT(std::abs(df_dC(i,j)-ndf_dC(i,j))<eps);
+	}
+      }
+    }
+  }
+  template<unsigned short N>
+  void check2(){
     using namespace tfel::math;
     using real    = double;
     using Stensor  = stensor<N,real>;

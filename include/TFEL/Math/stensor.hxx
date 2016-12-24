@@ -622,6 +622,17 @@ namespace tfel{
     >::type
     det(const StensorType&);
     /*!
+     * \return the derivative of the determinant
+     * \param[in] s: tensor where the the determinant is evaluated
+     */
+    template<typename StensorType>
+    typename std::enable_if<
+      tfel::meta::Implements<StensorType,StensorConcept>::cond,
+      stensor<StensorTraits<StensorType>::dime,
+	      typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,
+					  Power<2> >::Result>>::type
+    computeDeterminantDerivative(const StensorType&);
+    /*!
      * \brief rotate a symmetric tensor using a rotation matrix
      * \param[in] s: symmetric tensor to be rotated
      * \param[in] r: rotation matrix
