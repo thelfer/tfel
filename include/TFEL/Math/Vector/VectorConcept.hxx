@@ -32,6 +32,10 @@ namespace tfel{
       typedef tfel::meta::InvalidType RunTimeProperties;
     };
 
+    //! a simple alias
+    template<typename T>
+    using VectorNumType = typename VectorTraits<T>::NumType;
+    
     /*!
      * \class VectorTag
      * \brief Helper class to characterise vectors.

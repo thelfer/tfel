@@ -36,12 +36,12 @@ namespace tfel{
     template<typename ST2toST2ResultType>
     struct Expr<ST2toST2ResultType,StensorSquareDerivativeExpr<1u> >
       : public ST2toST2Concept<Expr<ST2toST2ResultType,StensorSquareDerivativeExpr<1u> > >,
-	public fsarray<9u,typename ST2toST2Traits<ST2toST2ResultType>::NumType>
+	public fsarray<9u,ST2toST2NumType<ST2toST2ResultType>>
     {
       //! a simple check
       TFEL_STATIC_ASSERT(ST2toST2Traits<ST2toST2ResultType>::dime==1u);
       //! a simple alias
-      typedef typename ST2toST2Traits<ST2toST2ResultType>::NumType value_type;
+      typedef ST2toST2NumType<ST2toST2ResultType> value_type;
       //! a simple alias
       typedef EmptyRunTimeProperties RunTimeProperties;
      /*!
@@ -55,8 +55,8 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((ST2toST2Traits<ST2toST2ResultType>::dime==StensorTraits<StensorType>::dime));
 	//! a simple check
-	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-							     typename ST2toST2Traits<ST2toST2ResultType>::NumType>::cond));
+	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+							     ST2toST2NumType<ST2toST2ResultType>>::cond));
 	constexpr const value_type zero = value_type(0);
 	this->v[0] = 2*B[0];
 	this->v[4] = 2*B[1];
@@ -83,10 +83,10 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((ST2toST2Traits<ST2toST2Type>::dime==StensorTraits<StensorType>::dime));
 	//! a simple check
-	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
-											  typename ST2toST2Traits<ST2toST2Type>::NumType,
+	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<StensorNumType<StensorType>,
+											  ST2toST2NumType<ST2toST2Type>,
 											  OpMult>::Result,
-							     typename ST2toST2Traits<ST2toST2ResultType>::NumType>::cond));
+							     ST2toST2NumType<ST2toST2ResultType>>::cond));
 	this->v[0]=2*C(0,0)*s(0);
 	this->v[1]=2*C(0,1)*s(0);
 	this->v[2]=2*C(0,2)*s(0);
@@ -126,12 +126,12 @@ namespace tfel{
     template<typename ST2toST2ResultType>
     struct Expr<ST2toST2ResultType,StensorSquareDerivativeExpr<2u> >
       : public ST2toST2Concept<Expr<ST2toST2ResultType,StensorSquareDerivativeExpr<2u> > >,
-	public fsarray<16u,typename ST2toST2Traits<ST2toST2ResultType>::NumType>
+	public fsarray<16u,ST2toST2NumType<ST2toST2ResultType>>
     {
       //! a simple check
       TFEL_STATIC_ASSERT(ST2toST2Traits<ST2toST2ResultType>::dime==2u);
       //! a simple alias
-      typedef typename ST2toST2Traits<ST2toST2ResultType>::NumType value_type;
+      typedef ST2toST2NumType<ST2toST2ResultType> value_type;
       //! a simple alias
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
@@ -145,8 +145,8 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((ST2toST2Traits<ST2toST2ResultType>::dime==StensorTraits<StensorType>::dime));
 	//! a simple check
-	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-							     typename ST2toST2Traits<ST2toST2ResultType>::NumType>::cond));
+	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+							     ST2toST2NumType<ST2toST2ResultType>>::cond));
 	constexpr const value_type zero = value_type(0);
 	this->v[0]  = 2*s(0);
 	this->v[1]  = zero;
@@ -183,10 +183,10 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((ST2toST2Traits<ST2toST2Type>::dime==StensorTraits<StensorType>::dime));
 	//! a simple check
-	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
-											  typename ST2toST2Traits<ST2toST2Type>::NumType,
+	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<StensorNumType<StensorType>,
+											  ST2toST2NumType<ST2toST2Type>,
 											  OpMult>::Result,
-							     typename ST2toST2Traits<ST2toST2ResultType>::NumType>::cond));
+							     ST2toST2NumType<ST2toST2ResultType>>::cond));
 	this->v[0] =C(3,0)*s(3)+2*C(0,0)*s(0);
 	this->v[1] =C(3,1)*s(3)+2*C(0,1)*s(0);
 	this->v[2] =C(3,2)*s(3)+2*C(0,2)*s(0);
@@ -233,12 +233,12 @@ namespace tfel{
     template<typename ST2toST2ResultType>
     struct Expr<ST2toST2ResultType,StensorSquareDerivativeExpr<3u> >
       : public ST2toST2Concept<Expr<ST2toST2ResultType,StensorSquareDerivativeExpr<3u> > >,
-	public fsarray<36u,typename ST2toST2Traits<ST2toST2ResultType>::NumType>
+	public fsarray<36u,ST2toST2NumType<ST2toST2ResultType>>
     {
       //! a simple check
       TFEL_STATIC_ASSERT(ST2toST2Traits<ST2toST2ResultType>::dime==3u);
       //! a simple alias
-      typedef typename ST2toST2Traits<ST2toST2ResultType>::NumType value_type;
+      typedef ST2toST2NumType<ST2toST2ResultType> value_type;
       //! a simple alias
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
@@ -252,8 +252,8 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((ST2toST2Traits<ST2toST2ResultType>::dime==StensorTraits<StensorType>::dime));
 	//! a simple check
-	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-							     typename ST2toST2Traits<ST2toST2ResultType>::NumType>::cond));
+	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+							     ST2toST2NumType<ST2toST2ResultType>>::cond));
 	using real =  tfel::typetraits::base_type<value_type>;
 	TFEL_CONSTEXPR const auto zero     = value_type(0);
 	TFEL_CONSTEXPR const auto one_half = real(1)/2;
@@ -313,10 +313,10 @@ namespace tfel{
 	//! a simple check
 	TFEL_STATIC_ASSERT((ST2toST2Traits<ST2toST2Type>::dime==StensorTraits<StensorType>::dime));
 	//! a simple check
-	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
-											  typename ST2toST2Traits<ST2toST2Type>::NumType,
+	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<StensorNumType<StensorType>,
+											  ST2toST2NumType<ST2toST2Type>,
 											  OpMult>::Result,
-							     typename ST2toST2Traits<ST2toST2ResultType>::NumType>::cond));
+							     ST2toST2NumType<ST2toST2ResultType>>::cond));
 	using real = tfel::typetraits::base_type<value_type>;
 	TFEL_CONSTEXPR const auto one_half = real(1)/real(2);
 	constexpr const auto cste     = Cste<real>::sqrt2;

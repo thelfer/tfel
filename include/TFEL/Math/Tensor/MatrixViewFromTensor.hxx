@@ -50,10 +50,10 @@ namespace tfel
     {}; // end of struct MatrixViewFromTensorExpr
 
     template<typename TensorType>
-    struct Expr<tmatrix<3u,3u,typename TensorTraits<typename std::decay<TensorType>::type>::NumType>,
+    struct Expr<tmatrix<3u,3u,TensorNumType<typename std::decay<TensorType>::type>>,
 		      MatrixViewFromTensorExpr<TensorType> >
       : public ExprBase,
-	public MatrixConcept<Expr<tmatrix<3u,3u,typename TensorTraits<typename std::decay<TensorType>::type>::NumType>,
+	public MatrixConcept<Expr<tmatrix<3u,3u,TensorNumType<typename std::decay<TensorType>::type>>,
 				  MatrixViewFromTensorExpr<TensorType> > >
     {
       

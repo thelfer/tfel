@@ -17,6 +17,8 @@
 
 #include<type_traits>
 #include"TFEL/Metaprogramming/InvalidType.hxx"
+#include"TFEL/Math/Forward/tensor.hxx"
+#include"TFEL/Math/Forward/t2tot2.hxx"
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/t2tot2.hxx"
 

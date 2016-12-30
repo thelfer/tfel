@@ -122,7 +122,6 @@ namespace epx{
 					  const EuroplexusReal * const F)
   {
     TFEL_CONSTEXPR const EuroplexusReal eps = 100*std::numeric_limits<EuroplexusReal>::epsilon();
-    using stensor = tfel::math::stensor<N,EuroplexusReal>;
     using tensor  = tfel::math::tensor<N,EuroplexusReal>;
     const auto f  = [](const EuroplexusReal x){return std::log1p(x-1)/2;};
     const auto df = [](const EuroplexusReal x){return 1/(2*x);};

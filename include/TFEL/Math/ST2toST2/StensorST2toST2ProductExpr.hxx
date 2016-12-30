@@ -39,12 +39,12 @@ namespace tfel
     struct Expr<StensorResultType,StensorST2toST2ProductExpr<1u> >
       : public StensorConcept<Expr<StensorResultType,StensorST2toST2ProductExpr<1u> > >,
 	public fsarray<StensorDimeToSize<StensorTraits<StensorResultType>::dime>::value,
-		       typename StensorTraits<StensorResultType>::NumType>
+		       StensorNumType<StensorResultType>>
     {
       //! a simple alias
       typedef EmptyRunTimeProperties RunTimeProperties;
       //! a simple alias
-      typedef typename StensorTraits<StensorResultType>::NumType value_type;
+      typedef StensorNumType<StensorResultType> value_type;
       //! a simple check
       TFEL_STATIC_ASSERT((StensorTraits<StensorResultType>::dime==1u));
       /*!
@@ -95,12 +95,12 @@ namespace tfel
     struct Expr<StensorResultType,StensorST2toST2ProductExpr<2u> >
       : public StensorConcept<Expr<StensorResultType,StensorST2toST2ProductExpr<2u> > >,
 	public fsarray<StensorDimeToSize<StensorTraits<StensorResultType>::dime>::value,
-		       typename StensorTraits<StensorResultType>::NumType>
+		       StensorNumType<StensorResultType>>
     {
       //! a simple alias
       typedef EmptyRunTimeProperties RunTimeProperties;
       //! a simple alias
-      typedef typename StensorTraits<StensorResultType>::NumType value_type;
+      typedef StensorNumType<StensorResultType> value_type;
       //! a simple check
       TFEL_STATIC_ASSERT((StensorTraits<StensorResultType>::dime==2u));
       /*!
@@ -152,12 +152,12 @@ namespace tfel
     struct Expr<StensorResultType,StensorST2toST2ProductExpr<3u> >
       : public StensorConcept<Expr<StensorResultType,StensorST2toST2ProductExpr<3u> > >,
 	public fsarray<StensorDimeToSize<StensorTraits<StensorResultType>::dime>::value,
-		       typename StensorTraits<StensorResultType>::NumType>
+		       StensorNumType<StensorResultType>>
     {
       //! a simple alias
       typedef EmptyRunTimeProperties RunTimeProperties;
       //! a simple alias
-      typedef typename StensorTraits<StensorResultType>::NumType value_type;
+      typedef StensorNumType<StensorResultType> value_type;
       //! a simple check
       TFEL_STATIC_ASSERT((StensorTraits<StensorResultType>::dime==3u));
       /*!

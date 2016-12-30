@@ -36,6 +36,9 @@ namespace tfel{
       static constexpr unsigned short dime = 0u;
     };
 
+    template<class T>
+    using StensorNumType = typename StensorTraits<T>::NumType;    
+    
     /*!
      * \class StensorTag
      * \brief Helper class to characterise stensors.
@@ -53,10 +56,10 @@ namespace tfel{
     {
       typedef StensorTag ConceptTag;
       
-      typename StensorTraits<T>::NumType
+      StensorNumType<T>
       operator()(const unsigned short) const;
 
-      typename StensorTraits<T>::NumType
+      StensorNumType<T>
       operator[](const unsigned short) const;
 
     protected:
@@ -78,7 +81,7 @@ namespace tfel{
     template<typename StensorType>
     typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,
-      typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
+      typename tfel::typetraits::AbsType<StensorNumType<StensorType>>::type
     >::type
     abs(const StensorType&);
 
@@ -86,7 +89,7 @@ namespace tfel{
     TFEL_MATH_INLINE 
     typename std::enable_if<
       tfel::meta::Implements<T,StensorConcept>::cond,
-      typename StensorTraits<T>::NumType
+      StensorNumType<T>
     >::type
     trace(const T& s);
 
@@ -94,7 +97,7 @@ namespace tfel{
     TFEL_MATH_INLINE2
     typename std::enable_if<
       tfel::meta::Implements<T,StensorConcept>::cond,
-      typename StensorTraits<T>::NumType
+      StensorNumType<T>
     >::type
     sigmaeq(const T& s);
 
@@ -141,9 +144,9 @@ namespace tfel{
       tfel::meta::Implements<StensorType,StensorConcept>::cond &&
       StensorTraits<StensorType>::dime == 1u&&
       StensorTraits<StensorResultType>::dime == 1u&&
-      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<StensorNumType<StensorType>,
 								   Power<2> >::Result,
-				       typename StensorTraits<StensorResultType>::NumType>::cond,
+				       StensorNumType<StensorResultType>>::cond,
       void>::type
     computeDeterminantDerivative(StensorResultType&,
 				const StensorType&);
@@ -160,9 +163,9 @@ namespace tfel{
       tfel::meta::Implements<StensorType,StensorConcept>::cond &&
       StensorTraits<StensorType>::dime == 2u&&
       StensorTraits<StensorResultType>::dime == 2u&&
-      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<StensorNumType<StensorType>,
 								   Power<2> >::Result,
-				       typename StensorTraits<StensorResultType>::NumType>::cond,
+				       StensorNumType<StensorResultType>>::cond,
       void>::type
     computeDeterminantDerivative(StensorResultType&,
 				 const StensorType&);
@@ -179,9 +182,9 @@ namespace tfel{
       tfel::meta::Implements<StensorType,StensorConcept>::cond &&
       StensorTraits<StensorType>::dime == 3u&&
       StensorTraits<StensorResultType>::dime == 3u&&
-      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<StensorNumType<StensorType>,
 								   Power<2> >::Result,
-				       typename StensorTraits<StensorResultType>::NumType>::cond,
+				       StensorNumType<StensorResultType>>::cond,
       void>::type
     computeDeterminantDerivative(StensorResultType&,
 				 const StensorType&);

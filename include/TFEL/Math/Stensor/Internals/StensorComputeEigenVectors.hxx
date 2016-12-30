@@ -34,10 +34,10 @@ namespace tfel{
     namespace internals{
 
       template<unsigned short N>
-      struct StensorComputeEigenVectors_;
+      struct StensorComputeEigenVectors;
 
       template<>
-      struct StensorComputeEigenVectors_<1u>
+      struct StensorComputeEigenVectors<1u>
       {
 
 	template<typename T>
@@ -52,8 +52,8 @@ namespace tfel{
 	static bool computeEigenVector(VectorType& v,const T* const s,const T vp)
 	{
 	  using namespace std;
-	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename VectorTraits<VectorType>::NumType>::cond);
-	  TFEL_STATIC_ASSERT((std::is_same<typename VectorTraits<VectorType>::NumType,T>::value));
+	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<VectorNumType<VectorType>>::cond);
+	  TFEL_STATIC_ASSERT((std::is_same<VectorNumType<VectorType>,T>::value));
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  if(std::abs(s[0]-vp)<10*numeric_limits<T>::min()){
@@ -78,7 +78,9 @@ namespace tfel{
 	}
 
 	template<typename T>
-	static bool exe(const T* const s,tfel::math::tvector<3u,T>& vp,tfel::math::tmatrix<3u,3u,T>& vec,
+	static bool exe(const T* const s,
+			tfel::math::tvector<3u,T>& vp,
+			tfel::math::tmatrix<3u,3u,T>& m,
 			const bool)
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
@@ -86,29 +88,28 @@ namespace tfel{
 	  vp(0)=s[0];
 	  vp(1)=s[1];
 	  vp(2)=s[2];
-	  vec = tfel::math::tmatrix<3u,3u,T>::Id();
+	  m = tfel::math::tmatrix<3u,3u,T>::Id();
 	  return true;
 	}
       };
 
       template<>
-      struct StensorComputeEigenVectors_<2u>
+      struct StensorComputeEigenVectors<2u>
       {
 
 	template<typename T>
-	static bool test(const T* const s,const tfel::math::tvector<3u,T>& vp,const tfel::math::tmatrix<3u,3u,T>& m)
+	static bool test(const T* const s,
+			 const tfel::math::tvector<3u,T>& vp,
+			 const tfel::math::tmatrix<3u,3u,T>& m)
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  using tfel::math::constexpr_fct::sqrt;
 	  constexpr const auto icste = Cste<T>::isqrt2;
-	  T tmp;
-	  T y0;
-	  T y1;
 	  // first eigenvalue
-	  y0 = s[0]*m(0,0)+s[3]*icste*m(1,0)-vp(0)*m(0,0);
-	  y1 = s[1]*m(1,0)+s[3]*icste*m(0,0)-vp(0)*m(1,0);
-	  tmp = std::sqrt(y0*y0+y1*y1);
+	  auto y0 = s[0]*m(0,0)+s[3]*icste*m(1,0)-vp(0)*m(0,0);
+	  auto y1 = s[1]*m(1,0)+s[3]*icste*m(0,0)-vp(0)*m(1,0);
+	  auto tmp = std::sqrt(y0*y0+y1*y1);
 	  if(tmp>100*std::numeric_limits<T>::epsilon()){
 	    return false;
 	  }
@@ -125,18 +126,18 @@ namespace tfel{
 	template<typename VectorType,typename T>
 	static bool computeEigenVector(VectorType& v,const T* const s,const T vp)
 	{
-	  using namespace std;
-	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename VectorTraits<VectorType>::NumType>::cond);
-	  TFEL_STATIC_ASSERT((std::is_same<typename VectorTraits<VectorType>::NumType,T>::value));
-	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
-	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  if(std::abs(s[2]-vp)<10*numeric_limits<T>::min()){
+	  using namespace tfel::typetraits;
+	  TFEL_STATIC_ASSERT(IsFundamentalNumericType<VectorNumType<VectorType>>::cond);
+	  TFEL_STATIC_ASSERT((std::is_same<VectorNumType<VectorType>,T>::value));
+	  TFEL_STATIC_ASSERT(IsFundamentalNumericType<T>::cond);
+	  TFEL_STATIC_ASSERT(IsReal<T>::cond);
+	  if(std::abs(s[2]-vp)<10*std::numeric_limits<T>::min()){
 	    v(0)=0;
 	    v(1)=0;
 	    v(2)=1;
 	    return true;
 	  }
-	  v(2)=0.;
+	  v(2)=0;
 	  return computeEigenVector(s[0],s[1],s[3],vp,v(0),v(1));
 	}
 
@@ -148,21 +149,21 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  T prec;
 	  vp(2)=s[2];
 	  vec = tmatrix<3u,3u,T>::Id();
-	  StensorComputeEigenVectors_<2u>::computeEigenValues(s[0],s[1],s[3],vp(0),vp(1));
-	  prec = 10*std::max(vp(0),vp(1))*std::numeric_limits<T>::epsilon();
+	  StensorComputeEigenVectors<2u>::computeEigenValues(s[0],s[1],s[3],vp(0),vp(1));
+	  const auto prec = 10*std::max(vp(0),vp(1))*std::numeric_limits<T>::epsilon();
 	  if(std::abs(vp(0)-vp(1))<=prec){
 	    return true;
 	  }
-	  if(StensorComputeEigenVectors_<2u>::computeEigenVector(s[0],s[1],s[3],vp(0),vec(0,0),vec(1,0))==false){
+	  if(StensorComputeEigenVectors<2u>::computeEigenVector(s[0],s[1],s[3],vp(0),
+								vec(0,0),vec(1,0))==false){
 	    return false;
 	  }
 	  vec(0,1)=-vec(1,0);
 	  vec(1,1)=vec(0,0);
 #ifdef TFEL_PARANOIC_CHECK
-	    return tfel::math::internals::StensorComputeEigenVectors_<2u>::test(s,vp,vec);
+	    return tfel::math::internals::StensorComputeEigenVectors<2u>::test(s,vp,vec);
 #else
 	    return true;
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
@@ -228,22 +229,22 @@ namespace tfel{
       };
 
       template<>
-      struct StensorComputeEigenVectors_<3u>
+      struct StensorComputeEigenVectors<3u>
       {
 
 	template<typename T>
-	static bool test(const T* const s,const tfel::math::tvector<3u,T>& vp,const tfel::math::tmatrix<3u,3u,T>& m)
+	static bool test(const T* const s,
+			 const tfel::math::tvector<3u,T>& vp,
+			 const tfel::math::tmatrix<3u,3u,T>& m)
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  constexpr const auto icste = Cste<T>::isqrt2;
-	  T y0,y1,y2;
-	  T tmp;
 	  // first eigenvalue
-	  y0 = s[0]*m(0,0)+s[3]*icste*m(1,0)+s[4]*icste*m(2,0)-vp(0)*m(0,0);
-	  y1 = s[1]*m(1,0)+s[3]*icste*m(0,0)+s[5]*icste*m(2,0)-vp(0)*m(1,0);
-	  y2 = s[2]*m(2,0)+s[4]*icste*m(0,0)+s[5]*icste*m(1,0)-vp(0)*m(2,0);
-	  tmp = norm(y0,y1,y2);
+	  auto y0 = s[0]*m(0,0)+s[3]*icste*m(1,0)+s[4]*icste*m(2,0)-vp(0)*m(0,0);
+	  auto y1 = s[1]*m(1,0)+s[3]*icste*m(0,0)+s[5]*icste*m(2,0)-vp(0)*m(1,0);
+	  auto y2 = s[2]*m(2,0)+s[4]*icste*m(0,0)+s[5]*icste*m(1,0)-vp(0)*m(2,0);
+	  auto tmp = norm(y0,y1,y2);
 	  if(tmp>100*std::numeric_limits<T>::epsilon()){
 	    return false;
 	  }
@@ -269,15 +270,18 @@ namespace tfel{
 	template<typename VectorType,typename T>
 	static bool computeEigenVector(VectorType& v,const T* const src,const T vp)
 	{
-	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<typename VectorTraits<VectorType>::NumType>::cond);
-	  TFEL_STATIC_ASSERT((std::is_same<typename VectorTraits<VectorType>::NumType,T>::value));
-	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
-	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
+	  using namespace tfel::typetraits;
+	  TFEL_STATIC_ASSERT(IsFundamentalNumericType<VectorNumType<VectorType>>::cond);
+	  TFEL_STATIC_ASSERT((std::is_same<VectorNumType<VectorType>,T>::value));
+	  TFEL_STATIC_ASSERT(IsFundamentalNumericType<T>::cond);
+	  TFEL_STATIC_ASSERT(IsReal<T>::cond);
 	  return computeEigenVector(src,vp,v(0),v(1),v(2));
 	}
 
 	template<typename T>
-	static bool exe(const T* const s,tfel::math::tvector<3u,T>& vp,tfel::math::tmatrix<3u,3u,T>& vec,
+	static bool exe(const T* const s,
+			tfel::math::tvector<3u,T>& vp,
+			tfel::math::tmatrix<3u,3u,T>& vec,
 			const bool b)
 	{
 	  using namespace std;
@@ -286,7 +290,7 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  TFEL_CONSTEXPR const auto rel_prec  = 100*std::numeric_limits<T>::epsilon();
 	  TFEL_CONSTEXPR const auto one_third = T(1)/T(3);
-	  StensorComputeEigenValues_<3u>::exe(s,vp(0),vp(1),vp(2),b);
+	  StensorComputeEigenValues<3u>::exe(s,vp(0),vp(1),vp(2),b);
 	  const auto tr  = (s[0]+s[1]+s[2])*one_third;
 	  const auto mvp = max(max(std::abs(vp(0)-tr),std::abs(vp(1)-tr)),std::abs(vp(2)-tr));
 	  const bool bsmall = ((mvp<100*std::numeric_limits<T>::min())||
@@ -295,7 +299,7 @@ namespace tfel{
 	    // all eigenvalues are equal
 	    vec = tmatrix<3u,3u,T>::Id();
 #ifdef TFEL_PARANOIC_CHECK
-	    return tfel::math::internals::StensorComputeEigenVectors_<3>::test(s,vp,vec);
+	    return tfel::math::internals::StensorComputeEigenVectors<3>::test(s,vp,vec);
 #else
 	    return true;
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
@@ -316,7 +320,7 @@ namespace tfel{
 	    // all eigenvalues are equal
 	    vec = tmatrix<3u,3u,T>::Id();
 #ifdef TFEL_PARANOIC_CHECK
-	    return tfel::math::internals::StensorComputeEigenVectors_<3>::test(s,vp,vec);
+	    return tfel::math::internals::StensorComputeEigenVectors<3>::test(s,vp,vec);
 #else
 	    return true;
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
@@ -343,7 +347,7 @@ namespace tfel{
 			    vec(0,1),vec(1,1),vec(2,1));
 	    }
 #ifdef TFEL_PARANOIC_CHECK
-	    return tfel::math::internals::StensorComputeEigenVectors_<3>::test(s,vp,vec);
+	    return tfel::math::internals::StensorComputeEigenVectors<3>::test(s,vp,vec);
 #else
 	    return true;
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
@@ -359,7 +363,7 @@ namespace tfel{
 			  vec(0,0),vec(1,0),vec(2,0),
 			  vec(0,1),vec(1,1),vec(2,1));
 #ifdef TFEL_PARANOIC_CHECK
-	    return tfel::math::internals::StensorComputeEigenVectors_<3>::test(s,vp,vec);
+	    return tfel::math::internals::StensorComputeEigenVectors<3>::test(s,vp,vec);
 #else
 	    return true;
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
@@ -374,14 +378,13 @@ namespace tfel{
 			vec(0,2),vec(1,2),vec(2,2),
 			vec(0,0),vec(1,0),vec(2,0));  
 #ifdef TFEL_PARANOIC_CHECK
-	  return tfel::math::internals::StensorComputeEigenVectors_<3>::test(s,vp,vec);
+	  return tfel::math::internals::StensorComputeEigenVectors<3>::test(s,vp,vec);
 #else
 	  return true;
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
 	}
 
       private:
-
 	
 	template<typename T>
 	static T conditionning_number(const T a, const T b, const T c)
@@ -422,7 +425,6 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  return x0*x0+x1*x1+x2*x2;
 	}
-
 
 	template<typename T>
 	static void cross_product(T& z0,T& z1,T& z2,const T x0,const T x1,const T x2,const T y0,const T y1,const T y2)
@@ -485,23 +487,23 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  // Assume that vp is a single eigenvalue
 	  constexpr const auto icste = Cste<T>::isqrt2;
-	  const T a = src[0]-vp;
-	  const T b = src[3]*icste;
-	  const T c = src[4]*icste;
-	  const T d = src[1]-vp;
-	  const T e = src[5]*icste;
-	  const T f = src[2]-vp;
-	  const T det3=a*d-b*b;
-	  const T det2=a*f-c*c;
-	  const T det1=d*f-e*e;
-	  const T prec = std::max(std::abs(vp)*std::numeric_limits<T>::epsilon(),
-				  10*std::numeric_limits<T>::min());
+	  const auto a = src[0]-vp;
+	  const auto b = src[3]*icste;
+	  const auto c = src[4]*icste;
+	  const auto d = src[1]-vp;
+	  const auto e = src[5]*icste;
+	  const auto f = src[2]-vp;
+	  const auto det3=a*d-b*b;
+	  const auto det2=a*f-c*c;
+	  const auto det1=d*f-e*e;
+	  const auto prec = std::max(std::abs(vp)*std::numeric_limits<T>::epsilon(),
+				     10*std::numeric_limits<T>::min());
 	  if((std::abs(det1)<prec)&&
 	     (std::abs(det2)<prec)&&
 	     (std::abs(det3)<prec)){
 	    tvector<3u,T> v;
 	    tmatrix<3u,3u,T> m;
-	    if(!StensorComputeEigenVectors_<3u>::exe(src,v,m,true)){
+	    if(!StensorComputeEigenVectors<3u>::exe(src,v,m,true)){
 	      v0 = v1 = v2 = T(0);	      
 	      return false;
 	    }

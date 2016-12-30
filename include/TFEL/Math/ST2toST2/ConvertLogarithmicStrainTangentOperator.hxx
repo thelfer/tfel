@@ -64,16 +64,16 @@ namespace tfel{
       static typename
       std::enable_if<((tfel::meta::implements<ST2toST2Type,tfel::math::ST2toST2Concept>())&&
 		      (tfel::math::ST2toST2Traits<ST2toST2Type>::dime==1u)&&
-		      (std::is_same<typename tfel::math::ST2toST2Traits<ST2toST2Type>::NumType,stress>::value)&&
+		      (std::is_same<ST2toST2NumType<ST2toST2Type>,stress>::value)&&
 		      (tfel::meta::implements<ST2toST2Type2,tfel::math::ST2toST2Concept>())&&
 		      (tfel::math::ST2toST2Traits<ST2toST2Type2>::dime==1u)&&
-		      (tfel::typetraits::IsAssignableTo<typename ST2toST2Traits<ST2toST2Type2>::NumType,stress>::cond),
+		      (tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type2>,stress>::cond),
 		      (tfel::meta::implements<ST2toST2Type3,tfel::math::ST2toST2Concept>())&&
 		      (tfel::math::ST2toST2Traits<ST2toST2Type3>::dime==1u)&&
-		      (tfel::typetraits::IsAssignableTo<typename ST2toST2Traits<ST2toST2Type3>::NumType,real>::cond),
+		      (tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type3>,real>::cond),
 		      (tfel::meta::implements<StressStensorType,tfel::math::StensorConcept>())&&
 		      (tfel::math::StensorTraits<StressStensorType>::dime==1u)&&
-		      (tfel::typetraits::IsAssignableTo<typename StensorTraits<StressStensorType>::NumType,stress>::cond)),
+		      (tfel::typetraits::IsAssignableTo<StensorNumType<StressStensorType>,stress>::cond)),
 		     void>::type
       exe(ST2toST2Type& Cse,
 	  const ST2toST2Type2& C,

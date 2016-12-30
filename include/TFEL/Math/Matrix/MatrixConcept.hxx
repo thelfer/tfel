@@ -53,7 +53,9 @@ namespace tfel{
        */
       typedef tfel::meta::InvalidType IndexType;
     };
-
+    //! a simple alias
+    template<typename T>
+    using MatrixNumType = typename MatrixTraits<T>::NumType;
     /*!
      * \class MatrixTag
      * \brief Helper class to characterise matrices.

@@ -40,10 +40,10 @@ namespace tfel{
 	static TFEL_MATH_INLINE2
 	typename std::enable_if<(tfel::meta::Implements<ST2toST2Type,tfel::math::ST2toST2Concept>::cond&&
 				 tfel::math::ST2toST2Traits<ST2toST2Type>::dime==1u),
-				tfel::math::st2tost2<1u,typename tfel::math::ST2toST2Traits<ST2toST2Type>::NumType>
+				tfel::math::st2tost2<1u,ST2toST2NumType<ST2toST2Type>>
 				>::type
 	exe(const ST2toST2Type& s,
-	    const tfel::math::tmatrix<3,3,typename tfel::typetraits::BaseType<typename tfel::math::ST2toST2Traits<ST2toST2Type>::NumType>::type>&){
+	    const tfel::math::tmatrix<3,3,typename tfel::typetraits::BaseType<tfel::math::ST2toST2NumType<ST2toST2Type>>::type>&){
 	  return s;
 	}
       }; // end of ChangeBasis<1u>
@@ -59,12 +59,12 @@ namespace tfel{
 	static TFEL_MATH_INLINE2
 	typename std::enable_if<(tfel::meta::Implements<ST2toST2Type,tfel::math::ST2toST2Concept>::cond&&
 				 tfel::math::ST2toST2Traits<ST2toST2Type>::dime==2u),
-				tfel::math::st2tost2<2u,typename tfel::math::ST2toST2Traits<ST2toST2Type>::NumType>
+				tfel::math::st2tost2<2u,tfel::math::ST2toST2NumType<ST2toST2Type>>
 				>::type
 	exe(const ST2toST2Type& s,
-	    const tfel::math::tmatrix<3,3,typename tfel::typetraits::BaseType<typename tfel::math::ST2toST2Traits<ST2toST2Type>::NumType>::type>& r)
+	    const tfel::math::tmatrix<3,3,tfel::typetraits::base_type<tfel::math::ST2toST2NumType<ST2toST2Type>>>& r)
 	{
-	  using st2tost2 = tfel::math::st2tost2<2u,typename tfel::math::ST2toST2Traits<ST2toST2Type>::NumType>;
+	  using st2tost2 = tfel::math::st2tost2<2u,tfel::math::ST2toST2NumType<ST2toST2Type>>;
 	  const auto sr  = st2tost2::fromRotationMatrix(r);
 	  const auto sir = st2tost2::fromRotationMatrix(transpose(r));
 	  return sr*s*sir;
@@ -84,12 +84,12 @@ namespace tfel{
 	static TFEL_MATH_INLINE2
 	typename std::enable_if<(tfel::meta::Implements<ST2toST2Type,tfel::math::ST2toST2Concept>::cond&&
 				 tfel::math::ST2toST2Traits<ST2toST2Type>::dime==3u),
-				tfel::math::st2tost2<3u,typename tfel::math::ST2toST2Traits<ST2toST2Type>::NumType>
+				tfel::math::st2tost2<3u,tfel::math::ST2toST2NumType<ST2toST2Type>>
 				>::type
 	exe(const ST2toST2Type& s,
-	    const tfel::math::tmatrix<3,3,typename tfel::typetraits::BaseType<typename tfel::math::ST2toST2Traits<ST2toST2Type>::NumType>::type>& r)
+	    const tfel::math::tmatrix<3,3,tfel::typetraits::base_type<tfel::math::ST2toST2NumType<ST2toST2Type>>>& r)
 	{
-	  using st2tost2 = tfel::math::st2tost2<3u,typename tfel::math::ST2toST2Traits<ST2toST2Type>::NumType>;
+	  using st2tost2 = tfel::math::st2tost2<3u,tfel::math::ST2toST2NumType<ST2toST2Type>>;
 	  const auto sr  = st2tost2::fromRotationMatrix(r);
 	  const auto sir = st2tost2::fromRotationMatrix(transpose(r));
 	  return sr*s*sir;

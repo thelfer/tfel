@@ -37,8 +37,8 @@ namespace tfel{
     template<typename T_type, typename Operation>
     struct TensorTraits<Expr<T_type,Operation>>
     {
-      typedef typename TensorTraits<T_type>::NumType   NumType;
-      typedef typename TensorTraits<T_type>::IndexType IndexType;
+      using NumType   =  typename TensorTraits<T_type>::NumType;
+      using IndexType =  typename TensorTraits<T_type>::IndexType;
       static constexpr unsigned short dime = TensorTraits<T_type>::dime;
     };
 

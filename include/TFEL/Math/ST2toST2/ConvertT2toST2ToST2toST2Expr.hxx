@@ -37,12 +37,12 @@ namespace tfel
     template<typename ST2toST2ResultType>
     struct Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<1u> >
       : public ST2toST2Concept<Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<1u> > >,
-	public fsarray<9u,typename ST2toST2Traits<ST2toST2ResultType>::NumType>
+	public fsarray<9u,ST2toST2NumType<ST2toST2ResultType>>
     {
       //! a simple check
       TFEL_STATIC_ASSERT(ST2toST2Traits<ST2toST2ResultType>::dime==1u);
       //! a simple alias
-      typedef typename ST2toST2Traits<ST2toST2ResultType>::NumType value_type;
+      typedef ST2toST2NumType<ST2toST2ResultType> value_type;
       //! a simple alias
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
@@ -58,7 +58,7 @@ namespace tfel
 	TFEL_STATIC_ASSERT((ST2toST2Traits<ST2toST2ResultType>::dime==T2toST2Traits<T2toST2Type>::dime));
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,
-							     typename ST2toST2Traits<ST2toST2ResultType>::NumType>::cond));
+							     ST2toST2NumType<ST2toST2ResultType>>::cond));
 	copy<9u>::exe(&A(0,0),this->v);
       } // end of Expr
       /*!
@@ -90,12 +90,12 @@ namespace tfel
     template<typename ST2toST2ResultType>
     struct Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<2u> >
       : public ST2toST2Concept<Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<2u> > >,
-	public fsarray<16u,typename ST2toST2Traits<ST2toST2ResultType>::NumType>
+	public fsarray<16u,ST2toST2NumType<ST2toST2ResultType>>
     {
       //! a simple check
       TFEL_STATIC_ASSERT(ST2toST2Traits<ST2toST2ResultType>::dime==2u);
       //! a simple alias
-      typedef typename ST2toST2Traits<ST2toST2ResultType>::NumType value_type;
+      typedef ST2toST2NumType<ST2toST2ResultType> value_type;
       //! a simple alias
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
@@ -110,7 +110,7 @@ namespace tfel
 	TFEL_STATIC_ASSERT((ST2toST2Traits<ST2toST2ResultType>::dime==T2toST2Traits<T2toST2Type>::dime));
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,
-							     typename ST2toST2Traits<ST2toST2ResultType>::NumType>::cond));
+							     ST2toST2NumType<ST2toST2ResultType>>::cond));
 	using tfel::typetraits::BaseType;
 	typedef typename BaseType<value_type>::type real;
 	constexpr const auto icste  = Cste<value_type>::sqrt2;
@@ -161,12 +161,12 @@ namespace tfel
     template<typename ST2toST2ResultType>
     struct Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<3u> >
       : public ST2toST2Concept<Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<3u> > >,
-	public fsarray<36u,typename ST2toST2Traits<ST2toST2ResultType>::NumType>
+	public fsarray<36u,ST2toST2NumType<ST2toST2ResultType>>
     {
       //! a simple check
       TFEL_STATIC_ASSERT(ST2toST2Traits<ST2toST2ResultType>::dime==3u);
       //! a simple alias
-      typedef typename ST2toST2Traits<ST2toST2ResultType>::NumType value_type;
+      typedef ST2toST2NumType<ST2toST2ResultType> value_type;
       //! a simple alias
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
@@ -181,7 +181,7 @@ namespace tfel
 	TFEL_STATIC_ASSERT((ST2toST2Traits<ST2toST2ResultType>::dime==T2toST2Traits<T2toST2Type>::dime));
 	//! a simple check
 	TFEL_STATIC_ASSERT((tfel::typetraits::IsAssignableTo<typename T2toST2Traits<T2toST2Type>::NumType,
-							     typename ST2toST2Traits<ST2toST2ResultType>::NumType>::cond));
+							     ST2toST2NumType<ST2toST2ResultType>>::cond));
 	using tfel::typetraits::BaseType;
 	typedef typename BaseType<value_type>::type real;
 	constexpr const auto icste  = Cste<value_type>::sqrt2;

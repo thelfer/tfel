@@ -14,6 +14,7 @@
 #define LIB_TFEL_MATH_ST2TOST2_CONCEPT_IMPL_ 1
 
 #include"TFEL/Math/Stensor/StensorSizeToDime.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2TransposeExpr.hxx"
 
 namespace tfel{
 

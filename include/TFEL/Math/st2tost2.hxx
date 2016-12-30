@@ -26,6 +26,7 @@
 #include"TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include"TFEL/Math/fsarray.hxx"
 #include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/General/BasicOperations.hxx"
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/Forward/st2tost2.hxx"

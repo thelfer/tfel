@@ -194,8 +194,11 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Stensor/Internals/StensorChangeBasis.hxx                                           \
 			TFEL/Math/Stensor/Internals/StensorExport.hxx                                                \
 			TFEL/Math/Stensor/Internals/StensorExport.ixx                                                \
+			TFEL/Math/Stensor/Internals/StensorEigenSolver.hxx                                           \
 			TFEL/Math/Stensor/Internals/StensorComputeEigenValues.hxx                                    \
 			TFEL/Math/Stensor/Internals/StensorComputeEigenVectors.hxx                                   \
+			TFEL/Math/Stensor/Internals/GteSymmetricEigenSolver.hxx                                      \
+			TFEL/Math/Stensor/Internals/GteSymmetricEigenSolver.ixx                                      \
 			TFEL/Math/Stensor/Internals/StensorImport.hxx                                                \
 			TFEL/Math/Stensor/StensorConcept.hxx		                                             \
 			TFEL/Math/Stensor/StensorConcept.ixx		                                             \

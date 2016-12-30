@@ -39,13 +39,14 @@ namespace tfel{
 	
       // computeEigenValues
       template<unsigned short N>
-      struct StensorComputeEigenValues_;
+      struct StensorComputeEigenValues;
       
       template<>
-      struct StensorComputeEigenValues_<1u>
+      struct StensorComputeEigenValues<1u>
       {
 	template<typename T>
-	static TFEL_MATH_INLINE2 void exe(const T* const v,T& vp1,T& vp2,T& vp3,
+	static TFEL_MATH_INLINE2 void exe(const T* const v,
+					  T& vp1,T& vp2,T& vp3,
 					  const bool)
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
@@ -57,7 +58,7 @@ namespace tfel{
       };
       
       template<>
-      struct StensorComputeEigenValues_<2u>
+      struct StensorComputeEigenValues<2u>
       {
 	template<typename T>
 	static TFEL_MATH_INLINE2 void exe(const T* const v,
@@ -66,10 +67,13 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
+	  constexpr      const auto zero     = T(0);
 	  TFEL_CONSTEXPR const auto one_half = T(1)/T(2);
 	  const auto tr    = v[0] + v[1];
 	  const auto tmp   = v[0] - v[1];
-	  const auto delta = (tmp*tmp*one_half+(v[3]*v[3]))*one_half;
+	  const auto delta = std::max((tmp*tmp*one_half+(v[3]*v[3]))*one_half,zero);
+	  // const auto r1 = one_half*tr+std::copysign(std::sqrt(delta),tr);
+	  // const auto r2 = c/r1;
 	  vp1 = one_half*tr+std::sqrt(delta); 
 	  vp2 = one_half*tr-std::sqrt(delta); 
 	  vp3 = *(v+2);
@@ -77,7 +81,7 @@ namespace tfel{
       };
 
       template<>
-      struct StensorComputeEigenValues_<3u>
+      struct StensorComputeEigenValues<3u>
       {
 	template<typename T>
 	static TFEL_MATH_INLINE2 void exe(const T* const v,T& vp1,T& vp2,T& vp3,
@@ -87,12 +91,12 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  using tfel::math::constexpr_fct::sqrt;
 	  constexpr const auto icste = Cste<T>::isqrt2;
-	  TFEL_CONSTEXPR T one_half  = T{1}/T{2};
-	  TFEL_CONSTEXPR T one_third = T{1}/T{3};
+	  TFEL_CONSTEXPR const auto one_half  = 1/T{2};
+	  TFEL_CONSTEXPR const auto one_third = 1/T{3};
 	  stensor<3u,T> s(v);
 	  stensor<3u,T> s2(deviator(s));
 	  const T vmax = *(fsalgo::max_element<6u>::exe(s2.begin()));
-	  const bool n = abs(vmax)*std::numeric_limits<T>::epsilon()>std::numeric_limits<T>::min();
+	  const bool n = std::abs(vmax)*std::numeric_limits<T>::epsilon()>std::numeric_limits<T>::min();
   	  if(n){
 	    s2 *= T(1)/vmax;
 	  }

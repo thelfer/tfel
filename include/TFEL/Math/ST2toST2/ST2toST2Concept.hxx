@@ -20,20 +20,28 @@
 #include"TFEL/Metaprogramming/InvalidType.hxx"
 #include"TFEL/Math/General/Abs.hxx"
 #include"TFEL/Math/General/ConceptRebind.hxx"
-#include"TFEL/Math/Forward/ST2toST2Concept.hxx"
 #include"TFEL/Math/Forward/TensorConcept.hxx"
-#include"TFEL/Math/ST2toST2/ST2toST2TransposeExpr.hxx"
+#include"TFEL/Math/ExpressionTemplates/Expr.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 
 namespace tfel{
 
   namespace math{
 
-    template<class T>
+    //! a simple alias
+    template<typename A>
+    struct ST2toST2TransposeExpr;
+    
+    template<typename T>
     struct ST2toST2Traits{
       typedef tfel::meta::InvalidType NumType;
       static constexpr unsigned short dime = 0u;
     };
 
+    //! a simple alias
+    template<typename T>
+    using ST2toST2NumType = typename ST2toST2Traits<T>::NumType;
+    
     /*!
      * \class ST2toST2Tag
      * \brief Helper class to characterise st2tost2.

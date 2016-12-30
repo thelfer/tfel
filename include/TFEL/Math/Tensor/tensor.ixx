@@ -51,7 +51,7 @@ namespace tfel{
 	template<typename T>
 	TFEL_MATH_INLINE2 static
 	void exe(T* const t,
-		 const typename tfel::typetraits::BaseType<T>::type* const v)
+		 const tfel::typetraits::base_type<T>* const v)
 	{
 	  t[0] = T(v[0]);
 	  t[1] = T(v[4]);
@@ -72,7 +72,7 @@ namespace tfel{
 	template<typename T>
 	TFEL_MATH_INLINE2 static
 	void exe(T* const t,
-		 const typename tfel::typetraits::BaseType<T>::type* const v)
+		 const tfel::typetraits::base_type<T>* const v)
 	{
 	  BuildTensorFromFortranMatrix<1u>::exe(t,v);
 	  t[3] = T(v[3]);
@@ -93,7 +93,7 @@ namespace tfel{
 	template<typename T>
 	TFEL_MATH_INLINE2 static
 	void exe(T* const t,
-		 const typename tfel::typetraits::BaseType<T>::type* const v)
+		 const tfel::typetraits::base_type<T>* const v)
 	{
 	  BuildTensorFromFortranMatrix<2u>::exe(t,v);
 	  t[5] = T(v[6]);
@@ -180,8 +180,8 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<Child>::dime==TensorTraits<TensorType>::dime &&
-      tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
-				       typename TensorTraits<Child>::NumType>::cond,
+      tfel::typetraits::IsAssignableTo<TensorNumType<TensorType>,
+				       TensorNumType<Child>>::cond,
       Child&>::type
     tensor_base<Child>::operator=(const TensorType& src){
       auto& child = static_cast<Child&>(*this);
@@ -194,8 +194,8 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<Child>::dime==TensorTraits<TensorType>::dime &&
-      tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
-				       typename TensorTraits<Child>::NumType>::cond,
+      tfel::typetraits::IsAssignableTo<TensorNumType<TensorType>,
+				       TensorNumType<Child>>::cond,
       Child&>::type
     tensor_base<Child>::operator+=(const TensorType& src){
       auto& child = static_cast<Child&>(*this);
@@ -208,8 +208,8 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<Child>::dime==TensorTraits<TensorType>::dime &&
-      tfel::typetraits::IsAssignableTo<typename TensorTraits<TensorType>::NumType,
-				       typename TensorTraits<Child>::NumType>::cond,
+      tfel::typetraits::IsAssignableTo<TensorNumType<TensorType>,
+				       TensorNumType<Child>>::cond,
       Child&>::type
     tensor_base<Child>::operator-=(const TensorType& src){
       auto& child = static_cast<Child&>(*this);
@@ -222,9 +222,9 @@ namespace tfel{
     template<typename T2>
     typename std::enable_if<
       tfel::typetraits::IsScalar<T2>::cond&&
-      std::is_same<typename ResultType<typename TensorTraits<Child>::NumType,
+      std::is_same<typename ResultType<TensorNumType<Child>,
 						 T2,OpMult>::type,
-			     typename TensorTraits<Child>::NumType>::value,
+			     TensorNumType<Child>>::value,
       Child&>::type
     tensor_base<Child>::operator*=(const T2 s)
     {
@@ -238,20 +238,20 @@ namespace tfel{
     template<typename T2>
     typename std::enable_if<
       tfel::typetraits::IsScalar<T2>::cond&&
-      std::is_same<typename ResultType<typename TensorTraits<Child>::NumType,
+      std::is_same<typename ResultType<TensorNumType<Child>,
 						 T2,OpDiv>::type,
-			     typename TensorTraits<Child>::NumType>::value,
+			     TensorNumType<Child>>::value,
       Child&>::type
     tensor_base<Child>::operator/=(const T2 s)
     {
       auto& child = static_cast<Child&>(*this);
-      VectorUtilities<TensorDimeToSize<TensorTraits<Child>::dime>::value>::scale(child,(static_cast<typename tfel::typetraits::BaseType<T2>::type>(1u))/s);
+      VectorUtilities<TensorDimeToSize<TensorTraits<Child>::dime>::value>::scale(child,(static_cast<tfel::typetraits::base_type<T2>>(1u))/s);
       return child;
     }
 
     template<unsigned short N, typename T>
     void tensor<N,T>::buildFromFortranMatrix(tensor<N,T>& t,
-					     const typename tfel::typetraits::BaseType<T>::type* const v)
+					     const tfel::typetraits::base_type<T>* const v)
     {
       using tfel::math::internals::BuildTensorFromFortranMatrix;
       BuildTensorFromFortranMatrix<N>::template exe<T>(t.begin(),v);
@@ -259,7 +259,7 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     tensor<N,T>
-    tensor<N,T>::buildFromFortranMatrix(const typename tfel::typetraits::BaseType<T>::type* const v)
+    tensor<N,T>::buildFromFortranMatrix(const tfel::typetraits::base_type<T>* const v)
     {
       using tfel::math::internals::BuildTensorFromFortranMatrix;
       tensor<N,T> t;
@@ -312,11 +312,11 @@ namespace tfel{
     template<unsigned short N,typename T>
     template<typename T2>
     typename std::enable_if<
-      tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
+      tfel::typetraits::IsSafelyReinterpretCastableTo<T2,tfel::typetraits::base_type<T>>::cond,
       void>::type
     tensor<N,T>::import(const T2 * const src)
     {
-      typedef typename tfel::typetraits::BaseType<T>::type base;
+      typedef tfel::typetraits::base_type<T> base;
       typedef tfel::fsalgo::copy<TensorDimeToSize<N>::value> Copy;
       TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
       Copy::exe(src,reinterpret_cast<base*>(this->v));
@@ -324,9 +324,9 @@ namespace tfel{
 
     // Write to Tab
     template<unsigned short N, typename T>
-    void tensor<N,T>::write(typename tfel::typetraits::BaseType<T>::type* const t) const
+    void tensor<N,T>::write(tfel::typetraits::base_type<T>* const t) const
     {
-      typedef typename tfel::typetraits::BaseType<T>::type base;
+      typedef tfel::typetraits::base_type<T> base;
       typedef tfel::fsalgo::copy<TensorDimeToSize<N>::value> Copy;
       TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
       Copy::exe(reinterpret_cast<const base*>(this->v),t);
@@ -335,7 +335,7 @@ namespace tfel{
     // ChangeBasis
     template<unsigned short N,typename T>
     void 
-    tensor<N,T>::changeBasis(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& m)
+    tensor<N,T>::changeBasis(const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m)
     {
       TensorChangeBasis<N,T>::exe(this->v,m);
     }
@@ -345,7 +345,7 @@ namespace tfel{
     const tensor<N,T>&
     tensor<N,T>::Id(void)
     {
-      typedef typename tfel::typetraits::BaseType<T>::type base;
+      typedef tfel::typetraits::base_type<T> base;
       constexpr base zero{0};
       constexpr base one{1};
       constexpr base IdCoef[]  = {one,one,one,
@@ -372,7 +372,7 @@ namespace tfel{
     exportToBaseTypeArray(const tensor<N,T>& t,
 			  OutputIterator p)
     {    
-      typedef typename tfel::typetraits::BaseType<T>::type base;
+      typedef tfel::typetraits::base_type<T> base;
       typedef tfel::fsalgo::copy<TensorDimeToSize<N>::value> Copy;
       TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
       Copy::exe(reinterpret_cast<const base*>(&t[0]),p);
@@ -382,12 +382,12 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 1u,
-      tensor<1u,typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type,
-					     typename TensorTraits<TensorType>::NumType,OpDiv>::Result>
+      tensor<1u,typename ComputeBinaryResult<tfel::typetraits::base_type<TensorNumType<TensorType>>,
+					     TensorNumType<TensorType>,OpDiv>::Result>
       >::type
     invert(const TensorType& t){
-      typedef typename TensorTraits<TensorType>::NumType T;
-      typedef typename tfel::typetraits::BaseType<T>::type base;
+      typedef TensorNumType<TensorType> T;
+      typedef tfel::typetraits::base_type<T> base;
       typedef typename ComputeBinaryResult<base,T,OpDiv>::Result T2;
       tensor<1u,T2> t2;
       t2(0) = base(1)/t(0);
@@ -400,12 +400,12 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 2u,
-      tensor<2u,typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type,
-					     typename TensorTraits<TensorType>::NumType,OpDiv>::Result>
+      tensor<2u,typename ComputeBinaryResult<tfel::typetraits::base_type<TensorNumType<TensorType>>,
+					     TensorNumType<TensorType>,OpDiv>::Result>
       >::type
     invert(const TensorType& t){
-      typedef typename TensorTraits<TensorType>::NumType T;
-      typedef typename tfel::typetraits::BaseType<T>::type base;
+      typedef TensorNumType<TensorType> T;
+      typedef tfel::typetraits::base_type<T> base;
       typedef typename ComputeBinaryResult<base,T,OpDiv>::Result T3;
       tensor<2u,T3> t2;
       const auto id = base(1)/(t(0)*t(1)-t(3)*t(4));
@@ -421,12 +421,12 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&
       TensorTraits<TensorType>::dime == 3u,
-      tensor<3u,typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type,
-    					     typename TensorTraits<TensorType>::NumType,OpDiv>::Result>
+      tensor<3u,typename ComputeBinaryResult<tfel::typetraits::base_type<TensorNumType<TensorType>>,
+    					     TensorNumType<TensorType>,OpDiv>::Result>
       >::type
     invert(const TensorType& t){
-      typedef typename TensorTraits<TensorType>::NumType T;
-      typedef typename tfel::typetraits::BaseType<T>::type base;
+      typedef TensorNumType<TensorType> T;
+      typedef tfel::typetraits::base_type<T> base;
       typedef typename ComputeBinaryResult<base,T,OpDiv>::Result  T4;
       tensor<3u,T4> t2;
       const auto id = base(1)/det(t);
@@ -446,11 +446,11 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond,
       tensor<TensorTraits<TensorType>::dime,
-	     typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+	     typename ComputeUnaryResult<TensorNumType<TensorType>,
 					 Power<2> >::Result>>::type
     computeDeterminantDerivative(const TensorType& F){
       tensor<TensorTraits<TensorType>::dime,
-	     typename ComputeUnaryResult<typename TensorTraits<TensorType>::NumType,
+	     typename ComputeUnaryResult<TensorNumType<TensorType>,
 					 Power<2> >::Result> dJ;
       computeDeterminantDerivative(dJ,F);
       return dJ;
@@ -460,12 +460,11 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond,
       tensor<TensorTraits<TensorType>::dime,
-	      typename TensorTraits<TensorType>::NumType>
+	      TensorNumType<TensorType>>
       >::type
     change_basis(const TensorType& t,
-		 const tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename TensorTraits<TensorType>::NumType>::type>& r){
-      tensor<TensorTraits<TensorType>::dime,
-	      typename TensorTraits<TensorType>::NumType> nt{t};
+		 const tmatrix<3u,3u,tfel::typetraits::base_type<TensorNumType<TensorType>>>& r){
+      tensor<TensorTraits<TensorType>::dime,TensorNumType<TensorType>> nt{t};
       nt.changeBasis(r);
       return nt;
     } // end of change_basis
@@ -474,50 +473,38 @@ namespace tfel{
     typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==1u)),
-      tensor<1u,typename StensorTraits<T>::NumType>
+      tensor<1u,StensorNumType<T>>
       >::type
     unsyme(const T& s){
-      tensor<1u,typename StensorTraits<T>::NumType> r;
-      r[0] = s[0];
-      r[1] = s[1];
-      r[2] = s[2];
-      return r;
+      return {s[0],s[1],s[2]};
     }
 
     template<class T>
     typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==2u)),
-      tensor<2u,typename StensorTraits<T>::NumType>
+      tensor<2u,StensorNumType<T>>
       >::type
     unsyme(const T& s){
-      using value_type = typename StensorTraits<T>::NumType;
-      constexpr const auto cste = Cste<value_type>::isqrt2;
-      tensor<2u,value_type> r;
-      r[0] = s[0];
-      r[1] = s[1];
-      r[2] = s[2];
-      r[3] = r[4] = s[3]*cste;
-      return r;
+      using real = tfel::typetraits::base_type<StensorNumType<T>>;
+      constexpr const auto cste = Cste<real>::isqrt2;
+      const auto s01 = s[3]*cste;
+      return {s[0],s[1],s[2],s01,s01};
     }
 
     template<class T>
     typename std::enable_if<
       ((tfel::meta::Implements<T,StensorConcept>::cond) &&
        (StensorTraits<T>::dime==3u)),
-      tensor<3u,typename StensorTraits<T>::NumType>
+      tensor<3u,StensorNumType<T>>
       >::type
     unsyme(const T& s){
-      using value_type = typename StensorTraits<T>::NumType;
-      constexpr const auto cste = Cste<value_type>::isqrt2;
-      tensor<3u,value_type> r;
-      r[0] = s[0];
-      r[1] = s[1];
-      r[2] = s[2];
-      r[3] = r[4] = s[3]*cste;
-      r[5] = r[6] = s[4]*cste;
-      r[7] = r[8] = s[5]*cste;
-      return r;
+      using real = tfel::typetraits::base_type<StensorNumType<T>>;
+      constexpr const auto cste = Cste<real>::isqrt2;
+      const auto s01 = s[3]*cste;
+      const auto s02 = s[4]*cste;
+      const auto s12 = s[5]*cste;
+      return {s[0],s[1],s[2],s01,s01,s02,s02,s12,s12};
     }
 
   } //end of namespace math

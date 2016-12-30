@@ -45,19 +45,19 @@ namespace tfel{
       ST2toST2Traits<DPPType>::dime==StensorTraits<StensorType>::dime &&
       StensorTraits<PPType>::dime==StensorTraits<StensorType>::dime   &&
       StensorTraits<StensorType>::dime==1u                            &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<PPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DPPType>::NumType>::cond,
+      tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+				       StensorNumType<PPType>>::cond &&
+      tfel::typetraits::IsAssignableTo<tfel::typetraits::base_type<StensorNumType<StensorType>>,
+				       ST2toST2NumType<DPPType>>::cond,
       void>::type
     computeStensorPositivePartAndDerivative(DPPType& dpp,
 					    PPType& pp,
 					    const StensorType& s,
-					    const typename StensorTraits<StensorType>::NumType eps)
+					    const StensorNumType<StensorType> eps)
     {
       using std::abs;
-      typedef typename StensorTraits<StensorType>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type real;
+      typedef StensorNumType<StensorType> NumType;
+      typedef tfel::typetraits::base_type<NumType> real;
       TFEL_CONSTEXPR const auto one_half = real(1)/(real(2));
       dpp(0,1) = dpp(0,2) = dpp(1,0) = dpp(1,2) = dpp(2,0) = dpp(2,1) = real(0);
       if(abs(s(0))<eps){
@@ -102,21 +102,21 @@ namespace tfel{
       ST2toST2Traits<DPPType>::dime==StensorTraits<StensorType>::dime &&
       StensorTraits<PPType>::dime==StensorTraits<StensorType>::dime   &&
       StensorTraits<StensorType>::dime==2u                            &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<PPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DPPType>::NumType>::cond,
+      tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+				       StensorNumType<PPType>>::cond &&
+      tfel::typetraits::IsAssignableTo<tfel::typetraits::base_type<StensorNumType<StensorType>>,
+				       ST2toST2NumType<DPPType>>::cond,
       void>::type
     computeStensorPositivePartAndDerivative(DPPType& dpp,
 					    PPType& pp,
 					    const StensorType& s,
-					    const typename StensorTraits<StensorType>::NumType eps)
+					    const StensorNumType<StensorType> eps)
     {
       using std::abs;
       using tfel::math::internals::stensor_ppos;
       using tfel::math::internals::stensor_pneg;
-      typedef typename StensorTraits<StensorType>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type real;
+      typedef StensorNumType<StensorType> NumType;
+      typedef tfel::typetraits::base_type<NumType> real;
       constexpr const auto cste     = Cste<real>::sqrt2;
       TFEL_CONSTEXPR const auto one_half = real(1)/(real(2));
       stensor<2u,NumType> ls(s); // local copy of s
@@ -179,20 +179,20 @@ namespace tfel{
       ST2toST2Traits<DPPType>::dime==StensorTraits<StensorType>::dime &&
       StensorTraits<PPType>::dime==StensorTraits<StensorType>::dime   &&
       StensorTraits<StensorType>::dime==3u                            &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<PPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DPPType>::NumType>::cond,
+      tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+				       StensorNumType<PPType>>::cond &&
+      tfel::typetraits::IsAssignableTo<tfel::typetraits::base_type<StensorNumType<StensorType>>,
+				       ST2toST2NumType<DPPType>>::cond,
       void>::type
     computeStensorPositivePartAndDerivative(DPPType& dpp,
 					    PPType& pp,
 					    const StensorType& s,
-					    const typename StensorTraits<StensorType>::NumType eps)
+					    const StensorNumType<StensorType> eps)
     {
       using tfel::math::internals::stensor_ppos;
       using tfel::math::internals::stensor_pneg;
-      typedef typename StensorTraits<StensorType>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type real;
+      typedef StensorNumType<StensorType> NumType;
+      typedef tfel::typetraits::base_type<NumType> real;
       constexpr const auto cste     = Cste<real>::sqrt2;
       TFEL_CONSTEXPR const auto one_half = real(1)/(real(2));
       stensor<3u,NumType> ls(s); // local copy of s
@@ -329,25 +329,25 @@ namespace tfel{
       StensorTraits<PPType>::dime==StensorTraits<StensorType>::dime   &&
       StensorTraits<NPType>::dime==StensorTraits<StensorType>::dime   &&
       StensorTraits<StensorType>::dime==1u                            &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<PPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<NPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DPPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DNPType>::NumType>::cond,
+      tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+				       StensorNumType<PPType>>::cond &&
+      tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+				       StensorNumType<NPType>>::cond &&
+      tfel::typetraits::IsAssignableTo<tfel::typetraits::base_type<StensorNumType<StensorType>>,
+				       ST2toST2NumType<DPPType>>::cond &&
+      tfel::typetraits::IsAssignableTo<tfel::typetraits::base_type<StensorNumType<StensorType>>,
+				       ST2toST2NumType<DNPType>>::cond,
       void>::type
     computeStensorDecompositionInPositiveAndNegativeParts(DPPType& dpp,
 							  DNPType& dnp,
 							  PPType& pp,
 							  NPType& np,
 							  const StensorType& s,
-							  const typename StensorTraits<StensorType>::NumType eps)
+							  const StensorNumType<StensorType> eps)
     {
       using std::abs;
-      typedef typename StensorTraits<StensorType>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type real;
+      typedef StensorNumType<StensorType> NumType;
+      typedef tfel::typetraits::base_type<NumType> real;
       const real one_half = real(1)/(real(2));
       dpp(0,1) = dpp(0,2) = dpp(1,0) = dpp(1,2) = dpp(2,0) = dpp(2,1) = real(0);
       dnp(0,1) = dnp(0,2) = dnp(1,0) = dnp(1,2) = dnp(2,0) = dnp(2,1) = real(0);
@@ -414,27 +414,27 @@ namespace tfel{
       StensorTraits<PPType>::dime==StensorTraits<StensorType>::dime   &&
       StensorTraits<NPType>::dime==StensorTraits<StensorType>::dime   &&
       StensorTraits<StensorType>::dime==2u                            &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<PPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<NPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DPPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DNPType>::NumType>::cond,
+      tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+				       StensorNumType<PPType>>::cond &&
+      tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+				       StensorNumType<NPType>>::cond &&
+      tfel::typetraits::IsAssignableTo<tfel::typetraits::base_type<StensorNumType<StensorType>>,
+				       ST2toST2NumType<DPPType>>::cond &&
+      tfel::typetraits::IsAssignableTo<tfel::typetraits::base_type<StensorNumType<StensorType>>,
+				       ST2toST2NumType<DNPType>>::cond,
       void>::type
     computeStensorDecompositionInPositiveAndNegativeParts(DPPType& dpp,
 							  DNPType& dnp,
 							  PPType& pp,
 							  NPType& np,
 							  const StensorType& s,
-							  const typename StensorTraits<StensorType>::NumType eps)
+							  const StensorNumType<StensorType> eps)
     {
       using std::abs;
       using tfel::math::internals::stensor_ppos;
       using tfel::math::internals::stensor_pneg;
-      typedef typename StensorTraits<StensorType>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type real;
+      typedef StensorNumType<StensorType> NumType;
+      typedef tfel::typetraits::base_type<NumType> real;
       constexpr const auto cste     = Cste<real>::sqrt2;
       TFEL_CONSTEXPR const auto one_half = real(1)/(real(2));
       stensor<2u,NumType> ls(s); // local copy of s
@@ -520,26 +520,26 @@ namespace tfel{
       StensorTraits<PPType>::dime==StensorTraits<StensorType>::dime   &&
       StensorTraits<NPType>::dime==StensorTraits<StensorType>::dime   &&
       StensorTraits<StensorType>::dime==3u                            &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<PPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<NPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DPPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DNPType>::NumType>::cond,
+      tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+				       StensorNumType<PPType>>::cond &&
+      tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,
+				       StensorNumType<NPType>>::cond &&
+      tfel::typetraits::IsAssignableTo<tfel::typetraits::base_type<StensorNumType<StensorType>>,
+				       ST2toST2NumType<DPPType>>::cond &&
+      tfel::typetraits::IsAssignableTo<tfel::typetraits::base_type<StensorNumType<StensorType>>,
+				       ST2toST2NumType<DNPType>>::cond,
       void>::type
     computeStensorDecompositionInPositiveAndNegativeParts(DPPType& dpp,
 							  DNPType& dnp,
 							  PPType& pp,
 							  NPType& np,
 							  const StensorType& s,
-							  const typename StensorTraits<StensorType>::NumType eps)
+							  const StensorNumType<StensorType> eps)
     {
       using tfel::math::internals::stensor_ppos;
       using tfel::math::internals::stensor_pneg;
-      typedef typename StensorTraits<StensorType>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type real;
+      typedef StensorNumType<StensorType> NumType;
+      typedef tfel::typetraits::base_type<NumType> real;
       constexpr const auto cste     = Cste<real>::sqrt2;
       TFEL_CONSTEXPR const auto one_half = real(1)/(real(2));
       stensor<3u,NumType> ls(s); // local copy of s

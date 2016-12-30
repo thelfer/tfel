@@ -32,7 +32,7 @@ namespace tfel{
       typename std::enable_if<
 	tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond &&
         StensorTraits<StensorType>::dime==1u&&
-	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
+	tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,T>::cond,
 	tfel::math::st2tost2<1u,T>>::type
       exe(const StensorType& s){
 	using real = typename tfel::typetraits::BaseType<T>::type;
@@ -49,7 +49,7 @@ namespace tfel{
       static TFEL_MATH_INLINE typename std::enable_if<
 	tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond &&
       StensorTraits<StensorType>::dime==2u&&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
+      tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,T>::cond,
       tfel::math::st2tost2<2u,T>>::type
       exe(const StensorType& s){
 	using real = typename tfel::typetraits::BaseType<T>::type;
@@ -67,7 +67,7 @@ namespace tfel{
       static TFEL_MATH_INLINE typename std::enable_if<
 	tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond &&
         StensorTraits<StensorType>::dime==3u&&
-	tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
+	tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,T>::cond,
 	tfel::math::st2tost2<3u,T>>::type
       exe(const StensorType& s){
 	using real = tfel::typetraits::base_type<T>;

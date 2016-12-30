@@ -20,13 +20,13 @@ namespace tfel{
   namespace math{
     
     template<class T>
-    typename StensorTraits<T>::NumType
+    StensorNumType<T>
     StensorConcept<T>::operator()(const unsigned short i) const {
       return static_cast<const T&>(*this).operator()(i);
     }
 
     template<class T>
-    typename StensorTraits<T>::NumType
+    StensorNumType<T>
     StensorConcept<T>::operator[](const unsigned short i) const {
       return static_cast<const T&>(*this).operator()(i);
     }
@@ -34,7 +34,7 @@ namespace tfel{
     template<class T>
     typename std::enable_if<
       tfel::meta::Implements<T,StensorConcept>::cond,
-      typename StensorTraits<T>::NumType
+      StensorNumType<T>
     >::type
     trace(const T& s)
     {
@@ -62,12 +62,12 @@ namespace tfel{
 	template<class T>
 	static typename std::enable_if<
 	  tfel::meta::Implements<T,StensorConcept>::cond,
-	  typename StensorTraits<T>::NumType
+	  StensorNumType<T>
 	>::type
 	exe(const T& s)
 	{
-	  typedef typename StensorTraits<T>::NumType NumType;
-	  typedef typename tfel::typetraits::BaseType<NumType>::type base;
+	  typedef StensorNumType<T> NumType;
+	  typedef tfel::typetraits::base_type<NumType> base;
 	  TFEL_CONSTEXPR const auto one_third = base{1}/base{3};
 	  TFEL_CONSTEXPR const auto cste      = base{3}/base{2};
 	  const NumType tr = one_third*trace(s);
@@ -84,12 +84,12 @@ namespace tfel{
 	template<class T>
 	static typename std::enable_if<
 	  tfel::meta::Implements<T,StensorConcept>::cond,
-	  typename StensorTraits<T>::NumType
+	  StensorNumType<T>
 	>::type
 	exe(const T& s)
 	{
-	  typedef typename StensorTraits<T>::NumType NumType;
-	  typedef typename tfel::typetraits::BaseType<NumType>::type base;
+	  typedef StensorNumType<T> NumType;
+	  typedef tfel::typetraits::base_type<NumType> base;
 	  TFEL_CONSTEXPR const auto one_third = base(1)/base(3);
 	  TFEL_CONSTEXPR const auto cste      = base(3)/base(2);
 	  const auto tr = one_third*trace(s);
@@ -107,12 +107,12 @@ namespace tfel{
 	template<class T>
 	static typename std::enable_if<
 	  tfel::meta::Implements<T,StensorConcept>::cond,
-	  typename StensorTraits<T>::NumType
+	  StensorNumType<T>
 	>::type
 	exe(const T& s)
 	{
-	  typedef typename StensorTraits<T>::NumType NumType;
-	  typedef typename tfel::typetraits::BaseType<NumType>::type base;
+	  typedef StensorNumType<T> NumType;
+	  typedef tfel::typetraits::base_type<NumType> base;
 	  TFEL_CONSTEXPR const auto one_third = base(1)/base(3);
 	  TFEL_CONSTEXPR const auto cste      = base(3)/base(2);
 	  const auto tr = one_third*trace(s);
@@ -133,7 +133,7 @@ namespace tfel{
       {
 	template<typename StensorType>
 	TFEL_MATH_INLINE
-	static typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
+	static typename tfel::typetraits::AbsType<StensorNumType<StensorType>>::type
 	exe(const StensorType& s)
 	{
 	  return tfel::math::abs(s(0))+tfel::math::abs(s(1))+tfel::math::abs(s(2));
@@ -145,7 +145,7 @@ namespace tfel{
       {
 	template<typename StensorType>
 	TFEL_MATH_INLINE
-	static typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
+	static typename tfel::typetraits::AbsType<StensorNumType<StensorType>>::type
 	exe(const StensorType& s)
 	{
 	  return tfel::math::abs(s(0))+tfel::math::abs(s(1))+
@@ -158,7 +158,7 @@ namespace tfel{
       {
 	template<typename StensorType>
 	TFEL_MATH_INLINE
-	static typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
+	static typename tfel::typetraits::AbsType<StensorNumType<StensorType>>::type
 	exe(const StensorType& s)
 	{
 	  return tfel::math::abs(s(0))+tfel::math::abs(s(1))+tfel::math::abs(s(2))
@@ -171,7 +171,7 @@ namespace tfel{
     template<typename StensorType>
     typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,
-      typename tfel::typetraits::AbsType<typename StensorTraits<StensorType>::NumType>::type
+      typename tfel::typetraits::AbsType<StensorNumType<StensorType>>::type
     >::type
     abs(const StensorType& s)
     {
@@ -181,7 +181,7 @@ namespace tfel{
     template<typename T>
     typename std::enable_if<
       tfel::meta::Implements<T,StensorConcept>::cond,
-      typename StensorTraits<T>::NumType
+      StensorNumType<T>
     >::type
     sigmaeq(const T& s)
     {
@@ -198,8 +198,8 @@ namespace tfel{
     deviator(const T& s)
     {
       using Result  = typename StensorType<T>::type;
-      using NumType = typename StensorTraits<T>::NumType;
-      using real    = typename tfel::typetraits::BaseType<NumType>::type;
+      using NumType = StensorNumType<T>;
+      using real    = tfel::typetraits::base_type<NumType>;
       TFEL_CONSTEXPR const auto one_third = real{1}/real{3};
       const NumType tr = one_third*trace(s);
       return Result{s(0)-tr,s(1)-tr,s(2)-tr};
@@ -214,8 +214,8 @@ namespace tfel{
     deviator(const T& s)
     {
       using Result  = typename StensorType<T>::type;
-      using NumType = typename StensorTraits<T>::NumType;
-      using real    = typename tfel::typetraits::BaseType<NumType>::type;
+      using NumType = StensorNumType<T>;
+      using real    = tfel::typetraits::base_type<NumType>;
       TFEL_CONSTEXPR const auto one_third = real{1}/real{3};
       const NumType tr = one_third*trace(s);
       return Result{s(0)-tr,s(1)-tr,s(2)-tr,s(3)};
@@ -230,8 +230,8 @@ namespace tfel{
     deviator(const T& s)
     {
       using Result  = typename StensorType<T>::type;
-      using NumType = typename StensorTraits<T>::NumType;
-      using real    = typename tfel::typetraits::BaseType<NumType>::type;
+      using NumType = StensorNumType<T>;
+      using real    = tfel::typetraits::base_type<NumType>;
       TFEL_CONSTEXPR const auto one_third = real{1}/real{3};
       const NumType tr = one_third*trace(s);
       return Result{s(0)-tr,s(1)-tr,s(2)-tr,s(3),s(4),s(5)};
@@ -244,9 +244,9 @@ namespace tfel{
       tfel::meta::Implements<StensorType,StensorConcept>::cond &&
       StensorTraits<StensorType>::dime == 1u&&
       StensorTraits<StensorResultType>::dime == 1u&&
-      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<StensorNumType<StensorType>,
 								   Power<2> >::Result,
-				       typename StensorTraits<StensorResultType>::NumType>::cond,
+				       StensorNumType<StensorResultType>>::cond,
       void>::type
     computeDeterminantDerivative(StensorResultType& dJ,
 				 const StensorType& s)
@@ -263,9 +263,9 @@ namespace tfel{
       tfel::meta::Implements<StensorType,StensorConcept>::cond &&
       StensorTraits<StensorType>::dime == 2u&&
       StensorTraits<StensorResultType>::dime == 2u&&
-      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<StensorNumType<StensorType>,
 								   Power<2> >::Result,
-				       typename StensorTraits<StensorResultType>::NumType>::cond,
+				       StensorNumType<StensorResultType>>::cond,
       void>::type
     computeDeterminantDerivative(StensorResultType& dJ,
 				 const StensorType& s)
@@ -283,14 +283,14 @@ namespace tfel{
       tfel::meta::Implements<StensorType,StensorConcept>::cond &&
       StensorTraits<StensorType>::dime == 3u&&
       StensorTraits<StensorResultType>::dime == 3u&&
-      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<typename StensorTraits<StensorType>::NumType,
+      tfel::typetraits::IsAssignableTo<typename ComputeUnaryResult<StensorNumType<StensorType>,
 								   Power<2> >::Result,
-				       typename StensorTraits<StensorResultType>::NumType>::cond,
+				       StensorNumType<StensorResultType>>::cond,
       void>::type
     computeDeterminantDerivative(StensorResultType& dJ,
 				 const StensorType& s)
     {
-      using NumType = typename StensorTraits<StensorType>::NumType;
+      using NumType = StensorNumType<StensorType>;
       using real    = tfel::typetraits::base_type<NumType>;
       TFEL_CONSTEXPR const auto one_half = real(1)/real(2);
       TFEL_CONSTEXPR const auto icste    = Cste<real>::isqrt2;

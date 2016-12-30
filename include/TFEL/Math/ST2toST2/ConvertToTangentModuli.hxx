@@ -37,13 +37,13 @@ namespace tfel{
        tfel::meta::Implements<T2toST2Type,tfel::math::T2toST2Concept>::cond&&
        tfel::meta::Implements<TensorType,tfel::math::TensorConcept>::cond),
       st2tost2<1u,typename ResultType<typename T2toST2Traits<T2toST2Type>::NumType,
-			            typename TensorTraits<TensorType>::NumType,
+			            TensorNumType<TensorType>,
 				    OpMult>::type>>::type
     convertToTangentModuli(const T2toST2Type& K,
 			   const TensorType& F)
     {
       st2tost2<1u,typename ResultType<typename T2toST2Traits<T2toST2Type>::NumType,
-			            typename TensorTraits<TensorType>::NumType,
+			            TensorNumType<TensorType>,
 				    OpMult>::type> C;
       C(0,0) = K(0,0)*F(0);
       C(0,1) = K(0,1)*F(1);
@@ -65,13 +65,13 @@ namespace tfel{
        tfel::meta::Implements<T2toST2Type,tfel::math::T2toST2Concept>::cond&&
        tfel::meta::Implements<TensorType,tfel::math::TensorConcept>::cond),
       st2tost2<2u,typename ResultType<typename T2toST2Traits<T2toST2Type>::NumType,
-			            typename TensorTraits<TensorType>::NumType,
+			            TensorNumType<TensorType>,
 				    OpMult>::type>>::type
     convertToTangentModuli(const T2toST2Type& K,
 			   const TensorType& F)
     {
       using res = typename ResultType<typename T2toST2Traits<T2toST2Type>::NumType,
-				      typename TensorTraits<TensorType>::NumType,
+				      TensorNumType<TensorType>,
 				      OpMult>::type;
       using base = typename tfel::typetraits::BaseType<res>::type;
       TFEL_CONSTEXPR const auto icste2 = Cste<res>::isqrt2/base(2);
@@ -103,13 +103,13 @@ namespace tfel{
        tfel::meta::Implements<T2toST2Type,tfel::math::T2toST2Concept>::cond&&
        tfel::meta::Implements<TensorType,tfel::math::TensorConcept>::cond),
       st2tost2<3u,typename ResultType<typename T2toST2Traits<T2toST2Type>::NumType,
-			            typename TensorTraits<TensorType>::NumType,
+			            TensorNumType<TensorType>,
 				    OpMult>::type>>::type
     convertToTangentModuli(const T2toST2Type& K,
 			   const TensorType& F)
     {
       using res = typename ResultType<typename T2toST2Traits<T2toST2Type>::NumType,
-				      typename TensorTraits<TensorType>::NumType,
+				      TensorNumType<TensorType>,
 				      OpMult>::type;
       using base = typename tfel::typetraits::BaseType<res>::type;
       TFEL_CONSTEXPR const auto icste2 = Cste<res>::isqrt2/base(2);

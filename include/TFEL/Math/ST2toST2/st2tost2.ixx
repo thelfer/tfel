@@ -41,8 +41,8 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
       ST2toST2Traits<Child>::dime==ST2toST2Traits<ST2toST2Type>::dime &&
-      tfel::typetraits::IsAssignableTo<typename ST2toST2Traits<ST2toST2Type>::NumType,
-				       typename ST2toST2Traits<Child>::NumType>::cond,
+      tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type>,
+				       ST2toST2NumType<Child>>::cond,
       Child&>::type
     st2tost2_base<Child>::operator=(const ST2toST2Type& src)
     {
@@ -58,8 +58,8 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
       ST2toST2Traits<Child>::dime==ST2toST2Traits<ST2toST2Type>::dime &&
-      tfel::typetraits::IsAssignableTo<typename ST2toST2Traits<ST2toST2Type>::NumType,
-				       typename ST2toST2Traits<Child>::NumType>::cond,
+      tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type>,
+				       ST2toST2NumType<Child>>::cond,
       Child&>::type
     st2tost2_base<Child>::operator+=(const ST2toST2Type& src)
     {
@@ -76,8 +76,8 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
       ST2toST2Traits<Child>::dime==ST2toST2Traits<ST2toST2Type>::dime &&
-      tfel::typetraits::IsAssignableTo<typename ST2toST2Traits<ST2toST2Type>::NumType,
-				       typename ST2toST2Traits<Child>::NumType>::cond,
+      tfel::typetraits::IsAssignableTo<ST2toST2NumType<ST2toST2Type>,
+				       ST2toST2NumType<Child>>::cond,
       Child&>::type
     st2tost2_base<Child>::operator-=(const ST2toST2Type& src)
     {
@@ -93,9 +93,9 @@ namespace tfel{
     template<typename T2>
     typename std::enable_if<
       tfel::typetraits::IsScalar<T2>::cond&&
-      std::is_same<typename ResultType<typename ST2toST2Traits<Child>::NumType,
+      std::is_same<typename ResultType<ST2toST2NumType<Child>,
 						 T2,OpMult>::type,
-			     typename ST2toST2Traits<Child>::NumType>::cond,
+			     ST2toST2NumType<Child>>::cond,
       Child&>::type
     st2tost2_base<Child>::operator*=(const T2 s)
     {
@@ -111,9 +111,9 @@ namespace tfel{
     template<typename T2>
     typename std::enable_if<
       tfel::typetraits::IsScalar<T2>::cond&&
-      std::is_same<typename ResultType<typename ST2toST2Traits<Child>::NumType,
+      std::is_same<typename ResultType<ST2toST2NumType<Child>,
 						 T2,OpDiv>::type,
-			     typename ST2toST2Traits<Child>::NumType>::cond,
+			     ST2toST2NumType<Child>>::cond,
       Child&>::type
     st2tost2_base<Child>::operator/=(const T2 s)
     {
@@ -129,7 +129,7 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond &&
       StensorTraits<StensorType>::dime==N&&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
+      tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,T>::cond,
       Expr<st2tost2<N,T>,StensorSquareDerivativeExpr<N> > >::type
     st2tost2<N,T>::dsquare(const StensorType& s)
     {
@@ -144,8 +144,8 @@ namespace tfel{
       tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond &&
       StensorTraits<StensorType>::dime==N&&
       ST2toST2Traits<ST2toST2Type>::dime==N&&
-      tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<typename StensorTraits<StensorType>::NumType,
-								    typename ST2toST2Traits<ST2toST2Type>::NumType,
+      tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<StensorNumType<StensorType>,
+								    ST2toST2NumType<ST2toST2Type>,
 								    OpMult>::Result,T>::cond,
       Expr<st2tost2<N,T>,StensorSquareDerivativeExpr<N> > >::type
     st2tost2<N,T>::dsquare(const StensorType&  s,
@@ -159,7 +159,7 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond &&
       StensorTraits<StensorType>::dime==N&&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,T>::cond,
+      tfel::typetraits::IsAssignableTo<StensorNumType<StensorType>,T>::cond,
       tfel::math::st2tost2<N,T>>::type
     st2tost2<N,T>::stpd(const StensorType& s){
       return StensorSymmetricProductDerivative<N,T>::exe(s);
@@ -179,8 +179,8 @@ namespace tfel{
     }
 
     template<unsigned short N, typename T>
-    st2tost2<N,typename tfel::typetraits::BaseType<T>::type>
-    st2tost2<N,T>::fromRotationMatrix(const tmatrix<3u,3u,typename tfel::typetraits::BaseType<T>::type>& r){
+    st2tost2<N,tfel::typetraits::base_type<T>>
+    st2tost2<N,T>::fromRotationMatrix(const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& r){
       return st2tost2_internals::BuildFromRotationMatrix<N>::exe(r);
     } // end of st2tost2<N,T>::fromRotationMatrix
     
@@ -434,15 +434,15 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond,
       st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
-	       typename ComputeBinaryResult<typename tfel::typetraits::BaseType<typename ST2toST2Traits<ST2toST2Type>::NumType>::type,
-					    typename ST2toST2Traits<ST2toST2Type>::NumType,OpDiv>::Result>
+	       typename ComputeBinaryResult<tfel::typetraits::base_type<ST2toST2NumType<ST2toST2Type>>,
+					    ST2toST2NumType<ST2toST2Type>,OpDiv>::Result>
     >::type
     invert(const ST2toST2Type& s)
     {
       using tfel::typetraits::BaseType;
       static constexpr unsigned short N           = ST2toST2Traits<ST2toST2Type>::dime;
       static constexpr unsigned short StensorSize = StensorDimeToSize<N>::value;
-      typedef typename ST2toST2Traits<ST2toST2Type>::NumType NumType;
+      typedef ST2toST2NumType<ST2toST2Type> NumType;
       typedef typename BaseType<NumType>::type real;
       typedef typename ComputeBinaryResult<real,NumType,OpDiv>::Result iNumType;
       st2tost2<N,iNumType> is;
@@ -465,10 +465,10 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond,
       st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
-	       typename ST2toST2Traits<ST2toST2Type>::NumType>
+	       ST2toST2NumType<ST2toST2Type>>
     >::type
     change_basis(const ST2toST2Type& s,
-		 const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<typename ST2toST2Traits<ST2toST2Type>::NumType>::type>& r){
+		 const tfel::math::tmatrix<3u,3u,tfel::typetraits::base_type<ST2toST2NumType<ST2toST2Type>>>& r){
       return st2tost2_internals::ChangeBasis<ST2toST2Traits<ST2toST2Type>::dime>::exe(s,r);
     }
 
@@ -479,15 +479,15 @@ namespace tfel{
       tfel::meta::Implements<TensorType,TensorConcept>::cond&&
       ST2toST2Traits<ST2toST2Type>::dime==TensorTraits<TensorType>::dime,
       st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
-	       typename ComputeBinaryResult<typename ST2toST2Traits<ST2toST2Type>::NumType,
-	       typename TensorTraits<TensorType>::NumType,OpMult>::Result>
+	       typename ComputeBinaryResult<ST2toST2NumType<ST2toST2Type>,
+	       TensorNumType<TensorType>,OpMult>::Result>
       >::type
      push_forward(const ST2toST2Type& C,
 		  const TensorType& F)
     {
       st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
-      typename ComputeBinaryResult<typename ST2toST2Traits<ST2toST2Type>::NumType,
-      typename TensorTraits<TensorType>::NumType,OpMult>::Result> r;
+      typename ComputeBinaryResult<ST2toST2NumType<ST2toST2Type>,
+      TensorNumType<TensorType>,OpMult>::Result> r;
       push_forward(r,C,F);
       return r;
     }
@@ -499,8 +499,8 @@ namespace tfel{
       tfel::meta::Implements<TensorType,TensorConcept>::cond&&
       ST2toST2Traits<ST2toST2Type>::dime==TensorTraits<TensorType>::dime,
       st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
-	       typename ComputeBinaryResult<typename ST2toST2Traits<ST2toST2Type>::NumType,
-	       typename TensorTraits<TensorType>::NumType,OpMult>::Result>
+	       typename ComputeBinaryResult<ST2toST2NumType<ST2toST2Type>,
+	       TensorNumType<TensorType>,OpMult>::Result>
       >::type
     pull_back(const ST2toST2Type& C,
 	      const TensorType& F)
@@ -513,11 +513,11 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&
       StensorTraits<StensorType>::dime==1u&&
-      tfel::typetraits::IsScalar<typename StensorTraits<StensorType>::NumType>::cond,
-      st2tost2<1u,typename StensorTraits<StensorType>::NumType>>::type
+      tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
+      st2tost2<1u,StensorNumType<StensorType>>>::type
     computeDeterminantSecondDerivative(const StensorType& s)
     {
-      using NumType = typename StensorTraits<StensorType>::NumType;
+      using NumType = StensorNumType<StensorType>;
       constexpr const auto zero  = NumType{0};
       return{zero,s[2],s[1],
 	  s[2],zero,s[0],
@@ -528,10 +528,10 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&
       StensorTraits<StensorType>::dime==2u&&
-      tfel::typetraits::IsScalar<typename StensorTraits<StensorType>::NumType>::cond,
-      st2tost2<2u,typename StensorTraits<StensorType>::NumType>>::type
+      tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
+      st2tost2<2u,StensorNumType<StensorType>>>::type
     computeDeterminantSecondDerivative(const StensorType& s){
-      using NumType = typename StensorTraits<StensorType>::NumType;
+      using NumType = StensorNumType<StensorType>;
       constexpr const auto zero  = NumType{0};
       return {zero,s[2],s[1],zero,
 	  s[2],zero,s[0],zero,
@@ -543,10 +543,10 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond&&
       StensorTraits<StensorType>::dime==3u&&
-      tfel::typetraits::IsScalar<typename StensorTraits<StensorType>::NumType>::cond,
-      st2tost2<3u,typename StensorTraits<StensorType>::NumType>>::type
+      tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
+      st2tost2<3u,StensorNumType<StensorType>>>::type
     computeDeterminantSecondDerivative(const StensorType& s){
-      using NumType = typename StensorTraits<StensorType>::NumType;
+      using NumType = StensorNumType<StensorType>;
       constexpr const auto zero  = NumType{0};
       constexpr const auto icste = Cste<NumType>::isqrt2;
       return {zero,s[2],s[1],zero,zero,-s[5],

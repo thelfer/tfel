@@ -43,7 +43,7 @@ namespace tfel{
       //! a simple alias
       typedef typename ST2toST2Traits<typename std::decay<A>::type>::IndexType IndexType;
       //! a simple alias
-      typedef typename ST2toST2Traits<typename std::decay<A>::type>::NumType   NumType;
+      typedef ST2toST2NumType<typename std::decay<A>::type>   NumType;
       
       TFEL_MATH_INLINE RunTimeProperties
       getRunTimeProperties(void) const

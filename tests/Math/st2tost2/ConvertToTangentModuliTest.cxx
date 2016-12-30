@@ -18,6 +18,7 @@
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
+#include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Math/t2tost2.hxx"
 #include"TFEL/Math/tensor.hxx"

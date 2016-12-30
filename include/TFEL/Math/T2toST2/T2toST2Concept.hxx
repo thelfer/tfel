@@ -36,7 +36,9 @@ namespace tfel{
       typedef tfel::meta::InvalidType NumType;
       static constexpr unsigned short dime = 0u;
     };
-
+    //! a simple alias
+    template<class T>
+    using T2toST2NumType = typename T2toST2Traits<T>::NumType;
     /*!
      * \class T2toST2Tag
      * \brief Helper class to characterise t2tost2.

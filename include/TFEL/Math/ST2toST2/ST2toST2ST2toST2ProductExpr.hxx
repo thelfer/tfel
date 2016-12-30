@@ -39,12 +39,12 @@ namespace tfel
       : public ST2toST2Concept<Expr<ST2toST2ResultType,ST2toST2ST2toST2ProductExpr<1u> > >,
 	public fsarray<StensorDimeToSize<ST2toST2Traits<ST2toST2ResultType>::dime>::value*
 		       StensorDimeToSize<ST2toST2Traits<ST2toST2ResultType>::dime>::value,
-		       typename ST2toST2Traits<ST2toST2ResultType>::NumType>
+		       ST2toST2NumType<ST2toST2ResultType>>
 {
   //! a simple alias
   typedef EmptyRunTimeProperties RunTimeProperties;
   //! a simple alias
-  typedef typename ST2toST2Traits<ST2toST2ResultType>::NumType value_type;
+  typedef ST2toST2NumType<ST2toST2ResultType> value_type;
   //! a simple check
   TFEL_STATIC_ASSERT((ST2toST2Traits<ST2toST2ResultType>::dime==1u));
   /*!
@@ -104,12 +104,12 @@ namespace tfel
     : public ST2toST2Concept<Expr<ST2toST2ResultType,ST2toST2ST2toST2ProductExpr<2u> > >,
       public fsarray<StensorDimeToSize<ST2toST2Traits<ST2toST2ResultType>::dime>::value*
 		     StensorDimeToSize<ST2toST2Traits<ST2toST2ResultType>::dime>::value,
-		     typename ST2toST2Traits<ST2toST2ResultType>::NumType>
+		     ST2toST2NumType<ST2toST2ResultType>>
 {
   //! a simple alias
   typedef EmptyRunTimeProperties RunTimeProperties;
   //! a simple alias
-  typedef typename ST2toST2Traits<ST2toST2ResultType>::NumType value_type;
+  typedef ST2toST2NumType<ST2toST2ResultType> value_type;
   //! a simple check
   TFEL_STATIC_ASSERT((ST2toST2Traits<ST2toST2ResultType>::dime==2u));
   /*!
@@ -176,12 +176,12 @@ struct TFEL_VISIBILITY_LOCAL Expr<ST2toST2ResultType,ST2toST2ST2toST2ProductExpr
   : public ST2toST2Concept<Expr<ST2toST2ResultType,ST2toST2ST2toST2ProductExpr<3u> > >,
     public fsarray<StensorDimeToSize<ST2toST2Traits<ST2toST2ResultType>::dime>::value*
 		   StensorDimeToSize<ST2toST2Traits<ST2toST2ResultType>::dime>::value,
-		   typename ST2toST2Traits<ST2toST2ResultType>::NumType>
+		   ST2toST2NumType<ST2toST2ResultType>>
 {
   //! a simple alias
   typedef EmptyRunTimeProperties RunTimeProperties;
   //! a simple alias
-  typedef typename ST2toST2Traits<ST2toST2ResultType>::NumType value_type;
+  typedef ST2toST2NumType<ST2toST2ResultType> value_type;
   //! a simple check
   TFEL_STATIC_ASSERT((ST2toST2Traits<ST2toST2ResultType>::dime==3u));
   /*!

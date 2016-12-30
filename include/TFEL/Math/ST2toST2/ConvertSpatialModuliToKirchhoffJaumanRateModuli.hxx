@@ -44,13 +44,13 @@ namespace tfel{
        (StensorTraits<StensorType>::dime==1u)&&
        tfel::meta::Implements<ST2toST2Type,tfel::math::ST2toST2Concept>::cond&&
        tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
-       std::is_same<typename ST2toST2Traits<ST2toST2Type>::NumType,
-                    typename StensorTraits<StensorType>::NumType> ::value),
-      st2tost2<1u,typename ST2toST2Traits<ST2toST2Type>::NumType>>::type
+       std::is_same<ST2toST2NumType<ST2toST2Type>,
+                    StensorNumType<StensorType>> ::value),
+      st2tost2<1u,ST2toST2NumType<ST2toST2Type>>>::type
     convertSpatialModuliToKirchhoffJaumanRateModuli(const ST2toST2Type& C_s,
 						    const StensorType& tau)
     {
-      using NumType = typename ST2toST2Traits<ST2toST2Type>::NumType;
+      using NumType = ST2toST2NumType<ST2toST2Type>;
       st2tost2<1u,NumType> C_tJ;
       C_tJ(0,0) = C_s(0,0)+2*tau[0];
       C_tJ(0,1) = C_s(0,1);
@@ -79,13 +79,13 @@ namespace tfel{
        (StensorTraits<StensorType>::dime==2u)&&
        tfel::meta::Implements<ST2toST2Type,tfel::math::ST2toST2Concept>::cond&&
        tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
-       std::is_same<typename ST2toST2Traits<ST2toST2Type>::NumType,
-                    typename StensorTraits<StensorType>::NumType> ::value),
-      st2tost2<2u,typename ST2toST2Traits<ST2toST2Type>::NumType>>::type
+       std::is_same<ST2toST2NumType<ST2toST2Type>,
+                    StensorNumType<StensorType>> ::value),
+      st2tost2<2u,ST2toST2NumType<ST2toST2Type>>>::type
     convertSpatialModuliToKirchhoffJaumanRateModuli(const ST2toST2Type& C_s,
 						    const StensorType& tau)
     {
-      using NumType = typename ST2toST2Traits<ST2toST2Type>::NumType;
+      using NumType = ST2toST2NumType<ST2toST2Type>;
       st2tost2<2u,NumType> C_tJ;
       C_tJ(0,0) = C_s(0,0)+2*tau[0];
       C_tJ(1,1) = C_s(1,1)+2*tau[1];
@@ -121,13 +121,13 @@ namespace tfel{
        (StensorTraits<StensorType>::dime==3u)&&
        tfel::meta::Implements<ST2toST2Type,tfel::math::ST2toST2Concept>::cond&&
        tfel::meta::Implements<StensorType,tfel::math::StensorConcept>::cond&&
-       std::is_same<typename ST2toST2Traits<ST2toST2Type>::NumType,
-                    typename StensorTraits<StensorType>::NumType> ::value),
-      st2tost2<3u,typename ST2toST2Traits<ST2toST2Type>::NumType>>::type
+       std::is_same<ST2toST2NumType<ST2toST2Type>,
+                    StensorNumType<StensorType>> ::value),
+      st2tost2<3u,ST2toST2NumType<ST2toST2Type>>>::type
     convertSpatialModuliToKirchhoffJaumanRateModuli(const ST2toST2Type& C_s,
 						    const StensorType& tau)
     {
-      using NumType = typename ST2toST2Traits<ST2toST2Type>::NumType;
+      using NumType = ST2toST2NumType<ST2toST2Type>;
       constexpr const auto icste = Cste<NumType>::isqrt2;
       st2tost2<3u,NumType> C_tJ;
       C_tJ(0,0) = C_s(0,0)+2*tau[0];

@@ -69,19 +69,16 @@ struct TinyMatrixInvertTest2D final
   virtual tfel::tests::TestResult
   execute() override
   {
-    using namespace std;
     using namespace tfel::math;
-    const T eps = 100*std::numeric_limits<T>::epsilon();
-    tmatrix<2,2,T> m;
-    m(0,0)=1.;
-    m(0,1)=2.;
-    m(1,0)=3.;
-    m(1,1)=4.;
+    const auto eps = 100*std::numeric_limits<T>::epsilon();
+    const auto one_half = 1/T(2);
+    tmatrix<2,2,T> m = {1,2,
+			3,4};
     TinyMatrixInvert<2,T>::exe(m);
-    TFEL_TESTS_ASSERT(abs(m(0,0)+2)<eps);
-    TFEL_TESTS_ASSERT(abs(m(0,1)-1)<eps);
-    TFEL_TESTS_ASSERT(abs(m(1,0)-1.5)<eps);
-    TFEL_TESTS_ASSERT(abs(m(1,1)+0.5)<eps);
+    TFEL_TESTS_ASSERT(std::abs(m(0,0)+2)<eps);
+    TFEL_TESTS_ASSERT(std::abs(m(0,1)-1)<eps);
+    TFEL_TESTS_ASSERT(std::abs(m(1,0)-3*one_half)<eps);
+    TFEL_TESTS_ASSERT(std::abs(m(1,1)+one_half)<eps);
     return this->result;
   } // end of execute
 
@@ -100,34 +97,23 @@ struct TinyMatrixInvertTest3D final
   virtual tfel::tests::TestResult
   execute() override
   {
-    using namespace std;
     using namespace tfel::math;
-    const T eps = 100*std::numeric_limits<T>::epsilon();
-    tmatrix<3,3,T> m;
-    m(0,0)=0.;
-    m(0,1)=2.;
-    m(0,2)=1.;
-    m(1,0)=1.;
-    m(1,1)=0.;
-    m(1,2)=0.;
-    m(2,0)=3.;
-    m(2,1)=0.;
-    m(2,2)=1.;
+    const auto eps = 100*std::numeric_limits<T>::epsilon();
+    const auto one_half = 1/T(2);
+    tmatrix<3,3,T> m = {0,2,1,
+			1,0,0,
+			3,0,1};
     TinyMatrixInvert<3,T>::exe(m);
-    TFEL_TESTS_ASSERT(abs(m(0,0))<eps);
-    TFEL_TESTS_ASSERT(abs(m(0,1)-1)<eps);
-    TFEL_TESTS_ASSERT(abs(m(0,2)-0)<eps);
-
-    TFEL_TESTS_ASSERT(abs(m(1,0)-0.5)<eps);
-    TFEL_TESTS_ASSERT(abs(m(1,1)-1.5)<eps);
-    TFEL_TESTS_ASSERT(abs(m(1,2)+0.5)<eps);
-
-    TFEL_TESTS_ASSERT(abs(m(2,0))<eps);
-    TFEL_TESTS_ASSERT(abs(m(2,1)+3)<eps);
-    TFEL_TESTS_ASSERT(abs(m(2,2)-1)<eps);
-
+    TFEL_TESTS_ASSERT(std::abs(m(0,0))<eps);
+    TFEL_TESTS_ASSERT(std::abs(m(0,1)-1)<eps);
+    TFEL_TESTS_ASSERT(std::abs(m(0,2)-0)<eps);
+    TFEL_TESTS_ASSERT(std::abs(m(1,0)-one_half)<eps);
+    TFEL_TESTS_ASSERT(std::abs(m(1,1)-3*one_half)<eps);
+    TFEL_TESTS_ASSERT(std::abs(m(1,2)+one_half)<eps);
+    TFEL_TESTS_ASSERT(std::abs(m(2,0))<eps);
+    TFEL_TESTS_ASSERT(std::abs(m(2,1)+3)<eps);
+    TFEL_TESTS_ASSERT(std::abs(m(2,2)-1)<eps);
     return this->result;
-
   } // end of execute
 
 }; // end of TinyMatrixInvertTest3D

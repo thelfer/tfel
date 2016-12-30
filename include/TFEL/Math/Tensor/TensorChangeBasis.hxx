@@ -34,9 +34,9 @@ namespace tfel{
     struct TensorChangeBasis<1u,T>
     {
       //! a simple alias
-      typedef typename tfel::typetraits::BaseType<T>::type BaseType;
+      using real = tfel::typetraits::base_type<T>;
       //! a simple alias
-      typedef const tmatrix<3u,3u,BaseType> RotationMatrix;
+      typedef const tmatrix<3u,3u,real> RotationMatrix;
       /*!
        * do the change of basis
        * \param[in,out] v : on input, initial values of the tensor, on output new values
@@ -54,9 +54,9 @@ namespace tfel{
     struct TensorChangeBasis<2u,T>
     {
       //! a simple alias
-      typedef typename tfel::typetraits::BaseType<T>::type BaseType;
+      using real = tfel::typetraits::base_type<T>;
       //! a simple alias
-      typedef const tmatrix<3u,3u,BaseType> RotationMatrix;
+      typedef const tmatrix<3u,3u,real> RotationMatrix;
       /*!
        * do the change of basis
        * \param[in,out] v : on input, initial values of the tensor, on output new values
@@ -87,9 +87,9 @@ namespace tfel{
     struct TensorChangeBasis<3u,T>
     {
       //! a simple alias
-      typedef typename tfel::typetraits::BaseType<T>::type BaseType;
+      using real = tfel::typetraits::base_type<T>;
       //! a simple alias
-      typedef const tmatrix<3u,3u,BaseType> RotationMatrix;
+      typedef const tmatrix<3u,3u,real> RotationMatrix;
       /*!
        * do the change of basis
        * \param[in,out] v : on input, initial values of the tensor, on output new values

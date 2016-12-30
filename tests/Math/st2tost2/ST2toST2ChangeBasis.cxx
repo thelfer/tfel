@@ -27,6 +27,8 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
+#include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 
 #ifndef M_PI
