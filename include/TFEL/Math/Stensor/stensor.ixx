@@ -28,926 +28,22 @@
 #include"TFEL/Math/Stensor/Internals/StensorImport.hxx"
 #include"TFEL/Math/Stensor/Internals/StensorExport.hxx"
 #include"TFEL/Math/Stensor/Internals/StensorChangeBasis.hxx"
+#include"TFEL/Math/Stensor/Internals/StensorInvert.hxx"
+#include"TFEL/Math/Stensor/Internals/StensorDeterminant.hxx"
+#include"TFEL/Math/Stensor/Internals/BuildStensorFromMatrix.hxx"
+#include"TFEL/Math/Stensor/Internals/BuildStensorFromVectorDiadicProduct.hxx"
+#include"TFEL/Math/Stensor/Internals/BuildStensorFromVectorsSymmetricDiadicProduct.hxx"
+#include"TFEL/Math/Stensor/Internals/BuildStensorFromEigenValuesAndVectors.hxx"
 #include"TFEL/Math/Stensor/Internals/StensorEigenSolver.hxx"
+#include"TFEL/Math/Stensor/Internals/SortEigenValues.hxx"
+#include"TFEL/Math/Stensor/Internals/SortEigenVectors.hxx"
+#include"TFEL/Math/Stensor/Internals/StensorComputeEigenValuesDerivatives.hxx"
+#include"TFEL/Math/Stensor/Internals/StensorComputeEigenVectorsDerivatives.hxx"
+#include"TFEL/Math/Stensor/Internals/StensorComputeIsotropicFunctionDerivative.hxx"
 
 namespace tfel{
 
   namespace math {
-
-    namespace internals{
-
-      template<unsigned short N>
-      struct StensorComputeEigenVectors;
-
-      template<unsigned short N>
-      struct StensorDeterminant;
-
-      template<>
-      struct StensorDeterminant<1u>
-      {
-	template<typename T>
-	static TFEL_MATH_INLINE typename ComputeUnaryResult<T,Power<3>>::Result
-	exe(const tfel::math::stensor<1u,T>& s)
-	{
-	  return s(0)*s(1)*s(2);
-	}
-      }; // end of struct StensorDeterminant
-
-      template<>
-      struct StensorDeterminant<2u>
-      {
-	template<typename T>
-	static TFEL_MATH_INLINE typename ComputeUnaryResult<T,Power<3>>::Result
-	exe(const tfel::math::stensor<2u,T>& s)
-	{
-	  return s(2)*(s(0)*s(1)-s(3)*s(3)/2);
-	}
-      }; // end of struct StensorDeterminant
-
-      template<>
-      struct StensorDeterminant<3u>
-      {
-	template<typename T>
-	static TFEL_MATH_INLINE typename ComputeUnaryResult<T,Power<3>>::Result
-	exe(const tfel::math::stensor<3u,T>& s)
-	{
-	  constexpr const auto cste = Cste<T>::sqrt2;
-	  return (2*s(0)*s(1)*s(2)+cste*s(3)*s(4)*s(5)-
-		  s(2)*s(3)*s(3)-s(1)*s(4)*s(4)-s(0)*s(5)*s(5))/2;
-	}
-      }; // end of struct StensorDeterminant
-
-      template<unsigned short N>
-      struct StensorInvert;
-      
-      template<>
-      struct StensorInvert<1u>
-      {
-	template<typename T>
-	static TFEL_MATH_INLINE
-	stensor<1u,typename ComputeBinaryResult<tfel::typetraits::base_type<T>,T,OpDiv>::Result>
-	exe(const stensor<1u,T>& s)
-	{
-	  return {1/s(0),1/s(1),1/s(2)};
-	}
-      };
-
-      template<>
-      struct StensorInvert<2u>
-      {
-	template<typename T>
-	static TFEL_MATH_INLINE
-	stensor<2u,typename ComputeBinaryResult<tfel::typetraits::base_type<T>,T,OpDiv>::Result>
-	exe(const stensor<2u,T>& s)
-	{
-	  const auto idet = 1/det(s);
-	  return {s(1)*s(2)*idet,s(0)*s(2)*idet,1/s(2),-s(2)*s(3)*idet};
-	}
-      };
-
-      template<>
-      struct StensorInvert<3u>
-      {
-	template<typename T>
-	static TFEL_MATH_INLINE
-	stensor<3u,typename ComputeBinaryResult<tfel::typetraits::base_type<T>,T,OpDiv>::Result>
-	exe(const stensor<3u,T>& s)
-	{
-	  using real = tfel::typetraits::base_type<T>;
-	  TFEL_CONSTEXPR const auto two      = real(2);
-	  TFEL_CONSTEXPR const auto one_half = real(1)/two;
-	  constexpr const auto icste    = Cste<real>::isqrt2;
-	  const auto iJ = 1/det(s);
-	  return {(s(1)*s(2)-s(5)*s(5)*one_half)*iJ,
-	      (s(0)*s(2)-s(4)*s(4)*one_half)*iJ,
-	      (s(0)*s(1)-s(3)*s(3)*one_half)*iJ,
-	      (icste*s(4)*s(5)-s(2)*s(3))*iJ,
-	      (icste*s(3)*s(5)-s(1)*s(4))*iJ,
-	      (icste*s(3)*s(4)-s(0)*s(5))*iJ};
-	}
-      };
-
-      template<unsigned short N>
-      struct BuildStensorFromMatrix;
-      
-      template<>
-      struct BuildStensorFromMatrix<1u>
-      {
-	template<typename T,typename MatrixType>
-	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
-	typename std::enable_if<
-	  tfel::typetraits::IsAssignableTo<MatrixNumType<MatrixType>,T>::cond,
-	  void>::type
-	exe(stensor<1u,T>& s,const MatrixType& m){
-	  s[0] = m(0,0);
-	  s[1] = m(1,1);
-	  s[2] = m(2,2);
-	}
-      };
-    
-      template<>
-      struct BuildStensorFromMatrix<2u>
-      {
-	template<typename T,typename MatrixType>
-	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
-	typename std::enable_if<
-	  tfel::typetraits::IsAssignableTo<MatrixNumType<MatrixType>,T>::cond,
-	  void>::type
-	exe(stensor<2u,T>& s,const MatrixType& m){
-	  constexpr const auto cste = Cste<T>::isqrt2/2;
-	  s[0] = m(0,0);
-	  s[1] = m(1,1);
-	  s[2] = m(2,2);
-	  s[3] = (m(0,1)+m(1,0))*cste;
-	}
-      };
-      
-      template<>
-      struct BuildStensorFromMatrix<3u>
-      {
-	template<typename T,typename MatrixType>
-	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
-	typename std::enable_if<
-	  tfel::typetraits::IsAssignableTo<MatrixNumType<MatrixType>,T>::cond,
-	  void>::type
-	exe(stensor<3u,T>& s,const MatrixType& m){
-	  constexpr const auto cste = Cste<T>::isqrt2/2;
-	  s[0] = m(0,0);
-	  s[1] = m(1,1);
-	  s[2] = m(2,2);
-	  s[3] = (m(0,1)+m(1,0))*cste;
-	  s[4] = (m(0,2)+m(2,0))*cste;
-	  s[5] = (m(2,1)+m(1,2))*cste;
-	}
-      };
-
-      template<unsigned short N>
-      struct BuildStensorFromVectorDiadicProduct;
-      
-      template<>
-      struct BuildStensorFromVectorDiadicProduct<1u>
-      {
-	template<typename T,typename VectorType>
-	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
-	typename std::enable_if<
-	  tfel::typetraits::IsAssignableTo<
-	    typename ComputeUnaryResult<VectorNumType<VectorType>,Power<2>>::Result,T
-	   >::cond,
-	  void>::type
-	exe(stensor<1u,T>& s,const VectorType& v){
-	  s[0] = v(0)*v(0);
-	  s[1] = v(1)*v(1);
-	  s[2] = v(2)*v(2);
-	}
-      };
-    
-      template<>
-      struct BuildStensorFromVectorDiadicProduct<2u>
-      {
-	template<typename T,typename VectorType>
-	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
-	typename std::enable_if<
-	  tfel::typetraits::IsAssignableTo<
-	    typename ComputeUnaryResult<VectorNumType<VectorType>,Power<2>>::Result,T
-	   >::cond,
-	  void>::type
-	exe(stensor<2u,T>& s,const VectorType& v){
-	  constexpr const auto cste = Cste<T>::sqrt2;
-	  s[0] = v(0)*v(0);
-	  s[1] = v(1)*v(1);
-	  s[2] = v(2)*v(2);
-	  s[3] = v(0)*v(1)*cste;
-	}
-      };
-      
-      template<>
-      struct BuildStensorFromVectorDiadicProduct<3u>
-      {
-	template<typename T,typename VectorType>
-	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
-	typename std::enable_if<
-	  tfel::typetraits::IsAssignableTo<
-	    typename ComputeUnaryResult<VectorNumType<VectorType>,Power<2>>::Result,T
-	   >::cond,
-	  void>::type
-	exe(stensor<3u,T>& s,const VectorType& v){
-	  constexpr const auto cste = Cste<T>::sqrt2;
-	  s[0] = v(0)*v(0);
-	  s[1] = v(1)*v(1);
-	  s[2] = v(2)*v(2);
-	  s[3] = v(0)*v(1)*cste;
-	  s[4] = v(0)*v(2)*cste;
-	  s[5] = v(1)*v(2)*cste;
-	}
-      };
-
-      template<unsigned short N>
-      struct BuildStensorFromVectorsSymmetricDiadicProduct;
-      
-      template<>
-      struct BuildStensorFromVectorsSymmetricDiadicProduct<1u>
-      {
-	template<typename T,
-		 typename VectorType,
-		 typename VectorType2>
-	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
-	typename std::enable_if<
-	  tfel::typetraits::IsAssignableTo<
-	    typename ComputeBinaryResult<VectorNumType<VectorType>,
-					 VectorNumType<VectorType2>,OpMult>::Result,T
-	   >::cond,
-	  void>::type
-	exe(stensor<1u,T>& s,
-	    const VectorType& v1,
-	    const VectorType2& v2){
-	  s[0] = 2*v1(0)*v2(0);
-	  s[1] = 2*v1(1)*v2(1);
-	  s[2] = 2*v1(2)*v2(2);
-	}
-      };
-    
-      template<>
-      struct BuildStensorFromVectorsSymmetricDiadicProduct<2u>
-      {
-	template<typename T,
-		 typename VectorType,
-		 typename VectorType2>
-	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
-	typename std::enable_if<
-	  tfel::typetraits::IsAssignableTo<
-	    typename ComputeBinaryResult<VectorNumType<VectorType>,
-					 VectorNumType<VectorType2>,OpMult>::Result,T
-	   >::cond,
-	  void>::type
-	exe(stensor<2u,T>& s,
-	    const VectorType& v1,
-	    const VectorType2& v2){
-	  constexpr const auto cste = Cste<T>::sqrt2;
-	  s[0] = 2*v1(0)*v2(0);
-	  s[1] = 2*v1(1)*v2(1);
-	  s[2] = 2*v1(2)*v2(2);
-	  s[3] = cste*(v1(0)*v2(1)+v2(0)*v1(1));
-	}
-      };
-      
-      template<>
-      struct BuildStensorFromVectorsSymmetricDiadicProduct<3u>
-      {
-	template<typename T,
-		 typename VectorType,
-		 typename VectorType2>
-	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL
-	typename std::enable_if<
-	  tfel::typetraits::IsAssignableTo<
-	    typename ComputeBinaryResult<VectorNumType<VectorType>,
-					 VectorNumType<VectorType2>,OpMult>::Result,T
-	   >::cond,
-	  void>::type
-	exe(stensor<3u,T>& s,
-	    const VectorType& v1,
-	    const VectorType2& v2){
-	  constexpr const auto cste = Cste<T>::sqrt2;
-	  s[0] = 2*v1(0)*v2(0);
-	  s[1] = 2*v1(1)*v2(1);
-	  s[2] = 2*v1(2)*v2(2);
-	  s[3] = (v1(0)*v2(1)+v2(0)*v1(1))*cste;
-	  s[4] = (v1(0)*v2(2)+v2(0)*v1(2))*cste;
-	  s[5] = (v1(1)*v2(2)+v2(1)*v1(2))*cste;
-	}
-      };
-
-      template<unsigned short N>
-      struct BuildStensorFromEigenValuesAndVectors;
-      
-      template<>
-      struct BuildStensorFromEigenValuesAndVectors<1u>
-      {
-	template<typename T>
-	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL void
-	exe(stensor<1u,T>& s,const T& v1,const T& v2,const T& v3,
-	    const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&){
-	  s[0] = v1;
-	  s[1] = v2;
-	  s[2] = v3;
-	}
-      };
-    
-      template<>
-      struct BuildStensorFromEigenValuesAndVectors<2u>
-      {
-	template<typename T>
-	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL void
-	exe(stensor<2u,T>& s,const T& v1,const T& v2,const T& v3,
-	    const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m){
-	  constexpr const auto cste = Cste<T>::sqrt2;
-	  s[0] = v1*m(0,0)*m(0,0)+v2*m(0,1)*m(0,1);
-	  s[1] = v1*m(1,0)*m(1,0)+v2*m(1,1)*m(1,1);
-	  s[2] = v3;
-	  s[3] = (v1*m(0,0)*m(1,0)+v2*m(0,1)*m(1,1))*cste;
-	}
-      };
-      
-      template<>
-      struct BuildStensorFromEigenValuesAndVectors<3u>
-      {
-	template<typename T>
-	static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL void
-	exe(stensor<3u,T>& s,const T& v1,const T& v2,const T& v3,
-	    const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m){
-	  constexpr const auto cste = Cste<T>::sqrt2;
-	  s[0] =  v1*m(0,0)*m(0,0)+v2*m(0,1)*m(0,1)+v3*m(0,2)*m(0,2);
-	  s[1] =  v1*m(1,0)*m(1,0)+v2*m(1,1)*m(1,1)+v3*m(1,2)*m(1,2);
-	  s[2] =  v1*m(2,0)*m(2,0)+v2*m(2,1)*m(2,1)+v3*m(2,2)*m(2,2);
-	  s[3] = (v1*m(0,0)*m(1,0)+v2*m(0,1)*m(1,1)+v3*m(0,2)*m(1,2))*cste;
-	  s[4] = (v1*m(0,0)*m(2,0)+v2*m(0,1)*m(2,1)+v3*m(0,2)*m(2,2))*cste;
-	  s[5] = (v1*m(1,0)*m(2,0)+v2*m(1,1)*m(2,1)+v3*m(1,2)*m(2,2))*cste;
-	}
-      };
-
-      template<unsigned short N>
-      struct StensorComputeEigenValuesDerivatives;
-      
-      template<>
-      struct StensorComputeEigenValuesDerivatives<1u>
-      {
-	template<typename StensorType,
-		 typename BaseType>
-	static TFEL_MATH_INLINE2
-	typename std::enable_if<
-	  (tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
-	  (StensorTraits<StensorType>::dime==1u)&&
-	  (tfel::typetraits::IsAssignableTo<BaseType,
-					    StensorNumType<StensorType>>::cond),
-	  void>::type
-	exe(StensorType& n0,StensorType& n1,StensorType& n2,
-	    const tfel::math::tmatrix<3u,3u,BaseType>&)
-	{
-	  n0(0) = BaseType(1);
-	  n0(1) = BaseType(0);
-	  n0(2) = BaseType(0);
-	  n1(0) = BaseType(0);
-	  n1(1) = BaseType(1);
-	  n1(2) = BaseType(0);
-	  n2(0) = BaseType(0);
-	  n2(1) = BaseType(0);
-	  n2(2) = BaseType(1);
-	}
-      };
-
-      template<>
-      struct StensorComputeEigenValuesDerivatives<2u>
-      {
-	template<typename StensorType,
-		 typename BaseType>
-	static TFEL_MATH_INLINE2
-	typename std::enable_if<
-	  (tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
-	  (StensorTraits<StensorType>::dime==2u)&&
-	  (tfel::typetraits::IsAssignableTo<BaseType,
-					    StensorNumType<StensorType>>::cond),
-	  void>::type
-	exe(StensorType& n0,StensorType& n1,StensorType& n2,
-	    const tfel::math::tmatrix<3u,3u,BaseType>& m)
-	{
-	  using namespace tfel::math;
-	  const tvector<3u,BaseType> v0 = m.template column_view<0u>();
-	  const tvector<3u,BaseType> v1 = m.template column_view<1u>();
-	  n0    = StensorType::buildFromVectorDiadicProduct(v0);
-	  n1    = StensorType::buildFromVectorDiadicProduct(v1);
-	  n2(0) = BaseType(0);
-	  n2(1) = BaseType(0);
-	  n2(2) = BaseType(1);
-	  n2(3) = BaseType(0);
-	}
-      };
-
-      template<>
-      struct StensorComputeEigenValuesDerivatives<3u>
-      {
-	template<typename StensorType,
-		 typename BaseType>
-	static TFEL_MATH_INLINE2
-	typename std::enable_if<
-	  (tfel::meta::Implements<StensorType,StensorConcept>::cond)&&
-	  (StensorTraits<StensorType>::dime==3u)&&
-	  (tfel::typetraits::IsAssignableTo<BaseType,
-					    StensorNumType<StensorType>>::cond),
-	  void>::type
-	exe(StensorType& n0,
-	    StensorType& n1,
-	    StensorType& n2,
-	    const tfel::math::tmatrix<3u,3u,BaseType>& m)
-	{
-	  using namespace tfel::math;
-	  const tvector<3u,BaseType> v0 = m.template column_view<0u>();
-	  const tvector<3u,BaseType> v1 = m.template column_view<1u>();
-	  const tvector<3u,BaseType> v2 = m.template column_view<2u>();
-	  n0 = StensorType::buildFromVectorDiadicProduct(v0);
-	  n1 = StensorType::buildFromVectorDiadicProduct(v1);
-	  n2 = StensorType::buildFromVectorDiadicProduct(v2);
-	}
-      };
-
-      template<unsigned short N>
-      struct StensorComputeEigenTensorsDerivatives;
-
-      struct StensorComputeEigenTensorsDerivativesBase
-      {
-	template<typename NumType>
-	TFEL_MATH_INLINE static
-	typename ComputeBinaryResult<tfel::typetraits::base_type<NumType>,
-				     NumType,OpDiv>::Result
-	regularized_inverse(const NumType x,
-			    const NumType eps)
-	{
-	  if(std::abs(x)<100*std::numeric_limits<NumType>::min()){
-	    return NumType(0);
-	  }
-	  return regularization_function(x/eps)/x;
-	} // end of regularization
-      protected:
-	template<typename NumType>
-	TFEL_MATH_INLINE static
-	NumType
-	regularization_function(const NumType x)
-	{
-	  if(std::abs(x)>1){
-	    return NumType(1);
-	  }
-	  return x*x*(4-x*x)/3;
-	}
-      };
-      
-      template<>
-      struct StensorComputeEigenTensorsDerivatives<1u>
-      {
-	template<typename ST2toST2Type,
-		 typename NumType>
-	static TFEL_MATH_INLINE2
-	typename std::enable_if<
-	  (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
-	  (ST2toST2Traits<ST2toST2Type>::dime==1u)&&
-	  (tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<tfel::typetraits::base_type<NumType>,
-									 NumType,OpDiv>::Result,
-					    ST2toST2NumType<ST2toST2Type>>::cond),
-	  void>::type
-	exe(ST2toST2Type& dn0_ds,
-	    ST2toST2Type& dn1_ds,
-	    ST2toST2Type& dn2_ds,
-	    const tfel::math::tvector<3u,NumType>&,
-	    const tfel::math::tmatrix<3u,3u,tfel::typetraits::base_type<NumType>>&,
-	    const NumType)
-	{
-	  using namespace tfel::math;
-	  using namespace tfel::typetraits;
-	  typedef typename ComputeBinaryResult<base_type<NumType>,
-					       NumType,OpDiv>::Result InvNumType;
-	  dn0_ds = st2tost2<1u,InvNumType>(InvNumType(0));
-	  dn1_ds = dn0_ds;
-	  dn2_ds = dn0_ds;
-	} // end of exe
-      };
-
-      template<>
-      struct StensorComputeEigenTensorsDerivatives<2u>
-	: public StensorComputeEigenTensorsDerivativesBase
-      {
-	template<typename ST2toST2Type,
-		 typename NumType>
-	static TFEL_MATH_INLINE2
-	typename std::enable_if<
-	  (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
-	  (ST2toST2Traits<ST2toST2Type>::dime==2u)&&
-	  (tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<tfel::typetraits::base_type<NumType>,
-									 NumType,OpDiv>::Result,
-					    ST2toST2NumType<ST2toST2Type>>::cond),
-	  void>::type
-	exe(ST2toST2Type& dn0_ds,ST2toST2Type& dn1_ds,ST2toST2Type& dn2_ds,
-	    const tfel::math::tvector<3u,NumType>& vp,
-	    const tfel::math::tmatrix<3u,3u,tfel::typetraits::base_type<NumType>>& m,
-	    const NumType eps)
-	{
-	  typedef tfel::typetraits::base_type<NumType> base;
-	  typedef typename ComputeBinaryResult<base,NumType,OpDiv>::Result InvNumType;
-	  constexpr const auto icste = Cste<base>::isqrt2;
-	  const tvector<3u,base> v0 = m.template column_view<0u>();
-	  const tvector<3u,base> v1 = m.template column_view<1u>();
-	  const stensor<2u,base> n01 = stensor<2u,base>::buildFromVectorsSymmetricDiadicProduct(v0,v1)*icste;
-	  dn0_ds = regularized_inverse(vp(0)-vp(1),eps)*(n01^n01);
-	  dn1_ds = -dn0_ds;
-	  dn2_ds = st2tost2<2u,InvNumType>(InvNumType(0));
-	} // end of exe
-      };
-
-      template<>
-      struct StensorComputeEigenTensorsDerivatives<3u>
-	: public StensorComputeEigenTensorsDerivativesBase
-      {
-	template<typename ST2toST2Type,
-		 typename NumType>
-	static TFEL_MATH_INLINE2
-	typename std::enable_if<
-	  (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
-	  (ST2toST2Traits<ST2toST2Type>::dime==3u)&&
-	  (tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<tfel::typetraits::base_type<NumType>,
-									 NumType,OpDiv>::Result,
-					    ST2toST2NumType<ST2toST2Type>>::cond),
-	  void>::type
-	exe(ST2toST2Type& dn0_ds,ST2toST2Type& dn1_ds,ST2toST2Type& dn2_ds,
-	    const tfel::math::tvector<3u,NumType>& vp,
-	    const tfel::math::tmatrix<3u,3u,tfel::typetraits::base_type<NumType>>& m,
-	    const NumType eps)
-	{
-	  using namespace tfel::math;
-	  typedef tfel::typetraits::base_type<NumType> base;
-	  constexpr const auto cste = Cste<base>::isqrt2;
-	  const tvector<3u,base> v0 = m.template column_view<0u>();
-	  const tvector<3u,base> v1 = m.template column_view<1u>();
-	  const tvector<3u,base> v2 = m.template column_view<2u>();
-	  const stensor<3u,base> n01 = stensor<3u,base>::buildFromVectorsSymmetricDiadicProduct(v0,v1)*cste;
-	  const stensor<3u,base> n02 = stensor<3u,base>::buildFromVectorsSymmetricDiadicProduct(v0,v2)*cste;
-	  const stensor<3u,base> n12 = stensor<3u,base>::buildFromVectorsSymmetricDiadicProduct(v1,v2)*cste;
-	  dn0_ds = regularized_inverse(vp(0)-vp(1),eps)*(n01^n01)+regularized_inverse(vp(0)-vp(2),eps)*(n02^n02);
-	  dn1_ds = regularized_inverse(vp(1)-vp(0),eps)*(n01^n01)+regularized_inverse(vp(1)-vp(2),eps)*(n12^n12);
-	  dn2_ds = regularized_inverse(vp(2)-vp(0),eps)*(n02^n02)+regularized_inverse(vp(2)-vp(1),eps)*(n12^n12);
-	} // end of exe
-      };
-      
-      template<unsigned short N>
-      struct StensorComputeIsotropicFunctionDerivative;
-
-      template<>
-      struct StensorComputeIsotropicFunctionDerivative<1u>
-      {
-	/*!
-	 * compute the derivative of an isotropic function
-	 * \param[out] d:   result
-	 * \param[in]  f:   function
-	 * \param[in]  df:  derivative of the function
-	 * \param[in]  vp:  eigen values
-	 * \param[in]  m:   eigenvectors
-	 * \param[in]  eps: criterion value used to judge if two eigenvalues are equals
-	 */
-	template<typename ST2toST2Type,
-		 typename Function,
-		 typename FunctionDerivative,
-		 typename T>
-	static typename std::enable_if<
-	  (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
-	  (ST2toST2Traits<ST2toST2Type>::dime==1u),
-	  void>::type
-	exe(ST2toST2Type& d,
-	    const Function&,
-	    const FunctionDerivative& df,
-	    const tvector<3u,T>& vp,
-	    const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&,
-	    const T){
-	  using real = ST2toST2NumType<ST2toST2Type>;
-	  d(0,0) = df(vp[0]);
-	  d(0,1) = d(0,2) = real(0);
-	  d(1,1) = df(vp[1]);
-	  d(1,0) = d(1,2) = real(0);
-	  d(2,2) = df(vp[2]);
-	  d(2,0) = d(2,1) = real(0);
-	} // end of exe
-      };
-
-      template<>
-      struct StensorComputeIsotropicFunctionDerivative<2u>
-      {
-	/*!
-	 * compute the derivative of an isotropic function
-	 * \param[out] d:   result
-	 * \param[in]  f:   function
-	 * \param[in]  df:  derivative of the function
-	 * \param[in]  vp:  eigen values
-	 * \param[in]  m:   eigenvectors
-	 * \param[in]  eps: criterion value used to judge if two eigenvalues are equals
-	 */
-	template<typename ST2toST2Type,
-		 typename T,
-		 typename Function,
-		 typename FunctionDerivative>
-	static typename std::enable_if<
-	  (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
-	  (ST2toST2Traits<ST2toST2Type>::dime==2u),
-	  void>::type
-	exe(ST2toST2Type& d,
-	    const Function& f,
-	    const FunctionDerivative& df,
-	    const tvector<3u,T>& vp,
-	    const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m,
-	    const T eps){
-	  using real    = ST2toST2NumType<ST2toST2Type>;
-	  using base    = tfel::typetraits::base_type<real>;
-	  using tvector = tfel::math::tvector<3u,real>;
-	  using stensor = tfel::math::stensor<2u,real>;
-	  constexpr const base cste = Cste<base>::sqrt2;
-	  stensor  n0,n1,n2;
-	  stensor::computeEigenTensors(n0,n1,n2,m);
-	  const tvector v0 = m.template column_view<0u>();
-	  const tvector v1 = m.template column_view<1u>();
-	  const auto n01 = stensor::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
-	  if(std::abs(vp(0)-vp(1))>eps){
-	    d = (n0^n0)*df(vp(0))+(n1^n1)*df(vp(1))+(n2^n2)*df(vp(2))+
-	      (f(vp(0))-f(vp(1)))/(vp(0)-vp(1))*(n01^n01);
-	  } else {
-	    const auto vpm = (vp(0)+vp(1))/2;
-	    d = ((n0^n0)+(n1^n1)+(n01^n01))*df(vpm)+(n2^n2)*df(vp(2));
-	  }
-	} // end of exe
-      };
-
-      template<>
-      struct StensorComputeIsotropicFunctionDerivative<3u>
-      {
-	/*!
-	 * compute the derivative of an isotropic function
-	 * \param[out] d:   result
-	 * \param[in]  f:   function
-	 * \param[in]  df:  derivative of the function
-	 * \param[in]  vp:  eigen values
-	 * \param[in]  m:   eigenvectors
-	 * \param[in]  eps: criterion value used to judge if two eigenvalues are equals
-	 */
-	template<typename ST2toST2Type,
-		 typename T,
-		 typename Function,
-		 typename FunctionDerivative>
-	static typename std::enable_if<
-	  (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
-	  (ST2toST2Traits<ST2toST2Type>::dime==3u),
-	  void>::type
-	exe(ST2toST2Type& d,
-	    const Function& f,
-	    const FunctionDerivative& df,
-	    const tvector<3u,T>& vp,
-	    const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m,
-	    const T eps){
-	  using real     = ST2toST2NumType<ST2toST2Type>;
-	  using base     = tfel::typetraits::base_type<real>;
-	  using tvector  = tfel::math::tvector<3u,real>;
-	  using stensor  = tfel::math::stensor<3u,real>;
-	  using st2tost2 = tfel::math::st2tost2<3u,real>;
-	  constexpr const base cste = Cste<base>::sqrt2;
-	  if((std::abs(vp(0)-vp(1))<eps)&&(std::abs(vp(0)-vp(2))<eps)){
-	    const auto vpm = (vp(0)+vp(1)+vp(2))/3;
-	    d = st2tost2::Id()*df(vpm);
-	  } else if(std::abs(vp(0)-vp(1))<eps){
-	    const tvector v0 = m.template column_view<0u>();
-	    const tvector v1 = m.template column_view<1u>();
-	    const tvector v2 = m.template column_view<2u>();
-	    stensor n0,n1,n2;
-	    stensor::computeEigenTensors(n0,n1,n2,m);
-	    const auto n01 = stensor::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
-	    const auto n02 = stensor::buildFromVectorsSymmetricDiadicProduct(v0,v2)/cste;
-	    const auto n12 = stensor::buildFromVectorsSymmetricDiadicProduct(v1,v2)/cste;
-	    const auto vpm = (vp(0)+vp(1))/2;
-	    d = (((n0^n0)+(n1^n1)+(n01^n01))*df(vpm)+(n2^n2)*df(vp(2))+
-		 (f(vp(0))-f(vp(2)))/(vpm-vp(2))*((n02^n02)+(n12^n12)));
-	  } else if(std::abs(vp(0)-vp(2))<eps){
-	    const tvector v0 = m.template column_view<0u>();
-	    const tvector v1 = m.template column_view<1u>();
-	    const tvector v2 = m.template column_view<2u>();
-	    stensor n0,n1,n2;
-	    stensor::computeEigenTensors(n0,n1,n2,m);
-	    const auto n01 = stensor::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
-	    const auto n02 = stensor::buildFromVectorsSymmetricDiadicProduct(v0,v2)/cste;
-	    const auto n12 = stensor::buildFromVectorsSymmetricDiadicProduct(v1,v2)/cste;
-	    const auto vpm = (vp(0)+vp(2))/2;
-	    d = (((n0^n0)+(n2^n2)+(n02^n02))*df(vpm)+(n1^n1)*df(vp(1))+
-		 (f(vp(0))-f(vp(1)))/(vpm-vp(1))*((n01^n01)+(n12^n12)));
-	  } else if(std::abs(vp(1)-vp(2))<eps){
-	    const tvector v0 = m.template column_view<0u>();
-	    const tvector v1 = m.template column_view<1u>();
-	    const tvector v2 = m.template column_view<2u>();
-	    stensor n0,n1,n2;
-	    stensor::computeEigenTensors(n0,n1,n2,m);
-	    const auto n01 = stensor::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
-	    const auto n02 = stensor::buildFromVectorsSymmetricDiadicProduct(v0,v2)/cste;
-	    const auto n12 = stensor::buildFromVectorsSymmetricDiadicProduct(v1,v2)/cste;
-	    const auto vpm = (vp(1)+vp(2))/2;
-	    d = ((n0^n0)*df(vp(0))+((n1^n1)+(n2^n2)+(n12^n12))*df(vpm)+
-		 ((f(vp(0))-f(vp(1)))/(vp(0)-vpm))*((n01^n01)+(n02^n02)));
-	  } else {
-	    st2tost2 dn0,dn1,dn2;
-	    stensor  n0,n1,n2;
-	    stensor::computeEigenTensors(n0,n1,n2,m);
-	    stensor::computeEigenTensorsDerivatives(dn0,dn1,dn2,vp,m,eps/4);
-	    d = (n0^n0)*df(vp(0))+(n1^n1)*df(vp(1))+(n2^n2)*df(vp(2))+
-	      f(vp(0))*dn0+f(vp(1))*dn1+f(vp(2))*dn2;
-	  }
-	} // end of exe
-      };
-      /*!
-       * \brief an helper class used to sort eigen values
-       * \tparam N: space dimension
-       */
-      template<unsigned short N>
-      struct SortEigenValues;
-      //! \brief partial specialisation of the `SortEigenValues` in 1D
-      template<>
-      struct SortEigenValues<1u>
-      {
-	//! a simple alias
-	using EigenValuesOrdering = stensor_common::EigenValuesOrdering;
-	/*!
-	 * \tparam T: numeric type
-	 * \param[in] vp0: eigen value
-	 * \param[in] vp1: eigen value
-	 * \param[in] vp2: eigen value
-	 * \param[in] o:   eigen value ordering
-	 */
-	template<typename T>
-	static void exe(T&,T&,T&,
-			const EigenValuesOrdering)
-	{} // end of exe
-      }; // end of struct SortEigenValues<1u>
-      //! \brief partial specialisation of the `SortEigenValues` in 1D
-      template<>
-      struct SortEigenValues<2u>
-      {
-	//! a simple alias
-	using EigenValuesOrdering = stensor_common::EigenValuesOrdering;
-	/*!
-	 * \tparam T: numeric type
-	 * \param[in] vp0: eigen value
-	 * \param[in] vp1: eigen value
-	 * \param[in] vp2: eigen value
-	 * \param[in] o:   eigen value ordering
-	 */
-	template<typename T>
-	static void exe(T& vp0,T& vp1,T&,
-			const EigenValuesOrdering o)
-	{
-	  if(o==EigenValuesOrdering::ASCENDING){
-	    if(vp0>vp1){std::swap(vp0,vp1);};
-	  } else if(o==EigenValuesOrdering::DESCENDING){
-	    if(vp0<vp1){std::swap(vp0,vp1);};	
-	  }
-	} // end of exe
-      }; // end of struct SortEigenValues<2u>
-      //! \brief partial specialisation of the `SortEigenValues` in 3D
-      template<>
-      struct SortEigenValues<3u>
-      {
-	//! a simple alias
-	using EigenValuesOrdering = stensor_common::EigenValuesOrdering;
-	/*!
-	 * \tparam T: numeric type
-	 * \param[in] vp0: eigen value
-	 * \param[in] vp1: eigen value
-	 * \param[in] vp2: eigen value
-	 * \param[in] o:   eigen value ordering
-	 */
-	template<typename T>
-	static void exe(T& vp0,T& vp1,T& vp2,
-			const EigenValuesOrdering o)
-	{
-	  auto swap_if_greater = [](T& x, T&y){
-	    if(x>y){std::swap(x,y);};
-	  };      
-	  auto swap_if_lesser = [](T& x, T&y){
-	    if(x<y){std::swap(x,y);};	
-	  };      
-	  if(o==EigenValuesOrdering::ASCENDING){
-	    swap_if_greater(vp0,vp1);
-	    swap_if_greater(vp0,vp2);
-	    swap_if_greater(vp1,vp2);
-	  } else if(o==EigenValuesOrdering::DESCENDING){
-	    swap_if_lesser(vp0,vp1);
-	    swap_if_lesser(vp0,vp2);
-	    swap_if_lesser(vp1,vp2);
-	  }
-	} // end of exe
-      }; // end of struct SortEigenValues<3u>
-      /*!
-       * \brief an helper class used to sort eigen values
-       * \tparam N: space dimension
-       */
-      template<unsigned short N>
-      struct SortEigenVectors;
-      //! \brief partial specialisation of the `SortEigenVectors` in 1D
-      template<>
-      struct SortEigenVectors<1u>
-      {
-	//! a simple alias
-	using EigenValuesOrdering = stensor_common::EigenValuesOrdering;
-	/*!
-	 * \tparam T: numeric type
-	 * \param[in] vp: eigen values
-	 * \param[in] m:  eigen vectors
-	 * \param[in] o:   eigen value ordering
-	 */
-	template<typename T>
-	static void exe(tfel::math::tvector<3u,T>&,
-		 tfel::math::tmatrix<3u,3u,T>&,
-		 const EigenValuesOrdering)
-	{} // end of exe
-      }; // end of struct SortEigenVectors<1u>
-      //! \brief partial specialisation of the `SortEigenVectors` in 1D
-      template<>
-      struct SortEigenVectors<2u>
-      {
-	//! a simple alias
-	using EigenValuesOrdering = stensor_common::EigenValuesOrdering;
-	/*!
-	 * \tparam T: numeric type
-	 * \param[in] vp: eigen values
-	 * \param[in] m:  eigen vectors
-	 * \param[in] o:   eigen value ordering
-	 */
-	template<typename T>
-	static void exe(tfel::math::tvector<3u,T>& vp,
-			tfel::math::tmatrix<3u,3u,T>& m,
-			const EigenValuesOrdering o)
-	{
-	  if(o==EigenValuesOrdering::ASCENDING){
-	    if(vp(1)<vp(0)){
-	      std::swap(vp(0),vp(1));
-	      std::swap(m(0,0),m(0,1));
-	      std::swap(m(1,0),m(1,1));
-	    }
-	  } else if(o==EigenValuesOrdering::DESCENDING){
-	    if(vp(1)>vp(0)){
-	      std::swap(vp(0),vp(1));
-	      std::swap(m(0,0),m(0,1));
-	      std::swap(m(1,0),m(1,1));
-	    }
-	  }
-	} // end of exe
-      }; // end of struct SortEigenVectors<2u>
-      //! \brief partial specialisation of the `SortEigenVectors` in 3D
-      template<>
-      struct SortEigenVectors<3u>
-      {
-	//! a simple alias
-	using EigenValuesOrdering = stensor_common::EigenValuesOrdering;
-	/*!
-	 * \tparam T: numeric type
-	 * \param[in] vp: eigen values
-	 * \param[in] m:  eigen vectors
-	 * \param[in] o:   eigen value ordering
-	 */
-	template<typename T>
-	static void exe(tfel::math::tvector<3u,T>& vp,
-			tfel::math::tmatrix<3u,3u,T>& m,
-			const EigenValuesOrdering o)
-	{
-	  using size_type = decltype(vp.size());
-	  size_type zero = 0;
-	  size_type one  = 1;
-	  size_type two  = 2;
-	  auto m2  = m;
-	  auto vp2 = vp;
-	  tfel::math::tvector<3u,decltype(vp.size())> idx = {zero,one,two};
-	  if(o==EigenValuesOrdering::ASCENDING){
-	    if((vp(0)<vp(1))&&(vp(1)<vp(2))){
-	      idx = {zero,one,two};
-	    } else if((vp(0)<vp(2))&&(vp(2)<vp(1))){
-	      idx = {zero,two,one};
-	    } else if((vp(1)<vp(0))&&(vp(0)<vp(2))){
-	      idx = {one,zero,two};
-	    } else if((vp(1)<vp(2))&&(vp(2)<vp(0))){
-	      idx = {one,two,zero};
-	    } else if((vp(2)<vp(0))&&(vp(0)<vp(1))){
-	      idx = {two,zero,one};
-	    } else {
-	      // ((vp(2)<vp(1))&&(vp(1)<vp(0))){
-	      idx = {two,one,zero};
-	    }
-	  } else if(o==EigenValuesOrdering::DESCENDING){
-	    if((vp(0)>vp(1))&&(vp(1)>vp(2))){
-	      idx = {zero,one,two};
-	    } else if((vp(0)>vp(2))&&(vp(2)>vp(1))){
-	      idx = {zero,two,one};
-	    } else if((vp(1)>vp(0))&&(vp(0)>vp(2))){
-	      idx = {one,zero,two};
-	    } else if((vp(1)>vp(2))&&(vp(2)>vp(0))){
-	      idx = {one,two,zero};
-	    } else if((vp(2)>vp(0))&&(vp(0)>vp(1))){
-	      idx = {two,zero,one};
-	    } else {
-	      // ((vp(2)>vp(1))&&(vp(1)>vp(0))){
-	      idx = {two,one,zero};
-	    }
-	  }
-	  vp(0)  = vp2(idx(0));
-	  vp(1)  = vp2(idx(1));
-	  vp(2)  = vp2(idx(2));
-	  m(0,0) = m2(0,idx(0));
-	  m(1,0) = m2(1,idx(0));
-	  m(2,0) = m2(2,idx(0));
-	  m(0,1) = m2(0,idx(1));
-	  m(1,1) = m2(1,idx(1));
-	  m(2,1) = m2(2,idx(1));
-	  m(0,2) = m2(0,idx(2));
-	  m(1,2) = m2(1,idx(2));
-	  m(2,2) = m2(2,idx(2));
-	} // end of exe
-      }; // end of struct SortEigenVectors<3u>
-      
-    } // end of namespace internals
 
     template<typename Child>
     template<typename StensorType>
@@ -1149,7 +245,7 @@ namespace tfel{
     }
 
     template<unsigned short N,typename T>
-    template<typename stensor<N,T>::EigenSolver es>
+    template<typename stensor_common::EigenSolver es>
     void stensor<N,T>::computeEigenValues(T& vp0,T& vp1,T& vp2,
 					  const bool b) const 
     {
@@ -1158,7 +254,7 @@ namespace tfel{
     } // end of stensor<N,T>::computeEigenValues
     
     template<unsigned short N,typename T>
-    template<typename stensor<N,T>::EigenSolver es>
+    template<typename stensor_common::EigenSolver es>
     void stensor<N,T>::computeEigenValues(tvector<3u,T>& vp,
 					  const bool b) const 
     {
@@ -1166,7 +262,7 @@ namespace tfel{
     }
 
     template<unsigned short N,typename T>
-    template<typename stensor<N,T>::EigenSolver es>
+    template<typename stensor_common::EigenSolver es>
     tvector<3u,T> stensor<N,T>::computeEigenValues(const bool b) const 
     {
       tvector<3u,T> vp;
@@ -1175,7 +271,7 @@ namespace tfel{
     } // end of stensor<N,T>::computeEigenValues
 
     template<unsigned short N,typename T>
-    template<typename stensor<N,T>::EigenSolver es>
+    template<typename stensor_common::EigenSolver es>
     void stensor<N,T>::computeEigenValues(T& vp0,T& vp1,T& vp2,
 					  const EigenValuesOrdering o,
 					  const bool b) const 
@@ -1185,7 +281,7 @@ namespace tfel{
     } // end of stensor<N,T>::computeEigenValues
     
     template<unsigned short N,typename T>
-    template<typename stensor<N,T>::EigenSolver es>
+    template<typename stensor_common::EigenSolver es>
     void stensor<N,T>::computeEigenValues(tvector<3u,T>& vp,
 					  const EigenValuesOrdering o,
 					  const bool b) const 
@@ -1194,7 +290,7 @@ namespace tfel{
     }
 
     template<unsigned short N,typename T>
-    template<typename stensor<N,T>::EigenSolver es>
+    template<typename stensor_common::EigenSolver es>
     tvector<3u,T> stensor<N,T>::computeEigenValues(const EigenValuesOrdering o,
 						   const bool b) const 
     {
@@ -1204,7 +300,7 @@ namespace tfel{
     } // end of stensor<N,T>::computeEigenValues
     
     template<unsigned short N,typename T>
-    template<typename stensor<N,T>::EigenSolver es>
+    template<typename stensor_common::EigenSolver es>
     void stensor<N,T>::computeEigenVectors(tvector<3u,T>& vp,
     					   tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m,
     					   const bool b) const 
@@ -1215,7 +311,7 @@ namespace tfel{
 
     // computeEigenVectors
     template<unsigned short N,typename T>
-    template<typename stensor<N,T>::EigenSolver es>
+    template<typename stensor_common::EigenSolver es>
     std::tuple<tvector<3u,T>,tmatrix<3u,3u,tfel::typetraits::base_type<T>>>
     stensor<N,T>::computeEigenVectors(const bool b) const 
     {
@@ -1225,7 +321,7 @@ namespace tfel{
     } // end of stensor<N,T>::computeEigenVectors
 
     template<unsigned short N,typename T>
-    template<typename stensor<N,T>::EigenSolver es>
+    template<typename stensor_common::EigenSolver es>
     void stensor<N,T>::computeEigenVectors(tvector<3u,T>& vp,
     					   tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m,
 					   const EigenValuesOrdering o,
@@ -1237,7 +333,7 @@ namespace tfel{
 
     // computeEigenVectors
     template<unsigned short N,typename T>
-    template<typename stensor<N,T>::EigenSolver es>
+    template<typename stensor_common::EigenSolver es>
     std::tuple<tvector<3u,T>,tmatrix<3u,3u,tfel::typetraits::base_type<T>>>
     stensor<N,T>::computeEigenVectors(const EigenValuesOrdering o,
 				      const bool b) const 
@@ -1334,12 +430,33 @@ namespace tfel{
 
     template<unsigned short N,typename T>
     template<typename Function>
-    stensor<N,T>
+    stensor<N,typename std::result_of<Function(T)>::type>
     stensor<N,T>::computeIsotropicFunction(const Function& f,
 					   const tvector<3u,T>& vp,
 					   const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m){
       return stensor<N,T>::buildFromEigenValuesAndVectors(f(vp(0)),f(vp(1)),f(vp(2)),m);
     }
+
+    template<unsigned short N,typename T>
+    template<typename T2>
+    stensor<N,T2>
+    stensor<N,T>::computeIsotropicFunction(const tvector<3u,T2>& f,
+					   const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m){
+      return stensor<N,T>::buildFromEigenValuesAndVectors(f[0],f[1],f[2],m);
+    }
+
+    template<unsigned short N,typename T>
+    template<typename Function,typename FunctionDerivative>
+    st2tost2<N,typename std::result_of<FunctionDerivative(T)>::type>
+    stensor<N,T>::computeIsotropicFunctionDerivative(const Function& f,
+						     const FunctionDerivative& df,
+						     const tvector<3u,T>& vp,
+						     const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m,
+						     const T eps){
+      st2tost2<N,typename std::result_of<FunctionDerivative(T)>::type> r;
+      stensor<N,T>::computeIsotropicFunctionDerivative(r,f,df,vp,m,eps);
+      return r;
+    } // end of stensor<N,T>::computeIsotropicFunctionDerivative
     
     template<unsigned short N,typename T>
     template<typename ST2toST2Type,
@@ -1362,8 +479,41 @@ namespace tfel{
     }
 
     template<unsigned short N,typename T>
+    template<typename T1,typename T2>
+    st2tost2<N,T2>
+    stensor<N,T>::computeIsotropicFunctionDerivative(const tvector<3u,T1>& f,
+						     const tvector<3u,T2>& df,
+						     const tvector<3u,T>&  vp,
+						     const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m,
+						     const T eps){
+      st2tost2<N,T2> r;
+      stensor<N,T>::computeIsotropicFunctionDerivative(r,f,df,vp,m,eps);
+      return r;
+    } // end of stensor<N,T>::computeIsotropicFunctionDerivative
+
+    
+    template<unsigned short N,typename T>
+    template<typename ST2toST2Type,
+	     typename T1,typename T2>
+    typename std::enable_if<
+      (tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
+      (ST2toST2Traits<ST2toST2Type>::dime==N)&&
+      (tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<tfel::typetraits::base_type<T>,
+       T,OpDiv>::Result,
+       ST2toST2NumType<ST2toST2Type>>::cond),
+      void>::type
+    stensor<N,T>::computeIsotropicFunctionDerivative(ST2toST2Type& d,
+						     const tvector<3u,T1>& f,
+						     const tvector<3u,T2>& df,
+						     const tvector<3u,T>&  vp,
+						     const tmatrix<3u,3u,tfel::typetraits::base_type<T>>& m,
+						     const T eps){
+      tfel::math::internals::StensorComputeIsotropicFunctionDerivative<N>::exe(d,f,df,vp,m,eps); 
+    }
+    
+    template<unsigned short N,typename T>
     template<typename Function>
-    stensor<N,T>
+    stensor<N,typename std::result_of<Function(T)>::type>
     stensor<N,T>::computeIsotropicFunction(const Function& f,const bool b) const
     {
       using base = tfel::typetraits::base_type<T>;
@@ -1375,7 +525,7 @@ namespace tfel{
 
     template<unsigned short N,typename T>
     template<typename Function,typename FunctionDerivative>
-    st2tost2<N,T>
+    st2tost2<N,typename std::result_of<FunctionDerivative(T)>::type>
     stensor<N,T>::computeIsotropicFunctionDerivative(const Function& f,
 						     const FunctionDerivative& df,
 						     const T eps,const bool b) const
@@ -1391,7 +541,8 @@ namespace tfel{
 
     template<unsigned short N,typename T>
     template<typename Function,typename FunctionDerivative>
-    std::pair<stensor<N,T>,st2tost2<N,T>>
+    std::pair<stensor<N,typename std::result_of<Function(T)>::type>,
+	      st2tost2<N,typename std::result_of<FunctionDerivative(T)>::type>>
     stensor<N,T>::computeIsotropicFunctionAndDerivative(const Function& f,
 							const FunctionDerivative& df,
 							const T eps,const bool b) const
@@ -1401,8 +552,10 @@ namespace tfel{
       tvector<3u,T> vp;
       tmatrix<3u,3u,base> m;
       this->computeEigenVectors(vp,m,b);
-      r.first = stensor<N,T>::buildFromEigenValuesAndVectors(f(vp(0)),f(vp(1)),f(vp(2)),m);
-      stensor<N,T>::computeIsotropicFunctionDerivative(r.second,f,df,vp,m,eps);
+      const auto fv  = map(f,vp);
+      const auto dfv = map(df,vp);
+      r.first = stensor<N,T>::buildFromEigenValuesAndVectors(fv(0),fv(1),fv(2),m);
+      stensor<N,T>::computeIsotropicFunctionDerivative(r.second,fv,dfv,vp,m,eps);
       return r;
     } // end of stensor<N,T>::computeIsotropicFunctionAndDerivative
     

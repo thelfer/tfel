@@ -87,7 +87,9 @@ struct Hyperelasticity final
       const auto dPv_dJ   = K*(J-1);
       return dPv_dJ/J*dI3_dC;
     };
-    for(const auto C : {stensor::Id(),stensor{1.2,0.95,0.67,0.324,-0.675,-0.2}}){
+    const auto s1 = stensor::Id();
+    const auto s2  =stensor{1.2,0.95,0.67,0.324,-0.675,-0.2};
+    for(const auto& C : {s1,s2}){
       const auto id      = stensor::Id();
       const auto C2      = square(C); 
       const auto I1      = trace(C);
@@ -144,7 +146,9 @@ struct Hyperelasticity final
       const auto dPi_dI2b   = C10;
       return 2*(dPi_dI1b*dI1b_dC+dPi_dI2b*dI2b_dC);
     };
-    for(const auto C : {stensor::Id(),stensor{1.2,0.95,0.67,0.324,-0.675,-0.2}}){
+    const auto s1 = stensor::Id();
+    const auto s2 = stensor{1.2,0.95,0.67,0.324,-0.675,-0.2};
+    for(const auto& C : {s1,s2}){
       const auto ndSi_dC = getNumericalApproximation(sif,C,1.e-6);
       const auto id      = stensor::Id();
       const auto C2         =  square(C);

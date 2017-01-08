@@ -12,6 +12,7 @@
  */
 
 #include"TFEL/TypeTraits/BaseType.hxx"
+#include"TFEL/Math/Stensor/Internals/KoppSymmetricEigenSolver.hxx"
 #include"TFEL/Math/Stensor/Internals/GteSymmetricEigenSolver.hxx"
 #include"TFEL/Math/Stensor/Internals/StensorComputeEigenValues.hxx"
 #include"TFEL/Math/Stensor/Internals/StensorComputeEigenVectors.hxx"
@@ -84,12 +85,12 @@ namespace tfel{
 
       /*!
        * \brief Partial specialisation of the `StensorEigenSolver`
-       * class for the TFELEIGENSOLVER solver
+       * class for the GTESYMMETRICQREIGENSOLVER solver
        * \tparam N:       space dimension
        * \tparam NumType: numeric type
        */
       template<typename NumType>
-      struct StensorEigenSolver<stensor_common::GTESYMMETRICEIGENSOLVER,3u,NumType>
+      struct StensorEigenSolver<stensor_common::GTESYMMETRICQREIGENSOLVER,3u,NumType>
       {
 	//! base type
 	using base = tfel::typetraits::base_type<NumType>;
@@ -146,12 +147,12 @@ namespace tfel{
 
       /*!
        * \brief Partial specialisation of the `StensorEigenSolver`
-       * class for the TFELEIGENSOLVER solver
+       * class for the KOPPANALYTICALEIGENSOLVER solver
        * \tparam N:       space dimension
        * \tparam NumType: numeric type
        */
       template<typename NumType>
-      struct StensorEigenSolver<stensor_common::GTENISYMMETRICEIGENSOLVER,3u,NumType>
+      struct StensorEigenSolver<stensor_common::KOPPANALYTICALEIGENSOLVER,2u,NumType>
       {
 	//! base type
 	using base = tfel::typetraits::base_type<NumType>;
@@ -172,14 +173,11 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(IsReal<base>::cond);
 	  TFEL_STATIC_ASSERT((IsSafelyReinterpretCastableTo<NumType,base>::cond));
 	  auto vp = tfel::math::tvector<3u,base>{};
-	  auto m  = tfel::math::tmatrix<3u,3u,base>{};
 	  const auto s = reinterpret_cast<const base*>(v);
-	  GteNISymmetricEigensolver3x3<base>::exe(vp,m,
-						  s[0],s[3]*icste,s[4]*icste,
-						  s[1],s[5]*icste,s[2]);
+	  KoppAnalyticalSymmetricEigensolver2x2<base>::computeEigenValues(vp,s[0],s[3]*icste,s[1]);
 	  vp0 = NumType(vp[0]);
 	  vp1 = NumType(vp[1]);
-	  vp2 = NumType(vp[2]);
+	  vp2 = NumType(v[2]);
 	} // end of computeEigenValues
 	/*!
 	 * \param[out] vp: eigen values
@@ -199,11 +197,10 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT((IsSafelyReinterpretCastableTo<NumType,base>::cond));
 	  auto vp2 = tfel::math::tvector<3u,base>{};
 	  const auto s = reinterpret_cast<const base*>(v);
-	  GteNISymmetricEigensolver3x3<base>::exe(vp2,m,
-						  s[0],s[3]*icste,s[4]*icste,
-						  s[1],s[5]*icste,s[2]);
-	  vp = {NumType(vp2(0)),NumType(vp2(1)),NumType(vp2(2))};
-	}
+	  KoppAnalyticalSymmetricEigensolver2x2<base>::exe(vp2,m,s[0],s[3]*icste,s[1]);
+	  vp = {NumType(vp2(0)),NumType(vp2(1)),NumType(v(2))};
+	  m(2,2)=base(1);
+	} // end of computeEigenVectors
       }; // end of struct StensorEigenSolver
       
     } // end of namespace internals

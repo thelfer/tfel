@@ -276,7 +276,14 @@ namespace tfel{
       //! a simple assertion stating that the dimension is valid.
       TFEL_STATIC_ASSERT(N!=0);
     };
-
+    /*!
+     * \brief create a new tvector by applying a functor
+     * \param[in] f: functor
+     * \param[in] x: inital value
+     */
+    template<typename F,typename T,unsigned short N>
+    tvector<N,typename std::result_of<F(T)>::type>
+    map(F,const tvector<N,T>&);
     /*!
      * export the given vector to an array of the 
      */

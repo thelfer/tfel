@@ -112,8 +112,8 @@ namespace tfel{
     >::type
     tvector_base<Child,N,T>::operator/=(const T2 s)
     {
-      VectorUtilities<N>::scale(static_cast<Child&>(*this),
-				(static_cast<typename tfel::typetraits::BaseType<T2>::type>(1u))/s);
+      constexpr const auto one = tfel::typetraits::base_type<T2>(1);
+      VectorUtilities<N>::scale(static_cast<Child&>(*this),one/s);
       return static_cast<Child&>(*this);
     }
 
@@ -221,7 +221,7 @@ namespace tfel{
 			    OutputIterator p)
     {
       typedef tfel::fsalgo::copy<N> Copy;
-      typedef typename tfel::typetraits::BaseType<T>::type base;
+      typedef tfel::typetraits::base_type<T> base;
       TFEL_STATIC_ASSERT((tfel::typetraits::IsSafelyReinterpretCastableTo<T,base>::cond));
       Copy::exe(reinterpret_cast<const base*>(&v[0]),p);
     } // end of exportToBaseTypePointer
@@ -242,9 +242,8 @@ namespace tfel{
     typename tfel::typetraits::AbsType<T>::type
     abs(const tvector<N,T>& v)
     {
-      using namespace tfel::fsalgo;
       AbsSum<T> a;
-      for_each<N>::exe(v.begin(),a);
+      tfel::fsalgo::for_each<N>::exe(v.begin(),a);
       return a.result;
     }
 
@@ -254,43 +253,43 @@ namespace tfel{
     tvector<1u,T>
     makeTVector1D(const T v)
     {
-      return tvector<1u,T>(v);
+      return {v};
     } // end of makeTVector1D
 
     template<typename T>
     tvector<2u,T>
-    makeTVector2D(const T v1,
-		  const T v2)
+    makeTVector2D(const T v1,const T v2)
     {
-      tvector<2u,T> r;
-      r[0] = v1;
-      r[1] = v2;
-      return r;
+      return {v1,v2};
     } // end of makeTVector2D
     
     template<typename T>
     tvector<3u,T>
-    makeTVector3D(const T v1,
-		  const T v2,
-		  const T v3)
+    makeTVector3D(const T v1,const T v2,const T v3)
     {
-      tvector<3u,T> r;
-      r[0] = v1;
-      r[1] = v2;
-      r[2] = v3;
-      return r;
+      return {v1,v2,v3};
     } // end of makeTVector3D
 
+    /*!
+     * \brief create a new tvector by applying a functor
+     * \param[in] f: functor
+     * \param[in] x: inital value
+     */
+    template<typename F,typename T,unsigned short N>
+    tvector<N,typename std::result_of<F(T)>::type>
+    map(F f,const tvector<N,T>& x){
+      tvector<N,typename std::result_of<F(T)>::type> r;
+      tfel::fsalgo::transform<N>::exe(x.begin(),r.begin(),f);
+      return r;
+    } // end of map
+    
     template<typename T>
     tvector<3u,T>
     cross_product(const tvector<2u,T>& v1,
 		  const tvector<2u,T>& v2)
     {
-      tvector<3u,T> v3;
-      v3[0] = T(0);
-      v3[1] = T(0);
-      v3[2] = v1[0]*v2[1]-v1[1]*v2[0];
-      return v3;
+      constexpr const auto zero = T(0);
+      return {zero,zero,v1[0]*v2[1]-v1[1]*v2[0]};
     } // end of cross_product
 
     template<typename T>
@@ -298,11 +297,9 @@ namespace tfel{
     cross_product(const tvector<3u,T>& v1,
 		  const tvector<3u,T>& v2)
     {
-      tvector<3u,T> v3;
-      v3[0] = v1[1]*v2[2]-v1[2]*v2[1];
-      v3[1] = v1[2]*v2[0]-v1[0]*v2[2];
-      v3[2] = v1[0]*v2[1]-v1[1]*v2[0];
-      return v3;
+      return {v1[1]*v2[2]-v1[2]*v2[1],
+	  v1[2]*v2[0]-v1[0]*v2[2],
+	  v1[0]*v2[1]-v1[1]*v2[0]};
     } // end of cross_product
 
     template<typename T>
@@ -310,46 +307,40 @@ namespace tfel{
     find_perpendicular_vector(tvector<3u,T>& y,
 			      const tvector<3u,T>& x)
     {
-      using namespace std;
-      using namespace tfel::math;
-      typedef typename tfel::typetraits::BaseType<T>::type real;
-      typedef typename ComputeBinaryResult<real,T,OpDiv>::Result inv_T;
-      T norm2_x = (x|x);
-      if(norm2_x<100*std::numeric_limits<T>::min()){
+      using real = tfel::typetraits::base_type<T>;
+      constexpr const auto zero = T(0);
+      constexpr const auto one  = T(1);
+      const auto nx = (x|x);
+      if(nx<100*std::numeric_limits<decltype(nx)>::min()){
 	//x is null
-	y(0) = static_cast<T>(1.);
-	y(1) = static_cast<T>(0.);
-	y(2) = static_cast<T>(0.);
+	y = {one,zero,zero};
 	return;
       }
-      inv_T inv_norm2_x = real(1)/norm2_x;
-      if(abs(x(0))<abs(x(1))){
-	if(abs(x(0))<abs(x(2))){
+      const auto inx = real(1)/nx;
+      if(std::abs(x(0))<std::abs(x(1))){
+	if(std::abs(x(0))<std::abs(x(2))){
 	  //|x0| is min, (1 0 0) is a good choice
-	  y(0) = real(1.)- x(0)*x(0)*inv_norm2_x;
-	  y(1) =         - x(0)*x(1)*inv_norm2_x;
-	  y(2) =         - x(0)*x(2)*inv_norm2_x;
+	  y(0) = one - x(0)*x(0)*inx;
+	  y(1) =     - x(0)*x(1)*inx;
+	  y(2) =     - x(0)*x(2)*inx;
 	} else {
 	  //|x2| is min, (0 0 1) is a good choice
-	  y(0) =         - x(2)*x(0)*inv_norm2_x;
-	  y(1) =         - x(2)*x(1)*inv_norm2_x;
-	  y(2) = real(1) - x(2)*x(2)*inv_norm2_x;
+	  y(0) =     - x(2)*x(0)*inx;
+	  y(1) =     - x(2)*x(1)*inx;
+	  y(2) = one - x(2)*x(2)*inx;
 	}
-      } else if (abs(x(1))<abs(x(2))) {
+      } else if (std::abs(x(1))<std::abs(x(2))) {
 	// |x1| is min, (0 0 1) is a good choice
-	y(0) =         - x(1)*x(0)*inv_norm2_x;
-	y(1) = real(1) - x(1)*x(1)*inv_norm2_x;
-	y(2) =         - x(1)*x(2)*inv_norm2_x;
+	y(0) =     - x(1)*x(0)*inx;
+	y(1) = one - x(1)*x(1)*inx;
+	y(2) =     - x(1)*x(2)*inx;
       } else {
 	// |x2| is min, (0 0 1) is a good choice
-	y(0) =         - x(2)*x(0)*inv_norm2_x;
-	y(1) =         - x(2)*x(1)*inv_norm2_x;
-	y(2) = real(1) - x(2)*x(2)*inv_norm2_x;
+	y(0) =     - x(2)*x(0)*inx;
+	y(1) =     - x(2)*x(1)*inx;
+	y(2) = one - x(2)*x(2)*inx;
       }
-      const T tmp = std::sqrt(y|y);
-      y(0) /=tmp;
-      y(1) /=tmp;
-      y(2) /=tmp; 
+      y /= std::sqrt(y|y);
     }
 
     template<unsigned short I,unsigned short N,typename T>

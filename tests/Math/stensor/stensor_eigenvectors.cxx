@@ -48,8 +48,7 @@ struct StensorComputeEigenvectors final
     this->test<float>();
     this->test<double>();
     this->check<EigenSolver::TFELEIGENSOLVER>();
-    this->check<EigenSolver::GTESYMMETRICEIGENSOLVER>();
-    //    this->check<EigenSolver::GTENISYMMETRICEIGENSOLVER>();
+    this->check<EigenSolver::GTESYMMETRICQREIGENSOLVER>();
     return this->result;
   } // end of execute
 
@@ -160,7 +159,7 @@ private:
     // iterative eigen solver, ascending ordering
     tfel::math::tmatrix<3u,3u,T> m4;
     tfel::math::tvector<3u,T>    vp4;
-    s.template computeEigenVectors<stensor::GTESYMMETRICEIGENSOLVER>(vp4,m4,stensor::ASCENDING);
+    s.template computeEigenVectors<stensor::GTESYMMETRICQREIGENSOLVER>(vp4,m4,stensor::ASCENDING);
     TFEL_TESTS_ASSERT(std::abs(vp4(0)+T(1.68923153093191))<prec);  
     TFEL_TESTS_ASSERT(std::abs(vp4(1)-T(1.50793773158270))<prec);  
     TFEL_TESTS_ASSERT(std::abs(vp4(2)-T(4.16709379934921))<prec);  
@@ -170,33 +169,13 @@ private:
     // iterative eigen solver, descding ordering
     tfel::math::tmatrix<3u,3u,T> m5;
     tfel::math::tvector<3u,T>    vp5;
-    s.template computeEigenVectors<stensor::GTESYMMETRICEIGENSOLVER>(vp5,m5,stensor::DESCENDING);
+    s.template computeEigenVectors<stensor::GTESYMMETRICQREIGENSOLVER>(vp5,m5,stensor::DESCENDING);
     TFEL_TESTS_ASSERT(std::abs(vp5(0)-T(4.16709379934921))<prec);  
     TFEL_TESTS_ASSERT(std::abs(vp5(1)-T(1.50793773158270))<prec);  
     TFEL_TESTS_ASSERT(std::abs(vp5(2)+T(1.68923153093191))<prec);  
     check_eigenvector(m5.template column_view<2>(),v0,prec);
     check_eigenvector(m5.template column_view<1>(),v1,prec);
     check_eigenvector(m5.template column_view<0>(),v2,prec);
-    // non iterative eigen solver, ascending ordering
-    tfel::math::tmatrix<3u,3u,T> m6;
-    tfel::math::tvector<3u,T>    vp6;
-    s.template computeEigenVectors<stensor::GTENISYMMETRICEIGENSOLVER>(vp6,m6,stensor::ASCENDING);
-    TFEL_TESTS_ASSERT(std::abs(vp6(0)+T(1.68923153093191))<prec);  
-    TFEL_TESTS_ASSERT(std::abs(vp6(1)-T(1.50793773158270))<prec);  
-    TFEL_TESTS_ASSERT(std::abs(vp6(2)-T(4.16709379934921))<prec);  
-    check_eigenvector(m6.template column_view<0>(),v0,prec);
-    check_eigenvector(m6.template column_view<1>(),v1,prec);
-    check_eigenvector(m6.template column_view<2>(),v2,prec);
-    // non iterative eigen solver, descding ordering
-    tfel::math::tmatrix<3u,3u,T> m7;
-    tfel::math::tvector<3u,T>    vp7;
-    s.template computeEigenVectors<stensor::GTENISYMMETRICEIGENSOLVER>(vp7,m7,stensor::DESCENDING);
-    TFEL_TESTS_ASSERT(std::abs(vp7(0)-T(4.16709379934921))<prec);  
-    TFEL_TESTS_ASSERT(std::abs(vp7(1)-T(1.50793773158270))<prec);  
-    TFEL_TESTS_ASSERT(std::abs(vp7(2)+T(1.68923153093191))<prec);  
-    check_eigenvector(m7.template column_view<2>(),v0,prec);
-    check_eigenvector(m7.template column_view<1>(),v1,prec);
-    check_eigenvector(m7.template column_view<0>(),v2,prec);
   }
 
   template<typename T,EigenSolver es>

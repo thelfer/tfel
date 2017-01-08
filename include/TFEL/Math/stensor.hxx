@@ -126,10 +126,10 @@ namespace tfel{
       enum EigenSolver{
 	//! historical algorithm
 	TFELEIGENSOLVER,
+	//! non iterative solver from Joachim Kopp, 
+	KOPPANALYTICALEIGENSOLVER,
 	//! iterative solver from David Eberly, Geometric Tools
-	GTESYMMETRICEIGENSOLVER,
-	//! non iterative solver from David Eberly, Geometric Tools
-	GTENISYMMETRICEIGENSOLVER,
+	GTESYMMETRICQREIGENSOLVER
       }; // end of EigenSolver
       //! \brief available eigen solver
       enum EigenValuesOrdering{
@@ -138,7 +138,7 @@ namespace tfel{
 	//! sort eigenvalues from the greatest to the lowest
 	DESCENDING,
 	//! no ordering
-	UNSORTED,
+	UNSORTED
       }; // end of EigenValuesOrdering
     }; // end of struct stensor_common
     
@@ -594,7 +594,7 @@ namespace tfel{
        * \param[out] n : derivativse of the eigenvalues
        * \param[in]  m   : eigenvectors
        */
-      std::tuple<stensor<N,T>,stensor<N,T>,stensor<N,T>>
+      static std::tuple<stensor<N,T>,stensor<N,T>,stensor<N,T>>
       computeEigenTensors(const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&);
       /*!
        * compute the "eigentensors"
@@ -638,16 +638,80 @@ namespace tfel{
 				     const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&,
 				     const T);
       /*!
-       * compute the derivative of an isotropic function
+       * compute an isotropic function
        * \param[in]  f:   function
        * \param[in]  vp:  eigen values
        * \param[in]  m:   eigenvectors
        */
       template<typename Function>
-      static stensor<N,T>
+      static stensor<N,typename std::result_of<Function(T)>::type>
       computeIsotropicFunction(const Function&,
 			       const tvector<3u,T>&,
 			       const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&);
+      /*!
+       * compute an isotropic function
+       * \param[in]  f: function values for each eigen values
+       * \param[in]  m: eigenvectors
+       */
+      template<typename T2>
+      static stensor<N,T2>
+      computeIsotropicFunction(const tvector<3u,T2>&,
+			       const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&);
+      /*!
+       * compute the derivative of an isotropic function
+       * \param[out] d:   result
+       * \param[in]  f:   function values
+       * \param[in]  df:  values of the derivative of the function
+       * \param[in]  vp:  eigen values
+       * \param[in]  m:   eigenvectors
+       * \param[in]  eps: criterion value used to judge if two eigenvalues are equals
+       */
+      template<typename T1,typename T2>
+      static st2tost2<N,T2>
+      computeIsotropicFunctionDerivative(const tvector<3u,T1>&,
+					 const tvector<3u,T2>&,
+					 const tvector<3u,T>&,
+					 const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&,
+					 const T);
+      /*!
+       * compute the derivative of an isotropic function
+       * \param[out] d:   result
+       * \param[in]  f:   function values
+       * \param[in]  df:  values of the derivative of the function
+       * \param[in]  vp:  eigen values
+       * \param[in]  m:   eigenvectors
+       * \param[in]  eps: criterion value used to judge if two eigenvalues are equals
+       */
+      template<typename ST2toST2Type,typename T1,typename T2>
+      static typename std::enable_if<
+	(tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond)&&
+	(ST2toST2Traits<ST2toST2Type>::dime==N)&&
+	(tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<tfel::typetraits::base_type<T>,
+								       T,OpDiv>::Result,
+					  typename ST2toST2Traits<ST2toST2Type>::NumType>::cond),
+	void>::type
+      computeIsotropicFunctionDerivative(ST2toST2Type&,
+					 const tvector<3u,T1>&,
+					 const tvector<3u,T2>&,
+					 const tvector<3u,T>&,
+					 const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&,
+					 const T);
+      /*!
+       * compute the derivative of an isotropic function
+       * \param[out] d:   result
+       * \param[in]  f:   function
+       * \param[in]  df:  derivative of the function
+       * \param[in]  vp:  eigen values
+       * \param[in]  m:   eigenvectors
+       * \param[in]  eps: criterion value used to judge if two eigenvalues are equals
+       */
+      template<typename Function,typename FunctionDerivative>
+      static st2tost2<N,typename std::result_of<FunctionDerivative(T)>::type>
+      computeIsotropicFunctionDerivative(const Function&,
+					 const FunctionDerivative&,
+					 const tvector<3u,T>&,
+					 const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&,
+					 const T);
       /*!
        * compute the derivative of an isotropic function
        * \param[out] d:   result
@@ -679,7 +743,7 @@ namespace tfel{
        * \param[in] b:   if true, refinement of eigen values is performed
        */
       template<typename Function>
-      stensor<N,T>
+      stensor<N,typename std::result_of<Function(T)>::type>
       computeIsotropicFunction(const Function&,const bool=false) const;
       /*!
        * \return the derivative of an isotropic function
@@ -688,9 +752,8 @@ namespace tfel{
        * \param[in] eps: criterion value used to judge if two eigenvalues are equals
        * \param[in] b:   if true, refinement of eigen values is performed
        */
-      template<typename Function,
-	       typename FunctionDerivative>
-      st2tost2<N,T>
+      template<typename Function,typename FunctionDerivative>
+      st2tost2<N,typename std::result_of<FunctionDerivative(T)>::type>
       computeIsotropicFunctionDerivative(const Function&,
 					 const FunctionDerivative&,
 					 const T,const bool=false) const;
@@ -703,7 +766,8 @@ namespace tfel{
        */
       template<typename Function,
 	       typename FunctionDerivative>
-      std::pair<stensor<N,T>,st2tost2<N,T>>
+      std::pair<stensor<N, typename std::result_of<Function(T)>::type>,
+		st2tost2<N,typename std::result_of<FunctionDerivative(T)>::type>>
       computeIsotropicFunctionAndDerivative(const Function&,
 					    const FunctionDerivative&,
 					    const T,const bool=false) const;

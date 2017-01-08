@@ -72,7 +72,6 @@ struct Ogden final
     using namespace tfel::math;
     using real    = double;
     using Stensor  = stensor<N,real>;
-    using Stensor4 = st2tost2<N,real>;
     const real alpha = 28.8;
     const real mu    = 0.4e6;
     const auto a = alpha/2;
@@ -82,23 +81,15 @@ struct Ogden final
     auto df = [&a](const real x){
       return a*(a-1)*pow(x,a-2);
     };
-    auto sf = [&alpha,&mu,&a,&f,&df](const Stensor& C) -> Stensor{
-      Stensor n0,n1,n2;
-      tvector<3u,real> vp;
-      tmatrix<3u,3u,real> m;
-      C.computeEigenVectors(vp,m);
-      Stensor::computeEigenTensors(n0,n1,n2,m);
-      return f(vp(0))*n0+f(vp(1))*n1+f(vp(2))*n2;
+    auto sf = [&f](const Stensor& C) -> Stensor{
+      return C.computeIsotropicFunction(f);
     };
-    for(const auto C : {Stensor::Id(),Stensor{1.2,0.95,0.67,0.324,-0.675,-0.2}}){
+    const auto s1 = Stensor::Id();
+    const auto s2 = Stensor{1.2,0.95,0.67,0.324,-0.675,-0.2};
+    for(const Stensor& C : {s1,s2}){
        const auto ndf_dC = getNumericalApproximation(sf,C,1.e-6);
       /* invariants and derivatives */
-      Stensor4 df_dC;
-      tvector<3u,real> vp;
-      tmatrix<3u,3u,real> m;
-      C.computeEigenVectors(vp,m);
-      Stensor::computeIsotropicFunctionDerivative(df_dC,f,df,
-						  vp,m,1.e-12);
+      const auto df_dC = C.computeIsotropicFunctionDerivative(f,df,1.e-12);
       const auto eps = 1.e-9*(*(std::max_element(df_dC.begin(),df_dC.end())));
       for(unsigned short i=0;i!=tfel::math::StensorDimeToSize<N>::value;++i){
 	for(unsigned short j=0;j!=tfel::math::StensorDimeToSize<N>::value;++j){
@@ -149,14 +140,16 @@ struct Ogden final
       Stensor n0,n1,n2;
       tvector<3u,real> vp;
       tmatrix<3u,3u,real> m;
-      C.computeEigenVectors(vp,m);
-      Stensor::computeEigenTensors(n0,n1,n2,m);
+      std::tie(vp,m)     = C.computeEigenVectors();
+      std::tie(n0,n1,n2) = Stensor::computeEigenTensors(m);
       const auto fv    = f(vp(0))+f(vp(1))+f(vp(2));
       const auto df_dC = df(vp(0))*n0+df(vp(1))*n1+df(vp(2))*n2;
       const auto c     = pow(iJb,a-2);
       return mu*c*iJb*((fv*diJb_dC+(iJb/a)*df_dC));
     };
-    for(const auto C : {Stensor::Id(),Stensor{1.2,0.95,0.67,0.324,-0.675,-0.2}}){
+    const auto s1 = Stensor::Id();
+    const auto s2 = Stensor{1.2,0.95,0.67,0.324,-0.675,-0.2};
+    for(const auto& C : {s1,s2}){
        const auto ndSi_dC = getNumericalApproximation(sif,C,1.e-6);
       /* invariants and derivatives */
       const auto id       = Stensor::Id();
@@ -179,13 +172,11 @@ struct Ogden final
       tvector<3u,real> vp;
       tmatrix<3u,3u,real> m;
       C.computeEigenVectors(vp,m);
-      Stensor::computeEigenTensors(n0,n1,n2,m);
+      std::tie(n0,n1,n2) = Stensor::computeEigenTensors(m);
       const auto fv    = f(vp(0))+f(vp(1))+f(vp(2));
       const auto df_dC = df(vp(0))*n0+df(vp(1))*n1+df(vp(2))*n2;
       const auto c     = pow(iJb,a-2);
-      Stensor4 d2f_dC2;
-      Stensor::computeIsotropicFunctionDerivative(d2f_dC2,df,d2f,
-						  vp,m,1.e-12);
+      const auto d2f_dC2 = Stensor::computeIsotropicFunctionDerivative(df,d2f,vp,m,1.e-12);
       const auto d2iJb_dC2  =
 	d2iJb_dI32*(dI3_dC^dI3_dC)+ diJb_dI3*d2I3_dC2;
       const Stensor4 dSi_dC = mu*c*((a-1)*fv*(diJb_dC^diJb_dC)+

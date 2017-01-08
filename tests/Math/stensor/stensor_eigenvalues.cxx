@@ -44,10 +44,8 @@ struct StensorComputeEigenValues final
     this->test1<double>();
     this->test2<float ,EigenSolver::TFELEIGENSOLVER>();
     this->test2<double,EigenSolver::TFELEIGENSOLVER>();
-    this->test2<float ,EigenSolver::GTESYMMETRICEIGENSOLVER>();
-    this->test2<double,EigenSolver::GTESYMMETRICEIGENSOLVER>();
-    this->test2<float ,EigenSolver::GTENISYMMETRICEIGENSOLVER>();
-    this->test2<double,EigenSolver::GTENISYMMETRICEIGENSOLVER>();
+    this->test2<float ,EigenSolver::GTESYMMETRICQREIGENSOLVER>();
+    this->test2<double,EigenSolver::GTESYMMETRICQREIGENSOLVER>();
     return this->result;
   } // end of execute
 
@@ -67,20 +65,12 @@ private:
     internals::GteSymmetricEigensolver3x3<T>::exe(vp2,m2,
 						  s[0],s[3]*icste,s[4]*icste,
 						  s[1],s[5]*icste,s[2],false);
-    auto vp3 = tvector<3u,T>{};
-    auto m3  = tmatrix<3u,3u,T>{};
-    internals::GteNISymmetricEigensolver3x3<T>::exe(vp3,m3,
-						    s[0],s[3]*icste,s[4]*icste,
-						    s[1],s[5]*icste,s[2]);
     TFEL_TESTS_ASSERT(std::abs(vp(0) -zero)<eps);
     TFEL_TESTS_ASSERT(std::abs(vp(1) -zero)<eps);
     TFEL_TESTS_ASSERT(std::abs(vp(2) -zero)<eps);
     TFEL_TESTS_ASSERT(std::abs(vp2(0)-zero)<eps);
     TFEL_TESTS_ASSERT(std::abs(vp2(1)-zero)<eps);
     TFEL_TESTS_ASSERT(std::abs(vp2(2)-zero)<eps);
-    TFEL_TESTS_ASSERT(std::abs(vp3(0)-zero)<eps);
-    TFEL_TESTS_ASSERT(std::abs(vp3(1)-zero)<eps);
-    TFEL_TESTS_ASSERT(std::abs(vp3(2)-zero)<eps);
   }
   template<typename T,tfel::math::stensor_common::EigenSolver es>
   void test2()
