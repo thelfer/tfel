@@ -7,6 +7,7 @@
 ## Hyperelasticity
 
 - [SaintVenantKirchhoffElasticity](./gallery/hyperelasticity/SaintVenantKirchhoffElasticity.mfront)
+- [Signorini](signorini.html)
 
 ## Viscoelasticity
 

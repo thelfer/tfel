@@ -1,6 +1,37 @@
 % News
 % Helfer Thomas
-% May 27, 2016
+% January 1, 2017
+
+# MFront model repository (7/01/2017)
+
+A page referencing examples of well written mechanical behaviours has
+been created here:
+
+<http://tfel.sourceforge.net/gallery.html>
+
+For each behaviours, we will try to provide tutorial-like pages
+explaining the implementations details (usage of tensorial objects,
+special functions of the `TFEL` library, choice of the algorithms, and
+so on...)
+
+The first attempt is an hyperelastic behaviour already available in
+`Code_Aster`: the Signorini behaviour. You can find the page here:
+
+<http://tfel.sourceforge.net/signorini.html>
+
+This is still under review, so corrections and feed-backs would be
+greatly appreciated. The following behaviours are planned to be addressed:
+
+- the Ogden hyperelastic behaviour which will show how we can compute
+  eigenvalues, eigenvectors and isotropic functions of symmetric
+  tensors.
+- hyperviscoelasticity (a very small extension of hyperelasticity,
+  indeed)
+- simple plastic behaviours
+
+If you have particular wishes on behaviours implementation that you
+would like to see treated, do not hesitate to send a message at
+[tfel-contact@cea.fr](mailto:tfel-contact@cea.fr).
 
 # TFEL version 3.0 has been released the 16/12/2016.
 

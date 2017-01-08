@@ -145,6 +145,8 @@ docs/gallery/behaviours/damage/Mazars.mfront -text
 docs/gallery/behaviours/hyperelasticity/CMakeLists.txt -text
 docs/gallery/behaviours/hyperelasticity/Makefile.am -text
 docs/gallery/behaviours/hyperelasticity/SaintVenantKirchhoffElasticity.mfront -text
+docs/gallery/behaviours/hyperelasticity/Signorini-tfel2.mfront -text
+docs/gallery/behaviours/hyperelasticity/Signorini.mfront -text
 docs/gallery/behaviours/plasticity/CMakeLists.txt -text
 docs/gallery/behaviours/plasticity/IsotropicLinearHardeningPlasticity.mfront -text
 docs/gallery/behaviours/plasticity/IsotropicLinearKinematicHardeningPlasticity.mfront -text
@@ -1146,8 +1148,10 @@ docs/web/pandoc-crossref.yaml -text
 docs/web/parameters.md -text
 docs/web/publications.md -text
 docs/web/release-notes-3.0.md -text
+docs/web/release-notes-3.1.md -text
 docs/web/release-notes.md -text
 docs/web/robots.txt -text
+docs/web/signorini.md -text
 docs/web/svn.md -text
 docs/web/tex/lcmd_utf8.tex -text
 docs/web/tutorial.md -text

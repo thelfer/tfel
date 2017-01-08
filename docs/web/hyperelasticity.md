@@ -42,7 +42,7 @@ The three invariants are defined by:
 \left\{
 \begin{aligned}
 I_{1} &= \trace{C} \\
-I_{2} &= \paren{\trace{\C}}^{2}-\trace{\C^{2}} \\
+I_{2} &= \Frac{1}{2}\left(\paren{\trace{\C}}^{2}-\trace{\C^{2}}\right) \\
 I_{3} &= \det\paren{\C} = J^{2}
 \end{aligned}
 \right.
@@ -87,8 +87,6 @@ In `MFront`, the fourth order tensors
 
 The \(\sderiv{I_{3}}{\C}\) term can be computed using the
 `computeJacobianSecondDerivative` function.
-
-## Application to the ?? behaviour
 
 # A second class of hyperelastic behaviours
 
@@ -182,7 +180,7 @@ expected by the solver.
 The general expression of the second Piola-Kirchhoff stress is:
 
 \[
-\S=2\,\deriv{W^{v}}{\C}+2\,\deriv{W^{v}}{\C}+2\deriv{W^{i}}{\C}=\S^{v}+\S^{i}
+\S=2\,\deriv{W^{v}}{\C}+2\deriv{W^{i}}{\C}=\S^{v}+\S^{i}
 \]
 
 where \(\S^{v}=2\,\deriv{W^{v}}{\C}\) is the

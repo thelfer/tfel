@@ -1,1 +1,4 @@
 install_gallery(hyperelasticity SaintVenantKirchhoffElasticity.mfront)
+install_gallery(hyperelasticity Signorini.mfront)
+install_gallery(hyperelasticity Signorini-tfel2.mfront)
+

@@ -28,13 +28,19 @@ the study under the type "nom" in `astk`.
 
 Starting from an existing input file, two things must be declared.
 
-In the `DEFI_MATERIAU` block, one must add:
+In the `DEFI_MATERIAU` block, one must add for `Code_Aster` version
+`12.x`:
 
 ~~~~ {.python}
-.......=DEFI_MATERIAU( UMAT=_F( C1 = ... , C2 = ... , C3 = ... , )
+.......=DEFI_MATERIAU( UMAT=_F( LISTE_COEF = (C1,C2,....),),)
 ~~~~~~~~~~~~~~~~
 
-where `C1`, ..., `CN` are the material properties declared by the
+For version greater than `13`, the syntax has evolved:
+~~~~ {.python}
+.......=DEFI_MATERIAU( MFRONT=_F( LISTE_COEF = (C1,C2,....)),)
+~~~~~~~~~~~~~~~~
+
+In both cases, `C1`, ..., `CN` are the material properties declared by the
 `MFront` behaviour.
 
 In the `COMPORTEMENT` part of the main computation instructions
