@@ -1,0 +1,82 @@
+@DSL DefaultFiniteStrain;
+@Behaviour Ogden;
+@Author Thomas Helfer;
+@Date 20/12/2016;
+@Description{
+}
+
+@Parameter alpha =     28.8;
+// 2*0.4e6/28.8
+@Parameter mu    =    27778;
+// 2*0.4e6/28.8*2.5e3
+@Parameter K     = 69444444;
+
+@LocalVariable StiffnessTensor dS_dC;
+
+@Integrator{
+  const auto id  = Stensor::Id();
+  const auto J   = det(F1);
+  const auto C   = computeRightCauchyGreenTensor(F1);
+  /* invariants and derivatives */
+  const auto C2       = square(C);
+  const auto I1       = trace(C);
+  const auto I2       = (I1*I1-trace(C2))/2;
+  const auto I3       = J*J;
+  const auto dI3_dC   = C2-I1*C+I2*id;
+  /* volumetric part */
+  // Pv = K*(J-1)*(J-1)/2
+  const auto dPv_dJ   = K*(J-1);
+  const StressStensor Sv = dPv_dJ/J*dI3_dC;
+  /* iscochoric part */
+  // I1b = J^{-2/3}*I1 = I1/(sqrt[3]{I3})     = I1*iJb
+  // I2b = J^{-4/9}*I2 = I2/(sqrt[3]{I3})^{2} = I2*iJb*iJb
+  const auto iJb        =  1/cbrt(I3);
+  const auto iJb2       =  power<2>(iJb);
+  const auto iJb4       =  iJb2*iJb2;
+  const auto iJb7       =  iJb4*power<3>(iJb);
+  const auto diJb_dI3   = -iJb4/3;
+  const auto d2iJb_dI32 = 4*iJb7/9;
+  const auto diJb_dC    = diJb_dI3*dI3_dC;
+  // eigen values
+  Stensor n0,n1,n2;
+  tvector<3u,real> vp;
+  tmatrix<3u,3u,real> m;
+  C.computeEigenVectors(vp,m);
+  Stensor::computeEigenTensors(n0,n1,n2,m);
+  const auto a = alpha/2;
+  const tvector<3u,real> pwv = {pow(vp(0),a-2),pow(vp(1),a-2),pow(vp(2),a-2)};
+  const tvector<3u,real> dfv = {a*vp(0)*pwv(0),a*vp(1)*pwv(1),a*vp(2)*pwv(2)};
+  const auto fv  = vp(0)*vp(0)*pwv(0)+vp(1)*vp(1)*pwv(1)+vp(2)*vp(2)*pwv(2);
+  const auto df_dC = dfv(0)*n0+dfv(1)*n1+dfv(2)*n2;
+  const auto c     = pow(iJb,a-2);
+  const StressStensor Si = mu*c*iJb*((fv*diJb_dC+(iJb/a)*df_dC));
+  // The Cauchy Stress
+  sig = convertSecondPiolaKirchhoffStressToCauchyStress(Sv+Si,F1);
+  if(computeTangentOperator_){
+    const auto d2I3_dC2 = computeDeterminantSecondDerivative(C);
+    /* volumetric part */
+    const auto d2Pv_dJ2 = K;
+    dS_dC = ((d2Pv_dJ2-dPv_dJ/J)/(2*I3)*(dI3_dC^dI3_dC)+
+	     dPv_dJ/J*d2I3_dC2);
+    /* isochoric part */
+    auto df = [&a](const real x){
+      return a*pow(x,a-1);
+    };
+    auto d2f = [&a](const real x){
+      return a*(a-1)*pow(x,a-2);
+    };
+    Stensor4 d2f_dC2;
+    Stensor::computeIsotropicFunctionDerivative(d2f_dC2,df,d2f,
+						vp,m,1.e-12);
+    const auto d2iJb_dC2  =
+      d2iJb_dI32*(dI3_dC^dI3_dC)+ diJb_dI3*d2I3_dC2;
+    dS_dC += mu*c*((a-1)*fv*(diJb_dC^diJb_dC)+
+		   iJb*(fv*d2iJb_dC2+
+			((diJb_dC^df_dC)+(df_dC^diJb_dC))+
+			iJb/a*d2f_dC2));
+  }
+}
+
+@TangentOperator<DS_DC>{
+  Dt = dS_dC;
+}

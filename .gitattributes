@@ -144,6 +144,8 @@ docs/gallery/behaviours/damage/Marigo.mfront -text
 docs/gallery/behaviours/damage/Mazars.mfront -text
 docs/gallery/behaviours/hyperelasticity/CMakeLists.txt -text
 docs/gallery/behaviours/hyperelasticity/Makefile.am -text
+docs/gallery/behaviours/hyperelasticity/Ogden-tfel-3.0.0.mfront -text
+docs/gallery/behaviours/hyperelasticity/Ogden.mfront -text
 docs/gallery/behaviours/hyperelasticity/SaintVenantKirchhoffElasticity.mfront -text
 docs/gallery/behaviours/hyperelasticity/Signorini-tfel2.mfront -text
 docs/gallery/behaviours/hyperelasticity/Signorini.mfront -text
@@ -740,6 +742,7 @@ docs/ptest/img/ptest-QuadraticElements-sigtt.pdf -text
 docs/ptest/img/ptest-QuadraticElements-sigzz.pdf -text
 docs/ptest/img/tubeaxi.pdf -text
 docs/ptest/ptest.tex.in -text
+docs/references/Kopp[!!-~]-[!!-~]2008[!!-~]-[!!-~]Efficient[!!-~]numerical[!!-~]diagonalization[!!-~]of[!!-~]hermitian[!!-~]3.pdf -text
 docs/references/matrixcookbook.pdf -text svneol=unset#unset
 docs/release-notes-2.0.3/CMakeLists.txt -text
 docs/release-notes-2.0.3/Makefile.am -text
@@ -1143,6 +1146,7 @@ docs/web/models.md -text
 docs/web/mtest-python.md -text
 docs/web/mtest.md -text
 docs/web/news.md -text
+docs/web/ogden.md -text
 docs/web/packages.md -text
 docs/web/pandoc-crossref.yaml -text
 docs/web/parameters.md -text

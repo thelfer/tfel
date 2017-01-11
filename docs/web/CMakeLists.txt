@@ -60,6 +60,7 @@ pandoc_html(Norton-full)
 pandoc_html(coverity-scan)
 pandoc_html(hyperelasticity "--toc")
 pandoc_html(signorini "--toc" "--toc-depth=2")
+pandoc_html(ogden "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.0 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.1 "--toc" "--toc-depth=2")
 

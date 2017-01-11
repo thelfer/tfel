@@ -264,23 +264,23 @@ Odgen-type form:
 
 with \(f\paren{\lambda_{1},\lambda_{2},\lambda_{3}}=\lambda_{1}^{\alpha_{p}/2}+\lambda_{2}^{\alpha_{p}/2}+\lambda_{3}^{\alpha_{p}/2}\)
 
-Let us focus on the contribution \(\S_{p}\) of
+Let us focus on the contribution \(\S_{p}^{i}\) of
 \(W^{i}_{p}\) to the second Piola Kirchoff stress:
 \[
 \begin{aligned}
-\S_{p}=2\,\deriv{\bar{W}^{i}_{p}}{\C}=
+\S_{p}^{i}=2\,\deriv{\bar{W}^{i}_{p}}{\C}=
 \mu_{p}\,\iJb^{\alpha_{p}/2-1}\,f\paren{\lambda_{1},\lambda_{2},\lambda_{3}}\deriv{\iJb}{\C}+
 \Frac{2\,\mu_{p}\,\iJb^{\alpha_{p}/2}}{\alpha_{p}}\,\deriv{f}{\C}\\
 \end{aligned}
 \]
 
 The associated contribution to the consistent tangent operator is
-given the derivative of \(\S_{p}\) with respect to the right Cauchy
+given the derivative of \(\S_{p}^{i}\) with respect to the right Cauchy
 tensor \(\C\):
 
 \[
 \begin{aligned}
-\Frac{1}{\mu_{p}}\,\deriv{S_{p}}{\C}
+\Frac{1}{\mu_{p}}\,\deriv{S_{p}^{i}}{\C}
 &=\frac{\alpha_{p}-2}{2}\,\iJb^{\alpha_{p}/2-2}\,f\paren{\lambda_{1},\lambda_{2},\lambda_{3}}\deriv{\iJb}{\C}\otimes\deriv{\iJb}{\C}\\
 &+\iJb^{\alpha_{p}/2-1}\,f\paren{\lambda_{1},\lambda_{2},\lambda_{3}}\,\sderiv{\iJb}{\C}+\iJb^{\alpha_{p}/2-1}\,\deriv{\iJb}{\C}\otimes\deriv{f}{\C}\\
 &+\iJb^{\alpha_{p}/2-1}\,\deriv{f}{\C}\otimes\deriv{\iJb}{\C}+

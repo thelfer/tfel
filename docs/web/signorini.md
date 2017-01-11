@@ -56,7 +56,6 @@ The whole implementation is available here:
 > An implementation where those changes were made is available
 > [here](./gallery/hyperelasticity/Signorini-tfel2.mfront)
 
-
 # Description
 
 The Signorini behaviour is described by the following decoupled
@@ -82,8 +81,8 @@ where
   invariants of the modified right Cauchy tensor \(\tenseur{\bar{C}}\)
   defined by: \(\tenseur{\bar{C}}=J^{-2/3}\,\C = I_{3}^{-1/3}\,\C\)
 
-**A general derivation the stress and consistent tangent operator for
-this kind of hyperelastic behaviours is described
+**A general derivation of the stress and the consistent tangent
+operator for this kind of hyperelastic behaviours is described
 [here](hyperelasticity.html).** The reader shall refer to this page
 for intermediate computations that won't be detailled here.
 
@@ -214,7 +213,10 @@ straightforward:
 const auto I3      = J*J;
 const auto dI3_dC  = C2-I1*C+I2*id;
 ~~~~~
-  
+
+> In TFEL 3.1, one may use the `computeDeterminantDerivative` function
+> to compute \(\deriv{I_{3}}{\C}\)
+
 ### Computation of the volumetric part of the second Piola Kirchhoff stress
 
 The volumetric part of the second Piola Kirchhoff stress \(\S^{v}\) is

@@ -1,9 +1,9 @@
 figureTitle: "Figure"
-tableTitle: "Tableau"
+tableTitle: "Table"
 lstPrefix: ""
 figPrefix: ""
 tblPrefix: ""
 secPrefix: ""
-loftitle: "# Liste des figures"
-lotTitle: "# Liste des tableaux"
+loftitle: "# List of figures"
+lotTitle: "# List of tables"
 listings: True
