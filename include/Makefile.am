@@ -209,8 +209,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Stensor/Internals/StensorComputeEigenValuesDerivatives.hxx                         \
 			TFEL/Math/Stensor/Internals/StensorComputeEigenVectorsDerivatives.hxx                        \
 			TFEL/Math/Stensor/Internals/StensorComputeIsotropicFunctionDerivative.hxx                    \
-			TFEL/Math/Stensor/Internals/KoppSymmetricEigenSolver.hxx                                     \
-			TFEL/Math/Stensor/Internals/KoppSymmetricEigenSolver.ixx                                     \
+			TFEL/Math/Stensor/Internals/FSESSymmetricEigenSolver.hxx                                     \
+			TFEL/Math/Stensor/Internals/FSESSymmetricEigenSolver.ixx                                     \
 			TFEL/Math/Stensor/Internals/GteSymmetricEigenSolver.hxx                                      \
 			TFEL/Math/Stensor/Internals/GteSymmetricEigenSolver.ixx                                      \
 			TFEL/Math/Stensor/StensorConcept.hxx		                                             \
@@ -513,7 +513,30 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Tests/TestProxy.ixx						                     \
 			TFEL/Tests/TestResult.hxx						                     \
 			TFEL/Tests/TestSuite.hxx						                     \
-			TFEL/Exception/TFELException.hxx 
+			TFEL/Exception/TFELException.hxx 							     \
+			FSES/fses.hxx										     \
+			FSES/slvsec3.hxx									     \
+			FSES/slvsec3.ixx									     \
+			FSES/std_array.hxx									     \
+			FSES/syev2.hxx										     \
+			FSES/syev2.ixx										     \
+			FSES/syevc3.hxx										     \
+			FSES/syevc3.ixx										     \
+			FSES/syevd3.hxx										     \
+			FSES/syevd3.ixx										     \
+			FSES/syevh3.hxx										     \
+			FSES/syevh3.ixx										     \
+			FSES/syevj3.hxx										     \
+			FSES/syevj3.ixx										     \
+			FSES/syevq3.hxx										     \
+			FSES/syevq3.ixx										     \
+			FSES/syevv3.hxx										     \
+			FSES/syevv3.ixx										     \
+			FSES/sytrd3.hxx										     \
+			FSES/sytrd3.ixx										     \
+			FSES/Utilities.hxx									     \
+			FSES/Utilities.ixx
+
 
 EXTRA_DIST = CMakeLists.txt                 \
 	     TFEL/Math/math.doxygen         \

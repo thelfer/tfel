@@ -127,7 +127,15 @@ namespace tfel{
 	//! historical algorithm
 	TFELEIGENSOLVER,
 	//! non iterative solver from Joachim Kopp, 
-	KOPPANALYTICALEIGENSOLVER,
+	FSESANALYTICALEIGENSOLVER,
+	//! Jacobi iterative solver from Joachim Kopp
+	FSESJACOBIEIGENSOLVER,
+	//! QL with implicit shifts iterative solver from Joachim Kopp
+	FSESQLEIGENSOLVER,
+	//!  Cuppen's Divide & Conquer solver from Joachim Kopp
+	FSESCUPPENEIGENSOLVER,
+	//!  hybride solver from Joachim Kopp
+	FSESHYBRIDEIGENSOLVER,
 	//! iterative solver from David Eberly, Geometric Tools
 	GTESYMMETRICQREIGENSOLVER
       }; // end of EigenSolver
@@ -742,7 +750,7 @@ namespace tfel{
        * \param[in] f: function
        * \param[in] b:   if true, refinement of eigen values is performed
        */
-      template<typename Function>
+      template<EigenSolver = TFELEIGENSOLVER,typename Function>
       stensor<N,typename std::result_of<Function(T)>::type>
       computeIsotropicFunction(const Function&,const bool=false) const;
       /*!
@@ -752,7 +760,8 @@ namespace tfel{
        * \param[in] eps: criterion value used to judge if two eigenvalues are equals
        * \param[in] b:   if true, refinement of eigen values is performed
        */
-      template<typename Function,typename FunctionDerivative>
+      template<EigenSolver = TFELEIGENSOLVER,
+	       typename Function,typename FunctionDerivative>
       st2tost2<N,typename std::result_of<FunctionDerivative(T)>::type>
       computeIsotropicFunctionDerivative(const Function&,
 					 const FunctionDerivative&,
@@ -764,8 +773,8 @@ namespace tfel{
        * \param[in] eps: criterion value used to judge if two eigenvalues are equals
        * \param[in] b:   if true, refinement of eigen values is performed
        */
-      template<typename Function,
-	       typename FunctionDerivative>
+      template<EigenSolver = TFELEIGENSOLVER,
+	       typename Function,typename FunctionDerivative>
       std::pair<stensor<N, typename std::result_of<Function(T)>::type>,
 		st2tost2<N,typename std::result_of<FunctionDerivative(T)>::type>>
       computeIsotropicFunctionAndDerivative(const Function&,
@@ -1018,7 +1027,8 @@ namespace tfel{
      * \param[in] s: symmetric tensor
      * \param[in] b: if true, refinement of eigen values is performed
      */
-    template<typename Function,typename StensorType>
+    template<typename stensor_common::EigenSolver = stensor_common::TFELEIGENSOLVER,
+	     typename Function,typename StensorType>
     typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,
       stensor<StensorTraits<StensorType>::dime,
@@ -1034,7 +1044,8 @@ namespace tfel{
      * \param[in] eps: criterion value used to judge if two eigenvalues are equals
      * \param[in] b:   if true, refinement of eigen values is performed
      */
-    template<typename Function,typename FunctionDerivative,
+    template<typename stensor_common::EigenSolver = stensor_common::TFELEIGENSOLVER,
+	     typename Function,typename FunctionDerivative,
 	     typename StensorType>
     typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,
@@ -1053,7 +1064,8 @@ namespace tfel{
      * \param[in] eps: criterion value used to judge if two eigenvalues are equals
      * \param[in] b:   if true, refinement of eigen values is performed
      */
-    template<typename Function,typename FunctionDerivative,
+    template<typename stensor_common::EigenSolver = stensor_common::TFELEIGENSOLVER,
+	     typename Function,typename FunctionDerivative,
 	     typename StensorType>
     typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,

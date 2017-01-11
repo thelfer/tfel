@@ -1,5 +1,5 @@
 /*!
- * \file   KoppSymmetricEigenSolver.hxx
+ * \file   FSESSymmetricEigenSolver.hxx
  * \brief    
  * \author Joachim Kopp/Thomas Helfer
  * \date   30/12/2016
@@ -34,8 +34,8 @@
  * ----------------------------------------------------------------------------
  */
 
-#ifndef LIB_TFEL_MATH_KOPPSYMMETRICEIGENSOLVER_HXX
-#define LIB_TFEL_MATH_KOPPSYMMETRICEIGENSOLVER_HXX
+#ifndef LIB_TFEL_MATH_FSESSYMMETRICEIGENSOLVER_HXX
+#define LIB_TFEL_MATH_FSESSYMMETRICEIGENSOLVER_HXX
 
 #include<cmath>
 #include"TFEL/Math/tvector.hxx"
@@ -48,18 +48,18 @@ namespace tfel{
     namespace internals{
 
       template <typename real> 
-      struct KoppAnalyticalSymmetricEigensolver2x2
+      struct FSESAnalyticalSymmetricEigensolver2x2
       {
 	/*!
 	 * \brief calculates the eigenvalues of a real symmetric 2x2 matrix
-	 *    [ A  B ]
+n	 *    [ A  B ]
 	 *    [ B  C ]
 	 * \param[out] vp: eigen values
 	 * \param[in]  A:  component of the matrix
 	 * \param[in]  B:  component of the matrix
 	 * \param[in]  C:  component of the matrix
 	 */
-	static void computeEigenValues(const tvector<3u,real>&,
+	static void computeEigenValues(tvector<3u,real>&,
 				       const real,const real,const real);
 	/*!
 	 * \brief calculates the eigensystem of a real symmetric 2x2 matrix
@@ -75,17 +75,27 @@ namespace tfel{
 	 * \param[in]  B:  component of the matrix
 	 * \param[in]  C:  component of the matrix
 	 */
-	static void computeEigenVectors(const tvector<3u,real>&,
-					const tmatrix<3u,3u,real>&,
+	static void computeEigenVectors(tvector<3u,real>&,
+					tmatrix<3u,3u,real>&,
 					const real,const real,const real);
       };
-  
+
+      template <typename real> 
+      struct FSESAnalyticalSymmetricEigensolver3x3
+      {
+	static void computeEigenValues(tvector<3u,real>&,
+				       const tmatrix<3u,3u,real>&);
+	static void computeEigenVectors(tvector<3u,real>&,
+					tmatrix<3u,3u,real>&,
+					tmatrix<3u,3u,real>&);
+      };
+
     } // end of namespace internals
 
   } // end of namespace math
 
 } // end of namespace tfel
 
-#include"TFEL/Math/Stensor/Internals/KoppSymmetricEigenSolver.ixx"
+#include"TFEL/Math/Stensor/Internals/FSESSymmetricEigenSolver.ixx"
 
-#endif /* LIB_TFEL_MATH_KOPPSYMMETRICEIGENSOLVER_HXX */
+#endif /* LIB_TFEL_MATH_FSESSYMMETRICEIGENSOLVER_HXX */

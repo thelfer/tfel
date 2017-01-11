@@ -1,5 +1,5 @@
 /*!
- * \file   KoppSymmetricEigenSolver.ixx
+ * \file   FSESSymmetricEigenSolver.ixx
  * \brief    
  * \author Joachim Kopp/Thomas Helfer
  * \date   30/12/2016
@@ -37,8 +37,11 @@
  * ----------------------------------------------------------------------------
  */
 
-#ifndef LIB_TFEL_MATH_INTERNALS_KOPPSYMMETRICEIGENSOLVER_IXX
-#define LIB_TFEL_MATH_INTERNALS_KOPPSYMMETRICEIGENSOLVER_IXX
+#ifndef LIB_TFEL_MATH_INTERNALS_FSESSYMMETRICEIGENSOLVER_IXX
+#define LIB_TFEL_MATH_INTERNALS_FSESSYMMETRICEIGENSOLVER_IXX
+
+#include"FSES/syevc3.hxx"
+#include"FSES/syevv3.hxx"
 
 namespace tfel{
 
@@ -48,7 +51,7 @@ namespace tfel{
 
       template <typename real> 
       void
-      KoppAnalyticalSymmetricEigensolver2x2<real>::computeEigenValues(const tvector<3u,real>& vp,
+      FSESAnalyticalSymmetricEigensolver2x2<real>::computeEigenValues(tvector<3u,real>& vp,
 								      const real A,const real B,
 								      const real C){
 	constexpr const auto zero     = real{0};
@@ -75,8 +78,8 @@ namespace tfel{
 
       template <typename real> 
       void
-      KoppAnalyticalSymmetricEigensolver2x2<real>::computeEigenVectors(const tvector<3u,real>& vp,
-								       const tmatrix<3u,3u,real>& m,
+      FSESAnalyticalSymmetricEigensolver2x2<real>::computeEigenVectors(tvector<3u,real>& vp,
+								       tmatrix<3u,3u,real>& m,
 								       const real A,const real B,
 								       const real C){
 	constexpr const auto rmin     = std::numeric_limits<real>::min();
@@ -84,7 +87,7 @@ namespace tfel{
 	constexpr const auto one      = real{1};
 	constexpr const auto one_half = one/2;
 	// computing eigen values
-	KoppAnalyticalSymmetricEigensolver2x2::computeEigenValues(vp,A,B,C);
+	FSESAnalyticalSymmetricEigensolver2x2::computeEigenValues(vp,A,B,C);
 	// nullify unused terms
 	m(0,2)=m(1,2)=m(2,2)=m(2,0)=m(2,1)=zero;
 	// computing eigen vectors
@@ -114,11 +117,26 @@ namespace tfel{
 	  m(1,0) = t;
 	}
       }
-  
+
+      template <typename real> 
+      void
+      FSESAnalyticalSymmetricEigensolver3x3<real>::computeEigenValues(tvector<3u,real>& vp,
+								      const tmatrix<3u,3u,real>& s){
+	fses::syevc3(vp,s);
+      }
+
+      template <typename real> 
+      void
+      FSESAnalyticalSymmetricEigensolver3x3<real>::computeEigenVectors(tvector<3u,real>& vp,
+								       tmatrix<3u,3u,real>& m,
+								       tmatrix<3u,3u,real>& s){
+	fses::syevv3(m,vp,s);
+      }
+      
     } // end of namespace internals
 
   } // end of namespace math
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_INTERNALS_KOPPSYMMETRICEIGENSOLVER_IXX */
+#endif /* LIB_TFEL_MATH_INTERNALS_FSESSYMMETRICEIGENSOLVER_IXX */

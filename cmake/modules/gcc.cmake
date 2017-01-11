@@ -90,10 +90,13 @@ if(enable-sanitize-options)
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fno-omit-frame-pointer")
 endif(enable-sanitize-options)
 
+
 if(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 4.7)
   message(FATAL_ERROR "TFEL C++11 support is only available for gcc version >= 4.7")
 endif(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 4.7)
 set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -std=c++11")
+# unsable flag
+# set(COMPILER_CXXFLAGS "${COMPILER_CXXFLAGS} -D_GLIBCXX_CONCEPT_CHECKS")
 
 if(HAVE_FORTRAN)
   include(cmake/modules/gnu-fortran-compiler.cmake)

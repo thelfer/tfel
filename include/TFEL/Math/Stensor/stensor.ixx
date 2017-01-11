@@ -512,19 +512,19 @@ namespace tfel{
     }
     
     template<unsigned short N,typename T>
-    template<typename Function>
+    template<typename stensor_common::EigenSolver es,typename Function>
     stensor<N,typename std::result_of<Function(T)>::type>
     stensor<N,T>::computeIsotropicFunction(const Function& f,const bool b) const
     {
       using base = tfel::typetraits::base_type<T>;
       tvector<3u,T> vp;
       tmatrix<3u,3u,base> m;
-      this->computeEigenVectors(vp,m,b);
+      this->template computeEigenVectors<es>(vp,m,b);
       return stensor<N,T>::buildFromEigenValuesAndVectors(f(vp(0)),f(vp(1)),f(vp(2)),m);
     }
 
     template<unsigned short N,typename T>
-    template<typename Function,typename FunctionDerivative>
+    template<typename stensor_common::EigenSolver es,typename Function,typename FunctionDerivative>
     st2tost2<N,typename std::result_of<FunctionDerivative(T)>::type>
     stensor<N,T>::computeIsotropicFunctionDerivative(const Function& f,
 						     const FunctionDerivative& df,
@@ -534,13 +534,13 @@ namespace tfel{
       st2tost2<N,T> r;
       tvector<3u,T> vp;
       tmatrix<3u,3u,base> m;
-      this->computeEigenVectors(vp,m,b);
+      this->template computeEigenVectors<es>(vp,m,b);
       stensor<N,T>::computeIsotropicFunctionDerivative(r,f,df,vp,m,eps);
       return r;
     }
 
     template<unsigned short N,typename T>
-    template<typename Function,typename FunctionDerivative>
+    template<typename stensor_common::EigenSolver es,typename Function,typename FunctionDerivative>
     std::pair<stensor<N,typename std::result_of<Function(T)>::type>,
 	      st2tost2<N,typename std::result_of<FunctionDerivative(T)>::type>>
     stensor<N,T>::computeIsotropicFunctionAndDerivative(const Function& f,
@@ -551,7 +551,7 @@ namespace tfel{
       std::pair<stensor<N,T>,st2tost2<N,T>> r;
       tvector<3u,T> vp;
       tmatrix<3u,3u,base> m;
-      this->computeEigenVectors(vp,m,b);
+      this->template computeEigenVectors<es>(vp,m,b);
       const auto fv  = map(f,vp);
       const auto dfv = map(df,vp);
       r.first = stensor<N,T>::buildFromEigenValuesAndVectors(fv(0),fv(1),fv(2),m);
@@ -1037,7 +1037,7 @@ namespace tfel{
       return ns;
     }
 
-    template<typename Function,typename StensorType>
+    template<typename stensor_common::EigenSolver es,typename Function,typename StensorType>
     typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,
       stensor<StensorTraits<StensorType>::dime,
@@ -1046,11 +1046,11 @@ namespace tfel{
 			     const StensorType& s,
 			     const bool b)
     {
-      return s.computeIsotropicFunction(f,b);
+      return s.template computeIsotropicFunction<es>(f,b);
     }
     
-    template<typename Function,typename FunctionDerivative,
-	     typename StensorType>
+    template<typename stensor_common::EigenSolver es,typename Function,
+	     typename FunctionDerivative,typename StensorType>
     typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,
       st2tost2<StensorTraits<StensorType>::dime,
@@ -1061,11 +1061,11 @@ namespace tfel{
 				       const StensorNumType<StensorType> eps,
 				       const bool b)
     {
-      return s.computeIsotropicFunctionDerivative(f,df,eps,b);
+      return s.template computeIsotropicFunctionDerivative<es>(f,df,eps,b);
     }
 
-    template<typename Function,typename FunctionDerivative,
-	     typename StensorType>
+    template<typename stensor_common::EigenSolver es,typename Function,
+	     typename FunctionDerivative,typename StensorType>
     typename std::enable_if<
       tfel::meta::Implements<StensorType,StensorConcept>::cond,
       std::pair<stensor<StensorTraits<StensorType>::dime,
@@ -1078,7 +1078,7 @@ namespace tfel{
 				       const StensorNumType<StensorType> eps,
 				       const bool b)
     {
-      return s.computeIsotropicFunctionDerivative(f,df,eps,b);
+      return s.template computeIsotropicFunctionDerivative<es>(f,df,eps,b);
     }
 
     template<typename T,typename T2>

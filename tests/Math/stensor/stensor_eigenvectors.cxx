@@ -17,6 +17,7 @@
 
 #include<cmath>
 #include<limits>
+#include<chrono>
 #include<cstdlib>
 #include<iostream>
 
@@ -49,6 +50,11 @@ struct StensorComputeEigenvectors final
     this->test<double>();
     this->check<EigenSolver::TFELEIGENSOLVER>();
     this->check<EigenSolver::GTESYMMETRICQREIGENSOLVER>();
+    this->check<EigenSolver::FSESJACOBIEIGENSOLVER>();
+    this->check<EigenSolver::FSESQLEIGENSOLVER>();
+    // this->check<EigenSolver::FSESCUPPENEIGENSOLVER>();
+    // this->check<EigenSolver::FSESHYBRIDEIGENSOLVER>();
+    // this->check<EigenSolver::FSESANALYTICALEIGENSOLVER>();
     return this->result;
   } // end of execute
 
@@ -167,27 +173,52 @@ private:
     check_eigenvector(m4.template column_view<1>(),v1,prec);
     check_eigenvector(m4.template column_view<2>(),v2,prec);
     // iterative eigen solver, descding ordering
-    tfel::math::tmatrix<3u,3u,T> m5;
-    tfel::math::tvector<3u,T>    vp5;
-    s.template computeEigenVectors<stensor::GTESYMMETRICQREIGENSOLVER>(vp5,m5,stensor::DESCENDING);
-    TFEL_TESTS_ASSERT(std::abs(vp5(0)-T(4.16709379934921))<prec);  
-    TFEL_TESTS_ASSERT(std::abs(vp5(1)-T(1.50793773158270))<prec);  
-    TFEL_TESTS_ASSERT(std::abs(vp5(2)+T(1.68923153093191))<prec);  
-    check_eigenvector(m5.template column_view<2>(),v0,prec);
-    check_eigenvector(m5.template column_view<1>(),v1,prec);
-    check_eigenvector(m5.template column_view<0>(),v2,prec);
+    this->template test1b<T,stensor::GTESYMMETRICQREIGENSOLVER>(s);
+    // non iterative eigen solver, descding ordering
+    this->template test1b<T,stensor::FSESANALYTICALEIGENSOLVER>(s);
+    // iterative eigen solver, descding ordering
+    this->template test1b<T,stensor::FSESJACOBIEIGENSOLVER>(s);
+    // iterative eigen solver, descding ordering
+    this->template test1b<T,stensor::FSESQLEIGENSOLVER>(s);
+    // iterative eigen solver, descding ordering
+    this->template test1b<T,stensor::FSESCUPPENEIGENSOLVER>(s);
+    // hybrid eigen solver, descding ordering
+    this->template test1b<T,stensor::FSESHYBRIDEIGENSOLVER>(s);
   }
 
   template<typename T,EigenSolver es>
+  void test1b(const tfel::math::stensor<3u,T>& s){
+    using tvector = tfel::math::tvector<3,T>;
+    using stensor = tfel::math::stensor<3,T>;
+    const tvector v0 = {-T(0.6378665158240716), T(0.0413740968617118), T(0.7690347795121735)};
+    const tvector v1 = { T(0.4557421346177839),-T(0.7846718738721010), T(0.4202251266738716)};
+    const tvector v2 = { T(0.6208263966073649), T(0.6185290894233862), T(0.4816599950303030)};
+    TFEL_CONSTEXPR const auto prec = 20*std::numeric_limits<T>::epsilon();
+    tfel::math::tmatrix<3u,3u,T> m;
+    tfel::math::tvector<3u,T>    vp;
+    s.template computeEigenVectors<stensor::GTESYMMETRICQREIGENSOLVER>(vp,m,stensor::DESCENDING);
+    TFEL_TESTS_ASSERT(std::abs(vp(0)-T(4.16709379934921))<prec);  
+    TFEL_TESTS_ASSERT(std::abs(vp(1)-T(1.50793773158270))<prec);  
+    TFEL_TESTS_ASSERT(std::abs(vp(2)+T(1.68923153093191))<prec);  
+    check_eigenvector(m.template column_view<2>(),v0,prec);
+    check_eigenvector(m.template column_view<1>(),v1,prec);
+    check_eigenvector(m.template column_view<0>(),v2,prec);
+  }
+ 
+  
+  template<typename T,EigenSolver es>
   void test2()
   {
+    using namespace std::chrono;
     const unsigned int nb_boucles = 1000000;
     TFEL_CONSTEXPR const auto one_half = 1/T(2);
     TFEL_CONSTEXPR const auto prec = 10*std::numeric_limits<T>::epsilon();
     tfel::math::stensor<3,T>     s(T(0));
     tfel::math::tmatrix<3u,3u,T> m(T(0));
     tfel::math::tvector<3u,T>    vp(T(0));
+    auto nsec = nanoseconds{};
     unsigned int unprecised_results = 0;
+    auto e = T(0);
     for(unsigned int i=0;i<nb_boucles;++i){
       s(0)=static_cast<T>((static_cast<T>(std::rand())/static_cast<T>(RAND_MAX)-one_half)*2);
       s(1)=static_cast<T>((static_cast<T>(std::rand())/static_cast<T>(RAND_MAX)-one_half)*2);
@@ -195,13 +226,18 @@ private:
       s(3)=static_cast<T>((static_cast<T>(std::rand())/static_cast<T>(RAND_MAX)-one_half)*2);
       s(4)=static_cast<T>((static_cast<T>(std::rand())/static_cast<T>(RAND_MAX)-one_half)*2);
       s(5)=static_cast<T>((static_cast<T>(std::rand())/static_cast<T>(RAND_MAX)-one_half)*2);
+      const auto start = high_resolution_clock::now();
       s.template computeEigenVectors<es>(vp,m);
+      const auto stop = high_resolution_clock::now();
+      nsec += duration_cast<nanoseconds>(stop-start);
       const auto d = check_eigenvectors(s,vp,m);
+      e = std::max(d,e);
       if(d>prec){
 	unprecised_results+=1u;
       }
     }
-    std::cout << "stat : " << (double(unprecised_results)/double(nb_boucles)) << std::endl;
+    std::cout << "stat : " << (double(unprecised_results)/double(nb_boucles))
+	      << " " << e << " " << nsec.count() << std::endl;
     TFEL_TESTS_ASSERT((double(unprecised_results)/double(nb_boucles)<0.003));
   }
 

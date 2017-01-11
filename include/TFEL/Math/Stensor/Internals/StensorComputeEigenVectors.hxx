@@ -51,27 +51,23 @@ namespace tfel{
 	template<typename VectorType,typename T>
 	static bool computeEigenVector(VectorType& v,const T* const s,const T vp)
 	{
-	  using namespace std;
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<VectorNumType<VectorType>>::cond);
 	  TFEL_STATIC_ASSERT((std::is_same<VectorNumType<VectorType>,T>::value));
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  if(std::abs(s[0]-vp)<10*numeric_limits<T>::min()){
-	    v(0)=T(1);
-	    v(1)=T(0);
-	    v(2)=T(0);
+	  constexpr const auto zero = T{0};
+	  constexpr const auto one  = T{1};
+	  TFEL_CONSTEXPR const auto e = 10*std::numeric_limits<T>::min();
+	  if(std::abs(s[0]-vp)<e){
+	    v = {one,zero,zero};
 	    return true;
 	  }
-	  if(std::abs(s[1]-vp)<10*numeric_limits<T>::min()){
-	    v(0)=T(0);
-	    v(1)=T(1);
-	    v(2)=T(0);
+	  if(std::abs(s[1]-vp)<e){
+	    v = {zero,one,zero};
 	    return true;
 	  }
-	  if(std::abs(s[2]-vp)<10*numeric_limits<T>::min()){
-	    v(0)=T(0);
-	    v(1)=T(0);
-	    v(2)=T(1);
+	  if(std::abs(s[2]-vp)<e){
+	    v = {zero,zero,one};
 	    return true;
 	  }
 	  return false;
@@ -85,10 +81,8 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  vp(0)=s[0];
-	  vp(1)=s[1];
-	  vp(2)=s[2];
-	  m = tfel::math::tmatrix<3u,3u,T>::Id();
+	  vp = {s[0],s[1],s[2]};
+	  m  = tfel::math::tmatrix<3u,3u,T>::Id();
 	  return true;
 	}
       };
@@ -131,13 +125,15 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT((std::is_same<VectorNumType<VectorType>,T>::value));
 	  TFEL_STATIC_ASSERT(IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(IsReal<T>::cond);
+	  constexpr const auto zero = T{0};
+	  constexpr const auto one  = T{1};
 	  if(std::abs(s[2]-vp)<10*std::numeric_limits<T>::min()){
-	    v(0)=0;
-	    v(1)=0;
-	    v(2)=1;
+	    v(0)=zero;
+	    v(1)=zero;
+	    v(2)=one;
 	    return true;
 	  }
-	  v(2)=0;
+	  v(2)=zero;
 	  return computeEigenVector(s[0],s[1],s[3],vp,v(0),v(1));
 	}
 
@@ -189,18 +185,20 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
+	  constexpr const auto zero = T{0};
+	  constexpr const auto one  = T{1};
 	  constexpr const auto cste = Cste<T>::sqrt2; 
-	  T s0 = s_0 - vp;
-	  T s1 = s_1 - vp;
+	  auto s0 = s_0 - vp;
+	  auto s1 = s_1 - vp;
 	  if(std::abs(s3)<std::max(std::min(s_0,s_1)*std::numeric_limits<T>::epsilon(),
 				   10*std::numeric_limits<T>::min())){
 	    if(std::abs(s0)>std::abs(s1)){
-	      x = T{0};
-	      y = T{1};
+	      x = zero;
+	      y = one;
 	      return true;
 	    } else {
-	      x = T{1};
-	      y = T{0};
+	      x = one;
+	      y = zero;
 	      return true;
 	    }
 	  }
@@ -208,13 +206,13 @@ namespace tfel{
 	    if(std::abs(s0)<100*std::numeric_limits<T>::min()){
 	      return false;
 	    }
-	    y=T{1};
+	    y=one;
 	    x=-s3/(cste*s0);
 	  } else {
 	    if(std::abs(s1)<100*std::numeric_limits<T>::min()){
 	      return false;
 	    }
-	    x=T{1};
+	    x=one;
 	    y=-s3/(cste*s1);	    
 	  }
 	  s0 = std::sqrt(x*x+y*y);
@@ -307,14 +305,12 @@ namespace tfel{
 	  const auto imvp = T(1)/mvp;
 	  tvector<6u,T> s2(s);
 	  tvector<3u,T> vp2(vp);
-	  vp2(0) = (vp(0) - tr) * imvp;
-	  vp2(1) = (vp(1) - tr) * imvp;
-	  vp2(2) = (vp(2) - tr) * imvp;
+	  vp2 = {(vp(0)-tr)*imvp,(vp(1)-tr)*imvp,(vp(2)-tr)*imvp};
 	  s2    *= imvp;
 	  s2(0) -= tr * imvp;
 	  s2(1) -= tr * imvp;
 	  s2(2) -= tr * imvp;
-	  const T prec = max(rel_prec,100*std::numeric_limits<T>::min());
+	  const auto prec = max(rel_prec,100*std::numeric_limits<T>::min());
 	  if((std::abs(vp2(0)-vp2(1))<=prec)&&
 	     (std::abs(vp2(0)-vp2(2))<=prec)){
 	    // all eigenvalues are equal
@@ -391,19 +387,19 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  T tmp  = a+b;
-	  T tmp2 = a-b;
-	  T X = static_cast<T>(0.5)*(tmp);
-	  T Y = static_cast<T>(0.5)*std::sqrt(tmp2*tmp2+2*c*c);
+	  auto tmp  = a+b;
+	  auto tmp2 = a-b;
+	  const auto X = tmp/2;
+	  const auto Y = std::sqrt(tmp2*tmp2+2*c*c)/2;
 	  tmp  = std::abs(X+Y);
 	  tmp2 = std::abs(X-Y);
 	  if(tmp>tmp2){
-	    if(tmp2<100.*std::numeric_limits<T>::min()){
+	    if(tmp2<100*std::numeric_limits<T>::min()){
 	      return std::numeric_limits<T>::max();
 	    }
 	    return tmp/tmp2;
 	  } else {
-	    if(tmp<100.*std::numeric_limits<T>::min()){
+	    if(tmp<100*std::numeric_limits<T>::min()){
 	      return std::numeric_limits<T>::max();
 	    }
 	    return tmp2/tmp;
@@ -441,39 +437,40 @@ namespace tfel{
 	{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  T norm2_x = norm2(x0,x1,x2);
-	  T tmp;
+	  constexpr const auto zero = T{0};
+	  constexpr const auto one  = T{1};
+	  const auto norm2_x = norm2(x0,x1,x2);
 	  if(norm2_x<100*std::numeric_limits<T>::min()){
 	    //x is null
-	    y0 = static_cast<T>(1.);
-	    y1 = static_cast<T>(0.);
-	    y2 = static_cast<T>(0.);
+	    y0 = one;
+	    y1 = zero;
+	    y2 = zero;
 	    return;
 	  }
 	  if(std::abs(x0)<std::abs(x1)){
 	    if(std::abs(x0)<std::abs(x2)){
 	      //|x0| is min, (1 0 0) is a good choice
-	      y0 = static_cast<T>(1.)- x0*x0/norm2_x;
-	      y1 =                   - x0*x1/norm2_x;
-	      y2 =                   - x0*x2/norm2_x;
+	      y0 = one - x0*x0/norm2_x;
+	      y1 =     - x0*x1/norm2_x;
+	      y2 =     - x0*x2/norm2_x;
 	    } else {
 	      //|x2| is min, (0 0 1) is a good choice
-	      y0 =                   - x2*x0/norm2_x;
-	      y1 =                   - x2*x1/norm2_x;
-	      y2 = static_cast<T>(1.)- x2*x2/norm2_x;
+	      y0 =     - x2*x0/norm2_x;
+	      y1 =     - x2*x1/norm2_x;
+	      y2 = one - x2*x2/norm2_x;
 	    }
 	  } else if (std::abs(x1)<std::abs(x2)) {
 	    // |x1| is min, (0 0 1) is a good choice
-	    y0 =                   - x1*x0/norm2_x;
-	    y1 = static_cast<T>(1.)- x1*x1/norm2_x;
-	    y2 =                   - x1*x2/norm2_x;
+	    y0 =     - x1*x0/norm2_x;
+	    y1 = one - x1*x1/norm2_x;
+	    y2 =     - x1*x2/norm2_x;
 	  } else {
 	    // |x2| is min, (0 0 1) is a good choice
-	    y0 =                   - x2*x0/norm2_x;
-	    y1 =                   - x2*x1/norm2_x;
-	    y2 = static_cast<T>(1.)- x2*x2/norm2_x;
+	    y0 =     - x2*x0/norm2_x;
+	    y1 =     - x2*x1/norm2_x;
+	    y2 = one - x2*x2/norm2_x;
 	  }
-	  tmp = norm(y0,y1,y2);
+	  const auto tmp = norm(y0,y1,y2);
 	  y0 /=tmp;
 	  y1 /=tmp;
 	  y2 /=tmp; 
@@ -507,9 +504,9 @@ namespace tfel{
 	      v0 = v1 = v2 = T(0);	      
 	      return false;
 	    }
-	    const T d0 = std::abs(v[0]-vp);
-	    const T d1 = std::abs(v[1]-vp);
-	    const T d2 = std::abs(v[2]-vp);
+	    const auto d0 = std::abs(v[0]-vp);
+	    const auto d1 = std::abs(v[1]-vp);
+	    const auto d2 = std::abs(v[2]-vp);
 	    if((d0<d1)&&(d0<d2)){
 	      v0 = m(0,0);
 	      v1 = m(1,0);
@@ -541,7 +538,7 @@ namespace tfel{
 	    v1=T(1);
 	    v2=(b*c-a*e)/det2;
 	  }
-	  const T nr = norm(v0,v1,v2);
+	  const auto nr = norm(v0,v1,v2);
 	  v0/=nr;
 	  v1/=nr;
 	  v2/=nr;
@@ -557,4 +554,3 @@ namespace tfel{
 } // end of namespace tfel
 
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
-
