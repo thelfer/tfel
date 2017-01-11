@@ -14,7 +14,7 @@ include(cmake/modules/tfel.cmake)
 include(cmake/modules/autotools.cmake)
 
 #major and minor version
-tfel_project(3 0 0)
+tfel_project(3 0 "0-dev")
 set(PACKAGE_BUGREPORT "tfel-contact@cea.fr")
 
 # check for the fenv package
@@ -46,6 +46,19 @@ else(UNIX)
   set(TFEL_LOCAL_LIBRARY_PREFIX "")
   set(TFEL_DL_LIBRARY "")
 endif(UNIX)
+
+# adding support for rpath on MacOs X
+if(APPLE)
+   set(CMAKE_MACOSX_RPATH ON)
+   set(CMAKE_SKIP_BUILD_RPATH FALSE)
+   set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+   list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
+   if("${isSystemDir}" STREQUAL "-1")
+      set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+   endif()
+endif()
 
 # type of architecture
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
