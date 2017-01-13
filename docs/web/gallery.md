@@ -8,6 +8,13 @@
 
 - [SaintVenantKirchhoffElasticity](./gallery/hyperelasticity/SaintVenantKirchhoffElasticity.mfront)
 - [Signorini](signorini.html)
+- [Ogden](ogden.html)
+
+## Hyperviscoelasticity
+
+We provide a general framework to build hyperviscoelastic
+behaviour. This framework is described
+[here](hyperviscoelasticity.html).
 
 ## Viscoelasticity
 

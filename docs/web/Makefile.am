@@ -42,6 +42,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./hyperelasticity.md				           \
 	   ./signorini.md				           \
 	   ./ogden.md				                   \
+	   ./hyperviscoelasticity.md				   \
 	   ./pandoc-crossref.yaml                                  \
 	   ./TODO.md						   \
 	   ./BehaviourBricks.md				           \

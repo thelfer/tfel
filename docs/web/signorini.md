@@ -51,7 +51,10 @@ The whole implementation is available here:
 >     - specify the appropriate flag to the `C++` compiler. Assuming
 >       that the current shell is `bash` and that the compiler is
 >       `g++`, this can be done by invoking mfront as follows:
->       `CXXFLAGS="`tfel-config --oflags` -std=c++11" mfront --obuild --interface=aster Signorini.mfront`
+>
+>~~~~{.bash}
+>`CXXFLAGS="`tfel-config --oflags` -std=c++11" mfront --obuild --interface=aster Signorini.mfront`
+>~~~~
 >
 > An implementation where those changes were made is available
 > [here](./gallery/hyperelasticity/Signorini-tfel2.mfront)
@@ -380,6 +383,15 @@ const auto d2Pi_dI1b2 = 2*C02;
 const auto dSi_dC = 2*(d2Pi_dI1b2*(dI1b_dC^dI1b_dC)+dPi_dI1b*d2I1b_dC2+
 	                                               +dPi_dI2b*d2I2b_dC2);
 ~~~~
+
+### Tests
+
+The comparison of previous derivation of the consistent tangent
+operator to a numerical approximation is made in the
+`Hyperelasticity.cxx` test that can be found in the `tests/Material`
+directory of the `TFEL` sources. The components of the consistent
+tangent operator match their numerical approximation with an accuracy
+lower than \(10^{-7}\,C01\).
 
 # References
 

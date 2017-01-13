@@ -564,6 +564,7 @@ AC_OUTPUT([debug.sh
    	   docs/gallery/Makefile
       	   docs/gallery/behaviours/Makefile
        	   docs/gallery/behaviours/hyperelasticity/Makefile
+       	   docs/gallery/behaviours/hyperviscoelasticity/Makefile
        	   docs/gallery/behaviours/damage/Makefile
        	   docs/gallery/behaviours/plasticity/Makefile
        	   docs/gallery/behaviours/viscoelasticity/Makefile

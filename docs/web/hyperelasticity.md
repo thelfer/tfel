@@ -230,6 +230,9 @@ The second derivative is also straightforward:
 
 ## Application to the Signorini behaviour
 
+An implementation of the Signorini behaviour based on the previous
+developments is available on a [dedicated page](signorini.html).
+
 #  Odgen Hyperelastic behaviours
 
 We now consider another class of hyperelastic behaviour of the form:
@@ -300,6 +303,9 @@ Computing \(\sderiv{f}{\C}\) is a non trivial task as one have to take
 care of the cases where two eigenvalues are equal and repeatedly use
 the Hospital rule to pass to the limit. For this reason, it is much
 easier to use the `computeIsotropicFunctionAndDerivative` static
-method of the stensor class.
+method of the `stensor` class.
+
+An implementation of the Ogden behaviour based on the previous
+developments is available on a [dedicated page](ogden.html).
 
 <!-- Local IspellDict: english -->

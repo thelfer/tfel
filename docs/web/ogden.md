@@ -384,5 +384,16 @@ const auto d2iJb_dC2  = d2iJb_dI32*(dI3_dC^dI3_dC)+ diJb_dI3*d2I3_dC2;
 dS_dC += mu*c*((a-1)*fv*(diJb_dC^diJb_dC)+iJb*(fv*d2iJb_dC2+
                ((diJb_dC^df_dC)+(df_dC^diJb_dC))+iJb/a*d2f_dC2));
 ~~~~
-		
+
+### Tests
+
+The comparison of previous derivation of the consistent tangent
+operator to a numerical approximation is made in the `Ogden.cxx` test
+that can be found in the `tests/Material` directory of the `TFEL`
+sources.
+
+The components of the consistent tangent operator match their
+numerical approximation with an accuracy lower than
+\(10^{-9}\max_{i,j}\deriv{D}{\C}(i,j)\).
+
 <!-- Local IspellDict: english -->

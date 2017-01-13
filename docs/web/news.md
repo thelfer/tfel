@@ -1,6 +1,29 @@
 % News
 % Helfer Thomas
-% January 1, 2017
+% January 13, 2017
+
+# New hyper(visco)elastic behaviours in the MFront model repository (13/01/2017)
+
+The implementation of the Ogden behaviour is now described in depth in
+the following page:
+
+<http://tfel.sourceforge.net/ogden.html>
+
+This behaviour is interesting as it highlights the features introduced
+in `TFEL-3.0` for computing isotropic functions of symmetric tensors.
+
+This page uses the formal developments detailled in:
+
+<http://tfel.sourceforge.net/hyperelasticity.html>
+
+Concerning hyperviscoelasticity, a page describing a generic
+implementation is available here:
+
+<http://tfel.sourceforge.net/hyperviscoelasticity.html>
+
+If you have particular wishes on behaviours implementation that you
+would like to see treated, do not hesitate to send a message at
+[tfel-contact@cea.fr](mailto:tfel-contact@cea.fr).
 
 # MFront model repository (7/01/2017)
 
