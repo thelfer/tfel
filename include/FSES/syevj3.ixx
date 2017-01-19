@@ -47,11 +47,11 @@ namespace fses{
   {
     using real = GetMatrixNumericType_t<MatrixType2>;
       
-    constexpr const auto zero     = real(0);
-    constexpr const auto one      = real(1);
-    constexpr const auto one_half = real(1)/real(2);
+    constexpr const auto zero = real(0);
+    constexpr const auto one  = real(1);
     constexpr const auto c100 = real(100);
-    constexpr const auto c1_5 = one/real(5);
+    TFEL_CONSTEXPR const auto one_half = one/2;
+    TFEL_CONSTEXPR const auto c1_5     = one/5;
     
     const int n = 3;
     real sd, so;                  // Sums of diagonal resp. off-diagonal elements

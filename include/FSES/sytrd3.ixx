@@ -53,7 +53,7 @@ namespace fses{
     constexpr const auto zero     = real(0);
     constexpr const auto one      = real(1);
     constexpr const auto two      = real(2);
-    constexpr const auto one_half = real(1)/real(2);
+    TFEL_CONSTEXPR const auto one_half = real(1)/real(2);
 
     const int n = 3;
     real u[n], q[n];
