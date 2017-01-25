@@ -1697,6 +1697,8 @@ include/TFEL/Utilities/CxxKeywords.hxx -text
 include/TFEL/Utilities/CxxTokenizer.hxx -text
 include/TFEL/Utilities/CxxTokenizer.ixx -text
 include/TFEL/Utilities/Data.hxx -text
+include/TFEL/Utilities/FCString.hxx -text
+include/TFEL/Utilities/FCString.ixx -text
 include/TFEL/Utilities/GenTypeBase.hxx -text
 include/TFEL/Utilities/GenTypeBase.ixx -text
 include/TFEL/Utilities/GenTypeBase_MSC.hxx -text
@@ -5312,6 +5314,7 @@ tests/Utilities/CMakeLists.txt -text
 tests/Utilities/CxxTokenizerTest.cxx -text
 tests/Utilities/CxxTokenizerTest2.cxx -text
 tests/Utilities/DataTest.cxx -text
+tests/Utilities/FCString.cxx -text
 tests/Utilities/Makefile.am -text
 tests/Utilities/StringAlgorithms.cxx -text
 tests/Utilities/gentype.cxx -text
