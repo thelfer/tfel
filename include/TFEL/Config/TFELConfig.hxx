@@ -74,6 +74,45 @@
 #endif /* LIB_TFEL_CONFIG_HXX_ */
 
 /*!
+ * \def TFEL_VISIBILITY_IMPORT
+ *
+ * On windows, this macro is used to declare a function or a class as
+ * imported in the dynamic loadable library (dll) sense.
+ *
+ * On other plateforms, this macros affects the default visibility
+ * attribute to a function or a class.
+ *
+ * Macro extracted from :
+ * "Why is the new C++ visibility support so useful?"
+ * from http://gcc.gnu.org/wiki/Visibility
+ */ 
+/*!
+ * \def TFEL_VISIBILITY_EXPORT
+ *
+ * On Windows, this macro is used to declare a function or a class as
+ * exported in the dynamic loadable library (dll) sense.
+ *
+ * On other plateforms, this macros affects the default visibility
+ * attribute to a function or a class.
+ *
+ * Macro extracted from :
+ * "Why is the new C++ visibility support so useful?"
+ * from http://gcc.gnu.org/wiki/Visibility
+ */ 
+/*!
+ * \def TFEL_VISIBILITY_LOCAL
+ *
+ * On Windows, this macro has no effect.
+ *
+ * On other plateforms, this macros affects the hidden visibility
+ * attribute to a function or a class.
+ *
+ * Macro extracted from :
+ * "Why is the new C++ visibility support so useful?"
+ * from http://gcc.gnu.org/wiki/Visibility
+ */ 
+
+/*!
  * Macro extracted from :
  * "Why is the new C++ visibility support so useful?"
  * from http://gcc.gnu.org/wiki/Visibility
