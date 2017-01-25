@@ -43,6 +43,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./signorini.md				           \
 	   ./ogden.md				                   \
 	   ./hyperviscoelasticity.md				   \
+	   ./phasefield.md				           \
 	   ./pandoc-crossref.yaml                                  \
 	   ./TODO.md						   \
 	   ./BehaviourBricks.md				           \
@@ -132,6 +133,7 @@ EXTRA_DIST=CMakeLists.txt					   \
 	   ./img/AbaqusRotSigTest.png                              \
 	   ./img/FissurationPastille.png                           \
 	   ./img/anderson-withwithoutacceleration.svg              \
+	   ./img/freebsdlogo-1.png                                 \
 	   ./media/epx1.mp4                                        \
 	   ./media/epx2.mp4                                        \
 	   ./media/abaqus-explicit.mp4                             \

@@ -15,7 +15,6 @@
 #define LIB_TFEL_EXCEPTIONS_H_ 
 
 #include<stdexcept>
-
 #include"TFEL/Config/TFELConfig.hxx"
 
 namespace tfel

@@ -1,6 +1,118 @@
 % News
 % Helfer Thomas
-% January 13, 2017
+% January 23, 2017
+
+\newcommand{\tenseur}[1]{\underline{#1}}
+
+# New eigensolvers (23/01/2017)
+
+The default eigen solver for symmetric tensors used in `TFEL` is based
+on analitical computations of the eigen values and eigen vectors. Such
+computations are more efficient but less accurate than the iterative
+Jacobi algorithm (see [@kopp_efficient_2008;@kopp_numerical_2017]).
+
+With the courtesy of Joachim Kopp, we have introduced the following
+algorithms:
+
+- Jacobi
+- QL with implicit shifts
+- Cuppen
+- Analytical
+- Hybrid
+- Householder reduction
+
+The implementation of Joachim Kopp have been updated for `C++-11` and
+make more generic (support of all the floatting point numbers,
+different types of matrix/vector objects). The algorithms have been
+put in a separate namespace called `fses` (Fast Symmetric Eigen
+Solver) and is independant of the rest of `TFEL`.
+
+We have also introduced the Jacobi implementation of the `Geometric`
+`Tools` library (see [@eberly_robust_2016;@eberly_geometric_2017]).
+
+Those algorithms are available in 3D. For 2D symmetric tensors, we
+fall back to some default algorithm as described below.
+
+| Name                        | Algorithm  in 3D          | Algorithm  in 2D   |
+|:---------------------------:|:-------------------------:|:------------------:|
+| `TFELEIGENSOLVER`           | Analytical (TFEL)         | Analytical (TFEL)  |
+| `FSESJACOBIEIGENSOLVER`     | Jacobi                    | Analytical (FSES)  |
+| `FSESQLEIGENSOLVER`         | QL with implicit shifts   | Analytical (FSES)  |
+| `FSESCUPPENEIGENSOLVER`     | Cuppen's Divide & Conquer | Analytical (FSES)  |
+| `FSESANALYTICALEIGENSOLVER` | Analytical			      | Analytical (FSES)  |
+| `FSESHYBRIDEIGENSOLVER`     | Hybrid				      | Analytical (FSES)  |
+| `GTESYMMETRICQREIGENSOLVER` | Symmetric QR              | Analytical (TFEL)  |
+: List of available eigen solvers. {#tbl:eigensolvers}
+
+The various eigen solvers available are enumerated in Table
+@tbl:eigensolvers.
+
+The eigen solver is passed as a template argument of the
+`computeEigenValues` or the `computeEigenVectors` methods as
+illustrated in the code below:
+
+~~~~~{.cpp}
+tmatrix<3u,3u,real> m2;
+tvector<3u,real>    vp2;
+std::tie(vp,m)=s.computeEigenVectors<Stensor::GTESYMMETRICQREIGENSOLVER>();
+~~~~~
+
+|  Algorithm                  |  Failure ratio  | \(\Delta_{\infty}\) |   Times (ns)  |  Time ratio |
+|:---------------------------:|:---------------:|:-------------------:|:-------------:|:-----------:|
+| `TFELEIGENSOLVER`           |   0.000632      | 7.75e-14            |   252663338   |	1		    |
+| `GTESYMMETRICQREIGENSOLVER` |   0             | 2.06e-15            |   525845499   |	2.08	    |
+| `FSESJACOBIEIGENSOLVER`     |   0             | 1.05e-15            |   489507133   |	1.94	    |
+| `FSESQLEIGENSOLVER`         |   0.000422      | 3.30e-15            |   367599140   |	1.45	    |
+| `FSESCUPPENEIGENSOLVER`     |   0.020174      | 5.79e-15            |   374190684   |	1.48	    |
+| `FSESHYBRIDEIGENSOLVER`     |   0.090065      | 3.53e-10            |   154911762   |	0.61	    |
+| `FSESANALYTICALEIGENSOLVER` |   0.110399      | 1.09e-09            |   157613994   |	0.62	    |
+: Test on \(10^{6}\) random symmetric tensors in double precision (`double`). {#tbl:comp_eigensolvers_double}
+
+#### Some benchmarks
+
+We have compared the available algorithm on \(10^{6}\) random
+symmetric tensors whose components are in \([-1:1]\).
+
+For a given symmetric tensor, we consider that the computation of the
+eigenvalues and eigenvectors failed if:
+\[
+\Delta_{\infty}=\max_{i\in[1,2,3]}\left\|\tenseur{s}\,\cdot\,\vec{v}_{i}-\lambda_{i}\,\vec{v}_{i}\right\|>10\,\varepsilon
+\]
+where \(\varepsilon\) is the accuracy of the floatting point considered.
+
+The results of those tests are reported on Table
+@tbl:comp_eigensolvers_double:
+
+- The standard eigen solver available in previous versions of `TFEL`
+  offers a very interesting compromise between accuracy and numerical
+  efficiency.
+- If very accurate results are required, the `FSESJACOBIEIGENSOLVER`
+  eigen solver is a good choice.
+
+
+# Official port of `TFEL` for `FreeBSD` (20/01/2017)
+
+![](img/freebsdlogo-1.png "")
+
+Thanks to the work of Pedro F. Giffuni , an official port of
+`TFEL/MFront` is available for `FreeBSD`:
+
+<http://www.freshports.org/science/tfel/>
+
+To install an executable package, you can now simply do:
+ 
+~~~~{.sh}
+pkg install tfel-mfront
+~~~~
+
+Alternativel, to build and install `TFEL` from the ports tree, one can
+do:
+
+~~~~{.sh}
+cd /usr/ports/science/tfel/
+make
+make install
+~~~~
 
 # New hyper(visco)elastic behaviours in the MFront model repository (13/01/2017)
 
@@ -716,5 +828,7 @@ Here is the official announcement by Jean-Paul DEFFAIN (in French):
   > Chef du programme SIMU
   > 
   > Commissariat à l'Énergie Atomique
+
+# References
 
 <!-- Local IspellDict: english -->

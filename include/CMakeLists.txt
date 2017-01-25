@@ -100,6 +100,8 @@ install_header(TFEL/Utilities GenTypeBase.ixx)
 install_header(TFEL/Utilities GenTypeBase_MSC.hxx)
 install_header(TFEL/Utilities GenTypeSpecialisation.ixx)
 install_header(TFEL/Utilities TextData.hxx)
+install_header(TFEL/Utilities FCString.hxx)
+install_header(TFEL/Utilities FCString.ixx)
 
 install_header(TFEL/Exception TFELException.hxx)
 

@@ -1114,6 +1114,7 @@ docs/web/img/cyrano-mfront.eps -text
 docs/web/img/cyrano-mfront.svg -text
 docs/web/img/epx-bars.png -text
 docs/web/img/epx.png -text
+docs/web/img/freebsdlogo-1.png -text
 docs/web/img/hsnv125.png -text
 docs/web/img/hsnv125.xcf -text
 docs/web/img/materiaux2014.jpg -text
@@ -1155,6 +1156,7 @@ docs/web/ogden.md -text
 docs/web/packages.md -text
 docs/web/pandoc-crossref.yaml -text
 docs/web/parameters.md -text
+docs/web/phasefield.md -text
 docs/web/publications.md -text
 docs/web/release-notes-3.0.md -text
 docs/web/release-notes-3.1.md -text

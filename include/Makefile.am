@@ -500,6 +500,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Utilities/GenTypeSpecialisation.ixx                                                     \
 			TFEL/Utilities/TextData.hxx                                                                  \
 			TFEL/Utilities/StringAlgorithms.hxx                                                          \
+			TFEL/Utilities/FCString.hxx                                                                  \
+			TFEL/Utilities/FCString.ixx                                                                  \
 			TFEL/Tests/MultipleTestOutputs.hxx					                     \
 			TFEL/Tests/StdStreamTestOutput.hxx					                     \
 			TFEL/Tests/XMLTestOutput.hxx					                             \
