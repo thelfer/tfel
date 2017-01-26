@@ -53,16 +53,6 @@ namespace tfel{
     struct basic_fcstring
       : public std::array<CharT,N+1>
     {
-      //! a simple alias
-      using typename std::array<CharT,N+1>::iterator;
-      //! a simple alias
-      using typename std::array<CharT,N+1>::const_iterator;
-      //! a simple alias
-      using typename std::array<CharT,N+1>::reverse_iterator;
-      //! a simple alias
-      using typename std::array<CharT,N+1>::const_reverse_iterator;
-      //! a simple alias
-      using typename std::array<CharT,N+1>::size_type;
       //! default constructor
       basic_fcstring();
       /*!
@@ -153,17 +143,17 @@ namespace tfel{
       //! \return the actual size of the string
       std::size_t size() const;
       //! \return an iterator past-the end of the string
-      iterator end();
+      typename std::array<CharT,N+1>::iterator end();
       //! \return an iterator past-the end of the string
-      const_iterator end() const;
+      typename std::array<CharT,N+1>::const_iterator end() const;
       //! \return an iterator past-the end of the string
-      const_iterator cend() const;
+      typename std::array<CharT,N+1>::const_iterator cend() const;
       //! \return an reverse iterator at the end of the string
-      reverse_iterator rbegin();
+      typename std::array<CharT,N+1>::reverse_iterator rbegin();
       //! \return an reverse iterator at the end of the string
-      const_reverse_iterator rbegin() const;
+      typename std::array<CharT,N+1>::const_reverse_iterator rbegin() const;
       //! \return an reverse iterator at the end of the string
-      const_reverse_iterator crbegin() const;
+      typename std::array<CharT,N+1>::const_reverse_iterator crbegin() const;
       //! \return the last character of the string
       CharT& back();
       //! \return the last character of the string
@@ -182,7 +172,8 @@ namespace tfel{
        * \param[in] n: size of the string
        * \return true if the two string are equals
        */
-      bool strcmp(const CharT*,const size_type) const;      
+      bool strcmp(const CharT*,
+		  const typename std::array<CharT,N+1>::size_type) const;      
       /*!
        * \return the size of an external C-string if a null character
        * is found in the N first characters, N+1 otherwise.
