@@ -55,7 +55,11 @@ namespace tfel{
 
     void CxxTokenizer::treatDotAsSeparator(const bool b){
       this->dotAsSeparator = b;
-    } // end of CxxTokenizer::treatCharAsString
+    } // end of CxxTokenizer::treatDotAsSeparator
+
+    void CxxTokenizer::treatMinusAsSeparator(const bool b){
+      this->minusAsSeparator = b;
+    } // end of CxxTokenizer::treatMinusAsSeparator
     
     void CxxTokenizer::mergeStrings(const bool b){
       this->shallMergeStrings = b;
@@ -133,31 +137,37 @@ namespace tfel{
 
     struct is_cxx_separator
     {
-      explicit is_cxx_separator(const bool b)
-	: treat_dot_as_separator(b)
+      explicit is_cxx_separator(const bool bd,
+				const bool bm)
+	: treat_dot_as_separator(bd),
+	  treat_minus_as_separator(bm)
       {}
       bool operator()(const std::string::value_type& c) const{
 	using ctype = std::string::value_type;
-	constexpr const std::array<ctype,26> s = {{'?',';','/','!','&','*',
+	constexpr const std::array<ctype,24> s = {{'?',';','/','!','&','*',
 						   '|','{','}','[',']','(',
 						   ')','%','=','^',',',':',
 						   '<','>','\'','\"',
-						   '+','-','\\','.'}};
-	if(this->treat_dot_as_separator){
-	  return std::find(std::begin(s),std::end(s),c)!=std::end(s);
+						   '+','\\'}};
+	if(c=='.'){
+	  return this->treat_dot_as_separator;
 	}
-	const auto e = std::prev(std::end(s));
-	return std::find(std::begin(s),e,c)!=e;
+	if(c=='-'){
+	  return this->treat_minus_as_separator;
+	}
+	return std::find(std::begin(s),std::end(s),c)!=std::end(s);
       }
     protected:
-      bool treat_dot_as_separator = true;
+      bool treat_dot_as_separator   = true;
+      bool treat_minus_as_separator = true;
     };
 
     struct is_cxx_separator_or_space
       :public is_cxx_separator      
     {
-      explicit is_cxx_separator_or_space(const bool b)
-	: is_cxx_separator(b)
+      explicit is_cxx_separator_or_space(const bool bd,
+					 const bool bm)
+	: is_cxx_separator(bd,bm)
       {}
       bool operator()(const std::string::value_type& c) const{
 	return ((std::isspace(c)) || (is_cxx_separator::operator()(c)));
@@ -583,7 +593,7 @@ namespace tfel{
       advance(o,p,1);
       ignore_space(o,p,pe);
       throw_if(p==pe,"lonely ‘#’");
-      auto pn = std::find_if(p,pe,is_cxx_separator_or_space(this->dotAsSeparator));
+      auto pn = std::find_if(p,pe,is_cxx_separator_or_space(this->dotAsSeparator,this->minusAsSeparator));
       throw_if(p==pn,"unexpected token '"+std::string(1u,*p)+"'");
       const auto key = std::string{p,pn};
       throw_if(!is_preprocessor_keyword('#'+key),
@@ -597,12 +607,11 @@ namespace tfel{
       }
     } // end of CxxTokenizer::treatPreprocessorDirective
     
-    void
-    CxxTokenizer::treatStandardLine(Token::size_type& o,
-				    std::string::const_iterator& p,
-				    const std::string::const_iterator b,
-				    const std::string::const_iterator pe,
-				    const Token::size_type n)
+    void CxxTokenizer::treatStandardLine(Token::size_type& o,
+					 std::string::const_iterator& p,
+					 const std::string::const_iterator b,
+					 const std::string::const_iterator pe,
+					 const Token::size_type n)
     {
       auto throw_if = [](const bool c, const std::string& m){
 	if(c){throw(std::runtime_error("CxxTokenizer::treatStandardLine: "+m));}
@@ -642,7 +651,8 @@ namespace tfel{
 	      this->tokens.emplace_back("->",n,o,Token::Standard);
 	      advance(o,p,2u);
 	    }
-	  } else if(((p==b)||(is_cxx_separator_or_space(this->dotAsSeparator)(*(std::prev(p)))))&&
+	  } else if(((p==b)||(is_cxx_separator_or_space(this->dotAsSeparator,
+							this->minusAsSeparator)(*(std::prev(p)))))&&
 		    ((pn!=pe)&&((*pn=='.')||(std::isdigit(*pn))))){
 	    this->readNumber(o,p,pe,n);
 	  } else {
@@ -672,7 +682,8 @@ namespace tfel{
 	} else if(*p=='|'){
 	  this->try_join(o,p,pe,n,'|','=');
 	} else{
-	  auto pw = std::find_if(p,pe,is_cxx_separator_or_space(this->dotAsSeparator));
+	  auto pw = std::find_if(p,pe,is_cxx_separator_or_space(this->dotAsSeparator,
+								this->minusAsSeparator));
 	  if(p==pw){
 	    this->tokens.emplace_back(std::string(1u,*p),n,Token::Standard);	      
 	    advance(o,p,1u);
