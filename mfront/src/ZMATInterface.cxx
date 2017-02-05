@@ -1149,8 +1149,8 @@ namespace mfront
 
   void
   ZMATInterface::writeBehaviourInitialisation(std::ostream& out,
-						    const BehaviourDescription& mb,
-						    const ZMATInterface::Hypothesis h) const
+					      const BehaviourDescription& mb,
+					      const ZMATInterface::Hypothesis h) const
   {
     using namespace std;
     if(!mb.isModellingHypothesisSupported(h)){
@@ -1168,38 +1168,37 @@ namespace mfront
     if(!mps.empty()){
       out << "this->mprops.resize(" << mps_size << ");\n"; 
     }
-    if(!isvs.empty()){
-      for(const auto & isv : isvs){
-	const SupportedTypes::TypeFlag flag = this->getTypeFlag(isv.type);
-	if(flag==SupportedTypes::Scalar){
-	  out << "this->" << isv.name << ".initialize(this,\"" << isv.name 
-	      << "\"," << isv.arraySize << ",1);\n"; 
-	} else if (flag==SupportedTypes::Stensor){
-	  if(isv.arraySize==1u){
-	    out << "this->" << isv.name << ".initialize(this,\"" << isv.name 
-		<< "\",this->tsz(),1);\n"; 
-	  } else {
-	    for(unsigned short i=0;i!=isv.arraySize;++i){
-	      out << "this->" << isv.name << "[" << i << "].initialize(this,\""
-		  << isv.name << std::to_string(i)
-		  << "\",this->tsz(),1);\n";
-	    }
-	  }
-	} else if (flag==SupportedTypes::Tensor){
-	  if(isv.arraySize==1u){
-	    out << "this->" << isv.name << ".initialize(this,\""
-		<< isv.name << "\",this->utsz(),1);\n"; 
-	  } else {
-	    for(unsigned short i=0;i!=isv.arraySize;++i){
-	      out << "this->" << isv.name << "[" << i << "].initialize(this,\""
-		  << isv.name << std::to_string(i)
-		  << "\",this->uts(),1);\n";
-	    }
-	  }
+    for(const auto & isv : isvs){
+      const auto flag = this->getTypeFlag(isv.type);
+      const auto& name = d.getExternalName(isv.name);
+      if(flag==SupportedTypes::Scalar){
+	out << "this->" << isv.name << ".initialize(this,\"" << name 
+	    << "\"," << isv.arraySize << ",1);\n"; 
+      } else if (flag==SupportedTypes::Stensor){
+	if(isv.arraySize==1u){
+	  out << "this->" << isv.name << ".initialize(this,\"" << name 
+	      << "\",this->tsz(),1);\n"; 
 	} else {
-	  throw(runtime_error("ZMATInterface::endTreatment: "
-			      "unsupported state variable type"));
+	  for(unsigned short i=0;i!=isv.arraySize;++i){
+	    out << "this->" << isv.name << "[" << i << "].initialize(this,\""
+		<< name << std::to_string(i)
+		<< "\",this->tsz(),1);\n";
+	  }
 	}
+      } else if (flag==SupportedTypes::Tensor){
+	if(isv.arraySize==1u){
+	  out << "this->" << isv.name << ".initialize(this,\""
+	      << name << "\",this->utsz(),1);\n"; 
+	} else {
+	  for(unsigned short i=0;i!=isv.arraySize;++i){
+	    out << "this->" << isv.name << "[" << i << "].initialize(this,\""
+		<< name << std::to_string(i)
+		<< "\",this->uts(),1);\n";
+	  }
+	}
+      } else {
+	throw(runtime_error("ZMATInterface::endTreatment: "
+			    "unsupported state variable type"));
       }
     }
     out << "for(;;){\n";
@@ -1239,10 +1238,8 @@ namespace mfront
     if(!esvs.empty()){
       const int ext_size = this->getTotalSize(esvs).getValueForDimension(dime);
       out << "evs_positions.resize(" << ext_size << ");"<< endl;
-      VariableDescriptionContainer::const_iterator pev;
       int i=0;
-      for(pev=esvs.begin();pev!=esvs.end();++pev){
-	const VariableDescription& v = *pev;
+      for(const auto& v : esvs){
 	const auto& name = d.getExternalName(v.name);
 	if(v.arraySize==1u){
 	  out << "this->evs_positions[" << i << "] = " 
@@ -1511,7 +1508,6 @@ namespace mfront
     insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
   } // end of ZMATInterface::getTargetsDescription
 
-  ZMATInterface::~ZMATInterface()
-  {}
+  ZMATInterface::~ZMATInterface() = default;
 
 } // end of namespace mfront
