@@ -207,7 +207,8 @@ nobase_include_HEADERS += MFront/Aster/Aster.hxx                                
 			  MFront/Aster/AsterComputeThermalExpansionCoefficientTensor.hxx \
 			  MFront/Aster/AsterStressFreeExpansionHandler.hxx               \
 			  MFront/Aster/AsterTangentOperator.hxx                          \
-			  MFront/AsterInterface.hxx
+			  MFront/Aster/AsterConvertStress.hxx                            \
+			  MFront/AsterInterface.hxx                             
 endif
 
 if HAVE_ABAQUS

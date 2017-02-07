@@ -207,6 +207,35 @@ namespace tfel
     /*!
      * \brief partial specialisation of FiniteStrainBehaviourTangentOperatorConverter structure
      */
+    TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DSIG_DF,DS_DEGL)
+    {
+      /*!
+       * \param[out] Kr: the result of the convertion
+       * \param[in]  Ks: the initial stiffness tensor
+       * \param[in]  F0:  the deformation gradient
+       * \param[in]  F1:  the deformation gradient
+       * \param[in]  s:  the Cauchy stress tensor
+       */
+      template<unsigned short N,typename stress>
+      static TFEL_MATERIAL_INLINE void
+      exe(Result<N,stress>& Kr,
+	  const Source<N,stress>& Ks,
+	  const DeformationGradientTensor<N,stress>& F0,
+	  const DeformationGradientTensor<N,stress>& F1,
+	  const StressStensor<N,stress>& s)
+      {
+	using TangentOperator = FiniteStrainBehaviourTangentOperatorBase;
+	const auto Cs = convert<TangentOperator::SPATIAL_MODULI,
+				TangentOperator::DS_DEGL>(Ks,F0,F1,s);
+	const auto Dt = convert<TangentOperator::DTAU_DF,
+				TangentOperator::SPATIAL_MODULI>(Cs,F0,F1,s);
+	Kr = convert<TangentOperator::DSIG_DF,
+		     TangentOperator::DTAU_DF>(Dt,F0,F1,s);
+      } // end of exe
+    }; // end of struct FiniteStrainBehaviourTangentOperatorConverter
+    /*!
+     * \brief partial specialisation of FiniteStrainBehaviourTangentOperatorConverter structure
+     */
     TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DS_DF,DS_DC)
     {
       /*!

@@ -711,7 +711,27 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-4-3D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-5-3D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-6-3D.mtest
-           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig11-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig22-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig33-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig11-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig22-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig33-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-1-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-2-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-3-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-1-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-2-2D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-1-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-2-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-3-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-4-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-5-3D.mtest
+           mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-6-3D.mtest
+	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-1-2D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-2-2D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-3-2D.mtest
            mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-shear-1-2D.mtest

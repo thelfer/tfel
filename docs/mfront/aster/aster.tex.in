@@ -410,4 +410,20 @@ fichier {\tt mtest} sera généré automatiquement en cas d'échec de
 l'intégration.
 
 
+\subsubsection{Choix d'une formulation grandes transformations}
+
+Pour les lois en grandes transformations, le mot clé
+\mkey{AsterFiniteStrainFormulation} permet de sélection une des
+formulations grandes transformations disponibles dans \aster{}.
+
+Ce mot clé est suivi d'une des valeurs suivantes~:
+\begin{itemize}
+\item {\tt SIMO\_MIEHE} (le défaut).  Dans ce cas, la loi devra être
+  déclarée avec le mot clé {\tt DEFORMATION=SIMO\_MIEHE} dans les
+  opérateurs mécaniques.
+\item {\tt GROT\_GDEP} ou {\tt TotalLagrangian}. Dans ce cas, la loi
+  devra être déclarée avec le mot clé {\tt DEFORMATION=GROT\_GDEP}
+  dans les opérateurs mécaniques.
+\end{itemize}
+
 \end{document}

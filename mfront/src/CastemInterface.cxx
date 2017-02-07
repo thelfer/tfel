@@ -929,6 +929,7 @@ namespace mfront{
 		<< makeLowerCase(name+"_ss") << "_Interface = 1u;\n\n";
 	    if(this->finiteStrainStrategies.size()==1u){
 	      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
+	      UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);
 	      if(!mb.areAllMechanicalDataSpecialised(mh)){
 		const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 		this->generateUMATxxSymbols(out,name,uh,mb,fd);

@@ -70,6 +70,8 @@ namespace mtest
 		   const real,
 		   const StiffnessMatrixType,
 		   const bool) const override;
+    //! finite strain formulation
+    unsigned short afsf = 0u;
   }; // end of struct Behaviour
   
 } // end of namespace mtest

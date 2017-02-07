@@ -344,6 +344,18 @@ namespace tfel
       checkIfAsterBehaviourSavesTangentOperator(const std::string&,
 						const std::string&);
       /*!
+       * \return the aster finite strain formulation.
+       * Possible returned values are:
+       * - 1: `SIMO_MIEHE`
+       * - 2: `GROT_DEP` (total lagrangian)
+       * \param[in] l: name of the library
+       * \param[in] f: law name
+       */
+      unsigned short
+      getAsterFiniteStrainFormulation(const std::string&,
+				      const std::string&);
+      
+      /*!
        * \return the orthotropy management policy for the Abaqus and
        * Abaqus/Explicit interface. See the associated documentation
        * for details.

@@ -35,8 +35,7 @@ static const char * const constexpr_c = "const";
 
 namespace mfront{
 
-  std::string
-  AsterInterface::getName()
+  std::string AsterInterface::getName()
   {
     return "aster";
   }
@@ -44,18 +43,14 @@ namespace mfront{
   std::string
   AsterInterface::getLibraryName(const BehaviourDescription& mb) const
   {
-    using namespace std;
-    string lib;
     if(mb.getLibrary().empty()){
       if(!mb.getMaterialName().empty()){
-	lib = "Aster"+mb.getMaterialName();
+	return "Aster"+mb.getMaterialName();
       } else {
-	lib = "AsterBehaviour";
+	return "AsterBehaviour";
       }
-    } else {
-      lib = "Aster"+mb.getLibrary();
     }
-    return lib;
+    return "Aster"+mb.getLibrary();
   } // end of AsterInterface::getLibraryName
 
   std::string AsterInterface::getInterfaceName() const
@@ -69,16 +64,10 @@ namespace mfront{
     return "aster"+makeLowerCase(name);
   } // end of AsterInterface::getLibraryName
 
-  AsterInterface::AsterInterface()
-    : compareToNumericalTangentOperator(false),
-      strainPerturbationValue(1.e-6),
-      tangentOperatorComparisonCriterion(1.e7),
-      savesTangentOperator(false),
-      errorReport(true)
-  {} // end of AsterInterface::AsterInterface()
+  AsterInterface::AsterInterface() = default;
 
   std::pair<bool,AsterInterface::tokens_iterator>
-  AsterInterface::treatKeyword(BehaviourDescription&,
+  AsterInterface::treatKeyword(BehaviourDescription& bd,
 			       const std::string& key,
 			       const std::vector<std::string>& i,
 			       tokens_iterator current,
@@ -96,7 +85,8 @@ namespace mfront{
 		 (key!="@AsterTangentOperatorComparisonCriterion")&&
 		 (key!="@AsterStrainPerturbationValue")&&
 		 (key!="@AsterSaveTangentOperator")&&
-		 (key!="@AsterErrorReport"),
+		 (key!="@AsterErrorReport")&&
+		 (key!="@AsterFiniteStrainFormulation"),
 		 "unsupported key '"+key+"'");
       } else {
 	return {false,current};
@@ -136,6 +126,25 @@ namespace mfront{
       return {true,current};
     } else if(key=="@AsterErrorReport"){
       this->errorReport = this->readBooleanValue(key,current,end);
+      return {true,current};
+    } else if(key=="@AsterFiniteStrainFormulation"){
+      throw_if(bd.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,
+	       "the '@AsterFiniteStrainFormulation' is only valid "
+	       "for finite strain behaviour");
+      throw_if(this->afsf!=UNDEFINEDFINITESTRAINFORMULATION,
+	       "finite strain formulation already defined");
+      const auto s = current->value;
+      if(s=="SIMO_MIEHE"){
+	this->afsf = SIMO_MIEHE;
+      } else if((s=="GROT_GDEP")||(s=="TotalLagrangian")){
+	this->afsf = GROT_GDEP;
+      } else {
+	throw_if(true,"invalid finite strain formuluation '"+s+"'");
+      }
+      ++(current);
+      throw_if(current==end,"unexpected end of file");
+      throw_if(current->value!=";","expected ';', read '"+current->value+"'");
+      ++(current);
       return {true,current};
     }
     return {false,current};
@@ -713,10 +722,8 @@ namespace mfront{
 	const auto& d = mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
 	const auto& mps = d.getMaterialProperties();
 	for(const auto & mp : mps){
-	  const auto& mp1 = findUMATMaterialProperty(mfirst.first,
-								     mb.getExternalName(h,mp.name));
-	  const auto& mp2 = findUMATMaterialProperty(pum->first,
-								     mb.getExternalName(h,mp.name));
+	  const auto& mp1 = findUMATMaterialProperty(mfirst.first,mb.getExternalName(h,mp.name));
+	  const auto& mp2 = findUMATMaterialProperty(pum->first,mb.getExternalName(h,mp.name));
 	  auto o1 = mp1.offset;
 	  o1+=pum->second;
 	  auto o2 = mp2.offset;
@@ -786,20 +793,21 @@ namespace mfront{
     return res;
   } // end of AsterInterface::buildMaterialPropertiesList
     
-  void
-  AsterInterface::writeUMATxxAdditionalSymbols(std::ostream&,
-						     const std::string&,
-						     const Hypothesis,
-						     const BehaviourDescription&,
+  void AsterInterface::writeUMATxxAdditionalSymbols(std::ostream&,
+						    const std::string&,
+						    const Hypothesis,
+						    const BehaviourDescription&,
 						     const FileDescription&) const
   {} // end of AsterInterface::writeUMATxxAdditionalSymbols
 
-  void
-  AsterInterface::writeUMATxxSpecificSymbols(std::ostream& out,
-						   const std::string& name,
-						   const BehaviourDescription&,
-						   const FileDescription&) const
+  void AsterInterface::writeUMATxxSpecificSymbols(std::ostream& out,
+						  const std::string& name,
+						  const BehaviourDescription& bd,
+						  const FileDescription&) const
   {
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("AsterInterface::writeUMATxxSpecificSymbols: "+m));}
+    };
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
 	<< "_savesTangentOperator = ";
     if(this->savesTangentOperator){
@@ -808,16 +816,29 @@ namespace mfront{
       out << "0";
     }
     out << ";\n";
+    if(bd.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	  << "_FiniteStrainFormulation = ";
+      if((this->afsf==SIMO_MIEHE)||(this->afsf==UNDEFINEDFINITESTRAINFORMULATION)){
+	out << "1u;\n";
+      } else if(this->afsf==GROT_GDEP){
+	out << "2u;\n";
+      } else {
+	throw_if(true,"internal error: unsupported finite strain formulation");
+      }
+    }
   } // end of AsterInterface::writeUMATxxSpecificSymbols
 
-  void
-  AsterInterface::writeAsterBehaviourTraits(std::ostream& out,
-					    const BehaviourDescription& mb,
-					    const Hypothesis h) const
+  void AsterInterface::writeAsterBehaviourTraits(std::ostream& out,
+						 const BehaviourDescription& mb,
+						 const Hypothesis h) const
   {
     using namespace std;
     const auto mvs = mb.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(mb,h);
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("AsterInterface::writeAsterBehaviourTraits: "+m));}
+    };
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type";
       if(mb.useQt()){
@@ -852,8 +873,7 @@ namespace mfront{
     } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
       out << "static " << constexpr_c << " AsterBehaviourType btype = aster::COHESIVEZONEMODEL;\n";
     } else {
-      throw(runtime_error("AsterInterface::writeAsterBehaviourTraits : "
-			  "unsupported behaviour type"));
+      throw_if(true,"unsupported behaviour type");
     }
     out << "//! space dimension\n";
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
@@ -904,6 +924,19 @@ namespace mfront{
       msg += "The aster interface only support isotropic or orthotropic behaviour at this time.";
       throw(runtime_error(msg));
     }
+    out << "static " << constexpr_c << " AsterFiniteStrainFormulation afsf = aster::";
+    if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      if((this->afsf==SIMO_MIEHE)||(this->afsf==UNDEFINEDFINITESTRAINFORMULATION)){
+	out << "SIMO_MIEHE;\n";
+      } else if(this->afsf==GROT_GDEP){
+	out << "GROT_GDEP;\n";
+      } else {
+	throw_if(true,"internal error: unsupported "
+		 "finite strain formulation");
+      }
+    } else {
+      out << "UNDEFINEDFINITESTRAINFORMULATION;\n";
+    }
     // computing material properties size
     auto msize = SupportedTypes::TypeSize{};
     if(!mprops.first.empty()){
@@ -939,10 +972,9 @@ namespace mfront{
 	out << "static " << constexpr_c << " unsigned short thermalExpansionPropertiesOffset = 0u;\n"; 
       }
     } else {
-      string msg("AsterInterface::endTreatment : ");
-      msg += "unsupported behaviour type.\n";
-      msg += "The aster interface only support isotropic or orthotropic behaviour at this time.";
-      throw(runtime_error(msg));
+      throw_if(true,"unsupported behaviour type.\n"
+	       "The aster interface only support isotropic "
+	       "or orthotropic behaviour at this time.");
     }
     out << "}; // end of class AsterTraits\n\n";
   }

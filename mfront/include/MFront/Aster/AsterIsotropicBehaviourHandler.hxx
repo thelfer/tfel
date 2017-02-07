@@ -62,7 +62,7 @@ namespace aster
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
       Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
-      handler.exe(DDSOE,STRESS,STATEV);
+      handler.exe(DDSOE,STRESS,STATEV,DSTRAN);
     } // end of AsterIsotropicBehaviourHandler::exe
     
   }; // end of struct AsterIsotropicBehaviourHandler

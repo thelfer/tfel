@@ -37,8 +37,7 @@ namespace mtest
   void
   AsterSmallStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
   {
-    using namespace std;
-    fill(v.begin(),v.end(),real(0));
+    std::fill(v.begin(),v.end(),real(0));
   }
 
   std::pair<bool,real>

@@ -45,9 +45,7 @@ namespace mtest
   void
   AbaqusFiniteStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
   {
-    v[0] = real(1);
-    v[1] = real(1);
-    v[2] = real(1);
+    v[0] = v[1] = v[2] = real(1);
     std::fill(v.begin()+3,v.end(),real(0));
   }
 

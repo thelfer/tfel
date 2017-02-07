@@ -23,6 +23,7 @@
 #include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 
+#include"MFront/Aster/AsterConvertStress.hxx"
 #include"MFront/Aster/AsterTangentOperator.hxx"
 #include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
 #include"MFront/Aster/AsterComputeThermalExpansionCoefficientTensor.hxx"
@@ -30,20 +31,24 @@
 namespace aster
 {
 
-  template<AsterBehaviourType btype>
+  template<AsterBehaviourType btype,
+	   AsterFiniteStrainFormulation afsf>
   struct AsterTangentOperatorFlag;
 
   template<>
-  struct AsterTangentOperatorFlag<aster::SMALLSTRAINSTANDARDBEHAVIOUR>
+  struct AsterTangentOperatorFlag<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+				  aster::UNDEFINEDFINITESTRAINFORMULATION>
   {
-    typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
-    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>
-    TangentOperatorTraits;
-    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
+    using MechanicalBehaviourBase = tfel::material::MechanicalBehaviourBase; 
+    using TangentOperatorTraits =
+      tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>;
+    static constexpr TangentOperatorTraits::SMFlag value =
+      TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
 
   template<>
-  struct AsterTangentOperatorFlag<aster::FINITESTRAINSTANDARDBEHAVIOUR>
+  struct AsterTangentOperatorFlag<aster::FINITESTRAINSTANDARDBEHAVIOUR,
+				  aster::SIMO_MIEHE>
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
@@ -52,34 +57,58 @@ namespace aster
   };
 
   template<>
-  struct AsterTangentOperatorFlag<aster::COHESIVEZONEMODEL>
+  struct AsterTangentOperatorFlag<aster::FINITESTRAINSTANDARDBEHAVIOUR,
+				  aster::GROT_GDEP>
+  {
+    typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
+    TangentOperatorTraits;
+    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DS_DEGL;
+  };
+  
+  template<>
+  struct AsterTangentOperatorFlag<aster::COHESIVEZONEMODEL,
+				  aster::UNDEFINEDFINITESTRAINFORMULATION>
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
     typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::COHESIVEZONEMODEL>
     TangentOperatorTraits;
-    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
+    static constexpr TangentOperatorTraits::SMFlag value =
+      TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
 
   template<AsterBehaviourType btype,
+	   AsterFiniteStrainFormulation afsf,
 	   unsigned short N>
   struct AsterTangentOperatorType;
 
   template<unsigned short N>
-  struct AsterTangentOperatorType<aster::SMALLSTRAINSTANDARDBEHAVIOUR,N>
+  struct AsterTangentOperatorType<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+				  aster::UNDEFINEDFINITESTRAINFORMULATION,N>
   {
     using type      = tfel::math::st2tost2<N,AsterReal>;
     using view_type = tfel::math::ST2toST2View<N,AsterReal>;
   };
 
   template<unsigned short N>
-  struct AsterTangentOperatorType<aster::FINITESTRAINSTANDARDBEHAVIOUR,N>
+  struct AsterTangentOperatorType<aster::FINITESTRAINSTANDARDBEHAVIOUR,
+				  aster::SIMO_MIEHE,N>
   {
     using type      = tfel::math::t2tost2<N,AsterReal>;
     using view_type = tfel::math::T2toST2View<N,AsterReal>;
   };
 
   template<unsigned short N>
-  struct AsterTangentOperatorType<aster::COHESIVEZONEMODEL,N>
+  struct AsterTangentOperatorType<aster::FINITESTRAINSTANDARDBEHAVIOUR,
+				  aster::GROT_GDEP,N>
+  {
+    using type      = tfel::math::st2tost2<N,AsterReal>;
+    using view_type = tfel::math::ST2toST2View<N,AsterReal>;
+  };
+  
+  template<unsigned short N>
+  struct AsterTangentOperatorType<aster::COHESIVEZONEMODEL,
+				  aster::UNDEFINEDFINITESTRAINFORMULATION,N>
   {
     using type      = tfel::math::tmatrix<N,N,AsterReal>;
     using view_type = tfel::math::TMatrixView<N,N,AsterReal>;
@@ -279,7 +308,8 @@ namespace aster
       TFEL_ASTER_INLINE2
 	void exe(AsterReal *const DDSOE,
 		 AsterReal *const STRESS,
-		 AsterReal *const STATEV)
+		 AsterReal *const STATEV,
+		 const AsterReal *const DSTRAN)
       {
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<BV> Traits;
@@ -296,12 +326,15 @@ namespace aster
 	  StandardPredictionOperatorComputer,
 	  PredictionOperatorIsNotAvalaible
 	  >::type PredictionOperatorComputer;
+	using tfel::material::ModellingHypothesisToSpaceDimension;
+	const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
 	if(this->dt<0.){
 	  throwNegativeTimeStepException(Traits::getName());
 	}
 	this->behaviour.checkBounds();
-	typename BV::IntegrationResult r = BV::SUCCESS;
-	const typename BV::SMFlag smflag = AsterTangentOperatorFlag<AsterTraits<BV>::btype>::value;
+	auto r = BV::SUCCESS;
+	const auto smflag = AsterTangentOperatorFlag<AsterTraits<BV>::btype,
+						     AsterTraits<BV>::afsf>::value;
 	if(*DDSOE<-0.5){
 	  if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
 	    r = PredictionOperatorComputer::exe(this->behaviour,smflag,
@@ -337,6 +370,10 @@ namespace aster
 	  }
 	  this->behaviour.checkBounds();
 	  this->behaviour.ASTERexportStateData(STRESS,STATEV);
+	  // For the GROT_GDEP finite strain formulation, one must
+	  // convert the Cauchy stress to the Piola-Kirchoff stress.
+	  AsterConvertStress<AsterTraits<BV>::btype,
+			     AsterTraits<BV>::afsf,N>::exe(STRESS,DSTRAN);
 	}
 	if((*DDSOE>0.5)||(*DDSOE<-0.5)){
 	  ConsistentTangentOperatorHandler::exe(this->behaviour,DDSOE);
@@ -384,8 +421,10 @@ namespace aster
 	{
 	  using tfel::material::ModellingHypothesisToSpaceDimension;
 	  const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
-	  using  TangentOperatorType     = typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::type;
-	  using  TangentOperatorViewType = typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::view_type;
+	  using  TangentOperatorType     = typename AsterTangentOperatorType<AsterTraits<BV>::btype,
+									     AsterTraits<BV>::afsf,N>::type;
+	  using  TangentOperatorViewType = typename AsterTangentOperatorType<AsterTraits<BV>::btype,
+									     AsterTraits<BV>::afsf,N>::view_type;
 	  TangentOperatorViewType Dt{DDSOE};
 	  Dt = static_cast<const TangentOperatorType&>(bv.getTangentOperator());
 	  // l'opérateur tangent contient des sqrt(2) en petites déformations...
@@ -409,7 +448,8 @@ namespace aster
 	{
 	  using tfel::material::ModellingHypothesisToSpaceDimension;
 	  const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
-	  using  TangentOperatorViewType = typename AsterTangentOperatorType<AsterTraits<BV>::btype,N>::view_type;
+	  using  TangentOperatorViewType = typename AsterTangentOperatorType<AsterTraits<BV>::btype,
+									     AsterTraits<BV>::afsf,N>::view_type;
 	  ConsistentTangentOperatorComputer::exe(bv,DDSOE);
 	  // les conventions fortran.... (petites déformations et modèles de zones cohésives)
 	  TangentOperatorViewType Dt{DDSOE};

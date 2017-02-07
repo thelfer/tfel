@@ -32,7 +32,25 @@ namespace aster{
     ASTER_WRITEONSTDOUT,
     ASTER_NOERRORREPORT
   }; // end of enum AsterErrorReportPolicy
+  /*!
+   * \brief list of the finite strain formulation available.
+   */
+  enum AsterFiniteStrainFormulation{
+    //! Formulation introduced by Simo and Miehe (the default)
+    SIMO_MIEHE,
+    //! Total lagrangian formulation
+    GROT_GDEP,
+    /*!
+     * \brief entry used when the finite strain formulation is
+     * meaningless (e.g. small strain behaviour).
+     */
+    UNDEFINEDFINITESTRAINFORMULATION
+  }; // end of enum AsterFiniteStrainFormulation
 
+  /*!
+   * \brief The AsterTraits class defines a set of fields used for
+   * adapting the AsterInterface.
+   */
   template<typename Behaviour>
   struct AsterTraits{
     static constexpr AsterBehaviourType btype = aster::SMALLSTRAINSTANDARDBEHAVIOUR;
@@ -44,10 +62,12 @@ namespace aster{
     static constexpr bool requiresStiffnessTensor             = false;
     static constexpr bool requiresThermalExpansionCoefficientTensor = false;
     static constexpr unsigned short propertiesOffset          = 0u;
-    // Type of the behaviour of the material (isotropic or orthotropic)
+    //! \brief type of the behaviour of the material (isotropic or orthotropic)
     static constexpr AsterSymmetryType type   = aster::ISOTROPIC;
-    // Type of the elastic behaviour of the material (isotropic or orthotropic)
+    //! \brief type of the elastic behaviour of the material (isotropic or orthotropic)
     static constexpr AsterSymmetryType  etype = aster::ISOTROPIC;
+    //! \brief finite strain formulation used
+    static constexpr AsterFiniteStrainFormulation afsf = aster::UNDEFINEDFINITESTRAINFORMULATION;
   }; // end of class ASTERTraits
 
 } // end of namespace aster  

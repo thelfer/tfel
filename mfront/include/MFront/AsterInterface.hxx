@@ -25,8 +25,16 @@ namespace mfront{
   struct AsterInterface
     : public UMATInterfaceBase
   {
-    static std::string 
-    getName(void);
+    /*!
+     * \brief list o supported finite strain formulation.
+     */
+    enum AsterFiniteStrainFormulation{
+      SIMO_MIEHE, 
+      GROT_GDEP,
+      UNDEFINEDFINITESTRAINFORMULATION
+    }; // end of enum AsterFiniteStrainFormulation
+    
+    static std::string getName(void);
     
     AsterInterface();
     /*!
@@ -153,16 +161,18 @@ namespace mfront{
     virtual std::set<Hypothesis>
     getModellingHypothesesToBeTreated(const BehaviourDescription&) const override;
 
-    bool   compareToNumericalTangentOperator;
+    bool compareToNumericalTangentOperator = false;
 
-    double strainPerturbationValue;
+    double strainPerturbationValue = 1.e-6;
 
-    double tangentOperatorComparisonCriterion;
+    double tangentOperatorComparisonCriterion = 1.e7;
 
-    bool savesTangentOperator;
+    AsterFiniteStrainFormulation afsf = UNDEFINEDFINITESTRAINFORMULATION;
+    
+    bool savesTangentOperator = false;
 
-    bool errorReport;
-
+    bool errorReport = true;
+    
   }; // end of AsterInterface
 
 } // end of namespace mfront

@@ -18,12 +18,17 @@
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/t2tost2.hxx"
+#include"TFEL/Math/st2tost2.hxx"
+#include"TFEL/Math/Stensor/StensorView.hxx"
 #include"TFEL/Math/T2toST2/T2toST2ConceptIO.hxx"
+#include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
+#include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Aster/Aster.hxx"
 #include"MFront/Aster/AsterComputeStiffnessTensor.hxx"
 
 #include"MTest/CurrentState.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
+#include"MTest/UmatNormaliseTangentOperator.hxx"
 #include"MTest/AsterFiniteStrainBehaviour.hxx"
 
 namespace mtest
@@ -119,7 +124,19 @@ namespace mtest
 							 const std::string& l,
 							 const std::string& b)
     : AsterStandardBehaviour(h,l,b)
-  {}
+  {
+    auto& elm     = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    const auto fs = elm.getAsterFiniteStrainFormulation(l,b);
+    if(fs==1){
+      this->afsf = 1u;
+    } else if(fs==2){
+      this->afsf = 2u;
+    } else {
+      throw(std::runtime_error("AsterFiniteStrainBehaviour::AsterFiniteStrainBehaviour: "
+			       "invalid finite strain formulation for behaviour '"+b+"' "
+			       "in library '"+l+"'"));
+    }
+  } // end of AsterFiniteStrainBehaviour::AsterFiniteStrainBehaviour
 
   void
   AsterFiniteStrainBehaviour::getDrivingVariablesDefaultInitialValues(tfel::math::vector<real>& v) const
@@ -132,7 +149,9 @@ namespace mtest
   AsterFiniteStrainBehaviour::allocate(BehaviourWorkSpace& wk) const
   {
     AsterStandardBehaviour::allocate(wk);
-    wk.D.resize(6u,9u);
+    if(this->afsf==1u){
+      wk.D.resize(6u,9u);
+    }
   }
 
   std::pair<bool,real>
@@ -145,8 +164,13 @@ namespace mtest
   {
     using namespace std;
     using namespace tfel::math;
+    using namespace tfel::material;
     using namespace aster;
     using tfel::math::vector;
+    using TangentOperator = tfel::material::FiniteStrainBehaviourTangentOperatorBase;
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("AsterFiniteStrainBehaviour::call_behaviour: "+m));}
+    };
     constexpr const auto sqrt2 = Cste<real>::sqrt2;
     AsterInt ntens;
     AsterInt dimension;
@@ -171,8 +195,7 @@ namespace mtest
       dimension = 3u;
       nummod = 3u;
     } else {
-      throw(runtime_error("AsterFiniteStrainBehaviour::call_behaviour: "
-			  "unsupported hypothesis"));
+      throw_if(true,"unsupported hypothesis");
     }
     fill(wk.D.begin(),wk.D.end(),0.);
     // choosing the type of stiffness matrix
@@ -217,8 +240,7 @@ namespace mtest
       uu0(2,1) = s.e0(7); uu1(2,1) = s.e1(7);
       uu0(1,2) = s.e0(8); uu1(1,2) = s.e1(8);
     } else {
-      throw(runtime_error("UmatFiniteStrainBehaviour::integrate: "
-			  "unsupported hypothesis"));
+      throw_if(true,"unsupported hypothesis");
     }
     copy(s.s0.begin(),s.s0.end(),s.s1.begin());
     for(unsigned short i=3;i!=static_cast<unsigned short>(ntens);++i){
@@ -242,14 +264,59 @@ namespace mtest
       for(unsigned short i=3;i!=static_cast<unsigned short>(ntens);++i){
 	s.s1(i) *= sqrt2;
       }
+      if(this->afsf==2u){
+	// converting pk2-stress to cauchy stress
+	if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	  const stensor<3u,real> pk2(&s.s1[0]);
+	  StensorView<3u,real> sig(&s.s1[0]);
+	  sig = convertSecondPiolaKirchhoffStressToCauchyStress(pk2,tensor<3u,real>(&s.e1[0]));
+	} else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+		   (h==ModellingHypothesis::PLANESTRAIN)||
+		   (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	  const stensor<2u,real> pk2(&s.s1[0]);
+	  StensorView<2u,real> sig(&s.s1[0]);
+	  sig = convertSecondPiolaKirchhoffStressToCauchyStress(pk2,tensor<2u,real>(&s.e1[0]));
+	} else if (h==ModellingHypothesis::PLANESTRESS){
+	  throw_if(true,"plane stress modelling hypothesis is not supported");
+	} else {
+	  throw_if(true,"unsupported hypothesis");
+	}
+	
+      }
     }
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){
-      if(dimension==1u){
-	convertTangentOperator<1u>(Kt,wk.D,s.s1,s.e0,s.e1);
-      } else if(dimension==2u){
-	convertTangentOperator<2u>(Kt,wk.D,s.s1,s.e0,s.e1);
-      } else if(dimension==3u){
-	convertTangentOperator<3u>(Kt,wk.D,s.s1,s.e0,s.e1);
+      if(this->afsf==1u){
+	if(dimension==1u){
+	  convertTangentOperator<1u>(Kt,wk.D,s.s1,s.e0,s.e1);
+	} else if(dimension==2u){
+	  convertTangentOperator<2u>(Kt,wk.D,s.s1,s.e0,s.e1);
+	} else if(dimension==3u){
+	  convertTangentOperator<3u>(Kt,wk.D,s.s1,s.e0,s.e1);
+	}
+      } else if(this->afsf==2u){
+	if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	  st2tost2<3u,real> K;
+	  UmatNormaliseTangentOperator::exe(&K(0,0),wk.D,3u);
+	  const auto ds = convert<TangentOperator::DSIG_DF,
+				  TangentOperator::DS_DEGL>(K,tensor<3u,real>(&s.e0[0]),
+							    tensor<3u,real>(&s.e1[0]),
+							    stensor<3u,real>(&s.s1[0]));
+	  std::copy(ds.begin(),ds.end(),Kt.begin());
+	} else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+		   (h==ModellingHypothesis::PLANESTRAIN)||
+		   (h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	  st2tost2<2u,real> K;
+	  UmatNormaliseTangentOperator::exe(&K(0,0),wk.D,2u);
+	  const auto ds = convert<TangentOperator::DSIG_DF,
+				  TangentOperator::DS_DEGL>(K,tensor<2u,real>(&s.e0[0]),
+							    tensor<2u,real>(&s.e1[0]),
+							    stensor<2u,real>(&s.s1[0]));
+	  std::copy(ds.begin(),ds.end(),Kt.begin());
+	} else if (h==ModellingHypothesis::PLANESTRESS){
+	  throw_if(true,"plane stress modelling hypothesis is not supported");
+	} else {
+	  throw_if(true,"unsupported hypothesis");
+	}
       }
     }
     return {true,ndt};

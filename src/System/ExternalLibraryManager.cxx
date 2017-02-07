@@ -568,6 +568,33 @@ namespace tfel
     } // end of ExternalLibraryManager::checkIfAsterBehaviourSaveTangentOperator
 
     unsigned short
+    ExternalLibraryManager::getAsterFiniteStrainFormulation(const std::string& l,
+							    const std::string& f)
+    {
+      const auto lib = this->loadLibrary(l);
+      const auto s   = f+"_FiniteStrainFormulation";
+      const auto res = ::tfel_getUnsignedShort(lib,s.c_str());
+      if(res<0){
+	auto msg = std::string("ExternalLibraryManager::"
+			       "getAsterFiniteStrainFormulation: "
+			       "information could not be read (");
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+	msg += getLastWin32Error();
+#else
+	msg += ::dlerror();
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+	msg += ")";
+	throw(std::runtime_error(std::move(msg)));
+      }
+      if((res!=1)&&(res!=2)){
+	throw(std::runtime_error("ExternalLibraryManager::"
+				 "getAsterFiniteStrainFormulation: "
+				 "invalid returned value"));
+      }
+      return static_cast<unsigned short>(res);
+    } // end of ExternalLibraryManager::getAsterFiniteStrainFormulation
+    
+    unsigned short
     ExternalLibraryManager::getAbaqusOrthotropyManagementPolicy(const std::string& l,
 								const std::string& f)
     {

@@ -153,7 +153,7 @@ namespace aster
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
       Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
-      handler.exe(DDSOE,STRESS,STATEV);
+      handler.exe(DDSOE,STRESS,STATEV,nullptr);
     } // end of AsterOrthotropicBehaviourHander<1u,Behaviour>::exe
   }; // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
 
@@ -206,7 +206,7 @@ namespace aster
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSOE,s,STATEV);
+      handler.exe(DDSOE,s,STATEV,nullptr);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
 	m.rotateTangentOperatorBackward(DDSOE);
@@ -266,7 +266,7 @@ namespace aster
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSOE,s,STATEV);
+      handler.exe(DDSOE,s,STATEV,nullptr);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
 	m.rotateTangentOperatorBackward(DDSOE);
@@ -324,7 +324,7 @@ namespace aster
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSOE,s,STATEV);
+      handler.exe(DDSOE,s,STATEV,nullptr);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
 	m.rotateTangentOperatorBackward(DDSOE);
@@ -385,7 +385,7 @@ namespace aster
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
       Handler handler(DTIME,F0,F1,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
-      handler.exe(DDSOE,STRESS,STATEV);
+      handler.exe(DDSOE,STRESS,STATEV,F1);
     } // end of AsterOrthotropicBehaviourHander<1u,Behaviour>::exe
   }; // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
 
@@ -438,7 +438,7 @@ namespace aster
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSOE,s,STATEV);
+      handler.exe(DDSOE,s,STATEV,F1m);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
 	m.rotateTangentOperatorBackward(DDSOE);
@@ -499,7 +499,7 @@ namespace aster
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSOE,s,STATEV);
+      handler.exe(DDSOE,s,STATEV,F1m);
       m.rotateStressesBackward(s,STRESS);
       if(bDDSOE){
 	m.rotateTangentOperatorBackward(DDSOE);
@@ -557,7 +557,7 @@ namespace aster
       const bool bDDSOE = std::abs(*DDSOE)>0.5; 
       Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
 		      PREDEF,DPRED,STATEV,sm,op,sfeh);
-      handler.exe(DDSOE,sm,STATEV);
+      handler.exe(DDSOE,sm,STATEV,F1m);
       m.rotateStressesBackward(sm,STRESS);
       if(bDDSOE){
 	m.rotateTangentOperatorBackward(DDSOE);

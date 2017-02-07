@@ -136,6 +136,7 @@ if(HAVE_ASTER)
   install_mfront_header(MFront/Aster AsterComputeStiffnessTensor.hxx)
   install_mfront_header(MFront/Aster AsterStressFreeExpansionHandler.hxx)
   install_mfront_header(MFront/Aster AsterComputeThermalExpansionCoefficientTensor.hxx)
+  install_mfront_header(MFront/Aster AsterConvertStress.hxx)
 endif(HAVE_ASTER)
 
 if(HAVE_ABAQUS)

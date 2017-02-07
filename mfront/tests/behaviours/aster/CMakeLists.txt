@@ -75,6 +75,7 @@ set(mfront_tests_SOURCES
   SaintVenantKirchhoffElasticity
   SaintVenantKirchhoffElasticity2
   SaintVenantKirchhoffElasticity3
+  SaintVenantKirchhoffElasticityTotalLagrangian
   FiniteStrainSingleCrystal
   FiniteStrainSingleCrystal_NumericalJacobian
   ComputeStressFreeExpansion
@@ -321,6 +322,26 @@ test_aster(saintvenantkirchhoffelasticity-shear-3-3D)
 test_aster(saintvenantkirchhoffelasticity-shear-4-3D)
 test_aster(saintvenantkirchhoffelasticity-shear-5-3D)
 test_aster(saintvenantkirchhoffelasticity-shear-6-3D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig11-2D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig22-2D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig33-2D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig11-3D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig22-3D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig33-3D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-1-2D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-2-2D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-3-2D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-shear-1-2D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-shear-2-2D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-1-3D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-2-3D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-3-3D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-shear-1-3D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-shear-2-3D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-shear-3-3D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-shear-4-3D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-shear-5-3D)
+test_aster(saintvenantkirchhoffelasticitytotallagrangian-shear-6-3D)
 test_aster(saintvenantkirchhoffelasticity2-uniaxialloading-1-2D)
 test_aster(saintvenantkirchhoffelasticity2-uniaxialloading-2-2D)
 test_aster(saintvenantkirchhoffelasticity2-uniaxialloading-3-2D)

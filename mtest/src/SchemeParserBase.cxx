@@ -280,8 +280,8 @@ namespace mtest{
   } // end of SchemeParserBase::handleIronsTuckAccelerationTrigger
 
 
-  void
-  SchemeParserBase::handleStiffnessUpdatePolicy(SchemeBase& t,tokens_iterator& p)
+  void SchemeParserBase::handleStiffnessUpdatePolicy(SchemeBase& t,
+						     tokens_iterator& p)
   {
     StiffnessUpdatingPolicy ks;
     const auto& type = this->readString(p,this->tokens.end());
@@ -300,25 +300,24 @@ namespace mtest{
     t.setStiffnessUpdatingPolicy(ks);
   }
 
-  void
-  SchemeParserBase::handleMaximumNumberOfIterations(SchemeBase& t,tokens_iterator& p)
+  void SchemeParserBase::handleMaximumNumberOfIterations(SchemeBase& t,
+							 tokens_iterator& p)
   {
     t.setMaximumNumberOfIterations(this->readUnsignedInt(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleMaximumNumberOfIterations",";",
 			     p,this->tokens.end());
   } // end of SchemeParserBase::handleMaximumNumberOfIterations
 
-  void
-  SchemeParserBase::handleMaximumNumberOfSubSteps(SchemeBase& t,tokens_iterator& p)
+  void SchemeParserBase::handleMaximumNumberOfSubSteps(SchemeBase& t,
+						       tokens_iterator& p)
   {
     t.setMaximumNumberOfSubSteps(this->readUnsignedInt(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleMaximumNumberOfSubSteps",";",
 			     p,this->tokens.end());
   } // end of SchemeParserBase::handleMaximumNumberOfSubSteps
 
-  void
-  SchemeParserBase::handleOutputFrequency(SchemeBase& t,
-					  tokens_iterator& p)
+  void SchemeParserBase::handleOutputFrequency(SchemeBase& t,
+					       tokens_iterator& p)
   {
     const auto v = this->readString(p,this->tokens.end());
     if(v=="UserDefinedTimes"){
@@ -353,36 +352,32 @@ namespace mtest{
 			     p,this->tokens.end());
   }
   
-  void
-  SchemeParserBase::handleMaximalTimeStep(SchemeBase& t,
-					  tokens_iterator& p)
+  void SchemeParserBase::handleMaximalTimeStep(SchemeBase& t,
+					       tokens_iterator& p)
   {
     t.setMaximalTimeStep(this->readDouble(t,p));
     this->readSpecifiedToken("SchemeParserBase::handleMaximalTimeStep",";",
 			     p,this->tokens.end());
   }
 
-  void
-  SchemeParserBase::handleMinimalTimeStep(SchemeBase& t,
-					  tokens_iterator& p)
+  void SchemeParserBase::handleMinimalTimeStep(SchemeBase& t,
+					       tokens_iterator& p)
   {
     t.setMinimalTimeStep(this->readDouble(t,p));
     this->readSpecifiedToken("SchemeParserBase::handleMinimalTimeStep",";",
 			     p,this->tokens.end());
   }
 
-  void
-  SchemeParserBase::handleMinimalTimeStepScalingFactor(SchemeBase& t,
-						       tokens_iterator& p)
+  void SchemeParserBase::handleMinimalTimeStepScalingFactor(SchemeBase& t,
+							    tokens_iterator& p)
   {
     t.setMinimalTimeStepScalingFactor(this->readDouble(t,p));
     this->readSpecifiedToken("SchemeParserBase::handleMinimalTimeStepScalingFactor",";",
 			     p,this->tokens.end());
   }
 
-  void
-  SchemeParserBase::handleMaximalTimeStepScalingFactor(SchemeBase& t,
-						       tokens_iterator& p)
+  void SchemeParserBase::handleMaximalTimeStepScalingFactor(SchemeBase& t,
+							    tokens_iterator& p)
   {
     t.setMaximalTimeStepScalingFactor(this->readDouble(t,p));
     this->readSpecifiedToken("SchemeParserBase::handleMaximalTimeStepScalingFactor",";",
@@ -412,8 +407,7 @@ namespace mtest{
     return res;
   }
 
-  void
-  SchemeParserBase::handleTimes(SchemeBase& t,tokens_iterator& p)
+  void SchemeParserBase::handleTimes(SchemeBase& t,tokens_iterator& p)
   {
     using namespace std;
     enum {ARRAY,FILE} entry_type = ARRAY;
