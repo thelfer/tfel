@@ -431,6 +431,18 @@ then
     AC_DEFINE(HAVE_ABAQUS)
 fi
 
+#ansys
+AC_ARG_ENABLE([ansys],
+               AC_HELP_STRING([--enable-ansys],
+		   [build ansys interface for mechanical behaviours]),
+	       [enable_ansys=true],
+	       [enable_ansys=false])
+AM_CONDITIONAL(HAVE_ANSYS,[test x"$enable_ansys" = "xtrue"])
+if(test "x$enable_ansys" = "xtrue")
+then
+    AC_DEFINE(HAVE_ANSYS)
+fi
+
 #europlexus
 AC_ARG_ENABLE([europlexus],
                AC_HELP_STRING([--enable-europlexus],
@@ -536,6 +548,7 @@ AC_OUTPUT([debug.sh
 	   docs/mfront/abaqus/Makefile
 	   docs/mfront/abaqus/abaqus.tex
 	   docs/mfront/abaqus/Makefile.doc
+  	   docs/mfront/ansys/Makefile
 	   docs/mfront/glossary.tex
 	   docs/presentations/Makefile
 	   docs/presentations/mfront-presentation/Makefile
@@ -1142,6 +1155,34 @@ AC_OUTPUT([debug.sh
    	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitorthotropicswelling2.mtest
    	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitaxialgrowth.mtest
 	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitimplicitsimomieheelastoplasticity.mtest
+           mfront/tests/behaviours/ansys/Makefile
+	   mfront/tests/behaviours/ansys/ansyselasticity.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity2.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity3.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity4.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity5.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity6.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity7.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity8.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity9.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity10.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity11.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity12.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity13.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity14.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity15.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity16.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity24.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity25.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity26.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity27.mtest
+	   mfront/tests/behaviours/ansys/ansyselasticity33.mtest
+	   mfront/tests/behaviours/ansys/ansysmaterialpropertiesboundscheck2.mtest
+	   mfront/tests/behaviours/ansys/ansysmaterialpropertiesboundscheck3.mtest
+	   mfront/tests/behaviours/ansys/ansysmaterialpropertiesboundscheck4.mtest
+	   mfront/tests/behaviours/ansys/ansysmaterialpropertiesboundscheck5.mtest
+	   mfront/tests/behaviours/ansys/ansysmaterialpropertiesboundscheck6.mtest
+	   mfront/tests/behaviours/ansys/ansysmaterialpropertiesboundscheck.mtest
 	   mfront/tests/behaviours/bricks/Makefile
 	   mfront/tests/behaviours/bricks/castem/Makefile
 	   mfront/tests/behaviours/bricks/cyrano/Makefile

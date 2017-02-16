@@ -14,7 +14,7 @@ namespace abaqus{
 
   /*!
    * \brief class defining the convertion from abaqus to mfront for
-   * thermodynamic forces
+   * driving variables
    * \tparam H: modelling hypothesis
    */
   template<tfel::material::ModellingHypothesis::Hypothesis H>

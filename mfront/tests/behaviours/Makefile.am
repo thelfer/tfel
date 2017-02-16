@@ -3,7 +3,8 @@ SUBDIRS = unit-tests bricks                              \
 	  steffensen ironstuck  alternatesecant          \
 	  alternatedelta2 alternate2delta crossedsecant  \
 	  crosseddelta2 crossed2delta crossed2deltabis   \
-	  abaqus  abaqus-explicit uanderson fanderson
+	  abaqus abaqus-explicit uanderson fanderson     \
+          ansys
 
 MFRONTS= DDIF2.mfront                                                      \
          MaterialPropertiesBoundsCheck.mfront                              \

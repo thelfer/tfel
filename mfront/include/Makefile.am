@@ -237,6 +237,28 @@ nobase_include_HEADERS += MFront/Abaqus/Abaqus.hxx                              
 			  MFront/AbaqusExplicitInterface.hxx
 endif
 
+if HAVE_ANSYS
+nobase_include_HEADERS += MFront/Ansys/Ansys.hxx                                         \
+			  MFront/Ansys/AnsysData.hxx                                     \
+			  MFront/Ansys/AnsysConvert.hxx                                  \
+			  MFront/Ansys/AnsysOrthotropicBehaviour.hxx                     \
+			  MFront/Ansys/AnsysRotation.hxx                                 \
+			  MFront/Ansys/AnsysRotation.ixx                                 \
+			  MFront/Ansys/AnsysConfig.hxx                                   \
+			  MFront/Ansys/AnsysTraits.hxx                                   \
+			  MFront/Ansys/AnsysException.hxx 		                   \
+			  MFront/Ansys/AnsysInterface.hxx	                           \
+			  MFront/Ansys/AnsysInterfaceExceptions.hxx                      \
+			  MFront/Ansys/AnsysBehaviourHandler.hxx                         \
+			  MFront/Ansys/AnsysComputeStiffnessTensor.hxx                   \
+			  MFront/Ansys/AnsysComputeThermalExpansionCoefficientTensor.hxx \
+			  MFront/Ansys/AnsysStressFreeExpansionHandler.hxx               \
+			  MFront/Ansys/AnsysTangentOperator.hxx                          \
+			  MFront/Ansys/AnsysTangentOperator.ixx                          \
+			  MFront/Ansys/AnsysFiniteStrain.hxx                             \
+			  MFront/AnsysInterface.hxx	                                 
+endif
+
 if HAVE_EUROPLEXUS
 nobase_include_HEADERS += MFront/Europlexus/Europlexus.hxx                                         \
 			  MFront/Europlexus/EuroplexusOrthotropicBehaviour.hxx                     \

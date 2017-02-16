@@ -204,6 +204,12 @@ namespace tfel
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
+      AnsysFctPtr getAnsysExternalBehaviourFunction(const std::string&,
+						    const std::string&);
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
       AbaqusExplicitFctPtr
       getAbaqusExplicitExternalBehaviourFunction(const std::string&,
 						 const std::string&);

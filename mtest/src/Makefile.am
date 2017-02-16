@@ -116,6 +116,13 @@ libTFELMTest_la_SOURCES += AbaqusStandardBehaviour.cxx     \
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAbaqusInterface
 endif
 
+if HAVE_ANSYS
+libTFELMTest_la_SOURCES += AnsysStandardBehaviour.cxx        \
+			   AnsysSmallStrainBehaviour.cxx     \
+			   AnsysNormaliseTangentOperator.cxx
+libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAnsysInterface
+endif
+
 if HAVE_CYRANO
 libTFELMTest_la_SOURCES += CyranoBehaviour.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lCyranoInterface

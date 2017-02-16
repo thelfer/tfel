@@ -1,0 +1,514 @@
+% The `MFront` interface to the `ANSYS Mechanical APDL` finite element solver
+% Thomas Helfer
+% 09/02/2017
+
+\newcommand{\Frac}[2]{\displaystyle\frac{\displaystyle #1}{\displaystyle #2}}
+\newcommand{\deriv}[2]{\Frac{\partial #1}{\partial #2}}
+\newcommand{\tenseur}[1]{\underline{#1}}
+\newcommand{\tenseurq}[1]{\underline{\underline{\mathbf{#1}}}}
+\newcommand{\tns}[1]{{\underset{\tilde{}}{\mathbf{#1}}}}
+\newcommand{\transpose}[1]{{#1^{\mathrm{T}}}}
+\newcommand{\tsigma}{\tenseur{\sigma}}
+\newcommand{\ctsigma}{\tenseur{\hat{\sigma}}}
+\newcommand{\ctau}{\tenseur{\hat{\tau}}}
+\newcommand{\cD}{\tenseur{\hat{D}}}
+\newcommand{\cC}{\tenseurq{\hat{C}}}
+\newcommand{\cCtau}{\tenseurq{\hat{C}}^{\tau}}
+\newcommand{\CtJ}{\tenseurq{C}^{\tau\,J}}
+\newcommand{\CsT}{\tenseurq{C}^{\sigma\,T}}
+\newcommand{\CsG}{\tenseurq{C}^{\sigma\,G}}
+\newcommand{\CSE}{\tenseurq{C}^{\mathrm{SE}}}
+\newcommand{\Cs}{\tenseurq{C}^{s}}
+\newcommand{\Cspin}{\tenseurq{C}^{\mathrm{spin}}}
+\newcommand{\CMJ}{\tenseurq{C}^{MJ}}
+\newcommand{\tpld}[1]{\partial^{\star}_{l}\left(#1\right)}
+\newcommand{\tprd}[1]{\partial^{\star}_{r}\left(#1\right)}
+<!-- \newcommand{\paren}[1]{\left(#1\right)} -->
+
+<!-- <div id="slideshow"> -->
+<!--   <ul class="slides"> -->
+<!--   <li> -->
+<!--     <video style="display:block; margin: 0 auto;" width="640" height="320" controls> -->
+<!--       <source src="media/ansys-explicit.mp4" type="video/mp4"> -->
+<!-- 	Your browser does not support the video tag. -->
+<!--     </video> -->
+<!--   </li> -->
+<!--   <li><img src="img/ANSYSFLD.png" width="620" height="320" alt="Simulation of a Punching test" /></li> -->
+<!--   <li><img src="img/ansys-isotropichardening1.png" width="620" height="320" alt="Notched beam under a cyclic loading with an isotropic hardening plastic beahviour" /></li> -->
+<!--   </ul> -->
+<!--   <span class="arrow previous"></span> -->
+<!--   <span class="arrow next"></span> -->
+<!-- </div> -->
+<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> -->
+<!-- <script src="js/slideshow.js"></script> -->
+
+# Introduction
+
+`MFront` version 3.1 provides an interface for the `ANSYS` `Mechanical
+ APDL` (`MAPDL`) finite element solver. This interface is fairly
+ features complete:
+
+- Isotropic and orthotropic materials are supported.
+- Small and finite strain behaviours are supported.
+
+It shall be pointed out that the `ANSYS` solvers has a long
+history. In particular, the design choices made for the `USERMAT`
+interface were meant to allow the users to easily write finite-strain
+behaviours in rate-form.
+
+`MFront` strives to provides behaviours that can be used "just-like"
+other `USERMAT` subroutines, but 
+
+## Limitations
+
+The `USERMAT` subroutines has a number of shortcomings compared with
+other interfaces:
+
+- External state variables are *not* supported.
+- Internal state variables can *not* be initialized to values
+  different from zero.
+- There is no standard way of defining the orthotropic axes for
+  orthotropic behaviours.
+- There is no way of controlling the increase/decrease of the time
+  step.
+
+The choice made to defined the orthotropic axes for orthotropic
+behaviours is detailed below.
+
+## Pitfalls
+
+There are also cases of misuses of the generated libraries that can
+*not* be prevented by `MFront`. The most important ones are the
+following:
+
+- The modelling hypothesis is not passed to the mechanical
+  behaviours. As a consequence, there is not way of distinguishing
+  between the plane strain hypothesis and the axisymmetrical
+  hypothesis, which is mandatory for consistent orthotropic axes
+  management. Therefore, the user has to explicitly call the
+  implementation of the behaviour corresponding to the modelling
+  hypothesis he wants to use, but there is not way to ensure the
+  consistency of this choice and the choice of the modelling
+  hypothesis make for the mechanical computation.
+- Whether the computation takes into account finite strain
+  transformation (non linear geometric effects according to the
+  `ANSYS` wording) is not known to the behaviour, so some misuses of
+  `MFront` behaviours can't be prevented. For example, small strain
+  behaviours can be used in finite strain transformation using the
+  build-in Jauman corotational framework, which is only valid for
+  isotropic behaviours. Using this framework with orthotropic
+  behaviours can't be prevented.
+- The user must respect the order of definition of the material
+  properties, some of them being implicitly defined by `MFront`. For
+  example, we made the choice to pass the orthotropic axes as material
+  properties. Those are automatically inserted at the beginning of the
+  material properties list, after thermo-elastic properties, if the
+  latter are requested. As a consequence, the number of material
+  properties depends on the modelling hypothesis. The user is thus
+  strongly advised to look at the input file example generated by
+  `MFront` to have a consistent definition of the material properties.
+
+## Current status
+
+The `ansys` interface is still in its early stage of development.
+
+# How the use `MFront` behaviours in `ANSYS`
+
+When compiling mechanical behaviours with the `ansys` interface,
+`MFront` generates:
+
+- Shared libraries containing one implementation of the considered
+  behaviours per supported modelling hypotheses.
+- Examples of input files in the `ansys` directory.
+- A copy of a generic `usermat.cpp` file for the `ANSYS` solver.
+
+Those various files and their usage are now described.
+
+## Notes
+
+- The `MFront` libraries are only generated *once*, only the generic
+  files needs to be recompiled at each run. This is very handy since
+  compiling the `MFront` libraries can be time-consuming. Those
+  libraries can be shared between computations and/or between users
+  when placed in a shared folders.
+- The fact that `MFront` generates one implementation per modelling
+  hypothesis allows the distinction between the plane strain
+  hypothesis and the axisymmetrical hypothesis. This is mandatory to
+  consistently handle orthotropy.
+- The name of the library can be changed by renaming it after the
+  compilation or by using the `@Library` keyword.
+
+### Note on libraries locations
+
+As explained above, `MFront` libraries will be loaded at the runtime
+time. This means that the libraries must be found by the dynamic
+loader of the operating system.
+
+#### Under Linux
+
+Under Linux, the search path for dynamic libraries are specified using
+the `LD_LIBRARY_PATH` variable environment. This variable defines a
+colon-separated set of directories where libraries should be searched
+for first, before the standard set of directories.
+
+Depending on the configuration of the system, the current directory
+can be considered by default.
+
+#### Under Windows
+
+Under Windows, the dynamic libraries are searched:
+
+- in the current directory
+- in the directories listed in the `PATH` environment. This
+  variable defines a semicolon-separated set of directories.
+
+## Generated input files
+
+Here is an extract of the generated input file for a `MFront`
+behaviour named `Plasticitiy` for the plane strain modelling
+hypothesis for the `ANSYS` solver:
+
+~~~~{.pure}
+/com, Example for the 'PlaneStrain' modelling hypothesis
+/com, List of material properties
+/com, -YoungModulus
+/com, -PoissonRatio
+/com, -H
+/com, -s0
+tb,user,<mat_id>,<numer of temperatures>,4
+/com, you shall now declare your material properties
+/com, using the tbtemp an tbdata instructions.
+/com, See the Ansys "USER Material Subroutine" guide for details.
+/com, Declaration of state variables
+tb,state,<mat_id>,,5
+~~~~~~~~~~~~~~~
+
+## Compilation of the generic `usermat.cpp` file
+
+The generic `usermat.cpp` file provided by `MFront` has the following
+role:
+
+- Reading a file called `mfront-usermat.dat` that has to be present in
+  the current directory. This file relates an `ANSYS` material
+  identifier to a `MFront` behaviour.
+- Loading the shared library and the behaviours implementation
+  generated by `MFront`.
+- Calling the `MFront` behaviour.
+
+### Relating material identifier and `MFront` behaviours
+
+The `mfront-usermat.dat` file gives a list of commands aimed to
+associate an `ANSYS` material identifier to a `MFront` behaviour. The
+syntax used closely follows `ANSY` `APDL` syntax.
+
+Only two commands are actually supported:
+
+- `/com,` which is used to introduce a comment line.
+- `tb,mfront` which is used to associate an `ANSYS` material
+  identifier to a `MFront` behaviour.
+
+Here is an example of such a file:
+
+~~~~
+/com, Associate the material id 2 to the Chaboche_3D behaviour
+/com, implemented in the libZircaloy4Behaviours.so shared library.
+tb,mfront,2,libZircaloy4Behaviours.so,Chaboche_3D
+/com, Associate the material id 3 to the Creep_3D behaviour
+/com, implemented in the libZircaloy4Behaviours.so shared library.
+tb,mfront,3,libUO2Behaviours.so,Creep_3D
+~~~~
+
+New commands will eventually be introduced as needed to circumvent the
+various shortcomings of the `USERMAT` interface, notably:
+
+- Adding the ability to give initial values to state variables
+- Adding the ability to override the default values of parameters.
+- etc.
+
+# Main features of the `ANSYS` interface
+
+The `ANSYS` solver provides the `USERMAT` interface. In this case, the
+behaviour shall compute:
+
+- The evolution of the state variables.
+- The value the Cauchy stress at the end of the time step.
+- The consistent tangent operator. The definition of the consistent
+  tangent operator is given below.
+
+For finite strain analyses, small strain behaviours can be written in
+rate form. The behaviour in integrated in the Jauman framework,
+**which is only suitable for isotropic behaviours**.
+
+## Supported behaviours
+
+Isotropic and orthotropic behaviours are both supported.
+
+Small and finite strain behaviours are supported.
+
+## Modelling hypotheses
+
+The following modelling hypotheses are supported:
+
+- tridimensional (`3D`)
+- plane strain (`pstrain`)
+- plane stress (including shell elements) (`pstress`)
+- axisymmetrical (`axis`)
+
+The generalised plane strain hypothesis is currently *not* supported.
+
+## Orthotropic behaviours
+
+By nature, orthotropic behaviours are expressed in a preferential
+frame defined by the material orthotropic axes. There is no standard
+way of defining the orthotropic axes in `ANSYS`.
+
+We choose to add the definition of those axes to the list of material
+properties. \(2\) additional material properties are required in
+\(2D\), and \(6\) additional material properties in \(3D\):
+
+- In \(2D\), the two additional material properties are the two
+  components of the vector defining the first axis of the material
+  frame. This vector is thus supposed to be contained in the \(2D\)
+  plane. The second axis is also assumed to be contained in this plane
+  and perpendicular to the first one. With those assumptions, this
+  vector can be deduced from the first one and does not have to be
+  defined. The third direction is required to follow the out-of-plane
+  direction.
+- In \(3D\), the six additional material properties defines two
+  vectors defining respectively the first and second axes of the
+  material frame. The components of the first vectors are given before
+  the components of the second vector. Those vectors are supposed to
+  be orthogonal. The third vector, associated to the third axis, is
+  implicitly given by the cross-product of the two first axes and does
+  not have to be defined.
+
+The user shall use the input file example generated by `MFront` to see
+their relative positions of the material properties associated to the
+definition of the orthotropic axes.
+
+Those definitions are only meaningful if the direction of orthotropy
+are constants.
+
+## Finite strain strategies
+
+Engineers are used to write behaviours based on an additive split of
+strains, as usual in small strain behaviours. Different strategies
+exist to:
+
+- write finite strain behaviours that preserve this property.
+- guarantee some desirable properties such as energetic consistency
+  and objectivity.
+
+Through the `@ANSYSFiniteStrainStrategy`, the user can select on of
+various finite strain strategies supported by `MFront`, which are
+described in this paragraph.
+
+### The `Native` finite strain strategy
+
+Among them is the `Native` finite strain strategy which relies on
+build-in `ANSYS` facilities to integrate the behaviours written in
+rate form. The `Native` finite strain strategy will use the Jauman
+rate.
+
+This strategy has some theoretical drawbacks (hypoelasticity,
+restriction to isotropic behaviours, etc...) and is not portable from
+one code to another.
+
+### Recommended finite strain strategies
+
+Two other finite strain strategies are available in `MFront` for the
+`ansys` interface (see the `@ANSYSFiniteStrainStrategy` keyword):
+
+- `FiniteRotationSmallStrain`: this finite strain strategy is fully
+  described in @doghri_mechanics_2000,@edf_loi_2013
+- `MieheApelLambrechtLogarithmicStrain`: this finite strain strategy
+  is fully described in @miehe_anisotropic_2002 and
+  @edf_modeles_2013. This finite strain strategy is yet to be
+  implemented.
+
+Those two strategies use lagrangian tensors, which automatically
+ensures the objectivity of the behaviour.
+
+Each of these two strategies define an energetic conjugate pair of
+strain or stress tensors:
+
+- For the `FiniteRotationSmallStrain` case, the strain tensor is the
+  Green-Lagrange strain and the conjugated stress is the second
+  Piola-Kirchhoff stress.
+- For the `MieheApelLambrechtLogarithmicStrain`, the strain tensor is
+  the langrangian Hencky strain tensor, i.e. the logarithm of the
+  stretch tensor.
+
+The first strategy is suited for reusing behaviours that were
+identified under the small strain assumptions in a finite rotation
+context. The usage of this behaviour is still limited to the small
+strain assumptions.
+
+The second strategy is particularly suited for metals, as
+incompressible flows are characterized by a deviatoric logarithmic
+strain tensor, which is the exact transposition of the property used
+in small strain behaviours to handle plastic incompressibility. This
+means that all valid consistutive equations for small strain
+behaviours can be automatically reused in finite strain analysis. This
+does *not* mean that a behaviour identified under the small strain
+assumptions can be directly used in a finite strain analysis: the
+identification would not be consistent.
+
+Those two finite strain strategies are fairly portable and are
+available (natively or via `MFront`) in `Cast3M`, `Code_Aster`,
+`Europlexus`, `Abaqus/Standard` and `Abaqus/Explicit` and `Zebulon`,
+etc...
+
+## Consistent tangent operator for finite strain behaviours
+
+The "ANSYS User Subroutines Reference Guide" gives indicates that the
+tangent moduli required by `ANSYS` \(\CMJ\) is closely related to
+\(\tenseurq{C}^{\tau\,J}\), the moduli associated to the Jauman rate
+of the Kirchhoff stress :
+
+\[
+J\,\CMJ=\CtJ
+\]
+
+where \(J\) is the derterminant of the deformation gradient
+\(\tns{F}\).
+
+By definition, \(\CtJ\) satisfies:
+\[
+\overset{\circ}{\tenseur{\tau}}^{J}=\CtJ\,\colon\tenseur{D}
+\]
+where \(\tenseur{D}\) is the rate of deformation.
+
+# Appendix
+
+!["Relation between tangent operators"](img/FiniteStrainTangentOperatorConvertion.svg "Supported relations between tangent operators in `MFront`")
+
+Most information reported here are extracted from the book of
+Belytschko (@belytschko_nonlinear_2000).
+
+## Relations between tangent operator
+
+#### Relation with the moduli associated to the Truesdell rate of the Cauchy Stress $\CsT$
+
+The moduli associated to the Truesdell rate of the Cauchy Stress
+\(\CsT\) is related to \(\CtJ\) by the following relationship:
+
+\[
+\CtJ=J\,\left(\CsT+\tenseurq{C}^{\prime}\right)\quad\text{with}\quad\tenseurq{C}^{\prime}\colon\tenseur{D}=\tsigma\,.\,\tenseur{D}+\tenseur{D}\,.\,\tsigma
+\]
+
+Thus,
+
+\[
+\CMJ=\CsT+\tenseurq{C}^{\prime}
+\]
+
+#### Relation with the spatial moduli $\Cs$
+
+The spatial moduli \(\Cs\) is associated to the Lie
+derivative of the Kirchhoff stress \(\mathcal{L}\tenseur{\tau}\) ,
+which is also called the convected rate or the Oldroyd rate:
+
+\[
+\mathcal{L}\tenseur{\tau}=\Cs\,\colon\,\tenseur{D}
+\]
+
+The spatial moduli is related to the moduli associated to Truesdell
+rate of the Cauchy stress \(\CsT\):
+
+\[
+\CsT=J^{-1}\,\Cs
+\]
+
+Thus, we have:
+\[
+\CMJ = J^{-1}\Cs+\tenseurq{C}^{\prime} = J^{-1}\left(\Cs+\tenseurq{C}^{\prime\prime}\right)\quad\text{with}\quad\tenseurq{C}^{\prime\prime}\colon\tenseur{D}=\tenseur{\tau}\,.\,\tenseur{D}+\tenseur{D}\,.\,\tenseur{\tau}
+\]
+
+<!-- The relationship between \(CsJ\) and -->
+<!-- \(\Cs\) can be expressed in component form as -->
+
+<!-- \[ -->
+<!-- CsJ_{ijlk}=\Cs+I_{ik}\tau_{jl}+I_{jl}\tau_{ik} -->
+<!-- \] -->
+
+<!-- where \tns{I} is the rank 2 identity tensor. -->
+
+#### Relation with $\CSE$ 
+
+The \(\CSE\) relates the rate of the second
+Piola-Kirchhoff stress \(\tenseur{S}\) and the Green-Lagrange strain
+rate \(\tenseur{\varepsilon}^{\mathrm{GL}}\):
+
+\[
+\tenseur{\dot{S}}=\CSE\,\colon\,\tenseur{\dot{\varepsilon}}^{\mathrm{GL}}
+\]
+
+As the Lie derivative of the Kirchhoff stress
+\(\mathcal{L}\tenseur{\tau}\) is the push-forward of the second
+Piola-Kirchhoff stress rate \(\tenseur{\dot{S}}\) and the rate of
+deformation \(\tenseur{D}\) is push-forward of the Green-Lagrange
+strain rate \(\tenseur{\dot{\varepsilon}}^{\mathrm{GL}}\),
+\(\Cs\) is the push-forward of
+\(\CSE\):
+
+\[
+C^{c}_{ijkl}=F_{im}F_{jn}F_{kp}F_{lq}C^{\mathrm{SE}}_{mnpq}
+\]
+
+#### Link with $\deriv{\tsigma}{\tns{F}}$
+
+For all variation of the deformation gradient \(\delta\,\tns{F}\), the
+Jauman rate of the Kirchhoff stress satisfies:
+\[
+\CtJ\,\colon\delta\tenseur{D}=\delta\tenseur{\tau}-\delta\tns{W}.\tenseur{\tau}+\tenseur{\tau}.\delta\tns{W}
+\]
+
+with:
+
+- \(\delta\tns{L}= \delta\tns{F}\,.\,\tns{F}^{-1}\)
+- \(\delta\tns{W}= \Frac{1}{2}\left(\delta\tns{L}-\transpose{\delta\tns{L}}\right)\)
+- \(\delta\tns{D}= \Frac{1}{2}\left(\delta\tns{L}+\transpose{\delta\tns{L}}\right)\)
+
+Thus, the derivative of the Kirchhoff stress with respect to the
+deformation gradient yields:
+\[
+\deriv{\tenseur{\tau}}{\tns{F}}=\CtJ\,.\,\deriv{\tenseur{D}}{\tns{F}}+\left(\tprd{\tau}-\tpld{\tau}\right)\,.\,\deriv{\tns{W}}{\tns{F}}
+\]
+
+with \(\delta\,\tenseur{D}=\deriv{\tenseur{D}}{\tns{F}}\,\colon\,\delta\,\tns{F}\) and \(\delta\,\tns{W}=\deriv{\tns{W}}{\tns{F}}\,\colon\,\delta\,\tns{F}\)
+
+\[
+\deriv{\tsigma}{\tns{F}}=\Frac{1}{J}\left(\deriv{\tenseur{\tau}}{\tns{F}}-\tsigma\,\otimes\,\deriv{J}{\tns{F}}\right)
+\]
+
+### Numerical approximation of \(\CMJ\)
+
+Following @sun_numerical_2008, an numerical approximation of \(\CMJ\)
+is given by:
+\[
+\CMJ_{ijkl}\approx\Frac{1}{J\,\varepsilon}\left(\tenseur{\tau}_{ij}\left(\tns{F}+\tns{\delta F}^{kl}\right)-\tenseur{\tau}_{ij}\left(\tns{F}\right)\right) \]
+
+where the perturbation \(\tns{\delta F}^{kl}\) is given by:
+
+\[
+\tns{\delta F}^{kl}=\Frac{\varepsilon}{2}\left(\vec{e}_{k}\otimes\vec{e}_{l}+\vec{e}_{l}\otimes\vec{e}_{k}\right)\,.\,\tns{F}
+\]
+
+Such perturbation leads to the following rate of deformation:
+\[
+\delta\,\tenseur{D}=\left(\tns{\delta F}^{kl}\right)\,\tns{F}^{-1}=\Frac{\varepsilon}{2}\left(\vec{e}_{k}\otimes\vec{e}_{l}+\vec{e}_{l}\otimes\vec{e}_{k}\right)
+\]
+
+The spin rate \(\delta\,\tenseur{W}\) associated with
+\(\tns{\delta F}^{kl}\) is null.
+
+#### Relation with other moduli
+
+The previous relation can be used to relate to other moduli. See the
+section describing the isotropic case for details.
+
+# Biblography
+
+<!-- Local IspellDict: english -->
+

@@ -38,7 +38,7 @@ behaviour implemented in a file called `plasticity.mfront`.
 > lead to an error in the best case, crashes of `Code_Aster` in the
 > worst case and a wide variety of strange behaviours in between.
 
-> ** `MFront` behaviours officially integrated in `Code_Aster` **
+> **`MFront` behaviours officially integrated in `Code_Aster`**
 >
 > Some mechanical behaviours officially available in `Code_Aster` are
 > natively generated with `MFront`. Those may be distinguished by
@@ -61,7 +61,7 @@ The `aster` interface can be used to introduce:
 # Generating the shared library
 
 The first step can be done as part of a `Code_Aster` simulation or
-before running `Code_Aster`. These two approaches have their
+*before* running `Code_Aster`. These two approaches have their
 advantages and their drawbacks.
 
 The first one is used in `Code_Aster` verification tests
@@ -95,8 +95,8 @@ present in this directory, it must be declared in `astk` as an external
 data file (e.g. with type `nom`)**.
 
 The library is generated in the `src` subdirectory. For convenience,
-this library is often copied in the current directory and renamed with
-an instruction similar to:
+this library is often copied in the current directory and often
+renamed with an instruction similar to:
 
 ~~~~{.python}
 os.system("cp src/libAsterBehaviour.so plasticity.so")

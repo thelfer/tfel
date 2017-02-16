@@ -61,7 +61,7 @@ namespace mfront{
      * \brief return the state variable offset used for variables used
      * internally by the abaqus interface
      * \param[in] mb: behaviour description
-     * \param[in] : behaviour description
+     * \param[in] h:  modelling hypothesis
      */
     virtual unsigned short
     getStateVariablesOffset(const BehaviourDescription&,

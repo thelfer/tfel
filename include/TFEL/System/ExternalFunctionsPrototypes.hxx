@@ -48,9 +48,11 @@ extern "C" {
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
 
   typedef int AbaqusIntegerType;
+  typedef int AnsysIntegerType;
   typedef int EuroplexusIntegerType;
   
   typedef double AbaqusRealType;
+  typedef double AnsysRealType;
   typedef double CyranoRealType;
   typedef double CastemRealType;
   typedef double AsterRealType;
@@ -358,6 +360,52 @@ namespace tfel
 						   AbaqusIntegerType  *const,
 						   const int /* hidden fortran parameter */);
       /*!
+       * a simple alias.
+       * This is the prototype of the external functions used by the
+       * pleiades version of the castem finite element solver
+       */
+      typedef void (TFEL_ADDCALL_PTR AnsysFctPtr)(const AnsysIntegerType *const,
+						  const AnsysIntegerType *const,
+						  const AnsysIntegerType *const,
+						  const AnsysIntegerType *const,
+						  const AnsysIntegerType *const,
+						  const AnsysIntegerType *const,
+						  const AnsysIntegerType *const,
+						  AnsysIntegerType *const,
+						  const AnsysIntegerType *const,
+						  const AnsysIntegerType *const,
+						  const AnsysIntegerType *const,
+						  const AnsysIntegerType *const,
+						  const AnsysIntegerType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const,
+						  AnsysRealType *const,
+						  AnsysRealType *const,
+						  AnsysRealType *const,
+						  AnsysRealType *const,
+						  AnsysRealType *const,
+						  AnsysRealType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const,
+						  AnsysRealType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const,
+						  AnsysRealType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const,
+						  const AnsysRealType *const);
+       /*!
        * a simple alias.
        * This is the prototype of the external functions used by the
        * abaqus explicit solver

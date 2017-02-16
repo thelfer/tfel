@@ -140,6 +140,11 @@ namespace mtest{
       i = "abaqus_explicit";
     }
 #endif /* HAVE_ABAQUS */
+#ifdef HAVE_ANSYS
+    if((p->value=="ansys")||(p->value=="ansys_usermat")){
+      i = "ansys";
+    }
+#endif /* HAVE_ANSYS */
 #ifdef HAVE_CYRANO
     if(p->value=="cyrano"){
       i = p->value;

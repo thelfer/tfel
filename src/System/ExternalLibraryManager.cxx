@@ -700,6 +700,26 @@ namespace tfel
       return fct;
     }
 
+    AnsysFctPtr
+    ExternalLibraryManager::getAnsysExternalBehaviourFunction(const std::string& l,
+							      const std::string& f)
+    {
+      const auto lib = this->loadLibrary(l);
+      const auto fct = ::tfel_getAnsysExternalBehaviourFunction(lib,f.c_str());
+      if(fct==nullptr){
+	auto msg = std::string("ExternalLibraryManager::getAnsysExternalBehaviourFunction : ");
+	msg += " could not load Ansys external behaviour '"+f+"' (";
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+	msg += getLastWin32Error();
+#else
+	msg += ::dlerror();
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+	msg += ")";
+	throw(std::runtime_error(msg));
+      }
+      return fct;
+    }
+    
     AbaqusExplicitFctPtr
     ExternalLibraryManager::getAbaqusExplicitExternalBehaviourFunction(const std::string& l,
 								       const std::string& f)

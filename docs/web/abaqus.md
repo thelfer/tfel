@@ -48,8 +48,8 @@
 and `Abaqus/Explicit` finite element solvers. Those interfaces are
 fairly features complete:
 
-- isotropic and orthotropic materials are supported.
-- small and finite strain behaviours are supported.
+- Isotropic and orthotropic materials are supported.
+- Small and finite strain behaviours are supported.
 
 It shall be pointed out that the `Abaqus/Standard` and
 `Abaqus/Explicit` solvers have a long history. In particular, the
@@ -66,9 +66,9 @@ finite strain orthotropic behaviours) where we were obliged to make
 some unusual choices that are described in this document for various
 reasons:
 
-- ensure the compatibility between the `Abaqus/Standard` and
+- Ensure the compatibility between the `Abaqus/Standard` and
   `Abaqus/Explicit`.
-- have optimal performances.
+- Have optimal performances.
 
 ## Pitfalls
 
@@ -88,9 +88,9 @@ following:
   aware that when using the `Native` finite strain strategy, results
   will depend on the fact that an orientation is defined or
   not*. Indeed the `Native` finite strain strategy will use:
-	- the Jauman rate if no orientation is defined. In this case,
+	- The Jauman rate if no orientation is defined. In this case,
 	  all internal state variables are rotated appropriately.
-	- the corotationnal frame defined through the polar decomposition
+	- The corotationnal frame defined through the polar decomposition
       of the deformation gradient if an orientation is defined.
   Futhermore, behaviours using the `Native` finite strain strategy (or
   no strategy at all) can not be ported to other solver. If
@@ -642,4 +642,3 @@ section describing the isotropic case for details.
 # Biblography
 
 <!-- Local IspellDict: english -->
-

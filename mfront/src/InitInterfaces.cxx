@@ -60,6 +60,10 @@
 #include"MFront/AbaqusExplicitInterface.hxx"
 #endif
 
+#ifdef HAVE_ANSYS
+#include"MFront/AnsysInterface.hxx"
+#endif
+
 #ifdef HAVE_EUROPLEXUS
 #include"MFront/EuroplexusInterface.hxx"
 #endif
@@ -133,6 +137,10 @@ namespace mfront
     BehaviourInterfaceProxy<AbaqusExplicitInterface> abaqusExplicitProxy;
 #endif /* HAVE_ABAQUS */
 
+#ifdef HAVE_ANSYS
+    BehaviourInterfaceProxy<AnsysInterface>         ansysProxy;
+#endif /* HAVE_ANSYS */
+    
 #ifdef HAVE_EUROPLEXUS
     BehaviourInterfaceProxy<EuroplexusInterface> europlexusProxy;
 #endif /* HAVE_EUROPLEXUS */

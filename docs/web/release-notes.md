@@ -105,141 +105,16 @@ A full description of the 2.0.3 release can be found
 
 The 2.1.x versions will be the last versions based build on C++98.
 
-# Versions 3.0.x
+# Versions 3.x
 
-The version 3.0.x will be based on the C++11 standard. This implied a
-major code refactoring. In particular, the expression template engine
-was greatly simplified and is now much more liable and maintainable.
+## Versions 3.0.x
 
-## New features
+- [release notes of version 3.0.0](release-notes-3.0.html)
+- [release notes of version 3.0.1](release-notes-3.0.1.html)
 
-- new applications:
-    + `mfront-query` can be used to extract various information from
-      a `MFront` file
-	+ `mfront-doc` can be used to generate a documentations from a
-      mfront file. `mfront-doc` generates files in `pandoc`
-      [markdown format](http://pandoc.org/demo/example9/pandocs-markdown.html). Those
-      files can be processed using [`pandoc`](http://pandoc.org/) and
-      be converted to one of the many file format supported by
-      [`pandoc`](http://pandoc.org/), including
-      [`LaTeX`](www.latex-project.org), `html` or various Word
-      processor formats: Microsoft Word
-      [docx](http://www.microsoft.com/interop/openup/openxml/default.aspx),
-      OpenOffice/LibreOffice
-      [ODT](http://en.wikipedia.org/wiki/OpenDocument).
-- new material properties interfaces:
-	+ `fortran03` which relies on several features of the 2003 Fortran
-      standard:
-	  * include files and interfaces which leads to a much safer
-        language
-	  * standard bindings to `C` functions
-	+ `java` designed for the
-      [`java` language](http://www.oracle.com/fr/java/overview/index.html).
-  	+ `octave` designed for
-	  [`GNU Octave`](https://www.gnu.org/software/octave/) which is
-      a high-level interpreted language, primarily intended for
-      numerical computations.
-- `MFront` new features
-	+ behaviour bricks
-	+ support of thermal expansion computations in behaviours
-	+ support of calling models from behaviours
-	+ add the '--help-commands' command to `MFront`. This option displays
-	  the documentation of all the keywords of a given domain specific
-	  language. This option was used to generate the following pages:
-	    * [DefaultDSL](DefaultDSL-keywords.html) 
-	    * [DefaultCZMDSL](DefaultCZMDSL-keywords.html) 
-	    * [DefaultFiniteStrainDSL](DefaultFiniteStrainDSL-keywords.html) 
-	    * [Implicit](Implicit-keywords.html) 
-	    * [ImplicitFiniteStrain](ImplicitFiniteStrain-keywords.html) 
-	    * [ImplicitII](ImplicitII-keywords.html) 
-	    * [IsotropicMisesCreep](IsotropicMisesCreep-keywords.html) 
-	    * [IsotropicPlasticMisesFlow](IsotropicPlasticMisesFlow-keywords.html) 
-	    * [IsotropicStrainHardeningMisesCreep](IsotropicStrainHardeningMisesCreep-keywords.html) 
-	    * [MaterialLaw](MaterialLaw-keywords.html) 
-	    * [Model](Model-keywords.html) 
-	    * [MultipleIsotropicMisesFlows](MultipleIsotropicMisesFlows-keywords.html) 
-	    * [RungeKutta](RungeKutta-keywords.html)
-- `MTest` new features
-	+ new acceleration algorithms by I. Ramière. This work has been
-      described in a dedicated paper, see @ramiere_iterative_2015.
-	+ add the '--help-commands' command to `MTest`. This option displays
-	  the documentation of all the keywords. This option was used to
-	  generate this [page](MTest-keywords.html).
-- `TFEL/Math` library
-    + add a bunch of view classes (`StensorView` for example) to avoid
-      some `reinterpret_cast` that relied on the empty base
-      optimization performed by all compilers, except Visual
-      C++. `TFEL` and `MFront` are now even more standard compliant
-      and portable.
+## Versions 3.1.x
 
-## Solved Tickets
-
-### [Tickets #31](https://sourceforge.net/p/tfel/tickets/31)
-
-To be consistent with the `MTest` input file keywords, the following
-methods have been added to the `MTest` class of the` mtest` `python`
-module:
-
-- `setStrainEpsilon` (valid for small strain behaviours)
-- `setDeformationGradientEpsilon` (valid for finite strain behaviours)
-- `setOpeningDisplacementEpsilon` (valid for cohesive zone models)
-- `setStressEpsilon` (valid for small and finite strain behaviours)
-- `setCohesiveForceEpsilon`  (valid for cohesive zone models)
-
-### [Tickets #32](https://sourceforge.net/p/tfel/tickets/32)
-
-The `python` interface did not allow to initialize the values of the
-driving variables (deformation, deformation gradient or displacement
-jump) or the thermodynamic forces (Cauchy stress or cohesive force).
-
-The `setDrivingVariablesInitialValues` and the
-`setThermodynamicForcesInitialValues` methods were added the `MTest`
-class of the` mtest` `python` module to solve this issue.
-
-To be consistent with the `MTest` input file keywords, the following
-methods have also been added to the `MTest` class of the` mtest`
-`python` module:
-
-- `setStrain` (valid for small strain behaviours)
-- `setDeformationGradient` (valid for finite strain behaviours)
-- `setOpeningDisplacement` (valid for cohesive zone models)
-- `setStress` (valid for small and finite strain behaviours)
-- `setCohesiveForce`  (valid for cohesive zone models)
-
-## Systems supported
-
-Version 3.0.x of `TFEL/MFront` will be available on the following
-systems:
-
-- `LiNuX`
-- `Mac Os X`
-- `Windows`. The port to `Visual Studio 2015` is the first step toward
-  a industrial strength support of this platform. However, du to the
-  very nature of this platform, a direct use of `MFront` is
-  discouraged. One shall consider creating a material knowledge
-  management project based on `cmake` to build material librairies.
-
-Various Unix-based systems have been tested and shall work out of the
-box, including `FreeBSD` and `PCBSD`.
-
-## Compiler support
-
-Version 3.0.x were tested using:
-
-- [`gcc`](https://gcc.gnu.org/)
-- [`clang`](http://clang.llvm.org/)
-- [`intel`](https://software.intel.com/en-us/intel-compilers)
-- [`Visual Studio`](https://www.visualstudio.com/)
-- [`mingw`](http://www.mingw.org/)
-- [`cygwin`](https://www.visualstudio.com)
-
-[Intel compilers 15](https://software.intel.com/en-us/intel-compilers)
-are known not to work due to a bug in the [EDG](https://www.edg.com)
-front-end that can't parse a syntax mandatory for the expression
-template engine. The same bug affects the
-[Blitz++](http://sourceforge.net/projects/blitz/) library:
-
-<http://dsec.pku.edu.cn/~mendl/blitz/manual/blitz11.html>
+- [release notes of version 3.1.0](release-notes-3.1.html)
 
 # References
 

@@ -121,8 +121,6 @@ namespace mtest
     tfel::system::AbaqusFctPtr fct;
     //! orthotropy management policy
     unsigned short omp = 0u;
-    //! save tangent operator
-    bool savesTangentOperator = false;
   }; // end of struct Behaviour
   
 } // end of namespace mtest

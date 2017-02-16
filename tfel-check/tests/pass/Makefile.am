@@ -1,6 +1,6 @@
 checkfiles:
-	if test "@top_srcdir@" != "@top_builddir@";                                 \
-	then                                                                        \
+	if test "@top_srcdir@" != "@top_builddir@";                       \
+	then                                                              \
 		cp @srcdir@/test1.check  test1.check;                     \
 		cp @srcdir@/test2.check  test2.check;                     \
 		cp @srcdir@/test2.ref    test2.ref;                       \
@@ -13,11 +13,11 @@ checkfiles:
 		cp @srcdir@/test4.check  test6.check;                     \
 		cp @srcdir@/test4.ref    test6.ref;                       \
 		cp @srcdir@/UPuN_GaseousFissionProductsReleaseModel.check \
-		   UPuN_GaseousFissionProductsReleaseModel.check;                   \
+		   UPuN_GaseousFissionProductsReleaseModel.check;         \
 		cp @srcdir@/UPuN_GaseousFissionProductsReleaseModel.ref   \
-		   UPuN_GaseousFissionProductsReleaseModel.ref;                     \
+		   UPuN_GaseousFissionProductsReleaseModel.ref;           \
 		cp @srcdir@/UPuN_GaseousFissionProductsReleaseModel.txt   \
-		   UPuN_GaseousFissionProductsReleaseModel.txt;                     \
+		   UPuN_GaseousFissionProductsReleaseModel.txt;           \
 		cp @srcdir@/Alcyone1D.ref    Alcyone1D.ref;               \
 		cp @srcdir@/Alcyone1D.res    Alcyone1D.res;               \
 		cp @srcdir@/Alcyone1D.check  Alcyone1D.check;             \
@@ -55,7 +55,27 @@ EXTRA_DIST = test1.check     \
 TESTS = @top_builddir@/tfel-check/src/tfel-check
 
 clean-local:
+	if test "@top_srcdir@" != "@top_builddir@";               \
+	then                                                      \
+	  $(RM) -f *.xml *.out;                                   \
+	  $(RM) -f test2.res test4.res;                           \
+	  $(RM) -f UPuN_GaseousFissionProductsReleaseModel.check; \
+	  $(RM) -f UPuN_GaseousFissionProductsReleaseModel.ref;   \
+	  $(RM) -f UPuN_GaseousFissionProductsReleaseModel.txt;   \
+	  $(RM) -f test1.check;					  \
+	  $(RM) -f test2.check;					  \
+	  $(RM) -f test3.check;					  \
+	  $(RM) -f test4.check;					  \
+	  $(RM) -f test6.check;					  \
+	  $(RM) -f test5.check;					  \
+	  $(RM) -f test2.ref;					  \
+	  $(RM) -f test4.ref;					  \
+	  $(RM) -f test3.ref;					  \
+	  $(RM) -f test5.ref;					  \
+	  $(RM) -f test6.ref;					  \
+	  $(RM) -f Alcyone1D.check;				  \
+	  $(RM) -f Alcyone1D.ref;				  \
+	  $(RM) -f Alcyone1D.res;				  \
+	fi
 	$(RM) -f tfel-check.log *.checklog
-	$(RM) -f *.xml *.out *.check *.ref
-	$(RM) -f Alcyone1D.res test2.res test4.res
-	$(RM) -f UPuN_GaseousFissionProductsReleaseModel.txt
+	$(RM) -f *.xml *.out

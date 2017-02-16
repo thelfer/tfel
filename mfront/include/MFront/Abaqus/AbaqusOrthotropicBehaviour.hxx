@@ -23,12 +23,6 @@ namespace abaqus
   struct AbaqusOrthotropicElasticPropertiesOffset;
 
   template<>
-  struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusOrthotropicElasticPropertiesOffset<1u>
-  {
-    static constexpr unsigned short value = 6u;
-  }; // end of struct AbaqusOrthotropicElasticPropertiesOffset<1u>
-
-  template<>
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusOrthotropicElasticPropertiesOffset<2u>
   {
     static constexpr unsigned short value = 7u;

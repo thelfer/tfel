@@ -1,4 +1,4 @@
-SUBDIRS=abaqus
+SUBDIRS=abaqus ansys
 
 MFRONT_DOCS = Algorithm.md				                \
 	      Author.md				                        \

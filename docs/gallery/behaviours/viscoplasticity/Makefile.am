@@ -1,4 +1,5 @@
 EXTRA_DIST=CMakeLists.txt                 \
 	   ImplicitNorton.mfront          \
 	   Hayhurst.mfront                \
-	   ChabocheViscoplasticity.mfront
+	   ChabocheViscoplasticity.mfront \
+	   IsotropicViscoplasticityAmstrongFredericKinematicHardening.mfront

@@ -216,6 +216,24 @@ if(HAVE_ABAQUS)
     TFELException)
 endif(HAVE_ABAQUS)
 
+if(HAVE_ANSYS)
+  set(TFELMFront_SOURCES
+    AnsysInterface.cxx
+    ${TFELMFront_SOURCES})
+  set(AnsysInterface_SOURCES
+    AnsysInterfaceExceptions.cxx
+    AnsysException.cxx
+    AnsysComputeStiffnessTensor.cxx
+    AnsysStressFreeExpansionHandler.cxx
+    AnsysComputeThermalExpansionCoefficientTensor.cxx
+    AnsysFiniteStrain.cxx)
+  mfront_library(AnsysInterface ${AnsysInterface_SOURCES})
+  target_link_libraries(AnsysInterface
+    MTestFileGenerator
+    TFELUtilities
+    TFELException)
+endif(HAVE_ANSYS)
+
 if(HAVE_EUROPLEXUS)
   set(TFELMFront_SOURCES
     EuroplexusInterface.cxx

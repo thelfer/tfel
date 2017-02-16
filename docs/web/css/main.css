@@ -115,6 +115,15 @@ body p{
    text-justify: inter-word;    
 }
 
+body ul li{
+   text-align: justify;
+   text-justify: inter-word;
+}
+
+body header ul li{
+   text-align: center;
+}
+
 h1{
     width:100%;
     color: blue;
@@ -147,6 +156,11 @@ header {
     display:block;
     z-index: 1;
 }
+
+.sourceCode {
+    background-color:#FFFACD;
+}
+
 
 #header h1{
     font-size:3em;

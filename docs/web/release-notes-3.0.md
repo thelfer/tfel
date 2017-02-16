@@ -562,6 +562,40 @@ functionality has at least one associated test. The current version is
 delivered with more than \(3\,300\) tests, each of them containing
 various units-tests.
 
+## Solved Tickets
+
+### [Tickets #31](https://sourceforge.net/p/tfel/tickets/31)
+
+To be consistent with the `MTest` input file keywords, the following
+methods have been added to the `MTest` class of the` mtest` `python`
+module:
+
+- `setStrainEpsilon` (valid for small strain behaviours)
+- `setDeformationGradientEpsilon` (valid for finite strain behaviours)
+- `setOpeningDisplacementEpsilon` (valid for cohesive zone models)
+- `setStressEpsilon` (valid for small and finite strain behaviours)
+- `setCohesiveForceEpsilon`  (valid for cohesive zone models)
+
+### [Tickets #32](https://sourceforge.net/p/tfel/tickets/32)
+
+The `python` interface did not allow to initialize the values of the
+driving variables (deformation, deformation gradient or displacement
+jump) or the thermodynamic forces (Cauchy stress or cohesive force).
+
+The `setDrivingVariablesInitialValues` and the
+`setThermodynamicForcesInitialValues` methods were added the `MTest`
+class of the` mtest` `python` module to solve this issue.
+
+To be consistent with the `MTest` input file keywords, the following
+methods have also been added to the `MTest` class of the` mtest`
+`python` module:
+
+- `setStrain` (valid for small strain behaviours)
+- `setDeformationGradient` (valid for finite strain behaviours)
+- `setOpeningDisplacement` (valid for cohesive zone models)
+- `setStress` (valid for small and finite strain behaviours)
+- `setCohesiveForce`  (valid for cohesive zone models)
+
 # Conclusions
 
 This paper have highlighted the improvements made in the version 3.0

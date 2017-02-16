@@ -179,7 +179,7 @@ namespace mtest
 	  const bool b = bv1x&&bv1y;
 	  if(((bv1x)&&(!b))||((bv1y)&&(!b))){
 	    throw(std::runtime_error("Behaviour::setOptionalMaterialPropertiesDefaultValues : "
-				     "if on component of the orthotropic basis is defined, all "
+				     "if one component of the orthotropic basis is defined, all "
 				     "the components must be defined."));
 	  }
 	  Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"V1X",1.);
@@ -193,7 +193,7 @@ namespace mtest
 	  if(((bv1x)&&(!b))||((bv1y)&&(!b))||((bv1z)&&(!b))||
 	     ((bv2x)&&(!b))||((bv2y)&&(!b))||((bv2z)&&(!b))){
 	    throw(std::runtime_error("Behaviour::setOptionalMaterialPropertiesDefaultValues : "
-				     "if on component of the orthotropic basis is defined, all "
+				     "if one component of the orthotropic basis is defined, all "
 				     "the components must be defined."));
 	  }
 	  Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"V1X",1.);

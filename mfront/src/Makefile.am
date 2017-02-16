@@ -146,6 +146,10 @@ libTFELMFront_la_SOURCES += AbaqusInterfaceBase.cxx     \
 			    AbaqusExplicitInterface.cxx
 endif
 
+if HAVE_ANSYS
+libTFELMFront_la_SOURCES += AnsysInterface.cxx
+endif
+
 if HAVE_EUROPLEXUS
 libTFELMFront_la_SOURCES += EuroplexusInterface.cxx
 endif
@@ -285,6 +289,27 @@ if TFEL_WIN
 libAbaqusInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
 endif # HAVE_ABAQUS
+
+# Ansys Interface
+if HAVE_ANSYS
+lib_LTLIBRARIES += libAnsysInterface.la
+libAnsysInterface_la_SOURCES = AnsysInterfaceExceptions.cxx                      \
+		               AnsysException.cxx                                \
+			       AnsysComputeStiffnessTensor.cxx                   \
+			       AnsysStressFreeExpansionHandler.cxx               \
+			       AnsysComputeThermalExpansionCoefficientTensor.cxx \
+			       AnsysFiniteStrain.cxx
+
+libAnsysInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities          \
+			       -L$(top_builddir)/src/Exception -lTFELException          \
+			       -L$(top_builddir)/mfront/src    -lMTestFileGenerator
+libAnsysInterface_la_DEPENDENCIES = libMTestFileGenerator.la
+libAnsysInterface_la_CPPFLAGS     = $(AM_CPPFLAGS) -DAnsysInterface_EXPORTS
+if TFEL_WIN
+libAnsysInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+endif # TFEL_WIN
+endif # HAVE_ANSYS
+
 
 # Europlexus Interface
 if HAVE_EUROPLEXUS

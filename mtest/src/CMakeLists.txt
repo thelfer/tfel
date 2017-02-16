@@ -126,6 +126,17 @@ set(TFELMTest_LDADD
     ${TFELMTest_LDADD})
 endif(HAVE_ABAQUS)
 
+if(HAVE_ANSYS)
+set(TFELMTest_SOURCES
+    AnsysStandardBehaviour.cxx
+    AnsysSmallStrainBehaviour.cxx
+    AnsysNormaliseTangentOperator.cxx
+    ${TFELMTest_SOURCES})
+set(TFELMTest_LDADD
+    AnsysInterface
+    ${TFELMTest_LDADD})
+endif(HAVE_ANSYS)
+
 if(HAVE_CYRANO)
 set(TFELMTest_SOURCES
     CyranoBehaviour.cxx

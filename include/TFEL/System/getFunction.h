@@ -150,7 +150,7 @@ extern "C" {
 										       const CyranoIntegerType  *const,
 										       CyranoIntegerType  *const);
   /*!
-   * \return a pointer to a Castem external behaviour
+   * \return a pointer to an Abaqus/Standard (umat) external behaviour
    *
    * This function is a simple wrapper around dlsym. We can check if a
    * symbol with the given name exists but cannot check if it points to
@@ -199,7 +199,7 @@ extern "C" {
 										     AbaqusIntegerType  *const,
 										     const int);
   /*!
-   * \return a pointer to a Castem external behaviour
+   * \return a pointer to a Abaqus/Explicit (vumat) external behaviour
    *
    * This function is a simple wrapper around dlsym. We can check if a
    * symbol with the given name exists but cannot check if it points to
@@ -244,6 +244,58 @@ extern "C" {
 											     AbaqusRealType* const,
 											      AbaqusRealType* const,
 											      const int);
+  /*!
+   * \return a pointer to an Ansys (usermat) behaviour
+   *
+   * This function is a simple wrapper around dlsym. We can check if a
+   * symbol with the given name exists but cannot check if it points to
+   * a function with that prototype.
+   *
+   * \param[in] l: link to library opened through dlopen
+   * \param[in] n: name of the function to be checked
+   * \return a function pointer if the call succeed, the NULL pointer if not.
+   */
+  void (TFEL_ADDCALL_PTR tfel_getAnsysExternalBehaviourFunction(LibraryHandlerPtr,const char * const))(const AnsysIntegerType *const,
+												       const AnsysIntegerType *const,
+												       const AnsysIntegerType *const,
+												       const AnsysIntegerType *const,
+												       const AnsysIntegerType *const,
+												       const AnsysIntegerType *const,
+												       const AnsysIntegerType *const,
+												       AnsysIntegerType *const,
+												       const AnsysIntegerType *const,
+												       const AnsysIntegerType *const,
+												       const AnsysIntegerType *const,
+												       const AnsysIntegerType *const,
+												       const AnsysIntegerType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const,
+												       AnsysRealType *const,
+												       AnsysRealType *const,
+												       AnsysRealType *const,
+												       AnsysRealType *const,
+												       AnsysRealType *const,
+												       AnsysRealType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const,
+												       AnsysRealType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const,
+												       AnsysRealType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const,
+												       const AnsysRealType *const);
   /*!
    * \return a pointer to a Castem external behaviour
    * \param[in] l : library

@@ -137,6 +137,14 @@ if(enable-abaqus)
   add_definitions("-DHAVE_ABAQUS=1")
 endif(enable-abaqus)
 
+#ansys
+option(enable-ansys "build ansys interface for mechanical behaviours" OFF)
+if(enable-ansys)
+  message(STATUS "ansys support enabled")
+  set(HAVE_ANSYS ON)
+  add_definitions("-DHAVE_ANSYS=1")
+endif(enable-ansys)
+
 #europlexus
 option(enable-europlexus "build europlexus interface for mechanical behaviours" OFF)
 if(enable-europlexus)

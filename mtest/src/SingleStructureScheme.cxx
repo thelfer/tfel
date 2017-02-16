@@ -51,6 +51,10 @@
 #include"MTest/AbaqusFiniteStrainBehaviour.hxx"
 #include"MTest/AbaqusExplicitBehaviour.hxx"
 #endif /* HAVE_ABAQUS  */
+#ifdef HAVE_ANSYS
+#include"MTest/AnsysStandardBehaviour.hxx"
+#include"MTest/AnsysSmallStrainBehaviour.hxx"
+#endif /* HAVE_ANSYS  */
 #ifdef HAVE_CYRANO
 #include"MTest/CyranoBehaviour.hxx"
 #endif /* HAVE_CYRANO  */
@@ -254,6 +258,18 @@ namespace mtest{
       const auto type = elm.getUMATBehaviourType(l,bn);
       if(type==2u){
 	b = std::make_shared<AbaqusExplicitBehaviour>(h,l,f);
+      } else {
+	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
+      }
+    }
+#endif
+#ifdef HAVE_ANSYS
+    if((i=="ansys")||(i=="ansys_usermat")){
+      check_no_parameters();
+      const auto bn   = AnsysStandardBehaviour::getBehaviourName(f,h);
+      const auto type = elm.getUMATBehaviourType(l,bn);
+      if(type==1u){
+	b = std::make_shared<AnsysSmallStrainBehaviour>(h,l,f);
       } else {
 	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }

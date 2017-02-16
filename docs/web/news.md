@@ -2,7 +2,64 @@
 % Helfer Thomas
 % January 23, 2017
 
+\newcommand{\paren}[1]{{\left(#1\right)}}
 \newcommand{\tenseur}[1]{\underline{#1}}
+\newcommand{\tenseurq}[1]{\underline{\underline{\mathbf{#1}}}}
+\newcommand{\tepsilonto}{\tenseur{\varepsilon}^{\mathrm{to}}}
+\newcommand{\tepsilonel}{\tenseur{\varepsilon}^{\mathrm{el}}}
+\newcommand{\tepsilonp}{\tenseur{\varepsilon}^{\mathrm{p}}}
+\newcommand{\tsigma}{\underline{\sigma}}
+\newcommand{\sigmaH}{\sigma_{H}}
+\newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
+\newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
+
+# [MFront Gallery] Description of the implementation of a simple orthotropic behaviour (27/01/2017)
+
+A new example has been added in the gallery
+[here](orthotropiclinearhardeningplasticity.html).
+
+This example describes a simple orthotropic behaviour.
+
+The behaviour is described by a standard split of the strain
+\(\tepsilonto\) in an elastic and a plastic parts, respectively
+denoted \(\tepsilonel\) and \(\tepsilonp\):
+
+\[
+\tepsilonto=\tepsilonel+\tepsilonp
+\]
+
+## Elastic behaviour
+
+The stress \(\tsigma\) is related to the the elastic strain
+\(\tepsilonel\) by a the orthotropic elastic stiffness
+\(\tenseurq{D}\):
+
+\[
+\tsigma = \tenseurq{D}\,\colon\,\tepsilonel
+\]
+
+The plastic part of the behaviour is described by the following yield
+surface:
+\[
+f\paren{\sigmaH,p} = \sigmaH-\sigma_{0}-R\,p
+\]
+
+where \(\sigmaH\) is the Hill stress defined below, \(p\) is the
+equivalent plastic strain. \(\sigma_{0}\) is the yield stress and
+\(R\) is the hardening slope.
+
+The Hill stress \(\sigmaH\) is defined using the fourth order Hill
+tensor \(H\):
+\[
+\sigmaH=\sqrt{\tsigma\,\colon\,\tenseurq{H}\colon\,\tsigma}
+\]
+
+The plastic flow is assumed to be associated, so the flow direction
+\(\tenseur{n}\) is given by \(\deriv{f}{\tsigma}\):
+
+\[
+\tenseur{n} = \deriv{f}{\tsigma} = \Frac{1}{\sigmaH}\,\tenseurq{H}\,\colon\,\tsigma
+\]
 
 # New eigensolvers (23/01/2017)
 

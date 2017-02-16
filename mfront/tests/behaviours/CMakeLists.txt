@@ -26,6 +26,10 @@ if(HAVE_ABAQUS)
   add_subdirectory(abaqus-explicit)
 endif(HAVE_ABAQUS)
 
+if(HAVE_ANSYS)
+  add_subdirectory(ansys)
+endif(HAVE_ANSYS)
+
 if(HAVE_EUROPLEXUS)
   add_subdirectory(epx)
 endif(HAVE_EUROPLEXUS)
