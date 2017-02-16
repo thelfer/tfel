@@ -64,7 +64,8 @@ namespace mtest
 	     "consistent tangent operator");
     const AbaqusInt nprops = s.mprops1.empty() ? 1 : static_cast<AbaqusInt>(s.mprops1.size());
     const AbaqusInt ntens = [&h,&throw_if](){
-      if (h==ModellingHypothesis::AXISYMMETRICAL){
+      if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+	  (h==ModellingHypothesis::PLANESTRAIN)){
 	return 4;
       } else if (h==ModellingHypothesis::PLANESTRESS){
 	return 3;
@@ -176,7 +177,8 @@ namespace mtest
 	  }
 	}
       }
-    } else if (h==ModellingHypothesis::AXISYMMETRICAL){
+    } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
+	       (h==ModellingHypothesis::PLANESTRAIN)){
       UmatNormaliseTangentOperator::exe(&Kt(0,0),wk.D,2u);
       if((this->stype==1u)&&(this->omp!=2u)){
 	st2tost2<2u,AbaqusReal> K;
