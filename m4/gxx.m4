@@ -323,6 +323,35 @@ AC_DEFUN([AC_CHECK_GXX],
 		fi
 	    fi
 	fi
+
+	dnl symbol visibility
+	GCC_SYMBOL_VISIBILITY=""
+	AC_GCC_CHECK_FLAG(-fvisibility-inlines-hidden,GCC_SYMBOL_VISIBILITY)
+	if test "x$GCC_SYMBOL_VISIBILITY" != "x"; then
+	dnl a small test because this compilation flag may cause problems
+	dnl on some systems
+	cat > test-fvisibility-inlines-hidden.cxx << EOF
+	#include<string>
+	#include<sstream>
+	void function(const double a)
+	{
+	  using namespace std;
+	  ostringstream c;
+	  c << a;
+	}
+EOF
+	$CXX -fvisibility-inlines-hidden --shared -DPIC -fPIC test-fvisibility-inlines-hidden.cxx -o libtest-fvisibility-inlines-hidden.so &> /dev/null
+	if test x"$?" == "x0" ; then
+	  CXXFLAGS="$CXXFLAGS $GCC_SYMBOL_VISIBILITY"
+	  OPTIMISATION_FLAGS0="$GCC_SYMBOL_VISIBILITY $OPTIMISATION_FLAGS0"
+	  AC_MSG_NOTICE([-fvisibility-inlines-hidden enabled])
+	  rm libtest-fvisibility-inlines-hidden.so
+	else
+	  AC_MSG_NOTICE([-fvisibility-inlines-hidden disabled])
+	fi
+	rm test-fvisibility-inlines-hidden.cxx
+      fi
+
 	if test "x$enable_optimizations" != "xno"; then   	    
 	    if test "x$enable_debug" != "xyes"; then
 		dnl g++ debug options

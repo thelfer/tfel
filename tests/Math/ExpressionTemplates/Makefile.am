@@ -44,6 +44,9 @@ test_expr12_SOURCES  = test_expr12.cxx
 
 TESTS=$(test_PROGRAMS)
 
+clean-local:
+	-$(RM) *.xml
+
 endif
 
 EXTRA_DIST=CMakeLists.txt

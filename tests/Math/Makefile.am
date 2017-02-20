@@ -288,6 +288,12 @@ integerparser_LDADD = -L$(top_builddir)/src/Tests        \
 
 TESTS=$(test_PROGRAMS)
 
+clean-local:
+	-$(RM) *.xml
+	-$(RM) CubicSplineTest.out
+	-$(RM) out2D.txt out2D-2.txt
+	-$(RM) data.txt out.txt
+
 endif
 
 EXTRA_DIST=CMakeLists.txt

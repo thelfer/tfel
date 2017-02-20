@@ -30,6 +30,9 @@ FCString_SOURCES          = FCString.cxx
 
 TESTS=$(test_PROGRAMS)
 
+clean-local:
+	-$(RM) *.xml
+
 endif
 
 EXTRA_DIST=CMakeLists.txt

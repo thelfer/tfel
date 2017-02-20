@@ -168,6 +168,6 @@ endif
 endif
 
 clean-local:
-	-rm -fr src include
+	-$(RM) -fr src include *.xml
 
 endif

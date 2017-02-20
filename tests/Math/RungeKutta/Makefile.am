@@ -24,6 +24,17 @@ rk54_SOURCES         = rk54.cxx
 
 TESTS=$(test_PROGRAMS)
 
+clean-local:
+	-$(RM) *.xml
+	-$(RM) 'rk2_long double.txt'
+	-$(RM) 'rk4_long double.txt'
+	-$(RM) rk2_float.txt
+	-$(RM) rk4_double.txt
+	-$(RM) rk54.txt
+	-$(RM) rk42.txt
+	-$(RM) rk4_float.txt
+	-$(RM) rk2_double.txt
+
 endif
 
 EXTRA_DIST=CMakeLists.txt

@@ -44,8 +44,8 @@ LDADD = -L$(top_builddir)/mfront/src    \
 	-lTFELUtilities -lTFELGlossary  \
 	-lTFELException -lTFELTests
 
+endif
+
 EXTRA_DIST=CMakeLists.txt      \
 	   mfront/test1.mfront \
 	   mfront/test2.mfront 
-
-endif

@@ -6,6 +6,8 @@ if !TFEL_WIN
 SUBDIRS += tfel-doc tfel-check
 endif
 
+DISTCHECK_CONFIGURE_FLAGS = --enable-tests
+
 doc-install: doc
 	mkdir -p @docdir@
 	mkdir -p @docdir@/reference-guide

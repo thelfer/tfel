@@ -1,18 +1,20 @@
+mfronts = Test.mfront
+testdir = $(pkgdatadir)/tests/System
+EXTRA_DIST = CMakeLists.txt \
+	     $(mfronts)
+
 if WITH_TESTS
 
 AM_CPPFLAGS = -I$(top_srcdir)/include \
               -I@builddir@/include
-
-mfronts = Test.mfront
-
-testdir = $(pkgdatadir)/tests/System
 
 LDADD = -lTFELSystem -lTFELException -lTFELTests \
 	-L$(top_builddir)/src/System             \
 	-L$(top_builddir)/src/Exception          \
 	-L$(top_builddir)/src/Tests
 
-test_PROGRAMS   = ThreadPoolTest
+test_PROGRAMS          = ThreadPoolTest
+ThreadPoolTest_SOURCES = ThreadPoolTest.cxx
 
 if !TFEL_WIN
 test_PROGRAMS  += process_test_target \
@@ -42,13 +44,13 @@ src/%-castem.cxx : %.mfront
 
 endif
 
-endif
+clean-local:
+	-$(RM) -fr src include
+	-$(RM) test.bin
+	-$(RM) *.xml
 
-ThreadPoolTest_SOURCES = ThreadPoolTest.cxx
 TESTS=$(test_PROGRAMS)
 
-clean-local:
-	-rm -fr src include
+endif
 
-EXTRA_DIST = CMakeLists.txt \
-	     $(mfronts)
+

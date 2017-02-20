@@ -13,7 +13,8 @@
 
 \newcommand{\tepsilonto}{\tenseur{\varepsilon}^{\mathrm{to}}}
 \newcommand{\tepsilonel}{\tenseur{\varepsilon}^{\mathrm{el}}}
-\newcommand{\tepsilonp}{\tenseur{\varepsilon}^{\mathrm{p}}}
+\newcommand{\tepsilonvis}{\tenseur{\varepsilon}^{\mathrm{vis}}}
+\newcommand{\tdepsilonvis}{\tenseur{\dot{\varepsilon}}^{\mathrm{vis}}}
 \newcommand{\tsigma}{\underline{\sigma}}
 \newcommand{\sigmaH}{\sigma_{H}}
 \newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
@@ -40,10 +41,10 @@ Such an example illustrates:
 
 The behaviour is described by a standard split of the strain
 \(\tepsilonto\) in an elastic and a plastic parts, respectively
-denoted \(\tepsilonel\) and \(\tepsilonp\):
+denoted \(\tepsilonel\) and \(\tepsilonvis\):
 
 \[
-\tepsilonto=\tepsilonel+\tepsilonp
+\tepsilonto=\tepsilonel+\tepsilonvis
 \]
 
 ## Elastic behaviour
@@ -55,7 +56,47 @@ The stress \(\tsigma\) is related to the the elastic strain
 \tsigma = \lambda\,\trace{\tepsilonel}\,\tenseur{I}+2\,\mu\,\tepsilonel
 \]
 
+## Viscoplastic behaviour
 
+The viscoplastic behaviour follows a standard viscoplastic behaviour:
+\[
+\tdepsilonvis=\paren{\Frac{F}{K}}^{m}\,\tenseur{n}
+\]
+
+where \(F\) is the yield surface defined below and \(\tenseur{n}\) is
+the normal to \(F\).
+
+The yield surface is defined by:
+\[
+F\paren{\tsigma,\tenseur{X}_{i},p}=\paren{\tsigma-\sum_{i=1}^{N}\tenseur{X}_{i}}_{\mathrm{eq}}-R\paren{p}
+\]
+
+where \(R\paren{p}\) describes the isotropic hardening as a function
+of the equivalent viscoplastic strain \(p\) and where the \(N\)
+tensors \(\tenseur{X}_{i}\) (i\in\left[1,N\right]) are backstresses
+describing the kinematic hardening.
+
+## Evolution of the isotropic hardening
+
+The isotropic hardening is defined by:
+\[
+R\paren{p}=R_{\infty} + \paren{R_{0}-R_{\infty}}\,\exp\paren{-b\,p}
+\]
+
+## Evolution of the kinematic hardenings
+
+\[
+\tenseur{X}_{i}=\Frac{2}{3}\,C_{i}\,\tenseur{a}_{i}
+\]
+
+The evolution of the kinematic variables \(\tenseur{a}_{i}\) follows
+the Armstrong-Frederic rule:
+
+\[
+\tenseur{\dot{a}}_{i}=\tdepsilonvis-g[i]\,\tenseur{a}_{i}\,\dot{p}
+\]
+
+# Implementation
 
 <!-- ## Plastic flow -->
 
