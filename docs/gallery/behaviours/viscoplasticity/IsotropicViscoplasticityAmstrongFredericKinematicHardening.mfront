@@ -59,7 +59,7 @@ nu.setGlossaryName("PoissonRatio");
     dfp_ddeel    = - Fexp*m*dt* 2*mu*theta*(n| Stensor4::M() )*two_third;
     dfp_ddp     += theta* Fexp *m *dt*b*(Rinf-Rp);
     for(unsigned short i=0;i!=2;++i){
-      dfeel_dda(i)   = -C[i]*dp*theta* iseq*two_third*Jmn ;
+      dfeel_dda(i)   = -C[i]*dp*theta*iseq*two_third*Jmn ;
       dfp_dda(i)     =  Fexp*m*dt*C[i]*theta*two_third*n;  
       dfa_ddeel(i)   = -2*mu*theta*dp*Jmn *iseq;
       dfa_ddp(i)     = -n + g[i]*a_[i];

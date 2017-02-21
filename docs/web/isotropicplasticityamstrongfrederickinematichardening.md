@@ -16,6 +16,7 @@
 \newcommand{\tepsilonvis}{\tenseur{\varepsilon}^{\mathrm{vis}}}
 \newcommand{\tdepsilonvis}{\tenseur{\dot{\varepsilon}}^{\mathrm{vis}}}
 \newcommand{\tsigma}{\underline{\sigma}}
+\newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 \newcommand{\sigmaH}{\sigma_{H}}
 \newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
@@ -60,21 +61,36 @@ The stress \(\tsigma\) is related to the the elastic strain
 
 The viscoplastic behaviour follows a standard viscoplastic behaviour:
 \[
-\tdepsilonvis=\paren{\Frac{F}{K}}^{m}\,\tenseur{n}
+\tdepsilonvis=\left\langle\Frac{F}{K}\right\rangle^{m}\,\tenseur{n}=\dot{p}\,\tenseur{n}
 \]
 
-where \(F\) is the yield surface defined below and \(\tenseur{n}\) is
-the normal to \(F\).
+where \(F\) is the yield surface defined below, \(<.>\) is Macaulay
+brackets, \(\tenseur{n}\) is the normal to \(F\) with respect to the
+stress and \(p\) is the equivalent plastic strain.
 
 The yield surface is defined by:
 \[
-F\paren{\tsigma,\tenseur{X}_{i},p}=\paren{\tsigma-\sum_{i=1}^{N}\tenseur{X}_{i}}_{\mathrm{eq}}-R\paren{p}
+F\paren{\tsigma,\tenseur{X}_{i},p}=\paren{\tsigma-\sum_{i=1}^{N}\tenseur{X}_{i}}_{\mathrm{eq}}-R\paren{p}=s^{e}_{\mathrm{eq}}-R\paren{p}
 \]
 
-where \(R\paren{p}\) describes the isotropic hardening as a function
-of the equivalent viscoplastic strain \(p\) and where the \(N\)
-tensors \(\tenseur{X}_{i}\) (i\in\left[1,N\right]) are backstresses
-describing the kinematic hardening.
+where:
+
+- \(R\paren{p}\) describes the isotropic hardening as a function
+  of the equivalent viscoplastic strain \(p\).
+- the \(N\) tensors \(\tenseur{X}_{i}\) (i\in\left[1,N\right]) are
+  backstresses describing the kinematic hardening.
+- \(\paren{.}_{\mathrm{eq}}\) is the Von Mises norm.
+
+We have introduced an effective deviatoric stress \(\tenseur{s}^{e}\) defined by:
+\[
+\tenseur{s}^{e}=\tenseur{s}-\sum_{i=1}^{N}\tenseur{X}_{i}
+\]
+where \(\tenseur{s}\) is the deviatoric part of the stress.
+
+The normal is then given by:
+\[
+\tenseur{n}=\deriv{F}{\tsigma}=\Frac{3}{2}\,\Frac{\tenseur{s}^{e}}{s^{e}_{\mathrm{eq}}}
+\]
 
 ## Evolution of the isotropic hardening
 
@@ -93,10 +109,164 @@ The evolution of the kinematic variables \(\tenseur{a}_{i}\) follows
 the Armstrong-Frederic rule:
 
 \[
-\tenseur{\dot{a}}_{i}=\tdepsilonvis-g[i]\,\tenseur{a}_{i}\,\dot{p}
+\tenseur{\dot{a}}_{i}=\tdepsilonvis-g[i]\,\tenseur{a}_{i}\,\dot{p}=\dot{p}\,\paren{\tenseur{n}-g[i]\,\tenseur{a}_{i}}
 \]
 
-# Implementation
+# \(\theta\)-scheme
+
+The previous consitutive equations will be integrated using a
+\(\theta\)-scheme. The increments of the unknowns satisfy:
+
+\[
+\left\{
+\begin{aligned}
+\Delta\,\tepsilonel&=\Delta\,\tepsilonto+\Delta\,p\,\mts{\tenseur{n}}\\
+\Delta\,p&=\left\langle\Frac{\mts{F}}{K}\right\rangle^{m}\,\Delta\,t\\
+\Delta\,\tenseur{a}_{i}&=\Delta\,\tepsilonvis-g[i]\,\mts{\tenseur{a}_{i}}\,\Delta\,p\\
+\end{aligned}
+\right.
+\]
+
+where the following notations have been used:
+
+- \(\mts{\tepsilonel}=\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonel\)
+- \(\mts{\tsigma} = \lambda\,\trace{\mts{\tepsilonel}}\,\tenseur{I}+2\,\mu\,\mts{\tepsilonel}\)
+- \(\mts{p} = \bts{p}+\theta\Delta\,p\)
+- \(\mts{\tenseur{a}_{i}} = \bts{\tenseur{a}_{i}}+\theta\Delta\,\tenseur{a}\)
+- \(\mts{\tenseur{X}_{i}} = C_{i}\,\mts{\tenseur{a}_{i}}\)
+- \(\mts{\tenseur{s}^{e}}=\mts{\tenseur{s}}-\sum_{i=1}^{N}\mts{\tenseur{X}_{i}}\)
+- \(\mts{s^{e}_{\mathrm{eq}}}=\paren{\mts{\tenseur{s}^{e}}}_{\mathrm{eq}}\)
+- \(\mts{F}=\mts{s^{e}_{\mathrm{eq}}}-R\paren{\mts{p}}\)
+
+# Implicit system formulation and implementation
+
+The previous equations can be translated in an
+implicit system in a straightforward manner:
+
+\[
+\left\{
+\begin{aligned}
+f_{\tepsilonel}&=\Delta\,\tepsilonel+\Delta\,p\,\mts{\tenseur{n}}-\Delta\,\tepsilonto=\tenseur{0}\\
+f_{p}&=\Delta\,p-\left\langle\Frac{\mts{F}}{K}\right\rangle^{m}\,\Delta\,t=0\\
+f_{\tenseur{a}_{i}}&=\Delta\,\tenseur{a}_{i}-\Delta\,\tepsilonvis-g[i]\,\mts{\tenseur{a}_{i}}\,\Delta\,p=\tenseur{0}
+\end{aligned}
+\right.
+\]
+
+## Computation of the jacobian
+
+### Terms related to \(f_{\tepsilonel}\)
+
+> **Derivative of the normal**
+>
+> In the following, we will make use of the "classical" relationship
+> giving the derivative of the normal:
+> \[
+> \deriv{\mts{\tenseur{n}}}{\mts{\tenseur{s}}}=\Frac{1}{\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}
+> \]
+>
+> Here, \(\tenseurq{M}\) is a tensor space defined by:
+> \[
+> \sigmaeq=\sqrt{\tsigma\,\colon\,\tenseurq{M}\,\colon\,\tsigma}
+> \]
+>
+> \(\tenseurq{M}\) is available in MFront as the result of a static
+> member of the `st2tost2` template class. In `MFront`, the alias
+> `Stensor4` is usually used to refer to the `st2tost2` class for the
+> current numeric type and space dimension.
+
+Here are the expressions of the term related to \(f_{\tepsilonel}\):
+
+\[
+\left\{
+\begin{aligned}
+\deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel}&=\tenseurq{I}+\Delta\,p\deriv{\mts{\tenseur{n}}}{\Delta\,\tepsilonel}
+=\tenseurq{I}+\Delta\,p\,\cdot\,\underbrace{\deriv{\mts{\tenseur{n}}}{\mts{\tsigma}}}_{\Frac{1}{\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}}\,\cdot\,\underbrace{\deriv{\mts{\tsigma}}{\mts{\tepsilonel}}}_{\lambda\,\tenseur{I}\otimes\tenseur{I}+2\,\mu\,\tenseur{I}}\,\cdot\,\underbrace{\deriv{\mts{\tepsilonel}}{\Delta\,\tepsilonel}}_{\theta\,\tenseur{I}}\\
+\deriv{f_{\tepsilonel}}{\Delta\,p}&=\mts{\tenseur{n}}\\
+\deriv{f_{\tepsilonel}}{\Delta\,\tenseur{a}_{i}}&=\Delta\,p\,\cdot\,\underbrace{\deriv{\mts{\tenseur{n}}}{\mts{\tenseur{s}}}}_{\Frac{1}{\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{s}}}{\mts{\tenseur{a}_{i}}}}_{-\Frac{2}{3}\,C_{i}}\,\cdot\,\underbrace{\deriv{\mts{\tenseur{a}_{i}}}{\Delta\,a_{i}}}_{\theta\,\tenseurq{I}}\\
+\end{aligned}
+\right.
+\]
+
+Finally,
+
+\[
+\left\{
+\begin{aligned}
+\deriv{f_{\tepsilonel}}{\Delta\,\tepsilonel}
+&=tenseurq{I}+\Frac{2\,\,\mu\,\theta\,\Delta\,p}{\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}\\
+\deriv{f_{\tepsilonel}}{\Delta\,p}
+&=\mts{\tenseur{n}}\\
+\deriv{f_{\tepsilonel}}{\Delta\,\tenseur{a}_{i}}
+&=-\Frac{2\,C_{i}\,\theta\,\Delta\,p}{3\,\mts{s^{e}_{\mathrm{eq}}}}\,\paren{\tenseurq{M}-\mts{\tenseur{n}}\otimes\mts{\tenseur{n}}}\\
+\end{aligned}
+\right.
+\]
+
+### Terms related to \(f_{p}\)
+
+> **Derivative of the equivalent stress**
+>
+> In the following, we will make use of another "classical"
+> relationship giving the derivative of the equivalent stress:
+> \[
+> \deriv{\mts{s^{e}_{\mathrm{eq}}}}{\mts{\tenseur{s}}}=\mts{\tenseur{n}}
+> \]
+
+To compute the terms of the jacobian associated with \(f_{p}\), we
+need the derivatives of \(\mts{F}\) with respect to
+\(\Delta\,\tepsilonel\), \(\Delta\,p\) and
+\(\Delta\,\tenseur{a}_{i}\). Assuming that \(\mts{F}\) is positive, we
+have:
+
+\[
+\left\{
+\begin{aligned}
+\deriv{F}{\Delta\,\tepsilonel}=\underbrace{\deriv{F}{\mts{\tsigma}}}_{\mts{\tenseur{n}}}\,\cdot\,\underbrace{\deriv{\mts{\tsigma}}{\mts{\tepsilonel}}}_{\lambda\,\tenseur{I}\otimes\tenseur{I}+2\,\mu\,\tenseur{I}}\,\cdot\,\underbrace{\deriv{\mts{\tepsilonel}}{\Delta\,\tepsilonel}}_{\theta\,\tenseur{I}}
+\end{aligned}
+\right.
+\]
+
+### Terms related to \(f_{a_{i}}\)
+
+## An easy optimization
+
+The last equation can be easily eliminated as
+\(\Delta\,\tenseur{a}_{i}\) can be expressed as a simple function of
+\(\Delta\,p\) and \(\Delta\,\tepsilonel\):
+
+\[
+\left\{
+\begin{aligned}
+\Delta\,\tenseur{a}_{i}=\Frac{\Delta\,p\,\mts{\tenseur{n}}}{1+g_{i}\,\bts{\tenseur{a}_{i}}\,\Delta\,p}
+\end{aligned}
+\right.
+\]
+
+Such an optimization is strongly encouraged as the reduction in the
+system size is significant. For clarity reasons, this optimization has
+not presented here but can be introducted in a straightforward manner:
+
+- The kinematic variable \(\tenseur{a}_{i}\) must be defined as an
+  auxiliary state variable (using the `@AuxiliaryStateVariable`
+  keyword) and updated after the integration using the
+  `@UpdateAuxiliaryStateVariables` code block.
+- The updated values of \(\mts{\tenseur{a}_{i}}\) must be computed
+  with the previous update formulae.
+- The derivatives with respect to the kinematic variables
+  \(\tenseur{a}_{i}\) must be added to the derivatives with respect to
+  \(\Delta\,p\) and \(\Delta\,\tepsilonel\) using the chain rule.
+
+> **Reduction to a scalar equation**
+>
+> Using the isotropy assumption, this system of equations can be
+> further optimised by a reduction to a scalar equation with
+> \(\Delta\,p\) as the only unknown (see @chaboche_integration_1996
+> for details). However, with this operation, the `StandardElasticity`
+> brick can't be used anymore. Thus plane stress an generalised plane
+> stress hypotheses would require a specific treatment and the
+> expression of the consistent tangent operator, which becomes quite
+> complex, has to be written by hand.
 
 <!-- ## Plastic flow -->
 
@@ -426,6 +596,8 @@ the Armstrong-Frederic rule:
 <!--   } -->
 <!-- } -->
 <!-- ~~~~ -->
+
+# References
 
 <!-- Local IspellDict: english -->
 
