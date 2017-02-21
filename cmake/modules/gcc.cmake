@@ -36,6 +36,7 @@ endif(WIN32)
 if(enable-fast-math)
   tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS  "ffast-math")
 else(enable-fast-math)
+  tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS  "fno-fast-math")
   tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS2 "ffast-math")
 endif(enable-fast-math)
 

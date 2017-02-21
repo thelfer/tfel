@@ -11,8 +11,6 @@
 @ModellingHypothesis 'Axisymmetrical';
 
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatellipticcreep';
-@StrainEpsilon 1.e-11;
-@StressEpsilon '150e9*1.e-11';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 
@@ -31,7 +29,7 @@
 
 @ExternalStateVariable 'Temperature' 293.15;
 
-@Times {0.,3600 in 20};
+@Times {0.,3600 in 50};
 
 // tests on strains
 @Real 'A' 8.e-67; 
