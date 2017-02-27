@@ -5,7 +5,9 @@
 @Theta 1.;
 @Epsilon 1.e-13;
 
-@StateVariable strain    p;
+@StateVariable strain  p;
+p.setGlossaryName("EquivalentViscoplasticStrain");
+
 @StateVariable StrainStensor a[2];
 
 @MaterialProperty stress young; 
@@ -19,7 +21,7 @@ nu.setGlossaryName("PoissonRatio");
 @MaterialProperty stress C[2];
 @MaterialProperty real   g[2];
 @MaterialProperty real m;
-@MaterialProperty real UNsurK;
+@MaterialProperty real K;
 
 @LocalVariable stress mu;
 
@@ -31,7 +33,6 @@ nu.setGlossaryName("PoissonRatio");
 @Integrator{
   const real two_third     = 2/real(3);
   constexpr const real eps = real(1.e-12);
-  // Les variables post-fixee par un _ sont exprimees en t+theta*dt
   const auto p_ = p +theta*dp ;
   auto scin     = sig ;
   StrainStensor a_[2];
@@ -43,7 +44,7 @@ nu.setGlossaryName("PoissonRatio");
   const auto Rp  = Rinf + (R0-Rinf)*exp(-b*p_) ;  
   const auto F   = seq - Rp ;
   if(F > 0){
-    const auto Fexp = UNsurK*pow(F*UNsurK,m-1) ;
+    const auto Fexp = pow(F/K,m-1)/K ;
     const auto iseq = 1/(max(seq,eps*young));
     const auto n    = 3*iseq*deviator(scin)/2;
     const auto vp   = Fexp*F;  
@@ -52,7 +53,7 @@ nu.setGlossaryName("PoissonRatio");
     for(unsigned short i=0;i!=2;++i){
       fa[i] -= dp*(n-g[i]*a_[i]);
     }
-    // jacobienne
+    // computation of the jacobian matrix
     const auto Jmn = eval(Stensor4::M()-(n^n));    
     dfeel_ddeel += 2*mu*theta*dp*Jmn*iseq ;
     dfeel_ddp    = n;

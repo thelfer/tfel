@@ -176,8 +176,8 @@ integration will be used by default:
 @Theta 1;
 ~~~~
 
-The choice can be dynamically choice par modifying the `theta`
-parameter.
+This value can be dynamically changed at runtime by modifying the
+`theta` parameter.
 
 The stopping criterion is chosen low, to ensure the quality of the
 consistent tangent operator (the default value, \(10^{-8}\) is enough
@@ -220,7 +220,7 @@ brick which provides:
   additional state variables and the associated equation enforcing the
   plane stess condition).
 - Automatic addition of the standard terms associated with the elastic
-  strain state variables.
+  strain state variable.
 
 This behaviour brick is fully described [here](BehaviourBricks.html).
 

@@ -767,9 +767,13 @@ namespace mtest
     return rb;
   } // end of MTest::computeStiffnessMatrixAndResidual
 
-  static real
-  MTest_getErrorNorm(const tfel::math::vector<real>& v,
-		     const tfel::math::vector<real>::size_type s)
+  /*!
+   * \brief compute the error norm
+   * \param[in] v: values
+   * \param[in] s: size
+   */
+  static real MTest_getErrorNorm(const tfel::math::vector<real>& v,
+				 const tfel::math::vector<real>::size_type s)
   {
     using size_type = tfel::math::vector<real>::size_type;
     auto n = real(0);
@@ -779,20 +783,18 @@ namespace mtest
     return n;
   }
   
-  real
-  MTest::getErrorNorm(const tfel::math::vector<real>& du) const {
+  real MTest::getErrorNorm(const tfel::math::vector<real>& du) const {
     const auto ndv = this->b->getDrivingVariablesSize();
     return MTest_getErrorNorm(du,ndv);
   } // end of MTest::getErrorNorm
   
-  bool
-  MTest::checkConvergence(const StudyCurrentState&  state,
-			  const tfel::math::vector<real>& du,
-			  const tfel::math::vector<real>& r,
-			  const SolverOptions& o,
-			  const unsigned int iter,
-			  const real t,
-			  const real dt) const
+  bool MTest::checkConvergence(const StudyCurrentState&  state,
+			       const tfel::math::vector<real>& du,
+			       const tfel::math::vector<real>& r,
+			       const SolverOptions& o,
+			       const unsigned int iter,
+			       const real t,
+			       const real dt) const
   {
     auto report = [&iter,&state](std::ostream& os,
 				 const tfel::math::vector<real>::size_type ndv,

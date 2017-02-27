@@ -139,6 +139,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/FissurationPastille.png                              \
 	   ./img/anderson-withwithoutacceleration.svg                 \
 	   ./img/freebsdlogo-1.png                                    \
+	   ./img/tplot.svg                                            \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \
