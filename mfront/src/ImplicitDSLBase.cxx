@@ -1930,7 +1930,7 @@ namespace mfront{
        (this->solver->usesJacobian())){
       const std::string nje = "numerical_jacobian_epsilon";
       if(!this->mb.hasParameter(h,nje)){
-	const double eps = 0.1*this->mb.getFloattingPointParameterDefaultValue(h,"epsilon");
+	const auto eps = 0.1*this->mb.getFloattingPointParameterDefaultValue(h,"epsilon");
 	VariableDescription v("real",nje,1u,0u);
 	v.description="perturbation value used to compute a numerical "
 	  "approximation of the jacobian";

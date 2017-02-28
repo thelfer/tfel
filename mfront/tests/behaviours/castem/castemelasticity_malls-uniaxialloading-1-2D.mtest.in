@@ -17,7 +17,7 @@
 
 @ExternalStateVariable 'Temperature' 293.15;
 
-@Times {0.,1 in 10};
+@Times {0.,1 in 15};
 
 @Evolution<function> 'err' 'log(FRR**2)/2';
 @Evolution<function> 'ezz' '-PoissonRatio*err';
