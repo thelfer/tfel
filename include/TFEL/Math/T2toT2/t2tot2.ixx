@@ -29,6 +29,19 @@
 #include"TFEL/Math/T2toT2/BuildFromRotationMatrix.hxx"
 #include"TFEL/Math/T2toT2/ChangeBasis.hxx"
 
+#if defined(__GNUG__) && (not defined (__CLANG__)) && (not defined (__INTEL_COMPILER))
+#if ((__GNUC__ > 4) || ( (__GNUC__ == 4) && ((__GNUC_MINOR__ > 9) || \
+                                             (__GNUC_MINOR__ == 9 && __GNUC_PATCHLEVEL__ > 0))))
+#define TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT 
+#else
+// don't define TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT 
+#endif
+#elif defined(_MSC_VER)
+// don't define TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT 
+#else
+#define TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT 
+#endif
+
 namespace tfel{
 
   namespace math {
@@ -48,8 +61,8 @@ namespace tfel{
        * \tparam T: numerical type
        */
       template<typename T>
-      struct ComputeSpecialT2toT2Values<1u,T>{
-#ifndef _MSC_VER
+      struct TFEL_VISIBILITY_LOCAL ComputeSpecialT2toT2Values<1u,T>{
+#ifdef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT 
 	static TFEL_CONSTEXPR const T zero      = T{0};
 	static TFEL_CONSTEXPR const T one       = T{1};
 	static TFEL_CONSTEXPR const T one_third = T{1}/T{3};
@@ -65,7 +78,7 @@ namespace tfel{
 	//! \return the identity
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<1u,T> Id(void){
-#ifdef _MSC_VER
+#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
 	const auto zero = T{0};
 	const auto one  = T{1};
 #endif
@@ -76,7 +89,7 @@ namespace tfel{
 	//! \return Id2^Id2, where Id2 is the identity tensor 
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<1u,T> IxI(void){
-#ifdef _MSC_VER
+#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
 	const auto zero = T{0};
 	const auto one  = T{1};
 #endif
@@ -90,7 +103,7 @@ namespace tfel{
 	 */
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<1u,T> K(void){
-#ifdef _MSC_VER
+#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
 	const auto one_third = T{1}/T{3};
 	const auto two_third = T{2}/T{3};
 #endif
@@ -105,8 +118,8 @@ namespace tfel{
        * \tparam T: numerical type
        */
       template<typename T>
-      struct ComputeSpecialT2toT2Values<2u,T>{
-#ifndef _MSC_VER
+      struct TFEL_VISIBILITY_LOCAL ComputeSpecialT2toT2Values<2u,T>{
+#ifdef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT 
 	static TFEL_CONSTEXPR const T zero      = T{0};
 	static TFEL_CONSTEXPR const T one       = T{1};
 	static TFEL_CONSTEXPR const T one_third = T{1}/T{3};
@@ -117,7 +130,7 @@ namespace tfel{
 	 */
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<2u,T> transpose_derivative(void){
-#ifdef _MSC_VER
+#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
 	const auto zero = T{0};
 	const auto one  = T{1};
 #endif
@@ -130,7 +143,7 @@ namespace tfel{
 	//! \return the identity
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<2u,T> Id(void){
-#ifdef _MSC_VER
+#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
 	const auto zero = T{0};
 	const auto one  = T{1};
 #endif
@@ -143,7 +156,7 @@ namespace tfel{
 	//! \return Id2^Id2, where Id2 is the identity tensor 
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<2u,T> IxI(void){
-#ifdef _MSC_VER
+#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
 	const auto zero = T{0};
 	const auto one  = T{1};
 #endif
@@ -159,7 +172,7 @@ namespace tfel{
 	 */
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<2u,T> K(void){
-#ifdef _MSC_VER
+#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
 	const auto zero      = T{0};
 	const auto one       = T{1};
 	const auto one_third = T{1}/T{3};
@@ -178,8 +191,8 @@ namespace tfel{
        * \tparam T: numerical type
        */
       template<typename T>
-      struct ComputeSpecialT2toT2Values<3u,T>{
-#ifndef _MSC_VER
+      struct TFEL_VISIBILITY_LOCAL ComputeSpecialT2toT2Values<3u,T>{
+#ifdef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT 
 	static TFEL_CONSTEXPR const T zero = T{0};
 	static TFEL_CONSTEXPR const T one  = T{1};
 	static TFEL_CONSTEXPR const T one_third = T{1}/T{3};
@@ -190,7 +203,7 @@ namespace tfel{
 	 */
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<3u,T> transpose_derivative(void){
-#ifdef _MSC_VER
+#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
 	const auto zero = T{0};
 	const auto one  = T{1};
 #endif
@@ -207,7 +220,7 @@ namespace tfel{
 	//! \return the identity
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<3u,T> Id(void){
-#ifdef _MSC_VER
+#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
 	const auto zero = T{0};
 	const auto one  = T{1};
 #endif
@@ -224,7 +237,7 @@ namespace tfel{
 	//! \return Id2^Id2, where Id2 is the identity tensor 
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<3u,T> IxI(void){
-#ifdef _MSC_VER
+#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
 	const auto zero = T{0};
 	const auto one  = T{1};
 #endif
@@ -244,7 +257,7 @@ namespace tfel{
 	 */
 	static TFEL_MATH_INLINE TFEL_CONSTEXPR
 	tfel::math::t2tot2<3u,T> K(void){
-#ifdef _MSC_VER
+#ifndef TFEL_MATH_T2TOT2_SPECIALVALUES_CONSTEXPR_SUPPORT
 	const auto zero      = T{0};
 	const auto one       = T{1};
 	const auto one_third = T{1}/T{3};

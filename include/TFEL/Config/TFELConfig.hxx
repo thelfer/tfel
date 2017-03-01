@@ -323,10 +323,17 @@
 #undef max
 #endif
 
-#ifndef _MSC_VER
+#if defined(__GNUG__) && (not defined (__CLANG__)) && (not defined (__INTEL_COMPILER))
+#if ((__GNUC__ > 4) || ( (__GNUC__ == 4) && ((__GNUC_MINOR__ > 9) || \
+                                             (__GNUC_MINOR__ == 9 && __GNUC_PATCHLEVEL__ > 0))))
 #define TFEL_CONSTEXPR constexpr
 #else
 #define TFEL_CONSTEXPR
+#endif
+#elif defined(_MSC_VER)
+#define TFEL_CONSTEXPR
+#else
+#define TFEL_CONSTEXPR constexpr
 #endif
 
 #endif /* LIB_TFEL_CONFIG_HXX_ */
