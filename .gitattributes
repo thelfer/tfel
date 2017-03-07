@@ -1144,6 +1144,7 @@ docs/web/packages.md -text
 docs/web/pandoc-crossref.yaml -text
 docs/web/parameters.md -text
 docs/web/publications.md -text
+docs/web/release-notes-3.0.1.md -text
 docs/web/release-notes-3.0.md -text
 docs/web/release-notes.md -text
 docs/web/robots.txt -text

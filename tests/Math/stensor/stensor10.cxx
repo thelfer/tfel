@@ -196,7 +196,7 @@ struct ComputePositivePartAndDerivativeTest3D final
     // {1,1,0}
     s(0) = s(1) = 1.;
     s(2) = 0.;
-    this->check(s,1.e-8);
+    this->check(s,3e-5);
     // {1,0,1}
     s(0) = s(2) = 1.;
     s(1) = 0.;
@@ -259,9 +259,9 @@ struct DecompositionInPositiveAndNegativePartsTest1D final
   {
     using namespace std;
     using namespace tfel::math;
-    const double v1[6] = {8.2,-4.5,7.2};
-    const double v2[6] = {-8.2,4.5,7.2};
-    const double v3[6] = {8.2,4.5,-7.2};
+    const double v1[3] = {8.2,-4.5,7.2};
+    const double v2[3] = {-8.2,4.5,7.2};
+    const double v3[3] = {8.2,4.5,-7.2};
     stensor<1u,double> zero(0.);
     stensor<1u,double> s(zero);
     this->check(stensor<1u,double>(0.),1.e-8);
@@ -434,7 +434,7 @@ struct DecompositionInPositiveAndNegativePartsTest3D final
     // {1,1,0}
     s(0) = s(1) = 1.;
     s(2) = 0.;
-    this->check(s,1.e-8);
+    this->check(s,3e-5);
     // {1,0,1}
     s(0) = s(2) = 1.;
     s(1) = 0.;

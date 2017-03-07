@@ -76,6 +76,7 @@ pandoc_html(MultipleIsotropicMisesFlows-keywords "--toc" "--toc-depth=1")
 pandoc_html(RungeKutta-keywords "--toc" "--toc-depth=1")
 pandoc_html(BehaviourBricks "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.0 "--toc" "--toc-depth=2")
+pandoc_html(release-notes-3.0.1 "--toc" "--toc-depth=2")
 
 # mtest keywords
 
