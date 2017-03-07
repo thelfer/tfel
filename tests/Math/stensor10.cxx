@@ -195,7 +195,7 @@ struct ComputePositivePartAndDerivativeTest3D
     // {1,1,0}
     s(0) = s(1) = 1.;
     s(2) = 0.;
-    this->check(s,1.e-8);
+    this->check(s,3e-5);
     // {1,0,1}
     s(0) = s(2) = 1.;
     s(1) = 0.;
@@ -433,7 +433,7 @@ struct DecompositionInPositiveAndNegativePartsTest3D
     // {1,1,0}
     s(0) = s(1) = 1.;
     s(2) = 0.;
-    this->check(s,1.e-8);
+    this->check(s,3e-5);
     // {1,0,1}
     s(0) = s(2) = 1.;
     s(1) = 0.;

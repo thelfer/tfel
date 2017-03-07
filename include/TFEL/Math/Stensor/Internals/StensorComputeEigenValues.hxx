@@ -106,8 +106,14 @@ namespace tfel{
 	  const T one_third = T(1)/T(3);
 	  stensor<3u,T> s(v);
 	  stensor<3u,T> s2(deviator(s));
-	  const T vmax = *(fsalgo::max_element<6u>::exe(s2.begin()));
-	  const bool n = abs(vmax)*std::numeric_limits<T>::epsilon()>std::numeric_limits<T>::min();
+	  T vmax = -std::numeric_limits<T>::min();
+	  for(unsigned short i=0;i!=6;++i){
+	    const T sv = std::abs(s2(i));
+	    if(sv>vmax){
+	      vmax=sv;
+	    }
+	  }
+	  const bool n = std::abs(vmax)*std::numeric_limits<T>::epsilon()>std::numeric_limits<T>::min();
   	  if(n){
 	    s2 *= T(1)/vmax;
 	  }
