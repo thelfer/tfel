@@ -5,6 +5,7 @@
  * \brief  17 avril 2013
  */
 
+@AccelerationAlgorithm 'Cast3M';
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatmazars';
 @MaterialProperty<constant> 'YoungModulus'     3.2e10; 
 @MaterialProperty<constant> 'PoissonRatio'     0.2;    

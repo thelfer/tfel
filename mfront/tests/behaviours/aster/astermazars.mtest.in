@@ -6,7 +6,7 @@
  */
 
 @StiffnessMatrixType 'SecantOperator';
-
+@AccelerationAlgorithm 'Cast3M';
 @Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'astermazars';
 @MaterialProperty<constant> 'YoungModulus'     3.2e10; 
 @MaterialProperty<constant> 'PoissonRatio'     0.2;    

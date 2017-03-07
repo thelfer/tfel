@@ -5,9 +5,12 @@
  * \brief  4 dec. 2013
  */
 
+@MaximumNumberOfSubSteps 1;
 @UseCastemAccelerationAlgorithm true;
 @ModellingHypothesis 'Axisymmetrical';
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity_malls';
+@StressEpsilon 6e2;
+
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 
@@ -25,8 +28,8 @@
 @Evolution<function> 'J'   'sqrt(exp(2*err)*exp(2*ezz))*FTT';
 @Evolution<function> 'Ttt' 'YoungModulus*ett';
 
-@Test<function> {'SRR':'0','SZZ':'0'} 1.e-4;
-@Test<function> {'STT':'Ttt/J'}       1.e-4;
+@Test<function> {'SRR':'0','SZZ':'0'} 2.e-1;
+@Test<function> {'STT':'Ttt/J'}       2.e-2;
 @Test<function> {'SRZ':'0'}           1.e-4;
 @Test<function> {'FRR': 'sqrt(exp(2*err))','FZZ': 'sqrt(exp(2*ezz))'} 1.e-10;
 @Test<function> {'FRZ': '0', 'FZR':'0'} 1.e-10;
