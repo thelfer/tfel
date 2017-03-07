@@ -5,6 +5,8 @@
  * \brief  17 avril 2013
  */
 
+@MaximumNumberOfSubSteps 1;
+@AccelerationAlgorithm 'Cast3M';
 @Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'MAZARS_3D';
 @MaterialProperty<constant> 'YoungModulus'     3.2e10; 
 @MaterialProperty<constant> 'PoissonRatio'     0.2;    
