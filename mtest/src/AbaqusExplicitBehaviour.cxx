@@ -60,11 +60,11 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return "_3D";
       }
-      throw(std::runtime_error("AbaqusExplicitBehaviour::AbaqusExplicitBehaviour: "
+      throw(std::runtime_error("AbaqusExplicitBehaviour::getBehaviourName: "
 			       "invalid hypothesis."));
     }();
     if(!ends(s)){
-      throw(std::runtime_error("AbaqusExplicitBehaviour::AbaqusExplicitBehaviour: "
+      throw(std::runtime_error("AbaqusExplicitBehaviour::getBehaviourName: "
 			       "invalid function name."));
     }
     return {b.begin(),b.begin()+b.length()-s.length()};    
@@ -76,8 +76,7 @@ namespace mtest
     : UmatBehaviourBase(h,l,AbaqusExplicitBehaviour::getBehaviourName(b,h))
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("AbaqusExplicitBehaviour::"
-				     "AbaqusExplicitBehaviour:"+m));}
+      if(c){throw(std::runtime_error("AbaqusExplicitBehaviour::AbaqusExplicitBehaviour: "+m));}
     };
     auto& elm     = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     const auto bn = AbaqusExplicitBehaviour::getBehaviourName(b,h);
@@ -179,8 +178,7 @@ namespace mtest
     return r;
   } // end of AbaqusExplicitBehaviour::getRotationMatrix
 
-  void
-  AbaqusExplicitBehaviour::allocate(BehaviourWorkSpace& wk) const
+  void AbaqusExplicitBehaviour::allocate(BehaviourWorkSpace& wk) const
   {
     const auto ndv     = this->getDrivingVariablesSize();
     const auto nth     = this->getThermodynamicForcesSize();
@@ -193,15 +191,13 @@ namespace mtest
     mtest::allocate(wk.cs,this->shared_from_this());
   } // end of AbaqusExplicitBehaviour::allocate
 
-  StiffnessMatrixType
-  AbaqusExplicitBehaviour::getDefaultStiffnessMatrixType() const
+  StiffnessMatrixType AbaqusExplicitBehaviour::getDefaultStiffnessMatrixType() const
   {
     return StiffnessMatrixType::ELASTIC;
   }
 
-  bool
-  AbaqusExplicitBehaviour::doPackagingStep(CurrentState& s,
-					   BehaviourWorkSpace& wk) const{
+  bool AbaqusExplicitBehaviour::doPackagingStep(CurrentState& s,
+						BehaviourWorkSpace& wk) const{
     using tfel::math::matrix;
     using abaqus::AbaqusInt;
     auto throw_if = [](const bool c, const std::string& m){

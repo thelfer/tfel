@@ -357,7 +357,6 @@ namespace mtest{
     }
   }
 
-  GenericSolver::~GenericSolver()
-  {} // end of GenericSolver::~GenericSolver
+  GenericSolver::~GenericSolver() = default;
   
 } // end of namespace mtest

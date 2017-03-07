@@ -23,8 +23,8 @@
 @Evolution<function> 'J'   'sqrt(exp(2*ett)*exp(2*ezz))*FRR';
 @Evolution<function> 'Trr' 'YoungModulus*err';
 
-@Test<function> {'SZZ':'0','STT':'0'} 1.e-4;
-@Test<function> {'SRR':'Trr/J'}       1.e-4;
+@Test<function> {'SZZ':'0','STT':'0'} 2.3e-4;
+@Test<function> {'SRR':'Trr/J'}       2.3e-4;
 @Test<function> {'FTT': 'sqrt(exp(2*ett))','FZZ': 'sqrt(exp(2*ezz))'} 1.e-10;
 
 

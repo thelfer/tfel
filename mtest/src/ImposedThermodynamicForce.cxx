@@ -39,20 +39,19 @@ namespace mtest
     return 0u;
   } // end of ImposedThermodynamicForce::getNumberOfLagrangeMultipliers
 
-  void
-  ImposedThermodynamicForce::setValues(tfel::math::matrix<real>&,
-				       tfel::math::vector<real>& r,
-				       const tfel::math::vector<real>&,
-				       const tfel::math::vector<real>&,
-				       const unsigned short,
-				       const unsigned short,
-				       const real t,
-				       const real dt,
-				       const real) const
+  void ImposedThermodynamicForce::setValues(tfel::math::matrix<real>&,
+					    tfel::math::vector<real>& r,
+					    const tfel::math::vector<real>&,
+					    const tfel::math::vector<real>&,
+					    const tfel::math::matrix<real>&,
+					    const tfel::math::vector<real>&,
+					    const unsigned short,
+					    const unsigned short,
+					    const real t,
+					    const real dt,
+					    const real) const
   {
-    using namespace std;
-    const Evolution& s = *(this->sev);
-    r(this->c) -= s(t+dt);
+    r(this->c) -= this->sev->operator()(t+dt);
   } // end of ImposedThermodynamicForce::setValues
 
   bool
@@ -63,10 +62,8 @@ namespace mtest
 					      const real t,
 					      const real dt) const
   {
-    using namespace std;
-    const Evolution& sv = *(this->sev);
-    const bool cb = abs(s(this->c)-sv(t+dt))<seps;
-    return cb;
+    const auto& sv = *(this->sev);
+    return std::abs(s(this->c)-sv(t+dt))<seps;
   }
 
   std::string
@@ -77,17 +74,14 @@ namespace mtest
 							 const real t,
 							 const real dt) const
   {
-    using namespace std;
-    const Evolution& sv = *(this->sev);
-    ostringstream msg;
+    const auto& sv = *(this->sev);
+    std::ostringstream msg;
     msg << "imposed thermodynmic force not reached for component " << this->c 
 	<< " (imposed value : " << sv(t+dt) << ", computed value : " 
 	<< s(this->c) << ", criteria : " << seps << ")";
     return msg.str();
   }
 
-  ImposedThermodynamicForce::~ImposedThermodynamicForce()
-  {} // end of ImposedThermodynamicForce::~ImposedThermodynamicForce
+  ImposedThermodynamicForce::~ImposedThermodynamicForce() = default;
 
 } // end of namespace mtest
-

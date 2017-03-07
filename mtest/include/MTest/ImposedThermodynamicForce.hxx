@@ -59,29 +59,36 @@ namespace mtest
     virtual unsigned short
     getNumberOfLagrangeMultipliers(void) const override;
     /*!
-     * \brief builds up the stiffness matrix and the residual
-     * \param[out] K  : stiffness matrix
-     * \param[out] r  : residual vector
-     * \param[in]  u0 : value of the unknowns at the beginning
+     * \brief builds up the stiffness matrix and the residual.
+     * \param[out] K:  stiffness matrix
+     * \param[out] r:  residual vector
+     * \param[in]  u0: value of the unknowns at the beginning
      *                  of the time step
-     * \param[in]  u1 : current estimate of the unknowns
-     * \param[in]  p  : position of the first lagrange multiplier
-     *                  in the residual 
-     * \param[in]  d  : space dimension
-     * \param[in]  t  : beginning of the time step
-     * \param[in]  dt : time increment
-     * \param[in]  a  : normalisation factor
+     * \param[in]  u1: current estimate of the unknowns
+     * \param[in]  u1: current estimate of the unknowns
+     * \param[in]  k: approximation of the derivative of the
+     * thermodynamic force with respect to the driving variable, as
+     * returned by the mechanical behaviour.
+     * \param[in]  f: thermodynamic forces.
+     * \param[in]  u1: current estimate of the unknowns
+     * \param[in]  p:  position of the first lagrange multiplier
+     *                 in the residual 
+     * \param[in]  d:  space dimension
+     * \param[in]  t:  beginning of the time step
+     * \param[in]  dt: time increment
+     * \param[in]  a:  normalisation factor
      */
-    virtual void
-    setValues(tfel::math::matrix<real>&,
-	      tfel::math::vector<real>&,
-	      const tfel::math::vector<real>&,
-	      const tfel::math::vector<real>&,
-	      const unsigned short,
-	      const unsigned short,
-	      const real,
-	      const real,
-	      const real) const override;
+    virtual void setValues(tfel::math::matrix<real>&,
+			   tfel::math::vector<real>&,
+			   const tfel::math::vector<real>&,
+			   const tfel::math::vector<real>&,
+			   const tfel::math::matrix<real>&,
+			   const tfel::math::vector<real>&,
+			   const unsigned short,
+			   const unsigned short,
+			   const real,
+			   const real,
+			   const real) const override;
     /*!
      * \param[in]  e    : strains
      * \param[in]  s    : ThermodynamicForcees

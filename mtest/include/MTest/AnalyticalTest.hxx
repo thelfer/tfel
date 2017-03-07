@@ -15,12 +15,11 @@
 #define LIB_MTEST_MTESTANALYTICALTEST_H_ 
 
 #include<map>
+#include<memory>
 #include<string>
 
 #include"TFEL/Math/Evaluator.hxx"
 #include"TFEL/Tests/TestResult.hxx"
-#include<memory>
-
 #include"MTest/MTest.hxx"
 
 namespace mtest{

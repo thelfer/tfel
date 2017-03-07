@@ -95,8 +95,10 @@ namespace tfel{
 	  TFEL_CONSTEXPR const auto one_third = 1/T{3};
 	  stensor<3u,T> s(v);
 	  stensor<3u,T> s2(deviator(s));
-	  const auto vmax = *(fsalgo::max_element<6u>::exe(s2.begin()));
-	  const bool n = std::abs(vmax)*std::numeric_limits<T>::epsilon()>std::numeric_limits<T>::min();
+	  const auto vmax = *(fsalgo::max_element<6u>::exe(s2.begin(),[](const T x,const T y){
+		return std::abs(x)>std::abs(y);
+	      }));
+	  const bool n = std::abs(vmax)*std::numeric_limits<T>::epsilon()>10*std::numeric_limits<T>::min();
   	  if(n){
 	    s2 *= T(1)/vmax;
 	  }

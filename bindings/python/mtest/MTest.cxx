@@ -19,8 +19,9 @@
 #include"MTest/Constraint.hxx"
 #include"MTest/CurrentState.hxx"
 #include"MTest/StructureCurrentState.hxx"
-#include"MTest/ImposedThermodynamicForce.hxx"
+#include"MTest/NonLinearConstraint.hxx"
 #include"MTest/ImposedDrivingVariable.hxx"
+#include"MTest/ImposedThermodynamicForce.hxx"
 
 namespace mtest{
 
@@ -230,6 +231,40 @@ MTest_setImposedCohesiveForce2(mtest::MTest& t,
 			     "for small strain behaviours"));
   }
   MTest_setImposedThermodynamicForce2(t,n,v);
+}
+
+static void MTest_setNonLinearConstraint(mtest::MTest& t,
+					 const std::string& f,
+					 const std::string& np)
+{
+  using namespace tfel::material;
+  using namespace mtest;
+  if((np=="DrivingVariable")||
+     ((np=="Strain")&&
+      (t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR))||
+     ((np=="DeformationGradient")&&
+      (t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR))||
+     ((np=="OpeningDisplacement")&&
+      (t.getBehaviourType()==MechanicalBehaviourBase::COHESIVEZONEMODEL))){
+    const auto p = NonLinearConstraint::DRIVINGVARIABLECONSTRAINT;
+    auto c = std::make_shared<mtest::NonLinearConstraint>(*(t.getBehaviour()),f,
+							  t.getEvolutions(),p);
+
+    t.addConstraint(c);
+  } else if ((np=="ThermodynamicForce")||
+	     ((np=="Stress")&&
+	      ((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	       (t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)))||
+	     ((np=="CohesiveForce")&&
+	      (t.getBehaviourType()==MechanicalBehaviourBase::COHESIVEZONEMODEL))){
+    const auto p = NonLinearConstraint::THERMODYNAMICFORCECONSTRAINT;
+    auto c = std::make_shared<mtest::NonLinearConstraint>(*(t.getBehaviour()),f,
+							  t.getEvolutions(),p);
+    t.addConstraint(c);
+  } else {
+    throw(std::runtime_error("MTest::setNonLinearConstraint: "
+			     "invalid normalisation policy"));
+  }
 }
 
 static void
@@ -710,13 +745,24 @@ void declareMTest()
      "the returned value will be the one from the nearest "
      "association available.")
     .def("setImposedCohesiveForce",MTest_setImposedCohesiveForce,
-     (arg("name"),"values"))
+	 (arg("name"),"values"))
     .def("setImposedCohesiveForce",MTest_setImposedCohesiveForce2,
-     (arg("name"),"values"))
+	 (arg("name"),"values"))
     .def("setImposedThermodynamicForce",MTest_setImposedThermodynamicForce,
-     (arg("name"),"values"))
+	 (arg("name"),"values"))
     .def("setImposedThermodynamicForce",MTest_setImposedThermodynamicForce2,
-     (arg("name"),"values"))
+	 (arg("name"),"values"))
+    .def("setNonLinearConstraint",MTest_setNonLinearConstraint,
+	 arg("constraint"),arg("normalisation_policy"),
+	 "This method add a non linear constraint "
+	 "on driving variables or thermodynamic forces.\n"
+	 "The normalisation policy can have one of the following values:\n"
+	 "- `DrivingVariable`, `Strain`, `DeformationGradient`, `OpeningDisplacement` "
+	 "stating that the constraint is of the order "
+	 "of magnitude of the driving variable\n"
+    	 "- `ThermodynamicForce`, `Stress`, `CohesiveForce` "
+	 "stating that the constraint is of the order "
+	 "of magnitude of the thermodynamic force'\n")
     .def("setImposedStrain",MTest_setImposedStrain,
      (arg("name"),"values"),
      "This method specify the constant evolution of a strains component.\n"

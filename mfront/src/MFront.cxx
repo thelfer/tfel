@@ -365,8 +365,7 @@ namespace mfront{
     this->parseArguments();
   } // end of MFront::MFront
 
-  void
-  MFront::treatDefine()
+  void MFront::treatDefine()
   {
     const auto& o = this->currentArgument->getOption();
     if(o.empty()){
@@ -376,8 +375,7 @@ namespace mfront{
     this->defines.insert(o);
   } // end of MFront::treatDefine
   
-  void
-  MFront::treatHelpCommandsList()
+  void MFront::treatHelpCommandsList()
   {
     using tfel::utilities::TerminalColors;
     auto& f = DSLFactory::getDSLFactory();
@@ -411,8 +409,7 @@ namespace mfront{
     exit(EXIT_SUCCESS);
   } // end of MFront::treatHelpCommandsList
 
-  void
-  MFront::treatHelpCommands()
+  void MFront::treatHelpCommands()
   {
     auto& f = DSLFactory::getDSLFactory();
     const auto& o = this->currentArgument->getOption();
@@ -442,8 +439,7 @@ namespace mfront{
     exit(EXIT_SUCCESS);
   } // end of MFront::treatHelpCommands
   
-  void
-  MFront::treatHelpCommand()
+  void MFront::treatHelpCommand()
   {
     auto& f = DSLFactory::getDSLFactory();
     const auto& o = this->currentArgument->getOption();

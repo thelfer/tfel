@@ -59,11 +59,10 @@ namespace mtest
        * \param[in] dt: time increment
        * \param[in] p:  period
        */
-      virtual void
-      check(const CurrentState&,
-	    const real,
-	    const real,
-	    const unsigned int) = 0;
+      virtual void check(const CurrentState&,
+			 const real,
+			 const real,
+			 const unsigned int) = 0;
       /*!
        * \return the results of the test
        */

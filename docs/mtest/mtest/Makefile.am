@@ -11,7 +11,8 @@ MTEST_MTEST_DOCS = ImposedStrain.md              \
 	     	   StressEpsilon.md              \
 	     	   CohesiveForce.md              \
 	     	   CohesiveForceEpsilon.md       \
-	     	   Test.md
+	     	   Test.md                       \
+	     	   NonLinearConstraint.md
 
 mtestdocdir   = $(datadir)/doc/mtest/mtest
 mtestdoc_DATA = $(MTEST_MTEST_DOCS)

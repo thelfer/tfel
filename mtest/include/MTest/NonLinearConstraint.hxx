@@ -1,8 +1,8 @@
 /*! 
- * \file  mtest/include/MTest/ImposedDrivingVariable.hxx
+ * \file  mtest/include/MTest/NonLinearConstraint.hxx
  * \brief
  * \author Helfer Thomas
- * \brief 05 avril 2013
+ * \brief  03/03/2017
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -11,13 +11,16 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_MTESTIMPOSEDDRIVINGVARIABLE_H_
-#define LIB_MTEST_MTESTIMPOSEDDRIVINGVARIABLE_H_ 
+#ifndef LIB_MTEST_MTESTNONLINEARCONSTRAINT_H_
+#define LIB_MTEST_MTESTNONLINEARCONSTRAINT_H_ 
 
+#include<vector>
+#include<string>
+#include<memory>
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/vector.hxx"
+#include"TFEL/Math/Evaluator.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
-#include<memory>
 
 #include"MTest/Types.hxx"
 #include"MTest/Config.hxx"
@@ -30,34 +33,42 @@ namespace mtest
   // forward declaration
   struct Behaviour;
 
-  /*!
-   * Impose the value of a driving variable component
-   */
-  struct MTEST_VISIBILITY_EXPORT ImposedDrivingVariable final
+  //! \brief Impose a contraint on the driving variables.
+  struct MTEST_VISIBILITY_EXPORT NonLinearConstraint final
     : public Constraint
   {
+    //! \brief define the normalisation policy
+    enum NormalisationPolicy{
+      /*!
+       * \brief this policy assumes that the constraint is defined by
+       * a function which values are of the order of magnitude of the
+       * driving variables.
+       */
+      DRIVINGVARIABLECONSTRAINT,
+      /*!
+       * \brief this policy assumes that the constraint is defined by
+       * a function which values are of the order of magnitude of the
+       * thermodynamic forces.
+       */
+      THERMODYNAMICFORCECONSTRAINT
+    }; // end of enum NormalisationPolicy
     /*!
      * constructor
-     * \param[in] b : behaviour
-     * \param[in] c : driving variable component
-     * \param[in] s : driving variable evolution
+     * \param[in] b_:  behaviour
+     * \param[in] f:   analytic defintion of the constraint
+     * \param[in] evm: evolution manager
+     * \param[in] p:   normalisation policy
      */
-    ImposedDrivingVariable(const Behaviour&,
-			   const std::string&,
-			   const std::shared_ptr<Evolution>);
-    /*!
-     * constructor
-     * \param[in] c : component
-     * \param[in] s : driving variable evolution
-     */
-    ImposedDrivingVariable(const unsigned short c,
-				const std::shared_ptr<Evolution>);
+    NonLinearConstraint(const Behaviour&,
+			const std::string&,
+			const EvolutionManager&,
+			const NormalisationPolicy);
     /*!
      * \return the number of Lagrange Multipliers
      * associated with this contraint
      */
     virtual unsigned short
-    getNumberOfLagrangeMultipliers(void) const override;
+    getNumberOfLagrangeMultipliers() const override;
     /*!
      * \brief builds up the stiffness matrix and the residual.
      * \param[out] K:  stiffness matrix
@@ -121,17 +132,42 @@ namespace mtest
 				const real,
 				const real) const override;
     //! destructor
-    virtual ~ImposedDrivingVariable();
+    virtual ~NonLinearConstraint();
   protected:
-    ImposedDrivingVariable& operator=(const ImposedDrivingVariable&) = delete;
-    ImposedDrivingVariable& operator=(ImposedDrivingVariable&&) = delete;
-    //! driving variable evolution
-    const std::shared_ptr<Evolution> eev;
-    //! component value
-    unsigned short c;
-  }; // end of struct ImposedDrivingVariable
+    /*!
+     * \brief a structure containing the data relative of one of the
+     * variable defining the contraint.
+     */
+    struct Variable
+    {
+      //! \brief variable name
+      std::string name;
+      //! \brief position
+      unsigned short p;
+      //! \brief derivative of the contraint with respect to this variable
+      mutable std::shared_ptr<tfel::math::Evaluator> d;
+    }; // end of struct Variable    
+    //! \brief evaluation of the constraint
+    mutable tfel::math::Evaluator c;
+    //! \brief list of driving variables used to define the constraint
+    std::vector<Variable> dvs;
+    //! \brief list of thermodynamic forces used to define the constraint
+    std::vector<Variable> tfs;
+    /*!
+     * \brief reference to all variables which are not driving
+     * variables or thermodynamic forces
+     */
+    EvolutionManager evs;
+    //! normalisation policy
+    const Behaviour& b;
+    //! normalisation policy
+    const NormalisationPolicy np;
+    //! disabled operatorx
+    NonLinearConstraint& operator=(const NonLinearConstraint&) = delete;
+    NonLinearConstraint& operator=(NonLinearConstraint&&) = delete;
+  }; // end of struct NonLinearConstraint
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_MTESTIMPOSEDDRIVINGVARIABLE_H_ */
+#endif /* LIB_MTEST_MTESTNONLINEARCONSTRAINT_H_ */
 

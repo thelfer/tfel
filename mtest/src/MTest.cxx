@@ -644,7 +644,7 @@ namespace mtest
     const auto a = state.getParameter<real>("LagrangeMultipliersNormalisationFactor");      
     unsigned short pos = ndv;
     for(const auto& c : this->constraints){
-      c->setValues(k,r,state.u0,state.u0,pos,getSpaceDimension(this->hypothesis),t,dt,a);
+      c->setValues(k,r,state.u0,state.u0,bwk.kt,s.s0,pos,getSpaceDimension(this->hypothesis),t,dt,a);
       pos = static_cast<unsigned short>(pos+c->getNumberOfLagrangeMultipliers());
     }
     return res;
@@ -752,6 +752,7 @@ namespace mtest
 	log << "Numerical evalution of tangent operator failed.\n\n";
       }
     }
+    //! update the stiffness matrix and the residual
     updateStiffnessAndResidual(k,r,*(this->b),bwk.k,s.s1);
     if(!state.containsParameter("LagrangeMultipliersNormalisationFactor")){
       state.setParameter("LagrangeMultipliersNormalisationFactor",
@@ -761,7 +762,7 @@ namespace mtest
     const auto d = getSpaceDimension(this->hypothesis);
     unsigned short pos = ndv;
     for(const auto& c : this->constraints){
-      c->setValues(k,r,state.u0,state.u1,pos,d,t,dt,a);
+      c->setValues(k,r,state.u0,state.u1,bwk.k,s.s1,pos,d,t,dt,a);
       pos = static_cast<unsigned short>(pos+c->getNumberOfLagrangeMultipliers());
     }
     return rb;

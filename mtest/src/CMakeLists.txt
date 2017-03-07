@@ -33,6 +33,7 @@ set(TFELMTest_SOURCES
   UmatBehaviourBase.cxx
   UmatNormaliseTangentOperator.cxx
   Constraint.cxx
+  NonLinearConstraint.cxx
   ImposedDrivingVariable.cxx
   ImposedThermodynamicForce.cxx
   AccelerationAlgorithmFactory.cxx

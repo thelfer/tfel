@@ -224,7 +224,7 @@ const auto evp    = map([](const auto x){return exp(x)},vp);
 const auto [f,df] = Stensor::computeIsotropicFunctionAndDerivative(evp,evp,vp,m,1.e-12);
 ~~~~
 
-# MFront
+# New functionalities of the `MFront` code generator
 
 ## Gallery
 
@@ -235,6 +235,55 @@ The implementation of various hyperelastic behaviours can be found
 
 - [Signorini](signorini.html)
 - [Ogden](ogden.html)
+
+# New functionalities of `MTest` solver
+
+### Abritrary non linear constraints
+
+Abritrary non linear constraints on driving variables and
+thermodynamic forces can now be added using the `@NonLinearConstraint`
+keyword.
+
+> **Note**
+>
+> This keyword can also be used to define linear constraints, although
+> the numerical treatment of such a constraint will be sub-optimal. A
+> special treatment of such a constraint is planned.
+
+#### Normalisation policy
+
+This keyword must be followed by an option giving the normalisation
+policy. The normalisation policy can have one of the following values:
+
+- `DrivingVariable`, `Strain`, `DeformationGradient`,
+  `OpeningDisplacement` stating that the constraint is of the order of
+  magnitude of the driving variable.
+- `ThermodynamicForce`, `Stress`, `CohesiveForce` stating that the
+  constraint is of the order of magnitude of the thermodynamic force.
+
+#### Example
+
+~~~~~ {.cpp}
+// ensure that the loading is isochoric in 1D
+@NonLinearEquation<Strain> 'FRR*FTT*FZZ-1';
+~~~~~~~~~~
+
+#### `python` bindings
+
+In the `python` bindings, the `setNonLinearConstraint` method has been
+added to the `MTest` class.
+
+This method takes two named arguments:
+
+- `constraint`, the equation to be satified
+- `normalisation_policy`. The normalisation policy can have one of the
+  following values:
+    - `DrivingVariable`, `Strain`, `DeformationGradient`,
+	  `OpeningDisplacement` stating that the constraint is of the
+	  order of magnitude of the driving variable
+	- `ThermodynamicForce`, `Stress`, `CohesiveForce` stating that the
+	  constraint is of the order of magnitude of the thermodynamic
+	  force
 
 # References
 

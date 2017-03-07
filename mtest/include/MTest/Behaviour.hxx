@@ -51,7 +51,7 @@ namespace mtest
     //! a simple alias
     using Kinematic     = tfel::material::MechanicalBehaviourBase::Kinematic;
     //! \return the modelling hypothesis 
-    virtual Hypothesis getHypothesis(void) const = 0;
+    virtual Hypothesis getHypothesis() const = 0;
     /*!
      * \brief This function set a material property to its default value if it not already declared
      * \param[out] mp  : evolution manager where 
@@ -65,11 +65,11 @@ namespace mtest
 					    const std::string&,
 					    const real);
     //! \return the type of the behaviour
-    virtual BehaviourType getBehaviourType(void) const = 0;
+    virtual BehaviourType getBehaviourType() const = 0;
     //! \return the type of the behaviour
-    virtual Kinematic getBehaviourKinematic(void) const = 0;
+    virtual Kinematic getBehaviourKinematic() const = 0;
     //! \return the size of a vector able to contain all the components of the driving variables
-    virtual unsigned short getDrivingVariablesSize(void) const = 0;
+    virtual unsigned short getDrivingVariablesSize() const = 0;
     /*!
      * \param[out] v : initial values of the driving variables
      * \note : the vector shall have been correctly allocated
@@ -80,32 +80,32 @@ namespace mtest
      * \return the size of a vector able to contain all the components of the thermodynamic forces
      */
     virtual unsigned short
-    getThermodynamicForcesSize(void) const = 0;
+    getThermodynamicForcesSize() const = 0;
     /*!
      * \return the components suffixes of a symmetric tensor
      */
     virtual std::vector<std::string>
-    getStensorComponentsSuffixes(void) const = 0;
+    getStensorComponentsSuffixes() const = 0;
     /*!
      * \return the components suffixes of a vector
      */
     virtual std::vector<std::string>
-    getVectorComponentsSuffixes(void) const = 0;
+    getVectorComponentsSuffixes() const = 0;
     /*!
      * \return the components suffixes of a tensor
      */
     virtual std::vector<std::string>
-    getTensorComponentsSuffixes(void) const = 0;
+    getTensorComponentsSuffixes() const = 0;
     /*!
      * \return the components of the driving variables
      */
     virtual std::vector<std::string>
-    getDrivingVariablesComponents(void) const = 0;
+    getDrivingVariablesComponents() const = 0;
     /*!
      * \return the components of the thermodynamic forces
      */
     virtual std::vector<std::string>
-    getThermodynamicForcesComponents(void) const = 0;
+    getThermodynamicForcesComponents() const = 0;
     /*!
      * \param[in] c : component
      */
@@ -122,12 +122,12 @@ namespace mtest
      * 1 means that the behaviour is orthotropic.
      */
     virtual unsigned short
-    getSymmetryType(void) const = 0;
+    getSymmetryType() const = 0;
     /*!
      * \return the number of material properties
      */
     virtual std::vector<std::string>
-    getMaterialPropertiesNames(void) const = 0;
+    getMaterialPropertiesNames() const = 0;
     /*!
      * \brief This method solves two issues:
      * 
@@ -149,7 +149,7 @@ namespace mtest
 					       const EvolutionManager&) const = 0;
     //! \return the names of internal variables
     virtual std::vector<std::string>
-    getInternalStateVariablesNames(void) const  = 0;
+    getInternalStateVariablesNames() const  = 0;
     //! \return expand the names of internal variables
     virtual std::vector<std::string>
     expandInternalStateVariablesNames() const = 0;
@@ -157,12 +157,12 @@ namespace mtest
      * \return the size of the array of internal variables
      */
     virtual size_t
-    getInternalStateVariablesSize(void) const = 0;
+    getInternalStateVariablesSize() const = 0;
     /*!
      * \return the descriptions the internal variables
      */
     virtual std::vector<std::string>
-    getInternalStateVariablesDescriptions(void) const = 0;
+    getInternalStateVariablesDescriptions() const = 0;
     /*!
      * \return the type of an internal variable
      */
@@ -178,7 +178,7 @@ namespace mtest
      * \return the number of external variables
      */
     virtual std::vector<std::string>
-    getExternalStateVariablesNames(void) const  = 0;
+    getExternalStateVariablesNames() const  = 0;
     /*!
      * \brief set the out of bounds policy
      * \param[in] p : policy selected
@@ -219,7 +219,7 @@ namespace mtest
      * \return the default type of stiffness matrix used by the behaviour
      */
     virtual StiffnessMatrixType
-    getDefaultStiffnessMatrixType(void) const = 0;
+    getDefaultStiffnessMatrixType() const = 0;
     /*!
      * \brief compute the *real* rotation matrix
      * \param[in] mp : material properties

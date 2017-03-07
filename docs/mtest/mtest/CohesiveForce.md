@@ -1,5 +1,5 @@
-The `@CohesiveForce` let the user specifiy the inital value of the
-cohesive forces.
+The `@CohesiveForce` keyword let the user specifiy the inital value of
+the cohesive forces.
 
 This keyword is followed by an array. The size of this array must be
 equal to the number of components of symmetric tensors for the

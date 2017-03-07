@@ -25,6 +25,7 @@ libTFELMTest_la_SOURCES = Study.cxx                                 \
 			  UmatBehaviourBase.cxx                     \
 			  UmatNormaliseTangentOperator.cxx          \
 			  Constraint.cxx                            \
+			  NonLinearConstraint.cxx                   \
 			  ImposedDrivingVariable.cxx                \
 			  ImposedThermodynamicForce.cxx             \
 			  Solver.cxx                                \

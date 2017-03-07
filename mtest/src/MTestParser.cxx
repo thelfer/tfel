@@ -46,6 +46,7 @@
 #include"MTest/Evolution.hxx"
 #include"MTest/Behaviour.hxx"
 #include"MTest/Constraint.hxx"
+#include"MTest/NonLinearConstraint.hxx"
 #include"MTest/ImposedThermodynamicForce.hxx"
 #include"MTest/ImposedDrivingVariable.hxx"
 #include"MTest/MTestParser.hxx"
@@ -272,6 +273,8 @@ namespace mtest
 			   &MTestParser::handleImposedCohesiveForce);
     this->registerCallBack("@ImposedThermodynamicForce",
 			   &MTestParser::handleImposedThermodynamicForce);
+    this->registerCallBack("@NonLinearConstraint",
+			   &MTestParser::handleNonLinearConstraint);
     this->registerCallBack("@CompareToNumericalTangentOperator",
 			   &MTestParser::handleCompareToNumericalTangentOperator);
     this->registerCallBack("@TangentOperatorComparisonCriterium",
@@ -662,8 +665,46 @@ namespace mtest
     t.addConstraint(sc);
     this->readSpecifiedToken("MTestParser::handleImposedThermodynamicForce",";",
 			     p,this->tokens.end());
-  } // end of MTestParser::handleImposedStress
+  } // end of MTestParser::handleImposedThermodynamicForce
 
+  void MTestParser::handleNonLinearConstraint(MTest& t,tokens_iterator& p)
+  {
+    using namespace tfel::material;
+    NonLinearConstraint::NormalisationPolicy np;
+    this->readSpecifiedToken("MTestParser::handleNonLinearConstraint","<",
+			     p,this->tokens.end());
+    this->checkNotEndOfLine("MTestParser::handleNonLinearConstraint",
+			    p,this->tokens.end());
+    if((p->value=="DrivingVariable")||
+       ((p->value=="Strain")&&
+	(t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR))||
+       ((p->value=="DeformationGradient")&&
+	(t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR))||
+       ((p->value=="OpeningDisplacement")&&
+	(t.getBehaviourType()==MechanicalBehaviourBase::COHESIVEZONEMODEL))){
+      np = NonLinearConstraint::DRIVINGVARIABLECONSTRAINT; 
+    } else if ((p->value=="ThermodynamicForce")||
+	       ((p->value=="Stress")&&
+		((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		 (t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)))||
+	       ((p->value=="CohesiveForce")&&
+		(t.getBehaviourType()==MechanicalBehaviourBase::COHESIVEZONEMODEL))){
+      np = NonLinearConstraint::THERMODYNAMICFORCECONSTRAINT; 
+    } else {
+      throw(std::runtime_error("MTestParser::handleNonLinearConstraint: "
+			       "invalid normalisation policy '"+p->value+"'"));
+    }
+    ++p;
+    this->readSpecifiedToken("MTestParser::handleNonLinearConstraint",">",
+			     p,this->tokens.end());
+    const auto& c = this->readString(p,this->tokens.end());
+    auto sc  = std::make_shared<NonLinearConstraint>(*(t.getBehaviour()),c,
+						     t.getEvolutions(),np);
+    t.addConstraint(sc);
+    this->readSpecifiedToken("MTestParser::handleNonLinearConstraint",";",
+			     p,this->tokens.end());
+  } // end of MTestParser::handleNonLinearConstraint
+  
   void MTestParser::handleImposedStrain(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;

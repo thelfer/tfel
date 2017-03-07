@@ -5,8 +5,12 @@
   "avec effet unilatéral"
 };
 
+@MaximumNumberOfSubSteps 1;
 @StiffnessMatrixType 'SecantOperator';
+
 @Behaviour<aster> '@MFrontAsterBehavioursBuildPath@' 'asterunilateralmazars';
+@StressEpsilon 1;
+
 @MaterialProperty<constant> 'YoungModulus'     3.2e10; 
 @MaterialProperty<constant> 'PoissonRatio'     0.2;    
 @MaterialProperty<constant> 'At' 0.98;

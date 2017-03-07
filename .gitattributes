@@ -598,6 +598,7 @@ docs/mtest/mtest/ImposedStrain.md -text
 docs/mtest/mtest/ImposedStress.md -text
 docs/mtest/mtest/Makefile.am -text
 docs/mtest/mtest/ModellingHypothesis.md -text
+docs/mtest/mtest/NonLinearConstraint.md -text
 docs/mtest/mtest/RotationMatrix.md -text
 docs/mtest/mtest/Strain.md -text
 docs/mtest/mtest/StrainEpsilon.md -text
@@ -4877,6 +4878,7 @@ mtest/include/MTest/LogarithmicStrain1DBehaviourWrapper.hxx -text
 mtest/include/MTest/MTest.hxx -text
 mtest/include/MTest/MTestParser.hxx -text
 mtest/include/MTest/MistralBehaviour.hxx -text
+mtest/include/MTest/NonLinearConstraint.hxx -text
 mtest/include/MTest/PipeCubicElement.hxx -text
 mtest/include/MTest/PipeLinearElement.hxx -text
 mtest/include/MTest/PipeMesh.hxx -text
@@ -4960,6 +4962,7 @@ mtest/src/MTestMain.cxx -text
 mtest/src/MTestParser.cxx -text
 mtest/src/Makefile.am -text
 mtest/src/MistralBehaviour.cxx -text
+mtest/src/NonLinearConstraint.cxx -text
 mtest/src/PipeCubicElement.cxx -text
 mtest/src/PipeLinearElement.cxx -text
 mtest/src/PipeProfile.cxx -text
