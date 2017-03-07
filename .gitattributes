@@ -1168,6 +1168,7 @@ docs/web/pandoc-crossref.yaml -text
 docs/web/parameters.md -text
 docs/web/phasefield.md -text
 docs/web/publications.md -text
+docs/web/release-notes-2.0.5.md -text
 docs/web/release-notes-3.0.1.md -text
 docs/web/release-notes-3.0.md -text
 docs/web/release-notes-3.1.md -text

@@ -39,6 +39,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./publications.md					      \
 	   ./CONTRIBUTING.md					      \
 	   ./release-notes.md					      \
+	   ./release-notes-2.0.5.md				      \
 	   ./release-notes-3.0.md				      \
 	   ./release-notes-3.0.1.md				      \
 	   ./release-notes-3.1.md				      \

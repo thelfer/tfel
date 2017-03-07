@@ -101,6 +101,10 @@ A full description of the 2.0.3 release can be found
 - Fix of [Ticket #32](https://sourceforge.net/p/tfel/tickets/32/):
   some methods of the `MTest` class were not wrapped in `python`.
 
+## Version 2.0.5
+
+- [release notes of version 2.0.5](release-notes-2.0.5.html)
+
 # Versions 2.1.x
 
 The 2.1.x versions will be the last versions based build on C++98.
