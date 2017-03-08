@@ -24,4 +24,4 @@
 @ExternalStateVariable 'Temperature' 293.15;
 
 @Times {0.,'2*tmax' };
-@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/tssf.ref' {'EquivalentViscoplasticStrain':20} 1.e-10 ; 
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/tssf.ref' {'EquivalentViscoplasticStrain':20} 2.e-10 ; 
