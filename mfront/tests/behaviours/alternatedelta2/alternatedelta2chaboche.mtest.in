@@ -9,8 +9,9 @@
 @MaximumNumberOfSubSteps 1.;
 
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatchaboche';
-@StrainEpsilon '4e-7';
-@StressEpsilon '145200.*3e-7';
+@Parameter 'epsilon' 1e-16;
+@StrainEpsilon '1e-8';
+@StressEpsilon '145200.*1e-8';
 
 @MaterialProperty<constant> 'YoungModulus' 145200. ; 
 @MaterialProperty<constant> 'PoissonRatio'  0.3 ;    
