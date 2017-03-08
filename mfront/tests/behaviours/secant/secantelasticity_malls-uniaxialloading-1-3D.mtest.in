@@ -5,12 +5,10 @@
  * \brief  4 dec. 2013
  */
 
-@MaximumNumberOfSubSteps 1;
 @AccelerationAlgorithm 'Secant';
 
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity_malls';
-
-@StressEpsilon 1.;
+@StressEpsilon 1e2;
 
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
@@ -33,8 +31,8 @@
 @Evolution<function> 'J'   'sqrt(exp(2*eyy)*exp(2*ezz))*FXX';
 @Evolution<function> 'Txx' 'YoungModulus*exx';
 
-@Test<function> {'SZZ':'0','SYY':'0'}           2e-2;
-@Test<function> {'SXX':'Txx/J'}                 2e-2;
+@Test<function> {'SZZ':'0','SYY':'0'}           1;
+@Test<function> {'SXX':'Txx/J'}                 5e-1;
 @Test<function> {'SXY':'0','SXZ':'0','SYZ':'0'} 2e-2;
 @Test<function> {'FYY': 'sqrt(exp(2*eyy))','FZZ': 'sqrt(exp(2*ezz))'} 1.e-7;
 @Test<function> {'FXY': '0', 'FZY':'0'} 1.e-10;

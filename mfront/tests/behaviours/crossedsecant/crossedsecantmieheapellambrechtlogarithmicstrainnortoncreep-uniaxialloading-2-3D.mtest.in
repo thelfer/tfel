@@ -6,8 +6,6 @@
  */
 
 @AccelerationAlgorithm 'CrossedSecant';
-@MaximumNumberOfSubSteps 1;
-
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainnortoncreep';
 @DrivingVariableEpsilon 4.e-8;
 @StressEpsilon          2.e3;

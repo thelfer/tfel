@@ -5,7 +5,6 @@
  * \brief  4 dec. 2013
  */
 
-@MaximumNumberOfSubSteps 1;
 @AccelerationAlgorithm 'AlternateDelta2';
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainelasticity2';
 @StressEpsilon 3.e-4;

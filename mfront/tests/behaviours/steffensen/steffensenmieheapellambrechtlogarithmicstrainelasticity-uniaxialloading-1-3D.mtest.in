@@ -8,7 +8,7 @@
 @MaximumNumberOfSubSteps 1;
 @AccelerationAlgorithm 'Steffensen';
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainelasticity';
-@StressEpsilon 6e2;
+@StressEpsilon 2e3;
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 
@@ -30,8 +30,8 @@
 @Evolution<function> 'J'   'sqrt(exp(2*eyy)*exp(2*ezz))*FXX';
 @Evolution<function> 'Txx' 'YoungModulus*exx';
 
-@Test<function> {'SZZ':'0','SYY':'0'}           3.e-1;
-@Test<function> {'SXX':'Txx/J'}                 5.e-2;
+@Test<function> {'SZZ':'0','SYY':'0'}           5.e-1;
+@Test<function> {'SXX':'Txx/J'}                 5.e-1;
 @Test<function> {'SXY':'0','SXZ':'0','SYZ':'0'} 1.e-2;
 @Test<function> {'FYY': 'sqrt(exp(2*eyy))','FZZ': 'sqrt(exp(2*ezz))'} 1.e-7;
 @Test<function> {'FXY': '0', 'FZY':'0'} 1.e-10;

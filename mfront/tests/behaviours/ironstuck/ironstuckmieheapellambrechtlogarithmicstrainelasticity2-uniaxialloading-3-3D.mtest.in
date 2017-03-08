@@ -7,7 +7,11 @@
 
 @AccelerationAlgorithm 'IronsTuck';
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainelasticity2';
-@StressEpsilon 2e2;
+
+@DeformationGradientEpsilon 3.e-11;
+@StressEpsilon 2.e3;
+@Parameter 'RelativePrecision' 1e6;
+
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 
@@ -29,8 +33,8 @@
 @Evolution<function> 'J'   'sqrt(exp(2*exx)*exp(2*ezz))*FYY';
 @Evolution<function> 'Tyy' 'YoungModulus*eyy';
 
-@Test<function> {'SXX':'0','SZZ':'0'} 5.e-2;
-@Test<function> {'SYY':'Tyy/J'}       4.e-2;
+@Test<function> {'SXX':'0','SZZ':'0'} 10;
+@Test<function> {'SYY':'Tyy/J'}       10;
 @Test<function> {'SXY':'0','SXZ':'0','SYZ':'0'}           1.e-2;
 @Test<function> {'FXX': 'sqrt(exp(2*exx))','FZZ': 'sqrt(exp(2*ezz))'} 1.e-7;
 @Test<function> {'FXY': '0', 'FZY':'0'} 1.e-10;

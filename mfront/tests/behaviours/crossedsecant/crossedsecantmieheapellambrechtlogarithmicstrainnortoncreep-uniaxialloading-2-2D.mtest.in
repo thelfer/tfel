@@ -7,8 +7,6 @@
 
 @ModellingHypothesis 'GeneralisedPlaneStrain';
 @AccelerationAlgorithm 'CrossedSecant';
-@MaximumNumberOfSubSteps 1;
-
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainnortoncreep';
 @DrivingVariableEpsilon 1.e-10;
 @StressEpsilon          2.e3;
