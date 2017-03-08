@@ -30,7 +30,7 @@ nu.setGlossaryName("PoissonRatio");
 @AuxiliaryStateVariable StressStensor ps;
 ps.setEntryName("PreviousStress");
 
-@Parameter rp = 1.e4;
+@Parameter rp = 5.e4;
 rp.setEntryName("RelativePrecision");
 
 @InitLocalVariables{

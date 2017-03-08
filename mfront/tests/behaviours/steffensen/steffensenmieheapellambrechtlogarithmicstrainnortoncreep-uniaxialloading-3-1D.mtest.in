@@ -6,6 +6,7 @@
  */
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@PredictionPolicy 'LinearPrediction';
 @AccelerationAlgorithm 'Steffensen';
 @MaximumNumberOfSubSteps 1;
 
