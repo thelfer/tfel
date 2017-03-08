@@ -6,6 +6,7 @@
  */
 
 @AccelerationAlgorithm 'Steffensen';
+@PredictionPolicy 'LinearPrediction';
 @MaximumNumberOfSubSteps 1;
 
 @Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainnortoncreep';

@@ -30,12 +30,15 @@ nu.setGlossaryName("PoissonRatio");
 @AuxiliaryStateVariable StressStensor ps;
 ps.setEntryName("PreviousStress");
 
+@Parameter rp = 5.e4;
+rp.setEntryName("RelativePrecision");
+
 @InitLocalVariables{
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
   const stress ds  = sqrt((sig-ps)|(sig-ps));
   const stress s   = sqrt(sig|sig);
-  const stress eps = 1e4*s*numeric_limits<stress>::epsilon();
+  const stress eps = rp*s*numeric_limits<stress>::epsilon();
   if(ds>eps){
     throw(runtime_error("invalid stress value at "
 			"the beginning of the time step "
