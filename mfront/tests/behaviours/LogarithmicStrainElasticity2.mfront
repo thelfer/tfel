@@ -23,6 +23,9 @@ young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
 
+@Parameter rp = 5.e4;
+rp.setEntryName("RelativePrecision");
+
 @LocalVariable stress lambda;
 @LocalVariable stress mu;
 
@@ -37,10 +40,12 @@ ps.setEntryName("PreviousStress");
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
-  if(sqrt((sig-ps)|(sig-ps))>10*young*numeric_limits<stress>::epsilon()){
-    string msg("invalid stress value at the beginning "
-	       "of the time step");
-    throw(runtime_error(msg));
+  const stress ds  = sqrt((sig-ps)|(sig-ps));
+  const stress s   = sqrt(sig|sig);
+  const stress eps = rp*s*numeric_limits<stress>::epsilon();
+  if(ds>eps){
+    throw(runtime_error("invalid stress value at the beginning "
+			"of the time step"));
   }
 }
 
