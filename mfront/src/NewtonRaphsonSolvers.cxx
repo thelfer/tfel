@@ -149,7 +149,7 @@ namespace mfront{
 	<< "if(computeFdF_ok){\n"
 	<< "error=norm(this->fzeros);\n"
 	<< "}\n"
-	<< "if((!computeFdF_ok)||(std::isnan(error))){\n"
+	<< "if((!computeFdF_ok)||(!ieee754::isfinite(error))){\n"
 	<< "if(this->iter==1){\n";
     if(getDebugMode()){
       out << "cout << endl << \"" << mb.getClassName()
