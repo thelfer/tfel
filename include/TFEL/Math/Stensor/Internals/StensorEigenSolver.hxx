@@ -201,7 +201,11 @@ namespace tfel{
 	  auto vp2 = tfel::math::tvector<3u,base>{};
 	  const auto s = reinterpret_cast<const base*>(v);
 	  FSESAnalyticalSymmetricEigensolver2x2<base>::computeEigenVectors(vp2,m,s[0],s[3]*icste,s[1]);
-	  vp = {NumType(vp2(0)),NumType(vp2(1)),NumType(vp2(2))};
+	  vp = {NumType(vp2(0)),NumType(vp2(1)),v[2]};
+	  m(2,0)=base(0);
+	  m(2,1)=base(0);
+	  m(0,2)=base(0);
+	  m(1,2)=base(0);
 	  m(2,2)=base(1);
 	} // end of computeEigenVectors
       }; // end of struct StensorEigenSolver
@@ -306,9 +310,9 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT((IsSafelyReinterpretCastableTo<NumType,base>::cond));
 	  auto vp = tfel::math::tvector<3u,base>{};
 	  const auto s = reinterpret_cast<const base*>(v);
-	  const auto sm = tmatrix<3u,3u,base>{s[0],s[3]*icste,s[4]*icste,
-					      s[3]*icste,s[1],s[5]*icste,
-					      s[4]*icste,s[5]*icste,s[2]};
+	  auto sm = tmatrix<3u,3u,base>{s[0],s[3]*icste,s[4]*icste,
+					s[3]*icste,s[1],s[5]*icste,
+					s[4]*icste,s[5]*icste,s[2]};
 	  auto m = tmatrix<3u,3u>{};
 	  fses::syevj3(m,vp,sm);
 	  vp0 = NumType(vp[0]);
