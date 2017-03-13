@@ -25,6 +25,7 @@
 #include"TFEL/Utilities/TextData.hxx"
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
+#include"TFEL/Math/General/IEEE754.hxx"
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/tvector.hxx"
@@ -825,6 +826,10 @@ namespace mtest
     }
     if(this->residual){
       report(this->residual,ndv,ne,nr);
+    }
+    if((!tfel::math::ieee754::isfinite(ne))||
+       (!tfel::math::ieee754::isfinite(nr))){
+      return false;
     }
     if((ne>o.eeps)||(nr>o.seps)){
       return false;

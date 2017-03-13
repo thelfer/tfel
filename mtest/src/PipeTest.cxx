@@ -16,6 +16,7 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"TFEL/Math/General/IEEE754.hxx"
 #include"TFEL/Math/LUSolve.hxx"
 #include"TFEL/Utilities/TextData.hxx"
 #include"MFront/MFrontLogStream.hxx"
@@ -1092,6 +1093,10 @@ namespace mtest{
     }
     if(this->residual){
       report(this->residual,nu,nr);
+    }
+    if((!tfel::math::ieee754::isfinite(nu))||
+       (!tfel::math::ieee754::isfinite(nr))){
+      return false;
     }
     auto ok = ((nu<Re*this->options.eeps)&&(nr<this->options.seps));
     if(this->rl==IMPOSEDOUTERRADIUS){
