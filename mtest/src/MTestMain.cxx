@@ -15,7 +15,7 @@
 #include<cstdlib>
 #include<vector>
 #include<string>
-#include<fenv.h>
+#include<cfenv>
 
 #if defined _WIN32 || defined _WIN64
 #ifndef NOMINMAX
@@ -73,8 +73,12 @@ namespace mtest
     TFEL_NORETURN void treatHelpCommandsList();
     TFEL_NORETURN void treatHelpCommands();
     TFEL_NORETURN void treatHelpCommand();
+    //! treat the `--floating-point-exceptions` option
     void treatEnableFloatingPointExceptions();
+    //! treat the `--rounding-direction-mode` option
+    void treatRoundingDirectionMode();
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+    //! treat the `--backtrace` option
     void treatBacktrace();
 #endif
     virtual std::string 
@@ -107,8 +111,7 @@ namespace mtest
     }
   }
 
-  void 
-  MTestMain::registerArgumentCallBacks()
+  void MTestMain::registerArgumentCallBacks()
   {
     this->registerNewCallBack("--verbose",&MTestMain::treatVerbose,
 			      "set verbose output",true);
@@ -147,6 +150,13 @@ namespace mtest
     this->registerNewCallBack("--floating-point-exceptions","-fpe",
 			      &MTestMain::treatEnableFloatingPointExceptions,
 			      "handle floating point exceptions through SIGFPE signals");
+    this->registerNewCallBack("--rounding-direction-mode","-rmd",
+			      &MTestMain::treatRoundingDirectionMode,
+			      "set the rounding mode direction. Valid options are:\n"
+			      "DownWard:   Round downward.\n"
+			      "ToNearest:  Round to nearest.\n"
+			      "TowardZero: Round toward zero.\n"
+			      "UpWard:     Round upward.",true);
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     this->registerNewCallBack("--backtrace","-bt",&MTestMain::treatBacktrace,
 			      "print process stack when getting SIGSEGV or SIGFPE signals");
@@ -175,8 +185,7 @@ namespace mtest
     }
   } // end of MTestMain::treatScheme
   
-  void
-  MTestMain::treatEnableFloatingPointExceptions()
+  void MTestMain::treatEnableFloatingPointExceptions()
   {
     // mathematical
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__||defined __APPLE__)
@@ -188,9 +197,28 @@ namespace mtest
 #endif
   } // end of MTestMain::treatEnableFloatingPointExceptions
 
+  void MTestMain::treatRoundingDirectionMode()
+  {
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("MTestMain::setRoundingDirectionMode: "+m));}
+    };
+    const auto& o = this->currentArgument->getOption();
+    throw_if(o.empty(),"no option given");
+    if(o=="DownWard"){
+      std::fesetround(FE_DOWNWARD);
+    } else if(o=="UpWard"){
+      std::fesetround(FE_UPWARD);
+    } else if(o=="ToNearest"){
+      std::fesetround(FE_TONEAREST);
+    } else if(o=="TowardZero"){
+      std::fesetround(FE_TOWARDZERO);
+    } else {
+      throw_if(true,"invalid rounding direction mode '"+o+"'");
+    }
+  } // end of MTestMain::setRoundingDirectionMode
+  
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-  void
-  MTestMain::treatBacktrace()
+  void MTestMain::treatBacktrace()
   {
     using namespace tfel::system;
     // posix signals

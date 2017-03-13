@@ -294,6 +294,7 @@ namespace castem
   {
     using namespace tfel::math;
     using std::log;
+    constexpr const auto eps  = CastemReal(1.e-15);
     constexpr const auto cste = Cste<CastemReal>::sqrt2;
     CastemCheckNDIValue(NDI);
     tvector<3u,CastemReal>    vp;
@@ -328,7 +329,7 @@ namespace castem
     const tvector<3u,CastemReal> v0 = m.column_view<0u>();
     const tvector<3u,CastemReal> v1 = m.column_view<1u>();
     const stensor<2u,CastemReal> n01 = stensor<2u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
-    if(abs(vp(0)-vp(1))>1.e-12){
+    if(abs(vp(0)-vp(1))>eps){
       ST2toST2View<2u,CastemReal>{P} = (n0^n0)/vp(0)+(n1^n1)/vp(1)+(n2^n2)/vp(2)+(log_vp(0)-log_vp(1))/(vp(0)-vp(1))*(n01^n01);
     } else {
       ST2toST2View<2u,CastemReal>{P} = (n0^n0)/vp(0)+(n1^n1)/vp(1)+(n2^n2)/vp(2)+(n01^n01)/vp(0);
@@ -342,6 +343,7 @@ namespace castem
   {
     using namespace tfel::math;
     using std::log;
+    constexpr const auto eps  = CastemReal(1.e-15);
     constexpr const auto cste = Cste<CastemReal>::sqrt2;
     tvector<3u,CastemReal>    vp,log_vp;
     stensor<3u,CastemReal>    n0,n1,n2;
@@ -349,7 +351,7 @@ namespace castem
     tensor<3u,CastemReal>  f;
     tensor<3u,CastemReal>::buildFromFortranMatrix(f,F);
     const stensor<3u,CastemReal> C = computeRightCauchyGreenTensor(f);
-    C.computeEigenVectors(vp,m);
+    C.computeEigenVectors<stensor<3u,CastemReal>::FSESJACOBIEIGENSOLVER>(vp,m);
     log_vp(0) = log(vp(0));
     log_vp(1) = log(vp(1));
     log_vp(2) = log(vp(2));
@@ -360,10 +362,10 @@ namespace castem
     E[4] *= cste;
     E[5] *= cste;
     // computing P
-    if((abs(vp(0)-vp(1))<1.e-12)&&(abs(vp(0)-vp(2))<1.e-12)){
+    if((abs(vp(0)-vp(1))<eps)&&(abs(vp(0)-vp(2))<eps)){
       CastemReal vpm = (vp(0)+vp(1)+vp(2))/3;
       ST2toST2View<3u,CastemReal>{P} = st2tost2<3u,CastemReal>::Id()/vpm;
-    } else if(abs(vp(0)-vp(1))<1.e-12){
+    } else if(abs(vp(0)-vp(1))<eps){
       const tvector<3u,CastemReal> v0 = m.column_view<0u>();
       const tvector<3u,CastemReal> v1 = m.column_view<1u>();
       const tvector<3u,CastemReal> v2 = m.column_view<2u>();
@@ -373,7 +375,7 @@ namespace castem
       CastemReal vpm = (vp(0)+vp(1))/2;
       ST2toST2View<3u,CastemReal>{P} = (((n0^n0)+(n1^n1)+(n01^n01))/vpm+(n2^n2)/vp(2)+
 				      (log_vp(0)-log_vp(2))/(vpm-vp(2))*((n02^n02)+(n12^n12)));
-    } else if(abs(vp(0)-vp(2))<1.e-12){
+    } else if(abs(vp(0)-vp(2))<eps){
       const tvector<3u,CastemReal> v0 = m.column_view<0u>();
       const tvector<3u,CastemReal> v1 = m.column_view<1u>();
       const tvector<3u,CastemReal> v2 = m.column_view<2u>();
@@ -383,7 +385,7 @@ namespace castem
       CastemReal vpm = (vp(0)+vp(2))/2;
       ST2toST2View<3u,CastemReal>{P} = (((n0^n0)+(n2^n2)+(n02^n02))/vpm+(n1^n1)/vp(1)+
 				      (log_vp(0)-log_vp(1))/(vpm-vp(1))*((n01^n01)+(n12^n12)));
-    } else if(abs(vp(1)-vp(2))<1.e-12){
+    } else if(abs(vp(1)-vp(2))<eps){
       const tvector<3u,CastemReal> v0 = m.column_view<0u>();
       const tvector<3u,CastemReal> v1 = m.column_view<1u>();
       const tvector<3u,CastemReal> v2 = m.column_view<2u>();
@@ -397,7 +399,7 @@ namespace castem
       st2tost2<3u,CastemReal> dn0_dC;
       st2tost2<3u,CastemReal> dn1_dC;
       st2tost2<3u,CastemReal> dn2_dC;
-      stensor<3u,CastemReal>::computeEigenTensorsDerivatives(dn0_dC,dn1_dC,dn2_dC,vp,m,1.e-12);
+      stensor<3u,CastemReal>::computeEigenTensorsDerivatives(dn0_dC,dn1_dC,dn2_dC,vp,m,eps);
       ST2toST2View<3u,CastemReal>{P} = (n0^n0)/vp(0)+log_vp(0)*dn0_dC+(n1^n1)/vp(1)+log_vp(1)*dn1_dC+(n2^n2)/vp(2)+log_vp(2)*dn2_dC;
     }
   }

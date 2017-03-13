@@ -159,13 +159,24 @@ The stress is defined as the thermodynamic force associated with the elastic str
 
 ## Thermodynamic force associated with the damage
 
-\[
-  H(x,t) = \max_{\tau \in [0,t]}\left[\pPsiel\paren{\tau}\right]
-\]
+Inspired by thermodynamic arguments, namely the respect of the
+Clausis-Duhem inegality, Miehe introduces the following equation:
 
 \[
 	\frac{g_{c}}{l}\left[d - l^2 \triangle d\right] = 2\,(1 - d)\,H 
 \]
+
+where
+\[
+  H(x,t) = \max_{\tau \in [0,t]}\left[\pPsiel\paren{\tau}\right]
+\]
+
+This definition of \(H\), which appears as the driving force of the
+damage evolution, has been introduced to described the irreversibility
+of the crack propagation, altough the demonstration that this choice
+leads to an increasing value of the damage is not straightforward.
+
+# Implementation
 
 
 # References

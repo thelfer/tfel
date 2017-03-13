@@ -196,61 +196,66 @@ macro(test_castem test_arg)
       message(FATAL_ERROR "test_castem: unsupported option '${_ARG}'")
     endif()
   endforeach(_ARG ${ARGN})
-  if(CMAKE_CONFIGURATION_TYPES)
-    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-      set(file "castem${test_arg}-${conf}.mtest")
+  foreach(rm ${IEEE754_ROUNDING_MODES})
+    if(CMAKE_CONFIGURATION_TYPES)
+      foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+	set(test "castem${test_arg}_${rm}_${conf}_mtest")
+	set(file "castem${test_arg}-${rm}-${conf}.mtest")
+	get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
+	get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
+	configure_file(castem${test_arg}.mtest.in
+	  ${file} @ONLY)
+	if(_NO_XML_OUTPUT)
+	  add_test(NAME ${test}
+	    COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=false --result-file-output=false ${file}
+	    CONFIGURATIONS ${conf})
+	else(_NO_XML_OUTPUT)
+	  add_test(NAME ${test}
+	    COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false ${file}
+	    CONFIGURATIONS ${conf})
+	endif(_NO_XML_OUTPUT)
+	if(_WILL_FAIL)
+	  set_tests_properties(${test}
+	    PROPERTIES WILL_FAIL true)
+	endif(_WILL_FAIL)
+	if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+          set_property(TEST ${test}
+            PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest"
+	    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$ENV{PATH}")
+	elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+          set_property(TEST ${test}
+            PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
+	endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  DESTINATION "share/mfront/tests/behaviours/castem"
+	  CONFIGURATIONS ${conf}
+	  COMPONENT mtest)
+      endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+    else(CMAKE_CONFIGURATION_TYPES)
       get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
       get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
+      set(test "castem${test_arg}_${rm}_mtest")
+      set(file "castem${test_arg}-${rm}.mtest")
       configure_file(castem${test_arg}.mtest.in
 	${file} @ONLY)
       if(_NO_XML_OUTPUT)
-	add_test(NAME castem${test_arg}_${conf}_mtest
-	  COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false ${file}
-	  CONFIGURATIONS ${conf})
+	add_test(NAME ${test}
+	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=false --result-file-output=false ${file})
       else(_NO_XML_OUTPUT)
-	add_test(NAME castem${test_arg}_${conf}_mtest
-	  COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file}
-	  CONFIGURATIONS ${conf})
+	add_test(NAME ${test}
+	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false ${file})
       endif(_NO_XML_OUTPUT)
       if(_WILL_FAIL)
-	set_tests_properties(castem${test_arg}_${conf}_mtest
+	set_tests_properties(${test}
 	  PROPERTIES WILL_FAIL true)
       endif(_WILL_FAIL)
-      if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST castem${test_arg}_${conf}_mtest
-          PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest"
-	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$ENV{PATH}")
-      elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST castem${test_arg}_${conf}_mtest
-          PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
-      endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      set_property(TEST ${test}
+	PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	DESTINATION "share/mfront/tests/behaviours/castem"
-	CONFIGURATIONS ${conf}
 	COMPONENT mtest)
-    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-  else(CMAKE_CONFIGURATION_TYPES)
-    get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-    get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
-    configure_file(castem${test_arg}.mtest.in
-      castem${test_arg}.mtest @ONLY)
-    if(_NO_XML_OUTPUT)
-      add_test(NAME castem${test_arg}_mtest
-	COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false castem${test_arg}.mtest)
-    else(_NO_XML_OUTPUT)
-      add_test(NAME castem${test_arg}_mtest
-	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false castem${test_arg}.mtest)
-    endif(_NO_XML_OUTPUT)
-    if(_WILL_FAIL)
-      set_tests_properties(castem${test_arg}_mtest
-	PROPERTIES WILL_FAIL true)
-    endif(_WILL_FAIL)
-    set_property(TEST castem${test_arg}_mtest
-      PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/castem${test_arg}.mtest
-      DESTINATION "share/mfront/tests/behaviours/castem"
-      COMPONENT mtest)
-  endif(CMAKE_CONFIGURATION_TYPES)
+    endif(CMAKE_CONFIGURATION_TYPES)
+  endforeach(rm ${IEEE754_ROUNDING_MODES})
 endmacro(test_castem)
 
 test_castem(materialpropertiesboundscheck
@@ -266,34 +271,36 @@ test_castem(materialpropertiesboundscheck7)
 test_castem(materialpropertiesboundscheck8 
   NO_XML_OUTPUT WILL_FAIL)
 
-if(CMAKE_CONFIGURATION_TYPES)
-  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-    set_tests_properties(castemmaterialpropertiesboundscheck6_${conf}_mtest
-      PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
-    set_tests_properties(castemmaterialpropertiesboundscheck7_${conf}_mtest
-      PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
-    set_tests_properties(castemmaterialpropertiesboundscheck8_${conf}_mtest
-      PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
-    set_tests_properties(castemmaterialpropertiesboundscheck_${conf}_mtest
-      castemmaterialpropertiesboundscheck2_${conf}_mtest
-      castemmaterialpropertiesboundscheck5_${conf}_mtest
-      castemmaterialpropertiesboundscheck8_${conf}_mtest
-      PROPERTIES WILL_FAIL true)
+foreach(rm ${IEEE754_ROUNDING_MODES})
+  if(CMAKE_CONFIGURATION_TYPES)
+    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+      set_tests_properties(castemmaterialpropertiesboundscheck6_${rm}_${conf}_mtest
+	PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
+      set_tests_properties(castemmaterialpropertiesboundscheck7_${rm}_${conf}_mtest
+	PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
+      set_tests_properties(castemmaterialpropertiesboundscheck8_${rm}_${conf}_mtest
+	PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
+      set_tests_properties(castemmaterialpropertiesboundscheck_${rm}_${conf}_mtest
+	castemmaterialpropertiesboundscheck2_${rm}_${conf}_mtest
+	castemmaterialpropertiesboundscheck5_${rm}_${conf}_mtest
+	castemmaterialpropertiesboundscheck8_${rm}_${conf}_mtest
+	PROPERTIES WILL_FAIL true)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-else(CMAKE_CONFIGURATION_TYPES)
-  set_tests_properties(castemmaterialpropertiesboundscheck6_mtest
-    PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
-  set_tests_properties(castemmaterialpropertiesboundscheck7_mtest
-    PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
-  set_tests_properties(castemmaterialpropertiesboundscheck8_mtest
-    PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
-  set_tests_properties(castemmaterialpropertiesboundscheck_mtest
-    castemmaterialpropertiesboundscheck2_mtest
-    castemmaterialpropertiesboundscheck5_mtest
-    castemmaterialpropertiesboundscheck8_mtest
-    PROPERTIES WILL_FAIL true)
-endif(CMAKE_CONFIGURATION_TYPES)
-
+  else(CMAKE_CONFIGURATION_TYPES)
+    set_tests_properties(castemmaterialpropertiesboundscheck6_${rm}_mtest
+      PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
+    set_tests_properties(castemmaterialpropertiesboundscheck7_${rm}_mtest
+      PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
+    set_tests_properties(castemmaterialpropertiesboundscheck8_${rm}_mtest
+      PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
+    set_tests_properties(castemmaterialpropertiesboundscheck_${rm}_mtest
+      castemmaterialpropertiesboundscheck2_${rm}_mtest
+      castemmaterialpropertiesboundscheck5_${rm}_mtest
+      castemmaterialpropertiesboundscheck8_${rm}_mtest
+      PROPERTIES WILL_FAIL true)
+  endif(CMAKE_CONFIGURATION_TYPES)
+endforeach(rm ${IEEE754_ROUNDING_MODES})
+  
 test_castem(statevariablesboundscheck
   NO_XML_OUTPUT WILL_FAIL)
 test_castem(statevariablesboundscheck2 

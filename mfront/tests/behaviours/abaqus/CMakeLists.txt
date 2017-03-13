@@ -129,66 +129,63 @@ macro(test_abaqus test_arg)
       message(FATAL_ERROR "test_abaqus: unsupported option '${_ARG}'")
     endif()
   endforeach(_ARG ${ARGN})
-  if(CMAKE_CONFIGURATION_TYPES)
-    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-      set(file "abaqus${test_arg}-${conf}.mtest")
-      get_property(MFrontAbaqusBehavioursBuildPath TARGET MFrontAbaqusBehaviours PROPERTY LOCATION_${conf})
+  foreach(rm ${IEEE754_ROUNDING_MODES})
+    if(CMAKE_CONFIGURATION_TYPES)
+      foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+	set(file "abaqus${test_arg}-${conf}.mtest")
+	set(test "abaqus${test_arg}_${rm}_${conf}_mtest")
+	get_property(MFrontAbaqusBehavioursBuildPath TARGET MFrontAbaqusBehaviours PROPERTY LOCATION_${conf})
+	if(HAVE_CASTEM)
+	  get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
+	endif(HAVE_CASTEM)
+	configure_file(abaqus${test_arg}.mtest.in ${file} @ONLY)
+	if(_NO_XML_OUTPUT)
+	  add_test(NAME ${test} CONFIGURATIONS ${conf}
+	    COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=false --result-file-output=false ${file})
+	else(_NO_XML_OUTPUT)
+	  add_test(NAME ${test} CONFIGURATIONS ${conf}
+	    COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false ${file})
+	endif(_NO_XML_OUTPUT)
+	if(_WILL_FAIL)
+	  set_tests_properties(${test} PROPERTIES WILL_FAIL true)
+	endif(_WILL_FAIL)
+	if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+          set_property(TEST ${test}
+            PROPERTY DEPENDS MFrontAbaqusBehaviours MFrontMaterialProperties-abaqus mtest
+	    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$ENV{PATH}")
+	elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+          set_property(TEST ${test}
+            PROPERTY DEPENDS MFrontAbaqusBehaviours MFrontMaterialProperties-castem mtest)
+	endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  DESTINATION "share/mfront/tests/behaviours/abaqus"
+	  COMPONENT mtest)
+      endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+    else(CMAKE_CONFIGURATION_TYPES)
+      set(file "abaqus${test_arg}.mtest")
+      set(test "abaqus${test_arg}_${rm}_mtest")
+      get_property(MFrontAbaqusBehavioursBuildPath TARGET MFrontAbaqusBehaviours PROPERTY LOCATION)
       if(HAVE_CASTEM)
-	get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
+	get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION)
       endif(HAVE_CASTEM)
-      configure_file(abaqus${test_arg}.mtest.in
-	${file} @ONLY)
+      configure_file(abaqus${test_arg}.mtest.in	${file} @ONLY)
       if(_NO_XML_OUTPUT)
-	add_test(NAME abaqus${test_arg}_${conf}_mtest
-	  CONFIGURATIONS ${conf}
-	  COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false ${file})
+	add_test(NAME ${test}
+	  COMMAND mtest  --rounding-direction-mode=${rm} --verbose=level0 --xml-output=false --result-file-output=false ${file})
       else(_NO_XML_OUTPUT)
-	add_test(NAME abaqus${test_arg}_${conf}_mtest
-	  CONFIGURATIONS ${conf}
-	  COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file})
+	add_test(NAME ${test}
+	  COMMAND mtest  --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false ${file})
       endif(_NO_XML_OUTPUT)
       if(_WILL_FAIL)
-	set_tests_properties(abaqus${test_arg}_${conf}_mtest
-	  PROPERTIES WILL_FAIL true)
+	set_tests_properties(${test} PROPERTIES WILL_FAIL true)
       endif(_WILL_FAIL)
-      if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST abaqus${test_arg}_${conf}_mtest
-          PROPERTY DEPENDS MFrontAbaqusBehaviours MFrontMaterialProperties-abaqus mtest
-	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$ENV{PATH}")
-      elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST abaqus${test_arg}_${conf}_mtest
-          PROPERTY DEPENDS MFrontAbaqusBehaviours MFrontMaterialProperties-castem mtest)
-      endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      set_tests_properties(${test} PROPERTIES DEPENDS MFrontAbaqusBehaviours)
+      set_tests_properties(${test} PROPERTIES DEPENDS mtest)
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
 	DESTINATION "share/mfront/tests/behaviours/abaqus"
 	COMPONENT mtest)
-    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-  else(CMAKE_CONFIGURATION_TYPES)
-    get_property(MFrontAbaqusBehavioursBuildPath TARGET MFrontAbaqusBehaviours PROPERTY LOCATION)
-    if(HAVE_CASTEM)
-      get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION)
-    endif(HAVE_CASTEM)
-    configure_file(abaqus${test_arg}.mtest.in
-      abaqus${test_arg}.mtest @ONLY)
-    if(_NO_XML_OUTPUT)
-      add_test(NAME abaqus${test_arg}_mtest
-	COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false abaqus${test_arg}.mtest)
-    else(_NO_XML_OUTPUT)
-      add_test(NAME abaqus${test_arg}_mtest
-	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false abaqus${test_arg}.mtest)
-    endif(_NO_XML_OUTPUT)
-    if(_WILL_FAIL)
-      set_tests_properties(abaqus${test_arg}_mtest
-	PROPERTIES WILL_FAIL true)
-    endif(_WILL_FAIL)
-    set_tests_properties(abaqus${test_arg}_mtest
-      PROPERTIES DEPENDS MFrontAbaqusBehaviours)
-    set_tests_properties(abaqus${test_arg}_mtest
-      PROPERTIES DEPENDS mtest)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/abaqus${test_arg}.mtest
-      DESTINATION "share/mfront/tests/behaviours/abaqus"
-      COMPONENT mtest)
-  endif(CMAKE_CONFIGURATION_TYPES)
+    endif(CMAKE_CONFIGURATION_TYPES)
+  endforeach(rm ${IEEE754_ROUNDING_MODES})
 endmacro(test_abaqus)
 
 test_abaqus(materialpropertiesboundscheck
@@ -214,15 +211,17 @@ test_abaqus(elasticity)
 test_abaqus(elasticity2)
 if(HAVE_CASTEM)
   test_abaqus(elasticity3)
-  if(CMAKE_CONFIGURATION_TYPES)
-    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-      set_tests_properties(abaquselasticity3_${conf}_mtest
+  foreach(rm ${IEEE754_ROUNDING_MODES})
+    if(CMAKE_CONFIGURATION_TYPES)
+      foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+	set_tests_properties(abaquselasticity3_${rm}_${conf}_mtest
+	  PROPERTIES DEPENDS MFrontMaterialProperties-castem)
+      endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+    else(CMAKE_CONFIGURATION_TYPES)
+      set_tests_properties(abaquselasticity3_${rm}_mtest
 	PROPERTIES DEPENDS MFrontMaterialProperties-castem)
-    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-  else(CMAKE_CONFIGURATION_TYPES)
-    set_tests_properties(abaquselasticity3_mtest
-      PROPERTIES DEPENDS MFrontMaterialProperties-castem)
-  endif(CMAKE_CONFIGURATION_TYPES)
+    endif(CMAKE_CONFIGURATION_TYPES)
+  endforeach(rm ${IEEE754_ROUNDING_MODES})
 endif(HAVE_CASTEM)
 test_abaqus(elasticity4)
 test_abaqus(elasticity5)

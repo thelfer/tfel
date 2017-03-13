@@ -121,27 +121,30 @@ namespace mfront{
     for(const auto& v : d.getIntegrationVariables()){
       n2 += mb.getTypeSize(v.type,v.arraySize);
     }
-    out << "tmatrix<" << n2 << "," << n2 << ",real> jacobian2;\n";
-    out << "tvector<" << n2 << ",real> fzeros2;\n";
-    out << "tvector<" << n2 << ",real> Dzeros;\n";
-    out << "real broyden_inv;\n";
-    out << "real error;\n";
-    out << "bool converged=false;\n";
-    out << "this->iter=0;\n";
+    out << "tmatrix<" << n2 << "," << n2 << ",real> jacobian2;\n"
+	<< "tvector<" << n2 << ",real> fzeros2;\n"
+	<< "tvector<" << n2 << ",real> Dzeros;\n"
+	<< "real broyden_inv;\n"
+	<< "real error;\n"
+	<< "bool converged=false;\n"
+	<< "this->iter=0;\n";
     if(getDebugMode()){
       out << "cout << endl << \"" << mb.getClassName()
 	  << "::integrate() : beginning of resolution\" << endl;\n";
     }
-    out << "while((converged==false)&&\n";
-    out << "(this->iter<" << mb.getClassName() << "::iterMax)){\n";
-    out << "++(this->iter);\n";
-    out << "fzeros2 = this->fzeros;\n";
+    out << "while((converged==false)&&\n"
+	<< "(this->iter<" << mb.getClassName() << "::iterMax)){\n"
+	<< "++(this->iter);\n"
+	<< "fzeros2 = this->fzeros;\n";
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
       out << "this->computeStress();\n";
     }
-    out << "const bool computeFdF_ok = this->computeFdF();\n";
-    out << "if(!computeFdF_ok){\n";
-    out << "if(this->iter==1){\n";
+    out << "const bool computeFdF_ok = this->computeFdF();\n"
+	<< "if(computeFdF_ok){\n"
+	<< "error=norm(this->fzeros);\n"
+	<< "}\n"
+	<< "if((!computeFdF_ok)||(std::isnan(error))){\n"
+	<< "if(this->iter==1){\n";
     if(getDebugMode()){
       out << "cout << endl << \"" << mb.getClassName()
 	  << "::integrate() : computFdF returned false on first iteration, abording...\" << endl;\n";
@@ -156,58 +159,57 @@ namespace mfront{
       out << "cout << endl << \"" << mb.getClassName()
 	  << "::integrate() : computFdF returned false, dividing increment by two...\" << endl;\n";
     }
-    out << "const real integrate_one_half = real(1)/real(2);\n";
-    out << "this->zeros -= (this->zeros-this->zeros_1)*integrate_one_half;\n";
-    out << "}\n";
-    out << "} else {\n";
-    out << "this->zeros_1  = this->zeros;\n";
-    out << "error=norm(this->fzeros);\n";
-    out << "converged = ((error)/(real(" << n2 << "))<";
-    out << "(this->epsilon));\n";
+    out << "const real integrate_one_half = real(1)/real(2);\n"
+	<< "this->zeros -= (this->zeros-this->zeros_1)*integrate_one_half;\n"
+	<< "}\n"
+	<< "} else {\n"
+	<< "this->zeros_1  = this->zeros;\n"
+	<< "converged = ((error)/(real(" << n2 << "))<"
+	<< "(this->epsilon));\n";
     if(getDebugMode()){
       out << "cout << \"" << mb.getClassName()
 	  << "::integrate() : iteration \" "
 	  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << endl;\n";
     }
-    out << "if(!converged){\n";
-    out << "Dzeros = this->fzeros;\n";
-    out << "jacobian2 = this->jacobian;\n";
-    out << "try{\n";
-    out << "TinyMatrixSolve<" << n2
-	<< "," << "real>::exe(jacobian2,Dzeros);\n";
-    out << "}\n";
-    out << "catch(LUException&){\n";
+    out << "if(!converged){\n"
+	<< "Dzeros = this->fzeros;\n"
+	<< "jacobian2 = this->jacobian;\n"
+	<< "try{\n"
+	<< "TinyMatrixSolve<" << n2
+	<< "," << "real>::exe(jacobian2,Dzeros);\n"
+	<< "}\n"
+	<< "catch(LUException&){\n";
     if(mb.useQt()){        
       out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
       out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    out << "}\n";
-    out << "jacobian2 = this->jacobian;\n";
+    out << "}\n"
+	<< "jacobian2 = this->jacobian;\n";
     if(this->usesPowellDogLegAlgorithm()){
       this->writePowellDogLegStep(out,mb,h,"tjacobian","tfzeros","fzeros");
     } else {
       NonLinearSystemSolverBase::writeLimitsOnIncrementValues(out,mb,h,"fzeros");
       out << "this->zeros -= Dzeros;\n";
     }
-    out << "if(this->iter>1){\n";
-    out << "broyden_inv = (Dzeros|Dzeros);\n";
-    out << "if(broyden_inv>100*std::numeric_limits<real>::epsilon()){\n";
-    out << "#if (!defined __INTEL_COMPILER)\n";
-    out << "this->jacobian += "
-	<< "(((this->fzeros-fzeros2)-jacobian2*Dzeros)^Dzeros)/broyden_inv;\n";
-    out << "#else\n";
-    out << "const tvector<" << n2 <<  ",real> fzeros3 = jacobian2*Dzeros;\n";
-    out << "this->jacobian += "
-	<< "(((this->fzeros-fzeros2)-fzeros3)^Dzeros)/broyden_inv;\n";
-    out << "#endif  /* __INTEL_COMPILER */\n";
-    out << "}\n";
-    out << "}\n";
+    out << "if(this->iter>1){\n"
+	<< "broyden_inv = (Dzeros|Dzeros);\n"
+	<< "if(broyden_inv>100*std::numeric_limits<real>::epsilon()){\n"
+	<< "#if (!defined __INTEL_COMPILER)\n"
+	<< "this->jacobian += "
+	<< "(((this->fzeros-fzeros2)-jacobian2*Dzeros)^Dzeros)/broyden_inv;\n"
+	<< "#else\n"
+	<< "const tvector<" << n2 <<  ",real> fzeros3 = jacobian2*Dzeros;\n"
+	<< "this->jacobian += "
+	<< "(((this->fzeros-fzeros2)-fzeros3)^Dzeros)/broyden_inv;\n"
+	<< "#endif  /* __INTEL_COMPILER */\n"
+	<< "}\n"
+	<< "}\n";
     NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(out,mb,h);
     NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(out,mb,h);
-    out << "}\n";
-    out << "}\n";
-    out << "}\n";
+    out << "}\n"
+	<< "}\n"
+	<< "}\n";
   } // end of MFrontBroydenSolverBase::writeResolutionAlgorithm
 
   MFrontBroydenSolverBase::~MFrontBroydenSolverBase() = default;

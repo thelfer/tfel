@@ -361,7 +361,7 @@ namespace mfront
 	// can't use std::swap here as errno might be a macro
 	  << "const auto mfront_errno = errno;\n"
 	  << "errno = mfront_errno_old;\n"
-	  << "if(mfront_errno!=0){\n"
+	  << "if((mfront_errno!=0)||(std::isnan(" << output << "))){\n"
 	  << "throw(runtime_error(\""<< name << ": errno has been set \"\n"
 	  << "                    \"(\"+std::string(::strerror(errno))+\")\"));\n"
 	  << "}\n"

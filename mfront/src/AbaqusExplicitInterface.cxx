@@ -1351,8 +1351,8 @@ namespace mfront{
     }
     out	<< "stensor<" << dime << "," << t << "> eto;\n"
 	<< "stensor<" << dime << "," << t << "> deto;\n"
-	<< "std::tie(eto ,P0) = C0.computeIsotropicFunctionAndDerivative(f,df,std::numeric_limits<" << t << ">::epsilon());\n"
-	<< "std::tie(deto,P1) = C1.computeIsotropicFunctionAndDerivative(f,df,std::numeric_limits<" << t << ">::epsilon());\n"
+	<< "std::tie(eto ,P0) = C0.computeIsotropicFunctionAndDerivative<stensor<" << dime << "," << t << ">::FSESJACOBIEIGENSOLVER>(f,df,std::numeric_limits<" << t << ">::epsilon());\n"
+	<< "std::tie(deto,P1) = C1.computeIsotropicFunctionAndDerivative<stensor<" << dime << "," << t << ">::FSESJACOBIEIGENSOLVER>(f,df,std::numeric_limits<" << t << ">::epsilon());\n"
 	<< "deto -= eto;\n";
     if(h==ModellingHypothesis::PLANESTRESS){
       // on affecte ezz à U0, sa valeur pour U1 étant inconnue à ce moment (ne sert à rien pour le calcul de eto et deto

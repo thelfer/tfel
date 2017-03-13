@@ -83,8 +83,10 @@ on analitical computations of the eigen values and eigen vectors. Such
 computations are more efficient but less accurate than the iterative
 Jacobi algorithm (see [@kopp_efficient_2008;@kopp_numerical_2017]).
 
-With the courtesy of Joachim Kopp, we have introduced the following
-algorithms:
+With the courtesy of Joachim Kopp, we have created a `C++11` compliant
+version of his routines that we gathered in header-only library called
+`FSES` (Fast Symmetric Eigen Solver). This library is included with
+`TFEL` and provides the following algorithms:
 
 - Jacobi
 - QL with implicit shifts
@@ -228,6 +230,9 @@ const auto [f,df] = Stensor::computeIsotropicFunctionAndDerivative(evp,evp,vp,m,
 
 ## Gallery
 
+The `MFront` gallery is meant to present well-written implementation of
+behaviours that will be updated to follow `MFront` latest evolutions.
+
 ### Hyperelastic behaviours
 
 The implementation of various hyperelastic behaviours can be found
@@ -236,9 +241,79 @@ The implementation of various hyperelastic behaviours can be found
 - [Signorini](signorini.html)
 - [Ogden](ogden.html)
 
+### Hyperviscoelastic behaviours
+
+The following page describes how to implement standard
+hyperviscoelastic behaviours based on the development in Prony series:
+
+<http://tfel.sourceforge.net/hyperviscoelasticity.html>
+
+### Plasticity
+
+An example of a simple orthotropic behaviour is available
+[here](orthotropiclinearhardeningplasticity.html).
+
+### Viscoplasticity
+
+This following article shows how to implement an isotropic
+viscoplastic behaviour combining isotropic hardening and multiple
+kinematic hardenings following an Armstrong-Frederic evolution of the
+back stress:
+
+<http://tfel.sourceforge.net/isotropicplasticityamstrongfrederickinematichardening.html>
+
+## Behaviours interfaces
+
+### The `Cast3M` interface
+
+#### The `MieheApelLambrechtLogarithmic` finite strain strategy
+
+The pre- and post-computations performed by the
+`MieheApelLambrechtLogarithmic` finite strain strategy , which require
+the computation of the eigen values and eigen vectors of the right
+Cauchy strecth tensor, are now based the Jacobi algorithm from the
+`FSES` library for improved accuracy.
+
+### The `Europlexus` interface
+
+#### The `MieheApelLambrechtLogarithmic` finite strain strategy
+
+The pre- and post-computations performed by the
+`MieheApelLambrechtLogarithmic` finite strain strategy, which require
+the computation of the eigen values and eigen vectors of the right
+Cauchy strecth tensor, are now based the Jacobi algorithm from the
+`FSES` library for improved accuracy.
+
+### The `Abaqus-Explicit` interface
+
+#### The `MieheApelLambrechtLogarithmic` finite strain strategy
+
+The pre- and post-computations performed by the
+`MieheApelLambrechtLogarithmic` finite strain strategy, which require
+the computation of the eigen values and eigen vectors of the right
+Cauchy strecth tensor, are now based the Jacobi algorithm from the
+`FSES` library for improved accuracy.
+
 # New functionalities of `MTest` solver
 
-### Abritrary non linear constraints
+## Choice of the rounding mode from the command line
+
+\(4\) rounding mode are defined in the IEEE754 standard. Changing the
+rounding mode is a gross way to check the numerical stability of the
+computations performed with `MTest` and `MFront`.
+
+The rounding mode can be set using the `--rounding-direction-mode`
+option. Valid values for this option are:
+
+- `DownWard`: Round downward.
+- `ToNearest`: Round to nearest (the default).
+- `TowardZero`: Round toward zero.
+- `UpWard`: Round upward.
+
+Most unit-tests based on `MTest` are now executed four times, one for
+each available choice of the rounding mode.
+
+## Abritrary non linear constraints
 
 Abritrary non linear constraints on driving variables and
 thermodynamic forces can now be added using the `@NonLinearConstraint`
@@ -250,7 +325,13 @@ keyword.
 > the numerical treatment of such a constraint will be sub-optimal. A
 > special treatment of such a constraint is planned.
 
-#### Normalisation policy
+> **Note**
+>
+> This development of this functionality highlighted to trouble
+> reporter in Ticket #39.
+> For more details, see: <https://sourceforge.net/p/tfel/tickets/39/>
+
+### Normalisation policy
 
 This keyword must be followed by an option giving the normalisation
 policy. The normalisation policy can have one of the following values:
@@ -261,14 +342,14 @@ policy. The normalisation policy can have one of the following values:
 - `ThermodynamicForce`, `Stress`, `CohesiveForce` stating that the
   constraint is of the order of magnitude of the thermodynamic force.
 
-#### Example
+### Example
 
 ~~~~~ {.cpp}
 // ensure that the loading is isochoric in 1D
 @NonLinearEquation<Strain> 'FRR*FTT*FZZ-1';
 ~~~~~~~~~~
 
-#### `python` bindings
+### `python` bindings
 
 In the `python` bindings, the `setNonLinearConstraint` method has been
 added to the `MTest` class.

@@ -377,7 +377,6 @@ namespace mtest{
 				 const tfel::utilities::TextData& d,
 				 const unsigned short c,
 				 const real e){
-    
     if((n=="InnerDisplacement")||(n=="OuterDisplacement")||(n=="AxialGrowth")){
       this->tests.push_back(std::shared_ptr<UTest>(new IntegralTest(n,d,c,e)));      
     } else {

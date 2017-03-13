@@ -419,9 +419,6 @@ namespace aster
 	Dg[i+n1*(mj_r+3*mj_c)] = v;
       }
     }
-    // string msg("AsterFiniteStrainRotationMatrix3D::rotateTangentOperatorBackward : "
-    // 	       "unimplemented feature");
-    // throw(runtime_error(msg));
   } // end of AsterFiniteStrainRotationMatrix3D::rotateTangentOperatorBackward
 
 } // end of namespace aster

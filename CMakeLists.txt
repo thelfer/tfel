@@ -17,6 +17,9 @@ include(cmake/modules/autotools.cmake)
 tfel_project(3 1 "0-dev")
 set(PACKAGE_BUGREPORT "tfel-contact@cea.fr")
 
+# load the list of rounding modes defined by the IEEE754 standard
+include(cmake/modules/ieee754.cmake)
+
 # check for the fenv package
 include(CheckIncludeFiles)
 check_include_files(fenv.h HAVE_FENV_H)

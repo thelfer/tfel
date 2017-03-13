@@ -75,7 +75,7 @@ namespace mfront{
       return r;
     }
     if(key=="@JacobianUpdatePeriod"){
-     if(!this->requiresNumericalJacobian()){
+      if(!this->requiresNumericalJacobian()){
 	throw(runtime_error("MFrontNewtonRaphsonSolverBase::treatSpecificKeywords : "
 			    "jacobian update period is only defined "
 			    "for algorithms using a numerical jacobian"));
@@ -128,122 +128,128 @@ namespace mfront{
       n2 += mb.getTypeSize(v.type,v.arraySize);
     }
     if(mb.hasAttribute(h,BehaviourData::compareToNumericalJacobian)){
-      out << "tmatrix<" << n2 << "," << n2 << ",real> njacobian;" << endl;
+      out << "tmatrix<" << n2 << "," << n2 << ",real> njacobian;\n";
     }
     if((this->requiresNumericalJacobian())&&(this->jacobianUpdatePeriod!=-1)&&(n2.getValueForDimension(1u)>3)){
-      out << "TinyPermutation<" << n2 << "> permutation_vector;" << endl;
+      out << "TinyPermutation<" << n2 << "> permutation_vector;\n";
     }
-    out << "real error;" << endl;
-    out << "bool converged=false;" << endl;
-    out << "this->iter=0;" << endl;
+    out << "real error;\n"
+	<< "bool converged=false;\n"
+	<< "this->iter=0;\n";
     if(getDebugMode()){
-      out << "cout << endl << \"" << mb.getClassName() << "::integrate() : beginning of resolution\" << endl;" << endl;
+      out << "cout << endl << \"" << mb.getClassName() << "::integrate() : beginning of resolution\" << endl;\n";
     }
-    out << "while((converged==false)&&" << endl;
-    out << "(this->iter<" << mb.getClassName() << "::iterMax)){" << endl;
-    out << "++(this->iter);" << endl;
+    out << "while((converged==false)&&\n"
+	<< "(this->iter<" << mb.getClassName() << "::iterMax)){\n"
+	<< "++(this->iter);\n";
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
-      out << "this->computeStress();" << endl;
+      out << "this->computeStress();\n";
     }
-    out << "const bool computeFdF_ok = this->computeFdF();" << endl;
-    out << "if(!computeFdF_ok){" << endl;
-    out << "if(this->iter==1){" << endl;
+    out << "const bool computeFdF_ok = this->computeFdF();\n"
+	<< "if(computeFdF_ok){\n"
+	<< "error=norm(this->fzeros);\n"
+	<< "}\n"
+	<< "if((!computeFdF_ok)||(std::isnan(error))){\n"
+	<< "if(this->iter==1){\n";
     if(getDebugMode()){
       out << "cout << endl << \"" << mb.getClassName()
-			  << "::integrate() : computFdF returned false on first iteration, abording...\" << endl;" << endl;
+	  << "::integrate() : computFdF returned false on first iteration, abording...\" << endl;\n";
     }
     if(mb.useQt()){        
-      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;" << endl;
+      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
-      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;" << endl;
+      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    out << "} else {" << endl;
+    out << "} else {\n";
     if(getDebugMode()){
       out << "cout << endl << \"" << mb.getClassName()
-			  << "::integrate() : computFdF returned false, dividing increment by two...\" << endl;" << endl;
+	  << "::integrate() : computFdF returned false, dividing increment by two...\" << endl;\n";
     }
-    out << "const real integrate_one_half = real(1)/real(2);" << endl;
-    out << "this->zeros -= (this->zeros-this->zeros_1)*integrate_one_half;" << endl;
-    out << "}" << endl;
-    out << "} else {" << endl;
-    out << "this->zeros_1  = this->zeros;" << endl;
+    out << "const real integrate_one_half = real(1)/real(2);\n"
+	<< "this->zeros -= (this->zeros-this->zeros_1)*integrate_one_half;\n"
+	<< "}\n"
+	<< "} else {\n"
+	<< "this->zeros_1  = this->zeros;\n";
     if(!this->requiresNumericalJacobian()){
       this->writeComparisonToNumericalJacobian(out,mb,h,"njacobian");
     }
-    out << "error=norm(this->fzeros);" << endl;
-    out << "converged = ((error)/(real(" << n2 << "))<";
-    out << "(this->epsilon));" << endl;
+    out << "converged = ((error)/(real(" << n2 << "))<"
+	<< "(this->epsilon));\n";
     if(this->requiresNumericalJacobian()){
       // We compute the numerical jacobian even if we converged since
       // most of the time, this tangent operator will be computed
       // using the partial jacobian invert. We consider very unlikely
       // that a user may use a numerical jacobian and provide an
       // analytic definition of the tangent operator
-      out << "if((!converged)||(smt!=NOSTIFFNESSREQUESTED)){" << endl;
+      out << "if((!converged)||(smt!=NOSTIFFNESSREQUESTED)){\n";
       if(this->jacobianUpdatePeriod!=-1){
-	out << "if(converged){" << endl
-	    << "this->computeNumericalJacobian(this->jacobian);" << endl
-	    << "} else {" << endl
-	    << "if(this->iter%" << jacobianUpdatePeriod << "){" << endl;
+	out << "if(converged){\n"
+	    << "this->computeNumericalJacobian(this->jacobian);\n"
+	    << "} else {\n"
+	    << "if(this->iter%" << jacobianUpdatePeriod << "){\n";
 	if(getDebugMode()){
 	  out << "cout << \"" << mb.getClassName()
-	      << "::integrate() : updating jacobian\" << endl;" << endl;
+	      << "::integrate() : updating jacobian\" << endl;\n";
 	}
-	out << "this->computeNumericalJacobian(this->jacobian);" << endl
-	    << "}" << endl
-	    << "}" << endl;
+	out << "this->computeNumericalJacobian(this->jacobian);\n"
+	    << "}\n"
+	    << "}\n";
       } else {
-	out << "this->computeNumericalJacobian(this->jacobian);" << endl;
+	out << "this->computeNumericalJacobian(this->jacobian);\n";
       }	
-      out << "}" << endl;
+      out << "}\n";
     }
     if(getDebugMode()){
       out << "cout << \"" << mb.getClassName()
-			  << "::integrate() : iteration \" "
-			  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << endl;" << endl;
+	  << "::integrate() : iteration \" "
+	  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << endl;\n";
     }
-    out << "if(!converged){" << endl;
+    out << "if(!converged){\n";
     if(this->usesPowellDogLegAlgorithm()){
-      out << "tmatrix<" << n2 << "," << n2 << ",real> tjacobian(this->jacobian);" << endl;
-      out << "tvector<" << n2 << ",real> tfzeros(this->fzeros);" << endl;
+      out << "tmatrix<" << n2 << "," << n2 << ",real> tjacobian(this->jacobian);\n";
+      out << "tvector<" << n2 << ",real> tfzeros(this->fzeros);\n";
     }
-    out << "try{" << endl;
+    out << "try{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       writeStandardPerformanceProfilingBegin(out,mb.getClassName(),"TinyMatrixSolve","lu");
     }
     if((this->requiresNumericalJacobian())&&(this->jacobianUpdatePeriod!=-1)&&(n2.getValueForDimension(1u)>3)){
-      out << "if(this->iter%" << jacobianUpdatePeriod << "){" << endl
+      out << "if(this->iter%" << jacobianUpdatePeriod << "){\n"
 	  << "TinyMatrixSolve<" << n2
-	  << "," << "real>::decomp(this->jacobian,permutation_vector);" << endl
-	  << "}" << endl
+	  << "," << "real>::decomp(this->jacobian,permutation_vector);\n"
+	  << "}\n"
 	  << "TinyMatrixSolve<" << n2
-	  << "," << "real>::back_substitute(this->jacobian,permutation_vector,this->fzeros);" << endl;
+	  << "," << "real>::back_substitute(this->jacobian,permutation_vector,this->fzeros);\n";
     } else {
       out << "TinyMatrixSolve<" << n2
-	  << "," << "real>::exe(this->jacobian,this->fzeros);" << endl;
+	  << "," << "real>::exe(this->jacobian,this->fzeros);\n";
     }
     if(mb.getAttribute(BehaviourData::profiling,false)){
       writeStandardPerformanceProfilingEnd(out);
     }
-    out << "}" << endl;
-    out << "catch(LUException&){" << endl;
-    if(mb.useQt()){        
-      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;" << endl;
-    } else {
-      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;" << endl;
+    out << "}\n"
+	<< "catch(LUException&){\n";
+    if(getDebugMode()){
+      out << "cout << \"" << mb.getClassName()
+	  << "::integrate(): jacobian inversion failed\" << endl << endl;\n";
     }
-    out << "}" << endl;
+    if(mb.useQt()){        
+      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
+    }
+    out << "}\n";
     if(this->usesPowellDogLegAlgorithm()){
       this->writePowellDogLegStep(out,mb,h,"tjacobian","tfzeros","fzeros");
     } else {
       NonLinearSystemSolverBase::writeLimitsOnIncrementValues(out,mb,h,"fzeros");
-      out << "this->zeros -= this->fzeros;" << endl;
+      out << "this->zeros -= this->fzeros;\n";
     }
     NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(out,mb,h);
     NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(out,mb,h);
-    out << "}" << endl;
-    out << "}" << endl;
-    out << "}" << endl;
+    out << "}\n"
+	<< "}\n"
+	<< "}\n";
   } // end of MFrontNewtonRaphsonSolverBase::writeResolutionAlgorithm
 
   MFrontNewtonRaphsonSolverBase::~MFrontNewtonRaphsonSolverBase() = default;

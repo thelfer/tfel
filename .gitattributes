@@ -118,6 +118,7 @@ cmake/modules/compiler.cmake -text
 cmake/modules/cyrano.cmake -text
 cmake/modules/gcc.cmake -text
 cmake/modules/gnu-fortran-compiler.cmake -text
+cmake/modules/ieee754.cmake -text
 cmake/modules/intel.cmake -text
 cmake/modules/latex.cmake -text
 cmake/modules/msvc.cmake -text
@@ -1125,8 +1126,10 @@ docs/web/img/freebsdlogo-1.png -text
 docs/web/img/hsnv125.png -text
 docs/web/img/hsnv125.xcf -text
 docs/web/img/materiaux2014.jpg -text
+docs/web/img/mfront-flyer-en-2017.svg -text
 docs/web/img/mfront-flyer-en.png -text
 docs/web/img/mfront-flyer-en.svg -text
+docs/web/img/mfront-flyer-fr-2017.svg -text
 docs/web/img/mingw-get1.png -text
 docs/web/img/mingw-get1.xcf -text
 docs/web/img/mingw-get2.png -text

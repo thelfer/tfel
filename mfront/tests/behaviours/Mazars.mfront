@@ -88,7 +88,7 @@ PlaneStress::etozz.setGlossaryName("AxialStrain");
 @Integrator<Append,AtEnd>{
   const real dmax=0.99999;
   strain e1,e2,e3;
-  e.computeEigenValues(e1,e2,e3);
+  e.template computeEigenValues<Stensor::FSESJACOBIEIGENSOLVER>(e1,e2,e3);
   // eigen values of s0
   const stress s1 = 2*mu*e1+lambda*tr;
   const stress s2 = 2*mu*e2+lambda*tr;

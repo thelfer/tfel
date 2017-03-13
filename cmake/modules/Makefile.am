@@ -14,6 +14,7 @@ EXTRA_DIST = autotools.cmake               \
 	     gnu-fortran-compiler.cmake    \
 	     OptimizeForArchitecture.cmake \
 	     tfel.cmake                    \
+	     ieee754.cmake                 \
 	     latex.cmake                   \
 	     cadna.cmake                   \
 	     pandoc.cmake                  \

@@ -32,9 +32,7 @@
 template<typename T>
 bool QRDecompTest()
 {
-  using namespace std;
   using namespace tfel::math;
-  using tfel::math::vector;
   matrix<T> m(3,3);
   vector<T> rdiag(3);
   vector<T> beta(3);
@@ -54,9 +52,12 @@ bool QRDecompTest()
   QRDecomp::exe(m,rdiag,beta);
   QRDecomp::tq_product(b,m,beta);
   QRDecomp::back_substitute(b,m,rdiag);
-  return ((abs(b(0)+1)<10*numeric_limits<T>::epsilon())&&
-	  (abs(b(1)-2)<10*numeric_limits<T>::epsilon())&&
-	  (abs(b(2)-1)<10*numeric_limits<T>::epsilon()));
+  const auto e1 = std::abs(b(0)+1);
+  const auto e2 = std::abs(b(1)-2);
+  const auto e3 = std::abs(b(2)-1);
+  return ((e1<100*std::numeric_limits<T>::epsilon())&&
+	  (e2<100*std::numeric_limits<T>::epsilon())&&
+	  (e3<100*std::numeric_limits<T>::epsilon()));
 } // end of QRDecompTest
 
 /* coverity [UNCAUGHT_EXCEPT]*/

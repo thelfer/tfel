@@ -35,7 +35,7 @@ nu.setGlossaryName("PoissonRatio");
   const real  mu    = computeMu(young,nu);
   const Stensor e  = eto+deto;
   // valeurs propres, parties positives et négatives
-  e.computeEigenVectors(vp,m,true);
+  e.template computeEigenVectors<Stensor::FSESJACOBIEIGENSOLVER>(vp,m,true);
   const real e0p = max(vp(0),real(0));
   const real e1p = max(vp(1),real(0));
   const real e2p = max(vp(2),real(0));

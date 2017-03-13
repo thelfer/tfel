@@ -19,12 +19,11 @@
 
 namespace epx{
 
-  void
-  computeGreenLagrangeStrain(EuroplexusReal * const eto,
-			     EuroplexusReal * const deto,
-			     const EuroplexusReal * const F0,
-			     const EuroplexusReal * const F1,
-			     const EuroplexusInt h)
+  void computeGreenLagrangeStrain(EuroplexusReal * const eto,
+				  EuroplexusReal * const deto,
+				  const EuroplexusReal * const F0,
+				  const EuroplexusReal * const F1,
+				  const EuroplexusInt h)
   {
     using namespace tfel::math;
     using real = EuroplexusReal;
@@ -123,10 +122,11 @@ namespace epx{
   {
     TFEL_CONSTEXPR const EuroplexusReal eps = 100*std::numeric_limits<EuroplexusReal>::epsilon();
     using tensor  = tfel::math::tensor<N,EuroplexusReal>;
+    using stensor = tfel::math::stensor<N,EuroplexusReal>;
     const auto f  = [](const EuroplexusReal x){return std::log1p(x-1)/2;};
     const auto df = [](const EuroplexusReal x){return 1/(2*x);};
     const auto C  = computeRightCauchyGreenTensor(tensor(F));
-    std::tie(e,p) = C.computeIsotropicFunctionAndDerivative(f,df,eps);
+    std::tie(e,p) = C.template computeIsotropicFunctionAndDerivative<stensor::FSESJACOBIEIGENSOLVER>(f,df,eps);
   } // end of doComputeLogarithmicStrainAndDerivative
 
   void

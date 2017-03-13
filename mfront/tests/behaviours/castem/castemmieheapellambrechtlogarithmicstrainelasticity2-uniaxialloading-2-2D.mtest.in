@@ -25,8 +25,8 @@
 @Evolution<function> 'J'   'sqrt(exp(2*err)*exp(2*ett))*FZZ';
 @Evolution<function> 'Tzz' 'YoungModulus*ezz';
 
-@Test<function> {'SRR':'0','STT':'0'} 1.e-4;
-@Test<function> {'SZZ':'Tzz/J'}       1.e-4;
+@Test<function> {'SRR':'0','STT':'0'} 1.e-3;
+@Test<function> {'SZZ':'Tzz/J'}       1.e-3;
 @Test<function> {'SRZ':'0'}           1.e-4;
 @Test<function> {'FRR': 'sqrt(exp(2*err))','FTT': 'sqrt(exp(2*ett))'} 1.e-10;
 @Test<function> {'FRZ': '0', 'FZR':'0'} 1.e-10;

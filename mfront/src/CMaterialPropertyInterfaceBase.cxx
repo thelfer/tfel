@@ -252,7 +252,7 @@ namespace mfront
 	// can't use std::swap here as errno might be a macro
 		    << "const auto mfront_errno = errno;\n"
 		    << "errno = mfront_errno_old;\n"
-		    << "if(mfront_errno!=0){\n";
+		    << "if((mfront_errno!=0)||(std::isnan(" << mpd.output << "))){\n";
       this->writeCErrorTreatment(this->srcFile,mpd);
       this->srcFile << "}\n"
 		    << "#endif /* MFRONT_NOERRNO_HANDLING */\n";

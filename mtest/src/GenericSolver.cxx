@@ -294,7 +294,7 @@ namespace mtest{
       if(converged){
 	scs.update(dt);
 	t+=dt;
-	end=std::abs(te-t)<t_eps;
+	end=(std::abs(te-t)<t_eps)||(te<t);
 	if(o.dynamic_time_step_scaling){
 	  const auto rdt = std::max(std::min(o.maximal_time_step_scaling_factor,r.second),1.);
 	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
