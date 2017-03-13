@@ -273,6 +273,7 @@ namespace mfront
 	<< "#include<sstream>\n"
 	<< "#include<cstring>\n"
       	<< "#include<string>\n"
+	<< "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
 	<< "#include\"" << name << "-cxx.hxx\"\n\n"
 	<< "namespace mfront\n{\n\n"
 	<< name << "::" << name << "() noexcept\n";
@@ -361,7 +362,7 @@ namespace mfront
 	// can't use std::swap here as errno might be a macro
 	  << "const auto mfront_errno = errno;\n"
 	  << "errno = mfront_errno_old;\n"
-	  << "if((mfront_errno!=0)||(std::isnan(" << output << "))){\n"
+	  << "if((mfront_errno!=0)||(!tfel::math::ieee754::isfinite(" << output << "))){\n"
 	  << "throw(runtime_error(\""<< name << ": errno has been set \"\n"
 	  << "                    \"(\"+std::string(::strerror(errno))+\")\"));\n"
 	  << "}\n"

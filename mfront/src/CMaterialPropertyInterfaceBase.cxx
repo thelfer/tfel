@@ -203,9 +203,10 @@ namespace mfront
       this->srcFile << "* \\date   " << fd.date       << '\n';
     }
     this->srcFile << " */\n\n"
-		  << "#include<cmath>\n\n"
-      		  << "#include<cerrno>\n\n"
-		  << "#include<algorithm>\n\n";
+		  << "#include<cmath>\n"
+      		  << "#include<cerrno>\n"
+		  << "#include<algorithm>\n"
+		  << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n";
     if(!mpd.includes.empty()){
       this->srcFile << mpd.includes << "\n\n";
     }
@@ -252,7 +253,7 @@ namespace mfront
 	// can't use std::swap here as errno might be a macro
 		    << "const auto mfront_errno = errno;\n"
 		    << "errno = mfront_errno_old;\n"
-		    << "if((mfront_errno!=0)||(std::isnan(" << mpd.output << "))){\n";
+		    << "if((mfront_errno!=0)||(!tfel::math::ieee754::isfinite(" << mpd.output << "))){\n";
       this->writeCErrorTreatment(this->srcFile,mpd);
       this->srcFile << "}\n"
 		    << "#endif /* MFRONT_NOERRNO_HANDLING */\n";

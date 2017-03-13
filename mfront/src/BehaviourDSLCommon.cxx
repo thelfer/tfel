@@ -915,7 +915,7 @@ namespace mfront{
 
   void
   BehaviourDSLCommon::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const Hypothesis h,
-												const std::string& n)
+											     const std::string& n)
   {
     if(!this->explicitlyDeclaredUsableInPurelyImplicitResolution){
       this->mb.setUsableInPurelyImplicitResolution(h,false);
@@ -1361,7 +1361,7 @@ namespace mfront{
 
   bool
   BehaviourDSLCommon::isCallableVariable(const Hypothesis h,
-					    const std::string& n) const
+					 const std::string& n) const
   {
     return ((this->mb.isMaterialPropertyName(h,n))||
 	    (this->mb.isStateVariableName(h,n))||
@@ -1428,7 +1428,7 @@ namespace mfront{
 
   void
   BehaviourDSLCommon::treatUnknownVariableMethod(const Hypothesis,
-						    const std::string& n)
+						 const std::string& n)
   {
     this->throwRuntimeError("BehaviourDSLCommon::treatUnknownVariableMethod : ",
 			    "unknown method '"+this->current->value+"' for variable '"+n+"', "
@@ -1854,7 +1854,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::treatPhysicalBounds
 
   void BehaviourDSLCommon::treatBounds(BoundsDescription& d,
-					  const Hypothesis h)
+				       const Hypothesis h)
   {
     using namespace std;
     VariableDescriptionContainer::const_iterator p;
@@ -1871,7 +1871,7 @@ namespace mfront{
     d.arraySize = 1u;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       map<DrivingVariable,
-	ThermodynamicForce>::const_iterator p3;
+	  ThermodynamicForce>::const_iterator p3;
       for(p3=this->mb.getMainVariables().begin();
 	  p3!=this->mb.getMainVariables().end();++p3){
 	// check if the driving variable match
@@ -2276,17 +2276,18 @@ namespace mfront{
     auto b1 = false;
     auto b2 = false;
     this->checkBehaviourDataFile();
-    this->behaviourDataFile << "#include<limits>\n";
-    this->behaviourDataFile << "#include<string>\n";
-    this->behaviourDataFile << "#include<sstream>\n";
-    this->behaviourDataFile << "#include<iostream>\n";
-    this->behaviourDataFile << "#include<stdexcept>\n";
-    this->behaviourDataFile << "#include<algorithm>\n\n";
-    this->behaviourDataFile << "#include\"TFEL/Config/TFELConfig.hxx\"\n";
-    this->behaviourDataFile << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
-    this->behaviourDataFile << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n";
-    this->behaviourDataFile << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n";
-    this->behaviourDataFile << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n";
+    this->behaviourDataFile << "#include<limits>\n"
+			    << "#include<string>\n"
+			    << "#include<sstream>\n"
+			    << "#include<iostream>\n"
+			    << "#include<stdexcept>\n"
+			    << "#include<algorithm>\n\n"
+			    << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
+			    << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
+			    << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
+			    << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
+			    << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
+			    << "#include\"TFEL/Math/General/IEEE754.hxx\"\n";
     if(this->mb.useQt()){
       this->behaviourDataFile << "#include\"TFEL/Math/General/BaseCast.hxx\"\n";
     }
@@ -2315,7 +2316,7 @@ namespace mfront{
 			      << "#include\"TFEL/Math/ST2toT2/ST2toT2ConceptIO.hxx\"\n"
 			      << "#include\"TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx\"\n"
 			      << "#include\"TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx\"\n"
-	   << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"\n";
+			      << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"\n";
     }
     this->behaviourDataFile << "#include\"TFEL/Material/ModellingHypothesis.hxx\"\n\n";
   }
@@ -2344,13 +2345,13 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourDataStandardTFELTypedefs()
   {
     this->checkBehaviourDataFile();
-    this->behaviourDataFile << "static " << constexpr_c << " unsigned short TVectorSize = N;\n";
-    this->behaviourDataFile << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n";
-    this->behaviourDataFile << "static " << constexpr_c << " unsigned short StensorSize = ";
-    this->behaviourDataFile << "StensorDimeToSize::value;\n";
-    this->behaviourDataFile << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n";
-    this->behaviourDataFile << "static " << constexpr_c << " unsigned short TensorSize = ";
-    this->behaviourDataFile << "TensorDimeToSize::value;\n\n";
+    this->behaviourDataFile << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
+			    << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n"
+			    << "static " << constexpr_c << " unsigned short StensorSize = "
+			    << "StensorDimeToSize::value;\n"
+			    << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
+			    << "static " << constexpr_c << " unsigned short TensorSize = "
+			    << "TensorDimeToSize::value;\n\n";
     this->writeStandardTFELTypedefs(this->behaviourDataFile);
     this->behaviourDataFile << '\n';
   }
@@ -2420,14 +2421,14 @@ namespace mfront{
     using namespace std;
     const auto& md = this->mb.getBehaviourData(h);
     map<DrivingVariable,
-      ThermodynamicForce>::const_iterator p3;
+	ThermodynamicForce>::const_iterator p3;
     VariableDescriptionContainer::const_iterator p;
     this->checkBehaviourDataFile();
-    this->behaviourDataFile << "/*\n";
-    this->behaviourDataFile << "* \\brief Assignement operator\n";
-    this->behaviourDataFile << "*/\n";
-    this->behaviourDataFile << this->mb.getClassName() << "BehaviourData&\n";
-    this->behaviourDataFile << "operator=(const " 
+    this->behaviourDataFile << "/*\n"
+			    << "* \\brief Assignement operator\n"
+			    << "*/\n"
+			    << this->mb.getClassName() << "BehaviourData&\n"
+			    << "operator=(const " 
 			    << this->mb.getClassName() << "BehaviourData& src){\n";
     for(p3=this->mb.getMainVariables().begin();p3!=this->mb.getMainVariables().end();++p3){
       if(p3->first.increment_known){
@@ -2458,8 +2459,8 @@ namespace mfront{
 	this->behaviourDataFile << "this->" << p->name << " = src." << p->name << ";\n";  
       }
     }
-    this->behaviourDataFile << "return *this;\n";
-    this->behaviourDataFile << "}\n\n";
+    this->behaviourDataFile << "return *this;\n"
+			    << "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourAssignementOperator
 
   void BehaviourDSLCommon::writeBehaviourDataExport(const Hypothesis h)
@@ -2495,13 +2496,13 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourDataClassHeader() 
   {
     this->checkBehaviourDataFile();
-    this->behaviourDataFile << "/*!\n";
-    this->behaviourDataFile << "* \\class " << this->mb.getClassName() << "BehaviourData\n";
-    this->behaviourDataFile << "* \\brief This class implements the " 
-			    << this->mb.getClassName() << "BehaviourData" << " .\n";
-    this->behaviourDataFile << "* \\param H, modelling hypothesis.\n";
-    this->behaviourDataFile << "* \\param typename Type, numerical type.\n";
-    this->behaviourDataFile << "* \\param bool use_qt, conditional saying if quantities are use.\n";
+    this->behaviourDataFile << "/*!\n"
+			    << "* \\class " << this->mb.getClassName() << "BehaviourData\n"
+			    << "* \\brief This class implements the " 
+			    << this->mb.getClassName() << "BehaviourData" << " .\n"
+			    << "* \\param H, modelling hypothesis.\n"
+			    << "* \\param typename Type, numerical type.\n"
+			    << "* \\param bool use_qt, conditional saying if quantities are use.\n";
     if(!this->authorName.empty()){
       this->behaviourDataFile << "* \\author " << this->authorName << '\n';
     }
@@ -2515,12 +2516,12 @@ namespace mfront{
   {
     using namespace std;
     this->checkBehaviourDataFile();
-    this->behaviourDataFile << "// Forward Declaration\n";
-    this->behaviourDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
-    this->behaviourDataFile << "class " << this->mb.getClassName() << "BehaviourData;\n\n";
-    this->behaviourDataFile << "// Forward Declaration\n";
-    this->behaviourDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
-    this->behaviourDataFile << "class " << this->mb.getClassName() << "IntegrationData;\n\n";
+    this->behaviourDataFile << "// Forward Declaration\n"
+			    << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
+			    << "class " << this->mb.getClassName() << "BehaviourData;\n\n"
+			    << "// Forward Declaration\n"
+			    << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
+			    << "class " << this->mb.getClassName() << "IntegrationData;\n\n";
     if(this->mb.useQt()){
       this->behaviourDataFile << "// Forward Declaration\n";
       this->behaviourDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
@@ -2587,14 +2588,14 @@ namespace mfront{
 			      << "ModellingHypothesis::"
 			      << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }
-    this->behaviourDataFile << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n";
-    this->behaviourDataFile << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);\n";
-    this->behaviourDataFile << "TFEL_STATIC_ASSERT(tfel::typetraits::"
-			    << "IsFundamentalNumericType<Type>::cond);\n";
-    this->behaviourDataFile << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n";
-    this->behaviourDataFile << "friend std::ostream& operator<< <>(std::ostream&,const ";
-    this->behaviourDataFile << this->mb.getClassName() << "BehaviourData&);\n\n";
-    this->behaviourDataFile << "/* integration data is declared friend to access"
+    this->behaviourDataFile << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n"
+			    << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);\n"
+			    << "TFEL_STATIC_ASSERT(tfel::typetraits::"
+			    << "IsFundamentalNumericType<Type>::cond);\n"
+			    << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n"
+			    << "friend std::ostream& operator<< <>(std::ostream&,const "
+			    << this->mb.getClassName() << "BehaviourData&);\n\n"
+			    << "/* integration data is declared friend to access"
 			    << "   driving variables at the beginning of the time step */\n";
     if(this->mb.useQt()){
       this->behaviourDataFile << "friend class " << this->mb.getClassName() << "IntegrationData<hypothesis,Type,use_qt>;\n\n";
@@ -2666,8 +2667,8 @@ namespace mfront{
 				<< "BehaviourData<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>& b)\n";
       }
     }
-    this->behaviourDataFile << "{\n";
-    this->behaviourDataFile << "using namespace std;\n";
+    this->behaviourDataFile << "{\n"
+			    << "using namespace std;\n";
     for(const auto& v : this->mb.getMainVariables()){
       if(v.first.increment_known){
 	this->behaviourDataFile << "os << \"" << v.first.name  << " : \" << b." << v.first.name  << " << '\\n';\n";
@@ -2693,8 +2694,8 @@ namespace mfront{
       this->behaviourDataFile << "os << \"" << v.name << " : \" << b." 
 			      << v.name << " << '\\n';\n";
     }
-    this->behaviourDataFile << "return os;\n";
-    this->behaviourDataFile << "}\n\n";
+    this->behaviourDataFile << "return os;\n"
+			    << "}\n\n";
   } //  BehaviourDSLCommon::writeBehaviourDataOutputOperator
 
   void BehaviourDSLCommon::writeBehaviourDataFileBegin()
@@ -3718,8 +3719,8 @@ namespace mfront{
 	    << "*(" << T << "-this->referenceTemperatureForThermalExpansion);\n";
       } else {
 	out << "dl" << i << "_l0"  << "[" << c << "] += (this->"
-	    << cmp.name << ")/(1+(this->" << cmp.name << ")*(this->referenceTemperatureForThermalExpansion-" << Tref << "))"
-	    << "*(" << T << "-this->referenceTemperatureForThermalExpansion);\n";
+	<< cmp.name << ")/(1+(this->" << cmp.name << ")*(this->referenceTemperatureForThermalExpansion-" << Tref << "))"
+	<< "*(" << T << "-this->referenceTemperatureForThermalExpansion);\n";
       }
     };
     if(!this->mb.requiresStressFreeExpansionTreatment(h)){
@@ -3962,17 +3963,17 @@ namespace mfront{
       } else {
 	throw_if(this->mb.getOrthotropicAxesConvention()!=OrthotropicAxesConvention::DEFAULT,
 		 "internal error, unsupported orthotropic axes convention");
-	  for(const auto mh:this->mb.getDistinctModellingHypotheses()){
-	    throw_if(mh!=ModellingHypothesis::TRIDIMENSIONAL,
-		     "an orthotropic axes convention must be choosen when "
-		     "defining a stress free expansion in behaviours "
-		     "which shall be valid in other modelling hypothesis "
-		     "than 'Tridimensional'.\n"
-		     "Either restrict the validity of the behaviour to "
-		     "'Tridimensional' (see @ModellingHypothesis) or "
-		     "choose and orthotropic axes convention as on option "
-		     "to the @OrthotropicBehaviour keyword");
-	  }
+	for(const auto mh:this->mb.getDistinctModellingHypotheses()){
+	  throw_if(mh!=ModellingHypothesis::TRIDIMENSIONAL,
+		   "an orthotropic axes convention must be choosen when "
+		   "defining a stress free expansion in behaviours "
+		   "which shall be valid in other modelling hypothesis "
+		   "than 'Tridimensional'.\n"
+		   "Either restrict the validity of the behaviour to "
+		   "'Tridimensional' (see @ModellingHypothesis) or "
+		   "choose and orthotropic axes convention as on option "
+		   "to the @OrthotropicBehaviour keyword");
+	}
       }
     }
     this->behaviourFile << "}\n\n";
@@ -4299,6 +4300,7 @@ namespace mfront{
 			<< "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
 			<< "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
 			<< "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
+			<< "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
 			<< "#include\"TFEL/Material/MaterialException.hxx\"\n"
 			<< "#include\"TFEL/Material/MechanicalBehaviour.hxx\"\n"
 			<< "#include\"TFEL/Material/MechanicalBehaviourTraits.hxx\"\n"
@@ -5230,7 +5232,8 @@ namespace mfront{
 			      << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
 			      << "#include\"TFEL/TypeTraits/IsScalar.hxx\"\n"
 			      << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
-			      << "#include\"TFEL/TypeTraits/Promote.hxx\"\n";
+			      << "#include\"TFEL/TypeTraits/Promote.hxx\"\n"
+			      << "#include\"TFEL/Math/General/IEEE754.hxx\"\n";
     this->mb.requiresTVectorOrVectorIncludes(b1,b2);
     if(b1){
       this->integrationDataFile << "#include\"TFEL/Math/tvector.hxx\"\n"
@@ -5488,7 +5491,7 @@ namespace mfront{
     const auto& md = this->mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     map<DrivingVariable,
-      ThermodynamicForce>::const_iterator p2;
+	ThermodynamicForce>::const_iterator p2;
     this->checkBehaviourFile();
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(this->mb.useQt()){        
@@ -6010,7 +6013,7 @@ namespace mfront{
 		  << "msg+=fn;\n"
 		  << "msg+=\"'. Invalid parameter '\"+p+\"'\";\n"
 		  << "throw(runtime_error(msg));\n"
-		    << "}\n"
+		  << "}\n"
 		  << "}\n"
 		  << "}\n\n";
   } // end of BehaviourDSLCommon::writeSrcFileParametersInitializer

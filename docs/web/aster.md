@@ -52,11 +52,47 @@ The `aster` interface can be used to introduce:
 - Small strain mechanical behaviours. Those behaviours can be used
   with the `GDEF_LOG` and `GROT_GDEP` finite strain strategies (see
   @edf_modeles_2013).
-- Finite strain mechanical behaviours. Those behaviours must be used
-  with the `SIMO_MIEHE` finite strain formulation (see
-  @edf_loi_2013). This feature is only available for `Code_Aster`
-  version greater than `13.x`.
+- Finite strain mechanical behaviours.
 - Cohesive zone models.
+
+## Finite strain behaviours
+
+Support for `MFront` finite strain behaviours is only available for
+`Code_Aster` version greater than `13`.
+
+`Code_Aster` provides two distincts finite strain formulation:
+
+- `SIMO_MIEHE` which is a finite strain formulation where the
+  principle of virtual power is expressed in the current
+  configuration (see @edf_loi_2013).
+- `GROT_GDEP` is the name in `Code_Aster` of a finite strain
+  formulation based on the principle of virtual work in the reference
+  configuration expressed in term of the Green-Lagrange strain and the
+  second Piola-Kirchhoff stress. Such a formulation is also called
+  `Total Lagrangian` in the litterature (see @belytschko_nonlinear_2000)
+  and in other finite element solvers.
+
+From the behaviour point of view, using `SIMO_MIEHE` or `GROT_GDEP`
+differs from:
+
+- The choice of the output stress (the Cauchy stress in `SIMO_MIEHE`,
+the second Piola-Kirchhoff stress in `GROT_GDEP`)
+- The definition of the consistent tangent operator.
+
+The `@AsterFiniteStrainFormulation` keyword can be used to choose one
+of these finite strain formulation. This keyword must be followed by
+one of the following choice:
+
+- `SIMO_MIEHE`
+- `GROT_GDEP` or `TotalLagrangian`
+
+By default, finite strain behaviours must be used with the
+`SIMO_MIEHE` finite strain formulation.
+
+> **Support of the `GROT_GDEP` finite strain formulation**
+>
+> Official versions of `Code_Aster` does not support yet calling
+> `MFront` behaviours for the `GROT_GDEP` finite strain formulation.
 
 # Generating the shared library
 

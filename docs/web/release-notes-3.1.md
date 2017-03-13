@@ -10,6 +10,12 @@
 The page declares the new functionalities of the 3.1 version of
 `TFEL`, `MFront` and `MTest`.
 
+# Highlights
+
+## Numerical stability
+
+### Enabling the `-ffast-math` with GCC
+
 # TFEL
 
 ## TFEL/Math
@@ -226,6 +232,42 @@ const auto evp    = map([](const auto x){return exp(x)},vp);
 const auto [f,df] = Stensor::computeIsotropicFunctionAndDerivative(evp,evp,vp,m,1.e-12);
 ~~~~
 
+### Portable implementation of the `fpclassify`, `isnan`,  `isfinite` functions
+
+The `C99` standard defines the `fpclassify`, `isnan`, `isfinite`
+functions to query some information about double precision
+floatting-point numbers (`double`):
+
+- Following the `IEEE754` standard, the `fpclassify` categorizes a
+  floating point number into one of the following categories: zero,
+  subnormal, normal, infinite, NaN (Not a Number). The return value
+  returned for each category is respectively `FP_ZERO`,
+  `FP_SUBNORMAL`, `FP_NORMAL`, `FP_INFINITE` and `FP_NaN`.
+- The `isnan` function returns a boolean stating if its argument has a
+  not-a-number (NaN) value.
+- The `isfinite` function returns true if its argument falls into one
+  of the following categories: zero, subnormal or normal.
+
+The `C++11` provides a set of overload for single precision (`float`)
+and extended precision (`long double`) floatting-point numbers.
+
+Those functions are very handy to check the validity of a
+computation. However, those functions are not compatible with the use
+of the `-ffast-math` option of the `GNU` compiler which also implies
+the `-ffinite-math-only` option. This latter option allows
+optimizations for floating-point arithmetic that assume that arguments
+and results are finite numbers. As a consequence, when this option is
+enabled, the previous functions does not behave as expected. For
+example, `isnan` always returns false, whatever the value of its
+argument.
+
+To overcome this issue, we have introduced in `TFEL/Math` the
+implementation of these functions provided by the `musl` library (see
+@musl_libc_2017). Those implementations are compatible with the
+`-ffast-math` option of the `GNU` compiler. Those implementations are
+defined in the `TFEL/Math/General/IEEE754.hxx` header file in the
+`tfel::math::ieee754` namespace.
+
 # New functionalities of the `MFront` code generator
 
 ## Gallery
@@ -273,6 +315,38 @@ The pre- and post-computations performed by the
 the computation of the eigen values and eigen vectors of the right
 Cauchy strecth tensor, are now based the Jacobi algorithm from the
 `FSES` library for improved accuracy.
+
+### The `Code_Aster` interface
+
+#### Support for the `GROT_GDEP` finite strain formulation
+
+`GROT_GDEP` is the name in `Code_Aster` of a finite strain formulation
+based on the principle of virtual work in the reference configuration
+expressed in term of the Green-Lagrange strain and the second
+Piola-Kirchhoff stress. Such a formulation is also called `Total
+Lagrangian` in the litterature (see @belytschko_nonlinear_2000) and in
+other finite element solvers.
+
+Prior to this version, `MFront` behaviours were meant to be used with
+the `SIMO_MIEHE` finite strain formulation and could not be used with
+the `GROT_GDEP` finite strain formulation.
+
+From the behaviour point of view, using `SIMO_MIEHE` or `GROT_GDEP`
+differs from the choice of the output stress and the definition of the
+consistent tangent operator.
+
+#### The `@AsterFiniteStrainFormulation` keyword
+
+The `@AsterFiniteStrainFormulation` keyword can now be used to choose
+one of these finite strain formulation.
+
+This keyword must be followed by one of the following choice:
+
+- `SIMO_MIEHE`
+- `GROT_GDEP` or `TotalLagrangian`
+
+The choice `SIMO_MIEHE` remains the default for backward
+compatibility.
 
 ### The `Europlexus` interface
 
@@ -365,6 +439,44 @@ This method takes two named arguments:
 	- `ThermodynamicForce`, `Stress`, `CohesiveForce` stating that the
 	  constraint is of the order of magnitude of the thermodynamic
 	  force
+
+# Tickets fixed
+
+## Ticket #40:  `ImplicitDSL`: Detect non finite values during resolution
+
+During the resolution of the implicit system, invalid results may
+occur. In previous versions, no check were made leading to a
+propagation of those values and finally the failure of integration.
+
+A test to check that the residual of the implicit system is finite
+have been added. If this test is not satisfied after the first
+iteration, the last increment of the unknowns is divided by two and
+the resolution is restarted with this guess. If this test is not
+satisfied at the first iteration, the behaviour integration can not be
+performed.
+
+## Ticket #41: `MTest`: check if the residual is finite and not NaN
+
+In previous versions, if the behaviour integration returned a
+not-a-number value (`NaN` ), this value propagated throughout the
+computation.
+
+This situation can be detected by checking that the convergence
+criteria are finite as defined by the `IEEE754` standard.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/41/>
+
+## Ticket #42: Check for infinite and `NaN` values in material properties
+
+In the previous versions of `MFront`, generated sources for material
+properties checked that the `errno` value to determine is something
+had gone wrong, but this check does not appear to portable nor
+reliable with the INTEL compiler or when the `-ffast-math` option of
+the GNU compiler is activated.
+
+The current version now check that the return value is finite.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/42/>
 
 # References
 

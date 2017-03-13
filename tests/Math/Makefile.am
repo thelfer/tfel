@@ -68,7 +68,8 @@ test_PROGRAMS = hill                                     \
 		TensorProductCheck                       \
                 CorotationnalCauchyStressToSecondPioloKirchhoffStressTest \
 		StridedRandomAccessIteratorTest          \
-		DifferenceRandomAccessIteratorTest
+		DifferenceRandomAccessIteratorTest       \
+	        IEEE754Test
 
 LDADD = -L$(top_builddir)/src/Math      \
 	-L$(top_builddir)/src/Utilities \
@@ -118,6 +119,7 @@ TensorProductCheck_SOURCES    = TensorProductCheck.cxx
 CorotationnalCauchyStressToSecondPioloKirchhoffStressTest_SOURCES = CorotationnalCauchyStressToSecondPioloKirchhoffStressTest.cxx
 StridedRandomAccessIteratorTest_SOURCES    = StridedRandomAccessIteratorTest.cxx
 DifferenceRandomAccessIteratorTest_SOURCES = DifferenceRandomAccessIteratorTest.cxx
+IEEE754Test_SOURCES = IEEE754Test.cxx
 
 discretization1D_SOURCES = discretization1D.cxx
 discretization1D_LDADD   = -L$(top_builddir)/src/Math      \

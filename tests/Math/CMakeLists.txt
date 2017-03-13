@@ -106,6 +106,7 @@ tests_math(levenberg-marquardt3)
 tests_math(CorotationnalCauchyStressToSecondPioloKirchhoffStressTest)
 tests_math(StridedRandomAccessIteratorTest)
 tests_math(DifferenceRandomAccessIteratorTest)
+tests_math(IEEE754Test)
 
 tests_math3(levenberg-marquardt4)
 

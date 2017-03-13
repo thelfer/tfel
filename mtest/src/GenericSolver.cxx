@@ -255,13 +255,12 @@ namespace mtest{
     return {true,r_dt};
   } // end of iterate
   
-  void
-  GenericSolver::execute(StudyCurrentState& scs,
-			 SolverWorkSpace& wk,
-			 const Study& s,
-			 const SolverOptions& o,
-			 const real ti,
-			 const real te)
+  void GenericSolver::execute(StudyCurrentState& scs,
+			      SolverWorkSpace& wk,
+			      const Study& s,
+			      const SolverOptions& o,
+			      const real ti,
+			      const real te)
   {
     unsigned short subStep = 0;
     auto t_eps = (te-ti)*100*std::numeric_limits<real>::epsilon();

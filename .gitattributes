@@ -1330,6 +1330,8 @@ include/TFEL/Math/General/DifferenceRandomAccessIterator.hxx -text
 include/TFEL/Math/General/DotProduct.hxx -text
 include/TFEL/Math/General/EmptyRunTimeProperties.hxx -text
 include/TFEL/Math/General/Forward/General.hxx -text
+include/TFEL/Math/General/IEEE754.hxx -text
+include/TFEL/Math/General/IEEE754.ixx -text
 include/TFEL/Math/General/LogicalOperations.hxx -text
 include/TFEL/Math/General/MathConstants.hxx -text
 include/TFEL/Math/General/NegObjectRandomAccessConstIterator.hxx -text
@@ -5245,6 +5247,7 @@ tests/Math/ExpressionTemplates/test_expr2.cxx -text
 tests/Math/ExpressionTemplates/test_expr6.cxx -text
 tests/Math/ExpressionTemplates/test_expr7.cxx -text
 tests/Math/ExpressionTemplates/test_expr9.cxx -text
+tests/Math/IEEE754Test.cxx -text
 tests/Math/Makefile.am -text
 tests/Math/RungeKutta/CMakeLists.txt -text
 tests/Math/RungeKutta/Makefile.am -text
@@ -5333,6 +5336,7 @@ tests/Math/stensor/StensorComputeJacobianDerivativeTest.cxx -text
 tests/Math/stensor/StensorFromTinyMatrixColumnView.cxx -text
 tests/Math/stensor/stensor.cxx -text
 tests/Math/stensor/stensor10.cxx -text
+tests/Math/stensor/stensor11.cxx -text
 tests/Math/stensor/stensor2.cxx -text
 tests/Math/stensor/stensor4.cxx -text
 tests/Math/stensor/stensor5.cxx -text

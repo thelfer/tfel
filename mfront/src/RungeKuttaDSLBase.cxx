@@ -1322,7 +1322,7 @@ namespace mfront{
       this->throwRuntimeError("RungeKuttaDSLBase::writeBehaviourRK54Integrator",
 			      "internal error, unsupported error evaluation.");
     }
-    this->behaviourFile << "if(std::isnan(error)){\n"
+    this->behaviourFile << "if(!ieee754::isfinite(error)){\n"
 			<< "throw(tfel::material::DivergenceException());\n"
 			<< "}\n";
     if(getDebugMode()){
@@ -1710,7 +1710,7 @@ namespace mfront{
 			<< "ra = sqrt(((sigf)-(this->sig))|((sigf)-(this->sig)))/errabs;\n"
 			<< "sqra = sqrt(ra);\n"
 			<< "// test for convergence\n"
-			<< "if ((sqra>"  << this->mb.getClassName() << "::rkcastem_div)||(std::isnan(ra))){\n"
+			<< "if ((sqra>"  << this->mb.getClassName() << "::rkcastem_div)||(!ieee754::isfinite(ra))){\n"
 			<< "dt_ /= "  << this->mb.getClassName() << "::rkcastem_div;\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
@@ -2095,7 +2095,7 @@ namespace mfront{
       this->throwRuntimeError("RungeKuttaDSLBase::writeBehaviourRK42Integrator",
 			      "internal error, unsupported error evaluation");
     }
-    this->behaviourFile << "if(std::isnan(error)){\n"
+    this->behaviourFile << "if(!ieee754::isfinite(error)){\n"
 			<< "throw(tfel::material::DivergenceException());\n"
 			<< "}\n";
     if(getDebugMode()){
