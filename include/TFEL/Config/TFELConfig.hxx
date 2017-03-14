@@ -323,7 +323,7 @@
 #undef max
 #endif
 
-#if defined(__GNUG__) && (not defined (__CLANG__)) && (not defined (__INTEL_COMPILER))
+#if defined(__GNUG__) && (!defined(__CLANG__)) && (!defined(__INTEL_COMPILER))
 #if ((__GNUC__ > 4) || ( (__GNUC__ == 4) && ((__GNUC_MINOR__ > 9) || \
                                              (__GNUC_MINOR__ == 9 && __GNUC_PATCHLEVEL__ > 0))))
 #define TFEL_CONSTEXPR constexpr
