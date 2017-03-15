@@ -14,7 +14,7 @@ do
   case $opt in
     f) fcheck=yes
       ;;
-    j) rdoc="$OPTARG";
+    d) rdoc="$OPTARG";
       ;;
     j) pbuild=yes;
        nbproc="$OPTARG";

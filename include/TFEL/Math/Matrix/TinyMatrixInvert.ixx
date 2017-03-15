@@ -31,14 +31,13 @@ namespace tfel{
       TinyMatrixSolve<N,T>::decomp(t,p,eps);
       typename tmatrix<N,N,T>::size_type i;
       typename tmatrix<N,N,T>::size_type j;
-      tvector<N,T> e(zero);
       for(i=0;i!=N;++i){
+	tvector<N,T> e(zero);
 	e(i) = one;
 	TinyMatrixSolve<N,T>::back_substitute(t,p,e);
 	for(j=0;j!=N;++j){
 	  m(j,i)=e(j);
 	}
-	e(i) = zero;
       }
     } // end of TinyMatrixInvert::exe
 
