@@ -576,7 +576,7 @@ namespace tfel{
     -> typename std::enable_if<
       tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond,
       Expr<tmatrix<3u,3u,TensorNumType<typename std::decay<decltype(t)>::type>>,
-      class MatrixViewFromTensorExpr<decltype(t)>>
+      MatrixViewFromTensorExpr<decltype(t)>>
       >::type;
 
     /*!

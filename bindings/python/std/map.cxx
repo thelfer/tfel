@@ -12,6 +12,7 @@
  */
 
 #include<map>
+#include<cmath>
 #include<string>
 #include<boost/python.hpp>
 #include"TFEL/Python/MapConverter.hxx"

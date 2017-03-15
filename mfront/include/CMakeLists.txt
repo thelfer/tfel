@@ -114,7 +114,7 @@ install_mfront_header(MFront/Castem CastemTangentOperator.hxx)
 install_mfront_header(MFront/Castem CastemStressFreeExpansionHandler.hxx)
 
 if(LOCAL_CASTEM_HEADER)
-  install(FILES "castem.h" DESTINATION "include/")
+  install(FILES "castem.h" DESTINATION "include/" COMPONENT mfront)
 endif(LOCAL_CASTEM_HEADER)
 
 endif(HAVE_CASTEM)

@@ -81,11 +81,14 @@ else(CMAKE_CONFIGURATION_TYPES)
   add_dependencies(check MTestParserTest)
 endif(CMAKE_CONFIGURATION_TYPES)
 
-
 macro(test_mtest test_arg)
   add_executable(${test_arg} EXCLUDE_FROM_ALL ${test_arg}.cxx)
   add_test(NAME ${test_arg} COMMAND ${test_arg})
   add_dependencies(check ${test_arg})
+    if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      set_property(TEST ${test_arg}
+    	PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$ENV{PATH}")
+    endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   target_link_libraries(${test_arg}
     TFELMTest      TFELMaterial
     TFELMathParser TFELMath

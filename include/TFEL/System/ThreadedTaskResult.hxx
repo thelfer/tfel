@@ -69,8 +69,12 @@ namespace tfel{
       //! \brief set current exception
       TFEL_INLINE void setException(const std::exception_ptr&);
       //! \brief throw the catched exception
-      TFEL_INLINE TFEL_NORETURN void rethrow(void);
-      //! \brief conversion to bool
+#ifndef _MSC_VER
+	  TFEL_INLINE TFEL_NORETURN void rethrow(void);
+#else /* _MSC_VER */
+	  TFEL_INLINE void rethrow(void);
+#endif /* _MSC_VER */
+	  //! \brief conversion to bool
       TFEL_INLINE operator bool () const;
       //! \brief conversion to underlying type
       TFEL_INLINE T& operator* ();
