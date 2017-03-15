@@ -15,56 +15,16 @@
 #define LIB_TFEL_MATH_IEEE754_IXX
 
 #include<cmath>
-#include<cfloat>
 #include<limits>
+#include<cfloat>
 #include<cstdint>
+#include<stdexcept>
 
 namespace tfel{
 
   namespace math{
 
     namespace ieee754{
-
-#if LDBL_MANT_DIG == 53 && LDBL_MAX_EXP == 1024
-#elif LDBL_MANT_DIG == 64 && LDBL_MAX_EXP == 16384 && __BYTE_ORDER == __LITTLE_ENDIAN
-      union ldshape {
-	long double f;
-	struct {
-	  uint64_t m;
-	  uint16_t se;
-	} i;
-      };
-#elif LDBL_MANT_DIG == 113 && LDBL_MAX_EXP == 16384 && __BYTE_ORDER == __LITTLE_ENDIAN
-      union ldshape {
-	long double f;
-	struct {
-	  uint64_t lo;
-	  uint32_t mid;
-	  uint16_t top;
-	  uint16_t se;
-	} i;
-	struct {
-	  uint64_t lo;
-	  uint64_t hi;
-	} i2;
-      };
-#elif LDBL_MANT_DIG == 113 && LDBL_MAX_EXP == 16384 && __BYTE_ORDER == __BIG_ENDIAN
-      union ldshape {
-	long double f;
-	struct {
-	  uint16_t se;
-	  uint16_t top;
-	  uint32_t mid;
-	  uint64_t lo;
-	} i;
-	struct {
-	  uint64_t hi;
-	  uint64_t lo;
-	} i2;
-      };
-#else
-#error "Unsupported long double representation"
-#endif
 
       int fpclassify(const float x)
       {
@@ -96,27 +56,99 @@ namespace tfel{
 #elif LDBL_MANT_DIG == 64 && LDBL_MAX_EXP == 16384
       int fpclassify(const long double x)
       {
-	union ldshape u = {x};
-	int e = u.i.se & 0x7fff;
-	int msb = u.i.m>>63;
-	if (!e && !msb)
-	  return u.i.m ? FP_SUBNORMAL : FP_ZERO;
-	if (!msb)
-	  return FP_NAN;
-	if (e == 0x7fff)
-	  return u.i.m << 1 ? FP_NAN : FP_INFINITE;
+#ifdef __BYTE_ORDER	
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#else
+#error "Unsupported long double representation"
+#endif
+#endif /* __BYTE_ORDER	*/
+	auto le = [](){
+	  union {
+	    uint32_t i;
+	    char c[4];
+	  } bint = {0x01020304};
+	  return bint.c[0] != 1; 
+	}();
+	if(le){
+	  union {
+	    long double f;
+	    struct {
+	      uint64_t m;
+	      uint16_t se;
+	    } i;
+	  } u = {x};
+	  int e = u.i.se & 0x7fff;
+	  int msb = u.i.m>>63;
+	  if (!e && !msb)
+	    return u.i.m ? FP_SUBNORMAL : FP_ZERO;
+	  if (!msb)
+	    return FP_NAN;
+	  if (e == 0x7fff)
+	    return u.i.m << 1 ? FP_NAN : FP_INFINITE;
+	} else {
+	  throw(std::logic_error("tfel::math::ieee754::fpclassify: "
+				 "unsupported long double representation"));
+	}
 	return FP_NORMAL;
       }
 #elif LDBL_MANT_DIG == 113 && LDBL_MAX_EXP == 16384
       int fpclassify(const long double x)
       {
-	union ldshape u = {x};
-	int e = u.i.se & 0x7fff;
-	u.i.se = 0;
-	if (!e)
-	  return u.i2.lo | u.i2.hi ? FP_SUBNORMAL : FP_ZERO;
-	if (e == 0x7fff)
-	  return u.i2.lo | u.i2.hi ? FP_NAN : FP_INFINITE;
+#ifdef __BYTE_ORDER
+#if   __BYTE_ORDER == __LITTLE_ENDIAN	
+#elif __BYTE_ORDER == __BIG_ENDIAN
+#else
+#error "Unsupported long double representation"
+#endif
+#endif /* __BYTE_ORDER */
+	auto le = [](){
+	  union {
+	    uint32_t i;
+	    char c[4];
+	  } bint = {0x01020304};
+	  return bint.c[0] != 1; 
+	}();
+	if(le){
+	  union {
+	    long double f;
+	    struct {
+	      uint64_t lo;
+	      uint32_t mid;
+	      uint16_t top;
+	      uint16_t se;
+	    } i;
+	    struct {
+	      uint64_t lo;
+	      uint64_t hi;
+	    } i2;
+	  } u = {x};
+	  int e = u.i.se & 0x7fff;
+	  u.i.se = 0;
+	  if (!e)
+	    return u.i2.lo | u.i2.hi ? FP_SUBNORMAL : FP_ZERO;
+	  if (e == 0x7fff)
+	    return u.i2.lo | u.i2.hi ? FP_NAN : FP_INFINITE;
+	} else if(!le){
+	  union {
+	    long double f;
+	    struct {
+	      uint16_t se;
+	      uint16_t top;
+	      uint32_t mid;
+	      uint64_t lo;
+	    } i;
+	    struct {
+	      uint64_t hi;
+	      uint64_t lo;
+	    } i2;
+	  } u = {x};
+	  int e = u.i.se & 0x7fff;
+	  u.i.se = 0;
+	  if (!e)
+	    return u.i2.lo | u.i2.hi ? FP_SUBNORMAL : FP_ZERO;
+	  if (e == 0x7fff)
+	    return u.i2.lo | u.i2.hi ? FP_NAN : FP_INFINITE;
+	}
 	return FP_NORMAL;
       }
 #endif
