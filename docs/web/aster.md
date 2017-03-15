@@ -26,8 +26,7 @@ process:
 - Declaring the mechanical behaviour in the `COMPORTEMENT` field of
   the `STAT_NON_LINE` function.
 
-In the following, we will consider the case of single mechanical
-behaviour implemented in a file called `plasticity.mfront`.
+Those two steps are detailed in this document.
 
 > **A word of caution**
 > 
@@ -106,6 +105,9 @@ code.
 
 In practice, we consider the second approach to be easier and more
 flexible.
+
+In the following, we will consider the case of single mechanical
+behaviour implemented in a file called `plasticity.mfront`.
 
 ## Generating the shared library as part of the `Code_Aster` simulation
 
@@ -312,6 +314,145 @@ COMPORTEMENT=_F ( RELATION    = 'MFRONT',
 			      NOM_ROUTINE = 'asterplasticity',
 			      DEFORMATION = 'GDEF_LOG', )
 ~~~~~~~~~~~~~~~~
+
+# Examples
+
+<div id="slideshow">
+  <ul class="slides">
+  <li>
+  <video style="display:block; margin: 0 auto;" width="640" height="320" controls>
+  <source src="media/SignoriniStrip.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+  </video>
+  </li>
+  <li>
+  <video style="display:block; margin: 0 auto;" width="640" height="320" controls>
+  <source src="media/SignoriniCompression.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+  </video>
+  </li>
+  </ul>
+  <span class="arrow previous"></span>
+  <span class="arrow next"></span>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="js/slideshow.js"></script>
+
+# Know issues
+
+The `Code_Aster` team uses the `bitbucket` forge:
+
+<https://bitbucket.org/code_aster/codeaster-src>
+
+This section reports all the issues are related to `MFront`. The
+number of the ticket are the one used by the `bitbucket` forge.
+
+## Ticket #92: `SIMO_MIEHE` with `MFront` (Solved in `Code_Aster` 13.4)
+
+For versions prior to 13.4, invalid deformation gradients were send to
+the behaviour during the prediction phase, causing floatting point
+exceptions.
+
+For previous versions, one workaround is to use another prediction
+policy, for example:
+
+~~~~{.python}
+RESU1=STAT_NON_LINE(...
+	                NEWTON=_F(PREDICTION = 'EXTRAPOLE',
+					...
+~~~~
+
+For more details, see <https://bitbucket.org/code_aster/codeaster-src/issues/92/simo_miehe-with-mfront>.
+
+## Ticket #93: Better support of external state variables for `MFront` behaviours
+
+If the behaviours declares an external state variable (corresponding
+to a "control variable" in `Code_Aster` wording), its availability is
+not checked.
+
+If not correctly declared, a nan value seems to be passed to the
+behaviour, which can be quite difficult to debug.
+
+Note that the number of declared external state variables is not
+passed to the `MFront` behaviour, so even this basic check is not
+possible.
+
+For more details, see <https://bitbucket.org/code_aster/codeaster-src/issues/93/better-support-of-external-state-variables>.
+
+## Ticket #96: `MFront` small strain behaviours and `GROT_GDEP`
+
+`MFront` small strain behaviours are not usable with `GROT_GDEP` due to
+a meaningless restriction.
+
+For more details, see <https://bitbucket.org/code_aster/codeaster-src/issues/96/mfront-small-strain-behaviours-and>.
+
+## Ticket #97: `MFront` finite strain behaviours and `GROT_GDEP`
+
+`MFront` finite strain behaviours are currently restricted to the
+`SIMO_MIEHE` finite strain formulation. Support for the `GROT_GDEP`
+finite strain formulation will be available in `MFront` 3.1 (see the
+documentation of the `@AsterFiniteStrainFormulation`
+keyword). Appropriate developments must be made on the `Code_Aster`
+side.
+
+For more details, see <https://bitbucket.org/code_aster/codeaster-src/issues/97/mfront-finite-strain-behaviours-and>.
+
+## Ticket #98: `MFront`: check if the behaviour is small strain or finite strain
+
+Currently, one can use a `MFront` finite strain behaviour with
+the `GDEF_LOG` option, leading to a severe crash.
+
+Whether a `MFront` behaviour is a finite or small strain behaviour shall
+be checked by `Code_Aster`. This piece of information is given by the
+<behaviour>_BehaviourType symbol exported in the library.
+
+A small strain behaviour shall be usable in the small strain
+assumption and with the `GROT_GDEP` and `GDEF_LOG` finite strain
+strategies.
+
+A finite strain behaviour shall only be usable with `SIMO_MIEHE`. (and
+with `GROT_GDEP` in the future, see Ticket #97 below.
+
+For more details, see <https://bitbucket.org/code_aster/codeaster-src/issues/98/mfront-check-if-the-behaviour-is-small>.
+
+## Ticket #99: `MFront`: minimal length in LIST_COEF is not meaningfull
+
+Currently, a least 2 entries must be given in the `LIST_COEF`
+command. This is not meaningfull as some behaviours contains all the
+relevant physical information and does not require any material
+property.
+
+To overcome this issue, two dummy material properties can be added to
+the `MFront` behaviour from the command line:
+
+~~~~{.sh}
+mfront --@MaterialProperty="real fake1" --@MaterialProperty="real fake2" ...
+~~~~
+
+For more details, see <https://bitbucket.org/code_aster/codeaster-src/issues/99/mfront-minimal-length-in-list_coef-is-not>.
+
+## Ticket #100: `MFront`: restrict the finite strain strategies usable
+
+For small strain behaviours, `MFront` 3.1 provides a keyword
+(`@FiniteStrainStrategy`) stating which finite strain strategy
+(`GROT_GDEP` or `GDEF_LOG`) has been used for the behaviour
+identification.
+
+Developments in `Code_Aster` are required to read this information and
+check proper usage of the behaviour.
+
+For more details, see <https://bitbucket.org/code_aster/codeaster-src/issues/100/mfront-restrict-the-finite-strain>.
+
+# Ticket #101: `MFront`: the library name containing officially supported behaviours is the same as the default library name generated by `MFront` (Solved in `Code_Aster` 13.4)
+
+By default (if neither the `@Library` nor the `@Material` keywords are
+used), `MFront` generates a library called `libAsterBehaviour.so`.
+
+This library may conflict with the library delivered with `Code_Aster`
+which contains the officially supported behaviours.
+
+Changing the library name in `Code_Aster` seems easier for backward
+compatibility (for example, for `MTest` users).
 
 #References
 
