@@ -188,6 +188,10 @@ add_dependencies(check test-cxx)
 add_dependencies(test-cxx MFrontMaterialProperties-cxx)
 target_link_libraries(test-cxx MFrontMaterialProperties-cxx
   TFELTests)
+if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  set_property(TEST test-cxx
+               PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
+endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
   target_link_libraries(test-cxx "-lgcov")
 endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")

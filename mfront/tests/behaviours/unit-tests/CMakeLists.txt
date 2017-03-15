@@ -24,6 +24,10 @@ macro(mfront_unit_test file)
     --no-gui --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours
     --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties
     ${mfront_file})
+  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    set_property(TEST ${test_arg}
+ 	         PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$ENV{PATH}")
+  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   if(_WILL_FAIL)
     set_tests_properties(mfront-unit-tests-${file}
       PROPERTIES WILL_FAIL true)
