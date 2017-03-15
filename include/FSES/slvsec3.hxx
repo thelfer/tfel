@@ -33,8 +33,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef _FSES_SLVSEC3_HXX
-#define _FSES_SLVSEC3_HXX
+#ifndef LIB_FSES_SLVSEC3_HXX
+#define LIB_FSES_SLVSEC3_HXX
 
 namespace fses{
 
@@ -58,4 +58,4 @@ namespace fses{
 
 #include"FSES/slvsec3.ixx"
 
-#endif /* _FSES_SLVSEC3_HXX */
+#endif /* LIB_FSES_SLVSEC3_HXX */

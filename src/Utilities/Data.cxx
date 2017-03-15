@@ -14,6 +14,7 @@
 #include<iostream>
 #include<algorithm>
 
+#include"TFEL/Math/General/IEEE754.hxx"
 #include"TFEL/Utilities/Data.hxx"
 
 namespace tfel{
@@ -260,7 +261,7 @@ namespace tfel{
       apply(const double v1,
 	    const double v2)
       {
-	return v1==v2;
+	return tfel::math::ieee754::fpclassify(v1-v2)==FP_ZERO;
       } // end of apply
     }; // end of struct DataComparator
     

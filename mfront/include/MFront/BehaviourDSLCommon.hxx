@@ -914,7 +914,7 @@ namespace mfront{
     virtual void
     writeMaterialPropertyEvaluation(std::ostream&,
 				    const BehaviourDescription::MaterialProperty&,
-				    std::function<std::string(const MaterialPropertyInput&)>&);
+				    std::function<std::string(const MaterialPropertyInput&)>&) override;
     /*!
      * \brief write the evoluation of a thermal expansion coefficient
      * \param[out] out: output stream

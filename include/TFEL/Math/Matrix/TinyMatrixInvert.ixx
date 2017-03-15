@@ -24,18 +24,21 @@ namespace tfel{
     TinyMatrixInvert<N,T>::exe(tfel::math::tmatrix<N,N,T>& m,
 			       const T eps)
     {
+      constexpr const auto zero = T(0);
+      constexpr const auto one  = T(1);
       tmatrix<N,N,T> t(m);
       TinyPermutation<N> p;
       TinyMatrixSolve<N,T>::decomp(t,p,eps);
       typename tmatrix<N,N,T>::size_type i;
       typename tmatrix<N,N,T>::size_type j;
+      tvector<N,T> e(zero);
       for(i=0;i!=N;++i){
-	tvector<N,T> e(T(0));
-	e(i) = 1.;
+	e(i) = one;
 	TinyMatrixSolve<N,T>::back_substitute(t,p,e);
 	for(j=0;j!=N;++j){
 	  m(j,i)=e(j);
 	}
+	e(i) = zero;
       }
     } // end of TinyMatrixInvert::exe
 

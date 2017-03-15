@@ -29,6 +29,14 @@ namespace tfel_check {
   {
     //! constructor
     Linearization();
+    //! move constructor
+    Linearization(Linearization&&);
+    //! copy constructor
+    Linearization(const Linearization&);
+    //! move assignement
+    Linearization& operator=(Linearization&&);
+    //! copy assignement
+    Linearization& operator=(const Linearization&);
     /*!
      * \param[in] times
      * \param[in] values

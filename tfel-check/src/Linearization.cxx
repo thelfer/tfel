@@ -13,22 +13,24 @@
 namespace tfel_check {
 
   Linearization::Linearization() = default;
+  Linearization::Linearization(Linearization&&) = default;
+  Linearization::Linearization(const Linearization&) = default;
+  Linearization& Linearization::operator=(Linearization&&) = default;
+  Linearization& Linearization::operator=(const Linearization&) = default;
+
+
   Linearization::~Linearization() = default;
   
   Linearization::Linearization(const std::vector<double>& t,
 			       const std::vector<double>& v) {
-
-    if (t.size() != v.size()) {
-      throw(std::runtime_error("Linearization::Linearization : "
-			       "the number of values of the times don't match "
-			       "the number of values of the evolution"));
-    } else if (t.size() < 1) {
-      throw(std::runtime_error("Linearization::Linearization : "
-			       "wrong number of values for the times"));
-    } else if (v.size() < 1) {
-      throw(std::runtime_error("Linearization::Linearization : "
-			       "wrong number of values for the ordinates"));
-    }
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("Linearization::Linearization: "+m));}
+    };
+    throw_if(t.size() != v.size(),
+	     "the number of values of the times don't match "
+	     "the number of values of the evolution");
+    throw_if(t.empty(),"wrong number of values for the times");
+    throw_if(v.empty(),"wrong number of values for the ordinates");
     auto pX = t.begin();
     auto pY = v.begin();
     while (pX != t.end()) {
@@ -36,7 +38,6 @@ namespace tfel_check {
       ++pX;
       ++pY;
     }
-
   }  // constructor
 
   double Linearization::operator()(const double x) const {
