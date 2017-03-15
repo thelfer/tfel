@@ -12,9 +12,9 @@
 
 @MaterialProperty stress K;
 K.setGlossaryName("BulkModulus");
-@MaterialProperty stress C01;
-@MaterialProperty stress C02;
 @MaterialProperty stress C10;
+@MaterialProperty stress C20;
+@MaterialProperty stress C01;
 
 @MaterialProperty stress tau[Nv];
 @MaterialProperty stress g[Nv];
@@ -56,8 +56,8 @@ H.setEntryName("ViscoplasticStress");
   const auto I1b          =  I1*iJb;
   const auto dI1b_dC      =  iJb*id+I1*diJb_dC;
   const auto dI2b_dC      = 2*I2*iJb*diJb_dC+iJb2*dI2_dC;
-  const auto dPi_dI1b   = C01+2*C02*(I1b-3);
-  const auto dPi_dI2b   = C10;
+  const auto dPi_dI1b   = C10+2*C20*(I1b-3);
+  const auto dPi_dI2b   = C01;
   Si = 2*(dPi_dI1b*dI1b_dC+dPi_dI2b*dI2b_dC);
   // updating the viscoelastic stresses and computing the Second
   // Piola-Kirchhoff stress
@@ -90,7 +90,7 @@ H.setEntryName("ViscoplasticStress");
     const auto d2I2b_dC2    =
       2*(iJb*(diJb_dC^dI2_dC)+I2*(diJb_dC^diJb_dC)+I2*iJb*d2iJb_dC2)+
       2*iJb*(dI2_dC^diJb_dC)+iJb2*d2I2_dC2;
-    const auto d2Pi_dI1b2 = 2*C02;
+    const auto d2Pi_dI1b2 = 2*C20;
     const auto d2Pi_dI2b2 = 0;
     const auto dSi_dC =
       2*(d2Pi_dI1b2*(dI1b_dC^dI1b_dC)+dPi_dI1b*d2I1b_dC2+

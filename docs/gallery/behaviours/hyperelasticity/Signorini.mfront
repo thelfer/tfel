@@ -8,9 +8,9 @@
 }
 
 @Parameter K   = 2.939e9;
-@Parameter C01 = 2.668e6;
-@Parameter C02 = 0.446e6;
-@Parameter C10 = 0.271e6;
+@Parameter C10 = 2.668e6;
+@Parameter C20 = 0.446e6;
+@Parameter C01 = 0.271e6;
 
 @LocalVariable StiffnessTensor dS_dC;
 
@@ -40,8 +40,8 @@
   const auto I1b        =  I1*iJb;
   const auto dI1b_dC    =  iJb*id+I1*diJb_dC;
   const auto dI2b_dC    = iJb2*dI2_dC+2*I2*iJb*diJb_dC;
-  const auto dPi_dI1b   = C01+2*C02*(I1b-3);
-  const auto dPi_dI2b   = C10;
+  const auto dPi_dI1b   = C10+2*C20*(I1b-3);
+  const auto dPi_dI2b   = C01;
   const StressStensor Si =
     2*(dPi_dI1b*dI1b_dC+dPi_dI2b*dI2b_dC);
   sig = convertSecondPiolaKirchhoffStressToCauchyStress(Sv+Si,F1);
@@ -67,7 +67,7 @@
       (d2Pv_dJ2-dPv_dJ/J)/(2*I3)*(dI3_dC^dI3_dC)
       +dPv_dJ/J*d2I3_dC2;
     /* isochoric part */
-    const auto d2Pi_dI1b2 = 2*C02;
+    const auto d2Pi_dI1b2 = 2*C20;
     const auto dSi_dC =
       2*(d2Pi_dI1b2*(dI1b_dC^dI1b_dC)+dPi_dI1b*d2I1b_dC2+
 	                             +dPi_dI2b*d2I2b_dC2);
