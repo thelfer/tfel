@@ -1,5 +1,5 @@
 % Implementation of the Signorini hyperelastic behaviour
-% T. Helfer
+% T. Helfer, T. Baranger
 % 01/01/2017
 
 \newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
@@ -21,6 +21,27 @@
 \newcommand{\iJb}{\bar{c}_{I_{3}}}
 \newcommand{\diJb}{\deriv{\iJb}{I_{3}}}
 \newcommand{\sdiJb}{\sderiv{\iJb}{I_{3}}}
+
+<div id="slideshow">
+  <ul class="slides">
+  <li>
+  <video style="display:block; margin: 0 auto;" width="640" height="320" controls>
+  <source src="media/SignoriniStrip.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+  </video>
+  </li>
+  <li>
+  <video style="display:block; margin: 0 auto;" width="640" height="320" controls>
+  <source src="media/SignoriniCompression.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+  </video>
+  </li>
+  </ul>
+  <span class="arrow previous"></span>
+  <span class="arrow next"></span>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="js/slideshow.js"></script>
 
 This page describe how to implement the Signorini hyperelastic
 behaviour (see @edf_loi_2013).
@@ -98,7 +119,7 @@ where \(K\) is the bulk modulus.
 The Signorini behaviour mostly refers to the following choice of
 \(W^{i}\):
 \[
-W^{i}= C_{01}\,\paren{\bar{I}_{1}-3}+2\,C_{02}\,\paren{\bar{I}_{1}-3}^{2}+C_{10}\,\paren{\bar{I}_{2}-3}
+W^{i}= C_{10}\,\paren{\bar{I}_{1}-3}+2\,C_{20}\,\paren{\bar{I}_{1}-3}^{2}+C_{01}\,\paren{\bar{I}_{2}-3}
 \]
 
 The general expression of the second Piola-Kirchhoff stress is:
@@ -130,9 +151,9 @@ We use parameters for defining the material constants:
 
 ~~~~~{.cpp}
 @Parameter K   = 2.939e9;
-@Parameter C01 = 2.668e6;
-@Parameter C02 = 0.446e6;
-@Parameter C10 = 0.271e6;
+@Parameter C10 = 2.668e6;
+@Parameter C20 = 0.446e6;
+@Parameter C01 = 0.271e6;
 ~~~~~
 
 Finally, we use a local variable to store the consistent tangent
@@ -282,8 +303,8 @@ In the case of the Signorini behaviour, the derivatives of \(W^{i}\) are:
 \[
 \left\{
 \begin{aligned}
-\deriv{W^{i}}{\bar{I}_{1}} &= C_{01}+2\,C_{02}\,(\bar{I}_{1}-3)\\
-\deriv{W^{i}}{\bar{I}_{2}} &= C_{10}\\
+\deriv{W^{i}}{\bar{I}_{1}} &= C_{10}+2\,C_{20}\,(\bar{I}_{1}-3)\\
+\deriv{W^{i}}{\bar{I}_{2}} &= C_{01}\\
 \end{aligned}
 \right.
 \]
@@ -291,8 +312,8 @@ In the case of the Signorini behaviour, the derivatives of \(W^{i}\) are:
 The computation of \(\S^{i}\) is:
 
 ~~~~{.cpp}
-const auto dPi_dI1b    = C01+2*C02*(I1b-3);
-const auto dPi_dI2b    = C10;
+const auto dPi_dI1b    = C10+2*C20*(I1b-3);
+const auto dPi_dI2b    = C01;
 const StressStensor Si = 2*(dPi_dI1b*dI1b_dC+dPi_dI2b*dI2b_dC);
 ~~~~
 
@@ -371,7 +392,7 @@ For the Signorini behaviour:
 \[
 \left\{
 \begin{aligned}
-\sderiv{W^{i}}{\bar{I}_{1}} &= 2\,C_{02} \\
+\sderiv{W^{i}}{\bar{I}_{1}} &= 2\,C_{20} \\
 \sderiv{W^{i}}{\bar{I}_{2}} &= {\displaystyle \frac{\displaystyle \partial^{2} W^{i}}{\partial \bar{I}_{1}\partial \bar{I}_{2}}} =
 {\displaystyle \frac{\displaystyle \partial^{2} W^{i}}{\partial \bar{I}_{2}\partial \bar{I}_{1}}}=0
 \end{aligned}
@@ -379,7 +400,7 @@ For the Signorini behaviour:
 \]
 
 ~~~~{.cpp}
-const auto d2Pi_dI1b2 = 2*C02;
+const auto d2Pi_dI1b2 = 2*C20;
 const auto dSi_dC = 2*(d2Pi_dI1b2*(dI1b_dC^dI1b_dC)+dPi_dI1b*d2I1b_dC2+
 	                                               +dPi_dI2b*d2I2b_dC2);
 ~~~~
@@ -391,7 +412,7 @@ operator to a numerical approximation is made in the
 `Hyperelasticity.cxx` test that can be found in the `tests/Material`
 directory of the `TFEL` sources. The components of the consistent
 tangent operator match their numerical approximation with an accuracy
-lower than \(10^{-7}\,C01\).
+lower than \(10^{-7}\,C10\).
 
 # References
 
