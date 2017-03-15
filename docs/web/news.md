@@ -12,6 +12,24 @@
 \newcommand{\sigmaH}{\sigma_{H}}
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
+ 
+
+# Third MFront Users Day
+
+![](img/mfront-flyer-en-2017.png "third users day flyer")
+
+CEA and EDF are pleased to announce that the third MFront users
+meeting will take place on May 30th 2017 and will be organized by CEA
+DEC/SESC at CEA Saclay in the DIGITEO building (building 565, room
+34). 
+
+Researchers and engineers willing to present their works are welcome.
+
+They may contact the organizers for information at:
+[tfel-contact@cea.fr](mailto:tfel-contact@cea.fr).
+
+Registration by sending an email at the previous address before May
+12th is required to ensure proper organization.
 
 # Announcing the `tfel-plot` project
 
@@ -450,7 +468,6 @@ welcome. They may contact the organizers for information at:
 
 This users day will take place on Friday, May 20th, 2016 at EDF Lab
 Paris-Saclay (access map).
-
 
 Registration is required to ensure proper organization. See the
 dedicated form on the Code_Aster website: [http://www.code-aster.org/spip.php?article906](http://www.code-aster.org/spip.php?article906)

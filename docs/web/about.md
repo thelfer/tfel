@@ -28,6 +28,7 @@
 - Élodie Bosso
 - Olivier Jamond
 - Tran Thang Dang
+- Thouraya Baranger
 
 # Tools
 

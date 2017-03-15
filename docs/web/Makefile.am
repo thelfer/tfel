@@ -127,6 +127,10 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/abaqus-isotropichardening2.png			      \
 	   ./img/mfront-flyer-en.svg                                  \
 	   ./img/mfront-flyer-en.png                                  \
+	   ./img/mfront-flyer-en-2017.svg                             \
+	   ./img/mfront-flyer-en-2017.png                             \
+	   ./img/mfront-flyer-fr-2017.svg                             \
+	   ./img/mfront-flyer-fr-2017.png                             \
 	   ./img/AbaqusFLD.png                                        \
 	   ./img/AbaqusFLD.xcf                                        \
 	   ./img/AbaqusFLD.pdf                                        \
@@ -141,9 +145,12 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/anderson-withwithoutacceleration.svg                 \
 	   ./img/freebsdlogo-1.png                                    \
 	   ./img/tplot.svg                                            \
+	   ./img/AccesDigeteo.png                                     \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \
+	   ./media/SignoriniCompression.mp4                           \
+	   ./media/SignoriniStrip.mp4                                 \
 	   ./doc/js.md						      \
 	   ./doc/usage.md					      \
 	   ./doc/css.md						      \
