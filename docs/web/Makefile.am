@@ -145,7 +145,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/anderson-withwithoutacceleration.svg                 \
 	   ./img/freebsdlogo-1.png                                    \
 	   ./img/tplot.svg                                            \
-	   ./img/AccesDigeteo.png                                     \
+	   ./img/AccesDigiteo.png                                     \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \
