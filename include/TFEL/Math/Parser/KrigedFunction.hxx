@@ -47,7 +47,7 @@ namespace tfel
       }; // end of KrigedFunctionBase
 
       template<unsigned short N>
-      struct TFELMATHPARSER_VISIBILITY_EXPORT KrigedFunction
+      struct TFEL_VISIBILITY_LOCAL KrigedFunction
 	: public ExternalFunction
       {
 	typedef typename KrigingVariable<N,double>::type Variable;
