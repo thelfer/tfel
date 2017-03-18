@@ -274,30 +274,30 @@ test_castem(materialpropertiesboundscheck8
 foreach(rm ${IEEE754_ROUNDING_MODES})
   if(CMAKE_CONFIGURATION_TYPES)
     foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-      set_tests_properties(castemmaterialpropertiesboundscheck6_${rm}_${conf}_mtest
-	PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
-      set_tests_properties(castemmaterialpropertiesboundscheck7_${rm}_${conf}_mtest
-	PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
-      set_tests_properties(castemmaterialpropertiesboundscheck8_${rm}_${conf}_mtest
-	PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
-      set_tests_properties(castemmaterialpropertiesboundscheck_${rm}_${conf}_mtest
+      set_property(TEST castemmaterialpropertiesboundscheck6_${rm}_${conf}_mtest
+      	 APPEND PROPERTY ENVIRONMENT "& CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
+      set_property(TEST castemmaterialpropertiesboundscheck7_${rm}_${conf}_mtest
+      	 APPEND PROPERTY ENVIRONMENT "& CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
+      set_property(TEST castemmaterialpropertiesboundscheck8_${rm}_${conf}_mtest
+	 APPEND PROPERTY ENVIRONMENT "& CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
+      set_property(TEST castemmaterialpropertiesboundscheck_${rm}_${conf}_mtest
 	castemmaterialpropertiesboundscheck2_${rm}_${conf}_mtest
 	castemmaterialpropertiesboundscheck5_${rm}_${conf}_mtest
 	castemmaterialpropertiesboundscheck8_${rm}_${conf}_mtest
-	PROPERTIES WILL_FAIL true)
+	PROPERTY WILL_FAIL true)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
-    set_tests_properties(castemmaterialpropertiesboundscheck6_${rm}_mtest
-      PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
-    set_tests_properties(castemmaterialpropertiesboundscheck7_${rm}_mtest
-      PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
-    set_tests_properties(castemmaterialpropertiesboundscheck8_${rm}_mtest
-      PROPERTIES ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
-    set_tests_properties(castemmaterialpropertiesboundscheck_${rm}_mtest
+    set_property(TEST castemmaterialpropertiesboundscheck6_${rm}_mtest
+      APPEND PROPERTY ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=NONE")
+    set_property(TEST castemmaterialpropertiesboundscheck7_${rm}_mtest
+      APPEND PROPERTY ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=WARNING")
+    set_property(TEST castemmaterialpropertiesboundscheck8_${rm}_mtest
+      APPEND PROPERTY ENVIRONMENT "CASTEM_OUT_OF_BOUNDS_POLICY=STRICT")
+    set_property(TEST castemmaterialpropertiesboundscheck_${rm}_mtest
       castemmaterialpropertiesboundscheck2_${rm}_mtest
       castemmaterialpropertiesboundscheck5_${rm}_mtest
       castemmaterialpropertiesboundscheck8_${rm}_mtest
-      PROPERTIES WILL_FAIL true)
+      APPEND PROPERTY WILL_FAIL true)
   endif(CMAKE_CONFIGURATION_TYPES)
 endforeach(rm ${IEEE754_ROUNDING_MODES})
   
