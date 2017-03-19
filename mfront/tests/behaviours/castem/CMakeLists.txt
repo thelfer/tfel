@@ -297,7 +297,7 @@ foreach(rm ${IEEE754_ROUNDING_MODES})
       castemmaterialpropertiesboundscheck2_${rm}_mtest
       castemmaterialpropertiesboundscheck5_${rm}_mtest
       castemmaterialpropertiesboundscheck8_${rm}_mtest
-      APPEND PROPERTY WILL_FAIL true)
+      PROPERTY WILL_FAIL true)
   endif(CMAKE_CONFIGURATION_TYPES)
 endforeach(rm ${IEEE754_ROUNDING_MODES})
   
