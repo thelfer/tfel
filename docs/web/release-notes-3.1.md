@@ -18,6 +18,23 @@ The page declares the new functionalities of the 3.1 version of
 
 # TFEL
 
+## TFEL/System
+
+#### Improvements to the `ExternalLibraryManager` class
+
+##### Better handling of behaviour parameters
+
+The `ExternalLibraryManager` class has two additional methods for a
+better handling of behaviour parameters:
+
+- The `getUMATParametersNames` returns the list of parameters.
+- The `getUMATParametersTypes` returns a list of integers which gives
+  the type of the associated paramater: The integer values returned
+  have the following meaning:
+    - 0: floatting point value
+    - 1: integer value
+    - 2: unsigned short value
+
 ## TFEL/Math
 
 ### Symmetric tensor eigen values and eigen vectors
@@ -477,6 +494,15 @@ the GNU compiler is activated.
 The current version now check that the return value is finite.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/42/>
+
+## Ticket #43: Add the list of parameters' names and types to generated library for the `UMAT++` interface
+
+In previous versions,, the list of parameters' names and types were
+not exported to the generated library for the `UMAT++` interface,
+i.e. the additional symbols defined in the generated shared libraries
+that can be read through the `ExternalLibraryManager` class.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/43/>
 
 # References
 

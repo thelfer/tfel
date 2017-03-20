@@ -1457,10 +1457,9 @@ namespace mfront
     }
   } // end of UMATInterface::writeUMATxxMaterialPropertiesSymbol
 
-  void
-  UMATInterfaceBase::writeUMATxxStateVariablesSymbols(std::ostream& out,
-						      const std::string& name,
-						      const Hypothesis h,
+  void UMATInterfaceBase::writeUMATxxStateVariablesSymbols(std::ostream& out,
+							   const std::string& name,
+							   const Hypothesis h,
 						      const BehaviourDescription& mb) const
   {
     using namespace std;
@@ -1513,11 +1512,10 @@ namespace mfront
     }
   } // end of UMATInterfaceBase::writeUMATxxStateVariablesSymbols
   
-  void
-  UMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols(std::ostream& out,
-							      const std::string& name,
-							      const Hypothesis h,
-							      const BehaviourDescription& mb) const
+  void UMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols(std::ostream& out,
+								   const std::string& name,
+								   const Hypothesis h,
+								   const BehaviourDescription& mb) const
   {
     const auto& d = mb.getBehaviourData(h);
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
@@ -1527,11 +1525,52 @@ namespace mfront
   			     "ExternalStateVariables");
   } // end of UMATInterfaceBase::writeUMATxxExternalStateVariablesSymbols
 
-  void
-  UMATInterfaceBase::writeUMATxxRequirementsSymbols(std::ostream& out,
-						    const std::string& name,
-						    const Hypothesis h,
-						    const BehaviourDescription& mb) const
+  void UMATInterfaceBase::writeUMATxxParametersSymbols(std::ostream& out,
+						       const std::string& name,
+						       const Hypothesis h,
+						       const BehaviourDescription& mb) const
+  {
+    const auto& d = mb.getBehaviourData(h);
+    const auto& parameters = d.getParameters();
+    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h)
+  	<< "_nParameters = " << this->getNumberOfVariables(parameters) << ";\n";
+    this->writeExternalNames(out,name,h,mb.getExternalNames(h,parameters),
+  			     "Parameters");
+    if(!parameters.empty()){
+      out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(name,h)
+  	  << "_ParametersTypes [] = {";
+      for(auto p=parameters.begin();p!=parameters.end();){
+  	for(unsigned short is=0;is!=p->arraySize;){
+	  if(p->type=="real"){
+	    out << "0";
+	  } else if(p->type=="int"){
+	    out << "1";
+	  } else if(p->type=="ushort"){
+	    out << "2";
+	  } else {
+  	    throw(std::runtime_error("UMATInterfaceBase::writeUMATxxParametersSymbols: "
+				     "internal error, unsupported type "
+				     "for parameter '"+p->name+"'"));
+  	  }
+  	  if(++is!=p->arraySize){
+  	    out << ",";
+  	  }
+  	}
+  	if(++p!=parameters.end()){
+  	  out << ",";
+  	}
+      }
+      out << "};\n\n";
+    } else {
+      out << "MFRONT_SHAREDOBJ const int * " << this->getSymbolName(name,h)
+  	  << "_ParametersTypes = nullptr;\n\n";
+    }
+  } // end of UMATInterfaceBase::writeUMATxxParametersSymbols
+  
+  void UMATInterfaceBase::writeUMATxxRequirementsSymbols(std::ostream& out,
+							 const std::string& name,
+							 const Hypothesis h,
+							 const BehaviourDescription& mb) const
   {
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(name,h);
     out << "_requiresStiffnessTensor = ";
@@ -1681,7 +1720,6 @@ namespace mfront
     return {false,o};
   }
   
-  UMATInterfaceBase::~UMATInterfaceBase()
-  {}
+  UMATInterfaceBase::~UMATInterfaceBase() = default;
 
 } // end of namespace mfront

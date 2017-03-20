@@ -454,6 +454,29 @@ which contains the officially supported behaviours.
 Changing the library name in `Code_Aster` seems easier for backward
 compatibility (for example, for `MTest` users).
 
+# Ticket #103: `MFront`: allow modification of parameters
+
+Parameters are the MFront "flightweight" way of modifying the
+coefficients of a behaviour.  Compared to material properties (given
+through the `LIST_COEF` entry in `Code_Aster`), parameters have
+default values. They are also global values, meaning that have the
+same value for every material.
+
+It is possible to overload the default values by defining an
+appropriate text file (see the MFront documentation) in the current
+directory (meaning that this txt file must be declared as a data in
+the export file, otherwise not copied by `as_run`).
+
+However, modifying parameters from the input file would be more
+convenient and would allow the supervisor to check that a parameter as
+been modified (hence, the study is no more under AQ if the behaviour
+was under AQ).
+
+Currently a parameter can be modified through the
+`ExternalLibraryManager` class of the `TFEL/System`
+library. `Code_Aster` already modifies the `epsilon` parameter if
+needed.
+
 #References
 
 <!-- Local IspellDict: english -->

@@ -307,7 +307,6 @@ namespace tfel
       getUMATInternalStateVariablesTypes(const std::string&,
 					 const std::string&,
 					 const std::string&);
-
       /*!
        * \param[in] l : name of the library
        * \param[in] f : law name
@@ -317,7 +316,32 @@ namespace tfel
       getUMATExternalStateVariablesNames(const std::string&,
 					 const std::string&,
 					 const std::string&);
+      /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       * \param[in] h : modelling hypothesis
+       */
+      std::vector<std::string>
+      getUMATParametersNames(const std::string&,
+			     const std::string&,
+			     const std::string&);
 
+      /*!
+       * \return the types associated with each parameter. The integer
+       * values returned have the following meaning:
+       * 
+       * - 0: floatting point value
+       * - 1: integer value
+       * - 2: unsigned short value
+       *
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       * \param[in] h : modelling hypothesis
+       */
+      std::vector<int>
+      getUMATParametersTypes(const std::string&,
+			     const std::string&,
+			     const std::string&);
       /*!
        * \return true if a behaviour generated throught the aster
        * interface requires a offset for the elastic properties

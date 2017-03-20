@@ -626,8 +626,7 @@ namespace tfel
     ExternalLibraryManager::getCastemFunctionVariables(const std::string& l,
 						       const std::string& f)
     {
-      using namespace std;
-      vector<string> vars;
+      std::vector<std::string> vars;
       this->getCastemFunctionVariables(vars,l,f);
       return vars;
     } // end of ExternalLibraryManager::getCastemFunctionVariables
@@ -969,6 +968,27 @@ namespace tfel
       return static_cast<unsigned short>(u);
     } // end of ExternalLibraryManager::getUMATElasticSymmetryType
 
+    std::vector<std::string>
+    ExternalLibraryManager::getUMATMaterialPropertiesNames(const std::string& l,
+							   const std::string& f,
+							   const std::string& h)
+    {
+      std::vector<std::string> vars;
+      this->getUMATNames(vars,l,f,h,"MaterialProperties");
+      return vars;
+    } // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
+
+
+    std::vector<std::string>
+    ExternalLibraryManager::getUMATInternalStateVariablesNames(const std::string& l,
+							       const std::string& f,
+							       const std::string& h)
+    {
+      std::vector<std::string> vars;
+      this->getUMATNames(vars,l,f,h,"InternalStateVariables");
+      return vars;
+    } // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
+
     std::vector<int>
     ExternalLibraryManager::getUMATInternalStateVariablesTypes(const std::string& l,
 							       const std::string& f,
@@ -1012,41 +1032,71 @@ namespace tfel
       copy(res,res+nb,back_inserter(types));
       return types;
     } // end of ExternalLibraryManager::getUMATInternalVariablesTypes
-
-    std::vector<std::string>
-    ExternalLibraryManager::getUMATMaterialPropertiesNames(const std::string& l,
-							   const std::string& f,
-							   const std::string& h)
-    {
-      using namespace std;
-      vector<string> vars;
-      this->getUMATNames(vars,l,f,h,"MaterialProperties");
-      return vars;
-    } // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
-
-
-    std::vector<std::string>
-    ExternalLibraryManager::getUMATInternalStateVariablesNames(const std::string& l,
-							       const std::string& f,
-							       const std::string& h)
-    {
-      using namespace std;
-      vector<string> vars;
-      this->getUMATNames(vars,l,f,h,"InternalStateVariables");
-      return vars;
-    } // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
-
+    
     std::vector<std::string>
     ExternalLibraryManager::getUMATExternalStateVariablesNames(const std::string& l,
 							       const std::string& f,
 							       const std::string& h)
     {
-      using namespace std;
-      vector<string> vars;
+      std::vector<std::string> vars;
       this->getUMATNames(vars,l,f,h,"ExternalStateVariables");
       return vars;
     } // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
-  
+
+    std::vector<std::string>
+    ExternalLibraryManager::getUMATParametersNames(const std::string& l,
+						   const std::string& f,
+						   const std::string& h)
+    {
+      std::vector<std::string> vars;
+      this->getUMATNames(vars,l,f,h,"Parameters");
+      return vars;
+    } // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
+
+    std::vector<int>
+    ExternalLibraryManager::getUMATParametersTypes(const std::string& l,
+						   const std::string& f,
+						   const std::string& h)
+    {
+      using namespace std;
+      ExternalLibraryManagerCheckModellingHypothesisName(h);
+      vector<int> types;
+      const auto lib = this->loadLibrary(l);
+      int nb = ::tfel_getUnsignedShort(lib,(f+"_"+h+"_nParameters").c_str());
+      if(nb==-1){
+	nb = ::tfel_getUnsignedShort(lib,(f+"_nParameters").c_str());
+      }
+      int * res;
+      if(nb==-1){
+	string msg("ExternalLibraryManager::getUMATParametersTypes : ");
+	msg += " number of variables names could not be read (";
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+	msg += getLastWin32Error();
+#else
+	msg += ::dlerror();
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      res = ::tfel_getArrayOfInt(lib,(f+"_"+h+"_ParametersTypes").c_str());
+      if(res==nullptr){
+	res = ::tfel_getArrayOfInt(lib,(f+"_ParametersTypes").c_str());
+      }
+      if(res==nullptr){
+	string msg("ExternalLibraryManager::getUMATParametersTypes : ");
+	msg += "internal state variables types could not be read (";
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+	msg += getLastWin32Error();
+#else
+	msg += ::dlerror();
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+	msg += ")";
+	throw(runtime_error(msg));
+      }
+      copy(res,res+nb,back_inserter(types));
+      return types;
+    } // end of ExternalLibraryManager::getUMATInternalVariablesTypes
+    
     CastemFunctionPtr
     ExternalLibraryManager::getCastemFunction(const std::string& l,
 					      const std::string& f)
