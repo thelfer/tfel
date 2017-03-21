@@ -337,10 +337,14 @@ namespace mfront
       MTestParser parser;
       parser.execute(static_cast<MTest&>(*(t.get())),*p);
       if(this->result_file_output){
-	static_cast<MTest&>(*(t.get())).setOutputFileName(tname+".res");
+	if(!static_cast<MTest&>(*(t.get())).hasOutputFileName()){
+	  static_cast<MTest&>(*(t.get())).setOutputFileName(tname+".res");
+	}
       }
       if(this->residual_file_output){
-	static_cast<MTest&>(*(t.get())).setResidualFileName(tname+"-residual.res");
+	if(!static_cast<MTest&>(*(t.get())).hasResidualFileName()){
+	  static_cast<MTest&>(*(t.get())).setResidualFileName(tname+"-residual.res");
+	}
       }
       tm.addTest("MTest/"+tname,t);
       if(this->xml_output){

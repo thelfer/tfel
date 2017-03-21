@@ -395,6 +395,10 @@ namespace mfront
 		 const std::string&,
 		 const std::string&);
     /*!
+     * \return true if the output file name has been set
+     */
+    virtual bool hasOutputFileName() const;
+    /*!
      * \brief set the output file
      * \param[in] f : file name
      */
@@ -406,6 +410,10 @@ namespace mfront
      */
     virtual void
     setOutputFilePrecision(const unsigned int);
+    /*!
+     * \return true if the output file name has been set
+     */
+    virtual bool hasResidualFileName() const;
     /*!
      * \brief set the residual file
      * \param[in] f : file name

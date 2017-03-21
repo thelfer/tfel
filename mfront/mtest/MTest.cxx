@@ -811,6 +811,11 @@ namespace mfront
     this->output = o;
   }
 
+  bool MTest::hasOutputFileName() const
+  {
+    return !this->output.empty();
+  }
+  
   void
   MTest::setOutputFilePrecision(const unsigned int p)
   {
@@ -823,6 +828,11 @@ namespace mfront
     this->oprec = static_cast<int>(p);
   }
 
+  bool MTest::hasResidualFileName() const
+  {
+    return !this->residualFileName.empty();
+  }
+  
   void
   MTest::setResidualFileName(const std::string& o)
   {
