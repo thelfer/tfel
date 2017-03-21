@@ -36,3 +36,20 @@ multiplier, some unit-tests had to be fixed by introducting a looser
 criterion value on the stress.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/39/>
+
+## Ticket 44: `mtest` `@OutputFile` error: output file name already defined
+
+With `TFEL` version `2.0.4`, when assigning a name for the output of
+the mtest analysis rather than using the default name, the following
+error is reported:
+
+~~~~{.sh}
+No hypothesis defined, using default
+terminate called after throwing an instance of 'std::runtime_error'
+what(): MTest::setOutputFileName : output file name already defined
+Abandon
+~~~~
+
+
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/44/>
