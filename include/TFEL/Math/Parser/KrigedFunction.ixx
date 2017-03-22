@@ -65,7 +65,7 @@ namespace tfel
       } // end of KrigedFunction<N>::setVariableValue
 
       template<>
-      void
+      TFELMATHPARSER_VISIBILITY_EXPORT  void
       KrigedFunction<1u>::setVariableValue(const std::vector<double>::size_type,
 					   const double);
 

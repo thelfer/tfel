@@ -100,12 +100,12 @@ namespace tfel
 
       private:
 
-	TFEL_VISIBILITY_LOCAL KrigedFunction() = delete;
+	KrigedFunction() = delete;
 	
-	TFEL_VISIBILITY_LOCAL KrigedFunction&
-	operator = (const KrigedFunction&) = delete;
+	KrigedFunction& operator = (KrigedFunction&&) = delete;
+	KrigedFunction& operator = (const KrigedFunction&) = delete;
 
-	std::shared_ptr<tfel::math::Kriging<N> > k;
+	std::shared_ptr<tfel::math::Kriging<N>> k;
 
 	Variable v;
 
