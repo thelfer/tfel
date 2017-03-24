@@ -74,25 +74,35 @@ namespace mfront{
     return ModelDescription::isNameReserved(n);
   }
   
-  AbstractDSL::DSLTarget
-  ModelDSLCommon::getTargetType() const{
+  AbstractDSL::DSLTarget ModelDSLCommon::getTargetType() const{
     return MODELDSL;
   }
 
-  std::string
-  ModelDSLCommon::getClassName() const
+  std::string ModelDSLCommon::getClassName() const
   {
     return this->className;
   } // end of ModelDSLCommon::getClassName
 
-  void
-  ModelDSLCommon::addStaticVariableDescription(const StaticVariableDescription& v)
+  void ModelDSLCommon::addStaticVariableDescription(const StaticVariableDescription& v)
   {
     this->staticVars.push_back(v);
   } // end of ModelDSLCommon::addStaticVariableDescription
 
-  void
-  ModelDSLCommon::treatMaterial()
+  int ModelDSLCommon::getIntegerConstant(const std::string& n) const{
+    for(const auto& v:this->staticVars){
+      if(v.name==n){
+	if(v.type!="int"){
+	  this->throwRuntimeError("ModelDSLCommon::getIntegerConstant",
+				  "invalid type for variable '"+n+"'");
+	}
+	return v.value;
+      }
+    }
+    this->throwRuntimeError("ModelDSLCommon::getIntegerConstant",
+			    "unknown variable '"+n+"'");
+  } // end of ModelDSLCommon::getIntegerConstant
+  
+  void ModelDSLCommon::treatMaterial()
   {
     if(!ModelDescription::material.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatMaterial",
@@ -108,8 +118,7 @@ namespace mfront{
     }
   } // end of ModelDSLCommon::treatMaterial
 
-  void
-  ModelDSLCommon::treatLibrary()
+  void ModelDSLCommon::treatLibrary()
   {
     const auto& l = this->readOnlyOneToken();
     if(!CxxTokenizer::isValidIdentifier(l,true)){
@@ -139,8 +148,7 @@ namespace mfront{
     }
   } // end of ModelDSLCommon::treatModel
 
-  void
-  ModelDSLCommon::setInterfaces(const std::set<std::string>& inames)
+  void ModelDSLCommon::setInterfaces(const std::set<std::string>& inames)
   {
     using namespace std;
     auto& mbif = ModelInterfaceFactory::getModelInterfaceFactory();
@@ -151,8 +159,7 @@ namespace mfront{
     }
   } // end of ModelDSLCommon::setInterfaces
 
-  void
-  ModelDSLCommon::generateOutputFiles()
+  void ModelDSLCommon::generateOutputFiles()
   {
     if(this->interfaces.empty()){
       this->throwRuntimeError("ModelDSLCommon::generateOutputFiles",
@@ -258,8 +265,7 @@ namespace mfront{
     this->readSpecifiedToken("ModelDSLCommon::treatDomain",";");
   } // end of ModelDSLCommon::treatDomain(void)
 
-  void
-  ModelDSLCommon::treatDomains()
+  void ModelDSLCommon::treatDomains()
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::treatDomains: "+m));}
@@ -273,20 +279,17 @@ namespace mfront{
     this->readSpecifiedToken("ModelDSLCommon::treatDomain",";");
   } // end of ModelDSLCommon::treatDomains(void)
 
-  bool
-  ModelDSLCommon::isInputVariable(const std::string& v) const
+  bool ModelDSLCommon::isInputVariable(const std::string& v) const
   {
     return is(this->inputs,v);
   } // end of ModelDSLCommon::isInputVariable(void)
 
-  bool
-  ModelDSLCommon::isOutputVariable(const std::string& v) const
+  bool ModelDSLCommon::isOutputVariable(const std::string& v) const
   {
     return is(this->outputs,v);
   } // end of ModelDSLCommon::isInputVariable(void)
   
-  void
-  ModelDSLCommon::treatFunction()
+  void ModelDSLCommon::treatFunction()
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::treatFunction: "+m));}
@@ -492,8 +495,7 @@ namespace mfront{
     this->functions.push_back(f);
   } // end of ModelDSLCommon::treatFunction(void)
 
-  void
-  ModelDSLCommon::treatOutput()
+  void ModelDSLCommon::treatOutput()
   {
     if(!this->functions.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatInput",
@@ -508,8 +510,7 @@ namespace mfront{
     }
   } // end of ModelDSLCommon::treatOutput(void)
 
-  void
-  ModelDSLCommon::treatInput()
+  void ModelDSLCommon::treatInput()
   {
     if(!this->functions.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatInput",
@@ -524,8 +525,7 @@ namespace mfront{
     }
   } // end of ModelDSLCommon::treatInput(void)
 
-  void
-  ModelDSLCommon::treatOutputMethod() 
+  void ModelDSLCommon::treatOutputMethod() 
   {
     if(!this->functions.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatOutputMethod: ",
@@ -585,8 +585,7 @@ namespace mfront{
     this->readSpecifiedToken("ModelDSLCommon::treatOutputMethod",";");
   } // end of ModelDSLCommon::treatOutputMethod
 
-  void
-  ModelDSLCommon::treatInputMethod() 
+  void ModelDSLCommon::treatInputMethod() 
   {
     if(!this->functions.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
@@ -777,20 +776,17 @@ namespace mfront{
     }
   } // end of ModelDSLCommon::readDefaultValue
 
-  void
-  ModelDSLCommon::treatBounds()
+  void ModelDSLCommon::treatBounds()
   {
     this->registerBounds(VariableDescription::bound);
   } // end of ModelDSLCommon::treatBounds
 
-  void
-  ModelDSLCommon::treatPhysicalBounds()
+  void ModelDSLCommon::treatPhysicalBounds()
   {
     this->registerBounds(VariableDescription::physicalBound);
   } // end of ModelDSLCommon::treatPhysicalBounds
 
-  void
-  ModelDSLCommon::registerBounds(const std::string& bn)
+  void ModelDSLCommon::registerBounds(const std::string& bn)
   {
     VariableBoundsDescription bd;
     this->checkNotEndOfFile("ModelDSLCommon::registerBounds");
@@ -810,8 +806,7 @@ namespace mfront{
 			     "no variable named '"+n+"'"));
   }
   
-  void
-  ModelDSLCommon::registerBounds(VariableDescription& v,
+  void ModelDSLCommon::registerBounds(VariableDescription& v,
 				 VariableBoundsDescription bd,
 				 const std::string& bn)
   {
@@ -871,8 +866,7 @@ namespace mfront{
     v.setAttribute(bn,bd,false);
   } // end of ModelDSLCommon::registerBounds
 
-  void
-  ModelDSLCommon::addMaterialLaw(const std::string& m)
+  void ModelDSLCommon::addMaterialLaw(const std::string& m)
   {
     if(std::find(this->materialLaws.begin(),
 		 this->materialLaws.end(),m)==this->materialLaws.end()){
@@ -880,8 +874,7 @@ namespace mfront{
     }
   } // end of ModelDSLCommon::addMaterialLaw
 
-  void
-  ModelDSLCommon::appendToIncludes(const std::string& c)
+  void ModelDSLCommon::appendToIncludes(const std::string& c)
   {
     this->includes+=c;
     if(!this->includes.empty()){
@@ -891,8 +884,7 @@ namespace mfront{
     }
   } // end of ModelDSLCommon::appendToIncludes
 
-  void
-  ModelDSLCommon::appendToMembers(const std::string& c)
+  void ModelDSLCommon::appendToMembers(const std::string& c)
   {
     this->members+=c;
     if(!this->members.empty()){
@@ -902,8 +894,7 @@ namespace mfront{
     }
   } // end of ModelDSLCommon::appendToMembers
 
-  void
-  ModelDSLCommon::appendToPrivateCode(const std::string& c)
+  void ModelDSLCommon::appendToPrivateCode(const std::string& c)
   {
     this->privateCode+=c;
     if(!this->privateCode.empty()){
@@ -913,8 +904,7 @@ namespace mfront{
     }
   } // end of ModelDSLCommon::appendToPrivateCode
 
-  void
-  ModelDSLCommon::appendToSources(const std::string& c)
+  void ModelDSLCommon::appendToSources(const std::string& c)
   {
     this->sources+=c;
     if(!this->sources.empty()){

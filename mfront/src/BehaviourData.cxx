@@ -326,6 +326,20 @@ namespace mfront{
     this->staticVariables.push_back(v);
   } // end of BehaviourData::addStaticVariable
 
+  int BehaviourData::getIntegerConstant(const std::string& n) const{
+    for(const auto& v:this->staticVariables){
+      if(v.name==n){
+	if(v.type!="int"){
+	  throw(std::runtime_error("MaterialPropertyDSL::getIntegerConstant: "
+				   "invalid type for variable '"+n+"'"));
+	}
+	return v.value;
+      }
+    }
+    throw(std::runtime_error("MaterialPropertyDSL::getIntegerConstant: "
+			     "unknown variable '"+n+"'"));
+  } // end of BehaviourData::getIntegerConstant
+  
   const StaticVariableDescriptionContainer&
   BehaviourData::getStaticVariables() const
   {

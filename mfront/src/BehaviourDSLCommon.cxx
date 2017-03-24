@@ -25,6 +25,7 @@
 #include"TFEL/System/System.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
+#include"TFEL/Material/CubicSlipSystems.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include"TFEL/Utilities/Data.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
@@ -401,6 +402,11 @@ namespace mfront{
     this->mb.addStaticVariable(ModellingHypothesis::UNDEFINEDHYPOTHESIS,v);
   } // end of BehaviourDSLCommon::addStaticVariableDescription
 
+  int BehaviourDSLCommon::getIntegerConstant(const std::string& n) const
+  {
+    return this->mb.getIntegerConstant(ModellingHypothesis::UNDEFINEDHYPOTHESIS,n);
+  } // end of BehaviourDSLCommon::getIntegerConstant  
+  
   std::set<BehaviourDSLCommon::Hypothesis>
   BehaviourDSLCommon::getDefaultModellingHypotheses() const
   {
@@ -625,6 +631,10 @@ namespace mfront{
 	}
       }
     }
+    if(this->mb.areSlipSystemsDefined()){
+      this->mb.appendToIncludes("#include \"TFEL/Material/"+
+				this->mb.getClassName()+"SlipSystems.hxx\"");
+    }
     // calling interfaces
     for(const auto& i  : this->interfaces){
       i.second->allowDynamicallyAllocatedArrays(this->areDynamicallyAllocatedVectorsAllowed());
@@ -664,16 +674,15 @@ namespace mfront{
    * \param[in] b3 : check if glossary name is declared
    * \param[in] b4 : check if variable is used in more than one code block (test for local variables)
    */
-  static void
-  performPedanticChecks(const BehaviourData& md,
-			const VarContainer& v,
-			const std::string& t,
-			const std::map<std::string,
-			unsigned short>& uv,
-			const bool b1 = true,
-			const bool b2 = true,
-			const bool b3 = true,
-			const bool b4 = false)
+  static void performPedanticChecks(const BehaviourData& md,
+				    const VarContainer& v,
+				    const std::string& t,
+				    const std::map<std::string,
+				    unsigned short>& uv,
+				    const bool b1 = true,
+				    const bool b2 = true,
+				    const bool b3 = true,
+				    const bool b4 = false)
   {
     using namespace tfel::glossary;
     const auto& glossary = Glossary::getGlossary();
@@ -730,8 +739,7 @@ namespace mfront{
     }      
   }
   
-  void
-  BehaviourDSLCommon::doPedanticChecks() const
+  void BehaviourDSLCommon::doPedanticChecks() const
   {
     const auto& hs = this->mb.getDistinctModellingHypotheses();
     auto& log = getLogStream();
@@ -820,6 +828,9 @@ namespace mfront{
     this->writeBehaviourDataFileBegin();
     this->writeIntegrationDataFileBegin();
     this->writeBehaviourFileBegin();
+    if(this->mb.areSlipSystemsDefined()){
+      this->generateSlipSystemsFiles();
+    }
     // modelling hypotheses handled by the interfaces (if at least one
     // interface is defined), or by the behaviour
     std::set<Hypothesis> hh;
@@ -913,6 +924,274 @@ namespace mfront{
     }
   }
 
+  void BehaviourDSLCommon::generateSlipSystemsFiles()
+  {
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("FiniteStrainSingleCrystalBrick::generateSlipSystems: "+m));}
+    };
+    auto nss = [this,throw_if](std::ostream& out,
+			       const BehaviourDescription::SlipSystem& ss,
+			       const std::string& idx){
+      const auto cubic = ss.normal.is<tfel::math::tvector<3u,int>>();
+      if(cubic){
+	// cubic system
+	const auto& n = ss.normal.get<tfel::math::tvector<3u,int>>();
+	const auto& d = ss.slip.get<tfel::math::tvector<3u,int>>();
+	const auto& s = tfel::material::CubicSlipSystems::generate(n,d);
+	out << "//! number of sliding systems\n"
+	    << "static constexpr const unsigned short Nss" << idx << " = " << s.size() << ";\n";
+      } else {
+	// hexagonal systems
+	throw_if(true,"hexagonal systems are not supported yet");
+      }
+    };
+    auto mu = [](std::ostream& out,
+		 const std::string& idx){
+      out << "//! tensor of directional sense\n"
+      << "tfel::math::tvector<Nss" << idx << ",tensor> mu" << idx << ";\n"
+      << "//! symmetric tensor of directional sense\n"
+      << "tfel::math::tvector<Nss" << idx << ",stensor> mus" << idx << ";\n";
+    };
+    auto value = [](const int n,const int d){
+      if(n*d==0){
+	return std::string("zero");
+      } else if(n*d==1){
+	return std::string("c1");
+      } else if(n*d==-1){
+	return std::string("-c1");
+      }
+      return std::to_string(n*d)+"*c1";
+    };
+    auto value2 = [](const int n1,const int d1,
+		     const int n2,const int d2){
+      const auto v = n1*d1+n2*d2;
+      if(v==0){
+	return std::string("zero");
+      } else if(v==1){
+	return std::string("c2");
+      } else if(v==-1){
+	return std::string("-c2");
+      }
+      return std::to_string(v)+"*c2";
+    };
+    auto tensor = [throw_if,value](std::ostream& out,
+				   const BehaviourDescription::SlipSystem& ss,
+				   const std::string& idx){
+      const auto cubic = ss.normal.is<tfel::math::tvector<3u,int>>();
+      const auto mun = "this->mu"+idx;
+      if(cubic){
+	const auto& ns = ss.normal.get<tfel::math::tvector<3u,int>>();
+	const auto& ds = ss.slip.get<tfel::math::tvector<3u,int>>();
+	const auto  as = tfel::material::CubicSlipSystems::generate(ns,ds);
+	for(decltype(as.size()) i=0;i!=as.size();){
+	  const auto& s = as[i];
+	  const auto& n = s.first;
+	  const auto& m = s.second;
+	  out << "tensor{" << value(n[0],m[0]) << ","
+	      << value(n[1],m[1]) << ","
+	      << value(n[2],m[2]) << ","
+	      << value(n[1],m[0]) << ","
+	      << value(n[0],m[1]) << ","
+	      << value(n[2],m[0]) << ","
+	      << value(n[0],m[2]) << ","
+	      << value(n[2],m[1]) << ","
+	      << value(n[1],m[2]) << "}";
+	  if(++i!=as.size()){
+	    out << ",\n";
+	  }
+	}
+      } else {
+	// hexagonal systems
+	throw_if(true,"hexagonal systems are not supported yet");
+      }
+    }; // end of impl
+    auto stensor = [throw_if,value,value2](std::ostream& out,
+					   const BehaviourDescription::SlipSystem& ss,
+					   const std::string& idx){
+      const auto cubic = ss.normal.is<tfel::math::tvector<3u,int>>();
+      const auto mun = "this->mu"+idx;
+      if(cubic){
+	const auto& ns = ss.normal.get<tfel::math::tvector<3u,int>>();
+	const auto& ds = ss.slip.get<tfel::math::tvector<3u,int>>();
+	const auto  as = tfel::material::CubicSlipSystems::generate(ns,ds);
+	for(decltype(as.size()) i=0;i!=as.size();){
+	  const auto& s = as[i];
+	  const auto& n = s.first;
+	  const auto& m = s.second;
+	  out << "stensor{" << value(n[0],m[0]) << ","
+	      << value(n[1],m[1]) << ","
+	      << value(n[2],m[2]) << ","
+	      << value2(n[1],m[0],n[0],m[1]) << ","
+	      << value2(n[2],m[0],n[0],m[2]) << ","
+	      << value2(n[2],m[1],n[1],m[2]) << "}";
+	  if(++i!=as.size()){
+	    out << ",\n";
+	  }
+	}
+      } else {
+	// hexagonal systems
+	throw_if(true,"hexagonal systems are not supported yet");
+      }
+    }; // end of impl
+    const auto& sss = this->mb.getSlipSystems();
+    const auto cn   = this->mb.getClassName()+"SlipSystems";
+    tfel::system::systemCall::mkdir("include");
+    tfel::system::systemCall::mkdir("include/TFEL/");
+    tfel::system::systemCall::mkdir("include/TFEL/Material");
+    auto file = "include/TFEL/Material/"+cn+".hxx";
+    std::ofstream out(file);
+    throw_if(!out,"can't open file '"+file+"'");
+    out.exceptions(std::ios::badbit|std::ios::failbit);
+    out << "/*!\n"
+	<< "* \\file   " << file << '\n'
+	<< "* \\brief  " << "this file decares the " << cn << " class.\n"
+	<< "*         File generated by "
+	<< MFrontHeader::getVersionName() << " "
+	<< "version " << MFrontHeader::getVersionNumber()<< '\n';
+    if(!this->authorName.empty()){
+      out << "* \\author " << this->authorName << '\n';
+    }
+    if(!this->date.empty()){
+      out << "* \\date   " << this->date       << '\n';
+    }
+    out << " */\n\n";
+    out << "#ifndef LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_HXX\n"
+	<< "#define LIB_TFEL_MATERIAL_"	<< makeUpperCase(cn) << "_HXX\n\n"
+	<< "#include\"TFEL/Math/tvector.hxx\"\n"
+	<< "#include\"TFEL/Math/stensor.hxx\"\n"
+	<< "#include\"TFEL/Math/tensor.hxx\"\n\n"
+	<< "namespace tfel{\n\n"
+      	<< "namespace material{\n\n"
+	<< "template<typename real>\n"
+	<< "struct " << cn << '\n'
+	<< "{\n"
+	<< "//! a simple alias\n"
+	<< "using tensor = tfel::math::tensor<3u,real>;\n"
+	<< "//! a simple alias\n"
+	<< "using stensor = tfel::math::stensor<3u,real>;\n";
+    if(sss.size()==1u){
+      nss(out,sss[0],"");
+    } else {
+      decltype(sss.size()) idx = 0;
+      for(const auto& ss:sss){
+	nss(out,ss,std::to_string(idx));
+	++idx;
+      }
+      out << "static const constexpr const Nss = ";
+      for(idx=0;idx!=sss.size();){
+	out << "Nss" << idx;
+	if(++idx!=sss.size()){
+	  out << "+";
+	};
+      }
+      out << "\n";
+    }
+    mu(out,"");
+    if(sss.size()!=1u){
+      auto idx = 0;
+      for(const auto& ss:sss){
+	mu(out,std::to_string(idx));
+	++idx;
+      }
+    }
+    out << "//! return the unique instance of the class\n"
+	<< "static const " << cn << "&\n"
+	<< "getSlidingSystems();\n"
+	<< "private:\n"
+	<< "//! Constructor\n"
+	<< cn << "();\n"
+	<< "//! move constructor (disabled)\n"
+	<< cn << "(" << cn << "&&) = delete;\n"
+	<< "//! copy constructor (disabled)\n"
+	<< cn << "(const " << cn << "&) = delete;\n"
+	<< "//! move operator (disabled)\n"
+	<< cn << "&\n"
+	<< "operator=(" << cn << "&&) = delete;\n"
+	<< "//! copy constructor (disabled)\n"
+	<< cn << "&\n"
+	<< "operator=(const " << cn << "&) = delete;\n"
+	<< "}; // end of struct " <<  cn << "\n\n"
+	<< "} // end of namespace material\n\n"
+	<< "} // end of namespace tfel\n\n"
+	<< "#include\"TFEL/Material/" << cn << ".ixx\"\n\n"
+	<< "#endif /* LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_HXX */\n";
+    out.close();
+    file = "include/TFEL/Material/"+cn+".ixx";
+    out.open(file);
+    throw_if(!out,"can't open file '"+file+"'");
+    out.exceptions(std::ios::badbit|std::ios::failbit);
+    out << "/*!\n"
+	<< "* \\file   " << file << '\n'
+	<< "* \\brief  " << "this file implements the " << cn << " class.\n"
+	<< "*         File generated by "
+	<< MFrontHeader::getVersionName() << " "
+	<< "version " << MFrontHeader::getVersionNumber()<< '\n';
+    if(!this->authorName.empty()){
+      out << "* \\author " << this->authorName << '\n';
+    }
+    if(!this->date.empty()){
+      out << "* \\date   " << this->date       << '\n';
+    }
+    out << " */\n\n";
+    out << "#ifndef LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_IXX\n"
+	<< "#define LIB_TFEL_MATERIAL_"	<< makeUpperCase(cn) << "_IXX\n\n"
+	<< "#include\"TFEL/Math/General/MathConstants.hxx\"\n\n"
+	<< "namespace tfel{\n\n"
+      	<< "namespace material{\n\n"
+	<< "template<typename real>\n"
+	<< "const " << cn << "<real>&\n" << cn << "<real>::getSlidingSystems(){\n"
+	<< "static const " << cn << " i;\n"
+      	<< "return i;\n"
+      	<< "} // end of " << cn << "::getSlidingSystems\n\n"
+	<< "template<typename real>\n"
+	<< cn << "<real>::" << cn << "(){\n"
+	<< "constexpr const auto cm   = tfel::math::Cste<real>::isqrt2;\n"
+	<< "constexpr const auto cn   = tfel::math::Cste<real>::isqrt3;\n"
+    	<< "constexpr const auto c1   = cm*cn;\n"
+	<< "constexpr const auto c2   = cm/2;\n"
+	<< "constexpr const auto zero = real(0);\n";
+    if(sss.size()!=1u){
+      for(decltype(sss.size()) idx=0;idx!=sss.size();++idx){
+	out << "this->mu" << idx << " = {";
+	tensor(out,sss[idx],std::to_string(idx));
+	out << "}";
+      }
+    }
+    out << "this->mu = {";
+    for(decltype(sss.size()) idx=0;idx!=sss.size();){
+      if(sss.size()!=1u){
+	out << "// " << idx << " slip system family\n";
+      }
+      tensor(out,sss[idx],std::to_string(idx));
+      if(++idx!=sss.size()){
+	out << ",\n";
+      }
+    }
+    out << "};\n";
+    if(sss.size()!=1u){
+      for(decltype(sss.size()) idx=0;idx!=sss.size();++idx){
+	out << "this->mus" << idx << " = {";
+	stensor(out,sss[idx],std::to_string(idx));
+	out << "}";
+      }
+    }
+    out << "this->mus = {";
+    for(decltype(sss.size()) idx=0;idx!=sss.size();){
+      if(sss.size()!=1u){
+	out << "// " << idx << " slip system family\n";
+      }
+      stensor(out,sss[idx],std::to_string(idx));
+      if(++idx!=sss.size()){
+	out << ",\n";
+      }
+    }
+    out << "};\n";
+    out << "} // end of "<< cn << "::" << cn << "\n\n"
+	<< "} // end of namespace material\n\n"
+	<< "} // end of namespace tfel\n\n"
+	<< "#endif /* LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_IXX */\n";
+  }
+  
   void
   BehaviourDSLCommon::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const Hypothesis h,
 											     const std::string& n)
@@ -981,9 +1260,12 @@ namespace mfront{
   
   void BehaviourDSLCommon::treatBrick()
   {
+    using Parameters = AbstractBehaviourBrick::Parameters;
+    using Data       = AbstractBehaviourBrick::Data;
+    using DataMap    = AbstractBehaviourBrick::DataMap;
     auto& f = AbstractBehaviourBrickFactory::getFactory();
-    AbstractBehaviourBrick::Parameters parameters;
-    AbstractBehaviourBrick::DataMap data;
+    auto parameters = Parameters{};
+    auto data       = DataMap{};
     if(this->current->value=="<"){
       auto options = std::vector<tfel::utilities::Token>{};
       this->readList(options,"BehaviourDSLCommon::treatBehaviourBrick",
@@ -1009,7 +1291,7 @@ namespace mfront{
 	}
       }
     }
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatIsTangentOperatorSymmetric : ",
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourBrick",
   			    "Expected 'true' or 'false'.");
     const auto b = [this]() -> std::string {
       if(this->current->flag==tfel::utilities::Token::String){
@@ -1020,7 +1302,7 @@ namespace mfront{
       return r;
     }();
     if(this->current->value=="{"){
-      data = AbstractBehaviourBrick::Data::read(this->current,this->tokens.end()).get<AbstractBehaviourBrick::DataMap>();
+      data = Data::read(this->current,this->tokens.end()).get<DataMap>();
     }
     this->readSpecifiedToken("BehaviourDSLCommon::treatBehaviourBrick",";");
     this->bricks.emplace_back(f.get(b,*this,this->mb,parameters,data));
@@ -1426,9 +1708,8 @@ namespace mfront{
     this->readSpecifiedToken("BehaviourDSLCommon::treatVariableMethod",";");
   } // end of BehaviourDSLCommon::treatVariableMethod
 
-  void
-  BehaviourDSLCommon::treatUnknownVariableMethod(const Hypothesis,
-						 const std::string& n)
+  void BehaviourDSLCommon::treatUnknownVariableMethod(const Hypothesis,
+						      const std::string& n)
   {
     this->throwRuntimeError("BehaviourDSLCommon::treatUnknownVariableMethod : ",
 			    "unknown method '"+this->current->value+"' for variable '"+n+"', "
@@ -1443,69 +1724,87 @@ namespace mfront{
     const auto key = this->current->value;
     ++(this->current);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
-    if(this->current->value=="["){
-      ++(this->current);
-      this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
-      auto s = std::vector<std::string>{};
-      while(this->current->value!="]"){
-	this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
-	const auto t = [this]() -> std::string {
-	  if(this->current->flag==tfel::utilities::Token::String){
-	    return this->current->value.substr(1,this->current->value.size()-2);
+    for(const auto& b: bricks){
+      auto p = b->treatKeyword(key,this->current,
+			       this->tokens.end());
+      if(p.first){
+	if(treated){
+	  if(p2!=p.second){
+	    this->throwRuntimeError("BehaviourDSLCommon::treatUnknownKeyword",
+				    "the keyword '"+key+"' has been treated "
+				    "by two interfaces/analysers but "
+				    "results were differents");
 	  }
-	  return this->current->value;
-	}();
+	}
+	p2 = p.second;
+	treated = true;
+      }
+    }
+    if(!treated){
+      if(this->current->value=="["){
 	++(this->current);
 	this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
-	if(std::find(s.begin(),s.end(),t)==s.end()){
-	  s.push_back(t);
-	}
-	if(this->current->value!="]"){
-	  this->readSpecifiedToken("BehaviourDSLCommon::treatUnknownKeyword",",");
+	auto s = std::vector<std::string>{};
+	while(this->current->value!="]"){
 	  this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
-	  if(this->current->value=="]"){
-	    this->throwRuntimeError("BehaviourDSLCommon::treatUnknownKeyword",
-				    "unexpected token ']'");
+	  const auto t = [this]() -> std::string {
+	    if(this->current->flag==tfel::utilities::Token::String){
+	      return this->current->value.substr(1,this->current->value.size()-2);
+	    }
+	    return this->current->value;
+	  }();
+	  ++(this->current);
+	  this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
+	  if(std::find(s.begin(),s.end(),t)==s.end()){
+	    s.push_back(t);
 	  }
-	}
-      }
-      ++(this->current);
-      for(auto& i : this->interfaces){
-	auto p = i.second->treatKeyword(this->mb,key,s,this->current,
-					this->tokens.end());
-	if(p.first){
-	  if(treated){
-	    if(p2!=p.second){
+	  if(this->current->value!="]"){
+	    this->readSpecifiedToken("BehaviourDSLCommon::treatUnknownKeyword",",");
+	    this->checkNotEndOfFile("BehaviourDSLCommon::treatUnknownKeyword");
+	    if(this->current->value=="]"){
 	      this->throwRuntimeError("BehaviourDSLCommon::treatUnknownKeyword",
-				      "the keyword '"+key+"' has been treated "
-				      "by two interfaces/analysers but "
-				      "results were differents");
+				      "unexpected token ']'");
 	    }
 	  }
-	  p2 = p.second;
-	  treated = true;
 	}
-      }
-      if(!treated){
-	this->ignoreKeyWord(key);
-	return;
-      }
-    } else {
-      for(const auto&i : this->interfaces){
-	auto p = i.second->treatKeyword(this->mb,key,{i.first},
-					this->current,
-					this->tokens.end());
-	if(p.first){
-	  if(treated){
-	    if(p2!=p.second){
-	      this->throwRuntimeError("BehaviourDSLCommon::treatUnknownKeyword",
-				      "the keyword '"+key+"' has been treated "
-				      "by two interfaces/analysers but "
-				      "results were differents");
+	++(this->current);
+	for(auto& i : this->interfaces){
+	  auto p = i.second->treatKeyword(this->mb,key,s,this->current,
+					  this->tokens.end());
+	  if(p.first){
+	    if(treated){
+	      if(p2!=p.second){
+		this->throwRuntimeError("BehaviourDSLCommon::treatUnknownKeyword",
+					"the keyword '"+key+"' has been treated "
+					"by two interfaces/analysers but "
+					"results were differents");
+	      }
 	    }
+	    p2 = p.second;
+	    treated = true;
 	  }
-	  p2 = p.second;
-	  treated = true;
+	}
+	if(!treated){
+	  this->ignoreKeyWord(key);
+	  return;
+	}
+      } else {
+	for(const auto&i : this->interfaces){
+	  auto p = i.second->treatKeyword(this->mb,key,{i.first},
+					  this->current,
+					  this->tokens.end());
+	  if(p.first){
+	    if(treated){
+	      if(p2!=p.second){
+		this->throwRuntimeError("BehaviourDSLCommon::treatUnknownKeyword",
+					"the keyword '"+key+"' has been treated "
+					"by two interfaces/analysers but "
+					"results were differents");
+	      }
+	    }
+	    p2 = p.second;
+	    treated = true;
+	  }
 	}
       }
     }

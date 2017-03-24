@@ -27,8 +27,7 @@ namespace mfront{
     /*!
      * \return the name of the interface
      */
-    static std::string
-    getName(void);
+    static std::string getName();
     /*!
      * \brief write output files
      * \param[in] mb : behaviour description
@@ -59,7 +58,7 @@ namespace mfront{
      * \return the name of the interface
      */
     virtual std::string
-    getInterfaceName(void) const override;
+    getInterfaceName() const override;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile           : output file

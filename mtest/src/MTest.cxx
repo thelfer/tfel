@@ -120,8 +120,7 @@ namespace mtest
     return "MTest";
   }
 
-  void
-  MTest::addConstraint(const std::shared_ptr<Constraint> c)
+  void MTest::addConstraint(const std::shared_ptr<Constraint> c)
   {
     this->constraints.push_back(c);
   }

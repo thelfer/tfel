@@ -171,6 +171,11 @@ namespace mfront
     virtual void
     addStaticVariableDescription(const StaticVariableDescription&) = 0;
     /*!
+     * \return the value of an integer constant
+     * \param[in] n: variable name
+     */
+    virtual int getIntegerConstant(const std::string&) const = 0;
+    /*!
      * \return the name of the generated class
      */
     virtual std::string getClassName(void) const = 0;
@@ -278,33 +283,29 @@ namespace mfront
      * \param[in] type : type of the variable
      * \param[in] allowArray : allow arrays of variables to be defined
      */
-    void
-    readVarList(VariableDescriptionContainer&,
-		const std::string&,
-		const bool);
+    void readVarList(VariableDescriptionContainer&,
+		     const std::string&,
+		     const bool);
     /*!
      * \param[in] cont : variable container to wich variables are
      * added
      * \param[in] allowArray : allow arrays of variables to be defined
      */
-    void
-    readVarList(VariableDescriptionContainer&,
-		const bool);
+    void readVarList(VariableDescriptionContainer&,
+		     const bool);
     /*!
      * extract a boolean value from the current token and go the next
      * token
      * \param[in] m : calling method name (used for error message)
      * \return the boolean value read
      */
-    bool
-    readBooleanValue(const std::string&);
+    bool readBooleanValue(const std::string&);
     /*!
      * extract a string from the current token and go the next token
      * \param[in] m : calling method name (used for error message)
      * \return the extracted string
      */
-    std::string
-    readString(const std::string&);
+    std::string readString(const std::string&);
     /*!
      * extract an array of string starting from the current token and
      * go the token following the end of the array
@@ -340,12 +341,11 @@ namespace mfront
      * delimiter (or is past the end of the file), nothing is returned
      * if this parameter is true. An exception is thrown otherwise
      */
-    void
-    readList(std::vector<tfel::utilities::Token>&,
-	     const std::string&,
-	     const std::string&,
-	     const std::string&,
-	     const bool);
+    void readList(std::vector<tfel::utilities::Token>&,
+		  const std::string&,
+		  const std::string&,
+		  const std::string&,
+		  const bool);
     
     std::string
     readSpecifiedValue(const std::string&,
@@ -429,6 +429,15 @@ namespace mfront
      */
     virtual void completeTargetsDescription(void);
     /*!
+     * \brief register an integer constant.
+     * \param[in] n: name of the constant
+     * \param[in] l: line number
+     * \param[in] v: value
+     */
+    virtual void registerIntegerConstant(const std::string&,
+					 const size_t,
+					 const int);
+    /*!
      * \brief extract a double from the current token
      */
     double readDouble(void);
@@ -454,8 +463,6 @@ namespace mfront
     std::vector<std::string> ldflags;
     //! auxiliary target descriptions
     std::vector<TargetsDescription> atds;
-    //! integer constants
-    std::map<std::string,int> integerConstants;
     //! current position in the input stream
     TokensContainer::const_iterator current;
     /*!

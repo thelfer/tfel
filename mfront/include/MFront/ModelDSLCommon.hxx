@@ -37,12 +37,12 @@ namespace mfront{
     //! constructor
     ModelDSLCommon();
     //! \return the target of the dsl
-    virtual DSLTarget getTargetType(void) const override final;
+    virtual DSLTarget getTargetType() const override final;
     /*!
      * \brief write the output files.
      * \note this shall be called after the analyseFile method.
      */
-    virtual void generateOutputFiles(void) override;
+    virtual void generateOutputFiles() override;
 
     virtual void
     setInterfaces(const std::set<std::string>&) override;
@@ -67,7 +67,7 @@ namespace mfront{
     /*!
      * \return the name of the generated class
      */
-    virtual std::string getClassName(void) const override ;
+    virtual std::string getClassName() const override ;
     /*!
      * \brief add a material law
      * \param[in] m : added material law name
@@ -96,50 +96,48 @@ namespace mfront{
     virtual void
     addStaticVariableDescription(const StaticVariableDescription&) override;
     /*!
-     * treat the material keyword
+     * \return the value of an integer constant
+     * \param[in] n: variable name
      */
-    virtual void
-    treatMaterial(void);
-    /*!
-     * treat the library keyword
-     */
-    virtual void
-    treatLibrary(void);
+    virtual int getIntegerConstant(const std::string&) const override;
+    //! treat the `@Material` keyword
+    virtual void treatMaterial();
+    //! treat the `@Library` keyword
+    virtual void treatLibrary();
 
-    virtual void treatModel(void);
+    virtual void treatModel();
 
-    virtual void treatDomain(void);
+    virtual void treatDomain();
 
-    virtual void treatDomains(void);
+    virtual void treatDomains();
 
-    virtual void
-    treatUnknownKeyword(void) override;
+    virtual void treatUnknownKeyword() override;
 
-    virtual void treatBounds(void);
+    virtual void treatBounds();
     
-    virtual void treatPhysicalBounds(void);
+    virtual void treatPhysicalBounds();
 
-    virtual void treatConstantMaterialProperty(void);
+    virtual void treatConstantMaterialProperty();
 
-    virtual void treatConstantMaterialPropertyMethod(void);
+    virtual void treatConstantMaterialPropertyMethod();
 
-    virtual void treatFunction(void);
+    virtual void treatFunction();
 
-    virtual void treatOutput(void);
+    virtual void treatOutput();
 
-    virtual void treatOutputMethod(void);
+    virtual void treatOutputMethod();
 
-    virtual void treatInput(void);
+    virtual void treatInput();
 
-    virtual void treatInputMethod(void);
+    virtual void treatInputMethod();
 
-    virtual void treatParameter(void);
+    virtual void treatParameter();
 
-    virtual void treatLocalParameter(void);
+    virtual void treatLocalParameter();
 
-    virtual void treatParameterMethod(void);
+    virtual void treatParameterMethod();
 
-    virtual void readDefaultValue(void);
+    virtual void readDefaultValue();
     /*!
      * \param[in] bn: bounds type
      */

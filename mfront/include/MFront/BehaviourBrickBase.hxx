@@ -54,6 +54,19 @@ namespace mfront{
     virtual void
     addRequirements(bbrick::RequirementManager&,
 		    const Hypothesis) const override;
+    /*!
+     * \brief treat a keyword
+     * \param[in] key: keyword to be treated
+     * \param[in,out] p:   current position in the file
+     * \param[in] pe:  iterator past the end of the file
+     * \return a pair. The first entry is true if the keyword was
+     * treated by the interface. The second entry is an iterator after
+     * the last token treated.
+     */
+    virtual std::pair<bool,tokens_iterator>
+    treatKeyword(const std::string&,
+		 tokens_iterator&,
+		 const tokens_iterator) override;
     //! destructor
     virtual ~BehaviourBrickBase();
   protected:

@@ -53,7 +53,7 @@ namespace mfront{
     writeInterfaceSpecificIncludes(std::ostream&,
 				   const BehaviourDescription&) const override;
     /*!
-     * \param[out/in] bd: behaviour description
+     * \param[in,out] bd: behaviour description
      * \param[in] k:  keyword treated
      * \param[in] i:  list of interfaces to which the keyword is restricted
      * \param[in] p:  iterator to the current token

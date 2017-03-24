@@ -135,10 +135,9 @@ namespace tfel{
        * \throw std::runtime_error if the given iterator is egal to
        * the third argument
        */ 
-      static void
-      checkNotEndOfLine(const std::string&,
-			const_iterator&, 
-			const const_iterator);
+      static void checkNotEndOfLine(const std::string&,
+				    const_iterator&, 
+				    const const_iterator);
       /*!
        * \brief an helper method throwing an exception if the given
        * iterator is egal to the fourth argument (which shall point
@@ -151,11 +150,10 @@ namespace tfel{
        * \throw std::runtime_error if the given iterator is egal to
        * the fourth argument
        */ 
-      static void
-      checkNotEndOfLine(const std::string&,
-			const std::string&,
-			const_iterator&, 
-			const const_iterator);
+      static void checkNotEndOfLine(const std::string&,
+				    const std::string&,
+				    const_iterator&, 
+				    const const_iterator);
       /*!
        * \brief an helper method throwing an exception if the given
        * iterator is egal to the fourth argument (which shall point
@@ -169,11 +167,10 @@ namespace tfel{
        * \throw std::runtime_error if the given iterator is egal to
        * the fourth argument
        */ 
-      static void
-      readSpecifiedToken(const std::string&,
-			 const std::string&,
-			 const_iterator&, 
-			 const const_iterator);
+      static void readSpecifiedToken(const std::string&,
+				     const std::string&,
+				     const_iterator&, 
+				     const const_iterator);
       /*!
        * \brief an helper method to extract an unsigned int from the
        * given token
@@ -184,9 +181,8 @@ namespace tfel{
        * \throw std::runtime_error if the given iterator is egal to
        * the second argument
        */ 
-      static unsigned int
-      readUnsignedInt(const_iterator&, 
-		      const const_iterator);
+      static unsigned int readUnsignedInt(const_iterator&, 
+					  const const_iterator);
       /*!
        * \brief an helper method to extract a string from the
        * given token
@@ -197,9 +193,21 @@ namespace tfel{
        * \throw std::runtime_error if the given iterator is egal to
        * the second argument or if the given token is not a string
        */ 
-      static std::string
-      readString(const_iterator&, 
-		 const const_iterator);
+      static std::string readString(const_iterator&, 
+				    const const_iterator);
+      /*!
+       * \brief an helper method to extract a set of values from the
+       * given as an array
+       * \param[in] method : calling method name
+       * \param[in]  p  : iterator to the current token
+       * \param[in]  pe : iterator pointing after the last token of the
+       * line
+       * \throw std::runtime_error if the given iterator is egal to
+       * the second argument or if the given token is not a string
+       */ 
+      static std::vector<std::string> readArray(const std::string&,
+						const_iterator&, 
+						const const_iterator);
       /*!
        * \brief an helper method to extract a set of values from the
        * given as an array
@@ -211,11 +219,40 @@ namespace tfel{
        * \throw std::runtime_error if the given iterator is egal to
        * the second argument or if the given token is not a string
        */ 
-      static void
-      readArray(const std::string&,
-		std::vector<std::string>&,
-		const_iterator&, 
-		const const_iterator);
+      static void readArray(const std::string&,
+			    std::vector<std::string>&,
+			    const_iterator&, 
+			    const const_iterator);
+      /*!
+       * \brief extract a list of token
+       * \param[in]  m  : calling method name (used for error message)
+       * \param[in]  db : beginning delimiter
+       * \param[in]  de : end delimiter
+       * \param[in]  p  : iterator to the current token
+       * \param[in]  pe : iterator pointing after the last token of the
+       * line
+       */
+      static std::vector<Token> readList(const std::string&,
+					 const std::string&,
+					 const std::string&,
+					 const_iterator&, 
+					 const const_iterator);
+      /*!
+       * \brief extract a list of token
+       * \param[out] l  : list read
+       * \param[in]  m  : calling method name (used for error message)
+       * \param[in]  db : beginning delimiter
+       * \param[in]  de : end delimiter
+       * \param[in]  p  : iterator to the current token
+       * \param[in]  pe : iterator pointing after the last token of the
+       * line
+       */
+      static void readList(std::vector<Token>&,
+			   const std::string&,
+			   const std::string&,
+			   const std::string&,
+			   const_iterator&, 
+			   const const_iterator);
       /*!
        * \brief an helper method to extract a set of values from the
        * given as an array
@@ -239,9 +276,8 @@ namespace tfel{
        * \throw std::runtime_error if the given iterator is egal to
        * the second argument
        */ 
-      static double
-      readDouble(const_iterator&, 
-		 const const_iterator);	
+      static double readDouble(const_iterator&, 
+			       const const_iterator);	
       /*!
        * \brief an helper method to extract a int from the given
        * token
@@ -252,9 +288,8 @@ namespace tfel{
        * \throw std::runtime_error if the given iterator is egal to
        * the second argument
        */ 
-      static int
-      readInt(const_iterator&, 
-	      const const_iterator);	
+      static int readInt(const_iterator&, 
+			 const const_iterator);	
       //! \return an iterator to the first token
       const_iterator begin(void) const;
       //! \return an iterator past the last token

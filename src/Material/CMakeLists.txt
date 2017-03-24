@@ -8,6 +8,7 @@ set(TFELMaterial_SOURCES
     BoundsCheck.cxx
     MaterialException.cxx
     ModellingHypothesis.cxx
+    CubicSlipSystems.cxx
     FiniteStrainBehaviourTangentOperator.cxx)
 
 tfel_library(TFELMaterial ${TFELMaterial_SOURCES})

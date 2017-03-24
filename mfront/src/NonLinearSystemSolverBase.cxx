@@ -22,7 +22,7 @@ namespace mfront{
   std::vector<std::string>
   NonLinearSystemSolverBase::getReservedNames() const
   {
-    return {"error","iter","iterMax","converged"};
+    return {"jacobian_error","error","iter","iterMax","converged"};
   } // end of NonLinearSystemSolverBase::getReservedNames
 
   std::string
@@ -89,46 +89,43 @@ namespace mfront{
     SupportedTypes::TypeSize n;
     SupportedTypes::TypeSize n2;
     SupportedTypes::TypeSize n3;
-    VariableDescriptionContainer::const_iterator p;
-    VariableDescriptionContainer::const_iterator p2;
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n2 += mb.getTypeSize(p->type,p->arraySize);
+    for(const auto& v : d.getIntegrationVariables()){
+      n2 += mb.getTypeSize(v.type,v.arraySize);
     }
     if(mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
-      out << "this->computeNumericalJacobian(" << nj << ");\n";
+      out << "auto jacobian_error = real{};"
+	 << "this->computeNumericalJacobian(" << nj << ");\n";
       n = SupportedTypes::TypeSize();
-      for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-	if(p->arraySize==1){
+      for(const auto& v : d.getIntegrationVariables()){
+	if(v.arraySize==1){
 	  n3 = SupportedTypes::TypeSize();
-	  for(p2=d.getIntegrationVariables().begin();p2!=d.getIntegrationVariables().end();++p2){
-	    if((p->arraySize==1)&&(p2->arraySize==1)){
-	      out << "// derivative of variable f" << p->name 
-		  << " by variable " << p2->name << "\n";
-	      out << NonLinearSystemSolverBase::getJacobianPart(mb,*p,*p2,n,n2,n3);
-	      out << "// numerical derivative of variable f" << p->name 
-		  << " by variable " << p2->name << "\n";
-	      out << NonLinearSystemSolverBase::getJacobianPart(mb,*p,*p2,n,n2,n3,
+	  for(const auto& v2 : d.getIntegrationVariables()){
+	    if((v.arraySize==1)&&(v2.arraySize==1)){
+	      out << "// derivative of variable f" << v.name 
+		  << " by variable " << v2.name << "\n"
+		  << NonLinearSystemSolverBase::getJacobianPart(mb,v,v2,n,n2,n3)
+		  << "// numerical derivative of variable f" << v.name 
+		  << " by variable " << v2.name << "\n"
+		  << NonLinearSystemSolverBase::getJacobianPart(mb,v,v2,n,n2,n3,
 								nj,"n");
-	      n3 += mb.getTypeSize(p2->type,p2->arraySize);
+	      n3 += mb.getTypeSize(v2.type,v2.arraySize);
 	    }
 	  }
 	}
-	n += mb.getTypeSize(p->type,p->arraySize);
+	n += mb.getTypeSize(v.type,v.arraySize);
       }
-      for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-	for(p2=d.getIntegrationVariables().begin();p2!=d.getIntegrationVariables().end();++p2){
-	  const VariableDescription& v1 = *p;
-	  const VariableDescription& v2 = *p2;
-	  SupportedTypes::TypeSize nv1 = mb.getTypeSize(v1.type,1u);
-	  SupportedTypes::TypeSize nv2 = mb.getTypeSize(v2.type,1u);
-	  out << "error=" << nv1 << "*" << nv2 << "*"
+      for(const auto& v1 : d.getIntegrationVariables()){
+	for(const auto& v2 : d.getIntegrationVariables()){
+	  auto nv1 = mb.getTypeSize(v1.type,1u);
+	  auto nv2 = mb.getTypeSize(v2.type,1u);
+	  out << "jacobian_error=" << nv1 << "*" << nv2 << "*"
 	      << "(this->jacobianComparisonCriterion)" <<";\n";
 	  if((v1.arraySize==1u)&&(v2.arraySize==1u)){
 	    out << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
-		<< "ndf" << v1.name  << "_dd" << v2.name << ") > error)\n" 
+		<< "ndf" << v1.name  << "_dd" << v2.name << ") > jacobian_error)\n" 
 		<< "{\n";
 	    out << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
-		<< "ndf" << v1.name  << "_dd" << v2.name << ") << \" \" << error << endl;\n";
+		<< "ndf" << v1.name  << "_dd" << v2.name << ") << \" \" << jacobian_error << endl;\n";
 	    out << "cout << \"df" << v1.name
 		<< "_dd" << v2.name << " :\\n\" << " 
 		<< "df" << v1.name  << "_dd" << v2.name << " << endl;\n";
@@ -151,10 +148,10 @@ namespace mfront{
 	    }
 	    out << "for(unsigned short idx=0;idx!=" << asize << ";++idx){\n";
 	    out << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
-		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx)) > error)\n" 
+		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx)) > jacobian_error)\n" 
 		<< "{\n";
 	    out << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
-		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx)) << \" \" << error << endl;\n";
+		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx)) << \" \" << jacobian_error << endl;\n";
 	    out << "cout << \"df" << v1.name
 		<< "_dd" << v2.name << "(\" << idx << \") :\\n\" << " 
 		<< "df" << v1.name  << "_dd" << v2.name << "(idx) << endl;\n";
@@ -172,10 +169,10 @@ namespace mfront{
 	    out << "for(unsigned short idx=0;idx!=" << v1.arraySize << ";++idx){\n";
 	    out << "for(unsigned short idx2=0;idx2!=" << v2.arraySize << ";++idx2){\n";
 	    out << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
-		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx,idx2)) > error)\n" 
+		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx,idx2)) > jacobian_error)\n" 
 		<< "{\n";
 	    out << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
-		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx,idx2)) << \" \" << error << endl;\n";
+		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx,idx2)) << \" \" << jacobian_error << endl;\n";
 	    out << "cout << \"df" << v1.name
 		<< "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << " 
 		<< "df" << v1.name  << "_dd" << v2.name << "(idx,idx2) << endl;\n";

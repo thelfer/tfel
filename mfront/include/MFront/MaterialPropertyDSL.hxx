@@ -147,7 +147,15 @@ namespace mfront{
      */
     virtual void
     addStaticVariableDescription(const StaticVariableDescription&) override;
-
+    /*!
+     * \return the value of an integer constant
+     * \param[in] n: variable name
+     */
+    virtual int getIntegerConstant(const std::string&) const override;
+    /*!
+     * \brief add a new interface
+     * \param[in] n: interface name
+     */
     virtual void addInterface(const std::string&);
     //! treat the @Material keyword
     virtual void treatMaterial();

@@ -41,8 +41,7 @@ namespace mfront
     /*!
      * \return the uniq instance of the AbstractBehaviourBrick factory
      */
-    static AbstractBehaviourBrickFactory&
-    getFactory();
+    static AbstractBehaviourBrickFactory& getFactory();
     /*!
      * \return the requested behaviour brick
      * \param[in]     a:   behaviour brick name
@@ -51,7 +50,6 @@ namespace mfront
      * treated
      * \param[out]    p:   parameters
      * \param[out]    d:   data
-
      */
     std::shared_ptr<AbstractBehaviourBrick>
     get(const std::string&,
@@ -63,9 +61,8 @@ namespace mfront
      * \param[in] a : AbstractBehaviourBrick name 
      * \param[in] c : AbstractBehaviourBrick constructor 
      */
-    void
-    registerAbstractBehaviourBrick(const std::string&,
-		  const constructor);
+    void registerAbstractBehaviourBrick(const std::string&,
+					const constructor);
   private:
     /*!
      * default constructor

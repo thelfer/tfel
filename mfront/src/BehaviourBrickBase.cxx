@@ -28,6 +28,14 @@ namespace mfront{
     : dsl(dsl_),bd(bd_)
   {} // end of BehaviourBrickBase::BehaviourBrickBase
 
+  std::pair<bool,BehaviourBrickBase::tokens_iterator>
+  BehaviourBrickBase::treatKeyword(const std::string&,
+				   tokens_iterator& p,
+				   const tokens_iterator)
+  {
+    return {false,p};
+  } // end of BehaviourBrickBase::treatKeyword
+  
   void BehaviourBrickBase::addRequirements(bbrick::RequirementManager&,
 					   const Hypothesis) const
   {} // end of BehaviourBrickBase::addRequirements
@@ -149,7 +157,7 @@ namespace mfront{
     this->bd.setEntryName(h,n,e);
     this->bd.setParameterDefaultValue(h,n,p);
   } // end of BehaviourBrickBase::addParameter
-  
+
   BehaviourBrickBase::~BehaviourBrickBase() = default;
 
 } // end of namespace mfront

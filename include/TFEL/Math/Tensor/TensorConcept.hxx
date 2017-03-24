@@ -96,6 +96,20 @@ namespace tfel{
     }; // end of struct TensorInvalidIndexesException
 
     /*!
+     * \brief exception thrown if an std::initializer_list with no
+     * appropriate size is affected to a tensor.
+     */
+    struct TFELMATH_VISIBILITY_EXPORT TensorInvalidInitializerListSizeException
+      : public MathRunTimeException
+    {
+      TensorInvalidInitializerListSizeException() = default;
+      TensorInvalidInitializerListSizeException(const TensorInvalidInitializerListSizeException&) = default;
+      TensorInvalidInitializerListSizeException(TensorInvalidInitializerListSizeException&&) = default;
+      virtual const char* what() const noexcept override final;
+      virtual ~TensorInvalidInitializerListSizeException() noexcept;
+    }; // end of struct TensorInvalidInitializerListSizeException
+    
+    /*!
      * The base class which implements the tensor concept
      */
     template<class T>

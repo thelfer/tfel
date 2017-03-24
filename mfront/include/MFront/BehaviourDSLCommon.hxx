@@ -367,6 +367,11 @@ namespace mfront{
     virtual void
     addStaticVariableDescription(const StaticVariableDescription&) override;
     /*!
+     * \return the value of an integer constant
+     * \param[in] n: variable name
+     */
+    virtual int getIntegerConstant(const std::string&) const override;
+    /*!
      * disable the declaration of new variables
      * \param[in] h : modelling hypothesis
      */
@@ -376,6 +381,10 @@ namespace mfront{
      * write the output files
      */
     virtual void generateOutputFiles(void) override;
+    /*!
+     * \brief write the header files declaring the slip systems
+     */
+    virtual void generateSlipSystemsFiles(void);
     /*!
      * \return the list of hypothesis a priori supported by
      * the parser.

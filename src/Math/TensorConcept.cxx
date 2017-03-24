@@ -33,6 +33,15 @@ namespace tfel{
     } // end of TensorInvalidIndexesException::what() const
 
     TensorInvalidIndexesException::~TensorInvalidIndexesException() noexcept = default;
+
+    const char*
+    TensorInvalidInitializerListSizeException::what() const noexcept
+    {
+      return "invalid std::initializer_list size";
+    } // end of TensorInvalidInitializerListSizeException::what() const
+
+    TensorInvalidInitializerListSizeException::~TensorInvalidInitializerListSizeException() noexcept = default;
+
     
   } // end of namespace math
 

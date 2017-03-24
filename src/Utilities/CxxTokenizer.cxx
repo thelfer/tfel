@@ -1010,18 +1010,60 @@ namespace tfel{
       return res;
     } // end of CxxTokenizer::readUnsignedInt
 
-    void
-    CxxTokenizer::readArray(const std::string& m,
-			    std::vector<std::string>& v,
-			    const_iterator& p, 
-			    const const_iterator pe)
+    void CxxTokenizer::readList(std::vector<Token>& l,
+				const std::string& m,
+				const std::string& db,
+				const std::string& de,
+				const_iterator& p, 
+				const const_iterator pe)
+    {
+      CxxTokenizer::readSpecifiedToken(m,db,p,pe);
+      CxxTokenizer::checkNotEndOfLine(m,p,pe);
+      l.clear();
+      while(p->value!=de){
+	CxxTokenizer::checkNotEndOfLine(m,p,pe);
+	if((p->value==",")||p->value==de||p->value==db){
+	  throw(std::runtime_error(m+" : unexpected token ',' or "
+				   "'"+db+"' or '"+de+"'"));
+	}
+	l.push_back(*p);
+	++p;
+	CxxTokenizer::checkNotEndOfLine(m,p,pe);
+	if(p->value!=de){
+	  CxxTokenizer::readSpecifiedToken(m,",",p,pe);
+	  CxxTokenizer::checkNotEndOfLine(m,p,pe);
+	  if(p->value==","){
+	    throw(std::runtime_error(m+" : unexpected token ',' or '}'"));
+	  }
+	}
+      }
+      CxxTokenizer::readSpecifiedToken(m,de,p,pe);
+    }
+
+    std::vector<Token> CxxTokenizer::readList(const std::string& m,
+					      const std::string& db,
+					      const std::string& de,
+					      const_iterator& p, 
+					      const const_iterator pe)
+    {
+      std::vector<Token> l;
+      CxxTokenizer::readList(l,m,db,de,p,pe);
+      return l;
+    }
+
+    void CxxTokenizer::readArray(const std::string& m,
+				 std::vector<std::string>& v,
+				 const_iterator& p, 
+				 const const_iterator pe)
     {
       CxxTokenizer::readSpecifiedToken(m,"{",p,pe);
       CxxTokenizer::checkNotEndOfLine(m,p,pe);
+      v.clear();
       while(p->value!="}"){
 	CxxTokenizer::checkNotEndOfLine(m,p,pe);
 	if((p->value==",")||p->value=="}"||p->value=="{"){
-	  throw(std::runtime_error(m+" : unexpected token ',' or '}' or '{'"));
+	  throw(std::runtime_error(m+" : unexpected token ',' or "
+				   "'{' or '}'"));
 	}
 	v.push_back(p->value);
 	++p;
@@ -1035,6 +1077,15 @@ namespace tfel{
 	}
       }
       CxxTokenizer::readSpecifiedToken(m,"}",p,pe);
+    } // end of CxxTokenizer::readArray
+    
+    std::vector<std::string> CxxTokenizer::readArray(const std::string& m,
+						     const_iterator& p, 
+						     const const_iterator pe)
+    {
+      std::vector<std::string> v;
+      CxxTokenizer::readArray(m,v,p,pe);
+      return v;
     } // end of CxxTokenizer::readArray
 
     std::vector<std::string>

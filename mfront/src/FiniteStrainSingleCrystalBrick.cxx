@@ -11,11 +11,16 @@
  * project under specific licensing conditions. 
  */
 
+#include<fstream>
 #include<sstream>
 #include<stdexcept>
 
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
+#include "TFEL/System/System.hxx"
+#include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/LocalDataStructure.hxx"
@@ -90,8 +95,105 @@ namespace mfront{
     this->bd.reserveName(h,"fsscb_dFe_dDF");
   } // end of FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick
 
-  void 
-  FiniteStrainSingleCrystalBrick::endTreatment() const
+  std::pair<bool,FiniteStrainSingleCrystalBrick::tokens_iterator>
+  FiniteStrainSingleCrystalBrick::treatKeyword(const std::string& key,
+					       tokens_iterator& p,
+					       const tokens_iterator pe)
+  {
+    const auto m = std::string("FiniteStrainSingleCrystalBrick::treatKeyword");
+    auto throw_if = [](const bool c,const std::string& msg){
+      if(c){throw(std::runtime_error("FiniteStrainSingleCrystalBrick::"
+				     "treatKeyword: "+msg));}
+    };
+    auto gs = [&m,&p,&throw_if,pe](){
+      const auto normal    = CxxTokenizer::readList(m,"{","}",p,pe);
+      const auto direction = CxxTokenizer::readList(m,"<",">",p,pe);
+      throw_if(normal.size()!=direction.size(),"normal and direction don't match in size");
+      throw_if((normal.size()!=3u)&&(normal.size()!=4u),
+	       "invalid definition of a normal "
+	       "(must be an array of 3 or 4 integers, read '"+
+	       std::to_string(normal.size())+"' values)");
+      BehaviourDescription::SlipSystem s;
+      if(normal.size()==3u){
+	tfel::math::tvector<3u,int> n;
+	tfel::math::tvector<3u,int> d;
+	for(tfel::math::tvector<3u,int>::size_type i=0;i!=3;++i){
+	  n[i] = std::stoi(normal[i].value);
+	  d[i] = std::stoi(direction[i].value);
+	}
+	s.normal = n;
+	s.slip   = d;
+      } else {
+	tfel::math::tvector<4u,int> n;
+	tfel::math::tvector<4u,int> d;
+	for(tfel::math::tvector<3u,int>::size_type i=0;i!=4;++i){
+	  n[i] = std::stoi(normal[i].value);
+	  d[i] = std::stoi(direction[i].value);
+	}
+	s.normal = n;
+	s.slip   = d;
+      }
+      return s;
+    };
+    if((key=="@SlidingSystem")||(key=="@GlidingSystem")||(key=="@SlipSystem")){
+      const auto s = gs();
+      this->bd.setSlipSystems({1u,s});
+      CxxTokenizer::readSpecifiedToken(m,";",p,pe);
+      return {true,p};
+    } else if ((key=="@SlidingSystems")||(key=="@GlidingSystems")||(key=="@SlipSystems")){
+      std::vector<BehaviourDescription::SlipSystem> ss;
+      CxxTokenizer::readSpecifiedToken(m,"{",p,pe);
+      CxxTokenizer::checkNotEndOfLine(m,p,pe);
+      while(p->value!="}"){
+	CxxTokenizer::checkNotEndOfLine(m,p,pe);
+	ss.push_back(gs());
+	CxxTokenizer::checkNotEndOfLine(m,p,pe);
+	if(p->value!="}"){
+	  CxxTokenizer::readSpecifiedToken(m,",",p,pe);
+	  CxxTokenizer::checkNotEndOfLine(m,p,pe);
+	  throw_if(p->value=="}","unexpected token '}'");
+	}
+      }
+      CxxTokenizer::readSpecifiedToken(m,"}",p,pe);
+      CxxTokenizer::readSpecifiedToken(m,";",p,pe);
+      this->bd.setSlipSystems(ss);
+      return {true,p};
+    } else if (key=="@InteractionMatrix"){
+      CxxTokenizer::checkNotEndOfLine(m,p,pe);
+      bool symmetric = false;
+      if(p->value=="<"){
+	const auto options = CxxTokenizer::readList(m,"<",">",p,pe);
+	for(const auto& o:options){
+	  if(o.value=="Symmetric"){
+	    symmetric=true;
+	  } else {
+	    throw_if(true,"unsupported option '"+o.value+"'");
+	  }
+	}
+      }
+      if(symmetric){
+	// read 6 values
+	const auto v = CxxTokenizer::readArray(m,p,pe);
+	CxxTokenizer::readSpecifiedToken(m,";",p,pe);
+	throw_if(v.size()!=6u,"invalid number of values given "
+		 "(expected 6 values)");
+	std::array<double,6u> mv;
+	for(std::array<double,6u>::size_type i=0;i!=6;++i){
+	  mv[i] = std::stod(v[i]);
+	}
+	this->bd.setInteractionMatrix(mv);
+	return {true,p};
+      } else {
+	// CxxTokenizer::readSpecifiedToken(m,";",p,pe);
+	throw_if(true,"unsymmetric interaction matrix "
+		 "are not supported yet");
+	return {true,p};
+      }
+    }
+    return BehaviourBrickBase::treatKeyword(key,p,pe);
+  } // end of FiniteStrainSingleCrystalBrick::treatKeyword
+  
+  void FiniteStrainSingleCrystalBrick::endTreatment() const
   {
     using tfel::glossary::Glossary; 
     const auto h = ModellingHypothesis::TRIDIMENSIONAL;
@@ -190,7 +292,7 @@ namespace mfront{
     this->bd.setCode(h,BehaviourData::BehaviourData::ComputeTangentOperator+"-DTAU_DDF",
     		     to,BehaviourData::CREATE,
     		     BehaviourData::AT_BEGINNING);
-  this->bd.addLocalDataStructure(d,BehaviourData::ALREADYREGISTRED);
+    this->bd.addLocalDataStructure(d,BehaviourData::ALREADYREGISTRED);
   } // end of FiniteStrainSingleCrystalBrick::endTreatment
   
   std::string FiniteStrainSingleCrystalBrick::getName() const{

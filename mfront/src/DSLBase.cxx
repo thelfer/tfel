@@ -471,25 +471,28 @@ namespace mfront
     return res;
   } // end of DSLBase::readOnlyOneToken
 
+  void DSLBase::registerIntegerConstant(const std::string& n,
+					const size_t l,
+					const int v)
+  {
+    if(!this->isValidIdentifier(n)){
+      this->throwRuntimeError("DSLBase::registerIntegerConstant",
+			      "Variable name '"+n+"' is not valid.");
+    }
+    this->addStaticVariableDescription(StaticVariableDescription("int",n,l,
+								 v));
+  } // end of DSLBase::registerIntegerConstant
+  
   void DSLBase::treatIntegerConstant()
   {
     this->checkNotEndOfFile("DSLBase::treatIntegerConstant",
 			    "Cannot read type of static variable.");
     const auto name = this->current->value;
     const auto line = this->current->line;
-    if(!this->isValidIdentifier(name)){
-      this->throwRuntimeError("DSLBase::treatIntegerConstant",
-			      "Variable name '"+name+"' is not valid.");
-    }
     ++(this->current);
     const auto value = this->readInitialisationValue<int>(name,true);
     this->readSpecifiedToken("DSLBase::treatIntegerConstant",";");
-    this->addStaticVariableDescription(StaticVariableDescription("int",name,line,
-								 value.second));
-    if(!this->integerConstants.insert({name,value.second}).second){
-      this->throwRuntimeError("DSLBase::treatIntegerConstant",
-			      "variable '"+name+"' already declared");
-    }
+    this->registerIntegerConstant(name,line,value.second);
   } // end of DSLBase::treatIntegerConstant
 
   void DSLBase::readVarList(VariableDescriptionContainer& cont,
@@ -534,12 +537,7 @@ namespace mfront
 	tfel::math::IntegerEvaluator ev(array_size);
 	const auto& vars = ev.getVariablesNames();
 	for(const auto& v:vars){
-	  auto pvv = this->integerConstants.find(v);
-	  if(pvv==this->integerConstants.end()){
-	    this->throwRuntimeError("DSLBase::readVarList : ",
-				    "unknown constant '"+v+"'");
-	  }
-	  ev.setVariableValue(v,pvv->second);
+	  ev.setVariableValue(v,this->getIntegerConstant(v));
 	}
 	const auto iv = ev.getValue();
 	if(iv<=0){
@@ -652,12 +650,11 @@ namespace mfront
     this->readVarList(cont,type,allowArray);
   } // end of DSLBase::readVarList
 
-  void
-  DSLBase::readList(std::vector<tfel::utilities::Token>& l,
-		    const std::string& m,
-		    const std::string& db,
-		    const std::string& de,
-		    const bool b)
+  void DSLBase::readList(std::vector<tfel::utilities::Token>& l,
+			 const std::string& m,
+			 const std::string& db,
+			 const std::string& de,
+			 const bool b)
   {
     l.clear();
     this->checkNotEndOfFile(m,"Expected '"+db+"'");

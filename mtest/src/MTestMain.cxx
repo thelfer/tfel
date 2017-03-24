@@ -489,8 +489,7 @@ namespace mtest
     return r.success() ?  EXIT_SUCCESS : EXIT_FAILURE;
   }
 
-  MTestMain::~MTestMain()
-  {}
+  MTestMain::~MTestMain() = default;
 
 } // end of namespace mtest
 

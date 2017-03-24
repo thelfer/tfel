@@ -19,6 +19,7 @@
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
+#include"TFEL/Material/CubicSlipSystems.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/LocalDataStructure.hxx"
 #include"MFront/ModelDescription.hxx"
@@ -812,9 +813,8 @@ namespace mfront
     }
   }
   
-  void
-  BehaviourDescription::addMainVariable(const DrivingVariable&    v,
-					const ThermodynamicForce& f)
+  void BehaviourDescription::addMainVariable(const DrivingVariable&    v,
+					     const ThermodynamicForce& f)
   {
     if(this->type!=BehaviourDescription::GENERALBEHAVIOUR){
       throw(std::runtime_error("BehaviourDescription::addMainVariables: "
@@ -834,8 +834,7 @@ namespace mfront
     return this->mvariables;
   } // end of BehaviourDescription::getMainVariables
   
-  bool
-  BehaviourDescription::isDrivingVariableName(const std::string& n) const
+  bool BehaviourDescription::isDrivingVariableName(const std::string& n) const
   {
     for(const auto& v : this->getMainVariables()){
       if(v.first.name==n){
@@ -845,8 +844,7 @@ namespace mfront
     return false;
   } // end of BehaviourDescription::isDrivingVariableName
 
-  bool
-  BehaviourDescription::isDrivingVariableIncrementName(const std::string& n) const
+  bool BehaviourDescription::isDrivingVariableIncrementName(const std::string& n) const
   {
     for(const auto& v : this->getMainVariables()){
       const auto& dv = v.first;
@@ -869,8 +867,7 @@ namespace mfront
     return {ov,of};
   } // end of BehaviourDescription::getMainVariablesSize
 
-  void
-  BehaviourDescription::setThermalExpansionCoefficient(MaterialProperty a)
+  void BehaviourDescription::setThermalExpansionCoefficient(MaterialProperty a)
   {
     using tfel::glossary::Glossary;
     if(this->areThermalExpansionCoefficientsDefined()){
@@ -883,10 +880,9 @@ namespace mfront
     this->thermalExpansionCoefficients.push_back(a);
   } // end of BehaviourDescription::setThermalExpansionCoefficient
 
-  void
-  BehaviourDescription::setThermalExpansionCoefficients(MaterialProperty a1,
-							MaterialProperty a2,
-							MaterialProperty a3)
+  void BehaviourDescription::setThermalExpansionCoefficients(MaterialProperty a1,
+							     MaterialProperty a2,
+							     MaterialProperty a3)
   {
     using tfel::glossary::Glossary;
     if(this->areThermalExpansionCoefficientsDefined()){
@@ -963,8 +959,111 @@ namespace mfront
     return this->thermalExpansionCoefficients;
   }
 
-  void
-  BehaviourDescription::setUseQt(const bool b)
+  void BehaviourDescription::setSlipSystems(const std::vector<SlipSystem>& ss)
+  {
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("BehaviourDescription::setSlipSystems: "+m));}
+    };
+    throw_if(this->areSlipSystemsDefined(),"slip systems already defined");
+    throw_if(ss.empty(),"empty number of slip systems specified");
+    throw_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
+	     "the behaviour is not orthotropic");
+    const auto cubic = ss[0].normal.is<tfel::math::tvector<3u,int>>();
+    auto check = [throw_if,cubic](const SlipSystem::Direction& cd){
+      throw_if((cubic) &&(cd.is<tfel::math::tvector<4u,int>>()),
+	       "some direction are given using cubic symmetry,"
+	       " other using orthogonal symmetry");
+      throw_if((!cubic)&&(cd.is<tfel::math::tvector<3u,int>>()),
+	       "some direction are given using cubic symmetry,"
+	       " other using orthogonal symmetry");
+    };
+    decltype(ss.size()) Nss = 0;
+    decltype(ss.size()) idx = 0;
+    for(const auto& s : ss){
+      check(s.normal);
+      check(s.slip);
+      if(cubic){
+	const auto& ns = s.normal.get<tfel::math::tvector<3u,int>>();
+	const auto& ds = s.slip.get<tfel::math::tvector<3u,int>>();
+	const auto& as = tfel::material::CubicSlipSystems::generate(ns,ds);
+	Nss += as.size();
+	if(ss.size()!=1u){
+	  const auto n = "Nss"+std::to_string(idx);
+	  StaticVariableDescription v("int",n,0u,
+				      static_cast<int>(as.size()));
+	  this->addStaticVariable(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+				  v,BehaviourData::UNREGISTRED);
+	}
+      } else {
+	throw_if(true,"orthogonal slips systems are not supported yet");
+      }
+      ++idx;
+    }
+    StaticVariableDescription v("int","Nss",0u,
+				static_cast<int>(Nss));
+    this->addStaticVariable(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+			    v,BehaviourData::UNREGISTRED);
+    this->slip_systems = ss;
+  }
+  
+  bool BehaviourDescription::areSlipSystemsDefined() const
+  {
+    return !this->slip_systems.empty();
+  } // end of BehaviourDescription::areSlipSystemsDefined
+
+  const std::vector<BehaviourDescription::SlipSystem>&
+  BehaviourDescription::getSlipSystems() const
+  {
+    if(!this->areSlipSystemsDefined()){
+      throw(std::runtime_error("BehaviourDescription::getSlipSystems: "
+			       "no slip systems defined"));
+    }
+    return this->slip_systems;
+  } // end of BehaviourDescription::getSlipSystems
+
+  void BehaviourDescription::setInteractionMatrix(const InteractionMatrix& m)
+  {
+    auto throw_if = [](const bool c,const std::string& msg){
+      if(c){throw(std::runtime_error("BehaviourDescription::setInteractionMatrix: "+msg));}
+    };
+    throw_if(this->slip_systems.empty(),"no slip system defined");
+    throw_if(this->slip_systems.size()!=1u,"more than one slip system defined");
+    throw_if(!this->interaction_matrices.empty(),
+	     "interaction matrix already defined");
+    InteractionMatrixDescription md = {0,0,m};
+    this->interaction_matrices.push_back(md);
+  } // end of BehaviourDescription::setInteractionMatrix
+
+  BehaviourDescription::InteractionMatrix BehaviourDescription::getInteractionMatrix() const
+  {
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("BehaviourDescription::getInteractionMatrix: "+m));}
+    };
+    throw_if(this->slip_systems.empty(),"no slip system defined");
+    throw_if(this->slip_systems.size()!=1u,"more than one slip system defined");
+    throw_if(this->interaction_matrices.empty(),
+	     "no interaction matrix defined");
+    throw_if(this->interaction_matrices.size()>1u,
+	     "internal error (inconsistent number of interaction matrices)");
+    const auto& mh = this->interaction_matrices.front();
+    throw_if((mh.i==0)&&(mh.j==0),
+	     "internal error (inconsistent interaction matrix definition)");
+    return mh.m;
+  } // end of BehaviourDescription::getInteractionMatrix
+  
+  bool BehaviourDescription::hasInteractionMatrix() const
+  {
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("BehaviourDescription::hasInteractionMatrix: "+m));}
+    };
+    throw_if(this->slip_systems.empty(),"no slip system defined");
+    throw_if(this->slip_systems.size()!=1u,"more than one slip system defined");
+    throw_if(this->interaction_matrices.size()>1u,
+	     "internal error (inconsistent number of interaction matrices)");
+    return this->interaction_matrices.size()==1u;
+  } // end of BehaviourDescription::hasInteractionMatrix
+  
+  void BehaviourDescription::setUseQt(const bool b)
   {
     if (this->use_qt) {
       throw(std::runtime_error("BehaviourDescription::setUseQt: "
@@ -973,8 +1072,7 @@ namespace mfront
     this->use_qt = b;
   } // end of BehaviourDescription::setUseQt
 
-  bool
-  BehaviourDescription::useQt() const
+  bool BehaviourDescription::useQt() const
   {
     return this->use_qt;
   } // end of BehaviourDescription::useQt
@@ -1441,6 +1539,11 @@ namespace mfront
     }
   } // end of BehaviourDescription::addStaticVariable
 
+  int BehaviourDescription::getIntegerConstant(const Hypothesis h,
+					       const std::string& n) const{
+    return this->getData(h,&BehaviourData::getIntegerConstant,n);
+  } // end of BehaviourDescription::getIntegerConstant
+  
   void
   BehaviourDescription::addVariables(const Hypothesis h,
 				     const VariableDescriptionContainer& v,
@@ -1876,15 +1979,13 @@ namespace mfront
     this->callBehaviourData(h,&BehaviourData::registerMemberName,n,true);
   } // end of BehaviourDescription::registerMemberName
 
-  void
-  BehaviourDescription::registerStaticMemberName(const Hypothesis h,
-						 const std::string& n)
+  void BehaviourDescription::registerStaticMemberName(const Hypothesis h,
+						      const std::string& n)
   {
     this->callBehaviourData(h,&BehaviourData::registerStaticMemberName,n,true);
   } // end of BehaviourDescription::registerMemberName
   
-  void
-  BehaviourDescription::addMaterialLaw(const std::string& m)
+  void BehaviourDescription::addMaterialLaw(const std::string& m)
   {
     if(std::find(this->materialLaws.begin(),
 		 this->materialLaws.end(),m)==this->materialLaws.end()){

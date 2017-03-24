@@ -1242,6 +1242,7 @@ include/TFEL/Glossary/Glossary.hxx -text
 include/TFEL/Glossary/GlossaryEntry.hxx -text
 include/TFEL/Macros.hxx -text
 include/TFEL/Material/BoundsCheck.hxx -text
+include/TFEL/Material/CubicSlipSystems.hxx -text
 include/TFEL/Material/DDIF2Base.hxx -text
 include/TFEL/Material/DDIF2Base.ixx -text
 include/TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx -text
@@ -5096,6 +5097,7 @@ src/Glossary/Makefile.am -text
 src/Makefile.am -text
 src/Material/BoundsCheck.cxx -text
 src/Material/CMakeLists.txt -text
+src/Material/CubicSlipSystems.cxx -text
 src/Material/DDIF2Base.cxx -text
 src/Material/FiniteStrainBehaviourTangentOperator.cxx -text
 src/Material/Makefile.am -text

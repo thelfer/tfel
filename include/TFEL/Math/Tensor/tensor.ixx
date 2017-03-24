@@ -190,6 +190,21 @@ namespace tfel{
     }
 
     template<typename Child>
+    template<typename T>
+    typename std::enable_if<
+      tfel::typetraits::IsAssignableTo<T,TensorNumType<Child>>::cond,
+      Child&>::type
+    tensor_base<Child>::operator=(const std::initializer_list<T>& src){
+      using Copy=tfel::fsalgo::copy<TensorDimeToSize<TensorTraits<Child>::dime>::value>;
+      if(src.size()!=TensorDimeToSize<TensorTraits<Child>::dime>::value){
+	throw(TensorInvalidInitializerListSizeException());
+      }
+      auto& child = static_cast<Child&>(*this);
+      Copy::exe(src.begin(),child.begin());
+      return child;
+    }
+    
+    template<typename Child>
     template<typename TensorType>
     typename std::enable_if<
       tfel::meta::Implements<TensorType,TensorConcept>::cond &&

@@ -127,6 +127,20 @@ namespace mfront{
     this->staticVars.push_back(v);
   } // end of MaterialPropertyDSL::addStaticVariableDescription
 
+  int MaterialPropertyDSL::getIntegerConstant(const std::string& n) const{
+    for(const auto& v:this->staticVars){
+      if(v.name==n){
+	if(v.type!="int"){
+	  this->throwRuntimeError("MaterialPropertyDSL::getIntegerConstant",
+				  "invalid type for variable '"+n+"'");
+	}
+	return v.value;
+      }
+    }
+    this->throwRuntimeError("MaterialPropertyDSL::getIntegerConstant",
+			    "unknown variable '"+n+"'");
+  } // end of MaterialPropertyDSL::getIntegerConstant
+  
   std::string
   MaterialPropertyDSL::getDescription()
   {

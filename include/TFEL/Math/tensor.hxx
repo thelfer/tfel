@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_TENSOR_HXX_ 
 
 #include<cstddef>
+#include<initializer_list>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
@@ -74,6 +75,15 @@ namespace tfel{
 					 TensorNumType<Child>>::cond,
 	Child&>::type
       operator=(const TensorType&);
+      /*!
+       * Assignement operator
+       */
+      template<typename T>
+      TFEL_MATH_INLINE 
+      typename std::enable_if<
+	tfel::typetraits::IsAssignableTo<T,TensorNumType<Child>>::cond,
+	Child&>::type
+      operator=(const std::initializer_list<T>&);
       //! Assignement operator
       template<typename TensorType>
       TFEL_MATH_INLINE 

@@ -40,7 +40,7 @@ namespace tfel
       tfel::math::tvector<Nss,tfel::math::tensor<3u,real> >  mu;
       //! symmetric tensor of directional sense
       tfel::math::tvector<Nss,tfel::math::stensor<3u,real> > mus;
-      //! return the uniq instance of the class
+      //! return the unique instance of the class
       static const MetallicCFCSlidingSystems&
       getSlidingSystems(void);
     protected:

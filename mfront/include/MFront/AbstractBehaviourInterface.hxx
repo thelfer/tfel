@@ -56,8 +56,8 @@ namespace mfront{
     allowDynamicallyAllocatedArrays(const bool) = 0;
     /*!
      * \brief treat a keyword
-     * \param[out/in] bd: behaviour description
-     * \param[in] key: keyword to be treated
+     * \param[in,out] bd: behaviour description
+     * \param[in]     key: keyword to be treated
      * \param[in] i:   list of interfaces to which the keyword is restricted
      * \param[in] p:   current position in the file
      * \param[in] pe:  iterator past the end of the file

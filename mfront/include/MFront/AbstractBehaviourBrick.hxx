@@ -18,6 +18,8 @@
 #include<map>
 #include<string>
 #include<vector>
+#include<utility>
+#include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
 namespace tfel{
@@ -50,6 +52,10 @@ namespace mfront
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
+    //! a simple alias
+    using CxxTokenizer = tfel::utilities::CxxTokenizer;
+    //! a simple alias
+    using tokens_iterator = CxxTokenizer::TokensContainer::const_iterator;
     /*!
      * Object used to pass parameters to BehaviourBricks constructor
      * The key   is the parameter name.
@@ -65,8 +71,20 @@ namespace mfront
     /*!
      * \brief return the name of the brick
      */
-    virtual std::string
-    getName() const = 0;
+    virtual std::string getName() const = 0;
+    /*!
+     * \brief treat a keyword
+     * \param[in] key: keyword to be treated
+     * \param[in,out] p:   current position in the file
+     * \param[in] pe:  iterator past the end of the file
+     * \return a pair. The first entry is true if the keyword was
+     * treated by the interface. The second entry is an iterator after
+     * the last token treated.
+     */
+    virtual std::pair<bool,tokens_iterator>
+    treatKeyword(const std::string&,
+		 tokens_iterator&,
+		 const tokens_iterator) = 0;
     /*!
      * \brief This method returns the list of supported modelling
      * hypotheses that are supported by the brick.
@@ -95,8 +113,7 @@ namespace mfront
     addRequirements(bbrick::RequirementManager&,
 		    const Hypothesis) const = 0;
     //! ends the file treatment
-    virtual void 
-    endTreatment() const = 0;
+    virtual void endTreatment() const = 0;
     //! descructor
     virtual ~AbstractBehaviourBrick();
   }; // end of struct AbstractBehaviourBrick
@@ -104,4 +121,3 @@ namespace mfront
 } // end of namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTBEHAVIOURBRICK_H */
-

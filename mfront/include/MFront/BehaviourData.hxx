@@ -578,9 +578,13 @@ namespace mfront{
      * \param[in] v : variable description
      * \param[in] s : registration status
      */
-    void
-    addStaticVariable(const StaticVariableDescription&,
-		      const RegistrationStatus);
+    void addStaticVariable(const StaticVariableDescription&,
+			   const RegistrationStatus);
+    /*!
+     * \return the value of an integer constant
+     * \param[in] n: variable name
+     */
+    int getIntegerConstant(const std::string&) const;
     /*!
      * \brief add a new stress free expansion description
      * \param[in] sfed: stress free expansion description
