@@ -195,64 +195,64 @@ void declareSingleStructureScheme()
     .def("setBehaviour",SingleStructureScheme_setBehaviour,
 	 "This method declares the behaviour used for the "
 	 "test.\n"
-	 "* The first parameter (string) specify a wrapper "
+	 "* The first argument (string) specify a wrapper "
 	 "aroung the behaviour.\n"
-	 "* The second parameter (string) specify the interface "
+	 "* The second argument (string) specify the interface "
 	 "used by the behaviour. Supported interfaces are:\n"
 	 "- 'umat'\n"
 	 "- 'cyrano'\n"
 	 "- 'aster'\n"
-	 "* The second parameter (string) is the path to the "
+	 "* The second argument (string) is the path to the "
 	 "dynamic library which implement the selected behaviour.\n"
-	 "* The third parameter (string) is the name of the function.")
+	 "* The third argument (string) is the name of the function.")
     .def("setBehaviour",SingleStructureScheme_setBehaviour2,
 	 "This method declares the behaviour used for the "
 	 "test.\n"
-	 "* The first parameter (string) specify the interface "
+	 "* The first argument (string) specify the interface "
 	 "used by the behaviour. Supported interfaces are:\n"
 	 "- 'umat'\n"
 	 "- 'cyrano'\n"
 	 "- 'aster'\n"
 	 "- 'abaqus'\n"
-	 "* The second parameter (string) is the path to the "
+	 "* The second argument (string) is the path to the "
 	 "dynamic library which implement the selected behaviour.\n"
-	 "* The third parameter (string) is the name of the function.")
+	 "* The third argument (string) is the name of the function.")
     .def("handleThermalExpansion",
 	 &SingleStructureScheme::setHandleThermalExpansion,
 	 "This method override the (de)activation of the thermal "
 	 "strain computation. It's activated by default if a "
 	 "material property named 'ThermalExpansion' is defined "
 	 "(isotropic materials).\n"
-	 "* If the parameter (bool) is 'true', the computation is "
+	 "* If the argument (bool) is 'true', the computation is "
 	 "activated. Otherwise, the computation is deactivated.")
     .def("setParameter",&SingleStructureScheme::setParameter,
 	 "This method specifies the value of a parameter's "
 	 "behaviour.\n"
-	 "* The first parameter (string) is the name of the "
+	 "* The first argument (string) is the name of the "
 	 "parameter's behaviour.\n"
-	 "* The second parameter (double) is the value of that "
+	 "* The second argument (double) is the value of that "
 	 "parameter's behaviour.")
     .def("setIntegerParameter",
 	 &SingleStructureScheme::setIntegerParameter,
 	 "This keyword specifies the value of an "
 	 "integer parameter of the behaviour.\n"
-	 "* The first parameter (string) is the name of the "
+	 "* The first argument (string) is the name of the "
 	 "parameter's behaviour.\n"
-	 "* The second parameter (int) is the value of that "
+	 "* The second argument (int) is the value of that "
 	 "parameter's behaviour.")
     .def("setUnsignedIntegerParameter",
 	 &SingleStructureScheme::setUnsignedIntegerParameter,
 	 "This method specifies the value of an "
 	 "unsigned integer parameter of the behaviour.\n"
-	 "* The first parameter (string) is the name of the "
+	 "* The first argument (string) is the name of the "
 	 "parameter's behaviour.\n"
-	 "* The second parameter (uint) is the value of that "
+	 "* The second argument (uint) is the value of that "
 	 "parameter's behaviour.")
     .def("setOutOfBoundsPolicy",
 	 &SingleStructureScheme::setOutOfBoundsPolicy,
 	 "This method let the user to precise the out "
 	 "of bounds policy.\n"
-	 "* The parameter (OutOfBoundsPolicy) is the selected "
+	 "* The argument (OutOfBoundsPolicy) is the selected "
 	 "policy. Three policies are available:\n"
 	 "- 'None' : nothing is done when a variable is out of "
 	 "bounds.\n"
@@ -266,7 +266,7 @@ void declareSingleStructureScheme()
 	 SingleStructureScheme_setMaterialProperty,
 	 (boost::python::arg("name"),"value",boost::python::arg("check")=true),
 	 "This method defines a constant material property.\n"
-	 "* The first parameter (string) is the selected material "
+	 "* The first argument (string) is the selected material "
 	 "property. Only the mechanical properties defined by the "
 	 "behaviour for the modelling hypothesis considered may be "
 	 "used. (Note : isotropic thermal expansion is defined "
@@ -274,13 +274,13 @@ void declareSingleStructureScheme()
 	 "orthotropic thermal expansion is defined through the "
 	 "'ThermalExpansion1', 'ThermalExpansion2' and "
 	 "'ThermalExpansion3' material properties).\n"
-	 "* The second parameter (double) is the constant value of "
+	 "* The second argument (double) is the constant value of "
 	 "the selected material property.")
     .def("setMaterialProperty",
 	 SingleStructureScheme_setMaterialProperty2,
 	 (boost::python::arg("name"),"value",boost::python::arg("check")=true),
 	 "This method defines a function material property.\n"
-	 "* The first parameter (string) is the selected material "
+	 "* The first argument (string) is the selected material "
 	 "property. Only the mechanical properties defined by the "
 	 "behaviour for the modelling hypothesis considered may be "
 	 "used. (Note : isotropic thermal expansion is defined "
@@ -288,7 +288,7 @@ void declareSingleStructureScheme()
 	 "orthotropic thermal expansion is defined through the "
 	 "'ThermalExpansion1', 'ThermalExpansion2' and "
 	 "'ThermalExpansion3' material properties).\n"
-	 "* The second parameter (string) is the function used "
+	 "* The second argument (string) is the function used "
 	 "to represent the behaviour of the selected material "
 	 "property.")
     .def("setMaterialProperty",
@@ -296,7 +296,7 @@ void declareSingleStructureScheme()
 	 (boost::python::arg("name"),"value","function",
 	  boost::python::arg("check")=true),
 	 "This method defines a function material property.\n"
-	 "* The first parameter (string) is the selected material "
+	 "* The first argument (string) is the selected material "
 	 "property. Only the mechanical properties defined by the "
 	 "behaviour for the modelling hypothesis considered may "
 	 "be used. (Note : isotropic thermal expansion is defined "
@@ -304,7 +304,7 @@ void declareSingleStructureScheme()
 	 "orthotropic thermal expansion is defined through the "
 	 "'ThermalExpansion1', 'ThermalExpansion2' and "
 	 "'ThermalExpansion3' material properties).\n"
-	 "* The second parameter (string) is the function used "
+	 "* The second argument (string) is the function used "
 	 "to represent the behaviour of the selected material "
 	 "property.")
     .def("setCastemMaterialProperty",
@@ -312,7 +312,7 @@ void declareSingleStructureScheme()
 	 (boost::python::arg("name"),boost::python::arg("library"),
 	  boost::python::arg("function"),boost::python::arg("check")=true),
 	 "This method defines a castem material property.\n"
-	 "* The first parameter (string) is the selected material "
+	 "* The first argument (string) is the selected material "
 	 "property. Only the mechanical properties defined by the "
 	 "behaviour for the modelling hypothesis considered may be "
 	 "used. (Note : isotropic thermal expansion is defined "
@@ -320,10 +320,10 @@ void declareSingleStructureScheme()
 	 "orthotropic thermal expansion is defined through the "
 	 "'ThermalExpansion1', 'ThermalExpansion2' and "
 	 "'ThermalExpansion3' material properties).\n"
-	 "* The second parameter (string) is the path to the "
+	 "* The second argument (string) is the path to the "
 	 "dynamic library which implement the behaviour of the "
 	 "selected material property.\n"
-	 "* The third parameter (string) is the name of the "
+	 "* The third argument (string) is the name of the "
 	 "function.")
     .def("setExternalStateVariable",
 	 SingleStructureScheme_setExternalStateVariable,
@@ -331,10 +331,10 @@ void declareSingleStructureScheme()
 	  boost::python::arg("check")=true),
 	 "This method specify the constant evolution of an "
 	 "external state variable.\n"
-	 "* The first parameter (string) is the name of the "
+	 "* The first argument (string) is the name of the "
 	 "external state variable (generally the temperature "
 	 "which is by default defined in behaviour interfaces).\n"
-	 "* The second parameter (double) is the constant value "
+	 "* The second argument (double) is the constant value "
 	 "of the selected external state variable.")
     .def("setExternalStateVariable",
 	 SingleStructureScheme_setExternalStateVariable2,
@@ -342,10 +342,10 @@ void declareSingleStructureScheme()
 	  boost::python::arg("check")=true),
 	 "This method specify the linear evolution of an "
 	 "external state variable.\n"
-	 "* The first parameter (string) is the name of the "
+	 "* The first argument (string) is the name of the "
 	 "external state variable (generally the temperature "
 	 "which is by default defined in behaviour interfaces).\n"
-	 "* The second parameter (map<double, double>) specify "
+	 "* The second argument (map<double, double>) specify "
 	 "a linear evolution: the associative array of time-value "
 	 "is used to perform an interpolation. That interpolation "
 	 "is only performed between the minimum and maximum times "
@@ -358,10 +358,10 @@ void declareSingleStructureScheme()
 	  boost::python::arg("check")=true),
 	 "This method specify the complex evolution of an "
 	 "external state variable.\n"
-	 "* The first parameter (string) is the name of the "
+	 "* The first argument (string) is the name of the "
 	 "external state variable (generally the temperature "
 	 "which is by default defined in behaviour interfaces).\n"
-	 "* The second parameter (string) is the function used "
+	 "* The second argument (string) is the function used "
 	 "to represent the evolution of the selected external "
 	 "state variable. The string will be interpreted as a "
 	 "function of time (represented by the variable 't' in "

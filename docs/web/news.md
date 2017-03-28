@@ -7,12 +7,95 @@
 \newcommand{\tenseurq}[1]{\underline{\underline{\mathbf{#1}}}}
 \newcommand{\tepsilonto}{\tenseur{\varepsilon}^{\mathrm{to}}}
 \newcommand{\tepsilonel}{\tenseur{\varepsilon}^{\mathrm{el}}}
+\newcommand{\tepsilonvis}{\tenseur{\varepsilon}^{\mathrm{vis}}}
+\newcommand{\tdepsilonvis}{\tenseur{\dot{\varepsilon}}^{\mathrm{vis}}}
 \newcommand{\tepsilonp}{\tenseur{\varepsilon}^{\mathrm{p}}}
 \newcommand{\tsigma}{\underline{\sigma}}
+\newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
 \newcommand{\sigmaH}{\sigma_{H}}
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
- 
+
+# [MFront Gallery] How to implement an isotropic viscoplastic behaviour with several kinematic variables following the Amstrong-Frederic evolution (27/03/2017)
+
+![](img/IsotropicViscoplasticityAmstrongFredericKinematicHardening.svg "")
+
+The implementation of an an isotropic viscoplastic behaviour with
+several kinematic variables following the Amstrong-Frederic evolution
+law is described
+[here](isotropicplasticityamstrongfrederickinematichardening.html)
+
+The behaviour is described by a standard split of the strain
+\(\tepsilonto\) in an elastic and a plastic parts, respectively
+denoted \(\tepsilonel\) and \(\tepsilonvis\):
+
+\[
+\tepsilonto=\tepsilonel+\tepsilonvis
+\]
+
+## Elastic behaviour
+
+The stress \(\tsigma\) is related to the the elastic strain
+\(\tepsilonel\) by a the standard Hooke behaviour:
+
+\[
+\tsigma = \lambda\,\trace{\tepsilonel}\,\tenseur{I}+2\,\mu\,\tepsilonel
+\]
+
+## Viscoplastic behaviour
+
+The viscoplastic behaviour follows a standard viscoplastic behaviour:
+\[
+\tdepsilonvis=\left\langle\Frac{F}{K}\right\rangle^{m}\,\tenseur{n}=\dot{p}\,\tenseur{n}
+\]
+
+where \(F\) is the yield surface defined below, \(<.>\) is Macaulay
+brackets, \(\tenseur{n}\) is the normal to \(F\) with respect to the
+stress and \(p\) is the equivalent plastic strain.
+
+The yield surface is defined by:
+\[
+F\paren{\tsigma,\tenseur{X}_{i},p}=\paren{\tsigma-\sum_{i=1}^{N}\tenseur{X}_{i}}_{\mathrm{eq}}-R\paren{p}=s^{e}_{\mathrm{eq}}-R\paren{p}
+\]
+
+where:
+
+- \(R\paren{p}\) describes the isotropic hardening as a function
+  of the equivalent viscoplastic strain \(p\).
+- the \(N\) tensors \(\tenseur{X}_{i}\) (i\in\left[1,N\right]) are
+  backstresses describing the kinematic hardening.
+- \(\paren{.}_{\mathrm{eq}}\) is the Von Mises norm.
+
+We have introduced an effective deviatoric stress \(\tenseur{s}^{e}\) defined by:
+\[
+\tenseur{s}^{e}=\tenseur{s}-\sum_{i=1}^{N}\tenseur{X}_{i}
+\]
+where \(\tenseur{s}\) is the deviatoric part of the stress.
+
+The normal is then given by:
+\[
+\tenseur{n}=\deriv{F}{\tsigma}=\Frac{3}{2}\,\Frac{\tenseur{s}^{e}}{s^{e}_{\mathrm{eq}}}
+\]
+
+## Evolution of the isotropic hardening
+
+The isotropic hardening is defined by:
+\[
+R\paren{p}=R_{\infty} + \paren{R_{0}-R_{\infty}}\,\exp\paren{-b\,p}
+\]
+
+## Evolution of the kinematic hardenings
+
+\[
+\tenseur{X}_{i}=\Frac{2}{3}\,C_{i}\,\tenseur{a}_{i}
+\]
+
+The evolution of the kinematic variables \(\tenseur{a}_{i}\) follows
+the Armstrong-Frederic rule:
+
+\[
+\tenseur{\dot{a}}_{i}=\tdepsilonvis-g[i]\,\tenseur{a}_{i}\,\dot{p}=\dot{p}\,\paren{\tenseur{n}-g[i]\,\tenseur{a}_{i}}
+\]
 
 # Third MFront Users Day
 

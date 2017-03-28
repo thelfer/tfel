@@ -99,6 +99,19 @@ if(enable-cppcheck)
   include(cmake/modules/CppCheckTargets.cmake)
 endif(enable-cppcheck)
 
+option(enable-vera++ "analyse targets with vera++" OFF)
+if(enable-vera++)
+  message(STATUS "vera++ support enabled")
+  find_package(vera++)
+  include(${VERA++_USE_FILE})
+  if(NOT VERA_ROOT)
+    message(fatal "VERA_ROOT is not defined")
+  endif(NOT VERA_ROOT)
+  add_vera_targets(*.h *.cpp
+    RECURSE
+    ROOT "${VERA_ROOT}/lib/vera++")
+endif(enable-vera++)
+
 # floatting point exceptions (TODO)
 
 # portable-build
@@ -231,14 +244,20 @@ if(enable-python-bindings)
   if(NOT HAVE_PYTHON)
     message(FATAL_ERROR "python not found. python is mandatory for python bindings.")
   endif(NOT HAVE_PYTHON)
-  find_package(Boost 1.36.0 COMPONENTS python)
-  if(Boost_FOUND)
+  find_package(Boost 1.36.0 COMPONENTS python numpy)
+  if(Boost_PYTHON_FOUND)
+    message(STATUS "  python found")
+    if(BOOST_NUMPY_FOUND)
+      message(STATUS "  numpy found")
+    else(BOOST_NUMPY_FOUND)
+      message(STATUS "  numpy *not* found")
+    endif(BOOST_NUMPY_FOUND)
     get_filename_component(Boost_PYTHON_LIBRARY ${Boost_PYTHON_LIBRARY} NAME)
     message(STATUS "Boost library python found (${Boost_PYTHON_LIBRARY}).")
-  else(Boost_FOUND)
-    message(FATAL_ERROR "Boost libraries not found.\n"
+  else(Boost_PYTHON_FOUND)
+    message(FATAL_ERROR "Boost python libraries not found.\n"
       "Required packages are :" ${BOOST_MANDATORY_COMPONENTS})
-  endif(Boost_FOUND)
+  endif(Boost_PYTHON_FOUND)
   list(APPEND CPACK_COMPONENTS_ALL python_bindings)
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DESCRIPTION 
     "Contains the python bindings for TFEL, MFront and MTest")

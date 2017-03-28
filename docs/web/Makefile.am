@@ -49,6 +49,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./hyperviscoelasticity.md				      \
 	   ./orthotropiclinearhardeningplasticity.md                  \
 	   ./isotropicplasticityamstrongfrederickinematichardening.md \
+	   ./finitestrainsinglecrystal.md                             \
 	   ./phasefield.md				              \
 	   ./pandoc-crossref.yaml                                     \
 	   ./TODO.md						      \
@@ -146,6 +147,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/freebsdlogo-1.png                                    \
 	   ./img/tplot.svg                                            \
 	   ./img/AccesDigiteo.png                                     \
+	   ./img/IsotropicViscoplasticityAmstrongFredericKinematicHardening.svg \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \

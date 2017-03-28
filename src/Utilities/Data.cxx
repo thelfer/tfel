@@ -258,8 +258,7 @@ namespace tfel{
 	return e;
       } // end of apply
       static bool
-      apply(const double v1,
-	    const double v2)
+      apply(const double v1,const double v2)
       {
 	return tfel::math::ieee754::fpclassify(v1-v2)==FP_ZERO;
       } // end of apply

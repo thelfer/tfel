@@ -45,6 +45,7 @@ bindings/python/mfront/umatxx/Behaviour.py.in -text
 bindings/python/mfront/umatxx/CMakeLists.txt -text
 bindings/python/mfront/umatxx/Makefile.am -text
 bindings/python/mfront/umatxx/__init__.py.in -text
+bindings/python/mtest/Behaviour.cxx -text
 bindings/python/mtest/CMakeLists.txt -text
 bindings/python/mtest/CurrentState.cxx -text
 bindings/python/mtest/MFrontLogStream.cxx -text
@@ -1052,6 +1053,7 @@ docs/web/downloads/patchs-Cast3M-2015.tar.bz2 -text
 docs/web/epx.md -text
 docs/web/faq.md -text
 docs/web/favicon.ico -text
+docs/web/finitestrainsinglecrystal.md -text
 docs/web/gallery.md -text
 docs/web/glossary.md -text
 docs/web/humans.txt -text
@@ -1095,6 +1097,7 @@ docs/web/img/IconeCast3M_bleue.png -text
 docs/web/img/IconeCast3M_verte.png -text
 docs/web/img/ImplicitDSL.svg -text
 docs/web/img/Interfaces.svg -text
+docs/web/img/IsotropicViscoplasticityAmstrongFredericKinematicHardening.svg -text
 docs/web/img/LogarithmicStrainPlasticity-ssna303.svg -text
 docs/web/img/Norton-full.docx -text
 docs/web/img/Norton-full.odt -text

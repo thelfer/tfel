@@ -11,6 +11,8 @@ class Behaviour:
       - internal state variable names
       - internal state variable types
       - external state variable names
+      - parameters names
+      - parameters types
       - symmetry of the behaviour (isotropic or orthotropic)
     """
 
@@ -78,6 +80,38 @@ class Behaviour:
                                                       self.behaviour,
                                                       self.hypothesis)
 
+    def getParametersNames(self):
+        """
+        return the names of the internal state variables
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.getUMATParametersNames(self.library,
+                                          self.behaviour,
+                                          self.hypothesis)
+
+    def getParametersTypes(self):
+        """
+        return the types of the internal state variables in an array
+        of integers sorted in the same order than the array of names
+        returned by the getParametersNames.
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        ts = elm.getUMATParametersTypes(self.library,
+                                        self.behaviour,
+                                        self.hypothesis)
+        types = []
+        for t in ts:
+            if(t==0):
+                types.append("Float")
+            elif(t==1):
+                types.append("Int")
+            elif(t==2):
+                types.append("UShort")
+            else:
+                raise("Behaviour.getParametersTypes :"
+                      "unsupported state variable type '"+str(t)+"'")
+        return types
+
     def isIsotropic(self):
         """
         return true if the material is isotropic
@@ -94,6 +128,25 @@ class Behaviour:
         return elm.getUMATBehaviourType(self.library,
                                         self.behaviour)==1
 
+    def requiresStiffnessTensor(self):
+        """
+        return true if the behaviour requires the stiffness tensor
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.getUMATRequiresStiffnessTensor(self.library,
+                                                  self.behaviour,
+                                                  self.hypothesis)==1
+
+    def requiresThermalExpansionCoefficientTensor(self):
+        """
+        return true if the behaviour requires the thermal expansion
+        coefficient tensor
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.requiresThermalExpansionCoefficientTensor(self.library,
+                                                             self.behaviour,
+                                                             self.hypothesis)==1
+    
     def setParameter(self,n,v):
         """
         set a parameter true

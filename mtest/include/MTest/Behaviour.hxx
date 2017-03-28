@@ -22,6 +22,7 @@
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 
+#include"TFEL/Utilities/Data.hxx"
 #include"TFEL/Material/OutOfBoundsPolicy.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
@@ -39,9 +40,11 @@ namespace mtest
   struct BehaviourWorkSpace;
   
   //! A simple wrapper around mechanical behaviours
-  struct Behaviour
+  struct MTEST_VISIBILITY_EXPORT Behaviour
     : std::enable_shared_from_this<Behaviour>
   {
+    //! a simple alias
+    using Parameters = tfel::utilities::Data;
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
@@ -64,6 +67,20 @@ namespace mtest
 					    const EvolutionManager&,
 					    const std::string&,
 					    const real);
+    /*!
+     * \brief build a behaviour
+     * \param[in] i: interface
+     * \param[in] l: library
+     * \param[in] f: function
+     * \param[in] d: parameter
+     * \param[in] h: modelling hypothesis
+     */
+    static std::shared_ptr<Behaviour>
+    getBehaviour(const std::string&,
+		 const std::string&,
+		 const std::string&,
+		 const Parameters&,
+		 const Hypothesis);
     //! \return the type of the behaviour
     virtual BehaviourType getBehaviourType() const = 0;
     //! \return the type of the behaviour
@@ -124,7 +141,7 @@ namespace mtest
     virtual unsigned short
     getSymmetryType() const = 0;
     /*!
-     * \return the number of material properties
+     * \return the names of the material properties
      */
     virtual std::vector<std::string>
     getMaterialPropertiesNames() const = 0;
@@ -175,7 +192,7 @@ namespace mtest
     virtual unsigned short
     getInternalStateVariablePosition(const std::string&) const = 0;
     /*!
-     * \return the number of external variables
+     * \return the names of external variables
      */
     virtual std::vector<std::string>
     getExternalStateVariablesNames() const  = 0;

@@ -17,6 +17,7 @@ link_directories("${PYTHON_LIBRARY_PATH}")
 
 mtest_python_module(_mtest
   pymtest.cxx
+  Behaviour.cxx
   SchemeBase.cxx
   SingleStructureScheme.cxx
   MTest.cxx
@@ -27,9 +28,11 @@ mtest_python_module(_mtest
   StructureCurrentState.cxx
   StudyCurrentState.cxx
   SolverWorkSpace.cxx
-  MFrontLogStream)
+  MFrontLogStream.cxx)
 
 target_link_libraries(py_mtest__mtest
-  TFELMTest)
+  TFELMTest
+  TFELMaterial
+  TFELUtilities)
 
 tfel_python_script(mtest __init__.py)

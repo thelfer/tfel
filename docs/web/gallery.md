@@ -37,6 +37,10 @@ behaviour. This framework is described
 
 - [Hayhurst](gallery/viscoplasticity/Hayhurst.mfront)
 - [ChabocheViscoplasticity](gallery/viscoplasticity/ChabocheViscoplasticity.mfront)
+- The implementation of an an isotropic plastic behaviour with several
+  kinematic variables following the Amstrong-Frederic evolution law is
+  described
+  [here](isotropicplasticityamstrongfrederickinematichardening.html)
 - [ImplicitNorton](gallery/viscoplasticity/ImplicitNorton.mfront)
 
 <!-- Local IspellDict: english -->

@@ -14,6 +14,7 @@
 #include<boost/python.hpp>
 #include"MTest/SolverOptions.hxx"
 
+void declareBehaviour();
 void declareSchemeBase();
 void declareSingleStructureScheme();
 void declareMTest();
@@ -57,6 +58,7 @@ BOOST_PYTHON_MODULE(_mtest)
 	   mtest::StiffnessMatrixType::CONSISTENTTANGENTOPERATOR)
     ;
   
+  declareBehaviour();
   declareCurrentState();
   declareStructureCurrentState();
   declareStudyCurrentState();
