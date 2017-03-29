@@ -101,7 +101,7 @@ namespace tfel{
       return this->symbols(n.c_str());
     } // end of LibraryInformation::symbols
 
-    LibraryInformation::~LibraryInformation() = default;
+    LibraryInformation::~LibraryInformation() noexcept = default;
     
   } // end of namespace system
     
