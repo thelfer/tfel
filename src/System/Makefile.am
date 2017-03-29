@@ -5,7 +5,8 @@ AM_LDFLAGS   = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-a
 endif
 
 lib_LTLIBRARIES = libTFELSystem.la 
-libTFELSystem_la_SOURCES  = ExternalLibraryManager.cxx       \
+libTFELSystem_la_SOURCES  = LibraryInformation.cxx           \
+			    ExternalLibraryManager.cxx       \
 			    ExternalBehaviourDescription.cxx \
 			    System.cxx                       \
 			    SystemError.cxx                  \
@@ -40,5 +41,9 @@ if TFEL_LINUX
 libTFELSystem_la_LIBADD += -ldl
 endif
 
-EXTRA_DIST = CMakeLists.txt   \
-	     getFunction.impl
+EXTRA_DIST = CMakeLists.txt                       \
+	     getFunction.impl                     \
+             LibraryInformationImplementation.cxx \
+	     LibraryInformation-elf_info.cxx      \
+             LibraryInformation-macho_info.cxx    \
+             LibraryInformation-pe_info.cxx

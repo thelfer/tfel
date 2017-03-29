@@ -1,13 +1,15 @@
-include_directories("${PROJECT_SOURCE_DIR}/include")
+include_directories("${PROJECT_SOURCE_DIR}/include"
+  "${CMAKE_CURRENT_SOURCE_DIR}")
 link_directories("${PROJECT_BINARY_DIR}/src/Exception")
 
 set(TFELSystem_SOURCES
-    ExternalLibraryManager.cxx
-    ExternalBehaviourDescription.cxx
-    System.cxx
-    SystemError.cxx
-    ThreadPool.cxx
-    ThreadedTaskResult.cxx)
+  LibraryInformation.cxx
+  ExternalLibraryManager.cxx
+  ExternalBehaviourDescription.cxx
+  System.cxx
+  SystemError.cxx
+  ThreadPool.cxx
+  ThreadedTaskResult.cxx)
 
 if(UNIX)
   set(TFELSystem_SOURCES

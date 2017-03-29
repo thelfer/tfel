@@ -81,6 +81,7 @@ install_header(TFEL/System ThreadPool.hxx)
 install_header(TFEL/System ThreadPool.ixx)
 install_header(TFEL/System ThreadedTaskResult.hxx)
 install_header(TFEL/System ThreadedTaskResult.ixx)
+install_header(TFEL/System LibraryInformation.hxx)
 
 install_header(TFEL/Utilities StringAlgorithms.hxx)
 install_header(TFEL/Utilities Argument.hxx)

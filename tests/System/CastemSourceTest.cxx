@@ -11,16 +11,14 @@
  * project under specific licensing conditions. 
  */
 
-
-#include<iostream>
-#include<cstdlib>
 #include<cmath>
-
-#include<TFEL/System/ExternalLibraryManager.hxx>
+#include<cstdlib>
+#include<iostream>
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
+#include"TFEL/System/ExternalLibraryManager.hxx"
 
 struct CastemSourceTest
   : public tfel::tests::TestCase
@@ -30,34 +28,23 @@ struct CastemSourceTest
 			    "CastemSourceTest")
   {} // end of CastemSourceTest
 
-  tfel::tests::TestResult
-  execute()
+  tfel::tests::TestResult execute() override
   {
-    using namespace std;
     using namespace tfel::system;
-    typedef ExternalLibraryManager ELM;
-    auto& elm = ELM::getExternalLibraryManager();
-    const string f = elm.getSource(".libs/libCastemMaterialLaw.so","Test");
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    const auto f = elm.getSource(".libs/libCastemMaterialLaw.so","Test");
     TFEL_TESTS_ASSERT(f=="Test.mfront");
     return this->result;
   } // end of execute
 };
 
-TFEL_TESTS_GENERATE_PROXY(CastemSourceTest,
-			  "CastemSourceTest");
+TFEL_TESTS_GENERATE_PROXY(CastemSourceTest,"CastemSourceTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
-  using namespace std;
-  using namespace tfel::tests;
-  auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
-  manager.addXMLTestOutput("CastemSource.xml");
-  TestResult r = manager.execute();
-  if(!r.success()){
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("CastemSource.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 } // end of main
-

@@ -632,38 +632,43 @@ test_castem(axialgrowth)
 test_castem(axialgrowth2)
 test_castem(axialgrowth3)
 
-if(CMAKE_CONFIGURATION_TYPES)
-  foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-    get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-    configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx.in"
-      ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription_${conf}.cxx @ONLY)
-    add_executable(UMATExternalBehaviourDescription_${conf} EXCLUDE_FROM_ALL
-      ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription_${conf}.cxx)
-    add_test(NAME UMATExternalBehaviourDescription_${conf}
-      COMMAND UMATExternalBehaviourDescription_${conf}
-      CONFIGURATIONS ${conf})
-    if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-      set_property(TEST UMATExternalBehaviourDescription_${conf}
-        PROPERTY DEPENDS "MFrontCastemBehaviours"
+macro(test_castem_cxx test_arg)
+  if(CMAKE_CONFIGURATION_TYPES)
+    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
+      get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
+      configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in"
+	${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}_${conf}.cxx @ONLY)
+      add_executable(${test_arg}_${conf} EXCLUDE_FROM_ALL
+	${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}_${conf}.cxx)
+      add_test(NAME ${test_arg}_${conf}
+	COMMAND ${test_arg}_${conf}
+	CONFIGURATIONS ${conf})
+      if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+	set_property(TEST ${test_arg}_${conf}
+          PROPERTY DEPENDS "MFrontCastemBehaviours"
     	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$ENV{PATH}")
-    elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-      set_property(TEST UMATExternalBehaviourDescription_${conf}
-        PROPERTY DEPENDS "MFrontCastemBehaviours")
-    endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-    target_link_libraries(UMATExternalBehaviourDescription_${conf}
-      TFELGlossary TFELSystem TFELTests TFELException)
-    add_dependencies(check UMATExternalBehaviourDescription_${conf})
-  endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-else(CMAKE_CONFIGURATION_TYPES)
-  get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-  configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx.in"
-    ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx @ONLY)
-  add_executable(UMATExternalBehaviourDescription EXCLUDE_FROM_ALL
-    ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx)
-  add_test(NAME UMATExternalBehaviourDescription COMMAND UMATExternalBehaviourDescription)
-  target_link_libraries(UMATExternalBehaviourDescription
-    TFELGlossary TFELSystem TFELTests TFELException)
-  set_tests_properties(UMATExternalBehaviourDescription
-    PROPERTIES DEPENDS MFrontCastemBehaviours)
-  add_dependencies(check UMATExternalBehaviourDescription)
-endif(CMAKE_CONFIGURATION_TYPES)
+      elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+	set_property(TEST ${test_arg}_${conf}
+          PROPERTY DEPENDS "MFrontCastemBehaviours")
+      endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      target_link_libraries(${test_arg}_${conf}
+	TFELGlossary TFELSystem TFELUtilities TFELTests TFELException)
+      add_dependencies(check ${test_arg}_${conf})
+    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
+  else(CMAKE_CONFIGURATION_TYPES)
+    get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
+    configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in"
+      ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx @ONLY)
+    add_executable(${test_arg} EXCLUDE_FROM_ALL
+      ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx)
+    add_test(NAME ${test_arg} COMMAND ${test_arg})
+    target_link_libraries(${test_arg}
+      TFELGlossary TFELSystem TFELUtilities TFELTests TFELException)
+    set_tests_properties(${test_arg}
+      PROPERTIES DEPENDS MFrontCastemBehaviours)
+    add_dependencies(check ${test_arg})
+  endif(CMAKE_CONFIGURATION_TYPES)
+endmacro(test_castem_cxx)
+
+test_castem_cxx(UMATExternalBehaviourDescription)
+test_castem_cxx(LibraryInformationCastemTest)

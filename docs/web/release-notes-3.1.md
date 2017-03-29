@@ -18,7 +18,23 @@ The page declares the new functionalities of the 3.1 version of
 
 # TFEL
 
+## TFEL/Utilities
+
+### `ends_with` string algorithm
+
+The `ends_with` string algorithm is an helper function used to
+determine if a given string ends with another.
+
 ## TFEL/System
+
+#### The `LibraryInformation` class
+
+This release introduces the `LibraryInformation` class that allow
+querying a library about exported symbols.
+
+> **Note** This class has been adapted from the `boost/dll` library
+> version 1.63 and has been originally written by Antony Polukhin,
+> Renato Tegon Forti and Antony Polukhin.
 
 #### Improvements to the `ExternalLibraryManager` class
 
@@ -441,6 +457,28 @@ policy. The normalisation policy can have one of the following values:
 ~~~~~~~~~~
 
 ### `python` bindings
+
+#### The `Behaviour` class
+
+The `Behaviour` class has been introduced in the `mtest` modules. This
+class can be used to determine at runtime time the material
+properties, internal state variables, parameters and external state
+variables required by a specific implementation.
+
+Contrary the `tfel.system.ExternalBehaviourDescription` class, the
+information given by the `Behaviour` class takes into account the
+variables that are implicitly declared by the interface to match its
+specific (internal) requirements. For example:
+
+- The `castem` interface usually adds additional material properties
+  describing the thermo-elastic properties. Such properties are may be
+  unused by the behaviour.
+- The `abaqus` interface may declare additional state variables to
+  describe the orthotropic axes (this is mandatory for finite strain
+  ortotropic behaviours).
+- etc...
+
+#### The `MTest` class
 
 In the `python` bindings, the `setNonLinearConstraint` method has been
 added to the `MTest` class.

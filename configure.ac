@@ -1188,6 +1188,7 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/bricks/cyrano/Makefile
 	   mfront/tests/behaviours/castem/Makefile
 	   mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx
+   	   mfront/tests/behaviours/castem/LibraryInformationCastemTest.cxx
            mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck.mtest
            mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck2.mtest
            mfront/tests/behaviours/castem/castemmaterialpropertiesboundscheck3.mtest
