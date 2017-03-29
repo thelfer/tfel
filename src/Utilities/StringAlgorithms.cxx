@@ -20,9 +20,14 @@ namespace tfel
   namespace utilities
   {
 
-    std::vector<std::string>
-    tokenize(const std::string& s,
-	     const char c)
+    bool ends_with(const std::string& s1,const std::string& s2)
+    {
+      return ((s1.size()>=s2.size()) &&
+	      (std::equal(s2.rbegin(),s2.rend(),s1.rbegin())));
+    } // end of ends_with
+    
+    std::vector<std::string> tokenize(const std::string& s,
+				      const char c)
     {
       using namespace std;
       vector<string> res;
@@ -37,21 +42,20 @@ namespace tfel
       return res;
     } // end of tokenize
 
-    std::vector<std::string>
-    tokenize(const std::string& s,
-	     const std::string& delim)
+    std::vector<std::string> tokenize(const std::string& s,
+				      const std::string& d)
     {
       using namespace std;
       vector<string> res;
       const string::size_type sl = s.length();
-      const string::size_type dl = delim.length();
+      const string::size_type dl = d.length();
       string::size_type b = 0u;
       string::size_type e;
-      e = s.find(delim,b);
+      e = s.find(d,b);
       while (e!=string::npos) {
 	res.push_back(s.substr(b,e-b));
 	b = e + dl;
-	e = s.find(delim,b);
+	e = s.find(d,b);
       }
       if(b!=sl){
 	res.push_back(s.substr(b));
@@ -59,24 +63,21 @@ namespace tfel
       return res;
     } // end of tokenize
 
-    std::string
-    replace_all(const std::string& s,
-		const std::string& s1,
-		const std::string& s2,
-		const std::string::size_type ps)
+    std::string replace_all(const std::string& s,
+			    const std::string& s1,
+			    const std::string& s2,
+			    const std::string::size_type ps)
     {
-      using namespace std;
-      string r;
+      std::string r;
       replace_all(r,s,s1,s2,ps);
       return r;
     }
     
-    void
-    replace_all(std::string& r,
-		const std::string& s,
-		const std::string& s1,
-		const std::string& s2,
-		const std::string::size_type ps){
+    void replace_all(std::string& r,
+		     const std::string& s,
+		     const std::string& s1,
+		     const std::string& s2,
+		     const std::string::size_type ps){
       using namespace std;
       string::size_type rs;
       string::size_type pos = ps;
@@ -100,10 +101,9 @@ namespace tfel
 	   &r[0]+rs);
     }
     
-    std::string
-    replace_all(const std::string& c,
-		const char c1,
-		const char c2){
+    std::string replace_all(const std::string& c,
+			    const char c1,
+			    const char c2){
       std::string s(c);
       std::string::size_type p  = 0u;
       if(s.empty()){
