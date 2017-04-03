@@ -1,5 +1,5 @@
 % How to implement an orthotropic plastic behaviour with isotropic linear hardening in MFront
-% Thomas Helfer
+% Thomas Helfer, Lorenzo Riparbelli, Ioannis Christovasilis
 % 27/01/2017
 
 \newcommand{\bts}[1]{{\left.#1\right|_{t}}}
@@ -38,8 +38,8 @@ The whole implementation is available
 
 # Description of the behaviour
 
-The behaviour is described by a standard split of the strain
-\(\tepsilonto\) in an elastic and a plastic parts, respectively
+The behaviour is described by a standard decomposition of the strain
+\(\tepsilonto\) in an elastic and a plastic component, respectively
 denoted \(\tepsilonel\) and \(\tepsilonp\):
 
 \[
@@ -65,7 +65,7 @@ f\paren{\sigmaH,p} = \sigmaH-\sigma_{0}-R\,p
 \]
 
 where \(\sigmaH\) is the Hill stress defined below, \(p\) is the
-equivalent plastic strain. \(\sigma_{0}\) is the yield stress and
+equivalent plastic strain, \(\sigma_{0}\) is the yield stress and
 \(R\) is the hardening slope.
 
 The Hill stress \(\sigmaH\) is defined using the fourth order Hill
@@ -152,10 +152,11 @@ The jacobian associated with this system is the identity matrix.
 
 # Implementation
 
-In the plastic loading case, the system of equations to be solved in
-*non-linear*. We choose the Newton-Raphson algorithm which an
-analytical jacobian. This algorithm is the *most efficient* in
-pratice.
+In the plastic loading case, the system of equations to be solved is
+*non-linear*. We choose the Newton-Raphson algorithm with an
+analytical jacobian. Compared to other algorithm available in `MFront`
+(Runge-Kutta, Broyden, Newton-Raphson with numerical jacobian, etc..),
+this algorithm is generally the *most efficient* in pratice.
 
 ## Preamble
 
@@ -169,15 +170,15 @@ specific language (dsl):
 Note that this dsl automatically declares the elastic strain `eel` as
 a state variable.
 
-As discussed before, we explicit state that that a fully implicit
+As discussed before, we explicit state that a fully implicit
 integration will be used by default:
 
 ~~~~{.cpp}
 @Theta 1;
 ~~~~
 
-This value can be dynamically changed at runtime by modifying the
-`theta` parameter.
+This value can be changed at runtime by modifying the `theta`
+parameter.
 
 The stopping criterion is chosen low, to ensure the quality of the
 consistent tangent operator (the default value, \(10^{-8}\) is enough
@@ -216,9 +217,9 @@ brick which provides:
   behaviour integration.
 - Automatic computation of the consistent tangent operator.
 - Automatic support for plane stress and generalized plane stress
-  modelling hypotheses (definitions of the axial strain as an
-  additional state variables and the associated equation enforcing the
-  plane stess condition).
+  modelling hypotheses (The axial strain is defined as an additional
+  state variable and the associated equation in the implicit system is
+  added to enforce the plane stess condition).
 - Automatic addition of the standard terms associated with the elastic
   strain state variable.
 
@@ -283,8 +284,8 @@ For the computation of the Hill tensor, we make use of the
 
 #### State variables
 
-As recalled earlier, the state variable `eel` is automatically
-declared by the `Implicit` dsl.
+As stated earlier, the state variable `eel` is automatically declared
+by the `Implicit` dsl.
 
 The equivalent plastic strain state variable `p` is declared as:
 
@@ -300,7 +301,7 @@ p.setGlossaryName("EquivalentPlasticStrain");
 
 #### Parameters
 
-The definition of yield surface introduce two material coefficients
+The definition of yield surface introduces two material coefficients
 \(\sigma_{0}\) and \(R\) that we declare as parameters:
 
 ~~~~{.cpp}
@@ -313,7 +314,7 @@ R.setEntryName("HardeningSlope");
 The `YieldStress` is an entry of the glossary (see
 [here](glossary.html)). The `HardeningSlope` name is not declared in
 the glossary name (yet) and is then associated to the \(R\) variable
-with the `setEntryName` methode.
+with the `setEntryName` method.
 
 #### Local variable
 
@@ -324,7 +325,7 @@ plastic loading case, we introduce a boolean local variable `b`.
 @LocalVariable bool b; // if true, plastic loading
 ~~~~
 
-## Initialisation of the local variables, determination of the loading case
+## Initialization of the local variables, determination of the loading case
 
 Before solving the implicit system, the code block introduced by the
 `@InitLocalVariables` keyword is executed. For this behaviour, this

@@ -43,6 +43,12 @@ namespace tfel
       std::vector<int> ivtypes;
       //! names of the external state variables
       std::vector<std::string> evnames;
+      //! names of the parameters
+      std::vector<std::string> pnames;
+      //! names of the integer parameters
+      std::vector<std::string> ipnames;
+      //! names of the unsigned short parameters
+      std::vector<std::string> upnames;
       //! source file
       std::string source;
       /*!

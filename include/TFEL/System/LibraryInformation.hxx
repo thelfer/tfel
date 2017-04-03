@@ -40,6 +40,8 @@ namespace tfel{
      */
     struct TFELSYSTEM_VISIBILITY_EXPORT LibraryInformation
     {
+      //! structure used to implement the PImpl idiom.
+      struct Implementation;
       /*!
        * Opens file with specified path and prepares for information extraction.
        * \param[in] f: path to the binary file from which the info must be extracted.
@@ -70,8 +72,6 @@ namespace tfel{
       //! \brief destructor
       ~LibraryInformation() noexcept;
     private:
-      //! structure used to implement the PImpl idiom.
-      struct Implementation;
       //! pointer to the internal structure
       std::shared_ptr<Implementation> impl;
     }; // end of struct LibraryInformation

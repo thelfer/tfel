@@ -161,11 +161,18 @@ namespace mtest
      */
     virtual unsigned short
     getInternalStateVariablePosition(const std::string&) const override;
-    /*!
-     * \return the names of external variables
-     */
+    //! \return the names of external variables
     virtual std::vector<std::string>
     getExternalStateVariablesNames(void) const override;
+    //! \return the names of floating point parameters
+    virtual std::vector<std::string>
+    getParametersNames() const override;
+    //! \return the names of integer parameters
+    virtual std::vector<std::string>
+    getIntegerParametersNames() const override;
+    //! \return the names of unsigned short parameters
+    virtual std::vector<std::string>
+    getUnsignedShortParametersNames() const override;
     /*!
      * \brief set the out of bounds policy
      * \param[in] p : policy selected

@@ -1812,9 +1812,8 @@ namespace mfront
     return this->getBehaviourData(h).hasCode(n);
   } // end of BehaviourDescription::getCode
 
-  void
-  BehaviourDescription::setBounds(const Hypothesis h,
-				  const BoundsDescription& b)
+  void BehaviourDescription::setBounds(const Hypothesis h,
+				       const BoundsDescription& b)
   {
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       this->d.setBounds(b);
@@ -1826,11 +1825,10 @@ namespace mfront
     }
   } // end of BehaviourDescription::setBounds
 
-  void
-  BehaviourDescription::setAttribute(const Hypothesis h,
-				     const std::string& n,
-				     const BehaviourAttribute& a,
-				     const bool b)
+  void BehaviourDescription::setAttribute(const Hypothesis h,
+					  const std::string& n,
+					  const BehaviourAttribute& a,
+					  const bool b)
   {
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       this->d.setAttribute(n,a,b);
@@ -1843,9 +1841,8 @@ namespace mfront
     }
   } // end of BehaviourDescription::setAttribute
 
-  bool
-  BehaviourDescription::hasAttribute(const Hypothesis h,
-				     const std::string& n) const
+  bool BehaviourDescription::hasAttribute(const Hypothesis h,
+					  const std::string& n) const
   {
     return this->getBehaviourData(h).hasAttribute(n);
   } // end of BehaviourDescription::hasAttribute

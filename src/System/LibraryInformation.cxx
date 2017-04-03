@@ -41,14 +41,14 @@ namespace tfel{
         throw_if(c,"not native format (64bit binary)");
       };
       auto throw_if_in_windows = [throw_if]() {
-#if (defined(__WIN32) || defined(__WIN64))
+#if (defined(_WIN32) || defined(_WIN64))
 	throw_if(true,"not native format (not a PE binary)");
 #endif
       };
       auto throw_if_in_linux = [throw_if]() {
-#if !((defined(__WIN32)   || defined(__WIN64))  || \
+#if !((defined(_WIN32)    || defined(_WIN64))   || \
       (defined(macintosh) || defined(Macintosh) || \
-       (defined(__APPLE__) && defined(__MACH__))))
+       ((defined(__APPLE__) && defined(__MACH__)))))
 	throw_if(true,"not native format (not an ELF binary)");
 #endif
       };

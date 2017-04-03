@@ -1308,6 +1308,7 @@ namespace mfront
     this->writeUMATxxMaterialPropertiesSymbols(out,name,h,mb);
     this->writeUMATxxStateVariablesSymbols(out,name,h,mb);
     this->writeUMATxxExternalStateVariablesSymbols(out,name,h,mb);
+    this->writeUMATxxParametersSymbols(out,name,h,mb);
     this->writeUMATxxRequirementsSymbols(out,name,h,mb);
     this->writeUMATxxAdditionalSymbols(out,name,h,mb,fd);
   }

@@ -173,16 +173,11 @@ namespace mtest
     /*!
      * \return the size of the array of internal variables
      */
-    virtual size_t
-    getInternalStateVariablesSize() const = 0;
-    /*!
-     * \return the descriptions the internal variables
-     */
+    virtual size_t getInternalStateVariablesSize() const = 0;
+    //! \return the descriptions the internal variables
     virtual std::vector<std::string>
     getInternalStateVariablesDescriptions() const = 0;
-    /*!
-     * \return the type of an internal variable
-     */
+    //! \return the type of an internal variable
     virtual unsigned short
     getInternalStateVariableType(const std::string&) const = 0;
     /*!
@@ -191,11 +186,18 @@ namespace mtest
      */
     virtual unsigned short
     getInternalStateVariablePosition(const std::string&) const = 0;
-    /*!
-     * \return the names of external variables
-     */
+    //! \return the names of external variables
     virtual std::vector<std::string>
     getExternalStateVariablesNames() const  = 0;
+    //! \return the names of floating point parameters
+    virtual std::vector<std::string>
+    getParametersNames() const  = 0;
+    //! \return the names of integer parameters
+    virtual std::vector<std::string>
+    getIntegerParametersNames() const  = 0;
+    //! \return the names of unsigned short parameters
+    virtual std::vector<std::string>
+    getUnsignedShortParametersNames() const  = 0;
     /*!
      * \brief set the out of bounds policy
      * \param[in] p : policy selected

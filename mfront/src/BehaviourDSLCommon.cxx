@@ -2122,8 +2122,7 @@ namespace mfront{
     this->readVariableList(v,h,&BehaviourDescription::addExternalStateVariables,true,false);
   }
 
-  void
-  BehaviourDSLCommon::treatBounds()
+  void BehaviourDSLCommon::treatBounds()
   {
     auto hs = std::set<Hypothesis>{};
     this->readHypothesesList(hs);
@@ -2137,8 +2136,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::treatBounds
 
-  void
-  BehaviourDSLCommon::treatPhysicalBounds()
+  void BehaviourDSLCommon::treatPhysicalBounds()
   {
     auto hs = std::set<Hypothesis>{};
     this->readHypothesesList(hs);

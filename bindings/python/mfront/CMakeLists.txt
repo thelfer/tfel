@@ -27,6 +27,7 @@ mfront_python_module(_mfront mfront.cxx
   VariableDescription.cxx
   BehaviourAttribute.cxx
   BehaviourData.cxx
+  BehaviourSymmetryType
   BehaviourDescription.cxx)
 target_link_libraries(py_mfront__mfront TFELMFront
   MFrontLogStream TFELMaterial

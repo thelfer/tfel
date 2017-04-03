@@ -458,8 +458,22 @@ namespace mtest
     return this->evnames;
   }
 
-  size_t
-  UmatBehaviourBase::getInternalStateVariablesSize() const
+  std::vector<std::string> UmatBehaviourBase::getParametersNames() const
+  {
+    return this->pnames;
+  } // end of UmatBehaviourBase::getParametersNames
+
+  std::vector<std::string> UmatBehaviourBase::getIntegerParametersNames() const
+  {
+    return this->ipnames;
+  } // end of UmatBehaviourBase::getIntegerParametersNames
+
+  std::vector<std::string> UmatBehaviourBase::getUnsignedShortParametersNames() const
+  {
+    return this->upnames;
+  } // end of UmatBehaviourBase::getUnsignedShortParametersNames
+  
+  size_t UmatBehaviourBase::getInternalStateVariablesSize() const
   {
     const auto h = this->getHypothesis();    
     size_t s = 0;
@@ -651,8 +665,7 @@ namespace mtest
     return s;
   }
 
-  void
-  UmatBehaviourBase::setParameter(const std::string& n,
+  void UmatBehaviourBase::setParameter(const std::string& n,
 				       const real v) const
   {
     using namespace tfel::system;

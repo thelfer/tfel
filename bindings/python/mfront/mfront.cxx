@@ -24,6 +24,7 @@ void declareFileDescription();
 void declareLibraryDescription();
 void declareTargetsDescription();
 void declareAbstractBehaviourDSL();
+void declareBehaviourSymmetryType();
 void declareVariableDescription();
 void declareBehaviourAttribute();
 void declareBehaviourData();
@@ -59,5 +60,6 @@ BOOST_PYTHON_MODULE(_mfront)
   declareBehaviourAttribute();
   declareVariableDescription();
   declareBehaviourData();
+  declareBehaviourSymmetryType();
   declareBehaviourDescription();
 }

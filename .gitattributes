@@ -29,6 +29,7 @@ bindings/python/mfront/AbstractDSL.cxx -text
 bindings/python/mfront/BehaviourAttribute.cxx -text
 bindings/python/mfront/BehaviourData.cxx -text
 bindings/python/mfront/BehaviourDescription.cxx -text
+bindings/python/mfront/BehaviourSymmetryType.cxx -text
 bindings/python/mfront/CMakeLists.txt -text
 bindings/python/mfront/DSLFactory.cxx -text
 bindings/python/mfront/FileDescription.cxx -text

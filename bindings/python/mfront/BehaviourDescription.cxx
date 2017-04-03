@@ -168,6 +168,8 @@ void declareBehaviourDescription(){
 	 return_internal_reference<>())
     .def("hasAttribute",
 	 static_cast<bool (BehaviourDescription::*)(const std::string&) const>(&BehaviourDescription::hasAttribute))
+    .def("getSymmetryType",&BehaviourDescription::getSymmetryType)
+    .def("getElasticSymmetryType",&BehaviourDescription::getElasticSymmetryType)
     .def("hasAttribute",hasAttribute)
     .def("getUnsignedShortAttribute",getUnsignedShortAttribute)
     .def("getStringAttribute",getStringAttribute)

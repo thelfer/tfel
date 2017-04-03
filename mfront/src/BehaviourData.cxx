@@ -928,14 +928,12 @@ namespace mfront{
     return out.str();
   } // end of BehaviourData::getCode
 
-  bool
-  BehaviourData::hasCode(const std::string& n) const
+  bool BehaviourData::hasCode(const std::string& n) const
   {
     return this->cblocks.find(n)!=this->cblocks.end();
   }
 
-  void
-  BehaviourData::setBounds(const BoundsDescription& d)
+  void BehaviourData::setBounds(const BoundsDescription& d)
   {
     this->bounds.push_back(d);
   } // end of BehaviourData::setBound

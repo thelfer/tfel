@@ -195,6 +195,24 @@ namespace mtest{
     return this->b->getExternalStateVariablesNames();
   } // end of LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablesNames
 
+  std::vector<std::string>
+  LogarithmicStrain1DBehaviourWrapper::getParametersNames() const 
+  {
+    return this->b->getParametersNames();
+  } // end of LogarithmicStrain1DBehaviourWrapper::getParametersNames
+
+  std::vector<std::string>
+  LogarithmicStrain1DBehaviourWrapper::getIntegerParametersNames() const 
+  {
+    return this->b->getIntegerParametersNames();
+  } // end of LogarithmicStrain1DBehaviourWrapper::getIntegerParametersNames
+
+  std::vector<std::string>
+  LogarithmicStrain1DBehaviourWrapper::getUnsignedShortParametersNames() const 
+  {
+    return this->b->getUnsignedShortParametersNames();
+  } // end of LogarithmicStrain1DBehaviourWrapper::getUnsignedShortParametersNames
+  
   void
   LogarithmicStrain1DBehaviourWrapper::setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy p) const 
   {

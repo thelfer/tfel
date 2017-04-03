@@ -17,9 +17,9 @@
 #include<cmath>
 #include<cassert>
 #include<algorithm>
+#include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
-#include<type_traits>
 #include"TFEL/TypeTraits/IsReal.hxx"
 #include"TFEL/TypeTraits/IsFundamentalNumericType.hxx"
 #include"TFEL/Math/General/CubicRoots.hxx"
@@ -289,10 +289,13 @@ namespace tfel{
 	  TFEL_CONSTEXPR const auto rel_prec  = 100*std::numeric_limits<T>::epsilon();
 	  TFEL_CONSTEXPR const auto one_third = T(1)/T(3);
 	  StensorComputeEigenValues<3u>::exe(s,vp(0),vp(1),vp(2),b);
-	  const auto tr  = (s[0]+s[1]+s[2])*one_third;
-	  const auto mvp = max(max(std::abs(vp(0)-tr),std::abs(vp(1)-tr)),std::abs(vp(2)-tr));
-	  const bool bsmall = ((mvp<100*std::numeric_limits<T>::min())||
-			       (mvp*std::numeric_limits<T>::epsilon()<100*std::numeric_limits<T>::min()));
+	  const auto tr  = (s[0]+s[1]+s[2])/3;
+	  auto ms = T(0);
+	  for(unsigned short i=0;i!=6;++i){
+	    ms = std::max(ms,std::abs(s[i]));
+	  }
+	  const bool bsmall = ((ms<100*std::numeric_limits<T>::min())||
+			       (ms*std::numeric_limits<T>::epsilon()<100*std::numeric_limits<T>::min()));
   	  if(bsmall){
 	    // all eigenvalues are equal
 	    vec = tmatrix<3u,3u,T>::Id();
@@ -302,17 +305,23 @@ namespace tfel{
 	    return true;
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
 	  }
-	  const auto imvp = T(1)/mvp;
+	  const auto ims = T(1)/ms;
 	  tvector<6u,T> s2(s);
 	  tvector<3u,T> vp2(vp);
-	  vp2 = {(vp(0)-tr)*imvp,(vp(1)-tr)*imvp,(vp(2)-tr)*imvp};
-	  s2    *= imvp;
-	  s2(0) -= tr * imvp;
-	  s2(1) -= tr * imvp;
-	  s2(2) -= tr * imvp;
-	  const auto prec = max(rel_prec,100*std::numeric_limits<T>::min());
-	  if((std::abs(vp2(0)-vp2(1))<=prec)&&
-	     (std::abs(vp2(0)-vp2(2))<=prec)){
+	  vp2(0) = (vp(0) - tr) * ims;
+	  vp2(1) = (vp(1) - tr) * ims;
+	  vp2(2) = (vp(2) - tr) * ims;
+	  s2    *= ims;
+	  s2(0) -= tr * ims;
+	  s2(1) -= tr * ims;
+	  s2(2) -= tr * ims;
+	  const auto prec = 10*std::max(rel_prec,100*std::numeric_limits<T>::min());
+	  if(((std::abs(vp2(0)-vp2(1))<=prec)&&
+	      (std::abs(vp2(0)-vp2(2))<=prec))||
+	     ((std::abs(vp2(1)-vp2(0))<=prec)&&
+	      (std::abs(vp2(1)-vp2(2))<=prec))||
+	     ((std::abs(vp2(2)-vp2(0))<=prec)&&
+	      (std::abs(vp2(2)-vp2(1))<=prec))){
 	    // all eigenvalues are equal
 	    vec = tmatrix<3u,3u,T>::Id();
 #ifdef TFEL_PARANOIC_CHECK

@@ -29,6 +29,8 @@
 - Olivier Jamond
 - Tran Thang Dang
 - Thouraya Baranger
+- Lorenzo Riparbelli
+- Ioannis Christovasilis
 
 # Tools
 

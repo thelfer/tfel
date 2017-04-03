@@ -132,14 +132,10 @@ namespace mtest
     //! \return expand the names of internal variables
     virtual std::vector<std::string>
     expandInternalStateVariablesNames() const override;
-    /*!
-     * \return the size of the array of internal variables
-     */
+    //! \return the size of the array of internal variables
     virtual size_t
     getInternalStateVariablesSize() const override;
-    /*!
-     * \return the descriptions the internal variables
-     */
+    //! \return the descriptions the internal variables
     virtual std::vector<std::string>
     getInternalStateVariablesDescriptions() const override;
     /*!
@@ -154,11 +150,18 @@ namespace mtest
      */
     virtual unsigned short
     getInternalStateVariablePosition(const std::string&) const override;
-    /*!
-     * \return the number of external variables
-     */
+    //! \return the number of external variables
     virtual std::vector<std::string>
     getExternalStateVariablesNames(void) const  override;
+    //! \return the names of floating point parameters
+    virtual std::vector<std::string>
+    getParametersNames() const override;
+    //! \return the names of integer parameters
+    virtual std::vector<std::string>
+    getIntegerParametersNames() const override;
+    //! \return the names of unsigned short parameters
+    virtual std::vector<std::string>
+    getUnsignedShortParametersNames() const override;
     /*!
      * \brief set the out of bounds policy
      * \param[in] p : policy selected

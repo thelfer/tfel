@@ -147,6 +147,15 @@ void declareBehaviour(){
     .def("getExternalStateVariablesNames",
 	 &Behaviour::getExternalStateVariablesNames,
 	 "return the names of the external state variables")
-    ;  
+    .def("getParametersNames",
+	 &Behaviour::getParametersNames,
+	 "return the names of the floating point parameters")
+    .def("getIntegerParametersNames",
+	 &Behaviour::getIntegerParametersNames,
+	 "return the names of the integer parameters")
+    .def("getUnsignedShortParametersNames",
+	 &Behaviour::getUnsignedShortParametersNames,
+	 "return the names of the unsigned short parameters")
+    ;
   
 } // end of declareBehaviour()

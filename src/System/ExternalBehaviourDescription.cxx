@@ -32,13 +32,14 @@ namespace tfel
     ExternalBehaviourDescription::ExternalBehaviourDescription(const std::string& l,
 							       const std::string& f,
 							       const std::string& h){
+      auto throw_if = [l,f](const bool c,const std::string& m){
+	if(c){throw(std::runtime_error("ExternalBehaviourDescription::ExternalBehaviourDescription: "
+				       +m+" for behaviour '"+l+"' in library '"+l+"'"));}
+      };
       auto& elm = ExternalLibraryManager::getExternalLibraryManager();
       const auto hypotheses = elm.getSupportedModellingHypotheses(l,f);
-      if(std::find(hypotheses.begin(),hypotheses.end(),h)==hypotheses.end()){
-	throw(std::runtime_error("ExternalBehaviourDescription::ExternalBehaviourDescription : "
-				 "unsupported hypothesis '"+h+"' for behaviour '"+l+"'"
-				 "in library '"+l+"'"));
-      }
+      throw_if(std::find(hypotheses.begin(),hypotheses.end(),h)==hypotheses.end(),
+	       "unsupported hypothesis");
       this->source    = elm.getSource(l,f);
       this->btype     = elm.getUMATBehaviourType(l,f);
       this->kinematic = elm.getUMATBehaviourKinematic(l,f);
@@ -49,6 +50,23 @@ namespace tfel
       this->ivnames   = elm.getUMATInternalStateVariablesNames(l,f,h);
       this->ivtypes   = elm.getUMATInternalStateVariablesTypes(l,f,h);
       this->evnames   = elm.getUMATExternalStateVariablesNames(l,f,h);
+      //! parameters
+      const auto pn = elm.getUMATParametersNames(l,f,h);
+      const auto pt = elm.getUMATParametersTypes(l,f,h);
+      throw_if(pn.size()!=pt.size(),
+	       "inconsistent size between parameters' names and parameters' sizes");
+      for(decltype(pn.size()) i=0;i!=pn.size();++i){
+	if(pt[i]==0){
+	  this->pnames.push_back(pn[i]);
+	} else if (pt[i]==1){
+	  this->ipnames.push_back(pn[i]);
+	} else if (pt[i]==2){
+	  this->upnames.push_back(pn[i]);
+	} else {
+	  throw_if(true,"unsupported parameter type for parameter '"+pn[i]+"'");
+	}
+      }
+      //! additional parameters
       this->requiresStiffnessTensor =
 	elm.getUMATRequiresStiffnessTensor(l,f,h);
       this->requiresThermalExpansionCoefficientTensor =
