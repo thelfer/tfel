@@ -14,17 +14,14 @@
 #undef NDEBUG
 #endif
 
-#include<iostream>
-#include<cstdlib>
 #include<cmath>
-
 #include<cassert>
+#include<cstdlib>
+#include<iostream>
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
-
-#include"TFEL/Math/Vector/VectorUtilities.hxx"
 #include"TFEL/Math/stensor.hxx"
 
 struct STensorTest7 final
@@ -99,12 +96,12 @@ struct STensorTest7 final
       TFEL_TESTS_ASSERT(abs(vp_p(i)-max(vp(i),0.))<eps);
       TFEL_TESTS_ASSERT(abs(vp_n(i)-min(vp(i),0.))<eps);
       for(unsigned short j=0;j!=3;++j){
-	TFEL_TESTS_ASSERT(abs(m_p(i,j)-m(i,j))<eps);
-	if(i==j){
-	  TFEL_TESTS_ASSERT(abs(m_n(i,j)-1.)<eps);
-	} else {
-	  TFEL_TESTS_ASSERT(abs(m_n(i,j)-0.)<eps);
-	}
+    	TFEL_TESTS_ASSERT(abs(m_p(i,j)-m(i,j))<eps);
+    	if(i==j){
+    	  TFEL_TESTS_ASSERT(abs(m_n(i,j)-1.)<eps);
+    	} else {
+    	  TFEL_TESTS_ASSERT(abs(m_n(i,j)-0.)<eps);
+    	}
       }
     }
     return this->result;

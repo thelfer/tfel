@@ -110,7 +110,7 @@ namespace tfel{
     };
 
     //! comparison operator
-    bool operator==(const Data&,const Data&);
+    TFELUTILITIES_VISIBILITY_EXPORT bool operator==(const Data&,const Data&);
 
     /*!
      * \brief extract a value of the given type from a Data structure
