@@ -328,7 +328,7 @@ namespace castem
     const tvector<3u,CastemReal> v0 = m.column_view<0u>();
     const tvector<3u,CastemReal> v1 = m.column_view<1u>();
     const stensor<2u,CastemReal> n01 = stensor<2u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
-    if(abs(vp(0)-vp(1))>1.e-12){
+    if(std::abs(vp(0)-vp(1))>1.e-12){
       ST2toST2View<2u,CastemReal>{P} = (n0^n0)/vp(0)+(n1^n1)/vp(1)+(n2^n2)/vp(2)+(log_vp(0)-log_vp(1))/(vp(0)-vp(1))*(n01^n01);
     } else {
       ST2toST2View<2u,CastemReal>{P} = (n0^n0)/vp(0)+(n1^n1)/vp(1)+(n2^n2)/vp(2)+(n01^n01)/vp(0);
@@ -360,10 +360,10 @@ namespace castem
     E[4] *= cste;
     E[5] *= cste;
     // computing P
-    if((abs(vp(0)-vp(1))<1.e-12)&&(abs(vp(0)-vp(2))<1.e-12)){
+    if((std::abs(vp(0)-vp(1))<1.e-12)&&(std::abs(vp(0)-vp(2))<1.e-12)){
       CastemReal vpm = (vp(0)+vp(1)+vp(2))/3;
       ST2toST2View<3u,CastemReal>{P} = st2tost2<3u,CastemReal>::Id()/vpm;
-    } else if(abs(vp(0)-vp(1))<1.e-12){
+    } else if(std::abs(vp(0)-vp(1))<1.e-12){
       const tvector<3u,CastemReal> v0 = m.column_view<0u>();
       const tvector<3u,CastemReal> v1 = m.column_view<1u>();
       const tvector<3u,CastemReal> v2 = m.column_view<2u>();
@@ -373,7 +373,7 @@ namespace castem
       CastemReal vpm = (vp(0)+vp(1))/2;
       ST2toST2View<3u,CastemReal>{P} = (((n0^n0)+(n1^n1)+(n01^n01))/vpm+(n2^n2)/vp(2)+
 				      (log_vp(0)-log_vp(2))/(vpm-vp(2))*((n02^n02)+(n12^n12)));
-    } else if(abs(vp(0)-vp(2))<1.e-12){
+    } else if(std::abs(vp(0)-vp(2))<1.e-12){
       const tvector<3u,CastemReal> v0 = m.column_view<0u>();
       const tvector<3u,CastemReal> v1 = m.column_view<1u>();
       const tvector<3u,CastemReal> v2 = m.column_view<2u>();
@@ -383,7 +383,7 @@ namespace castem
       CastemReal vpm = (vp(0)+vp(2))/2;
       ST2toST2View<3u,CastemReal>{P} = (((n0^n0)+(n2^n2)+(n02^n02))/vpm+(n1^n1)/vp(1)+
 				      (log_vp(0)-log_vp(1))/(vpm-vp(1))*((n01^n01)+(n12^n12)));
-    } else if(abs(vp(1)-vp(2))<1.e-12){
+    } else if(std::abs(vp(1)-vp(2))<1.e-12){
       const tvector<3u,CastemReal> v0 = m.column_view<0u>();
       const tvector<3u,CastemReal> v1 = m.column_view<1u>();
       const tvector<3u,CastemReal> v2 = m.column_view<2u>();
@@ -448,6 +448,7 @@ namespace castem
        sk2[3] *= cste;
        sk2[4] *= cste;
        sk2[5] *= cste;
+       //       std::cout << "P: " << P << std::endl;
        const st2tost2<3u,CastemReal> iP(invert(ConstST2toST2View<3u,CastemReal>{P}));
        StensorView<3u,CastemReal>{s} = ConstStensorView<3u,CastemReal>{sk2}|iP;
        s[3] *= icste;
