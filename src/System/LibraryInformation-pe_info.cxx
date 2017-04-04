@@ -27,9 +27,11 @@ namespace details {
   // because that header must be included only on Windows platform
   typedef unsigned char BYTE_;
   typedef unsigned short WORD_;
-  typedef unsigned long DWORD_;
-  typedef long LONG_;
-  typedef unsigned long ULONG_;
+  
+  typedef std::uint32_t DWORD_;
+  typedef std::int32_t LONG_;
+  typedef std::int32_t ULONG_;
+
   typedef std::int64_t LONGLONG_;
   typedef std::uint64_t ULONGLONG_;
 
