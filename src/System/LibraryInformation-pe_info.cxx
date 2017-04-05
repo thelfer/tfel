@@ -29,10 +29,10 @@ namespace details {
   typedef unsigned short WORD_;
   
   typedef std::uint32_t DWORD_;
-  typedef std::int32_t LONG_;
-  typedef std::int32_t ULONG_;
+  typedef std::int32_t  LONG_;
+  typedef std::uint32_t ULONG_;
 
-  typedef std::int64_t LONGLONG_;
+  typedef std::int64_t  LONGLONG_;
   typedef std::uint64_t ULONGLONG_;
 
   struct IMAGE_DOS_HEADER_ { // 32/64 independent header
@@ -221,8 +221,7 @@ namespace details {
       const std::size_t exp_virtual_address = h.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT_].VirtualAddress;
 
       const std::size_t real_offset = get_file_offset(exp_virtual_address, h);
-#pragma message("HERE")
-      //      BOOST_ASSERT(real_offset);
+      assert(real_offset);
 
       this->f_->seekg(static_cast<std::streamoff>(real_offset));
       read_raw(e);

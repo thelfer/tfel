@@ -15,6 +15,7 @@
  * Antony Polukhin, Renato Tegon Forti and Antony Polukhin.
  */
 
+#include<cassert>
 #include<cstring>
 #include<fstream>
 #include<stdexcept>
