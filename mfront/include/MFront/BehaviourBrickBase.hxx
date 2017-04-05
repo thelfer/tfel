@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICKBASE_H_
-#define LIB_MFRONT_BEHAVIOURBRICKBASE_H_ 
+#ifndef LIB_MFRONT_BEHAVIOURBRICKBASE_HXX
+#define LIB_MFRONT_BEHAVIOURBRICKBASE_HXX 
 
 #include"MFront/AbstractBehaviourBrick.hxx"
 

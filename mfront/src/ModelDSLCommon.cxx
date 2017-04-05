@@ -778,93 +778,31 @@ namespace mfront{
 
   void ModelDSLCommon::treatBounds()
   {
-    this->registerBounds(VariableDescription::bound);
+    const auto b = mfront::readVariableBounds(this->current,this->end());
+    if(this->outputs.contains(b.first)){
+      this->outputs.getVariable(b.first).setBounds(b.second);
+    } else if(this->inputs.contains(b.first)){
+      this->inputs.getVariable(b.first).setBounds(b.second);
+    } else {
+      throw(std::runtime_error("ModelDSLCommon::treatBounds: "
+			       "no variable named '"+b.first+"'"));
+    }
+    this->readSpecifiedToken("ModelDSLCommon::treatBounds",";");
   } // end of ModelDSLCommon::treatBounds
 
   void ModelDSLCommon::treatPhysicalBounds()
   {
-    this->registerBounds(VariableDescription::physicalBound);
+    const auto b = mfront::readVariableBounds(this->current,this->end());
+    if(this->outputs.contains(b.first)){
+      this->outputs.getVariable(b.first).setPhysicalBounds(b.second);
+    } else if(this->inputs.contains(b.first)){
+      this->inputs.getVariable(b.first).setPhysicalBounds(b.second);
+    } else {
+      throw(std::runtime_error("ModelDSLCommon::treatPhysicalBounds: "
+			       "no variable named '"+b.first+"'"));
+    }
+    this->readSpecifiedToken("ModelDSLCommon::treatPhysicalBounds",";");
   } // end of ModelDSLCommon::treatPhysicalBounds
-
-  void ModelDSLCommon::registerBounds(const std::string& bn)
-  {
-    VariableBoundsDescription bd;
-    this->checkNotEndOfFile("ModelDSLCommon::registerBounds");
-    const auto n = this->current->value;
-    bd.lineNumber = this->current->line;
-    bd.varNbr  = 0u;
-    ++(this->current);
-    if(this->outputs.contains(n)){
-      this->registerBounds(this->outputs.getVariable(n),bd,bn);
-      return;
-    }
-    if(this->inputs.contains(n)){
-      this->registerBounds(this->inputs.getVariable(n),bd,bn);
-      return;
-    }
-    throw(std::runtime_error("ModelDSLCommon::registerBounds: "
-			     "no variable named '"+n+"'"));
-  }
-  
-  void ModelDSLCommon::registerBounds(VariableDescription& v,
-				 VariableBoundsDescription bd,
-				 const std::string& bn)
-  {
-    auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("ModelDSLCommon::registerBounds: "+m));}
-    };
-    this->readSpecifiedToken("ModelDSLCommon::registerBounds","in");
-    this->checkNotEndOfFile("ModelDSLCommon::registerBounds ",
-			    "Expected ']' or '['.");
-    if(this->current->value=="]"){
-      ++(this->current);
-      this->checkNotEndOfFile("ModelDSLCommon::registerBounds ",
-			      "Expected '*'.");
-      throw_if(this->current->value!="*",
-	       "expected '*' (read '"+this->current->value+"')");
-      bd.boundsType = VariableBoundsDescription::Upper;
-    } else if(this->current->value=="["){
-      ++(this->current);
-      this->checkNotEndOfFile("ModelDSLCommon::registerBounds ",
-			      "Expected lower bound value for variable "+v.name);
-      bd.boundsType = VariableBoundsDescription::LowerAndUpper;
-      bd.lowerBound = tfel::utilities::convert<double>(this->current->value);
-    } else {
-      throw_if(true,"expected ']' or '[' (read '"+this->current->value+"')");
-    }
-    ++(this->current);
-    this->readSpecifiedToken("ModelDSLCommon::registerBounds",":");
-    this->checkNotEndOfFile("ModelDSLCommon::registerBounds",
-			    "Could not read upper bound value for variable "+
-			    v.name);
-    if(this->current->value=="*"){
-      throw_if(bd.boundsType==VariableBoundsDescription::Upper,
-	       "upper and lower values bounds are both infinity. This is inconsistent.");
-      bd.boundsType=VariableBoundsDescription::Lower;
-      ++(this->current);
-      this->checkNotEndOfFile("ModelDSLCommon::registerBounds",
-			      "Expected '['.");
-      if(this->current->value!="["){
-	this->throwRuntimeError("ModelDSLCommon::registerBounds",
-				"Expected '[' (read '"+this->current->value+"')");
-      }
-    } else {
-      bd.upperBound = tfel::utilities::convert<double>(this->current->value);
-      if(bd.boundsType==VariableBoundsDescription::LowerAndUpper){
-	throw_if(bd.lowerBound>bd.upperBound,
-		 "lower bound value is greater than upper bound value "
-		 "for variable '"+v.name+"'");
-      }
-      ++(this->current);
-      this->checkNotEndOfFile("ModelDSLCommon::registerBounds",
-			      "Expected ']'");
-      throw_if(this->current->value!="]",
-	       "expected ']' (read '"+this->current->value+"'");
-    }
-    ++(this->current);
-    this->readSpecifiedToken("ModelDSLCommon::registerBounds",";");
-    v.setAttribute(bn,bd,false);
-  } // end of ModelDSLCommon::registerBounds
 
   void ModelDSLCommon::addMaterialLaw(const std::string& m)
   {

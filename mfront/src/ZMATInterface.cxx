@@ -236,7 +236,7 @@ namespace mfront
       out << "auto& ZMATstatev = ZMATdata.var_int()[0];\n";
       SupportedTypes::TypeSize currentOffset;
       for(const auto& v : persistentVarsHolder){
-	const auto flag = this->getTypeFlag(v.type);
+	const auto flag = SupportedTypes::getTypeFlag(v.type);
 	if(v.arraySize==1u){
 	  if(flag==SupportedTypes::Scalar){
 	    if(mb.useQt()){
@@ -340,7 +340,9 @@ namespace mfront
     const auto& d = mb.getBehaviourData(h);
     const auto& mps = d.getMaterialProperties();
     const auto& ivs = d.getPersistentVariables();
-    const auto& evs = d.getExternalStateVariables();
+    auto evs = d.getExternalStateVariables();
+    // removing the temperature
+    evs.erase(evs.begin());
     if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
       throw(runtime_error("ZMATInterface::writeBehaviourDataConstructor: "
@@ -411,7 +413,7 @@ namespace mfront
     if(!mps.empty()){
       SupportedTypes::TypeSize o;
       for(const auto & mp : mps){
-	const SupportedTypes::TypeFlag flag = this->getTypeFlag(mp.type);
+	const SupportedTypes::TypeFlag flag = SupportedTypes::getTypeFlag(mp.type);
 	if(flag==SupportedTypes::Scalar){
 	  if(mp.arraySize==1u){
 	    out << "this->" << mp.name << " = ZMATmprops[" << o << "]();\n";
@@ -440,7 +442,7 @@ namespace mfront
       SupportedTypes::TypeSize o;
       for(const auto & iv : ivs){
 	const string n = "this->"+iv.name;
-	const SupportedTypes::TypeFlag flag = this->getTypeFlag(iv.type);
+	const SupportedTypes::TypeFlag flag = SupportedTypes::getTypeFlag(iv.type);
 	if(iv.arraySize==1u){
 	  switch(flag){
 	  case SupportedTypes::Scalar : 	  
@@ -507,7 +509,7 @@ namespace mfront
     if(!evs.empty()){
       SupportedTypes::TypeSize o;
       for(const auto & ev : evs){
-	const auto flag = this->getTypeFlag(ev.type);
+	const auto flag = SupportedTypes::getTypeFlag(ev.type);
 	if(flag==SupportedTypes::Scalar){
 	  if(ev.arraySize==1u){
 	    out << "this->" << ev.name << " = ZMATextvars_t[ZMATevs_pos[" << o << "]];\n";
@@ -644,7 +646,9 @@ namespace mfront
   {
     using namespace std;
     const auto& d = mb.getBehaviourData(h);
-    const auto& evs = d.getExternalStateVariables();
+    auto evs = d.getExternalStateVariables();
+    // removing the temperature
+    evs.erase(evs.begin());
     if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
       string msg("ZMATInterface::writeBehaviourDataConstructor : "
@@ -711,7 +715,7 @@ namespace mfront
     if(!evs.empty()){
       SupportedTypes::TypeSize o;
       for(const auto & ev : evs){
-	const auto flag = this->getTypeFlag(ev.type);
+	const auto flag = SupportedTypes::getTypeFlag(ev.type);
 	if(flag==SupportedTypes::Scalar){
 	  if(ev.arraySize==1u){
 	    out << "this->d" << ev.name << " = ZMATextvars_tdt[ZMATevs_pos[" << o << "]]-ZMATextvars_t[ZMATevs_pos[" << o << "]];\n";
@@ -901,7 +905,7 @@ namespace mfront
     if(!svs.empty()){
       for(const auto & sv : svs){
 	out << "//! '" << sv.name << "' state variable\n";
-	const SupportedTypes::TypeFlag flag = this->getTypeFlag(sv.type);
+	const SupportedTypes::TypeFlag flag = SupportedTypes::getTypeFlag(sv.type);
 	if(flag==SupportedTypes::Scalar){
 	  if(sv.arraySize==1u){
 	    out << "SCALAR_VINT " << sv.name << ";\n"; 
@@ -1134,8 +1138,10 @@ namespace mfront
 	const auto mps     = getAllMaterialPropertiesNames(mb);
 	const auto& d = mb.getBehaviourData(h);
 	const auto& ivs = d.getPersistentVariables();
-	const auto& evs = d.getExternalStateVariables();
+	auto evs = d.getExternalStateVariables();
 	const auto& params = d.getParameters();
+	// removing the temperature
+	evs.erase(evs.begin());
 	auto print_variable = [&out,&d](const VariableDescription& v){
 	  out << "# - " << d.getExternalName(v.name) << " (" << v.type << "): ";
 	  if(v.description.empty()){
@@ -1213,14 +1219,16 @@ namespace mfront
     const auto& d = mb.getBehaviourData(h);
     const auto& mps = d.getMaterialProperties();
     const auto& isvs = d.getPersistentVariables();
-    const auto& esvs = d.getExternalStateVariables();
+    auto esvs = d.getExternalStateVariables();
     const auto dime = getSpaceDimension(h);
     const auto mps_size  = this->getTotalSize(mps).getValueForDimension(dime);
+    // removing the temperature
+    esvs.erase(esvs.begin());
     if(!mps.empty()){
       out << "this->mprops.resize(" << mps_size << ");\n"; 
     }
     for(const auto & isv : isvs){
-      const auto flag = this->getTypeFlag(isv.type);
+      const auto flag = SupportedTypes::getTypeFlag(isv.type);
       const auto& name = d.getExternalName(isv.name);
       if(flag==SupportedTypes::Scalar){
 	out << "this->" << isv.name << ".initialize(this,\"" << name 

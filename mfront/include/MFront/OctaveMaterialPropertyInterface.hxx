@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTOCTAVELAWINTERFACE_H_
-#define LIB_MFRONTOCTAVELAWINTERFACE_H_ 
+#ifndef LIB_MFRONTOCTAVELAWINTERFACE_HXX
+#define LIB_MFRONTOCTAVELAWINTERFACE_HXX 
 
 #include<string>
 #include<fstream>

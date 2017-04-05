@@ -107,6 +107,127 @@ namespace mfront
     return name + "-castem.cxx";
   }
 
+  static void writePhysicalBounds(std::ostream& out,
+				  const std::string& name,
+				  const VariableDescription& v){
+    if(!v.hasPhysicalBounds()){
+      return;
+    }
+    const auto& b = v.getPhysicalBounds();
+    if(b.boundsType==VariableBoundsDescription::Lower){
+      out << "if(" << v.name << " < " << b.lowerBound << "){\n";
+      out << "cerr << \"" << name << ": "
+	  << v.name << " is below its physical lower bound (\"\n << "
+	  << v.name << " << \"<" << b.lowerBound << ").\\n\";\n";
+      out << "return nan(\""
+	  << name << ": "
+	  << v.name << " is not physically valid.\");\n";
+      out << "}\n";
+    } else if(b.boundsType==VariableBoundsDescription::Upper){
+      out << "if(" << v.name << " > "<< b.upperBound << "){\n";
+      out << "cerr << \"" << name << ": "
+	  << v.name << " is below its physical upper bound (\"\n << "
+	  << v.name << " << \">" << b.upperBound << ").\\n\";\n";
+      out << "return nan(\""
+	  << name << ": "
+	  << v.name << " is not physically valid.\");\n";
+      out << "}\n";
+    } else {
+      out << "if((" << v.name<< " < "<< b.lowerBound << ")||"
+	  << "(" << v.name<< " > "<< b.upperBound << ")){\n";
+      out << "if(" << v.name<< " < " << b.lowerBound << "){\n";
+      out << "cerr << \"" << name << ": "
+	  << v.name << " is below its physical lower bound (\"\n << "
+	  << v.name << " << \"<" << b.lowerBound << ").\\n\";\n";
+      out << "} else {\n";
+      out << "cerr << \"" << name << ": "
+	  << v.name << " is over its physical upper bound (\"\n << "
+	  << v.name << " << \">" << b.upperBound << ").\\n\";\n";
+      out << "}\n";
+      out << "return nan(\""
+	  << name << ": "
+	  << v.name << " is not physically valid.\");\n";
+      out << "}\n";
+    }
+  } // end of writePhysicalBounds
+  
+  static void writeBounds(std::ostream& out,
+			  const std::string& name,
+			  const VariableDescription& v){
+    if(!v.hasBounds()){
+      return;
+    }
+    const auto& b = v.getBounds();
+    if(b.boundsType==VariableBoundsDescription::Lower){
+      out << "if(" << v.name << " < "<< b.lowerBound << "){\n";
+      out << "const char * const policy = "
+	  << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
+      out << "if(policy!=nullptr){\n";
+      out << "if(strcmp(policy,\"STRICT\")==0){\n";
+      out << "return nan(\""
+	  << name << ": "
+	  << v.name << " is out of bounds.\");\n";
+      out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
+      out << "cerr << \"" << name << ": "
+	  << v.name << " is below its lower bound (\"\n << "
+	  << v.name << " << \"<" << b.lowerBound << ").\\n\";\n";
+      out << "}\n";
+      out << "}\n";
+      out << "}\n";
+    } else if(b.boundsType==VariableBoundsDescription::Upper){
+      out << "if(" << v.name<< " > "<< b.upperBound << "){\n";
+      out << "const char * const policy = "
+	  << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
+      out << "if(policy!=nullptr){\n";
+      out << "if(strcmp(policy,\"STRICT\")==0){\n";
+      out << "cerr << \"" << name << ": "
+	  << v.name << " is over its upper bound (\"\n << "
+	  << v.name << " << \">" << b.upperBound << ").\\n\";\n";
+      out << "return nan(\""
+	  << name << ": "
+	  << v.name << " is out of bounds.\");\n";
+      out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
+      out << "cerr << \"" << name << ": "
+	  << v.name << " is over its upper bound (\"\n << "
+	  << v.name << " << \">" << b.upperBound << ").\\n\";\n";
+      out << "}\n";
+      out << "}\n";
+      out << "}\n";
+    } else {
+      out << "if((" << v.name<< " < "<< b.lowerBound << ")||"
+	  << "(" << v.name<< " > "<< b.upperBound << ")){\n";
+      out << "const char * const policy = "
+	  << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
+      out << "if(policy!=nullptr){\n";
+      out << "if(strcmp(policy,\"STRICT\")==0){\n";
+      out << "if(" << v.name<< " < " << b.lowerBound << "){\n";
+      out << "cerr << \"" << name << ": "
+	  << v.name << " is below its lower bound (\"\n << "
+	  << v.name << " << \"<" << b.lowerBound << ").\\n\";\n";
+      out << "} else {\n";
+      out << "cerr << \"" << name << ": "
+	  << v.name << " is over its upper bound (\"\n << "
+	  << v.name << " << \">" << b.upperBound << ").\\n\";\n";
+      out << "}\n";
+      out << "return nan(\""
+	  << name << ": "
+	  << v.name << " is out of bounds.\");\n";
+      out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
+      out << "if(" << v.name<< " < "<< b.lowerBound << "){\n";
+      out << "cerr << \"" << name << ": "
+	  << v.name << " is below its lower bound (\"\n << "
+	  << v.name << " << \"<" << b.lowerBound << ").\\n\";\n"
+	  << "} else {\n"
+	  << "cerr << \"" << name << ": "
+	  << v.name << " is over its upper bound (\"\n << "
+	  << v.name << " << \">" << b.upperBound << ").\\n\";\n"
+	  << "}\n"
+	  << "}\n"
+	  << "}\n"
+	  << "}\n";
+    }
+  } // end of writeBounds
+  
   void
   CastemMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
 						    const FileDescription& fd)
@@ -185,20 +306,16 @@ namespace mfront
     const auto& author=fd.authorName;
     const auto& date=fd.date;
     const auto& includes=mpd.includes;
-    const auto& output=mpd.output;
-    const auto& inputs=mpd.inputs;
     const auto& materialLaws=mpd.materialLaws;
     const auto& glossaryNames=mpd.glossaryNames;
     const auto& entryNames=mpd.entryNames;
     const auto& staticVars=mpd.staticVars;
     const auto& params=mpd.parameters;
     const auto& function=mpd.f;
-    const auto& bounds=mpd.bounds;
-    const auto& physicalBounds=mpd.physicalBounds;
     out << "/*!\n";
     out << "* \\file   " << fn  << '\n';
     out << "* \\brief  " << "this file implements the " 
-			<< name << " MaterialLaw.\n";
+	<< name << " MaterialLaw.\n";
     out << "*         File generated by ";
     out << MFrontHeader::getVersionName() << " ";
     out << "version " << MFrontHeader::getVersionNumber();
@@ -231,11 +348,11 @@ namespace mfront
     out << name << "_src = \""
 	<< tfel::utilities::tokenize(file,tfel::system::dirSeparator()).back()
 	<< "\";\n\n";
-    if(!inputs.empty()){
+    if(!mpd.inputs.empty()){
       out << "MFRONT_SHAREDOBJ const char *\n";
-      out << name << "_args[" << inputs.size();
+      out << name << "_args[" << mpd.inputs.size();
       out << "] = {";
-      for(auto p3=inputs.begin();p3!=inputs.end();){
+      for(auto p3=mpd.inputs.begin();p3!=mpd.inputs.end();){
 	std::string iname;
 	auto p4=glossaryNames.find(p3->name);
 	if(p4!=glossaryNames.end()){
@@ -246,7 +363,7 @@ namespace mfront
 	  iname = "\""+p3->name+"\"";
 	}
 	out << iname;
-	if(++p3!=inputs.end()){
+	if(++p3!=mpd.inputs.end()){
 	  out << ",";
 	}
       }
@@ -254,7 +371,7 @@ namespace mfront
     }
 
     out << "MFRONT_SHAREDOBJ unsigned short\n";
-    out << name << "_nargs = " << inputs.size() << "u;\n\n";
+    out << name << "_nargs = " << mpd.inputs.size() << "u;\n\n";
 
     if(!params.empty()){
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
@@ -274,7 +391,7 @@ namespace mfront
 
     out << "MFRONT_SHAREDOBJ double\n";
     out << name << "(";
-    if(!inputs.empty()){
+    if(!mpd.inputs.empty()){
       out << "const double * const castem_params";
     } else {
       out << "const double * const";
@@ -292,15 +409,15 @@ namespace mfront
     if(!params.empty()){
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       out << "if(!castem::" <<  hn << "::get" << hn << "().ok){\n"
-		    << "return std::nan(castem::"<< name << "MaterialPropertyHandler::get"
-		    << name << "MaterialPropertyHandler().msg.c_str());\n"
-		    << "}\n";
+	  << "return std::nan(castem::"<< name << "MaterialPropertyHandler::get"
+	  << name << "MaterialPropertyHandler().msg.c_str());\n"
+	  << "}\n";
       writeAssignMaterialPropertyParameters(out,mpd,name,
 					    "double","castem");
     }
-    if(!inputs.empty()){
-      auto p3=inputs.begin();
-      for(auto i=0u;p3!=inputs.end();++p3,++i){
+    if(!mpd.inputs.empty()){
+      auto p3=mpd.inputs.begin();
+      for(auto i=0u;p3!=mpd.inputs.end();++p3,++i){
 	out << "const double " << p3->name << " = ";
 	if(i==0){
 	  out << "*(castem_params);\n";
@@ -309,133 +426,43 @@ namespace mfront
 	}
       }
     }
-    out << "real " << output << ";\n";
-    if((!physicalBounds.empty())||
-       (!bounds.empty())){
+    out << "real " << mpd.output.name << ";\n";
+    if((hasPhysicalBounds(mpd.inputs))||(hasBounds(mpd.inputs))){
       out << "#ifndef NO_CASTEM_BOUNDS_CHECK\n";
     }
-    if(!physicalBounds.empty()){
+    if(hasPhysicalBounds(mpd.inputs)){
       out << "// treating physical bounds\n";
-      for(const auto& b : physicalBounds){
-	if(b.boundsType==VariableBoundsDescription::Lower){
-	  out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is below its physical lower bound (\"\n << "
-	      << b.varName << " << \"<" << b.lowerBound << ").\\n\";\n";
-	  out << "return nan(\""
-	      << name << " : "
-	      << b.varName << " is not physically valid.\");\n";
-	  out << "}\n";
-	} else if(b.boundsType==VariableBoundsDescription::Upper){
-	  out << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is below its physical upper bound (\"\n << "
-	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n";
-	  out << "return nan(\""
-	      << name << " : "
-	      << b.varName << " is not physically valid.\");\n";
-	  out << "}\n";
-	} else {
-	  out << "if((" << b.varName<< " < "<< b.lowerBound << ")||"
-	      << "(" << b.varName<< " > "<< b.upperBound << ")){\n";
-	  out << "if(" << b.varName<< " < " << b.lowerBound << "){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is below its physical lower bound (\"\n << "
-	      << b.varName << " << \"<" << b.lowerBound << ").\\n\";\n";
-	  out << "} else {\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is over its physical upper bound (\"\n << "
-	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n";
-	  out << "}\n";
-	  out << "return nan(\""
-	      << name << " : "
-	      << b.varName << " is not physically valid.\");\n";
-	  out << "}\n";
-	}
+      for(const auto& i : mpd.inputs){
+	writePhysicalBounds(out,name,i);
       }
     }
-    if(!bounds.empty()){
+    if(hasBounds(mpd.inputs)){
       out << "// treating standard bounds\n";
-      for(const auto& b : bounds){
-	if(b.boundsType==VariableBoundsDescription::Lower){
-	  out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
-	  out << "const char * const policy = "
-	      << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
-	  out << "if(policy!=nullptr){\n";
-	  out << "if(strcmp(policy,\"STRICT\")==0){\n";
-	  out << "return nan(\""
-	      << name << " : "
-	      << b.varName << " is out of bounds.\");\n";
-	  out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is below its lower bound (\"\n << "
-	      << b.varName << " << \"<" << b.lowerBound << ").\\n\";\n";
-	  out << "}\n";
-	  out << "}\n";
-	  out << "}\n";
-	} else if(b.boundsType==VariableBoundsDescription::Upper){
-	  out << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
-	  out << "const char * const policy = "
-	      << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
-	  out << "if(policy!=nullptr){\n";
-	  out << "if(strcmp(policy,\"STRICT\")==0){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is over its upper bound (\"\n << "
-	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n";
-	  out << "return nan(\""
-	      << name << " : "
-	      << b.varName << " is out of bounds.\");\n";
-	  out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is over its upper bound (\"\n << "
-	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n";
-	  out << "}\n";
-	  out << "}\n";
-	  out << "}\n";
-	} else {
-	  out << "if((" << b.varName<< " < "<< b.lowerBound << ")||"
-	      << "(" << b.varName<< " > "<< b.upperBound << ")){\n";
-	  out << "const char * const policy = "
-	      << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
-	  out << "if(policy!=nullptr){\n";
-	  out << "if(strcmp(policy,\"STRICT\")==0){\n";
-	  out << "if(" << b.varName<< " < " << b.lowerBound << "){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is below its lower bound (\"\n << "
-	      << b.varName << " << \"<" << b.lowerBound << ").\\n\";\n";
-	  out << "} else {\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is over its upper bound (\"\n << "
-	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n";
-	  out << "}\n";
-	  out << "return nan(\""
-	      << name << " : "
-	      << b.varName << " is out of bounds.\");\n";
-	  out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
-	  out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is below its lower bound (\"\n << "
-	      << b.varName << " << \"<" << b.lowerBound << ").\\n\";\n"
-	      << "} else {\n"
-	      << "cerr << \"" << name << " : "
-	      << b.varName << " is over its upper bound (\"\n << "
-	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n"
-	      << "}\n"
-	      << "}\n"
-	      << "}\n"
-	      << "}\n";
-	}
+      for(const auto& i : mpd.inputs){
+	writeBounds(out,name,i);
       }
     }
-    if((!physicalBounds.empty())||(!bounds.empty())){
+    if((hasPhysicalBounds(mpd.inputs))||(hasBounds(mpd.inputs))){
       out << "#endif /* NO_CASTEM_BOUNDS_CHECK */\n";
     }
     out << function.body;
-    out << "return " << output << ";\n";
-    out << "} // end of " << name << "\n\n";
-    out << "#ifdef __cplusplus\n";
-    out << "} // end of extern \"C\"\n";
-    out << "#endif /* __cplusplus */\n\n";
+    if((mpd.output.hasPhysicalBounds())||(mpd.output.hasBounds())){
+      out << "#ifndef NO_CASTEM_BOUNDS_CHECK\n";
+      if(mpd.output.hasPhysicalBounds()){
+	out << "// treating physical bounds\n";
+	writePhysicalBounds(out,name,mpd.output);
+      }
+      if(mpd.output.hasBounds()){
+	out << "// treating bounds\n";
+	writeBounds(out,name,mpd.output);
+      }
+      out << "#endif /* NO_CASTEM_BOUNDS_CHECK */\n";
+    }
+    out << "return " << mpd.output.name << ";\n"
+	<< "} // end of " << name << "\n\n"
+	<< "#ifdef __cplusplus\n"
+	<< "} // end of extern \"C\"\n"
+	<< "#endif /* __cplusplus */\n\n";
     out.close();
   } // end of CastemMaterialPropertyInterface::writeSrcFile(void)
 

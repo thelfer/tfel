@@ -538,7 +538,8 @@ namespace mfront{
 	out << "** This behaviour requires " << externalStateVarsHolder.size()
 	    <<  " field variables to be defined:\n";
 	int i=1;
-	for(auto pv=externalStateVarsHolder.begin();pv!=externalStateVarsHolder.end();++pv,++i){
+	for(auto pv=std::next(externalStateVarsHolder.begin()); // skipping the temperature
+	    pv!=externalStateVarsHolder.end();++pv,++i){
 	  out << "** " << i << ": " << mb.getExternalName(h,pv->name);
 	}
       }
@@ -616,9 +617,9 @@ namespace mfront{
 				   const Hypothesis& h,
 				   const VariableDescription& v,
 				   const std::string& n) const {
-    if(this->getTypeFlag(v.type)==SupportedTypes::Scalar){
+    if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Scalar){
       out << i++ << ", " << n << '\n';
-    } else if(this->getTypeFlag(v.type)==SupportedTypes::Stensor){
+    } else if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Stensor){
       out << i++ << ", " << n << "_11\n";
       out << i++ << ", " << n << "_22\n";
       out << i++ << ", " << n << "_33\n";
@@ -627,7 +628,7 @@ namespace mfront{
 	out << i++ << ", " << n << "_13\n";
 	out << i++ << ", " << n << "_23\n";
       }
-    } else if(this->getTypeFlag(v.type)==SupportedTypes::Tensor){
+    } else if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Tensor){
       out << i++ << ", " << n << "_11\n";
       out << i++ << ", " << n << "_22\n";
       out << i++ << ", " << n << "_33\n";

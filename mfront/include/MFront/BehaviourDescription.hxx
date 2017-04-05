@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURDESCRIPTION_H_
-#define LIB_MFRONT_BEHAVIOURDESCRIPTION_H_ 
+#ifndef LIB_MFRONT_BEHAVIOURDESCRIPTION_HXX
+#define LIB_MFRONT_BEHAVIOURDESCRIPTION_HXX 
 
 #include<set>
 #include<map>
@@ -945,27 +945,24 @@ namespace mfront
      * \param[in] h: modelling Hypothesis
      * \param[in] n: name
      */
-    bool
-      isGlossaryNameUsed(const Hypothesis,
-			 const std::string&) const;
+    bool isGlossaryNameUsed(const Hypothesis,
+			    const std::string&) const;
     /*!
      * \return true if the given variable name is associated with a
      * glossary name
      * \param[in] h: modelling hypothesis
      * \param[in] n: name
      */
-    bool
-      hasGlossaryName(const Hypothesis,
-		      const std::string&) const;
+    bool hasGlossaryName(const Hypothesis,
+			 const std::string&) const;
     /*!
      * \return true if the given variable name is associated with a
      * entry name
      * \param[in] h: modelling hypothesis
      * \param[in] n: name
      */
-    bool
-      hasEntryName(const Hypothesis,
-		   const std::string&) const;
+    bool hasEntryName(const Hypothesis,
+		      const std::string&) const;
     /*!
      * associate an entry name to a variable
      * \param[in] h: modelling Hypothesis
@@ -980,9 +977,8 @@ namespace mfront
      * \param[in] h: modelling Hypothesis
      * \param[in] n: variable name
      */
-    std::string
-      getExternalName(const Hypothesis h,
-		      const std::string& n) const;
+    std::string getExternalName(const Hypothesis h,
+				const std::string& n) const;
     /*!
      * \return the name of the variable associated with the given
      * glossary or entry name
@@ -990,16 +986,33 @@ namespace mfront
      * \param[in] n: name
      */
     std::string
-      getVariableNameFromGlossaryNameOrEntryName(const Hypothesis,
-						 const std::string&) const;
+    getVariableNameFromGlossaryNameOrEntryName(const Hypothesis,
+					       const std::string&) const;
     /*!
      * \return true if the given name is an entry name
      * \param[in] h: modelling Hypothesis
      * \param[in] n: name
      */
-    bool
-      isUsedAsEntryName(const Hypothesis,
-			const std::string&) const;
+    bool isUsedAsEntryName(const Hypothesis,
+			   const std::string&) const;
+    /*!
+     * \brief add bounds to a variable
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: variable name
+     * \param[in] b: bounds description
+     */
+    void setBounds(const Hypothesis,
+		   const std::string&,
+		   const VariableBoundsDescription&);
+    /*!
+     * \brief add physical bounds to a variable
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: variable name
+     * \param[in] b: bounds description
+     */
+    void setPhysicalBounds(const Hypothesis,
+			   const std::string&,
+			   const VariableBoundsDescription&);
     /*!
      * \brief declares an external state variable to be probably
      * unusable in a purely implicit resolution. This means that its
@@ -1073,13 +1086,6 @@ namespace mfront
     bool hasCode(const Hypothesis,
 		 const std::string&) const;
     /*!
-     * \brief set the bound description for a given variable
-     * \param[in] h: modelling hypothesis
-     * \param[in] b: bounds description
-     */
-    void setBounds(const Hypothesis,
-		   const BoundsDescription&);
-    /*!
      * \brief set a mechanical attribute
      * \param[in] h: modelling hypothesis
      * \param[in] n: name
@@ -1099,9 +1105,8 @@ namespace mfront
      * \param[in] n: name
      */
     template<typename T>
-      const T&
-      getAttribute(const Hypothesis,
-		   const std::string&) const;
+    const T& getAttribute(const Hypothesis,
+			  const std::string&) const;
     /*!
      * \return a mechanical attribute if it exists or the default
      * value
@@ -1110,8 +1115,8 @@ namespace mfront
      * \param[in] v: default value
      */
     template<typename T>
-      T getAttribute(const Hypothesis,
-		     const std::string&,
+    T getAttribute(const Hypothesis,
+		   const std::string&,
 		     const T&) const;
     /*!
      * \return true an attribute with the given name has been declared
@@ -1557,4 +1562,4 @@ namespace mfront
 
 #include"MFront/BehaviourDescription.ixx"
 
-#endif /* LIB_MFRONT_BEHAVIOURDESCRIPTION_H_ */
+#endif /* LIB_MFRONT_BEHAVIOURDESCRIPTION_HXX */

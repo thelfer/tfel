@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_EPXTRAITS_HXX_
-#define LIB_MFRONT_EPXTRAITS_HXX_ 
+#ifndef LIB_MFRONT_EPXTRAITS_HXX
+#define LIB_MFRONT_EPXTRAITS_HXX 
 
 namespace epx{
 
@@ -45,5 +45,5 @@ namespace epx{
 
 } // end of namespace epx  
 
-#endif /* LIB_MFRONT_EPXTRAITS_HXX_ */
+#endif /* LIB_MFRONT_EPXTRAITS_HXX */
 

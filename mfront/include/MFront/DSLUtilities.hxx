@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_PARSERUTILITIES_HXX_
-#define LIB_MFRONT_PARSERUTILITIES_HXX_ 
+#ifndef LIB_MFRONT_PARSERUTILITIES_HXX
+#define LIB_MFRONT_PARSERUTILITIES_HXX 
 
 #include<iosfwd>
 
@@ -85,5 +85,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* LIB_MFRONT_PARSERUTILITIES_HXX_ */
+#endif /* LIB_MFRONT_PARSERUTILITIES_HXX */
 

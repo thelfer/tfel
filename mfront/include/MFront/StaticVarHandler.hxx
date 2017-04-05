@@ -11,11 +11,11 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_STATICVARHANDLER_H_
-#define LIB_MFRONT_STATICVARHANDLER_H_ 
+#ifndef LIB_MFRONT_STATICVARHANDLER_HXX
+#define LIB_MFRONT_STATICVARHANDLER_HXX 
 
 #pragma message("This header is deprected, one shall use MFront/StaticVariableDescription instead")
 #include"MFront/StaticVariableDescription.hxx"
 
-#endif /* LIB_MFRONT_STATICVARHANDLER_H_ */
+#endif /* LIB_MFRONT_STATICVARHANDLER_HXX */
 

@@ -1020,7 +1020,7 @@ namespace mfront{
 							      const SupportedTypes::TypeSize o) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
+    if(SupportedTypes::getTypeFlag(f.type)==SupportedTypes::Stensor){
       os << "abaqus::UMATImportThermodynamicForces<hypothesis>::exe(this->" << f.name << ",";
       if(!o.isNull()){
 	os << iprefix << "stress_+" << o << ");\n";
@@ -1058,7 +1058,7 @@ namespace mfront{
     const auto& d = mb.getBehaviourData(h);
     bool b = false; // have persistent variables that have to be updated
     for(const auto& v:d.getPersistentVariables()){
-      const auto flag = this->getTypeFlag(v.type);
+      const auto flag = SupportedTypes::getTypeFlag(v.type);
       if((flag==SupportedTypes::Stensor)||
 	 (flag==SupportedTypes::Tensor)){
 	b = true;
@@ -1074,7 +1074,7 @@ namespace mfront{
       "                                                        ABAQUSDR[3],ABAQUSDR[4],ABAQUSDR[5],\n"
       "                                                        ABAQUSDR[6],ABAQUSDR[7],ABAQUSDR[8]};\n";
     for(const auto& v:d.getPersistentVariables()){
-      const auto flag = this->getTypeFlag(v.type);
+      const auto flag = SupportedTypes::getTypeFlag(v.type);
       if((flag==SupportedTypes::Stensor)||
 	 (flag==SupportedTypes::Tensor)){
 	if(v.arraySize==1u){
@@ -1095,7 +1095,7 @@ namespace mfront{
 					    const SupportedTypes::TypeSize o) const
    {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    const auto flag = this->getTypeFlag(f.type);
+    const auto flag = SupportedTypes::getTypeFlag(f.type);
     if(flag==SupportedTypes::Stensor){
       if(!o.isNull()){
 	out << "abaqus::UMATExportThermodynamicForces<hypothesis>::exe("

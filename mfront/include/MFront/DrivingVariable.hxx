@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_DRIVINGVARIABLE_H_
-#define LIB_MFRONT_DRIVINGVARIABLE_H_ 
+#ifndef LIB_MFRONT_DRIVINGVARIABLE_HXX
+#define LIB_MFRONT_DRIVINGVARIABLE_HXX 
 
 #include<string>
 #include"MFront/MFrontConfig.hxx"
@@ -50,5 +50,5 @@ namespace mfront
   
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_DRIVINGVARIABLE_H_ */
+#endif /* LIB_MFRONT_DRIVINGVARIABLE_HXX */
 

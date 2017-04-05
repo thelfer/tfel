@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTMODELDSLCOMMON_H_
-#define LIB_MFRONT_MFRONTMODELDSLCOMMON_H_ 
+#ifndef LIB_MFRONT_MFRONTMODELDSLCOMMON_HXX
+#define LIB_MFRONT_MFRONTMODELDSLCOMMON_HXX 
 
 #include<set>
 #include<map>
@@ -138,18 +138,6 @@ namespace mfront{
     virtual void treatParameterMethod();
 
     virtual void readDefaultValue();
-    /*!
-     * \param[in] bn: bounds type
-     */
-    virtual void registerBounds(const std::string&);
-    /*!
-     * \param[out] v:  variable
-     * \param[in]  bd: bounds description
-     * \param[in]  bn: bounds type
-     */
-    virtual void registerBounds(VariableDescription&,
-				VariableBoundsDescription,
-				const std::string&);
 
     virtual bool isOutputVariable(const std::string&) const;
 
@@ -163,5 +151,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* LIB_MFRONT_MFRONTMODELDSLCOMMON_H_ */
+#endif /* LIB_MFRONT_MFRONTMODELDSLCOMMON_HXX */
 

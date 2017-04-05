@@ -83,9 +83,6 @@ namespace mfront{
 	}
       }
     }
-    if(uvs.find("T")!=uvs.end()){
-      f << "this->T_   = this->T+(this->dT)*" << t << ";\n";
-    }
     for(const auto& v : d.getExternalStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
 	f << "this->" << v.name << "_ = this->" << v.name
@@ -182,9 +179,6 @@ namespace mfront{
 	writeExternalVariableCurrentValue2(f,dv.name,p,dv.increment_known);
       }
     }
-    if(uvs.find("T")!=uvs.end()){
-      writeExternalVariableCurrentValue2(f,"T",p,true);
-    }
     for(const auto& v : d.getExternalStateVariables()){
       if(uvs.find(v.name)!=uvs.end()){
 	writeExternalVariableCurrentValue2(f,v.name,p,true);
@@ -195,7 +189,6 @@ namespace mfront{
   RungeKuttaDSLBase::RungeKuttaDSLBase()
     : BehaviourDSLBase<RungeKuttaDSLBase>()
   {
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->useStateVarTimeDerivative=true;
     // parameters
     this->reserveName("dtmin");
@@ -232,7 +225,6 @@ namespace mfront{
     this->reserveName("cste2197_75240");
     this->reserveName("cste1_50");
     this->reserveName("t");
-    this->mb.addLocalVariable(h,VariableDescription("temperature","T_",1u,0u));
     // CallBacks
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
 			      &RungeKuttaDSLBase::treatUsableInPurelyImplicitResolution);
@@ -292,7 +284,7 @@ namespace mfront{
 						    const bool addThisPtr)
   {
     const auto& d = this->mb.getBehaviourData(h);
-    if((this->mb.isDrivingVariableName(var)) ||(var=="T") ||
+    if((this->mb.isDrivingVariableName(var))||
        (this->mb.isDrivingVariableIncrementName(var))||
        (d.isIntegrationVariableName(var))||
        (d.isExternalStateVariableName(var))){
@@ -339,7 +331,7 @@ namespace mfront{
 						    const bool addThisPtr)
   {
     const auto& d = this->mb.getBehaviourData(h);
-    if((this->mb.isDrivingVariableName(var))||(var=="T")||
+    if((this->mb.isDrivingVariableName(var))||
        (d.isExternalStateVariableName(var))){
       if(addThisPtr){
 	return "this->"+var+"+this->d"+var;
@@ -614,9 +606,6 @@ namespace mfront{
 	    ib.code += "this->" + dv.name + "_ = this->" + dv.name + ";\n";
 	  }
 	}
-	if(uvs.find("T")!=uvs.end()){
-	  ib.code += "this->T_ = this->T;\n";
-	}
       }
       for(const auto& ev:evs){
 	if(uvs.find(ev.name)!=uvs.end()){
@@ -867,9 +856,6 @@ namespace mfront{
 	if(uvs.find(dv.name)!=uvs.end()){
 	  return true;
 	}
-      }
-      if(uvs.find("T")!=uvs.end()){
-	return true;
       }
       for(const auto& v : d.getExternalStateVariables()){
 	if(uvs.find(v.name)!=uvs.end()){
@@ -2315,10 +2301,11 @@ namespace mfront{
 			      "This shall not happen at this stage."
 			      " Please contact MFront developper to help them debug this.");
     }
-    for(const auto& b : d.getBounds()){
-      if(b.varCategory==BoundsDescription::StateVariable){
-	b.writeBoundsChecks(this->behaviourFile);
-      }
+    for(const auto& v : d.getPersistentVariables()){
+      this->writePhysicalBoundsChecks(this->behaviourFile,v,false);
+    }
+    for(const auto& v : d.getPersistentVariables()){
+      this->writeBoundsChecks(this->behaviourFile,v,false);
     }
     if(this->mb.getAttribute(BehaviourData::profiling,false)){
       writeStandardPerformanceProfilingEnd(this->behaviourFile);

@@ -85,4 +85,4 @@ namespace epx{
 						       const EuroplexusInt);
 } // end of namespace epx
 
-#endif /* LIB_MFRONT_EUROPLEXUS_EUROPLEXUSFINITESTRAIN_HXX_ */
+#endif /* LIB_MFRONT_EUROPLEXUS_EUROPLEXUSFINITESTRAIN_HXX */

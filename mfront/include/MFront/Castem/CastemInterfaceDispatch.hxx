@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_CASTEM_CASTEMINTERFACEDISPATCH_H_
-#define LIB_MFRONT_CASTEM_CASTEMINTERFACEDISPATCH_H_ 
+#ifndef LIB_MFRONT_CASTEM_CASTEMINTERFACEDISPATCH_HXX
+#define LIB_MFRONT_CASTEM_CASTEMINTERFACEDISPATCH_HXX 
 
 #include<type_traits>
 #include"TFEL/Material/MechanicalBehaviourTraits.hxx"
@@ -298,4 +298,4 @@ namespace castem{
 
 } // end of namespace castem
 
-#endif /* LIB_MFRONT_CASTEM_CASTEMINTERFACEDISPATCH_H_ */
+#endif /* LIB_MFRONT_CASTEM_CASTEMINTERFACEDISPATCH_HXX */

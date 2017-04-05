@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTMATERIALLAWPARSER_HXX_
-#define LIB_MFRONTMATERIALLAWPARSER_HXX_ 
+#ifndef LIB_MFRONTMATERIALLAWPARSER_HXX
+#define LIB_MFRONTMATERIALLAWPARSER_HXX 
 
 #include<string>
 #include<set>
@@ -184,9 +184,6 @@ namespace mfront{
     virtual void treatBounds();
     //! treat the @PhysicalBounds keyword
     virtual void treatPhysicalBounds();
-
-    virtual void
-    registerBounds(std::vector<VariableBoundsDescription>&);
     
     virtual void
     registerNewCallBack(const std::string&,const MemberFuncPtr);
@@ -212,5 +209,5 @@ namespace mfront{
 
 } // end of namespace mfront  
   
-#endif /* LIB_MFRONTMATERIALLAWPARSER_HXX_ */
+#endif /* LIB_MFRONTMATERIALLAWPARSER_HXX */
 

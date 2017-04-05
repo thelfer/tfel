@@ -65,11 +65,11 @@ nobase_include_HEADERS= MFront/MFront.hxx                               \
 			MFront/SearchFile.hxx                           \
 			MFront/DrivingVariable.hxx                      \
 			MFront/ThermodynamicForce.hxx                   \
-			MFront/BoundsDescription.hxx                    \
 			MFront/VariableBoundsDescription.hxx            \
 			MFront/VarHandler.hxx                           \
 			MFront/StaticVarHandler.hxx                     \
 			MFront/VariableAttribute.hxx                    \
+			MFront/VariableDescriptionBase.hxx              \
 			MFront/VariableDescription.hxx                  \
 			MFront/VariableDescription.ixx                  \
 			MFront/StaticVariableDescription.hxx            \

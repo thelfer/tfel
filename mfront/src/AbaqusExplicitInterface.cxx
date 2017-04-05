@@ -553,14 +553,22 @@ namespace mfront{
 	<< " * \\param[in] " << iprefix << "d : data\n"
 	<< " */\n"
 	<< mb.getClassName() << "BehaviourData"
-	<< "(const abaqus::AbaqusExplicitData<Type>& " << iprefix << "d)\n"
-	<< ": T(" << iprefix << "d.tempOld)";
-    this->writeMaterialPropertiesInitializersInBehaviourDataConstructorI(out,h,mb,mprops.first,
+	<< "(const abaqus::AbaqusExplicitData<Type>& " << iprefix << "d)\n: ";
+    bool first = true;
+    this->writeMaterialPropertiesInitializersInBehaviourDataConstructorI(out,first,h,mb,
+									 mprops.first,
     									 mprops.second,
     									 iprefix+"d.props","","");
-    this->writeVariableInitializersInBehaviourDataConstructorI(out,persistentVarsHolder,
+    this->writeVariableInitializersInBehaviourDataConstructorI(out,first,persistentVarsHolder,
     							       iprefix+"d.stateOld","","");
-    this->writeVariableInitializersInBehaviourDataConstructorI(out,externalStateVarsHolder,
+    if(!first){
+      out << ",\n";
+    }
+    first = false;
+    out << "T(" << iprefix << "d.tempOld)";
+    this->writeVariableInitializersInBehaviourDataConstructorI(out,first,
+							       std::next(externalStateVarsHolder.begin()),
+							       externalStateVarsHolder.end(),
     							       iprefix+"d.fieldOld","","");
     out << "\n{\n";
     this->writeMaterialPropertiesInitializersInBehaviourDataConstructorII(out,h,mb,mprops.first,
@@ -568,7 +576,9 @@ namespace mfront{
     									  iprefix+"d.props","","");
     this->writeVariableInitializersInBehaviourDataConstructorII(out,persistentVarsHolder,
     								iprefix+"d.stateOld","","");
-    this->writeVariableInitializersInBehaviourDataConstructorII(out,externalStateVarsHolder,
+    this->writeVariableInitializersInBehaviourDataConstructorII(out,
+								std::next(externalStateVarsHolder.begin()),
+								externalStateVarsHolder.end(),
     								iprefix+"d.fieldOld","","");
     this->completeBehaviourDataConstructor(out,h,mb);
     out << "}\n\n";
@@ -592,15 +602,16 @@ namespace mfront{
 	<< "(const abaqus::AbaqusExplicitData<Type>& " << iprefix << "d)"
 	<< ": dt(" << iprefix << "d.dt),\n"
 	<< "  dT(" << iprefix << "d.tempNew-" << iprefix << "d.tempOld)";
-    if(!externalStateVarsHolder.empty()){
-      this->writeVariableInitializersInBehaviourDataConstructorI(out,externalStateVarsHolder,
-    								 iprefix+"d.dfield","d","");
-    }
+    bool first = false;
+    this->writeVariableInitializersInBehaviourDataConstructorI(out,first,
+							       std::next(externalStateVarsHolder.begin()),
+							       externalStateVarsHolder.end(),
+							       iprefix+"d.dfield","d","");
     out << "\n{\n";
-    if(!externalStateVarsHolder.empty()){
-      this->writeVariableInitializersInBehaviourDataConstructorII(out,externalStateVarsHolder,
-    								  iprefix+"d.dfield","d","");
-    }
+    this->writeVariableInitializersInBehaviourDataConstructorII(out,
+								std::next(externalStateVarsHolder.begin()),
+								externalStateVarsHolder.end(),
+								iprefix+"d.dfield","d","");
     out << "}\n\n";
   }
 
@@ -720,7 +731,7 @@ namespace mfront{
 	<< "constexpr const unsigned short nprops_  = AbaqusTraits<BV>::material_properties_nb;\n"
 	<< "constexpr const unsigned short NPROPS_  = offset+nprops_;\n"
 	<< "constexpr const unsigned short nstatev_ = Traits::internal_variables_nb;\n"
-	<< "constexpr const unsigned short nfieldv_ = Traits::external_variables_nb;\n";
+	<< "constexpr const unsigned short nfieldv_ = Traits::external_variables_nb2;\n";
     if((h==ModellingHypothesis::AXISYMMETRICAL)||
        (h==ModellingHypothesis::PLANESTRAIN)||
        (h==ModellingHypothesis::PLANESTRESS)){

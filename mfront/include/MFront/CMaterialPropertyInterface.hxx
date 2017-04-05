@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_CMATERIALPROPERTYINTERFACE_H_
-#define LIB_CMATERIALPROPERTYINTERFACE_H_ 
+#ifndef LIB_CMATERIALPROPERTYINTERFACE_HXX
+#define LIB_CMATERIALPROPERTYINTERFACE_HXX 
 
 #include"MFront/CMaterialPropertyInterfaceBase.hxx"
 
@@ -109,5 +109,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_CMATERIALPROPERTYINTERFACE_H_ */
+#endif /* LIB_CMATERIALPROPERTYINTERFACE_HXX */
 

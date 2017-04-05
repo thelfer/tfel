@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ASTERTRAITS_HXX_
-#define LIB_MFRONT_ASTERTRAITS_HXX_ 
+#ifndef LIB_MFRONT_ASTERTRAITS_HXX
+#define LIB_MFRONT_ASTERTRAITS_HXX 
 
 namespace aster{
 
@@ -72,5 +72,5 @@ namespace aster{
 
 } // end of namespace aster  
 
-#endif /* LIB_MFRONT_ASTERTRAITS_HXX_ */
+#endif /* LIB_MFRONT_ASTERTRAITS_HXX */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_CASTEMROTATIONMATRIX_H_
-#define LIB_MFRONT_CASTEMROTATIONMATRIX_H_ 
+#ifndef LIB_MFRONT_CASTEMROTATIONMATRIX_HXX
+#define LIB_MFRONT_CASTEMROTATIONMATRIX_HXX 
 
 #include"MFront/Castem/CastemConfig.hxx"
 #include"MFront/Castem/Castem.hxx"
@@ -80,5 +80,5 @@ namespace castem
 
 } // end of namespace castem
 
-#endif /* LIB_MFRONT_CASTEMROTATIONMATRIX_H_ */
+#endif /* LIB_MFRONT_CASTEMROTATIONMATRIX_HXX */
 

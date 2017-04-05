@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ABAQUSCOMPUTESTIFFNESSTENSOR_H_
-#define LIB_MFRONT_ABAQUSCOMPUTESTIFFNESSTENSOR_H_ 
+#ifndef LIB_MFRONT_ABAQUSCOMPUTESTIFFNESSTENSOR_HXX
+#define LIB_MFRONT_ABAQUSCOMPUTESTIFFNESSTENSOR_HXX 
 
 #include"TFEL/Config/TFELTypes.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
@@ -408,5 +408,5 @@ namespace abaqus
 
 } // end of namespace abaqus
 
-#endif /* LIB_MFRONT_ABAQUSCOMPUTESTIFFNESSTENSOR_H_ */
+#endif /* LIB_MFRONT_ABAQUSCOMPUTESTIFFNESSTENSOR_HXX */
 

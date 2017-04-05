@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MTESTFILEGENERATORBASE_H_
-#define LIB_MFRONT_MTESTFILEGENERATORBASE_H_ 
+#ifndef LIB_MFRONT_MTESTFILEGENERATORBASE_HXX
+#define LIB_MFRONT_MTESTFILEGENERATORBASE_HXX 
 
 #include<map>
 #include<set>
@@ -235,5 +235,5 @@ namespace mfront
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MTESTFILEGENERATORBASE_H_ */
+#endif /* LIB_MFRONT_MTESTFILEGENERATORBASE_HXX */
 

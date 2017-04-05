@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_EPXEXCEPTION_H_
-#define LIB_MFRONT_EPXEXCEPTION_H_ 
+#ifndef LIB_MFRONT_EPXEXCEPTION_HXX
+#define LIB_MFRONT_EPXEXCEPTION_HXX 
 
 #include<string>
 #include<exception>
@@ -88,5 +88,5 @@ namespace epx {
   
 } // end of namespace epx
 
-#endif /* LIB_MFRONT_EPXEXCEPTION_H_ */
+#endif /* LIB_MFRONT_EPXEXCEPTION_HXX */
 

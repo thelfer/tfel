@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ANSYS_ANSYSFINITESTRAIN_H_
-#define LIB_MFRONT_ANSYS_ANSYSFINITESTRAIN_H_ 
+#ifndef LIB_MFRONT_ANSYS_ANSYSFINITESTRAIN_HXX
+#define LIB_MFRONT_ANSYS_ANSYSFINITESTRAIN_HXX 
 
 #include"MFront/Ansys/AnsysConfig.hxx"
 #include"MFront/Ansys/Ansys.hxx"
@@ -128,5 +128,5 @@ namespace ansys
 
 } // end of namespace ansys
 
-#endif /* LIB_MFRONT_ANSYS_ANSYSFINITESTRAIN_H_ */
+#endif /* LIB_MFRONT_ANSYS_ANSYSFINITESTRAIN_HXX */
 

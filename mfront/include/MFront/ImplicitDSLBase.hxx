@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTIMPLICITPARSERBASE_H_
-#define LIB_MFRONTIMPLICITPARSERBASE_H_ 
+#ifndef LIB_MFRONTIMPLICITPARSERBASE_HXX
+#define LIB_MFRONTIMPLICITPARSERBASE_HXX 
 
 #include<string>
 #include<memory>
@@ -182,4 +182,4 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* LIB_MFRONTIMPLICITPARSERBASE_H_ */
+#endif /* LIB_MFRONTIMPLICITPARSERBASE_HXX */

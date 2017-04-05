@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_SUPPORTEDTYPES_H_
-#define LIB_MFRONT_SUPPORTEDTYPES_H_ 
+#ifndef LIB_MFRONT_SUPPORTEDTYPES_HXX
+#define LIB_MFRONT_SUPPORTEDTYPES_HXX 
 
 #include<map>
 #include<iosfwd>
@@ -21,14 +21,10 @@
 
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"MFront/MFrontConfig.hxx"
+#include"MFront/VariableDescription.hxx"
 
 namespace mfront
 {
-
-  // forward declaration
-  struct VariableDescription;
-  // forward declaration
-  struct VariableDescriptionContainer;
 
   //! class handling all type variables types supported by MFront
   struct MFRONT_VISIBILITY_EXPORT SupportedTypes
@@ -38,7 +34,7 @@ namespace mfront
     static const int ArraySizeLimit = 10u;
 #else 
     static constexpr int ArraySizeLimit = 10u;
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
     //! type of variable supported
     enum TypeFlag{Scalar,TVector,Stensor,Tensor};
     /*!
@@ -115,6 +111,11 @@ namespace mfront
     //! \return a list of type names associated with type flags
     static const std::map<std::string,TypeFlag>&
     getTypeFlags(void);
+    /*!
+     * \return the flag associated with the given type
+     * \param[in] t : type
+     */
+    static TypeFlag getTypeFlag(const std::string&);
     //! default constructor
     SupportedTypes();
     //! move constructor
@@ -130,11 +131,6 @@ namespace mfront
      * \param[in] t : type
      */
     bool isSupportedType(const std::string&) const;
-    /*!
-     * \return the flag associated with the given type
-     * \param[in] t : type
-     */
-    TypeFlag getTypeFlag(const std::string&) const;
     //! return a map associating a supported type to is type flag
     /*!
      * \param[in] t : variable type
@@ -189,6 +185,7 @@ namespace mfront
 			     const bool) const;
     /*!
      * \param[out] f      : output file
+     * \param[out] first  : true if not initializer has been declared yet
      * \param[in]  v      : variables to be initialized
      * \param[in]  src    : name of the array from which the variables are initialized
      * \param[in]  prefix : prefix added to variable's names
@@ -196,8 +193,25 @@ namespace mfront
      * \param[in]  o      : offset in the array from which the variables are initialized
      */
     virtual void
-    writeVariableInitializersInBehaviourDataConstructorI(std::ostream&,
-							 const VariableDescriptionContainer&,
+      writeVariableInitializersInBehaviourDataConstructorI(std::ostream&,bool&,
+							   const VariableDescriptionContainer&,
+							   const std::string&,
+							   const std::string&,
+							   const std::string&) const;
+    /*!
+     * \param[out] f      : output file
+     * \param[out] first  : true if not initializer has been declared yet
+     * \param[in]  b      : iterator to the first variable to be initialized
+     * \param[in]  e      : iterator past the last variable to be initialized
+     * \param[in]  src    : name of the array from which the variables are initialized
+     * \param[in]  prefix : prefix added to variable's names
+     * \param[in]  suffix : suffix added to variable's names
+     * \param[in]  o      : offset in the array from which the variables are initialized
+     */
+    virtual void
+    writeVariableInitializersInBehaviourDataConstructorI(std::ostream&,bool&,							 
+							 const VariableDescriptionContainer::const_iterator&,
+							 const VariableDescriptionContainer::const_iterator&,
 							 const std::string&,
 							 const std::string&,
 							 const std::string&) const;
@@ -212,6 +226,22 @@ namespace mfront
     virtual void
     writeVariableInitializersInBehaviourDataConstructorII(std::ostream&,
 							  const VariableDescriptionContainer&,
+							  const std::string&,
+							  const std::string&,
+							  const std::string&) const;
+    /*!
+     * \param[out] f      : output file
+     * \param[in]  b      : iterator to the first variable to be initialized
+     * \param[in]  e      : iterator past the last variable to be initialized
+     * \param[in]  src    : name of the array from which the variables are initialized
+     * \param[in]  prefix : prefix added to variable's names
+     * \param[in]  suffix : suffix added to variable's names
+     * \param[in]  o      : offset in the array from which the variables are initialized
+     */
+    virtual void
+    writeVariableInitializersInBehaviourDataConstructorII(std::ostream&,
+							  const VariableDescriptionContainer::const_iterator&,
+							  const VariableDescriptionContainer::const_iterator&,
 							  const std::string&,
 							  const std::string&,
 							  const std::string&) const;
@@ -270,5 +300,5 @@ namespace mfront
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_SUPPORTEDTYPES_H_ */
+#endif /* LIB_MFRONT_SUPPORTEDTYPES_HXX */
 

@@ -11,12 +11,12 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_H_
-#define LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_H_ 
+#ifndef LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX
+#define LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX 
 
-#ifndef LIB_MFRONT_ASTER_CALL_H_
+#ifndef LIB_MFRONT_ASTER_CALL_HXX
 #error "This header shall not be called directly"
-#endif /* LIB_MFRONT_ASTER_CALL_H_ */
+#endif /* LIB_MFRONT_ASTER_CALL_HXX */
 
 #include"TFEL/Math/Matrix/TMatrixView.hxx"
 #include"TFEL/Math/T2toST2/T2toST2View.hxx"
@@ -503,4 +503,4 @@ namespace aster
 #include"MFront/Aster/AsterIsotropicBehaviourHandler.hxx"
 #include"MFront/Aster/AsterOrthotropicBehaviourHandler.hxx"
 
-#endif /* LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_H_ */
+#endif /* LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_HXX */

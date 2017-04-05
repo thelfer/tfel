@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTSEARCHFILE_H_
-#define LIB_MFRONT_MFRONTSEARCHFILE_H_ 
+#ifndef LIB_MFRONT_MFRONTSEARCHFILE_HXX
+#define LIB_MFRONT_MFRONTSEARCHFILE_HXX 
 
 #include<set>
 #include<string>
@@ -78,5 +78,5 @@ namespace mfront
 
 } // end of SearchFile
 
-#endif /* LIB_MFRONT_MFRONTSEARCHFILE_H_ */
+#endif /* LIB_MFRONT_MFRONTSEARCHFILE_HXX */
 

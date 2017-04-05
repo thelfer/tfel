@@ -1857,7 +1857,6 @@ mfront/include/MFront/BehaviourInterfaceProxy.ixx -text
 mfront/include/MFront/BehaviourProfiler.hxx -text
 mfront/include/MFront/BehaviourQuery.hxx -text
 mfront/include/MFront/BehaviourSymmetryType.hxx -text
-mfront/include/MFront/BoundsDescription.hxx -text
 mfront/include/MFront/BroydenSolvers.hxx -text
 mfront/include/MFront/CMaterialPropertyInterface.hxx -text
 mfront/include/MFront/CMaterialPropertyInterfaceBase.hxx -text
@@ -2016,6 +2015,7 @@ mfront/include/MFront/VariableAttribute.hxx -text
 mfront/include/MFront/VariableBoundsDescription.hxx -text
 mfront/include/MFront/VariableDescription.hxx -text
 mfront/include/MFront/VariableDescription.ixx -text
+mfront/include/MFront/VariableDescriptionBase.hxx -text
 mfront/include/MFront/ZMAT/ZMATInterface.hxx -text
 mfront/include/MFront/ZMAT/ZMATInterface.ixx -text
 mfront/include/MFront/ZMAT/ZMATUndefs.hxx -text
@@ -2071,7 +2071,6 @@ mfront/src/BehaviourDocumentationGenerator.cxx -text
 mfront/src/BehaviourInterfaceFactory.cxx -text
 mfront/src/BehaviourProfiler.cxx -text
 mfront/src/BehaviourQuery.cxx -text
-mfront/src/BoundsDescription.cxx -text
 mfront/src/BroydenSolvers.cxx -text
 mfront/src/CMakeLists.txt -text
 mfront/src/CMaterialPropertyInterface.cxx -text
@@ -2186,6 +2185,7 @@ mfront/src/UmatFiniteStrainMTestFileGenerator.cxx -text
 mfront/src/UmatSmallStrainMTestFileGenerator.cxx -text
 mfront/src/VariableBoundsDescription.cxx -text
 mfront/src/VariableDescription.cxx -text
+mfront/src/VariableDescriptionBase.cxx -text
 mfront/src/ZMATInterface.cxx -text
 mfront/src/main.cxx -text
 mfront/src/mfront-doc.cxx -text

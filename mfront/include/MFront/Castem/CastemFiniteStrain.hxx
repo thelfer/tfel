@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_CASTEM_CASTEMFINITESTRAIN_H_
-#define LIB_MFRONT_CASTEM_CASTEMFINITESTRAIN_H_ 
+#ifndef LIB_MFRONT_CASTEM_CASTEMFINITESTRAIN_HXX
+#define LIB_MFRONT_CASTEM_CASTEMFINITESTRAIN_HXX 
 
 #include"MFront/Castem/CastemConfig.hxx"
 #include"MFront/Castem/Castem.hxx"
@@ -172,5 +172,5 @@ namespace castem
 
 } // end of namespace castem
 
-#endif /* LIB_MFRONT_CASTEM_CASTEMFINITESTRAIN_H_ */
+#endif /* LIB_MFRONT_CASTEM_CASTEMFINITESTRAIN_HXX */
 

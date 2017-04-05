@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_EUROPLEXUSINTERFACE_H_
-#define LIB_MFRONT_EUROPLEXUSINTERFACE_H_ 
+#ifndef LIB_MFRONT_EUROPLEXUSINTERFACE_HXX
+#define LIB_MFRONT_EUROPLEXUSINTERFACE_HXX 
 
 #include<string>
 #include<iosfwd>
@@ -264,4 +264,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_EUROPLEXUSINTERFACE_H_ */
+#endif /* LIB_MFRONT_EUROPLEXUSINTERFACE_HXX */

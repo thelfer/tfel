@@ -187,10 +187,11 @@ namespace mfront{
     this->behaviourFile << "this->updateStateVariables();\n";
     this->behaviourFile << "this->sig  = (this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*(this->eel);\n";
     this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
-    for(const auto & elem : d.getBounds()){
-      if(elem.varCategory==BoundsDescription::StateVariable){
-	elem.writeBoundsChecks(this->behaviourFile);
-      }
+    for(const auto& v : d.getPersistentVariables()){
+      this->writePhysicalBoundsChecks(this->behaviourFile,v,false);
+    }
+    for(const auto& v : d.getPersistentVariables()){
+      this->writeBoundsChecks(this->behaviourFile,v,false);
     }
     if(this->mb.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";

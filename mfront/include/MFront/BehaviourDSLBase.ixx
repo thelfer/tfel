@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURDSLBASE_IXX_
-#define LIB_MFRONT_BEHAVIOURDSLBASE_IXX_ 
+#ifndef LIB_MFRONT_BEHAVIOURDSLBASE_IXX
+#define LIB_MFRONT_BEHAVIOURDSLBASE_IXX 
 
 #include<sstream>
 #include<stdexcept>
@@ -258,5 +258,5 @@ namespace mfront{
   
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURDSLBASE_IXX_ */
+#endif /* LIB_MFRONT_BEHAVIOURDSLBASE_IXX */
 

@@ -12,8 +12,8 @@
  * <!-- Local IspellDict: english -->
  */
 
-#ifndef LIB_BEHAVIOURBRICKREQUIREMENT_HXX_
-#define LIB_BEHAVIOURBRICKREQUIREMENT_HXX_
+#ifndef LIB_BEHAVIOURBRICKREQUIREMENT_HXX
+#define LIB_BEHAVIOURBRICKREQUIREMENT_HXX
 
 #include<string>
 #include<vector>
@@ -73,4 +73,4 @@ namespace mfront{
   
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_REQUIREMENT_HXX_ */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_REQUIREMENT_HXX */

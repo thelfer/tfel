@@ -601,8 +601,7 @@ namespace mfront{
 							   const bool addThisPtr)
   {
     const auto& d = this->mb.getBehaviourData(h);
-    if(this->mb.isDrivingVariableName(var)||(var=="T")|
-       (d.isExternalStateVariableName(var))){
+    if(this->mb.isDrivingVariableName(var)||(d.isExternalStateVariableName(var))){
       if(addThisPtr){
 	return "(this->"+var+"+(this->theta)*(this->d"+var+"))";
       } else {
@@ -640,8 +639,7 @@ namespace mfront{
 							   const bool addThisPtr)
   {
     const auto& d = this->mb.getBehaviourData(h);
-    if((this->mb.isDrivingVariableName(var))||(var=="T")||
-       (d.isExternalStateVariableName(var))){
+    if((this->mb.isDrivingVariableName(var))||(d.isExternalStateVariableName(var))){
       if(addThisPtr){
 	return "(this->"+var+"+this->d"+var+")";
       } else {
@@ -795,7 +793,7 @@ namespace mfront{
     for(const auto & h : mh){
       const auto& d = this->mb.getBehaviourData(h);
       for(const auto& v : d.getIntegrationVariables()){
-	const auto flag  = this->getTypeFlag(v.type);
+	const auto flag  = SupportedTypes::getTypeFlag(v.type);
 	if(flag==SupportedTypes::Scalar){
 	  has_scalar = true;
 	  if(v.arraySize>=1){
@@ -884,8 +882,8 @@ namespace mfront{
     for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
       SupportedTypes::TypeSize n2;
       for(p2=d.getIntegrationVariables().begin();p2!=d.getIntegrationVariables().end();++p2){
-	SupportedTypes::TypeFlag flag  = this->getTypeFlag(p->type);
-	SupportedTypes::TypeFlag flag2 = this->getTypeFlag(p2->type);
+	SupportedTypes::TypeFlag flag  = SupportedTypes::getTypeFlag(p->type);
+	SupportedTypes::TypeFlag flag2 = SupportedTypes::getTypeFlag(p2->type);
 	if((p->arraySize!=1u)||(p2->arraySize!=1u)){
 	  this->behaviourFile << "/*!\n"
 			      << " * \\return the part of the jacobian matrix "
@@ -1242,7 +1240,7 @@ namespace mfront{
       this->behaviourFile << "void\ngetPartialJacobianInvert(";
       for(size_type i2=0;i2<=i;){
 	const auto& v = d.getIntegrationVariables()[i2];
-	const auto flag = this->getTypeFlag(v.type);
+	const auto flag = SupportedTypes::getTypeFlag(v.type);
 	if(v.arraySize==1u){
 	  switch(flag){
 	  case SupportedTypes::Scalar : 
@@ -1289,7 +1287,7 @@ namespace mfront{
       SupportedTypes::TypeSize n2;
       for(size_type i2=0;i2<=i;++i2){
 	const auto& v = d.getIntegrationVariables()[i2];
-	const auto flag = this->getTypeFlag(v.type);
+	const auto flag = SupportedTypes::getTypeFlag(v.type);
 	if(flag==SupportedTypes::Scalar){
 	  if(v.arraySize==1u){
 	    this->behaviourFile << "partial_jacobian_" << v.name << "(idx)=vect_e(" << n2 << ");\n";
@@ -1400,7 +1398,7 @@ namespace mfront{
   std::string
   ImplicitDSLBase::getVectorMappingClass(const VariableDescription& v) const
   {
-    const auto f = this->getTypeFlag(v.type);
+    const auto f = SupportedTypes::getTypeFlag(v.type);
     if(f==SupportedTypes::Stensor){
       if(v.arraySize==1u){
 	return "StensorFromTinyVectorView";
@@ -1496,10 +1494,11 @@ namespace mfront{
       this->behaviourFile << "this->computeFinalStress();\n";
     }
     this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
-    for(const auto& b : d.getBounds()){
-      if(b.varCategory==BoundsDescription::StateVariable){
-	b.writeBoundsChecks(this->behaviourFile);
-      }
+    for(const auto& v : d.getPersistentVariables()){
+      this->writePhysicalBoundsChecks(this->behaviourFile,v,false);
+    }
+    for(const auto& v : d.getPersistentVariables()){
+      this->writeBoundsChecks(this->behaviourFile,v,false);
     }
     this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
     if(this->mb.hasAttribute(h,BehaviourData::hasConsistentTangentOperator)){
@@ -1556,7 +1555,7 @@ namespace mfront{
 		      this->behaviourFile,this->mb.getMaterialLaws());
     n = SupportedTypes::TypeSize();
     for(const auto & v : d.getIntegrationVariables()){
-      if(this->getTypeFlag(v.type)==SupportedTypes::Scalar){
+      if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Scalar){
 	if(v.arraySize==1u){
 	  this->behaviourFile << "real& f" << v.name << "(this->fzeros(" << n << "));\n";
 	} else {
@@ -1806,7 +1805,7 @@ namespace mfront{
 	this->behaviourFile << "#line " << v.lineNumber << " \"" 
 			    << this->fileName << "\"\n";
       }
-      if(this->getTypeFlag(v.type)==SupportedTypes::Scalar){
+      if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Scalar){
 	if(v.arraySize==1u){
 	  this->behaviourFile << "real& d" << v.name << ";\n";
 	} else {

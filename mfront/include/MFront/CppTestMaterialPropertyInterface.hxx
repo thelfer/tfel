@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTCPPTESTLAWINTERFACE_H_
-#define LIB_MFRONTCPPTESTLAWINTERFACE_H_ 
+#ifndef LIB_MFRONTCPPTESTLAWINTERFACE_HXX
+#define LIB_MFRONTCPPTESTLAWINTERFACE_HXX 
 
 #include<string>
 #include<fstream>
@@ -69,20 +69,11 @@ namespace mfront{
     registerTestBounds(tokens_iterator,
 			const tokens_iterator);
 
-    tokens_iterator
-    nextToken(tokens_iterator,
-	      tokens_iterator,
-	      const std::string &msg="");
-
-    std::ofstream srcFile;
-
-    std::string srcFileName;
-    
-    std::vector<VariableBoundsDescription> testBounds ;
+    std::map<std::string,VariableBoundsDescription> testBounds ;
 
   }; // end of MfrontCppTestMaterialPropertyInterface
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONTCPPTESTLAWINTERFACE_H_ */
+#endif /* LIB_MFRONTCPPTESTLAWINTERFACE_HXX */
 

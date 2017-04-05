@@ -11,28 +11,26 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_STATICVARIABLEDESCRIPTION_H_
-#define LIB_MFRONT_STATICVARIABLEDESCRIPTION_H_ 
+#ifndef LIB_MFRONT_STATICVARIABLEDESCRIPTION_HXX
+#define LIB_MFRONT_STATICVARIABLEDESCRIPTION_HXX 
 
 #include<string>
 #include<vector>
 
 #include"MFront/MFrontConfig.hxx"
-#include"MFront/VariableDescription.hxx"
+#include"MFront/VariableDescriptionBase.hxx"
 
 namespace mfront{
 
-  /*!
-   * Class representing a static variable
-   */
+  //! \brief class representing a static variable
   struct MFRONT_VISIBILITY_EXPORT StaticVariableDescription
-    : public VariableDescription
+    : public VariableDescriptionBase
   {
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
     typedef double StaticVariableValueType;
 #else 
     typedef long double StaticVariableValueType;
-#endif /* LIB_MFRONT_STATICVARIABLEDESCRIPTION_H_ */
+#endif /* LIB_MFRONT_STATICVARIABLEDESCRIPTION_HXX */
     /*!
      * Constructor
      * \param[in] type_       : variable type
@@ -78,8 +76,7 @@ namespace mfront{
      * \param[in] n : variable name
      * \return true if a variable with the given name exists
      */
-    bool
-    contains(const std::string&) const;
+    bool contains(const std::string&) const;
     /*!
      * \param[in] n : variable name
      * \return the variable description with the given name
@@ -93,4 +90,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_STATICVARIABLEDESCRIPTION_H_ */
+#endif /* LIB_MFRONT_STATICVARIABLEDESCRIPTION_HXX */

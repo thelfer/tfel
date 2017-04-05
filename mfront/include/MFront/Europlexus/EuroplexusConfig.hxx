@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_EPX_EPXCONFIG_H_
-#define LIB_MFRONT_EPX_EPXCONFIG_H_ 
+#ifndef LIB_MFRONT_EPX_EPXCONFIG_HXX
+#define LIB_MFRONT_EPX_EPXCONFIG_HXX 
 
 #include"MFront/MFrontConfig.hxx"
 
@@ -28,7 +28,7 @@
 #  endif
 #else
 #  define MFRONT_EPX_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif /* LIB_MFRONT_EPX_EPXCONFIG_H_ */
+#endif /* LIB_MFRONT_EPX_EPXCONFIG_HXX */
 
-#endif /* LIB_MFRONT_EPX_EPXCONFIG_H_ */
+#endif /* LIB_MFRONT_EPX_EPXCONFIG_HXX */
 

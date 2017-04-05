@@ -11,16 +11,16 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ASTER_H_
-#define LIB_MFRONT_ASTER_H_ 
+#ifndef LIB_MFRONT_ASTER_HXX
+#define LIB_MFRONT_ASTER_HXX 
 
 #ifndef TFEL_ASTER_INLINE
 #define TFEL_ASTER_INLINE inline
-#endif /* LIB_MFRONT_ASTER_H_ */
+#endif /* LIB_MFRONT_ASTER_HXX */
 
 #ifndef TFEL_ASTER_INLINE2
 #define TFEL_ASTER_INLINE2 inline
-#endif /* LIB_MFRONT_ASTER_H_ */
+#endif /* LIB_MFRONT_ASTER_HXX */
 
 namespace aster{
 
@@ -29,12 +29,12 @@ namespace aster{
   typedef long long   AsterInt;
 #else
   typedef long   AsterInt;
-#endif /* LIB_MFRONT_ASTER_H_ */
+#endif /* LIB_MFRONT_ASTER_HXX */
 #elif ASTER_ARCH == 32
   typedef int    AsterInt;
 #else
   #error "aster : unsupported machine type"
-#endif /* LIB_MFRONT_ASTER_H_ */
+#endif /* LIB_MFRONT_ASTER_HXX */
 
   typedef double AsterReal;
 
@@ -58,5 +58,5 @@ namespace aster{
 
 } // end of namespace aster
 
-#endif /* LIB_MFRONT_ASTER_H_ */
+#endif /* LIB_MFRONT_ASTER_HXX */
 

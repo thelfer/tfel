@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_LAWFUNCTION_H_
-#define LIB_LAWFUNCTION_H_ 
+#ifndef LIB_LAWFUNCTION_HXX
+#define LIB_LAWFUNCTION_HXX 
 
 #include<string>
 #include"MFront/MFrontConfig.hxx"
@@ -35,5 +35,5 @@ namespace mfront
 
 } // end of namespace mfront
 
-#endif /* LIB_LAWFUNCTION_H_ */
+#endif /* LIB_LAWFUNCTION_HXX */
 

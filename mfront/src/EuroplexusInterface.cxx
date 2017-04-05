@@ -377,7 +377,7 @@ namespace mfront{
       out << "LAW '" << this->getFunctionName(name)  <<  "'\n"
 	  << "!! material properties\n";
       for(const auto& mp : this->buildMaterialPropertiesList(mb,h).first){
-	throw_if(this->getTypeFlag(mp.type)!=SupportedTypes::Scalar,
+	throw_if(SupportedTypes::getTypeFlag(mp.type)!=SupportedTypes::Scalar,
 		 "material property '"+mp.name+"' is not a scalar. "
 		 "This is not supported yet");
 	if(mp.arraySize==1u){
@@ -416,21 +416,20 @@ namespace mfront{
 	};
 	if(iv.arraySize==1u){
 	  out << "!! IVAR '" << d.getExternalName(iv.name) << "' ";
-	  display(this->getTypeFlag(iv.type));
+	  display(SupportedTypes::getTypeFlag(iv.type));
 	  out << '\n';
 	} else {
 	  for(unsigned short i=0;i!=iv.arraySize;++i){
 	    out << "!! IVAR '" << d.getExternalName(iv.name)
 		<< '[' << i <<  "]' ";
-	    display(this->getTypeFlag(iv.type));
+	    display(SupportedTypes::getTypeFlag(iv.type));
 	    out << '\n';
 	  }
 	}
       }
-      out << "!! external state variables\n"
-	  << "EVAR 'Temperature' 293.15\n";
+      out << "!! external state variables\n";
       for(const auto& e: d.getExternalStateVariables()){
-	throw_if(this->getTypeFlag(e.type)!=SupportedTypes::Scalar,
+	throw_if(SupportedTypes::getTypeFlag(e.type)!=SupportedTypes::Scalar,
 		 "external state variable '"+e.name+
 		 "' is not a scalar. This is not supported yet");
 	if(e.arraySize==1u){
@@ -638,7 +637,7 @@ namespace mfront{
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(!v.increment_known){
-      if(this->getTypeFlag(v.type)!=SupportedTypes::Tensor){
+      if(SupportedTypes::getTypeFlag(v.type)!=SupportedTypes::Tensor){
 	throw(std::runtime_error("EuroplexusInterface::writeBehaviourDataDrivingVariableSetter: "
 				 "unsupported driving variable type"));
       }
@@ -650,7 +649,7 @@ namespace mfront{
 	   << v.name << "0.begin());\n";
       }
     } else {
-      if(this->getTypeFlag(v.type)!=SupportedTypes::Stensor){
+      if(SupportedTypes::getTypeFlag(v.type)!=SupportedTypes::Stensor){
 	throw(std::runtime_error("EuroplexusInterface::writeBehaviourDataDrivingVariableSetter: "
 				 "unsupported driving variable type"));
       }
@@ -671,7 +670,7 @@ namespace mfront{
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(!v.increment_known){
-      if(this->getTypeFlag(v.type)!=SupportedTypes::Tensor){
+      if(SupportedTypes::getTypeFlag(v.type)!=SupportedTypes::Tensor){
 	throw(std::runtime_error("EuroplexusInterface::writeIntegrationDataDrivingVariableSetter: "
 				 "unsupported driving variable type"));
       }
@@ -683,7 +682,7 @@ namespace mfront{
 	   << v.name << "1.begin());\n";
       }
     } else {
-      if(this->getTypeFlag(v.type)!=SupportedTypes::Stensor){
+      if(SupportedTypes::getTypeFlag(v.type)!=SupportedTypes::Stensor){
 	throw(std::runtime_error("EuroplexusInterface::writeIntegrationDataDrivingVariableSetter: "
 				 "unsupported driving variable type"));
       }
@@ -703,7 +702,7 @@ namespace mfront{
 								  const SupportedTypes::TypeSize o) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
+    if(SupportedTypes::getTypeFlag(f.type)==SupportedTypes::Stensor){
       os << "tfel::fsalgo::copy<StensorSize>::exe(";
       if(!o.isNull()){
 	os << iprefix << "stress_+" << o;
@@ -724,7 +723,7 @@ namespace mfront{
 						const SupportedTypes::TypeSize o) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    const auto flag = this->getTypeFlag(f.type);
+    const auto flag = SupportedTypes::getTypeFlag(f.type);
     if(flag==SupportedTypes::Stensor){
       out << "tfel::fsalgo::copy<StensorSize>::exe(this->" << f.name << ".begin()," << a;
       if(!o.isNull()){

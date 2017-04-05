@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_EPX_EPXSTRESSFREEEXPANSIONHANDLER_H_
-#define LIB_MFRONT_EPX_EPXSTRESSFREEEXPANSIONHANDLER_H_ 
+#ifndef LIB_MFRONT_EPX_EPXSTRESSFREEEXPANSIONHANDLER_HXX
+#define LIB_MFRONT_EPX_EPXSTRESSFREEEXPANSIONHANDLER_HXX 
 
 #include"MFront/Europlexus/Europlexus.hxx"
 #include"MFront/Europlexus/EuroplexusConfig.hxx"
@@ -61,5 +61,5 @@ namespace epx
 
 } // end of namespace epx
 
-#endif /* LIB_MFRONT_EPX_EPXSTRESSFREEEXPANSIONHANDLER_H_ */
+#endif /* LIB_MFRONT_EPX_EPXSTRESSFREEEXPANSIONHANDLER_HXX */
 

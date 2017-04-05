@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTLAWINTERFACEPROXY_HXX_
-#define LIB_MFRONTLAWINTERFACEPROXY_HXX_ 
+#ifndef LIB_MFRONTLAWINTERFACEPROXY_HXX
+#define LIB_MFRONTLAWINTERFACEPROXY_HXX 
 
 #include<string>
 #include<memory>
@@ -61,4 +61,4 @@ namespace mfront{
 
 #include"MFront/MaterialPropertyInterfaceProxy.ixx"
 
-#endif /* LIB_MFRONTLAWINTERFACEPROXY_HXX_ */
+#endif /* LIB_MFRONTLAWINTERFACEPROXY_HXX */

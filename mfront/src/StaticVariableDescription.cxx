@@ -23,7 +23,7 @@ namespace mfront{
 						       const std::string& name_,
 						       const unsigned int line_,
 						       const StaticVariableValueType value_)
-    : VariableDescription(type_,name_,1u,line_),
+    : VariableDescriptionBase(type_,name_,1u,line_),
       value(value_)
   {}
 

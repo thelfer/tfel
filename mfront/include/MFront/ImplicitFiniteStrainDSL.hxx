@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_IMPLICITFINITESTRAINPARSER_H_
-#define LIB_MFRONT_IMPLICITFINITESTRAINPARSER_H_ 
+#ifndef LIB_MFRONT_IMPLICITFINITESTRAINPARSER_HXX
+#define LIB_MFRONT_IMPLICITFINITESTRAINPARSER_HXX 
 
 #include"MFront/ImplicitDSLBase.hxx"
 
@@ -40,5 +40,5 @@ namespace mfront
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_IMPLICITFINITESTRAINPARSER_H_ */
+#endif /* LIB_MFRONT_IMPLICITFINITESTRAINPARSER_HXX */
 

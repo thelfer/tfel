@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ANSYS_ANSYSCONFIG_H_
-#define LIB_MFRONT_ANSYS_ANSYSCONFIG_H_ 
+#ifndef LIB_MFRONT_ANSYS_ANSYSCONFIG_HXX
+#define LIB_MFRONT_ANSYS_ANSYSCONFIG_HXX 
 
 #include"MFront/MFrontConfig.hxx"
 
@@ -28,7 +28,7 @@
 #  endif
 #else
 #  define MFRONT_ANSYS_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif /* LIB_MFRONT_ANSYS_ANSYSCONFIG_H_ */
+#endif /* LIB_MFRONT_ANSYS_ANSYSCONFIG_HXX */
 
-#endif /* LIB_MFRONT_ANSYS_ANSYSCONFIG_H_ */
+#endif /* LIB_MFRONT_ANSYS_ANSYSCONFIG_HXX */
 

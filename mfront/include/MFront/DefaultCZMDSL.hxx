@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTDEFAULTCZMPARSER_HXX_
-#define LIB_MFRONT_MFRONTDEFAULTCZMPARSER_HXX_ 
+#ifndef LIB_MFRONT_MFRONTDEFAULTCZMPARSER_HXX
+#define LIB_MFRONT_MFRONTDEFAULTCZMPARSER_HXX 
 
 #include<string>
 #include"MFront/DefaultDSLBase.hxx"
@@ -42,5 +42,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* LIB_MFRONT_MFRONTDEFAULTCZMPARSER_HXX_ */
+#endif /* LIB_MFRONT_MFRONTDEFAULTCZMPARSER_HXX */
 

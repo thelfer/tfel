@@ -11,16 +11,16 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ANSYS_H_
-#define LIB_MFRONT_ANSYS_H_ 
+#ifndef LIB_MFRONT_ANSYS_HXX
+#define LIB_MFRONT_ANSYS_HXX 
 
 #ifndef TFEL_ANSYS_INLINE
 #define TFEL_ANSYS_INLINE inline
-#endif /* LIB_MFRONT_ANSYS_H_ */
+#endif /* LIB_MFRONT_ANSYS_HXX */
 
 #ifndef TFEL_ANSYS_INLINE2
 #define TFEL_ANSYS_INLINE2 inline
-#endif /* LIB_MFRONT_ANSYS_H_ */
+#endif /* LIB_MFRONT_ANSYS_HXX */
 
 #include<cstdint>
 #include<type_traits>
@@ -61,5 +61,5 @@ namespace ansys{
   
 } // end of namespace ansys
 
-#endif /* LIB_MFRONT_ANSYS_H_ */
+#endif /* LIB_MFRONT_ANSYS_HXX */
 

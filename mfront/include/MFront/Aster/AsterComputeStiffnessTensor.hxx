@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ASTERCOMPUTESTIFFNESSTENSOR_H_
-#define LIB_MFRONT_ASTERCOMPUTESTIFFNESSTENSOR_H_ 
+#ifndef LIB_MFRONT_ASTERCOMPUTESTIFFNESSTENSOR_HXX
+#define LIB_MFRONT_ASTERCOMPUTESTIFFNESSTENSOR_HXX 
 
 #include"TFEL/Config/TFELTypes.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
@@ -346,5 +346,5 @@ namespace aster
 
 } // end of namespace aster
 
-#endif /* LIB_MFRONT_ASTERCOMPUTESTIFFNESSTENSOR_H_ */
+#endif /* LIB_MFRONT_ASTERCOMPUTESTIFFNESSTENSOR_HXX */
 

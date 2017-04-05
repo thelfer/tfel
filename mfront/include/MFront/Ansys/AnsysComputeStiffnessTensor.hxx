@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ANSYSCOMPUTESTIFFNESSTENSOR_H_
-#define LIB_MFRONT_ANSYSCOMPUTESTIFFNESSTENSOR_H_ 
+#ifndef LIB_MFRONT_ANSYSCOMPUTESTIFFNESSTENSOR_HXX
+#define LIB_MFRONT_ANSYSCOMPUTESTIFFNESSTENSOR_HXX 
 
 #include"TFEL/Config/TFELTypes.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
@@ -408,5 +408,5 @@ namespace ansys
 
 } // end of namespace ansys
 
-#endif /* LIB_MFRONT_ANSYSCOMPUTESTIFFNESSTENSOR_H_ */
+#endif /* LIB_MFRONT_ANSYSCOMPUTESTIFFNESSTENSOR_HXX */
 

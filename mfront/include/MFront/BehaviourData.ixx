@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURDATA_IXX_
-#define LIB_MFRONT_BEHAVIOURDATA_IXX_ 
+#ifndef LIB_MFRONT_BEHAVIOURDATA_IXX
+#define LIB_MFRONT_BEHAVIOURDATA_IXX 
 
 namespace mfront{
 
@@ -44,4 +44,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURDATA_IXX_ */
+#endif /* LIB_MFRONT_BEHAVIOURDATA_IXX */

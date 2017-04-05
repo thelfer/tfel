@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_CYRANOEXCEPTION_H_
-#define LIB_MFRONT_CYRANOEXCEPTION_H_ 
+#ifndef LIB_MFRONT_CYRANOEXCEPTION_HXX
+#define LIB_MFRONT_CYRANOEXCEPTION_HXX 
 
 #include<string>
 #include<exception>
@@ -88,5 +88,5 @@ namespace cyrano {
   
 } // end of namespace cyrano
 
-#endif /* LIB_MFRONT_CYRANOEXCEPTION_H_ */
+#endif /* LIB_MFRONT_CYRANOEXCEPTION_HXX */
 

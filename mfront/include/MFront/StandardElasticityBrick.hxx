@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ELASTICITYBEHAVIOURBRICK_H_
-#define LIB_MFRONT_ELASTICITYBEHAVIOURBRICK_H_ 
+#ifndef LIB_MFRONT_ELASTICITYBEHAVIOURBRICK_HXX
+#define LIB_MFRONT_ELASTICITYBEHAVIOURBRICK_HXX 
 
 #include "MFront/BehaviourBrickBase.hxx"
 

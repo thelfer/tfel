@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURATTRIBUTE_H_
-#define LIB_MFRONT_BEHAVIOURATTRIBUTE_H_ 
+#ifndef LIB_MFRONT_BEHAVIOURATTRIBUTE_HXX
+#define LIB_MFRONT_BEHAVIOURATTRIBUTE_HXX 
 
 #include<string>
 #include"TFEL/Metaprogramming/GenerateTypeList.hxx"
@@ -29,5 +29,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURATTRIBUTE_H_ */
+#endif /* LIB_MFRONT_BEHAVIOURATTRIBUTE_HXX */
 

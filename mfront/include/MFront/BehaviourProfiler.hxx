@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTBEHAVIOURPROFILER_H_
-#define LIB_MFRONT_MFRONTBEHAVIOURPROFILER_H_ 
+#ifndef LIB_MFRONT_MFRONTBEHAVIOURPROFILER_HXX
+#define LIB_MFRONT_MFRONTBEHAVIOURPROFILER_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #if defined _MSC_VER
@@ -145,5 +145,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MFRONTBEHAVIOURPROFILER_H_ */
+#endif /* LIB_MFRONT_MFRONTBEHAVIOURPROFILER_HXX */
 

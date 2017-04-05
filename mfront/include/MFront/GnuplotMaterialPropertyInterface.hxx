@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTGNUPLOTLAWINTERFACE_H_
-#define LIB_MFRONTGNUPLOTLAWINTERFACE_H_ 
+#ifndef LIB_MFRONTGNUPLOTLAWINTERFACE_HXX
+#define LIB_MFRONTGNUPLOTLAWINTERFACE_HXX 
 
 #include<map>
 #include<vector>
@@ -82,12 +82,8 @@ namespace mfront{
     nextToken(tokens_iterator,
 	      tokens_iterator,
 	      const std::string &msg="");
-
-    std::ofstream srcFile;
-
-    std::string srcFileName;
     
-    std::vector<VariableBoundsDescription> testBounds ;
+    std::map<std::string,VariableBoundsDescription> testBounds ;
 
     std::string xLabel ;
     std::string yLabel ;
@@ -114,4 +110,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONTGNUPLOTLAWINTERFACE_H_ */
+#endif /* LIB_MFRONTGNUPLOTLAWINTERFACE_HXX */

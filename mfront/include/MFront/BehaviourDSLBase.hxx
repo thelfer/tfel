@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTPARSERBASE_HXX_
-#define LIB_MFRONTPARSERBASE_HXX_ 
+#ifndef LIB_MFRONTPARSERBASE_HXX
+#define LIB_MFRONTPARSERBASE_HXX 
 
 #include"MFront/BehaviourDSLCommon.hxx"
 
@@ -75,4 +75,4 @@ namespace mfront{
 
 #include"MFront/BehaviourDSLBase.ixx"
 
-#endif /* LIB_MFRONTPARSERBASE_HXX_ */
+#endif /* LIB_MFRONTPARSERBASE_HXX */

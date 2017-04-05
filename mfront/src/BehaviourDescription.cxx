@@ -171,15 +171,15 @@ namespace mfront
       const auto& mpd = *(emp.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
       
       const auto ename = [&mpd](){
-	auto p = mpd.glossaryNames.find(mpd.output);
+	auto p = mpd.glossaryNames.find(mpd.output.name);
 	if(p!=mpd.glossaryNames.end()){
 	  return p->second;
 	}
-	p = mpd.entryNames.find(mpd.output);
+	p = mpd.entryNames.find(mpd.output.name);
 	if(p!=mpd.entryNames.end()){
 	  return p->second;
 	}
-	return mpd.output;
+	return mpd.output.name;
       }();
       if(ename!=e){
 	auto& log = getLogStream();
@@ -1244,8 +1244,8 @@ namespace mfront
     constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     for(auto ov : md.outputs){
       const auto en = md.getExternalName(ov.name);
-      auto dov = ov;
-      dov.name = "d"+ov.name;
+      VariableDescription dov{ov.type,"d"+ov.name,
+	  ov.arraySize,ov.lineNumber};
       if(ov.type=="Field"){
 	ov.type="real";
 	dov.type="real";
@@ -1805,25 +1805,11 @@ namespace mfront
     return this->getBehaviourData(h).getCode(n,this->getClassName(),b);
   } // end of BehaviourDescription::getCode
 
-  bool
-  BehaviourDescription::hasCode(const Hypothesis h,
-				const std::string& n) const
+  bool BehaviourDescription::hasCode(const Hypothesis h,
+				     const std::string& n) const
   {
     return this->getBehaviourData(h).hasCode(n);
   } // end of BehaviourDescription::getCode
-
-  void BehaviourDescription::setBounds(const Hypothesis h,
-				       const BoundsDescription& b)
-  {
-    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      this->d.setBounds(b);
-      for(const auto& md : this->sd){
-	md.second->setBounds(b);
-      }
-    } else {
-      this->getBehaviourData2(h).setBounds(b);
-    }
-  } // end of BehaviourDescription::setBounds
 
   void BehaviourDescription::setAttribute(const Hypothesis h,
 					  const std::string& n,
@@ -1890,17 +1876,15 @@ namespace mfront
     return this->getBehaviourData(h).isGlossaryNameUsed(n);
   } // end of BehaviourDescription::isGlossaryName
 
-  void
-  BehaviourDescription::setEntryName(const Hypothesis h,
-				     const std::string& n,
-				     const std::string& g)
+  void BehaviourDescription::setEntryName(const Hypothesis h,
+					  const std::string& n,
+					  const std::string& g)
   {
     this->callBehaviourData(h,&BehaviourData::setEntryName,n,g,true);
   } // end of BehaviourDescription::setEntryName
 
-  bool
-  BehaviourDescription::isUsedAsEntryName(const Hypothesis h,
-					  const std::string& n) const
+  bool BehaviourDescription::isUsedAsEntryName(const Hypothesis h,
+					       const std::string& n) const
   {
     return this->getBehaviourData(h).isUsedAsEntryName(n);
   } // end of BehaviourDescription::isEntryName
@@ -1918,6 +1902,20 @@ namespace mfront
   {
     return this->getBehaviourData(h).getVariableNameFromGlossaryNameOrEntryName(n);
   } // end of BehaviourDescription::getVariableNameFromGlossaryNameOrEntryName
+
+  void BehaviourDescription::setBounds(const Hypothesis h,
+				       const std::string& n,
+				       const VariableBoundsDescription& b)
+  {
+    this->callBehaviourData(h,&BehaviourData::setBounds,n,b,true);
+  } // end of BehaviourDescription::setBounds
+
+  void BehaviourDescription::setPhysicalBounds(const Hypothesis h,
+					       const std::string& n,
+					       const VariableBoundsDescription& b)
+  {
+    this->callBehaviourData(h,&BehaviourData::setPhysicalBounds,n,b,true);
+  } // end of BehaviourDescription::setPhysicalBounds
 
   void BehaviourDescription::setAttribute(const std::string& n,
 					  const BehaviourAttribute& a,

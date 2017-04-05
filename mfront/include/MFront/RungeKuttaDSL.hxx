@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTRUNGEKUTTAPARSER_H_
-#define LIB_MFRONT_MFRONTRUNGEKUTTAPARSER_H_ 
+#ifndef LIB_MFRONT_MFRONTRUNGEKUTTAPARSER_HXX
+#define LIB_MFRONT_MFRONTRUNGEKUTTAPARSER_HXX 
 
 #include"MFront/RungeKuttaDSLBase.hxx"
 
@@ -35,5 +35,5 @@ namespace mfront
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MFRONTRUNGEKUTTAPARSER_H_ */
+#endif /* LIB_MFRONT_MFRONTRUNGEKUTTAPARSER_HXX */
 

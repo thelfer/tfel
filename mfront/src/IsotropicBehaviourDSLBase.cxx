@@ -152,10 +152,10 @@ namespace mfront{
 
   std::string
   IsotropicBehaviourDSLBase::flowRuleVariableModifier(const Hypothesis h,
-							       const std::string& var,
-							       const bool addThisPtr)
+						      const std::string& var,
+						      const bool addThisPtr)
   {
-    if((var=="T")||(this->mb.isExternalStateVariableName(h,var))||
+    if((this->mb.isExternalStateVariableName(h,var))||
        (this->mb.isStateVariableName(h,var))){
       if(addThisPtr){
 	return "this->"+var+"_";

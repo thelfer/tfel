@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTBROYDENSOLVERS_H_
-#define LIB_MFRONT_MFRONTBROYDENSOLVERS_H_ 
+#ifndef LIB_MFRONT_MFRONTBROYDENSOLVERS_HXX
+#define LIB_MFRONT_MFRONTBROYDENSOLVERS_HXX 
 
 #include "MFront/NonLinearSystemSolverBase.hxx"
 #include "MFront/PowellDogLegAlgorithmBase.hxx"
@@ -184,5 +184,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MFRONTBROYDENSOLVERS_H_ */
+#endif /* LIB_MFRONT_MFRONTBROYDENSOLVERS_HXX */
 

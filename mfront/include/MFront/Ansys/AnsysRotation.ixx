@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ANSYS_ANSYSROTATION_IXX_
-#define LIB_MFRONT_ANSYS_ANSYSROTATION_IXX_
+#ifndef LIB_MFRONT_ANSYS_ANSYSROTATION_IXX
+#define LIB_MFRONT_ANSYS_ANSYSROTATION_IXX
 
 namespace ansys
 {
@@ -383,4 +383,4 @@ namespace ansys
   
 } // end of namespace ansys
 
-#endif /* LIB_MFRONT_ANSYS_ANSYSROTATION_IXX_ */
+#endif /* LIB_MFRONT_ANSYS_ANSYSROTATION_IXX */

@@ -11,12 +11,12 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ANSYS_ANSYSBEHAVIOURHANDLER_H_
-#define LIB_MFRONT_ANSYS_ANSYSBEHAVIOURHANDLER_H_ 
+#ifndef LIB_MFRONT_ANSYS_ANSYSBEHAVIOURHANDLER_HXX
+#define LIB_MFRONT_ANSYS_ANSYSBEHAVIOURHANDLER_HXX 
 
-#ifndef LIB_MFRONT_ANSYS_CALL_H_
+#ifndef LIB_MFRONT_ANSYS_CALL_HXX
 #error "This header shall not be called directly"
-#endif /* LIB_MFRONT_ANSYS_CALL_H_ */
+#endif /* LIB_MFRONT_ANSYS_CALL_HXX */
 
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
@@ -290,4 +290,4 @@ namespace ansys
   
 } // end of namespace ansys
 
-#endif /* LIB_MFRONT_ANSYS_ANSYSBEHAVIOURHANDLER_H_ */
+#endif /* LIB_MFRONT_ANSYS_ANSYSBEHAVIOURHANDLER_HXX */

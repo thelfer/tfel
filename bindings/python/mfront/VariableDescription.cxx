@@ -25,12 +25,14 @@ void declareVariableDescription();
 void declareVariableDescription(){
   using namespace boost::python;
   using namespace mfront;
-  class_<VariableDescription>("VariableDescription")
-    .def_readwrite("type",&VariableDescription::type)
-    .def_readwrite("name",&VariableDescription::name)
-    .def_readwrite("description",&VariableDescription::description)
-    .def_readwrite("arraySize",&VariableDescription::arraySize)
-    .def_readwrite("lineNumber",&VariableDescription::lineNumber)
+  class_<VariableDescriptionBase>("VariableDescriptionBase")
+    .def_readwrite("type",&VariableDescriptionBase::type)
+    .def_readwrite("name",&VariableDescriptionBase::name)
+    .def_readwrite("description",&VariableDescriptionBase::description)
+    .def_readwrite("arraySize",&VariableDescriptionBase::arraySize)
+    .def_readwrite("lineNumber",&VariableDescriptionBase::lineNumber)
+    ;
+  class_<VariableDescription,bases<VariableDescriptionBase>>("VariableDescription")
     ;
   class_<VariableDescriptionContainer>("VariableDescriptionContainer")
     .def("__iter__", iterator<VariableDescriptionContainer>())

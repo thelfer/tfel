@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_JAVAMATERIALPROPERTYINTERFACE_H_
-#define LIB_MFRONT_JAVAMATERIALPROPERTYINTERFACE_H_ 
+#ifndef LIB_MFRONT_JAVAMATERIALPROPERTYINTERFACE_HXX
+#define LIB_MFRONT_JAVAMATERIALPROPERTYINTERFACE_HXX 
 
 #include<string>
 #include"TFEL/Utilities/CxxTokenizer.hxx"
@@ -65,5 +65,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_JAVAMATERIALPROPERTYINTERFACE_H_ */
+#endif /* LIB_MFRONT_JAVAMATERIALPROPERTYINTERFACE_HXX */
 

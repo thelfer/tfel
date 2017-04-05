@@ -11,10 +11,10 @@ g/*!
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTGENERICDATA_H_
-#define LIB_MFRONT_MFRONTGENERICDATA_H_ 
+#ifndef LIB_MFRONT_MFRONTGENERICDATA_HXX
+#define LIB_MFRONT_MFRONTGENERICDATA_HXX 
 
 #pragma message("This header is deprected, one shall use 'MFront/FileDescription.hxx' instead")
 #include"MFront/FileDescription.hxx"
 
-#endif /* LIB_MFRONT_MFRONTGENERICDATA_H_ */
+#endif /* LIB_MFRONT_MFRONTGENERICDATA_HXX */

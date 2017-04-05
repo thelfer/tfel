@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTMODELPARSERBASE_HXX_
-#define LIB_MFRONTMODELPARSERBASE_HXX_ 
+#ifndef LIB_MFRONTMODELPARSERBASE_HXX
+#define LIB_MFRONTMODELPARSERBASE_HXX 
 
 #include<map>
 #include<string>
@@ -89,5 +89,5 @@ namespace mfront{
 
 #include"MFront/ModelDSLBase.ixx"
 
-#endif /* LIB_MFRONTMODELPARSERBASE_HXX_ */
+#endif /* LIB_MFRONTMODELPARSERBASE_HXX */
 

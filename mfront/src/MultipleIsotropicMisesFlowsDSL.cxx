@@ -308,7 +308,6 @@ namespace mfront{
     using namespace std;
     const string btype = this->mb.getBehaviourTypeFlag();
     const auto& d = this->mb.getBehaviourData(h);
-    vector<BoundsDescription>::const_iterator p;
     vector<FlowHandler>::const_iterator p2;
     unsigned short n;
     this->checkBehaviourFile();
@@ -361,11 +360,11 @@ namespace mfront{
     this->behaviourFile << "this->updateStateVariables();\n";
     this->behaviourFile << "this->sig  = (this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*(this->eel);\n";
     this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
-    for(p  = d.getBounds().begin();
-	p != d.getBounds().end();++p){
-      if(p->varCategory==BoundsDescription::StateVariable){
-	p->writeBoundsChecks(this->behaviourFile);
-      }
+    for(const auto& v : d.getPersistentVariables()){
+      this->writePhysicalBoundsChecks(this->behaviourFile,v,false);
+    }
+    for(const auto& v : d.getPersistentVariables()){
+      this->writeBoundsChecks(this->behaviourFile,v,false);
     }
     if(this->mb.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";

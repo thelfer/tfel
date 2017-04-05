@@ -4,6 +4,58 @@
 
 This page describes the `mtest` module
 
+# The `Behaviour` class
+
+- `getBehaviourType`: Return the behaviour type.
+- `getBehaviourKinematic`: Return the behaviour kinematic.
+- `getDrivingVariablesSize`: Return the size of a vector able to
+	 contain all the components of the driving variables.
+- `getThermodynamicForcesSize`: Return the size of a vector able to
+	 contain all the components of the thermodynamic forces.
+- `getStensorComponentsSuffixes`: Return the components suffixes of a
+  symmetric tensor.
+- `getVectorComponentsSuffixes`: Return the components suffixes of a
+  vector.
+- `getTensorComponentsSuffixes`: Return the components suffixes of a
+  tensor.
+- `getDrivingVariablesComponents`: Return the components of the
+  driving variables.
+- `getThermodynamicForcesComponents`: Return the components of the
+  thermodynamic forces.
+- `getDrivingVariableComponentPosition`: Return the position of the
+  component of a driving variable.
+- `getThermodynamicForceComponentPosition`: Return the position of the
+  component of a thermodynamic force.
+- `getSymmetryType`: Return the symmetry of the behaviour:
+    -- 0 means that the behaviour is isotropic.
+    -- 1 means that the behaviour is orthotropic.
+- `getMaterialPropertiesNames`: return the names of the material
+  properties.
+- `getInternalStateVariablesNames`: Return the names of the internal
+  state variables.
+- `expandInternalStateVariablesNames`: Return the names of the
+  internal state variables, taking into account the suffixes for
+  vectors, symmetric tensors and tensors.
+- `getInternalStateVariablesSize`: Return the the size of the array of
+  internal variables.
+- `getInternalStateVariablesDescriptions`: Return the descriptions the
+  internal variables.
+- `getInternalStateVariableType`: Return the type of an internal
+  variable:
+    - 0 means that the internal state variable is a scalar.
+    - 1 means that the internal state variable is a symmetric tensor.
+    - 3 means that the internal state variable is a tensor\n.
+- `getInternalStateVariablePosition`: Return the internal state
+  variable position.
+- `getExternalStateVariablesNames`: Return the names of the external
+  state variables.
+- `getParametersNames`: Return the names of the floating point
+  parameters.
+- `getIntegerParametersNames`: Return the names of the integer
+  parameters.
+- `getUnsignedShortParametersNames`: Return the names of the unsigned
+  short parameters.
+
 # Using the MTest class
 
 Here is a first example of the `MTest` class usage:

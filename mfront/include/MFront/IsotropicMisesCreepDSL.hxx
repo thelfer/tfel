@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTISOTROPICMISESCREEPPARSER_H_
-#define LIB_MFRONTISOTROPICMISESCREEPPARSER_H_ 
+#ifndef LIB_MFRONTISOTROPICMISESCREEPPARSER_HXX
+#define LIB_MFRONTISOTROPICMISESCREEPPARSER_HXX 
 
 #include<string>
 #include"MFront/IsotropicBehaviourDSLBase.hxx"
@@ -51,5 +51,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* LIB_MFRONTISOTROPICMISESCREEPPARSER_H_ */
+#endif /* LIB_MFRONTISOTROPICMISESCREEPPARSER_HXX */
 

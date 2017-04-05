@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ANSYSORTHOTROPICBEHAVIOUR_H_
-#define LIB_MFRONT_ANSYSORTHOTROPICBEHAVIOUR_H_ 
+#ifndef LIB_MFRONT_ANSYSORTHOTROPICBEHAVIOUR_HXX
+#define LIB_MFRONT_ANSYSORTHOTROPICBEHAVIOUR_HXX 
 
 #include"MFront/Ansys/AnsysConfig.hxx"
 
@@ -51,4 +51,4 @@ namespace ansys
   
 } // end of namespace ansys
 
-#endif /* LIB_MFRONT_ANSYSORTHOTROPICBEHAVIOUR_H_ */
+#endif /* LIB_MFRONT_ANSYSORTHOTROPICBEHAVIOUR_HXX */

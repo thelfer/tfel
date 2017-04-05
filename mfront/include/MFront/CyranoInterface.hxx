@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTCYRANOINTERFACE_H_
-#define LIB_MFRONTCYRANOINTERFACE_H_ 
+#ifndef LIB_MFRONTCYRANOINTERFACE_HXX
+#define LIB_MFRONTCYRANOINTERFACE_HXX 
 
 #include<string>
 #include<iosfwd>
@@ -188,4 +188,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONTCYRANOINTERFACE_H_ */
+#endif /* LIB_MFRONTCYRANOINTERFACE_HXX */

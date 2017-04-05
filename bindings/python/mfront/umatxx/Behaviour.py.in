@@ -73,7 +73,10 @@ class Behaviour:
                 
     def getExternalStateVariablesNames(self):
         """
-        return the names of the external state variables
+        return the names of the external state variables.  Note that
+        the temperature has been removed from the list of external
+        state variables as it is treated apart by interfaces derived
+        from the UMAT interface.
         """
         elm = ExternalLibraryManager.getExternalLibraryManager()
         return elm.getUMATExternalStateVariablesNames(self.library,

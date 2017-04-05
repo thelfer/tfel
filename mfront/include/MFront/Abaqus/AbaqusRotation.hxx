@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ABAQUS_ABAQUSROTATION_H_
-#define LIB_MFRONT_ABAQUS_ABAQUSROTATION_H_ 
+#ifndef LIB_MFRONT_ABAQUS_ABAQUSROTATION_HXX
+#define LIB_MFRONT_ABAQUS_ABAQUSROTATION_HXX 
 
 #include<iterator>
 #include"TFEL/Math/tmatrix.hxx"
@@ -91,5 +91,5 @@ namespace abaqus
 
 #include"MFront/Abaqus/AbaqusRotation.ixx"
 
-#endif /* LIB_MFRONT_ABAQUS_ABAQUSROTATION_H_ */
+#endif /* LIB_MFRONT_ABAQUS_ABAQUSROTATION_HXX */
 

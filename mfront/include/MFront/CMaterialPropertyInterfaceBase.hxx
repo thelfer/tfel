@@ -11,22 +11,34 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTCLAWINTERFACEBASE_H_
-#define LIB_MFRONTCLAWINTERFACEBASE_H_ 
+#ifndef LIB_MFRONTCLAWINTERFACEBASE_HXX
+#define LIB_MFRONTCLAWINTERFACEBASE_HXX 
 
 #include<string>
 #include<fstream>
 
 #include"MFront/LawFunction.hxx"
+#include"MFront/VariableDescription.hxx"
 #include"MFront/VariableBoundsDescription.hxx"
 #include"MFront/AbstractMaterialPropertyInterface.hxx"
 
 namespace mfront{
 
+  /*!
+   * \brief Base class for a set of material properties interface.
+   */
   struct CMaterialPropertyInterfaceBase
     : public AbstractMaterialPropertyInterface
   {
-    
+    /*!
+     * \return the position of the variable in the inputs plus one.
+     * \param[in] mpd: material property description
+     * \param[in] n:   variable name
+     */
+    static VariableDescriptionContainer::size_type
+    getVariableNumber(const MaterialPropertyDescription&,
+		      const std::string&);
+    //! constructor
     CMaterialPropertyInterfaceBase();
     /*!
      * \brief generate the output files
@@ -39,7 +51,7 @@ namespace mfront{
     virtual ~CMaterialPropertyInterfaceBase();
     
   protected:
-
+    
     virtual void
     writeParameterList(std::ostream&,
 		       const VariableDescriptionContainer&);
@@ -137,5 +149,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONTCLAWINTERFACEBASE_H_ */
+#endif /* LIB_MFRONTCLAWINTERFACEBASE_HXX */
 

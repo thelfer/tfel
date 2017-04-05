@@ -14,6 +14,8 @@ The page declares the new functionalities of the 3.1 version of
 
 ## Numerical stability
 
+#### Tests with `verrou`
+
 ### Enabling the `-ffast-math` with GCC
 
 # TFEL
@@ -541,6 +543,96 @@ i.e. the additional symbols defined in the generated shared libraries
 that can be read through the `ExternalLibraryManager` class.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/43/>
+
+## Ticket #45: Support for bounds on parameters
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/45/>
+
+## Ticket #46: Improvements to the `mfront` `python` module
+
+The following improvements to the `mfront` `python` module have been
+made:
+
+- Add missing metods in the `BehaviourDescription` class to retrieve
+  information about the material symmetry
+- Add missing methods to retrieve information about standard and
+  physical variables' bounds.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/46/>
+
+## Ticket #47: Add `python` bindings for the `mtest::Behaviour` class
+
+The `mtest` module now contains bindings for the `mtest::Behaviour`
+class. This class allow querying information about how to use a
+behaviour in a specific context (interface and modelling hypothesis):
+for example, if a behaviour has the `requireStiffnessTensor`
+attribute, the list of material properties is updated appropriately if
+required by the interface for the considered modelling hypothesis. The
+`Behaviour` class has the following useful methods:
+
+- `getBehaviourType`: Return the behaviour type.
+- `getBehaviourKinematic`: Return the behaviour kinematic.
+- `getDrivingVariablesSize`: Return the size of a vector able to
+	 contain all the components of the driving variables.
+- `getThermodynamicForcesSize`: Return the size of a vector able to
+	 contain all the components of the thermodynamic forces.
+- `getStensorComponentsSuffixes`: Return the components suffixes of a
+  symmetric tensor.
+- `getVectorComponentsSuffixes`: Return the components suffixes of a
+  vector.
+- `getTensorComponentsSuffixes`: Return the components suffixes of a
+  tensor.
+- `getDrivingVariablesComponents`: Return the components of the
+  driving variables.
+- `getThermodynamicForcesComponents`: Return the components of the
+  thermodynamic forces.
+- `getDrivingVariableComponentPosition`: Return the position of the
+  component of a driving variable.
+- `getThermodynamicForceComponentPosition`: Return the position of the
+  component of a thermodynamic force.
+- `getSymmetryType`: Return the symmetry of the behaviour:
+    -- 0 means that the behaviour is isotropic.
+    -- 1 means that the behaviour is orthotropic.
+- `getMaterialPropertiesNames`: return the names of the material
+  properties.
+- `getInternalStateVariablesNames`: Return the names of the internal
+  state variables.
+- `expandInternalStateVariablesNames`: Return the names of the
+  internal state variables, taking into account the suffixes for
+  vectors, symmetric tensors and tensors.
+- `getInternalStateVariablesSize`: Return the the size of the array of
+  internal variables.
+- `getInternalStateVariablesDescriptions`: Return the descriptions the
+  internal variables.
+- `getInternalStateVariableType`: Return the type of an internal
+  variable:
+    - 0 means that the internal state variable is a scalar.
+    - 1 means that the internal state variable is a symmetric tensor.
+    - 3 means that the internal state variable is a tensor\n.
+- `getInternalStateVariablePosition`: Return the internal state
+  variable position.
+- `getExternalStateVariablesNames`: Return the names of the external
+  state variables.
+- `getParametersNames`: Return the names of the floating point
+  parameters.
+- `getIntegerParametersNames`: Return the names of the integer
+  parameters.
+- `getUnsignedShortParametersNames`: Return the names of the unsigned
+  short parameters.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/47/>
+
+## Ticket #48: Add the ability to retrieve bounds for material properties and parameters from the `mtest::Behaviour` class
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/48/>
+
+## Ticket #49: Add the ability to retrieve the symmetry of the behaviour and the symmetry of the elastic behaviour from `mfront-query`
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/49/>
+
+## Ticket #50: Add the ability to retrieve bounds values from `mfront-query`
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/50/>
 
 # References
 

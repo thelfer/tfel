@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_PYTHONMATERIALPROPERTYINTERFACE_H_
-#define LIB_MFRONT_PYTHONMATERIALPROPERTYINTERFACE_H_ 
+#ifndef LIB_MFRONT_PYTHONMATERIALPROPERTYINTERFACE_HXX
+#define LIB_MFRONT_PYTHONMATERIALPROPERTYINTERFACE_HXX 
 
 #include<string>
 #include<fstream>
@@ -60,19 +60,9 @@ namespace mfront{
     //! destructor
     virtual ~PythonMaterialPropertyInterface();
     
-  private:
-
-    std::ofstream headerFile;
-
-    std::ofstream srcFile;
-
-    std::string headerFileName;
-
-    std::string srcFileName;
-    
   }; // end of PythonMaterialPropertyInterface
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_PYTHONMATERIALPROPERTYINTERFACE_H_ */
+#endif /* LIB_MFRONT_PYTHONMATERIALPROPERTYINTERFACE_HXX */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_EPX_ORTHOTROPICBEHAVIOUR_H_
-#define LIB_MFRONT_EPX_ORTHOTROPICBEHAVIOUR_H_ 
+#ifndef LIB_MFRONT_EPX_ORTHOTROPICBEHAVIOUR_HXX
+#define LIB_MFRONT_EPX_ORTHOTROPICBEHAVIOUR_HXX 
 
 #include"MFront/Europlexus/EuroplexusConfig.hxx"
 
@@ -42,4 +42,4 @@ namespace epx
 
 } // end of namespace epx
 
-#endif /* LIB_MFRONT_EPX_ORTHOTROPICBEHAVIOUR_H_ */
+#endif /* LIB_MFRONT_EPX_ORTHOTROPICBEHAVIOUR_HXX */

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MODELDESCRIPTION_H_
-#define LIB_MFRONT_MODELDESCRIPTION_H_ 
+#ifndef LIB_MFRONT_MODELDESCRIPTION_HXX
+#define LIB_MFRONT_MODELDESCRIPTION_HXX 
 
 #include<set>
 #include<map>
@@ -195,4 +195,4 @@ namespace mfront
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MODELDESCRIPTION_H_ */
+#endif /* LIB_MFRONT_MODELDESCRIPTION_HXX */

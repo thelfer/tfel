@@ -113,7 +113,10 @@ namespace mfront{
       {"--attribute-type","display an attribute type"},
       {"--attribute-value","display an attribute value"},
       {"--parameter-type","display a parameter type"},
-      {"--parameter-default-value","display a parameter default value"}};
+      {"--parameter-default-value","display a parameter default value"},
+      {"--has-bounds","return EXIT_SUCCESS if a variable has bounds"},
+      {"--bounds-type","return the bounds type associated to a variable"},
+      {"--bounds-value","show the bounds value associated as a range"}};
     for(const auto& q : sq2){
       Parser::registerNewCallBack(q.first,&BehaviourQuery::treatStandardQuery2,q.second,true);
     }
@@ -129,8 +132,7 @@ namespace mfront{
 				"show all the specific targets");
   } // end of BehaviourQuery::registerCommandLineCallBacks
 
-  void
-  BehaviourQuery::treatStandardQuery(){
+  void BehaviourQuery::treatStandardQuery(){
     using namespace std;
     using namespace tfel::utilities;
     using tfel::material::ModellingHypothesis;
@@ -246,8 +248,7 @@ const Hypothesis){
     }
   }
 
-  void
-  BehaviourQuery::treatStandardQuery2(){
+  void BehaviourQuery::treatStandardQuery2(){
     using namespace std;
     using namespace tfel::utilities;
     using tfel::material::ModellingHypothesis;
@@ -302,6 +303,16 @@ const Hypothesis){
 	const auto& bd = d.getBehaviourData(h);
 	const auto& p  = bd.getParameters().getVariable(o);
 	cout << p.type << endl;
+      };
+      this->queries.push_back({"parameter-type",l});
+    } else if (qn=="--has-bounds"){
+      auto l = [o](const FileDescription&,
+		   const BehaviourDescription& d,
+		   const Hypothesis h){
+	const auto& bd = d.getBehaviourData(h);
+	const auto& p  = bd.getParameters().getVariable(o);
+#pragma message ("hasBounds")
+	//	cout << (bd.hasBounds(o) ? "true" : "false") << endl;
       };
       this->queries.push_back({"parameter-type",l});
     } else if (qn=="--parameter-default-value"){

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_CASTEMCOMPUTESTIFFNESSTENSOR_H_
-#define LIB_MFRONT_CASTEMCOMPUTESTIFFNESSTENSOR_H_ 
+#ifndef LIB_MFRONT_CASTEMCOMPUTESTIFFNESSTENSOR_HXX
+#define LIB_MFRONT_CASTEMCOMPUTESTIFFNESSTENSOR_HXX 
 
 #include"MFront/MFrontConfig.hxx"
 #include"TFEL/Config/TFELTypes.hxx"
@@ -415,5 +415,5 @@ namespace castem
 
 } // end of namespace castem
 
-#endif /* LIB_MFRONT_CASTEMCOMPUTESTIFFNESSTENSOR_H_ */
+#endif /* LIB_MFRONT_CASTEMCOMPUTESTIFFNESSTENSOR_HXX */
 

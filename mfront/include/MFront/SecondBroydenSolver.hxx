@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTSECONDBROYDENSOLVER_H_
-#define LIB_MFRONT_MFRONTSECONDBROYDENSOLVER_H_ 
+#ifndef LIB_MFRONT_MFRONTSECONDBROYDENSOLVER_HXX
+#define LIB_MFRONT_MFRONTSECONDBROYDENSOLVER_HXX 
 
 #include "MFront/NonLinearSystemSolverBase.hxx"
 
@@ -127,5 +127,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MFRONTSECONDBROYDENSOLVER_H_ */
+#endif /* LIB_MFRONT_MFRONTSECONDBROYDENSOLVER_HXX */
 

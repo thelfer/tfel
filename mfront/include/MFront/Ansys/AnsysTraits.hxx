@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ANSYSTRAITS_HXX_
-#define LIB_MFRONT_ANSYSTRAITS_HXX_ 
+#ifndef LIB_MFRONT_ANSYSTRAITS_HXX
+#define LIB_MFRONT_ANSYSTRAITS_HXX 
 
 namespace ansys{
 
@@ -47,5 +47,5 @@ namespace ansys{
 
 } // end of namespace ansys  
 
-#endif /* LIB_MFRONT_ANSYSTRAITS_HXX_ */
+#endif /* LIB_MFRONT_ANSYSTRAITS_HXX */
 

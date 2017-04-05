@@ -68,4 +68,4 @@ namespace ansys{
   
 } // end of namespace ansys
 
-#endif /* LIB_MFRONT_ANSYS_ANSYSDATA_HXX_ */
+#endif /* LIB_MFRONT_ANSYS_ANSYSDATA_HXX */

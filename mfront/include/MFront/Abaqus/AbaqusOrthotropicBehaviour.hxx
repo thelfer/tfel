@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ABAQUSORTHOTROPICBEHAVIOUR_H_
-#define LIB_MFRONT_ABAQUSORTHOTROPICBEHAVIOUR_H_ 
+#ifndef LIB_MFRONT_ABAQUSORTHOTROPICBEHAVIOUR_HXX
+#define LIB_MFRONT_ABAQUSORTHOTROPICBEHAVIOUR_HXX 
 
 #include"MFront/Abaqus/AbaqusConfig.hxx"
 
@@ -36,4 +36,4 @@ namespace abaqus
 
 } // end of namespace abaqus
 
-#endif /* LIB_MFRONT_ABAQUSORTHOTROPICBEHAVIOUR_H_ */
+#endif /* LIB_MFRONT_ABAQUSORTHOTROPICBEHAVIOUR_HXX */

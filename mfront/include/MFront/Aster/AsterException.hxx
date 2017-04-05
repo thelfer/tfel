@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ASTEREXCEPTION_H_
-#define LIB_MFRONT_ASTEREXCEPTION_H_ 
+#ifndef LIB_MFRONT_ASTEREXCEPTION_HXX
+#define LIB_MFRONT_ASTEREXCEPTION_HXX 
 
 #include<string>
 #include<exception>
@@ -88,5 +88,5 @@ namespace aster {
   
 } // end of namespace aster
 
-#endif /* LIB_MFRONT_ASTEREXCEPTION_H_ */
+#endif /* LIB_MFRONT_ASTEREXCEPTION_HXX */
 

@@ -5,8 +5,8 @@
  * \date   04 avril 2016
  */
 
-#ifndef LIB_ABAQUSTANGENTOPERATOR_IXX_
-#define LIB_ABAQUSTANGENTOPERATOR_IXX_
+#ifndef LIB_ABAQUSTANGENTOPERATOR_IXX
+#define LIB_ABAQUSTANGENTOPERATOR_IXX
 
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 
@@ -111,4 +111,4 @@ namespace abaqus
 
 } // end of namespace abaqus
 
-#endif /* LIB_ABAQUSTANGENTOPERATOR_IXX_ */
+#endif /* LIB_ABAQUSTANGENTOPERATOR_IXX */

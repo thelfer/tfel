@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_GENERATOROPTIONS_HXX_
-#define LIB_MFRONT_GENERATOROPTIONS_HXX_
+#ifndef LIB_MFRONT_GENERATOROPTIONS_HXX
+#define LIB_MFRONT_GENERATOROPTIONS_HXX
 
 #include<string>
 
@@ -37,4 +37,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_GENERATOROPTIONS_HXX_ */
+#endif /* LIB_MFRONT_GENERATOROPTIONS_HXX */

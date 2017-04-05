@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURSYMMETRYTYPE_H_
-#define LIB_MFRONT_BEHAVIOURSYMMETRYTYPE_H_ 
+#ifndef LIB_MFRONT_BEHAVIOURSYMMETRYTYPE_HXX
+#define LIB_MFRONT_BEHAVIOURSYMMETRYTYPE_HXX 
 
 namespace mfront
 {
@@ -28,5 +28,5 @@ namespace mfront
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURSYMMETRYTYPE_H_ */
+#endif /* LIB_MFRONT_BEHAVIOURSYMMETRYTYPE_HXX */
 

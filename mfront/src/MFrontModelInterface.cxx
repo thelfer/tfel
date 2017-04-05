@@ -89,8 +89,10 @@ namespace mfront{
     auto write_bounds = [&throw_if](std::ostream& out,
 				    const VariableDescription& v,
 				    const std::string& vn){
-      auto write = [&out,&v,&vn,&throw_if](const std::string& bn,const std::string& p){
-	const auto& bd = v.getAttribute<VariableBoundsDescription>(bn);
+      auto write = [&out,&v,&vn,&throw_if](const VariableBoundsDescription&
+					   (VariableDescription:: *m)() const,
+					   const std::string& p){
+	const auto& bd = (v.*m)();
 	if(bd.boundsType==VariableBoundsDescription::Lower){
 	  out << "BoundsCheckBase::lowerBoundCheck"
 	      << "(\"" << vn << "\"," << vn
@@ -108,12 +110,11 @@ namespace mfront{
 	  throw_if(true,"unsupported bound type for variable '"+vn+"'");
 	}
       };
-      if(v.hasAttribute(VariableDescription::bound)){
-	write(VariableDescription::bound,"this->policy");
+      if(v.hasBounds()){
+	write(&VariableDescription::getBounds,"this->policy");
       }
-      if(v.hasAttribute(VariableDescription::physicalBound)){
-	write(VariableDescription::physicalBound,
-	      "OutOfBoundsPolicy::Strict");
+      if(v.hasPhysicalBounds()){
+	write(&VariableDescription::getPhysicalBounds,"OutOfBoundsPolicy::Strict");
       }
     };
     tfel::system::systemCall::mkdir("include/MFront");
@@ -134,19 +135,15 @@ namespace mfront{
 	   << "#include\"TFEL/Material/BoundsCheck.hxx\"\n"
 	   << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n";
     const auto hasBounds = [&md](){
-      for(const auto& v: md.outputs){
-	if((v.hasAttribute(VariableDescription::bound))||
-	   (v.hasAttribute(VariableDescription::physicalBound))){
-	  return true;
+      const auto hasBounds2 = [](const VariableDescriptionContainer& c){
+	for(const auto& v: c){
+	  if((v.hasBounds())||(v.hasPhysicalBounds())){
+	    return true;
+	  }
 	}
-      }
-      for(const auto& v: md.inputs){
-	if((v.hasAttribute(VariableDescription::bound))||
-	   (v.hasAttribute(VariableDescription::physicalBound))){
-	  return true;
-	}
-      }
-      return false;
+	return false;
+      };
+      return hasBounds2(md.outputs)||hasBounds2(md.inputs);
     }();
     if(hasBounds){
       header << "#include\"TFEL/Material/BoundsCheck.hxx\"\n";

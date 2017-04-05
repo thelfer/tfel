@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_EPXCOMPUTESTIFFNESSTENSOR_H_
-#define LIB_MFRONT_EPXCOMPUTESTIFFNESSTENSOR_H_ 
+#ifndef LIB_MFRONT_EPXCOMPUTESTIFFNESSTENSOR_HXX
+#define LIB_MFRONT_EPXCOMPUTESTIFFNESSTENSOR_HXX 
 
 #include"TFEL/Config/TFELTypes.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
@@ -346,5 +346,5 @@ namespace epx
 
 } // end of namespace epx
 
-#endif /* LIB_MFRONT_EPXCOMPUTESTIFFNESSTENSOR_H_ */
+#endif /* LIB_MFRONT_EPXCOMPUTESTIFFNESSTENSOR_HXX */
 

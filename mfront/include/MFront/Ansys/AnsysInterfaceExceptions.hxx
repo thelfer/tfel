@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ANSYS_ANSYSINTERFACEEXCEPTIONS_H_
-#define LIB_MFRONT_ANSYS_ANSYSINTERFACEEXCEPTIONS_H_ 
+#ifndef LIB_MFRONT_ANSYS_ANSYSINTERFACEEXCEPTIONS_HXX
+#define LIB_MFRONT_ANSYS_ANSYSINTERFACEEXCEPTIONS_HXX 
 
 #include<string>
 
@@ -179,5 +179,5 @@ namespace ansys{
 
 } // end of namespace ansys
 
-#endif /* LIB_MFRONT_ANSYS_ANSYSINTERFACEEXCEPTIONS_H_ */
+#endif /* LIB_MFRONT_ANSYS_ANSYSINTERFACEEXCEPTIONS_HXX */
 

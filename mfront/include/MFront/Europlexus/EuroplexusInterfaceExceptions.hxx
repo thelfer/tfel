@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_EPX_EPXINTERFACEEXCEPTIONS_H_
-#define LIB_MFRONT_EPX_EPXINTERFACEEXCEPTIONS_H_ 
+#ifndef LIB_MFRONT_EPX_EPXINTERFACEEXCEPTIONS_HXX
+#define LIB_MFRONT_EPX_EPXINTERFACEEXCEPTIONS_HXX 
 
 #include<string>
 
@@ -205,5 +205,5 @@ namespace epx{
 
 } // end of namespace epx
 
-#endif /* LIB_MFRONT_EPX_EPXINTERFACEEXCEPTIONS_H_ */
+#endif /* LIB_MFRONT_EPX_EPXINTERFACEEXCEPTIONS_HXX */
 

@@ -11,14 +11,13 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_VARIABLEATTRIBUTE_H_
-#define LIB_MFRONT_VARIABLEATTRIBUTE_H_ 
+#ifndef LIB_MFRONT_VARIABLEATTRIBUTE_HXX
+#define LIB_MFRONT_VARIABLEATTRIBUTE_HXX 
 
 #include<string>
 #include<vector>
 #include"TFEL/Metaprogramming/GenerateTypeList.hxx"
 #include"TFEL/Utilities/GenTypeBase.hxx"
-#include"MFront/VariableBoundsDescription.hxx"
 
 namespace mfront{
 
@@ -28,12 +27,11 @@ namespace mfront{
 							       double,
 							       std::string,
 							       std::vector<double>,
-							       std::vector<std::string>,
-							       VariableBoundsDescription>::type;
+							       std::vector<std::string>>::type;
   //! \brief a class used to store a variable attribute
   using VariableAttribute = tfel::utilities::GenTypeBase<VariableAttributeTypes>;
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_VARIABLEATTRIBUTE_H_ */
+#endif /* LIB_MFRONT_VARIABLEATTRIBUTE_HXX */
 

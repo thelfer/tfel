@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_CODEBLOCK_H_
-#define LIB_MFRONT_CODEBLOCK_H_ 
+#ifndef LIB_MFRONT_CODEBLOCK_HXX
+#define LIB_MFRONT_CODEBLOCK_HXX 
 
 #include<set>
 #include<string>
@@ -45,5 +45,5 @@ namespace mfront{
   
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_CODEBLOCK_H_ */
+#endif /* LIB_MFRONT_CODEBLOCK_HXX */
 

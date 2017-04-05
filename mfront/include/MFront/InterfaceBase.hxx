@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_INTERFACEBASE_HXX_
-#define LIB_INTERFACEBASE_HXX_ 
+#ifndef LIB_INTERFACEBASE_HXX
+#define LIB_INTERFACEBASE_HXX 
 
 #include<string>
 
@@ -62,5 +62,5 @@ namespace mfront
 
 } // end of namespace mfront  
 
-#endif /* LIB_INTERFACEBASE_HXX_ */
+#endif /* LIB_INTERFACEBASE_HXX */
 

@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_CASTEMTRAITS_HXX_
-#define LIB_MFRONT_CASTEMTRAITS_HXX_ 
+#ifndef LIB_MFRONT_CASTEMTRAITS_HXX
+#define LIB_MFRONT_CASTEMTRAITS_HXX 
 
 namespace castem{
 
@@ -48,5 +48,5 @@ namespace castem{
 
 } // end of namespace castem  
 
-#endif /* LIB_MFRONT_CASTEMTRAITS_HXX_ */
+#endif /* LIB_MFRONT_CASTEMTRAITS_HXX */
 

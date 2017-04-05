@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ANSYS_ANSYSROTATION_H_
-#define LIB_MFRONT_ANSYS_ANSYSROTATION_H_ 
+#ifndef LIB_MFRONT_ANSYS_ANSYSROTATION_HXX
+#define LIB_MFRONT_ANSYS_ANSYSROTATION_HXX 
 
 #include<iterator>
 #include"TFEL/Math/tmatrix.hxx"
@@ -91,5 +91,5 @@ namespace ansys
 
 #include"MFront/Ansys/AnsysRotation.ixx"
 
-#endif /* LIB_MFRONT_ANSYS_ANSYSROTATION_H_ */
+#endif /* LIB_MFRONT_ANSYS_ANSYSROTATION_HXX */
 

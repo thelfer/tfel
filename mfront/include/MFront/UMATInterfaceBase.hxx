@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTUMATINTERFACEBASE_H_
-#define LIB_MFRONT_MFRONTUMATINTERFACEBASE_H_ 
+#ifndef LIB_MFRONT_MFRONTUMATINTERFACEBASE_HXX
+#define LIB_MFRONT_MFRONTUMATINTERFACEBASE_HXX 
 
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 
@@ -329,6 +329,7 @@ namespace mfront{
 		  const Hypothesis) const;
     /*!
      * \param[out] f      : output file
+     * \param[out] first  : boolean stating if the an initializer has already been declared
      * \param[in]  h      : modelling hypothesis
      * \param[in]  mb     : behaviour description
      * \param[in]  v      : variables to be initialized
@@ -340,6 +341,7 @@ namespace mfront{
      */
     virtual void
     writeMaterialPropertiesInitializersInBehaviourDataConstructorI(std::ostream&,
+								   bool& first,
 								   const Hypothesis,
 								   const BehaviourDescription&,
 								   const std::vector<UMATMaterialProperty>&,
@@ -674,5 +676,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MFRONTUMATINTERFACEBASE_H_ */
+#endif /* LIB_MFRONT_MFRONTUMATINTERFACEBASE_HXX */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONMODELTINTERFACEFACTORY_HXX_
-#define LIB_MFRONMODELTINTERFACEFACTORY_HXX_ 
+#ifndef LIB_MFRONMODELTINTERFACEFACTORY_HXX
+#define LIB_MFRONMODELTINTERFACEFACTORY_HXX 
 
 #include<map>
 #include<memory>
@@ -65,5 +65,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* LIB_MFRONMODELTINTERFACEFACTORY_HXX_ */
+#endif /* LIB_MFRONMODELTINTERFACEFACTORY_HXX */
 

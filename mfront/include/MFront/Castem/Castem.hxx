@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_CASTEM_MFRONT_CASTEM_H_
-#define LIB_TFEL_CASTEM_MFRONT_CASTEM_H_ 
+#ifndef LIB_TFEL_CASTEM_MFRONT_CASTEM_HXX
+#define LIB_TFEL_CASTEM_MFRONT_CASTEM_HXX 
 
 #include<castem.h>
 #ifdef umat /* the umat symbol might be defined in the (standard)
@@ -24,11 +24,11 @@
 
 #ifndef TFEL_CASTEM_INLINE
 #define TFEL_CASTEM_INLINE inline
-#endif /* LIB_TFEL_CASTEM_MFRONT_CASTEM_H_ */
+#endif /* LIB_TFEL_CASTEM_MFRONT_CASTEM_HXX */
 
 #ifndef TFEL_CASTEM_INLINE2
 #define TFEL_CASTEM_INLINE2 inline
-#endif /* LIB_TFEL_CASTEM_MFRONT_CASTEM_H_ */
+#endif /* LIB_TFEL_CASTEM_MFRONT_CASTEM_HXX */
 
 namespace castem{
 
@@ -55,4 +55,4 @@ namespace castem{
 
 } // end of namespace castem
 
-#endif /* LIB_TFEL_CASTEM_MFRONT_CASTEM_H_ */
+#endif /* LIB_TFEL_CASTEM_MFRONT_CASTEM_HXX */

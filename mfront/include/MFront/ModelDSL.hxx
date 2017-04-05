@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTMODELPARSER_H_
-#define LIB_MFRONTMODELPARSER_H_ 
+#ifndef LIB_MFRONTMODELPARSER_HXX
+#define LIB_MFRONTMODELPARSER_HXX 
 
 #include"MFront/MFrontConfig.hxx"
 #include"MFront/ModelDSLBase.hxx"
@@ -48,5 +48,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONTMODELPARSER_H_ */
+#endif /* LIB_MFRONTMODELPARSER_HXX */
 

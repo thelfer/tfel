@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTEXCELLAWINTERFACE_H_
-#define LIB_MFRONTEXCELLAWINTERFACE_H_ 
+#ifndef LIB_MFRONTEXCELLAWINTERFACE_HXX
+#define LIB_MFRONTEXCELLAWINTERFACE_HXX 
 
 #include<string>
 
@@ -63,5 +63,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONTEXCELLAWINTERFACE_H_ */
+#endif /* LIB_MFRONTEXCELLAWINTERFACE_HXX */
 

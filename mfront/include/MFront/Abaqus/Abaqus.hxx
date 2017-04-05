@@ -11,16 +11,16 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ABAQUS_H_
-#define LIB_MFRONT_ABAQUS_H_ 
+#ifndef LIB_MFRONT_ABAQUS_HXX
+#define LIB_MFRONT_ABAQUS_HXX 
 
 #ifndef TFEL_ABAQUS_INLINE
 #define TFEL_ABAQUS_INLINE inline
-#endif /* LIB_MFRONT_ABAQUS_H_ */
+#endif /* LIB_MFRONT_ABAQUS_HXX */
 
 #ifndef TFEL_ABAQUS_INLINE2
 #define TFEL_ABAQUS_INLINE2 inline
-#endif /* LIB_MFRONT_ABAQUS_H_ */
+#endif /* LIB_MFRONT_ABAQUS_HXX */
 
 #include<cstdint>
 #include<type_traits>
@@ -61,5 +61,5 @@ namespace abaqus{
   
 } // end of namespace abaqus
 
-#endif /* LIB_MFRONT_ABAQUS_H_ */
+#endif /* LIB_MFRONT_ABAQUS_HXX */
 

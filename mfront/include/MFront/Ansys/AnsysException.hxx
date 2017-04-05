@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ANSYSEXCEPTION_H_
-#define LIB_MFRONT_ANSYSEXCEPTION_H_ 
+#ifndef LIB_MFRONT_ANSYSEXCEPTION_HXX
+#define LIB_MFRONT_ANSYSEXCEPTION_HXX 
 
 #include<string>
 #include<exception>
@@ -110,4 +110,4 @@ namespace ansys {
   
 } // end of namespace ansys
 
-#endif /* LIB_MFRONT_ANSYSEXCEPTION_H_ */
+#endif /* LIB_MFRONT_ANSYSEXCEPTION_HXX */

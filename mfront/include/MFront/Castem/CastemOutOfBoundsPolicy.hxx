@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MFRONT_CASTEMOUTOFBOUNDSPOLICY_H_
-#define LIB_TFEL_MFRONT_CASTEMOUTOFBOUNDSPOLICY_H_ 
+#ifndef LIB_TFEL_MFRONT_CASTEMOUTOFBOUNDSPOLICY_HXX
+#define LIB_TFEL_MFRONT_CASTEMOUTOFBOUNDSPOLICY_HXX 
 
 #include"MFront/Castem/CastemConfig.hxx"
 #include"TFEL/Material/OutOfBoundsPolicy.hxx"
@@ -36,5 +36,5 @@ namespace castem
 
 } // end of namespace castem
 
-#endif /* LIB_TFEL_MFRONT_CASTEMOUTOFBOUNDSPOLICY_H_ */
+#endif /* LIB_TFEL_MFRONT_CASTEMOUTOFBOUNDSPOLICY_HXX */
 

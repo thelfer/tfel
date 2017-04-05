@@ -11,17 +11,17 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_CYRANO_CYRANOGENERICPLANESTRESSHANDLER_H_
-#define LIB_MFRONT_CYRANO_CYRANOGENERICPLANESTRESSHANDLER_H_ 
+#ifndef LIB_MFRONT_CYRANO_CYRANOGENERICPLANESTRESSHANDLER_HXX
+#define LIB_MFRONT_CYRANO_CYRANOGENERICPLANESTRESSHANDLER_HXX 
 
 #include<algorithm>
 
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/tvector.hxx"
 
-#ifndef LIB_MFRONT_CYRANO_CALL_H_
+#ifndef LIB_MFRONT_CYRANO_CALL_HXX
 #error "This header shall not be called directly"
-#endif /* LIB_MFRONT_CYRANO_CALL_H_ */
+#endif /* LIB_MFRONT_CYRANO_CALL_HXX */
 
 namespace cyrano
 {
@@ -328,5 +328,5 @@ namespace cyrano
 
 } // end of namespace cyrano
 
-#endif /* LIB_MFRONT_CYRANO_CYRANOGENERICPLANESTRESSHANDLER_H_ */
+#endif /* LIB_MFRONT_CYRANO_CYRANOGENERICPLANESTRESSHANDLER_HXX */
 

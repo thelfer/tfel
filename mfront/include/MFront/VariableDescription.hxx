@@ -11,33 +11,29 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_VARDESCRIPTION_H_
-#define LIB_MFRONT_VARDESCRIPTION_H_ 
+#ifndef LIB_MFRONT_VARDESCRIPTION_HXX
+#define LIB_MFRONT_VARDESCRIPTION_HXX 
 
 #include<map>
 #include<vector>
 #include<string>
 #include<initializer_list>
 
+#include"TFEL/Utilities/GenTypeBase.hxx"
 #include"MFront/MFrontConfig.hxx"
 #include"MFront/VariableAttribute.hxx"
+#include"MFront/VariableBoundsDescription.hxx"
+#include"MFront/VariableDescriptionBase.hxx"
 
 namespace mfront
 {
 
-  /*!
-   * structure standing for a variable
-   * The support of fixed-sized arrays has been added lately.
-   * This variable is considered as an array if arraySize is greater than 1.
-   */
+  //! \brief structure standing for a standard (non static) variable
   struct MFRONT_VISIBILITY_EXPORT VariableDescription
+    : public VariableDescriptionBase
   {
     //! standard attribute name
     static const std::string depth;
-    //! standard attribute name
-    static const std::string bound;
-    //! standard attribute name
-    static const std::string physicalBound;
     //! standard attribute name
     static const std::string initialValue;
     //! standard attribute name
@@ -134,26 +130,54 @@ namespace mfront
      */
     const std::map<std::string,VariableAttribute>&
     getAttributes(void) const;
+    //! \return true if bounds has been specified for this variable
+    bool hasBounds() const;
+    /*!
+     * \brief set bounds on this variable
+     * \param[in] b: bounds
+     */
+    void setBounds(const VariableBoundsDescription&);
+    //! \return the bounds of this variable
+    const VariableBoundsDescription& getBounds() const;
+    //! \return true if physical bounds has been specified for this variable
+    bool hasPhysicalBounds() const;
+    /*!
+     * \brief set physical bounds on this variable
+     * \param[in] b: physical bounds
+     */
+    void setPhysicalBounds(const VariableBoundsDescription&);
+    //! \return the physical bounds of this variable
+    const VariableBoundsDescription& getPhysicalBounds() const;
     //! destructor
     ~VariableDescription();
-    //! type of the variable
-    //  If the variable has been declared as an array (see below),
-    //  this field holds the type contained by the array.
-    std::string type;
-    //! name of the variable
-    std::string name;
-    //! description
-    std::string description;
-    //! if the variable has been declared as an array, this field
-    //  contains a value greater than 1
-    unsigned short arraySize;
-    //! line at wich the variable has been declared
-    size_t lineNumber;
   private:
+    //! a simple alias
+    using OptionalVariableBoundsDescription =
+      tfel::utilities::GenType<VariableBoundsDescription>;
+    //! standard bounds
+    OptionalVariableBoundsDescription bounds;
+    //! standard bounds
+    OptionalVariableBoundsDescription physicalBounds;
     //! variable attributes
     std::map<std::string,VariableAttribute> attributes;
   }; // end of struct VariableDescription
 
+  /*!
+   * \return true if the variable has bounds.
+   * \param[in] v: variable description
+   * \note this is a simple wrapper around the `hasBounds` method
+   */
+  MFRONT_VISIBILITY_EXPORT bool
+  hasBounds(const VariableDescription&);
+  /*!
+   * \return true if the variable has physical bounds.
+   * \param[in] v: variable description
+   * \note this is a simple wrapper around the `hasPhysicalBounds`
+   * method.
+   */
+  MFRONT_VISIBILITY_EXPORT bool
+  hasPhysicalBounds(const VariableDescription&);
+  
   //! a simple alias for backward compatibility
   typedef VariableDescription  VarHandler;
 
@@ -186,6 +210,7 @@ namespace mfront
     using std::vector<VariableDescription>::back;
     using std::vector<VariableDescription>::clear;
     using std::vector<VariableDescription>::size;
+    using std::vector<VariableDescription>::erase;
     using std::vector<VariableDescription>::operator[];
     /*!
      * \param[in] n : variable name
@@ -248,8 +273,21 @@ namespace mfront
 			      const std::map<std::string,std::string>&) const;
     //! destructor
     ~VariableDescriptionContainer();
-  }; // end of struct VariableDescription
+  }; // end of struct VariableDescriptionContainer
 
+  /*!
+   * \return true if one of the variables has bounds.
+   * \param[in] c: variable description container
+   */
+  MFRONT_VISIBILITY_EXPORT bool
+  hasBounds(const VariableDescriptionContainer&);
+  /*!
+   * \return true if one of the variables has physical bounds.
+   * \param[in] c: variable description container
+   */
+  MFRONT_VISIBILITY_EXPORT bool
+  hasPhysicalBounds(const VariableDescriptionContainer&);
+  
   //! a simple alias for backward compatibility
   typedef VariableDescriptionContainer      VarContainer;  
 
@@ -257,5 +295,4 @@ namespace mfront
 
 #include"MFront/VariableDescription.ixx"
 
-#endif /* LIB_MFRONT_VARDESCRIPTION_H_ */
-
+#endif /* LIB_MFRONT_VARDESCRIPTION_HXX */

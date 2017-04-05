@@ -11,11 +11,11 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_VARHANDLER_H_
-#define LIB_MFRONT_VARHANDLER_H_ 
+#ifndef LIB_MFRONT_VARHANDLER_HXX
+#define LIB_MFRONT_VARHANDLER_HXX 
 
 #pragma message("This header is deprected, one shall use MFront/VariableDescription instead")
 #include"MFront/VariableDescription.hxx"
 
-#endif /* LIB_MFRONT_VARHANDLER_H_ */
+#endif /* LIB_MFRONT_VARHANDLER_HXX */
 

@@ -97,4 +97,4 @@ namespace mfront{
   
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MATERIALPROPERTYQUERY_HXX_ */
+#endif /* LIB_MFRONT_MATERIALPROPERTYQUERY_HXX */

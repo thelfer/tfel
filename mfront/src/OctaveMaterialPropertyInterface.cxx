@@ -26,6 +26,7 @@
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/MaterialPropertyParametersHandler.hxx"
+#include"MFront/CMaterialPropertyInterfaceBase.hxx"
 #include"MFront/OctaveMaterialPropertyInterface.hxx"
 
 namespace mfront
@@ -183,11 +184,11 @@ namespace mfront
       writeAssignMaterialPropertyParameters(out,mpd,name,
 					    "double","octave");
     }
-    out << "real " << mpd.output << ";\n"
+    out << "real " << mpd.output.name << ";\n"
 	<< mpd.f.body
-	<< "return " << mpd.output << ";\n"
+	<< "return " << mpd.output.name << ";\n"
 	<< "} // end of " << name << "_compute\n\n";
-    if((!mpd.bounds.empty())||(!mpd.physicalBounds.empty())){
+    if((hasBounds(mpd.inputs))||(hasPhysicalBounds(mpd.inputs))){
       out << "static double " << name <<"_checkBounds(";
       for(auto p3=mpd.inputs.begin();p3!=mpd.inputs.end();){
 	out << "const double " << p3->name;
@@ -197,112 +198,122 @@ namespace mfront
       }
       out << ")\n{\n";
       out << "using namespace std;\n";
-      if(!mpd.physicalBounds.empty()){
+      if(hasPhysicalBounds(mpd.inputs)){
 	out << "// treating physical bounds\n";
-	for(const auto& b : mpd.physicalBounds){
+	for(const auto& i : mpd.inputs){
+	  if(!i.hasPhysicalBounds()){
+	    continue;
+	  }
+	  const auto& b = i.getPhysicalBounds();
+	  const auto nbr = CMaterialPropertyInterfaceBase::getVariableNumber(mpd,i.name);
 	  if(b.boundsType==VariableBoundsDescription::Lower){
-	    out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
-	    out << "error(\"" << name << " :"  << b.varName 
+	    out << "if(" << i.name<< " < "<< b.lowerBound << "){\n";
+	    out << "error(\"" << name << " :"  << i.name 
 			  << " is below its physical lower bound.\");\n";
-	    out << "return -" << b.varNbr << ";\n";
+	    out << "return -" << nbr << ";\n";
 	    out << "}\n";
 	  } else if(b.boundsType==VariableBoundsDescription::Upper){
-	    out << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
-	    out << "error(\"" << name << " : " << b.varName 
+	    out << "if(" << i.name<< " > "<< b.upperBound << "){\n";
+	    out << "error(\"" << name << " : " << i.name 
 			  << " is over its physical upper bound.\");\n";
-	    out << "return -" << b.varNbr << ";\n";
+	    out << "return -" << nbr << ";\n";
 	    out << "}\n";
 	  } else {
-	    out << "if((" << b.varName<< " < "<< b.lowerBound << ")||"
-			   << "(" << b.varName<< " > "<< b.upperBound << ")){\n";
-	    out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
-	    out << "error(\"" << name << " : " << b.varName 
+	    out << "if((" << i.name<< " < "<< b.lowerBound << ")||"
+			   << "(" << i.name<< " > "<< b.upperBound << ")){\n";
+	    out << "if(" << i.name<< " < "<< b.lowerBound << "){\n";
+	    out << "error(\"" << name << " : " << i.name 
 			  << " is below its physical lower bound.\");\n";
 	    out << "}\n";
-	    out << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
-	    out << "error(\"" << name << " : " << b.varName 
+	    out << "if(" << i.name<< " > "<< b.upperBound << "){\n";
+	    out << "error(\"" << name << " : " << i.name 
 			  << " is over its physical upper bound.\");\n";
 	    out << "}\n";
-	    out << "return -" << b.varNbr << ";\n";
+	    out << "return -" << nbr << ";\n";
 	    out << "}\n";
 	  }
 	}
       }
-      if(!mpd.bounds.empty()){
+      if(hasBounds(mpd.inputs)){
 	out << "// treating standard bounds\n";
-	for(const auto& b : mpd.bounds){
+	for(const auto& i: mpd.inputs){
+	  if(!i.hasBounds()){
+	    continue;
+	  }
+	  const auto& b = i.getBounds();
+	  const auto nbr = CMaterialPropertyInterfaceBase::getVariableNumber(mpd,i.name);
 	  if(b.boundsType==VariableBoundsDescription::Lower){
-	    out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
+	    out << "if(" << i.name<< " < "<< b.lowerBound << "){\n";
 	    out << "const octave_value policy = get_global_value("
 			  << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\", true);\n";
 	    out << "if(policy.is_defined()){\n";
 	    out << "if(policy.is_string()){\n";
-	    out << "string msg(\"" << name << " : " << b.varName 
+	    out << "string msg(\"" << name << " : " << i.name 
 			  << " is below its physical lower bound.\");\n";
 	    out << "if(policy.string_value()==\"STRICT\"){\n";
 	    out << "error(msg.c_str());\n";
-	    out << "return -" << b.varNbr << ";\n";
+	    out << "return -" << nbr << ";\n";
 	    out << "} if(policy.string_value()==\"WARNING\"){\n";
 	    out << "octave_stdout << msg << \"\\n\";\n";
 	    out << "} else {\n";
-	    out << "return " << b.varNbr << ";\n";
+	    out << "return " << nbr << ";\n";
 	    out << "}\n";
 	    out << "} else {\n";
-	    out << "return " << b.varNbr << ";\n";
+	    out << "return " << nbr << ";\n";
 	    out << "}\n";
 	    out << "} else {\n";
-	    out << "return " << b.varNbr << ";\n";
+	    out << "return " << nbr << ";\n";
 	    out << "}\n";
-	    out << "return " << b.varNbr << ";\n";
+	    out << "return " << nbr << ";\n";
 	    out << "}\n";
 	  } else if(b.boundsType==VariableBoundsDescription::Upper){
-	    out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
+	    out << "if(" << i.name<< " < "<< b.lowerBound << "){\n";
 	    out << "const octave_value policy = get_global_value("
 			  << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\", true);\n";
 	    out << "if(policy.is_defined()){\n";
 	    out << "if(policy.is_string()){\n";
-	    out << "string msg(\"" << b.varName 
+	    out << "string msg(\"" << i.name 
 			  << " is over its physical upper bound.\");\n";
 	    out << "if(policy.string_value()==\"STRICT\"){\n";
 	    out << "error(msg.c_str());\n";
-	    out << "return -" << b.varNbr << ";\n";
+	    out << "return -" << nbr << ";\n";
 	    out << "} if(policy.string_value()==\"WARNING\"){\n";
 	    out << "octave_stdout << msg << \"\\n\";\n";
 	    out << "} else {\n";
-	    out << "return " << b.varNbr << ";\n";
+	    out << "return " << nbr << ";\n";
 	    out << "}\n";
 	    out << "} else {\n";
-	    out << "return " << b.varNbr << ";\n";
+	    out << "return " << nbr << ";\n";
 	    out << "}\n";
 	    out << "} else {\n";
-	    out << "return " << b.varNbr << ";\n";
+	    out << "return " << nbr << ";\n";
 	    out << "}\n";
-	    out << "return " << b.varNbr << ";\n";
+	    out << "return " << nbr << ";\n";
 	    out << "}\n";
 	  } else {
-	    out << "if((" << b.varName<< " < "<< b.lowerBound << ")||"
-			  << "(" << b.varName<< " > "<< b.upperBound << ")){\n";
+	    out << "if((" << i.name<< " < "<< b.lowerBound << ")||"
+			  << "(" << i.name<< " > "<< b.upperBound << ")){\n";
 	    out << "const octave_value policy = get_global_value("
 			  << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\", true);\n";
 	    out << "if(policy.is_defined()){\n";
 	    out << "if(policy.is_string()){\n";
-	    out << "string msg(\"" << b.varName 
+	    out << "string msg(\"" << i.name 
 			  << " is out of its bounds.\");\n";
 	    out << "if(policy.string_value()==\"STRICT\"){\n";
 	    out << "error(msg.c_str());\n";
-	    out << "return -" << b.varNbr << ";\n";
+	    out << "return -" << nbr << ";\n";
 	    out << "} if(policy.string_value()==\"WARNING\"){\n";
 	    out << "octave_stdout << msg << \"\\n\";\n";
 	    out << "} else {\n";
-	    out << "return " << b.varNbr << ";\n";
+	    out << "return " << nbr << ";\n";
 	    out << "}\n";
 	    out << "} else {\n";
-	    out << "return " << b.varNbr << ";\n";
+	    out << "return " << nbr << ";\n";
 	    out << "}\n";
 	    out << "} else {\n";
-	    out << "return " << b.varNbr << ";\n";
+	    out << "return " << nbr << ";\n";
 	    out << "}\n";
-	    out << "return " << b.varNbr << ";\n";
+	    out << "return " << nbr << ";\n";
 	    out << "}\n";
 	  }
 	}
@@ -361,8 +372,8 @@ namespace mfront
       out << "retval = " << name << "_compute();\n";
     } else if(mpd.inputs.size()==1){
       out << "if(args(0).is_real_scalar()){\n";
-      if((!mpd.bounds.empty())||
-	 (!mpd.physicalBounds.empty())){
+      if((hasBounds(mpd.inputs))||
+	 (hasPhysicalBounds(mpd.inputs))){
 	out << "if("<< name << "_checkBounds(";
 	out << "args(0).scalar_value())<0){\n";
 	out << "return retval;\n";
@@ -375,8 +386,8 @@ namespace mfront
       out << "Matrix xout(xin0.rows(),xin0.cols());\n";
       out << "for(i=0;i!=xin0.rows();++i){\n";
       out << "for(j=0;j!=xin0.cols();++j){\n";
-      if((!mpd.bounds.empty())||
-	 (!mpd.physicalBounds.empty())){
+      if((hasBounds(mpd.inputs))||
+	 (hasPhysicalBounds(mpd.inputs))){
 	out << "if("<< name << "_checkBounds(";
 	out << "xin0(i,j))<0){\n";
 	out << "return retval;\n";
@@ -434,8 +445,8 @@ namespace mfront
       // all scalar case
       out << "if(areAllVariablesScalars){\n";
       decltype(mpd.inputs.size()) i;
-      if((!mpd.bounds.empty())||
-	 (!mpd.physicalBounds.empty())){
+      if((hasBounds(mpd.inputs))||
+	 (hasPhysicalBounds(mpd.inputs))){
 	out << "if("<< name << "_checkBounds(";
 	for(i=0;i!=mpd.inputs.size()-1;++i){
 	  out << "args(" << i << ").scalar_value(),";
@@ -457,8 +468,8 @@ namespace mfront
       out << "Matrix xout(row,col);\n";
       out << "for(i=0;i!=row;++i){\n";
       out << "for(j=0;j!=col;++j){\n";
-      if((!mpd.bounds.empty())||
-	 (!mpd.physicalBounds.empty())){
+      if((hasBounds(mpd.inputs))||
+	 (hasPhysicalBounds(mpd.inputs))){
 	out << "if("<< name << "_checkBounds(";
 	for(i=0;i!=mpd.inputs.size()-1;++i){
 	  out << "xin" << i << "(i,j),";
@@ -480,8 +491,7 @@ namespace mfront
       out << "Matrix xout(row,col);\n";
       out << "for(i=0;i!=row;++i){\n";
       out << "for(j=0;j!=col;++j){\n";
-      if((!mpd.bounds.empty())||
-	 (!mpd.physicalBounds.empty())){
+      if((hasBounds(mpd.inputs))||(hasPhysicalBounds(mpd.inputs))){
 	out << "if("<< name << "_checkBounds(";
 	for(i=0;i!=mpd.inputs.size()-1;++i){
 	  out << "(*(getfunction[" << i << "]))(args(" << i << "),i,j),\n";

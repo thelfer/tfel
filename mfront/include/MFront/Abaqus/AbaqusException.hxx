@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ABAQUSEXCEPTION_H_
-#define LIB_MFRONT_ABAQUSEXCEPTION_H_ 
+#ifndef LIB_MFRONT_ABAQUSEXCEPTION_HXX
+#define LIB_MFRONT_ABAQUSEXCEPTION_HXX 
 
 #include<string>
 #include<exception>
@@ -110,4 +110,4 @@ namespace abaqus {
   
 } // end of namespace abaqus
 
-#endif /* LIB_MFRONT_ABAQUSEXCEPTION_H_ */
+#endif /* LIB_MFRONT_ABAQUSEXCEPTION_HXX */

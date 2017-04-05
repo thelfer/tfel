@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTMODELINTERFACEPROXY_HXX_
-#define LIB_MFRONTMODELINTERFACEPROXY_HXX_ 
+#ifndef LIB_MFRONTMODELINTERFACEPROXY_HXX
+#define LIB_MFRONTMODELINTERFACEPROXY_HXX 
 
 #include<string>
 #include<memory>
@@ -35,4 +35,4 @@ namespace mfront{
 
 #include"MFront/ModelInterfaceProxy.ixx"
 
-#endif /* LIB_MFRONTMODELINTERFACEPROXY_HXX_ */
+#endif /* LIB_MFRONTMODELINTERFACEPROXY_HXX */

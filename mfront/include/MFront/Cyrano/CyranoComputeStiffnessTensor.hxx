@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_CYRANOCOMPUTESTIFFNESSTENSOR_H_
-#define LIB_MFRONT_CYRANOCOMPUTESTIFFNESSTENSOR_H_ 
+#ifndef LIB_MFRONT_CYRANOCOMPUTESTIFFNESSTENSOR_HXX
+#define LIB_MFRONT_CYRANOCOMPUTESTIFFNESSTENSOR_HXX 
 
 #include"TFEL/Config/TFELTypes.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
@@ -65,5 +65,5 @@ namespace cyrano
 
 } // end of namespace cyrano
 
-#endif /* LIB_MFRONT_CYRANOCOMPUTESTIFFNESSTENSOR_H_ */
+#endif /* LIB_MFRONT_CYRANOCOMPUTESTIFFNESSTENSOR_HXX */
 

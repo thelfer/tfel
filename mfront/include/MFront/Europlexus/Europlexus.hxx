@@ -11,16 +11,16 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_EPX_H_
-#define LIB_MFRONT_EPX_H_ 
+#ifndef LIB_MFRONT_EPX_HXX
+#define LIB_MFRONT_EPX_HXX 
 
 #ifndef TFEL_EPX_INLINE
 #define TFEL_EPX_INLINE inline
-#endif /* LIB_MFRONT_EPX_H_ */
+#endif /* LIB_MFRONT_EPX_HXX */
 
 #ifndef TFEL_EPX_INLINE2
 #define TFEL_EPX_INLINE2 inline
-#endif /* LIB_MFRONT_EPX_H_ */
+#endif /* LIB_MFRONT_EPX_HXX */
 
 #include<cstdint>
 #include<type_traits>
@@ -81,7 +81,7 @@ namespace epx{
 
 } // end of namespace epx
 
-#endif /* LIB_MFRONT_EPX_H_ */
+#endif /* LIB_MFRONT_EPX_HXX */
 
 
 

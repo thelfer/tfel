@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_CASTEMINTERFACE_H_
-#define LIB_MFRONT_CASTEMINTERFACE_H_ 
+#ifndef LIB_MFRONT_CASTEMINTERFACE_HXX
+#define LIB_MFRONT_CASTEMINTERFACE_HXX 
 
 #include<string>
 #include<iosfwd>
@@ -276,6 +276,12 @@ namespace mfront{
 					       const VariableDescriptionContainer&) const;
 
     virtual void
+    writeVariableDescriptionsToGibiane(std::ostream&,
+				       const Hypothesis,
+				       const VariableDescriptionContainer::const_iterator,
+				       const VariableDescriptionContainer::const_iterator) const;
+    
+    virtual void
     writeGibianeInstruction(std::ostream&,
 			    const std::string&) const;
 
@@ -403,4 +409,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_CASTEMINTERFACE_H_ */
+#endif /* LIB_MFRONT_CASTEMINTERFACE_HXX */

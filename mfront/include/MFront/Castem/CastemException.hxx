@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_CASTEMEXCEPTION_H_
-#define LIB_MFRONT_CASTEMEXCEPTION_H_ 
+#ifndef LIB_MFRONT_CASTEMEXCEPTION_HXX
+#define LIB_MFRONT_CASTEMEXCEPTION_HXX 
 
 #include<string>
 #include<exception>
@@ -73,5 +73,5 @@ namespace castem {
   
 } // end of namespace castem
 
-#endif /* LIB_MFRONT_CASTEMEXCEPTION_H_ */
+#endif /* LIB_MFRONT_CASTEMEXCEPTION_HXX */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_MFRONT_ZMAT_ZMATINTERFACE_IXX_
-#define _LIB_MFRONT_ZMAT_ZMATINTERFACE_IXX_ 
+#ifndef _LIB_MFRONT_ZMAT_ZMATINTERFACE_IXX
+#define _LIB_MFRONT_ZMAT_ZMATINTERFACE_IXX 
 
 namespace zmat
 {

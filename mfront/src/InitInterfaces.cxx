@@ -75,8 +75,7 @@
 namespace mfront
 {
 
-  void
-  initInterfaces()
+  void initInterfaces()
   {
 
     MaterialPropertyInterfaceProxy<CMaterialPropertyInterface> cLawProxy;
@@ -99,7 +98,7 @@ namespace mfront
     MaterialPropertyInterfaceProxy<CppMaterialPropertyInterface> cppLawProxy(cppLawProxyNames,cppLawProxyNames+6);
 
     MaterialPropertyInterfaceProxy<CppTestMaterialPropertyInterface> cppTestLawProxy(CppTestMaterialPropertyInterface::getName(),
-										     CppMaterialPropertyInterface::getName());
+    										     CppMaterialPropertyInterface::getName());
 
 #ifdef HAVE_GNUPLOT
     MaterialPropertyInterfaceProxy<GnuplotMaterialPropertyInterface> gnuplotLawProxy(GnuplotMaterialPropertyInterface::getName(),

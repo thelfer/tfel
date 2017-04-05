@@ -11,11 +11,15 @@
  * project under specific licensing conditions. 
  */
 
+#include<sstream>
 #include<ostream>
 #include<cstring>
+#include<stdexcept>
 #include<algorithm>
 #include"TFEL/Utilities/StringAlgorithms.hxx"
+#include"MFront/VariableBoundsDescription.hxx"
 #include"MFront/MFrontUtilities.hxx"
+
 
 namespace mfront{
 
@@ -97,5 +101,70 @@ namespace mfront{
     p=c;
     return r;
   } // end of read
+
+  std::pair<std::string,VariableBoundsDescription>
+  readVariableBounds(tfel::utilities::CxxTokenizer::const_iterator& p,
+		     const tfel::utilities::CxxTokenizer::const_iterator pe){
+    using tfel::utilities::CxxTokenizer;
+    const std::string m = "mfront::readVariableBounds";
+    auto throw_if = [&m](const bool b,const std::string& msg){
+      if(b){throw(std::runtime_error(m+": "+msg));}
+    };
+    VariableBoundsDescription b;
+    CxxTokenizer::checkNotEndOfLine(m,p,pe);
+    const auto n = p->value;
+    ++p;
+    CxxTokenizer::checkNotEndOfLine(m,"Expected '(' or 'in'.",p,pe);
+    if(p->value=="("){
+      CxxTokenizer::readSpecifiedToken(m,"(",p,pe);
+      CxxTokenizer::checkNotEndOfLine(m,p,pe);
+      if(p->value!="*"){
+	unsigned int component;
+	std::istringstream converter(p->value);
+	converter >> component;
+	throw_if(!converter||(!converter.eof()),
+		 "could not read component number for variable '"+n+"'");
+	b.component=component;
+      }
+      ++(p);
+      CxxTokenizer::checkNotEndOfLine(m,p,pe);
+      throw_if(p->value!=")","Expected ')' (read '"+p->value+"')");
+    }
+    CxxTokenizer::readSpecifiedToken(m,"in",p,pe);
+    CxxTokenizer::checkNotEndOfLine(m,"Expected ']' or '['.",p,pe);
+    if(p->value=="]"){
+      ++p;
+      CxxTokenizer::checkNotEndOfLine(m,"Expected '*'.",p,pe);
+      throw_if(p->value!="*","Expected '*' (read '"+p->value+"')");
+      b.boundsType = VariableBoundsDescription::Upper;
+      ++p;
+    } else if(p->value=="["){
+      ++p;
+      CxxTokenizer::checkNotEndOfLine(m,"Expected lower bound value for variable '"+n+"'",p,pe);
+      b.lowerBound = mfront::read<double>(p,pe);
+      b.boundsType = VariableBoundsDescription::LowerAndUpper;
+    } else {
+      throw_if(true,"Expected ']' or '[' (read '"+p->value+"')");
+    }
+    CxxTokenizer::readSpecifiedToken(m,":",p,pe);
+    CxxTokenizer::checkNotEndOfLine(m,"expected upper bound value for variable '"+n+"'",p,pe);
+    if(p->value=="*"){
+      throw_if(b.boundsType==VariableBoundsDescription::Upper,
+	       "Upper and lower values bounds are both infinity. "
+	       "This is inconsistent.");
+      b.boundsType=VariableBoundsDescription::Lower;
+      ++p;
+      CxxTokenizer::readSpecifiedToken(m,"[",p,pe);
+    } else {
+      b.upperBound = mfront::read<double>(p,pe);
+      if(b.boundsType==VariableBoundsDescription::LowerAndUpper){
+	throw_if(b.lowerBound>b.upperBound,
+		 "Lower bound value is greater than upper "
+		 "bound value for variable '"+n+"'");
+      }
+      CxxTokenizer::readSpecifiedToken(m,"]",p,pe);
+    }
+    return std::make_pair(n,b);
+  } // end of readVariableBounds
   
 } // end of namespace mfront

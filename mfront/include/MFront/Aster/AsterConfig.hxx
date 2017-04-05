@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ASTER_ASTERCONFIG_H_
-#define LIB_MFRONT_ASTER_ASTERCONFIG_H_ 
+#ifndef LIB_MFRONT_ASTER_ASTERCONFIG_HXX
+#define LIB_MFRONT_ASTER_ASTERCONFIG_HXX 
 
 #include"MFront/MFrontConfig.hxx"
 
@@ -28,7 +28,7 @@
 #  endif
 #else
 #  define MFRONT_ASTER_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif /* LIB_MFRONT_ASTER_ASTERCONFIG_H_ */
+#endif /* LIB_MFRONT_ASTER_ASTERCONFIG_HXX */
 
-#endif /* LIB_MFRONT_ASTER_ASTERCONFIG_H_ */
+#endif /* LIB_MFRONT_ASTER_ASTERCONFIG_HXX */
 

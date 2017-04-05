@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ABAQUS_ABAQUSTANGENTOPERATOR_H_
-#define LIB_MFRONT_ABAQUS_ABAQUSTANGENTOPERATOR_H_ 
+#ifndef LIB_MFRONT_ABAQUS_ABAQUSTANGENTOPERATOR_HXX
+#define LIB_MFRONT_ABAQUS_ABAQUSTANGENTOPERATOR_HXX 
 
 #include<type_traits>
 
@@ -208,4 +208,4 @@ namespace abaqus
 
 #include"MFront/Abaqus/AbaqusTangentOperator.ixx"
 
-#endif /* LIB_MFRONT_ABAQUS_ABAQUSTANGENTOPERATOR_H_ */
+#endif /* LIB_MFRONT_ABAQUS_ABAQUSTANGENTOPERATOR_HXX */

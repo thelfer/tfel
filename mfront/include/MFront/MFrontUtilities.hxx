@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTUTILITIES_HXX_
-#define LIB_MFRONT_MFRONTUTILITIES_HXX_
+#ifndef LIB_MFRONT_MFRONTUTILITIES_HXX
+#define LIB_MFRONT_MFRONTUTILITIES_HXX
 
 #include<string>
 #include<vector>
@@ -25,6 +25,9 @@
 
 namespace mfront{
 
+  // forward declaration
+  struct VariableBoundsDescription;
+  
   /*!
    * \brief conditionnally insert a string into
    * a vector of string : an element is inserted if not already
@@ -91,9 +94,8 @@ namespace mfront{
    * If this function fails,   p shall be unchanged.
    */
   template<typename T>
-  T
-  read(tfel::utilities::CxxTokenizer::const_iterator&,
-       const tfel::utilities::CxxTokenizer::const_iterator);		 
+  T read(tfel::utilities::CxxTokenizer::const_iterator&,
+	 const tfel::utilities::CxxTokenizer::const_iterator);		 
   /*!
    * \brief read an object of type T from a stream created by the
    * CxxTokenizer class
@@ -106,10 +108,9 @@ namespace mfront{
    * If this function fails,   p shall be unchanged.
    */
   template<typename T>
-  void
-  read(T&,
-       tfel::utilities::CxxTokenizer::const_iterator&,
-       const tfel::utilities::CxxTokenizer::const_iterator);		 
+  void read(T&,
+	    tfel::utilities::CxxTokenizer::const_iterator&,
+	    const tfel::utilities::CxxTokenizer::const_iterator);		 
   /*!
    * \brief read a string from a stream created by the CxxTokenizer
    * class
@@ -148,10 +149,20 @@ namespace mfront{
   template<>
   MFRONT_VISIBILITY_EXPORT std::vector<std::string>
   read(tfel::utilities::CxxTokenizer::const_iterator&,
-       const tfel::utilities::CxxTokenizer::const_iterator);
-		 
+       const tfel::utilities::CxxTokenizer::const_iterator); 
+  /*!
+   * \brief read the bounds associated to a variable
+   * \param[in,out] p  : current position in the stream
+   * \param[in]     pe : end of the stream
+   * \return a tuple giving the variable name and the bounds
+   */
+  MFRONT_VISIBILITY_EXPORT
+  std::pair<std::string,VariableBoundsDescription>
+  readVariableBounds(tfel::utilities::CxxTokenizer::const_iterator& p,
+		     const tfel::utilities::CxxTokenizer::const_iterator pe);
+
 } // end of mfront
 
 #include"MFront/MFrontUtilities.ixx"
 	   
-#endif /* LIB_MFRONT_MFRONTUTILITIES_HXX_ */
+#endif /* LIB_MFRONT_MFRONTUTILITIES_HXX */

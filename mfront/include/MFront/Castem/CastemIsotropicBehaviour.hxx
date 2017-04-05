@@ -42,4 +42,4 @@ namespace castem{
   
 } // end of namespace castem
 
-#endif /* LIB_MFRONT_CASTEM_CASTEMISOTROPICBEHAVIOUR_HXX_ */
+#endif /* LIB_MFRONT_CASTEM_CASTEMISOTROPICBEHAVIOUR_HXX */

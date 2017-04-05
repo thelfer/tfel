@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTPEDANTICMODE_H_
-#define LIB_MFRONT_MFRONTPEDANTICMODE_H_ 
+#ifndef LIB_MFRONT_MFRONTPEDANTICMODE_HXX
+#define LIB_MFRONT_MFRONTPEDANTICMODE_HXX 
 
 #include"MFront/MFrontConfig.hxx"
 
@@ -31,5 +31,5 @@ namespace mfront{
 
 }
 
-#endif /* LIB_MFRONT_MFRONTPEDANTICMODE_H_ */
+#endif /* LIB_MFRONT_MFRONTPEDANTICMODE_HXX */
 

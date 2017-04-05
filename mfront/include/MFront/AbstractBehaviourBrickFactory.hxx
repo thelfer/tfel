@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTBEHAVIOURBRICKFACTORY_H_
-#define LIB_MFRONT_MFRONTBEHAVIOURBRICKFACTORY_H_ 
+#ifndef LIB_MFRONT_MFRONTBEHAVIOURBRICKFACTORY_HXX
+#define LIB_MFRONT_MFRONTBEHAVIOURBRICKFACTORY_HXX 
 
 #include<map>
 #include<string>
@@ -83,5 +83,5 @@ namespace mfront
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MFRONTBEHAVIOURBRICKFACTORY_H_ */
+#endif /* LIB_MFRONT_MFRONTBEHAVIOURBRICKFACTORY_HXX */
 

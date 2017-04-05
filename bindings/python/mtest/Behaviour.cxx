@@ -120,7 +120,7 @@ void declareBehaviour(){
 	 "- 1 means that the behaviour is orthotropic.\n")
     .def("getMaterialPropertiesNames",
 	 &Behaviour::getMaterialPropertiesNames,
-	 "return the names of the material properties")
+	 "Return the names of the material properties")
     .def("getInternalStateVariablesNames",
 	 &Behaviour::getInternalStateVariablesNames,
 	 "Return the names of the internal state variables")
@@ -131,7 +131,7 @@ void declareBehaviour(){
 	 "tensors and tensors")
     .def("getInternalStateVariablesSize",
 	 &Behaviour::getInternalStateVariablesSize,
-	 "Rthe size of the array of internal variables")
+	 "Return the size of the array of internal variables")
     .def("getInternalStateVariablesDescriptions",
 	 &Behaviour::getInternalStateVariablesDescriptions,
 	 "Return the descriptions the internal variables")
@@ -146,16 +146,16 @@ void declareBehaviour(){
 	 "Return the internal state variable position")
     .def("getExternalStateVariablesNames",
 	 &Behaviour::getExternalStateVariablesNames,
-	 "return the names of the external state variables")
+	 "Return the names of the external state variables")
     .def("getParametersNames",
 	 &Behaviour::getParametersNames,
-	 "return the names of the floating point parameters")
+	 "Return the names of the floating point parameters")
     .def("getIntegerParametersNames",
 	 &Behaviour::getIntegerParametersNames,
-	 "return the names of the integer parameters")
+	 "Return the names of the integer parameters")
     .def("getUnsignedShortParametersNames",
 	 &Behaviour::getUnsignedShortParametersNames,
-	 "return the names of the unsigned short parameters")
+	 "Return the names of the unsigned short parameters")
     ;
   
 } // end of declareBehaviour()

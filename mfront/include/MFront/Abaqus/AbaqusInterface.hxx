@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ABAQUS_CALL_H_
-#define LIB_MFRONT_ABAQUS_CALL_H_ 
+#ifndef LIB_MFRONT_ABAQUS_CALL_HXX
+#define LIB_MFRONT_ABAQUS_CALL_HXX 
 
 #include<string>
 #include<vector>
@@ -135,5 +135,5 @@ namespace abaqus
     
 } // end of namespace abaqus
 
-#endif /* LIB_MFRONT_ABAQUS_CALL_H_ */
+#endif /* LIB_MFRONT_ABAQUS_CALL_HXX */
 

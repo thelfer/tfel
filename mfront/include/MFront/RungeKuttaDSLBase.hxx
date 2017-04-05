@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_RUNGEKUTTADSLBASE_H_
-#define LIB_MFRONT_RUNGEKUTTADSLBASE_H_ 
+#ifndef LIB_MFRONT_RUNGEKUTTADSLBASE_HXX
+#define LIB_MFRONT_RUNGEKUTTADSLBASE_HXX 
 
 #include<string>
 #include"MFront/BehaviourDSLBase.hxx"
@@ -110,5 +110,5 @@ namespace mfront{
 
 } // end of namespace mfront  
 
-#endif /* LIB_MFRONT_RUNGEKUTTADSLBASE_H_ */
+#endif /* LIB_MFRONT_RUNGEKUTTADSLBASE_HXX */
 

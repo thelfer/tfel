@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MAKEFILEGENERATOR_HXX_
-#define LIB_MFRONT_MAKEFILEGENERATOR_HXX_
+#ifndef LIB_MFRONT_MAKEFILEGENERATOR_HXX
+#define LIB_MFRONT_MAKEFILEGENERATOR_HXX
 
 #include<string>
 
@@ -38,4 +38,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MAKEFILEGENERATOR_HXX_ */
+#endif /* LIB_MFRONT_MAKEFILEGENERATOR_HXX */

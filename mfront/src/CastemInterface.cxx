@@ -1747,39 +1747,48 @@ namespace mfront{
 							      const Hypothesis h,
 							      const VariableDescriptionContainer& v) const
   {
-    for(const auto & vd : v){
-      const auto flag = this->getTypeFlag(vd.type);
+    this->writeVariableDescriptionsToGibiane(out,h,v.begin(),v.end());
+  }
+
+  void
+  CastemInterface::writeVariableDescriptionsToGibiane(std::ostream& out,
+						      const Hypothesis h,
+						      const VariableDescriptionContainer::const_iterator pb,
+						      const VariableDescriptionContainer::const_iterator pe) const
+  {  
+    for(auto p=pb;p!=pe;++p){
+      const auto flag = SupportedTypes::getTypeFlag(p->type);
       std::string tmp;
       tmp += ' ';
       if(flag==SupportedTypes::Scalar){
-	if(vd.arraySize==1){
-	  tmp += treatScalar(vd.name);
+	if(p->arraySize==1){
+	  tmp += treatScalar(p->name);
 	} else {
-	  for(unsigned short j=0;j!=vd.arraySize;){
-	    tmp += treatScalar(vd.name,j);
-	    if(++j!=vd.arraySize){
+	  for(unsigned short j=0;j!=p->arraySize;){
+	    tmp += treatScalar(p->name,j);
+	    if(++j!=p->arraySize){
 	      tmp += ' ';
 	    }
 	  }
 	}
       } else if(flag==SupportedTypes::Stensor){
-	if(vd.arraySize==1){
-	  tmp += treatStensor(h,vd.name);
+	if(p->arraySize==1){
+	  tmp += treatStensor(h,p->name);
 	} else {
-	  for(unsigned short j=0;j!=vd.arraySize;){
-	    tmp += treatStensor(h,vd.name,j);
-	    if(++j!=vd.arraySize){
+	  for(unsigned short j=0;j!=p->arraySize;){
+	    tmp += treatStensor(h,p->name,j);
+	    if(++j!=p->arraySize){
 	      tmp += ' ';
 	    }
 	  }
 	}
       } else if(flag==SupportedTypes::Tensor){
-	if(vd.arraySize==1){
-	  tmp += treatTensor(h,vd.name);
+	if(p->arraySize==1){
+	  tmp += treatTensor(h,p->name);
 	} else {
-	  for(unsigned short j=0;j!=vd.arraySize;){
-	    tmp += treatTensor(h,vd.name,j);
-	    if(++j!=vd.arraySize){
+	  for(unsigned short j=0;j!=p->arraySize;){
+	    tmp += treatTensor(h,p->name,j);
+	    if(++j!=p->arraySize){
 	      tmp += ' ';
 	    }
 	  }
@@ -1872,7 +1881,7 @@ namespace mfront{
       ostringstream mcoel;
       mcoel << "coel = 'MOTS' ";
       for(auto pm=mprops.first.cbegin();pm!=mprops.first.cend();){
-	auto flag = this->getTypeFlag(pm->type);
+	auto flag = SupportedTypes::getTypeFlag(pm->type);
 	if(flag!=SupportedTypes::Scalar){
 	  throw(runtime_error("CastemInterface::generateGibianeDeclaration: "
 			      "material properties shall be scalars"));
@@ -1906,7 +1915,9 @@ namespace mfront{
       mparam << "params = 'MOTS' 'T'";
       if(!externalStateVarsHolder.empty()){
 	mparam << " ";
-	this->writeVariableDescriptionContainerToGibiane(mparam,h,externalStateVarsHolder);
+	const auto pb = std::next(externalStateVarsHolder.begin());
+	const auto pe = externalStateVarsHolder.end();
+	this->writeVariableDescriptionsToGibiane(mparam,h,pb,pe);
       }
       mparam << ";";
       writeGibianeInstruction(out,mparam.str());
@@ -1927,7 +1938,7 @@ namespace mfront{
       mi << "MA = 'MATERIAU' MO ";
       auto mpos = 0;
       for(auto pm=mprops.first.cbegin();pm!=mprops.first.cend();++mpos){
-	auto flag = this->getTypeFlag(pm->type);
+	auto flag = SupportedTypes::getTypeFlag(pm->type);
 	if(flag!=SupportedTypes::Scalar){
 	  throw(runtime_error("CastemInterface::generateGibianeDeclaration: "
 			      "material properties shall be scalars"));

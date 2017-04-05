@@ -298,9 +298,9 @@ namespace mfront{
       this->throwRuntimeError("MaterialPropertyDSL::treatFunction",
 			      "function already defined");
     }
-    if(this->output.empty()){
+    if(this->output.name.empty()){
       this->reserveName("res");
-      this->output = "res";
+      this->output.name = "res";
     }
     this->f.modified = false;
     this->f.line = this->current->line;
@@ -358,7 +358,7 @@ namespace mfront{
 	if(!newLine){
 	  this->f.body  += " ";
 	}
-	if((this->current->value==output)||
+	if((this->current->value==output.name)||
 	   (this->inputs.contains(this->current->value))){
 	  treated = false;
 	  if(newInstruction){
@@ -374,7 +374,7 @@ namespace mfront{
 	       (this->current->value=="-=")||
 	       (this->current->value=="*=")||
 	       (this->current->value=="/=")){
-	      if(var != this->output){
+	      if(var != this->output.name){
 		this->throwRuntimeError("MaterialPropertyDSL::treatFunction",
 					"Trying to modify variable '"+var+"'.\n");
 	      }
@@ -574,8 +574,8 @@ namespace mfront{
       const auto p = this->callBacks.find(this->current->value);
       if(p==this->callBacks.end()){
 	MemberFuncPtr handler = nullptr;
-	if(this->output==this->current->value){
-	  this->currentVar = this->output;
+	if(this->output.name==this->current->value){
+	  this->currentVar = this->output.name;
 	  handler = &MaterialPropertyDSL::treatMethod;
 	}
 	for(auto p2=this->inputs.begin();
@@ -676,118 +676,34 @@ namespace mfront{
 
   void MaterialPropertyDSL::treatOutput()
   {
-    if(!this->output.empty()){
+    if(!this->output.name.empty()){
       this->throwRuntimeError("MaterialPropertyDSL::treatOutput",
 			      "Output already defined.");
     }
-    this->output = this->readOnlyOneToken();
-    this->reserveName(this->output);
+    const auto n = this->readOnlyOneToken();
+    if(!tfel::utilities::CxxTokenizer::isValidIdentifier(n,false)){
+      this->throwRuntimeError("MaterialPropertyDSL::treatOutput",
+			      "invalid output name.");
+    }
+    this->output.name = n;
+    this->reserveName(n);
   } // end of MaterialPropertyDSL::treatOutput
 
   void MaterialPropertyDSL::treatBounds()
   {
-    this->registerBounds(this->bounds);
+    const auto b = this->readVariableBounds();
+    this->readSpecifiedToken("MaterialPropertyDSL::treatBounds",";");
+    auto& v = this->inputs.getVariable(std::get<0>(b));
+    v.setBounds(std::get<1>(b));
   } // end of MaterialPropertyDSL::treatBounds
 
   void MaterialPropertyDSL::treatPhysicalBounds()
   {
-    this->registerBounds(this->physicalBounds);
+    const auto b = this->readVariableBounds();
+    this->readSpecifiedToken("MaterialPropertyDSL::treatPhysicalBounds",";");
+    auto& v = this->inputs.getVariable(std::get<0>(b));
+    v.setPhysicalBounds(std::get<1>(b));
   } // end of MaterialPropertyDSL::treatPhysicalBounds
-
-  void
-  MaterialPropertyDSL::registerBounds(std::vector<VariableBoundsDescription>& container)
-  {
-    using namespace std;
-    VariableDescriptionContainer::const_iterator p;
-    vector<VariableBoundsDescription>::const_iterator p3;
-    VariableBoundsDescription boundsDescription;
-    unsigned short i;
-    bool found;
-    this->checkNotEndOfFile("MaterialPropertyDSL::registerBounds");
-    boundsDescription.lineNumber = this->current->line;
-    boundsDescription.varName = this->current->value;
-    found = false;
-    for(i=1u,p=this->inputs.begin();
-	(p!=this->inputs.end())&&(!found);++p,++i){
-      if(p->name==boundsDescription.varName){
-	found=true;
-	boundsDescription.varNbr = i;
-      }
-    }
-    if(!found){
-      this->throwRuntimeError("MaterialPropertyDSL::registerBounds",
-			      "'"+this->current->value+"' is not a valid identifier.");
-    }
-    found = false;
-    for(p3=container.begin();(p3!=container.end())&&(!found);++p3){
-      if(p3->varName==boundsDescription.varName){
-	found = true;
-      }
-    }
-    if(found){
-      this->throwRuntimeError("MaterialPropertyDSL::registerBounds",
-			      "bounds for variable '"+this->current->value+"' already declared.");
-    }
-    ++(this->current);
-    this->readSpecifiedToken("MaterialPropertyDSL::registerBounds","in");
-    this->checkNotEndOfFile("MaterialPropertyDSL::registerBounds ",
-			    "Expected ']' or '['.");
-    if(this->current->value=="]"){
-      ++(this->current);
-      this->checkNotEndOfFile("MaterialPropertyDSL::registerBounds ",
-			      "Expected '*'.");
-      if(this->current->value!="*"){
-	this->throwRuntimeError("MaterialPropertyDSL::registerBounds",
-				"Expected '*' (read '"+this->current->value+"')");
-      }
-      boundsDescription.boundsType = VariableBoundsDescription::Upper;
-      ++(this->current);
-    } else if(this->current->value=="["){
-      ++(this->current);
-      this->checkNotEndOfFile("MaterialPropertyDSL::registerBounds ",
-			      "Expected lower bound value for variable "+boundsDescription.varName);
-      boundsDescription.lowerBound=this->readDouble();
-      boundsDescription.boundsType = VariableBoundsDescription::LowerAndUpper;
-    } else {
-      this->throwRuntimeError("MaterialPropertyDSL::registerBounds",
-			      "Expected ']' or '[' (read '"+this->current->value+"')");
-    }
-    this->readSpecifiedToken("MaterialPropertyDSL::registerBounds",":");
-    this->checkNotEndOfFile("MaterialPropertyDSL::registerBounds",
-			    "Could not read upper bound value for variable "+boundsDescription.varName);
-    if(this->current->value=="*"){
-      if(boundsDescription.boundsType==VariableBoundsDescription::Upper){
-	this->throwRuntimeError("MaterialPropertyDSL::registerBounds",
-				"Upper and lower values bounds are both infinity. This is inconsistent.");
-      }
-      boundsDescription.boundsType=VariableBoundsDescription::Lower;
-      ++(this->current);
-      this->checkNotEndOfFile("MaterialPropertyDSL::registerBounds",
-			      "Expected '['.");
-      if(this->current->value!="["){
-	this->throwRuntimeError("MaterialPropertyDSL::registerBounds",
-				"Expected '[' (read '"+this->current->value+"')");
-      }
-    } else {
-      boundsDescription.upperBound = this->readDouble();
-      if(boundsDescription.boundsType==VariableBoundsDescription::LowerAndUpper){
-	if(boundsDescription.lowerBound>boundsDescription.upperBound){
-	  this->throwRuntimeError("MaterialPropertyDSL::registerBounds",
-				  "Lower bound value is greater than upper bound value for variable '"+
-				  boundsDescription.varName+"'");
-	}
-      }
-      this->checkNotEndOfFile("MaterialPropertyDSL::registerBounds",
-			      "Expected ']'");
-      if(this->current->value!="]"){
-	this->throwRuntimeError("MaterialPropertyDSL::registerBounds",
-				"Expected ']' (read '"+this->current->value+"'");
-      }      
-    }
-    ++(this->current);
-    this->readSpecifiedToken("MaterialPropertyDSL::registerBounds",";");
-    container.push_back(boundsDescription);
-  } // end of MaterialPropertyDSL::registerBounds
   
   void MaterialPropertyDSL::treatUnknownKeyword()
   {

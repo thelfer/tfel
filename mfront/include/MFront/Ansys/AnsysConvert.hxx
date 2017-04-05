@@ -233,4 +233,4 @@ namespace ansys{
   
 } // end of namespace ansys
 
-#endif /* LIB_MFRONT_ANSYS_ANSYSCONVERT_HXX_ */
+#endif /* LIB_MFRONT_ANSYS_ANSYSCONVERT_HXX */

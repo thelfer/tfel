@@ -11,12 +11,12 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_EPX_EUROPLEXUSBEHAVIOURHANDLER_H_
-#define LIB_MFRONT_EPX_EUROPLEXUSBEHAVIOURHANDLER_H_ 
+#ifndef LIB_MFRONT_EPX_EUROPLEXUSBEHAVIOURHANDLER_HXX
+#define LIB_MFRONT_EPX_EUROPLEXUSBEHAVIOURHANDLER_HXX 
 
-#ifndef LIB_MFRONT_EPX_CALL_H_
+#ifndef LIB_MFRONT_EPX_CALL_HXX
 #error "This header shall not be called directly"
-#endif /* LIB_MFRONT_EPX_CALL_H_ */
+#endif /* LIB_MFRONT_EPX_CALL_HXX */
 
 #include"TFEL/Math/Matrix/TMatrixView.hxx"
 #include"TFEL/Math/T2toST2/T2toST2View.hxx"
@@ -449,7 +449,9 @@ namespace epx
     {
       typedef Behaviour<H,EuroplexusReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
-      constexpr const unsigned short npredef  = Traits::external_variables_nb;
+      // The temperature is not counted among external state
+      // variable, so we use Traits::external_variables_nb2
+      constexpr const unsigned short npredef  = Traits::external_variables_nb2;
       constexpr const bool is_defined_        = Traits::is_defined;
       //Test if the nb of state variables matches Behaviour requirements
       if((npredef!=NPREDEF)&&is_defined_){
@@ -462,4 +464,4 @@ namespace epx
   
 } // end of namespace epx
 
-#endif /* LIB_MFRONT_EPX_EUROPLEXUSBEHAVIOURHANDLER_H_ */
+#endif /* LIB_MFRONT_EPX_EUROPLEXUSBEHAVIOURHANDLER_HXX */

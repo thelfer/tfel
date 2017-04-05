@@ -31,5 +31,5 @@ namespace mfront
   MaterialPropertyDescription&
   MaterialPropertyDescription::operator=(MaterialPropertyDescription&&) = default;
   MaterialPropertyDescription::~MaterialPropertyDescription() = default;
-
+  
 } // end of namespace mfront

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ANSYS_ANSYSTANGENTOPERATOR_H_
-#define LIB_MFRONT_ANSYS_ANSYSTANGENTOPERATOR_H_ 
+#ifndef LIB_MFRONT_ANSYS_ANSYSTANGENTOPERATOR_HXX
+#define LIB_MFRONT_ANSYS_ANSYSTANGENTOPERATOR_HXX 
 
 #include<type_traits>
 
@@ -228,4 +228,4 @@ namespace ansys
 
 #include"MFront/Ansys/AnsysTangentOperator.ixx"
 
-#endif /* LIB_MFRONT_ANSYS_ANSYSTANGENTOPERATOR_H_ */
+#endif /* LIB_MFRONT_ANSYS_ANSYSTANGENTOPERATOR_HXX */

@@ -196,4 +196,4 @@ namespace mfront{
   
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_ABAQUSINTERFACEBASE_HXX_ */
+#endif /* LIB_MFRONT_ABAQUSINTERFACEBASE_HXX */

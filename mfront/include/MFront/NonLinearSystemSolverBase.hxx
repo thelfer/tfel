@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVERBASE_H_
-#define LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVERBASE_H_ 
+#ifndef LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVERBASE_HXX
+#define LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVERBASE_HXX 
 
 #include<iosfwd>
 #include<string>
@@ -124,5 +124,5 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVERBASE_H_ */
+#endif /* LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVERBASE_HXX */
 

@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ABAQUSTRAITS_HXX_
-#define LIB_MFRONT_ABAQUSTRAITS_HXX_ 
+#ifndef LIB_MFRONT_ABAQUSTRAITS_HXX
+#define LIB_MFRONT_ABAQUSTRAITS_HXX 
 
 namespace abaqus{
 
@@ -47,5 +47,5 @@ namespace abaqus{
 
 } // end of namespace abaqus  
 
-#endif /* LIB_MFRONT_ABAQUSTRAITS_HXX_ */
+#endif /* LIB_MFRONT_ABAQUSTRAITS_HXX */
 

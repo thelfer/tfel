@@ -12,8 +12,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX_
-#define LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX_
+#ifndef LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX
+#define LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX
 
 #include<set>
 #include<map>
@@ -636,12 +636,6 @@ namespace mfront{
     virtual void treatBounds(void);
     //! \brief treat the @PhysicalBounds keyword
     virtual void treatPhysicalBounds(void);
-    /*!
-     * \param[out] d : bounds description
-     * \param[in]  h : modelling hypothesis
-     */
-    virtual void treatBounds(BoundsDescription&,
-			     const Hypothesis);
     //! \brief treat the @PredictionOperator keyword
     virtual void treatPredictionOperator(void);
     //! \brief treat the @Swelling keyword
@@ -871,7 +865,27 @@ namespace mfront{
 
     virtual void
     writeBehaviourCheckBounds(const Hypothesis);
-
+    /*!
+     * \brief write the checks associated to a bound
+     * \param[out] os: output stream
+     * \param[in]  v:  variable description
+     * \param[in]  b:  if true, checks are written also on the variable updated with its increment
+     * \note if the variable has no bounds, nothing is done
+     */
+    virtual void writeBoundsChecks(std::ostream&,
+				   const VariableDescription&,
+				   const bool);
+    /*!
+     * \brief write the checks associated to a physical bound
+     * \param[out] os: output stream
+     * \param[in]  v:  variable description
+     * \param[in]  b:  if true, checks are written also on the variable updated with its increment
+     * \note if the variable has no physical bounds, nothing is done
+     */
+    virtual void writePhysicalBoundsChecks(std::ostream&,
+					   const VariableDescription&,
+					   const bool);
+    
     virtual void
     writeBehaviourDisabledConstructors(void);
 
@@ -1256,4 +1270,4 @@ namespace mfront{
 
 #include"MFront/BehaviourDSLCommon.ixx"
 
-#endif /* LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX_ */
+#endif /* LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX */

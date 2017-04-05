@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_CASTEMORTHOTROPICBEHAVIOUR_H_
-#define LIB_MFRONT_CASTEMORTHOTROPICBEHAVIOUR_H_ 
+#ifndef LIB_MFRONT_CASTEMORTHOTROPICBEHAVIOUR_HXX
+#define LIB_MFRONT_CASTEMORTHOTROPICBEHAVIOUR_HXX 
 
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"MFront/Castem/CastemConfig.hxx"
@@ -100,5 +100,5 @@ namespace castem
   
 } // end of namespace castem
 
-#endif /* LIB_MFRONT_CASTEMORTHOTROPICBEHAVIOUR_H_ */
+#endif /* LIB_MFRONT_CASTEMORTHOTROPICBEHAVIOUR_HXX */
 

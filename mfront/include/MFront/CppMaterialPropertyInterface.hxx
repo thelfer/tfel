@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTCPPLAWINTERFACE_H_
-#define LIB_MFRONTCPPLAWINTERFACE_H_ 
+#ifndef LIB_MFRONTCPPLAWINTERFACE_HXX
+#define LIB_MFRONTCPPLAWINTERFACE_HXX 
 
 #include<string>
 
@@ -72,8 +72,6 @@ namespace mfront{
      * \param const std::string&, includes
      * \param const VariableDescriptionContainer&, inputs
      * \param const std::vector<std::string>&, parameters
-     * \param const std::vector<VariableBoundsDescription>&, bounds of the law
-     * \param const std::vector<VariableBoundsDescription>&, physical bounds of the law
      */
     void writeHeaderFile(const std::string&,
 			 const std::string&,
@@ -81,9 +79,7 @@ namespace mfront{
 			 const std::string&,
 			 const std::string&,
 			 const VariableDescriptionContainer&,
-			 const std::vector<std::string>&,
-			 const std::vector<VariableBoundsDescription>&,
-			 const std::vector<VariableBoundsDescription>&);
+			 const std::vector<std::string>&);
 
     /*
      * \param const std::string&, name of the original file
@@ -97,8 +93,6 @@ namespace mfront{
      * \param const std::vector<std::string>&, parameters
      * \param const std::map<std::string,double>&, parameters values
      * \param const LawFunction&, function definition
-     * \param const std::vector<VariableBoundsDescription>&, bounds of the law
-     * \param const std::vector<VariableBoundsDescription>&, physical bounds of the law
      */
     void writeSrcFile(const std::string&,
 		      const std::string&,
@@ -110,14 +104,10 @@ namespace mfront{
 		      const StaticVariableDescriptionContainer&,
 		      const std::vector<std::string>&,
 		      const std::map<std::string,double>&,
-		      const LawFunction&,
-		      const std::vector<VariableBoundsDescription>&,
-		      const std::vector<VariableBoundsDescription>&);
-
-    std::string headerFileName;
+		      const LawFunction&);
     
   }; // end of MfrontCppMaterialPropertyInterface
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONTCPPLAWINTERFACE_H_ */
+#endif /* LIB_MFRONTCPPLAWINTERFACE_HXX */

@@ -131,7 +131,7 @@ namespace mfront
     this->headerFile << "(";
     this->writeParameterList(this->headerFile,mpd.inputs);
     this->headerFile << ");\n\n";
-    if(((!mpd.bounds.empty())||(!mpd.physicalBounds.empty()))||
+    if(((hasBounds(mpd.inputs))||(hasPhysicalBounds(mpd.inputs)))||
        (this->requiresCheckBoundsFunction())){
       this->headerFile << "MFRONT_SHAREDOBJ int "
 		       << this->getCallingConvention() << '\n'
@@ -163,22 +163,65 @@ namespace mfront
     }
   } // end of CMaterialPropertyInterfaceBase::writeParameterList
 
-  static void writeBounds(std::ostream& out,
-			  const std::vector<VariableBoundsDescription>& bounds,
-			  const char * const s){
-    for(const auto& b : bounds){
+  VariableDescriptionContainer::size_type
+  CMaterialPropertyInterfaceBase::getVariableNumber(const MaterialPropertyDescription& mpd,
+						    const std::string& n){
+    VariableDescriptionContainer::size_type nbr = 1u;
+    for(const auto& i:mpd.inputs){
+      if(i.name==n){
+	return nbr;
+      }
+      ++nbr;
+    }
+    throw(std::runtime_error("CMaterialPropertyInterfaceBase::getVariableNumber: "
+			     "no inputs named '"+n+"'"));
+  } // end of CMaterialPropertyInterfaceBase::getVariableNumber
+  
+  static void writePhysicalBounds(std::ostream& out,
+				  const MaterialPropertyDescription& mpd) {
+    for(const auto& i : mpd.inputs){
+      if(!i.hasPhysicalBounds()){
+	continue;
+      }
+      const auto& b = i.getPhysicalBounds();
+      const auto nbr = CMaterialPropertyInterfaceBase::getVariableNumber(mpd,i.name);
       if(b.boundsType==VariableBoundsDescription::Lower){
-	out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n"
-	    << "return " << s << b.varNbr << ";\n"
+	out << "if(" << i.name << " < "<< b.lowerBound << "){\n"
+	    << "return -" << nbr << ";\n"
 	    << "}\n";
       } else if(b.boundsType==VariableBoundsDescription::Upper){
-	out << "if(" << b.varName<< " > "<< b.upperBound << "){\n"
-	    << "return " << s << b.varNbr << ";\n"
+	out << "if(" << i.name << " > "<< b.upperBound << "){\n"
+	    << "return -" << nbr << ";\n"
 	    << "}\n";
       } else {
-	out << "if((" << b.varName<< " < "<< b.lowerBound << ")||"
-	    << "(" << b.varName<< " > "<< b.upperBound << ")){\n"
-	    << "return " << s << b.varNbr << ";\n"
+	out << "if((" << i.name << " < "<< b.lowerBound << ")||"
+	    << "(" << i.name<< " > "<< b.upperBound << ")){\n"
+	    << "return -" << nbr << ";\n"
+	    << "}\n";
+      }
+    }
+  }
+
+  static void writeBounds(std::ostream& out,
+			  const MaterialPropertyDescription& mpd) {
+    for(const auto& i : mpd.inputs){
+      if(!i.hasBounds()){
+	continue;
+      }
+      const auto& b = i.getBounds();
+      const auto nbr = CMaterialPropertyInterfaceBase::getVariableNumber(mpd,i.name);
+      if(b.boundsType==VariableBoundsDescription::Lower){
+	out << "if(" << i.name << " < "<< b.lowerBound << "){\n"
+	    << "return " << nbr << ";\n"
+	    << "}\n";
+      } else if(b.boundsType==VariableBoundsDescription::Upper){
+	out << "if(" << i.name << " > "<< b.upperBound << "){\n"
+	    << "return " << nbr << ";\n"
+	    << "}\n";
+      } else {
+	out << "if((" << i.name << " < "<< b.lowerBound << ")||"
+	    << "(" << i.name<< " > "<< b.upperBound << ")){\n"
+	    << "return " << nbr << ";\n"
 	    << "}\n";
       }
     }
@@ -246,21 +289,22 @@ namespace mfront
 		    << "errno=0;\n"
 		    << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
     }
-    this->srcFile << "real " << mpd.output << ";\n"
+    this->srcFile << "real " << mpd.output.name << ";\n"
 		  << mpd.f.body << "\n";
     if(!mpd.inputs.empty()){
       this->srcFile << "#ifndef MFRONT_NOERRNO_HANDLING\n"
 	// can't use std::swap here as errno might be a macro
 		    << "const auto mfront_errno = errno;\n"
 		    << "errno = mfront_errno_old;\n"
-		    << "if((mfront_errno!=0)||(!tfel::math::ieee754::isfinite(" << mpd.output << "))){\n";
+		    << "if((mfront_errno!=0)||(!tfel::math::ieee754::isfinite("
+		    << mpd.output.name << "))){\n";
       this->writeCErrorTreatment(this->srcFile,mpd);
       this->srcFile << "}\n"
 		    << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
     }
-    this->srcFile << "return " << mpd.output << ";\n"
+    this->srcFile << "return " << mpd.output.name << ";\n"
 		  << "} /* end of " << mpd.className << " */\n\n";
-    if(((!mpd.bounds.empty())||(!mpd.physicalBounds.empty()))||
+    if(((hasBounds(mpd.inputs))||(hasPhysicalBounds(mpd.inputs)))||
        (this->requiresCheckBoundsFunction())){
       this->srcFile << "int "
 		    << this->getCheckBoundsFunctionName(mpd.material,mpd.className);
@@ -271,13 +315,13 @@ namespace mfront
       for(const auto& i : mpd.inputs){
 	this->srcFile << "static_cast<void>(" << i.name << ");\n";
       }
-      if(!mpd.physicalBounds.empty()){
+      if(hasPhysicalBounds(mpd.inputs)){
 	this->srcFile << "/* treating mpd.physical bounds */\n";
-	writeBounds(this->srcFile,mpd.physicalBounds,"-");
+	writePhysicalBounds(this->srcFile,mpd);
       }
-      if(!mpd.bounds.empty()){
+      if(hasBounds(mpd.inputs)){
 	this->srcFile << "/* treating standard bounds */\n";
-	writeBounds(this->srcFile,mpd.physicalBounds,"");
+	writeBounds(this->srcFile,mpd);
       }
       this->srcFile << "return 0;\n} /* end of " << mpd.className << "_checkBounds */\n\n";
     }

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONT_H_
-#define LIB_MFRONT_MFRONT_H_ 
+#ifndef LIB_MFRONT_MFRONT_HXX
+#define LIB_MFRONT_MFRONT_HXX 
 
 #include<set>
 #include<map>
@@ -136,7 +136,7 @@ namespace mfront{
     
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     virtual void treatWin32(void);
-#endif /* LIB_MFRONT_H_ */
+#endif /* LIB_MFRONT_HXX */
 
     //! description of the targets that can be build
     TargetsDescription targets;
@@ -168,4 +168,4 @@ namespace mfront{
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MFRONT_H_ */
+#endif /* LIB_MFRONT_MFRONT_HXX */

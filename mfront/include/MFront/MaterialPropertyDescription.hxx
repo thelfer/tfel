@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MATERIALPROPERTYDESCRIPTION_H_
-#define LIB_MFRONT_MATERIALPROPERTYDESCRIPTION_H_ 
+#ifndef LIB_MFRONT_MATERIALPROPERTYDESCRIPTION_HXX
+#define LIB_MFRONT_MATERIALPROPERTYDESCRIPTION_HXX 
 
 #include<map>
 #include<set>
@@ -27,105 +27,66 @@
 namespace mfront
 {
 
-  /*!
-   * structure describing a material property
-   */
+  //! structure describing a material property
   struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDescription
   {
+    //! default constructor
     MaterialPropertyDescription();
+    //! copy constructor
     MaterialPropertyDescription(const MaterialPropertyDescription&);
+    //! move constructor
     MaterialPropertyDescription(MaterialPropertyDescription&&);
+    //! standard assignement
     MaterialPropertyDescription& operator=(const MaterialPropertyDescription&);
+    //! move assignement
     MaterialPropertyDescription& operator=(MaterialPropertyDescription&&);
+    //! destructor
     ~MaterialPropertyDescription();
-    /*!
-     * \return the external names of each input variables.
-     */
+    //! \return the external names of each input variables.
     std::vector<std::string>
     getInputVariablesExternalNames(void);
-    /*!
-     * body of the material property
-     */
+    //! body of the material property
     LawFunction f;
-    /*!
-     * list of inputs
-     */
+    //! list of inputs
     VariableDescriptionContainer inputs;
-    /*!
-     * output
-     */
-    std::string output;
-    /*!
-     * law name
-     */
+    //! output
+    VariableDescription output;
+    //! law name
     std::string law;
-    /*!
-     * material name
-     */
+    //! material name
     std::string material;
-    /*!
-     * library name
-     */
+    //! library name
     std::string library;
-    /*!
-     * class name
-     */
+    //! class name
     std::string className;
-    /*!
-     * included header files
-     */
+    //! included header files
     std::string includes;
-    /*!
-     * specific sources
-     */
+    //! specific sources
     std::string sources;
-    /*!
-     * private code
-     */
+    //! private code
     std::string privateCode;
-    /*!
-     * class member
-     */
+    //! class member
     std::string members;
-    /*!
-     * bounds description
-     */
-    std::vector<VariableBoundsDescription> bounds;
-    /*!
-     * physical bounds description
-     */
-    std::vector<VariableBoundsDescription> physicalBounds;
     //! list of reserved names
     std::set<std::string> reservedNames;
     //! list of variables names
     std::set<std::string> memberNames;
     //! list of variables names
     std::set<std::string> staticMemberNames;
-    /*!
-     * glossary names
-     */
+    //! glossary names
     std::map<std::string,std::string> glossaryNames;
-    /*!
-     * entry names
-     */
+    //! entry names
     std::map<std::string,std::string> entryNames;
-    /*!
-     * parameters
-     */
+    //! parameters
     std::vector<std::string> parameters;
-    /*!
-     * parameters default value
-     */
+    //! parameters default value
     std::map<std::string,double> parametersValues;
-    /*!
-     * list of material laws used
-     */
+    //! list of material laws used
     std::vector<std::string> materialLaws;
     //! static variables
     StaticVariableDescriptionContainer staticVars;
   }; // end of MaterialProopertyDescription
-
+    
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MATERIALPROPERTYDESCRIPTION_H_ */
-
+#endif /* LIB_MFRONT_MATERIALPROPERTYDESCRIPTION_HXX */

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MFRONT_CYRANOOUTOFBOUNDSPOLICY_H_
-#define LIB_TFEL_MFRONT_CYRANOOUTOFBOUNDSPOLICY_H_ 
+#ifndef LIB_TFEL_MFRONT_CYRANOOUTOFBOUNDSPOLICY_HXX
+#define LIB_TFEL_MFRONT_CYRANOOUTOFBOUNDSPOLICY_HXX 
 
 #include"MFront/Cyrano/CyranoConfig.hxx"
 #include"TFEL/Material/OutOfBoundsPolicy.hxx"
@@ -36,5 +36,5 @@ namespace cyrano
 
 } // end of namespace cyrano
 
-#endif /* LIB_TFEL_MFRONT_CYRANOOUTOFBOUNDSPOLICY_H_ */
+#endif /* LIB_TFEL_MFRONT_CYRANOOUTOFBOUNDSPOLICY_HXX */
 

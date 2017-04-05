@@ -17,6 +17,7 @@
 
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontUtilities.hxx"
 #include"MFront/FileDescription.hxx"
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
@@ -104,117 +105,39 @@ namespace mfront
   } // end of treatKeyword
 
   std::pair<bool,GnuplotMaterialPropertyInterface::tokens_iterator>
-  GnuplotMaterialPropertyInterface::registerTestBounds(tokens_iterator current,
-						const tokens_iterator endTokens)
+  GnuplotMaterialPropertyInterface::registerTestBounds(tokens_iterator p,
+						       const tokens_iterator pe)
   {
-    using namespace std;
-    string msg("GnuplotMaterialPropertyInterface::registerTestBounds : ");
-    VariableBoundsDescription boundsDescription;
-    
-    current=nextToken(--current,endTokens,msg);
-    if(current->value=="{"){
-      msg+="'{' is not allowed in graph bounds.\n";
-      msg+="Error at line : ";
-      msg+=to_string(current->line);
-    }
-    // howto test if current->value is a word ????
-    boundsDescription.lineNumber = current->line;
-    boundsDescription.varName = current->value;
-
-    // on ne peut pas tester si la variable existe bien en input :-(
-    // peut-on avoir ici autre chose que 1 ?
-    boundsDescription.varNbr = 1 ;
-
-    current=nextToken(current,endTokens,msg);
-    if(current->value!="in"){
-      msg+="expected 'in' (read ";
-      msg+=current->value;
-      msg+=")\nError at line : ";
-      msg+=to_string(current->line);
-      throw(runtime_error(msg));
-    }
-    current=nextToken(current,endTokens,msg);
-    if(current->value!="["){
-      msg+="expected '[' (read ";
-      msg+=current->value;
-      msg+=")\nError at line : ";
-      msg+=to_string(current->line);
-      throw(runtime_error(msg));
-    }
-    current=nextToken(current,endTokens,msg);
-    istringstream converterL(current->value);
-    converterL >> boundsDescription.lowerBound;
-    boundsDescription.boundsType = VariableBoundsDescription::LowerAndUpper;
-    if(!converterL&&(!converterL.eof())){
-      msg+="could not read lower bound value\nRead : ";
-      msg+=current->value;
-      msg+="\nError at line : ";
-      msg+=to_string(current->line);
-      throw(runtime_error(msg));
-    }
-    current=nextToken(current,endTokens,msg);
-    if(current->value!=":"){
-      msg+="expected ':' (read ";
-      msg+=current->value;
-      msg+=")\nError at line : ";
-      msg+=to_string(current->line);
-      throw(runtime_error(msg));
-    }
-    current=nextToken(current,endTokens,msg);
-    istringstream converterU(current->value);
-    converterU >> boundsDescription.upperBound;
-    if(!converterU&&(!converterU.eof())){
-      msg+="could not read upper bound value\nRead : ";
-      msg+=current->value;
-      msg+="\nError at line : ";
-      msg+=to_string(current->line);
-      throw(runtime_error(msg));
-    }
-    if(boundsDescription.boundsType==VariableBoundsDescription::LowerAndUpper){
-      if(boundsDescription.lowerBound>boundsDescription.upperBound){
-	msg+="lower bound value is greater than upper bound value for variable ";
-	msg+=boundsDescription.varName;
-	msg+="\nError at line : ";
-	msg+=to_string(current->line);
-	throw(runtime_error(msg));
-      }
-    }
-    current=nextToken(current,endTokens,msg);
-    if(current->value!="]"){
-      msg+="expected ']' (read ";
-      msg+=current->value;
-      msg+=")\nError at line : ";
-      msg+=to_string(current->line);
-      throw(runtime_error(msg));
-    }      
-    current=nextToken(current,endTokens,msg);
-    if(current->value!=";"){
-      msg+="expected ';' (read ";
-      msg+=current->value;
-      msg+=")\nError at line : ";
-      msg+=to_string(current->line);
-      throw(runtime_error(msg));
-    }      
-    testBounds.push_back(boundsDescription);
-    return make_pair(true,++current);
+    using tfel::utilities::CxxTokenizer;
+    const std::string m = "GnuplotMaterialPropertyInterface::registerTestBounds";
+    auto throw_if = [&m](const bool b,const std::string& msg){
+      if(b){throw(std::runtime_error(m+": "+msg));}
+    };
+    const auto b = mfront::readVariableBounds(p,pe);
+    CxxTokenizer::readSpecifiedToken(m,";",p,pe);
+    throw_if(b.second.boundsType!=VariableBoundsDescription::LowerAndUpper,
+	     "invalid bounds type");
+    throw_if(!testBounds.insert(b).second,
+	     "test bounds for variable '"+b.first+"' already registred");
+    return {true,++p};
   } // end of registerTestBounds
 
   std::pair<bool,GnuplotMaterialPropertyInterface::tokens_iterator>
   GnuplotMaterialPropertyInterface::registerGraph(tokens_iterator current,
-						  const tokens_iterator endTokens)
+						  const tokens_iterator pe)
   {
     using namespace std;
     string msg("GnuplotMaterialPropertyInterface::registerGraph : ");
-    current=nextToken(--current,endTokens,msg);
+    current=nextToken(--current,pe,msg);
     if(current->value!="{"){
       msg+="expected '{'.\n";
       msg+="Error at line : ";
       msg+=to_string(current->line);
       throw(runtime_error(msg));
     }
-    current=nextToken(current,endTokens,msg);
+    current=nextToken(current,pe,msg);
     while((current->value!="}")&&
-	  (current!=endTokens)){
+	  (current!=pe)){
       if(current->value=="{"){
 	msg+="'{' is not allowed in graph.\n";
 	msg+="Error at line : ";
@@ -223,37 +146,37 @@ namespace mfront
       }
       // on lit les mots clefs
       if (current->value == "Label") {
-	//	current=readUntilEndOfInstruction(yLabel,++current,endTokens);
+	//	current=readUntilEndOfInstruction(yLabel,++current,pe);
 	// suppress " at begin and end of string if any
 	
 	
-	current=nextToken(current,endTokens,msg);
+	current=nextToken(current,pe,msg);
 	yLabel=eraseQuote(current->value);
-	current=nextToken(current,endTokens,msg);
+	current=nextToken(current,pe,msg);
 	if (current->value != ";") {
 	  msg+="Label : you must give only a string.\n";
 	  msg+="Error at line : ";
 	  msg+=to_string((--current)->line);
 	  throw(runtime_error(msg));
 	}
-	current=nextToken(current,endTokens,msg);
+	current=nextToken(current,pe,msg);
       } else if (current->value == "ExperimentalData") {
-	current=nextToken(current,endTokens,msg);
+	current=nextToken(current,pe,msg);
 	string input = eraseQuote(current->value) ;
-	current=nextToken(current,endTokens,msg);
+	current=nextToken(current,pe,msg);
 	dataFile mydataFile;
 	mydataFile.name = eraseQuote(current->value) ;
-	current=nextToken(current,endTokens,msg);
+	current=nextToken(current,pe,msg);
 	mydataFile.legend = eraseQuote(current->value) ;
 	experimentalData.insert({input,mydataFile}) ;
-	current=nextToken(current,endTokens,msg);
+	current=nextToken(current,pe,msg);
 	if (current->value != ";") {
 	  msg+="ExperimentalData : you provide more than three arguments.\n";
 	  msg+="Error at line : ";
 	  msg+=to_string((--current)->line);
 	  throw(runtime_error(msg));
 	}
-	current=nextToken(current,endTokens,msg);
+	current=nextToken(current,pe,msg);
 	//      } else if (current->value == "xxx") {
       } else {
 	msg+="Keyword ";
@@ -263,9 +186,9 @@ namespace mfront
 	msg+=to_string(current->line);
 	throw(runtime_error(msg));
       }
-      //current=nextToken(current,endTokens,msg);
+      //current=nextToken(current,pe,msg);
     }
-    if(current==endTokens){
+    if(current==pe){
       msg+="File ended before the end of graph.\n";
       msg+="Error at line : ";
       msg+=to_string(current->line);
@@ -297,124 +220,127 @@ namespace mfront
     const auto& className=mpd.className;
     const auto& material=mpd.material;
     const auto& inputs=mpd.inputs;
-    const auto& bounds=mpd.bounds;
     const auto name = (material.empty()) ? className : material+"_"+className;
-    this->srcFileName  = "src/" + name;
-    this->srcFileName += ".gp";
-    this->srcFile.open(this->srcFileName);
-    if(!this->srcFile){
-      string msg("MaterialPropertyDSL::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->srcFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
+    std::ofstream out("src/"+name+".gp");
+    if(!out){
+      throw(runtime_error("MaterialPropertyDSL::writeOutputFiles: "
+			  "unable to open 'src/"+name+".gp' "
+			  "for writing output file."));
     }
-    this->srcFile.exceptions(ios::badbit|ios::failbit);
+    out.exceptions(ios::badbit|ios::failbit);
     // writing src file
     string base;
     if(file.find('/')!=string::npos){
       base = file.substr(0,file.rfind('/'))+'/';
     }
     // en attendant qu'on puisse passer testbounds
-    if (testBounds.empty()) testBounds=bounds;
-    this->srcFile<<"# generated by mfront from " << file << endl << endl;
-    this->srcFile<< "set term postscript eps color enhanced" << endl
+    if (testBounds.empty()){
+      for(const auto& i:mpd.inputs){
+	if(hasBounds(i)){
+	  if(testBounds.count(i.name)==0){
+	    testBounds.insert({i.name,i.getBounds()});
+	  }
+	}
+      }
+    }
+    out<<"# generated by mfront from " << file << endl << endl;
+    out<< "set term postscript eps color enhanced" << endl
 		 << "set encoding iso_8859_1" << endl
 		 << "set grid" << endl << endl
 		 << "set key under" << endl << endl;
     // On doit demander a l'utilisateur ce que l'on veut pour le placement de la legende !!!!
     if (!yLabel.empty())
-      this->srcFile<< "set ylabel '" << yLabel << "'" << endl;
+      out<< "set ylabel '" << yLabel << "'" << endl;
     
     // on boucle sur toutes les variables pour generer les plot
     const auto csvFileName = name + "_test.csv";
     if(!inputs.empty()){
       if (inputs.size() == 1) {
-	this->srcFile<< "set xlabel '"<< inputs.begin()->name <<"'"<<endl;
-	this->srcFile<< "set output '"<< name << "_" << inputs.begin()->name << ".eps'" << endl;
-	this->srcFile<< "plot '" << csvFileName << "' u 1:2 notitle" ;
+	out<< "set xlabel '"<< inputs.begin()->name <<"'"<<endl;
+	out<< "set output '"<< name << "_" << inputs.begin()->name << ".eps'" << endl;
+	out<< "plot '" << csvFileName << "' u 1:2 notitle" ;
 	//adding experimental data if any
 	for(multimap< string, dataFile >::const_iterator it=experimentalData.begin();it!=experimentalData.end();++it){
 	  if (inputs[0].name == (*it).first){
-	    this->srcFile<<",\\\n'../"<< base + it->second.name <<"' u 1:2 t '"<<it->second.legend<<"'" ;
+	    out<<",\\\n'../"<< base + it->second.name <<"' u 1:2 t '"<<it->second.legend<<"'" ;
 	  }
 	}
-	this->srcFile<<endl;
+	out<<endl;
       } else {
 	int column = 0 ;
 	for(auto p3=inputs.begin();p3!=inputs.end();p3++){
-	  this->srcFile<< "set xlabel '"<< p3->name <<"'"<<endl;
-	  this->srcFile<< "set output '"<< name << "_" << p3->name << ".eps'" << endl ;
+	  out<< "set xlabel '"<< p3->name <<"'"<<endl;
+	  out<< "set output '"<< name << "_" << p3->name << ".eps'" << endl ;
 	  int columnIni=++column ;
-	  this->srcFile<< "plot '" << csvFileName << "' u " <<columnIni<<":"<<++column<< " t '" ;
+	  out<< "plot '" << csvFileName << "' u " <<columnIni<<":"<<++column<< " t '" ;
 	  for(auto p4=inputs.begin();p4!=inputs.end();++p4){
 	    if (p4 != p3) {
 	      for(auto p6=testBounds.begin();p6!=testBounds.end();++p6){
-		if (p6->varName == p4->name) {
-		  this->srcFile<<p4->name<<"="<<p6->lowerBound ;
+		if (p6->first == p4->name) {
+		  out<<p4->name<<"="<<p6->second.lowerBound ;
 		  if (p3+1==inputs.end()) {
 		    if (p4+2!=inputs.end())
-		      this->srcFile<<",";
+		      out<<",";
 		  } else {
 		    if (p4+1!=inputs.end())
-		      this->srcFile<<",";
+		      out<<",";
 		  }
 		}
 	      }
 	    } 
 	  }
-	  this->srcFile<< "'" ;
-	  this->srcFile<<" w l lw 2 ";
-	  this->srcFile<< ", '" << csvFileName << "' u " <<columnIni<<":"<<++column<< " t '" ;
+	  out<< "'" ;
+	  out<<" w l lw 2 ";
+	  out<< ", '" << csvFileName << "' u " <<columnIni<<":"<<++column<< " t '" ;
 	  for(auto p4=inputs.begin();p4!=inputs.end();++p4){
 	    if (p4 != p3) {
 	      // pb si vide !
 	      for(auto p6=testBounds.begin();p6!=testBounds.end();++p6){
-		if (p6->varName == p4->name) {
-		  this->srcFile<<p4->name<<"="<<(p6->upperBound-p6->lowerBound)/2.;
+		if (p6->first == p4->name) {
+		  out<<p4->name<<"="<<(p6->second.upperBound-p6->second.lowerBound)/2.;
 		  if (p3+1==inputs.end()) {
 		    if (p4+2!=inputs.end())
-		      this->srcFile<<",";
+		      out<<",";
 		  } else {
 		    if (p4+1!=inputs.end())
-		      this->srcFile<<",";
+		      out<<",";
 		  }
 		}
 	      }
 	    }	
 	  }
-	  this->srcFile<< "'" ;
-	  this->srcFile<<" w l lw 2 ";
-	  this->srcFile<< ", '" << csvFileName << "' u " <<columnIni<<":"<<++column<< " t '" ;
+	  out<< "'" ;
+	  out<<" w l lw 2 ";
+	  out<< ", '" << csvFileName << "' u " <<columnIni<<":"<<++column<< " t '" ;
 	  for(auto p4=inputs.begin();p4!=inputs.end();++p4){
 	    if (p4 != p3) {
 	      for(auto p6=testBounds.begin();p6!=testBounds.end();++p6){
-		if (p6->varName == p4->name){
-		  this->srcFile<<p4->name<<"="<<p6->upperBound;
+		if (p6->first == p4->name){
+		  out<<p4->name<<"="<<p6->second.upperBound;
 		  if (p3+1==inputs.end()) {
 		    if (p4+2!=inputs.end())
-		      this->srcFile<<",";
+		      out<<",";
 		  } else {
 		    if (p4+1!=inputs.end())
-		      this->srcFile<<",";
+		      out<<",";
 		  }
 		}
 	      }
 	    }
 	  }
-	  this->srcFile<< "'" ;
-	  this->srcFile<<" w l lw 2 ";
+	  out<< "'" ;
+	  out<<" w l lw 2 ";
 	  //adding experimental data if any
 	  for(auto it=experimentalData.begin();it!=experimentalData.end();++it){
 	    if (p3->name == (*it).first){
-	      this->srcFile << "\\"<<endl<<",'../"<< base + (*it).second.name
+	      out << "\\"<<endl<<",'../"<< base + (*it).second.name
 			    << "' u 1:2 t '"<<(it->second).legend<<"' w p lw 2";
 	    }
 	  }
-	  this->srcFile<<endl;
+	  out<<endl;
 	}
       }
-      this->srcFile.close();
+      out.close();
     }
 
   } // end of GnuplotMaterialPropertyInterface::writeSrcFile(void)

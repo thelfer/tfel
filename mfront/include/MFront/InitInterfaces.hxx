@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_INITINTERFACES_HXX_
-#define LIB_MFRONT_INITINTERFACES_HXX_ 
+#ifndef LIB_MFRONT_INITINTERFACES_HXX
+#define LIB_MFRONT_INITINTERFACES_HXX 
 
 #include"MFront/MFrontConfig.hxx"
 
@@ -25,4 +25,4 @@ namespace mfront
 
 } // end of namespace mfront  
 
-#endif /* LIB_MFRONT_INITINTERFACES_HXX_ */
+#endif /* LIB_MFRONT_INITINTERFACES_HXX */

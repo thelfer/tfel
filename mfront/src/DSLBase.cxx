@@ -27,6 +27,7 @@
 #include"MFront/DSLBase.hxx"
 #include"MFront/SearchFile.hxx"
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontMaterialPropertyInterface.hxx"
@@ -145,24 +146,21 @@ namespace mfront
     }
   } // end of DSLBase::openFile
 
-  const FileDescription&
-  DSLBase::getFileDescription() const
+  const FileDescription& DSLBase::getFileDescription() const
   {
     return *this;
   } // end of DSLBase::getFileDescription
 
-  const TargetsDescription&
-  DSLBase::getTargetsDescription() const{
+  const TargetsDescription& DSLBase::getTargetsDescription() const{
     return this->td;
   } // end of DSLBase::getTargetsDescription
 
   DSLBase::~DSLBase() = default;
   
-  void
-  DSLBase::readNextBlock(CodeBlock& res1,
+  void DSLBase::readNextBlock(CodeBlock& res1,
 			 CodeBlock& res2,
-			 const CodeBlockParserOptions& o1,
-			 const CodeBlockParserOptions& o2)
+			      const CodeBlockParserOptions& o1,
+			      const CodeBlockParserOptions& o2)
   {
     auto pb = this->current;
     res1 = this->readNextBlock(o1);
@@ -471,6 +469,11 @@ namespace mfront
     return res;
   } // end of DSLBase::readOnlyOneToken
 
+  std::pair<std::string,VariableBoundsDescription> DSLBase::readVariableBounds()
+  {
+    return mfront::readVariableBounds(this->current,this->end());
+  } // end of DSLBase::readVariableBounds
+  
   void DSLBase::registerIntegerConstant(const std::string& n,
 					const size_t l,
 					const int v)
@@ -832,8 +835,7 @@ namespace mfront
       const auto p=find(values.begin(),values.end(),pt->value);
       if(p!=values.end()){
 	if(pt!=cfile.begin()){
-	  auto ptp = pt;
-	  --ptp;
+	  auto ptp = std::prev(pt);
 	  throw_if(ptp->value!=";","the keyword '"+*p+"' does not "
 		   "begin a new instruction.",pt->line);
 	}

@@ -154,6 +154,96 @@ namespace mfront
     insert_if(d.specific_targets["all"].first,target);
   } // end of JavaMaterialPropertyInterface::getTargetsDescription
 
+  static void writePhysicalBounds(std::ostream& out,
+				  const std::string& name,
+				  const VariableDescription& v){
+    if(!v.hasPhysicalBounds()){
+      return;
+    }
+    const auto& b = v.getPhysicalBounds();
+    if(b.boundsType==VariableBoundsDescription::Lower){
+      out << "if(" << v.name << " < "<< b.lowerBound << "){\n"
+	  << "ostringstream msg;\nmsg << \"" << name << " : "
+	  << v.name << " is below its physical lower bound (\"\n << "
+	  << v.name << " << \"<" << b.lowerBound << ").\";\n"
+	  << "return throwJavaRuntimeException(msg.str());\n"
+	  << "}\n";
+    } else if(b.boundsType==VariableBoundsDescription::Upper){
+      out << "if(" << v.name << " > "<< b.upperBound << "){\n"
+	  << "ostringstream msg;\nmsg << \"" << name << " : "
+	  << v.name << " is beyond its physical upper bound (\"\n << "
+	  << v.name << " << \">" << b.upperBound << ").\";\n"
+	  << "return throwJavaRuntimeException(msg.str());\n"
+	  << "}\n";
+    } else {
+      out << "if((" << v.name << " < "<< b.lowerBound << ")||"
+	  << "(" << v.name << " > "<< b.upperBound << ")){\n"
+	  << "if(" << v.name << " < " << b.lowerBound << "){\n"
+	  << "ostringstream msg;\nmsg << \"" << name << " : "
+	  << v.name << " is below its physical lower bound (\"\n << "
+	  << v.name << " << \"<" << b.lowerBound << ").\";\n"
+	  << "return throwJavaRuntimeException(msg.str());\n"
+	  << "} else {\n"
+	  << "ostringstream msg;\nmsg << \"" << name << " : "
+	  << v.name << " is beyond its physical upper bound (\"\n << "
+	  << v.name << " << \">" << b.upperBound << ").\";\n"
+	  << "return throwJavaRuntimeException(msg.str());\n"
+	  << "}\n"
+	  << "}\n";
+    }
+  } // end of writePhysicalBounds
+
+  static void writeBounds(std::ostream& out,
+			  const std::string& name,
+			  const VariableDescription& v){
+    if(!v.hasBounds()){
+      return;
+    }
+    const auto& b = v.getBounds();
+    if((b.boundsType==VariableBoundsDescription::Lower)||
+       (b.boundsType==VariableBoundsDescription::LowerAndUpper)){
+      out << "if(" << v.name << " < "<< b.lowerBound << "){\n"
+	  << "auto policy = "
+	  << "::getenv(\"JAVA_OUT_OF_BOUNDS_POLICY\");\n"
+	  << "if(policy!=nullptr){\n"
+	  << "if((strcmp(policy,\"STRICT\")==0)||"
+	  << "(strcmp(policy,\"WARNING\")==0)){\n"
+	  << "ostringstream msg;\n"
+	  << "msg << \"" << name << " : "
+	  << v.name << " is below its lower bound (\"\n << "
+	  << v.name << " << \"<" << b.lowerBound << ").\";\n"
+	  << "if(strcmp(policy,\"STRICT\")==0){\n"
+	  << "return throwJavaRuntimeException(msg.str());\n"
+	  << "} else {\n"
+	  << "fprintf(stderr,\"%s\\n\",msg.str().c_str());\n"
+	  << "}\n"
+	  << "}\n"
+	  << "}\n"
+	  << "}\n";
+    }
+    if((b.boundsType==VariableBoundsDescription::Upper)||
+       (b.boundsType==VariableBoundsDescription::LowerAndUpper)){
+      out << "if(" << v.name << " > "<< b.upperBound << "){\n"
+	  << "auto policy = "
+	  << "::getenv(\"JAVA_OUT_OF_BOUNDS_POLICY\");\n"
+	  << "if(policy!=nullptr){\n"
+	  << "if((strcmp(policy,\"STRICT\")==0)||"
+	  << "(strcmp(policy,\"WARNING\")==0)){\n"
+	  << "ostringstream msg;\n"
+	  << "msg << \"" << name << " : "
+	  << v.name << " is over its upper bound (\"\n << "
+	  << v.name << " << \">" << b.upperBound << ").\";\n"
+	  << "if(strcmp(policy,\"STRICT\")==0){\n"
+	  << "return throwJavaRuntimeException(msg.str());\n"
+	  << "} else {\n"
+	  << "fprintf(stderr,\"%s\\n\",msg.str().c_str());\n"
+	  << "}\n"
+	  << "}\n"
+	  << "}\n"
+	  << "}\n";
+    }
+  }
+  
   void
   JavaMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
 						  const FileDescription& fd)
@@ -243,101 +333,43 @@ namespace mfront
 	       "internal error (can't find value of parameter '"+p+"')");
       srcFile << "static " << constexpr_c << " double " << p << " = " << p6->second << ";\n";
     }
-    if((!mpd.physicalBounds.empty())||(!mpd.bounds.empty())){
+    if((hasPhysicalBounds(mpd.inputs))||(hasBounds(mpd.inputs))){
       srcFile << "#ifndef JAVA_NO_BOUNDS_CHECK\n";
-      if(!mpd.physicalBounds.empty()){
+      if(hasPhysicalBounds(mpd.inputs)){
 	srcFile << "// treating physical bounds\n";
-	for(const auto& b : mpd.physicalBounds){
-	  if(b.boundsType==VariableBoundsDescription::Lower){
-	    srcFile << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
-	    srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
-	    	    << b.varName << " is below its physical lower bound (\"\n << "
-	    	    << b.varName << " << \"<" << b.lowerBound << ").\";\n";
-	    srcFile << "return throwJavaRuntimeException(msg.str());\n";
-	    srcFile << "}\n";
-	  } else if(b.boundsType==VariableBoundsDescription::Upper){
-	    srcFile << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
-	    srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
-	    	    << b.varName << " is beyond its physical upper bound (\"\n << "
-	    	    << b.varName << " << \">" << b.upperBound << ").\";\n";
-	    srcFile << "return throwJavaRuntimeException(msg.str());\n";
-	    srcFile << "}\n";
-	  } else {
-	    srcFile << "if((" << b.varName<< " < "<< b.lowerBound << ")||"
-	    	    << "(" << b.varName<< " > "<< b.upperBound << ")){\n";
-	    srcFile << "if(" << b.varName<< " < " << b.lowerBound << "){\n";
-	    srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
-	    	    << b.varName << " is below its physical lower bound (\"\n << "
-	    	    << b.varName << " << \"<" << b.lowerBound << ").\";\n";
-	    srcFile << "return throwJavaRuntimeException(msg.str());\n";
-	    srcFile << "} else {\n";
-	    srcFile << "ostringstream msg;\nmsg << \"" << name << " : "
-	    	    << b.varName << " is beyond its physical upper bound (\"\n << "
-	    	    << b.varName << " << \">" << b.upperBound << ").\";\n";
-	    srcFile << "return throwJavaRuntimeException(msg.str());\n";
-	    srcFile << "}\n";
-	    srcFile << "}\n";
-	  }
+	for(const auto& i : mpd.inputs){
+	  writePhysicalBounds(srcFile,name,i);
 	}
-	if(!mpd.bounds.empty()){
-	  srcFile << "// treating standard bounds\n";
-	  for(const auto& b : mpd.bounds){
-	    if((b.boundsType==VariableBoundsDescription::Lower)||
-	       (b.boundsType==VariableBoundsDescription::LowerAndUpper)){
-	      srcFile << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
-	      srcFile << "auto policy = "
-		      << "::getenv(\"JAVA_OUT_OF_BOUNDS_POLICY\");\n";
-	      srcFile << "if(policy!=nullptr){\n";
-	      srcFile << "if((strcmp(policy,\"STRICT\")==0)||"
-		      << "(strcmp(policy,\"WARNING\")==0)){\n";
-	      srcFile << "ostringstream msg;\n";
-	      srcFile << "msg << \"" << name << " : "
-		      << b.varName << " is below its lower bound (\"\n << "
-		      << b.varName << " << \"<" << b.lowerBound << ").\";\n";
-	      srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
-	      srcFile << "return throwJavaRuntimeException(msg.str());\n";
-	      srcFile << "} else {\n";
-	      srcFile << "fprintf(stderr,\"%s\\n\",msg.str().c_str());\n";
-	      srcFile << "}\n";
-	      srcFile << "}\n";
-	      srcFile << "}\n";
-	      srcFile << "}\n";
-	    }
-	    if((b.boundsType==VariableBoundsDescription::Upper)||
-	       (b.boundsType==VariableBoundsDescription::LowerAndUpper)){
-	      srcFile << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
-	      srcFile << "auto policy = "
-		      << "::getenv(\"JAVA_OUT_OF_BOUNDS_POLICY\");\n";
-	      srcFile << "if(policy!=nullptr){\n";
-	      srcFile << "if((strcmp(policy,\"STRICT\")==0)||"
-		      << "(strcmp(policy,\"WARNING\")==0)){\n";
-	      srcFile << "ostringstream msg;\n";
-	      srcFile << "msg << \"" << name << " : "
-		      << b.varName << " is over its upper bound (\"\n << "
-		      << b.varName << " << \">" << b.upperBound << ").\";\n";
-	      srcFile << "if(strcmp(policy,\"STRICT\")==0){\n";
-	      srcFile << "return throwJavaRuntimeException(msg.str());\n";
-	      srcFile << "} else {\n";
-	      srcFile << "fprintf(stderr,\"%s\\n\",msg.str().c_str());\n";
-	      srcFile << "}\n";
-	      srcFile << "}\n";
-	      srcFile << "}\n";
-	      srcFile << "}\n";
-	    }
-	  }
-	}
-	srcFile << "#endif /* JAVA_NO_BOUNDS_CHECK */\n";
       }
-    }
-    srcFile << "jdouble " << mpd.output << ";\n"
+      if(hasBounds(mpd.inputs)){
+	srcFile << "// treating standard bounds\n";
+	for(const auto& i : mpd.inputs){
+	  writeBounds(srcFile,name,i);
+	}
+      }
+      srcFile << "#endif /* JAVA_NO_BOUNDS_CHECK */\n";
+    } //  if((hasPhysicalBounds(mpd))||(hasBounds(mpd))){
+    srcFile << "jdouble " << mpd.output.name << ";\n"
 	    << "try{\n"
 	    << mpd.f.body
 	    << "} catch(exception& cpp_except){\n"
 	    << "  return throwJavaRuntimeException(cpp_except.what());\n"
 	    << "} catch(...){\n"
       	    << "  return throwJavaRuntimeException(\"unknown C++ exception\");\n"
-	    << "}\n"
-	    << "return " << mpd.output << ";\n"
+	    << "}\n";
+    if((hasPhysicalBounds(mpd.output))||(hasBounds(mpd.output))){
+      srcFile << "#ifndef JAVA_NO_BOUNDS_CHECK\n";
+      if(hasPhysicalBounds(mpd.output)){
+	srcFile << "// treating physical bounds\n";
+	writePhysicalBounds(srcFile,name,mpd.output);
+      }
+      if(hasBounds(mpd.output)){
+	srcFile << "// treating standard bounds\n";
+	writeBounds(srcFile,name,mpd.output);
+      }
+      srcFile << "#endif /* JAVA_NO_BOUNDS_CHECK */\n";
+    } // (hasPhysicalBounds(mpd.output))||(hasBounds(mpd.output))
+    srcFile << "return " << mpd.output.name << ";\n"
 	    << "} // end of " << name << "\n\n"
 	    << "#ifdef __cplusplus\n"
 	    << "} // end of extern \"C\"\n"

@@ -631,7 +631,7 @@ namespace mfront{
     	this->getStateVariablesOffset(mb,h);
       // external state variables
       const auto& externalStateVarsHolder = d.getExternalStateVariables();
-      throw_if(!externalStateVarsHolder.empty(),
+      throw_if(externalStateVarsHolder.size()!=1u,
 	       "The ansys interface does not support external state  variables");
       // user material declaration
       out << "/com, Example for the '" << ModellingHypothesis::toString(h) << "' modelling hypothesis\n";
@@ -767,7 +767,7 @@ namespace mfront{
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     for(const auto h : mh){
       const auto& d = mb.getBehaviourData(h);
-      throw_if(!d.getExternalStateVariables().empty(),
+      throw_if(d.getExternalStateVariables().size()!=1u,
 	       "external state variables are not supported "
 	       "by ANSYS's usermat interface");
     }
@@ -1459,7 +1459,7 @@ namespace mfront{
 							      const SupportedTypes::TypeSize o) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if(this->getTypeFlag(f.type)==SupportedTypes::Stensor){
+    if(SupportedTypes::getTypeFlag(f.type)==SupportedTypes::Stensor){
       os << "ansys::ImportThermodynamicForces<hypothesis>::exe(this->" << f.name << ",";
       if(!o.isNull()){
 	os << iprefix << "stress_+" << o << ");\n";
@@ -1497,7 +1497,7 @@ namespace mfront{
     const auto& d = mb.getBehaviourData(h);
     bool b = false; // have persistent variables that have to be updated
     for(const auto& v:d.getPersistentVariables()){
-      const auto flag = this->getTypeFlag(v.type);
+      const auto flag = SupportedTypes::getTypeFlag(v.type);
       if((flag==SupportedTypes::Stensor)||
 	 (flag==SupportedTypes::Tensor)){
 	b = true;
@@ -1513,7 +1513,7 @@ namespace mfront{
       "                                                       ANSYSDR[3],ANSYSDR[4],ANSYSDR[5],\n"
       "                                                       ANSYSDR[6],ANSYSDR[7],ANSYSDR[8]};\n";
     for(const auto& v:d.getPersistentVariables()){
-      const auto flag = this->getTypeFlag(v.type);
+      const auto flag = SupportedTypes::getTypeFlag(v.type);
       if((flag==SupportedTypes::Stensor)||
 	 (flag==SupportedTypes::Tensor)){
 	if(v.arraySize==1u){
@@ -1534,7 +1534,7 @@ namespace mfront{
 					   const SupportedTypes::TypeSize o) const
    {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    const auto flag = this->getTypeFlag(f.type);
+    const auto flag = SupportedTypes::getTypeFlag(f.type);
     if(flag==SupportedTypes::Stensor){
       if(!o.isNull()){
 	out << "ansys::ExportThermodynamicForces<hypothesis>::exe("

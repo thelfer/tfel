@@ -659,13 +659,11 @@ namespace mfront{
 				   "no input or output variable "
 				   "named '"+*puv+"'"));
 	}();
-	if((v.hasAttribute(VariableDescription::bound))||
-	   (v.hasAttribute(VariableDescription::physicalBound))){
+	if((v.hasBounds())||(v.hasPhysicalBounds())){
 	  this->srcFile << "#ifndef NO_PLEIADES_BOUNDS_CHECK\n";
 	}
-	if(v.hasAttribute(VariableDescription::physicalBound)){
-	  const auto& bd =
-	    v.getAttribute<VariableBoundsDescription>(VariableDescription::physicalBound);
+	if(v.hasPhysicalBounds()){
+	  const auto& bd = v.getPhysicalBounds();
 	  this->srcFile << "// checking " << v.name << " physical bounds\n";
 	  if((bd.boundsType==VariableBoundsDescription::Lower)||
 	     (bd.boundsType==VariableBoundsDescription::LowerAndUpper)){
@@ -688,9 +686,8 @@ namespace mfront{
 	    this->srcFile << "}\n";
 	  }
 	}
-	if(v.hasAttribute(VariableDescription::bound)){
-	  const auto& bd =
-	    v.getAttribute<VariableBoundsDescription>(VariableDescription::bound);
+	if(v.hasBounds()){
+	  const auto& bd = v.getBounds();
 	  this->srcFile << "// checking " << v.name<< " bounds\n";
 	  if((bd.boundsType==VariableBoundsDescription::Lower)||
 	     (bd.boundsType==VariableBoundsDescription::LowerAndUpper)){
@@ -735,8 +732,7 @@ namespace mfront{
 	    this->srcFile << "}\n";
 	  }
 	}
-	if((v.hasAttribute(VariableDescription::bound))||
-	   (v.hasAttribute(VariableDescription::physicalBound))){
+	if((v.hasBounds())||(v.hasPhysicalBounds())){
 	  this->srcFile << "#endif /* NO_PLEIADES_BOUNDS_CHECK */\n";
 	}
       }

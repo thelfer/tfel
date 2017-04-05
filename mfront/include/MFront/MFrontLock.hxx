@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef   LIB_MFRONT_MFRONTLOCK_H_
-#define   LIB_MFRONT_MFRONTLOCK_H_ 
+#ifndef   LIB_MFRONT_MFRONTLOCK_HXX
+#define   LIB_MFRONT_MFRONTLOCK_HXX 
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
 #ifndef NOMINMAX

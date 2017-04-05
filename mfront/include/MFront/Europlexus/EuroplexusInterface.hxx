@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_EPX_CALL_H_
-#define LIB_MFRONT_EPX_CALL_H_ 
+#ifndef LIB_MFRONT_EPX_CALL_HXX
+#define LIB_MFRONT_EPX_CALL_HXX 
 
 #include<string>
 #include<vector>
@@ -239,5 +239,5 @@ namespace epx
     
 } // end of namespace epx
 
-#endif /* LIB_MFRONT_EPX_CALL_H_ */
+#endif /* LIB_MFRONT_EPX_CALL_HXX */
 

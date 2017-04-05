@@ -5,8 +5,8 @@
  * \date   04 avril 2016
  */
 
-#ifndef LIB_ANSYSTANGENTOPERATOR_IXX_
-#define LIB_ANSYSTANGENTOPERATOR_IXX_
+#ifndef LIB_ANSYSTANGENTOPERATOR_IXX
+#define LIB_ANSYSTANGENTOPERATOR_IXX
 
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 
@@ -115,4 +115,4 @@ namespace ansys
 
 } // end of namespace ansys
 
-#endif /* LIB_ANSYSTANGENTOPERATOR_IXX_ */
+#endif /* LIB_ANSYSTANGENTOPERATOR_IXX */

@@ -12,11 +12,12 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_DSLBASE_HXX_
-#define LIB_MFRONT_DSLBASE_HXX_ 
+#ifndef LIB_MFRONT_DSLBASE_HXX
+#define LIB_MFRONT_DSLBASE_HXX 
 
 #include<set>
 #include<map>
+#include<tuple>
 #include<memory>
 #include<string>
 
@@ -360,6 +361,12 @@ namespace mfront
     readSpecifiedValues(const std::string&,
 			const std::vector<std::string>&);
     /*!
+     * \brief read the bounds associated to a variable
+     * \return a pair giving the variable name and the bounds
+     */
+    std::pair<std::string,VariableBoundsDescription>
+    readVariableBounds();
+    /*!
      * call mfront in a subprocess
      * \param[in] interfaces : list of interfaces
      * \param[in] files      : list of files
@@ -482,4 +489,4 @@ namespace mfront
 
 #include"MFront/DSLBase.ixx"
 
-#endif /* LIB_MFRONT_DSLBASE_HXX_ */
+#endif /* LIB_MFRONT_DSLBASE_HXX */

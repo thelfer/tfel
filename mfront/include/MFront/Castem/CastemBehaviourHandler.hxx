@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_H_
-#define LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_H_ 
+#ifndef LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX
+#define LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX 
 
 #ifndef LIB_MFRONT_CASTEM_CALL_HXX
 #error "This header shall not be called directly"
@@ -942,4 +942,4 @@ namespace castem
 #include"MFront/Castem/CastemIsotropicBehaviourHandler.hxx"
 #include"MFront/Castem/CastemOrthotropicBehaviourHandler.hxx"
 
-#endif /* LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_H_ */
+#endif /* LIB_MFRONT_CASTEM_CASTEMBEHAVIOURHANDLER_HXX */

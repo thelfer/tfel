@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ABAQUS_ABAQUSROTATION_IXX_
-#define LIB_MFRONT_ABAQUS_ABAQUSROTATION_IXX_
+#ifndef LIB_MFRONT_ABAQUS_ABAQUSROTATION_IXX
+#define LIB_MFRONT_ABAQUS_ABAQUSROTATION_IXX
 
 namespace abaqus
 {
@@ -373,4 +373,4 @@ namespace abaqus
   
 } // end of namespace abaqus
 
-#endif /* LIB_MFRONT_ABAQUS_ABAQUSROTATION_IXX_ */
+#endif /* LIB_MFRONT_ABAQUS_ABAQUSROTATION_IXX */

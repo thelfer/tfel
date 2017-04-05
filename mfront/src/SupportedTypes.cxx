@@ -185,7 +185,7 @@ namespace mfront{
   } // end of SupportedTypes::isSupportedType
   
   SupportedTypes::TypeFlag
-  SupportedTypes::getTypeFlag(const std::string& name) const
+  SupportedTypes::getTypeFlag(const std::string& name)
   {
     const auto& flags = SupportedTypes_getFlags();
     const auto p = flags.find(name);
@@ -201,7 +201,7 @@ namespace mfront{
 			      const unsigned short a) const
   {
     TypeSize res;
-    switch(this->getTypeFlag(type)){
+    switch(SupportedTypes::getTypeFlag(type)){
     case Scalar : 
       res=TypeSize(a,0u,0u,0u);
       break;
@@ -286,18 +286,33 @@ namespace mfront{
   } // end of SupportedTypes::TypeSize::isNull
 
   void
-  SupportedTypes::writeVariableInitializersInBehaviourDataConstructorI(std::ostream& f,
+  SupportedTypes::writeVariableInitializersInBehaviourDataConstructorI(std::ostream& f,bool& first,
 								       const VariableDescriptionContainer& v,
 								       const std::string& src,
 								       const std::string& prefix,
 								       const std::string& suffix) const
   {
+    this->writeVariableInitializersInBehaviourDataConstructorI(f,first,v.begin(),v.end(),
+							       src,prefix,suffix);
+  }
+  
+  void
+  SupportedTypes::writeVariableInitializersInBehaviourDataConstructorI(std::ostream& f,bool& first,
+								       const VariableDescriptionContainer::const_iterator& b,
+								       const VariableDescriptionContainer::const_iterator& e,
+								       const std::string& src,
+								       const std::string& prefix,
+								       const std::string& suffix) const
+  {
     SupportedTypes::TypeSize currentOffset;
-    for(auto p=v.begin();p!=v.end();++p){
+    for(auto p=b;p!=e;++p){
       if(p->arraySize==1u){
 	const auto n = prefix+p->name+suffix;
-	f << ",\n";
-	auto flag = this->getTypeFlag(p->type);
+	if(!first){
+	  f << ",\n";
+	}
+	first = false;
+	auto flag = SupportedTypes::getTypeFlag(p->type);
 	if(flag==SupportedTypes::Scalar){
 	  f << n << "("+src+"[" 
 	    << currentOffset << "])";  
@@ -316,14 +331,12 @@ namespace mfront{
     }
   } // end of SupportedTypes::writeVariableInitializersInBehaviourDataConstructorI
 
-  bool
-  SupportedTypes::useDynamicallyAllocatedVector(const unsigned short s) const
+  bool SupportedTypes::useDynamicallyAllocatedVector(const unsigned short s) const
   {
     return (s>=SupportedTypes::ArraySizeLimit)&&(this->areDynamicallyAllocatedVectorsAllowed());
   } // end of SupportedTypes::useDynamicallyAllocatedVector
 
-  bool
-  SupportedTypes::areDynamicallyAllocatedVectorsAllowed() const
+  bool SupportedTypes::areDynamicallyAllocatedVectorsAllowed() const
   {
     return this->areDynamicallyAllocatedVectorsAllowed_;
   } // end of SupportedTypes::areDynamicallyAllocatedVectorsAllowed
@@ -335,12 +348,24 @@ namespace mfront{
 									const std::string& prefix,
 									const std::string& suffix) const
   {
+    this->writeVariableInitializersInBehaviourDataConstructorII(f,v.begin(),v.end(),src,
+								prefix,suffix);
+  }
+
+  void
+  SupportedTypes::writeVariableInitializersInBehaviourDataConstructorII(std::ostream& f,
+									const VariableDescriptionContainer::const_iterator& b,
+									const VariableDescriptionContainer::const_iterator& e,
+									const std::string& src,
+									const std::string& prefix,
+									const std::string& suffix) const
+  {
     SupportedTypes::TypeSize currentOffset;
-    for(auto p=v.begin();p!=v.end();++p){
+    for(auto p=b;p!=e;++p){
       if(p->arraySize==1u){
 	currentOffset+=this->getTypeSize(p->type,p->arraySize);
       } else {
-	const auto flag = this->getTypeFlag(p->type);
+	const auto flag = SupportedTypes::getTypeFlag(p->type);
 	const auto n = prefix+p->name+suffix;
 	if(this->useDynamicallyAllocatedVector(p->arraySize)){
 	  f << n << ".resize(" << p->arraySize << ");\n";
@@ -512,7 +537,7 @@ namespace mfront{
     SupportedTypes::TypeSize currentOffset;
     if(!v.empty()){
       for(p=v.begin();p!=v.end();++p){
-	SupportedTypes::TypeFlag flag = this->getTypeFlag(p->type);
+	SupportedTypes::TypeFlag flag = SupportedTypes::getTypeFlag(p->type);
 	if(p->arraySize==1u){
 	  if(flag==SupportedTypes::Scalar){
 	    if(useQt){

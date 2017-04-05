@@ -12,8 +12,8 @@
  * <!-- Local IspellDict: english -->
  */
 
-#ifndef LIB_MFRONT_MFRONTBEHAVIOURBRICK_H_
-#define LIB_MFRONT_MFRONTBEHAVIOURBRICK_H_ 
+#ifndef LIB_MFRONT_MFRONTBEHAVIOURBRICK_HXX
+#define LIB_MFRONT_MFRONTBEHAVIOURBRICK_HXX 
 
 #include<map>
 #include<string>

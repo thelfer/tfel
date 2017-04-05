@@ -11,33 +11,56 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_VARIABLEBOUNDSDESCRIPTION_H_
-#define LIB_VARIABLEBOUNDSDESCRIPTION_H_ 
+#ifndef LIB_VARIABLEBOUNDSDESCRIPTION_HXX
+#define LIB_VARIABLEBOUNDSDESCRIPTION_HXX 
 
 #include<string>
+#include<limits>
 #include"MFront/MFrontConfig.hxx"
 
 namespace mfront
 {
 
+  /*!
+   * \brief a structure in charge of describing bounds on a variable.
+   * Two kinds of bounds are considered:
+   * - physical bounds: give the bounds out of which this variable is
+   *   not physically defined. For example, a temperature must be
+   *   positive.
+   * - (standard) bounds: give the bounds out of which the correlation
+   *   has not been identified.
+   */
   struct MFRONT_VISIBILITY_EXPORT VariableBoundsDescription
   {
-    enum BoundsType{Lower,Upper,LowerAndUpper};
+    //! \brief bounds type
+    enum BoundsType{
+      Lower,
+      Upper,
+      LowerAndUpper
+    }; // end of enum BoundsType
+    //! default constructor
     VariableBoundsDescription() = default;
+    //! copy constructor
     VariableBoundsDescription(VariableBoundsDescription&&) = default;
+    //! move constructor
     VariableBoundsDescription(const VariableBoundsDescription&) = default;
+    //! move assignement
     VariableBoundsDescription& operator=(VariableBoundsDescription&&) = default;
+    //! standard assignement
     VariableBoundsDescription& operator=(const VariableBoundsDescription&) = default;
+    //! destructor
     ~VariableBoundsDescription() noexcept;
-    BoundsType     boundsType;
-    std::string    varName;
-    unsigned short varNbr;
-    unsigned int lineNumber;
-    double lowerBound;
-    double upperBound;
+    //! type of the bound
+    BoundsType boundsType;
+    size_t     lineNumber;
+    // component. If component is egal to -1, bounds acts of all
+    // components
+    short component   = -1;
+    long double lowerBound = std::numeric_limits<long double>::min();
+    long double upperBound = std::numeric_limits<long double>::max();
   }; // end of class VariableBoundsDescription
 
 } // end of namespace mfront
 
-#endif /* LIB_VARIABLEBOUNDSDESCRIPTION_H_ */
+#endif /* LIB_VARIABLEBOUNDSDESCRIPTION_HXX */
 

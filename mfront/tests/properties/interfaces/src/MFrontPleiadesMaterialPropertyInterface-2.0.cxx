@@ -81,8 +81,6 @@ namespace mfront {
     const auto& params=mpd.parameters;
     const auto& paramValues=mpd.parametersValues;
     const auto& function=mpd.f;
-    const auto& bounds=mpd.bounds;
-    const auto& physicalBounds=mpd.physicalBounds;
     systemCall::mkdir("include/Pleiades");
     systemCall::mkdir("include/Pleiades/Metier");
     systemCall::mkdir("include/Pleiades/Metier/MaterialProperty");
@@ -110,10 +108,9 @@ namespace mfront {
     }
     this->srcFile.exceptions(ios::badbit|ios::failbit);
     this->writeHeaderFile(file,name,author,date,description,includes,inputs);
-    this->writeSrcFile(file,name,author,date,output,
+    this->writeSrcFile(file,name,author,date,output.name,
 		       inputs,materialLaws,glossaryNames,
-		       entryNames,staticVars,params,paramValues,
-		       function,bounds,physicalBounds);
+		       entryNames,staticVars,params,paramValues,function);
   } // end of MFrontPleiadesMaterialPropertyInterface::writeOutputFiles
 
   void MFrontPleiadesMaterialPropertyInterface::writeHeaderFile(const std::string&,
@@ -211,9 +208,7 @@ namespace mfront {
 							const StaticVarContainer& staticVars,
 							const std::vector<std::string>& params,
 							const std::map<std::string,double>& paramValues,
-							const LawFunction& function,
-							const std::vector<VariableBoundsDescription>& bounds,
-							const std::vector<VariableBoundsDescription>& physicalBounds) {
+							const LawFunction& function) {
     using namespace std;
     vector<string>::const_iterator p;
     VarContainer::const_iterator p3;
@@ -323,39 +318,42 @@ namespace mfront {
       }
     }
     this->srcFile << "double " << output << ";\n";
-    if((!physicalBounds.empty())||
-       (!bounds.empty())){
+    if((hasPhysicalBounds(inputs))||(hasBounds(inputs))){
       this->srcFile << "#ifndef NO_PLEIADES_BOUNDS_CHECK\n";
     }
-    if(!physicalBounds.empty()){
+    if(hasPhysicalBounds(inputs)){
       this->srcFile << "// treating physical bounds\n";
-      for(auto p6=physicalBounds.cbegin();p6!=physicalBounds.cend();++p6){
+      for(const auto&i : inputs){
+	if(!i.hasPhysicalBounds()){
+	  continue;
+	}
 	string fname;
-	if((p4=glossaryNames.find(p6->varName))!=glossaryNames.end()){
+	if((p4=glossaryNames.find(i.name))!=glossaryNames.end()){
 	  fname = "GlossaireField::"+p4->second;
-	} else if((p4=entryNames.find(p6->varName))!=entryNames.end()){
+	} else if((p4=entryNames.find(i.name))!=entryNames.end()){
 	  fname = "\""+p4->second+"\"";
 	} else {
-	  fname = "\""+p6->varName+"\"";
+	  fname = "\""+i.name+"\"";
 	}
-	if(p6->boundsType==VariableBoundsDescription::Lower){
-	  this->srcFile << "if(" << p6->varName<< " < "<< p6->lowerBound << "){\n";
+	const auto& b = i.getPhysicalBounds();
+	if(b.boundsType==VariableBoundsDescription::Lower){
+	  this->srcFile << "if(" << i.name << " < "<< b.lowerBound << "){\n";
 	  this->srcFile << "string msg (\"" << name << "::compute : \");\n"
 			<< "msg += " << fname << ";\n"
 			<< "msg += \" is below its physical lower bound.\";\n";
 	  this->srcFile << "PLEIADES_THROW(msg);\n";
 	  this->srcFile << "}\n";
-	} else if(p6->boundsType==VariableBoundsDescription::Upper){
-	  this->srcFile << "if(" << p6->varName<< " > "<< p6->upperBound << "){\n";
+	} else if(b.boundsType==VariableBoundsDescription::Upper){
+	  this->srcFile << "if(" << i.name << " > "<< b.upperBound << "){\n";
 	  this->srcFile << "string msg (\"" << name << "::compute : \");\n"
 			<< "msg += " << fname << ";\n"
 			<< "msg += \" is over its physical upper bound.\";\n";
 	  this->srcFile << "PLEIADES_THROW(msg);\n";
 	  this->srcFile << "}\n";
 	} else {
-	  this->srcFile << "if((" << p6->varName<< " < "<< p6->lowerBound << ")||"
-			<< "(" << p6->varName<< " > "<< p6->upperBound << ")){\n";
-	  this->srcFile << "if(" << p6->varName<< " < " << p6->lowerBound << "){\n";
+	  this->srcFile << "if((" << i.name << " < "<< b.lowerBound << ")||"
+			<< "(" << i.name << " > "<< b.upperBound << ")){\n";
+	  this->srcFile << "if(" << i.name << " < " << b.lowerBound << "){\n";
 	  this->srcFile << "string msg (\"" << name << "::compute : \");\n"
 			<< "msg += " << fname << ";\n"
 			<< "msg += \" is below its physical lower bound.\";\n";
@@ -370,34 +368,38 @@ namespace mfront {
 	}
       }
     }
-    if(!bounds.empty()){
+    if(hasBounds(inputs)){
       this->srcFile << "// treating standard bounds\n";
-      for(auto p6=bounds.cbegin();p6!=bounds.cend();++p6){
+      for(const auto&i : inputs){
+	if(!i.hasBounds()){
+	  continue;
+	}
 	string fname;
-	if((p4=glossaryNames.find(p6->varName))!=glossaryNames.end()){
+	if((p4=glossaryNames.find(i.name))!=glossaryNames.end()){
 	  fname = "GlossaireField::"+p4->second;
-	} else if((p4=entryNames.find(p6->varName))!=entryNames.end()){
+	} else if((p4=entryNames.find(i.name))!=entryNames.end()){
 	  fname = "\""+p4->second+"\"";
 	} else {
-	  fname = "\""+p6->varName+"\"";
+	  fname = "\""+i.name+"\"";
 	}
-	if(p6->boundsType==VariableBoundsDescription::Lower){
-	  this->srcFile << "if(" << p6->varName<< " < "<< p6->lowerBound << "){\n";
+	const auto& b = i.getBounds();
+	if(b.boundsType==VariableBoundsDescription::Lower){
+	  this->srcFile << "if(" << i.name << " < "<< b.lowerBound << "){\n";
 	  this->srcFile << "string msg(\"" << name << "::compute : value of\");\n";
 	  this->srcFile << "msg += " << fname << ";\n";
 	  this->srcFile << "msg += \" is below its lower bound\";\n";
 	  this->srcFile << "treatOutOfBounds(msg);\n";
 	  this->srcFile << "}\n";
-	} else if(p6->boundsType==VariableBoundsDescription::Upper){
-	  this->srcFile << "if(" << p6->varName<< " > "<< p6->upperBound << "){\n";
+	} else if(b.boundsType==VariableBoundsDescription::Upper){
+	  this->srcFile << "if(" << i.name << " > "<< b.upperBound << "){\n";
 	  this->srcFile << "string msg(\"" << name << "::compute : value of\");\n";
 	  this->srcFile << "msg += " << fname << ";\n";
 	  this->srcFile << "msg += \" is over its upper bound\";\n";
 	  this->srcFile << "treatOutOfBounds(msg);\n";
 	  this->srcFile << "}\n";
 	} else {
-	  this->srcFile << "if((" << p6->varName<< " < "<< p6->lowerBound << ")||"
-			<< "(" << p6->varName<< " > "<< p6->upperBound << ")){\n";
+	  this->srcFile << "if((" << i.name << " < "<< b.lowerBound << ")||"
+			<< "(" << i.name << " > "<< b.upperBound << ")){\n";
 	  this->srcFile << "string msg(\"" << name << "::compute : value of\");\n";
 	  this->srcFile << "msg += " << fname << ";\n";
 	  this->srcFile << "msg += \" is out of bounds\";\n";
@@ -406,8 +408,7 @@ namespace mfront {
 	}
       }
     }
-    if((!physicalBounds.empty())||
-       (!bounds.empty())){
+    if((hasPhysicalBounds(inputs))||(hasBounds(inputs))){
       this->srcFile << "#endif /* NO_PLEIADES_BOUNDS_CHECK */\n";
     }
     this->srcFile << function.body;

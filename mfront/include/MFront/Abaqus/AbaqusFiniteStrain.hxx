@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_ABAQUS_ABAQUSFINITESTRAIN_H_
-#define LIB_MFRONT_ABAQUS_ABAQUSFINITESTRAIN_H_ 
+#ifndef LIB_MFRONT_ABAQUS_ABAQUSFINITESTRAIN_HXX
+#define LIB_MFRONT_ABAQUS_ABAQUSFINITESTRAIN_HXX 
 
 #include"MFront/Abaqus/AbaqusConfig.hxx"
 #include"MFront/Abaqus/Abaqus.hxx"
@@ -128,5 +128,5 @@ namespace abaqus
 
 } // end of namespace abaqus
 
-#endif /* LIB_MFRONT_ABAQUS_ABAQUSFINITESTRAIN_H_ */
+#endif /* LIB_MFRONT_ABAQUS_ABAQUSFINITESTRAIN_HXX */
 

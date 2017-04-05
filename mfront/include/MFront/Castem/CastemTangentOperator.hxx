@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_CASTEMTANGENTOPERATOR_H_
-#define LIB_MFRONT_CASTEMTANGENTOPERATOR_H_ 
+#ifndef LIB_MFRONT_CASTEMTANGENTOPERATOR_HXX
+#define LIB_MFRONT_CASTEMTANGENTOPERATOR_HXX 
 
 #include"TFEL/Math/Matrix/TMatrixView.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
@@ -106,5 +106,5 @@ namespace castem
 } // end of namespace castem
 
 
-#endif /* LIB_MFRONT_CASTEMTANGENTOPERATOR_H_ */
+#endif /* LIB_MFRONT_CASTEMTANGENTOPERATOR_HXX */
 

@@ -69,4 +69,4 @@ namespace mfront{
   
 } // end of namespace mfront
 
-#endif /* LIB_LOCALDATASTRUCTURE_HXX_ */
+#endif /* LIB_LOCALDATASTRUCTURE_HXX */

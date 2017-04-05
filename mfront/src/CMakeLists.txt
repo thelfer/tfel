@@ -57,7 +57,7 @@ set(TFELMFront_SOURCES
     MaterialPropertyParametersHandler.cxx
     BehaviourData.cxx
     BehaviourDescription.cxx
-    BoundsDescription.cxx
+    VariableDescriptionBase.cxx
     VariableDescription.cxx
     StaticVariableDescription.cxx
     VariableBoundsDescription.cxx

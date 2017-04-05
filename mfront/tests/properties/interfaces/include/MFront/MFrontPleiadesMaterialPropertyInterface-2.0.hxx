@@ -98,8 +98,6 @@ namespace mfront{
      * \param const std::vector<std::string>&, parameters
      * \param const std::map<std::string,double>&, parameters values
      * \param const LawFunction&, function definition
-     * \param const std::vector<VariableBoundsDescription>&, bounds of the law
-     * \param const std::vector<VariableBoundsDescription>&, physical bounds of the law
      */
     void writeSrcFile(const std::string&,
 		      const std::string&,
@@ -113,9 +111,7 @@ namespace mfront{
 		      const StaticVarContainer& staticVars,
 		      const std::vector<std::string>&,
 		      const std::map<std::string,double>&,
-		      const LawFunction&,
-		      const std::vector<VariableBoundsDescription>&,
-		      const std::vector<VariableBoundsDescription>&);
+		      const LawFunction&);
 
     std::ofstream headerFile;
     std::ofstream srcFile;

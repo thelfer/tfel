@@ -166,4 +166,4 @@ namespace abaqus{
 
 } // end of namespace abaqus
 
-#endif /* LIB_MFRONT_ABAQUS_ABAQUSCONVERT_HXX_ */
+#endif /* LIB_MFRONT_ABAQUS_ABAQUSCONVERT_HXX */
