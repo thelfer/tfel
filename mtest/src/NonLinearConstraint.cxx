@@ -13,7 +13,6 @@
 
 #include<cmath>
 #include<sstream>
-#include<iostream>
 
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Behaviour.hxx"
@@ -94,7 +93,29 @@ namespace mtest
     auto throw_if = [](const bool tc, const std::string& m){
       if(tc){throw(std::runtime_error("NonLinearConstraint::setValues: "+m));}
     };
-    auto eval = [this,u1,s,t,dt,throw_if](tfel::math::Evaluator& ev){
+    auto eval = [this,&u1,&s,t,dt,throw_if](tfel::math::Evaluator& ev){
+      for(const auto& v : this->c.getVariablesNames()){
+	const auto pdv = std::find_if(this->dvs.begin(),this->dvs.end(),
+				      [&v](const Variable& dv){
+					return v==dv.name;
+				      });
+	const auto ptf = std::find_if(this->tfs.begin(),this->tfs.end(),
+				      [&v](const Variable& tf){
+					return v==tf.name;
+				      });
+	if(pdv!=this->dvs.end()){
+	  ev.setVariableValue(v,u1[pdv->p]);
+	} else if(ptf!=this->tfs.end()){
+	  ev.setVariableValue(v,s[ptf->p]);
+	} else {
+	  const auto p = this->evs.find(v);
+	  throw_if(p==this->evs.end(),"undefined evolution or variable '"+v+"'");
+	  ev.setVariableValue(v,p->second->operator()(t+dt));
+	}
+      }
+      return ev.getValue();
+    };
+    auto eval2 = [this,&u1,&s,t,dt,throw_if](tfel::math::Evaluator& ev){
       for(const auto& v : this->c.getVariablesNames()){
 	const auto pdv = std::find_if(this->dvs.begin(),this->dvs.end(),
 				      [&v](const Variable& dv){
@@ -121,42 +142,40 @@ namespace mtest
     const auto nf = this->np==DRIVINGVARIABLECONSTRAINT ? a : real(1);
     for(const auto& dv : this->dvs){
       const auto dc_dv = eval(*(dv.d));
-      const auto kv = nf*dc_dv;
-      K(pos,dv.p)-= kv;
-      K(dv.p,pos)-= kv;
-      r(dv.p)    -= kv*l;
+      const auto kv    = nf*dc_dv;
+      K(pos,dv.p)     -= kv;
+      K(dv.p,pos)     -= kv;
+      r(dv.p)         -= kv*l;
     }
-    if(this->tfs.size()!=0){
+    for(const auto& tf : this->tfs){
       const auto ndv = this->b.getDrivingVariablesSize();
-      for(const auto& tf : this->tfs){
-	const auto dc_dtf = eval(*(tf.d));
-	const auto kv = nf*dc_dtf;
-	if(this->b.getBehaviourType()==
-	   MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+      const auto dc_dtf = eval(*(tf.d));
+      const auto kv = nf*dc_dtf;
+      if(this->b.getBehaviourType()==
+	 MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+	if(tf.p<3){
 	  for(unsigned short i=0;i!=ndv;++i){
 	    K(pos,tf.p)-= kv*k(tf.p,i);
 	    K(tf.p,pos)-= kv*k(tf.p,i);
 	    r(tf.p)    -= kv*k(tf.p,i)*l;
 	  }
 	} else {
-	  if(tf.p<3){
-	    for(unsigned short i=0;i!=ndv;++i){
-	      K(pos,tf.p)-= kv*k(tf.p,i);
-	      K(tf.p,pos)-= kv*k(tf.p,i);
-	      r(tf.p)    -= kv*k(tf.p,i)*l;
-	    }
-	  } else {
-	    const size_type p1 = 2*tf.p-3u;
-	    const size_type p2 = p1+1;
-	    for(unsigned short i=0;i!=ndv;++i){
-	      K(pos,p1)-= kv*k(p1,i);
-	      K(p1,pos)-= kv*k(p1,i);
-	      r(p1)    -= kv*k(p1,i)*l;
-	      K(pos,p2)-= kv*k(p2,i);
-	      K(p2,pos)-= kv*k(p2,i);
-	      r(p2)    -= kv*k(p2,i)*l;
-	    }
+	  const size_type p1 = 2*tf.p-3u;
+	  const size_type p2 = p1+1;
+	  for(unsigned short i=0;i!=ndv;++i){
+	    K(pos,p1)-= kv*k(p1,i);
+	    K(p1,pos)-= kv*k(p1,i);
+	    r(p1)    -= kv*k(p1,i)*l;
+	    K(pos,p2)-= kv*k(p2,i);
+	    K(p2,pos)-= kv*k(p2,i);
+	    r(p2)    -= kv*k(p2,i)*l;
 	  }
+	}
+      } else {
+	for(unsigned short i=0;i!=ndv;++i){
+	  K(pos,tf.p)-= kv*k(tf.p,i);
+	  K(tf.p,pos)-= kv*k(tf.p,i);
+	  r(tf.p)    -= kv*k(tf.p,i)*l;
 	}
       }
     }

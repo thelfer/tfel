@@ -43,7 +43,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 			   MaterialPropertyParametersHandler.cxx                  \
 		           BehaviourData.cxx                                      \
 		           BehaviourDescription.cxx                               \
-		           VariableDescriptionDescription.cxx                     \
+			   VariableDescriptionBase.cxx                            \
 			   VariableDescription.cxx                                \
 		           StaticVariableDescription.cxx                          \
 		           VariableBoundsDescription.cxx                          \
