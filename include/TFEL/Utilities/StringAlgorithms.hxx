@@ -26,6 +26,13 @@ namespace tfel{
     /*!
      * \param[in] s1: first string
      * \param[in] s2: second string
+     * \return true if the first string starts with the second
+     */
+    TFELUTILITIES_VISIBILITY_EXPORT 
+    bool starts_with(const std::string&,const std::string&);
+    /*!
+     * \param[in] s1: first string
+     * \param[in] s2: second string
      * \return true if the first string ends with the second
      */
     TFELUTILITIES_VISIBILITY_EXPORT 

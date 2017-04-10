@@ -134,34 +134,24 @@ namespace mtest
     //! destructor
     virtual ~NonLinearConstraint();
   protected:
+    // Internal structure
+    struct Constraint;
     /*!
-     * \brief a structure containing the data relative of one of the
-     * variable defining the contraint.
+     * \brief evaluate the constraint or one of its derivatives
+     * \param[in]  d:  driving variables
+     * \param[in]  s:  thermodynamic forces
+     * \param[in]  t:  beginning of the time step
+     * \param[in]  dt: time increment
      */
-    struct Variable
-    {
-      //! \brief variable name
-      std::string name;
-      //! \brief position
-      unsigned short p;
-      //! \brief derivative of the contraint with respect to this variable
-      mutable std::shared_ptr<tfel::math::Evaluator> d;
-    }; // end of struct Variable    
+    double eval(tfel::math::Evaluator&,
+		const tfel::math::vector<real>&,
+		const tfel::math::vector<real>&,
+		const real,
+		const real) const;
     //! \brief evaluation of the constraint
-    mutable tfel::math::Evaluator c;
-    //! \brief list of driving variables used to define the constraint
-    std::vector<Variable> dvs;
-    //! \brief list of thermodynamic forces used to define the constraint
-    std::vector<Variable> tfs;
-    /*!
-     * \brief reference to all variables which are not driving
-     * variables or thermodynamic forces
-     */
-    EvolutionManager evs;
+    std::shared_ptr<Constraint> c;
     //! normalisation policy
     const Behaviour& b;
-    //! normalisation policy
-    const NormalisationPolicy np;
     //! disabled operatorx
     NonLinearConstraint& operator=(const NonLinearConstraint&) = delete;
     NonLinearConstraint& operator=(NonLinearConstraint&&) = delete;

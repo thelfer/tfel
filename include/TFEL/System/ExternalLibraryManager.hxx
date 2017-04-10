@@ -222,11 +222,11 @@ namespace tfel
       /*!
        * \return the type of the behaviour
        * \see MechanicalBehaviourBase::BehaviourType
-       * The value returned are the following
-       * 0 : general behaviour
-       * 1 : small strain behaviour
-       * 2 : finite strain behaviour
-       * 3 : cohesive zone model
+       * The value returned has the following meaning:
+       * - 0: general behaviour
+       * - 1: small strain behaviour
+       * - 2: finite strain behaviour
+       * - 3: cohesive zone model
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
@@ -236,12 +236,12 @@ namespace tfel
       /*!
        * \return the kinematic assumption used by the behaviour
        * \see MechanicalBehaviourBase::Kinematic
-       * The value returned are the following
-       * 0 : undefined kinematic
-       * 1 : standard small strain behaviour kinematic
-       * 2 : cohesive zone model kinematic
-       * 3 : standard finite strain kinematic (F-Cauchy)
-       * 4 : ptest finite strain kinematic (eto-pk1)
+       * The value returned has the following meaning:
+       * - 0: undefined kinematic
+       * - 1: standard small strain behaviour kinematic
+       * - 2: cohesive zone model kinematic
+       * - 3: standard finite strain kinematic (F-Cauchy)
+       * - 4: ptest finite strain kinematic (eto-pk1)
        * \param[in] l : name of the library
        * \param[in] f : law name
        */

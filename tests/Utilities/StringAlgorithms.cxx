@@ -12,16 +12,15 @@
  */
 
 #include<iostream>
+#include<cassert>
 #include<cstdlib>
 #include<string>
-
-#include<cassert>
-
-#include"TFEL/Utilities/StringAlgorithms.hxx"
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
+#include"TFEL/Utilities/StringAlgorithms.hxx"
+
 
 struct StringAlgorithmsTest final
   : public tfel::tests::TestCase
@@ -33,17 +32,17 @@ struct StringAlgorithmsTest final
   tfel::tests::TestResult
   execute() override
   {
-    using namespace std;
     using namespace tfel::utilities;
-  
     TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar","o","a"),"faa bar");
     TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar","u","a"),"foo bar");
     TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar","fo","a"),"ao bar");
     TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar","ar","u"),"foo bu");
-
     TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar","foo ",""),"bar");
     TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar","","test"),"foo bar");
-
+    TFEL_TESTS_ASSERT(starts_with("foobar","foo"));
+    TFEL_TESTS_ASSERT(!starts_with("foobar","bar"));
+    TFEL_TESTS_ASSERT(ends_with("foobar","bar"));
+    TFEL_TESTS_ASSERT(!ends_with("foobar","foo"));
     return this->result;
   } // end of execute()
 };
@@ -53,19 +52,9 @@ TFEL_TESTS_GENERATE_PROXY(StringAlgorithmsTest,"StringAlgorithms");
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main()
 {
-  using namespace std;
-  using namespace std;
-
-  using namespace tfel::tests;
-  using namespace tfel::utilities;
-  auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
-  manager.addXMLTestOutput("gentype.xml");
-  TestResult r = manager.execute();
-  if(!r.success()){
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
-
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("StringAlgorithms.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 

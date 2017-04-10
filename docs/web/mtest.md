@@ -4,14 +4,64 @@
 
 # Overview
 
-`MFront` comes with an handy easy-to-use tool called `MTest` that can
-test the local behaviour of a material, by imposing independent
-constraints on each component of the strain or the stress. This tool
-has been much faster (from ten to several hundred times depending on
-the test case) than using a full-fledged finite element solver. It
-equivalent to the SIMU_POINT_MAT operator available within the
-`Code-Aster` finite element solver [@edf_macro-commande_2013] or to
-the `SiDoLo` software [@pilvin_sidolo_2003].
+`MFront` comes with an handy easy-to-use tool called `MTest`. This
+tool handles two types of computations:
+
+- The description of a single material point.
+- The description of a pipe, submitted to variaous kinds of loadings.
+
+From various benchmarcks, this tool has been found much faster (from
+ten to several hundred times depending on the test case) than using a
+full-fledged finite element solver such as `Cast3M` or `Code_Aster`.
+
+The `mtest` python module, described [here](mtest-python.html), allows
+much finer control of the computations.
+
+# Usage
+
+MTest can be used from the command line as follows:
+
+~~~~{.bash}
+$ mtest [options] inputfile
+~~~~
+
+If the input file has the `ptest` extension, `MTest` will assume that
+the input files describes a test on a pipe. Otherwise, a test on a
+material point is assumed.
+
+This can be changed by using the `--scheme` option that currently
+accept two values:
+
+- `--scheme=mtest` to specify that the simulation of a single material
+  point is intended.
+- `--scheme=ptest` to specify that the simulation of a pipe is
+  intended.
+
+## Getting help
+
+### The `--help-keywords-list` command line option
+
+The list of available keywords are available thanks to the
+`--help-keywords-list` option. By default, this command describes the
+list of keywords associated with the simulation of a single material
+point.  To see the keywords associated with the simulation of a pipe,
+use `--scheme=ptest` option *before* the `--help-keywords-list`
+option.
+
+### The `--help-keyword` option
+
+The `--help-keyword` displays the help associated with a keyword. If
+this keyword is specific to the simulation of a pipe, use
+`--scheme=ptest` option *before* the `--help-keyword` option.
+
+# Material point
+
+`MTest` can test the local behaviour of a material, by imposing
+independent constraints on each component of the driving variables (or
+deformation gradient or or the stress. It equivalent to the
+`SIMU_POINT_MAT` operator available within the `Code-Aster` finite
+element solver [@edf_macro-commande_2013] or to the `SiDoLo` software
+[@pilvin_sidolo_2003].
 
 `MTest` can be used to model various experiments, as far as a stage
 implying strain localisation is not reached: tensile, compressive or
@@ -52,7 +102,7 @@ the appropriate initial conditions. This feature is particularly
 useful to analyse the failure of large simulations which may happen
 after several hours of computations.
 
-# Example
+## Example
 
 ~~~~ {#MTestPlasticity .cpp .numberLines}
 @Behaviour<aster> 'src/libAsterBehaviour.so' 'asterplasticity';
@@ -64,6 +114,10 @@ after several hours of computations.
 @ImposedStrain<function> 'EXX' '1.e-3*t';
 @Times {0.,1 in 20};
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Simulation of a pipe
+
+`MTest` 
 
 # References
 

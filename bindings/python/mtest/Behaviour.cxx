@@ -79,10 +79,21 @@ void declareBehaviour(){
 	 "-  d(tfel::utilities::Data): parameter\n"
 	 "-  h(std::string): modelling hypothesis\n")
     .def("getBehaviourType",&Behaviour::getBehaviourType,
-	 "Return the behaviour type")
+	 "Return the behaviour type.\n"
+	 "The value returned has the following meaning:\n"
+	 "- 0: general behaviour\n"
+	 "- 1: small strain behaviour\n"
+	 "- 2: finite strain behaviour\n"
+	 "- 3: cohesive zone model\n")
     .def("getBehaviourKinematic",
 	 &Behaviour::getBehaviourKinematic,
-	 "Return the behaviour kinematic")
+	 "Return the behaviour kinematic.\n"
+	 "The value returned has the following meaning:\n"
+	 "- 0: undefined kinematic\n"
+	 "- 1: standard small strain behaviour kinematic\n"
+	 "- 2: cohesive zone model kinematic\n"
+	 "- 3: standard finite strain kinematic (F-Cauchy)\n"
+	 "- 4: ptest finite strain kinematic (eto-pk1)\n")
     .def("getDrivingVariablesSize",
 	 &Behaviour::getDrivingVariablesSize,
 	 "Return the size of a vector able to contain "

@@ -6,8 +6,64 @@ This page describes the `mtest` module
 
 # The `Behaviour` class
 
-- `getBehaviourType`: Return the behaviour type.
-- `getBehaviourKinematic`: Return the behaviour kinematic.
+## Rationale
+
+The `Behaviour` class retrieves information in a shared library about
+a behaviour specific implementation.
+
+Contrary the `tfel.system.ExternalBehaviourDescription` class, the
+information given by the `Behaviour` class takes into account the
+variables that are implicitly declared by the interface to match its
+specific (internal) requirements.
+
+For example, if a behaviour requires the stiffness tensor to be given
+by the calling code (see the `@RequireStiffnessTensor` `MFront`'
+keyword for details), additional material properties are provided to
+the behaviour. The number of those additional material properties may
+depend on the modelling hypothesis (mostly for orthotropic
+behaviours): the calling code generally only not provides the minimal
+number of material properties needed, in order to reduce the cost of
+handling those extra material properties.
+
+One can give some other examples:
+
+- If the `@AsterSaveTangentOperator` is used in `MFront`, the
+  consistent tangent operator will be saved as additional state
+  variables.
+- If the `@AbaqusOrthotropyManagementPolicy` is used to set the
+  orthotropy management policy to "`MFront`" in `Abaqus/Standard` and
+  `Abaqus/Explicit`, the definition of the orthotropic axes must be
+  given in additional state variables.
+- Most of time, support for the plane stress hypothesis defines an
+  additional state variable, the axial strain (see for example the
+  `StandardElasticity` brick). This variable is only defined for this
+  specific modelling hypothesis.
+
+## Usage
+
+~~~~{.python}
+import mtest
+b = mtest.Behaviour('aster','libAsterBehaviour.so','asterplasticity','PlaneStrain')
+~~~~~
+
+## Methods available
+
+The following methods are avaiable:
+
+- `getBehaviourType`: Return the behaviour type. The value returned
+  has the following meaning:
+    - `0`: general behaviour.
+    - `1`: small strain behaviour.
+    - `2`: finite strain behaviour.
+    - `3`: cohesive zone model.
+- `getBehaviourKinematic`: Return the behaviour kinematic. The value
+  returned has the following meaning:
+    - `0`: undefined kinematic.
+    - `1`: standard small strain behaviour kinematic.
+    - `2`: cohesive zone model kinematic.
+    - `3`: standard finite strain kinematic (F-Cauchy).
+    - `4`: `PTest` finite strain kinematic (eto-pk1) (see
+      @helfer_extension_2015).
 - `getDrivingVariablesSize`: Return the size of a vector able to
 	 contain all the components of the driving variables.
 - `getThermodynamicForcesSize`: Return the size of a vector able to
@@ -27,8 +83,8 @@ This page describes the `mtest` module
 - `getThermodynamicForceComponentPosition`: Return the position of the
   component of a thermodynamic force.
 - `getSymmetryType`: Return the symmetry of the behaviour:
-    -- 0 means that the behaviour is isotropic.
-    -- 1 means that the behaviour is orthotropic.
+    - `0` means that the behaviour is isotropic.
+    - `1` means that the behaviour is orthotropic.
 - `getMaterialPropertiesNames`: return the names of the material
   properties.
 - `getInternalStateVariablesNames`: Return the names of the internal
@@ -42,9 +98,9 @@ This page describes the `mtest` module
   internal variables.
 - `getInternalStateVariableType`: Return the type of an internal
   variable:
-    - 0 means that the internal state variable is a scalar.
-    - 1 means that the internal state variable is a symmetric tensor.
-    - 3 means that the internal state variable is a tensor\n.
+    - `0` means that the internal state variable is a scalar.
+    - `1` means that the internal state variable is a symmetric tensor.
+    - `3` means that the internal state variable is a tensor.
 - `getInternalStateVariablePosition`: Return the internal state
   variable position.
 - `getExternalStateVariablesNames`: Return the names of the external
@@ -56,7 +112,7 @@ This page describes the `mtest` module
 - `getUnsignedShortParametersNames`: Return the names of the unsigned
   short parameters.
 
-# Using the MTest class
+# The `MTest` class
 
 Here is a first example of the `MTest` class usage:
 
@@ -226,7 +282,7 @@ The `MTestCurrentState` also provides `getInternalStateVariableValue`
 and `setInternalStateVariableValue` methods, which are described more
 in depth below.
 
-# Using the `PipeTest` class
+# The `PipeTest` class
 
 Here is an example:
 

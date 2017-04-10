@@ -163,8 +163,7 @@ namespace mtest
 #endif
   }
 
-  void
-  MTestMain::treatScheme()
+  void MTestMain::treatScheme()
   {
     if(this->currentArgument->getOption().empty()){
       throw(std::runtime_error("MTestMain::treatScheme: "

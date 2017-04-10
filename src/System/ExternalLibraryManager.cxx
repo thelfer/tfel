@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<cstring>
 #include<stdexcept>
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 #ifndef NOMINMAX
@@ -90,6 +91,64 @@ namespace tfel
     ExternalLibraryManager::ExternalLibraryManager() = default;
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+    static HINSTANCE__*
+#else
+    static void *
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+    load_library(const std::string& l){
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+      return ::LoadLibrary(TEXT (l.c_str()));
+#else
+      return ::dlopen(l.c_str(),RTLD_NOW);
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+    } // end of load_library
+    
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+    static HINSTANCE__*
+#else
+    static void *
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+    try_open(const std::string& l){
+      auto starts_with = [](const std::string& s1,
+      			    const char* const s2){
+	const auto l = std::strlen(s2);
+      	return ((s1.size()>=l) &&
+      		(std::equal(s2,s2+l,s1.begin())));
+      }; // end of starts_with
+      auto ends_with = [](const std::string& s1,
+			  const char* const s2){
+	const auto l = std::strlen(s2);
+      	if(!(s1.size()>=l)){
+	  return false;
+	}
+	return std::equal(s2,s2+l,s1.begin()+(s1.size()-l));
+      }; // end of ends_with
+#if (defined(macintosh) || defined(Macintosh) || \
+     (defined(__APPLE__) && defined(__MACH__)))
+      const char * const ext = ".dylib";
+#elif (defined(_WIN32) || defined(_WIN64))
+      const char * const ext = ".dll";
+#else
+      const char * const ext = ".so";
+#endif
+      auto lib = load_library(l);
+#if !(defined(_WIN32) || defined(_WIN64))
+      if((lib==nullptr)&&(!starts_with(l,"lib"))){
+	lib = load_library("lib"+l);
+	if(lib==nullptr){
+	  if(!ends_with(l,ext)){
+	    lib = load_library("lib"+l+ext);
+	  }
+	}
+      }
+#endif
+      if((lib==nullptr)&&(!ends_with(l,ext))){
+	lib = load_library(l+ext);
+      }
+      return lib;
+    } // end of load_library
+    
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
     HINSTANCE__*
 #else
     void *
@@ -104,13 +163,7 @@ namespace tfel
       auto p=this->librairies.find(name);
       if(p==librairies.end()){
 	// this library has not been 
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	HINSTANCE__* lib;
-	lib = ::LoadLibrary(TEXT (name.c_str()));
-#else
-	void * lib;
-	lib = ::dlopen(name.c_str(),RTLD_NOW);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+	auto lib = try_open(name);
 	if((lib==nullptr)&&(!b)){
 	  string msg("ExternalLibraryManager::loadLibrary : library '");
 	  msg += name;

@@ -22,7 +22,14 @@ The page declares the new functionalities of the 3.1 version of
 
 ## TFEL/Utilities
 
-### `ends_with` string algorithm
+### String algorithms
+
+#### The `starts_with` string algorithm
+
+The `starts_with` string algorithm is an helper function used to
+determine if a given string starts with another.
+
+#### The `ends_with` string algorithm
 
 The `ends_with` string algorithm is an helper function used to
 determine if a given string ends with another.
@@ -39,6 +46,23 @@ querying a library about exported symbols.
 > Renato Tegon Forti and Antony Polukhin.
 
 #### Improvements to the `ExternalLibraryManager` class
+
+##### Completion of libraries names
+
+If a library is not found, the `ExternalLibraryManager` class will
+try the following combinaisons:
+
+- Append `lib` in front of the library name (except for `Microsoft`
+  `Windows` platforms).
+- Append `lib` in front of the library name and the standard library
+  suffix at the end (except for `Microsoft` `Windows` platforms).
+- Append the standard library suffix at the end of the library name.
+
+The standard library suffix is:
+
+- `.dll` for `Microsoft` `Windows` platforms.
+- `.dylib` for `Apple` `MacOs` plateforms.
+- `.so` on all other supported systems.
 
 ##### Better handling of behaviour parameters
 
@@ -436,8 +460,8 @@ keyword.
 
 > **Note**
 >
-> This development of this functionality highlighted to trouble
-> reporter in Ticket #39.
+> This development of this functionality highlighted the issue
+> reported in Ticket #39.
 > For more details, see: <https://sourceforge.net/p/tfel/tickets/39/>
 
 ### Normalisation policy
@@ -451,11 +475,18 @@ policy. The normalisation policy can have one of the following values:
 - `ThermodynamicForce`, `Stress`, `CohesiveForce` stating that the
   constraint is of the order of magnitude of the thermodynamic force.
 
-### Example
+### Examples
 
 ~~~~~ {.cpp}
 // ensure that the loading is isochoric in 1D
-@NonLinearEquation<Strain> 'FRR*FTT*FZZ-1';
+@NonLinearConstraint<Strain> 'FRR*FTT*FZZ-1';
+~~~~~~~~~~
+
+~~~~~ {.cpp}
+// impose the first piola kirchoff stress
+// in an uniaxial compression test
+@Real 'Pi0' -40e6
+@NonLinearConstraint<Strain> 'SXX*FYY*FZZ-Pi0';
 ~~~~~~~~~~
 
 ### `python` bindings

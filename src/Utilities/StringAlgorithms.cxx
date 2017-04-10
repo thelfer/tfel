@@ -20,6 +20,12 @@ namespace tfel
   namespace utilities
   {
 
+    bool starts_with(const std::string& s1,const std::string& s2)
+    {
+      return ((s1.size()>=s2.size()) &&
+	      (std::equal(s2.begin(),s2.end(),s1.begin())));
+    } // end of starts_with
+
     bool ends_with(const std::string& s1,const std::string& s2)
     {
       return ((s1.size()>=s2.size()) &&
