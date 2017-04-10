@@ -94,6 +94,26 @@ namespace mfront{
       {"--date","show the file implementation date"},
       {"--material","show the material name"},
       {"--library","show the library name"},
+      {"--type","return the behaviour type\n"
+       "The value returned has the following meaning:\n"
+       "- 0: general behaviour\n"
+       "- 1: small strain behaviour\n"
+       "- 2: finite strain behaviour\n"
+       "- 3: cohesive zone model\n"},
+      // {"--kinematic","return the behaviour kinematic\n"
+      //  "The value returned has the following meaning:\n"
+      //  "- 0: undefined kinematic\n"
+      //  "- 1: standard small strain behaviour kinematic\n"
+      //  "- 2: cohesive zone model kinematic\n"
+      //  "- 3: standard finite strain kinematic (F-Cauchy)\n"
+      //  "- 4: ptest finite strain kinematic (eto-pk1)\n"},
+      {"--symmetry","return the behaviour symmetry. If the returned value is 0, "
+       "the behaviour is isotropic. If the returned value is 1, "
+       "the behaviour is orthotropic."},
+      {"--elastic-symmetry","return the symmetry of the elastic part of the behaviour. "
+       "If the returned value is 0, this part of the behaviour is isotropic. "
+       "If the returned value is 1, this part of the behaviour is orthotropic."
+       "the behaviour is orthotropic."},
       {"--supported-modelling-hypotheses","show the list of supported modelling hypothesis"},
       {"--material-properties","show the list of material properties for the selected modelling hypothesis"},
       {"--state-variables","show the list of state variables for the selected modelling hypothesis"},
@@ -133,9 +153,10 @@ namespace mfront{
   } // end of BehaviourQuery::registerCommandLineCallBacks
 
   void BehaviourQuery::treatStandardQuery(){
-    using namespace std;
     using namespace tfel::utilities;
     using tfel::material::ModellingHypothesis;
+    using std::cout;
+    using std::endl;;
     const auto& q = this->getCurrentCommandLineArgument();
     const auto& qn = q.as_string();
     if(qn=="--author"){
@@ -182,6 +203,54 @@ const Hypothesis){
 					    const Hypothesis){
 	    const auto& l = d.getLibrary();
 	    cout << (!l.empty() ? l : "(undefined)") << endl;
+	  }});
+    } else if(qn=="--type"){
+      this->queries.push_back({"type",[](const FileDescription&,
+					 const BehaviourDescription& d,
+					 const Hypothesis){
+	    const auto t = d.getBehaviourType();
+	    if(t==BehaviourDescription::GENERALBEHAVIOUR){
+	      std::cout << 0 << std::endl;
+	    } else if(t==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	      std::cout << 1 << std::endl;
+	    } else if(t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	      std::cout << 2 << std::endl;
+	    } else if(t==BehaviourDescription::COHESIVEZONEMODEL){
+	      std::cout << 3 << std::endl;
+	    } else {
+	      throw(std::runtime_error("unsupported behaviour type"));
+	    }}});
+    // } else if(qn=="--kinematic"){
+    //   this->queries.push_back({"kinematic",[](const FileDescription&,
+    // 					 const BehaviourDescription& d,
+    // 					 const Hypothesis){
+    // 	    cout << d.getBehaviourKinematic() << endl;
+    // }});
+    } else if(qn=="--symmetry"){
+      this->queries.push_back({"symmetry",[](const FileDescription&,
+					 const BehaviourDescription& d,
+					 const Hypothesis){
+	    const auto s = d.getSymmetryType();
+	    if(s==mfront::ISOTROPIC){
+	      cout << 0 << endl;
+	    } else if(s==mfront::ORTHOTROPIC){
+	      cout << 1 << endl;
+	    } else {
+	      throw(std::runtime_error("unsupported symmetry"));
+	    }
+	  }});
+    } else if(qn=="--elastic-symmetry"){
+      this->queries.push_back({"elastic-symmetry",[](const FileDescription&,
+						     const BehaviourDescription& d,
+						     const Hypothesis){
+	    const auto s = d.getElasticSymmetryType();
+	    if(s==mfront::ISOTROPIC){
+	      cout << 0 << endl;
+	    } else if(s==mfront::ORTHOTROPIC){
+	      cout << 1 << endl;
+	    } else {
+	      throw(std::runtime_error("unsupported elastic symmetry"));
+	    }
 	  }});
     } else if(qn=="--supported-modelling-hypotheses"){
       this->queries.push_back({"supported-modelling-hypotheses",[](const FileDescription&,
@@ -243,8 +312,8 @@ const Hypothesis){
 	    }
 	  }});
     } else {
-      throw(runtime_error("Behaviour::treatStandardQuery : "
-			  "unsupported query '"+qn+"'"));
+      throw(std::runtime_error("Behaviour::treatStandardQuery : "
+			       "unsupported query '"+qn+"'"));
     }
   }
 
