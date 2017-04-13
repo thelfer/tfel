@@ -36,6 +36,7 @@ bindings/python/mfront/FileDescription.cxx -text
 bindings/python/mfront/LibraryDescription.cxx -text
 bindings/python/mfront/Makefile.am -text
 bindings/python/mfront/TargetsDescription.cxx -text
+bindings/python/mfront/VariableBoundsDescription.cxx -text
 bindings/python/mfront/VariableDescription.cxx -text
 bindings/python/mfront/__init__.py.in -text
 bindings/python/mfront/mfront.cxx -text

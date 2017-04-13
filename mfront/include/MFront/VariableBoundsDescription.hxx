@@ -34,9 +34,9 @@ namespace mfront
   {
     //! \brief bounds type
     enum BoundsType{
-      Lower,
-      Upper,
-      LowerAndUpper
+      LOWER,
+      UPPER,
+      LOWERANDUPPER
     }; // end of enum BoundsType
     //! default constructor
     VariableBoundsDescription() = default;

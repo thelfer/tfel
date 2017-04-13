@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include<algorithm>
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
@@ -69,8 +70,7 @@ namespace mfront
   ModelDescription&
   ModelDescription::operator=(ModelDescription&&) = default;
 
-  void
-  ModelDescription::reserveName(const std::string& n){
+  void ModelDescription::reserveName(const std::string& n){
     if(!this->reservedNames.insert(n).second){
       throw(std::runtime_error("ModelDescription::reserveName: "
 			       "name '"+n+"' already reserved"));
@@ -99,19 +99,53 @@ namespace mfront
     }
   } // end of ModelDescription::registerStaticMemberName
   
-  const std::string&
-  ModelDescription::getExternalName(const std::string& n) const{
-    this->checkVariableExistence(n);
-    auto p=this->glossaryNames.find(n);
-    if(p!=this->glossaryNames.end()){
-      return p->second;
+  VariableDescription&
+  ModelDescription::getVariableDescription(const std::string& n)
+  {
+    if(this->outputs.contains(n)){
+      return this->outputs.getVariable(n);
     }
-    p=this->entryNames.find(n);
-    if(p!=this->entryNames.end()){
-      return p->second;
+    if(this->inputs.contains(n)){
+      return this->inputs.getVariable(n);
     }
-    return n;
-  } // end of ModelDescription::getExternalName
+    if(this->parameters.contains(n)){
+      return this->parameters.getVariable(n);
+    }
+    if(this->constantMaterialProperties.contains(n)){
+      return this->constantMaterialProperties.getVariable(n);
+    }
+    throw(std::runtime_error("ModelDescription::getVariableDescription: "
+			     "No variable named '"+n+"'.\n"
+			     "'"+n+"' is neither:\n"
+			     "- An output.\n"
+			     "- An input.\n"
+			     "- A parameter.\n"
+			     "- A constant material properties."));
+  } // end of ModelDescription::getVariableDescription
+
+  const VariableDescription&
+  ModelDescription::getVariableDescription(const std::string& n) const
+  {
+    if(this->outputs.contains(n)){
+      return this->outputs.getVariable(n);
+    }
+    if(this->inputs.contains(n)){
+      return this->inputs.getVariable(n);
+    }
+    if(this->parameters.contains(n)){
+      return this->parameters.getVariable(n);
+    }
+    if(this->constantMaterialProperties.contains(n)){
+      return this->constantMaterialProperties.getVariable(n);
+    }
+    throw(std::runtime_error("ModelDescription::getVariableDescription: "
+			     "No variable named '"+n+"'.\n"
+			     "'"+n+"' is neither:\n"
+			     "- An output.\n"
+			     "- An input.\n"
+			     "- A parameter.\n"
+			     "- A constant material properties."));
+  } // end of ModelDescription::getVariableDescription
   
   void ModelDescription::checkVariableExistence(const std::string& v) const{
     if((!this->inputs.contains(v))&&
@@ -123,22 +157,6 @@ namespace mfront
 			       "no variable named '"+v+"'"));
     }
   } // end of ModelDescription::checkVariableExistence
-
-  bool ModelDescription::hasGlossaryName(const std::string& v) const{
-    this->checkVariableExistence(v);
-    return this->glossaryNames.count(v)!=0;
-  }
-
-  std::string
-  ModelDescription::getGlossaryName(const std::string& v) const{
-    this->checkVariableExistence(v);
-    const auto p = this->glossaryNames.find(v);
-    if(p==this->glossaryNames.end()){
-      throw(std::runtime_error("ModelDescription::getGlossaryName: "
-			       "no glossary named defined for variable '"+v+"'"));
-    }
-    return p->second;
-  } // end of ModelDescription::getGlossaryName
   
   void ModelDescription::setGlossaryName(const std::string& v,
 					 const std::string& g){
@@ -157,7 +175,9 @@ namespace mfront
     if(v!=g){
       this->reserveName(g);
     }
-    this->glossaryNames.insert({v,glossary.getGlossaryEntry(g).getKey()});
+    const auto gn = glossary.getGlossaryEntry(g).getKey();
+    this->getVariableDescription(v).setGlossaryName(g);
+    this->glossaryNames.insert({v,gn});
   }
 
   void ModelDescription::setEntryName(const std::string& v,
@@ -180,6 +200,7 @@ namespace mfront
     if(v!=e){
       this->reserveName(e);
     }
+    this->getVariableDescription(v).setEntryName(e);
     this->entryNames.insert({v,e});
   }
 
@@ -192,6 +213,54 @@ namespace mfront
   ModelDescription::getReservedNames() const{
     return this->reservedNames;
   }
+
+  void ModelDescription::addMaterialLaw(const std::string& m)
+  {
+    if(std::find(this->materialLaws.begin(),
+		 this->materialLaws.end(),m)==this->materialLaws.end()){
+      this->materialLaws.push_back(m);
+    }
+  } // end of ModelDescription::addMaterialLaw
+
+  void ModelDescription::appendToIncludes(const std::string& c)
+  {
+    this->includes+=c;
+    if(!this->includes.empty()){
+      if(*(this->includes.rbegin())!='\n'){
+	this->includes+='\n';
+      }
+    }
+  } // end of ModelDescription::appendToIncludes
+
+  void ModelDescription::appendToMembers(const std::string& c)
+  {
+    this->members+=c;
+    if(!this->members.empty()){
+      if(*(this->members.rbegin())!='\n'){
+	this->members+='\n';
+      }
+    }
+  } // end of ModelDescription::appendToMembers
+
+  void ModelDescription::appendToPrivateCode(const std::string& c)
+  {
+    this->privateCode+=c;
+    if(!this->privateCode.empty()){
+      if(*(this->privateCode.rbegin())!='\n'){
+	this->privateCode+='\n';
+      }
+    }
+  } // end of ModelDescription::appendToPrivateCode
+
+  void ModelDescription::appendToSources(const std::string& c)
+  {
+    this->sources+=c;
+    if(!this->sources.empty()){
+      if(*(this->sources.rbegin())!='\n'){
+	this->sources+='\n';
+      }
+    }
+  } // end of ModelDescription::appendToSources
   
   ModelDescription::~ModelDescription() = default;
   

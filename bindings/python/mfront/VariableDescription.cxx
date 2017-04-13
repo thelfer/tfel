@@ -32,8 +32,35 @@ void declareVariableDescription(){
     .def_readwrite("arraySize",&VariableDescriptionBase::arraySize)
     .def_readwrite("lineNumber",&VariableDescriptionBase::lineNumber)
     ;
+  
   class_<VariableDescription,bases<VariableDescriptionBase>>("VariableDescription")
+    .def("hasBounds",&VariableDescription::hasBounds,
+	 "Return true if the bounds of the variable has already been set")
+    .def("getBounds",&VariableDescription::getBounds,
+	 return_internal_reference<>(),
+	 "Return the physical bounds of the variable")
+    .def("setBounds",&VariableDescription::setBounds,
+	 "Set the physical bounds of the variable")
+    .def("hasPhysicalBounds",&VariableDescription::hasPhysicalBounds,
+	 "Return true if the physical bounds of the variable has already been set")
+    .def("getPhysicalBounds",&VariableDescription::getPhysicalBounds,
+	 return_internal_reference<>(),
+	 "Get the physical bounds of the variable")
+    .def("setPhysicalBounds",&VariableDescription::setPhysicalBounds,
+	 "Set the physical bounds of the variable")
+    .def("setGlossaryName",&VariableDescription::setGlossaryName,
+	 "Set the glossary name")
+    .def("setEntryName",&VariableDescription::setEntryName,
+	 "Set the entry name")
+    .def("getExternalName",&VariableDescription::getExternalName,
+	 return_value_policy<copy_const_reference>(),
+	 "Return the external name")
+    .def("hasGlossaryName",&VariableDescription::hasGlossaryName,
+	 "Return true if the variable has a glossary name")
+    .def("hasEntryName",&VariableDescription::hasEntryName,
+	 "Return true if the variable has a entry name")
     ;
+  
   class_<VariableDescriptionContainer>("VariableDescriptionContainer")
     .def("__iter__", iterator<VariableDescriptionContainer>())
     .def("__len__",VariableDescriptionContainer_size)

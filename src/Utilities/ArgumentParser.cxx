@@ -17,6 +17,7 @@
 #include<iterator>
 #include<utility>
 #include<cstdlib>
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/Utilities/ArgumentParser.hxx"
 
 namespace tfel{
@@ -66,7 +67,12 @@ namespace tfel{
 	if(tmp.size()<=32){
 	  tmp.insert(tmp.size(),32-tmp.size(),' ');
 	}
-	std::cout << tmp << " : " <<  c.second.d << '\n';
+	tmp += ": ";
+	const auto lines = tokenize(c.second.d,'\n');
+	for(const auto& l : lines){
+	  std::cout << tmp << l << '\n';
+	  std::fill(tmp.begin(),tmp.end(),' ');
+	}
       }
       std::exit(EXIT_SUCCESS);
     }
@@ -119,9 +125,8 @@ namespace tfel{
       this->registerCallBack(k,c);
     }
     
-    void
-    ArgumentParser::setArguments(const int argc,
-				 const char * const * const argv)
+    void ArgumentParser::setArguments(const int argc,
+				      const char * const * const argv)
     {
       if(argc<1){
 	throw(std::runtime_error("ArgumentParser::setArguments: "
@@ -166,8 +171,7 @@ namespace tfel{
       }
     }
 
-    void
-    ArgumentParser::stripArguments()
+    void ArgumentParser::stripArguments()
     {
       for(auto& a : this->args){
 	auto& an = a.as_string();
@@ -188,8 +192,7 @@ namespace tfel{
       }
     } // end of ArgumentParser::stripArguments
 
-    void
-    ArgumentParser::treatUnknownArgument()
+    void ArgumentParser::treatUnknownArgument()
     {
       throw(std::runtime_error("ArgumentParser::treatUnknownArg: '"+
 			       this->currentArgument->as_string()+

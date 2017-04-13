@@ -67,11 +67,11 @@ namespace mfront{
   }
 
   void ModelDSLCommon::reserveName(const std::string& n){
-    ModelDescription::reserveName(n);
+    this->md.reserveName(n);
   }
 
   bool ModelDSLCommon::isNameReserved(const std::string& n) const{
-    return ModelDescription::isNameReserved(n);
+    return this->md.isNameReserved(n);
   }
   
   AbstractDSL::DSLTarget ModelDSLCommon::getTargetType() const{
@@ -80,16 +80,16 @@ namespace mfront{
 
   std::string ModelDSLCommon::getClassName() const
   {
-    return this->className;
+    return this->md.className;
   } // end of ModelDSLCommon::getClassName
 
   void ModelDSLCommon::addStaticVariableDescription(const StaticVariableDescription& v)
   {
-    this->staticVars.push_back(v);
+    this->md.staticVars.push_back(v);
   } // end of ModelDSLCommon::addStaticVariableDescription
 
   int ModelDSLCommon::getIntegerConstant(const std::string& n) const{
-    for(const auto& v:this->staticVars){
+    for(const auto& v:this->md.staticVars){
       if(v.name==n){
 	if(v.type!="int"){
 	  this->throwRuntimeError("ModelDSLCommon::getIntegerConstant",
@@ -104,17 +104,17 @@ namespace mfront{
   
   void ModelDSLCommon::treatMaterial()
   {
-    if(!ModelDescription::material.empty()){
+    if(!this->md.material.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatMaterial",
 			      "material name alreay defined");
     }
-    this->material = this->readOnlyOneToken();
-    if(!CxxTokenizer::isValidIdentifier(ModelDescription::material,true)){
+    this->md.material = this->readOnlyOneToken();
+    if(!CxxTokenizer::isValidIdentifier(this->md.material,true)){
       this->throwRuntimeError("ModelDSLCommon::treatMaterial",
-			      "invalid material name ('"+this->material+"')");
+			      "invalid material name ('"+this->md.material+"')");
     }
-    if(!this->className.empty()){
-      this->className = ModelDescription::material+"_"+this->className;
+    if(!this->md.className.empty()){
+      this->md.className = this->md.material+"_"+this->md.className;
     }
   } // end of ModelDSLCommon::treatMaterial
 
@@ -125,26 +125,26 @@ namespace mfront{
       this->throwRuntimeError("ModelDSLCommon::treatMaterial",
 			      "invalid library name");
     }
-    if(!this->library.empty()){
+    if(!this->md.library.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatMaterial",
 			      "library name already registred");
     }
-    this->library = l;
+    this->md.library = l;
   } // end of ModelDSLCommon::treatLibrary
 
   void ModelDSLCommon::treatModel()
   {
-    if(!this->className.empty()){
+    if(!this->md.className.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatModel",
 			      "model name already defined");
     }
-    this->className = this->readOnlyOneToken();
-    if(!isValidIdentifier(this->className)){
+    this->md.className = this->readOnlyOneToken();
+    if(!isValidIdentifier(this->md.className)){
       this->throwRuntimeError("ModelDSLCommon::treatModel",
 			      "invalid model name");
     }
-    if(!ModelDescription::material.empty()){
-      this->className = ModelDescription::material+"_"+this->className;
+    if(!this->md.material.empty()){
+      this->md.className = this->md.material+"_"+this->md.className;
     }
   } // end of ModelDSLCommon::treatModel
 
@@ -166,7 +166,7 @@ namespace mfront{
 			      "no interface defined");
     }
     for(const auto& i : this->interfaces){
-      i.second->writeOutputFiles(*this,*this);
+      i.second->writeOutputFiles(*this,this->md);
     }
   } // end of ModelDSLCommon::writeOutputFiles
 
@@ -255,12 +255,12 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::treatDomain: "+m));}
     };    
-    throw_if(!this->domains.empty(),"domain defined");
+    throw_if(!this->md.domains.empty(),"domain defined");
     this->checkNotEndOfFile("ModelDSLCommon::treatDomain");
     throw_if(this->current->flag!=tfel::utilities::Token::String,
 	     "Expected to read a string (read '"+this->current->value+"').");
     throw_if(this->current->value.size()<2,"domain name too short.");
-    this->domains.insert(this->current->value.substr(1,this->current->value.size()-2));
+    this->md.domains.insert(this->current->value.substr(1,this->current->value.size()-2));
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatDomain",";");
   } // end of ModelDSLCommon::treatDomain(void)
@@ -270,23 +270,23 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::treatDomains: "+m));}
     };    
-    throw_if(!this->domains.empty(),"domains defined");
+    throw_if(!this->md.domains.empty(),"domains defined");
     for(const auto& d : this->readArrayOfString("ModelDSLCommon::treatDomains")){
-      throw_if(!this->domains.insert(d).second,
+      throw_if(!this->md.domains.insert(d).second,
 	       "domain "+d+" already defined.");
     }
-    throw_if(this->domains.empty(),"@Domains does not set any domain");
+    throw_if(this->md.domains.empty(),"@Domains does not set any domain");
     this->readSpecifiedToken("ModelDSLCommon::treatDomain",";");
   } // end of ModelDSLCommon::treatDomains(void)
 
   bool ModelDSLCommon::isInputVariable(const std::string& v) const
   {
-    return is(this->inputs,v);
+    return is(this->md.inputs,v);
   } // end of ModelDSLCommon::isInputVariable(void)
 
   bool ModelDSLCommon::isOutputVariable(const std::string& v) const
   {
-    return is(this->outputs,v);
+    return is(this->md.outputs,v);
   } // end of ModelDSLCommon::isInputVariable(void)
   
   void ModelDSLCommon::treatFunction()
@@ -312,16 +312,16 @@ namespace mfront{
       }
       return false;
     };
-    Function f;
+    ModelDescription::Function f;
     unsigned int openedBrackets = 0;
     unsigned int openedParenthesis = 0;
     f.useTimeIncrement = false;
-    this->registerMemberName("functor"+std::to_string(this->functions.size()));
+    this->md.registerMemberName("functor"+std::to_string(this->md.functions.size()));
     this->checkNotEndOfFile("ModelDSLCommon::treatFunction");
     f.name = this->current->value;
     throw_if(!this->isValidIdentifier(f.name),
 	     "function name '"+f.name+"' is not valid");
-    this->registerMemberName(f.name);
+    this->md.registerMemberName(f.name);
     this->reserveName(f.name+".Domain");
     this->reserveName(f.name+".Domains");
     f.line = this->current->line;
@@ -368,9 +368,9 @@ namespace mfront{
 	if(!newLine){
 	  f.body  += " ";
 	}
-	if(isStaticMemberName(*this,this->current->value)){
-	  f.body  += "(" + this->className + ":: "+ this->current->value + ")";
-	} else if(isMemberName(*this,this->current->value)){
+	if(isStaticMemberName(this->md,this->current->value)){
+	  f.body  += "(" + this->md.className + ":: "+ this->current->value + ")";
+	} else if(isMemberName(this->md,this->current->value)){
 	  bool treated = false;
 	  if(newInstruction){
 	    const auto var = this->current->value;
@@ -398,7 +398,7 @@ namespace mfront{
 	    }
 	    if(modifier){
 	      bool found = false;
-	      for(auto p=this->outputs.begin();(p!=this->outputs.end())&&(!found);){
+	      for(auto p=this->md.outputs.begin();(p!=this->md.outputs.end())&&(!found);){
 		if(p->name==var){
 		  found = true;
 		} else {
@@ -423,8 +423,8 @@ namespace mfront{
 	  }
 	  if(!treated){
 	    // treating the case of local parameters
-	    for(auto p =this->parameters.begin();
-		(p!=this->parameters.end())&&(!treated);++p){
+	    for(auto p =this->md.parameters.begin();
+		(p!=this->md.parameters.end())&&(!treated);++p){
 	      if(p->name==this->current->value){
 		treated = true;
 		f.parameters.insert(this->current->value);
@@ -432,8 +432,8 @@ namespace mfront{
 	      }
 	    }
 	    // treating the case of local parameters
-	    for(auto p =this->constantMaterialProperties.begin();
-		(p!=this->constantMaterialProperties.end())&&(!treated);++p){
+	    for(auto p =this->md.constantMaterialProperties.begin();
+		(p!=this->md.constantMaterialProperties.end())&&(!treated);++p){
 	      if(p->name==this->current->value){
 		treated = true;
 		f.constantMaterialProperties.insert(this->current->value);
@@ -443,7 +443,7 @@ namespace mfront{
 	    if(!treated){
 	      if(this->isInputVariable(this->current->value)){
 		f.usedVariables.insert(this->current->value);
-		auto dv = this->decomposeVariableName(this->current->value);
+		auto dv = this->md.decomposeVariableName(this->current->value);
 		auto p6 = f.depths.find(dv.first);
 		if(p6!=f.depths.end()){
 		  if(dv.second>p6->second){
@@ -454,7 +454,7 @@ namespace mfront{
 		}
 	      } else if(this->isOutputVariable(this->current->value)){
 		f.usedVariables.insert(this->current->value);
-		auto dv = this->decomposeVariableName(this->current->value);
+		auto dv = this->md.decomposeVariableName(this->current->value);
 		auto p6 = f.depths.find(dv.first);
 		if(p6!=f.depths.end()){
 		  if(dv.second>p6->second){
@@ -483,7 +483,7 @@ namespace mfront{
 	     "unexpected end of file while reading body of function '"+f.name+"'");
     throw_if(openedBrackets!=0,"parenthesis still opened at the end of function '"+f.name+"'");
     throw_if(f.modifiedVariables.empty(),"function " + f.name + " does not change any variable.");
-    for(const auto& df: this->functions){
+    for(const auto& df: this->md.functions){
       throw_if(df.name==f.name,"function " + f.name + " already declared.");
     }
     for(auto p2=f.modifiedVariables.begin();p2!=f.modifiedVariables.end();++p2){
@@ -492,12 +492,12 @@ namespace mfront{
 	f.usedVariables.erase(*p3);
       }
     }
-    this->functions.push_back(f);
+    this->md.functions.push_back(f);
   } // end of ModelDSLCommon::treatFunction(void)
 
   void ModelDSLCommon::treatOutput()
   {
-    if(!this->functions.empty()){
+    if(!this->md.functions.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatInput",
 			       "outputs must be declared before "
 			       "declaring functions");
@@ -505,14 +505,14 @@ namespace mfront{
     VariableDescriptionContainer noutputs;
     this->readVarList(noutputs,"Field",false);
     for(const auto& v : noutputs){
-      this->registerMemberName(v.name);
-      this->outputs.push_back(v);
+      this->md.registerMemberName(v.name);
+      this->md.outputs.push_back(v);
     }
   } // end of ModelDSLCommon::treatOutput(void)
 
   void ModelDSLCommon::treatInput()
   {
-    if(!this->functions.empty()){
+    if(!this->md.functions.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatInput",
 			      "inputs must be declared before "
 			      "declaring functions");
@@ -520,14 +520,14 @@ namespace mfront{
     VariableDescriptionContainer ninputs;
     this->readVarList(ninputs,"Field",false);
     for(const auto& v : ninputs){
-      this->registerMemberName(v.name);
-      this->inputs.push_back(v);
+      this->md.registerMemberName(v.name);
+      this->md.inputs.push_back(v);
     }
   } // end of ModelDSLCommon::treatInput(void)
 
   void ModelDSLCommon::treatOutputMethod() 
   {
-    if(!this->functions.empty()){
+    if(!this->md.functions.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatOutputMethod: ",
 			      "variable methods must be called "
 			      "before declaring functions");
@@ -548,15 +548,15 @@ namespace mfront{
     this->readSpecifiedToken("ModelDSLCommon::treatOutputMethod","(");
     if(mn=="setGlossaryName"){
       const auto gn = this->readString("ModelDSLCommon::treatOutputMethod");
-      this->setGlossaryName(this->currentVar,gn);
+      this->md.setGlossaryName(this->currentVar,gn);
     } else if (mn=="setEntryName"){
       const auto en = this->readString("ModelDSLCommon::treatOutputMethod");
-      this->setEntryName(this->currentVar,en);
+      this->md.setEntryName(this->currentVar,en);
     }  else if (mn=="setDefaultInitialValue"){
       this->checkNotEndOfFile("ModelDSLCommon::treatOutputMethod",
 			      "Expected intial value.");
       const auto value = this->readDouble();
-      auto& v = this->outputs.getVariable(this->currentVar);
+      auto& v = this->md.outputs.getVariable(this->currentVar);
       v.setAttribute(VariableDescription::initialValue,value,false);
     } else if (mn=="setDepth"){
       this->checkNotEndOfFile("ModelDSLCommon::treatOutputMethod",
@@ -568,13 +568,13 @@ namespace mfront{
 	this->throwRuntimeError("ModelDSLCommon::treatOutputMethod",
 				"Could not read depth value of field '"+this->currentVar+"'");
       }
-      auto& v = this->outputs.getVariable(this->currentVar);
+      auto& v = this->md.outputs.getVariable(this->currentVar);
       v.setAttribute(VariableDescription::depth,value,false);
       for(unsigned short i=1;i<=value;++i){
 	const auto vn = this->currentVar+"_"+std::to_string(i);
-	this->registerMemberName(vn);
-	this->registerMemberName("f_"+vn);
-	this->registerMemberName("ff_"+vn);
+	this->md.registerMemberName(vn);
+	this->md.registerMemberName("f_"+vn);
+	this->md.registerMemberName("ff_"+vn);
       }
       ++(this->current);
     } else {
@@ -587,7 +587,7 @@ namespace mfront{
 
   void ModelDSLCommon::treatInputMethod() 
   {
-    if(!this->functions.empty()){
+    if(!this->md.functions.empty()){
       this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
 			      "input methods must be called "
 			      "before declaring functions");
@@ -606,10 +606,10 @@ namespace mfront{
     this->readSpecifiedToken("ModelDSLCommon::treatInputMethod","(");
     if(mn=="setGlossaryName"){
       const auto gn = this->readString("ModelDSLCommon::treatInputMethod");
-      this->setGlossaryName(this->currentVar,gn);
+      this->md.setGlossaryName(this->currentVar,gn);
     } else if (mn=="setEntryName"){
       const auto en = this->readString("ModelDSLCommon::treatInputMethod");
-      this->setEntryName(this->currentVar,en);
+      this->md.setEntryName(this->currentVar,en);
     } else if (mn=="setDepth"){
       this->checkNotEndOfFile("ModelDSLCommon::treatInputMethod",
 			      "Expected depth value.");
@@ -620,13 +620,13 @@ namespace mfront{
 	this->throwRuntimeError("ModelDSLCommon::treatInputMethod",
 				"Could not read initial value of field '"+this->currentVar+"'");
       }
-      auto& v = this->inputs.getVariable(this->currentVar);
+      auto& v = this->md.inputs.getVariable(this->currentVar);
       v.setAttribute(VariableDescription::depth,value,false);
       for(unsigned short i=1;i<=value;++i){
 	const auto vn = this->currentVar+"_"+std::to_string(i);
-	this->registerMemberName(vn);
-	this->registerMemberName("f_"+vn);
-	this->registerMemberName("ff_"+vn);
+	this->md.registerMemberName(vn);
+	this->md.registerMemberName("f_"+vn);
+	this->md.registerMemberName("ff_"+vn);
       }
       ++(this->current);
     } else {
@@ -664,8 +664,8 @@ namespace mfront{
 	this->throwRuntimeError("DSLBase::handleParameter",
 				", or ; expected after '"+n+"'");
       }
-      this->registerMemberName(v.name);
-      this->parameters.push_back(v);
+      this->md.registerMemberName(v.name);
+      this->md.parameters.push_back(v);
     }
     if(!endOfTreatment){
       --(this->current);
@@ -679,8 +679,8 @@ namespace mfront{
     VariableDescriptionContainer gp;
     this->readVarList(gp,false);
     for(const auto& v : gp){
-      this->registerMemberName(v.name);
-      this->parameters.push_back(v);
+      this->md.registerMemberName(v.name);
+      this->md.parameters.push_back(v);
     }
   } // end of ModelDSLCommon::treatLocalParameter()
     
@@ -702,10 +702,10 @@ namespace mfront{
     this->readSpecifiedToken("ModelDSLCommon::treatParameterMethod","(");
     if(mn=="setGlossaryName"){
       const auto gn = this->readString("ModelDSLCommon::treatInputMethod");
-      this->setGlossaryName(this->currentVar,gn);
+      this->md.setGlossaryName(this->currentVar,gn);
     } else if(mn=="setEntryName"){
       const auto en = this->readString("ModelDSLCommon::treatInputMethod");
-      this->setEntryName(this->currentVar,en);
+      this->md.setEntryName(this->currentVar,en);
     } else if (mn=="setDefaultValue"){
       this->readDefaultValue();
     }
@@ -718,8 +718,8 @@ namespace mfront{
     VariableDescriptionContainer cmp;
     this->readVarList(cmp,"real",false);
     for(const auto& mp : cmp){
-      this->registerMemberName(mp.name);
-      this->constantMaterialProperties.push_back(mp);
+      this->md.registerMemberName(mp.name);
+      this->md.constantMaterialProperties.push_back(mp);
     }
   } // end of ModelDSLCommon::treatConstantMaterialProperty(void)
 
@@ -736,10 +736,10 @@ namespace mfront{
     this->readSpecifiedToken("ModelDSLCommon::treatConstantMaterialPropertyMethod","(");
     if(mn=="setGlossaryName"){
       const auto gn = this->readString("ModelDSLCommon::treatConstantMaterialPropertyMethod");
-      this->setGlossaryName(this->currentVar,gn);
+      this->md.setGlossaryName(this->currentVar,gn);
     } else if(mn=="setEntryName"){
       const auto en = this->readString("ModelDSLCommon::treatConstantMaterialPropertyMethod");
-      this->setEntryName(this->currentVar,en);
+      this->md.setEntryName(this->currentVar,en);
     } else {
       throw_if(true,"unknown method (valid methods for constant material properties are "
 	       "setGlossaryName and setEntryName, read "+mn+").");
@@ -753,7 +753,7 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ModelDSLCommon::readDefaultValue: "+m));}
     };
-    auto& v = this->parameters.getVariable(this->currentVar);
+    auto& v = this->md.parameters.getVariable(this->currentVar);
     this->checkNotEndOfFile("ModelDSLCommon::readDefaultValue",
 			    "Expected default value.");
     if(v.type=="DoubleArray"){
@@ -779,10 +779,10 @@ namespace mfront{
   void ModelDSLCommon::treatBounds()
   {
     const auto b = mfront::readVariableBounds(this->current,this->end());
-    if(this->outputs.contains(b.first)){
-      this->outputs.getVariable(b.first).setBounds(b.second);
-    } else if(this->inputs.contains(b.first)){
-      this->inputs.getVariable(b.first).setBounds(b.second);
+    if(this->md.outputs.contains(b.first)){
+      this->md.outputs.getVariable(b.first).setBounds(b.second);
+    } else if(this->md.inputs.contains(b.first)){
+      this->md.inputs.getVariable(b.first).setBounds(b.second);
     } else {
       throw(std::runtime_error("ModelDSLCommon::treatBounds: "
 			       "no variable named '"+b.first+"'"));
@@ -793,10 +793,10 @@ namespace mfront{
   void ModelDSLCommon::treatPhysicalBounds()
   {
     const auto b = mfront::readVariableBounds(this->current,this->end());
-    if(this->outputs.contains(b.first)){
-      this->outputs.getVariable(b.first).setPhysicalBounds(b.second);
-    } else if(this->inputs.contains(b.first)){
-      this->inputs.getVariable(b.first).setPhysicalBounds(b.second);
+    if(this->md.outputs.contains(b.first)){
+      this->md.outputs.getVariable(b.first).setPhysicalBounds(b.second);
+    } else if(this->md.inputs.contains(b.first)){
+      this->md.inputs.getVariable(b.first).setPhysicalBounds(b.second);
     } else {
       throw(std::runtime_error("ModelDSLCommon::treatPhysicalBounds: "
 			       "no variable named '"+b.first+"'"));
@@ -806,50 +806,27 @@ namespace mfront{
 
   void ModelDSLCommon::addMaterialLaw(const std::string& m)
   {
-    if(std::find(this->materialLaws.begin(),
-		 this->materialLaws.end(),m)==this->materialLaws.end()){
-      this->materialLaws.push_back(m);
-    }
+    this->md.addMaterialLaw(m);
   } // end of ModelDSLCommon::addMaterialLaw
 
   void ModelDSLCommon::appendToIncludes(const std::string& c)
   {
-    this->includes+=c;
-    if(!this->includes.empty()){
-      if(*(this->includes.rbegin())!='\n'){
-	this->includes+='\n';
-      }
-    }
+    this->md.appendToIncludes(c);
   } // end of ModelDSLCommon::appendToIncludes
 
   void ModelDSLCommon::appendToMembers(const std::string& c)
   {
-    this->members+=c;
-    if(!this->members.empty()){
-      if(*(this->members.rbegin())!='\n'){
-	this->members+='\n';
-      }
-    }
+    this->md.appendToMembers(c);
   } // end of ModelDSLCommon::appendToMembers
 
   void ModelDSLCommon::appendToPrivateCode(const std::string& c)
   {
-    this->privateCode+=c;
-    if(!this->privateCode.empty()){
-      if(*(this->privateCode.rbegin())!='\n'){
-	this->privateCode+='\n';
-      }
-    }
+    this->md.appendToPrivateCode(c);
   } // end of ModelDSLCommon::appendToPrivateCode
 
   void ModelDSLCommon::appendToSources(const std::string& c)
   {
-    this->sources+=c;
-    if(!this->sources.empty()){
-      if(*(this->sources.rbegin())!='\n'){
-	this->sources+='\n';
-      }
-    }
+    this->md.appendToSources(c);
   } // end of ModelDSLCommon::appendToSources
 
   ModelDSLCommon::~ModelDSLCommon() = default;

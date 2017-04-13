@@ -74,7 +74,7 @@ release-notes-2.0.4-doc-pdf:
 	make -f Makefile.doc
 
 release-notes-3.0-doc-pdf:
-	cd docs/release-notes-3.0 ;                                            \
+	cd docs/release-notes-3.0 ;                                \
 	make -f Makefile.doc
 
 mfront-doc-pdf:

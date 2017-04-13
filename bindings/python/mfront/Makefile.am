@@ -10,17 +10,18 @@ mfrontdir = @pythondir@/mfront
 mfront_PYTHON = __init__.py
 
 mfront_LTLIBRARIES = _mfront.la
-_mfront_la_SOURCES = mfront.cxx                \
-		     AbstractDSL.cxx           \
-		     FileDescription.cxx       \
-		     LibraryDescription.cxx    \
-		     TargetsDescription.cxx    \
-		     DSLFactory.cxx            \
-		     VariableDescription.cxx   \
-		     AbstractBehaviourDSL.cxx  \
-		     BehaviourAttribute.cxx    \
-		     BehaviourData.cxx         \
-		     BehaviourSymmetryType.cxx \
+_mfront_la_SOURCES = mfront.cxx                    \
+		     AbstractDSL.cxx               \
+		     FileDescription.cxx           \
+		     LibraryDescription.cxx        \
+		     TargetsDescription.cxx        \
+		     DSLFactory.cxx                \
+		     VariableBoundsDescription.cxx \
+		     VariableDescription.cxx       \
+		     AbstractBehaviourDSL.cxx      \
+		     BehaviourAttribute.cxx        \
+		     BehaviourData.cxx             \
+		     BehaviourSymmetryType.cxx     \
 		     BehaviourDescription.cxx
 
 _mfront_la_LDFLAGS = -module

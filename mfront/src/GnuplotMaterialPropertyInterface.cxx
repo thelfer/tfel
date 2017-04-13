@@ -115,7 +115,7 @@ namespace mfront
     };
     const auto b = mfront::readVariableBounds(p,pe);
     CxxTokenizer::readSpecifiedToken(m,";",p,pe);
-    throw_if(b.second.boundsType!=VariableBoundsDescription::LowerAndUpper,
+    throw_if(b.second.boundsType!=VariableBoundsDescription::LOWERANDUPPER,
 	     "invalid bounds type");
     throw_if(!testBounds.insert(b).second,
 	     "test bounds for variable '"+b.first+"' already registred");

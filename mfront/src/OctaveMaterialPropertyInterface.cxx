@@ -206,13 +206,13 @@ namespace mfront
 	  }
 	  const auto& b = i.getPhysicalBounds();
 	  const auto nbr = CMaterialPropertyInterfaceBase::getVariableNumber(mpd,i.name);
-	  if(b.boundsType==VariableBoundsDescription::Lower){
+	  if(b.boundsType==VariableBoundsDescription::LOWER){
 	    out << "if(" << i.name<< " < "<< b.lowerBound << "){\n";
 	    out << "error(\"" << name << " :"  << i.name 
 			  << " is below its physical lower bound.\");\n";
 	    out << "return -" << nbr << ";\n";
 	    out << "}\n";
-	  } else if(b.boundsType==VariableBoundsDescription::Upper){
+	  } else if(b.boundsType==VariableBoundsDescription::UPPER){
 	    out << "if(" << i.name<< " > "<< b.upperBound << "){\n";
 	    out << "error(\"" << name << " : " << i.name 
 			  << " is over its physical upper bound.\");\n";
@@ -242,7 +242,7 @@ namespace mfront
 	  }
 	  const auto& b = i.getBounds();
 	  const auto nbr = CMaterialPropertyInterfaceBase::getVariableNumber(mpd,i.name);
-	  if(b.boundsType==VariableBoundsDescription::Lower){
+	  if(b.boundsType==VariableBoundsDescription::LOWER){
 	    out << "if(" << i.name<< " < "<< b.lowerBound << "){\n";
 	    out << "const octave_value policy = get_global_value("
 			  << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\", true);\n";
@@ -266,7 +266,7 @@ namespace mfront
 	    out << "}\n";
 	    out << "return " << nbr << ";\n";
 	    out << "}\n";
-	  } else if(b.boundsType==VariableBoundsDescription::Upper){
+	  } else if(b.boundsType==VariableBoundsDescription::UPPER){
 	    out << "if(" << i.name<< " < "<< b.lowerBound << "){\n";
 	    out << "const octave_value policy = get_global_value("
 			  << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\", true);\n";

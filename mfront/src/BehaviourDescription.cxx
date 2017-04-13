@@ -169,18 +169,7 @@ namespace mfront
 			       const std::string& n2){
     if(emp.is<BehaviourDescription::ComputedMaterialProperty>()){
       const auto& mpd = *(emp.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
-      
-      const auto ename = [&mpd](){
-	auto p = mpd.glossaryNames.find(mpd.output.name);
-	if(p!=mpd.glossaryNames.end()){
-	  return p->second;
-	}
-	p = mpd.entryNames.find(mpd.output.name);
-	if(p!=mpd.entryNames.end()){
-	  return p->second;
-	}
-	return mpd.output.name;
-      }();
+      const auto ename = mpd.output.getExternalName();
       if(ename!=e){
 	auto& log = getLogStream();
 	log << "checkElasticMaterialProperty: inconsistent external name for "
@@ -208,7 +197,7 @@ namespace mfront
     }
     if(mpd.inputs.size()==1u){
       const auto& v = mpd.inputs.front();
-      const auto& vn = v.getExternalName(mpd.glossaryNames,mpd.entryNames);
+      const auto& vn = v.getExternalName();
       if(vn!="Temperature"){
 	throw(std::runtime_error("checkThermalExpansionCoefficientArgument: "
 				 "thermal expansion shall only depend on temperature"));
@@ -348,11 +337,10 @@ namespace mfront
     };
     auto inputs = std::vector<MaterialPropertyInput>{};
     for(const auto& v : mpd.inputs){
-      throw_if((mpd.glossaryNames.find(v.name)==mpd.glossaryNames.end())&&
-	       (mpd.entryNames.find(v.name)==mpd.entryNames.end()),
+      throw_if(!(v.hasGlossaryName())&&(!v.hasEntryName()),
 	       "no glossary nor entry name declared for variable "
 	       "'"+v.name+"' used by the material property '"+mpd.law+"'");
-      const auto& vn = v.getExternalName(mpd.glossaryNames,mpd.entryNames);
+      const auto& vn = v.getExternalName();
       if(vn==tfel::glossary::Glossary::Temperature){
 	inputs.push_back({"T",tfel::glossary::Glossary::Temperature,
 	      MaterialPropertyInput::TEMPERATURE});
@@ -1243,7 +1231,7 @@ namespace mfront
     const auto& g = tfel::glossary::Glossary::getGlossary();
     constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     for(auto ov : md.outputs){
-      const auto en = md.getExternalName(ov.name);
+      const auto en = ov.getExternalName();
       VariableDescription dov{ov.type,"d"+ov.name,
 	  ov.arraySize,ov.lineNumber};
       if(ov.type=="Field"){

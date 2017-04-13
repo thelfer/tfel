@@ -106,14 +106,14 @@ namespace mfront
       return;
     }
     const auto& b = v.getPhysicalBounds();
-    if(b.boundsType==VariableBoundsDescription::Lower){
+    if(b.boundsType==VariableBoundsDescription::LOWER){
       out << "if(" << v.name<< " < "<< b.lowerBound << "){\n"
 	  << "ostringstream msg;\nmsg << \"" << name << " : "
 	  << v.name << " is below its physical lower bound (\"\n << "
 	  << v.name << " << \"<" << b.lowerBound << ").\";\n"
 	  << "return throwPythonRuntimeException(msg.str());\n"
 	  << "}\n";
-    } else if(b.boundsType==VariableBoundsDescription::Upper){
+    } else if(b.boundsType==VariableBoundsDescription::UPPER){
       out << "if(" << v.name<< " > "<< b.upperBound << "){\n"
 	  << "ostringstream msg;\nmsg << \"" << name << " : "
 	  << v.name << " is beyond its physical upper bound (\"\n << "
@@ -145,8 +145,8 @@ namespace mfront
       return;
     }
     const auto& b = v.getBounds();
-    if((b.boundsType==VariableBoundsDescription::Lower)||
-       (b.boundsType==VariableBoundsDescription::LowerAndUpper)){
+    if((b.boundsType==VariableBoundsDescription::LOWER)||
+       (b.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
       out << "if(" << v.name<< " < "<< b.lowerBound << "){\n"
 	  << "policy = "
 	  << "::getenv(\"PYTHON_OUT_OF_BOUNDS_POLICY\");\n"
@@ -166,8 +166,8 @@ namespace mfront
 	  << "}\n"
 	  << "}\n";
     }
-    if((b.boundsType==VariableBoundsDescription::Upper)||
-       (b.boundsType==VariableBoundsDescription::LowerAndUpper)){
+    if((b.boundsType==VariableBoundsDescription::UPPER)||
+       (b.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
       out << "if(" << v.name<< " > "<< b.upperBound << "){\n"
 	  << "policy = "
 	  << "::getenv(\"PYTHON_OUT_OF_BOUNDS_POLICY\");\n"

@@ -78,7 +78,7 @@ namespace mfront
     };
     const auto b = mfront::readVariableBounds(p,pe);
     CxxTokenizer::readSpecifiedToken(m,";",p,pe);
-    throw_if(b.second.boundsType!=VariableBoundsDescription::LowerAndUpper,
+    throw_if(b.second.boundsType!=VariableBoundsDescription::LOWERANDUPPER,
 	     "invalid bounds type");
     throw_if(!testBounds.insert(b).second,
 	     "test bounds for variable '"+b.first+"' already registred");
@@ -150,11 +150,11 @@ namespace mfront
     for(const auto& t : tests){
       const auto& n = t.first;
       const auto& b = t.second;
-      if(b.boundsType==VariableBoundsDescription::Lower){
+      if(b.boundsType==VariableBoundsDescription::LOWER){
 	throw runtime_error("MaterialPropertyDSL::writeTestFile:\n"
 			    "No upper bound defined to draw graph !") ;
       }
-      if(b.boundsType==VariableBoundsDescription::Upper){
+      if(b.boundsType==VariableBoundsDescription::UPPER){
 	throw runtime_error("MaterialPropertyDSL::writeTestFile:\n"
 			    "No lower bound defined to draw graph !") ;
       }

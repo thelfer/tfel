@@ -64,12 +64,13 @@ namespace mfront{
   {
     std::string name;
     std::string name2;
-    if(md.hasGlossaryName(v.name)){
-      name  = "GlossaireParam::" + md.getGlossaryName(v.name);
-      name2 = "this->getMeshZoneName()+\".\"+GlossaireParam::" + md.getGlossaryName(v.name);
+    const auto en = v.getExternalName();
+    if(v.hasGlossaryName()){
+      name  = "GlossaireParam::" + en;
+      name2 = "this->getMeshZoneName()+\".\"+GlossaireParam::" + en;
     } else {
-      name = "\""+md.getExternalName(v.name)+"\"";
-      name2 = "this->getMeshZoneName()+\"."+md.getExternalName(v.name)+"\"";
+      name = "\""+en+"\"";
+      name2 = "this->getMeshZoneName()+\"."+en+"\"";
     }
     this->srcFile << "if(arg.contains(" << name2 << ")){\n"
 		  << "this->" << v.name << " = arg[" << name2 << "]."
@@ -105,12 +106,13 @@ namespace mfront{
     for(const auto& v : md.outputs){
       std::string name;
       std::string iname;
-      if(md.hasGlossaryName(v.name)){
-	name  = "GlossaireField::"+md.getGlossaryName(v.name);
-	iname = "GlossaireField::"+md.getGlossaryName(v.name)+"+\".InitialValue\"";
+      const auto& en = v.getExternalName();
+      if(v.hasGlossaryName()){
+	name  = "GlossaireField::"+en;
+	iname = "GlossaireField::"+en+"+\".InitialValue\"";
       } else {
-	name  = "\""+md.getExternalName(v.name)+"\"";
-	iname = "\""+md.getExternalName(v.name)+".InitialValue\"";
+	name  = "\""+en+"\"";
+	iname = "\""+en+".InitialValue\"";
       }
       this->srcFile << "if(arg.contains(this->getMeshZoneName()+\".\"+" << iname << ")){\n";
       this->srcFile << "this->initializeField(this->_ple" << v.name

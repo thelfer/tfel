@@ -114,7 +114,7 @@ namespace mfront
       return;
     }
     const auto& b = v.getPhysicalBounds();
-    if(b.boundsType==VariableBoundsDescription::Lower){
+    if(b.boundsType==VariableBoundsDescription::LOWER){
       out << "if(" << v.name << " < " << b.lowerBound << "){\n";
       out << "cerr << \"" << name << ": "
 	  << v.name << " is below its physical lower bound (\"\n << "
@@ -123,7 +123,7 @@ namespace mfront
 	  << name << ": "
 	  << v.name << " is not physically valid.\");\n";
       out << "}\n";
-    } else if(b.boundsType==VariableBoundsDescription::Upper){
+    } else if(b.boundsType==VariableBoundsDescription::UPPER){
       out << "if(" << v.name << " > "<< b.upperBound << "){\n";
       out << "cerr << \"" << name << ": "
 	  << v.name << " is below its physical upper bound (\"\n << "
@@ -158,7 +158,7 @@ namespace mfront
       return;
     }
     const auto& b = v.getBounds();
-    if(b.boundsType==VariableBoundsDescription::Lower){
+    if(b.boundsType==VariableBoundsDescription::LOWER){
       out << "if(" << v.name << " < "<< b.lowerBound << "){\n";
       out << "const char * const policy = "
 	  << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
@@ -174,7 +174,7 @@ namespace mfront
       out << "}\n";
       out << "}\n";
       out << "}\n";
-    } else if(b.boundsType==VariableBoundsDescription::Upper){
+    } else if(b.boundsType==VariableBoundsDescription::UPPER){
       out << "if(" << v.name<< " > "<< b.upperBound << "){\n";
       out << "const char * const policy = "
 	  << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
@@ -307,8 +307,6 @@ namespace mfront
     const auto& date=fd.date;
     const auto& includes=mpd.includes;
     const auto& materialLaws=mpd.materialLaws;
-    const auto& glossaryNames=mpd.glossaryNames;
-    const auto& entryNames=mpd.entryNames;
     const auto& staticVars=mpd.staticVars;
     const auto& params=mpd.parameters;
     const auto& function=mpd.f;
@@ -353,15 +351,7 @@ namespace mfront
       out << name << "_args[" << mpd.inputs.size();
       out << "] = {";
       for(auto p3=mpd.inputs.begin();p3!=mpd.inputs.end();){
-	std::string iname;
-	auto p4=glossaryNames.find(p3->name);
-	if(p4!=glossaryNames.end()){
-	  iname = "\""+p4->second+"\"";
-	} else if((p4=entryNames.find(p3->name))!=entryNames.end()){
-	  iname = "\""+p4->second+"\"";
-	} else {
-	  iname = "\""+p3->name+"\"";
-	}
+	const auto iname = '\"'+p3->getExternalName()+'\"';
 	out << iname;
 	if(++p3!=mpd.inputs.end()){
 	  out << ",";
@@ -380,8 +370,8 @@ namespace mfront
       out << "const double v";
       out << "){\n";
       for(const auto& p : params){
-	out << "if(strcmp(\"" << p << "\",p)==0){\n";
-	out << "castem::" <<  hn << "::get" << hn << "()." << p << " = v;\n";
+	out << "if(strcmp(\"" << p.name << "\",p)==0){\n";
+	out << "castem::" <<  hn << "::get" << hn << "()." << p.name << " = v;\n";
 	out << "return 1;\n";
 	out << "}\n";
       }	

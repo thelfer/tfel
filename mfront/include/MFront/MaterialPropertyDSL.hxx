@@ -32,8 +32,7 @@ namespace mfront{
    * Parser handling material properties
    */
   struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDSL
-    : public DSLBase,
-      protected MaterialPropertyDescription
+    : public DSLBase
   {
     //! \return the target of the dsl
     virtual DSLTarget getTargetType() const override final;
@@ -187,6 +186,8 @@ namespace mfront{
     
     virtual void
     registerNewCallBack(const std::string&,const MemberFuncPtr);
+    //! description of the material property 
+    MaterialPropertyDescription md;
     /*!
      * list of registred interfaces
      */

@@ -132,7 +132,7 @@ namespace mfront{
 	continue;
       }
       const auto  a  = md.decomposeVariableName(*pa);
-      const auto& ea = md.getExternalName(a.first);
+      const auto& ea = md.getVariableDescription(a.first).getExternalName();
       if(ea==bd.getExternalName(vs)){
 	throw_if(a.second!=1,"invalid depth for variable '"+a.first+"' "
 		 "in model '"+md.className+"'");
@@ -1376,8 +1376,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::treatTangentOperator
 
-  void
-  BehaviourDSLCommon::treatMaterial()
+  void BehaviourDSLCommon::treatMaterial()
   {
     const auto& m = this->readOnlyOneToken();
     if(!CxxTokenizer::isValidIdentifier(m,true)){
@@ -3429,7 +3428,7 @@ namespace mfront{
       return;
     }
     const auto& bounds = v.getBounds();
-    if(bounds.boundsType==VariableBoundsDescription::Lower){
+    if(bounds.boundsType==VariableBoundsDescription::LOWER){
       os << "BoundsCheck<N>::lowerBoundCheck(\""
 	   << n << "\",this->" << n << ","
 	   << "static_cast<real>(" << bounds.lowerBound << "),this->policy);\n";
@@ -3439,7 +3438,7 @@ namespace mfront{
 	     << n << "+this->d" << n << ","
 	     << "static_cast<real>(" << bounds.lowerBound << "),this->policy);\n";
       }
-    } else if(bounds.boundsType==VariableBoundsDescription::Upper){
+    } else if(bounds.boundsType==VariableBoundsDescription::UPPER){
       os << "BoundsCheck<N>::upperBoundCheck(\""
 	   << n << "\",this->" << n << ","
 	   << "static_cast<real>(" << bounds.upperBound << "),this->policy);\n";
@@ -3449,7 +3448,7 @@ namespace mfront{
 	     << n << "+this->d" << n << ","
 	     << "static_cast<real>(" << bounds.upperBound << "),this->policy);\n";
       }
-    } else if(bounds.boundsType==VariableBoundsDescription::LowerAndUpper){
+    } else if(bounds.boundsType==VariableBoundsDescription::LOWERANDUPPER){
       os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
 	   << n << "\",this->" << n    << ","
 	   << "static_cast<real>("   << bounds.lowerBound << "),"
@@ -3489,7 +3488,7 @@ namespace mfront{
       return;
     }
     const auto& bounds = v.getPhysicalBounds();
-    if(bounds.boundsType==VariableBoundsDescription::Lower){
+    if(bounds.boundsType==VariableBoundsDescription::LOWER){
       os << "BoundsCheck<N>::lowerBoundCheck(\""
 	 << n << "\",this->" << n << ","
 	 << "static_cast<real>(" << bounds.lowerBound << "));\n";
@@ -3499,7 +3498,7 @@ namespace mfront{
 	   << n << "+this->d" << n << ","
 	   << "static_cast<real>(" << bounds.lowerBound << "));\n";
       }
-    } else if(bounds.boundsType==VariableBoundsDescription::Upper){
+    } else if(bounds.boundsType==VariableBoundsDescription::UPPER){
       os << "BoundsCheck<N>::upperBoundCheck(\""
 	 << n << "\",this->" << n << ","
 	 << "static_cast<real>(" << bounds.upperBound << "));\n";
@@ -3509,7 +3508,7 @@ namespace mfront{
 	   << n << "+this->d" << n << ","
 	   << "static_cast<real>(" << bounds.upperBound << "));\n";
       }
-    } else if(bounds.boundsType==VariableBoundsDescription::LowerAndUpper){
+    } else if(bounds.boundsType==VariableBoundsDescription::LOWERANDUPPER){
       os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
 	 << n << "\",this->" << n    << ","
 	 << "static_cast<real>("   << bounds.lowerBound << "),"

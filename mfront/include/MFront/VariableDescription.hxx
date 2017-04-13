@@ -70,15 +70,6 @@ namespace mfront
 			const unsigned short,
 			const size_t);
     /*!
-     * \return the name used to call the variable from outside
-     * (pleiades application, mtest, etc..)
-     * \param[in] gn: glossaryNames
-     * \param[in] en: entryNames
-     */
-    const std::string&
-    getExternalName(const std::map<std::string,std::string>&,
-		    const std::map<std::string,std::string>&) const;
-    /*!
      * \brief insert a new attribute
      * \param[in] n : name
      * \param[in] a : attribute
@@ -148,16 +139,38 @@ namespace mfront
     void setPhysicalBounds(const VariableBoundsDescription&);
     //! \return the physical bounds of this variable
     const VariableBoundsDescription& getPhysicalBounds() const;
+    /*!
+     * \brief associate a glossary name to the variable
+     * \param[in] g: glossary name
+     */
+    void setGlossaryName(const std::string&);
+    /*!
+     * \brief associate an entry name to the variable
+     * \param[in] e: entry name
+     */
+    void setEntryName(const std::string&);
+    //! \return true if the variable has a glossary name
+    bool hasGlossaryName() const;
+    //! \return true if the variable has a glossary name
+    bool hasEntryName() const;
+    //! \return the external name of the variable
+    const std::string& getExternalName() const;
     //! destructor
     ~VariableDescription();
   private:
     //! a simple alias
     using OptionalVariableBoundsDescription =
       tfel::utilities::GenType<VariableBoundsDescription>;
+    //! a simple alias
+    using OptionalString = tfel::utilities::GenType<std::string>;
     //! standard bounds
     OptionalVariableBoundsDescription bounds;
     //! standard bounds
     OptionalVariableBoundsDescription physicalBounds;
+    //! glossary name
+    OptionalString glossaryName;
+    //! entry name
+    OptionalString entryName;
     //! variable attributes
     std::map<std::string,VariableAttribute> attributes;
   }; // end of struct VariableDescription
@@ -221,35 +234,23 @@ namespace mfront
      * \return the list of external names associated with this
      * container.
      * \see VariableDescription::getExternalName
-     * \param[in] glossaryNames : glossary names
-     * \param[in] entryNames    : entry names
      */
-    std::vector<std::string>
-    getExternalNames(const std::map<std::string,std::string>&,
-		     const std::map<std::string,std::string>&) const;
+    std::vector<std::string> getExternalNames() const;
     /*!
      * get the external names associated with this container.
      * \see VariableDescription::getExternalName
-     * \param[out] names         : glossary names of the function
-     * \param[in]  glossaryNames : glossary names
-     * \param[in]  entryNames    : entry names
+     * \param[out] n: glossary names of the function
      */
     void
-    getExternalNames(std::vector<std::string>&,
-		     const std::map<std::string,std::string>&,
-		     const std::map<std::string,std::string>&) const;
+    getExternalNames(std::vector<std::string>&) const;
     /*!
      * append the list of external names associated with this
      * container at the end of the given list.
      * \see VariableDescription::getExternalName
-     * \param[in] names         : list of names
-     * \param[in] glossaryNames : glossary names
-     * \param[in] entryNames    : entry names
+     * \param[in] n: list of names
      */
     void
-    appendExternalNames(std::vector<std::string>&,
-			const std::map<std::string,std::string>&,
-			const std::map<std::string,std::string>&) const;
+    appendExternalNames(std::vector<std::string>&) const;
     /*!
      * \return the variable with the given name
      * \param[in] n : name
@@ -264,13 +265,9 @@ namespace mfront
     /*!
      * \return the variable with the given name
      * \param[in] n:  external name
-     * \param[in] gn: glossary names
-     * \param[in] en: entry names
      */
     const VariableDescription&
-    getVariableByExternalName(const std::string&,
-			      const std::map<std::string,std::string>&,
-			      const std::map<std::string,std::string>&) const;
+    getVariableByExternalName(const std::string&) const;
     //! destructor
     ~VariableDescriptionContainer();
   }; // end of struct VariableDescriptionContainer

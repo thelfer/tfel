@@ -369,18 +369,44 @@ namespace mfront{
      */
     const VariableDescriptionContainer&
     getParameters(void) const;
-
+    /*!
+     * \return a variable description with the given name.
+     * \param[in] n: name
+     */
     const VariableDescription&
     getPersistentVariableDescription(const std::string&) const;
-
+    /*!
+     * \return a variable description associated with the given
+     * external name.
+     * \param[in] n: name
+     */
+    const VariableDescription&
+    getPersistentVariableDescriptionByExternalName(const std::string&) const;
+    /*!
+     * \return a variable description with the given name.
+     * \param[in] n: name
+     */
     const VariableDescription&
     getIntegrationVariableDescription(const std::string&) const;
+    /*!
+     * \return a variable description associated with the given
+     * external name.
+     * \param[in] n: name
+     */
+    const VariableDescription&
+    getIntegrationVariableDescriptionByExternalName(const std::string&) const;
     /*!
      * \return the state variable associated with the given name
      * \param[in] n: name
      */
     const VariableDescription&
     getStateVariableDescription(const std::string&) const;
+    /*!
+     * \return the state variable associated with the given name
+     * \param[in] n: name
+     */
+    const VariableDescription&
+    getStateVariableDescriptionByExternalName(const std::string&) const;
     /*!
      * \return the state variable associated with the given name
      * \param[in] n: name
@@ -398,10 +424,33 @@ namespace mfront{
     const VariableDescription&
     getExternalStateVariableDescriptionByExternalName(const std::string&) const;
     /*!
+     * \param[in] n: name
+     */
+    const VariableDescription&
+    getParameterDescription(const std::string&) const;
+    /*!
+     * \param[in] n: external name
+     */
+    const VariableDescription&
+    getParameterDescriptionByExternalName(const std::string&) const;
+    /*!
      * \param[in] n: external name
      */
     const VariableDescription&
     getAuxiliaryStateVariableDescriptionByExternalName(const std::string&) const;
+    /*!
+     * \return a variable description with the given name.
+     * \param[in] n: external name.
+     */
+    const VariableDescription&
+    getVariableDescription(const std::string&) const;
+    /*!
+     * \return a variable description associated with the given
+     * external name.
+     * \param[in] n: external name.
+     */
+    const VariableDescription&
+    getVariableDescriptionByExternalName(const std::string&) const;
     /*!
      * \return true if a least one modelling hypothesis is anisotropic
      */
@@ -692,15 +741,15 @@ namespace mfront{
      * get the external names associated with the variables
      * contained in the given container.
      * \see getExternalName
-     * \param[out] n : names
-     * \param[in]  v : variables for which glossary names are requested
+     * \param[out] n: names
+     * \param[in]  v: variables for which glossary names are requested
      */
     void appendExternalNames(std::vector<std::string>&,
 			     const VariableDescriptionContainer&) const;
     /*!
-     * associate a glossary name to a variable
-     * \param[in] n : variable name
-     * \param[in] g : glossary name
+     * \brief associate a glossary name to a variable
+     * \param[in] n: variable name
+     * \param[in] g: glossary name
      */
     void setGlossaryName(const std::string&,
 			 const std::string&);
@@ -712,9 +761,9 @@ namespace mfront{
      */
     bool isGlossaryNameUsed(const std::string&) const;
     /*!
-     * associate an entry name to a variable
-     * \param[in] n : variable name
-     * \param[in] e : entry name
+     * \brief associate an entry name to a variable
+     * \param[in] n: variable name
+     * \param[in] e: entry name
      */
     void setEntryName(const std::string&,
 		      const std::string&);
@@ -882,6 +931,11 @@ namespace mfront{
      * \note an exception is thrown is the given name is not found
      */
     void checkVariableName(const std::string&) const;
+    /*!
+     * \brief return the variable description associated to the given name
+     * \param[in] n: name
+     */
+    VariableDescription& getVariableDescription(const std::string&);
     /*!
      * \brief add a variable to a container
      * \param[in] c  : container

@@ -127,10 +127,6 @@ namespace mfront{
     std::string
     getGenTypeIsMethod(const std::string&) const;
 
-    std::string
-    getVariableName(const std::string&,
-		    const ModelDescription&) const;
-
   private:
 
     std::ofstream headerFile;

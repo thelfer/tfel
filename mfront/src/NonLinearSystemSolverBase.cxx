@@ -269,8 +269,8 @@ namespace mfront{
       }
       const auto& b = v.getPhysicalBounds();
       // treating lower bounds
-      if((b.boundsType==VariableBoundsDescription::Lower)||
-	 (b.boundsType==VariableBoundsDescription::LowerAndUpper)){
+      if((b.boundsType==VariableBoundsDescription::LOWER)||
+	 (b.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
 	if((mb.getTypeFlag(v.type)==SupportedTypes::Scalar)&&(v.arraySize==1u)){
 	  if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
 	    const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
@@ -429,8 +429,8 @@ namespace mfront{
 	}
       }
       // treating upper bounds
-      if((b.boundsType==VariableBoundsDescription::Upper)||
-	 (b.boundsType==VariableBoundsDescription::LowerAndUpper)){
+      if((b.boundsType==VariableBoundsDescription::UPPER)||
+	 (b.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
 	if((mb.getTypeFlag(v.type)==SupportedTypes::Scalar)&&(v.arraySize==1u)){
 	  if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
 	    const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");

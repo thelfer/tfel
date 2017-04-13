@@ -185,11 +185,11 @@ namespace mfront
       }
       const auto& b = i.getPhysicalBounds();
       const auto nbr = CMaterialPropertyInterfaceBase::getVariableNumber(mpd,i.name);
-      if(b.boundsType==VariableBoundsDescription::Lower){
+      if(b.boundsType==VariableBoundsDescription::LOWER){
 	out << "if(" << i.name << " < "<< b.lowerBound << "){\n"
 	    << "return -" << nbr << ";\n"
 	    << "}\n";
-      } else if(b.boundsType==VariableBoundsDescription::Upper){
+      } else if(b.boundsType==VariableBoundsDescription::UPPER){
 	out << "if(" << i.name << " > "<< b.upperBound << "){\n"
 	    << "return -" << nbr << ";\n"
 	    << "}\n";
@@ -210,11 +210,11 @@ namespace mfront
       }
       const auto& b = i.getBounds();
       const auto nbr = CMaterialPropertyInterfaceBase::getVariableNumber(mpd,i.name);
-      if(b.boundsType==VariableBoundsDescription::Lower){
+      if(b.boundsType==VariableBoundsDescription::LOWER){
 	out << "if(" << i.name << " < "<< b.lowerBound << "){\n"
 	    << "return " << nbr << ";\n"
 	    << "}\n";
-      } else if(b.boundsType==VariableBoundsDescription::Upper){
+      } else if(b.boundsType==VariableBoundsDescription::UPPER){
 	out << "if(" << i.name << " > "<< b.upperBound << "){\n"
 	    << "return " << nbr << ";\n"
 	    << "}\n";
@@ -274,12 +274,14 @@ namespace mfront
     // parameters
     if(!mpd.parameters.empty()){
       for(const auto& p : mpd.parameters){
-	const auto p6 = mpd.parametersValues.find(p);
+	const auto p6 = mpd.parametersValues.find(p.name);
 	if(p6==mpd.parametersValues.end()){
 	  throw(std::runtime_error("CMaterialPropertyInterfaceBase::writeSrcFile : "
-				   "internal error (can't find value of parameter '"+p+"')"));
+				   "internal error (can't find value of "
+				   "parameter '"+p.name+"')"));
 	}
-	this->srcFile << "static " << constexpr_c << " real " << p << " = " << p6->second << ";\n";
+	this->srcFile << "static " << constexpr_c << " real "
+		      << p.name << " = " << p6->second << ";\n";
       }
     }
     this->writeInterfaceSpecificVariables(mpd.inputs);

@@ -15,6 +15,8 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/VariableDescription.hxx"
@@ -41,16 +43,51 @@ namespace mfront{
   VariableDescription&
   VariableDescription::operator=(const VariableDescription&) = default;
 
-  const std::string&
-  VariableDescription::getExternalName(const std::map<std::string,std::string>& glossaryNames,
-				       const std::map<std::string,std::string>& entryNames) const
+  void VariableDescription::setGlossaryName(const std::string& g)
   {
-    auto p2=glossaryNames.find(this->name);
-    auto p3=entryNames.find(this->name);
-    if(p2!=glossaryNames.end()){
-      return p2->second;
-    } else if(p3!=entryNames.end()){
-      return p3->second;
+    using tfel::glossary::Glossary;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("VariableDescription::setGlossaryName: "+m));}
+    };
+    const auto& glossary = Glossary::getGlossary();
+    throw_if(!glossary.contains(g),"'"+g+"' is not a glossary name");
+    throw_if(this->hasGlossaryName(),"the glossary name has already been defined "
+	     "for variable '"+this->name+"'");
+    throw_if(this->hasEntryName(),"an entry name has already been defined "
+	     "for variable '"+this->name+"'");
+    this->glossaryName = glossary.getGlossaryEntry(g).getKey();
+  } // end of VariableDescription::setGlossaryName
+
+  void VariableDescription::setEntryName(const std::string& e)
+  {
+    using tfel::glossary::Glossary;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("VariableDescription::setEntryName: "+m));}
+    };
+    const auto& glossary = Glossary::getGlossary();
+    throw_if(glossary.contains(e),"'"+e+"' is a glossary name");
+    throw_if(this->hasGlossaryName(),"the glossary name has already been defined "
+	     "for variable '"+this->name+"'");
+    throw_if(this->hasEntryName(),"an entry name has already been defined "
+	     "for variable '"+this->name+"'");
+    this->entryName = e;    
+  } // end of VariableDescription::setEntryName
+  
+  bool VariableDescription::hasGlossaryName() const{
+    return this->glossaryName.is<std::string>();
+  }
+
+  bool VariableDescription::hasEntryName() const{
+    return this->entryName.is<std::string>();
+  }
+  
+  const std::string& VariableDescription::getExternalName() const
+  {
+    if(this->hasGlossaryName()){
+      return this->glossaryName.get<std::string>();
+    }
+    if(this->hasEntryName()){
+      return this->entryName.get<std::string>();
     }
     return this->name;
   } // end of VariableDescription::getExternalName
@@ -107,7 +144,7 @@ namespace mfront{
 	       "invalid component value for a scalar "
 	       "("+std::to_string(b.component)+")");
     }
-    if(b.boundsType==VariableBoundsDescription::LowerAndUpper){
+    if(b.boundsType==VariableBoundsDescription::LOWERANDUPPER){
       throw_if(b.lowerBound>b.upperBound,
 	       "invalid bounds value");
     }
@@ -193,31 +230,23 @@ namespace mfront{
     return false;
   } // end of VariableDescriptionContainer::contains
 
-  std::vector<std::string>
-  VariableDescriptionContainer::getExternalNames(const std::map<std::string,std::string>& glossaryNames,
-						 const std::map<std::string,std::string>& entryNames) const
+  std::vector<std::string> VariableDescriptionContainer::getExternalNames() const
   {
     std::vector<std::string> n;
-    this->appendExternalNames(n,glossaryNames,entryNames);
+    this->appendExternalNames(n);
     return n;
   }
 
-  void
-  VariableDescriptionContainer::getExternalNames(std::vector<std::string>& n,
-						 const std::map<std::string,std::string>& glossaryNames,
-						 const std::map<std::string,std::string>& entryNames) const
+  void VariableDescriptionContainer::getExternalNames(std::vector<std::string>& n) const
   {
     n.clear();
-    this->appendExternalNames(n,glossaryNames,entryNames);
+    this->appendExternalNames(n);
   }
 
-  void
-  VariableDescriptionContainer::appendExternalNames(std::vector<std::string>& n,
-						    const std::map<std::string,std::string>& glossaryNames,
-						    const std::map<std::string,std::string>& entryNames) const
+  void VariableDescriptionContainer::appendExternalNames(std::vector<std::string>& n) const
   {
     for(const auto& v : *this){
-      const auto name = v.getExternalName(glossaryNames,entryNames);
+      const auto name = v.getExternalName();
       if(v.arraySize==1u){
 	n.push_back(name);
       } else {
@@ -243,12 +272,10 @@ namespace mfront{
   }
 
   const VariableDescription&
-  VariableDescriptionContainer::getVariableByExternalName(const std::string& n,
-							  const std::map<std::string,std::string>& gn,
-							  const std::map<std::string,std::string>& en) const
+  VariableDescriptionContainer::getVariableByExternalName(const std::string& n) const
   {
     for(auto& v : *this){
-      if(v.getExternalName(gn,en)==n){
+      if(v.getExternalName()==n){
 	return v;
       }
     }

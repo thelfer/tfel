@@ -9,4 +9,3 @@ nu.setGlossaryName("PoissonRatio");
 h.setEntryName("HardeningCoefficient");
 
 @StaticVariable real Cste = 12.;
-Cste.setEntryName("CsteEntryName");

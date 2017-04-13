@@ -93,15 +93,15 @@ namespace mfront{
 					   (VariableDescription:: *m)() const,
 					   const std::string& p){
 	const auto& bd = (v.*m)();
-	if(bd.boundsType==VariableBoundsDescription::Lower){
+	if(bd.boundsType==VariableBoundsDescription::LOWER){
 	  out << "BoundsCheckBase::lowerBoundCheck"
 	      << "(\"" << vn << "\"," << vn
 	      << ",real(" << bd.lowerBound << ")," << p << ");\n";
-	} else if(bd.boundsType==VariableBoundsDescription::Upper){
+	} else if(bd.boundsType==VariableBoundsDescription::UPPER){
 	  out << "BoundsCheckBase::upperBoundCheck"
 	      << "(\"" << vn << "\"," << vn
 	      << ",real(" << bd.upperBound << ")," << p << ");\n";
-	} else if(bd.boundsType==VariableBoundsDescription::LowerAndUpper){
+	} else if(bd.boundsType==VariableBoundsDescription::LOWERANDUPPER){
 	  out << "BoundsCheckBase::lowerAndUpperBoundsChecks"
 	      << "(\"" << vn << "\"," << vn
 	      << ",real(" << bd.lowerBound << "),"

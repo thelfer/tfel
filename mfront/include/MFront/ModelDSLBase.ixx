@@ -104,16 +104,16 @@ namespace mfront{
     while(this->current != this->tokens.end()){
       auto p = this->callBacks.find(this->current->value);
       if(p==this->callBacks.end()){
-	if(this->outputs.contains(this->current->value)){
+	if(this->md.outputs.contains(this->current->value)){
 	  this->currentVar = this->current->value;
 	  handler = &Child::treatOutputMethod;
-	} else if(this->inputs.contains(this->current->value)){
+	} else if(this->md.inputs.contains(this->current->value)){
 	  this->currentVar = this->current->value;
 	  handler = &Child::treatInputMethod;
-	} else if(this->parameters.contains(this->current->value)){
+	} else if(this->md.parameters.contains(this->current->value)){
 	  this->currentVar = this->current->value;
 	  handler = &Child::treatParameterMethod;
-	} else if(this->constantMaterialProperties.contains(this->current->value)){
+	} else if(this->md.constantMaterialProperties.contains(this->current->value)){
 	  this->currentVar = this->current->value;
 	  handler = &Child::treatConstantMaterialPropertyMethod;
 	} else {
@@ -146,7 +146,7 @@ namespace mfront{
   {
     this->importFile(fileName_,ecmds,s);
     for(const auto & i : this->interfaces){
-      i.second->getTargetsDescription(this->td,*this);
+      i.second->getTargetsDescription(this->td,md);
     }
     this->completeTargetsDescription();
   }
@@ -155,8 +155,7 @@ namespace mfront{
   void ModelDSLBase<Child>::registerNewCallBack(const std::string& keyword,
 						const MemberFuncPtr f)
   {
-    using namespace std;
-    this->callBacks.insert(make_pair(keyword,f));
+    this->callBacks.insert({keyword,f});
     this->registredKeyWords.insert(keyword);
   } // end of registerNewCallBack
 

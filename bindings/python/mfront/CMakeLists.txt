@@ -24,6 +24,7 @@ mfront_python_module(_mfront mfront.cxx
   LibraryDescription.cxx
   DSLFactory.cxx
   AbstractBehaviourDSL.cxx
+  VariableBoundsDescription.cxx
   VariableDescription.cxx
   BehaviourAttribute.cxx
   BehaviourData.cxx

@@ -135,8 +135,21 @@ namespace mfront{
       {"--parameter-type","display a parameter type"},
       {"--parameter-default-value","display a parameter default value"},
       {"--has-bounds","return EXIT_SUCCESS if a variable has bounds"},
-      {"--bounds-type","return the bounds type associated to a variable"},
-      {"--bounds-value","show the bounds value associated as a range"}};
+      {"--bounds-type","return the bounds type associated to a variable.\n"
+       "The returned value has the follwing meaning:\n"
+       "- `None`\n"
+       "- `Lower`\n"
+       "- `Upper`\n"
+       "- `LowerAndUpper`"},
+      {"--bounds-value","show the bounds value associated as a range"},
+      {"--has-physical-bounds","return EXIT_SUCCESS if a variable has physical bounds"},
+      {"--physical-bounds-type","return the physical bounds type associated to a variable.\n"
+       "The returned value has the follwing meaning:\n"
+       "- `None`\n"
+       "- `Lower`\n"
+       "- `Upper`\n"
+       "- `LowerAndUpper`"},
+      {"--physical-bounds-value","show the bounds value associated as a range"}};
     for(const auto& q : sq2){
       Parser::registerNewCallBack(q.first,&BehaviourQuery::treatStandardQuery2,q.second,true);
     }
@@ -156,7 +169,6 @@ namespace mfront{
     using namespace tfel::utilities;
     using tfel::material::ModellingHypothesis;
     using std::cout;
-    using std::endl;;
     const auto& q = this->getCurrentCommandLineArgument();
     const auto& qn = q.as_string();
     if(qn=="--author"){
@@ -164,7 +176,7 @@ namespace mfront{
 					   const BehaviourDescription&,
 					   const Hypothesis){
 	    const auto& a = fd.authorName;
-	    cout << (!a.empty() ? a : "(undefined)") << endl;
+	    cout << (!a.empty() ? a : "(undefined)") << '\n';
 	  }});
     } else if(qn=="--description"){
       this->queries.push_back({"description",[](const FileDescription& fd,
@@ -174,13 +186,13 @@ namespace mfront{
 	      const auto d = tokenize(fd.description,'\n');
 	      for(const auto& l : d){
 		if((l.size()>=2)&&((l)[0]=='*')&&((l)[1]==' ')){
-		  cout << l.substr(2) << endl;
+		  cout << l.substr(2) << '\n';
 		} else {
-		  cout << l << endl;
+		  cout << l << '\n';
 		}
 	      }
 	    } else {
-	      cout << "(undefined)" << endl;
+	      cout << "(undefined)\n";
 	    }
 	  }});
     } else if(qn=="--date"){
@@ -188,21 +200,21 @@ namespace mfront{
 					 const BehaviourDescription&,
 					 const Hypothesis){
 	    const auto& d = fd.date;
-	    cout << (!d.empty() ? d : "(undefined)") << endl;
+	    cout << (!d.empty() ? d : "(undefined)") << '\n';
 	  }});
     } else if(qn=="--material"){
       this->queries.push_back({"material",[](const FileDescription&,
 					     const BehaviourDescription& d,
 const Hypothesis){
 	    const auto& m = d.getMaterialName();
-	    cout << (!m.empty() ? m : "(undefined)") << endl;
+	    cout << (!m.empty() ? m : "(undefined)") << '\n';
 	  }});
     } else if(qn=="--library"){
       this->queries.push_back({"library",[](const FileDescription&,
 					    const BehaviourDescription& d,
 					    const Hypothesis){
 	    const auto& l = d.getLibrary();
-	    cout << (!l.empty() ? l : "(undefined)") << endl;
+	    cout << (!l.empty() ? l : "(undefined)") << '\n';
 	  }});
     } else if(qn=="--type"){
       this->queries.push_back({"type",[](const FileDescription&,
@@ -224,7 +236,7 @@ const Hypothesis){
     //   this->queries.push_back({"kinematic",[](const FileDescription&,
     // 					 const BehaviourDescription& d,
     // 					 const Hypothesis){
-    // 	    cout << d.getBehaviourKinematic() << endl;
+    // 	    cout << d.getBehaviourKinematic() << '\n';
     // }});
     } else if(qn=="--symmetry"){
       this->queries.push_back({"symmetry",[](const FileDescription&,
@@ -232,9 +244,9 @@ const Hypothesis){
 					 const Hypothesis){
 	    const auto s = d.getSymmetryType();
 	    if(s==mfront::ISOTROPIC){
-	      cout << 0 << endl;
+	      cout << 0 << '\n';
 	    } else if(s==mfront::ORTHOTROPIC){
-	      cout << 1 << endl;
+	      cout << 1 << '\n';
 	    } else {
 	      throw(std::runtime_error("unsupported symmetry"));
 	    }
@@ -245,9 +257,9 @@ const Hypothesis){
 						     const Hypothesis){
 	    const auto s = d.getElasticSymmetryType();
 	    if(s==mfront::ISOTROPIC){
-	      cout << 0 << endl;
+	      cout << 0 << '\n';
 	    } else if(s==mfront::ORTHOTROPIC){
-	      cout << 1 << endl;
+	      cout << 1 << '\n';
 	    } else {
 	      throw(std::runtime_error("unsupported elastic symmetry"));
 	    }
@@ -260,7 +272,7 @@ const Hypothesis){
 	    for(const auto& h : mh){
 	      cout << ModellingHypothesis::toString(h) << " ";
 	    }
-	    cout << endl;
+	    cout << '\n';
 	  }});
     } else if (qn=="--material-properties"){
       this->queries.emplace_back("material-properties",
@@ -300,7 +312,7 @@ const Hypothesis){
 	    for(const auto& a:as2){
 	      cout << a.first << " ";
 	    }
-	    cout << endl;
+	    cout << '\n';
 	  }});
     } else if (qn=="--code-blocks"){
       this->queries.push_back({"attributes",[](const FileDescription&,
@@ -308,7 +320,7 @@ const Hypothesis){
 					       const Hypothesis h){
 	    const auto& names = d.getBehaviourData(h).getCodeBlockNames();
 	    for(const auto& n:names){
-	      cout << "- "  << n << endl;
+	      cout << "- "  << n << '\n';
 	    }
 	  }});
     } else {
@@ -333,11 +345,11 @@ const Hypothesis){
 		   const Hypothesis h){
 	const auto& a = getAttribute(o,d,h);
 	if(a.is<bool>()){
-	  cout << "bool" << endl;
+	  cout << "bool\n";
 	} else if(a.is<unsigned short>()){
-	  cout << "unsigned short" << endl;
+	  cout << "unsigned short\n";
 	} else if(a.is<string>()){
-	  cout << "string" << endl;
+	  cout << "string\n";
 	} else {
 	  throw(runtime_error("Behaviour::treatStandardQuery2 : "
 			      "unsupported attribute type"));
@@ -351,37 +363,117 @@ const Hypothesis){
 	const auto& a = getAttribute(o,d,h);
 	if(a.is<bool>()){
 	  if(a.get<bool>()){
-	    cout << "true" << endl;
+	    cout << "true\n";
 	  } else {
-	    cout << "false" << endl;
+	    cout << "false\n";
 	  }
 	} else if(a.is<unsigned short>()){
-	  cout << a.get<unsigned short>() << endl;
+	  cout << a.get<unsigned short>() << '\n';
 	} else if(a.is<string>()){
-	  cout << a.get<string>() << endl;
+	  cout << a.get<string>() << '\n';
 	} else {
 	  throw(runtime_error("Behaviour::treatStandardQuery2 : "
 			      "unsupported attribute type"));
 	}
       };
       this->queries.push_back({"attributes-value",l});
-    } else if (qn=="--parameter-type"){
-      auto l = [o](const FileDescription&,
-		   const BehaviourDescription& d,
-		   const Hypothesis h){
-	const auto& bd = d.getBehaviourData(h);
-	const auto& p  = bd.getParameters().getVariable(o);
-	cout << p.type << endl;
-      };
-      this->queries.push_back({"parameter-type",l});
     } else if (qn=="--has-bounds"){
       auto l = [o](const FileDescription&,
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
 	const auto& bd = d.getBehaviourData(h);
-	const auto& p  = bd.getParameters().getVariable(o);
-#pragma message ("hasBounds")
-	//	cout << (bd.hasBounds(o) ? "true" : "false") << endl;
+	const auto& p  = bd.getVariableDescriptionByExternalName(o);
+	cout << (p.hasBounds() ? "true" : "false") << '\n';
+      };
+      this->queries.push_back({"has-bounds",l});
+    } else if (qn=="--bounds-type"){
+      auto l = [o](const FileDescription&,
+		   const BehaviourDescription& d,
+		   const Hypothesis h){
+	const auto& bd = d.getBehaviourData(h);
+	const auto& p  = bd.getVariableDescriptionByExternalName(o);
+	const auto& b  = p.getBounds();
+	if(b.boundsType==VariableBoundsDescription::LOWER){
+	  cout << "Lower\n";
+	} else if(b.boundsType==VariableBoundsDescription::UPPER){
+	  cout << "Upper\n";
+	} else if(b.boundsType==VariableBoundsDescription::LOWERANDUPPER){
+	  cout << "LowerAndUpper\n";
+	} else {
+	  throw(std::runtime_error("unsupported bounds type"));
+	}
+      };
+      this->queries.push_back({"bounds-type",l});
+    } else if (qn=="--bounds-value"){
+      auto l = [o](const FileDescription&,
+		   const BehaviourDescription& d,
+		   const Hypothesis h){
+	const auto& bd = d.getBehaviourData(h);
+	const auto& p  = bd.getVariableDescriptionByExternalName(o);
+	const auto& b  = p.getBounds();
+	if(b.boundsType==VariableBoundsDescription::LOWER){
+	  cout << "[" << b.lowerBound << ":*[\n";
+	} else if(b.boundsType==VariableBoundsDescription::UPPER){
+	  cout << "]*:" << b.upperBound << "]\n";
+	} else if(b.boundsType==VariableBoundsDescription::LOWERANDUPPER){
+	  cout << "[" << b.lowerBound << ":" << b.upperBound << "]\n";
+	} else {
+	  throw(std::runtime_error("unsupported bounds type"));
+	}
+      };
+      this->queries.push_back({"bounds-value",l});
+    } else if (qn=="--has-physical-bounds"){
+      auto l = [o](const FileDescription&,
+		   const BehaviourDescription& d,
+		   const Hypothesis h){
+	const auto& bd = d.getBehaviourData(h);
+	const auto& p  = bd.getVariableDescriptionByExternalName(o);
+	cout << (p.hasPhysicalBounds() ? "true" : "false") << '\n';
+      };
+      this->queries.push_back({"has-physical-bounds",l});
+    } else if (qn=="--physical-bounds-type"){
+      auto l = [o](const FileDescription&,
+		   const BehaviourDescription& d,
+		   const Hypothesis h){
+	const auto& bd = d.getBehaviourData(h);
+	const auto& p  = bd.getVariableDescriptionByExternalName(o);
+	const auto& b  = p.getPhysicalBounds();
+	if(b.boundsType==VariableBoundsDescription::LOWER){
+	  cout << "Lower\n";
+	} else if(b.boundsType==VariableBoundsDescription::UPPER){
+	  cout << "Upper\n";
+	} else if(b.boundsType==VariableBoundsDescription::LOWERANDUPPER){
+	  cout << "LowerAndUpper\n";
+	} else {
+	  throw(std::runtime_error("unsupported physical bounds type"));
+	}
+      };
+      this->queries.push_back({"physical-bounds-type",l});
+    } else if (qn=="--physical-bounds-value"){
+      auto l = [o](const FileDescription&,
+		   const BehaviourDescription& d,
+		   const Hypothesis h){
+	const auto& bd = d.getBehaviourData(h);
+	const auto& p  = bd.getVariableDescriptionByExternalName(o);
+	const auto& b  = p.getPhysicalBounds();
+	if(b.boundsType==VariableBoundsDescription::LOWER){
+	  cout << "[" << b.lowerBound << ":*[\n";
+	} else if(b.boundsType==VariableBoundsDescription::UPPER){
+	  cout << "]*:" << b.upperBound << "]\n";
+	} else if(b.boundsType==VariableBoundsDescription::LOWERANDUPPER){
+	  cout << "[" << b.lowerBound << ":" << b.upperBound << "]\n";
+	} else {
+	  throw(std::runtime_error("unsupported bounds type"));
+	}
+      };
+      this->queries.push_back({"physical-bounds-value",l});
+    } else if (qn=="--parameter-type"){
+      auto l = [o](const FileDescription&,
+		   const BehaviourDescription& d,
+		   const Hypothesis h){
+	const auto& bd = d.getBehaviourData(h);
+	const auto& p  = bd.getParameterDescriptionByExternalName(o);
+	cout << p.type << '\n';
       };
       this->queries.push_back({"parameter-type",l});
     } else if (qn=="--parameter-default-value"){
@@ -389,23 +481,24 @@ const Hypothesis){
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
 	const auto& bd = d.getBehaviourData(h);
-	const auto& p  = bd.getParameters().getVariable(o);
+	const auto& p  = bd.getParameterDescriptionByExternalName(o);
+	const auto& n  = p.name;
 	if(p.type=="real"){
 	  if(p.arraySize==1){
-	    cout << bd.getFloattingPointParameterDefaultValue(o) << endl;
+	    cout << bd.getFloattingPointParameterDefaultValue(n) << '\n';
 	  } else {
 	    for(unsigned short i=0;i!=p.arraySize;){
-	      cout << bd.getFloattingPointParameterDefaultValue(o,i);
+	      cout << bd.getFloattingPointParameterDefaultValue(n,i);
 	      if(++i!=p.arraySize){
 		cout << " ";
 	      }
 	    }
-	    cout << endl;
+	    cout << '\n';
 	  }
 	} else if(p.type=="int"){
-	  cout << bd.getIntegerParameterDefaultValue(o) << endl;
+	  cout << bd.getIntegerParameterDefaultValue(n) << '\n';
 	} else if(p.type=="ushort"){
-	  cout << bd.getUnsignedShortParameterDefaultValue(o) << endl;
+	  cout << bd.getUnsignedShortParameterDefaultValue(n) << '\n';
 	} else {
 	  throw(runtime_error("Behaviour::treatStandardQuery2 : "
 			      "unsupported parameter type"));
@@ -445,7 +538,7 @@ const Hypothesis){
 	    cout << ": " << glossary.getGlossaryEntry(n).getShortDescription();
 	  }
 	}
-	cout << endl;
+	cout << '\n';
       }
     };
   }
@@ -462,7 +555,7 @@ const Hypothesis){
 	cout << l.name << " : "; //< library
 	copy(l.sources.begin(),l.sources.end(),
 	     ostream_iterator<string>(cout," "));
-	cout << endl;
+	cout << '\n';
       }
     };
     this->queries.push_back({"generated-sources",q});
@@ -479,7 +572,7 @@ const Hypothesis){
       const auto headers = ldsl->getTargetsDescription().headers;
       copy(headers.begin(),headers.end(),
 	   ostream_iterator<string>(cout," "));
-      cout << endl;
+      cout << '\n';
     };
     this->queries.push_back({"generated-headers",q});
   } // end of BehaviourQuery::treatGeneratedHeaders
@@ -496,7 +589,7 @@ const Hypothesis){
 	cout << l.name << " : ";
 	copy(l.cppflags.begin(),l.cppflags.end(),
 	     ostream_iterator<string>(cout," "));
-	cout << endl;
+	cout << '\n';
       }
     };
     this->queries.push_back({"cppflags",q});
@@ -514,7 +607,7 @@ const Hypothesis){
 	cout << l.name << " : ";
 	copy(l.ldflags.begin(),l.ldflags.end(),
 	     ostream_iterator<string>(cout," "));
-	cout << endl;
+	cout << '\n';
       }
     };
     this->queries.push_back({"libraries-dependencies",q});
@@ -533,10 +626,10 @@ const Hypothesis){
 	cout << t.first << " : ";
 	copy(t.second.first.begin(),t.second.first.end(),
 	     ostream_iterator<string>(cout," "));
-	cout << endl << "> rule : ";
+	cout << '\n' << "> rule : ";
 	copy(t.second.second.begin(),t.second.second.end(),
 	     ostream_iterator<string>(cout,"\n> rule : "));
-	cout << endl;
+	cout << '\n';
       }
     };
     this->queries.push_back({"specific-targets",l});
@@ -559,12 +652,11 @@ const Hypothesis){
     this->hypothesis = ModellingHypothesis::fromString(o);
   } // end of BehaviourQuery::treatModellingHypothesis
 
-  void
-  BehaviourQuery::exe()
+  void BehaviourQuery::exe()
   {
     using namespace std;
     if(getVerboseMode()>=VERBOSE_LEVEL2){
-      getLogStream() << "Treating file '" << this->file << "'" << endl;
+      getLogStream() << "Treating file '" << this->file << "'\n";
     }
     // analysing the file
     this->dsl->analyseFile(this->file,this->ecmds,this->substitutions);
@@ -578,12 +670,12 @@ const Hypothesis){
 	if(mh.size()==1u){
 	  this->hypothesis = *(mh.begin());
 	} else {
-	  msg << "BehaviourQuery::exe : all mechanical data are specialised." << endl
+	  msg << "BehaviourQuery::exe : all mechanical data are specialised.\n"
 	      << "A modelling hypothesis must be specified using "
-	      << "the '--modelling-hypothesis' command line option." << endl
-	      << "The supported modelling hypothesis are : " << endl;
+	      << "the '--modelling-hypothesis' command line option.\n"
+	      << "The supported modelling hypothesis are : \n";
 	  for(const auto h : mh){
-	    msg << "- " << ModellingHypothesis::toString(h) << endl;
+	    msg << "- " << ModellingHypothesis::toString(h) << '\n';
 	  }
 	  throw(runtime_error(msg.str()));
 	}
@@ -599,7 +691,7 @@ const Hypothesis){
     // treating the queries
     for(const auto& q : queries){
       if(getVerboseMode()>=VERBOSE_LEVEL2){
-	getLogStream() << "Treating query '" << q.first << "'" << endl;
+	getLogStream() << "Treating query '" << q.first << "'\n";
       }
       q.second(fd,d,this->hypothesis);
     }

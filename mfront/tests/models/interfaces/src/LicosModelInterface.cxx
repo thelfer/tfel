@@ -49,8 +49,19 @@ namespace std{
 
 static constexpr unsigned short TFEL_MFRONTPLEAIDESPARSER_MAXUSEDVARIABLESFORUSINGAPPLY = 8;
 
+
+
 namespace mfront{
 
+  static std::string getDeclaration(const VariableDescription& v)
+  {
+    const auto& en = v.getExternalName();
+    if(v.hasGlossaryName()){
+      return "Glossary::" + en;
+    }
+    return "\""+en+"\"";
+  } // end of getDeclaration
+  
   static std::string
   getVariableType(const std::string& v){
     if(v=="string"){
@@ -113,7 +124,7 @@ namespace mfront{
 			       "field name '"+n+"' has not been found"));
     }
     return r;
-  } // end of MFrontModelInterface::getVariableName(const std::string& v)
+  } // end of decomposeVariableName
 
   MFrontModelInterface::MFrontModelInterface()
     : hasDefaultConstructor(false)
@@ -665,8 +676,8 @@ namespace mfront{
 	if(v.hasPhysicalBounds()){
 	  const auto& bd = v.getPhysicalBounds();
 	  this->srcFile << "// checking " << v.name << " physical bounds\n";
-	  if((bd.boundsType==VariableBoundsDescription::Lower)||
-	     (bd.boundsType==VariableBoundsDescription::LowerAndUpper)){
+	  if((bd.boundsType==VariableBoundsDescription::LOWER)||
+	     (bd.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
 	    this->srcFile << "if(" << v.name<< " < "<< bd.lowerBound << "){\n";
 	    this->srcFile << "ostringstream msg;\n"
 			  << "msg << \"" << md.className << "::" << f.name << "::operator() : \"\n"
@@ -675,8 +686,8 @@ namespace mfront{
 	    this->srcFile << "throw(runtime_error(msg.str()));\n";
 	    this->srcFile << "}\n";
 	  }
-	  if((bd.boundsType==VariableBoundsDescription::Upper)||
-	     (bd.boundsType==VariableBoundsDescription::LowerAndUpper)){
+	  if((bd.boundsType==VariableBoundsDescription::UPPER)||
+	     (bd.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
 	    this->srcFile << "if(" << v.name << " > " << bd.upperBound << "){\n";
 	    this->srcFile << "ostringstream msg;\n"
 			  << "msg << \"" << md.className << "::" << f.name << "::operator() : \"\n"
@@ -689,8 +700,8 @@ namespace mfront{
 	if(v.hasBounds()){
 	  const auto& bd = v.getBounds();
 	  this->srcFile << "// checking " << v.name<< " bounds\n";
-	  if((bd.boundsType==VariableBoundsDescription::Lower)||
-	     (bd.boundsType==VariableBoundsDescription::LowerAndUpper)){
+	  if((bd.boundsType==VariableBoundsDescription::LOWER)||
+	     (bd.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
 	    this->srcFile << "if(" << v.name<< " < "<< bd.lowerBound << "){\n";
 	    this->srcFile << "if(pleiades::getOutOfBoundsPolicy()!= pleiades::NO_OUT_OF_BOUNDS_POLICY){\n";
 	    this->srcFile << "ostringstream msg;\n"
@@ -710,8 +721,8 @@ namespace mfront{
 	    this->srcFile << "}\n";
 	    this->srcFile << "}\n";
 	  }
-	  if((bd.boundsType==VariableBoundsDescription::Upper)||
-	     (bd.boundsType==VariableBoundsDescription::LowerAndUpper)){
+	  if((bd.boundsType==VariableBoundsDescription::UPPER)||
+	     (bd.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
 	    this->srcFile << "if(" << v.name<< " > "<< bd.upperBound << "){\n";
 	    this->srcFile << "if(pleiades::getOutOfBoundsPolicy()!= pleiades::NO_OUT_OF_BOUNDS_POLICY){\n";
 	    this->srcFile << "ostringstream msg;\n"
@@ -831,7 +842,7 @@ namespace mfront{
 		  << "\"ActivatingEvents\",\"DesactivatingEvents\"";
     specializedParametersNumber=5u;
     for(const auto& p : md.parameters){
-      const auto name = this->getVariableName(p.name,md);
+      const auto name = getDeclaration(p);
       this->srcFile << ",\n"
 		    << name;
       ++(specializedParametersNumber);
@@ -854,7 +865,7 @@ namespace mfront{
     this->srcFile << "}\n";
     this->srcFile << "ActivableObjectBase::handleSpecialisationData(data);\n";
     for(const auto& p : md.parameters){
-      const auto name = this->getVariableName(p.name,md);
+      const auto name = getDeclaration(p);
       this->srcFile << "ptr = md.find(" << name << ");\n";
       this->srcFile << "if(ptr==md.end()){\n";
       if(p.hasAttribute(VariableDescription::defaultValue)){
@@ -1150,13 +1161,15 @@ namespace mfront{
       this->srcFile << "auto& mm = this->smanager.getMTFieldManager(*ptr);\n";
       for(const auto &uv  : f.usedVariables){
 	const auto dv = decomposeVariableName(md,uv);
+	const auto en = getDeclaration(md.getVariableDescription(dv.first));
 	this->srcFile << "const NFieldHolder& " << "f_" << uv 
-		      << " = mm.getNFieldHolder(" << this->getVariableName(dv.first,md)
+		      << " = mm.getNFieldHolder(" << en
 		      << "," << dv.second << ");\n";
       }
       for(const auto& mv : f.modifiedVariables){
+	const auto en = getDeclaration(md.getVariableDescription(mv));
 	this->srcFile << "NFieldHolder& " << "f_" << mv 
-		      << " = mm.getNFieldHolder(" << this->getVariableName(mv,md) << ");\n";
+		      << " = mm.getNFieldHolder(" << en << ");\n";
       }
       for(const auto& c : f.constantMaterialProperties){
 	this->srcFile << "this->" << functor << "." << c 
@@ -1207,10 +1220,11 @@ namespace mfront{
 	  this->srcFile << "map<unsigned short,const VNField<real> *>::const_iterator ptr3;\n";
 	  // converting the output
 	  for(const auto& mv : f.modifiedVariables){
+	    const auto en = getDeclaration(md.getVariableDescription(mv));
 	    this->srcFile << "if(!f_" << mv << ".is<VNField<real> >()){\n"
 			  << "f_" << mv
 			  << " = NFieldHolder(shared_ptr<VNField<real> >(new VNField<real>(support,"
-			  << this->getVariableName(mv,md) << ",f_" << mv << ".get<real>())));\n"
+			  << en << ",f_" << mv << ".get<real>())));\n"
 			  << "}\n";
 	  }
 	  // getting output field
@@ -1257,8 +1271,9 @@ namespace mfront{
 	  this->srcFile << "this->" << functor << "(results,values);\n";
 	  i=0;
 	  for(const auto& mv : f.modifiedVariables){
+	    const auto en = getDeclaration(md.getVariableDescription(mv));
 	    this->srcFile << "f_" << mv << " = NFieldHolder(UNField<real>(support,"
-			  << this->getVariableName(mv,md) << ",results[" << i <<"]));\n";
+			  << en << ",results[" << i <<"]));\n";
 	    ++i;
 	  }
 	  this->srcFile << "}\n";
@@ -1301,6 +1316,7 @@ namespace mfront{
     for(const auto& f : md.functions){
       ++i;
       for(const auto& mf : f.modifiedVariables){
+	const auto en = getDeclaration(md.getVariableDescription(mf))	;
 	const auto functor = "functor"+std::to_string(i);
 	auto p3 = f.depths.find(mf);
 	if(p3==f.depths.end()){
@@ -1309,13 +1325,13 @@ namespace mfront{
 				   "in function '"+f.name+"'"));
 	}
 	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
-	this->srcFile << "if(!this->outputsDepths[" << this->getVariableName(mf,md)
+	this->srcFile << "if(!this->outputsDepths[" << en
 		      << "].insert(make_pair(*ptr,";
 	this->srcFile << p3->second;
 	this->srcFile << ")).second){\n";
 	this->srcFile << "string msg(\"" << md.className << "::" << md.className << " : \");\n";
 	this->srcFile << "msg += \"output '\";\n";
-	this->srcFile << "msg += " << this->getVariableName(mf,md) << ";\n";
+	this->srcFile << "msg += " << en << ";\n";
 	this->srcFile << "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n";
 	this->srcFile << "throw(runtime_error(msg));\n";
 	this->srcFile << "}\n";
@@ -1338,7 +1354,8 @@ namespace mfront{
     this->srcFile << "vector<string>::const_iterator ptr;\n";
     for(const auto& f : md.functions){
       for(const auto& c : f.constantMaterialProperties){
-	const auto& v = md.constantMaterialProperties.getVariable(c);
+	const auto& v  = md.constantMaterialProperties.getVariable(c);
+	const auto& en = getDeclaration(v);
 	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	// getting material description
 	this->srcFile << "if(!md.hasMaterialDescription(*ptr)){\n";
@@ -1347,21 +1364,21 @@ namespace mfront{
 	this->srcFile << "throw(runtime_error(msg));\n";
 	this->srcFile << "}\n";
 	this->srcFile << "const MaterialDescription& md = *(md.getMaterialDescription(*ptr));\n";
-	this->srcFile << "if(md.containsMaterialProperty(" << this->getVariableName(c,md) << ")){\n";
-	this->srcFile << "if(!md.isMaterialPropertyAccesible(" << this->getVariableName(c,md) << ")){\n";
+	this->srcFile << "if(md.containsMaterialProperty(" << en << ")){\n";
+	this->srcFile << "if(!md.isMaterialPropertyAccesible(" << en << ")){\n";
 	this->srcFile << "string msg(\"" << md.className << "::initializeConstantMaterialProperties : \");\n";
 	this->srcFile << "msg += \"material property '\";\n";
-	this->srcFile << "msg += " <<  this->getVariableName(c,md) << ";\n";
+	this->srcFile << "msg += " <<  en << ";\n";
 	this->srcFile << "msg += \"' is not accessible on material '\"+*ptr+\"'\";\n";
 	this->srcFile << "msg += \"' (this means that this property is define within a behaviour)\";\n";
 	this->srcFile << "throw(runtime_error(msg));\n";
 	this->srcFile << "}\n";
 	this->srcFile << "const MaterialPropertyDescription& mpd = *(md.getMaterialProperty(" 
-		      << this->getVariableName(c,md) << "));\n";
+		      << en << "));\n";
 	this->srcFile << "if(!mpd.is<CMPD>()){\n";
 	this->srcFile << "string msg(\"" << md.className << "::initializeConstantMaterialProperties : \");\n";
 	this->srcFile << "msg += \"material property '\";\n";
-	this->srcFile << "msg += " <<  this->getVariableName(c,md) << ";\n";
+	this->srcFile << "msg += " <<  en << ";\n";
 	this->srcFile << "msg += \"' is not constant on material '\"+*ptr+\"'\";\n";
 	this->srcFile << "throw(runtime_error(msg));\n";
 	this->srcFile << "}\n";
@@ -1375,7 +1392,7 @@ namespace mfront{
 	  this->srcFile << "string msg(\"" << md.className
 			<< "::initializeConstantMaterialProperties : \");\n";
 	  this->srcFile << "msg += \"material property '\";\n";
-	  this->srcFile << "msg += " <<  this->getVariableName(c,md) << ";\n";
+	  this->srcFile << "msg += " <<  en << ";\n";
 	  this->srcFile << "msg += \"' is undefined on material '\"+*ptr+\"'\";\n";
 	  this->srcFile << "throw(runtime_error(msg));\n";
 	}
@@ -1403,8 +1420,8 @@ namespace mfront{
     for(const auto& f : md.functions){
       for(const auto& mv : f.modifiedVariables){
 	// external name
-	const auto& en = this->getVariableName(mv,md); 
 	const auto& v  = md.outputs.getVariable(mv);
+	const auto& en = getDeclaration(v); 
 	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	// getting material description
 	if(v.hasAttribute(VariableDescription::initialValue)){
@@ -1494,7 +1511,8 @@ namespace mfront{
       for(const auto& f : md.functions){
 	for(const auto& uv : f.usedVariables){
 	  if(isInputVariable(md,uv)){
-	    const auto& v = decomposeVariableName(md,uv).first;
+	    const auto& v  = decomposeVariableName(md,uv).first;
+	    const auto& en = getDeclaration(md.getVariableDescription(v));
 	    if(treatedVars.find(v)==treatedVars.end()){
 	      const auto p3 = f.depths.find(v);
 	      if(p3==f.depths.end()){
@@ -1504,7 +1522,7 @@ namespace mfront{
 					 "in function '"+f.name+"'"));
 	      }
 	      this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
-	      this->srcFile << "map<string,unsigned auto& tmp = this->inputsDepths[" << this->getVariableName(v,md) << "];\n";
+	      this->srcFile << "map<string,unsigned auto& tmp = this->inputsDepths[" << en << "];\n";
 	      if(p3->second==0){
 		this->srcFile << "if(tmp.find(*ptr)==tmp.end()){\n";
 		this->srcFile << "tmp[*ptr]=0;\n";
@@ -1527,16 +1545,6 @@ namespace mfront{
     }
     this->srcFile << "} // end of " << md.className << "::initializeInputsVariablesDepths\n\n";
   } // end of MFrontModelInterface::writeInitializeInputsVariablesDepths()
-
-  std::string
-  MFrontModelInterface::getVariableName(const std::string& v,
-					const ModelDescription& md) const
-  {
-    if(md.hasGlossaryName(v)){
-      return "Glossary::" + md.getGlossaryName(v);
-    }
-    return "\""+md.getExternalName(v)+"\"";
-  } // end of MFrontModelInterface::getVariableName(const std::string& v)
 
   void
   MFrontModelInterface::writeStaticVariableInitialization(const FileDescription& fd,

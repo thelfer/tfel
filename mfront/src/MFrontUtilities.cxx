@@ -136,28 +136,28 @@ namespace mfront{
       ++p;
       CxxTokenizer::checkNotEndOfLine(m,"Expected '*'.",p,pe);
       throw_if(p->value!="*","Expected '*' (read '"+p->value+"')");
-      b.boundsType = VariableBoundsDescription::Upper;
+      b.boundsType = VariableBoundsDescription::UPPER;
       ++p;
     } else if(p->value=="["){
       ++p;
       CxxTokenizer::checkNotEndOfLine(m,"Expected lower bound value for variable '"+n+"'",p,pe);
       b.lowerBound = mfront::read<double>(p,pe);
-      b.boundsType = VariableBoundsDescription::LowerAndUpper;
+      b.boundsType = VariableBoundsDescription::LOWERANDUPPER;
     } else {
       throw_if(true,"Expected ']' or '[' (read '"+p->value+"')");
     }
     CxxTokenizer::readSpecifiedToken(m,":",p,pe);
     CxxTokenizer::checkNotEndOfLine(m,"expected upper bound value for variable '"+n+"'",p,pe);
     if(p->value=="*"){
-      throw_if(b.boundsType==VariableBoundsDescription::Upper,
+      throw_if(b.boundsType==VariableBoundsDescription::UPPER,
 	       "Upper and lower values bounds are both infinity. "
 	       "This is inconsistent.");
-      b.boundsType=VariableBoundsDescription::Lower;
+      b.boundsType=VariableBoundsDescription::LOWER;
       ++p;
       CxxTokenizer::readSpecifiedToken(m,"[",p,pe);
     } else {
       b.upperBound = mfront::read<double>(p,pe);
-      if(b.boundsType==VariableBoundsDescription::LowerAndUpper){
+      if(b.boundsType==VariableBoundsDescription::LOWERANDUPPER){
 	throw_if(b.lowerBound>b.upperBound,
 		 "Lower bound value is greater than upper "
 		 "bound value for variable '"+n+"'");

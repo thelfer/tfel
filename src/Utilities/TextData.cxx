@@ -30,7 +30,6 @@ namespace tfel
     TextData::TextData(const std::string& file,
 		       const std::string& format)
     {
-      using namespace std;
       auto get_legends = [](const std::string& l){
 	std::vector<std::string> r;
 	CxxTokenizer t;
@@ -71,7 +70,7 @@ namespace tfel
       firstLine=true;
       firstComments = true;
       while(!f.eof()){
-	string line;
+	auto line = std::string{};
 	getline(f,line);
 	if(line.empty()){
 	  continue;
@@ -94,7 +93,7 @@ namespace tfel
 	    for(const auto& l:this->legends){
 	      try{
 		convert<double>(l);
-	      } catch(exception&){
+	      } catch(std::exception&){
 		all_numbers = false;
 	      }
 	      if(!all_numbers){

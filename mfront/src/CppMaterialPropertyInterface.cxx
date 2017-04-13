@@ -109,7 +109,7 @@ namespace mfront
 						const std::string& description,
 						const std::string& includes,
 						const VariableDescriptionContainer& inputs,
-						const std::vector<std::string>& params)
+						const VariableDescriptionContainer& params)
   {
     using namespace std;
     std::ofstream header(getHeaderFileName(name));
@@ -120,9 +120,7 @@ namespace mfront
       throw(runtime_error(msg));
     }
     header.exceptions(ios::badbit|ios::failbit);
-    vector<string>::const_iterator p3;
-    VariableDescriptionContainer::const_iterator p4;
-    header << "/*!" << endl;
+    header << "/*!\n";
     header << "* \\file   " << getHeaderFileName(name)  << endl;
     header << "* \\brief  " << "this file declares the " 
 	   << name << " MaterialLaw.\n";
@@ -177,7 +175,7 @@ namespace mfront
     header << "//! assignement operator\n";
     header << name << "& operator=(const " << name << "&) noexcept = default;\n\n";
     header << "double\noperator()(";
-    for(p4=inputs.begin();p4!=inputs.end();){
+    for(auto p4=inputs.begin();p4!=inputs.end();){
       header << "const double";
       if((++p4)!=inputs.end()){
 	header << ",";
@@ -186,7 +184,7 @@ namespace mfront
     header << ") const;\n\n";
     if((hasBounds(inputs))||(hasPhysicalBounds(inputs))){
       header << "static void\ncheckBounds(";
-      for(p4=inputs.begin();p4!=inputs.end();){
+      for(auto p4=inputs.begin();p4!=inputs.end();){
 	header << "const double";
 	if((++p4)!=inputs.end()){
 	  header << ",";
@@ -194,19 +192,19 @@ namespace mfront
       }
       header << ");\n\n";
     }
-    for(p3=params.begin();p3!=params.end();++p3){
-      header << "const double& get" << *p3 << "(void) const;\n";
+    for(const auto& p : params){
+      header << "const double& get" << p.name << "(void) const;\n";
     }
-    for(p3=params.begin();p3!=params.end();++p3){
-      header << "double& get" << *p3 << "(void);\n";
+    for(const auto& p : params){
+      header << "double& get" << p.name << "(void);\n";
     }
-    for(p3=params.begin();p3!=params.end();++p3){
-      header << "void set" << *p3 << "(const double);\n";
+    for(const auto& p : params){
+      header << "void set" << p.name << "(const double);\n";
     }
     if(!params.empty()){
       header << "private:\n";
-      for(p3=params.begin();p3!=params.end();++p3){
-	header << "double " << *p3 << ";\n";
+      for(const auto& p : params){
+	header << "double " << p.name << ";\n";
       }
     }
     header << "}; // end of class " << name << endl << endl;
@@ -227,7 +225,7 @@ namespace mfront
 					     const VariableDescriptionContainer& inputs,
 					     const std::vector<std::string>& materialLaws,
 					     const StaticVariableDescriptionContainer& staticVars,
-					     const std::vector<std::string>& params,
+					     const VariableDescriptionContainer& params,
 					     const std::map<std::string,double>& paramValues,
 					     const LawFunction& function)
   {
@@ -239,10 +237,7 @@ namespace mfront
 			  "unable to open '"+src_name+"'"));
     }
     src.exceptions(ios::badbit|ios::failbit);
-    vector<string>::const_iterator p;
-    VariableDescriptionContainer::const_iterator p3;
-    map<string,double>::const_iterator p7;
-    src << "/*!" << endl;
+    src << "/*!\n";
     src << "* \\file   " << src_name  << endl;
     src << "* \\brief  " << "this file implements the " 
 	<< name << " MaterialLaw.\n";
@@ -270,55 +265,51 @@ namespace mfront
     if(!params.empty()){
       src << ": ";
     }
-    for(p=params.begin();p!=params.end();){
-      p7 = paramValues.find(*p);
+    for(auto p=params.begin();p!=params.end();){
+      auto p7 = paramValues.find(p->name);
       if(p7==paramValues.end()){
 	string msg("MaterialPropertyDSL::writeCppSrcFile : ");
-	msg += "internal error (can't find value of parameter '" + *p + "')";
+	msg += "internal error (can't find value of parameter '" + p->name + "')";
 	throw(runtime_error(msg));
       }
-      src << *p << "(" << p7->second << ")";
+      src << p->name << "(" << p7->second << ")";
       if(++p!=params.end()){
 	src << ",";
       }
       src << "\n";
     }
     src << "{} // end of " << name << "::" << name << "\n\n";
-    for(p=params.begin();p!=params.end();++p){
+    for(const auto& p : params){
       src << "const double& ";
       src << name;
       src << "::get"
-	  << *p << "(void) const{\n"
-	  << "return this->" << *p << ";\n"
+	  << p.name << "(void) const{\n"
+	  << "return this->" << p.name << ";\n"
 	  << "} // end of " << name << "::get\n\n";
-    }
-    for(p=params.begin();p!=params.end();++p){
       src << "double& ";
       src << name;
-      src << "::get" << *p << "(void){\n"
-	  << "return " << *p << ";\n"
+      src << "::get" << p.name << "(void){\n"
+	  << "return " << p.name << ";\n"
 	  << "} // end of " << name << "::get\n\n";
-    }
-    for(p=params.begin();p!=params.end();++p){
       src << "void " << name;
-      src  << "::set" << *p;
+      src  << "::set" << p.name;
       src << "(const double " << name << "_value_)";
       src << "{\n"
-	  << "this->" << *p << " = " << name << "_value_;\n"
+	  << "this->" << p.name << " = " << name << "_value_;\n"
 	  << "} // end of " << name << "::set\n\n";
     }
     src << "double\n";
     src << name;
     src << "::operator()(";
-    for(p3=inputs.begin();p3!=inputs.end();){
-      src << "const double " << p3->name;
-      if(++p3!=inputs.end()){
+    for(auto pi=inputs.begin();pi!=inputs.end();){
+      src << "const double " << pi->name;
+      if(++pi!=inputs.end()){
 	src << ",";
       }
     }
     src << ") const\n{\n";
-    src << "using namespace std;" << endl;
-    src << "using real = double;" << endl;
+    src << "using namespace std;\n";
+    src << "using real = double;\n";
     // material laws
     writeMaterialLaws("CMaterialPropertyInterfaceBase::writeSrcFile",
 		      src,materialLaws);
@@ -330,9 +321,9 @@ namespace mfront
     if((hasBounds(inputs))||(hasPhysicalBounds(inputs))){
       src << "#ifndef MFRONT_NO_BOUNDS_CHECK\n";	
       src << name << "::checkBounds(";
-      for(p3=inputs.begin();p3!=inputs.end();){
-	src << p3->name;
-	if((++p3)!=inputs.end()){
+      for(auto pi=inputs.begin();pi!=inputs.end();){
+	src << pi->name;
+	if((++pi)!=inputs.end()){
 	  src << ",";
 	}
       }
@@ -364,9 +355,9 @@ namespace mfront
       src << name;
       src << "::checkBounds(";
       if(!inputs.empty()){
-	for(p3=inputs.begin();p3!=inputs.end();){
-	  src << "const double " << p3->name;
-	  if((++p3)!=inputs.end()){
+	for(auto pi=inputs.begin();pi!=inputs.end();){
+	  src << "const double " << pi->name;
+	  if((++pi)!=inputs.end()){
 	    src << ",";
 	  }
 	}
@@ -382,7 +373,7 @@ namespace mfront
 	    continue;
 	  }
 	  const auto& b = i.getPhysicalBounds();
-	  if(b.boundsType==VariableBoundsDescription::Lower){
+	  if(b.boundsType==VariableBoundsDescription::LOWER){
 	    src << "if(" << i.name<< " < "<< b.lowerBound << "){\n";
 	    src << "ostringstream msg;\n";
 	    src << "msg << \"" << name << " : "  << i.name << " is below its physical lower bound \";\n";
@@ -390,7 +381,7 @@ namespace mfront
 		<< " << \" < " << b.lowerBound << ")\";\n";
 	    src << "throw(range_error(msg.str()));\n";
 	    src << "}\n";
-	  } else if(b.boundsType==VariableBoundsDescription::Upper){
+	  } else if(b.boundsType==VariableBoundsDescription::UPPER){
 	    src << "if(" << i.name<< " > "<< b.upperBound << "){\n";
 	    src << "ostringstream msg;\n";
 	    src << "msg << \"" << name << " : "  << i.name << " is beyond its physical upper bound \";\n";
@@ -423,7 +414,7 @@ namespace mfront
 	    continue;
 	  }
 	  const auto& b = i.getBounds();
-	  if(b.boundsType==VariableBoundsDescription::Lower){
+	  if(b.boundsType==VariableBoundsDescription::LOWER){
 	    src << "if(" << i.name<< " < "<< b.lowerBound << "){\n";
 	    src << "const char * const policy = "
 		<< "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n";
@@ -441,7 +432,7 @@ namespace mfront
 	    src << "}\n";
 	    src << "}\n";
 	    src << "}\n";
-	  } else if(b.boundsType==VariableBoundsDescription::Upper){
+	  } else if(b.boundsType==VariableBoundsDescription::UPPER){
 	    src << "if(" << i.name<< " > "<< b.upperBound << "){\n";
 	    src << "const char * const policy = "
 		<< "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n";
@@ -507,8 +498,9 @@ namespace mfront
     } else {
       src << "&){\n";
     }
-    for(p=params.begin();p!=params.end();++p){
-      src << "os << \"" << *p << " : \" << src.get" << *p << "() << std::endl;\n";
+    for(const auto& p : params){
+      src << "os << \"" << p.name
+	  << " : \" << src.get" << p.name << "() << std::endl;\n";
     }
     src << "return os;\n}// end of operator(std::ostream& os," 
 	<< name << "\n\n";

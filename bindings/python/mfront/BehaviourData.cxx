@@ -52,10 +52,14 @@ getVariablesNames(const mfront::BehaviourData& d){
   return {n.begin(),n.end()};
 }
 
+void declareBehaviourData();
 void declareBehaviourData(){
   using namespace boost::python;
   using namespace mfront;
 
+  const VariableDescription& (BehaviourData::* ptr)(const std::string&) const =
+    &BehaviourData::getVariableDescription;
+  
   class_<BehaviourData>("BehaviourData")
     .def("getMaterialProperties",&BehaviourData::getMaterialProperties,
 	 return_internal_reference<>())
@@ -92,6 +96,41 @@ void declareBehaviourData(){
     .def("isAuxiliaryStateVariableName",&BehaviourData::isAuxiliaryStateVariableName)
     .def("isExternalStateVariableName",&BehaviourData::isExternalStateVariableName)
     .def("isExternalStateVariableIncrementName",&BehaviourData::isExternalStateVariableIncrementName)
+    .def("getVariableDescription",ptr,
+	 return_internal_reference<>())
+    .def("getVariableDescriptionByExternalName",
+	 &BehaviourData::getVariableDescriptionByExternalName,
+	 return_internal_reference<>())
+    .def("getPersistentVariableDescription",
+	 &BehaviourData::getPersistentVariableDescription,
+	 return_internal_reference<>())
+    .def("getPersistentVariableDescriptionByExternalName",
+	 &BehaviourData::getPersistentVariableDescriptionByExternalName,
+	 return_internal_reference<>())
+    .def("getIntegrationVariableDescription",
+	 &BehaviourData::getIntegrationVariableDescription,
+	 return_internal_reference<>())
+    .def("getIntegrationVariableDescriptionByExternalName",
+	 &BehaviourData::getIntegrationVariableDescriptionByExternalName,
+	 return_internal_reference<>())
+    .def("getStateVariableDescription",
+	 &BehaviourData::getStateVariableDescription,
+	 return_internal_reference<>())
+    .def("getStateVariableDescriptionByExternalName",
+	 &BehaviourData::getStateVariableDescriptionByExternalName,
+	 return_internal_reference<>())
+    .def("getAuxiliaryStateVariableDescription",
+	 &BehaviourData::getAuxiliaryStateVariableDescription,
+	 return_internal_reference<>())
+    .def("getAuxiliaryStateVariableDescriptionByExternalName",
+	 &BehaviourData::getAuxiliaryStateVariableDescriptionByExternalName,
+	 return_internal_reference<>())
+    .def("getExternalStateVariableDescription",
+	 &BehaviourData::getExternalStateVariableDescription,
+	 return_internal_reference<>())
+    .def("getExternalStateVariableDescriptionByExternalName",
+	 &BehaviourData::getExternalStateVariableDescriptionByExternalName,
+	 return_internal_reference<>())
     .def("isParameterName",&BehaviourData::isParameterName)
     .def("isStaticVariableName",&BehaviourData::isStaticVariableName)
     .def("hasGlossaryName",&BehaviourData::hasGlossaryName)

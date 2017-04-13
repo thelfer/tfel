@@ -41,7 +41,7 @@ namespace mfront{
        << "return i;\n"
        << "}\n";
     for(const auto& p: mpd.parameters){
-      os << t << " " << p << ";\n";
+      os << t << " " << p.name << ";\n";
     }
     os << "std::string msg;\n"
        << "bool ok = false;\n" 
@@ -50,12 +50,13 @@ namespace mfront{
     if(!mpd.parameters.empty()){
       os << "\n: ";
       for(auto p = mpd.parameters.begin();p!=mpd.parameters.end();){
-	const auto pv = mpd.parametersValues.find(*p);
+	const auto pv = mpd.parametersValues.find(p->name);
 	if(pv==mpd.parametersValues.end()){
 	  throw(std::runtime_error("writeAssignMaterialPropertyParameters: "
-				   "no default value for parameter '"+*p+"'"));
+				   "no default value for parameter "
+				   "'"+p->name+"'"));
 	}
-	os << *p << "(" << pv->second << ")";
+	os << p->name << "(" << pv->second << ")";
 	if(++p!=mpd.parameters.end()){
 	  os << ",\n";
 	}
@@ -90,16 +91,8 @@ namespace mfront{
       if(!first){
 	os << " else ";
       }
-      auto pn = p;
-      if(mpd.glossaryNames.find(pn)!=mpd.glossaryNames.end()){
-	pn = mpd.glossaryNames.find(pn)->second;
-      } else {
-	if(mpd.entryNames.find(pn)!=mpd.entryNames.end()){
-	  pn = mpd.entryNames.find(pn)->second;
-	}
-      }
-      os << "if(pname==\"" << pn << "\"){\n"
-	 << "this->" << p << " = pvalue;\n"
+      os << "if(pname==\"" << p.getExternalName() << "\"){\n"
+	 << "this->" << p.name << " = pvalue;\n"
 	 << "}";
       first = false;
     }
@@ -130,9 +123,9 @@ namespace mfront{
 					const std::string& t,
 					const std::string& i){
     for(const auto& p:mpd.parameters){
-      os << "const " << t << " " << p << " = "
+      os << "const " << t << " " << p.name << " = "
 	 << i << "::" << n << "MaterialPropertyHandler::get"
-	 << n << "MaterialPropertyHandler()." << p << ";\n";
+	 << n << "MaterialPropertyHandler()." << p.name << ";\n";
     }
   }
   

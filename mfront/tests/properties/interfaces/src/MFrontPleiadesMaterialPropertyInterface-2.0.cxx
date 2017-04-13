@@ -75,8 +75,6 @@ namespace mfront {
     const auto& output=mpd.output;
     const auto& inputs=mpd.inputs;
     const auto& materialLaws=mpd.materialLaws;
-    const auto& glossaryNames=mpd.glossaryNames;
-    const auto& entryNames=mpd.entryNames;
     const auto& staticVars=mpd.staticVars;
     const auto& params=mpd.parameters;
     const auto& paramValues=mpd.parametersValues;
@@ -108,9 +106,9 @@ namespace mfront {
     }
     this->srcFile.exceptions(ios::badbit|ios::failbit);
     this->writeHeaderFile(file,name,author,date,description,includes,inputs);
-    this->writeSrcFile(file,name,author,date,output.name,
-		       inputs,materialLaws,glossaryNames,
-		       entryNames,staticVars,params,paramValues,function);
+    this->writeSrcFile(file,name,author,date,output,
+		       inputs,materialLaws,staticVars,
+		       params,paramValues,function);
   } // end of MFrontPleiadesMaterialPropertyInterface::writeOutputFiles
 
   void MFrontPleiadesMaterialPropertyInterface::writeHeaderFile(const std::string&,
@@ -119,9 +117,9 @@ namespace mfront {
 								const std::string& date,
 								const std::string& description,
 								const std::string& includes,
-								const VarContainer& inputs) {
+								const VariableDescriptionContainer& inputs) {
     using namespace std;
-    VarContainer::const_iterator p4;
+    VariableDescriptionContainer::const_iterator p4;
     this->headerFile << "/*!" << endl;
     this->headerFile << "* \\file   " << this->headerFileName  << endl;
     this->headerFile << "* \\brief  " << "this file declares the "
@@ -200,20 +198,14 @@ namespace mfront {
 							const std::string& name,
 							const std::string& author,
 							const std::string& date,
-							const std::string& output,
-							const VarContainer& inputs,
+							const VariableDescription& output,
+							const VariableDescriptionContainer& inputs,
 							const std::vector<std::string>& materialLaws,
-							const std::map<std::string,std::string>& glossaryNames,
-							const std::map<std::string,std::string>& entryNames,
-							const StaticVarContainer& staticVars,
-							const std::vector<std::string>& params,
+							const StaticVariableDescriptionContainer& staticVars,
+							const VariableDescriptionContainer& params,
 							const std::map<std::string,double>& paramValues,
 							const LawFunction& function) {
     using namespace std;
-    vector<string>::const_iterator p;
-    VarContainer::const_iterator p3;
-    map<string,string>::const_iterator p4;
-    map<string,double>::const_iterator p7;
     this->srcFile << "/*!" << endl;
     this->srcFile << "* \\file   " << this->srcFileName  << endl;
     this->srcFile << "* \\brief  " << "this file implements the "
@@ -243,31 +235,30 @@ namespace mfront {
     this->srcFile << name
                   << "::declare() {\n";
     this->srcFile << "using namespace Pleiades::PGlossaire;\n";
-
-    string oname;
-    if((p4=glossaryNames.find(output))!=glossaryNames.end()){
-      oname = "GlossaireField::"+p4->second;
-    } else if ((p4=entryNames.find(output))!=entryNames.end()){
-      oname = "\"" + p4->second + "\"";
+    std::string oname;
+    if(output.hasGlossaryName()){
+      oname = "GlossaireField::"+output.getExternalName();
+    } else if (output.hasEntryName()){
+      oname = "\"" + output.getExternalName() + "\"";
     } else {
-      this->srcFile << "AFF(\"WARNING !!! Glossary name not defined for output field : " << output << " in " << name << "\");" << endl;
-      oname = "\""+output+"\"";
+      this->srcFile << "AFF(\"WARNING !!! Glossary name not defined for output field: "
+		    << output.name << " in " << name << "\");" << endl;
+      oname = "\""+output.name+"\"";
     }
     this->srcFile << "declareField<double>(\"OutputField\", OUT);\n";
     this->srcFile << "setFieldName(\"OutputField\", " << oname << ");\n";
 
-    string iname;
-    for(p3=inputs.begin();p3!=inputs.end();++p3){
-      if((p4=glossaryNames.find(p3->name))!=glossaryNames.end()){
-	iname = "GlossaireField::"+p4->second;
-      } else if((p4=entryNames.find(p3->name))!=entryNames.end()){
-	iname = "\""+p4->second+"\"";
+    for(const auto& i : inputs){
+      string iname;
+      if(i.hasGlossaryName()){
+	iname = "GlossaireField::"+i.getExternalName();
+      } else if(i.hasEntryName()){
+	iname = "\""+i.getExternalName()+"\"";
       } else {
-	iname = "\""+p3->name+"\"";
+	iname = "\""+i.name+"\"";
       }
-
-      this->srcFile << "declareField<double>(\"" << p3->name << "\", " << "IN" << ");\n";
-      this->srcFile << "setFieldName(\"" << p3->name << "\", " << iname << ");\n";
+      this->srcFile << "declareField<double>(\"" << i.name << "\", " << "IN" << ");\n";
+      this->srcFile << "setFieldName(\"" << i.name << "\", " << iname << ");\n";
     }
 
     this->srcFile << "}\n\n";
@@ -276,9 +267,8 @@ namespace mfront {
     this->srcFile << "void ";
     this->srcFile << name << "::compute(void) {\n";
     this->srcFile << "  apply(*this, getOutputField<double>(\"OutputField\")";
-    for(p3=inputs.begin();p3!=inputs.end();){
-      this->srcFile << ", getField<double>(\"" << p3->name << "\")";
-      ++p3;
+    for(const auto& i : inputs){
+      this->srcFile << ", getField<double>(\"" << i.name << "\")";
     }
     this->srcFile << ");\n";
     this->srcFile << "} // end of " << name << "::compute\n\n";
@@ -286,9 +276,9 @@ namespace mfront {
     this->srcFile << "double ";
     this->srcFile << name << "::operator()(";
     if(!inputs.empty()){
-      for(p3=inputs.begin();p3!=inputs.end();){
-	this->srcFile << "const double& " << p3->name;
-	if((++p3)!=inputs.end()){
+      for(auto pi=inputs.begin();pi!=inputs.end();){
+	this->srcFile << "const double& " << pi->name;
+	if((++pi)!=inputs.end()){
 	  this->srcFile << ",";
 	}
       }
@@ -306,44 +296,45 @@ namespace mfront {
     writeStaticVariables("MFrontPleiadesMaterialPropertyInterface::writeSrcFile",
 			 srcFile,staticVars,file);
     if(!params.empty()){
-      for(p=params.begin();p!=params.end();++p){
-	p7 = paramValues.find(*p);
+      for(const auto& p : params){
+	auto p7 = paramValues.find(p.name);
 	if(p7==paramValues.end()){
 	  string msg("MFrontPleiadesMaterialPropertyInterface::writeCSrcFile : ");
-	  msg += "internal error (can't find value of parameter " + *p + ")";
+	  msg += "internal error (can't find value of parameter " + p.name + ")";
 	  throw(runtime_error(msg));
 	}
-	this->srcFile << "static constexpr double " << *p
+	this->srcFile << "static constexpr double " << p.name
 		      << " = " << p7->second << ";\n";
       }
     }
-    this->srcFile << "double " << output << ";\n";
+    this->srcFile << "double " << output.name << ";\n";
     if((hasPhysicalBounds(inputs))||(hasBounds(inputs))){
       this->srcFile << "#ifndef NO_PLEIADES_BOUNDS_CHECK\n";
     }
+    auto get_ename = [](const VariableDescription& v){
+      if(v.hasGlossaryName()){
+	return "GlossaireField::"+v.getExternalName();
+      } else if(v.hasEntryName()){
+	return "\""+v.getExternalName()+"\"";
+      }
+      return "\""+v.name+"\"";
+    };    
     if(hasPhysicalBounds(inputs)){
       this->srcFile << "// treating physical bounds\n";
       for(const auto&i : inputs){
 	if(!i.hasPhysicalBounds()){
 	  continue;
 	}
-	string fname;
-	if((p4=glossaryNames.find(i.name))!=glossaryNames.end()){
-	  fname = "GlossaireField::"+p4->second;
-	} else if((p4=entryNames.find(i.name))!=entryNames.end()){
-	  fname = "\""+p4->second+"\"";
-	} else {
-	  fname = "\""+i.name+"\"";
-	}
 	const auto& b = i.getPhysicalBounds();
-	if(b.boundsType==VariableBoundsDescription::Lower){
+	const auto fname = get_ename(i);
+	if(b.boundsType==VariableBoundsDescription::LOWER){
 	  this->srcFile << "if(" << i.name << " < "<< b.lowerBound << "){\n";
 	  this->srcFile << "string msg (\"" << name << "::compute : \");\n"
 			<< "msg += " << fname << ";\n"
 			<< "msg += \" is below its physical lower bound.\";\n";
 	  this->srcFile << "PLEIADES_THROW(msg);\n";
 	  this->srcFile << "}\n";
-	} else if(b.boundsType==VariableBoundsDescription::Upper){
+	} else if(b.boundsType==VariableBoundsDescription::UPPER){
 	  this->srcFile << "if(" << i.name << " > "<< b.upperBound << "){\n";
 	  this->srcFile << "string msg (\"" << name << "::compute : \");\n"
 			<< "msg += " << fname << ";\n"
@@ -374,23 +365,16 @@ namespace mfront {
 	if(!i.hasBounds()){
 	  continue;
 	}
-	string fname;
-	if((p4=glossaryNames.find(i.name))!=glossaryNames.end()){
-	  fname = "GlossaireField::"+p4->second;
-	} else if((p4=entryNames.find(i.name))!=entryNames.end()){
-	  fname = "\""+p4->second+"\"";
-	} else {
-	  fname = "\""+i.name+"\"";
-	}
+	const auto fname = get_ename(i);
 	const auto& b = i.getBounds();
-	if(b.boundsType==VariableBoundsDescription::Lower){
+	if(b.boundsType==VariableBoundsDescription::LOWER){
 	  this->srcFile << "if(" << i.name << " < "<< b.lowerBound << "){\n";
 	  this->srcFile << "string msg(\"" << name << "::compute : value of\");\n";
 	  this->srcFile << "msg += " << fname << ";\n";
 	  this->srcFile << "msg += \" is below its lower bound\";\n";
 	  this->srcFile << "treatOutOfBounds(msg);\n";
 	  this->srcFile << "}\n";
-	} else if(b.boundsType==VariableBoundsDescription::Upper){
+	} else if(b.boundsType==VariableBoundsDescription::UPPER){
 	  this->srcFile << "if(" << i.name << " > "<< b.upperBound << "){\n";
 	  this->srcFile << "string msg(\"" << name << "::compute : value of\");\n";
 	  this->srcFile << "msg += " << fname << ";\n";
@@ -412,7 +396,7 @@ namespace mfront {
       this->srcFile << "#endif /* NO_PLEIADES_BOUNDS_CHECK */\n";
     }
     this->srcFile << function.body;
-    this->srcFile << "return " << output << ";\n";
+    this->srcFile << "return " << output.name << ";\n";
     this->srcFile << "} // end of " << name << "::law\n\n";
 
     this->srcFile << "GENERATE_PROXY(IMaterialProperty,";

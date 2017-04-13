@@ -40,13 +40,13 @@ namespace std{
 namespace mfront{
 
   static std::string
-  getDeclarationName(const ModelDescription& md,
-		     const std::string& g,
-		     const std::string& v){
-    if(md.hasGlossaryName(v)){
-      return g+"::"+md.getGlossaryName(v);
+  getDeclarationName(const VariableDescription& v,
+		     const std::string& g){
+    const auto ev = v.getExternalName();
+    if(v.hasGlossaryName()){
+      return g+"::"+ev;
     }
-    return "\""+md.getExternalName(v)+"\"";
+    return "\""+ev+"\"";
   }
   
   MFrontPleiadesModelInterfaceBase::MFrontPleiadesModelInterfaceBase()
@@ -513,7 +513,7 @@ namespace mfront{
       this->srcFile << "using namespace Pleiades::PUtilitaires;\n";
       this->srcFile << "using namespace Pleiades::PExceptions;\n";
       for(const auto& v : md.parameters){
-	const auto name = getDeclarationName(md,"GlossaireParam",v.name);
+	const auto name = getDeclarationName(v,"GlossaireParam");
 	this->srcFile << "if(!arg.contains(" << name << ")){\n";
 	if(v.hasAttribute(VariableDescription::defaultValue)){
 	  this->writeAssignDefaultValue(v);
@@ -765,7 +765,7 @@ namespace mfront{
   MFrontPleiadesModelInterfaceBase::writeGetGlobalParameter(const VariableDescription& v,
 							    const ModelDescription& md)
   {
-    const auto name = getDeclarationName(md,"GlossaireParam",v.name);
+    const auto name = getDeclarationName(v,"GlossaireParam");
     this->srcFile << "if(!arg.contains(" << name << ")){\n";
     if(v.hasAttribute(VariableDescription::defaultValue)){
       this->writeAssignDefaultValue(v);
@@ -786,7 +786,7 @@ namespace mfront{
   MFrontPleiadesModelInterfaceBase::writeGetConstantMaterialProperty(const VariableDescription& v,
 								     const ModelDescription& md)
   {
-    const auto name = getDeclarationName(md,"GlossaireParam",v.name);
+    const auto name = getDeclarationName(v,"GlossaireParam");
     this->srcFile << "if(arg.contains(" << name << ")){\n"
 		  << "this->" << v.name << " = arg[" << name << "]." 
 		  << this->getGenTypeMethod(v.type) << "();\n"
@@ -980,7 +980,7 @@ namespace mfront{
 		  << "using namespace Pleiades::PExceptions;\n"
 		  << "using namespace Pleiades::PMetier::PGlossaire;\n";
     for(const auto& v : md.outputs){
-      const auto name = getDeclarationName(md,"GlossaireField",v.name);
+      const auto name = getDeclarationName(v,"GlossaireField");
       this->srcFile << "if(!this->initializeOutputIFieldDouble(arg," << name;
       this->srcFile << ",\nthis->_ple" << v.name << ",\"\",";
       if(v.hasAttribute(VariableDescription::initialValue)){
@@ -1012,7 +1012,7 @@ namespace mfront{
 		  << "using namespace Pleiades::PExceptions;\n"
 		  << "using namespace Pleiades::PMetier::PGlossaire;\n";
     for(const auto& v : md.inputs){
-      const auto name = getDeclarationName(md,"GlossaireField",v.name);
+      const auto name = getDeclarationName(v,"GlossaireField");
       this->srcFile << "if(!this->initializeInputIFieldDouble(this->_ple"
 		    << v.name << "," << name
 		    << ",\"\",arg)){\n"

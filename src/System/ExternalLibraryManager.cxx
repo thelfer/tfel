@@ -111,17 +111,17 @@ namespace tfel
     try_open(const std::string& l){
       auto starts_with = [](const std::string& s1,
       			    const char* const s2){
-	const auto l = std::strlen(s2);
-      	return ((s1.size()>=l) &&
-      		(std::equal(s2,s2+l,s1.begin())));
+	const auto ls2 = std::strlen(s2);
+      	return ((s1.size()>=ls2) &&
+      		(std::equal(s2,s2+ls2,s1.begin())));
       }; // end of starts_with
       auto ends_with = [](const std::string& s1,
 			  const char* const s2){
-	const auto l = std::strlen(s2);
-      	if(!(s1.size()>=l)){
+	const auto ls2 = std::strlen(s2);
+      	if(!(s1.size()>=ls2)){
 	  return false;
 	}
-	return std::equal(s2,s2+l,s1.begin()+(s1.size()-l));
+	return std::equal(s2,s2+ls2,s1.begin()+(s1.size()-ls2));
       }; // end of ends_with
 #if (defined(macintosh) || defined(Macintosh) || \
      (defined(__APPLE__) && defined(__MACH__)))
@@ -145,6 +145,8 @@ namespace tfel
       if((lib==nullptr)&&(!ends_with(l,ext))){
 	lib = load_library(l+ext);
       }
+      // retrieving the initial error message
+      lib = load_library(l);
       return lib;
     } // end of load_library
     
@@ -166,8 +168,7 @@ namespace tfel
 	auto lib = try_open(name);
 	if((lib==nullptr)&&(!b)){
 	  string msg("ExternalLibraryManager::loadLibrary : library '");
-	  msg += name;
-	  msg += "' could not be loaded, (";
+	  msg += name+"' could not be loaded, (";
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
 	  msg += getLastWin32Error();
 #else

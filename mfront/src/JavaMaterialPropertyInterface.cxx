@@ -161,14 +161,14 @@ namespace mfront
       return;
     }
     const auto& b = v.getPhysicalBounds();
-    if(b.boundsType==VariableBoundsDescription::Lower){
+    if(b.boundsType==VariableBoundsDescription::LOWER){
       out << "if(" << v.name << " < "<< b.lowerBound << "){\n"
 	  << "ostringstream msg;\nmsg << \"" << name << " : "
 	  << v.name << " is below its physical lower bound (\"\n << "
 	  << v.name << " << \"<" << b.lowerBound << ").\";\n"
 	  << "return throwJavaRuntimeException(msg.str());\n"
 	  << "}\n";
-    } else if(b.boundsType==VariableBoundsDescription::Upper){
+    } else if(b.boundsType==VariableBoundsDescription::UPPER){
       out << "if(" << v.name << " > "<< b.upperBound << "){\n"
 	  << "ostringstream msg;\nmsg << \"" << name << " : "
 	  << v.name << " is beyond its physical upper bound (\"\n << "
@@ -200,8 +200,8 @@ namespace mfront
       return;
     }
     const auto& b = v.getBounds();
-    if((b.boundsType==VariableBoundsDescription::Lower)||
-       (b.boundsType==VariableBoundsDescription::LowerAndUpper)){
+    if((b.boundsType==VariableBoundsDescription::LOWER)||
+       (b.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
       out << "if(" << v.name << " < "<< b.lowerBound << "){\n"
 	  << "auto policy = "
 	  << "::getenv(\"JAVA_OUT_OF_BOUNDS_POLICY\");\n"
@@ -221,8 +221,8 @@ namespace mfront
 	  << "}\n"
 	  << "}\n";
     }
-    if((b.boundsType==VariableBoundsDescription::Upper)||
-       (b.boundsType==VariableBoundsDescription::LowerAndUpper)){
+    if((b.boundsType==VariableBoundsDescription::UPPER)||
+       (b.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
       out << "if(" << v.name << " > "<< b.upperBound << "){\n"
 	  << "auto policy = "
 	  << "::getenv(\"JAVA_OUT_OF_BOUNDS_POLICY\");\n"
@@ -328,10 +328,10 @@ namespace mfront
 			 srcFile,mpd.staticVars,fd.fileName);
     // parameters
     for(const auto& p : mpd.parameters){
-      const auto p6 = mpd.parametersValues.find(p);
+      const auto p6 = mpd.parametersValues.find(p.name);
       throw_if(p6==mpd.parametersValues.end(),
-	       "internal error (can't find value of parameter '"+p+"')");
-      srcFile << "static " << constexpr_c << " double " << p << " = " << p6->second << ";\n";
+	       "internal error (can't find value of parameter '"+p.name+"')");
+      srcFile << "static " << constexpr_c << " double " << p.name << " = " << p6->second << ";\n";
     }
     if((hasPhysicalBounds(mpd.inputs))||(hasBounds(mpd.inputs))){
       srcFile << "#ifndef JAVA_NO_BOUNDS_CHECK\n";

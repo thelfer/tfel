@@ -98,12 +98,8 @@ struct DSLTest2 final
     TFEL_TESTS_ASSERT(!bd.hasGlossaryName(mh,"h"));
     TFEL_TESTS_ASSERT(bd.hasEntryName(mh,"h"));
     TFEL_TESTS_ASSERT((bd.getExternalName(mh,"h")=="HardeningCoefficient"));
-    TFEL_TESTS_ASSERT((bd.getVariableNameFromGlossaryNameOrEntryName(mh,"HardeningCoefficient")==
-		       "h"));
+    TFEL_TESTS_ASSERT((bd.getVariableNameFromGlossaryNameOrEntryName(mh,"HardeningCoefficient")=="h"));
     TFEL_TESTS_ASSERT(bd.isStaticVariableName(mh,"Cste"));
-    TFEL_TESTS_ASSERT(!bd.hasGlossaryName(mh,"Cste"));
-    TFEL_TESTS_ASSERT(bd.hasEntryName(mh,"Cste"));
-    TFEL_TESTS_ASSERT((bd.getExternalName(mh,"Cste")=="CsteEntryName"));
   }
   /*!
    * Various checks on the BehaviourData object resulting from the
@@ -137,9 +133,6 @@ struct DSLTest2 final
     TFEL_TESTS_ASSERT((bd.getVariableNameFromGlossaryNameOrEntryName("HardeningCoefficient")==
 		       "h"));
     TFEL_TESTS_ASSERT(bd.isStaticVariableName("Cste"));
-    TFEL_TESTS_ASSERT(!bd.hasGlossaryName("Cste"));
-    TFEL_TESTS_ASSERT(bd.hasEntryName("Cste"));
-    TFEL_TESTS_ASSERT((bd.getExternalName("Cste")=="CsteEntryName"));
     const auto& mps   = bd.getMaterialProperties();
     TFEL_TESTS_ASSERT(mps.size()==3);
     const auto& young = mps.getVariable("young");
