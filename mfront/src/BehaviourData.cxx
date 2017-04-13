@@ -1198,16 +1198,14 @@ namespace mfront{
     auto throw_if = [](const bool c, const std::string& m){
       if(c){throw(std::runtime_error("BehaviourData::setAttribute: "+m));}
     };    
-    if(b){
-      auto p=this->attributes.find(n);
-      if(p!=this->attributes.end()){
-	throw_if(a.getTypeIndex()!=p->second.getTypeIndex(),
-		 "attribute already exists with a different type");
-	return;
-      }
+    auto p=this->attributes.find(n);
+    if(p!=this->attributes.end()){
+      throw_if(a.getTypeIndex()!=p->second.getTypeIndex(),
+	       "attribute already exists with a different type");
     }
-    throw_if(!this->attributes.insert({n,a}).second,
-	     "attribute '"+n+"' already declared");
+    if(!this->attributes.insert({n,a}).second){
+      throw_if(!b,"attribute '"+n+"' already declared");
+    }
   } // end of BehaviourData::setAttribute
 
   bool BehaviourData::hasAttribute(const std::string& n) const

@@ -220,7 +220,7 @@ namespace mfront{
     ++(this->current);
     const auto value = this->readInitialisationValue<double>(p.name,false);
     if(value.first){
-      this->md.parametersValues.insert({p.name,value.second});
+      p.setAttribute(VariableDescription::defaultValue,value.second,false);
     }
     this->readSpecifiedToken("MaterialPropertyDSL::treatParameter",";");
     this->reserveName(p.name);
@@ -481,11 +481,8 @@ namespace mfront{
       }
       this->checkNotEndOfFile("MaterialPropertyDSL::treatMethod",
 			      "Expected to read value of variable '"+this->currentVar+"'");
-      const auto value = this->readDouble();
-      if(!this->md.parametersValues.insert({this->currentVar,value}).second){
-	this->throwRuntimeError("MaterialPropertyDSL::treatMethod",
-				"default value already defined for variable '"+this->currentVar+"'.");
-      }
+      auto& p = this->md.parameters.getVariable(this->currentVar);
+      p.setAttribute(VariableDescription::defaultValue,this->readDouble(),false);
       --(this->current);
     } else {
       this->throwRuntimeError("MaterialPropertyDSL::treatMethod",

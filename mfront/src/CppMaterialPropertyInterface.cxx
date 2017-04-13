@@ -94,12 +94,11 @@ namespace mfront
     const auto& materialLaws=mpd.materialLaws;
     const auto& staticVars=mpd.staticVars;
     const auto& params=mpd.parameters;
-    const auto& paramValues=mpd.parametersValues;
     const auto& function=mpd.f;
     const auto name = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
     this->writeHeaderFile(name,author,date,description,includes,inputs,params);
     this->writeSrcFile(file,name,author,date,output.name,inputs,materialLaws,
-		       staticVars,params,paramValues,function);
+		       staticVars,params,function);
   } // end of CppMaterialPropertyInterface::writeOutputFiles
 
   void
@@ -226,7 +225,6 @@ namespace mfront
 					     const std::vector<std::string>& materialLaws,
 					     const StaticVariableDescriptionContainer& staticVars,
 					     const VariableDescriptionContainer& params,
-					     const std::map<std::string,double>& paramValues,
 					     const LawFunction& function)
   {
     using namespace std;
@@ -266,13 +264,13 @@ namespace mfront
       src << ": ";
     }
     for(auto p=params.begin();p!=params.end();){
-      auto p7 = paramValues.find(p->name);
-      if(p7==paramValues.end()){
-	string msg("MaterialPropertyDSL::writeCppSrcFile : ");
-	msg += "internal error (can't find value of parameter '" + p->name + "')";
-	throw(runtime_error(msg));
+      if(!p->hasAttribute(VariableDescription::defaultValue)){
+	throw(runtime_error("MaterialPropertyDSL::writeCppSrcFile: "
+			    "internal error (can't find value of "
+			    "parameter '" + p->name + "')"));
       }
-      src << p->name << "(" << p7->second << ")";
+      src << p->name << "("
+	  << p->getAttribute<double>(VariableDescription::defaultValue) << ")";
       if(++p!=params.end()){
 	src << ",";
       }

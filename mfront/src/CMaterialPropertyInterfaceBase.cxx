@@ -274,14 +274,13 @@ namespace mfront
     // parameters
     if(!mpd.parameters.empty()){
       for(const auto& p : mpd.parameters){
-	const auto p6 = mpd.parametersValues.find(p.name);
-	if(p6==mpd.parametersValues.end()){
+	if(!p.hasAttribute(VariableDescription::defaultValue)){
 	  throw(std::runtime_error("CMaterialPropertyInterfaceBase::writeSrcFile : "
 				   "internal error (can't find value of "
 				   "parameter '"+p.name+"')"));
 	}
-	this->srcFile << "static " << constexpr_c << " real "
-		      << p.name << " = " << p6->second << ";\n";
+	this->srcFile << "static " << constexpr_c << " real " << p.name << " = "
+		      << p.getAttribute<double>(VariableDescription::defaultValue) << ";\n";
       }
     }
     this->writeInterfaceSpecificVariables(mpd.inputs);

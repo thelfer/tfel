@@ -77,7 +77,6 @@ namespace mfront {
     const auto& materialLaws=mpd.materialLaws;
     const auto& staticVars=mpd.staticVars;
     const auto& params=mpd.parameters;
-    const auto& paramValues=mpd.parametersValues;
     const auto& function=mpd.f;
     systemCall::mkdir("include/Pleiades");
     systemCall::mkdir("include/Pleiades/Metier");
@@ -108,7 +107,7 @@ namespace mfront {
     this->writeHeaderFile(file,name,author,date,description,includes,inputs);
     this->writeSrcFile(file,name,author,date,output,
 		       inputs,materialLaws,staticVars,
-		       params,paramValues,function);
+		       params,function);
   } // end of MFrontPleiadesMaterialPropertyInterface::writeOutputFiles
 
   void MFrontPleiadesMaterialPropertyInterface::writeHeaderFile(const std::string&,
@@ -119,7 +118,6 @@ namespace mfront {
 								const std::string& includes,
 								const VariableDescriptionContainer& inputs) {
     using namespace std;
-    VariableDescriptionContainer::const_iterator p4;
     this->headerFile << "/*!" << endl;
     this->headerFile << "* \\file   " << this->headerFileName  << endl;
     this->headerFile << "* \\brief  " << "this file declares the "
@@ -165,7 +163,7 @@ namespace mfront {
     this->headerFile << "void compute();\n ";
     this->headerFile << "double operator()(";
     if(!inputs.empty()){
-      for(p4=inputs.begin();p4!=inputs.end();){
+      for(auto p4=inputs.begin();p4!=inputs.end();){
 	this->headerFile << "const double& " << p4->name ;
 	if((++p4)!=inputs.end()){
 	  this->headerFile << ",";
@@ -203,7 +201,6 @@ namespace mfront {
 							const std::vector<std::string>& materialLaws,
 							const StaticVariableDescriptionContainer& staticVars,
 							const VariableDescriptionContainer& params,
-							const std::map<std::string,double>& paramValues,
 							const LawFunction& function) {
     using namespace std;
     this->srcFile << "/*!" << endl;
@@ -297,14 +294,13 @@ namespace mfront {
 			 srcFile,staticVars,file);
     if(!params.empty()){
       for(const auto& p : params){
-	auto p7 = paramValues.find(p.name);
-	if(p7==paramValues.end()){
-	  string msg("MFrontPleiadesMaterialPropertyInterface::writeCSrcFile : ");
-	  msg += "internal error (can't find value of parameter " + p.name + ")";
-	  throw(runtime_error(msg));
+	if(!p.hasAttribute(VariableDescription::defaultValue)){
+	  throw(runtime_error("MFrontPleiadesMaterialPropertyInterface::writeCSrcFile: "
+			      "internal error (can't find value of "
+			      "parameter " + p.name + ")"));
 	}
-	this->srcFile << "static constexpr double " << p.name
-		      << " = " << p7->second << ";\n";
+	this->srcFile << "static constexpr double " << p.name << " = "
+		      << p.getAttribute<double>(VariableDescription::defaultValue) << ";\n";
       }
     }
     this->srcFile << "double " << output.name << ";\n";

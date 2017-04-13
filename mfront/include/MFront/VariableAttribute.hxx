@@ -24,7 +24,7 @@ namespace mfront{
   //! \brief types that can be stored in a variable attribute
   using  VariableAttributeTypes = tfel::meta::GenerateTypeList<bool,
 							       unsigned short,
-							       double,
+							       int,double,
 							       std::string,
 							       std::vector<double>,
 							       std::vector<std::string>>::type;

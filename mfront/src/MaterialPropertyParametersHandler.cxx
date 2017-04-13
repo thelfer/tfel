@@ -50,13 +50,13 @@ namespace mfront{
     if(!mpd.parameters.empty()){
       os << "\n: ";
       for(auto p = mpd.parameters.begin();p!=mpd.parameters.end();){
-	const auto pv = mpd.parametersValues.find(p->name);
-	if(pv==mpd.parametersValues.end()){
+	if(!p->hasAttribute(VariableDescription::defaultValue)){
 	  throw(std::runtime_error("writeAssignMaterialPropertyParameters: "
 				   "no default value for parameter "
 				   "'"+p->name+"'"));
 	}
-	os << p->name << "(" << pv->second << ")";
+	const auto pv = p->getAttribute<double>(VariableDescription::defaultValue);
+	os << p->name << "(" << pv  << ")";
 	if(++p!=mpd.parameters.end()){
 	  os << ",\n";
 	}

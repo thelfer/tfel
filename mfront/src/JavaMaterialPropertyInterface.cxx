@@ -328,10 +328,10 @@ namespace mfront
 			 srcFile,mpd.staticVars,fd.fileName);
     // parameters
     for(const auto& p : mpd.parameters){
-      const auto p6 = mpd.parametersValues.find(p.name);
-      throw_if(p6==mpd.parametersValues.end(),
+      throw_if(!p.hasAttribute(VariableDescription::defaultValue),
 	       "internal error (can't find value of parameter '"+p.name+"')");
-      srcFile << "static " << constexpr_c << " double " << p.name << " = " << p6->second << ";\n";
+      srcFile << "static " << constexpr_c << " double " << p.name
+	      << " = " << p.getAttribute<double>(VariableDescription::defaultValue) << ";\n";
     }
     if((hasPhysicalBounds(mpd.inputs))||(hasBounds(mpd.inputs))){
       srcFile << "#ifndef JAVA_NO_BOUNDS_CHECK\n";

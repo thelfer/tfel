@@ -94,7 +94,6 @@ namespace mfront{
      * \param const std::vector<std::string>&, material laws
      * \param const StaticVariableDescriptionContainer&, static variables
      * \param const VariableDescriptionContainer&, parameters
-     * \param const std::map<std::string,double>&, parameters values
      * \param const LawFunction&, function definition
      */
     void writeSrcFile(const std::string&,
@@ -104,9 +103,8 @@ namespace mfront{
 		      const VariableDescription&,
 		      const VariableDescriptionContainer&,
 		      const std::vector<std::string>&,
-		      const StaticVariableDescriptionContainer& staticVars,
+		      const StaticVariableDescriptionContainer&,
 		      const VariableDescriptionContainer&,
-		      const std::map<std::string,double>&,
 		      const LawFunction&);
 
     std::ofstream headerFile;

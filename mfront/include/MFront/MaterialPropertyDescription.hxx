@@ -140,8 +140,6 @@ namespace mfront
     std::string privateCode;
     //! class member
     std::string members;
-    //! parameters default value
-    std::map<std::string,double> parametersValues;
     //! list of material laws used
     std::vector<std::string> materialLaws;
     //! static variables
