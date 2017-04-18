@@ -28,11 +28,15 @@ namespace mfront
     if(this->inputs.contains(n)){
       return this->inputs.getVariable(n);
     }
+    if(this->parameters.contains(n)){
+      return this->parameters.getVariable(n);
+    }
     throw(std::runtime_error("MaterialPropertyDescription::getVariableDescription:"
 			     "no variable named '"+n+"'.\n"
 			     "'"+n+"' is neither:\n"
 			     "- The output.\n"
-			     "- an input."));    
+			     "- An input.\n"
+			     "- A parameter.\n"));    
   } // end of MaterialPropertyDescription::getVariableDescription
 
   VariableDescription&
@@ -44,11 +48,15 @@ namespace mfront
     if(this->inputs.contains(n)){
       return this->inputs.getVariable(n);
     }
+    if(this->parameters.contains(n)){
+      return this->parameters.getVariable(n);
+    }
     throw(std::runtime_error("MaterialPropertyDescription::getVariableDescription:"
 			     "no variable named '"+n+"'.\n"
 			     "'"+n+"' is neither:\n"
 			     "- The output.\n"
-			     "- an input."));    
+			     "- An input.\n"
+			     "- A parameter."));    
   } // end of MaterialPropertyDescription::getVariableDescription
 
   bool MaterialPropertyDescription::isParameterName(const std::string& n) const

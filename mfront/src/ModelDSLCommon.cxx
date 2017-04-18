@@ -165,6 +165,11 @@ namespace mfront{
       this->throwRuntimeError("ModelDSLCommon::generateOutputFiles",
 			      "no interface defined");
     }
+    //! generating sources du to external material properties and models
+    for(const auto& em : this->externalMFrontFiles){
+      this->callMFront(em.second,{em.first});
+    }
+    //! generating sources by the interfaces
     for(const auto& i : this->interfaces){
       i.second->writeOutputFiles(*this,this->md);
     }

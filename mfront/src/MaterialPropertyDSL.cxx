@@ -600,6 +600,10 @@ namespace mfront{
     // creating directories
     systemCall::mkdir("include");
     systemCall::mkdir("src");
+    //! generating sources du to external material properties and models
+    for(const auto& em : this->externalMFrontFiles){
+      this->callMFront(em.second,{em.first});
+    }
     // calling interfaces
     for(const auto& i : this->interfaces){
       if(getVerboseMode()>=VERBOSE_LEVEL2){

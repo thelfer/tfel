@@ -326,20 +326,9 @@ namespace mfront{
     const auto path = SearchFile::search(f);
     ModelDSL dsl;
     try{
+      dsl.setInterfaces({"mfront"});
       dsl.analyseFile(path,{},{});
-    } catch(std::exception& e){
-      this->throwRuntimeError("BehaviourDSLCommon::getModelDescription",
-			      "error while treating file '"+f+"'\n"+
-			      std::string(e.what()));
-    } catch(...){
-      this->throwRuntimeError("BehaviourDSLCommon::getModelDescription",
-			      "error while treating file '"+f+"'");
-    }
-    // generating the sources
-    try{
-      MFront m;
-      m.setInterface("mfront");
-      const auto t = m.treatFile(path);
+      const auto t = dsl.getTargetsDescription();
       if(!t.specific_targets.empty()){
 	this->throwRuntimeError("BehaviourDSLCommon::getModelDescription",
 				"error while treating file '"+f+"'.\n"
@@ -348,7 +337,8 @@ namespace mfront{
       for(const auto& h:t.headers){
 	this->appendToIncludes("#include\""+h+"\"");
       }
-      this->atds.push_back(t);
+      this->atds.push_back(std::move(t));
+      this->externalMFrontFiles.insert({path,{"mfront"}});
     } catch(std::exception& e){
       this->throwRuntimeError("BehaviourDSLCommon::getModelDescription",
 			      "error while treating file '"+f+"'\n"+
@@ -798,6 +788,10 @@ namespace mfront{
     tfel::system::systemCall::mkdir("include");
     tfel::system::systemCall::mkdir("include/TFEL/");
     tfel::system::systemCall::mkdir("include/TFEL/Material");
+    //! generating sources du to external material properties and models
+    for(const auto& em : this->externalMFrontFiles){
+      this->callMFront(em.second,{em.first});
+    }
     this->behaviourFile.open("include/"+this->behaviourFileName);
     if(!this->behaviourFile){
       this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles",

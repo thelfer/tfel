@@ -545,8 +545,7 @@ namespace mfront{
     return td;
   } // end of MFront::treatFile(void)
 
-  void
-  MFront::analyseTargetsFile(){
+  void MFront::analyseTargetsFile(){
     using tfel::system::dirStringSeparator;
     MFrontLockGuard lock;
     const auto file = "src"+dirStringSeparator()+"targets.lst";
@@ -632,8 +631,7 @@ namespace mfront{
     callMake(target);
   } // end of MFront::buildLibraries
 
-  void
-  MFront::cleanLibraries()
+  void MFront::cleanLibraries()
   {
     callMake("clean");
   } // end of MFront::cleanLibraries
@@ -770,6 +768,9 @@ namespace mfront{
 	    log << "The following libraries have been built :\n";
 	  }
 	  for(const auto& l:this->targets){
+	    if(l.name=="MFrontMaterialLaw"){
+	      continue;
+	    }
 	    log << "- " << l.prefix << l.name << "." << l.suffix << " : ";
 	    for(const auto& pts:l.epts){
 	      log << " " << pts;

@@ -41,6 +41,7 @@ tfel_python_module(material
 if(NOT WIN32)
   tfel_python_module(system system.cxx
     ProcessManagerCommand.cxx
+    LibraryInformation.cxx
     ExternalLibraryManager.cxx
     ExternalBehaviourDescription.cxx)
 else(NOT WIN32)

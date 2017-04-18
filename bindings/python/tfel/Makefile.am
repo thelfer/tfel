@@ -55,6 +55,7 @@ material_la_LDFLAGS = -module
 
 system_la_SOURCES = system.cxx                       \
 		    ProcessManagerCommand.cxx        \
+		    LibraryInformation.cxx           \
 		    ExternalLibraryManager.cxx       \
 		    ExternalBehaviourDescription.cxx
 system_la_LIBADD  = -L@top_builddir@/src/System -lTFELSystem    \

@@ -63,9 +63,9 @@ namespace mfront{
   // res.second.first : list of object files
   // res.second.first : list of library dependencies
   static std::pair<bool,std::pair<std::string,std::string>>
-    getLibrarySourcesAndDependencies(const TargetsDescription& t,
-				     const GeneratorOptions& o,
-				     const std::string& name)
+  getLibrarySourcesAndDependencies(const TargetsDescription& t,
+				   const GeneratorOptions& o,
+				   const std::string& name)
   {
     const auto& l = t[name];
     auto res = std::pair<bool,std::pair<std::string,std::string>>{};
@@ -289,7 +289,9 @@ namespace mfront{
     m << ".PHONY = ";
     m << "all clean ";
     for(const auto& l : t){
-      m << l.prefix <<  l.name << "." << l.suffix << " ";
+      if(l.name!="MFrontMaterialLaw"){
+	m << l.prefix <<  l.name << "." << l.suffix << " ";
+      }
     }
     for(const auto& target : t.specific_targets){
       if((target.first!="all")&&(target.first!="clean")){
@@ -299,7 +301,9 @@ namespace mfront{
     m << "\n\n";
     m << "all : ";
     for(const auto& l : t){
-      m << l.prefix << l.name << "." << l.suffix << " ";
+      if(l.name!="MFrontMaterialLaw"){
+	m << l.prefix << l.name << "." << l.suffix << " ";
+      }
     }
     auto p5=t.specific_targets.find("all");
     if(p5!=t.specific_targets.end()){
@@ -324,6 +328,9 @@ namespace mfront{
       }
     }
     for(const auto& l : t){
+      if(l.name=="MFrontMaterialLaw"){
+	continue;
+      }
       m << l.prefix << l.name << "." << l.suffix << " : ";
       auto dep = getLibrarySourcesAndDependencies(t,o,l.name);
       const auto hasCxxSources = dep.first;

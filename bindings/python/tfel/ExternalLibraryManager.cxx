@@ -1,7 +1,7 @@
 /*! 
  * \file  bindings/python/tfel/ExternalLibraryManager.cxx
  * \brief
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \brief 11 juil. 2011
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
@@ -12,7 +12,6 @@
  */
 
 #include<boost/python.hpp>
-
 #include"TFEL/System/ExternalLibraryManager.hxx"
 
 void declareExternalLibraryManager();

@@ -16,11 +16,15 @@
 void declareProcessManagerCommand();
 #endif /* _WIN32 */
 void declareExternalLibraryManager();
+void declareLibraryInformation();
+void declareExternalBehaviourDescription();
 
 BOOST_PYTHON_MODULE(system)
 {
 #ifndef _WIN32
   declareProcessManagerCommand();
 #endif /* _WIN32 */
+  declareLibraryInformation();
   declareExternalLibraryManager();
+  declareExternalBehaviourDescription();
 }

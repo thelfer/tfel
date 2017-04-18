@@ -80,6 +80,7 @@ bindings/python/tfel/ExternalBehaviourDescription.cxx -text
 bindings/python/tfel/ExternalLibraryManager.cxx -text
 bindings/python/tfel/Glossary.cxx -text
 bindings/python/tfel/GlossaryEntry.cxx -text
+bindings/python/tfel/LibraryInformation.cxx -text
 bindings/python/tfel/Makefile.am -text
 bindings/python/tfel/ModellingHypothesis.cxx -text
 bindings/python/tfel/OutOfBoundsPolicy.cxx -text

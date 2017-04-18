@@ -768,9 +768,8 @@ namespace mfront
     }
   } // end of DSLBase::treatLink
 
-  void
-  DSLBase::callMFront(const std::vector<std::string>& interfaces,
-		      const std::vector<std::string>& files)
+  void DSLBase::callMFront(const std::vector<std::string>& interfaces,
+			   const std::vector<std::string>& files)
   {
     MFront m;
     for(const auto& i : interfaces){
@@ -797,7 +796,9 @@ namespace mfront
     }
     this->readSpecifiedToken("DSLBase::treatMfront","}");
     this->readSpecifiedToken("DSLBase::treatMfront",";");
-    this->callMFront(vinterfaces,vfiles);
+    for(const auto& f: vfiles){
+      this->externalMFrontFiles.insert({f,vinterfaces});
+    }
   } // end of DSLBase::treatMfront
 
   std::string
@@ -862,7 +863,14 @@ namespace mfront
     try{
       MFrontMaterialPropertyInterface minterface;
       const auto& path = SearchFile::search(f);
+      mp.setInterfaces({"mfront"});
       mp.analyseFile(path);
+      const auto t = mp.getTargetsDescription();
+      if(!t.specific_targets.empty()){
+	this->throwRuntimeError("DSLBase::handleMaterialPropertyDescription",
+				"error while treating file '"+f+"'.\n"
+				"Specific targets are not supported");
+      }
       const auto& mpd = mp.getMaterialPropertyDescription();
       const auto& mname = minterface.getFunctionName(mpd.material,
 						     mpd.law);
@@ -872,15 +880,8 @@ namespace mfront
       this->appendToIncludes("#include\""+minterface.getHeaderFileName(mpd.material,
 								       mpd.law)+".hxx\"");
       this->addMaterialLaw(mname);
-      MFront m;
-      m.setInterface("mfront");
-      const auto t = m.treatFile(path);
-      if(!t.specific_targets.empty()){
-	this->throwRuntimeError("DSLBase::handleMaterialPropertyDescription",
-				"error while treating file '"+f+"'.\n"
-				"Specific targets are not supported");
-      }
-      this->atds.push_back(t);
+      this->atds.push_back(std::move(t));
+      this->externalMFrontFiles.insert({path,{"mfront"}});
     } catch(std::exception& e){
       this->throwRuntimeError("DSLBase::handleMaterialPropertyDescription",
 			      "error while treating file '"+f+"'\n"+

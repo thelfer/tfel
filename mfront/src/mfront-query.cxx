@@ -74,18 +74,24 @@ int main(const int argc, const char *const *const argv)
 	  throw(runtime_error("mfront-query : unsupported dsl type"));
 	}
       } else if ((strcmp(*a,"--help")==0)||(strcmp(*a,"-h")==0)){
-	cout << "Usage : " << argv[0] << " [options] [files]" << endl;
-	cout << "Available options are :" << endl
-	     << "--help,-h                     : print this message" << endl
-	     << "--usage                       : show how to use " << argv[0] << endl
-	     << "--help-behaviour-queries-list : list all queries avaiable for mfront behaviour files" << endl
-	     << "--help-model-queries-list : list all queries avaiable for mfront model files" << endl;
+	cout << "Usage : " << argv[0] << " [options] [files]\n"
+	     << "Available options are:\n"
+	     << "--help,-h                             : "
+	     << "print this message\n"
+	     << "--usage                               : "
+	     << "show how to use " << argv[0] << endl
+	     << "--help-material-property-queries-list : "
+	     << "list all queries avaiable for mfront behaviour files\n"
+	     << "--help-behaviour-queries-list         : "
+	     << "list all queries avaiable for mfront behaviour files\n"
+	     << "--help-model-queries-list             : "
+	     << "list all queries avaiable for mfront model files\n";
 	exit(EXIT_SUCCESS);
       } else if ((strcmp(*a,"--version")==0)||(strcmp(*a,"-v")==0)){
 	cout << MFrontHeader::getHeader();
 	std::exit(EXIT_SUCCESS);
       } else if (strcmp(*a,"--usage")==0){
-	cout << "Usage : " << argv[0] << " [options] [files]" << endl;
+	cout << "Usage : " << argv[0] << " [options] [files]\n";
 	std::exit(EXIT_SUCCESS);
       } else if (strcmp(*a,"--help-material-property-queries-list")==0){
 	const char* args[2] = {argv[0],"--help"};
