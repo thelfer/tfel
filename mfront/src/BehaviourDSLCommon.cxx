@@ -5938,41 +5938,51 @@ namespace mfront{
     }
     this->srcFile << ",const char* const fn)" 
 		  << "{\n"
-		  << "using namespace std;\n"
-		  << "ifstream f(fn);\n"
+		  << "auto tokenize = [](const std::string& line){\n"
+		  << "std::istringstream tokenizer(line);\n"
+		  << "std::vector<std::string> tokens;\n"
+		  << "std::copy(std::istream_iterator<std::string>(tokenizer),\n"
+		  << "std::istream_iterator<std::string>(),\n"
+		  << "std::back_inserter(tokens));\n"
+		  << "return tokens;\n"
+		  << "};\n"
+		  << "std::ifstream f(fn);\n"
 		  << "if(!f){\n"
       		  << "return;\n"
       		  << "}\n"
+		  << "size_t ln = 1u;\n"
 		  << "while(!f.eof()){\n"
-		  << "string p;\n"
-		  << "string v;\n"
-		  << "f >> p;\n"
-		  << "if(p.empty()){\n"
-		  << "if(!f.eof()){\n"
-		  << "string msg(\"" << cname << "::readParameters : \");\n"
-		  << "msg+=\"Error while parsing file '\";\n"
-		  << "msg+=fn;\n"
-		  << "msg+=\"'\";\n"
-		  << "throw(runtime_error(msg));\n"
+		  << "auto line = std::string{};\n"
+		  << "std::getline(f,line);\n"
+		  << "auto tokens = tokenize(line);\n"
+		  << "auto throw_if = [ln,line,fn](const bool c,const std::string& m){\n"
+		  << "if(c){throw(std::runtime_error(\"" << cname << "::readParameters: \"\n"
+		  << "\"error at line '\"+std::to_string(ln)+\"' \"\n"
+		  << "\"while reading parameter file '\"+std::string(fn)+\"'\"\n"
+		  << "\"(\"+m+\")\"));}\n"
+		  << "};\n"
+		  << "if(tokens.empty()){\n"
+		  << "continue;\n"
 		  << "}\n"
-		  << "break;\n"
+		  << "if(tokens[0][0]=='#'){\n"
+		  << "continue;\n"
 		  << "}\n"
-		  << "f >> v;\n";
+		  << "throw_if(tokens.size()!=2u,\"invalid number of tokens\");\n";
     bool first = true;
     for(const auto& v : params){
       const auto b = ((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 		      ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 		       (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,v.name))));
       auto write = [&v,&write_if,&b,&dcname,&cname](std::ostream& os,const std::string& vn, const std::string& en){
-	os << "\"" <<  en << "\"==p){\n";
+	os << "\"" <<  en << "\"==tokens[0]){\n";
 	if(b){
 	  os << "pi." << vn << " = ";
 	  if(v.type=="real"){
-	    os <<  cname << "::getDouble(p,v);\n";
+	    os <<  cname << "::getDouble(tokens[0],tokens[1]);\n";
 	  } else if(v.type=="int"){
-	    os << cname << "::getInt(p,v);\n";
+	    os << cname << "::getInt(tokens[0],tokens[1]);\n";
 	  } else if(v.type=="ushort"){
-	    os << cname << "::getUnsignedShort(p,v);\n";
+	    os << cname << "::getUnsignedShort(tokens[0],tokens[1]);\n";
 	  } else {
 	    throw(std::runtime_error("BehaviourDSLCommon::writeSrcFileParametersInitializer: "
 				     "invalid parameter type '"+v.type+"'"));
@@ -5980,11 +5990,11 @@ namespace mfront{
 	} else {
 	  os << dcname << "::get().set(\"" << en << "\",\n";
 	  if(v.type=="real"){
-	    os << dcname << "::getDouble(p,v)";
+	    os << dcname << "::getDouble(tokens[0],tokens[1])";
 	  } else if(v.type=="int"){
-	    os << dcname << "::getInt(p,v)";
+	    os << dcname << "::getInt(tokens[0],tokens[1])";
 	  } else if(v.type=="ushort"){
-	    os << dcname << "::getUnsignedShort(p,v)";
+	    os << dcname << "::getUnsignedShort(tokens[0],tokens[1])";
 	  } else {
 	    throw(std::runtime_error("BehaviourDSLCommon::writeSrcFileParametersInitializer: "
 				     "invalid parameter type '"+v.type+"'"));
@@ -6005,11 +6015,7 @@ namespace mfront{
       }
     }
     this->srcFile << "} else {\n"
-		  << "string msg(\"" << cname << "::readParameters : \");\n"
-		  << "msg+=\"Error while parsing file '\";\n"
-		  << "msg+=fn;\n"
-		  << "msg+=\"'. Invalid parameter '\"+p+\"'\";\n"
-		  << "throw(runtime_error(msg));\n"
+		  << "throw_if(true,\"invalid parameter '\"+tokens[0]+\"'\");\n"
 		    << "}\n"
 		  << "}\n"
 		  << "}\n\n";
