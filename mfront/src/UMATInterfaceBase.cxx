@@ -843,8 +843,7 @@ namespace mfront
     return b;
   }
 
-  void
-  UMATInterfaceBase::writeVisibilityDefines(std::ostream& out) const
+  void UMATInterfaceBase::writeVisibilityDefines(std::ostream& out) const
   {
     out << "#ifdef _WIN32\n"
 	<< "#ifndef NOMINMAX\n"
@@ -857,11 +856,8 @@ namespace mfront
 	<< "#endif /* MFRONT_SHAREDOBJ */\n\n"; 
   } // end of UMATInterfaceBase::writeVisibilityDefines
 
-  void
-  UMATInterfaceBase::checkParametersType(bool& rp,
-					 bool& ip,
-					 bool& up,
-					 const VariableDescriptionContainer& pc) const
+  void UMATInterfaceBase::checkParametersType(bool& rp,bool& ip,bool& up,
+					      const VariableDescriptionContainer& pc) const
   {
     rp = false;
     ip = false;

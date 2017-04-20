@@ -1231,7 +1231,6 @@ namespace mfront
     const auto& g = tfel::glossary::Glossary::getGlossary();
     constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     for(auto ov : md.outputs){
-      const auto en = ov.getExternalName();
       VariableDescription dov{ov.type,"d"+ov.name,
 	  ov.arraySize,ov.lineNumber};
       if(ov.type=="Field"){
@@ -1240,11 +1239,6 @@ namespace mfront
       }
       ov.setAttribute("ComputedByExternalModel",true,false);
       this->addAuxiliaryStateVariable(uh,ov,BehaviourData::UNREGISTRED);
-      if(g.contains(en)){
-	this->setGlossaryName(uh,ov.name,en);
-      } else {
-	this->setEntryName(uh,ov.name,en);
-      }
       this->addLocalVariable(uh,dov,BehaviourData::UNREGISTRED);
     }
     this->models.push_back(md);

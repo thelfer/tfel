@@ -420,23 +420,20 @@ namespace mfront{
     return this->getParameters().getVariableByExternalName(v);
   } // end of BehaviourData::getParameterDescriptionByExternalName
   
-  void
-  BehaviourData::addMaterialProperty(const VariableDescription& v,
-				   const RegistrationStatus s)
+  void BehaviourData::addMaterialProperty(const VariableDescription& v,
+					  const RegistrationStatus s)
   {
     this->addVariable(this->materialProperties,v,s,false);
   } // end of BehaviourData::addMaterialProperty
 
-  void
-  BehaviourData::addIntegrationVariable(const VariableDescription& v,
-					const RegistrationStatus s)
+  void BehaviourData::addIntegrationVariable(const VariableDescription& v,
+					     const RegistrationStatus s)
   {
     this->addVariable(this->integrationVariables,v,s,true);
   } // end of BehaviourData::addIntegrationVariable
 
-  void
-  BehaviourData::addStateVariable(const VariableDescription& v,
-				  const RegistrationStatus s)
+  void BehaviourData::addStateVariable(const VariableDescription& v,
+				       const RegistrationStatus s)
   {
     this->addVariable(this->stateVariables,v,s,true);
     this->addVariable(this->integrationVariables,v,

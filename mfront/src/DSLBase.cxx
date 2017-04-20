@@ -117,11 +117,9 @@ namespace mfront
 			    "unable to find a temporary variable");
   }
 
-  
-  void
-  DSLBase::openFile(const std::string& f,
-		    const std::vector<std::string>& ecmds,
-		    const std::map<std::string,std::string>& s)
+  void DSLBase::openFile(const std::string& f,
+			 const std::vector<std::string>& ecmds,
+			 const std::map<std::string,std::string>& s)
   {
     CxxTokenizer::openFile(f);
     // substitutions
@@ -158,7 +156,7 @@ namespace mfront
   DSLBase::~DSLBase() = default;
   
   void DSLBase::readNextBlock(CodeBlock& res1,
-			 CodeBlock& res2,
+			      CodeBlock& res2,
 			      const CodeBlockParserOptions& o1,
 			      const CodeBlockParserOptions& o2)
   {
@@ -404,8 +402,7 @@ namespace mfront
     }
   } // end of DSLBase::checkNotEndOfFile
 
-  unsigned short
-  DSLBase::readUnsignedShort(const std::string& m)
+  unsigned short DSLBase::readUnsignedShort(const std::string& m)
   {
     this->checkNotEndOfFile(m,"Cannot read unsigned short value.");
     unsigned short value;
@@ -502,51 +499,41 @@ namespace mfront
 			    const std::string& type,
 			    const bool allowArray)
   {
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("DSLBase::readVarList",m);}
+    };
     auto endComment = std::string{};
     auto endOfTreatment=false;
     while((this->current!=this->tokens.end())&&
 	  (!endOfTreatment)){
       const auto& varName = this->current->value;
-      if(!this->isValidIdentifier(this->current->value)){
-	this->throwRuntimeError("DSLBase::readVarList : ",
-				"variable given is not valid (read '"+this->current->value+"').");
-      }
+      throw_if(!this->isValidIdentifier(this->current->value),
+	       "variable given is not valid (read '"+this->current->value+"').");
       auto lineNumber = this->current->line;
       unsigned int asize = 1u;
       ++(this->current);
       this->checkNotEndOfFile("DSLBase::readVarList");
       if(this->current->value=="["){
-	if(!allowArray){
-	  this->throwRuntimeError("DSLBase::readVarList : ",
-				  "variable '"+varName+"' can't be declared an array");
-	}
+	throw_if(!allowArray,"variable '"+varName+"' can't be declared an array");
 	auto array_size = std::string{};
 	++(this->current);
 	this->checkNotEndOfFile("DSLBase::readVarList");
 	while(this->current->value!="]"){
-	  if((this->current->flag!=tfel::utilities::Token::Standard)||
-	     (this->current->value==";")){
-	    this->throwRuntimeError("DSLBase::readVarList : ",
-				    "invalid array size for '"+varName+"'");
-	  }
+	  throw_if((this->current->flag!=tfel::utilities::Token::Standard)||
+		   (this->current->value==";"),
+		   "invalid array size for '"+varName+"'");
 	  array_size += this->current->value;
 	  ++(this->current);
 	  this->checkNotEndOfFile("DSLBase::readVarList");
 	}
-	if(array_size.empty()){
-	  this->throwRuntimeError("DSLBase::readVarList : ",
-				  "empty array size for '"+varName+"'");
-	}
+	throw_if(array_size.empty(),"empty array size for '"+varName+"'");
 	tfel::math::IntegerEvaluator ev(array_size);
 	const auto& vars = ev.getVariablesNames();
 	for(const auto& v:vars){
 	  ev.setVariableValue(v,this->getIntegerConstant(v));
 	}
 	const auto iv = ev.getValue();
-	if(iv<=0){
-	  this->throwRuntimeError("DSLBase::readVarList : ",
-				  "invalid array size for '"+varName+"'");
-	}
+	throw_if(iv<=0,"invalid array size for '"+varName+"'");
 	asize = static_cast<unsigned int>(iv);
 	this->readSpecifiedToken("DSLBase::readVarList","]");
 	this->checkNotEndOfFile("DSLBase::readVarList");
@@ -558,8 +545,7 @@ namespace mfront
 	endComment = this->current->comment;
 	++(this->current);
       } else {
-	this->throwRuntimeError("DSLBase::readVarList",
-				", or ; expected after '"+varName+"'");
+	throw_if(true,"',' or ';' expected after '"+varName+"'");
       }
       cont.push_back(VariableDescription(type,varName,asize,lineNumber));
       if(!this->currentComment.empty()){
@@ -576,33 +562,29 @@ namespace mfront
     }
     if(!endOfTreatment){
       --(this->current);
-      this->throwRuntimeError("DSLBase::readVarList",
-			      "Expected ';' before end of file");
+      throw_if(true,"expected ';' before end of file");
     }
   }
 
   void DSLBase::readVarList(VariableDescriptionContainer& cont,
 			    const bool allowArray)
   {
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("DSLBase::readVarList",m);}
+    };
     this->checkNotEndOfFile("DSLBase::readVarList",
 			    "Cannot read type of varName.\n");
     auto type=this->current->value;
-    if(!this->isValidIdentifier(type,false)){
-      --(this->current);
-      this->throwRuntimeError("DSLBase::readVarList",
-			      "given type "+type+"is not valid.");
-    }
+    throw_if(!this->isValidIdentifier(type,false),
+	     "given type "+type+"is not valid.");
     ++(this->current);
     this->checkNotEndOfFile("DSLBase::readVarList");
     while(this->current->value=="::"){
       ++(this->current);
       this->checkNotEndOfFile("DSLBase::readVarList");
       const auto t = this->current->value;
-      if(!this->isValidIdentifier(t,false)){
-	--(this->current);
-	this->throwRuntimeError("DSLBase::readVarList",
-				"given type '"+t+"' is not valid.");
-      }
+      throw_if(!this->isValidIdentifier(t,false),
+	       "given type '"+t+"' is not valid.");
       type += "::"+t;
       ++(this->current);
       this->checkNotEndOfFile("DSLBase::readVarList");
@@ -614,11 +596,8 @@ namespace mfront
       type += "<";
       while(openBrackets!=0){
 	const auto t = this->current->value;
-	if((!this->isValidIdentifier(t,false))&&
-	   (!isInteger(t))){
-	  this->throwRuntimeError("DSLBase::readVarList",
-				  "given type '"+t+"' is not valid.");
-	}
+	throw_if((!this->isValidIdentifier(t,false))&&(!isInteger(t)),
+		 "given type '"+t+"' is not valid.");
 	++(this->current);
 	this->checkNotEndOfFile("DSLBase::readVarList");
 	type += t;
@@ -626,18 +605,11 @@ namespace mfront
 	  ++(this->current);
 	  this->checkNotEndOfFile("DSLBase::readVarList");
 	  const auto t2 = this->current->value;
-	  if((!this->isValidIdentifier(t2,false))&&
-	     (!isInteger(t2))){
-	    --(this->current);
-	    this->throwRuntimeError("DSLBase::readVarList",
-				    "given type '"+t+"' is not valid.");
-	  }
+	  throw_if((!this->isValidIdentifier(t2,false))&&(!isInteger(t2)),
+		   "given type '"+t+"' is not valid.");
 	  type+=",";
 	} else if(this->current->value=="<"){
-	  if(isInteger(t)){
-	    this->throwRuntimeError("DSLBase::readVarList",
-				    "given type '"+t+"'is not valid.");
-	  }
+	  throw_if(isInteger(t),"given type '"+t+"'is not valid.");
 	  ++openBrackets;
 	  ++(this->current);
 	  this->checkNotEndOfFile("DSLBase::readVarList");
@@ -721,8 +693,7 @@ namespace mfront
     return r;
   } // end of DSLBase::readArrayOfString
 
-  bool
-  DSLBase::readBooleanValue(const std::string& m)
+  bool DSLBase::readBooleanValue(const std::string& m)
   {
     bool b = false;
     this->checkNotEndOfFile(m,"Expected a boolean value");
@@ -738,8 +709,7 @@ namespace mfront
     return b;
   } // end of DSLBase::readBooleanValue
 
-  std::string
-  DSLBase::readString(const std::string& m)
+  std::string DSLBase::readString(const std::string& m)
   {
     this->checkNotEndOfFile(m,"Expected a string or '{'");
     if(this->current->flag!=tfel::utilities::Token::String){

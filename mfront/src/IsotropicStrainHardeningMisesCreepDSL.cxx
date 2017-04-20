@@ -44,22 +44,19 @@ namespace mfront{
     this->mb.setAttribute(h,BehaviourData::isConsistentTangentOperatorSymmetric,true);
   }
 
-  std::string
-  IsotropicStrainHardeningMisesCreepDSL::getName()
+  std::string IsotropicStrainHardeningMisesCreepDSL::getName()
   {
     return "IsotropicStrainHardeningMisesCreep";
   }
 
-  std::string
-  IsotropicStrainHardeningMisesCreepDSL::getDescription()
+  std::string IsotropicStrainHardeningMisesCreepDSL::getDescription()
   {
     return "this parser is used for standard strain hardening creep behaviours "
-           "of the form dp/dt=f(s,p) where p is the equivalent creep strain "
-           "and s the equivalent mises stress";
+      "of the form dp/dt=f(s,p) where p is the equivalent creep strain "
+      "and s the equivalent mises stress";
   } // end of IsotropicStrainHardeningMisesCreepDSL::getDescription
 
-  void
-  IsotropicStrainHardeningMisesCreepDSL::endsInputFileProcessing()
+  void IsotropicStrainHardeningMisesCreepDSL::endsInputFileProcessing()
   {
     IsotropicBehaviourDSLBase::endsInputFileProcessing();
     auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -72,22 +69,22 @@ namespace mfront{
   void
   IsotropicStrainHardeningMisesCreepDSL::writeBehaviourParserSpecificMembers(const Hypothesis h)
   {
-    using namespace std;
     this->checkBehaviourFile();
     if(!this->mb.hasCode(h,BehaviourData::FlowRule)){
-      string msg("IsotropicStrainHardeningMisesCreepDSL::writeBehaviourParserSpecificMembers : ");
-      msg += "no flow rule declared (use the @FlowRule directive)";
-      throw(runtime_error(msg));
+      this->throwRuntimeError("IsotropicStrainHardeningMisesCreepDSL::"
+			      "writeBehaviourParserSpecificMembers",
+			      "no flow rule declared "
+			      "(use the @FlowRule directive)");
     }
-    this->behaviourFile << "void computeFlow(){\n";
-    this->behaviourFile << "using namespace std;\n";
-    this->behaviourFile << "using namespace tfel::math;\n";
-    this->behaviourFile << "using namespace tfel::material;\n";
-    this->behaviourFile << "using std::vector;\n";
+    this->behaviourFile << "void computeFlow(){\n"
+			<< "using namespace std;\n"
+			<< "using namespace tfel::math;\n"
+			<< "using namespace tfel::material;\n"
+			<< "using std::vector;\n";
     writeMaterialLaws("IsotropicStrainHardeningMisesCreepDSL::writeBehaviourParserSpecificMembers",
 		      this->behaviourFile,this->mb.getMaterialLaws());
-    this->behaviourFile << this->mb.getCode(h,BehaviourData::FlowRule) << endl
-			<< "}\n\n"
+    this->behaviourFile << this->mb.getCode(h,BehaviourData::FlowRule) 
+			<< "\n}\n\n"
 			<< "bool NewtonIntegration(void){\n"
 			<< "using namespace std;\n"
 			<< "using namespace tfel::math;\n"
@@ -117,31 +114,31 @@ namespace mfront{
 			  << "::NewtonIntegration() : iteration \" "
 			  << "<< iter << \" : \" << std::abs(tfel::math::base_cast(newton_f)) << endl;\n";
     }
-    this->behaviourFile << "converge = (std::abs(tfel::math::base_cast(newton_f))<";
-    this->behaviourFile << "(this->epsilon));\n";
-    this->behaviourFile << "} else {\n";
-    this->behaviourFile << "inversible=false;\n";
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "}\n\n";
-    this->behaviourFile << "if(inversible==false){\n";
-    this->behaviourFile << "return false;\n";
-    this->behaviourFile << "}\n\n";
-    this->behaviourFile << "if(iter==this->iterMax){\n";
+    this->behaviourFile << "converge = (std::abs(tfel::math::base_cast(newton_f))<"
+			<< "(this->epsilon));\n"
+			<< "} else {\n"
+			<< "inversible=false;\n"
+			<< "}\n"
+			<< "}\n\n"
+			<< "if(inversible==false){\n"
+			<< "return false;\n"
+			<< "}\n\n"
+			<< "if(iter==this->iterMax){\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::NewtonIntegration() : no convergence after \" "
 			  << "<< iter << \" iterations\"<< endl << endl;\n";
       this->behaviourFile << "cout << *this << endl;\n";
     }
-    this->behaviourFile << "return false;\n";
-    this->behaviourFile << "}\n\n";
+    this->behaviourFile << "return false;\n"
+			<< "}\n\n";
     if(getDebugMode()){
       this->behaviourFile << "cout << \"" << this->mb.getClassName()
 			  << "::NewtonIntegration() : convergence after \" "
 			  << "<< iter << \" iterations\"<< endl << endl;\n";
     }
-    this->behaviourFile << "return true;\n";
-    this->behaviourFile << "}\n\n";
+    this->behaviourFile << "return true;\n"
+			<< "}\n\n";
   } // end of writeBehaviourParserSpecificMembers
 
   void IsotropicStrainHardeningMisesCreepDSL::writeBehaviourIntegrator(const Hypothesis h)
@@ -149,12 +146,12 @@ namespace mfront{
     const auto  btype = this->mb.getBehaviourTypeFlag();
     const auto& d = this->mb.getBehaviourData(h);
     this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n";
-    this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
-    this->behaviourFile << "*/\n";
-    this->behaviourFile << "IntegrationResult\n";
-    this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt) override{\n";
-    this->behaviourFile << "using namespace std;\n";
+    this->behaviourFile << "/*!\n"
+			<< "* \\brief Integrate behaviour law over the time step\n"
+			<< "*/\n"
+			<< "IntegrationResult\n"
+			<< "integrate(const SMFlag smflag,const SMType smt) override{\n"
+			<< "using namespace std;\n";
     if(this->mb.useQt()){
       this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
 			  << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
@@ -172,20 +169,20 @@ namespace mfront{
     } else {
       this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
-    this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
+    this->behaviourFile << "}\n"
+			<< "if(smt!=NOSTIFFNESSREQUESTED){\n"
+			<< "if(!this->computeConsistentTangentOperator(smt)){\n";
     if(this->mb.useQt()){        
       this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
       this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "this->deel = this->deto-(this->dp)*(this->n);\n";
-    this->behaviourFile << "this->updateStateVariables();\n";
-    this->behaviourFile << "this->sig  = (this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*(this->eel);\n";
-    this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
+    this->behaviourFile << "}\n"
+			<< "}\n"
+			<< "this->deel = this->deto-(this->dp)*(this->n);\n"
+			<< "this->updateStateVariables();\n"
+			<< "this->sig  = (this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*(this->eel);\n"
+			<< "this->updateAuxiliaryStateVariables();\n";
     for(const auto& v : d.getPersistentVariables()){
       this->writePhysicalBoundsChecks(this->behaviourFile,v,false);
     }
@@ -203,38 +200,38 @@ namespace mfront{
   void
   IsotropicStrainHardeningMisesCreepDSL::writeBehaviourComputeTangentOperator(const Hypothesis)
   {
-    this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n";
-    this->behaviourFile << "using tfel::material::computeElasticStiffness;\n";
-    this->behaviourFile << "using tfel::math::st2tost2;\n";
-    this->behaviourFile << "if(smt==CONSISTENTTANGENTOPERATOR){\n";
-    this->behaviourFile << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n";
-    this->behaviourFile << "if(this->seq_e>(0.01*(this->young))*std::numeric_limits<stress>::epsilon()){\n";
-    this->behaviourFile << "const real ccto_tmp_1 =  this->dp/this->seq_e;\n";
-    this->behaviourFile << "const auto& M = st2tost2<N,Type>::M();\n";
-    this->behaviourFile << "this->Dt += -Type(4)*(this->mu)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_1-this->df_dseq*(this->dt)/(Type(1)+(this->theta)*(this->dt)*(Type(3)*(this->mu)*this->df_dseq-(this->df_dp))))*((this->n)^(this->n)));\n";
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "} else if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";
-    this->behaviourFile << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n";
-    this->behaviourFile << "} else {\n";
-    this->behaviourFile << "return false;";
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "return true;\n";
-    this->behaviourFile << "}\n\n";
+    this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n"
+			<< "using tfel::material::computeElasticStiffness;\n"
+			<< "using tfel::math::st2tost2;\n"
+			<< "if(smt==CONSISTENTTANGENTOPERATOR){\n"
+			<< "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n"
+			<< "if(this->seq_e>(0.01*(this->young))*std::numeric_limits<stress>::epsilon()){\n"
+			<< "const real ccto_tmp_1 =  this->dp/this->seq_e;\n"
+			<< "const auto& M = st2tost2<N,Type>::M();\n"
+			<< "this->Dt += -Type(4)*(this->mu)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_1-this->df_dseq*(this->dt)/(Type(1)+(this->theta)*(this->dt)*(Type(3)*(this->mu)*this->df_dseq-(this->df_dp))))*((this->n)^(this->n)));\n"
+			<< "}\n"
+			<< "} else if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
+			<< "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n"
+			<< "} else {\n"
+			<< "return false;"
+			<< "}\n"
+			<< "return true;\n"
+			<< "}\n\n";
   }
 
   void
   IsotropicStrainHardeningMisesCreepDSL::writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis)
   {
     this->checkBehaviourFile();
-    this->behaviourFile << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+(";
-    this->behaviourFile << this->mb.getClassName();
-    this->behaviourFile << "::theta)*(this->deto)));\n";
-    this->behaviourFile << "this->seq_e = sigmaeq(this->se);\n";
-    this->behaviourFile << "if(this->seq_e>(0.01*(this->young))*std::numeric_limits<stress>::epsilon()){\n";
-    this->behaviourFile << "this->n = 1.5f*(this->se)/(this->seq_e);\n";
-    this->behaviourFile << "} else {\n";
-    this->behaviourFile << "this->n = StrainStensor(strain(0));\n";
-    this->behaviourFile << "}\n";
+    this->behaviourFile << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+("
+			<< this->mb.getClassName()
+			<< "::theta)*(this->deto)));\n"
+			<< "this->seq_e = sigmaeq(this->se);\n"
+			<< "if(this->seq_e>(0.01*(this->young))*std::numeric_limits<stress>::epsilon()){\n"
+			<< "this->n = 1.5f*(this->se)/(this->seq_e);\n"
+			<< "} else {\n"
+			<< "this->n = StrainStensor(strain(0));\n"
+			<< "}\n";
   } // end of IsotropicStrainHardeningMisesCreepDSL::writeBehaviourParserSpecificInitializeMethodPart
 
   IsotropicStrainHardeningMisesCreepDSL::~IsotropicStrainHardeningMisesCreepDSL() = default;

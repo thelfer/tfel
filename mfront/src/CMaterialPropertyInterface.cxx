@@ -84,30 +84,30 @@ namespace mfront
   
   void CMaterialPropertyInterface::writeBeginHeaderNamespace()
   {
-    this->headerFile << "#ifdef __cplusplus\n";
-    this->headerFile << "extern \"C\"{\n";
-    this->headerFile << "#endif /* __cplusplus */\n\n";
+    this->headerFile << "#ifdef __cplusplus\n"
+		     << "extern \"C\"{\n"
+		     << "#endif /* __cplusplus */\n\n";
   } // end of CMaterialPropertyInterface::writeBeginHeaderNamespace
   
   void CMaterialPropertyInterface::writeEndHeaderNamespace()
   {
-    this->headerFile << "#ifdef __cplusplus\n";
-    this->headerFile << "} /* end of extern \"C\" */\n";
-    this->headerFile << "#endif /* __cplusplus */\n\n";
+    this->headerFile << "#ifdef __cplusplus\n"
+		     << "} /* end of extern \"C\" */\n"
+		     << "#endif /* __cplusplus */\n\n";
   } // end of CMaterialPropertyInterface::writeEndHeaderNamespace(void)
 
   void CMaterialPropertyInterface::writeBeginSrcNamespace()
   {
-    this->srcFile << "#ifdef __cplusplus\n";
-    this->srcFile << "extern \"C\"{\n";
-    this->srcFile << "#endif /* __cplusplus */\n\n";
+    this->srcFile << "#ifdef __cplusplus\n"
+		  << "extern \"C\"{\n"
+		  << "#endif /* __cplusplus */\n\n";
   } // end of CMaterialPropertyInterface::writeBeginSrcNamespace
   
   void CMaterialPropertyInterface::writeEndSrcNamespace()
   {
-    this->srcFile << "#ifdef __cplusplus\n";
-    this->srcFile << "} // end of extern \"C\"\n";
-    this->srcFile << "#endif /* __cplusplus */\n\n";
+    this->srcFile << "#ifdef __cplusplus\n"
+		  << "} // end of extern \"C\"\n"
+		  << "#endif /* __cplusplus */\n\n";
   } // end of CMaterialPropertyInterface::writeEndSrcNamespace(void)
 
   std::string

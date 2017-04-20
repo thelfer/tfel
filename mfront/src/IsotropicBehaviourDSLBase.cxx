@@ -13,7 +13,7 @@
  */
 
 #include<sstream>
-
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/IsotropicBehaviourDSLBase.hxx"
 
@@ -73,8 +73,7 @@ namespace mfront{
     this->mb.setIntegrationScheme(BehaviourDescription::SPECIFICSCHEME);
   } // end of IsotropicBehaviourDSLBase::IsotropicBehaviourDSLBase
 
-  bool
-  IsotropicBehaviourDSLBase::isModellingHypothesisSupported(const Hypothesis h) const
+  bool IsotropicBehaviourDSLBase::isModellingHypothesisSupported(const Hypothesis h) const
   {
     return ((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
 	    (h==ModellingHypothesis::AXISYMMETRICAL)||
@@ -85,16 +84,10 @@ namespace mfront{
 
   void IsotropicBehaviourDSLBase::treatTheta()
   {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    double v;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("IsotropicBehaviourDSLBase::treatTheta",
 			    "Cannot read theta value.");
-    std::istringstream flux(current->value);
-    flux >> v;
-    if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("IsotropicBehaviourDSLBase::treatTheta",
-			      "Failed to read theta value.");
-    }
+    const auto v = tfel::utilities::convert<double>(this->current->value);
     if((v<0.)||(v>1.)){
       this->throwRuntimeError("IsotropicBehaviourDSLBase::treatTheta",
 			      "Theta value must be positive and smaller than 1.");
@@ -109,18 +102,12 @@ namespace mfront{
   void IsotropicBehaviourDSLBase::treatEpsilon()
   {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    double epsilon;
     this->checkNotEndOfFile("IsotropicBehaviourDSLBase::treatEpsilon",
-			    "Cannot read epsilon value.");
-    std::istringstream flux(current->value);
-    flux >> epsilon;
-    if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("IsotropicBehaviourDSLBase::treatEpsilon",
-			      "Failed to read epsilon value.");
-    }
+			    "cannot read epsilon value");
+    const auto epsilon = tfel::utilities::convert<double>(this->current->value);
     if(epsilon<0){
       this->throwRuntimeError("IsotropicBehaviourDSLBase::treatEpsilon",
-			      "Epsilon value must be positive.");
+			      "Epsilon value must be positive");
     }
     ++(this->current);
     this->readSpecifiedToken("IsotropicBehaviourDSLBase::treatEpsilon",";");
@@ -146,8 +133,8 @@ namespace mfront{
   void IsotropicBehaviourDSLBase::writeBehaviourParserSpecificIncludes()
   {
     this->checkBehaviourFile();
-    this->behaviourFile << "#include\"TFEL/Math/General/BaseCast.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Material/Lame.hxx\"\n\n";
+    this->behaviourFile << "#include\"TFEL/Math/General/BaseCast.hxx\"\n"
+			<< "#include\"TFEL/Material/Lame.hxx\"\n\n";
   } // end of IsotropicBehaviourDSLBase::writeBehaviourParserSpecificIncludes
 
   std::string
@@ -178,8 +165,7 @@ namespace mfront{
 			&IsotropicBehaviourDSLBase::flowRuleVariableModifier,true,false);
   } // end of IsotropicBehaviourDSLBase::treatFlowRule
 
-  void
-  IsotropicBehaviourDSLBase::endsInputFileProcessing()
+  void IsotropicBehaviourDSLBase::endsInputFileProcessing()
   {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(getVerboseMode()>=VERBOSE_DEBUG){
@@ -235,8 +221,7 @@ namespace mfront{
     }
   } // end of IsotropicBehaviourDSLBase::treatExternalStateVariable
 
-  void
-  IsotropicBehaviourDSLBase::writeBehaviourParserSpecificTypedefs()
+  void IsotropicBehaviourDSLBase::writeBehaviourParserSpecificTypedefs()
   {
     this->checkBehaviourFile();
     this->behaviourFile << "typedef typename tfel::math::ComputeBinaryResult<"

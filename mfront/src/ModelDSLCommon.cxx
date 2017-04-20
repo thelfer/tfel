@@ -58,7 +58,6 @@ namespace mfront{
     }
     return false;
   } // end of ModelDSLCommon::is(void)
-
   
   ModelDSLCommon::ModelDSLCommon(){
     for(const auto& v : DSLBase::getDefaultReservedNames()){
@@ -232,7 +231,7 @@ namespace mfront{
       }
     } else {
       for(const auto&i : this->interfaces){
-	auto p = i.second->treatKeyword(key,{i.first},
+	auto p = i.second->treatKeyword(key,{},
 					this->current,
 					this->tokens.end());
 	if(p.first){
@@ -296,8 +295,8 @@ namespace mfront{
   
   void ModelDSLCommon::treatFunction()
   {
-    auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("ModelDSLCommon::treatFunction: "+m));}
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("ModelDSLCommon::treatFunction",m);}
     };
     auto isStaticMemberName = [](const ModelDescription& d,
 				 const std::string& n) -> bool{
@@ -410,11 +409,8 @@ namespace mfront{
 		  ++p;
 		}
 	      }
-	      if(!found){
-		this->throwRuntimeError("ModelDSLCommon::treatFunction",
-					"trying to modify variable '"+var+
-					"' in the body of function '"+f.name+"'");
-	      }
+	      throw_if(!found,"trying to modify variable '"+var+
+		       "' in the body of function '"+f.name+"'");
 	      f.body  += var + " " + op + " ";
 	      f.modifiedVariables.insert(var);
 	      auto p6 = f.depths.find(var);

@@ -24,12 +24,14 @@
 
 namespace mfront{
 
+  /*!
+   * \brief Interface for C++ material properties
+   */
   struct CppMaterialPropertyInterface
     : public AbstractMaterialPropertyInterface
   {
-    static std::string 
-    getName(void);
-    
+    static std::string getName(void);
+    //! default constructor
     CppMaterialPropertyInterface();
     /*!
      * \param[in] k  : keyword treated
@@ -63,46 +65,20 @@ namespace mfront{
     virtual ~CppMaterialPropertyInterface();
     
   private:
-
-    /*
-     * \param const std::string&, className
-     * \param const std::string&, author
-     * \param const std::string&, date
-     * \param const std::string&, description
-     * \param const std::string&, includes
-     * \param const VariableDescriptionContainer&, inputs
-     * \param const VariableDescriptionContainer&, parameters
+    /*!
+     * \brief generate the header file.
+     * \param[in] mpd : material property description
+     * \param[in] fd  : mfront file description
      */
-    void writeHeaderFile(const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const VariableDescriptionContainer&,
-			 const VariableDescriptionContainer&);
-
-    /*
-     * \param const std::string&, name of the original file
-     * \param const std::string&, className
-     * \param const std::string&, author
-     * \param const std::string&, date
-     * \param const std::string&, output name
-     * \param const VariableDescriptionContainer&, inputs
-     * \param const std::vector<std::string>&, material laws
-     * \param const StaticVariableDescriptionContainer&, static variables
-     * \param const VariableDescriptionContainer&, parameters
-     * \param const LawFunction&, function definition
+    virtual void writeHeaderFile(const MaterialPropertyDescription&,
+				 const FileDescription&);
+    /*!
+     * \brief generate the source file.
+     * \param[in] mpd : material property description
+     * \param[in] fd  : mfront file description
      */
-    void writeSrcFile(const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const VariableDescriptionContainer&,
-		      const std::vector<std::string>&,
-		      const StaticVariableDescriptionContainer&,
-		      const VariableDescriptionContainer&,
-		      const LawFunction&);
+    virtual void writeSrcFile(const MaterialPropertyDescription&,
+			      const FileDescription&);
     
   }; // end of MfrontCppMaterialPropertyInterface
 
