@@ -115,39 +115,39 @@ namespace mfront
     }
     const auto& b = v.getPhysicalBounds();
     if(b.boundsType==VariableBoundsDescription::LOWER){
-      out << "if(" << v.name << " < " << b.lowerBound << "){\n";
-      out << "cerr << \"" << name << ": "
+      out << "if(" << v.name << " < " << b.lowerBound << "){\n"
+	  << "cerr << \"" << name << ": "
 	  << v.name << " is below its physical lower bound (\"\n << "
-	  << v.name << " << \"<" << b.lowerBound << ").\\n\";\n";
-      out << "return nan(\""
+	  << v.name << " << \"<" << b.lowerBound << ").\\n\";\n"
+	  << "return nan(\""
 	  << name << ": "
-	  << v.name << " is not physically valid.\");\n";
-      out << "}\n";
+	  << v.name << " is not physically valid.\");\n"
+	  << "}\n";
     } else if(b.boundsType==VariableBoundsDescription::UPPER){
-      out << "if(" << v.name << " > "<< b.upperBound << "){\n";
-      out << "cerr << \"" << name << ": "
+      out << "if(" << v.name << " > "<< b.upperBound << "){\n"
+	  << "cerr << \"" << name << ": "
 	  << v.name << " is below its physical upper bound (\"\n << "
-	  << v.name << " << \">" << b.upperBound << ").\\n\";\n";
-      out << "return nan(\""
+	  << v.name << " << \">" << b.upperBound << ").\\n\";\n"
+	  << "return nan(\""
 	  << name << ": "
-	  << v.name << " is not physically valid.\");\n";
-      out << "}\n";
+	  << v.name << " is not physically valid.\");\n"
+	  << "}\n";
     } else {
       out << "if((" << v.name<< " < "<< b.lowerBound << ")||"
-	  << "(" << v.name<< " > "<< b.upperBound << ")){\n";
-      out << "if(" << v.name<< " < " << b.lowerBound << "){\n";
-      out << "cerr << \"" << name << ": "
+	  << "(" << v.name<< " > "<< b.upperBound << ")){\n"
+	  << "if(" << v.name<< " < " << b.lowerBound << "){\n"
+	  << "cerr << \"" << name << ": "
 	  << v.name << " is below its physical lower bound (\"\n << "
-	  << v.name << " << \"<" << b.lowerBound << ").\\n\";\n";
-      out << "} else {\n";
-      out << "cerr << \"" << name << ": "
+	  << v.name << " << \"<" << b.lowerBound << ").\\n\";\n"
+	  << "} else {\n"
+	  << "cerr << \"" << name << ": "
 	  << v.name << " is over its physical upper bound (\"\n << "
-	  << v.name << " << \">" << b.upperBound << ").\\n\";\n";
-      out << "}\n";
-      out << "return nan(\""
+	  << v.name << " << \">" << b.upperBound << ").\\n\";\n"
+	  << "}\n"
+	  << "return nan(\""
 	  << name << ": "
-	  << v.name << " is not physically valid.\");\n";
-      out << "}\n";
+	  << v.name << " is not physically valid.\");\n"
+	  << "}\n";
     }
   } // end of writePhysicalBounds
   
@@ -159,62 +159,62 @@ namespace mfront
     }
     const auto& b = v.getBounds();
     if(b.boundsType==VariableBoundsDescription::LOWER){
-      out << "if(" << v.name << " < "<< b.lowerBound << "){\n";
-      out << "const char * const policy = "
-	  << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
-      out << "if(policy!=nullptr){\n";
-      out << "if(strcmp(policy,\"STRICT\")==0){\n";
-      out << "return nan(\""
+      out << "if(" << v.name << " < "<< b.lowerBound << "){\n"
+	  << "const char * const policy = "
+	  << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n"
+	  << "if(policy!=nullptr){\n"
+	  << "if(strcmp(policy,\"STRICT\")==0){\n"
+	  << "return nan(\""
 	  << name << ": "
-	  << v.name << " is out of bounds.\");\n";
-      out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
-      out << "cerr << \"" << name << ": "
+	  << v.name << " is out of bounds.\");\n"
+	  << "} else if (strcmp(policy,\"WARNING\")==0){\n"
+	  << "cerr << \"" << name << ": "
 	  << v.name << " is below its lower bound (\"\n << "
-	  << v.name << " << \"<" << b.lowerBound << ").\\n\";\n";
-      out << "}\n";
-      out << "}\n";
-      out << "}\n";
+	  << v.name << " << \"<" << b.lowerBound << ").\\n\";\n"
+	  << "}\n"
+	  << "}\n"
+	  << "}\n";
     } else if(b.boundsType==VariableBoundsDescription::UPPER){
-      out << "if(" << v.name<< " > "<< b.upperBound << "){\n";
-      out << "const char * const policy = "
-	  << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
-      out << "if(policy!=nullptr){\n";
-      out << "if(strcmp(policy,\"STRICT\")==0){\n";
-      out << "cerr << \"" << name << ": "
+      out << "if(" << v.name<< " > "<< b.upperBound << "){\n"
+	  << "const char * const policy = "
+	  << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n"
+	  << "if(policy!=nullptr){\n"
+	  << "if(strcmp(policy,\"STRICT\")==0){\n"
+	  << "cerr << \"" << name << ": "
 	  << v.name << " is over its upper bound (\"\n << "
-	  << v.name << " << \">" << b.upperBound << ").\\n\";\n";
-      out << "return nan(\""
+	  << v.name << " << \">" << b.upperBound << ").\\n\";\n"
+	  << "return nan(\""
 	  << name << ": "
-	  << v.name << " is out of bounds.\");\n";
-      out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
-      out << "cerr << \"" << name << ": "
+	  << v.name << " is out of bounds.\");\n"
+	  << "} else if (strcmp(policy,\"WARNING\")==0){\n"
+	  << "cerr << \"" << name << ": "
 	  << v.name << " is over its upper bound (\"\n << "
-	  << v.name << " << \">" << b.upperBound << ").\\n\";\n";
-      out << "}\n";
-      out << "}\n";
-      out << "}\n";
+	  << v.name << " << \">" << b.upperBound << ").\\n\";\n"
+	  << "}\n"
+	  << "}\n"
+	  << "}\n";
     } else {
       out << "if((" << v.name<< " < "<< b.lowerBound << ")||"
-	  << "(" << v.name<< " > "<< b.upperBound << ")){\n";
-      out << "const char * const policy = "
-	  << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
-      out << "if(policy!=nullptr){\n";
-      out << "if(strcmp(policy,\"STRICT\")==0){\n";
-      out << "if(" << v.name<< " < " << b.lowerBound << "){\n";
-      out << "cerr << \"" << name << ": "
+	  << "(" << v.name<< " > "<< b.upperBound << ")){\n"
+	  << "const char * const policy = "
+	  << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n"
+	  << "if(policy!=nullptr){\n"
+	  << "if(strcmp(policy,\"STRICT\")==0){\n"
+	  << "if(" << v.name<< " < " << b.lowerBound << "){\n"
+	  << "cerr << \"" << name << ": "
 	  << v.name << " is below its lower bound (\"\n << "
-	  << v.name << " << \"<" << b.lowerBound << ").\\n\";\n";
-      out << "} else {\n";
-      out << "cerr << \"" << name << ": "
+	  << v.name << " << \"<" << b.lowerBound << ").\\n\";\n"
+	  << "} else {\n"
+	  << "cerr << \"" << name << ": "
 	  << v.name << " is over its upper bound (\"\n << "
-	  << v.name << " << \">" << b.upperBound << ").\\n\";\n";
-      out << "}\n";
-      out << "return nan(\""
+	  << v.name << " << \">" << b.upperBound << ").\\n\";\n"
+	  << "}\n"
+	  << "return nan(\""
 	  << name << ": "
-	  << v.name << " is out of bounds.\");\n";
-      out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
-      out << "if(" << v.name<< " < "<< b.lowerBound << "){\n";
-      out << "cerr << \"" << name << ": "
+	  << v.name << " is out of bounds.\");\n"
+	  << "} else if (strcmp(policy,\"WARNING\")==0){\n"
+	  << "if(" << v.name<< " < "<< b.lowerBound << "){\n"
+	  << "cerr << \"" << name << ": "
 	  << v.name << " is below its lower bound (\"\n << "
 	  << v.name << " << \"<" << b.lowerBound << ").\\n\";\n"
 	  << "} else {\n"
@@ -248,14 +248,14 @@ namespace mfront
 			       "unable to open '"+fn+"'"));
     }
     out.exceptions(std::ios::badbit|std::ios::failbit);
-    out << "/*!\n";
-    out << "* \\file   " << fn  << "\n";
-    out << "* \\brief  " << "this file declares the " 
-	<< name << " MaterialLaw.\n";
-    out << "*         File generated by ";
-    out << MFrontHeader::getVersionName() << " ";
-    out << "version " << MFrontHeader::getVersionNumber();
-    out << '\n';
+    out << "/*!\n"
+	<< "* \\file   " << fn  << "\n"
+	<< "* \\brief  " << "this file declares the " 
+	<< name << " MaterialLaw.\n"
+	<< "*         File generated by "
+	<< MFrontHeader::getVersionName() << " "
+	<< "version " << MFrontHeader::getVersionNumber()
+	<< '\n';
     if(!fd.authorName.empty()){
       out << "* \\author " << fd.authorName << '\n';
     }
@@ -267,26 +267,26 @@ namespace mfront
     }
     out << " */\n\n";
 
-    out << "#ifndef " << makeUpperCase(name) << "_CASTEM_HH\n";
-    out << "#define " << makeUpperCase(name) << "_CASTEM_HH\n\n";
+    out << "#ifndef " << makeUpperCase(name) << "_CASTEM_HH\n"
+	<< "#define " << makeUpperCase(name) << "_CASTEM_HH\n\n";
     writeExportDirectives(out);
-    out << "#ifdef __cplusplus\n";
-    out << "extern \"C\"{\n";
-    out << "#endif /* __cplusplus */\n\n";
-    out << "MFRONT_SHAREDOBJ double\n";
-    out << name << "(";
-    out << "const double * const";
-    out << ");\n\n";
+    out << "#ifdef __cplusplus\n"
+	<< "extern \"C\"{\n"
+	<< "#endif /* __cplusplus */\n\n"
+	<< "MFRONT_SHAREDOBJ double\n"
+	<< name << "("
+	<< "const double * const"
+	<< ");\n\n";
     if(!mpd.parameters.empty()){
-      out << "MFRONT_SHAREDOBJ int\n";
-      out << name << "_setParameter(const char *const,";
-      out << "const double";
-      out << ");\n\n";
+      out << "MFRONT_SHAREDOBJ int\n"
+	  << name << "_setParameter(const char *const,"
+	  << "const double"
+	  << ");\n\n";
     }
-    out << "#ifdef __cplusplus\n";
-    out << "} // end of extern \"C\"\n";
-    out << "#endif /* __cplusplus */\n\n";
-    out << "#endif /* " << makeUpperCase(name) << "_CASTEM_HH */\n";
+    out << "#ifdef __cplusplus\n"
+	<< "} // end of extern \"C\"\n"
+	<< "#endif /* __cplusplus */\n\n"
+	<< "#endif /* " << makeUpperCase(name) << "_CASTEM_HH */\n";
     out.close();
   } // end of CastemMaterialPropertyInterface::writeHeaderFile(void)
 
@@ -310,46 +310,48 @@ namespace mfront
     const auto& staticVars=mpd.staticVars;
     const auto& params=mpd.parameters;
     const auto& function=mpd.f;
-    out << "/*!\n";
-    out << "* \\file   " << fn  << '\n';
-    out << "* \\brief  " << "this file implements the " 
-	<< name << " MaterialLaw.\n";
-    out << "*         File generated by ";
-    out << MFrontHeader::getVersionName() << " ";
-    out << "version " << MFrontHeader::getVersionNumber();
-    out << '\n';
+    out << "/*!\n"
+	<< "* \\file   " << fn  << '\n'
+	<< "* \\brief  " << "this file implements the " 
+	<< name << " MaterialLaw.\n"
+	<< "*         File generated by "
+	<< MFrontHeader::getVersionName() << " "
+	<< "version " << MFrontHeader::getVersionNumber()
+	<< '\n';
     if(!author.empty()){
       out << "* \\author " << author << '\n';
     }
     if(!date.empty()){
       out << "* \\date   " << date       << '\n';
     }
-    out << " */\n\n";
-    out << "#include<algorithm>\n";
-    out << "#include<iostream>\n";
-    out << "#include<fstream>\n";
-    out << "#include<cstring>\n";
-    out << "#include<cstdlib>\n";
-    out << "#include<string>\n";
-    out << "#include<cmath>\n";
+    out << " */\n\n"
+	<< "#include<algorithm>\n"
+	<< "#include<iterator>\n"
+	<< "#include<iostream>\n"
+	<< "#include<sstream>\n"
+	<< "#include<fstream>\n"
+	<< "#include<cstring>\n"
+	<< "#include<cstdlib>\n"
+	<< "#include<string>\n"
+	<< "#include<cmath>\n";
     if(!includes.empty()){
       out << includes << "\n\n";
     }
     out << "#include\"" << name << "-castem.hxx\"\n\n";
     writeMaterialPropertyParametersHandler(out,mpd,
 					   name,"double","castem");
-    out << "#ifdef __cplusplus\n";
-    out << "extern \"C\"{\n";
-    out << "#endif /* __cplusplus */\n\n";
-
-    out << "MFRONT_SHAREDOBJ const char *\n";
-    out << name << "_src = \""
+    out << "#ifdef __cplusplus\n"
+	<< "extern \"C\"{\n"
+	<< "#endif /* __cplusplus */\n\n";
+    
+    out << "MFRONT_SHAREDOBJ const char *\n"
+	<< name << "_src = \""
 	<< tfel::utilities::tokenize(file,tfel::system::dirSeparator()).back()
 	<< "\";\n\n";
     if(!mpd.inputs.empty()){
-      out << "MFRONT_SHAREDOBJ const char *\n";
-      out << name << "_args[" << mpd.inputs.size();
-      out << "] = {";
+      out << "MFRONT_SHAREDOBJ const char *\n"
+	  << name << "_args[" << mpd.inputs.size()
+	  << "] = {";
       for(auto p3=mpd.inputs.begin();p3!=mpd.inputs.end();){
 	const auto iname = '\"'+p3->getExternalName()+'\"';
 	out << iname;
@@ -360,35 +362,35 @@ namespace mfront
       out << "};\n\n";
     }
 
-    out << "MFRONT_SHAREDOBJ unsigned short\n";
-    out << name << "_nargs = " << mpd.inputs.size() << "u;\n\n";
+    out << "MFRONT_SHAREDOBJ unsigned short\n"
+	<< name << "_nargs = " << mpd.inputs.size() << "u;\n\n";
 
     if(!params.empty()){
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
-      out << "MFRONT_SHAREDOBJ int\n";
-      out << name << "_setParameter(const char *const p,";
-      out << "const double v";
-      out << "){\n";
+      out << "MFRONT_SHAREDOBJ int\n"
+	<< name << "_setParameter(const char *const p,"
+	<< "const double v"
+	<< "){\n";
       for(const auto& p : params){
-	out << "if(strcmp(\"" << p.name << "\",p)==0){\n";
-	out << "castem::" <<  hn << "::get" << hn << "()." << p.name << " = v;\n";
-	out << "return 1;\n";
-	out << "}\n";
+	out << "if(strcmp(\"" << p.name << "\",p)==0){\n"
+	    << "castem::" <<  hn << "::get" << hn << "()." << p.name << " = v;\n"
+	    << "return 1;\n"
+	    << "}\n";
       }	
-      out << "return 0;\n";
-      out << "}\n\n";
+      out << "return 0;\n"
+	  << "}\n\n";
     }
 
-    out << "MFRONT_SHAREDOBJ double\n";
-    out << name << "(";
+    out << "MFRONT_SHAREDOBJ double\n"
+	<< name << "(";
     if(!mpd.inputs.empty()){
       out << "const double * const castem_params";
     } else {
       out << "const double * const";
     }
-    out << ")\n{\n";
-    out << "using namespace std;\n";
-    out << "typedef double real;\n";
+    out << ")\n{\n"
+	<< "using namespace std;\n"
+	<< "typedef double real;\n";
     // material laws
     writeMaterialLaws("CastemMaterialPropertyInterface::writeOutputFile",
 		      out,materialLaws);
@@ -399,9 +401,9 @@ namespace mfront
     if(!params.empty()){
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       out << "if(!castem::" <<  hn << "::get" << hn << "().ok){\n"
-	  << "return std::nan(castem::"<< name << "MaterialPropertyHandler::get"
-	  << name << "MaterialPropertyHandler().msg.c_str());\n"
-	  << "}\n";
+	<< "return std::nan(castem::"<< name << "MaterialPropertyHandler::get"
+	<< name << "MaterialPropertyHandler().msg.c_str());\n"
+	<< "}\n";
       writeAssignMaterialPropertyParameters(out,mpd,name,
 					    "double","castem");
     }
