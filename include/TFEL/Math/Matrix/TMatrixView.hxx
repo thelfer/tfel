@@ -56,8 +56,7 @@ namespace tfel
       typedef typename tmatrix<N,M,T>::size_type       size_type;	    
       typedef typename tmatrix<N,M,T>::difference_type difference_type;
 
-      RunTimeProperties
-      getRunTimeProperties() const
+      RunTimeProperties getRunTimeProperties() const
       {
 	return RunTimeProperties();
       }
@@ -70,23 +69,25 @@ namespace tfel
 
       Expr(const Expr&) noexcept = default;
 
-      const T&
-      operator()(const unsigned short i,
-		 const unsigned short j) const noexcept
+      const T& operator()(const unsigned short i,
+			  const unsigned short j) const noexcept
       {
 	return this->v[i*M+j];
       } // end of operator() const
 
-      T&
-      operator()(const unsigned short i,
-		 const unsigned short j) noexcept
+      T& operator()(const unsigned short i,
+		    const unsigned short j) noexcept
       {
 	return this->v[i*M+j];
       } // end of operator()
 
       //! using tmatrix_base::operator=
       using tmatrix_base<Expr,N,M,T>::operator=;
-
+      //! assignement operator
+      Expr& operator=(const Expr& src){
+	tmatrix_base<Expr,N,M,T>::operator=(src);
+	return *this;
+      }
       /*!
        * size of the tiny matrix
        * (compatibility with matrix)
@@ -103,8 +104,6 @@ namespace tfel
     private:
 
       Expr() = delete;
-      Expr& operator=(Expr&&) = delete;
-      Expr& operator=(const Expr&) = delete;
 
     }; // end of struct TMatrixExpr
 

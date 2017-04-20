@@ -37,10 +37,8 @@ namespace tfel
      * \param In : starting index in the underlying tiny vector
      * \param T  : value type
      */
-    template<unsigned short N,
-	     unsigned short Mn,
-	     unsigned short In,
-	     typename T>
+    template<unsigned short N, unsigned short Mn,
+	     unsigned short In,typename T>
     struct StensorFromTinyVectorViewExpr
     {}; // end of struct StensorFromTinyMatrixColumnViewExpr
 
@@ -53,9 +51,9 @@ namespace tfel
      */
     template<unsigned short N, unsigned short Mn,
 	     unsigned short In,typename T>
-    struct Expr<stensor<N,T>,StensorFromTinyVectorViewExpr<N,Mn,In,T> >
-      : public StensorConcept<Expr<stensor<N,T>,StensorFromTinyVectorViewExpr<N,Mn,In,T> > >,
-	public stensor_base<Expr<stensor<N,T>,StensorFromTinyVectorViewExpr<N,Mn,In,T> > >
+    struct Expr<stensor<N,T>,StensorFromTinyVectorViewExpr<N,Mn,In,T>>
+      : public StensorConcept<Expr<stensor<N,T>,StensorFromTinyVectorViewExpr<N,Mn,In,T>>>,
+	public stensor_base<Expr<stensor<N,T>,StensorFromTinyVectorViewExpr<N,Mn,In,T>>>
     {
       typedef EmptyRunTimeProperties RunTimeProperties;
       typedef typename stensor<N,T>::value_type      value_type;      
@@ -66,8 +64,7 @@ namespace tfel
       typedef typename stensor<N,T>::size_type 	   size_type;	    
       typedef typename stensor<N,T>::difference_type difference_type;
 
-      RunTimeProperties
-      getRunTimeProperties() const
+      RunTimeProperties getRunTimeProperties() const
       {
 	return RunTimeProperties();
       }
@@ -76,26 +73,22 @@ namespace tfel
 	: v(v_)
       {} // end of Expr
 
-      const T&
-      operator()(const unsigned short i) const
+      const T& operator()(const unsigned short i) const
       {
 	return this->v(In+i);
       } // end of operator() const
 
-      T&
-      operator()(const unsigned short i)
+      T& operator()(const unsigned short i)
       {
 	return this->v(In+i);
       } // end of operator()
 
-      const T&
-      operator[](const unsigned short i) const
+      const T& operator[](const unsigned short i) const
       {
 	return this->v(In+i);
       } // end of operator[] const
 
-      T&
-      operator[](const unsigned short i)
+      T& operator[](const unsigned short i)
       {
 	return this->v(In+i);
       } // end of operator[]
@@ -103,18 +96,18 @@ namespace tfel
       //! using stensor_base::operator=
       using stensor_base<Expr>::operator=;
 
+      Expr& operator=(const Expr& src){
+	stensor_base<Expr>::operator=(src);
+	return *this;
+      }
+      
     protected:
 
       tvector<Mn,T>& v;
 
     private:
 
-      Expr& operator=(Expr&&)      = delete;
-      Expr& operator=(const Expr&) = delete;
-
-      /*!
-       * Simple checks
-       */
+      // simple checks
       TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
       TFEL_STATIC_ASSERT((In<Mn));
       TFEL_STATIC_ASSERT((StensorDimeToSize<N>::value<=Mn-In));

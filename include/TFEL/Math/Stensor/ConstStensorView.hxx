@@ -72,14 +72,12 @@ namespace tfel
 
       Expr(const Expr&)  noexcept = default;
       
-      const T&
-      operator()(const unsigned short i) const noexcept
+      const T& operator()(const unsigned short i) const noexcept
       {
 	return this->v[i];
       } // end of operator() const
 
-      const T&
-      operator[](const unsigned short i) const noexcept
+      const T& operator[](const unsigned short i) const noexcept
       {
 	return this->v[i];
       } // end of operator[] const
