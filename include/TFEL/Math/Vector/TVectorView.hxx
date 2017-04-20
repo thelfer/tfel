@@ -57,8 +57,7 @@ namespace tfel
       typedef typename tvector<N,T>::size_type 	   size_type;	    
       typedef typename tvector<N,T>::difference_type difference_type;
 
-      RunTimeProperties
-      getRunTimeProperties() const
+      RunTimeProperties getRunTimeProperties() const
       {
 	return RunTimeProperties();
       }
@@ -67,30 +66,26 @@ namespace tfel
 	: v(v_)
       {} // end of TvectorExpr
 
-      Expr(Expr&&)  noexcept = default;
+      Expr(Expr&&) noexcept = default;
 
       Expr(const Expr&) noexcept = default;
 
-      const T&
-      operator()(const unsigned short i) const noexcept
+      const T& operator()(const unsigned short i) const noexcept
       {
 	return this->v[i];
       } // end of operator() const
 
-      T&
-      operator()(const unsigned short i) noexcept
+      T& operator()(const unsigned short i) noexcept
       {
 	return this->v[i];
       } // end of operator()
 
-      const T&
-      operator[](const unsigned short i) const noexcept
+      const T& operator[](const unsigned short i) const noexcept
       {
 	return this->v[i];
       } // end of operator[] const
 
-      T&
-      operator[](const unsigned short i) noexcept
+      T& operator[](const unsigned short i) noexcept
       {
 	return this->v[i];
       } // end of operator[]
@@ -114,8 +109,6 @@ namespace tfel
     private:
 
       Expr() = delete;
-      Expr& operator=(Expr&&) = delete;
-      Expr& operator=(const Expr&) = delete;
       //! simple check
       TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
     }; // end of struct TVectorExpr

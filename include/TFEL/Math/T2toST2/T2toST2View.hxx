@@ -73,15 +73,13 @@ namespace tfel
 
       Expr(const Expr&)  noexcept = default;
       
-      const T&
-      operator()(const unsigned short i,
+      const T& operator()(const unsigned short i,
 		 const unsigned short j) const noexcept
       {
 	return this->v[TensorDimeToSize<N>::value*i+j];
       } // end of operator() const
 
-      T&
-      operator()(const unsigned short i,
+      T& operator()(const unsigned short i,
 		 const unsigned short j) noexcept
       {
 	return this->v[TensorDimeToSize<N>::value*i+j];
@@ -89,6 +87,11 @@ namespace tfel
 
       //! using t2tost2_base::operator=
       using t2tost2_base<Expr>::operator=;
+
+      Expr& operator=(const Expr& src){
+	t2tost2_base<Expr>::operator=(src);
+	return *this;
+      }
 
       /*!
        * size of the symmetric tensor
@@ -106,8 +109,6 @@ namespace tfel
     private:
 
       Expr() = delete;
-      Expr& operator=(Expr&&) = delete;
-      Expr& operator=(const Expr&) = delete;
       //! simple check
       TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
 

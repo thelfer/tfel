@@ -212,6 +212,7 @@ namespace mfront
     out << " */\n\n";
     out << "#include<algorithm>\n";
     out << "#include<iostream>\n";
+    out << "#include<iterator>\n";
     out << "#include<fstream>\n";
     out << "#include<cstring>\n";
     out << "#include<cstdlib>\n";

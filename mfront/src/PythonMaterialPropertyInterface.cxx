@@ -194,15 +194,16 @@ namespace mfront
     }
     this->srcFile << " */\n\n";
     this->srcFile << "#include <Python.h>\n\n";
+    this->srcFile << "#include<algorithm>\n";
     this->srcFile << "#include<iostream>\n";
+    this->srcFile << "#include<iterator>\n";
     this->srcFile << "#include<fstream>\n";
     this->srcFile << "#include<sstream>\n";
-    this->srcFile << "#include<string>\n";
-    this->srcFile << "#include<cmath>\n";
-    this->srcFile << "#include<algorithm>\n";
     this->srcFile << "#include<cstring>\n";
     this->srcFile << "#include<cstdlib>\n";
+    this->srcFile << "#include<string>\n";
     this->srcFile << "#include<cstdio>\n";
+    this->srcFile << "#include<cmath>\n";
     if(!includes.empty()){
       this->srcFile << includes << endl << endl;
     }
