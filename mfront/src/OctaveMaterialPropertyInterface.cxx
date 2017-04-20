@@ -131,7 +131,10 @@ namespace mfront
       out << fd.description << '\n';
     }
     out << " */\n\n"
+	<< "#include<algorithm>\n"
 	<< "#include<iostream>\n"
+	<< "#include<iterator>\n"
+	<< "#include<sstream>\n"
 	<< "#include<fstream>\n"
 	<< "#include<cstring>\n"
 	<< "#include<cstdlib>\n"
