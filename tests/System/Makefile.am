@@ -36,7 +36,6 @@ CastemSourceTest_SOURCES     = CastemSourceTest.cxx
 check_LTLIBRARIES = libCastemMaterialLaw.la
 nodist_libCastemMaterialLaw_la_SOURCES = src/Test-castem.cxx
 libCastemMaterialLaw_la_LDFLAGS        = -rpath /
-
 endif
 
 src/%-castem.cxx : %.mfront

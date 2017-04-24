@@ -25,6 +25,7 @@
 #include"TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include"TFEL/Math/Vector/VectorUtilities.hxx"
 
+#include"TFEL/Math/Stensor/SymmetricStensorProduct.hxx"
 #include"TFEL/Math/Stensor/Internals/StensorImport.hxx"
 #include"TFEL/Math/Stensor/Internals/StensorExport.hxx"
 #include"TFEL/Math/Stensor/Internals/StensorChangeBasis.hxx"

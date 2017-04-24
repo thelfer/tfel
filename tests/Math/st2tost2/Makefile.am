@@ -15,7 +15,8 @@ test_PROGRAMS =	st2tost2                                 \
 		StensorSquareDerivative                  \
 		ConvertToTangentModuliTest               \
 		ConvertLogarithmicStrainTangentOperator  \
-		ComputeDeterminantSecondDerivativeTest
+		ComputeDeterminantSecondDerivativeTest   \
+		SymmetricStensorProductDerivativeTest
 
 LDADD = -lTFELMath -lTFELException -lTFELTests \
 	-L$(top_builddir)/src/Tests            \
@@ -33,6 +34,7 @@ StensorSquareDerivative_SOURCES = StensorSquareDerivative.cxx
 ConvertToTangentModuliTest_SOURCES = ConvertToTangentModuliTest.cxx
 ConvertLogarithmicStrainTangentOperator_SOURCES = ConvertLogarithmicStrainTangentOperator.cxx
 ComputeDeterminantSecondDerivativeTest_SOURCES  = ComputeDeterminantSecondDerivativeTest.cxx
+SymmetricStensorProductDerivativeTest_SOURCES   = SymmetricStensorProductDerivativeTest.cxx
 
 TESTS=$(test_PROGRAMS)
 

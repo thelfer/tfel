@@ -232,6 +232,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Stensor/ConstStensorView.hxx			        			     \
 			TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx                                \
 			TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.ixx                                \
+			TFEL/Math/Stensor/SymmetricStensorProduct.hxx						     \
+			TFEL/Math/Stensor/SymmetricStensorProduct.ixx						     \
 			TFEL/Math/Vector/tvectorResultType.hxx	                                                     \
 			TFEL/Math/Vector/tvector.ixx			                                             \
 			TFEL/Math/Vector/tvectorIO.hxx			                                             \
@@ -380,6 +382,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toST2/ConvertLogarithmicStrainTangentOperator.hxx                               \
 			TFEL/Math/ST2toST2/UmatNormaliseTangentOperator.hxx                                          \
 			TFEL/Math/ST2toST2/UmatNormaliseTangentOperator.ixx                                          \
+			TFEL/Math/ST2toST2/SymmetricStensorProductDerivative.hxx				     \
+			TFEL/Math/ST2toST2/SymmetricStensorProductDerivative.ixx				     \
 			TFEL/Math/t2tost2.hxx                                                                        \
 			TFEL/Math/T2toST2/t2tost2.ixx                                                                \
 			TFEL/Math/T2toST2/T2toST2Concept.hxx                                                         \

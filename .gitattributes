@@ -1184,6 +1184,7 @@ docs/web/phasefield.md -text
 docs/web/publications.md -text
 docs/web/release-notes-2.0.5.md -text
 docs/web/release-notes-3.0.1.md -text
+docs/web/release-notes-3.0.2.md -text
 docs/web/release-notes-3.0.md -text
 docs/web/release-notes-3.1.md -text
 docs/web/release-notes.md -text
@@ -1492,6 +1493,8 @@ include/TFEL/Math/ST2toST2/ST2toST2View.hxx -text
 include/TFEL/Math/ST2toST2/StensorST2toST2ProductExpr.hxx -text
 include/TFEL/Math/ST2toST2/StensorSquareDerivative.hxx -text
 include/TFEL/Math/ST2toST2/StensorSymmetricProductDerivative.hxx -text
+include/TFEL/Math/ST2toST2/SymmetricStensorProductDerivative.hxx -text
+include/TFEL/Math/ST2toST2/SymmetricStensorProductDerivative.ixx -text
 include/TFEL/Math/ST2toST2/UmatNormaliseTangentOperator.hxx -text
 include/TFEL/Math/ST2toST2/UmatNormaliseTangentOperator.ixx -text
 include/TFEL/Math/ST2toST2/st2tost2.ixx -text
@@ -1550,6 +1553,8 @@ include/TFEL/Math/Stensor/StensorFromTinyVectorView.hxx -text
 include/TFEL/Math/Stensor/StensorProduct.hxx -text
 include/TFEL/Math/Stensor/StensorSizeToDime.hxx -text
 include/TFEL/Math/Stensor/StensorView.hxx -text
+include/TFEL/Math/Stensor/SymmetricStensorProduct.hxx -text
+include/TFEL/Math/Stensor/SymmetricStensorProduct.ixx -text
 include/TFEL/Math/Stensor/stensor.ixx -text
 include/TFEL/Math/Stensor/stensorResultType.hxx -text
 include/TFEL/Math/T2toST2/ConstT2toST2View.hxx -text
@@ -5341,6 +5346,7 @@ tests/Math/st2tost2/ST2toST2FromTinyMatrixView.cxx -text
 tests/Math/st2tost2/ST2toST2FromTinyMatrixView2.cxx -text
 tests/Math/st2tost2/ST2toST2PushForward.cxx -text
 tests/Math/st2tost2/StensorSquareDerivative.cxx -text
+tests/Math/st2tost2/SymmetricStensorProductDerivativeTest.cxx -text
 tests/Math/st2tost2/st2tost2-2.cxx -text
 tests/Math/st2tost2/st2tost2-3.cxx -text
 tests/Math/st2tost2/st2tost2.cxx -text

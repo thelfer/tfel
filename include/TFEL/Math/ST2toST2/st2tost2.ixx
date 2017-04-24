@@ -28,6 +28,7 @@
 #include"TFEL/Math/ST2toST2/ConvertT2toST2ToST2toST2Expr.hxx"
 #include"TFEL/Math/ST2toST2/BuildFromRotationMatrix.hxx"
 #include"TFEL/Math/ST2toST2/StensorSymmetricProductDerivative.hxx"
+#include"TFEL/Math/ST2toST2/SymmetricStensorProductDerivative.hxx"
 #include"TFEL/Math/ST2toST2/ChangeBasis.hxx"
 
 namespace tfel{
@@ -164,7 +165,6 @@ namespace tfel{
     st2tost2<N,T>::stpd(const StensorType& s){
       return StensorSymmetricProductDerivative<N,T>::exe(s);
     }
-
     
     template<unsigned short N, typename T>
     template<typename T2toST2Type>

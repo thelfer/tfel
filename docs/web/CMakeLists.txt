@@ -71,6 +71,7 @@ pandoc_html(phasefield "--toc" "--toc-depth=2")
 pandoc_html(release-notes-2.0.5 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.0   "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.0.1 "--toc" "--toc-depth=2")
+pandoc_html(release-notes-3.0.2 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.1   "--toc" "--toc-depth=2")
 
 # mfront keywords
