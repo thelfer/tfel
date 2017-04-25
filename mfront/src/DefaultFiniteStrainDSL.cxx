@@ -28,23 +28,21 @@ namespace mfront{
     this->mb.declareAsAFiniteStrainStandardBehaviour(false);
   }
 
-  std::string
-  DefaultFiniteStrainDSL::getDescription()
+  std::string DefaultFiniteStrainDSL::getDescription()
   {
     return "this parser is the most generic one as it does not make any restriction "
            "on the behaviour or the integration method that may be used";
   } // end of DefaultFiniteStrainDSL::getDescription
   
-  std::string
-  DefaultFiniteStrainDSL::getName()
+  std::string DefaultFiniteStrainDSL::getName()
   {
     return "DefaultFiniteStrainDSL";
   }
 
-  void DefaultFiniteStrainDSL::writeBehaviourParserSpecificIncludes()
+  void DefaultFiniteStrainDSL::writeBehaviourParserSpecificIncludes(std::ostream& os) const
   {
-    DefaultDSLBase::writeBehaviourParserSpecificIncludes();
-    this->behaviourFile << "#include\"TFEL/Math/tensor.hxx\"\n";
+    DefaultDSLBase::writeBehaviourParserSpecificIncludes(os);
+    os << "#include\"TFEL/Math/tensor.hxx\"\n";
   } // end of DefaultFiniteStrainDSL::writeBehaviourParserSpecificIncludes
 
   DefaultFiniteStrainDSL::~DefaultFiniteStrainDSL() = default;

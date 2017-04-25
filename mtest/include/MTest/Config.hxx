@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_MTEST_MTESTCONFIG_H_
-#define LIB_MTEST_MTEST_MTESTCONFIG_H_ 
+#ifndef LIB_MTEST_MTEST_MTESTCONFIG_HXX
+#define LIB_MTEST_MTEST_MTESTCONFIG_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -28,7 +28,7 @@
 #  endif
 #else
 #  define MTEST_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif /* LIB_MTEST_MTEST_MTESTCONFIG_H_ */
+#endif /* LIB_MTEST_MTEST_MTESTCONFIG_HXX */
 
-#endif /* LIB_MTEST_MTEST_MTESTCONFIG_H_ */
+#endif /* LIB_MTEST_MTEST_MTESTCONFIG_HXX */
 

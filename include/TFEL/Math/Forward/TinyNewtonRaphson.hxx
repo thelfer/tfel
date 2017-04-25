@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_FORWARD_TINYNEWTONRAPHSON_H_
-#define LIB_TFEL_MATH_FORWARD_TINYNEWTONRAPHSON_H_ 
+#ifndef LIB_TFEL_MATH_FORWARD_TINYNEWTONRAPHSON_HXX
+#define LIB_TFEL_MATH_FORWARD_TINYNEWTONRAPHSON_HXX 
 
 namespace tfel{
 
@@ -27,4 +27,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_FORWARD_TINYNEWTONRAPHSON_H_ */
+#endif /* LIB_TFEL_MATH_FORWARD_TINYNEWTONRAPHSON_HXX */

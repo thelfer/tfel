@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_FSARRAY_H_
-#define LIB_TFEL_MATH_FSARRAY_H_ 
+#ifndef LIB_TFEL_MATH_FSARRAY_HXX
+#define LIB_TFEL_MATH_FSARRAY_HXX 
 
 #include<iterator>
 #include<type_traits>
@@ -231,5 +231,5 @@ namespace tfel
 
 #include"TFEL/Math/General/fsarray.ixx"
 
-#endif /* LIB_TFEL_MATH_FSARRAY_H_ */
+#endif /* LIB_TFEL_MATH_FSARRAY_HXX */
 

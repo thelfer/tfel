@@ -46,7 +46,7 @@ namespace mfront{
      * \param[in] fd  : mfront file description
      */
     virtual void writeOutputFiles(const MaterialPropertyDescription&,
-				  const FileDescription&) override;
+				  const FileDescription&) const override;
     //! destructor
     virtual ~CMaterialPropertyInterfaceBase();
     
@@ -54,54 +54,76 @@ namespace mfront{
     
     virtual void
     writeParameterList(std::ostream&,
-		       const VariableDescriptionContainer&);
-
+		       const VariableDescriptionContainer&) const;
+    /*!
+     * \param[out] os:  output file stream
+     */
     virtual void
-    writeInterfaceSpecificVariables(const VariableDescriptionContainer&);
-
+    writeInterfaceSpecificVariables(std::ostream&,
+				    const VariableDescriptionContainer&) const;
+    /*!
+     * \param[out] os:  output file stream
+     */
+    virtual void writeBeginHeaderNamespace(std::ostream&) const = 0;
+    /*!
+     * \param[out] os:  output file stream
+     */
+    virtual void writeEndHeaderNamespace(std::ostream&) const = 0;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
+    virtual void writeEntryPointSymbol(std::ostream&,
+				       const MaterialPropertyDescription&) const;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
+    virtual void writeMaterialKnowledgeTypeSymbol(std::ostream&,
+						  const MaterialPropertyDescription&) const;
+    /*!
+     * \param[out] os:  output file stream
+     */
+    virtual void writeBeginSrcNamespace(std::ostream&) const = 0;
+    /*!
+     * \param[out] os:  output file stream
+     */
+    virtual void writeEndSrcNamespace(std::ostream&) const = 0;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
     virtual void
-    writeBeginHeaderNamespace(void) = 0;
-
+    writeHeaderPreprocessorDirectives(std::ostream&,
+				      const MaterialPropertyDescription&) const;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
     virtual void
-    writeEndHeaderNamespace(void) = 0;
-
-    virtual void
-    writeBeginSrcNamespace(void) = 0;
-
-    virtual void
-    writeEndSrcNamespace(void) = 0;
-
-    virtual void
-    writeHeaderPreprocessorDirectives(const MaterialPropertyDescription&);
-
-    virtual void
-    writeSrcPreprocessorDirectives(const MaterialPropertyDescription&);
-
+    writeSrcPreprocessorDirectives(std::ostream&,
+				   const MaterialPropertyDescription&) const;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
     virtual void
     writeCErrorTreatment(std::ostream&,
 			 const MaterialPropertyDescription&) const;
     
-    virtual std::string
-    getCallingConvention(void) const;
+    virtual std::string getCallingConvention(void) const;
     
-    virtual bool
-    requiresCheckBoundsFunction(void) const = 0;
-
+    virtual bool requiresCheckBoundsFunction(void) const = 0;
     /*!
-     * \param const std::string&, name of the material
-     * \param const std::string&, name of the class
+     * \param[in] mpd: material property description
      */
     virtual std::string
-    getFunctionName(const std::string&,
-		    const std::string&) const = 0;
-
+    getFunctionName(const MaterialPropertyDescription&) const = 0;
     /*!
-     * \param const std::string&, name of the material
-     * \param const std::string&, name of the class
+     * \param[in] mpd: material property description
      */
     virtual std::string
-    getCheckBoundsFunctionName(const std::string&,
-			       const std::string&) const = 0;
+    getCheckBoundsFunctionName(const MaterialPropertyDescription&) const = 0;
 
     /*!
      * \param const std::string&, name of the material
@@ -127,23 +149,16 @@ namespace mfront{
      */
     virtual void
     writeHeaderFile(const MaterialPropertyDescription&,
-		    const FileDescription&);
+		    const FileDescription&) const;
     /*!
      * \brief : write the source file. The srcFile member has been
      * opened appropriately and will be closed after the call.
      * \param[in] mpd : material property description
      * \param[in] fd  : file description
      */
-    void writeSrcFile(const MaterialPropertyDescription&,
-		      const FileDescription&);
-
-    std::ofstream headerFile;
-
-    std::ofstream srcFile;
-
-    std::string headerFileName;
-
-    std::string srcFileName;
+    virtual void
+    writeSrcFile(const MaterialPropertyDescription&,
+		 const FileDescription&) const;
     
   }; // end of MfrontCMaterialPropertyInterfaceBase
 

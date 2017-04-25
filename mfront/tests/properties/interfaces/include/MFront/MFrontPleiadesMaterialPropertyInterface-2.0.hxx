@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTPLEIADESLAWINTERFACE_H_
-#define LIB_MFRONTPLEIADESLAWINTERFACE_H_ 
+#ifndef LIB_MFRONTPLEIADESLAWINTERFACE_HXX
+#define LIB_MFRONTPLEIADESLAWINTERFACE_HXX 
 
 #include<string>
 #include<fstream>
@@ -30,87 +30,58 @@ namespace mfront{
   struct MFrontPleiadesMaterialPropertyInterface final
     : public AbstractMaterialPropertyInterface
   {
-
-    MFrontPleiadesMaterialPropertyInterface();
-
+    using const_iterator =
+      tfel::utilities::CxxTokenizer::TokensContainer::const_iterator;
+    
     static std::string getName(void);
+    
+    MFrontPleiadesMaterialPropertyInterface();
     /*!
-     * \param[in] k  : keyword treated
-     * \param[in] i:   list of interfaces to which the keyword is restricted
-     * \param[in] p  : iterator to the current token
-     * \param[in] pe : iterator past the end of the file
+     * \param[in] k:  keyword treated
+     * \param[in] i:  list of interfaces to which the keyword is restricted
+     * \param[in] p:  iterator to the current token
+     * \param[in] pe: iterator past the end of the file
      * \return a pair. The first entry is true if the keyword was
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    virtual std::pair<bool,const_iterator>
     treatKeyword(const std::string&,
 		 const std::vector<std::string>&,
-		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
+		 const_iterator,
+		 const const_iterator) override;
     /*!
      * \brief : fill the target descripton
      * \param[out] d   : target description
      * \param[in]  mpd : material property description
      */
     virtual void getTargetsDescription(TargetsDescription&,
-				       const MaterialPropertyDescription&) override;
+				       const MaterialPropertyDescription&) const override;
     /*!
      * \brief generate the output files
      * \param[in] mpd : material property description
      * \param[in] fd  : mfront file description
      */
     void writeOutputFiles(const MaterialPropertyDescription&,
-			  const FileDescription&) override;
-
+			  const FileDescription&) const override;
+    //! destructor
     virtual ~MFrontPleiadesMaterialPropertyInterface();
 
   private:
 
-    /*
-     * \param const std::string&, name of the original file
-     * \param const std::string&, className
-     * \param const std::string&, author
-     * \param const std::string&, date
-     * \param const std::string&, description
-     * \param const std::string&, includes
-     * \param const VariableDescriptionContainer&, inputs
+    /*!
+     * \param[in] mpd : material property description
+     * \param[in] fd  : mfront file description
      */
-    void writeHeaderFile(const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const VariableDescriptionContainer&);
-
-    /*
-     * \param const std::string&, name of the original file
-     * \param const std::string&, className
-     * \param const std::string&, author
-     * \param const std::string&, date
-     * \param const std::string&, output name
-     * \param const VariableDescriptionContainer&, inputs
-     * \param const std::vector<std::string>&, material laws
-     * \param const StaticVariableDescriptionContainer&, static variables
-     * \param const VariableDescriptionContainer&, parameters
-     * \param const LawFunction&, function definition
+    void writeHeaderFile(const MaterialPropertyDescription&,
+			 const FileDescription&) const;
+    /*!
+     * \param[in] mpd : material property description
+     * \param[in] fd  : mfront file description
      */
-    void writeSrcFile(const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const VariableDescription&,
-		      const VariableDescriptionContainer&,
-		      const std::vector<std::string>&,
-		      const StaticVariableDescriptionContainer&,
-		      const VariableDescriptionContainer&,
-		      const LawFunction&);
-
-    std::ofstream headerFile;
-    std::ofstream srcFile;
-    std::string headerFileName;
-    std::string srcFileName;
+    void writeSrcFile(const MaterialPropertyDescription&,
+		      const FileDescription&) const;
+    
   }; // end of MfrontPleiadesMaterialPropertyInterface
 
 } // end of namespace mfront

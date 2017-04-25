@@ -17,8 +17,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_FSLEVENBERGMARQUARDT_HXX_
-#define LIB_FSLEVENBERGMARQUARDT_HXX_ 
+#ifndef LIB_FSLEVENBERGMARQUARDT_HXX
+#define LIB_FSLEVENBERGMARQUARDT_HXX 
 
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/tmatrix.hxx"
@@ -185,5 +185,5 @@ namespace tfel
 
 #include"TFEL/Math/LevenbergMarquardt/FSLevenbergMarquardt.ixx"
 
-#endif /* LIB_FSLEVENBERGMARQUARDT_HXX_ */
+#endif /* LIB_FSLEVENBERGMARQUARDT_HXX */
 

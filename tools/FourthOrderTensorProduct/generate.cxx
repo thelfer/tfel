@@ -149,8 +149,8 @@ writeFileHeader(std::ostream& out,
   out << " * \\date 16 juin 2014" << endl;
   out << " */" << endl;
   out << "" << endl;
-  out << "#ifndef _LIB_TFEL_MATH_" << toupper(getName(p)) << "PRODUCTEXPR_H_" << endl;
-  out << "#define _LIB_TFEL_MATH_" << toupper(getName(p)) << "PRODUCTEXPR_H_ " << endl;
+  out << "#ifndef _LIB_TFEL_MATH_" << toupper(getName(p)) << "PRODUCTEXPR_HXX" << endl;
+  out << "#define _LIB_TFEL_MATH_" << toupper(getName(p)) << "PRODUCTEXPR_HXX " << endl;
   out << "" << endl;
   out << "#include\"TFEL/Config/TFELConfig.hxx\"" << endl;
   out << "" << endl;

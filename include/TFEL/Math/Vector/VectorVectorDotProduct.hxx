@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_VECTORVECTORDOTPRODUCT_H_
-#define LIB_TFEL_MATH_VECTORVECTORDOTPRODUCT_H_ 
+#ifndef LIB_TFEL_MATH_VECTORVECTORDOTPRODUCT_HXX
+#define LIB_TFEL_MATH_VECTORVECTORDOTPRODUCT_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/General/RunTimeCheck.hxx"

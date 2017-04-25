@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_FUNCTION_HXX_
-#define LIB_TFEL_FUNCTION_HXX_ 
+#ifndef LIB_TFEL_FUNCTION_HXX
+#define LIB_TFEL_FUNCTION_HXX 
 
 #include<memory>
 #include"TFEL/Config/TFELConfig.hxx"
@@ -80,5 +80,5 @@ namespace tfel
 
 #include"TFEL/Math/Parser/Function.ixx"
 
-#endif /* LIB_TFEL_FUNCTION_HXX_ */
+#endif /* LIB_TFEL_FUNCTION_HXX */
 

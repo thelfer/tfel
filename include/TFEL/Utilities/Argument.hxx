@@ -70,4 +70,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_UTILITIES_ARGUMENT_HXX_ */
+#endif /* LIB_TFEL_UTILITIES_ARGUMENT_HXX */

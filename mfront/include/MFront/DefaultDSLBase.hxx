@@ -26,9 +26,10 @@ namespace mfront{
   protected:
     virtual void endsInputFileProcessing() override;
     virtual void
-    writeBehaviourParserSpecificIncludes(void) override;
+    writeBehaviourParserSpecificIncludes(std::ostream&) const override;
     virtual void
-    writeBehaviourLocalVariablesInitialisation(const Hypothesis) override;
+    writeBehaviourLocalVariablesInitialisation(std::ostream&,
+					       const Hypothesis) const override;
     virtual void
     treatProvidesTangentOperator(void);
     virtual void

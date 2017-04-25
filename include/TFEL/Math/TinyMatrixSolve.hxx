@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_TINYMATRIXSOLVE_H_
-#define LIB_TFEL_TINYMATRIXSOLVE_H_ 
+#ifndef LIB_TFEL_TINYMATRIXSOLVE_HXX
+#define LIB_TFEL_TINYMATRIXSOLVE_HXX 
 
 #include<cmath>
 #include<limits>
@@ -152,5 +152,5 @@ namespace tfel{
 
 #include "LU/TinyMatrixSolve.ixx"
 
-#endif /* LIB_TFEL_TINYMATRIXSOLVE_H_ */
+#endif /* LIB_TFEL_TINYMATRIXSOLVE_HXX */
 

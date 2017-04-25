@@ -425,7 +425,7 @@ namespace mfront
     /*!
      * \return the list of Hill tensors that have been defined
      */
-    const std::vector<HillTensor>& getHillTensors(void);
+    const std::vector<HillTensor>& getHillTensors(void) const;
     /*!
      * \return a mechanical behaviour data associated with the
      * given modelling hypothesis
@@ -644,6 +644,21 @@ namespace mfront
     void addParameter(const Hypothesis,
 		      const VariableDescription&,
 		      const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    /*!
+     * \brief assign an attribute to variable
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: variable name
+     * \param[in] n: attribute name
+     * \param[in] a: attribute
+     * \param[in] b: don't throw if the attribute already exists.  In
+     * this case, the attribute is left unchanged. However the type of
+     * the attribute is checked.
+     */
+    void setVariableAttribute(const Hypothesis,
+			      const std::string&,
+			      const std::string&,
+			      const VariableAttribute&,
+			      const bool);
     //! \return a type suitable for storing stress-free expansion
     std::string getStressFreeExpansionType(void) const;
     /*!

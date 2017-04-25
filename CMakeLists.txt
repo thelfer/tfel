@@ -304,6 +304,7 @@ endif(UNIX AND (NOT CYGWIN))
 
 add_subdirectory(mfront)
 add_subdirectory(mtest)
+add_subdirectory(mfm)
 add_subdirectory(tests)
 
 #documentations

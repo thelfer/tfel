@@ -70,7 +70,7 @@ namespace mfront{
     virtual void
     writeMaterialPropertyEvaluation(std::ostream&,
 				    const BehaviourDescription::MaterialProperty&,
-				    std::function<std::string(const MaterialPropertyInput&)>&) = 0;
+				    std::function<std::string(const MaterialPropertyInput&)>&) const = 0;
     /*!
      * \brief This function handles a material property treated as a
      * dependency of the current file.

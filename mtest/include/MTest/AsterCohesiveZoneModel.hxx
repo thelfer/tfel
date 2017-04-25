@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_MTESTASTERCOHESIVEZONEMODELBEHAVIOUR_H_
-#define LIB_MTEST_MTESTASTERCOHESIVEZONEMODELBEHAVIOUR_H_ 
+#ifndef LIB_MTEST_MTESTASTERCOHESIVEZONEMODELBEHAVIOUR_HXX
+#define LIB_MTEST_MTESTASTERCOHESIVEZONEMODELBEHAVIOUR_HXX 
 
 #include"TFEL/System/ExternalFunctionsPrototypes.hxx"
 #include"MTest/UmatBehaviourBase.hxx"
@@ -131,5 +131,5 @@ namespace mtest
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_MTESTASTERCOHESIVEZONEMODELBEHAVIOUR_H_ */
+#endif /* LIB_MTEST_MTESTASTERCOHESIVEZONEMODELBEHAVIOUR_HXX */
 

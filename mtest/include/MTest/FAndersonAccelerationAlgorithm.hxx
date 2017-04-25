@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_MTEST_FANDERSONACCELERATIONALGORITHM_H_
-#define LIB_MTEST_MTEST_FANDERSONACCELERATIONALGORITHM_H_ 
+#ifndef LIB_MTEST_MTEST_FANDERSONACCELERATIONALGORITHM_HXX
+#define LIB_MTEST_MTEST_FANDERSONACCELERATIONALGORITHM_HXX 
 
 #include"TFEL/Math/AccelerationAlgorithms/FAnderson.hxx"
 #include"MTest/Config.hxx"
@@ -95,5 +95,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_MTEST_FANDERSONACCELERATIONALGORITHM_H_ */
+#endif /* LIB_MTEST_MTEST_FANDERSONACCELERATIONALGORITHM_HXX */
 

@@ -104,14 +104,13 @@ namespace mfront
   } // end of treatKeyword
 
 
-  void
-  ExcelMaterialPropertyInterface::getTargetsDescription(TargetsDescription&,
-							const MaterialPropertyDescription&)
+  void ExcelMaterialPropertyInterface::getTargetsDescription(TargetsDescription&,
+							     const MaterialPropertyDescription&) const
   {} // end of ExcelMaterialPropertyInterface::getTargetsDescription
 
   void
   ExcelMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
-						   const FileDescription&)
+						   const FileDescription&) const
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("ExcelMaterialPropertyInterface::writeOutputFiles: "+m));};
@@ -136,7 +135,7 @@ namespace mfront
       }
       iwrapper.close();
     }
-    const auto lib = "Excel"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
+    const auto lib = "Excel"+getMaterialLawLibraryNameBase(mpd);
     auto p2 = interfaces.end();
     for(auto p=interfaces.begin();p!=interfaces.end();++p){
       if((p->function==name)&&

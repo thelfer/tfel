@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_CASTEMFINITESTRAINUMATBEHAVIOUR2_H_
-#define LIB_MTEST_CASTEMFINITESTRAINUMATBEHAVIOUR2_H_ 
+#ifndef LIB_MTEST_CASTEMFINITESTRAINUMATBEHAVIOUR2_HXX
+#define LIB_MTEST_CASTEMFINITESTRAINUMATBEHAVIOUR2_HXX 
 
 #include"MTest/CastemSmallStrainBehaviour.hxx"
 
@@ -41,4 +41,4 @@ namespace mtest
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_CASTEMFINITESTRAINUMATBEHAVIOUR2_H_ */
+#endif /* LIB_MTEST_CASTEMFINITESTRAINUMATBEHAVIOUR2_HXX */

@@ -15,8 +15,9 @@
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 
-void
-declareGlossary()
+void declareGlossary();
+
+void declareGlossary()
 {
 using namespace boost;
 using namespace boost::python;

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_METAPROGRAMMING_RESULTOF_H_
-#define LIB_TFEL_METAPROGRAMMING_RESULTOF_H_ 
+#ifndef LIB_TFEL_METAPROGRAMMING_RESULTOF_HXX
+#define LIB_TFEL_METAPROGRAMMING_RESULTOF_HXX 
 
 #include<type_traits>
 #include"TFEL/Metaprogramming/InvalidType.hxx"
@@ -49,5 +49,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_METAPROGRAMMING_RESULTOF_H_ */
+#endif /* LIB_TFEL_METAPROGRAMMING_RESULTOF_HXX */
 

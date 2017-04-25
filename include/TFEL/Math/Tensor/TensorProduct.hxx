@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_TENSORPRODUCTEXPR_HXX_
-#define LIB_TFEL_MATH_TENSORPRODUCTEXPR_HXX_ 
+#ifndef LIB_TFEL_MATH_TENSORPRODUCTEXPR_HXX
+#define LIB_TFEL_MATH_TENSORPRODUCTEXPR_HXX 
 
 #include<cmath>
 
@@ -173,4 +173,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_TENSORPRODUCTEXPR_HXX_ */
+#endif /* LIB_TFEL_MATH_TENSORPRODUCTEXPR_HXX */

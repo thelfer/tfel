@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_SINGLESTRUCTURESCHEME_HXX_
-#define LIB_MTEST_SINGLESTRUCTURESCHEME_HXX_
+#ifndef LIB_MTEST_SINGLESTRUCTURESCHEME_HXX
+#define LIB_MTEST_SINGLESTRUCTURESCHEME_HXX
 
 #include"TFEL/Utilities/Data.hxx"
 #include"TFEL/Material/OutOfBoundsPolicy.hxx"
@@ -198,4 +198,4 @@ namespace mtest{
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_SINGLESTRUCTURESCHEME_HXX_ */
+#endif /* LIB_MTEST_SINGLESTRUCTURESCHEME_HXX */

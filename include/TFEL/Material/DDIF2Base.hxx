@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef   LIB_TFEL_MATERIAL_DDIF2BASE_H_
-#define   LIB_TFEL_MATERIAL_DDIF2BASE_H_ 
+#ifndef   LIB_TFEL_MATERIAL_DDIF2BASE_HXX
+#define   LIB_TFEL_MATERIAL_DDIF2BASE_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/tvector.hxx"

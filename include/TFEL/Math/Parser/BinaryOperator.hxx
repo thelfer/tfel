@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_BINARYOPERATOR_HXX_
-#define LIB_TFEL_BINARYOPERATOR_HXX_ 
+#ifndef LIB_TFEL_BINARYOPERATOR_HXX
+#define LIB_TFEL_BINARYOPERATOR_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include<memory>
@@ -104,5 +104,5 @@ namespace tfel
 
 #include"TFEL/Math/Parser/BinaryOperator.ixx"
 
-#endif /* LIB_TFEL_BINARYOPERATOR_HXX_ */
+#endif /* LIB_TFEL_BINARYOPERATOR_HXX */
 

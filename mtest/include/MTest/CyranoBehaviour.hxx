@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_MTESTCYRANOBEHAVIOUR_H_
-#define LIB_MTEST_MTESTCYRANOBEHAVIOUR_H_ 
+#ifndef LIB_MTEST_MTESTCYRANOBEHAVIOUR_HXX
+#define LIB_MTEST_MTESTCYRANOBEHAVIOUR_HXX 
 
 #include"TFEL/Math/tmatrix.hxx"
 
@@ -120,4 +120,4 @@ namespace mtest
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_MTESTCYRANOBEHAVIOUR_H_ */
+#endif /* LIB_MTEST_MTESTCYRANOBEHAVIOUR_HXX */

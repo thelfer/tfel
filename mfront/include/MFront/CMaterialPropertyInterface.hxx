@@ -45,7 +45,7 @@ namespace mfront{
      * \param[in]  mpd : material property description
      */
     virtual void getTargetsDescription(TargetsDescription&,
-				       const MaterialPropertyDescription&) override;
+				       const MaterialPropertyDescription&) const override;
     //! destructor
     virtual ~CMaterialPropertyInterface();
         
@@ -53,24 +53,18 @@ namespace mfront{
 
     /*!
      * \return the name of the generated library
-     * \param[in] l: library name (given by the `@Library` keyword)
-     * \param[in] m: material name (given by the `@Material` keyword)
+     * \param[in] mpd: material property description
      */
     virtual std::string
-    getGeneratedLibraryName(const std::string&,
-			    const std::string&) const;
+    getGeneratedLibraryName(const MaterialPropertyDescription&) const;
 
-    virtual void
-    writeBeginHeaderNamespace(void) override;
+    virtual void writeBeginHeaderNamespace(std::ostream&) const override;
 
-    virtual void
-    writeEndHeaderNamespace(void) override;
+    virtual void writeEndHeaderNamespace(std::ostream&) const override;
 
-    virtual void
-    writeBeginSrcNamespace(void) override;
+    virtual void writeBeginSrcNamespace(std::ostream&) const override;
 
-    virtual void
-    writeEndSrcNamespace(void) override;
+    virtual void writeEndSrcNamespace(std::ostream&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
@@ -86,20 +80,16 @@ namespace mfront{
     getSrcFileName(const std::string&,
 		   const std::string&) const override;
     /*!
-     * \param[in] m: material name
-     * \param[in] c: class name
+     * \param[in] mpd: material property description
      */
     virtual std::string
-    getFunctionName(const std::string&,
-		    const std::string&) const override;
+    getFunctionName(const MaterialPropertyDescription&) const override;
 
     /*!
-     * \param[in] m: material name
-     * \param[in] c: class name
+     * \param[in] mpd: material property description
      */
     virtual std::string
-    getCheckBoundsFunctionName(const std::string&,
-			       const std::string&) const override;
+    getCheckBoundsFunctionName(const MaterialPropertyDescription&) const override;
     /*!
      * \return true if a check bounds function is required
      */

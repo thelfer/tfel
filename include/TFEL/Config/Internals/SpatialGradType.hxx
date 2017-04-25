@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_SPATIALGRADTYPE_H_
-#define LIB_TFEL_SPATIALGRADTYPE_H_ 
+#ifndef LIB_TFEL_SPATIALGRADTYPE_HXX
+#define LIB_TFEL_SPATIALGRADTYPE_HXX 
 
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/Forward/qt.hxx"
@@ -55,5 +55,5 @@ namespace tfel{
 } // end of namespace tfel
 
 
-#endif /* LIB_TFEL_SPATIALGRADTYPE_H_ */
+#endif /* LIB_TFEL_SPATIALGRADTYPE_HXX */
 

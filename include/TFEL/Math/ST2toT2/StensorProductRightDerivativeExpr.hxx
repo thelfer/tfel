@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_STENSORPRODUCTRIGHTDERIVATIVEEXPR_H_
-#define LIB_TFEL_MATH_STENSORPRODUCTRIGHTDERIVATIVEEXPR_H_ 
+#ifndef LIB_TFEL_MATH_STENSORPRODUCTRIGHTDERIVATIVEEXPR_HXX
+#define LIB_TFEL_MATH_STENSORPRODUCTRIGHTDERIVATIVEEXPR_HXX 
 
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Math/General/MathConstants.hxx"

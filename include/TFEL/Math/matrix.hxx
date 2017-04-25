@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_MATRIX_H_
-#define LIB_TFEL_MATH_MATRIX_H_ 
+#ifndef LIB_TFEL_MATH_MATRIX_HXX
+#define LIB_TFEL_MATH_MATRIX_HXX 
 
 #include"TFEL/Math/vector.hxx"
 #include"TFEL/Math/Matrix/MatrixConcept.hxx"
@@ -20,7 +20,7 @@
 
 #ifdef NO_RUNTIME_CHECK_BOUNDS
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
-#endif /* LIB_TFEL_MATH_MATRIX_H_ */
+#endif /* LIB_TFEL_MATH_MATRIX_HXX */
 
 namespace tfel
 {
@@ -50,7 +50,7 @@ namespace tfel
       typedef EmptyRunTimeProperties RunTimeProperties;
 #else /* NO_RUNTIME_CHECK_BOUNDS */
       typedef MatrixProperties<T> RunTimeProperties;
-#endif /* LIB_TFEL_MATH_MATRIX_H_ */
+#endif /* LIB_TFEL_MATH_MATRIX_HXX */
     };
 
     template<typename T>
@@ -94,7 +94,7 @@ namespace tfel
       typedef EmptyRunTimeProperties RunTimeProperties;
 #else /* NO_RUNTIME_CHECK_BOUNDS */
       typedef MatrixProperties<T> RunTimeProperties;
-#endif /* LIB_TFEL_MATH_MATRIX_H_ */
+#endif /* LIB_TFEL_MATH_MATRIX_HXX */
       /*!
        * type of the matrix's values.
        * (this i<s a stl requirement).
@@ -194,7 +194,7 @@ namespace tfel
       TFEL_MATH_INLINE const RunTimeProperties
 #else
       TFEL_MATH_INLINE const RunTimeProperties&
-#endif /* LIB_TFEL_MATH_MATRIX_H_ */
+#endif /* LIB_TFEL_MATH_MATRIX_HXX */
       getRunTimeProperties(void) const;
 
       /*
@@ -307,5 +307,5 @@ namespace tfel
 
 #include"TFEL/Math/Matrix/matrix.ixx"
 
-#endif /* LIB_TFEL_MATH_MATRIX_H_ */
+#endif /* LIB_TFEL_MATH_MATRIX_HXX */
 

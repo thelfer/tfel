@@ -45,14 +45,12 @@ namespace mfront{
      * \param[in]  mpd : material property description
      */
     virtual void getTargetsDescription(TargetsDescription&,
-				       const MaterialPropertyDescription&) override;
+				       const MaterialPropertyDescription&) const override;
     /*!
-     * \param[in] m : name of the material
-     * \param[in] l : name of the law
+     * \param[in] mpd: material property description 
      */
     virtual std::string
-    getFunctionName(const std::string&,
-		    const std::string&) const override;
+    getFunctionName(const MaterialPropertyDescription&) const override;
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
@@ -64,17 +62,13 @@ namespace mfront{
     virtual ~MFrontMaterialPropertyInterface();
   private:
 
-    virtual void
-    writeBeginHeaderNamespace(void) override;
+    virtual void writeBeginHeaderNamespace(std::ostream&) const override;
 
-    virtual void
-    writeEndHeaderNamespace(void) override;
+    virtual void writeEndHeaderNamespace(std::ostream&) const override;
 
-    virtual void
-    writeBeginSrcNamespace(void) override;
+    virtual void writeBeginSrcNamespace(std::ostream&) const override;
 
-    virtual void
-    writeEndSrcNamespace(void) override;
+    virtual void writeEndSrcNamespace(std::ostream&) const override;
 
     /*!
      * \param const std::string&, name of the material
@@ -84,15 +78,23 @@ namespace mfront{
     getSrcFileName(const std::string&,
 		   const std::string&) const override;
     /*!
-     * \param const std::string&, name of the material
-     * \param const std::string&, name of the class
+     * \param[in] mpd: material property description 
      */
     virtual std::string
-    getCheckBoundsFunctionName(const std::string&,
-			       const std::string&) const override;
-
-    virtual bool
-    requiresCheckBoundsFunction(void) const override;
+    getCheckBoundsFunctionName(const MaterialPropertyDescription&) const override;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
+    virtual void writeEntryPointSymbol(std::ostream&,
+				       const MaterialPropertyDescription&) const override;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
+    virtual void writeMaterialKnowledgeTypeSymbol(std::ostream&,
+						  const MaterialPropertyDescription&) const override;  
+    virtual bool requiresCheckBoundsFunction(void) const override;
 
   }; // end of MFrontMaterialPropertyInterface
 

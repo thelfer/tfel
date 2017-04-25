@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_GLOSSARY_GLOSSARYENTRY_H_
-#define LIB_TFEL_GLOSSARY_GLOSSARYENTRY_H_ 
+#ifndef LIB_TFEL_GLOSSARY_GLOSSARYENTRY_HXX
+#define LIB_TFEL_GLOSSARY_GLOSSARYENTRY_HXX 
 
 #include<set>
 #include<string>
@@ -287,4 +287,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_GLOSSARY_GLOSSARYENTRY_H_ */
+#endif /* LIB_TFEL_GLOSSARY_GLOSSARYENTRY_HXX */

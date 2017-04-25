@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_TINYPERMUTATION_H_
-#define LIB_TFEL_MATH_TINYPERMUTATION_H_ 
+#ifndef LIB_TFEL_MATH_TINYPERMUTATION_HXX
+#define LIB_TFEL_MATH_TINYPERMUTATION_HXX 
 
 #include"TFEL/Math/tvector.hxx"
 
@@ -61,5 +61,5 @@ namespace tfel{
 
 #include"TFEL/Math/LU/TinyPermutation.ixx"
 
-#endif /* LIB_TFEL_MATH_TINYPERMUTATION_H_ */
+#endif /* LIB_TFEL_MATH_TINYPERMUTATION_HXX */
 

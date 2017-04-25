@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_PIPEPROFILE_HXX_
-#define LIB_MTEST_PIPEPROFILE_HXX_
+#ifndef LIB_MTEST_PIPEPROFILE_HXX
+#define LIB_MTEST_PIPEPROFILE_HXX
 
 #include<iosfwd>
 #include"MTest/PipeProfile.hxx"
@@ -122,4 +122,4 @@ namespace mtest{
   
 }
 
-#endif /* LIB_MTEST_PIPEPROFILE_HXX_ */
+#endif /* LIB_MTEST_PIPEPROFILE_HXX */

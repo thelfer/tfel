@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_TMATRIX_ROW_VIEW_H_
-#define LIB_TFEL_MATH_TMATRIX_ROW_VIEW_H_ 
+#ifndef LIB_TFEL_MATH_TMATRIX_ROW_VIEW_HXX
+#define LIB_TFEL_MATH_TMATRIX_ROW_VIEW_HXX 
 
 namespace tfel
 {
@@ -160,5 +160,5 @@ namespace tfel
 
 #include"TFEL/Math/Matrix/tmatrix_row_view.ixx"
 
-#endif /* LIB_TFEL_MATH_TMATRIX_ROW_VIEW_H_ */
+#endif /* LIB_TFEL_MATH_TMATRIX_ROW_VIEW_HXX */
 

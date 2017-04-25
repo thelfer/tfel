@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATERIAL_MODELLINGHYPOTHESIS_H_
-#define LIB_TFEL_MATERIAL_MODELLINGHYPOTHESIS_H_ 
+#ifndef LIB_TFEL_MATERIAL_MODELLINGHYPOTHESIS_HXX
+#define LIB_TFEL_MATERIAL_MODELLINGHYPOTHESIS_HXX 
 
 #include<string>
 #include<vector>
@@ -197,5 +197,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATERIAL_MODELLINGHYPOTHESIS_H_ */
+#endif /* LIB_TFEL_MATERIAL_MODELLINGHYPOTHESIS_HXX */
 

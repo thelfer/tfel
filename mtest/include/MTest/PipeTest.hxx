@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_PIPETEST_HXX_
-#define LIB_MTEST_PIPETEST_HXX_
+#ifndef LIB_MTEST_PIPETEST_HXX
+#define LIB_MTEST_PIPETEST_HXX
 
 #include<string>
 #include<vector>
@@ -500,4 +500,4 @@ namespace mtest{
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_PIPETEST_HXX_ */
+#endif /* LIB_MTEST_PIPETEST_HXX */

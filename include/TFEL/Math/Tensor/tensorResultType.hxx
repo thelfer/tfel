@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_TENSOR_RESULT_TYPE_HXX_
-#define LIB_TFEL_TENSOR_RESULT_TYPE_HXX_ 
+#ifndef LIB_TFEL_TENSOR_RESULT_TYPE_HXX
+#define LIB_TFEL_TENSOR_RESULT_TYPE_HXX 
 
 #include<type_traits>
 #include"TFEL/Metaprogramming/InvalidType.hxx"
@@ -247,5 +247,5 @@ namespace tfel{
 } // end of namespace tfel
   
 
-#endif /* LIB_TFEL_TENSOR_RESULT_TYPE_HXX_ */
+#endif /* LIB_TFEL_TENSOR_RESULT_TYPE_HXX */
 

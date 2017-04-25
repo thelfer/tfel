@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_CONVERTTOTANGENTMODULI_HXX_
-#define LIB_TFEL_MATH_CONVERTTOTANGENTMODULI_HXX_
+#ifndef LIB_TFEL_MATH_CONVERTTOTANGENTMODULI_HXX
+#define LIB_TFEL_MATH_CONVERTTOTANGENTMODULI_HXX
 
 #include<type_traits>
 
@@ -157,4 +157,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_CONVERTTOTANGENTMODULI_HXX_ */
+#endif /* LIB_TFEL_MATH_CONVERTTOTANGENTMODULI_HXX */

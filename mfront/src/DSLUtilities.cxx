@@ -12,14 +12,16 @@
  * project under specific licensing conditions. 
  */
 
-#include<stdexcept>
 #include<fstream>
 #include<sstream>
+#include<stdexcept>
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/DSLUtilities.hxx"
+#include"MFront/StaticVariableDescription.hxx"
+#include"MFront/MaterialPropertyDescription.hxx"
 
 #ifndef _MSC_VER
 static const char * const constexpr_c = "constexpr";
@@ -30,73 +32,101 @@ static const char * const constexpr_c = "const";
 namespace mfront
 {
 
-  void writeMaterialLaws(const std::string&,
-			 std::ostream& srcFile,
+  void writeEntryPointSymbol(std::ostream& out,
+			     const std::string& n)
+  {
+    writeEntryPointSymbol(out,n,n);
+  } // end of writeMFrontEntryPointSymbols
+  
+  void writeEntryPointSymbol(std::ostream& out,
+			     const std::string& n,
+			     const std::string& n2)
+  {
+    out << "MFRONT_SHAREDOBJ const char* \n"
+	<< n << "_mfront_ept = \"" << n2 << "\";\n\n";
+  } // end of writeMFrontEntryPointSymbols
+  
+  void writeMaterialKnowledgeTypeSymbol(std::ostream& out,
+					const std::string& n,
+					const MaterialKnowledgeType& t)
+  {
+    if(t==MATERIALPROPERTY){
+      out << "MFRONT_SHAREDOBJ unsigned short " << n << "_mfront_mkt = 0u;\n\n";
+    } else if(t==BEHAVIOUR){
+      out << "MFRONT_SHAREDOBJ unsigned short " << n << "_mfront_mkt = 2u;\n\n";
+    } else if(t==MODEL){
+      out << "MFRONT_SHAREDOBJ unsigned short " << n << "_mfront_mkt = 3u;\n\n";
+    } else {
+      throw(std::runtime_error("writeMaterialKnowledgeTypeSymbol: "
+			       "internal error, (unsupported material knowledge type)"));
+    }
+  } // end of writeMaterialKnowledgeTypeSymbol
+  
+  void writeMaterialLaws(std::ostream& os,
 			 const std::vector<std::string>& materialLaws)
   {
     for(const auto& l : materialLaws){
-      srcFile << "using mfront::" << l << ";\n"
-	      << "using mfront::" << l << "_checkBounds;\n";
+      os << "using mfront::" << l << ";\n"
+	 << "using mfront::" << l << "_checkBounds;\n";
     }
   } // end of writeMaterialLaws
 
-  void
-  writeStaticVariables(const std::string& method,
-		       std::ostream& srcFile,
-		       const StaticVariableDescriptionContainer& staticVars,
-		       const std::string& file)
+  void writeStaticVariables(std::ostream& os,
+			    const StaticVariableDescriptionContainer& vc,
+			    const std::string& f)
   {
-    if(staticVars.empty()){
+    if(vc.empty()){
       return;
     }
-    for(const auto& v : staticVars){
+    for(const auto& v : vc){
       if(getDebugMode()){
-	srcFile << "#line " << v.lineNumber << " \"" << file << "\"\n";
+	os << "#line " << v.lineNumber << " \"" << f << "\"\n";
       }
       if(v.type=="short"){
-	srcFile << "static " << constexpr_c << "  short " << v.name 
-		<< " = " << static_cast<short>(v.value) << ";\n";
+	os << "static " << constexpr_c << "  short " << v.name 
+	   << " = " << static_cast<short>(v.value) << ";\n";
       } else if(v.type=="ushort"){
-	srcFile << "static " << constexpr_c << "  unsigned short "  << v.name 
-		<< " = " << static_cast<unsigned short>(v.value) << ";\n";
+	os << "static " << constexpr_c << "  unsigned short "  << v.name 
+	   << " = " << static_cast<unsigned short>(v.value) << ";\n";
       } else if(v.type=="int"){
-	srcFile << "static " << constexpr_c << "  int " << v.name 
-		<< " = " << static_cast<int>(v.value) << ";\n";
+	os << "static " << constexpr_c << "  int " << v.name 
+	   << " = " << static_cast<int>(v.value) << ";\n";
       } else if(v.type=="uint"){
-	srcFile << "static " << constexpr_c << "  unsigned int " << v.name 
-		<< " = " << static_cast<unsigned int>(v.value) << ";\n";
+	os << "static " << constexpr_c << "  unsigned int " << v.name 
+	   << " = " << static_cast<unsigned int>(v.value) << ";\n";
       } else if(v.type=="long"){
-	srcFile << "static " << constexpr_c << "  long " << v.name 
-		<< " = " << static_cast<long>(v.value) << ";\n";
+	os << "static " << constexpr_c << "  long " << v.name 
+	   << " = " << static_cast<long>(v.value) << ";\n";
       } else if(v.type=="ulong"){
-	srcFile << "static " << constexpr_c << "  unsigned long " << v.name 
-		<< " = " << static_cast<unsigned long>(v.value) << ";\n";
+	os << "static " << constexpr_c << "  unsigned long " << v.name 
+	   << " = " << static_cast<unsigned long>(v.value) << ";\n";
       } else if(v.type=="float"){
-	srcFile << "static " << constexpr_c << "  float " << v.name 
-		<< " = " << static_cast<float>(v.value) << ";\n";
+	os << "static " << constexpr_c << "  float " << v.name 
+	   << " = " << static_cast<float>(v.value) << ";\n";
       } else if((v.type=="double")||(v.type=="real")){
-	srcFile << "static " << constexpr_c << "  double " << v.name 
-		<< " = " << static_cast<double>(v.value) << ";\n";
+	os << "static " << constexpr_c << "  double " << v.name 
+	   << " = " << static_cast<double>(v.value) << ";\n";
       } else if(v.type=="ldouble"){
-	srcFile << "static " << constexpr_c << "  long double " << v.name 
-		<< " = " << static_cast<long double>(v.value) << ";\n";
+	os << "static " << constexpr_c << "  long double " << v.name 
+	   << " = " << static_cast<long double>(v.value) << ";\n";
       } else {
 	std::ostringstream msg;
-	msg << method << "type '" + v.type 
-	    << "' is not a supported type for a static variable."
+	msg << "writeStaticVariables: " << "type '" + v.type
+	    << "' of variable '" << v.name
+	    << "' defined at line '"<< v.lineNumber << "' "
+	    << "is not a supported type for a static variable."
 	    << "Supported types are short, ushort, int, uint, long, ulong,"
-	    << "float, double and ldouble.\n"
-	    << "Error at line " << v.lineNumber << ".";
+	    << "float, double and ldouble.";
 	throw(std::runtime_error(msg.str()));
       }
     }
-    srcFile << '\n';
+    os << '\n';
   } // end of writeStaticVariables
 
-  std::string
-  getMaterialLawLibraryNameBase(const std::string& library,
-				const std::string& material)
+  std::string getMaterialLawLibraryNameBase(const MaterialPropertyDescription& mpd)
   {
+    const auto material = mpd.material;
+    const auto library  = mpd.library;
     if(library.empty()){
       if(material.empty()){
 	return "MaterialLaw";
@@ -106,8 +136,7 @@ namespace mfront
     return library;
   } // end of getLibraryNameBase
 
-  void
-  writeF77FUNCMacros(std::ostream& f)
+  void writeF77FUNCMacros(std::ostream& f)
   {
     auto def = [&f](){
       f << "#ifndef F77_FUNC\n"
@@ -135,8 +164,7 @@ namespace mfront
     f << "#endif\n\n";
   } // end of writeF77FuncMacros
   
-  void
-  writeExportDirectives(std::ostream& file)
+  void writeExportDirectives(std::ostream& file)
   {
     file << "#ifdef _WIN32\n"
 	 << "#ifndef NOMINMAX\n"
@@ -161,8 +189,7 @@ namespace mfront
 	 << "#endif /* _WIN32 */\n\n";
   } // end of writeExportDirectives
 
-  std::string 
-  makeUpperCase(const std::string& n)
+  std::string makeUpperCase(const std::string& n)
   {
     std::string s(n);
     std::string::const_iterator p;
@@ -173,8 +200,7 @@ namespace mfront
     return s;
   } // end of makeUpperCase
 
-  std::string 
-  makeLowerCase(const std::string& n)
+  std::string makeLowerCase(const std::string& n)
   {
     std::string s(n);
     std::string::const_iterator p;
@@ -185,9 +211,8 @@ namespace mfront
     return s;
   } // end of makeLowerCase
 
-  void
-  displayGlossaryEntryCompleteDescription(std::ostream& os,
-					  const tfel::glossary::GlossaryEntry& e)
+  void displayGlossaryEntryCompleteDescription(std::ostream& os,
+					       const tfel::glossary::GlossaryEntry& e)
   {
     const auto& k = e.getKey();
     const auto& n = e.getNames();

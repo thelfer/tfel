@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_INVJACOBIANTYPE_H_
-#define LIB_TFEL_INVJACOBIANTYPE_H_ 
+#ifndef LIB_TFEL_INVJACOBIANTYPE_HXX
+#define LIB_TFEL_INVJACOBIANTYPE_HXX 
 
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/Forward/qt.hxx"
@@ -53,5 +53,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_INVJACOBIANTYPE_H_ */
+#endif /* LIB_TFEL_INVJACOBIANTYPE_HXX */
 

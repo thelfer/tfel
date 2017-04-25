@@ -33,10 +33,9 @@ namespace mfront
   CMaterialPropertyInterface::CMaterialPropertyInterface() = default;
 
   std::string
-  CMaterialPropertyInterface::getGeneratedLibraryName(const std::string& l,
-					       const std::string& m) const
+  CMaterialPropertyInterface::getGeneratedLibraryName(const MaterialPropertyDescription& m) const
   {
-    return getMaterialLawLibraryNameBase(l,m);
+    return getMaterialLawLibraryNameBase(m);
   } // end of CMaterialPropertyInterface::getGeneratedLibraryName
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
@@ -54,9 +53,9 @@ namespace mfront
     
   void
   CMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
-						    const MaterialPropertyDescription& mpd)
+						    const MaterialPropertyDescription& mpd) const
   {
-    const auto lib  = this->getGeneratedLibraryName(mpd.library,mpd.material);
+    const auto lib  = this->getGeneratedLibraryName(mpd);
     const auto name = this->getSrcFileName(mpd.material,mpd.className);
     const auto f    = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
     const auto header = this->getHeaderFileName(mpd.material,mpd.className);
@@ -82,38 +81,39 @@ namespace mfront
     return material.empty() ? className : material+"_"+className;
   } // end of CMaterialPropertyInterface::getSrcFileName
   
-  void CMaterialPropertyInterface::writeBeginHeaderNamespace()
+  void CMaterialPropertyInterface::writeBeginHeaderNamespace(std::ostream& os) const
   {
-    this->headerFile << "#ifdef __cplusplus\n"
-		     << "extern \"C\"{\n"
-		     << "#endif /* __cplusplus */\n\n";
+    os << "#ifdef __cplusplus\n"
+       << "extern \"C\"{\n"
+       << "#endif /* __cplusplus */\n\n";
   } // end of CMaterialPropertyInterface::writeBeginHeaderNamespace
   
-  void CMaterialPropertyInterface::writeEndHeaderNamespace()
+  void CMaterialPropertyInterface::writeEndHeaderNamespace(std::ostream& os) const
   {
-    this->headerFile << "#ifdef __cplusplus\n"
-		     << "} /* end of extern \"C\" */\n"
-		     << "#endif /* __cplusplus */\n\n";
+    os << "#ifdef __cplusplus\n"
+       << "} /* end of extern \"C\" */\n"
+       << "#endif /* __cplusplus */\n\n";
   } // end of CMaterialPropertyInterface::writeEndHeaderNamespace(void)
 
-  void CMaterialPropertyInterface::writeBeginSrcNamespace()
+  void CMaterialPropertyInterface::writeBeginSrcNamespace(std::ostream& os) const
   {
-    this->srcFile << "#ifdef __cplusplus\n"
-		  << "extern \"C\"{\n"
-		  << "#endif /* __cplusplus */\n\n";
+    os << "#ifdef __cplusplus\n"
+       << "extern \"C\"{\n"
+       << "#endif /* __cplusplus */\n\n";
   } // end of CMaterialPropertyInterface::writeBeginSrcNamespace
   
-  void CMaterialPropertyInterface::writeEndSrcNamespace()
+  void CMaterialPropertyInterface::writeEndSrcNamespace(std::ostream& os) const
   {
-    this->srcFile << "#ifdef __cplusplus\n"
-		  << "} // end of extern \"C\"\n"
-		  << "#endif /* __cplusplus */\n\n";
+    os << "#ifdef __cplusplus\n"
+       << "} // end of extern \"C\"\n"
+       << "#endif /* __cplusplus */\n\n";
   } // end of CMaterialPropertyInterface::writeEndSrcNamespace(void)
 
   std::string
-  CMaterialPropertyInterface::getFunctionName(const std::string& material,
-					      const std::string& className) const
+  CMaterialPropertyInterface::getFunctionName(const MaterialPropertyDescription& mpd) const
   {
+    const auto material  = mpd.material;
+    const auto className = mpd.className;
     return material.empty() ? className : material+"_"+className;
   } // end of CMaterialPropertyInterface::getFunctionName
   
@@ -123,9 +123,10 @@ namespace mfront
   }
 
   std::string
-  CMaterialPropertyInterface::getCheckBoundsFunctionName(const std::string& material,
-							 const std::string& className) const
+  CMaterialPropertyInterface::getCheckBoundsFunctionName(const MaterialPropertyDescription& mpd) const
   {
+    const auto material  = mpd.material;
+    const auto className = mpd.className;
     if(material.empty()){
       return className+"_checkBounds";
     }

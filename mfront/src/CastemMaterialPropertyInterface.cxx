@@ -50,8 +50,7 @@ namespace mfront
     return "castem";
   }
 
-  CastemMaterialPropertyInterface::CastemMaterialPropertyInterface()
-  {}
+  CastemMaterialPropertyInterface::CastemMaterialPropertyInterface() = default;
   
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CastemMaterialPropertyInterface::treatKeyword(const std::string& k,
@@ -72,12 +71,10 @@ namespace mfront
 
   void
   CastemMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
-							 const MaterialPropertyDescription& mpd)
+							 const MaterialPropertyDescription& mpd) const
   {
-    const auto lib = "Castem"+getMaterialLawLibraryNameBase(mpd.library,
-							    mpd.material);
-    const auto name    = this->getCastemFunctionName(mpd.material,
-						     mpd.className);
+    const auto lib = "Castem"+getMaterialLawLibraryNameBase(mpd);
+    const auto name    = this->getCastemFunctionName(mpd);
     insert_if(d[lib].ldflags,"-lm");
     insert_if(d[lib].cppflags,CASTEM_CPPFLAGS);
     insert_if(d[lib].sources,this->getSourceFileName(name));
@@ -86,9 +83,10 @@ namespace mfront
   } // end of CastemMaterialPropertyInterface::getTargetsDescription
 
   std::string
-  CastemMaterialPropertyInterface::getCastemFunctionName(const std::string& material,
-							 const std::string& className)
+  CastemMaterialPropertyInterface::getCastemFunctionName(const MaterialPropertyDescription& mpd) const
   {
+    const auto material  = mpd.material;
+    const auto className = mpd.className;
     if(material.empty()){
       return className;
     }
@@ -96,13 +94,13 @@ namespace mfront
   }
 
   std::string
-  CastemMaterialPropertyInterface::getHeaderFileName(const std::string& name)
+  CastemMaterialPropertyInterface::getHeaderFileName(const std::string& name) const
   {
     return name + "-castem.hxx";
   }
 
   std::string
-  CastemMaterialPropertyInterface::getSourceFileName(const std::string& name)
+  CastemMaterialPropertyInterface::getSourceFileName(const std::string& name) const
   {
     return name + "-castem.cxx";
   }
@@ -230,7 +228,7 @@ namespace mfront
   
   void
   CastemMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
-						    const FileDescription& fd)
+						    const FileDescription& fd) const
   {
     this->writeHeaderFile(mpd,fd);
     this->writeSrcFile(mpd,fd);
@@ -238,9 +236,9 @@ namespace mfront
 
   void
   CastemMaterialPropertyInterface::writeHeaderFile(const MaterialPropertyDescription& mpd,
-						   const FileDescription& fd)
+						   const FileDescription& fd) const
   {
-    const auto name = this->getCastemFunctionName(mpd.material,mpd.className);
+    const auto name = this->getCastemFunctionName(mpd);
     const auto fn = "include/"+this->getHeaderFileName(name);
     std::ofstream out{fn};
     if(!out){
@@ -292,9 +290,9 @@ namespace mfront
 
   void
   CastemMaterialPropertyInterface::writeSrcFile(const MaterialPropertyDescription& mpd,
-						const FileDescription& fd)
+						const FileDescription& fd) const
   {
-    const auto name = this->getCastemFunctionName(mpd.material,mpd.className);
+    const auto name = this->getCastemFunctionName(mpd);
     const auto fn   = "src/"+this->getSourceFileName(name);
     std::ofstream out{fn};
     if(!out){
@@ -380,9 +378,9 @@ namespace mfront
       out << "return 0;\n"
 	  << "}\n\n";
     }
-
-    out << "MFRONT_SHAREDOBJ double\n"
-	<< name << "(";
+    writeEntryPointSymbol(out,name);
+    writeMaterialKnowledgeTypeSymbol(out,name,MATERIALPROPERTY);
+    out << "MFRONT_SHAREDOBJ double\n" << name << "(";
     if(!mpd.inputs.empty()){
       out << "const double * const castem_params";
     } else {
@@ -392,11 +390,9 @@ namespace mfront
 	<< "using namespace std;\n"
 	<< "typedef double real;\n";
     // material laws
-    writeMaterialLaws("CastemMaterialPropertyInterface::writeOutputFile",
-		      out,materialLaws);
+    writeMaterialLaws(out,materialLaws);
     // static variables
-    writeStaticVariables("CastemMaterialPropertyInterface::writeOutputFile",
-			 out,staticVars,file);
+    writeStaticVariables(out,staticVars,file);
     // parameters
     if(!params.empty()){
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);

@@ -414,11 +414,8 @@ namespace mfront{
      */
     virtual bool
     isModellingHypothesisSupported(const Hypothesis) const override;
-    /*!
-     *
-     */
-    virtual void
-    endsInputFileProcessing();
+    //! \brief method called at the end of the input file processing.
+    virtual void endsInputFileProcessing();
     /*!
      * \brief the standard variable modifier
      * \param[in] h : modelling hypothesis
@@ -661,210 +658,208 @@ namespace mfront{
      */
     virtual BehaviourData::StressFreeExpansionHandler
     readStressFreeExpansionHandler(const tfel::utilities::Token&);
+    //! \return the name of the behaviour file
+    virtual std::string getBehaviourFileName() const;
+    //! \return the name of the behaviour data file
+    virtual std::string getBehaviourDataFileName() const;
+    //! \return the name of the integration data file
+    virtual std::string getIntegrationDataFileName() const;
+    //! \return the name of the source file
+    virtual std::string getSrcFileName() const;
+    
+    virtual void writeIncludes(std::ostream&) const;
 
-    virtual void writeIncludes(std::ostream&);
+    virtual void writeNamespaceBegin(std::ostream&) const;
 
-    virtual void
-    writeNamespaceBegin(std::ostream&);
-
-    virtual void
-    writeNamespaceEnd(std::ostream&);
-
-    virtual void
-    writeStandardTFELTypedefs(std::ostream&);
-
-    virtual void
-    checkBehaviourDataFile(void) const;
-
-    virtual void
-    writeBehaviourDataStandardTFELTypedefs(void);
+    virtual void writeNamespaceEnd(std::ostream&) const;
 
     virtual void
-    writeBehaviourDataStandardTFELIncludes(void);
+    writeStandardTFELTypedefs(std::ostream&) const;
 
     virtual void
-    writeBehaviourDataFileHeader(void);
+    checkBehaviourDataFile(std::ostream&) const;
 
     virtual void
-    writeBehaviourDataFileHeaderBegin(void);
+    writeBehaviourDataStandardTFELTypedefs(std::ostream&) const;
 
     virtual void
-    writeBehaviourDataFileHeaderEnd(void);
+    writeBehaviourDataStandardTFELIncludes(std::ostream&) const;
 
     virtual void
-    writeBehaviourDataClassHeader(void);
+    writeBehaviourDataFileHeader(std::ostream&) const;
 
     virtual void
-    writeBehaviourDataDisabledConstructors(void);
+    writeBehaviourDataFileHeaderBegin(std::ostream&) const;
 
     virtual void
-    writeBehaviourDataConstructors(const Hypothesis);
+    writeBehaviourDataFileHeaderEnd(std::ostream&) const;
+
+    virtual void
+    writeBehaviourDataClassHeader(std::ostream&) const;
+
+    virtual void
+    writeBehaviourDataDisabledConstructors(std::ostream&) const;
+
+    virtual void
+    writeBehaviourDataConstructors(std::ostream&,
+				     const Hypothesis) const;
     /*!
      * write interface's setters for the main variables
      */
     virtual void
-    writeBehaviourDataMainVariablesSetters(void);
+    writeBehaviourDataMainVariablesSetters(std::ostream&) const;
 
     virtual void
-    writeBehaviourDataClassBegin(const Hypothesis);
+    writeBehaviourDataClassBegin(std::ostream&,
+				   const Hypothesis) const;
 
     virtual void
-    writeBehaviourDataClassEnd(void);
+    writeBehaviourDataClassEnd(std::ostream&) const;
 
     virtual void
-    writeBehaviourDataDefaultMembers(void);
+    writeBehaviourDataDefaultMembers(std::ostream&) const;
 
     virtual void
-    writeBehaviourDataMaterialProperties(const Hypothesis);
+    writeBehaviourDataMaterialProperties(std::ostream&,
+					   const Hypothesis) const;
 
     virtual void
-    writeBehaviourDataStateVariables(const Hypothesis);
+    writeBehaviourDataStateVariables(std::ostream&,
+				       const Hypothesis) const;
 
     virtual void
-    writeBehaviourDataAssignementOperator(const Hypothesis);
+    writeBehaviourDataAssignementOperator(std::ostream&,
+					    const Hypothesis) const;
 
     virtual void
-    writeBehaviourDataOutputOperator(const Hypothesis);
+    writeBehaviourDataOutputOperator(std::ostream&,
+				       const Hypothesis) const;
 
     virtual void
-    writeBehaviourDataExport(const Hypothesis);
+    writeBehaviourDataExport(std::ostream&,
+			       const Hypothesis) const;
 
     virtual void
-    writeBehaviourDataPublicMembers(void);
+    writeBehaviourDataPublicMembers(std::ostream&) const;
 
     virtual void
-    writeBehaviourDataFileBegin(void);
+    writeBehaviourDataFileBegin(std::ostream&) const;
 
     virtual void
-    writeBehaviourDataFileEnd(void);
+    writeBehaviourDataFileEnd(std::ostream&) const;
 
     virtual void
-    writeBehaviourDataClass(const Hypothesis);
+    writeBehaviourDataClass(std::ostream&,
+			      const Hypothesis) const;
 
     virtual void
-    writeBehaviourDataForwardDeclarations(void);
+    writeBehaviourDataForwardDeclarations(std::ostream&) const;
 
     virtual void
-    checkIntegrationDataFile(void) const;
+    checkIntegrationDataFile(std::ostream&) const;
 
     virtual void
-    writeIntegrationDataStandardTFELTypedefs(void);
+    writeIntegrationDataStandardTFELTypedefs(std::ostream&) const;
 
     virtual void
-    writeIntegrationDataStandardTFELIncludes(void);
+    writeIntegrationDataStandardTFELIncludes(std::ostream&) const;
 
     virtual void
-    writeIntegrationDataFileHeader(void);
+    writeIntegrationDataFileHeader(std::ostream&) const;
 
     virtual void
-    writeIntegrationDataFileHeaderBegin(void);
+    writeIntegrationDataFileHeaderBegin(std::ostream&) const;
 
     virtual void
-    writeIntegrationDataFileHeaderEnd(void);
+    writeIntegrationDataFileHeaderEnd(std::ostream&) const;
 
     virtual void
-    writeIntegrationDataClassHeader(void);
+    writeIntegrationDataClassHeader(std::ostream&) const;
 
     virtual void
-    writeIntegrationDataDisabledConstructors(void);
+    writeIntegrationDataDisabledConstructors(std::ostream&) const;
 
     virtual void
-    writeIntegrationDataConstructors(const Hypothesis);
+    writeIntegrationDataConstructors(std::ostream&,
+				       const Hypothesis) const;
     /*!
      * write interface's setters for the main variables
      */
     virtual void
-    writeIntegrationDataMainVariablesSetters(void);
+    writeIntegrationDataMainVariablesSetters(std::ostream&) const;
 
     virtual void
-    writeIntegrationDataScaleOperators(const Hypothesis);
+    writeIntegrationDataScaleOperators(std::ostream&,
+					 const Hypothesis) const;
+
+    virtual void writeIntegrationDataClassBegin(std::ostream&,
+						const Hypothesis) const;
+
+    virtual void writeIntegrationDataClassEnd(std::ostream&) const;
+
+    virtual void writeIntegrationDataDefaultMembers(std::ostream&) const;
+
+    virtual void writeIntegrationDataExternalStateVariables(std::ostream&,
+							    const Hypothesis) const;
+
+    virtual void writeIntegrationDataFileBegin(std::ostream&) const;
+
+    virtual void writeIntegrationDataFileEnd(std::ostream&) const;
+
+    virtual void writeIntegrationDataClass(std::ostream&,
+					   const Hypothesis) const;
 
     virtual void
-    writeIntegrationDataClassBegin(const Hypothesis);
+    writeIntegrationDataForwardDeclarations(std::ostream&) const;
+
+    virtual void writeIntegrationDataOutputOperator(std::ostream&,
+						    const Hypothesis) const;
+
+    virtual void checkBehaviourFile(std::ostream&) const;
+
+    virtual void writeBehaviourStandardTFELTypedefs(std::ostream&) const;
+
+    virtual void writeBehaviourFileHeader(std::ostream&) const;
+
+    virtual void writeBehaviourFileHeaderBegin(std::ostream&) const;
+
+    virtual void writeBehaviourFileHeaderEnd(std::ostream&) const;
+
+    virtual void writeBehaviourFileBegin(std::ostream&) const;
+
+    virtual void writeBehaviourFileEnd(std::ostream&) const;
+
+    virtual void writeBehaviourClass(std::ostream&,
+				     const Hypothesis) const;
+
+    virtual void writeBehaviourForwardDeclarations(std::ostream&) const;
+
+    virtual void writeBehaviourProfiler(std::ostream&) const;
 
     virtual void
-    writeIntegrationDataClassEnd(void);
+    writeBehaviourParserSpecificInheritanceRelationship(std::ostream&) const;
+
+    virtual void writeBehaviourParserSpecificTypedefs(std::ostream&) const;
+
+    virtual void writeBehaviourParserSpecificMembers(std::ostream&,
+						     const Hypothesis) const;
 
     virtual void
-    writeIntegrationDataDefaultMembers(void);
+    writeBehaviourParserSpecificIncludes(std::ostream&) const;
 
-    virtual void
-    writeIntegrationDataExternalStateVariables(const Hypothesis);
+    virtual void writeBehaviourClassBegin(std::ostream&,
+					  const Hypothesis) const;
+    
+    virtual void writeBehaviourGetModellingHypothesis(std::ostream&) const;
 
-    virtual void
-    writeIntegrationDataFileBegin(void);
+    virtual void writeBehaviourClassEnd(std::ostream&) const;
 
-    virtual void
-    writeIntegrationDataFileEnd(void);
+    virtual void writeBehaviourPolicyVariable(std::ostream&) const;
 
-    virtual void
-    writeIntegrationDataClass(const Hypothesis);
+    virtual void writeBehaviourSetOutOfBoundsPolicy(std::ostream&) const;
 
-    virtual void
-    writeIntegrationDataForwardDeclarations(void);
-
-    virtual void
-    writeIntegrationDataOutputOperator(const Hypothesis);
-
-    virtual void
-    checkBehaviourFile(void) const;
-
-    virtual void
-    writeBehaviourStandardTFELTypedefs(void);
-
-    virtual void
-    writeBehaviourFileHeader(void);
-
-    virtual void
-    writeBehaviourFileHeaderBegin(void);
-
-    virtual void
-    writeBehaviourFileHeaderEnd(void);
-
-    virtual void
-    writeBehaviourFileBegin(void);
-
-    virtual void
-    writeBehaviourFileEnd(void);
-
-    virtual void
-    writeBehaviourClass(const Hypothesis);
-
-    virtual void
-    writeBehaviourForwardDeclarations(void);
-
-    virtual void
-    writeBehaviourProfiler(void);
-
-    virtual void
-    writeBehaviourParserSpecificInheritanceRelationship(void);
-
-    virtual void
-    writeBehaviourParserSpecificTypedefs(void);
-
-    virtual void
-    writeBehaviourParserSpecificMembers(const Hypothesis);
-
-    virtual void
-    writeBehaviourParserSpecificIncludes(void);
-
-    virtual void
-    writeBehaviourClassBegin(const Hypothesis);
-
-    virtual void
-    writeBehaviourGetModellingHypothesis(void);
-
-    virtual void
-    writeBehaviourClassEnd(void);
-
-    virtual void
-    writeBehaviourPolicyVariable(void);
-
-    virtual void
-    writeBehaviourSetOutOfBoundsPolicy(void);
-
-    virtual void
-    writeBehaviourCheckBounds(const Hypothesis);
+    virtual void writeBehaviourCheckBounds(std::ostream&,
+					   const Hypothesis) const;
     /*!
      * \brief write the checks associated to a bound
      * \param[out] os: output stream
@@ -874,7 +869,7 @@ namespace mfront{
      */
     virtual void writeBoundsChecks(std::ostream&,
 				   const VariableDescription&,
-				   const bool);
+				   const bool) const;
     /*!
      * \brief write the checks associated to a physical bound
      * \param[out] os: output stream
@@ -884,19 +879,18 @@ namespace mfront{
      */
     virtual void writePhysicalBoundsChecks(std::ostream&,
 					   const VariableDescription&,
-					   const bool);
+					   const bool) const;
     
-    virtual void
-    writeBehaviourDisabledConstructors(void);
+    virtual void writeBehaviourDisabledConstructors(std::ostream&) const;
 
-    virtual void
-    writeBehaviourConstructors(const Hypothesis);
-
+    virtual void writeBehaviourConstructors(std::ostream&,
+					    const Hypothesis) const;
+    
     /*!
      * \return behaviour constructor initializers.
      */
     virtual std::string
-    getBehaviourConstructorsInitializers(const Hypothesis);
+    getBehaviourConstructorsInitializers(const Hypothesis) const;
     /*!
      * \brief write the arguments of a material property, including
      * the the surrounding parenthesis. Those arguments are used to
@@ -911,7 +905,7 @@ namespace mfront{
     virtual void
     writeMaterialPropertyArguments(std::ostream&,
 				   const BehaviourDescription::ComputedMaterialProperty&,
-				   std::function<std::string(const MaterialPropertyInput&)>&);
+				   std::function<std::string(const MaterialPropertyInput&)>&) const;
     /*!
      * \brief write the bounds checks to a material property
      * \param[out] out: output stream
@@ -924,7 +918,7 @@ namespace mfront{
     virtual void
     writeMaterialPropertyCheckBoundsEvaluation(std::ostream&,
 					       const BehaviourDescription::MaterialProperty&,
-					       std::function<std::string(const MaterialPropertyInput&)>&);
+					       std::function<std::string(const MaterialPropertyInput&)>&) const;
     /*!
      * \brief write the call to a material property
      * \param[out] out: output stream
@@ -937,7 +931,7 @@ namespace mfront{
     virtual void
     writeMaterialPropertyEvaluation(std::ostream&,
 				    const BehaviourDescription::MaterialProperty&,
-				    std::function<std::string(const MaterialPropertyInput&)>&) override;
+				    std::function<std::string(const MaterialPropertyInput&)>&) const override;
     /*!
      * \brief write the evoluation of a thermal expansion coefficient
      * \param[out] out: output stream
@@ -952,24 +946,25 @@ namespace mfront{
 						const BehaviourDescription::MaterialProperty&,
 						const std::string&,
 						const std::string&,
-						const std::string&);
+						const std::string&) const;
     virtual void
     writeThermalExpansionCoefficientsComputations(std::ostream&,
 						  const BehaviourDescription::MaterialProperty&,
-						  const std::string& = "");
+						  const std::string& = "") const;
     virtual void
     writeThermalExpansionComputation(std::ostream&,
 				     const BehaviourDescription::MaterialProperty&,
 				     const std::string&,
 				     const std::string&,
-				     const std::string& = "");
+				     const std::string& = "") const;
     /*!
      * \brief write the behaviour's computeStressFreeExpansion method, if
      * mandatory.
      * \param[in] h : modelling hypothesis
      */
     virtual void
-    writeBehaviourComputeStressFreeExpansion(const Hypothesis);
+    writeBehaviourComputeStressFreeExpansion(std::ostream&,
+					     const Hypothesis) const;
     /*!
      * \brief write the stiffness tensor computation evaluation
      * from the elastic material properties.
@@ -980,7 +975,7 @@ namespace mfront{
     virtual void
     writeStiffnessTensorComputation(std::ostream&,
 				    const std::string&,
-				    std::function<std::string(const MaterialPropertyInput&)>&);
+				    std::function<std::string(const MaterialPropertyInput&)>&) const;
     /*!
      * \brief write the Hill tensor computation evaluation
      * from the elastic material properties.
@@ -993,161 +988,166 @@ namespace mfront{
     writeHillTensorComputation(std::ostream&,
 			       const std::string&,
 			       const BehaviourDescription::HillTensor&,
-			       std::function<std::string(const MaterialPropertyInput&)>&);
+			       std::function<std::string(const MaterialPropertyInput&)>&) const;
     /*!
      * \brief write the initalize method . This method is called after that
      * the main variables were set.
      */
     virtual void
-    writeBehaviourInitializeMethod(const Hypothesis);
+    writeBehaviourInitializeMethod(std::ostream&,
+				   const Hypothesis) const;
     /*!
      * write part of the constructor specific to the parser
      * \param[in] h : modelling hypothesis
      */
     virtual void
-    writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis);
+    writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,
+						     const Hypothesis) const;
 
     virtual void
-    writeBehaviourIntegrationVariablesIncrements(const Hypothesis);
+    writeBehaviourIntegrationVariablesIncrements(std::ostream&,
+						 const Hypothesis) const;
 
     virtual void
-    writeBehaviourLocalVariables(const Hypothesis);
+    writeBehaviourLocalVariables(std::ostream&,
+				 const Hypothesis) const;
 
     virtual void
-    writeBehaviourIntegrationVariables(const Hypothesis);
+    writeBehaviourIntegrationVariables(std::ostream&,
+				       const Hypothesis) const;
 
     virtual void
-    writeBehaviourParameters(const Hypothesis);
+    writeBehaviourParameters(std::ostream&,
+			     const Hypothesis) const;
 
     virtual void
-    writeBehaviourStaticVariables(const Hypothesis);
+    writeBehaviourStaticVariables(std::ostream&,
+				  const Hypothesis) const;
 
     virtual void
-    writeBehaviourAdditionalMembers(const Hypothesis);
+    writeBehaviourAdditionalMembers(std::ostream&,
+				    const Hypothesis) const;
 
     virtual void
-    writeBehaviourPrivate(const Hypothesis);
+    writeBehaviourPrivate(std::ostream&,
+			  const Hypothesis) const;
 
     virtual void
-    writeBehaviourUpdateIntegrationVariables(const Hypothesis);
+    writeBehaviourUpdateIntegrationVariables(std::ostream&,
+					     const Hypothesis) const;
 
     virtual void
-    writeBehaviourUpdateStateVariables(const Hypothesis);
+    writeBehaviourUpdateStateVariables(std::ostream&,
+				       const Hypothesis) const;
 
     virtual void
-    writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis);
+    writeBehaviourUpdateAuxiliaryStateVariables(std::ostream&,
+						const Hypothesis) const;
     /*!
      * \brief write the computeInternalEnergy method
      * \param[in] h: modelling hypothesis
      */
-    virtual void
-      writeBehaviourComputeInternalEnergy(const Hypothesis);
+    virtual void writeBehaviourComputeInternalEnergy(std::ostream&,
+						     const Hypothesis) const;
     /*!
      * \brief write the computeInternalEnergy method
      * \param[in] h: modelling hypothesis
      */
-    virtual void
-    writeBehaviourComputeDissipatedEnergy(const Hypothesis);
+    virtual void writeBehaviourComputeDissipatedEnergy(std::ostream&,
+						       const Hypothesis) const;
     //! \brief write the getTimeStepScalingFactor method
-    virtual void
-    writeBehaviourGetTimeStepScalingFactor(void);
+    virtual void writeBehaviourGetTimeStepScalingFactor(std::ostream&) const;
     //! \brief write the integrate method
-    virtual void
-    writeBehaviourIntegrator(const Hypothesis);
+    virtual void writeBehaviourIntegrator(std::ostream&,
+					  const Hypothesis) const;
     /*!
      * \brief write the computeAPrioriTimeStepsScalingFactor method
      */
     virtual void
-    writeBehaviourComputeAPrioriTimeStepScalingFactor();
+    writeBehaviourComputeAPrioriTimeStepScalingFactor(std::ostream&) const;
     /*!
      * \brief write the computeAPrioriTimeStepsScalingFactorII method
      */
     virtual void
-    writeBehaviourComputeAPrioriTimeStepScalingFactorII(const Hypothesis);
+    writeBehaviourComputeAPrioriTimeStepScalingFactorII(std::ostream&,
+							const Hypothesis) const;
     /*!
      * \brief write the computeAPosterioriTimeStepsScalingFactor method
      */
     virtual void
-    writeBehaviourComputeAPosterioriTimeStepScalingFactor();
+    writeBehaviourComputeAPosterioriTimeStepScalingFactor(std::ostream&) const;
     /*!
      * \brief write the computeAPosterioriTimeStepsScalingFactorII method
      */
     virtual void
-    writeBehaviourComputeAPosterioriTimeStepScalingFactorII(const Hypothesis);
+    writeBehaviourComputeAPosterioriTimeStepScalingFactorII(std::ostream&,
+							    const Hypothesis) const;
 
     virtual void
-    writeBehaviourUpdateExternalStateVariables(const Hypothesis);
+    writeBehaviourUpdateExternalStateVariables(std::ostream&,
+					       const Hypothesis) const;
 
-    virtual void
-    writeBehaviourOutputOperator(const Hypothesis);
+    virtual void writeBehaviourOutputOperator(std::ostream&,
+					      const Hypothesis) const;
 
-    virtual void
-    writeBehaviourDestructor(void);
+    virtual void writeBehaviourDestructor(std::ostream&) const;
 
-    virtual void
-    writeBehaviourTraits(void);
+    virtual void writeBehaviourTraits(std::ostream&) const;
 
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] b : true if the behaviour is defined for the given modelling hypothesis
      */
-    virtual void
-    writeBehaviourTraitsSpecialisation(const Hypothesis,
-				       const bool);
+    virtual void writeBehaviourTraitsSpecialisation(std::ostream&,
+						    const Hypothesis,
+						    const bool) const;
 
-    virtual void
-    writeBehaviourIncludes(void);
+    virtual void writeBehaviourIncludes(std::ostream&) const;
 
-    virtual void
-    writeBehaviourLocalVariablesInitialisation(const Hypothesis);
+    virtual void writeBehaviourLocalVariablesInitialisation(std::ostream&,
+							    const Hypothesis) const;
 
-    virtual void
-    writeBehaviourParameterInitialisation(const Hypothesis);
+    virtual void writeBehaviourParameterInitialisation(std::ostream&,
+						       const Hypothesis) const;
 
-    virtual void
-    writeBehaviourParametersInitializers();
+    virtual void writeBehaviourParametersInitializers(std::ostream&) const;
 
-    virtual void
-    writeBehaviourParametersInitializer(const Hypothesis);
+    virtual void writeBehaviourParametersInitializer(std::ostream&,
+						     const Hypothesis) const;
 
-    virtual void
-    checkSrcFile(void) const;
+    virtual void checkSrcFile(std::ostream&) const;
 
-    virtual void
-    writeSrcFileHeader(void);
+    virtual void writeSrcFileHeader(std::ostream&) const;
 
-    virtual void
-    writeSrcFileUserDefinedCode(void);
+    virtual void writeSrcFileUserDefinedCode(std::ostream&) const;
 
-    virtual void
-    writeSrcFileBehaviourProfiler(void);
+    virtual void writeSrcFileBehaviourProfiler(std::ostream&) const;
 
-    virtual void
-    writeSrcFileParametersInitializers(void);
+    virtual void writeSrcFileParametersInitializers(std::ostream&) const;
 
-    virtual void
-    writeSrcFileParametersInitializer(const Hypothesis);
+    virtual void writeSrcFileParametersInitializer(std::ostream&,
+						   const Hypothesis) const;
 
-    virtual void
-    writeSrcFileStaticVariables(const Hypothesis);
+    virtual void writeSrcFileStaticVariables(std::ostream&,
+					     const Hypothesis) const;
     /*!
      * \brief write the source file
      */
-    virtual void
-    writeSrcFile(void);
+    virtual void writeSrcFile(std::ostream&) const;
 
-    virtual void
-    writeBehaviourComputePredictionOperator(const Hypothesis);
+    virtual void writeBehaviourComputePredictionOperator(std::ostream&,
+							 const Hypothesis) const;
 
-    virtual void
-    writeBehaviourComputeTangentOperator(const Hypothesis);
+    virtual void writeBehaviourComputeTangentOperator(std::ostream&,
+						      const Hypothesis) const;
 
-    virtual void writeBehaviourGetTangentOperator();
+    virtual void writeBehaviourGetTangentOperator(std::ostream&) const;
 
-    virtual void writeBehaviourTangentOperator();
+    virtual void writeBehaviourTangentOperator(std::ostream&) const;
     /*!
      * \brief write the call to a model
      * \param[out] out: output stream
+     * \param[in,out] tmpnames: temporary names
      * \param[in]  h:   hypothesis
      * \param[in]  md:  model description
      * \param[in]  vo:  name of the variable containing the result
@@ -1157,11 +1157,12 @@ namespace mfront{
      * \param[in]  bn:  base name for temporary variable 
      */
     virtual void writeModelCall(std::ostream&,
+				std::vector<std::string>&,
 				const Hypothesis,
 				const ModelDescription&,
 				const std::string&,
 				const std::string&,
-				const std::string&);
+				const std::string&) const;
     /*!
      * \brief treat methods associated with parameters
      * \param[in] h : modelling hypothesis
@@ -1251,16 +1252,6 @@ namespace mfront{
      * be accessible to the end user.
      */
     std::string localVariablesInitializers;
-
-    std::string behaviourFileName;
-    std::string behaviourDataFileName;
-    std::string integrationDataFileName;
-    std::string srcFileName;
-
-    std::ofstream behaviourFile;
-    std::ofstream behaviourDataFile;
-    std::ofstream integrationDataFile;
-    std::ofstream srcFile;
 
     bool useStateVarTimeDerivative;
     bool explicitlyDeclaredUsableInPurelyImplicitResolution;

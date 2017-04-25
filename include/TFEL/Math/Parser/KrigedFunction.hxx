@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_PARSER_KRIGEDFUNCTION_HXX_
-#define LIB_TFEL_MATH_PARSER_KRIGEDFUNCTION_HXX_ 
+#ifndef LIB_TFEL_MATH_PARSER_KRIGEDFUNCTION_HXX
+#define LIB_TFEL_MATH_PARSER_KRIGEDFUNCTION_HXX 
 
 #include<vector>
 #include<string>
@@ -119,4 +119,4 @@ namespace tfel
 
 #include"TFEL/Math/Parser/KrigedFunction.ixx"
 
-#endif /* LIB_TFEL_MATH_PARSER_KRIGEDFUNCTION_HXX_ */
+#endif /* LIB_TFEL_MATH_PARSER_KRIGEDFUNCTION_HXX */

@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_RSTREAMVIEW_HXX_
-#define LIB_TFEL_RSTREAMVIEW_HXX_ 
+#ifndef LIB_TFEL_RSTREAMVIEW_HXX
+#define LIB_TFEL_RSTREAMVIEW_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/System/stream_traits.hxx"
@@ -57,5 +57,5 @@ namespace tfel
 
 #include"TFEL/System/rstreamView.ixx"
 
-#endif /* LIB_TFEL_RSTREAMVIEW_HXX_ */
+#endif /* LIB_TFEL_RSTREAMVIEW_HXX */
 

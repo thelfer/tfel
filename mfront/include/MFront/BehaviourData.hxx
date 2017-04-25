@@ -308,13 +308,13 @@ namespace mfront{
      * valid in a purely implicit resolution.
      */
     void
-      declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const std::string&);
+    declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const std::string&);
     /*!
      * \brief get all the external state variables found to be
      * probably unusable in a purely implicit resolution.
      */
     const std::set<std::string>&
-      getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution(void) const;
+    getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution(void) const;
     /*!
      * \return the variables of the specificed type
      * \param[in] t: type of the variable
@@ -451,6 +451,19 @@ namespace mfront{
      */
     const VariableDescription&
     getVariableDescriptionByExternalName(const std::string&) const;
+    /*!
+     * \brief assign an attribute to variable
+     * \param[in] v: variable name
+     * \param[in] n: attribute name
+     * \param[in] a: attribute
+     * \param[in] b: don't throw if the attribute already exists.  In
+     * this case, the attribute is left unchanged. However the type of
+     * the attribute is checked.
+     */
+    void setVariableAttribute(const std::string&,
+			      const std::string&,
+			      const VariableAttribute&,
+			      const bool);
     /*!
      * \return true if a least one modelling hypothesis is anisotropic
      */

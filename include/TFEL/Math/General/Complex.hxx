@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_COMPLEX_HXX_
-#define LIB_TFEL_MATH_COMPLEX_HXX_ 
+#ifndef LIB_TFEL_MATH_COMPLEX_HXX
+#define LIB_TFEL_MATH_COMPLEX_HXX 
 
 #include<complex>
 
@@ -74,5 +74,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_COMPLEX_HXX_ */
+#endif /* LIB_TFEL_MATH_COMPLEX_HXX */
 

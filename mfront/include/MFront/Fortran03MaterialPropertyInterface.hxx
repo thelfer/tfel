@@ -45,14 +45,14 @@ namespace mfront{
      * \param[in]  mpd : material property description
      */
     virtual void getTargetsDescription(TargetsDescription&,
-				       const MaterialPropertyDescription&) override;
+				       const MaterialPropertyDescription&) const override;
     /*!
      * \brief generate the output files
      * \param[in] mpd : material property description
      * \param[in] fd  : mfront file description
      */
     virtual void writeOutputFiles(const MaterialPropertyDescription&,
-				  const FileDescription&) override;
+				  const FileDescription&) const override;
     //! destructor
     virtual ~Fortran03MaterialPropertyInterface();
         
@@ -60,25 +60,27 @@ namespace mfront{
     
     virtual void
     writeParameterList(std::ostream&,
-		       const VariableDescriptionContainer&) override;
+		       const VariableDescriptionContainer&) const override;
 
     virtual void
-    writeInterfaceSpecificVariables(const VariableDescriptionContainer&) override;
+    writeInterfaceSpecificVariables(std::ostream&,
+				    const VariableDescriptionContainer&) const override;
 
     virtual void
-    writeSrcPreprocessorDirectives(const MaterialPropertyDescription&) override;
+    writeSrcPreprocessorDirectives(std::ostream&,
+				   const MaterialPropertyDescription&) const override;
 
     virtual void
-    writeBeginHeaderNamespace(void) override;
+    writeBeginHeaderNamespace(std::ostream&) const override;
 
     virtual void
-    writeEndHeaderNamespace(void) override;
+    writeEndHeaderNamespace(std::ostream&) const override;
 
     virtual void
-    writeBeginSrcNamespace(void) override;
+    writeBeginSrcNamespace(std::ostream&) const override;
 
     virtual void
-    writeEndSrcNamespace(void) override;
+    writeEndSrcNamespace(std::ostream&) const override;
 
     /*!
      * \param const std::string&, name of the material
@@ -95,22 +97,16 @@ namespace mfront{
     virtual std::string
     getSrcFileName(const std::string&,
 		   const std::string&) const override;
-
     /*!
-     * \param const std::string&, name of the material
-     * \param const std::string&, name of the class
+     * \param[in] mpd: material property description 
      */
     virtual std::string
-    getFunctionName(const std::string&,
-		    const std::string&) const override;
-
+    getFunctionName(const MaterialPropertyDescription&) const override;
     /*!
-     * \param const std::string&, name of the material
-     * \param const std::string&, name of the class
+     * \param[in] mpd: material property description 
      */
     virtual std::string
-    getCheckBoundsFunctionName(const std::string&,
-			       const std::string&) const override;
+    getCheckBoundsFunctionName(const MaterialPropertyDescription&) const override;
 
     virtual bool
     requiresCheckBoundsFunction(void) const override;

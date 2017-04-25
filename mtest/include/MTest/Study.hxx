@@ -5,8 +5,8 @@
  * \date   03 nov. 2015
  */
 
-#ifndef LIB_MTEST_STUDY_HXX_
-#define LIB_MTEST_STUDY_HXX_
+#ifndef LIB_MTEST_STUDY_HXX
+#define LIB_MTEST_STUDY_HXX
 
 #include<utility>
 
@@ -218,4 +218,4 @@ namespace mtest{
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_STUDY_HXX_ */
+#endif /* LIB_MTEST_STUDY_HXX */

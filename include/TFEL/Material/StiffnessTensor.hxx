@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATERIAL_STIFFNESSTENSOR_H_
-#define LIB_TFEL_MATERIAL_STIFFNESSTENSOR_H_ 
+#ifndef LIB_TFEL_MATERIAL_STIFFNESSTENSOR_HXX
+#define LIB_TFEL_MATERIAL_STIFFNESSTENSOR_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/st2tost2.hxx"
@@ -155,4 +155,4 @@ namespace tfel{
 
 #include"TFEL/Material/StiffnessTensor.ixx"
 
-#endif /* LIB_TFEL_MATERIAL_STIFFNESSTENSOR_H_ */
+#endif /* LIB_TFEL_MATERIAL_STIFFNESSTENSOR_HXX */

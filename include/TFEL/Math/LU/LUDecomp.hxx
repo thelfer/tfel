@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_LUDECOMP_H_
-#define LIB_TFEL_MATH_LUDECOMP_H_ 
+#ifndef LIB_TFEL_MATH_LUDECOMP_HXX
+#define LIB_TFEL_MATH_LUDECOMP_HXX 
 
 #include<cmath>
 #include<limits>
@@ -155,5 +155,5 @@ namespace tfel{
 
 }// end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_LUDECOMP_H_ */
+#endif /* LIB_TFEL_MATH_LUDECOMP_HXX */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_UTILITIES_GLOBAL_H_
-#define LIB_TFEL_UTILITIES_GLOBAL_H_ 
+#ifndef LIB_TFEL_UTILITIES_GLOBAL_HXX
+#define LIB_TFEL_UTILITIES_GLOBAL_HXX 
 
 #include<map>
 #include<string>

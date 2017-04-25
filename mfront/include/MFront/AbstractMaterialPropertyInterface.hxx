@@ -32,6 +32,9 @@ namespace mfront{
   // forward declartion
   struct TargetsDescription;
 
+  /*!
+   * \brief abstract interface for material property interface.
+   */
   struct MFRONT_VISIBILITY_EXPORT AbstractMaterialPropertyInterface
   {
     //! a simple alias
@@ -53,18 +56,18 @@ namespace mfront{
 		 const tokens_iterator) = 0;
     /*!
      * \brief generate the output files
-     * \param[in] mpd : material property description
-     * \param[in] fd  : mfront file description
+     * \param[in] mpd: material property description
+     * \param[in] fd:  mfront file description
      */
     virtual void writeOutputFiles(const MaterialPropertyDescription&,
-				  const FileDescription&) = 0;
+				  const FileDescription&) const = 0;
     /*!
      * \brief : fill the target descripton
-     * \param[out] d   : target description
-     * \param[in]  mpd : material property description
+     * \param[out] d:   target description
+     * \param[in]  mpd: material property description
      */
     virtual void getTargetsDescription(TargetsDescription&,
-				       const MaterialPropertyDescription&) = 0;
+				       const MaterialPropertyDescription&) const = 0;
     //! destructor
     virtual ~AbstractMaterialPropertyInterface();
   }; // end of AbstractMaterialPropertyInterface

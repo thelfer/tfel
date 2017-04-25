@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_EVALUATORPROXY_HXX_
-#define LIB_TFEL_MATH_EVALUATORPROXY_HXX_ 
+#ifndef LIB_TFEL_MATH_EVALUATORPROXY_HXX
+#define LIB_TFEL_MATH_EVALUATORPROXY_HXX 
 
 #include"TFEL/Math/Parser/EvaluatorFunction.hxx"
 #include"TFEL/Math/Evaluator.hxx"
@@ -133,4 +133,4 @@ namespace tfel
 
 #include"TFEL/Math/Parser/EvaluatorProxy.ixx"
 
-#endif /* LIB_TFEL_MATH_EVALUATORPROXY_HXX_ */
+#endif /* LIB_TFEL_MATH_EVALUATORPROXY_HXX */

@@ -696,7 +696,8 @@ namespace mfront
     this->hillTensors.push_back(std::move(h));
   } // end of BehaviourDescription::addHillTensor
 
-  const std::vector<BehaviourDescription::HillTensor>& BehaviourDescription::getHillTensors(void){
+  const std::vector<BehaviourDescription::HillTensor>&
+  BehaviourDescription::getHillTensors(void) const{
     return this->hillTensors;
   } // end of BehaviourDescription::getHillTensors
   
@@ -1365,10 +1366,9 @@ namespace mfront
     this->addVariables(h,v,s,f);
   }
 
-  void
-  BehaviourDescription::addLocalVariable(const Hypothesis h,
-					 const VariableDescription& v,
-					 const BehaviourData::RegistrationStatus s)
+  void BehaviourDescription::addLocalVariable(const Hypothesis h,
+					      const VariableDescription& v,
+					      const BehaviourData::RegistrationStatus s)
   {
     using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &,
 						 const BehaviourData::RegistrationStatus);
@@ -1376,10 +1376,9 @@ namespace mfront
     this->addVariable(h,v,s,f);
   }
 
-  void
-  BehaviourDescription::addParameter(const Hypothesis h,
-				     const VariableDescription& v,
-				     const BehaviourData::RegistrationStatus s)
+  void BehaviourDescription::addParameter(const Hypothesis h,
+					  const VariableDescription& v,
+					  const BehaviourData::RegistrationStatus s)
   {
     using mptr = void (mfront::BehaviourData::*)(const mfront::VariableDescription &,
 						 const BehaviourData::RegistrationStatus);
@@ -1387,9 +1386,27 @@ namespace mfront
     this->addVariable(h,v,s,f);
   }
 
-  bool
-  BehaviourDescription::hasGlossaryName(const Hypothesis h,
-					const std::string& v) const
+  void BehaviourDescription::setVariableAttribute(const Hypothesis h,
+						  const std::string& v,
+						  const std::string& n,
+						  const VariableAttribute& a,
+						  const bool b)
+  {
+    auto set = [&v,&n,&a,b](BehaviourData& d){
+      d.setVariableAttribute(v,n,a,b);
+    };    
+    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      set(this->d);
+      for(auto md : this->sd){
+	set(*(md.second));
+      }
+    } else {
+      set(this->getBehaviourData2(h));
+    }
+  } // end of BehaviourDescription::setVariableAttribute
+  
+  bool BehaviourDescription::hasGlossaryName(const Hypothesis h,
+					     const std::string& v) const
   {
     return this->getData(h,&BehaviourData::hasGlossaryName,v);
   } // end of BehaviourDescription::hasGlossaryName

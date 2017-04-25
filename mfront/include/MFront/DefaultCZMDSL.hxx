@@ -22,12 +22,9 @@ namespace mfront{
   struct DefaultCZMDSL
     : public DefaultDSLBase
   {
+    static std::string getName();
 
-    static std::string 
-    getName(void);
-
-    static std::string 
-    getDescription(void);
+    static std::string getDescription();
 
     DefaultCZMDSL();
 
@@ -36,7 +33,7 @@ namespace mfront{
   protected:
 
     virtual void
-    writeBehaviourParserSpecificIncludes(void) override;
+    writeBehaviourParserSpecificIncludes(std::ostream&) const override;
 
   }; // end of struct DefaultCZMDSL
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_ISOPERATOR_H_
-#define LIB_TFEL_ISOPERATOR_H_ 
+#ifndef LIB_TFEL_ISOPERATOR_HXX
+#define LIB_TFEL_ISOPERATOR_HXX 
 
 namespace tfel{
 
@@ -42,5 +42,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_ISOPERATOR_H_ */
+#endif /* LIB_TFEL_ISOPERATOR_HXX */
 

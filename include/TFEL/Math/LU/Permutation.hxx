@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_PERMUTATION_H_
-#define LIB_TFEL_MATH_PERMUTATION_H_ 
+#ifndef LIB_TFEL_MATH_PERMUTATION_HXX
+#define LIB_TFEL_MATH_PERMUTATION_HXX 
 
 #include<cstdlib>
 
@@ -70,5 +70,5 @@ namespace tfel{
 
 #include"TFEL/Math/LU/Permutation.ixx"
 
-#endif /* LIB_TFEL_MATH_PERMUTATION_H_ */
+#endif /* LIB_TFEL_MATH_PERMUTATION_HXX */
 

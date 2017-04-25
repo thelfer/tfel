@@ -122,9 +122,9 @@ namespace mfront
 
   void
   JavaMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
-						       const MaterialPropertyDescription& mpd)
+						       const MaterialPropertyDescription& mpd) const
   {
-    const auto lib = getMaterialLawLibraryNameBase(mpd.library,mpd.material)+"-java";
+    const auto lib = getMaterialLawLibraryNameBase(mpd)+"-java";
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     insert_if(d[lib].ldflags,"-lm");    
     // the jni part
@@ -246,7 +246,7 @@ namespace mfront
   
   void
   JavaMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
-						  const FileDescription& fd)
+						  const FileDescription& fd) const
   {
     auto throw_if = [](const bool b, const std::string& m){
       if(b){throw(std::runtime_error("JavaMaterialPropertyInterface::writeOutputFiles : "+m));}
@@ -256,7 +256,7 @@ namespace mfront
     if(!this->package.empty()){
       tfel::system::systemCall::mkdir("java/"+this->package);
     }
-    const auto lib   = getMaterialLawLibraryNameBase(mpd.library,mpd.material)+"-java";
+    const auto lib   = getMaterialLawLibraryNameBase(mpd)+"-java";
     const auto cname = (!mpd.material.empty()) ? mpd.material : "UnknowMaterial";
     const auto name  = (!mpd.material.empty()) ? mpd.material+"_"+mpd.law : mpd.law;
     const auto srcFileName     = "src/" + name + "-java.cxx";
@@ -321,11 +321,9 @@ namespace mfront
 	    << "  return jdouble{};\n"
 	    << "};\n";
     // material laws
-    writeMaterialLaws("JavaMaterialPropertyInterface::writeOutputFile",
-		      srcFile,mpd.materialLaws);
+    writeMaterialLaws(srcFile,mpd.materialLaws);
     // static variables
-    writeStaticVariables("JavaMaterialPropertyInterface::writeOutputFile",
-			 srcFile,mpd.staticVars,fd.fileName);
+    writeStaticVariables(srcFile,mpd.staticVars,fd.fileName);
     // parameters
     for(const auto& p : mpd.parameters){
       throw_if(!p.hasAttribute(VariableDescription::defaultValue),

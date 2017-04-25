@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_RANDOMROTATIONMATRIX_H_
-#define LIB_TFEL_MATH_RANDOMROTATIONMATRIX_H_ 
+#ifndef LIB_TFEL_MATH_RANDOMROTATIONMATRIX_HXX
+#define LIB_TFEL_MATH_RANDOMROTATIONMATRIX_HXX 
 
 #include<cmath>
 #include<cstdlib>
@@ -56,5 +56,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_RANDOMROTATIONMATRIX_H_ */
+#endif /* LIB_TFEL_MATH_RANDOMROTATIONMATRIX_HXX */
 

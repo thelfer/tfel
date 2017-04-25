@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_NEGOBJECTRANDOMACCESSCONSTITERATOR_H_
-#define LIB_TFEL_NEGOBJECTRANDOMACCESSCONSTITERATOR_H_ 
+#ifndef LIB_TFEL_NEGOBJECTRANDOMACCESSCONSTITERATOR_HXX
+#define LIB_TFEL_NEGOBJECTRANDOMACCESSCONSTITERATOR_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
@@ -166,5 +166,5 @@ namespace tfel{
 } // end of namespace tfel
 
 
-#endif /* LIB_TFEL_NEGOBJECTRANDOMACCESSCONSTITERATOR_H_ */
+#endif /* LIB_TFEL_NEGOBJECTRANDOMACCESSCONSTITERATOR_HXX */
 

@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATHEXCEPTION_H_
-#define LIB_TFEL_MATHEXCEPTION_H_ 
+#ifndef LIB_TFEL_MATHEXCEPTION_HXX
+#define LIB_TFEL_MATHEXCEPTION_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Exception/TFELException.hxx"
@@ -83,5 +83,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATHEXCEPTION_H_ */
+#endif /* LIB_TFEL_MATHEXCEPTION_HXX */
 

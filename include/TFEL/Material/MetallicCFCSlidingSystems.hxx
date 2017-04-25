@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATERIAL_METALLICCFCSLIDINGSYSTEMS_H_
-#define LIB_TFEL_MATERIAL_METALLICCFCSLIDINGSYSTEMS_H_ 
+#ifndef LIB_TFEL_MATERIAL_METALLICCFCSLIDINGSYSTEMS_HXX
+#define LIB_TFEL_MATERIAL_METALLICCFCSLIDINGSYSTEMS_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/tvector.hxx"
@@ -62,5 +62,5 @@ namespace tfel
 
 #include"TFEL/Material/MetallicCFCSlidingSystems.ixx"
 
-#endif /* LIB_TFEL_MATERIAL_METALLICCFCSLIDINGSYSTEMS_H_ */
+#endif /* LIB_TFEL_MATERIAL_METALLICCFCSLIDINGSYSTEMS_HXX */
 

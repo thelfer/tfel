@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_PARSERBASE_HXX_
-#define LIB_TFEL_PARSERBASE_HXX_ 
+#ifndef LIB_TFEL_PARSERBASE_HXX
+#define LIB_TFEL_PARSERBASE_HXX 
 
 #include<vector>
 #include<string>
@@ -56,5 +56,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_PARSERBASE_HXX_ */
+#endif /* LIB_TFEL_PARSERBASE_HXX */
 

@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_ISREAL_HXX_
-#define LIB_TFEL_ISREAL_HXX_ 
+#ifndef LIB_TFEL_ISREAL_HXX
+#define LIB_TFEL_ISREAL_HXX 
 
 /*!
  * \def    TFEL_META_IS_REAL
@@ -79,5 +79,5 @@ namespace tfel{
 
 } // end of namespace tfel
   
-#endif /* LIB_TFEL_ISREAL_HXX_ */
+#endif /* LIB_TFEL_ISREAL_HXX */
 

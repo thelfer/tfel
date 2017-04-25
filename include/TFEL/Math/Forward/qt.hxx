@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_FORWARD_QT_H_
-#define LIB_TFEL_MATH_FORWARD_QT_H_ 
+#ifndef LIB_TFEL_MATH_FORWARD_QT_HXX
+#define LIB_TFEL_MATH_FORWARD_QT_HXX 
 
 #include<type_traits>
 
@@ -223,5 +223,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_FORWARD_QT_H_ */
+#endif /* LIB_TFEL_MATH_FORWARD_QT_HXX */
 

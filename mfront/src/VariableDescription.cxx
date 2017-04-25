@@ -26,7 +26,8 @@ namespace mfront{
   const std::string VariableDescription::depth("depth");
   const std::string VariableDescription::initialValue("initialValue");
   const std::string VariableDescription::defaultValue("defaultValue");
-  
+  const std::string VariableDescription::errorNormalisationFactor("errorNormalisationFactor");
+
   VariableDescription::VariableDescription() = default;
 
   VariableDescription::VariableDescription(const std::string& t,

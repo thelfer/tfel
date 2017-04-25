@@ -43,33 +43,31 @@ namespace mfront{
     this->mb.addLocalVariable(h,VariableDescription("strain","p_",1u,0u));
   }
 
-  std::string
-  MultipleIsotropicMisesFlowsDSL::getName()
+  std::string MultipleIsotropicMisesFlowsDSL::getName()
   {
     return "MultipleIsotropicMisesFlows";
   }
 
-  std::string
-  MultipleIsotropicMisesFlowsDSL::getDescription()
+  std::string MultipleIsotropicMisesFlowsDSL::getDescription()
   {
     return "this parser is used to define behaviours combining several "
-           "isotropic flows. Supported flow type are 'Creep' (dp/dt=f(s)) "
-           "'StrainHardeningCreep' (dp/dt=f(s,p)) and 'Plasticity' (f(p,s)=0) "
-           "where p is the equivalent plastic strain and s the equivalent "
-           "mises stress";
+      "isotropic flows. Supported flow type are 'Creep' (dp/dt=f(s)) "
+      "'StrainHardeningCreep' (dp/dt=f(s,p)) and 'Plasticity' (f(p,s)=0) "
+      "where p is the equivalent plastic strain and s the equivalent "
+      "mises stress";
   } // end of MultipleIsotropicMisesFlowsDSL::getDescription
 
-  void
-  MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificIncludes()
+  void MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificIncludes(std::ostream& os) const
   {
-    this->checkBehaviourFile();
-    this->behaviourFile << "#include\"TFEL/Math/General/BaseCast.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/TinyMatrixSolve.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Material/Lame.hxx\"\n\n";
+    this->checkBehaviourFile(os);
+    os << "#include\"TFEL/Math/General/BaseCast.hxx\"\n"
+       << "#include\"TFEL/Math/TinyMatrixSolve.hxx\"\n"
+       << "#include\"TFEL/Material/Lame.hxx\"\n\n";
   }
 
   void
-  MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificMembers(const Hypothesis)
+  MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificMembers(std::ostream& os,
+								      const Hypothesis) const
   {
     using namespace std;
     vector<FlowHandler>::const_iterator p;
@@ -77,7 +75,7 @@ namespace mfront{
     bool found;
     unsigned short n;
     bool genericTheta;
-    this->checkBehaviourFile();
+    this->checkBehaviourFile(os);
     if(this->flows.empty()){
       string msg("MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificMembers : "
 		 "no flow rule defined");
@@ -85,293 +83,293 @@ namespace mfront{
     }
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){    
       if(p->flow==FlowHandler::PlasticFlow){
-	this->behaviourFile << "void computeFlow" << n << "(stress& f,\n"
-			    << "real& df_dseq,\n"
-			    << "stress& df_dp){\n";
+	os << "void computeFlow" << n << "(stress& f,\n"
+	   << "real& df_dseq,\n"
+	   << "stress& df_dp){\n";
       } else if(p->flow==FlowHandler::CreepFlow){
-	this->behaviourFile << "void computeFlow" << n << "(DstrainDt& f,\n"
-			    << "DF_DSEQ_TYPE& df_dseq){\n";
+	os << "void computeFlow" << n << "(DstrainDt& f,\n"
+	   << "DF_DSEQ_TYPE& df_dseq){\n";
       } else if(p->flow==FlowHandler::StrainHardeningCreepFlow){
-	this->behaviourFile << "void computeFlow" << n << "(DstrainDt& f,\n"
-			    << "DF_DSEQ_TYPE& df_dseq,\n"
-			    << "DstrainDt& df_dp){\n";
+	os << "void computeFlow" << n << "(DstrainDt& f,\n"
+	   << "DF_DSEQ_TYPE& df_dseq,\n"
+	   << "DstrainDt& df_dp){\n";
       }
-      this->behaviourFile << "using namespace std;\n";
-      this->behaviourFile << "using namespace tfel::math;\n";
-      this->behaviourFile << "using namespace tfel::material;\n";
-      this->behaviourFile << "using std::vector;\n";
-      writeMaterialLaws("MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificMembers",
-			this->behaviourFile,this->mb.getMaterialLaws());
-      this->behaviourFile << p->flowRule << endl;
-      this->behaviourFile << "}\n\n";
+      os << "using namespace std;\n";
+      os << "using namespace tfel::math;\n";
+      os << "using namespace tfel::material;\n";
+      os << "using std::vector;\n";
+      writeMaterialLaws(os,this->mb.getMaterialLaws());
+      os << p->flowRule << endl;
+      os << "}\n\n";
     }
-    this->behaviourFile << "bool NewtonIntegration(void){\n";
-    this->behaviourFile << "using namespace std;\n";
-    this->behaviourFile << "using namespace tfel::math;\n";
-    this->behaviourFile << "tvector<" << this->flows.size() << ",strain> vdp(strain(real(0.)));\n";
-    this->behaviourFile << "tvector<" << this->flows.size() << ",strain> newton_f;\n";
-    this->behaviourFile << "tmatrix<" << this->flows.size() 
-			<< ","  << this->flows.size() << ",strain> newton_df;\n";
+    os << "bool NewtonIntegration(void){\n"
+       << "using namespace std;\n"
+       << "using namespace tfel::math;\n"
+       << "tvector<" << this->flows.size() << ",strain> vdp(strain(real(0.)));\n"
+       << "tvector<" << this->flows.size() << ",strain> newton_f;\n"
+       << "tmatrix<" << this->flows.size() 
+       << ","  << this->flows.size() << ",strain> newton_df;\n";
 
     genericTheta=false;
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
       if(p->hasSpecificTheta){
 	ostringstream otheta;
 	otheta << "mu_3_theta" << n;
-	this->behaviourFile << "stress "+otheta.str()+" = 3*(real(";
-	this->behaviourFile << p->theta << "))*(this->mu);\n";
+	os << "stress "+otheta.str()+" = 3*(real(";
+	os << p->theta << "))*(this->mu);\n";
       } else {
 	genericTheta=true;
       }
     }
 
     if(genericTheta){
-      this->behaviourFile << "stress mu_3_theta = 3*(";
-      this->behaviourFile << this->mb.getClassName() << "::theta)*(this->mu);\n";
+      os << "stress mu_3_theta = 3*(";
+      os << this->mb.getClassName() << "::theta)*(this->mu);\n";
     }
 
     found=false;
     for(p=this->flows.begin();(p!=this->flows.end())&&!(found);++p){
       if(p->flow==FlowHandler::PlasticFlow){
-	this->behaviourFile << "real surf;\n";
-	this->behaviourFile << "real newton_epsilon = 100*std::numeric_limits<real>::epsilon();\n";
+	os << "real surf;\n";
+	os << "real newton_epsilon = 100*std::numeric_limits<real>::epsilon();\n";
 	found = true;
       }
     }
-    this->behaviourFile << "unsigned int iter=0u;\n";
-    this->behaviourFile << "bool converge=false;\n";
-    this->behaviourFile << "while((converge==false)&&\n";
-    this->behaviourFile << "(iter<(" << this->mb.getClassName() << "::iterMax))){\n";
+    os << "unsigned int iter=0u;\n"
+       << "bool converge=false;\n"
+       << "while((converge==false)&&\n"
+       << "(iter<(" << this->mb.getClassName() << "::iterMax))){\n";
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
-      this->behaviourFile << "this->p_  = this->p" << n << " + (";
+      os << "this->p_  = this->p" << n << " + (";
       if(p->hasSpecificTheta){
-	this->behaviourFile << "real(" << p->theta << ")";
+	os << "real(" << p->theta << ")";
       } else {
-	this->behaviourFile << this->mb.getClassName() << "::theta";
+	os << this->mb.getClassName() << "::theta";
       }
-      this->behaviourFile << ")*(vdp(" << n << "));\n";
+      os << ")*(vdp(" << n << "));\n";
       if(p->hasSpecificTheta){
 	ostringstream otheta;
-	this->behaviourFile << "this->seq = std::max(this->seq_e" << n << "-";
+	os << "this->seq = std::max(this->seq_e" << n << "-";
 	otheta << "mu_3_theta" << n << "*(";
-	this->behaviourFile << otheta.str();
+	os << otheta.str();
       } else {
-	this->behaviourFile << "this->seq = std::max(this->seq_e-";
-	this->behaviourFile << "mu_3_theta*(";
+	os << "this->seq = std::max(this->seq_e-";
+	os << "mu_3_theta*(";
       }
       p2=this->flows.begin();
       unsigned short n2 = 0u;
       while(p2!=this->flows.end()){
-	this->behaviourFile << "vdp(" << n2 << ")";
+	os << "vdp(" << n2 << ")";
 	++p2;
 	++n2;
 	if(p2!=this->flows.end()){
-	  this->behaviourFile << "+";
+	  os << "+";
 	}
       }
-      this->behaviourFile << "),real(0.f));\n";
+      os << "),real(0.f));\n";
       if(p->flow==FlowHandler::PlasticFlow){
-	this->behaviourFile << "this->computeFlow" << n << "("
-			    << "this->f"       << n << ","
-			    << "this->df_dseq" << n << ","
-			    << "this->df_dp"   << n << ");\n";
-	this->behaviourFile << "surf = (this->f" << n << ")/(this->young);\n";
-	this->behaviourFile << "if(((surf>newton_epsilon)&&((vdp(" << n << "))>=0))||"
-			    << "((vdp(" << n << "))>newton_epsilon)){";
-	this->behaviourFile << "newton_f(" << n << ")  = surf;\n";
+	os << "this->computeFlow" << n << "("
+	   << "this->f"       << n << ","
+	   << "this->df_dseq" << n << ","
+	   << "this->df_dp"   << n << ");\n";
+	os << "surf = (this->f" << n << ")/(this->young);\n";
+	os << "if(((surf>newton_epsilon)&&((vdp(" << n << "))>=0))||"
+	   << "((vdp(" << n << "))>newton_epsilon)){";
+	os << "newton_f(" << n << ")  = surf;\n";
 	for(p2=this->flows.begin(),n2=0;p2!=this->flows.end();++p2,++n2){
 	  if(p2==p){
-	    this->behaviourFile << "newton_df(" << n << "," << n << ")";
+	    os << "newton_df(" << n << "," << n << ")";
 	    if(p->hasSpecificTheta){
-	      this->behaviourFile << " = ((real("<< p->theta << "))*(this->df_dp" << n << ")"
-				  << "-mu_3_theta" << n << "*(this->df_dseq" << n <<"))/(this->young);\n";
+	      os << " = ((real("<< p->theta << "))*(this->df_dp" << n << ")"
+		 << "-mu_3_theta" << n << "*(this->df_dseq" << n <<"))/(this->young);\n";
 	    } else {
-	      this->behaviourFile << " = (("<< this->mb.getClassName() << "::theta)*(this->df_dp" << n << ")"
-				  << "-mu_3_theta*(this->df_dseq" << n <<"))/(this->young);\n";
+	      os << " = (("<< this->mb.getClassName() << "::theta)*(this->df_dp" << n << ")"
+		 << "-mu_3_theta*(this->df_dseq" << n <<"))/(this->young);\n";
 	    }
 	  } else {
-	    this->behaviourFile << "newton_df(" << n << "," << n2 << ")";
+	    os << "newton_df(" << n << "," << n2 << ")";
 	    if(p->hasSpecificTheta){
-	      this->behaviourFile << " = -mu_3_theta" << n << "*(this->df_dseq" << n <<")/(this->young);\n";
+	      os << " = -mu_3_theta" << n << "*(this->df_dseq" << n <<")/(this->young);\n";
 	    } else {
-	      this->behaviourFile << " = -mu_3_theta*(this->df_dseq" << n <<")/(this->young);\n";
+	      os << " = -mu_3_theta*(this->df_dseq" << n <<")/(this->young);\n";
 	    }
 	  }
 	}
-	this->behaviourFile << "} else {\n";
-	this->behaviourFile << "newton_f("  << n << ")  =(vdp(" << n << "));\n";
-	this->behaviourFile << "newton_df(" << n << "," << n << ") = real(1.);\n";
+	os << "} else {\n";
+	os << "newton_f("  << n << ")  =(vdp(" << n << "));\n";
+	os << "newton_df(" << n << "," << n << ") = real(1.);\n";
 	for(p2=this->flows.begin(),n2=0;p2!=this->flows.end();++p2,++n2){
 	  if(p2!=p){
-	    this->behaviourFile << "newton_df(" << n << "," << n2 << ") = real(0.);\n";
+	    os << "newton_df(" << n << "," << n2 << ") = real(0.);\n";
 	  }
 	}	
-	this->behaviourFile << "}\n";
+	os << "}\n";
       } else  if (p->flow==FlowHandler::CreepFlow){
-	this->behaviourFile << "this->computeFlow" << n << "("
-			    << "this->f" << n << ","
-			    << "this->df_dseq" << n << ""
-			    << ");\n";
-	this->behaviourFile << "newton_f(" << n << ")  = vdp(" << n << ") - (this->f" << n << ")*(this->dt);\n";
-	this->behaviourFile << "newton_df(" << n << "," << n << ") = 1+";
+	os << "this->computeFlow" << n << "("
+	   << "this->f" << n << ","
+	   << "this->df_dseq" << n << ""
+	   << ");\n";
+	os << "newton_f(" << n << ")  = vdp(" << n << ") - (this->f" << n << ")*(this->dt);\n";
+	os << "newton_df(" << n << "," << n << ") = 1+";
 	if(p->hasSpecificTheta){
-	  this->behaviourFile <<  "mu_3_theta" << n;
+	  os <<  "mu_3_theta" << n;
 	} else {
-	  this->behaviourFile <<  "mu_3_theta";
+	  os <<  "mu_3_theta";
 	}
-	this->behaviourFile << "*(this->df_dseq" << n << ")*(this->dt);\n";
+	os << "*(this->df_dseq" << n << ")*(this->dt);\n";
 	for(p2=this->flows.begin(),n2=0;p2!=this->flows.end();++p2,++n2){
 	  if(p2!=p){
-	    this->behaviourFile << "newton_df(" << n << "," << n2 << ") = ";
+	    os << "newton_df(" << n << "," << n2 << ") = ";
 	    if(p->hasSpecificTheta){
-	      this->behaviourFile <<  "mu_3_theta" << n;
+	      os <<  "mu_3_theta" << n;
 	    } else {
-	      this->behaviourFile <<  "mu_3_theta";
+	      os <<  "mu_3_theta";
 	    }
-	    this->behaviourFile << "*(this->df_dseq" << n << ")*(this->dt);\n";
+	    os << "*(this->df_dseq" << n << ")*(this->dt);\n";
 	  }
 	}
       } else {
-	this->behaviourFile << "this->computeFlow" << n << "("
-			    << "this->f" << n << ","
-			    << "this->df_dseq" << n << ","
-			    << "this->df_dp"   << n << ");\n";
-	this->behaviourFile << "newton_f(" << n << ")  = vdp(" << n << ") - (this->f" << n << ")*(this->dt);\n";
-	this->behaviourFile << "newton_df(" << n << "," << n << ") = 1-(this->dt)*(";
+	os << "this->computeFlow" << n << "("
+	   << "this->f" << n << ","
+	   << "this->df_dseq" << n << ","
+	   << "this->df_dp"   << n << ");\n";
+	os << "newton_f(" << n << ")  = vdp(" << n << ") - (this->f" << n << ")*(this->dt);\n";
+	os << "newton_df(" << n << "," << n << ") = 1-(this->dt)*(";
 	if(p->hasSpecificTheta){
-	  this->behaviourFile <<  "(real(" << p->theta << "))";
+	  os <<  "(real(" << p->theta << "))";
 	} else {
-	  this->behaviourFile <<  "(" << this->mb.getClassName() << "::theta)";
+	  os <<  "(" << this->mb.getClassName() << "::theta)";
 	}
-	this->behaviourFile << "*(this->df_dp" << n << ")-";
+	os << "*(this->df_dp" << n << ")-";
 	if(p->hasSpecificTheta){
-	  this->behaviourFile <<  "mu_3_theta" << n;
+	  os <<  "mu_3_theta" << n;
 	} else {
-	  this->behaviourFile <<  "mu_3_theta";
+	  os <<  "mu_3_theta";
 	}
-	this->behaviourFile << "*(this->df_dseq" << n << "));\n";
+	os << "*(this->df_dseq" << n << "));\n";
 	for(p2=this->flows.begin(),n2=0;p2!=this->flows.end();++p2,++n2){
 	  if(p2!=p){
-	    this->behaviourFile << "newton_df(" << n << "," << n2 << ") = ";
+	    os << "newton_df(" << n << "," << n2 << ") = ";
 	    if(p->hasSpecificTheta){
-	      this->behaviourFile <<  "mu_3_theta" << n;
+	      os <<  "mu_3_theta" << n;
 	    } else {
-	      this->behaviourFile <<  "mu_3_theta";
+	      os <<  "mu_3_theta";
 	    }
-	    this->behaviourFile << "*(this->df_dseq" << n << ")*(this->dt);\n";
+	    os << "*(this->df_dseq" << n << ")*(this->dt);\n";
 	  }
 	}
       }
     }
-    this->behaviourFile << "real error=static_cast<real>(0.);\n";
+    os << "real error=static_cast<real>(0.);\n";
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
-      this->behaviourFile << "error+=std::abs(tfel::math::base_cast(newton_f(" << n << ")));\n";
+      os << "error+=std::abs(tfel::math::base_cast(newton_f(" << n << ")));\n";
     }
-    this->behaviourFile << "try{" << endl;
-    this->behaviourFile << "TinyMatrixSolve<" << this->flows.size() << "," << "real>::exe(newton_df,newton_f);\n";
-    this->behaviourFile << "} catch(LUException&){" << endl;
-    this->behaviourFile << "return false;" << endl;
-    this->behaviourFile << "}" << endl;
-    this->behaviourFile << "vdp -= newton_f;\n";
-    this->behaviourFile << "iter+=1;\n";
+    os << "try{" << endl
+       << "TinyMatrixSolve<" << this->flows.size() << "," << "real>::exe(newton_df,newton_f);\n"
+       << "} catch(LUException&){" << endl
+       << "return false;" << endl
+       << "}" << endl
+       << "vdp -= newton_f;\n"
+       << "iter+=1;\n";
     if(getDebugMode()){
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::NewtonIntegration() : iteration \" "
-			  << "<< iter << \" : \" << (error/(real(" << this->flows.size() << "))) << endl;\n";
+      os << "cout << \"" << this->mb.getClassName()
+	 << "::NewtonIntegration() : iteration \" "
+	 << "<< iter << \" : \" << (error/(real(" << this->flows.size() << "))) << endl;\n";
     }
-    this->behaviourFile << "converge = ((error)/(real(" << this->flows.size() << "))<";
-    this->behaviourFile << "(" << this->mb.getClassName() << "::epsilon));\n";
-    this->behaviourFile << "}\n\n";
-    this->behaviourFile << "if(iter==" << this->mb.getClassName() << "::iterMax){\n";
+    os << "converge = ((error)/(real(" << this->flows.size() << "))<"
+       << "(" << this->mb.getClassName() << "::epsilon));\n"
+       << "}\n\n"
+       << "if(iter==" << this->mb.getClassName() << "::iterMax){\n";
     if(getDebugMode()){
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::NewtonIntegration() : no convergence after \" "
-			  << "<< iter << \" iterations\"<< endl << endl;\n";
-      this->behaviourFile << "cout << *this << endl;\n";
+      os << "cout << \"" << this->mb.getClassName()
+	 << "::NewtonIntegration() : no convergence after \" "
+	 << "<< iter << \" iterations\"<< endl << endl;\n";
+      os << "cout << *this << endl;\n";
     }
-    this->behaviourFile << "return false;" << endl;
-    this->behaviourFile << "}\n\n";
+    os << "return false;" << endl
+       << "}\n\n";
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){
-      this->behaviourFile << "this->dp"<< n << " = " << "vdp(" << n<< ");\n";
+      os << "this->dp"<< n << " = " << "vdp(" << n<< ");\n";
     }
     if(getDebugMode()){
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::NewtonIntegration() : convergence after \" "
-			  << "<< iter << \" iterations\"<< endl << endl;\n";
+      os << "cout << \"" << this->mb.getClassName()
+	 << "::NewtonIntegration() : convergence after \" "
+	 << "<< iter << \" iterations\"<< endl << endl;\n";
     }
-    this->behaviourFile << "return true;" << endl;
-    this->behaviourFile << "\n}\n\n";
+    os << "return true;" << endl
+       << "\n}\n\n";
   } // end of writeBehaviourParserSpecificMembers
 
-  void MultipleIsotropicMisesFlowsDSL::writeBehaviourIntegrator(const Hypothesis h)
+  void MultipleIsotropicMisesFlowsDSL::writeBehaviourIntegrator(std::ostream& os,
+								const Hypothesis h) const
   {
     using namespace std;
     const string btype = this->mb.getBehaviourTypeFlag();
     const auto& d = this->mb.getBehaviourData(h);
     vector<FlowHandler>::const_iterator p2;
     unsigned short n;
-    this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n";
-    this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
-    this->behaviourFile << "*/\n";
-    this->behaviourFile << "IntegrationResult" << endl;
-    this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt) override{\n";
-    this->behaviourFile << "using namespace std;" << endl;
+    this->checkBehaviourFile(os);
+    os << "/*!\n"
+       << "* \\brief Integrate behaviour law over the time step\n"
+       << "*/\n"
+       << "IntegrationResult" << endl
+       << "integrate(const SMFlag smflag,const SMType smt) override{\n"
+       << "using namespace std;" << endl;
     if(this->mb.useQt()){
-      this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			  << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){" << endl
-			  << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
-			  << "}" << endl;
+      os << "if(smflag!=MechanicalBehaviour<" << btype 
+	 << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){" << endl
+	 << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
+	 << "}" << endl;
     } else {
-      this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			  << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){" << endl
-			  << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
-			  << "}" << endl;
+      os << "if(smflag!=MechanicalBehaviour<" << btype 
+	 << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){" << endl
+	 << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
+	 << "}" << endl;
     }
-    this->behaviourFile << "if(!this->NewtonIntegration()){\n";
+    os << "if(!this->NewtonIntegration()){\n";
     if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
+      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "this->dp = ";
+    os << "}\n"
+       << "this->dp = ";
     p2=this->flows.begin();
     n=0;
     while(p2!=this->flows.end()){
-      this->behaviourFile << "this->dp" << n << "";
+      os << "this->dp" << n << "";
       ++n;
       ++p2;
       if(p2!=this->flows.end()){
-	this->behaviourFile << "+";
+	os << "+";
       }
     }
-    this->behaviourFile << ";\n";
-    this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
-    this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
+    os << ";\n"
+       << "if(smt!=NOSTIFFNESSREQUESTED){\n"
+       << "if(!this->computeConsistentTangentOperator(smt)){\n";
     if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
+      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
     }
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "}\n";
-    this->behaviourFile << "this->deel = this->deto-dp*(this->n);\n";
-    this->behaviourFile << "this->updateStateVariables();\n";
-    this->behaviourFile << "this->sig  = (this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*(this->eel);\n";
-    this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
+    os << "}\n"
+       << "}\n"
+       << "this->deel = this->deto-dp*(this->n);\n"
+       << "this->updateStateVariables();\n"
+       << "this->sig  = (this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*(this->eel);\n"
+       << "this->updateAuxiliaryStateVariables();\n";
     for(const auto& v : d.getPersistentVariables()){
-      this->writePhysicalBoundsChecks(this->behaviourFile,v,false);
+      this->writePhysicalBoundsChecks(os,v,false);
     }
     for(const auto& v : d.getPersistentVariables()){
-      this->writeBoundsChecks(this->behaviourFile,v,false);
+      this->writeBoundsChecks(os,v,false);
     }
     if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
+      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
     } else {
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::SUCCESS;\n";
+      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::SUCCESS;\n";
     }
-    this->behaviourFile << "}\n\n";
+    os << "}\n\n";
   }
 
   void
@@ -458,40 +456,42 @@ namespace mfront{
   } // end of MultipleIsotropicMisesFlowsDSL::treatFlowRule
 
   void
-  MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis)
+  MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificInitializeMethodPart(std::ostream& os,
+										   const Hypothesis) const
   {
-    this->checkBehaviourFile();
-    this->behaviourFile << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+(";
-    this->behaviourFile << this->mb.getClassName();
-    this->behaviourFile << "::theta)*(this->deto)));\n";
-    this->behaviourFile << "this->seq_e = sigmaeq(this->se);\n";
+    this->checkBehaviourFile(os);
+    os << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+("
+       << this->mb.getClassName()
+       << "::theta)*(this->deto)));\n"
+       << "this->seq_e = sigmaeq(this->se);\n";
     unsigned short n = 0;
     for(const auto& f : this->flows){
       if(f.hasSpecificTheta){
-	this->behaviourFile << "StressStensor se" << n << "=2*(this->mu)*(tfel::math::deviator(this->eel+(";
-	this->behaviourFile << f.theta << ")*(this->deto)));\n";
-	this->behaviourFile << "this->seq_e" << n << " = sigmaeq(se" << n << ");\n";
+	os << "StressStensor se" << n << "=2*(this->mu)*(tfel::math::deviator(this->eel+(";
+	os << f.theta << ")*(this->deto)));\n";
+	os << "this->seq_e" << n << " = sigmaeq(se" << n << ");\n";
       }
       ++n;
     }
-    this->behaviourFile << "if(this->seq_e>100*std::numeric_limits<stress>::epsilon()){\n";
-    this->behaviourFile << "this->n = 1.5f*(this->se)/(this->seq_e);\n";
-    this->behaviourFile << "} else {\n";
-    this->behaviourFile << "this->n = StrainStensor(strain(0));\n";
-    this->behaviourFile << "}\n";
+    os << "if(this->seq_e>100*std::numeric_limits<stress>::epsilon()){\n"
+       << "this->n = 1.5f*(this->se)/(this->seq_e);\n"
+       << "} else {\n"
+       << "this->n = StrainStensor(strain(0));\n"
+       << "}\n";
   } // end of MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificInitializeMethodPart
 
-  void MultipleIsotropicMisesFlowsDSL::writeBehaviourComputeTangentOperator(const Hypothesis)
+  void MultipleIsotropicMisesFlowsDSL::writeBehaviourComputeTangentOperator(std::ostream& os,
+									    const Hypothesis) const
   {
-    this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n"
-			<< "using namespace std;\n"
-			<< "using tfel::material::computeElasticStiffness;\n"
-			<< "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-			<< "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n"
-			<< "return true;\n"
-			<< "}\n"
-			<< "return false;\n"
-			<< "}\n\n";
+    os << "bool computeConsistentTangentOperator(const SMType smt){\n"
+       << "using namespace std;\n"
+       << "using tfel::material::computeElasticStiffness;\n"
+       << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
+       << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n"
+       << "return true;\n"
+       << "}\n"
+       << "return false;\n"
+       << "}\n\n";
   }
 
   MultipleIsotropicMisesFlowsDSL::~MultipleIsotropicMisesFlowsDSL() = default;

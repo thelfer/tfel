@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_RUNGEKUTTA54_HXX_
-#define LIB_TFEL_RUNGEKUTTA54_HXX_ 
+#ifndef LIB_TFEL_RUNGEKUTTA54_HXX
+#define LIB_TFEL_RUNGEKUTTA54_HXX 
 
 #include<type_traits>
 #include"TFEL/FSAlgorithm/accumulate.hxx"
@@ -62,5 +62,5 @@ namespace tfel
 
 #include"TFEL/Math/RungeKutta/RungeKutta54.ixx"
 
-#endif /* LIB_TFEL_RUNGEKUTTA54_HXX_ */
+#endif /* LIB_TFEL_RUNGEKUTTA54_HXX */
 

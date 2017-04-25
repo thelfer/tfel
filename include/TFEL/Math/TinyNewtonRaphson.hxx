@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_TINYNEWTONRAPHSON_H_
-#define LIB_TFEL_TINYNEWTONRAPHSON_H_ 
+#ifndef LIB_TFEL_TINYNEWTONRAPHSON_HXX
+#define LIB_TFEL_TINYNEWTONRAPHSON_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
@@ -37,5 +37,5 @@ namespace tfel{
 
 #include"TFEL/Math/Newton-Raphson/TinyNewtonRaphson.ixx"
 
-#endif /* LIB_TFEL_TINYNEWTONRAPHSON_H_ */
+#endif /* LIB_TFEL_TINYNEWTONRAPHSON_HXX */
 

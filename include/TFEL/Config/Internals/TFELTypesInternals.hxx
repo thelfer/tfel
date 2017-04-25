@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFELTYPESINTERNALS_H_
-#define LIB_TFELTYPESINTERNALS_H_ 
+#ifndef LIB_TFELTYPESINTERNALS_HXX
+#define LIB_TFELTYPESINTERNALS_HXX 
 
 #include"TFEL/Math/Forward/qt.hxx"
 #include"TFEL/Math/Forward/tvector.hxx"
@@ -26,5 +26,5 @@
 #include"TFEL/Config/Internals/HeatFluxVectorType.hxx"
 #include"TFEL/Config/Internals/ThermalConductivityMatrixType.hxx"
 
-#endif /* LIB_TFELTYPESINTERNALS_H_ */
+#endif /* LIB_TFELTYPESINTERNALS_HXX */
 

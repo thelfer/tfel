@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef  LIB_TFEL_MATH_FACTORIZEDKRIGING1D3D_H_
-#define  LIB_TFEL_MATH_FACTORIZEDKRIGING1D3D_H_ 
+#ifndef  LIB_TFEL_MATH_FACTORIZEDKRIGING1D3D_HXX
+#define  LIB_TFEL_MATH_FACTORIZEDKRIGING1D3D_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/vector.hxx"

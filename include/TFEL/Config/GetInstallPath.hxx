@@ -5,8 +5,8 @@
  * \date   21 déc. 2015
  */
 
-#ifndef LIB_TFEL_GETINSTALLPATH_HXX_
-#define LIB_TFEL_GETINSTALLPATH_HXX_
+#ifndef LIB_TFEL_GETINSTALLPATH_HXX
+#define LIB_TFEL_GETINSTALLPATH_HXX
 
 #include<string>
 #include"TFEL/Config/TFELConfig.hxx"
@@ -18,4 +18,4 @@ namespace tfel{
   
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_GETINSTALLPATH_HXX_ */
+#endif /* LIB_TFEL_GETINSTALLPATH_HXX */

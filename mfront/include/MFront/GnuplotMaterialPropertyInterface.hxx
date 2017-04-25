@@ -30,8 +30,7 @@ namespace mfront{
   struct GnuplotMaterialPropertyInterface
     : public AbstractMaterialPropertyInterface
   {
-    static std::string 
-    getName(void);
+    static std::string getName(void);
     
     GnuplotMaterialPropertyInterface();
     /*!
@@ -53,15 +52,17 @@ namespace mfront{
      * \param[out] d   : target description
      * \param[in]  mpd : material property description
      */
-    virtual void getTargetsDescription(TargetsDescription&,
-				       const MaterialPropertyDescription&) override;
+    virtual void
+    getTargetsDescription(TargetsDescription&,
+			  const MaterialPropertyDescription&) const override;
     /*!
      * \brief generate the output files
      * \param[in] mpd : material property description
      * \param[in] fd  : mfront file description
      */
-    virtual void writeOutputFiles(const MaterialPropertyDescription&,
-				  const FileDescription&) override;
+    virtual void
+    writeOutputFiles(const MaterialPropertyDescription&,
+		     const FileDescription&) const override;
     //! destructor
     virtual ~GnuplotMaterialPropertyInterface();
     
@@ -78,15 +79,9 @@ namespace mfront{
     registerGraph(tokens_iterator,
 		  const tokens_iterator);
 
-    tokens_iterator
-    nextToken(tokens_iterator,
-	      tokens_iterator,
-	      const std::string &msg="");
-    
-    std::map<std::string,VariableBoundsDescription> testBounds ;
-
-    std::string xLabel ;
-    std::string yLabel ;
+    tokens_iterator nextToken(tokens_iterator,
+			      tokens_iterator,
+			      const std::string &msg="");
     //map : variable,datafile
     struct dataFile {
       //! constructor
@@ -104,8 +99,10 @@ namespace mfront{
       std::string name;
       std::string legend;
     };
+    std::map<std::string,VariableBoundsDescription> registredTestBounds;
     std::multimap< std::string, dataFile > experimentalData ;
-    
+    std::string xLabel ;
+    std::string yLabel ;
   }; // end of MfrontGnuplotMaterialPropertyInterface
 
 } // end of namespace mfront

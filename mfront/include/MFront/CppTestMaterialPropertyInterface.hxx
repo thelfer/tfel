@@ -52,14 +52,14 @@ namespace mfront{
      * \param[in]  mpd : material property description
      */
     virtual void getTargetsDescription(TargetsDescription&,
-				       const MaterialPropertyDescription&) override;
+				       const MaterialPropertyDescription&) const override;
     /*!
      * \brief generate the output files
      * \param[in] mpd : material property description
      * \param[in] fd  : mfront file description
      */
     virtual void writeOutputFiles(const MaterialPropertyDescription&,
-				  const FileDescription&) override;
+				  const FileDescription&) const override;
     //! destructor
     virtual ~CppTestMaterialPropertyInterface();
     

@@ -46,17 +46,18 @@ namespace mfront{
     getCallingConvention(void) const override;
     /*!
      * \return the name of the generated library
-     * \param[in] l: library name (given by the `@Library` keyword)
-     * \param[in] m: material name (given by the `@Material` keyword)
+     * \param[in] mpd: material property description
      */
     virtual std::string
-    getGeneratedLibraryName(const std::string&,
-			    const std::string&) const override;
+    getGeneratedLibraryName(const MaterialPropertyDescription&) const override;
     /*!
      * \brief write the header preprocessor directives
+     * \param[in] os:  output stream
+     * \param[in] mpd: material property description
      */
     virtual void
-    writeHeaderPreprocessorDirectives(const MaterialPropertyDescription&) override;
+    writeHeaderPreprocessorDirectives(std::ostream&,
+				      const MaterialPropertyDescription&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name

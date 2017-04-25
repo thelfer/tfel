@@ -21,7 +21,7 @@ namespace mfront{
 
   IsotropicBehaviourDSLBase::IsotropicBehaviourDSLBase()
     : BehaviourDSLBase<IsotropicBehaviourDSLBase>(),
-      theta(0.5)
+    theta(0.5)
   {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->reserveName("NewtonIntegration");
@@ -130,13 +130,6 @@ namespace mfront{
     this->mb.setParameterDefaultValue(h,"iterMax",iterMax);
   } // end of IsotropicBehaviourDSLBase::treatIterMax
 
-  void IsotropicBehaviourDSLBase::writeBehaviourParserSpecificIncludes()
-  {
-    this->checkBehaviourFile();
-    this->behaviourFile << "#include\"TFEL/Math/General/BaseCast.hxx\"\n"
-			<< "#include\"TFEL/Material/Lame.hxx\"\n\n";
-  } // end of IsotropicBehaviourDSLBase::writeBehaviourParserSpecificIncludes
-
   std::string
   IsotropicBehaviourDSLBase::flowRuleVariableModifier(const Hypothesis h,
 						      const std::string& var,
@@ -164,6 +157,25 @@ namespace mfront{
     this->readCodeBlock(*this,BehaviourData::FlowRule,
 			&IsotropicBehaviourDSLBase::flowRuleVariableModifier,true,false);
   } // end of IsotropicBehaviourDSLBase::treatFlowRule
+
+  void IsotropicBehaviourDSLBase::treatExternalStateVariable()
+  {
+    VariableDescriptionContainer ev;
+    std::set<Hypothesis> h;
+    this->readVariableList(ev,h,&BehaviourDescription::addExternalStateVariables,true,false);
+    for(const auto & elem : h){
+      CodeBlock ib;
+      for(const auto& v : ev){
+	const auto currentVarName = v.name + "_";
+	this->mb.addLocalVariable(elem,VariableDescription(v.type,currentVarName,v.arraySize,0u));
+	ib.code = "this->" + currentVarName + " = this->" + v.name +
+	  "+(" + this->mb.getClassName() + "::theta)*(this->d" + v.name + ");\n";
+      }
+      this->mb.setCode(elem,BehaviourData::BeforeInitializeLocalVariables,ib,
+		       BehaviourData::CREATEORAPPEND,
+		       BehaviourData::AT_END);
+    }
+  } // end of IsotropicBehaviourDSLBase::treatExternalStateVariable
 
   void IsotropicBehaviourDSLBase::endsInputFileProcessing()
   {
@@ -202,67 +214,57 @@ namespace mfront{
     }
   } // end of IsotropicBehaviourDSLBase::endsInputFileProcessing
 
-  void IsotropicBehaviourDSLBase::treatExternalStateVariable()
+  void IsotropicBehaviourDSLBase::writeBehaviourParserSpecificIncludes(std::ostream& os) const
   {
-    VariableDescriptionContainer ev;
-    std::set<Hypothesis> h;
-    this->readVariableList(ev,h,&BehaviourDescription::addExternalStateVariables,true,false);
-    for(const auto & elem : h){
-      CodeBlock ib;
-      for(const auto& v : ev){
-	const auto currentVarName = v.name + "_";
-	this->mb.addLocalVariable(elem,VariableDescription(v.type,currentVarName,v.arraySize,0u));
-	ib.code = "this->" + currentVarName + " = this->" + v.name +
-	  "+(" + this->mb.getClassName() + "::theta)*(this->d" + v.name + ");\n";
-      }
-      this->mb.setCode(elem,BehaviourData::BeforeInitializeLocalVariables,ib,
-		       BehaviourData::CREATEORAPPEND,
-		       BehaviourData::AT_END);
-    }
-  } // end of IsotropicBehaviourDSLBase::treatExternalStateVariable
-
-  void IsotropicBehaviourDSLBase::writeBehaviourParserSpecificTypedefs()
+    this->checkBehaviourFile(os);
+    os << "#include\"TFEL/Math/General/BaseCast.hxx\"\n"
+       << "#include\"TFEL/Material/Lame.hxx\"\n\n";
+  } // end of IsotropicBehaviourDSLBase::writeBehaviourParserSpecificIncludes
+  
+  void IsotropicBehaviourDSLBase::writeBehaviourParserSpecificTypedefs(std::ostream& os) const
   {
-    this->checkBehaviourFile();
-    this->behaviourFile << "typedef typename tfel::math::ComputeBinaryResult<"
-			<< "strain,time,tfel::math::OpDiv>::Result DstrainDt;\n"
-			<< "typedef typename tfel::math::ComputeBinaryResult<"
-			<< "DstrainDt,stress,tfel::math::OpDiv>::Result DF_DSEQ_TYPE;\n\n";
+    this->checkBehaviourFile(os);
+    os << "typedef typename tfel::math::ComputeBinaryResult<"
+       << "strain,time,tfel::math::OpDiv>::Result DstrainDt;\n"
+       << "typedef typename tfel::math::ComputeBinaryResult<"
+       << "DstrainDt,stress,tfel::math::OpDiv>::Result DF_DSEQ_TYPE;\n\n";
   } // end of IsotropicBehaviourDSLBase::writeBehaviourParserSpecificTypedefs
 
-  void IsotropicBehaviourDSLBase::writeBehaviourComputePredictionOperator(const Hypothesis h)
+  void IsotropicBehaviourDSLBase::writeBehaviourComputePredictionOperator(std::ostream& os,
+									  const Hypothesis h) const
   {
     const auto btype = this->mb.getBehaviourTypeFlag();
     if(!this->mb.hasCode(h,BehaviourData::ComputePredictionOperator)){
-      this->behaviourFile << "IntegrationResult\n"
-			  << "computePredictionOperator(const SMFlag smflag, const SMType smt) override{\n";
-      this->behaviourFile << "using namespace std;\n";
+      os << "IntegrationResult\n"
+	 << "computePredictionOperator(const SMFlag smflag, const SMType smt) override{\n";
+      os << "using namespace std;\n";
       if(this->mb.useQt()){
-	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			    << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n";
+	os << "if(smflag!=MechanicalBehaviour<" << btype 
+	   << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n";
       } else {
-	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			    << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n";
+	os << "if(smflag!=MechanicalBehaviour<" << btype 
+	   << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n";
       }
-      this->behaviourFile << "throw(runtime_error(\"" << this->mb.getClassName()
-			  << "::computePredictionOperator : "
-			  << "invalid tangent operator flag\"));\n"
-			  << "}\n"
-			  << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-			  << "Dt = (this->lambda)*Stensor4::IxI()+2*(this->mu)*Stensor4::Id();\n"
-			  << "} else {\n"
-			  << "string msg(\"" << this->mb.getClassName() << "::computePredictionOperator : \");\n"
-			  << "msg +=\"unimplemented feature\";\n"
-			  << "throw(runtime_error(msg));\n"
-			  << "}\n\n"
-			  << "return SUCCESS;\n"
-			  << "}\n\n";
+      os << "throw(runtime_error(\"" << this->mb.getClassName()
+	 << "::computePredictionOperator : "
+	 << "invalid tangent operator flag\"));\n"
+	 << "}\n"
+	 << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
+	 << "Dt = (this->lambda)*Stensor4::IxI()+2*(this->mu)*Stensor4::Id();\n"
+	 << "} else {\n"
+	 << "string msg(\"" << this->mb.getClassName() << "::computePredictionOperator : \");\n"
+	 << "msg +=\"unimplemented feature\";\n"
+	 << "throw(runtime_error(msg));\n"
+	 << "}\n\n"
+	 << "return SUCCESS;\n"
+	 << "}\n\n";
     } else {
-      BehaviourDSLCommon::writeBehaviourComputePredictionOperator(h);
+      BehaviourDSLCommon::writeBehaviourComputePredictionOperator(os,h);
     }
   } // end of IsotropicBehaviourDSLBase::writeBehaviourComputePredictionOperator(void)
 
-  void IsotropicBehaviourDSLBase::writeBehaviourComputeTangentOperator(const Hypothesis)
+  void IsotropicBehaviourDSLBase::writeBehaviourComputeTangentOperator(std::ostream&,
+								       const Hypothesis) const
   {} // end of IsotropicBehaviourDSLBase::writeBehaviourComputeTangentOperator
 
   IsotropicBehaviourDSLBase::~IsotropicBehaviourDSLBase() = default;

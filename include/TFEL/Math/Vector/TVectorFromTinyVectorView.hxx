@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_TVECTORFROMTINYVECTORVIEW_HXX_
-#define LIB_TFEL_MATH_TVECTORFROMTINYVECTORVIEW_HXX_ 
+#ifndef LIB_TFEL_MATH_TVECTORFROMTINYVECTORVIEW_HXX
+#define LIB_TFEL_MATH_TVECTORFROMTINYVECTORVIEW_HXX 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
@@ -128,5 +128,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_TVECTORFROMTINYVECTORVIEW_HXX_ */
+#endif /* LIB_TFEL_MATH_TVECTORFROMTINYVECTORVIEW_HXX */
 

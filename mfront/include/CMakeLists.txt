@@ -1,4 +1,5 @@
 install_mfront_header(MFront MFront.hxx)
+install_mfront_header(MFront MaterialKnowledgeType.hxx)
 install_mfront_header(MFront MaterialPropertyQuery.hxx)
 install_mfront_header(MFront BehaviourQuery.hxx)
 install_mfront_header(MFront ModelQuery.hxx)

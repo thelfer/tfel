@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_UMATNORMALISETANGENTOPERATOR_H_
-#define LIB_TFEL_MATH_UMATNORMALISETANGENTOPERATOR_H_ 
+#ifndef LIB_TFEL_MATH_UMATNORMALISETANGENTOPERATOR_HXX
+#define LIB_TFEL_MATH_UMATNORMALISETANGENTOPERATOR_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/st2tost2.hxx"
@@ -117,5 +117,5 @@ namespace tfel{
 
 #include"TFEL/Math/ST2toST2/UmatNormaliseTangentOperator.ixx"
 
-#endif /* LIB_TFEL_MATH_UMATNORMALISETANGENTOPERATOR_H_ */
+#endif /* LIB_TFEL_MATH_UMATNORMALISETANGENTOPERATOR_HXX */
 

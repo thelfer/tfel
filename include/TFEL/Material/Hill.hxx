@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATERIAL_HILL_H_
-#define LIB_TFEL_MATERIAL_HILL_H_ 
+#ifndef LIB_TFEL_MATERIAL_HILL_HXX
+#define LIB_TFEL_MATERIAL_HILL_HXX 
 
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
@@ -113,4 +113,4 @@ namespace tfel
 
 #include"TFEL/Material/Hill.ixx"
 
-#endif /* LIB_TFEL_MATERIAL_HILL_H_ */
+#endif /* LIB_TFEL_MATERIAL_HILL_HXX */

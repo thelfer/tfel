@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATERIAL_ORTHOTROPICAXESCONVENTION_HXX_
-#define LIB_TFEL_MATERIAL_ORTHOTROPICAXESCONVENTION_HXX_
+#ifndef LIB_TFEL_MATERIAL_ORTHOTROPICAXESCONVENTION_HXX
+#define LIB_TFEL_MATERIAL_ORTHOTROPICAXESCONVENTION_HXX
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Math/stensor.hxx"
@@ -81,4 +81,4 @@ namespace tfel{
 
 #include"TFEL/Material/OrthotropicAxesConvention.ixx"
   
-#endif /* LIB_TFEL_MATERIAL_ORTHOTROPICAXESCONVENTION_HXX_ */
+#endif /* LIB_TFEL_MATERIAL_ORTHOTROPICAXESCONVENTION_HXX */

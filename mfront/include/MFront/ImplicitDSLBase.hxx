@@ -103,32 +103,40 @@ namespace mfront{
     virtual void endsInputFileProcessing(void) override;
 
     virtual void
-    writeBehaviourLocalVariablesInitialisation(const Hypothesis) override;
+    writeBehaviourLocalVariablesInitialisation(std::ostream&,
+					       const Hypothesis) const override;
     
-    virtual void writeBehaviourIntegrator(const Hypothesis) override;
+    virtual void writeBehaviourIntegrator(std::ostream&,
+					  const Hypothesis) const override;
 
-    virtual void writeComputeFdF(const Hypothesis);
+    virtual void writeComputeFdF(std::ostream&,
+				 const Hypothesis) const;
 
-    virtual void writeBehaviourParserSpecificIncludes(void) override;
+    virtual void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
 
-    virtual void writeBehaviourParserSpecificTypedefs(void) override;
+    virtual void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
 
-    virtual void writeBehaviourParserSpecificMembers(const Hypothesis) override;
+    virtual void writeBehaviourParserSpecificMembers(std::ostream&,
+						     const Hypothesis) const override;
 
-    virtual void writeBehaviourIntegrationVariablesIncrements(const Hypothesis) override;
+    virtual void writeBehaviourIntegrationVariablesIncrements(std::ostream&,
+							      const Hypothesis) const override;
     
     virtual std::string
-    getBehaviourConstructorsInitializers(const Hypothesis) override;
+    getBehaviourConstructorsInitializers(const Hypothesis) const override;
 
     virtual std::string
     getIntegrationVariablesIncrementsInitializers(const VariableDescriptionContainer&,
 						  const bool) const override;
 
-    virtual void writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis) override;
+    virtual void writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,
+								  const Hypothesis) const override;
 
-    virtual void writeComputeNumericalJacobian(const Hypothesis);
+    virtual void writeComputeNumericalJacobian(std::ostream&,
+					       const Hypothesis) const;
 
-    virtual void writeGetPartialJacobianInvert(const Hypothesis);
+    virtual void writeGetPartialJacobianInvert(std::ostream&,
+					       const Hypothesis) const;
     //! \brief treat the @Theta keyword
     virtual void treatTheta(void);
     //! \brief treat the @IterMax keyword

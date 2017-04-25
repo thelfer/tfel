@@ -28,10 +28,9 @@ namespace mfront
   {}
 
   std::string
-  ExcelMaterialPropertyInternalInterface::getGeneratedLibraryName(const std::string& l,
-								  const std::string& m) const
+  ExcelMaterialPropertyInternalInterface::getGeneratedLibraryName(const MaterialPropertyDescription& mpd) const
   {
-    return "Excel"+getMaterialLawLibraryNameBase(l,m);
+    return "Excel"+mfront::getMaterialLawLibraryNameBase(mpd);
   } // end of ExcelMaterialPropertyInternalInterface::getGeneratedLibraryName
 
   std::string
@@ -48,26 +47,23 @@ namespace mfront
     return CMaterialPropertyInterface::getSrcFileName(m,c)+"-Excel";
   } // end of ExcelMaterialPropertyInternalInterface::getSrcFileName
   
-  void
-  ExcelMaterialPropertyInternalInterface::writeHeaderPreprocessorDirectives(const MaterialPropertyDescription&)
+  void ExcelMaterialPropertyInternalInterface::writeHeaderPreprocessorDirectives(std::ostream& os,
+										 const MaterialPropertyDescription&) const
   {
-    this->headerFile << "#ifndef MFRONT_EXCEL_CALLING_CONVENTION\n"
-		     << "#ifdef _WIN32\n"
-		     << "#define MFRONT_EXCEL_CALLING_CONVENTION __stdcall\n"
-		     << "#else /* _WIN32 */\n"
-		     << "#define MFRONT_EXCEL_CALLING_CONVENTION\n"
-		     << "#endif /* _WIN32 */\n"
-		     << "#endif /* MFRONT_EXCEL_CALLING_CONVENTION */\n"; 
+    os << "#ifndef MFRONT_EXCEL_CALLING_CONVENTION\n"
+       << "#ifdef _WIN32\n"
+       << "#define MFRONT_EXCEL_CALLING_CONVENTION __stdcall\n"
+       << "#else /* _WIN32 */\n"
+       << "#define MFRONT_EXCEL_CALLING_CONVENTION\n"
+       << "#endif /* _WIN32 */\n"
+       << "#endif /* MFRONT_EXCEL_CALLING_CONVENTION */\n"; 
   } // end of ExcelMaterialPropertyInternalInterface::writePreprocessorDirectives
 
   std::string
   ExcelMaterialPropertyInternalInterface::getCallingConvention() const{
     return "MFRONT_EXCEL_CALLING_CONVENTION";
   }
-  
 
-  
-  ExcelMaterialPropertyInternalInterface::~ExcelMaterialPropertyInternalInterface()
-  {} // end of ExcelMaterialPropertyInternalInterface::~ExcelMaterialPropertyInternalInterface
+  ExcelMaterialPropertyInternalInterface::~ExcelMaterialPropertyInternalInterface() = default;
 
 } // end of namespace mfront

@@ -73,9 +73,9 @@ namespace mfront
 
   void
   PythonMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
-							 const MaterialPropertyDescription& mpd)
+							 const MaterialPropertyDescription& mpd) const
   {
-    const auto lib = makeLowerCase(getMaterialLawLibraryNameBase(mpd.library,mpd.material));
+    const auto lib = makeLowerCase(getMaterialLawLibraryNameBase(mpd));
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto headerFileName  = "include/"+name+"-python.hxx";
     auto src = std::string{};
@@ -190,7 +190,7 @@ namespace mfront
 
   void
   PythonMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
-						    const FileDescription& fd)
+						    const FileDescription& fd) const
   {
     using namespace std;
     using namespace tfel::system;
@@ -309,11 +309,9 @@ namespace mfront
     srcFile << "using namespace std;\n"
 	    << "using real = double;\n";
     // material laws
-    writeMaterialLaws("PythonMaterialPropertyInterface::writeOutputFile",
-		      srcFile,materialLaws);
+    writeMaterialLaws(srcFile,materialLaws);
     // static variables
-    writeStaticVariables("PythonMaterialPropertyInterface::writeOutputFile",
-			 srcFile,staticVars,file);
+    writeStaticVariables(srcFile,staticVars,file);
     srcFile << "auto throwPythonRuntimeException = [](const string& msg){\n"
 	    << "  PyErr_SetString(PyExc_RuntimeError,msg.c_str());\n"
 	    << "  return nullptr;\n"
@@ -491,12 +489,12 @@ namespace mfront
 #else /* _WIN32 */
       wrapper << "PyMODINIT_FUNC\n"
 #endif /* _WIN32 */
-	    << "init" << makeLowerCase(getMaterialLawLibraryNameBase(library,material))
+	    << "init" << makeLowerCase(getMaterialLawLibraryNameBase(mpd))
 	    << "(void)\n";
     wrapper << "{\n";
     if(!material.empty()){
       wrapper << "(void) Py_InitModule(\""
-	      << makeLowerCase(getMaterialLawLibraryNameBase(library,material))
+	      << makeLowerCase(getMaterialLawLibraryNameBase(mpd))
 	      << "\"," << material << "LawMethods);\n";
     } else {
       wrapper << "(void) Py_InitModule(\"materiallaw\",MaterialLawMethods);\n";

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_T2TOT2T2TOT2PRODUCTEXPR_H_
-#define LIB_TFEL_MATH_T2TOT2T2TOT2PRODUCTEXPR_H_ 
+#ifndef LIB_TFEL_MATH_T2TOT2T2TOT2PRODUCTEXPR_HXX
+#define LIB_TFEL_MATH_T2TOT2T2TOT2PRODUCTEXPR_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -318,4 +318,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_T2TOT2T2TOT2PRODUCTEXPR_H_ */
+#endif /* LIB_TFEL_MATH_T2TOT2T2TOT2PRODUCTEXPR_HXX */

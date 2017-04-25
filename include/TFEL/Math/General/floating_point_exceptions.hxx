@@ -12,12 +12,12 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_FLOATING_POINT_EXCEPTIONS_HXX_
-#define LIB_TFEL_FLOATING_POINT_EXCEPTIONS_HXX_ 
+#ifndef LIB_TFEL_FLOATING_POINT_EXCEPTIONS_HXX
+#define LIB_TFEL_FLOATING_POINT_EXCEPTIONS_HXX 
 
 #ifdef HAVE_FENV
 #include "fenv.h"
-#endif /* LIB_TFEL_FLOATING_POINT_EXCEPTIONS_HXX_ */
+#endif /* LIB_TFEL_FLOATING_POINT_EXCEPTIONS_HXX */
 
 namespace tfel{
   
@@ -41,13 +41,13 @@ namespace tfel{
       feenableexcept(FE_OVERFLOW);  //	result not representable due to overflow
       feenableexcept(FE_INVALID);   //	invalid operation
       fedisableexcept(FE_INEXACT);  // The Inexact exception occurs when the  rounded  result  of  an operation  is  not equal to the infinite precision result.
-#endif /* LIB_TFEL_FLOATING_POINT_EXCEPTIONS_HXX_ */
-#endif /* LIB_TFEL_FLOATING_POINT_EXCEPTIONS_HXX_ */
+#endif /* LIB_TFEL_FLOATING_POINT_EXCEPTIONS_HXX */
+#endif /* LIB_TFEL_FLOATING_POINT_EXCEPTIONS_HXX */
     }    
     
   } // end of namespace math
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_FLOATING_POINT_EXCEPTIONS_HXX_ */
+#endif /* LIB_TFEL_FLOATING_POINT_EXCEPTIONS_HXX */
 

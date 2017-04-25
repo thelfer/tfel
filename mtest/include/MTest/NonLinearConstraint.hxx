@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_MTESTNONLINEARCONSTRAINT_H_
-#define LIB_MTEST_MTESTNONLINEARCONSTRAINT_H_ 
+#ifndef LIB_MTEST_MTESTNONLINEARCONSTRAINT_HXX
+#define LIB_MTEST_MTESTNONLINEARCONSTRAINT_HXX 
 
 #include<vector>
 #include<string>
@@ -159,5 +159,5 @@ namespace mtest
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_MTESTNONLINEARCONSTRAINT_H_ */
+#endif /* LIB_MTEST_MTESTNONLINEARCONSTRAINT_HXX */
 

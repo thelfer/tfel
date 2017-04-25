@@ -13,8 +13,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_VECTOR_HXX_
-#define LIB_TFEL_VECTOR_HXX_ 
+#ifndef LIB_TFEL_VECTOR_HXX
+#define LIB_TFEL_VECTOR_HXX 
 
 #include<vector>
 #include<type_traits>
@@ -283,5 +283,5 @@ namespace tfel{
 
 #include"TFEL/Math/Vector/vector.ixx"
 
-#endif /* LIB_TFEL_VECTOR_HXX_ */
+#endif /* LIB_TFEL_VECTOR_HXX */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_PIPEMESH_HXX_
-#define LIB_MTEST_PIPEMESH_HXX_
+#ifndef LIB_MTEST_PIPEMESH_HXX
+#define LIB_MTEST_PIPEMESH_HXX
 
 #include"MTest/Types.hxx"
 
@@ -39,4 +39,4 @@ namespace mtest{
 
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_PIPEMESH_HXX_ */
+#endif /* LIB_MTEST_PIPEMESH_HXX */

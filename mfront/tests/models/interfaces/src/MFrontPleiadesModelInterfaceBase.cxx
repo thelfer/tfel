@@ -604,8 +604,7 @@ namespace mfront{
       this->srcFile << ")\n";
       this->srcFile << "{\n";
       this->srcFile << "using namespace std;\n";
-      writeMaterialLaws("MFrontPleiadesModelInterfaceBase::writeSrcFile",
-			this->srcFile,md.materialLaws);		      
+      writeMaterialLaws(this->srcFile,md.materialLaws);		      
       if(f.modifiedVariables.size()==1){
 	this->srcFile << "double " << *(f.modifiedVariables.begin()) << ";\n";
       }

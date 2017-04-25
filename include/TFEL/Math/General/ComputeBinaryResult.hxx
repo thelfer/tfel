@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_COMPUTEBINARYRESULT_H_
-#define LIB_TFEL_COMPUTEBINARYRESULT_H_ 
+#ifndef LIB_TFEL_COMPUTEBINARYRESULT_HXX
+#define LIB_TFEL_COMPUTEBINARYRESULT_HXX 
 
 #include<type_traits>
 #include"TFEL/Math/General/ResultType.hxx"
@@ -141,5 +141,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_COMPUTEBINARYRESULT_H_ */
+#endif /* LIB_TFEL_COMPUTEBINARYRESULT_HXX */
 

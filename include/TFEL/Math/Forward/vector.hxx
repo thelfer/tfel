@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_FORWARD_VECTOR_H_
-#define LIB_TFEL_MATH_FORWARD_VECTOR_H_ 
+#ifndef LIB_TFEL_MATH_FORWARD_VECTOR_HXX
+#define LIB_TFEL_MATH_FORWARD_VECTOR_HXX 
 
 namespace tfel
 {
@@ -34,5 +34,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_FORWARD_VECTOR_H_ */
+#endif /* LIB_TFEL_MATH_FORWARD_VECTOR_HXX */
 

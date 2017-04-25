@@ -39,49 +39,8 @@ namespace mfront{
     this->registerNewCallBack("@ComputeStiffnessTensor",
 			      &DefaultDSLBase::treatComputeStiffnessTensor);
   }
-
-  void
-  DefaultDSLBase::writeBehaviourParserSpecificIncludes()
-  {
-    BehaviourDSLCommon::writeBehaviourParserSpecificIncludes();
-  } // end of DefaultDSLBase::writeBehaviourParserSpecificIncludes
-
-  void DefaultDSLBase::endsInputFileProcessing()
-  {
-    BehaviourDSLCommon::endsInputFileProcessing();
-    if(this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false)){
-      const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      auto D = VariableDescription("StiffnessTensor","D",1u,0u); 
-      D.description = "stiffness tensor computed from elastic "
-	"material properties";
-      this->mb.addLocalVariable(h,D,BehaviourData::ALREADYREGISTRED);
-    }
-  } // end of DefaultDSLBase::endsInputFileProcessing()
   
-  void DefaultDSLBase::writeBehaviourLocalVariablesInitialisation(const Hypothesis)
-  {
-    using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    Modifier ets = [](const MaterialPropertyInput& i) -> std::string {
-      if((i.type==MaterialPropertyInput::TEMPERATURE)||
-	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
-	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
-	return "this->"+i.name + "+this->d" + i.name;
-      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
-		 (i.type==MaterialPropertyInput::PARAMETER)){
-	return "this->"+i.name;
-      } else {
-	throw(std::runtime_error("DefaultDSLBase::writeBehaviourLocalVariablesInitialisation: "
-				 "unsupported input type for variable '"+i.name+"'"));
-      }
-    };
-    if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
-      this->behaviourFile << "// stiffness tensor at the end of the time step\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",ets);
-    }
-  }
-  
-  void
-  DefaultDSLBase::treatProvidesTangentOperator()
+  void DefaultDSLBase::treatProvidesTangentOperator()
   {
     std::set<Hypothesis> h;
     this->readHypothesesList(h);
@@ -98,8 +57,7 @@ namespace mfront{
     }
   } // end of DefaultDSLBase::treatProvidesTangentOperator
 
-  void
-  DefaultDSLBase::treatProvidesSymmetricTangentOperator()
+  void DefaultDSLBase::treatProvidesSymmetricTangentOperator()
   {
     std::set<Hypothesis> h;
     this->readHypothesesList(h);
@@ -118,6 +76,47 @@ namespace mfront{
       this->mb.setAttribute(elem,BehaviourData::isConsistentTangentOperatorSymmetric,true);
     }
   } // end of DefaultDSLBase::treatProvidesSymmetricTangentOperator
+  
+  void DefaultDSLBase::endsInputFileProcessing()
+  {
+    BehaviourDSLCommon::endsInputFileProcessing();
+    if(this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false)){
+      const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      auto D = VariableDescription("StiffnessTensor","D",1u,0u); 
+      D.description = "stiffness tensor computed from elastic "
+	"material properties";
+      this->mb.addLocalVariable(h,D,BehaviourData::ALREADYREGISTRED);
+    }
+  } // end of DefaultDSLBase::endsInputFileProcessing()
+
+
+  void DefaultDSLBase::writeBehaviourParserSpecificIncludes(std::ostream& os) const
+  {
+    BehaviourDSLCommon::writeBehaviourParserSpecificIncludes(os);
+  } // end of DefaultDSLBase::writeBehaviourParserSpecificIncludes
+
+  void DefaultDSLBase::writeBehaviourLocalVariablesInitialisation(std::ostream& os,
+								  const Hypothesis) const
+  {
+    using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
+    Modifier ets = [](const MaterialPropertyInput& i) -> std::string {
+      if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
+	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	return "this->"+i.name + "+this->d" + i.name;
+      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::PARAMETER)){
+	return "this->"+i.name;
+      } else {
+	throw(std::runtime_error("DefaultDSLBase::writeBehaviourLocalVariablesInitialisation: "
+				 "unsupported input type for variable '"+i.name+"'"));
+      }
+    };
+    if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
+      os << "// stiffness tensor at the end of the time step\n";
+      this->writeStiffnessTensorComputation(os,"this->D",ets);
+    }
+  }
 
   DefaultDSLBase::~DefaultDSLBase() = default;
 

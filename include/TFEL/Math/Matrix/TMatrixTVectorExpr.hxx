@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_TMATRIXTVECTOREXPR_HXX_
-#define LIB_TFEL_MATH_TMATRIXTVECTOREXPR_HXX_ 
+#ifndef LIB_TFEL_MATH_TMATRIXTVECTOREXPR_HXX
+#define LIB_TFEL_MATH_TMATRIXTVECTOREXPR_HXX 
 
 #include<cstddef>
 #include<iterator>
@@ -151,5 +151,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_TMATRIXTVECTOREXPR_HXX_ */
+#endif /* LIB_TFEL_MATH_TMATRIXTVECTOREXPR_HXX */
 

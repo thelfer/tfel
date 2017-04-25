@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_METAPROGRAMMING_ISCONSTCALLABLE_H_
-#define LIB_TFEL_METAPROGRAMMING_ISCONSTCALLABLE_H_ 
+#ifndef LIB_TFEL_METAPROGRAMMING_ISCONSTCALLABLE_HXX
+#define LIB_TFEL_METAPROGRAMMING_ISCONSTCALLABLE_HXX 
 
 #include<type_traits>
 
@@ -57,5 +57,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_METAPROGRAMMING_ISCONSTCALLABLE_H_ */
+#endif /* LIB_TFEL_METAPROGRAMMING_ISCONSTCALLABLE_HXX */
 

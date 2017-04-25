@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_ST2TOST2_RESULT_TYPE_HXX_
-#define LIB_TFEL_ST2TOST2_RESULT_TYPE_HXX_ 
+#ifndef LIB_TFEL_ST2TOST2_RESULT_TYPE_HXX
+#define LIB_TFEL_ST2TOST2_RESULT_TYPE_HXX 
 
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Math/Forward/stensor.hxx"
@@ -157,5 +157,5 @@ namespace tfel{
 } // end of namespace tfel
   
 
-#endif /* LIB_TFEL_ST2TOST2_RESULT_TYPE_HXX_ */
+#endif /* LIB_TFEL_ST2TOST2_RESULT_TYPE_HXX */
 

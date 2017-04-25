@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_UTILITIES_TESTDOCMAIN_H_
-#define LIB_TFEL_UTILITIES_TESTDOCMAIN_H_ 
+#ifndef LIB_TFEL_UTILITIES_TESTDOCMAIN_HXX
+#define LIB_TFEL_UTILITIES_TESTDOCMAIN_HXX 
 
 #include<string>
 #include<ostream>

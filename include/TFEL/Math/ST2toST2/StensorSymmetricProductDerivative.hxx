@@ -14,7 +14,7 @@
 #ifndef LIB_STENSORSYMMETRICPRODUCTDERIVATIVE_HXX
 #define LIB_STENSORSYMMETRICPRODUCTDERIVATIVE_HXX
 
-#ifndef  LIB_TFEL_MATH_ST2TOST2_H_
+#ifndef  LIB_TFEL_MATH_ST2TOST2_HXX
 #error "This file is not meant to be included directly"
 #endif
 
@@ -86,4 +86,4 @@ namespace tfel{
   
 } // end of namespace tfel
 
-#endif /* LIB_STENSORSYMMETRICPRODUCTDERIVATIVE_HXX_ */
+#endif /* LIB_STENSORSYMMETRICPRODUCTDERIVATIVE_HXX */

@@ -43,26 +43,24 @@ namespace mfront{
       "Dt_nn(this->Dt(0,0)),\nDt_nt(this->Dt),\nDt_tn(this->Dt),\nDt_tt(this->Dt)";
   }
 
-  std::string
-  DefaultCZMDSL::getDescription()
+  std::string DefaultCZMDSL::getDescription()
   {
     return "this parser is the most generic one as it does not make any restriction "
            "on the behaviour or the integration method that may be used";
   } // end of DefaultCZMDSL::getDescription
   
-  std::string
-  DefaultCZMDSL::getName()
+  std::string DefaultCZMDSL::getName()
   {
     return "DefaultCZMDSL";
   }
 
-  void DefaultCZMDSL::writeBehaviourParserSpecificIncludes()
+  void DefaultCZMDSL::writeBehaviourParserSpecificIncludes(std::ostream& os) const
   {
-    DefaultDSLBase::writeBehaviourParserSpecificIncludes();
-    this->behaviourFile << "#include\"TFEL/Math/tmatrix.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/tvector.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n";
-    this->behaviourFile << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n";
+    DefaultDSLBase::writeBehaviourParserSpecificIncludes(os);
+    os << "#include\"TFEL/Math/tmatrix.hxx\"\n"
+       << "#include\"TFEL/Math/tvector.hxx\"\n"
+       << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n"
+       << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n";
   } // end of DefaultCZMDSL::writeBehaviourParserSpecificIncludes
 
   DefaultCZMDSL::~DefaultCZMDSL() = default;

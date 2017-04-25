@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_ISOTROPICLINEARFOURIERLAW_H_
-#define LIB_TFEL_ISOTROPICLINEARFOURIERLAW_H_ 
+#ifndef LIB_TFEL_ISOTROPICLINEARFOURIERLAW_HXX
+#define LIB_TFEL_ISOTROPICLINEARFOURIERLAW_HXX 
 
 #include"TFEL/Material/ThermalBehaviour.hxx"
 #include"TFEL/Material/ThermalBehaviourData.hxx"
@@ -54,5 +54,5 @@ namespace tfel{
 
 } // end of namespace  tfel
 
-#endif /* LIB_TFEL_ISOTROPICLINEARFOURIERLAW_H_ */
+#endif /* LIB_TFEL_ISOTROPICLINEARFOURIERLAW_HXX */
 

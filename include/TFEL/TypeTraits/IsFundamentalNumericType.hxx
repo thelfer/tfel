@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_ISFUNDAMENTALNUMERICTYPE_HXX_
-#define LIB_TFEL_ISFUNDAMENTALNUMERICTYPE_HXX_ 
+#ifndef LIB_TFEL_ISFUNDAMENTALNUMERICTYPE_HXX
+#define LIB_TFEL_ISFUNDAMENTALNUMERICTYPE_HXX 
 
 #include"TFEL/Math/Forward/Complex.hxx"
 
@@ -97,5 +97,5 @@ namespace tfel{
 
 } // end of namespace tfel
   
-#endif /* LIB_TFEL_ISFUNDAMENTALNUMERICTYPE_HXX_ */
+#endif /* LIB_TFEL_ISFUNDAMENTALNUMERICTYPE_HXX */
 

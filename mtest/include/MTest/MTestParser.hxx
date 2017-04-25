@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_MTESTPARSER_H_
-#define LIB_MTEST_MTESTPARSER_H_ 
+#ifndef LIB_MTEST_MTESTPARSER_HXX
+#define LIB_MTEST_MTESTPARSER_HXX 
 
 #include<map>
 #include<string>
@@ -307,5 +307,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_MTESTPARSER_H_ */
+#endif /* LIB_MTEST_MTESTPARSER_HXX */
 

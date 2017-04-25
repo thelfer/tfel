@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_T2TOST2T2TOT2PRODUCTEXPR_H_
-#define LIB_TFEL_MATH_T2TOST2T2TOT2PRODUCTEXPR_H_ 
+#ifndef LIB_TFEL_MATH_T2TOST2T2TOT2PRODUCTEXPR_HXX
+#define LIB_TFEL_MATH_T2TOST2T2TOT2PRODUCTEXPR_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -287,4 +287,4 @@ struct TFEL_VISIBILITY_LOCAL Expr<T2toST2ResultType,T2toST2T2toT2ProductExpr<3u>
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_T2TOST2T2TOT2PRODUCTEXPR_H_ */
+#endif /* LIB_TFEL_MATH_T2TOST2T2TOT2PRODUCTEXPR_HXX */

@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_LOGICALEXPR_HXX_
-#define LIB_TFEL_LOGICALEXPR_HXX_ 
+#ifndef LIB_TFEL_LOGICALEXPR_HXX
+#define LIB_TFEL_LOGICALEXPR_HXX 
 
 #include<set>
 #include<vector>
@@ -187,4 +187,4 @@ namespace tfel
 
 #include"TFEL/Math/Parser/LogicalExpr.ixx"
 
-#endif /* LIB_TFEL_LOGICALEXPR_HXX_ */
+#endif /* LIB_TFEL_LOGICALEXPR_HXX */

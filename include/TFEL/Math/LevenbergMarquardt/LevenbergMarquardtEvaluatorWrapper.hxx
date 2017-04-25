@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_LEVENBERGMARQUARDTEVALUATORWRAPPER_H_
-#define LIB_LEVENBERGMARQUARDTEVALUATORWRAPPER_H_ 
+#ifndef LIB_LEVENBERGMARQUARDTEVALUATORWRAPPER_HXX
+#define LIB_LEVENBERGMARQUARDTEVALUATORWRAPPER_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include<memory>
@@ -56,5 +56,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_LEVENBERGMARQUARDTEVALUATORWRAPPER_H_ */
+#endif /* LIB_LEVENBERGMARQUARDTEVALUATORWRAPPER_HXX */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_QT_H_
-#define LIB_TFEL_MATH_QT_H_
+#ifndef LIB_TFEL_MATH_QT_HXX
+#define LIB_TFEL_MATH_QT_HXX
 
 #include<cmath>
 
@@ -417,5 +417,5 @@ namespace tfel{
 #include"TFEL/Math/Quantity/qt.ixx"
 #include"TFEL/Math/Quantity/qtOperations.hxx"
 
-#endif /* LIB_TFEL_MATH_QT_H_ */
+#endif /* LIB_TFEL_MATH_QT_HXX */
 

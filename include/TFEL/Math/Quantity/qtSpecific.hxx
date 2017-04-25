@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_QTSPECIFIC_H_
-#define LIB_TFEL_QTSPECIFIC_H_ 
+#ifndef LIB_TFEL_QTSPECIFIC_HXX
+#define LIB_TFEL_QTSPECIFIC_HXX 
 
 /*!
  * \def TFEL_MATH_QT_BASE_TYPE
@@ -342,4 +342,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_QTSPECIFIC_H_ */
+#endif /* LIB_TFEL_QTSPECIFIC_HXX */

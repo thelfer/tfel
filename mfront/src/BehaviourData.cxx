@@ -742,6 +742,41 @@ namespace mfront{
 			     "- a parameter"));
   } // end of BehaviourData::getVariableDescription
 
+  void BehaviourData::setVariableAttribute(const std::string& v,
+					   const std::string& n,
+					   const VariableAttribute& a,
+					   const bool b)
+  {
+    bool treated = false;
+    auto set_if = [&v,&n,&a,b,&treated](VariableDescriptionContainer& vc){
+      if(vc.contains(v)){
+	vc.getVariable(v).setAttribute(n,a,b);
+	treated = true;
+      }
+    };
+    set_if(this->materialProperties);
+    set_if(this->localVariables);
+    set_if(this->integrationVariables);
+    set_if(this->stateVariables);
+    set_if(this->auxiliaryStateVariables);
+    set_if(this->persistentVariables);
+    set_if(this->externalStateVariables);
+    set_if(this->parameters);
+    if(!treated){
+      throw(std::runtime_error("BehaviourData::setVariableAttribute: "
+			       "no variable named '"+n+"' found."
+			       "This variable is *not*:\n"
+			       "- a material property\n"
+			       "- a local variable\n"
+			       "- a state variable\n"
+			       "- an auxiliary state variable\n"
+			       "- an integration variable\n"
+			       "- a  persistent variable\n"
+			       "- an external state variable\n"
+			       "- a parameter"));
+    }
+  } // end of BehaviourData::setVariableAttribute
+  
   VariableDescription&
   BehaviourData::getVariableDescription(const std::string& n)
   {

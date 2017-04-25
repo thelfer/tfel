@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_QRDECOMP_H_
-#define LIB_TFEL_MATH_QRDECOMP_H_ 
+#ifndef LIB_TFEL_MATH_QRDECOMP_HXX
+#define LIB_TFEL_MATH_QRDECOMP_HXX 
 
 #include<cmath>
 #include<limits>
@@ -143,5 +143,5 @@ namespace tfel
 
 #include"TFEL/Math/QR/QRDecomp.ixx"
 
-#endif /* LIB_TFEL_MATH_QRDECOMP_H_ */
+#endif /* LIB_TFEL_MATH_QRDECOMP_HXX */
 

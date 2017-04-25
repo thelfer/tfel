@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_TENSORPRODUCTLEFTDERIVATIVEEXPR_H_
-#define LIB_TFEL_MATH_TENSORPRODUCTLEFTDERIVATIVEEXPR_H_ 
+#ifndef LIB_TFEL_MATH_TENSORPRODUCTLEFTDERIVATIVEEXPR_HXX
+#define LIB_TFEL_MATH_TENSORPRODUCTLEFTDERIVATIVEEXPR_HXX 
 
 #include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
@@ -419,5 +419,5 @@ namespace tfel{
 
 } // end of namespace math
 
-#endif /* LIB_TFEL_MATH_TENSORPRODUCTLEFTDERIVATIVEEXPR_H_ */
+#endif /* LIB_TFEL_MATH_TENSORPRODUCTLEFTDERIVATIVEEXPR_HXX */
 

@@ -226,4 +226,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_STRIDEDRANDOMACCESSITERATOR_HXX_ */
+#endif /* LIB_TFEL_MATH_STRIDEDRANDOMACCESSITERATOR_HXX */

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_MTESTIMPOSEDDRIVINGVARIABLE_H_
-#define LIB_MTEST_MTESTIMPOSEDDRIVINGVARIABLE_H_ 
+#ifndef LIB_MTEST_MTESTIMPOSEDDRIVINGVARIABLE_HXX
+#define LIB_MTEST_MTESTIMPOSEDDRIVINGVARIABLE_HXX 
 
 #include"TFEL/Math/matrix.hxx"
 #include"TFEL/Math/vector.hxx"
@@ -133,5 +133,5 @@ namespace mtest
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_MTESTIMPOSEDDRIVINGVARIABLE_H_ */
+#endif /* LIB_MTEST_MTESTIMPOSEDDRIVINGVARIABLE_HXX */
 

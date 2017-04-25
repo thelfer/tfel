@@ -22,15 +22,14 @@ namespace mfront{
   struct RungeKuttaDSLBase
     : public BehaviourDSLBase<RungeKuttaDSLBase>
   {
-
-    static std::string 
-    getDescription(void);
+    //! return a generic description of DSL based on this class
+    static std::string getDescription(void);
     //! constructor
     RungeKuttaDSLBase();
     //! destructor
-    ~RungeKuttaDSLBase();
+    virtual ~RungeKuttaDSLBase();
 
-  private:
+  protected:
 
     enum ErrorEvaluation{
       DEFAULTERROREVALUATION,
@@ -51,60 +50,65 @@ namespace mfront{
     virtual void
     treatUnknownVariableMethod(const Hypothesis,
 			       const std::string&) override;
+    //! treat the `@Epsilon` keywork
+    virtual void treatEpsilon();
+    //! treat the `@MinimalTimeStep` keywork
+    virtual void treatMinimalTimeStep();
+    //! treat the `@Algorithm` keywork
+    virtual void treatAlgorithm();
+    //! treat the `@ComputeStress` keywork
+    virtual void treatComputeStress();
+    //! treat the `@ComputeFinalStress` keywork
+    virtual void treatComputeFinalStress();
+    //! treat the `@UpdateAuxiliaryStateVariables` keywork
+    virtual void treatUpdateAuxiliaryStateVariables() override;
+    //! treat the `@Derivative` keywork
+    virtual void treatDerivative();
 
-    virtual void treatEpsilon(void);
-
-    virtual void treatMinimalTimeStep(void);
-
-    virtual void treatAlgorithm(void);
-
-    virtual void treatComputeStress(void);
-
-    virtual void treatComputeFinalStress(void);
-
-    virtual void
-    treatUpdateAuxiliaryStateVariables(void) override;
-
-    virtual void treatDerivative(void);
-
-    virtual void writeBehaviourParserSpecificIncludes(void) override;
-
-    virtual void writeBehaviourParserSpecificTypedefs(void) override;
-
-    virtual void writeBehaviourParserSpecificMembers(const Hypothesis) override;
-
-    virtual void writeBehaviourLocalVariablesInitialisation(const Hypothesis) override;
+    virtual void setDefaultAlgorithm();
     
-    virtual void writeBehaviourEulerIntegrator(const Hypothesis);
+    virtual void endsInputFileProcessing() override;
+    
+    virtual void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
 
-    virtual void writeBehaviourRK2Integrator(const Hypothesis);
+    virtual void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
 
-    virtual void writeBehaviourRK4Integrator(const Hypothesis);
+    virtual void writeBehaviourParserSpecificMembers(std::ostream&,
+						     const Hypothesis) const override;
 
-    virtual void writeBehaviourRK42Integrator(const Hypothesis);
+    virtual void writeBehaviourLocalVariablesInitialisation(std::ostream&,
+							    const Hypothesis) const override;
+    
+    virtual void writeBehaviourEulerIntegrator(std::ostream&,
+					       const Hypothesis) const;
 
-    virtual void writeBehaviourRK54Integrator(const Hypothesis);
+    virtual void writeBehaviourRK2Integrator(std::ostream&,
+					     const Hypothesis) const;
 
-    virtual void writeBehaviourRKCastemIntegrator(const Hypothesis);
+    virtual void writeBehaviourRK4Integrator(std::ostream&,
+					     const Hypothesis) const;
 
-    virtual void writeBehaviourUpdateStateVariables(const Hypothesis) override;
+    virtual void writeBehaviourRK42Integrator(std::ostream&,
+					      const Hypothesis) const;
+
+    virtual void writeBehaviourRK54Integrator(std::ostream&,
+					      const Hypothesis) const;
+
+    virtual void writeBehaviourRKCastemIntegrator(std::ostream&,
+						  const Hypothesis) const;
+
+    virtual void writeBehaviourUpdateStateVariables(std::ostream&,
+						    const Hypothesis) const override;
 
     virtual void
-    writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis) override;
+    writeBehaviourUpdateAuxiliaryStateVariables(std::ostream&,
+						const Hypothesis) const override;
 
     virtual void
-    writeBehaviourIntegrator(const Hypothesis) override;
-
-    virtual void
-    endsInputFileProcessing(void) override;
-
-    virtual void
-    setDefaultAlgorithm(void);
+    writeBehaviourIntegrator(std::ostream&,
+			     const Hypothesis) const override;
 
     friend struct BehaviourDSLBase<RungeKuttaDSLBase>;
-
-    // error normalisation factors
-    std::map<std::string,std::string> enf;
 
   };
 

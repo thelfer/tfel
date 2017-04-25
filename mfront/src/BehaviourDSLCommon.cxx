@@ -75,11 +75,12 @@ static const char * const constexpr_c = "const";
 namespace mfront{
 
   void BehaviourDSLCommon::writeModelCall(std::ostream& out,
+					  std::vector<std::string>& tmpnames,
 					  const Hypothesis h,
 					  const ModelDescription& md,
 					  const std::string& vo,
 					  const std::string& vs,
-					  const std::string& bn){
+					  const std::string& bn) const{
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("BehaviourDSLCommon::writeModelCall",m);}
     };
@@ -108,7 +109,7 @@ namespace mfront{
     throw_if(f.name.empty(),"unnamed function");
     throw_if((f.usedVariables.empty())&&(!f.useTimeIncrement),
 	     "no used variable for function '"+f.name+"'");
-    const auto sm = this->getTemporaryVariableName(bn);
+    const auto sm = this->getTemporaryVariableName(tmpnames,bn);
     out << "// updating " << vs << "\n"
 	<< "mfront::" << md.className << "<Type> " << sm << ";\n"
 	<< "" << sm << ".setOutOfBoundsPolicy(this->policy);\n"
@@ -410,6 +411,26 @@ namespace mfront{
     return true;
   } // end of BehaviourDSLCommon::isModellingHypothesesSupported
 
+  std::string BehaviourDSLCommon::getBehaviourFileName() const
+  {
+    return "TFEL/Material/"+this->mb.getClassName()+".hxx";
+  } // end of BehaviourDSLCommon::getBehaviourFileName
+
+  std::string BehaviourDSLCommon::getBehaviourDataFileName() const
+  {
+    return "TFEL/Material/"+this->mb.getClassName()+"BehaviourData.hxx";
+  } // end of BehaviourDSLCommon::getBehaviourDataFileName
+
+  std::string BehaviourDSLCommon::getIntegrationDataFileName() const
+  {
+    return "TFEL/Material/"+this->mb.getClassName()+"IntegrationData.hxx";
+  } // end of BehaviourDSLCommon::getIntegrationDataFileName
+
+  std::string BehaviourDSLCommon::getSrcFileName() const
+  {
+    return this->mb.getClassName()+".cxx";
+  } // end of BehaviourDSLCommon::getSrcFileName
+  
   void BehaviourDSLCommon::analyseFile(const std::string& fileName_,
 				       const std::vector<std::string>& ecmds,
 				       const std::map<std::string,std::string>& s)
@@ -418,27 +439,16 @@ namespace mfront{
     // Adding some stuff
     this->endsInputFileProcessing();
     // setting the name of the output files
-    this->behaviourFileName = "TFEL/Material/";
-    this->behaviourFileName += this->mb.getClassName();
-    this->behaviourFileName += ".hxx";
-    this->behaviourDataFileName  = "TFEL/Material/";
-    this->behaviourDataFileName += this->mb.getClassName();
-    this->behaviourDataFileName += "BehaviourData.hxx";
-    this->integrationDataFileName  = "TFEL/Material/";
-    this->integrationDataFileName += this->mb.getClassName();
-    this->integrationDataFileName += "IntegrationData.hxx";
-    this->srcFileName  = this->mb.getClassName();
-    this->srcFileName += ".cxx";
     // targets description
     for(const auto & i : this->interfaces){
       i.second->getTargetsDescription(this->td,this->mb);
     }
     for(auto& l : this->td){
-      insert_if(this->td[l.name].sources,this->srcFileName);
+      insert_if(this->td[l.name].sources,this->getSrcFileName());
     }
-    insert_if(this->td.headers,this->behaviourFileName);
-    insert_if(this->td.headers,this->behaviourDataFileName);
-    insert_if(this->td.headers,this->integrationDataFileName);
+    insert_if(this->td.headers,this->getBehaviourFileName());
+    insert_if(this->td.headers,this->getBehaviourDataFileName());
+    insert_if(this->td.headers,this->getIntegrationDataFileName());
     this->completeTargetsDescription();
   }
 
@@ -639,8 +649,7 @@ namespace mfront{
    * \return the "true" integration variables (state variables are excluded)
    * \param[in] md : mechanical behaviour data
    */
-  static VarContainer
-  getIntegrationVariables(const BehaviourData& md)
+  static VarContainer getIntegrationVariables(const BehaviourData& md)
   {
     const auto& ivs = md.getIntegrationVariables();
     VarContainer v;
@@ -789,37 +798,37 @@ namespace mfront{
     tfel::system::systemCall::mkdir("include/TFEL/");
     tfel::system::systemCall::mkdir("include/TFEL/Material");
     //! generating sources du to external material properties and models
+    std::ofstream behaviourFile("include/"+this->getBehaviourFileName());
+    std::ofstream behaviourDataFile("include/"+this->getBehaviourDataFileName());
+    std::ofstream integrationDataFile("include/"+this->getIntegrationDataFileName());
+    std::ofstream srcFile("src/"+this->getSrcFileName());
     for(const auto& em : this->externalMFrontFiles){
       this->callMFront(em.second,{em.first});
     }
-    this->behaviourFile.open("include/"+this->behaviourFileName);
-    if(!this->behaviourFile){
+    if(!behaviourFile){
       this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles",
-			      "unable to open '"+this->behaviourFileName+"' "
+			      "unable to open '"+this->getBehaviourFileName()+"' "
 			      "for writing output file");
     }
-    this->behaviourDataFile.open("include/"+this->behaviourDataFileName);
-    if(!this->behaviourDataFile){
+    if(!behaviourDataFile){
       this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles",
-			      "unable to open '"+this->behaviourDataFileName+"' "
+			      "unable to open '"+this->getBehaviourDataFileName()+"' "
 			      "for writing output file");
     }
-    this->integrationDataFile.open("include/"+this->integrationDataFileName);
-    if(!this->integrationDataFile){
+    if(!integrationDataFile){
       this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles",
-			      "unable to open '"+this->integrationDataFileName+"' "
+			      "unable to open '"+this->getIntegrationDataFileName()+"' "
 			      "for writing output file");
     }
-    this->srcFile.open("src/"+this->srcFileName);
-    if(!this->srcFile){
+    if(!srcFile){
       this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles",
-			      "unable to open '"+this->srcFileName+"' "
+			      "unable to open '"+this->getSrcFileName()+"' "
 			      "for writing output file");
     }
     // generate outpout files
-    this->writeBehaviourDataFileBegin();
-    this->writeIntegrationDataFileBegin();
-    this->writeBehaviourFileBegin();
+    this->writeBehaviourDataFileBegin(behaviourDataFile);
+    this->writeIntegrationDataFileBegin(integrationDataFile);
+    this->writeBehaviourFileBegin(behaviourFile);
     if(this->mb.areSlipSystemsDefined()){
       this->generateSlipSystemsFiles();
     }
@@ -842,28 +851,28 @@ namespace mfront{
 	log << "BehaviourDSLCommon::writeOutputFiles : "
 	    << "treating default hypothesis\n";
       }
-      const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // Generating BehaviourData's outputClass
       if(getVerboseMode()>=VERBOSE_DEBUG){
 	auto& log = getLogStream();
 	log << "BehaviourDSLCommon::writeOutputFiles : writing behaviour data "
 	    << "for default hypothesis\n";
       }
-      this->writeBehaviourDataClass(h);
+      this->writeBehaviourDataClass(behaviourDataFile,h);
       // Generating IntegrationData's outputClass
       if(getVerboseMode()>=VERBOSE_DEBUG){
 	auto& log = getLogStream();
 	log << "BehaviourDSLCommon::writeOutputFiles : writing integration data "
 	    << "for default hypothesis\n";
       }
-      this->writeIntegrationDataClass(h);
+      this->writeIntegrationDataClass(integrationDataFile,h);
       // Generating Behaviour's outputFile
       if(getVerboseMode()>=VERBOSE_DEBUG){
 	auto& log = getLogStream();
 	log << "BehaviourDSLCommon::writeOutputFiles : writing behaviour class "
 	    << "for default hypothesis\n";
       }
-      this->writeBehaviourClass(h);
+      this->writeBehaviourClass(behaviourFile,h);
     }
     for(const auto & h : hh){
       if(mb.hasSpecialisedMechanicalData(h)){
@@ -879,32 +888,32 @@ namespace mfront{
 	  log << "BehaviourDSLCommon::writeOutputFiles : writing behaviour data "
 	      << "for hypothesis '" << ModellingHypothesis::toString(h) << "'\n";
 	}
-	this->writeBehaviourDataClass(h);
+	this->writeBehaviourDataClass(behaviourDataFile,h);
 	// Generating IntegrationData's outputClass
 	if(getVerboseMode()>=VERBOSE_DEBUG){
 	  auto& log = getLogStream();
 	  log << "BehaviourDSLCommon::writeOutputFiles : writing integration data "
 	      << "for hypothesis '" << ModellingHypothesis::toString(h) << "'\n";
 	}
-	this->writeIntegrationDataClass(h);
+	this->writeIntegrationDataClass(integrationDataFile,h);
 	// Generating behaviour's outputClass
 	if(getVerboseMode()>=VERBOSE_DEBUG){
 	  auto& log = getLogStream();
 	  log << "BehaviourDSLCommon::writeOutputFiles : writing behaviour class "
 	      << "for hypothesis '" << ModellingHypothesis::toString(h) << "'\n";
 	}
-	this->writeBehaviourClass(h);
+	this->writeBehaviourClass(behaviourFile,h);
       }
     }
-    this->writeBehaviourDataFileEnd();
-    this->writeIntegrationDataFileEnd();
-    this->writeBehaviourFileEnd();
+    this->writeBehaviourDataFileEnd(behaviourDataFile);
+    this->writeIntegrationDataFileEnd(integrationDataFile);
+    this->writeBehaviourFileEnd(behaviourFile);
     // Generating behaviour's source file
     if(getVerboseMode()>=VERBOSE_DEBUG){
       auto& log = getLogStream();
       log << "BehaviourDSLCommon::writeOutputFiles : writing source file\n";
     }
-    this->writeSrcFile();
+    this->writeSrcFile(srcFile);
     // calling the interfaces
     for(const auto& i : this->interfaces){
       if(getVerboseMode()>=VERBOSE_DEBUG){
@@ -2240,7 +2249,7 @@ namespace mfront{
     return this->mb.isNameReserved(n);
   }
   
-  void BehaviourDSLCommon::writeIncludes(std::ostream& file) {
+  void BehaviourDSLCommon::writeIncludes(std::ostream& file) const {
     if((!file)||(!file.good())){
       this->throwRuntimeError("BehaviourDSLCommon::writeIncludes",
 			      "ouput file is not valid");
@@ -2251,7 +2260,7 @@ namespace mfront{
     }
   }
 
-  void BehaviourDSLCommon::writeNamespaceBegin(std::ostream& file) {
+  void BehaviourDSLCommon::writeNamespaceBegin(std::ostream& file) const {
     if((!file)||(!file.good())){
       this->throwRuntimeError("BehaviourDSLCommon::writeNamespaceBegin",
 			      "ouput file is not valid");
@@ -2260,7 +2269,7 @@ namespace mfront{
 	 << "namespace material{\n\n";
   }
 
-  void BehaviourDSLCommon::writeNamespaceEnd(std::ostream& file) {
+  void BehaviourDSLCommon::writeNamespaceEnd(std::ostream& file) const {
     if((!file)||(!file.good())){
       this->throwRuntimeError("BehaviourDSLCommon::writeNamespaceEnd",
 			      "ouput file is not valid");
@@ -2269,7 +2278,7 @@ namespace mfront{
 	 << "} // end of namespace tfel\n\n";
   }
 
-  void BehaviourDSLCommon::writeStandardTFELTypedefs(std::ostream& file) 
+  void BehaviourDSLCommon::writeStandardTFELTypedefs(std::ostream& file)  const
   {
     if((!file)||(!file.good())){
       this->throwRuntimeError("BehaviourDSLCommon::writeStandardTFELTypedefs",
@@ -2312,712 +2321,692 @@ namespace mfront{
 	 << "typedef " << this->mb.getTangentOperatorType() << " TangentOperator;\n";
   } // end of BehaviourDSLCommon::writeStandardTFELTypedefs
 
-  BehaviourDSLCommon::~BehaviourDSLCommon()
-  {
-    this->behaviourFile.close();
-    this->behaviourDataFile.close();
-    this->integrationDataFile.close();
-    this->srcFile.close();    
-  } // end of BehaviourDSLCommon::~MFrontParserCommon
-
-  void BehaviourDSLCommon::checkBehaviourDataFile() const {
-    if((!this->behaviourDataFile)||(!this->behaviourDataFile.good())){
+  void BehaviourDSLCommon::checkBehaviourDataFile(std::ostream& os) const {
+    if((!os)||(!os.good())){
       this->throwRuntimeError("BehaviourDSLCommon::checkBehaviourDataOutputFile",
 			      "ouput file is not valid");
     }
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataFileHeader(){
-    this->checkBehaviourDataFile();
-    this->behaviourDataFile << "/*!\n"
-			    << "* \\file   " << this->behaviourDataFileName << '\n'
-			    << "* \\brief  " << "this file implements the " 
-			    << this->mb.getClassName() << "BehaviourData" << " class.\n"
-			    << "*         File generated by "
-			    << MFrontHeader::getVersionName() << " "
-			    << "version " << MFrontHeader::getVersionNumber()<< '\n';
+  void BehaviourDSLCommon::writeBehaviourDataFileHeader(std::ostream& os) const{
+    this->checkBehaviourDataFile(os);
+    os << "/*!\n"
+       << "* \\file   " << this->getBehaviourDataFileName() << '\n'
+       << "* \\brief  " << "this file implements the " 
+       << this->mb.getClassName() << "BehaviourData" << " class.\n"
+       << "*         File generated by "
+       << MFrontHeader::getVersionName() << " "
+       << "version " << MFrontHeader::getVersionNumber()<< '\n';
     if(!this->authorName.empty()){
-      this->behaviourDataFile << "* \\author " << this->authorName << '\n';
+      os << "* \\author " << this->authorName << '\n';
     }
     if(!this->date.empty()){
-      this->behaviourDataFile << "* \\date   " << this->date       << '\n';
+      os << "* \\date   " << this->date       << '\n';
     }
-    this->behaviourDataFile << " */\n\n";
+    os << " */\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataFileHeaderBegin(){
-    this->checkBehaviourDataFile();
-    this->behaviourDataFile << "#ifndef LIB_TFELMATERIAL_"
-			    << makeUpperCase(this->mb.getClassName())
-			    << "_BEHAVIOUR_DATA_HXX\n";
-    this->behaviourDataFile << "#define LIB_TFELMATERIAL_"
-			    << makeUpperCase(this->mb.getClassName())
-			    << "_BEHAVIOUR_DATA_HXX\n\n";
+  void BehaviourDSLCommon::writeBehaviourDataFileHeaderBegin(std::ostream& os) const{
+    this->checkBehaviourDataFile(os);
+    os << "#ifndef LIB_TFELMATERIAL_"
+       << makeUpperCase(this->mb.getClassName())
+       << "_BEHAVIOUR_DATA_HXX\n";
+    os << "#define LIB_TFELMATERIAL_"
+       << makeUpperCase(this->mb.getClassName())
+       << "_BEHAVIOUR_DATA_HXX\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataFileHeaderEnd()
+  void BehaviourDSLCommon::writeBehaviourDataFileHeaderEnd(std::ostream& os) const
   {
-    this->checkBehaviourDataFile();
-    this->behaviourDataFile << "#endif /* LIB_TFELMATERIAL_"
-			    << makeUpperCase(this->mb.getClassName())
-			    << "_BEHAVIOUR_DATA_HXX */\n";
+    this->checkBehaviourDataFile(os);
+    os << "#endif /* LIB_TFELMATERIAL_"
+       << makeUpperCase(this->mb.getClassName())
+       << "_BEHAVIOUR_DATA_HXX */\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataStandardTFELIncludes()
+  void BehaviourDSLCommon::writeBehaviourDataStandardTFELIncludes(std::ostream& os) const
   {
     auto b1 = false;
     auto b2 = false;
-    this->checkBehaviourDataFile();
-    this->behaviourDataFile << "#include<limits>\n"
-			    << "#include<string>\n"
-			    << "#include<sstream>\n"
-			    << "#include<iostream>\n"
-			    << "#include<stdexcept>\n"
-			    << "#include<algorithm>\n\n"
-			    << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
-			    << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
-			    << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
-			    << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
-			    << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
-			    << "#include\"TFEL/Math/General/IEEE754.hxx\"\n";
+    this->checkBehaviourDataFile(os);
+    os << "#include<limits>\n"
+       << "#include<string>\n"
+       << "#include<sstream>\n"
+       << "#include<iostream>\n"
+       << "#include<stdexcept>\n"
+       << "#include<algorithm>\n\n"
+       << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
+       << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
+       << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
+       << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
+       << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
+       << "#include\"TFEL/Math/General/IEEE754.hxx\"\n";
     if(this->mb.useQt()){
-      this->behaviourDataFile << "#include\"TFEL/Math/General/BaseCast.hxx\"\n";
+      os << "#include\"TFEL/Math/General/BaseCast.hxx\"\n";
     }
     this->mb.requiresTVectorOrVectorIncludes(b1,b2);
     if(b1){
-      this->behaviourDataFile << "#include\"TFEL/Math/tvector.hxx\"\n"
-			      << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n";
+      os << "#include\"TFEL/Math/tvector.hxx\"\n"
+	 << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n";
     }
     if(b2){
-      this->behaviourDataFile << "#include\"TFEL/Math/vector.hxx\"\n";
+      os << "#include\"TFEL/Math/vector.hxx\"\n";
     }
-    this->behaviourDataFile << "#include\"TFEL/Math/stensor.hxx\"\n"
-			    << "#include\"TFEL/Math/Stensor/StensorConceptIO.hxx\"\n"
-			    << "#include\"TFEL/Math/tmatrix.hxx\"\n"
-			    << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
-			    << "#include\"TFEL/Math/st2tost2.hxx\"\n"
-			    << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
+    os << "#include\"TFEL/Math/stensor.hxx\"\n"
+       << "#include\"TFEL/Math/Stensor/StensorConceptIO.hxx\"\n"
+       << "#include\"TFEL/Math/tmatrix.hxx\"\n"
+       << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
+       << "#include\"TFEL/Math/st2tost2.hxx\"\n"
+       << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
     if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      this->behaviourDataFile << "#include\"TFEL/Math/tensor.hxx\"\n"
-			      << "#include\"TFEL/Math/Tensor/TensorConceptIO.hxx\"\n"
-			      << "#include\"TFEL/Math/t2tot2.hxx\"\n"
-			      << "#include\"TFEL/Math/T2toT2/T2toT2ConceptIO.hxx\"\n"
-			      << "#include\"TFEL/Math/t2tost2.hxx\"\n"
-			      << "#include\"TFEL/Math/T2toST2/T2toST2ConceptIO.hxx\"\n"
-			      << "#include\"TFEL/Math/st2tot2.hxx\"\n"
-			      << "#include\"TFEL/Math/ST2toT2/ST2toT2ConceptIO.hxx\"\n"
-			      << "#include\"TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx\"\n"
-			      << "#include\"TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx\"\n"
-			      << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"\n";
+      os << "#include\"TFEL/Math/tensor.hxx\"\n"
+	 << "#include\"TFEL/Math/Tensor/TensorConceptIO.hxx\"\n"
+	 << "#include\"TFEL/Math/t2tot2.hxx\"\n"
+	 << "#include\"TFEL/Math/T2toT2/T2toT2ConceptIO.hxx\"\n"
+	 << "#include\"TFEL/Math/t2tost2.hxx\"\n"
+	 << "#include\"TFEL/Math/T2toST2/T2toST2ConceptIO.hxx\"\n"
+	 << "#include\"TFEL/Math/st2tot2.hxx\"\n"
+	 << "#include\"TFEL/Math/ST2toT2/ST2toT2ConceptIO.hxx\"\n"
+	 << "#include\"TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx\"\n"
+	 << "#include\"TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx\"\n"
+	 << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"\n";
     }
-    this->behaviourDataFile << "#include\"TFEL/Material/ModellingHypothesis.hxx\"\n\n";
+    os << "#include\"TFEL/Material/ModellingHypothesis.hxx\"\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataDefaultMembers()
+  void BehaviourDSLCommon::writeBehaviourDataDefaultMembers(std::ostream& os) const
   {
-    this->checkBehaviourDataFile();
+    this->checkBehaviourDataFile(os);
     if(this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-      this->behaviourDataFile << "//! stiffness tensor computed by the calling solver\n"
-			      << "StiffnessTensor D;\n";
+      os << "//! stiffness tensor computed by the calling solver\n"
+	 << "StiffnessTensor D;\n";
     }
     if(this->mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-      this->behaviourDataFile << "ThermalExpansionCoefficientTensor A;\n";
+      os << "ThermalExpansionCoefficientTensor A;\n";
     }
     for(const auto& mv : this->mb.getMainVariables()){
       if(mv.first.increment_known){
-	this->behaviourDataFile << mv.first.type  << " " << mv.first.name << ";\n\n";
+	os << mv.first.type  << " " << mv.first.name << ";\n\n";
       } else {
-	this->behaviourDataFile << mv.first.type  << " " << mv.first.name << "0;\n\n";
+	os << mv.first.type  << " " << mv.first.name << "0;\n\n";
       }
-      this->behaviourDataFile << mv.second.type << " " << mv.second.name << ";\n\n";
+      os << mv.second.type << " " << mv.second.name << ";\n\n";
     }
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataStandardTFELTypedefs()
+  void BehaviourDSLCommon::writeBehaviourDataStandardTFELTypedefs(std::ostream& os) const
   {
-    this->checkBehaviourDataFile();
-    this->behaviourDataFile << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
-			    << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n"
-			    << "static " << constexpr_c << " unsigned short StensorSize = "
-			    << "StensorDimeToSize::value;\n"
-			    << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
-			    << "static " << constexpr_c << " unsigned short TensorSize = "
-			    << "TensorDimeToSize::value;\n\n";
-    this->writeStandardTFELTypedefs(this->behaviourDataFile);
-    this->behaviourDataFile << '\n';
+    this->checkBehaviourDataFile(os);
+    os << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
+       << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n"
+       << "static " << constexpr_c << " unsigned short StensorSize = "
+       << "StensorDimeToSize::value;\n"
+       << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
+       << "static " << constexpr_c << " unsigned short TensorSize = "
+       << "TensorDimeToSize::value;\n\n";
+    this->writeStandardTFELTypedefs(os);
+    os << '\n';
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataDisabledConstructors()
+  void BehaviourDSLCommon::writeBehaviourDataDisabledConstructors(std::ostream& os) const
   {
-    this->checkBehaviourDataFile();
+    this->checkBehaviourDataFile(os);
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataConstructors(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourDataConstructors(std::ostream& os,
+							  const Hypothesis h) const
   {
     const auto& md = this->mb.getBehaviourData(h);
-    this->checkBehaviourDataFile();
-    this->behaviourDataFile << "/*!\n"
-			    << "* \\brief Default constructor\n"
-			    << "*/\n"
-			    << this->mb.getClassName() << "BehaviourData()\n"
-			    << "{}\n\n"
-			    << "/*!\n"
-			    << "* \\brief Copy constructor\n"
-			    << "*/\n"
-			    << this->mb.getClassName() << "BehaviourData(const "
-			    << this->mb.getClassName() << "BehaviourData& src)\n"
-			    << ": ";
+    this->checkBehaviourDataFile(os);
+    os << "/*!\n"
+       << "* \\brief Default constructor\n"
+       << "*/\n"
+       << this->mb.getClassName() << "BehaviourData()\n"
+       << "{}\n\n"
+       << "/*!\n"
+       << "* \\brief Copy constructor\n"
+       << "*/\n"
+       << this->mb.getClassName() << "BehaviourData(const "
+       << this->mb.getClassName() << "BehaviourData& src)\n"
+       << ": ";
     if(this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-      this->behaviourDataFile << "D(src.D),\n";
+      os << "D(src.D),\n";
     }
     if(this->mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-      this->behaviourDataFile << "A(src.A),\n";
+      os << "A(src.A),\n";
     }
     for(const auto& mv : this->mb.getMainVariables()){
       if(mv.first.increment_known){
-	this->behaviourDataFile << mv.first.name  << "(src." << mv.first.name << "),\n";
+	os << mv.first.name  << "(src." << mv.first.name << "),\n";
       } else {
-	this->behaviourDataFile << mv.first.name  << "0(src." << mv.first.name << "0),\n";
+	os << mv.first.name  << "0(src." << mv.first.name << "0),\n";
       }
-      this->behaviourDataFile << mv.second.name << "(src." << mv.second.name << ")\n";
+      os << mv.second.name << "(src." << mv.second.name << ")\n";
     }
     for(const auto& v: md.getMaterialProperties()){
-      this->behaviourDataFile << ",\n";
-      this->behaviourDataFile << v.name << "(src." << v.name << ")";  
+      os << ",\n";
+      os << v.name << "(src." << v.name << ")";  
     }
     for(const auto& v:md.getStateVariables()){
-      this->behaviourDataFile << ",\n";
-      this->behaviourDataFile << v.name << "(src." << v.name << ")";  
+      os << ",\n";
+      os << v.name << "(src." << v.name << ")";  
     }
     for(const auto& v:md.getAuxiliaryStateVariables()){
-      this->behaviourDataFile << ",\n";
-      this->behaviourDataFile << v.name << "(src." << v.name << ")";  
+      os << ",\n";
+      os << v.name << "(src." << v.name << ")";  
     }
     for(const auto& v: md.getExternalStateVariables()){
-      this->behaviourDataFile << ",\n";
-      this->behaviourDataFile << v.name << "(src." << v.name << ")";  
+      os << ",\n";
+      os << v.name << "(src." << v.name << ")";  
     }
-    this->behaviourDataFile << "\n{}\n\n";
+    os << "\n{}\n\n";
     // Creating constructor for external interfaces
     for(const auto& i : this->interfaces){
       if(i.second->isModellingHypothesisHandled(h,this->mb)){
-	i.second->writeBehaviourDataConstructor(this->behaviourDataFile,h,this->mb);
+	i.second->writeBehaviourDataConstructor(os,h,this->mb);
       }
     }
   } // end of BehaviourDSLCommon::WriteBehaviourDataConstructors
 
-  void BehaviourDSLCommon::writeBehaviourDataAssignementOperator(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourDataAssignementOperator(std::ostream& os,
+								 const Hypothesis h) const
   {
-    using namespace std;
     const auto& md = this->mb.getBehaviourData(h);
-    map<DrivingVariable,
-	ThermodynamicForce>::const_iterator p3;
-    VariableDescriptionContainer::const_iterator p;
-    this->checkBehaviourDataFile();
-    this->behaviourDataFile << "/*\n"
-			    << "* \\brief Assignement operator\n"
-			    << "*/\n"
-			    << this->mb.getClassName() << "BehaviourData&\n"
-			    << "operator=(const " 
-			    << this->mb.getClassName() << "BehaviourData& src){\n";
-    for(p3=this->mb.getMainVariables().begin();p3!=this->mb.getMainVariables().end();++p3){
-      if(p3->first.increment_known){
-	this->behaviourDataFile << "this->" << p3->first.name  << " = src." << p3->first.name << ";\n";
+    this->checkBehaviourDataFile(os);
+    os << "/*\n"
+       << "* \\brief Assignement operator\n"
+       << "*/\n"
+       << this->mb.getClassName() << "BehaviourData&\n"
+       << "operator=(const " 
+       << this->mb.getClassName() << "BehaviourData& src){\n";
+    for(const auto& dv  : this->mb.getMainVariables()){
+      if(dv.first.increment_known){
+	os << "this->" << dv.first.name  << " = src." << dv.first.name << ";\n";
       } else {
-	this->behaviourDataFile << "this->" << p3->first.name  << "0 = src." << p3->first.name << "0;\n";
+	os << "this->" << dv.first.name  << "0 = src." << dv.first.name << "0;\n";
       }
-      this->behaviourDataFile << "this->" << p3->second.name << " = src." << p3->second.name << ";\n";
+      os << "this->" << dv.second.name << " = src." << dv.second.name << ";\n";
     }
-    if(!md.getMaterialProperties().empty()){
-      for(p=md.getMaterialProperties().begin();p!=md.getMaterialProperties().end();++p){
-	this->behaviourDataFile << "this->" << p->name << " = src." << p->name << ";\n";  
-      }
+    for(const auto& mp : md.getMaterialProperties()){
+      os << "this->" << mp.name << " = src." << mp.name << ";\n";  
     }
-    if(!md.getStateVariables().empty()){
-      for(p=md.getStateVariables().begin();p!=md.getStateVariables().end();++p){
-	this->behaviourDataFile << "this->" << p->name << " = src." << p->name << ";\n";  
-      }
+    for(const auto& iv : md.getStateVariables()){
+      os << "this->" << iv.name << " = src." << iv.name << ";\n";  
     }
-    if(!md.getAuxiliaryStateVariables().empty()){
-      for(p=md.getAuxiliaryStateVariables().begin();p!=md.getAuxiliaryStateVariables().end();++p){
-	this->behaviourDataFile << "this->" << p->name << " = src." << p->name << ";\n";  
-      }
+    for(const auto& iv : md.getAuxiliaryStateVariables()){
+      os << "this->" << iv.name << " = src." << iv.name << ";\n";  
     }
-    if(!md.getExternalStateVariables().empty()){
-      for(p =md.getExternalStateVariables().begin();
-	  p!=md.getExternalStateVariables().end();++p){
-	this->behaviourDataFile << "this->" << p->name << " = src." << p->name << ";\n";  
-      }
+    for(const auto& ev : md.getExternalStateVariables()){
+      os << "this->" << ev.name << " = src." << ev.name << ";\n";  
     }
-    this->behaviourDataFile << "return *this;\n"
-			    << "}\n\n";
+    os << "return *this;\n"
+       << "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourAssignementOperator
 
-  void BehaviourDSLCommon::writeBehaviourDataExport(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourDataExport(std::ostream& os,
+						    const Hypothesis h) const
   {
-    this->checkBehaviourDataFile();
+    this->checkBehaviourDataFile(os);
     for(const auto& i : this->interfaces){
-      i.second->exportMechanicalData(this->behaviourDataFile,h,
-				     this->mb);
+      i.second->exportMechanicalData(os,h,this->mb);
     }
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataPublicMembers()
+  void BehaviourDSLCommon::writeBehaviourDataPublicMembers(std::ostream& os) const
   {
-    this->checkBehaviourDataFile();
+    this->checkBehaviourDataFile(os);
     if(this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-      this->behaviourDataFile << "StiffnessTensor& getStiffnessTensor()\n"
-			      << "{\nreturn this->D;\n}\n\n"
-			      << "const StiffnessTensor& getStiffnessTensor() const\n"
-			      << "{\nreturn this->D;\n}\n\n";
+      os << "StiffnessTensor& getStiffnessTensor()\n"
+	 << "{\nreturn this->D;\n}\n\n"
+	 << "const StiffnessTensor& getStiffnessTensor() const\n"
+	 << "{\nreturn this->D;\n}\n\n";
     }
     if(this->mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
-      this->behaviourDataFile << "ThermalExpansionCoefficientTensor& "
-			      << "getThermalExpansionCoefficientTensor()\n"
-			      << "{\nreturn this->A;\n}\n\n"
-			      << "const ThermalExpansionCoefficientTensor& "
-			      << "getThermalExpansionCoefficientTensor() const\n"
-			      << "{\nreturn this->A;\n}\n\n";
+      os << "ThermalExpansionCoefficientTensor& "
+	 << "getThermalExpansionCoefficientTensor()\n"
+	 << "{\nreturn this->A;\n}\n\n"
+	 << "const ThermalExpansionCoefficientTensor& "
+	 << "getThermalExpansionCoefficientTensor() const\n"
+	 << "{\nreturn this->A;\n}\n\n";
     }
   } // end of BehaviourDSLCommon::writeBehaviourDataPublicMembers
 
-  void BehaviourDSLCommon::writeBehaviourDataClassHeader() 
+  void BehaviourDSLCommon::writeBehaviourDataClassHeader(std::ostream& os) const
   {
-    this->checkBehaviourDataFile();
-    this->behaviourDataFile << "/*!\n"
-			    << "* \\class " << this->mb.getClassName() << "BehaviourData\n"
-			    << "* \\brief This class implements the " 
-			    << this->mb.getClassName() << "BehaviourData" << " .\n"
-			    << "* \\param H, modelling hypothesis.\n"
-			    << "* \\param typename Type, numerical type.\n"
-			    << "* \\param bool use_qt, conditional saying if quantities are use.\n";
+    this->checkBehaviourDataFile(os);
+    os << "/*!\n"
+       << "* \\class " << this->mb.getClassName() << "BehaviourData\n"
+       << "* \\brief This class implements the " 
+       << this->mb.getClassName() << "BehaviourData" << " .\n"
+       << "* \\param H, modelling hypothesis.\n"
+       << "* \\param typename Type, numerical type.\n"
+       << "* \\param bool use_qt, conditional saying if quantities are use.\n";
     if(!this->authorName.empty()){
-      this->behaviourDataFile << "* \\author " << this->authorName << '\n';
+      os << "* \\author " << this->authorName << '\n';
     }
     if(!this->date.empty()){
-      this->behaviourDataFile << "* \\date   " << this->date << '\n';
+      os << "* \\date   " << this->date << '\n';
     }
-    this->behaviourDataFile << "*/\n";
+    os << "*/\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataForwardDeclarations()
+  void BehaviourDSLCommon::writeBehaviourDataForwardDeclarations(std::ostream& os) const
   {
-    using namespace std;
-    this->checkBehaviourDataFile();
-    this->behaviourDataFile << "// Forward Declaration\n"
-			    << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
-			    << "class " << this->mb.getClassName() << "BehaviourData;\n\n"
-			    << "// Forward Declaration\n"
-			    << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
-			    << "class " << this->mb.getClassName() << "IntegrationData;\n\n";
+    this->checkBehaviourDataFile(os);
+    os << "// Forward Declaration\n"
+       << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
+       << "class " << this->mb.getClassName() << "BehaviourData;\n\n"
+       << "// Forward Declaration\n"
+       << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
+       << "class " << this->mb.getClassName() << "IntegrationData;\n\n";
     if(this->mb.useQt()){
-      this->behaviourDataFile << "// Forward Declaration\n";
-      this->behaviourDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
-      this->behaviourDataFile << "std::ostream&\n operator <<(std::ostream&,";
-      this->behaviourDataFile << "const " << this->mb.getClassName() 
-			      << "BehaviourData<hypothesis,Type,use_qt>&);\n\n";
+      os << "// Forward Declaration\n";
+      os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
+      os << "std::ostream&\n operator <<(std::ostream&,";
+      os << "const " << this->mb.getClassName() 
+	 << "BehaviourData<hypothesis,Type,use_qt>&);\n\n";
     } else {
-      this->behaviourDataFile << "// Forward Declaration\n";
-      this->behaviourDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
-      this->behaviourDataFile << "std::ostream&\n operator <<(std::ostream&,";
-      this->behaviourDataFile << "const " << this->mb.getClassName() 
-			      << "BehaviourData<hypothesis,Type,false>&);\n\n";
+      os << "// Forward Declaration\n";
+      os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
+      os << "std::ostream&\n operator <<(std::ostream&,";
+      os << "const " << this->mb.getClassName() 
+	 << "BehaviourData<hypothesis,Type,false>&);\n\n";
     }
     // maintenant, il faut déclarer toutes les spécialisations partielles...
     for(const auto & h : this->mb.getModellingHypotheses()){
       if(this->mb.hasSpecialisedMechanicalData(h)){
 	if(this->mb.useQt()){
-	  this->behaviourDataFile << "// Forward Declaration\n"
-				  << "template<typename Type,bool use_qt>\n"
-				  << "std::ostream&\n operator <<(std::ostream&,"
-				  << "const " << this->mb.getClassName() 
-				  << "BehaviourData<ModellingHypothesis::"
-				  << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>&);\n\n";
+	  os << "// Forward Declaration\n"
+	     << "template<typename Type,bool use_qt>\n"
+	     << "std::ostream&\n operator <<(std::ostream&,"
+	     << "const " << this->mb.getClassName() 
+	     << "BehaviourData<ModellingHypothesis::"
+	     << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>&);\n\n";
 	} else {
-	  this->behaviourDataFile << "// Forward Declaration\n"
-				  << "template<typename Type>\n"
-				  << "std::ostream&\n operator <<(std::ostream&,"
-				  << "const " << this->mb.getClassName() 
-				  << "BehaviourData<ModellingHypothesis::"
-				  << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>&);\n\n";
+	  os << "// Forward Declaration\n"
+	     << "template<typename Type>\n"
+	     << "std::ostream&\n operator <<(std::ostream&,"
+	     << "const " << this->mb.getClassName() 
+	     << "BehaviourData<ModellingHypothesis::"
+	     << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>&);\n\n";
 	}
       }
     }
   }
     
-  void BehaviourDSLCommon::writeBehaviourDataClassBegin(const Hypothesis h) {
-    using namespace std;
-    this->checkBehaviourDataFile();
+  void BehaviourDSLCommon::writeBehaviourDataClassBegin(std::ostream& os,
+							const Hypothesis h) const{
+    this->checkBehaviourDataFile(os);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(this->mb.useQt()){
-	this->behaviourDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
-	this->behaviourDataFile << "class " << this->mb.getClassName() << "BehaviourData\n";
+	os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
+	os << "class " << this->mb.getClassName() << "BehaviourData\n";
       } else {
-	this->behaviourDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
-	this->behaviourDataFile << "class " << this->mb.getClassName() 
-				<< "BehaviourData<hypothesis,Type,false>\n";
+	os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
+	os << "class " << this->mb.getClassName() 
+	   << "BehaviourData<hypothesis,Type,false>\n";
       }
     } else {
       if(this->mb.useQt()){
-	this->behaviourDataFile << "template<typename Type,bool use_qt>\n";
-	this->behaviourDataFile << "class " << this->mb.getClassName()
-				<< "BehaviourData<ModellingHypothesis::"
-				<< ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>\n";
+	os << "template<typename Type,bool use_qt>\n";
+	os << "class " << this->mb.getClassName()
+	   << "BehaviourData<ModellingHypothesis::"
+	   << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>\n";
       } else {
-	this->behaviourDataFile << "template<typename Type>\n";
-	this->behaviourDataFile << "class " << this->mb.getClassName() 
-				<< "BehaviourData<ModellingHypothesis::"
-				<< ModellingHypothesis::toUpperCaseString(h) << ",Type,false>\n";
+	os << "template<typename Type>\n";
+	os << "class " << this->mb.getClassName() 
+	   << "BehaviourData<ModellingHypothesis::"
+	   << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>\n";
       }
     }
-    this->behaviourDataFile << "{\n\n";
+    os << "{\n\n";
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      this->behaviourDataFile << "static " << constexpr_c << " ModellingHypothesis::Hypothesis hypothesis = " 
-			      << "ModellingHypothesis::"
-			      << ModellingHypothesis::toUpperCaseString(h) << ";\n";
+      os << "static " << constexpr_c << " ModellingHypothesis::Hypothesis hypothesis = " 
+	 << "ModellingHypothesis::"
+	 << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }
-    this->behaviourDataFile << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n"
-			    << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);\n"
-			    << "TFEL_STATIC_ASSERT(tfel::typetraits::"
-			    << "IsFundamentalNumericType<Type>::cond);\n"
-			    << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n"
-			    << "friend std::ostream& operator<< <>(std::ostream&,const "
-			    << this->mb.getClassName() << "BehaviourData&);\n\n"
-			    << "/* integration data is declared friend to access"
-			    << "   driving variables at the beginning of the time step */\n";
+    os << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n"
+       << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);\n"
+       << "TFEL_STATIC_ASSERT(tfel::typetraits::"
+       << "IsFundamentalNumericType<Type>::cond);\n"
+       << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n"
+       << "friend std::ostream& operator<< <>(std::ostream&,const "
+       << this->mb.getClassName() << "BehaviourData&);\n\n"
+       << "/* integration data is declared friend to access"
+       << "   driving variables at the beginning of the time step */\n";
     if(this->mb.useQt()){
-      this->behaviourDataFile << "friend class " << this->mb.getClassName() << "IntegrationData<hypothesis,Type,use_qt>;\n\n";
+      os << "friend class " << this->mb.getClassName() << "IntegrationData<hypothesis,Type,use_qt>;\n\n";
     } else {
-      this->behaviourDataFile << "friend class " << this->mb.getClassName() << "IntegrationData<hypothesis,Type,false>;\n\n";
+      os << "friend class " << this->mb.getClassName() << "IntegrationData<hypothesis,Type,false>;\n\n";
     }
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataClassEnd() {    
-    this->checkBehaviourDataFile();
-    this->behaviourDataFile << "}; // end of " << this->mb.getClassName() << "BehaviourData" 
-			    << "class\n\n";
+  void BehaviourDSLCommon::writeBehaviourDataClassEnd(std::ostream& os) const {    
+    this->checkBehaviourDataFile(os);
+    os << "}; // end of " << this->mb.getClassName() << "BehaviourData" 
+       << "class\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataMaterialProperties(const Hypothesis h) {
-    this->checkBehaviourDataFile();
-    this->writeVariablesDeclarations(this->behaviourDataFile,
-				     this->mb.getBehaviourData(h).getMaterialProperties(),
+  void BehaviourDSLCommon::writeBehaviourDataMaterialProperties(std::ostream& os,
+								const Hypothesis h) const {
+    this->checkBehaviourDataFile(os);
+    this->writeVariablesDeclarations(os,this->mb.getBehaviourData(h).getMaterialProperties(),
 				     "","",this->fileName,
 				     false);
-    this->behaviourDataFile << '\n';
+    os << '\n';
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataStateVariables(const Hypothesis h) {
-    this->checkBehaviourDataFile();
+  void BehaviourDSLCommon::writeBehaviourDataStateVariables(std::ostream& os,
+							    const Hypothesis h) const {
+    this->checkBehaviourDataFile(os);
     const auto& d = this->mb.getBehaviourData(h);
-    this->writeVariablesDeclarations(this->behaviourDataFile,
-				     d.getStateVariables(),
+    this->writeVariablesDeclarations(os,d.getStateVariables(),
 				     "","",this->fileName,false);
-    this->writeVariablesDeclarations(this->behaviourDataFile,
-				     d.getAuxiliaryStateVariables(),
+    this->writeVariablesDeclarations(os,d.getAuxiliaryStateVariables(),
 				     "","",this->fileName,false);
-    this->writeVariablesDeclarations(this->behaviourDataFile,
-				     d.getExternalStateVariables(),
+    this->writeVariablesDeclarations(os,d.getExternalStateVariables(),
 				     "","",this->fileName,false);
-    this->behaviourDataFile << '\n';
+    os << '\n';
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataOutputOperator(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourDataOutputOperator(std::ostream& os,
+							    const Hypothesis h) const
   {    
-    this->checkBehaviourFile();
+    this->checkBehaviourFile(os);
     const auto& d = this->mb.getBehaviourData(h);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(this->mb.useQt()){
-	this->behaviourDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
-	this->behaviourDataFile << "std::ostream&\n";
-	this->behaviourDataFile << "operator <<(std::ostream& os,";
-	this->behaviourDataFile << "const " << this->mb.getClassName() 
-				<< "BehaviourData<hypothesis,Type,use_qt>& b)\n";
+	os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
+	os << "std::ostream&\n";
+	os << "operator <<(std::ostream& os,";
+	os << "const " << this->mb.getClassName() 
+	   << "BehaviourData<hypothesis,Type,use_qt>& b)\n";
       } else {
-	this->behaviourDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
-	this->behaviourDataFile << "std::ostream&\n";
-	this->behaviourDataFile << "operator <<(std::ostream& os,";
-	this->behaviourDataFile << "const " << this->mb.getClassName() 
-				<< "BehaviourData<hypothesis,Type,false>& b)\n";
+	os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
+	os << "std::ostream&\n";
+	os << "operator <<(std::ostream& os,";
+	os << "const " << this->mb.getClassName() 
+	   << "BehaviourData<hypothesis,Type,false>& b)\n";
       }
     } else {
       if(this->mb.useQt()){
-	this->behaviourDataFile << "template<typename Type,bool use_qt>\n";
-	this->behaviourDataFile << "std::ostream&\n";
-	this->behaviourDataFile << "operator <<(std::ostream& os,";
-	this->behaviourDataFile << "const " << this->mb.getClassName() 
-				<< "BehaviourData<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>& b)\n";
+	os << "template<typename Type,bool use_qt>\n";
+	os << "std::ostream&\n";
+	os << "operator <<(std::ostream& os,";
+	os << "const " << this->mb.getClassName() 
+	   << "BehaviourData<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>& b)\n";
       } else {
-	this->behaviourDataFile << "template<typename Type>\n";
-	this->behaviourDataFile << "std::ostream&\n";
-	this->behaviourDataFile << "operator <<(std::ostream& os,";
-	this->behaviourDataFile << "const " << this->mb.getClassName() 
-				<< "BehaviourData<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>& b)\n";
+	os << "template<typename Type>\n";
+	os << "std::ostream&\n";
+	os << "operator <<(std::ostream& os,";
+	os << "const " << this->mb.getClassName() 
+	   << "BehaviourData<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>& b)\n";
       }
     }
-    this->behaviourDataFile << "{\n"
-			    << "using namespace std;\n";
+    os << "{\n"
+       << "using namespace std;\n";
     for(const auto& v : this->mb.getMainVariables()){
       if(v.first.increment_known){
-	this->behaviourDataFile << "os << \"" << v.first.name  << " : \" << b." << v.first.name  << " << '\\n';\n";
+	os << "os << \"" << v.first.name  << " : \" << b." << v.first.name  << " << '\\n';\n";
       } else {
-	this->behaviourDataFile << "os << \"" << v.first.name  << "0 : \" << b." << v.first.name  << "0 << endl;\n";
+	os << "os << \"" << v.first.name  << "0 : \" << b." << v.first.name  << "0 << endl;\n";
       }
-      this->behaviourDataFile << "os << \"" << v.second.name << " : \" << b." << v.second.name << " << '\\n';\n";
+      os << "os << \"" << v.second.name << " : \" << b." << v.second.name << " << '\\n';\n";
     }
-    this->behaviourDataFile << "os << \"T : \" << b.T << endl;\n";
+    os << "os << \"T : \" << b.T << endl;\n";
     for(const auto& v: d.getMaterialProperties()){
-      this->behaviourDataFile <<  "os << \"" << v.name << " : \" << b." 
-			      << v.name <<  " << '\\n';\n";  
+      os <<  "os << \"" << v.name << " : \" << b." 
+	 << v.name <<  " << '\\n';\n";  
     }
     for(const auto& v: d.getStateVariables()){
-      this->behaviourDataFile << "os << \"" << v.name << " : \" << b." 
-			      << v.name <<  " << '\\n';\n";  
+      os << "os << \"" << v.name << " : \" << b." 
+	 << v.name <<  " << '\\n';\n";  
     }    
     for(const auto& v : d.getAuxiliaryStateVariables()){
-      this->behaviourDataFile << "os << \"" << v.name << " : \" << b." 
-			      << v.name <<  " << '\\n';\n";  
+      os << "os << \"" << v.name << " : \" << b." 
+	 << v.name <<  " << '\\n';\n";  
     }    
     for(const auto& v : d.getExternalStateVariables()){
-      this->behaviourDataFile << "os << \"" << v.name << " : \" << b." 
-			      << v.name << " << '\\n';\n";
+      os << "os << \"" << v.name << " : \" << b." 
+	 << v.name << " << '\\n';\n";
     }
-    this->behaviourDataFile << "return os;\n"
-			    << "}\n\n";
+    os << "return os;\n"
+       << "}\n\n";
   } //  BehaviourDSLCommon::writeBehaviourDataOutputOperator
 
-  void BehaviourDSLCommon::writeBehaviourDataFileBegin()
+  void BehaviourDSLCommon::writeBehaviourDataFileBegin(std::ostream& os) const
   {
-    this->checkBehaviourDataFile();
-    this->writeBehaviourDataFileHeader();
-    this->writeBehaviourDataFileHeaderBegin();
-    this->writeBehaviourDataStandardTFELIncludes();
-    this->writeIncludes(this->behaviourDataFile);
+    this->checkBehaviourDataFile(os);
+    this->writeBehaviourDataFileHeader(os);
+    this->writeBehaviourDataFileHeaderBegin(os);
+    this->writeBehaviourDataStandardTFELIncludes(os);
+    this->writeIncludes(os);
     // includes specific to interfaces
     for(const auto& i : this->interfaces){
-      i.second->writeInterfaceSpecificIncludes(this->behaviourDataFile,this->mb);
+      i.second->writeInterfaceSpecificIncludes(os,this->mb);
     }
-    this->writeNamespaceBegin(this->behaviourDataFile);
-    this->writeBehaviourDataForwardDeclarations();
+    this->writeNamespaceBegin(os);
+    this->writeBehaviourDataForwardDeclarations(os);
   } // end of BehaviourDSLCommon::writeBehaviourDataFile
 
-  void BehaviourDSLCommon::writeBehaviourDataClass(const Hypothesis h){
-    this->checkBehaviourDataFile();
-    this->writeBehaviourDataClassBegin(h);
-    this->writeBehaviourDataStandardTFELTypedefs();
-    this->behaviourDataFile << "protected:\n\n";
-    this->writeBehaviourDataDefaultMembers();
-    this->writeBehaviourDataMaterialProperties(h);
-    this->writeBehaviourDataStateVariables(h);
-    this->behaviourDataFile << "public:\n\n";
-    this->writeBehaviourDataDisabledConstructors();
-    this->writeBehaviourDataConstructors(h);
-    this->writeBehaviourDataMainVariablesSetters();
-    this->writeBehaviourDataPublicMembers();
-    this->writeBehaviourDataAssignementOperator(h);
-    this->writeBehaviourDataExport(h);
-    this->writeBehaviourDataClassEnd();
-    this->writeBehaviourDataOutputOperator(h);
+  void BehaviourDSLCommon::writeBehaviourDataClass(std::ostream& os,
+						   const Hypothesis h) const{
+    this->checkBehaviourDataFile(os);
+    this->writeBehaviourDataClassBegin(os,h);
+    this->writeBehaviourDataStandardTFELTypedefs(os);
+    os << "protected:\n\n";
+    this->writeBehaviourDataDefaultMembers(os);
+    this->writeBehaviourDataMaterialProperties(os,h);
+    this->writeBehaviourDataStateVariables(os,h);
+    os << "public:\n\n";
+    this->writeBehaviourDataDisabledConstructors(os);
+    this->writeBehaviourDataConstructors(os,h);
+    this->writeBehaviourDataMainVariablesSetters(os);
+    this->writeBehaviourDataPublicMembers(os);
+    this->writeBehaviourDataAssignementOperator(os,h);
+    this->writeBehaviourDataExport(os,h);
+    this->writeBehaviourDataClassEnd(os);
+    this->writeBehaviourDataOutputOperator(os,h);
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataFileEnd()
+  void BehaviourDSLCommon::writeBehaviourDataFileEnd(std::ostream& os) const
   {
-    this->writeNamespaceEnd(this->behaviourDataFile);
-    this->writeBehaviourDataFileHeaderEnd();
+    this->writeNamespaceEnd(os);
+    this->writeBehaviourDataFileHeaderEnd(os);
   } // end of BehaviourDSLCommon::writeBehaviourDataFileEnd
 
-  void BehaviourDSLCommon::checkBehaviourFile() const {
-    if((!this->behaviourFile)||(!this->behaviourFile.good())){
+  void BehaviourDSLCommon::checkBehaviourFile(std::ostream& os) const {
+    if((!os)||(!os.good())){
       this->throwRuntimeError("BehaviourDSLCommon::checkBehaviourDataOutputFile",
 			      "ouput file is not valid");
     }
   }
 
-  void BehaviourDSLCommon::writeBehaviourForwardDeclarations()
+  void BehaviourDSLCommon::writeBehaviourForwardDeclarations(std::ostream& os) const
   {
-    this->checkBehaviourFile();
-    this->behaviourFile << "// Forward Declaration\n"
-			<< "template<ModellingHypothesis::Hypothesis,typename Type,bool use_qt>\n"
-			<< "class " << this->mb.getClassName() << ";\n\n";
+    this->checkBehaviourFile(os);
+    os << "// Forward Declaration\n"
+       << "template<ModellingHypothesis::Hypothesis,typename Type,bool use_qt>\n"
+       << "class " << this->mb.getClassName() << ";\n\n";
     if(this->mb.useQt()){
-      this->behaviourFile << "// Forward Declaration\n"
-			  << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
-			  << "std::ostream&\n operator <<(std::ostream&,"
-			  << "const " << this->mb.getClassName() << "<hypothesis,Type,use_qt>&);\n\n";
+      os << "// Forward Declaration\n"
+	 << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
+	 << "std::ostream&\n operator <<(std::ostream&,"
+	 << "const " << this->mb.getClassName() << "<hypothesis,Type,use_qt>&);\n\n";
     } else {
-      this->behaviourFile << "// Forward Declaration\n"
-			  << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n"
-			  << "std::ostream&\n operator <<(std::ostream&,"
-			  << "const " << this->mb.getClassName() << "<hypothesis,Type,false>&);\n\n";
+      os << "// Forward Declaration\n"
+	 << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n"
+	 << "std::ostream&\n operator <<(std::ostream&,"
+	 << "const " << this->mb.getClassName() << "<hypothesis,Type,false>&);\n\n";
     }
     // maintenant, il faut déclarer toutes les spécialisations partielles...
     const auto& mh = this->mb.getModellingHypotheses();
     for(const auto & h : mh){
       if(this->mb.hasSpecialisedMechanicalData(h)){
 	if(this->mb.useQt()){
-	  this->behaviourFile << "// Forward Declaration\n"
-			      << "template<typename Type,bool use_qt>\n"
-			      << "std::ostream&\n operator <<(std::ostream&,"
-			      << "const " << this->mb.getClassName() 
-			      << "<ModellingHypothesis::"
-			      << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>&);\n\n";
+	  os << "// Forward Declaration\n"
+	     << "template<typename Type,bool use_qt>\n"
+	     << "std::ostream&\n operator <<(std::ostream&,"
+	     << "const " << this->mb.getClassName() 
+	     << "<ModellingHypothesis::"
+	     << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>&);\n\n";
 	} else {
-	  this->behaviourFile << "// Forward Declaration\n"
-			      << "template<typename Type>\n"
-			      << "std::ostream&\n operator <<(std::ostream&,"
-			      << "const " << this->mb.getClassName() 
-			      << "<ModellingHypothesis::"
-			      << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>&);\n\n";
+	  os << "// Forward Declaration\n"
+	     << "template<typename Type>\n"
+	     << "std::ostream&\n operator <<(std::ostream&,"
+	     << "const " << this->mb.getClassName() 
+	     << "<ModellingHypothesis::"
+	     << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>&);\n\n";
 	}
       }
     }
   } // end of BehaviourDSLCommon::writeBehaviourClassForwardDeclarations
 
-  void BehaviourDSLCommon::writeBehaviourClassBegin(const Hypothesis h) {
-    using namespace std;
-    this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n";
-    this->behaviourFile << "* \\class " << this->mb.getClassName() << '\n';
-    this->behaviourFile << "* \\brief This class implements the " 
-			<< this->mb.getClassName() << " behaviour.\n";
-    this->behaviourFile << "* \\param hypothesis, modelling hypothesis.\n";
-    this->behaviourFile << "* \\param Type, numerical type.\n";
+  void BehaviourDSLCommon::writeBehaviourClassBegin(std::ostream& os,
+						    const Hypothesis h) const {
+    this->checkBehaviourFile(os);
+    os << "/*!\n";
+    os << "* \\class " << this->mb.getClassName() << '\n';
+    os << "* \\brief This class implements the " 
+       << this->mb.getClassName() << " behaviour.\n";
+    os << "* \\param hypothesis, modelling hypothesis.\n";
+    os << "* \\param Type, numerical type.\n";
     if(this->mb.useQt()){    
-      this->behaviourFile << "* \\param use_qt, conditional "
-			  << "saying if quantities are use.\n";
+      os << "* \\param use_qt, conditional "
+	 << "saying if quantities are use.\n";
     }
     if(!this->authorName.empty()){
-      this->behaviourFile << "* \\author " << this->authorName << '\n';
+      os << "* \\author " << this->authorName << '\n';
     }
     if(!this->date.empty()){
-      this->behaviourFile << "* \\date   " << this->date << '\n';
+      os << "* \\date   " << this->date << '\n';
     }
     if(!this->description.empty()){
-      this->behaviourFile << this->description << '\n';
+      os << this->description << '\n';
     }
-    this->behaviourFile << "*/\n";
-    const string btype = this->mb.getBehaviourTypeFlag();
+    os << "*/\n";
+    const auto btype = this->mb.getBehaviourTypeFlag();
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(this->mb.useQt()){
-	this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
-	this->behaviourFile << "class " << this->mb.getClassName() << '\n';
-	this->behaviourFile << ": public MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>,\n";
+	os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
+	os << "class " << this->mb.getClassName() << '\n';
+	os << ": public MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>,\n";
 	if(this->mb.getAttribute(BehaviourData::profiling,false)){
-	  this->behaviourFile << "public "
-			      << this->mb.getClassName() << "Profiler,\n";
+	  os << "public "
+	     << this->mb.getClassName() << "Profiler,\n";
 	}
-	this->behaviourFile << "public "
-			    << this->mb.getClassName() << "BehaviourData<hypothesis,Type,use_qt>,\n";
-	this->behaviourFile << "public "
-			    << this->mb.getClassName() << "IntegrationData<hypothesis,Type,use_qt>";
-	this->writeBehaviourParserSpecificInheritanceRelationship();
+	os << "public "
+	   << this->mb.getClassName() << "BehaviourData<hypothesis,Type,use_qt>,\n";
+	os << "public "
+	   << this->mb.getClassName() << "IntegrationData<hypothesis,Type,use_qt>";
+	this->writeBehaviourParserSpecificInheritanceRelationship(os);
       } else {
-	this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
-	this->behaviourFile << "class " << this->mb.getClassName() 
-			    << "<hypothesis,Type,false>\n";
-	this->behaviourFile << ": public MechanicalBehaviour<" << btype << ",hypothesis,Type,false>,\n";
+	os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
+	os << "class " << this->mb.getClassName() 
+	   << "<hypothesis,Type,false>\n";
+	os << ": public MechanicalBehaviour<" << btype << ",hypothesis,Type,false>,\n";
 	if(this->mb.getAttribute(BehaviourData::profiling,false)){
-	  this->behaviourFile << "public "
-			      << this->mb.getClassName() << "Profiler,\n";
+	  os << "public "
+	     << this->mb.getClassName() << "Profiler,\n";
 	}
-	this->behaviourFile << "public "
-			    << this->mb.getClassName() << "BehaviourData<hypothesis,Type,false>,\n";
-	this->behaviourFile << "public "
-			    << this->mb.getClassName() << "IntegrationData<hypothesis,Type,false>";
-	this->writeBehaviourParserSpecificInheritanceRelationship();
+	os << "public "
+	   << this->mb.getClassName() << "BehaviourData<hypothesis,Type,false>,\n";
+	os << "public "
+	   << this->mb.getClassName() << "IntegrationData<hypothesis,Type,false>";
+	this->writeBehaviourParserSpecificInheritanceRelationship(os);
       }
     } else {
       if(this->mb.useQt()){
-	this->behaviourFile << "template<typename Type,bool use_qt>\n";
-	this->behaviourFile << "class " << this->mb.getClassName()
-			    << "<ModellingHypothesis::"
-			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>\n";
-	this->behaviourFile << ": public MechanicalBehaviour<" << btype << ",ModellingHypothesis::"
-			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>,\n";
+	os << "template<typename Type,bool use_qt>\n";
+	os << "class " << this->mb.getClassName()
+	   << "<ModellingHypothesis::"
+	   << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>\n";
+	os << ": public MechanicalBehaviour<" << btype << ",ModellingHypothesis::"
+	   << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>,\n";
 	if(this->mb.getAttribute(BehaviourData::profiling,false)){
-	  this->behaviourFile << "public "
-			      << this->mb.getClassName() << "Profiler,\n";
+	  os << "public "
+	     << this->mb.getClassName() << "Profiler,\n";
 	}
-	this->behaviourFile << "public "
-			    << this->mb.getClassName() << "BehaviourData<ModellingHypothesis::"
-			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>,\n";
-	this->behaviourFile << "public "
-			    << this->mb.getClassName() << "IntegrationData<ModellingHypothesis::"
-			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>";
-	this->writeBehaviourParserSpecificInheritanceRelationship();
+	os << "public "
+	   << this->mb.getClassName() << "BehaviourData<ModellingHypothesis::"
+	   << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>,\n";
+	os << "public "
+	   << this->mb.getClassName() << "IntegrationData<ModellingHypothesis::"
+	   << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>";
+	this->writeBehaviourParserSpecificInheritanceRelationship(os);
       } else {
-	this->behaviourFile << "template<typename Type>\n";
-	this->behaviourFile << "class " << this->mb.getClassName() 
-			    << "<ModellingHypothesis::"
-			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>\n";
-	this->behaviourFile << ": public MechanicalBehaviour<" << btype << ",ModellingHypothesis::"
-			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>,\n";
+	os << "template<typename Type>\n";
+	os << "class " << this->mb.getClassName() 
+	   << "<ModellingHypothesis::"
+	   << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>\n";
+	os << ": public MechanicalBehaviour<" << btype << ",ModellingHypothesis::"
+	   << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>,\n";
 	if(this->mb.getAttribute(BehaviourData::profiling,false)){
-	  this->behaviourFile << "public "
-			      << this->mb.getClassName() << "Profiler,\n";
+	  os << "public "
+	     << this->mb.getClassName() << "Profiler,\n";
 	}
-	this->behaviourFile << "public "
-			    << this->mb.getClassName() << "BehaviourData<ModellingHypothesis::"
-			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>,\n";
-	this->behaviourFile << "public "
-			    << this->mb.getClassName() << "IntegrationData<ModellingHypothesis::"
-			    << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>";
+	os << "public "
+	   << this->mb.getClassName() << "BehaviourData<ModellingHypothesis::"
+	   << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>,\n";
+	os << "public "
+	   << this->mb.getClassName() << "IntegrationData<ModellingHypothesis::"
+	   << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>";
       }
     }
-    this->behaviourFile << "{\n\n";
+    os << "{\n\n";
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      this->behaviourFile << "static " << constexpr_c << " ModellingHypothesis::Hypothesis hypothesis = " 
-			  << "ModellingHypothesis::"
-			  << ModellingHypothesis::toUpperCaseString(h) << ";\n";
+      os << "static " << constexpr_c << " ModellingHypothesis::Hypothesis hypothesis = " 
+	 << "ModellingHypothesis::"
+	 << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }
-    this->behaviourFile << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n\n";
-    this->behaviourFile << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);\n";
-    this->behaviourFile << "TFEL_STATIC_ASSERT(tfel::typetraits::"
-			<< "IsFundamentalNumericType<Type>::cond);\n";
-    this->behaviourFile << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n";
-    this->behaviourFile << "friend std::ostream& operator<< <>(std::ostream&,const ";
-    this->behaviourFile << this->mb.getClassName() << "&);\n\n";
+    os << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n\n";
+    os << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);\n";
+    os << "TFEL_STATIC_ASSERT(tfel::typetraits::"
+       << "IsFundamentalNumericType<Type>::cond);\n";
+    os << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n";
+    os << "friend std::ostream& operator<< <>(std::ostream&,const ";
+    os << this->mb.getClassName() << "&);\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourFileHeader(){
-    this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n"
-			<< "* \\file   " << this->behaviourFileName  << '\n'
-			<< "* \\brief  " << "this file implements the " 
-			<< this->mb.getClassName() << " Behaviour.\n"
-			<< "*         File generated by "
-			<< MFrontHeader::getVersionName() << " "
-			<< "version " << MFrontHeader::getVersionNumber() << '\n';
+  void BehaviourDSLCommon::writeBehaviourFileHeader(std::ostream& os) const{
+    this->checkBehaviourFile(os);
+    os << "/*!\n"
+       << "* \\file   " << this->getBehaviourFileName() << '\n'
+       << "* \\brief  " << "this file implements the " 
+       << this->mb.getClassName() << " Behaviour.\n"
+       << "*         File generated by "
+       << MFrontHeader::getVersionName() << " "
+       << "version " << MFrontHeader::getVersionNumber() << '\n';
     if(!this->authorName.empty()){
-      this->behaviourFile << "* \\author " << this->authorName << '\n';
+      os << "* \\author " << this->authorName << '\n';
     }
     if(!this->date.empty()){
-      this->behaviourFile << "* \\date   " << this->date       << '\n';
+      os << "* \\date   " << this->date       << '\n';
     }
-    this->behaviourFile << " */\n\n";
+    os << " */\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourFileHeaderBegin(){
-    this->checkBehaviourFile();
-    this->behaviourFile << "#ifndef LIB_TFELMATERIAL_"
-			<< makeUpperCase(this->mb.getClassName())
-			<< "_HXX\n"
-			<< "#define LIB_TFELMATERIAL_"
-			<< makeUpperCase(this->mb.getClassName())
-			<< "_HXX\n\n";
+  void BehaviourDSLCommon::writeBehaviourFileHeaderBegin(std::ostream& os) const{
+    this->checkBehaviourFile(os);
+    os << "#ifndef LIB_TFELMATERIAL_"
+       << makeUpperCase(this->mb.getClassName())
+       << "_HXX\n"
+       << "#define LIB_TFELMATERIAL_"
+       << makeUpperCase(this->mb.getClassName())
+       << "_HXX\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourFileHeaderEnd() {
-    this->checkBehaviourFile();
-    this->behaviourFile << "#endif /* LIB_TFELMATERIAL_"
-			<< makeUpperCase(this->mb.getClassName())
-			<< "_HXX */\n";
+  void BehaviourDSLCommon::writeBehaviourFileHeaderEnd(std::ostream& os) const {
+    this->checkBehaviourFile(os);
+    os << "#endif /* LIB_TFELMATERIAL_"
+       << makeUpperCase(this->mb.getClassName())
+       << "_HXX */\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourClassEnd() {    
-    this->checkBehaviourFile();
-    this->behaviourFile << "}; // end of " << this->mb.getClassName() 
-			<< " class\n\n";
+  void BehaviourDSLCommon::writeBehaviourClassEnd(std::ostream& os) const {
+    this->checkBehaviourFile(os);
+    os << "}; // end of " << this->mb.getClassName() 
+       << " class\n\n";
   }
   
   void BehaviourDSLCommon::treatUpdateAuxiliaryStateVariables()
@@ -3188,116 +3177,118 @@ namespace mfront{
     this->mb.addStressFreeExpansion(uh,AxialGrowth{s});
   } // end of BehaviourDSLCommon::treatAxialGrowth
   
-  void BehaviourDSLCommon::writeBehaviourUpdateIntegrationVariables(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourUpdateIntegrationVariables(std::ostream& os,
+								    const Hypothesis h) const
   {
     const auto& d = this->mb.getBehaviourData(h);
-    this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n"
-			<< "* \\brief Update internal variables at end of integration\n"
-			<< "*/\n"
-			<< "void updateIntegrationVariables()";
+    this->checkBehaviourFile(os);
+    os << "/*!\n"
+       << "* \\brief Update internal variables at end of integration\n"
+       << "*/\n"
+       << "void updateIntegrationVariables()";
     if(!d.getIntegrationVariables().empty()){
-      this->behaviourFile << "{\n";
+      os << "{\n";
       for(const auto& v : d.getIntegrationVariables()){
 	if(!d.isStateVariableName(v.name)){
 	  if(d.isMemberUsedInCodeBlocks(v.name)){
-	    this->behaviourFile << "this->"  << v.name << " += "
-				<< "this->d" << v.name << ";\n";
+	    os << "this->"  << v.name << " += "
+	       << "this->d" << v.name << ";\n";
 	  }
 	}
       }
-      this->behaviourFile << "}\n\n";
+      os << "}\n\n";
     } else {
-      this->behaviourFile << "\n{}\n\n";
+      os << "\n{}\n\n";
     }
   } // end of BehaviourDSLCommon::writeBehaviourUpdateIntegrationVariables
 
-  void BehaviourDSLCommon::writeBehaviourUpdateStateVariables(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourUpdateStateVariables(std::ostream& os,
+							      const Hypothesis h) const
   {
     const auto& d = this->mb.getBehaviourData(h);
-    this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n"
-			<< "* \\brief Update internal variables at end of integration\n"
-			<< "*/\n"
-			<< "void updateStateVariables()";
+    this->checkBehaviourFile(os);
+    os << "/*!\n"
+       << "* \\brief Update internal variables at end of integration\n"
+       << "*/\n"
+       << "void updateStateVariables()";
     if(!d.getStateVariables().empty()){
-      this->behaviourFile << "{\n";
+      os << "{\n";
       for(const auto & v : d.getStateVariables()){
-	this->behaviourFile << "this->"  << v.name << " += "
-			    << "this->d" << v.name << ";\n";
+	os << "this->"  << v.name << " += "
+	   << "this->d" << v.name << ";\n";
       }
-      this->behaviourFile << "}\n\n";
+      os << "}\n\n";
     } else {
-      this->behaviourFile << "\n{}\n\n";
+      os << "\n{}\n\n";
     }
   } // end of BehaviourDSLCommon::writeBehaviourUpdateStateVariables
 
-  void BehaviourDSLCommon::writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis h) 
+  void BehaviourDSLCommon::writeBehaviourUpdateAuxiliaryStateVariables(std::ostream& os,
+								       const Hypothesis h) const
   {
-    this->behaviourFile << "/*!\n"
-			<< "* \\brief Update auxiliary state variables at end of integration\n"
-			<< "*/\n"
-			<< "void updateAuxiliaryStateVariables()";
+    os << "/*!\n"
+       << "* \\brief Update auxiliary state variables at end of integration\n"
+       << "*/\n"
+       << "void updateAuxiliaryStateVariables()";
     const auto& em = this->mb.getModelsDescriptions();
     if((this->mb.hasCode(h,BehaviourData::UpdateAuxiliaryStateVariables))||(!em.empty())){
-      this->behaviourFile << "{\n"
-			  << "using namespace std;\n"
-			  << "using namespace tfel::math;\n";
+      os << "{\n"
+	 << "using namespace std;\n"
+	 << "using namespace tfel::math;\n";
       for(const auto& m: em){
 	if(m.outputs.size()==1){
 	  const auto vn = m.outputs[0].name;
-	  this->behaviourFile << "this->" << vn << " += this->d" << vn << ";\n";
+	  os << "this->" << vn << " += this->d" << vn << ";\n";
 	} else {
 	  this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourUpdateAuxiliaryStateVariables",
 				  "only models with one output are supported");
 	}
       }
       if(this->mb.hasCode(h,BehaviourData::UpdateAuxiliaryStateVariables)){
-	writeMaterialLaws("BehaviourDSLCommon::writeBehaviourUpdateAuxiliaryStateVariables",
-			  this->behaviourFile,this->mb.getMaterialLaws());		      
-	this->behaviourFile << this->mb.getCode(h,BehaviourData::UpdateAuxiliaryStateVariables) << "\n";
+	writeMaterialLaws(os,this->mb.getMaterialLaws());		      
+	os << this->mb.getCode(h,BehaviourData::UpdateAuxiliaryStateVariables) << "\n";
       }
-      this->behaviourFile << "}\n\n";
+      os << "}\n\n";
     } else {
-      this->behaviourFile << "\n{}\n\n";
+      os << "\n{}\n\n";
     }
   } // end of  BehaviourDSLCommon::writeBehaviourUpdateAuxiliaryStateVariables
 
-  void BehaviourDSLCommon::writeBehaviourComputeInternalEnergy(const Hypothesis h){
-    this->behaviourFile << "/*!\n"
-			<< "* \\brief Update the internal energy at end of the time step\n"
-      			<< "* \\param[in] Psi_s: internal energy at end of the time step\n"
-			<< "*/\n"
-			<< "void computeInternalEnergy(real& Psi_s) const";
+  void BehaviourDSLCommon::writeBehaviourComputeInternalEnergy(std::ostream& os,
+							       const Hypothesis h) const{
+    os << "/*!\n"
+       << "* \\brief Update the internal energy at end of the time step\n"
+       << "* \\param[in] Psi_s: internal energy at end of the time step\n"
+       << "*/\n"
+       << "void computeInternalEnergy(real& Psi_s) const";
     if(this->mb.hasCode(h,BehaviourData::ComputeInternalEnergy)){
-      this->behaviourFile << "{\n"
-			  << "using namespace std;\n"
-			  << "using namespace tfel::math;\n";
-      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeInternalEnergy",
-			this->behaviourFile,this->mb.getMaterialLaws());		      
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeInternalEnergy)
-			  << "\n}\n\n";
+      os << "{\n"
+	 << "using namespace std;\n"
+	 << "using namespace tfel::math;\n";
+      writeMaterialLaws(os,this->mb.getMaterialLaws());		      
+      os << this->mb.getCode(h,BehaviourData::ComputeInternalEnergy)
+	 << "\n}\n\n";
     } else {
-      this->behaviourFile << "\n{\nPsi_s=0;\n}\n\n";
+      os << "\n{\nPsi_s=0;\n}\n\n";
     }
   } // end of BehaviourDSLCommon::writeBehaviourComputeInternalEnergy
 
-  void BehaviourDSLCommon::writeBehaviourComputeDissipatedEnergy(const Hypothesis h){
-    this->behaviourFile << "/*!\n"
-			<< "* \\brief Update the dissipated energy at end of the time step\n"
-      			<< "* \\param[in] Psi_d: dissipated energy at end of the time step\n"
-			<< "*/\n"
-			<< "void computeDissipatedEnergy(real& Psi_d) const";
+  void BehaviourDSLCommon::writeBehaviourComputeDissipatedEnergy(std::ostream& os,
+								 const Hypothesis h) const{
+    os << "/*!\n"
+       << "* \\brief Update the dissipated energy at end of the time step\n"
+       << "* \\param[in] Psi_d: dissipated energy at end of the time step\n"
+       << "*/\n"
+       << "void computeDissipatedEnergy(real& Psi_d) const";
     if(this->mb.hasCode(h,BehaviourData::ComputeDissipatedEnergy)){
-      this->behaviourFile << "{\n"
-			  << "using namespace std;\n"
-			  << "using namespace tfel::math;\n";
-      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeDissipatedEnergy",
-			this->behaviourFile,this->mb.getMaterialLaws());		      
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeDissipatedEnergy)
-			  << "\n}\n\n";
+      os << "{\n"
+	 << "using namespace std;\n"
+	 << "using namespace tfel::math;\n";
+      writeMaterialLaws(os,this->mb.getMaterialLaws());		      
+      os << this->mb.getCode(h,BehaviourData::ComputeDissipatedEnergy)
+	 << "\n}\n\n";
     } else {
-      this->behaviourFile << "\n{\nPsi_d=0;\n}\n\n";
+      os << "\n{\nPsi_d=0;\n}\n\n";
     }
   } // end of BehaviourDSLCommon::writeBehaviourComputeDissipatedEnergy
   
@@ -3323,94 +3314,94 @@ namespace mfront{
     return false;
   } // end of BehaviourDSLCommon::hasUserDefinedTangentOperatorCode
 
-  void BehaviourDSLCommon::writeBehaviourIntegrator(const Hypothesis h) {
+  void BehaviourDSLCommon::writeBehaviourIntegrator(std::ostream& os,
+						    const Hypothesis h) const{
     const auto btype = this->mb.getBehaviourTypeFlag();
     const auto& md = this->mb.getBehaviourData(h);
-    this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n"
-			<< "* \\brief Integrate behaviour  over the time step\n"
-			<< "*/\n"
-			<< "IntegrationResult\n"
-			<< "integrate(const SMFlag smflag, const SMType smt) override{\n"
-			<< "using namespace std;\n"
-			<< "using namespace tfel::math;\n";
-    writeMaterialLaws("BehaviourDSLCommon::writeBehaviourIntegrator",
-		      this->behaviourFile,this->mb.getMaterialLaws());		      
+    this->checkBehaviourFile(os);
+    os << "/*!\n"
+       << "* \\brief Integrate behaviour  over the time step\n"
+       << "*/\n"
+       << "IntegrationResult\n"
+       << "integrate(const SMFlag smflag, const SMType smt) override{\n"
+       << "using namespace std;\n"
+       << "using namespace tfel::math;\n";
+    writeMaterialLaws(os,this->mb.getMaterialLaws());		      
     if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
        (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
       if(this->mb.useQt()){
-	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			    << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
-			    << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
-			    << "}\n";
+	os << "if(smflag!=MechanicalBehaviour<" << btype 
+	   << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
+	   << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
+	   << "}\n";
       } else {
-	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			    << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
-			    << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
-			    << "}\n";
+	os << "if(smflag!=MechanicalBehaviour<" << btype 
+	   << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
+	   << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
+	   << "}\n";
       }
     }
-    this->behaviourFile << "bool computeTangentOperator_ = smt!=NOSTIFFNESSREQUESTED;\n";
+    os << "bool computeTangentOperator_ = smt!=NOSTIFFNESSREQUESTED;\n";
     if(this->mb.hasCode(h,BehaviourData::ComputePredictor)){
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputePredictor) << '\n';
+      os << this->mb.getCode(h,BehaviourData::ComputePredictor) << '\n';
     }
     if(this->mb.hasCode(h,BehaviourData::Integrator)){
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::Integrator) << '\n';
+      os << this->mb.getCode(h,BehaviourData::Integrator) << '\n';
     }
-    this->behaviourFile << "this->updateIntegrationVariables();\n"
-			<< "this->updateStateVariables();\n"
-			<< "this->updateAuxiliaryStateVariables();\n";
+    os << "this->updateIntegrationVariables();\n"
+       << "this->updateStateVariables();\n"
+       << "this->updateAuxiliaryStateVariables();\n";
     for(const auto& v : this->mb.getBehaviourData(h).getPersistentVariables()){
-      this->writePhysicalBoundsChecks(this->behaviourFile,v,false);
+      this->writePhysicalBoundsChecks(os,v,false);
     }
     for(const auto& v : this->mb.getBehaviourData(h).getPersistentVariables()){
-      this->writeBoundsChecks(this->behaviourFile,v,false);
+      this->writeBoundsChecks(os,v,false);
     }
     if(this->hasUserDefinedTangentOperatorCode(h)){
-      this->behaviourFile << "if(computeTangentOperator_){\n";
+      os << "if(computeTangentOperator_){\n";
       if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
+	os << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
       } else {
-	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
+	os << "if(!this->computeConsistentTangentOperator(smt)){\n";
       }
       if(this->mb.useQt()){        
-	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+	os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
       } else {
-	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
+	os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
       }
-      this->behaviourFile << "}\n";
-      this->behaviourFile << "}\n";
+      os << "}\n";
+      os << "}\n";
     }
     if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
+      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
     } else {
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::SUCCESS;\n";
+      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::SUCCESS;\n";
     }
-    this->behaviourFile << "}\n\n";
+    os << "}\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourDisabledConstructors()
+  void BehaviourDSLCommon::writeBehaviourDisabledConstructors(std::ostream& os) const
   {    
-    this->checkBehaviourFile();
-    this->behaviourFile << "//! \\brief Default constructor (disabled)\n"
-			<< this->mb.getClassName() << "() =delete ;\n"
-			<< "//! \\brief Copy constructor (disabled)\n"
-			<< this->mb.getClassName() << "(const "
-			<< this->mb.getClassName()<< "&) = delete;\n"
-			<< "//! \\brief Assignement operator (disabled)\n"
-			<< this->mb.getClassName() << "& operator = (const "
-			<< this->mb.getClassName()<< "&) = delete;\n\n";
+    this->checkBehaviourFile(os);
+    os << "//! \\brief Default constructor (disabled)\n"
+       << this->mb.getClassName() << "() =delete ;\n"
+       << "//! \\brief Copy constructor (disabled)\n"
+       << this->mb.getClassName() << "(const "
+       << this->mb.getClassName()<< "&) = delete;\n"
+       << "//! \\brief Assignement operator (disabled)\n"
+       << this->mb.getClassName() << "& operator = (const "
+       << this->mb.getClassName()<< "&) = delete;\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourSetOutOfBoundsPolicy()
+  void BehaviourDSLCommon::writeBehaviourSetOutOfBoundsPolicy(std::ostream& os) const
   {
-    this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n"
-			<< "* \\brief set the policy for \"out of bounds\" conditions\n"
-			<< "*/\n"
-			<< "void\nsetOutOfBoundsPolicy(const OutOfBoundsPolicy policy_value){\n"
-			<< "this->policy = policy_value;\n"
-			<< "} // end of setOutOfBoundsPolicy\n\n";
+    this->checkBehaviourFile(os);
+    os << "/*!\n"
+       << "* \\brief set the policy for \"out of bounds\" conditions\n"
+       << "*/\n"
+       << "void\nsetOutOfBoundsPolicy(const OutOfBoundsPolicy policy_value){\n"
+       << "this->policy = policy_value;\n"
+       << "} // end of setOutOfBoundsPolicy\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourOutOfBoundsEnumeration
 
   static void writeBoundsChecks(std::ostream& os,
@@ -3424,35 +3415,35 @@ namespace mfront{
     const auto& bounds = v.getBounds();
     if(bounds.boundsType==VariableBoundsDescription::LOWER){
       os << "BoundsCheck<N>::lowerBoundCheck(\""
-	   << n << "\",this->" << n << ","
-	   << "static_cast<real>(" << bounds.lowerBound << "),this->policy);\n";
+	 << n << "\",this->" << n << ","
+	 << "static_cast<real>(" << bounds.lowerBound << "),this->policy);\n";
       if(b){
 	os << "BoundsCheck<N>::lowerBoundCheck(\""
-	     << n << "+d" << n << "\",this->" 
-	     << n << "+this->d" << n << ","
-	     << "static_cast<real>(" << bounds.lowerBound << "),this->policy);\n";
+	   << n << "+d" << n << "\",this->" 
+	   << n << "+this->d" << n << ","
+	   << "static_cast<real>(" << bounds.lowerBound << "),this->policy);\n";
       }
     } else if(bounds.boundsType==VariableBoundsDescription::UPPER){
       os << "BoundsCheck<N>::upperBoundCheck(\""
-	   << n << "\",this->" << n << ","
-	   << "static_cast<real>(" << bounds.upperBound << "),this->policy);\n";
+	 << n << "\",this->" << n << ","
+	 << "static_cast<real>(" << bounds.upperBound << "),this->policy);\n";
       if(b){
 	os << "BoundsCheck<N>::upperBoundCheck(\""
-	     << n << "+d" << n << "\",this->" 
-	     << n << "+this->d" << n << ","
-	     << "static_cast<real>(" << bounds.upperBound << "),this->policy);\n";
+	   << n << "+d" << n << "\",this->" 
+	   << n << "+this->d" << n << ","
+	   << "static_cast<real>(" << bounds.upperBound << "),this->policy);\n";
       }
     } else if(bounds.boundsType==VariableBoundsDescription::LOWERANDUPPER){
       os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
-	   << n << "\",this->" << n    << ","
-	   << "static_cast<real>("   << bounds.lowerBound << "),"
-	   << "static_cast<real>("   << bounds.upperBound << "),this->policy);\n";
+	 << n << "\",this->" << n    << ","
+	 << "static_cast<real>("   << bounds.lowerBound << "),"
+	 << "static_cast<real>("   << bounds.upperBound << "),this->policy);\n";
       if(b){
 	os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\""
-	     << n << "+d" << n << "\",this->" 
-	     << n << "+this->d" << n << ","
-	     << "static_cast<real>("   << bounds.lowerBound << "),"
-	     << "static_cast<real>("   << bounds.upperBound << "),this->policy);\n";
+	   << n << "+d" << n << "\",this->" 
+	   << n << "+this->d" << n << ","
+	   << "static_cast<real>("   << bounds.lowerBound << "),"
+	   << "static_cast<real>("   << bounds.upperBound << "),this->policy);\n";
       }
     } else {
       throw(std::runtime_error("BehaviourDSLCommon::writeBoundsChecks: "
@@ -3462,7 +3453,7 @@ namespace mfront{
   
   void BehaviourDSLCommon::writeBoundsChecks(std::ostream& os,
 					     const VariableDescription& v,
-					     const bool b)
+					     const bool b) const
   {
     if(v.arraySize==1u){
       mfront::writeBoundsChecks(os,v,v.name,b);
@@ -3522,7 +3513,7 @@ namespace mfront{
   
   void BehaviourDSLCommon::writePhysicalBoundsChecks(std::ostream& os ,
 						     const VariableDescription& v,
-						     const bool b)
+						     const bool b) const
   {
     if(v.arraySize==1u){
       mfront::writePhysicalBoundsChecks(os,v,v.name,b);
@@ -3533,26 +3524,27 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::writePhysicalBoundsChecks
   
-  void BehaviourDSLCommon::writeBehaviourCheckBounds(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourCheckBounds(std::ostream& os,
+						     const Hypothesis h) const
   {
-    auto write_physical_bounds = [this](const VariableDescriptionContainer& c,
-					const bool b){
+    auto write_physical_bounds = [this,&os](const VariableDescriptionContainer& c,
+					    const bool b){
       for(const auto& v:c){
-	this->writePhysicalBoundsChecks(this->behaviourFile,v,b);
+	this->writePhysicalBoundsChecks(os,v,b);
       }
     }; 
-    auto write_bounds = [this](const VariableDescriptionContainer& c,
-			       const bool b){
+    auto write_bounds = [this,&os](const VariableDescriptionContainer& c,
+				   const bool b){
       for(const auto& v:c){
-	this->writeBoundsChecks(this->behaviourFile,v,b);
+	this->writeBoundsChecks(os,v,b);
       }
     }; 
     const auto& md = this->mb.getBehaviourData(h);
-    this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n"
-			<< "* \\brief check bounds\n"
-			<< "*/\n"
-			<< "void checkBounds(void) const{\n";
+    this->checkBehaviourFile(os);
+    os << "/*!\n"
+       << "* \\brief check bounds\n"
+       << "*/\n"
+       << "void checkBounds(void) const{\n";
     write_physical_bounds(md.getMaterialProperties(),false);
     write_physical_bounds(md.getPersistentVariables(),false);
     write_physical_bounds(md.getExternalStateVariables(),true);
@@ -3561,11 +3553,11 @@ namespace mfront{
     write_bounds(md.getPersistentVariables(),false);
     write_bounds(md.getExternalStateVariables(),true);
     write_bounds(md.getLocalVariables(),false);
-    this->behaviourFile << "} // end of checkBounds\n\n";
+    os << "} // end of checkBounds\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourCheckBounds
 
   std::string
-  BehaviourDSLCommon::getBehaviourConstructorsInitializers(const Hypothesis h)
+  BehaviourDSLCommon::getBehaviourConstructorsInitializers(const Hypothesis h) const
   {
     const auto& md = this->mb.getBehaviourData(h);
     // variable initialisation
@@ -3580,66 +3572,67 @@ namespace mfront{
     return init;
   } // end of BehaviourDSLCommon::getBehaviourConstructorsInitializers
 
-  void BehaviourDSLCommon::writeBehaviourConstructors(const Hypothesis h)
-  {    
-    auto write_body = [this,h](){
-      this->behaviourFile << "\n{\n"
+  void BehaviourDSLCommon::writeBehaviourConstructors(std::ostream& os,
+						      const Hypothesis h) const
+  {
+    auto tmpnames = std::vector<std::string>{};
+    auto write_body = [this,&os,&tmpnames,h](){
+      os << "\n{\n"
       << "using namespace std;\n"
       << "using namespace tfel::math;\n"
       << "using std::vector;\n";
-      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourConstructors",
-			this->behaviourFile,this->mb.getMaterialLaws());		      
-      this->writeBehaviourParameterInitialisation(h);
+      writeMaterialLaws(os,this->mb.getMaterialLaws());		      
+      this->writeBehaviourParameterInitialisation(os,h);
       // calling models
       for(const auto& m:this->mb.getModelsDescriptions()){
 	if(m.outputs.size()==1){
 	  const auto vn = m.outputs[0].name;
-	  this->writeModelCall(this->behaviourFile,h,m,"d"+vn,vn,"em");
-	  this->behaviourFile << "this->d" << vn << " -= this->" << vn << ";\n";
+	  this->writeModelCall(os,tmpnames,h,m,"d"+vn,vn,"em");
+	  os << "this->d" << vn << " -= this->" << vn << ";\n";
 	} else {
 	  this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourInitializeMethod",
 				  "only models with one output are supported yet");
 	}
       }
-      this->writeBehaviourLocalVariablesInitialisation(h);
-      this->behaviourFile << "}\n\n";
+      this->writeBehaviourLocalVariablesInitialisation(os,h);
+      os << "}\n\n";
     };
-    this->checkBehaviourFile();
+    this->checkBehaviourFile(os);
     // initializers
     const auto& init = this->getBehaviourConstructorsInitializers(h);;
     // writing constructors
-    this->behaviourFile << "/*!\n"
-			<< "* \\brief Constructor\n"
-			<< "*/\n";
+    os << "/*!\n"
+       << "* \\brief Constructor\n"
+       << "*/\n";
     if(this->mb.useQt()){        
-      this->behaviourFile << this->mb.getClassName() << "("
-			  << "const " << this->mb.getClassName() 
-			  << "BehaviourData<hypothesis,Type,use_qt>& src1,\n"
-			  << "const " << this->mb.getClassName() 
-			  << "IntegrationData<hypothesis,Type,use_qt>& src2)\n"
-			  << ": " << this->mb.getClassName() 
-			  << "BehaviourData<hypothesis,Type,use_qt>(src1),\n"
-			  << this->mb.getClassName() 
-			  << "IntegrationData<hypothesis,Type,use_qt>(src2)";
+      os << this->mb.getClassName() << "("
+	 << "const " << this->mb.getClassName() 
+	 << "BehaviourData<hypothesis,Type,use_qt>& src1,\n"
+	 << "const " << this->mb.getClassName() 
+	 << "IntegrationData<hypothesis,Type,use_qt>& src2)\n"
+	 << ": " << this->mb.getClassName() 
+	 << "BehaviourData<hypothesis,Type,use_qt>(src1),\n"
+	 << this->mb.getClassName() 
+	 << "IntegrationData<hypothesis,Type,use_qt>(src2)";
     } else {
-      this->behaviourFile << this->mb.getClassName() << "("
-			  << "const " << this->mb.getClassName() 
-			  << "BehaviourData<hypothesis,Type,false>& src1,\n"
-			  << "const " << this->mb.getClassName() 
-			  << "IntegrationData<hypothesis,Type,false>& src2)\n"
-			  << ": " << this->mb.getClassName() 
-			  << "BehaviourData<hypothesis,Type,false>(src1),\n"
-			  << this->mb.getClassName() 
-			  << "IntegrationData<hypothesis,Type,false>(src2)";
+      os << this->mb.getClassName() << "("
+	 << "const " << this->mb.getClassName() 
+	 << "BehaviourData<hypothesis,Type,false>& src1,\n"
+	 << "const " << this->mb.getClassName() 
+	 << "IntegrationData<hypothesis,Type,false>& src2)\n"
+	 << ": " << this->mb.getClassName() 
+	 << "BehaviourData<hypothesis,Type,false>(src1),\n"
+	 << this->mb.getClassName() 
+	 << "IntegrationData<hypothesis,Type,false>(src2)";
     }
     if(!init.empty()){
-      this->behaviourFile << ",\n" <<init;
+      os << ",\n" <<init;
     }
     write_body();
     // constructor specific to interfaces
     for(const auto& i : this->interfaces){
       if(i.second->isModellingHypothesisHandled(h,this->mb)){
-	i.second->writeBehaviourConstructor(this->behaviourFile,this->mb,init);
+	i.second->writeBehaviourConstructor(os,this->mb,init);
 	write_body();
       }
     }
@@ -3648,7 +3641,7 @@ namespace mfront{
   void BehaviourDSLCommon::writeHillTensorComputation(std::ostream& out,
 						      const std::string& H,
 						      const BehaviourDescription::HillTensor& h,
-						      std::function<std::string(const MaterialPropertyInput&)>& f)
+						      std::function<std::string(const MaterialPropertyInput&)>& f) const
   {
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("BehaviourDSLCommon::writeHillTensorComputation",m);}
@@ -3674,7 +3667,7 @@ namespace mfront{
   
   void BehaviourDSLCommon::writeStiffnessTensorComputation(std::ostream& out,
 							   const std::string& D,
-							   std::function<std::string(const MaterialPropertyInput&)>& f)
+							   std::function<std::string(const MaterialPropertyInput&)>& f) const
   {
     const auto& emps = this->mb.getElasticMaterialProperties();
     if((this->mb.getSymmetryType()==mfront::ISOTROPIC)&&
@@ -3757,7 +3750,7 @@ namespace mfront{
   void
   BehaviourDSLCommon::writeMaterialPropertyArguments(std::ostream& out,
 						     const BehaviourDescription::ComputedMaterialProperty& cmp,
-						     std::function<std::string(const MaterialPropertyInput&)>& f)
+						     std::function<std::string(const MaterialPropertyInput&)>& f) const
   {
     const auto& mpd = *(cmp.mpd);
     out << '(';
@@ -3778,7 +3771,7 @@ namespace mfront{
   void
   BehaviourDSLCommon::writeMaterialPropertyCheckBoundsEvaluation(std::ostream& out,
 								 const BehaviourDescription::MaterialProperty& m,
-								 std::function<std::string(const MaterialPropertyInput&)>& f)
+								 std::function<std::string(const MaterialPropertyInput&)>& f) const
   {
     if(m.is<BehaviourDescription::ComputedMaterialProperty>()){
       const auto& cmp = m.get<BehaviourDescription::ComputedMaterialProperty>();
@@ -3786,7 +3779,7 @@ namespace mfront{
       if((hasBounds(mpd.inputs))&&(hasPhysicalBounds(mpd.inputs))){
 	return;
       }
-      const auto& n   = MFrontMaterialPropertyInterface().getFunctionName(mpd.material,mpd.law);
+      const auto& n = MFrontMaterialPropertyInterface().getFunctionName(mpd);
       out << "{\n // check bounds for material property '" << n << "'\n"
 	  << "const auto " << n << "_bounds_check_status = "
 	  << n << "_checkBounds";
@@ -3821,7 +3814,7 @@ namespace mfront{
   void
   BehaviourDSLCommon::writeMaterialPropertyEvaluation(std::ostream& out,
 						      const BehaviourDescription::MaterialProperty& m,
-						      std::function<std::string(const MaterialPropertyInput&)>& f)
+						      std::function<std::string(const MaterialPropertyInput&)>& f) const
   {
     if(m.is<BehaviourDescription::ConstantMaterialProperty>()){
       const auto& cmp = m.get<BehaviourDescription::ConstantMaterialProperty>();
@@ -3833,7 +3826,7 @@ namespace mfront{
     } else if(m.is<BehaviourDescription::ComputedMaterialProperty>()){
       const auto& cmp = m.get<BehaviourDescription::ComputedMaterialProperty>();
       const auto& mpd = *(cmp.mpd);
-      out << MFrontMaterialPropertyInterface().getFunctionName(mpd.material,mpd.law);
+      out << MFrontMaterialPropertyInterface().getFunctionName(mpd);
       this->writeMaterialPropertyArguments(out,cmp,f);
     } else {
       this->throwRuntimeError("BehaviourDSLCommon::writeMaterialPropertyEvaluation",
@@ -3846,7 +3839,7 @@ namespace mfront{
 								  const BehaviourDescription::MaterialProperty& a,
 								  const std::string& T,
 								  const std::string& i,
-								  const std::string& s)
+								  const std::string& s) const
   {
     out << "const thermalexpansion alpha" << s;
     if(!i.empty()){out << "_" << i;}
@@ -3861,7 +3854,7 @@ namespace mfront{
     } else if(a.is<BehaviourDescription::ComputedMaterialProperty>()){
       const auto& mpd = *(a.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
       const auto inputs = this->mb.getMaterialPropertyInputs(mpd);
-      out << MFrontMaterialPropertyInterface().getFunctionName(mpd.material,mpd.law) << '(';
+      out << MFrontMaterialPropertyInterface().getFunctionName(mpd) << '(';
       if(!inputs.empty()){
 	if(inputs.size()!=1u){
 	  this->throwRuntimeError("BehaviourDSLCommon::writeThermalExpansionCoefficientComputation",
@@ -3883,7 +3876,7 @@ namespace mfront{
   void
   BehaviourDSLCommon::writeThermalExpansionCoefficientsComputations(std::ostream& out,
 								    const BehaviourDescription::MaterialProperty& a,
-								    const std::string& suffix)
+								    const std::string& suffix) const
   {
     this->writeThermalExpansionCoefficientComputation(out,a,"this->referenceTemperatureForThermalExpansion",
 						      "",suffix+"_Ti");
@@ -3897,7 +3890,7 @@ namespace mfront{
 						       const BehaviourDescription::MaterialProperty& a,
 						       const std::string& t,
 						       const std::string& c,
-						       const std::string& suffix)
+						       const std::string& suffix) const
   {
     const auto Tref = [&a]() -> std::string {
       if(a.is<BehaviourDescription::ConstantMaterialProperty>()){
@@ -3922,8 +3915,10 @@ namespace mfront{
 	<< "alpha" << suffix << "_Ti * (this->referenceTemperatureForThermalExpansion-" << Tref << "));\n";
   } // end of BehaviourDSLCommon::writeThermalExpansionComputation
   
-  void BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion(std::ostream& os,
+								    const Hypothesis h) const
   {
+    auto tmpnames = std::vector<std::string>{};
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",m);}
     };
@@ -3971,57 +3966,56 @@ namespace mfront{
 	}
       }
     }
-    this->checkBehaviourFile();
-    this->behaviourFile << "void\n"
-			<< "computeStressFreeExpansion(std::pair<StressFreeExpansionType,StressFreeExpansionType>& dl01_l0)\n{\n";
-    this->behaviourFile << "using namespace std;\n";
-    this->behaviourFile << "using namespace tfel::math;\n";
-    this->behaviourFile << "using std::vector;\n";
-    writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion",
-		      this->behaviourFile,this->mb.getMaterialLaws());
-    this->behaviourFile << "auto& dl0_l0 = dl01_l0.first;\n";
-    this->behaviourFile << "auto& dl1_l0 = dl01_l0.second;\n";
-    this->behaviourFile << "dl0_l0 = StressFreeExpansionType(typename StressFreeExpansionType::value_type(0));\n";
-    this->behaviourFile << "dl1_l0 = StressFreeExpansionType(typename StressFreeExpansionType::value_type(0));\n";
+    this->checkBehaviourFile(os);
+    os << "void\n"
+       << "computeStressFreeExpansion(std::pair<StressFreeExpansionType,StressFreeExpansionType>& dl01_l0)\n{\n";
+    os << "using namespace std;\n";
+    os << "using namespace tfel::math;\n";
+    os << "using std::vector;\n";
+    writeMaterialLaws(os,this->mb.getMaterialLaws());
+    os << "auto& dl0_l0 = dl01_l0.first;\n";
+    os << "auto& dl1_l0 = dl01_l0.second;\n";
+    os << "dl0_l0 = StressFreeExpansionType(typename StressFreeExpansionType::value_type(0));\n";
+    os << "dl1_l0 = StressFreeExpansionType(typename StressFreeExpansionType::value_type(0));\n";
     if(this->mb.hasCode(h,BehaviourData::ComputeStressFreeExpansion)){
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeStressFreeExpansion) << '\n';
+      os << this->mb.getCode(h,BehaviourData::ComputeStressFreeExpansion) << '\n';
     }
     if(this->mb.areThermalExpansionCoefficientsDefined()){
       const auto& acs = this->mb.getThermalExpansionCoefficients();
       if(acs.size()==1u){
 	const auto& a = acs.front();
 	if(a.is<BehaviourDescription::ConstantMaterialProperty>()){
-	  eval(this->behaviourFile,a,"0",false);
+	  eval(os,a,"0",false);
 	} else{
-	  this->writeThermalExpansionCoefficientsComputations(this->behaviourFile,acs.front());
-	  this->writeThermalExpansionComputation(this->behaviourFile,acs.front(),"t","0");
+	  this->writeThermalExpansionCoefficientsComputations(os,acs.front());
+	  this->writeThermalExpansionComputation(os,acs.front(),"t","0");
 	}
-	this->behaviourFile << "dl0_l0[1] += dl0_l0[0];\n"
-			    << "dl0_l0[2] += dl0_l0[0];\n";
+	os << "dl0_l0[1] += dl0_l0[0];\n"
+	   << "dl0_l0[2] += dl0_l0[0];\n";
 	if(a.is<BehaviourDescription::ConstantMaterialProperty>()){
-	  eval(this->behaviourFile,a,"0",true);
+	  eval(os,a,"0",true);
 	} else{
-	  this->writeThermalExpansionComputation(this->behaviourFile,acs.front(),"t_dt","0");
+	  this->writeThermalExpansionComputation(os,acs.front(),"t_dt","0");
 	}
-	this->behaviourFile << "dl1_l0[1] += dl1_l0[0];\n"
-			    << "dl1_l0[2] += dl1_l0[0];\n";
+	os << "dl1_l0[1] += dl1_l0[0];\n"
+	   << "dl1_l0[2] += dl1_l0[0];\n";
       } else if(acs.size()==3u){
 	throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
 		 "invalid number of thermal expansion coefficients");
 	for(size_t i=0;i!=3;++i){
 	  if(!acs[i].is<BehaviourDescription::ConstantMaterialProperty>()){
-	    this->writeThermalExpansionCoefficientsComputations(this->behaviourFile,acs[i],
+	    this->writeThermalExpansionCoefficientsComputations(os,acs[i],
 								std::to_string(i));
 	  }
 	}
 	for(size_t i=0;i!=3;++i){
 	  const auto idx = std::to_string(i);
 	  if(acs[i].is<BehaviourDescription::ConstantMaterialProperty>()){
-	    eval(this->behaviourFile,acs[i],idx,false);
-	    eval(this->behaviourFile,acs[i],idx,true);
+	    eval(os,acs[i],idx,false);
+	    eval(os,acs[i],idx,true);
 	  } else {
-	    this->writeThermalExpansionComputation(this->behaviourFile,acs[i],"t",idx,idx);
-	    this->writeThermalExpansionComputation(this->behaviourFile,acs[i],"t_dt",idx,idx);
+	    this->writeThermalExpansionComputation(os,acs[i],"t",idx,idx);
+	    this->writeThermalExpansionComputation(os,acs[i],"t_dt",idx,idx);
 	  }
 	}
       } else {
@@ -4041,41 +4035,42 @@ namespace mfront{
 		 "null swelling is not supported here");
 	if(s.sfe.is<BehaviourData::SFED_ESV>()){
 	  const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
-	  this->behaviourFile << "dl0_l0[2]+=this->" << ev << ";\n";
-	  this->behaviourFile << "dl0_l0[0]=dl0_l0[1]=real(1)/std::sqrt(1+dl0_l0[2])-real(1);\n";
-	  this->behaviourFile << "dl1_l0[2]+=this->" << ev << "+this->d" << ev << ";\n";
-	  this->behaviourFile << "dl1_l0[0]=dl1_l0[1]=real(1)/std::sqrt(1+dl1_l0[2])-real(1);\n";
+	  os << "dl0_l0[2]+=this->" << ev << ";\n";
+	  os << "dl0_l0[0]=dl0_l0[1]=real(1)/std::sqrt(1+dl0_l0[2])-real(1);\n";
+	  os << "dl1_l0[2]+=this->" << ev << "+this->d" << ev << ";\n";
+	  os << "dl1_l0[0]=dl1_l0[1]=real(1)/std::sqrt(1+dl1_l0[2])-real(1);\n";
 	} else if (s.sfe.is<std::shared_ptr<ModelDescription>>()){
 	  const auto& md =
 	    *(s.sfe.get<std::shared_ptr<ModelDescription>>());
 	  throw_if(md.outputs.size()!=1u,
 		   "invalid number of outputs for model '"+md.className+"'");
 	  const auto vs = md.className+"_"+md.outputs[0].name;	  
-	  this->behaviourFile << "dl0_l0[2]+=this->" << vs << ";\n";
-	  this->behaviourFile << "dl0_l0[0]=dl0_l0[1]=real(1)/std::sqrt(1+dl0_l0[2])-real(1);\n";
-	  this->writeModelCall(this->behaviourFile,h,md,vs,vs,"sfeh");
-	  this->behaviourFile << "dl1_l0[2]+=this->" << vs << ";\n";
-	  this->behaviourFile << "dl1_l0[0]=dl1_l0[1]=real(1)/std::sqrt(1+dl1_l0[2])-real(1);\n";
+	  os << "dl0_l0[2]+=this->" << vs << ";\n";
+	  os << "dl0_l0[0]=dl0_l0[1]=real(1)/std::sqrt(1+dl0_l0[2])-real(1);\n";
+	  this->writeModelCall(os,tmpnames,h,md,vs,vs,"sfeh");
+	  os << "dl1_l0[2]+=this->" << vs << ";\n";
+	  os << "dl1_l0[0]=dl1_l0[1]=real(1)/std::sqrt(1+dl1_l0[2])-real(1);\n";
 	} else {
 	  throw_if(true,"internal error, unsupported stress free expansion");
 	}
-      } else if(d.is<BehaviourData::OrthotropicStressFreeExpansion>()){ 
+      } else if(d.is<BehaviourData::OrthotropicStressFreeExpansion>()){
+	using StressFreeExpansionHandler = BehaviourData::StressFreeExpansionHandler;
 	const auto& s =
 	  d.get<BehaviourData::OrthotropicStressFreeExpansion>();
-	auto write = [this,throw_if,h](const BehaviourData::StressFreeExpansionHandler& sfe,
-				       const char* const c){
+	auto write = [this,&os,&tmpnames,throw_if,h](const StressFreeExpansionHandler& sfe,
+						     const char* const c){
 	  if(sfe.is<BehaviourData::SFED_ESV>()){
 	    const auto& ev = sfe.get<BehaviourData::SFED_ESV>().vname;
-	    this->behaviourFile << "dl0_l0[" << c << "]+=this->" << ev << ";\n";
-	    this->behaviourFile << "dl1_l0[" << c << "]+=this->" << ev << "+this->d" << ev << ";\n";
+	    os << "dl0_l0[" << c << "]+=this->" << ev << ";\n";
+	    os << "dl1_l0[" << c << "]+=this->" << ev << "+this->d" << ev << ";\n";
 	  } else if (sfe.is<std::shared_ptr<ModelDescription>>()){
 	    const auto& md = *(sfe.get<std::shared_ptr<ModelDescription>>());
 	    throw_if(md.outputs.size()!=1u,
 		     "invalid number of outputs for model '"+md.className+"'");
 	    const auto vs = md.className+"_"+md.outputs[0].name;	  
-	    this->behaviourFile << "dl0_l0[" << c << "]+=this->" << vs << ";\n";
-	    this->writeModelCall(this->behaviourFile,h,md,vs,vs,"sfeh");
-	    this->behaviourFile << "dl1_l0[" << c << "]+=this->" << vs << ";\n";
+	    os << "dl0_l0[" << c << "]+=this->" << vs << ";\n";
+	    this->writeModelCall(os,tmpnames,h,md,vs,vs,"sfeh");
+	    os << "dl1_l0[" << c << "]+=this->" << vs << ";\n";
 	  } else if(!sfe.is<BehaviourData::NullSwelling>()){
 	    throw_if(true,"internal error, unsupported stress free expansion");
 	  }
@@ -4103,12 +4098,12 @@ namespace mfront{
 	throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
 		 "orthotropic stress free expansion is only supported "
 		 "for orthotropic behaviours");
-	this->behaviourFile << "dl0_l0[0]+=this->" << ev << "[0];\n"
-			    << "dl0_l0[1]+=this->" << ev << "[1];\n"
-			    << "dl0_l0[2]+=this->" << ev << "[2];\n"
-			    << "dl1_l0[0]+=this->" << ev << "[0]+this->d" << ev << "[0];\n"
-			    << "dl1_l0[1]+=this->" << ev << "[1]+this->d" << ev << "[1];\n"
-			    << "dl1_l0[2]+=this->" << ev << "[2]+this->d" << ev << "[2];\n";
+	os << "dl0_l0[0]+=this->" << ev << "[0];\n"
+	   << "dl0_l0[1]+=this->" << ev << "[1];\n"
+	   << "dl0_l0[2]+=this->" << ev << "[2];\n"
+	   << "dl1_l0[0]+=this->" << ev << "[0]+this->d" << ev << "[0];\n"
+	   << "dl1_l0[1]+=this->" << ev << "[1]+this->d" << ev << "[1];\n"
+	   << "dl1_l0[2]+=this->" << ev << "[2]+this->d" << ev << "[2];\n";
       } else if(d.is<BehaviourData::IsotropicStressFreeExpansion>()){
 	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
 		 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
@@ -4119,25 +4114,25 @@ namespace mfront{
 		 "null swelling is not supported here");
 	if(s.sfe.is<BehaviourData::SFED_ESV>()){
 	  const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
-	  this->behaviourFile << "dl0_l0[0]+=this->" << ev << ";\n"
-			      << "dl0_l0[1]+=this->" << ev << ";\n"
-			      << "dl0_l0[2]+=this->" << ev << ";\n"
-			      << "dl1_l0[0]+=this->" << ev << "+this->d" << ev << ";\n"
-			      << "dl1_l0[1]+=this->" << ev << "+this->d" << ev << ";\n"
-			      << "dl1_l0[2]+=this->" << ev << "+this->d" << ev << ";\n";
+	  os << "dl0_l0[0]+=this->" << ev << ";\n"
+	     << "dl0_l0[1]+=this->" << ev << ";\n"
+	     << "dl0_l0[2]+=this->" << ev << ";\n"
+	     << "dl1_l0[0]+=this->" << ev << "+this->d" << ev << ";\n"
+	     << "dl1_l0[1]+=this->" << ev << "+this->d" << ev << ";\n"
+	     << "dl1_l0[2]+=this->" << ev << "+this->d" << ev << ";\n";
 	} else if (s.sfe.is<std::shared_ptr<ModelDescription>>()){
 	  const auto& md =
 	    *(s.sfe.get<std::shared_ptr<ModelDescription>>());
 	  throw_if(md.outputs.size()!=1u,
 		   "invalid number of outputs for model '"+md.className+"'");
 	  const auto vs = md.className+"_"+md.outputs[0].name;	  
-	  this->behaviourFile << "dl0_l0[0]+=this->" << vs << ";\n"
-			      << "dl0_l0[1]+=this->" << vs << ";\n"
-			      << "dl0_l0[2]+=this->" << vs << ";\n";
-	  this->writeModelCall(this->behaviourFile,h,md,vs,vs,"sfeh");
-	  this->behaviourFile << "dl1_l0[0]+=this->" << vs << ";\n"
-			      << "dl1_l0[1]+=this->" << vs << ";\n"
-			      << "dl1_l0[2]+=this->" << vs << ";\n";
+	  os << "dl0_l0[0]+=this->" << vs << ";\n"
+	     << "dl0_l0[1]+=this->" << vs << ";\n"
+	     << "dl0_l0[2]+=this->" << vs << ";\n";
+	  this->writeModelCall(os,tmpnames,h,md,vs,vs,"sfeh");
+	  os << "dl1_l0[0]+=this->" << vs << ";\n"
+	     << "dl1_l0[1]+=this->" << vs << ";\n"
+	     << "dl1_l0[2]+=this->" << vs << ";\n";
 	} else {
 	  throw_if(true,"internal error, unsupported stress free expansion");
 	}
@@ -4151,25 +4146,25 @@ namespace mfront{
 		 "null swelling is not supported here");
 	if(s.sfe.is<BehaviourData::SFED_ESV>()){
 	  const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
-	  this->behaviourFile << "dl0_l0[0]+=this->" << ev << "/3;\n"
-			      << "dl0_l0[1]+=this->" << ev << "/3;\n"
-			      << "dl0_l0[2]+=this->" << ev << "/3;\n"
-			      << "dl1_l0[0]+=(this->" << ev << "+this->d" << ev << ")/3;\n"
-			      << "dl1_l0[1]+=(this->" << ev << "+this->d" << ev << ")/3;\n"
-			      << "dl1_l0[2]+=(this->" << ev << "+this->d" << ev << ")/3;\n";
+	  os << "dl0_l0[0]+=this->" << ev << "/3;\n"
+	     << "dl0_l0[1]+=this->" << ev << "/3;\n"
+	     << "dl0_l0[2]+=this->" << ev << "/3;\n"
+	     << "dl1_l0[0]+=(this->" << ev << "+this->d" << ev << ")/3;\n"
+	     << "dl1_l0[1]+=(this->" << ev << "+this->d" << ev << ")/3;\n"
+	     << "dl1_l0[2]+=(this->" << ev << "+this->d" << ev << ")/3;\n";
 	} else if (s.sfe.is<std::shared_ptr<ModelDescription>>()){
 	  const auto& md =
 	    *(s.sfe.get<std::shared_ptr<ModelDescription>>());
 	  throw_if(md.outputs.size()!=1u,
 		   "invalid number of outputs for model '"+md.className+"'");
 	  const auto vs = md.className+"_"+md.outputs[0].name;	  
-	  this->behaviourFile << "dl0_l0[0]+=this->" << vs << "/3;\n"
-			      << "dl0_l0[1]+=this->" << vs << "/3;\n"
-			      << "dl0_l0[2]+=this->" << vs << "/3;\n";
-	  this->writeModelCall(this->behaviourFile,h,md,vs,vs,"sfeh");
-	  this->behaviourFile << "dl1_l0[0]+=this->" << vs << "/3;\n"
-			      << "dl1_l0[1]+=this->" << vs << "/3;\n"
-			      << "dl1_l0[2]+=this->" << vs << "/3;\n";
+	  os << "dl0_l0[0]+=this->" << vs << "/3;\n"
+	     << "dl0_l0[1]+=this->" << vs << "/3;\n"
+	     << "dl0_l0[2]+=this->" << vs << "/3;\n";
+	  this->writeModelCall(os,tmpnames,h,md,vs,vs,"sfeh");
+	  os << "dl1_l0[0]+=this->" << vs << "/3;\n"
+	     << "dl1_l0[1]+=this->" << vs << "/3;\n"
+	     << "dl1_l0[2]+=this->" << vs << "/3;\n";
 	} else {
 	  throw_if(true,"internal error, unsupported stress free expansion");
 	}
@@ -4180,8 +4175,8 @@ namespace mfront{
     }
     if(this->mb.getSymmetryType()==mfront::ORTHOTROPIC){
       if(this->mb.getOrthotropicAxesConvention()==OrthotropicAxesConvention::PIPE){
-	this->behaviourFile << "tfel::material::convertStressFreeExpansionStrain<hypothesis,tfel::material::OrthotropicAxesConvention::PIPE>(dl0_l0);\n"
-			    << "tfel::material::convertStressFreeExpansionStrain<hypothesis,tfel::material::OrthotropicAxesConvention::PIPE>(dl1_l0);\n";
+	os << "tfel::material::convertStressFreeExpansionStrain<hypothesis,tfel::material::OrthotropicAxesConvention::PIPE>(dl0_l0);\n"
+	   << "tfel::material::convertStressFreeExpansionStrain<hypothesis,tfel::material::OrthotropicAxesConvention::PIPE>(dl1_l0);\n";
       } else {
 	throw_if(this->mb.getOrthotropicAxesConvention()!=OrthotropicAxesConvention::DEFAULT,
 		 "internal error, unsupported orthotropic axes convention");
@@ -4198,446 +4193,455 @@ namespace mfront{
 	}
       }
     }
-    this->behaviourFile << "}\n\n";
+    os << "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion
 
-  void BehaviourDSLCommon::writeBehaviourInitializeMethod(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourInitializeMethod(std::ostream& os,
+							  const Hypothesis h) const
   {    
-    this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n"
-			<< " * \\ brief initialize the behaviour with user code\n"
-			<< " */\n"
-			<< "void initialize(){\n"
-			<< "using namespace std;\n"
-			<< "using namespace tfel::math;\n"
-			<< "using std::vector;\n";
-    writeMaterialLaws("BehaviourDSLCommon::writeBehaviourInitializeMethod",
-		      this->behaviourFile,this->mb.getMaterialLaws());
+    this->checkBehaviourFile(os);
+    os << "/*!\n"
+       << " * \\ brief initialize the behaviour with user code\n"
+       << " */\n"
+       << "void initialize(){\n"
+       << "using namespace std;\n"
+       << "using namespace tfel::math;\n"
+       << "using std::vector;\n";
+    writeMaterialLaws(os,this->mb.getMaterialLaws());
     if(this->mb.hasCode(h,BehaviourData::BeforeInitializeLocalVariables)){
       if(this->mb.getAttribute(BehaviourData::profiling,false)){
-	writeStandardPerformanceProfilingBegin(this->behaviourFile,this->mb.getClassName(),
+	writeStandardPerformanceProfilingBegin(os,this->mb.getClassName(),
 					       BehaviourData::BeforeInitializeLocalVariables,
 					       "binit");
       }
-      this->behaviourFile << this->mb.getCodeBlock(h,BehaviourData::BeforeInitializeLocalVariables).code
-			  << '\n';
+      os << this->mb.getCodeBlock(h,BehaviourData::BeforeInitializeLocalVariables).code
+	 << '\n';
       if(this->mb.getAttribute(BehaviourData::profiling,false)){
-	writeStandardPerformanceProfilingEnd(this->behaviourFile);
+	writeStandardPerformanceProfilingEnd(os);
       }
     }
     if(this->mb.hasCode(h,BehaviourData::InitializeLocalVariables)){
       if(this->mb.getAttribute(BehaviourData::profiling,false)){
-	writeStandardPerformanceProfilingBegin(this->behaviourFile,this->mb.getClassName(),
+	writeStandardPerformanceProfilingBegin(os,this->mb.getClassName(),
 					       BehaviourData::InitializeLocalVariables,"init");
       }
-      this->behaviourFile << this->mb.getCodeBlock(h,BehaviourData::InitializeLocalVariables).code
-			  << '\n';
+      os << this->mb.getCodeBlock(h,BehaviourData::InitializeLocalVariables).code
+	 << '\n';
       if(this->mb.getAttribute(BehaviourData::profiling,false)){
-	writeStandardPerformanceProfilingEnd(this->behaviourFile);
+	writeStandardPerformanceProfilingEnd(os);
       }
     }
     if(this->mb.hasCode(h,BehaviourData::AfterInitializeLocalVariables)){
       if(this->mb.getAttribute(BehaviourData::profiling,false)){
-	writeStandardPerformanceProfilingBegin(this->behaviourFile,this->mb.getClassName(),
+	writeStandardPerformanceProfilingBegin(os,this->mb.getClassName(),
 					       BehaviourData::AfterInitializeLocalVariables,"ainit");
       }
-      this->behaviourFile << this->mb.getCodeBlock(h,BehaviourData::AfterInitializeLocalVariables).code
-			  << '\n';
+      os << this->mb.getCodeBlock(h,BehaviourData::AfterInitializeLocalVariables).code
+	 << '\n';
       if(this->mb.getAttribute(BehaviourData::profiling,false)){
-	writeStandardPerformanceProfilingEnd(this->behaviourFile);
+	writeStandardPerformanceProfilingEnd(os);
       }
     }
-    this->writeBehaviourParserSpecificInitializeMethodPart(h);
-    this->behaviourFile << "}\n\n";
+    this->writeBehaviourParserSpecificInitializeMethodPart(os,h);
+    os << "}\n\n";
   } // end of void BehaviourDSLCommon::writeBehaviourInitializeMethod
 
-  void
-  BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(std::ostream& os,
+								      const Hypothesis h) const
   {
     const auto& md = this->mb.getBehaviourData(h);
-    this->checkBehaviourFile();
+    this->checkBehaviourFile(os);
     for(const auto& v : md.getLocalVariables()){
       if(this->useDynamicallyAllocatedVector(v.arraySize)){
-	this->behaviourFile << "this->" << v.name << ".resize(" << v.arraySize << ");\n";
+	os << "this->" << v.name << ".resize(" << v.arraySize << ");\n";
       }
     }  
   }
   
-  void BehaviourDSLCommon::writeBehaviourParameterInitialisation(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourParameterInitialisation(std::ostream& os,
+								 const Hypothesis h) const
   {    
-    this->checkBehaviourFile();
+    this->checkBehaviourFile(os);
     const auto& d = this->mb.getBehaviourData(h);
     for(const auto& p: d.getParameters()){
       if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	this->behaviourFile << "this->" << p.name << " = " << this->mb.getClassName() 
-			    << "ParametersInitializer::get()." << p.name << ";\n";  
+	os << "this->" << p.name << " = " << this->mb.getClassName() 
+	   << "ParametersInitializer::get()." << p.name << ";\n";  
       } else {
 	if(this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name)){
-	  this->behaviourFile << "this->" << p.name << " = " << this->mb.getClassName() 
-			      << "ParametersInitializer::get()." << p.name << ";\n";  
+	  os << "this->" << p.name << " = " << this->mb.getClassName() 
+	     << "ParametersInitializer::get()." << p.name << ";\n";  
 	} else {
-	  this->behaviourFile << "this->" << p.name << " = " << this->mb.getClassName() 
-			      << ModellingHypothesis::toString(h) 
-			      << "ParametersInitializer::get()." << p.name << ";\n";
+	  os << "this->" << p.name << " = " << this->mb.getClassName() 
+	     << ModellingHypothesis::toString(h) 
+	     << "ParametersInitializer::get()." << p.name << ";\n";
 	}
       }
     }
   } // end of BehaviourDSLCommon::writeBehaviourParameterInitialisation
 
-  void BehaviourDSLCommon::writeBehaviourDataMainVariablesSetters()
+  void BehaviourDSLCommon::writeBehaviourDataMainVariablesSetters(std::ostream& os) const
   {
-    this->checkBehaviourDataFile();
+    this->checkBehaviourDataFile(os);
     for(const auto& i : this->interfaces){
-      i.second->writeBehaviourDataMainVariablesSetters(this->behaviourDataFile,
-						       this->mb);
-      this->behaviourDataFile << '\n';
+      i.second->writeBehaviourDataMainVariablesSetters(os,this->mb);
+      os << '\n';
     }
   } // end of BehaviourDSLCommon::writeBehaviourDataMainVariablesSetters
 
-  void BehaviourDSLCommon::writeIntegrationDataMainVariablesSetters()
+  void BehaviourDSLCommon::writeIntegrationDataMainVariablesSetters(std::ostream& os) const
   {
-    this->checkIntegrationDataFile();
+    this->checkIntegrationDataFile(os);
     for(const auto& i : this->interfaces){
-      i.second->writeIntegrationDataMainVariablesSetters(this->integrationDataFile,
-							 this->mb);
-      this->integrationDataFile << '\n';
+      i.second->writeIntegrationDataMainVariablesSetters(os,this->mb);
+      os << '\n';
     }
   } // end of BehaviourDSLCommon::writeIntegrationDataMainVariablesSetters
 
-  void BehaviourDSLCommon::writeBehaviourGetModellingHypothesis()
+  void BehaviourDSLCommon::writeBehaviourGetModellingHypothesis(std::ostream& os) const
   {
-    this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n"
-			<< "* \\return the modelling hypothesis\n"
-			<< "*/\n"
-			<< "constexpr ModellingHypothesis::Hypothesis\ngetModellingHypothesis() const{\n"
-			<< "return hypothesis;\n"
-			<< "} // end of getModellingHypothesis\n\n";
+    this->checkBehaviourFile(os);
+    os << "/*!\n"
+       << "* \\return the modelling hypothesis\n"
+       << "*/\n"
+       << "constexpr ModellingHypothesis::Hypothesis\ngetModellingHypothesis() const{\n"
+       << "return hypothesis;\n"
+       << "} // end of getModellingHypothesis\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourGetModellingHypothesis();
 
-  void BehaviourDSLCommon::writeBehaviourLocalVariables(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourLocalVariables(std::ostream& os,
+							const Hypothesis h) const
   {    
-    this->checkBehaviourFile();
+    this->checkBehaviourFile(os);
     const auto& md = this->mb.getBehaviourData(h);
-    this->writeVariablesDeclarations(this->behaviourFile,
-				     md.getLocalVariables(),
+    this->writeVariablesDeclarations(os,md.getLocalVariables(),
 				     "","",this->fileName,false);
-    this->behaviourFile << '\n';
+    os << '\n';
   }
 
-  void
-  BehaviourDSLCommon::writeBehaviourIntegrationVariables(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourIntegrationVariables(std::ostream& os,
+							      const Hypothesis h) const
   {
-    this->checkBehaviourFile();
+    this->checkBehaviourFile(os);
     const auto& md = this->mb.getBehaviourData(h);
     for(const auto& v : md.getIntegrationVariables()){
       if(!md.isStateVariableName(v.name)){
 	if(md.isMemberUsedInCodeBlocks(v.name)){
-	  this->writeVariableDeclaration(this->behaviourFile,
-					 v,"","",this->fileName,false);
+	  this->writeVariableDeclaration(os,v,"","",this->fileName,false);
 	}
       }
     }
-    this->behaviourFile << '\n';
+    os << '\n';
   } // end od BehaviourDSLCommon::writeBehaviourIntegrationVariables
 
-  void BehaviourDSLCommon::writeBehaviourParameters(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourParameters(std::ostream& os,
+						    const Hypothesis h) const
   {    
-    this->checkBehaviourFile();
+    this->checkBehaviourFile(os);
     const auto& d = this->mb.getBehaviourData(h);
     for(const auto& v : d.getParameters()){
       if(!getDebugMode()){
 	if(v.lineNumber!=0u){
-	  this->behaviourFile << "#line " << v.lineNumber << " \"" 
-			      << this->fileName << "\"\n";
+	  os << "#line " << v.lineNumber << " \"" 
+	     << this->fileName << "\"\n";
 	}
       }
       if(v.arraySize==1){
-	this->behaviourFile << v.type << " " << v.name << ";\n";  
+	os << v.type << " " << v.name << ";\n";  
       } else {
-	this->behaviourFile << "tfel::math::tvector<" << v.arraySize << "," << v.type << "> " 
-			    << v.name << ";\n";  
+	os << "tfel::math::tvector<" << v.arraySize << "," << v.type << "> " 
+	   << v.name << ";\n";  
       }
     }
-    this->behaviourFile << '\n';
+    os << '\n';
   }
-
   
-  void BehaviourDSLCommon::writeBehaviourPolicyVariable()
+  void BehaviourDSLCommon::writeBehaviourPolicyVariable(std::ostream& os) const
   {    
-    this->checkBehaviourFile();
-    this->behaviourFile << "//! policy for treating out of bounds conditions\n"
-			<< "OutOfBoundsPolicy policy = None;\n";
+    this->checkBehaviourFile(os);
+    os << "//! policy for treating out of bounds conditions\n"
+       << "OutOfBoundsPolicy policy = None;\n";
   } // end of BehaviourDSLCommon::writeBehaviourPolicyVariable
 
-  void BehaviourDSLCommon::writeBehaviourStaticVariables(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourStaticVariables(std::ostream& os,
+							 const Hypothesis h) const
   {    
     const auto& md = this->mb.getBehaviourData(h);
-    this->checkBehaviourFile();
+    this->checkBehaviourFile(os);
     for(const auto& v : md.getStaticVariables()){
       if(!getDebugMode()){
 	if(v.lineNumber!=0u){
-	  this->behaviourFile << "#line " << v.lineNumber << " \"" 
-			      << this->fileName << "\"\n";
+	  os << "#line " << v.lineNumber << " \"" 
+	     << this->fileName << "\"\n";
 	}
       }
       if(v.type=="int"){
-	this->behaviourFile << "static constexpr " << v.type << " " << v.name
-			    << " = " << v.value << ";\n";
+	os << "static constexpr " << v.type << " " << v.name
+	   << " = " << v.value << ";\n";
       } else {
-	this->behaviourFile << "static const " << v.type << " " << v.name << ";\n";
+	os << "static const " << v.type << " " << v.name << ";\n";
       }
     }
-    this->behaviourFile << '\n';
+    os << '\n';
   }
 
-  void BehaviourDSLCommon::writeBehaviourIntegrationVariablesIncrements(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourIntegrationVariablesIncrements(std::ostream& os,
+									const Hypothesis h) const
   {    
     const auto& md = this->mb.getBehaviourData(h);
-    this->checkBehaviourFile();
-    this->writeVariablesDeclarations(this->behaviourFile,
-				     md.getIntegrationVariables(),
+    this->checkBehaviourFile(os);
+    this->writeVariablesDeclarations(os,md.getIntegrationVariables(),
 				     "d","",this->fileName,
 				     this->useStateVarTimeDerivative);
-    this->behaviourFile << '\n';
+    os << '\n';
   }
 
-  void BehaviourDSLCommon::writeBehaviourOutputOperator(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourOutputOperator(std::ostream& os,
+							const Hypothesis h) const
   {    
     const auto& md = this->mb.getBehaviourData(h);
-    this->checkBehaviourFile();
+    this->checkBehaviourFile(os);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(this->mb.useQt()){        
-	this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
-			    << "std::ostream&\n"
-			    << "operator <<(std::ostream& os,"
-			    << "const " << this->mb.getClassName() << "<hypothesis,Type,use_qt>& b)\n";
+	os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
+	   << "std::ostream&\n"
+	   << "operator <<(std::ostream& os,"
+	   << "const " << this->mb.getClassName() << "<hypothesis,Type,use_qt>& b)\n";
       } else {
-	this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n"
-			    << "std::ostream&\n"
-			    << "operator <<(std::ostream& os,"
-			    << "const " << this->mb.getClassName() << "<hypothesis,Type,false>& b)\n";
+	os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n"
+	   << "std::ostream&\n"
+	   << "operator <<(std::ostream& os,"
+	   << "const " << this->mb.getClassName() << "<hypothesis,Type,false>& b)\n";
       }
     } else {
       if(this->mb.useQt()){        
-	this->behaviourFile << "template<typename Type,bool use_qt>\n"
-			    << "std::ostream&\n"
-			    << "operator <<(std::ostream& os,"
-			    << "const " << this->mb.getClassName()
-			    << "<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>& b)\n";
+	os << "template<typename Type,bool use_qt>\n"
+	   << "std::ostream&\n"
+	   << "operator <<(std::ostream& os,"
+	   << "const " << this->mb.getClassName()
+	   << "<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h)
+	   << ",Type,use_qt>& b)\n";
       } else {
-	this->behaviourFile << "template<typename Type>\n"
-			    << "std::ostream&\n"
-			    << "operator <<(std::ostream& os,"
-			    << "const " << this->mb.getClassName() 
-			    << "<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>& b)\n";
+	os << "template<typename Type>\n"
+	   << "std::ostream&\n"
+	   << "operator <<(std::ostream& os,"
+	   << "const " << this->mb.getClassName() 
+	   << "<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h)
+	   << ",Type,false>& b)\n";
       }
     }
-    this->behaviourFile << "{\n"
-			<< "using namespace std;\n";
+    os << "{\n"
+       << "using namespace std;\n";
     for(const auto& v : this->mb.getMainVariables()){
       if(v.first.increment_known){
-	this->behaviourFile << "os << \""  << v.first.name << " : \" << b." << v.first.name << " << '\\n';\n"
-			    << "os << \"d" << v.first.name << " : \" << b.d" << v.first.name << " << '\\n';\n";
+	os << "os << \""  << v.first.name << " : \" << b." << v.first.name << " << '\\n';\n"
+	   << "os << \"d" << v.first.name << " : \" << b.d" << v.first.name << " << '\\n';\n";
       } else {
-	this->behaviourFile << "os << \"" << v.first.name << "0 : \" << b." << v.first.name << "0 << endl;\n"
-			    << "os << \"" << v.first.name << "1 : \" << b." << v.first.name << "1 << endl;\n";
+	os << "os << \"" << v.first.name << "0 : \" << b." << v.first.name << "0 << endl;\n"
+	   << "os << \"" << v.first.name << "1 : \" << b." << v.first.name << "1 << endl;\n";
       }
-      this->behaviourFile << "os << \"" << v.second.name << " : \" << b." << v.second.name << " << '\\n';\n";
+      os << "os << \"" << v.second.name << " : \" << b." << v.second.name << " << '\\n';\n";
     }
-    this->behaviourFile << "os << \"dt : \" << b.dt << endl;\n"
-			<< "os << \"T : \" << b.T << endl;\n"
-			<< "os << \"dT : \" << b.dT << endl;\n";
+    os << "os << \"dt : \" << b.dt << endl;\n"
+       << "os << \"T : \" << b.T << endl;\n"
+       << "os << \"dT : \" << b.dT << endl;\n";
     for(const auto& v: md.getMaterialProperties()){
-      this->behaviourFile <<  "os << \"" << v.name << " : \" << b." << v.name <<  " << '\\n';\n";  
+      os <<  "os << \"" << v.name << " : \" << b." << v.name <<  " << '\\n';\n";  
     }
     for(const auto& v : md.getStateVariables()){
-      this->behaviourFile << "os << \"" << v.name << " : \" << b." 
-			  << v.name <<  " << '\\n';\n";  
-      this->behaviourFile << "os << \"d" << v.name << " : \" << b.d" 
-			  << v.name <<  " << '\\n';\n";  
+      os << "os << \"" << v.name << " : \" << b." 
+	 << v.name <<  " << '\\n';\n";  
+      os << "os << \"d" << v.name << " : \" << b.d" 
+	 << v.name <<  " << '\\n';\n";  
     }    
     for(const auto& v : md.getAuxiliaryStateVariables()){
-      this->behaviourFile << "os << \"" << v.name << " : \" << b." 
-			  << v.name <<  " << '\\n';\n";  
+      os << "os << \"" << v.name << " : \" << b." 
+	 << v.name <<  " << '\\n';\n";  
     }
     for(const auto& v : md.getExternalStateVariables()){
-      this->behaviourFile << "os << \"" << v.name << " : \" << b." 
-			  << v.name << " << '\\n';\n";
-      this->behaviourFile << "os << \"d" << v.name << " : \" << b.d" 
-			  << v.name << " << '\\n';\n";  
+      os << "os << \"" << v.name << " : \" << b." 
+	 << v.name << " << '\\n';\n";
+      os << "os << \"d" << v.name << " : \" << b.d" 
+	 << v.name << " << '\\n';\n";  
     }
     for(const auto& v : md.getLocalVariables()){
 #pragma message ("BehaviourDSLCommon: handle LocalDataStructure properly")
       if((v.type.size()>=7)&&(v.type.substr(0,7)!="struct{")){
-	this->behaviourFile << "os << \"" << v.name << " : \" << b." 
-			    << v.name <<  " << '\\n';\n";
+	os << "os << \"" << v.name << " : \" << b." 
+	   << v.name <<  " << '\\n';\n";
       }
     }
     for(const auto& v : md.getParameters()){
-      this->behaviourFile << "os << \"" << v.name << " : \" << b." 
-			  << v.name << " << '\\n';\n";  
+      os << "os << \"" << v.name << " : \" << b." 
+	 << v.name << " << '\\n';\n";  
     }
-    this->behaviourFile << "return os;\n"
-			<< "}\n\n";
+    os << "return os;\n"
+       << "}\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourDestructor() 
+  void BehaviourDSLCommon::writeBehaviourDestructor(std::ostream& os) const
   {    
-    this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n"
-			<< "* \\brief Destructor\n"
-			<< "*/\n"
-			<< "~" << this->mb.getClassName() << "()\n" << "{}\n\n";
+    this->checkBehaviourFile(os);
+    os << "/*!\n"
+       << "* \\brief Destructor\n"
+       << "*/\n"
+       << "~" << this->mb.getClassName() << "()\n" << "{}\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourUpdateExternalStateVariables(const Hypothesis h) 
+  void BehaviourDSLCommon::writeBehaviourUpdateExternalStateVariables(std::ostream& os,
+								      const Hypothesis h) const
   {    
     const auto& md = this->mb.getBehaviourData(h);
-    this->checkBehaviourFile();
-    this->behaviourFile << "void updateExternalStateVariables(){\n";
+    this->checkBehaviourFile(os);
+    os << "void updateExternalStateVariables(){\n";
     for(const auto& v : this->mb.getMainVariables()){
       if(v.first.increment_known){
-	this->behaviourFile << "this->" << v.first.name  << "  += this->d" << v.first.name << ";\n";
+	os << "this->" << v.first.name  << "  += this->d" << v.first.name << ";\n";
       } else {
-	this->behaviourFile << "this->" << v.first.name  << "0  = this->"  << v.first.name << "1;\n";
+	os << "this->" << v.first.name  << "0  = this->"  << v.first.name << "1;\n";
       }
     }
-    this->behaviourFile << "this->T   += this->dT;\n";
+    os << "this->T   += this->dT;\n";
     for(const auto& v : md.getExternalStateVariables()){
-      this->behaviourFile << "this->" << v.name << " += this->d" << v.name << ";\n";
+      os << "this->" << v.name << " += this->d" << v.name << ";\n";
     }
-    this->behaviourFile << "}\n\n";
+    os << "}\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourIncludes() {    
-    this->checkBehaviourFile();
-    this->behaviourFile << "#include<string>\n"
-			<< "#include<iostream>\n"
-			<< "#include<limits>\n"
-			<< "#include<stdexcept>\n"
-			<< "#include<algorithm>\n\n"
-			<< "#include\"TFEL/Config/TFELConfig.hxx\"\n"
-			<< "#include\"TFEL/Config/TFELTypes.hxx\"\n"
-			<< "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
-			<< "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
-			<< "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
-			<< "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
-			<< "#include\"TFEL/Material/MaterialException.hxx\"\n"
-			<< "#include\"TFEL/Material/MechanicalBehaviour.hxx\"\n"
-			<< "#include\"TFEL/Material/MechanicalBehaviourTraits.hxx\"\n"
-			<< "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n"
-			<< "#include\"TFEL/Material/BoundsCheck.hxx\"\n"
-			<< "#include\"TFEL/Material/Lame.hxx\"\n";
+  void BehaviourDSLCommon::writeBehaviourIncludes(std::ostream& os) const {    
+    this->checkBehaviourFile(os);
+    os << "#include<string>\n"
+       << "#include<iostream>\n"
+       << "#include<limits>\n"
+       << "#include<stdexcept>\n"
+       << "#include<algorithm>\n\n"
+       << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
+       << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
+       << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
+       << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
+       << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
+       << "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
+       << "#include\"TFEL/Material/MaterialException.hxx\"\n"
+       << "#include\"TFEL/Material/MechanicalBehaviour.hxx\"\n"
+       << "#include\"TFEL/Material/MechanicalBehaviourTraits.hxx\"\n"
+       << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n"
+       << "#include\"TFEL/Material/BoundsCheck.hxx\"\n"
+       << "#include\"TFEL/Material/Lame.hxx\"\n";
     if(this->mb.getSymmetryType()==ORTHOTROPIC){
-      this->behaviourFile << "#include\"TFEL/Material/Hill.hxx\"\n"
-			  << "#include\"TFEL/Material/OrthotropicAxesConvention.hxx\"\n";
+      os << "#include\"TFEL/Material/Hill.hxx\"\n"
+	 << "#include\"TFEL/Material/OrthotropicAxesConvention.hxx\"\n";
     }
     if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
-      this->behaviourFile << "#include\"TFEL/Material/StiffnessTensor.hxx\"\n";
+      os << "#include\"TFEL/Material/StiffnessTensor.hxx\"\n";
     }
-    this->behaviourFile << "#include\"" << this->behaviourDataFileName << "\"\n"
-			<< "#include\"" << this->integrationDataFileName << "\"\n";
+    os << "#include\"" << this->getBehaviourDataFileName()   << "\"\n"
+       << "#include\"" << this->getIntegrationDataFileName() << "\"\n";
     if(this->mb.getAttribute<bool>(BehaviourData::profiling,false)){
-      this->behaviourFile << "#include\"MFront/BehaviourProfiler.hxx\"\n";
+      os << "#include\"MFront/BehaviourProfiler.hxx\"\n";
     }
-    this->behaviourFile << '\n';
+    os << '\n';
   }
 
-  void BehaviourDSLCommon::writeBehaviourAdditionalMembers(const Hypothesis h) {    
-    this->checkBehaviourFile();
+  void BehaviourDSLCommon::writeBehaviourAdditionalMembers(std::ostream& os,
+							   const Hypothesis h) const
+  {
+    this->checkBehaviourFile(os);
     const auto& m = this->mb.getMembers(h);
     if(!m.empty()){
-      this->behaviourFile << m << "\n\n";
+      os << m << "\n\n";
     }
   }
 
-  void BehaviourDSLCommon::writeBehaviourPrivate(const Hypothesis h) {
-    this->checkBehaviourFile();
+  void BehaviourDSLCommon::writeBehaviourPrivate(std::ostream& os,
+						 const Hypothesis h) const
+  {
+    this->checkBehaviourFile(os);
     const auto& c = this->mb.getPrivateCode(h);
     if(!c.empty()){
-      this->behaviourFile << c << "\n\n";
+      os << c << "\n\n";
     }
   } // end of void BehaviourDSLCommon::writeBehaviourPrivate
 
-  void BehaviourDSLCommon::writeBehaviourStandardTFELTypedefs()
+  void BehaviourDSLCommon::writeBehaviourStandardTFELTypedefs(std::ostream& os) const
   {
     using namespace tfel::material;
-    this->checkBehaviourFile();
+    this->checkBehaviourFile(os);
     const auto btype = this->mb.getBehaviourTypeFlag();
-    this->behaviourFile << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
-			<< "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n"
-			<< "static " << constexpr_c << " unsigned short StensorSize = "
-			<< "StensorDimeToSize::value;\n"
-			<< "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
-			<< "static " << constexpr_c << " unsigned short TensorSize = "
-			<< "TensorDimeToSize::value;\n\n";
-    this->writeStandardTFELTypedefs(this->behaviourFile);
-    this->behaviourFile << '\n'
-			<< "public :\n\n";
+    os << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
+       << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n"
+       << "static " << constexpr_c << " unsigned short StensorSize = "
+       << "StensorDimeToSize::value;\n"
+       << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
+       << "static " << constexpr_c << " unsigned short TensorSize = "
+       << "TensorDimeToSize::value;\n\n";
+    this->writeStandardTFELTypedefs(os);
+    os << '\n'
+       << "public :\n\n";
     const auto qt = this->mb.useQt() ? "use_qt" : "false";
-    this->behaviourFile << "typedef " << this->mb.getClassName() 
-			<< "BehaviourData<hypothesis,Type," << qt << "> BehaviourData;\n"
-			<< "typedef " << this->mb.getClassName() 
-			<< "IntegrationData<hypothesis,Type," << qt << "> IntegrationData;\n"
-			<< "typedef typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SMFlag SMFlag;\n"
-			<< "typedef typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SMType SMType;\n"
-			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::ELASTIC;\n"
-			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SECANTOPERATOR;\n"
-			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::TANGENTOPERATOR;\n"
-			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::CONSISTENTTANGENTOPERATOR;\n"
-			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::NOSTIFFNESSREQUESTED;\n";
+    os << "typedef " << this->mb.getClassName() 
+       << "BehaviourData<hypothesis,Type," << qt << "> BehaviourData;\n"
+       << "typedef " << this->mb.getClassName() 
+       << "IntegrationData<hypothesis,Type," << qt << "> IntegrationData;\n"
+       << "typedef typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SMFlag SMFlag;\n"
+       << "typedef typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SMType SMType;\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::ELASTIC;\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SECANTOPERATOR;\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::TANGENTOPERATOR;\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::CONSISTENTTANGENTOPERATOR;\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::NOSTIFFNESSREQUESTED;\n";
     if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
        (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
-      this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::STANDARDTANGENTOPERATOR;\n";
+      os << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::STANDARDTANGENTOPERATOR;\n";
     } else if (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       for(const auto & toflag : getFiniteStrainBehaviourTangentOperatorFlags()){
-	this->behaviourFile << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::"
-			    << convertFiniteStrainBehaviourTangentOperatorFlagToString(toflag) << ";\n";
+	os << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::"
+	   << convertFiniteStrainBehaviourTangentOperatorFlagToString(toflag) << ";\n";
       }
     }
-    this->behaviourFile << "using IntegrationResult = typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::IntegrationResult;\n\n"
-			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SUCCESS;\n"
-			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::FAILURE;\n"
-			<< "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::UNRELIABLE_RESULTS;\n\n";
+    os << "using IntegrationResult = typename MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::IntegrationResult;\n\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SUCCESS;\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::FAILURE;\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::UNRELIABLE_RESULTS;\n\n";
     if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
        (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
-      this->behaviourFile << "using StressFreeExpansionType = "
-			  << this->mb.getStressFreeExpansionType()  << ";\n\n";
+      os << "using StressFreeExpansionType = "
+	 << this->mb.getStressFreeExpansionType()  << ";\n\n";
     }
   } // end of BehaviourDSLCommon::writeBehaviourStandardTFELTypedefs
 
-  void BehaviourDSLCommon::writeBehaviourTraits()
+  void BehaviourDSLCommon::writeBehaviourTraits(std::ostream& os) const
   {
-    this->checkBehaviourFile();
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    this->checkBehaviourFile(os);
     const auto& ah = ModellingHypothesis::getModellingHypotheses();
     // writing partial specialisations
     if(this->mb.getModellingHypotheses().size()>=4u){
       // on définit toutes les hypothèses par défaut
-      this->writeBehaviourTraitsSpecialisation(ModellingHypothesis::UNDEFINEDHYPOTHESIS,true);
+      this->writeBehaviourTraitsSpecialisation(os,uh,true);
       // unsupported hypothesis
       for(const auto h : ah){
     	if(this->mb.isModellingHypothesisSupported(h)){
 	  if(this->mb.hasSpecialisedMechanicalData(h)){
-	    this->writeBehaviourTraitsSpecialisation(h,true);
+	    this->writeBehaviourTraitsSpecialisation(os,h,true);
 	  }
     	} else {
-    	  this->writeBehaviourTraitsSpecialisation(h,false);
+    	  this->writeBehaviourTraitsSpecialisation(os,h,false);
 	}
       }
     } else {
       // on exclut toutes les hypothèses par défaut
-      this->writeBehaviourTraitsSpecialisation(ModellingHypothesis::UNDEFINEDHYPOTHESIS,false);
+      this->writeBehaviourTraitsSpecialisation(os,uh,false);
       // unsupported hypothesis
       for(const auto h: this->mb.getModellingHypotheses()){
-    	this->writeBehaviourTraitsSpecialisation(h,true);
+    	this->writeBehaviourTraitsSpecialisation(os,h,true);
       }
     }
   }
 
   void
-  BehaviourDSLCommon::writeBehaviourTraitsSpecialisation(const Hypothesis h,
-							 const bool b)
+  BehaviourDSLCommon::writeBehaviourTraitsSpecialisation(std::ostream & os,
+							 const Hypothesis h,
+							 const bool b) const
   {
     SupportedTypes::TypeSize coefSize;
     SupportedTypes::TypeSize stateVarsSize;
@@ -4657,189 +4661,192 @@ namespace mfront{
     }
     externalStateVarsSize2  = externalStateVarsSize;
     externalStateVarsSize2 -= SupportedTypes::TypeSize(1,0,0,0);
-    this->behaviourFile << "/*!\n"
-			<< "* Partial specialisation for "
-			<< this->mb.getClassName() << ".\n"
-			<< "*/\n";
+    os << "/*!\n"
+       << "* Partial specialisation for "
+       << this->mb.getClassName() << ".\n"
+       << "*/\n";
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(this->mb.useQt()){
-	this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
-			    << "class MechanicalBehaviourTraits<"
-			    << this->mb.getClassName() << "<hypothesis,Type,use_qt> >\n";
+	os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
+	   << "class MechanicalBehaviourTraits<"
+	   << this->mb.getClassName() << "<hypothesis,Type,use_qt> >\n";
       } else {
-	this->behaviourFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n"
-			    << "class MechanicalBehaviourTraits<"
-			    << this->mb.getClassName() << "<hypothesis,Type,false> >\n";
+	os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n"
+	   << "class MechanicalBehaviourTraits<"
+	   << this->mb.getClassName() << "<hypothesis,Type,false> >\n";
       }
     } else {
       if(this->mb.useQt()){
-	this->behaviourFile << "template<typename Type,bool use_qt>\n"
-			    << "class MechanicalBehaviourTraits<"
-			    << this->mb.getClassName() << "<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt> >\n";
+	os << "template<typename Type,bool use_qt>\n"
+	   << "class MechanicalBehaviourTraits<"
+	   << this->mb.getClassName() << "<ModellingHypothesis::"
+	   << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt> >\n";
       } else {
-	this->behaviourFile << "template<typename Type>\n"
-			    << "class MechanicalBehaviourTraits<"
-			    << this->mb.getClassName() << "<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,false> >\n";
+	os << "template<typename Type>\n"
+	   << "class MechanicalBehaviourTraits<"
+	   << this->mb.getClassName() << "<ModellingHypothesis::"
+	   << ModellingHypothesis::toUpperCaseString(h) << ",Type,false> >\n";
       }
     }
-    this->behaviourFile << "{\n";
+    os << "{\n";
     if(b){
       if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	this->behaviourFile << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n";
+	os << "static " << constexpr_c << " unsigned short N = "
+	   << "ModellingHypothesisToSpaceDimension<hypothesis>::value;\n";
       } else {
-	this->behaviourFile << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<"
-			    << "ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ">::value;\n";
+	os << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<"
+	   << "ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ">::value;\n";
       }
-      this->behaviourFile << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
-			  << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n"
-			  << "static " << constexpr_c << " unsigned short StensorSize = "
-			  << "StensorDimeToSize::value;\n"
-			  << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
-			  << "static " << constexpr_c << " unsigned short TensorSize = "
-			  << "TensorDimeToSize::value;\n";
+      os << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
+	 << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n"
+	 << "static " << constexpr_c << " unsigned short StensorSize = "
+	 << "StensorDimeToSize::value;\n"
+	 << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
+	 << "static " << constexpr_c << " unsigned short TensorSize = "
+	 << "TensorDimeToSize::value;\n";
     }
-    this->behaviourFile << "public:\n";
+    os << "public:\n";
     if(b){
-      this->behaviourFile << "static " << constexpr_c << " bool is_defined = true;\n";
+      os << "static " << constexpr_c << " bool is_defined = true;\n";
     } else {
-      this->behaviourFile << "static " << constexpr_c << " bool is_defined = false;\n";
+      os << "static " << constexpr_c << " bool is_defined = false;\n";
     }
     if(this->mb.useQt()){
-      this->behaviourFile << "static " << constexpr_c << " bool use_quantities = use_qt;\n";
+      os << "static " << constexpr_c << " bool use_quantities = use_qt;\n";
     } else {
-      this->behaviourFile << "static " << constexpr_c << " bool use_quantities = false;\n";
+      os << "static " << constexpr_c << " bool use_quantities = false;\n";
     }
     if(this->mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      this->behaviourFile << "//! orthotropic axes convention\n";
+      os << "//! orthotropic axes convention\n";
       if(this->mb.getOrthotropicAxesConvention()==OrthotropicAxesConvention::DEFAULT){
-	this->behaviourFile << "static " << constexpr_c
-			    << " OrthotropicAxesConvention oac = OrthotropicAxesConvention::DEFAULT;\n";
+	os << "static " << constexpr_c
+	   << " OrthotropicAxesConvention oac = OrthotropicAxesConvention::DEFAULT;\n";
       } else if(this->mb.getOrthotropicAxesConvention()==OrthotropicAxesConvention::PIPE){
-	this->behaviourFile << "static " << constexpr_c
-			    << " OrthotropicAxesConvention oac = OrthotropicAxesConvention::PIPE;\n";
+	os << "static " << constexpr_c
+	   << " OrthotropicAxesConvention oac = OrthotropicAxesConvention::PIPE;\n";
       } else {
 	this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourTraitsSpecialisation",
 				"internal error : unsupported orthotropic axes convention");
       }
     }
     if((b)&&(this->mb.requiresStressFreeExpansionTreatment(h))){
-      this->behaviourFile << "static " << constexpr_c << " bool hasStressFreeExpansion = true;\n";    
+      os << "static " << constexpr_c << " bool hasStressFreeExpansion = true;\n";    
     } else {
-      this->behaviourFile << "static " << constexpr_c << " bool hasStressFreeExpansion = false;\n";
+      os << "static " << constexpr_c << " bool hasStressFreeExpansion = false;\n";
     }
     if(this->mb.areThermalExpansionCoefficientsDefined()){
-      this->behaviourFile << "static " << constexpr_c << " bool handlesThermalExpansion = true;\n";
+      os << "static " << constexpr_c << " bool handlesThermalExpansion = true;\n";
     } else {
-      this->behaviourFile << "static " << constexpr_c << " bool handlesThermalExpansion = false;\n";
+      os << "static " << constexpr_c << " bool handlesThermalExpansion = false;\n";
     }
     if(b){
-      this->behaviourFile << "static " << constexpr_c << " unsigned short dimension = N;\n";
+      os << "static " << constexpr_c << " unsigned short dimension = N;\n";
     } else {
-      this->behaviourFile << "static " << constexpr_c << " unsigned short dimension = 0u;\n";
+      os << "static " << constexpr_c << " unsigned short dimension = 0u;\n";
     }
-    this->behaviourFile << "typedef Type NumType;\n"
-			<< "static " << constexpr_c << " unsigned short material_properties_nb = "
-			<< coefSize << ";\n"
-			<< "static " << constexpr_c << " unsigned short internal_variables_nb  = "
-			<< stateVarsSize << ";\n"
-			<< "static " << constexpr_c << " unsigned short external_variables_nb  = "
-			<< externalStateVarsSize << ";\n"
-			<< "static " << constexpr_c << " unsigned short external_variables_nb2 = "
-			<< externalStateVarsSize2 << ";\n"
-			<< "static " << constexpr_c << " bool hasConsistentTangentOperator = ";
+    os << "typedef Type NumType;\n"
+       << "static " << constexpr_c << " unsigned short material_properties_nb = "
+       << coefSize << ";\n"
+       << "static " << constexpr_c << " unsigned short internal_variables_nb  = "
+       << stateVarsSize << ";\n"
+       << "static " << constexpr_c << " unsigned short external_variables_nb  = "
+       << externalStateVarsSize << ";\n"
+       << "static " << constexpr_c << " unsigned short external_variables_nb2 = "
+       << externalStateVarsSize2 << ";\n"
+       << "static " << constexpr_c << " bool hasConsistentTangentOperator = ";
     if(b){
       if(this->mb.getAttribute<bool>(h,BehaviourData::hasConsistentTangentOperator,false)){
-	this->behaviourFile << "true;\n";
+	os << "true;\n";
       } else {
-	this->behaviourFile << "false;\n";
+	os << "false;\n";
       }
     } else {
-      this->behaviourFile << "false;\n";
+      os << "false;\n";
     }
-    this->behaviourFile << "static " << constexpr_c << " bool isConsistentTangentOperatorSymmetric = ";
+    os << "static " << constexpr_c << " bool isConsistentTangentOperatorSymmetric = ";
     if(b){
       if(this->mb.getAttribute<bool>(h,BehaviourData::isConsistentTangentOperatorSymmetric,false)){
-	this->behaviourFile << "true;\n";
+	os << "true;\n";
       } else {
-	this->behaviourFile << "false;\n";
+	os << "false;\n";
       }
     } else {
-      this->behaviourFile << "false;\n";
+      os << "false;\n";
     }
-    this->behaviourFile << "static " << constexpr_c << " bool hasPredictionOperator = ";
+    os << "static " << constexpr_c << " bool hasPredictionOperator = ";
     if(b){
       if(this->mb.getAttribute<bool>(h,BehaviourData::hasPredictionOperator,false)){
-	this->behaviourFile << "true;\n";
+	os << "true;\n";
       } else {
-	this->behaviourFile << "false;\n";
+	os << "false;\n";
       }
     } else {
-      this->behaviourFile << "false;\n";
+      os << "false;\n";
     }
-    this->behaviourFile << "static " << constexpr_c << " bool hasAPrioriTimeStepScalingFactor = ";
+    os << "static " << constexpr_c << " bool hasAPrioriTimeStepScalingFactor = ";
     if(b){
       if(this->mb.getAttribute<bool>(h,BehaviourData::hasAPrioriTimeStepScalingFactor,false)){
-	this->behaviourFile << "true;\n";
+	os << "true;\n";
       } else {
-	this->behaviourFile << "false;\n";
+	os << "false;\n";
       }
     } else {
-      this->behaviourFile << "false;\n";
+      os << "false;\n";
     }
     // internal enery
-    this->behaviourFile << "static " << constexpr_c << " bool hasComputeInternalEnergy = ";
+    os << "static " << constexpr_c << " bool hasComputeInternalEnergy = ";
     if(b){
       if(this->mb.hasCode(h,BehaviourData::ComputeInternalEnergy)){
-	this->behaviourFile << "true;\n";
+	os << "true;\n";
       } else {
-	this->behaviourFile << "false;\n";
+	os << "false;\n";
       }
     } else {
-      this->behaviourFile << "false;\n";
+      os << "false;\n";
     }
     // dissipated energy
-    this->behaviourFile << "static " << constexpr_c << " bool hasComputeDissipatedEnergy = ";
+    os << "static " << constexpr_c << " bool hasComputeDissipatedEnergy = ";
     if(b){
       if(this->mb.hasCode(h,BehaviourData::ComputeDissipatedEnergy)){
-	this->behaviourFile << "true;\n";
+	os << "true;\n";
       } else {
-	this->behaviourFile << "false;\n";
+	os << "false;\n";
       }
     } else {
-      this->behaviourFile << "false;\n";
+      os << "false;\n";
     }
     // name of the class
-    this->behaviourFile << "/*!\n"
-			<< "* \\return the name of the class.\n"
-			<< "*/\n"
-			<< "static const char* getName(){\n"
-			<< "return \"" << this->mb.getClassName() << "\";\n"
-			<< "}\n\n"
-			<< "};\n\n";
+    os << "/*!\n"
+       << "* \\return the name of the class.\n"
+       << "*/\n"
+       << "static const char* getName(){\n"
+       << "return \"" << this->mb.getClassName() << "\";\n"
+       << "}\n\n"
+       << "};\n\n";
   }
 
-  void 
-  BehaviourDSLCommon::writeBehaviourParserSpecificInheritanceRelationship()
+  void BehaviourDSLCommon::writeBehaviourParserSpecificInheritanceRelationship(std::ostream& os) const
   {
-    this->behaviourFile << '\n';
+    os << '\n';
   }
 
-  void BehaviourDSLCommon::writeBehaviourParserSpecificTypedefs()
-  {
-    // Empty member meant to be overriden in Child if necessary
-  }
-
-  void BehaviourDSLCommon::writeBehaviourParserSpecificMembers(const Hypothesis)
+  void BehaviourDSLCommon::writeBehaviourParserSpecificTypedefs(std::ostream&) const
   {
     // Empty member meant to be overriden in Child if necessary
   }
 
-  void BehaviourDSLCommon::writeBehaviourParserSpecificIncludes()
+  void BehaviourDSLCommon::writeBehaviourParserSpecificMembers(std::ostream&,
+							       const Hypothesis) const
   {
     // Empty member meant to be overriden in Child if necessary
   }
 
-  void BehaviourDSLCommon::writeBehaviourParametersInitializers()
+  void BehaviourDSLCommon::writeBehaviourParserSpecificIncludes(std::ostream&) const
+  {
+    // Empty member meant to be overriden in Child if necessary
+  }
+
+  void BehaviourDSLCommon::writeBehaviourParametersInitializers(std::ostream& os) const
   {
     if(!this->mb.hasParameters()){
       return;
@@ -4848,13 +4855,13 @@ namespace mfront{
     mh.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     for(const auto h : mh){
       if(this->mb.hasParameters(h)){
-	this->writeBehaviourParametersInitializer(h);
+	this->writeBehaviourParametersInitializer(os,h);
       }
     }
   } // end of BehaviourDSLCommon::writeBehaviourParametersInitializers
 
-  void 
-  BehaviourDSLCommon::writeBehaviourParametersInitializer(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourParametersInitializer(std::ostream& os,
+							       const Hypothesis h) const
   {
     const auto& md = this->mb.getBehaviourData(h);
     const auto& params = md.getParameters();
@@ -4869,11 +4876,11 @@ namespace mfront{
     bool rp2 = false;
     bool ip2 = false;
     bool up2 = false;
-    this->checkBehaviourFile();
-    this->behaviourFile << "struct " << cname << '\n'
-			<< "{\n"
-			<< "static " << cname << "&\n"
-			<< "get();\n\n";
+    this->checkBehaviourFile(os);
+    os << "struct " << cname << '\n'
+       << "{\n"
+       << "static " << cname << "&\n"
+       << "get();\n\n";
     for(const auto& p : params){
       if(p.type=="real"){
 	rp = true;
@@ -4882,9 +4889,9 @@ namespace mfront{
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name)))){
 	  rp2=true;
 	  if(p.arraySize==1){
-	    this->behaviourFile << "double " << p.name << ";\n"; 
+	    os << "double " << p.name << ";\n"; 
 	  } else {
-	    this->behaviourFile << "tfel::math::tvector<" << p.arraySize << ",double> " << p.name << ";\n"; 
+	    os << "tfel::math::tvector<" << p.arraySize << ",double> " << p.name << ";\n"; 
 	  }
 	}
       } else if(p.type=="int"){
@@ -4893,7 +4900,7 @@ namespace mfront{
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name)))){
 	  ip2 = true;
-	  this->behaviourFile << "double " << p.name << ";\n"; 
+	  os << "double " << p.name << ";\n"; 
 	}
       } else  if(p.type=="ushort"){
 	up = true;
@@ -4901,7 +4908,7 @@ namespace mfront{
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name)))){
 	  up2 = true;
-	  this->behaviourFile << "unsigned short " << p.name << ";\n"; 
+	  os << "unsigned short " << p.name << ";\n"; 
 	}
       } else {
 	this->throwRuntimeError("BehaviourDSLCommon::writeBehaviourParametersInitializer",
@@ -4909,147 +4916,149 @@ namespace mfront{
       }
     }
     if(!params.empty()){
-      this->behaviourFile << '\n'; 
+      os << '\n'; 
     }
     if(rp){
-      this->behaviourFile << "void set(const char* const,const double);\n\n";
+      os << "void set(const char* const,const double);\n\n";
     }
     if(ip){
-      this->behaviourFile << "void set(const char* const,const int);\n\n";
+      os << "void set(const char* const,const int);\n\n";
     }
     if(up){
-      this->behaviourFile << "void set(const char* const,const unsigned short);\n\n";
+      os << "void set(const char* const,const unsigned short);\n\n";
     }
     if(rp2){
-      this->behaviourFile << "/*!\n"
-			  << " * \\brief convert a string to double\n"
-			  << " * \\param[in] p : parameter\n"
-			  << " * \\param[in] v : value\n"
-			  << " */\n"
-			  << "static double getDouble(const std::string&,const std::string&);\n";
+      os << "/*!\n"
+	 << " * \\brief convert a string to double\n"
+	 << " * \\param[in] p : parameter\n"
+	 << " * \\param[in] v : value\n"
+	 << " */\n"
+	 << "static double getDouble(const std::string&,const std::string&);\n";
     }
     if(ip2){
-      this->behaviourFile << "/*!\n"
-			  << " * \\brief convert a string to int\n"
-			  << " * \\param[in] p : parameter\n"
-			  << " * \\param[in] v : value\n"
-			  << " */\n"
-			  << "static int getInt(const std::string&,const std::string&);\n";
+      os << "/*!\n"
+	 << " * \\brief convert a string to int\n"
+	 << " * \\param[in] p : parameter\n"
+	 << " * \\param[in] v : value\n"
+	 << " */\n"
+	 << "static int getInt(const std::string&,const std::string&);\n";
     }
     if(up2){
-      this->behaviourFile << "/*!\n"
-			  << " * \\brief convert a string to unsigned short\n"
-			  << " * \\param[in] p : parameter\n"
-			  << " * \\param[in] v : value\n"
-			  << " */\n"
-			  << "static unsigned short getUnsignedShort(const std::string&,const std::string&);\n";
+      os << "/*!\n"
+	 << " * \\brief convert a string to unsigned short\n"
+	 << " * \\param[in] p : parameter\n"
+	 << " * \\param[in] v : value\n"
+	 << " */\n"
+	 << "static unsigned short getUnsignedShort(const std::string&,const std::string&);\n";
     }
-    this->behaviourFile << "private :\n\n"
-			<< cname << "();\n\n"
-			<< cname << "(const " << cname << "&);\n\n"
-			<< cname << "&\n"
-			<< "operator=(const " << cname << "&);\n"
-			<< "/*!\n"
-			<< " * \\brief read the parameters from the given file\n"
-			<< " * \\param[out] pi : parameters initializer\n"
-			<< " * \\param[in]  fn : file name\n"
-			<< " */\n"
-			<< "static void readParameters(" << cname << "&,const char* const);\n"
-			<< "};\n\n";
+    os << "private :\n\n"
+       << cname << "();\n\n"
+       << cname << "(const " << cname << "&);\n\n"
+       << cname << "&\n"
+       << "operator=(const " << cname << "&);\n"
+       << "/*!\n"
+       << " * \\brief read the parameters from the given file\n"
+       << " * \\param[out] pi : parameters initializer\n"
+       << " * \\param[in]  fn : file name\n"
+       << " */\n"
+       << "static void readParameters(" << cname << "&,const char* const);\n"
+       << "};\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourParametersInitializer
 
-  void BehaviourDSLCommon::writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis)
+  void BehaviourDSLCommon::writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,
+									    const Hypothesis) const
   {
     // Empty member meant to be overriden in Child if necessary
   }
 
-  void BehaviourDSLCommon::writeBehaviourFileBegin()
+  void BehaviourDSLCommon::writeBehaviourFileBegin(std::ostream& os) const
   {
-    this->checkBehaviourFile();
-    this->writeBehaviourFileHeader();
-    this->writeBehaviourFileHeaderBegin();
-    this->writeBehaviourIncludes();
-    this->writeBehaviourParserSpecificIncludes();
-    this->writeIncludes(this->behaviourFile);
+    this->checkBehaviourFile(os);
+    this->writeBehaviourFileHeader(os);
+    this->writeBehaviourFileHeaderBegin(os);
+    this->writeBehaviourIncludes(os);
+    this->writeBehaviourParserSpecificIncludes(os);
+    this->writeIncludes(os);
     // includes specific to interfaces
     for(const auto& i : this->interfaces){
-      i.second->writeInterfaceSpecificIncludes(this->behaviourFile,this->mb);
+      i.second->writeInterfaceSpecificIncludes(os,this->mb);
     }
-    this->writeNamespaceBegin(this->behaviourFile);
-    this->writeBehaviourParametersInitializers();
-    this->writeBehaviourForwardDeclarations();
-    this->writeBehaviourProfiler();
+    this->writeNamespaceBegin(os);
+    this->writeBehaviourParametersInitializers(os);
+    this->writeBehaviourForwardDeclarations(os);
+    this->writeBehaviourProfiler(os);
   } // end of BehaviourDSLCommon::writeBehaviourFileBegin
 
-  void BehaviourDSLCommon::writeBehaviourProfiler()
+  void BehaviourDSLCommon::writeBehaviourProfiler(std::ostream& os) const
   {
     if(this->mb.getAttribute(BehaviourData::profiling,false)){
-      this->checkBehaviourFile();
-      this->behaviourFile << "/*!\n"
-			  << " * " << this->mb.getClassName() << " profiler\n"
-			  << " */\n"
-			  << "struct " << this->mb.getClassName() << "Profiler\n"
-			  << "{\n"
-			  << "//! return the profiler associated with the behaviour\n"
-			  << "static mfront::BehaviourProfiler& getProfiler();\n"
-			  << "}; // end of struct " << this->mb.getClassName() << "Profiler\n\n";
+      this->checkBehaviourFile(os);
+      os << "/*!\n"
+	 << " * " << this->mb.getClassName() << " profiler\n"
+	 << " */\n"
+	 << "struct " << this->mb.getClassName() << "Profiler\n"
+	 << "{\n"
+	 << "//! return the profiler associated with the behaviour\n"
+	 << "static mfront::BehaviourProfiler& getProfiler();\n"
+	 << "}; // end of struct " << this->mb.getClassName() << "Profiler\n\n";
     }
   } // end of BehaviourDSLCommon::writeBehaviourProfiler
 
-  void BehaviourDSLCommon::writeBehaviourClass(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourClass(std::ostream& os,
+					       const Hypothesis h) const
   {
-    this->checkBehaviourFile();
-    this->writeBehaviourClassBegin(h);
-    this->writeBehaviourStandardTFELTypedefs();
-    this->behaviourFile << "private :\n\n";
-    this->writeBehaviourParserSpecificTypedefs();
-    this->writeBehaviourStaticVariables(h);
-    this->writeBehaviourIntegrationVariables(h);
-    this->writeBehaviourIntegrationVariablesIncrements(h);
-    this->writeBehaviourLocalVariables(h);
-    this->writeBehaviourParameters(h);
-    this->writeBehaviourParserSpecificMembers(h);
-    this->writeBehaviourUpdateIntegrationVariables(h);
-    this->writeBehaviourUpdateStateVariables(h);
-    this->writeBehaviourUpdateAuxiliaryStateVariables(h);
-    this->writeBehaviourAdditionalMembers(h);
-    this->writeBehaviourPrivate(h);
-    this->writeBehaviourDisabledConstructors();
+    this->checkBehaviourFile(os);
+    this->writeBehaviourClassBegin(os,h);
+    this->writeBehaviourStandardTFELTypedefs(os);
+    os << "private :\n\n";
+    this->writeBehaviourParserSpecificTypedefs(os);
+    this->writeBehaviourStaticVariables(os,h);
+    this->writeBehaviourIntegrationVariables(os,h);
+    this->writeBehaviourIntegrationVariablesIncrements(os,h);
+    this->writeBehaviourLocalVariables(os,h);
+    this->writeBehaviourParameters(os,h);
+    this->writeBehaviourParserSpecificMembers(os,h);
+    this->writeBehaviourUpdateIntegrationVariables(os,h);
+    this->writeBehaviourUpdateStateVariables(os,h);
+    this->writeBehaviourUpdateAuxiliaryStateVariables(os,h);
+    this->writeBehaviourAdditionalMembers(os,h);
+    this->writeBehaviourPrivate(os,h);
+    this->writeBehaviourDisabledConstructors(os);
     // from this point, all is public
-    this->behaviourFile << "public:\n\n";
-    this->writeBehaviourConstructors(h);
-    this->writeBehaviourComputeStressFreeExpansion(h);
-    this->writeBehaviourInitializeMethod(h);
-    this->writeBehaviourSetOutOfBoundsPolicy();
-    this->writeBehaviourGetModellingHypothesis();
-    this->writeBehaviourCheckBounds(h);
-    this->writeBehaviourComputePredictionOperator(h);
-    this->writeBehaviourGetTimeStepScalingFactor();
-    this->writeBehaviourComputeAPrioriTimeStepScalingFactor();
-    this->writeBehaviourIntegrator(h);
-    this->writeBehaviourComputeAPosterioriTimeStepScalingFactor();
-    this->writeBehaviourComputeInternalEnergy(h);
-    this->writeBehaviourComputeDissipatedEnergy(h);
-    this->writeBehaviourComputeTangentOperator(h);
-    this->writeBehaviourGetTangentOperator();
-    this->writeBehaviourUpdateExternalStateVariables(h);
-    this->writeBehaviourDestructor();
-    this->checkBehaviourFile();
-    this->behaviourFile << "private:\n\n";
-    this->writeBehaviourComputeAPrioriTimeStepScalingFactorII(h);
-    this->writeBehaviourComputeAPosterioriTimeStepScalingFactorII(h);
-    this->writeBehaviourTangentOperator();
-    this->writeBehaviourPolicyVariable();
-    this->writeBehaviourClassEnd();
-    this->writeBehaviourOutputOperator(h);
+    os << "public:\n\n";
+    this->writeBehaviourConstructors(os,h);
+    this->writeBehaviourComputeStressFreeExpansion(os,h);
+    this->writeBehaviourInitializeMethod(os,h);
+    this->writeBehaviourSetOutOfBoundsPolicy(os);
+    this->writeBehaviourGetModellingHypothesis(os);
+    this->writeBehaviourCheckBounds(os,h);
+    this->writeBehaviourComputePredictionOperator(os,h);
+    this->writeBehaviourGetTimeStepScalingFactor(os);
+    this->writeBehaviourComputeAPrioriTimeStepScalingFactor(os);
+    this->writeBehaviourIntegrator(os,h);
+    this->writeBehaviourComputeAPosterioriTimeStepScalingFactor(os);
+    this->writeBehaviourComputeInternalEnergy(os,h);
+    this->writeBehaviourComputeDissipatedEnergy(os,h);
+    this->writeBehaviourComputeTangentOperator(os,h);
+    this->writeBehaviourGetTangentOperator(os);
+    this->writeBehaviourUpdateExternalStateVariables(os,h);
+    this->writeBehaviourDestructor(os);
+    this->checkBehaviourFile(os);
+    os << "private:\n\n";
+    this->writeBehaviourComputeAPrioriTimeStepScalingFactorII(os,h);
+    this->writeBehaviourComputeAPosterioriTimeStepScalingFactorII(os,h);
+    this->writeBehaviourTangentOperator(os);
+    this->writeBehaviourPolicyVariable(os);
+    this->writeBehaviourClassEnd(os);
+    this->writeBehaviourOutputOperator(os,h);
   }
 
-  void BehaviourDSLCommon::writeBehaviourFileEnd()
+  void BehaviourDSLCommon::writeBehaviourFileEnd(std::ostream& os) const
   {
-    this->checkBehaviourFile();
-    this->writeBehaviourTraits();
-    this->writeNamespaceEnd(this->behaviourFile);
-    this->writeBehaviourFileHeaderEnd();
+    this->checkBehaviourFile(os);
+    this->writeBehaviourTraits(os);
+    this->writeNamespaceEnd(os);
+    this->writeBehaviourFileHeaderEnd(os);
   } // end of BehaviourDSLCommon::writeBehaviourFileBegin
 
   static bool
@@ -5076,7 +5085,8 @@ namespace mfront{
   } // end of BehaviourDSLCommon::hasUserDefinedTangentOperatorCode
 
   
-  void BehaviourDSLCommon::writeBehaviourComputePredictionOperator(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourComputePredictionOperator(std::ostream& os,
+								   const Hypothesis h) const
   {
     using namespace std;
     using namespace tfel::material;
@@ -5087,11 +5097,11 @@ namespace mfront{
 			      "attribute 'hasPredictionOperator' is set but no associated code defined");
     }
     if(!hasUserDefinedPredictionOperatorCode(this->mb,h)){
-      this->behaviourFile << "IntegrationResult computePredictionOperator(const SMFlag,const SMType) override{\n"
-			  << "throw(std::runtime_error(\"" << this->mb.getClassName()
-			  << "::computePredictionOperator: \"\n"
-			  << "\"unsupported prediction operator flag\"));\n"
-			  << "}\n\n";
+      os << "IntegrationResult computePredictionOperator(const SMFlag,const SMType) override{\n"
+	 << "throw(std::runtime_error(\"" << this->mb.getClassName()
+	 << "::computePredictionOperator: \"\n"
+	 << "\"unsupported prediction operator flag\"));\n"
+	 << "}\n\n";
       return;
     }
     if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
@@ -5119,93 +5129,92 @@ namespace mfront{
 	for(const auto& t:tos){
 	  const auto ktype = convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
 	  if(find(ktos.begin(),ktos.end(),t)!=ktos.end()){
-	    this->behaviourFile << "IntegrationResult\ncomputePredictionOperator_" << ktype << "(const SMType smt){\n"
-				<< "using namespace std;\n"
-				<< "using namespace tfel::math;\n"
-				<< "using std::vector;\n";
-	    writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputePredictionOperator",
-			      this->behaviourFile,this->mb.getMaterialLaws());
-	    this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputePredictionOperator+"-"+ktype) << '\n'
-				<< "return SUCCESS;\n"
-				<< "}\n\n";
+	    os << "IntegrationResult\ncomputePredictionOperator_" << ktype << "(const SMType smt){\n"
+	       << "using namespace std;\n"
+	       << "using namespace tfel::math;\n"
+	       << "using std::vector;\n";
+	    writeMaterialLaws(os,this->mb.getMaterialLaws());
+	    os << this->mb.getCode(h,BehaviourData::ComputePredictionOperator+"-"+ktype) << '\n'
+	       << "return SUCCESS;\n"
+	       << "}\n\n";
 	  } else {
 	    const auto path =
 	      FiniteStrainBehaviourTangentOperatorConversionPath::getShortestPath(paths,t);
 	    if(path.empty()){
-	      this->behaviourFile << "IntegrationResult computePredictionOperator_" << ktype << "(const SMType){\n"
-				  << "throw(std::runtime_error(\"" << this->mb.getClassName()
-				  << "::computePredictionOperator_" << ktype << ": \"\n"
-				  << "\"computing the prediction operator '"
-				  << ktype << "' is not supported\"));\n"
-				  << "}\n\n";
+	      os << "IntegrationResult computePredictionOperator_" << ktype << "(const SMType){\n"
+		 << "throw(std::runtime_error(\"" << this->mb.getClassName()
+		 << "::computePredictionOperator_" << ktype << ": \"\n"
+		 << "\"computing the prediction operator '"
+		 << ktype << "' is not supported\"));\n"
+		 << "}\n\n";
 	    } else {
-	      this->behaviourFile << "IntegrationResult computePredictionOperator_" << ktype << "(const SMType smt){\n";
+	      os << "IntegrationResult computePredictionOperator_" << ktype << "(const SMType smt){\n";
 	      auto pc = path.begin();
-	      this->behaviourFile << "using namespace tfel::math;\n";
-	      this->behaviourFile << "// computing " << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from()) << '\n';
+	      os << "using namespace tfel::math;\n";
+	      os << "// computing " << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from()) << '\n';
 	      const auto k = convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from());
-	      this->behaviourFile << "this->computePredictionOperator_" << k << "(smt);\n"
-				  << "const " << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from()) << "<N,stress>"
-				  << " tangentOperator_" << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from())
-				  << " = this->Dt.template get<"
-				  << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from())
-				  << "<N,stress> >();\n";
+	      os << "this->computePredictionOperator_" << k << "(smt);\n"
+		 << "const " << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from()) << "<N,stress>"
+		 << " tangentOperator_" << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from())
+		 << " = this->Dt.template get<"
+		 << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from())
+		 << "<N,stress> >();\n";
 	      for(;pc!=path.end();){
 		const auto converter = *pc;
 		if(++pc==path.end()){
-		  this->behaviourFile << converter.getFinalConversion() << '\n';
+		  os << converter.getFinalConversion() << '\n';
 		} else {
-		  this->behaviourFile << converter.getIntermediateConversion() << '\n';
+		  os << converter.getIntermediateConversion() << '\n';
 		}
 	      }
-	      this->behaviourFile << "return SUCCESS;\n"
-				  << "}\n\n";
+	      os << "return SUCCESS;\n"
+		 << "}\n\n";
 	    }
 	  }
 	}
-	this->behaviourFile << "IntegrationResult computePredictionOperator(const SMFlag smflag,const SMType smt) override{\n"
-			    << "using namespace std;\n"
-			    << "switch(smflag){\n";
+	os << "IntegrationResult computePredictionOperator(const SMFlag smflag,const SMType smt) override{\n"
+	   << "using namespace std;\n"
+	   << "switch(smflag){\n";
 	for(const auto& t:tos){
 	  const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
-	  this->behaviourFile << "case " << ktype << ":\n"
-			      << "return this->computePredictionOperator_" << ktype << "(smt);\n";
+	  os << "case " << ktype << ":\n"
+	     << "return this->computePredictionOperator_" << ktype << "(smt);\n";
 	}
-	this->behaviourFile << "}\n"
-			    << "throw(runtime_error(\"" << this->mb.getClassName()
-			    << "::computePredictionOperator: \"\n"
-			    << "\"unsupported prediction operator flag\"));\n"
-			    << "}\n\n";
+	os << "}\n"
+	   << "throw(runtime_error(\"" << this->mb.getClassName()
+	   << "::computePredictionOperator: \"\n"
+	   << "\"unsupported prediction operator flag\"));\n"
+	   << "}\n\n";
       }
     } else {
-      this->behaviourFile << "IntegrationResult\n"
-			  << "computePredictionOperator(const SMFlag smflag,const SMType smt) override{\n"
-			  << "using namespace std;\n"
-			  << "using namespace tfel::math;\n"
-			  << "using std::vector;\n";
-      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputePredictionOperator",
-			this->behaviourFile,this->mb.getMaterialLaws());
+      os << "IntegrationResult\n"
+	 << "computePredictionOperator(const SMFlag smflag,const SMType smt) override{\n"
+	 << "using namespace std;\n"
+	 << "using namespace tfel::math;\n"
+	 << "using std::vector;\n";
+      writeMaterialLaws(os,this->mb.getMaterialLaws());
       if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
 	if(mb.useQt()){
-	  this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			      << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
-			      << "throw(runtime_error(\"invalid prediction operator flag\"));\n"
-			      << "}\n";
+	  os << "if(smflag!=MechanicalBehaviour<" << btype 
+	     << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
+	     << "throw(runtime_error(\"invalid prediction operator flag\"));\n"
+	     << "}\n";
 	} else {
-	  this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			      << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
-			      << "throw(runtime_error(\"invalid prediction operator flag\"));\n"
-			      << "}\n";
+	  os << "if(smflag!=MechanicalBehaviour<" << btype 
+	     << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
+	     << "throw(runtime_error(\"invalid prediction operator flag\"));\n"
+	     << "}\n";
 	}
       }
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputePredictionOperator)
-			  << "return SUCCESS;\n"
-			  << "}\n\n";
+      os << this->mb.getCode(h,BehaviourData::ComputePredictionOperator)
+	 << "return SUCCESS;\n"
+	 << "}\n\n";
     }
   } // end of BehaviourDSLCommon::writeBehaviourComputePredictionOperator
 
-  void BehaviourDSLCommon::writeBehaviourComputeTangentOperator(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourComputeTangentOperator(std::ostream& os,
+								const Hypothesis h) const
   {
     using namespace std;
     using namespace tfel::material;
@@ -5234,101 +5243,99 @@ namespace mfront{
 	for(const auto& t:tos){
 	  const auto ktype = convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
 	  if(find(ktos.begin(),ktos.end(),t)!=ktos.end()){
-	    this->behaviourFile << "bool computeConsistentTangentOperator_" << ktype << "(const SMType smt){\n"
-				<< "using namespace std;\n"
-				<< "using namespace tfel::math;\n"
-				<< "using std::vector;\n";
-	    writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeTangentOperator",
-			      this->behaviourFile,this->mb.getMaterialLaws());
-	    this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeTangentOperator+"-"+ktype) << '\n'
-				<< "return true;\n"
-				<< "}\n\n";
+	    os << "bool computeConsistentTangentOperator_" << ktype << "(const SMType smt){\n"
+	       << "using namespace std;\n"
+	       << "using namespace tfel::math;\n"
+	       << "using std::vector;\n";
+	    writeMaterialLaws(os,this->mb.getMaterialLaws());
+	    os << this->mb.getCode(h,BehaviourData::ComputeTangentOperator+"-"+ktype) << '\n'
+	       << "return true;\n"
+	       << "}\n\n";
 	  } else {
 	    const auto path =
 	      FiniteStrainBehaviourTangentOperatorConversionPath::getShortestPath(paths,t);
 	    if(path.empty()){
-	      this->behaviourFile << "bool computeConsistentTangentOperator_" << ktype << "(const SMType){\n"
-				  << "using namespace std;\n"
-				  << "string msg(\"" << this->mb.getClassName()
-				  << "::computeConsistentTangentOperator_" << ktype << " : \");\n"
-				  << "msg += \"computing the tangent operator '"
-				  << ktype << "' is not supported\";\n"
-				  << "throw(runtime_error(msg));\n"
-				  << "}\n\n";
+	      os << "bool computeConsistentTangentOperator_" << ktype << "(const SMType){\n"
+		 << "using namespace std;\n"
+		 << "string msg(\"" << this->mb.getClassName()
+		 << "::computeConsistentTangentOperator_" << ktype << " : \");\n"
+		 << "msg += \"computing the tangent operator '"
+		 << ktype << "' is not supported\";\n"
+		 << "throw(runtime_error(msg));\n"
+		 << "}\n\n";
 	    } else {
-	      this->behaviourFile << "bool computeConsistentTangentOperator_" << ktype << "(const SMType smt){\n";
+	      os << "bool computeConsistentTangentOperator_" << ktype << "(const SMType smt){\n";
 	      auto pc = path.begin();
-	      this->behaviourFile << "using namespace tfel::math;\n";
-	      this->behaviourFile << "// computing " << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from()) << '\n';
+	      os << "using namespace tfel::math;\n";
+	      os << "// computing " << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from()) << '\n';
 	      const auto k = convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from());
-	      this->behaviourFile << "this->computeConsistentTangentOperator_" << k << "(smt);\n"
-				  << "const " << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from()) << "<N,stress>"
-				  << " tangentOperator_" << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from())
-				  << " = this->Dt.template get<"
-				  << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from())
-				  << "<N,stress> >();\n";
+	      os << "this->computeConsistentTangentOperator_" << k << "(smt);\n"
+		 << "const " << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from()) << "<N,stress>"
+		 << " tangentOperator_" << convertFiniteStrainBehaviourTangentOperatorFlagToString(pc->from())
+		 << " = this->Dt.template get<"
+		 << getFiniteStrainBehaviourTangentOperatorFlagType(pc->from())
+		 << "<N,stress> >();\n";
 	      for(;pc!=path.end();){
 		const auto converter = *pc;
 		if(++pc==path.end()){
-		  this->behaviourFile << converter.getFinalConversion() << '\n';
+		  os << converter.getFinalConversion() << '\n';
 		} else {
-		  this->behaviourFile << converter.getIntermediateConversion() << '\n';
+		  os << converter.getIntermediateConversion() << '\n';
 		}
 	      }
-	      this->behaviourFile << "return true;\n"
-				  << "}\n\n";
+	      os << "return true;\n"
+		 << "}\n\n";
 	    }
 	  }
 	}
-	this->behaviourFile << "bool computeConsistentTangentOperator(const SMFlag smflag,const SMType smt){\n"
-			    << "using namespace std;\n"
-			    << "switch(smflag){\n";
+	os << "bool computeConsistentTangentOperator(const SMFlag smflag,const SMType smt){\n"
+	   << "using namespace std;\n"
+	   << "switch(smflag){\n";
 	for(const auto& t:tos){
 	  const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
-	  this->behaviourFile << "case " << ktype << ":\n"
-			      << "return this->computeConsistentTangentOperator_" << ktype << "(smt);\n";
+	  os << "case " << ktype << ":\n"
+	     << "return this->computeConsistentTangentOperator_" << ktype << "(smt);\n";
 	}
-	this->behaviourFile << "}\n"
-			    << "throw(std::runtime_error(\"" << this->mb.getClassName()
-			    << "::computeConsistentTangentOperator : \"\n"
-			    << "\"unsupported tangent operator flag\"));\n"
-			    << "}\n\n";
+	os << "}\n"
+	   << "throw(std::runtime_error(\"" << this->mb.getClassName()
+	   << "::computeConsistentTangentOperator : \"\n"
+	   << "\"unsupported tangent operator flag\"));\n"
+	   << "}\n\n";
       }
     } else {
       if(this->mb.hasCode(h,BehaviourData::ComputeTangentOperator)){
-	this->behaviourFile << "bool computeConsistentTangentOperator(const SMType smt){\n"
-			    << "using namespace std;\n"
-			    << "using namespace tfel::math;\n"
-			    << "using std::vector;\n";
-	writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeTangentOperator",
-			  this->behaviourFile,this->mb.getMaterialLaws());
-	this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeTangentOperator) << '\n'
-			    << "return true;\n"
-			    << "}\n\n";
+	os << "bool computeConsistentTangentOperator(const SMType smt){\n"
+	   << "using namespace std;\n"
+	   << "using namespace tfel::math;\n"
+	   << "using std::vector;\n";
+	writeMaterialLaws(os,this->mb.getMaterialLaws());
+	os << this->mb.getCode(h,BehaviourData::ComputeTangentOperator) << '\n'
+	   << "return true;\n"
+	   << "}\n\n";
       }
     }
   } // end of BehaviourDSLCommon::writeBehaviourComputeTangentOperator
 
-  void BehaviourDSLCommon::writeBehaviourGetTangentOperator()
+  void BehaviourDSLCommon::writeBehaviourGetTangentOperator(std::ostream& os) const
   {
-    this->checkBehaviourFile();
-    this->behaviourFile << "const TangentOperator& getTangentOperator() const{\n"
-			<< "return this->Dt;\n"
-			<< "}\n\n";
+    this->checkBehaviourFile(os);
+    os << "const TangentOperator& getTangentOperator() const{\n"
+       << "return this->Dt;\n"
+       << "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourComputeTangentOperator(void)
 
-  void BehaviourDSLCommon::writeBehaviourGetTimeStepScalingFactor()
+  void BehaviourDSLCommon::writeBehaviourGetTimeStepScalingFactor(std::ostream& os) const
   {
-    this->checkBehaviourFile();
-    this->behaviourFile << "real getMinimalTimeStepScalingFactor() const override{\n"
+    this->checkBehaviourFile(os);
+    os << "real getMinimalTimeStepScalingFactor() const override{\n"
       "  return this->minimal_time_step_scaling_factor;\n"
       "}\n\n";
   }
   
-  void BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactor()
+  void BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactor(std::ostream& os) const
   {
-    this->checkBehaviourFile();
-    this->behaviourFile << "std::pair<bool,real>\n"
+    this->checkBehaviourFile(os);
+    os << "std::pair<bool,real>\n"
       "computeAPrioriTimeStepScalingFactor(const real current_time_step_scaling_factor) const override{\n"
       "const auto time_scaling_factor = this->computeAPrioriTimeStepScalingFactorII();\n"
       "return {time_scaling_factor.first,\n"
@@ -5339,25 +5346,25 @@ namespace mfront{
       "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactor(void)
 
-  void BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactorII(const Hypothesis h){
-    this->checkBehaviourFile();
-    this->behaviourFile << "std::pair<bool,real> computeAPrioriTimeStepScalingFactorII() const{\n";
+  void BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactorII(std::ostream& os,
+									       const Hypothesis h) const{
+    this->checkBehaviourFile(os);
+    os << "std::pair<bool,real> computeAPrioriTimeStepScalingFactorII() const{\n";
     if(this->mb.hasCode(h,BehaviourData::APrioriTimeStepScalingFactor)){
-      this->behaviourFile << "using namespace std;\n"
-			  << "using namespace tfel::math;\n"
-			  << "using std::vector;\n";
-      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactorII",
-			this->behaviourFile,this->mb.getMaterialLaws());
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::APrioriTimeStepScalingFactor) << '\n';
+      os << "using namespace std;\n"
+	 << "using namespace tfel::math;\n"
+	 << "using std::vector;\n";
+      writeMaterialLaws(os,this->mb.getMaterialLaws());
+      os << this->mb.getCode(h,BehaviourData::APrioriTimeStepScalingFactor) << '\n';
     }
-    this->behaviourFile << "return {true,this->maximal_time_step_scaling_factor};\n"
-			<< "}\n\n";
+    os << "return {true,this->maximal_time_step_scaling_factor};\n"
+       << "}\n\n";
   }
 
-  void BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor()
+  void BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor(std::ostream& os) const
   {
-    this->checkBehaviourFile();
-    this->behaviourFile << "std::pair<bool,real>\n"
+    this->checkBehaviourFile(os);
+    os << "std::pair<bool,real>\n"
       "computeAPosterioriTimeStepScalingFactor(const real current_time_step_scaling_factor) const override{\n"
       "const auto time_scaling_factor = this->computeAPosterioriTimeStepScalingFactorII();\n"
       "return {time_scaling_factor.first,\n"
@@ -5368,555 +5375,551 @@ namespace mfront{
       "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor
   
-  void BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactorII(const Hypothesis h)
+  void BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactorII(std::ostream& os,
+										   const Hypothesis h) const
   {
-    this->checkBehaviourFile();
-    this->behaviourFile << "std::pair<bool,real> computeAPosterioriTimeStepScalingFactorII() const{\n";
+    this->checkBehaviourFile(os);
+    os << "std::pair<bool,real> computeAPosterioriTimeStepScalingFactorII() const{\n";
     if(this->mb.hasCode(h,BehaviourData::APosterioriTimeStepScalingFactor)){
-      this->behaviourFile << "using namespace std;\n"
-			  << "using namespace tfel::math;\n"
-			  << "using std::vector;\n";
-      writeMaterialLaws("BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactorII",
-			this->behaviourFile,this->mb.getMaterialLaws());
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::APosterioriTimeStepScalingFactor) << '\n';
+      os << "using namespace std;\n"
+	 << "using namespace tfel::math;\n"
+	 << "using std::vector;\n";
+      writeMaterialLaws(os,this->mb.getMaterialLaws());
+      os << this->mb.getCode(h,BehaviourData::APosterioriTimeStepScalingFactor) << '\n';
     }
-    this->behaviourFile << "return {true,this->maximal_time_step_scaling_factor};\n"
-			<< "}\n\n";
+    os << "return {true,this->maximal_time_step_scaling_factor};\n"
+       << "}\n\n";
   } // end of BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor(void)
   
-  void BehaviourDSLCommon::writeBehaviourTangentOperator()
+  void BehaviourDSLCommon::writeBehaviourTangentOperator(std::ostream& os) const
   {
-    this->checkBehaviourFile();
-    this->behaviourFile << "//! Tangent operator;\n"
-			<< "TangentOperator Dt;\n";
+    this->checkBehaviourFile(os);
+    os << "//! Tangent operator;\n"
+       << "TangentOperator Dt;\n";
   } // end of BehaviourDSLCommon::writeBehaviourTangentOperator()
 
-  void BehaviourDSLCommon::checkIntegrationDataFile() const {
-    if((!this->integrationDataFile)||(!this->integrationDataFile.good())){
+  void BehaviourDSLCommon::checkIntegrationDataFile(std::ostream& os) const {
+    if((!os)||(!os.good())){
       this->throwRuntimeError("BehaviourDSLCommon::checkIntegrationDataOutputFile",
 			      "ouput file is not valid");
     }
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataFileHeader(){
-    this->checkIntegrationDataFile();
-    this->integrationDataFile << "/*!\n";
-    this->integrationDataFile << "* \\file   " << this->integrationDataFileName << '\n';
-    this->integrationDataFile << "* \\brief  " << "this file implements the " 
-			      << this->mb.getClassName() << "IntegrationData" << " class.\n";
-    this->integrationDataFile << "*         File generated by ";
-    this->integrationDataFile << MFrontHeader::getVersionName() << " ";
-    this->integrationDataFile << "version " << MFrontHeader::getVersionNumber();
-    this->integrationDataFile << '\n';
+  void BehaviourDSLCommon::writeIntegrationDataFileHeader(std::ostream& os) const{
+    this->checkIntegrationDataFile(os);
+    os << "/*!\n";
+    os << "* \\file   " << this->getIntegrationDataFileName() << '\n';
+    os << "* \\brief  " << "this file implements the " 
+       << this->mb.getClassName() << "IntegrationData" << " class.\n";
+    os << "*         File generated by ";
+    os << MFrontHeader::getVersionName() << " ";
+    os << "version " << MFrontHeader::getVersionNumber();
+    os << '\n';
     if(!this->authorName.empty()){
-      this->integrationDataFile << "* \\author " << this->authorName << '\n';
+      os << "* \\author " << this->authorName << '\n';
     }
     if(!this->date.empty()){
-      this->integrationDataFile << "* \\date   " << this->date       << '\n';
+      os << "* \\date   " << this->date       << '\n';
     }
-    this->integrationDataFile << " */\n\n";
+    os << " */\n\n";
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataFileHeaderBegin(){
-    this->checkIntegrationDataFile();
-    this->integrationDataFile << "#ifndef LIB_TFELMATERIAL_"
-			      << makeUpperCase(this->mb.getClassName())
-			      << "_INTEGRATION_DATA_HXX\n"
-			      << "#define LIB_TFELMATERIAL_"
-			      << makeUpperCase(this->mb.getClassName())
-			      << "_INTEGRATION_DATA_HXX\n\n";
+  void BehaviourDSLCommon::writeIntegrationDataFileHeaderBegin(std::ostream& os) const{
+    this->checkIntegrationDataFile(os);
+    os << "#ifndef LIB_TFELMATERIAL_"
+       << makeUpperCase(this->mb.getClassName())
+       << "_INTEGRATION_DATA_HXX\n"
+       << "#define LIB_TFELMATERIAL_"
+       << makeUpperCase(this->mb.getClassName())
+       << "_INTEGRATION_DATA_HXX\n\n";
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataFileHeaderEnd()
+  void BehaviourDSLCommon::writeIntegrationDataFileHeaderEnd(std::ostream& os) const
   {
-    this->checkIntegrationDataFile();
-    this->integrationDataFile << "#endif /* LIB_TFELMATERIAL_"
-			      << makeUpperCase(this->mb.getClassName())
-			      << "_INTEGRATION_DATA_HXX */\n";
+    this->checkIntegrationDataFile(os);
+    os << "#endif /* LIB_TFELMATERIAL_"
+       << makeUpperCase(this->mb.getClassName())
+       << "_INTEGRATION_DATA_HXX */\n";
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataStandardTFELIncludes()
+  void BehaviourDSLCommon::writeIntegrationDataStandardTFELIncludes(std::ostream& os) const
   {
     bool b1 = false;
     bool b2 = false;
-    this->checkIntegrationDataFile();
-    this->integrationDataFile << "#include<string>\n"
-			      << "#include<iostream>\n"
-			      << "#include<limits>\n"
-			      << "#include<stdexcept>\n"
-			      << "#include<algorithm>\n\n"
-			      << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
-			      << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
-			      << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
-			      << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
-			      << "#include\"TFEL/TypeTraits/IsScalar.hxx\"\n"
-			      << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
-			      << "#include\"TFEL/TypeTraits/Promote.hxx\"\n"
-			      << "#include\"TFEL/Math/General/IEEE754.hxx\"\n";
+    this->checkIntegrationDataFile(os);
+    os << "#include<string>\n"
+       << "#include<iostream>\n"
+       << "#include<limits>\n"
+       << "#include<stdexcept>\n"
+       << "#include<algorithm>\n\n"
+       << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
+       << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
+       << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
+       << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
+       << "#include\"TFEL/TypeTraits/IsScalar.hxx\"\n"
+       << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
+       << "#include\"TFEL/TypeTraits/Promote.hxx\"\n"
+       << "#include\"TFEL/Math/General/IEEE754.hxx\"\n";
     this->mb.requiresTVectorOrVectorIncludes(b1,b2);
     if(b1){
-      this->integrationDataFile << "#include\"TFEL/Math/tvector.hxx\"\n"
-				<< "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n";
+      os << "#include\"TFEL/Math/tvector.hxx\"\n"
+	 << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n";
     }
     if(b2){
-      this->integrationDataFile << "#include\"TFEL/Math/vector.hxx\"\n";
+      os << "#include\"TFEL/Math/vector.hxx\"\n";
     }
-    this->integrationDataFile << "#include\"TFEL/Math/stensor.hxx\"\n"
-			      << "#include\"TFEL/Math/st2tost2.hxx\"\n";
+    os << "#include\"TFEL/Math/stensor.hxx\"\n"
+       << "#include\"TFEL/Math/st2tost2.hxx\"\n";
     if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      this->integrationDataFile << "#include\"TFEL/Math/tensor.hxx\"\n"
-				<< "#include\"TFEL/Math/t2tot2.hxx\"\n"
-				<< "#include\"TFEL/Math/t2tost2.hxx\"\n"
-				<< "#include\"TFEL/Math/st2tot2.hxx\"\n";
+      os << "#include\"TFEL/Math/tensor.hxx\"\n"
+	 << "#include\"TFEL/Math/t2tot2.hxx\"\n"
+	 << "#include\"TFEL/Math/t2tost2.hxx\"\n"
+	 << "#include\"TFEL/Math/st2tot2.hxx\"\n";
     }
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataDefaultMembers()
+  void BehaviourDSLCommon::writeIntegrationDataDefaultMembers(std::ostream& os) const
   {
-    this->checkIntegrationDataFile();
-    this->integrationDataFile << "protected: \n\n";
+    this->checkIntegrationDataFile(os);
+    os << "protected: \n\n";
     for(const auto& v : this->mb.getMainVariables()){
       if(v.first.increment_known){
-	this->integrationDataFile << "/*!\n"
-				  << " * \\brief " << v.first.name << " increment\n"
-				  << " */\n"
-				  << v.first.type  << " d" << v.first.name << ";\n\n";
+	os << "/*!\n"
+	   << " * \\brief " << v.first.name << " increment\n"
+	   << " */\n"
+	   << v.first.type  << " d" << v.first.name << ";\n\n";
       } else {
-	this->integrationDataFile << "/*!\n"
-				  << " * \\brief " << v.first.name << " at the end of the time step\n"
-				  << " */\n"
-				  << v.first.type  << " " << v.first.name << "1;\n\n";
+	os << "/*!\n"
+	   << " * \\brief " << v.first.name << " at the end of the time step\n"
+	   << " */\n"
+	   << v.first.type  << " " << v.first.name << "1;\n\n";
       }
     }
-    this->integrationDataFile << "/*!\n"
-			      << " * \\brief time increment\n"
-			      << " */\n"
-			      << "time dt;\n\n";
+    os << "/*!\n"
+       << " * \\brief time increment\n"
+       << " */\n"
+       << "time dt;\n\n";
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataStandardTFELTypedefs()
+  void BehaviourDSLCommon::writeIntegrationDataStandardTFELTypedefs(std::ostream& os) const
   {
-    this->checkIntegrationDataFile();
-    this->integrationDataFile << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
-			      << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n"
-			      << "static " << constexpr_c << " unsigned short StensorSize = "
-			      << "StensorDimeToSize::value;\n"
-			      << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
-			      << "static " << constexpr_c << " unsigned short TensorSize = "
-			      << "TensorDimeToSize::value;\n\n";
-    this->writeStandardTFELTypedefs(this->integrationDataFile);
-    this->integrationDataFile << '\n';
+    this->checkIntegrationDataFile(os);
+    os << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
+       << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n"
+       << "static " << constexpr_c << " unsigned short StensorSize = "
+       << "StensorDimeToSize::value;\n"
+       << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
+       << "static " << constexpr_c << " unsigned short TensorSize = "
+       << "TensorDimeToSize::value;\n\n";
+    this->writeStandardTFELTypedefs(os);
+    os << '\n';
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataDisabledConstructors()
+  void BehaviourDSLCommon::writeIntegrationDataDisabledConstructors(std::ostream& os) const
   {
-    this->checkIntegrationDataFile();
+    this->checkIntegrationDataFile(os);
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataConstructors(const Hypothesis h)
+  void BehaviourDSLCommon::writeIntegrationDataConstructors(std::ostream& os,
+							    const Hypothesis h) const
   {
     const auto& md = this->mb.getBehaviourData(h);
-    this->checkIntegrationDataFile();
-    this->integrationDataFile << "/*!\n"
-			      << "* \\brief Default constructor\n"
-			      << "*/\n"
-			      << this->mb.getClassName() << "IntegrationData()\n"
-			      << "{}\n\n"
-			      << "/*!\n"
-			      << "* \\brief Copy constructor\n"
-			      << "*/\n"
-			      << this->mb.getClassName() << "IntegrationData(const "
-			      << this->mb.getClassName() << "IntegrationData& src)\n"
-			      << ": ";
+    this->checkIntegrationDataFile(os);
+    os << "/*!\n"
+       << "* \\brief Default constructor\n"
+       << "*/\n"
+       << this->mb.getClassName() << "IntegrationData()\n"
+       << "{}\n\n"
+       << "/*!\n"
+       << "* \\brief Copy constructor\n"
+       << "*/\n"
+       << this->mb.getClassName() << "IntegrationData(const "
+       << this->mb.getClassName() << "IntegrationData& src)\n"
+       << ": ";
     for(const auto& v : this->mb.getMainVariables()){
       if(v.first.increment_known){
-	this->integrationDataFile << "d" <<v.first.name  << "(src.d" << v.first.name << "),\n";
+	os << "d" <<v.first.name  << "(src.d" << v.first.name << "),\n";
       } else {
-	this->integrationDataFile << v.first.name  << "1(src." << v.first.name << "1),\n";
+	os << v.first.name  << "1(src." << v.first.name << "1),\n";
       }
     }
-    this->integrationDataFile << "dt(src.dt)";
+    os << "dt(src.dt)";
     for(const auto& v : md.getExternalStateVariables()){
-      this->integrationDataFile << ",\nd" << v.name << "(src.d" << v.name << ")";
+      os << ",\nd" << v.name << "(src.d" << v.name << ")";
     }
-    this->integrationDataFile << "\n{}\n\n";
+    os << "\n{}\n\n";
     // Creating constructor for external interfaces
     for(const auto& i : this->interfaces){
       if(i.second->isModellingHypothesisHandled(h,this->mb)){
-	i.second->writeIntegrationDataConstructor(this->integrationDataFile,h,this->mb);
+	i.second->writeIntegrationDataConstructor(os,h,this->mb);
       }
     }
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataScaleOperators(const Hypothesis h)
+  void BehaviourDSLCommon::writeIntegrationDataScaleOperators(std::ostream& os,
+							      const Hypothesis h) const
   {
     const auto& md = this->mb.getBehaviourData(h);
     bool iknown = true;
     for(const auto& v  : this->mb.getMainVariables()){
       iknown = v.first.increment_known;
     }
-    this->checkIntegrationDataFile();
-    this->integrationDataFile << "/*\n"
-			      << "* Multiplication by a scalar.\n"
-			      << "*/\n"
-			      << "template<typename Scal>\n"
-			      << "typename std::enable_if<\n"
-			      << "tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&\n"
-			      << "tfel::typetraits::IsScalar<Scal>::cond&&\n"
-			      << "tfel::typetraits::IsReal<Scal>::cond&&\n"
-			      << "std::is_same<Type," 
-			      << "typename tfel::typetraits::Promote"
-			      << "<Type,Scal>::type>::value,\n"
-			      << this->mb.getClassName() << "IntegrationData&\n"
-			      << ">::type\n";
+    this->checkIntegrationDataFile(os);
+    os << "/*\n"
+       << "* Multiplication by a scalar.\n"
+       << "*/\n"
+       << "template<typename Scal>\n"
+       << "typename std::enable_if<\n"
+       << "tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&\n"
+       << "tfel::typetraits::IsScalar<Scal>::cond&&\n"
+       << "tfel::typetraits::IsReal<Scal>::cond&&\n"
+       << "std::is_same<Type," 
+       << "typename tfel::typetraits::Promote"
+       << "<Type,Scal>::type>::value,\n"
+       << this->mb.getClassName() << "IntegrationData&\n"
+       << ">::type\n";
     if(!iknown){
       if(this->mb.useQt()){
-	this->integrationDataFile << "scale(const " << this->mb.getClassName() << "BehaviourData<hypothesis,Type,use_qt>& behaviourData, const Scal time_scaling_factor){\n";
+	os << "scale(const " << this->mb.getClassName() << "BehaviourData<hypothesis,Type,use_qt>& behaviourData, const Scal time_scaling_factor){\n";
       } else {
-	this->integrationDataFile << "scale(const " << this->mb.getClassName() << "BehaviourData<hypothesis,Type,false>& behaviourData, const Scal time_scaling_factor){\n";
+	os << "scale(const " << this->mb.getClassName() << "BehaviourData<hypothesis,Type,false>& behaviourData, const Scal time_scaling_factor){\n";
       }
     } else {
       if(this->mb.useQt()){
-	this->integrationDataFile << "scale(const " << this->mb.getClassName() << "BehaviourData<hypothesis,Type,use_qt>&, const Scal time_scaling_factor){\n";
+	os << "scale(const " << this->mb.getClassName() << "BehaviourData<hypothesis,Type,use_qt>&, const Scal time_scaling_factor){\n";
       } else {
-	this->integrationDataFile << "scale(const " << this->mb.getClassName() << "BehaviourData<hypothesis,Type,false>&, const Scal time_scaling_factor){\n";
+	os << "scale(const " << this->mb.getClassName() << "BehaviourData<hypothesis,Type,false>&, const Scal time_scaling_factor){\n";
       }
     }
-    this->integrationDataFile << "this->dt   *= time_scaling_factor;\n";
+    os << "this->dt   *= time_scaling_factor;\n";
     for(const auto& v : this->mb.getMainVariables()){
       if(v.first.increment_known){
-	this->integrationDataFile << "this->d" <<v.first.name  << " *= time_scaling_factor;\n";
+	os << "this->d" <<v.first.name  << " *= time_scaling_factor;\n";
       } else {
-	this->integrationDataFile << "this->" <<v.first.name  << "1 = (1-time_scaling_factor)*(behaviourData." <<v.first.name  << "0)+time_scaling_factor*(this->" <<v.first.name  << "1);\n";
+	os << "this->" <<v.first.name  << "1 = (1-time_scaling_factor)*(behaviourData." <<v.first.name  << "0)+time_scaling_factor*(this->" <<v.first.name  << "1);\n";
       }
     }
-    this->integrationDataFile << "this->dT   *= time_scaling_factor;\n";
+    os << "this->dT   *= time_scaling_factor;\n";
     for(const auto& v : md.getExternalStateVariables()){
-      this->integrationDataFile << "this->d" << v.name << " *= time_scaling_factor;\n";
+      os << "this->d" << v.name << " *= time_scaling_factor;\n";
     }
-    this->integrationDataFile << "return *this;\n"
-			      << "}\n\n";
+    os << "return *this;\n"
+       << "}\n\n";
   } // end of BehaviourDSLCommon::writeIntegrationDataScaleOpeartors
 
-  void BehaviourDSLCommon::writeIntegrationDataClassHeader() 
+  void BehaviourDSLCommon::writeIntegrationDataClassHeader(std::ostream& os) const
   {
-    this->checkIntegrationDataFile();
-    this->integrationDataFile << "/*!\n"
-			      << "* \\class " << this->mb.getClassName() << "IntegrationData\n"
-			      << "* \\brief This class implements the " 
-			      << this->mb.getClassName() << "IntegrationData" << " behaviour.\n"
-			      << "* \\param unsigned short N, space dimension.\n"
-			      << "* \\param typename Type, numerical type.\n"
-			      << "* \\param bool use_qt, conditional saying if quantities are use.\n";
+    this->checkIntegrationDataFile(os);
+    os << "/*!\n"
+       << "* \\class " << this->mb.getClassName() << "IntegrationData\n"
+       << "* \\brief This class implements the " 
+       << this->mb.getClassName() << "IntegrationData" << " behaviour.\n"
+       << "* \\param unsigned short N, space dimension.\n"
+       << "* \\param typename Type, numerical type.\n"
+       << "* \\param bool use_qt, conditional saying if quantities are use.\n";
     if(!this->authorName.empty()){
-      this->integrationDataFile << "* \\author " << this->authorName << '\n';
+      os << "* \\author " << this->authorName << '\n';
     }
     if(!this->date.empty()){
-      this->integrationDataFile << "* \\date   " << this->date << '\n';
+      os << "* \\date   " << this->date << '\n';
     }
-    this->integrationDataFile << "*/\n";
+    os << "*/\n";
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataForwardDeclarations()
+  void BehaviourDSLCommon::writeIntegrationDataForwardDeclarations(std::ostream& os) const
   {
-    this->checkIntegrationDataFile();
-    this->integrationDataFile << "// Forward Declaration\n"
-			      << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
-			      << "class " << this->mb.getClassName() << "IntegrationData;\n\n";
+    this->checkIntegrationDataFile(os);
+    os << "// Forward Declaration\n"
+       << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
+       << "class " << this->mb.getClassName() << "IntegrationData;\n\n";
     if(this->mb.useQt()){
-      this->integrationDataFile << "// Forward Declaration\n"
-				<< "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
-				<< "std::ostream&\n operator <<(std::ostream&,"
-				<< "const " << this->mb.getClassName() 
-				<< "IntegrationData<hypothesis,Type,use_qt>&);\n\n";
+      os << "// Forward Declaration\n"
+	 << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n"
+	 << "std::ostream&\n operator <<(std::ostream&,"
+	 << "const " << this->mb.getClassName() 
+	 << "IntegrationData<hypothesis,Type,use_qt>&);\n\n";
     } else {
-      this->integrationDataFile << "// Forward Declaration\n"
-				<< "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n"
-				<< "std::ostream&\n operator <<(std::ostream&,"
-				<< "const " << this->mb.getClassName() 
-				<< "IntegrationData<hypothesis,Type,false>&);\n\n";
+      os << "// Forward Declaration\n"
+	 << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n"
+	 << "std::ostream&\n operator <<(std::ostream&,"
+	 << "const " << this->mb.getClassName() 
+	 << "IntegrationData<hypothesis,Type,false>&);\n\n";
     }
     // maintenant, il faut déclarer toutes les spécialisations partielles...
     const auto& mh = this->mb.getModellingHypotheses();
     for(const auto & h : mh){
       if(this->mb.hasSpecialisedMechanicalData(h)){
 	if(this->mb.useQt()){
-	  this->integrationDataFile << "// Forward Declaration\n"
-				    << "template<typename Type,bool use_qt>\n"
-				    << "std::ostream&\n operator <<(std::ostream&,"
-				    << "const " << this->mb.getClassName() 
-				    << "IntegrationData<ModellingHypothesis::"
-				    << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>&);\n\n";
+	  os << "// Forward Declaration\n"
+	     << "template<typename Type,bool use_qt>\n"
+	     << "std::ostream&\n operator <<(std::ostream&,"
+	     << "const " << this->mb.getClassName() 
+	     << "IntegrationData<ModellingHypothesis::"
+	     << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>&);\n\n";
 	} else {
-	  this->integrationDataFile << "// Forward Declaration\n"
-				    << "template<typename Type>\n"
-				    << "std::ostream&\n operator <<(std::ostream&,"
-				    << "const " << this->mb.getClassName() 
-				    << "IntegrationData<ModellingHypothesis::"
-				    << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>&);\n\n";
+	  os << "// Forward Declaration\n"
+	     << "template<typename Type>\n"
+	     << "std::ostream&\n operator <<(std::ostream&,"
+	     << "const " << this->mb.getClassName() 
+	     << "IntegrationData<ModellingHypothesis::"
+	     << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>&);\n\n";
 	}
       }
     }
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataClassBegin(const Hypothesis h) {
-    using namespace std;
-    this->checkIntegrationDataFile();
+  void BehaviourDSLCommon::writeIntegrationDataClassBegin(std::ostream& os,
+							  const Hypothesis h) const{
+    this->checkIntegrationDataFile(os);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(this->mb.useQt()){
-	this->integrationDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
-	this->integrationDataFile << "class " << this->mb.getClassName() << "IntegrationData\n";
+	os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
+	os << "class " << this->mb.getClassName() << "IntegrationData\n";
       } else {
-	this->integrationDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
-	this->integrationDataFile << "class " << this->mb.getClassName() 
-				  << "IntegrationData<hypothesis,Type,false>\n";
+	os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
+	os << "class " << this->mb.getClassName() 
+	   << "IntegrationData<hypothesis,Type,false>\n";
       }
     } else {
       if(this->mb.useQt()){
-	this->integrationDataFile << "template<typename Type,bool use_qt>\n";
-	this->integrationDataFile << "class " << this->mb.getClassName()
-				  << "IntegrationData<ModellingHypothesis::"
-				  << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>\n";
+	os << "template<typename Type,bool use_qt>\n";
+	os << "class " << this->mb.getClassName()
+	   << "IntegrationData<ModellingHypothesis::"
+	   << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>\n";
       } else {
-	this->integrationDataFile << "template<typename Type>\n";
-	this->integrationDataFile << "class " << this->mb.getClassName() 
-				  << "IntegrationData<ModellingHypothesis::"
-				  << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>\n";
+	os << "template<typename Type>\n";
+	os << "class " << this->mb.getClassName() 
+	   << "IntegrationData<ModellingHypothesis::"
+	   << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>\n";
       }
     }
-    this->integrationDataFile << "{\n\n";
+    os << "{\n\n";
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      this->integrationDataFile << "static " << constexpr_c << " ModellingHypothesis::Hypothesis hypothesis = " 
-				<< "ModellingHypothesis::"
-				<< ModellingHypothesis::toUpperCaseString(h) << ";\n";
+      os << "static " << constexpr_c << " ModellingHypothesis::Hypothesis hypothesis = " 
+	 << "ModellingHypothesis::"
+	 << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }
-    this->integrationDataFile << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n";
-    this->integrationDataFile << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);\n";
-    this->integrationDataFile << "TFEL_STATIC_ASSERT(tfel::typetraits::"
-			      << "IsFundamentalNumericType<Type>::cond);\n";
-    this->integrationDataFile << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n";
-    this->integrationDataFile << "friend std::ostream& operator<< <>(std::ostream&,const ";
-    this->integrationDataFile << this->mb.getClassName() << "IntegrationData&);\n\n";
+    os << "static " << constexpr_c << " unsigned short N = ModellingHypothesisToSpaceDimension<hypothesis>::value;\n";
+    os << "TFEL_STATIC_ASSERT(N==1||N==2||N==3);\n";
+    os << "TFEL_STATIC_ASSERT(tfel::typetraits::"
+       << "IsFundamentalNumericType<Type>::cond);\n";
+    os << "TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<Type>::cond);\n\n";
+    os << "friend std::ostream& operator<< <>(std::ostream&,const ";
+    os << this->mb.getClassName() << "IntegrationData&);\n\n";
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataOutputOperator(const Hypothesis h)
+  void BehaviourDSLCommon::writeIntegrationDataOutputOperator(std::ostream& os,
+							      const Hypothesis h) const
   {    
-    using namespace std;
     const auto& md = this->mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
-    map<DrivingVariable,
-	ThermodynamicForce>::const_iterator p2;
-    this->checkBehaviourFile();
+    this->checkBehaviourFile(os);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       if(this->mb.useQt()){        
-	this->integrationDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
-	this->integrationDataFile << "std::ostream&\n";
-	this->integrationDataFile << "operator <<(std::ostream& os,";
-	this->integrationDataFile << "const " << this->mb.getClassName() 
+	os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type,bool use_qt>\n";
+	os << "std::ostream&\n";
+	os << "operator <<(std::ostream& os,";
+	os << "const " << this->mb.getClassName() 
 				  << "IntegrationData<hypothesis,Type,use_qt>& b)\n";
       } else {
-	this->integrationDataFile << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
-	this->integrationDataFile << "std::ostream&\n";
-	this->integrationDataFile << "operator <<(std::ostream& os,";
-	this->integrationDataFile << "const " << this->mb.getClassName() 
+	os << "template<ModellingHypothesis::Hypothesis hypothesis,typename Type>\n";
+	os << "std::ostream&\n";
+	os << "operator <<(std::ostream& os,";
+	os << "const " << this->mb.getClassName() 
 				  << "IntegrationData<hypothesis,Type,false>& b)\n";
       }
     } else {
       if(this->mb.useQt()){        
-	this->integrationDataFile << "template<typename Type,bool use_qt>\n";
-	this->integrationDataFile << "std::ostream&\n";
-	this->integrationDataFile << "operator <<(std::ostream& os,";
-	this->integrationDataFile << "const " << this->mb.getClassName() 
+	os << "template<typename Type,bool use_qt>\n";
+	os << "std::ostream&\n";
+	os << "operator <<(std::ostream& os,";
+	os << "const " << this->mb.getClassName() 
 				  << "IntegrationData<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>& b)\n";
       } else {
-	this->integrationDataFile << "template<typename Type>\n";
-	this->integrationDataFile << "std::ostream&\n";
-	this->integrationDataFile << "operator <<(std::ostream& os,";
-	this->integrationDataFile << "const " << this->mb.getClassName() 
+	os << "template<typename Type>\n";
+	os << "std::ostream&\n";
+	os << "operator <<(std::ostream& os,";
+	os << "const " << this->mb.getClassName() 
 				  << "IntegrationData<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>& b)\n";
       }
     }
-    this->integrationDataFile << "{\n";
-    this->integrationDataFile << "using namespace std;\n";
-    for(p2=this->mb.getMainVariables().begin();p2!=this->mb.getMainVariables().end();++p2){
-      if(p2->first.increment_known){
-	this->integrationDataFile << "os << \"d" << p2->first.name << " : \" << b.d" << p2->first.name << " << '\\n';\n";
+    os << "{\n";
+    os << "using namespace std;\n";
+    for(const auto& dv : this->mb.getMainVariables()){
+      if(dv.first.increment_known){
+	os << "os << \"d" << dv.first.name << " : \" << b.d" << dv.first.name << " << '\\n';\n";
       } else {
-	this->integrationDataFile << "os << \"" << p2->first.name << "1 : \" << b." << p2->first.name << "1 << endl;\n";
+	os << "os << \"" << dv.first.name << "1 : \" << b." << dv.first.name << "1 << endl;\n";
       }
     }
-    this->integrationDataFile << "os << \"dt : \" << b.dt << endl;\n";
-    this->integrationDataFile << "os << \"dT : \" << b.dT << endl;\n";
-    for(p=md.getExternalStateVariables().begin();p!=md.getExternalStateVariables().end();++p){
-      this->integrationDataFile << "os << \"d" << p->name << " : \" << b.d" 
-				<< p->name << " << '\\n';\n";  
+    os << "os << \"dt : \" << b.dt << endl;\n";
+    os << "os << \"dT : \" << b.dT << endl;\n";
+    for(const auto& ev : md.getExternalStateVariables()){
+      os << "os << \"d" << ev.name << " : \" << b.d" 
+	 << ev.name << " << '\\n';\n";  
     }
-    this->integrationDataFile << "return os;\n";
-    this->integrationDataFile << "}\n\n";
-  } // end of BehaviourDSLCommon::writeIntegrationDataOutputOperator()
+    os << "return os;\n";
+    os << "}\n\n";
+  } // end of BehaviourDSLCommon::writeIntegrationDataOutputOperator
 
-  void BehaviourDSLCommon::writeIntegrationDataClassEnd() {    
-    this->checkIntegrationDataFile();
-    this->integrationDataFile << "}; // end of " << this->mb.getClassName() << "IntegrationData" 
-			      << "class\n\n";
+  void BehaviourDSLCommon::writeIntegrationDataClassEnd(std::ostream& os) const{
+    this->checkIntegrationDataFile(os);
+    os << "}; // end of " << this->mb.getClassName() << "IntegrationData" 
+       << "class\n\n";
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataExternalStateVariables(const Hypothesis h) {
+  void BehaviourDSLCommon::writeIntegrationDataExternalStateVariables(std::ostream& os,
+								      const Hypothesis h) const{
     const auto& md = this->mb.getBehaviourData(h);
-    this->checkIntegrationDataFile();
-    this->writeVariablesDeclarations(this->integrationDataFile,
-				     md.getExternalStateVariables(),
+    this->checkIntegrationDataFile(os);
+    this->writeVariablesDeclarations(os,md.getExternalStateVariables(),
 				     "d","",this->fileName,false);
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataFileBegin()
+  void BehaviourDSLCommon::writeIntegrationDataFileBegin(std::ostream& os) const
   {
-    this->checkIntegrationDataFile();
-    this->writeIntegrationDataFileHeader();
-    this->writeIntegrationDataFileHeaderBegin();
-    this->writeIntegrationDataStandardTFELIncludes();
-    this->writeIncludes(this->integrationDataFile);
+    this->checkIntegrationDataFile(os);
+    this->writeIntegrationDataFileHeader(os);
+    this->writeIntegrationDataFileHeaderBegin(os);
+    this->writeIntegrationDataStandardTFELIncludes(os);
+    this->writeIncludes(os);
     // includes specific to interfaces
     for(const auto& i : this->interfaces){
-      i.second->writeInterfaceSpecificIncludes(this->integrationDataFile,this->mb);
+      i.second->writeInterfaceSpecificIncludes(os,this->mb);
     }
-    this->writeNamespaceBegin(this->integrationDataFile);
-    this->writeIntegrationDataForwardDeclarations();
+    this->writeNamespaceBegin(os);
+    this->writeIntegrationDataForwardDeclarations(os);
   } // end of BehaviourDSLCommon::writeIntegrationDataFile
 
-  void BehaviourDSLCommon::writeIntegrationDataClass(const Hypothesis h){
-    this->checkIntegrationDataFile();
-    this->writeIntegrationDataClassBegin(h);
-    this->writeIntegrationDataStandardTFELTypedefs();
-    this->writeIntegrationDataDefaultMembers();
-    this->writeIntegrationDataExternalStateVariables(h);
-    this->writeIntegrationDataDisabledConstructors();
-    this->integrationDataFile << "public:\n\n";
-    this->writeIntegrationDataConstructors(h);
-    this->writeIntegrationDataMainVariablesSetters();
-    this->writeIntegrationDataScaleOperators(h);
-    this->writeIntegrationDataClassEnd();
-    this->writeIntegrationDataOutputOperator(h);
+  void BehaviourDSLCommon::writeIntegrationDataClass(std::ostream& os,
+						     const Hypothesis h) const{
+    this->checkIntegrationDataFile(os);
+    this->writeIntegrationDataClassBegin(os,h);
+    this->writeIntegrationDataStandardTFELTypedefs(os);
+    this->writeIntegrationDataDefaultMembers(os);
+    this->writeIntegrationDataExternalStateVariables(os,h);
+    this->writeIntegrationDataDisabledConstructors(os);
+    os << "public:\n\n";
+    this->writeIntegrationDataConstructors(os,h);
+    this->writeIntegrationDataMainVariablesSetters(os);
+    this->writeIntegrationDataScaleOperators(os,h);
+    this->writeIntegrationDataClassEnd(os);
+    this->writeIntegrationDataOutputOperator(os,h);
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataFileEnd()
+  void BehaviourDSLCommon::writeIntegrationDataFileEnd(std::ostream& os) const
   {
-    this->checkIntegrationDataFile();
-    this->writeNamespaceEnd(this->integrationDataFile);
-    this->writeIntegrationDataFileHeaderEnd();
+    this->checkIntegrationDataFile(os);
+    this->writeNamespaceEnd(os);
+    this->writeIntegrationDataFileHeaderEnd(os);
   } // end of BehaviourDSLCommon::writeIntegrationDataFileEnd
 
-  void BehaviourDSLCommon::checkSrcFile() const {
-    using namespace std;
-    if((!this->integrationDataFile)||
-       (!this->integrationDataFile.good())){
-      string msg("BehaviourDSLCommon::checkSrcOutputFile : ");
-      msg += "ouput file is not valid";
-      throw(runtime_error(msg));
+  void BehaviourDSLCommon::checkSrcFile(std::ostream& os) const {
+    if((!os)||(!os.good())){
+      this->throwRuntimeError("BehaviourDSLCommon::checkSrcFile",
+			      "ouput file is not valid");
     }
   }
 
-  void BehaviourDSLCommon::writeSrcFileHeader(){
-    this->checkSrcFile();
-    this->srcFile << "/*!\n"
-		  << "* \\file   " << this->srcFileName << '\n'
-		  << "* \\brief  " << "this file implements the " 
-		  << this->mb.getClassName() << " Behaviour.\n"
-		  << "*         File generated by "
-		  << MFrontHeader::getVersionName() << " "
-		  << "version " << MFrontHeader::getVersionNumber()
-		  << '\n';
+  void BehaviourDSLCommon::writeSrcFileHeader(std::ostream& os) const{
+    this->checkSrcFile(os);
+    os << "/*!\n"
+       << "* \\file   " << this->getSrcFileName() << '\n'
+       << "* \\brief  " << "this file implements the " 
+       << this->mb.getClassName() << " Behaviour.\n"
+       << "*         File generated by "
+       << MFrontHeader::getVersionName() << " "
+       << "version " << MFrontHeader::getVersionNumber()
+       << '\n';
     if(!this->authorName.empty()){
-      this->srcFile << "* \\author " << this->authorName << '\n';
+      os << "* \\author " << this->authorName << '\n';
     }
     if(!this->date.empty()){
-      this->srcFile << "* \\date   " << this->date       << '\n';
+      os << "* \\date   " << this->date       << '\n';
     }
-    this->srcFile << " */\n\n";
+    os << " */\n\n";
     if(this->mb.hasParameters()){
-      this->srcFile << "#include<string>\n"
-		    << "#include<cstring>\n"
-		    << "#include<sstream>\n"
-		    << "#include<fstream>\n"
-		    << "#include<stdexcept>\n\n";
+      os << "#include<string>\n"
+	 << "#include<cstring>\n"
+	 << "#include<sstream>\n"
+	 << "#include<fstream>\n"
+	 << "#include<stdexcept>\n\n";
     }
-    this->srcFile << "#include\"" << this->behaviourDataFileName   << "\"\n"
-		  << "#include\"" << this->integrationDataFileName << "\"\n"
-		  << "#include\"" << this->behaviourFileName       << "\"\n\n";
+    os << "#include\"" << this->getBehaviourDataFileName()   << "\"\n"
+       << "#include\"" << this->getIntegrationDataFileName() << "\"\n"
+       << "#include\"" << this->getBehaviourFileName()       << "\"\n\n";
   } // end of BehaviourDSLCommon::writeSrcFileHeader()
 
-  void BehaviourDSLCommon::writeSrcFileStaticVariables(const Hypothesis h){
+  void BehaviourDSLCommon::writeSrcFileStaticVariables(std::ostream& os,
+						       const Hypothesis h) const{
     const auto& md = this->mb.getBehaviourData(h);
     const auto m = "tfel::material::ModellingHypothesis::"+
       ModellingHypothesis::toUpperCaseString(h);
-    this->checkSrcFile();
+    this->checkSrcFile(os);
     for(const auto& v : md.getStaticVariables()){
       if(v.type=="int"){
 	continue;
       }
       if(this->mb.useQt()){
-	this->srcFile << "template<>\n";
-	this->srcFile << "const " << this->mb.getClassName() << "<" << m << ",float,true>::" 
-		      << v.type << '\n' << this->mb.getClassName() 
-		      << "<" << m << ",float,true>::" 
-		      << v.name << " = " << this->mb.getClassName() 
-		      << "<" << m << ",float,true>::" << v.type 
-		      << "(static_cast<float>(" << v.value <<"));\n\n";
+	os << "template<>\n";
+	os << "const " << this->mb.getClassName() << "<" << m << ",float,true>::" 
+	   << v.type << '\n' << this->mb.getClassName() 
+	   << "<" << m << ",float,true>::" 
+	   << v.name << " = " << this->mb.getClassName() 
+	   << "<" << m << ",float,true>::" << v.type 
+	   << "(static_cast<float>(" << v.value <<"));\n\n";
       }
-      this->srcFile << "template<>\n";
-      this->srcFile << "const " << this->mb.getClassName() << "<" << m << ",float,false>::" 
-		    << v.type << '\n' << this->mb.getClassName() 
-		    << "<" << m << ",float,false>::" 
-		    << v.name << " = " << this->mb.getClassName() 
-		    << "<" << m << ",float,false>::" << v.type 
-		    << "(static_cast<float>(" << v.value <<"));\n\n";
+      os << "template<>\n";
+      os << "const " << this->mb.getClassName() << "<" << m << ",float,false>::" 
+	 << v.type << '\n' << this->mb.getClassName() 
+	 << "<" << m << ",float,false>::" 
+	 << v.name << " = " << this->mb.getClassName() 
+	 << "<" << m << ",float,false>::" << v.type 
+	 << "(static_cast<float>(" << v.value <<"));\n\n";
       if(this->mb.useQt()){
-	this->srcFile << "template<>\n";
-	this->srcFile << "const " << this->mb.getClassName() << "<" << m << ",double,true>::" 
-		      << v.type << '\n' << this->mb.getClassName() 
-		      << "<" << m << ",double,true>::" 
-		      << v.name << " = " << this->mb.getClassName() 
-		      << "<" << m << ",double,true>::" << v.type 
-		      << "(static_cast<double>(" << v.value <<"));\n\n";
+	os << "template<>\n";
+	os << "const " << this->mb.getClassName() << "<" << m << ",double,true>::" 
+	   << v.type << '\n' << this->mb.getClassName() 
+	   << "<" << m << ",double,true>::" 
+	   << v.name << " = " << this->mb.getClassName() 
+	   << "<" << m << ",double,true>::" << v.type 
+	   << "(static_cast<double>(" << v.value <<"));\n\n";
       }
-      this->srcFile << "template<>\n";
-      this->srcFile << "const " << this->mb.getClassName() << "<" << m << ",double,false>::" 
-		    << v.type << '\n' << this->mb.getClassName() 
-		    << "<" << m << ",double,false>::" 
-		    << v.name << " = " << this->mb.getClassName() 
-		    << "<" << m << ",double,false>::" << v.type 
-		    << "(static_cast<double>(" << v.value <<"));\n\n";
+      os << "template<>\n";
+      os << "const " << this->mb.getClassName() << "<" << m << ",double,false>::" 
+	 << v.type << '\n' << this->mb.getClassName() 
+	 << "<" << m << ",double,false>::" 
+	 << v.name << " = " << this->mb.getClassName() 
+	 << "<" << m << ",double,false>::" << v.type 
+	 << "(static_cast<double>(" << v.value <<"));\n\n";
       if(this->mb.useQt()){
-	this->srcFile << "template<>\n";
-	this->srcFile << "const " << this->mb.getClassName() << "<" << m << ",long double,true>::" 
-		      << v.type << '\n' << this->mb.getClassName() 
-		      << "<" << m << ",long double,true>::" 
-		      << v.name << " = " << this->mb.getClassName() << "<" 
-		      << m << ",long double,true>::" << v.type 
-		      << "(static_cast<long double>(" << v.value <<"));\n\n";
+	os << "template<>\n";
+	os << "const " << this->mb.getClassName() << "<" << m << ",long double,true>::" 
+	   << v.type << '\n' << this->mb.getClassName() 
+	   << "<" << m << ",long double,true>::" 
+	   << v.name << " = " << this->mb.getClassName() << "<" 
+	   << m << ",long double,true>::" << v.type 
+	   << "(static_cast<long double>(" << v.value <<"));\n\n";
       }
-      this->srcFile << "template<>\n";
-      this->srcFile << "const " << this->mb.getClassName() << "<" << m << ",long double,false>::" 
-		    << v.type << '\n' << this->mb.getClassName() 
-		    << "<" << m << ",long double,false>::" 
-		    << v.name << " = " << this->mb.getClassName() 
-		    << "<" << m << ",long double,false>::" << v.type 
-		    << "(static_cast<long double>(" << v.value <<"));\n\n";
+      os << "template<>\n";
+      os << "const " << this->mb.getClassName() << "<" << m << ",long double,false>::" 
+	 << v.type << '\n' << this->mb.getClassName() 
+	 << "<" << m << ",long double,false>::" 
+	 << v.name << " = " << this->mb.getClassName() 
+	 << "<" << m << ",long double,false>::" << v.type 
+	 << "(static_cast<long double>(" << v.value <<"));\n\n";
     }
   } // end of BehaviourDSLCommon::writeSrcFileStaticVariables
   
-  void
-  BehaviourDSLCommon::writeSrcFileUserDefinedCode()
+  void BehaviourDSLCommon::writeSrcFileUserDefinedCode(std::ostream& os) const
   {
+    this->checkSrcFile(os);
     const auto& s = this->mb.getSources();
-    this->checkBehaviourFile();
     if(!s.empty()){
-      this->srcFile << s << "\n\n";
+      os << s << "\n\n";
     }
   } // end of BehaviourDSLCommon::writeSrcFileUserDefinedCode
 
-  void
-  BehaviourDSLCommon::writeSrcFileParametersInitializers()
+  void BehaviourDSLCommon::writeSrcFileParametersInitializers(std::ostream& os) const
   {
     if(!this->mb.hasParameters()){
       return;
@@ -5925,7 +5928,7 @@ namespace mfront{
     hs.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     for(const auto & h : hs){
       if(this->mb.hasParameters(h)){
-	this->writeSrcFileParametersInitializer(h);
+	this->writeSrcFileParametersInitializer(os,h);
       }
     }
   } // end of BehaviourDSLCommon::writeSrcFileParametersInitializer
@@ -5952,10 +5955,10 @@ namespace mfront{
       << "}\n\n";
   }
 
-  void BehaviourDSLCommon::writeSrcFileParametersInitializer(const Hypothesis h)
+  void BehaviourDSLCommon::writeSrcFileParametersInitializer(std::ostream& os,
+							     const Hypothesis h) const
   {
-    using namespace std;
-    this->checkBehaviourFile();
+    this->checkBehaviourFile(os);
     // treating the default case
     bool rp  = false; // real    parameter found
     bool ip  = false; // integer parameter found
@@ -5964,21 +5967,21 @@ namespace mfront{
     bool ip2 = false; // integer parameter found
     bool up2 = false; // unsigned short parameter found
     VariableDescriptionContainer::const_iterator p;
-    string cname(this->mb.getClassName());
+    std::string cname(this->mb.getClassName());
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       cname += ModellingHypothesis::toString(h);
     }
     cname += "ParametersInitializer";
-    string dcname(this->mb.getClassName()+"ParametersInitializer");
-    this->srcFile << cname << "&\n"
-		  << cname << "::get()\n"
-		  <<"{\n"
-		  << "static " << cname << " i;\n"
-		  << "return i;\n"
-		  << "}\n\n";
-    this->srcFile << cname << "::" 
-		  << cname << "()\n"
-		  <<"{\n";
+    std::string dcname(this->mb.getClassName()+"ParametersInitializer");
+    os << cname << "&\n"
+       << cname << "::get()\n"
+       <<"{\n"
+       << "static " << cname << " i;\n"
+       << "return i;\n"
+       << "}\n\n";
+    os << cname << "::" 
+       << cname << "()\n"
+       <<"{\n";
     const VariableDescriptionContainer& params =
       this->mb.getBehaviourData(h).getParameters();
     for(p=params.begin();p!=params.end();++p){
@@ -5988,18 +5991,18 @@ namespace mfront{
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
 	  rp2=true;
-	  this->srcFile << "this->" << p->name << " = ";
+	  os << "this->" << p->name << " = ";
 	  if(p->arraySize==1u){
-	    this->srcFile << this->mb.getFloattingPointParameterDefaultValue(h,p->name) << ";\n"; 
+	    os << this->mb.getFloattingPointParameterDefaultValue(h,p->name) << ";\n"; 
 	  } else {
-	    this->srcFile << '{';
+	    os << '{';
 	    for(unsigned short i=0;i!=p->arraySize;){
-	      this->srcFile << this->mb.getFloattingPointParameterDefaultValue(h,p->name,i); 
+	      os << this->mb.getFloattingPointParameterDefaultValue(h,p->name,i); 
 	      if(++i!=p->arraySize){
-		this->srcFile << ',';
+		os << ',';
 	      }
 	    }
-	    this->srcFile << "};\n";
+	    os << "};\n";
 	  }
 	}
       } else if(p->type=="int"){
@@ -6008,8 +6011,8 @@ namespace mfront{
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
 	  ip2=true;
-	  this->srcFile << "this->" << p->name << " = " 
-			<< this->mb.getIntegerParameterDefaultValue(h,p->name) << ";\n"; 
+	  os << "this->" << p->name << " = " 
+	     << this->mb.getIntegerParameterDefaultValue(h,p->name) << ";\n"; 
 	}
       } else if(p->type=="ushort"){
 	up = true;
@@ -6017,18 +6020,18 @@ namespace mfront{
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
 	  up2=true;
-	  this->srcFile << "this->" << p->name << " = " 
-			<< this->mb.getUnsignedShortParameterDefaultValue(h,p->name) << ";\n"; 
+	  os << "this->" << p->name << " = " 
+	     << this->mb.getUnsignedShortParameterDefaultValue(h,p->name) << ";\n"; 
 	}
       }
     }
-    this->srcFile << "// Reading parameters from a file\n";
-    this->srcFile << cname << "::readParameters(*this,\"" << this->mb.getClassName() << "-parameters.txt\");\n";
+    os << "// Reading parameters from a file\n";
+    os << cname << "::readParameters(*this,\"" << this->mb.getClassName() << "-parameters.txt\");\n";
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      this->srcFile << cname << "::readParameters(*this,\"" << this->mb.getClassName() << ModellingHypothesis::toString(h) << "-parameters.txt\");\n";
+      os << cname << "::readParameters(*this,\"" << this->mb.getClassName() << ModellingHypothesis::toString(h) << "-parameters.txt\");\n";
     }
-    this->srcFile <<"}\n\n";
-    auto write_if = [](std::ostream& os,bool& b){
+    os <<"}\n\n";
+    auto write_if = [&os](bool& b){
       if(b){
 	os << "if(";
 	b = false;
@@ -6037,157 +6040,158 @@ namespace mfront{
       }
     };
     if(rp){
-      this->srcFile <<"void\n"
-		    << cname << "::set(const char* const key,\nconst double v)" 
-		    << "{\n"
-		    << "using namespace std;\n";
+      os <<"void\n"
+	 << cname << "::set(const char* const key,\nconst double v)" 
+	 << "{\n"
+	 << "using namespace std;\n";
       bool first = true;
       for(p=params.begin();p!=params.end();++p){
 	if(p->type=="real"){
 	  if(p->arraySize==1u){
-	    write_if(this->srcFile,first);
-	    this->srcFile << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){\n";
+	    write_if(first);
+	    os << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){\n";
 	    if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	       ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 		(!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
-	      this->srcFile << "this->" << p->name << " = v;\n";
+	      os << "this->" << p->name << " = v;\n";
 	    } else {
-	      this->srcFile << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\",v);\n";
+	      os << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\",v);\n";
 	    }
 	  } else {
 	    for(unsigned short i=0;i!=p->arraySize;++i){
-	      write_if(this->srcFile,first);
-	      const auto vn = p->name+'['+to_string(i)+']';
-	      const auto en = this->mb.getExternalName(h,p->name)+'['+to_string(i)+']';
-	      this->srcFile << "::strcmp(\""+en+"\",key)==0){\n";
+	      write_if(first);
+	      const auto vn = p->name+'['+std::to_string(i)+']';
+	      const auto en = this->mb.getExternalName(h,p->name)+'['+std::to_string(i)+']';
+	      os << "::strcmp(\""+en+"\",key)==0){\n";
 	      if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 		 ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 		  (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
-		this->srcFile << "this->" << vn << " = v;\n";
+		os << "this->" << vn << " = v;\n";
 	      } else {
-		this->srcFile << dcname << "::get().set(\"" << en << "\",v);\n";
+		os << dcname << "::get().set(\"" << en << "\",v);\n";
 	      }
 	    }
 	  }
 	}
       }
-      this->srcFile << "} else {\n";
-      this->srcFile << "string msg(\"" << cname << "::set : \");\n"
-		    << "msg += \" no parameter named '\";\n"
-		    << "msg += key;\n"
-		    << "msg += \"'\";\n"
-		    << "throw(runtime_error(msg));\n"
-		    << "}\n"
-		    << "}\n\n";
+      os << "} else {\n";
+      os << "string msg(\"" << cname << "::set : \");\n"
+	 << "msg += \" no parameter named '\";\n"
+	 << "msg += key;\n"
+	 << "msg += \"'\";\n"
+	 << "throw(runtime_error(msg));\n"
+	 << "}\n"
+	 << "}\n\n";
     }
     if(ip){
-      this->srcFile <<"void\n"
-		    << cname << "::set(const char* const key,\nconst int v)" 
-		    << "{\n"
-		    << "using namespace std;\n";
+      os <<"void\n"
+	 << cname << "::set(const char* const key,\nconst int v)" 
+	 << "{\n"
+	 << "using namespace std;\n";
       bool first = true;
       for(p=params.begin();p!=params.end();++p){
 	if(p->type=="int"){
-	  write_if(this->srcFile,first);
-	  this->srcFile << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){\n";
+	  write_if(first);
+	  os << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){\n";
 	  if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	     ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	      (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
-	    this->srcFile << "this->" << p->name << " = v;\n";
+	    os << "this->" << p->name << " = v;\n";
 	  } else {
-	    this->srcFile << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\",v);\n";
+	    os << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\",v);\n";
 	  }
 	}
       }
-      this->srcFile << "} else {\n";
-      this->srcFile << "string msg(\"" << cname << "::set : \");\n"
-		    << "msg += \" no parameter named '\";\n"
-		    << "msg += key;\n"
-		    << "msg += \"'\";\n"
-		    << "throw(runtime_error(msg));\n"
-		    << "}\n"
-		    << "}\n\n";
+      os << "} else {\n";
+      os << "string msg(\"" << cname << "::set : \");\n"
+	 << "msg += \" no parameter named '\";\n"
+	 << "msg += key;\n"
+	 << "msg += \"'\";\n"
+	 << "throw(runtime_error(msg));\n"
+	 << "}\n"
+	 << "}\n\n";
     }
     if(up){
-      this->srcFile <<"void\n"
-		    << cname << "::set(const char* const key,\nconst unsigned short v)" 
-		    << "{\n"
-		    << "using namespace std;\n";
+      os <<"void\n"
+	 << cname << "::set(const char* const key,\nconst unsigned short v)" 
+	 << "{\n"
+	 << "using namespace std;\n";
       bool first = true;
       for(p=params.begin();p!=params.end();++p){
 	if(p->type=="ushort"){
-	  write_if(this->srcFile,first);
-	  this->srcFile << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){\n";
+	  write_if(first);
+	  os << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){\n";
 	  if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	     ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	      (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
-	    this->srcFile << "this->" << p->name << " = v;\n";
+	    os << "this->" << p->name << " = v;\n";
 	  } else {
-	    this->srcFile << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\",v);\n";
+	    os << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\",v);\n";
 	  }
 	}
       }
-      this->srcFile << "} else {\n";
-      this->srcFile << "string msg(\"" << cname << "::set : \");\n"
-		    << "msg += \" no parameter named '\";\n"
-		    << "msg += key;\n"
-		    << "msg += \"'\";\n"
-		    << "throw(runtime_error(msg));\n"
-		    << "}\n"
-		    << "}\n\n";
+      os << "} else {\n";
+      os << "string msg(\"" << cname << "::set : \");\n"
+	 << "msg += \" no parameter named '\";\n"
+	 << "msg += key;\n"
+	 << "msg += \"'\";\n"
+	 << "throw(runtime_error(msg));\n"
+	 << "}\n"
+	 << "}\n\n";
     }
     if(rp2){
-      BehaviourDSLCommon_writeConverter(this->srcFile,cname,"double","Double");
+      BehaviourDSLCommon_writeConverter(os,cname,"double","Double");
     }
     if(ip2){
-      BehaviourDSLCommon_writeConverter(this->srcFile,cname,"int","Int");
+      BehaviourDSLCommon_writeConverter(os,cname,"int","Int");
     }
     if(up2){
-      BehaviourDSLCommon_writeConverter(this->srcFile,cname,"unsigned short","UnsignedShort");
+      BehaviourDSLCommon_writeConverter(os,cname,"unsigned short","UnsignedShort");
     }
-    this->srcFile << "void\n"
-		  << cname << "::readParameters(" << cname << "&";
+    os << "void\n"
+       << cname << "::readParameters(" << cname << "&";
     if(rp2||ip2||up2){
-      this->srcFile << " pi";
+      os << " pi";
     }
-    this->srcFile << ",const char* const fn)" 
-		  << "{\n"
-		  << "auto tokenize = [](const std::string& line){\n"
-		  << "std::istringstream tokenizer(line);\n"
-		  << "std::vector<std::string> tokens;\n"
-		  << "std::copy(std::istream_iterator<std::string>(tokenizer),\n"
-		  << "std::istream_iterator<std::string>(),\n"
-		  << "std::back_inserter(tokens));\n"
-		  << "return tokens;\n"
-		  << "};\n"
-		  << "std::ifstream f(fn);\n"
-		  << "if(!f){\n"
-      		  << "return;\n"
-      		  << "}\n"
-		  << "size_t ln = 1u;\n"
-		  << "while(!f.eof()){\n"
-		  << "auto line = std::string{};\n"
-		  << "std::getline(f,line);\n"
-		  << "auto tokens = tokenize(line);\n"
-		  << "auto throw_if = [ln,line,fn](const bool c,const std::string& m){\n"
-		  << "if(c){throw(std::runtime_error(\"" << cname << "::readParameters: \"\n"
-		  << "\"error at line '\"+std::to_string(ln)+\"' \"\n"
-		  << "\"while reading parameter file '\"+std::string(fn)+\"'\"\n"
-		  << "\"(\"+m+\")\"));}\n"
-		  << "};\n"
-		  << "if(tokens.empty()){\n"
-		  << "continue;\n"
-		  << "}\n"
-		  << "if(tokens[0][0]=='#'){\n"
-		  << "continue;\n"
-		  << "}\n"
-		  << "throw_if(tokens.size()!=2u,\"invalid number of tokens\");\n";
+    os << ",const char* const fn)" 
+       << "{\n"
+       << "auto tokenize = [](const std::string& line){\n"
+       << "std::istringstream tokenizer(line);\n"
+       << "std::vector<std::string> tokens;\n"
+       << "std::copy(std::istream_iterator<std::string>(tokenizer),\n"
+       << "std::istream_iterator<std::string>(),\n"
+       << "std::back_inserter(tokens));\n"
+       << "return tokens;\n"
+       << "};\n"
+       << "std::ifstream f(fn);\n"
+       << "if(!f){\n"
+       << "return;\n"
+       << "}\n"
+       << "size_t ln = 1u;\n"
+       << "while(!f.eof()){\n"
+       << "auto line = std::string{};\n"
+       << "std::getline(f,line);\n"
+       << "auto tokens = tokenize(line);\n"
+       << "auto throw_if = [ln,line,fn](const bool c,const std::string& m){\n"
+       << "if(c){throw(std::runtime_error(\"" << cname << "::readParameters: \"\n"
+       << "\"error at line '\"+std::to_string(ln)+\"' \"\n"
+       << "\"while reading parameter file '\"+std::string(fn)+\"'\"\n"
+       << "\"(\"+m+\")\"));}\n"
+       << "};\n"
+       << "if(tokens.empty()){\n"
+       << "continue;\n"
+       << "}\n"
+       << "if(tokens[0][0]=='#'){\n"
+       << "continue;\n"
+       << "}\n"
+       << "throw_if(tokens.size()!=2u,\"invalid number of tokens\");\n";
     bool first = true;
     for(const auto& v : params){
       const auto b = ((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 		      ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 		       (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,v.name))));
-      auto write = [&v,&write_if,&b,&dcname,&cname](std::ostream& os,const std::string& vn, const std::string& en){
+      auto write = [&os,&v,&write_if,&b,&dcname,&cname](const std::string& vn,
+							const std::string& en){
 	os << "\"" <<  en << "\"==tokens[0]){\n";
 	if(b){
 	  os << "pi." << vn << " = ";
@@ -6217,51 +6221,51 @@ namespace mfront{
 	}
       };
       if(v.arraySize==1u){
-	write_if(this->srcFile,first);
-	write(this->srcFile,v.name,this->mb.getExternalName(h,v.name));
+	write_if(first);
+	write(v.name,this->mb.getExternalName(h,v.name));
       } else {
 	for(unsigned short i=0;i!=v.arraySize;++i){
-	  const auto vn = v.name+'['+to_string(i)+']';
-	  const auto en = this->mb.getExternalName(h,v.name)+'['+to_string(i)+']';
-	  write_if(this->srcFile,first);
-	  write(this->srcFile,vn,en);
+	  const auto vn = v.name+'['+std::to_string(i)+']';
+	  const auto en = this->mb.getExternalName(h,v.name)+'['+std::to_string(i)+']';
+	  write_if(first);
+	  write(vn,en);
 	}
       }
     }
-    this->srcFile << "} else {\n"
-		  << "throw_if(true,\"invalid parameter '\"+tokens[0]+\"'\");\n"
-		  << "}\n"
-      		  << "}\n"
-		  << "}\n\n";
+    os << "} else {\n"
+       << "throw_if(true,\"invalid parameter '\"+tokens[0]+\"'\");\n"
+       << "}\n"
+       << "}\n"
+       << "}\n\n";
   } // end of BehaviourDSLCommon::writeSrcFileParametersInitializer
   
-  void BehaviourDSLCommon::writeSrcFileBehaviourProfiler()
+  void BehaviourDSLCommon::writeSrcFileBehaviourProfiler(std::ostream& os) const
   {
     if(this->mb.getAttribute(BehaviourData::profiling,false)){
-      this->checkSrcFile();
-      this->srcFile << "mfront::BehaviourProfiler&\n"
-		    << this->mb.getClassName() << "Profiler::getProfiler()\n"
-		    << "{\n"
-		    << "static mfront::BehaviourProfiler profiler(\""
-		    << this->mb.getClassName() << "\");\n;"
-		    << "return profiler;\n"
-		    << "}\n\n";
+      this->checkSrcFile(os);
+      os << "mfront::BehaviourProfiler&\n"
+	 << this->mb.getClassName() << "Profiler::getProfiler()\n"
+	 << "{\n"
+	 << "static mfront::BehaviourProfiler profiler(\""
+	 << this->mb.getClassName() << "\");\n;"
+	 << "return profiler;\n"
+	 << "}\n\n";
     }
   } // end of BehaviourDSLCommon::writeSrcFileBehaviourProfiler
 
-  void BehaviourDSLCommon::writeSrcFile()
+  void BehaviourDSLCommon::writeSrcFile(std::ostream& os) const
   {
-    this->writeSrcFileHeader();
-    this->writeSrcFileUserDefinedCode();
-    this->writeNamespaceBegin(this->srcFile);
-    this->writeSrcFileBehaviourProfiler();
-    this->writeSrcFileParametersInitializers();
+    this->writeSrcFileHeader(os);
+    this->writeSrcFileUserDefinedCode(os);
+    this->writeNamespaceBegin(os);
+    this->writeSrcFileBehaviourProfiler(os);
+    this->writeSrcFileParametersInitializers(os);
     // modelling hypotheses handled by the behaviour
     const auto& mh = this->mb.getModellingHypotheses();
     for(const auto & h : mh){
-      this->writeSrcFileStaticVariables(h);
+      this->writeSrcFileStaticVariables(os,h);
     }
-    this->writeNamespaceEnd(this->srcFile);
+    this->writeNamespaceEnd(os);
   } // end of BehaviourDSLCommon::writeSrcFile
 
   std::string
@@ -6594,5 +6598,7 @@ namespace mfront{
       }
     }
   } // end of BehaviourDSLCommon::setComputeFinalStressFromComputeFinalStressCandidateIfNecessary
+
+  BehaviourDSLCommon::~BehaviourDSLCommon() = default;
 
 } // end of namespace mfront

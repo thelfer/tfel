@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_SYSTEM_BINARYREAD_H_
-#define LIB_TFEL_SYSTEM_BINARYREAD_H_ 
+#ifndef LIB_TFEL_SYSTEM_BINARYREAD_HXX
+#define LIB_TFEL_SYSTEM_BINARYREAD_HXX 
 
 #include<unistd.h>
 #include<type_traits>
@@ -162,5 +162,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_SYSTEM_BINARYREAD_H_ */
+#endif /* LIB_TFEL_SYSTEM_BINARYREAD_HXX */
 

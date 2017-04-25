@@ -13,8 +13,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_IS_ASSIGNABLETO_HXX_
-#define LIB_TFEL_IS_ASSIGNABLETO_HXX_ 
+#ifndef LIB_TFEL_IS_ASSIGNABLETO_HXX
+#define LIB_TFEL_IS_ASSIGNABLETO_HXX 
 
 #include<type_traits>
 #include"TFEL/TypeTraits/Promote.hxx"
@@ -115,5 +115,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_IS_ASSIGNABLETO_HXX_ */
+#endif /* LIB_TFEL_IS_ASSIGNABLETO_HXX */
 

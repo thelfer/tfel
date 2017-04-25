@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_SYSTEM_BINARYWRITE_H_
-#define LIB_TFEL_SYSTEM_BINARYWRITE_H_ 
+#ifndef LIB_TFEL_SYSTEM_BINARYWRITE_HXX
+#define LIB_TFEL_SYSTEM_BINARYWRITE_HXX 
 
 #include<type_traits>
 #include"TFEL/Config/TFELConfig.hxx"
@@ -156,5 +156,5 @@ namespace tfel
 } // end of namespace tfel
 
 
-#endif /* LIB_TFEL_SYSTEM_BINARYWRITE_H_ */
+#endif /* LIB_TFEL_SYSTEM_BINARYWRITE_HXX */
 

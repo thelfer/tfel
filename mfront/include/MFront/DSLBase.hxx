@@ -161,10 +161,15 @@ namespace mfront
      */
     virtual bool isNameReserved(const std::string&) const = 0;
     /*! 
-     * \return a name which has not been reserved yet and reserve it
-     * \param[in] p: prefix
+     * \return a temporary name which has not been reserved. This
+     * method shall be used to get a temporary name at a
+     * code block scope.
+     * \param[in,out] tmpnames: list of already used temporary names
+     * in the treated code block.
+     * \param[in]     p: prefix
      */
-    virtual std::string getTemporaryVariableName(const std::string&);
+    virtual std::string getTemporaryVariableName(std::vector<std::string>&,
+						 const std::string&) const;
     /*!
      * \brief add a static variable description
      * \param[in] v : variable description
@@ -213,8 +218,6 @@ namespace mfront
     virtual void importFile(const std::string&,
 			    const std::vector<std::string>&,
 			    const std::map<std::string,std::string>&) = 0;
-    //! destructor
-    virtual ~DSLBase();
     /*!
      * \brief check that the end of file in not reached yet
      * \param[in] m: calling method name
@@ -448,6 +451,8 @@ namespace mfront
      * \brief extract a double from the current token
      */
     double readDouble(void);
+    //! destructor
+    virtual ~DSLBase();
     /*!
      * \brief main targets description
      *

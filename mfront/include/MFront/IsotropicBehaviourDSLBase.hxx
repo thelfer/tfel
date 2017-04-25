@@ -52,16 +52,18 @@ namespace mfront{
     isModellingHypothesisSupported(const Hypothesis) const override;
 
     virtual void
-    writeBehaviourParserSpecificIncludes(void) override;
+    writeBehaviourParserSpecificIncludes(std::ostream&) const override;
 
     virtual void
-    writeBehaviourParserSpecificTypedefs(void) override;
+    writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
 
     virtual void
-    writeBehaviourComputePredictionOperator(const Hypothesis) override;
+    writeBehaviourComputePredictionOperator(std::ostream&,
+					    const Hypothesis) const override;
 
     virtual void
-    writeBehaviourComputeTangentOperator(const Hypothesis) override;
+    writeBehaviourComputeTangentOperator(std::ostream&,
+					 const Hypothesis) const override;
 
     virtual std::string
     flowRuleVariableModifier(const Hypothesis,
@@ -70,17 +72,13 @@ namespace mfront{
     virtual void
     treatExternalStateVariable(void) override;
 
-    virtual void
-    treatFlowRule(void);
+    virtual void treatFlowRule(void);
 
-    virtual void
-    treatTheta(void);
+    virtual void treatTheta(void);
 
-    virtual void
-    treatEpsilon(void);
+    virtual void treatEpsilon(void);
 
-    virtual void
-    treatIterMax(void);
+    virtual void treatIterMax(void);
 
     virtual void
     endsInputFileProcessing(void) override;

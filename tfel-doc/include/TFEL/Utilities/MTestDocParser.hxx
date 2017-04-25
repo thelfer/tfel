@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_UTILITIES_MTESTDOCPARSER_H_
-#define LIB_TFEL_UTILITIES_MTESTDOCPARSER_H_ 
+#ifndef LIB_TFEL_UTILITIES_MTESTDOCPARSER_HXX
+#define LIB_TFEL_UTILITIES_MTESTDOCPARSER_HXX 
 
 #include"TFEL/Utilities/ParserBase.hxx"
 #include"TFEL/Utilities/TestDocumentation.hxx"

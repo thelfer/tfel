@@ -38,7 +38,7 @@ namespace mfront{
      * \param[in]  mpd : material property description
      */
     virtual void getTargetsDescription(TargetsDescription&,
-				       const MaterialPropertyDescription&) override;
+				       const MaterialPropertyDescription&) const override;
     /*!
      * \param[in] k  : keyword treated
      * \param[in] i:   list of interfaces to which the keyword is restricted
@@ -58,26 +58,25 @@ namespace mfront{
      * \param[in] mpd : material property description
      * \param[in] fd  : mfront file description
      */
-    virtual void writeOutputFiles(const MaterialPropertyDescription&,
-				  const FileDescription&) override;
+    virtual void
+    writeOutputFiles(const MaterialPropertyDescription&,
+		     const FileDescription&) const override;
     //! destructor
     virtual ~CastemMaterialPropertyInterface();
 
   protected:
     
     /*!
-     * \param[in] material
-     * \param[in] className
+     * \param[in] mpd : material property description
      */
     virtual std::string
-    getCastemFunctionName(const std::string&,
-			  const std::string&);
+    getCastemFunctionName(const MaterialPropertyDescription&) const;
     
     virtual std::string
-    getHeaderFileName(const std::string&);
+    getHeaderFileName(const std::string&) const;
 
     virtual std::string
-    getSourceFileName(const std::string&);
+    getSourceFileName(const std::string&) const;
 
   private:
     /*!
@@ -87,14 +86,14 @@ namespace mfront{
      */
     virtual void
     writeHeaderFile(const MaterialPropertyDescription&,
-		    const FileDescription&);
+		    const FileDescription&) const;
     /*!
      * \brief generate the output files
      * \param[in] mpd : material property description
      * \param[in] fd  : mfront file description
      */
     virtual void writeSrcFile(const MaterialPropertyDescription&,
-			      const FileDescription&);
+			      const FileDescription&) const;
   }; // end of MfrontCastemMaterialPropertyInterface
 
 } // end of namespace mfront

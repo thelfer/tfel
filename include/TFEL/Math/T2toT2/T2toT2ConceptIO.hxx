@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_T2TOT2CONCEPTIO_H_
-#define LIB_TFEL_MATH_T2TOT2CONCEPTIO_H_ 
+#ifndef LIB_TFEL_MATH_T2TOT2CONCEPTIO_HXX
+#define LIB_TFEL_MATH_T2TOT2CONCEPTIO_HXX 
 
 #include<ostream>
 #include"TFEL/Math/T2toT2/T2toT2Concept.hxx"
@@ -61,5 +61,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_T2TOT2CONCEPTIO_H_ */
+#endif /* LIB_TFEL_MATH_T2TOT2CONCEPTIO_HXX */
 

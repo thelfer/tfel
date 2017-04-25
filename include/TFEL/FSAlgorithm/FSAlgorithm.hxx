@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_FSALGORITHM_HXX_
-#define LIB_TFEL_FSALGORITHM_HXX_ 
+#ifndef LIB_TFEL_FSALGORITHM_HXX
+#define LIB_TFEL_FSALGORITHM_HXX 
 
 #include"TFEL/FSAlgorithm/copy.hxx"
 #include"TFEL/FSAlgorithm/fill.hxx"
@@ -28,5 +28,5 @@
 #include"TFEL/FSAlgorithm/inner_product.hxx"
 #include"TFEL/FSAlgorithm/iota.hxx"
 
-#endif /* LIB_TFEL_FSALGORITHM_HXX_ */
+#endif /* LIB_TFEL_FSALGORITHM_HXX */
 

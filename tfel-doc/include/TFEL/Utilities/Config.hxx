@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_UTILITIES_CONFIG_H_
-#define LIB_TFEL_UTILITIES_CONFIG_H_ 
+#ifndef LIB_TFEL_UTILITIES_CONFIG_HXX
+#define LIB_TFEL_UTILITIES_CONFIG_HXX 
 
 namespace tfel{
 

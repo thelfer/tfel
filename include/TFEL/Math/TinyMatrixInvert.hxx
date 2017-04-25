@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_TINYMATRIXINVERT_H_
-#define LIB_TFEL_MATH_TINYMATRIXINVERT_H_ 
+#ifndef LIB_TFEL_MATH_TINYMATRIXINVERT_HXX
+#define LIB_TFEL_MATH_TINYMATRIXINVERT_HXX 
 
 #include<limits>
 
@@ -40,5 +40,5 @@ namespace tfel{
 
 #include"TFEL/Math/Matrix/TinyMatrixInvert.ixx"
 
-#endif /* LIB_TFEL_MATH_TINYMATRIXINVERT_H_ */
+#endif /* LIB_TFEL_MATH_TINYMATRIXINVERT_HXX */
 

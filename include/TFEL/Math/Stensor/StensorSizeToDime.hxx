@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_STENSORSIZETODIME_H_
-#define LIB_TFEL_STENSORSIZETODIME_H_ 
+#ifndef LIB_TFEL_STENSORSIZETODIME_HXX
+#define LIB_TFEL_STENSORSIZETODIME_HXX 
 
 namespace tfel{
   
@@ -108,5 +108,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_STENSORSIZETODIME_H_ */
+#endif /* LIB_TFEL_STENSORSIZETODIME_HXX */
 

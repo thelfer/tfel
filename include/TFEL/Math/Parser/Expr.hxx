@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_EXPR_HXX_
-#define LIB_TFEL_EXPR_HXX_ 
+#ifndef LIB_TFEL_EXPR_HXX
+#define LIB_TFEL_EXPR_HXX 
 
 #include<map>
 #include<set>
@@ -64,4 +64,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_EXPR_HXX_ */
+#endif /* LIB_TFEL_EXPR_HXX */

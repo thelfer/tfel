@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_CURRENTSTATE_HXX_
-#define LIB_MTEST_CURRENTSTATE_HXX_
+#ifndef LIB_MTEST_CURRENTSTATE_HXX
+#define LIB_MTEST_CURRENTSTATE_HXX
 
 #include<map>
 #include<string>
@@ -253,4 +253,4 @@ namespace mtest
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_CURRENTSTATE_HXX_ */
+#endif /* LIB_MTEST_CURRENTSTATE_HXX */

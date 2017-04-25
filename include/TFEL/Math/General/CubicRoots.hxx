@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_CUBICROOTS_HXX_
-#define LIB_TFEL_MATH_CUBICROOTS_HXX_ 
+#ifndef LIB_TFEL_MATH_CUBICROOTS_HXX
+#define LIB_TFEL_MATH_CUBICROOTS_HXX 
 
 #include<cmath>
 #include<limits>
@@ -62,8 +62,8 @@ namespace tfel{
       cbrt(const long double x){
 	return ::cbrtl(x);
       }
-#endif /* LIB_TFEL_MATH_CUBICROOTS_HXX_ */
-#endif /* LIB_TFEL_MATH_CUBICROOTS_HXX_ */
+#endif /* LIB_TFEL_MATH_CUBICROOTS_HXX */
+#endif /* LIB_TFEL_MATH_CUBICROOTS_HXX */
       /*!
        * \return the cubic root of a real number
        * \param[in] x : value
@@ -278,5 +278,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_CUBICROOTS_HXX_ */
+#endif /* LIB_TFEL_MATH_CUBICROOTS_HXX */
 

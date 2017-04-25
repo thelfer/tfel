@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_KRIGINGDEFAULTMODEL3D_H_
-#define LIB_TFEL_MATH_KRIGINGDEFAULTMODEL3D_H_ 
+#ifndef LIB_TFEL_MATH_KRIGINGDEFAULTMODEL3D_HXX
+#define LIB_TFEL_MATH_KRIGINGDEFAULTMODEL3D_HXX 
 
 #include<cmath>
 
@@ -83,5 +83,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_KRIGINGDEFAULTMODEL3D_H_ */
+#endif /* LIB_TFEL_MATH_KRIGINGDEFAULTMODEL3D_HXX */
 

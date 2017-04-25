@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_INTEGEREVALUATOR_HXX_
-#define LIB_TFEL_MATH_INTEGEREVALUATOR_HXX_ 
+#ifndef LIB_TFEL_MATH_INTEGEREVALUATOR_HXX
+#define LIB_TFEL_MATH_INTEGEREVALUATOR_HXX 
 
 #include<map>
 #include<vector>
@@ -160,4 +160,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_INTEGEREVALUATOR_HXX_ */
+#endif /* LIB_TFEL_MATH_INTEGEREVALUATOR_HXX */

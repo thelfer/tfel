@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_STRUCTURECURRENTSTATE_HXX_
-#define LIB_MTEST_STRUCTURECURRENTSTATE_HXX_
+#ifndef LIB_MTEST_STRUCTURECURRENTSTATE_HXX
+#define LIB_MTEST_STRUCTURECURRENTSTATE_HXX
 
 #include<memory>
 #include<vector>
@@ -102,4 +102,4 @@ namespace mtest{
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_STRUCTURECURRENTSTATE_HXX_ */
+#endif /* LIB_MTEST_STRUCTURECURRENTSTATE_HXX */

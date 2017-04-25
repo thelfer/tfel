@@ -83,4 +83,4 @@ namespace tfel{
 } // end of namespace tfel
 
     
-#endif /* LIB_TFEL_MATH_ST2TOST2TRANSPOSEEXPR_HXX_ */
+#endif /* LIB_TFEL_MATH_ST2TOST2TRANSPOSEEXPR_HXX */

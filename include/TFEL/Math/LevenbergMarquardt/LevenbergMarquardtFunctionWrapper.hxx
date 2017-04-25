@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_LEVENBERGMARQUARDTFUNCTIONWRAPPER_H_
-#define LIB_LEVENBERGMARQUARDTFUNCTIONWRAPPER_H_ 
+#ifndef LIB_LEVENBERGMARQUARDTFUNCTIONWRAPPER_HXX
+#define LIB_LEVENBERGMARQUARDTFUNCTIONWRAPPER_HXX 
 
 #include"TFEL/Math/vector.hxx"
 
@@ -71,5 +71,5 @@ namespace tfel
 
 #include"TFEL/Math/LevenbergMarquardt/LevenbergMarquardtFunctionWrapper.ixx"
 
-#endif /* LIB_LEVENBERGMARQUARDTFUNCTIONWRAPPER_H_ */
+#endif /* LIB_LEVENBERGMARQUARDTFUNCTIONWRAPPER_HXX */
 

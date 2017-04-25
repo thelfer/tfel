@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_FUNCTION_HXX_
-#define _LIB_TFEL_FUNCTION_HXX_ 
+#ifndef _LIB_TFEL_FUNCTION_HXX
+#define _LIB_TFEL_FUNCTION_HXX 
 
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 

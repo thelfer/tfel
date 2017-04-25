@@ -651,8 +651,7 @@ namespace mfront{
 	  ++i;
 	}
       }
-      writeMaterialLaws("MFrontModelInterface::writeSrcFile",
-			this->srcFile,md.materialLaws);		      
+      writeMaterialLaws(this->srcFile,md.materialLaws);		      
       i=0;
       for(auto puv=f.usedVariables.begin();puv!=f.usedVariables.end();++puv,++i){
 	const auto& v = [&md,puv](){

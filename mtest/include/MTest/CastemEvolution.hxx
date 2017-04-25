@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_MTESTCASTEMEVOLUTION_H_
-#define LIB_MTEST_MTESTCASTEMEVOLUTION_H_ 
+#ifndef LIB_MTEST_MTESTCASTEMEVOLUTION_HXX
+#define LIB_MTEST_MTESTCASTEMEVOLUTION_HXX 
 
 #include<map>
 #include<string>
@@ -84,5 +84,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_MTESTCASTEMEVOLUTION_H_ */
+#endif /* LIB_MTEST_MTESTCASTEMEVOLUTION_HXX */
 

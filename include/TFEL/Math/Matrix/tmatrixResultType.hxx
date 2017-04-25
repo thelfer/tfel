@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_TINY_MATRIX_RESULT_TYPE_H_
-#define LIB_TFEL_TINY_MATRIX_RESULT_TYPE_H_ 
+#ifndef LIB_TFEL_TINY_MATRIX_RESULT_TYPE_HXX
+#define LIB_TFEL_TINY_MATRIX_RESULT_TYPE_HXX 
 
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/tmatrix.hxx"
@@ -158,5 +158,5 @@ namespace tfel{
 } // end of namespace tfel
 
 
-#endif /* LIB_TFEL_TINY_MATRIX_RESULT_TYPE_H_ */
+#endif /* LIB_TFEL_TINY_MATRIX_RESULT_TYPE_HXX */
 

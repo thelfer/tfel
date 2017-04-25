@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_STENSORIMPORT_H_
-#define LIB_TFEL_STENSORIMPORT_H_ 
+#ifndef LIB_TFEL_STENSORIMPORT_HXX
+#define LIB_TFEL_STENSORIMPORT_HXX 
 
 #include<cmath>
 #include<type_traits>
@@ -125,5 +125,5 @@ namespace tfel{
 } // end of namespace tfel
 
 
-#endif /* LIB_TFEL_STENSORIMPORT_H_ */
+#endif /* LIB_TFEL_STENSORIMPORT_HXX */
 

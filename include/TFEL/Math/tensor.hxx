@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_TENSOR_HXX_
-#define LIB_TFEL_MATH_TENSOR_HXX_ 
+#ifndef LIB_TFEL_MATH_TENSOR_HXX
+#define LIB_TFEL_MATH_TENSOR_HXX 
 
 #include<cstddef>
 #include<initializer_list>
@@ -379,5 +379,5 @@ namespace tfel{
 #include"TFEL/Math/Tensor/tensor.ixx"
 #include"TFEL/Math/Tensor/tensorResultType.hxx"
 
-#endif /* LIB_TFEL_MATH_TENSOR_HXX_ */
+#endif /* LIB_TFEL_MATH_TENSOR_HXX */
 

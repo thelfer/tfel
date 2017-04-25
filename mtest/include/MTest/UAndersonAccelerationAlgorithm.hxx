@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_MTEST_UANDERSONACCELERATIONALGORITHM_H_
-#define LIB_MTEST_MTEST_UANDERSONACCELERATIONALGORITHM_H_ 
+#ifndef LIB_MTEST_MTEST_UANDERSONACCELERATIONALGORITHM_HXX
+#define LIB_MTEST_MTEST_UANDERSONACCELERATIONALGORITHM_HXX 
 
 #include"TFEL/Math/AccelerationAlgorithms/UAnderson.hxx"
 #include"MTest/Config.hxx"
@@ -93,5 +93,5 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_MTEST_UANDERSONACCELERATIONALGORITHM_H_ */
+#endif /* LIB_MTEST_MTEST_UANDERSONACCELERATIONALGORITHM_HXX */
 

@@ -1286,14 +1286,14 @@ namespace mfront
     }
   } // end of UMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix
 
-  void
-  UMATInterfaceBase::generateUMATxxGeneralSymbols(std::ostream& out,
-						  const std::string& name,
-						  const BehaviourDescription& mb,
-						  const FileDescription & fd) const
+  void UMATInterfaceBase::generateUMATxxGeneralSymbols(std::ostream& out,
+						       const std::string& name,
+						       const BehaviourDescription& mb,
+						       const FileDescription & fd) const
   {
-    this->writeUMATxxSourceFileSymbols(out,name,mb,fd);
+    this->writeUMATxxEntryPointSymbol(out,name);
     this->writeUMATxxInterfaceNameSymbols(out,name,mb,fd);
+    this->writeUMATxxSourceFileSymbols(out,name,mb,fd);
     this->writeUMATxxSupportedModellingHypothesis(out,name,mb);
     this->writeUMATxxBehaviourTypeSymbols(out,name,mb);
     this->writeUMATxxBehaviourKinematicSymbols(out,name,mb);
@@ -1302,12 +1302,21 @@ namespace mfront
     this->writeUMATxxSpecificSymbols(out,name,mb,fd);
   }
 
-  void
-  UMATInterfaceBase::generateUMATxxSymbols(std::ostream& out,
-					   const std::string& name,
-					   const Hypothesis h,
-					   const BehaviourDescription& mb,
-					   const FileDescription & fd) const
+  void UMATInterfaceBase::writeUMATxxEntryPointSymbol(std::ostream& out,
+						      const std::string& n) const{
+    writeEntryPointSymbol(out,n);
+  } // end of UMATInterfaceBase::writeUMATxxEntryPointSymbol
+  
+  void UMATInterfaceBase::writeUMATxxMaterialKnowledgeTypeSymbol(std::ostream& out,
+								 const std::string& n) const{
+    writeMaterialKnowledgeTypeSymbol(out,n,BEHAVIOUR);
+  } // end of UMATInterfaceBase::writeUMATxxEntryPointSymbol
+  
+  void UMATInterfaceBase::generateUMATxxSymbols(std::ostream& out,
+						const std::string& name,
+						const Hypothesis h,
+						const BehaviourDescription& mb,
+						const FileDescription & fd) const
   {
     this->writeUMATxxIsUsableInPurelyImplicitResolutionSymbols(out,name,h,mb);
     this->writeUMATxxMaterialPropertiesSymbols(out,name,h,mb);
@@ -1318,17 +1327,15 @@ namespace mfront
     this->writeUMATxxAdditionalSymbols(out,name,h,mb,fd);
   }
 
-  void
-  UMATInterfaceBase::writeUMATxxSpecificSymbols(std::ostream&,
-						const std::string&,
-						const BehaviourDescription&,
-						const FileDescription&) const
+  void UMATInterfaceBase::writeUMATxxSpecificSymbols(std::ostream&,
+						     const std::string&,
+						     const BehaviourDescription&,
+						     const FileDescription&) const
   {} // end of UMATInterfaceBase::writeUMATxxSpecificSymbols
 
-  void
-  UMATInterfaceBase::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
-						     const std::string& name,
-						     const BehaviourDescription& mb) const
+  void UMATInterfaceBase::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
+							  const std::string& name,
+							  const BehaviourDescription& mb) const
   {
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;

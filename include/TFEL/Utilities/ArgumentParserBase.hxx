@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_UTILITIES_ARGUMENTPARSERBASE_H_
-#define LIB_TFEL_UTILITIES_ARGUMENTPARSERBASE_H_ 
+#ifndef LIB_TFEL_UTILITIES_ARGUMENTPARSERBASE_HXX
+#define LIB_TFEL_UTILITIES_ARGUMENTPARSERBASE_HXX 
 
 #include<map>
 #include<vector>
@@ -100,5 +100,5 @@ namespace tfel
 
 #include"TFEL/Utilities/ArgumentParserBase.ixx"
 
-#endif /* LIB_TFEL_UTILITIES_ARGUMENTPARSERBASE_H_ */
+#endif /* LIB_TFEL_UTILITIES_ARGUMENTPARSERBASE_HXX */
 

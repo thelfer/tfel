@@ -29,25 +29,31 @@ namespace mfront{
     static std::string getName(void);
     //! \return a description of the dsl
     static std::string getDescription(void);
+    //! constructor
+    IsotropicMisesPlasticFlowDSL();
 
     virtual void
     endsInputFileProcessing(void) override;
-
-    virtual void
-    writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis) override;
-
-    virtual void
-    writeBehaviourParserSpecificMembers(const Hypothesis) override;
-
-    virtual void
-    writeBehaviourIntegrator(const Hypothesis) override;
-
-    virtual void
-    writeBehaviourComputeTangentOperator(const Hypothesis) override;
-    //! constructor
-    IsotropicMisesPlasticFlowDSL();
     //! desctructor
     virtual ~IsotropicMisesPlasticFlowDSL();
+
+  protected:
+    
+    virtual void
+    writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,
+						     const Hypothesis) const override;
+
+    virtual void
+    writeBehaviourParserSpecificMembers(std::ostream&,
+					const Hypothesis) const override;
+
+    virtual void
+    writeBehaviourIntegrator(std::ostream&,
+			     const Hypothesis) const override;
+
+    virtual void
+    writeBehaviourComputeTangentOperator(std::ostream&,
+					 const Hypothesis) const override;
   };
 
 } // end of namespace mfront  

@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_QTIO_H_
-#define LIB_TFEL_MATH_QTIO_H_ 
+#ifndef LIB_TFEL_MATH_QTIO_HXX
+#define LIB_TFEL_MATH_QTIO_HXX 
 
 #include<ostream>
 #include"TFEL/Math/qt.hxx"
@@ -37,5 +37,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_QTIO_H_ */
+#endif /* LIB_TFEL_MATH_QTIO_HXX */
 

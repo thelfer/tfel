@@ -5,8 +5,8 @@
  * \date   21 déc. 2015
  */
 
-#ifndef LIB_MTEST_SCHEMEPARSERBASE_HXX_
-#define LIB_MTEST_SCHEMEPARSERBASE_HXX_
+#ifndef LIB_MTEST_SCHEMEPARSERBASE_HXX
+#define LIB_MTEST_SCHEMEPARSERBASE_HXX
 
 #include<memory>
 #include"TFEL/Utilities/CxxTokenizer.hxx"
@@ -270,4 +270,4 @@ namespace mtest{
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_SCHEMEPARSERBASE_HXX_ */
+#endif /* LIB_MTEST_SCHEMEPARSERBASE_HXX */

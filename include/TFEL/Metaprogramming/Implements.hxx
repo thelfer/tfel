@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_IMPLEMENTS_H_
-#define LIB_TFEL_IMPLEMENTS_H_ 
+#ifndef LIB_TFEL_IMPLEMENTS_HXX
+#define LIB_TFEL_IMPLEMENTS_HXX 
 
 #include<type_traits>
 
@@ -54,5 +54,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_IMPLEMENTS_H_ */
+#endif /* LIB_TFEL_IMPLEMENTS_HXX */
 

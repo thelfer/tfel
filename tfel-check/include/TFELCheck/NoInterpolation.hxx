@@ -46,4 +46,4 @@ namespace tfel_check {
 
 } /* namespace tfel_check */
 
-#endif /* LIB_TFELCHECK_NOINTERPOLATION_H_ */
+#endif /* LIB_TFELCHECK_NOINTERPOLATION_HXX */

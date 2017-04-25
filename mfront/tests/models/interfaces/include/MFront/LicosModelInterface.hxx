@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONTMODELINTERFACE_H_
-#define LIB_MFRONTMODELINTERFACE_H_ 
+#ifndef LIB_MFRONTMODELINTERFACE_HXX
+#define LIB_MFRONTMODELINTERFACE_HXX 
 
 #include<fstream>
 #include"MFront/AbstractModelInterface.hxx"

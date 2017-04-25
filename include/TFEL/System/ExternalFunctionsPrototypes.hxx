@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_
-#define LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ 
+#ifndef LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX
+#define LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX 
 
 #ifdef	__cplusplus
 #include <cstdint>
@@ -24,17 +24,17 @@
 #define TFEL_ADDCALL_PTR __cdecl *
 #else 
 #define TFEL_ADDCALL_PTR *
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
 
 #ifdef	__cplusplus
 extern "C" {
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
 
 #ifdef TFEL_ARCH32
   typedef int    CyranoIntegerType;
   typedef int    CastemIntegerType;
   typedef int    AsterIntegerType;
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
 #ifdef TFEL_ARCH64
 #ifdef _WIN64
   typedef long long   CyranoIntegerType;
@@ -44,8 +44,8 @@ extern "C" {
   typedef long   CyranoIntegerType;
   typedef long   CastemIntegerType;
   typedef long   AsterIntegerType;
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
 
   typedef int AbaqusIntegerType;
   typedef int AnsysIntegerType;
@@ -60,7 +60,7 @@ extern "C" {
   
 #ifdef	__cplusplus
 }
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
 
 #ifdef	__cplusplus
 
@@ -498,7 +498,7 @@ namespace tfel
     
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
 
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
+#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
 

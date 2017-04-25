@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_T2TOST2FROMTINYMATRIXVIEW2_HXX_
-#define LIB_TFEL_MATH_T2TOST2FROMTINYMATRIXVIEW2_HXX_ 
+#ifndef LIB_TFEL_MATH_T2TOST2FROMTINYMATRIXVIEW2_HXX
+#define LIB_TFEL_MATH_T2TOST2FROMTINYMATRIXVIEW2_HXX 
 
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
 
@@ -127,5 +127,5 @@ namespace tfel
   
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_T2TOST2FROMTINYMATRIXVIEW2_HXX_ */
+#endif /* LIB_TFEL_MATH_T2TOST2FROMTINYMATRIXVIEW2_HXX */
 

@@ -101,20 +101,23 @@ namespace mfront
     return names;
   }
 
-  std::string DSLBase::getTemporaryVariableName(const std::string& p){
+  std::string DSLBase::getTemporaryVariableName(std::vector<std::string>& tmpnames,
+						const std::string& p) const{
     if(!this->isValidIdentifier(p)){
       this->throwRuntimeError("DSLBase::getTemporaryVariableName",
-			      "invalid variable prefix '"+p+"'");
+  			      "invalid variable prefix '"+p+"'");
     }
-    for(unsigned int i=0;i!=std::numeric_limits<unsigned int>::max();++i){
+    for(size_type i=0;i!=std::numeric_limits<size_type>::max();++i){
       const auto c = p+std::to_string(i);
       if(!this->isNameReserved(c)){
-	this->reserveName(c);
-	return c;
+	if(std::find(tmpnames.begin(),tmpnames.end(),c)==tmpnames.end()){
+	  tmpnames.push_back(c);
+	  return c;
+	}
       }
     }
     this->throwRuntimeError("DSLBase::getTemporaryVariableName",
-			    "unable to find a temporary variable");
+  			    "unable to find a temporary variable");
   }
 
   void DSLBase::openFile(const std::string& f,
@@ -842,8 +845,7 @@ namespace mfront
 				"Specific targets are not supported");
       }
       const auto& mpd = mp.getMaterialPropertyDescription();
-      const auto& mname = minterface.getFunctionName(mpd.material,
-						     mpd.law);
+      const auto& mname = minterface.getFunctionName(mpd);
       this->reserveName(mname);
       this->reserveName(mname+"_checkBounds");
       this->reserveName(mname+"_bounds_check_status");
@@ -954,7 +956,7 @@ namespace mfront
   {
     CodeBlockParserOptions options;
     this->appendToSources(this->readNextBlock(options).code);
-  } // end of DSLBase::treatSources(void)
+  } // end of DSLBase::treatSources
 
   void DSLBase::treatMembers()
   {
@@ -970,7 +972,7 @@ namespace mfront
     options.qualifyStaticVariables = true;
     options.qualifyMemberVariables = true;
     this->appendToPrivateCode(this->readNextBlock(options).code);
-  } // end of DSLBase::treatSources(void)
+  } // end of DSLBase::treatPrivate
 
   void DSLBase::treatParser()
   {

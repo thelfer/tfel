@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_COMPUTEUNARYRESULT_H_
-#define LIB_TFEL_COMPUTEUNARYRESULT_H_ 
+#ifndef LIB_TFEL_COMPUTEUNARYRESULT_HXX
+#define LIB_TFEL_COMPUTEUNARYRESULT_HXX 
 
 #include<type_traits>
 
@@ -66,5 +66,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_COMPUTEUNARYRESULT_H_ */
+#endif /* LIB_TFEL_COMPUTEUNARYRESULT_HXX */
 

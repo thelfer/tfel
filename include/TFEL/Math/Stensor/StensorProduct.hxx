@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_STENSORPRODUCTEXPR_HXX_
-#define LIB_STENSORPRODUCTEXPR_HXX_ 
+#ifndef LIB_STENSORPRODUCTEXPR_HXX
+#define LIB_STENSORPRODUCTEXPR_HXX 
 
 #include<cmath>
 
@@ -193,4 +193,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_STENSORPRODUCTEXPR_HXX_ */
+#endif /* LIB_STENSORPRODUCTEXPR_HXX */

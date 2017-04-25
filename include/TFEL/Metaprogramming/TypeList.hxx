@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_TYPELIST_H_
-#define LIB_TFEL_TYPELIST_H_ 
+#ifndef LIB_TFEL_TYPELIST_HXX
+#define LIB_TFEL_TYPELIST_HXX 
 
 #include<cstddef>
 #include"TFEL/Config/TFELConfig.hxx"
@@ -302,5 +302,5 @@ namespace tfel{
 #include"TFEL/Metaprogramming/TypeList.ixx"
 #include"TFEL/Metaprogramming/GenerateTypeList.hxx"
 
-#endif /* LIB_TFEL_TYPELIST_H_ */
+#endif /* LIB_TFEL_TYPELIST_HXX */
 

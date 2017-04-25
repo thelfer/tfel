@@ -22,31 +22,35 @@ namespace mfront{
   struct IsotropicStrainHardeningMisesCreepDSL
     : public IsotropicBehaviourDSLBase
   {
+    IsotropicStrainHardeningMisesCreepDSL();
 
-    static std::string 
-    getName(void);
+    static std::string getName(void);
 
-    static std::string
-    getDescription(void);
-
+    static std::string getDescription(void);
+    
     virtual void
     endsInputFileProcessing(void) override;
 
-    virtual void
-    writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis) override;
+    virtual ~IsotropicStrainHardeningMisesCreepDSL();
 
-    virtual void
-    writeBehaviourParserSpecificMembers(const Hypothesis) override;
+  protected:
     
     virtual void
-    writeBehaviourIntegrator(const Hypothesis) override;
+    writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,
+						     const Hypothesis) const override;
 
     virtual void
-    writeBehaviourComputeTangentOperator(const Hypothesis) override;
+    writeBehaviourParserSpecificMembers(std::ostream&,
+					const Hypothesis) const override;
+    
+    virtual void
+    writeBehaviourIntegrator(std::ostream&,
+			     const Hypothesis) const override;
 
-    IsotropicStrainHardeningMisesCreepDSL();
+    virtual void
+    writeBehaviourComputeTangentOperator(std::ostream&,
+					 const Hypothesis) const override;
 
-    virtual ~IsotropicStrainHardeningMisesCreepDSL();
   };
 
 } // end of namespace mfront  

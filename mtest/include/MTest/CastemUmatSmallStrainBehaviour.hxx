@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_CASTEMUMATSMALLSTRAINBEHAVIOUR_H_
-#define LIB_MTEST_CASTEMUMATSMALLSTRAINBEHAVIOUR_H_ 
+#ifndef LIB_MTEST_CASTEMUMATSMALLSTRAINBEHAVIOUR_HXX
+#define LIB_MTEST_CASTEMUMATSMALLSTRAINBEHAVIOUR_HXX 
 
 #include<memory>
 #include"TFEL/Utilities/Data.hxx"
@@ -88,4 +88,4 @@ namespace mtest
   
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_CASTEMUMATSMALLSTRAINBEHAVIOUR_H_ */
+#endif /* LIB_MTEST_CASTEMUMATSMALLSTRAINBEHAVIOUR_HXX */

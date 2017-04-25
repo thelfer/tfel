@@ -64,4 +64,4 @@ namespace mtest
 
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_CASTEMUMATSTANDARDBEHAVIOUR_HXX_ */
+#endif /* LIB_MTEST_CASTEMUMATSTANDARDBEHAVIOUR_HXX */

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_T2TOT2_CONCEPT_OPERATIONS_HXX_
-#define LIB_TFEL_T2TOT2_CONCEPT_OPERATIONS_HXX_ 
+#ifndef LIB_TFEL_T2TOT2_CONCEPT_OPERATIONS_HXX
+#define LIB_TFEL_T2TOT2_CONCEPT_OPERATIONS_HXX 
 
 #include <cmath>
 #include"TFEL/Config/TFELConfig.hxx"
@@ -184,5 +184,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_T2TOT2_CONCEPT_OPERATIONS_HXX_ */
+#endif /* LIB_TFEL_T2TOT2_CONCEPT_OPERATIONS_HXX */
 

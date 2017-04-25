@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_STENSORCHANGEBASIS_H_
-#define LIB_TFEL_STENSORCHANGEBASIS_H_ 
+#ifndef LIB_TFEL_STENSORCHANGEBASIS_HXX
+#define LIB_TFEL_STENSORCHANGEBASIS_HXX 
 
 #include<cmath>
 
@@ -98,5 +98,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_STENSORCHANGEBASIS_H_ */
+#endif /* LIB_TFEL_STENSORCHANGEBASIS_HXX */
 

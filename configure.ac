@@ -2942,6 +2942,8 @@ AC_OUTPUT([debug.sh
    	   mtest/tests/ptest/cyrano/cyranotightpipe-gd-quadratic.ptest
    	   mtest/tests/ptest/cyrano/cyranotightpipe-linear.ptest
    	   mtest/tests/ptest/cyrano/cyranotightpipe-quadratic.ptest
+	   mfm/Makefile
+	   mfm/src/Makefile
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile
 	   tfel-doc/include/Makefile

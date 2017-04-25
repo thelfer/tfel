@@ -60,9 +60,9 @@ namespace mfront
 
     void
     CppMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
-							const MaterialPropertyDescription& mpd)
+							const MaterialPropertyDescription& mpd) const
     {
-      const auto lib  = "Cpp"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
+      const auto lib  = "Cpp"+getMaterialLawLibraryNameBase(mpd);
       const auto name = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
       insert_if(d[lib].ldflags,"-lm");
       insert_if(d[lib].sources,name+"-cxx.cxx");
@@ -77,14 +77,14 @@ namespace mfront
     } // end of CMaterialPropertyInterface::getTargetsDescription
 
   void CppMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
-						      const FileDescription& fd)
+						      const FileDescription& fd) const
   {
     this->writeHeaderFile(mpd,fd);
     this->writeSrcFile(mpd,fd);
   } // end of CppMaterialPropertyInterface::writeOutputFiles
 
   void CppMaterialPropertyInterface::writeHeaderFile(const MaterialPropertyDescription& mpd,
-						     const FileDescription& fd)
+						     const FileDescription& fd) const
   {
     const auto name = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
     std::ofstream header(getHeaderFileName(name));
@@ -189,7 +189,7 @@ namespace mfront
   } // end of CppMaterialPropertyInterface::writeHeaderFile(void)
 
   void CppMaterialPropertyInterface::writeSrcFile(const MaterialPropertyDescription& mpd,
-						  const FileDescription& fd)
+						  const FileDescription& fd) const
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("CppMaterialPropertyInterface::writeOutputFiles: "+m));}
@@ -268,11 +268,9 @@ namespace mfront
 	<< "using namespace std;\n"
 	<< "using real = double;\n";
     // material laws
-    writeMaterialLaws("CMaterialPropertyInterfaceBase::writeSrcFile",
-		      src,mpd.materialLaws);
+    writeMaterialLaws(src,mpd.materialLaws);
     // static variables
-    writeStaticVariables("MaterialPropertyDSL::writeSrcFile",
-			 src,mpd.staticVars,fd.fileName);
+    writeStaticVariables(src,mpd.staticVars,fd.fileName);
     // body
     src << "real " << mpd.output.name << ";\n";
     if((hasBounds(mpd.inputs))||(hasPhysicalBounds(mpd.inputs))){

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_
-#define LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ 
+#ifndef LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX
+#define LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX 
 
 #include<cmath>
 #include<cassert>
@@ -162,7 +162,7 @@ namespace tfel{
 	    return tfel::math::internals::StensorComputeEigenVectors<2u>::test(s,vp,vec);
 #else
 	    return true;
-#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
+#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX */
 	}
 
       private:
@@ -287,7 +287,6 @@ namespace tfel{
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
 	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
 	  TFEL_CONSTEXPR const auto rel_prec  = 100*std::numeric_limits<T>::epsilon();
-	  TFEL_CONSTEXPR const auto one_third = T(1)/T(3);
 	  StensorComputeEigenValues<3u>::exe(s,vp(0),vp(1),vp(2),b);
 	  const auto tr  = (s[0]+s[1]+s[2])/3;
 	  auto ms = T(0);
@@ -303,7 +302,7 @@ namespace tfel{
 	    return tfel::math::internals::StensorComputeEigenVectors<3>::test(s,vp,vec);
 #else
 	    return true;
-#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
+#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX */
 	  }
 	  const auto ims = T(1)/ms;
 	  tvector<6u,T> s2(s);
@@ -328,7 +327,7 @@ namespace tfel{
 	    return tfel::math::internals::StensorComputeEigenVectors<3>::test(s,vp,vec);
 #else
 	    return true;
-#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
+#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX */
 	  }
 	  if((std::abs(vp2(0)-vp2(1))>prec)&&
 	     (std::abs(vp2(0)-vp2(2))>prec)){
@@ -355,7 +354,7 @@ namespace tfel{
 	    return tfel::math::internals::StensorComputeEigenVectors<3>::test(s,vp,vec);
 #else
 	    return true;
-#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
+#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX */
 	  } else if((std::abs(vp2(1)-vp2(0))>prec)&&
 		    (std::abs(vp2(1)-vp2(2))>prec)){
 	    // vp1 is single, vp0 and vp2 are equal
@@ -371,7 +370,7 @@ namespace tfel{
 	    return tfel::math::internals::StensorComputeEigenVectors<3>::test(s,vp,vec);
 #else
 	    return true;
-#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
+#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX */
 	  } 
 	  assert((std::abs(vp2(2)-vp2(0))>prec)&&(std::abs(vp2(2)-vp2(1))>prec));
 	  assert(std::abs(vp2(0)-vp2(1))<prec);
@@ -386,7 +385,7 @@ namespace tfel{
 	  return tfel::math::internals::StensorComputeEigenVectors<3>::test(s,vp,vec);
 #else
 	  return true;
-#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
+#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX */
 	}
 
       private:
@@ -562,4 +561,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_H_ */
+#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX */

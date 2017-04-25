@@ -56,14 +56,14 @@ namespace mfront{
      * \param[in] fd  : mfront file description
      */
     virtual void writeOutputFiles(const MaterialPropertyDescription&,
-				  const FileDescription&) override;
+				  const FileDescription&) const override;
     /*!
      * \brief : fill the target descripton
      * \param[out] d   : target description
      * \param[in]  mpd : material property description
      */
     virtual void getTargetsDescription(TargetsDescription&,
-				       const MaterialPropertyDescription&) override;
+				       const MaterialPropertyDescription&) const override;
 
     ~OctaveMaterialPropertyInterface();
     

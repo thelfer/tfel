@@ -87,9 +87,9 @@ namespace mfront
 
   void
   CppTestMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
-							  const MaterialPropertyDescription& mpd)
+							  const MaterialPropertyDescription& mpd) const
   {
-    const auto lib = "Cpp"+getMaterialLawLibraryNameBase(mpd.library,mpd.material);
+    const auto lib = "Cpp"+getMaterialLawLibraryNameBase(mpd);
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto target = name+"CppTest";
 #if defined _WIN32 || defined _WIN64
@@ -104,7 +104,7 @@ namespace mfront
 
   void
   CppTestMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
-						     const FileDescription& fd)
+						     const FileDescription& fd) const
   {
     using namespace std;
     const auto& file=fd.fileName;

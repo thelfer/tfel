@@ -20,16 +20,19 @@ namespace mfront
 {
 
   /*!
-   *
+   * \brief DSL for integrating a mechanical behaviour using
+   * Runge-Kutta algorithms.
    */
   struct RungeKuttaDSL
     : public RungeKuttaDSLBase
   {
-    static std::string 
-    getName(void);
-    static std::string 
-    getDescription(void);
+    //! \return the name of the DSL
+    static std::string getName(void);
+    //! \return the description of the DSL
+    static std::string getDescription(void);
+    //! constructor
     RungeKuttaDSL();
+    //! destructor
     ~RungeKuttaDSL();
   }; // end of struct RungeKuttaDSL
 

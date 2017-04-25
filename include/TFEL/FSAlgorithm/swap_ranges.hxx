@@ -13,8 +13,8 @@
 
 #include<algorithm>
 
-#ifndef LIB_TFEL_SWAP_RANGES_HXX_
-#define LIB_TFEL_SWAP_RANGES_HXX_ 
+#ifndef LIB_TFEL_SWAP_RANGES_HXX
+#define LIB_TFEL_SWAP_RANGES_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -87,5 +87,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_SWAP_RANGES_HXX_ */
+#endif /* LIB_TFEL_SWAP_RANGES_HXX */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_STUDYCURRENTSTATE_HXX_
-#define LIB_MTEST_STUDYCURRENTSTATE_HXX_
+#ifndef LIB_MTEST_STUDYCURRENTSTATE_HXX
+#define LIB_MTEST_STUDYCURRENTSTATE_HXX
 
 #include<map>
 #include<string>
@@ -195,4 +195,4 @@ namespace mtest{
 
 #include"MTest/StudyCurrentState.ixx"
 
-#endif /* LIB_MTEST_STUDYCURRENTSTATE_HXX_ */
+#endif /* LIB_MTEST_STUDYCURRENTSTATE_HXX */

@@ -48,15 +48,17 @@ namespace mfront{
      * \param[out] d   : target description
      * \param[in]  mpd : material property description
      */
-    virtual void getTargetsDescription(TargetsDescription&,
-				       const MaterialPropertyDescription&) override;
+    virtual void
+    getTargetsDescription(TargetsDescription&,
+			  const MaterialPropertyDescription&) const override;
     /*!
      * \brief generate the output files
      * \param[in] mpd : material property description
      * \param[in] fd  : mfront file description
      */
-    virtual void writeOutputFiles(const MaterialPropertyDescription&,
-				  const FileDescription&) override;
+    virtual void
+    writeOutputFiles(const MaterialPropertyDescription&,
+		     const FileDescription&) const override;
     //! destructor
     virtual ~PythonMaterialPropertyInterface();
     

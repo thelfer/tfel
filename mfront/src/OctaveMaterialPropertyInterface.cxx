@@ -80,7 +80,7 @@ namespace mfront
 
   void
   OctaveMaterialPropertyInterface::getTargetsDescription(TargetsDescription& td,
-							 const MaterialPropertyDescription& mpd)
+							 const MaterialPropertyDescription& mpd) const
   {
     const char * mkoctfile = ::getenv("MKOCTFILE");
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
@@ -99,9 +99,8 @@ namespace mfront
     res["all"].first.push_back("../octave/"+name+".oct");
   } // end of OctaveMaterialPropertyInterface::getSpecificTargets
 
-  void
-  OctaveMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
-						    const FileDescription& fd)
+  void OctaveMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
+							 const FileDescription& fd) const
   {
     using namespace std;
     tfel::system::systemCall::mkdir("octave");
@@ -177,11 +176,9 @@ namespace mfront
 	<< "using namespace std;\n"
 	<< "using real = double;\n";
     // material laws
-    writeMaterialLaws("OctaveMaterialPropertyInterface::writeOutputFile",
-		      out,mpd.materialLaws);
+    writeMaterialLaws(out,mpd.materialLaws);
     // static variables
-    writeStaticVariables("OctaveMaterialPropertyInterface::writeOutputFile",
-			 out,mpd.staticVars,fd.fileName);
+    writeStaticVariables(out,mpd.staticVars,fd.fileName);
     // parameters
     if(!mpd.parameters.empty()){
       writeAssignMaterialPropertyParameters(out,mpd,name,

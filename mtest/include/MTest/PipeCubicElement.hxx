@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MTEST_PIPECUBICELEMENT_HXX_
-#define LIB_MTEST_PIPECUBICELEMENT_HXX_
+#ifndef LIB_MTEST_PIPECUBICELEMENT_HXX
+#define LIB_MTEST_PIPECUBICELEMENT_HXX
 
 #include<iosfwd>
 
@@ -140,4 +140,4 @@ namespace mtest{
 
 } // end of namespace mtest
 
-#endif /* LIB_MTEST_PIPECUBICELEMENT_HXX_ */
+#endif /* LIB_MTEST_PIPECUBICELEMENT_HXX */

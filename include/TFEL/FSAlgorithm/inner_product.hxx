@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_INNER_PRODUCT_HXX_
-#define LIB_TFEL_INNER_PRODUCT_HXX_ 
+#ifndef LIB_TFEL_INNER_PRODUCT_HXX
+#define LIB_TFEL_INNER_PRODUCT_HXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -167,5 +167,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_INNER_PRODUCT_HXX_ */
+#endif /* LIB_TFEL_INNER_PRODUCT_HXX */
 

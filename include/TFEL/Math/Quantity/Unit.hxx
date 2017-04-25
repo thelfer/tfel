@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_UNIT_H_
-#define LIB_TFEL_UNIT_H_ 
+#ifndef LIB_TFEL_UNIT_HXX
+#define LIB_TFEL_UNIT_HXX 
 
 #include<ratio>
 #include<type_traits>
@@ -64,5 +64,5 @@ namespace tfel{
 
 #include"TFEL/Math/Quantity/Unit.ixx"
 
-#endif /* LIB_TFEL_UNIT_H_ */
+#endif /* LIB_TFEL_UNIT_HXX */
 

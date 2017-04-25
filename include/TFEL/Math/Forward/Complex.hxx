@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_FORWARD_COMPLEX_H_
-#define LIB_TFEL_MATH_FORWARD_COMPLEX_H_ 
+#ifndef LIB_TFEL_MATH_FORWARD_COMPLEX_HXX
+#define LIB_TFEL_MATH_FORWARD_COMPLEX_HXX 
 
 // August 2015 : a simple trick: including this header has not effect
 // in c++ other than defining some macros specific to the standard
@@ -33,7 +33,7 @@ namespace std
 #else
   template<typename T>
   class complex;
-#endif /* LIB_TFEL_MATH_FORWARD_COMPLEX_H_ */
+#endif /* LIB_TFEL_MATH_FORWARD_COMPLEX_HXX */
 } // end of namespace std
 #endif /* defined _LIBCPP_VERSION */
 
@@ -55,5 +55,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_FORWARD_COMPLEX_H_ */
+#endif /* LIB_TFEL_MATH_FORWARD_COMPLEX_HXX */
 

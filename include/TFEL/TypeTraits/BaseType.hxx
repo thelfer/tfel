@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_BASETYPE_H_
-#define LIB_TFEL_BASETYPE_H_ 
+#ifndef LIB_TFEL_BASETYPE_HXX
+#define LIB_TFEL_BASETYPE_HXX 
 
 #include"TFEL/Math/Forward/Complex.hxx"
 
@@ -152,4 +152,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_BASETYPE_H_ */
+#endif /* LIB_TFEL_BASETYPE_HXX */

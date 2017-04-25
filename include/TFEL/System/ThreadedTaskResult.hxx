@@ -141,4 +141,4 @@ namespace tfel{
 
 #include"TFEL/System/ThreadedTaskResult.ixx"
 
-#endif /* LIB_TFEL_SYSTEM_THREADEDTASKRESULT_HXX_ */
+#endif /* LIB_TFEL_SYSTEM_THREADEDTASKRESULT_HXX */

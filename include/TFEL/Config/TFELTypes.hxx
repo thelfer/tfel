@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFELTYPES_H_
-#define LIB_TFELTYPES_H_ 
+#ifndef LIB_TFELTYPES_HXX
+#define LIB_TFELTYPES_HXX 
 
 #include"TFEL/Math/Forward/qt.hxx"
 #include"TFEL/Math/Forward/tvector.hxx"
@@ -135,5 +135,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFELTYPES_H_ */
+#endif /* LIB_TFELTYPES_HXX */
 

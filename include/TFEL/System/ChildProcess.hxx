@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_CHILDPROCESS_H_
-#define LIB_CHILDPROCESS_H_ 
+#ifndef LIB_CHILDPROCESS_HXX
+#define LIB_CHILDPROCESS_HXX 
 
 #include<cstdlib>
 #include<cstring>
@@ -116,5 +116,5 @@ namespace tfel
     
 } // end of namespace tfel
 
-#endif /* LIB_CHILDPROCESS_H_ */
+#endif /* LIB_CHILDPROCESS_HXX */
 

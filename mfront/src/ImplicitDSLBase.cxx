@@ -135,108 +135,6 @@ namespace mfront{
     }
     BehaviourDSLCommon::treatUnknownKeyword();
   } // end of ImplicitDSLBase::treatUnknownKeyword
-
-  void ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation(const Hypothesis h)
-  {
-    using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    Modifier mts = [this](const MaterialPropertyInput& i) -> std::string{
-      if((i.type==MaterialPropertyInput::TEMPERATURE)||
-	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
-	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
-	return "this->"+i.name + "+theta*(this->d" + i.name+')';
-      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
-		 (i.type==MaterialPropertyInput::PARAMETER)){
-	return "this->"+i.name;
-      } else {
-	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-				"unsupported input type for variable '"+i.name+"'");
-      }
-    };
-    Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
-      if((i.type==MaterialPropertyInput::TEMPERATURE)||
-	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
-	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
-	return "this->"+i.name + "+this->d" + i.name;
-      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
-		 (i.type==MaterialPropertyInput::PARAMETER)){
-	return "this->"+i.name;
-      } else {
-	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-				"unsupported input type for variable '"+i.name+"'");
-      }
-    };
-    if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
-      this->behaviourFile << "// updating the stiffness tensor at the middle of the time step\n";
-      this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",mts);
-      if(!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
-	this->behaviourFile << "// stiffness tensor at the end of the time step\n";
-	this->writeStiffnessTensorComputation(this->behaviourFile,"this->D_tdt",ets);
-      }
-    }
-    for(const auto& ht : this->mb.getHillTensors()){
-      if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
-	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-				"Hill tensors shall only be defined for finite strain "
-				"or small strain behaviours");
-      }      
-      this->writeHillTensorComputation(this->behaviourFile,"this->"+ht.name,ht,mts);
-      if(!this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)){
-	this->writeHillTensorComputation(this->behaviourFile,"this->"+ht.name+"_tdt",ht,ets);
-      }
-    }
-    if((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false))&&
-       (this->mb.getElasticSymmetryType()==ISOTROPIC)&&
-       (this->mb.areElasticMaterialPropertiesDefined())){
-      const auto& emps = this->mb.getElasticMaterialProperties();
-      if(emps.size()!=2u){
-	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-				"invalid number of material properties");
-      }
-      if(!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()){
-	this->writeMaterialPropertyCheckBoundsEvaluation(this->behaviourFile,emps[0],mts);
-      }
-      if(!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()){
-	this->writeMaterialPropertyCheckBoundsEvaluation(this->behaviourFile,emps[1],mts);
-      }
-      if(!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()){
-	this->behaviourFile << "this->young=";
-	this->writeMaterialPropertyEvaluation(this->behaviourFile,emps[0],mts);
-	this->behaviourFile << ";\n";
-      }
-      if(!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()){
-	this->behaviourFile << "this->nu=";
-	this->writeMaterialPropertyEvaluation(this->behaviourFile,emps[1],mts);
-	this->behaviourFile << ";\n";
-      }
-      this->behaviourFile << "this->lambda=computeLambda(young,nu);\n";
-      this->behaviourFile << "this->mu=computeMu(young,nu);\n";
-      if(!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[0])){
-	this->writeMaterialPropertyCheckBoundsEvaluation(this->behaviourFile,emps[0],ets);
-	this->behaviourFile << "this->young_tdt=";
-	this->writeMaterialPropertyEvaluation(this->behaviourFile,emps[0],ets);
-	this->behaviourFile << ";\n";
-      } else {
-	this->behaviourFile << "this->young_tdt  = this->young;\n";
-      }
-      if(!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[1])){
-	this->writeMaterialPropertyCheckBoundsEvaluation(this->behaviourFile,emps[1],ets);
-	this->behaviourFile << "this->nu_tdt=";
-	this->writeMaterialPropertyEvaluation(this->behaviourFile,emps[1],ets);
-	this->behaviourFile << ";\n";
-      } else {
-	this->behaviourFile << "this->nu_tdt     = this->nu;\n";
-      }
-      if(!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
-	this->behaviourFile << "this->lambda_tdt = computeLambda(young_tdt,nu_tdt);\n";
-	this->behaviourFile << "this->mu_tdt     = computeMu(young_tdt,nu_tdt);\n";
-      } else {
-	this->behaviourFile << "this->lambda_tdt = this->lambda;\n";
-	this->behaviourFile << "this->mu_tdt     = this->mu;\n";
-      }
-    }
-    BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(h);
-  } // end of writeBehaviourLocalVariablesInitialisation
   
   void ImplicitDSLBase::treatStateVariable()
   {
@@ -295,7 +193,7 @@ namespace mfront{
   } // end of ImplicitDSLBase::treatInitJacobianInvert
   
   void ImplicitDSLBase::treatUnknownVariableMethod(const Hypothesis h,
-							    const std::string& n)
+						   const std::string& n)
   {
     if((this->mb.isIntegrationVariableName(h,n))||
        ((n[0]=='f')&&(this->mb.isIntegrationVariableName(h,n.substr(1))))){
@@ -359,14 +257,14 @@ namespace mfront{
 				      const std::string& n) const
     
   {
-     if(n.empty()){
-       this->throwRuntimeError("ImplicitDSLBase::isCallableVariable",
-			       "empty variable name '"+n+"'");
-     }
-     if((n[0]=='f')&&(this->mb.isIntegrationVariableName(h,n.substr(1)))){
-       return true;
-     }
-     return BehaviourDSLCommon::isCallableVariable(h,n);
+    if(n.empty()){
+      this->throwRuntimeError("ImplicitDSLBase::isCallableVariable",
+			      "empty variable name '"+n+"'");
+    }
+    if((n[0]=='f')&&(this->mb.isIntegrationVariableName(h,n.substr(1)))){
+      return true;
+    }
+    return BehaviourDSLCommon::isCallableVariable(h,n);
   } // end of ImplicitDSLBase::isCallableVariable
 
   void
@@ -531,8 +429,8 @@ namespace mfront{
 
   std::string
   ImplicitDSLBase::tangentOperatorVariableModifier(const Hypothesis h,
-							    const std::string& var,
-							    const bool addThisPtr)
+						   const std::string& var,
+						   const bool addThisPtr)
   {
     using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
@@ -597,8 +495,8 @@ namespace mfront{
 
   std::string
   ImplicitDSLBase::computeStressVariableModifier1(const Hypothesis h,
-							   const std::string& var,
-							   const bool addThisPtr)
+						  const std::string& var,
+						  const bool addThisPtr)
   {
     const auto& d = this->mb.getBehaviourData(h);
     if(this->mb.isDrivingVariableName(var)||(d.isExternalStateVariableName(var))){
@@ -635,8 +533,8 @@ namespace mfront{
 
   std::string
   ImplicitDSLBase::computeStressVariableModifier2(const Hypothesis h,
-							   const std::string& var,
-							   const bool addThisPtr)
+						  const std::string& var,
+						  const bool addThisPtr)
   {
     const auto& d = this->mb.getBehaviourData(h);
     if((this->mb.isDrivingVariableName(var))||(d.isExternalStateVariableName(var))){
@@ -657,7 +555,7 @@ namespace mfront{
 
   bool
   ImplicitDSLBase::isJacobianPart(const Hypothesis h,
-					   const std::string& w)
+				  const std::string& w)
   {
     const auto& d = this->mb.getBehaviourData(h);
     TokensContainer::const_iterator previous;
@@ -693,18 +591,16 @@ namespace mfront{
     return false;
   } // end of ImplicitDSLBase::isJacobianPart
 
-  void
-  ImplicitDSLBase::integratorAnalyser(const Hypothesis h,
-					       const std::string& w)
+  void ImplicitDSLBase::integratorAnalyser(const Hypothesis h,
+					   const std::string& w)
   {
     if(this->isJacobianPart(h,w)){
       this->jacobianPartsUsedInIntegrator.insert(w);
     }
   } // end of ImplicitDSLBase::integratorAnalyser
 
-  void
-  ImplicitDSLBase::predictorAnalyser(const Hypothesis h,
-					      const std::string& w)
+  void ImplicitDSLBase::predictorAnalyser(const Hypothesis h,
+					  const std::string& w)
   {
     const auto& d = this->mb.getBehaviourData(h);
     if(d.isIntegrationVariableIncrementName(w)){
@@ -712,16 +608,14 @@ namespace mfront{
     }
   } // end of ImplicitDSLBase::predictorAnalyser
 
-  void
-  ImplicitDSLBase::treatIntegrator()
+  void ImplicitDSLBase::treatIntegrator()
   {
     this->readCodeBlock(*this,BehaviourData::Integrator,
 			&ImplicitDSLBase::integratorVariableModifier,
 			&ImplicitDSLBase::integratorAnalyser,true);
   } // end of ImplicitDSLBase::treatIntegrator
 
-  void
-  ImplicitDSLBase::treatPredictor()
+  void ImplicitDSLBase::treatPredictor()
   {
     using namespace std;
     this->readCodeBlock(*this,BehaviourData::ComputePredictor,
@@ -729,8 +623,7 @@ namespace mfront{
 			&ImplicitDSLBase::predictorAnalyser,true);
   } // end of ImplicitDSLBase::treatPredictor
 
-  void
-  ImplicitDSLBase::treatComputeStress()
+  void ImplicitDSLBase::treatComputeStress()
   {
     /*
      * Most behaviours will only rely the @ComputeStress keyword to
@@ -748,18 +641,16 @@ namespace mfront{
 			&ImplicitDSLBase::computeStressVariableModifier2,true,true);
   } // end of ImplicitDSLBase::treatComputeStress
 
-  void
-  ImplicitDSLBase::treatComputeFinalStress()
+  void ImplicitDSLBase::treatComputeFinalStress()
   {
     this->readCodeBlock(*this,BehaviourData::ComputeFinalStress,
 			&ImplicitDSLBase::computeStressVariableModifier2,true,true);
   } // end of ImplicitDSLBase::treatComputeFinalStress
 
-  void
-  ImplicitDSLBase::treatMaximumIncrementValuePerIteration()
+  void ImplicitDSLBase::treatMaximumIncrementValuePerIteration()
   {
     using namespace std;
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double value;
     this->checkNotEndOfFile("ImplicitDSLBase::treatMaximumIncrementValuePerIteration",
 			    "Cannot read value value.");
@@ -779,1058 +670,6 @@ namespace mfront{
 			  BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h,"maximum_increment_value_per_iteration",value);
   } // end of ImplicitDSLBase::treatMaximumIncrementValuePerIteration
-
-  void ImplicitDSLBase::writeBehaviourParserSpecificIncludes()
-  {
-    bool has_scalar  = false;
-    bool has_scalar_array  = false;
-    bool has_tvector = false;
-    bool has_tvector_array = false;
-    bool has_stensor = false;
-    bool has_stensor_array = false;
-    // checks
-    const auto& mh = this->mb.getModellingHypotheses();
-    for(const auto & h : mh){
-      const auto& d = this->mb.getBehaviourData(h);
-      for(const auto& v : d.getIntegrationVariables()){
-	const auto flag  = SupportedTypes::getTypeFlag(v.type);
-	if(flag==SupportedTypes::Scalar){
-	  has_scalar = true;
-	  if(v.arraySize>=1){
-	    has_scalar_array = true;
-	  }
-	}
-	if(flag==SupportedTypes::Stensor){
-	  has_stensor = true;
-	  if(v.arraySize>=1){
-	    has_stensor_array = true;
-	  }
-	}
-	if(flag==SupportedTypes::TVector){
-	  has_tvector = true;
-	  if(v.arraySize>=1){
-	    has_tvector_array = true;
-	  }
-	}
-      }
-    }
-    // output
-    this->checkBehaviourFile();
-    this->behaviourFile << "#include\"TFEL/Math/st2tost2.hxx\"\n"
-			<< "#include\"TFEL/Math/tmatrix.hxx\"\n"
-			<< "#include\"TFEL/Math/tvector.hxx\"\n"
-			<< "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
-			<< "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n"
-			<< "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
-    if(has_scalar_array){
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx\"\n"
-			  << "#include\"TFEL/Math/Vector/TinyVectorFromTinyVectorViewIO.hxx\"\n";
-    }
-    // tiny vectors
-    if(has_tvector){
-      this->behaviourFile << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n\n"
-			  << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n\n";
-    }
-    if((has_scalar)&&(has_tvector)){
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixColumnView.hxx\"\n"
-			  << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx\"\n"
-			  << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixColumnView2.hxx\"\n"
-			  << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx\"\n"
-			  << "#include\"TFEL/Math/Vector/TVectorFromTinyVectorView.hxx\"\n";
-    }
-    if(has_tvector_array){
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorView.hxx\"\n"
-			  << "#include\"TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorViewIO.hxx\"\n";
-    }
-    // symmetric tensors
-    if(has_stensor){
-      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyVectorView.hxx\"\n"
-			  << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx\"\n\n"
-			  << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx\"\n\n";
-    }
-    if((has_scalar)&&(has_stensor)){
-      this->behaviourFile << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx\"\n"
-			  << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx\"\n"
-			  << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx\"\n"
-			  << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx\"\n";
-    }
-    if(has_stensor_array){
-      this->behaviourFile << "#include\"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx\"\n"
-			  << "#include\"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorViewIO.hxx\"\n";
-    }
-  } // end of ImplicitDSLBase::writeBehaviourParserSpecificIncludes(void)
-  
-  void ImplicitDSLBase::writeBehaviourParserSpecificTypedefs()
-  {
-    this->checkBehaviourFile();
-    BehaviourDSLCommon::writeBehaviourParserSpecificTypedefs();
-  } // end of ImplicitDSLBase::writeBehaviourParserSpecificTypedefs(void)
-
-  void
-  ImplicitDSLBase::writeBehaviourParserSpecificMembers(const Hypothesis h)
-  {
-    BehaviourDSLCommon::writeBehaviourParserSpecificMembers(h);
-    const auto& d = this->mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
-    VariableDescriptionContainer::const_iterator p2;
-    SupportedTypes::TypeSize n;
-    SupportedTypes::TypeSize n3;
-    // size of linear system
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n3 += this->getTypeSize(p->type,p->arraySize);
-    }
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      SupportedTypes::TypeSize n2;
-      for(p2=d.getIntegrationVariables().begin();p2!=d.getIntegrationVariables().end();++p2){
-	SupportedTypes::TypeFlag flag  = SupportedTypes::getTypeFlag(p->type);
-	SupportedTypes::TypeFlag flag2 = SupportedTypes::getTypeFlag(p2->type);
-	if((p->arraySize!=1u)||(p2->arraySize!=1u)){
-	  this->behaviourFile << "/*!\n"
-			      << " * \\return the part of the jacobian matrix "
-			      << "corresponding to the derivative "
-			      << "of variable " << p->name 
-			      << " by variable " << p2->name << "\n"
-			      << " */\n";
-	}
-	if((p->arraySize!=1u)&&(p2->arraySize==1u)){
-	  if(flag==SupportedTypes::Scalar){
-	    if(flag2==SupportedTypes::Scalar){
-	      this->behaviourFile << "real&\n"
-				  << "df" << p->name << "_dd" << p2->name
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-				  << "const unsigned short idx){\n"
-				  << "return tjacobian(" << n << "+idx, " << n2 << ");\n"
-				  << "}\n\n";
-	      this->behaviourFile << "real&\n"
-				  << "df" << p->name << "_dd" << p2->name << "(const unsigned short idx){\n"
-				  << "return this->jacobian(" << n << "+idx, " << n2 << ");\n"
-				  << "}\n\n";
-	    } else if(flag2==SupportedTypes::TVector){
-	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
-	      this->behaviourFile << "typename tfel::math::TVectorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-				  << "const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename TVectorFromTinyMatrixRowView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
-				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::TVectorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename TVectorFromTinyMatrixRowView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0);\n"
-				  << "}\n\n";
-	    } else {
-	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
-	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-				  << "const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename StensorFromTinyMatrixRowView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
-				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename StensorFromTinyMatrixRowView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0);\n"
-				  << "}\n\n";
-	    }
-	  } else if(flag==SupportedTypes::TVector){
-	    if(flag2==SupportedTypes::Scalar){
-	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
-	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-				  << "const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename StensorFromTinyMatrixColumnView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
-				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename StensorFromTinyMatrixColumnView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0);\n"
-				  << "}\n\n";
-	    } else if(flag2==SupportedTypes::TVector){
-	      // Le résultat est une sous-matrice
-	      this->behaviourFile << "typename tfel::math::TMatrixFromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-	      			  << "df" << p->name << "_dd" << p2->name 
-	      			  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-	      			  << "const unsigned short idx){\n"
-	      			  << "using namespace tfel::math;\n"
-	      			  << "return typename TMatrixFromTinyMatrixView2<N,"
-	      			  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0u);\n"
-	      			  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::TMatrixFromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-	      			  << "df" << p->name << "_dd" << p2->name 
-	      			  << "(const unsigned short idx){\n"
-	      			  << "using namespace tfel::math;\n"
-	      			  << "return typename TMatrixFromTinyMatrixView2<N,"
-	      			  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0u);\n"
-	      			  << "}\n\n";
-	    } else {
-	      this->throwRuntimeError("ImplicitDSLBase::writeBehaviourParserSpecificMembers",
-				      "derivation of a vector by a tensor is not defined");
-	    }
-	  } else {
-	    if(flag2==SupportedTypes::Scalar){
-	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
-	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-				  << "const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename StensorFromTinyMatrixColumnView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
-				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename StensorFromTinyMatrixColumnView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0);\n"
-				  << "}\n\n";
-	    } else if(flag2==SupportedTypes::Stensor){
-	      // Le résultat est un tenseur d'ordre 4
-	      this->behaviourFile << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-				  << "const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename ST2toST2FromTinyMatrixView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0u);\n"
-				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename ST2toST2FromTinyMatrixView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0u);\n"
-				  << "}\n\n";
-	    } else {
-	      this->throwRuntimeError("ImplicitDSLBase::writeBehaviourParserSpecificMembers",
-				      "derivation of a tensor by a vector is not defined");
-	    }
-	  }
-	} else if((p->arraySize==1u)&&(p2->arraySize!=1u)){
-	  if(flag==SupportedTypes::Scalar){
-	    if(flag2==SupportedTypes::Scalar){
-	      this->behaviourFile << "real&\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-				  << "const unsigned short idx){\n"
-				  << "return tjacobian(" << n << ", " << n2 << "+idx);\n"
-				  << "}\n\n";
-	      this->behaviourFile << "real&\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(const unsigned short idx){\n"
-				  << "return this->jacobian(" << n << ", " << n2 << "+idx);\n"
-				  << "}\n\n";
-	    } else {
-	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
-	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-				  << "const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename StensorFromTinyMatrixRowView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,0,idx);\n"
-				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename StensorFromTinyMatrixRowView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,0,idx);\n"
-				  << "}\n\n";
-	    }
-	  } else {
-	    if(flag2==SupportedTypes::Scalar){
-	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
-	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-				  << "const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename StensorFromTinyMatrixColumnView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,0,idx);\n"
-				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename StensorFromTinyMatrixColumnView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,0,idx);\n"
-				  << "}\n\n";
-	    } else {
-	      this->behaviourFile << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-				  << "const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename ST2toST2FromTinyMatrixView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,0,idx);\n"
-				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(const unsigned short idx){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename ST2toST2FromTinyMatrixView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,0,idx);\n"
-				  << "}\n\n";
-	    }
-	  }
-	} else if((p->arraySize!=1u)&&(p2->arraySize!=1u)){
-	  if(flag==SupportedTypes::Scalar){
-	    if(flag2==SupportedTypes::Scalar){
-	      this->behaviourFile << "real&\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-				  << "const unsigned short idx,"
-				  << " const unsigned short idx2){\n"
-				  << "return tjacobian(" << n << "+idx, " << n2 << "+idx2);\n"
-				  << "}\n\n";
-	      this->behaviourFile << "real&\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(const unsigned short idx,"
-				  << " const unsigned short idx2){\n"
-				  << "return this->jacobian(" << n << "+idx, " << n2 << "+idx2);\n"
-				  << "}\n\n";
-	    } else {
-	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
-	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-				  << "const unsigned short idx,"
-				  << " const unsigned short idx2){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename StensorFromTinyMatrixRowView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,idx2);\n"
-				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(const unsigned short idx,"
-				  << " const unsigned short idx2){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename StensorFromTinyMatrixRowView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,idx2);\n"
-				  << "}\n\n";
-	    }
-	  } else {
-	    if(flag2==SupportedTypes::Scalar){
-	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
-	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-				  << "const unsigned short idx,"
-				  << " const unsigned short idx2){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename StensorFromTinyMatrixColumnView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,idx2);\n"
-				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(const unsigned short idx,"
-				  << " const unsigned short idx2){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename StensorFromTinyMatrixColumnView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,idx2);\n"
-				  << "}\n\n";
-	    } else {
-	      this->behaviourFile << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
-				  << "const unsigned short idx,"
-				  << " const unsigned short idx2){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename ST2toST2FromTinyMatrixView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,idx2);\n"
-				  << "}\n\n";
-	      this->behaviourFile << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-				  << "df" << p->name << "_dd" << p2->name 
-				  << "(const unsigned short idx,"
-				  << " const unsigned short idx2){\n"
-				  << "using namespace tfel::math;\n"
-				  << "return typename ST2toST2FromTinyMatrixView2<N,"
-				  << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,idx2);\n"
-				  << "}\n\n";
-	    }
-	  }
-	}
-	n2 += this->getTypeSize(p2->type,p2->arraySize);
-      }
-      n += this->getTypeSize(p->type,p->arraySize);
-    }
-    // size of linear system
-    n = n3;
-    if(this->solver->usesJacobian()){
-      this->behaviourFile << "// Jacobian\n";
-      this->behaviourFile << "tfel::math::tmatrix<" << n << "," << n << ",Type> jacobian;\n";
-    }
-    if(this->solver->usesJacobianInvert()){
-      this->behaviourFile << "// Jacobian\n";
-      this->behaviourFile << "tfel::math::tmatrix<" << n << "," << n << ",Type> inv_jacobian;\n";
-    }
-    this->solver->writeSpecificMembers(this->behaviourFile,this->mb,h);
-    this->behaviourFile << "// zeros\n";
-    this->behaviourFile << "tfel::math::tvector<" << n << ",Type> zeros;\n\n";
-    this->behaviourFile << "// previous zeros\n";
-    this->behaviourFile << "tfel::math::tvector<" << n << ",Type> zeros_1;\n\n";
-    this->behaviourFile << "// function\n";
-    this->behaviourFile << "tfel::math::tvector<" << n << ",Type> fzeros;\n\n";
-    this->behaviourFile << "// number of iterations\n";
-    this->behaviourFile << "unsigned int iter = 0u;\n\n";
-    //
-    
-    if(this->solver->usesJacobian()){
-      // compute the numerical part of the jacobian.  This method is
-      // used to compute a numerical approximation of the jacobian for
-      // the solvers based on it. For solvers providing an analytical
-      // jacobian, or an approximation of it, this method is used to
-      // compare the jacobain to its numerical approximation
-      this->writeComputeNumericalJacobian(h);
-    }
-    if(this->solver->usesJacobian()){
-      // for solver based on the jacobian matrix, the get partial
-      // jacobian invert method can be used to compute the tangent
-      // operator.
-      this->writeGetPartialJacobianInvert(h);
-    }
-    // compute stress
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      this->behaviourFile << "void\ncomputeStress(void){\n"
-			  << "using namespace std;\n"
-			  << "using namespace tfel::math;\n"
-			  << "using std::vector;\n";
-      writeMaterialLaws("ImplicitDSLBase::writeBehaviourParserSpecificMembers",
-			this->behaviourFile,this->mb.getMaterialLaws());
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeStress)
-			  << "\n} // end of " << this->mb.getClassName() << "::computeStress\n\n";
-    }
-    if(this->mb.hasCode(h,BehaviourData::ComputeFinalStress)){
-      this->behaviourFile << "void\ncomputeFinalStress(void){\n"
-			  << "using namespace std;\n"
-			  << "using namespace tfel::math;\n"
-			  << "using std::vector;\n";
-      writeMaterialLaws("ImplicitDSLBase::writeBehaviourParserSpecificMembers",
-			this->behaviourFile,this->mb.getMaterialLaws());
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeFinalStress)
-			  << "\n} // end of " << this->mb.getClassName() << "::computeStress\n\n";
-    }
-  } // end of ImplicitDSLBase::writeBehaviourParserSpecificMembers
-
-  void
-  ImplicitDSLBase::writeGetPartialJacobianInvert(const Hypothesis h)
-  {
-    using size_type = VariableDescriptionContainer::size_type;
-    const auto& d = this->mb.getBehaviourData(h);
-    this->checkBehaviourFile();
-    SupportedTypes::TypeSize n;
-    for(const auto& v : d.getIntegrationVariables()){
-      n += this->getTypeSize(v.type,v.arraySize);
-    }
-    for(size_type i=0;i!=d.getIntegrationVariables().size();++i){
-      this->behaviourFile << "void\ngetPartialJacobianInvert(";
-      for(size_type i2=0;i2<=i;){
-	const auto& v = d.getIntegrationVariables()[i2];
-	const auto flag = SupportedTypes::getTypeFlag(v.type);
-	if(v.arraySize==1u){
-	  switch(flag){
-	  case SupportedTypes::Scalar : 
-	    this->behaviourFile << "Stensor& ";
-	    break;
-	  case SupportedTypes::Stensor :
-	    this->behaviourFile << "Stensor4& ";
-	    break;
-	  case SupportedTypes::TVector:
-	  case SupportedTypes::Tensor:
-	  default :
-	    this->throwRuntimeError("ImplicitDSLBase::writeGetPartialJacobianInvert",
-				    "internal error, tag unsupported");
-	  }
-	} else {
-	  switch(flag){
-	  case SupportedTypes::Scalar : 
-	    this->behaviourFile << "tfel::math::tvector<" << v.arraySize << "u,Stensor>& ";
-	    break;
-	  case SupportedTypes::Stensor :
-	    this->behaviourFile << "tfel::math::tvector<" << v.arraySize << "u,Stensor4>& ";
-	    break;
-	  case SupportedTypes::TVector:
-	  case SupportedTypes::Tensor:
-	  default :
-	    this->throwRuntimeError("ImplicitDSLBase::writeGetPartialJacobianInvert",
-				    "internal error, tag unsupported");
-	  }
-	}
-	this->behaviourFile << "partial_jacobian_" << v.name;
-	if(++i2<=i){
-	  this->behaviourFile << ",\n";
-	}	  
-      }
-      this->behaviourFile << ")\n";
-      this->behaviourFile << "{\n";
-      this->behaviourFile << "using namespace tfel::math;\n";
-      this->behaviourFile << "TinyPermutation<" << n << "> permuation;\n";
-      this->behaviourFile << "TinyMatrixSolve<" << n << ",real>::decomp(this->jacobian,permuation);\n";
-      this->behaviourFile << "for(unsigned short idx=0;idx!=StensorSize;++idx){\n";
-      this->behaviourFile << "tvector<" << n << ",real> vect_e(real(0));\n";
-      this->behaviourFile << "vect_e(idx) = real(1);\n";
-      this->behaviourFile << "TinyMatrixSolve<" << n << ",real>::back_substitute(this->jacobian,permuation,vect_e);\n";
-      SupportedTypes::TypeSize n2;
-      for(size_type i2=0;i2<=i;++i2){
-	const auto& v = d.getIntegrationVariables()[i2];
-	const auto flag = SupportedTypes::getTypeFlag(v.type);
-	if(flag==SupportedTypes::Scalar){
-	  if(v.arraySize==1u){
-	    this->behaviourFile << "partial_jacobian_" << v.name << "(idx)=vect_e(" << n2 << ");\n";
-	  } else {
-	    this->behaviourFile << "for(unsigned short idx2=0;idx2!="
-				<< v.arraySize << ";++idx2){\n";
-	    this->behaviourFile << "partial_jacobian_" << v.name << "(idx2)(idx)=vect_e(" << n2 << "+idx2);\n";
-	    this->behaviourFile << "}\n";
-	  }
-	  n2 += this->getTypeSize(v.type,v.arraySize);
-	} else if(flag==SupportedTypes::TVector){
-	  if(v.arraySize==1u){
-	    this->behaviourFile << "for(unsigned short idx2=" << n2;
-	    this->behaviourFile << ";idx2!=";
-	    n2 += this->getTypeSize(v.type,v.arraySize);
-	    this->behaviourFile << n2 << ";++idx2){\n";
-	    this->behaviourFile << "partial_jacobian_" << v.name << "(idx2,idx)=vect_e(idx2);\n";
-	    this->behaviourFile << "}\n";
-	  } else {
-	    this->behaviourFile << "for(unsigned short idx2=0;idx2!="
-				<< v.arraySize << ";++idx2){\n";
-	    this->behaviourFile << "for(unsigned short idx3=" << n2;
-	    this->behaviourFile << ";idx3!=TVectorSize;++idx3){\n";
-	    this->behaviourFile << "partial_jacobian_" << v.name 
-				<< "(idx2)(idx3,idx)=vect_e(" << n2 << "+idx3+idx2*TVectorSize);\n";
-	    this->behaviourFile << "}\n";
-	    this->behaviourFile << "}\n";
-	    n2 += this->getTypeSize(v.type,v.arraySize);
-	  }
-	} else if(flag==SupportedTypes::Stensor){
-	  if(v.arraySize==1u){
-	    this->behaviourFile << "for(unsigned short idx2=" << n2;
-	    this->behaviourFile << ";idx2!=";
-	    n2 += this->getTypeSize(v.type,v.arraySize);
-	    this->behaviourFile << n2 << ";++idx2){\n";
-	    this->behaviourFile << "partial_jacobian_" << v.name << "(idx2,idx)=vect_e(idx2);\n";
-	    this->behaviourFile << "}\n";
-	  } else {
-	    this->behaviourFile << "for(unsigned short idx2=0;idx2!="
-				<< v.arraySize << ";++idx2){\n";
-	    this->behaviourFile << "for(unsigned short idx3=" << n2;
-	    this->behaviourFile << ";idx3!=StensorSize;++idx3){\n";
-	    this->behaviourFile << "partial_jacobian_" << v.name 
-				<< "(idx2)(idx3,idx)=vect_e(" << n2 << "+idx3+idx2*StensorSize);\n";
-	    this->behaviourFile << "}\n";
-	    this->behaviourFile << "}\n";
-	    n2 += this->getTypeSize(v.type,v.arraySize);
-	  }
-	} else {
-	  this->throwRuntimeError("ImplicitDSLBase::writeGetPartialJacobianInvert",
-				  "internal error, tag unsupported");
-	}
-      }
-      this->behaviourFile << "}\n";
-      for(size_type i2=0;i2<=i;++i2){
-	const auto& v = d.getIntegrationVariables()[i2];
-	if(this->mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	  const auto& nf = this->mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
-	  this->behaviourFile << "partial_jacobian_" << v.name << " /= " << nf << ";\n";
-	}
-      }
-      this->behaviourFile << "}\n\n";
-    }
-  } // end of ImplicitDSLBase::writeGetPartialJacobianInvert
-  
-  void ImplicitDSLBase::writeComputeNumericalJacobian(const Hypothesis h){
-    using namespace std;
-    const auto& d = this->mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
-    SupportedTypes::TypeSize n;
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n += this->getTypeSize(p->type,p->arraySize);
-    }
-    this->checkBehaviourFile();
-    this->behaviourFile << "void\ncomputeNumericalJacobian(tfel::math::tmatrix<" << n << "," << n << ",real>& njacobian)\n"
-			<< "{\n"
-			<< "using namespace std;\n"
-			<< "using namespace tfel::math;\n"
-			<< "tvector<" << n << ",real> tzeros(this->zeros);\n"
-			<< "tvector<" << n << ",real> tfzeros(this->fzeros);\n"
-			<< "tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n"
-			<< "for(unsigned short idx = 0; idx!= "<< n<<  ";++idx){\n"
-			<< "this->zeros(idx) -= this->numerical_jacobian_epsilon;\n";
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      this->behaviourFile << "this->computeStress();\n";
-    }
-    this->behaviourFile << "this->computeFdF();\n"
-			<< "this->zeros = tzeros;\n"
-			<< "tvector<" << n << ",real> tfzeros2(this->fzeros);\n"
-			<< "this->zeros(idx) += this->numerical_jacobian_epsilon;\n";
-    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      this->behaviourFile << "this->computeStress();\n";
-    }
-    this->behaviourFile << "this->computeFdF();\n"
-			<< "this->fzeros = (this->fzeros-tfzeros2)/(real(2)*(this->numerical_jacobian_epsilon));\n"
-			<< "for(unsigned short idx2 = 0; idx2!= "<< n <<  ";++idx2){\n"
-			<< "njacobian(idx2,idx) = this->fzeros(idx2);\n"
-			<< "}\n"
-			<< "this->zeros    = tzeros;\n"
-			<< "this->fzeros   = tfzeros;\n"
-			<< "}\n"
-			<< "if(&njacobian!=&(this->jacobian)){\n"
-			<< "this->jacobian = tjacobian;\n"
-			<< "}\n"
-			<< "}\n\n";
-  }
-
-  std::string
-  ImplicitDSLBase::getVectorMappingClass(const VariableDescription& v) const
-  {
-    const auto f = SupportedTypes::getTypeFlag(v.type);
-    if(f==SupportedTypes::Stensor){
-      if(v.arraySize==1u){
-	return "StensorFromTinyVectorView";
-      } else {
-	return "TinyVectorOfStensorFromTinyVectorView";
-      }
-    }
-    this->throwRuntimeError("ImplicitDSLBase::getVectorMappingClass",
-			    "unsupported type for variable '"+v.name+"'");
-  } // end of ImplicitDSLBase::getVectorMappingClass
-
-  void ImplicitDSLBase::writeBehaviourIntegrator(const Hypothesis h){
-    const auto btype = this->mb.getBehaviourTypeFlag();
-    const auto& d = this->mb.getBehaviourData(h);
-    SupportedTypes::TypeSize n;
-    SupportedTypes::TypeSize n2;
-    SupportedTypes::TypeSize n3;
-    for(const auto& v : d.getIntegrationVariables()){
-      n2 += this->getTypeSize(v.type,v.arraySize);
-    }
-    this->checkBehaviourFile();
-    this->behaviourFile << "/*!\n";
-    this->behaviourFile << "* \\brief Integrate behaviour law over the time step\n";
-    this->behaviourFile << "*/\n";
-    this->behaviourFile << "IntegrationResult\n";
-    if(this->mb.hasAttribute(h,BehaviourData::hasConsistentTangentOperator)){
-      this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt) override{\n";
-    } else {
-      if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
-	this->behaviourFile << "integrate(const SMFlag smflag,const SMType smt) override{\n";
-      } else {
-	this->behaviourFile << "integrate(const SMFlag,const SMType smt) override{\n";
-      }
-    }
-    this->behaviourFile << "using namespace std;\n";
-    this->behaviourFile << "using namespace tfel::math;\n";
-    writeMaterialLaws("ImplicitDSLBase::writeBehaviourParserSpecificMembers",
-		      this->behaviourFile,this->mb.getMaterialLaws());
-    if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-       (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
-      if(this->mb.useQt()){
-	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			    << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
-			    << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
-			    << "}\n";
-      } else {
-	this->behaviourFile << "if(smflag!=MechanicalBehaviour<" << btype 
-			    << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
-			    << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
-			    << "}\n";
-      }
-    }
-    if(this->mb.hasCode(h,BehaviourData::ComputePredictor)){
-      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputePredictor) << '\n';
-    }
-    if(this->mb.getAttribute(BehaviourData::profiling,false)){
-      writeStandardPerformanceProfilingBegin(this->behaviourFile,
-					     mb.getClassName(),
-					     BehaviourData::Integrator);
-    }
-    this->solver->writeResolutionAlgorithm(this->behaviourFile,this->mb,h);
-    this->behaviourFile << "if(this->iter==this->iterMax){\n";
-    if(getDebugMode()){
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : no convergence after \" "
-			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
-      this->behaviourFile << "cout << *this << endl;\n";
-    }
-    if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
-    } else {
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
-    }
-    this->behaviourFile << "}\n";
-    if(getDebugMode()){
-      this->behaviourFile << "cout << \"" << this->mb.getClassName()
-			  << "::integrate() : convergence after \" "
-			  << "<< this->iter << \" iterations\"<< endl << endl;\n";
-    }
-    if(this->mb.getAttribute(BehaviourData::profiling,false)){
-      writeStandardPerformanceProfilingEnd(this->behaviourFile);
-    }
-    for(const auto& v : d.getIntegrationVariables()){
-      if(this->mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	const auto& nf = this->mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
-	this->behaviourFile << "this->d" << v.name << " *= " << nf << ";\n";
-      }
-    }
-    this->behaviourFile << "this->updateIntegrationVariables();\n";
-    this->behaviourFile << "this->updateStateVariables();\n";
-    if(this->mb.hasCode(h,BehaviourData::ComputeFinalStress)){
-      this->behaviourFile << "this->computeFinalStress();\n";
-    }
-    this->behaviourFile << "this->updateAuxiliaryStateVariables();\n";
-    for(const auto& v : d.getPersistentVariables()){
-      this->writePhysicalBoundsChecks(this->behaviourFile,v,false);
-    }
-    for(const auto& v : d.getPersistentVariables()){
-      this->writeBoundsChecks(this->behaviourFile,v,false);
-    }
-    this->behaviourFile << "if(smt!=NOSTIFFNESSREQUESTED){\n";
-    if(this->mb.hasAttribute(h,BehaviourData::hasConsistentTangentOperator)){
-      if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
-      } else {
-	this->behaviourFile << "if(!this->computeConsistentTangentOperator(smt)){\n";
-      }
-      if(this->mb.useQt()){        
-	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
-      } else {
-	this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
-      }
-      this->behaviourFile << "}\n";
-    } else {
-      this->behaviourFile << "string msg(\"" << this->mb.getClassName() << "::integrate : \");\n";
-      this->behaviourFile << "msg +=\"unimplemented feature\";\n";
-      this->behaviourFile << "throw(runtime_error(msg));\n";
-    }
-    this->behaviourFile << "}\n";
-    if(this->mb.useQt()){        
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
-    } else {
-      this->behaviourFile << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::SUCCESS;\n";
-    }
-    this->behaviourFile << "} // end of " << this->mb.getClassName() << "::integrate\n\n";
-    this->writeComputeFdF(h);
-  }
-
-  void
-  ImplicitDSLBase::writeComputeFdF(const Hypothesis h)
-  {
-    const auto& d = this->mb.getBehaviourData(h);
-    SupportedTypes::TypeSize n;
-    SupportedTypes::TypeSize n2;
-    SupportedTypes::TypeSize n3;
-    for(const auto& v : d.getIntegrationVariables()){
-      n2 += this->getTypeSize(v.type,v.arraySize);
-    }
-    this->behaviourFile << "/*!\n"
-			<< "* \\brief compute fzeros and jacobian\n"
-			<< "*/\n"
-			<< "bool\n"
-			<< "computeFdF(void){\n"
-			<< "using namespace std;\n"
-			<< "using namespace tfel::math;\n"
-			<< "using std::vector;\n";
-    if(this->mb.getAttribute(BehaviourData::profiling,false)){
-      writeStandardPerformanceProfiling(this->behaviourFile,
-					mb.getClassName(),
-					"ComputeFdF");
-    }
-    writeMaterialLaws("ImplicitDSLBase::writeBehaviourParserSpecificMembers",
-		      this->behaviourFile,this->mb.getMaterialLaws());
-    n = SupportedTypes::TypeSize();
-    for(const auto & v : d.getIntegrationVariables()){
-      if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Scalar){
-	if(v.arraySize==1u){
-	  this->behaviourFile << "real& f" << v.name << "(this->fzeros(" << n << "));\n";
-	} else {
-	  this->behaviourFile << "typename tfel::math::TinyVectorFromTinyVectorView<" 
-			      << v.arraySize << "," << n2 << "," << n
-			      << ",real,false>::type"
-			      << " f" << v.name << "(this->fzeros);\n";
-	}
-      } else {
-	if(v.arraySize==1u){
-	  this->behaviourFile << "typename tfel::math::"
-			      << this->getVectorMappingClass(v)
-			      << "<N," << n2 << "," << n << ",real>::type"
-			      << " f" << v.name << "(this->fzeros);\n";
-	} else {
-	  this->behaviourFile << "typename tfel::math::"
-			      << this->getVectorMappingClass(v)
-			      << "<N," << n2 << "," << n << "," << v. arraySize << ",real>::type"
-			      << " f" << v.name << "(this->fzeros);\n";
-	}
-      }
-      n += this->getTypeSize(v.type,v.arraySize);
-    }
-    if((this->solver->usesJacobian())&&
-       (!(this->solver->requiresNumericalJacobian()))){
-      n = SupportedTypes::TypeSize();
-      for(const auto & v : d.getIntegrationVariables()){
-	n3 = SupportedTypes::TypeSize();
-	for(const auto & v2 : d.getIntegrationVariables()){
-	  if((v.arraySize==1u)&&(v2.arraySize==1u)){
-	    this->behaviourFile << "// derivative of variable f" << v.name 
-				<< " by variable " << v2.name << "\n"
-				<< NonLinearSystemSolverBase::getJacobianPart(this->mb,v,v2,n,n2,n3);
-	  }
-	  n3 += this->getTypeSize(v2.type,v2.arraySize);
-	}
-	n += this->getTypeSize(v.type,v.arraySize);
-      }
-    }
-    if(this->solver->requiresJacobianToBeReinitialisedToIdentityAtEachIterations()){
-      for(const auto & v : d.getIntegrationVariables()){
-	this->jacobianPartsUsedInIntegrator.insert("df"+v.name+"_dd"+v.name);
-      }
-      this->behaviourFile << "// setting jacobian to identity\n"
-			  << "std::fill(this->jacobian.begin(),this->jacobian.end(),real(0));\n"
-			  << "for(unsigned short idx = 0; idx!=" << n << ";++idx){\n"
-			  << "this->jacobian(idx,idx)= real(1);\n"
-			  << "}\n";
-    }
-    this->behaviourFile << "// setting f values to zeros\n"
-			<< "this->fzeros = this->zeros;\n";
-    for(const auto& v : d.getIntegrationVariables()){
-      if(this->mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	const auto& nf = this->mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
-    	this->behaviourFile << "f" << v.name << " *= " << nf << ";\n";
-      }
-    }
-    this->behaviourFile << this->mb.getCodeBlock(h,BehaviourData::Integrator).code << "\n";
-    for(const auto&  v : d.getIntegrationVariables()){
-      if(this->mb.hasAttribute(h,'f'+v.name+"_normalisation_factor")){
-	const auto& nf = this->mb.getAttribute<std::string>(h,'f'+v.name+"_normalisation_factor");
-    	this->behaviourFile << "f" << v.name << "*= real(1)/(" << nf << ");\n";
-      }
-    }
-    if((this->solver->usesJacobian())&&
-       (!(this->solver->requiresNumericalJacobian()))){
-      for(const auto& v : d.getIntegrationVariables()){
-	for(const auto& v2 : d.getIntegrationVariables()){
-	  if((v.arraySize==1u)&&(v2.arraySize==1u)){
-	    this->behaviourFile << "static_cast<void>(df"
-				<< v.name << "_dd" << v2.name
-				<< "); /* suppress potential warnings */\n";
-	  }
-	  if(this->jacobianPartsUsedInIntegrator.find("df"+v.name+"_dd"+v2.name)!=
-	     this->jacobianPartsUsedInIntegrator.end()){
-	    const bool bfnf = this->mb.hasAttribute(h,'f'+v.name+"_normalisation_factor");
-	    const bool bvnf = this->mb.hasAttribute(h,v2.name+"_normalisation_factor");
-	    if(bfnf){
-	      const auto& fnf = this->mb.getAttribute<std::string>(h,'f'+v.name+"_normalisation_factor");	      
-	      if(bvnf){
-		const auto& vnf = this->mb.getAttribute<std::string>(h,v2.name+"_normalisation_factor");
-		if((v.arraySize!=1u)&&(v2.arraySize!=1u)){
-		  this->behaviourFile << "for(unsigned short idx=0;idx!="
-				      << v.arraySize << ";++idx){\n";
-		  this->behaviourFile << "for(unsigned short idx2=0;idx2!="
-				      << v2.arraySize << ";++idx2){\n";
-		  this->behaviourFile << "df" << v.name << "_dd" << v2.name << "(idx,idx2) *= " 
-				      << vnf << "/(" << fnf << ");\n";
-		  this->behaviourFile << "}\n";
-		  this->behaviourFile << "}\n";
-		} else if((v.arraySize!=1u)&&(v2.arraySize==1u)){
-		  this->behaviourFile << "for(unsigned short idx=0;idx!="
-				      << v.arraySize << ";++idx){\n";
-		  this->behaviourFile << "df" << v.name << "_dd" << v2.name << "(idx) *= " 
-				      << vnf << "/(" << fnf << ");\n";
-		  this->behaviourFile << "}\n";
-		} else if((v.arraySize==1u)&&(v2.arraySize!=1u)){
-		  this->behaviourFile << "for(unsigned short idx=0;idx!="
-				      << v2.arraySize << ";++idx){\n";
-		  this->behaviourFile << "df" << v.name << "_dd" << v2.name << "(idx) *= " 
-				      << vnf << "/(" << fnf << ");\n";		  
-		  this->behaviourFile << "}\n";
-		} else if((v.arraySize==1u)&&(v2.arraySize==1u)){
-		  this->behaviourFile << "df" << v.name << "_dd" << v2.name << " *= " 
-				      << vnf << "/(" << fnf << ");\n";
-		}
-	      } else {
-		if((v.arraySize!=1u)&&(v2.arraySize!=1u)){
-		  this->behaviourFile << "for(unsigned short idx=0;idx!="
-				      << v.arraySize << ";++idx){\n";
-		  this->behaviourFile << "for(unsigned short idx2=0;idx2!="
-				      << v2.arraySize << ";++idx2){\n";
-		  this->behaviourFile << "df" << v.name << "_dd" << v2.name << "(idx,idx2) *= " 
-				      << "real(1)/(" << fnf << ");\n";
-		  this->behaviourFile << "}\n";
-		  this->behaviourFile << "}\n";
-		} else if((v.arraySize!=1u)&&(v2.arraySize==1u)){
-		  this->behaviourFile << "for(unsigned short idx=0;idx!="
-				      << v.arraySize << ";++idx){\n";
-		  this->behaviourFile << "df" << v.name << "_dd" << v2.name << "(idx) *= " 
-				      << "real(1)/(" << fnf << ");\n";
-		  this->behaviourFile << "}\n";
-		} else if((v.arraySize==1u)&&(v2.arraySize!=1u)){
-		  this->behaviourFile << "for(unsigned short idx=0;idx!="
-				      << v2.arraySize << ";++idx){\n";
-		  this->behaviourFile << "df" << v.name << "_dd" << v2.name << "(idx) *= " 
-				      << "real(1)/(" << fnf << ");\n";
-		  this->behaviourFile << "}\n";
-		} else if((v.arraySize==1u)&&
-			  (v2.arraySize==1u)){
-		  this->behaviourFile << "df" << v.name << "_dd" << v2.name << " *= " 
-				      << "real(1)/(" << fnf << ");\n";
-		}
-	      }
-	    } else{
-	      if(bvnf){
-		const auto& vnf = this->mb.getAttribute<std::string>(h,v2.name+"_normalisation_factor");
-		if((v.arraySize!=1u)&&(v2.arraySize!=1u)){
-		  this->behaviourFile << "for(unsigned short idx=0;idx!="
-				      << v.arraySize << ";++idx){\n";
-		  this->behaviourFile << "for(unsigned short idx2=0;idx2!="
-				      << v2.arraySize << ";++idx2){\n";
-		  this->behaviourFile << "df" << v.name << "_dd" << v2.name << "(idx,idx2) *= " 
-				      << vnf << ";\n";
-		  this->behaviourFile << "}\n";
-		  this->behaviourFile << "}\n";
-		} else if((v.arraySize!=1u)&&(v2.arraySize==1u)){
-		  this->behaviourFile << "for(unsigned short idx=0;idx!="
-				      << v.arraySize << ";++idx){\n";
-		  this->behaviourFile << "df" << v.name << "_dd" << v2.name << "(idx) *= " 
-				      << vnf << ";\n";
-		  this->behaviourFile << "}\n";
-		} else if((v.arraySize==1u)&&(v2.arraySize!=1u)){
-		  this->behaviourFile << "for(unsigned short idx=0;idx!="
-				      << v2.arraySize << ";++idx){\n";
-		  this->behaviourFile << "df" << v.name << "_dd" << v2.name << "(idx) *= " 
-				      << vnf << ";\n";
-		  this->behaviourFile << "}\n";
-		} else if((v.arraySize==1u)&&(v2.arraySize==1u)){
-		  this->behaviourFile << "df" << v.name << "_dd" << v2.name << " *= " 
-				      << vnf << ";\n";
-		}
-	      }
-	    }
-	  }
-	}
-      }
-    }
-    this->behaviourFile << "return true;\n"
-			<< "}\n\n";
-  } // end of ImplicitDSLBase::writeBehaviourIntegrator
-
-  std::string
-  ImplicitDSLBase::getIntegrationVariablesIncrementsInitializers(const VariableDescriptionContainer& ivs,
-								 const bool) const
-  {
-    SupportedTypes::TypeSize n;
-    std::ostringstream init;
-    bool first = true;
-    for(const auto& v: ivs){
-      const auto flag = getTypeFlag(v.type);
-      if(!first){
-	init << ",\n";
-      }
-      if((flag!=SupportedTypes::Scalar)&&(flag!=SupportedTypes::Stensor)){
-	this->throwRuntimeError("getIntegrationVariablesIncrementsInitializers",
-				"internal error, tag unsupported");
-      }
-      if((flag==SupportedTypes::Scalar)&&(v.arraySize==1u)){
-	init << "d" << v.name << "(this->zeros(" << n << "))";
-      } else {
-	init << "d" << v.name << "(this->zeros)";
-      }
-      n += this->getTypeSize(v.type,v.arraySize);
-      first = false;
-    }
-    return init.str();
-  } // end of ImplicitDSLBase::getIntegrationVariableIncrementsInitializers
-
-  std::string
-  ImplicitDSLBase::getBehaviourConstructorsInitializers(const Hypothesis h)
-  {    
-    auto init = BehaviourDSLCommon::getBehaviourConstructorsInitializers(h);
-    init += (!init.empty()) ? ",\n" : "";
-    if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
-      if(this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
-	init += "D_tdt(D),\n";
-      }
-    }
-    for(const auto& ht : this->mb.getHillTensors()){
-      if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
-	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-				"Hill tensors shall only be defined for finite strain "
-				"or small strain behaviours");
-      }      
-      if(this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)){
-	init += ht.name+"_tdt("+ht.name+"),\n";
-      }
-    }
-    init += "zeros(real(0)),\nfzeros(real(0))";
-    return init;
-  }
-
-  void ImplicitDSLBase::writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis h)
-  {
-    const auto& d = this->mb.getBehaviourData(h);
-    SupportedTypes::TypeSize n;
-    this->checkBehaviourFile();
-    for(const auto& v : d.getIntegrationVariables()){
-      n += this->getTypeSize(v.type,v.arraySize);
-    }
-    this->solver->writeSpecificInitializeMethodPart(this->behaviourFile,mb,h);
-  }
-
-  void ImplicitDSLBase::writeBehaviourIntegrationVariablesIncrements(const Hypothesis h)
-  {    
-    const auto& d = this->mb.getBehaviourData(h);
-    this->checkBehaviourFile();
-    SupportedTypes::TypeSize n;
-    SupportedTypes::TypeSize n2;
-    for(const auto& v : d.getIntegrationVariables()){
-      n2 += this->getTypeSize(v.type,v.arraySize);
-    }
-    for(const auto& v : d.getIntegrationVariables()){
-      if((!getDebugMode())&&(v.lineNumber!=0u)){
-	this->behaviourFile << "#line " << v.lineNumber << " \"" 
-			    << this->fileName << "\"\n";
-      }
-      if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Scalar){
-	if(v.arraySize==1u){
-	  this->behaviourFile << "real& d" << v.name << ";\n";
-	} else {
-	  this->behaviourFile << "typename tfel::math::TinyVectorFromTinyVectorView<" 
-			      <<  v.arraySize << "," << n2 << "," << n
-			      << ",real,false>::type"
-			      << " d" << v.name << ";\n";
-	}
-      } else {
-	if(v.arraySize==1u){
-	  this->behaviourFile << "typename tfel::math::"
-			      << this->getVectorMappingClass(v)    
-			      << "<N," << n2 << "," << n << ",real>::type"
-			      << " d" << v.name << ";\n";
-	} else {
-	  this->behaviourFile << "typename tfel::math::"
-			      << this->getVectorMappingClass(v)    
-			      << "<N," << n2 << "," << n << "," << v. arraySize << ",real>::type"
-			      << " d" << v.name << ";\n";
-	}
-      }
-      n += this->getTypeSize(v.type,v.arraySize);
-    }
-    this->behaviourFile << '\n';
-  }
 
   void ImplicitDSLBase::endsInputFileProcessing()
   {
@@ -1999,6 +838,1164 @@ namespace mfront{
     this->setMinimalTangentOperator();
   } // end of ImplicitDSLBase::endsInputFileProcessing(void)
 
+
+  void ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation(std::ostream& os,
+								   const Hypothesis h) const
+  {
+    using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
+    Modifier mts = [this](const MaterialPropertyInput& i) -> std::string{
+      if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
+	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	return "this->"+i.name + "+theta*(this->d" + i.name+')';
+      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::PARAMETER)){
+	return "this->"+i.name;
+      } else {
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"unsupported input type for variable '"+i.name+"'");
+      }
+    };
+    Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
+      if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
+	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	return "this->"+i.name + "+this->d" + i.name;
+      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::PARAMETER)){
+	return "this->"+i.name;
+      } else {
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"unsupported input type for variable '"+i.name+"'");
+      }
+    };
+    if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
+      os << "// updating the stiffness tensor at the middle of the time step\n";
+      this->writeStiffnessTensorComputation(os,"this->D",mts);
+      if(!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
+	os << "// stiffness tensor at the end of the time step\n";
+	this->writeStiffnessTensorComputation(os,"this->D_tdt",ets);
+      }
+    }
+    for(const auto& ht : this->mb.getHillTensors()){
+      if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"Hill tensors shall only be defined for finite strain "
+				"or small strain behaviours");
+      }      
+      this->writeHillTensorComputation(os,"this->"+ht.name,ht,mts);
+      if(!this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)){
+	this->writeHillTensorComputation(os,"this->"+ht.name+"_tdt",ht,ets);
+      }
+    }
+    if((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false))&&
+       (this->mb.getElasticSymmetryType()==ISOTROPIC)&&
+       (this->mb.areElasticMaterialPropertiesDefined())){
+      const auto& emps = this->mb.getElasticMaterialProperties();
+      if(emps.size()!=2u){
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"invalid number of material properties");
+      }
+      if(!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()){
+	this->writeMaterialPropertyCheckBoundsEvaluation(os,emps[0],mts);
+      }
+      if(!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()){
+	this->writeMaterialPropertyCheckBoundsEvaluation(os,emps[1],mts);
+      }
+      if(!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()){
+	os << "this->young=";
+	this->writeMaterialPropertyEvaluation(os,emps[0],mts);
+	os << ";\n";
+      }
+      if(!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()){
+	os << "this->nu=";
+	this->writeMaterialPropertyEvaluation(os,emps[1],mts);
+	os << ";\n";
+      }
+      os << "this->lambda=computeLambda(young,nu);\n";
+      os << "this->mu=computeMu(young,nu);\n";
+      if(!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[0])){
+	this->writeMaterialPropertyCheckBoundsEvaluation(os,emps[0],ets);
+	os << "this->young_tdt=";
+	this->writeMaterialPropertyEvaluation(os,emps[0],ets);
+	os << ";\n";
+      } else {
+	os << "this->young_tdt  = this->young;\n";
+      }
+      if(!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[1])){
+	this->writeMaterialPropertyCheckBoundsEvaluation(os,emps[1],ets);
+	os << "this->nu_tdt=";
+	this->writeMaterialPropertyEvaluation(os,emps[1],ets);
+	os << ";\n";
+      } else {
+	os << "this->nu_tdt     = this->nu;\n";
+      }
+      if(!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
+	os << "this->lambda_tdt = computeLambda(young_tdt,nu_tdt);\n";
+	os << "this->mu_tdt     = computeMu(young_tdt,nu_tdt);\n";
+      } else {
+	os << "this->lambda_tdt = this->lambda;\n";
+	os << "this->mu_tdt     = this->mu;\n";
+      }
+    }
+    BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(os,h);
+  } // end of writeBehaviourLocalVariablesInitialisation
+
+  void ImplicitDSLBase::writeBehaviourParserSpecificIncludes(std::ostream& os) const
+  {
+    bool has_scalar  = false;
+    bool has_scalar_array  = false;
+    bool has_tvector = false;
+    bool has_tvector_array = false;
+    bool has_stensor = false;
+    bool has_stensor_array = false;
+    // checks
+    const auto& mh = this->mb.getModellingHypotheses();
+    for(const auto & h : mh){
+      const auto& d = this->mb.getBehaviourData(h);
+      for(const auto& v : d.getIntegrationVariables()){
+	const auto flag  = SupportedTypes::getTypeFlag(v.type);
+	if(flag==SupportedTypes::Scalar){
+	  has_scalar = true;
+	  if(v.arraySize>=1){
+	    has_scalar_array = true;
+	  }
+	}
+	if(flag==SupportedTypes::Stensor){
+	  has_stensor = true;
+	  if(v.arraySize>=1){
+	    has_stensor_array = true;
+	  }
+	}
+	if(flag==SupportedTypes::TVector){
+	  has_tvector = true;
+	  if(v.arraySize>=1){
+	    has_tvector_array = true;
+	  }
+	}
+      }
+    }
+    // output
+    this->checkBehaviourFile(os);
+    os << "#include\"TFEL/Math/st2tost2.hxx\"\n"
+       << "#include\"TFEL/Math/tmatrix.hxx\"\n"
+       << "#include\"TFEL/Math/tvector.hxx\"\n"
+       << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
+       << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n"
+       << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
+    if(has_scalar_array){
+      os << "#include\"TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx\"\n"
+	 << "#include\"TFEL/Math/Vector/TinyVectorFromTinyVectorViewIO.hxx\"\n";
+    }
+    // tiny vectors
+    if(has_tvector){
+      os << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n\n"
+	 << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n\n";
+    }
+    if((has_scalar)&&(has_tvector)){
+      os << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixColumnView.hxx\"\n"
+	 << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx\"\n"
+	 << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixColumnView2.hxx\"\n"
+	 << "#include\"TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx\"\n"
+	 << "#include\"TFEL/Math/Vector/TVectorFromTinyVectorView.hxx\"\n";
+    }
+    if(has_tvector_array){
+      os << "#include\"TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorView.hxx\"\n"
+	 << "#include\"TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorViewIO.hxx\"\n";
+    }
+    // symmetric tensors
+    if(has_stensor){
+      os << "#include\"TFEL/Math/Stensor/StensorFromTinyVectorView.hxx\"\n"
+	 << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx\"\n\n"
+	 << "#include\"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx\"\n\n";
+    }
+    if((has_scalar)&&(has_stensor)){
+      os << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx\"\n"
+	 << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx\"\n"
+	 << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx\"\n"
+	 << "#include\"TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx\"\n";
+    }
+    if(has_stensor_array){
+      os << "#include\"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx\"\n"
+	 << "#include\"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorViewIO.hxx\"\n";
+    }
+  } // end of ImplicitDSLBase::writeBehaviourParserSpecificIncludes(void)
+  
+  void ImplicitDSLBase::writeBehaviourParserSpecificTypedefs(std::ostream& os) const
+  {
+    this->checkBehaviourFile(os);
+    BehaviourDSLCommon::writeBehaviourParserSpecificTypedefs(os);
+  } // end of ImplicitDSLBase::writeBehaviourParserSpecificTypedefs(void)
+
+  void ImplicitDSLBase::writeBehaviourParserSpecificMembers(std::ostream& os,
+							    const Hypothesis h) const
+  {
+    BehaviourDSLCommon::writeBehaviourParserSpecificMembers(os,h);
+    const auto& d = this->mb.getBehaviourData(h);
+    VariableDescriptionContainer::const_iterator p;
+    VariableDescriptionContainer::const_iterator p2;
+    SupportedTypes::TypeSize n;
+    SupportedTypes::TypeSize n3;
+    // size of linear system
+    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
+      n3 += this->getTypeSize(p->type,p->arraySize);
+    }
+    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
+      SupportedTypes::TypeSize n2;
+      for(p2=d.getIntegrationVariables().begin();p2!=d.getIntegrationVariables().end();++p2){
+	SupportedTypes::TypeFlag flag  = SupportedTypes::getTypeFlag(p->type);
+	SupportedTypes::TypeFlag flag2 = SupportedTypes::getTypeFlag(p2->type);
+	if((p->arraySize!=1u)||(p2->arraySize!=1u)){
+	  os << "/*!\n"
+	     << " * \\return the part of the jacobian matrix "
+	     << "corresponding to the derivative "
+	     << "of variable " << p->name 
+	     << " by variable " << p2->name << "\n"
+	     << " */\n";
+	}
+	if((p->arraySize!=1u)&&(p2->arraySize==1u)){
+	  if(flag==SupportedTypes::Scalar){
+	    if(flag2==SupportedTypes::Scalar){
+	      os << "real&\n"
+		 << "df" << p->name << "_dd" << p2->name
+		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+		 << "const unsigned short idx){\n"
+		 << "return tjacobian(" << n << "+idx, " << n2 << ");\n"
+		 << "}\n\n";
+	      os << "real&\n"
+		 << "df" << p->name << "_dd" << p2->name << "(const unsigned short idx){\n"
+		 << "return this->jacobian(" << n << "+idx, " << n2 << ");\n"
+		 << "}\n\n";
+	    } else if(flag2==SupportedTypes::TVector){
+	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
+	      os << "typename tfel::math::TVectorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+		 << "const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename TVectorFromTinyMatrixRowView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
+		 << "}\n\n";
+	      os << "typename tfel::math::TVectorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename TVectorFromTinyMatrixRowView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0);\n"
+		 << "}\n\n";
+	    } else {
+	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
+	      os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+		 << "const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename StensorFromTinyMatrixRowView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
+		 << "}\n\n";
+	      os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename StensorFromTinyMatrixRowView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0);\n"
+		 << "}\n\n";
+	    }
+	  } else if(flag==SupportedTypes::TVector){
+	    if(flag2==SupportedTypes::Scalar){
+	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
+	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+		 << "const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename StensorFromTinyMatrixColumnView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
+		 << "}\n\n";
+	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename StensorFromTinyMatrixColumnView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0);\n"
+		 << "}\n\n";
+	    } else if(flag2==SupportedTypes::TVector){
+	      // Le résultat est une sous-matrice
+	      os << "typename tfel::math::TMatrixFromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+		 << "const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename TMatrixFromTinyMatrixView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0u);\n"
+		 << "}\n\n";
+	      os << "typename tfel::math::TMatrixFromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename TMatrixFromTinyMatrixView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0u);\n"
+		 << "}\n\n";
+	    } else {
+	      this->throwRuntimeError("ImplicitDSLBase::writeBehaviourParserSpecificMembers",
+				      "derivation of a vector by a tensor is not defined");
+	    }
+	  } else {
+	    if(flag2==SupportedTypes::Scalar){
+	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
+	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+		 << "const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename StensorFromTinyMatrixColumnView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0);\n"
+		 << "}\n\n";
+	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename StensorFromTinyMatrixColumnView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0);\n"
+		 << "}\n\n";
+	    } else if(flag2==SupportedTypes::Stensor){
+	      // Le résultat est un tenseur d'ordre 4
+	      os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+		 << "const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename ST2toST2FromTinyMatrixView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,0u);\n"
+		 << "}\n\n";
+	      os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename ST2toST2FromTinyMatrixView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,0u);\n"
+		 << "}\n\n";
+	    } else {
+	      this->throwRuntimeError("ImplicitDSLBase::writeBehaviourParserSpecificMembers",
+				      "derivation of a tensor by a vector is not defined");
+	    }
+	  }
+	} else if((p->arraySize==1u)&&(p2->arraySize!=1u)){
+	  if(flag==SupportedTypes::Scalar){
+	    if(flag2==SupportedTypes::Scalar){
+	      os << "real&\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+		 << "const unsigned short idx){\n"
+		 << "return tjacobian(" << n << ", " << n2 << "+idx);\n"
+		 << "}\n\n";
+	      os << "real&\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(const unsigned short idx){\n"
+		 << "return this->jacobian(" << n << ", " << n2 << "+idx);\n"
+		 << "}\n\n";
+	    } else {
+	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
+	      os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+		 << "const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename StensorFromTinyMatrixRowView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,0,idx);\n"
+		 << "}\n\n";
+	      os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename StensorFromTinyMatrixRowView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,0,idx);\n"
+		 << "}\n\n";
+	    }
+	  } else {
+	    if(flag2==SupportedTypes::Scalar){
+	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
+	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+		 << "const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename StensorFromTinyMatrixColumnView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,0,idx);\n"
+		 << "}\n\n";
+	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename StensorFromTinyMatrixColumnView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,0,idx);\n"
+		 << "}\n\n";
+	    } else {
+	      os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+		 << "const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename ST2toST2FromTinyMatrixView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,0,idx);\n"
+		 << "}\n\n";
+	      os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(const unsigned short idx){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename ST2toST2FromTinyMatrixView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,0,idx);\n"
+		 << "}\n\n";
+	    }
+	  }
+	} else if((p->arraySize!=1u)&&(p2->arraySize!=1u)){
+	  if(flag==SupportedTypes::Scalar){
+	    if(flag2==SupportedTypes::Scalar){
+	      os << "real&\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+		 << "const unsigned short idx,"
+		 << " const unsigned short idx2){\n"
+		 << "return tjacobian(" << n << "+idx, " << n2 << "+idx2);\n"
+		 << "}\n\n";
+	      os << "real&\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(const unsigned short idx,"
+		 << " const unsigned short idx2){\n"
+		 << "return this->jacobian(" << n << "+idx, " << n2 << "+idx2);\n"
+		 << "}\n\n";
+	    } else {
+	      // Le résultat est un tenseur, une ligne dans la matrice jacobienne
+	      os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+		 << "const unsigned short idx,"
+		 << " const unsigned short idx2){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename StensorFromTinyMatrixRowView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,idx2);\n"
+		 << "}\n\n";
+	      os << "typename tfel::math::StensorFromTinyMatrixRowView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(const unsigned short idx,"
+		 << " const unsigned short idx2){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename StensorFromTinyMatrixRowView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,idx2);\n"
+		 << "}\n\n";
+	    }
+	  } else {
+	    if(flag2==SupportedTypes::Scalar){
+	      // Le résultat est un tenseur, une colonne dans la matrice jacobienne
+	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+		 << "const unsigned short idx,"
+		 << " const unsigned short idx2){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename StensorFromTinyMatrixColumnView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,idx2);\n"
+		 << "}\n\n";
+	      os << "typename tfel::math::StensorFromTinyMatrixColumnView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(const unsigned short idx,"
+		 << " const unsigned short idx2){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename StensorFromTinyMatrixColumnView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,idx2);\n"
+		 << "}\n\n";
+	    } else {
+	      os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(tfel::math::tmatrix<" << n3 << "," << n3 << ">& tjacobian,\n"
+		 << "const unsigned short idx,"
+		 << " const unsigned short idx2){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename ST2toST2FromTinyMatrixView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(tjacobian,idx,idx2);\n"
+		 << "}\n\n";
+	      os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N," << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
+		 << "df" << p->name << "_dd" << p2->name 
+		 << "(const unsigned short idx,"
+		 << " const unsigned short idx2){\n"
+		 << "using namespace tfel::math;\n"
+		 << "return typename ST2toST2FromTinyMatrixView2<N,"
+		 << n3 << "," << n3 << "," << n << "," << n2 << ",real>::type(this->jacobian,idx,idx2);\n"
+		 << "}\n\n";
+	    }
+	  }
+	}
+	n2 += this->getTypeSize(p2->type,p2->arraySize);
+      }
+      n += this->getTypeSize(p->type,p->arraySize);
+    }
+    // size of linear system
+    n = n3;
+    if(this->solver->usesJacobian()){
+      os << "// Jacobian\n";
+      os << "tfel::math::tmatrix<" << n << "," << n << ",Type> jacobian;\n";
+    }
+    if(this->solver->usesJacobianInvert()){
+      os << "// Jacobian\n";
+      os << "tfel::math::tmatrix<" << n << "," << n << ",Type> inv_jacobian;\n";
+    }
+    this->solver->writeSpecificMembers(os,this->mb,h);
+    os << "// zeros\n";
+    os << "tfel::math::tvector<" << n << ",Type> zeros;\n\n";
+    os << "// previous zeros\n";
+    os << "tfel::math::tvector<" << n << ",Type> zeros_1;\n\n";
+    os << "// function\n";
+    os << "tfel::math::tvector<" << n << ",Type> fzeros;\n\n";
+    os << "// number of iterations\n";
+    os << "unsigned int iter = 0u;\n\n";
+    //
+    
+    if(this->solver->usesJacobian()){
+      // compute the numerical part of the jacobian.  This method is
+      // used to compute a numerical approximation of the jacobian for
+      // the solvers based on it. For solvers providing an analytical
+      // jacobian, or an approximation of it, this method is used to
+      // compare the jacobain to its numerical approximation
+      this->writeComputeNumericalJacobian(os,h);
+    }
+    if(this->solver->usesJacobian()){
+      // for solver based on the jacobian matrix, the get partial
+      // jacobian invert method can be used to compute the tangent
+      // operator.
+      this->writeGetPartialJacobianInvert(os,h);
+    }
+    // compute stress
+    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
+      os << "void\ncomputeStress(void){\n"
+	 << "using namespace std;\n"
+	 << "using namespace tfel::math;\n"
+	 << "using std::vector;\n";
+      writeMaterialLaws(os,this->mb.getMaterialLaws());
+      os << this->mb.getCode(h,BehaviourData::ComputeStress)
+	 << "\n} // end of " << this->mb.getClassName() << "::computeStress\n\n";
+    }
+    if(this->mb.hasCode(h,BehaviourData::ComputeFinalStress)){
+      os << "void\ncomputeFinalStress(void){\n"
+	 << "using namespace std;\n"
+	 << "using namespace tfel::math;\n"
+	 << "using std::vector;\n";
+      writeMaterialLaws(os,this->mb.getMaterialLaws());
+      os << this->mb.getCode(h,BehaviourData::ComputeFinalStress)
+	 << "\n} // end of " << this->mb.getClassName() << "::computeStress\n\n";
+    }
+  } // end of ImplicitDSLBase::writeBehaviourParserSpecificMembers
+
+  void ImplicitDSLBase::writeGetPartialJacobianInvert(std::ostream& os,
+						      const Hypothesis h) const
+  {
+    using size_type = VariableDescriptionContainer::size_type;
+    const auto& d = this->mb.getBehaviourData(h);
+    this->checkBehaviourFile(os);
+    SupportedTypes::TypeSize n;
+    for(const auto& v : d.getIntegrationVariables()){
+      n += this->getTypeSize(v.type,v.arraySize);
+    }
+    for(size_type i=0;i!=d.getIntegrationVariables().size();++i){
+      os << "void\ngetPartialJacobianInvert(";
+      for(size_type i2=0;i2<=i;){
+	const auto& v = d.getIntegrationVariables()[i2];
+	const auto flag = SupportedTypes::getTypeFlag(v.type);
+	if(v.arraySize==1u){
+	  switch(flag){
+	  case SupportedTypes::Scalar : 
+	    os << "Stensor& ";
+	    break;
+	  case SupportedTypes::Stensor :
+	    os << "Stensor4& ";
+	    break;
+	  case SupportedTypes::TVector:
+	  case SupportedTypes::Tensor:
+	  default :
+	    this->throwRuntimeError("ImplicitDSLBase::writeGetPartialJacobianInvert",
+				    "internal error, tag unsupported");
+	  }
+	} else {
+	  switch(flag){
+	  case SupportedTypes::Scalar : 
+	    os << "tfel::math::tvector<" << v.arraySize << "u,Stensor>& ";
+	    break;
+	  case SupportedTypes::Stensor :
+	    os << "tfel::math::tvector<" << v.arraySize << "u,Stensor4>& ";
+	    break;
+	  case SupportedTypes::TVector:
+	  case SupportedTypes::Tensor:
+	  default :
+	    this->throwRuntimeError("ImplicitDSLBase::writeGetPartialJacobianInvert",
+				    "internal error, tag unsupported");
+	  }
+	}
+	os << "partial_jacobian_" << v.name;
+	if(++i2<=i){
+	  os << ",\n";
+	}	  
+      }
+      os << ")\n";
+      os << "{\n";
+      os << "using namespace tfel::math;\n";
+      os << "TinyPermutation<" << n << "> permuation;\n";
+      os << "TinyMatrixSolve<" << n << ",real>::decomp(this->jacobian,permuation);\n";
+      os << "for(unsigned short idx=0;idx!=StensorSize;++idx){\n";
+      os << "tvector<" << n << ",real> vect_e(real(0));\n";
+      os << "vect_e(idx) = real(1);\n";
+      os << "TinyMatrixSolve<" << n << ",real>::back_substitute(this->jacobian,permuation,vect_e);\n";
+      SupportedTypes::TypeSize n2;
+      for(size_type i2=0;i2<=i;++i2){
+	const auto& v = d.getIntegrationVariables()[i2];
+	const auto flag = SupportedTypes::getTypeFlag(v.type);
+	if(flag==SupportedTypes::Scalar){
+	  if(v.arraySize==1u){
+	    os << "partial_jacobian_" << v.name << "(idx)=vect_e(" << n2 << ");\n";
+	  } else {
+	    os << "for(unsigned short idx2=0;idx2!="
+	       << v.arraySize << ";++idx2){\n";
+	    os << "partial_jacobian_" << v.name << "(idx2)(idx)=vect_e(" << n2 << "+idx2);\n";
+	    os << "}\n";
+	  }
+	  n2 += this->getTypeSize(v.type,v.arraySize);
+	} else if(flag==SupportedTypes::TVector){
+	  if(v.arraySize==1u){
+	    os << "for(unsigned short idx2=" << n2;
+	    os << ";idx2!=";
+	    n2 += this->getTypeSize(v.type,v.arraySize);
+	    os << n2 << ";++idx2){\n";
+	    os << "partial_jacobian_" << v.name << "(idx2,idx)=vect_e(idx2);\n";
+	    os << "}\n";
+	  } else {
+	    os << "for(unsigned short idx2=0;idx2!="
+	       << v.arraySize << ";++idx2){\n";
+	    os << "for(unsigned short idx3=" << n2;
+	    os << ";idx3!=TVectorSize;++idx3){\n";
+	    os << "partial_jacobian_" << v.name 
+	       << "(idx2)(idx3,idx)=vect_e(" << n2 << "+idx3+idx2*TVectorSize);\n";
+	    os << "}\n";
+	    os << "}\n";
+	    n2 += this->getTypeSize(v.type,v.arraySize);
+	  }
+	} else if(flag==SupportedTypes::Stensor){
+	  if(v.arraySize==1u){
+	    os << "for(unsigned short idx2=" << n2;
+	    os << ";idx2!=";
+	    n2 += this->getTypeSize(v.type,v.arraySize);
+	    os << n2 << ";++idx2){\n";
+	    os << "partial_jacobian_" << v.name << "(idx2,idx)=vect_e(idx2);\n";
+	    os << "}\n";
+	  } else {
+	    os << "for(unsigned short idx2=0;idx2!="
+	       << v.arraySize << ";++idx2){\n";
+	    os << "for(unsigned short idx3=" << n2;
+	    os << ";idx3!=StensorSize;++idx3){\n";
+	    os << "partial_jacobian_" << v.name 
+	       << "(idx2)(idx3,idx)=vect_e(" << n2 << "+idx3+idx2*StensorSize);\n";
+	    os << "}\n";
+	    os << "}\n";
+	    n2 += this->getTypeSize(v.type,v.arraySize);
+	  }
+	} else {
+	  this->throwRuntimeError("ImplicitDSLBase::writeGetPartialJacobianInvert",
+				  "internal error, tag unsupported");
+	}
+      }
+      os << "}\n";
+      for(size_type i2=0;i2<=i;++i2){
+	const auto& v = d.getIntegrationVariables()[i2];
+	if(this->mb.hasAttribute(h,v.name+"_normalisation_factor")){
+	  const auto& nf = this->mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
+	  os << "partial_jacobian_" << v.name << " /= " << nf << ";\n";
+	}
+      }
+      os << "}\n\n";
+    }
+  } // end of ImplicitDSLBase::writeGetPartialJacobianInvert
+  
+  void ImplicitDSLBase::writeComputeNumericalJacobian(std::ostream& os,
+						      const Hypothesis h) const{
+    using namespace std;
+    const auto& d = this->mb.getBehaviourData(h);
+    VariableDescriptionContainer::const_iterator p;
+    SupportedTypes::TypeSize n;
+    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
+      n += this->getTypeSize(p->type,p->arraySize);
+    }
+    this->checkBehaviourFile(os);
+    os << "void\ncomputeNumericalJacobian(tfel::math::tmatrix<" << n << "," << n << ",real>& njacobian)\n"
+       << "{\n"
+       << "using namespace std;\n"
+       << "using namespace tfel::math;\n"
+       << "tvector<" << n << ",real> tzeros(this->zeros);\n"
+       << "tvector<" << n << ",real> tfzeros(this->fzeros);\n"
+       << "tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n"
+       << "for(unsigned short idx = 0; idx!= "<< n<<  ";++idx){\n"
+       << "this->zeros(idx) -= this->numerical_jacobian_epsilon;\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
+      os << "this->computeStress();\n";
+    }
+    os << "this->computeFdF();\n"
+       << "this->zeros = tzeros;\n"
+       << "tvector<" << n << ",real> tfzeros2(this->fzeros);\n"
+       << "this->zeros(idx) += this->numerical_jacobian_epsilon;\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
+      os << "this->computeStress();\n";
+    }
+    os << "this->computeFdF();\n"
+       << "this->fzeros = (this->fzeros-tfzeros2)/(real(2)*(this->numerical_jacobian_epsilon));\n"
+       << "for(unsigned short idx2 = 0; idx2!= "<< n <<  ";++idx2){\n"
+       << "njacobian(idx2,idx) = this->fzeros(idx2);\n"
+       << "}\n"
+       << "this->zeros    = tzeros;\n"
+       << "this->fzeros   = tfzeros;\n"
+       << "}\n"
+       << "if(&njacobian!=&(this->jacobian)){\n"
+       << "this->jacobian = tjacobian;\n"
+       << "}\n"
+       << "}\n\n";
+  }
+
+  std::string
+  ImplicitDSLBase::getVectorMappingClass(const VariableDescription& v) const
+  {
+    const auto f = SupportedTypes::getTypeFlag(v.type);
+    if(f==SupportedTypes::Stensor){
+      if(v.arraySize==1u){
+	return "StensorFromTinyVectorView";
+      } else {
+	return "TinyVectorOfStensorFromTinyVectorView";
+      }
+    }
+    this->throwRuntimeError("ImplicitDSLBase::getVectorMappingClass",
+			    "unsupported type for variable '"+v.name+"'");
+  } // end of ImplicitDSLBase::getVectorMappingClass
+
+  void ImplicitDSLBase::writeBehaviourIntegrator(std::ostream& os,
+						 const Hypothesis h) const{
+    const auto btype = this->mb.getBehaviourTypeFlag();
+    const auto& d = this->mb.getBehaviourData(h);
+    SupportedTypes::TypeSize n;
+    SupportedTypes::TypeSize n2;
+    SupportedTypes::TypeSize n3;
+    for(const auto& v : d.getIntegrationVariables()){
+      n2 += this->getTypeSize(v.type,v.arraySize);
+    }
+    this->checkBehaviourFile(os);
+    os << "/*!\n";
+    os << "* \\brief Integrate behaviour law over the time step\n";
+    os << "*/\n";
+    os << "IntegrationResult\n";
+    if(this->mb.hasAttribute(h,BehaviourData::hasConsistentTangentOperator)){
+      os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
+    } else {
+      if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	 (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
+	os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
+      } else {
+	os << "integrate(const SMFlag,const SMType smt) override{\n";
+      }
+    }
+    os << "using namespace std;\n";
+    os << "using namespace tfel::math;\n";
+    writeMaterialLaws(os,this->mb.getMaterialLaws());
+    if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+       (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
+      if(this->mb.useQt()){
+	os << "if(smflag!=MechanicalBehaviour<" << btype 
+	   << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
+	   << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
+	   << "}\n";
+      } else {
+	os << "if(smflag!=MechanicalBehaviour<" << btype 
+	   << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
+	   << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
+	   << "}\n";
+      }
+    }
+    if(this->mb.hasCode(h,BehaviourData::ComputePredictor)){
+      os << this->mb.getCode(h,BehaviourData::ComputePredictor) << '\n';
+    }
+    if(this->mb.getAttribute(BehaviourData::profiling,false)){
+      writeStandardPerformanceProfilingBegin(os,
+					     mb.getClassName(),
+					     BehaviourData::Integrator);
+    }
+    this->solver->writeResolutionAlgorithm(os,this->mb,h);
+    os << "if(this->iter==this->iterMax){\n";
+    if(getDebugMode()){
+      os << "cout << \"" << this->mb.getClassName()
+	 << "::integrate() : no convergence after \" "
+	 << "<< this->iter << \" iterations\"<< endl << endl;\n";
+      os << "cout << *this << endl;\n";
+    }
+    if(this->mb.useQt()){        
+      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+    } else {
+      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
+    }
+    os << "}\n";
+    if(getDebugMode()){
+      os << "cout << \"" << this->mb.getClassName()
+	 << "::integrate() : convergence after \" "
+	 << "<< this->iter << \" iterations\"<< endl << endl;\n";
+    }
+    if(this->mb.getAttribute(BehaviourData::profiling,false)){
+      writeStandardPerformanceProfilingEnd(os);
+    }
+    for(const auto& v : d.getIntegrationVariables()){
+      if(this->mb.hasAttribute(h,v.name+"_normalisation_factor")){
+	const auto& nf = this->mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
+	os << "this->d" << v.name << " *= " << nf << ";\n";
+      }
+    }
+    os << "this->updateIntegrationVariables();\n";
+    os << "this->updateStateVariables();\n";
+    if(this->mb.hasCode(h,BehaviourData::ComputeFinalStress)){
+      os << "this->computeFinalStress();\n";
+    }
+    os << "this->updateAuxiliaryStateVariables();\n";
+    for(const auto& v : d.getPersistentVariables()){
+      this->writePhysicalBoundsChecks(os,v,false);
+    }
+    for(const auto& v : d.getPersistentVariables()){
+      this->writeBoundsChecks(os,v,false);
+    }
+    os << "if(smt!=NOSTIFFNESSREQUESTED){\n";
+    if(this->mb.hasAttribute(h,BehaviourData::hasConsistentTangentOperator)){
+      if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	os << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
+      } else {
+	os << "if(!this->computeConsistentTangentOperator(smt)){\n";
+      }
+      if(this->mb.useQt()){        
+	os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
+      } else {
+	os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
+      }
+      os << "}\n";
+    } else {
+      os << "string msg(\"" << this->mb.getClassName() << "::integrate : \");\n";
+      os << "msg +=\"unimplemented feature\";\n";
+      os << "throw(runtime_error(msg));\n";
+    }
+    os << "}\n";
+    if(this->mb.useQt()){        
+      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
+    } else {
+      os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::SUCCESS;\n";
+    }
+    os << "} // end of " << this->mb.getClassName() << "::integrate\n\n";
+    this->writeComputeFdF(os,h);
+  }
+
+  void ImplicitDSLBase::writeComputeFdF(std::ostream& os,
+					const Hypothesis h) const
+  {
+    const auto& d = this->mb.getBehaviourData(h);
+    SupportedTypes::TypeSize n;
+    SupportedTypes::TypeSize n2;
+    SupportedTypes::TypeSize n3;
+    for(const auto& v : d.getIntegrationVariables()){
+      n2 += this->getTypeSize(v.type,v.arraySize);
+    }
+    auto jp(this->jacobianPartsUsedInIntegrator);
+    if(this->solver->requiresJacobianToBeReinitialisedToIdentityAtEachIterations()){
+      for(const auto & v : d.getIntegrationVariables()){
+	jp.insert("df"+v.name+"_dd"+v.name);
+      }
+    }
+    os << "/*!\n"
+       << "* \\brief compute fzeros and jacobian\n"
+       << "*/\n"
+       << "bool\n"
+       << "computeFdF(void){\n"
+       << "using namespace std;\n"
+       << "using namespace tfel::math;\n"
+       << "using std::vector;\n";
+    if(this->mb.getAttribute(BehaviourData::profiling,false)){
+      writeStandardPerformanceProfiling(os,
+					mb.getClassName(),
+					"ComputeFdF");
+    }
+    writeMaterialLaws(os,this->mb.getMaterialLaws());
+    n = SupportedTypes::TypeSize();
+    for(const auto & v : d.getIntegrationVariables()){
+      if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Scalar){
+	if(v.arraySize==1u){
+	  os << "real& f" << v.name << "(this->fzeros(" << n << "));\n";
+	} else {
+	  os << "typename tfel::math::TinyVectorFromTinyVectorView<" 
+	     << v.arraySize << "," << n2 << "," << n
+	     << ",real,false>::type"
+	     << " f" << v.name << "(this->fzeros);\n";
+	}
+      } else {
+	if(v.arraySize==1u){
+	  os << "typename tfel::math::"
+	     << this->getVectorMappingClass(v)
+	     << "<N," << n2 << "," << n << ",real>::type"
+	     << " f" << v.name << "(this->fzeros);\n";
+	} else {
+	  os << "typename tfel::math::"
+	     << this->getVectorMappingClass(v)
+	     << "<N," << n2 << "," << n << "," << v. arraySize << ",real>::type"
+	     << " f" << v.name << "(this->fzeros);\n";
+	}
+      }
+      n += this->getTypeSize(v.type,v.arraySize);
+    }
+    if((this->solver->usesJacobian())&&
+       (!(this->solver->requiresNumericalJacobian()))){
+      n = SupportedTypes::TypeSize();
+      for(const auto & v : d.getIntegrationVariables()){
+	n3 = SupportedTypes::TypeSize();
+	for(const auto & v2 : d.getIntegrationVariables()){
+	  if((v.arraySize==1u)&&(v2.arraySize==1u)){
+	    os << "// derivative of variable f" << v.name 
+	       << " by variable " << v2.name << "\n"
+	       << NonLinearSystemSolverBase::getJacobianPart(this->mb,v,v2,n,n2,n3);
+	  }
+	  n3 += this->getTypeSize(v2.type,v2.arraySize);
+	}
+	n += this->getTypeSize(v.type,v.arraySize);
+      }
+    }
+    if(this->solver->requiresJacobianToBeReinitialisedToIdentityAtEachIterations()){
+      os << "// setting jacobian to identity\n"
+	 << "std::fill(this->jacobian.begin(),this->jacobian.end(),real(0));\n"
+	 << "for(unsigned short idx = 0; idx!=" << n << ";++idx){\n"
+	 << "this->jacobian(idx,idx)= real(1);\n"
+	 << "}\n";
+    }
+    os << "// setting f values to zeros\n"
+       << "this->fzeros = this->zeros;\n";
+    for(const auto& v : d.getIntegrationVariables()){
+      if(this->mb.hasAttribute(h,v.name+"_normalisation_factor")){
+	const auto& nf = this->mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
+    	os << "f" << v.name << " *= " << nf << ";\n";
+      }
+    }
+    os << this->mb.getCodeBlock(h,BehaviourData::Integrator).code << "\n";
+    for(const auto&  v : d.getIntegrationVariables()){
+      if(this->mb.hasAttribute(h,'f'+v.name+"_normalisation_factor")){
+	const auto& nf = this->mb.getAttribute<std::string>(h,'f'+v.name+"_normalisation_factor");
+    	os << "f" << v.name << "*= real(1)/(" << nf << ");\n";
+      }
+    }
+    if((this->solver->usesJacobian())&&
+       (!(this->solver->requiresNumericalJacobian()))){
+      for(const auto& v : d.getIntegrationVariables()){
+	for(const auto& v2 : d.getIntegrationVariables()){
+	  if((v.arraySize==1u)&&(v2.arraySize==1u)){
+	    os << "static_cast<void>(df"
+	       << v.name << "_dd" << v2.name
+	       << "); /* suppress potential warnings */\n";
+	  }
+	  if(jp.find("df"+v.name+"_dd"+v2.name)!=jp.end()){
+	    const bool bfnf = this->mb.hasAttribute(h,'f'+v.name+"_normalisation_factor");
+	    const bool bvnf = this->mb.hasAttribute(h,v2.name+"_normalisation_factor");
+	    if(bfnf){
+	      const auto& fnf = this->mb.getAttribute<std::string>(h,'f'+v.name+"_normalisation_factor");	      
+	      if(bvnf){
+		const auto& vnf = this->mb.getAttribute<std::string>(h,v2.name+"_normalisation_factor");
+		if((v.arraySize!=1u)&&(v2.arraySize!=1u)){
+		  os << "for(unsigned short idx=0;idx!="
+		     << v.arraySize << ";++idx){\n";
+		  os << "for(unsigned short idx2=0;idx2!="
+		     << v2.arraySize << ";++idx2){\n";
+		  os << "df" << v.name << "_dd" << v2.name << "(idx,idx2) *= " 
+		     << vnf << "/(" << fnf << ");\n";
+		  os << "}\n";
+		  os << "}\n";
+		} else if((v.arraySize!=1u)&&(v2.arraySize==1u)){
+		  os << "for(unsigned short idx=0;idx!="
+		     << v.arraySize << ";++idx){\n";
+		  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " 
+		     << vnf << "/(" << fnf << ");\n";
+		  os << "}\n";
+		} else if((v.arraySize==1u)&&(v2.arraySize!=1u)){
+		  os << "for(unsigned short idx=0;idx!="
+		     << v2.arraySize << ";++idx){\n";
+		  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " 
+		     << vnf << "/(" << fnf << ");\n";		  
+		  os << "}\n";
+		} else if((v.arraySize==1u)&&(v2.arraySize==1u)){
+		  os << "df" << v.name << "_dd" << v2.name << " *= " 
+		     << vnf << "/(" << fnf << ");\n";
+		}
+	      } else {
+		if((v.arraySize!=1u)&&(v2.arraySize!=1u)){
+		  os << "for(unsigned short idx=0;idx!="
+		     << v.arraySize << ";++idx){\n";
+		  os << "for(unsigned short idx2=0;idx2!="
+		     << v2.arraySize << ";++idx2){\n";
+		  os << "df" << v.name << "_dd" << v2.name << "(idx,idx2) *= " 
+		     << "real(1)/(" << fnf << ");\n";
+		  os << "}\n";
+		  os << "}\n";
+		} else if((v.arraySize!=1u)&&(v2.arraySize==1u)){
+		  os << "for(unsigned short idx=0;idx!="
+		     << v.arraySize << ";++idx){\n";
+		  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " 
+		     << "real(1)/(" << fnf << ");\n";
+		  os << "}\n";
+		} else if((v.arraySize==1u)&&(v2.arraySize!=1u)){
+		  os << "for(unsigned short idx=0;idx!="
+		     << v2.arraySize << ";++idx){\n";
+		  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " 
+		     << "real(1)/(" << fnf << ");\n";
+		  os << "}\n";
+		} else if((v.arraySize==1u)&&
+			  (v2.arraySize==1u)){
+		  os << "df" << v.name << "_dd" << v2.name << " *= " 
+		     << "real(1)/(" << fnf << ");\n";
+		}
+	      }
+	    } else{
+	      if(bvnf){
+		const auto& vnf = this->mb.getAttribute<std::string>(h,v2.name+"_normalisation_factor");
+		if((v.arraySize!=1u)&&(v2.arraySize!=1u)){
+		  os << "for(unsigned short idx=0;idx!="
+		     << v.arraySize << ";++idx){\n";
+		  os << "for(unsigned short idx2=0;idx2!="
+		     << v2.arraySize << ";++idx2){\n";
+		  os << "df" << v.name << "_dd" << v2.name << "(idx,idx2) *= " 
+		     << vnf << ";\n";
+		  os << "}\n";
+		  os << "}\n";
+		} else if((v.arraySize!=1u)&&(v2.arraySize==1u)){
+		  os << "for(unsigned short idx=0;idx!="
+		     << v.arraySize << ";++idx){\n";
+		  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " 
+		     << vnf << ";\n";
+		  os << "}\n";
+		} else if((v.arraySize==1u)&&(v2.arraySize!=1u)){
+		  os << "for(unsigned short idx=0;idx!="
+		     << v2.arraySize << ";++idx){\n";
+		  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " 
+		     << vnf << ";\n";
+		  os << "}\n";
+		} else if((v.arraySize==1u)&&(v2.arraySize==1u)){
+		  os << "df" << v.name << "_dd" << v2.name << " *= " 
+		     << vnf << ";\n";
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    os << "return true;\n"
+       << "}\n\n";
+  } // end of ImplicitDSLBase::writeBehaviourIntegrator
+
+  std::string
+  ImplicitDSLBase::getIntegrationVariablesIncrementsInitializers(const VariableDescriptionContainer& ivs,
+								 const bool) const
+  {
+    SupportedTypes::TypeSize n;
+    std::ostringstream init;
+    bool first = true;
+    for(const auto& v: ivs){
+      const auto flag = getTypeFlag(v.type);
+      if(!first){
+	init << ",\n";
+      }
+      if((flag!=SupportedTypes::Scalar)&&(flag!=SupportedTypes::Stensor)){
+	this->throwRuntimeError("getIntegrationVariablesIncrementsInitializers",
+				"internal error, tag unsupported");
+      }
+      if((flag==SupportedTypes::Scalar)&&(v.arraySize==1u)){
+	init << "d" << v.name << "(this->zeros(" << n << "))";
+      } else {
+	init << "d" << v.name << "(this->zeros)";
+      }
+      n += this->getTypeSize(v.type,v.arraySize);
+      first = false;
+    }
+    return init.str();
+  } // end of ImplicitDSLBase::getIntegrationVariableIncrementsInitializers
+
+  std::string
+  ImplicitDSLBase::getBehaviourConstructorsInitializers(const Hypothesis h) const
+  {    
+    auto init = BehaviourDSLCommon::getBehaviourConstructorsInitializers(h);
+    init += (!init.empty()) ? ",\n" : "";
+    if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
+      if(this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
+	init += "D_tdt(D),\n";
+      }
+    }
+    for(const auto& ht : this->mb.getHillTensors()){
+      if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"Hill tensors shall only be defined for finite strain "
+				"or small strain behaviours");
+      }      
+      if(this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)){
+	init += ht.name+"_tdt("+ht.name+"),\n";
+      }
+    }
+    init += "zeros(real(0)),\nfzeros(real(0))";
+    return init;
+  }
+
+  void ImplicitDSLBase::writeBehaviourParserSpecificInitializeMethodPart(std::ostream& os,
+									 const Hypothesis h) const
+  {
+    const auto& d = this->mb.getBehaviourData(h);
+    SupportedTypes::TypeSize n;
+    this->checkBehaviourFile(os);
+    for(const auto& v : d.getIntegrationVariables()){
+      n += this->getTypeSize(v.type,v.arraySize);
+    }
+    this->solver->writeSpecificInitializeMethodPart(os,mb,h);
+  }
+
+  void ImplicitDSLBase::writeBehaviourIntegrationVariablesIncrements(std::ostream& os,
+								     const Hypothesis h) const
+  {    
+    const auto& d = this->mb.getBehaviourData(h);
+    this->checkBehaviourFile(os);
+    SupportedTypes::TypeSize n;
+    SupportedTypes::TypeSize n2;
+    for(const auto& v : d.getIntegrationVariables()){
+      n2 += this->getTypeSize(v.type,v.arraySize);
+    }
+    for(const auto& v : d.getIntegrationVariables()){
+      if((!getDebugMode())&&(v.lineNumber!=0u)){
+	os << "#line " << v.lineNumber << " \"" 
+	   << this->fileName << "\"\n";
+      }
+      if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Scalar){
+	if(v.arraySize==1u){
+	  os << "real& d" << v.name << ";\n";
+	} else {
+	  os << "typename tfel::math::TinyVectorFromTinyVectorView<" 
+	     <<  v.arraySize << "," << n2 << "," << n
+	     << ",real,false>::type"
+	     << " d" << v.name << ";\n";
+	}
+      } else {
+	if(v.arraySize==1u){
+	  os << "typename tfel::math::"
+	     << this->getVectorMappingClass(v)    
+	     << "<N," << n2 << "," << n << ",real>::type"
+	     << " d" << v.name << ";\n";
+	} else {
+	  os << "typename tfel::math::"
+	     << this->getVectorMappingClass(v)    
+	     << "<N," << n2 << "," << n << "," << v. arraySize << ",real>::type"
+	     << " d" << v.name << ";\n";
+	}
+      }
+      n += this->getTypeSize(v.type,v.arraySize);
+    }
+    os << '\n';
+  }
+  
   ImplicitDSLBase::~ImplicitDSLBase() = default;
 
 } // end of namespace mfront  

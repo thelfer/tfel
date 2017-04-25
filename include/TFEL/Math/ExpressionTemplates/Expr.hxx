@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_EXPRESSION_EXPR_H_
-#define LIB_TFEL_MATH_EXPRESSION_EXPR_H_ 
+#ifndef LIB_TFEL_MATH_EXPRESSION_EXPR_HXX
+#define LIB_TFEL_MATH_EXPRESSION_EXPR_HXX 
 
 #include<type_traits>
 #include"TFEL/Metaprogramming/ResultOf.hxx"
@@ -522,4 +522,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_EXPRESSION_EXPR_H_ */
+#endif /* LIB_TFEL_MATH_EXPRESSION_EXPR_HXX */

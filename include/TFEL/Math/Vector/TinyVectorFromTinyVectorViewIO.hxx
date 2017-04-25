@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_TINYVECTORFROMTINYVECTORVIEWIO_H_
-#define LIB_TFEL_MATH_TINYVECTORFROMTINYVECTORVIEWIO_H_ 
+#ifndef LIB_TFEL_MATH_TINYVECTORFROMTINYVECTORVIEWIO_HXX
+#define LIB_TFEL_MATH_TINYVECTORFROMTINYVECTORVIEWIO_HXX 
 
 #include<ostream>
 #include"TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx"
@@ -47,5 +47,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_TINYVECTORFROMTINYVECTORVIEWIO_H_ */
+#endif /* LIB_TFEL_MATH_TINYVECTORFROMTINYVECTORVIEWIO_HXX */
 

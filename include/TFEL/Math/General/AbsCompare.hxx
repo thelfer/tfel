@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_ABS_COMPARE_HXX_
-#define LIB_TFEL_ABS_COMPARE_HXX_ 
+#ifndef LIB_TFEL_ABS_COMPARE_HXX
+#define LIB_TFEL_ABS_COMPARE_HXX 
 
 #include<functional>
 
@@ -48,5 +48,5 @@ namespace tfel{
 } // end of namespace tfel
   
 
-#endif /* LIB_TFEL_ABS_COMPARE_HXX_ */
+#endif /* LIB_TFEL_ABS_COMPARE_HXX */
 

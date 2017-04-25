@@ -38,6 +38,8 @@ namespace mfront
     static const std::string initialValue;
     //! standard attribute name
     static const std::string defaultValue;
+    //! error normalisation factor
+    static const std::string errorNormalisationFactor;
     //! default constructor
     VariableDescription();
     //! copy constructor
@@ -45,11 +47,9 @@ namespace mfront
     //! move constructor
     VariableDescription(VariableDescription&&);
     //! move operator
-    VariableDescription&
-    operator=(VariableDescription&&);
+    VariableDescription& operator=(VariableDescription&&);
     //! assignement operator
-    VariableDescription&
-    operator=(const VariableDescription&);
+    VariableDescription& operator=(const VariableDescription&);
     /*!
      * \brief throw an exception saying that no attribute with the
      * given name exists

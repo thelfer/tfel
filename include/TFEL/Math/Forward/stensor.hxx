@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_FORWARD_STENSOR_H_
-#define LIB_TFEL_MATH_FORWARD_STENSOR_H_ 
+#ifndef LIB_TFEL_MATH_FORWARD_STENSOR_HXX
+#define LIB_TFEL_MATH_FORWARD_STENSOR_HXX 
 
 namespace tfel
 {
@@ -42,5 +42,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_FORWARD_STENSOR_H_ */
+#endif /* LIB_TFEL_MATH_FORWARD_STENSOR_HXX */
 

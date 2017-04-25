@@ -1762,6 +1762,11 @@ m4/m4-ax_prog_java_cc.m4 -text
 m4/mp_with_curses.m4 -text
 m4/vl_lib_readline.m4 -text
 m4/zset.m4 -text
+mfm/CMakeLists.txt -text
+mfm/Makefile.am -text
+mfm/src/CMakeLists.txt -text
+mfm/src/Makefile.am -text
+mfm/src/mfm.cxx -text
 mfront/CMakeLists.txt -text
 mfront/Examples/CMakeLists.txt -text
 mfront/Examples/Makefile.am -text
@@ -1977,6 +1982,7 @@ mfront/include/MFront/MFrontUtilities.hxx -text
 mfront/include/MFront/MFrontUtilities.ixx -text
 mfront/include/MFront/MTestFileGeneratorBase.hxx -text
 mfront/include/MFront/MakefileGenerator.hxx -text
+mfront/include/MFront/MaterialKnowledgeType.hxx -text
 mfront/include/MFront/MaterialPropertyDSL.hxx -text
 mfront/include/MFront/MaterialPropertyDescription.hxx -text
 mfront/include/MFront/MaterialPropertyInterfaceFactory.hxx -text
