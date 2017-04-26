@@ -1,5 +1,6 @@
 import std
 import tfel.math
-from _mtest import *
+from ._mtest import *
+
 MTestStiffnessMatrixType=StiffnessMatrixType
 MTestWorkSpace=SolverWorkSpace
