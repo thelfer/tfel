@@ -37,21 +37,11 @@ namespace mfront{
     typedef tfel::material::ModellingHypothesis ModellingHypothesis;
     //! a simple alias
     typedef ModellingHypothesis::Hypothesis Hypothesis;
-
-    /*!
-     * \return the name of the interface
-     */
-    static std::string
-    getName(void);
+    //! \return the name of the interface
+    static std::string getName(void);
 
     ZMATInterface();
 
-    /*!
-     * set if dynamically allocated arrays are allowed
-     * \param[in] b : boolean
-     */
-    virtual void
-    allowDynamicallyAllocatedArrays(const bool) override;
     /*!
      * \param[in,out] mb: behaviour description
      * \param[in] k:   keyword treated

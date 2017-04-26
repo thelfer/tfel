@@ -184,6 +184,17 @@ namespace mfront
     BehaviourDescription();
     //! copy constructor
     BehaviourDescription(const BehaviourDescription&);
+
+    void areDynamicallyAllocatedVectorsAllowed(const bool);
+    /*!
+     * \return true if dynamically allocated vectors are allowed
+     */
+    bool areDynamicallyAllocatedVectorsAllowed(void) const;
+    /*!
+     * \return true of the parser shall declare a dynamically
+     * allocated vector for the given array size
+     */
+    bool useDynamicallyAllocatedVector(const unsigned short) const;
     /*!
      * \brief set the behaviour name
      * \param[in] b: behaviour name
@@ -772,6 +783,15 @@ namespace mfront
      * \param[in] b2: requires true if one has to include vector.hxx
      */
     void requiresTVectorOrVectorIncludes(bool&,bool&) const;
+    /*!
+     * \brief check if one has to include tvector.hxx or vector.hxx
+     * \param[in] d:  behaviour data
+     * \param[in] b1: requires true if one has to include tvector.hxx
+     * \param[in] b2: requires true if one has to include vector.hxx
+     */
+    void requiresTVectorOrVectorIncludes(bool&,bool&,
+					 const BehaviourData&) const;   
+
     /*!
      * \return true if all mechanical data are specialised
      * This means that the default mechanical data is useless
@@ -1560,6 +1580,12 @@ namespace mfront
     IntegrationScheme ischeme = UNDEFINEDINTEGRATIONSCHEME;
     //! list of material laws used
     std::vector<std::string> materialLaws;
+    /*!
+     * Support for dynamically allocated vectors is not allowed in all
+     * dsl's. A dsl may change this value to disable the use of
+     * dynamically allocated vectors.
+     */
+    tfel::utilities::GenType<bool> areDynamicallyAllocatedVectorsAllowed_;
   }; // end of struct BehaviourDescription
 
   /*!

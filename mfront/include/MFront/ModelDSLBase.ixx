@@ -70,12 +70,12 @@ namespace mfront{
 
   template<typename Child>
   void
-  ModelDSLBase<Child>::importFile(const std::string& fileName_,
+  ModelDSLBase<Child>::importFile(const std::string& fn,
 				  const std::vector<std::string>& ecmds,
 				  const std::map<std::string,std::string>& s)
   {
-    this->fileName = fileName_;
-    this->openFile(this->fileName,ecmds,s);
+    this->fd.fileName = fn;
+    this->openFile(this->fd.fileName,ecmds,s);
     this->analyse();
   } // end of ModelDSLBase<Child>::importFile
     
@@ -83,7 +83,7 @@ namespace mfront{
   void
   ModelDSLBase<Child>::analyseString(const std::string& s)
   {
-    this->fileName = "user defined string";
+    this->fd.fileName = "user defined string";
     this->parseString(s);
     this->analyse();
   } // end of ModelDSLBase<Child>::analyseString
@@ -94,7 +94,8 @@ namespace mfront{
   {
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       getLogStream() << "ModelDSLBase<Child>::analyse: "
-		     << "begin of analysis of file '" << this->fileName << "'\n";
+		     << "begin of analysis of file '"
+		     << this->fd.fileName << "'\n";
     }
     MemberFuncPtr handler = nullptr;
     // strip comments from file
@@ -134,7 +135,8 @@ namespace mfront{
     }
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       getLogStream() << "ModelDSLBase<Child>::analyse: "
-		     << "end of analysis of file '" << this->fileName << "'\n";
+		     << "end of analysis of file '"
+		     << this->fd.fileName << "'\n";
     }
   } // end of ModelDSLBase<Child>::analyse
 

@@ -27,22 +27,100 @@ namespace mfront{
    * interfaces based on the umat standard
    */
   struct UMATInterfaceBase
-    : public SupportedTypes,
-      public AbstractBehaviourInterface
+    : public AbstractBehaviourInterface,
+      public SupportedTypes
   {
     // constructor
     UMATInterfaceBase();
-    /*!
-     * set if dynamically allocated arrays are allowed
-     * \param[in] b : boolean
-     */
-    virtual void
-    allowDynamicallyAllocatedArrays(const bool) override;
 
     virtual void
     exportMechanicalData(std::ostream&,
 			 const Hypothesis,
 			 const BehaviourDescription&) const override;
+    /*!
+     * \param[out] f      : output file
+     * \param[out] first  : true if not initializer has been declared yet
+     * \param[in]  v      : variables to be initialized
+     * \param[in]  src    : name of the array from which the variables are initialized
+     * \param[in]  prefix : prefix added to variable's names
+     * \param[in]  suffix : suffix added to variable's names
+     * \param[in]  o      : offset in the array from which the variables are initialized
+     */
+    virtual void
+      writeVariableInitializersInBehaviourDataConstructorI(std::ostream&,bool&,
+							   const VariableDescriptionContainer&,
+							   const std::string&,
+							   const std::string&,
+							   const std::string&) const;
+    /*!
+     * \param[out] f      : output file
+     * \param[out] first  : true if not initializer has been declared yet
+     * \param[in]  b      : iterator to the first variable to be initialized
+     * \param[in]  e      : iterator past the last variable to be initialized
+     * \param[in]  src    : name of the array from which the variables are initialized
+     * \param[in]  prefix : prefix added to variable's names
+     * \param[in]  suffix : suffix added to variable's names
+     * \param[in]  o      : offset in the array from which the variables are initialized
+     */
+    virtual void
+    writeVariableInitializersInBehaviourDataConstructorI(std::ostream&,bool&,							 
+							 const VariableDescriptionContainer::const_iterator&,
+							 const VariableDescriptionContainer::const_iterator&,
+							 const std::string&,
+							 const std::string&,
+							 const std::string&) const;
+    /*!
+     * \param[out] f      : output file
+     * \param[in] mb      : behaviour description
+     * \param[in]  v      : variables to be initialized
+     * \param[in]  src    : name of the array from which the variables are initialized
+     * \param[in]  prefix : prefix added to variable's names
+     * \param[in]  suffix : suffix added to variable's names
+     * \param[in]  o      : offset in the array from which the variables are initialized
+     */
+    virtual void
+    writeVariableInitializersInBehaviourDataConstructorII(std::ostream&,
+							  const BehaviourDescription&,
+							  const VariableDescriptionContainer&,
+							  const std::string&,
+							  const std::string&,
+							  const std::string&) const;
+    /*!
+     * \param[out] f      : output file
+     * \param[in]  mb     : behaviour description
+     * \param[in]  b      : iterator to the first variable to be initialized
+     * \param[in]  e      : iterator past the last variable to be initialized
+     * \param[in]  src    : name of the array from which the variables are initialized
+     * \param[in]  prefix : prefix added to variable's names
+     * \param[in]  suffix : suffix added to variable's names
+     * \param[in]  o      : offset in the array from which the variables are initialized
+     */
+    virtual void
+    writeVariableInitializersInBehaviourDataConstructorII(std::ostream&,
+							  const BehaviourDescription&,
+							  const VariableDescriptionContainer::const_iterator&,
+							  const VariableDescriptionContainer::const_iterator&,
+							  const std::string&,
+							  const std::string&,
+							  const std::string&) const;
+    /*!
+     * \param[out] f     : output file
+     * \param[in]   mb   : behaviour description
+     * \param[in]  v     : variables to be initialized
+     * \param[in]  src   : name of the array to which the variables are exported
+     */
+    virtual void exportResults(std::ostream&,
+			       const BehaviourDescription&,
+			       const VariableDescriptionContainer&,
+			       const std::string&) const;
+    
+    virtual void writeResultsArrayResize(std::ostream&,
+					 const std::string&,
+					 const VariableDescriptionContainer&) const;
+    
+    virtual void writeResultsArrayResize(std::ostream&,
+					 const std::string&,
+					 const SupportedTypes::TypeSize&) const;
     /*!
      * \brief write the instruction of exporting a thermodynamic force in an array
      * \param[out] out : output stream

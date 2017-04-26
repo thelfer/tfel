@@ -1392,8 +1392,8 @@ namespace mfront
 						  const VariableAttribute& a,
 						  const bool b)
   {
-    auto set = [&v,&n,&a,b](BehaviourData& d){
-      d.setVariableAttribute(v,n,a,b);
+    auto set = [&v,&n,&a,b](BehaviourData& bd){
+      bd.setVariableAttribute(v,n,a,b);
     };    
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       set(this->d);
@@ -1624,8 +1624,72 @@ namespace mfront
     return this->sd.find(h)!=this->sd.end();
   }
 
-  void BehaviourDescription::requiresTVectorOrVectorIncludes(bool& b1,
-							    bool& b2) const
+  void BehaviourDescription::requiresTVectorOrVectorIncludes(bool& b1,bool& b2,
+							     const BehaviourData& bd) const
+  {
+    for(const auto& v : bd.getMaterialProperties()){
+      if(v.arraySize>1){
+	if(this->useDynamicallyAllocatedVector(v.arraySize)){
+	  b2 = true;
+	} else {
+	  b1 = true;
+	}
+      }
+      if(b1&&b2){return;}
+    }
+    for(const auto& v : bd.getIntegrationVariables()){
+      if(v.arraySize>1){
+	if(this->useDynamicallyAllocatedVector(v.arraySize)){
+	  b2 = true;
+	} else {
+	  b1 = true;
+	}
+      }
+      if(b1&&b2){return;}
+    }
+    for(const auto& v : bd.getStateVariables()){
+      if(v.arraySize>1){
+	if(this->useDynamicallyAllocatedVector(v.arraySize)){
+	  b2 = true;
+	} else {
+	  b1 = true;
+	}
+      }
+      if(b1&&b2){return;}
+    }
+    for(const auto& v : bd.getAuxiliaryStateVariables()){
+      if(v.arraySize>1){
+	if(this->useDynamicallyAllocatedVector(v.arraySize)){
+	  b2 = true;
+	} else {
+	  b1 = true;
+	}
+      }
+      if(b1&&b2){return;}
+    }
+    for(const auto& v: bd.getLocalVariables()){
+      if(v.arraySize>1){
+	if(this->useDynamicallyAllocatedVector(v.arraySize)){
+	  b2 = true;
+	} else {
+	  b1 = true;
+	}
+      }
+      if(b1&&b2){return;}
+    }
+    for(const auto& v: bd.getExternalStateVariables()){
+      if(v.arraySize>1){
+	if(this->useDynamicallyAllocatedVector(v.arraySize)){
+	  b2 = true;
+	} else {
+	  b1 = true;
+	}
+      }
+      if(b1&&b2){return;}
+    }
+  } // end of BehaviourData::requiresTVectorOrVectorIncludes
+  
+  void BehaviourDescription::requiresTVectorOrVectorIncludes(bool& b1,bool& b2) const
   {
     b1 = b2 = false;
     if(this->hypotheses.empty()){
@@ -1633,10 +1697,10 @@ namespace mfront
 			       "no hypothesis defined"));
     }
     if(!this->areAllMechanicalDataSpecialised()){
-      this->d.requiresTVectorOrVectorIncludes(b1,b2);
+      this->requiresTVectorOrVectorIncludes(b1,b2,d);
     }
     for(const auto& md : this->sd){
-      md.second->requiresTVectorOrVectorIncludes(b1,b2);
+      this->requiresTVectorOrVectorIncludes(b1,b2,*(md.second));
     }
   } // end of BehaviourDescription::requiresTVectorOrVectorIncludes
 
@@ -2119,6 +2183,31 @@ namespace mfront
     return this->oac;
   }
 
+  bool BehaviourDescription::useDynamicallyAllocatedVector(const unsigned short s) const
+  {
+    return (s>=SupportedTypes::ArraySizeLimit)&&(this->areDynamicallyAllocatedVectorsAllowed());
+  } // end of SupportedTypes::useDynamicallyAllocatedVector
+
+  bool BehaviourDescription::areDynamicallyAllocatedVectorsAllowed() const
+  {
+    if(this->areDynamicallyAllocatedVectorsAllowed_.is<bool>()){
+      return this->areDynamicallyAllocatedVectorsAllowed_.get<bool>();
+    }
+    return true;
+  } // end of SupportedTypes::areDynamicallyAllocatedVectorsAllowed
+
+  void BehaviourDescription::areDynamicallyAllocatedVectorsAllowed(const bool b)
+  {
+    if(this->areDynamicallyAllocatedVectorsAllowed_.is<bool>()){
+      if(this->areDynamicallyAllocatedVectorsAllowed_.get<bool>()!=b){
+	throw(std::runtime_error("BehaviourDescription::areDynamicallyAllocatedVectorsAllowed: "
+				 "inconsistent policy for dynamically allocated vectors"));
+      }
+      return;
+    }
+    this->areDynamicallyAllocatedVectorsAllowed_ = b;
+  } // end of SupportedTypes::areDynamicallyAllocatedVectorsAllowed
+  
   BehaviourDescription::~BehaviourDescription() = default;
 
   void

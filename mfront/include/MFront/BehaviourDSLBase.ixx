@@ -221,7 +221,7 @@ namespace mfront{
 	    std::ostringstream msg;
 	    msg << "BehaviourDSLBase::analyse: "
 		<< "error while treating keyword '" << k << "' at line '" << l
-		<< "' of file '" << this->fileName << "'.\n" << e.what();
+		<< "' of file '" << this->fd.fileName << "'.\n" << e.what();
 	    throw(std::runtime_error(msg.str()));
 	  }
 	  catch(...){
@@ -235,26 +235,25 @@ namespace mfront{
   }
   
   template<typename Child>
-  void BehaviourDSLBase<Child>::importFile(const std::string& fileName_,
+  void BehaviourDSLBase<Child>::importFile(const std::string& fn,
 					   const std::vector<std::string>& ecmds,
 					   const std::map<std::string,std::string>& s)
   {
-    this->fileName = fileName_;
-    this->openFile(this->fileName,ecmds,s);
+    this->fd.fileName = fn;
+    this->openFile(this->fd.fileName,ecmds,s);
     this->analyse();
   } // end of BehaviourDSLBase<Child>::importFile
 
   template<typename Child>
   void BehaviourDSLBase<Child>::analyseString(const std::string& s)
   {
-    this->fileName = "user defined string";
+    this->fd.fileName = "user defined string";
     this->parseString(s);
     this->analyse();
   } // end of BehaviourDSLCommon::analyseString
   
   template<typename Child>
-  BehaviourDSLBase<Child>::~BehaviourDSLBase()
-  {} // end of BehaviourDSLBase<Child>::~BehaviourDSLBase
+  BehaviourDSLBase<Child>::~BehaviourDSLBase() = default;
   
 } // end of namespace mfront
 

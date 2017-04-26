@@ -570,7 +570,7 @@ namespace mfront{
 	    }
 	  }
 	  this->mb.addLocalVariable(elem,VariableDescription(iv.type,currentVarName,iv.arraySize,0u));
-	  if(this->useDynamicallyAllocatedVector(iv.arraySize)){
+	  if(this->mb.useDynamicallyAllocatedVector(iv.arraySize)){
 	    icb.code += "this->"+currentVarName +".resize("+std::to_string(iv.arraySize)+");\n";
 	  }
 	  if((algorithm!="RungeKutta4/2")&&(algorithm!="RungeKutta5/4")){
@@ -601,7 +601,7 @@ namespace mfront{
 	    }
 	  }
 	  this->mb.addLocalVariable(elem,VariableDescription(ev.type,currentVarName,ev.arraySize,0u));
-	  if(this->useDynamicallyAllocatedVector(ev.arraySize)){
+	  if(this->mb.useDynamicallyAllocatedVector(ev.arraySize)){
 	    icb.code += "this->"+currentVarName +".resize("+std::to_string(ev.arraySize)+");\n";
 	  }
 	  if((algorithm!="RungeKutta4/2")&&(algorithm!="RungeKutta5/4")){
@@ -870,7 +870,7 @@ namespace mfront{
       uvs.insert(uvs2.begin(),uvs2.end());
     }
     ErrorEvaluation eev;
-    auto svsize = this->getTotalSize(d.getStateVariables());
+    auto svsize = d.getStateVariables().getTypeSize();
     if(svsize.getScalarSize()+svsize.getTVectorSize()+
        3u*svsize.getStensorSize()+3u*svsize.getTensorSize()>=20){
       eev = MAXIMUMVALUEERROREVALUATION;
@@ -1202,7 +1202,7 @@ namespace mfront{
 	  }
 	  os << ";\n";
 	} else {
-	  if(this->useDynamicallyAllocatedVector(v.arraySize)){
+	  if(this->mb.useDynamicallyAllocatedVector(v.arraySize)){
 	    if(p==d.getStateVariables().begin()){
 	      os << "error  = Type(0);\n";
 	    }
@@ -1266,7 +1266,7 @@ namespace mfront{
 	  }
 	  os << ");\n";
 	} else {
-	  if(this->useDynamicallyAllocatedVector(v.arraySize)){
+	  if(this->mb.useDynamicallyAllocatedVector(v.arraySize)){
 	    os << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
 	    os << "error = std::max(error,";
 	    if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){
@@ -1779,7 +1779,7 @@ namespace mfront{
       uvs.insert(uvs2.begin(),uvs2.end());
     }
     ErrorEvaluation eev;
-    auto svsize = this->getTotalSize(d.getStateVariables());
+    auto svsize = d.getStateVariables().getTypeSize();
     if(svsize.getScalarSize()+svsize.getTVectorSize()+
        3u*svsize.getStensorSize()+3u*svsize.getTensorSize()>=20){
       eev = MAXIMUMVALUEERROREVALUATION;
@@ -1987,7 +1987,7 @@ namespace mfront{
 	  }
 	  os << ";\n";
 	} else {
-	  if(this->useDynamicallyAllocatedVector(v.arraySize)){
+	  if(this->mb.useDynamicallyAllocatedVector(v.arraySize)){
 	    if(first){
 	      os << "error  = Type(0);\n";
 	      first=false;
@@ -2048,7 +2048,7 @@ namespace mfront{
 	  }
 	  os << ");\n";
 	} else {
-	  if(this->useDynamicallyAllocatedVector(v.arraySize)){
+	  if(this->mb.useDynamicallyAllocatedVector(v.arraySize)){
 	    os << "for(unsigned short idx=0;idx!=" <<v.arraySize << ";++idx){\n";
 	    os << "error = std::max(error,tfel::math::abs(";
 	    if(v.hasAttribute(VariableDescription::errorNormalisationFactor)){

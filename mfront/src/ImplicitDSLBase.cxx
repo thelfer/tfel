@@ -35,7 +35,7 @@ namespace mfront{
   {
     // dynamically allocated vectors are not yet allowed in implicit
     // parsers
-    this->areDynamicallyAllocatedVectorsAllowed_ = false;
+    this->mb.areDynamicallyAllocatedVectorsAllowed(false);
     // parameters
     this->reserveName("epsilon");
     this->reserveName("theta");
@@ -1796,9 +1796,11 @@ namespace mfront{
 	    const bool bfnf = this->mb.hasAttribute(h,'f'+v.name+"_normalisation_factor");
 	    const bool bvnf = this->mb.hasAttribute(h,v2.name+"_normalisation_factor");
 	    if(bfnf){
-	      const auto& fnf = this->mb.getAttribute<std::string>(h,'f'+v.name+"_normalisation_factor");	      
+	      const auto& fnf =
+		this->mb.getAttribute<std::string>(h,'f'+v.name+"_normalisation_factor");	      
 	      if(bvnf){
-		const auto& vnf = this->mb.getAttribute<std::string>(h,v2.name+"_normalisation_factor");
+		const auto& vnf =
+		  this->mb.getAttribute<std::string>(h,v2.name+"_normalisation_factor");
 		if((v.arraySize!=1u)&&(v2.arraySize!=1u)){
 		  os << "for(unsigned short idx=0;idx!="
 		     << v.arraySize << ";++idx){\n";
@@ -1854,7 +1856,8 @@ namespace mfront{
 	      }
 	    } else{
 	      if(bvnf){
-		const auto& vnf = this->mb.getAttribute<std::string>(h,v2.name+"_normalisation_factor");
+		const auto& vnf =
+		  this->mb.getAttribute<std::string>(h,v2.name+"_normalisation_factor");
 		if((v.arraySize!=1u)&&(v2.arraySize!=1u)){
 		  os << "for(unsigned short idx=0;idx!="
 		     << v.arraySize << ";++idx){\n";
@@ -1891,13 +1894,12 @@ namespace mfront{
   } // end of ImplicitDSLBase::writeBehaviourIntegrator
 
   std::string
-  ImplicitDSLBase::getIntegrationVariablesIncrementsInitializers(const VariableDescriptionContainer& ivs,
-								 const bool) const
+  ImplicitDSLBase::getIntegrationVariablesIncrementsInitializers(const Hypothesis h) const
   {
     SupportedTypes::TypeSize n;
     std::ostringstream init;
     bool first = true;
-    for(const auto& v: ivs){
+    for(const auto& v: this->mb.getBehaviourData(h).getIntegrationVariables()){
       const auto flag = getTypeFlag(v.type);
       if(!first){
 	init << ",\n";
@@ -1967,7 +1969,7 @@ namespace mfront{
     for(const auto& v : d.getIntegrationVariables()){
       if((!getDebugMode())&&(v.lineNumber!=0u)){
 	os << "#line " << v.lineNumber << " \"" 
-	   << this->fileName << "\"\n";
+	   << this->fd.fileName << "\"\n";
       }
       if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Scalar){
 	if(v.arraySize==1u){

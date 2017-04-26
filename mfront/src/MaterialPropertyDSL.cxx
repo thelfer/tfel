@@ -299,7 +299,7 @@ namespace mfront{
     currentLine = this->current->line;
     newLine=true;
     if(!getDebugMode()){
-      this->md.f.body +="#line "+std::to_string(currentLine)+" \""+this->fileName+"\"\n";
+      this->md.f.body +="#line "+std::to_string(currentLine)+" \""+this->fd.fileName+"\"\n";
     }
     for(;(this->current!=this->tokens.end())&&
 	  (openedBrackets!=0);++(this->current)){
@@ -307,7 +307,7 @@ namespace mfront{
 	currentLine=this->current->line;
 	this->md.f.body  += "\n";
 	if(!getDebugMode()){
-	  this->md.f.body +="#line "+std::to_string(currentLine)+" \""+this->fileName+"\"\n";
+	  this->md.f.body +="#line "+std::to_string(currentLine)+" \""+this->fd.fileName+"\"\n";
 	}
 	newLine = true;
       } 
@@ -440,18 +440,18 @@ namespace mfront{
     this->readSpecifiedToken("MaterialPropertyDSL::treatMethod",";");
   } // end of MaterialPropertyDSL::treatMethod
 
-  void MaterialPropertyDSL::importFile(const std::string& fileName_,
+  void MaterialPropertyDSL::importFile(const std::string& fn,
 				       const std::vector<std::string>& ecmds,
 				       const std::map<std::string,std::string>& s) 
   {
-    this->fileName = fileName_;
-    this->openFile(this->fileName,ecmds,s);
+    this->fd.fileName = fn;
+    this->openFile(this->fd.fileName,ecmds,s);
     this->analyse();
   }
 
   void MaterialPropertyDSL::analyseString(const std::string& s)
   {
-    this->fileName = "user defined string";
+    this->fd.fileName = "user defined string";
     this->parseString(s);
     this->analyse();
   }
@@ -555,7 +555,7 @@ namespace mfront{
       if(getVerboseMode()>=VERBOSE_LEVEL2){
 	getLogStream() << "calling interface " << i.first << '\n';
       }
-      i.second->writeOutputFiles(this->md,*this);
+      i.second->writeOutputFiles(this->md,this->fd);
     }
   } // end of MaterialPropertyDSL::generateOutputFiles
 

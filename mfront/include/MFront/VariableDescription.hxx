@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_VARDESCRIPTION_HXX
-#define LIB_MFRONT_VARDESCRIPTION_HXX 
+#ifndef LIB_MFRONT_VARIABLEDESCRIPTION_HXX
+#define LIB_MFRONT_VARIABLEDESCRIPTION_HXX 
 
 #include<map>
 #include<vector>
@@ -21,6 +21,7 @@
 
 #include"TFEL/Utilities/GenTypeBase.hxx"
 #include"MFront/MFrontConfig.hxx"
+#include"MFront/SupportedTypes.hxx"
 #include"MFront/VariableAttribute.hxx"
 #include"MFront/VariableBoundsDescription.hxx"
 #include"MFront/VariableDescriptionBase.hxx"
@@ -69,6 +70,10 @@ namespace mfront
 			const std::string&,
 			const unsigned short,
 			const size_t);
+    //! \return the type flag associated to a the variable
+    SupportedTypes::TypeFlag getTypeFlag() const;
+    //! \return the size of the variable
+    SupportedTypes::TypeSize getTypeSize() const;
     /*!
      * \brief insert a new attribute
      * \param[in] n : name
@@ -230,6 +235,10 @@ namespace mfront
      * \return true if a variable with the given name exists
      */
     bool contains(const std::string&) const;
+    //! \return the sum of the sizes of all the variables
+    SupportedTypes::TypeSize getTypeSize() const;
+    //! \return the sum of the array sizes of all the variables
+    unsigned short getNumberOfVariables() const;
     /*!
      * \return the list of external names associated with this
      * container.
@@ -286,10 +295,10 @@ namespace mfront
   hasPhysicalBounds(const VariableDescriptionContainer&);
   
   //! a simple alias for backward compatibility
-  typedef VariableDescriptionContainer      VarContainer;  
+  typedef VariableDescriptionContainer VarContainer;  
 
 } // end of namespace mfront
 
 #include"MFront/VariableDescription.ixx"
 
-#endif /* LIB_MFRONT_VARDESCRIPTION_HXX */
+#endif /* LIB_MFRONT_VARIABLEDESCRIPTION_HXX */

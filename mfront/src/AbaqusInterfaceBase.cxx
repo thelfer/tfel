@@ -284,7 +284,7 @@ namespace mfront{
     if(!mprops.empty()){
       const auto& m = mprops.back();
       res.second  = m.offset;
-      res.second += this->getTypeSize(m.type,m.arraySize);
+      res.second += SupportedTypes::getTypeSize(m.type,m.arraySize);
     }
     this->completeMaterialPropertiesList(mprops,mb,h);
     return res;
@@ -382,7 +382,7 @@ namespace mfront{
     if(!mprops.first.empty()){
       const auto& m = mprops.first.back();
       msize  = m.offset;
-      msize += this->getTypeSize(m.type,m.arraySize);
+      msize += SupportedTypes::getTypeSize(m.type,m.arraySize);
       msize -= mprops.second;
     }
     out << "static " << constexpr_c << " unsigned short material_properties_nb = " << msize << ";\n";
@@ -523,12 +523,12 @@ namespace mfront{
       if(!mps.first.empty()){
 	const auto& m = mps.first.back();
 	msize  = m.offset;
-	msize += this->getTypeSize(m.type,m.arraySize);
+	msize += SupportedTypes::getTypeSize(m.type,m.arraySize);
       }
       const auto& persistentVarsHolder = d.getPersistentVariables();
       auto vs = SupportedTypes::TypeSize{};
       for(const auto& v : persistentVarsHolder){
-	vs+=this->getTypeSize(v.type,v.arraySize);
+	vs+=SupportedTypes::getTypeSize(v.type,v.arraySize);
       }
       const auto vsize = vs.getValueForModellingHypothesis(h)+ 
 	this->getStateVariablesOffset(mb,h);

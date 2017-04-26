@@ -304,11 +304,11 @@ namespace mfront{
     // checks
     if(!s){
       if(o.hypotheses.size()!=1u){
-	this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions : ",
+	this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions: ",
 				"specialisation is not allowed");
       }
       if(*(o.hypotheses.begin())!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions : ",
+	this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions: ",
 				"specialisation is not allowed");
       }
     }
@@ -372,7 +372,7 @@ namespace mfront{
   {
     if(!o.untreated.empty()){
       std::ostringstream msg;
-      msg << "BehaviourDSLCommon::treatUnsupportedCodeBlockOptions : ";
+      msg << "BehaviourDSLCommon::treatUnsupportedCodeBlockOptions: ";
       if(o.untreated.size()==1u){
 	msg << "option '" << o.untreated[0].value << "' is invalid";
       } else {
@@ -457,7 +457,7 @@ namespace mfront{
     using namespace mfront::bbrick;
     const auto& g = tfel::glossary::Glossary::getGlossary();
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing : begin\n";
+      getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: begin\n";
     }
     // defining modelling hypotheses
     if(!this->mb.areModellingHypothesesDefined()){
@@ -467,7 +467,7 @@ namespace mfront{
     // treating bricks
     if(!this->bricks.empty()){
       if(getVerboseMode()>=VERBOSE_DEBUG){
-	getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing : "
+	getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: "
 		       << "treating bricks\n";
       }
       for(const auto h: mh){
@@ -513,7 +513,7 @@ namespace mfront{
     if(getVerboseMode()>=VERBOSE_DEBUG){
       auto& log = getLogStream();
       log << "behaviour '" << this->mb.getClassName()
-	  << "' supports the following hypotheses : \n";
+	  << "' supports the following hypotheses: \n";
       for(const auto & h : mh){
 	log << " - " << ModellingHypothesis::toString(h);
 	if(this->mb.hasSpecialisedMechanicalData(h)){
@@ -634,14 +634,11 @@ namespace mfront{
 				this->mb.getClassName()+"SlipSystems.hxx\"");
     }
     // calling interfaces
-    for(const auto& i  : this->interfaces){
-      i.second->allowDynamicallyAllocatedArrays(this->areDynamicallyAllocatedVectorsAllowed());
-    }
     if(getPedanticMode()){
       this->doPedanticChecks();
     }
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing : end\n";
+      getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: end\n";
     }
   } // end of BehaviourDSLCommon::endsInputFileProcessing
 
@@ -848,28 +845,28 @@ namespace mfront{
     if(!this->mb.areAllMechanicalDataSpecialised(hh)){
       if(getVerboseMode()>=VERBOSE_DEBUG){
 	auto& log = getLogStream();
-	log << "BehaviourDSLCommon::writeOutputFiles : "
+	log << "BehaviourDSLCommon::generateOutputFiles : "
 	    << "treating default hypothesis\n";
       }
       const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // Generating BehaviourData's outputClass
       if(getVerboseMode()>=VERBOSE_DEBUG){
 	auto& log = getLogStream();
-	log << "BehaviourDSLCommon::writeOutputFiles : writing behaviour data "
+	log << "BehaviourDSLCommon::generateOutputFiles : writing behaviour data "
 	    << "for default hypothesis\n";
       }
       this->writeBehaviourDataClass(behaviourDataFile,h);
       // Generating IntegrationData's outputClass
       if(getVerboseMode()>=VERBOSE_DEBUG){
 	auto& log = getLogStream();
-	log << "BehaviourDSLCommon::writeOutputFiles : writing integration data "
+	log << "BehaviourDSLCommon::generateOutputFiles : writing integration data "
 	    << "for default hypothesis\n";
       }
       this->writeIntegrationDataClass(integrationDataFile,h);
       // Generating Behaviour's outputFile
       if(getVerboseMode()>=VERBOSE_DEBUG){
 	auto& log = getLogStream();
-	log << "BehaviourDSLCommon::writeOutputFiles : writing behaviour class "
+	log << "BehaviourDSLCommon::generateOutputFiles : writing behaviour class "
 	    << "for default hypothesis\n";
       }
       this->writeBehaviourClass(behaviourFile,h);
@@ -878,28 +875,28 @@ namespace mfront{
       if(mb.hasSpecialisedMechanicalData(h)){
 	if(getVerboseMode()>=VERBOSE_DEBUG){
 	  auto& log = getLogStream();
-	  log << "BehaviourDSLCommon::writeOutputFiles : "
+	  log << "BehaviourDSLCommon::generateOutputFiles : "
 	      << "treating hypothesis '" << ModellingHypothesis::toString(h)
 	      << "'\n";
 	}
 	// Generating BehaviourData's outputClass
 	if(getVerboseMode()>=VERBOSE_DEBUG){
 	  auto& log = getLogStream();
-	  log << "BehaviourDSLCommon::writeOutputFiles : writing behaviour data "
+	  log << "BehaviourDSLCommon::generateOutputFiles : writing behaviour data "
 	      << "for hypothesis '" << ModellingHypothesis::toString(h) << "'\n";
 	}
 	this->writeBehaviourDataClass(behaviourDataFile,h);
 	// Generating IntegrationData's outputClass
 	if(getVerboseMode()>=VERBOSE_DEBUG){
 	  auto& log = getLogStream();
-	  log << "BehaviourDSLCommon::writeOutputFiles : writing integration data "
+	  log << "BehaviourDSLCommon::generateOutputFiles : writing integration data "
 	      << "for hypothesis '" << ModellingHypothesis::toString(h) << "'\n";
 	}
 	this->writeIntegrationDataClass(integrationDataFile,h);
 	// Generating behaviour's outputClass
 	if(getVerboseMode()>=VERBOSE_DEBUG){
 	  auto& log = getLogStream();
-	  log << "BehaviourDSLCommon::writeOutputFiles : writing behaviour class "
+	  log << "BehaviourDSLCommon::generateOutputFiles : writing behaviour class "
 	      << "for hypothesis '" << ModellingHypothesis::toString(h) << "'\n";
 	}
 	this->writeBehaviourClass(behaviourFile,h);
@@ -911,17 +908,17 @@ namespace mfront{
     // Generating behaviour's source file
     if(getVerboseMode()>=VERBOSE_DEBUG){
       auto& log = getLogStream();
-      log << "BehaviourDSLCommon::writeOutputFiles : writing source file\n";
+      log << "BehaviourDSLCommon::generateOutputFiles : writing source file\n";
     }
     this->writeSrcFile(srcFile);
     // calling the interfaces
     for(const auto& i : this->interfaces){
       if(getVerboseMode()>=VERBOSE_DEBUG){
 	auto& log = getLogStream();
-	log << "BehaviourDSLCommon::writeOutputFiles : "
+	log << "BehaviourDSLCommon::generateOutputFiles : "
 	    << "calling interface '" << i.first << "'\n";
       }
-      i.second->endTreatment(this->mb,*this);
+      i.second->endTreatment(this->mb,this->fd);
     }
   }
 
@@ -1049,11 +1046,11 @@ namespace mfront{
 	<< "*         File generated by "
 	<< MFrontHeader::getVersionName() << " "
 	<< "version " << MFrontHeader::getVersionNumber()<< '\n';
-    if(!this->authorName.empty()){
-      out << "* \\author " << this->authorName << '\n';
+    if(!this->fd.authorName.empty()){
+      out << "* \\author " << this->fd.authorName << '\n';
     }
-    if(!this->date.empty()){
-      out << "* \\date   " << this->date       << '\n';
+    if(!this->fd.date.empty()){
+      out << "* \\date   " << this->fd.date       << '\n';
     }
     out << " */\n\n";
     out << "#ifndef LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_HXX\n"
@@ -1127,11 +1124,11 @@ namespace mfront{
 	<< "*         File generated by "
 	<< MFrontHeader::getVersionName() << " "
 	<< "version " << MFrontHeader::getVersionNumber()<< '\n';
-    if(!this->authorName.empty()){
-      out << "* \\author " << this->authorName << '\n';
+    if(!this->fd.authorName.empty()){
+      out << "* \\author " << this->fd.authorName << '\n';
     }
-    if(!this->date.empty()){
-      out << "* \\date   " << this->date       << '\n';
+    if(!this->fd.date.empty()){
+      out << "* \\date   " << this->fd.date       << '\n';
     }
     out << " */\n\n";
     out << "#ifndef LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_IXX\n"
@@ -2248,6 +2245,44 @@ namespace mfront{
   bool BehaviourDSLCommon::isNameReserved(const std::string& n) const{
     return this->mb.isNameReserved(n);
   }
+
+  void
+  BehaviourDSLCommon::writeVariablesDeclarations(std::ostream& f,
+  					     const VariableDescriptionContainer& v,
+  					     const std::string& prefix,
+  					     const std::string& suffix,
+  					     const std::string& fileName,
+  					     const bool useTimeDerivative) const
+  {
+    for(const auto& e:v){
+      this->writeVariableDeclaration(f,e,prefix,suffix,fileName,useTimeDerivative);
+    }
+  } // end of BehaviourDSLCommon::writeVariablesDeclarations
+
+  void BehaviourDSLCommon::writeVariableDeclaration(std::ostream& f,
+						    const VariableDescription& v,
+						    const std::string& prefix,
+						    const std::string& suffix,
+						    const std::string& fileName,
+						    const bool useTimeDerivative) const
+  {
+    const auto n = prefix+v.name+suffix;
+    const auto t = (!useTimeDerivative) ? v.type :  this->getTimeDerivativeType(v.type);
+    if((!getDebugMode())&&(v.lineNumber!=0u)){
+      f << "#line " << v.lineNumber << " \"" 
+  	<< fileName << "\"\n";
+    }
+    if(v.arraySize==1u){
+  	f << t << " "  << n << ";\n";  
+    } else {
+      if(this->mb.useDynamicallyAllocatedVector(v.arraySize)){
+  	f << "tfel::math::vector<" << t << " > "  << n << ";\n";
+      } else {
+  	f << "tfel::math::tvector<" << v.arraySize 
+  	  << ", " << t << " > "  << n << ";\n";
+      }
+    }
+  } // end of BehaviourDSLCommon::writeVariableDeclaration
   
   void BehaviourDSLCommon::writeIncludes(std::ostream& file) const {
     if((!file)||(!file.good())){
@@ -2321,6 +2356,63 @@ namespace mfront{
 	 << "typedef " << this->mb.getTangentOperatorType() << " TangentOperator;\n";
   } // end of BehaviourDSLCommon::writeStandardTFELTypedefs
 
+  std::string
+  BehaviourDSLCommon::getIntegrationVariablesIncrementsInitializers(const Hypothesis h) const 
+  {
+    using namespace std;
+    ostringstream f;
+    const auto& vc = this->mb.getBehaviourData(h).getIntegrationVariables();
+    for(auto p=vc.begin();p!=vc.end();++p){
+      const auto& v = *p;
+      const auto flag = getTypeFlag(v.type);
+      const auto n = v.name;
+      const auto t = (!this->useStateVarTimeDerivative) ? v.type : this->getTimeDerivativeType(v.type);
+      if(p!=vc.begin()){
+  	f << ",\n";
+      }
+      if(flag==SupportedTypes::Scalar){
+  	if(this->mb.useDynamicallyAllocatedVector(v.arraySize)){
+  	  f << "d" << n << "(" << v.arraySize << "," << t <<"(0))";
+  	} else {
+  	  f << "d" << n << "(" << t <<"(0))";
+  	}
+      } else if ((flag==SupportedTypes::TVector)||
+  		 (flag==SupportedTypes::Stensor)||
+  		 (flag==SupportedTypes::Tensor)){
+  	string traits;
+  	if(flag==SupportedTypes::TVector){
+  	  traits = "VectorTraits";
+  	} else if(flag==SupportedTypes::Stensor){
+  	  traits = "StensorTraits";
+  	} else if(flag==SupportedTypes::Tensor){
+  	  traits = "TensorTraits";
+  	} else {
+	  this->throwRuntimeError("BehaviourDSLCommon::getIntegrationVariablesIncrementsInitializers",
+				  "internal error, tag unsupported");
+  	}
+  	if(v.arraySize==1u){
+  	  f << "d" << n 
+  	    << "(typename tfel::math::"+traits+"<" 
+  	    << t << ">::NumType(0))";
+  	} else {
+  	  if(this->mb.useDynamicallyAllocatedVector(v.arraySize)){
+  	    f << "d" << n 
+  	      << "(" << v.arraySize << "," << t << "(typename tfel::math::"+traits+"<" 
+  	      << t << ">::NumType(0)))";
+  	  } else {
+  	    f << "d" << n 
+  	      << "(" << t << "(typename tfel::math::"+traits+"<" 
+  	      << t << ">::NumType(0)))";
+  	  }
+  	}
+      } else {
+	this->throwRuntimeError("BehaviourDSLCommon::getIntegrationVariablesIncrementsInitializers",
+				"internal error, tag unsupported");
+      }
+    }
+    return f.str();
+  } // end of SupportedTypes::getIntegrationVariablesInitializers
+  
   void BehaviourDSLCommon::checkBehaviourDataFile(std::ostream& os) const {
     if((!os)||(!os.good())){
       this->throwRuntimeError("BehaviourDSLCommon::checkBehaviourDataOutputFile",
@@ -2337,11 +2429,11 @@ namespace mfront{
        << "*         File generated by "
        << MFrontHeader::getVersionName() << " "
        << "version " << MFrontHeader::getVersionNumber()<< '\n';
-    if(!this->authorName.empty()){
-      os << "* \\author " << this->authorName << '\n';
+    if(!this->fd.authorName.empty()){
+      os << "* \\author " << this->fd.authorName << '\n';
     }
-    if(!this->date.empty()){
-      os << "* \\date   " << this->date       << '\n';
+    if(!this->fd.date.empty()){
+      os << "* \\date   " << this->fd.date       << '\n';
     }
     os << " */\n\n";
   }
@@ -2581,11 +2673,11 @@ namespace mfront{
        << "* \\param H, modelling hypothesis.\n"
        << "* \\param typename Type, numerical type.\n"
        << "* \\param bool use_qt, conditional saying if quantities are use.\n";
-    if(!this->authorName.empty()){
-      os << "* \\author " << this->authorName << '\n';
+    if(!this->fd.authorName.empty()){
+      os << "* \\author " << this->fd.authorName << '\n';
     }
-    if(!this->date.empty()){
-      os << "* \\date   " << this->date << '\n';
+    if(!this->fd.date.empty()){
+      os << "* \\date   " << this->fd.date << '\n';
     }
     os << "*/\n";
   }
@@ -2691,7 +2783,7 @@ namespace mfront{
 								const Hypothesis h) const {
     this->checkBehaviourDataFile(os);
     this->writeVariablesDeclarations(os,this->mb.getBehaviourData(h).getMaterialProperties(),
-				     "","",this->fileName,
+				     "","",this->fd.fileName,
 				     false);
     os << '\n';
   }
@@ -2701,11 +2793,11 @@ namespace mfront{
     this->checkBehaviourDataFile(os);
     const auto& d = this->mb.getBehaviourData(h);
     this->writeVariablesDeclarations(os,d.getStateVariables(),
-				     "","",this->fileName,false);
+				     "","",this->fd.fileName,false);
     this->writeVariablesDeclarations(os,d.getAuxiliaryStateVariables(),
-				     "","",this->fileName,false);
+				     "","",this->fd.fileName,false);
     this->writeVariablesDeclarations(os,d.getExternalStateVariables(),
-				     "","",this->fileName,false);
+				     "","",this->fd.fileName,false);
     os << '\n';
   }
 
@@ -2875,14 +2967,14 @@ namespace mfront{
       os << "* \\param use_qt, conditional "
 	 << "saying if quantities are use.\n";
     }
-    if(!this->authorName.empty()){
-      os << "* \\author " << this->authorName << '\n';
+    if(!this->fd.authorName.empty()){
+      os << "* \\author " << this->fd.authorName << '\n';
     }
-    if(!this->date.empty()){
-      os << "* \\date   " << this->date << '\n';
+    if(!this->fd.date.empty()){
+      os << "* \\date   " << this->fd.date << '\n';
     }
-    if(!this->description.empty()){
-      os << this->description << '\n';
+    if(!this->fd.description.empty()){
+      os << this->fd.description << '\n';
     }
     os << "*/\n";
     const auto btype = this->mb.getBehaviourTypeFlag();
@@ -2977,11 +3069,11 @@ namespace mfront{
        << "*         File generated by "
        << MFrontHeader::getVersionName() << " "
        << "version " << MFrontHeader::getVersionNumber() << '\n';
-    if(!this->authorName.empty()){
-      os << "* \\author " << this->authorName << '\n';
+    if(!this->fd.authorName.empty()){
+      os << "* \\author " << this->fd.authorName << '\n';
     }
-    if(!this->date.empty()){
-      os << "* \\date   " << this->date       << '\n';
+    if(!this->fd.date.empty()){
+      os << "* \\date   " << this->fd.date       << '\n';
     }
     os << " */\n\n";
   }
@@ -3559,10 +3651,8 @@ namespace mfront{
   std::string
   BehaviourDSLCommon::getBehaviourConstructorsInitializers(const Hypothesis h) const
   {
-    const auto& md = this->mb.getBehaviourData(h);
     // variable initialisation
-    auto init = this->getIntegrationVariablesIncrementsInitializers(md.getIntegrationVariables(),
-								    this->useStateVarTimeDerivative);    
+    auto init = this->getIntegrationVariablesIncrementsInitializers(h);    
     if(!this->localVariablesInitializers.empty()){
       if(!init.empty()){
 	init += ",\n";
@@ -4252,7 +4342,7 @@ namespace mfront{
     const auto& md = this->mb.getBehaviourData(h);
     this->checkBehaviourFile(os);
     for(const auto& v : md.getLocalVariables()){
-      if(this->useDynamicallyAllocatedVector(v.arraySize)){
+      if(this->mb.useDynamicallyAllocatedVector(v.arraySize)){
 	os << "this->" << v.name << ".resize(" << v.arraySize << ");\n";
       }
     }  
@@ -4315,7 +4405,7 @@ namespace mfront{
     this->checkBehaviourFile(os);
     const auto& md = this->mb.getBehaviourData(h);
     this->writeVariablesDeclarations(os,md.getLocalVariables(),
-				     "","",this->fileName,false);
+				     "","",this->fd.fileName,false);
     os << '\n';
   }
 
@@ -4327,7 +4417,7 @@ namespace mfront{
     for(const auto& v : md.getIntegrationVariables()){
       if(!md.isStateVariableName(v.name)){
 	if(md.isMemberUsedInCodeBlocks(v.name)){
-	  this->writeVariableDeclaration(os,v,"","",this->fileName,false);
+	  this->writeVariableDeclaration(os,v,"","",this->fd.fileName,false);
 	}
       }
     }
@@ -4343,7 +4433,7 @@ namespace mfront{
       if(!getDebugMode()){
 	if(v.lineNumber!=0u){
 	  os << "#line " << v.lineNumber << " \"" 
-	     << this->fileName << "\"\n";
+	     << this->fd.fileName << "\"\n";
 	}
       }
       if(v.arraySize==1){
@@ -4372,7 +4462,7 @@ namespace mfront{
       if(!getDebugMode()){
 	if(v.lineNumber!=0u){
 	  os << "#line " << v.lineNumber << " \"" 
-	     << this->fileName << "\"\n";
+	     << this->fd.fileName << "\"\n";
 	}
       }
       if(v.type=="int"){
@@ -4391,7 +4481,7 @@ namespace mfront{
     const auto& md = this->mb.getBehaviourData(h);
     this->checkBehaviourFile(os);
     this->writeVariablesDeclarations(os,md.getIntegrationVariables(),
-				     "d","",this->fileName,
+				     "d","",this->fd.fileName,
 				     this->useStateVarTimeDerivative);
     os << '\n';
   }
@@ -4638,10 +4728,9 @@ namespace mfront{
     }
   }
 
-  void
-  BehaviourDSLCommon::writeBehaviourTraitsSpecialisation(std::ostream & os,
-							 const Hypothesis h,
-							 const bool b) const
+  void BehaviourDSLCommon::writeBehaviourTraitsSpecialisation(std::ostream & os,
+							      const Hypothesis h,
+							      const bool b) const
   {
     SupportedTypes::TypeSize coefSize;
     SupportedTypes::TypeSize stateVarsSize;
@@ -5415,11 +5504,11 @@ namespace mfront{
     os << MFrontHeader::getVersionName() << " ";
     os << "version " << MFrontHeader::getVersionNumber();
     os << '\n';
-    if(!this->authorName.empty()){
-      os << "* \\author " << this->authorName << '\n';
+    if(!this->fd.authorName.empty()){
+      os << "* \\author " << this->fd.authorName << '\n';
     }
-    if(!this->date.empty()){
-      os << "* \\date   " << this->date       << '\n';
+    if(!this->fd.date.empty()){
+      os << "* \\date   " << this->fd.date       << '\n';
     }
     os << " */\n\n";
   }
@@ -5617,11 +5706,11 @@ namespace mfront{
        << "* \\param unsigned short N, space dimension.\n"
        << "* \\param typename Type, numerical type.\n"
        << "* \\param bool use_qt, conditional saying if quantities are use.\n";
-    if(!this->authorName.empty()){
-      os << "* \\author " << this->authorName << '\n';
+    if(!this->fd.authorName.empty()){
+      os << "* \\author " << this->fd.authorName << '\n';
     }
-    if(!this->date.empty()){
-      os << "* \\date   " << this->date << '\n';
+    if(!this->fd.date.empty()){
+      os << "* \\date   " << this->fd.date << '\n';
     }
     os << "*/\n";
   }
@@ -5772,7 +5861,7 @@ namespace mfront{
     const auto& md = this->mb.getBehaviourData(h);
     this->checkIntegrationDataFile(os);
     this->writeVariablesDeclarations(os,md.getExternalStateVariables(),
-				     "d","",this->fileName,false);
+				     "d","",this->fd.fileName,false);
   }
 
   void BehaviourDSLCommon::writeIntegrationDataFileBegin(std::ostream& os) const
@@ -5830,11 +5919,11 @@ namespace mfront{
        << MFrontHeader::getVersionName() << " "
        << "version " << MFrontHeader::getVersionNumber()
        << '\n';
-    if(!this->authorName.empty()){
-      os << "* \\author " << this->authorName << '\n';
+    if(!this->fd.authorName.empty()){
+      os << "* \\author " << this->fd.authorName << '\n';
     }
-    if(!this->date.empty()){
-      os << "* \\date   " << this->date       << '\n';
+    if(!this->fd.date.empty()){
+      os << "* \\date   " << this->fd.date       << '\n';
     }
     os << " */\n\n";
     if(this->mb.hasParameters()){

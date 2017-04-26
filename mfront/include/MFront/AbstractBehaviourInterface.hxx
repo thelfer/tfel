@@ -49,12 +49,6 @@ namespace mfront{
     //! a simple alias
     using tokens_iterator = CxxTokenizer::TokensContainer::const_iterator;
     /*!
-     * set if dynamically allocated arrays are allowed
-     * \param[in] b : boolean
-     */
-    virtual void
-    allowDynamicallyAllocatedArrays(const bool) = 0;
-    /*!
      * \brief treat a keyword
      * \param[in,out] bd: behaviour description
      * \param[in]     key: keyword to be treated

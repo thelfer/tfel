@@ -15,13 +15,11 @@
 #define LIB_MFRONT_SUPPORTEDTYPES_HXX 
 
 #include<map>
-#include<iosfwd>
 #include<string>
 #include<vector>
 
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"MFront/MFrontConfig.hxx"
-#include"MFront/VariableDescription.hxx"
 
 namespace mfront
 {
@@ -87,11 +85,9 @@ namespace mfront
       //! return the (un)symmetric tensor part of the size
       int getTensorSize() const;
 
-      int
-      getValueForDimension(const unsigned short) const;
+      int getValueForDimension(const unsigned short) const;
 
-      int
-      getValueForModellingHypothesis(const Hypothesis) const;
+      int getValueForModellingHypothesis(const Hypothesis) const;
       //! \return true is all components of the TipeSize are null
       bool isNull(void) const;
       
@@ -136,166 +132,13 @@ namespace mfront
      * \param[in] t : variable type
      * \param[in] a : array size
      */
-    TypeSize
-    getTypeSize(const std::string&,
-		const unsigned short) const;
+    static TypeSize getTypeSize(const std::string&,
+				const unsigned short);
 
-    std::string
-    getTimeDerivativeType(const std::string&) const;
-    /*!
-     * \return true of the parser shall declare a dynamically
-     * allocated vector for the given array size
-     */
-    bool
-    useDynamicallyAllocatedVector(const unsigned short) const;
-    /*!
-     * \return true if dynamically allocated vectors are allowed
-     */
-    bool
-    areDynamicallyAllocatedVectorsAllowed(void) const;
-    /*!
-     * write the given variables declaration
-     * \param[out] f                 : output file
-     * \param[in]  v                 : variables to be declared
-     * \param[in]  prefix            : prefix added to variable's names
-     * \param[in]  suffix            : suffix added to variable's names
-     * \param[in]  useTimeDerivative : declare time derivative of the variables
-     */
-    virtual void
-    writeVariablesDeclarations(std::ostream&,
-			       const VariableDescriptionContainer&,
-			       const std::string&,
-			       const std::string&,
-			       const std::string&,
-			       const bool) const;
-    /*!
-     * write the given variable declaration
-     * \param[out] f                 : output file
-     * \param[in]  v                 : variable to be declared
-     * \param[in]  prefix            : prefix added to variable's names
-     * \param[in]  suffix            : suffix added to variable's names
-     * \param[in]  useTimeDerivative : declare time derivative of the variables
-     */
-    virtual void
-    writeVariableDeclaration(std::ostream&,
-			     const VariableDescription&,
-			     const std::string&,
-			     const std::string&,
-			     const std::string&,
-			     const bool) const;
-    /*!
-     * \param[out] f      : output file
-     * \param[out] first  : true if not initializer has been declared yet
-     * \param[in]  v      : variables to be initialized
-     * \param[in]  src    : name of the array from which the variables are initialized
-     * \param[in]  prefix : prefix added to variable's names
-     * \param[in]  suffix : suffix added to variable's names
-     * \param[in]  o      : offset in the array from which the variables are initialized
-     */
-    virtual void
-      writeVariableInitializersInBehaviourDataConstructorI(std::ostream&,bool&,
-							   const VariableDescriptionContainer&,
-							   const std::string&,
-							   const std::string&,
-							   const std::string&) const;
-    /*!
-     * \param[out] f      : output file
-     * \param[out] first  : true if not initializer has been declared yet
-     * \param[in]  b      : iterator to the first variable to be initialized
-     * \param[in]  e      : iterator past the last variable to be initialized
-     * \param[in]  src    : name of the array from which the variables are initialized
-     * \param[in]  prefix : prefix added to variable's names
-     * \param[in]  suffix : suffix added to variable's names
-     * \param[in]  o      : offset in the array from which the variables are initialized
-     */
-    virtual void
-    writeVariableInitializersInBehaviourDataConstructorI(std::ostream&,bool&,							 
-							 const VariableDescriptionContainer::const_iterator&,
-							 const VariableDescriptionContainer::const_iterator&,
-							 const std::string&,
-							 const std::string&,
-							 const std::string&) const;
-    /*!
-     * \param[out] f      : output file
-     * \param[in]  v      : variables to be initialized
-     * \param[in]  src    : name of the array from which the variables are initialized
-     * \param[in]  prefix : prefix added to variable's names
-     * \param[in]  suffix : suffix added to variable's names
-     * \param[in]  o      : offset in the array from which the variables are initialized
-     */
-    virtual void
-    writeVariableInitializersInBehaviourDataConstructorII(std::ostream&,
-							  const VariableDescriptionContainer&,
-							  const std::string&,
-							  const std::string&,
-							  const std::string&) const;
-    /*!
-     * \param[out] f      : output file
-     * \param[in]  b      : iterator to the first variable to be initialized
-     * \param[in]  e      : iterator past the last variable to be initialized
-     * \param[in]  src    : name of the array from which the variables are initialized
-     * \param[in]  prefix : prefix added to variable's names
-     * \param[in]  suffix : suffix added to variable's names
-     * \param[in]  o      : offset in the array from which the variables are initialized
-     */
-    virtual void
-    writeVariableInitializersInBehaviourDataConstructorII(std::ostream&,
-							  const VariableDescriptionContainer::const_iterator&,
-							  const VariableDescriptionContainer::const_iterator&,
-							  const std::string&,
-							  const std::string&,
-							  const std::string&) const;
-    /*!
-     * \param[in]  v                 : variables to be initialized
-     * \param[in]  useTimeDerivative : declare time derivative of the variables
-     */
-    virtual std::string
-    getIntegrationVariablesIncrementsInitializers(const VariableDescriptionContainer&,
-						  const bool) const;
-
-    /*!
-     * \param[out] f     : output file
-     * \param[in]  v     : variables to be initialized
-     * \param[in]  src   : name of the array to which the variables are exported
-     * \param[in]  useQt : true if quantities are used
-     */
-    virtual void
-    exportResults(std::ostream&,
-		  const VariableDescriptionContainer&,
-		  const std::string&,
-		  const bool) const;
-    /*!
-     * \param[in]  v   : variables
-     */
-    TypeSize
-    getTotalSize(const VariableDescriptionContainer&) const;
-    /*!
-     * \param[in]  vc : variables
-     */
-    unsigned short
-    getNumberOfVariables(const VariableDescriptionContainer&) const;
-
-    void
-    writeResultsArrayResize(std::ostream&,
-			    const std::string&,
-			    const VariableDescriptionContainer&) const;
-    
-    void
-    writeResultsArrayResize(std::ostream&,
-			    const std::string&,
-			    const SupportedTypes::TypeSize&) const;
+    std::string getTimeDerivativeType(const std::string&) const;
     //! desctructor
     virtual ~SupportedTypes();
 
-  protected:
-    //! reset the class members
-    void reset(void);
-    /*!
-     * Support for dynamically allocated vectors is not allowed in all
-     * parsers. Parsers may change this value to disable the use of
-     * dynamically allocated vectors
-     */
-    bool areDynamicallyAllocatedVectorsAllowed_;
   }; // end of class SupportedTypes
 
 } // end of namespace mfront

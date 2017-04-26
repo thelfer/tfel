@@ -618,14 +618,14 @@ namespace mfront{
        << "{\n";
     for(const auto& v : mb.getMainVariables()){
       this->writeBehaviourDataDrivingVariableSetter(os,v.first,ov);
-      ov += this->getTypeSize(v.first.type,1u);
+      ov += SupportedTypes::getTypeSize(v.first.type,1u);
     }
     os << "}\n\n";
     os << "void set" << iprefix << "BehaviourDataThermodynamicForces(const Type* const " << iprefix << "stress_)\n"
        << "{\n";
     for(const auto& v : mb.getMainVariables()){
       this->writeBehaviourDataThermodynamicForceSetter(os,v.second,of);
-      of += this->getTypeSize(v.second.type,1u);
+      of += SupportedTypes::getTypeSize(v.second.type,1u);
     }
     os << "}\n\n";
   } // end of EuroplexusInterface::writeBehaviourDataMainVariablesSetters
@@ -880,7 +880,7 @@ namespace mfront{
     if(!mprops.empty()){
       const auto& m = mprops.back();
       res.second  = m.offset;
-      res.second += this->getTypeSize(m.type,m.arraySize);
+      res.second += SupportedTypes::getTypeSize(m.type,m.arraySize);
     }
     this->completeMaterialPropertiesList(mprops,mb,h);
     return res;
@@ -977,7 +977,7 @@ namespace mfront{
     if(!mprops.first.empty()){
       const auto& m = mprops.first.back();
       msize  = m.offset;
-      msize += this->getTypeSize(m.type,m.arraySize);
+      msize += SupportedTypes::getTypeSize(m.type,m.arraySize);
       msize -= mprops.second;
     }
     out << "static " << constexpr_c << " unsigned short material_properties_nb = " << msize << ";\n";

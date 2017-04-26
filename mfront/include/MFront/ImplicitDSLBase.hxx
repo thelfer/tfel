@@ -126,8 +126,7 @@ namespace mfront{
     getBehaviourConstructorsInitializers(const Hypothesis) const override;
 
     virtual std::string
-    getIntegrationVariablesIncrementsInitializers(const VariableDescriptionContainer&,
-						  const bool) const override;
+    getIntegrationVariablesIncrementsInitializers(const Hypothesis) const override;
 
     virtual void writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,
 								  const Hypothesis) const override;

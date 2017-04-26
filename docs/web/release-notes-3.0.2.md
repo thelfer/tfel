@@ -4,6 +4,10 @@
 
 # Tickets fixed
 
+## Ticket #56: More robust detection of python versions: avoid mismatch between the python libraries, the python interpreter and the boost python library
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/56/>
+
 ## Ticket #54: Bug in StensorFromTinyVectorView: standard assignement fails
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/54/>
@@ -15,3 +19,5 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/53/>
 ## Ticket #52: More robust handling of parameters txt file
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/52/>
+
+<!-- Local IspellDict: english -->

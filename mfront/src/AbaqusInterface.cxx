@@ -962,7 +962,7 @@ namespace mfront{
        << "{\n";
     for(const auto& v : mb.getMainVariables()){
       this->writeBehaviourDataDrivingVariableSetter(os,v.first,ov);
-      ov += this->getTypeSize(v.first.type,1u);
+      ov += SupportedTypes::getTypeSize(v.first.type,1u);
     }
     os << "}\n\n";
     os << "void set"
@@ -971,7 +971,7 @@ namespace mfront{
        << "{\n";
     for(const auto& v : mb.getMainVariables()){
       this->writeBehaviourDataThermodynamicForceSetter(os,v.second,of);
-      of += this->getTypeSize(v.second.type,1u);
+      of += SupportedTypes::getTypeSize(v.second.type,1u);
     }
     os << "}\n\n";
   } // end of AbaqusInterface::writeBehaviourDataMainVariablesSetters

@@ -173,7 +173,7 @@ namespace tfel
       virtual std::string getVersionDescription(void) const = 0;
       //! \return the usage of the program being used
       virtual std::string getUsageDescription(void) const = 0;
-  };
+    };
   } // end of namespace utilities
 
 } // end of namespace tfel

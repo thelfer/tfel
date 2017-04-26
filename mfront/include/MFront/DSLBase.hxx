@@ -42,8 +42,7 @@ namespace mfront
    */
   struct MFRONT_VISIBILITY_EXPORT DSLBase
     : public virtual AbstractDSL,
-      public tfel::utilities::CxxTokenizer,
-      public FileDescription
+      public tfel::utilities::CxxTokenizer
   {
     //! \return the file description associated with the treated file
     virtual const FileDescription& getFileDescription() const override final;
@@ -396,40 +395,40 @@ namespace mfront
      */
     virtual std::shared_ptr<MaterialPropertyDescription>
     handleMaterialPropertyDescription(const std::string&);
-    //! handle keyword @
+    //! handle the `@MFront` keyword
     virtual void treatMFront(void);
-    //! handle keyword @
+    //! handle the `@Import` keyword
     virtual void treatImport(void);
-    //! handle keyword @
+    //! handle the `@MaterialLaw` keyword
     virtual void treatMaterialLaw(void);
-    //! handle keyword @
+    //! handle the `@Link` keyword
     virtual void treatLink(void);
-    //! handle keyword @
+    //! handle the `@Author` keyword
     virtual void treatAuthor(void);
+    //! handle the `@Data` keyword
+    virtual void treatDate(void);
+    //! handle the `@Includes` keyword
+    virtual void treatIncludes(void);
+    //! handle the `@Sources` keyword
+    virtual void treatSources(void);
+    //! handle the `@Private` keyword
+    virtual void treatPrivate(void);
+    //! handle the `@Members` keyword
+    virtual void treatMembers(void);
+    //! handle the `@Parser` keyword
+    virtual void treatParser(void);
+    //! handle the `@StaticVar` keyword
+    virtual void treatStaticVar(void);
+    //! handle the `@IntegerConstant` keyword
+    virtual void treatIntegerConstant(void);
+    //! handle the `@Description` keyword
+    virtual void treatDescription(void);
+    //! handle the `@LonelySeparator` keyword
+    virtual void treatLonelySeparator(void);
+    //! 
+    virtual void ignoreKeyWord(const std::string&);
     //! treat an unknown keyword
     virtual void treatUnknownKeyword(void);
-    //! handle keyword @
-    virtual void treatDate(void);
-    //! handle keyword @
-    virtual void treatIncludes(void);
-    //! handle keyword @
-    virtual void treatSources(void);
-    //! handle keyword @
-    virtual void treatPrivate(void);
-    //! handle keyword @
-    virtual void treatMembers(void);
-    //! handle keyword @
-    virtual void treatParser(void);
-    //! handle keyword @
-    virtual void treatStaticVar(void);
-    //! handle keyword @
-    virtual void treatIntegerConstant(void);
-    //! handle keyword @
-    virtual void treatDescription(void);
-    //! handle keyword @
-    virtual void ignoreKeyWord(const std::string&);
-    //! handle keyword @
-    virtual void treatLonelySeparator(void);
     /*!
      * \brief this method must be called at the end of the treatment:
      * - to set each libraries defined the auxiliary targets as
@@ -453,6 +452,8 @@ namespace mfront
     double readDouble(void);
     //! destructor
     virtual ~DSLBase();
+    //! \brief description of the file treated
+    FileDescription fd;
     /*!
      * \brief main targets description
      *

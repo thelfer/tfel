@@ -141,21 +141,12 @@ namespace mfront
     return "ZMAT"+mb.getLibrary();
   } // end of ZMATInterface::getLibraryName
 
-  std::string
-  ZMATInterface::getName()
+  std::string ZMATInterface::getName()
   {
     return "zmat";
   }
 
-  ZMATInterface::ZMATInterface()
-  {} // end of ZMATInterface::ZMATInterface
-
-  void
-  ZMATInterface::allowDynamicallyAllocatedArrays(const bool b)
-  {
-    this->areDynamicallyAllocatedVectorsAllowed_ = b;
-  } // end of ZMATInterface::allowDynamicallyAllocatedArrays
-
+  ZMATInterface::ZMATInterface() = default;
 
   std::pair<bool,ZMATInterface::tokens_iterator>
   ZMATInterface::treatKeyword(BehaviourDescription&,
@@ -171,9 +162,8 @@ namespace mfront
     return {false,current};
   }
   
-  bool
-  ZMATInterface::isModellingHypothesisHandled(const Hypothesis h,
-					      const BehaviourDescription& mb) const
+  bool ZMATInterface::isModellingHypothesisHandled(const Hypothesis h,
+						   const BehaviourDescription& mb) const
   {
     const auto ih = this->getModellingHypothesesToBeTreated(mb);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
@@ -260,7 +250,7 @@ namespace mfront
 	  }
 	  currentOffset+=this->getTypeSize(v.type,v.arraySize);
 	} else {
-	  if(this->useDynamicallyAllocatedVector(v.arraySize)){
+	  if(mb.useDynamicallyAllocatedVector(v.arraySize)){
 	    out << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
 	    if(flag==SupportedTypes::Scalar){ 
 	      if(mb.useQt()){
@@ -419,7 +409,7 @@ namespace mfront
 	    out << "this->" << mp.name << " = ZMATmprops[" << o << "]();\n";
 	    o+=this->getTypeSize(mp.type,1u);
 	  } else {
-	    if(this->useDynamicallyAllocatedVector(mp.arraySize)){
+	    if(mb.useDynamicallyAllocatedVector(mp.arraySize)){
 	      out << "this->" << mp.name << ".resize(" << mp.arraySize << ");\n";
 	      out << "for(unsigned short idx=0;idx!=" << mp.arraySize << ";++idx){\n";
 	      out << "this->" << mp.name << "[idx] = ZMATmprops[" << o << "+idx]();\n";
@@ -459,7 +449,7 @@ namespace mfront
 	  }
 	  o+=this->getTypeSize(iv.type,1u);
 	} else {
-	  if(this->useDynamicallyAllocatedVector(iv.arraySize)){
+	  if(mb.useDynamicallyAllocatedVector(iv.arraySize)){
 	    out << n << ".resize(" << iv.arraySize << ");\n";
 	    out << "for(unsigned short idx=0;idx!=" << iv.arraySize << ";++idx){\n";
 	    switch(flag){
@@ -515,7 +505,7 @@ namespace mfront
 	    out << "this->" << ev.name << " = ZMATextvars_t[ZMATevs_pos[" << o << "]];\n";
 	    o+=this->getTypeSize(ev.type,1u);
 	  } else {
-	    if(this->useDynamicallyAllocatedVector(ev.arraySize)){
+	    if(mb.useDynamicallyAllocatedVector(ev.arraySize)){
 	      out << "this->" << ev.name << ".resize(" << ev.arraySize << ");\n";
 	      out << "for(unsigned short idx=0;idx!=" << ev.arraySize << ";++idx){\n";
 	      out << "this->" << ev.name << "[idx] = ZMATextvars_t[ZMATevs_pos[" << o << "+idx]];\n";
@@ -721,7 +711,7 @@ namespace mfront
 	    out << "this->d" << ev.name << " = ZMATextvars_tdt[ZMATevs_pos[" << o << "]]-ZMATextvars_t[ZMATevs_pos[" << o << "]];\n";
 	    o+=this->getTypeSize(ev.type,1u);
 	  } else {
-	    if(this->useDynamicallyAllocatedVector(ev.arraySize)){
+	    if(mb.useDynamicallyAllocatedVector(ev.arraySize)){
 	      out << "this->d" << ev.name << ".resize(" << ev.arraySize << ");\n";
 	      out << "for(unsigned short idx=0;idx!=" << ev.arraySize << ";++idx){\n";
 	      out << "this->d" << ev.name << "[idx] = ZMATextvars_td-[ZMATevs_pos[" << o << "+idx]]-ZMATextvars_t[ZMATevs_pos[" << o << "+idx]];\n";
@@ -1221,7 +1211,7 @@ namespace mfront
     const auto& isvs = d.getPersistentVariables();
     auto esvs = d.getExternalStateVariables();
     const auto dime = getSpaceDimension(h);
-    const auto mps_size  = this->getTotalSize(mps).getValueForDimension(dime);
+    const auto mps_size  = mps.getTypeSize().getValueForDimension(dime);
     // removing the temperature
     esvs.erase(esvs.begin());
     if(!mps.empty()){
@@ -1298,7 +1288,7 @@ namespace mfront
 	<< "INPUT_ERROR(\"Invalid keyword '\"+str+\"'\");\n"
 	<< "}\n" << "}\n";
     if(!esvs.empty()){
-      const int ext_size = this->getTotalSize(esvs).getValueForDimension(dime);
+      const int ext_size = esvs.getTypeSize().getValueForDimension(dime);
       out << "evs_positions.resize(" << ext_size << ");\n";
       int i=0;
       for(const auto& v : esvs){
@@ -1383,7 +1373,7 @@ namespace mfront
       (mb.isModellingHypothesisSupported(ModellingHypothesis::GENERALISEDPLANESTRAIN) ? 1 : 0) +
       (mb.isModellingHypothesisSupported(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ? 1 : 0);
     const unsigned short dime = getSpaceDimension(h);
-    const int mps_size  = this->getTotalSize(mps).getValueForDimension(dime);
+    const int mps_size  = mps.getTypeSize().getValueForDimension(dime);
     out << "void\n";
     out << "ZMAT" << mb.getClassName()
 	<< "::initializeMaterialProperties" << getSpaceDimensionSuffix(h) << "(ASCII_FILE& file){\n"

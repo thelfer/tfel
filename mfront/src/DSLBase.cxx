@@ -149,7 +149,7 @@ namespace mfront
 
   const FileDescription& DSLBase::getFileDescription() const
   {
-    return *this;
+    return this->fd;
   } // end of DSLBase::getFileDescription
 
   const TargetsDescription& DSLBase::getTargetsDescription() const{
@@ -209,7 +209,7 @@ namespace mfront
       res  = "#line ";
       res += std::to_string(currentLine);
       res += " \"";
-      res += this->fileName;
+      res += this->fd.fileName;
       res += "\"\n";
     }
     if(!this->current->comment.empty()){
@@ -272,7 +272,7 @@ namespace mfront
 	  res += "#line ";
 	  res += std::to_string(currentLine);
 	  res += " \"";
-	  res += this->fileName;
+	  res += this->fd.fileName;
 	  res += "\"\n";
 	}  else {
 	  res += "\n";
@@ -372,7 +372,7 @@ namespace mfront
   void DSLBase::treatImport()
   {
     const auto m = "DSLBase::treatImport";
-    const auto oFileName = this->fileName;
+    const auto oFileName = this->fd.fileName;
     this->checkNotEndOfFile(m);
     const auto& files = this->readStringOrArrayOfString(m);
     this->checkNotEndOfFile(m);
@@ -384,7 +384,7 @@ namespace mfront
       this->importFile(SearchFile::search(f),
 		       std::vector<std::string>(),{});
     }
-    this->fileName = oFileName;
+    this->fd.fileName = oFileName;
     this->tokens.swap(oFileTokens);
     this->current = ocurrent;
   }
@@ -878,7 +878,7 @@ namespace mfront
   {
     this->readSpecifiedToken("DSLBase::treatDescription","{");
     this->checkNotEndOfFile("DSLBase::treatDescription");
-    this->description += "* ";
+    this->fd.description += "* ";
     auto currentLine = this->current->line;
     unsigned int openedBrackets = 1u;
     while((this->current!=this->tokens.end())&&
@@ -900,16 +900,16 @@ namespace mfront
       }
       if(currentLine!=this->current->line){
 	while(currentLine!=this->current->line){
-	  this->description+="\n* ";
+	  this->fd.description+="\n* ";
 	  ++currentLine;
 	}
       }
       if(this->current->flag==tfel::utilities::Token::String){
-	this->description+=this->current->value.substr(1,this->current->value.size()-2u);
+	this->fd.description+=this->current->value.substr(1,this->current->value.size()-2u);
       } else {
-	this->description+=this->current->value;
+	this->fd.description+=this->current->value;
       }
-      this->description+=" ";
+      this->fd.description+=" ";
       ++(this->current);
     }
     if(this->current==this->tokens.end()){
@@ -922,7 +922,7 @@ namespace mfront
 
   void DSLBase::treatLonelySeparator(){
     if(getPedanticMode()){
-      getLogStream() << this->fileName << ":"
+      getLogStream() << this->fd.fileName << ":"
 		     << this->current->line << ":"
 		     << this->current->offset << ": warning: extra ‘;’ [-pedantic]\n";
     }
@@ -931,12 +931,12 @@ namespace mfront
   
   void DSLBase::treatAuthor()
   {
-    this->authorName = this->readUntilEndOfInstruction();
+    this->fd.authorName = this->readUntilEndOfInstruction();
   } // end of DSLBase::treatAuthor
 
   void DSLBase::treatDate()
   {
-    this->date = this->readUntilEndOfInstruction();
+    this->fd.date = this->readUntilEndOfInstruction();
   } // end of DSLBase::treatDate
 
   void DSLBase::treatUnknownKeyword()

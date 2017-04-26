@@ -634,13 +634,6 @@ namespace mfront{
      */
     void addStressFreeExpansion(const StressFreeExpansionDescription&);
     /*!
-     * \brief check if one has to include tvector.hxx or vector.hxx
-     * \param[in] b1 : requires true if one has to include tvector.hxx
-     * \param[in] b2 : requires true if one has to include vector.hxx
-     */
-    void requiresTVectorOrVectorIncludes(bool&,
-					 bool&) const;   
-    /*!
      * \brief append the given code to the members
      * \param[in] s : members
      */

@@ -574,9 +574,9 @@ namespace mfront{
     this->writeMaterialPropertiesInitializersInBehaviourDataConstructorII(out,h,mb,mprops.first,
     									  mprops.second,
     									  iprefix+"d.props","","");
-    this->writeVariableInitializersInBehaviourDataConstructorII(out,persistentVarsHolder,
+    this->writeVariableInitializersInBehaviourDataConstructorII(out,mb,persistentVarsHolder,
     								iprefix+"d.stateOld","","");
-    this->writeVariableInitializersInBehaviourDataConstructorII(out,
+    this->writeVariableInitializersInBehaviourDataConstructorII(out,mb,
 								std::next(externalStateVarsHolder.begin()),
 								externalStateVarsHolder.end(),
     								iprefix+"d.fieldOld","","");
@@ -608,7 +608,7 @@ namespace mfront{
 							       externalStateVarsHolder.end(),
 							       iprefix+"d.dfield","d","");
     out << "\n{\n";
-    this->writeVariableInitializersInBehaviourDataConstructorII(out,
+    this->writeVariableInitializersInBehaviourDataConstructorII(out,mb,
 								std::next(externalStateVarsHolder.begin()),
 								externalStateVarsHolder.end(),
 								iprefix+"d.dfield","d","");
@@ -712,7 +712,7 @@ namespace mfront{
 	<< "using namespace tfel::math;\n"
 	<< iprefix+"s = " << "this->sig;\n";
     if(!ivs.empty()){
-      this->exportResults(out,ivs,iprefix+"d.stateNew",mb.useQt());
+      this->exportResults(out,mb,ivs,iprefix+"d.stateNew");
     }
     out << "} // end of " << iprefix << "exportStateData\n\n";
   }

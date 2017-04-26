@@ -170,7 +170,7 @@ namespace mfront{
     }
     //! generating sources by the interfaces
     for(const auto& i : this->interfaces){
-      i.second->writeOutputFiles(*this,this->md);
+      i.second->writeOutputFiles(this->fd,this->md);
     }
   } // end of ModelDSLCommon::writeOutputFiles
 
@@ -338,14 +338,14 @@ namespace mfront{
     auto newInstruction = true;
     auto newLine        = true;
     if(getDebugMode()){
-      f.body  +="#line " + std::to_string(currentLine) + " \"" + this->fileName + "\"\n";
+      f.body += "#line "+std::to_string(currentLine)+" \""+this->fd.fileName+"\"\n";
     }
     for(;(this->current!=this->tokens.end())&&(openedBrackets!=0);++(this->current)){
       if(this->current->line!=currentLine){
 	currentLine=this->current->line;
-	f.body  += "\n";
+	f.body += "\n";
 	if(getDebugMode()){
-	  f.body  +="#line " + std::to_string(currentLine) + " \"" + this->fileName + "\"\n";
+	  f.body += "#line "+std::to_string(currentLine)+" \""+this->fd.fileName+"\"\n";
 	}
 	newLine = true;
       }

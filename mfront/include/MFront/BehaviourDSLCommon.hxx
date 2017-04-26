@@ -666,6 +666,36 @@ namespace mfront{
     virtual std::string getIntegrationDataFileName() const;
     //! \return the name of the source file
     virtual std::string getSrcFileName() const;
+    /*!
+     * write the given variable declaration
+     * \param[out] f                 : output file
+     * \param[in]  v                 : variable to be declared
+     * \param[in]  prefix            : prefix added to variable's names
+     * \param[in]  suffix            : suffix added to variable's names
+     * \param[in]  useTimeDerivative : declare time derivative of the variables
+     */
+    virtual void
+    writeVariableDeclaration(std::ostream&,
+			     const VariableDescription&,
+			     const std::string&,
+			     const std::string&,
+			     const std::string&,
+			     const bool) const;
+    /*!
+     * write the given variables declaration
+     * \param[out] f                 : output file
+     * \param[in]  v                 : variables to be declared
+     * \param[in]  prefix            : prefix added to variable's names
+     * \param[in]  suffix            : suffix added to variable's names
+     * \param[in]  useTimeDerivative : declare time derivative of the variables
+     */
+    virtual void
+    writeVariablesDeclarations(std::ostream&,
+			       const VariableDescriptionContainer&,
+			       const std::string&,
+			       const std::string&,
+			       const std::string&,
+			       const bool) const;
     
     virtual void writeIncludes(std::ostream&) const;
 
@@ -1003,6 +1033,12 @@ namespace mfront{
     virtual void
     writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,
 						     const Hypothesis) const;
+
+    /*!
+     * \param[in] h: modelling hypothesis
+     */
+    virtual std::string
+    getIntegrationVariablesIncrementsInitializers(const Hypothesis) const;
 
     virtual void
     writeBehaviourIntegrationVariablesIncrements(std::ostream&,

@@ -98,6 +98,15 @@ void declareExternalLibraryManager()
     .staticmethod("getExternalLibraryManager")
     .def("loadLibrary",ELM_loadLibrary)
     .def("getSource",&ELM::getSource)
+    .def("getEntryPoints",&ELM::getEntryPoints,
+	 "return the list of all mfront generated entry points\n"
+	 "in a library")
+    .def("getMaterialKnowledgeType",&ELM::getMaterialKnowledgeType,
+	 "return the list of all mfront generated entry points in a"
+	 "library. The returned value has the following meaning:\n"
+	 "- 0: material property\n"
+	 "- 1: behaviour\n"
+	 "- 2: model")
     .def("setUShortParameter",ELM_setUShortParameter)
     .def("setIntParameter",ELM_setIntParameter)
     .def("setDoubleParameter",ELM_setDoubleParameter)

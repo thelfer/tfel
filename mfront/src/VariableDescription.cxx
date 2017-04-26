@@ -44,6 +44,16 @@ namespace mfront{
   VariableDescription&
   VariableDescription::operator=(const VariableDescription&) = default;
 
+  SupportedTypes::TypeFlag VariableDescription::getTypeFlag() const
+  {
+    return SupportedTypes::getTypeFlag(this->type);
+  }
+
+  SupportedTypes::TypeSize VariableDescription::getTypeSize() const
+  {
+    return SupportedTypes::getTypeSize(this->type,this->arraySize);
+  }
+  
   void VariableDescription::setGlossaryName(const std::string& g)
   {
     using tfel::glossary::Glossary;
@@ -294,6 +304,27 @@ namespace mfront{
 			     "no variable named '"+n+"'"));
   }
 
+  SupportedTypes::TypeSize VariableDescriptionContainer::getTypeSize() const
+  {
+    auto s = SupportedTypes::TypeSize{};
+    for(const auto& v:*this){
+      s += v.getTypeSize();
+    }
+    return s;
+  }
+
+  unsigned short VariableDescriptionContainer::getNumberOfVariables() const
+  {
+    size_t n = 0u;
+    for(const auto& v : *this){
+      n = n + v.arraySize;
+    }
+    return n;
+  } // end of SupportedTypes::getNumberOfVariables
+
+  
+  VariableDescriptionContainer::~VariableDescriptionContainer() = default;
+  
   bool hasBounds(const VariableDescriptionContainer& c)
   {
     for(const auto& v:c){
@@ -313,7 +344,5 @@ namespace mfront{
     }
     return false;
   } // end of hasPhysicalBounds
-  
-  VariableDescriptionContainer::~VariableDescriptionContainer() = default;
 
 } // end of namespace mfront
