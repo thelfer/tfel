@@ -35,6 +35,12 @@ namespace tfel
       ExternalBehaviourData(const ExternalBehaviourData&);
       ExternalBehaviourData& operator=(ExternalBehaviourData&&);
       ExternalBehaviourData& operator=(const ExternalBehaviourData&);
+      //! name of the library
+      std::string library;
+      //! name of the behavior
+      std::string behaviour;
+      //! name of the hypothesis
+      std::string hypothesis;
       //! names of the material properties
       std::vector<std::string> mpnames;
       //! names of the internal state variables
@@ -113,6 +119,71 @@ namespace tfel
       ExternalBehaviourDescription(const ExternalBehaviourDescription&);
       //! move constructor
       ExternalBehaviourDescription(ExternalBehaviourDescription&&);
+      /*!
+       * \brief get the default value of a double parameter
+       * \param[in] p: parameter name
+       */
+      double getRealParameterDefaultValue(const std::string&) const;
+      /*!
+       * \brief get the default value of an integer parameter
+       * \param[in] p: parameter name
+       */
+      int getIntegerParameterDefaultValue(const std::string&) const;
+      /*!
+       * \brief get the default value of an unsigned short parameter
+       * \param[in] p: parameter name
+       */
+      unsigned short getUnsignedShortParameterDefaultValue(const std::string&) const;
+      /*!
+       * \return true if the given variable has bounds
+       * \param[in] v: variable name
+       */
+      bool hasBounds(const std::string&) const;
+      /*!
+       * \return true if the given variable has a lower bound
+       * \param[in] v: variable name
+       */
+      bool hasLowerBound(const std::string&) const;
+      /*!
+       * \return true if the given variable has a upper bound
+       * \param[in] v: variable name
+       */
+      bool hasUpperBound(const std::string&) const;
+      /*!
+       * \return the lower bound of the given variable
+       * \param[in] v: variable name
+       */
+      long double getLowerBound(const std::string&) const;
+      /*!
+       * \return the upper bound of the given variable
+       * \param[in] v: variable name
+       */
+      long double getUpperBound(const std::string&) const;
+      /*!
+       * \return true if the given variable has bounds
+       * \param[in] v: variable name
+       */
+      bool hasPhysicalBounds(const std::string&) const;
+      /*!
+       * \return true if the given variable has a lower physical bound
+       * \param[in] v: variable name
+       */
+      bool hasLowerPhysicalBound(const std::string&) const;
+      /*!
+       * \return true if the given variable has a upper physical bound
+       * \param[in] v: variable name
+       */
+      bool hasUpperPhysicalBound(const std::string&) const;
+      /*!
+       * \return the lower bound of the given variable
+       * \param[in] v: variable name
+       */
+      long double getLowerPhysicalBound(const std::string&) const;
+      /*!
+       * \return the upper bound of the given variable
+       * \param[in] v: variable name
+       */
+      long double getUpperPhysicalBound(const std::string&) const;
       //! assignement
       ExternalBehaviourDescription&
       operator=(const ExternalBehaviourDescription&);

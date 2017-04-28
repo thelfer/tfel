@@ -2,8 +2,7 @@ import std
 from tfel.system import ExternalLibraryManager
 
 class Behaviour:
-    """
-    The class Behaviour gathers information about a behaviour for a
+    """The class Behaviour gathers information about a behaviour for a
     specific modelling hypothesis and allows the modification of its
     parameters.
     The following piece of information are available:
@@ -14,6 +13,10 @@ class Behaviour:
       - parameters names
       - parameters types
       - symmetry of the behaviour (isotropic or orthotropic)
+
+    Note that this class does not take into account additional
+    variables required by the interface. To take those into account,
+    the user shall refer to the Behaviour class of the mtest package.
     """
 
     def __init__(self,h,l,b):
@@ -115,6 +118,34 @@ class Behaviour:
                       "unsupported state variable type '"+str(t)+"'")
         return types
 
+    def getRealParameterDefaultValue(self,n):
+        """
+        return the default value for a real parameter
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.getRealParameterDefaultValue(self.library,
+                                                self.behaviour,
+                                                self.hypothesis,n)
+    
+    def getIntegerParameterDefaultValue(self,n):
+        """
+        return the default value for an integer parameter
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.getIntegerParameterDefaultValue(self.library,
+                                                   self.behaviour,
+                                                   self.hypothesis,n)
+
+    def getUnsignedShortParameterDefaultValue(self,n):
+        """
+        return the default value for an unsigned short parameter
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.getUnsignedShortParameterDefaultValue(self.library,
+                                                         self.behaviour,
+                                                         self.hypothesis,n)
+
+    
     def isIsotropic(self):
         """
         return true if the material is isotropic

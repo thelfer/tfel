@@ -199,6 +199,24 @@ namespace mtest
     virtual std::vector<std::string>
     getUnsignedShortParametersNames() const  = 0;
     /*!
+     * \return the default value of a parameter
+     * \param[in] p: parameter name
+     */
+    virtual double
+    getRealParameterDefaultValue(const std::string&) const  = 0;
+    /*!
+     * \return the default value of an integer parameter
+     * \param[in] p: parameter name
+     */
+    virtual int
+    getIntegerParameterDefaultValue(const std::string&) const  = 0;
+    /*!
+     * \return the default value of an integer parameter
+     * \param[in] p: parameter name
+     */
+    virtual unsigned short
+    getUnsignedShortParameterDefaultValue(const std::string&) const  = 0;
+    /*!
      * \brief set the out of bounds policy
      * \param[in] p : policy selected
      */

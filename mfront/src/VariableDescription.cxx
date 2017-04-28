@@ -147,6 +147,9 @@ namespace mfront{
     auto throw_if = [](const bool c,const std::string& m){
       if(c){throw(std::runtime_error("checkBoundsCompatibility: "+m));}
     };    
+    SupportedTypes st;
+    throw_if(!st.isSupportedType(v.type),
+	     "can't assign bounds to parameter '"+v.name+"' (invalid type)");
     if((b.component!=-1)&&(b.component!=0)){
       const auto f = SupportedTypes::getTypeFlag(v.type);
       throw_if(f!=SupportedTypes::Scalar,

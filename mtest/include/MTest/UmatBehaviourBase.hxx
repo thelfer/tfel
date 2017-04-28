@@ -174,6 +174,24 @@ namespace mtest
     virtual std::vector<std::string>
     getUnsignedShortParametersNames() const override;
     /*!
+     * \return the default value of a real parameter
+     * \param[in] p: parameter name
+     */
+    virtual double
+    getRealParameterDefaultValue(const std::string&) const override;
+    /*!
+     * \return the default value of an integer parameter
+     * \param[in] p: parameter name
+     */
+    virtual int
+    getIntegerParameterDefaultValue(const std::string&) const override;
+    /*!
+     * \return the default value of an integer parameter
+     * \param[in] p: parameter name
+     */
+    virtual unsigned short
+    getUnsignedShortParameterDefaultValue(const std::string&) const override;
+    /*!
      * \brief set the out of bounds policy
      * \param[in] p : policy selected
      */

@@ -267,8 +267,7 @@ namespace mfront
     return *(p->second);
   } // end of BehaviourDescription::getBehaviourData2
 
-  void
-  BehaviourDescription::setBehaviourName(const std::string& m)
+  void BehaviourDescription::setBehaviourName(const std::string& m)
   {
     if(!this->behaviour.empty()){
       throw(std::runtime_error("BehaviourDescription::setBehaviourName: "
@@ -278,8 +277,7 @@ namespace mfront
     this->updateClassName();
   } // end of BehaviourDescription::setBehaviourName
 
-  const std::string&
-  BehaviourDescription::getBehaviourName() const
+  const std::string& BehaviourDescription::getBehaviourName() const
   {
     if(this->behaviour.empty()){
       throw(std::runtime_error("BehaviourDescription::getBehaviourName: "
@@ -1234,10 +1232,6 @@ namespace mfront
     for(auto ov : md.outputs){
       VariableDescription dov{ov.type,"d"+ov.name,
 	  ov.arraySize,ov.lineNumber};
-      if(ov.type=="Field"){
-	ov.type="real";
-	dov.type="real";
-      }
       ov.setAttribute("ComputedByExternalModel",true,false);
       this->addAuxiliaryStateVariable(uh,ov,BehaviourData::UNREGISTRED);
       this->addLocalVariable(uh,dov,BehaviourData::UNREGISTRED);

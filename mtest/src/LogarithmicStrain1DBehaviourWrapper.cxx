@@ -212,6 +212,25 @@ namespace mtest{
   {
     return this->b->getUnsignedShortParametersNames();
   } // end of LogarithmicStrain1DBehaviourWrapper::getUnsignedShortParametersNames
+
+
+  double
+  LogarithmicStrain1DBehaviourWrapper::getRealParameterDefaultValue(const std::string& p) const
+  {
+    return this->b->getRealParameterDefaultValue(p);
+  }
+
+  int
+  LogarithmicStrain1DBehaviourWrapper::getIntegerParameterDefaultValue(const std::string& p) const
+  {
+    return this->b->getIntegerParameterDefaultValue(p);
+  }
+
+  unsigned short
+  LogarithmicStrain1DBehaviourWrapper::getUnsignedShortParameterDefaultValue(const std::string& p) const
+  {
+    return this->b->getUnsignedShortParameterDefaultValue(p);
+  }
   
   void
   LogarithmicStrain1DBehaviourWrapper::setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy p) const 

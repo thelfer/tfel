@@ -504,7 +504,7 @@ namespace mfront{
 			       "declaring functions");
     }
     VariableDescriptionContainer noutputs;
-    this->readVarList(noutputs,"Field",false);
+    this->readVarList(noutputs,"real",false);
     for(const auto& v : noutputs){
       this->md.registerMemberName(v.name);
       this->md.outputs.push_back(v);
@@ -519,7 +519,7 @@ namespace mfront{
 			      "declaring functions");
     }
     VariableDescriptionContainer ninputs;
-    this->readVarList(ninputs,"Field",false);
+    this->readVarList(ninputs,"real",false);
     for(const auto& v : ninputs){
       this->md.registerMemberName(v.name);
       this->md.inputs.push_back(v);

@@ -77,7 +77,15 @@ extern "C" {
   int tfel_getUnsignedShort(LibraryHandlerPtr,
 			    const char * const);
 
+  double tfel_getDouble(LibraryHandlerPtr,
+			const char * const);
 
+  long double tfel_getLongDouble(LibraryHandlerPtr,
+				 const char * const);
+  
+  int tfel_getInteger(LibraryHandlerPtr,
+		      const char * const);
+  
   char **
   tfel_getArrayOfStrings(LibraryHandlerPtr,
 			 const char * const);

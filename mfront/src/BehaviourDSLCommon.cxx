@@ -2070,8 +2070,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::treatInterface
 
-  void
-  BehaviourDSLCommon::setInterfaces(const std::set<std::string>& inames)
+  void BehaviourDSLCommon::setInterfaces(const std::set<std::string>& inames)
   {
     auto& mbif = BehaviourInterfaceFactory::getBehaviourInterfaceFactory();
     for(const auto& i : inames){
@@ -4989,7 +4988,7 @@ namespace mfront{
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name)))){
 	  ip2 = true;
-	  os << "double " << p.name << ";\n"; 
+	  os << "int " << p.name << ";\n"; 
 	}
       } else  if(p.type=="ushort"){
 	up = true;
@@ -6080,18 +6079,14 @@ namespace mfront{
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
 	  rp2=true;
-	  os << "this->" << p->name << " = ";
 	  if(p->arraySize==1u){
-	    os << this->mb.getFloattingPointParameterDefaultValue(h,p->name) << ";\n"; 
+	    os << "this->" << p->name << " = "
+	       << this->mb.getFloattingPointParameterDefaultValue(h,p->name) << ";\n"; 
 	  } else {
-	    os << '{';
-	    for(unsigned short i=0;i!=p->arraySize;){
-	      os << this->mb.getFloattingPointParameterDefaultValue(h,p->name,i); 
-	      if(++i!=p->arraySize){
-		os << ',';
-	      }
+	    for(unsigned short i=0;i!=p->arraySize;++i){
+	      os << "this->" << p->name << "[" << i<< "] = "
+		 << this->mb.getFloattingPointParameterDefaultValue(h,p->name,i) << ";\n";
 	    }
-	    os << "};\n";
 	  }
 	}
       } else if(p->type=="int"){

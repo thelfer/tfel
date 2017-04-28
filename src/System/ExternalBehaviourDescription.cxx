@@ -31,7 +31,8 @@ namespace tfel
     
     ExternalBehaviourDescription::ExternalBehaviourDescription(const std::string& l,
 							       const std::string& f,
-							       const std::string& h){
+							       const std::string& h)
+    {
       auto throw_if = [l,f](const bool c,const std::string& m){
 	if(c){throw(std::runtime_error("ExternalBehaviourDescription::ExternalBehaviourDescription: "
 				       +m+" for behaviour '"+l+"' in library '"+l+"'"));}
@@ -40,6 +41,9 @@ namespace tfel
       const auto hypotheses = elm.getSupportedModellingHypotheses(l,f);
       throw_if(std::find(hypotheses.begin(),hypotheses.end(),h)==hypotheses.end(),
 	       "unsupported hypothesis");
+      this->library    = l;
+      this->behaviour  = f;
+      this->hypothesis = h;
       this->source    = elm.getSource(l,f);
       this->btype     = elm.getUMATBehaviourType(l,f);
       this->kinematic = elm.getUMATBehaviourKinematic(l,f);
@@ -73,6 +77,85 @@ namespace tfel
 	elm.getUMATRequiresThermalExpansionCoefficientTensor(l,f,h);
     }
 
+    double ExternalBehaviourDescription::getRealParameterDefaultValue(const std::string& p) const
+    {
+      auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+      return elm.getRealParameterDefaultValue(this->library,this->behaviour,this->hypothesis,p);
+    } // end of ExternalBehaviourDescription::getRealParameterDefaultValue
+    
+    int ExternalBehaviourDescription::getIntegerParameterDefaultValue(const std::string& p) const
+    {
+      auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+      return elm.getIntegerParameterDefaultValue(this->library,this->behaviour,this->hypothesis,p);
+    } // end of ExternalBehaviourDescription::getIntegerParameterDefaultValue
+    
+    unsigned short
+    ExternalBehaviourDescription::getUnsignedShortParameterDefaultValue(const std::string& p) const
+    {
+      auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+      return elm.getUnsignedShortParameterDefaultValue(this->library,this->behaviour,this->hypothesis,p);
+    } // end of ExternalBehaviourDescription::getUnsignedShortParameterDefaultValue
+    
+    bool ExternalBehaviourDescription::hasBounds(const std::string& v) const
+    {
+      auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+      return elm.hasBounds(this->library,this->behaviour,this->hypothesis,v);
+    } // end of ExternalBehaviourDescription::hasBounds
+
+    bool ExternalBehaviourDescription::hasLowerBound(const std::string& v) const
+    {
+      auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+      return elm.hasLowerBound(this->library,this->behaviour,this->hypothesis,v);
+    } // end of ExternalBehaviourDescription::hasLowerBound
+
+    bool ExternalBehaviourDescription::hasUpperBound(const std::string& v) const
+    {
+      auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+      return elm.hasUpperBound(this->library,this->behaviour,this->hypothesis,v);
+    } // end of ExternalBehaviourDescription::hasUpperBound
+
+    long double ExternalBehaviourDescription::getLowerBound(const std::string& v) const
+    {
+      auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+      return elm.getLowerBound(this->library,this->behaviour,this->hypothesis,v);
+    } // end of  ExternalBehaviourDescription::getLowerBound
+
+    long double ExternalBehaviourDescription::getUpperBound(const std::string& v) const
+    {
+      auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+      return elm.getUpperBound(this->library,this->behaviour,this->hypothesis,v);
+    } // end of ExternalBehaviourDescription::getUpperBound
+
+    bool ExternalBehaviourDescription::hasPhysicalBounds(const std::string& v) const
+    {
+      auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+      return elm.hasPhysicalBounds(this->library,this->behaviour,this->hypothesis,v);
+    } // end of ExternalBehaviourDescription::hasPhysicalBounds
+
+    bool ExternalBehaviourDescription::hasLowerPhysicalBound(const std::string& v) const
+    {
+      auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+      return elm.hasLowerPhysicalBound(this->library,this->behaviour,this->hypothesis,v);
+    } // end of ExternalBehaviourDescription::hasLowerPhysicalBound
+
+    bool ExternalBehaviourDescription::hasUpperPhysicalBound(const std::string& v) const
+    {
+      auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+      return elm.hasUpperPhysicalBound(this->library,this->behaviour,this->hypothesis,v);
+    } // end of ExternalBehaviourDescription::hasUpperPhysicalBound
+
+    long double ExternalBehaviourDescription::getLowerPhysicalBound(const std::string& v) const
+    {
+      auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+      return elm.getLowerPhysicalBound(this->library,this->behaviour,this->hypothesis,v);
+    } // end of ExternalBehaviourDescription::getLowerPhysicalBound
+
+    long double ExternalBehaviourDescription::getUpperPhysicalBound(const std::string& v) const
+    {
+      auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+      return elm.getUpperPhysicalBound(this->library,this->behaviour,this->hypothesis,v);
+    } // end of ExternalBehaviourDescription::getUpperPhysicalBound
+    
     ExternalBehaviourDescription::ExternalBehaviourDescription() = default;
     ExternalBehaviourDescription::ExternalBehaviourDescription(ExternalBehaviourDescription&&) = default;
     ExternalBehaviourDescription::ExternalBehaviourDescription(const ExternalBehaviourDescription&) = default;

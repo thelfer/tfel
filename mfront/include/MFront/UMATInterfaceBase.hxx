@@ -699,6 +699,37 @@ namespace mfront{
      * \param[in] mb   : behaviour description
      */
     virtual void
+    writeUMATxxParameterDefaultValueSymbols(std::ostream&,
+					    const std::string&,
+					    const Hypothesis,
+					    const BehaviourDescription&) const;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour 
+     * \param[in] h    : modelling hypothesis
+     * \param[in] mb   : behaviour description
+     */
+    void writeUMATxxBoundsSymbols(std::ostream&,
+				  const std::string&,
+				  const Hypothesis,
+				  const BehaviourDescription&) const;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour 
+     * \param[in] h    : modelling hypothesis
+     * \param[in] mb   : behaviour description
+     */
+    void writeUMATxxPhysicalBoundsSymbols(std::ostream&,
+					  const std::string&,
+					  const Hypothesis,
+					  const BehaviourDescription&) const;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour 
+     * \param[in] h    : modelling hypothesis
+     * \param[in] mb   : behaviour description
+     */
+    virtual void
     writeUMATxxRequirementsSymbols(std::ostream&,
 				   const std::string&,
 				   const Hypothesis,
@@ -760,7 +791,7 @@ namespace mfront{
     virtual std::string
     getModellingHypothesisTest(const Hypothesis) const = 0;
 
-    bool generateMTestFile;
+    bool generateMTestFile = false;
     
   }; // end of struct UMATInterfaceBase
 

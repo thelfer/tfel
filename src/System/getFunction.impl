@@ -126,6 +126,32 @@ extern "C" {
     return *n;
   }
 
+  double tfel_getDouble(LibraryHandlerPtr lib,
+	   	        const char * const name){
+    double * n = (double *) dlsym(lib,name);
+    if(n==nullptr){
+      return 0.;
+    }  
+    return *n;
+  } 
+
+  long  double tfel_getLongDouble(LibraryHandlerPtr lib,
+				  const char * const name){
+    long double * n = (long double *) dlsym(lib,name);
+    if(n==nullptr){
+      return 0.;
+    }  
+    return *n;
+  } 
+
+  int tfel_getInteger(LibraryHandlerPtr lib,
+		      const char * const name){
+    int * n = (int *) dlsym(lib,name);
+    if(n==nullptr){
+      return 0.;
+    }  
+    return *n;
+  } 
 
   int tfel_getUnsignedShort(LibraryHandlerPtr lib,
 			    const char * const name){

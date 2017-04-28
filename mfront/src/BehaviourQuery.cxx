@@ -543,100 +543,89 @@ const Hypothesis){
     };
   }
 
-  void
-  BehaviourQuery::treatGeneratedSources()
+  void BehaviourQuery::treatGeneratedSources()
   {
-    using namespace std;
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&,
 		    const BehaviourDescription&,
 		    const Hypothesis){
       for(const auto& l : ldsl->getTargetsDescription()){
-	cout << l.name << " : "; //< library
-	copy(l.sources.begin(),l.sources.end(),
-	     ostream_iterator<string>(cout," "));
-	cout << '\n';
+	std::cout << l.name << " : "; //< library
+	std::copy(l.sources.begin(),l.sources.end(),
+		  std::ostream_iterator<std::string>(std::cout," "));
+	std::cout << '\n';
       }
     };
     this->queries.push_back({"generated-sources",q});
   } // end of BehaviourQuery::treatGeneratedSources
 
-  void
-  BehaviourQuery::treatGeneratedHeaders()
+  void BehaviourQuery::treatGeneratedHeaders()
   {
-    using namespace std;
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&,
 		    const BehaviourDescription&,
 		    const Hypothesis){
       const auto headers = ldsl->getTargetsDescription().headers;
-      copy(headers.begin(),headers.end(),
-	   ostream_iterator<string>(cout," "));
-      cout << '\n';
+      std::copy(headers.begin(),headers.end(),
+		std::ostream_iterator<std::string>(std::cout," "));
+      std::cout << '\n';
     };
     this->queries.push_back({"generated-headers",q});
   } // end of BehaviourQuery::treatGeneratedHeaders
 
-  void
-  BehaviourQuery::treatCppFlags()
+  void BehaviourQuery::treatCppFlags()
   {
-    using namespace std;
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&,
 		    const BehaviourDescription&,
 		    const Hypothesis){
       for(const auto& l : ldsl->getTargetsDescription()){
-	cout << l.name << " : ";
-	copy(l.cppflags.begin(),l.cppflags.end(),
-	     ostream_iterator<string>(cout," "));
-	cout << '\n';
+	std::cout << l.name << " : ";
+	std::copy(l.cppflags.begin(),l.cppflags.end(),
+		  std::ostream_iterator<std::string>(std::cout," "));
+	std::cout << '\n';
       }
     };
     this->queries.push_back({"cppflags",q});
   } // end of BehaviourQuery::treatCppFlags
 
-  void
-  BehaviourQuery::treatLibrariesDependencies()
+  void BehaviourQuery::treatLibrariesDependencies()
   {
-    using namespace std;
     auto ldsl = this->dsl;
     auto q = [ldsl](const FileDescription&,
 		    const BehaviourDescription&,
 		    const Hypothesis){
       for(const auto& l : ldsl->getTargetsDescription()){
-	cout << l.name << " : ";
-	copy(l.ldflags.begin(),l.ldflags.end(),
-	     ostream_iterator<string>(cout," "));
-	cout << '\n';
+	std::cout << l.name << " : ";
+	std::copy(l.ldflags.begin(),l.ldflags.end(),
+		  std::ostream_iterator<std::string>(std::cout," "));
+	std::cout << '\n';
       }
     };
     this->queries.push_back({"libraries-dependencies",q});
   } // end of BehaviourQuery::treatLibrariesDependencies
 
-  void
-  BehaviourQuery::treatSpecificTargets()
+  void BehaviourQuery::treatSpecificTargets()
   {
-    using namespace std;
     auto ldsl = this->dsl;
     auto l = [ldsl](const FileDescription&,
 		    const BehaviourDescription&,
 		    const Hypothesis){
       const auto targets = ldsl->getTargetsDescription().specific_targets;
       for(const auto& t : targets){
-	cout << t.first << " : ";
-	copy(t.second.first.begin(),t.second.first.end(),
-	     ostream_iterator<string>(cout," "));
-	cout << '\n' << "> rule : ";
-	copy(t.second.second.begin(),t.second.second.end(),
-	     ostream_iterator<string>(cout,"\n> rule : "));
-	cout << '\n';
+	std::cout << t.first << " : ";
+	std::copy(t.second.first.begin(),t.second.first.end(),
+		  std::ostream_iterator<std::string>(std::cout," "));
+	std::cout << '\n' << "> rule : ";
+	std::copy(t.second.second.begin(),t.second.second.end(),
+		  std::ostream_iterator<std::string>(std::cout,"\n> rule : "));
+	std::cout << '\n';
       }
     };
     this->queries.push_back({"specific-targets",l});
   } // end of BehaviourQuery::treatSpecificTargets
 
-  void
-  BehaviourQuery::treatModellingHypothesis()
+  void BehaviourQuery::treatModellingHypothesis()
   {
     using namespace std;
     const auto& o = this->getCurrentCommandLineArgument().getOption();

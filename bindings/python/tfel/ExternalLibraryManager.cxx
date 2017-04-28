@@ -115,6 +115,37 @@ void declareExternalLibraryManager()
     .def("setIntParameter",ELM_setIntParameter2)
     .def("setDoubleParameter",ELM_setDoubleParameter2)
     .def("setParameter",ELM_setDoubleParameter2)
+    .def("getRealParameterDefaultValue",&ELM::getRealParameterDefaultValue,
+	 "return the default value of a real parameter")
+    .def("getIntegerParameterDefaultValue",&ELM::getIntegerParameterDefaultValue,
+	 "return the default value of an integer parameter")
+    .def("getUnsignedShortParameterDefaultValue",
+	 &ELM::getUnsignedShortParameterDefaultValue,
+	 "return the default value of an unsigned short parameter")
+    .def("getUMATParametersNames",&ELM::getUMATParametersNames,
+	 "return the list of the parameters")
+    .def("getUMATParametersTypes",&ELM::getUMATParametersTypes,
+	 "return the types of the parameters")
+    .def("hasBounds",&ELM::hasBounds,
+	 "return true if the given variable has bounds")
+    .def("hasLowerBound",&ELM::hasLowerBound,
+	 "return true if the given variable has lower bound")
+    .def("hasUpperBound",&ELM::hasUpperBound,
+	 "return true if the given variable has upper bound")
+    .def("getLowerBound",&ELM::getLowerBound,
+	 "return the lower bound of a variable")
+    .def("getUpperBound",&ELM::getUpperBound,
+	 "return the upper bound of a variable")
+    .def("hasPhysicalBounds",&ELM::hasPhysicalBounds,
+	 "return true if the given variable has physical bounds")
+    .def("hasLowerPhysicalBound",&ELM::hasLowerPhysicalBound,
+	 "return true if the given variable has lower PhysicalBound")
+    .def("hasUpperPhysicalBound",&ELM::hasUpperPhysicalBound,
+	 "return true if the given variable has upper PhysicalBound")
+    .def("getLowerPhysicalBound",&ELM::getLowerPhysicalBound,
+	 "return the lower physical bound of a variable")
+    .def("getUpperPhysicalBound",&ELM::getUpperPhysicalBound,
+	 "return the upper physical bound of a variable")
     .def("contains",&ELM::contains)
     .def("getUMATBehaviourType",
 	 &ELM::getUMATBehaviourType)

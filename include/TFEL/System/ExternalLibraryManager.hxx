@@ -152,6 +152,149 @@ namespace tfel
 			const std::string&,
 			const unsigned short);
       /*!
+       * \brief get the default value of a double parameter
+       * \param[in] l : name of the library
+       * \param[in] s : name of function or mechanical behaviour
+       * \param[in] h : modelling hypothesis
+       * \param[in] p : parameter name
+       */
+      double getRealParameterDefaultValue(const std::string&,
+					  const std::string&,
+					  const std::string&,
+					  const std::string&);
+      /*!
+       * \brief get the default value of an integer parameter
+       * \param[in] l : name of the library
+       * \param[in] s : name of function or mechanical behaviour
+       * \param[in] h : modelling hypothesis
+       * \param[in] p : parameter name
+       */
+      int getIntegerParameterDefaultValue(const std::string&,
+					  const std::string&,
+					  const std::string&,
+					  const std::string&);
+      /*!
+       * \brief get the default value of an unsigned short parameter
+       * \param[in] l : name of the library
+       * \param[in] s : name of function or mechanical behaviour
+       * \param[in] h : modelling hypothesis
+       * \param[in] p : parameter name
+       */
+      unsigned short getUnsignedShortParameterDefaultValue(const std::string&,
+							   const std::string&,
+							   const std::string&,
+							   const std::string&);
+      /*!
+       * \return true if the given variable has bounds
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] h: modelling hypothesis
+       * \param[in] v: variable name
+       */
+      bool hasBounds(const std::string&,
+		     const std::string&,
+		     const std::string&,
+		     const std::string&);
+      /*!
+       * \return true if the given variable has a lower bound
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] h: modelling hypothesis
+       * \param[in] v: variable name
+       */
+      bool hasLowerBound(const std::string&,
+			 const std::string&,
+			 const std::string&,
+			 const std::string&);
+      /*!
+       * \return true if the given variable has a upper bound
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] h: modelling hypothesis
+       * \param[in] v: variable name
+       */
+      bool hasUpperBound(const std::string&,
+			 const std::string&,
+			 const std::string&,
+			 const std::string&);
+      /*!
+       * \return the lower bound of the given variable
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] h: modelling hypothesis
+       * \param[in] v: variable name
+       */
+      long double getLowerBound(const std::string&,
+				const std::string&,
+				const std::string&,
+				const std::string&);
+      /*!
+       * \return the upper bound of the given variable
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] h: modelling hypothesis
+       * \param[in] v: variable name
+       */
+      long double getUpperBound(const std::string&,
+				const std::string&,
+				const std::string&,
+				const std::string&);
+      /*!
+       * \return true if the given variable has bounds
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] h: modelling hypothesis
+       * \param[in] v: variable name
+       */
+      bool hasPhysicalBounds(const std::string&,
+			     const std::string&,
+			     const std::string&,
+			     const std::string&);
+      /*!
+       * \return true if the given variable has a lower physical bound
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] h: modelling hypothesis
+       * \param[in] v: variable name
+       */
+      bool hasLowerPhysicalBound(const std::string&,
+				 const std::string&,
+				 const std::string&,
+				 const std::string&);
+      /*!
+       * \return true if the given variable has a upper physical bound
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] h: modelling hypothesis
+       * \param[in] v: variable name
+       */
+      bool hasUpperPhysicalBound(const std::string&,
+				 const std::string&,
+				 const std::string&,
+				 const std::string&);
+      /*!
+       * \return the lower bound of the given variable
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] h: modelling hypothesis
+       * \param[in] v: variable name
+       */
+      long double getLowerPhysicalBound(const std::string&,
+					const std::string&,
+					const std::string&,
+					const std::string&);
+      /*!
+       * \return the upper bound of the given variable
+       * \param[in] l: name of the library
+       * \param[in] f: name of function or mechanical behaviour
+       * \param[in] h: modelling hypothesis
+       * \param[in] v: variable name
+       */
+      long double getUpperPhysicalBound(const std::string&,
+					const std::string&,
+					const std::string&,
+					const std::string&);
+      /*!
        * \return the src of the function or the mechanical behaviour
        * \param[in] l: name of the library
        * \param[in] s: name of function or mechanical behaviour

@@ -102,8 +102,7 @@ namespace mfront{
     return *this;
   }
 
-  int
-  SupportedTypes::TypeSize::getValueForDimension(const unsigned short d) const
+  int SupportedTypes::TypeSize::getValueForDimension(const unsigned short d) const
   {
     switch(d){
     case 1:

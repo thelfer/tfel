@@ -11,8 +11,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
-
 #include<cstring>
 #include<stdexcept>
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
@@ -60,7 +58,6 @@ namespace tfel
     }
 #endif /*  (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 
-
     static std::string getErrorMessage()
     {
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
@@ -97,12 +94,41 @@ namespace tfel
 	throw(runtime_error(msg));
       }
     } // end of ExternalLibraryManagerCheckModellingHypothesisName
+
+    static std::string decomposeVariableName(const std::string& n)
+    {
+      auto throw_if = [](const bool c,const std::string& m){
+	if(c){throw(std::runtime_error("tfel::system::decomposeVariableName: "+m));}
+      };
+      auto p  = n.cbegin();
+      auto pe = n.cend();
+      while((p!=pe)&&(*p!='[')){
+	++p;
+      }
+      if(p==pe){
+	return n;
+      }
+      auto r = std::string{n.cbegin(),p};
+      ++p;
+      throw_if(p==pe,"unexpected end of string 'n'");
+      r+="__";
+      while((p!=pe)&&(std::isdigit(*p))){
+	r.push_back(*p);
+	++p;
+      }
+      throw_if(p==pe,"unexpected end of string '"+n+"'");
+      throw_if(*p!=']',"invalid variable name '"+n+"'");
+      ++p;
+      throw_if(p!=pe,"invalid variable name '"+n+"'");
+      r+="__";
+      return r;
+    } // end of decomposeVariableName
     
     ExternalLibraryManager&
     ExternalLibraryManager::getExternalLibraryManager()
     {
-      static ExternalLibraryManager externalLibraryManager;
-      return externalLibraryManager;
+      static ExternalLibraryManager elm;
+      return elm;
     } // end of ExternalLibraryManager::getExternalLibraryManager()
 
     ExternalLibraryManager::ExternalLibraryManager() = default;
@@ -512,6 +538,206 @@ namespace tfel
 	throw(runtime_error(msg));
       }
     } // end of ExternalLibraryManager::setParameter
+
+    double ExternalLibraryManager::getRealParameterDefaultValue(const std::string& l,
+								const std::string& f,
+								const std::string& h,
+								const std::string& p)
+    {
+      const auto lib = this->loadLibrary(l);
+      const auto pn  = decomposeVariableName(p);
+      const auto n1 = f+"_"+h+"_"+pn+"_ParameterDefaultValue";
+      if(this->contains(l,n1.c_str())){
+	return tfel_getDouble(lib,n1.c_str());
+      }
+      const auto n2 = f+"_"+pn+"_ParameterDefaultValue";
+      if(!this->contains(l,n2.c_str())){
+	throw(std::runtime_error("ExternalLibraryManager::getRealParameterDefaultValue: "
+				 "can't get default value for parameter '"+p+"'"));
+      }
+      return tfel_getDouble(lib,n2.c_str());
+    } // end of ExternalLibraryManager::getRealParameterDefaultValue
+
+    int ExternalLibraryManager::getIntegerParameterDefaultValue(const std::string& l,
+								const std::string& f,
+								const std::string& h,
+								const std::string& p)
+    {
+      const auto lib = this->loadLibrary(l);
+      const auto pn  = decomposeVariableName(p);
+      const auto n1 = f+"_"+h+"_"+pn+"_ParameterDefaultValue";
+      if(this->contains(l,n1.c_str())){
+	return tfel_getInteger(lib,n1.c_str());
+      }
+      const auto n2 = f+"_"+pn+"_ParameterDefaultValue";
+      if(!this->contains(l,n2.c_str())){
+	throw(std::runtime_error("ExternalLibraryManager::getIntegerParameterDefaultValue: "
+				 "can't get default value for parameter '"+p+"'"));
+      }
+      return tfel_getInteger(lib,n2.c_str());
+    } // end of ExternalLibraryManager::getIntegerParameterDefaultValue
+
+    unsigned short
+    ExternalLibraryManager::getUnsignedShortParameterDefaultValue(const std::string& l,
+								  const std::string& f,
+								  const std::string& h,
+								  const std::string& p)
+    {
+      const auto lib = this->loadLibrary(l);
+      const auto pn  = decomposeVariableName(p);
+      const auto n1 = f+"_"+h+"_"+pn+"_ParameterDefaultValue";
+      auto res = ::tfel_getUnsignedShort(lib,n1.c_str());
+      if(res<0){
+	res = ::tfel_getUnsignedShort(lib,(f+"_"+pn+"_ParameterDefaultValue").c_str());
+	if(res<0){
+	  auto msg = std::string("ExternalLibraryManager::"
+				 "getUnsignedShortParameterDefaultValue: "
+				 "information could not be read (");
+	  msg += getErrorMessage();
+	  msg += ")";
+	  throw(std::runtime_error(std::move(msg)));
+	}
+      }
+      return static_cast<unsigned short>(res);
+    } // end of ExternalLibraryManager::getUnsignedShortParameterDefaultValue
+
+    bool ExternalLibraryManager::hasBounds(const std::string& l,
+					   const std::string& f,
+					   const std::string& h,
+					   const std::string& n)
+    {
+      const auto n1 = f+"_"+h+"_"+n+"_LowerBound";
+      const auto n2 = f+"_"+h+"_"+n+"_UpperBound";
+      const auto n3 = f+"_"+n+"_LowerBound";
+      const auto n4 = f+"_"+n+"_UpperBound";
+      return ((this->contains(l,n1))||(this->contains(l,n2))||
+	      (this->contains(l,n3))||(this->contains(l,n4)));
+    } // end of ExternalLibraryManager::hasBounds
+
+    bool ExternalLibraryManager::hasLowerBound(const std::string& l,
+					       const std::string& f,
+					       const std::string& h,
+					       const std::string& n)
+    {
+      const auto n1 = f+"_"+h+"_"+n+"_LowerBound";
+      const auto n2 = f+"_"+n+"_LowerBound";
+      return ((this->contains(l,n1))||(this->contains(l,n2)));
+    } // end of ExternalLibraryManager::hasLowerBound
+
+    bool ExternalLibraryManager::hasUpperBound(const std::string& l,
+					       const std::string& f,
+					       const std::string& h,
+					       const std::string& n)
+    {
+      const auto n1 = f+"_"+h+"_"+n+"_UpperBound";
+      const auto n2 = f+"_"+n+"_UpperBound";
+      return ((this->contains(l,n1))||(this->contains(l,n2)));
+    } // end of ExternalLibraryManager::hasUpperBound
+
+    long double ExternalLibraryManager::getLowerBound(const std::string& l,
+						      const std::string& f,
+						      const std::string& h,
+						      const std::string& n)
+    {
+      const auto lib = this->loadLibrary(l);
+      const auto n1 = f+"_"+h+"_"+n+"_LowerBound";
+      if(this->contains(l,n1)){
+	return tfel_getLongDouble(lib,n1.c_str());
+      }
+      const auto n2 = f+"_"+n+"_LowerBound";
+      if(!this->contains(l,n2)){
+	throw(std::runtime_error("ExternalLibraryManager::getLowerBound: "
+				 "no lower bound associated to variable '"+n+"'"));
+      }
+      return tfel_getLongDouble(lib,n2.c_str());
+    } // end of ExternalLibraryManager::getLowerBound
+    
+    long double ExternalLibraryManager::getUpperBound(const std::string& l,
+						      const std::string& f,
+						      const std::string& h,
+						      const std::string& n)
+    {
+      const auto lib = this->loadLibrary(l);
+      const auto n1 = f+"_"+h+"_"+n+"_UpperBound";
+      if(this->contains(l,n1)){
+	return tfel_getLongDouble(lib,n1.c_str());
+      }
+      const auto n2 = f+"_"+n+"_UpperBound";
+      if(!this->contains(l,n2)){
+	throw(std::runtime_error("ExternalLibraryManager::getUpperBound: "
+				 "no upper bound associated to variable '"+n+"'"));
+      }
+      return tfel_getLongDouble(lib,n2.c_str());
+    } // end of ExternalLibraryManager::getUpperBound
+    
+    bool ExternalLibraryManager::hasPhysicalBounds(const std::string& l,
+						   const std::string& f,
+						   const std::string& h,
+						   const std::string& n)
+    {
+      const auto n1 = f+"_"+h+"_"+n+"_LowerPhysicalBound";
+      const auto n2 = f+"_"+h+"_"+n+"_UpperPhysicalBound";
+      const auto n3 = f+"_"+n+"_LowerPhysicalBound";
+      const auto n4 = f+"_"+n+"_UpperPhysicalBound";
+      return ((this->contains(l,n1))||(this->contains(l,n2))||
+	      (this->contains(l,n3))||(this->contains(l,n4)));
+    } // end of ExternalLibraryManager::hasPhysicalBounds
+
+    bool ExternalLibraryManager::hasLowerPhysicalBound(const std::string& l,
+						       const std::string& f,
+						       const std::string& h,
+						       const std::string& n)
+    {
+      const auto n1 = f+"_"+h+"_"+n+"_LowerPhysicalBound";
+      const auto n2 = f+"_"+n+"_LowerPhysicalBound";
+      return ((this->contains(l,n1))||(this->contains(l,n2)));
+    } // end of ExternalLibraryManager::hasLowerPhysicalBound
+
+    bool ExternalLibraryManager::hasUpperPhysicalBound(const std::string& l,
+						       const std::string& f,
+						       const std::string& h,
+						       const std::string& n)
+    {
+      const auto n1 = f+"_"+h+"_"+n+"_UpperPhysicalBound";
+      const auto n2 = f+"_"+n+"_UpperPhysicalBound";
+      return ((this->contains(l,n1))||(this->contains(l,n2)));
+    } // end of ExternalLibraryManager::hasUpperPhysicalBound
+
+    long double ExternalLibraryManager::getLowerPhysicalBound(const std::string& l,
+							      const std::string& f,
+							      const std::string& h,
+							      const std::string& n)
+    {
+      const auto lib = this->loadLibrary(l);
+      const auto n1 = f+"_"+h+"_"+n+"_LowerPhysicalBound";
+      if(this->contains(l,n1)){
+	return tfel_getLongDouble(lib,n1.c_str());
+      }
+      const auto n2 = f+"_"+n+"_LowerPhysicalBound";
+      if(!this->contains(l,n2)){
+	throw(std::runtime_error("ExternalLibraryManager::getLowerPhysicalBound: "
+				 "no physical lower bound associated to variable '"+n+"'"));
+      }
+      return tfel_getLongDouble(lib,n2.c_str());
+    } // end of ExternalLibraryManager::getLowerPhysicalBound
+    
+    long double ExternalLibraryManager::getUpperPhysicalBound(const std::string& l,
+							      const std::string& f,
+							      const std::string& h,
+							      const std::string& n)
+    {
+      const auto lib = this->loadLibrary(l);
+      const auto n1 = f+"_"+h+"_"+n+"_UpperPhysicalBound";
+      if(this->contains(l,n1)){
+	return tfel_getLongDouble(lib,n1.c_str());
+      }
+      const auto n2 = f+"_"+n+"_UpperPhysicalBound";
+      if(!this->contains(l,n2)){
+	throw(std::runtime_error("ExternalLibraryManager::getUpperPhysicalBound: "
+				 "no physical upper bound associated to variable '"+n+"'"));
+      }
+      return tfel_getLongDouble(lib,n2.c_str());
+    } // end of ExternalLibraryManager::getUpperPhysicalBound
     
     unsigned short
     ExternalLibraryManager::getCastemFunctionNumberOfVariables(const std::string& l,

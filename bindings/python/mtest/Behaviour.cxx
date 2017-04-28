@@ -167,6 +167,15 @@ void declareBehaviour(){
     .def("getUnsignedShortParametersNames",
 	 &Behaviour::getUnsignedShortParametersNames,
 	 "Return the names of the unsigned short parameters")
+    .def("getRealParameterDefaultValue",
+	 &Behaviour::getRealParameterDefaultValue,
+	 "return the default value of a parameter")
+    .def("getIntegerParameterDefaultValue",
+	 &Behaviour::getIntegerParameterDefaultValue,
+	 "return the default value of an integer parameter")
+    .def("getUnsignedShortParameterDefaultValue",
+	 &Behaviour::getUnsignedShortParameterDefaultValue,
+	 "return the default value of an unsigned short parameter")
     ;
   
 } // end of declareBehaviour()

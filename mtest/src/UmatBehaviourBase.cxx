@@ -472,6 +472,27 @@ namespace mtest
   {
     return this->upnames;
   } // end of UmatBehaviourBase::getUnsignedShortParametersNames
+
+  double UmatBehaviourBase::getRealParameterDefaultValue(const std::string& p) const
+  {
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    elm.getRealParameterDefaultValue(this->library,this->behaviour,this->hypothesis,p);
+  }
+
+  int UmatBehaviourBase::getIntegerParameterDefaultValue(const std::string& p) const
+  {
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    elm.getIntegerParameterDefaultValue(this->library,this->behaviour,
+					this->hypothesis,p);
+  }
+
+  unsigned short
+  UmatBehaviourBase::getUnsignedShortParameterDefaultValue(const std::string& p) const
+  {
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    elm.getUnsignedShortParameterDefaultValue(this->library,this->behaviour,
+					      this->hypothesis,p);
+  }
   
   size_t UmatBehaviourBase::getInternalStateVariablesSize() const
   {
