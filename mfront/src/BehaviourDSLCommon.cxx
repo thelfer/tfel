@@ -4665,7 +4665,7 @@ namespace mfront{
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name)))){
 	  ip2 = true;
-	  this->behaviourFile << "double " << p.name << ";\n"; 
+	  this->behaviourFile << "int " << p.name << ";\n"; 
 	}
       } else  if(p.type=="ushort"){
 	up = true;
@@ -5774,18 +5774,14 @@ namespace mfront{
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
 	  rp2=true;
-	  this->srcFile << "this->" << p->name << " = ";
 	  if(p->arraySize==1u){
-	    this->srcFile << this->mb.getFloattingPointParameterDefaultValue(h,p->name) << ";\n"; 
+	    this->srcFile << "this->" << p->name << " = "
+			  << this->mb.getFloattingPointParameterDefaultValue(h,p->name) << ";\n"; 
 	  } else {
-	    this->srcFile << '{';
-	    for(unsigned short i=0;i!=p->arraySize;){
-	      this->srcFile << this->mb.getFloattingPointParameterDefaultValue(h,p->name,i); 
-	      if(++i!=p->arraySize){
-		this->srcFile << ',';
-	      }
+	    for(unsigned short i=0;i!=p->arraySize;++i){
+	      this->srcFile << "this->" << p->name << "[" << i<< "] = "
+			    << this->mb.getFloattingPointParameterDefaultValue(h,p->name,i) << ";\n";
 	    }
-	    this->srcFile << "};\n";
 	  }
 	}
       } else if(p->type=="int"){
