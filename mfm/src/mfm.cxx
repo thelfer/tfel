@@ -7,6 +7,7 @@
 
 #include<cstdlib>
 #include<iostream>
+#include<stdexcept>
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
