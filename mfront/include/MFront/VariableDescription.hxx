@@ -129,21 +129,56 @@ namespace mfront
     //! \return true if bounds has been specified for this variable
     bool hasBounds() const;
     /*!
+     * \return true if bounds has been specified for this variable
+     * \param[in] i: position
+     */
+    bool hasBounds(const unsigned short) const;
+    /*!
      * \brief set bounds on this variable
      * \param[in] b: bounds
      */
     void setBounds(const VariableBoundsDescription&);
+    /*!
+     * \brief set bounds on this variable
+     * \param[in] b: bounds
+     * \param[in] i: position
+     */
+    void setBounds(const VariableBoundsDescription&,
+		   const unsigned short);
     //! \return the bounds of this variable
     const VariableBoundsDescription& getBounds() const;
+    /*!
+     * \return the bounds of this variable
+     * \param[in] i: position
+     */
+    const VariableBoundsDescription&
+    getBounds(const unsigned short) const;
     //! \return true if physical bounds has been specified for this variable
     bool hasPhysicalBounds() const;
+    /*!
+     * \return true if bounds has been specified for this variable
+     * \param[in] i: position
+     */
+    bool hasPhysicalBounds(const unsigned short) const;
     /*!
      * \brief set physical bounds on this variable
      * \param[in] b: physical bounds
      */
     void setPhysicalBounds(const VariableBoundsDescription&);
+    /*!
+     * \brief set physical bounds on this variable
+     * \param[in] b: physical bounds
+     */
+    void setPhysicalBounds(const VariableBoundsDescription&,
+			   const unsigned short);
     //! \return the physical bounds of this variable
     const VariableBoundsDescription& getPhysicalBounds() const;
+    /*!
+     * \return the physical bounds of this variable
+     * \param[in] i: position
+     */
+    const VariableBoundsDescription&
+    getPhysicalBounds(const unsigned short) const;
     /*!
      * \brief associate a glossary name to the variable
      * \param[in] g: glossary name
@@ -165,7 +200,9 @@ namespace mfront
   private:
     //! a simple alias
     using OptionalVariableBoundsDescription =
-      tfel::utilities::GenType<VariableBoundsDescription>;
+      tfel::utilities::GenType<VariableBoundsDescription,
+			       std::map<unsigned short,
+					VariableBoundsDescription>>;
     //! a simple alias
     using OptionalString = tfel::utilities::GenType<std::string>;
     //! standard bounds
@@ -188,6 +225,15 @@ namespace mfront
   MFRONT_VISIBILITY_EXPORT bool
   hasBounds(const VariableDescription&);
   /*!
+   * \return true if the variable has bounds.
+   * \param[in] c: variable description container
+   * \param[in] i: index
+   * \note this is a simple wrapper around the `hasBounds` method
+   */
+  MFRONT_VISIBILITY_EXPORT bool
+  hasBounds(const VariableDescription&,
+	    const unsigned short);
+  /*!
    * \return true if the variable has physical bounds.
    * \param[in] v: variable description
    * \note this is a simple wrapper around the `hasPhysicalBounds`
@@ -195,6 +241,16 @@ namespace mfront
    */
   MFRONT_VISIBILITY_EXPORT bool
   hasPhysicalBounds(const VariableDescription&);
+  /*!
+   * \return true if the variable has physical bounds.
+   * \param[in] c: variable description container
+   * \param[in] i: index
+   * \note this is a simple wrapper around the `hasPhysicalBounds`
+   * method.
+   */
+  MFRONT_VISIBILITY_EXPORT bool
+  hasPhysicalBounds(const VariableDescription&,
+		    const unsigned short);
   
   //! a simple alias for backward compatibility
   typedef VariableDescription  VarHandler;

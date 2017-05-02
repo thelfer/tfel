@@ -32,21 +32,66 @@ void declareVariableDescription(){
     .def_readwrite("arraySize",&VariableDescriptionBase::arraySize)
     .def_readwrite("lineNumber",&VariableDescriptionBase::lineNumber)
     ;
+
+  bool (VariableDescription::* hasBounds_1)() const
+    = &VariableDescription::hasBounds;
+  bool (VariableDescription::* hasBounds_2)(const unsigned short) const
+    = &VariableDescription::hasBounds;
+  const VariableBoundsDescription&
+    (VariableDescription::* getBounds_1)() const
+    = &VariableDescription::getBounds;
+  const VariableBoundsDescription&
+    (VariableDescription::* getBounds_2)(const unsigned short) const
+    = &VariableDescription::getBounds;
+  void (VariableDescription::* setBounds_1)(const VariableBoundsDescription&)
+    = &VariableDescription::setBounds;
+  void (VariableDescription::* setBounds_2)(const VariableBoundsDescription&,
+					    const unsigned short)
+    = &VariableDescription::setBounds;
+  bool (VariableDescription::* hasPhysicalBounds_1)() const
+    = &VariableDescription::hasPhysicalBounds;
+  bool (VariableDescription::* hasPhysicalBounds_2)(const unsigned short) const
+    = &VariableDescription::hasPhysicalBounds;
+  const VariableBoundsDescription&
+    (VariableDescription::* getPhysicalBounds_1)() const
+    = &VariableDescription::getPhysicalBounds;
+  const VariableBoundsDescription&
+    (VariableDescription::* getPhysicalBounds_2)(const unsigned short) const
+    = &VariableDescription::getPhysicalBounds;
+  void (VariableDescription::* setPhysicalBounds_1)(const VariableBoundsDescription&)
+    = &VariableDescription::setPhysicalBounds;
+  void (VariableDescription::* setPhysicalBounds_2)(const VariableBoundsDescription&,
+						    const unsigned short)
+    = &VariableDescription::setPhysicalBounds;
   
   class_<VariableDescription,bases<VariableDescriptionBase>>("VariableDescription")
-    .def("hasBounds",&VariableDescription::hasBounds,
+    .def("hasBounds",hasBounds_1,
 	 "Return true if the bounds of the variable has already been set")
-    .def("getBounds",&VariableDescription::getBounds,
+    .def("hasBounds",hasBounds_2,
+	 "Return true if the bounds of the variable has already been set")
+    .def("getBounds",getBounds_1,
 	 return_internal_reference<>(),
 	 "Return the physical bounds of the variable")
-    .def("setBounds",&VariableDescription::setBounds,
+    .def("getBounds",getBounds_2,
+	 return_internal_reference<>(),
+	 "Return the physical bounds of the variable")
+    .def("setBounds",setBounds_1,
 	 "Set the physical bounds of the variable")
-    .def("hasPhysicalBounds",&VariableDescription::hasPhysicalBounds,
+    .def("setBounds",setBounds_2,
+	 "Set the physical bounds of the variable")
+    .def("hasPhysicalBounds",hasPhysicalBounds_1,
 	 "Return true if the physical bounds of the variable has already been set")
-    .def("getPhysicalBounds",&VariableDescription::getPhysicalBounds,
+    .def("hasPhysicalBounds",hasPhysicalBounds_2,
+	 "Return true if the physical bounds of the variable has already been set")
+    .def("getPhysicalBounds",getPhysicalBounds_1,
 	 return_internal_reference<>(),
 	 "Get the physical bounds of the variable")
-    .def("setPhysicalBounds",&VariableDescription::setPhysicalBounds,
+    .def("getPhysicalBounds",getPhysicalBounds_2,
+	 return_internal_reference<>(),
+	 "Get the physical bounds of the variable")
+    .def("setPhysicalBounds",setPhysicalBounds_1,
+	 "Set the physical bounds of the variable")
+    .def("setPhysicalBounds",setPhysicalBounds_2,
 	 "Set the physical bounds of the variable")
     .def("setGlossaryName",&VariableDescription::setGlossaryName,
 	 "Set the glossary name")

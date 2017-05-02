@@ -145,7 +145,7 @@ const GlossaryEntry Glossary::B10BurnUp("B10BurnUp","B10BurnUp",
 
 const GlossaryEntry Glossary::BulkModulus("BulkModulus","BulkModulus",
 "Pa","scalar",
-"the bulk modulus of an isotropic material",
+"The bulk modulus of an isotropic material",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -193,7 +193,7 @@ const GlossaryEntry Glossary::Displacement("Displacement","Displacement",
 
 const GlossaryEntry Glossary::ElasticStrain("ElasticStrain","ElasticStrain",
 "","tensor",
-"la déformation élastique",
+"The elastic strain",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -205,7 +205,7 @@ const GlossaryEntry Glossary::Emissivity("Emissivity","Emissivity",
 
 const GlossaryEntry Glossary::EquivalentPlasticStrain("EquivalentPlasticStrain","EquivalentPlasticStrain",
 "","scalar",
-"la déformation plastique équivalente",
+"The equivalent plastic strain",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -217,7 +217,7 @@ const GlossaryEntry Glossary::EquivalentStrain("EquivalentStrain","EquivalentStr
 
 const GlossaryEntry Glossary::EquivalentViscoplasticStrain("EquivalentViscoplasticStrain","EquivalentViscoplasticStrain",
 "","scalar",
-"la déformation viscoplastique équivalente",
+"The equivalent viscoplastic strain",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -253,7 +253,7 @@ const GlossaryEntry Glossary::FirstAxisSecondMomentArea("FirstAxisSecondMomentAr
 
 const GlossaryEntry Glossary::FirstLameCoefficient("FirstLameCoefficient","FirstLameCoefficient",
 "Pa","scalar",
-"le premier coefficient de Lamé d'un matériau isotrope",
+"First Lamé coefficient of an isotropic material",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -338,13 +338,13 @@ const GlossaryEntry Glossary::IrradiationTemperature("IrradiationTemperature","I
 
 const GlossaryEntry Glossary::KelvinTemperature("KelvinTemperature","KelvinTemperature",
 "K","scalar",
-"la température",
+"The temperature",
 "" /* no 'description' defined */,
 "Cette entrée a été rajoutée par compatibilité avec les choix d'implantation des lois de comportements mécaniques utilisés par le code Germinal");
 
 const GlossaryEntry Glossary::MassDensity("MassDensity","MassDensity",
 "kg.m^{-3}","scalar",
-"la densité massique",
+"The mass density",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -434,7 +434,7 @@ const GlossaryEntry Glossary::OrthotropicAxisZ2("OrthotropicAxisZ2","Orthotropic
 
 const GlossaryEntry Glossary::PlasticStrain("PlasticStrain","PlasticStrain",
 "","tensor",
-"la déformation plastique",
+"The plastic strain",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -446,7 +446,7 @@ const GlossaryEntry Glossary::PlateWidth("PlateWidth","PlateWidth",
 
 const GlossaryEntry Glossary::PoissonRatio("PoissonRatio","PoissonRatio",
 "","scalar",
-"the Poisson ratio of an isotropic material",
+"The Poisson ratio of an isotropic material",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -512,7 +512,7 @@ const GlossaryEntry Glossary::SecondAxisSecondMomentArea("SecondAxisSecondMoment
 
 const GlossaryEntry Glossary::ShearModulus("ShearModulus","ShearModulus",
 "Pa","scalar",
-"the shear modulus of an isotropic material",
+"The shear modulus of an isotropic material",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -578,7 +578,7 @@ const GlossaryEntry Glossary::TangentialStiffness("TangentialStiffness","Tangent
 
 const GlossaryEntry Glossary::Temperature("Temperature","Temperature",
 "K","scalar",
-"la température",
+"The temperature",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -656,7 +656,7 @@ const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",
 
 const GlossaryEntry Glossary::ViscoplasticStrain("ViscoplasticStrain","ViscoplasticStrain",
 "","tensor",
-"la déformation viscoplastique",
+"The viscoplatic strain",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -680,7 +680,7 @@ const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+91,G
 
 const GlossaryEntry Glossary::YoungModulus("YoungModulus","YoungModulus",
 "Pa","scalar",
-"the Young modulus of an isotropic material",
+"The Young modulus of an isotropic material",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -703,7 +703,7 @@ const GlossaryEntry Glossary::YoungModulus3("YoungModulus3","YoungModulus3",
 "" /* no 'notes' defined */);
 
 Glossary&
-Glossary::getGlossary()
+Glossary::getGlossary(void)
 {
 static Glossary glossary;
 return glossary;
@@ -829,16 +829,17 @@ return this->findGlossaryEntry(n)!=this->entries.end();
 const GlossaryEntry&
 Glossary::getGlossaryEntry(const std::string& n) const
 {
-auto p=this->findGlossaryEntry(n);
+using namespace std;
+set<GlossaryEntry>::const_iterator p=this->findGlossaryEntry(n);
 if(p==this->entries.end()){
-  throw(std::runtime_error("Glossary::getGlossaryEntry: "
-			   "no glossary entry matching '"+n+"'"));
- }
+string msg("Glossary::getGlossaryEntry : no glossary entry matching '"+n+"'");
+throw(runtime_error(msg));
+}
 return *p;
 } // end of Glossary::contains
 
 const std::vector<std::string>&
-Glossary::getKeys() const
+Glossary::getKeys(void) const
 {
 return this->keys;
 } // end of Glossary::contains

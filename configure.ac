@@ -2882,6 +2882,15 @@ AC_OUTPUT([debug.sh
            mfront/tests/models/interfaces/include/Makefile
            mfront/tests/models/interfaces/src/Makefile
 	   mfront/Examples/Makefile
+   	   mfront-query/Makefile
+	   mfront-query/src/Makefile
+	   mfront-query/include/Makefile
+  	   mfront-query/tests/Makefile
+   	   mfm/Makefile
+	   mfm/src/Makefile
+   	   mfront-doc/Makefile
+	   mfront-doc/src/Makefile
+   	   mfront-doc/include/Makefile
 	   mtest/Makefile
    	   mtest/src/Makefile
    	   mtest/include/Makefile
@@ -2942,8 +2951,6 @@ AC_OUTPUT([debug.sh
    	   mtest/tests/ptest/cyrano/cyranotightpipe-gd-quadratic.ptest
    	   mtest/tests/ptest/cyrano/cyranotightpipe-linear.ptest
    	   mtest/tests/ptest/cyrano/cyranotightpipe-quadratic.ptest
-	   mfm/Makefile
-	   mfm/src/Makefile
 	   tfel-doc/Makefile
 	   tfel-doc/src/Makefile
 	   tfel-doc/include/Makefile

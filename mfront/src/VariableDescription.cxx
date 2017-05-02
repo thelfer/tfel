@@ -136,16 +136,11 @@ namespace mfront{
   {
     return this->attributes;
   } // end of VariableDescription::getAttributes
-
-  bool VariableDescription::hasBounds() const
-  {
-    return this->bounds.is<VariableBoundsDescription>();
-  } // end of VariableDescription::hasBounds
-
+  
   static void checkBoundsCompatibility(const VariableDescription& v,
 				       const VariableBoundsDescription& b){
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("checkBoundsCompatibility: "+m));}
+      if(c){throw(std::runtime_error("mfront::checkBoundsCompatibility: "+m));}
     };    
     SupportedTypes st;
     throw_if(!st.isSupportedType(v.type),
@@ -161,18 +156,119 @@ namespace mfront{
 	       "invalid bounds value");
     }
   } // end of checkBoundsCompatibility
+
+  /*!
+   * \param[in] b1: standard bounds
+   * \param[in] b2: physical bounds
+   */
+  static void checkBoundsCompatibility(const VariableBoundsDescription& b1,
+				       const VariableBoundsDescription& b2,
+				       const std::string& n){
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("mfront::checkBoundsCompatibility: "+m));}
+    };
+    throw_if((!b1.hasLowerBound())&&(b2.hasLowerBound()),
+	     "standard bounds for variable '"+n+"' has no lower bounds "
+	     "whereas the physical bounds has. This is inconsistent.");
+    if(b1.hasLowerBound()){
+      throw_if(b1.lowerBound<b2.lowerBound,
+	       "standard bounds for variable '"+n+"' are not contained  "
+	       "in the physical bounds.");
+    }
+    throw_if((!b1.hasUpperBound())&&(b2.hasUpperBound()),
+	     "standard bounds for variable '"+n+"' has no lower bounds "
+	     "whereas the physical bounds has. This is inconsistent.");
+    if(b1.hasUpperBound()){
+      throw_if(b1.upperBound>b2.upperBound,
+	       "standard bounds for variable '"+n+"' are not contained  "
+	       "in the physical bounds.");
+    }
+  } // end of checkBoundsCompatibility
+  
+  bool VariableDescription::hasBounds() const
+  {
+    return this->bounds.is<VariableBoundsDescription>();
+  } // end of VariableDescription::hasBounds
+
+  bool VariableDescription::hasBounds(const unsigned short i) const
+  {
+    if(this->arraySize==1u){
+      throw(std::runtime_error("VariableDescription::hasBounds: "
+			       "invalid call on scalar variable '"+
+			       this->name+"'"));
+    }
+    if(this->bounds.is<VariableBoundsDescription>()){
+      return true;
+    } else if (this->bounds.is<std::map<unsigned short,
+	                                VariableBoundsDescription>>()){
+      const auto& m = this->bounds.get<std::map<unsigned short,
+					       VariableBoundsDescription>>();
+      return m.count(i)!=0;
+    }
+    return false;
+  } // end of VariableDescription::hasBounds
   
   void VariableDescription::setBounds(const VariableBoundsDescription& b)
   {
-    if(this->hasBounds()){
+    if(!this->bounds.empty()){
       throw(std::runtime_error("VariableDescription::setBounds: "
 			       "bounds have already been set on variable "
 			       "'"+this->name+"'"));
     }
-    checkBoundsCompatibility(*this,b);
+    mfront::checkBoundsCompatibility(*this,b);
+    if(this->arraySize==1u){
+      if(this->hasPhysicalBounds()){
+	mfront::checkBoundsCompatibility(b,this->getPhysicalBounds(),
+					 this->name);
+      }
+    } else {
+      for(unsigned short i=0;i!=this->arraySize;++i){
+	if(this->hasPhysicalBounds(i)){
+	  mfront::checkBoundsCompatibility(b,this->getPhysicalBounds(i),
+					 this->name);
+	}
+      }
+    }
     this->bounds = b;
   } // end of VariableDescription::setBounds
 
+  void VariableDescription::setBounds(const VariableBoundsDescription& b,
+				      const unsigned short i)
+  {
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("VariableDescription::setBounds: "+m));}
+    };    
+    throw_if(this->arraySize==1u,"invalid call on scalar variable");
+    throw_if(i>this->arraySize,"invalid index");
+    throw_if(this->bounds.is<VariableBoundsDescription>(),
+	     "bounds have already been set on variable "
+	     "'"+this->name+"'");
+    if(!this->bounds.empty()){
+      if(this->hasBounds(i)){
+	throw(std::runtime_error("VariableDescription::setBounds: "
+				 "bounds have already been set on variable "
+				 "'"+this->name+"'"));
+      }
+    }
+    for(unsigned short j=0;j!=this->arraySize;++j){
+      if(this->hasPhysicalBounds(j)){
+	mfront::checkBoundsCompatibility(b,this->getPhysicalBounds(j),
+					 this->name);
+      }
+    }
+    if(this->bounds.empty()){
+      this->bounds = std::map<unsigned short,VariableBoundsDescription>();
+    }
+    mfront::checkBoundsCompatibility(*this,b);
+    if(this->hasPhysicalBounds(i)){
+      mfront::checkBoundsCompatibility(b,this->getPhysicalBounds(i),
+				       this->name);
+    }
+    auto& m = this->bounds.get<std::map<unsigned short,
+					VariableBoundsDescription>>();
+    m.insert({i,b});
+  } // end of VariableDescription::setBounds
+  
   const VariableBoundsDescription& VariableDescription::getBounds() const
   {
     if(!this->hasBounds()){
@@ -183,22 +279,100 @@ namespace mfront{
     return this->bounds.get<VariableBoundsDescription>();
   } // end of VariableDescription::getBounds
 
+  const VariableBoundsDescription&
+  VariableDescription::getBounds(const unsigned short i) const
+  {
+    if(!this->hasBounds(i)){
+      throw(std::runtime_error("VariableDescription::getBounds: "
+			       "no bounds set on variable "
+			       "'"+this->name+"'"));
+    }
+    if(this->bounds.is<VariableBoundsDescription>()){
+      return this->bounds.get<VariableBoundsDescription>();
+    }
+    const auto& m = this->bounds.get<std::map<unsigned short,
+					      VariableBoundsDescription>>();
+    return m.at(i);
+  } // end of VariableDescription::getBounds
+
   bool VariableDescription::hasPhysicalBounds() const
   {
     return this->physicalBounds.is<VariableBoundsDescription>();
   } // end of VariableDescription::hasPhysicalBounds
+
+  bool VariableDescription::hasPhysicalBounds(const unsigned short i) const
+  {
+    if(this->arraySize==1u){
+      throw(std::runtime_error("VariableDescription::hasPhysicalBounds: "
+			       "invalid call on scalar variable '"+
+			       this->name+"'"));
+    }
+    if(this->physicalBounds.is<VariableBoundsDescription>()){
+      return true;
+    } else if (this->physicalBounds.is<std::map<unsigned short,
+	                                VariableBoundsDescription>>()){
+      const auto& m = this->physicalBounds.get<std::map<unsigned short,
+							VariableBoundsDescription>>();
+      return m.count(i)!=0;
+    }
+    return false;
+  } // end of VariableDescription::hasPhysicalBounds
   
   void VariableDescription::setPhysicalBounds(const VariableBoundsDescription& b)
   {
-    if(this->hasPhysicalBounds()){
+    if(!this->physicalBounds.empty()){
       throw(std::runtime_error("VariableDescription::setPhysicalBounds: "
 			       "bounds have already been set on variable "
 			       "'"+this->name+"'"));
     }
-    checkBoundsCompatibility(*this,b);
+    mfront::checkBoundsCompatibility(*this,b);
+    if(this->arraySize==1u){
+      if(this->hasBounds()){
+	mfront::checkBoundsCompatibility(this->getBounds(),b,
+					 this->name);
+      }
+    } else {
+      for(unsigned short i=0;i!=this->arraySize;++i){
+	if(this->hasBounds(i)){
+	  mfront::checkBoundsCompatibility(this->getBounds(i),b,
+					   this->name);
+	}
+      }
+    }
     this->physicalBounds = b;
   } // end of VariableDescription::setPhysicalBounds
 
+  void VariableDescription::setPhysicalBounds(const VariableBoundsDescription& b,
+					      const unsigned short i)
+  {
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("VariableDescription::setPhysicalBounds: "+m));}
+    };    
+    throw_if(this->arraySize==1u,"invalid call on scalar variable");
+    throw_if(i>this->arraySize,"invalid index");
+    throw_if(this->physicalBounds.is<VariableBoundsDescription>(),
+	     "physical bounds have already been set on variable "
+	     "'"+this->name+"'");
+    if(this->hasPhysicalBounds(i)){
+      throw(std::runtime_error("VariableDescription::setPhysicalBounds: "
+			       "bounds have already been set on variable "
+			       "'"+this->name+"'"));
+    }
+    mfront::checkBoundsCompatibility(*this,b);
+    for(unsigned short j=0;j!=this->arraySize;++j){
+      if(this->hasBounds(j)){
+	mfront::checkBoundsCompatibility(this->getBounds(j),b,
+					 this->name);
+      }
+    }
+    if(this->physicalBounds.empty()){
+      this->physicalBounds = std::map<unsigned short,VariableBoundsDescription>();
+    }
+    auto& m = this->physicalBounds.get<std::map<unsigned short,
+					VariableBoundsDescription>>();
+    m.insert({i,b});
+  } // end of VariableDescription::setPhysicalBounds
+  
   const VariableBoundsDescription& VariableDescription::getPhysicalBounds() const
   {
     if(!this->hasPhysicalBounds()){
@@ -208,6 +382,22 @@ namespace mfront{
     }
     return this->physicalBounds.get<VariableBoundsDescription>();
   } // end of VariableDescription::getPhysicalBounds
+
+  const VariableBoundsDescription&
+  VariableDescription::getPhysicalBounds(const unsigned short i) const
+  {
+    if(!this->hasPhysicalBounds(i)){
+      throw(std::runtime_error("VariableDescription::setPhysicalBounds: "
+			       "no bounds set on variable "
+			       "'"+this->name+"'"));
+    }
+    if(this->physicalBounds.is<VariableBoundsDescription>()){
+      return this->physicalBounds.get<VariableBoundsDescription>();
+    }
+    const auto& m = this->physicalBounds.get<std::map<unsigned short,
+					      VariableBoundsDescription>>();
+    return m.at(i);
+  } // end of VariableDescription::getBounds
   
   VariableDescription::~VariableDescription() = default;
 
@@ -215,8 +405,19 @@ namespace mfront{
     return v.hasBounds();
   } // end of hasBounds
 
+  bool hasBounds(const VariableDescription& v,
+		 const unsigned short i)
+  {
+    return v.hasBounds(i);
+  } // end of hasBounds
+  
   bool hasPhysicalBounds(const VariableDescription& v){
     return v.hasPhysicalBounds();
+  } // end of hasPhysicalBounds
+
+  bool hasPhysicalBounds(const VariableDescription& v,
+			 const unsigned short i){
+    return v.hasPhysicalBounds(i);
   } // end of hasPhysicalBounds
   
   VariableDescriptionContainer::VariableDescriptionContainer() = default;
@@ -331,8 +532,16 @@ namespace mfront{
   bool hasBounds(const VariableDescriptionContainer& c)
   {
     for(const auto& v:c){
-      if(v.hasBounds()){
-	return true;
+      if(v.arraySize==1u){
+	if(v.hasBounds()){
+	  return true;
+	}
+      } else {
+	for(unsigned short i=0;i!=v.arraySize;++i){
+	  if(v.hasBounds(i)){
+	    return true;
+	  }
+	}
       }
     }
     return false;
@@ -341,8 +550,16 @@ namespace mfront{
   bool hasPhysicalBounds(const VariableDescriptionContainer& c)
   {
     for(const auto& v:c){
-      if(v.hasPhysicalBounds()){
-	return true;
+      if(v.arraySize==1u){
+	if(v.hasPhysicalBounds()){
+	  return true;
+	}
+      } else {
+	for(unsigned short i=0;i!=v.arraySize;++i){
+	  if(v.hasPhysicalBounds(i)){
+	    return true;
+	  }
+	}
       }
     }
     return false;

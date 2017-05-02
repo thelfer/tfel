@@ -48,11 +48,15 @@ namespace mfront
     VariableBoundsDescription& operator=(VariableBoundsDescription&&) = default;
     //! standard assignement
     VariableBoundsDescription& operator=(const VariableBoundsDescription&) = default;
+    //! \return true if the bounds type is either LOWER or LOWERANDUPPER
+    bool hasLowerBound() const;
+    //! \return true if the bounds type is either UPPER or LOWERANDUPPER
+    bool hasUpperBound() const;
     //! destructor
     ~VariableBoundsDescription() noexcept;
     //! type of the bound
     BoundsType boundsType;
-    size_t     lineNumber;
+    size_t     lineNumber = 0u;
     // component. If component is egal to -1, bounds acts of all
     // components
     short component   = -1;

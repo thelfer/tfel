@@ -2124,8 +2124,13 @@ namespace mfront{
     auto b = this->current;
     for(const auto & h : hs){
       this->current = b;
-      const auto bounds = this->readVariableBounds();
-      this->mb.setBounds(h,bounds.first,bounds.second);
+      const auto r = this->readVariableBounds();
+      const auto v = extracVariableNameAndArrayPosition(r.first);
+      if(std::get<1>(v)){
+	this->mb.setBounds(h,std::get<0>(v),std::get<2>(v),r.second);
+      } else {
+	this->mb.setBounds(h,std::get<0>(v),r.second);
+      }
     }
     this->readSpecifiedToken("BehaviourDSLCommon::treatBounds",";");
   } // end of BehaviourDSLCommon::treatBounds
@@ -6054,7 +6059,6 @@ namespace mfront{
     bool rp2 = false; // real    parameter found
     bool ip2 = false; // integer parameter found
     bool up2 = false; // unsigned short parameter found
-    VariableDescriptionContainer::const_iterator p;
     std::string cname(this->mb.getClassName());
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       cname += ModellingHypothesis::toString(h);
@@ -6070,42 +6074,40 @@ namespace mfront{
     os << cname << "::" 
        << cname << "()\n"
        <<"{\n";
-    const VariableDescriptionContainer& params =
-      this->mb.getBehaviourData(h).getParameters();
-    for(p=params.begin();p!=params.end();++p){
-      if(p->type=="real"){
+    for(const auto& p: this->mb.getBehaviourData(h).getParameters()){
+      if(p.type=="real"){
 	rp = true;
 	if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
-	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
+	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name)))){
 	  rp2=true;
-	  if(p->arraySize==1u){
-	    os << "this->" << p->name << " = "
-	       << this->mb.getFloattingPointParameterDefaultValue(h,p->name) << ";\n"; 
+	  if(p.arraySize==1u){
+	    os << "this->" << p.name << " = "
+	       << this->mb.getFloattingPointParameterDefaultValue(h,p.name) << ";\n"; 
 	  } else {
-	    for(unsigned short i=0;i!=p->arraySize;++i){
-	      os << "this->" << p->name << "[" << i<< "] = "
-		 << this->mb.getFloattingPointParameterDefaultValue(h,p->name,i) << ";\n";
+	    for(unsigned short i=0;i!=p.arraySize;++i){
+	      os << "this->" << p.name << "[" << i<< "] = "
+		 << this->mb.getFloattingPointParameterDefaultValue(h,p.name,i) << ";\n";
 	    }
 	  }
 	}
-      } else if(p->type=="int"){
+      } else if(p.type=="int"){
 	ip = true;
 	if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
-	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
+	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name)))){
 	  ip2=true;
-	  os << "this->" << p->name << " = " 
-	     << this->mb.getIntegerParameterDefaultValue(h,p->name) << ";\n"; 
+	  os << "this->" << p.name << " = " 
+	     << this->mb.getIntegerParameterDefaultValue(h,p.name) << ";\n"; 
 	}
-      } else if(p->type=="ushort"){
+      } else if(p.type=="ushort"){
 	up = true;
 	if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	   ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
-	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
+	    (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name)))){
 	  up2=true;
-	  os << "this->" << p->name << " = " 
-	     << this->mb.getUnsignedShortParameterDefaultValue(h,p->name) << ";\n"; 
+	  os << "this->" << p.name << " = " 
+	     << this->mb.getUnsignedShortParameterDefaultValue(h,p.name) << ";\n"; 
 	}
       }
     }
@@ -6129,27 +6131,27 @@ namespace mfront{
 	 << "{\n"
 	 << "using namespace std;\n";
       bool first = true;
-      for(p=params.begin();p!=params.end();++p){
-	if(p->type=="real"){
-	  if(p->arraySize==1u){
+      for(const auto& p: this->mb.getBehaviourData(h).getParameters()){
+	if(p.type=="real"){
+	  if(p.arraySize==1u){
 	    write_if(first);
-	    os << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){\n";
+	    os << "::strcmp(\""+this->mb.getExternalName(h,p.name)+"\",key)==0){\n";
 	    if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	       ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
-		(!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
-	      os << "this->" << p->name << " = v;\n";
+		(!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name)))){
+	      os << "this->" << p.name << " = v;\n";
 	    } else {
-	      os << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\",v);\n";
+	      os << dcname << "::get().set(\"" << this->mb.getExternalName(h,p.name) << "\",v);\n";
 	    }
 	  } else {
-	    for(unsigned short i=0;i!=p->arraySize;++i){
+	    for(unsigned short i=0;i!=p.arraySize;++i){
 	      write_if(first);
-	      const auto vn = p->name+'['+std::to_string(i)+']';
-	      const auto en = this->mb.getExternalName(h,p->name)+'['+std::to_string(i)+']';
+	      const auto vn = p.name+'['+std::to_string(i)+']';
+	      const auto en = this->mb.getExternalName(h,p.name)+'['+std::to_string(i)+']';
 	      os << "::strcmp(\""+en+"\",key)==0){\n";
 	      if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 		 ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
-		  (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
+		  (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name)))){
 		os << "this->" << vn << " = v;\n";
 	      } else {
 		os << dcname << "::get().set(\"" << en << "\",v);\n";
@@ -6173,16 +6175,16 @@ namespace mfront{
 	 << "{\n"
 	 << "using namespace std;\n";
       bool first = true;
-      for(p=params.begin();p!=params.end();++p){
-	if(p->type=="int"){
+      for(const auto& p: this->mb.getBehaviourData(h).getParameters()){
+	if(p.type=="int"){
 	  write_if(first);
-	  os << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){\n";
+	  os << "::strcmp(\""+this->mb.getExternalName(h,p.name)+"\",key)==0){\n";
 	  if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	     ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
-	      (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
-	    os << "this->" << p->name << " = v;\n";
+	      (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name)))){
+	    os << "this->" << p.name << " = v;\n";
 	  } else {
-	    os << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\",v);\n";
+	    os << dcname << "::get().set(\"" << this->mb.getExternalName(h,p.name) << "\",v);\n";
 	  }
 	}
       }
@@ -6201,16 +6203,16 @@ namespace mfront{
 	 << "{\n"
 	 << "using namespace std;\n";
       bool first = true;
-      for(p=params.begin();p!=params.end();++p){
-	if(p->type=="ushort"){
+      for(const auto& p: this->mb.getBehaviourData(h).getParameters()){
+	if(p.type=="ushort"){
 	  write_if(first);
-	  os << "::strcmp(\""+this->mb.getExternalName(h,p->name)+"\",key)==0){\n";
+	  os << "::strcmp(\""+this->mb.getExternalName(h,p.name)+"\",key)==0){\n";
 	  if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 	     ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
-	      (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p->name)))){
-	    os << "this->" << p->name << " = v;\n";
+	      (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name)))){
+	    os << "this->" << p.name << " = v;\n";
 	  } else {
-	    os << dcname << "::get().set(\"" << this->mb.getExternalName(h,p->name) << "\",v);\n";
+	    os << dcname << "::get().set(\"" << this->mb.getExternalName(h,p.name) << "\",v);\n";
 	  }
 	}
       }
@@ -6270,47 +6272,47 @@ namespace mfront{
        << "}\n"
        << "throw_if(tokens.size()!=2u,\"invalid number of tokens\");\n";
     bool first = true;
-    for(const auto& v : params){
+    for(const auto& p: this->mb.getBehaviourData(h).getParameters()){
       const auto b = ((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 		      ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
-		       (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,v.name))));
-      auto write = [&os,&v,&write_if,&b,&dcname,&cname](const std::string& vn,
+		       (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name))));
+      auto write = [&os,&p,&write_if,&b,&dcname,&cname](const std::string& vn,
 							const std::string& en){
 	os << "\"" <<  en << "\"==tokens[0]){\n";
 	if(b){
 	  os << "pi." << vn << " = ";
-	  if(v.type=="real"){
+	  if(p.type=="real"){
 	    os <<  cname << "::getDouble(tokens[0],tokens[1]);\n";
-	  } else if(v.type=="int"){
+	  } else if(p.type=="int"){
 	    os << cname << "::getInt(tokens[0],tokens[1]);\n";
-	  } else if(v.type=="ushort"){
+	  } else if(p.type=="ushort"){
 	    os << cname << "::getUnsignedShort(tokens[0],tokens[1]);\n";
 	  } else {
 	    throw(std::runtime_error("BehaviourDSLCommon::writeSrcFileParametersInitializer: "
-				     "invalid parameter type '"+v.type+"'"));
+				     "invalid parameter type '"+p.type+"'"));
 	  }
 	} else {
 	  os << dcname << "::get().set(\"" << en << "\",\n";
-	  if(v.type=="real"){
+	  if(p.type=="real"){
 	    os << dcname << "::getDouble(tokens[0],tokens[1])";
-	  } else if(v.type=="int"){
+	  } else if(p.type=="int"){
 	    os << dcname << "::getInt(tokens[0],tokens[1])";
-	  } else if(v.type=="ushort"){
+	  } else if(p.type=="ushort"){
 	    os << dcname << "::getUnsignedShort(tokens[0],tokens[1])";
 	  } else {
 	    throw(std::runtime_error("BehaviourDSLCommon::writeSrcFileParametersInitializer: "
-				     "invalid parameter type '"+v.type+"'"));
+				     "invalid parameter type '"+p.type+"'"));
 	  }
 	  os << ");\n";
 	}
       };
-      if(v.arraySize==1u){
+      if(p.arraySize==1u){
 	write_if(first);
-	write(v.name,this->mb.getExternalName(h,v.name));
+	write(p.name,this->mb.getExternalName(h,p.name));
       } else {
-	for(unsigned short i=0;i!=v.arraySize;++i){
-	  const auto vn = v.name+'['+std::to_string(i)+']';
-	  const auto en = this->mb.getExternalName(h,v.name)+'['+std::to_string(i)+']';
+	for(unsigned short i=0;i!=p.arraySize;++i){
+	  const auto vn = p.name+'['+std::to_string(i)+']';
+	  const auto en = this->mb.getExternalName(h,p.name)+'['+std::to_string(i)+']';
 	  write_if(first);
 	  write(vn,en);
 	}

@@ -6,16 +6,17 @@ AM_CPPFLAGS = -I$(top_srcdir)/include        \
 if WITH_TESTS
 
 testdir = $(pkgdatadir)/mfront/tests/unit-tests
-test_PROGRAMS = DSLTest                              \
-		DSLTest2                             \
-		SwellingTest                         \
-		BehaviourDataTest                    \
-		BehaviourDescriptionTest             \
-		BehaviourBrickProviderTest           \
-		BehaviourBrickRequirementManagerTest \
-		TargetsDescriptionTest               \
-		StandardElasticityBrickTest          \
-		LocalDataStructureTest               \
+test_PROGRAMS = DSLTest                                    \
+		DSLTest2                                   \
+		SwellingTest                               \
+		BehaviourDataTest                          \
+		BehaviourDescriptionTest                   \
+		BehaviourDescriptionBoundsHandlingTest     \
+		BehaviourBrickProviderTest                 \
+		BehaviourBrickRequirementManagerTest       \
+		TargetsDescriptionTest                     \
+		StandardElasticityBrickTest                \
+		LocalDataStructureTest                     \
 		ComputeStiffnessTensorTest
 
 
@@ -30,6 +31,7 @@ TargetsDescriptionTest_SOURCES      = TargetsDescriptionTest.cxx
 StandardElasticityBrickTest_SOURCES = StandardElasticityBrickTest.cxx
 LocalDataStructureTest_SOURCES      = LocalDataStructureTest.cxx
 ComputeStiffnessTensorTest_SOURCES  = ComputeStiffnessTensorTest.cxx
+BehaviourDescriptionBoundsHandlingTest_SOURCES = BehaviourDescriptionBoundsHandlingTest.cxx
 
 LDADD = -L$(top_builddir)/mfront/src    \
 	-L$(top_builddir)/src/Material  \

@@ -21,9 +21,9 @@ void declareVariableBoundsDescription(){
   using namespace mfront;
 
   enum_<VariableBoundsDescription::BoundsType>("VariableBoundsTypes")
-    .value("Lower",VariableBoundsDescription::LOWER)
-    .value("Upper",VariableBoundsDescription::UPPER)
-    .value("LowerAndUpper",VariableBoundsDescription::LOWERANDUPPER)
+    .value("LOWER",VariableBoundsDescription::LOWER)
+    .value("UPPER",VariableBoundsDescription::UPPER)
+    .value("LOWERANDUPPER",VariableBoundsDescription::LOWERANDUPPER)
     ;
   
   class_<VariableBoundsDescription>("VariableBoundsDescription")

@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_CXXTOKENIZER_HXX
-#define LIB_TFEL_CXXTOKENIZER_HXX 
+#ifndef LIB_TFEL_UTILITIES_CXXTOKENIZER_HXX
+#define LIB_TFEL_UTILITIES_CXXTOKENIZER_HXX 
 
 #include<map>
 #include<string>
@@ -392,9 +392,7 @@ namespace tfel{
        * treatment was finised
        */
       bool cStyleCommentOpened= false;
-      /*!
-       * if true, successive strings are merged
-       */
+      //! if true, successive strings are merged
       bool shallMergeStrings = false;
     }; // end of struct CxxTokenizer
 
@@ -404,4 +402,4 @@ namespace tfel{
 
 #include"TFEL/Utilities/CxxTokenizer.ixx"
 
-#endif /* LIB_TFEL_CXXTOKENIZER_HXX */
+#endif /* LIB_TFEL_UTILITIES_CXXTOKENIZER_HXX */

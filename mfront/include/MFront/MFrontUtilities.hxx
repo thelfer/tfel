@@ -15,6 +15,7 @@
 #ifndef LIB_MFRONT_MFRONTUTILITIES_HXX
 #define LIB_MFRONT_MFRONTUTILITIES_HXX
 
+#include<tuple>
 #include<string>
 #include<vector>
 #include<iosfwd>
@@ -160,7 +161,22 @@ namespace mfront{
   std::pair<std::string,VariableBoundsDescription>
   readVariableBounds(tfel::utilities::CxxTokenizer::const_iterator& p,
 		     const tfel::utilities::CxxTokenizer::const_iterator pe);
-
+  /*!
+   * \brief extract the name of a variable and an array position from a string.
+   * \param[in] n: variable name and array position
+   * \return a tuple giving the variable name, the fact that a
+   * position was read, the read position if any.
+   *
+   * For example, calling this function with the `A[10]` argument
+   * results in the following tuple: `{"A",true,10}`.
+   *
+   * With `B` as argument, the result is the following tuple:
+   * `{"B",false,0}`.
+   */
+  MFRONT_VISIBILITY_EXPORT
+  std::tuple<std::string,bool,unsigned short>
+  extracVariableNameAndArrayPosition(const std::string&);
+  
 } // end of mfront
 
 #include"MFront/MFrontUtilities.ixx"

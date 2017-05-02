@@ -55,6 +55,7 @@ struct GlossaryTokenizer
     set<string> keys;
     set<string> names;
     this->treatCharAsString(true);
+    this->mergeStrings(true);
     this->openFile(f);
     // stripping comment
     this->stripComments();

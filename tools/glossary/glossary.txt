@@ -13,7 +13,7 @@
 "MassDensity"{
  unit : "kg.m^{-3}";
  type : "scalar";
- short_description : "la densité massique";
+ short_description : "The mass density";
 };
 
 "OrthotropicAxisX1"{
@@ -91,13 +91,13 @@
 "Temperature"{
  unit : "K";
  type : "scalar";
- short_description : "la température";
+ short_description : "The temperature";
 };
 
 "KelvinTemperature"{
  unit : "K";
  type : "scalar";
- short_description : "la température";
+ short_description : "The temperature";
  notes :{"Cette entrée a été rajoutée par compatibilité avec les choix d'implantation des "
       "lois de comportements mécaniques utilisés par le code Germinal"};
 };
@@ -179,25 +179,25 @@
 "YoungModulus"{
  unit : "Pa";
  type : "scalar";
- short_description : "the Young modulus of an isotropic material";
+ short_description : "The Young modulus of an isotropic material";
 };
 
 "ShearModulus"{
  unit : "Pa";
  type : "scalar";
- short_description : "the shear modulus of an isotropic material";
+ short_description : "The shear modulus of an isotropic material";
 };
 
 "BulkModulus"{
  unit : "Pa";
  type : "scalar";
- short_description : "the bulk modulus of an isotropic material";
+ short_description : "The bulk modulus of an isotropic material";
 };
 
 "FirstLameCoefficient"{
  unit : "Pa";
  type : "scalar";
- short_description : "le premier coefficient de Lamé d'un matériau isotrope";
+ short_description : "First Lamé coefficient of an isotropic material";
 };
 
 "YoungModulus1"{
@@ -220,7 +220,7 @@
 
 "PoissonRatio"{
  type : "scalar";
- short_description : "the Poisson ratio of an isotropic material";
+ short_description : "The Poisson ratio of an isotropic material";
 };
 
 "PoissonRatio12"{
@@ -293,17 +293,17 @@
 
 "ElasticStrain"{
  type : "tensor";
- short_description : "la déformation élastique";
+ short_description : "The elastic strain";
 };
 
 "PlasticStrain"{
  type : "tensor";
- short_description : "la déformation plastique";
+ short_description : "The plastic strain";
 };
 
 "ViscoplasticStrain"{
  type : "tensor";
- short_description : "la déformation viscoplastique";
+ short_description : "The viscoplatic strain";
 };
 
 "EquivalentStrain"{
@@ -315,12 +315,12 @@
 
 "EquivalentPlasticStrain"{
  type : "scalar";
- short_description : "la déformation plastique équivalente";
+ short_description : "The equivalent plastic strain";
 };
 
 "EquivalentViscoplasticStrain"{
  type : "scalar";
- short_description : "la déformation viscoplastique équivalente";
+ short_description : "The equivalent viscoplastic strain";
 };
 
 "AxialStrain"{

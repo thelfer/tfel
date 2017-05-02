@@ -15,9 +15,8 @@
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 
-void declareGlossary();
-
-void declareGlossary()
+void
+declareGlossary(void)
 {
 using namespace boost;
 using namespace boost::python;
@@ -36,7 +35,7 @@ return_value_policy<reference_existing_object>())
 .def_readonly("B10BurnUp",&Glossary::B10BurnUp,
 "le taux d'usure en \\(\\mbox{}^{10}B\\)")
 .def_readonly("BulkModulus",&Glossary::BulkModulus,
-"the bulk modulus of an isotropic material")
+"The bulk modulus of an isotropic material")
 .def_readonly("BurnUp_AtPercent",&Glossary::BurnUp_AtPercent,
 "le taux de combustion en atome pour cent")
 .def_readonly("BurnUp_MWJperTm",&Glossary::BurnUp_MWJperTm,
@@ -52,15 +51,15 @@ return_value_policy<reference_existing_object>())
 .def_readonly("Displacement",&Glossary::Displacement,
 "le déplacement")
 .def_readonly("ElasticStrain",&Glossary::ElasticStrain,
-"la déformation élastique")
+"The elastic strain")
 .def_readonly("Emissivity",&Glossary::Emissivity,
 "Emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation")
 .def_readonly("EquivalentPlasticStrain",&Glossary::EquivalentPlasticStrain,
-"la déformation plastique équivalente")
+"The equivalent plastic strain")
 .def_readonly("EquivalentStrain",&Glossary::EquivalentStrain,
 "la somme des déformations plastiques ou viscoplastiques équivalentes")
 .def_readonly("EquivalentViscoplasticStrain",&Glossary::EquivalentViscoplasticStrain,
-"la déformation viscoplastique équivalente")
+"The equivalent viscoplastic strain")
 .def_readonly("FastNeutronFluence_01MeV",&Glossary::FastNeutronFluence_01MeV,
 "la fluence rapide")
 .def_readonly("FastNeutronFluence_1MeV",&Glossary::FastNeutronFluence_1MeV,
@@ -72,7 +71,7 @@ return_value_policy<reference_existing_object>())
 .def_readonly("FirstAxisSecondMomentArea",&Glossary::FirstAxisSecondMomentArea,
 "??")
 .def_readonly("FirstLameCoefficient",&Glossary::FirstLameCoefficient,
-"le premier coefficient de Lamé d'un matériau isotrope")
+"First Lamé coefficient of an isotropic material")
 .def_readonly("FissionDensity",&Glossary::FissionDensity,
 "la densité de fission")
 .def_readonly("GaseousSwelling",&Glossary::GaseousSwelling,
@@ -96,9 +95,9 @@ return_value_policy<reference_existing_object>())
 .def_readonly("IrradiationTemperature",&Glossary::IrradiationTemperature,
 "la température moyenne (dans le temps) au cours de l'irradiation")
 .def_readonly("KelvinTemperature",&Glossary::KelvinTemperature,
-"la température")
+"The temperature")
 .def_readonly("MassDensity",&Glossary::MassDensity,
-"la densité massique")
+"The mass density")
 .def_readonly("MeanBurnUp_AtPercent",&Glossary::MeanBurnUp_AtPercent,
 "le taux de combustion en atome pour cent moyen (au sens spatial) pour un matériau donné")
 .def_readonly("MeanBurnUp_MWJperTm",&Glossary::MeanBurnUp_MWJperTm,
@@ -128,11 +127,11 @@ return_value_policy<reference_existing_object>())
 .def_readonly("OrthotropicAxisZ2",&Glossary::OrthotropicAxisZ2,
 "la troisième coordonnée du second axe d'orthotropie")
 .def_readonly("PlasticStrain",&Glossary::PlasticStrain,
-"la déformation plastique")
+"The plastic strain")
 .def_readonly("PlateWidth",&Glossary::PlateWidth,
 "??")
 .def_readonly("PoissonRatio",&Glossary::PoissonRatio,
-"the Poisson ratio of an isotropic material")
+"The Poisson ratio of an isotropic material")
 .def_readonly("PoissonRatio12",&Glossary::PoissonRatio12,
 "le coefficient de Poisson d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie")
 .def_readonly("PoissonRatio13",&Glossary::PoissonRatio13,
@@ -154,7 +153,7 @@ return_value_policy<reference_existing_object>())
 .def_readonly("SecondAxisSecondMomentArea",&Glossary::SecondAxisSecondMomentArea,
 "??")
 .def_readonly("ShearModulus",&Glossary::ShearModulus,
-"the shear modulus of an isotropic material")
+"The shear modulus of an isotropic material")
 .def_readonly("ShearModulus12",&Glossary::ShearModulus12,
 "le module de cisaillement d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie")
 .def_readonly("ShearModulus13",&Glossary::ShearModulus13,
@@ -176,7 +175,7 @@ return_value_policy<reference_existing_object>())
 .def_readonly("TangentialStiffness",&Glossary::TangentialStiffness,
 "la raideur tangentielle pour un modèle de zone cohésive")
 .def_readonly("Temperature",&Glossary::Temperature,
-"la température")
+"The temperature")
 .def_readonly("TemperatureGradient",&Glossary::TemperatureGradient,
 "le gradient de température")
 .def_readonly("ThermalConductivity",&Glossary::ThermalConductivity,
@@ -202,7 +201,7 @@ return_value_policy<reference_existing_object>())
 .def_readonly("UltimateTensileStrength",&Glossary::UltimateTensileStrength,
 "la valeur maximale de la contrainte qu'un materiau peut supporter")
 .def_readonly("ViscoplasticStrain",&Glossary::ViscoplasticStrain,
-"la déformation viscoplastique")
+"The viscoplatic strain")
 .def_readonly("VolumetricStrain",&Glossary::VolumetricStrain,
 "la dilatation volumique")
 .def_readonly("VonMisesStress",&Glossary::VonMisesStress,
@@ -210,7 +209,7 @@ return_value_policy<reference_existing_object>())
 .def_readonly("YieldStrength",&Glossary::YieldStrength,
 "la limite d'élasticité")
 .def_readonly("YoungModulus",&Glossary::YoungModulus,
-"the Young modulus of an isotropic material")
+"The Young modulus of an isotropic material")
 .def_readonly("YoungModulus1",&Glossary::YoungModulus1,
 "le module d'Young d'un matériau orthotrope suivant la première direction d'orthotropie")
 .def_readonly("YoungModulus2",&Glossary::YoungModulus2,

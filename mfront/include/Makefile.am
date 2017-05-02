@@ -7,10 +7,6 @@ nobase_include_HEADERS= MFront/MFront.hxx                               \
 			MFront/MFrontUtilities.ixx                      \
 			MFront/GeneratorOptions.hxx                     \
 			MFront/MakefileGenerator.hxx                    \
-			MFront/MaterialPropertyQuery.hxx                \
-			MFront/BehaviourQuery.hxx                       \
-			MFront/ModelQuery.hxx                           \
-			MFront/BehaviourDocumentationGenerator.hxx      \
 			MFront/CodeBlock.hxx                            \
 			MFront/MFrontConfig.hxx	                        \
 			MFront/MFrontDebugMode.hxx	                \

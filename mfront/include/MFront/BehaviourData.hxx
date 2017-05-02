@@ -793,11 +793,29 @@ namespace mfront{
     void setBounds(const std::string&,
 		   const VariableBoundsDescription&);
     /*!
+     * \brief add bounds to a variable
+     * \param[in] n: variable name
+     * \param[in] i: index (for array of variables)
+     * \param[in] b: bounds description
+     */
+    void setBounds(const std::string&,
+		   const unsigned short,
+		   const VariableBoundsDescription&);
+    /*!
      * \brief add physical bounds to a variable
      * \param[in] n: variable name
      * \param[in] b: bounds description
      */
     void setPhysicalBounds(const std::string&,
+			   const VariableBoundsDescription&);
+    /*!
+     * \brief add physical bounds to a variable
+     * \param[in] n: variable name
+     * \param[in] i: index (for array of variables)
+     * \param[in] b: bounds description
+     */
+    void setPhysicalBounds(const std::string&,
+			   const unsigned short,
 			   const VariableBoundsDescription&);
     /*!
      * \return the attribute with the given name

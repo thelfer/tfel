@@ -1967,6 +1967,21 @@ namespace mfront
     this->callBehaviourData(h,&BehaviourData::setBounds,n,b,true);
   } // end of BehaviourDescription::setBounds
 
+  void BehaviourDescription::setBounds(const Hypothesis h,
+				       const std::string& n,
+				       const unsigned short i,
+				       const VariableBoundsDescription& b)
+  {
+    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      this->d.setBounds(n,i,b);
+      for(auto md : this->sd){
+	md.second.get()->setBounds(n,i,b);
+      }
+    } else {
+      this->getBehaviourData2(h).setBounds(n,i,b);
+    }
+  } // end of BehaviourDescription::setBounds
+  
   void BehaviourDescription::setPhysicalBounds(const Hypothesis h,
 					       const std::string& n,
 					       const VariableBoundsDescription& b)
@@ -1974,6 +1989,21 @@ namespace mfront
     this->callBehaviourData(h,&BehaviourData::setPhysicalBounds,n,b,true);
   } // end of BehaviourDescription::setPhysicalBounds
 
+  void BehaviourDescription::setPhysicalBounds(const Hypothesis h,
+					       const std::string& n,
+					       const unsigned short i,
+					       const VariableBoundsDescription& b)
+  {
+    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      this->d.setPhysicalBounds(n,i,b);
+      for(auto md : this->sd){
+	md.second.get()->setPhysicalBounds(n,i,b);
+      }
+    } else {
+      this->getBehaviourData2(h).setPhysicalBounds(n,i,b);
+    }
+  } // end of BehaviourDescription::setPhysicalBounds
+  
   void BehaviourDescription::setAttribute(const std::string& n,
 					  const BehaviourAttribute& a,
 					  const bool b)

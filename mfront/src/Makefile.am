@@ -11,7 +11,7 @@ endif
 AM_CPPFLAGS += $(CASTEM_CPPFLAGS)
 endif
 
-bin_PROGRAMS = mfront mfront-query mfront-doc
+bin_PROGRAMS = mfront
 lib_LTLIBRARIES = libMFrontLogStream.la libTFELMFront.la libMTestFileGenerator.la
 
 libMFrontLogStream_la_SOURCES  = MFrontLogStream.cxx
@@ -339,32 +339,6 @@ mfront_LDADD = -L$(top_builddir)/mfront/src -lTFELMFront -lMFrontLogStream \
 mfront_DEPENDENCIES = libTFELMFront.la libMFrontLogStream.la
 if !TFEL_WIN
 mfront_LDFLAGS  = -export-dynamic
-endif # TFEL_WIN
-
-mfront_query_SOURCES = mfront-query.cxx MaterialPropertyQuery.cxx BehaviourQuery.cxx ModelQuery.cxx
-mfront_query_LDADD = -L$(top_builddir)/mfront/src -lTFELMFront -lMFrontLogStream \
-                     -L$(top_builddir)/src/Glossary -lTFELGlossary   \
-                     -L$(top_builddir)/src/Material -lTFELMaterial   \
-                     -L$(top_builddir)/src/Math -lTFELMath           \
-                     -L$(top_builddir)/src/Utilities -lTFELUtilities \
-                     -L$(top_builddir)/src/System -lTFELSystem
-mfront_query_DEPENDENCIES = libTFELMFront.la libMFrontLogStream.la
-
-if !TFEL_WIN
-mfront_query_LDFLAGS  = -export-dynamic
-endif # TFEL_WIN
-
-mfront_doc_SOURCES = mfront-doc.cxx BehaviourDocumentationGenerator.cxx
-mfront_doc_LDADD = -L$(top_builddir)/mfront/src -lTFELMFront -lMFrontLogStream \
-                     -L$(top_builddir)/src/Glossary -lTFELGlossary   \
-                     -L$(top_builddir)/src/Material -lTFELMaterial   \
-                     -L$(top_builddir)/src/Math -lTFELMath           \
-                     -L$(top_builddir)/src/Utilities -lTFELUtilities \
-                     -L$(top_builddir)/src/System -lTFELSystem
-mfront_doc_DEPENDENCIES = libTFELMFront.la libMFrontLogStream.la
-
-if !TFEL_WIN
-mfront_doc_LDFLAGS  = -export-dynamic
 endif # TFEL_WIN
 
 EXTRA_DIST = CMakeLists.txt

@@ -320,25 +320,3 @@ install(TARGETS mfront DESTINATION bin
 if(enable-cppcheck)
   add_cppcheck(mfront)
 endif(enable-cppcheck)
-
-# mfront-query
-add_executable(mfront-query mfront-query.cxx
-  MaterialPropertyQuery.cxx
-  BehaviourQuery.cxx
-  ModelQuery.cxx)
-target_link_libraries(mfront-query
-  TFELMFront 
-  MFrontLogStream
-  TFELSystem TFELUtilities)
-install(TARGETS mfront-query DESTINATION bin
-  COMPONENT mfront)
-
-# mfront-doc
-add_executable(mfront-doc mfront-doc.cxx
-  BehaviourDocumentationGenerator.cxx)
-target_link_libraries(mfront-doc
-  TFELMFront 
-  MFrontLogStream
-  TFELSystem TFELUtilities)
-install(TARGETS mfront-doc DESTINATION bin
-  COMPONENT mfront)

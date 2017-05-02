@@ -8,8 +8,8 @@
 @StateVariable real iv;
 iv.setEntryName("StateVariable");
 
-@PhysicalBounds iv in [0:0.5];
-@Bounds iv in [0.2:0.8];
+@PhysicalBounds iv in [0:0.8];
+@Bounds iv in [0.2:0.5];
 			      
 @ProvidesSymmetricTangentOperator;
 @Integrator{

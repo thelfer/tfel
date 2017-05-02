@@ -68,8 +68,7 @@ namespace mfront{
     }
   } // end of BehaviourQuery::BehaviourQuery
 
-  void
-  BehaviourQuery::registerCommandLineCallBacks(){
+  void BehaviourQuery::registerCommandLineCallBacks(){
     using namespace std;
     using Parser = tfel::utilities::ArgumentParserBase<BehaviourQuery>;
     Parser::registerNewCallBack("--verbose",&BehaviourQuery::treatVerbose,
@@ -159,7 +158,8 @@ namespace mfront{
 				"show all the generated headers");
     Parser::registerNewCallBack("--cppflags",&BehaviourQuery::treatCppFlags,
 				"show all the global headers");
-    Parser::registerNewCallBack("--libraries-dependencies",&BehaviourQuery::treatLibrariesDependencies,
+    Parser::registerNewCallBack("--libraries-dependencies",
+				&BehaviourQuery::treatLibrariesDependencies,
 				"show all the libraries dependencies");
     Parser::registerNewCallBack("--specific-targets",&BehaviourQuery::treatSpecificTargets,
 				"show all the specific targets");
@@ -381,9 +381,15 @@ const Hypothesis){
       auto l = [o](const FileDescription&,
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
+	const auto  vn = extracVariableNameAndArrayPosition(o);
+	const auto& n  = std::get<0>(vn);
 	const auto& bd = d.getBehaviourData(h);
-	const auto& p  = bd.getVariableDescriptionByExternalName(o);
-	cout << (p.hasBounds() ? "true" : "false") << '\n';
+	const auto& p  = bd.getVariableDescriptionByExternalName(n);
+	if(std::get<1>(vn)){
+	  cout << (p.hasBounds(std::get<2>(vn)) ? "true" : "false") << '\n';
+	} else {
+	  cout << (p.hasBounds() ? "true" : "false") << '\n';
+	}
       };
       this->queries.push_back({"has-bounds",l});
     } else if (qn=="--bounds-type"){
@@ -391,8 +397,10 @@ const Hypothesis){
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
 	const auto& bd = d.getBehaviourData(h);
-	const auto& p  = bd.getVariableDescriptionByExternalName(o);
-	const auto& b  = p.getBounds();
+	const auto  vn = extracVariableNameAndArrayPosition(o);
+	const auto& n  = std::get<0>(vn);
+	const auto& p  = bd.getVariableDescriptionByExternalName(n);
+	const auto& b  = std::get<1>(vn) ? p.getBounds(std::get<2>(vn)) : p.getBounds();
 	if(b.boundsType==VariableBoundsDescription::LOWER){
 	  cout << "Lower\n";
 	} else if(b.boundsType==VariableBoundsDescription::UPPER){
@@ -409,8 +417,10 @@ const Hypothesis){
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
 	const auto& bd = d.getBehaviourData(h);
-	const auto& p  = bd.getVariableDescriptionByExternalName(o);
-	const auto& b  = p.getBounds();
+	const auto  vn = extracVariableNameAndArrayPosition(o);
+	const auto& n  = std::get<0>(vn);
+	const auto& p  = bd.getVariableDescriptionByExternalName(n);
+	const auto& b  = std::get<1>(vn) ? p.getBounds(std::get<2>(vn)) : p.getBounds();
 	if(b.boundsType==VariableBoundsDescription::LOWER){
 	  cout << "[" << b.lowerBound << ":*[\n";
 	} else if(b.boundsType==VariableBoundsDescription::UPPER){
@@ -426,9 +436,15 @@ const Hypothesis){
       auto l = [o](const FileDescription&,
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
+	const auto  vn = extracVariableNameAndArrayPosition(o);
+	const auto& n  = std::get<0>(vn);
 	const auto& bd = d.getBehaviourData(h);
-	const auto& p  = bd.getVariableDescriptionByExternalName(o);
-	cout << (p.hasPhysicalBounds() ? "true" : "false") << '\n';
+	const auto& p  = bd.getVariableDescriptionByExternalName(n);
+	if(std::get<1>(vn)){
+	  cout << (p.hasPhysicalBounds(std::get<2>(vn)) ? "true" : "false") << '\n';
+	} else {
+	  cout << (p.hasPhysicalBounds() ? "true" : "false") << '\n';
+	}
       };
       this->queries.push_back({"has-physical-bounds",l});
     } else if (qn=="--physical-bounds-type"){
@@ -436,8 +452,12 @@ const Hypothesis){
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
 	const auto& bd = d.getBehaviourData(h);
-	const auto& p  = bd.getVariableDescriptionByExternalName(o);
-	const auto& b  = p.getPhysicalBounds();
+	const auto  vn = extracVariableNameAndArrayPosition(o);
+	const auto& n  = std::get<0>(vn);
+	const auto& p  = bd.getVariableDescriptionByExternalName(n);
+	const auto& b  = (std::get<1>(vn) ?
+			  p.getPhysicalBounds(std::get<2>(vn)): 
+			  p.getPhysicalBounds());
 	if(b.boundsType==VariableBoundsDescription::LOWER){
 	  cout << "Lower\n";
 	} else if(b.boundsType==VariableBoundsDescription::UPPER){
@@ -454,8 +474,12 @@ const Hypothesis){
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
 	const auto& bd = d.getBehaviourData(h);
-	const auto& p  = bd.getVariableDescriptionByExternalName(o);
-	const auto& b  = p.getPhysicalBounds();
+	const auto  vn = extracVariableNameAndArrayPosition(o);
+	const auto& n  = std::get<0>(vn);
+	const auto& p  = bd.getVariableDescriptionByExternalName(n);
+	const auto& b  = (std::get<1>(vn) ?
+			  p.getPhysicalBounds(std::get<2>(vn)): 
+			  p.getPhysicalBounds());
 	if(b.boundsType==VariableBoundsDescription::LOWER){
 	  cout << "[" << b.lowerBound << ":*[\n";
 	} else if(b.boundsType==VariableBoundsDescription::UPPER){
@@ -710,13 +734,9 @@ const Hypothesis){
 
   std::string BehaviourQuery::getUsageDescription() const
   {
-    auto usage = std::string("Usage : ");
-    usage += this->programName;
-    usage += " [options] [files]";
-    return usage;
+    return "Usage: "+this->programName+" [options] [files]";
   }
 
-  BehaviourQuery::~BehaviourQuery()
-  {} // end of BehaviourQuery::~BehaviourQuery
+  BehaviourQuery::~BehaviourQuery() = default;
 
 } // end of namespace mfront

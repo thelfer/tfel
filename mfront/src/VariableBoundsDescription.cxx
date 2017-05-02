@@ -15,6 +15,14 @@
 
 namespace mfront{
 
+  bool VariableBoundsDescription::hasLowerBound() const{
+    return (this->boundsType==LOWER)||(this->boundsType==LOWERANDUPPER);
+  } // end of VariableBoundsDescription::hasLowerBounds()
+
+  bool VariableBoundsDescription::hasUpperBound() const{
+    return (this->boundsType==UPPER)||(this->boundsType==LOWERANDUPPER);
+  } // end of VariableBoundsDescription::hasUpperBounds()
+  
   VariableBoundsDescription::~VariableBoundsDescription() noexcept = default;
 
 } // end of namespace mfront

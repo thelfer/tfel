@@ -49,7 +49,7 @@ Ce nombre décrit le nombre d'atomes de \(\mbox{}^{10}B\) consommé par unité d
 
 # L'entrée BulkModulus
 
-Cette entrée décrit the bulk modulus of an isotropic material.
+Cette entrée décrit The bulk modulus of an isotropic material.
 
 * noms  : BulkModulus
 * unité : \(Pa\)
@@ -113,7 +113,7 @@ Cette entrée décrit le déplacement.
 
 # L'entrée ElasticStrain
 
-Cette entrée décrit la déformation élastique.
+Cette entrée décrit The elastic strain.
 
 * noms  : ElasticStrain
 * unité : sans unité
@@ -129,7 +129,7 @@ Cette entrée décrit Emissivity of the surface of a material is its effectivene
 
 # L'entrée EquivalentPlasticStrain
 
-Cette entrée décrit la déformation plastique équivalente.
+Cette entrée décrit The equivalent plastic strain.
 
 * noms  : EquivalentPlasticStrain
 * unité : sans unité
@@ -149,7 +149,7 @@ Cette quantité n'a pas de sens physique directe.
 
 # L'entrée EquivalentViscoplasticStrain
 
-Cette entrée décrit la déformation viscoplastique équivalente.
+Cette entrée décrit The equivalent viscoplastic strain.
 
 * noms  : EquivalentViscoplasticStrain
 * unité : sans unité
@@ -197,7 +197,7 @@ Cette entrée décrit ??.
 
 # L'entrée FirstLameCoefficient
 
-Cette entrée décrit le premier coefficient de Lamé d'un matériau isotrope.
+Cette entrée décrit First Lamé coefficient of an isotropic material.
 
 * noms  : FirstLameCoefficient
 * unité : \(Pa\)
@@ -326,7 +326,7 @@ Ce mode de calcul peut conduire à de légères erreurs numériques
 
 # L'entrée KelvinTemperature
 
-Cette entrée décrit la température.
+Cette entrée décrit The temperature.
 
 * noms  : KelvinTemperature
 * unité : \(K\)
@@ -338,7 +338,7 @@ Cette entrée a été rajoutée par compatibilité avec les choix d'implantation
 
 # L'entrée MassDensity
 
-Cette entrée décrit la densité massique.
+Cette entrée décrit The mass density.
 
 * noms  : MassDensity
 * unité : \(kg.m^{-3}\)
@@ -498,7 +498,7 @@ Cette quantité est automatiquementcalculée par Licos à partir de la définiti
 
 # L'entrée PlasticStrain
 
-Cette entrée décrit la déformation plastique.
+Cette entrée décrit The plastic strain.
 
 * noms  : PlasticStrain
 * unité : sans unité
@@ -514,7 +514,7 @@ Cette entrée décrit ??.
 
 # L'entrée PoissonRatio
 
-Cette entrée décrit the Poisson ratio of an isotropic material.
+Cette entrée décrit The Poisson ratio of an isotropic material.
 
 * noms  : PoissonRatio
 * unité : sans unité
@@ -614,7 +614,7 @@ Cette entrée décrit ??.
 
 # L'entrée ShearModulus
 
-Cette entrée décrit the shear modulus of an isotropic material.
+Cette entrée décrit The shear modulus of an isotropic material.
 
 * noms  : ShearModulus
 * unité : \(Pa\)
@@ -710,7 +710,7 @@ Cette entrée décrit la raideur tangentielle pour un modèle de zone cohésive.
 
 # L'entrée Temperature
 
-Cette entrée décrit la température.
+Cette entrée décrit The temperature.
 
 * noms  : Temperature
 * unité : \(K\)
@@ -814,7 +814,7 @@ Cette entrée décrit la valeur maximale de la contrainte qu'un materiau peut su
 
 # L'entrée ViscoplasticStrain
 
-Cette entrée décrit la déformation viscoplastique.
+Cette entrée décrit The viscoplatic strain.
 
 * noms  : ViscoplasticStrain
 * unité : sans unité
@@ -846,7 +846,7 @@ Cette entrée décrit la limite d'élasticité.
 
 # L'entrée YoungModulus
 
-Cette entrée décrit the Young modulus of an isotropic material.
+Cette entrée décrit The Young modulus of an isotropic material.
 
 * noms  : YoungModulus
 * unité : \(Pa\)

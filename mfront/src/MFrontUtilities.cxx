@@ -112,8 +112,23 @@ namespace mfront{
     };
     VariableBoundsDescription b;
     CxxTokenizer::checkNotEndOfLine(m,p,pe);
-    const auto n = p->value;
+    auto n = p->value;
     ++p;
+    CxxTokenizer::checkNotEndOfLine(m,"Expected '[' or '(' or 'in'.",p,pe);
+    if(p->value=="["){
+      CxxTokenizer::readSpecifiedToken(m,"[",p,pe);
+      CxxTokenizer::checkNotEndOfLine(m,p,pe);
+      std::string position(p->value);
+      std::istringstream converter(position);
+      unsigned int pos;
+      converter >> pos;
+      throw_if(!converter||(!converter.eof()),
+	       "could not read position number for variable '"+n+"'");
+      ++p;
+      CxxTokenizer::checkNotEndOfLine(m,p,pe);
+      CxxTokenizer::readSpecifiedToken(m,"]",p,pe);
+      n += '['+position+']';
+    }
     CxxTokenizer::checkNotEndOfLine(m,"Expected '(' or 'in'.",p,pe);
     if(p->value=="("){
       CxxTokenizer::readSpecifiedToken(m,"(",p,pe);
@@ -166,5 +181,36 @@ namespace mfront{
     }
     return std::make_pair(n,b);
   } // end of readVariableBounds
+
+  std::tuple<std::string,bool,unsigned short>
+  extracVariableNameAndArrayPosition(const std::string& n)
+  {
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("mfront::extracVariableNameAndArrayPosition: "+m));}
+    };
+    unsigned short i = 0;
+    auto p  = n.cbegin();
+    auto pe = n.cend();
+    while((p!=pe)&&(*p!='[')){
+      ++p;
+    }
+    if(p==pe){
+      return std::make_tuple(n,false,i);
+    }
+    auto r = std::string{n.cbegin(),p};
+    ++p;
+    throw_if(p==pe,"unexpected end of string 'n'");
+    throw_if(!std::isdigit(*p),"unexpected a digit 'n'");
+    while((p!=pe)&&(std::isdigit(*p))){
+      i*=10;
+      i+=*p-'0';
+      ++p;
+    }
+    throw_if(p==pe,"unexpected end of string '"+n+"'");
+    throw_if(*p!=']',"invalid variable name '"+n+"'");
+    ++p;
+    throw_if(p!=pe,"invalid variable name '"+n+"'");
+    return std::make_tuple(r,true,i);
+  } // end of extracVariableNameAndArrayPosition
   
 } // end of namespace mfront

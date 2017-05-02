@@ -20,6 +20,7 @@
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
+#include"MFront/MFrontUtilities.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/PerformanceProfiling.hxx"
 #include"MFront/ModelDescription.hxx"
@@ -663,7 +664,7 @@ namespace mfront{
   {
     return this->usableInPurelyImplicitResolution;
   } // end of BehaviourData::isUsableInPurelyImplicitResolution
-
+  
   void BehaviourData::setBounds(const std::string& n,
 				const VariableBoundsDescription& b)
   {
@@ -688,6 +689,31 @@ namespace mfront{
     }
   } // end of BehaviourData::getBounds
 
+  void BehaviourData::setBounds(const std::string& n,
+				const unsigned short i,
+				const VariableBoundsDescription& b)
+  {
+    bool treated = false;
+    auto set_bounds = [&n,i,&b,&treated](VariableDescriptionContainer& c){
+      if(c.contains(n)){
+	c.getVariable(n).setBounds(b,i);
+	treated = true;
+      }
+    };
+    set_bounds(this->materialProperties);
+    set_bounds(this->localVariables);
+    set_bounds(this->stateVariables);
+    set_bounds(this->auxiliaryStateVariables);
+    set_bounds(this->integrationVariables);
+    set_bounds(this->persistentVariables);
+    set_bounds(this->externalStateVariables);
+    set_bounds(this->parameters);
+    if(!treated){
+      throw(std::runtime_error("BehaviourData::setBounds: "
+			       "no variable named '"+n+"'"));
+    }
+  }
+  
   const VariableDescription&
   BehaviourData::getVariableDescriptionByExternalName(const std::string& n) const
   {
@@ -720,7 +746,7 @@ namespace mfront{
     if(contains(this->parameters)){
       return this->parameters.getVariableByExternalName(n);
     }
-    throw(std::runtime_error("BehaviourData::getVariableDescription: "
+    throw(std::runtime_error("BehaviourData::getVariableDescriptionByExternalName: "
 			     "no variable with external name '"+n+"' found. "
 			     "Such variable is *not*:\n"
 			     "- a material property\n"
@@ -730,7 +756,7 @@ namespace mfront{
 			     "- an integration variable\n"
 			     "- an external state variable\n"
 			     "- a parameter"));
-  } // end of BehaviourData::getVariableByExternalName
+  } // end of BehaviourData::getVariableDescriptionByExternalName
 
   const VariableDescription&
   BehaviourData::getVariableDescription(const std::string& n) const
@@ -846,6 +872,31 @@ namespace mfront{
     auto set_bounds = [&n,&b,&treated](VariableDescriptionContainer& c){
       if(c.contains(n)){
 	c.getVariable(n).setPhysicalBounds(b);
+	treated = true;
+      }
+    };
+    set_bounds(this->materialProperties);
+    set_bounds(this->localVariables);
+    set_bounds(this->stateVariables);
+    set_bounds(this->auxiliaryStateVariables);
+    set_bounds(this->integrationVariables);
+    set_bounds(this->persistentVariables);
+    set_bounds(this->externalStateVariables);
+    set_bounds(this->parameters);
+    if(!treated){
+      throw(std::runtime_error("BehaviourData::setPhysicalBounds: "
+			       "no variable named '"+n+"'"));
+    }
+  } // end of BehaviourData::setPhysicalBounds
+
+  void BehaviourData::setPhysicalBounds(const std::string& n,
+					const unsigned short i,
+					const VariableBoundsDescription& b)
+  {
+    bool treated = false;
+    auto set_bounds = [&n,&i,&b,&treated](VariableDescriptionContainer& c){
+      if(c.contains(n)){
+	c.getVariable(n).setPhysicalBounds(b,i);
 	treated = true;
       }
     };
