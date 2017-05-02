@@ -115,6 +115,7 @@ The 2.1.x versions will be the last versions based build on C++98.
 
 - [release notes of version 3.0.0](release-notes-3.0.html)
 - [release notes of version 3.0.1](release-notes-3.0.1.html)
+- [release notes of version 3.0.2](release-notes-3.0.2.html)
 
 ## Versions 3.1.x
 
