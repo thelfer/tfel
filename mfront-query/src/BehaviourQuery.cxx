@@ -133,7 +133,7 @@ namespace mfront{
       {"--attribute-value","display an attribute value"},
       {"--parameter-type","display a parameter type"},
       {"--parameter-default-value","display a parameter default value"},
-      {"--has-bounds","return EXIT_SUCCESS if a variable has bounds"},
+      {"--has-bounds","return `true` if a variable has bounds, `false` otherwise"},
       {"--bounds-type","return the bounds type associated to a variable.\n"
        "The returned value has the follwing meaning:\n"
        "- `None`\n"
@@ -141,7 +141,7 @@ namespace mfront{
        "- `Upper`\n"
        "- `LowerAndUpper`"},
       {"--bounds-value","show the bounds value associated as a range"},
-      {"--has-physical-bounds","return EXIT_SUCCESS if a variable has physical bounds"},
+      {"--has-physical-bounds","return `true` if a variable has physical bounds, `false` otherwise"},
       {"--physical-bounds-type","return the physical bounds type associated to a variable.\n"
        "The returned value has the follwing meaning:\n"
        "- `None`\n"
