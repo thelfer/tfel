@@ -107,6 +107,7 @@ void declareExternalLibraryManager()
 	 "- 0: material property\n"
 	 "- 1: behaviour\n"
 	 "- 2: model")
+    .def("getInterface",&ELM::getInterface)
     .def("setUShortParameter",ELM_setUShortParameter)
     .def("setIntParameter",ELM_setIntParameter)
     .def("setDoubleParameter",ELM_setDoubleParameter)

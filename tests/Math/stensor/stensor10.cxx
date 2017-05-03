@@ -91,10 +91,10 @@ private:
     }
     for(unsigned short i=0;i!=3u;++i){
       for(unsigned short j=0;j!=3u;++j){
-	if(abs(dpp(i,j)-ndpp(i,j))>prec){
-	  cout << "dpp : " << i << " " << j << " " << dpp(i,j) << " " << ndpp(i,j) << " " << abs(dpp(i,j)-ndpp(i,j)) << endl;
+	if(std::abs(dpp(i,j)-ndpp(i,j))>prec){
+	  cout << "dpp : " << i << " " << j << " " << dpp(i,j) << " " << ndpp(i,j) << " " << std::abs(dpp(i,j)-ndpp(i,j)) << endl;
 	}
-	TFEL_TESTS_ASSERT(abs(dpp(i,j)-ndpp(i,j))<prec);
+	TFEL_TESTS_ASSERT(std::abs(dpp(i,j)-ndpp(i,j))<prec);
       }
     }
   }
@@ -163,10 +163,10 @@ private:
     }
     for(unsigned short i=0;i!=4u;++i){
       for(unsigned short j=0;j!=4u;++j){
-	if(abs(dpp(i,j)-ndpp(i,j))>prec){
-	  cout << "dpp : " << i << " " << j << " " << dpp(i,j) << " " << ndpp(i,j) << " " << abs(dpp(i,j)-ndpp(i,j)) << endl;
+	if(std::abs(dpp(i,j)-ndpp(i,j))>prec){
+	  cout << "dpp : " << i << " " << j << " " << dpp(i,j) << " " << ndpp(i,j) << " " << std::abs(dpp(i,j)-ndpp(i,j)) << endl;
 	}
-	TFEL_TESTS_ASSERT(abs(dpp(i,j)-ndpp(i,j))<prec);
+	TFEL_TESTS_ASSERT(std::abs(dpp(i,j)-ndpp(i,j))<prec);
       }
     }
   }
@@ -238,10 +238,10 @@ private:
     }
     for(unsigned short i=0;i!=6u;++i){
       for(unsigned short j=0;j!=6u;++j){
-	if(abs(dpp(i,j)-ndpp(i,j))>prec){
-	  cout << "dpp : " << i << " " << j << " " << dpp(i,j) << " " << ndpp(i,j) << " " << abs(dpp(i,j)-ndpp(i,j)) << endl;
+	if(std::abs(dpp(i,j)-ndpp(i,j))>prec){
+	  cout << "dpp : " << i << " " << j << " " << dpp(i,j) << " " << ndpp(i,j) << " " << std::abs(dpp(i,j)-ndpp(i,j)) << endl;
 	}
-	TFEL_TESTS_ASSERT(abs(dpp(i,j)-ndpp(i,j))<prec);
+	TFEL_TESTS_ASSERT(std::abs(dpp(i,j)-ndpp(i,j))<prec);
       }
     }
   }
@@ -315,14 +315,14 @@ private:
     }
     for(unsigned short i=0;i!=3u;++i){
       for(unsigned short j=0;j!=3u;++j){
-	if(abs(dpp(i,j)-ndpp(i,j))>prec){
-	  cout << "dpp : " << i << " " << j << " " << dpp(i,j) << " " << ndpp(i,j) << " " << abs(dpp(i,j)-ndpp(i,j)) << endl;
+	if(std::abs(dpp(i,j)-ndpp(i,j))>prec){
+	  cout << "dpp : " << i << " " << j << " " << dpp(i,j) << " " << ndpp(i,j) << " " << std::abs(dpp(i,j)-ndpp(i,j)) << endl;
 	}
-	if(abs(dnp(i,j)-ndnp(i,j))>prec){
-	  cout << "dnp : " << i << " " << j << " " << dnp(i,j) << " " << ndnp(i,j) << " " << abs(dnp(i,j)-ndnp(i,j)) << endl;
+	if(std::abs(dnp(i,j)-ndnp(i,j))>prec){
+	  cout << "dnp : " << i << " " << j << " " << dnp(i,j) << " " << ndnp(i,j) << " " << std::abs(dnp(i,j)-ndnp(i,j)) << endl;
 	}
-	TFEL_TESTS_ASSERT(abs(dpp(i,j)-ndpp(i,j))<prec);
-	TFEL_TESTS_ASSERT(abs(dnp(i,j)-ndnp(i,j))<prec);
+	TFEL_TESTS_ASSERT(std::abs(dpp(i,j)-ndpp(i,j))<prec);
+	TFEL_TESTS_ASSERT(std::abs(dnp(i,j)-ndnp(i,j))<prec);
       }
     }
   }
@@ -397,14 +397,14 @@ private:
     }
     for(unsigned short i=0;i!=4u;++i){
       for(unsigned short j=0;j!=4u;++j){
-	if(abs(dpp(i,j)-ndpp(i,j))>prec){
-	  cout << "dpp : " << i << " " << j << " " << dpp(i,j) << " " << ndpp(i,j) << " " << abs(dpp(i,j)-ndpp(i,j)) << endl;
+	if(std::abs(dpp(i,j)-ndpp(i,j))>prec){
+	  cout << "dpp : " << i << " " << j << " " << dpp(i,j) << " " << ndpp(i,j) << " " << std::abs(dpp(i,j)-ndpp(i,j)) << endl;
 	}
-	if(abs(dnp(i,j)-ndnp(i,j))>prec){
-	  cout << "dnp : " << i << " " << j << " " << dnp(i,j) << " " << ndnp(i,j) << " " << abs(dnp(i,j)-ndnp(i,j)) << endl;
+	if(std::abs(dnp(i,j)-ndnp(i,j))>prec){
+	  cout << "dnp : " << i << " " << j << " " << dnp(i,j) << " " << ndnp(i,j) << " " << std::abs(dnp(i,j)-ndnp(i,j)) << endl;
 	}
-	TFEL_TESTS_ASSERT(abs(dpp(i,j)-ndpp(i,j))<prec);
-	TFEL_TESTS_ASSERT(abs(dnp(i,j)-ndnp(i,j))<prec);
+	TFEL_TESTS_ASSERT(std::abs(dpp(i,j)-ndpp(i,j))<prec);
+	TFEL_TESTS_ASSERT(std::abs(dnp(i,j)-ndnp(i,j))<prec);
       }
     }
   }
@@ -482,14 +482,14 @@ private:
     }
     for(unsigned short i=0;i!=6u;++i){
       for(unsigned short j=0;j!=6u;++j){
-	if(abs(dpp(i,j)-ndpp(i,j))>prec){
-	  cout << "dpp : " << i << " " << j << " " << dpp(i,j) << " " << ndpp(i,j) << " " << abs(dpp(i,j)-ndpp(i,j)) << endl;
+	if(std::abs(dpp(i,j)-ndpp(i,j))>prec){
+	  cout << "dpp : " << i << " " << j << " " << dpp(i,j) << " " << ndpp(i,j) << " " << std::abs(dpp(i,j)-ndpp(i,j)) << endl;
 	}
-	if(abs(dnp(i,j)-ndnp(i,j))>prec){
-	  cout << "dnp : " << i << " " << j << " " << dnp(i,j) << " " << ndnp(i,j) << " " << abs(dnp(i,j)-ndnp(i,j)) << endl;
+	if(std::abs(dnp(i,j)-ndnp(i,j))>prec){
+	  cout << "dnp : " << i << " " << j << " " << dnp(i,j) << " " << ndnp(i,j) << " " << std::abs(dnp(i,j)-ndnp(i,j)) << endl;
 	}
-	TFEL_TESTS_ASSERT(abs(dpp(i,j)-ndpp(i,j))<prec);
-	TFEL_TESTS_ASSERT(abs(dnp(i,j)-ndnp(i,j))<prec);
+	TFEL_TESTS_ASSERT(std::abs(dpp(i,j)-ndpp(i,j))<prec);
+	TFEL_TESTS_ASSERT(std::abs(dnp(i,j)-ndnp(i,j))<prec);
       }
     }
   }

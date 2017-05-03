@@ -7,3 +7,5 @@ link_directories("${PROJECT_BINARY_DIR}/src/System"
 add_executable(mfm mfm.cxx)
 target_link_libraries(mfm
   TFELSystem TFELUtilities)
+install(TARGETS mfm DESTINATION bin
+  COMPONENT mfront)

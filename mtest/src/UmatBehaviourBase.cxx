@@ -76,7 +76,57 @@ namespace mtest
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     elm.setOutOfBoundsPolicy(this->library,this->behaviour,p);
   } // end of UmatBehaviourBase::setOutOfBoundsPolicy
-  
+
+  bool UmatBehaviourBase::hasBounds(const std::string& v) const{
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    return elm.hasBounds(this->library,this->behaviour,this->hypothesis,v);
+  } // end of UmatBehaviourBase::hasBounds
+
+  bool UmatBehaviourBase::hasLowerBound(const std::string& v) const{
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    return elm.hasLowerBound(this->library,this->behaviour,this->hypothesis,v);
+  } // end of UmatBehaviourBase::hasLowerBound
+
+  bool UmatBehaviourBase::hasUpperBound(const std::string& v) const{
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    return elm.hasUpperBound(this->library,this->behaviour,this->hypothesis,v);
+  } // end of UmatBehaviourBase::hasUpperBound
+
+  long double UmatBehaviourBase::getLowerBound(const std::string& v) const{
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    return elm.getLowerBound(this->library,this->behaviour,this->hypothesis,v);
+  } // end of UmatBehaviourBase::getLowerBound
+
+  long double UmatBehaviourBase::getUpperBound(const std::string& v) const{
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    return elm.getUpperBound(this->library,this->behaviour,this->hypothesis,v);
+  } // end of UmatBehaviourBase::getUpperBound
+
+  bool UmatBehaviourBase::hasPhysicalBounds(const std::string& v) const{
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    return elm.hasPhysicalBounds(this->library,this->behaviour,this->hypothesis,v);
+  } // end of UmatBehaviourBase::hasPhysicalBounds
+
+  bool UmatBehaviourBase::hasLowerPhysicalBound(const std::string& v) const{
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    return elm.hasLowerPhysicalBound(this->library,this->behaviour,this->hypothesis,v);
+  } // end of UmatBehaviourBase::hasLowerPhysicalBound
+
+  bool UmatBehaviourBase::hasUpperPhysicalBound(const std::string& v) const{
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    return elm.hasUpperPhysicalBound(this->library,this->behaviour,this->hypothesis,v);
+  } // end of UmatBehaviourBase::hasUpperPhysicalBound
+
+  long double UmatBehaviourBase::getLowerPhysicalBound(const std::string& v) const{
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    return elm.getLowerPhysicalBound(this->library,this->behaviour,this->hypothesis,v);
+  } // end of UmatBehaviourBase::getLowerPhysicalBound
+
+  long double UmatBehaviourBase::getUpperPhysicalBound(const std::string& v) const{
+    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    return elm.getUpperPhysicalBound(this->library,this->behaviour,this->hypothesis,v);
+  } // end of UmatBehaviourBase::getUpperPhysicalBound
+
   tfel::material::MechanicalBehaviourBase::BehaviourType
   UmatBehaviourBase::getBehaviourType() const
   {

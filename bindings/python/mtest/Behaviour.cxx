@@ -47,37 +47,82 @@ static std::shared_ptr<mtest::Behaviour> getBehaviour3(const std::string& i,
 				 Behaviour::ModellingHypothesis::fromString(h));
 } // end of std::shared_ptr<Behaviour> getBehaviour1
 
+
+static std::shared_ptr<mtest::Behaviour> getBehaviour4(const std::string& l,
+						       const std::string& f,
+						       const mtest::Behaviour::Parameters& p,
+						       const std::string& h)
+{
+  using mtest::Behaviour;
+  return Behaviour::getBehaviour("",l,f,p,
+				 Behaviour::ModellingHypothesis::fromString(h));
+} // end of std::shared_ptr<Behaviour> getBehaviour1
+
+static std::shared_ptr<mtest::Behaviour> getBehaviour5(const std::string& l,
+						       const std::string& f,
+						       const mtest::Behaviour::ModellingHypothesis::Hypothesis h)
+{
+  using mtest::Behaviour;
+  return Behaviour::getBehaviour("",l,f,Behaviour::Parameters(),h);
+} // end of std::shared_ptr<Behaviour> getBehaviour1
+
+static std::shared_ptr<mtest::Behaviour> getBehaviour6(const std::string& l,
+						       const std::string& f,
+						       const std::string& h)
+{
+  using mtest::Behaviour;
+  return Behaviour::getBehaviour("",l,f,Behaviour::Parameters(),
+				 Behaviour::ModellingHypothesis::fromString(h));
+} // end of std::shared_ptr<Behaviour> getBehaviour1
+
 void declareBehaviour(){
   using boost::python::class_;
   using mtest::Behaviour;
   class_<std::shared_ptr<Behaviour>>("Behaviour")
     .def("__init__",boost::python::make_constructor(Behaviour::getBehaviour),
 	 "This constructor has the following arguments:\n"
-	 "-  i(std::string): interface\n"
-	 "-  l(std::string): library\n"
-	 "-  f(std::string): function\n"
-	 "-  d(tfel::utilities::Data): parameter\n"
-	 "-  h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
+	 "- i(std::string): interface\n"
+	 "- l(std::string): library\n"
+	 "- f(std::string): function\n"
+	 "- d(tfel::utilities::Data): parameter\n"
+	 "- h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
     .def("__init__",boost::python::make_constructor(getBehaviour1),
 	 "This constructor has the following arguments:\n"
-	 "-  i(std::string): interface\n"
-	 "-  l(std::string): library\n"
-	 "-  f(std::string): function\n"
-	 "-  d(tfel::utilities::Data): parameter\n"
-	 "-  h(std::string): modelling hypothesis\n")
+	 "- i(std::string): interface\n"
+	 "- l(std::string): library\n"
+	 "- f(std::string): function\n"
+	 "- d(tfel::utilities::Data): parameter\n"
+	 "- h(std::string): modelling hypothesis\n")
     .def("__init__",boost::python::make_constructor(getBehaviour2),
 	 "This constructor has the following arguments:\n"
-	 "-  i(std::string): interface\n"
-	 "-  l(std::string): library\n"
-	 "-  f(std::string): function\n"
-	 "-  h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
+	 "- i(std::string): interface\n"
+	 "- l(std::string): library\n"
+	 "- f(std::string): function\n"
+	 "- h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
     .def("__init__",boost::python::make_constructor(getBehaviour3),
 	 "This constructor has the following arguments:\n"
-	 "-  i(std::string): interface\n"
-	 "-  l(std::string): library\n"
-	 "-  f(std::string): function\n"
-	 "-  d(tfel::utilities::Data): parameter\n"
-	 "-  h(std::string): modelling hypothesis\n")
+	 "- i(std::string): interface\n"
+	 "- l(std::string): library\n"
+	 "- f(std::string): function\n"
+	 "- d(tfel::utilities::Data): parameter\n"
+	 "- h(std::string): modelling hypothesis\n")
+    .def("__init__",boost::python::make_constructor(getBehaviour4),
+	 "This constructor has the following arguments:\n"
+	 "- l(std::string): library\n"
+	 "- f(std::string): function\n"
+	 "- d(tfel::utilities::Data): parameter\n"
+	 "- h(std::string): modelling hypothesis\n")
+    .def("__init__",boost::python::make_constructor(getBehaviour5),
+	 "This constructor has the following arguments:\n"
+	 "- l(std::string): library\n"
+	 "- f(std::string): function\n"
+	 "- h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
+    .def("__init__",boost::python::make_constructor(getBehaviour6),
+	 "This constructor has the following arguments:\n"
+	 "- l(std::string): library\n"
+	 "- f(std::string): function\n"
+	 "- d(tfel::utilities::Data): parameter\n"
+	 "- h(std::string): modelling hypothesis\n")
     .def("getBehaviourType",&Behaviour::getBehaviourType,
 	 "Return the behaviour type.\n"
 	 "The value returned has the following meaning:\n"
@@ -176,6 +221,26 @@ void declareBehaviour(){
     .def("getUnsignedShortParameterDefaultValue",
 	 &Behaviour::getUnsignedShortParameterDefaultValue,
 	 "return the default value of an unsigned short parameter")
+    .def("hasBounds",&Behaviour::hasBounds,
+	 "return true if the given variable has bounds")
+    .def("hasLowerBound",&Behaviour::hasLowerBound,
+	 "return true if the given variable has a lower bound")
+    .def("hasUpperBound",&Behaviour::hasUpperBound,
+	 "return true if the given variable has an upper bound")
+    .def("getLowerBound",&Behaviour::getLowerBound,
+	 "return the lower bound of the given variable")
+    .def("getUpperBound",&Behaviour::getUpperBound,
+	 "return the uppert bound of the given variable")
+    .def("hasPhysicalBounds",&Behaviour::hasPhysicalBounds,
+	 "return true if the given variable has physical bounds")
+    .def("hasLowerPhysicalBound",&Behaviour::hasLowerPhysicalBound,
+	 "return true if the given variable has a physical lower bound")
+    .def("hasUpperPhysicalBound",&Behaviour::hasUpperPhysicalBound,
+	 "return true if the given variable has a physical upper bound")
+    .def("getLowerPhysicalBound",&Behaviour::getLowerPhysicalBound,
+	 "return the lower bound of the given variable")
+    .def("getUpperPhysicalBound",&Behaviour::getUpperPhysicalBound,
+	 "return the upper bound of the given variable")
     ;
   
 } // end of declareBehaviour()

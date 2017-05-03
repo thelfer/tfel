@@ -62,9 +62,8 @@ namespace mfront
 
   UMATInterfaceBase::UMATInterfaceBase() = default;
 
-  bool
-  UMATInterfaceBase::isModellingHypothesisHandled(const Hypothesis h,
-						  const BehaviourDescription& mb) const
+  bool UMATInterfaceBase::isModellingHypothesisHandled(const Hypothesis h,
+						       const BehaviourDescription& mb) const
   {
     const auto ih = this->getModellingHypothesesToBeTreated(mb);
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
@@ -73,9 +72,8 @@ namespace mfront
     return ih.find(h)!=ih.end();
   }
 
-  std::string
-  UMATInterfaceBase::getSymbolName(const std::string& n,
-				   const Hypothesis h) const
+  std::string UMATInterfaceBase::getSymbolName(const std::string& n,
+					       const Hypothesis h) const
   {
     if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       return this->getFunctionName(n)+"_"+ModellingHypothesis::toString(h);
@@ -162,10 +160,9 @@ namespace mfront
     }
   } // end of UMATInterfaceBase::completeMaterialPropertiesList
 
-  void 
-  UMATInterfaceBase::exportMechanicalData(std::ostream& out,
-					  const Hypothesis h,
-					  const BehaviourDescription& mb) const
+  void UMATInterfaceBase::exportMechanicalData(std::ostream& out,
+					       const Hypothesis h,
+					       const BehaviourDescription& mb) const
   {
     const auto& d = mb.getBehaviourData(h);
     const auto& persistentVarsHolder = d.getPersistentVariables();
@@ -1515,6 +1512,7 @@ namespace mfront
 						       const FileDescription & fd) const
   {
     this->writeUMATxxEntryPointSymbol(out,name);
+    this->writeUMATxxMaterialKnowledgeTypeSymbol(out,name);
     this->writeUMATxxInterfaceNameSymbols(out,name,mb,fd);
     this->writeUMATxxSourceFileSymbols(out,name,mb,fd);
     this->writeUMATxxSupportedModellingHypothesis(out,name,mb);
@@ -1527,12 +1525,12 @@ namespace mfront
 
   void UMATInterfaceBase::writeUMATxxEntryPointSymbol(std::ostream& out,
 						      const std::string& n) const{
-    writeEntryPointSymbol(out,n);
+    writeEntryPointSymbol(out,this->getFunctionName(n));
   } // end of UMATInterfaceBase::writeUMATxxEntryPointSymbol
   
   void UMATInterfaceBase::writeUMATxxMaterialKnowledgeTypeSymbol(std::ostream& out,
 								 const std::string& n) const{
-    writeMaterialKnowledgeTypeSymbol(out,n,BEHAVIOUR);
+    writeMaterialKnowledgeTypeSymbol(out,this->getFunctionName(n),BEHAVIOUR);
   } // end of UMATInterfaceBase::writeUMATxxEntryPointSymbol
   
   void UMATInterfaceBase::generateUMATxxSymbols(std::ostream& out,
@@ -1848,6 +1846,24 @@ namespace mfront
     }
   } // end of UMATInterfaceBase::writeUMATxxParameterDefaultValueSymbols
 
+  static void writewriteUMATxxBoundsSymbol(std::ostream& out,
+					   const std::string& bn,
+					   const std::string& vn,
+					   const std::string& bt,
+					   const VariableBoundsDescription& b)
+  {
+    if((b.boundsType==VariableBoundsDescription::LOWER)||
+       (b.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
+      out << "MFRONT_SHAREDOBJ long double " << bn
+	  << "_" << vn << "_" << "Lower" << bt <<"Bound = " << b.lowerBound << ";\n\n";
+    }
+    if((b.boundsType==VariableBoundsDescription::UPPER)||
+       (b.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
+      out << "MFRONT_SHAREDOBJ long double " << bn
+	  << "_" << vn << "_" << "Upper" << bt << "Bound = " << b.upperBound << ";\n\n";
+    }
+  } // end of writewriteUMATxxBoundsSymbol
+  
   void UMATInterfaceBase::writeUMATxxBoundsSymbols(std::ostream& out,
 						   const std::string& name,
 						   const Hypothesis h,
@@ -1855,24 +1871,28 @@ namespace mfront
   {
     auto write = [this,&out,&name,h](const VariableDescriptionContainer& vc){
       for(const auto& v : vc){
-	if(!v.hasBounds()){
-	  continue;
-	}
-	const auto& b = v.getBounds();
-	if((b.boundsType==VariableBoundsDescription::LOWER)||
-	   (b.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
-	  out << "MFRONT_SHAREDOBJ long double " << this->getSymbolName(name,h)
-	      << "_" << v.getExternalName() << "_LowerBound = " << b.lowerBound << ";\n\n";
-	}
-	if((b.boundsType==VariableBoundsDescription::UPPER)||
-	   (b.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
-	  out << "MFRONT_SHAREDOBJ long double " << this->getSymbolName(name,h)
-	      << "_" << v.getExternalName() << "_UpperBound = " << b.upperBound << ";\n\n";
+	if(v.arraySize==1u){
+	  if(!v.hasBounds()){
+	    continue;
+	  }
+	  mfront::writewriteUMATxxBoundsSymbol(out,this->getSymbolName(name,h),
+					       v.getExternalName(),"",v.getBounds());		       
+	} else {
+	  for(auto i=0;i!=v.arraySize;++i){
+	    if(!v.hasBounds(i)){
+	      continue;
+	    }
+	    mfront::writewriteUMATxxBoundsSymbol(out,this->getSymbolName(name,h),
+						 v.getExternalName()+"__"+std::to_string(i)+"__",
+						 "",v.getBounds(i));
+	  }
 	}
       }
     };
     const auto& d = mb.getBehaviourData(h);
     write(d.getMaterialProperties());
+    write(d.getPersistentVariables());
+    write(d.getExternalStateVariables());
     write(d.getParameters());
   } // end of UMATInterfaceBase::writeUMATxxBoundsSymbols
 
@@ -1883,26 +1903,31 @@ namespace mfront
   {
     auto write = [this,&out,&name,h](const VariableDescriptionContainer& vc){
       for(const auto& v : vc){
-	if(!v.hasPhysicalBounds()){
-	  continue;
-	}
-	const auto& b = v.getPhysicalBounds();
-	if((b.boundsType==VariableBoundsDescription::LOWER)||
-	   (b.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
-	  out << "MFRONT_SHAREDOBJ long double " << this->getSymbolName(name,h)
-	      << "_" << v.getExternalName() << "_LowerPhysicalBound = " << b.lowerBound << ";\n\n";
-	}
-	if((b.boundsType==VariableBoundsDescription::UPPER)||
-	   (b.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
-	  out << "MFRONT_SHAREDOBJ long double " << this->getSymbolName(name,h)
-	      << "_" << v.getExternalName() << "_UpperPhysicalBound = " << b.upperBound << ";\n\n";
+	if(v.arraySize==1u){
+	  if(!v.hasPhysicalBounds()){
+	    continue;
+	  }
+	  mfront::writewriteUMATxxBoundsSymbol(out,this->getSymbolName(name,h),
+					       v.getExternalName(),"Physical",
+					       v.getPhysicalBounds());		       
+	} else {
+	  for(auto i=0;i!=v.arraySize;++i){
+	    if(!v.hasPhysicalBounds(i)){
+	      continue;
+	    }
+	    mfront::writewriteUMATxxBoundsSymbol(out,this->getSymbolName(name,h),
+						 v.getExternalName()+"__"+std::to_string(i)+"__",
+						 "Physical",v.getPhysicalBounds(i));		       
+	  }
 	}
       }
     };
     const auto& d = mb.getBehaviourData(h);
     write(d.getMaterialProperties());
+    write(d.getPersistentVariables());
+    write(d.getExternalStateVariables());
     write(d.getParameters());
-  } // end of UMATInterfaceBase::writeUMATxxBoundsSymbols
+  } // end of UMATInterfaceBase::writeUMATxxPhysicalBoundsSymbols
   
   void UMATInterfaceBase::writeUMATxxRequirementsSymbols(std::ostream& out,
 							 const std::string& name,

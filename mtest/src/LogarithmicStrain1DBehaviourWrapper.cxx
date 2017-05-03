@@ -238,6 +238,46 @@ namespace mtest{
     return this->b->setOutOfBoundsPolicy(p);
   } // end of LogarithmicStrain1DBehaviourWrapper::setOutOfBoundsPolicy
 
+  bool LogarithmicStrain1DBehaviourWrapper::hasBounds(const std::string& v) const{
+    return this->b->hasBounds(v);
+  } // end of LogarithmicStrain1DBehaviourWrapper::hasBounds
+
+  bool LogarithmicStrain1DBehaviourWrapper::hasLowerBound(const std::string& v) const{
+    return this->b->hasLowerBound(v);
+  } // end of LogarithmicStrain1DBehaviourWrapper::hasLowerBound
+
+  bool LogarithmicStrain1DBehaviourWrapper::hasUpperBound(const std::string& v) const{
+    return this->b->hasUpperBound(v);
+  } // end of LogarithmicStrain1DBehaviourWrapper::hasUpperBound
+
+  long double LogarithmicStrain1DBehaviourWrapper::getLowerBound(const std::string& v) const{
+    return this->b->getLowerBound(v);
+  } // end of LogarithmicStrain1DBehaviourWrapper::getLowerBound
+
+  long double LogarithmicStrain1DBehaviourWrapper::getUpperBound(const std::string& v) const{
+    return this->b->getUpperBound(v);
+  } // end of LogarithmicStrain1DBehaviourWrapper::getUpperBound
+
+  bool LogarithmicStrain1DBehaviourWrapper::hasPhysicalBounds(const std::string& v) const{
+    return this->b->hasPhysicalBounds(v);
+  } // end of LogarithmicStrain1DBehaviourWrapper::hasPhysicalBounds
+
+  bool LogarithmicStrain1DBehaviourWrapper::hasLowerPhysicalBound(const std::string& v) const{
+    return this->b->hasLowerPhysicalBound(v);
+  } // end of LogarithmicStrain1DBehaviourWrapper::hasLowerPhysicalBound
+
+  bool LogarithmicStrain1DBehaviourWrapper::hasUpperPhysicalBound(const std::string& v) const{
+    return this->b->hasUpperPhysicalBound(v);
+  } // end of LogarithmicStrain1DBehaviourWrapper::hasUpperPhysicalBound
+
+  long double LogarithmicStrain1DBehaviourWrapper::getLowerPhysicalBound(const std::string& v) const{
+    return this->b->getLowerPhysicalBound(v);
+  } // end of LogarithmicStrain1DBehaviourWrapper::getLowerPhysicalBound
+
+  long double LogarithmicStrain1DBehaviourWrapper::getUpperPhysicalBound(const std::string& v) const{
+    return this->b->getUpperPhysicalBound(v);
+  } // end of LogarithmicStrain1DBehaviourWrapper::getUpperPhysicalBound
+  
   void
   LogarithmicStrain1DBehaviourWrapper::setParameter(const std::string& n,
 						    const real v) const 

@@ -53,7 +53,7 @@
 
 namespace mtest
 {
-
+  
   std::shared_ptr<Behaviour>
   Behaviour::getBehaviour(const std::string& i,
 			  const std::string& l,
@@ -73,9 +73,10 @@ namespace mtest
     };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     throw_if(!elm.contains(l,f),"behaviour '"+f+"' not defined in library '"+l+"'");
-    auto b = std::shared_ptr<Behaviour>{};
+    auto b  = std::shared_ptr<Behaviour>{};
+    auto in = i.empty() ? elm.getInterface(l,f) : i ;
 #ifdef HAVE_CASTEM
-    if((i=="castem")||(i=="umat")){
+    if((in=="castem")||(in=="umat")||(in=="Castem")){
       check_no_parameters();
       const auto type  = elm.getUMATBehaviourType(l,f);
       const auto ktype = elm.getUMATBehaviourKinematic(l,f);
@@ -95,18 +96,18 @@ namespace mtest
 	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }
     }
-    if(i=="mistral"){
+    if(in=="mistral"){
       b = MistralBehaviour::buildMistralBehaviour(l,f,d,h);
     }
-    if(i=="castem_umat_small_strain"){
+    if(in=="castem_umat_small_strain"){
       b = CastemUmatSmallStrainBehaviour::buildCastemUmatSmallStrainBehaviour(l,f,d,h);
     }
-    if(i=="castem_umat_finite_strain"){
+    if(in=="castem_umat_finite_strain"){
       b = CastemUmatFiniteStrainBehaviour::buildCastemUmatFiniteStrainBehaviour(l,f,d,h);
     }
 #endif
 #ifdef HAVE_ASTER
-    if(i=="aster"){
+    if((in=="aster")||(in=="Aster")){
       check_no_parameters();
       const auto type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
@@ -121,7 +122,7 @@ namespace mtest
     }
 #endif
 #ifdef HAVE_EUROPLEXUS
-    if((i=="europlexus")||(i=="epx")){
+    if((in=="europlexus")||(in=="epx")||(in=="Europlexus")){
       check_no_parameters();
       const auto type = elm.getUMATBehaviourType(l,f);
       if(type==2u){
@@ -132,7 +133,7 @@ namespace mtest
     }
 #endif
 #ifdef HAVE_ABAQUS
-    if((i=="abaqus")||(i=="abaqus_standard")||(i=="abaqus_umat")){
+    if((in=="abaqus")||(in=="abaqus_standard")||(in=="abaqus_umat")||(in=="Abaqus")){
       check_no_parameters();
       const auto bn   = AbaqusStandardBehaviour::getBehaviourName(f,h);
       const auto type = elm.getUMATBehaviourType(l,bn);
@@ -144,7 +145,7 @@ namespace mtest
 	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }
     }
-    if((i=="abaqus_explicit")||(i=="abaqus_vumat")){
+    if((in=="abaqus_explicit")||(in=="abaqus_vumat")||(in=="AbaqusExplicit")){
       const auto bn   = AbaqusExplicitBehaviour::getBehaviourName(f,h);
       check_no_parameters();
       const auto type = elm.getUMATBehaviourType(l,bn);
@@ -156,7 +157,7 @@ namespace mtest
     }
 #endif
 #ifdef HAVE_ANSYS
-    if((i=="ansys")||(i=="ansys_usermat")){
+    if((in=="ansys")||(in=="ansys_usermat")||(in=="Ansys")){
       check_no_parameters();
       const auto bn   = AnsysStandardBehaviour::getBehaviourName(f,h);
       const auto type = elm.getUMATBehaviourType(l,bn);
@@ -168,7 +169,7 @@ namespace mtest
     }
 #endif
 #ifdef HAVE_CYRANO
-    if(i=="cyrano"){
+    if((in=="cyrano")||(in=="Cyrano")){
       const auto btype = elm.getUMATBehaviourType(l,f);
       const auto ktype = elm.getUMATBehaviourKinematic(l,f);
       check_no_parameters();

@@ -1022,7 +1022,7 @@ namespace mtest{
   void PipeTest::checkBehaviourConsistency(const std::shared_ptr<Behaviour>& bp){
     using tfel::material::MechanicalBehaviourBase;
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("PipeTest::setBehaviour: "+m));}
+      if(c){throw(std::runtime_error("PipeTest::checkBehaviourConsistency: "+m));}
     };
     throw_if(bp==nullptr,"null behaviour pointer");
     if(this->hpp){

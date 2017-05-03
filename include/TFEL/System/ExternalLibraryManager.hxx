@@ -58,13 +58,18 @@ namespace tfel
 			 const bool = false);
 #endif /* LIB_EXTERNALLIBRARYMANAGER_HXX */
       /*!
+       * \return the path of a library
+       * \param[in] l: library name
+       */
+      std::string getLibraryPath(const std::string&);
+      /*!
        * \return the list of all mfront generated entry points
        * in a library.
        * \param[in] l: library name
        */
       std::vector<std::string> getEntryPoints(const std::string&);
       /*!
-       * \return the list of all mfront generated entry points in a
+       * \return the material knowledge type of an entry point in a
        * library. The returned value has the following meaning:
        * - 0: material property
        * - 1: behaviour

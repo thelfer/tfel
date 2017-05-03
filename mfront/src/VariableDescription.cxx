@@ -272,7 +272,7 @@ namespace mfront{
   const VariableBoundsDescription& VariableDescription::getBounds() const
   {
     if(!this->hasBounds()){
-      throw(std::runtime_error("VariableDescription::setBounds: "
+      throw(std::runtime_error("VariableDescription::getBounds: "
 			       "no bounds set on variable "
 			       "'"+this->name+"'"));
     }

@@ -100,71 +100,75 @@ namespace mtest{
     t.setHandleThermalExpansion(b);
   }
   
-  void
-  SingleStructureSchemeParser::handleBehaviour(SingleStructureScheme& t,
-					       tokens_iterator& p)
+  void SingleStructureSchemeParser::handleBehaviour(SingleStructureScheme& t,
+						    tokens_iterator& p)
   {
     auto i = std::string{}; // interface
     auto w = std::string{}; // wrapper
-    this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour","<",p,
-			     this->tokens.end());
     this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",p,
 			    this->tokens.end());
+    if(p->value=="<"){
+      this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour","<",p,
+			       this->tokens.end());
+      this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",p,
+			      this->tokens.end());
 #ifdef HAVE_CASTEM
-    if((p->value=="umat")||(p->value=="castem")){
-      i = "castem";
-    }
-    if(p->value=="mistral"){
-      i="mistral";
-    }
-    if((p->value=="mistral")||(p->value=="castem_umat_small_strain")||
-       (p->value=="castem_umat_finite_strain")){
-      i=p->value;
-    }
+      if((p->value=="umat")||(p->value=="castem")){
+	i = "castem";
+      }
+      if(p->value=="mistral"){
+	i="mistral";
+      }
+      if((p->value=="mistral")||(p->value=="castem_umat_small_strain")||
+	 (p->value=="castem_umat_finite_strain")){
+	i=p->value;
+      }
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ASTER
-    if(p->value=="aster"){
-      i = p->value;
-    }
+      if(p->value=="aster"){
+	i = p->value;
+      }
 #endif /* HAVE_ASTER */
 #ifdef HAVE_EUROPLEXUS
-    if((p->value=="europlexus")||(p->value=="epx")){
-      i = p->value;
-    }
+      if((p->value=="europlexus")||(p->value=="epx")){
+	i = p->value;
+      }
 #endif /* HAVE_EUROPLEXUS */
 #ifdef HAVE_ABAQUS
-    if((p->value=="abaqus")||(p->value=="abaqus_standard")||(p->value=="abaqus_umat")){
-      i = "abaqus";
-    }
-    if((p->value=="abaqus_explicit")||(p->value=="abaqus_vumat")){
-      i = "abaqus_explicit";
-    }
+      if((p->value=="abaqus")||(p->value=="abaqus_standard")||(p->value=="abaqus_umat")){
+	i = "abaqus";
+      }
+      if((p->value=="abaqus_explicit")||(p->value=="abaqus_vumat")){
+	i = "abaqus_explicit";
+      }
 #endif /* HAVE_ABAQUS */
 #ifdef HAVE_ANSYS
-    if((p->value=="ansys")||(p->value=="ansys_usermat")){
-      i = "ansys";
-    }
+      if((p->value=="ansys")||(p->value=="ansys_usermat")){
+	i = "ansys";
+      }
 #endif /* HAVE_ANSYS */
 #ifdef HAVE_CYRANO
-    if(p->value=="cyrano"){
-      i = p->value;
-    }
+      if(p->value=="cyrano"){
+	i = p->value;
+      }
 #endif /* HAVE_CYRANO */
-    if(i.empty()){
-      throw(std::runtime_error("SingleStructureSchemeParser::handleBehaviour: "
-			       "unknown interface '"+p->value+"'"));
-    }
-    ++p;
-    this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",p,
-			    this->tokens.end());
-    if(p->value==","){
-      this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",",",p,
-			       this->tokens.end());
-      w = p->value;
+      if(i.empty()){
+	throw(std::runtime_error("SingleStructureSchemeParser::handleBehaviour: "
+				 "unknown interface '"+p->value+"'"));
+      }
+      
       ++p;
+      this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",p,
+			      this->tokens.end());
+      if(p->value==","){
+	this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",",",p,
+				 this->tokens.end());
+	w = p->value;
+	++p;
+      }
+      this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",">",p,
+			       this->tokens.end());
     }
-    this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",">",p,
-			     this->tokens.end());
     const auto& l = this->readString(p,this->tokens.end());
     const auto& f = this->readString(p,this->tokens.end());
     this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",p,

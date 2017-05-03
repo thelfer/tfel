@@ -4,21 +4,30 @@ macro(mfront_query_test args mfront_file file)
   endif(NOT MFRONT_QUERY_TEST_ID)
   if(CMAKE_CONFIGURATION_TYPES)
     foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-      set(test "castem${test_arg}_${rm}_${conf}_mtest")
-      set(file "castem${test_arg}-${rm}-${conf}.mtest")
+      set(test "mfront-query-test-${MFRONT_QUERY_TEST_ID}_${conf}")
       get_property(MFrontQueryPath TARGET mfront-query PROPERTY LOCATION_${conf})
-      add_test(mfront-query-test-${MFRONT_QUERY_TEST_ID}_${conf}
+      add_test(${test}
 	${CMAKE_COMMAND}
 	-D TEST_PROGRAM=${MFrontQueryPath}
 	-D TEST_ARGS=${args}
 	-D MFRONT_FILE=${CMAKE_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
 	-D TEST_OUTPUT=mfront-query-result-${MFRONT_QUERY_TEST_ID}.txt
 	-D REFERENCE_FILE=${CMAKE_CURRENT_SOURCE_DIR}/references/${file}
-	-P ${CMAKE_CURRENT_SOURCE_DIR}/mfront-query.cmake )
+	-P ${CMAKE_CURRENT_SOURCE_DIR}/mfront-query.cmake
+	CONFIGURATIONS ${conf})
+	if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+          set_property(TEST ${test}
+            PROPERTY DEPENDS "mfront-query"
+	    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$ENV{PATH}")
+	elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+          set_property(TEST ${test}
+            PROPERTY DEPENDS "mfront-query")
+	endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
     get_property(MFrontQueryPath TARGET mfront-query PROPERTY LOCATION)
-    add_test(mfront-query-test-${MFRONT_QUERY_TEST_ID}_${conf}
+    set(test "mfront-query-test-${MFRONT_QUERY_TEST_ID}_${conf}")
+    add_test(${test}
       ${CMAKE_COMMAND}
       -D TEST_PROGRAM=${MFrontQueryPath}
       -D TEST_ARGS=${args}
@@ -26,6 +35,8 @@ macro(mfront_query_test args mfront_file file)
       -D TEST_OUTPUT=mfront-query-result-${MFRONT_QUERY_TEST_ID}.txt
       -D REFERENCE_FILE=${CMAKE_CURRENT_SOURCE_DIR}/references/${file}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/mfront-query.cmake )
+    set_property(TEST ${test}
+      PROPERTY DEPENDS "mfront-query")
   endif(CMAKE_CONFIGURATION_TYPES)
   # The previous definition with generators, which does not work !!
   #

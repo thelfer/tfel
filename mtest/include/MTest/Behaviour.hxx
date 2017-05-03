@@ -223,6 +223,56 @@ namespace mtest
     virtual void
     setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy) const  = 0;
     /*!
+     * \return true if the given variable has bounds
+     * \param[in] v: variable name
+     */
+    virtual bool hasBounds(const std::string&) const = 0;
+    /*!
+     * \return true if the given variable has a lower bound
+     * \param[in] v: variable name
+     */
+    virtual bool hasLowerBound(const std::string&) const = 0;
+    /*!
+     * \return true if the given variable has an upper bound
+     * \param[in] v: variable name
+     */
+    virtual bool hasUpperBound(const std::string&) const = 0;
+    /*!
+     * \return the lower bound of the given variable
+     * \param[in] v: variable name
+     */
+    virtual long double getLowerBound(const std::string&) const = 0;
+    /*!
+     * \return the upper bound of the given variable
+     * \param[in] v: variable name
+     */
+    virtual long double getUpperBound(const std::string&) const = 0;
+    /*!
+     * \return true if the given variable has physical bounds
+     * \param[in] v: variable name
+     */
+    virtual bool hasPhysicalBounds(const std::string&) const = 0;
+    /*!
+     * \return true if the given variable has a lower physical bound
+     * \param[in] v: variable name
+     */
+    virtual bool hasLowerPhysicalBound(const std::string&) const = 0;
+    /*!
+     * \return true if the given variable has a upper physical bound
+     * \param[in] v: variable name
+     */
+    virtual bool hasUpperPhysicalBound(const std::string&) const = 0;
+    /*!
+     * \return the lower bound of the given variable
+     * \param[in] v: variable name
+     */
+    virtual long double getLowerPhysicalBound(const std::string&) const = 0;
+    /*!
+     * \return the upper bound of the given variable
+     * \param[in] v: variable name
+     */
+    virtual long double getUpperPhysicalBound(const std::string&) const = 0;
+    /*!
      * \brief set the value of a parameter
      * \param[in] n : name of the parameter
      * \param[in] v : value

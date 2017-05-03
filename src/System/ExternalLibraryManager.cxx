@@ -12,6 +12,7 @@
  */
 
 #include<cstring>
+#include<fstream>
 #include<stdexcept>
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 #ifndef NOMINMAX
@@ -148,9 +149,9 @@ namespace tfel
     } // end of load_library
     
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-    static HINSTANCE__*
+    static std::pair<HINSTANCE__*,std::string>
 #else
-    static void *
+    static std::pair<void *,std::string>
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     try_open(const std::string& l){
       auto starts_with = [](const std::string& s1,
@@ -175,24 +176,77 @@ namespace tfel
 #else
       const char * const ext = ".so";
 #endif
+      auto ln  = l;
       auto lib = load_library(l);
 #if !(defined(_WIN32) || defined(_WIN64))
       if((lib==nullptr)&&(!starts_with(l,"lib"))){
-	lib = load_library("lib"+l);
+	ln  = "lib"+l;
+	lib = load_library(ln);
 	if(lib==nullptr){
 	  if(!ends_with(l,ext)){
-	    lib = load_library("lib"+l+ext);
+	    ln  = "lib"+l+ext;
+	    lib = load_library(ln);
 	  }
 	}
       }
 #endif
       if((lib==nullptr)&&(!ends_with(l,ext))){
-	lib = load_library(l+ext);
+	ln  = l+ext;
+	lib = load_library(ln);
       }
       // retrieving the initial error message
-      lib = load_library(l);
-      return lib;
-    } // end of load_library
+      if(lib==nullptr){
+	ln  = l;
+	lib = load_library(ln);
+      }
+      return {lib,ln};
+    } // end of try_open
+
+    std::string ExternalLibraryManager::getLibraryPath(const std::string& l){
+      auto throw_if = [](const bool c,const std::string& m){
+	if(c){throw(std::runtime_error("ExternalLibraryManager::"
+				       "getLibraryPath: "+m));}
+      };
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+      auto lib = this->loadLibrary(l);
+      char path[MAX_PARAM];
+      GetModuleFileNameA(lib,path,sizeof(path));
+      return std::string{path};
+#else
+      auto tokenize = [](const std::string& s,const char c){
+	std::vector<std::string> r;
+	std::string::size_type b = 0u;
+	std::string::size_type e = s.find_first_of(c, b);
+	while (std::string::npos != e || std::string::npos != b){
+	// Found a token, add it to the vector.
+	  r.push_back(s.substr(b, e - b));
+	  b = s.find_first_not_of(c, e);
+	  e = s.find_first_of(c, b);
+	}
+	return r;
+      };
+      auto exists = [](const std::string& f){
+	std::ifstream file(f);
+	return static_cast<bool>(file);
+      };
+      auto lib = try_open(l);
+      throw_if(lib.first==nullptr,"can't load library '"+l+"'");
+      // check if file exists
+      if(exists(lib.second)){
+	return lib.second;
+      }
+      // look in LD_LIBRARY_PATH
+      const auto ld = std::getenv("LD_LIBRARY_PATH");
+      throw_if(ld==nullptr,"can't find library '"+l+"'");
+      for(const auto& p : tokenize(ld,':')){
+	const auto lp = p+'/'+lib.second;
+	if(exists(lp)){
+	  return lp;
+	}
+      }
+      throw_if(true,"can't find library '"+l+"'");
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */      
+    } // end of ExternalLibraryManager::getLibraryPath
     
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
     HINSTANCE__*
@@ -202,20 +256,18 @@ namespace tfel
     ExternalLibraryManager::loadLibrary(const std::string& name,
 					const bool b)
     {
-      using namespace std;
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
 #else 
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */      
       auto p=this->librairies.find(name);
       if(p==librairies.end()){
 	// this library has not been 
-	auto lib = try_open(name);
+	auto r = try_open(name);
+	auto lib = r.first;
 	if((lib==nullptr)&&(!b)){
-	  string msg("ExternalLibraryManager::loadLibrary : library '");
-	  msg += name+"' could not be loaded, (";
-	  msg += getErrorMessage();
-	  msg += ")";
-	  throw(runtime_error(msg));
+	  throw(std::runtime_error("ExternalLibraryManager::loadLibrary:"
+				   " library '"+name+"' could not be loaded, "
+				   "("+getErrorMessage()+")"));
 	} else if((lib==nullptr)&&(b)){
 	  return lib;
 	}
@@ -233,8 +285,15 @@ namespace tfel
 	return ((s1.size()>=s2.size()) &&
 		(std::equal(s2.rbegin(),s2.rend(),s1.rbegin())));
       }; // end of ends_with
-      auto r = std::vector<std::string>{};
-      for(const auto& s : LibraryInformation(l).symbols()){
+      auto r  = std::vector<std::string>{};
+      auto lib = try_open(l);
+      if(lib.first==nullptr){
+      	throw(std::runtime_error("ExternalLibraryManager::getEntryPoints:"
+      				 " library '"+l+"' could not be loaded, "
+      				 "("+getErrorMessage()+")"));
+      }
+      auto pl = this->getLibraryPath(lib.second);
+      for(const auto& s : LibraryInformation(pl).symbols()){
 	if(ends_with(s,"_mfront_ept")){
 	  r.push_back(s.substr(0,s.size()-11));
 	}
@@ -607,8 +666,9 @@ namespace tfel
 					   const std::string& h,
 					   const std::string& n)
     {
-      const auto n1 = f+"_"+h+"_"+n+"_LowerBound";
-      const auto n2 = f+"_"+h+"_"+n+"_UpperBound";
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f+"_"+h+"_"+vn+"_LowerBound";
+      const auto n2 = f+"_"+h+"_"+vn+"_UpperBound";
       const auto n3 = f+"_"+n+"_LowerBound";
       const auto n4 = f+"_"+n+"_UpperBound";
       return ((this->contains(l,n1))||(this->contains(l,n2))||
@@ -620,8 +680,9 @@ namespace tfel
 					       const std::string& h,
 					       const std::string& n)
     {
-      const auto n1 = f+"_"+h+"_"+n+"_LowerBound";
-      const auto n2 = f+"_"+n+"_LowerBound";
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f+"_"+h+"_"+vn+"_LowerBound";
+      const auto n2 = f+"_"+vn+"_LowerBound";
       return ((this->contains(l,n1))||(this->contains(l,n2)));
     } // end of ExternalLibraryManager::hasLowerBound
 
@@ -630,8 +691,9 @@ namespace tfel
 					       const std::string& h,
 					       const std::string& n)
     {
-      const auto n1 = f+"_"+h+"_"+n+"_UpperBound";
-      const auto n2 = f+"_"+n+"_UpperBound";
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f+"_"+h+"_"+vn+"_UpperBound";
+      const auto n2 = f+"_"+vn+"_UpperBound";
       return ((this->contains(l,n1))||(this->contains(l,n2)));
     } // end of ExternalLibraryManager::hasUpperBound
 
@@ -641,14 +703,15 @@ namespace tfel
 						      const std::string& n)
     {
       const auto lib = this->loadLibrary(l);
-      const auto n1 = f+"_"+h+"_"+n+"_LowerBound";
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f+"_"+h+"_"+vn+"_LowerBound";
       if(this->contains(l,n1)){
 	return tfel_getLongDouble(lib,n1.c_str());
       }
-      const auto n2 = f+"_"+n+"_LowerBound";
+      const auto n2 = f+"_"+vn+"_LowerBound";
       if(!this->contains(l,n2)){
 	throw(std::runtime_error("ExternalLibraryManager::getLowerBound: "
-				 "no lower bound associated to variable '"+n+"'"));
+				 "no lower bound associated to variable '"+vn+"'"));
       }
       return tfel_getLongDouble(lib,n2.c_str());
     } // end of ExternalLibraryManager::getLowerBound
@@ -659,14 +722,15 @@ namespace tfel
 						      const std::string& n)
     {
       const auto lib = this->loadLibrary(l);
-      const auto n1 = f+"_"+h+"_"+n+"_UpperBound";
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f+"_"+h+"_"+vn+"_UpperBound";
       if(this->contains(l,n1)){
 	return tfel_getLongDouble(lib,n1.c_str());
       }
-      const auto n2 = f+"_"+n+"_UpperBound";
+      const auto n2 = f+"_"+vn+"_UpperBound";
       if(!this->contains(l,n2)){
 	throw(std::runtime_error("ExternalLibraryManager::getUpperBound: "
-				 "no upper bound associated to variable '"+n+"'"));
+				 "no upper bound associated to variable '"+vn+"'"));
       }
       return tfel_getLongDouble(lib,n2.c_str());
     } // end of ExternalLibraryManager::getUpperBound
@@ -676,10 +740,11 @@ namespace tfel
 						   const std::string& h,
 						   const std::string& n)
     {
-      const auto n1 = f+"_"+h+"_"+n+"_LowerPhysicalBound";
-      const auto n2 = f+"_"+h+"_"+n+"_UpperPhysicalBound";
-      const auto n3 = f+"_"+n+"_LowerPhysicalBound";
-      const auto n4 = f+"_"+n+"_UpperPhysicalBound";
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f+"_"+h+"_"+vn+"_LowerPhysicalBound";
+      const auto n2 = f+"_"+h+"_"+vn+"_UpperPhysicalBound";
+      const auto n3 = f+"_"+vn+"_LowerPhysicalBound";
+      const auto n4 = f+"_"+vn+"_UpperPhysicalBound";
       return ((this->contains(l,n1))||(this->contains(l,n2))||
 	      (this->contains(l,n3))||(this->contains(l,n4)));
     } // end of ExternalLibraryManager::hasPhysicalBounds
@@ -689,8 +754,9 @@ namespace tfel
 						       const std::string& h,
 						       const std::string& n)
     {
-      const auto n1 = f+"_"+h+"_"+n+"_LowerPhysicalBound";
-      const auto n2 = f+"_"+n+"_LowerPhysicalBound";
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f+"_"+h+"_"+vn+"_LowerPhysicalBound";
+      const auto n2 = f+"_"+vn+"_LowerPhysicalBound";
       return ((this->contains(l,n1))||(this->contains(l,n2)));
     } // end of ExternalLibraryManager::hasLowerPhysicalBound
 
@@ -699,8 +765,9 @@ namespace tfel
 						       const std::string& h,
 						       const std::string& n)
     {
-      const auto n1 = f+"_"+h+"_"+n+"_UpperPhysicalBound";
-      const auto n2 = f+"_"+n+"_UpperPhysicalBound";
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f+"_"+h+"_"+vn+"_UpperPhysicalBound";
+      const auto n2 = f+"_"+vn+"_UpperPhysicalBound";
       return ((this->contains(l,n1))||(this->contains(l,n2)));
     } // end of ExternalLibraryManager::hasUpperPhysicalBound
 
@@ -710,14 +777,15 @@ namespace tfel
 							      const std::string& n)
     {
       const auto lib = this->loadLibrary(l);
-      const auto n1 = f+"_"+h+"_"+n+"_LowerPhysicalBound";
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f+"_"+h+"_"+vn+"_LowerPhysicalBound";
       if(this->contains(l,n1)){
 	return tfel_getLongDouble(lib,n1.c_str());
       }
-      const auto n2 = f+"_"+n+"_LowerPhysicalBound";
+      const auto n2 = f+"_"+vn+"_LowerPhysicalBound";
       if(!this->contains(l,n2)){
 	throw(std::runtime_error("ExternalLibraryManager::getLowerPhysicalBound: "
-				 "no physical lower bound associated to variable '"+n+"'"));
+				 "no physical lower bound associated to variable '"+vn+"'"));
       }
       return tfel_getLongDouble(lib,n2.c_str());
     } // end of ExternalLibraryManager::getLowerPhysicalBound
@@ -728,14 +796,15 @@ namespace tfel
 							      const std::string& n)
     {
       const auto lib = this->loadLibrary(l);
-      const auto n1 = f+"_"+h+"_"+n+"_UpperPhysicalBound";
+      const auto vn = decomposeVariableName(n);
+      const auto n1 = f+"_"+h+"_"+vn+"_UpperPhysicalBound";
       if(this->contains(l,n1)){
 	return tfel_getLongDouble(lib,n1.c_str());
       }
-      const auto n2 = f+"_"+n+"_UpperPhysicalBound";
+      const auto n2 = f+"_"+vn+"_UpperPhysicalBound";
       if(!this->contains(l,n2)){
 	throw(std::runtime_error("ExternalLibraryManager::getUpperPhysicalBound: "
-				 "no physical upper bound associated to variable '"+n+"'"));
+				 "no physical upper bound associated to variable '"+vn+"'"));
       }
       return tfel_getLongDouble(lib,n2.c_str());
     } // end of ExternalLibraryManager::getUpperPhysicalBound
@@ -744,16 +813,12 @@ namespace tfel
     ExternalLibraryManager::getCastemFunctionNumberOfVariables(const std::string& l,
 							       const std::string& f)
     {
-      using namespace std;
-      int res;
       const auto lib = this->loadLibrary(l);
-      res = ::tfel_getCastemFunctionNumberOfVariables(lib,f.c_str());
+      const auto res = ::tfel_getCastemFunctionNumberOfVariables(lib,f.c_str());
       if(res<0){
-	string msg("ExternalLibraryManager::getCastemFunctionNumberOfVariables : ");
-	msg += " number of variables could not be read (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
+	throw(std::runtime_error("ExternalLibraryManager::getCastemFunctionNumberOfVariables: "
+				 "number of variables could not be read ("
+				 +getErrorMessage()+")"));
       }
       return static_cast<unsigned short>(res);
     }
@@ -929,9 +994,8 @@ namespace tfel
       }
     } // end of ExternalLibraryManager::getCastemFunctionVariables
 
-    CyranoFctPtr
-    ExternalLibraryManager::getCyranoFunction(const std::string& l,
-					      const std::string& f)
+    CyranoFctPtr ExternalLibraryManager::getCyranoFunction(const std::string& l,
+							   const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
@@ -1105,9 +1169,8 @@ namespace tfel
     ExternalLibraryManager::checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm(const std::string& l,
 										const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      int b = ::tfel_getBool(lib,(f+"_UsesGenericPlaneStressAlgorithm").c_str());
+      const auto b = ::tfel_getBool(lib,(f+"_UsesGenericPlaneStressAlgorithm").c_str());
       if(b==-1){
 	return false;
       }
@@ -1123,7 +1186,7 @@ namespace tfel
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      int u = ::tfel_getUnsignedShort(lib,(f+"_BehaviourType").c_str());
+      const auto u = ::tfel_getUnsignedShort(lib,(f+"_BehaviourType").c_str());
       if(u==-1){
 	string msg("ExternalLibraryManager::getUMATBehaviourType: ");
 	msg += " behaviour type could not be read ("+getErrorMessage()+")";
@@ -1137,7 +1200,7 @@ namespace tfel
 						      const std::string& f)
     {
       const auto lib = this->loadLibrary(l);
-      int u = ::tfel_getUnsignedShort(lib,(f+"_BehaviourKinematic").c_str());
+      const auto u = ::tfel_getUnsignedShort(lib,(f+"_BehaviourKinematic").c_str());
       if(u==-1){
 	std::string msg("ExternalLibraryManager::getUMATBehaviourKinematic : ");
 	msg += " behaviour type could not be read ("+getErrorMessage()+")";
@@ -1152,7 +1215,7 @@ namespace tfel
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      int u = ::tfel_getUnsignedShort(lib,(f+"_SymmetryType").c_str());
+      const auto u = ::tfel_getUnsignedShort(lib,(f+"_SymmetryType").c_str());
       if(u==-1){
 	string msg("ExternalLibraryManager::getUMATSymmetryType : ");
 	msg += " symmetry type could not be read (";
@@ -1169,7 +1232,7 @@ namespace tfel
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      int u = ::tfel_getUnsignedShort(lib,(f+"_ElasticSymmetryType").c_str());
+      const auto u = ::tfel_getUnsignedShort(lib,(f+"_ElasticSymmetryType").c_str());
       if(u==-1){
 	string msg("ExternalLibraryManager::getUMATElasticSymmetryType : ");
 	msg += " elastic symmetry type could not be read (";
@@ -1310,13 +1373,12 @@ namespace tfel
       return fct;
     }
 
-    CFunction0Ptr
-    ExternalLibraryManager::getCFunction0(const std::string& l,
-					  const std::string& f)
+    CFunction0Ptr ExternalLibraryManager::getCFunction0(const std::string& l,
+							const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction0Ptr fct = ::tfel_getCFunction0(lib,f.c_str());
+      auto fct = ::tfel_getCFunction0(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction0 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1327,13 +1389,12 @@ namespace tfel
       return fct;
     }
 
-    CFunction1Ptr
-    ExternalLibraryManager::getCFunction1(const std::string& l,
-					  const std::string& f)
+    CFunction1Ptr ExternalLibraryManager::getCFunction1(const std::string& l,
+							const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction1Ptr fct = ::tfel_getCFunction1(lib,f.c_str());
+      auto fct = ::tfel_getCFunction1(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction1 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1344,13 +1405,12 @@ namespace tfel
       return fct;
     }
 
-    CFunction2Ptr
-    ExternalLibraryManager::getCFunction2(const std::string& l,
-					  const std::string& f)
+    CFunction2Ptr ExternalLibraryManager::getCFunction2(const std::string& l,
+							const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction2Ptr fct = ::tfel_getCFunction2(lib,f.c_str());
+      auto fct = ::tfel_getCFunction2(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction2 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1361,13 +1421,12 @@ namespace tfel
       return fct;
     }
 
-    CFunction3Ptr
-    ExternalLibraryManager::getCFunction3(const std::string& l,
-					  const std::string& f)
+    CFunction3Ptr ExternalLibraryManager::getCFunction3(const std::string& l,
+							const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction3Ptr fct = ::tfel_getCFunction3(lib,f.c_str());
+      auto fct = ::tfel_getCFunction3(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction3 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1378,9 +1437,8 @@ namespace tfel
       return fct;
     }
 
-    CFunction4Ptr
-    ExternalLibraryManager::getCFunction4(const std::string& l,
-					  const std::string& f)
+    CFunction4Ptr ExternalLibraryManager::getCFunction4(const std::string& l,
+							const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
@@ -1395,13 +1453,12 @@ namespace tfel
       return fct;
     }
 
-    CFunction5Ptr
-    ExternalLibraryManager::getCFunction5(const std::string& l,
-					  const std::string& f)
+    CFunction5Ptr ExternalLibraryManager::getCFunction5(const std::string& l,
+							const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction5Ptr fct = ::tfel_getCFunction5(lib,f.c_str());
+      auto fct = ::tfel_getCFunction5(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction5 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1412,13 +1469,12 @@ namespace tfel
       return fct;
     }
 
-    CFunction6Ptr
-    ExternalLibraryManager::getCFunction6(const std::string& l,
-					  const std::string& f)
+    CFunction6Ptr ExternalLibraryManager::getCFunction6(const std::string& l,
+							const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction6Ptr fct = ::tfel_getCFunction6(lib,f.c_str());
+      auto fct = ::tfel_getCFunction6(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction6 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1429,13 +1485,12 @@ namespace tfel
       return fct;
     }
 
-    CFunction7Ptr
-    ExternalLibraryManager::getCFunction7(const std::string& l,
-					  const std::string& f)
+    CFunction7Ptr ExternalLibraryManager::getCFunction7(const std::string& l,
+							const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction7Ptr fct = ::tfel_getCFunction7(lib,f.c_str());
+      auto fct = ::tfel_getCFunction7(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction7 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1446,13 +1501,12 @@ namespace tfel
       return fct;
     }
 
-    CFunction8Ptr
-    ExternalLibraryManager::getCFunction8(const std::string& l,
-					  const std::string& f)
+    CFunction8Ptr ExternalLibraryManager::getCFunction8(const std::string& l,
+							const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction8Ptr fct = ::tfel_getCFunction8(lib,f.c_str());
+      auto fct = ::tfel_getCFunction8(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction8 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1463,13 +1517,12 @@ namespace tfel
       return fct;
     }
 
-    CFunction9Ptr
-    ExternalLibraryManager::getCFunction9(const std::string& l,
-					  const std::string& f)
+    CFunction9Ptr ExternalLibraryManager::getCFunction9(const std::string& l,
+							const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction9Ptr fct = ::tfel_getCFunction9(lib,f.c_str());
+      auto fct = ::tfel_getCFunction9(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction9 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1480,13 +1533,12 @@ namespace tfel
       return fct;
     }
 
-    CFunction10Ptr
-    ExternalLibraryManager::getCFunction10(const std::string& l,
-					   const std::string& f)
+    CFunction10Ptr ExternalLibraryManager::getCFunction10(const std::string& l,
+							  const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction10Ptr fct = ::tfel_getCFunction10(lib,f.c_str());
+      auto fct = ::tfel_getCFunction10(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction10 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1497,13 +1549,12 @@ namespace tfel
       return fct;
     }
 
-    CFunction11Ptr
-    ExternalLibraryManager::getCFunction11(const std::string& l,
-					   const std::string& f)
+    CFunction11Ptr ExternalLibraryManager::getCFunction11(const std::string& l,
+							  const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction11Ptr fct = ::tfel_getCFunction11(lib,f.c_str());
+      auto fct = ::tfel_getCFunction11(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction11 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1514,13 +1565,12 @@ namespace tfel
       return fct;
     }
 
-    CFunction12Ptr
-    ExternalLibraryManager::getCFunction12(const std::string& l,
-					   const std::string& f)
+    CFunction12Ptr ExternalLibraryManager::getCFunction12(const std::string& l,
+							  const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction12Ptr fct = ::tfel_getCFunction12(lib,f.c_str());
+      auto fct = ::tfel_getCFunction12(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction12 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1531,13 +1581,12 @@ namespace tfel
       return fct;
     }
 
-    CFunction13Ptr
-    ExternalLibraryManager::getCFunction13(const std::string& l,
-					   const std::string& f)
+    CFunction13Ptr ExternalLibraryManager::getCFunction13(const std::string& l,
+							  const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction13Ptr fct = ::tfel_getCFunction13(lib,f.c_str());
+      auto fct = ::tfel_getCFunction13(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction13 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1548,13 +1597,12 @@ namespace tfel
       return fct;
     }
 
-    CFunction14Ptr
-    ExternalLibraryManager::getCFunction14(const std::string& l,
-					   const std::string& f)
+    CFunction14Ptr ExternalLibraryManager::getCFunction14(const std::string& l,
+							  const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction14Ptr fct = ::tfel_getCFunction14(lib,f.c_str());
+      auto fct = ::tfel_getCFunction14(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction14 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1565,13 +1613,12 @@ namespace tfel
       return fct;
     }
 
-    CFunction15Ptr
-    ExternalLibraryManager::getCFunction15(const std::string& l,
-					   const std::string& f)
+    CFunction15Ptr ExternalLibraryManager::getCFunction15(const std::string& l,
+							  const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction15Ptr fct = ::tfel_getCFunction15(lib,f.c_str());
+      auto fct = ::tfel_getCFunction15(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getCFunction15 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1582,13 +1629,12 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction0Ptr
-    ExternalLibraryManager::getFortranFunction0(const std::string& l,
-						const std::string& f)
+    FortranFunction0Ptr ExternalLibraryManager::getFortranFunction0(const std::string& l,
+								    const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction0Ptr fct = ::tfel_getFortranFunction0(lib,f.c_str());
+      auto fct = ::tfel_getFortranFunction0(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction0 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1599,13 +1645,12 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction1Ptr
-    ExternalLibraryManager::getFortranFunction1(const std::string& l,
-						const std::string& f)
+    FortranFunction1Ptr ExternalLibraryManager::getFortranFunction1(const std::string& l,
+								    const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction1Ptr fct = ::tfel_getFortranFunction1(lib,f.c_str());
+      auto fct = ::tfel_getFortranFunction1(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction1 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1616,13 +1661,12 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction2Ptr
-    ExternalLibraryManager::getFortranFunction2(const std::string& l,
-						const std::string& f)
+    FortranFunction2Ptr ExternalLibraryManager::getFortranFunction2(const std::string& l,
+								    const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction2Ptr fct = ::tfel_getFortranFunction2(lib,f.c_str());
+      auto fct = ::tfel_getFortranFunction2(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction2 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1633,13 +1677,12 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction3Ptr
-    ExternalLibraryManager::getFortranFunction3(const std::string& l,
-						const std::string& f)
+    FortranFunction3Ptr ExternalLibraryManager::getFortranFunction3(const std::string& l,
+								    const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction3Ptr fct = ::tfel_getFortranFunction3(lib,f.c_str());
+      auto fct = ::tfel_getFortranFunction3(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction3 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1650,9 +1693,8 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction4Ptr
-    ExternalLibraryManager::getFortranFunction4(const std::string& l,
-						const std::string& f)
+    FortranFunction4Ptr ExternalLibraryManager::getFortranFunction4(const std::string& l,
+								    const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
@@ -1667,13 +1709,12 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction5Ptr
-    ExternalLibraryManager::getFortranFunction5(const std::string& l,
-						const std::string& f)
+    FortranFunction5Ptr ExternalLibraryManager::getFortranFunction5(const std::string& l,
+								    const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction5Ptr fct = ::tfel_getFortranFunction5(lib,f.c_str());
+      auto fct = ::tfel_getFortranFunction5(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction5 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1684,13 +1725,12 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction6Ptr
-    ExternalLibraryManager::getFortranFunction6(const std::string& l,
-						const std::string& f)
+    FortranFunction6Ptr ExternalLibraryManager::getFortranFunction6(const std::string& l,
+								    const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction6Ptr fct = ::tfel_getFortranFunction6(lib,f.c_str());
+      auto fct = ::tfel_getFortranFunction6(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction6 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1701,13 +1741,12 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction7Ptr
-    ExternalLibraryManager::getFortranFunction7(const std::string& l,
-						const std::string& f)
+    FortranFunction7Ptr ExternalLibraryManager::getFortranFunction7(const std::string& l,
+								    const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction7Ptr fct = ::tfel_getFortranFunction7(lib,f.c_str());
+      auto fct = ::tfel_getFortranFunction7(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction7 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1718,13 +1757,12 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction8Ptr
-    ExternalLibraryManager::getFortranFunction8(const std::string& l,
-						const std::string& f)
+    FortranFunction8Ptr ExternalLibraryManager::getFortranFunction8(const std::string& l,
+								    const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction8Ptr fct = ::tfel_getFortranFunction8(lib,f.c_str());
+      auto fct = ::tfel_getFortranFunction8(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction8 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1735,13 +1773,12 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction9Ptr
-    ExternalLibraryManager::getFortranFunction9(const std::string& l,
-						const std::string& f)
+    FortranFunction9Ptr ExternalLibraryManager::getFortranFunction9(const std::string& l,
+								    const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction9Ptr fct = ::tfel_getFortranFunction9(lib,f.c_str());
+      auto fct = ::tfel_getFortranFunction9(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction9 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1752,13 +1789,12 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction10Ptr
-    ExternalLibraryManager::getFortranFunction10(const std::string& l,
-						 const std::string& f)
+    FortranFunction10Ptr ExternalLibraryManager::getFortranFunction10(const std::string& l,
+								      const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction10Ptr fct = ::tfel_getFortranFunction10(lib,f.c_str());
+      auto fct = ::tfel_getFortranFunction10(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction10 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1769,13 +1805,12 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction11Ptr
-    ExternalLibraryManager::getFortranFunction11(const std::string& l,
-						 const std::string& f)
+    FortranFunction11Ptr ExternalLibraryManager::getFortranFunction11(const std::string& l,
+								      const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction11Ptr fct = ::tfel_getFortranFunction11(lib,f.c_str());
+      auto fct = ::tfel_getFortranFunction11(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction11 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1786,13 +1821,12 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction12Ptr
-    ExternalLibraryManager::getFortranFunction12(const std::string& l,
-						 const std::string& f)
+    FortranFunction12Ptr ExternalLibraryManager::getFortranFunction12(const std::string& l,
+								      const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction12Ptr fct = ::tfel_getFortranFunction12(lib,f.c_str());
+      auto fct = ::tfel_getFortranFunction12(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction12 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1803,13 +1837,12 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction13Ptr
-    ExternalLibraryManager::getFortranFunction13(const std::string& l,
-						 const std::string& f)
+    FortranFunction13Ptr ExternalLibraryManager::getFortranFunction13(const std::string& l,
+								      const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction13Ptr fct = ::tfel_getFortranFunction13(lib,f.c_str());
+      auto fct = ::tfel_getFortranFunction13(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction13 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1820,13 +1853,12 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction14Ptr
-    ExternalLibraryManager::getFortranFunction14(const std::string& l,
-						 const std::string& f)
+    FortranFunction14Ptr ExternalLibraryManager::getFortranFunction14(const std::string& l,
+								      const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction14Ptr fct = ::tfel_getFortranFunction14(lib,f.c_str());
+      auto fct = ::tfel_getFortranFunction14(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction14 : ");
 	msg += " could not load function '"+f+"' (";
@@ -1837,13 +1869,12 @@ namespace tfel
       return fct;
     }
 
-    FortranFunction15Ptr
-    ExternalLibraryManager::getFortranFunction15(const std::string& l,
-						 const std::string& f)
+    FortranFunction15Ptr ExternalLibraryManager::getFortranFunction15(const std::string& l,
+								      const std::string& f)
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction15Ptr fct = ::tfel_getFortranFunction15(lib,f.c_str());
+      auto fct = ::tfel_getFortranFunction15(lib,f.c_str());
       if(fct==nullptr){
 	string msg("ExternalLibraryManager::getFortranFunction15 : ");
 	msg += " could not load function '"+f+"' (";

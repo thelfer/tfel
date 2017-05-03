@@ -61,6 +61,7 @@ namespace tfel{
       };
       //
       auto file = std::make_shared<std::ifstream>(f);
+      throw_if(!(*file),"no library named '"+f+"' found");
       // 
       if (details::elf_info32::parsing_supported(*file)) {
 	if (b) { throw_if_in_windows(); throw_if_in_macos(); }

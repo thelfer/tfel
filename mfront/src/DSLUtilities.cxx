@@ -53,9 +53,9 @@ namespace mfront
     if(t==MATERIALPROPERTY){
       out << "MFRONT_SHAREDOBJ unsigned short " << n << "_mfront_mkt = 0u;\n\n";
     } else if(t==BEHAVIOUR){
-      out << "MFRONT_SHAREDOBJ unsigned short " << n << "_mfront_mkt = 2u;\n\n";
+      out << "MFRONT_SHAREDOBJ unsigned short " << n << "_mfront_mkt = 1u;\n\n";
     } else if(t==MODEL){
-      out << "MFRONT_SHAREDOBJ unsigned short " << n << "_mfront_mkt = 3u;\n\n";
+      out << "MFRONT_SHAREDOBJ unsigned short " << n << "_mfront_mkt = 2u;\n\n";
     } else {
       throw(std::runtime_error("writeMaterialKnowledgeTypeSymbol: "
 			       "internal error, (unsupported material knowledge type)"));

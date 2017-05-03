@@ -64,10 +64,20 @@ The standard library suffix is:
 - `.dylib` for `Apple` `MacOs` plateforms.
 - `.so` on all other supported systems.
 
+##### Retrieving the path of a library
+
+The `getLibraryPath` method returns the path to a shared library:
+
+- The method relies on the `GetModuleFileNameA` function on `Windows`
+  which is reliable.
+- On `Unix`, no portable way exists, so the method simply looks if the
+  library can be loaded. If so, the method look if the file exists
+  locally or in a directory listed in the `LD_LIBRARY_PATH` variable. 
+
 ##### Better handling of behaviour parameters
 
-The `ExternalLibraryManager` class has two additional methods for a
-better handling of behaviour parameters:
+The `ExternalLibraryManager` class has several new methods for better
+handling of behaviours' parameters:
 
 - The `getUMATParametersNames` returns the list of parameters.
 - The `getUMATParametersTypes` returns a list of integers which gives
@@ -76,6 +86,79 @@ better handling of behaviour parameters:
     - 0: floatting point value
     - 1: integer value
     - 2: unsigned short value
+- The `getRealParameterDefaultValue`,
+  `getIntegerParameterDefaultValue`, and
+  `getUnsignedShortParameterDefaultValue` methods allow retrieving the
+  default value of a parameter.
+
+#### Retrieving bounds values
+
+The `ExternalLibraryManager` class has several new methods for better
+handling of a behaviour' variable bounds:
+
+- The `hasBounds`,`hasLowerBound` and `hasUpperBound` allow querying
+  about the existence of bounds for a given variable.
+- The `getLowerBound` method returns the lower bound a variable, if defined.
+- The `getUpperBound` method returns the upper bound a variable, if defined.
+
+#### Retrieving physical bounds values
+
+The `ExternalLibraryManager` class has several new methods for better
+handling of a behaviour' variable bounds:
+
+- The `hasPhysicalBounds`,`hasLowerPhysicalBound` and
+  `hasUpperPhysicalBound` allow querying about the existence of bounds
+  for a given variable.
+- The `getLowerPhysicalBound` method returns the physical lower bound
+  a variable, if defined.
+- The `getUpperPhysicalBound` method returns the physical upper bound
+  a variable, if defined.
+
+##### Retrieving all mfront generated entry points and associated information
+
+The `getEntryPoints` method returns a list containing all mfront
+generated entry points. Those can be functions or classes depending on
+the interface's needs.
+
+The `getMaterialKnowledgeType` allows retrieving the material
+knowledge type associated with and entry point. The returned value has the following meaning:
+
+- 0: Material property.
+- 1: Behaviour.
+- 2: Model.
+
+The `getInterface` method allows retrieving the interface of used to
+generate an entry point.
+
+The following code retrieves all the behaviours generated with the
+`aster` interface in the `libAsterBehaviour.so` library:
+
+~~~~{.cpp}
+auto ab = std::vector<std::string>{};
+const auto l = "AsterBehaviour";
+auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+for(const auto& e : elm.getEntryPoints(l)){
+  if((elm.getMaterialKnowledgeType(l,e)==1u)&&(elm.getInterface(l,e)=="Aster")){
+	ab.push_back(e);
+  }
+}
+~~~~
+
+Note that we did not mention the prefix and the suffix of the
+library. The library path is searched through the `getLibraryPath`
+method.
+
+The equivalent `python` code is the following:
+
+~~~~{.python}
+ab  = []
+l   = 'AsterBehaviour';
+elm = ExternalLibraryManager.getExternalLibraryManager();
+for e in elm.getEntryPoints(l):
+	if ((elm.getMaterialKnowledgeType(l,e)==1) and
+		(elm.getInterface(l,e)=='Aster')):
+		ab.append(e)
+~~~~
 
 ## TFEL/Math
 
@@ -650,11 +733,133 @@ required by the interface for the considered modelling hypothesis. The
   parameters.
 - `getUnsignedShortParametersNames`: Return the names of the unsigned
   short parameters.
+- The `getRealParameterDefaultValue`,
+  `getIntegerParameterDefaultValue` and
+  `getUnsignedShortParameterDefaultValue` methods can be used to
+  retrieve the default value of a parameter.
+- The `hasBounds` method returns true if the given variable has
+  bounds.
+- The `hasLowerBound` method returns true if the given variable has a
+  lower bound.
+- The `hasUpperBound` method hasUpperBound returns true if the given
+  variable has an upper bound.
+- The `getLowerBound` method returns the lower bound of the given
+  variable.
+- The `getUpperBound` method returns the uppert bound of the given
+  variable.
+- The `hasPhysicalBounds` methodreturns true if the given variable has
+  physical bounds.
+- The `hasLowerPhysicalBound` method returns true if the given
+  variable has a physical lower bound.
+- The `hasUpperPhysicalBound` method returns true if the given
+  variable has a physical upper bound.
+- The `getLowerPhysicalBound` method returns the lower bound of the
+  given variable.
+- The `getUpperPhysicalBound` method returns the upper bound of the
+  given variable.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/47/>
 
+Here is an example of the usage of the `Behaviour` class in `python`:
+
+~~~~{.python}
+import mtest
+b= mtest.Behaviour('AsterBehaviour','asternorton','Tridimensional');
+for p in b.getParametersNames():
+    print('- '+p+': '+str(b.getRealParameterDefaultValue(p)))
+for p in b.getIntegerParametersNames():
+    print('- '+p+': '+str(b.getIntegerParameterDefaultValue(p)))
+for p in b.getUnsignedShortParametersNames():
+	print('- '+p+': '+str(b.getUnsignedShortParameterDefaultValue(p)))
+~~~~
+
+## Ticket #46: Improved `python` bindings for the `mfront::BehaviourDescription` class
+
+The `python` bindings of the `mfront::BehaviourDescription` now gives
+access to the parameters default values, and information about a
+variable standard or physical bounds (type, range).
+
+Here is an example of its usage:
+
+~~~~{.python}
+from tfel.material import ModellingHypothesis
+import mfront
+
+def printBounds(n,b):
+    print('Bounds of variable \''+n+'\':')
+    if((b.boundsType==mfront.VariableBoundsTypes.LOWER) or
+       (b.boundsType==mfront.VariableBoundsTypes.LOWERANDUPPER)):
+        print('- lower bound: '+str(b.lowerBound))
+    if((b.boundsType==mfront.VariableBoundsTypes.UPPER) or
+       (b.boundsType==mfront.VariableBoundsTypes.LOWERANDUPPER)):
+        print('- upper bound: '+str(b.upperBound))
+        print('')
+
+dsl = mfront.getDSL('Norton.mfront')
+dsl.analyseFile('Norton.mfront',[])
+
+# behaviour description
+bd = dsl.getBehaviourDescription()
+
+if(bd.getSymmetryType()==mfront.BehaviourSymmetryType.ISOTROPIC):
+    print 'Isotropic behaviour\n'
+else:
+    print 'Orthropic behaviour\n'
+
+if(bd.getElasticSymmetryType()==mfront.BehaviourSymmetryType.ISOTROPIC):
+    print 'Isotropic elasticity\n'
+else:
+    print 'Orthropic elasticity\n'
+
+# a deeper look at the 3D case
+d = bd.getBehaviourData(ModellingHypothesis.TRIDIMENSIONAL)
+for p in d.getParameters():
+    if(p.arraySize==1):
+        if(p.hasBounds()):
+            printBounds(p.name,p.getBounds())
+    else:
+        for i in range(p.arraySize):
+            if(p.hasBounds(i)):
+				printBounds(p.name+'['+str(i)+']',p.getBounds(i))
+~~~~
+				
 ## Ticket #48: Add the ability to retrieve bounds for material properties and parameters from the `mtest::Behaviour` class
 
+The following methods were added to the `mtest.Behaviour` class:
+- The `hasBounds` method returns true if the given variable has
+  bounds.
+- The `hasLowerBound` method returns true if the given variable has a
+  lower bound.
+- The `hasUpperBound` method hasUpperBound returns true if the given
+  variable has an upper bound.
+- The `getLowerBound` method returns the lower bound of the given
+  variable.
+- The `getUpperBound` method returns the uppert bound of the given
+  variable.
+- The `hasPhysicalBounds` methodreturns true if the given variable has
+  physical bounds.
+- The `hasLowerPhysicalBound` method returns true if the given
+  variable has a physical lower bound.
+- The `hasUpperPhysicalBound` method returns true if the given
+  variable has a physical upper bound.
+- The `getLowerPhysicalBound` method returns the lower bound of the
+  given variable.
+- The `getUpperPhysicalBound` method returns the upper bound of the
+  given variable.
+
+Here is an example:
+
+~~~~{.python}
+from mtest import Behaviour
+
+b = Behaviour('AsterBehaviour','asternorton','Tridimensional')
+
+for p in b.getParametersNames():
+    if b.hasLowerBound(p):
+        print(p+" lower bound: "+str(b.getLowerBound(p)))
+    if b.hasUpperBound(p):
+        print(p+" lower bound: "+str(b.getUpperBound(p)))
+~~~~
 For more details, see: <https://sourceforge.net/p/tfel/tickets/48/>
 
 ## Ticket #49: Add the ability to retrieve the symmetry of the behaviour and the symmetry of the elastic behaviour from `mfront-query`
