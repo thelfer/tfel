@@ -27,7 +27,7 @@ namespace tfel{
      * \brief An class used to retrieve information about cubic slip
      * systems.
      */
-    struct TFELUTILITIES_VISIBILITY_EXPORT CubicSlipSystems
+    struct TFELMATERIAL_VISIBILITY_EXPORT CubicSlipSystems
     {
       //! a simple alias
       using vec3d = tfel::math::tvector<3u,int>;
