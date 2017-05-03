@@ -526,21 +526,21 @@ namespace mtest
   double UmatBehaviourBase::getRealParameterDefaultValue(const std::string& p) const
   {
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
-    elm.getRealParameterDefaultValue(this->library,this->behaviour,this->hypothesis,p);
+    return elm.getRealParameterDefaultValue(this->library,this->behaviour,this->hypothesis,p);
   }
 
   int UmatBehaviourBase::getIntegerParameterDefaultValue(const std::string& p) const
   {
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
-    elm.getIntegerParameterDefaultValue(this->library,this->behaviour,
-					this->hypothesis,p);
+    return elm.getIntegerParameterDefaultValue(this->library,this->behaviour,
+						this->hypothesis,p);
   }
 
   unsigned short
   UmatBehaviourBase::getUnsignedShortParameterDefaultValue(const std::string& p) const
   {
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
-    elm.getUnsignedShortParameterDefaultValue(this->library,this->behaviour,
+    return elm.getUnsignedShortParameterDefaultValue(this->library,this->behaviour,
 					      this->hypothesis,p);
   }
   
