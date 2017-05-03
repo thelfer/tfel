@@ -210,7 +210,7 @@ namespace tfel
       };
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       auto lib = this->loadLibrary(l);
-      char path[MAX_PARAM];
+      char path[MAX_PATH];
       GetModuleFileNameA(lib,path,sizeof(path));
       return std::string{path};
 #else
