@@ -62,7 +62,7 @@ namespace mtest
 			  const Hypothesis h)
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("SingleStructureScheme::getBehaviour: "+m));}
+      if(c){throw(std::runtime_error("Behaviour::getBehaviour: "+m));}
     };
     auto check_no_parameters = [&throw_if,&d]{
       if(d.empty()){return;}
@@ -186,7 +186,7 @@ namespace mtest
       }
     }
 #endif
-    throw_if(b.get()==nullptr,"unknown interface '"+i+"'");
+    throw_if(b.get()==nullptr,"unknown interface '"+in+"'");
     return b;
   }
   
