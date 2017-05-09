@@ -172,13 +172,25 @@ namespace tfel
 #if (defined(macintosh) || defined(Macintosh) || \
      (defined(__APPLE__) && defined(__MACH__)))
       const char * const ext = ".dylib";
-#elif (defined(_WIN32) || defined(_WIN64))
+#elif (defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__))
       const char * const ext = ".dll";
 #else
       const char * const ext = ".so";
 #endif
       auto ln  = l;
       auto lib = load_library(l);
+#if defined(__CYGWIN__)
+      if((lib==nullptr)&&(!starts_with(l,"cyg"))){
+	ln  = "cyg"+l;
+	lib = load_library(ln);
+	if(lib==nullptr){
+	  if(!ends_with(l,ext)){
+	    ln  = "cyg"+l+ext;
+	    lib = load_library(ln);
+	  }
+	}
+      }
+#endif
 #if !(defined(_WIN32) || defined(_WIN64))
       if((lib==nullptr)&&(!starts_with(l,"lib"))){
 	ln  = "lib"+l;

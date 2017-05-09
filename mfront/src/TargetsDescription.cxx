@@ -77,7 +77,7 @@ namespace mfront{
     const auto p = std::find_if(b,e,c);
     if(p==e){
       const auto pr = LibraryDescription::getDefaultLibraryPrefix(this->system,
-								 this->libraryType);
+								  this->libraryType);
       const auto s  = LibraryDescription::getDefaultLibrarySuffix(this->system,
 								  this->libraryType);
       this->libraries.emplace_back(n,pr,s,this->libraryType);

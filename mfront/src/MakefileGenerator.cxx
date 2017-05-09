@@ -215,7 +215,7 @@ namespace mfront{
       } else {
 	m << "-O2 $(shell " << tfel_config << " --compiler-flags)";
       }
-      if(o.sys=="win32"){
+      if((o.sys=="win32")||(o.sys=="cygwin")){
 	m << "-DWIN32 -DMFRONT_COMPILING $(INCLUDES) \n\n";
       } else {
 	m << "-fPIC $(INCLUDES) \n\n";
@@ -240,7 +240,7 @@ namespace mfront{
       } else {
 	m << "-O2 ";
       }
-      if(o.sys=="win32"){
+      if((o.sys=="win32")||(o.sys=="cygwin")){
 	m << "-DWIN32 -DMFRONT_COMPILING $(INCLUDES)\n\n";
       } else {
 	m << "-fPIC $(INCLUDES)\n\n";
@@ -352,6 +352,8 @@ namespace mfront{
       }
       if(o.sys=="win32"){
 	m << "-shared -Wl,--add-stdcall-alias,--out-implib,lib" << l.name << "_dll.a,-no-undefined ";
+      } else if(o.sys=="cygwin"){
+	m << "-shared -Wl,--add-stdcall-alias,--out-implib,cyg" << l.name << "_dll.a,-no-undefined ";
       } else if(o.sys=="apple"){
 	m << "-bundle ";
       } else {
@@ -368,7 +370,7 @@ namespace mfront{
 	   p5->second.first.end(),ostream_iterator<string>(m," "));
     }
     m << "\n";
-    if(o.sys=="win32"){
+    if((o.sys=="win32")||(o.sys=="cygwin")){
       m << "\t" << sb << "rm -f *.o *.dll *.d *.d.*\n";
     } else if(o.sys=="apple"){
       m << "\t" << sb << "rm -f *.o *.bundle *.d *.d*\n";

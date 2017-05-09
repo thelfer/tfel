@@ -38,6 +38,7 @@ namespace mfront{
      */
     enum TargetSystem{
       WINDOWS,//<! Microsoft windows system
+      CYGWIN, //<! Cywgin environment
       MACOSX, //<! Apple Mac Os
       UNIX    //<! General unix flavor (Linux, FreeBSD, Solaris, ...)
     };

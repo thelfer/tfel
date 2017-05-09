@@ -62,8 +62,11 @@ namespace mfront{
   } // end of mergeLibraryDescription
 
   const char*
-  LibraryDescription::getDefaultLibraryPrefix(const TargetSystem,
+  LibraryDescription::getDefaultLibraryPrefix(const TargetSystem s,
 					      const LibraryType) noexcept{
+    if(s==CYGWIN){
+      return "cyg";
+    }
     return "lib";
   }
   
@@ -78,6 +81,9 @@ namespace mfront{
     switch(s){
     case UNIX:
       p = "so";
+      break;
+    case CYGWIN:
+      p = "dll";
       break;
     case WINDOWS:
       p = "dll";

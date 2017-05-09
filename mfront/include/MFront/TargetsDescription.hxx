@@ -104,8 +104,10 @@ namespace mfront{
     //! target system
 #if defined __APPLE__
     LibraryDescription::TargetSystem system = LibraryDescription::MACOSX;
-#elif (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#elif (defined _WIN32 || defined _WIN64)
     LibraryDescription::TargetSystem system = LibraryDescription::WINDOWS;
+#elif defined __CYGWIN__
+    LibraryDescription::TargetSystem system = LibraryDescription::CYGWIN;
 #else
     LibraryDescription::TargetSystem system = LibraryDescription::UNIX;
 #endif

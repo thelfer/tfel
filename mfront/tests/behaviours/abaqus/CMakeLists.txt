@@ -85,7 +85,7 @@ set(mfront_tests_SOURCES
   OrthotropicSwelling
   OrthotropicSwelling2
   AxialGrowth)
-if(NOT WIN32)
+if((NOT WIN32) AND (NOT CYGWIN))
   list(APPEND mfront_tests_SOURCES
        AbaqusAxialGrowth
        AbaqusAxialGrowth2
@@ -93,7 +93,7 @@ if(NOT WIN32)
        AbaqusOrthotropicSwelling2
        AbaqusOrthotropicElastic
        AbaqusOrthotropicElastic2)
-endif(NOT WIN32)
+endif((NOT WIN32) AND (NOT CYGWIN))
 mfront_dependencies(MFrontAbaqusBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2

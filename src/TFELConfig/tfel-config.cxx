@@ -222,7 +222,7 @@ libDir()
   const string prefix(PREFIXDIR);
   const string execPrefix(EXECPREFIXDIR);
   string lib(LIBDIR);
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
   const string ldir("/bin");
 #else 
 #ifdef LIB_SUFFIX
