@@ -130,28 +130,24 @@ namespace mfront{
   } // end of MFront::treatUnknownArgument()
 
 #ifdef MFRONT_MAKE_SUPPORT  
-  void
-  MFront::treatMake()
+  void MFront::treatMake()
   {
     this->genMake = true;
   } // end of MFront::treatMake
 
-  void
-  MFront::treatBuild()
+  void MFront::treatBuild()
   {
     this->genMake   = true;
     this->buildLibs = true;
   } // end of MFront::treatBuild
 
-  void
-  MFront::treatClean()
+  void MFront::treatClean()
   {
     this->genMake   = true;
     this->cleanLibs = true;
   } // end of MFront::treatBuild
 
-  void
-  MFront::treatOMake()
+  void MFront::treatOMake()
   {
     this->genMake = true;
     const auto level = this->currentArgument->getOption();
@@ -172,8 +168,7 @@ namespace mfront{
     }
   } // end of MFront::treatOMake
 
-  void
-  MFront::treatOBuild()
+  void MFront::treatOBuild()
   {
     this->genMake   = true;
     this->buildLibs = true;
@@ -197,8 +192,7 @@ namespace mfront{
 
 #endif /* MFRONT_MAKE_SUPPORT */
   
-  void
-  MFront::treatListParsers()
+  void MFront::treatListParsers()
   {
     std::cout << "available dsl: \n";
     auto& parserFactory = DSLFactory::getDSLFactory();
@@ -215,8 +209,7 @@ namespace mfront{
     exit(EXIT_SUCCESS);
   } // end of MFront::treatListParsers
 
-  void
-  MFront::treatSilentBuild()
+  void MFront::treatSilentBuild()
   {
     const auto& o = this->currentArgument->getOption();
     if(o.empty()){
@@ -238,8 +231,7 @@ namespace mfront{
   
 #ifdef MFRONT_MAKE_SUPPORT
   
-  void
-  MFront::treatTarget()
+  void MFront::treatTarget()
   {
     using tfel::utilities::tokenize;
     const auto& t = tokenize(this->currentArgument->getOption(),',');
@@ -253,8 +245,7 @@ namespace mfront{
     this->buildLibs = true;
   } // end of MFront::treatTarget
 
-  void
-  MFront::treatOTarget()
+  void MFront::treatOTarget()
   {
     if(this->currentArgument==this->args.end()){
       throw(std::runtime_error("MFront::treatTarget: "
@@ -268,8 +259,7 @@ namespace mfront{
 #endif /* MFRONT_MAKE_SUPPORT */
   
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-  void
-  MFront::treatWin32()
+  void MFront::treatWin32()
   {
     this->opts.sys = "win32";
   } // end of MFront::treatWin32
@@ -348,8 +338,10 @@ namespace mfront{
   MFront::MFront()
     : tfel::utilities::ArgumentParserBase<MFront>()
   {
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if ((defined(_WIN32)||defined(_WIN64)) && (!defined (__CYGWIN__)))
     this->opts.sys = "win32";
+#elif defined __CYGWIN__
+    this->opts.sys = "cygwin";
 #elif defined __APPLE__
     this->opts.sys = "apple";
 #else
@@ -365,8 +357,7 @@ namespace mfront{
     this->parseArguments();
   } // end of MFront::MFront
 
-  void
-  MFront::treatDefine()
+  void MFront::treatDefine()
   {
     const auto& o = this->currentArgument->getOption();
     if(o.empty()){
@@ -376,8 +367,7 @@ namespace mfront{
     this->defines.insert(o);
   } // end of MFront::treatDefine
   
-  void
-  MFront::treatHelpCommandsList()
+  void MFront::treatHelpCommandsList()
   {
     using tfel::utilities::TerminalColors;
     auto& f = DSLFactory::getDSLFactory();
@@ -411,8 +401,7 @@ namespace mfront{
     exit(EXIT_SUCCESS);
   } // end of MFront::treatHelpCommandsList
 
-  void
-  MFront::treatHelpCommands()
+  void MFront::treatHelpCommands()
   {
     auto& f = DSLFactory::getDSLFactory();
     const auto& o = this->currentArgument->getOption();
@@ -442,8 +431,7 @@ namespace mfront{
     exit(EXIT_SUCCESS);
   } // end of MFront::treatHelpCommands
   
-  void
-  MFront::treatHelpCommand()
+  void MFront::treatHelpCommand()
   {
     auto& f = DSLFactory::getDSLFactory();
     const auto& o = this->currentArgument->getOption();
@@ -549,8 +537,7 @@ namespace mfront{
     return td;
   } // end of MFront::treatFile(void)
 
-  void
-  MFront::analyseTargetsFile(){
+  void MFront::analyseTargetsFile(){
     using tfel::system::dirStringSeparator;
     MFrontLockGuard lock;
     const auto file = "src"+dirStringSeparator()+"targets.lst";
@@ -636,8 +623,7 @@ namespace mfront{
     callMake(target);
   } // end of MFront::buildLibraries
 
-  void
-  MFront::cleanLibraries()
+  void MFront::cleanLibraries()
   {
     callMake("clean");
   } // end of MFront::cleanLibraries

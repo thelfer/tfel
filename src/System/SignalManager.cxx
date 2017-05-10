@@ -11,6 +11,12 @@
  * project under specific licensing conditions. 
  */
 
+#ifdef __CYGWIN__
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+#endif /* __CYGWIN__ */
+
 #include<iostream>
 #include<sstream>
 #include<cstdlib>

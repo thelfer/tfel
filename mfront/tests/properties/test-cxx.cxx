@@ -8,6 +8,12 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#ifdef __CYGWIN__
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+#endif /* __CYGWIN__ */
+
 #include<cmath>
 #include<cstdlib>
 #include<cassert>
