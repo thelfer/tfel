@@ -12,6 +12,7 @@
  */
 
 #include<boost/python.hpp>
+#include"MTest/RoundingMode.hxx"
 #include"MTest/SolverOptions.hxx"
 
 void declareBehaviour();
@@ -70,4 +71,9 @@ BOOST_PYTHON_MODULE(_mtest)
   declarePipeMesh();
   declarePipeTest();
   declareMFrontLogStream();
+
+  void (*ptr)(const std::string&) = mtest::setRoundingMode;
+  void (*ptr2)() = mtest::setRoundingMode;
+  boost::python::def("setRoundingMode",ptr);
+  boost::python::def("setRoundingMode",ptr2);
 }

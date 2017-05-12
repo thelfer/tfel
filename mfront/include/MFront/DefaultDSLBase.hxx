@@ -24,7 +24,7 @@ namespace mfront{
     DefaultDSLBase();
     virtual ~DefaultDSLBase();
   protected:
-    virtual void endsInputFileProcessing() override;
+    virtual void completeVariableDeclaration() override;
     virtual void
     writeBehaviourParserSpecificIncludes(std::ostream&) const override;
     virtual void

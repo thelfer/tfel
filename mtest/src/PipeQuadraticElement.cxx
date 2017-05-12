@@ -13,6 +13,7 @@
 
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"MFront/MFrontLogStream.hxx"
+#include"MTest/RoundingMode.hxx"
 #include"MTest/Behaviour.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/CurrentState.hxx"
@@ -155,6 +156,7 @@ namespace mtest{
     auto r_dt = real{};
     // loop over Gauss point
     for(const auto g : {0,1,2}){
+      setRoundingMode();
       // Gauss point position in the reference element
       const auto pg = pg_radii[g];
       // radial position of the Gauss point
@@ -169,8 +171,10 @@ namespace mtest{
       const real dsf[3] = {pg-0.5,-2.*pg,pg+0.5};
       // current state
       auto& s = scs.istates[3*i+g];
+      setRoundingMode();
       const auto rb =
 	b.integrate(s,bwk,dt,mt);
+      setRoundingMode();
       r_dt = (g==0) ? rb.second : std::min(rb.second,r_dt);
       if(!rb.first){
 	if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){

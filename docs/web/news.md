@@ -16,6 +16,17 @@
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 
+# Cast3m 2017 is out (12 May 2017)
+
+![](img/IconeCast3M_jaune.png "")
+
+[`Cast3M`](http://www-cast3m.cea.fr) 2017 has been released.
+
+A binary version of TFEL compiled for Cast3M 2017 is now available for
+download on sourceforge:
+
+<https://sourceforge.net/projects/tfel/files/>
+
 # Non linear constraints with `MTest`
 
 Arbitrary non linear constraints can be now imposed in `MTest` using

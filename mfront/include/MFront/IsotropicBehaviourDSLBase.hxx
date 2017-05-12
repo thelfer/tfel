@@ -31,6 +31,22 @@ namespace mfront{
 
   protected:
 
+    virtual double getDefaultThetaValue() const;
+    
+    virtual void treatExternalStateVariable() override;
+
+    virtual void treatFlowRule();
+
+    virtual void treatTheta();
+
+    virtual void treatEpsilon();
+
+    virtual void treatIterMax();
+
+    virtual void completeVariableDeclaration() override;
+    
+    virtual void endsInputFileProcessing() override;
+
     /*!
      * \return true if the given modelling hypothesis is handled by
      * the parser
@@ -58,6 +74,10 @@ namespace mfront{
     writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
 
     virtual void
+    writeBehaviourLocalVariablesInitialisation(std::ostream&,
+					       const Hypothesis) const override;
+
+    virtual void
     writeBehaviourComputePredictionOperator(std::ostream&,
 					    const Hypothesis) const override;
 
@@ -68,23 +88,6 @@ namespace mfront{
     virtual std::string
     flowRuleVariableModifier(const Hypothesis,
 			     const std::string&,const bool);
-
-    virtual void
-    treatExternalStateVariable(void) override;
-
-    virtual void treatFlowRule(void);
-
-    virtual void treatTheta(void);
-
-    virtual void treatEpsilon(void);
-
-    virtual void treatIterMax(void);
-
-    virtual void
-    endsInputFileProcessing(void) override;
-
-    //! default value
-    double theta;
 
   private:
 

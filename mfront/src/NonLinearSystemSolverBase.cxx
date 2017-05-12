@@ -122,10 +122,10 @@ namespace mfront{
 	  out << "jacobian_error=" << nv1 << "*" << nv2 << "*"
 	      << "(this->jacobianComparisonCriterion)" <<";\n";
 	  if((v1.arraySize==1u)&&(v2.arraySize==1u)){
-	    out << "if(std::abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
+	    out << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
 		<< "ndf" << v1.name  << "_dd" << v2.name << ") > jacobian_error)\n" 
 		<< "{\n";
-	    out << "cout << std::abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
+	    out << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
 		<< "ndf" << v1.name  << "_dd" << v2.name << ") << \" \" << jacobian_error << endl;\n";
 	    out << "cout << \"df" << v1.name
 		<< "_dd" << v2.name << " :\\n\" << " 
@@ -148,10 +148,10 @@ namespace mfront{
 	      asize = v2.arraySize;
 	    }
 	    out << "for(unsigned short idx=0;idx!=" << asize << ";++idx){\n";
-	    out << "if(std::abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
+	    out << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
 		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx)) > jacobian_error)\n" 
 		<< "{\n";
-	    out << "cout << std::abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
+	    out << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
 		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx)) << \" \" << jacobian_error << endl;\n";
 	    out << "cout << \"df" << v1.name
 		<< "_dd" << v2.name << "(\" << idx << \") :\\n\" << " 
@@ -169,10 +169,10 @@ namespace mfront{
 	  } else {
 	    out << "for(unsigned short idx=0;idx!=" << v1.arraySize << ";++idx){\n";
 	    out << "for(unsigned short idx2=0;idx2!=" << v2.arraySize << ";++idx2){\n";
-	    out << "if(std::abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
+	    out << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
 		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx,idx2)) > jacobian_error)\n" 
 		<< "{\n";
-	    out << "cout << std::abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
+	    out << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
 		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx,idx2)) << \" \" << jacobian_error << endl;\n";
 	    out << "cout << \"df" << v1.name
 		<< "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << " 

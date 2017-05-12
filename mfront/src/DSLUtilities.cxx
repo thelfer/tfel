@@ -31,7 +31,7 @@ static const char * const constexpr_c = "const";
 
 namespace mfront
 {
-
+  
   void writeEntryPointSymbol(std::ostream& out,
 			     const std::string& n)
   {

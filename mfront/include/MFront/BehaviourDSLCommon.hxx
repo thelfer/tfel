@@ -51,7 +51,7 @@ namespace mfront{
       tfel::material::OrthotropicAxesConvention;
     //! \return the behaviour description
     virtual const BehaviourDescription&
-    getBehaviourDescription(void) const override final;
+    getBehaviourDescription() const override final;
     /*!
      * \brief This function handles a material property treated as a
      * dependency of the current file.
@@ -198,7 +198,7 @@ namespace mfront{
     /*!
      * \return the name of the generated class
      */
-    virtual std::string getClassName(void) const override;
+    virtual std::string getClassName() const override;
     /*!
      * \brief add a material law
      * \param[in] m : added material law name
@@ -375,16 +375,19 @@ namespace mfront{
      * disable the declaration of new variables
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    disableVariableDeclaration(const Hypothesis);
+    virtual void disableVariableDeclaration();
+    //! \brief method called at the end of the input file processing.
+    virtual void completeVariableDeclaration();
+    //! \brief method called at the end of the input file processing.
+    virtual void endsInputFileProcessing();
     /*!
      * write the output files
      */
-    virtual void generateOutputFiles(void) override;
+    virtual void generateOutputFiles() override;
     /*!
      * \brief write the header files declaring the slip systems
      */
-    virtual void generateSlipSystemsFiles(void);
+    virtual void generateSlipSystemsFiles();
     /*!
      * \return the list of hypothesis a priori supported by
      * the parser.
@@ -394,7 +397,7 @@ namespace mfront{
      * `@ModellingHypotheses` keywords.
      */
     virtual std::set<Hypothesis>
-    getDefaultModellingHypotheses(void) const override;
+    getDefaultModellingHypotheses() const override;
     /*!
      * \return true if the given modelling hypothesis is handled by
      * the parser
@@ -414,8 +417,6 @@ namespace mfront{
      */
     virtual bool
     isModellingHypothesisSupported(const Hypothesis) const override;
-    //! \brief method called at the end of the input file processing.
-    virtual void endsInputFileProcessing();
     /*!
      * \brief the standard variable modifier
      * \param[in] h : modelling hypothesis
@@ -482,9 +483,6 @@ namespace mfront{
      * \param[out] h  : modelling hypothesis on which the variables were declared
      * \param[in]  m  : method used to assign the variables
      * \param[in]  b1 : allows variables to be declared as array
-     * \param[in]  b2 : if true, allows variable declaration after that
-     *                  a code block has been defined (this is a
-     *                  priori only valid for local variables)
      */
     virtual void
     readVariableList(VariableDescriptionContainer&,
@@ -492,24 +490,20 @@ namespace mfront{
 		     void (BehaviourDescription::*)(const Hypothesis,
 						    const VariableDescriptionContainer&,
 						    const BehaviourData::RegistrationStatus),
-		     const bool,const bool);
+		     const bool);
 
     /*!
      * Assign a list variables to mechanical data associated with the given hypotheses.
      * \param[out] h : modelling hypothesis on which the variables were declared
      * \param[out] v : the declared variables
      * \param[in]  m : method used to assign the variables
-     * \param[in]  b : if true, allows variable declaration after that
-     *                  a code block has been defined (this is a
-     *                  priori only valid for local variables)
      */
     virtual void
     addVariableList(const std::set<Hypothesis>&,
 		    const VariableDescriptionContainer&,
 		    void (BehaviourDescription::*)(const Hypothesis,
 						   const VariableDescriptionContainer&,
-						   const BehaviourData::RegistrationStatus),
-		    const bool);
+						   const BehaviourData::RegistrationStatus));
 
     /*!
      * set the interfaces to be used
@@ -530,9 +524,9 @@ namespace mfront{
      * register the default variable names
      */
     virtual void
-    registerDefaultVarNames(void);
+    registerDefaultVarNames();
     //!\brief treat the @Brick keyword
-    virtual void treatBrick(void);
+    virtual void treatBrick();
     //!\brief treat the @Model keyword
     virtual void treatModel();
     /*!
@@ -543,102 +537,102 @@ namespace mfront{
     virtual ModelDescription
     getModelDescription(const std::string&);
     //! \brief treat the @Private keyword
-    virtual void treatPrivate(void) override;
+    virtual void treatPrivate() override;
     //! \brief treat the @Members keyword
-    virtual void treatMembers(void) override;
+    virtual void treatMembers() override;
     //! \brief treat the @TangentOperator keyword
-    virtual void treatTangentOperator(void);
+    virtual void treatTangentOperator();
     //! \brief treat the @IsTangentOperatorSymmetric keyword
-    virtual void treatIsTangentOperatorSymmetric(void);
+    virtual void treatIsTangentOperatorSymmetric();
     //! \brief treat the @Material keyword
-    virtual void treatMaterial(void);
+    virtual void treatMaterial();
     //! \brief treat the @Library keyword
-    virtual void treatLibrary(void);
+    virtual void treatLibrary();
     //! \brief treat the @Profiling keyword
-    virtual void treatProfiling(void);
+    virtual void treatProfiling();
     //! \brief treat the @ModellingHypothesis keyword
-    virtual void treatModellingHypothesis(void);
+    virtual void treatModellingHypothesis();
     //! \brief treat the @ModellingHypotheses keyword
-    virtual void treatModellingHypotheses(void);
+    virtual void treatModellingHypotheses();
     //! \brief treat the @UpdateAuxiliaryStateVariables keyword
-    virtual void treatUpdateAuxiliaryStateVariables(void);
+    virtual void treatUpdateAuxiliaryStateVariables();
     //! \brief treat the @InternalEnergy keyword
-    virtual void treatInternalEnergy(void);
+    virtual void treatInternalEnergy();
     //! \brief treat the @DissipatedEnergy keyword
-    virtual void treatDissipatedEnergy(void);
+    virtual void treatDissipatedEnergy();
     //! \brief treat the @ComputeStressFreeExpansion keyword
-    virtual void treatComputeStressFreeExpansion(void);
+    virtual void treatComputeStressFreeExpansion();
     //! \brief treat the @UsableInPurelyImplicitResolution keyword
     virtual void
-    treatUsableInPurelyImplicitResolution(void);
+    treatUsableInPurelyImplicitResolution();
     //! \brief treat the @Parameter keyword
-    virtual void treatParameter(void);
+    virtual void treatParameter();
     //! \brief treat the @LocalVariables keyword
-    virtual void treatLocalVar(void);
+    virtual void treatLocalVar();
     //! handle the @ComputeThermalExpansion keyword
-    virtual void treatComputeThermalExpansion(void);
+    virtual void treatComputeThermalExpansion();
     //! handle the @ComputeStiffnessTensor keyword
-    virtual void treatComputeStiffnessTensor(void);
+    virtual void treatComputeStiffnessTensor();
     //! handle the @ElasticMaterialProperties keyword
-    virtual void treatElasticMaterialProperties(void);
+    virtual void treatElasticMaterialProperties();
     /*!
      * \brief read the elastic material properties and assign them to
      * the behaviour Description
      */
-    virtual void readElasticMaterialProperties(void);
+    virtual void readElasticMaterialProperties();
     //! \brief handle the @HillTensor keyword
-    virtual void treatHillTensor(void);
+    virtual void treatHillTensor();
     //! \brief handle the @InitLocalVariables keyword
-    virtual void treatInitLocalVariables(void);
+    virtual void treatInitLocalVariables();
     //! \brief handle the @OrthotropicBehaviour keyword
-    virtual void treatOrthotropicBehaviour(void);
+    virtual void treatOrthotropicBehaviour();
     //! \brief handle the @IsotropicElasticBehaiour keyword
-    virtual void treatIsotropicElasticBehaviour(void);
+    virtual void treatIsotropicElasticBehaviour();
     //! \brief handle the @IsotropicBehaviour keyword
-    virtual void treatIsotropicBehaviour(void);
+    virtual void treatIsotropicBehaviour();
     //! \brief handle the @RequireStiffnessOperator keyword
-    virtual void treatRequireStiffnessOperator(void);
+    virtual void treatRequireStiffnessOperator();
     //! \brief handle the @RequireStiffnessTensor keyword
-    virtual void treatRequireStiffnessTensor(void);
+    virtual void treatRequireStiffnessTensor();
 
-    virtual void  treatStiffnessTensorOption(void);
+    virtual void  treatStiffnessTensorOption();
     //! \brief handle the @RequireThermalExpansionCoefficientTensor keyword
     virtual void
-    treatRequireThermalExpansionCoefficientTensor(void);
+    treatRequireThermalExpansionCoefficientTensor();
     //! \brief handle the @Behaviour keyword
-    virtual void treatBehaviour(void);
+    virtual void treatBehaviour();
     //! \brief handle the @Interface keyword
-    virtual void treatInterface(void);
+    virtual void treatInterface();
     //! \brief handle the @StateVariable keyword
-    virtual void treatStateVariable(void);
+    virtual void treatStateVariable();
     //! \brief handle the @AuxiliaryStateVariable keyword
-    virtual void treatAuxiliaryStateVariable(void);
+    virtual void treatAuxiliaryStateVariable();
     //! \brief handle the @ExternalStateVariable keyword
-    virtual void treatExternalStateVariable(void);
+    virtual void treatExternalStateVariable();
     //! \brief treat the @MinimalTimeStepScalingFactor keyword
-    virtual void treatMinimalTimeStepScalingFactor(void);
+    virtual void treatMinimalTimeStepScalingFactor();
     //! \brief treat the @MaximalTimeStepScalingFactor keyword
-    virtual void treatMaximalTimeStepScalingFactor(void);
+    virtual void treatMaximalTimeStepScalingFactor();
     //! \brief treat the @APrioriTimeStepScalingFactor keyword
-    virtual void treatAPrioriTimeStepScalingFactor(void);
+    virtual void treatAPrioriTimeStepScalingFactor();
     //! \brief treat the @Integrator keyword
-    virtual void treatIntegrator(void);
+    virtual void treatIntegrator();
     //! \brief treat the @APosterioriTimeStepScalingFactor keyword
-    virtual void treatAPosterioriTimeStepScalingFactor(void);
+    virtual void treatAPosterioriTimeStepScalingFactor();
     //! \brief treat the @MaterialProperty and the @Coef keywords
-    virtual void treatCoef(void);
+    virtual void treatCoef();
     //! \brief treat the @UseQt keyword
-    virtual void treatUseQt(void);
+    virtual void treatUseQt();
     //! \brief treat the @Bounds keyword
-    virtual void treatBounds(void);
+    virtual void treatBounds();
     //! \brief treat the @PhysicalBounds keyword
-    virtual void treatPhysicalBounds(void);
+    virtual void treatPhysicalBounds();
     //! \brief treat the @PredictionOperator keyword
-    virtual void treatPredictionOperator(void);
+    virtual void treatPredictionOperator();
     //! \brief treat the @Swelling keyword
-    virtual void treatSwelling(void);
+    virtual void treatSwelling();
     //! \brief treat the @AxialGrowth keyword
-    virtual void treatAxialGrowth(void);
+    virtual void treatAxialGrowth();
     /*!
      * \brief read a swelling description.
      *
@@ -647,7 +641,7 @@ namespace mfront{
      * readStressFreeExpansionHandler method.
      */
     virtual std::vector<BehaviourData::StressFreeExpansionHandler>
-    readStressFreeExpansionHandler(void);
+    readStressFreeExpansionHandler();
     /*!
      * \brief extract a swelling description from a token
      * \param[in] t: treated token
@@ -1227,7 +1221,7 @@ namespace mfront{
     treatUnknownVariableMethod(const Hypothesis,
 			       const std::string&);
     //! method called when an unknown keyword is parsed
-    virtual void treatUnknownKeyword(void) override;
+    virtual void treatUnknownKeyword() override;
     //! destructor
     virtual ~BehaviourDSLCommon();
     /*!
@@ -1247,7 +1241,7 @@ namespace mfront{
      * endsInputFileProcessing method.
      */
     virtual void
-    setMinimalTangentOperator(void);
+    setMinimalTangentOperator();
     /*!
      * \brief if the compte final stress code is not available, create
      * it from the ComputeFinalStressCandidate code if it is
@@ -1258,12 +1252,11 @@ namespace mfront{
      * endsInputFileProcessing method.
      */
     virtual void
-    setComputeFinalStressFromComputeFinalStressCandidateIfNecessary(void);
+    setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();
     /*!
      * \brief perform pedantic checks
      */
-    virtual void
-    doPedanticChecks(void) const;
+    virtual void doPedanticChecks() const;
     /*!
      * \return true if the user defined a block of code computing the
      * tangent operator

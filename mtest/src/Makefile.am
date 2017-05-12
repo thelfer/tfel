@@ -7,7 +7,8 @@ lib_LTLIBRARIES = libTFELMTest.la
 bin_PROGRAMS  = mtest
 mtest_SOURCES = MTestMain.cxx
 
-libTFELMTest_la_SOURCES = Study.cxx                                 \
+libTFELMTest_la_SOURCES = RoundingMode.cxx                          \
+			  Study.cxx                                 \
 			  StudyCurrentState.cxx                     \
 			  StructureCurrentState.cxx                 \
 			  CurrentState.cxx                          \

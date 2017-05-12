@@ -67,6 +67,8 @@ namespace mfront{
 
     virtual void setDefaultAlgorithm();
     
+    virtual void completeVariableDeclaration() override;
+
     virtual void endsInputFileProcessing() override;
     
     virtual void writeBehaviourParserSpecificIncludes(std::ostream&) const override;

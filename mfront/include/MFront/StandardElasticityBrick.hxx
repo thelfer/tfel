@@ -72,10 +72,11 @@ namespace mfront{
      * \return the list of supported modelling hypotheses.
      */
     virtual std::vector<Hypothesis> 
-    getSupportedModellingHypotheses(void) const override;
-    //! ends the file treatment
-    virtual void 
-    endTreatment(void) const override;
+    getSupportedModellingHypotheses() const override;
+    //! complete the variable description
+    virtual void completeVariableDeclaration() const override;
+    //! method called at the end of the input file processing
+    virtual void endTreatment() const override;
     /*!
      * destructor
      */
@@ -86,45 +87,38 @@ namespace mfront{
      * requiresStiffnessTensor attribute has been set.
      */
     virtual void
-    declareComputeStressWhenStiffnessTensorIsDefined(void) const;
+    declareComputeStressWhenStiffnessTensorIsDefined() const;
     /*!
      * treat the case of isotropic behaviours
      * \param[in] d: local data structure
      */
-    virtual void
-    treatIsotropicBehaviour(LocalDataStructure&) const;
+    virtual void treatIsotropicBehaviour(LocalDataStructure&) const;
     /*!
      * treat the case of isotropic behaviours
      */
-    virtual void
-    treatOrthotropicBehaviour(void) const;
+    virtual void treatOrthotropicBehaviour() const;
     /*!
      * \brief add support for the AXISYMMETRICALGENERALISEDPLANESTRESS
      * modelling hypothesis
-     * \param[in] d: local data structure
      */
     virtual void
-    addAxisymmetricalGeneralisedPlaneStressSupport(LocalDataStructure&) const;
+    addAxisymmetricalGeneralisedPlaneStressSupport() const;
     /*!
      * \brief add support for the PLANESTRESS modelling hypothesis
-     * \param[in] d: local data structure
      */
-    virtual void addPlaneStressSupport(LocalDataStructure&) const;
+    virtual void addPlaneStressSupport() const;
     /*!
      * \brief add the generic tangent operator computation
-     * \param[in] d: local data structure
      */
-    virtual void addGenericTangentOperatorSupport(const LocalDataStructure&) const;
+    virtual void addGenericTangentOperatorSupport() const;
     /*!
      * \brief add the generic prediction operator computation
-     * \param[in] d: local data structure
      */
-    virtual void addGenericPredictionOperatorSupport(const LocalDataStructure&) const;
+    virtual void addGenericPredictionOperatorSupport() const;
     /*! 
      * \brief declare the compute elastic prediction method
-     * \param[in] d: local data structure
      */
-    virtual void declareComputeElasticPredictionMethod(const LocalDataStructure&) const;
+    virtual void declareComputeElasticPredictionMethod() const;
     //! plane stress support; 
     bool pss = true;
     //! generic prediction operator support

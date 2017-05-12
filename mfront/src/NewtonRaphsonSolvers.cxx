@@ -98,12 +98,12 @@ namespace mfront{
     return {false,p};
   } // end of MFrontNewtonRaphsonSolverBase::treatSpecificKeywords
 
-  void MFrontNewtonRaphsonSolverBase::endsInputFileProcessing(BehaviourDescription& mb) const
+  void MFrontNewtonRaphsonSolverBase::completeVariableDeclaration(BehaviourDescription& mb) const
   {
     if(this->usesPowellDogLegAlgorithm()){
-      return PowellDogLegAlgorithmBase::endsInputFileProcessing(mb);
+      return PowellDogLegAlgorithmBase::completeVariableDeclaration(mb);
     }
-  } // end of MFrontNewtonRaphsonSolverBase::endsInputFileProcessing
+  } // end of MFrontNewtonRaphsonSolverBase::completeVariableDeclaration
 
   void MFrontNewtonRaphsonSolverBase::writeSpecificInitializeMethodPart(std::ostream&,
 									const BehaviourDescription&,

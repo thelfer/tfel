@@ -12,6 +12,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
+
 #include<algorithm>
 #include<iterator>
 #include<vector>
@@ -452,12 +454,21 @@ namespace mfront{
     this->completeTargetsDescription();
   }
 
-  void BehaviourDSLCommon::endsInputFileProcessing()
+  void BehaviourDSLCommon::disableVariableDeclaration()
+  {
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if(!this->mb.hasAttribute(h,BehaviourData::allowsNewUserDefinedVariables)){
+      this->completeVariableDeclaration();
+      this->mb.setAttribute(h,BehaviourData::allowsNewUserDefinedVariables,false);
+    }
+  }
+
+  void BehaviourDSLCommon::completeVariableDeclaration()
   {
     using namespace mfront::bbrick;
     const auto& g = tfel::glossary::Glossary::getGlossary();
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: begin\n";
+      getLogStream() << "BehaviourDSLCommon::completeVariableDeclaration: begin\n";
     }
     // defining modelling hypotheses
     if(!this->mb.areModellingHypothesesDefined()){
@@ -467,7 +478,7 @@ namespace mfront{
     // treating bricks
     if(!this->bricks.empty()){
       if(getVerboseMode()>=VERBOSE_DEBUG){
-	getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: "
+	getLogStream() << "BehaviourDSLCommon::completeVariableDeclaration: "
 		       << "treating bricks\n";
       }
       for(const auto h: mh){
@@ -496,7 +507,7 @@ namespace mfront{
 	  for(const auto& umrq : umrqs){
 	    msg += "\n- "+umrq;
 	  }
-	  this->throwRuntimeError("BehaviourDSLCommon::endsInputFileProcessing",msg);
+	  this->throwRuntimeError("BehaviourDSLCommon::completeVariableDeclaration",msg);
 	}
 	for(const auto& n : urs){
 	  const auto& ur = r.getRequirement(n);
@@ -508,7 +519,7 @@ namespace mfront{
       }
     }
     for(const auto& pb : this->bricks){
-      pb->endTreatment();
+      pb->completeVariableDeclaration();
     }
     if(getVerboseMode()>=VERBOSE_DEBUG){
       auto& log = getLogStream();
@@ -549,7 +560,7 @@ namespace mfront{
     // incompatible options
     if((this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false))&&
        (this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))){
-      this->throwRuntimeError("BehaviourDSLCommon::endsInputFileProcessing",
+      this->throwRuntimeError("BehaviourDSLCommon::completeVariableDeclaration",
 			      "internal error, incompatible options for stiffness tensor");
     }
     // check of stiffness tensor requirement
@@ -559,7 +570,7 @@ namespace mfront{
 	 (mh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=mh.end())){
 	if(this->mb.hasAttribute(BehaviourDescription::requiresStiffnessTensor)){
 	  if(!this->mb.hasAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor)){
-	    this->throwRuntimeError("BehaviourDSLCommon::endsInputFileProcessing",
+	    this->throwRuntimeError("BehaviourDSLCommon::completeVariableDeclaration",
 				    "No option was given to the '@RequireStiffnessTensor' keyword.\n"
 				    "For plane stress hypotheses, it is required to precise whether "
 				    "the expected stiffness tensor is 'Altered' (the plane stress "
@@ -593,7 +604,7 @@ namespace mfront{
 	     OrthotropicAxesConvention::DEFAULT){
 	    // in this case, only tridimensional case is supported
 	    if(h!=ModellingHypothesis::TRIDIMENSIONAL){
-	      this->throwRuntimeError("BehaviourDSLCommon::endsInputFileProcessing",
+	      this->throwRuntimeError("BehaviourDSLCommon::completeVariableDeclaration",
 				      "An orthotropic axes convention must be choosen when "
 				      "using one of @ComputeStiffnessTensor, "
 				      "@ComputeThermalExpansion, @Swelling, @AxilalGrowth keywords in behaviours which "
@@ -610,6 +621,17 @@ namespace mfront{
 	}
       }
     }
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "BehaviourDSLCommon::completeVariableDeclaration: end\n";
+    }
+  } // end of BehaviourDSLCommon::completeVariableDeclaration
+  
+  void BehaviourDSLCommon::endsInputFileProcessing()
+  {
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: begin\n";
+    }
+    this->disableVariableDeclaration();
     // restrictions on user defined compute stress free expansion
     for(const auto h : this->mb.getDistinctModellingHypotheses()){
       const auto& d = this->mb.getBehaviourData(h);
@@ -636,6 +658,9 @@ namespace mfront{
     // calling interfaces
     if(getPedanticMode()){
       this->doPedanticChecks();
+    }
+    for(const auto& pb : this->bricks){
+      pb->endTreatment();
     }
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: end\n";
@@ -1600,7 +1625,7 @@ namespace mfront{
 
   void BehaviourDSLCommon::treatUsableInPurelyImplicitResolution()
   {
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->readSpecifiedToken("BehaviourDSLCommon::treatUsableInPurelyImplicitResolution",";");
     if(this->explicitlyDeclaredUsableInPurelyImplicitResolution){
       this->throwRuntimeError("BehaviourDSLCommon::treatUsableInPurelyImplicitResolution",
@@ -2001,14 +2026,13 @@ namespace mfront{
 				       void (BehaviourDescription::* m)(const Hypothesis,
 									const VariableDescriptionContainer&,
 									const BehaviourData::RegistrationStatus),
-				       const bool b1,
-				       const bool b2)
+				       const bool b1)
   {
     h.clear();
     v.clear();
     this->readHypothesesList(h);
     this->readVarList(v,b1);
-    this->addVariableList(h,v,m,b2);
+    this->addVariableList(h,v,m);
   } // end of BehaviourDSLCommon::readVariableList
 
   void
@@ -2016,30 +2040,9 @@ namespace mfront{
 				      const VariableDescriptionContainer& v,
 				      void (BehaviourDescription::* m)(const Hypothesis,
 								       const VariableDescriptionContainer&,
-								       const BehaviourData::RegistrationStatus),
-				      const bool b)
+								       const BehaviourData::RegistrationStatus))
   {
     for(const auto & h : hypotheses){
-      if(!b){
-	if(!this->mb.getAttribute<bool>(h,BehaviourData::allowsNewUserDefinedVariables,true)){
-	  const auto cbn = this->mb.getCodeBlockNames(h);
-	  if(cbn.empty()){
-	    this->throwRuntimeError("BehaviourDSLCommon::readVariableList : ",
-				    "no more variable can be defined. This may mean that "
-				    "the parser does not expect you to add variables");
-	  } else {
-	    auto cbs = std::string{};
-	    for(const auto& n : cbn){
-	      cbs += "\n- "+n;
-	    }
-	    this->throwRuntimeError("BehaviourDSLCommon::readVariableList : ",
-				    "no more variable can be defined. This may mean that "
-				    "you already declared a block of code (or that the parser does not "
-				    "expect you to add variables for whatever reason). This is the list of "
-				    "code blocks defined :"+cbs);
-	  }
-	}
-      }
       (this->mb.*m)(h,v,BehaviourData::UNREGISTRED);
     }
   } // end of BehaviourDSLCommon::addVariableList
@@ -2048,14 +2051,14 @@ namespace mfront{
   {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
-    this->readVariableList(v,h,&BehaviourDescription::addMaterialProperties,true,false);
+    this->readVariableList(v,h,&BehaviourDescription::addMaterialProperties,true);
   } // end of BehaviourDSLCommon::treatCoef
 
   void BehaviourDSLCommon::treatLocalVar()
   {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
-    this->readVariableList(v,h,&BehaviourDescription::addLocalVariables,true,true);
+    this->readVariableList(v,h,&BehaviourDescription::addLocalVariables,true);
   } // end of BehaviourDSLCommon::treatLocalVar
 
   void BehaviourDSLCommon::treatInterface()
@@ -2100,21 +2103,21 @@ namespace mfront{
   {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
-    this->readVariableList(v,h,&BehaviourDescription::addStateVariables,true,false);
+    this->readVariableList(v,h,&BehaviourDescription::addStateVariables,true);
   }
 
   void BehaviourDSLCommon::treatAuxiliaryStateVariable()
   {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
-    this->readVariableList(v,h,&BehaviourDescription::addAuxiliaryStateVariables,true,false);
+    this->readVariableList(v,h,&BehaviourDescription::addAuxiliaryStateVariables,true);
   }
 
   void BehaviourDSLCommon::treatExternalStateVariable()
   {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
-    this->readVariableList(v,h,&BehaviourDescription::addExternalStateVariables,true,false);
+    this->readVariableList(v,h,&BehaviourDescription::addExternalStateVariables,true);
   }
 
   void BehaviourDSLCommon::treatBounds()
@@ -3136,7 +3139,7 @@ namespace mfront{
     this->checkNotEndOfFile("DSLBase::treatSwelling");
     if(this->current->value=="<"){
       auto options = std::vector<tfel::utilities::Token>{};
-      this->readList(options,"BehaviourDSLCommon::readCodeBlockOptions","<",">",true);
+      this->readList(options,"BehaviourDSLCommon::treatSwelling","<",">",true);
       for(const auto& o: options){
 	this->checkNotEndOfFile("BehaviourDSLCommon::treatSwelling");
 	if(o.value=="Orthotropic"){
@@ -3640,7 +3643,7 @@ namespace mfront{
     os << "/*!\n"
        << "* \\brief check bounds\n"
        << "*/\n"
-       << "void checkBounds(void) const{\n";
+       << "void checkBounds() const{\n";
     write_physical_bounds(md.getMaterialProperties(),false);
     write_physical_bounds(md.getPersistentVariables(),false);
     write_physical_bounds(md.getExternalStateVariables(),true);
@@ -5415,7 +5418,7 @@ namespace mfront{
     os << "const TangentOperator& getTangentOperator() const{\n"
        << "return this->Dt;\n"
        << "}\n\n";
-  } // end of BehaviourDSLCommon::writeBehaviourComputeTangentOperator(void)
+  } // end of BehaviourDSLCommon::writeBehaviourComputeTangentOperator()
 
   void BehaviourDSLCommon::writeBehaviourGetTimeStepScalingFactor(std::ostream& os) const
   {
@@ -5437,7 +5440,7 @@ namespace mfront{
       "                          this->maximal_time_step_scaling_factor),\n"
       "                  current_time_step_scaling_factor)};\n"
       "}\n\n";
-  } // end of BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactor(void)
+  } // end of BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactor
 
   void BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactorII(std::ostream& os,
 									       const Hypothesis h) const{
@@ -5482,7 +5485,7 @@ namespace mfront{
     }
     os << "return {true,this->maximal_time_step_scaling_factor};\n"
        << "}\n\n";
-  } // end of BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor(void)
+  } // end of BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor
   
   void BehaviourDSLCommon::writeBehaviourTangentOperator(std::ostream& os) const
   {
@@ -6550,7 +6553,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon:treatInitLocalVariables
 
   void BehaviourDSLCommon::treatMinimalTimeStepScalingFactor(){
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double r_dt;
     this->checkNotEndOfFile("ImplicitDSLBase::treatMinimalTimeStepScalingFactor",
 			    "Cannot read value.");
@@ -6574,9 +6577,8 @@ namespace mfront{
     this->mb.setEntryName(h,"minimal_time_step_scaling_factor","minimal_time_step_scaling_factor");
   } // end of BehaviourDSLCommon::treatMinimalTimeStepScalingFactor
 
-  void
-  BehaviourDSLCommon::treatMaximalTimeStepScalingFactor(){
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+  void BehaviourDSLCommon::treatMaximalTimeStepScalingFactor(){
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double r_dt;
     this->checkNotEndOfFile("ImplicitDSLBase::treatMaximalTimeStepScalingFactor",
 			    "Cannot read value.");
@@ -6599,17 +6601,8 @@ namespace mfront{
     this->mb.setParameterDefaultValue(h,"maximal_time_step_scaling_factor",r_dt);
     this->mb.setEntryName(h,"maximal_time_step_scaling_factor","maximal_time_step_scaling_factor");
   } // end of BehaviourDSLCommon::treatMaximalTimeStepScalingFactor
-  
-  void
-  BehaviourDSLCommon::disableVariableDeclaration(const Hypothesis h)
-  {
-    if(!this->mb.hasAttribute(h,BehaviourData::allowsNewUserDefinedVariables)){
-      this->mb.setAttribute(h,BehaviourData::allowsNewUserDefinedVariables,false);
-    }
-  }
-
-  void
-  BehaviourDSLCommon::setMinimalTangentOperator()
+    
+  void BehaviourDSLCommon::setMinimalTangentOperator()
   {
     if(this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       for(const auto & h : this->mb.getDistinctModellingHypotheses()){
@@ -6624,7 +6617,7 @@ namespace mfront{
       }
       if(this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
 	if(this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	  const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+	  const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	  // if the user provided a tangent operator, it won't be
 	  // overriden
 	  CodeBlock tangentOperator;
@@ -6673,7 +6666,7 @@ namespace mfront{
     }
     // now treating the default hypothesis case
     if(!this->mb.areAllMechanicalDataSpecialised()){
-      const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       if(!this->mb.hasCode(h,BehaviourData::ComputeFinalStress)){
 	if(this->mb.hasCode(h,BehaviourData::ComputeFinalStressCandidate)){
 	  this->mb.setCode(h,BehaviourData::ComputeFinalStress,

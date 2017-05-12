@@ -1,0 +1,18 @@
+@DSL IsotropicStrainHardeningMisesCreep;
+@Behaviour StrainHardeningCreep2;
+@Author    Helfer Thomas;
+@Date      23/11/06;
+
+@ElasticMaterialProperties {150e9,0.3};
+
+@MaterialProperty real A;
+@MaterialProperty real Ns;
+@MaterialProperty real Np;
+
+@FlowRule{
+  const real p0  = 1.e-6;
+  const real tmp = A*pow(seq,Ns-1.)*pow(p+p0,-Np-1);
+  f       = tmp*seq*(p+p0);
+  df_dseq =  Ns*tmp*(p+p0);
+  df_dp   = -Np*tmp*seq;
+}

@@ -349,9 +349,8 @@ namespace tfel
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     } // end of ExternalLibraryManager::contains
 
-    std::string
-    ExternalLibraryManager::getSource(const std::string& l,
-				      const std::string& f)
+    std::string ExternalLibraryManager::getSource(const std::string& l,
+						  const std::string& f)
     {
       auto s = std::string{};
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
@@ -374,22 +373,23 @@ namespace tfel
     std::string ExternalLibraryManager::getInterface(const std::string& l,
 						     const std::string& f)
     {
-      auto s = std::string{};
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      auto lib = this->loadLibrary(l);
-      const auto p  = (const char* const *) ::GetProcAddress(lib,(f+"_interface").c_str());
+      const auto lib = this->loadLibrary(l);
+      const auto p   = (const char* const *) ::GetProcAddress(lib,(f+"_interface").c_str());
 #else
-      auto lib = this->loadLibrary(l);
-      auto p   = ::dlsym(lib,(f+"_interface").c_str());
+      const auto lib = this->loadLibrary(l);
+      const auto p   = ::dlsym(lib,(f+"_interface").c_str());
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-      if(p!=nullptr){
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-	s = *p;
-#else
-	s = *(static_cast<const char* const *>(p));
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      if(p==nullptr){
+	throw(std::runtime_error("ExternalLibraryManager::getInterface: "
+				 "no interface found for entry point '"+f+"' "
+				 "in library '"+l+"'"));
       }
-      return s;
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+      return *p;
+#else
+      return *(static_cast<const char* const *>(p));
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     } // end of ExternalLibraryManager::getInterface
     
     std::vector<std::string>

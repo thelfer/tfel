@@ -24,6 +24,8 @@
 #include<windows.h>
 #endif
 
+#include"TFEL/Tests/TestManager.hxx"
+#include"TFEL/Tests/XMLTestOutput.hxx"
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
@@ -31,16 +33,13 @@
 #endif
 
 #include"MFront/MFrontLogStream.hxx"
-
-#include"MTest/MTest.hxx"
-#include"MTest/MTestParser.hxx"
-#include"MTest/PipeTest.hxx"
-#include"MTest/PipeTestParser.hxx"
+#include"MTest/RoundingMode.hxx"
 #include"MTest/Constraint.hxx"
 #include"MTest/Evolution.hxx"
-
-#include"TFEL/Tests/TestManager.hxx"
-#include"TFEL/Tests/XMLTestOutput.hxx"
+#include"MTest/MTest.hxx"
+#include"MTest/PipeTest.hxx"
+#include"MTest/MTestParser.hxx"
+#include"MTest/PipeTestParser.hxx"
 
 namespace mtest
 {
@@ -156,7 +155,8 @@ namespace mtest
 			      "DownWard:   Round downward.\n"
 			      "ToNearest:  Round to nearest.\n"
 			      "TowardZero: Round toward zero.\n"
-			      "UpWard:     Round upward.",true);
+			      "UpWard:     Round upward.\n"
+			      "Random:     Rounding mode is randomly changed at various stage of the compution.",true);
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     this->registerNewCallBack("--backtrace","-bt",&MTestMain::treatBacktrace,
 			      "print process stack when getting SIGSEGV or SIGFPE signals");
@@ -198,22 +198,12 @@ namespace mtest
 
   void MTestMain::treatRoundingDirectionMode()
   {
-    auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("MTestMain::setRoundingDirectionMode: "+m));}
-    };
     const auto& o = this->currentArgument->getOption();
-    throw_if(o.empty(),"no option given");
-    if(o=="DownWard"){
-      std::fesetround(FE_DOWNWARD);
-    } else if(o=="UpWard"){
-      std::fesetround(FE_UPWARD);
-    } else if(o=="ToNearest"){
-      std::fesetround(FE_TONEAREST);
-    } else if(o=="TowardZero"){
-      std::fesetround(FE_TOWARDZERO);
-    } else {
-      throw_if(true,"invalid rounding direction mode '"+o+"'");
+    if(o.empty()){
+      throw(std::runtime_error("MTestMain::setRoundingDirectionMode: "
+			       "no option given"));
     }
+    mtest::setRoundingMode(o);
   } // end of MTestMain::setRoundingDirectionMode
   
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
@@ -231,8 +221,7 @@ namespace mtest
   } // end of MTestMain::treatBacktrace(void)
 #endif
 
-  void
-  MTestMain::treatVerbose()
+  void MTestMain::treatVerbose()
   {
     if(this->currentArgument->getOption().empty()){
       mfront::setVerboseMode(mfront::VERBOSE_LEVEL1);
@@ -259,8 +248,7 @@ namespace mtest
     }
   } // end of MTestMain::treatVerbose
 
-  void
-  MTestMain::treatXMLOutput()
+  void MTestMain::treatXMLOutput()
   {
     if(this->currentArgument->getOption().empty()){
       this->xml_output = true;
@@ -277,8 +265,7 @@ namespace mtest
     }
   } // end of MTestMain::treatXMLOutput
 
-  void
-  MTestMain::treatResultFileOutput()
+  void MTestMain::treatResultFileOutput()
   {
     if(this->currentArgument->getOption().empty()){
       this->result_file_output = true;
@@ -295,8 +282,7 @@ namespace mtest
     }
   } // end of MTestMain::treatResultFileOutput
 
-  void
-  MTestMain::treatResidualFileOutput()
+  void MTestMain::treatResidualFileOutput()
   {
     if(this->currentArgument->getOption().empty()){
       this->residual_file_output = true;
@@ -313,8 +299,7 @@ namespace mtest
     }
   } // end of MTestMain::treatResidualFileOutput
 
-  void
-  MTestMain::treatHelpCommandsList()
+  void MTestMain::treatHelpCommandsList()
   {
     if((this->scheme==MTEST)||(this->scheme==DEFAULT)){
       MTestParser().displayKeyWordsList();
@@ -324,8 +309,7 @@ namespace mtest
     ::exit(EXIT_SUCCESS);
   } // end of MTestMain::treatHelpCommandsList
 
-  void
-  MTestMain::treatHelpCommands()
+  void MTestMain::treatHelpCommands()
   {
     if((this->scheme==MTEST)||(this->scheme==DEFAULT)){
       MTestParser().displayKeyWordsHelp();

@@ -38,6 +38,8 @@ namespace mfront{
     virtual ~IsotropicMisesPlasticFlowDSL();
 
   protected:
+
+    virtual double getDefaultThetaValue() const override;
     
     virtual void
     writeBehaviourParserSpecificInitializeMethodPart(std::ostream&,

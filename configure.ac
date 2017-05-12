@@ -1332,6 +1332,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/castem/castemorthotropiccreep-rkCastem.mtest
            mfront/tests/behaviours/castem/castemplasticity.mtest
            mfront/tests/behaviours/castem/castemstrainhardeningcreep.mtest
+           mfront/tests/behaviours/castem/castemstrainhardeningcreep2.mtest
+           mfront/tests/behaviours/castem/castemstrainhardeningcreep3.mtest
            mfront/tests/behaviours/castem/castemplasisocin.mtest
            mfront/tests/behaviours/castem/castemviscoplasisocin.mtest
            mfront/tests/behaviours/castem/castemchaboche.mtest

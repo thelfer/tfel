@@ -4,6 +4,25 @@
 
 # Tickets fixed
 
+## Ticket #64: Change the library prefix to "cyg" under cygwin
+
+The default library prefix under cygwin has been changed to `cyg`
+(rather than `lib`) to follow the standard conventions of this
+environment.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/84/>
+
+## Ticket #63: Error cygwin (make)
+
+Compiling `MFront` under `Cygwin` was broken because the `_GNU_SOURCE`
+macro was not defined in the following headers:
+
+- `mfront\tests\properties\test-cxx.cxx`
+- `src\System\ProcessManager.cxx`
+- `src\System\SignalManager.cxx`
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/83/>
+
 ## Ticket #58: Fix initialisation of an array of parameters
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/58/>

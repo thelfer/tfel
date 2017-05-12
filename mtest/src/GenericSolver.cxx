@@ -11,8 +11,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
-
 #include<iterator>
 #include<ostream>
 #include<fstream>
@@ -20,6 +18,7 @@
 
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Types.hxx"
+#include"MTest/RoundingMode.hxx"
 #include"MTest/SolverOptions.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
 #include"MTest/SolverWorkSpace.hxx"
@@ -86,7 +85,9 @@ namespace mtest{
       }
       if(s.computePredictionStiffnessAndResidual(scs,wk.K,wk.r,t,dt,smt).first){
 	wk.du = wk.r;
+	setRoundingMode();
 	LUSolve::exe(wk.K,wk.du,wk.x,wk.p_lu);
+	setRoundingMode();
 	u1 -= wk.du;	  
       } else {
 	if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
@@ -194,7 +195,9 @@ namespace mtest{
       // ::exit(-1);
 
       wk.du = wk.r;
+      setRoundingMode();
       LUSolve::exe(wk.K,wk.du,wk.x,wk.p_lu);
+      setRoundingMode();
       u1 -= wk.du;
       converged = (o.ppolicy == PredictionPolicy::NOPREDICTION) ? (iter>1) : true;
       converged = s.checkConvergence(scs,wk.du,wk.r,o,iter,t,dt) && converged;

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTLEVENBERGMARQUARTSOLVERS_HXX
-#define LIB_MFRONT_MFRONTLEVENBERGMARQUARTSOLVERS_HXX 
+#ifndef LIB_MFRONT_LEVENBERGMARQUARTSOLVERS_HXX
+#define LIB_MFRONT_LEVENBERGMARQUARTSOLVERS_HXX 
 
 #include "MFront/NonLinearSystemSolverBase.hxx"
 
@@ -23,7 +23,7 @@ namespace mfront{
    * Newton-Raphson algorithm coupled with the Levenberg-Marquart
    * algorithm for increased robustness.
    */
-  struct MFrontLevenbergMarquartSolverBase
+  struct LevenbergMarquartSolverBase
     : public NonLinearSystemSolverBase
   {
     /*!
@@ -36,14 +36,12 @@ namespace mfront{
      * (Newton-Raphson solvers) or an approximation of it (Broyden
      * method).
      */
-    virtual bool
-    usesJacobian(void) const override;
+    virtual bool usesJacobian(void) const override;
     /*!
      * \return true if the solver uses the invert of the jacobian of
      * the system or an approximation of it (second Broyden method).
      */
-    virtual bool
-    usesJacobianInvert(void) const override;
+    virtual bool usesJacobianInvert(void) const override;
     /*!
      * \return true if the solver allows the user to initialize the
      * jacobian
@@ -79,12 +77,10 @@ namespace mfront{
 			  const tokens_iterator,
 			  const tokens_iterator) override;
     /*!
-     * \brief method called at the end of the input file processing.
-     * Solver can use it to declared additional parameters
+     * \brief method called when all the user defined variables have been set.
      * \param[in,out] md  : mechanical description
      */
-    virtual void
-    endsInputFileProcessing(BehaviourDescription&) const override;
+    virtual void completeVariableDeclaration(BehaviourDescription&) const override;
     /*!
      * \brief write algorithm specific initialisations
      * This method may be used to initialise the jacobian to identity
@@ -122,15 +118,15 @@ namespace mfront{
     /*!
      * destructor
      */
-    virtual ~MFrontLevenbergMarquartSolverBase();
-  }; // end of struct MFrontLevenbergMarquartSolverBase
+    virtual ~LevenbergMarquartSolverBase();
+  }; // end of struct LevenbergMarquartSolverBase
 
   /*!
    * the standard Newton-Raphson solver coupled with the
    * Levenberg-Marquart algorithm for increased robustness
    */
-  struct MFrontLevenbergMarquartSolver
-    : public MFrontLevenbergMarquartSolverBase
+  struct LevenbergMarquartSolver
+    : public LevenbergMarquartSolverBase
   {
     /*!
      * \return true if the solver requires a numerical jacobian
@@ -140,7 +136,7 @@ namespace mfront{
     /*!
      * destructor
      */
-    virtual ~MFrontLevenbergMarquartSolver();
+    virtual ~LevenbergMarquartSolver();
   };
 
   /*!
@@ -148,8 +144,8 @@ namespace mfront{
    * evaluation coupled with the Levenberg-Marquart algorithm for
    * increased robustness
    */
-  struct MFrontLevenbergMarquartNumericalJacobianSolver
-    : public MFrontLevenbergMarquartSolverBase
+  struct LevenbergMarquartNumericalJacobianSolver
+    : public LevenbergMarquartSolverBase
   {
     /*!
      * \return true if the solver requires a numerical jacobian
@@ -159,10 +155,10 @@ namespace mfront{
     /*!
      * destructor
      */
-    virtual ~MFrontLevenbergMarquartNumericalJacobianSolver();
+    virtual ~LevenbergMarquartNumericalJacobianSolver();
   };
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MFRONTLEVENBERGMARQUARTSOLVERS_HXX */
+#endif /* LIB_MFRONT_LEVENBERGMARQUARTSOLVERS_HXX */
 

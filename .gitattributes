@@ -1097,6 +1097,7 @@ docs/web/img/FuelRod-ddif2.xcf -text
 docs/web/img/HureCast3M2014.png -text
 docs/web/img/HureCast3M2014.xcf -text
 docs/web/img/IconeCast3M_bleue.png -text
+docs/web/img/IconeCast3M_jaune.png -text
 docs/web/img/IconeCast3M_verte.png -text
 docs/web/img/ImplicitDSL.svg -text
 docs/web/img/Interfaces.svg -text
@@ -2355,6 +2356,8 @@ mfront/tests/behaviours/SaintVenantKirchhoffElasticityTotalLagrangian.mfront -te
 mfront/tests/behaviours/SlidingSystemsCC.mfront -text
 mfront/tests/behaviours/StateVariablesBoundsCheck.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep.mfront -text
+mfront/tests/behaviours/StrainHardeningCreep2.mfront -text
+mfront/tests/behaviours/StrainHardeningCreep3.mfront -text
 mfront/tests/behaviours/T91ViscoplasticBehaviour.mfront -text
 mfront/tests/behaviours/TestComputeElasticPrediction.mfront -text
 mfront/tests/behaviours/TestComputeElasticPrediction2.mfront -text
@@ -3501,6 +3504,8 @@ mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-uniaxialload
 mfront/tests/behaviours/castem/castemstatevariablesboundscheck.mtest.in -text
 mfront/tests/behaviours/castem/castemstatevariablesboundscheck2.mtest.in -text
 mfront/tests/behaviours/castem/castemstrainhardeningcreep.mtest.in -text
+mfront/tests/behaviours/castem/castemstrainhardeningcreep2.mtest.in -text
+mfront/tests/behaviours/castem/castemstrainhardeningcreep3.mtest.in -text
 mfront/tests/behaviours/castem/castemstressrelaxation.mtest.in -text
 mfront/tests/behaviours/castem/castemtssf.mtest.in -text
 mfront/tests/behaviours/castem/castemtvergaard.mtest.in -text
@@ -4938,6 +4943,7 @@ mtest/include/MTest/PipeQuadraticElement.hxx -text
 mtest/include/MTest/PipeTest.hxx -text
 mtest/include/MTest/PipeTestParser.hxx -text
 mtest/include/MTest/ReferenceFileComparisonTest.hxx -text
+mtest/include/MTest/RoundingMode.hxx -text
 mtest/include/MTest/Scheme.hxx -text
 mtest/include/MTest/SchemeBase.hxx -text
 mtest/include/MTest/SchemeParserBase.hxx -text
@@ -5022,6 +5028,7 @@ mtest/src/PipeQuadraticElement.cxx -text
 mtest/src/PipeTest.cxx -text
 mtest/src/PipeTestParser.cxx -text
 mtest/src/ReferenceFileComparisonTest.cxx -text
+mtest/src/RoundingMode.cxx -text
 mtest/src/Scheme.cxx -text
 mtest/src/SchemeBase.cxx -text
 mtest/src/SchemeParserBase.cxx -text

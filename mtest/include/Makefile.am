@@ -1,5 +1,6 @@
 nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/Types.hxx	                         \
+			 MTest/RoundingMode.hxx	                         \
 			 MTest/Solver.hxx	                         \
 			 MTest/SolverOptions.hxx	                 \
 			 MTest/SolverWorkSpace.hxx	                 \

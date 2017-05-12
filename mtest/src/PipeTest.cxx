@@ -20,6 +20,7 @@
 #include"TFEL/Math/LUSolve.hxx"
 #include"TFEL/Utilities/TextData.hxx"
 #include"MFront/MFrontLogStream.hxx"
+#include"MTest/RoundingMode.hxx"
 #include"MTest/Evolution.hxx"
 #include"MTest/SolverWorkSpace.hxx"
 #include"MTest/Behaviour.hxx"
@@ -1220,7 +1221,9 @@ namespace mtest{
       if(this->al==ENDCAPEFFECT){
 	du(n) += pi*Ri_*Ri_;
       }
+      setRoundingMode();
       tfel::math::LUSolve::back_substitute(wk.K,du,wk.x,wk.p_lu);
+      setRoundingMode();
       const real due_dp = *(du.rbegin()+1);
       auto& Pi = state.getEvolution("InnerPressure");
       // current inner pressure value
@@ -1234,7 +1237,9 @@ namespace mtest{
       // du first contains dFe_dF
       std::fill(du.begin(),du.end(),real(0));
       du(n)=1;
+      setRoundingMode();
       tfel::math::LUSolve::back_substitute(wk.K,du,wk.x,wk.p_lu);
+      setRoundingMode();
       const real dezz_dF = du(n);
       auto& F = state.getEvolution("AxialForce");
       // current axial force value

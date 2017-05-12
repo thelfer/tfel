@@ -17,6 +17,7 @@
 #include<stdexcept>
 #include<algorithm>
 #include"TFEL/FSAlgorithm/copy.hxx"
+#include"MTest/RoundingMode.hxx"
 #include"MTest/CurrentState.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/LogarithmicStrain1DBehaviourWrapper.hxx"
@@ -413,7 +414,9 @@ namespace mtest{
     s.e_th1[1] = std::log1p(e_th1[1]);
     s.e_th1[2] = std::log1p(e_th1[2]);
     tfel::fsalgo::copy<3u>::exe(s.s0.begin(),s.s1.begin());
+    setRoundingMode();
     const auto r = this->b->integrate(s,wk,dt,ktype);
+    setRoundingMode();
     tfel::fsalgo::copy<3u>::exe(e0,s.e0.begin());
     tfel::fsalgo::copy<3u>::exe(e1,s.e1.begin());
     tfel::fsalgo::copy<3u>::exe(s0,s.s0.begin());

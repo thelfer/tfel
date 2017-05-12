@@ -120,7 +120,14 @@ namespace mfront{
     //! if this attribute is true, the implicit algorithm compares the
     //! analytical jacobian to the numeric one
     static const std::string compareToNumericalJacobian;
-    //! a boolean attribute telling if the additionnal data can be declared
+    /*!
+     * a boolean attribute telling if the additionnal variables can be
+     * declared. This attribute is set by DSL's when the first code
+     * block has been read.
+     *
+     * \note This attribute applies to all variables except for local
+     * variables.
+     */
     static const std::string allowsNewUserDefinedVariables;
     //! a boolean attribute telling if profiling information shall be collected
     static const std::string profiling;
@@ -284,7 +291,7 @@ namespace mfront{
      * implies that no increment of an external loading is used in the
      * behaviour law.
      */
-    bool isUsableInPurelyImplicitResolution(void) const;
+    bool isUsableInPurelyImplicitResolution() const;
     /*!
      * \brief set if this behaviour can be used in a purely implicit
      * resolution.
@@ -314,7 +321,7 @@ namespace mfront{
      * probably unusable in a purely implicit resolution.
      */
     const std::set<std::string>&
-    getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution(void) const;
+    getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution() const;
     /*!
      * \return the variables of the specificed type
      * \param[in] t: type of the variable
@@ -333,42 +340,42 @@ namespace mfront{
      * \return all material properties
      */
     const VariableDescriptionContainer&
-    getMaterialProperties(void) const;
+    getMaterialProperties() const;
     /*!
      * \return all persistent variables
      */
     const VariableDescriptionContainer&
-    getPersistentVariables(void) const;
+    getPersistentVariables() const;
     /*!
      * \return all integration variables
      */
     const VariableDescriptionContainer&
-    getIntegrationVariables(void) const;
+    getIntegrationVariables() const;
     /*!
      * \return all state variables
      */
     const VariableDescriptionContainer&
-    getStateVariables(void) const;
+    getStateVariables() const;
     /*!
      * \return all auxiliary state variables
      */
     const VariableDescriptionContainer&
-    getAuxiliaryStateVariables(void) const;
+    getAuxiliaryStateVariables() const;
     /*!
      * \return all external state variables
      */
     const VariableDescriptionContainer&
-    getExternalStateVariables(void) const;
+    getExternalStateVariables() const;
     /*!
      * \return all local variables
      */
     const VariableDescriptionContainer&
-    getLocalVariables(void) const;
+    getLocalVariables() const;
     /*!
      * \return all parameter variables
      */
     const VariableDescriptionContainer&
-    getParameters(void) const;
+    getParameters() const;
     /*!
      * \return a variable description with the given name.
      * \param[in] n: name
@@ -467,12 +474,12 @@ namespace mfront{
     /*!
      * \return true if a least one modelling hypothesis is anisotropic
      */
-    bool isStressFreeExansionAnisotropic(void) const;
+    bool isStressFreeExansionAnisotropic() const;
     /*!
      * \return the registred stress free expansion descriptions
      */
     const std::vector<StressFreeExpansionDescription>&
-    getStressFreeExpansionDescriptions(void) const;
+    getStressFreeExpansionDescriptions() const;
     /*!
      * \return true if the given member is used in a code block
      * \param[in] h : modelling hypothesis
@@ -509,7 +516,7 @@ namespace mfront{
 
     //! \return the static variables defined
     const StaticVariableDescriptionContainer&
-    getStaticVariables(void) const;
+    getStaticVariables() const;
     /*!
      * \brief add a material property
      * \param[in] v : variable description
@@ -641,20 +648,20 @@ namespace mfront{
     /*!
      * \return the material additional members
      */
-    const std::string getMembers(void) const;
+    const std::string getMembers() const;
     /*!
      * \brief append the given code to the members
      * \param[in] s : members
      */
     void appendToPrivateCode(const std::string&);
     //! \return the material private code
-    const std::string getPrivateCode(void) const;
+    const std::string getPrivateCode() const;
     /*!
      * \brief return the name of the code blocks defined so far
      * \param[in] h : modelling hypothesis
      */
     std::vector<std::string>
-    getCodeBlockNames(void) const;
+    getCodeBlockNames() const;
     /*!
      * \brief declare or update a code block
      * \param[in] n : name
@@ -840,7 +847,7 @@ namespace mfront{
      * \param[in] n : name
      */
     const std::map<std::string,BehaviourAttribute>&
-    getAttributes(void) const;
+    getAttributes() const;
     /*!
      * reserve the given name
      * \param[in] n : variable name
@@ -871,16 +878,16 @@ namespace mfront{
     void registerStaticMemberName(const std::string&);
     //! \return all the registred member names
     const std::set<std::string>&
-    getRegistredMembersNames(void) const;
+    getRegistredMembersNames() const;
     //! \return all the registred static member names
     const std::set<std::string>&
-    getRegistredStaticMembersNames(void) const;
+    getRegistredStaticMembersNames() const;
     /*!
      * \return the name of all the variables (material properties,
      * state variables, auxiliary state variables, external state
      * variables, parameters)
      */
-    std::set<std::string> getVariablesNames(void) const;
+    std::set<std::string> getVariablesNames() const;
     //! destructor
     virtual ~BehaviourData();
   private:
@@ -925,9 +932,9 @@ namespace mfront{
       ~CodeBlocksAggregator();
     private:
       //! \brief update the code block
-      void update(void);
+      void update();
       //! check that the get function was not already called.
-      void check(void) const;
+      void check() const;
       //! beginnig of the block
       std::string cblock_begin;
       //! block body
@@ -962,27 +969,24 @@ namespace mfront{
     VariableDescription& getVariableDescription(const std::string&);
     /*!
      * \brief add a variable to a container
-     * \param[in] c  : container
-     * \param[in] v  : variable to be added
-     * \param[in] s  : registration status
-     * \param[in] bi : if true, register variable increment name
+     * \param[in] c: container
+     * \param[in] v: variable to be added
+     * \param[in] s: registration status
+     * \param[in] bi: if true, register variable increment name
+     * \param[in] b: if true, allow the variable to be added even if
+     * the allowsNewUserDefinedVariables has been set to false. This
+     * shall be true only for local variables which have a specific
+     * status.
      */
     void addVariable(VariableDescriptionContainer&,
 		     const VariableDescription&,
 		     const RegistrationStatus,
-		     const bool);
+		     const bool,const bool = false);
     /*!
      * variables flagged as probably unusable in purely implicit
      * resolutions
      */
     std::set<std::string> pupirv;
-    /*!
-     * boolean stating if this behaviour can be used in a purely
-     * implicit resolution.
-     * \see isUsableInPurelyImplicitResolution for details about
-     * purely implicit resolution.
-     */
-    bool usableInPurelyImplicitResolution;
     //! registred code blocks
     std::map<std::string,CodeBlocksAggregator> cblocks;
     //! registred material properties
@@ -1030,6 +1034,13 @@ namespace mfront{
     std::set<std::string> membersNames;
     //! list of variables names
     std::set<std::string> staticMembersNames;
+    /*!
+     * boolean stating if this behaviour can be used in a purely
+     * implicit resolution.
+     * \see isUsableInPurelyImplicitResolution for details about
+     * purely implicit resolution.
+     */
+    bool usableInPurelyImplicitResolution = false;
   }; // end of struct BehaviourData
 
 } // end of namespace mfront

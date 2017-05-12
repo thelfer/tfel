@@ -13,6 +13,7 @@
 
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"MFront/MFrontLogStream.hxx"
+#include"MTest/RoundingMode.hxx"
 #include"MTest/Behaviour.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/CurrentState.hxx"
@@ -220,8 +221,10 @@ namespace mtest{
       const real dsfv[4] = {dsf0(rg),dsf1(rg),dsf2(rg),dsf3(rg)};
       // jacobian of the transformation
       const auto J = PipeCubicElement::jacobian(r0,r1,r2,r3,pg);
+      setRoundingMode();
       const auto rb =
 	b.integrate(s,bwk,dt,mt);
+      setRoundingMode();
       r_dt = (g==0) ? rb.second : std::min(rb.second,r_dt);
       if(!rb.first){
 	if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){

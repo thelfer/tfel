@@ -52,12 +52,10 @@ namespace mfront{
 			  const tokens_iterator,
 			  const tokens_iterator);
     /*!
-     * \brief method called at the end of the input file processing.
-     * Solver can use it to declared additional parameters
+     * \brief method called when all the user defined variables have been set.
      * \param[in,out] md  : mechanical description
      */
-    static void
-    endsInputFileProcessing(BehaviourDescription&);
+    static void completeVariableDeclaration(BehaviourDescription&);
     /*!
      * write a step of the Powell dogleg method
      * \param[in] out : output file

@@ -100,12 +100,10 @@ namespace mfront
 			  const tokens_iterator,
 			  const tokens_iterator) = 0;
     /*!
-     * \brief method called at the end of the input file processing.
-     * Solver can use it to declared additional parameters
+     * \brief method called when all the user defined variables have been set.
      * \param[in,out] md  : mechanical description
      */
-    virtual void
-    endsInputFileProcessing(BehaviourDescription&) const = 0;
+    virtual void completeVariableDeclaration(BehaviourDescription&) const = 0;
     /*!
      * \brief write algorithm specific initialisations
      * This method may be used to initialise the jacobian to identity

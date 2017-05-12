@@ -141,6 +141,7 @@ namespace mfront
   {
     const auto& h = o.hypotheses;
     const auto beg = this->current;
+    this->disableVariableDeclaration();
     for(auto ph=h.cbegin();ph!=h.cend();++ph){
       this->current = beg;
       const auto& md = this->mb.getBehaviourData(*ph);
@@ -154,7 +155,6 @@ namespace mfront
       option.mn  = md.getRegistredMembersNames();
       option.smn = md.getRegistredStaticMembersNames();
       const auto& c = this->readNextBlock(option);
-      this->disableVariableDeclaration(*ph);
       this->mb.setCode(*ph,n,c,o.m,o.p);
     }
   } // end of BehaviourDSLCommon::readCodeBlock
@@ -171,6 +171,7 @@ namespace mfront
   {
     const auto& h = o.hypotheses;
     const auto beg = this->current;
+    this->disableVariableDeclaration();
     for(auto ph=h.cbegin();ph!=h.cend();++ph){
       const auto& md = this->mb.getBehaviourData(*ph);
       this->current = beg;
@@ -182,7 +183,6 @@ namespace mfront
       option.mn  = md.getRegistredMembersNames();
       option.smn = md.getRegistredStaticMembersNames();
       const auto& c = this->readNextBlock(option);
-      this->disableVariableDeclaration(*ph);
       this->mb.setCode(*ph,n,c,o.m,o.p);
     }
   } // end of BehaviourDSLCommon::readCodeBlock
@@ -220,7 +220,7 @@ namespace mfront
 				    const std::string& n1,
 				    const std::string& n2,
 				    std::string (T2::* m1)(const Hypothesis,
-								    const std::string&,
+							   const std::string&,
 							   const bool),
 				    std::string (T2::* m2)(const Hypothesis,
 							   const std::string&,
@@ -230,6 +230,7 @@ namespace mfront
   {
     const auto& hs = o.hypotheses;
     const auto beg = this->current;
+    this->disableVariableDeclaration();
     for(const auto& h : hs){
       const auto& md = this->mb.getBehaviourData(h);
       this->current = beg;
@@ -248,7 +249,6 @@ namespace mfront
       o2.mn  = md.getRegistredMembersNames();
       o2.smn = md.getRegistredStaticMembersNames();
       this->readNextBlock(c1,c2,o1,o2);
-      this->disableVariableDeclaration(h);
       this->mb.setCode(h,n1,c1,o.m,o.p);
       this->mb.setCode(h,n2,c2,o.m,o.p);
     }

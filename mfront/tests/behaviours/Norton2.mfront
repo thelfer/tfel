@@ -8,13 +8,14 @@
   stress to compute an appropriate time step scaling factor.
 }
 
+@Epsilon 1.e-11;
+@MaximalTimeStepScalingFactor 1.2;
 @LocalVariable stress sigeq0;
 
 @InitLocalVariables{
   sigeq0 = sigmaeq(sig);
 }
 
-@Epsilon 1.e-11;
 @FlowRule{
   constexpr const real A = 8.e-67;
   constexpr const real E = 8.2;
@@ -23,7 +24,6 @@
   df_dseq = E*tmp;
 }
 
-@MaximalTimeStepScalingFactor 1.2;
 @APosterioriTimeStepScalingFactor {
   constexpr const stress dsigeq_max = 2e6;
   const stress sigeq = sigmaeq(sig);

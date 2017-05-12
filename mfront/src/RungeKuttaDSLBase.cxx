@@ -508,10 +508,96 @@ namespace mfront{
     this->readSpecifiedToken("RungeKuttaDSLBase::treatAlgorithm",";");
   }
 
+  void RungeKuttaDSLBase::completeVariableDeclaration()
+  {
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "RungeKuttaDSLBase::completeVariableDeclaration: begin\n";
+    }
+    BehaviourDSLCommon::completeVariableDeclaration();
+    if(!this->mb.hasAttribute(BehaviourData::algorithm)){
+      this->setDefaultAlgorithm();
+    }
+    const auto& algorithm =
+      this->mb.getAttribute<std::string>(BehaviourData::algorithm);
+    const auto n =
+      this->mb.getAttribute<unsigned short>(BehaviourData::numberOfEvaluations);
+    // some checks
+    for(const auto & h : this->mb.getDistinctModellingHypotheses()){
+      const auto& d = this->mb.getBehaviourData(h);
+      // creating local variables
+      const auto& ivs = d.getStateVariables();
+      const auto& evs = d.getExternalStateVariables();
+      for(const auto& iv:ivs){
+	for(unsigned short i=0u;i!=n;++i){
+	  const auto currentVarName = "d" + iv.name + "_K"+std::to_string(i+1u);
+	  if(getVerboseMode()>=VERBOSE_DEBUG){
+	    auto& log = getLogStream();
+	    log << "registring variable '" << currentVarName << "'";
+	    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	      log << " for default hypothesis\n";
+	    } else {
+	      log << " for the '" << ModellingHypothesis::toString(h)
+		  << "' hypothesis\n";
+	    }
+	  }
+	  this->mb.addLocalVariable(h,VariableDescription(iv.type,currentVarName,
+							  iv.arraySize,0u));
+	}
+	const auto currentVarName = iv.name + "_";
+	if(getVerboseMode()>=VERBOSE_DEBUG){
+	  auto& log = getLogStream();
+	  log << "registring variable '" << currentVarName << "'";
+	  if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	    log << " for default hypothesis\n";
+	  } else {
+	    log << " for the '" << ModellingHypothesis::toString(h)
+		<< "' hypothesis\n";
+	  }
+	}
+	this->mb.addLocalVariable(h,VariableDescription(iv.type,currentVarName,
+							iv.arraySize,0u));
+      }
+      for(const auto& ev:evs){
+	const auto currentVarName = ev.name + "_";
+	if(getVerboseMode()>=VERBOSE_DEBUG){
+	  auto& log = getLogStream();
+	  log << "registring variable '" << currentVarName << "'";
+	  if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	    log << " for default hypothesis\n";
+	  } else {
+	    log << " for the '" << ModellingHypothesis::toString(h)
+		<< "' hypothesis\n";
+	  }
+	}
+	this->mb.addLocalVariable(h,VariableDescription(ev.type,currentVarName,
+							ev.arraySize,0u));
+      }
+    }
+    // declare the precision used by the algorithm
+    if(!this->mb.hasParameter(uh,"epsilon")){
+      this->mb.addParameter(uh,VariableDescription("real","epsilon",1u,0u),
+			    BehaviourData::ALREADYREGISTRED);
+      this->mb.setParameterDefaultValue(uh,"epsilon",1.e-8);
+    }
+    if(this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false)){
+      auto D = VariableDescription("StiffnessTensor","D",1u,0u);      
+      D.description = "stiffness tensor computed from elastic "
+	"material properties";
+      this->mb.addLocalVariable(uh,D,BehaviourData::ALREADYREGISTRED);
+    }
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "RungeKuttaDSLBase::completeVariableDeclaration: end\n";
+    }
+  }
+  
   void RungeKuttaDSLBase::endsInputFileProcessing()
   {
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "RungeKuttaDSLBase::endsInputFileProcessing: begin\n";
+    }
     BehaviourDSLCommon::endsInputFileProcessing();
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     CodeBlock ib; // code inserted at before of the local variable initialisation
     CodeBlock ie; // code inserted at the end of the local variable initialisation
     if(!this->mb.hasAttribute(BehaviourData::algorithm)){
@@ -522,9 +608,8 @@ namespace mfront{
     const auto n =
       this->mb.getAttribute<unsigned short>(BehaviourData::numberOfEvaluations);
     // some checks
-    const auto& bh = this->mb.getDistinctModellingHypotheses();
-    for(const auto & elem : bh){
-      const auto& d = this->mb.getBehaviourData(elem);
+    for(const auto & h : this->mb.getDistinctModellingHypotheses()){
+      const auto& d = this->mb.getBehaviourData(h);
       if(!d.hasCode(BehaviourData::ComputeFinalStress)){
 	this->throwRuntimeError("RungeKuttaDSLBase::endsInputFileProcessing",
 				"@ComputeFinalStress was not defined.");
@@ -543,33 +628,8 @@ namespace mfront{
       const auto& ivs = d.getStateVariables();
       const auto& evs = d.getExternalStateVariables();
       for(const auto& iv:ivs){
-	for(unsigned short i=0u;i!=n;++i){
-	  const auto currentVarName = "d" + iv.name + "_K"+std::to_string(i+1u);
-	  if(getVerboseMode()>=VERBOSE_DEBUG){
-	    auto& log = getLogStream();
-	    log << "registring variable '" << currentVarName << "'";
-	    if(elem==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	      log << " for default hypothesis\n";
-	    } else {
-	      log << " for the '" << ModellingHypothesis::toString(elem)
-		  << "' hypothesis\n";
-	    }
-	  }
-	  this->mb.addLocalVariable(elem,VariableDescription(iv.type,currentVarName,iv.arraySize,0u));
-	}
 	if(uvs.find(iv.name)!=uvs.end()){
 	  const auto currentVarName = iv.name + "_";
-	  if(getVerboseMode()>=VERBOSE_DEBUG){
-	    auto& log = getLogStream();
-	    log << "registring variable '" << currentVarName << "'";
-	    if(elem==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	      log << " for default hypothesis\n";
-	    } else {
-	      log << " for the '" << ModellingHypothesis::toString(elem)
-		  << "' hypothesis\n";
-	    }
-	  }
-	  this->mb.addLocalVariable(elem,VariableDescription(iv.type,currentVarName,iv.arraySize,0u));
 	  if(this->mb.useDynamicallyAllocatedVector(iv.arraySize)){
 	    icb.code += "this->"+currentVarName +".resize("+std::to_string(iv.arraySize)+");\n";
 	  }
@@ -590,17 +650,6 @@ namespace mfront{
       for(const auto& ev:evs){
 	if(uvs.find(ev.name)!=uvs.end()){
 	  const auto currentVarName = ev.name + "_";
-	  if(getVerboseMode()>=VERBOSE_DEBUG){
-	    auto& log = getLogStream();
-	    log << "registring variable '" << currentVarName << "'";
-	    if(elem==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	      log << " for default hypothesis\n";
-	    } else {
-	      log << " for the '" << ModellingHypothesis::toString(elem)
-		  << "' hypothesis\n";
-	    }
-	  }
-	  this->mb.addLocalVariable(elem,VariableDescription(ev.type,currentVarName,ev.arraySize,0u));
 	  if(this->mb.useDynamicallyAllocatedVector(ev.arraySize)){
 	    icb.code += "this->"+currentVarName +".resize("+std::to_string(ev.arraySize)+");\n";
 	  }
@@ -609,26 +658,14 @@ namespace mfront{
 	  }
 	}
       }
-      this->mb.setCode(elem,BehaviourData::BeforeInitializeLocalVariables,icb,
+      this->mb.setCode(h,BehaviourData::BeforeInitializeLocalVariables,icb,
 		       BehaviourData::CREATEORAPPEND,
 		       BehaviourData::AT_END);
     }
     // create the compute final stress code is necessary
     this->setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();
-    // declare the precision used by the algorithm
-    if(!this->mb.hasParameter(h,"epsilon")){
-      this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u),
-			    BehaviourData::ALREADYREGISTRED);
-      this->mb.setParameterDefaultValue(h,"epsilon",1.e-8);
-    }
-    if(this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false)){
-      auto D = VariableDescription("StiffnessTensor","D",1u,0u);      
-      D.description = "stiffness tensor computed from elastic "
-	"material properties";
-      this->mb.addLocalVariable(h,D,BehaviourData::ALREADYREGISTRED);
-    }
     // minimal time step
-    if(this->mb.hasParameter(h,"dtmin")){
+    if(this->mb.hasParameter(uh,"dtmin")){
       ib.code += "if(this->dt<" + this->mb.getClassName() + "::dtmin){\n";
       ib.code += "this->dt=" + this->mb.getClassName() + "::dtmin;\n";
       ib.code += "}\n";
@@ -639,7 +676,7 @@ namespace mfront{
       ib.code += "throw(runtime_error(msg));\n";
       ib.code += "}\n";
     }
-    this->mb.setCode(h,BehaviourData::BeforeInitializeLocalVariables,ib,
+    this->mb.setCode(uh,BehaviourData::BeforeInitializeLocalVariables,ib,
 		     BehaviourData::CREATEORAPPEND,
 		     BehaviourData::AT_BEGINNING);
     // part introduced at the end of the initialize local variables
@@ -651,11 +688,14 @@ namespace mfront{
 	ie.code += "this->d" + dv.name + "_ = (this->"+dv.name+"1-this->"+dv.name+"0)/(this->dt);\n";
       }
     }
-    this->mb.setCode(h,BehaviourData::AfterInitializeLocalVariables,ie,
+    this->mb.setCode(uh,BehaviourData::AfterInitializeLocalVariables,ie,
 		     BehaviourData::CREATEORAPPEND,
 		     BehaviourData::BODY);
     // minimal tangent operator if mandatory
     this->setMinimalTangentOperator();
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "RungeKuttaDSLBase::endsInputFileProcessing: end\n";
+    }
   } // end of RungeKuttaDSLBase::endsInputFileProcessing
 
   void RungeKuttaDSLBase::writeBehaviourParserSpecificIncludes(std::ostream& os) const

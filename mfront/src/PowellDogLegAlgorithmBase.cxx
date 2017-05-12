@@ -67,16 +67,15 @@ namespace mfront{
   } // end of PowellDogLegAlgorithmBase::treatSpecificKeywords
 
 
-  void
-  PowellDogLegAlgorithmBase::endsInputFileProcessing(BehaviourDescription& mb)
+  void PowellDogLegAlgorithmBase::completeVariableDeclaration(BehaviourDescription& mb)
   {
     using namespace tfel::material;
-    const ModellingHypothesis::Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(!mb.hasParameter(h,"powell_dogleg_trust_region_size")){
       mb.addParameter(h,VariableDescription("real","powell_dogleg_trust_region_size",1u,0u));
       mb.setParameterDefaultValue(h,"powell_dogleg_trust_region_size",1.e-4);
     }
-  } // end of PowellDogLegAlgorithmBase::endsInputFileProcessing
+  } // end of PowellDogLegAlgorithmBase::completeVariableDeclaration
   
   void
   PowellDogLegAlgorithmBase::writePowellDogLegStep(std::ostream& out,

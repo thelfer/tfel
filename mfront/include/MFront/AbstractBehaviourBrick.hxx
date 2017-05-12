@@ -109,11 +109,12 @@ namespace mfront
      * \param[in] r : requirement manager
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    addRequirements(bbrick::RequirementManager&,
-		    const Hypothesis) const = 0;
-    //! ends the file treatment
+    virtual void addRequirements(bbrick::RequirementManager&,
+				 const Hypothesis) const = 0;
+    //! method called at the end of the input file processing
     virtual void endTreatment() const = 0;
+    //! complete the variable description
+    virtual void completeVariableDeclaration() const = 0;
     //! descructor
     virtual ~AbstractBehaviourBrick();
   }; // end of struct AbstractBehaviourBrick

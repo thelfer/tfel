@@ -61,18 +61,6 @@ nu.setGlossaryName("PoissonRatio");
   sig = D*eel;
 }
 
-@TangentOperator{
-  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
-    Dt=D;
-  } else if (smt==CONSISTENTTANGENTOPERATOR){
-    Stensor4 Je;
-    getPartialJacobianInvert(Je);
-    Dt = D*Je;
-  } else {
-    return false;
-  }
-}
-
 @Integrator{
   if (Fel>0){
     const Stensor X1t	= X1+theta*dX1;
@@ -89,8 +77,8 @@ nu.setGlossaryName("PoissonRatio");
     const real P2 = pow(F/k2,n2+1);
     const real FP = 1./((1./(P1/(F/k1)))+(1./(P2/(F/k2))));
     const real FPP = ((FP*FP)*((n1/k1)*(1./P1) + (n2/k2)*(1./P2)));
-    feel	 = deel + dp*n - deto;
-    fp           = dp - FP*dt;
+    feel	+= dp*n;
+    fp          -= FP*dt;
     fX1 	 = (dX1 - C1*dp*n + D1*X1t*dp)/young;
     fX2 	 = (dX2 - C2*dp*n + D2*X2t*dp)/young; 
     dfeel_ddeel += theta*dp*inv_seq*J*D;
@@ -103,11 +91,22 @@ nu.setGlossaryName("PoissonRatio");
     dfp_ddX2     = theta*dt*FPP*n;
     dfX1_ddeel   = (-theta*C1*dp*inv_seq*J*D)/young;
     dfX1_ddp     = (-C1*n + D1*X1t)/young;
-    dfX1_ddX1    = (Stensor4::Id() + theta*dp*(C1*inv_seq*J + D1*Stensor4::Id()))/young;
+    dfX1_ddX1    = (Stensor4::Id() + theta*dp*(-C1*inv_seq*J + D1*Stensor4::Id()))/young;
     dfX2_ddeel   = (-theta*C2*dp*inv_seq*J*D)/young;
     dfX2_ddp     = (-C2*n + D1*X2t)/young;
-    dfX2_ddX2    = (Stensor4::Id() + theta*dp*(C2*inv_seq*J + D2*Stensor4::Id()))/young;
+    dfX2_ddX2    = (Stensor4::Id() + theta*dp*(-C2*inv_seq*J + D2*Stensor4::Id()))/young;
+  }
+  feel -= deto;
+}
+
+@TangentOperator{
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+    Dt=D;
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    Stensor4 Je;
+    getPartialJacobianInvert(Je);
+    Dt = D*Je;
   } else {
-    feel	= deel - deto;
+    return false;
   }
 }

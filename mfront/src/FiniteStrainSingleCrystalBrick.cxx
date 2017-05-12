@@ -193,12 +193,12 @@ namespace mfront{
     return BehaviourBrickBase::treatKeyword(key,p,pe);
   } // end of FiniteStrainSingleCrystalBrick::treatKeyword
   
-  void FiniteStrainSingleCrystalBrick::endTreatment() const
+  void FiniteStrainSingleCrystalBrick::completeVariableDeclaration() const
   {
     using tfel::glossary::Glossary; 
     const auto h = ModellingHypothesis::TRIDIMENSIONAL;
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      getLogStream() << "FiniteStrainSingleCrystalBrick::endTreatment: begin\n";
+      getLogStream() << "FiniteStrainSingleCrystalBrick::completeVariableDeclaration: begin\n";
     }
     // defining the stiffness tensor, if necessary
     if((!this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))&&
@@ -215,6 +215,15 @@ namespace mfront{
     d.addVariable(h,{"Tensor","inv_dFp"});
     d.addVariable(h,{"real","J_inv_dFp"});
     d.addVariable(h,{"StrainStensor","tmp"});
+    this->bd.addLocalDataStructure(d,BehaviourData::ALREADYREGISTRED);
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "FiniteStrainSingleCrystalBrick::completeVariableDeclaration: end\n";
+    }
+  }
+  
+  void FiniteStrainSingleCrystalBrick::endTreatment() const
+  {
+    const auto h = ModellingHypothesis::TRIDIMENSIONAL;
     // local data values initialisation
     CodeBlock init;
     init.code =
@@ -292,7 +301,6 @@ namespace mfront{
     this->bd.setCode(h,BehaviourData::BehaviourData::ComputeTangentOperator+"-DTAU_DDF",
     		     to,BehaviourData::CREATE,
     		     BehaviourData::AT_BEGINNING);
-    this->bd.addLocalDataStructure(d,BehaviourData::ALREADYREGISTRED);
   } // end of FiniteStrainSingleCrystalBrick::endTreatment
   
   std::string FiniteStrainSingleCrystalBrick::getName() const{

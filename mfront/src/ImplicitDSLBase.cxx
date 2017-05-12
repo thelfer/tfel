@@ -140,7 +140,7 @@ namespace mfront{
   {
     VariableDescriptionContainer v;
     auto hs = std::set<Hypothesis>{};
-    this->readVariableList(v,hs,&BehaviourDescription::addStateVariables,true,false);
+    this->readVariableList(v,hs,&BehaviourDescription::addStateVariables,true);
     for(const auto h : hs){
       for(const auto& iv : v){
 	this->mb.reserveName(h,"f"+iv.name);
@@ -152,7 +152,7 @@ namespace mfront{
   {
     VariableDescriptionContainer v;
     auto hs = std::set<Hypothesis>{};
-    this->readVariableList(v,hs,&BehaviourDescription::addIntegrationVariables,true,false);
+    this->readVariableList(v,hs,&BehaviourDescription::addIntegrationVariables,true);
     for(const auto h : hs){
       for(const auto& iv : v){
 	this->mb.reserveName(h,"f"+iv.name);
@@ -671,22 +671,14 @@ namespace mfront{
     this->mb.setParameterDefaultValue(h,"maximum_increment_value_per_iteration",value);
   } // end of ImplicitDSLBase::treatMaximumIncrementValuePerIteration
 
-  void ImplicitDSLBase::endsInputFileProcessing()
-  {
+  void ImplicitDSLBase::completeVariableDeclaration(){
     using namespace tfel::glossary;
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(this->solver==nullptr){
       const auto& f = NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
       this->solver = f.getSolver("NewtonRaphson");
     }
-    BehaviourDSLCommon::endsInputFileProcessing();
-    if(this->mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
-      if((!this->solver->usesJacobian())||(this->solver->requiresNumericalJacobian())){
-	this->throwRuntimeError("ImplicitDSLBase::endsInputFileProcessing",
-				"@CompareToNumericalJacobian can only be used with solver using "
-				"an analytical jacobian (or an approximation of it");
-      }
-    }
+    BehaviourDSLCommon::completeVariableDeclaration();
     if(this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false)){
       auto D = VariableDescription("StiffnessTensor","D",1u,0u); 
       D.description = "stiffness tensor computed from elastic "
@@ -702,11 +694,11 @@ namespace mfront{
     if((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false))&&
        (this->mb.getElasticSymmetryType()==ISOTROPIC)&&
        (this->mb.areElasticMaterialPropertiesDefined())){
-      auto add_lv = [&h](BehaviourDescription& bd,
-			 const std::string& t,
-			 const std::string& n,
-			 const std::string& g,
-			 const std::string d){
+      auto add_lv = [this,&h](BehaviourDescription& bd,
+			      const std::string& t,
+			      const std::string& n,
+			      const std::string& g,
+			      const std::string d){
 	auto r = bd.checkVariableExistence(n,"Parameter",false);
 	if(!r.first){
 	  VariableDescription v(t,n,1u,0u);
@@ -714,8 +706,8 @@ namespace mfront{
 	  bd.addLocalVariable(h,v,BehaviourData::UNREGISTRED);
 	} else {
 	  if(!r.second){
-	    throw(std::runtime_error("ImplicitDSLBase::endsInputFileProcessing: "
-				     "Parameter '"+n+"' is not defined for all hypotheses"));
+	    this->throwRuntimeError("ImplicitDSLBase::completeVariableDeclaration",
+				    "Parameter '"+n+"' is not defined for all hypotheses");
 	  }
 	  if(!g.empty()){
 	    bd.checkVariableGlossaryName(n,g);
@@ -746,8 +738,6 @@ namespace mfront{
       H_tdt.description = "Hill tensor '"+ht.name+"' at the end of the time step";
       this->mb.addLocalVariable(h,H_tdt);
     }
-    // create the compute final stress code is necessary
-    this->setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();
     // creating default parameters if not explicitely specified by the user
     if(!this->mb.hasParameter(h,"epsilon")){
       VariableDescription e("real","epsilon",1u,0u);
@@ -763,7 +753,7 @@ namespace mfront{
       this->mb.setEntryName(h,"theta","theta");
       this->mb.setParameterDefaultValue(h,"theta",0.5);
     }
-    this->solver->endsInputFileProcessing(this->mb);
+    this->solver->completeVariableDeclaration(this->mb);
     if((this->mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false))||
        (this->solver->usesJacobian())){
       const std::string nje = "numerical_jacobian_epsilon";
@@ -793,6 +783,22 @@ namespace mfront{
 					  this->mb.getFloattingPointParameterDefaultValue(h,"epsilon"));
       }
     }
+  } // end of ImplicitDSLBase::completeVariableDeclaration
+      
+  void ImplicitDSLBase::endsInputFileProcessing()
+  {
+    using namespace tfel::glossary;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    BehaviourDSLCommon::endsInputFileProcessing();
+    if(this->mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
+      if((!this->solver->usesJacobian())||(this->solver->requiresNumericalJacobian())){
+	this->throwRuntimeError("ImplicitDSLBase::endsInputFileProcessing",
+				"@CompareToNumericalJacobian can only be used with solver using "
+				"an analytical jacobian (or an approximation of it");
+      }
+    }
+    // create the compute final stress code is necessary
+    this->setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();
     // correct prediction to take into account normalisation factors
     const std::set<Hypothesis> mh(this->mb.getDistinctModellingHypotheses());
     for(const auto & elem : mh){
@@ -837,7 +843,6 @@ namespace mfront{
     // minimal tangent operator
     this->setMinimalTangentOperator();
   } // end of ImplicitDSLBase::endsInputFileProcessing(void)
-
 
   void ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation(std::ostream& os,
 								   const Hypothesis h) const

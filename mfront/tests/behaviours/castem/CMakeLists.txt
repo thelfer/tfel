@@ -75,6 +75,8 @@ set(mfront_tests_SOURCES
   ImplicitOrthotropicCreep
   ImplicitOrthotropicCreep2
   StrainHardeningCreep
+  StrainHardeningCreep2
+  StrainHardeningCreep3
   Lorentz
   Lorentz2
   Mazars
@@ -442,6 +444,8 @@ test_castem(orthotropiccreep)
 test_castem(orthotropiccreep-rk42)
 test_castem(orthotropiccreep-rkCastem)
 test_castem(strainhardeningcreep)
+test_castem(strainhardeningcreep2)
+test_castem(strainhardeningcreep3)
 test_castem(plasticity)
 test_castem(plasisocin)
 test_castem(viscoplasisocin)

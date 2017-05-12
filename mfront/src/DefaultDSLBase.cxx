@@ -76,10 +76,9 @@ namespace mfront{
       this->mb.setAttribute(elem,BehaviourData::isConsistentTangentOperatorSymmetric,true);
     }
   } // end of DefaultDSLBase::treatProvidesSymmetricTangentOperator
-  
-  void DefaultDSLBase::endsInputFileProcessing()
-  {
-    BehaviourDSLCommon::endsInputFileProcessing();
+
+  void DefaultDSLBase::completeVariableDeclaration(){
+    BehaviourDSLCommon::completeVariableDeclaration();
     if(this->mb.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,false)){
       const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       auto D = VariableDescription("StiffnessTensor","D",1u,0u); 
@@ -87,9 +86,8 @@ namespace mfront{
 	"material properties";
       this->mb.addLocalVariable(h,D,BehaviourData::ALREADYREGISTRED);
     }
-  } // end of DefaultDSLBase::endsInputFileProcessing()
-
-
+  } // end of DefaultDSLBase::completeVariableDeclaration
+  
   void DefaultDSLBase::writeBehaviourParserSpecificIncludes(std::ostream& os) const
   {
     BehaviourDSLCommon::writeBehaviourParserSpecificIncludes(os);

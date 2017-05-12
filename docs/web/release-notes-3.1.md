@@ -525,8 +525,10 @@ option. Valid values for this option are:
 - `ToNearest`: Round to nearest (the default).
 - `TowardZero`: Round toward zero.
 - `UpWard`: Round upward.
+- `Random`: rounding mode is changed randomly a various stage of the
+  computation to one of the four previous rounding modes.
 
-Most unit-tests based on `MTest` are now executed four times, one for
+Most unit-tests based on `MTest` are now executed five times, one for
 each available choice of the rounding mode.
 
 ## Abritrary non linear constraints
@@ -864,11 +866,54 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/48/>
 
 ## Ticket #49: Add the ability to retrieve the symmetry of the behaviour and the symmetry of the elastic behaviour from `mfront-query`
 
+The following queries are now available:
+
+- `--elastic-symmetry`: return the symmetry of the elastic part of the behaviour. If the returned value is 0, this part of the behaviour is isotropic. If the returned value is 1, this part of the behaviour is orthotropic.the behaviour is orthotropic.
+- `--symmetry`: return the behaviour symmetry. If the returned value is 0, the behaviour is isotropic. If the returned value is 1, the behaviour is orthotropic.
+
 For more details, see: <https://sourceforge.net/p/tfel/tickets/49/>
 
 ## Ticket #50: Add the ability to retrieve bounds values from `mfront-query`
 
+The following queries are now available:
+
+- `--has-bounds`: return `true` if a variable has bounds, `false` otherwise.
+- `--bounds-type`: return the bounds type associated to a variable.
+- `--bounds-value`: show the bounds value associated as a range.
+- `--has-physical-bounds`: return `true` if a variable has physical bounds, `false` otherwise.
+- `--physical-bounds-type`: return the physical bounds type associated to a variable.
+- `--physical-bounds-value`: show the bounds value associated as a range.
+
+
 For more details, see: <https://sourceforge.net/p/tfel/tickets/50/>
+
+## Ticket #65: `@ElasticMaterialProperties` does not work for DSL describing isotropics behaviours
+
+The `@ElasticMaterialProperties` is now available for domain specific
+languages (DSL) describing isotropics behaviours.
+
+~~~~{.cpp}
+@DSL IsotropicStrainHardeningMisesCreep;
+@Behaviour StrainHardeningCreep2;
+@Author    Helfer Thomas;
+@Date      23/11/06;
+
+@ElasticMaterialProperties {"Inconel600_YoungModulus.mfront",0.3};
+
+@MaterialProperty real A;
+@MaterialProperty real Ns;
+@MaterialProperty real Np;
+
+@FlowRule{
+  const real p0  = 1.e-6;
+  const real tmp = A*pow(seq,Ns-1.)*pow(p+p0,-Np-1);
+  f       = tmp*seq*(p+p0);
+  df_dseq =  Ns*tmp*(p+p0);
+  df_dp   = -Np*tmp*seq;
+}
+~~~~
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/65/>
 
 # References
 

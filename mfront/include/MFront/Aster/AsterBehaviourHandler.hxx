@@ -252,11 +252,10 @@ namespace aster
 
       TFEL_ASTER_INLINE void exe(AsterReal *const,
 				 AsterReal *const,
-				 AsterReal *const)
+				 AsterReal *const,
+				 const AsterReal *const)
       {
-	typedef tfel::material::MechanicalBehaviourTraits<Behaviour<H,AsterReal,false>> Traits;
-	throw(AsterInvalidModellingHypothesis(Traits::getName(),H));
-	return;
+	throw(AsterInvalidModellingHypothesis());
       } // end of Error::exe
 	
     }; // end of struct Error

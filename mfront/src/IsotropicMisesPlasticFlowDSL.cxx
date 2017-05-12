@@ -43,7 +43,6 @@ namespace mfront{
     this->mb.addLocalVariable(h,VariableDescription("strain","p_",1u,0u));
     this->mb.setAttribute(h,BehaviourData::hasConsistentTangentOperator,true);
     this->mb.setAttribute(h,BehaviourData::isConsistentTangentOperatorSymmetric,true);
-    this->theta = 1.;
   }
 
   std::string IsotropicMisesPlasticFlowDSL::getName()
@@ -57,6 +56,10 @@ namespace mfront{
       " of the form f(s,p)=0 where p is the equivalent creep strain and s the "
       "equivalent mises stress";
   } // end of IsotropicMisesPlasticFlowDSL::getDescription
+
+  double IsotropicMisesPlasticFlowDSL::getDefaultThetaValue() const{
+    return 1.;
+  }
 
   void IsotropicMisesPlasticFlowDSL::endsInputFileProcessing()
   {
@@ -195,7 +198,7 @@ namespace mfront{
        << "}\n"
        << "this->deel = this->deto-(this->dp)*(this->n);\n"
        << "this->updateStateVariables();\n"
-       << "this->sig  = (this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*(this->eel);\n"
+       << "this->sig  = (this->lambda_tdt)*trace(this->eel)*StrainStensor::Id()+2*(this->mu_tdt)*(this->eel);\n"
        << "this->updateAuxiliaryStateVariables();\n";
     for(const auto& v : d.getPersistentVariables()){
       this->writePhysicalBoundsChecks(os,v,false);
@@ -220,14 +223,14 @@ namespace mfront{
        << "using tfel::math::st2tost2;\n"
        << "TFEL_CONSTEXPR real prec = std::numeric_limits<strain>::epsilon()/100;\n"
        << "if(smt==CONSISTENTTANGENTOPERATOR){\n"
-       << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n"
+       << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda_tdt,this->mu_tdt);\n"
        << "if(this->dp>prec){\n"
        << "const real ccto_tmp_1 =  this->dp/this->seq_e;\n"
        << "const auto& M = st2tost2<N,Type>::M();\n"
-       << "this->Dt += -4*(this->mu)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_1-this->df_dseq/((this->theta)*(3*(this->mu)*(this->df_dseq)-(this->df_dp))))*((this->n)^(this->n)));\n"
+       << "this->Dt += -4*(this->mu_tdt)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_1-this->df_dseq/((this->theta)*(3*(this->mu)*(this->df_dseq)-(this->df_dp))))*((this->n)^(this->n)));\n"
        << "}\n"
        << "} else if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-       << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu);\n"
+       << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda_tdt,this->mu_tdt);\n"
        << "} else {\n"
        << "return false;\n"
        << "}\n"

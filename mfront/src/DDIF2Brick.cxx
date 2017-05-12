@@ -118,16 +118,17 @@ namespace mfront{
     }
   } // end of DDIF2Brick::DDIF2Brick
 
-  void DDIF2Brick::endTreatment() const
+  void DDIF2Brick::completeVariableDeclaration() const
   {
     using tfel::glossary::Glossary; 
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("DDIF2Brick::endTreatment: "+m));}
+      if(b){throw(std::runtime_error("DDIF2Brick::completeVariableDeclaration: "+m));}
     };
     constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      getLogStream() << "DDIF2Brick::endTreatment: begin\n";
+      getLogStream() << "DDIF2Brick::completeVariableDeclaration: begin\n";
     }
+    StandardElasticityBrick::completeVariableDeclaration();
     // fracture properties
     if(this->sr==nullptr){
       this->addMaterialPropertyIfNotDefined("stress","sigr","FractureStress");
@@ -138,6 +139,7 @@ namespace mfront{
     LocalDataStructure d;
     d.name = "ddif2bdata";
     d.addVariable(uh,{"StressStensor","sig"});
+    this->bd.addLocalDataStructure(d,BehaviourData::ALREADYREGISTRED);
     // modelling hypotheses supported by the brick
     const auto smh = this->getSupportedModellingHypotheses();
     // modelling hypotheses supported by the behaviour
@@ -146,7 +148,6 @@ namespace mfront{
       throw_if(std::find(smh.begin(),smh.end(),h)==smh.end(),
 	       "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'");
     }
-    StandardElasticityBrick::endTreatment();
     // init local variables
     CodeBlock init;
     init.code = "for(unsigned short idx=0;idx!=3;++idx){\n"
@@ -156,6 +157,18 @@ namespace mfront{
     this->bd.setCode(uh,BehaviourData::BeforeInitializeLocalVariables,
     		     init,BehaviourData::CREATEORAPPEND,
     		     BehaviourData::AT_END);
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "DDIF2Brick::completeVariableDeclaration: end\n";
+    }
+  }
+
+  void DDIF2Brick::endTreatment() const
+  {
+    constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      getLogStream() << "DDIF2Brick::endTreatment: begin\n";
+    }
+    StandardElasticityBrick::endTreatment();
     // implicit equation associated with the crack strains
     const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
     CodeBlock integrator;
@@ -195,7 +208,6 @@ namespace mfront{
     this->bd.setCode(uh,BehaviourData::UpdateAuxiliaryStateVariables,
     		     uasv,BehaviourData::CREATEORAPPEND,
     		     BehaviourData::AT_END);
-    this->bd.addLocalDataStructure(d,BehaviourData::ALREADYREGISTRED);
   } // end of DDIF2Brick::endTreatment
   
   std::string DDIF2Brick::getName() const{

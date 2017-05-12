@@ -12,6 +12,7 @@ link_directories("${PROJECT_BINARY_DIR}/mtest/src"
 		 "${PROJECT_BINARY_DIR}/src/Config")
 
 set(TFELMTest_SOURCES
+  RoundingMode.cxx
   Study.cxx
   StudyCurrentState.cxx
   StructureCurrentState.cxx

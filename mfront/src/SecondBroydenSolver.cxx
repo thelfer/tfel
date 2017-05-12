@@ -73,8 +73,8 @@ namespace mfront{
   } // end of MFrontLevenbergMarquartSolverBase::treatSpecificKeywords
 
   void
-  SecondBroydenSolver::endsInputFileProcessing(BehaviourDescription&) const
-  {} // end of SecondBroydenSolver::endsInputFileProcessing
+  SecondBroydenSolver::completeVariableDeclaration(BehaviourDescription&) const
+  {} // end of SecondBroydenSolver::completeVariableDeclaration
 
   void
   SecondBroydenSolver::writeSpecificMembers(std::ostream&,

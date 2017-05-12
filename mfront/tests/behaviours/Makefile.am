@@ -55,6 +55,8 @@ MFRONTS= DDIF2.mfront                                                      \
          ImplicitOrthotropicCreep.mfront                                   \
          ImplicitOrthotropicCreep2.mfront                                  \
          StrainHardeningCreep.mfront                                       \
+         StrainHardeningCreep2.mfront                                      \
+         StrainHardeningCreep3.mfront                                      \
          Mazars.mfront                                                     \
          UnilateralMazars.mfront                                           \
          Lorentz.mfront                                                    \

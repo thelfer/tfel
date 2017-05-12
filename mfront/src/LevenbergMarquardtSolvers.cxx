@@ -19,19 +19,19 @@
 namespace mfront{
 
   std::vector<std::string>
-  MFrontLevenbergMarquartSolverBase::getReservedNames() const
+  LevenbergMarquartSolverBase::getReservedNames() const
   {
     return {"levmar_jacobian_1","levmar_fzeros_1",
 	"levmar_error","levmar_m","levmar_sm",
 	"levmar_mu","levmar_mu0","levmar_muF",
 	"levmar_r","levmar_p0","levmar_p1","levmar_p2"};
-  } // end of MFrontLevenbergMarquartSolverBase::getReservedNames
+  } // end of LevenbergMarquartSolverBase::getReservedNames
 
   void
-  MFrontLevenbergMarquartSolverBase::endsInputFileProcessing(BehaviourDescription& mb) const
+  LevenbergMarquartSolverBase::completeVariableDeclaration(BehaviourDescription& mb) const
   {
     using namespace tfel::material;
-    const ModellingHypothesis::Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(!mb.hasParameter(h,"levmar_mu0")){
       mb.addParameter(h,VariableDescription("real","levmar_mu0",1u,0u),
 		      BehaviourData::ALREADYREGISTRED);
@@ -60,58 +60,58 @@ namespace mfront{
   }
 
   bool
-  MFrontLevenbergMarquartSolverBase::usesJacobian() const
+  LevenbergMarquartSolverBase::usesJacobian() const
   {
     return true;
-  } // end of MFrontLevenbergMarquartSolverBase::usesJacobian
+  } // end of LevenbergMarquartSolverBase::usesJacobian
 
   bool
-  MFrontLevenbergMarquartSolverBase::usesJacobianInvert() const
+  LevenbergMarquartSolverBase::usesJacobianInvert() const
   {
     return false;
-  } // end of MFrontLevenbergMarquartSolverBase::usesJacobianInvert
+  } // end of LevenbergMarquartSolverBase::usesJacobianInvert
 
   bool
-  MFrontLevenbergMarquartSolverBase::allowsJacobianInitialisation() const
+  LevenbergMarquartSolverBase::allowsJacobianInitialisation() const
   {
     return false;
-  } // end of MFrontLevenbergMarquartSolverBase::allowsJacobianInitialisation
+  } // end of LevenbergMarquartSolverBase::allowsJacobianInitialisation
 
   bool
-  MFrontLevenbergMarquartSolverBase::allowsJacobianInvertInitialisation() const
+  LevenbergMarquartSolverBase::allowsJacobianInvertInitialisation() const
   {
     return false;
-  } // end of MFrontLevenbergMarquartSolverBase::allowsJacobianInvertInitialisation
+  } // end of LevenbergMarquartSolverBase::allowsJacobianInvertInitialisation
 
   bool
-  MFrontLevenbergMarquartSolverBase::requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const
+  LevenbergMarquartSolverBase::requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const
   {
     return !this->requiresNumericalJacobian();
-  } // end of MFrontLevenbergMarquartSolverBase::requiresJacobianToBeReinitialisedToIdentityAtEachIterations
+  } // end of LevenbergMarquartSolverBase::requiresJacobianToBeReinitialisedToIdentityAtEachIterations
 
-  std::pair<bool,MFrontLevenbergMarquartSolverBase::tokens_iterator>
-  MFrontLevenbergMarquartSolverBase::treatSpecificKeywords(BehaviourDescription&,
+  std::pair<bool,LevenbergMarquartSolverBase::tokens_iterator>
+  LevenbergMarquartSolverBase::treatSpecificKeywords(BehaviourDescription&,
 							   const std::string&,
 							   const tokens_iterator p,
 							   const tokens_iterator)
   {
     return {false,p};
-  } // end of MFrontLevenbergMarquartSolverBase::treatSpecificKeywords
+  } // end of LevenbergMarquartSolverBase::treatSpecificKeywords
 
   void
-  MFrontLevenbergMarquartSolverBase::writeSpecificInitializeMethodPart(std::ostream&,
+  LevenbergMarquartSolverBase::writeSpecificInitializeMethodPart(std::ostream&,
 								       const BehaviourDescription&,
 								       const Hypothesis) const
-  {} // end of MFrontLevenbergMarquartSolverBase::writeSpecificInitializeMethodPart
+  {} // end of LevenbergMarquartSolverBase::writeSpecificInitializeMethodPart
 
   void
-  MFrontLevenbergMarquartSolverBase::writeSpecificMembers(std::ostream&,
+  LevenbergMarquartSolverBase::writeSpecificMembers(std::ostream&,
 						      const BehaviourDescription&,
 						      const Hypothesis) const
-  {} // end of MFrontLevenbergMarquartSolverBase::writeSpecificMembers
+  {} // end of LevenbergMarquartSolverBase::writeSpecificMembers
 
   void
-  MFrontLevenbergMarquartSolverBase::writeResolutionAlgorithm(std::ostream& out,
+  LevenbergMarquartSolverBase::writeResolutionAlgorithm(std::ostream& out,
 							      const BehaviourDescription& mb,
 							      const Hypothesis h) const
   {
@@ -254,23 +254,23 @@ namespace mfront{
     NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(out,mb,h);
     out << "}\n";
     out << "}\n";
-  } // end of MFrontLevenbergMarquartSolverBase::writeResolutionAlgorithm
+  } // end of LevenbergMarquartSolverBase::writeResolutionAlgorithm
 
-  MFrontLevenbergMarquartSolverBase::~MFrontLevenbergMarquartSolverBase() = default;
+  LevenbergMarquartSolverBase::~LevenbergMarquartSolverBase() = default;
 
-  bool MFrontLevenbergMarquartSolver::requiresNumericalJacobian() const
+  bool LevenbergMarquartSolver::requiresNumericalJacobian() const
   {
     return false;
   }
 
-  MFrontLevenbergMarquartSolver::~MFrontLevenbergMarquartSolver() = default;
+  LevenbergMarquartSolver::~LevenbergMarquartSolver() = default;
 
-  bool MFrontLevenbergMarquartNumericalJacobianSolver::requiresNumericalJacobian() const
+  bool LevenbergMarquartNumericalJacobianSolver::requiresNumericalJacobian() const
   {
     return true;
   }
 
-  MFrontLevenbergMarquartNumericalJacobianSolver::~MFrontLevenbergMarquartNumericalJacobianSolver() = default;
+  LevenbergMarquartNumericalJacobianSolver::~LevenbergMarquartNumericalJacobianSolver() = default;
   
 } // end of namespace mfront
 

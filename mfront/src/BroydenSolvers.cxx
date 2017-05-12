@@ -76,12 +76,12 @@ namespace mfront{
   } // end of MFrontBroydenSolverBase::treatSpecificKeywords
 
   void
-  MFrontBroydenSolverBase::endsInputFileProcessing(BehaviourDescription& mb) const
+  MFrontBroydenSolverBase::completeVariableDeclaration(BehaviourDescription& mb) const
   {
     if(this->usesPowellDogLegAlgorithm()){
-      return PowellDogLegAlgorithmBase::endsInputFileProcessing(mb);
+      return PowellDogLegAlgorithmBase::completeVariableDeclaration(mb);
     }
-  } // end of MFrontBroydenSolverBase::endsInputFileProcessing
+  } // end of MFrontBroydenSolverBase::completeVariableDeclaration
 
   void
   MFrontBroydenSolverBase::writeSpecificMembers(std::ostream&,

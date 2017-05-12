@@ -38,7 +38,7 @@ namespace mfront{
      * the rest of the endsInputFileProcessing method, in the
      * endTreatment method of the behaviour bricks in particular.
      */
-    const NonLinearSystemSolver& getSolver(void) const;
+    const NonLinearSystemSolver& getSolver() const;
     //!\brief destructor
     virtual ~ImplicitDSLBase();
 
@@ -83,7 +83,7 @@ namespace mfront{
      * solver may have specific keywords
      */
     virtual void
-    treatUnknownKeyword(void) override;
+    treatUnknownKeyword() override;
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] n : variable name
@@ -92,15 +92,17 @@ namespace mfront{
     treatUnknownVariableMethod(const Hypothesis,
 			       const std::string&) override;
     //! \brief treat the @StateVariable keyword
-    virtual void treatStateVariable(void) override;
+    virtual void treatStateVariable() override;
     //! \brief treat the @IntegrationVariable keyword
-    virtual void treatIntegrationVariable(void);
+    virtual void treatIntegrationVariable();
     //! \brief treat the @Integrator keyword
-    virtual void  treatIntegrator(void) override;
+    virtual void  treatIntegrator() override;
     //! \brief treat the @ComputeFinalStress keyword
-    virtual void treatComputeFinalStress(void);
+    virtual void treatComputeFinalStress();
 
-    virtual void endsInputFileProcessing(void) override;
+    virtual void completeVariableDeclaration() override;
+
+    virtual void endsInputFileProcessing() override;
 
     virtual void
     writeBehaviourLocalVariablesInitialisation(std::ostream&,
@@ -137,29 +139,29 @@ namespace mfront{
     virtual void writeGetPartialJacobianInvert(std::ostream&,
 					       const Hypothesis) const;
     //! \brief treat the @Theta keyword
-    virtual void treatTheta(void);
+    virtual void treatTheta();
     //! \brief treat the @IterMax keyword
-    virtual void treatIterMax(void);
+    virtual void treatIterMax();
     //! \brief treat the @Epsilon keyword
-    virtual void treatEpsilon(void);
+    virtual void treatEpsilon();
     //! \brief treat the @PerturbationValueForNumericalJacobianComputation keyword
-    virtual void treatPerturbationValueForNumericalJacobianComputation(void);
+    virtual void treatPerturbationValueForNumericalJacobianComputation();
     //! \brief treat the @Algorithm keyword
-    virtual void treatAlgorithm(void);
+    virtual void treatAlgorithm();
     //! \brief treat the @Predictor keyword
-    virtual void treatPredictor(void);
+    virtual void treatPredictor();
     //! \brief treat the @ComputeStress keyword
-    virtual void treatComputeStress(void);
+    virtual void treatComputeStress();
     //! \brief treat the @CompareToNumericalJacobian keyword
-    virtual void treatCompareToNumericalJacobian(void);
+    virtual void treatCompareToNumericalJacobian();
     //! \brief treat the @JacobianComparisonCriterion keyword
-    virtual void treatJacobianComparisonCriterion(void);
+    virtual void treatJacobianComparisonCriterion();
     //! \brief treat the @InitJacobian keyword
-    virtual void treatInitJacobian(void);
+    virtual void treatInitJacobian();
     //! \brief treat the @InitJacobianInvert keyword
-    virtual void treatInitJacobianInvert(void);
+    virtual void treatInitJacobianInvert();
     //! \brief treat the @MaximumIncrementValuePerIteration keyword
-    virtual void treatMaximumIncrementValuePerIteration(void);
+    virtual void treatMaximumIncrementValuePerIteration();
     /*!
      * \return true if the the given variable may have methods
      * \param[in] h : modelling hypothesis

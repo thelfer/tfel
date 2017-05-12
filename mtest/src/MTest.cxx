@@ -35,6 +35,7 @@
 #include"MFront/MFrontLogStream.hxx"
 
 #include"MTest/MTest.hxx"
+#include"MTest/RoundingMode.hxx"
 #include"MTest/Behaviour.hxx"
 #include"MTest/MTestParser.hxx"
 
@@ -683,7 +684,9 @@ namespace mtest
       s.e1[i] = state.u1[i];
     }
     // behaviour integration
+    setRoundingMode();
     const auto rb = this->b->integrate(s,bwk,dt,mt);
+    setRoundingMode();
     if(!rb.first){
       if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){
   	auto& log = mfront::getLogStream();
@@ -702,7 +705,9 @@ namespace mtest
 	std::copy(bwk.ne.begin(),bwk.ne.end(),s.e1.begin());
 	s.e1[i] += this->pv;
 	try{
+	  setRoundingMode();
 	  ok = this->b->integrate(s,bwk,dt,mt).first;
+	  setRoundingMode();
 	} catch(...){
 	  ok = false;
 	}
@@ -716,7 +721,9 @@ namespace mtest
 	std::copy(bwk.ne.begin(),bwk.ne.end(),s.e1.begin());
 	s.e1[i] -= this->pv;
 	try{
+	  setRoundingMode();
 	  ok = this->b->integrate(s,bwk,dt,mt).first;
+	  setRoundingMode();
 	} catch(...){
 	  ok = false;
 	}

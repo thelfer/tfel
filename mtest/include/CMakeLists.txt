@@ -1,5 +1,6 @@
 install_mtest_header(MTest Config.hxx)
 install_mtest_header(MTest Types.hxx)
+install_mtest_header(MTest RoundingMode.hxx)
 install_mtest_header(MTest Solver.hxx)
 install_mtest_header(MTest SolverOptions.hxx)
 install_mtest_header(MTest GenericSolver.hxx)

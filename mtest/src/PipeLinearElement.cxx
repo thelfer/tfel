@@ -13,6 +13,7 @@
 
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"MFront/MFrontLogStream.hxx"
+#include"MTest/RoundingMode.hxx"
 #include"MTest/Behaviour.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
 #include"MTest/CurrentState.hxx"
@@ -147,8 +148,10 @@ namespace mtest{
       const auto rg = interpolate(r0,r1,pg);
       // current state
       auto& s = scs.istates[2*i+g];
+      setRoundingMode();
       const auto rb =
 	b.integrate(s,bwk,dt,mt);
+      setRoundingMode();
       r_dt = (g==0) ? rb.second : std::min(rb.second,r_dt);
       if(!rb.first){
 	if(mfront::getVerboseMode()>mfront::VERBOSE_QUIET){

@@ -499,8 +499,7 @@ namespace mfront
     return this->type;
   } // end of BehaviourDescription::getBehaviourType
 
-  std::string
-  BehaviourDescription::getBehaviourTypeFlag() const
+  std::string BehaviourDescription::getBehaviourTypeFlag() const
   {
     std::string btype;
     if(this->getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
@@ -516,8 +515,7 @@ namespace mfront
     return btype;
   } // end of BehaviourDescription::getBehaviourTypeFlag
 
-  bool
-  BehaviourDescription::areElasticMaterialPropertiesDefined() const
+  bool BehaviourDescription::areElasticMaterialPropertiesDefined() const
   {
     return !this->elasticMaterialProperties.empty();
   } // end of BehaviourDescription::areElasticMaterialPropertiesDefined

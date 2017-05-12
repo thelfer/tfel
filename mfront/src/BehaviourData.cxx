@@ -292,7 +292,6 @@ namespace mfront{
   BehaviourData::CodeBlocksAggregator::~CodeBlocksAggregator() = default;
 
   BehaviourData::BehaviourData()
-    : usableInPurelyImplicitResolution(false)
   {
     this->registerMemberName("dt");
     // treating the temperature
@@ -316,6 +315,26 @@ namespace mfront{
   void BehaviourData::addStaticVariable(const StaticVariableDescription& v,
 					const RegistrationStatus s)
   {
+    if((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables))&&
+       (!this->getAttribute<bool>(BehaviourData::allowsNewUserDefinedVariables))){
+      const auto cbn = this->getCodeBlockNames();
+      if(cbn.empty()){
+	throw(std::runtime_error("BehaviourData::addStaticVariable: "
+				 "no more variable can be defined. This may mean that "
+				 "the parser does not expect you to add variables"));
+      } else {
+	auto cbs = std::string{};
+	for(const auto& n : cbn){
+	  cbs += "\n- "+n;
+	}
+	throw(std::runtime_error("BehaviourData::addStaticVariable: "
+				 "no more variable can be defined. This may mean that "
+				 "you already declared a block of code (or that the dsl "
+				 "does not expect you to add variables for whatever reason). "
+				 "This is the list of "
+				 "code blocks defined :"+cbs));
+      }
+    }
     if(s==UNREGISTRED){
       this->registerStaticMemberName(v.name);
     } else {
@@ -471,7 +490,7 @@ namespace mfront{
   void BehaviourData::addLocalVariable(const VariableDescription& v,
 				       const RegistrationStatus s)
   {
-    this->addVariable(this->localVariables,v,s,false);
+    this->addVariable(this->localVariables,v,s,false,true);
   } // end of BehaviourData::addLocalVariable
 
   void BehaviourData::addParameter(const VariableDescription& v,
@@ -934,8 +953,31 @@ namespace mfront{
   void BehaviourData::addVariable(VariableDescriptionContainer& c,
 				  const VariableDescription& v,
 				  const RegistrationStatus s,
-				  const bool bi)
+				  const bool bi,
+				  const bool b)
   {
+    if(!b){
+      if((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables))&&
+	 (!this->getAttribute<bool>(BehaviourData::allowsNewUserDefinedVariables))){
+	const auto cbn = this->getCodeBlockNames();
+	if(cbn.empty()){
+	  throw(std::runtime_error("BehaviourData::addVariable: can't add variable '"+v.name+"', "
+				   "no more variable can be defined. This may mean that "
+				   "the parser does not expect you to add variables"));
+	} else {
+	  auto cbs = std::string{};
+	  for(const auto& n : cbn){
+	    cbs += "\n- "+n;
+	  }
+	  throw(std::runtime_error("BehaviourData::addVariable: can't add variable '"+v.name+"', "
+				   "no more variable can be defined. This may mean that "
+				   "you already declared a block of code (or that the dsl "
+				   "does not expect you to add variables for whatever reason). "
+				   "This is the list of "
+				   "code blocks defined :"+cbs));
+	}
+      }
+    }
     if(s==ALREADYREGISTRED){
       checkAlreadyRegistred(this->reservedNames,v.name);
     } else {

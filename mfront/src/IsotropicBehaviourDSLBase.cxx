@@ -13,6 +13,8 @@
  */
 
 #include<sstream>
+#include"TFEL/Glossary/Glossary.hxx"
+#include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/IsotropicBehaviourDSLBase.hxx"
@@ -20,8 +22,7 @@
 namespace mfront{
 
   IsotropicBehaviourDSLBase::IsotropicBehaviourDSLBase()
-    : BehaviourDSLBase<IsotropicBehaviourDSLBase>(),
-    theta(0.5)
+    : BehaviourDSLBase<IsotropicBehaviourDSLBase>()
   {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->reserveName("NewtonIntegration");
@@ -34,23 +35,8 @@ namespace mfront{
     this->reserveName("theta");
     this->reserveName("epsilon");
     this->reserveName("iterMax");
-    this->mb.addMaterialProperty(h,VariableDescription("stress","young",1u,0u));
-    this->mb.setGlossaryName(h,"young","YoungModulus");
-    this->mb.addMaterialProperty(h,VariableDescription("real","nu",1u,0u));
-    this->mb.setGlossaryName(h,"nu","PoissonRatio");
-    // Lame coefficients
-    this->mb.addLocalVariable(h,VariableDescription("stress","lambda",1u,0u));
-    this->mb.addLocalVariable(h,VariableDescription("stress","mu",1u,0u));
     // intermediate temperature
     this->mb.addLocalVariable(h,VariableDescription("temperature","T_",1u,0u));
-    // local variable initialisation
-    CodeBlock initLocalVars;
-    initLocalVars.code = "// initialisation Lame's coefficient\n"
-      "this->lambda=tfel::material::computeLambda(this->young,this->nu);\n"
-      "this->mu=tfel::material::computeMu(this->young,this->nu);\n";
-    this->mb.setCode(h,BehaviourData::BeforeInitializeLocalVariables,
-		     initLocalVars,BehaviourData::CREATEORAPPEND,
-		     BehaviourData::AT_BEGINNING);
     // Call Back
     this->registerNewCallBack("@UsableInPurelyImplicitResolution",
 			      &IsotropicBehaviourDSLBase::treatUsableInPurelyImplicitResolution);
@@ -59,6 +45,8 @@ namespace mfront{
     this->registerNewCallBack("@Theta",&IsotropicBehaviourDSLBase::treatTheta);
     this->registerNewCallBack("@Epsilon",&IsotropicBehaviourDSLBase::treatEpsilon);
     this->registerNewCallBack("@IterMax",&IsotropicBehaviourDSLBase::treatIterMax);
+    this->registerNewCallBack("@ElasticMaterialProperties",
+			      &IsotropicBehaviourDSLBase::treatElasticMaterialProperties);
     this->disableCallBack("@Brick");
     this->disableCallBack("@StateVar");
     this->disableCallBack("@StateVariable");
@@ -82,6 +70,10 @@ namespace mfront{
 	    (h==ModellingHypothesis::TRIDIMENSIONAL));
   } // end of IsotropicBehaviourDSLBase::isModellingHypothesisSupported
 
+  double IsotropicBehaviourDSLBase::getDefaultThetaValue() const{
+    return 0.5;
+  }
+  
   void IsotropicBehaviourDSLBase::treatTheta()
   {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -162,7 +154,7 @@ namespace mfront{
   {
     VariableDescriptionContainer ev;
     std::set<Hypothesis> h;
-    this->readVariableList(ev,h,&BehaviourDescription::addExternalStateVariables,true,false);
+    this->readVariableList(ev,h,&BehaviourDescription::addExternalStateVariables,true);
     for(const auto & elem : h){
       CodeBlock ib;
       for(const auto& v : ev){
@@ -177,18 +169,56 @@ namespace mfront{
     }
   } // end of IsotropicBehaviourDSLBase::treatExternalStateVariable
 
-  void IsotropicBehaviourDSLBase::endsInputFileProcessing()
+  void IsotropicBehaviourDSLBase::completeVariableDeclaration()
   {
+    using namespace tfel::glossary;
+    auto add_lv = [](BehaviourDescription& bd,
+		     const std::string& t,
+		     const std::string& n,
+		     const std::string& g,
+		     const std::string d){
+      const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      auto r = bd.checkVariableExistence(n,"Parameter",false);
+      if(!r.first){
+	VariableDescription v(t,n,1u,0u);
+	v.description = d;
+	bd.addLocalVariable(h,v,BehaviourData::UNREGISTRED);
+      } else {
+	if(!r.second){
+	  throw(std::runtime_error("ImplicitDSLBase::completeVariableDeclaration: "
+				   "Parameter '"+n+"' is not defined for all hypotheses"));
+	}
+	if(!g.empty()){
+	  bd.checkVariableGlossaryName(n,g);
+	}
+      }
+    };
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(getVerboseMode()>=VERBOSE_DEBUG){
       auto& log = getLogStream();
-      log << "IsotropicBehaviourDSLBase::endsInputFileProcessing : begin\n";
+      log << "IsotropicBehaviourDSLBase::completeVariableDeclaration : begin\n";
     }
-    BehaviourDSLCommon::endsInputFileProcessing();
+    BehaviourDSLCommon::completeVariableDeclaration();
+    add_lv(this->mb,"stress","lambda",Glossary::FirstLameCoefficient,
+	   "first Lamé coefficient at t+theta*dt");
+    add_lv(this->mb,"stress","mu",Glossary::ShearModulus,"shear modulus at t+theta*dt");
+    add_lv(this->mb,"stress","lambda_tdt","","first Lamé coefficient at t+dt");
+    add_lv(this->mb,"stress","mu_tdt","","shear modulus at t+dt");
+    if(this->mb.areElasticMaterialPropertiesDefined()){
+      add_lv(this->mb,"stress","young",Glossary::YoungModulus,"Young modulus at t+theta*dt");
+      add_lv(this->mb,"real","nu",Glossary::PoissonRatio,"Poisson ratio at t+theta*dt");
+      add_lv(this->mb,"stress","young_tdt","","Young modulus at t+dt");
+      add_lv(this->mb,"real","nu_tdt","","Poisson ratio at t+dt");
+    } else {
+      this->mb.addMaterialProperty(h,VariableDescription("stress","young",1u,0u));
+      this->mb.setGlossaryName(h,"young","YoungModulus");
+      this->mb.addMaterialProperty(h,VariableDescription("real","nu",1u,0u));
+      this->mb.setGlossaryName(h,"nu","PoissonRatio");
+    }
     if(!this->mb.hasParameter(h,"theta")){
       this->mb.addParameter(h,VariableDescription("real","theta",1u,0u),
 			    BehaviourData::ALREADYREGISTRED);
-      this->mb.setParameterDefaultValue(h,"theta",this->theta);
+      this->mb.setParameterDefaultValue(h,"theta",this->getDefaultThetaValue());
     }
     if(!this->mb.hasParameter(h,"epsilon")){
       this->mb.addParameter(h,VariableDescription("real","epsilon",1u,0u),
@@ -201,6 +231,18 @@ namespace mfront{
 			    BehaviourData::ALREADYREGISTRED);
       this->mb.setParameterDefaultValue(h,"iterMax",iterMax);
     }
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      auto& log = getLogStream();
+      log << "IsotropicBehaviourDSLBase::completeVariableDeclaration: end\n";
+    }
+  } // end of IsotropicBehaviourDSLBase::completeVariableDeclaration
+
+  void IsotropicBehaviourDSLBase::endsInputFileProcessing()
+  {
+    if(getVerboseMode()>=VERBOSE_DEBUG){
+      auto& log = getLogStream();
+      log << "IsotropicBehaviourDSLBase::endsInputFileProcessing: begin\n";
+    }
     // temperature at the midle of the time step
     CodeBlock initLocalVars;
     initLocalVars.code = "this->T_ = this->T+(" + this->getClassName() + "::theta)*(this->dT);\n";
@@ -210,9 +252,95 @@ namespace mfront{
     		     BehaviourData::BODY);
     if(getVerboseMode()>=VERBOSE_DEBUG){
       auto& log = getLogStream();
-      log << "IsotropicBehaviourDSLBase::endsInputFileProcessing : end\n";
+      log << "IsotropicBehaviourDSLBase::endsInputFileProcessing: end\n";
     }
   } // end of IsotropicBehaviourDSLBase::endsInputFileProcessing
+
+  void IsotropicBehaviourDSLBase::writeBehaviourLocalVariablesInitialisation(std::ostream& os,
+									     const Hypothesis h) const
+  {
+    using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
+    Modifier mts = [this](const MaterialPropertyInput& i) -> std::string{
+      if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
+	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	return "this->"+i.name + "+theta*(this->d" + i.name+')';
+      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::PARAMETER)){
+	return "this->"+i.name;
+      } else {
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"unsupported input type for variable '"+i.name+"'");
+      }
+    };
+    Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
+      if((i.type==MaterialPropertyInput::TEMPERATURE)||
+	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
+	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){
+	return "this->"+i.name + "+this->d" + i.name;
+      } else if ((i.type==MaterialPropertyInput::MATERIALPROPERTY)||
+		 (i.type==MaterialPropertyInput::PARAMETER)){
+	return "this->"+i.name;
+      } else {
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"unsupported input type for variable '"+i.name+"'");
+      }
+    };
+    if(this->mb.areElasticMaterialPropertiesDefined()){
+      const auto& emps = this->mb.getElasticMaterialProperties();
+      if(emps.size()!=2u){
+	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+				"invalid number of material properties");
+      }
+      if(!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()){
+	this->writeMaterialPropertyCheckBoundsEvaluation(os,emps[0],mts);
+      }
+      if(!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()){
+	this->writeMaterialPropertyCheckBoundsEvaluation(os,emps[1],mts);
+      }
+      if(!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()){
+	os << "this->young=";
+	this->writeMaterialPropertyEvaluation(os,emps[0],mts);
+	os << ";\n";
+      }
+      if(!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()){
+	os << "this->nu=";
+	this->writeMaterialPropertyEvaluation(os,emps[1],mts);
+	os << ";\n";
+      }
+      os << "this->lambda=computeLambda(young,nu);\n";
+      os << "this->mu=computeMu(young,nu);\n";
+      if(!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[0])){
+	this->writeMaterialPropertyCheckBoundsEvaluation(os,emps[0],ets);
+	os << "this->young_tdt=";
+	this->writeMaterialPropertyEvaluation(os,emps[0],ets);
+	os << ";\n";
+      } else {
+	os << "this->young_tdt  = this->young;\n";
+      }
+      if(!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[1])){
+	this->writeMaterialPropertyCheckBoundsEvaluation(os,emps[1],ets);
+	os << "this->nu_tdt=";
+	this->writeMaterialPropertyEvaluation(os,emps[1],ets);
+	os << ";\n";
+      } else {
+	os << "this->nu_tdt     = this->nu;\n";
+      }
+      if(!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()){
+	os << "this->lambda_tdt = computeLambda(young_tdt,nu_tdt);\n";
+	os << "this->mu_tdt     = computeMu(young_tdt,nu_tdt);\n";
+      } else {
+	os << "this->lambda_tdt = this->lambda;\n"
+	   << "this->mu_tdt     = this->mu;\n";
+      }
+    } else {
+      os << "this->lambda=tfel::material::computeLambda(this->young,this->nu);\n"
+	 << "this->mu=tfel::material::computeMu(this->young,this->nu);\n"
+	 << "this->lambda_tdt = this->lambda;\n"
+	 << "this->mu_tdt     = this->mu;\n";
+    }
+    BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(os,h);
+  } // end of IsotropicBehaviourDSLBase::writeBehaviourLocalVariablesInitialisation
 
   void IsotropicBehaviourDSLBase::writeBehaviourParserSpecificIncludes(std::ostream& os) const
   {
@@ -250,7 +378,7 @@ namespace mfront{
 	 << "invalid tangent operator flag\"));\n"
 	 << "}\n"
 	 << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-	 << "Dt = (this->lambda)*Stensor4::IxI()+2*(this->mu)*Stensor4::Id();\n"
+	 << "Dt = (this->lambda_tdt)*Stensor4::IxI()+2*(this->mu_tdt)*Stensor4::Id();\n"
 	 << "} else {\n"
 	 << "string msg(\"" << this->mb.getClassName() << "::computePredictionOperator : \");\n"
 	 << "msg +=\"unimplemented feature\";\n"

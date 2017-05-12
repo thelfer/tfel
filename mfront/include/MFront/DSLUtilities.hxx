@@ -28,7 +28,9 @@ namespace mfront{
   struct StaticVariableDescription;
   // forward declaration
   struct MaterialPropertyDescription;
-  
+  // forward declaration
+  struct BehaviourDescription;
+
   /*!
    * \brief write a specific symbols stating that a given name entry
    * point (`C`-like function for example) has been created using
