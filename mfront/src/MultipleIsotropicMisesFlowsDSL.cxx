@@ -303,28 +303,26 @@ namespace mfront{
   void MultipleIsotropicMisesFlowsDSL::writeBehaviourIntegrator(std::ostream& os,
 								const Hypothesis h) const
   {
-    using namespace std;
-    const string btype = this->mb.getBehaviourTypeFlag();
+    const auto btype = this->mb.getBehaviourTypeFlag();
     const auto& d = this->mb.getBehaviourData(h);
-    vector<FlowHandler>::const_iterator p2;
     unsigned short n;
     this->checkBehaviourFile(os);
     os << "/*!\n"
        << "* \\brief Integrate behaviour law over the time step\n"
        << "*/\n"
-       << "IntegrationResult" << endl
+       << "IntegrationResult\n"
        << "integrate(const SMFlag smflag,const SMType smt) override{\n"
-       << "using namespace std;" << endl;
+       << "using namespace std;\n";
     if(this->mb.useQt()){
       os << "if(smflag!=MechanicalBehaviour<" << btype 
-	 << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){" << endl
-	 << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
-	 << "}" << endl;
+	 << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
+	 << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
+	 << "}\n";
     } else {
       os << "if(smflag!=MechanicalBehaviour<" << btype 
-	 << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){" << endl
-	 << "throw(runtime_error(\"invalid tangent operator flag\"));" << endl
-	 << "}" << endl;
+	 << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
+	 << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
+	 << "}\n";
     }
     os << "if(!this->NewtonIntegration()){\n";
     if(this->mb.useQt()){        
@@ -334,7 +332,7 @@ namespace mfront{
     }
     os << "}\n"
        << "this->dp = ";
-    p2=this->flows.begin();
+    auto p2=this->flows.begin();
     n=0;
     while(p2!=this->flows.end()){
       os << "this->dp" << n << "";
@@ -372,8 +370,7 @@ namespace mfront{
     os << "}\n\n";
   }
 
-  void
-  MultipleIsotropicMisesFlowsDSL::treatFlowRule()
+  void MultipleIsotropicMisesFlowsDSL::treatFlowRule()
   {
     using namespace std;
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -389,7 +386,8 @@ namespace mfront{
       f       << "f"       << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
       df_dp   << "df_dp"   << this->flows.size();
-      this->mb.addStateVariable(h,VariableDescription("strain",p.str(),1u,0u));
+      this->mb.addStateVariable(h,VariableDescription("strain",p.str(),1u,0u),
+				BehaviourData::FORCEREGISTRATION);
       this->mb.addLocalVariable(h,VariableDescription("stress",f.str(),1u,0u));
       this->mb.addLocalVariable(h,VariableDescription("real",df_dseq.str(),1u,0u));
       this->mb.addLocalVariable(h,VariableDescription("stress",df_dp.str(),1u,0u));
@@ -401,7 +399,8 @@ namespace mfront{
       p       << "p"       << this->flows.size();
       f       << "f"       << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
-      this->mb.addStateVariable(h,VariableDescription("strain",p.str(),1u,0u));
+      this->mb.addStateVariable(h,VariableDescription("strain",p.str(),1u,0u),
+				BehaviourData::FORCEREGISTRATION);
       this->mb.addLocalVariable(h,VariableDescription("DstrainDt",f.str(),1u,0u));
       this->mb.addLocalVariable(h,VariableDescription("DF_DSEQ_TYPE",df_dseq.str(),1u,0u));
       flow.flow = FlowHandler::CreepFlow;
@@ -414,7 +413,8 @@ namespace mfront{
       f       << "f"       << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
       df_dp   << "df_dp"   << this->flows.size();
-      this->mb.addStateVariable(h,VariableDescription("strain",p.str(),1u,0u));
+      this->mb.addStateVariable(h,VariableDescription("strain",p.str(),1u,0u),
+				BehaviourData::FORCEREGISTRATION);
       this->mb.addLocalVariable(h,VariableDescription("DstrainDt",f.str(),1u,0u));
       this->mb.addLocalVariable(h,VariableDescription("DF_DSEQ_TYPE",df_dseq.str(),1u,0u));
       this->mb.addLocalVariable(h,VariableDescription("DstrainDt",df_dp.str(),1u,0u));
@@ -448,7 +448,7 @@ namespace mfront{
       flow.hasSpecificTheta = false;
     }
     ostringstream cname;
-    cname << BehaviourData::FlowRule << flows.size() << endl;
+    cname << BehaviourData::FlowRule << flows.size() << '\n';
     this->readCodeBlock(*this,cname.str(),
 			&MultipleIsotropicMisesFlowsDSL::flowRuleVariableModifier,true,false);
     flow.flowRule = this->mb.getCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,cname.str());

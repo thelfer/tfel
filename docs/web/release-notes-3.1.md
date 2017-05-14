@@ -915,6 +915,21 @@ languages (DSL) describing isotropics behaviours.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/65/>
 
+# Know regressions
+
+## Stricter rules on variable declarations
+
+All variables, to the very exception of local variables, must be
+declared before the first user defined code block to allow appropriate
+analysis of those code blocks.
+
+Some variables are automatically declared by keywords. For instance,
+the `@Epsilon` keyword defines implicitly a parameter named `epsilon`.
+
+In previous versions of `MFront`, those rules were only partially
+enforced: it may happen that some keywords or variable declaration
+shall now be moved before the first user defined code block.
+
 # References
 
 <!-- Local IspellDict: english -->

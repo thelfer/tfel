@@ -272,6 +272,7 @@ namespace mfront{
      */
     enum RegistrationStatus{
       UNREGISTRED,
+      FORCEREGISTRATION,
       ALREADYREGISTRED
     };
     //! constructor

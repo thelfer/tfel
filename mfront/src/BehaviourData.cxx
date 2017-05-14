@@ -451,8 +451,13 @@ namespace mfront{
 				       const RegistrationStatus s)
   {
     this->addVariable(this->stateVariables,v,s,true);
-    this->addVariable(this->integrationVariables,v,
-		      ALREADYREGISTRED,true);
+    if(s==FORCEREGISTRATION){
+      this->addVariable(this->integrationVariables,v,
+			ALREADYREGISTRED,true,true);
+    } else {
+      this->addVariable(this->integrationVariables,v,
+			ALREADYREGISTRED,true);
+    }
     /*!
      * for compatibility reasons with previous mfront versions
      * (<2.0), auxiliary state variables shall be put after
@@ -477,8 +482,13 @@ namespace mfront{
 						const RegistrationStatus s)
   {
     this->addVariable(this->auxiliaryStateVariables,v,s,false);
-    this->addVariable(this->persistentVariables,v,
-		      ALREADYREGISTRED,true);
+    if(s==FORCEREGISTRATION){
+      this->addVariable(this->persistentVariables,v,
+			ALREADYREGISTRED,true,true);
+    } else {
+      this->addVariable(this->persistentVariables,v,
+			ALREADYREGISTRED,true);
+    }
   } // end of BehaviourData::addAuxiliaryStateVariable
 
   void BehaviourData::addExternalStateVariable(const VariableDescription& v,
@@ -956,7 +966,7 @@ namespace mfront{
 				  const bool bi,
 				  const bool b)
   {
-    if(!b){
+    if((!b)&&(s!=FORCEREGISTRATION)){
       if((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables))&&
 	 (!this->getAttribute<bool>(BehaviourData::allowsNewUserDefinedVariables))){
 	const auto cbn = this->getCodeBlockNames();

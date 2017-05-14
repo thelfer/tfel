@@ -11,8 +11,6 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
-
 #include<sstream>
 #include<stdexcept>
 
@@ -557,10 +555,8 @@ namespace mfront{
     CodeBlock tangentOperator;
     // modelling hypotheses supported by the behaviour
     const auto bmh = bd.getModellingHypotheses();
-    std::cout << "StandardElasticityBrick::addGenericTangentOperatorSupport" << std::endl;
     if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
        (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){
-      std::cout << "StandardElasticityBrick::addGenericTangentOperatorSupport: HERE" << std::endl;
       const std::string D = this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false) ?
 	"this->D" : "this->D_tdt";
       tangentOperator.code =
