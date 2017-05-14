@@ -2,6 +2,7 @@
 @Behaviour	ViscoPlasIsoCin;
 @Author 	Jeremy Hure;
 @Date 		08 Aout 2013;
+@Brick StandardElasticity;
 @Description{
   "B. Tanguy"
   "Modélisation de l'essai Charpy ..."
@@ -9,16 +10,8 @@
 }
 
 @Algorithm NewtonRaphson;
-/*
- * Using @RequireStiffnessTensor is not recommended for isotropic
- * behaviours as it induces some extra work in the interfaces.
- * We keep it for testing purposes.
- */
-@RequireStiffnessTensor;
-/*
- * Low precision is mandatory for the consistent tangent operator.
- */
-@Epsilon 1.e-12;
+@Epsilon 1.e-14;
+// @Theta 1;
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
@@ -39,75 +32,68 @@ nu.setGlossaryName("PoissonRatio");
 @MaterialProperty real k2;
 @MaterialProperty real n2;
 
-@StateVariable real    p;
+@StateVariable strain p;
+p.setGlossaryName("EquivalentViscoplasticStrain");
 @PhysicalBounds p in [0:*[;
 
-@StateVariable Stensor X1;
-@StateVariable Stensor X2;
+@StateVariable StrainStensor a1;
+@StateVariable StrainStensor a2;
 
-@LocalVariable Stensor s0;
-@LocalVariable real Rpel;
-@LocalVariable real sel;
-@LocalVariable real Fel;
+@LocalVariable stress lambda,mu;
+@LocalVariable bool b;
 
-@InitLocalVars{
-  s0 = D*(eel+deto);
-  Rpel = R0 + Q1*(1-exp(-b1*p)) +  Q2*(1-exp(-b2*p));
-  sel  = sigmaeq(s0-X1-X2);
-  Fel  = sel - Rpel;
-}
-
-@ComputeStress{
-  sig = D*eel;
-}
-
-@TangentOperator{
-  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
-    Dt=D;
-  } else if (smt==CONSISTENTTANGENTOPERATOR){
-    Stensor4 Je;
-    getPartialJacobianInvert(Je);
-    Dt = D*Je;
-  } else {
-    return false;
-  }
+@InitLocalVariables{
+  // Lamé coefficient
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+  // elastic prediction
+  const auto s0   = computeElasticPrediction();
+  const auto Rpel = R0 + Q1*(1-exp(-b1*p)) +  Q2*(1-exp(-b2*p));
+  const auto sel  = sigmaeq(s0-C1*a1-C2*a2);
+  b  = sel - Rpel > 0;
 }
 
 @Integrator{
-  if (Fel>0){
-    const Stensor X1t	= X1+theta*dX1;
-    const Stensor X2t 	= X2+theta*dX2;
-    const real pt 	= p+theta*dp;
-    const real Rpt 	= R0 + Q1*(1-exp(-b1*pt)) +  Q2*(1-exp(-b2*pt));
-    const real H 	= Q1*b1*exp(-b1*pt)  + Q2*b2*exp(-b2*pt);
-    const real seq 	= sigmaeq(sig-X1t-X2t);
-    const real F 	= seq - Rpt;
-    const real inv_seq	= 1./seq;
-    const Stensor n 	= 1.5*deviator(sig-X1t-X2t)*inv_seq;
-    const Stensor4 J	= Stensor4::M() - (n^n);
-    const real P1 = pow(F/k1,n1+1);
-    const real P2 = pow(F/k2,n2+1);
-    const real FP = 1./((1./(P1/(F/k1)))+(1./(P2/(F/k2))));
-    const real FPP = ((FP*FP)*((n1/k1)*(1./P1) + (n2/k2)*(1./P2)));
-    feel	 = deel + dp*n - deto;
-    fp           = dp - FP*dt;
-    fX1 	 = (dX1 - C1*dp*n + D1*X1t*dp)/young;
-    fX2 	 = (dX2 - C2*dp*n + D2*X2t*dp)/young; 
-    dfeel_ddeel += theta*dp*inv_seq*J*D;
-    dfeel_ddp    = n;
-    dfeel_ddX1   = -theta*dp*inv_seq*J;
-    dfeel_ddX2   = -theta*dp*inv_seq*J;
-    dfp_ddeel    = -theta*dt*FPP*(n|D);
-    dfp_ddp      = 1+theta*dt*H*FPP;
-    dfp_ddX1     = theta*dt*FPP*n;
-    dfp_ddX2     = theta*dt*FPP*n;
-    dfX1_ddeel   = (-theta*C1*dp*inv_seq*J*D)/young;
-    dfX1_ddp     = (-C1*n + D1*X1t)/young;
-    dfX1_ddX1    = (Stensor4::Id() + theta*dp*(C1*inv_seq*J + D1*Stensor4::Id()))/young;
-    dfX2_ddeel   = (-theta*C2*dp*inv_seq*J*D)/young;
-    dfX2_ddp     = (-C2*n + D1*X2t)/young;
-    dfX2_ddX2    = (Stensor4::Id() + theta*dp*(C2*inv_seq*J + D2*Stensor4::Id()))/young;
-  } else {
-    feel	= deel - deto;
+  if (b){
+    const auto pt   = p+theta*std::max(dp,strain(0));
+    const auto e1   = exp(-b1*pt);
+    const auto e2   = exp(-b2*pt);
+    const auto a1t  = eval(a1+theta*da1);
+    const auto a2t  = eval(a2+theta*da2);
+    const auto Rpt  = R0 + Q1*(1-e1) +  Q2*(1-e2);
+    const auto seff = eval(sig-C1*a1t-C2*a2t);
+    const auto seq = sigmaeq(seff);
+    const auto F   = std::max(seq - Rpt,stress(1e-12*young));
+    const auto small = real(1.e-20);
+    const auto iseq  = 1/max(seq,1e-12*young);
+    const auto n     = eval(3*deviator(seff)*iseq/2);
+    const auto P1    = pow(max(F/k1,real(0)),n1+1);
+    const auto P2    = pow(max(F/k2,real(0)),n2+1);
+    const auto iP1   = 1/max(small,P1);
+    const auto iP2   = 1/max(small,P2);
+    const auto FP    = 1/(iP1*F/k1 + iP2*F/k2);
+    // implicit system
+    feel	+= dp*n;
+    fp        -= FP*dt;
+    fa1 	-= dp*n - D1*a1t*dp;
+    fa2 	-= dp*n - D2*a2t*dp;
+    // jacobian
+    const auto H   = Q1*b1*e1  + Q2*b2*e2;
+    const auto FPP = theta*dt*((FP*FP)*((n1/k1)*(iP1) + (n2/k2)*(iP2)));
+    const auto J   = theta*dp*iseq*eval(Stensor4::M() - (n^n));
+    dfeel_ddeel   += 2*mu*J;
+    dfeel_ddp      = n;
+    dfeel_dda1     = -C1*J;
+    dfeel_dda2     = -C2*J;
+    dfp_ddeel      = -2*mu*FPP*n;
+    dfp_ddp       += FPP*H;
+    dfp_dda1       = FPP*n;
+    dfp_dda2       = FPP*n;
+    dfa1_ddeel     = -2*mu*J;
+    dfa1_ddp       = -n + D1*a1t;
+    dfa1_dda1     += -C1*J + D1*theta*dp*Stensor4::Id();
+    dfa2_ddeel     = -2*mu*J;
+    dfa2_ddp       = -n + D1*a2t;
+    dfa2_dda2     += -C2*J + D2*theta*dp*Stensor4::Id();
   }
 }
