@@ -25,6 +25,14 @@ using libptr = HINSTANCE__*;
 using libptr = void*;
 #endif
 
+#if (defined _WIN32) && (!defined _WIN64)
+using fortran_string_size = int;
+#elif defined _WIN64
+using fortran_string_size = size_t;
+#else
+using fortran_string_size = int;
+#endif
+
 using abaqus_real = double;
 using abaqus_int  = int;
 
@@ -105,7 +113,7 @@ extern "C" {
 	     const abaqus_int  *const,
 	     const abaqus_int  *const,
 	     abaqus_int  *const,
-	     const int);
+	     const fortran_string_size);
 
   void umat2_(abaqus_real *const,
 	      abaqus_real *const,
@@ -144,7 +152,7 @@ extern "C" {
 	      const abaqus_int  *const,
 	      const abaqus_int  *const,
 	      abaqus_int  *const,
-	      const int);
+	      const fortran_string_size);
 }
 
 static umatptr load(const char* n){
@@ -152,7 +160,7 @@ static umatptr load(const char* n){
     : public std::map<std::string,libptr>
   {
     ~LibrariesHandler(){
-      for(auto l:*this){
+      for(auto& l:*this){
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 	::FreeLibrary(l.second);
 #else
@@ -285,7 +293,7 @@ extern "C" {
 	     const abaqus_int  *const KSPT,
 	     const abaqus_int  *const KSTEP,
 	     abaqus_int  *const KINC,
-	     const int size){
+	     const fortran_string_size size){
     umatptr f = load(CMNAME);
     if(f!=nullptr){
       f(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,

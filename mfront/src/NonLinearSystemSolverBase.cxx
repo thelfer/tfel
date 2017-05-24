@@ -88,11 +88,8 @@ namespace mfront{
   {
     const auto& d = mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
-    SupportedTypes::TypeSize n2;
     SupportedTypes::TypeSize n3;
-    for(const auto& v : d.getIntegrationVariables()){
-      n2 += mb.getTypeSize(v.type,v.arraySize);
-    }
+    const auto n2 = d.getIntegrationVariables().getTypeSize();
     if(mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
       out << "auto jacobian_error = real{};"
 	  << "this->computeNumericalJacobian(" << nj << ");\n";
@@ -204,7 +201,7 @@ namespace mfront{
     const auto& d = mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
     for(const auto& iv : d.getIntegrationVariables()){
-      SupportedTypes::TypeSize nv = mb.getTypeSize(iv.type,iv.arraySize);
+      const auto nv = mb.getTypeSize(iv.type,iv.arraySize);
       if(mb.hasParameter(h,iv.name+"_maximum_increment_value_per_iteration")){
 	out << "for(unsigned short idx = 0; idx!=" << nv << ";++idx){\n";
 	if(mb.hasAttribute(h,iv.name+"_normalisation_factor")){
@@ -323,7 +320,7 @@ namespace mfront{
 	}
 	if((mb.getTypeFlag(v.type)!=SupportedTypes::Scalar)&&(v.arraySize==1u)){
 	  if(b.component==-1){
-	    SupportedTypes::TypeSize n2 =  mb.getTypeSize(v.type,1u);
+	    const auto n2 =  mb.getTypeSize(v.type,1u);
 	    out << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl;
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
 	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
@@ -374,7 +371,7 @@ namespace mfront{
 	  }
 	}
 	if((mb.getTypeFlag(v.type)!=SupportedTypes::Scalar)&&(v.arraySize!=1u)){
-	  SupportedTypes::TypeSize n2 =  mb.getTypeSize(v.type,1u);
+	  const auto n2 =  mb.getTypeSize(v.type,1u);
 	  out << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){" << endl;
 	  if(b.component==-1){
 	    out << "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){" << endl;
@@ -483,7 +480,7 @@ namespace mfront{
 	}
 	if((mb.getTypeFlag(v.type)!=SupportedTypes::Scalar)&&(v.arraySize==1u)){
 	  if(b.component==-1){
-	    SupportedTypes::TypeSize n2 =  mb.getTypeSize(v.type,1u);
+	    const auto n2 =  mb.getTypeSize(v.type,1u);
 	    out << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl;
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
 	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
@@ -534,7 +531,7 @@ namespace mfront{
 	  }
 	}
 	if((mb.getTypeFlag(v.type)!=SupportedTypes::Scalar)&&(v.arraySize!=1u)){
-	  SupportedTypes::TypeSize n2 =  mb.getTypeSize(v.type,1u);
+	  const auto n2 =  mb.getTypeSize(v.type,1u);
 	  out << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){" << endl;
 	  if(b.component==-1){
 	    out << "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){" << endl;

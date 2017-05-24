@@ -140,7 +140,7 @@ static vumatptr load(const char* n){
     : public std::map<std::string,libptr>
   {
     ~LibrariesHandler(){
-      for(auto l:*this){
+      for(auto& l:*this){
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 	::FreeLibrary(l.second);
 #else

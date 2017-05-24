@@ -456,10 +456,9 @@ namespace mfront{
 
   void BehaviourDSLCommon::disableVariableDeclaration()
   {
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    if(!this->mb.hasAttribute(h,BehaviourData::allowsNewUserDefinedVariables)){
+    if(this->mb.allowsNewUserDefinedVariables()){
       this->completeVariableDeclaration();
-      this->mb.setAttribute(h,BehaviourData::allowsNewUserDefinedVariables,false);
+      this->mb.disallowNewUserDefinedVariables();
     }
   }
 
@@ -6438,16 +6437,16 @@ namespace mfront{
 
   void BehaviourDSLCommon::treatParameter()
   {
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("BehaviourDSLCommon::treatParameter",m);};
+    };
     std::set<Hypothesis> mh;
     this->readHypothesesList(mh);
-    bool endOfTreatment=false;
-    while((this->current!=this->tokens.end())&&
-	  (!endOfTreatment)){
-      if(!isValidIdentifier(this->current->value)){
-	this->throwRuntimeError("BehaviourDSLCommon::treatParameter : ",
-				"variable given is not valid (read "
-				"'"+this->current->value+"').");
-      }
+    auto endOfTreatment=false;
+    while((this->current!=this->tokens.end())&&(!endOfTreatment)){
+      throw_if(!isValidIdentifier(this->current->value),
+	       "variable given is not valid (read "
+	       "'"+this->current->value+"').");
       const auto n = this->current->value;
       const auto lineNumber = this->current->line;
       ++(this->current);
@@ -6457,10 +6456,7 @@ namespace mfront{
 	++(this->current);
 	this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
 	arraySize=this->readUnsignedShort("BehaviourDSLCommon::treatParameter");
-	if(arraySize==0u){
-	  this->throwRuntimeError("BehaviourDSLCommon::treatParameter",
-				  "invalid array size");
-	}
+	throw_if(arraySize==0u,"invalid array size");
 	this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
 	this->readSpecifiedToken("BehaviourDSLCommon::treatParameter","]");
       }
@@ -6473,12 +6469,9 @@ namespace mfront{
 	  ci="}";
 	}
 	if(this->current->value=="("){
-	  if(arraySize!=1u){
-	    this->throwRuntimeError("BehaviourDSLCommon::treatParameter",
-				    "invalid initalisation syntax for the default values "
-				    "of an array of parameters.\n"
-				    "Unexpected token '"+current->value+"'");
-	  }
+	  throw_if(arraySize!=1u,"invalid initalisation syntax for "
+		   "the default values of an array of parameters.\n"
+		   "Unexpected token '"+current->value+"'");
 	  ci=")";
 	}
 	++(this->current);
@@ -6489,13 +6482,13 @@ namespace mfront{
 	  }
 	  --(this->current);
 	  const auto  r = this->readArrayOfDouble("BehaviourDSLCommon::treatParameter");
-	  if(r.size()!=arraySize){
-	    this->throwRuntimeError("BehaviourDSLCommon::treatParameter",
-				    "number of values given does not match the number of parameters "
-				    "("+std::to_string(r.size())+" vs +"+std::to_string(arraySize)+").\n");
-	  }
+	  throw_if(r.size()!=arraySize,
+		   "number of values given does not match the number of parameters "
+		   "("+std::to_string(r.size())+" vs +"+std::to_string(arraySize)+").\n");
 	  for(const auto & h : mh){
-	    this->mb.addParameter(h,VariableDescription("real",n,arraySize,lineNumber));
+	    VariableDescription p("real",n,arraySize,lineNumber);
+	    p.description = this->currentComment;
+	    this->mb.addParameter(h,p);
 	    for(decltype(r.size()) i=0;i!=r.size();++i){
 	      this->mb.setParameterDefaultValue(h,n,i,r[i]);
 	    }
@@ -6514,19 +6507,20 @@ namespace mfront{
 	    this->readSpecifiedToken("BehaviourDSLCommon::treatParameter",ci);
 	  }
 	  for(const auto & h : mh){
-	    this->mb.addParameter(h,VariableDescription("real",n,1u,lineNumber));
+	    VariableDescription p("real",n,1u,lineNumber);
+	    p.description = this->currentComment;
+	    this->mb.addParameter(h,p);
 	    this->mb.setParameterDefaultValue(h,n,value);
 	  }
 	}
       } else {
-	if(arraySize!=1){
-	  this->throwRuntimeError("BehaviourDSLCommon::treatParameter",
-				  "default values of parameters array "
-				  "must be defined with the array. "
-				  "Unexpected token '"+current->value+"'");
-	}
+	throw_if(arraySize!=1,"default values of parameters array "
+		 "must be defined with the array. "
+		 "Unexpected token '"+current->value+"'");
 	for(const auto & h : mh){
-	  this->mb.addParameter(h,VariableDescription("real",n,1u,lineNumber));
+	  VariableDescription p("real",n,1u,lineNumber);
+	  p.description = this->currentComment;
+	  this->mb.addParameter(h,p);
 	}
       }
       if(this->current->value==","){
@@ -6535,14 +6529,12 @@ namespace mfront{
 	endOfTreatment=true;
 	++(this->current);
       } else {
-	this->throwRuntimeError("BehaviourDSLCommon::treatParameter",
-				", or ; expected after '"+n+"', read '"+this->current->value+"'");
+	throw_if(true,"',' or ';' expected after '"+n+"', read '"+this->current->value+"'");
       }
     }
     if(!endOfTreatment){
       --(this->current);
-      this->throwRuntimeError("BehaviourDSLCommon::treatParameter",
-			      "Expected ';' before end of file");
+      throw_if(true,"expected ';' before end of file");
     }
   } // end of BehaviourDSLCommon::treatParameter
 

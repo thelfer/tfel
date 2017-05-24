@@ -1489,7 +1489,7 @@ namespace mfront{
     }
   } // end of BehaviourData::appendToMembers
 
-  const std::string BehaviourData::getMembers() const
+  std::string BehaviourData::getMembers() const
   {
     return this->members;
   } // end of BehaviourData::getMembers
@@ -1504,7 +1504,7 @@ namespace mfront{
     }
   } // end of BehaviourData::appendToPrivateCode
 
-  const std::string BehaviourData::getPrivateCode() const
+  std::string BehaviourData::getPrivateCode() const
   {
     return this->privateCode;
   } // end of BehaviourData::getPrivateCode

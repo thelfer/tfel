@@ -94,19 +94,15 @@ namespace mfront{
 								  const Hypothesis h) const
   {
     const auto& d = mb.getBehaviourData(h);
-    SupportedTypes::TypeSize n;
-    // size of linear system
-    for(const auto& v : d.getIntegrationVariables()){
-      n += mb.getTypeSize(v.type,v.arraySize);
-    }
+    const auto  n = d.getIntegrationVariables().getTypeSize();
     if(mb.hasCode(h,BehaviourData::InitializeJacobian)){
       out << mb.getCode(h,BehaviourData::InitializeJacobian);
     } else {
-      out << "// setting jacobian to identity\n";
-      out << "std::fill(this->jacobian.begin(),this->jacobian.end(),real(0));\n";
-      out << "for(unsigned short idx = 0; idx!= "<< n << ";++idx){\n";
-      out << "this->jacobian(idx,idx)= real(1);\n";
-      out << "}\n";
+      out << "// setting jacobian to identity\n"
+	"std::fill(this->jacobian.begin(),this->jacobian.end(),real(0));\n"
+	"for(unsigned short idx = 0; idx!= "<< n << ";++idx){\n"
+	"this->jacobian(idx,idx)= real(1);\n"
+	"}\n";
     }
   } // end of MFrontBroydenSolverBase::writeSpecificInitializeMethodPart
 
@@ -116,11 +112,8 @@ namespace mfront{
 						    const Hypothesis h) const
   {
     const auto btype = mb.getBehaviourTypeFlag();
-    const auto& d = mb.getBehaviourData(h);
-    SupportedTypes::TypeSize n2;
-    for(const auto& v : d.getIntegrationVariables()){
-      n2 += mb.getTypeSize(v.type,v.arraySize);
-    }
+    const auto& d  = mb.getBehaviourData(h);
+    const auto  n2 = d.getIntegrationVariables().getTypeSize();
     out << "tmatrix<" << n2 << "," << n2 << ",real> jacobian2;\n"
 	<< "tvector<" << n2 << ",real> fzeros2;\n"
 	<< "tvector<" << n2 << ",real> Dzeros;\n"

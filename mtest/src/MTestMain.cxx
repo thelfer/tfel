@@ -149,14 +149,15 @@ namespace mtest
     this->registerNewCallBack("--floating-point-exceptions","-fpe",
 			      &MTestMain::treatEnableFloatingPointExceptions,
 			      "handle floating point exceptions through SIGFPE signals");
-    this->registerNewCallBack("--rounding-direction-mode","-rmd",
+    this->registerNewCallBack("--rounding-direction-mode","-rdm",
 			      &MTestMain::treatRoundingDirectionMode,
 			      "set the rounding mode direction. Valid options are:\n"
 			      "DownWard:   Round downward.\n"
 			      "ToNearest:  Round to nearest.\n"
 			      "TowardZero: Round toward zero.\n"
 			      "UpWard:     Round upward.\n"
-			      "Random:     Rounding mode is randomly changed at various stage of the compution.",true);
+			      "Random:     Rounding mode is randomly changed at various "
+			      "stage of the compution.",true);
 #if ! (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     this->registerNewCallBack("--backtrace","-bt",&MTestMain::treatBacktrace,
 			      "print process stack when getting SIGSEGV or SIGFPE signals");

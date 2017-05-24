@@ -1372,7 +1372,7 @@ namespace mfront{
     }
     // compute stress
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "void\ncomputeStress(void){\n"
+      os << "void computeStress(void){\n"
 	 << "using namespace std;\n"
 	 << "using namespace tfel::math;\n"
 	 << "using std::vector;\n";
@@ -1381,7 +1381,7 @@ namespace mfront{
 	 << "\n} // end of " << this->mb.getClassName() << "::computeStress\n\n";
     }
     if(this->mb.hasCode(h,BehaviourData::ComputeFinalStress)){
-      os << "void\ncomputeFinalStress(void){\n"
+      os << "void computeFinalStress(void){\n"
 	 << "using namespace std;\n"
 	 << "using namespace tfel::math;\n"
 	 << "using std::vector;\n";
@@ -1520,15 +1520,10 @@ namespace mfront{
   
   void ImplicitDSLBase::writeComputeNumericalJacobian(std::ostream& os,
 						      const Hypothesis h) const{
-    using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
-    SupportedTypes::TypeSize n;
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n += this->getTypeSize(p->type,p->arraySize);
-    }
+    const auto n = d.getIntegrationVariables().getTypeSize();
     this->checkBehaviourFile(os);
-    os << "void\ncomputeNumericalJacobian(tfel::math::tmatrix<" << n << "," << n << ",real>& njacobian)\n"
+    os << "void computeNumericalJacobian(tfel::math::tmatrix<" << n << "," << n << ",real>& njacobian)\n"
        << "{\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"

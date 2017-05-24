@@ -6,6 +6,14 @@
 
 # Tickets fixed
 
+## Ticket 38:  Bad normalisation of the tensor when computing eigenvalues
+
+Tensors are normalised when computing the eigenvalues. There was a
+mistake in the normalisation which can lead to severe numerical
+instabilities in some (rare) case.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/38/>
+
 ## Ticket #35: regression when using `@CastemFiniteStrainStrategy` or `@CastemFiniteStrainStrategies` in the `castem` interface
 
 When definining finite strain strategies in the `castem` interface, a
@@ -21,11 +29,3 @@ The regression was that the `ModellingHypotheses` symbols was only
 defined for the second behaviour.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/35/>
-
-## Ticket 38:  Bad normalisation of the tensor when computing eigenvalues
-
-Tensors are normalised when computing the eigenvalues. There was a
-mistake in the normalisation which can lead to severe numerical
-instabilities in some (rare) case.
-
-For more details, see: <https://sourceforge.net/p/tfel/tickets/38/>

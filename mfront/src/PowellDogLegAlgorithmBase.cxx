@@ -38,7 +38,7 @@ namespace mfront{
     using namespace std;
     using namespace tfel::material;
     using namespace tfel::utilities;
-    const ModellingHypothesis::Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(key=="@PowellDogLegTrustRegionSize"){
       CxxTokenizer::TokensContainer::const_iterator current = p;
       CxxTokenizer::checkNotEndOfLine("PowellDogLegAlgorithmBase::treatSpecificKeywords",current,pe);
@@ -85,50 +85,45 @@ namespace mfront{
 							 const std::string& f,
 							 const std::string& pn)
   {
-    using namespace std;
     const auto& d = mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
-    SupportedTypes::TypeSize n;
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n += mb.getTypeSize(p->type,p->arraySize);
-    }
-    out << "if(abs(" << pn<< ")<(" << n << ")*(this->powell_dogleg_trust_region_size)){" << endl;
-    out << "// using the newton method only" << endl;
+    const auto n = d.getIntegrationVariables().getTypeSize();
+    out << "if(abs(" << pn<< ")<(" << n << ")*(this->powell_dogleg_trust_region_size)){\n"
+	<< "// using the newton method only\n";
     NonLinearSystemSolverBase::writeLimitsOnIncrementValues(out,mb,h,pn);
-    out << "this->zeros -= " << pn<< ";\n";
-    out << "} else { " << endl;
-    out << "// computing the steepest descent step\n";
-    out << "tvector<" << n << ",real> pdl_g;\n";
-    out << "tvector<" << n << ",real> pdl_g2;\n";
-    out << "for(unsigned short idx=0;idx!=" << n << ";++idx){" << endl;
-    out << "pdl_g[idx]=real(0);\n";
-    out << "for(unsigned short idx2=0;idx2!=" << n << ";++idx2){" << endl;
-    out << "pdl_g[idx] += (" << B << "(idx2,idx)) * (" << f << "(idx2));\n";
-    out << "}" << endl;
-    out << "}" << endl;
-    out << "for(unsigned short idx=0;idx!=" << n << ";++idx){" << endl;
-    out << "pdl_g2[idx]=real(0);\n";
-    out << "for(unsigned short idx2=0;idx2!=" << n << ";++idx2){" << endl;
-    out << "pdl_g2[idx] += (" << B << "(idx,idx2)) * pdl_g(idx2);\n";
-    out << "}" << endl;
-    out << "}" << endl;
-    out << "const real pdl_cste = (pdl_g|pdl_g)/(pdl_g2|pdl_g2);" << endl;
-    out << "pdl_g *= pdl_cste;" << endl;
-    out << "if(abs(pdl_g)<(" << n << ")*(this->powell_dogleg_trust_region_size)){" << endl;
-    out << "const real pdl_0 = (this->powell_dogleg_trust_region_size)*(this->powell_dogleg_trust_region_size);" << endl;
-    out << "const real pdl_1 = (pdl_g|pdl_g);" << endl;
-    out << "const real pdl_2 = ((" << pn << ")|pdl_g);" << endl;
-    out << "const real pdl_3 = ((" << pn << ")|(" << pn << "));" << endl;
-    out << "const real pdl_alpha = "
-			<< "(pdl_0-pdl_1)/((pdl_2-pdl_1)+sqrt(max((pdl_2-pdl_0)*(pdl_2-pdl_0)+(pdl_3-pdl_0)*(pdl_0-pdl_1),real(0))));" << endl;
-    out << "pdl_g = pdl_alpha*(" << pn<< ") + (1-pdl_alpha)*pdl_g;" << endl;
-    out << "} else {" << endl;
-    out << "const real pdl_alpha = (this->powell_dogleg_trust_region_size)/(norm(pdl_g));" << endl;
-    out << "pdl_g *= pdl_alpha;" << endl;
-    out << "}" << endl;
+    out << "this->zeros -= " << pn<< ";\n"
+	<< "} else { \n"
+	<< "// computing the steepest descent step\n"
+	<< "tvector<" << n << ",real> pdl_g;\n"
+	<< "tvector<" << n << ",real> pdl_g2;\n"
+	<< "for(unsigned short idx=0;idx!=" << n << ";++idx){\n"
+	<< "pdl_g[idx]=real(0);\n"
+	<< "for(unsigned short idx2=0;idx2!=" << n << ";++idx2){\n"
+	<< "pdl_g[idx] += (" << B << "(idx2,idx)) * (" << f << "(idx2));\n"
+	<< "}\n"
+	<< "}\n"
+	<< "for(unsigned short idx=0;idx!=" << n << ";++idx){\n"
+	<< "pdl_g2[idx]=real(0);\n"
+	<< "for(unsigned short idx2=0;idx2!=" << n << ";++idx2){\n"
+	<< "pdl_g2[idx] += (" << B << "(idx,idx2)) * pdl_g(idx2);\n"
+	<< "}\n"
+	<< "}\n"
+	<< "const real pdl_cste = (pdl_g|pdl_g)/(pdl_g2|pdl_g2);\n"
+	<< "pdl_g *= pdl_cste;\n"
+	<< "if(abs(pdl_g)<(" << n << ")*(this->powell_dogleg_trust_region_size)){\n"
+	<< "const real pdl_0 = (this->powell_dogleg_trust_region_size)*(this->powell_dogleg_trust_region_size);\n"
+	<< "const real pdl_1 = (pdl_g|pdl_g);\n"
+	<< "const real pdl_2 = ((" << pn << ")|pdl_g);\n"
+	<< "const real pdl_3 = ((" << pn << ")|(" << pn << "));\n"
+	<< "const real pdl_alpha = "
+	<< "(pdl_0-pdl_1)/((pdl_2-pdl_1)+sqrt(max((pdl_2-pdl_0)*(pdl_2-pdl_0)+(pdl_3-pdl_0)*(pdl_0-pdl_1),real(0))));\n"
+	<< "pdl_g = pdl_alpha*(" << pn<< ") + (1-pdl_alpha)*pdl_g;\n"
+	<< "} else {\n"
+	<< "const real pdl_alpha = (this->powell_dogleg_trust_region_size)/(norm(pdl_g));\n"
+	<< "pdl_g *= pdl_alpha;\n"
+	<< "}\n";
     NonLinearSystemSolverBase::writeLimitsOnIncrementValues(out,mb,h,"pdl_g");
-    out << "this->zeros -= pdl_g;\n";
-    out << "}" << endl;
+    out << "this->zeros -= pdl_g;\n"
+	<< "}\n";
   } // end of ImplicitDSLBase::writePowellDogLegStep
 
   PowellDogLegAlgorithmBase::~PowellDogLegAlgorithmBase() = default;

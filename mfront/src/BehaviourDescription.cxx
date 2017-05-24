@@ -169,12 +169,11 @@ namespace mfront
 			       const std::string& n2){
     if(emp.is<BehaviourDescription::ComputedMaterialProperty>()){
       const auto& mpd = *(emp.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
-      const auto ename = mpd.output.getExternalName();
+      const auto& ename = mpd.output.getExternalName();
       if(ename!=e){
-	auto& log = getLogStream();
-	log << "checkElasticMaterialProperty: inconsistent external name for "
-	    << "material property '"+e.getKey()+"': external name of mfront file "
-	    << "output  is '" << ename << "'\n";
+	getLogStream() << "checkElasticMaterialProperty: inconsistent external name for "
+		       << "material property '"+e.getKey()+"': external name of mfront file "
+		       << "output  is '" << ename << "'\n";
       }
     }
     declareParameter(bd,emp,e,n2);
@@ -216,18 +215,28 @@ namespace mfront
   
   const std::string
   BehaviourDescription::requiresThermalExpansionCoefficientTensor("requiresThermalExpansionCoefficientTensor");
-  
-  void
-  BehaviourDescription::throwUndefinedAttribute(const std::string& n)
-  {
-    throw(std::runtime_error("BehaviourDescription::getAttribute: "
-			     "no attribute named '"+n+"'"));
-  } // end of BehaviourDescription::throwUndefinedAttribute
 
   BehaviourDescription::BehaviourDescription() = default;
 
   BehaviourDescription::BehaviourDescription(const BehaviourDescription&) = default;
+  
+  bool BehaviourDescription::allowsNewUserDefinedVariables() const
+  {
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    return this->getAttribute(h,BehaviourData::allowsNewUserDefinedVariables,true);
+  } // end of BehaviourDescription::allowNewsUserDefinedVariables
 
+  void BehaviourDescription::disallowNewUserDefinedVariables()
+  {
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    return this->setAttribute(h,BehaviourData::allowsNewUserDefinedVariables,false);
+  } // end of BehaviourDescription::disallowNewUserDefinedVariables
+  
+  void BehaviourDescription::throwUndefinedAttribute(const std::string& n)
+  {
+    throw(std::runtime_error("BehaviourDescription::getAttribute: "
+			     "no attribute named '"+n+"'"));
+  } // end of BehaviourDescription::throwUndefinedAttribute
   
   const BehaviourData&
   BehaviourDescription::getBehaviourData(const Hypothesis& h) const
@@ -286,8 +295,7 @@ namespace mfront
     return this->behaviour;
   } // end of BehaviourDescription::getBehaviourName
 
-  void
-  BehaviourDescription::setDSLName(const std::string& m)
+  void BehaviourDescription::setDSLName(const std::string& m)
   {
     if(!this->dsl.empty()){
       throw(std::runtime_error("BehaviourDescription::setDSLName: "
@@ -297,8 +305,7 @@ namespace mfront
     this->updateClassName();
   } // end of BehaviourDescription::setDSLName
 
-  const std::string&
-  BehaviourDescription::getDSLName() const
+  const std::string& BehaviourDescription::getDSLName() const
   {
     if(this->dsl.empty()){
       throw(std::runtime_error("BehaviourDescription::getDSLName: "
@@ -383,8 +390,7 @@ namespace mfront
     return this->ischeme;
   } // end of BehaviourDescription::getIntegrationScheme
 
-  void
-  BehaviourDescription::setLibrary(const std::string& l)
+  void BehaviourDescription::setLibrary(const std::string& l)
   {
     if(!this->library.empty()){
       throw(std::runtime_error("BehaviourDescription::setLibrary: "
@@ -393,14 +399,12 @@ namespace mfront
     this->library = l;
   } // end of BehaviourDescription::setLibrary
 
-  const std::string&
-  BehaviourDescription::getLibrary() const
+  const std::string& BehaviourDescription::getLibrary() const
   {
     return this->library;
   } // end of BehaviourDescription::getLibrary
 
-  void
-  BehaviourDescription::setMaterialName(const std::string& m)
+  void BehaviourDescription::setMaterialName(const std::string& m)
   {
     if(!this->material.empty()){
       throw(std::runtime_error("BehaviourDescription::setMaterialName: "
@@ -410,14 +414,12 @@ namespace mfront
     this->updateClassName();
   } // end of BehaviourDescription::setMaterialName
 
-  const std::string&
-  BehaviourDescription::getMaterialName() const
+  const std::string& BehaviourDescription::getMaterialName() const
   {
     return this->material;
   } // end of BehaviourDescription::getMaterialName
 
-  void
-  BehaviourDescription::setClassName(const std::string& n)
+  void BehaviourDescription::setClassName(const std::string& n)
   {
     if(!this->className.empty()){
       throw(std::runtime_error("BehaviourDescription::setClassName: "
@@ -426,8 +428,7 @@ namespace mfront
     this->className = n;
   } // end of BehaviourDescription::setClassName
 
-  const std::string&
-  BehaviourDescription::getClassName() const
+  const std::string& BehaviourDescription::getClassName() const
   {
     if(this->className.empty()){
       throw(std::runtime_error("BehaviourDescription::getClassName: "
@@ -446,8 +447,7 @@ namespace mfront
     }
   } // end of BehaviourDescription::appendToIncludes
 
-  const std::string&
-  BehaviourDescription::getIncludes() const
+  const std::string& BehaviourDescription::getIncludes() const
   {
     return this->includes;
   } // end of BehaviourDescription::getIncludes
@@ -459,7 +459,7 @@ namespace mfront
     this->callBehaviourData(h,&BehaviourData::appendToMembers,c,b);
   } // end of BehaviourDescription::appendToMembers
 
-  const std::string BehaviourDescription::getMembers(const Hypothesis h) const
+  std::string BehaviourDescription::getMembers(const Hypothesis h) const
   {
     return this->getBehaviourData(h).getMembers();
   } // end of BehaviourDescription::getMembers
@@ -471,13 +471,12 @@ namespace mfront
     this->callBehaviourData(h,&BehaviourData::appendToPrivateCode,c,b);
   } // end of BehaviourDescription::appendToPrivateCode
 
-  const std::string BehaviourDescription::getPrivateCode(const Hypothesis h) const
+  std::string BehaviourDescription::getPrivateCode(const Hypothesis h) const
   {
     return this->getBehaviourData(h).getPrivateCode();
   } // end of BehaviourDescription::getPrivateCode
 
-  void
-  BehaviourDescription::appendToSources(const std::string& c)
+  void BehaviourDescription::appendToSources(const std::string& c)
   {
     this->sources+=c;
     if(!this->sources.empty()){
@@ -487,14 +486,12 @@ namespace mfront
     }
   } // end of BehaviourDescription::appendToSources
 
-  const std::string&
-  BehaviourDescription::getSources() const
+  const std::string& BehaviourDescription::getSources() const
   {
     return this->sources;
   } // end of BehaviourDescription::getSources
 
-  BehaviourDescription::BehaviourType
-  BehaviourDescription::getBehaviourType() const
+  BehaviourDescription::BehaviourType BehaviourDescription::getBehaviourType() const
   {
     return this->type;
   } // end of BehaviourDescription::getBehaviourType
@@ -563,42 +560,36 @@ namespace mfront
     return this->elasticMaterialProperties;
   }
   
-  void
-  BehaviourDescription::setElasticMaterialProperties(const std::vector<MaterialProperty>& emps)
+  void BehaviourDescription::setElasticMaterialProperties(const std::vector<MaterialProperty>& emps)
   {
-    if((this->getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)&&
-       (this->getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)){
-      throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
-			       "only finite and strain behaviour are supported"));
-    }
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "+m));}
+    };
+    throw_if(!this->allowsNewUserDefinedVariables(),
+	     "new variables are can't be defined after the first code block.");
+    throw_if((this->getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)&&
+	     (this->getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR),
+	     "only finite and strain behaviour are supported");
     this->setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		       BehaviourDescription::requiresStiffnessTensor,false);
-    if(!this->elasticMaterialProperties.empty()){
-      throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
-			       "elastic material property already declared"));
-    }
+    throw_if(!this->elasticMaterialProperties.empty(),
+	     "elastic material property already declared");
     auto lemps = emps; // local copy, swap to data member if no exceptions is thrown
     if(emps.size()==2u){
       if(this->isElasticSymmetryTypeDefined()){
-	if(this->getElasticSymmetryType()!=mfront::ISOTROPIC){
-	  throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
-				   "inconsistent elastic symmetry type"));
-	}
+	throw_if(this->getElasticSymmetryType()!=mfront::ISOTROPIC,
+		 "inconsistent elastic symmetry type");
       } else {
 	this->setElasticSymmetryType(mfront::ISOTROPIC);
       }
       checkElasticMaterialProperty(*this,lemps[0],tfel::glossary::Glossary::YoungModulus,"young");
       checkElasticMaterialProperty(*this,lemps[1],tfel::glossary::Glossary::PoissonRatio,"nu");
     } else if(emps.size()==9u){
-      if(this->getSymmetryType()!=mfront::ORTHOTROPIC){
-	throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
-				 "the behaviour is not orthotropic."));
-      }
+      throw_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
+	       "the behaviour is not orthotropic.");
       if(this->isElasticSymmetryTypeDefined()){
-	if(this->getElasticSymmetryType()!=mfront::ORTHOTROPIC){
-	  throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
-				   "inconsistent elastic symmetry type"));
-	}
+	throw_if(this->getElasticSymmetryType()!=mfront::ORTHOTROPIC,
+		 "inconsistent elastic symmetry type");
       } else {
 	this->setElasticSymmetryType(mfront::ORTHOTROPIC);
       }
@@ -612,8 +603,7 @@ namespace mfront
       checkElasticMaterialProperty(*this,lemps[7],tfel::glossary::Glossary::ShearModulus23,"mu23");
       checkElasticMaterialProperty(*this,lemps[8],tfel::glossary::Glossary::ShearModulus13,"mu13");
     } else {
-      throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "
-			       "unsupported behaviour type"));
+      throw_if(true,"unsupported behaviour type");
     }
     this->elasticMaterialProperties.swap(lemps);
   } // end of BehaviourDescription::setElasticMaterialProperties
@@ -855,6 +845,11 @@ namespace mfront
   void BehaviourDescription::setThermalExpansionCoefficient(MaterialProperty a)
   {
     using tfel::glossary::Glossary;
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient: "+m));}
+    };
+    throw_if(!this->allowsNewUserDefinedVariables(),
+	     "new variables are can't be defined after the first code block.");
     if(this->areThermalExpansionCoefficientsDefined()){
       throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient: "
 			       "thermal expansion coefficient already defined"));
@@ -870,14 +865,15 @@ namespace mfront
 							     MaterialProperty a3)
   {
     using tfel::glossary::Glossary;
-    if(this->areThermalExpansionCoefficientsDefined()){
-      throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient: "
-			       "thermal expansion coefficient already defined"));
-    }
-    if(this->getSymmetryType()!=mfront::ORTHOTROPIC){
-      throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient: "
-			       "the behaviour is not orthotropic."));
-    }
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficients: "+m));}
+    };
+    throw_if(!this->allowsNewUserDefinedVariables(),
+	     "new variables are can't be defined after the first code block.");
+    throw_if(this->areThermalExpansionCoefficientsDefined(),
+	     "thermal expansion coefficient already defined");
+    throw_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
+	     "the behaviour is not orthotropic.");
     this->setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		       BehaviourDescription::requiresThermalExpansionCoefficientTensor,false);
     checkThermalExpansionCoefficientArgument(*this,a1,Glossary::ThermalExpansion1,"alpha1");
@@ -893,6 +889,8 @@ namespace mfront
     auto throw_if = [](const bool c,const std::string& m){
       if(c){throw(std::runtime_error("BehaviourDescription::addStressFreeExpansion: "+m));}
     };
+    throw_if(!this->allowsNewUserDefinedVariables(),
+	     "new variables are can't be defined after the first code block.");
     if ((sfed.is<BehaviourData::AxialGrowthStressFreeExpansion>())||
 	(sfed.is<BehaviourData::OrthotropicStressFreeExpansion>())||
 	(sfed.is<BehaviourData::OrthotropicStressFreeExpansionII>())){ 
@@ -949,6 +947,8 @@ namespace mfront
     auto throw_if = [](const bool c,const std::string& m){
       if(c){throw(std::runtime_error("BehaviourDescription::setSlipSystems: "+m));}
     };
+    throw_if(!this->allowsNewUserDefinedVariables(),
+	     "new variables are can't be defined after the first code block.");
     throw_if(this->areSlipSystemsDefined(),"slip systems already defined");
     throw_if(ss.empty(),"empty number of slip systems specified");
     throw_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
@@ -1011,6 +1011,8 @@ namespace mfront
     auto throw_if = [](const bool c,const std::string& msg){
       if(c){throw(std::runtime_error("BehaviourDescription::setInteractionMatrix: "+msg));}
     };
+    throw_if(!this->allowsNewUserDefinedVariables(),
+	     "new variables are can't be defined after the first code block.");
     throw_if(this->slip_systems.empty(),"no slip system defined");
     throw_if(this->slip_systems.size()!=1u,"more than one slip system defined");
     throw_if(!this->interaction_matrices.empty(),
@@ -1122,8 +1124,7 @@ namespace mfront
     }
   } // end of BehaviourDescription::checkModellingHypothesis
 
-  bool
-  BehaviourDescription::areModellingHypothesesDefined() const
+  bool BehaviourDescription::areModellingHypothesesDefined() const
   {
     return !this->hypotheses.empty();
   } // end of BehaviourDescription::areModellingHypothesesDefined
@@ -1161,9 +1162,7 @@ namespace mfront
     return dh;
   } // end of BehaviourDescription::getDistinctModellingHypotheses
 
-
-  bool
-  BehaviourDescription::isModellingHypothesisSupported(const Hypothesis h) const
+  bool BehaviourDescription::isModellingHypothesisSupported(const Hypothesis h) const
   {
     return this->getModellingHypotheses().count(h)!=0u;
   }
@@ -1219,8 +1218,7 @@ namespace mfront
     }
   } // end of BehaviourDescription::setModellingHypotheses
 
-  const std::vector<ModelDescription>&
-  BehaviourDescription::getModelsDescriptions() const{
+  const std::vector<ModelDescription>& BehaviourDescription::getModelsDescriptions() const{
     return this->models;
   }
   
@@ -1433,10 +1431,9 @@ namespace mfront
     return false;
   } // end of BehaviourDescription::hasParameters
     
-  void
-  BehaviourDescription::setParameterDefaultValue(const Hypothesis h,
-						 const std::string& n,
-						 const double v)
+  void BehaviourDescription::setParameterDefaultValue(const Hypothesis h,
+						      const std::string& n,
+						      const double v)
   {
     void (BehaviourData:: *mptr)(const std::string&,
 				 const double);
@@ -1444,11 +1441,10 @@ namespace mfront
     this->callBehaviourData(h,mptr,n,v,true);
   }
 
-  void
-  BehaviourDescription::setParameterDefaultValue(const Hypothesis h,
-						 const std::string& n,
-						 const unsigned short i,
-						 const double v)
+  void BehaviourDescription::setParameterDefaultValue(const Hypothesis h,
+						      const std::string& n,
+						      const unsigned short i,
+						      const double v)
   {
     void (BehaviourData:: *m)(const std::string&,
 			      const unsigned short,
@@ -1464,10 +1460,9 @@ namespace mfront
     }
   }
 
-  void
-  BehaviourDescription::setParameterDefaultValue(const Hypothesis h,
-						 const std::string& n,
-						 const int v)
+  void BehaviourDescription::setParameterDefaultValue(const Hypothesis h,
+						      const std::string& n,
+						      const int v)
   {
     void (BehaviourData:: *mptr)(const std::string&,
 				 const int v);
@@ -1475,10 +1470,9 @@ namespace mfront
     this->callBehaviourData(h,mptr,n,v,true);
   }
 
-  void
-  BehaviourDescription::setParameterDefaultValue(const Hypothesis h,
-						 const std::string& n,
-						 const unsigned short v)
+  void BehaviourDescription::setParameterDefaultValue(const Hypothesis h,
+						      const std::string& n,
+						      const unsigned short v)
   {
     void (BehaviourData:: *mptr)(const std::string&,
 				 const unsigned short v);
@@ -1705,9 +1699,8 @@ namespace mfront
     this->callBehaviourData(h,m,n,true);
   } // end of BehaviourDescription::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
 
-  void
-  BehaviourDescription::setUsableInPurelyImplicitResolution(const Hypothesis h,
-							    const bool b)
+  void BehaviourDescription::setUsableInPurelyImplicitResolution(const Hypothesis h,
+								 const bool b)
   {
     void (BehaviourData::* m)(const bool) =
       &BehaviourData::setUsableInPurelyImplicitResolution;
@@ -1721,9 +1714,8 @@ namespace mfront
     return this->getData(h,&BehaviourData::isMemberUsedInCodeBlocks,v);
   } // end of BehaviourDescription::isMaterialPropertyName
 
-  bool
-  BehaviourDescription::isMaterialPropertyName(const Hypothesis h,
-					       const std::string& v) const
+  bool BehaviourDescription::isMaterialPropertyName(const Hypothesis h,
+						    const std::string& v) const
   {
     return this->getData(h,&BehaviourData::isMaterialPropertyName,v);
   } // end of BehaviourDescription::isMaterialPropertyName
@@ -1917,10 +1909,9 @@ namespace mfront
     return this->getBehaviourData(h).appendExternalNames(n,v);
   } // end of BehaviourDescription::appendExternalNames
 
-  void
-  BehaviourDescription::setGlossaryName(const Hypothesis h,
-					const std::string& n,
-					const std::string& g)
+  void BehaviourDescription::setGlossaryName(const Hypothesis h,
+					     const std::string& n,
+					     const std::string& g)
   {
     this->callBehaviourData(h,&BehaviourData::setGlossaryName,n,g,true);
   } // end of BehaviourDescription::setGlossaryName

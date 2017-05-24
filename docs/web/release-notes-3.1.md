@@ -571,7 +571,7 @@ policy. The normalisation policy can have one of the following values:
 // impose the first piola kirchoff stress
 // in an uniaxial compression test
 @Real 'Pi0' -40e6
-@NonLinearConstraint<Strain> 'SXX*FYY*FZZ-Pi0';
+@NonLinearConstraint<Stress> 'SXX*FYY*FZZ-Pi0';
 ~~~~~~~~~~
 
 ### `python` bindings
@@ -653,10 +653,10 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/42/>
 
 ## Ticket #43: Add the list of parameters' names and types to generated library for the `UMAT++` interface
 
-In previous versions,, the list of parameters' names and types were
-not exported to the generated library for the `UMAT++` interface,
-i.e. the additional symbols defined in the generated shared libraries
-that can be read through the `ExternalLibraryManager` class.
+In previous versions of `MFront`, the list of parameters' names and
+types were not exported to the generated library for the `UMAT++`
+interface, i.e. the additional symbols defined in the generated shared
+libraries that can be read through the `ExternalLibraryManager` class.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/43/>
 

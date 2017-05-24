@@ -649,20 +649,19 @@ namespace mfront{
     /*!
      * \return the material additional members
      */
-    const std::string getMembers() const;
+    std::string getMembers() const;
     /*!
      * \brief append the given code to the members
      * \param[in] s : members
      */
     void appendToPrivateCode(const std::string&);
     //! \return the material private code
-    const std::string getPrivateCode() const;
+    std::string getPrivateCode() const;
     /*!
      * \brief return the name of the code blocks defined so far
      * \param[in] h : modelling hypothesis
      */
-    std::vector<std::string>
-    getCodeBlockNames() const;
+    std::vector<std::string> getCodeBlockNames() const;
     /*!
      * \brief declare or update a code block
      * \param[in] n : name

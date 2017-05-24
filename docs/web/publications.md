@@ -4,6 +4,9 @@
 
 ---
 nocite: |
+	@gelebart_fft_2017
+	@helfer_phase_field_2017
+	@helfer_mfront_2017
 	@farsi_full_2017
 	@portillo_muesli_2017
 	@torelli_multiaxial_2016

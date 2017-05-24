@@ -87,22 +87,16 @@ namespace mfront{
 							 const BehaviourDescription& mb,
 							 const Hypothesis h) const
   {
-    using namespace std;
     const auto& d = mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
-    SupportedTypes::TypeSize n;
-    // size of linear system
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n += mb.getTypeSize(p->type,p->arraySize);
-    }
+    const auto n = d.getIntegrationVariables().getTypeSize();
     if(mb.hasCode(h,BehaviourData::InitializeJacobianInvert)){
       out << mb.getCode(h,BehaviourData::InitializeJacobianInvert);
     } else {
-      out << "// setting the inverse of jacobian to identity" << endl;
-      out << "std::fill(this->inv_jacobian.begin(),this->inv_jacobian.end(),real(0));" << endl;
-      out << "for(unsigned short idx = 0; idx!= "<< n << ";++idx){" << endl;
-      out << "this->inv_jacobian(idx,idx)= real(1);" << endl;
-      out << "}" << endl;
+      out << "// setting the inverse of jacobian to identity\n"
+	  << "std::fill(this->inv_jacobian.begin(),this->inv_jacobian.end(),real(0));\n"
+	  << "for(unsigned short idx = 0; idx!= "<< n << ";++idx){\n"
+	  << "this->inv_jacobian(idx,idx)= real(1);\n"
+	  << "}\n";
     }
   } // end of SecondBroydenSolver::writeSpecificInitializeMethodPart
   
@@ -111,14 +105,9 @@ namespace mfront{
 						const BehaviourDescription& mb,
 						const Hypothesis h) const
   {
-    using namespace std;
-    const string btype = mb.getBehaviourTypeFlag();
+    const auto btype = mb.getBehaviourTypeFlag();
     const auto& d = mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
-    SupportedTypes::TypeSize n2;
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n2 += mb.getTypeSize(p->type,p->arraySize);
-    }
+    const auto n2 = d.getIntegrationVariables().getTypeSize();
     out << "tmatrix<" << n2 << "," << n2 << ",real> inv_jacobian2;\n"
 	<< "tvector<" << n2 << ",real> fzeros2;\n"
 	<< "tvector<" << n2 << ",real> Dzeros;\n"

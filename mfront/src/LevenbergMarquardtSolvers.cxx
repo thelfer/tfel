@@ -91,38 +91,33 @@ namespace mfront{
 
   std::pair<bool,LevenbergMarquartSolverBase::tokens_iterator>
   LevenbergMarquartSolverBase::treatSpecificKeywords(BehaviourDescription&,
-							   const std::string&,
-							   const tokens_iterator p,
-							   const tokens_iterator)
+						     const std::string&,
+						     const tokens_iterator p,
+						     const tokens_iterator)
   {
     return {false,p};
   } // end of LevenbergMarquartSolverBase::treatSpecificKeywords
 
   void
   LevenbergMarquartSolverBase::writeSpecificInitializeMethodPart(std::ostream&,
-								       const BehaviourDescription&,
-								       const Hypothesis) const
+								 const BehaviourDescription&,
+								 const Hypothesis) const
   {} // end of LevenbergMarquartSolverBase::writeSpecificInitializeMethodPart
 
   void
   LevenbergMarquartSolverBase::writeSpecificMembers(std::ostream&,
-						      const BehaviourDescription&,
-						      const Hypothesis) const
+						    const BehaviourDescription&,
+						    const Hypothesis) const
   {} // end of LevenbergMarquartSolverBase::writeSpecificMembers
 
   void
   LevenbergMarquartSolverBase::writeResolutionAlgorithm(std::ostream& out,
-							      const BehaviourDescription& mb,
-							      const Hypothesis h) const
+							const BehaviourDescription& mb,
+							const Hypothesis h) const
   {
-    using namespace std;
-    const string btype = mb.getBehaviourTypeFlag();
+    const auto btype = mb.getBehaviourTypeFlag();
     const auto& d = mb.getBehaviourData(h);
-    VariableDescriptionContainer::const_iterator p;
-    SupportedTypes::TypeSize n2;
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n2 += mb.getTypeSize(p->type,p->arraySize);
-    }
+    const auto n2 = d.getIntegrationVariables().getTypeSize();
     out << "// dumping parameter\n";
     out << "real levmar_mu = this->levmar_mu0;\n";
     out << "real error;\n";
@@ -149,25 +144,25 @@ namespace mfront{
     if(this->requiresNumericalJacobian()){
       out << "this->computeNumericalJacobian(this->jacobian);\n";
     }
-    out << "error=norm(this->fzeros);\n";
-    out << "while((converged==false)&&\n";
-    out << "(this->iter<" << mb.getClassName() << "::iterMax)){\n";
-    out << "++(this->iter);\n";
-    out << "this->zeros_1  = this->zeros;\n";
+    out << "error=norm(this->fzeros);\n"
+	<< "while((converged==false)&&\n"
+	<< "(this->iter<" << mb.getClassName() << "::iterMax)){\n"
+	<< "++(this->iter);\n"
+	<< "this->zeros_1  = this->zeros;\n";
     NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(out,mb,h,"jacobian");
-    out << "converged = ((error)/(real(" << n2 << "))<";
-    out << "(this->epsilon));\n";
+    out << "converged = ((error)/(real(" << n2 << "))<"
+	<< "(this->epsilon));\n";
     if(getDebugMode()){
       out << "cout << \"" << mb.getClassName()
 	  << "::integrate() : iteration \" "
 	  << "<< this->iter << \" : \" << (error)/(real(" << n2 << ")) << \", dumping parameter : \" << levmar_mu << endl;\n";
     }
-    out << "if(!converged){\n";
-    out << "// matrix containing tJJ+levmar_mu*I\n";
-    out << "tmatrix<" << n2 << "," << n2 << ",real> levmar_tJJ;\n";
-    out << "// vector containing tJ*F\n";
-    out << "tvector<" << n2 << ",real> levmar_sm;\n";
-    out << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){\n"
+    out << "if(!converged){\n"
+	<< "// matrix containing tJJ+levmar_mu*I\n"
+	<< "tmatrix<" << n2 << "," << n2 << ",real> levmar_tJJ;\n"
+	<< "// vector containing tJ*F\n"
+	<< "tvector<" << n2 << ",real> levmar_sm;\n"
+	<< "for(unsigned short idx=0;idx!=" << n2 << ";++idx){\n"
 	<< "levmar_sm(idx)=real(0);"
 	<< "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){\n"
 	<< "levmar_sm(idx)+=(this->jacobian(idx2,idx))*(this->fzeros(idx2));"
@@ -180,8 +175,8 @@ namespace mfront{
 	<< "const real levmar_muF = (levmar_mu)*norm(this->fzeros);\n"
 	<< "for(unsigned short idx=0;idx!=" << n2 << ";++idx){\n"
 	<< "levmar_tJJ(idx,idx)+=levmar_muF;\n"
-	<< "}\n";
-    out << "try{\n";
+	<< "}\n"
+	<< "try{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       writeStandardPerformanceProfilingBegin(out,mb.getClassName(),
 					     "TinyMatrixSolve","lu");
@@ -191,8 +186,8 @@ namespace mfront{
     if(mb.getAttribute(BehaviourData::profiling,false)){
       writeStandardPerformanceProfilingEnd(out);
     }
-    out << "}\n";
-    out << "catch(LUException&){\n";
+    out << "}\n"
+	<< "catch(LUException&){\n";
     if(mb.useQt()){        
       out << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::FAILURE;\n";
     } else {
@@ -207,53 +202,52 @@ namespace mfront{
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
       out << "this->computeStress();\n";
     }
-    out << "if(!this->computeFdF()){\n";
-    out << "// rejecting the step\n";
-    out << "this->zeros     = this->zeros_1;\n"; 
+    out << "if(!this->computeFdF()){\n"
+	<< "// rejecting the step\n"
+	<< "this->zeros     = this->zeros_1;\n"; 
     out << "this->fzeros    = levmar_fzeros_1;\n"; 
     out << "this->jacobian  = levmar_jacobian_1;\n"; 
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
       out << "this->computeStress();\n";
     }
-    out << "// updating mu\n";
-    out << "levmar_mu *= 4;\n";
-    out << "} else {\n";
-    out << "const real error_1=error;\n";
-    out << "#if (!defined __INTEL_COMPILER)\n";
-    out << "const real error_p=norm(levmar_fzeros_1-levmar_jacobian_1*levmar_sm);\n";
-    out << "#else\n";
-    out << "tvector<" << n2 <<  ",real> levmar_error = "
-      "levmar_jacobian_1*levmar_sm\n;";
-    out << "const real error_p=norm(levmar_fzeros_1-levmar_error);\n";
-    out << "#endif  /* __INTEL_COMPILER */\n";
-    out << "error=norm(this->fzeros);\n";
-    out << "const real levmar_r = (error*error-error_1*error_1)/(error_p*error_p-error_1*error_1);\n";
-    out << "if(levmar_r<this->levmar_p0){\n";
-    out << "// rejecting the step\n";
-    out << "this->zeros     = this->zeros_1;\n"; 
-    out << "this->fzeros    = levmar_fzeros_1;\n"; 
-    out << "this->jacobian  = levmar_jacobian_1;\n"; 
-    out << "error = error_1;\n";
+    out << "// updating mu\n"
+	<< "levmar_mu *= 4;\n"
+	<< "} else {\n"
+	<< "const real error_1=error;\n"
+	<< "#if (!defined __INTEL_COMPILER)\n"
+	<< "const real error_p=norm(levmar_fzeros_1-levmar_jacobian_1*levmar_sm);\n"
+	<< "#else\n"
+	<< "tvector<" << n2 <<  ",real> levmar_error = levmar_jacobian_1*levmar_sm\n;"
+	<< "const real error_p=norm(levmar_fzeros_1-levmar_error);\n"
+	<< "#endif  /* __INTEL_COMPILER */\n"
+	<< "error=norm(this->fzeros);\n"
+	<< "const real levmar_r = (error*error-error_1*error_1)/(error_p*error_p-error_1*error_1);\n"
+	<< "if(levmar_r<this->levmar_p0){\n"
+	<< "// rejecting the step\n"
+	<< "this->zeros     = this->zeros_1;\n"
+	<< "this->fzeros    = levmar_fzeros_1;\n"
+	<< "this->jacobian  = levmar_jacobian_1;\n"
+	<< "error = error_1;\n";
     if(mb.hasCode(h,BehaviourData::ComputeStress)){
       out << "this->computeStress();\n";
     }
-    out << "levmar_mu *= 4;\n";
-    out << "} else {\n";
-    out << "// accepting the step and updating mu\n";
+    out << "levmar_mu *= 4;\n"
+	<< "} else {\n"
+	<< "// accepting the step and updating mu\n";
     if(this->requiresNumericalJacobian()){
       out << "this->computeNumericalJacobian(this->jacobian);\n";
     }
-    out << "if(levmar_r<this->levmar_p1){\n";
-    out << "levmar_mu *= 4;\n";
-    out << "} else if(levmar_r>this->levmar_p2){\n";
-    out << "levmar_mu  = max(levmar_mu/4,this->levmar_m);\n";
-    out << "}\n";
-    out << "}\n";
-    out << "}\n";
+    out << "if(levmar_r<this->levmar_p1){\n"
+	<< "levmar_mu *= 4;\n"
+	<< "} else if(levmar_r>this->levmar_p2){\n"
+	<< "levmar_mu  = max(levmar_mu/4,this->levmar_m);\n"
+	<< "}\n"
+	<< "}\n"
+	<< "}\n";
     NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(out,mb,h);
     NonLinearSystemSolverBase::writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(out,mb,h);
-    out << "}\n";
-    out << "}\n";
+    out << "}\n"
+	<< "}\n";
   } // end of LevenbergMarquartSolverBase::writeResolutionAlgorithm
 
   LevenbergMarquartSolverBase::~LevenbergMarquartSolverBase() = default;

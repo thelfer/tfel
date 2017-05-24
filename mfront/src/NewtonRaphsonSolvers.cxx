@@ -123,10 +123,7 @@ namespace mfront{
     using namespace std;
     const auto  btype = mb.getBehaviourTypeFlag();
     const auto& d = mb.getBehaviourData(h);
-    SupportedTypes::TypeSize n2;
-    for(const auto& v : d.getIntegrationVariables()){
-      n2 += mb.getTypeSize(v.type,v.arraySize);
-    }
+    const auto n2 = d.getIntegrationVariables().getTypeSize();
     if(mb.hasAttribute(h,BehaviourData::compareToNumericalJacobian)){
       out << "tmatrix<" << n2 << "," << n2 << ",real> njacobian;\n";
     }

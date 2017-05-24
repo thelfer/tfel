@@ -50,6 +50,4 @@ what(): MTest::setOutputFileName : output file name already defined
 Abandon
 ~~~~
 
-
-
 For more details, see: <https://sourceforge.net/p/tfel/tickets/44/>

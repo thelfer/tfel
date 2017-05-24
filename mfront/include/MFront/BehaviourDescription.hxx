@@ -184,16 +184,18 @@ namespace mfront
     BehaviourDescription();
     //! copy constructor
     BehaviourDescription(const BehaviourDescription&);
-
+    /*!
+     * \brief return true if the behaviour description allows the
+     * declaration of user defined variables
+     */
+    bool allowsNewUserDefinedVariables() const;
+    //! \brief disallow the declaration of user defined variables
+    void disallowNewUserDefinedVariables();
+    //! \brief set if dynamically allocated vectors are allowed
     void areDynamicallyAllocatedVectorsAllowed(const bool);
-    /*!
-     * \return true if dynamically allocated vectors are allowed
-     */
+    //! \return true if dynamically allocated vectors are allowed
     bool areDynamicallyAllocatedVectorsAllowed(void) const;
-    /*!
-     * \return true of the parser shall declare a dynamically
-     * allocated vector for the given array size
-     */
+    //! \return true of the parser shall declare a dynamically
     bool useDynamicallyAllocatedVector(const unsigned short) const;
     /*!
      * \brief set the behaviour name
@@ -207,18 +209,14 @@ namespace mfront
      * \param[in] b: dsl name
      */
     void setDSLName(const std::string&);
-    /*!
-     * \return the dsl name
-     */
+    //! \return the dsl name
     const std::string& getDSLName(void) const;
     /*!
      * \brief set the material name
      * \param[in] m: material name
      */
     void setMaterialName(const std::string&);
-    /*!
-     * \return the material name
-     */
+    //! \return the material name
     const std::string&
       getMaterialName(void) const;
     /*!
@@ -253,13 +251,12 @@ namespace mfront
      * \param[in] h: hypothesis
      * \param[in] s: members
      * \param[in] b: if h is UNDEFINEDHYPOTHIS, propagate to all specialised data
-     
      */
     void appendToMembers(const Hypothesis,
 			 const std::string&,
 			 const bool);
     //! \return the aditional members
-    const std::string getMembers(const Hypothesis) const;
+    std::string getMembers(const Hypothesis) const;
     /*!
      * \brief append the given code to the members
      * \param[in] h: hypothesis
@@ -273,18 +270,17 @@ namespace mfront
      * \return the material private code
      * \param[in] h: hypothesis
      */
-    const std::string getPrivateCode(const Hypothesis) const;
+    std::string getPrivateCode(const Hypothesis) const;
     /*!
      * \brief append the given code to the includes
      * \param[in] s: includes
      */
     void appendToIncludes(const std::string&);
-    /*!
-     * \return the material
-     */
+    //! \return the includes
     const std::string& getIncludes(void) const;
     /*!
      * add a material law
+     * \param[in] m:material law
      */
     void addMaterialLaw(const std::string&);
     /*!
@@ -314,9 +310,7 @@ namespace mfront
      */
     void addMainVariable(const DrivingVariable&,
 			 const ThermodynamicForce&);
-    /*!
-     * \return the main variables of the behaviour
-     */
+    //! \return the main variables of the behaviour
     const std::map<DrivingVariable,ThermodynamicForce>&
       getMainVariables(void) const;
     /*!
@@ -330,13 +324,9 @@ namespace mfront
      * \param[in] b: if true, declare F and dF as members
      */
     void declareAsAFiniteStrainStandardBehaviour(const bool);
-    /*!
-     * \brief set the behaviour to be a cohesive zone model
-     */
+    //! \brief set the behaviour to be a cohesive zone model
     void declareAsACohesiveZoneModel(void);
-    /*!
-     * \return the type of the stiffness operator
-     */
+    //! \return the type of the stiffness operator
     std::string getTangentOperatorType(void) const;
 
     bool useQt(void) const;
@@ -346,9 +336,7 @@ namespace mfront
     bool isDrivingVariableName(const std::string&) const;
 
     bool isDrivingVariableIncrementName(const std::string&) const;
-    /*!
-     * \return the behaviour type
-     */
+    //! \return the behaviour type
     BehaviourType getBehaviourType(void) const;
     /*!
      * \brief set the integration scheme
@@ -391,9 +379,7 @@ namespace mfront
      */
     bool
       isMaterialPropertyConstantDuringTheTimeStep(const MaterialProperty&) const;
-    /*!
-     * \return registred models
-     */
+    //! \return registred models
     const std::vector<ModelDescription>& getModelsDescriptions() const;
     /*!
      * \brief set the elastic material properties
