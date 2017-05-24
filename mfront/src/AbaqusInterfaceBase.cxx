@@ -594,16 +594,28 @@ namespace mfront{
       out << '\n';
       if(!mps.first.empty()){      
 	int i=1;
-	for(auto pm =mps.first.begin();pm!=mps.first.end();){
+	auto write = [&i,&out](const std::string& n){
 	  if(i%9==0){
 	    out << "\n";
 	    i=1;
 	  }
-	  out << '<' << pm->name << '>';
+	  out << '<' << n << '>';
+	  ++i;
+	};
+	for(auto pm =mps.first.begin();pm!=mps.first.end();){
+	  if(pm->arraySize==1u){
+	    write(pm->name);
+	  } else {
+	    for(unsigned short a=0;a!=pm->arraySize;){
+	      write(pm->name+"_"+std::to_string(a));
+	      if(++a!=pm->arraySize){
+		out << ", ";
+	      }
+	    }
+	  }
 	  if(++pm!=mps.first.end()){
 	    out << ", ";
 	  }
-	  ++i;
 	}
       }
       out << "\n\n";
