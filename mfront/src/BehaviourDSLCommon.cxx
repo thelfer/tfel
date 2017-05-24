@@ -1514,8 +1514,7 @@ namespace mfront{
     return mps;
   }
   
-  void
-  BehaviourDSLCommon::readElasticMaterialProperties(){
+  void BehaviourDSLCommon::readElasticMaterialProperties(){
     const auto& emps =
       this->readMaterialPropertyOrArrayOfMaterialProperties("BehaviourDSLCommon::readElasticMaterialProperties");
     this->readSpecifiedToken("BehaviourDSLCommon::readElasticMaterialProperties",";");
@@ -1598,8 +1597,7 @@ namespace mfront{
     this->mb.setModellingHypotheses(hypotheses);
   } // end of BehaviourDSLCommon::treatModellingHypothesis
 
-  void
-  BehaviourDSLCommon::treatModellingHypotheses()
+  void BehaviourDSLCommon::treatModellingHypotheses()
   {
     using namespace tfel::utilities;
     auto hypotheses = std::set<Hypothesis>{};
@@ -1662,8 +1660,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::treatParameterMethod
 
-  bool
-  BehaviourDSLCommon::isCallableVariable(const Hypothesis h,
+  bool BehaviourDSLCommon::isCallableVariable(const Hypothesis h,
 					 const std::string& n) const
   {
     return ((this->mb.isMaterialPropertyName(h,n))||
@@ -1676,8 +1673,7 @@ namespace mfront{
 	    (this->mb.isIntegrationVariableName(h,n)));
   } // end of BehaviourDSLCommon::isCallableVariable
 
-  void
-  BehaviourDSLCommon::treatVariableMethod(const Hypothesis h)
+  void BehaviourDSLCommon::treatVariableMethod(const Hypothesis h)
   {
     using namespace std;
     using namespace tfel::utilities;
@@ -1921,8 +1917,7 @@ namespace mfront{
     this->readSpecifiedToken("BehaviourDSLCommon::treatStiffnessTensorOption",">");
   }
   
-  void
-  BehaviourDSLCommon::treatRequireStiffnessTensor()
+  void BehaviourDSLCommon::treatRequireStiffnessTensor()
   {
     if(this->mb.hasAttribute(BehaviourDescription::computesStiffnessTensor)){
       this->throwRuntimeError("BehaviourDSLCommon::treatRequireStiffnessTensor",
@@ -1937,8 +1932,7 @@ namespace mfront{
     this->mb.setAttribute(BehaviourDescription::requiresStiffnessTensor,true,false);
   } // end of BehaviourDSLCommon::treatRequireStiffnessTensor
 
-  void
-  BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor()
+  void BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor()
   {
     this->readSpecifiedToken("BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor",";");
     this->mb.setAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,true,false);
@@ -1955,8 +1949,7 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::treatMaterial
 
-  void 
-  BehaviourDSLCommon::readStringList(std::vector<std::string>& cont)
+  void BehaviourDSLCommon::readStringList(std::vector<std::string>& cont)
   {
     this->checkNotEndOfFile("BehaviourDSLCommon::readStringList",
 			    "Cannot read interface name.");
@@ -1993,8 +1986,7 @@ namespace mfront{
     }
   }
 
-  void
-  BehaviourDSLCommon::readHypothesesList(std::set<Hypothesis>& h)
+  void BehaviourDSLCommon::readHypothesesList(std::set<Hypothesis>& h)
   {
     h.clear();
     if(this->current==this->tokens.end()){
@@ -3843,10 +3835,9 @@ namespace mfront{
     }
   } // end of BehaviourDSLCommon::writeStiffnessTensorComputation
 
-  void
-  BehaviourDSLCommon::writeMaterialPropertyArguments(std::ostream& out,
-						     const BehaviourDescription::ComputedMaterialProperty& cmp,
-						     std::function<std::string(const MaterialPropertyInput&)>& f) const
+  void BehaviourDSLCommon::writeMaterialPropertyArguments(std::ostream& out,
+							  const BehaviourDescription::ComputedMaterialProperty& cmp,
+							  std::function<std::string(const MaterialPropertyInput&)>& f) const
   {
     const auto& mpd = *(cmp.mpd);
     out << '(';
