@@ -12,10 +12,12 @@ nocite: |
 	@torelli_multiaxial_2016
 	@michel_3d_2016
 	@bary_thermoviscoelastic_2016
-	@asali_numerical_2016@
-	@hure_intergranular_2016@
-	@saouma16:_effec@
-	@honorio_multiscale_2016@
+	@asali_modelisation_2016
+	@asali_numerical_2016
+	@hure_intergranular_2016
+	@saouma16:_effec
+	@honorio_multiscale_2016
+	@blanc_characterization_2015
 	@helfer_implantation_2015
 	@helfer_extension_2015
 	@helfer_introducing_2015

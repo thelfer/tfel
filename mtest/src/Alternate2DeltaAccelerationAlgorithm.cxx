@@ -26,7 +26,7 @@ namespace mtest
   {} // end of Alternate2DeltaAccelerationAlgorithm::Alternate2DeltaAccelerationAlgorithm
     
   std::string Alternate2DeltaAccelerationAlgorithm::getName() const{
-    return "crossed secant";
+    return "Alternate2Delta";
   }
 
   void
@@ -92,7 +92,7 @@ namespace mtest
 	if(nr2_dr1>(asa_eps*asa_eps)){
 	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
 	    ostream& log = mfront::getLogStream();
-	    log << "AlternateSecant acceleration convergence" << endl;
+	    log << "Alternate2Delta acceleration convergence" << endl;
 	  }
 	  const real asa_a = (this->asa_dr1|this->asa_r1)/nr2_dr1;
 	  u1 -= asa_a*(this->asa_du1);    
@@ -121,7 +121,7 @@ namespace mtest
 	  if(nr2_dr1>(asa_eps*asa_eps)){
 	    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
 	      auto& log = mfront::getLogStream();
-	      log << "AlternateSecant acceleration convergence" << endl;
+	      log << "Alternate2Delta acceleration convergence" << endl;
 	    }
 	    const real asa_a = (this->asa_dr1|this->asa_r1)/nr2_dr1;
 	    u1 -= asa_a*(this->asa_du1);    

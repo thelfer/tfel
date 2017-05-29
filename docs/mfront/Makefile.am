@@ -75,6 +75,7 @@ MFRONT_DOCS = Algorithm.md				                \
 	      MaterialLaw/Law.md                                        \
 	      MaterialLaw/MFront.md                                     \
 	      MaterialLaw/Output.md                                     \
+	      Model.md                                                  \
 	      Model/ConstantMaterialProperty.md                         \
 	      Model/Domain.md                                           \
 	      Model/Domains.md                                          \

@@ -360,6 +360,7 @@ docs/mfront/MaterialLaw/MFront.md -text
 docs/mfront/MaterialLaw/Output.md -text
 docs/mfront/MaterialProperty.md -text
 docs/mfront/MaximumNumberOfIterations.md -text
+docs/mfront/Model.md -text
 docs/mfront/Model/ConstantMaterialProperty.md -text
 docs/mfront/Model/Domain.md -text
 docs/mfront/Model/Domains.md -text
