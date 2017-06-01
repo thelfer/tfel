@@ -5,10 +5,13 @@
  * \date   21 déc. 2015
  */
 
+#include<iostream>
 #include<sstream>
 
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/TextData.hxx"
+#include"TFEL/System/ExternalLibraryManager.hxx"
+#include"TFEL/Math/Parser/ExternalCastemFunction.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/MTest.hxx"
 #include"MTest/Evolution.hxx"
@@ -18,6 +21,10 @@
 
 namespace mtest{
 
+  SchemeParserBase::SchemeParserBase()
+    : externalFunctions(new ExternalFunctionManager)
+  {} // end of SchemeParserBase::SchemeParserBase
+  
   std::string
   SchemeParserBase::getDocumentationFilePath(const std::string& s,
 					     const std::string& k) const
@@ -70,16 +77,14 @@ namespace mtest{
 	     (openedBrackets==1u)))&&
 	  (p!=this->tokens.end())){
       if(p->value=="{"){
-	tokens_iterator previous = p;
-	--previous;
+	const auto previous = std::prev(p);
 	if((previous->value.size()>0)&&
 	   (previous->value[previous->value.size()-1]!='\\')){
 	  ++openedBrackets;
 	}
       }
       if(p->value=="}"){
-	tokens_iterator previous = p;
-	--previous;
+	const auto previous = std::prev(p);
 	if((previous->value.size()>0)&&
 	   (previous->value[previous->value.size()-1]!='\\')){
 	  --openedBrackets;
@@ -193,7 +198,6 @@ namespace mtest{
   void
   SchemeParserBase::handleStiffnessMatrixType(SchemeBase& t,tokens_iterator& p)
   {
-    using namespace std;
     StiffnessMatrixType ktype;
     const auto& type = this->readString(p,this->tokens.end());
     if(type=="Elastic"){
@@ -205,8 +209,8 @@ namespace mtest{
     } else if(type=="ConsistentTangentOperator"){
       ktype=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
     } else {
-      throw(runtime_error("SchemeParserBase::handleStiffnessMatrixType: "
-			  "unsupported stiffness matrix type '"+type+"'"));
+      throw(std::runtime_error("SchemeParserBase::handleStiffnessMatrixType: "
+			       "unsupported stiffness matrix type '"+type+"'"));
     }
     this->readSpecifiedToken("SchemeParserBase::handleStiffnessMatrixType",";",
 			     p,this->tokens.end());
@@ -216,7 +220,6 @@ namespace mtest{
   void
   SchemeParserBase::handleUseCastemAccelerationAlgorithm(SchemeBase& t,tokens_iterator& p)
   {
-    using namespace std;
     bool useCastemAcceleration;
     this->checkNotEndOfLine("SchemeParserBase::handleUseCastemAccelerationAlgorithm",
 			    p,this->tokens.end());
@@ -225,8 +228,8 @@ namespace mtest{
     } else if(p->value=="false"){
       useCastemAcceleration = false;
     } else {
-      throw(runtime_error("SchemeParserBase::handleUseCastemAccelerationAlgorithm: "
-			  "unexpected token '"+p->value+"'"));
+      throw(std::runtime_error("SchemeParserBase::handleUseCastemAccelerationAlgorithm: "
+			       "unexpected token '"+p->value+"'"));
     }
     ++p;
     this->readSpecifiedToken("SchemeParserBase::handleUseCastemAccelerationAlgorithm",
@@ -237,7 +240,7 @@ namespace mtest{
   void
   SchemeParserBase::handleCastemAccelerationTrigger(SchemeBase& t,tokens_iterator& p)
   {
-    int cat = static_cast<int>(this->readUnsignedInt(p,this->tokens.end()));
+    const auto cat = static_cast<int>(this->readUnsignedInt(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleCastemAccelerationTrigger",";",
 			     p,this->tokens.end());
     t.setCastemAccelerationTrigger(cat);
@@ -246,8 +249,7 @@ namespace mtest{
   void
   SchemeParserBase::handleCastemAccelerationPeriod(SchemeBase& t,tokens_iterator& p)
   {
-    using namespace std;
-    int cap = static_cast<int>(this->readUnsignedInt(p,this->tokens.end()));
+    const auto cap = static_cast<int>(this->readUnsignedInt(p,this->tokens.end()));
     this->readSpecifiedToken("SchemeParserBase::handleCastemAccelerationPeriod",";",
 			     p,this->tokens.end());
     t.setCastemAccelerationPeriod(cap);
@@ -332,9 +334,8 @@ namespace mtest{
 			     p,this->tokens.end());
   } // end of SchemeParserBase::handleOutputFrequency
   
-  void
-  SchemeParserBase::handleDynamicTimeStepScaling(SchemeBase& t,
-						 tokens_iterator& p)
+  void SchemeParserBase::handleDynamicTimeStepScaling(SchemeBase& t,
+						      tokens_iterator& p)
   {
     this->checkNotEndOfLine("SchemeParserBase::handleDynamicTimeStepScaling",
 			    p,this->tokens.end());
@@ -443,13 +444,13 @@ namespace mtest{
 	if(!times.empty()){
 	  if(p->value=="in"){
 	    ++p;
-	    unsigned int n = this->readUnsignedInt(p,this->tokens.end());
+	    const auto n = this->readUnsignedInt(p,this->tokens.end());
 	    if(n==0){
 	      throw(runtime_error("SchemeParserBase::handleTimes: "
 				  "invalid number of intervals"));
 	    }
-	    const real tt = times.back();
-	    real dt = (t_dt-tt)/(static_cast<real>(n));
+	    const auto tt = times.back();
+	    const auto dt = (t_dt-tt)/(static_cast<real>(n));
 	    for(unsigned int i=1;i!=n;++i){
 	      times.push_back(tt+i*dt);
 	    }
@@ -526,8 +527,7 @@ namespace mtest{
     t.setTimes(times);
   }
 
-  void
-  SchemeParserBase::handleEvolution(SchemeBase& t,tokens_iterator& p)
+  void SchemeParserBase::handleEvolution(SchemeBase& t,tokens_iterator& p)
   {
     const auto& evt = this->readEvolutionType(p);
     const auto& n = this->readString(p,this->tokens.end());
@@ -536,15 +536,14 @@ namespace mtest{
 			     this->tokens.end());
   }
 
-  real
-  SchemeParserBase::readDouble(SchemeBase& t,tokens_iterator& p)
+  real SchemeParserBase::readDouble(SchemeBase& t,tokens_iterator& p)
   {
     this->checkNotEndOfLine("SchemeParserBase::readDouble",p,
 			    this->tokens.end());
     real r(0);
     if(p->flag==tfel::utilities::Token::String){
       const auto&f = this->readString(p,this->tokens.end());
-      tfel::math::Evaluator ev(f);
+      tfel::math::Evaluator ev(f,this->externalFunctions);
       for(const auto& v : ev.getVariablesNames()){
 	const auto evs = t.getEvolutions();
 	const auto pev = evs.find(v);
@@ -568,9 +567,8 @@ namespace mtest{
     return r;
   } // end of SchemeParserBase::readDouble
 
-  real
-  SchemeParserBase::readTime(SchemeBase& t,
-			     tokens_iterator& p)
+  real SchemeParserBase::readTime(SchemeBase& t,
+				  tokens_iterator& p)
   {
     return this->readDouble(t,p);
   } // end of SchemeParserBase::readTime
@@ -689,15 +687,13 @@ namespace mtest{
     return evt;
   } // end of SchemeParserBase::readEvolutionType
 
-  void
-  SchemeParserBase::registerCallBack(const std::string& k,
-				     const SchemeParserBase::CallBack& p)
+  void SchemeParserBase::registerCallBack(const std::string& k,
+					  const SchemeParserBase::CallBack& p)
   {
     this->callbacks.insert({k,p});
   }
   
-  void
-  SchemeParserBase::registerCallBacks()
+  void SchemeParserBase::registerCallBacks()
   {
     this->registerCallBack(";",&SchemeParserBase::handleLonelySeparator);
     this->registerCallBack("@Author",&SchemeParserBase::handleAuthor);
@@ -748,10 +744,66 @@ namespace mtest{
 			   &SchemeParserBase::handleMaximalTimeStep);
     this->registerCallBack("@MinimalTimeStep",
 			   &SchemeParserBase::handleMinimalTimeStep);
+    this->registerCallBack("@Import",&SchemeParserBase::handleImport);
+    this->registerCallBack("@Message",&SchemeParserBase::handleMessage);
+    this->registerCallBack("@Print",&SchemeParserBase::handleMessage);
   } // end of SchemeParserBase::registerCallBacks
 
-  bool
-  SchemeParserBase::treatKeyword(SchemeBase& t,tokens_iterator& p)
+  void SchemeParserBase::handleImport(SchemeBase&,tokens_iterator& p)
+  {
+    this->readSpecifiedToken("SchemeParserBase::handleImport","<",p,
+			     this->tokens.end());
+    this->checkNotEndOfLine("SchemeParserBase::handleImport",p,
+			    this->tokens.end());
+    if((p->value=="castem")||(p->value=="Castem")||(p->value=="Cast3M")){
+      ++p;
+      this->readSpecifiedToken("SchemeParserBase::handleImport",">",p,
+			       this->tokens.end());
+      using tfel::math::parser::ExternalCastemFunction;
+      auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+      const auto l = this->readString(p,this->tokens.end());
+      const auto f = this->readString(p,this->tokens.end());
+      this->readSpecifiedToken("SchemeParserBase::handleImport",";",p,
+			       this->tokens.end());
+      const auto c = elm.getCastemFunction(l,f);
+      const auto n = elm.getCastemFunctionNumberOfVariables(l,f);
+      const auto pc = std::make_shared<ExternalCastemFunction>(c,n);
+      if(!this->externalFunctions->insert({f,pc}).second){
+	throw(std::runtime_error("SchemeParserBase::handleImport: "
+				 "function '"+f+"' already declared"));
+      }
+    } else {
+      throw(std::runtime_error("SchemeParserBase::handleImport: "
+			       "unexpected token '"+p->value+"'"));
+    }
+  } // end of SchemeParserBase::handleImport
+
+  void SchemeParserBase::handleMessage(SchemeBase& t,tokens_iterator& p)
+  {
+    this->checkNotEndOfLine("SchemeParserBase::handleMessage",p,
+			    this->tokens.end());
+    while(p->value!=";"){
+      if(p->flag==tfel::utilities::Token::String){
+	auto c = p;
+	try{
+	  std::cout << this->readDouble(t,p);
+	} catch (std::exception&){
+	  p=c;
+	  std::cout << this->readString(p,this->tokens.end());
+	}
+      } else {
+	std::cout << this->readDouble(t,p);
+	++p;
+      } 
+      this->checkNotEndOfLine("SchemeParserBase::handleMessage",p,
+			      this->tokens.end());
+    }
+    this->readSpecifiedToken("SchemeParserBase::handleMessage",";",p,
+			     this->tokens.end());
+    std::cout << std::endl;
+  } // end of SchemeParserBase::handleMessage
+  
+  bool SchemeParserBase::treatKeyword(SchemeBase& t,tokens_iterator& p)
   {
     auto pc = this->callbacks.find(p->value);
     if(pc==this->callbacks.end()){
@@ -776,8 +828,7 @@ namespace mtest{
     return true;
   } // end of SchemeParserBase::treatKeyword
 
-  std::vector<std::string>
-  SchemeParserBase::getKeyWordsList() const
+  std::vector<std::string> SchemeParserBase::getKeyWordsList() const
   {
     auto keys = std::vector<std::string>{};
     for(const auto& k : this->callbacks){

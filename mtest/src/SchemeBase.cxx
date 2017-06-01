@@ -23,11 +23,10 @@ namespace mtest{
     this->declareVariable("t",true);
   } // end of SchemeBase::SchemeBase
 
-  void
-  SchemeBase::addEvolution(const std::string& n,
-			   const EvolutionPtr p,
-			   const bool b1,
-			   const bool b2)
+  void SchemeBase::addEvolution(const std::string& n,
+				const EvolutionPtr p,
+				const bool b1,
+				const bool b2)
   {
     if(b1){
       this->declareVariable(n,b1);
@@ -46,10 +45,9 @@ namespace mtest{
     (*(this->evm))[n] = p;
   }
 
-  void
-  SchemeBase::setEvolutionValue(const std::string& n,
-				const real t,
-				const real v)
+  void SchemeBase::setEvolutionValue(const std::string& n,
+				     const real t,
+				     const real v)
   {
     const auto pev = this->evm->find(n);
     if(pev==this->evm->end()){
@@ -59,15 +57,13 @@ namespace mtest{
     pev->second->setValue(t,v);
   } // end of SchemeBase::setEvolutionValue
 
-  const EvolutionManager&
-  SchemeBase::getEvolutions() const
+  const EvolutionManager& SchemeBase::getEvolutions() const
   {
     return *(this->evm);
   } // end of SchemeBase::getEvolutions() const
 
   
-  void
-  SchemeBase::setTimes(const std::vector<real>& t)
+  void SchemeBase::setTimes(const std::vector<real>& t)
   {
     if(!this->times.empty()){
       throw(std::runtime_error("SchemeBase::setTimes: "
@@ -76,8 +72,7 @@ namespace mtest{
     this->times=t;
   } // end of SchemeBase::setTimes
 
-  void
-  SchemeBase::setMaximumNumberOfIterations(const unsigned int i)
+  void SchemeBase::setMaximumNumberOfIterations(const unsigned int i)
   {
     if(this->options.iterMax!=-1){
       throw(std::runtime_error("SchemeBase::setMaximumNumberOfIterations: "
@@ -91,8 +86,7 @@ namespace mtest{
     this->options.iterMax = static_cast<int>(i);
   }
 
-  void
-  SchemeBase::setMaximumNumberOfSubSteps(const unsigned int i)
+  void SchemeBase::setMaximumNumberOfSubSteps(const unsigned int i)
   {
     if(this->options.mSubSteps!=-1){
       throw(std::runtime_error("SchemeBase::setMaximumNumberOfSubSteps: "
@@ -106,18 +100,15 @@ namespace mtest{
     this->options.mSubSteps = static_cast<int>(i);
   }
 
-  void
-  SchemeBase::setOutputFrequency(const OutputFrequency o){
+  void SchemeBase::setOutputFrequency(const OutputFrequency o){
     this->output_frequency = o;
   }
   
-  void
-  SchemeBase::setDynamicTimeStepScaling(const bool b){
+  void SchemeBase::setDynamicTimeStepScaling(const bool b){
     this->options.dynamic_time_step_scaling = b;
   }
   
-  void
-  SchemeBase::setMaximalTimeStep(const real v)
+  void SchemeBase::setMaximalTimeStep(const real v)
   {
     if(this->options.maximal_time_step>0){
       throw(std::runtime_error("SchemeBase::setMaximalTimeStep: "
@@ -143,8 +134,7 @@ namespace mtest{
     this->options.maximal_time_step=v;
   }
 
-  void
-  SchemeBase::setMinimalTimeStep(const real v)
+  void SchemeBase::setMinimalTimeStep(const real v)
   {
     if(this->options.minimal_time_step>0){
       throw(std::runtime_error("SchemeBase::setMinimalTimeStep: "
@@ -172,8 +162,7 @@ namespace mtest{
     this->options.minimal_time_step=v;
   }
 
-  void
-  SchemeBase::setMinimalTimeStepScalingFactor(const real v)
+  void SchemeBase::setMinimalTimeStepScalingFactor(const real v)
   {
     if(this->options.minimal_time_step_scaling_factor>0){
       throw(std::runtime_error("SchemeBase::setMinimalTimeStepScalingFactor: "
@@ -193,8 +182,7 @@ namespace mtest{
     this->options.minimal_time_step_scaling_factor=v;
   }
 
-  void
-  SchemeBase::setMaximalTimeStepScalingFactor(const real v)
+  void SchemeBase::setMaximalTimeStepScalingFactor(const real v)
   {
     if(this->options.maximal_time_step_scaling_factor>0){
       throw(std::runtime_error("SchemeBase::setMaximalTimeStepScalingFactor: "
@@ -209,8 +197,7 @@ namespace mtest{
     this->options.maximal_time_step_scaling_factor=v;
   }
   
-  void
-  SchemeBase::setDescription(const std::string& d)
+  void SchemeBase::setDescription(const std::string& d)
   {
     if(!this->description.empty()){
       throw(std::runtime_error("SchemeBase::setDescription: "
@@ -219,8 +206,7 @@ namespace mtest{
     this->description = d;
   } // end of SchemeBase::setDescription
 
-  void
-  SchemeBase::setAuthor(const std::string& a)
+  void SchemeBase::setAuthor(const std::string& a)
   {
     if(!this->author.empty()){
       throw(std::runtime_error("SchemeBase::setAuthor: "
@@ -229,8 +215,7 @@ namespace mtest{
     this->author = a;
   } // end of SchemeBase::setAuthor
   
-  void
-  SchemeBase::setDate(const std::string& d)
+  void SchemeBase::setDate(const std::string& d)
   {
     if(!this->date.empty()){
       throw(std::runtime_error("SchemeBase::setDate: "
@@ -240,8 +225,7 @@ namespace mtest{
   } // end of SchemeBase::setDate
   
 
-  void
-  SchemeBase::setModellingHypothesis(const std::string& h)
+  void SchemeBase::setModellingHypothesis(const std::string& h)
   {
     if(this->hypothesis!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       throw(std::runtime_error("SchemeBase::setModellingHypothesis: "
@@ -250,8 +234,7 @@ namespace mtest{
     this->hypothesis=ModellingHypothesis::fromString(h);
   } // end of SchemeBase::setModellingHypothesis
 
-  tfel::material::ModellingHypothesis::Hypothesis
-  SchemeBase::getModellingHypothesis() const
+  tfel::material::ModellingHypothesis::Hypothesis SchemeBase::getModellingHypothesis() const
   {
     if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       throw(std::runtime_error("SchemeBase::getModellingHypothesis: "
@@ -260,8 +243,7 @@ namespace mtest{
     return this->hypothesis;
   }
 
-  unsigned short
-  SchemeBase::getDimension() const
+  unsigned short SchemeBase::getDimension() const
   {
     if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       throw(std::runtime_error("SchemeBase::getDimension: "
@@ -271,8 +253,7 @@ namespace mtest{
     return tfel::material::getSpaceDimension(this->hypothesis);
   }
 
-  void
-  SchemeBase::setAccelerationAlgorithm(const std::string& a)
+  void SchemeBase::setAccelerationAlgorithm(const std::string& a)
   {
     if(this->options.aa.get()!=nullptr){
       throw(std::runtime_error("SchemeBase::setAccelerationAlgorithm: "
@@ -282,8 +263,7 @@ namespace mtest{
     this->options.aa = f.getAlgorithm(a);
   }
 
-  void
-  SchemeBase::setAccelerationAlgorithmParameter(const std::string& p,
+  void SchemeBase::setAccelerationAlgorithmParameter(const std::string& p,
 					   const std::string& v)
   {
     if(this->options.aa.get()==nullptr){
@@ -293,8 +273,7 @@ namespace mtest{
     this->options.aa->setParameter(p,v);
   }
 
-  void
-  SchemeBase::setPredictionPolicy(const PredictionPolicy p)
+  void SchemeBase::setPredictionPolicy(const PredictionPolicy p)
   {
     if(this->options.ppolicy!=PredictionPolicy::UNSPECIFIEDPREDICTIONPOLICY){
       throw(std::runtime_error("SchemeBase::setPredictionPolicy: "
@@ -303,8 +282,7 @@ namespace mtest{
     this->options.ppolicy = p;
   } // end of SchemeBase::setPredictionPolicy
 
-  void
-  SchemeBase::setStiffnessMatrixType(const StiffnessMatrixType k)
+  void SchemeBase::setStiffnessMatrixType(const StiffnessMatrixType k)
   {
     if(this->options.ktype!=StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE){
       throw(std::runtime_error("SchemeBase::setStiffnessMatrixType: "
@@ -313,8 +291,7 @@ namespace mtest{
     this->options.ktype = k;
   }
 
-  void
-  SchemeBase::setUseCastemAccelerationAlgorithm(const bool ucaa)
+  void SchemeBase::setUseCastemAccelerationAlgorithm(const bool ucaa)
   {
     if(ucaa){
       if(this->options.aa.get()!=nullptr){
@@ -326,8 +303,7 @@ namespace mtest{
     this->options.useCastemAcceleration = ucaa;
   }
   
-  void
-  SchemeBase::setCastemAccelerationTrigger(const int i)
+  void SchemeBase::setCastemAccelerationTrigger(const int i)
   {
     if(!this->options.useCastemAcceleration){
       throw(std::runtime_error("SchemeBase::setCastemAccelerationTrigger: "
@@ -350,8 +326,7 @@ namespace mtest{
   }
 
 
-  void
-  SchemeBase::setCastemAccelerationPeriod(const int p)
+  void SchemeBase::setCastemAccelerationPeriod(const int p)
   {
     if(!this->options.useCastemAcceleration){
       throw(std::runtime_error("SchemeBase::setCastemAccelerationPeriod: "
@@ -373,8 +348,7 @@ namespace mtest{
     this->options.aa->setParameter("AccelerationPeriod",nb.str());
   }
   
-  void
-  SchemeBase::setStiffnessUpdatingPolicy(const StiffnessUpdatingPolicy p)
+  void SchemeBase::setStiffnessUpdatingPolicy(const StiffnessUpdatingPolicy p)
   {
     if(this->options.ks!=StiffnessUpdatingPolicy::UNSPECIFIEDSTIFFNESSUPDATINGPOLICY){
       throw(std::runtime_error("SchemeBase::setStiffnessUpdatePolicy: "
@@ -383,8 +357,7 @@ namespace mtest{
     this->options.ks = p;
   } // end of SchemeBase::setStiffnessUpdatingPolicy
 
-  void
-  SchemeBase::completeInitialisation()
+  void SchemeBase::completeInitialisation()
   {
     if(this->initialisationFinished){
       throw(std::runtime_error("SchemeBase::completeInitialisation : "
@@ -563,7 +536,6 @@ namespace mtest{
     return this->xmlFileName;
   }
   
-  SchemeBase::~SchemeBase()
-  {} // end of SchemeBase::~SchemeBase()
+  SchemeBase::~SchemeBase() = default;
   
 } // end of namespace mtest

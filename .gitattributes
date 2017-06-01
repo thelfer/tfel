@@ -523,6 +523,7 @@ docs/mtest/DynamicTimeStepScaling.md -text
 docs/mtest/Evolution.md -text
 docs/mtest/ExternalStateVariable.md -text
 docs/mtest/HandleThermalExpansion.md -text
+docs/mtest/Import.md -text
 docs/mtest/IntegerParameter.md -text
 docs/mtest/InternalStateVariable.md -text
 docs/mtest/Makefile.am -text
@@ -532,6 +533,7 @@ docs/mtest/MaximalTimeStep.md -text
 docs/mtest/MaximalTimeStepScalingFactor.md -text
 docs/mtest/MaximumNumberOfIterations.md -text
 docs/mtest/MaximumNumberOfSubSteps.md -text
+docs/mtest/Message.md -text
 docs/mtest/MinimalTimeStep.md -text
 docs/mtest/MinimalTimeStepScalingFactor.md -text
 docs/mtest/NumericalTangentOperatorPerturbationValue.md -text
@@ -541,6 +543,7 @@ docs/mtest/OutputFilePrecision.md -text
 docs/mtest/OutputFrequency.md -text
 docs/mtest/Parameter.md -text
 docs/mtest/PredictionPolicy.md -text
+docs/mtest/Print.md -text
 docs/mtest/Real.md -text
 docs/mtest/ResidualFile.md -text
 docs/mtest/ResidualFilePrecision.md -text

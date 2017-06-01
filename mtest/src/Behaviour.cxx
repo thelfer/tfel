@@ -76,7 +76,7 @@ namespace mtest
     auto b  = std::shared_ptr<Behaviour>{};
     auto in = i.empty() ? elm.getInterface(l,f) : i ;
 #ifdef HAVE_CASTEM
-    if((in=="castem")||(in=="umat")||(in=="Castem")){
+    if((in=="castem")||(in=="umat")||(in=="Castem")||(in=="Cast3M")){
       check_no_parameters();
       const auto type  = elm.getUMATBehaviourType(l,f);
       const auto ktype = elm.getUMATBehaviourKinematic(l,f);

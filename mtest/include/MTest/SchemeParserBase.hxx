@@ -10,7 +10,7 @@
 
 #include<memory>
 #include"TFEL/Utilities/CxxTokenizer.hxx"
-
+#include"TFEL/Math/Parser/ExternalFunctionManager.hxx"
 #include"MTest/Config.hxx"
 #include"MTest/Types.hxx"
 
@@ -26,169 +26,163 @@ namespace mtest{
   {
     //! a simple alias
     using tokens_iterator = TokensContainer::const_iterator;
+    //! constructor
+    SchemeParserBase();
+    //! destructor
+    virtual ~SchemeParserBase();
+  protected:
     /*!
      * \brief allow an lonely ';'
      * \param[in,out] p : position in the input file
      */
-    void handleLonelySeparator(SchemeBase&,tokens_iterator&);
+    virtual void handleLonelySeparator(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @Author keyword
+     * \brief handle the @Author keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleAuthor(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @Date keyword
+     * \brief handle the @Date keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleDate(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @OutputFrequency keyword
+     * \brief handle the @Import keyword
+     * \param[in,out] p : position in the input file
+     */
+    virtual void handleImport(SchemeBase&,tokens_iterator&);
+    /*!
+     * \brief handle the @Message keyword
+     * \param[in,out] p : position in the input file
+     */
+    virtual void handleMessage(SchemeBase&,tokens_iterator&);
+    /*!
+     * \brief handle the @OutputFrequency keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleOutputFrequency(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @Description keyword
+     * \brief handle the @Description keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleDescription(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @PredictionPolicy keyword
+     * \brief handle the @PredictionPolicy keyword
      * \param[in,out] p : position in the input file
      */
     virtual void 
     handlePredictionPolicy(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @Times keyword
+     * \brief handle the @Times keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleTimes(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @Real keyword
+     * \brief handle the @Real keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleReal(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @StiffnessMatrixType keyword
+     * \brief handle the @StiffnessMatrixType keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleStiffnessMatrixType(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @StiffnessUpdatePolicy keyword
+     * \brief handle the @StiffnessUpdatePolicy keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleStiffnessUpdatePolicy(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @UseCastemAccelerationAlgorithm keyword
+     * \brief handle the @UseCastemAccelerationAlgorithm keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void
-    handleUseCastemAccelerationAlgorithm(SchemeBase&,tokens_iterator&);
+    virtual void handleUseCastemAccelerationAlgorithm(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @CastemAccelerationTrigger keyword
+     * \brief handle the @CastemAccelerationTrigger keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void
-    handleCastemAccelerationTrigger(SchemeBase&,tokens_iterator&);
+    virtual void handleCastemAccelerationTrigger(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @CastemAccelerationAlgorithm keyword
+     * \brief handle the @CastemAccelerationAlgorithm keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void
-    handleCastemAccelerationPeriod(SchemeBase&,tokens_iterator&);
+    virtual void handleCastemAccelerationPeriod(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @AccelerationAlgorithm keyword
+     * \brief handle the @AccelerationAlgorithm keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void
-    handleAccelerationAlgorithm(SchemeBase&,tokens_iterator&);
+    virtual void handleAccelerationAlgorithm(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @AccelerationAlgorithmParameter keyword
+     * \brief handle the @AccelerationAlgorithmParameter keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void
-    handleAccelerationAlgorithmParameter(SchemeBase&,tokens_iterator&);
+    virtual void handleAccelerationAlgorithmParameter(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @DynamicTimeStepScaling keyword
+     * \brief handle the @DynamicTimeStepScaling keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void
-    handleDynamicTimeStepScaling(SchemeBase&,tokens_iterator&);
+    virtual void handleDynamicTimeStepScaling(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @MaximalTimeStep keyword
+     * \brief handle the @MaximalTimeStep keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void
-    handleMaximalTimeStep(SchemeBase&,tokens_iterator&);
+    virtual void handleMaximalTimeStep(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @MinimalTimeStep keyword
+     * \brief handle the @MinimalTimeStep keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void
-    handleMinimalTimeStep(SchemeBase&,tokens_iterator&);
+    virtual void handleMinimalTimeStep(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @MaximalTimeStepScalingFactor keyword
+     * \brief handle the @MaximalTimeStepScalingFactor keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void
-    handleMaximalTimeStepScalingFactor(SchemeBase&,tokens_iterator&);
+    virtual void handleMaximalTimeStepScalingFactor(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @MinimalTimeStepScalingFactor keyword
+     * \brief handle the @MinimalTimeStepScalingFactor keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void
-    handleMinimalTimeStepScalingFactor(SchemeBase&,tokens_iterator&);
+    virtual void handleMinimalTimeStepScalingFactor(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @MaximumNumberOfIterations keyword
+     * \brief handle the @MaximumNumberOfIterations keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleMaximumNumberOfIterations(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @MaximumNumberOfSubSteps keyword
+     * \brief handle the @MaximumNumberOfSubSteps keyword
      * \param[in,out] p : position in the input file
      */
     virtual void handleMaximumNumberOfSubSteps(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @Evolution keyword
+     * \brief handle the @Evolution keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void 
-    handleEvolution(SchemeBase&,tokens_iterator&);
+    virtual void handleEvolution(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @OutputFile keyword
+     * \brief handle the @OutputFile keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void
-    handleOutputFile(SchemeBase&,tokens_iterator&);
+    virtual void handleOutputFile(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @XMLOutputFile keyword
+     * \brief handle the @XMLOutputFile keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void
-    handleXMLOutputFile(SchemeBase&,tokens_iterator&);
+    virtual void handleXMLOutputFile(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @OutputFilePrecision keyword
+     * \brief handle the @OutputFilePrecision keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void
-    handleOutputFilePrecision(SchemeBase&,tokens_iterator&);
+    virtual void handleOutputFilePrecision(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @ResidualFile keyword
+     * \brief handle the @ResidualFile keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void
-    handleResidualFile(SchemeBase&,tokens_iterator&);
+    virtual void handleResidualFile(SchemeBase&,tokens_iterator&);
     /*!
-     * handle the @ResidualFilePrecision keyword
+     * \brief handle the @ResidualFilePrecision keyword
      * \param[in,out] p : position in the input file
      */
-    virtual void
-    handleResidualFilePrecision(SchemeBase&,tokens_iterator&);
-    //! destructor
-    ~SchemeParserBase();
-  protected:
-    /*!
-     * \brief register call backs
-     */
+    virtual void handleResidualFilePrecision(SchemeBase&,tokens_iterator&);
+    //! \brief register call backs
     virtual void registerCallBacks();
     /*!
      * \return the file path associated with the keyword documentation
@@ -203,8 +197,7 @@ namespace mtest{
      * semi-colon.
      * \param[in,out] p : position in the input file
      */
-    virtual std::string
-    readUntilEndOfInstruction(tokens_iterator&);
+    virtual std::string readUntilEndOfInstruction(tokens_iterator&);
     /*!
      * \return a real value
      * \param[in] t : structure to be filled
@@ -216,24 +209,21 @@ namespace mtest{
      * \param[in,out] t : structure to be filled
      * \param[in,out] p : position in the input file
      */
-    virtual real
-    readTime(SchemeBase&,tokens_iterator&);
+    virtual real readTime(SchemeBase&,tokens_iterator&);
     /*!
      * \brief parse an evolution
      * \param[in,out] t    : structure to be filled
      * \param[in]     type : evolution type
      * \param[in,out] p    : position in the input file
      */
-    std::shared_ptr<Evolution>
-    parseEvolution(SchemeBase&,
-		   const std::string&,
-		   tokens_iterator&);
+    virtual std::shared_ptr<Evolution> parseEvolution(SchemeBase&,
+						      const std::string&,
+						      tokens_iterator&);
     /*!
      * \brief try to read the type of an evolution
      * \param[in,out] p : position in the input file
      */
-    std::string
-    readEvolutionType(tokens_iterator&);
+    virtual std::string readEvolutionType(tokens_iterator&);
     /*!
      * read an array
      * The expected size of the array is given by the output vector
@@ -241,10 +231,9 @@ namespace mtest{
      * \param[in,out] t : structure to be filled
      * \param[in,out] p : position in the input file
      */
-    void
-    readArrayOfSpecifiedSize(std::vector<real>&,
-			     SchemeBase&,
-			     tokens_iterator&);
+    virtual void readArrayOfSpecifiedSize(std::vector<real>&,
+					  SchemeBase&,
+					  tokens_iterator&);
     /*!
      * \brief treat the current keyword
      * \param[in,out] p : position in the input file
@@ -255,6 +244,10 @@ namespace mtest{
     //! a simple alias
     using CallBack = void (SchemeParserBase::*)(SchemeBase&,
 						tokens_iterator&);
+    //! a simple alias
+    using ExternalFunctionManager = tfel::math::parser::ExternalFunctionManager;
+    //! external function imported through the @Import keyword
+    std::shared_ptr<ExternalFunctionManager> externalFunctions;
     //! callbacks
     std::map<std::string,CallBack> callbacks;
     //! input file

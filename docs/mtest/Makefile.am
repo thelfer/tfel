@@ -9,6 +9,7 @@ MTEST_DOCS = Author.md                                    \
 	     DynamicTimeStepScaling.md                    \
 	     Evolution.md                                 \
 	     HandleThermalExpansion.md                    \
+	     Import.md                                    \
 	     InternalStateVariable.md                     \
 	     ExternalStateVariable.md                     \
 	     MaterialProperty.md                          \
@@ -18,8 +19,10 @@ MTEST_DOCS = Author.md                                    \
 	     MaximalTimeStepScalingFactor.md              \
 	     MaximumNumberOfIterations.md                 \
 	     MaximumNumberOfSubSteps.md                   \
+	     Message.md                                   \
 	     OutputFrequency.md                           \
 	     Parameter.md                                 \
+	     Print.md                                     \
 	     IntegerParameter.md                          \
 	     UnsignedIntegerParameter.md                  \
 	     OutputFile.md                                \

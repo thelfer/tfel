@@ -17,8 +17,6 @@
 #include"MTest/TextDataUtilities.hxx"
 #include"MTest/ReferenceFileComparisonTest.hxx"
 
-#include<iostream>
-
 namespace mtest{
   
   ReferenceFileComparisonTest::ReferenceFileComparisonTest(const tfel::utilities::TextData& d,
@@ -30,9 +28,7 @@ namespace mtest{
       name(v),
       get(g),
       eps(eps_)
-  {
-    std::cout << "values.size: " << values.size() << std::endl;
-  } // ReferenceFileComparisonTest::ReferenceFileComparisonTest
+  {} // ReferenceFileComparisonTest::ReferenceFileComparisonTest
 
   ReferenceFileComparisonTest::ReferenceFileComparisonTest(const tfel::utilities::TextData& d,
 							   const EvolutionManager& e,

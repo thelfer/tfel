@@ -12,7 +12,6 @@
  */
 
 #include<limits>
-#include<iostream>
 #include"TFEL/Math/Evaluator.hxx"
 #include"TFEL/Math/Parser/ConstantExternalFunction.hxx"
 #include"MTest/Evolution.hxx"

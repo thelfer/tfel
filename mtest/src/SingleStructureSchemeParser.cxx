@@ -113,7 +113,8 @@ namespace mtest{
       this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",p,
 			      this->tokens.end());
 #ifdef HAVE_CASTEM
-      if((p->value=="umat")||(p->value=="castem")){
+      if((p->value=="umat")||(p->value=="castem")||
+	 (p->value=="Castem")||(p->value=="Cast3M")){
 	i = "castem";
       }
       if(p->value=="mistral"){
