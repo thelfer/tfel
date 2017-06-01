@@ -4,6 +4,15 @@
 
 # Tickets fixed
 
+## Ticket #69: `@Profiling` true; Error in cygwin
+
+Under Windows, the `__declspec(dllexport)` attribute does not
+propagate to inner structures, wheres the visibility flags used under
+`POSIX` systems does. This attribute is now set also on the
+`BehaviourProfiler::Timer` structure.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/69/>
+
 ## Ticket #64: Change the library prefix to "cyg" under cygwin
 
 The default library prefix under cygwin has been changed to `cyg`
