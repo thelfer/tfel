@@ -40,7 +40,7 @@ namespace mfront{
      * a timer for a specicied code block.
      * This descructor will increase the time count for the code block.
      */
-    struct Timer
+    struct MFRONTPROFILING_VISIBILITY_EXPORT Timer
     {
       /*!
        * \param[in,out] t  : global timer
