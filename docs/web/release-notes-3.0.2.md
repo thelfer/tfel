@@ -4,6 +4,18 @@
 
 # Tickets fixed
 
+## Ticket #72: Error at compilation of documentation
+
+The latex documents declared a unnecessary dependency to the
+`stmaryrd` package. This package became outdated in recent `LaTeX`
+distributions causing some portability issues. This dependency has
+been removed.
+
+The inclusion of the `babel` package was missing in the
+`docs/presentations/mfront-formation-tp/tp.tex.in` file.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/72/>
+
 ## Ticket #69: `@Profiling` true; Error in cygwin
 
 Under Windows, the `__declspec(dllexport)` attribute does not
