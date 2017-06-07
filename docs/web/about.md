@@ -31,6 +31,14 @@
 - Thouraya Baranger
 - Lorenzo Riparbelli
 - Ioannis Christovasilis
+- Rafal Brzegowy
+- Guillaume Michal
+- Medhi Assali
+- Pierre Lemerle
+- Julien Sanahuja
+- Jean-Luc Adia
+- Luc Portelette
+- Laurent Dupuy
 
 # Tools
 

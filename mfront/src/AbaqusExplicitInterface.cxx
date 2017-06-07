@@ -723,7 +723,8 @@ namespace mfront{
 				       const std::string& t,
 				       const Hypothesis h) const
   {
-    out << "using BV = " << mb.getClassName()
+    out << "#ifndef MFRONT_ABAQUS_NORUNTIMECHECKS\n"
+	<< "using BV = " << mb.getClassName()
 	<< "<ModellingHypothesis::"<< ModellingHypothesis::toUpperCaseString(h) << "," << t << ",false>;\n"
 	<< "using Traits = tfel::material::MechanicalBehaviourTraits<BV>;\n"
 	<< "constexpr const unsigned short offset  = (AbaqusTraits<BV>::elasticPropertiesOffset+\n"
@@ -778,7 +779,8 @@ namespace mfront{
 	<< " unmatched number of external state variables "
 	<< "(\" << *nfieldv << \" given, \" << nfieldv_ << \" expected)\\n\";\n"
 	<< "::exit(-1);\n"
-	<< "}\n";
+	<< "}\n"
+	<< "#endif /* MFRONT_ABAQUS_NORUNTIMECHECKS */\n";
   } // end of AbaqusExplicitInterface::writeChecks
 
   void

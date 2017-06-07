@@ -474,24 +474,28 @@ namespace mfront{
        ((btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
 	((this->fss!=AbaqusInterfaceBase::NATIVEFINITESTRAINSTRATEGY)&&
 	 (this->fss!=AbaqusInterfaceBase::UNDEFINEDSTRATEGY)))){
-      out << "if(KSTEP[2]!=1){\n"
+      out << "#ifndef MFRONT_ABAQUS_NORUNTIMECHECKS\n"
+	  << "if(KSTEP[2]!=1){\n"
 	  << "std::cerr << \"the " << name << " behaviour is only "
 	  << "valid in finite strain analysis\\n\";\n"
 	  << "*PNEWDT=-1;\n"
 	  << "return;\n"
-	  << "}\n";
+	  << "}\n"
+	  << "#endif /* MFRONT_ABAQUS_NORUNTIMECHECKS */\n";
     }
     if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
       if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
     	// turning the deformation and the deformation gradient
     	// increment to the material frame
     	if(h==ModellingHypothesis::PLANESTRESS){
-	  out << "if(*NSTATV<2){\n"
+	  out << "#ifndef MFRONT_ABAQUS_NORUNTIMECHECKS\n"
+	      << "if(*NSTATV<2){\n"
 	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
 	      << "          << \"invalid number of state variables\\n\";\n"
 	      << "*PNEWDT = -1.;\n"
 	      << "return;\n"
 	      << "}\n"
+	      << "#endif /* MFRONT_ABAQUS_NORUNTIMECHECKS */\n"
 	      << "abaqus::AbaqusRotation2D<abaqus::AbaqusReal> R(STATEV);\n"
     	      << "const abaqus::AbaqusReal eto[4u]  = {*STRAN ,*(STRAN+1) ,0,*(STRAN+2)};\n"
     	      << "const abaqus::AbaqusReal deto[4u] = {*DSTRAN,*(DSTRAN+1),0,*(DSTRAN+2)};\n"
@@ -512,12 +516,14 @@ namespace mfront{
 	  statev="STATEV+2";
     	} else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
     		   (h==ModellingHypothesis::PLANESTRAIN)){
-    	  out << "if(*NSTATV<2){\n"
+    	  out << "#ifndef MFRONT_ABAQUS_NORUNTIMECHECKS\n"
+	      << "if(*NSTATV<2){\n"
 	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
 	      << "          << \"invalid number of state variables\\n\";\n"
 	      << "*PNEWDT = -1.;\n"
 	      << "return;\n"
 	      << "}\n"
+	      << "#endif /* MFRONT_ABAQUS_NORUNTIMECHECKS */\n"
 	      << "abaqus::AbaqusRotation2D<abaqus::AbaqusReal> R(STATEV);\n"
     	      << "abaqus::AbaqusReal e[4u];\n"
     	      << "abaqus::AbaqusReal de[4u];\n"
@@ -528,12 +534,14 @@ namespace mfront{
 	      << "const abaqus::AbaqusInt nstatev = *NSTATV-2;\n";
 	  statev="STATEV+2";
     	} else if (h==ModellingHypothesis::TRIDIMENSIONAL){
-    	  out << "if(*NSTATV<6){\n"
+    	  out << "#ifndef MFRONT_ABAQUS_NORUNTIMECHECKS\n"
+	      << "if(*NSTATV<6){\n"
 	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
 	      << "          << \"invalid number of state variables\\n\";\n"
 	      << "*PNEWDT = -1.;\n"
 	      << "return;\n"
 	      << "}\n"
+	      << "#endif /* MFRONT_ABAQUS_NORUNTIMECHECKS */\n"
 	      << "abaqus::AbaqusRotation3D<abaqus::AbaqusReal> R(STATEV);\n"
     	      << "abaqus::AbaqusReal e[6u];\n"
     	      << "abaqus::AbaqusReal de[6u];\n"
@@ -553,12 +561,14 @@ namespace mfront{
       } else if(btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
     	// turning the deformation gradients to the material frame
     	if(h==ModellingHypothesis::PLANESTRESS){
-    	  out << "if(*NSTATV<2){\n"
+    	  out << "#ifndef MFRONT_ABAQUS_NORUNTIMECHECKS\n"
+	      << "if(*NSTATV<2){\n"
 	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
 	      << "          << \"invalid number of state variables\\n\";\n"
 	      << "*PNEWDT = -1.;\n"
 	      << "return;\n"
 	      << "}\n"
+	      << "#endif /* MFRONT_ABAQUS_NORUNTIMECHECKS */\n"
 	      << "abaqus::AbaqusRotation2D<abaqus::AbaqusReal> R(STATEV);\n"
     	      << "abaqus::AbaqusReal Fm0[9u];\n"
 	      << "abaqus::AbaqusReal Fm1[9u];\n"
@@ -573,12 +583,14 @@ namespace mfront{
 	  statev="STATEV+2";
     	} else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
     		   (h==ModellingHypothesis::PLANESTRAIN)){
-    	  out << "if(*NSTATV<2){\n"
+    	  out << "#ifndef MFRONT_ABAQUS_NORUNTIMECHECKS\n"
+	      << "if(*NSTATV<2){\n"
 	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
 	      << "          << \"invalid number of state variables\\n\";\n"
 	      << "*PNEWDT = -1.;\n"
 	      << "return;\n"
 	      << "}\n"
+	      << "#endif /* MFRONT_ABAQUS_NORUNTIMECHECKS */\n"
 	      << "abaqus::AbaqusRotation2D<abaqus::AbaqusReal> R(STATEV);\n"
     	      << "abaqus::AbaqusReal Fm0[9u];\n"
 	      << "abaqus::AbaqusReal Fm1[9u];\n"
@@ -589,12 +601,14 @@ namespace mfront{
 	      << "const abaqus::AbaqusInt nstatev = *NSTATV-2;\n";
 	  statev="STATEV+2";
     	} else if (h==ModellingHypothesis::TRIDIMENSIONAL){
-    	  out << "if(*NSTATV<6){\n"
+    	  out << "#ifndef MFRONT_ABAQUS_NORUNTIMECHECKS\n"
+	      << "if(*NSTATV<6){\n"
 	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
 	      << "          << \"invalid number of state variables\\n\";\n"
 	      << "*PNEWDT = -1.;\n"
 	      << "return;\n"
 	      << "}\n"
+	      << "#endif /* MFRONT_ABAQUS_NORUNTIMECHECKS */\n"
 	      << "abaqus::AbaqusRotation3D<abaqus::AbaqusReal> R(STATEV);\n"
     	      << "abaqus::AbaqusReal Fm0[9u];\n"
 	      << "abaqus::AbaqusReal Fm1[9u];\n"
