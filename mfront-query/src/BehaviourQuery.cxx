@@ -109,6 +109,8 @@ namespace mfront{
       {"--symmetry","return the behaviour symmetry. If the returned value is 0, "
        "the behaviour is isotropic. If the returned value is 1, "
        "the behaviour is orthotropic."},
+      {"--has-crystal-structure","return `true` if a crystal structure has been defined"},
+      {"--crystal-structure","return the crystal structure"},
       {"--elastic-symmetry","return the symmetry of the elastic part of the behaviour. "
        "If the returned value is 0, this part of the behaviour is isotropic. "
        "If the returned value is 1, this part of the behaviour is orthotropic."
@@ -205,7 +207,7 @@ namespace mfront{
     } else if(qn=="--material"){
       this->queries.push_back({"material",[](const FileDescription&,
 					     const BehaviourDescription& d,
-const Hypothesis){
+					     const Hypothesis){
 	    const auto& m = d.getMaterialName();
 	    cout << (!m.empty() ? m : "(undefined)") << '\n';
 	  }});
@@ -249,6 +251,32 @@ const Hypothesis){
 	      cout << 1 << '\n';
 	    } else {
 	      throw(std::runtime_error("unsupported symmetry"));
+	    }
+	  }});
+    } else if(qn=="--has-crystal-structure"){
+      this->queries.push_back({"has-crystal-structure",[](const FileDescription&,
+							  const BehaviourDescription& d,
+							  const Hypothesis){
+	    if(d.hasCrystalStructure()){
+	      cout << "true\n";
+	    } else {
+	      cout << "false\n";
+	    }
+	  }});
+    } else if(qn=="--crystal-structure"){
+      this->queries.push_back({"crystal-structure",[](const FileDescription&,
+						      const BehaviourDescription& d,
+						      const Hypothesis){
+	    using tfel::material::CrystalStructure;
+	    const auto s = d.getCrystalStructure();
+	    if(s==CrystalStructure::Cubic){
+	      cout << "Cubic\n";
+	    } else if(s==CrystalStructure::HCP){
+	      cout << "Hexagonal closed-packed\n";
+	    } else if(s==CrystalStructure::FCC){
+	      cout << "Face-centered cubic\n";
+	    } else {
+	      throw(std::runtime_error("unsupported crystal structure"));
 	    }
 	  }});
     } else if(qn=="--elastic-symmetry"){

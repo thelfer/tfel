@@ -1,7 +1,7 @@
 /*!
  * \file   CubicSlipSystems.cxx
  * \brief    
- * \author THOMAS HELFER
+ * \author Thomas Helfer
  * \date   22/03/2017
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 

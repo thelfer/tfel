@@ -597,6 +597,7 @@ AC_OUTPUT([debug.sh
 	   src/Utilities/Makefile
 	   src/Glossary/Makefile
 	   src/Math/Makefile
+	   src/NUMODIS/Makefile
 	   src/Material/Makefile
 	   src/System/Makefile
 	   src/TFELConfig/Makefile

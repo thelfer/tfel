@@ -19,7 +19,8 @@ test_PROGRAMS = boundsCheck \
 		FiniteStrainBehaviourTangentOperator10 \
 		FiniteStrainBehaviourTangentOperator11 \
 		Hyperelasticity                        \
-		Ogden
+		Ogden                                  \
+		SlipSystemsDescriptionTest
 
 LDADD = -lTFELMaterial -lTFELMath       \
 	-lTFELUtilities -lTFELException \
@@ -47,6 +48,7 @@ FiniteStrainBehaviourTangentOperator10_SOURCES = FiniteStrainBehaviourTangentOpe
 FiniteStrainBehaviourTangentOperator11_SOURCES = FiniteStrainBehaviourTangentOperator11.cxx
 Hyperelasticity_SOURCES = Hyperelasticity.cxx
 Ogden_SOURCES = Ogden.cxx
+SlipSystemsDescriptionTest_SOURCES = SlipSystemsDescriptionTest.cxx
 
 TESTS=$(test_PROGRAMS)
 

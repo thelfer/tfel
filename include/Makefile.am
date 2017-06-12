@@ -49,6 +49,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/PolyCrystalsSlidingSystems.ixx                                                 \
 			TFEL/Material/GursonTvergaardNeedleman.hxx                                                   \
 			TFEL/Material/CubicSlipSystems.hxx                                                           \
+			TFEL/Material/CrystalStructure.hxx                                                           \
+			TFEL/Material/SlipSystemsDescription.hxx                                                     \
 			TFEL/Config/Internals/TFELTypesInternals.hxx	                                             \
 			TFEL/Config/Internals/SpatialGradType.hxx	                                             \
 			TFEL/Config/Internals/HeatFluxVectorType.hxx	                                             \
@@ -545,8 +547,20 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			FSES/sytrd3.hxx										     \
 			FSES/sytrd3.ixx										     \
 			FSES/Utilities.hxx									     \
-			FSES/Utilities.ixx
-
+			FSES/Utilities.ixx									     \
+			NUMODIS/BCC.hxx										     \
+			NUMODIS/Config.hxx									     \
+			NUMODIS/Crystallo.hxx									     \
+			NUMODIS/Cubic.hxx									     \
+			NUMODIS/FCC.hxx										     \
+			NUMODIS/GSystem.hxx									     \
+			NUMODIS/HCP.hxx										     \
+			NUMODIS/Hardening.hxx									     \
+			NUMODIS/IBurgers.hxx									     \
+			NUMODIS/IDirection.hxx									     \
+			NUMODIS/IPlane.hxx									     \
+			NUMODIS/Math/Utilities.hxx								     \
+			NUMODIS/Vect3.hxx
 
 EXTRA_DIST = CMakeLists.txt                 \
 	     TFEL/Math/math.doxygen         \

@@ -35,4 +35,5 @@ tests_material(FiniteStrainBehaviourTangentOperator10)
 tests_material(FiniteStrainBehaviourTangentOperator11)
 tests_material(Hyperelasticity)
 tests_material(Ogden)
+tests_material(SlipSystemsDescriptionTest)
 

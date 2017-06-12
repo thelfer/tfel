@@ -15,9 +15,11 @@
 
 void declareModellingHypothesis();
 void declareOutOfBoundsPolicy();
+void declareCrystalStructure();
 
 BOOST_PYTHON_MODULE(material)
 {
   declareModellingHypothesis();
   declareOutOfBoundsPolicy();
+  declareCrystalStructure();
 }

@@ -662,6 +662,29 @@ namespace mfront
     return this->stypeIsDefined;
   } // end of BehaviourDescription::setSymmetryType
 
+  void BehaviourDescription::setCrystalStructure(const CrystalStructure s)
+  {
+    if(this->hasCrystalStructure()){
+      throw(std::runtime_error("BehaviourDescription::setCrystalStructure: "
+			       "crystal structure already declared"));
+    }
+    this->crystalStructure = s;
+  } // end of BehaviourDescription::setCrystalStructure
+
+  bool BehaviourDescription::hasCrystalStructure() const
+  {
+    return this->crystalStructure.is<CrystalStructure>();
+  } // end of BehaviourDescription::hasCrystalStructure
+
+  BehaviourDescription::CrystalStructure BehaviourDescription::getCrystalStructure() const
+  {
+    if(!this->hasCrystalStructure()){
+      throw(std::runtime_error("BehaviourDescription::setCrystalStructure: "
+			       "no crystal structure declared"));
+    }
+    return this->crystalStructure.get<CrystalStructure>();
+  } // end of BehaviourDescription::getCrystalStructure
+  
   void BehaviourDescription::addHillTensor(const VariableDescription& v,
 					   const std::vector<MaterialProperty>& hcs){
     auto throw_if = [](const bool c,const std::string& m){
@@ -957,10 +980,10 @@ namespace mfront
     auto check = [throw_if,cubic](const SlipSystem::Direction& cd){
       throw_if((cubic) &&(cd.is<tfel::math::tvector<4u,int>>()),
 	       "some direction are given using cubic symmetry,"
-	       " other using orthogonal symmetry");
+	       " other using hexagonal symmetry");
       throw_if((!cubic)&&(cd.is<tfel::math::tvector<3u,int>>()),
 	       "some direction are given using cubic symmetry,"
-	       " other using orthogonal symmetry");
+	       " other using hexagonal symmetry");
     };
     decltype(ss.size()) Nss = 0;
     decltype(ss.size()) idx = 0;
@@ -980,7 +1003,7 @@ namespace mfront
 				  v,BehaviourData::UNREGISTRED);
 	}
       } else {
-	throw_if(true,"orthogonal slips systems are not supported yet");
+	throw_if(true,"hexagonal slips systems are not supported yet");
       }
       ++idx;
     }

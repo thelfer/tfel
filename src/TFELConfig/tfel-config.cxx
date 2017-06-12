@@ -152,6 +152,7 @@ static bool mathInterpreter = false;
 static bool utilities       = false;
 static bool glossary        = false;
 static bool finiteElement   = false;
+static bool numodis         = false;
 static bool material        = false;
 static bool tests           = false;
 static bool mfront_profiling    = false;
@@ -373,8 +374,14 @@ static void treatSystem()
   lsystem        = true;
 } // end of treatFiniteElement
 
+static void treatNumodis()
+{
+  numodis  = true;
+} // end of treatNumodis
+
 static void treatMaterial()
 {
+  numodis     = true;
   exceptions  = true;
   math        = true;
   utilities   = true;
@@ -395,6 +402,7 @@ static void treatAll()
 {
   exceptions   = true;
   math         = true;
+  numodis      = true;
   material     = true;
   utilities    = true;
   glossary     = true;
@@ -518,6 +526,8 @@ int main(const int argc,
 		   "request flags for libTFELGlossary.");
   registerCallBack("--material",&treatMaterial,
 		   "request flags for libTFELMaterial.");
+  registerCallBack("--numodis",&treatNumodis,
+		   "request flags for libTFELNUMODIS.");
   registerCallBack("--mfront-profiling",&treatMFrontProfiling,
 		   "request flags for libMFrontProfiling.");
   registerCallBack("--finiteElement",&treatFiniteElement,
@@ -626,6 +636,9 @@ int main(const int argc,
     }
     if(exceptions){
       cout << "-lTFELException ";
+    }
+    if(numodis){
+      cout << "-lTFELNUMODIS ";
     }
     if(tests){
       cout << "-lTFELTests ";

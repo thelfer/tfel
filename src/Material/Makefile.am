@@ -10,10 +10,12 @@ libTFELMaterial_la_SOURCES = DDIF2Base.cxx                             \
 			     MaterialException.cxx                     \
 			     ModellingHypothesis.cxx                   \
 			     CubicSlipSystems.cxx                      \
-			     FiniteStrainBehaviourTangentOperator.cxx
+			     FiniteStrainBehaviourTangentOperator.cxx  \
+			     SlipSystemsDescription.cxx
 libTFELMaterial_la_LIBADD = -L$(top_builddir)/src/Math      -lTFELMath      \
-		            -L$(top_builddir)/src/Exception -lTFELException \
-			    -L$(top_builddir)/src/Utilities -lTFELUtilities
+		            -L$(top_builddir)/src/NUMODIS   -lTFELNUMODIS   \
+			    -L$(top_builddir)/src/Utilities -lTFELUtilities \
+		            -L$(top_builddir)/src/Exception -lTFELException
 libTFELMaterial_la_CPPFLAGS  = -I$(top_srcdir)/include
 libTFELMaterial_la_CPPFLAGS += -DTFELMaterial_EXPORTS
 

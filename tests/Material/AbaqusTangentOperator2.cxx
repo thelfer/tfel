@@ -1,6 +1,7 @@
 /*!
  * \file   AbaqusTangentOperator2.cxx
- *
+ * \author THOMAS HELFER
+ * \date   13 août 2016
  * \brief This test verify that the abaqus tangent operator
  *        is correctly computed by comparing its value to 
  *        an numerical perturbation 
@@ -11,9 +12,6 @@
  * Sun, Wei and Chaikof, Elliot L and Levenston, Marc E
  * Journal of biomechanical engineering, 6
  * 2008-12
- *
- * \author THOMAS HELFER
- * \date   13 août 2016
  */
 
 #ifdef NDEBUG

@@ -183,6 +183,12 @@ void declareBehaviourDescription(){
     .def("getUnsignedShortAttribute",getUnsignedShortAttribute4)
     .def("getStringAttribute",getStringAttribute4)
     .def("getBooleanAttribute",getBooleanAttribute4)
+    .def("hasCrystalStructure",&BehaviourDescription::hasCrystalStructure,
+	 "return if a crystal structure has been defined")
+    .def("getCrystalStructure",&BehaviourDescription::getCrystalStructure,
+	 "return the crystal structure")
+    .def("setCrystalStructure",&BehaviourDescription::setCrystalStructure,
+	 "set the crystal structure")
     .def("getAttributes",&BehaviourDescription::getAttributes,
 	 return_value_policy<copy_const_reference>())
     ;

@@ -34,9 +34,8 @@ namespace tfel
     MetallicCFCSlidingSystems<NumType>::MetallicCFCSlidingSystems()
     {
       using namespace tfel::math;
-      using namespace tfel::fsalgo;
-      const real coefm = Cste<real>::isqrt2;
-      const real coefn = Cste<real>::isqrt3;
+      const auto coefm = Cste<real>::isqrt2;
+      const auto coefn = Cste<real>::isqrt3;
       // sliding systems
       const real nx[Nss]={ 1.0,1.0,1.0, 1.0, 1.0, 1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0};
       const real ny[Nss]={ 1.0,1.0,1.0,-1.0,-1.0,-1.0, 1.0, 1.0, 1.0,-1.0,-1.0,-1.0};

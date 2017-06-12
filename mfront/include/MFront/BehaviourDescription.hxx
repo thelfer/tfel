@@ -21,6 +21,7 @@
 
 #include"TFEL/Utilities/GenTypeBase.hxx"
 #include"TFEL/Math/tvector.hxx"
+#include"TFEL/Material/CrystalStructure.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Material/OrthotropicAxesConvention.hxx"
@@ -55,6 +56,10 @@ namespace mfront
     : public tfel::material::MechanicalBehaviourBase,
       public SupportedTypes  
   {
+    //! a simple alias
+    using CrystalStructure = tfel::material::CrystalStructure;
+    //! a simple alias
+    using OrthotropicAxesConvention = tfel::material::OrthotropicAxesConvention;
     /*!
      * \brief this structure holds the value of a constant material
      * property
@@ -194,7 +199,7 @@ namespace mfront
     //! \brief set if dynamically allocated vectors are allowed
     void areDynamicallyAllocatedVectorsAllowed(const bool);
     //! \return true if dynamically allocated vectors are allowed
-    bool areDynamicallyAllocatedVectorsAllowed(void) const;
+    bool areDynamicallyAllocatedVectorsAllowed() const;
     //! \return true of the parser shall declare a dynamically
     bool useDynamicallyAllocatedVector(const unsigned short) const;
     /*!
@@ -203,14 +208,14 @@ namespace mfront
      */
     void setBehaviourName(const std::string&);
     //! \return the behaviour name
-    const std::string& getBehaviourName(void) const;
+    const std::string& getBehaviourName() const;
     /*!
      * \brief set the dsl name
      * \param[in] b: dsl name
      */
     void setDSLName(const std::string&);
     //! \return the dsl name
-    const std::string& getDSLName(void) const;
+    const std::string& getDSLName() const;
     /*!
      * \brief set the material name
      * \param[in] m: material name
@@ -218,21 +223,21 @@ namespace mfront
     void setMaterialName(const std::string&);
     //! \return the material name
     const std::string&
-      getMaterialName(void) const;
+      getMaterialName() const;
     /*!
      * \brief set the library name
      * \param[in] l: library name
      */
     void setLibrary(const std::string&);
     //! \return the library name
-    const std::string& getLibrary(void) const;
+    const std::string& getLibrary() const;
     /*!
      * \brief set the class name
      * \param[in] n: class name
      */
     void setClassName(const std::string&);
     //! \return the class name
-    const std::string& getClassName(void) const;
+    const std::string& getClassName() const;
     /*!
      * \return the inputs of a material property
      * \param[in] mpd: material property description
@@ -245,7 +250,7 @@ namespace mfront
      */
     void appendToSources(const std::string&);
     //! \return the material name
-    const std::string& getSources(void) const;
+    const std::string& getSources() const;
     /*!
      * \brief append the given code to the members
      * \param[in] h: hypothesis
@@ -277,7 +282,7 @@ namespace mfront
      */
     void appendToIncludes(const std::string&);
     //! \return the includes
-    const std::string& getIncludes(void) const;
+    const std::string& getIncludes() const;
     /*!
      * add a material law
      * \param[in] m:material law
@@ -298,11 +303,11 @@ namespace mfront
 			       const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     //! \return the list of material laws
     const std::vector<std::string>&
-      getMaterialLaws(void) const;
+      getMaterialLaws() const;
     //! \return the size of the main variables
     std::pair<SupportedTypes::TypeSize,
 	      SupportedTypes::TypeSize>
-      getMainVariablesSize(void) const;
+      getMainVariablesSize() const;
     /*!
      * \brief add a new main variable
      * \note using this method means that the behaviour type is always
@@ -312,12 +317,12 @@ namespace mfront
 			 const ThermodynamicForce&);
     //! \return the main variables of the behaviour
     const std::map<DrivingVariable,ThermodynamicForce>&
-      getMainVariables(void) const;
+      getMainVariables() const;
     /*!
      * \brief set the behaviour to be a small strain standard
      * behaviour
      */
-    void declareAsASmallStrainStandardBehaviour(void);
+    void declareAsASmallStrainStandardBehaviour();
     /*!
      * \brief set the behaviour to be a finite strain standard
      * behaviour
@@ -325,11 +330,11 @@ namespace mfront
      */
     void declareAsAFiniteStrainStandardBehaviour(const bool);
     //! \brief set the behaviour to be a cohesive zone model
-    void declareAsACohesiveZoneModel(void);
+    void declareAsACohesiveZoneModel();
     //! \return the type of the stiffness operator
-    std::string getTangentOperatorType(void) const;
+    std::string getTangentOperatorType() const;
 
-    bool useQt(void) const;
+    bool useQt() const;
 
     void setUseQt(const bool);
 
@@ -337,35 +342,21 @@ namespace mfront
 
     bool isDrivingVariableIncrementName(const std::string&) const;
     //! \return the behaviour type
-    BehaviourType getBehaviourType(void) const;
+    BehaviourType getBehaviourType() const;
     /*!
      * \brief set the integration scheme
      * \param[in] s: integration scheme
      */
     void setIntegrationScheme(const IntegrationScheme);
     //! \return the integration scheme used
-    IntegrationScheme getIntegrationScheme(void) const;
+    IntegrationScheme getIntegrationScheme() const;
     //! \return a string describing the behaviour type
-    std::string getBehaviourTypeFlag(void) const;
+    std::string getBehaviourTypeFlag() const;
     //! \return the symmetry type of the behaviour
     BehaviourSymmetryType getSymmetryType() const;
 
     void setSymmetryType(const BehaviourSymmetryType);
-    /*!
-     * \brief set the orthotropic axes convention.
-     * \param[in] c: new value for the orthotropic axes convention.
-     * \note this method can be only call once.
-     */
-    void setOrthotropicAxesConvention(const tfel::material::OrthotropicAxesConvention);
-    /*!
-     * \return the orthotropic axes convention.
-     * \note if the orthotropic axes convention has not been defined,
-     * the UNDEFINED convention is assumed and oacIsDefined is set to
-     * true.
-     */
-    tfel::material::OrthotropicAxesConvention
-      getOrthotropicAxesConvention(void) const;
-    
+
     bool isSymmetryTypeDefined() const;
 
     BehaviourSymmetryType getElasticSymmetryType() const;
@@ -373,6 +364,30 @@ namespace mfront
     void setElasticSymmetryType(const BehaviourSymmetryType);
     
     bool isElasticSymmetryTypeDefined() const;
+    /*!
+     * \brief set the orthotropic axes convention.
+     * \param[in] c: new value for the orthotropic axes convention.
+     * \note this method can be only call once.
+     */
+    void setOrthotropicAxesConvention(const OrthotropicAxesConvention);
+    /*!
+     * \return the orthotropic axes convention.
+     * \note if the orthotropic axes convention has not been defined,
+     * the UNDEFINED convention is assumed and oacIsDefined is set to
+     * true.
+     */
+    OrthotropicAxesConvention
+      getOrthotropicAxesConvention() const;
+    //! \brief set crystal structure of the material
+    void setCrystalStructure(const CrystalStructure);
+    /*!
+     * \return true if the crystal structure of the material has been
+     * defined.
+     */
+    bool hasCrystalStructure() const;
+    //! \return the crystal structure of the material
+    CrystalStructure getCrystalStructure() const;
+    
     /*!
      * \return true if the material property is constant over the time step
      * \param[in] mp: material property
@@ -390,16 +405,16 @@ namespace mfront
      * \return the elastic material properties
      */
     const std::vector<MaterialProperty>&
-      getElasticMaterialProperties(void) const;
+      getElasticMaterialProperties() const;
     /*!
      * \return true if the elastic material properties have been defined
      */
-    bool areElasticMaterialPropertiesDefined(void) const;
+    bool areElasticMaterialPropertiesDefined() const;
     /*!
      * \return true if the elastic material properties are constant
      * over the time step
      */
-    bool areElasticMaterialPropertiesConstantDuringTheTimeStep(void) const;
+    bool areElasticMaterialPropertiesConstantDuringTheTimeStep() const;
     /*!
      * \return true if the given material properties are constant over
      * the time step
@@ -422,7 +437,7 @@ namespace mfront
     /*!
      * \return the list of Hill tensors that have been defined
      */
-    const std::vector<HillTensor>& getHillTensors(void) const;
+    const std::vector<HillTensor>& getHillTensors() const;
     /*!
      * \return a mechanical behaviour data associated with the
      * given modelling hypothesis
@@ -430,12 +445,12 @@ namespace mfront
      */
     const BehaviourData& getBehaviourData(const Hypothesis&) const;
     //! \return true if modelling hypotheses are defined.
-    bool areModellingHypothesesDefined(void) const;
+    bool areModellingHypothesesDefined() const;
     /*!
      * \return all the modelling hypotheses supported by the
      * behaviour.
      */
-    const std::set<Hypothesis>& getModellingHypotheses(void) const;
+    const std::set<Hypothesis>& getModellingHypotheses() const;
     /*!
      * \return all the modelling hypotheses which are distinct.
      *
@@ -447,7 +462,7 @@ namespace mfront
      * This method has been introduced for iteration purpose in
      * behaviour dsls.
      */
-    std::set<Hypothesis> getDistinctModellingHypotheses(void) const;
+    std::set<Hypothesis> getDistinctModellingHypotheses() const;
     /*!
      * \return true if the given modelling hypothesis is supported
      * \param[in] h: modelling hypothesis
@@ -657,7 +672,7 @@ namespace mfront
 			      const VariableAttribute&,
 			      const bool);
     //! \return a type suitable for storing stress-free expansion
-    std::string getStressFreeExpansionType(void) const;
+    std::string getStressFreeExpansionType() const;
     /*!
      * \brief add a new stress free expansion description
      * \param[in] h: modelling hypothesis
@@ -782,7 +797,7 @@ namespace mfront
      * \return true if all mechanical data are specialised
      * This means that the default mechanical data is useless
      */
-    bool areAllMechanicalDataSpecialised(void) const;
+    bool areAllMechanicalDataSpecialised() const;
     /*!
      * \return true if all mechanical data associated with the given
      * modelling hypothesis are specialised.
@@ -798,19 +813,19 @@ namespace mfront
     //! \return true if a stress free expansion has been defined
     bool requiresStressFreeExpansionTreatment(const Hypothesis) const;
     //! \return true if thermal expansion coefficient were defined
-    bool areThermalExpansionCoefficientsDefined(void) const;
+    bool areThermalExpansionCoefficientsDefined() const;
     //! \return the thermal expansion coefficients
     const std::vector<MaterialProperty>&
-      getThermalExpansionCoefficients(void) const;
+      getThermalExpansionCoefficients() const;
     //! \return true if slip systems were defined
-    bool areSlipSystemsDefined(void) const;
+    bool areSlipSystemsDefined() const;
     /*!
      * \brief set the behaviour slip systems
      * \param[in] gss: slip systems
      */
     void setSlipSystems(const std::vector<SlipSystem>&);
     //! \return the slip systemss
-    const std::vector<SlipSystem>& getSlipSystems(void) const;
+    const std::vector<SlipSystem>& getSlipSystems() const;
     /*!
      * \brief set the interaction matrix.
      * \param[in] m: interaction matrix
@@ -1186,7 +1201,7 @@ namespace mfront
      * \return true if at least one modelling hypothesis has a
      * parameter.
      */
-    bool hasParameters(void) const;
+    bool hasParameters() const;
     /*!
      * \brief insert a new attribute
      * \param[in] n: name
@@ -1238,7 +1253,7 @@ namespace mfront
      * \param[in] n: name
      */
     const std::map<std::string,BehaviourAttribute>&
-      getAttributes(void) const;
+      getAttributes() const;
     /*!
      * reserve the given name
      * \param[in] h: hypothesis
@@ -1574,8 +1589,9 @@ namespace mfront
     //! symmetry of behaviour (isotropic or orthotropic)
     mutable BehaviourSymmetryType stype = mfront::ISOTROPIC;
     //! orthotropic axes convention
-    tfel::material::OrthotropicAxesConvention oac =
-      tfel::material::OrthotropicAxesConvention::DEFAULT;
+    OrthotropicAxesConvention oac = OrthotropicAxesConvention::DEFAULT;
+    //! crystal structure
+    tfel::utilities::GenType<CrystalStructure> crystalStructure;
     //!flag telling if the orthotropic axes convention has been defined
     mutable bool oacIsDefined = false;
     //! flag telling the behaviour symmetry has been defined
