@@ -267,7 +267,8 @@ namespace tfel{
        */ 
       template<typename T,typename R = T>
       using requires =
-	typename std::enable_if<tfel::meta::TLCountNbrOfT<T,List>::value==1,R>::type;
+	typename std::enable_if<tfel::meta::TLCountNbrOfT<typename std::decay<T>::type,
+							  List>::value==1,R>::type;
       //! number of object that the GenType can hold
       static constexpr unsigned short ListSize = tfel::meta::TLSize<List>::value;
       //! Default constructor.
@@ -277,9 +278,9 @@ namespace tfel{
        * \param[in] v: value
        */
       template<typename T1,requires<T1,bool> = true>
-      TFEL_INLINE GenTypeBase(const T1& v)
+      TFEL_INLINE GenTypeBase(T1&& v)
       {
-	this->template set<T1>(v);
+	this->template set<T1>(std::forward<T1>(v));
       }
       /*!
        * \brief copy constructor
@@ -358,24 +359,14 @@ namespace tfel{
        */
       template<typename T1>
       TFEL_INLINE requires<T1,void>
-      set(const T1& src)
+      set(T1&& src)
       {
-	if(this->index==tfel::meta::TLFindEltPos<T1,List>::value){
-	  // a silly trick to avoir a gcc warning
-	  union{
-	    storage_t *c;
-	    T1 *ptr;
-	  } ptr;
-	  // The GenType already holds an object of type T1
-	  ptr.c = &(this->buffer);
-	  *(ptr.ptr) = src;
-	} else {
-	  // We create a new object of type T1 by calling the copy constructor
-	  this->template set_uninitialised<T1>();
-	  void * p = reinterpret_cast<void*>(&(this->buffer));
-	  // the magic of placement new...
-	  new (p) T1(src);
-	}
+	using type = typename std::decay<T1>::type;
+	// We create a new object of type T1 by calling the copy constructor
+	this->template set_uninitialised<type>();
+	void * p = reinterpret_cast<void*>(&(this->buffer));
+	// the magic of placement new...
+	new (p) type(src);
       }
       //! assignement operator.
       /*
@@ -385,9 +376,9 @@ namespace tfel{
        */
       template<typename T1>
       TFEL_INLINE requires<T1,GenTypeBase&>
-      operator=(const T1& src)
+      operator=(T1&& src)
       {
-	this->template set<T1>(src);
+	this->template set<T1>(std::forward<T1>(src));
 	return *this;
       }
       template<typename T1>

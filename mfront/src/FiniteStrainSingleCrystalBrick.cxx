@@ -11,6 +11,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
+
 #include<fstream>
 #include<sstream>
 #include<stdexcept>
@@ -100,6 +102,8 @@ namespace mfront{
 					       tokens_iterator& p,
 					       const tokens_iterator pe)
   {
+    using CrystalStructure       = BehaviourDescription::CrystalStructure;
+    using SlipSystemsDescription = BehaviourDescription::SlipSystemsDescription;
     const auto m = std::string("FiniteStrainSingleCrystalBrick::treatKeyword");
     auto throw_if = [](const bool c,const std::string& msg){
       if(c){throw(std::runtime_error("FiniteStrainSingleCrystalBrick::"
@@ -115,23 +119,19 @@ namespace mfront{
 	       std::to_string(normal.size())+"' values)");
       BehaviourDescription::SlipSystem s;
       if(normal.size()==3u){
-	tfel::math::tvector<3u,int> n;
-	tfel::math::tvector<3u,int> d;
+	SlipSystemsDescription::system3d s3d;
 	for(tfel::math::tvector<3u,int>::size_type i=0;i!=3;++i){
-	  n[i] = std::stoi(normal[i].value);
-	  d[i] = std::stoi(direction[i].value);
+	  s3d.normal[i]  = std::stoi(normal[i].value);
+	  s3d.burgers[i] = std::stoi(direction[i].value);
 	}
-	s.normal = n;
-	s.slip   = d;
+	s = s3d;
       } else {
-	tfel::math::tvector<4u,int> n;
-	tfel::math::tvector<4u,int> d;
-	for(tfel::math::tvector<3u,int>::size_type i=0;i!=4;++i){
-	  n[i] = std::stoi(normal[i].value);
-	  d[i] = std::stoi(direction[i].value);
+	SlipSystemsDescription::system4d s4d;
+	for(tfel::math::tvector<4u,int>::size_type i=0;i!=4;++i){
+	  s4d.normal[i]  = std::stoi(normal[i].value);
+	  s4d.burgers[i] = std::stoi(direction[i].value);
 	}
-	s.normal = n;
-	s.slip   = d;
+	s = s4d;
       }
       return s;
     };
@@ -158,37 +158,53 @@ namespace mfront{
       CxxTokenizer::readSpecifiedToken(m,";",p,pe);
       this->bd.setSlipSystems(ss);
       return {true,p};
-    } else if (key=="@InteractionMatrix"){
+    } else if (key=="@CrystalStructure"){
       CxxTokenizer::checkNotEndOfLine(m,p,pe);
-      bool symmetric = false;
-      if(p->value=="<"){
-	const auto options = CxxTokenizer::readList(m,"<",">",p,pe);
-	for(const auto& o:options){
-	  if(o.value=="Symmetric"){
-	    symmetric=true;
-	  } else {
-	    throw_if(true,"unsupported option '"+o.value+"'");
-	  }
-	}
-      }
-      if(symmetric){
-	// read 6 values
-	const auto v = CxxTokenizer::readArray(m,p,pe);
-	CxxTokenizer::readSpecifiedToken(m,";",p,pe);
-	throw_if(v.size()!=6u,"invalid number of values given "
-		 "(expected 6 values)");
-	std::array<double,6u> mv;
-	for(std::array<double,6u>::size_type i=0;i!=6;++i){
-	  mv[i] = std::stod(v[i]);
-	}
-	this->bd.setInteractionMatrix(mv);
-	return {true,p};
+      const auto cs = p->value;
+      ++p;
+      if(cs=="Cubic"){
+	this->bd.setCrystalStructure(CrystalStructure::Cubic);
+      } else if(cs=="FCC"){
+	this->bd.setCrystalStructure(CrystalStructure::FCC);
+      } else if(cs=="HCP"){
+	this->bd.setCrystalStructure(CrystalStructure::HCP);
       } else {
-	// CxxTokenizer::readSpecifiedToken(m,";",p,pe);
-	throw_if(true,"unsymmetric interaction matrix "
-		 "are not supported yet");
-	return {true,p};
+	throw_if(true,"unsupported crystal structure '"+cs+"'");
       }
+      CxxTokenizer::readSpecifiedToken(m,";",p,pe);
+      return {true,p};
+    } else if (key=="@InteractionMatrix"){
+      throw_if(true,"unsupported");
+      // CxxTokenizer::checkNotEndOfLine(m,p,pe);
+      // bool symmetric = false;
+      // if(p->value=="<"){
+      // 	const auto options = CxxTokenizer::readList(m,"<",">",p,pe);
+      // 	for(const auto& o:options){
+      // 	  if(o.value=="Symmetric"){
+      // 	    symmetric=true;
+      // 	  } else {
+      // 	    throw_if(true,"unsupported option '"+o.value+"'");
+      // 	  }
+      // 	}
+      // }
+      // if(symmetric){
+      // 	// read 6 values
+      // 	const auto v = CxxTokenizer::readArray(m,p,pe);
+      // 	CxxTokenizer::readSpecifiedToken(m,";",p,pe);
+      // 	throw_if(v.size()!=6u,"invalid number of values given "
+      // 		 "(expected 6 values)");
+      // 	std::array<double,6u> mv;
+      // 	for(std::array<double,6u>::size_type i=0;i!=6;++i){
+      // 	  mv[i] = std::stod(v[i]);
+      // 	}
+      // 	this->bd.setInteractionMatrix(mv);
+      // 	return {true,p};
+      // } else {
+      // 	// CxxTokenizer::readSpecifiedToken(m,";",p,pe);
+      // 	throw_if(true,"unsymmetric interaction matrix "
+      // 		 "are not supported yet");
+      // 	return {true,p};
+      // }
     }
     return BehaviourBrickBase::treatKeyword(key,p,pe);
   } // end of FiniteStrainSingleCrystalBrick::treatKeyword

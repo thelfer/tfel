@@ -22,6 +22,7 @@
 #include"TFEL/Utilities/GenTypeBase.hxx"
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Material/CrystalStructure.hxx"
+#include"TFEL/Material/SlipSystemsDescription.hxx"
 #include"TFEL/Material/MechanicalBehaviour.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Material/OrthotropicAxesConvention.hxx"
@@ -57,9 +58,23 @@ namespace mfront
       public SupportedTypes  
   {
     //! a simple alias
+    using ModellingHypothesis = tfel::material::ModellingHypothesis;
+    //! a simple alias
+    using  Hypothesis = ModellingHypothesis::Hypothesis;
+    //! a simple alias
     using CrystalStructure = tfel::material::CrystalStructure;
     //! a simple alias
+    using SlipSystemsDescription = tfel::material::SlipSystemsDescription;
+    //! a simple alias
+    using SlipSystem = SlipSystemsDescription::system;
+    //! a simple alias
+    using InteractionMatrixStructure = SlipSystemsDescription::InteractionMatrixStructure;
+    //! a simple alias
     using OrthotropicAxesConvention = tfel::material::OrthotropicAxesConvention;
+    //! a simple alias
+    using  Mode = BehaviourData::Mode;
+    //! a simple alias
+    using  Position = BehaviourData::Position;
     /*!
      * \brief this structure holds the value of a constant material
      * property
@@ -103,43 +118,6 @@ namespace mfront
       std::vector<MaterialProperty> c;
     }; // end of struct HillTensor
     /*!
-     * \brief a structure describing a slip system.
-     * A slip system is defined by two directions:
-     * - the normal to the slip plane
-     * - the slip direction
-     * A direction is described by Miller's indices, by three integers
-     * for a cubic material and by four integers for hexagonal
-     * systems.
-     */
-    struct SlipSystem
-    {
-      //! a simple alias
-      using Direction = tfel::utilities::GenType<tfel::math::tvector<3u,int>,
-						 tfel::math::tvector<4u,int>>;
-      //! normal to the slip plane
-      Direction normal;
-      //! slip direction
-      Direction slip;
-    }; // end of struct SlipSystem
-    //! \brief a structure describing the interaction matrix between slip systems.
-    using InteractionMatrix = tfel::utilities::GenType<
-      // symmetric interaction matrix
-      std::array<double,6u>,
-      // non symmetric interaction matrix
-      std::array<std::array<double,6u>,6u>>;
-    /*!
-     * \brief the description of an interaction matrix
-     */
-    struct InteractionMatrixDescription
-    {
-      //! index of the first family
-      const size_t i;
-      //! index of the second family
-      const size_t j;
-      //! the interaction matrix
-      const InteractionMatrix m;
-    }; // end of struct InteractionMatrixDescription
-    /*!
      * \brief Available integration schemes.
      * One of the first thing a dsl shall do is to set the
      * integration scheme it uses.
@@ -167,14 +145,6 @@ namespace mfront
 	    AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL,
 	    EXTERNALSTATEVARIABLE,PARAMETER} type;
     }; // end of 
-    //! a simple alias
-    using ModellingHypothesis = tfel::material::ModellingHypothesis;
-    //! a simple alias
-    using  Hypothesis = ModellingHypothesis::Hypothesis;
-    //! a simple alias
-    typedef BehaviourData::Mode Mode;
-    //! a simple alias
-    typedef BehaviourData::Position Position;
     //! attribute name
     static const std::string requiresStiffnessTensor;
     //! attribute name
@@ -378,8 +348,6 @@ namespace mfront
      */
     OrthotropicAxesConvention
       getOrthotropicAxesConvention() const;
-    //! \brief set crystal structure of the material
-    void setCrystalStructure(const CrystalStructure);
     /*!
      * \return true if the crystal structure of the material has been
      * defined.
@@ -387,7 +355,39 @@ namespace mfront
     bool hasCrystalStructure() const;
     //! \return the crystal structure of the material
     CrystalStructure getCrystalStructure() const;
-    
+    /*!
+     * \brief set the crystal structure
+     * \param[in] cs: crystal structure
+     */
+    void setCrystalStructure(const CrystalStructure);
+    //! \return true if slip systems were defined
+    bool areSlipSystemsDefined() const;
+    /*!
+     * \brief set the behaviour slip systems
+     * \param[in] gss: slip systems
+     */
+    void setSlipSystems(const std::vector<SlipSystem>&);
+    //! \return the slip systemss
+    const SlipSystemsDescription& getSlipSystems() const;
+    /*!
+     * \brief set the interaction matrix.
+     * \param[in] m: interaction matrix
+     * \note: this method is only valid if one and only one slip
+     * system is defined.
+     */
+    void setInteractionMatrix(const std::vector<long double>&);
+    /*!
+     * \brief return the interaction matrix.
+     * \note: this method is only valid if one and only one slip
+     * system is defined.
+     */
+    InteractionMatrixStructure getInteractionMatrix() const;
+    /*!
+     * \brief return true if an interaction matrix is defined.
+     * \note: this method is only valid if one and only one slip
+     * system is defined.
+     */
+    bool hasInteractionMatrix() const;
     /*!
      * \return true if the material property is constant over the time step
      * \param[in] mp: material property
@@ -817,34 +817,6 @@ namespace mfront
     //! \return the thermal expansion coefficients
     const std::vector<MaterialProperty>&
       getThermalExpansionCoefficients() const;
-    //! \return true if slip systems were defined
-    bool areSlipSystemsDefined() const;
-    /*!
-     * \brief set the behaviour slip systems
-     * \param[in] gss: slip systems
-     */
-    void setSlipSystems(const std::vector<SlipSystem>&);
-    //! \return the slip systemss
-    const std::vector<SlipSystem>& getSlipSystems() const;
-    /*!
-     * \brief set the interaction matrix.
-     * \param[in] m: interaction matrix
-     * \note: this method is only valid if one and only one slip
-     * system is defined.
-     */
-    void setInteractionMatrix(const InteractionMatrix&);
-    /*!
-     * \brief return the interaction matrix.
-     * \note: this method is only valid if one and only one slip
-     * system is defined.
-     */
-    InteractionMatrix getInteractionMatrix() const;
-    /*!
-     * \brief return true if an interaction matrix is defined.
-     * \note: this method is only valid if one and only one slip
-     * system is defined.
-     */
-    bool hasInteractionMatrix() const;
     /*!
      * set the behaviour thermal expansion coefficient (isotropic behaviour)
      * \param[in] a: thermal expansion
@@ -1343,6 +1315,9 @@ namespace mfront
     //! destructor
     ~BehaviourDescription();
   private:
+    //! a simple alias (std::optional is not yet available)
+    template<typename T>
+    using optional = tfel::utilities::GenType<T>;
     /*!
      * \brief throw an exception saying that no attribute with the
      * given name exists
@@ -1502,38 +1477,21 @@ namespace mfront
     void checkModellingHypothesis(const Hypothesis&) const;
     //! a simple alias
     typedef std::shared_ptr<BehaviourData> MBDPtr;
-    /*!
-     * behaviour attributes
-     */
-    std::map<std::string,
-	     BehaviourAttribute> attributes;
-    /*!
-     * behaviour name
-     */
+    //! behaviour attributes
+    std::map<std::string,BehaviourAttribute> attributes;
+    //! behaviour name
     std::string behaviour;
-    /*!
-     * dsl name
-     */
+    //! dsl name
     std::string dsl;
-    /*!
-     * library name
-     */
+    //! library name
     std::string library;
-    /*!
-     * material name
-     */
+    //! material name
     std::string material;
-    /*!
-     * name of the generated class
-     */
+    //! name of the generated class
     std::string className;
-    /*!
-     * included header files
-     */
+    //! included header files
     std::string includes;
-    /*!
-     * specific sources
-     */
+    //! specific sources
     std::string sources;
     /*!
      * list of modelling hypotheses for
@@ -1545,13 +1503,9 @@ namespace mfront
      * which this class returned a mechanical data
      */
     mutable std::set<Hypothesis> requestedHypotheses;
-    /*!
-     * default behaviour data
-     */
+    //! default behaviour data
     BehaviourData d;
-    /*!
-     * specialisations
-     */
+    //! specialisations
     std::map<Hypothesis,MBDPtr> sd;
     /*!
      * main variables, association of a driving variable and a
@@ -1577,9 +1531,7 @@ namespace mfront
      */
     std::vector<ModelDescription> models;
     //! slip systems
-    std::vector<SlipSystem> slip_systems;
-    //! slip systems interaction
-    std::vector<InteractionMatrixDescription> interaction_matrices;
+    optional<SlipSystemsDescription> gs;
     //! \brief list of all Hill tensors defined
     std::vector<HillTensor> hillTensors;
     //! use units
@@ -1590,8 +1542,6 @@ namespace mfront
     mutable BehaviourSymmetryType stype = mfront::ISOTROPIC;
     //! orthotropic axes convention
     OrthotropicAxesConvention oac = OrthotropicAxesConvention::DEFAULT;
-    //! crystal structure
-    tfel::utilities::GenType<CrystalStructure> crystalStructure;
     //!flag telling if the orthotropic axes convention has been defined
     mutable bool oacIsDefined = false;
     //! flag telling the behaviour symmetry has been defined

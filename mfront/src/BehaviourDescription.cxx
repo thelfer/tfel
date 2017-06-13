@@ -19,7 +19,6 @@
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
-#include"TFEL/Material/CubicSlipSystems.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/LocalDataStructure.hxx"
 #include"MFront/ModelDescription.hxx"
@@ -228,8 +227,19 @@ namespace mfront
 
   void BehaviourDescription::disallowNewUserDefinedVariables()
   {
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    return this->setAttribute(h,BehaviourData::allowsNewUserDefinedVariables,false);
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if(this->areSlipSystemsDefined()){
+      const auto& ssd = this->gs.get<SlipSystemsDescription>();
+      auto n = int{};
+      for(SlipSystemsDescription::size_type i=0;
+	  i!=ssd.getNumberOfSlipSystemsFamilies();++i){
+	const auto css = ssd.getSlipSystems(i);
+	n += static_cast<int>(css.size());
+      }
+      StaticVariableDescription v("int","Nss",0u,n);
+      this->addStaticVariable(uh,v,BehaviourData::UNREGISTRED);
+    }
+    this->setAttribute(uh,BehaviourData::allowsNewUserDefinedVariables,false);
   } // end of BehaviourDescription::disallowNewUserDefinedVariables
   
   void BehaviourDescription::throwUndefinedAttribute(const std::string& n)
@@ -668,12 +678,12 @@ namespace mfront
       throw(std::runtime_error("BehaviourDescription::setCrystalStructure: "
 			       "crystal structure already declared"));
     }
-    this->crystalStructure = s;
+    this->gs = SlipSystemsDescription(s);
   } // end of BehaviourDescription::setCrystalStructure
 
   bool BehaviourDescription::hasCrystalStructure() const
   {
-    return this->crystalStructure.is<CrystalStructure>();
+    return !this->gs.empty();
   } // end of BehaviourDescription::hasCrystalStructure
 
   BehaviourDescription::CrystalStructure BehaviourDescription::getCrystalStructure() const
@@ -682,7 +692,7 @@ namespace mfront
       throw(std::runtime_error("BehaviourDescription::setCrystalStructure: "
 			       "no crystal structure declared"));
     }
-    return this->crystalStructure.get<CrystalStructure>();
+    return this->gs.get<SlipSystemsDescription>().getCrystalStructure();
   } // end of BehaviourDescription::getCrystalStructure
   
   void BehaviourDescription::addHillTensor(const VariableDescription& v,
@@ -778,7 +788,7 @@ namespace mfront
   void
   BehaviourDescription::addLocalDataStructure(const LocalDataStructure& lds,
 					      const BehaviourData::RegistrationStatus s){
-    auto gs = [](const std::vector<LocalDataStructure::Variable>& vars){
+    auto structify = [](const std::vector<LocalDataStructure::Variable>& vars){
       auto r = std::string("struct{\n");
       for(const auto& v : vars){
 	r += v.type +' '+v.name+";\n";
@@ -793,14 +803,14 @@ namespace mfront
     const auto mh = lds.getSpecialisedHypotheses();
     for(const auto h:mh){
       if(!lds.get(h).empty()){ // paranoiac checks, this can't occur
-	this->addLocalVariable(h,{gs(lds.get(h)),lds.name,1u,0u},s);
+	this->addLocalVariable(h,{structify(lds.get(h)),lds.name,1u,0u},s);
       }
     }
     const auto v = lds.get(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     if(v.empty()){
       return;
     }
-    auto vd = VariableDescription{gs(v),lds.name,1u,0u};
+    auto vd = VariableDescription{structify(v),lds.name,1u,0u};
     if(!this->areAllMechanicalDataSpecialised()){
       this->d.addLocalVariable(vd,s);
     }
@@ -971,94 +981,75 @@ namespace mfront
       if(c){throw(std::runtime_error("BehaviourDescription::setSlipSystems: "+m));}
     };
     throw_if(!this->allowsNewUserDefinedVariables(),
-	     "new variables are can't be defined after the first code block.");
-    throw_if(this->areSlipSystemsDefined(),"slip systems already defined");
+    	     "new variables are can't be defined after the first code block.");
     throw_if(ss.empty(),"empty number of slip systems specified");
     throw_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
-	     "the behaviour is not orthotropic");
-    const auto cubic = ss[0].normal.is<tfel::math::tvector<3u,int>>();
-    auto check = [throw_if,cubic](const SlipSystem::Direction& cd){
-      throw_if((cubic) &&(cd.is<tfel::math::tvector<4u,int>>()),
-	       "some direction are given using cubic symmetry,"
-	       " other using hexagonal symmetry");
-      throw_if((!cubic)&&(cd.is<tfel::math::tvector<3u,int>>()),
-	       "some direction are given using cubic symmetry,"
-	       " other using hexagonal symmetry");
-    };
-    decltype(ss.size()) Nss = 0;
-    decltype(ss.size()) idx = 0;
+    	     "the behaviour is not orthotropic");
+    throw_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
+    	     "the behaviour is not orthotropic");
+    throw_if(!this->hasCrystalStructure(),"crystal structure is not defined yet");
     for(const auto& s : ss){
-      check(s.normal);
-      check(s.slip);
-      if(cubic){
-	const auto& ns = s.normal.get<tfel::math::tvector<3u,int>>();
-	const auto& ds = s.slip.get<tfel::math::tvector<3u,int>>();
-	const auto& as = tfel::material::CubicSlipSystems::generate(ns,ds);
-	Nss += as.size();
-	if(ss.size()!=1u){
-	  const auto n = "Nss"+std::to_string(idx);
-	  StaticVariableDescription v("int",n,0u,
-				      static_cast<int>(as.size()));
-	  this->addStaticVariable(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-				  v,BehaviourData::UNREGISTRED);
-	}
+      auto& ssd = this->gs.get<SlipSystemsDescription>();
+      const auto nb = ssd.getNumberOfSlipSystemsFamilies();
+      if(s.is<SlipSystemsDescription::system3d>()){
+	const auto& s3d = s.get<SlipSystemsDescription::system3d>();
+	ssd.addSlipSystemsFamily(s3d.normal,s3d.burgers);
       } else {
-	throw_if(true,"hexagonal slips systems are not supported yet");
+	throw_if(!s.is<SlipSystemsDescription::system4d>(),
+		 "internal error (unsupported slip system definition)");
+	const auto& s4d = s.get<SlipSystemsDescription::system4d>();
+	ssd.addSlipSystemsFamily(s4d.normal,s4d.burgers);
       }
-      ++idx;
+      const auto css = ssd.getSlipSystems(nb);
+      const auto n = "Nss"+std::to_string(nb);
+      StaticVariableDescription v("int",n,0u,
+				  static_cast<int>(css.size()));
+      this->addStaticVariable(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+			      v,BehaviourData::UNREGISTRED);
     }
-    StaticVariableDescription v("int","Nss",0u,
-				static_cast<int>(Nss));
-    this->addStaticVariable(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-			    v,BehaviourData::UNREGISTRED);
-    this->slip_systems = ss;
   }
   
   bool BehaviourDescription::areSlipSystemsDefined() const
   {
-    return !this->slip_systems.empty();
+    if(this->gs.empty()){
+      return false;
+    }
+    auto& ssd = this->gs.get<SlipSystemsDescription>();
+    return ssd.getNumberOfSlipSystemsFamilies()!=0;
   } // end of BehaviourDescription::areSlipSystemsDefined
 
-  const std::vector<BehaviourDescription::SlipSystem>&
+  const tfel::material::SlipSystemsDescription&
   BehaviourDescription::getSlipSystems() const
   {
     if(!this->areSlipSystemsDefined()){
       throw(std::runtime_error("BehaviourDescription::getSlipSystems: "
 			       "no slip systems defined"));
     }
-    return this->slip_systems;
+    return this->gs;
   } // end of BehaviourDescription::getSlipSystems
 
-  void BehaviourDescription::setInteractionMatrix(const InteractionMatrix& m)
+  void BehaviourDescription::setInteractionMatrix(const std::vector<long double>& m)
   {
     auto throw_if = [](const bool c,const std::string& msg){
       if(c){throw(std::runtime_error("BehaviourDescription::setInteractionMatrix: "+msg));}
     };
     throw_if(!this->allowsNewUserDefinedVariables(),
 	     "new variables are can't be defined after the first code block.");
-    throw_if(this->slip_systems.empty(),"no slip system defined");
-    throw_if(this->slip_systems.size()!=1u,"more than one slip system defined");
-    throw_if(!this->interaction_matrices.empty(),
-	     "interaction matrix already defined");
-    InteractionMatrixDescription md = {0,0,m};
-    this->interaction_matrices.push_back(md);
+    throw_if(!this->areSlipSystemsDefined(),"no slip system defined");
+    // throw_if(!this->interaction_matrices.empty(),
+    // 	     "interaction matrix already defined");
+    // InteractionMatrixDescription md = {0,0,m};
+    // this->interaction_matrices.push_back(md);
   } // end of BehaviourDescription::setInteractionMatrix
 
-  BehaviourDescription::InteractionMatrix BehaviourDescription::getInteractionMatrix() const
+  BehaviourDescription::InteractionMatrixStructure
+  BehaviourDescription::getInteractionMatrix() const
   {
     auto throw_if = [](const bool c,const std::string& m){
       if(c){throw(std::runtime_error("BehaviourDescription::getInteractionMatrix: "+m));}
     };
-    throw_if(this->slip_systems.empty(),"no slip system defined");
-    throw_if(this->slip_systems.size()!=1u,"more than one slip system defined");
-    throw_if(this->interaction_matrices.empty(),
-	     "no interaction matrix defined");
-    throw_if(this->interaction_matrices.size()>1u,
-	     "internal error (inconsistent number of interaction matrices)");
-    const auto& mh = this->interaction_matrices.front();
-    throw_if((mh.i==0)&&(mh.j==0),
-	     "internal error (inconsistent interaction matrix definition)");
-    return mh.m;
+    throw_if(!this->areSlipSystemsDefined(),"no slip system defined");
+    return this->gs.get<SlipSystemsDescription>().getInteractionMatrixStructure();
   } // end of BehaviourDescription::getInteractionMatrix
   
   bool BehaviourDescription::hasInteractionMatrix() const
@@ -1066,11 +1057,7 @@ namespace mfront
     auto throw_if = [](const bool c,const std::string& m){
       if(c){throw(std::runtime_error("BehaviourDescription::hasInteractionMatrix: "+m));}
     };
-    throw_if(this->slip_systems.empty(),"no slip system defined");
-    throw_if(this->slip_systems.size()!=1u,"more than one slip system defined");
-    throw_if(this->interaction_matrices.size()>1u,
-	     "internal error (inconsistent number of interaction matrices)");
-    return this->interaction_matrices.size()==1u;
+    return false;
   } // end of BehaviourDescription::hasInteractionMatrix
   
   void BehaviourDescription::setUseQt(const bool b)
@@ -2047,9 +2034,8 @@ namespace mfront
     return this->attributes;
   } // end of BehaviourDescription::getAttributes
 
-  void
-  BehaviourDescription::reserveName(const Hypothesis h,
-				    const std::string& n)
+  void BehaviourDescription::reserveName(const Hypothesis h,
+					 const std::string& n)
   {
     this->callBehaviourData(h,&BehaviourData::reserveName,n,true);
   }
@@ -2066,9 +2052,8 @@ namespace mfront
     return false;
   } // end of BehaviourDescription::isNameReserved
   
-  void
-  BehaviourDescription::registerMemberName(const Hypothesis h,
-					   const std::string& n)
+  void BehaviourDescription::registerMemberName(const Hypothesis h,
+						const std::string& n)
   {
     this->callBehaviourData(h,&BehaviourData::registerMemberName,n,true);
   } // end of BehaviourDescription::registerMemberName

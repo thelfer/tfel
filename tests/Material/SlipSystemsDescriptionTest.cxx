@@ -49,13 +49,14 @@ struct SlipSystemsDescriptionTest final
 		    const tfel::math::tvector<N,int>& n2,
 		    const tfel::math::tvector<N,int>& b2)
   {
-    using system = std::pair<tfel::math::tvector<N,int>,
-			     tfel::math::tvector<N,int>>;
-    if(!g1.template is<system>()){
+    using system_type =
+      typename std::conditional<N==3,SlipSystemsDescription::system3d,
+				SlipSystemsDescription::system4d>::type;
+    if(!g1.template is<system_type>()){
       return false;
     }
-    const auto& g1b = g1.template get<system>();
-    return (equal(g1b.first,b2))&&(equal(g1b.second,n2));
+    const auto& g1b = g1.template get<system_type>();
+    return (equal(g1b.burgers,b2))&&(equal(g1b.normal,n2));
   } // end of equal
   template<unsigned short N>
   static bool contains(const std::vector<SlipSystemsDescription::system>& gs,
@@ -82,8 +83,8 @@ struct SlipSystemsDescriptionTest final
     const auto& gsf = ssd.getSlipSystemFamily(0);
     TFEL_TESTS_ASSERT(gsf.is<system3d>());
     const auto ssf0 = gsf.get<system3d>();
-    TFEL_TESTS_ASSERT(equal(ssf0.first,{1,1,0}));
-    TFEL_TESTS_ASSERT(equal(ssf0.second,{1,-1,1}));
+    TFEL_TESTS_ASSERT(equal(ssf0.burgers,{1,1,0}));
+    TFEL_TESTS_ASSERT(equal(ssf0.normal,{1,-1,1}));
     const auto gs = ssd.getSlipSystems();
     TFEL_TESTS_CHECK_EQUAL(gs.size(),1u);
     const auto& gs0 = gs[0];

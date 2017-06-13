@@ -18,6 +18,12 @@ The page declares the new functionalities of the 3.1 version of
 
 ### Enabling the `-ffast-math` with GCC
 
+## Single crystal behaviours
+
+### Introducing the `TFELNUMODIS` library
+
+### The `SlipSystemsDescription` class in `TFEL/Material`
+
 # TFEL
 
 ## TFEL/Utilities
@@ -411,6 +417,12 @@ implementation of these functions provided by the `musl` library (see
 defined in the `TFEL/Math/General/IEEE754.hxx` header file in the
 `tfel::math::ieee754` namespace.
 
+## `TFEL/Material`
+
+### The `SlipSystemsDescription` class
+
+
+
 # New functionalities of the `MFront` code generator
 
 ## Gallery
@@ -629,9 +641,9 @@ The keyword is followed by the library an function names.
 @Real 'h' 'h0*(1+W_ThermalExpansion(1723.15)*(1723.25-293.15))';
 ~~~~~~~~
 
-### `python` bindings
+## `python` bindings
 
-#### The `Behaviour` class
+### The `Behaviour` class
 
 The `Behaviour` class has been introduced in the `mtest` modules. This
 class can be used to determine at runtime time the material
@@ -651,7 +663,7 @@ specific (internal) requirements. For example:
   ortotropic behaviours).
 - etc...
 
-#### The `MTest` class
+### The `MTest` class
 
 In the `python` bindings, the `setNonLinearConstraint` method has been
 added to the `MTest` class.
@@ -667,6 +679,44 @@ This method takes two named arguments:
 	- `ThermodynamicForce`, `Stress`, `CohesiveForce` stating that the
 	  constraint is of the order of magnitude of the thermodynamic
 	  force
+
+# New functionalities of the `mfront-query` tool
+
+## New behaviours queries
+
+- `--static-variables`: show the list of the behaviour static
+  variables.
+- `--parameter-default-value`: display a parameter default value.
+- `--static-variable-value`: display the value of a static variable.
+- `--has-bounds`: return `true` if a variable has bounds, `false`
+  otherwise.
+- `--bounds-type`: return the bounds type associated to a
+  variable. The returned value has the follwing meaning:
+    - `None`
+    - `Lower`
+    - `Upper`
+    - `LowerAndUpper`
+- `--bounds-value`: show the bounds value associated as a range.
+- `--has-physical-bounds`: return `true` if a variable has physical
+  bounds, `false` otherwise.
+- `--physical-bounds-type`: return the physical bounds type associated
+  to a variable. The returned value has the follwing meaning:
+    - `None`
+    - `Lower`
+    - `Upper`
+    - `LowerAndUpper`
+- `--physical-bounds-value`: show the bounds value associated as a
+  range.
+- `--has-crystal-structure`: return `true` if a crystal structure has
+  been defined.
+- `--crystal-structure`: return the crystal structure.
+- `--slip-systems`: list all the slip systems, sorted by family.
+- `--slip-systems-by-index`: list all the slip systems, sorted by
+  index.
+- `--interaction-matrix`: display the interaction matrix where the
+  sliding systems' interaction are represented by their ranks.
+- `--interaction-matrix-structure`: return the number of independent
+  coefficients and the sliding systems sorted by rank.
 
 # Tickets fixed
 
@@ -969,6 +1019,15 @@ languages (DSL) describing isotropics behaviours.
 ~~~~
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/65/>
+
+## Ticket 74 `mfront-query`: handle static variables
+
+`mfront-query` now has the following options:
+
+- `--static-variables`: list all the static variables
+- `--static-variable-value`: return the value of a given static variable
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/74/>
 
 # Know regressions
 

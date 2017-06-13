@@ -290,7 +290,8 @@ namespace numodis
     if(length>std::numeric_limits<double>::min()){
       *this/=length;
     } else {
-      throw(std::runtime_error("Vect3::Normalize: Trying to normalize 0 vector"));
+      throw(std::runtime_error("Vect3::Normalize: "
+			       "Trying to normalize null vector"));
     }
     return true;
   }

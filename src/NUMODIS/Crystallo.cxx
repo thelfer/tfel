@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include <sstream>
 #include <vector>
 #include <string>
 
@@ -35,12 +36,13 @@ namespace numodis
   GSystem Crystallo::InitGSystem(const IBurgers& iburgers,
 				 const IPlane& iplane) const
   {
-
-    if (this->ScalProduct(iplane,iburgers)!=0)
-      throw std::string ("Ill-defined glide system");
-    else
-      return GSystem(iburgers,iplane);
-
+    if (this->ScalProduct(iplane,iburgers)!=0){
+      std::ostringstream os;
+      os << "Crystallo::InitGSystem: ill-defined glide system"
+	 << "'" << iburgers << iplane << "'";
+      throw(std::runtime_error(os.str()));
+    }
+    return GSystem(iburgers,iplane);
   }
 
   //=====================================================================

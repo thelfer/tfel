@@ -51,6 +51,31 @@ namespace mfront{
     }
     return p->second;
   }
+
+  static std::string to_string(const BehaviourDescription::SlipSystem& gs){
+    using SlipSystemsDescription =
+      BehaviourDescription::SlipSystemsDescription;
+    using std::to_string;
+    auto r = std::string{};
+    if(gs.is<SlipSystemsDescription::system3d>()){
+      const auto& n = gs.get<SlipSystemsDescription::system3d>().normal;
+      const auto& b = gs.get<SlipSystemsDescription::system3d>().burgers;
+      r += '{'+to_string(n[0])+','+to_string(n[1])+','+to_string(n[2])+'}';
+      r += '<'+to_string(b[0])+','+to_string(b[1])+','+to_string(b[2])+'>';
+    } else {
+      if(!gs.is<SlipSystemsDescription::system4d>()){
+	throw(std::runtime_error("to_string: internal error "
+				 "(unsupported slip system type)"));
+      }
+      const auto& n = gs.get<SlipSystemsDescription::system3d>().normal;
+      const auto& b = gs.get<SlipSystemsDescription::system3d>().burgers;
+      r += '{'+to_string(n[0])+','+to_string(n[1])+','+
+	to_string(n[2])+','+to_string(n[3])+'}';
+      r += '<'+to_string(b[0])+','+to_string(b[1])+','+
+	to_string(b[2])+','+to_string(b[3])+'>';
+    }
+    return r;
+  } // end of to_string
   
   BehaviourQuery::BehaviourQuery(const int argc,
 				 const char *const *const argv,
@@ -109,12 +134,16 @@ namespace mfront{
       {"--symmetry","return the behaviour symmetry. If the returned value is 0, "
        "the behaviour is isotropic. If the returned value is 1, "
        "the behaviour is orthotropic."},
-      {"--has-crystal-structure","return `true` if a crystal structure has been defined"},
-      {"--crystal-structure","return the crystal structure"},
       {"--elastic-symmetry","return the symmetry of the elastic part of the behaviour. "
        "If the returned value is 0, this part of the behaviour is isotropic. "
        "If the returned value is 1, this part of the behaviour is orthotropic."
        "the behaviour is orthotropic."},
+      {"--has-crystal-structure","return `true` if a crystal structure has been defined"},
+      {"--crystal-structure","return the crystal structure"},
+      {"--slip-systems","list all the slip systems, sorted by family"},
+      {"--slip-systems-by-index","list all the slip systems"},
+      {"--interaction-matrix","show the interaction matrix"},
+      {"--interaction-matrix-structure","show the structure of the interaction matrix"},
       {"--supported-modelling-hypotheses","show the list of supported modelling hypothesis"},
       {"--material-properties","show the list of material properties for the selected modelling hypothesis"},
       {"--state-variables","show the list of state variables for the selected modelling hypothesis"},
@@ -124,6 +153,7 @@ namespace mfront{
       {"--persistent-variables","show the list of persistent variables for the selected modelling hypothesis"},
       {"--local-variables","show the list of local variables for the selected modelling hypothesis"},
       {"--parameters","show the list of parameters for the selected modelling hypothesis"},
+      {"--static-variables","show the list of static variables for the selected modelling hypothesis"},
       {"--attributes","show the list of attributes of the behaviour description"},
       {"--code-blocks","show the list of code-blocks of the behaviour description for "
 	  " the selected modelling hypothesis"}};
@@ -135,6 +165,7 @@ namespace mfront{
       {"--attribute-value","display an attribute value"},
       {"--parameter-type","display a parameter type"},
       {"--parameter-default-value","display a parameter default value"},
+      {"--static-variable-value","display the value of a static variable"},
       {"--has-bounds","return `true` if a variable has bounds, `false` otherwise"},
       {"--bounds-type","return the bounds type associated to a variable.\n"
        "The returned value has the follwing meaning:\n"
@@ -279,6 +310,89 @@ namespace mfront{
 	      throw(std::runtime_error("unsupported crystal structure"));
 	    }
 	  }});
+    } else if(qn=="--slip-systems"){
+      this->queries.push_back({"slip-systems",[](const FileDescription&,
+						 const BehaviourDescription& d,
+						 const Hypothesis){
+	    if(!d.areSlipSystemsDefined()){
+	      throw(std::runtime_error("no slip system defined"));
+	    }
+	    const auto& ssd = d.getSlipSystems();
+	    const auto nss = ssd.getNumberOfSlipSystemsFamilies();
+	    for(size_t i=0;i!=nss;++i){
+	      const auto gss = ssd.getSlipSystems(i);
+	      cout << "- " << to_string(ssd.getSlipSystemFamily(i)) << ":";
+	      for(const auto& gs : gss){
+		cout << " " << to_string(gs);
+	      }
+	      cout << '\n';
+	    }
+	  }});
+    } else if(qn=="--slip-systems-by-index"){
+      this->queries.push_back({"slip-systems-by-index",
+	    [](const FileDescription&,
+	       const BehaviourDescription& d,
+	       const Hypothesis){
+	    if(!d.areSlipSystemsDefined()){
+	      throw(std::runtime_error("no slip system defined"));
+	    }
+	    const auto& ssd = d.getSlipSystems();
+	    const auto nss = ssd.getNumberOfSlipSystemsFamilies();
+	    auto r = size_t{};
+	    for(size_t i=0;i!=nss;++i){
+	      const auto gss = ssd.getSlipSystems(i);
+	      for(const auto& gs : gss){
+		cout << "- " << r << ": " << to_string(gs) << '\n';
+		++r;
+	      }
+	    }
+	  }});
+    } else if(qn=="--interaction-matrix-structure"){
+      this->queries.push_back({"interaction-matrix-structure",
+	    [](const FileDescription&,
+	       const BehaviourDescription& d,
+	       const Hypothesis){
+	    if(!d.areSlipSystemsDefined()){
+	      throw(std::runtime_error("no slip system defined"));
+	    }
+	    const auto& im     = d.getInteractionMatrix();
+	    const auto  r      = im.rank();
+	    const auto& ssis_r = im.getSlidingSystemsInteraction();
+	    cout << "- number of independent coefficients: " << r << '\n';
+	    auto i = size_t{};
+	    for(const auto& ssis : ssis_r){
+	      cout << "- rank " << i << ':';
+	      for(const auto ssi: ssis){
+		cout << " (" << to_string(ssi.g1)
+		     << ':'  << to_string(ssi.g2) << ')';
+	      }
+	      cout << '\n';
+	      ++i;
+	    }
+	  }});
+    } else if(qn=="--interaction-matrix"){
+      this->queries.push_back({"interaction-matrix",
+	    [](const FileDescription&,
+	       const BehaviourDescription& d,
+	       const Hypothesis){
+	    if(!d.areSlipSystemsDefined()){
+	      throw(std::runtime_error("no slip system defined"));
+	    }
+	    const auto& ssd = d.getSlipSystems();
+	    const auto& im  = d.getInteractionMatrix();
+	    const auto nss  = ssd.getNumberOfSlipSystemsFamilies();
+	    for(size_t i=0;i!=nss;++i){
+	      for(const auto& gs1 : ssd.getSlipSystems(i)){
+		cout << '|';
+		for(size_t j=0;j!=nss;++j){
+		  for(const auto& gs2 : ssd.getSlipSystems(j)){
+		    cout << " " << im.getRank(gs1,gs2);
+		  }
+		}
+		cout << " |\n";
+	      }
+	    }
+	  }});
     } else if(qn=="--elastic-symmetry"){
       this->queries.push_back({"elastic-symmetry",[](const FileDescription&,
 						     const BehaviourDescription& d,
@@ -308,6 +422,35 @@ namespace mfront{
     } else if (qn=="--state-variables"){
       this->queries.emplace_back("state-variables",
 				 this->generateVariablesListQuery<&BehaviourData::getStateVariables>());
+    } else if (qn=="--static-variables"){
+      auto nq = [](const FileDescription&,
+		   const BehaviourDescription& bd,
+		   const Hypothesis h){
+	using namespace std;
+	using namespace tfel::glossary;
+	const auto& d        = bd.getBehaviourData(h);
+	const auto& vars     = d.getStaticVariables();
+	for(const auto& v:vars){
+	  const auto& n = d.getExternalName(v.name);
+	  cout << "- " << n;
+	  if(v.arraySize!=1u){
+	    cout << '[' << v.arraySize << ']';
+	  }
+	  if(n!=v.name){
+	    cout << " (" << v.name << ")";
+	  }
+	  if(!v.description.empty()){
+	    cout << ": " << v.description;
+	  } else {
+	    const auto& glossary = Glossary::getGlossary();
+	    if(glossary.contains(n)){
+	      cout << ": " << glossary.getGlossaryEntry(n).getShortDescription();
+	    }
+	  }
+	  cout << endl;
+	}
+      };
+      this->queries.emplace_back("static-variables",nq);
     } else if (qn=="--auxiliary-state-variables"){
       this->queries.emplace_back("auxiliary-state-variables",
 				 this->generateVariablesListQuery<&BehaviourData::getAuxiliaryStateVariables>());
@@ -557,6 +700,21 @@ namespace mfront{
 	}
       };
       this->queries.push_back({"parameter-default-value",l});
+    } else if (qn=="--static-variable-value"){
+      auto l = [o](const FileDescription&,
+		   const BehaviourDescription& d,
+		   const Hypothesis h){
+	const auto& bd  = d.getBehaviourData(h);
+	for(const auto& sv : bd.getStaticVariables()){
+	  if(sv.name==o){
+	    std::cout << sv.value << '\n';
+	    return;
+	  }
+	}
+	throw(runtime_error("Behaviour::treatStandardQuery2 : "
+			    "no static variable '"+o+"'"));
+      };
+      this->queries.push_back({"static-variable-value",l});
     } else {
 	  throw(runtime_error("Behaviour::treatStandardQuery : "
 			  "unsupported query '"+qn+"'"));

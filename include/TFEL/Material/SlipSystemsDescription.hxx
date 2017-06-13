@@ -39,10 +39,16 @@ namespace tfel{
       using stensor = tfel::math::stensor<3u,long double>;
       //! a simple alias
       using tensor  = tfel::math::tensor<3u,long double>;
-      //! a simple alias
-      using system3d = std::pair<vec3d,vec3d>;
-      //! a simple alias
-      using system4d = std::pair<vec4d,vec4d>;
+      //! 
+      struct system3d{
+	vec3d burgers;
+	vec3d normal;
+      };
+      //! 
+      struct system4d{
+	vec4d burgers;
+	vec4d normal;
+      };
       //! a simple alias
       using system = tfel::utilities::GenType<system3d,system4d>;
       //! a simple alias
@@ -66,8 +72,9 @@ namespace tfel{
 	  system g1;
 	  system g2;
 	};
+	using SSIContainer = std::vector<std::vector<SlidingSystemsInteraction>>;
 	//! constructor
-	InteractionMatrixStructure(const std::vector<std::vector<SlidingSystemsInteraction>>&);
+	InteractionMatrixStructure(const SSIContainer&);
 	//! move constructor
 	InteractionMatrixStructure(InteractionMatrixStructure&&);
 	//! copy constructor
@@ -77,11 +84,13 @@ namespace tfel{
 	//! \return get the rank of a pair of systems
 	size_type getRank(const system&,
 			  const system&) const;
+	//! \return the sliding system interaction, sorted by rank
+	const SSIContainer& getSlidingSystemsInteraction() const;
 	//! destructor
 	~InteractionMatrixStructure();
       private:
 	//! \brief sliding system sorted by rank
-	const std::vector<std::vector<SlidingSystemsInteraction>> ranks;
+	const SSIContainer ranks;
       };
       /*!
        * \param[in] s:  crystal structure
@@ -97,6 +106,8 @@ namespace tfel{
        * \param[in] src: object moved
        */
       SlipSystemsDescription(SlipSystemsDescription&&);
+      //! \return the crystal structure
+      CrystalStructure getCrystalStructure() const;
       /*!
        * \param[in] n: plane normal
        * \param[in] b: Burgers' vector
