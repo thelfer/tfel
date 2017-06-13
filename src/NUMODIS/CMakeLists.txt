@@ -1,6 +1,6 @@
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-add_library(TFELNUMODIS SHARED
+tfel_library(TFELNUMODIS SHARED
   BCC.cxx
   Crystallo.cxx
   Cubic.cxx

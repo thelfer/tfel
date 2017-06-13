@@ -56,7 +56,7 @@ namespace tfel{
        * \brief structure describing the structure of the interaction
        * matrix.
        */
-      struct InteractionMatrixStructure
+      struct TFELMATERIAL_VISIBILITY_EXPORT InteractionMatrixStructure
       {
 	/*!
 	 * \brief structure descrbing the interaction of two sliding

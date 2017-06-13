@@ -24,7 +24,7 @@
 namespace mfront
 {
 
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ ||defined __APPLE__)
+#if !(defined _WIN32 || defined _WIN64 ||defined __APPLE__)
   /*!
    * add a new measure
    * t     : measure to which the new measure is added
@@ -172,14 +172,14 @@ namespace mfront
     : gtimer(t),
       c(cn)
   {
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ || defined __APPLE__)
+#if !(defined _WIN32 || defined _WIN64 || defined __APPLE__)
     ::clock_gettime(CLOCK_THREAD_CPUTIME_ID,&(this->start));
 #endif
   } // end of BehaviourProfiler::Timer
 
   BehaviourProfiler::Timer::~Timer()
   {
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ || defined __APPLE__)
+#if !(defined _WIN32 || defined _WIN64 || defined __APPLE__)
     ::clock_gettime(CLOCK_THREAD_CPUTIME_ID,&(this->end));
     add_measure(this->gtimer.measures[this->c],this->start,this->end);
 #endif    
@@ -188,30 +188,29 @@ namespace mfront
   BehaviourProfiler::BehaviourProfiler(const std::string& n)
     : name(n)
   {
-    using namespace std;
-    fill(begin(measures),end(measures),0);
+    std::fill(begin(measures),end(measures),0);
   } // end of BehaviourProfiler::BehaviourProfiler
 
   BehaviourProfiler::~BehaviourProfiler()
   {
-    using namespace std;
-    cout << "\nResults of " << this->name << " profiling : ";
-    print_time(cout,measures.back());
-    cout << endl;
-    string::size_type w{0};
-    for(array<atomic<intmax_t>,21>::size_type i=0;i+1!=measures.size();++i){
+	using size_type = std::array<std::atomic<std::intmax_t>, 21>::size_type;
+    std::cout << "\nResults of " << this->name << " profiling : ";
+    print_time(std::cout,measures.back());
+    std::cout << '\n';
+    std::string::size_type w{0};
+    for(size_type i=0;i+1!=measures.size();++i){
       if(measures[i]!=0){
-	w = max(w,getCodeBlockName(i).size());
+	w = std::max(w,getCodeBlockName(i).size());
       }
     }
-    for(array<atomic<intmax_t>,21>::size_type i=0;i+1!=measures.size();++i){
+    for(size_type i=0;i+1!=measures.size();++i){
       if(measures[i]!=0){
-	cout << "- " << setw(w) << left << getCodeBlockName(i) << " : ";
-	print_time(cout,measures[i]);
-	cout << " (" << measures[i] << " ns)" << endl;
+	std::cout << "- " << std::setw(w) << std::left << getCodeBlockName(i) << " : ";
+	print_time(std::cout,measures[i]);
+	std::cout << " (" << measures[i] << " ns)\n";
       }
     }
-    cout << endl;
+    std::cout << std::endl;
   } // end of BehaviourProfiler::~BehaviourProfiler
   
 } // end of namespace mfront

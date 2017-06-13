@@ -59,7 +59,7 @@ namespace mfront{
       BehaviourProfiler& gtimer;
       //! code block associated with the timer
       const unsigned short c;
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ || defined __APPLE__)
+#if !(defined _WIN32 || defined _WIN64 || defined __APPLE__)
       //! start
       timespec start;
       //! end
