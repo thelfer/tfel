@@ -220,6 +220,7 @@ namespace mfront
 	<< "#include<cstdlib>\n"
 	<< "#include<sstream>\n"
 	<< "#include<cstring>\n"
+      	<< "#include<vector>\n"
       	<< "#include<string>\n"
 	<< "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
 	<< "#include\"" << name << "-cxx.hxx\"\n\n"

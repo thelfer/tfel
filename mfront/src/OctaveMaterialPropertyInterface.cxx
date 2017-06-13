@@ -138,6 +138,7 @@ namespace mfront
 	<< "#include<cstring>\n"
 	<< "#include<cstdlib>\n"
 	<< "#include<string>\n"
+      	<< "#include<vector>\n"
 	<< "#include<cmath>\n"
 	<< "#include<octave/oct.h>\n\n";
     if(!mpd.includes.empty()){

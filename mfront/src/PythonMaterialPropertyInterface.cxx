@@ -285,11 +285,12 @@ namespace mfront
       	    << "#include<iterator>\n"
 	    << "#include<fstream>\n"
 	    << "#include<sstream>\n"
-	    << "#include<string>\n"
-	    << "#include<cmath>\n"
 	    << "#include<cstring>\n"
 	    << "#include<cstdlib>\n"
-	    << "#include<cstdio>\n";
+	    << "#include<cstdio>\n"
+	    << "#include<string>\n"
+	    << "#include<vector>\n"
+	    << "#include<cmath>\n";
     if(!includes.empty()){
       srcFile << includes << "\n\n";
     }
