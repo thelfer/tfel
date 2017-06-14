@@ -3405,7 +3405,6 @@ namespace mfront{
   void BehaviourDSLCommon::writeBehaviourIntegrator(std::ostream& os,
 						    const Hypothesis h) const{
     const auto btype = this->mb.getBehaviourTypeFlag();
-    const auto& md = this->mb.getBehaviourData(h);
     this->checkBehaviourFile(os);
     os << "/*!\n"
        << "* \\brief Integrate behaviour  over the time step\n"

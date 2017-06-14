@@ -285,7 +285,9 @@ namespace tfel{
 
     static std::array<long double,3u> to_array(const numodis::Vect3& v)
     {
-      return std::array<long double,3u>({v[0],v[1],v[2]});
+      std::array<long double,3u> r;
+      r[0]=v[0];r[1]=v[1];r[2]=v[2];
+      return r;
     }
     
     static std::array<long double,3u>

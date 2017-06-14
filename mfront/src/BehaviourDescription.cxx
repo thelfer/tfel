@@ -1233,7 +1233,6 @@ namespace mfront
   }
   
   void BehaviourDescription::addModelDescription(const ModelDescription& md){
-    const auto& g = tfel::glossary::Glossary::getGlossary();
     constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     for(auto ov : md.outputs){
       VariableDescription dov{ov.type,"d"+ov.name,

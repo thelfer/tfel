@@ -1529,7 +1529,6 @@ namespace mfront{
     };
     auto treat =
       [&check_esv,&throw_if,this](const StressFreeExpansionHandler& h){
-      const auto& g = tfel::glossary::Glossary::getGlossary();
       if(h.is<SFED_ESV>()){
 	check_esv(h.get<SFED_ESV>());
       } else if(h.is<std::shared_ptr<ModelDescription>>()){
@@ -1569,7 +1568,6 @@ namespace mfront{
 	}
 	// declaring the output has an auxiliary state variable
 	auto o = md.outputs[0];
-	const auto& on = o.getExternalName();
 	o.name = md.className+"_"+o.name;
 	this->addAuxiliaryStateVariable(o,UNREGISTRED);
       } else if (h.is<NullSwelling>()){
