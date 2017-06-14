@@ -18,6 +18,7 @@
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 
+#include"TFEL/FSAlgorithm/equal.hxx"
 #include"TFEL/Material/SlipSystemsDescription.hxx"
 
 struct SlipSystemsDescriptionTest final
@@ -38,16 +39,16 @@ struct SlipSystemsDescriptionTest final
 
   using SlipSystemsDescription = tfel::material::SlipSystemsDescription;
   
-  template<unsigned short N>
-  static bool equal(const tfel::math::tvector<N,int>& v1,
-		    const tfel::math::tvector<N,int>& v2)
+  template<size_t N>
+  static bool equal(const std::array<int,N>& v1,
+		    const std::array<int,N>& v2)
   {
     return tfel::fsalgo::equal<N>::exe(v1.begin(),v2.begin());
   } // end of equal
-  template<unsigned short N>
+  template<size_t N>
   static bool equal(const SlipSystemsDescription::system& g1,
-		    const tfel::math::tvector<N,int>& n2,
-		    const tfel::math::tvector<N,int>& b2)
+		    const std::array<int,N>& n2,
+		    const std::array<int,N>& b2)
   {
     using system_type =
       typename std::conditional<N==3,SlipSystemsDescription::system3d,
@@ -58,10 +59,10 @@ struct SlipSystemsDescriptionTest final
     const auto& g1b = g1.template get<system_type>();
     return (equal(g1b.burgers,b2))&&(equal(g1b.normal,n2));
   } // end of equal
-  template<unsigned short N>
+  template<size_t N>
   static bool contains(const std::vector<SlipSystemsDescription::system>& gs,
-		       const tfel::math::tvector<N,int>& n,
-		       const tfel::math::tvector<N,int>& b){
+		       const std::array<int,N>& n,
+		       const std::array<int,N>& b){
     for(const auto& g : gs){
       if(equal(g,n,b)){
 	return true;

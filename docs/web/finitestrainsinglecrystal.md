@@ -53,6 +53,133 @@ hides all the details described in the previous sections.
 
 # Implementation in MFront
 
+## Description of the slip systems and of the interaction matrix
+
+This section shows how to define:
+
+- the crystal structure.
+- the slip systems.
+- the interaction matrix.
+
+### Crystal structure
+
+The crystal structure must be defined through the `@CrystalStructure`
+keyword. This keyword is followed by one of the following value:
+
+- `Cubic`: cubic structure.
+- `FCC`: face centered cubic structure.
+- `HCP`: hexagonal closed-packed structures.
+
+~~~~{.cpp}
+@CrystalStructure FCC;
+~~~~
+
+### Definition of the slip systems
+
+A single slip systems family can be defined by one of the following
+keywords: `@SlidingSystem`, `@GlidingSystem` or `@SlipSystem`. Those
+keywords are followed by the definition of one family of slip systems.
+
+Several slip systems families can be defined by one of the following
+keywords: `@SlidingSystems`, `@GlidingSystems` or
+`@SlipSystems`. Those keywords are followed by an array giving the
+definition of the families of slip systems.
+
+For `Cubic` and `FCC` crystal structures, a slip system is defined by
+the normal to the plane and the Burgers'vector as follows:
+
+~~~~{.cpp}
+{1,-1,0}<1,1,1>
+~~~~
+
+Thus, an example of the usage of the `@SlidingSystem` keyword is:
+
+~~~~{.cpp}
+@SlidingSystem {1,-1,0}<1,1,1>;
+~~~~
+
+For a given slip systems family, a set of slip systems are generated
+by symmetry using code extracted from the `NUMODIS` code. The previous
+example defines \(12\) slip systems.
+
+Once the sliding system families has been defined, a static integer
+variable called `Nss` is available which contains the total number of
+slip systems defined. In the previous example, `Nss` value is \(12\).
+
+This value can be used to define additional state variables:
+
+~~~~{.cpp}
+//! equivalent plastic strain on each slip system
+@AuxiliaryStateVariable real p[Nss];
+~~~~
+
+For post-processing reasons, one needs to know in which order the slip
+systems are defined. This question is treated in the next paragraph.
+
+Also, note that for the \(i^{\text{th}}\) slip systems family, a
+static integer variable beginning by `Nss` and followed by the value
+of \(i\) is defined. In the previous example, a unique slip systems
+family is defined and a variable `Nss0` is made available. Of course,
+in this case `Nss0` is equal to `Nss`. Those variables may be useful
+to define variables specific to a slip system family.
+
+#### Getting information about the generated slip systems
+
+The list of the generated slip systems can be retrieved using
+`mfront-query`.
+
+Consider the following example:
+
+~~~~{.cpp}
+@DSL       ImplicitFiniteStrain;
+@Behaviour SlipSystemGenerationTest;
+@Brick     FiniteStrainSingleCrystal;
+@CrystalStructure FCC;
+@SlidingSystem {1,-1,0}<1,1,1>;
+~~~~
+
+If the previous code is saved a file called
+`SlipSystemGenerationTest.mfront`, one may use `mfront-query` as
+follows:
+
+~~~~{.sh}
+$ mfront-query --slip-systems
+- {1,-1,0}<1,1,1>: {0,1,1}<1,1,-1> {0,1,1}<1,-1,1> {0,1,-1}<1,1,1> {0,1,-1}<1,-1,-1> {1,0,1}<1,1,-1> {1,0,1}<1,-1,-1> {1,0,-1}<1,1,1> {1,0,-1}<1,-1,1> {1,1,0}<1,-1,-1> {1,1,0}<1,-1,1> {1,-1,0}<1,1,1> {1,-1,0}<1,1,-1>
+~~~~
+
+The output shows that \(12\) slip systems were generated. All those
+systems are equivalent by symmetry.
+
+Concerning slip systems, the following queries are available:
+
+~~~~{.sh}
+$ mfront-query --help-behaviour-queries-list |grep slip
+--slip-systems          : list all the slip systems, sorted by family
+--slip-systems-by-index : list all the slip systems
+~~~~
+
+The `--slip-systems-by-index` query gives the index associated to a
+given slip system, which is helpfull for postprocessing purposes. For
+this example:
+
+~~~~{.sh}
+$ mfront-query --slip-systems-by-index
+- 0: {0,1,1}<1,1,-1>
+- 1: {0,1,1}<1,-1,1>
+- 2: {0,1,-1}<1,1,1>
+- 3: {0,1,-1}<1,-1,-1>
+- 4: {1,0,1}<1,1,-1>
+- 5: {1,0,1}<1,-1,-1>
+- 6: {1,0,-1}<1,1,1>
+- 7: {1,0,-1}<1,-1,1>
+- 8: {1,1,0}<1,-1,-1>
+- 9: {1,1,0}<1,-1,1>
+- 10: {1,-1,0}<1,1,1>
+- 11: {1,-1,0}<1,1,-1>
+~~~~
+
+### Definition of the interaction matrix
+
 ## Implementation of the implicit system
 
 Le second tenseur de Piola-Kirchhoff est défini par la loi élastique de

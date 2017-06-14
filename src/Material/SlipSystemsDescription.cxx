@@ -62,7 +62,8 @@ namespace tfel{
     template<typename T,typename VectorType>
     static T to_numodis(const VectorType& v)
     {
-      auto r = T{v.size()};
+      using size_type = typename T::size_type;
+      auto r = T(static_cast<size_type>(v.size()));
       for(decltype(v.size()) i=0;i!=v.size();++i){
 	r[i] = v[i];
       }
@@ -284,12 +285,13 @@ namespace tfel{
     static SlipSystemsDescription::tensor
     getOrientationTensor(const SlipSystemsDescription::system3d& s)
     {
+      using tensor = SlipSystemsDescription::tensor;
       const auto& ns = s.burgers;
       const auto& ms = s.normal; 
       // XX YY ZZ
       // XY YX XZ
       // ZX YZ ZY
-      return {ns[0]*ms[0],ns[1]*ms[1],ns[2]*ms[2],
+      return tensor{ns[0]*ms[0],ns[1]*ms[1],ns[2]*ms[2],
 	  ns[1]*ms[0],ns[0]*ms[1],ns[2]*ms[0],
 	  ns[0]*ms[2],ns[2]*ms[1],ns[1]*ms[2]};
     } // end of getOrentiationTensor
