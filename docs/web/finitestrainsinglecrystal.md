@@ -67,6 +67,7 @@ The crystal structure must be defined through the `@CrystalStructure`
 keyword. This keyword is followed by one of the following value:
 
 - `Cubic`: cubic structure.
+- `BCC`: body centered cubic structure.
 - `FCC`: face centered cubic structure.
 - `HCP`: hexagonal closed-packed structures.
 
@@ -143,7 +144,7 @@ If the previous code is saved a file called
 follows:
 
 ~~~~{.sh}
-$ mfront-query --slip-systems
+$ mfront-query --slip-systems SlipSystemGenerationTest.mfront
 - (1,-1,0)[1,1,1]: (0,1,1)[1,1,-1] (0,1,1)[1,-1,1] (0,1,-1)[1,1,1] (0,1,-1)[1,-1,-1] (1,0,1)[1,1,-1] (1,0,1)[1,-1,-1] (1,0,-1)[1,1,1] (1,0,-1)[1,-1,1] (1,1,0)[1,-1,-1] (1,1,0)[1,-1,1] (1,-1,0)[1,1,1] (1,-1,0)[1,1,-1]
 ~~~~
 
@@ -163,7 +164,7 @@ given slip system, which is helpfull for postprocessing purposes. For
 this example:
 
 ~~~~{.sh}
-$ mfront-query --slip-systems-by-index
+$ mfront-query --slip-systems-by-index SlipSystemGenerationTest.mfront
 - 0: (0,1,1)[1,1,-1]
 - 1: (0,1,1)[1,-1,1]
 - 2: (0,1,-1)[1,1,1]
@@ -179,6 +180,57 @@ $ mfront-query --slip-systems-by-index
 ~~~~
 
 ### Definition of the interaction matrix
+
+#### Structure of the interaction matrix
+
+Since many interactions between slip systems are equivalent, the
+interaction matrix only contains a few independent coefficients.
+
+Using `mfront-query`, one may have access to the whole matrix using
+the `--interaction-matrix` query:
+
+~~~~{.sh}
+$ mfront-query --interaction-matrix SlipSystemGenerationTest.mfront 
+| 0 1 2 2 3 4 5 6 5 6 4 3 |
+| 1 0 2 2 6 5 4 3 4 3 5 6 |
+| 2 2 0 1 5 6 3 4 6 5 3 4 |
+| 2 2 1 0 4 3 6 5 3 4 6 5 |
+| 3 4 5 6 0 1 2 2 6 5 4 3 |
+| 6 5 4 3 1 0 2 2 3 4 5 6 |
+| 5 6 3 4 2 2 0 1 5 6 3 4 |
+| 4 3 6 5 2 2 1 0 4 3 6 5 |
+| 5 6 4 3 4 3 5 6 0 1 2 2 |
+| 4 3 5 6 5 6 4 3 1 0 2 2 |
+| 6 5 3 4 6 5 3 4 2 2 0 1 |
+| 3 4 6 5 3 4 6 5 2 2 1 0 |
+~~~~
+
+Here only \(7\) coefficients are needed. The number corresponding to a
+pair of slip systems defines the rank of the interaction.
+
+The `mfront-query` also provides the `--interaction-matrix-structure`
+query which displays the number of independent coefficients and sorts
+the pair of slip systems by rank:
+
+~~~~{.sh}
+$ mfront-query --interaction-matrix-structure SlipSystemGenerationTest.mfront 
+- number of independent coefficients: 7
+- rank 0: ((0,1,1)[1,1,-1]:(0,1,1)[1,1,-1]) ((0,1,1)[1,-1,1]:(0,1,1)[1,-1,1]) ((0,1,-1)[1,1,1]:(0,1,-1)[1,1,1]) ((0,1,-1)[1,-1,-1]:(0,1,-1)[1,-1,-1]) ((1,0,1)[1,1,-1]:(1,0,1)[1,1,-1]) ((1,0,1)[1,-1,-1]:(1,0,1)[1,-1,-1]) ((1,0,-1)[1,1,1]:(1,0,-1)[1,1,1]) ((1,0,-1)[1,-1,1]:(1,0,-1)[1,-1,1]) ((1,1,0)[1,-1,-1]:(1,1,0)[1,-1,-1]) ((1,1,0)[1,-1,1]:(1,1,0)[1,-1,1]) ((1,-1,0)[1,1,1]:(1,-1,0)[1,1,1]) ((1,-1,0)[1,1,-1]:(1,-1,0)[1,1,-1])
+- rank 1: ((0,1,1)[1,1,-1]:(0,1,1)[1,-1,1]) ((0,1,1)[1,-1,1]:(0,1,1)[1,1,-1]) ((0,1,-1)[1,1,1]:(0,1,-1)[1,-1,-1]) ((0,1,-1)[1,-1,-1]:(0,1,-1)[1,1,1]) ((1,0,1)[1,1,-1]:(1,0,1)[1,-1,-1]) ((1,0,1)[1,-1,-1]:(1,0,1)[1,1,-1]) ((1,0,-1)[1,1,1]:(1,0,-1)[1,-1,1]) ((1,0,-1)[1,-1,1]:(1,0,-1)[1,1,1]) ((1,1,0)[1,-1,-1]:(1,1,0)[1,-1,1]) ((1,1,0)[1,-1,1]:(1,1,0)[1,-1,-1]) ((1,-1,0)[1,1,1]:(1,-1,0)[1,1,-1]) ((1,-1,0)[1,1,-1]:(1,-1,0)[1,1,1])
+.....
+~~~~
+
+In this example, the rank \(0\) contains all the interactions of a
+slip system with itself.
+
+#### Definition of the interaction matrix
+
+The interaction matrix is defined through the `@InteractionMatrix`
+keyword.
+
+##### Explicit definition
+
+##### Definition using a model
 
 ## Implementation of the implicit system
 

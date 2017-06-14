@@ -14,6 +14,7 @@
 #include<string>
 #include<stdexcept>
 #include"NUMODIS/HCP.hxx"
+#include"NUMODIS/BCC.hxx"
 #include"NUMODIS/FCC.hxx"
 #include"NUMODIS/Cubic.hxx"
 #include"NUMODIS/GSystem.hxx"
@@ -59,6 +60,16 @@ namespace tfel{
       //! type used to describe the slip systems
       using system_type   = SlipSystemsDescription::system3d;
     }; // end of CristalStructureSlipSystems<CrystalStructure::FCC>
+
+    template<>
+    struct CristalStructureSlipSystems<CrystalStructure::BCC>
+    {
+      using numodis_handler = numodis::BCC;
+      //! type of vector used to describe the slip systems
+      using vector_type   = SlipSystemsDescription::vec3d;
+      //! type used to describe the slip systems
+      using system_type   = SlipSystemsDescription::system3d;
+    }; // end of CristalStructureSlipSystems<CrystalStructure::BCC>
     
     template<typename T,typename VectorType>
     static T to_numodis(const VectorType& v)
@@ -182,7 +193,9 @@ namespace tfel{
     SlipSystemsDescription::SlipSystemsDescription(const CrystalStructure s)
       : cs(s)
     {
-      if((s==CrystalStructure::Cubic)||(s==CrystalStructure::FCC)){
+      if((s==CrystalStructure::Cubic)||
+	 (s==CrystalStructure::FCC)||
+	 (s==CrystalStructure::BCC)){
 	this->gs = std::vector<system3d>();
       } else if (s==CrystalStructure::HCP){
 	this->gs = std::vector<system4d>();
@@ -209,9 +222,12 @@ namespace tfel{
       auto& gs3d = this->gs.get<std::vector<system3d>>();
       if(this->cs==CrystalStructure::Cubic){
 	tfel::material::addSlipSystemsFamily<CrystalStructure::Cubic>(gs3d,b,p);
+      } else if(this->cs==CrystalStructure::BCC){
+	tfel::material::addSlipSystemsFamily<CrystalStructure::BCC>(gs3d,b,p);
+      } else {
+	throw_if(cs!=CrystalStructure::FCC,"internal error (unknown cristal structure)");
+	tfel::material::addSlipSystemsFamily<CrystalStructure::FCC>(gs3d,b,p);
       }
-      throw_if(cs!=CrystalStructure::FCC,"internal error (unknown cristal structure)");
-      tfel::material::addSlipSystemsFamily<CrystalStructure::FCC>(gs3d,b,p);
     } // end of SlipSystemsDescription::addSlipSystemsFamily
 
     void SlipSystemsDescription::addSlipSystemsFamily(const vec4d& p,const vec4d& b)
@@ -267,6 +283,8 @@ namespace tfel{
 	return generateSlipSystems<CrystalStructure::Cubic>(g);
       } else if(this->cs==CrystalStructure::FCC){
 	return generateSlipSystems<CrystalStructure::FCC>(g);
+      } else if(this->cs==CrystalStructure::BCC){
+	return generateSlipSystems<CrystalStructure::BCC>(g);
       }
       throw_if(cs!=CrystalStructure::HCP,"internal error (unknown cristal structure)");
       return generateSlipSystems<CrystalStructure::HCP>(g);
@@ -297,6 +315,9 @@ namespace tfel{
       if(cs==CrystalStructure::FCC){
 	auto s = numodis::FCC();
 	return to_array(s.normal(to_numodis<numodis::IPlane>(p)));
+      } else if(cs==CrystalStructure::BCC){
+	auto s = numodis::BCC();
+	return to_array(s.normal(to_numodis<numodis::IPlane>(p)));
       }
       if(cs!=CrystalStructure::Cubic){
 	throw(std::runtime_error("normal: internal error "
@@ -324,6 +345,9 @@ namespace tfel{
     {
       if(cs==CrystalStructure::FCC){
 	auto s = numodis::FCC();
+	return to_array(s.burgers_vector(to_numodis<numodis::IBurgers>(b)));
+      } else if(cs==CrystalStructure::BCC){
+	auto s = numodis::BCC();
 	return to_array(s.burgers_vector(to_numodis<numodis::IBurgers>(b)));
       }
       if(cs!=CrystalStructure::Cubic){
@@ -536,6 +560,8 @@ namespace tfel{
 	return buildInteractionMatrix<CrystalStructure::Cubic>(ags);
       } else if(this->cs==CrystalStructure::FCC){
 	return buildInteractionMatrix<CrystalStructure::FCC>(ags);
+      } else if(this->cs==CrystalStructure::BCC){
+	return buildInteractionMatrix<CrystalStructure::BCC>(ags);
       }
       if(cs!=CrystalStructure::HCP){
 	throw(std::runtime_error("SlipSystemsDescription::getInteractionMatrixStructure: "

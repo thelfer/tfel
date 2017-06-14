@@ -948,109 +948,34 @@ namespace mfront{
   void BehaviourDSLCommon::generateSlipSystemsFiles()
   {
     using size_type = BehaviourDescription::SlipSystemsDescription::size_type;
-    auto throw_if = [](const bool b,const std::string& m){
+    using tensor    = BehaviourDescription::SlipSystemsDescription::tensor;
+    auto throw_if   = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("FiniteStrainSingleCrystalBrick::generateSlipSystems: "+m));}
     };
-    // auto nss = [this,throw_if](std::ostream& out,
-    // 			       const BehaviourDescription::SlipSystem& ss,
-    // 			       const std::string& idx){
-    //   const auto cubic = ss.normal.is<tfel::math::tvector<3u,int>>();
-    //   if(cubic){
-    // 	// cubic system
-    // 	const auto& n = ss.normal.get<tfel::math::tvector<3u,int>>();
-    // 	const auto& d = ss.slip.get<tfel::math::tvector<3u,int>>();
-    // 	const auto& s = tfel::material::CubicSlipSystems::generate(n,d);
-    // 	out << "//! number of sliding systems\n"
-    // 	    << "static constexpr const unsigned short Nss" << idx << " = " << s.size() << ";\n";
-    //   } else {
-    // 	// hexagonal systems
-    // 	throw_if(true,"hexagonal systems are not supported yet");
-    //   }
-    // };
-    // auto mu = [](std::ostream& out,
-    // 		 const std::string& idx){
-    // };
-    // auto value = [](const int n,const int d){
-    //   if(n*d==0){
-    // 	return std::string("zero");
-    //   } else if(n*d==1){
-    // 	return std::string("c1");
-    //   } else if(n*d==-1){
-    // 	return std::string("-c1");
-    //   }
-    //   return std::to_string(n*d)+"*c1";
-    // };
-    // auto value2 = [](const int n1,const int d1,
-    // 		     const int n2,const int d2){
-    //   const auto v = n1*d1+n2*d2;
-    //   if(v==0){
-    // 	return std::string("zero");
-    //   } else if(v==1){
-    // 	return std::string("c2");
-    //   } else if(v==-1){
-    // 	return std::string("-c2");
-    //   }
-    //   return std::to_string(v)+"*c2";
-    // };
-    // auto tensor = [throw_if,value](std::ostream& out,
-    // 				   const BehaviourDescription::SlipSystem& ss,
-    // 				   const std::string& idx){
-    //   const auto cubic = ss.normal.is<tfel::math::tvector<3u,int>>();
-    //   const auto mun = "this->mu"+idx;
-    //   if(cubic){
-    // 	const auto& ns = ss.normal.get<tfel::math::tvector<3u,int>>();
-    // 	const auto& ds = ss.slip.get<tfel::math::tvector<3u,int>>();
-    // 	const auto  as = tfel::material::CubicSlipSystems::generate(ns,ds);
-    // 	for(decltype(as.size()) i=0;i!=as.size();){
-    // 	  const auto& s = as[i];
-    // 	  const auto& n = s.first;
-    // 	  const auto& m = s.second;
-    // 	  out << "tensor{" << value(n[0],m[0]) << ","
-    // 	      << value(n[1],m[1]) << ","
-    // 	      << value(n[2],m[2]) << ","
-    // 	      << value(n[1],m[0]) << ","
-    // 	      << value(n[0],m[1]) << ","
-    // 	      << value(n[2],m[0]) << ","
-    // 	      << value(n[0],m[2]) << ","
-    // 	      << value(n[2],m[1]) << ","
-    // 	      << value(n[1],m[2]) << "}";
-    // 	  if(++i!=as.size()){
-    // 	    out << ",\n";
-    // 	  }
-    // 	}
-    //   } else {
-    // 	// hexagonal systems
-    // 	throw_if(true,"hexagonal systems are not supported yet");
-    //   }
-    // }; // end of impl
-    // auto stensor = [throw_if,value,value2](std::ostream& out,
-    // 					   const BehaviourDescription::SlipSystem& ss,
-    // 					   const std::string& idx){
-    //   const auto cubic = ss.normal.is<tfel::math::tvector<3u,int>>();
-    //   const auto mun = "this->mu"+idx;
-    //   if(cubic){
-    // 	const auto& ns = ss.normal.get<tfel::math::tvector<3u,int>>();
-    // 	const auto& ds = ss.slip.get<tfel::math::tvector<3u,int>>();
-    // 	const auto  as = tfel::material::CubicSlipSystems::generate(ns,ds);
-    // 	for(decltype(as.size()) i=0;i!=as.size();){
-    // 	  const auto& s = as[i];
-    // 	  const auto& n = s.first;
-    // 	  const auto& m = s.second;
-    // 	  out << "stensor{" << value(n[0],m[0]) << ","
-    // 	      << value(n[1],m[1]) << ","
-    // 	      << value(n[2],m[2]) << ","
-    // 	      << value2(n[1],m[0],n[0],m[1]) << ","
-    // 	      << value2(n[2],m[0],n[0],m[2]) << ","
-    // 	      << value2(n[2],m[1],n[1],m[2]) << "}";
-    // 	  if(++i!=as.size()){
-    // 	    out << ",\n";
-    // 	  }
-    // 	}
-    //   } else {
-    // 	// hexagonal systems
-    // 	throw_if(true,"hexagonal systems are not supported yet");
-    //   }
-    // }; // end of impl
+    auto write_tensor = [](std::ostream& out,const std::vector<tensor>& ts){
+      for(decltype(ts.size()) i=0;i!=ts.size();){
+	const auto& t = ts[i];
+	out << "tensor{" << t[0] << ',' << t[1] << ',' << t[2] << ','
+	<< t[3] << ',' << t[4] << ',' << t[5] << ','
+	<< t[8] << ',' << t[7] << ',' << t[8] << '}';
+	if(++i!=ts.size()){
+	  out << ",\n";
+	}
+      }
+    };
+    auto write_stensor = [](std::ostream& out,const std::vector<tensor>& ts){
+      constexpr const auto cste = tfel::math::Cste<long double>::sqrt2/2;
+      for(decltype(ts.size()) i=0;i!=ts.size();){
+	const auto& t = ts[i];
+	out << "stensor{" << t[0] << ',' << t[1] << ',' << t[2] << ','
+	    << (t[3]+t[4])*cste << ','
+	    << (t[5]+t[6])*cste << ','
+	    << (t[7]+t[8])*cste << '}';
+	if(++i!=ts.size()){
+	  out << ",\n";
+	}
+      }
+    };
     const auto& sss = this->mb.getSlipSystems();
     const auto nb   = sss.getNumberOfSlipSystemsFamilies();
     const auto cn   = this->mb.getClassName()+"SlipSystems";
@@ -1144,6 +1069,7 @@ namespace mfront{
     out.open(file);
     throw_if(!out,"can't open file '"+file+"'");
     out.exceptions(std::ios::badbit|std::ios::failbit);
+    out.precision(std::numeric_limits<long double>::digits10);
     out << "/*!\n"
     	<< "* \\file   " << file << '\n'
     	<< "* \\brief  " << "this file implements the " << cn << " class.\n"
@@ -1168,23 +1094,18 @@ namespace mfront{
       	<< "return i;\n"
       	<< "} // end of " << cn << "::getSlidingSystems\n\n"
     	<< "template<typename real>\n"
-    	<< cn << "<real>::" << cn << "(){\n"
-    	<< "constexpr const auto cm   = tfel::math::Cste<real>::isqrt2;\n"
-    	<< "constexpr const auto cn   = tfel::math::Cste<real>::isqrt3;\n"
-    	<< "constexpr const auto c1   = cm*cn;\n"
-    	<< "constexpr const auto c2   = cm/2;\n"
-    	<< "constexpr const auto zero = real(0);\n";
+    	<< cn << "<real>::" << cn << "(){\n";
     for(size_type idx=0;idx!=nb;++idx){
       out << "this->mu" << idx << " = {";
-      //    	tensor(out,sss[idx],std::to_string(idx));
-      out << "}";
+      write_tensor(out,sss.getOrientationTensors(idx));
+      out << "};\n";
     }
     out << "this->mu = {";
     for(size_type idx=0;idx!=nb;){
       if(nb!=1u){
 	out << "// " << idx << " slip system family\n";
       }
-      //      tensor(out,sss[idx],std::to_string(idx));
+      write_tensor(out,sss.getOrientationTensors(idx));
       if(++idx!=nb){
     	out << ",\n";
       }
@@ -1192,15 +1113,15 @@ namespace mfront{
     out << "};\n";
     for(size_type idx=0;idx!=nb;++idx){
       out << "this->mus" << idx << " = {";
-      //    	stensor(out,sss[idx],std::to_string(idx));
-      out << "}";
+      write_stensor(out,sss.getOrientationTensors(idx));
+      out << "}\n";
     }
     out << "this->mus = {";
     for(size_type idx=0;idx!=nb;){
       if(nb!=1u){
     	out << "// " << idx << " slip system family\n";
       }
-      //      stensor(out,sss[idx],std::to_string(idx));
+      write_stensor(out,sss.getOrientationTensors(idx));
       if(++idx!=nb){
     	out << ",\n";
       }

@@ -21,6 +21,7 @@ namespace tfel{
     //! \brief list of supported crystal structures
     enum struct CrystalStructure{
       Cubic, //!< cubic structure
+      BCC,   //!< body centered cubic structure
       FCC,   //!< face centered cubic structure
       HCP    //!< hexagonal closed-packed structures
     }; // end of enum struct CrystalStructure
