@@ -80,7 +80,7 @@ namespace tfel{
     template<typename VectorType,typename T>
     static VectorType from_numodis(const T& v)
     {
-      auto r = VectorType{};
+      auto r = VectorType();
       if(r.size()!=v.getNindices()){
 	throw(std::runtime_error("from_numodis: unmatched object size"));
       }
@@ -284,21 +284,14 @@ namespace tfel{
     static SlipSystemsDescription::tensor
     getOrientationTensor(const SlipSystemsDescription::system3d& s)
     {
-      const auto cm = tfel::math::Cste<long double>::isqrt2;
-      const auto cn = tfel::math::Cste<long double>::isqrt3;
-      const auto ns = cn*s.burgers;
-      const auto ms = cm*s.normal; 
-      auto mu = SlipSystemsDescription::tensor{};
-      mu[0]=ns[0]*ms[0]; // XX
-      mu[1]=ns[1]*ms[1]; // YY
-      mu[2]=ns[2]*ms[2]; // ZZ
-      mu[3]=ns[1]*ms[0]; // XY
-      mu[4]=ns[0]*ms[1]; // YX
-      mu[5]=ns[2]*ms[0]; // XZ
-      mu[6]=ns[0]*ms[2]; // ZX
-      mu[7]=ns[2]*ms[1]; // YZ
-      mu[8]=ns[1]*ms[2]; // ZY
-      return mu;
+      const auto& ns = s.burgers;
+      const auto& ms = s.normal; 
+      // XX YY ZZ
+      // XY YX XZ
+      // ZX YZ ZY
+      return {ns[0]*ms[0],ns[1]*ms[1],ns[2]*ms[2],
+	  ns[1]*ms[0],ns[0]*ms[1],ns[2]*ms[0],
+	  ns[0]*ms[2],ns[2]*ms[1],ns[1]*ms[2]};
     } // end of getOrentiationTensor
 
     static SlipSystemsDescription::tensor
@@ -320,34 +313,6 @@ namespace tfel{
       }
       return getOrientationTensor(s.get<SlipSystemsDescription::system4d>());
     } // end of getOrentiationTensor
-
-    static SlipSystemsDescription::stensor
-    getSymmetricOrientationTensor(const SlipSystemsDescription::system& s)
-    {
-      return tfel::math::syme(tfel::material::getOrientationTensor(s));
-    } // end of getOrientationTensor
-    
-    std::vector<SlipSystemsDescription::stensor>
-    SlipSystemsDescription::getSymmetricOrientationTensors(const size_type i) const
-    {
-      const auto ss = this->getSlipSystems(i);
-      auto r = std::vector<stensor>{ss.size()};
-      for(size_type idx=0;idx!=ss.size();++idx){
-	r[idx] = tfel::material::getSymmetricOrientationTensor(ss[idx]);
-      }
-      return r;
-    } // end of SlipSystemsDescription::getSymmetricOrientationTensors()
-    
-    std::vector<std::vector<SlipSystemsDescription::stensor>>
-    SlipSystemsDescription::getSymmetricOrientationTensors() const
-    {
-      const auto s = this->getNumberOfSlipSystemsFamilies();
-      auto r = std::vector<std::vector<stensor>>{s};
-      for(size_type i=0;i!=this->getNumberOfSlipSystemsFamilies();++i){
-	r[i] = this->getSymmetricOrientationTensors(i);
-      }
-      return r;
-    } // end of SlipSystemsDescription::getSymmetricOrientationTensors()
 
     std::vector<SlipSystemsDescription::tensor>
     SlipSystemsDescription::getOrientationTensors(const size_type i) const

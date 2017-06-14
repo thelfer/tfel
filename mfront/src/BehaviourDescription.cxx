@@ -1001,12 +1001,12 @@ namespace mfront
 	ssd.addSlipSystemsFamily(s4d.normal,s4d.burgers);
       }
       const auto css = ssd.getSlipSystems(nb);
-      const auto n = "Nss"+std::to_string(nb);
-      StaticVariableDescription v("int",n,0u,
+      StaticVariableDescription v("int","Nss"+std::to_string(nb),0u,
 				  static_cast<int>(css.size()));
       this->addStaticVariable(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 			      v,BehaviourData::UNREGISTRED);
     }
+    
   }
   
   bool BehaviourDescription::areSlipSystemsDefined() const

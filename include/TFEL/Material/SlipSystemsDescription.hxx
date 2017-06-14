@@ -14,11 +14,9 @@
 #ifndef LIB_TFEL_MATERIAL_SLIPSYSTEMSDESCRIPTION_HXX
 #define LIB_TFEL_MATERIAL_SLIPSYSTEMSDESCRIPTION_HXX
 
+#include<array>
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Utilities/GenTypeBase.hxx"
-#include"TFEL/Math/tvector.hxx"
-#include"TFEL/Math/tensor.hxx"
-#include"TFEL/Math/stensor.hxx"
 #include"TFEL/Material/CrystalStructure.hxx"
 
 namespace tfel{
@@ -32,13 +30,11 @@ namespace tfel{
     struct TFELMATERIAL_VISIBILITY_EXPORT SlipSystemsDescription
     {
       //! a simple alias
-      using vec3d = tfel::math::tvector<3u,int>;
+      using vec3d  = std::array<int,3u>;
       //! a simple alias
-      using vec4d = tfel::math::tvector<4u,int>;
+      using vec4d  = std::array<int,4u>;
       //! a simple alias
-      using stensor = tfel::math::stensor<3u,long double>;
-      //! a simple alias
-      using tensor  = tfel::math::tensor<3u,long double>;
+      using tensor = std::array<int,9u>;
       //! 
       struct system3d{
 	vec3d burgers;
@@ -142,24 +138,13 @@ namespace tfel{
       std::vector<system> getSlipSystems(const size_type) const;
       //! \return all the slip systems, sorted by family
       std::vector<std::vector<system>> getSlipSystems() const;
+      //! \return the orientation tensors, sorted by family
+      std::vector<std::vector<tensor>> getOrientationTensors() const;
       /*!
        * \return the orientation tensors associated with the ith family
        * \param[in] i: index
        */
-      std::vector<stensor>
-      getSymmetricOrientationTensors(const size_type) const;
-      //! \return the orientation tensors, sorted by slip system families
-      std::vector<std::vector<stensor>>
-      getSymmetricOrientationTensors() const;
-      //! \return the orientation tensors, sorted by slip system families
-      std::vector<std::vector<tensor>>
-      getOrientationTensors() const;
-      /*!
-       * \return the orientation tensors associated with the ith family
-       * \param[in] i: index
-       */
-      std::vector<tensor>
-      getOrientationTensors(const size_type) const;
+      std::vector<tensor> getOrientationTensors(const size_type) const;
       /*!
        * \return a structure defining the structure of the
        * interaction matrix
