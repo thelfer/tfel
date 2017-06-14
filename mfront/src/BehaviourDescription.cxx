@@ -993,12 +993,12 @@ namespace mfront
       const auto nb = ssd.getNumberOfSlipSystemsFamilies();
       if(s.is<SlipSystemsDescription::system3d>()){
 	const auto& s3d = s.get<SlipSystemsDescription::system3d>();
-	ssd.addSlipSystemsFamily(s3d.normal,s3d.burgers);
+	ssd.addSlipSystemsFamily(s3d.plane,s3d.burgers);
       } else {
 	throw_if(!s.is<SlipSystemsDescription::system4d>(),
 		 "internal error (unsupported slip system definition)");
 	const auto& s4d = s.get<SlipSystemsDescription::system4d>();
-	ssd.addSlipSystemsFamily(s4d.normal,s4d.burgers);
+	ssd.addSlipSystemsFamily(s4d.plane,s4d.burgers);
       }
       const auto css = ssd.getSlipSystems(nb);
       StaticVariableDescription v("int","Nss"+std::to_string(nb),0u,

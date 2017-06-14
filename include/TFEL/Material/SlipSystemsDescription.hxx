@@ -34,16 +34,16 @@ namespace tfel{
       //! a simple alias
       using vec4d  = std::array<int,4u>;
       //! a simple alias
-      using tensor = std::array<int,9u>;
+      using tensor = std::array<long double,9u>;
       //! 
       struct system3d{
 	vec3d burgers;
-	vec3d normal;
+	vec3d plane;
       };
       //! 
       struct system4d{
 	vec4d burgers;
-	vec4d normal;
+	vec4d plane;
       };
       //! a simple alias
       using system = tfel::utilities::GenType<system3d,system4d>;
@@ -105,12 +105,12 @@ namespace tfel{
       //! \return the crystal structure
       CrystalStructure getCrystalStructure() const;
       /*!
-       * \param[in] n: plane normal
+       * \param[in] p: plane
        * \param[in] b: Burgers' vector
        */
       void addSlipSystemsFamily(const vec3d&,const vec3d&);
       /*!
-       * \param[in] n: plane normal
+       * \param[in] p: plane normal
        * \param[in] b: Burgers' vector
        */
       void addSlipSystemsFamily(const vec4d&,const vec4d&);

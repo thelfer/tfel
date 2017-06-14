@@ -48,6 +48,10 @@ namespace numodis
     GSystem InitGSystem(const IBurgers& iburgers,
 			const IPlane& iplane) const;
 
+    virtual Vect3 normal(const IPlane&) const;
+
+    virtual Vect3 burgers_vector(const IBurgers&) const;
+    
     virtual double Norm2(const IBurgers& iburgers) const =0;
     
     virtual GSystem Symmetry(int k,
@@ -259,7 +263,13 @@ namespace numodis
 
     //! Name of the class
     std::string _name;
-
+    //! basis used to compute atomic positions and directions
+    std::vector<Vect3> _alattice;
+    //! basis used to compute Burgers' vector
+    std::vector<Vect3> _blattice;
+    //! basis used to compute plane normal
+    std::vector<Vect3> _plattice;
+    
   };
 
 } // end of namespace numodis

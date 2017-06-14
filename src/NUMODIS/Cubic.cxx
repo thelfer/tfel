@@ -110,13 +110,6 @@ namespace numodis
     //------
     _name = "Cubic";
 
-    //----------------------
-    // basis initialization
-    //----------------------
-    // _alattice.resize(3,Vect3());
-    // _blattice.resize(3,Vect3());
-    // _plattice.resize(3,Vect3());
-
     Init();
 
   }
@@ -129,8 +122,53 @@ namespace numodis
   void Cubic::Init()
   {
     //    _ra0=1.0/_a0;
+    //----------------------
+    // basis initialization
+    //----------------------
+    _alattice.resize(3,Vect3());
+    _alattice[0][0] = 1.0;
+    _alattice[1][1] = 1.0;
+    _alattice[2][2] = 1.0;
+    
+    _blattice.resize(3,Vect3());
+    _blattice[0][0] = 1.0;
+    _blattice[1][1] = 1.0;
+    _blattice[2][2] = 1.0;
+
+    _plattice.resize(3,Vect3());
+    _plattice[0][0] = 1.0;
+    _plattice[1][1] = 1.0;
+    _plattice[2][2] = 1.0;
   }
 
+  Vect3 Cubic::burgers_vector(const IBurgers& iburgers) const
+  {
+    //-------------------------------------
+    // conversion to Crystallo coordinates
+    //-------------------------------------
+    Vect3 xburgers;
+    xburgers[0]=iburgers.getIndex()[0]*_blattice[0][0];
+    xburgers[1]=iburgers.getIndex()[1]*_blattice[1][1];
+    xburgers[2]=iburgers.getIndex()[2]*_blattice[2][2];
+    return xburgers;
+  }
+  
+  Vect3 Cubic::normal(const IPlane& iplane) const
+  {
+    //-------------------------------------
+    // conversion to Crystallo coordinates
+    //-------------------------------------
+    Vect3 xdirection;
+    xdirection[0]=iplane.getIndex()[0]*_plattice[0][0];
+    xdirection[1]=iplane.getIndex()[1]*_plattice[1][1];
+    xdirection[2]=iplane.getIndex()[2]*_plattice[2][2];
+    //--------------------------
+    // convert to a unit vector
+    //--------------------------
+    xdirection.Normalize();
+    return xdirection;
+  }
+  
   //===========================================================
   // Cubic::Norm2
   //-----------------------------------------------------------

@@ -110,25 +110,25 @@ namespace mfront{
 				     "treatKeyword: "+msg));}
     };
     auto gs = [&m,&p,&throw_if,pe](){
-      const auto normal    = CxxTokenizer::readList(m,"{","}",p,pe);
+      const auto plane    = CxxTokenizer::readList(m,"{","}",p,pe);
       const auto direction = CxxTokenizer::readList(m,"<",">",p,pe);
-      throw_if(normal.size()!=direction.size(),"normal and direction don't match in size");
-      throw_if((normal.size()!=3u)&&(normal.size()!=4u),
-	       "invalid definition of a normal "
+      throw_if(plane.size()!=direction.size(),"plane and direction don't match in size");
+      throw_if((plane.size()!=3u)&&(plane.size()!=4u),
+	       "invalid definition of a plane "
 	       "(must be an array of 3 or 4 integers, read '"+
-	       std::to_string(normal.size())+"' values)");
+	       std::to_string(plane.size())+"' values)");
       BehaviourDescription::SlipSystem s;
-      if(normal.size()==3u){
+      if(plane.size()==3u){
 	SlipSystemsDescription::system3d s3d;
 	for(tfel::math::tvector<3u,int>::size_type i=0;i!=3;++i){
-	  s3d.normal[i]  = std::stoi(normal[i].value);
+	  s3d.plane[i]  = std::stoi(plane[i].value);
 	  s3d.burgers[i] = std::stoi(direction[i].value);
 	}
 	s = s3d;
       } else {
 	SlipSystemsDescription::system4d s4d;
 	for(tfel::math::tvector<4u,int>::size_type i=0;i!=4;++i){
-	  s4d.normal[i]  = std::stoi(normal[i].value);
+	  s4d.plane[i]  = std::stoi(plane[i].value);
 	  s4d.burgers[i] = std::stoi(direction[i].value);
 	}
 	s = s4d;

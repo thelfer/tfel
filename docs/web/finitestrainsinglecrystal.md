@@ -86,7 +86,7 @@ keywords: `@SlidingSystems`, `@GlidingSystems` or
 definition of the families of slip systems.
 
 For `Cubic` and `FCC` crystal structures, a slip system is defined by
-the normal to the plane and the Burgers'vector as follows:
+its plane and its Burgers'vector as follows:
 
 ~~~~{.cpp}
 {1,-1,0}<1,1,1>
@@ -135,7 +135,7 @@ Consider the following example:
 @Behaviour SlipSystemGenerationTest;
 @Brick     FiniteStrainSingleCrystal;
 @CrystalStructure FCC;
-@SlidingSystem {1,-1,0}<1,1,1>;
+@SlidingSystem <1,-1,0>{1,1,1};
 ~~~~
 
 If the previous code is saved a file called
@@ -144,7 +144,7 @@ follows:
 
 ~~~~{.sh}
 $ mfront-query --slip-systems
-- {1,-1,0}<1,1,1>: {0,1,1}<1,1,-1> {0,1,1}<1,-1,1> {0,1,-1}<1,1,1> {0,1,-1}<1,-1,-1> {1,0,1}<1,1,-1> {1,0,1}<1,-1,-1> {1,0,-1}<1,1,1> {1,0,-1}<1,-1,1> {1,1,0}<1,-1,-1> {1,1,0}<1,-1,1> {1,-1,0}<1,1,1> {1,-1,0}<1,1,-1>
+- (1,-1,0)[1,1,1]: (0,1,1)[1,1,-1] (0,1,1)[1,-1,1] (0,1,-1)[1,1,1] (0,1,-1)[1,-1,-1] (1,0,1)[1,1,-1] (1,0,1)[1,-1,-1] (1,0,-1)[1,1,1] (1,0,-1)[1,-1,1] (1,1,0)[1,-1,-1] (1,1,0)[1,-1,1] (1,-1,0)[1,1,1] (1,-1,0)[1,1,-1]
 ~~~~
 
 The output shows that \(12\) slip systems were generated. All those
@@ -164,18 +164,18 @@ this example:
 
 ~~~~{.sh}
 $ mfront-query --slip-systems-by-index
-- 0: {0,1,1}<1,1,-1>
-- 1: {0,1,1}<1,-1,1>
-- 2: {0,1,-1}<1,1,1>
-- 3: {0,1,-1}<1,-1,-1>
-- 4: {1,0,1}<1,1,-1>
-- 5: {1,0,1}<1,-1,-1>
-- 6: {1,0,-1}<1,1,1>
-- 7: {1,0,-1}<1,-1,1>
-- 8: {1,1,0}<1,-1,-1>
-- 9: {1,1,0}<1,-1,1>
-- 10: {1,-1,0}<1,1,1>
-- 11: {1,-1,0}<1,1,-1>
+- 0: (0,1,1)[1,1,-1]
+- 1: (0,1,1)[1,-1,1]
+- 2: (0,1,-1)[1,1,1]
+- 3: (0,1,-1)[1,-1,-1]
+- 4: (1,0,1)[1,1,-1]
+- 5: (1,0,1)[1,-1,-1]
+- 6: (1,0,-1)[1,1,1]
+- 7: (1,0,-1)[1,-1,1]
+- 8: (1,1,0)[1,-1,-1]
+- 9: (1,1,0)[1,-1,1]
+- 10: (1,-1,0)[1,1,1]
+- 11: (1,-1,0)[1,1,-1]
 ~~~~
 
 ### Definition of the interaction matrix

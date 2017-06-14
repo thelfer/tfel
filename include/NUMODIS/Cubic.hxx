@@ -44,6 +44,10 @@ namespace numodis
 
     Cubic();
 
+    virtual Vect3 burgers_vector(const IBurgers&) const override;
+    
+    virtual Vect3 normal(const IPlane&) const override;
+    
     virtual double Norm2(const IBurgers& iburgers) const override;
 
     virtual int getNsymmetries() const override;

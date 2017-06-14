@@ -42,8 +42,29 @@ namespace numodis
     _name="HCP";
 
     //---------------
+    // atom basis
+    //---------------
+    _alattice.resize(4,Vect3());
+    _alattice[0][0]= sqrt(3.)/2.;
+    _alattice[0][1]= 1/2.;
+    _alattice[0][2]= 0.;
+
+    _alattice[1][0]=-sqrt(3.)/2.;
+    _alattice[1][1]= 1/2.;
+    _alattice[1][2]= 0.;
+
+    _alattice[2][0]= 0.;
+    _alattice[2][1]=-1.;
+    _alattice[2][2]= 0.;
+
+    _alattice[3][0]= 0.;
+    _alattice[3][1]= 0.;
+    _alattice[3][2]= _ratio;
+    
+    //---------------
     // Burgers basis
     //---------------
+    _blattice.resize(4,Vect3());
     _blattice[0][0]= sqrt(3.)/2.;
     _blattice[0][1]= 1/2.;
     _blattice[0][2]= 0.;
@@ -59,6 +80,26 @@ namespace numodis
     _blattice[3][0]= 0.;
     _blattice[3][1]= 0.;
     _blattice[3][2]= _ratio;
+
+    //-------------
+    // plane basis
+    //-------------
+    _plattice.resize(4,Vect3());
+    _plattice[0][0]= sqrt(3.)/12.;
+    _plattice[0][1]= 1./12.;
+    _plattice[0][2]= 0.;
+
+    _plattice[1][0]=-sqrt(3.)/12;
+    _plattice[1][1]= 1./12.;
+    _plattice[1][2]= 0.;
+
+    _plattice[2][0]= 0.;
+    _plattice[2][1]=-1./6. ;
+    _plattice[2][2]= 0.;
+
+    _plattice[3][0]= 0.;
+    _plattice[3][1]= 0.;
+    _plattice[3][2]= 1./(4.*_ratio);
 
   }
 

@@ -46,6 +46,25 @@ namespace numodis
     return GSystem(iburgers,iplane);
   }
 
+  Vect3 Crystallo::normal(const IPlane& iplane) const
+  {
+    // rotation
+    Vect3 xdirection;
+    for(unsigned i=0; i<this->_alattice.size(); i++)
+      xdirection+=static_cast<double>(iplane[i])*(this->_plattice[i]);
+    // convert to a unit vector
+    xdirection.Normalize();
+    return xdirection;
+  }
+  
+  Vect3 Crystallo::burgers_vector(const IBurgers& iburgers) const
+  {
+    Vect3 xburgers;
+    for(unsigned i=0; i<_blattice.size(); i++)
+      xburgers+=(double)(iburgers.getIndex()[i])*_blattice[i];
+    return xburgers;
+  }
+  
   //=====================================================================
   // Crystallo::ComputeJunctionGSystem
   //---------------------------------------------------------------------

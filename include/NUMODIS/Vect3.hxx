@@ -36,7 +36,7 @@ namespace numodis
 
   */
   //===============================================================
-  struct Vect3
+  struct TFELNUMODIS_VISIBILITY_EXPORT Vect3
   {
 
     Vect3();

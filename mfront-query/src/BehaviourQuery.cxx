@@ -58,21 +58,21 @@ namespace mfront{
     using std::to_string;
     auto r = std::string{};
     if(gs.is<SlipSystemsDescription::system3d>()){
-      const auto& n = gs.get<SlipSystemsDescription::system3d>().normal;
+      const auto& p = gs.get<SlipSystemsDescription::system3d>().plane;
       const auto& b = gs.get<SlipSystemsDescription::system3d>().burgers;
-      r += '{'+to_string(n[0])+','+to_string(n[1])+','+to_string(n[2])+'}';
-      r += '<'+to_string(b[0])+','+to_string(b[1])+','+to_string(b[2])+'>';
+      r += '('+to_string(p[0])+','+to_string(p[1])+','+to_string(p[2])+')';
+      r += '['+to_string(b[0])+','+to_string(b[1])+','+to_string(b[2])+']';
     } else {
       if(!gs.is<SlipSystemsDescription::system4d>()){
 	throw(std::runtime_error("to_string: internal error "
 				 "(unsupported slip system type)"));
       }
-      const auto& n = gs.get<SlipSystemsDescription::system3d>().normal;
+      const auto& p = gs.get<SlipSystemsDescription::system3d>().plane;
       const auto& b = gs.get<SlipSystemsDescription::system3d>().burgers;
-      r += '{'+to_string(n[0])+','+to_string(n[1])+','+
-	to_string(n[2])+','+to_string(n[3])+'}';
-      r += '<'+to_string(b[0])+','+to_string(b[1])+','+
-	to_string(b[2])+','+to_string(b[3])+'>';
+      r += '('+to_string(p[0])+','+to_string(p[1])+','+
+	to_string(p[2])+','+to_string(p[3])+')';
+      r += '['+to_string(b[0])+','+to_string(b[1])+','+
+	to_string(b[2])+','+to_string(b[3])+']';
     }
     return r;
   } // end of to_string
