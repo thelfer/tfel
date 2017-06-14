@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include <stdexcept>
 #include <sstream>
 #include <vector>
 #include <string>
