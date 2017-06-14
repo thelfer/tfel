@@ -76,37 +76,42 @@ struct SlipSystemsDescriptionTest final
     using vec3d    = SlipSystemsDescription::vec3d;
     using system3d = SlipSystemsDescription::system3d;
     auto ssd = SlipSystemsDescription(CrystalStructure::FCC);
+    auto make_vec = [](const int v0,const int v1, const int v2){
+      auto v = vec3d();
+      v[0]=v0;v[1]=v1;v[2]=v2;
+      return v;
+    };
     /* slip systems */
-    ssd.addSlipSystemsFamily(vec3d{1,-1,1},vec3d{1,1,0});
+    ssd.addSlipSystemsFamily(make_vec(1,-1,1),make_vec(1,1,0));
     TFEL_TESTS_CHECK_EQUAL(ssd.getNumberOfSlipSystemsFamilies(),1u);
     TFEL_TESTS_CHECK_THROW(ssd.getSlipSystemFamily(1),
 			   std::runtime_error);
     const auto& gsf = ssd.getSlipSystemFamily(0);
     TFEL_TESTS_ASSERT(gsf.is<system3d>());
     const auto ssf0 = gsf.get<system3d>();
-    TFEL_TESTS_ASSERT(equal(ssf0.burgers,{1,1,0}));
-    TFEL_TESTS_ASSERT(equal(ssf0.plane,{1,-1,1}));
+    TFEL_TESTS_ASSERT(equal(ssf0.burgers,make_vec(1,1,0)));
+    TFEL_TESTS_ASSERT(equal(ssf0.plane,make_vec(1,-1,1)));
     const auto gs = ssd.getSlipSystems();
     TFEL_TESTS_CHECK_EQUAL(gs.size(),1u);
     const auto& gs0 = gs[0];
     TFEL_TESTS_CHECK_EQUAL(gs0.size(),12u);
-    TFEL_TESTS_ASSERT(contains(gs0,vec3d{1,1,1},vec3d{0,1,-1}));
-    TFEL_TESTS_ASSERT(contains(gs0,vec3d{1,1,1},vec3d{1,0,-1}));
-    TFEL_TESTS_ASSERT(contains(gs0,vec3d{1,1,1},vec3d{1,-1,0}));
-    TFEL_TESTS_ASSERT(contains(gs0,vec3d{1,1,-1},vec3d{0,1,1}));
-    TFEL_TESTS_ASSERT(contains(gs0,vec3d{1,1,-1},vec3d{1,0,1}));
-    TFEL_TESTS_ASSERT(contains(gs0,vec3d{1,1,-1},vec3d{1,-1,0}));
-    TFEL_TESTS_ASSERT(contains(gs0,vec3d{1,-1,-1},vec3d{0,1,-1}));
-    TFEL_TESTS_ASSERT(contains(gs0,vec3d{1,-1,-1},vec3d{1,0,1}));
-    TFEL_TESTS_ASSERT(contains(gs0,vec3d{1,-1,-1},vec3d{1,1,0}));
-    TFEL_TESTS_ASSERT(contains(gs0,vec3d{1,-1,1},vec3d{0,1,1}));
-    TFEL_TESTS_ASSERT(contains(gs0,vec3d{1,-1,1},vec3d{1,0,-1}));
-    TFEL_TESTS_ASSERT(contains(gs0,vec3d{1,-1,1},vec3d{1,1,0}));
+    TFEL_TESTS_ASSERT(contains(gs0,make_vec(1,1,1),make_vec(0,1,-1)));
+    TFEL_TESTS_ASSERT(contains(gs0,make_vec(1,1,1),make_vec(1,0,-1)));
+    TFEL_TESTS_ASSERT(contains(gs0,make_vec(1,1,1),make_vec(1,-1,0)));
+    TFEL_TESTS_ASSERT(contains(gs0,make_vec(1,1,-1),make_vec(0,1,1)));
+    TFEL_TESTS_ASSERT(contains(gs0,make_vec(1,1,-1),make_vec(1,0,1)));
+    TFEL_TESTS_ASSERT(contains(gs0,make_vec(1,1,-1),make_vec(1,-1,0)));
+    TFEL_TESTS_ASSERT(contains(gs0,make_vec(1,-1,-1),make_vec(0,1,-1)));
+    TFEL_TESTS_ASSERT(contains(gs0,make_vec(1,-1,-1),make_vec(1,0,1)));
+    TFEL_TESTS_ASSERT(contains(gs0,make_vec(1,-1,-1),make_vec(1,1,0)));
+    TFEL_TESTS_ASSERT(contains(gs0,make_vec(1,-1,1),make_vec(0,1,1)));
+    TFEL_TESTS_ASSERT(contains(gs0,make_vec(1,-1,1),make_vec(1,0,-1)));
+    TFEL_TESTS_ASSERT(contains(gs0,make_vec(1,-1,1),make_vec(1,1,0)));
     /* interaction matrix */
     const auto im = ssd.getInteractionMatrixStructure();
     TFEL_TESTS_CHECK_EQUAL(im.rank(),7u);
-    TFEL_TESTS_CHECK_EQUAL(im.getRank(system3d{vec3d{0,1,-1},vec3d{1,1,1}},
-				      system3d{vec3d{0,1,-1},vec3d{1,1,1}}),0u);
+    TFEL_TESTS_CHECK_EQUAL(im.getRank(system3d{make_vec(0,1,-1),make_vec(1,1,1)},
+				      system3d{make_vec(0,1,-1),make_vec(1,1,1)}),0u);
   }
 };
 
