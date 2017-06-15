@@ -67,13 +67,14 @@ namespace tfel{
 	}
       };
 
+
       //! an helper function to call the assignement operator of T.
       /*
        * \author Helfer Thomas.
-       * \date   20 Apr. 2007.
+       * \date   15/06/2017.
        */
       template<typename T>
-      struct TFEL_VISIBILITY_LOCAL GenTypeAssign
+      struct TFEL_VISIBILITY_LOCAL GenTypeDefaultAssign
       {
 	//! the helper function.
 	/*
@@ -88,6 +89,43 @@ namespace tfel{
 	  const T& tmp2 = *(static_cast<const T *>(p2)); 
 	  tmp = tmp2;
 	}
+      };
+      //! an helper function to call the assignement operator of T.
+      /*
+       * \author Helfer Thomas.
+       * \date   15/06/2017.
+       */
+      template<typename T>
+      struct TFEL_VISIBILITY_LOCAL GenTypeNoAssign
+      {
+	//! the helper function.
+	/*
+	 * \param void *const, a pointer to a T-object.
+	 * \param const void *const, a pointer to a T-object.
+	 * \return const bool, the result of the comparison.
+	 */
+	static void
+	exe(void *const,const void *const)
+	{
+	  throw(std::runtime_error("GenTypeAssign: "
+				   "type is not assignable"));
+	}
+      };
+      //! an helper function to call the assignement operator of T.
+      /*
+       * \author Helfer Thomas.
+       * \date   20 Apr. 2007.
+       */
+      template<typename T>
+      struct TFEL_VISIBILITY_LOCAL GenTypeAssign
+	: public std::conditional<std::is_assignable<T,T>::value,
+				  GenTypeDefaultAssign<T>,
+				  GenTypeNoAssign<T>>::type
+      {
+	using impl = typename std::conditional<std::is_assignable<T,T>::value,
+					       GenTypeDefaultAssign<T>,
+					       GenTypeNoAssign<T>>::type;
+	using impl::exe;
       };
 
       //! an helper function to call the copy constructor of T.
@@ -266,9 +304,14 @@ namespace tfel{
        * \tparam R: result
        */ 
       template<typename T,typename R = T>
-      using requires =
-	typename std::enable_if<tfel::meta::TLCountNbrOfT<typename std::decay<T>::type,
-							  List>::value==1,R>::type;
+      using count = typename tfel::meta::TLCountNbrOfT<typename std::decay<T>::type,List>;
+      /*!
+       * \brief a simple wrapper around std::enable_if
+       * \tparam T: tested type which must belong to List for the requirement to hold true
+       * \tparam R: result
+       */ 
+      template<typename T,typename R = T>
+      using requires = typename std::enable_if<count<T>::value==1,R>::type;
       //! number of object that the GenType can hold
       static constexpr unsigned short ListSize = tfel::meta::TLSize<List>::value;
       //! Default constructor.
