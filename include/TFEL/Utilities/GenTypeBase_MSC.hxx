@@ -153,7 +153,6 @@ namespace tfel{
        */
       bool copy(const GenTypeBase& src)
       {
-	using namespace tfel::meta;
 	this->operator=(src);
 	return true;
       }
@@ -167,27 +166,19 @@ namespace tfel{
       typename std::enable_if<
 	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 	void >::type 
-      set(const T1& src)
+      set(T1&& src)
       {
-	using namespace tfel::meta;
-	using namespace tfel::utilities::internals;
-	if(this->index==TLFindEltPos<T1,List>::value){
-	  // a silly trick to avoir a gcc warning
-	  union{
-	    storage_t *c;
-	    T1 *ptr;
-	  } ptr;
-	  // The GenType already holds an object of type T1
-	  ptr.c = &(this->buffer);
-	  T1& tmp  = *(ptr.ptr);
-	  tmp = src;
-	} else {
-	  // We create a new object of type T1 by calling the copy constructor
-	  this->template set_uninitialised<T1>();
-	  void * p = reinterpret_cast<void*>(&(this->buffer));
-	  // the magic of placement new...
-	  new (p) T1(src);
+	using type = typename std::decay<T1>::type;
+	if(this->template is<type>()){
+	  if(&(this->template get<type>())==&src){
+	    return;
+	  }
 	}
+	// We create a new object of type T1 by calling the copy constructor
+	this->template set_uninitialised<type>();
+	void * p = reinterpret_cast<void*>(&(this->buffer));
+	// the magic of placement new...
+	new (p) type(src);
       }
       //! assignement operator.
       /*

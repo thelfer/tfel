@@ -405,6 +405,11 @@ namespace tfel{
       set(T1&& src)
       {
 	using type = typename std::decay<T1>::type;
+	if(this->template is<type>()){
+	  if(&(this->template get<type>())==&src){
+	    return;
+	  }
+	}
 	// We create a new object of type T1 by calling the copy constructor
 	this->template set_uninitialised<type>();
 	void * p = reinterpret_cast<void*>(&(this->buffer));
