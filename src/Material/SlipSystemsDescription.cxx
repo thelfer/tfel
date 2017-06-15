@@ -215,7 +215,7 @@ namespace tfel{
       return this->cs;
     } // end of SlipSystemsDescription::getCrystalStructure
     
-    void SlipSystemsDescription::addSlipSystemsFamily(const vec3d& p,const vec3d& b)
+    void SlipSystemsDescription::addSlipSystemsFamily(const vec3d& b,const vec3d& p)
     {
       auto throw_if = [](const bool c, const std::string& m){
 	if(c){throw(std::runtime_error("SlipSystemsDescription::addSlipSystemsFamily: "+m));}
@@ -232,7 +232,7 @@ namespace tfel{
       }
     } // end of SlipSystemsDescription::addSlipSystemsFamily
 
-    void SlipSystemsDescription::addSlipSystemsFamily(const vec4d& p,const vec4d& b)
+    void SlipSystemsDescription::addSlipSystemsFamily(const vec4d& b,const vec4d& p)
     {
       auto throw_if = [](const bool c, const std::string& m){
 	if(c){throw(std::runtime_error("SlipSystemsDescription::addSlipSystemsFamily: "+m));}

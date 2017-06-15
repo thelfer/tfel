@@ -49,35 +49,40 @@ private:
       v[0]=v0;v[1]=v1;v[2]=v2;
       return v;
     };
-    auto make_sys = [](const vec3d& p,const vec3d& b){
+    auto make_sys = [](const vec3d& d,const vec3d& p){
       auto s = system3d();
       s.plane   = p;
-      s.burgers = b;
+      s.burgers = d;
       return system(s);
     };
-    const auto gs = make_sys(make_vec(1,1,-1),
-			     make_vec(0,1,1));
+    const auto gs = make_sys(make_vec(1,-1,0),
+			     make_vec(1,1,1));
     mfront::BehaviourDescription bd;
     bd.setSymmetryType(mfront::ORTHOTROPIC);
     bd.setCrystalStructure(CrystalStructure::BCC);
     bd.setSlipSystems(std::vector<system>(1u,gs));
     const auto o = bd.getSlipSystems().getOrientationTensors(0);
     for(const auto& t : o){
-      // std::cout << "\nt: " << t[0] << " " << t[1] << " " << t[2] << '\n';
+      std::cout << "\nt: " << t[0] << " " << t[1] << " " << t[2]
+		<<" " << t[3] << " " << t[4] << " " << t[5]
+		<<" " << t[6] << " " << t[7] << " " << t[8]
+		<< '\n';
       const auto b = [&ss,&t](){
 	for(const auto& mu : ss.mu){
-	  // std::cout << "mu: " << mu << '\n';
-	  auto e = real{};
+	  std::cout << "mu: " << mu << '\n';
+	  auto e1 = real{};
+	  auto e2 = real{};
 	  for(decltype(t.size()) i=0;i!=t.size();++i){
-	    e += std::abs(t[i]-mu[i]);
+	    e1 += std::abs(t[i]-mu[i]);
+	    e2 += std::abs(t[i]-mu[i]);
 	  }
-	  if(e<1.e-14){
+	  if((e1<1.e-14)||(e2<1.e-14)){
 	    return true;
 	  }
 	}
 	return false;
       }();
-      //      TFEL_TESTS_ASSERT(b);
+      // TFEL_TESTS_ASSERT(b);
     }
   }
 };

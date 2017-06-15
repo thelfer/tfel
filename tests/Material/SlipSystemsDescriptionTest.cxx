@@ -82,7 +82,7 @@ struct SlipSystemsDescriptionTest final
       return v;
     };
     /* slip systems */
-    ssd.addSlipSystemsFamily(make_vec(1,-1,1),make_vec(1,1,0));
+    ssd.addSlipSystemsFamily(make_vec(1,1,0),make_vec(1,-1,1));
     TFEL_TESTS_CHECK_EQUAL(ssd.getNumberOfSlipSystemsFamilies(),1u);
     TFEL_TESTS_CHECK_THROW(ssd.getSlipSystemFamily(1),
 			   std::runtime_error);

@@ -81,6 +81,19 @@ namespace mfront{
     }
     return r;
   } // end of to_string
+
+  static std::string to_string(const std::array<long double,9u>& a){
+    auto r = std::string{};
+    r += '[';
+    for(decltype(a.size()) i=0;i!=a.size();){
+      r+= std::to_string(a[i]);
+      if(++i!=9){
+	r+= ',';
+      }
+    }
+    r+=']';
+    return r;
+  }
   
   BehaviourQuery::BehaviourQuery(const int argc,
 				 const char *const *const argv,
@@ -140,6 +153,9 @@ namespace mfront{
       {"--crystal-structure","return the crystal structure"},
       {"--slip-systems","list all the slip systems, sorted by family"},
       {"--slip-systems-by-index","list all the slip systems"},
+      {"--orientation-tensors","list all the orientation tensors, sorted by family"},
+      {"--orientation-tensors-by-index","list all the orientation tensors"},
+      {"--orientation-tensors-by-slip-system","list all the orientation tensors"},
       {"--interaction-matrix","show the interaction matrix"},
       {"--interaction-matrix-structure","show the structure of the interaction matrix"},
       {"--supported-modelling-hypotheses","show the list of supported modelling hypothesis"},
@@ -335,6 +351,63 @@ namespace mfront{
 	      const auto gss = ssd.getSlipSystems(i);
 	      for(const auto& gs : gss){
 		cout << "- " << r << ": " << to_string(gs) << '\n';
+		++r;
+	      }
+	    }
+	  }});
+    } else if(qn=="--orientation-tensors"){
+      this->queries.push_back({"orientation-tensors",[](const FileDescription&,
+						 const BehaviourDescription& d,
+						 const Hypothesis){
+	    if(!d.areSlipSystemsDefined()){
+	      throw(std::runtime_error("no slip system defined"));
+	    }
+	    const auto& ssd = d.getSlipSystems();
+	    const auto nss = ssd.getNumberOfSlipSystemsFamilies();
+	    for(size_t i=0;i!=nss;++i){
+	      const auto os = ssd.getOrientationTensors(i);
+	      cout << "- " << to_string(ssd.getSlipSystemFamily(i),true) << ":";
+	      for(const auto& o : os){
+		cout << " " << to_string(o);
+	      }
+	      cout << '\n';
+	    }
+	  }});
+    } else if(qn=="--orientation-tensors-by-index"){
+      this->queries.push_back({"orientation-tensors-by-index",
+	    [](const FileDescription&,
+	       const BehaviourDescription& d,
+	       const Hypothesis){
+	    if(!d.areSlipSystemsDefined()){
+	      throw(std::runtime_error("no slip system defined"));
+	    }
+	    const auto& ssd = d.getSlipSystems();
+	    const auto nss = ssd.getNumberOfSlipSystemsFamilies();
+	    auto r = size_t{};
+	    for(size_t i=0;i!=nss;++i){
+	      const auto os = ssd.getOrientationTensors(i);
+	      for(const auto& o : os){
+		cout << "- " << r << ": " << to_string(o) << '\n';
+		++r;
+	      }
+	    }
+	  }});
+    } else if(qn=="--orientation-tensors-by-slip-system"){
+      this->queries.push_back({"orientation-tensors-by-slip-system",
+	    [](const FileDescription&,
+	       const BehaviourDescription& d,
+	       const Hypothesis){
+	    if(!d.areSlipSystemsDefined()){
+	      throw(std::runtime_error("no slip system defined"));
+	    }
+	    const auto& ssd = d.getSlipSystems();
+	    const auto nss = ssd.getNumberOfSlipSystemsFamilies();
+	    auto r = size_t{};
+	    for(size_t i=0;i!=nss;++i){
+	      const auto os = ssd.getOrientationTensors(i);
+	      const auto ss = ssd.getSlipSystems(i);
+	      for(decltype(ss.size()) j=0;j!=ss.size();++j){
+		cout << "- " << to_string(ss[j]) << ": " << to_string(os[j]) << '\n';
 		++r;
 	      }
 	    }

@@ -105,13 +105,13 @@ namespace tfel{
       //! \return the crystal structure
       CrystalStructure getCrystalStructure() const;
       /*!
-       * \param[in] p: plane
        * \param[in] b: Burgers' vector
+       * \param[in] p: plane
        */
       void addSlipSystemsFamily(const vec3d&,const vec3d&);
       /*!
-       * \param[in] p: plane normal
        * \param[in] b: Burgers' vector
+       * \param[in] p: plane normal
        */
       void addSlipSystemsFamily(const vec4d&,const vec4d&);
       //! \return the number of slip systems families
