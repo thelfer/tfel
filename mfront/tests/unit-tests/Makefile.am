@@ -17,7 +17,8 @@ test_PROGRAMS = DSLTest                                    \
 		TargetsDescriptionTest                     \
 		StandardElasticityBrickTest                \
 		LocalDataStructureTest                     \
-		ComputeStiffnessTensorTest
+		ComputeStiffnessTensorTest                 \
+		SlipSystemsTest
 
 
 DSLTest_SOURCES                     = DSLTest.cxx
@@ -32,6 +33,7 @@ StandardElasticityBrickTest_SOURCES = StandardElasticityBrickTest.cxx
 LocalDataStructureTest_SOURCES      = LocalDataStructureTest.cxx
 ComputeStiffnessTensorTest_SOURCES  = ComputeStiffnessTensorTest.cxx
 BehaviourDescriptionBoundsHandlingTest_SOURCES = BehaviourDescriptionBoundsHandlingTest.cxx
+SlipSystemsTest_SOURCES    = SlipSystemsTest.cxx
 
 LDADD = -L$(top_builddir)/mfront/src    \
 	-L$(top_builddir)/src/Material  \

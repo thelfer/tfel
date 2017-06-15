@@ -144,7 +144,20 @@ namespace tfel
       };
       throw_if(s.empty());
       std::size_t p;
-      const double r = std::stod(s,&p);
+      const auto r = std::stod(s,&p);
+      throw_if(p!=s.size());
+      return r;
+    }
+
+    template<>
+    long double convert<>(const std::string& s){
+      auto throw_if = [&s](const bool b){
+	if(b){throw(std::invalid_argument("tfel::utilities::convert: could not "
+					  "convert '"+s+"' to long double"));}
+      };
+      throw_if(s.empty());
+      std::size_t p;
+      const auto r = std::stol(s,&p);
       throw_if(p!=s.size());
       return r;
     }

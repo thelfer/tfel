@@ -126,6 +126,13 @@ namespace tfel{
     template<>
     TFELUTILITIES_VISIBILITY_EXPORT
     double convert<>(const std::string&);
+    /*!
+     * \brief partial specialisation for double
+     * \param[in] s: string to be converted
+     */
+    template<>
+    TFELUTILITIES_VISIBILITY_EXPORT
+    long double convert<>(const std::string&);
     
   } // end of namespace utilities
 

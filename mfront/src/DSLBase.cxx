@@ -694,7 +694,7 @@ namespace mfront
       r.push_back(tfel::utilities::convert<double>(t.value));
     }
     return r;
-  } // end of DSLBase::readArrayOfString
+  } // end of DSLBase::readArrayOfDouble
 
   bool DSLBase::readBooleanValue(const std::string& m)
   {

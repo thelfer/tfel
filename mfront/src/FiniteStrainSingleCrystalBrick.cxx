@@ -11,13 +11,12 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
-
 #include<fstream>
 #include<sstream>
 #include<stdexcept>
 
 #include "TFEL/Utilities/Data.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/System/System.hxx"
@@ -110,9 +109,10 @@ namespace mfront{
 				     "treatKeyword: "+msg));}
     };
     auto gs = [&m,&p,&throw_if,pe](){
-      const auto plane    = CxxTokenizer::readList(m,"{","}",p,pe);
       const auto direction = CxxTokenizer::readList(m,"<",">",p,pe);
-      throw_if(plane.size()!=direction.size(),"plane and direction don't match in size");
+      const auto plane     = CxxTokenizer::readList(m,"{","}",p,pe);
+      throw_if(plane.size()!=direction.size(),
+	       "plane and direction don't match in size");
       throw_if((plane.size()!=3u)&&(plane.size()!=4u),
 	       "invalid definition of a plane "
 	       "(must be an array of 3 or 4 integers, read '"+
@@ -166,6 +166,8 @@ namespace mfront{
 	this->bd.setCrystalStructure(CrystalStructure::Cubic);
       } else if(cs=="FCC"){
 	this->bd.setCrystalStructure(CrystalStructure::FCC);
+      } else if(cs=="BCC"){
+	this->bd.setCrystalStructure(CrystalStructure::BCC);
       } else if(cs=="HCP"){
 	this->bd.setCrystalStructure(CrystalStructure::HCP);
       } else {
@@ -174,37 +176,20 @@ namespace mfront{
       CxxTokenizer::readSpecifiedToken(m,";",p,pe);
       return {true,p};
     } else if (key=="@InteractionMatrix"){
-      throw_if(true,"unsupported");
-      // CxxTokenizer::checkNotEndOfLine(m,p,pe);
-      // bool symmetric = false;
-      // if(p->value=="<"){
-      // 	const auto options = CxxTokenizer::readList(m,"<",">",p,pe);
-      // 	for(const auto& o:options){
-      // 	  if(o.value=="Symmetric"){
-      // 	    symmetric=true;
-      // 	  } else {
-      // 	    throw_if(true,"unsupported option '"+o.value+"'");
-      // 	  }
-      // 	}
-      // }
-      // if(symmetric){
-      // 	// read 6 values
-      // 	const auto v = CxxTokenizer::readArray(m,p,pe);
-      // 	CxxTokenizer::readSpecifiedToken(m,";",p,pe);
-      // 	throw_if(v.size()!=6u,"invalid number of values given "
-      // 		 "(expected 6 values)");
-      // 	std::array<double,6u> mv;
-      // 	for(std::array<double,6u>::size_type i=0;i!=6;++i){
-      // 	  mv[i] = std::stod(v[i]);
-      // 	}
-      // 	this->bd.setInteractionMatrix(mv);
-      // 	return {true,p};
-      // } else {
-      // 	// CxxTokenizer::readSpecifiedToken(m,";",p,pe);
-      // 	throw_if(true,"unsymmetric interaction matrix "
-      // 		 "are not supported yet");
-      // 	return {true,p};
-      // }
+      throw_if(!this->bd.areSlipSystemsDefined(),
+	       "slip systems have not been defined");
+      const auto& im     = this->bd.getInteractionMatrixStructure();
+      const auto  r      = im.rank();
+      const auto  mv = CxxTokenizer::readArray(m,p,pe);
+      throw_if(mv.size()!=r,"the number of values does "
+	       "not match the number of independent coefficients "
+	       "in the interaction matrix");
+      auto imv = std::vector<long double>{};
+      imv.reserve((mv.size()));
+      for(const auto& v:mv){
+	imv.push_back(tfel::utilities::convert<long double>(v));
+      }
+      this->bd.setInteractionMatrix(imv);
     }
     return BehaviourBrickBase::treatKeyword(key,p,pe);
   } // end of FiniteStrainSingleCrystalBrick::treatKeyword

@@ -52,27 +52,32 @@ namespace mfront{
     return p->second;
   }
 
-  static std::string to_string(const BehaviourDescription::SlipSystem& gs){
+  static std::string to_string(const BehaviourDescription::SlipSystem& gs,
+			       const bool f = false){
     using SlipSystemsDescription =
       BehaviourDescription::SlipSystemsDescription;
     using std::to_string;
     auto r = std::string{};
+    const auto bb = f ? '<' : '[';
+    const auto be = f ? '>' : ']';
+    const auto pb = f ? '{' : '(';
+    const auto pe = f ? '}' : ')';
     if(gs.is<SlipSystemsDescription::system3d>()){
       const auto& p = gs.get<SlipSystemsDescription::system3d>().plane;
       const auto& b = gs.get<SlipSystemsDescription::system3d>().burgers;
-      r += '('+to_string(p[0])+','+to_string(p[1])+','+to_string(p[2])+')';
-      r += '['+to_string(b[0])+','+to_string(b[1])+','+to_string(b[2])+']';
+      r += bb+to_string(b[0])+','+to_string(b[1])+','+to_string(b[2])+be;
+      r += pb+to_string(p[0])+','+to_string(p[1])+','+to_string(p[2])+pe;
     } else {
       if(!gs.is<SlipSystemsDescription::system4d>()){
 	throw(std::runtime_error("to_string: internal error "
 				 "(unsupported slip system type)"));
       }
-      const auto& p = gs.get<SlipSystemsDescription::system3d>().plane;
-      const auto& b = gs.get<SlipSystemsDescription::system3d>().burgers;
-      r += '('+to_string(p[0])+','+to_string(p[1])+','+
-	to_string(p[2])+','+to_string(p[3])+')';
-      r += '['+to_string(b[0])+','+to_string(b[1])+','+
-	to_string(b[2])+','+to_string(b[3])+']';
+      const auto& p = gs.get<SlipSystemsDescription::system4d>().plane;
+      const auto& b = gs.get<SlipSystemsDescription::system4d>().burgers;
+      r += bb+to_string(b[0])+','+to_string(b[1])+','+
+	to_string(b[2])+','+to_string(b[3])+be;
+      r += pb+to_string(p[0])+','+to_string(p[1])+','+
+	to_string(p[2])+','+to_string(p[3])+pe;
     }
     return r;
   } // end of to_string
@@ -124,13 +129,6 @@ namespace mfront{
        "- 1: small strain behaviour\n"
        "- 2: finite strain behaviour\n"
        "- 3: cohesive zone model\n"},
-      // {"--kinematic","return the behaviour kinematic\n"
-      //  "The value returned has the following meaning:\n"
-      //  "- 0: undefined kinematic\n"
-      //  "- 1: standard small strain behaviour kinematic\n"
-      //  "- 2: cohesive zone model kinematic\n"
-      //  "- 3: standard finite strain kinematic (F-Cauchy)\n"
-      //  "- 4: ptest finite strain kinematic (eto-pk1)\n"},
       {"--symmetry","return the behaviour symmetry. If the returned value is 0, "
        "the behaviour is isotropic. If the returned value is 1, "
        "the behaviour is orthotropic."},
@@ -265,12 +263,6 @@ namespace mfront{
 	    } else {
 	      throw(std::runtime_error("unsupported behaviour type"));
 	    }}});
-    // } else if(qn=="--kinematic"){
-    //   this->queries.push_back({"kinematic",[](const FileDescription&,
-    // 					 const BehaviourDescription& d,
-    // 					 const Hypothesis){
-    // 	    cout << d.getBehaviourKinematic() << '\n';
-    // }});
     } else if(qn=="--symmetry"){
       this->queries.push_back({"symmetry",[](const FileDescription&,
 					 const BehaviourDescription& d,
@@ -321,7 +313,7 @@ namespace mfront{
 	    const auto nss = ssd.getNumberOfSlipSystemsFamilies();
 	    for(size_t i=0;i!=nss;++i){
 	      const auto gss = ssd.getSlipSystems(i);
-	      cout << "- " << to_string(ssd.getSlipSystemFamily(i)) << ":";
+	      cout << "- " << to_string(ssd.getSlipSystemFamily(i),true) << ":";
 	      for(const auto& gs : gss){
 		cout << " " << to_string(gs);
 	      }
@@ -355,7 +347,7 @@ namespace mfront{
 	    if(!d.areSlipSystemsDefined()){
 	      throw(std::runtime_error("no slip system defined"));
 	    }
-	    const auto& im     = d.getInteractionMatrix();
+	    const auto& im     = d.getInteractionMatrixStructure();
 	    const auto  r      = im.rank();
 	    const auto& ssis_r = im.getSlidingSystemsInteraction();
 	    cout << "- number of independent coefficients: " << r << '\n';
@@ -379,7 +371,7 @@ namespace mfront{
 	      throw(std::runtime_error("no slip system defined"));
 	    }
 	    const auto& ssd = d.getSlipSystems();
-	    const auto& im  = d.getInteractionMatrix();
+	    const auto& im  = d.getInteractionMatrixStructure();
 	    const auto nss  = ssd.getNumberOfSlipSystemsFamilies();
 	    for(size_t i=0;i!=nss;++i){
 	      for(const auto& gs1 : ssd.getSlipSystems(i)){

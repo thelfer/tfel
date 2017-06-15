@@ -228,17 +228,6 @@ namespace mfront
   void BehaviourDescription::disallowNewUserDefinedVariables()
   {
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    if(this->areSlipSystemsDefined()){
-      const auto& ssd = this->gs.get<SlipSystemsDescription>();
-      auto n = int{};
-      for(SlipSystemsDescription::size_type i=0;
-	  i!=ssd.getNumberOfSlipSystemsFamilies();++i){
-	const auto css = ssd.getSlipSystems(i);
-	n += static_cast<int>(css.size());
-      }
-      StaticVariableDescription v("int","Nss",0u,n);
-      this->addStaticVariable(uh,v,BehaviourData::UNREGISTRED);
-    }
     this->setAttribute(uh,BehaviourData::allowsNewUserDefinedVariables,false);
   } // end of BehaviourDescription::disallowNewUserDefinedVariables
   
@@ -980,6 +969,7 @@ namespace mfront
     auto throw_if = [](const bool c,const std::string& m){
       if(c){throw(std::runtime_error("BehaviourDescription::setSlipSystems: "+m));}
     };
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     throw_if(!this->allowsNewUserDefinedVariables(),
     	     "new variables are can't be defined after the first code block.");
     throw_if(ss.empty(),"empty number of slip systems specified");
@@ -1003,10 +993,17 @@ namespace mfront
       const auto css = ssd.getSlipSystems(nb);
       StaticVariableDescription v("int","Nss"+std::to_string(nb),0u,
 				  static_cast<int>(css.size()));
-      this->addStaticVariable(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-			      v,BehaviourData::UNREGISTRED);
+      this->addStaticVariable(uh,v,BehaviourData::UNREGISTRED);
     }
-    
+    const auto& ssd = this->gs.get<SlipSystemsDescription>();
+    auto n = int{};
+    for(SlipSystemsDescription::size_type i=0;
+	i!=ssd.getNumberOfSlipSystemsFamilies();++i){
+      const auto css = ssd.getSlipSystems(i);
+      n += static_cast<int>(css.size());
+    }
+    StaticVariableDescription v("int","Nss",0u,n);
+    this->addStaticVariable(uh,v,BehaviourData::UNREGISTRED);
   }
   
   bool BehaviourDescription::areSlipSystemsDefined() const
@@ -1028,6 +1025,16 @@ namespace mfront
     return this->gs;
   } // end of BehaviourDescription::getSlipSystems
 
+  BehaviourDescription::InteractionMatrixStructure
+  BehaviourDescription::getInteractionMatrixStructure() const
+  {
+    if(!this->areSlipSystemsDefined()){
+      throw(std::runtime_error("BehaviourDescription::getInteractionMatrixStructure: "
+			       "no slip system defined"));
+    }
+    return this->gs.get<SlipSystemsDescription>().getInteractionMatrixStructure();
+  } // end of BehaviourDescription::getInteractionMatrix
+
   void BehaviourDescription::setInteractionMatrix(const std::vector<long double>& m)
   {
     auto throw_if = [](const bool c,const std::string& msg){
@@ -1036,27 +1043,14 @@ namespace mfront
     throw_if(!this->allowsNewUserDefinedVariables(),
 	     "new variables are can't be defined after the first code block.");
     throw_if(!this->areSlipSystemsDefined(),"no slip system defined");
-    // throw_if(!this->interaction_matrices.empty(),
-    // 	     "interaction matrix already defined");
-    // InteractionMatrixDescription md = {0,0,m};
-    // this->interaction_matrices.push_back(md);
+    const auto im = this->getInteractionMatrixStructure();
+    throw_if(im.rank()!=m.size(),"the number of values does "
+	     "not match the number of independent coefficients "
+	     "in the interaction matrix");
   } // end of BehaviourDescription::setInteractionMatrix
-
-  BehaviourDescription::InteractionMatrixStructure
-  BehaviourDescription::getInteractionMatrix() const
-  {
-    auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourDescription::getInteractionMatrix: "+m));}
-    };
-    throw_if(!this->areSlipSystemsDefined(),"no slip system defined");
-    return this->gs.get<SlipSystemsDescription>().getInteractionMatrixStructure();
-  } // end of BehaviourDescription::getInteractionMatrix
   
   bool BehaviourDescription::hasInteractionMatrix() const
   {
-    auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourDescription::hasInteractionMatrix: "+m));}
-    };
     return false;
   } // end of BehaviourDescription::hasInteractionMatrix
   

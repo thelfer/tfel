@@ -11,6 +11,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
+
 #include<string>
 #include<stdexcept>
 #include"NUMODIS/HCP.hxx"
@@ -345,17 +347,23 @@ namespace tfel{
     {
       if(cs==CrystalStructure::FCC){
 	auto s = numodis::FCC();
-	return to_array(s.burgers_vector(to_numodis<numodis::IBurgers>(b)));
+	auto bv = s.burgers_vector(to_numodis<numodis::IBurgers>(b));
+	bv.Normalize();
+	return to_array(bv);
       } else if(cs==CrystalStructure::BCC){
 	auto s = numodis::BCC();
-	return to_array(s.burgers_vector(to_numodis<numodis::IBurgers>(b)));
+	auto bv = s.burgers_vector(to_numodis<numodis::IBurgers>(b));
+	bv.Normalize();
+	return to_array(bv);
       }
       if(cs!=CrystalStructure::Cubic){
 	throw(std::runtime_error("burgers: internal error "
 				 "(unsupported crystal structure)"));
       }
       auto s = numodis::Cubic();
-      return to_array(s.burgers_vector(to_numodis<numodis::IBurgers>(b)));
+      auto bv = s.burgers_vector(to_numodis<numodis::IBurgers>(b));
+      bv.Normalize();
+      return to_array(bv);
     }
 
     static std::array<long double,3u>
@@ -367,7 +375,9 @@ namespace tfel{
 				 "(unsupported crystal structure)"));
       }
       auto s = numodis::HCP();
-      return to_array(s.burgers_vector(to_numodis<numodis::IBurgers>(b)));
+      auto bv = s.burgers_vector(to_numodis<numodis::IBurgers>(b));
+      bv.Normalize();
+      return to_array(bv);
     }
     
     static SlipSystemsDescription::tensor
@@ -375,6 +385,7 @@ namespace tfel{
 			 const std::array<long double,3u>& m)
     {
       using tensor = SlipSystemsDescription::tensor;
+      // return m^n
       // XX YY ZZ
       // XY YX XZ
       // ZX YZ ZY

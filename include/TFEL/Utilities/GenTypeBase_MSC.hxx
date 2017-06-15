@@ -144,7 +144,7 @@ namespace tfel{
 	return *this;
       }
       //! \return true if empty
-      bool empty(void) const{
+      bool empty() const{
 	return this->index==tfel::meta::TLSize<List>::value;
       }
       //! copy a GenType (calls the assignement operator).
@@ -198,7 +198,7 @@ namespace tfel{
       }
       template<typename T1>
       typename std::enable_if<tfel::meta::TLCountNbrOfT<T1,List>::value==1,
-				    bool>::type
+			      bool>::type
       is() const
       {
 	using namespace tfel::meta;
@@ -216,7 +216,7 @@ namespace tfel{
       typename std::enable_if<
 	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 	const T1& >::type 
-      get(void) const
+      get() const
       {	
 	// a silly trick to avoir a gcc warning
 	union{
@@ -240,7 +240,7 @@ namespace tfel{
       typename std::enable_if<
 	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 	T1&>::type 
-      get(void)
+      get()
       {
 	using namespace std;
 	using namespace tfel::meta;
@@ -260,7 +260,7 @@ namespace tfel{
        * \return the type index of the object 
        */
       TFEL_INLINE unsigned short
-      getTypeIndex(void) const{
+      getTypeIndex() const{
 	return this->index;
       }
       /*
@@ -293,7 +293,7 @@ namespace tfel{
       typename std::enable_if<
 	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 	void >::type 
-      set_uninitialised(void)
+      set_uninitialised()
       {
 	using namespace tfel::meta;
 	if(this->index!=TLSize<List>::value){

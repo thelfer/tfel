@@ -377,11 +377,11 @@ namespace mfront
      */
     void setInteractionMatrix(const std::vector<long double>&);
     /*!
-     * \brief return the interaction matrix.
+     * \brief return the interaction matrix structure.
      * \note: this method is only valid if one and only one slip
      * system is defined.
      */
-    InteractionMatrixStructure getInteractionMatrix() const;
+    InteractionMatrixStructure getInteractionMatrixStructure() const;
     /*!
      * \brief return true if an interaction matrix is defined.
      * \note: this method is only valid if one and only one slip
