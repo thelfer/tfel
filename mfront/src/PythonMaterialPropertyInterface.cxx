@@ -485,22 +485,70 @@ namespace mfront
 	      << "\"compute the " << i <<  " law.\"},\n";
     }
     wrapper << "{NULL, NULL, 0, NULL} /* Sentinel */\n};\n\n";
+    const auto md = makeLowerCase(getMaterialLawLibraryNameBase(mpd));
+    wrapper << "#if PY_MAJOR_VERSION >= 3\n";
 #ifndef _WIN32
-    wrapper << "PyMODINIT_FUNC MFRONT_SHAREDOBJ\n"
-#else /* _WIN32 */
-      wrapper << "PyMODINIT_FUNC\n"
-#endif /* _WIN32 */
-	    << "init" << makeLowerCase(getMaterialLawLibraryNameBase(mpd))
-	    << "(void)\n";
-    wrapper << "{\n";
-    if(!material.empty()){
-      wrapper << "(void) Py_InitModule(\""
-	      << makeLowerCase(getMaterialLawLibraryNameBase(mpd))
-	      << "\"," << material << "LawMethods);\n";
-    } else {
-      wrapper << "(void) Py_InitModule(\"materiallaw\",MaterialLawMethods);\n";
-    }
-    wrapper << "} /* end of initmateriallaw */\n";
+    wrapper << "extern \"C\" MFRONT_SHAREDOBJ  PyObject* ";
+#else
+    wrapper << "PyMODINIT_FUNC ";
+#endif
+    wrapper << "PyInit_" << md << "(void)\n"
+	    << "{\n"
+	    << "  struct ModuleState {\n"
+	    << "    PyObject *error;\n"
+	    << "  };\n"
+	    << "  auto traverse = [](PyObject *m, visitproc visit, void * arg) {\n"
+	    << "    auto s = static_cast<ModuleState*>(PyModule_GetState(m));\n"
+	    << "    Py_VISIT(s->error);\n"
+	    << "    return 0;\n"
+	    << "  };\n"
+	    << "  auto clear = [](PyObject *m) {\n"
+	    << "    auto s = static_cast<ModuleState*>(PyModule_GetState(m));\n"
+	    << "    Py_CLEAR(s->error);\n"
+	    << "    return 0;\n"
+	    << "  };\n"
+	    << "  static PyModuleDef d = {\n"
+	    << "    PyModuleDef_HEAD_INIT,\n"
+	    << "    \"" << md << "\",\n"
+	    << "    nullptr,sizeof(ModuleState),\n"
+	    << "    " << material << "LawMethods,\n"
+	    << "    nullptr,+traverse,+clear,nullptr\n"
+	    << "  };\n"
+	    << "  auto *m = PyModule_Create(&d);\n"
+	    << "  if (m == nullptr){\n"
+	    << "    return nullptr;\n"
+	    << "  }\n"
+	    << "  auto st = static_cast<ModuleState*>(PyModule_GetState(m));\n"
+	    << "  st->error = PyErr_NewException(\"" << md << ".error\", nullptr, nullptr);\n"
+	    << "  if (st->error == nullptr) {\n"
+	    << "    Py_DECREF(m);\n"
+	    << "    return nullptr;\n"
+	    << "  }\n"
+	    << "  return m;\n"
+	    << "} /* end of init " << md << " */\n"
+	    << "#else\n";
+#ifndef _WIN32
+    wrapper << "extern \"C\" MFRONT_SHAREDOBJ  void ";
+#else
+    wrapper << "PyMODINIT_FUNC ";
+#endif
+    wrapper << "init" << md << "(void)\n"
+	    << "{\n"
+	    << "  static struct {\n"
+	    << "    PyObject *error;\n"
+	    << "  } state;\n"
+	    << "  auto *m = Py_InitModule(\"" << md << "\"," << material << "LawMethods);\n"
+	    << "  if (m == nullptr){\n"
+	    << "    return;\n"
+	    << "  }\n"
+	    << "  char exception[] = \"" << md << ".error\";\n"
+	    << "  state.error = PyErr_NewException(exception,nullptr,nullptr);\n"
+	    << "  if (state.error == nullptr) {\n"
+	    << "    Py_DECREF(m);\n"
+	    << "    return;\n"
+	    << "  }\n"
+	    << "} /* end of init " << md << "  */\n"
+	    << "#endif\n";
     wrapper.close();
     wrapper.open(fname);
     if(!wrapper){
