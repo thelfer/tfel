@@ -964,7 +964,7 @@ namespace mfront{
       }
     };
     auto write_stensor = [](std::ostream& out,const std::vector<tensor>& ts){
-      constexpr const auto cste = tfel::math::Cste<long double>::sqrt2/2;
+      TFEL_CONSTEXPR const auto cste = tfel::math::Cste<long double>::sqrt2/2;
       for(decltype(ts.size()) i=0;i!=ts.size();){
 	const auto& t = ts[i];
 	out << "stensor{" << t[0] << ',' << t[1] << ',' << t[2] << ','

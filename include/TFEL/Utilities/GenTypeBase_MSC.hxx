@@ -166,7 +166,7 @@ namespace tfel{
       typename std::enable_if<
 	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
 	void >::type 
-      set(T1&& src)
+      set(const T1& src)
       {
 	using type = typename std::decay<T1>::type;
 	if(this->template is<type>()){
