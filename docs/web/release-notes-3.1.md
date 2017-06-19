@@ -713,6 +713,11 @@ This method takes two named arguments:
 - `--slip-systems`: list all the slip systems, sorted by family.
 - `--slip-systems-by-index`: list all the slip systems, sorted by
   index.
+- `--orientation-tensors`: list all the orientation tensors, sorted by
+  family".
+- `--orientation-tensors-by-index`: list all the orientation tensors.
+- `--orientation-tensors-by-slip-system`: list all the orientation
+  tensors.
 - `--interaction-matrix`: display the interaction matrix where the
   sliding systems' interaction are represented by their ranks.
 - `--interaction-matrix-structure`: return the number of independent

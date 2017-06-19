@@ -20,6 +20,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./ansys.md						      \
 	   ./calculix.md					      \
 	   ./zmat.md						      \
+	   ./getting-started.md					      \
 	   ./install.md						      \
 	   ./install-windows.md					      \
 	   ./packages.md					      \

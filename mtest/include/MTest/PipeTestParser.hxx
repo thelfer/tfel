@@ -165,7 +165,7 @@ namespace mtest
     virtual void
     handleAxialGrowthEvolution(PipeTest&,tokens_iterator&);
     /*!
-     * \brief handle the GasEquationOfState keyword
+     * \brief handle the @GasEquationOfState keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
      */

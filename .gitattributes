@@ -1063,6 +1063,7 @@ docs/web/faq.md -text
 docs/web/favicon.ico -text
 docs/web/finitestrainsinglecrystal.md -text
 docs/web/gallery.md -text
+docs/web/getting-started.md -text
 docs/web/glossary.md -text
 docs/web/humans.txt -text
 docs/web/hyperelasticity.md -text
@@ -1876,7 +1877,7 @@ mfront/include/MFront/Ansys/AnsysStressFreeExpansionHandler.hxx -text
 mfront/include/MFront/Ansys/AnsysTangentOperator.hxx -text
 mfront/include/MFront/Ansys/AnsysTangentOperator.ixx -text
 mfront/include/MFront/Ansys/AnsysTraits.hxx -text
-mfront/include/MFront/Ansys/abaqus.doxygen -text
+mfront/include/MFront/Ansys/ansys.doxygen -text
 mfront/include/MFront/AnsysInterface.hxx -text
 mfront/include/MFront/Aster/Aster.hxx -text
 mfront/include/MFront/Aster/AsterBehaviourHandler.hxx -text

@@ -243,8 +243,8 @@ nobase_include_HEADERS += MFront/Ansys/Ansys.hxx                                
 			  MFront/Ansys/AnsysRotation.ixx                                 \
 			  MFront/Ansys/AnsysConfig.hxx                                   \
 			  MFront/Ansys/AnsysTraits.hxx                                   \
-			  MFront/Ansys/AnsysException.hxx 		                   \
-			  MFront/Ansys/AnsysInterface.hxx	                           \
+			  MFront/Ansys/AnsysException.hxx 		                 \
+			  MFront/Ansys/AnsysInterface.hxx	                         \
 			  MFront/Ansys/AnsysInterfaceExceptions.hxx                      \
 			  MFront/Ansys/AnsysBehaviourHandler.hxx                         \
 			  MFront/Ansys/AnsysComputeStiffnessTensor.hxx                   \
@@ -284,5 +284,6 @@ EXTRA_DIST = CMakeLists.txt               \
 	     MFront/Castem/castem.doxygen \
 	     MFront/Aster/aster.doxygen   \
 	     MFront/Abaqus/abaqus.doxygen \
+	     MFront/Ansys/ansys.doxygen   \
 	     MFront/Cyrano/cyrano.doxygen \
 	     MFront/ZMAT/zmat.doxygen

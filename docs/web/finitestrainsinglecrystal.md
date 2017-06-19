@@ -179,6 +179,17 @@ $ mfront-query --slip-systems-by-index SlipSystemGenerationTest.mfront
 - 11: [1,1,0](1,-1,1)
 ~~~~
 
+#### Getting information about the orientation tensors
+
+Concerning the orientation tensors, the following queries are
+available:
+
+- `--orientation-tensors`: list all the orientation tensors, sorted by
+  family".
+- `--orientation-tensors-by-index`: list all the orientation tensors.
+- `--orientation-tensors-by-slip-system`: list all the orientation
+  tensors.
+
 ### Definition of the interaction matrix
 
 #### Structure of the interaction matrix

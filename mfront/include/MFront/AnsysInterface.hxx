@@ -1,7 +1,7 @@
 /*!
- * \file   AnsysInterface.hxx
+ * \file   mfront/include/MFront/AnsysInterface.hxx
  * \brief    
- * \author THOMAS HELFER
+ * \author Thomas Helfer
  * \date   17 mars 2016
  */
 

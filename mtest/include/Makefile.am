@@ -81,4 +81,5 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/PipeTestParser.hxx                        \
 			 MTest/GasEquationOfState.hxx
 
-EXTRA_DIST = CMakeLists.txt
+EXTRA_DIST = CMakeLists.txt      \
+	     MTest/mtest.doxygen

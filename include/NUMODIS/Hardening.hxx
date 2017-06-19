@@ -1,5 +1,5 @@
 /*!
- * \file   include/NUMODIS/Hardering.hxx  
+ * \file   include/NUMODIS/Hardening.hxx  
  * \brief    
  * \author Laurent Dupuy
  * \date   9/06/2017
