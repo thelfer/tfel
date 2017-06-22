@@ -1,7 +1,7 @@
 /*! 
  * \file  tests/Material/FiniteStrainBehaviourTangentOperator11.cxx
  * \brief
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \brief 12 juin 2014
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 

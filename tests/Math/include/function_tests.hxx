@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_FUNCTION_HXX
-#define _LIB_TFEL_FUNCTION_HXX 
+#ifndef LIB_TFEL_FUNCTION_HXX
+#define LIB_TFEL_FUNCTION_HXX 
 
 #include"TFEL/Math/Vector/VectorConcept.hxx"
 
@@ -27,5 +27,5 @@ void function(const tfel::math::VectorConcept<T>&,
 
 #include "function_tests.ixx"
 
-#endif /* _LIB_TFEL_FUNCTION_HXX */
+#endif /* LIB_TFEL_FUNCTION_HXX */
 

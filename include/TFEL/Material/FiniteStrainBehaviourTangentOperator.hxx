@@ -180,7 +180,7 @@ namespace tfel
     struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DSIG_DF,N,StressType>
     {
       //! the result of the meta function
-      typedef tfel::math::t2tost2<N,StressType> type;
+      using type = tfel::math::t2tost2<N,StressType>;
     }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DSIG_DF,N,StressType>
 
     /*!
@@ -191,7 +191,7 @@ namespace tfel
     struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DSIG_DDF,N,StressType>
     {
       //! the result of the meta function
-      typedef tfel::math::t2tost2<N,StressType> type;
+      using type = tfel::math::t2tost2<N,StressType>;
     }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DSIG_DDF,N,StressType>
 
     /*!
@@ -202,7 +202,7 @@ namespace tfel
     struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::C_TRUESDELL,N,StressType>
     {
       //! the result of the meta function
-      typedef tfel::math::st2tost2<N,StressType> type;
+      using type = tfel::math::st2tost2<N,StressType>;
     }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::C_TRUESDELL,N,StressType>
 
     /*!
@@ -213,7 +213,7 @@ namespace tfel
     struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::ABAQUS,N,StressType>
     {
       //! the result of the meta function
-      typedef tfel::math::st2tost2<N,StressType> type;
+      using type = tfel::math::st2tost2<N,StressType>;
     };
     /*!
      * \brief partial specialisation for the tangent moduli associated
@@ -223,7 +223,7 @@ namespace tfel
     struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::C_TAU_JAUMANN,N,StressType>
     {
       //! the result of the meta function
-      typedef tfel::math::st2tost2<N,StressType> type;
+      using type = tfel::math::st2tost2<N,StressType>;
     };
     /*!
      * \brief partial specialisation for spatial moduli
@@ -232,7 +232,7 @@ namespace tfel
     struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI,N,StressType>
     {
       //! the result of the meta function
-      typedef tfel::math::st2tost2<N,StressType> type;
+      using type = tfel::math::st2tost2<N,StressType>;
     };
     
     /*!
@@ -243,7 +243,7 @@ namespace tfel
     struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DTAU_DF,N,StressType>
     {
       //! the result of the meta function
-      typedef tfel::math::t2tost2<N,StressType> type;
+      using type = tfel::math::t2tost2<N,StressType>;
     }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DTAU_DF,N,StressType>
 
     /*!
@@ -254,7 +254,7 @@ namespace tfel
     struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DTAU_DDF,N,StressType>
     {
       //! the result of the meta function
-      typedef tfel::math::t2tost2<N,StressType> type;
+      using type = tfel::math::t2tost2<N,StressType>;
     }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DTAU_DDF,N,StressType>
 
     /*!
@@ -265,7 +265,7 @@ namespace tfel
     struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DF,N,StressType>
     {
       //! the result of the meta function
-      typedef tfel::math::t2tost2<N,StressType> type;
+      using type = tfel::math::t2tost2<N,StressType>;
     }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DF,N,StressType>
 
     /*!
@@ -277,7 +277,7 @@ namespace tfel
     struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DDF,N,StressType>
     {
       //! the result of the meta function
-      typedef tfel::math::t2tost2<N,StressType> type;
+      using type = tfel::math::t2tost2<N,StressType>;
     }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DDF,N,StressType>
     /*!
      * partial specialisation for the derivative of the second
@@ -288,7 +288,7 @@ namespace tfel
     struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DC,N,StressType>
     {
       //! the result of the meta function
-      typedef tfel::math::st2tost2<N,StressType> type;
+      using type = tfel::math::st2tost2<N,StressType>;
     }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DC,N,StressType>
     /*!
      * partial specialisation for the derivative of the second
@@ -299,8 +299,18 @@ namespace tfel
     struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DEGL,N,StressType>
     {
       //! the result of the meta function
-      typedef tfel::math::st2tost2<N,StressType> type;
+      using type = tfel::math::st2tost2<N,StressType>;
     }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DEGL,N,StressType>
+    /*!
+     * partial specialisation for the dual of the lagrangian Hencky strain with respect to
+     * the lagrangian Hencky strain
+     */
+    template<unsigned short N,typename StressType>
+    struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DT_DELOG,N,StressType>
+    {
+      //! the result of the meta function
+      using type = tfel::math::st2tost2<N,StressType>;
+    }; // end of struct FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DSIG_DF,N,StressType>
     //! a simple alias
     template<FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType,
 	     unsigned short N,typename StressType>

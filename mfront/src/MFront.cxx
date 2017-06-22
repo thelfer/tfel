@@ -51,7 +51,6 @@
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/TargetsDescription.hxx"
-#include"MFront/SearchFile.hxx"
 #include"MFront/DSLFactory.hxx"
 #include"MFront/MaterialPropertyInterfaceFactory.hxx"
 #include"MFront/BehaviourInterfaceFactory.hxx"

@@ -8,6 +8,7 @@
 #ifndef LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATOR_IXX_
 #define LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATOR_IXX_
 
+#include<stdexcept>
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
@@ -955,6 +956,118 @@ namespace tfel
 			    tfel::math::t2tot2<N,base_type<stress>>::tprd(tus))*dW);
       } // end of exe
     }; // end of struct FiniteStrainBehaviourTangentOperatorConverter
+    TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DT_DELOG,DS_DC)
+    {
+      /*!
+       * \brief convert the stiffness matrix expressed in the logarithmic
+       * space into dS_dC in 1D.
+       * \param[out] Kr: the result of the convertion
+       * \param[in]  Ks: the initial stiffness tensor
+       * \param[in]  F0:  the deformation gradient
+       * \param[in]  F1:  the deformation gradient
+       * \param[in]  s:  the Cauchy stress tensor
+       */
+      template<typename stress>
+      static TFEL_MATERIAL_INLINE void
+      exe(Result<1u,stress>& Kr,
+	  const Source<1u,stress>& Ks,
+	  const DeformationGradientTensor<1u,stress>&,
+	  const DeformationGradientTensor<1u,stress>& F1,
+	  const StressStensor<1u,stress>& sig)
+      {
+	using namespace tfel::math;
+	using real = base_type<stress>;
+	const real iC[3]  = {1/(F1[0]*F1[0]),
+			     1/(F1[1]*F1[1]),
+			     1/(F1[2]*F1[2])};
+	const auto t = det(F1)*sig;
+	Kr(0,0)   = (Ks(0,0)-2*t[0])*iC[0]*iC[0]/2;
+	Kr(0,1)   =  Ks(0,1)*iC[0]*iC[1]/2;
+	Kr(0,2)   =  Ks(0,2)*iC[0]*iC[2]/2;
+	Kr(1,0)   =  Ks(1,0)*iC[0]*iC[1]/2;
+	Kr(1,1)   = (Ks(1,1)-2*t[1])*iC[1]*iC[1]/2;
+	Kr(1,2)   =  Ks(1,2)*iC[1]*iC[2]/2;
+	Kr(2,0)   =  Ks(2,0)*iC[0]*iC[2]/2;
+	Kr(2,1)   =  Ks(2,1)*iC[1]*iC[2]/2;
+	Kr(2,2)   = (Ks(2,2)-2*t[2])*iC[2]*iC[2]/2;
+      } // end of exe
+      /*!
+       * \brief convert the stiffness matrix expressed in the logarithmic
+       * space into dS_dC in 1D.
+       * \param[out] Kr: the result of the convertion
+       * \param[in]  Ks: the initial stiffness tensor
+       * \param[in]  F0:  the deformation gradient
+       * \param[in]  F1:  the deformation gradient
+       * \param[in]  s:  the Cauchy stress tensor
+       */
+      template<unsigned short N,typename stress>
+      static TFEL_MATERIAL_INLINE void
+      exe(Result<N,stress>&,
+	  const Source<N,stress>&,
+	  const DeformationGradientTensor<N,stress>&,
+	  const DeformationGradientTensor<N,stress>&,
+	  const StressStensor<N,stress>&)
+      {
+	throw(std::runtime_error("FiniteStrainBehaviourTangentOperatorConverter::exe: "
+				 "unsupported convertion from DT_DELOG to DS_DC"));
+      } // end of exe
+    };
+    TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DT_DELOG,DS_DEGL)
+    {
+      /*!
+       * \brief convert the stiffness matrix expressed in the logarithmic
+       * space into dS_dC in 1D.
+       * \param[out] Kr: the result of the convertion
+       * \param[in]  Ks: the initial stiffness tensor
+       * \param[in]  F0:  the deformation gradient
+       * \param[in]  F1:  the deformation gradient
+       * \param[in]  s:  the Cauchy stress tensor
+       */
+      template<typename stress>
+      static TFEL_MATERIAL_INLINE void
+      exe(Result<1u,stress>& Kr,
+	  const Source<1u,stress>& Ks,
+	  const DeformationGradientTensor<1u,stress>&,
+	  const DeformationGradientTensor<1u,stress>& F1,
+	  const StressStensor<1u,stress>& sig)
+      {
+	using namespace tfel::math;
+	using real = base_type<stress>;
+	const real iC[3]  = {1/(F1[0]*F1[0]),
+			     1/(F1[1]*F1[1]),
+			     1/(F1[2]*F1[2])};
+	const auto t = det(F1)*sig;
+	Kr(0,0)   = (Ks(0,0)-2*t[0])*iC[0]*iC[0];
+	Kr(0,1)   =  Ks(0,1)*iC[0]*iC[1];
+	Kr(0,2)   =  Ks(0,2)*iC[0]*iC[2];
+	Kr(1,0)   =  Ks(1,0)*iC[0]*iC[1];
+	Kr(1,1)   = (Ks(1,1)-2*t[1])*iC[1]*iC[1];
+	Kr(1,2)   =  Ks(1,2)*iC[1]*iC[2];
+	Kr(2,0)   =  Ks(2,0)*iC[0]*iC[2];
+	Kr(2,1)   =  Ks(2,1)*iC[1]*iC[2];
+	Kr(2,2)   = (Ks(2,2)-2*t[2])*iC[2]*iC[2];
+      } // end of exe
+      /*!
+       * \brief convert the stiffness matrix expressed in the logarithmic
+       * space into dS_dC in 1D.
+       * \param[out] Kr: the result of the convertion
+       * \param[in]  Ks: the initial stiffness tensor
+       * \param[in]  F0:  the deformation gradient
+       * \param[in]  F1:  the deformation gradient
+       * \param[in]  s:  the Cauchy stress tensor
+       */
+      template<unsigned short N,typename stress>
+      static TFEL_MATERIAL_INLINE void
+      exe(Result<N,stress>&,
+	  const Source<N,stress>&,
+	  const DeformationGradientTensor<N,stress>&,
+	  const DeformationGradientTensor<N,stress>&,
+	  const StressStensor<N,stress>&)
+      {
+	throw(std::runtime_error("FiniteStrainBehaviourTangentOperatorConverter::exe: "
+				 "unsupported convertion from DT_DELOG to DS_DC0"));
+      } // end of exe
+    };
     /*!
      * \brief partial specialisation of FiniteStrainBehaviourTangentOperatorConverter structure
      */

@@ -48,7 +48,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/PolyCrystalsSlidingSystems.hxx                                                 \
 			TFEL/Material/PolyCrystalsSlidingSystems.ixx                                                 \
 			TFEL/Material/GursonTvergaardNeedleman.hxx                                                   \
-			TFEL/Material/CubicSlipSystems.hxx                                                           \
 			TFEL/Material/CrystalStructure.hxx                                                           \
 			TFEL/Material/SlipSystemsDescription.hxx                                                     \
 			TFEL/Config/Internals/TFELTypesInternals.hxx	                                             \

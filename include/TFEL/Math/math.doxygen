@@ -10,6 +10,14 @@
  */
 
 /*!
+ * \namespace tfel::math::internals
+
+ * \brief This namespace contains classes, functions, metafunctions
+ * and data structures that are used internally in the `tfel::math`
+ * namespace and that are meant to be used by the end user.
+ */
+
+/*!
  * \namespace tfel::math::ieee754
  *
  * The `C99` standard defines the `fpclassify`, `isnan`, `isfinite`

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef TFEL_MATH_TENSOR_CONCEPT_LIB_
-#define TFEL_MATH_TENSOR_CONCEPT_LIB_ 1
+#ifndef LIB_TFEL_MATH_TENSORCONCEPT_HXX
+#define LIB_TFEL_MATH_TENSORCONCEPT_HXX 1
 
 #include<stdexcept>
 #include<type_traits>
@@ -142,9 +142,18 @@ namespace tfel{
     {
       using type = TensorConcept<Type>;
     };
-
+    /*!
+     * \brief a meta function returning the concrete tensor type
+     * that the given type is meant to represent.
+     *
+     * For a standard tensor type, the type is returned.
+     * See the partial specialisation for an expression of type `Expr`.
+     *
+     * \tparam T: input type
+     */
     template<typename T>
     struct TensorType{
+      //! the result
       typedef T type;
     };
 
@@ -635,4 +644,4 @@ namespace tfel{
 
 #include"TFEL/Math/Tensor/TensorConcept.ixx"
 
-#endif /* TFEL_MATH_TENSOR_CONCEPT_LIB_ */
+#endif /* LIB_TFEL_MATH_TENSORCONCEPT_HXX */

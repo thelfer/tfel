@@ -10,8 +10,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef TFEL_MATH_TINY_MATRIX_LIB_
-#define TFEL_MATH_TINY_MATRIX_LIB_ 1
+#ifndef TFEL_MATH_TINY_MATRIX_HXX
+#define TFEL_MATH_TINY_MATRIX_HXX 1
 
 #include<cstddef>
 #include<type_traits>
@@ -441,4 +441,4 @@ namespace tfel{
 #include"TFEL/Math/Matrix/tmatrix.ixx"
 #include"TFEL/Math/Matrix/tmatrixResultType.hxx"
 
-#endif /* TFEL_MATH_TINY_MATRIX_LIB_ */
+#endif /* TFEL_MATH_TINY_MATRIX_HXX */

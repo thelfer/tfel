@@ -59,7 +59,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                               \
 			MFront/InterfaceBase.hxx                        \
 			MFront/DSLUtilities.hxx                         \
 			MFront/SupportedTypes.hxx                       \
-			MFront/SearchFile.hxx                           \
+			MFront/SearchPathsHandler.hxx                   \
 			MFront/DrivingVariable.hxx                      \
 			MFront/ThermodynamicForce.hxx                   \
 			MFront/VariableBoundsDescription.hxx            \

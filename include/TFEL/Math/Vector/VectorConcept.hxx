@@ -9,8 +9,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef VECTOR_CONCEPT_LIB_
-#define VECTOR_CONCEPT_LIB_ 1
+#ifndef LIB_TFEL_MATH_VECTOR_CONCEPT_HXX
+#define LIB_TFEL_MATH_VECTOR_CONCEPT_HXX 1
 
 #include<type_traits>
 
@@ -77,4 +77,4 @@ namespace tfel{
 #include"TFEL/Math/Vector/VectorConcept.ixx"
 #include"TFEL/Math/Vector/VectorConceptOperations.hxx"
 
-#endif /* VECTOR_CONCEPT_LIB_ */
+#endif /* LIB_TFEL_MATH_VECTOR_CONCEPT_HXX */

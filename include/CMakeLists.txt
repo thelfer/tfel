@@ -523,7 +523,6 @@ install_header(TFEL/Material PolyCrystalsSlidingSystems.ixx)
 install_header(TFEL/Material OrthotropicAxesConvention.hxx)
 install_header(TFEL/Material OrthotropicAxesConvention.ixx)
 install_header(TFEL/Material GursonTvergaardNeedleman.hxx)
-install_header(TFEL/Material CubicSlipSystems.hxx)
 install_header(TFEL/Material CrystalStructure.hxx)
 install_header(TFEL/Material SlipSystemsDescription.hxx)
 

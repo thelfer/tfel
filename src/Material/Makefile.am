@@ -9,7 +9,6 @@ libTFELMaterial_la_SOURCES = DDIF2Base.cxx                             \
 			     BoundsCheck.cxx                           \
 			     MaterialException.cxx                     \
 			     ModellingHypothesis.cxx                   \
-			     CubicSlipSystems.cxx                      \
 			     FiniteStrainBehaviourTangentOperator.cxx  \
 			     SlipSystemsDescription.cxx
 libTFELMaterial_la_LIBADD = -L$(top_builddir)/src/Math      -lTFELMath      \

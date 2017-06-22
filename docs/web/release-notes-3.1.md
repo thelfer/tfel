@@ -1034,6 +1034,20 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/65/>
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/74/>
 
+## Ticket 76: Add `python` bindings for the `SearchPathsHandler` class in the `mfront` module
+
+The `SearchPathsHandler` class is used in `MFront` to search
+additional files. Bindings for this class has been added to the
+`mfront` module. The following methods are available:
+
+- `addSearchPaths`: Add new search paths. Multiple paths are separated
+  by commas under unices systems and by semicolons under Windows
+  systems.
+- `search`: search a file and return the path to it if found.
+- `getSearchPaths`: return all the registred search paths.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/76/>
+
 # Know regressions
 
 ## Stricter rules on variable declarations

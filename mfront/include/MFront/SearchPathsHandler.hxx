@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/include/MFront/SearchFile.hxx
+ * \file  mfront/include/MFront/SearchPathsHandler.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 21 mai 2013
@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONTSEARCHFILE_HXX
-#define LIB_MFRONT_MFRONTSEARCHFILE_HXX 
+#ifndef LIB_MFRONT_MFRONTSEARCHPATHSHANDLER_HXX
+#define LIB_MFRONT_MFRONTSEARCHPATHSHANDLER_HXX 
 
 #include<set>
 #include<string>
@@ -27,7 +27,7 @@ namespace mfront
    * - storing search paths
    * - searching imported mfront file
    */
-  struct MFRONT_VISIBILITY_EXPORT SearchFile
+  struct MFRONT_VISIBILITY_EXPORT SearchPathsHandler
   {
     /*!
      * search a file in the specified paths.
@@ -43,40 +43,45 @@ namespace mfront
      * \param[in] f : file name
      * \return the full path of the file
      */
-    static std::string
+    MFRONT_VISIBILITY_EXPORT static std::string
     search(const std::string&);
     /*!
+     * \brief Add new search paths.
+     *
+     * Multiple paths are separated by commas under unices systems and
+     * by semicolons under Windows systems.
      * \param[in] p : new search paths
      */
-    static void
+    MFRONT_VISIBILITY_EXPORT static void
     addSearchPaths(const std::string&);
     /*!
      * \return the list of the search paths
      */
-    static const std::vector<std::string>&
+    MFRONT_VISIBILITY_EXPORT static
+    const std::vector<std::string>&
     getSearchPaths(void);
   private:
     /*!
      * return the uniq instance of the class
      */
-    static TFEL_VISIBILITY_LOCAL SearchFile&
-    getSearchFile(void);
+    static TFEL_VISIBILITY_LOCAL SearchPathsHandler&
+    getSearchPathsHandler(void);
     /*!
      * Default constructor
      *
      * The MFRONT_INCLUDE_PATH environnement variable
      * is used to fill the search paths.
      */
-    TFEL_VISIBILITY_LOCAL SearchFile();
-    SearchFile(const SearchFile&) = delete;
-    SearchFile(SearchFile&&) = delete;
-    SearchFile& operator=(const SearchFile&) = delete;
-    SearchFile& operator=(SearchFile&&) = delete;
+    TFEL_VISIBILITY_LOCAL SearchPathsHandler();
+    SearchPathsHandler(const SearchPathsHandler&) = delete;
+    SearchPathsHandler(SearchPathsHandler&&) = delete;
+    SearchPathsHandler& operator=(const SearchPathsHandler&) = delete;
+    SearchPathsHandler& operator=(SearchPathsHandler&&) = delete;
     //! list of search paths
     std::vector<std::string> paths;
   };
 
-} // end of SearchFile
+} // end of SearchPathsHandler
 
-#endif /* LIB_MFRONT_MFRONTSEARCHFILE_HXX */
+#endif /* LIB_MFRONT_MFRONTSEARCHPATHSHANDLER_HXX */
 

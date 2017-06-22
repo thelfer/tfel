@@ -35,6 +35,7 @@ bindings/python/mfront/DSLFactory.cxx -text
 bindings/python/mfront/FileDescription.cxx -text
 bindings/python/mfront/LibraryDescription.cxx -text
 bindings/python/mfront/Makefile.am -text
+bindings/python/mfront/SearchPathsHandler.cxx -text
 bindings/python/mfront/TargetsDescription.cxx -text
 bindings/python/mfront/VariableBoundsDescription.cxx -text
 bindings/python/mfront/VariableDescription.cxx -text
@@ -1272,7 +1273,6 @@ include/TFEL/Glossary/GlossaryEntry.hxx -text
 include/TFEL/Macros.hxx -text
 include/TFEL/Material/BoundsCheck.hxx -text
 include/TFEL/Material/CrystalStructure.hxx -text
-include/TFEL/Material/CubicSlipSystems.hxx -text
 include/TFEL/Material/DDIF2Base.hxx -text
 include/TFEL/Material/DDIF2Base.ixx -text
 include/TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx -text
@@ -2058,7 +2058,7 @@ mfront/include/MFront/PythonMaterialPropertyInterface.hxx -text
 mfront/include/MFront/RungeKuttaDSL.hxx -text
 mfront/include/MFront/RungeKuttaDSLBase.hxx -text
 mfront/include/MFront/RungeKuttaFiniteStrainDSL.hxx -text
-mfront/include/MFront/SearchFile.hxx -text
+mfront/include/MFront/SearchPathsHandler.hxx -text
 mfront/include/MFront/SecondBroydenSolver.hxx -text
 mfront/include/MFront/StandardElasticityBrick.hxx -text
 mfront/include/MFront/StaticVarHandler.hxx -text
@@ -2228,7 +2228,7 @@ mfront/src/PythonMaterialPropertyInterface.cxx -text
 mfront/src/RungeKuttaDSL.cxx -text
 mfront/src/RungeKuttaDSLBase.cxx -text
 mfront/src/RungeKuttaFiniteStrainDSL.cxx -text
-mfront/src/SearchFile.cxx -text
+mfront/src/SearchPathsHandler.cxx -text
 mfront/src/SecondBroydenSolver.cxx -text
 mfront/src/StandardElasticityBrick.cxx -text
 mfront/src/StaticVariableDescription.cxx -text
@@ -5165,7 +5165,6 @@ src/Glossary/Makefile.am -text
 src/Makefile.am -text
 src/Material/BoundsCheck.cxx -text
 src/Material/CMakeLists.txt -text
-src/Material/CubicSlipSystems.cxx -text
 src/Material/DDIF2Base.cxx -text
 src/Material/FiniteStrainBehaviourTangentOperator.cxx -text
 src/Material/Makefile.am -text
@@ -5307,6 +5306,7 @@ tests/Material/CMakeLists.txt -text
 tests/Material/FiniteStrainBehaviourTangentOperator.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator10.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator11.cxx -text
+tests/Material/FiniteStrainBehaviourTangentOperator12.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator2.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator3.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator4.cxx -text

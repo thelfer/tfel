@@ -28,22 +28,38 @@ namespace tfel{
 
   namespace math{
 
+    /*!
+     * \brief Partial specialisation of the `TensorType` metafunction
+     * for structure resulting from the expression template engine.
+     * \tparam T_type: the result of the evaluation of the expression
+     * \tparam Operation: the class performing the operation
+     */
     template<typename T_type, typename Operation>
     struct TensorType<Expr<T_type,Operation> >
     {
+      //! \brief the result
       typedef T_type type;
     };
-
+    /*!
+     * \brief Partial specialisation of the `TensorTraits`
+     * metafunction for structure resulting from the expression
+     * template engine.
+     * \tparam T_type: the result of the evaluation of the expression
+     * \tparam Operation: the class performing the operation
+     */
     template<typename T_type, typename Operation>
     struct TensorTraits<Expr<T_type,Operation>>
     {
+      //! The numeric type
       using NumType   =  typename TensorTraits<T_type>::NumType;
+      //! The type used to access the element of the tensor
       using IndexType =  typename TensorTraits<T_type>::IndexType;
-      static constexpr unsigned short dime = TensorTraits<T_type>::dime;
+      //! The space dimension
+      static constexpr auto dime = TensorTraits<T_type>::dime;
     };
-
-    /*
-     * Partial Specialisation of ComputeBinaryResult_ for tensor's operation
+    /*!
+     * Partial Specialisation of `ComputeBinaryResult_` for tensor's
+     * operation
      */
     template<typename A, typename B,typename Op>
     class ComputeBinaryResult_<TensorTag,TensorTag,A,B,Op>

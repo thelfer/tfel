@@ -46,7 +46,7 @@ set(TFELMFront_SOURCES
     MFrontDebugMode.cxx
     PedanticMode.cxx
     MFrontLock.cxx
-    SearchFile.cxx
+    SearchPathsHandler.cxx
     InitInterfaces.cxx
     InitDSLs.cxx
     DSLFactory.cxx

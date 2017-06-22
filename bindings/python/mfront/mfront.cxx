@@ -30,9 +30,9 @@ void declareVariableDescription();
 void declareBehaviourAttribute();
 void declareBehaviourData();
 void declareBehaviourDescription();
+void declareSearchPathsHandler();
 
-static boost::python::object
-getDSL(const std::string& f)
+static boost::python::object getDSL(const std::string& f)
 {
   auto dsl = mfront::MFrontBase::getDSL(f);
   if(dsl->getTargetType()==mfront::AbstractDSL::BEHAVIOURDSL){
@@ -64,4 +64,5 @@ BOOST_PYTHON_MODULE(_mfront)
   declareBehaviourData();
   declareBehaviourSymmetryType();
   declareBehaviourDescription();
+  declareSearchPathsHandler();
 }

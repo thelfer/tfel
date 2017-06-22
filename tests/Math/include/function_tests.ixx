@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef _LIB_TFEL_FUNCTION_IXX_
-#define _LIB_TFEL_FUNCTION_IXX_ 
+#ifndef LIB_TFEL_FUNCTION_IXX_
+#define LIB_TFEL_FUNCTION_IXX_ 
 
 #include <cmath>
 
@@ -30,5 +30,5 @@ void function(const tfel::math::VectorConcept<T>& x,
   assert(std::abs(x(2)-v2)<=eps);
 }
 
-#endif /* _LIB_TFEL_FUNCTION_IXX */
+#endif /* LIB_TFEL_FUNCTION_IXX */
 

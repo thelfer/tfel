@@ -18,6 +18,7 @@ test_PROGRAMS = boundsCheck \
 		FiniteStrainBehaviourTangentOperator9  \
 		FiniteStrainBehaviourTangentOperator10 \
 		FiniteStrainBehaviourTangentOperator11 \
+		FiniteStrainBehaviourTangentOperator12 \
 		Hyperelasticity                        \
 		Ogden                                  \
 		SlipSystemsDescriptionTest
@@ -46,6 +47,7 @@ FiniteStrainBehaviourTangentOperator8_SOURCES  = FiniteStrainBehaviourTangentOpe
 FiniteStrainBehaviourTangentOperator9_SOURCES  = FiniteStrainBehaviourTangentOperator9.cxx
 FiniteStrainBehaviourTangentOperator10_SOURCES = FiniteStrainBehaviourTangentOperator10.cxx
 FiniteStrainBehaviourTangentOperator11_SOURCES = FiniteStrainBehaviourTangentOperator11.cxx
+FiniteStrainBehaviourTangentOperator12_SOURCES = FiniteStrainBehaviourTangentOperator12.cxx
 Hyperelasticity_SOURCES = Hyperelasticity.cxx
 Ogden_SOURCES = Ogden.cxx
 SlipSystemsDescriptionTest_SOURCES = SlipSystemsDescriptionTest.cxx

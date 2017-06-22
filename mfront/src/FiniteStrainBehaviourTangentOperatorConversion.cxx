@@ -100,6 +100,7 @@ namespace mfront
     std_add(TangentOperator::ABAQUS,TangentOperator::DTAU_DF);
     std_add(TangentOperator::C_TAU_JAUMANN,TangentOperator::ABAQUS);
     std_add(TangentOperator::C_TAU_JAUMANN,TangentOperator::DTAU_DF);
+    std_add(TangentOperator::DT_DELOG,TangentOperator::DS_DC);
     return converters;
   } // end of FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions
   

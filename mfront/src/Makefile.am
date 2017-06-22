@@ -60,7 +60,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 		           DSLBase.cxx                                            \
 		           InterfaceBase.cxx                                      \
 		           DSLUtilities.cxx                                       \
-		           SearchFile.cxx                                         \
+		           SearchPathsHandler.cxx                                 \
 		           MaterialPropertyInterfaceFactory.cxx                   \
 		           BehaviourInterfaceFactory.cxx                          \
 		           ModelInterfaceFactory.cxx                              \

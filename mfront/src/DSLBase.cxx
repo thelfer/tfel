@@ -25,7 +25,7 @@
 #include"MFront/PedanticMode.hxx"
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/DSLBase.hxx"
-#include"MFront/SearchFile.hxx"
+#include"MFront/SearchPathsHandler.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
@@ -381,7 +381,7 @@ namespace mfront
     oFileTokens.swap(this->tokens);
     const auto ocurrent = this->current;
     for(const auto& f : files){
-      this->importFile(SearchFile::search(f),
+      this->importFile(SearchPathsHandler::search(f),
 		       std::vector<std::string>(),{});
     }
     this->fd.fileName = oFileName;
@@ -835,7 +835,7 @@ namespace mfront
     MaterialPropertyDSL mp;
     try{
       MFrontMaterialPropertyInterface minterface;
-      const auto& path = SearchFile::search(f);
+      const auto& path = SearchPathsHandler::search(f);
       mp.setInterfaces({"mfront"});
       mp.analyseFile(path);
       const auto t = mp.getTargetsDescription();

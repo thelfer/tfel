@@ -22,7 +22,8 @@ _mfront_la_SOURCES = mfront.cxx                    \
 		     BehaviourAttribute.cxx        \
 		     BehaviourData.cxx             \
 		     BehaviourSymmetryType.cxx     \
-		     BehaviourDescription.cxx
+		     BehaviourDescription.cxx      \
+		     SearchPathsHandler.cxx
 
 _mfront_la_LDFLAGS = -module
 _mfront_la_LIBADD  = -L@top_builddir@/mfront/src                       \

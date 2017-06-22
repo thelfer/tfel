@@ -29,7 +29,7 @@
 
 #include"MFront/InitDSLs.hxx"
 #include"MFront/DSLFactory.hxx"
-#include"MFront/SearchFile.hxx"
+#include"MFront/SearchPathsHandler.hxx"
 
 struct SwellingTest final
   : public tfel::tests::TestCase
@@ -37,7 +37,7 @@ struct SwellingTest final
   SwellingTest()
     : tfel::tests::TestCase("MFront","SwellingTest")
   {
-    mfront::SearchFile::addSearchPaths("@top_srcdir@/mfront/tests/models");
+    mfront::SearchPathsHandler::addSearchPaths("@top_srcdir@/mfront/tests/models");
   } // end of SwellingTest
 
   tfel::tests::TestResult

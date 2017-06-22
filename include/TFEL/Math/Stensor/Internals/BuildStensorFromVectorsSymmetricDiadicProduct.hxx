@@ -20,9 +20,23 @@ namespace tfel{
 
     namespace internals{
 
+      /*!
+       * \brief The `BuildStensorFromVectorsSymmetricDiadicProduct` is
+       * used to build a tensor resulting from the symmetrisation of
+       * the diadic product of two vectors \f$\vec{a}\f$ and
+       * \f$\vec{b}\f$, defined by:
+       * \f[
+       * s_{ij}=a_{i}\,b_{j}+b_{i}\,a_{j}
+       * \f]
+       * \tparam N: space dimension
+       */
       template<unsigned short N>
       struct BuildStensorFromVectorsSymmetricDiadicProduct;
-      
+      /*!
+       * \brief Partial specialisation of the
+       * `BuildStensorFromVectorsSymmetricDiadicProduct` structure for
+       * 2D.
+       */
       template<>
       struct BuildStensorFromVectorsSymmetricDiadicProduct<1u>
       {
@@ -38,7 +52,11 @@ namespace tfel{
 	  s = {2*v1(0)*v2(0),2*v1(1)*v2(1),2*v1(2)*v2(2)};
 	}
       };
-    
+      /*!
+       * \brief Partial specialisation of the
+       * `BuildStensorFromVectorsSymmetricDiadicProduct` structure for
+       * 2D.
+       */
       template<>
       struct BuildStensorFromVectorsSymmetricDiadicProduct<2u>
       {
@@ -56,7 +74,11 @@ namespace tfel{
 	      cste*(v1(0)*v2(1)+v2(0)*v1(1))};
 	}
       };
-      
+      /*!
+       * \brief Partial specialisation of the
+       * `BuildStensorFromVectorsSymmetricDiadicProduct` structure for
+       * 3D.
+       */
       template<>
       struct BuildStensorFromVectorsSymmetricDiadicProduct<3u>
       {

@@ -6,8 +6,8 @@
 * \date   9 Octobre 2013
  */
 
-#ifndef _LIB_TFELMATERIAL_ELLIPTICCREEP_HXX_
-#define _LIB_TFELMATERIAL_ELLIPTICCREEP_HXX_
+#ifndef LIB_TFELMATERIAL_ELLIPTICCREEP_HXX_
+#define LIB_TFELMATERIAL_ELLIPTICCREEP_HXX_
 
 #include<iostream>
 #include<algorithm>
@@ -818,4 +818,4 @@ return std::string("EllipticCreep");
 } // end of namespace utilities
 } // end of namespace tfel
 
-#endif /* _LIB_TFELMATERIAL_ELLIPTICCREEP_HXX_ */
+#endif /* LIB_TFELMATERIAL_ELLIPTICCREEP_HXX_ */

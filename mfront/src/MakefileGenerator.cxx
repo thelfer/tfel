@@ -21,7 +21,7 @@
 #include"TFEL/System/System.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontLogStream.hxx"
-#include"MFront/SearchFile.hxx"
+#include"MFront/SearchPathsHandler.hxx"
 #include"MFront/MFrontLock.hxx"
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/GeneratorOptions.hxx"
@@ -184,8 +184,8 @@ namespace mfront{
       }
     }
     // adding the mfront search path to the include files
-    if(!SearchFile::getSearchPaths().empty()){
-      const auto& paths = SearchFile::getSearchPaths();
+    if(!SearchPathsHandler::getSearchPaths().empty()){
+      const auto& paths = SearchPathsHandler::getSearchPaths();
       for(const auto& path : paths){
 	m << "\\\n\t     -I" << path;
       }

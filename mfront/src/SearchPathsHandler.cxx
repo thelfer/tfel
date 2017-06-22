@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/src/SearchFile.cxx
+ * \file  mfront/src/SearchPathsHandler.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 21 mai 2013
@@ -25,19 +25,18 @@
 
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
-#include"MFront/SearchFile.hxx"
+#include"MFront/SearchPathsHandler.hxx"
 
 namespace mfront
 {
 
-  std::string
-  SearchFile::search(const std::string& f)
+  std::string SearchPathsHandler::search(const std::string& f)
   {
     using namespace tfel::system;
-    auto& msf = SearchFile::getSearchFile();
+    auto& msf = SearchPathsHandler::getSearchPathsHandler();
     if(::access(f.c_str(),F_OK)==0){
       if(::access(f.c_str(),R_OK)!=0){
-	throw(std::runtime_error("SearchFile::search : '"+
+	throw(std::runtime_error("SearchPathsHandler::search : '"+
 				 f + "' is not readable"));
       }
       return f;
@@ -46,56 +45,51 @@ namespace mfront
       const auto file = p+dirSeparator()+f;
       if(::access(file.c_str(),F_OK)==0){
 	if(::access(file.c_str(),R_OK)!=0){
-	  throw(std::runtime_error("SearchFile::search : '"+
+	  throw(std::runtime_error("SearchPathsHandler::search : '"+
 				   file + "' is not readable"));
 	}
 	return file;
       }
     }
-    throw(std::runtime_error("SearchFile::search : '"+f+
+    throw(std::runtime_error("SearchPathsHandler::search : '"+f+
 			     "' has not been found."));
   }
 
-  void
-  SearchFile::addSearchPaths(const std::string& p)
+  void SearchPathsHandler::addSearchPaths(const std::string& p)
   {
-    using namespace tfel::utilities;
-    auto& msf = SearchFile::getSearchFile();
+    auto& msf = SearchPathsHandler::getSearchPathsHandler();
 #if defined _WIN32 || defined _WIN64
-    const auto npaths = tokenize(p,';');
+    const auto npaths = tfel::utilities::tokenize(p,';');
 #else
-    const auto npaths = tokenize(p,':');
+    const auto npaths = tfel::utilities::tokenize(p,':');
 #endif
     msf.paths.insert(msf.paths.begin(),
 		     npaths.begin(),npaths.end());
-  } // end of SearchFile::addSearchPaths
+  } // end of SearchPathsHandler::addSearchPaths
 
-  const std::vector<std::string>&
-  SearchFile::getSearchPaths()
+  const std::vector<std::string>& SearchPathsHandler::getSearchPaths()
   {
-    return SearchFile::getSearchFile().paths;
-  } // end of SearchFile::getSearchPaths
+    return SearchPathsHandler::getSearchPathsHandler().paths;
+  } // end of SearchPathsHandler::getSearchPaths
 
-  SearchFile::SearchFile()
+  SearchPathsHandler::SearchPathsHandler()
   {
-    using namespace tfel::utilities;
     const char * const p = ::getenv("MFRONT_INCLUDE_PATH");
     if(p!=nullptr){
 #if defined _WIN32 || defined _WIN64
-    const auto npaths = tokenize(p,';');
+    const auto npaths = tfel::utilities::tokenize(p,';');
 #else
-    const auto npaths = tokenize(p,':');
+    const auto npaths = tfel::utilities::tokenize(p,':');
 #endif
       this->paths.insert(this->paths.begin(),
 			 npaths.begin(),npaths.end());
     }
   }
 
-  SearchFile&
-  SearchFile::getSearchFile()
+  SearchPathsHandler& SearchPathsHandler::getSearchPathsHandler()
   {
-    static SearchFile msf;
+    static SearchPathsHandler msf;
     return msf;
-  } // end of SearchFile::getSearchFile
+  } // end of SearchPathsHandler::getSearchPathsHandler
 
 } // end of namespace mfront

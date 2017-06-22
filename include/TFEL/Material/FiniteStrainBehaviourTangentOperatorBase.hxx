@@ -49,7 +49,7 @@ namespace tfel
 	ABAQUS,   /*!< tangent moduli associated with the Jaumann rate
 		    of the Kirchhoff stress divided by J. This is the
 		    tangent operator for the Abaqus and Ansys finite
-		    element solvers */
+		    element solvers (for isotropic behaviours) */
 	DSIG_DDE, /*!< derivative of the Cauchy stress with respect to
 		    the small strain deformation increment*/
 	DTAU_DF,  /*!< derivative of the Kirchhoff stress with respect to
@@ -65,8 +65,10 @@ namespace tfel
 		    increment */
 	DS_DC,    /*!< derivative of the second Piola-Kirchhoff stress
 		    with respect to the right Cauchy-Green tensor */
-	DS_DEGL   /*!< derivative of the Cauchy stress with respect to
+	DS_DEGL,  /*!< derivative of the Cauchy stress with respect to
 		    the Green-Lagrange strain deformation */
+	DT_DELOG  /*!< derivative of the dual of the logarithmic strain
+		    with respect to Hencky strain tensor */
       }; // end of Flag
     };
 

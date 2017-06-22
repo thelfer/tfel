@@ -18,7 +18,7 @@
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 
-#include"MFront/SearchFile.hxx"
+#include"MFront/SearchPathsHandler.hxx"
 #include"MFront/PedanticMode.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/MFrontDebugMode.hxx"
@@ -115,7 +115,7 @@ namespace mfront{
       throw(std::runtime_error("MFrontBase::treatSearchPath : "
 			       "no path given"));
     }
-    SearchFile::addSearchPaths(o);
+    SearchPathsHandler::addSearchPaths(o);
   }
 
   bool

@@ -38,7 +38,7 @@
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/PedanticMode.hxx"
 #include"MFront/MFrontLogStream.hxx"
-#include"MFront/SearchFile.hxx"
+#include"MFront/SearchPathsHandler.hxx"
 #include"MFront/AbstractBehaviourInterface.hxx"
 #include"MFront/MFrontMaterialPropertyInterface.hxx"
 #include"MFront/PerformanceProfiling.hxx"
@@ -325,7 +325,7 @@ namespace mfront{
       getLogStream() << "BehaviourDSLCommon::treatModel: treating file '" << f << "'\n";
     }
     // getting informations the source files
-    const auto path = SearchFile::search(f);
+    const auto path = SearchPathsHandler::search(f);
     ModelDSL dsl;
     try{
       dsl.setInterfaces({"mfront"});

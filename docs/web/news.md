@@ -16,6 +16,12 @@
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 
+# The talks of the third MFront Users Day (21 June 2017)
+
+The talks of the third MFront Users Day are available here:
+
+<https://github.com/thelfer/tfel-doc>
+
 # Cast3m 2017 is out (12 May 2017)
 
 ![](img/IconeCast3M_jaune.png "")
@@ -511,7 +517,7 @@ See the [dedicated page](epx.html) for more information.
 
 A `github` repository has been set up to store various documents
 describing TFEL and MFront usage. The talks of the first and second
-MFront Users are available there:
+MFront Users Days are available there:
 
 <https://github.com/thelfer/tfel-doc>
 

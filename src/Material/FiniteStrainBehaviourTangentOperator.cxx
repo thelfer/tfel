@@ -33,7 +33,8 @@ namespace tfel{
 	  FiniteStrainBehaviourTangentOperatorBase::DS_DF,   
 	  FiniteStrainBehaviourTangentOperatorBase::DS_DDF,  
 	  FiniteStrainBehaviourTangentOperatorBase::DS_DC,   
-	  FiniteStrainBehaviourTangentOperatorBase::DS_DEGL};
+	  FiniteStrainBehaviourTangentOperatorBase::DS_DEGL,
+	  FiniteStrainBehaviourTangentOperatorBase::DT_DELOG};
     }
 
     std::string
@@ -54,6 +55,7 @@ namespace tfel{
       case FiniteStrainBehaviourTangentOperatorBase::DSIG_DDE:
       case FiniteStrainBehaviourTangentOperatorBase::DS_DC:
       case FiniteStrainBehaviourTangentOperatorBase::DS_DEGL:
+      case FiniteStrainBehaviourTangentOperatorBase::DT_DELOG:
 	return "st2tost2";
       }
       throw(std::runtime_error("getFiniteStrainBehaviourTangentOperatorFlagType : "
@@ -90,6 +92,8 @@ namespace tfel{
 	return "DS_DC";
       case FiniteStrainBehaviourTangentOperatorBase::DS_DEGL:
 	return "DS_DEGL";
+      case FiniteStrainBehaviourTangentOperatorBase::DT_DELOG:
+	return "DT_DELOG";
       }
       throw(std::runtime_error("convertFiniteStrainBehaviourTangentOperatorFlagToString : "
 			       "unsupported FiniteStrainBehaviourTangentOperatorBase flag "));
@@ -138,6 +142,9 @@ namespace tfel{
       case FiniteStrainBehaviourTangentOperatorBase::DS_DEGL:
 	return "derivative of the second Piola-Kirchhoff stress "
 	  "with respect to the Green-Lagrange strain tensor";
+      case FiniteStrainBehaviourTangentOperatorBase::DT_DELOG:
+	return "derivative of the dual of the lagrangian Hencky strain "
+	  "with respect to the lagrangian Hencky strain tensor";
       }
       throw(std::runtime_error("getFiniteStrainBehaviourTangentOperatorDescription : "
 			       "unsupported FiniteStrainBehaviourTangentOperatorBase flag "));
