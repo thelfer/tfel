@@ -110,7 +110,7 @@ omega.setErrorNormalisationFactor(1.e-7);
       h=0.;
       Dp=0.;
       if (terme>1.){
-	Dp  = gamma0*power<20>(terme)-gamma0;
+	Dp  = gamma0*pow(terme,pn)-gamma0;
 	real sgn=tau/abs(tau);
 	real Dg  = sgn*Dp;
 	depsg[k]+=Dg*mu_ki ;
