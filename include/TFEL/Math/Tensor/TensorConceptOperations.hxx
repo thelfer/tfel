@@ -55,7 +55,7 @@ namespace tfel{
       //! The type used to access the element of the tensor
       using IndexType =  typename TensorTraits<T_type>::IndexType;
       //! The space dimension
-      static constexpr auto dime = TensorTraits<T_type>::dime;
+      static constexpr IndexType dime = TensorTraits<T_type>::dime;
     };
     /*!
      * Partial Specialisation of `ComputeBinaryResult_` for tensor's
