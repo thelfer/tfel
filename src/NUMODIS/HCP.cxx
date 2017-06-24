@@ -346,7 +346,29 @@ namespace numodis
 	if (isNew)
 	  eqBurgers.push_back(newBurgers);
 	    
+	// opposite sign for c axis (if needed)	    
+	if(newBurgers[3]!=0)
+	    {
+		// consider another possible Burgers
+		newBurgers[3]=-newBurgers[3];
+		
+		// check if it is new
+		isNew=true;
+		for(int i=0; i!=eqBurgers.size(); i++)
+		    if(Coincide(newBurgers,eqBurgers[i])!=0)
+			{
+			    isNew=false;
+			    break;
       }
+		
+		// push if it is new
+		if (isNew)
+		    eqBurgers.push_back(newBurgers);
+		
+	    }
+	
+      }
+    
     while(next_permutation(indices.begin(),indices.begin()+3));	
     
   }
