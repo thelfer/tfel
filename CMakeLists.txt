@@ -153,6 +153,14 @@ if(enable-abaqus)
   add_definitions("-DHAVE_ABAQUS=1")
 endif(enable-abaqus)
 
+#calculix
+option(enable-calculix "build CalculiX interface for mechanical behaviours" OFF)
+if(enable-calculix)
+  message(STATUS "CalculiX support enabled")
+  set(HAVE_CALCULIX ON)
+  add_definitions("-DHAVE_CALCULIX=1")
+endif(enable-calculix)
+
 #ansys
 option(enable-ansys "build ansys interface for mechanical behaviours" OFF)
 if(enable-ansys)

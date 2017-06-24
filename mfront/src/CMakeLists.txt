@@ -216,6 +216,25 @@ if(HAVE_ABAQUS)
     TFELException)
 endif(HAVE_ABAQUS)
 
+if(HAVE_CALCULIX)
+  set(TFELMFront_SOURCES
+    CalculiXInterface.cxx
+    ${TFELMFront_SOURCES})
+  set(CalculiXInterface_SOURCES
+    CalculiXInterfaceExceptions.cxx
+    CalculiXRotation.cxx
+    CalculiXException.cxx
+    CalculiXComputeStiffnessTensor.cxx
+    CalculiXStressFreeExpansionHandler.cxx
+    CalculiXComputeThermalExpansionCoefficientTensor.cxx
+    CalculiXFiniteStrain.cxx)
+  mfront_library(CalculiXInterface ${CalculiXInterface_SOURCES})
+  target_link_libraries(CalculiXInterface
+    MTestFileGenerator
+    TFELUtilities
+    TFELException)
+endif(HAVE_CALCULIX)
+
 if(HAVE_ANSYS)
   set(TFELMFront_SOURCES
     AnsysInterface.cxx

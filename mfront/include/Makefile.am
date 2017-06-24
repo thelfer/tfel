@@ -234,6 +234,26 @@ nobase_include_HEADERS += MFront/Abaqus/Abaqus.hxx                              
 			  MFront/AbaqusExplicitInterface.hxx
 endif
 
+if HAVE_ABAQUS
+nobase_include_HEADERS += MFront/CalculiX/CalculiX.hxx                                         \
+			  MFront/CalculiX/CalculiXData.hxx                                     \
+			  MFront/CalculiX/CalculiXConvert.hxx                                  \
+			  MFront/CalculiX/CalculiXRotation.hxx                                 \
+			  MFront/CalculiX/CalculiXConfig.hxx                                   \
+			  MFront/CalculiX/CalculiXTraits.hxx                                   \
+			  MFront/CalculiX/CalculiXException.hxx 		               \
+			  MFront/CalculiX/CalculiXInterface.hxx	                               \
+			  MFront/CalculiX/CalculiXInterfaceExceptions.hxx                      \
+			  MFront/CalculiX/CalculiXBehaviourHandler.hxx                         \
+			  MFront/CalculiX/CalculiXComputeStiffnessTensor.hxx                   \
+			  MFront/CalculiX/CalculiXComputeThermalExpansionCoefficientTensor.hxx \
+			  MFront/CalculiX/CalculiXStressFreeExpansionHandler.hxx               \
+			  MFront/CalculiX/CalculiXTangentOperator.hxx                          \
+			  MFront/CalculiX/CalculiXTangentOperator.ixx                          \
+			  MFront/CalculiX/CalculiXFiniteStrain.hxx                             \
+			  MFront/CalculiXInterface.hxx
+endif
+
 if HAVE_ANSYS
 nobase_include_HEADERS += MFront/Ansys/Ansys.hxx                                         \
 			  MFront/Ansys/AnsysData.hxx                                     \

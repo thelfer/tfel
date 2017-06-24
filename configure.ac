@@ -431,6 +431,18 @@ then
     AC_DEFINE(HAVE_ABAQUS)
 fi
 
+# calculix
+AC_ARG_ENABLE([calculix],
+               AC_HELP_STRING([--enable-calculix],
+		   [build CalculiX interface for mechanical behaviours]),
+	       [enable_calculix=true],
+	       [enable_calculix=false])
+AM_CONDITIONAL(HAVE_CALCULIX,[test x"$enable_calculix" = "xtrue"])
+if(test "x$enable_calculix" = "xtrue")
+then
+    AC_DEFINE(HAVE_CALCULIX)
+fi
+
 #ansys
 AC_ARG_ENABLE([ansys],
                AC_HELP_STRING([--enable-ansys],

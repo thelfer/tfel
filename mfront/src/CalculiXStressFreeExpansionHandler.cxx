@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/src/AnsysStressFreeExpansionHandler.cxx
+ * \file  mfront/src/CalculiXStressFreeExpansionHandler.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 04 mars 2014
@@ -14,18 +14,18 @@
 #include<cmath>
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/General/MathConstants.hxx"
-#include"MFront/Ansys/AnsysStressFreeExpansionHandler.hxx"
+#include"MFront/CalculiX/CalculiXStressFreeExpansionHandler.hxx"
 
-namespace ansys
+namespace calculix
 {
 
   template<typename real>
   static void
-  AnsysStandardSmallStrainStressFreeExpansionHandlerImpl(real * const e,
-							 real * const de,
-							 const real *const s0,
-							 const real *const s1,
-							 const AnsysInt d)
+  CalculiXStandardSmallStrainStressFreeExpansionHandlerImpl(real * const e,
+							    real * const de,
+							    const real *const s0,
+							    const real *const s1,
+							    const CalculiXInt d)
   {
     constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
     e[0]  -= s0[0];
@@ -46,33 +46,24 @@ namespace ansys
       de[4] -= (s1[4]-s0[4])*cste;
       de[5] -= (s1[5]-s0[5])*cste;
     }
-  } // end of AnsysStandardSmallStrainStressFreeExpansionHandler
-
-  void AnsysStandardSmallStrainStressFreeExpansionHandler(float * const e,
-							   float * const de,
-							   const float *const s0,
-							   const float *const s1,
-							   const AnsysInt d)
-  {
-    AnsysStandardSmallStrainStressFreeExpansionHandlerImpl(e,de,s0,s1,d);
-  }
+  } // end of CalculiXStandardSmallStrainStressFreeExpansionHandler
   
-  void AnsysStandardSmallStrainStressFreeExpansionHandler(double * const e,
-							   double * const de,
-							   const double *const s0,
-							   const double *const s1,
-							   const AnsysInt d)
+  void CalculiXStandardSmallStrainStressFreeExpansionHandler(CalculiXReal * const e,
+							     CalculiXReal * const de,
+							     const CalculiXReal *const s0,
+							     const CalculiXReal *const s1,
+							     const CalculiXInt d)
   {
-    AnsysStandardSmallStrainStressFreeExpansionHandlerImpl(e,de,s0,s1,d);
+    CalculiXStandardSmallStrainStressFreeExpansionHandlerImpl(e,de,s0,s1,d);
   }
 
   template<typename real>
   static void
-  AnsysLogarithmicStrainStressFreeExpansionHandlerImpl(real * const e,
-							real * const de,
-							const real *const s0,
-							const real *const s1,
-							const AnsysInt d)
+  CalculiXLogarithmicStrainStressFreeExpansionHandlerImpl(real * const e,
+							  real * const de,
+							  const real *const s0,
+							  const real *const s1,
+							  const CalculiXInt d)
   {
     constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
     if(d==2){
@@ -107,24 +98,15 @@ namespace ansys
       de[4] -= (ln_e1[4]-ln_e0[4])*cste;
       de[5] -= (ln_e1[5]-ln_e0[5])*cste;
     }
-  } // end of AnsysLogarithmicStrainStressFreeExpansionHandler
+  } // end of CalculiXLogarithmicStrainStressFreeExpansionHandler
 
-  void AnsysLogarithmicStrainStressFreeExpansionHandler(float * const e,
-							float * const de,
-							const float *const s0,
-							const float *const s1,
-							const AnsysInt d)
+  void CalculiXLogarithmicStrainStressFreeExpansionHandler(CalculiXReal * const e,
+							   CalculiXReal * const de,
+							   const CalculiXReal *const s0,
+							   const CalculiXReal *const s1,
+							   const CalculiXInt d)
   {
-    AnsysLogarithmicStrainStressFreeExpansionHandlerImpl(e,de,s0,s1,d);
+    CalculiXLogarithmicStrainStressFreeExpansionHandlerImpl(e,de,s0,s1,d);
   }
   
-  void AnsysLogarithmicStrainStressFreeExpansionHandler(double * const e,
-							double * const de,
-							const double *const s0,
-							const double *const s1,
-							const AnsysInt d)
-  {
-    AnsysLogarithmicStrainStressFreeExpansionHandlerImpl(e,de,s0,s1,d);
-  }
-  
-} // end of namespace ansys
+} // end of namespace calculix

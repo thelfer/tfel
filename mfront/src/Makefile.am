@@ -146,6 +146,10 @@ libTFELMFront_la_SOURCES += AbaqusInterfaceBase.cxx     \
 			    AbaqusExplicitInterface.cxx
 endif
 
+if HAVE_CALCULIX
+libTFELMFront_la_SOURCES += CalculiXInterface.cxx
+endif
+
 if HAVE_ANSYS
 libTFELMFront_la_SOURCES += AnsysInterface.cxx
 endif
@@ -289,6 +293,27 @@ if TFEL_WIN
 libAbaqusInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
 endif # HAVE_ABAQUS
+
+# CalculiX Interface
+if HAVE_CALCULIX
+lib_LTLIBRARIES += libCalculiXInterface.la
+libCalculiXInterface_la_SOURCES = CalculiXInterfaceExceptions.cxx                      \
+		                  CalculiXRotation.cxx                                 \
+				  CalculiXException.cxx                                \
+			          CalculiXComputeStiffnessTensor.cxx                   \
+			          CalculiXStressFreeExpansionHandler.cxx               \
+			          CalculiXComputeThermalExpansionCoefficientTensor.cxx \
+			          CalculiXFiniteStrain.cxx
+
+libCalculiXInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities       \
+			          -L$(top_builddir)/src/Exception -lTFELException       \
+			          -L$(top_builddir)/mfront/src    -lMTestFileGenerator
+libCalculiXInterface_la_DEPENDENCIES = libMTestFileGenerator.la
+libCalculiXInterface_la_CPPFLAGS     = $(AM_CPPFLAGS) -DCalculiXInterface_EXPORTS
+if TFEL_WIN
+libCalculiXInterface_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
+endif # TFEL_WIN
+endif # HAVE_CALCULIX
 
 # Ansys Interface
 if HAVE_ANSYS

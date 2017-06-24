@@ -1,0 +1,307 @@
+/*! 
+ * \file  mfront/include/MFront/CalculiX/CalculiXBehaviourHandler.hxx
+ * \brief
+ * \author Helfer Thomas
+ * \brief 30 janv. 2013
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
+ */
+
+#ifndef LIB_MFRONT_CALCULIX_CALCULIXBEHAVIOURHANDLER_HXX
+#define LIB_MFRONT_CALCULIX_CALCULIXBEHAVIOURHANDLER_HXX 
+
+#ifndef LIB_MFRONT_CALCULIX_CALL_HXX
+#error "This header shall not be called directly"
+#endif /* LIB_MFRONT_CALCULIX_CALL_HXX */
+
+#include"TFEL/Math/tensor.hxx"
+#include"TFEL/Math/stensor.hxx"
+#include"TFEL/Math/tmatrix.hxx"
+#include"TFEL/Math/Matrix/TMatrixView.hxx"
+#include"TFEL/Math/T2toST2/T2toST2View.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
+#include"TFEL/Material/MechanicalBehaviour.hxx"
+#include"TFEL/Material/ModellingHypothesis.hxx"
+#include"TFEL/Math/General/ConstExprMathFunctions.hxx"
+
+#include"MFront/CalculiX/CalculiXData.hxx"
+#include"MFront/CalculiX/CalculiXTangentOperator.hxx"
+#include"MFront/CalculiX/CalculiXInterfaceExceptions.hxx"
+#include"MFront/CalculiX/CalculiXComputeStiffnessTensor.hxx"
+#include"MFront/CalculiX/CalculiXComputeThermalExpansionCoefficientTensor.hxx"
+
+namespace calculix
+{
+
+  template<CalculiXBehaviourType btype>
+  struct CalculiXTangentOperatorFlag;
+
+  template<>
+  struct CalculiXTangentOperatorFlag<calculix::SMALLSTRAINSTANDARDBEHAVIOUR>
+  {
+    typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>
+    TangentOperatorTraits;
+    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
+  };
+
+  template<>
+  struct CalculiXTangentOperatorFlag<calculix::FINITESTRAINSTANDARDBEHAVIOUR>
+  {
+    typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR> TangentOperatorTraits;
+    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DS_DEGL;
+  };
+
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
+	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
+  struct TFEL_VISIBILITY_LOCAL CalculiXBehaviourHandler
+    : public CalculiXInterfaceExceptions
+  {
+
+    /*!
+     * An helper structure used to initialise the driving variables
+     */
+    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithStressFreeExpansion
+      : public CalculiXInterfaceExceptions
+    {
+      //! a simple alias
+      typedef Behaviour<H,CalculiXReal,false> BV;
+      /*!
+       * \param[out] b      : behaviour
+       * \param[in]  STRAN  : driving variable at the beginning of the
+       *                      time step
+       * \param[in]  DSTRAN : driving variable at the end of the
+       *                      time step or driving variable increment
+       * \param[in]  sfeh   : function handling the stress-free expansion
+       *                      at the beginning of the time step
+       */
+      TFEL_CALCULIX_INLINE static 
+	void exe(BV& b,
+		 const CalculiXReal *const STRAN,
+		 const CalculiXReal *const DSTRAN,
+		 const StressFreeExpansionHandler<CalculiXReal>& sfeh)
+      {
+	using std::pair;
+	using tfel::fsalgo::copy;
+	using namespace tfel::material;
+	typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
+	typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
+	const CalculiXInt N = ModellingHypothesisToSpaceDimension<H>::value;
+	CalculiXReal dv0[CalculiXTraits<BV>::DrivingVariableSize];
+	CalculiXReal dv1[CalculiXTraits<BV>::DrivingVariableSize];
+	copy<CalculiXTraits<BV>::DrivingVariableSize>::exe(STRAN,dv0);
+	copy<CalculiXTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
+	// check that the function pointer are not null
+	if(sfeh==nullptr){
+	  throwUnsupportedStressFreeExpansionException(Traits::getName());
+	}
+	pair<StressFreeExpansionType,StressFreeExpansionType> s;
+	b.computeStressFreeExpansion(s);
+	const auto& s0 = s.first;
+	const auto& s1 = s.second;
+	sfeh(dv0,dv1,&s0[0],&s1[0],N);
+	b.setCALCULIXBehaviourDataDrivingVariables(dv0);
+	b.setCALCULIXIntegrationDataDrivingVariables(dv1);
+      } // end of exe
+
+    }; // end of struct DrivingVariableInitialiserWithStressFreeExpansion
+
+    /*!
+     * An helper structure used to initialise the driving variables
+     */
+    struct TFEL_VISIBILITY_LOCAL DrivingVariableInitialiserWithoutStressFreeExpansion
+    {
+      //! a simple alias
+      typedef Behaviour<H,CalculiXReal,false> BV;
+      /*!
+       * \param[out] b      : b
+       * \param[in]  STRAN  : driving variable at the beginning of the
+       *                     time step
+       * \param[in]  DSTRAN : driving variable at the end of the
+       *                      time step or driving variable increment
+       * \param[in]  sfeh   : function handling the stress-free expansion
+       *                      at the beginning of the time step
+       */
+      TFEL_CALCULIX_INLINE static 
+	void exe(BV& b,
+		 const CalculiXReal *const STRAN,
+		 const CalculiXReal *const DSTRAN,
+		 const StressFreeExpansionHandler<CalculiXReal>&)
+      {
+	b.setCALCULIXBehaviourDataDrivingVariables(STRAN);
+	b.setCALCULIXIntegrationDataDrivingVariables(DSTRAN);
+      } // end of exe
+    }; // end of struct DrivingVariableInitialiserWithoutStressFreeExpansion
+
+    struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer
+    {
+      typedef Behaviour<H,CalculiXReal,false> BV;
+      typedef typename BV::BehaviourData  BData;
+      TFEL_CALCULIX_INLINE static void
+	exe(BData& data,const CalculiXReal * const props){
+	typedef CalculiXTraits<BV> Traits;
+	const bool buas = Traits::requiresUnAlteredStiffnessTensor;
+	CalculiXComputeStiffnessTensor<CalculiXTraits<BV>::btype,H,
+				     CalculiXTraits<BV>::etype,buas>::exe(data.getStiffnessTensor(),
+									props);
+      } // end of exe
+    }; // end of struct StiffnessOperatorInitializer
+
+    struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer
+    {
+      typedef Behaviour<H,CalculiXReal,false> BV;
+      typedef typename BV::BehaviourData  BData;
+      TFEL_CALCULIX_INLINE static void
+	exe(BData& data,const CalculiXReal * const props){
+	const unsigned short o =
+	  CalculiXTraits<BV>::elasticPropertiesOffset;
+	CalculiXComputeThermalExpansionCoefficientTensor<CalculiXTraits<BV>::btype,H,
+						       CalculiXTraits<BV>::stype>::exe(props+o,
+										     data.getThermalExpansionCoefficientTensor());
+      } // end of exe
+    }; // end of struct ThermalExpansionCoefficientTensorInitializer
+
+    struct TFEL_VISIBILITY_LOCAL DoNothingInitializer
+    {
+      typedef Behaviour<H,CalculiXReal,false> BV;
+      typedef typename BV::BehaviourData  BData;
+      TFEL_CALCULIX_INLINE static void
+	exe(BData&,const CalculiXReal * const)
+      {}
+    }; // end of struct DoNothingInitializer
+
+    template<const bool bs,     // requires StiffnessOperator
+	     const bool ba>     // requires ThermalExpansionCoefficientTensor
+      struct TFEL_VISIBILITY_LOCAL Integrator
+    {
+      typedef typename std::conditional<bs,StiffnessOperatorInitializer,
+					DoNothingInitializer>::type SInitializer;
+
+      typedef typename std::conditional<ba,ThermalExpansionCoefficientTensorInitializer,
+					DoNothingInitializer>::type AInitializer;
+
+      TFEL_CALCULIX_INLINE Integrator(const CalculiXData& d)
+	: behaviour(&(d.DTIME),d.TEMP,d.DTEMP,
+		    d.PROPS+CalculiXTraits<BV>::elasticPropertiesOffset+
+		    CalculiXTraits<BV>::thermalExpansionPropertiesOffset,
+		    d.STATEV,d.PREDEF,d.DPRED,d.DROT),
+	  dt(d.DTIME)
+       {
+	 using namespace tfel::material;
+	 typedef MechanicalBehaviourTraits<BV> Traits;
+	 typedef typename std::conditional<
+	   Traits::hasStressFreeExpansion,
+	   DrivingVariableInitialiserWithStressFreeExpansion,
+	   DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
+	 SInitializer::exe(this->behaviour,d.PROPS);
+	 AInitializer::exe(this->behaviour,d.PROPS);
+	 DVInitializer::exe(this->behaviour,d.STRAN,d.DSTRAN,d.sfeh);
+	 this->behaviour.setCALCULIXBehaviourDataThermodynamicForces(d.STRESS,d.DROT);
+	 this->behaviour.setOutOfBoundsPolicy(d.op);
+	 this->behaviour.initialize();
+       } // end of Integrator::Integrator
+	
+      TFEL_CALCULIX_INLINE2
+      void exe(const CalculiXData& d)
+      {
+	using namespace tfel::material;
+	typedef MechanicalBehaviourTraits<BV> Traits;
+	typedef typename std::conditional<
+	  Traits::hasConsistentTangentOperator,
+	  ExtractAndConvertTangentOperator<H>,
+	  ConsistentTangentOperatorIsNotAvalaible
+	  >::type ConsistentTangentOperatorHandler;
+	if(this->dt<0.){
+	  throwNegativeTimeStepException(Traits::getName());
+	}
+	this->behaviour.checkBounds();
+	auto r = BV::SUCCESS;
+	const auto smflag = CalculiXTangentOperatorFlag<CalculiXTraits<BV>::btype>::value;
+	auto tsf = behaviour.computeAPrioriTimeStepScalingFactor(*(d.PNEWDT));
+	*(d.PNEWDT) = tsf.second;
+	if(!tsf.first){
+	  r = BV::FAILURE;
+	} else {
+	  try{
+	    r = this->behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
+	  } catch(DivergenceException&){
+	    r=BV::FAILURE;
+	  }
+	  if(r==BV::FAILURE){
+	    *(d.PNEWDT) = behaviour.getMinimalTimeStepScalingFactor();
+	  } else {
+	    tsf = behaviour.computeAPosterioriTimeStepScalingFactor(*(d.PNEWDT));
+	    if(!tsf.first){
+	      r=BV::FAILURE;
+	    }
+	    *(d.PNEWDT) = std::min(tsf.second,*(d.PNEWDT));
+	  }
+	}
+	if(r==BV::FAILURE){
+	  return;
+	}
+	this->behaviour.checkBounds();
+	this->behaviour.CALCULIXexportStateData(d.STRESS,d.STATEV);
+	ConsistentTangentOperatorHandler::exe(this->behaviour,d.DDSDDE);
+      } // end of Integrator::exe
+	
+    private:
+      
+      struct ConsistentTangentOperatorIsNotAvalaible
+      {
+	typedef Behaviour<H,CalculiXReal,false> BV;
+	static void exe(BV&,CalculiXReal *const)
+	{
+	  typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
+	  throwConsistentTangentOperatorIsNotAvalaible(Traits::getName());
+	} // end of exe	  
+      };
+
+      typedef Behaviour<H,CalculiXReal,false> BV;
+      BV behaviour;
+      CalculiXReal dt;
+    }; // end of struct Integrator
+
+    TFEL_CALCULIX_INLINE2 static void
+    checkNPROPS(const CalculiXInt NPROPS)
+    {
+      using namespace std;
+      using namespace tfel::material;
+      typedef Behaviour<H,CalculiXReal,false> BV;
+      typedef MechanicalBehaviourTraits<BV> Traits;
+      const unsigned short offset  = (CalculiXTraits<BV>::elasticPropertiesOffset+
+				      CalculiXTraits<BV>::thermalExpansionPropertiesOffset);
+      const unsigned short nprops  = CalculiXTraits<BV>::material_properties_nb;
+      const unsigned short NPROPS_ = offset+nprops ==0 ? 1 : offset+nprops; 
+      const bool is_defined_       = Traits::is_defined;
+      //Test if the nb of properties matches Behaviour requirements
+      if((NPROPS!=NPROPS_)&&is_defined_){
+	throwUnMatchedNumberOfMaterialProperties(Traits::getName(),
+						 NPROPS_,NPROPS);
+      }
+    } // end of checkNPROPS
+      
+    TFEL_CALCULIX_INLINE2 static void
+    checkNSTATV(const CalculiXInt NSTATV)
+    {
+      typedef Behaviour<H,CalculiXReal,false> BV;
+      typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
+      const unsigned short nstatv  = Traits::internal_variables_nb;
+      const bool is_defined_       = Traits::is_defined;
+      //Test if the nb of state variables matches Behaviour requirements
+      if((nstatv!=NSTATV)&&is_defined_){
+	throwUnMatchedNumberOfStateVariables(Traits::getName(),
+					     nstatv,NSTATV);
+      }
+    } // end of checkNSTATV
+      
+  }; // end of struct CalculiXBehaviourHandler
+  
+} // end of namespace calculix
+
+#endif /* LIB_MFRONT_CALCULIX_CALCULIXBEHAVIOURHANDLER_HXX */

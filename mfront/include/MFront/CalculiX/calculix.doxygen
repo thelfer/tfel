@@ -1,0 +1,10 @@
+/*!
+ * \file  mfront/include/MFront/Calculix/calculix.doxygen
+ * \brief This file documents the calculix namespace.
+ */
+
+/*!
+ * \namespace calculix
+ * \brief the namespace calculix contains material related to the MFront
+ * interface to the `CalculiX` finite element solver.
+ */
