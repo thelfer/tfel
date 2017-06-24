@@ -112,9 +112,9 @@ namespace tfel{
       typename std::enable_if<
 	tfel::typetraits::IsScalar<T2>::cond&&
 	std::is_same<typename ResultType<TensorNumType<Child>,
-						   T2,OpMult>::type,
-			       TensorNumType<Child>>::value,
-				 Child&>::type
+					 T2,OpMult>::type,
+		     TensorNumType<Child>>::value,
+	Child&>::type
       operator*=(const T2);
       /*!
        * operator/=

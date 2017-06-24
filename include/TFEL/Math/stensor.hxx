@@ -666,8 +666,7 @@ namespace tfel{
       computeIsotropicFunction(const tvector<3u,T2>&,
 			       const tmatrix<3u,3u,tfel::typetraits::base_type<T>>&);
       /*!
-       * compute the derivative of an isotropic function
-       * \param[out] d:   result
+       * \return the derivative of an isotropic function
        * \param[in]  f:   function values
        * \param[in]  df:  values of the derivative of the function
        * \param[in]  vp:  eigen values
