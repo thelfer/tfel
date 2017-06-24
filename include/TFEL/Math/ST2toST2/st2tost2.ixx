@@ -95,7 +95,7 @@ namespace tfel{
       tfel::typetraits::IsScalar<T2>::cond&&
       std::is_same<typename ResultType<typename ST2toST2Traits<Child>::NumType,
 						 T2,OpMult>::type,
-			     typename ST2toST2Traits<Child>::NumType>::cond,
+		   typename ST2toST2Traits<Child>::NumType>::value,
       Child&>::type
     st2tost2_base<Child>::operator*=(const T2 s)
     {
@@ -113,7 +113,7 @@ namespace tfel{
       tfel::typetraits::IsScalar<T2>::cond&&
       std::is_same<typename ResultType<typename ST2toST2Traits<Child>::NumType,
 						 T2,OpDiv>::type,
-			     typename ST2toST2Traits<Child>::NumType>::cond,
+		   typename ST2toST2Traits<Child>::NumType>::value,
       Child&>::type
     st2tost2_base<Child>::operator/=(const T2 s)
     {

@@ -102,7 +102,7 @@ namespace tfel{
 	tfel::typetraits::IsScalar<T2>::cond&&
 	std::is_same<typename ResultType<typename T2toT2Traits<Child>::NumType,
 						   T2,OpMult>::type,
-			       typename T2toT2Traits<Child>::NumType>::cond,
+		     typename T2toT2Traits<Child>::NumType>::value,
 	Child&>::type
       operator*=(const T2);
       /*!
@@ -114,7 +114,7 @@ namespace tfel{
 	tfel::typetraits::IsScalar<T2>::cond&&
         std::is_same<typename ResultType<typename T2toT2Traits<Child>::NumType,
 						   T2,OpDiv>::type,
-			       typename T2toT2Traits<Child>::NumType>::cond,
+		     typename T2toT2Traits<Child>::NumType>::value,
 	Child&>::type
       operator/=(const T2);
     }; // end of struct t2tot2_base
