@@ -55,7 +55,7 @@ struct FiniteStrainBehaviourTangentOperator12 final
     using stensor   = tfel::math::stensor<N,real>;
     using tensor    = tfel::math::tensor<N,real>;
     using st2tost2  = tfel::math::st2tost2<N,real>;
-    using size_type = typename stensor::size_type;
+    using size_type = unsigned short;
     const real l0  = 1.09465e+11;
     const real m0  = 5.6391e+12;
     const real eps = 1.e-10*2*m0;
@@ -118,7 +118,7 @@ struct FiniteStrainBehaviourTangentOperator12 final
     using stensor   = tfel::math::stensor<N,real>;
     using tensor    = tfel::math::tensor<N,real>;
     using st2tost2  = tfel::math::st2tost2<N,real>;
-    using size_type = typename stensor::size_type;
+    using size_type = unsigned short;
     const real l0  = 1.09465e+11;
     const real m0  = 5.6391e+12;
     const real eps = 1.e-10*2*m0;
