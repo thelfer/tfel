@@ -42,6 +42,8 @@ struct FiniteStrainBehaviourTangentOperator12 final
   {
     this->check1<1u>();
     this->check2<1u>();
+    this->check1<3u>();
+    this->check2<3u>();
     return this->result;
   }
  private:
@@ -58,7 +60,7 @@ struct FiniteStrainBehaviourTangentOperator12 final
     using size_type = unsigned short;
     const real l0  = 1.09465e+11;
     const real m0  = 5.6391e+12;
-    const real eps = 1.e-10*2*m0;
+    const real eps = 1.e-7*2*m0;
     // Hencky-Biot law with PK2 result
     auto hb = [&l0,&m0](const stensor& C) -> stensor{
       auto e = stensor{};
@@ -87,25 +89,29 @@ struct FiniteStrainBehaviourTangentOperator12 final
     };
     const real v1[9u] = {1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005};
     const real v2[9u] = {0.70,1.125,1.32,-0.24,-0.32,0.15,-0.14,-0.05,0.08};
+    const real v3[9u] = {1.70,0.625,0.625,0.,0.,0.,0.,0.,0.};
+    const real v4[9u] = {-0.625,1.70,-0.625,0.,0.,0.,0.,0.,0.};
+    const real v5[9u] = {-0.625,-0.625,1.70,0.,0.,0.,0.,0.,0.};
     const auto F0 = tensor::Id();
-    for(const tensor& F1: {tensor::Id(),tensor{v1},tensor{v2}}){
+    for(const tensor& F1: {tensor::Id(),tensor{v1},tensor{v2},
+			   tensor{v3},tensor{v4},tensor{v5}}){
       const auto  C = computeRightCauchyGreenTensor(F1);
-      const auto nC = getD(C,5.e-7);
+      const auto nD = getD(C,5.e-7);
       const auto  D = eval(l0*st2tost2::IxI()+2*m0*st2tost2::Id());
       const auto  S = hb(C);
       const auto sig = convertSecondPiolaKirchhoffStressToCauchyStress(S,F1);
-      auto aC = st2tost2{};
+      auto aD = st2tost2{};
       tfel::material::convert<TangentOperator::DT_DELOG,
-			      TangentOperator::DS_DC>(aC,D,F0,F1,sig);
+			      TangentOperator::DS_DC>(aD,D,F0,F1,sig);
       for(size_type i=0;i!=tfel::math::StensorDimeToSize<N>::value;++i){
 	for(size_type j=0;j!=tfel::math::StensorDimeToSize<N>::value;++j){
-	  if(std::abs(aC(i,j)-nC(i,j))>eps){
+	  if(std::abs(aD(i,j)-nD(i,j))>eps){
 	    std::cout << i << " " << j << " "
-		      << nC(i,j) << " " << " " << aC(i,j)
-		      << " " << std::abs(aC(i,j)-nC(i,j))
-		      << " " << std::abs(aC(i,j)-nC(i,j))/(2*m0) << std::endl;
+		      << nD(i,j) << " " << " " << aD(i,j)
+		      << " " << std::abs(aD(i,j)-nD(i,j))
+		      << " " << std::abs(aD(i,j)-nD(i,j))/(2*m0) << std::endl;
 	  }
-	  TFEL_TESTS_ASSERT(std::abs(aC(i,j)-nC(i,j))<eps);	
+	  TFEL_TESTS_ASSERT(std::abs(aD(i,j)-nD(i,j))<eps);	
 	}
       }
     }
@@ -121,7 +127,7 @@ struct FiniteStrainBehaviourTangentOperator12 final
     using size_type = unsigned short;
     const real l0  = 1.09465e+11;
     const real m0  = 5.6391e+12;
-    const real eps = 1.e-10*2*m0;
+    const real eps = 1.e-7*2*m0;
     // Non symmetric behaviour from the Hencky-Biot law with PK2 result
     auto hb = [&l0,&m0](const stensor& C) -> stensor{
       auto e = stensor{};
@@ -156,8 +162,12 @@ struct FiniteStrainBehaviourTangentOperator12 final
     };
     const real v1[9u] = {1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005};
     const real v2[9u] = {0.70,1.125,1.32,-0.24,-0.32,0.15,-0.14,-0.05,0.08};
+    const real v3[9u] = {1.70,0.625,0.625,0.,0.,0.,0.,0.,0.};
+    const real v4[9u] = {-0.625,1.70,-0.625,0.,0.,0.,0.,0.,0.};
+    const real v5[9u] = {-0.625,-0.625,1.70,0.,0.,0.,0.,0.,0.};
     const auto F0 = tensor::Id();
-    for(const tensor& F1: {tensor::Id(),tensor{v1},tensor{v2}}){
+    for(const tensor& F1: {tensor::Id(),tensor{v1},tensor{v2},
+			   tensor{v3},tensor{v4},tensor{v5}}){
       const auto  C = computeRightCauchyGreenTensor(F1);
       const auto nC = getD(C,5.e-7);
       auto  D = eval(l0*st2tost2::IxI()+2*m0*st2tost2::Id());
