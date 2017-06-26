@@ -1012,7 +1012,7 @@ namespace tfel
 	using real    = base_type<stress>;
 	using tvector = tvector<3u,real>;
 	using stensor = stensor<3u,real>;
-	using size_type = typename stensor::size_type;
+	using size_type = unsigned short;
 	constexpr const auto eps = 1.e-14;
 	auto are_all_vp_equals = [eps](const tvector& vp){
 	  return ((std::abs(vp(1)-vp(0))<eps)&&
@@ -1040,7 +1040,7 @@ namespace tfel
 	  }
 	  return 0;
 	};
-	const auto lk = [](const size_type i, const size_type j){
+	const auto lk = [](const size_type i, const size_type j) -> size_type{
 	  if(i==0){
 	    return (j==1) ? 2 : 1;
 	  }
