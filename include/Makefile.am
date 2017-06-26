@@ -22,6 +22,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx	                                     \
 			TFEL/Material/FiniteStrainBehaviourTangentOperator.ixx	                                     \
 			TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx	                             \
+			TFEL/Material/LogarithmicStrainHandler.hxx	                                             \
+			TFEL/Material/LogarithmicStrainHandler.ixx	                                             \
 			TFEL/Material/Lame.hxx			                                                     \
 			TFEL/Material/Hill.hxx			                                                     \
 			TFEL/Material/Hill.ixx			                                                     \

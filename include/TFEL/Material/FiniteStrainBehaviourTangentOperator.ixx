@@ -16,6 +16,7 @@
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx"
+#include"TFEL/Material/LogarithmicStrainHandler.hxx"
 
 /*!
  * \brief a convenient macro for shorted declaration of partial
@@ -967,198 +968,17 @@ namespace tfel
        * \param[in]  F1:  the deformation gradient
        * \param[in]  s:  the Cauchy stress tensor
        */
-      template<typename stress>
+      template<unsigned short N,typename stress>
       static TFEL_MATERIAL_INLINE void
-      exe(Result<1u,stress>& Kr,
-	  const Source<1u,stress>& Ks,
-	  const DeformationGradientTensor<1u,stress>&,
-	  const DeformationGradientTensor<1u,stress>& F1,
-	  const StressStensor<1u,stress>& sig)
+      exe(Result<N,stress>& Kr,
+	  const Source<N,stress>& Ks,
+	  const DeformationGradientTensor<N,stress>&,
+	  const DeformationGradientTensor<N,stress>& F1,
+	  const StressStensor<N,stress>& s)
       {
-	using namespace tfel::math;
-	using real = base_type<stress>;
-	const real iC[3]  = {1/(F1[0]*F1[0]),
-			     1/(F1[1]*F1[1]),
-			     1/(F1[2]*F1[2])};
-	const auto t = det(F1)*sig;
-	Kr(0,0)   = (Ks(0,0)-2*t[0])*iC[0]*iC[0];
-	Kr(0,1)   =  Ks(0,1)*iC[0]*iC[1];
-	Kr(0,2)   =  Ks(0,2)*iC[0]*iC[2];
-	Kr(1,0)   =  Ks(1,0)*iC[0]*iC[1];
-	Kr(1,1)   = (Ks(1,1)-2*t[1])*iC[1]*iC[1];
-	Kr(1,2)   =  Ks(1,2)*iC[1]*iC[2];
-	Kr(2,0)   =  Ks(2,0)*iC[0]*iC[2];
-	Kr(2,1)   =  Ks(2,1)*iC[1]*iC[2];
-	Kr(2,2)   = (Ks(2,2)-2*t[2])*iC[2]*iC[2];
-      } // end of exe
-      /*!
-       * \brief convert the stiffness matrix expressed in the logarithmic
-       * space into dS_dC in 3D.
-       * \param[out] Kr: the result of the convertion
-       * \param[in]  Ks: the initial stiffness tensor
-       * \param[in]  F0:  the deformation gradient
-       * \param[in]  F1:  the deformation gradient
-       * \param[in]  s:  the Cauchy stress tensor
-       */
-      template<typename stress>
-      static TFEL_MATERIAL_INLINE void
-      exe(Result<3u,stress>& Kr,
-	  const Source<3u,stress>& Ks,
-	  const DeformationGradientTensor<3u,stress>&,
-	  const DeformationGradientTensor<3u,stress>& F1,
-	  const StressStensor<3u,stress>& s)
-      {
-	using namespace tfel::math;
-	using real    = base_type<stress>;
-	using tvector = tvector<3u,real>;
-	using stensor = stensor<3u,real>;
-	using size_type = unsigned short;
-	constexpr const auto eps = 1.e-14;
-	auto are_all_vp_equals = [eps](const tvector& vp){
-	  return ((std::abs(vp(1)-vp(0))<eps)&&
-		  (std::abs(vp(1)-vp(2))<eps)&&
-		  (std::abs(vp(2)-vp(0))<eps));
-	};
-	auto find_uniq_vp = [eps,&are_all_vp_equals](const tvector& vp){
-	  if(are_all_vp_equals(vp)){
-	    throw(std::runtime_error("FiniteStrainBehaviourTangentOperatorConverter"
-				     "<Base::DT_DELOG,Base::DS_DEGL>::exe: "
-				     "find_uniq_vp shall not be called if all "
-				     "eigen values are equal."));
-	  }
-	  if((std::abs(vp(1)-vp(0))>eps)&&
-	     (std::abs(vp(1)-vp(2))>eps)&&
-	     (std::abs(vp(2)-vp(0))>eps)){
-	    // all eigenvalues are different
-	    return 3;
-	  }
-	  if((std::abs(vp(1)-vp(0))<eps)){
-	    return 2;
-	  }
-	  if((std::abs(vp(2)-vp(0))<eps)){
-	    return 1;
-	  }
-	  return 0;
-	};
-	const auto lk = [](const size_type i, const size_type j) -> size_type{
-	  if(i==0){
-	    return (j==1) ? 2 : 1;
-	  }
-	  if(i==1){
-	    return (j==0) ? 2 : 0;
-	  }
-	  return (j==0) ? 1 : 0;
-	};
-	// compute the derivative of the Hencky strain with respect to C
-	const auto fl   = [](const real x){return std::log1p(x-1)/2;};
-	const auto dfl  = [](const real x){return 1/(2*x);};
-	const auto C = computeRightCauchyGreenTensor(F1);
-	auto vp = tvector{};
-	auto m  = tmatrix<3u,3u,real>{};
-	std::tie(vp,m) = C.template computeEigenVectors<stensor::FSESJACOBIEIGENSOLVER>();
-	const auto e   = map(fl,vp);
-	const auto d   = map(dfl,vp); // half compared to Miehe definition
-	const auto f   = map([](const real x){return -2/(x*x);},vp);
-	// p is one half of the tensor defined by Miehe
-	const auto p   = stensor::computeIsotropicFunctionDerivative(e,d,vp,m,eps);
-	// convert the Cauchy stress to the dual of the logaritmic strain
-	const auto ip = invert(p);
-	const auto S  = convertCauchyStressToSecondPiolaKirchhoffStress(s,F1);
-	const auto T = (S|ip)/2;
-	// real work starts here
-	const auto M = [&m]{
-	  const tvector v[3] = {m.template column_view<0u>(),
-				m.template column_view<1u>(),
-				m.template column_view<2u>()};
-	  tmatrix<3u,3u,stensor> r;
-	  for(size_type i=0;i!=3;++i){
-	    for(size_type j=0;j!=3;++j){
-	      r(i,j)=stensor::buildFromVectorsSymmetricDiadicProduct(v[i],v[j]);
-	    }
-	  }
-	  return r;
-	}();
-	const auto xsi   = [&vp,&e,&d,&f,&are_all_vp_equals,&find_uniq_vp]{
-	  if(are_all_vp_equals(vp)){
-	    constexpr const auto zero = real{0};
-	    const auto rv = (f[0]+f[1]+f[2])/24;
-	    return tmatrix<3u,3u,real>{zero,rv,rv,
-		rv,zero,rv,
-		rv,rv,zero};
-	  }
-	  auto r = tmatrix<3u,3u,real>{};
-	  const auto k = find_uniq_vp(vp);
-	  if(k!=3){
-	    for(size_type i=0;i!=3;++i){
-	      for(size_type j=0;j!=3;++j){
-		if(i==j){
-		  r(i,j) = real{};
-		} else if((i==k)||(j==k)){
-		  const auto idvp = 1/(vp[i]-vp[j]);
-		  r(i,j)=((e[i]-e[j])*idvp-d[j])*idvp;
-		} else {
-		  r(i,j)=(f[i]+f[j])/16;
-		}
-	      }
-	    }
-	    return r;
-	  }
-	  for(size_type i=0;i!=3;++i){
-	    for(size_type j=0;j!=3;++j){
-	      if(i==j){
-		r(i,j) = real{};
-	      } else {
-		const auto idvp = 1/(vp[i]-vp[j]);
-		r(i,j)=((e[i]-e[j])*idvp-d[j])*idvp;
-	      }
-	    }
-	  }
-	  return r;
-	}();
-	const auto eta = [&e,&vp,&lk,&f,&are_all_vp_equals,&find_uniq_vp,&d]{
-	  if(are_all_vp_equals(vp)){
-	    return (f[0]+f[1]+f[2])/24;
-	  }
-	  const auto u = find_uniq_vp(vp);
-	  if(u!=3){
-	    const auto i = (u==2) ? 0 : 2;
-	    const auto idvp = 1/(vp[i]-vp[u]);
-	    return ((e[i]-e[u])*idvp-d[u])*idvp;
-	  }
-	  auto r = real{};
-	  for(size_type i=0;i!=3;++i){
-	    for(size_type j=0;j!=3;++j){
-	      if(i==j){
-		continue;
-	      }
-	      const auto k = lk(i,j);
-	      r += e[i]/(2*(vp[i]-vp[j])*(vp[i]-vp[k]));
-	    }
-	  }
-	  return r;
-	}();
-	const auto dzeta = [&M,&T]{
-	  auto r = tmatrix<3u,3u,real>{};
-	  for(size_type i=0;i!=3;++i){
-	    for(size_type j=0;j!=3;++j){
-	      r(i,j)=(T|M(i,j))/2;
-	    }
-	  }
-	  return r;
-	}();
-	Kr = 4*transpose(p)*Ks*p;
-	for(size_type i=0;i!=3;++i){
-	  Kr+=f[i]/4*dzeta(i,i)*(M(i,i)^M(i,i));
-	  for(size_type j=0;j!=3;++j){
-	    if(i==j){
-	      continue;
-	    }
-	    const auto k = lk(i,j);
-	    Kr+=2*eta*dzeta(i,j)*(M(i,k)^M(j,k))
-	      +2*xsi(i,j)*(dzeta(i,j)*((M(i,j)^M(j,j))+(M(j,j)^M(i,j)))+
-			   dzeta(j,j)*(M(i,j)^M(i,j)));
-	  }
-	}
+	LogarithmicStrainHandler<N,stress> l(F1);
+	const auto T = l.convertFromCauchyStress(s);
+	Kr = l.convertToMaterialTangentModuli(Ks,T);
       } // end of exe
     };
     TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DT_DELOG,DS_DC)
@@ -1172,53 +992,17 @@ namespace tfel
        * \param[in]  F1:  the deformation gradient
        * \param[in]  s:  the Cauchy stress tensor
        */
-      template<typename stress>
-      static TFEL_MATERIAL_INLINE void
-      exe(Result<1u,stress>& Kr,
-	  const Source<1u,stress>& Ks,
-	  const DeformationGradientTensor<1u,stress>&,
-	  const DeformationGradientTensor<1u,stress>& F1,
-	  const StressStensor<1u,stress>& sig)
-      {
-	using namespace tfel::math;
-	using real = base_type<stress>;
-	const real iC[3]  = {1/(F1[0]*F1[0]),
-			     1/(F1[1]*F1[1]),
-			     1/(F1[2]*F1[2])};
-	const auto t = det(F1)*sig;
-	Kr(0,0)   = (Ks(0,0)-2*t[0])*iC[0]*iC[0]/2;
-	Kr(0,1)   =  Ks(0,1)*iC[0]*iC[1]/2;
-	Kr(0,2)   =  Ks(0,2)*iC[0]*iC[2]/2;
-	Kr(1,0)   =  Ks(1,0)*iC[0]*iC[1]/2;
-	Kr(1,1)   = (Ks(1,1)-2*t[1])*iC[1]*iC[1]/2;
-	Kr(1,2)   =  Ks(1,2)*iC[1]*iC[2]/2;
-	Kr(2,0)   =  Ks(2,0)*iC[0]*iC[2]/2;
-	Kr(2,1)   =  Ks(2,1)*iC[1]*iC[2]/2;
-	Kr(2,2)   = (Ks(2,2)-2*t[2])*iC[2]*iC[2]/2;
-      } // end of exe
-      /*!
-       * \brief convert the stiffness matrix expressed in the logarithmic
-       * space into dS_dC in 2D.
-       * \param[out] Kr: the result of the convertion
-       * \param[in]  Ks: the initial stiffness tensor
-       * \param[in]  F0:  the deformation gradient
-       * \param[in]  F1:  the deformation gradient
-       * \param[in]  s:  the Cauchy stress tensor
-       */
       template<unsigned short N,typename stress>
       static TFEL_MATERIAL_INLINE void
       exe(Result<N,stress>& Kr,
 	  const Source<N,stress>& Ks,
-	  const DeformationGradientTensor<N,stress>& F0,
+	  const DeformationGradientTensor<N,stress>&,
 	  const DeformationGradientTensor<N,stress>& F1,
 	  const StressStensor<N,stress>& s)
       {
-	using Base      = FiniteStrainBehaviourTangentOperatorBase;
-	using Converter = FiniteStrainBehaviourTangentOperatorConverter<Base::DT_DELOG,
-									Base::DS_DEGL>;
-	auto K = Result<N,stress>();
-	Converter::exe(K,Ks,F0,F1,s);
-	Kr = K/2;
+	LogarithmicStrainHandler<N,stress> l(F1);
+	const auto T = l.convertFromCauchyStress(s);
+	Kr = 2*l.convertToMaterialTangentModuli(Ks,T);
       } // end of exe
     };
     /*!

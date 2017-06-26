@@ -1284,6 +1284,8 @@ include/TFEL/Material/Hill.ixx -text
 include/TFEL/Material/IsotropicLinearFourierHookLaw.hxx -text
 include/TFEL/Material/IsotropicLinearFourierLaw.hxx -text
 include/TFEL/Material/Lame.hxx -text
+include/TFEL/Material/LogarithmicStrainHandler.hxx -text
+include/TFEL/Material/LogarithmicStrainHandler.ixx -text
 include/TFEL/Material/MaterialException.hxx -text
 include/TFEL/Material/MechanicalBehaviour.hxx -text
 include/TFEL/Material/MechanicalBehaviourTraits.hxx -text
@@ -5342,6 +5344,7 @@ tests/Material/FiniteStrainBehaviourTangentOperator7.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator8.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator9.cxx -text
 tests/Material/Hyperelasticity.cxx -text
+tests/Material/LogarithmicStrainHandlerTest.cxx -text
 tests/Material/Makefile.am -text
 tests/Material/Ogden.cxx -text
 tests/Material/OrthotropicAxesConventionTest.cxx -text

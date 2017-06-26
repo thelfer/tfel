@@ -42,6 +42,8 @@ struct FiniteStrainBehaviourTangentOperator12 final
   {
     this->check1<1u>();
     this->check2<1u>();
+    this->check1<2u>();
+    this->check2<3u>();
     this->check1<3u>();
     this->check2<3u>();
     return this->result;
@@ -100,9 +102,8 @@ struct FiniteStrainBehaviourTangentOperator12 final
       const auto  D = eval(l0*st2tost2::IxI()+2*m0*st2tost2::Id());
       const auto  S = hb(C);
       const auto sig = convertSecondPiolaKirchhoffStressToCauchyStress(S,F1);
-      auto aD = st2tost2{};
-      tfel::material::convert<TangentOperator::DT_DELOG,
-			      TangentOperator::DS_DC>(aD,D,F0,F1,sig);
+      auto aD = tfel::material::convert<TangentOperator::DT_DELOG,
+					TangentOperator::DS_DC>(D,F0,F1,sig);
       for(size_type i=0;i!=tfel::math::StensorDimeToSize<N>::value;++i){
 	for(size_type j=0;j!=tfel::math::StensorDimeToSize<N>::value;++j){
 	  if(std::abs(aD(i,j)-nD(i,j))>eps){
