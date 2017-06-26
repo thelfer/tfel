@@ -961,7 +961,7 @@ namespace tfel
     {
       /*!
        * \brief convert the stiffness matrix expressed in the logarithmic
-       * space into dS_dC in 1D.
+       * space into dS_dEGL.
        * \param[out] Kr: the result of the convertion
        * \param[in]  Ks: the initial stiffness tensor
        * \param[in]  F0:  the deformation gradient
@@ -985,7 +985,7 @@ namespace tfel
     {
       /*!
        * \brief convert the stiffness matrix expressed in the logarithmic
-       * space into dS_dC in 1D.
+       * space into dS_dC.
        * \param[out] Kr: the result of the convertion
        * \param[in]  Ks: the initial stiffness tensor
        * \param[in]  F0:  the deformation gradient
@@ -1002,7 +1002,7 @@ namespace tfel
       {
 	LogarithmicStrainHandler<N,stress> l(F1);
 	const auto T = l.convertFromCauchyStress(s);
-	Kr = 2*l.convertToMaterialTangentModuli(Ks,T);
+	Kr = l.convertToMaterialTangentModuli(Ks,T)/2;
       } // end of exe
     };
     /*!

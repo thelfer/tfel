@@ -61,10 +61,10 @@ namespace tfel
     LogarithmicStrainHandler<1u,StressType>::convertToMaterialTangentModuli(const TangentOperator& Ks,
 									    const StressStensor& T) const
     {
-      const real iC[3]  = {1/(this->F[0]*this->F[0]),
-			   1/(this->F[1]*this->F[1]),
-			   1/(this->F[2]*this->F[2])};
-      auto Kr = TangentOperator{};
+      const real iC[3]  = {1/((this->F[0])*(this->F[0])),
+			   1/((this->F[1])*(this->F[1])),
+			   1/((this->F[2])*(this->F[2]))};
+      auto Kr = TangentOperator();
       Kr(0,0)   = (Ks(0,0)-2*T[0])*iC[0]*iC[0];
       Kr(0,1)   =  Ks(0,1)*iC[0]*iC[1];
       Kr(0,2)   =  Ks(0,2)*iC[0]*iC[2];
