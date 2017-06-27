@@ -957,7 +957,7 @@ namespace tfel
 			    tfel::math::t2tot2<N,base_type<stress>>::tprd(tus))*dW);
       } // end of exe
     }; // end of struct FiniteStrainBehaviourTangentOperatorConverter
-    TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DT_DELOG,DS_DEGL)
+    TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DS_DEGL,DT_DELOG)
     {
       /*!
        * \brief convert the stiffness matrix expressed in the logarithmic
@@ -981,7 +981,7 @@ namespace tfel
 	Kr = l.convertToMaterialTangentModuli(Ks,T);
       } // end of exe
     };
-    TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DT_DELOG,DS_DC)
+    TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(DS_DC,DT_DELOG)
     {
       /*!
        * \brief convert the stiffness matrix expressed in the logarithmic
@@ -1003,6 +1003,34 @@ namespace tfel
 	LogarithmicStrainHandler<N,stress> l(F1);
 	const auto T = l.convertFromCauchyStress(s);
 	Kr = l.convertToMaterialTangentModuli(Ks,T)/2;
+      } // end of exe
+    };
+    TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(SPATIAL_MODULI,DT_DELOG)
+    {
+      /*!
+       * \brief convert the stiffness matrix expressed in the logarithmic
+       * space to the spatial moduli
+       * \param[out] Kr: the result of the convertion
+       * \param[in]  Ks: the initial stiffness tensor
+       * \param[in]  F0:  the deformation gradient
+       * \param[in]  F1:  the deformation gradient
+       * \param[in]  s:  the Cauchy stress tensor
+       */
+      template<unsigned short N,typename stress>
+      static TFEL_MATERIAL_INLINE void
+      exe(Result<N,stress>& Kr,
+	  const Source<N,stress>& Ks,
+	  const DeformationGradientTensor<N,stress>& F0,
+	  const DeformationGradientTensor<N,stress>& F1,
+	  const StressStensor<N,stress>& s)
+      {
+	using TangentOperator = FiniteStrainBehaviourTangentOperatorBase;
+	LogarithmicStrainHandler<N,stress> l(F1);
+	const auto T = l.convertFromCauchyStress(s);
+	const auto Cse = l.convertToMaterialTangentModuli(Ks,T);
+	convert<TangentOperator::SPATIAL_MODULI,
+		TangentOperator::DS_DEGL>(Kr,Cse,F0,F1,s);
+	//	Kr=tfel::math::push_forward(Cse,F1);
       } // end of exe
     };
     /*!

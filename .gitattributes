@@ -5335,6 +5335,7 @@ tests/Material/FiniteStrainBehaviourTangentOperator.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator10.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator11.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator12.cxx -text
+tests/Material/FiniteStrainBehaviourTangentOperator13.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator2.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator3.cxx -text
 tests/Material/FiniteStrainBehaviourTangentOperator4.cxx -text

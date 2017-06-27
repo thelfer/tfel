@@ -159,58 +159,56 @@ namespace tfel
       }
       LogarithmicStrainHandler<3u,StressType> l(F3d);
       const auto Kr3d = l.convertToMaterialTangentModuli(K3d,T3d);
-      auto Kr = tfel::math::st2tost2<2u,real>{};
+      auto Kr2 = tfel::math::st2tost2<2u,real>{};
       for(size_type i=0;i!=4;++i){
       	for(size_type j=0;j!=4;++j){
-      	  Kr(i,j)=Kr3d(i,j);
+      	  Kr2(i,j)=Kr3d(i,j);
       	}
       }
+      //      return Kr2;
+      using tvector = tfel::math::tvector<3u,real>;
+      using stensor = tfel::math::stensor<2u,real>;
+      using tfel::math::tmatrix;
+      // half compared to Miehe definition
+      const auto d = map([](const real x){return 1/(2*x);},this->vp);
+      // compute the derivative of the Hencky strain with respect to C
+      const auto f = map([](const real x){return -2/(x*x);},this->vp);
+      // real work starts here
+      const auto M = [this]{
+      	const tvector v[2] = {this->m.template column_view<0u>(),
+      			      this->m.template column_view<1u>()};
+      	auto r = tfel::math::tvector<4u,stensor>();
+      	r(0) = stensor::buildFromVectorsSymmetricDiadicProduct(v[0],v[0]);
+      	r(1) = stensor::buildFromVectorsSymmetricDiadicProduct(v[1],v[1]);
+      	r(2) = {0,0,2,0};
+      	r(3) = stensor::buildFromVectorsSymmetricDiadicProduct(v[0],v[1]);
+      	return r;
+      }();
+      const auto xsi = [this,&d,&f] () -> tfel::math::tvector<2u,real> {
+      	if(std::abs(this->vp[0]-this->vp[1])<eps){
+      	  const auto rv = -(f[0]+f[1])/16;
+      	  return {rv,rv};
+      	}
+      	const auto idvp = 1/(this->vp[0]-this->vp[1]);
+      	return {-((this->e[0]-this->e[1])*idvp-d[1])*idvp,
+	    ((this->e[0]-this->e[1])*idvp-d[0])*idvp};
+      }();
+      const auto dzeta = [&M,&T]{
+      	auto r = tfel::math::tvector<4u,real>{};
+      	for(size_type i=0;i!=4;++i){
+      	  r(i)=(T|M(i))/2;
+      	}
+      	return r;
+      }();
+      TangentOperator Kr = 4*transpose(p)*Ks*p;
+      Kr     +=(f[0]*dzeta(0)*(M(0)^M(0))+
+      		f[1]*dzeta(1)*(M(1)^M(1)))/4;
+      Kr(2,2)+= f[2]*dzeta(2); // (M(2)^M(2))(2,2) is 4
+      Kr+=-2*xsi[0]*(dzeta(3)*((M(3)^M(1))+(M(1)^M(3)))+
+      		     dzeta(1)*(M(3)^M(3)));
+      Kr+=-2*xsi[1]*(dzeta(3)*((M(3)^M(0))+(M(0)^M(3)))+
+      		     dzeta(0)*(M(3)^M(3)));
       return Kr;
-
-      // using tvector = tfel::math::tvector<3u,real>;
-      // using stensor = tfel::math::stensor<2u,real>;
-      // using tfel::math::tmatrix;
-      // const auto dfl = [](const real x){return 1/(2*x);};
-      // const auto d = map(dfl,vp); // half compared to Miehe definition
-      // // compute the derivative of the Hencky strain with respect to C
-      // const auto f = map([](const real x){return -2/(x*x);},this->vp);
-      // // real work starts here
-      // const auto M = [this](){
-      // 	const tvector v[2] = {this->m.template column_view<0u>(),
-      // 			      this->m.template column_view<1u>()};
-      // 	auto r = tfel::math::tvector<4u,stensor>();
-      // 	r(0) = stensor::buildFromVectorsSymmetricDiadicProduct(v[0],v[0]);
-      // 	r(1) = stensor::buildFromVectorsSymmetricDiadicProduct(v[1],v[1]);
-      // 	r(2) = {0,0,1,0};
-      // 	r(3) = stensor::buildFromVectorsSymmetricDiadicProduct(v[0],v[1]);
-      // 	return r;
-      // }();
-      // const auto xsi = [this,&d,&f]() -> tfel::math::tvector<2u,real> {
-      // 	if(std::abs(this->vp[0]-this->vp[1])<eps){
-      // 	  const auto rv = (f[0]+f[1])/16;
-      // 	  return {rv,rv};
-      // 	}
-      // 	const auto idvp = 1/(this->vp[0]-this->vp[1]);
-      // 	const auto r0 =  ((this->e[0]-this->e[1])*idvp-d[0])*idvp;
-      // 	const auto r1 = -((this->e[0]-this->e[1])*idvp-d[1])*idvp;
-      // 	return {r0,r1};
-      // }();
-      // const auto dzeta = [&M,&T](){
-      // 	auto r = tfel::math::tvector<4u,real>{};
-      // 	for(size_type i=0;i!=4;++i){
-      // 	  r(i)=(T|M(i))/2;
-      // 	}
-      // 	return r;
-      // }();
-      // TangentOperator Kr = 4*transpose(p)*Ks*p;
-      // Kr+=(f[0]*dzeta(0)*(M(0)^M(0))+
-      // 	   f[1]*dzeta(1)*(M(1)^M(1)))/4;
-      // Kr(2,2)+=f[2]/4*dzeta(2);
-      // Kr+=2*xsi[0]*(dzeta(3)*((M(3)^M(1))+(M(1)^M(3)))+
-      // 		    dzeta(1)*(M(3)^M(3)));
-      // Kr+=2*xsi[1]*(dzeta(3)*((M(3)^M(0))+(M(0)^M(3)))+
-      // 		    dzeta(0)*(M(3)^M(3)));
-      // return Kr;
     }
     
     template<typename StressType>
@@ -284,12 +282,12 @@ namespace tfel
       using tvector = tfel::math::tvector<3u,real>;
       using stensor = tfel::math::stensor<3u,real>;
       using tfel::math::tmatrix;
-      auto are_all_vp_equals = [this](){
+      auto are_all_vp_equals = [this]{
 	return ((std::abs(this->vp(1)-this->vp(0))<eps)&&
 		(std::abs(this->vp(1)-this->vp(2))<eps)&&
 		(std::abs(this->vp(2)-this->vp(0))<eps));
       };
-      auto find_uniq_vp = [this,&are_all_vp_equals](){
+      auto find_uniq_vp = [this,&are_all_vp_equals]{
 	if(are_all_vp_equals()){
 	  throw(std::runtime_error("FiniteStrainBehaviourTangentOperatorConverter"
 				   "<Base::DT_DELOG,Base::DS_DEGL>::exe: "
@@ -336,7 +334,7 @@ namespace tfel
 	}
 	return r;
       }();
-      const auto xsi   = [this,&d,&f,&are_all_vp_equals,&find_uniq_vp](){
+      const auto xsi   = [this,&d,&f,&are_all_vp_equals,&find_uniq_vp]{
 	if(are_all_vp_equals()){
 	  constexpr const auto zero = real{0};
 	  const auto rv = (f[0]+f[1]+f[2])/24;
@@ -395,7 +393,7 @@ namespace tfel
 	}
 	return r;
       }();
-      const auto dzeta = [&M,&T](){
+      const auto dzeta = [&M,&T]{
 	auto r = tmatrix<3u,3u,real>{};
 	for(size_type i=0;i!=3;++i){
 	  for(size_type j=0;j!=3;++j){
@@ -407,15 +405,15 @@ namespace tfel
       TangentOperator Kr = 4*transpose(p)*Ks*p;
       for(size_type i=0;i!=3;++i){
 	Kr+=f[i]/4*dzeta(i,i)*(M(i,i)^M(i,i));
-	for(size_type j=0;j!=3;++j){
-	  if(i==j){
-	    continue;
-	  }
-	  const auto k = lk(i,j);
-	  Kr+=2*eta*dzeta(i,j)*(M(i,k)^M(j,k))
-	    +2*xsi(i,j)*(dzeta(i,j)*((M(i,j)^M(j,j))+(M(j,j)^M(i,j)))+
-			 dzeta(j,j)*(M(i,j)^M(i,j)));
-	}
+      	for(size_type j=0;j!=3;++j){
+      	  if(i==j){
+      	    continue;
+      	  }
+      	  const auto k = lk(i,j);
+      	  Kr+=2*eta*dzeta(i,j)*(M(i,k)^M(j,k))
+      	    +2*xsi(i,j)*(dzeta(i,j)*((M(i,j)^M(j,j))+(M(j,j)^M(i,j)))+
+      			 dzeta(j,j)*(M(i,j)^M(i,j)));
+      	}
       }
       return Kr;
     }
