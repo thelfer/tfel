@@ -256,13 +256,12 @@ namespace cyrano
 			       const tfel::material::OutOfBoundsPolicy)
       {} // end of Error
       
-      TFEL_CYRANO_INLINE void exe(CyranoReal *const,
+        TFEL_NORETURN void exe(CyranoReal *const,
 				  CyranoReal *const,
 				  CyranoReal *const)
 	{
 	  typedef tfel::material::MechanicalBehaviourTraits<Behaviour<H,CyranoReal,false>> Traits;
 	  throw(CyranoInvalidDimension(Traits::getName(),1u));
-	  return;
 	} // end of Error::exe
       
     }; // end of struct Error
@@ -371,11 +370,11 @@ namespace cyrano
 	      } else if((3.75<*DDSOE)&&(*DDSOE<4.25)){
 		r = behaviour.integrate(smflag,BV::CONSISTENTTANGENTOPERATOR);
 	      } else {
-		throwInvalidDDSOEException(BV::getName(),*DDSOE);
+		throwInvalidDDSOEException(Traits::getName(),*DDSOE);
 	      }
 	      if(r==BV::FAILURE){
 		if(*DDSOE<-0.5){
-		  throwPredictionComputationFailedException(BV::getName());
+		  throwPredictionComputationFailedException(Traits::getName());
 		}
 	      }
 	    }
