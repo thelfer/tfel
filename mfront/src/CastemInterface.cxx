@@ -1571,6 +1571,7 @@ namespace mfront{
       out << "BehaviourProfiler::Timer total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
+    out << "const auto k = std::abs(*DDSDDE)>0.5;\n";
     this->generateMTestFile1(out);
     out << "// computing the logarithmic strain\n";
     out << "CastemReal eto[6];\n";
@@ -1606,7 +1607,11 @@ namespace mfront{
     }
     const auto c2 = "CastemFiniteStrain::computeCauchyStressFromDualStressOfLogarithmicStrain(STRESS,s,P1,F1,*NTENS,*NDI";
     this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c2,"std::exp(ezz)");
-    out << "}\n";
+    out << "if(k){\n";
+    // const auto c3 = "CastemFiniteStrain::convertLogarithmicModuliToCauchyTruesdellRateModuli(DDSDDE,STRESS,F1,*NTENS,*NDI";
+    // this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c3,"std::exp(ezz)");
+    out << "}\n"
+	<< "}\n";
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";
       this->generateMTestFile2(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,

@@ -2283,6 +2283,7 @@ mfront/tests/behaviours/AgeingBurger.mfront -text
 mfront/tests/behaviours/AnistropicLemaitreViscoplasticBehaviour.mfront -text
 mfront/tests/behaviours/AxialGrowth.mfront -text
 mfront/tests/behaviours/AxialGrowth2.mfront -text
+mfront/tests/behaviours/AxialGrowth3.mfront -text
 mfront/tests/behaviours/Burger.mfront -text
 mfront/tests/behaviours/CMakeLists.txt -text
 mfront/tests/behaviours/Chaboche.mfront -text
@@ -3234,6 +3235,7 @@ mfront/tests/behaviours/castem/castemanistropiclemaitreviscoplasticbehaviour.mte
 mfront/tests/behaviours/castem/castemaxialgrowth.mtest.in -text
 mfront/tests/behaviours/castem/castemaxialgrowth2.mtest.in -text
 mfront/tests/behaviours/castem/castemaxialgrowth3.mtest.in -text
+mfront/tests/behaviours/castem/castemaxialgrowth4.mtest.in -text
 mfront/tests/behaviours/castem/castemburger.mtest.in -text
 mfront/tests/behaviours/castem/castemchaboche.mtest.in -text
 mfront/tests/behaviours/castem/castemchaboche2.mtest.in -text
@@ -3639,6 +3641,8 @@ mfront/tests/behaviours/castem2/castem2gursontvergaardneedlemanviscoplasticflow.
 mfront/tests/behaviours/castem2/castem2implicithayhurst.mtest.in -text
 mfront/tests/behaviours/castem2/castem2implicitmonocrystal-2.mtest.in -text
 mfront/tests/behaviours/castem2/castem2implicitmonocrystal.mtest.in -text
+mfront/tests/behaviours/castem2/castem2implicitnorton.mtest.in -text
+mfront/tests/behaviours/castem2/castem2implicitnorton3.mtest.in -text
 mfront/tests/behaviours/castem2/castem2monocrystal-2.mtest.in -text
 mfront/tests/behaviours/castem2/castem2monocrystal.mtest.in -text
 mfront/tests/behaviours/castem2/castem2monocrystal_dd_cc.mtest.in -text
@@ -3928,6 +3932,7 @@ mfront/tests/behaviours/crossedsecant/crossedsecantviscoplasisocin.mtest.in -tex
 mfront/tests/behaviours/cyrano/CMakeLists.txt -text
 mfront/tests/behaviours/cyrano/Makefile.am -text
 mfront/tests/behaviours/cyrano/cyranoaxialgrowth.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoaxialgrowth3.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranocomputestressfreeexpansion.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity10.mtest.in -text
@@ -5195,6 +5200,7 @@ src/Material/BoundsCheck.cxx -text
 src/Material/CMakeLists.txt -text
 src/Material/DDIF2Base.cxx -text
 src/Material/FiniteStrainBehaviourTangentOperator.cxx -text
+src/Material/LogarithmicStrainHandler.cxx -text
 src/Material/Makefile.am -text
 src/Material/MaterialException.cxx -text
 src/Material/ModellingHypothesis.cxx -text

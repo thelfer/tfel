@@ -10,7 +10,8 @@ set(TFELMaterial_SOURCES
     MaterialException.cxx
     ModellingHypothesis.cxx
     FiniteStrainBehaviourTangentOperator.cxx
-    SlipSystemsDescription.cxx)
+    SlipSystemsDescription.cxx
+    LogarithmicStrainHandler.cxx)
 
 tfel_library(TFELMaterial ${TFELMaterial_SOURCES})
 target_link_libraries(TFELMaterial

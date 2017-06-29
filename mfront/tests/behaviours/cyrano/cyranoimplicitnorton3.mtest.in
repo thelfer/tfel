@@ -8,12 +8,17 @@
 @Description{
   "Test the axisymmetric generalised plane"
   " stress modelling hypothesis"
+  "This test is meant to test the local "
+  "sub stepping of the behaviour"
+  "Note: du to substepping, the convergence is *not* "
+  "quadratic, even though the the consistent tangent operator "
+  "is used."
  };
 
 @MaximumNumberOfSubSteps   1;
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStress';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoimplicitnorton';
+@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoimplicitnorton3';
 
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
@@ -49,7 +54,7 @@
 @Test<function> 'ElasticStrainRR' 'EELRR0'  1.e-12;
 @Test<function> 'ElasticStrainZZ' 'EELZZ0'  1.e-12;
 @Test<function> 'ElasticStrainTT' 'EELRR0'  1.e-12;
-@Test<function> 'p' 'A*szz**E*t' 1.e-12;
+@Test<function> 'EquivalentViscoplasticStrain' 'A*szz**E*t' 1.e-12;
 
 @Test<function> 'SZZ' 'szz'     1.e-3;
 // check that the mechanical equilibrium is satisfied

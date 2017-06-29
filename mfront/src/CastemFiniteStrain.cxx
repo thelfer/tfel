@@ -187,7 +187,7 @@ namespace castem
     const CastemReal F7 = F[7];
     const CastemReal F8 = NDI!=-2 ? F[8] : Fzz;
     // determinant
-    const CastemReal inv_J = 1/(F0*(F4*F8-F5*F7)-F3*(F1*F8-F2*F7)+(F1*F5-F2*F4)*F6);
+    const CastemReal iJ = 1/(F0*(F4*F8-F5*F7)-F3*(F1*F8-F2*F7)+(F1*F5-F2*F4)*F6);
     const CastemReal p0 = s[0];
     const CastemReal p1 = s[1];
     const CastemReal p2 = s[2];
@@ -195,24 +195,24 @@ namespace castem
     const CastemReal p4 = (NTENS==6) ? s[4] : CastemReal(0);
     const CastemReal p5 = (NTENS==6) ? s[5] : CastemReal(0);
     // maxima :   F3*(p5*F6+p1*F3+p3*F0)+F0*(p4*F6+p3*F3+p0*F0)+F6*(p2*F6+p5*F3+p4*F0) 
-    s[0] = inv_J*(F3*(p5*F6+p1*F3+p3*F0)+F0*(p4*F6+p3*F3+p0*F0)+F6*(p2*F6+p5*F3+p4*F0));
+    s[0] = iJ*(F3*(p5*F6+p1*F3+p3*F0)+F0*(p4*F6+p3*F3+p0*F0)+F6*(p2*F6+p5*F3+p4*F0));
     // maxima :   F4*(p5*F7+p1*F4+p3*F1)+F1*(p4*F7+p3*F4+p0*F1)+F7*(p2*F7+p5*F4+p4*F1) 
-    s[1] = inv_J*(F4*(p5*F7+p1*F4+p3*F1)+F1*(p4*F7+p3*F4+p0*F1)+F7*(p2*F7+p5*F4+p4*F1));
+    s[1] = iJ*(F4*(p5*F7+p1*F4+p3*F1)+F1*(p4*F7+p3*F4+p0*F1)+F7*(p2*F7+p5*F4+p4*F1));
     // maxima :   F5*(p5*F8+p1*F5+p3*F2)+F2*(p4*F8+p3*F5+p0*F2)+F8*(p2*F8+p5*F5+p4*F2) 
-    s[2] = inv_J*(F5*(p5*F8+p1*F5+p3*F2)+F2*(p4*F8+p3*F5+p0*F2)+F8*(p2*F8+p5*F5+p4*F2));
+    s[2] = iJ*(F5*(p5*F8+p1*F5+p3*F2)+F2*(p4*F8+p3*F5+p0*F2)+F8*(p2*F8+p5*F5+p4*F2));
     if(NTENS==4){
       if(NDI==-2){
 	s[2] = 0;
       }
       // maxima :   F3*(p5*F7+p1*F4+p3*F1)+F0*(p4*F7+p3*F4+p0*F1)+F6*(p2*F7+p5*F4+p4*F1) 
-      s[3] = inv_J*(F3*(p5*F7+p1*F4+p3*F1)+F0*(p4*F7+p3*F4+p0*F1)+F6*(p2*F7+p5*F4+p4*F1));
+      s[3] = iJ*(F3*(p5*F7+p1*F4+p3*F1)+F0*(p4*F7+p3*F4+p0*F1)+F6*(p2*F7+p5*F4+p4*F1));
     } else if(NTENS==6){
       // maxima :   F3*(p5*F7+p1*F4+p3*F1)+F0*(p4*F7+p3*F4+p0*F1)+F6*(p2*F7+p5*F4+p4*F1) 
-      s[3] = inv_J*(F3*(p5*F7+p1*F4+p3*F1)+F0*(p4*F7+p3*F4+p0*F1)+F6*(p2*F7+p5*F4+p4*F1));
+      s[3] = iJ*(F3*(p5*F7+p1*F4+p3*F1)+F0*(p4*F7+p3*F4+p0*F1)+F6*(p2*F7+p5*F4+p4*F1));
       // maxima :   F3*(p5*F8+p1*F5+p3*F2)+F0*(p4*F8+p3*F5+p0*F2)+F6*(p2*F8+p5*F5+p4*F2) 
-      s[4] = inv_J*(F3*(p5*F8+p1*F5+p3*F2)+F0*(p4*F8+p3*F5+p0*F2)+F6*(p2*F8+p5*F5+p4*F2));
+      s[4] = iJ*(F3*(p5*F8+p1*F5+p3*F2)+F0*(p4*F8+p3*F5+p0*F2)+F6*(p2*F8+p5*F5+p4*F2));
       // maxima :   F4*(p5*F8+p1*F5+p3*F2)+F1*(p4*F8+p3*F5+p0*F2)+F7*(p2*F8+p5*F5+p4*F2) 
-      s[5] = inv_J*(F4*(p5*F8+p1*F5+p3*F2)+F1*(p4*F8+p3*F5+p0*F2)+F7*(p2*F8+p5*F5+p4*F2));
+      s[5] = iJ*(F4*(p5*F8+p1*F5+p3*F2)+F1*(p4*F8+p3*F5+p0*F2)+F7*(p2*F8+p5*F5+p4*F2));
     }
   } // end of CastemFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress
 

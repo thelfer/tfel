@@ -103,8 +103,8 @@ struct FiniteStrainBehaviourTangentOperator12 final
     const real v1[9u] = {1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005};
     const real v2[9u] = {0.70,1.125,1.32,-0.24,-0.32,0.15,-0.14,-0.05,0.08};
     const real v3[9u] = {1.70,0.625,0.625,0.,0.,0.,0.,0.,0.};
-    const real v4[9u] = {-0.625,1.70,-0.625,0.,0.,0.,0.,0.,0.};
-    const real v5[9u] = {-0.625,-0.625,1.70,0.,0.,0.,0.,0.,0.};
+    const real v4[9u] = {0.625,1.70,0.625,0.,0.,0.,0.,0.,0.};
+    const real v5[9u] = {0.625,0.625,1.70,0.,0.,0.,0.,0.,0.};
     const real v6[9u] = {0.625,0.625,1.70,0.,0.,0.,0.,0.,0.};
     const auto F0 = tensor::Id();
     for(const tensor& F1: {tensor::Id(),tensor{v1},tensor{v2},
@@ -117,17 +117,20 @@ struct FiniteStrainBehaviourTangentOperator12 final
       const auto sig = convertSecondPiolaKirchhoffStressToCauchyStress(S,F1);
       const auto aD = tfel::material::convert<TangentOperator::DS_DC,
 					      TangentOperator::DT_DELOG>(D,F0,F1,sig);
+      auto emax = std::abs(aD(0,0)-nD(0,0));
       for(size_type i=0;i!=tfel::math::StensorDimeToSize<N>::value;++i){
 	for(size_type j=0;j!=tfel::math::StensorDimeToSize<N>::value;++j){
-	  if(std::abs(aD(i,j)-nD(i,j))>eps){
-	    std::cout << i << " " << j << " "
-		      << nD(i,j) << " " << " " << aD(i,j)
-		      << " " << std::abs(aD(i,j)-nD(i,j))
-		      << " " << std::abs(aD(i,j)-nD(i,j))/(2*m0) << std::endl;
+	  const auto e = std::abs(aD(i,j)-nD(i,j));
+	  emax = std::max(emax,e);
+	  if(e>eps){
+	    std::cout << i        << " " << j << " "
+		      << nD(i,j)  << " " << " " << aD(i,j)
+		      << " " << e << " " << e/(2*m0) << std::endl;
 	  }
 	  TFEL_TESTS_ASSERT(std::abs(aD(i,j)-nD(i,j))<eps);	
 	}
       }
+      //      std::cout << "emax: " << emax << std::endl;
     }
   }
   // check that the perturbation approximation is ok
@@ -179,8 +182,8 @@ struct FiniteStrainBehaviourTangentOperator12 final
     const real v1[9u] = {1.03,0.98,1.09,0.03,-0.012,0.04,-0.028,-0.015,0.005};
     const real v2[9u] = {0.70,1.125,1.32,-0.24,-0.32,0.15,-0.14,-0.05,0.08};
     const real v3[9u] = {1.70,0.625,0.625,0.,0.,0.,0.,0.,0.};
-    const real v4[9u] = {-0.625,1.70,-0.625,0.,0.,0.,0.,0.,0.};
-    const real v5[9u] = {-0.625,-0.625,1.70,0.,0.,0.,0.,0.,0.};
+    const real v4[9u] = {0.625,1.70,0.625,0.,0.,0.,0.,0.,0.};
+    const real v5[9u] = {0.625,0.625,1.70,0.,0.,0.,0.,0.,0.};
     const real v6[9u] = {0.625,0.625,1.70,0.,0.,0.,0.,0.,0.};
     const auto F0 = tensor::Id();
     for(const tensor& F1: {tensor::Id(),tensor{v1},tensor{v2},

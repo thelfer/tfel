@@ -116,62 +116,43 @@ namespace mfront{
 				tokens_iterator current,
 				const tokens_iterator end)
   {
-    using namespace std;
-    using namespace tfel::utilities;
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("Cyrano::treatKeyword: "+m));}
+    };
     if(!i.empty()){
       if(std::find(i.begin(),i.end(),this->getName())==i.end()){
 	return {false,current};
       }
     }
-    if((key=="@CyranoGenerateMTestFileOnFailure")||
-       (key=="@UMATGenerateMTestFileOnFailure")){
+    if((key=="@CyranoGenerateMTestFileOnFailure")||(key=="@UMATGenerateMTestFileOnFailure")){
       this->generateMTestFile = this->readBooleanValue(key,current,end);
       return {true,current};      
-    } else if((key=="@CyranoUseTimeSubStepping")||
-	      (key=="@UMATUseTimeSubStepping")){
+    } else if((key=="@CyranoUseTimeSubStepping")||(key=="@UMATUseTimeSubStepping")){
       this->useTimeSubStepping = this->readBooleanValue(key,current,end);
       return {true,current};      
-    } else if ((key=="@CyranoMaximumSubStepping")||
-	       (key=="@UMATMaximumSubStepping")){
-      if(!this->useTimeSubStepping){
-	throw(runtime_error("CyranoInterface::treatKeyword (@CyranoMaximumSubStepping): "
-			    "time sub stepping is not enabled at this stage.\n"
-			    "Use the @CyranoUseTimeSubStepping directive before "
-			    "@CyranoMaximumSubStepping"));
-      }
-      if(current==end){
-	throw(runtime_error("CyranoInterface::treatKeyword (@CyranoMaximumSubStepping): "
-			    "unexpected end of file"));
-      }
-      istringstream flux(current->value);
+    } else if ((key=="@CyranoMaximumSubStepping")||(key=="@UMATMaximumSubStepping")){
+      throw_if(!this->useTimeSubStepping,"time sub stepping is not enabled at this stage.\n"
+	       "Use the @CyranoUseTimeSubStepping directive before "
+	       "@CyranoMaximumSubStepping");
+      throw_if(current==end,"unexpected end of file");
+      std::istringstream flux(current->value);
       flux >> this->maximumSubStepping;
-      if(flux.fail()){
-	throw(runtime_error("CyranoInterface::treatKeyword (@CyranoMaximumSubStepping): "
-			    "failed to read maximum substepping value."));
-      }
+      throw_if(flux.fail(),"failed to read maximum substepping value.");
       ++(current);
-      if(current==end){
-	throw(runtime_error("CyranoInterface::treatKeyword (@CyranoMaximumSubStepping): "
-			    "unexpected end of file"));
-      }      
-      if(current->value!=";"){
-	throw(runtime_error("CyranoInterface::treatKeyword : expected ';',"
-			    " read '"+current->value+"'"));
-      }
+      throw_if(current==end,"unexpected end of file");
+      throw_if(current->value!=";","expected ';',read '"+current->value+"'");
       ++(current);
       return {true,current};      
     } else if ((key=="@CyranoDoSubSteppingOnInvalidResults")||
 	       (key=="@UMATDoSubSteppingOnInvalidResults")){
-      if(!this->useTimeSubStepping){
-	throw(runtime_error("CyranoInterface::treatKeyword (@CyranoDoSubSteppingOnInvalidResults): "
-			    "time sub stepping is not enabled at this stage.\n"
-			    "Use the @CyranoUseTimeSubStepping directive before "
-			    "@CyranoMaximumSubStepping"));
-      }
+      throw_if(!this->useTimeSubStepping,"time sub stepping is not "
+	       "enabled at this stage.\n"
+	       "Use the @CyranoUseTimeSubStepping directive before "
+	       "@CyranoMaximumSubStepping");
       this->doSubSteppingOnInvalidResults = this->readBooleanValue(key,current,end);
       return {true,current};      
     }
-    return make_pair(false,current);
+    return {false,current};
   } // end of treatKeyword
 
   std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,

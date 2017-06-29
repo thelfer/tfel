@@ -21,8 +21,7 @@ namespace tfel{
 
   namespace math{
 
-    template<typename ST2toST2Type,
-	     typename ST2toST2Type2,
+    template<typename ST2toST2Type,typename ST2toST2Type2,
 	     typename TensorType>
     typename std::enable_if<
       tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond&&
@@ -36,19 +35,21 @@ namespace tfel{
 		 const ST2toST2Type2& C,
 		 const TensorType& F)
     {
-      Ct(0,0) = F[0]*F[0]*F[0]*F[0]*C(0,0);
-      Ct(0,1) = F[0]*F[0]*F[1]*F[1]*C(0,1);
-      Ct(0,2) = F[0]*F[0]*F[2]*F[2]*C(0,2);
-      Ct(1,0) = F[1]*F[1]*F[0]*F[0]*C(1,0);
-      Ct(1,1) = F[1]*F[1]*F[1]*F[1]*C(1,1);
-      Ct(1,2) = F[1]*F[1]*F[2]*F[2]*C(1,2);
-      Ct(2,0) = F[2]*F[2]*F[0]*F[0]*C(2,0);
-      Ct(2,1) = F[2]*F[2]*F[1]*F[1]*C(2,1);
-      Ct(2,2) = F[2]*F[2]*F[2]*F[2]*C(2,2);
+      const auto C0 = F[0]*F[0];
+      const auto C1 = F[1]*F[1];
+      const auto C2 = F[2]*F[2];
+      Ct(0,0) = C0*C0*C(0,0);
+      Ct(0,1) = C0*C1*C(0,1);
+      Ct(0,2) = C0*C2*C(0,2);
+      Ct(1,0) = C1*C0*C(1,0);
+      Ct(1,1) = C1*C1*C(1,1);
+      Ct(1,2) = C1*C2*C(1,2);
+      Ct(2,0) = C2*C0*C(2,0);
+      Ct(2,1) = C2*C1*C(2,1);
+      Ct(2,2) = C2*C2*C(2,2);
     }
 
-    template<typename ST2toST2Type,
-	     typename ST2toST2Type2,
+    template<typename ST2toST2Type,typename ST2toST2Type2,
 	     typename TensorType>
     typename std::enable_if<
       tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond&&

@@ -10,7 +10,8 @@ libTFELMaterial_la_SOURCES = DDIF2Base.cxx                             \
 			     MaterialException.cxx                     \
 			     ModellingHypothesis.cxx                   \
 			     FiniteStrainBehaviourTangentOperator.cxx  \
-			     SlipSystemsDescription.cxx
+			     SlipSystemsDescription.cxx                \
+			     LogarithmicStrainHandler.cxx
 libTFELMaterial_la_LIBADD = -L$(top_builddir)/src/Math      -lTFELMath      \
 		            -L$(top_builddir)/src/NUMODIS   -lTFELNUMODIS   \
 			    -L$(top_builddir)/src/Utilities -lTFELUtilities \

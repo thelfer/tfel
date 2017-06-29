@@ -138,6 +138,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 IsotropicVolumeSwelling2.mfront                                   \
 	 AxialGrowth.mfront                                                \
 	 AxialGrowth2.mfront                                               \
+	 AxialGrowth3.mfront                                               \
 	 OrthotropicSwelling.mfront                                        \
 	 OrthotropicSwelling2.mfront                                       \
 	 AbaqusAxialGrowth.mfront                                          \

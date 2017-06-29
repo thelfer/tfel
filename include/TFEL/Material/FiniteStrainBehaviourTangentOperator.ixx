@@ -976,7 +976,8 @@ namespace tfel
 	  const DeformationGradientTensor<N,stress>& F1,
 	  const StressStensor<N,stress>& s)
       {
-	LogarithmicStrainHandler<N,stress> l(F1);
+	constexpr const auto ls = LogarithmicStrainHandler<N,stress>::LAGRANGIAN;
+	LogarithmicStrainHandler<N,stress> l(ls,F1);
 	const auto T = l.convertFromCauchyStress(s);
 	Kr = l.convertToMaterialTangentModuli(Ks,T);
       } // end of exe
@@ -1000,7 +1001,8 @@ namespace tfel
 	  const DeformationGradientTensor<N,stress>& F1,
 	  const StressStensor<N,stress>& s)
       {
-	LogarithmicStrainHandler<N,stress> l(F1);
+	constexpr const auto ls = LogarithmicStrainHandler<N,stress>::LAGRANGIAN;
+	LogarithmicStrainHandler<N,stress> l(ls,F1);
 	const auto T = l.convertFromCauchyStress(s);
 	Kr = l.convertToMaterialTangentModuli(Ks,T)/2;
       } // end of exe
@@ -1020,17 +1022,15 @@ namespace tfel
       static TFEL_MATERIAL_INLINE void
       exe(Result<N,stress>& Kr,
 	  const Source<N,stress>& Ks,
-	  const DeformationGradientTensor<N,stress>& F0,
+	  const DeformationGradientTensor<N,stress>&,
 	  const DeformationGradientTensor<N,stress>& F1,
 	  const StressStensor<N,stress>& s)
       {
-	using TangentOperator = FiniteStrainBehaviourTangentOperatorBase;
-	LogarithmicStrainHandler<N,stress> l(F1);
+	//	constexpr const auto ls = LogarithmicStrainHandler<N,stress>::EULERIAN;
+	constexpr const auto ls = LogarithmicStrainHandler<N,stress>::LAGRANGIAN;
+	LogarithmicStrainHandler<N,stress> l(ls,F1);
 	const auto T = l.convertFromCauchyStress(s);
-	const auto Cse = l.convertToMaterialTangentModuli(Ks,T);
-	convert<TangentOperator::SPATIAL_MODULI,
-		TangentOperator::DS_DEGL>(Kr,Cse,F0,F1,s);
-	//	Kr=tfel::math::push_forward(Cse,F1);
+	Kr = l.convertToSpatialTangentModuli(Ks,T);
       } // end of exe
     };
     /*!
