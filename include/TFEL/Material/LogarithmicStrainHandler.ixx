@@ -256,14 +256,15 @@ namespace tfel
       using tvector = tfel::math::tvector<3u,real>;
       using stensor = tfel::math::stensor<2u,real>;
       constexpr const auto zero = real{};
-      auto apply = [&F](const tvector& v2) -> tvector{
-	return {F[0]*v2[0]+F[3]*v2[1],
-	    F[4]*v2[0]+F[1]*v2[1],
-	    zero};
-      };
       const tvector v[2] = {m.template column_view<0u>(),
 			    m.template column_view<1u>()};
-      const tvector n[2] = {apply(v[0]),apply(v[1])};      
+      tfel::math::tvector<3u,real> n[2];
+      n[0][0] = F[0]*v[0][0]+F[3]*v[0][1];
+      n[0][1] = F[4]*v[0][0]+F[1]*v[0][1];
+      n[0][2] = zero;
+      n[1][0] = F[0]*v[1][0]+F[3]*v[1][1];
+      n[1][1] = F[4]*v[1][0]+F[1]*v[1][1];
+      n[1][2] = zero;
       auto M = tfel::math::tvector<4u,stensor>();
       M(0) = stensor::buildFromVectorsSymmetricDiadicProduct(n[0],n[0]);
       M(1) = stensor::buildFromVectorsSymmetricDiadicProduct(n[1],n[1]);
