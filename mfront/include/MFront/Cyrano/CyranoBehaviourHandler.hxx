@@ -305,8 +305,6 @@ namespace cyrano
 	    DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
 	  SInitializer::exe(this->bData,PROPS);
 	  AInitializer::exe(this->bData,PROPS);
-	  SInitializer::exe(this->bData,PROPS);
-	  AInitializer::exe(this->bData,PROPS);
 	  DVInitializer::exe(this->bData,this->iData,STRAN,DSTRAN);
 	  // initial stress
 	  CyranoReal sig[3];
@@ -345,15 +343,15 @@ namespace cyrano
 	  }
 	  while((iterations!=0)&&
 		(subSteps!=CyranoTraits<BV>::maximumSubStepping)){
+	    auto r = BV::SUCCESS;
 	    BV behaviour(this->bData,this->iData);
+	    try {
 	    behaviour.initialize();
 	    behaviour.setOutOfBoundsPolicy(this->policy);
 	    behaviour.checkBounds();
-	    typename BV::IntegrationResult r = BV::SUCCESS;
-	    const typename BV::SMFlag smflag = 
+	      const auto smflag = 
 	      TangentOperatorTraits<BV::SMALLSTRAINSTANDARDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
-	    try{
-	      if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
+	    if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
 		r = PredictionOperatorComputer::exe(behaviour,smflag,BV::TANGENTOPERATOR);
 	      } else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
 		r = PredictionOperatorComputer::exe(behaviour,smflag,BV::SECANTOPERATOR);
@@ -408,7 +406,7 @@ namespace cyrano
 	  if((subSteps==CyranoTraits<BV>::maximumSubStepping)&&(iterations!=0)){
 	    throwMaximumNumberOfSubSteppingReachedException(Traits::getName());
 	  }
-	  this->bData.CYRANOexportStateData(STRESS,STATEV);
+	  this->bData.CYRANOexportStateData(sig,STATEV);
 	  STRESS[0]=sig[0];
 	  STRESS[1]=sig[2];
 	  STRESS[2]=sig[1];
@@ -504,8 +502,8 @@ namespace cyrano
 	    throwNegativeTimeStepException(Traits::getName());
 	  }
 	  behaviour.checkBounds();
-	  typename BV::IntegrationResult r = BV::SUCCESS;
-	  const typename BV::SMFlag smflag = 
+	  auto r = BV::SUCCESS;
+	  const auto smflag = 
 	      TangentOperatorTraits<BV::SMALLSTRAINSTANDARDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
 	  if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
 	    r = PredictionOperatorComputer::exe(this->behaviour,smflag,BV::TANGENTOPERATOR);

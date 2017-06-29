@@ -20,6 +20,7 @@ set(mfront_tests_SOURCES
   OrthotropicElastic6
   Norton
   ImplicitNorton
+  ImplicitNorton3
   OrthotropicCreep
   EllipticCreep
   ComputeStressFreeExpansion
@@ -27,7 +28,9 @@ set(mfront_tests_SOURCES
   IsotropicVolumeSwelling
   OrthotropicSwelling
   OrthotropicSwelling2
-  AxialGrowth)
+  AxialGrowth
+  AxialGrowth3
+  )
 mfront_dependencies(MFrontCyranoBehaviours
   YoungModulusTest_1
   YoungModulusTest_2
