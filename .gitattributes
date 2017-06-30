@@ -2348,6 +2348,7 @@ mfront/tests/behaviours/IsotropicVolumeSwelling.mfront -text
 mfront/tests/behaviours/IsotropicVolumeSwelling2.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity2.mfront -text
+mfront/tests/behaviours/LogarithmicStrainElasticity3.mfront -text
 mfront/tests/behaviours/LogarithmicStrainNortonCreep.mfront -text
 mfront/tests/behaviours/LogarithmicStrainPlasticity.mfront -text
 mfront/tests/behaviours/Lorentz.mfront -text
@@ -3643,6 +3644,15 @@ mfront/tests/behaviours/castem2/castem2implicitmonocrystal-2.mtest.in -text
 mfront/tests/behaviours/castem2/castem2implicitmonocrystal.mtest.in -text
 mfront/tests/behaviours/castem2/castem2implicitnorton.mtest.in -text
 mfront/tests/behaviours/castem2/castem2implicitnorton3.mtest.in -text
+mfront/tests/behaviours/castem2/castem2mieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-1-1D.mtest.in -text
+mfront/tests/behaviours/castem2/castem2mieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-1-2D.mtest.in -text
+mfront/tests/behaviours/castem2/castem2mieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-1-3D.mtest.in -text
+mfront/tests/behaviours/castem2/castem2mieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-2-1D.mtest.in -text
+mfront/tests/behaviours/castem2/castem2mieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-2-2D.mtest.in -text
+mfront/tests/behaviours/castem2/castem2mieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-2-3D.mtest.in -text
+mfront/tests/behaviours/castem2/castem2mieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-3-1D.mtest.in -text
+mfront/tests/behaviours/castem2/castem2mieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-3-2D.mtest.in -text
+mfront/tests/behaviours/castem2/castem2mieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-3-3D.mtest.in -text
 mfront/tests/behaviours/castem2/castem2monocrystal-2.mtest.in -text
 mfront/tests/behaviours/castem2/castem2monocrystal.mtest.in -text
 mfront/tests/behaviours/castem2/castem2monocrystal_dd_cc.mtest.in -text

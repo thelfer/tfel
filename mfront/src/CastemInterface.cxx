@@ -597,33 +597,33 @@ namespace mfront{
     std::ofstream out("include/MFront/Castem/"+fileName);
     throw_if(!out,"could not open file '"+fileName+"'");
   
-    out << "/*!\n";
-    out << "* \\file   "  << fileName << '\n';
-    out << "* \\brief  This file declares the umat interface for the " 
-	<< mb.getClassName() << " behaviour law\n";
-    out << "* \\author "  << fd.authorName << '\n';
-    out << "* \\date   "  << fd.date       << '\n';
-    out << "*/\n\n";
+    out << "/*!\n"
+	<< "* \\file   "  << fileName << '\n'
+	<< "* \\brief  This file declares the umat interface for the " 
+	<< mb.getClassName() << " behaviour law\n"
+	<< "* \\author "  << fd.authorName << '\n'
+	<< "* \\date   "  << fd.date       << '\n'
+	<< "*/\n\n";
 
     const string header = this->getHeaderDefine(mb);
-    out << "#ifndef " << header << "\n";
-    out << "#define " << header << "\n\n";
+    out << "#ifndef " << header << "\n"
+	<< "#define " << header << "\n\n";
     
-    out << "#include\"castem.h\"\n";
-    out << "#ifdef umat\n";
-    out << "#undef umat\n";
-    out << "#endif /* umat */\n\n";
+    out << "#include\"castem.h\"\n"
+	<< "#ifdef umat\n"
+	<< "#undef umat\n"
+	<< "#endif /* umat */\n\n";
 
-    out << "#include\"TFEL/Config/TFELConfig.hxx\"\n\n";
-    out << "#include\"MFront/Castem/Castem.hxx\"\n\n";
+    out << "#include\"TFEL/Config/TFELConfig.hxx\"\n\n"
+	<< "#include\"MFront/Castem/Castem.hxx\"\n\n";
 
-    out << "#ifdef __cplusplus\n";
-    out << "#include\"MFront/Castem/CastemTraits.hxx\"\n";
+    out << "#ifdef __cplusplus\n"
+	<< "#include\"MFront/Castem/CastemTraits.hxx\"\n";
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "#include\"MFront/Castem/CastemOrthotropicBehaviour.hxx\"\n";
     }
-    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
-    out << "#endif /* __cplusplus */\n\n";
+    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
+	<< "#endif /* __cplusplus */\n\n";
 
     this->writeVisibilityDefines(out);
 
@@ -644,9 +644,9 @@ namespace mfront{
 
     out << "#endif /* __cplusplus */\n\n";
 
-    out << "#ifdef __cplusplus\n";
-    out << "extern \"C\"{\n";
-    out << "#endif /* __cplusplus */\n\n";
+    out << "#ifdef __cplusplus\n"
+	<< "extern \"C\"{\n"
+	<< "#endif /* __cplusplus */\n\n";
 
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
@@ -710,9 +710,9 @@ namespace mfront{
       this->writeCastemFunctionDeclaration(out,name);
     }
 
-    out << "#ifdef __cplusplus\n";
-    out << "}\n";
-    out << "#endif /* __cplusplus */\n\n";
+    out << "#ifdef __cplusplus\n"
+	<< "}\n"
+	<< "#endif /* __cplusplus */\n\n";
 
     out << "#endif /* " << header << " */\n";
 
@@ -728,13 +728,13 @@ namespace mfront{
 			  "could not open file '"+fileName+"'"));
     }
 
-    out << "/*!\n";
-    out << "* \\file   "  << fileName << '\n';
-    out << "* \\brief  This file implements the umat interface for the " 
-	<< mb.getClassName() << " behaviour law\n";
-    out << "* \\author "  << fd.authorName << '\n';
-    out << "* \\date   "  << fd.date       << '\n';
-    out << "*/\n\n";
+    out << "/*!\n"
+	<< "* \\file   "  << fileName << '\n'
+	<< "* \\brief  This file implements the umat interface for the " 
+	<< mb.getClassName() << " behaviour law\n"
+	<< "* \\author "  << fd.authorName << '\n'
+	<< "* \\date   "  << fd.date       << '\n'
+	<< "*/\n\n";
 
     this->getExtraSrcIncludes(out,mb);
     if(mb.getAttribute(BehaviourData::profiling,false)){
@@ -752,11 +752,11 @@ namespace mfront{
 	     MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)!=this->finiteStrainStrategies.end())){
       out << "#include\"MFront/Castem/CastemFiniteStrain.hxx\"\n\n";
     }
-    out << "#include\"MFront/Castem/CastemOutOfBoundsPolicy.hxx\"\n";
-    out << "#include\"MFront/Castem/CastemInterface.hxx\"\n\n";
-    out << "#include\"MFront/Castem/CastemStressFreeExpansionHandler.hxx\"\n\n";
-    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
-    out << "#include\"MFront/Castem/umat" << name << ".hxx\"\n\n";
+    out << "#include\"MFront/Castem/CastemOutOfBoundsPolicy.hxx\"\n"
+	<< "#include\"MFront/Castem/CastemInterface.hxx\"\n\n"
+	<< "#include\"MFront/Castem/CastemStressFreeExpansionHandler.hxx\"\n\n"
+	<< "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
+	<< "#include\"MFront/Castem/umat" << name << ".hxx\"\n\n";
 
     this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
     
@@ -1493,8 +1493,8 @@ namespace mfront{
     }
     out << "MFRONT_SHAREDOBJ void\n" << fname;
     writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR);
-    out << "\n{\n";
-    out << "using namespace castem;\n";
+    out << "\n{\n"
+	<< "using namespace castem;\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n";
       out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
@@ -1503,22 +1503,22 @@ namespace mfront{
     }
     out << "const auto k = std::abs(*DDSDDE)>0.5;\n";
     this->generateMTestFile1(out);
-    out << "// computing the Green Lagrange strains\n";
-    out << "CastemReal eto[6];\n";
-    out << "CastemReal deto[6];\n";
-    out << "CastemInt  i;\n";
+    out << "// computing the Green Lagrange strains\n"
+	<< "CastemReal eto[6];\n"
+	<< "CastemReal deto[6];\n"
+	<< "CastemInt  i;\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "{\n"
 	  << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
     }
-    out << "CastemFiniteStrain::computeGreenLagrangeStrain(eto,F0,*NTENS,*NDI);\n";
-    out << "CastemFiniteStrain::computeGreenLagrangeStrain(deto,F1,*NTENS,*NDI);\n";
+    out << "CastemFiniteStrain::computeGreenLagrangeStrain(eto,F0,*NTENS,*NDI);\n"
+	<< "CastemFiniteStrain::computeGreenLagrangeStrain(deto,F1,*NTENS,*NDI);\n";
     const auto c1 = "CastemFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,F0,*NTENS,*NDI";
     this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c1,"std::sqrt(1+2*ezz)");
-    out << "for(i=0;i!=*NTENS;++i){\n";
-    out << "deto[i] -= eto[i];\n";
-    out << "}\n";
+    out << "for(i=0;i!=*NTENS;++i){\n"
+	<< "deto[i] -= eto[i];\n"
+	<< "}\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "}\n";
     }
@@ -1526,8 +1526,8 @@ namespace mfront{
 	<< "_base(NTENS, DTIME,DROT,DDSDDE,eto,deto,TEMP,DTEMP,\n"
 	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
 	<< "STRESS,PNEWDT,NDI,KINC,\n"
-	<< "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n";
-    out << "if(*KINC==1){\n";
+	<< "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n"
+	<< "if(*KINC==1){\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
@@ -1563,8 +1563,8 @@ namespace mfront{
     }
     out << "MFRONT_SHAREDOBJ void\n" << fname;
     writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR);
-    out << "\n{\n";
-    out << "using namespace castem;\n";
+    out << "\n{\n"
+	<< "using namespace castem;\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n";
       out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
@@ -1573,25 +1573,25 @@ namespace mfront{
     }
     out << "const auto k = std::abs(*DDSDDE)>0.5;\n";
     this->generateMTestFile1(out);
-    out << "// computing the logarithmic strain\n";
-    out << "CastemReal eto[6];\n";
-    out << "CastemReal deto[6];\n";
-    out << "CastemReal P0[36];\n";
-    out << "CastemReal P1[36];\n";
-    out << "CastemReal s[6];\n";
-    out << "CastemInt  i;\n";
+    out << "// computing the logarithmic strain\n"
+	<< "CastemReal eto[6];\n"
+	<< "CastemReal deto[6];\n"
+	<< "CastemReal P0[36];\n"
+	<< "CastemReal P1[36];\n"
+	<< "CastemReal s[6];\n"
+	<< "CastemInt  i;\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "{\n"
 	  << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
     }
-    out << "CastemFiniteStrain::computeLogarithmicStrainAndDerivative(P0,eto ,F0,*NTENS,*NDI);\n";
-    out << "CastemFiniteStrain::computeLogarithmicStrainAndDerivative(P1,deto,F1,*NTENS,*NDI);\n";
+    out << "CastemFiniteStrain::computeLogarithmicStrainAndDerivative(P0,eto ,F0,*NTENS,*NDI);\n"
+	<< "CastemFiniteStrain::computeLogarithmicStrainAndDerivative(P1,deto,F1,*NTENS,*NDI);\n";
     const auto c1 = "CastemFiniteStrain::computeDualStressOfLogarithmicStrainFromCauchyStress(s,STRESS,P0,F0,*NTENS,*NDI";
     this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c1,"std::exp(ezz)");
-    out << "for(i=0;i!=*NTENS;++i){\n";
-    out << "deto[i] -= eto[i];\n";
-    out << "}\n";
+    out << "for(i=0;i!=*NTENS;++i){\n"
+	<< "deto[i] -= eto[i];\n"
+	<< "}\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "}\n";
     }
@@ -1599,8 +1599,8 @@ namespace mfront{
 	<< "_base(NTENS, DTIME,DROT,DDSDDE,eto,deto,TEMP,DTEMP,\n"
 	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
 	<< "s,PNEWDT,NDI,KINC,\n"
-	<< "castem::CastemLogarithmicStrainStressFreeExpansionHandler);\n";
-    out << "if(*KINC==1){\n";
+	<< "castem::CastemLogarithmicStrainStressFreeExpansionHandler);\n"
+	<< "if(*KINC==1){\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
@@ -1635,8 +1635,8 @@ namespace mfront{
     }
     out << "MFRONT_SHAREDOBJ void\n" << fname;
     writeUMATArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR);
-    out << "\n{\n";
-    out << "using namespace castem;\n";
+    out << "\n{\n"
+	<< "using namespace castem;\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n";
       out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
@@ -1644,12 +1644,12 @@ namespace mfront{
     	  << "BehaviourProfiler::TOTALTIME);\n";
     }
     this->generateMTestFile1(out);
-    out << "bool k = std::abs(*DDSDDE)>0.5;\n";
-    out << "// computing the logarithmic strain\n";
-    out << "CastemReal eto[3];\n";
-    out << "CastemReal deto[3];\n";
-    out << "CastemReal s[3];\n";
-    out << "CastemReal K[9];\n";
+    out << "bool k = std::abs(*DDSDDE)>0.5;\n"
+	<< "// computing the logarithmic strain\n"
+	<< "CastemReal eto[3];\n"
+	<< "CastemReal deto[3];\n"
+	<< "CastemReal s[3];\n"
+	<< "CastemReal K[9];\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "{\n"
     	  << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
@@ -1658,17 +1658,17 @@ namespace mfront{
     out << "if(*NDI!=14){\n"
 	<< "*KINC=-7;\n"
 	<< "return;\n"
-	<< "}\n";
-    out << "eto[0]=std::log1p(*STRAN);\n";
-    out << "eto[1]=std::log1p(*(STRAN+1));\n";
-    out << "eto[2]=std::log1p(*(STRAN+2));\n";
-    out << "deto[0]=std::log1p(*STRAN+*DSTRAN)-eto[0];\n";
-    out << "deto[1]=std::log1p(*(STRAN+1)+*(DSTRAN+1))-eto[1];\n";
-    out << "deto[2]=std::log1p(*(STRAN+2)+*(DSTRAN+2))-eto[2];\n";
-    out << "s[0]=(*STRESS)*(1+*STRAN);\n";
-    out << "s[1]=(*(STRESS+1))*(1+*(STRAN+1));\n";
-    out << "s[2]=(*(STRESS+2))*(1+*(STRAN+2));\n";
-    out << "K[0]=*DDSDDE;\n";
+	<< "}\n"
+	<< "eto[0]=std::log1p(*STRAN);\n"
+	<< "eto[1]=std::log1p(*(STRAN+1));\n"
+	<< "eto[2]=std::log1p(*(STRAN+2));\n"
+	<< "deto[0]=std::log1p(*STRAN+*DSTRAN)-eto[0];\n"
+	<< "deto[1]=std::log1p(*(STRAN+1)+*(DSTRAN+1))-eto[1];\n"
+	<< "deto[2]=std::log1p(*(STRAN+2)+*(DSTRAN+2))-eto[2];\n"
+	<< "s[0]=(*STRESS)*(1+*STRAN);\n"
+	<< "s[1]=(*(STRESS+1))*(1+*(STRAN+1));\n"
+	<< "s[2]=(*(STRESS+2))*(1+*(STRAN+2));\n"
+	<< "K[0]=*DDSDDE;\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "}\n";
     }
@@ -1676,16 +1676,16 @@ namespace mfront{
     	<< "_base(NTENS, DTIME,DROT,K,eto,deto,TEMP,DTEMP,\n"
     	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
     	<< "s,PNEWDT,NDI,KINC,\n"
-    	<< "castem::CastemLogarithmicStrainStressFreeExpansionHandler);\n";
-    out << "if(*KINC==1){\n";
+    	<< "castem::CastemLogarithmicStrainStressFreeExpansionHandler);\n"
+	<< "if(*KINC==1){\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
     	  << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
     }
     // First Piola-Kirchhoff stress
-    out << "STRESS[0]=s[0]/(1+*STRAN+*DSTRAN);\n";
-    out << "STRESS[1]=s[1]/(1+*(STRAN+1)+*(DSTRAN+1));\n";
-    out << "STRESS[2]=s[2]/(1+*(STRAN+2)+*(DSTRAN+2));\n";
+    out << "STRESS[0]=s[0]/(1+*STRAN+*DSTRAN);\n"
+	<< "STRESS[1]=s[1]/(1+*(STRAN+1)+*(DSTRAN+1));\n"
+	<< "STRESS[2]=s[2]/(1+*(STRAN+2)+*(DSTRAN+2));\n";
     // computation of the stiffness matrix
     out << "if(k){\n"
 	<< "*DDSDDE     = (-STRESS[0]+K[0]/(1+STRAN[0]+DSTRAN[0]))/(1+STRAN[0]+DSTRAN[0]);\n"
@@ -1697,8 +1697,8 @@ namespace mfront{
 	<< "*(DDSDDE+2) = K[2]/((1+STRAN[0]+DSTRAN[0])*(1+STRAN[2]+DSTRAN[2]));\n"
 	<< "*(DDSDDE+5) = K[5]/((1+STRAN[1]+DSTRAN[1])*(1+STRAN[2]+DSTRAN[2]));\n"
 	<< "*(DDSDDE+8) = (-STRESS[2]+K[8]/(1+STRAN[2]+DSTRAN[2]))/(1+STRAN[2]+DSTRAN[2]);\n"
+	<< "}\n"
 	<< "}\n";
-    out << "}\n";
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";
       this->generateMTestFile2(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
@@ -1855,13 +1855,13 @@ namespace mfront{
 			  "could not open file '"+fileName+"'"));
     }
     // header
-    out << "*\n";
-    out << "* \\file   "  << fd.fileName << '\n';
-    out << "* \\brief  example of how to use the " << mb.getClassName() << " behaviour law\n"
-	<< "* in the Cast3M finite element solver\n";
-    out << "* \\author "  << fd.authorName << '\n';
-    out << "* \\date   "  << fd.date       << '\n';
-    out << "*\n\n";
+    out << "*\n"
+	<< "* \\file   "  << fd.fileName << '\n'
+	<< "* \\brief  example of how to use the " << mb.getClassName() << " behaviour law\n"
+	<< "* in the Cast3M finite element solver\n"
+	<< "* \\author "  << fd.authorName << '\n'
+	<< "* \\date   "  << fd.date       << '\n'
+	<< "*\n\n";
     // specific declaration
     string nonlin;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
@@ -2046,19 +2046,19 @@ namespace mfront{
       throw(runtime_error("CastemInterface::writeUMATBehaviourTraits: "
 			  "unsupported behaviour type"));
     }
-    out << "// space dimension\n";
-    out << "static " << constexpr_c << " unsigned short N           = ModellingHypothesisToSpaceDimension::value;\n";
-    out << "// tiny vector size\n";
-    out << "static " << constexpr_c << " unsigned short TVectorSize = N;\n";
-    out << "// symmetric tensor size\n";
-    out << "static " << constexpr_c << " unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
-    out << "// tensor size\n";
-    out << "static " << constexpr_c << " unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
-    out << "// size of the driving variable array (STRAN)\n";
-    out << "static " << constexpr_c << " unsigned short DrivingVariableSize = " << mvs.first <<  ";\n";
-    out << "// size of the thermodynamic force variable array (STRESS)\n";
-    out << "static " << constexpr_c << " unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
-    out << "static " << constexpr_c << " bool useTimeSubStepping = ";
+    out << "// space dimension\n"
+	<< "static " << constexpr_c << " unsigned short N           = ModellingHypothesisToSpaceDimension::value;\n"
+	<< "// tiny vector size\n"
+	<< "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
+	<< "// symmetric tensor size\n"
+	<< "static " << constexpr_c << " unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n"
+	<< "// tensor size\n"
+	<< "static " << constexpr_c << " unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n"
+	<< "// size of the driving variable array (STRAN)\n"
+	<< "static " << constexpr_c << " unsigned short DrivingVariableSize = " << mvs.first <<  ";\n"
+	<< "// size of the thermodynamic force variable array (STRESS)\n"
+	<< "static " << constexpr_c << " unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n"
+	<< "static " << constexpr_c << " bool useTimeSubStepping = ";
     if(this->useTimeSubStepping){
       out << "true;\n";
     } else {

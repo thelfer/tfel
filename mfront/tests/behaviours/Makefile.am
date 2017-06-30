@@ -98,6 +98,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 OrthotropicSaintVenantKirchhoffElasticity.mfront                  \
 	 LogarithmicStrainElasticity.mfront                                \
 	 LogarithmicStrainElasticity2.mfront                               \
+	 LogarithmicStrainElasticity3.mfront                               \
 	 LogarithmicStrainPlasticity.mfront                                \
 	 LogarithmicStrainNortonCreep.mfront                               \
 	 CompressibleNeoHookeanBehaviour.mfront                            \

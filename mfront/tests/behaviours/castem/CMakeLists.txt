@@ -44,6 +44,7 @@ set(mfront_tests_SOURCES
   FiniteRotationSmallStrainElasticity2
   LogarithmicStrainElasticity
   LogarithmicStrainElasticity2
+  LogarithmicStrainElasticity3
   Plasticity
   LogarithmicStrainPlasticity
   DruckerPrager
