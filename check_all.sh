@@ -14,7 +14,7 @@ wbuild=no
 # fast check
 broken_libmath=OFF
 
-while getopts ":w:dbfj:" opt;
+while getopts ":w:rdbfj:" opt;
 do
   case $opt in
     f) fcheck=yes
