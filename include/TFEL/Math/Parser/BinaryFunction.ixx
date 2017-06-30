@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_BINARYFUNCTION_IXX_
-#define LIB_TFEL_BINARYFUNCTION_IXX_ 
+#ifndef LIB_TFEL_BINARYFUNCTIONIXX
+#define LIB_TFEL_BINARYFUNCTIONIXX 
 
 #include<string>
 #include<cstring>
@@ -120,5 +120,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_BINARYFUNCTION_IXX_ */
+#endif /* LIB_TFEL_BINARYFUNCTIONIXX */
 

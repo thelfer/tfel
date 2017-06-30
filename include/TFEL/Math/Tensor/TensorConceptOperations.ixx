@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_TENSORCONCEPTOPERATIONS_IXX_
-#define LIB_TFEL_MATH_TENSORCONCEPTOPERATIONS_IXX_ 
+#ifndef LIB_TFEL_MATH_TENSORCONCEPTOPERATIONSIXX
+#define LIB_TFEL_MATH_TENSORCONCEPTOPERATIONSIXX 
 
 namespace tfel{
 
@@ -68,5 +68,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_TENSORCONCEPTOPERATIONS_IXX_ */
+#endif /* LIB_TFEL_MATH_TENSORCONCEPTOPERATIONSIXX */
 

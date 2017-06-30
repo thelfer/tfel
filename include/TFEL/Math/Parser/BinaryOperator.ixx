@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_BINARYOPERATOR_IXX_
-#define LIB_TFEL_BINARYOPERATOR_IXX_ 
+#ifndef LIB_TFEL_BINARYOPERATORIXX
+#define LIB_TFEL_BINARYOPERATORIXX 
 
 namespace tfel
 {
@@ -155,5 +155,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_BINARYOPERATOR_IXX_ */
+#endif /* LIB_TFEL_BINARYOPERATORIXX */
 

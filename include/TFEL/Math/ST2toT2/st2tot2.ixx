@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_ST2TOT2_IXX_
-#define LIB_TFEL_MATH_ST2TOT2_IXX_ 
+#ifndef LIB_TFEL_MATH_ST2TOT2IXX
+#define LIB_TFEL_MATH_ST2TOT2IXX 
 
 #include<cmath>
 #include<iterator>
@@ -242,5 +242,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_ST2TOT2_IXX_ */
+#endif /* LIB_TFEL_MATH_ST2TOT2IXX */
 

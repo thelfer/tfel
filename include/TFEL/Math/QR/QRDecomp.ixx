@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_QRDECOMP_IXX_
-#define LIB_TFEL_MATH_QRDECOMP_IXX_ 
+#ifndef LIB_TFEL_MATH_QRDECOMPIXX
+#define LIB_TFEL_MATH_QRDECOMPIXX 
 
 #include<cmath>
 #include<limits>
@@ -186,5 +186,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_QRDECOMP_IXX_ */
+#endif /* LIB_TFEL_MATH_QRDECOMPIXX */
 

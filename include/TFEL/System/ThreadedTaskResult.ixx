@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_THREADEDTASKRESULT_IXX_
-#define LIB_THREADEDTASKRESULT_IXX_
+#ifndef LIB_THREADEDTASKRESULTIXX
+#define LIB_THREADEDTASKRESULTIXX
 
 #include<memory>
 #include<utility>
@@ -202,4 +202,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_THREADEDTASKRESULT_IXX_ */
+#endif /* LIB_THREADEDTASKRESULTIXX */

@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_CXXTOKENIZER_IXX_
-#define LIB_TFEL_CXXTOKENIZER_IXX_ 
+#ifndef LIB_TFEL_CXXTOKENIZERIXX
+#define LIB_TFEL_CXXTOKENIZERIXX 
 
 namespace tfel{
 
@@ -31,4 +31,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_CXXTOKENIZER_IXX_ */
+#endif /* LIB_TFEL_CXXTOKENIZERIXX */

@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_TINY_MATRIX_IXX_
-#define LIB_TFEL_TINY_MATRIX_IXX_ 
+#ifndef LIB_TFEL_TINY_MATRIXIXX
+#define LIB_TFEL_TINY_MATRIXIXX 
 
 #include"TFEL/FSAlgorithm/FSAlgorithm.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
@@ -377,11 +377,11 @@ namespace tfel{
       return tfel::math::internals::det3(m);
     }
 
-#endif /* LIB_TFEL_TINY_MATRIX_IXX_ */
+#endif /* LIB_TFEL_TINY_MATRIXIXX */
     
   } // end of namespace math
   
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_TINY_MATRIX_IXX_ */
+#endif /* LIB_TFEL_TINY_MATRIXIXX */
 

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATERIAL_STIFFNESSTENSOR_IXX_
-#define LIB_TFEL_MATERIAL_STIFFNESSTENSOR_IXX_ 
+#ifndef LIB_TFEL_MATERIAL_STIFFNESSTENSORIXX
+#define LIB_TFEL_MATERIAL_STIFFNESSTENSORIXX 
 
 #include<algorithm>
 
@@ -366,4 +366,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATERIAL_STIFFNESSTENSOR_IXX_ */
+#endif /* LIB_TFEL_MATERIAL_STIFFNESSTENSORIXX */

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_ABS_IXX_
-#define LIB_TFEL_MATH_ABS_IXX_ 
+#ifndef LIB_TFEL_MATH_ABSIXX
+#define LIB_TFEL_MATH_ABSIXX 
 
 #include<cmath>
 #include<functional>
@@ -41,5 +41,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_ABS_IXX_ */
+#endif /* LIB_TFEL_MATH_ABSIXX */
 

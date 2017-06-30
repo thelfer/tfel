@@ -37,10 +37,10 @@ struct LogarithmicStrainHandlerTest final
   execute() override
   {
     this->check1<1u,double>();
-    // this->check1<2u,double>();
+    this->check1<2u,double>();
     this->check1<3u,double>();
     this->check2<1u,double>();
-    // this->check2<2u,double>();
+    this->check2<2u,double>();
     this->check2<3u,double>();
     return this->result;
   }
@@ -113,6 +113,8 @@ struct LogarithmicStrainHandlerTest final
       const auto  T  = hb(h1);
       const auto D1  = h1.convertToSpatialTangentModuli(D,T);
       const auto D2  = h2.convertToSpatialTangentModuli(D,T);
+      std::cout << "D1: " << D1 << std::endl;
+      std::cout << "D2: " << D2 << std::endl;
       for(size_type i=0;i!=tfel::math::StensorDimeToSize<N>::value;++i){
 	for(size_type j=0;j!=tfel::math::StensorDimeToSize<N>::value;++j){
 	  const auto e = std::abs(D1(i,j)-D2(i,j));

@@ -56,7 +56,7 @@ namespace mfront
   {
     using TangentOperator = tfel::material::FiniteStrainBehaviourTangentOperatorBase ;
     using Converter = FiniteStrainBehaviourTangentOperatorConversion ;
-    std::vector<Converter> converters;
+    auto converters = std::vector<Converter>{};
     auto add = [&converters](Converter&& converter){
       converters.push_back(converter);
     };
@@ -101,6 +101,8 @@ namespace mfront
     std_add(TangentOperator::C_TAU_JAUMANN,TangentOperator::ABAQUS);
     std_add(TangentOperator::C_TAU_JAUMANN,TangentOperator::DTAU_DF);
     std_add(TangentOperator::DT_DELOG,TangentOperator::DS_DC);
+    std_add(TangentOperator::DT_DELOG,TangentOperator::SPATIAL_MODULI);
+    std_add(TangentOperator::DT_DELOG,TangentOperator::C_TRUESDELL);
     return converters;
   } // end of FiniteStrainBehaviourTangentOperatorConversion::getAvailableFiniteStrainBehaviourTangentOperatorConversions
   

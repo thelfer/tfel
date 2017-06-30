@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_LEVENBERGMARQUARDT_IXX_
-#define LIB_TFEL_MATH_LEVENBERGMARQUARDT_IXX_ 
+#ifndef LIB_TFEL_MATH_LEVENBERGMARQUARDTIXX
+#define LIB_TFEL_MATH_LEVENBERGMARQUARDTIXX 
 
 #include<algorithm>
 
@@ -179,5 +179,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_LEVENBERGMARQUARDT_IXX_ */
+#endif /* LIB_TFEL_MATH_LEVENBERGMARQUARDTIXX */
 

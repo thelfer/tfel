@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATRIX_IXX_
-#define LIB_TFEL_MATRIX_IXX_ 
+#ifndef LIB_TFEL_MATRIXIXX
+#define LIB_TFEL_MATRIXIXX 
 
 namespace tfel{
 
@@ -72,7 +72,7 @@ namespace tfel{
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),
 					   src.getRunTimeProperties());
-#endif /* LIB_TFEL_MATRIX_IXX_ */
+#endif /* LIB_TFEL_MATRIXIXX */
       tfel::math::vector<T>::operator=(src);
       return *this;
     }
@@ -86,7 +86,7 @@ namespace tfel{
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),
 					   src.getRunTimeProperties());
-#endif /* LIB_TFEL_MATRIX_IXX_ */
+#endif /* LIB_TFEL_MATRIXIXX */
       for(i=0;i<this->nb_rows;++i){
 	for(j=0;j<this->nb_cols;++j){
 	  this->operator()(i,j) += src(i,j);
@@ -104,7 +104,7 @@ namespace tfel{
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),
 					   src.getRunTimeProperties());
-#endif /* LIB_TFEL_MATRIX_IXX_ */
+#endif /* LIB_TFEL_MATRIXIXX */
       for(i=0;i<this->nb_rows;++i){
 	for(j=0;j<this->nb_cols;++j){
 	  this->operator()(i,j) -= src(i,j);
@@ -142,7 +142,7 @@ namespace tfel{
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),
 					   expr.getRunTimeProperties());
-#endif /* LIB_TFEL_MATRIX_IXX_ */
+#endif /* LIB_TFEL_MATRIXIXX */
       for(i=0;i<this->nb_rows;++i){
 	for(j=0;j<this->nb_cols;++j){
 	  this->operator()(i,j) = expr(i,j);
@@ -164,7 +164,7 @@ namespace tfel{
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),
 					   expr.getRunTimeProperties());
-#endif /* LIB_TFEL_MATRIX_IXX_ */
+#endif /* LIB_TFEL_MATRIXIXX */
       for(i=0;i<this->nb_rows;++i){
 	for(j=0;j<this->nb_cols;++j){
 	  this->operator()(i,j) += expr(i,j);
@@ -186,7 +186,7 @@ namespace tfel{
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),
 					   expr.getRunTimeProperties());
-#endif /* LIB_TFEL_MATRIX_IXX_ */
+#endif /* LIB_TFEL_MATRIXIXX */
       for(i=0;i<this->nb_rows;++i){
 	for(j=0;j<this->nb_cols;++j){
 	  this->operator()(i,j) -= expr(i,j);
@@ -201,7 +201,7 @@ namespace tfel{
 #ifndef NO_RUNTIME_CHECK_BOUNDS
       RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),
 					   a.getRunTimeProperties());
-#endif /* LIB_TFEL_MATRIX_IXX_ */
+#endif /* LIB_TFEL_MATRIXIXX */
       tfel::math::vector<T>::swap(a);
     }
 
@@ -227,14 +227,14 @@ namespace tfel{
     const typename matrix<T>::RunTimeProperties
 #else
     const typename matrix<T>::RunTimeProperties&
-#endif /* LIB_TFEL_MATRIX_IXX_ */
+#endif /* LIB_TFEL_MATRIXIXX */
     matrix<T>::getRunTimeProperties(void) const
     {
 #ifdef NO_RUNTIME_CHECK_BOUNDS
       return RunTimeProperties();
 #else
       return *this;
-#endif /* LIB_TFEL_MATRIX_IXX_ */
+#endif /* LIB_TFEL_MATRIXIXX */
     } // end of matrix<T>::getRunTimeProperties(void) const
 
     template<typename T>
@@ -277,4 +277,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATRIX_IXX_ */
+#endif /* LIB_TFEL_MATRIXIXX */

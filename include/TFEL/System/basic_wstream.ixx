@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_BASIC_WSTREAM_IXX_
-#define LIB_TFEL_BASIC_WSTREAM_IXX_ 
+#ifndef LIB_TFEL_BASIC_WSTREAMIXX
+#define LIB_TFEL_BASIC_WSTREAMIXX 
 
 #include<cstring>
 
@@ -283,5 +283,5 @@ namespace tfel
   
 } // end of namespace tfel  
 
-#endif /* LIB_TFEL_BASIC_WSTREAM_IXX_ */
+#endif /* LIB_TFEL_BASIC_WSTREAMIXX */
 

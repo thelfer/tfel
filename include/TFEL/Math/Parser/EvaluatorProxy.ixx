@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_EVALUATORPROXY_IXX_
-#define LIB_TFEL_MATH_EVALUATORPROXY_IXX_ 
+#ifndef LIB_TFEL_MATH_EVALUATORPROXYIXX
+#define LIB_TFEL_MATH_EVALUATORPROXYIXX 
 
 namespace tfel
 {
@@ -107,4 +107,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_EVALUATORPROXY_IXX_ */
+#endif /* LIB_TFEL_MATH_EVALUATORPROXYIXX */

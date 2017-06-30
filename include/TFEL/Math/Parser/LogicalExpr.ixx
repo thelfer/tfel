@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_LOGICALEXPR_IXX_
-#define LIB_TFEL_LOGICALEXPR_IXX_ 
+#ifndef LIB_TFEL_LOGICALEXPRIXX
+#define LIB_TFEL_LOGICALEXPRIXX 
 
 #include<vector>
 #include<string>
@@ -172,4 +172,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_LOGICALEXPR_IXX_ */
+#endif /* LIB_TFEL_LOGICALEXPRIXX */

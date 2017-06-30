@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_TINY_FSARRAY_IXX_
-#define LIB_TFEL_TINY_FSARRAY_IXX_ 
+#ifndef LIB_TFEL_TINY_FSARRAYIXX
+#define LIB_TFEL_TINY_FSARRAYIXX 
 
 namespace tfel{
   
@@ -207,5 +207,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_TINY_FSARRAY_IXX_ */
+#endif /* LIB_TFEL_TINY_FSARRAYIXX */
 

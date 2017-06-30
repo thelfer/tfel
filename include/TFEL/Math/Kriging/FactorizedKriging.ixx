@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_FACTORIZEDKRIGING_IXX_
-#define LIB_TFEL_MATH_FACTORIZEDKRIGING_IXX_ 
+#ifndef LIB_TFEL_MATH_FACTORIZEDKRIGINGIXX
+#define LIB_TFEL_MATH_FACTORIZEDKRIGINGIXX 
 
 #include<algorithm>
 
@@ -21,7 +21,7 @@
 #include"TFEL/Math/Bindings/atlas.hxx"
 #else
 #include"TFEL/Math/LUSolve.hxx"
-#endif /* LIB_TFEL_MATH_FACTORIZEDKRIGING_IXX_ */
+#endif /* LIB_TFEL_MATH_FACTORIZEDKRIGINGIXX */
 #include"TFEL/Math/Kriging/KrigingErrors.hxx"
 
 namespace tfel
@@ -76,7 +76,7 @@ namespace tfel
       using namespace tfel::math::internals;
 #ifdef HAVE_ATLAS
       using namespace tfel::math::atlas;
-#endif /* LIB_TFEL_MATH_FACTORIZEDKRIGING_IXX_ */
+#endif /* LIB_TFEL_MATH_FACTORIZEDKRIGINGIXX */
       using tfel::math::vector;
       if((x1.size()!=f.size())||(x2.size()!=f.size())){
 	throw(KrigingErrorInvalidLength());
@@ -105,7 +105,7 @@ namespace tfel
       gesv(m,this->a);
 #else
       LUSolve::exe(m,this->a);
-#endif /* LIB_TFEL_MATH_FACTORIZEDKRIGING_IXX_ */
+#endif /* LIB_TFEL_MATH_FACTORIZEDKRIGINGIXX */
     }
 
     template<unsigned short N,unsigned short M,
@@ -117,5 +117,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_FACTORIZEDKRIGING_IXX_ */
+#endif /* LIB_TFEL_MATH_FACTORIZEDKRIGINGIXX */
 

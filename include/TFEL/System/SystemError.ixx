@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_SYSTEMERROR_IXX_
-#define LIB_TFEL_SYSTEMERROR_IXX_ 
+#ifndef LIB_TFEL_SYSTEMERRORIXX
+#define LIB_TFEL_SYSTEMERRORIXX 
 
 namespace tfel
 {
@@ -29,5 +29,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_SYSTEMERROR_IXX_ */
+#endif /* LIB_TFEL_SYSTEMERRORIXX */
 

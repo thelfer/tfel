@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_GENTYPEBASE_IXX_
-#define LIB_TFEL_GENTYPEBASE_IXX_ 
+#ifndef LIB_TFEL_GENTYPEBASEIXX
+#define LIB_TFEL_GENTYPEBASEIXX 
 
 namespace tfel{
   
@@ -383,5 +383,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_GENTYPEBASE_IXX_ */
+#endif /* LIB_TFEL_GENTYPEBASEIXX */
 

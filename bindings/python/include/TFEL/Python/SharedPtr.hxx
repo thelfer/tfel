@@ -3,7 +3,7 @@
  * \brief This file works around a missing specialisation of the
  * get_pointer function for std::shared_ptr in old boost versions.
  * Proper support has been introduced in boost 1.53.
- * \author THOMAS HELFER
+ * \author Thomas Helfer
  * \date   05 mai 2016
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
@@ -44,4 +44,4 @@ namespace boost {
 }
 #endif
 
-#endif /* LIB_TFEL_PYTHON_SHAREDPTR_HXX_ */
+#endif /* LIB_TFEL_PYTHON_SHAREDPTR_HXX */

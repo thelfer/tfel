@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_EVALUATORFUNCTION_IXX_
-#define LIB_TFEL_MATH_EVALUATORFUNCTION_IXX_ 
+#ifndef LIB_TFEL_MATH_EVALUATORFUNCTIONIXX
+#define LIB_TFEL_MATH_EVALUATORFUNCTIONIXX 
 
 namespace tfel
 {
@@ -82,7 +82,7 @@ namespace tfel
 
 #ifdef __SUNPRO_CC
 	extern "C" {
-#endif /* LIB_TFEL_MATH_EVALUATORFUNCTION_IXX_ */
+#endif /* LIB_TFEL_MATH_EVALUATORFUNCTIONIXX */
 	typedef double (* EvaluatorFunctionWrapper0_type)();
 	typedef double (* EvaluatorFunctionWrapper0_type1P)(int);
 	typedef double (* EvaluatorFunctionWrapper0_type2P)(int,int);
@@ -212,7 +212,7 @@ namespace tfel
 
 #ifdef __SUNPRO_CC
      }
-#endif /* LIB_TFEL_MATH_EVALUATORFUNCTION_IXX_ */
+#endif /* LIB_TFEL_MATH_EVALUATORFUNCTIONIXX */
 
       template<>
       struct TFEL_VISIBILITY_LOCAL EvaluatorFunctionWrapper<0u>
@@ -1017,4 +1017,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_EVALUATORFUNCTION_IXX_ */
+#endif /* LIB_TFEL_MATH_EVALUATORFUNCTIONIXX */

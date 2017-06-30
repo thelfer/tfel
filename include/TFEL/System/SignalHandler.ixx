@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_SIGNALHANDLER_IXX_
-#define LIB_TFEL_SIGNALHANDLER_IXX_ 
+#ifndef LIB_TFEL_SIGNALHANDLERIXX
+#define LIB_TFEL_SIGNALHANDLERIXX 
 
 namespace tfel
 {
@@ -49,5 +49,5 @@ namespace tfel
   
 } // end of tfel
 
-#endif /* LIB_TFEL_SIGNALHANDLER_IXX_ */
+#endif /* LIB_TFEL_SIGNALHANDLERIXX */
 

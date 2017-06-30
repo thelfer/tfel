@@ -319,8 +319,8 @@ namespace tfel
      * A generic structure for convertion between tangent operators.
      * This structure must be specialised for each supported case.
      */
-    template<FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType1,
-	     FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType2>
+    template<FiniteStrainBehaviourTangentOperatorBase::Flag ResultFlag,
+	     FiniteStrainBehaviourTangentOperatorBase::Flag SourceFlag>
     struct FiniteStrainBehaviourTangentOperatorConverter;
     /*!
      * \brief a small wrapper around the FiniteStrainBehaviourTangentOperatorConverter
@@ -330,12 +330,14 @@ namespace tfel
      * \param[in] F0: the deformation gradient
      * \param[in] F1: the deformation gradient
      * \param[in] s:  the Cauchy stress tensor
+     * \tparam ResultFlag: Flag describing the result of the conversion
+     * \tparam SourceFlag: Flag describing the result of the conversion
      */
-    template<FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType1,
-    	     FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType2,
+    template<FiniteStrainBehaviourTangentOperatorBase::Flag ResultFlag,
+    	     FiniteStrainBehaviourTangentOperatorBase::Flag SourceFlag,
     	     unsigned short N,typename StressType>
-    TFEL_MATERIAL_INLINE tangent_operator<TangenOperatorType1,N,StressType>
-    convert(const tangent_operator<TangenOperatorType2,N,StressType>&,
+    TFEL_MATERIAL_INLINE tangent_operator<ResultFlag,N,StressType>
+    convert(const tangent_operator<SourceFlag,N,StressType>&,
     	    const tfel::math::tensor<N,tfel::typetraits::base_type<StressType>>&,
     	    const tfel::math::tensor<N,tfel::typetraits::base_type<StressType>>&,
     	    const tfel::math::stensor<N,StressType>&);
@@ -347,13 +349,15 @@ namespace tfel
      * \param[in]  F0:  the deformation gradient
      * \param[in]  F1:  the deformation gradient
      * \param[in]  s:  the Cauchy stress tensor
+     * \tparam ResultFlag: Flag describing the result of the conversion
+     * \tparam SourceFlag: Flag describing the result of the conversion
      */
-    template<FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType1,
-    	     FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType2,
+    template<FiniteStrainBehaviourTangentOperatorBase::Flag ResultFlag,
+    	     FiniteStrainBehaviourTangentOperatorBase::Flag SourceFlag,
     	     unsigned short N,typename StressType>
     TFEL_MATERIAL_INLINE void
-    convert(tangent_operator<TangenOperatorType1,N,StressType>&,
-    	    const tangent_operator<TangenOperatorType2,N,StressType>&,
+    convert(tangent_operator<ResultFlag,N,StressType>&,
+    	    const tangent_operator<SourceFlag,N,StressType>&,
     	    const tfel::math::tensor<N,tfel::typetraits::base_type<StressType>>&,
     	    const tfel::math::tensor<N,tfel::typetraits::base_type<StressType>>&,
     	    const tfel::math::stensor<N,StressType>&);

@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_IXX_
-#define LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_IXX_ 
+#ifndef LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEWIXX
+#define LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEWIXX 
 
 namespace tfel
 {
@@ -62,4 +62,4 @@ namespace tfel
   
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_IXX_ */
+#endif /* LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEWIXX */

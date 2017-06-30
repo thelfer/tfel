@@ -14,6 +14,10 @@
 #ifndef LIB_TFEL_MATH_LOGARITHMICSTRAINHANDLER_IXX
 #define LIB_TFEL_MATH_LOGARITHMICSTRAINHANDLER_IXX
 
+#include<iostream>
+#include"TFEL/Math/Stensor/StensorConceptIO.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
+
 #include<cmath>
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 
@@ -108,6 +112,25 @@ namespace tfel
       Kr(2,2) = (Ks(2,2)-2*T[2]);
       return Kr;
     } // end of LogarithmicStrainHandler<1u,StressType>::convertToSpatialTangentModuli
+
+    template<typename StressType>
+    typename LogarithmicStrainHandler<1u,StressType>::TangentOperator
+    LogarithmicStrainHandler<1u,StressType>::convertToCauchyStressTruesdellRateTangentModuli(const TangentOperator& Ks,
+											     const StressStensor& T) const
+    {
+      const auto iJ = 1/tfel::math::det(this->F);
+      auto Kr = TangentOperator();
+      Kr(0,0) = (Ks(0,0)-2*T[0])*iJ;
+      Kr(0,1) =  Ks(0,1)*iJ;
+      Kr(0,2) =  Ks(0,2)*iJ;
+      Kr(1,0) =  Ks(1,0)*iJ;
+      Kr(1,1) = (Ks(1,1)-2*T[1])*iJ;
+      Kr(1,2) =  Ks(1,2)*iJ;
+      Kr(2,0) =  Ks(2,0)*iJ;
+      Kr(2,1) =  Ks(2,1)*iJ;
+      Kr(2,2) = (Ks(2,2)-2*T[2])*iJ;
+      return Kr;
+    } // end of LogarithmicStrainHandler<1u,StressType>::convertToCauchyStressTruesdellRateTangentModuli
     
     template<typename StressType>
     LogarithmicStrainHandler<2u,StressType>::LogarithmicStrainHandler(const Setting c,
@@ -141,7 +164,7 @@ namespace tfel
 	const auto M = getEulerianMTensors(m,F1);
 	this->p=(d[0]*(N(0)^M(0))+d[1]*(N(1)^M(1)))/4;
 	this->p(2,2)=d[2]*((N(2))(2))*((M(2))(2))/4;
-	this->p += theta*(N(3)^M(3));
+	this->p += theta/2*(N(3)^M(3));
       }
     }
 
@@ -223,14 +246,13 @@ namespace tfel
       }();
       const tvector<4u,real> dzeta = {(T|N(0))/2,(T|N(1))/2,T[2],(T|N(3))/2};
       Kr = 4*transpose(p)*Ks*p+(f[0]*dzeta(0)*(M(0)^M(0))+
-				f[1]*dzeta(1)*(M(1)^M(1))+
-				f[2]*dzeta(2)*(M(2)^M(2)))/4;
+      				f[1]*dzeta(1)*(M(1)^M(1))+
+      				f[2]*dzeta(2)*(M(2)^M(2)))/4;
       Kr+=2*xsi[0]*(dzeta(3)*((M(3)^M(1))+(M(1)^M(3)))+
       		    dzeta(1)*(M(3)^M(3)));
       Kr+=2*xsi[1]*(dzeta(3)*((M(3)^M(0))+(M(0)^M(3)))+
       		    dzeta(0)*(M(3)^M(3)));
     } // end of LogarithmicStrainHandler<2u,StressType>::convertTangentModuli
-
 
     template<typename StressType>
     tfel::math::tvector<4u,tfel::math::stensor<2u,typename LogarithmicStrainHandler<2u,StressType>::real>>
@@ -306,6 +328,29 @@ namespace tfel
 	return Kr;
       }
     } // end of LogarithmicStrainHandler<2u,StressType>::convertToSpatialTangentModuli
+    
+    template<typename StressType>
+    typename LogarithmicStrainHandler<2u,StressType>::TangentOperator
+    LogarithmicStrainHandler<2u,StressType>::convertToCauchyStressTruesdellRateTangentModuli(const TangentOperator& Ks,
+											     const StressStensor& T) const
+    {
+      if(this->s==LAGRANGIAN){
+	using FSTOBase = FiniteStrainBehaviourTangentOperatorBase;
+	const auto F0  = tfel::math::tensor<2u,real>::Id();
+	const auto sig  = this->convertToCauchyStress(T);
+	const auto Cse = this->convertToMaterialTangentModuli(Ks,T);
+	auto Kr = convert<FSTOBase::SPATIAL_MODULI,
+			  FSTOBase::DS_DEGL>(Cse,F0,this->F,sig);
+	Kr /= tfel::math::det(this->F);
+	return Kr;
+      }
+      const auto N = getNTensors(this->m);
+      const auto M = getEulerianMTensors(this->m,this->F);
+      TangentOperator Kr;
+      this->convertTangentModuli(Kr,Ks,T,N,M);
+      Kr /= tfel::math::det(this->F);
+      return Kr;
+    } // end of LogarithmicStrainHandler<2u,StressType>::convertToCauchyStressTruesdellRateTangentModuli
     
     template<typename StressType>
     LogarithmicStrainHandler<3u,StressType>::LogarithmicStrainHandler(const Setting c,
@@ -647,6 +692,30 @@ namespace tfel
 	return Kr;
       }
     } // end of LogarithmicStrainHandler<3u,StressType>::convertToSpatialTangentModuli
+
+    template<typename StressType>
+    typename LogarithmicStrainHandler<3u,StressType>::TangentOperator
+    LogarithmicStrainHandler<3u,StressType>::convertToCauchyStressTruesdellRateTangentModuli(const TangentOperator& Ks,
+											     const StressStensor& T) const
+    {
+      if(this->s==LAGRANGIAN){
+	using FSTOBase = FiniteStrainBehaviourTangentOperatorBase;
+	const auto F0  = tfel::math::tensor<3u,real>::Id();
+	const auto sig = this->convertToCauchyStress(T);
+	const auto Cse = this->convertToMaterialTangentModuli(Ks,T);
+	auto Kr = convert<FSTOBase::SPATIAL_MODULI,
+			  FSTOBase::DS_DEGL>(Cse,F0,this->F,sig);
+	Kr /= tfel::math::det(this->F);
+	return Kr;
+      } else {
+	const auto N = getNTensors(this->m);
+	const auto M = getEulerianMTensors(this->m,this->F);
+	TangentOperator Kr;
+	this->convertTangentModuli(Kr,Ks,T,N,M);
+	Kr /= tfel::math::det(this->F);
+	return Kr;
+      }
+    } // end of LogarithmicStrainHandler<3u,StressType>::convertToCauchyStressTruesdellRateTangentModuli
     
   } // end of namespace material
 

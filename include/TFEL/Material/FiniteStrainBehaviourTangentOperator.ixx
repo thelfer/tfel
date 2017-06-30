@@ -5,8 +5,8 @@
  * \date   19 août 2016
  */
 
-#ifndef LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATOR_IXX_
-#define LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATOR_IXX_
+#ifndef LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORIXX
+#define LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORIXX
 
 #include<stdexcept>
 #include"TFEL/Math/tvector.hxx"
@@ -39,18 +39,18 @@ namespace tfel
     /*!
      * An helper class used to define simple alias
      */
-    template<FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType1,
-	     FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType2>
+    template<FiniteStrainBehaviourTangentOperatorBase::Flag ResultFlag,
+	     FiniteStrainBehaviourTangentOperatorBase::Flag SourceFlag>
     struct FiniteStrainBehaviourTangentOperatorConverterBase{
       //! a simple alias
       template<typename T>
       using base_type = tfel::typetraits::base_type<T>;
       //! a simple alias
       template<unsigned short N,typename stress>
-      using Result = tangent_operator<TangenOperatorType1,N,stress>;
+      using Result = tangent_operator<ResultFlag,N,stress>;
       //! a simple alias
       template<unsigned short N,typename stress>
-      using Source = tangent_operator<TangenOperatorType2,N,stress>;
+      using Source = tangent_operator<SourceFlag,N,stress>;
       //! a simple alias
       template<unsigned short N,typename stress>
       using DeformationGradientTensor =
@@ -1026,11 +1026,35 @@ namespace tfel
 	  const DeformationGradientTensor<N,stress>& F1,
 	  const StressStensor<N,stress>& s)
       {
-	//	constexpr const auto ls = LogarithmicStrainHandler<N,stress>::EULERIAN;
-	constexpr const auto ls = LogarithmicStrainHandler<N,stress>::LAGRANGIAN;
+	constexpr const auto ls = LogarithmicStrainHandler<N,stress>::EULERIAN;
 	LogarithmicStrainHandler<N,stress> l(ls,F1);
 	const auto T = l.convertFromCauchyStress(s);
 	Kr = l.convertToSpatialTangentModuli(Ks,T);
+      } // end of exe
+    };
+    TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORCONVERTER(C_TRUESDELL,DT_DELOG)
+    {
+      /*!
+       * \brief convert the stiffness matrix expressed in the logarithmic
+       * space to the spatial moduli
+       * \param[out] Kr: the result of the convertion
+       * \param[in]  Ks: the initial stiffness tensor
+       * \param[in]  F0:  the deformation gradient
+       * \param[in]  F1:  the deformation gradient
+       * \param[in]  s:  the Cauchy stress tensor
+       */
+      template<unsigned short N,typename stress>
+      static TFEL_MATERIAL_INLINE void
+      exe(Result<N,stress>& Kr,
+	  const Source<N,stress>& Ks,
+	  const DeformationGradientTensor<N,stress>&,
+	  const DeformationGradientTensor<N,stress>& F1,
+	  const StressStensor<N,stress>& s)
+      {
+	constexpr const auto ls = LogarithmicStrainHandler<N,stress>::EULERIAN;
+	LogarithmicStrainHandler<N,stress> l(ls,F1);
+	const auto T = l.convertFromCauchyStress(s);
+	Kr = l.convertToCauchyStressTruesdellRateTangentModuli(Ks,T);
       } // end of exe
     };
     /*!
@@ -1060,32 +1084,32 @@ namespace tfel
 		     TangentOperator::DTAU_DF>(Dt,F0,F1,s);
       } // end of exe
     }; // end of struct FiniteStrainBehaviourTangentOperatorConverter
-    template<FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType1,
-    	     FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType2,
+    template<FiniteStrainBehaviourTangentOperatorBase::Flag ResultFlag,
+    	     FiniteStrainBehaviourTangentOperatorBase::Flag SourceFlag,
     	     unsigned short N,typename StressType>
-    tangent_operator<TangenOperatorType1,N,StressType>
-    convert(const tangent_operator<TangenOperatorType2,N,StressType>& K,
+    tangent_operator<ResultFlag,N,StressType>
+    convert(const tangent_operator<SourceFlag,N,StressType>& K,
     	    const tfel::math::tensor<N,tfel::typetraits::base_type<StressType>>& F0,
     	    const tfel::math::tensor<N,tfel::typetraits::base_type<StressType>>& F1,
     	    const tfel::math::stensor<N,StressType>& s){
-      tangent_operator<TangenOperatorType1,N,StressType> r;
-      FiniteStrainBehaviourTangentOperatorConverter<TangenOperatorType1,TangenOperatorType2>::exe(r,K,F0,F1,s);
+      tangent_operator<ResultFlag,N,StressType> r;
+      FiniteStrainBehaviourTangentOperatorConverter<ResultFlag,SourceFlag>::exe(r,K,F0,F1,s);
       return r;
     }
 
-    template<FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType1,
-	     FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType2,
+    template<FiniteStrainBehaviourTangentOperatorBase::Flag ResultFlag,
+	     FiniteStrainBehaviourTangentOperatorBase::Flag SourceFlag,
 	     unsigned short N,typename StressType>
-    void convert(tangent_operator<TangenOperatorType1,N,StressType>& Kr,
-		 const tangent_operator<TangenOperatorType2,N,StressType>& Ks,
+    void convert(tangent_operator<ResultFlag,N,StressType>& Kr,
+		 const tangent_operator<SourceFlag,N,StressType>& Ks,
 		 const tfel::math::tensor<N,tfel::typetraits::base_type<StressType>>& F0,
 		 const tfel::math::tensor<N,tfel::typetraits::base_type<StressType>>& F1,
 		 const tfel::math::stensor<N,StressType>& s){
-      FiniteStrainBehaviourTangentOperatorConverter<TangenOperatorType1,TangenOperatorType2>::exe(Kr,Ks,F0,F1,s);
+      FiniteStrainBehaviourTangentOperatorConverter<ResultFlag,SourceFlag>::exe(Kr,Ks,F0,F1,s);
     }
     
   } // end of namespace material
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATOR_IXX_ */
+#endif /* LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATORIXX */

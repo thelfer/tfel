@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_UMATNORMALISETANGENTOPERATOR_IXX_
-#define LIB_TFEL_MATH_UMATNORMALISETANGENTOPERATOR_IXX_
+#ifndef LIB_TFEL_MATH_UMATNORMALISETANGENTOPERATORIXX
+#define LIB_TFEL_MATH_UMATNORMALISETANGENTOPERATORIXX
 
 #include<cmath>
 #include"TFEL/TypeTraits/BaseType.hxx"
@@ -116,4 +116,4 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_UMATNORMALISETANGENTOPERATOR_IXX_ */
+#endif /* LIB_TFEL_MATH_UMATNORMALISETANGENTOPERATORIXX */

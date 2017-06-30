@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_EVALUATOR_IXX_
-#define LIB_TFEL_MATH_EVALUATOR_IXX_ 
+#ifndef LIB_TFEL_MATH_EVALUATORIXX
+#define LIB_TFEL_MATH_EVALUATORIXX 
 
 #include"TFEL/Math/Parser/Function.hxx"
 #include"TFEL/Math/Parser/BinaryFunction.hxx"
@@ -47,4 +47,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_EVALUATOR_IXX_ */
+#endif /* LIB_TFEL_MATH_EVALUATORIXX */

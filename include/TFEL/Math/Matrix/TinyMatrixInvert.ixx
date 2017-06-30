@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_TINYMATRIXINVERT_IXX_
-#define LIB_TFEL_MATH_TINYMATRIXINVERT_IXX_ 
+#ifndef LIB_TFEL_MATH_TINYMATRIXINVERTIXX
+#define LIB_TFEL_MATH_TINYMATRIXINVERTIXX 
 
 namespace tfel{
   
@@ -45,5 +45,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_TINYMATRIXINVERT_IXX_ */
+#endif /* LIB_TFEL_MATH_TINYMATRIXINVERTIXX */
 

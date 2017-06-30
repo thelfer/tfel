@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_BASIC_RSTREAM_IXX_
-#define LIB_TFEL_BASIC_RSTREAM_IXX_ 
+#ifndef LIB_TFEL_BASIC_RSTREAMIXX
+#define LIB_TFEL_BASIC_RSTREAMIXX 
 
 #include"TFEL/Config/TFELConfig.hxx"
 #include<type_traits>
@@ -277,5 +277,5 @@ namespace tfel
   
 } // end of namespace tfel  
 
-#endif /* LIB_TFEL_BASIC_RSTREAM_IXX_ */
+#endif /* LIB_TFEL_BASIC_RSTREAMIXX */
 

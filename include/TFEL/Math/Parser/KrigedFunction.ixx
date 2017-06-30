@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_PARSER_KRIGEDFUNCTION_IXX_
-#define LIB_TFEL_MATH_PARSER_KRIGEDFUNCTION_IXX_ 
+#ifndef LIB_TFEL_MATH_PARSER_KRIGEDFUNCTIONIXX
+#define LIB_TFEL_MATH_PARSER_KRIGEDFUNCTIONIXX 
 
 namespace tfel
 {
@@ -150,4 +150,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_PARSER_KRIGEDFUNCTION_IXX_ */
+#endif /* LIB_TFEL_MATH_PARSER_KRIGEDFUNCTIONIXX */

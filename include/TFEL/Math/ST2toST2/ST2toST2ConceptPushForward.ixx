@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_ST2TOST2_PUSH_FORWARD_IXX_
-#define LIB_TFEL_MATH_ST2TOST2_PUSH_FORWARD_IXX_
+#ifndef LIB_TFEL_MATH_ST2TOST2_PUSH_FORWARDIXX
+#define LIB_TFEL_MATH_ST2TOST2_PUSH_FORWARDIXX
 
 #include"TFEL/TypeTraits/BaseType.hxx"
 #include"TFEL/Math/General/MathConstants.hxx"
@@ -1740,4 +1740,4 @@ namespace tfel{
   
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_ST2TOST2_PUSH_FORWARD_IXX_ */
+#endif /* LIB_TFEL_MATH_ST2TOST2_PUSH_FORWARDIXX */

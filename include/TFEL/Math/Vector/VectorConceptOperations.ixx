@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_VECTORCONCEPTOPERATIONS_IXX_
-#define LIB_TFEL_VECTORCONCEPTOPERATIONS_IXX_ 
+#ifndef LIB_TFEL_VECTORCONCEPTOPERATIONSIXX
+#define LIB_TFEL_VECTORCONCEPTOPERATIONSIXX 
 
 namespace tfel{
 
@@ -45,5 +45,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_VECTORCONCEPTOPERATIONS_IXX_ */
+#endif /* LIB_TFEL_VECTORCONCEPTOPERATIONSIXX */
 

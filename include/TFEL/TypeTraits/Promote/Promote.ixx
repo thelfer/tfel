@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_PROMOTE_IXX_
-#define LIB_TFEL_PROMOTE_IXX_ 
+#ifndef LIB_TFEL_PROMOTEIXX
+#define LIB_TFEL_PROMOTEIXX 
 
 #include<type_traits>
 #include"TFEL/Metaprogramming/StaticAssert.hxx"
@@ -443,5 +443,5 @@ namespace tfel{
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_PROMOTE_IXX_ */
+#endif /* LIB_TFEL_PROMOTEIXX */
 

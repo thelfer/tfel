@@ -10,8 +10,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATERIAL_HILL_IXX_
-#define LIB_TFEL_MATERIAL_HILL_IXX_ 
+#ifndef LIB_TFEL_MATERIAL_HILLIXX
+#define LIB_TFEL_MATERIAL_HILLIXX 
 
 namespace tfel
 {
@@ -216,4 +216,4 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATERIAL_HILL_IXX_ */
+#endif /* LIB_TFEL_MATERIAL_HILLIXX */

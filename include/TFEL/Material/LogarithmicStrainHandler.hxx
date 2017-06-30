@@ -86,7 +86,7 @@ namespace tfel
       using TangentOperator = tfel::math::st2tost2<1u,stress>;
       //! a simple alias
       using size_type = unsigned short;
-      //
+      //! numerical parameter used to distinguish egal eigenvalues.
       static constexpr const real eps = 1.e-14;
       /*!
        * \brief constructor
@@ -137,6 +137,15 @@ namespace tfel
       TangentOperator
       convertToSpatialTangentModuli(const TangentOperator&,
 				    const StressStensor&) const;
+      /*!
+       * \return the moduli associated with the Truesdell' rate of the
+       * Cauchy stress.
+       * \param[in] Ks: tangent moduli in the logarithmic space
+       * \param[in]  T: dual of the logarithmic strain
+       */
+      TangentOperator
+      convertToCauchyStressTruesdellRateTangentModuli(const TangentOperator&,
+						      const StressStensor&) const;
     private:
       //! deformation gradient
       DeformationGradient F;
@@ -220,6 +229,15 @@ namespace tfel
       TangentOperator
       convertToSpatialTangentModuli(const TangentOperator&,
 				    const StressStensor&) const;
+      /*!
+       * \return the moduli associated with the Truesdell' rate of the
+       * Cauchy stress.
+       * \param[in] Ks: tangent moduli in the logarithmic space
+       * \param[in]  T: dual of the logarithmic strain
+       */
+      TangentOperator
+      convertToCauchyStressTruesdellRateTangentModuli(const TangentOperator&,
+						      const StressStensor&) const;
     private:
       /*!
        * \brief compute the N tensors
@@ -322,7 +340,7 @@ namespace tfel
       using TangentOperator = tfel::math::st2tost2<3u,stress>;
       //! a simple alias
       using size_type = unsigned short;
-      //
+      //! numerical parameter used to distinguish egal eigenvalues.
       static constexpr const real eps = 1.e-14;
       /*!
        * \brief constructor
@@ -373,6 +391,15 @@ namespace tfel
       TangentOperator
       convertToSpatialTangentModuli(const TangentOperator&,
 				    const StressStensor&) const;
+      /*!
+       * \return the moduli associated with the Truesdell' rate of the
+       * Cauchy stress.
+       * \param[in] Ks: tangent moduli in the logarithmic space
+       * \param[in]  T: dual of the logarithmic strain
+       */
+      TangentOperator
+      convertToCauchyStressTruesdellRateTangentModuli(const TangentOperator&,
+						      const StressStensor&) const;
     private:
       //! \return true if all eigenvalues are equal
       static bool areEigenValuesEqual(const tfel::math::tvector<3u,real>&);

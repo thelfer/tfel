@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_FUNCTION_IXX_
-#define LIB_TFEL_FUNCTION_IXX_ 
+#ifndef LIB_TFEL_FUNCTIONIXX
+#define LIB_TFEL_FUNCTIONIXX 
 
 #include <cmath>
 

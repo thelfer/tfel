@@ -12,8 +12,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_RSTREAMVIEW_IXX_
-#define LIB_TFEL_RSTREAMVIEW_IXX_ 
+#ifndef LIB_TFEL_RSTREAMVIEWIXX
+#define LIB_TFEL_RSTREAMVIEWIXX 
 
 namespace tfel
 {
@@ -39,5 +39,5 @@ namespace tfel
 
 } // end of namespace tfel  
 
-#endif /* LIB_TFEL_RSTREAMVIEW_IXX_ */
+#endif /* LIB_TFEL_RSTREAMVIEWIXX */
 

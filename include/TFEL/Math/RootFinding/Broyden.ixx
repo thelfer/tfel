@@ -12,12 +12,12 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_MATH_BROYDEN_IXX_
-#define LIB_TFEL_MATH_BROYDEN_IXX_ 
+#ifndef LIB_TFEL_MATH_BROYDENIXX
+#define LIB_TFEL_MATH_BROYDENIXX 
 
 #ifdef TFEL_BROYDEN_VERBOSE_MODE
 #include<iostream>
-#endif /* LIB_TFEL_MATH_BROYDEN_IXX_ */
+#endif /* LIB_TFEL_MATH_BROYDENIXX */
 
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/TinyMatrixSolve.hxx"
@@ -47,7 +47,7 @@ namespace tfel
 	cout << "iteration : " << i <<  endl;	
 	cout << "x         : " << x <<  endl;	
 	cout << "||f||     : " << norm(vf) <<  endl;	
-#endif /* LIB_TFEL_MATH_BROYDEN_IXX_ */
+#endif /* LIB_TFEL_MATH_BROYDENIXX */
 	tvector<N,T> s = -vf;
 	tmatrix<N,N,T> J = A;
 	TinyMatrixSolve<N,T>::exe(J,s);
@@ -85,5 +85,5 @@ namespace tfel
 
 } // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_BROYDEN_IXX_ */
+#endif /* LIB_TFEL_MATH_BROYDENIXX */
 
