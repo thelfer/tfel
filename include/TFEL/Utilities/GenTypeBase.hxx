@@ -18,6 +18,7 @@
 
 #include<cmath>
 #include<limits>
+#include<utility>
 #include<type_traits>
 
 #include"TFEL/Config/TFELConfig.hxx"
@@ -65,8 +66,7 @@ namespace tfel{
 	  static_cast<void>(p);
 	  static_cast<T *>(p)->~T();
 	}
-      };
-
+      }; // end of GenTypeGenericDestroy
 
       //! an helper function to call the assignement operator of T.
       /*
@@ -85,8 +85,8 @@ namespace tfel{
 	static void
 	exe(void *const p,const void *const p2)
 	{
-	  T&       tmp  = *(static_cast<T *>(p)); 
-	  const T& tmp2 = *(static_cast<const T *>(p2)); 
+	  auto&       tmp  = *(static_cast<T *>(p)); 
+	  const auto& tmp2 = *(static_cast<const T *>(p2)); 
 	  tmp = tmp2;
 	}
       };
@@ -144,7 +144,7 @@ namespace tfel{
 	static void
 	exe(void *const p,const void *const p2)
 	{
-	  const T& tmp2 = *(static_cast<const T *>(p2)); 
+	  const auto& tmp2 = *(static_cast<const T *>(p2)); 
 	  // placement new
 	  new (p) T(tmp2);
 	}
@@ -340,6 +340,19 @@ namespace tfel{
 	}
       }
       /*!
+       * \param[in] args: argument passed to the constructor of the
+       * object
+       */
+      template<typename T1,typename... Args>
+      TFEL_INLINE requires<T1,T1&>
+      emplace(Args&&... args){
+	// We create a new object of type T1 by calling the copy constructor
+	this->template set_uninitialised<T1>();
+	void * p = reinterpret_cast<void*>(&(this->buffer));
+	// the magic of placement new...
+	return *(new (p) T1(std::forward<Args>(args)...));
+      } // end of emplace
+      /*!
        * \brief assignement operator
        * \param src: the right-hand side
        */
@@ -347,37 +360,31 @@ namespace tfel{
       operator=(const GenTypeBase& src)
       {
 	// check for self-assignement
-	if(this!=&src){
-	  if(this->index==src.index){
-	    if(src.index!=ListSize){
-	      // the two GenTypes hold the same objects
-	      // we then use the assignement operator.
-	      auto * tmp  = reinterpret_cast<void*>(&buffer);
-	      auto * tmp2 = reinterpret_cast<const void*>(&(src.buffer));
-	      (*(this->get_assignement_operator(this->index)))(tmp,tmp2);
-	    } else {
-	      // src is not initialized,
-	      // we then destroy holded object
-	      if(!this->empty()){
-		auto * tmp = reinterpret_cast<void*>(&buffer);
-		(*(this->get_destructor(this->index)))(tmp);
-	      }
-	      this->index = ListSize;
-	    }
+	if(this==&src){
+	  return *this;
+	}
+	if(this->index==src.index){
+	  if(src.index!=ListSize){
+	    // the two GenTypes hold the same objects
+	    // we then use the assignement operator.
+	    auto* tmp  = reinterpret_cast<void*>(&buffer);
+	    auto* tmp2 = reinterpret_cast<const void*>(&(src.buffer));
+	    (*(this->get_assignement_operator(this->index)))(tmp,tmp2);
 	  } else {
-	    // the two GenType have two differents objects.
-	    // we first destroy the previous object and create a new
-	    // one by copy.
-	    if(!this->empty()){
-	      auto * tmp = reinterpret_cast<void*>(&buffer);
-	      (*(this->get_destructor(this->index)))(tmp);
-	    }
-	    this->index = src.index;
-	    if(!this->empty()){
-	      auto * tmp  = reinterpret_cast<void*>(&buffer);
-	      auto * tmp2 = reinterpret_cast<const void*>(&(src.buffer));
-	      (*(this->get_copy_constructor(this->index)))(tmp,tmp2);
-	    }
+	    // src is not initialized,
+	    // we then destroy holded object
+	    this->clear();
+	  }
+	} else {
+	  // the two GenType have two differents objects.
+	  // we first destroy the previous object and create a new
+	  // one by copy.
+	  this->clear();
+	  this->index = src.index;
+	  if(!this->empty()){
+	    auto * tmp  = reinterpret_cast<void*>(&buffer);
+	    auto * tmp2 = reinterpret_cast<const void*>(&(src.buffer));
+	    (*(this->get_copy_constructor(this->index)))(tmp,tmp2);
 	  }
 	}
 	return *this;

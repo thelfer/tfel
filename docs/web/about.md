@@ -39,6 +39,8 @@
 - Jean-Luc Adia
 - Luc Portelette
 - Laurent Dupuy
+- Fabien Onimus
+
 
 # Tools
 

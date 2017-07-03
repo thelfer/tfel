@@ -156,6 +156,22 @@ namespace tfel{
 	this->operator=(src);
 	return true;
       }
+         /*!
+       * \param[in] args: argument passed to the constructor of the
+       * object
+       */
+      template<typename T1,typename... Args>
+      TFEL_INLINE
+      typename std::enable_if<
+	tfel::meta::TLCountNbrOfT<T1,List>::value==1, 
+	T1&>::type 
+      emplace(Args&&... args){
+	// We create a new object of type T1 by calling the copy constructor
+	this->template set_uninitialised<T1>();
+	void * p = reinterpret_cast<void*>(&(this->buffer));
+	// the magic of placement new...
+	return new (p) T1(std::forward(args)...);
+      } // end of emplace
       //! set the value of the GenType.
       /*
        * \param const T1&, the value affected to the GenType.

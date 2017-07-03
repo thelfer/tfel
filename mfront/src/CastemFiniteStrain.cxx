@@ -270,12 +270,36 @@ namespace castem
     }
   } // end of CastemFiniteStrain::convertCSEtoCauchyTruesdellRateModuli
 
+  void CastemFiniteStrain::initializeLogarithmicStrainHandler(LSHandler& h,
+							      const CastemReal* const Fv,
+							      const CastemInt NTENS)
+  {
+    if(NTENS==3){
+      constexpr const auto s = LogarithmicStrainHandler<1u>::EULERIAN;
+      using tensor = tfel::math::tensor<1u,CastemReal>;
+      const auto F = tensor::buildFromFortranMatrix(Fv);
+      h.emplace<LogarithmicStrainHandler<1u>>(s,F);
+    } else if(NTENS==4){
+      constexpr const auto s = LogarithmicStrainHandler<2u>::EULERIAN;
+      using tensor = tfel::math::tensor<2u,CastemReal>;
+      const auto F = tensor::buildFromFortranMatrix(Fv);
+      h.emplace<LogarithmicStrainHandler<2u>>(s,F);
+    }
+    if(NTENS!=6){
+      throw(std::runtime_error("CastemFiniteStrain::initializeLogarithmicStrainHandler: "
+			       "invalid NTENS value ("+std::to_string(NTENS)+")"));
+    }
+    constexpr const auto s = LogarithmicStrainHandler<3u>::EULERIAN;
+    using tensor = tfel::math::tensor<3u,CastemReal>;
+    const auto F = tensor::buildFromFortranMatrix(Fv);
+    h.emplace<LogarithmicStrainHandler<3u>>(s,F);
+  } // end of CastemFiniteStrain::initializeLogarithmicStrainHandler
   
   static void
   CastemFiniteStrainComputeLogarithmicStrainAndDerivative1D(CastemReal* const P,
-							  CastemReal* const E,
-							  const CastemReal* const F,
-							  const CastemInt NDI)
+							    CastemReal* const E,
+							    const CastemReal* const F,
+							    const CastemInt NDI)
   {
     CastemCheckNDIValue(NDI);
     E[0] = log(F[0]);
@@ -308,7 +332,7 @@ namespace castem
     if(NDI==-2){
       f(2)=1.;
     }
-    const stensor<2u,CastemReal> C = computeRightCauchyGreenTensor(f);
+    const auto C = computeRightCauchyGreenTensor(f);
     C.computeEigenVectors(vp,m);
     log_vp(0) = log(vp(0));
     log_vp(1) = log(vp(1));
@@ -328,7 +352,7 @@ namespace castem
     // computing P
     const tvector<3u,CastemReal> v0 = m.column_view<0u>();
     const tvector<3u,CastemReal> v1 = m.column_view<1u>();
-    const stensor<2u,CastemReal> n01 = stensor<2u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
+    const auto n01 = stensor<2u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
     if(std::abs(vp(0)-vp(1))>eps){
       ST2toST2View<2u,CastemReal>{P} = (n0^n0)/vp(0)+(n1^n1)/vp(1)+(n2^n2)/vp(2)+(log_vp(0)-log_vp(1))/(vp(0)-vp(1))*(n01^n01);
     } else {
@@ -350,7 +374,7 @@ namespace castem
     tmatrix<3u,3u,CastemReal> m;
     tensor<3u,CastemReal>  f;
     tensor<3u,CastemReal>::buildFromFortranMatrix(f,F);
-    const stensor<3u,CastemReal> C = computeRightCauchyGreenTensor(f);
+    const auto C = computeRightCauchyGreenTensor(f);
     C.computeEigenVectors<stensor<3u,CastemReal>::FSESJACOBIEIGENSOLVER>(vp,m);
     log_vp(0) = log(vp(0));
     log_vp(1) = log(vp(1));
@@ -363,36 +387,36 @@ namespace castem
     E[5] *= cste;
     // computing P
     if((std::abs(vp(0)-vp(1))<eps)&&(std::abs(vp(0)-vp(2))<eps)){
-      CastemReal vpm = (vp(0)+vp(1)+vp(2))/3;
+      const auto vpm = (vp(0)+vp(1)+vp(2))/3;
       ST2toST2View<3u,CastemReal>{P} = st2tost2<3u,CastemReal>::Id()/vpm;
     } else if(std::abs(vp(0)-vp(1))<eps){
       const tvector<3u,CastemReal> v0 = m.column_view<0u>();
       const tvector<3u,CastemReal> v1 = m.column_view<1u>();
       const tvector<3u,CastemReal> v2 = m.column_view<2u>();
-      const stensor<3u,CastemReal> n01 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
-      const stensor<3u,CastemReal> n02 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v2)/cste;
-      const stensor<3u,CastemReal> n12 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v1,v2)/cste;
-      CastemReal vpm = (vp(0)+vp(1))/2;
+      const auto n01 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
+      const auto n02 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v2)/cste;
+      const auto n12 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v1,v2)/cste;
+      const auto vpm = (vp(0)+vp(1))/2;
       ST2toST2View<3u,CastemReal>{P} = (((n0^n0)+(n1^n1)+(n01^n01))/vpm+(n2^n2)/vp(2)+
 				      (log_vp(0)-log_vp(2))/(vpm-vp(2))*((n02^n02)+(n12^n12)));
     } else if(std::abs(vp(0)-vp(2))<eps){
       const tvector<3u,CastemReal> v0 = m.column_view<0u>();
       const tvector<3u,CastemReal> v1 = m.column_view<1u>();
       const tvector<3u,CastemReal> v2 = m.column_view<2u>();
-      const stensor<3u,CastemReal> n01 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
-      const stensor<3u,CastemReal> n02 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v2)/cste;
-      const stensor<3u,CastemReal> n12 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v1,v2)/cste;
-      CastemReal vpm = (vp(0)+vp(2))/2;
+      const auto n01 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
+      const auto n02 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v2)/cste;
+      const auto n12 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v1,v2)/cste;
+      const auto vpm = (vp(0)+vp(2))/2;
       ST2toST2View<3u,CastemReal>{P} = (((n0^n0)+(n2^n2)+(n02^n02))/vpm+(n1^n1)/vp(1)+
 				      (log_vp(0)-log_vp(1))/(vpm-vp(1))*((n01^n01)+(n12^n12)));
     } else if(std::abs(vp(1)-vp(2))<eps){
       const tvector<3u,CastemReal> v0 = m.column_view<0u>();
       const tvector<3u,CastemReal> v1 = m.column_view<1u>();
       const tvector<3u,CastemReal> v2 = m.column_view<2u>();
-      const stensor<3u,CastemReal> n01 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
-      const stensor<3u,CastemReal> n02 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v2)/cste;
-      const stensor<3u,CastemReal> n12 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v1,v2)/cste;
-      CastemReal vpm = (vp(1)+vp(2))/2;
+      const auto n01 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
+      const auto n02 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v0,v2)/cste;
+      const auto n12 = stensor<3u,CastemReal>::buildFromVectorsSymmetricDiadicProduct(v1,v2)/cste;
+      const auto vpm = (vp(1)+vp(2))/2;
       ST2toST2View<3u,CastemReal>{P} = ((n0^n0)/vp(0)+((n1^n1)+(n2^n2)+(n12^n12))/vpm+
 				      ((log_vp(0)-log_vp(1))/(vp(0)-vpm))*((n01^n01)+(n02^n02)));
     } else {
