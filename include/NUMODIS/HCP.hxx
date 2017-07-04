@@ -152,9 +152,6 @@ namespace numodis
     //! ratio c/a
     double _ratio;
 
-    // Burgers basis
-    std::vector<Vect3> _blattice;
-    
   };
 
 } // end of namespace numodis

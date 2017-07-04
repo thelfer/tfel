@@ -60,8 +60,9 @@ namespace numodis
   Vect3 Crystallo::burgers_vector(const IBurgers& iburgers) const
   {
     Vect3 xburgers;
-    for(unsigned i=0; i<_blattice.size(); i++)
+    for(unsigned i=0; i<_blattice.size(); i++){
       xburgers+=(double)(iburgers.getIndex()[i])*_blattice[i];
+    }
     return xburgers;
   }
   
