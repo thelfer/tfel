@@ -79,6 +79,7 @@ MARK_AS_ADVANCED(CMAKE_CXX_FLAGS_PROFILING
   CMAKE_C_FLAGS_PROFILING)
 
 if(enable-sanitize-options)
+  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fcheck-pointer-bounds")
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=bounds-strict")
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=undefined")
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=float-divide-by-zero")
@@ -88,8 +89,17 @@ if(enable-sanitize-options)
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=object-size")
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=vpt")
   tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=address")
+  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=null")
+  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=return")
+  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=signed-integer-overflow")
+  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=bool")
+  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=enum")
+  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fstack-check")
+  
+  
 #  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fsanitize=leak")
-  tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fno-omit-frame-pointer")
+tfel_enable_cxx_compiler_flag(COMPILER_FLAGS "fno-omit-frame-pointer")
+
 endif(enable-sanitize-options)
 
 if(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 4.7)
