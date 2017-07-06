@@ -402,8 +402,7 @@ namespace mtest
     }
   }
 
-  void
-  MTest::initializeCurrentState(StudyCurrentState& s) const
+  void MTest::initializeCurrentState(StudyCurrentState& s) const
   {
     auto throw_if = [](const bool c, const std::string& m){
       if(c){throw(std::runtime_error("MTest::initializeCurrentState: "+m));}
