@@ -245,9 +245,16 @@ namespace tfel
 	        -((this->e[0]-this->e[1])*idvp-d[0])*idvp};
       }();
       const tvector<4u,real> dzeta = {(T|N(0))/2,(T|N(1))/2,T[2],(T|N(3))/2};
-      Kr = 4*transpose(p)*Ks*p+(f[0]*dzeta(0)*(M(0)^M(0))+
-      				f[1]*dzeta(1)*(M(1)^M(1))+
-      				f[2]*dzeta(2)*(M(2)^M(2)))/4;
+#ifndef __INTEL_COMPILER
+      Kr  = 4*transpose(p)*Ks*p + (f[0]*dzeta(0)*(M(0)^M(0))+
+				   f[1]*dzeta(1)*(M(1)^M(1))+
+				   f[2]*dzeta(2)*(M(2)^M(2)))/4;
+#else
+      const st2tost2<2u,real> tp = transpose(p);
+      Kr  = 4*tp*Ks*p + (f[0]*dzeta(0)*(M(0)^M(0))+
+			 f[1]*dzeta(1)*(M(1)^M(1))+
+			 f[2]*dzeta(2)*(M(2)^M(2)))/4;
+#endif
       Kr+=2*xsi[0]*(dzeta(3)*((M(3)^M(1))+(M(1)^M(3)))+
       		    dzeta(1)*(M(3)^M(3)));
       Kr+=2*xsi[1]*(dzeta(3)*((M(3)^M(0))+(M(0)^M(3)))+
@@ -643,9 +650,16 @@ namespace tfel
 	}
 	return r;
       }();
+#ifndef __INTEL_COMPILER
       Kr = 4*transpose(p)*Ks*p+(f[0]*dzeta(0,0)*(M(0,0)^M(0,0))+
-      				f[1]*dzeta(1,1)*(M(1,1)^M(1,1))+
-      				f[2]*dzeta(2,2)*(M(2,2)^M(2,2)))/4;
+				f[1]*dzeta(1,1)*(M(1,1)^M(1,1))+
+				f[2]*dzeta(2,2)*(M(2,2)^M(2,2)))/4;
+#else
+      const tfel::math::st2tost2<3u,real> tp = transpose(p);
+      Kr = 4*tp*Ks*p+(f[0]*dzeta(0,0)*(M(0,0)^M(0,0))+
+		      f[1]*dzeta(1,1)*(M(1,1)^M(1,1))+
+		      f[2]*dzeta(2,2)*(M(2,2)^M(2,2)))/4;
+#endif
       for(size_type i=0;i!=3;++i){
       	for(size_type j=0;j!=3;++j){
       	  if(i==j){
