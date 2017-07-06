@@ -71,7 +71,7 @@ struct FiniteStrainBehaviourTangentOperator12 final
     using size_type = unsigned short;
     const real l0  = 1.09465e+11;
     const real m0  = 5.6391e+12;
-    const real eps = 4.e-5*(2*m0);
+    const real eps = 2.e-4*(2*m0);
     // changing the rounding mode
     std::fesetround(r);
     // Hencky-Biot law with PK2 result
@@ -144,7 +144,7 @@ struct FiniteStrainBehaviourTangentOperator12 final
     using size_type = unsigned short;
     const real l0  = 1.09465e+11;
     const real m0  = 5.6391e+12;
-    const real eps = 4.e-5*(2*m0);
+    const real eps = 2.e-4*(2*m0);
     // changing the rounding mode
     std::fesetround(r);
     // Non symmetric behaviour from the Hencky-Biot law with PK2 result

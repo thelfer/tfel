@@ -71,7 +71,7 @@ struct FiniteStrainBehaviourTangentOperator13 final
     using size_type = unsigned short;
     const real l0  = 1.09465e+11;
     const real m0  = 5.6391e+12;
-    const real eps = 4.e-5*(2*m0);
+    const real eps = 2.e-4*(2*m0);
     // changing the rounding mode
     std::fesetround(r);
     // Hencky-Biot law with Cauchy result
@@ -125,7 +125,7 @@ struct FiniteStrainBehaviourTangentOperator13 final
     using size_type = unsigned short;
     const real l0  = 1.09465e+11;
     const real m0  = 5.6391e+12;
-    const real eps = 4.e-5*(2*m0);
+    const real eps = 2.e-4*(2*m0);
     auto  D = eval(l0*st2tost2::IxI()+2*m0*st2tost2::Id());
     for(size_type i=0;i!=StensorDimeToSize<N>::value;++i){
       for(size_type j=i+1;j!=StensorDimeToSize<N>::value;++j){
