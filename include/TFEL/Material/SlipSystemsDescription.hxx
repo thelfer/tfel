@@ -46,6 +46,8 @@ namespace tfel{
 	vec4d plane;
       };
       //! a simple alias
+      using vec = tfel::utilities::GenType<vec3d,vec4d>;
+      //! a simple alias
       using system = tfel::utilities::GenType<system3d,system4d>;
       //! a simple alias
       using size_type = std::vector<system3d>::size_type;
@@ -139,17 +141,39 @@ namespace tfel{
       //! \return all the slip systems, sorted by family
       std::vector<std::vector<system>> getSlipSystems() const;
       //! \return the orientation tensors, sorted by family
-      std::vector<std::vector<tensor>> getOrientationTensors() const;
+      std::vector<std::vector<tensor>> getOrientationTensors() const;      
       /*!
        * \return the orientation tensors associated with the ith family
        * \param[in] i: index
        */
       std::vector<tensor> getOrientationTensors(const size_type) const;
       /*!
+       * \return the Schmid factor, sorted by family
+       * \param[in] d: direction
+       */
+      std::vector<std::vector<long double>>
+      getSchmidFactors(const vec) const;      
+      /*!
+       * \return the Schmid factors associated with the ith family
+       * \param[in] d: direction
+       * \param[in] i: index
+       */
+      std::vector<long double> getSchmidFactors(const vec,
+						const size_type) const;
+      /*!
        * \return a structure defining the structure of the
        * interaction matrix
        */
       InteractionMatrixStructure getInteractionMatrixStructure() const;
+      //! \return if an interaction matrix has been defined
+      bool hasInteractionMatrix() const;
+      /*!
+       * \brief set the interaction matrix
+       * \param[in] v: values
+       */
+      void setInteractionMatrix(const std::vector<long double>&);
+      //! \return the interaction matrix
+      const std::vector<long double>& getInteractionMatrix() const;
       //! destructor
       ~SlipSystemsDescription();
     private:
@@ -158,7 +182,8 @@ namespace tfel{
 			       std::vector<system4d>> gs;
       //! the crystal structure
       const CrystalStructure cs;
-      //! InteractionMatrix 
+      //! \brief the interaction matrix
+      std::vector<long double> m;
     }; // end of SlipSystemsDescription
     
   } // end of namespace material

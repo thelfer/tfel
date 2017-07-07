@@ -1043,15 +1043,15 @@ namespace mfront
     throw_if(!this->allowsNewUserDefinedVariables(),
 	     "new variables are can't be defined after the first code block.");
     throw_if(!this->areSlipSystemsDefined(),"no slip system defined");
-    const auto im = this->getInteractionMatrixStructure();
-    throw_if(im.rank()!=m.size(),"the number of values does "
-	     "not match the number of independent coefficients "
-	     "in the interaction matrix");
+    this->gs.get<SlipSystemsDescription>().setInteractionMatrix(m);
   } // end of BehaviourDescription::setInteractionMatrix
   
   bool BehaviourDescription::hasInteractionMatrix() const
   {
-    return false;
+    if(!this->gs.is<SlipSystemsDescription>()){
+      return false;
+    }
+    return this->gs.get<SlipSystemsDescription>().hasInteractionMatrix();
   } // end of BehaviourDescription::hasInteractionMatrix
   
   void BehaviourDescription::setUseQt(const bool b)
@@ -1068,8 +1068,7 @@ namespace mfront
     return this->use_qt;
   } // end of BehaviourDescription::useQt
 
-  std::string
-  BehaviourDescription::getTangentOperatorType() const
+  std::string BehaviourDescription::getTangentOperatorType() const
   {
     if(this->type==GENERALBEHAVIOUR){
       auto msizes = this->getMainVariablesSize();

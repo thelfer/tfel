@@ -81,8 +81,8 @@ namespace mfront{
     // additional includes
     this->bd.appendToIncludes("#include\"TFEL/Math/General/CubicRoots.hxx\"");
     // reserve some specific variables
+    this->bd.reserveName(h,"ss");
     this->bd.reserveName(h,"fsscb_data");
-    this->bd.reserveName(h,"fsscb_ss");
     this->bd.reserveName(h,"fsscb_tprd");
     this->bd.reserveName(h,"fsscb_dfeel_dinv_dFp");
     this->bd.reserveName(h,"fsscb_dC_dFe");
@@ -178,9 +178,10 @@ namespace mfront{
     } else if (key=="@InteractionMatrix"){
       throw_if(!this->bd.areSlipSystemsDefined(),
 	       "slip systems have not been defined");
-      const auto& im     = this->bd.getInteractionMatrixStructure();
-      const auto  r      = im.rank();
+      const auto& im = this->bd.getInteractionMatrixStructure();
+      const auto  r  = im.rank();
       const auto  mv = CxxTokenizer::readArray(m,p,pe);
+      CxxTokenizer::readSpecifiedToken(m,";",p,pe);
       throw_if(mv.size()!=r,"the number of values does "
 	       "not match the number of independent coefficients "
 	       "in the interaction matrix");
@@ -190,6 +191,7 @@ namespace mfront{
 	imv.push_back(tfel::utilities::convert<long double>(v));
       }
       this->bd.setInteractionMatrix(imv);
+      return {true,p};
     }
     return BehaviourBrickBase::treatKeyword(key,p,pe);
   } // end of FiniteStrainSingleCrystalBrick::treatKeyword
@@ -225,6 +227,7 @@ namespace mfront{
   void FiniteStrainSingleCrystalBrick::endTreatment() const
   {
     const auto h = ModellingHypothesis::TRIDIMENSIONAL;
+    const auto cn   = this->bd.getClassName()+"SlipSystems<real>";
     // local data values initialisation
     CodeBlock init;
     init.code =
@@ -237,26 +240,27 @@ namespace mfront{
     		     init,BehaviourData::CREATEORAPPEND,
     		     BehaviourData::AT_END);
     CodeBlock integrator;
-    integrator.code = "this->fsscb_data.S = (this->D)*(this->eel+this->deel);\n"
+    integrator.code =
+      "const auto& ss = "+cn+"::getSlidingSystems();\n"
+      "this->fsscb_data.S = (this->D)*(this->eel+this->deel);\n"
       "this->fsscb_data.tmp = StrainStensor::Id() + 2*(this->eel+this->deel);\n"
       "// Mandel stress tensor\n"
-      "  const StressTensor M = (StrainStensor::Id() + 2*(this->eel+this->deel))*(this->fsscb_data.S);\n"
+      "const auto M = eval((StrainStensor::Id() + 2*(this->eel+this->deel))*(this->fsscb_data.S));\n"
       "// Mandel stress tensor derivative\n"
-      "const st2tot2<N,real> dM_ddeel(2*st2tot2<N,real>::tpld(this->fsscb_data.S)+\n"
-      "				        st2tot2<N,real>::tprd(this->fsscb_data.tmp,this->D));\n"
-      "const auto& fsscb_ss = SlidingSystems::getSlidingSystems();\n"
+      "const auto dM_ddeel = eval(2*st2tot2<N,real>::tpld(this->fsscb_data.S)+\n"
+      "				    st2tot2<N,real>::tprd(this->fsscb_data.tmp,this->D));\n"
       "this->fsscb_data.inv_dFp = Tensor::Id();\n"
-      "for(unsigned short i=0;i!=SlidingSystems::Nss;++i){\n"
-      "  this->fsscb_data.inv_dFp -= (this->dg[i])*fsscb_ss.mu[i];\n"
+      "for(unsigned short i=0;i!="+cn+"::Nss;++i){\n"
+      "  this->fsscb_data.inv_dFp -= (this->dg[i])*ss.mu[i];\n"
       "}\n"
       "this->fsscb_data.J_inv_dFp = det(this->fsscb_data.inv_dFp);\n"
       "this->fsscb_data.inv_dFp /= CubicRoots::cbrt(this->fsscb_data.J_inv_dFp);\n"
       "this->Fe = (this->fsscb_data.Fe_tr)*(this->fsscb_data.inv_dFp);\n"
       "feel = this->eel+this->deel-computeGreenLagrangeTensor(this->Fe);\n"
-      "const t2tot2<N,real> fsscb_tprd = t2tot2<N,real>::tprd(this->fsscb_data.Fe_tr);\n"
-      "const t2tost2<N,real> fsscb_dfeel_dinv_dFp = t2tost2<N,real>::dCdF(this->Fe)*fsscb_tprd;\n"
-      "for(unsigned short i=0;i!=SlidingSystems::Nss;++i){\n"
-      "  dfeel_ddg(i) = (fsscb_dfeel_dinv_dFp)*fsscb_ss.mu[i]/2;\n"
+      "const auto fsscb_tprd = t2tot2<N,real>::tprd(this->fsscb_data.Fe_tr);\n"
+      "const auto fsscb_dfeel_dinv_dFp = t2tost2<N,real>::dCdF(this->Fe)*fsscb_tprd;\n"
+      "for(unsigned short i=0;i!="+cn+"::Nss;++i){\n"
+      "  dfeel_ddg(i) = (fsscb_dfeel_dinv_dFp)*ss.mu[i]/2;\n"
       "}\n";
     integrator.members  = {"eel","Fe","D"};
     this->bd.setCode(h,BehaviourData::Integrator,
@@ -264,10 +268,10 @@ namespace mfront{
     		     BehaviourData::AT_BEGINNING);
     CodeBlock fs;
     fs.code = 
-      "const auto& fsscb_ss = SlidingSystems::getSlidingSystems();\n"
+      "const auto& ss = "+cn+"::getSlidingSystems();\n"
       "this->fsscb_data.inv_dFp = Tensor::Id();\n"
-      "for(unsigned short i=0;i!=SlidingSystems::Nss;++i){\n"
-      "  this->fsscb_data.inv_dFp -= dg[i]*fsscb_ss.mu[i];\n"
+      "for(unsigned short i=0;i!="+cn+"::Nss;++i){\n"
+      "  this->fsscb_data.inv_dFp -= dg[i]*ss.mu[i];\n"
       "}\n"
       "this->fsscb_data.J_inv_dFp = det(this->fsscb_data.inv_dFp);\n"
       "this->fsscb_data.inv_dFp /= CubicRoots::cbrt(this->fsscb_data.J_inv_dFp);\n"
@@ -282,18 +286,18 @@ namespace mfront{
     CodeBlock to;
     to.code = 
       "static_cast<void>(smt);\n"
-      "const auto& fsscb_ss = SlidingSystems::getSlidingSystems();\n"
+      "const auto& ss = "+cn+"::getSlidingSystems();\n"
       "const t2tost2<N,stress> fsscb_dC_dFe = t2tost2<N,real>::dCdF(this->Fe);\n"
       "const t2tost2<N,stress> fsscb_dS_dFe = 0.5*(this->D)*fsscb_dC_dFe;\n"
       "const auto fsscb_dtau_dFe = computePushForwardDerivative(fsscb_dS_dFe,this->fsscb_data.fsscb_S,this->Fe); \n"
       "const t2tot2<N,real> fsscb_dFe_dDF_tot = t2tot2<N,real>::tpld(this->fsscb_data.inv_dFp,t2tot2<N,real>::tpld(this->fsscb_data.Fe0));\n"
       "const t2tost2<N,real> fsscb_dfeel_dDF  = -0.5*(fsscb_dC_dFe)*(fsscb_dFe_dDF_tot);\n"
       "st2tost2<N,real> fsscb_Je;\n"
-      "tvector<SlidingSystems::Nss,Stensor> fsscb_Jg;\n"
+      "tvector<"+cn+"::Nss,Stensor> fsscb_Jg;\n"
       "getPartialJacobianInvert(fsscb_Je,fsscb_Jg);\n"
-      "t2tot2<N,real> fsscb_dinv_Fp_dDF = (fsscb_ss.mu[0])^(fsscb_Jg[0]|fsscb_dfeel_dDF);\n"
-      "for(unsigned short i=1;i!=SlidingSystems::Nss;++i){\n"
-      "  fsscb_dinv_Fp_dDF += (fsscb_ss.mu[i])^(fsscb_Jg[i]|fsscb_dfeel_dDF);\n"
+      "t2tot2<N,real> fsscb_dinv_Fp_dDF = (ss.mu[0])^(fsscb_Jg[0]|fsscb_dfeel_dDF);\n"
+      "for(unsigned short i=1;i!="+cn+"::Nss;++i){\n"
+      "  fsscb_dinv_Fp_dDF += (ss.mu[i])^(fsscb_Jg[i]|fsscb_dfeel_dDF);\n"
       "}\n"
       "const t2tot2<N,real> fsscb_dFe_dDF=\n"
       "  fsscb_dFe_dDF_tot+t2tot2<N,real>::tprd(this->fsscb_data.Fe_tr,fsscb_dinv_Fp_dDF);\n"

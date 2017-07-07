@@ -44,6 +44,8 @@ namespace numodis
 
     Cubic();
 
+    virtual Vect3 direction(const IDirection&) const;
+    
     virtual Vect3 burgers_vector(const IBurgers&) const override;
     
     virtual Vect3 normal(const IPlane&) const override;

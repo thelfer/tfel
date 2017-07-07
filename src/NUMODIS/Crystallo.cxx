@@ -46,6 +46,19 @@ namespace numodis
     return GSystem(iburgers,iplane);
   }
 
+  Vect3 Crystallo::direction(const IDirection& idirection) const
+  {
+    // rotation
+    Vect3 xdirection;
+    for(unsigned i=0; i<_alattice.size(); i++){
+      xdirection+=static_cast<double>(idirection.getIndex()[i])*_alattice[i];
+    }
+    // convert to a unit vector
+    xdirection.Normalize();
+    return xdirection;
+  }
+
+  
   Vect3 Crystallo::normal(const IPlane& iplane) const
   {
     // rotation
@@ -61,7 +74,7 @@ namespace numodis
   {
     Vect3 xburgers;
     for(unsigned i=0; i<_blattice.size(); i++){
-      xburgers+=(double)(iburgers.getIndex()[i])*_blattice[i];
+      xburgers+=static_cast<double>(iburgers.getIndex()[i])*_blattice[i];
     }
     return xburgers;
   }

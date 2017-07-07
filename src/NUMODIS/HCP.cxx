@@ -201,10 +201,9 @@ namespace numodis
   {
 
     Vect3 xburgers;
-
-    for(size_t i=0; i!=4; i++)
-      xburgers+=(double)iburgers[i]*_blattice[i];
-
+    for(size_t i=0; i!=4; i++){
+      xburgers+=static_cast<double>(iburgers[i])*_blattice[i];
+    }
     return xburgers.SquareLength();
 
   }

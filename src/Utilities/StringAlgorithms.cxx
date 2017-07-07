@@ -157,7 +157,7 @@ namespace tfel
       };
       throw_if(s.empty());
       std::size_t p;
-      const auto r = std::stol(s,&p);
+      const auto r = std::stold(s,&p);
       throw_if(p!=s.size());
       return r;
     }

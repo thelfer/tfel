@@ -190,6 +190,22 @@ available:
 - `--orientation-tensors-by-slip-system`: list all the orientation
   tensors.
 
+#### Getting information about the Schmid factors
+
+Concerning the Schmid factors, the following queries are
+available:
+
+- `--schmid-factors`: list all the Schmid factors, sorted by
+  family".
+- `--schmid-factors-by-index`: list all the Schmid factors.
+
+~~~~{.sh}
+$ mfront-query --schmid-factors-by-index='<1,1,1>' SlipSystemGenerationTest.mfront
+~~~~
+
+**Note** In this example, the direction must be surrounded by simple
+quote to avoid interpretation by the shell.
+
 ### Definition of the interaction matrix
 
 #### Structure of the interaction matrix

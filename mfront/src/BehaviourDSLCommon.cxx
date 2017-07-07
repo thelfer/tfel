@@ -955,9 +955,16 @@ namespace mfront{
     auto write_tensor = [](std::ostream& out,const std::vector<tensor>& ts){
       for(decltype(ts.size()) i=0;i!=ts.size();){
 	const auto& t = ts[i];
-	out << "tensor{" << t[0] << ',' << t[1] << ',' << t[2] << ','
-	<< t[3] << ',' << t[4] << ',' << t[5] << ','
-	<< t[8] << ',' << t[7] << ',' << t[8] << '}';
+	out << "tensor{"
+	<< "real(" << t[0] << "),"
+	<< "real(" << t[1] << "),"
+	<< "real(" << t[2] << "),"
+	<< "real(" << t[3] << "),"
+	<< "real(" << t[4] << "),"
+	<< "real(" << t[5] << "),"
+	<< "real(" << t[6] << "),"
+	<< "real(" << t[7] << "),"
+	<< "real(" << t[8] << ")}";
 	if(++i!=ts.size()){
 	  out << ",\n";
 	}
@@ -967,10 +974,13 @@ namespace mfront{
       TFEL_CONSTEXPR const auto cste = tfel::math::Cste<long double>::sqrt2/2;
       for(decltype(ts.size()) i=0;i!=ts.size();){
 	const auto& t = ts[i];
-	out << "stensor{" << t[0] << ',' << t[1] << ',' << t[2] << ','
-	    << (t[3]+t[4])*cste << ','
-	    << (t[5]+t[6])*cste << ','
-	    << (t[7]+t[8])*cste << '}';
+	out << "stensor{"
+	    << "real(" << t[0] << "),"
+	    << "real(" << t[1] << "),"
+	    << "real(" << t[2] << "),"
+	    << "real(" << (t[3]+t[4])*cste << "),"
+	    << "real(" << (t[5]+t[6])*cste << "),"
+	    << "real(" << (t[7]+t[8])*cste << ")}";
 	if(++i!=ts.size()){
 	  out << ",\n";
 	}
@@ -1013,10 +1023,18 @@ namespace mfront{
     	<< "using tensor = tfel::math::tensor<3u,real>;\n"
     	<< "//! a simple alias\n"
     	<< "using stensor = tfel::math::stensor<3u,real>;\n";
+    auto nss = size_type{};
+    for(size_type idx=0;idx!=nb;++idx){
+      nss += sss.getNumberOfSlipSystems(idx);
+    }
     if(nb==1u){
+      const auto nss0 = sss.getNumberOfSlipSystems(0);
       out << "//! number of sliding systems\n"
 	  << "static constexpr const unsigned short Nss" << " = "
-	  << sss.getNumberOfSlipSystems(0) << ";\n";
+	  << nss << ";\n"
+	  << "//! number of sliding systems (first and uniq family)\n"
+	  << "static constexpr const unsigned short Nss0" << " = "
+	  << nss0 << ";\n";
     } else {
       for(size_type idx=0;idx!=nb;++idx){
 	out << "//! number of sliding systems\n"
@@ -1042,6 +1060,10 @@ namespace mfront{
 	  << "tfel::math::tvector<Nss" << idx << ",tensor> mu" << idx << ";\n"
 	  << "//! symmetric tensor of directional sense\n"
 	  << "tfel::math::tvector<Nss" << idx << ",stensor> mus" << idx << ";\n";
+    }
+    if(this->mb.hasInteractionMatrix()){
+      out << "//! interaction matrix\n"
+	  << "tfel::math::tmatrix<Nss,Nss,real> mh;\n";
     }
     out << "//! return the unique instance of the class\n"
     	<< "static const " << cn << "&\n"
@@ -1114,7 +1136,7 @@ namespace mfront{
     for(size_type idx=0;idx!=nb;++idx){
       out << "this->mus" << idx << " = {";
       write_stensor(out,sss.getOrientationTensors(idx));
-      out << "}\n";
+      out << "};\n";
     }
     out << "this->mus = {";
     for(size_type idx=0;idx!=nb;){
@@ -1126,8 +1148,31 @@ namespace mfront{
     	out << ",\n";
       }
     }
-    out << "};\n"
-	<< "} // end of "<< cn << "::" << cn << "\n\n"
+    out << "};\n";
+    if(this->mb.hasInteractionMatrix()){
+      const auto ims = sss.getInteractionMatrixStructure();
+      const auto& mh = sss.getInteractionMatrix();
+      auto count = size_type{}; // number of terms of the matrix treated so far
+      out << "this-> mh = {";
+      for(size_type idx=0;idx!=nb;++idx){
+	const auto gsi = sss.getSlipSystems(idx);
+	for(size_type idx2=0;idx2!=gsi.size();++idx2){
+	  for(size_type jdx=0;jdx!=nb;++jdx){
+	    const auto gsj = sss.getSlipSystems(jdx);
+	    for(size_type jdx2=0;jdx2!=gsj.size();++jdx2){
+	      const auto r = ims.getRank(gsi[idx2],gsj[jdx2]);
+	      out << "real(" << mh[r] << ")";
+	      if(++count!=nss*nss){
+		out << ",";
+	      }
+	    }
+	  }
+	  out << '\n';
+	}
+      }
+      out << "};\n";
+    }
+    out << "} // end of "<< cn << "::" << cn << "\n\n"
     	<< "} // end of namespace material\n\n"
     	<< "} // end of namespace tfel\n\n"
     	<< "#endif /* LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_IXX */\n";

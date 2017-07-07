@@ -141,6 +141,22 @@ namespace numodis
     _plattice[2][2] = 1.0;
   }
 
+  Vect3 Cubic::direction(const IDirection& idirection) const
+  {
+    //-------------------------------------
+    // conversion to Crystallo coordinates
+    //-------------------------------------
+    Vect3 xdirection;
+    xdirection[0]=idirection.getIndex()[0]*_alattice[0][0];
+    xdirection[1]=idirection.getIndex()[1]*_alattice[1][1];
+    xdirection[2]=idirection.getIndex()[2]*_alattice[2][2];
+    //--------------------------
+    // convert to a unit vector
+    //--------------------------
+    xdirection.Normalize();
+    return xdirection;
+  } // end of Cubic::direction
+  
   Vect3 Cubic::burgers_vector(const IBurgers& iburgers) const
   {
     //-------------------------------------
@@ -199,11 +215,9 @@ namespace numodis
 			   const IPlane& iplane2,
 			   IDirection& idirection) const
   {
-    std::vector<int> direction(3);
-
-    numodis::math::iCrossProduct(iplane1.getIndex(),iplane2.getIndex(),direction);
-
-    idirection.setIDirection(direction);
+    std::vector<int> d(3);
+    numodis::math::iCrossProduct(iplane1.getIndex(),iplane2.getIndex(),d);
+    idirection.setIDirection(d);
   }
 
   //===========================================================

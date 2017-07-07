@@ -220,8 +220,8 @@ namespace tfel{
     
     void SlipSystemsDescription::addSlipSystemsFamily(const vec3d& b,const vec3d& p)
     {
-      auto throw_if = [](const bool c, const std::string& m){
-	if(c){throw(std::runtime_error("SlipSystemsDescription::addSlipSystemsFamily: "+m));}
+      auto throw_if = [](const bool c, const std::string& msg){
+	if(c){throw(std::runtime_error("SlipSystemsDescription::addSlipSystemsFamily: "+msg));}
       };
       throw_if(!this->gs.is<std::vector<system3d>>(),"invalid size for Burgers' vector and normal");
       auto& gs3d = this->gs.get<std::vector<system3d>>();
@@ -237,8 +237,8 @@ namespace tfel{
 
     void SlipSystemsDescription::addSlipSystemsFamily(const vec4d& b,const vec4d& p)
     {
-      auto throw_if = [](const bool c, const std::string& m){
-	if(c){throw(std::runtime_error("SlipSystemsDescription::addSlipSystemsFamily: "+m));}
+      auto throw_if = [](const bool c, const std::string& msg){
+	if(c){throw(std::runtime_error("SlipSystemsDescription::addSlipSystemsFamily: "+msg));}
       };
       throw_if(!this->gs.is<std::vector<system4d>>(),"invalid size for Burgers' vector and normal");
       throw_if(cs!=CrystalStructure::HCP,"internal error (unknown cristal structure)");
@@ -263,8 +263,8 @@ namespace tfel{
     SlipSystemsDescription::system
     SlipSystemsDescription::getSlipSystemFamily(const size_type i) const
     {
-      auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error("SlipSystemsDescription::getSlipSystem: "+m));}
+      auto throw_if = [](const bool b, const std::string& msg){
+	if(b){throw(std::runtime_error("SlipSystemsDescription::getSlipSystem: "+msg));}
       };
       if(this->gs.is<std::vector<system4d>>()){
 	const auto& v = this->gs.get<std::vector<system4d>>();
@@ -281,8 +281,8 @@ namespace tfel{
     SlipSystemsDescription::getSlipSystems(const size_type i) const
     {
       const auto& g = this->getSlipSystemFamily(i);
-      auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error("generateSlipSystems: "+m));}
+      auto throw_if = [](const bool b, const std::string& msg){
+	if(b){throw(std::runtime_error("generateSlipSystems: "+msg));}
       };
       if(this->cs==CrystalStructure::Cubic){
 	return generateSlipSystems<CrystalStructure::Cubic>(g);
@@ -299,7 +299,7 @@ namespace tfel{
     SlipSystemsDescription::getSlipSystems() const
     {
       const auto s = this->getNumberOfSlipSystemsFamilies();
-      auto r = std::vector<std::vector<SlipSystemsDescription::system>>{s};
+      auto r = std::vector<std::vector<SlipSystemsDescription::system>>(s);
       for(size_type i=0;i!=this->getNumberOfSlipSystemsFamilies();++i){
 	r[i] = this->getSlipSystems(i);
       }
@@ -433,7 +433,7 @@ namespace tfel{
     SlipSystemsDescription::getOrientationTensors(const size_type i) const
     {
       const auto ss = this->getSlipSystems(i);
-      auto r = std::vector<tensor>{ss.size()};
+      auto r = std::vector<tensor>(ss.size());
       for(size_type idx=0;idx!=ss.size();++idx){
 	r[idx] = tfel::material::getOrientationTensor(this->cs,ss[idx]);
       }
@@ -444,12 +444,88 @@ namespace tfel{
     SlipSystemsDescription::getOrientationTensors() const
     {
       const auto s = this->getNumberOfSlipSystemsFamilies();
-      auto r = std::vector<std::vector<tensor>>{s};
+      auto r = std::vector<std::vector<tensor>>(s);
       for(size_type i=0;i!=this->getNumberOfSlipSystemsFamilies();++i){
 	r[i] = this->getOrientationTensors(i);
       }
       return r;
     } // end of SlipSystemsDescription::getOrientationTensors()
+
+    static std::array<long double,3u>
+    getDirection(const CrystalStructure cs,
+		 const SlipSystemsDescription::vec& d)
+    {
+      auto throw_if = [](const bool c, const std::string& m){
+	if(c){throw(std::runtime_error("getDirection: "+m));}
+      };
+      auto build3d = [](const SlipSystemsDescription::vec3d& v){
+	return  numodis::IDirection({v[0],v[1],v[2]});
+      };
+      auto build4d = [](const SlipSystemsDescription::vec4d& v){
+	return  numodis::IDirection({v[0],v[1],v[2],v[3]});
+      };
+      if(cs==CrystalStructure::HCP){
+	throw_if(!d.is<SlipSystemsDescription::vec4d>(),
+		 "invalid direction description for HCP "
+		 "(shall be given as a four indices' vector)");
+	const auto s = numodis::HCP();
+	const auto d4d = d.get<SlipSystemsDescription::vec4d>();
+	const auto bv  = s.direction(build4d(d4d));
+	return to_array(bv);
+      } else if(cs==CrystalStructure::Cubic){
+	throw_if(!d.is<SlipSystemsDescription::vec3d>(),
+		 "invalid direction description for HCP "
+		 "(shall be given as a four indices' vector)");
+	const auto s = numodis::Cubic();
+	const auto d3d = d.get<SlipSystemsDescription::vec3d>();
+	const auto bv = s.direction(build3d(d3d));
+	return to_array(bv);
+      }	else if(cs==CrystalStructure::FCC){
+	throw_if(!d.is<SlipSystemsDescription::vec3d>(),
+		 "invalid direction description for HCP "
+		 "(shall be given as a four indices' vector)");
+	const auto s = numodis::FCC();
+	const auto d3d = d.get<SlipSystemsDescription::vec3d>();
+	const auto bv = s.direction(build3d(d3d));
+	return to_array(bv);
+      }
+      throw_if(cs!=CrystalStructure::BCC,
+	       "unsupported crystalline structure");
+      const auto s = numodis::BCC();
+	const auto d3d = d.get<SlipSystemsDescription::vec3d>();
+      const auto bv = s.direction(build3d(d3d));
+      return to_array(bv);
+    } // end of getDirection
+
+    std::vector<long double>
+    SlipSystemsDescription::getSchmidFactors(const vec d,
+					     const size_type i) const
+    {
+      const auto ss = this->getSlipSystems(i);
+      auto r = std::vector<long double>(ss.size());
+      const auto d3d = getDirection(this->cs,d);
+      const auto td  = tensor{d3d[0]*d3d[0],d3d[1]*d3d[1],d3d[2]*d3d[2],
+			      d3d[0]*d3d[1],d3d[1]*d3d[0],
+			      d3d[0]*d3d[2],d3d[2]*d3d[0],
+			      d3d[1]*d3d[2],d3d[2]*d3d[1]};
+      for(size_type idx=0;idx!=ss.size();++idx){
+	const auto mn = tfel::material::getOrientationTensor(this->cs,ss[idx]);
+	r[i]=td[8]*mn[8]+td[7]*mn[7]+td[6]*mn[6]+td[5]*mn[5]+
+	  td[4]*mn[4]+td[3]*mn[3]+td[2]*mn[2]+td[1]*mn[1]+td[0]*mn[0];
+      }
+      return r;
+    } // end of SlipSystemsDescription::getOrientationTensors
+    
+    std::vector<std::vector<long double>>
+    SlipSystemsDescription::getSchmidFactors(const vec d) const
+    {
+      const auto s = this->getNumberOfSlipSystemsFamilies();
+      auto r = std::vector<std::vector<long double>>(s);
+      for(size_type i=0;i!=this->getNumberOfSlipSystemsFamilies();++i){
+	r[i] = this->getSchmidFactors(d,i);
+      }
+      return r;
+    } // end of SlipSystemsDescription::getOrientationTensors
     
     SlipSystemsDescription::size_type
     SlipSystemsDescription::getNumberOfSlipSystems(const size_type i) const
@@ -467,6 +543,33 @@ namespace tfel{
       return s;
     }  // end of SlipSystemsDescription::getNumberOfSlipSystems
 
+    bool SlipSystemsDescription::hasInteractionMatrix() const{
+      return !this->m.empty();
+    } // end of SlipSystemsDescription::hasInteractionMatrix
+
+    void SlipSystemsDescription::setInteractionMatrix(const std::vector<long double>& v){
+      auto throw_if = [](const bool c, const std::string& msg){
+	if(c){throw(std::runtime_error("SlipSystemsDescription::setInteractionMatrix: "+msg));}
+      };
+      const auto im = this->getInteractionMatrixStructure();
+      throw_if(this->hasInteractionMatrix(),"the interaction matrix "
+	       "has already been defined");
+      throw_if(im.rank()!=v.size(),"the number of values does "
+	       "not match the number of independent coefficients "
+	       "in the interaction matrix ("+std::to_string(im.rank())+" vs "+
+	       std::to_string(v.size())+")");
+      this->m = v;
+    } // end of SlipSystemsDescription::setInteractionMatrix
+
+    const std::vector<long double>&
+    SlipSystemsDescription::getInteractionMatrix() const{
+      if(!this->hasInteractionMatrix()){
+	throw(std::runtime_error("SlipSystemsDescription::getInteractionMatrix: "
+				 "no interaction matrix defined"));
+      }
+      return this->m;
+    } // end of SlipSystemsDescription::getInteractionMatrix
+    
     template<CrystalStructure cs>
     static SlipSystemsDescription::InteractionMatrixStructure
     buildInteractionMatrix(const std::vector<std::vector<SlipSystemsDescription::system>>& gs){
@@ -564,8 +667,6 @@ namespace tfel{
       return i;
     } // end of SlipSystemsDescription::InteractionMatrixStructure::rank()
     
-    SlipSystemsDescription::InteractionMatrixStructure::~InteractionMatrixStructure() = default;
-    
     SlipSystemsDescription::InteractionMatrixStructure
     SlipSystemsDescription::getInteractionMatrixStructure() const
     {
@@ -588,6 +689,8 @@ namespace tfel{
     SlipSystemsDescription::InteractionMatrixStructure::getSlidingSystemsInteraction() const{
       return this->ranks;
     } // end of SlipSystemsDescription::InteractionMatrixStructure::getSlidingSystemsInteraction
+
+    SlipSystemsDescription::InteractionMatrixStructure::~InteractionMatrixStructure() = default;
     
     SlipSystemsDescription::~SlipSystemsDescription() = default;
       

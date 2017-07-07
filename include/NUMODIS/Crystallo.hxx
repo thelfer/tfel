@@ -48,6 +48,8 @@ namespace numodis
     GSystem InitGSystem(const IBurgers& iburgers,
 			const IPlane& iplane) const;
 
+    virtual Vect3 direction(const IDirection&) const;
+
     virtual Vect3 normal(const IPlane&) const;
 
     virtual Vect3 burgers_vector(const IBurgers&) const;
