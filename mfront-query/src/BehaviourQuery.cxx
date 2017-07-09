@@ -94,6 +94,38 @@ namespace mfront{
     r+=']';
     return r;
   }
+
+  static tfel::material::SlipSystemsDescription::vec
+  extract_crystal_direction(const std::string& o)
+  {
+    using tfel::utilities::tokenize;
+    auto throw_if = [](const bool c,const std::string& msg){
+      if(c){throw(std::runtime_error("extract_crystal_direction: "+msg));}
+    };
+    auto throw_if2 = [throw_if](const bool c){
+      throw_if(c,"ill defined direction");
+    };
+    throw_if2(o.size()<2);
+    throw_if2((o[0]!='<')||(o.back()!='>'));
+    const auto ds = tokenize(o.substr(1,o.size()-2),',');
+    auto dc = tfel::material::SlipSystemsDescription::vec{};
+    if(ds.size()==3u){
+      tfel::material::SlipSystemsDescription::vec3d d3d;;
+      d3d[0] = std::stoi(ds[0]);
+      d3d[1] = std::stoi(ds[1]);
+      d3d[2] = std::stoi(ds[2]);
+      dc = d3d;
+    } else {
+      throw_if2(ds.size()!=4);
+      tfel::material::SlipSystemsDescription::vec4d d4d;
+      d4d[0] = std::stoi(ds[0]);
+      d4d[1] = std::stoi(ds[1]);
+      d4d[2] = std::stoi(ds[2]);
+      d4d[3] = std::stoi(ds[3]);
+      dc = d4d;
+    }
+    return dc;
+  } // end of extract_crystal_direction
   
   BehaviourQuery::BehaviourQuery(const int argc,
 				 const char *const *const argv,
@@ -576,35 +608,6 @@ namespace mfront{
     const auto& q  = this->getCurrentCommandLineArgument();
     const auto& qn = q.as_string();
     const auto  o  = q.getOption();
-    auto extract_crystal_direction = [o](const BehaviourDescription& d){
-      auto throw_if = [](const bool c,const std::string& msg){
-	if(c){throw(std::runtime_error("extract_crystal_direction: "+msg));}
-      };
-      auto throw_if2 = [throw_if](const bool c){
-	throw_if(c,"ill defined direction");
-      };
-      throw_if(!d.areSlipSystemsDefined(),"no slip system defined");
-      throw_if2(o.size()<2);
-      throw_if2((o[0]!='<')||(o.back()!='>'));
-      const auto ds = tokenize(o.substr(1,o.size()-2),',');
-      auto dc = tfel::material::SlipSystemsDescription::vec{};
-      if(ds.size()==3u){
-	tfel::material::SlipSystemsDescription::vec3d d3d;;
-	d3d[0] = std::stoi(ds[0]);
-	d3d[1] = std::stoi(ds[1]);
-	d3d[2] = std::stoi(ds[2]);
-	dc = d3d;
-      } else {
-	throw_if2(ds.size()!=4);
-	tfel::material::SlipSystemsDescription::vec4d d4d;
-	d4d[0] = std::stoi(ds[0]);
-	d4d[1] = std::stoi(ds[1]);
-	d4d[2] = std::stoi(ds[2]);
-	d4d[3] = std::stoi(ds[3]);
-	dc = d4d;
-      }
-      return dc;
-    };
     if(o.empty()){
       throw(runtime_error("Behaviour::treatStandardQuery2 : "
 			  "no option given to the '"+qn+"' query"));
@@ -814,41 +817,47 @@ namespace mfront{
       };
       this->queries.push_back({"static-variable-value",l});
     } else if(qn=="--schmid-factors"){
-      this->queries.push_back({"schmid-factors",
-	    [extract_crystal_direction](const FileDescription&,
-					const BehaviourDescription& d,
-					const Hypothesis){
-	    const auto dc = extract_crystal_direction(d);
-	    const auto& ssd = d.getSlipSystems();
-	    const auto nss  = ssd.getNumberOfSlipSystemsFamilies();
-	    for(size_t i=0;i!=nss;++i){
-	      const auto sfs = ssd.getSchmidFactors(dc,i);
-	      cout << "- " << to_string(ssd.getSlipSystemFamily(i),true) << ":";
-	      for(const auto& sf : sfs){
-		cout << " " << std::to_string(sf);
-	      }
-	      cout << '\n';
-	    }
-	  }});
+      auto l = [o](const FileDescription&,
+		   const BehaviourDescription& d,
+		   const Hypothesis){
+	if(!d.areSlipSystemsDefined()){
+	  throw(std::runtime_error("no slip system defined"));
+	}
+	const auto dc = extract_crystal_direction(o);
+	const auto& ssd = d.getSlipSystems();
+	const auto nss  = ssd.getNumberOfSlipSystemsFamilies();
+	for(size_t i=0;i!=nss;++i){
+	  const auto sfs = ssd.getSchmidFactors(dc,i);
+	  cout << "- " << to_string(ssd.getSlipSystemFamily(i),true) << ":";
+	  for(const auto& sf : sfs){
+	    cout << " " << std::to_string(sf);
+	  }
+	  cout << '\n';
+	}
+      };
+      this->queries.push_back({"schmid-factors",l});
     } else if(qn=="--schmid-factors-by-index"){
-      this->queries.push_back({"schmid-factors-by-index",
-	    [extract_crystal_direction](const FileDescription&,
-					const BehaviourDescription& d,
-					const Hypothesis){
-	    const auto dc = extract_crystal_direction(d);
-	    const auto& ssd = d.getSlipSystems();
-	    const auto sfs  = ssd.getSchmidFactors(dc);
-	    size_t idx = 0;
-	    for(size_t i=0;i!=sfs.size();++i){
-	      for(const auto sf : sfs[i]){
-		cout << "- " << idx << ": " << std::to_string(sf) << '\n';
-		++idx;
-	      }
-	    }
-	  }});
+      auto l = [o](const FileDescription&,
+		   const BehaviourDescription& d,
+		   const Hypothesis){
+	if(!d.areSlipSystemsDefined()){
+	  throw(std::runtime_error("no slip system defined"));
+	}
+	const auto dc = extract_crystal_direction(o);
+	const auto& ssd = d.getSlipSystems();
+	const auto sfs  = ssd.getSchmidFactors(dc);
+	size_t idx = 0;
+	for(size_t i=0;i!=sfs.size();++i){
+	  for(const auto sf : sfs[i]){
+	    cout << "- " << idx << ": " << std::to_string(sf) << '\n';
+	    ++idx;
+	  }
+	}
+      };
+      this->queries.push_back({"schmid-factors-by-index",l});
     } else {
-      throw(runtime_error("Behaviour::treatStandardQuery : "
-			  "unsupported query '"+qn+"'"));
+      throw(std::runtime_error("Behaviour::treatStandardQuery : "
+			       "unsupported query '"+qn+"'"));
     }
   }
 
