@@ -578,3 +578,8 @@ install_header(NUMODIS IDirection.hxx)
 install_header(NUMODIS IPlane.hxx)
 install_header(NUMODIS Vect3.hxx)
 install_header(NUMODIS Math/Utilities.hxx)
+install_header(NUMODIS AnalyseJunction.hxx)
+install_header(NUMODIS FrankRead.hxx)
+install_header(NUMODIS IsotropicLineTensionModel.hxx)
+install_header(NUMODIS TripleNode.hxx)
+

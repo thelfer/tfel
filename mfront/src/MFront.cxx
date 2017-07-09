@@ -152,11 +152,11 @@ namespace mfront{
     const auto level = this->currentArgument->getOption();
     if(!level.empty()){
       if(level=="level2"){
-	this->opts.oflags2   = true;
+	this->opts.oflags2 = true;
       } else if(level=="level0"){
-	this->opts.oflags0   = true;
+	this->opts.oflags0 = true;
       } else if(level=="level1"){
-	this->opts.oflags    = true;
+	this->opts.oflags  = true;
       } else if(level!="level1"){
 	throw(std::runtime_error("MFront::treatOMake: "
 				 "unsupported value '"+level+
@@ -174,11 +174,11 @@ namespace mfront{
     const auto level = this->currentArgument->getOption();
     if(!level.empty()){
       if(level=="level2"){
-	this->opts.oflags2   = true;
+	this->opts.oflags2 = true;
       } else if(level=="level0"){
-	this->opts.oflags0   = true;
+	this->opts.oflags0 = true;
       } else if(level=="level1"){
-	this->opts.oflags    = true;
+	this->opts.oflags  = true;
       } else if(level!="level1"){
 	throw(std::runtime_error("MFront::treatOBuild: "
 				 "unsupported value '"+level+
@@ -336,17 +336,7 @@ namespace mfront{
 
   MFront::MFront()
     : tfel::utilities::ArgumentParserBase<MFront>()
-  {
-#if ((defined(_WIN32)||defined(_WIN64)) && (!defined (__CYGWIN__)))
-    this->opts.sys = "win32";
-#elif defined __CYGWIN__
-    this->opts.sys = "cygwin";
-#elif defined __APPLE__
-    this->opts.sys = "apple";
-#else
-    this->opts.sys = "default";
-#endif /* __CYGWIN__ */
-  } // end of MFront::MFront
+  {} // end of MFront::MFront
   
   MFront::MFront(const int argc, const char *const *const argv)
     : MFront()
@@ -494,7 +484,7 @@ namespace mfront{
   } // end of MFront::treatNoMelt
 
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-  void MFront::treatDefFile(void){
+  void MFront::treatDefFile(){
     const auto& o = this->getCurrentCommandLineArgument().getOption();
     if(o.empty()){
       throw(std::runtime_error("MFrontBase::treatDefFile: "
@@ -534,7 +524,7 @@ namespace mfront{
       }
     }
     return td;
-  } // end of MFront::treatFile(void)
+  } // end of MFront::treatFile()
 
   void MFront::analyseTargetsFile(){
     using tfel::system::dirStringSeparator;
@@ -561,8 +551,7 @@ namespace mfront{
   }
   
 #ifdef MFRONT_MAKE_SUPPORT
-  static const char*
-  getMakeCommand(){
+  static const char* getMakeCommand(){
     const char * emake = ::getenv("MAKE");
     if(emake!=nullptr){
       return emake;
@@ -629,7 +618,7 @@ namespace mfront{
 #endif /* MFRONT_MAKE_SUPPORT */
 
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-  void MFront::generateDefsFiles(void){
+  void MFront::generateDefsFiles(){
     MFrontLockGuard lock;
     for(const auto& d:this->defs){
       if(!describes(this->targets,d)){

@@ -12,4 +12,7 @@ tfel_library(TFELNUMODIS SHARED
   IDirection.cxx
   IPlane.cxx
   Utilities.cxx
-  Vect3.cxx)
+  Vect3.cxx
+  AnalyseJunction.cxx
+  FrankRead.cxx
+  TripleNode.cxx)

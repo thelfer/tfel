@@ -5,18 +5,22 @@ AM_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif
 
 lib_LTLIBRARIES = libTFELNUMODIS.la
-libTFELNUMODIS_la_SOURCES = BCC.cxx 	   \
-                            Crystallo.cxx  \
-                            Cubic.cxx	   \
-                            FCC.cxx	   \
-                            GSystem.cxx	   \
-                            HCP.cxx	   \
-                            Hardening.cxx  \
-                            IBurgers.cxx   \
-                            IDirection.cxx \
-                            IPlane.cxx	   \
-                            Utilities.cxx  \
-                            Vect3.cxx
+libTFELNUMODIS_la_SOURCES = BCC.cxx 	        \
+                            Crystallo.cxx       \
+                            Cubic.cxx	        \
+                            FCC.cxx	        \
+                            GSystem.cxx	        \
+                            HCP.cxx	        \
+                            Hardening.cxx       \
+                            IBurgers.cxx        \
+                            IDirection.cxx      \
+                            IPlane.cxx	        \
+                            Utilities.cxx       \
+                            Vect3.cxx           \
+                            AnalyseJunction.cxx \
+                            FrankRead.cxx       \
+                            TripleNode.cxx
+
 libTFELNUMODIS_la_LIBADD = -L$(top_builddir)/src/Math      -lTFELMath      \
 		           -L$(top_builddir)/src/Exception -lTFELException \
 			   -L$(top_builddir)/src/Utilities -lTFELUtilities

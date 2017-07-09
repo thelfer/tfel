@@ -6593,6 +6593,110 @@ namespace mfront{
     this->readCodeBlock(*this,BehaviourData::ComputeDissipatedEnergy,
 			&BehaviourDSLCommon::standardModifier,true,true);
   } // end of BehaviourDSLCommon::treatDissipatedEnergy
+
+  static BehaviourDescription::SlipSystem
+  readSlipSystem(BehaviourDSLCommon::CxxTokenizer::const_iterator& p,
+		 const BehaviourDSLCommon::CxxTokenizer::const_iterator pe)
+  {
+    using tfel::utilities::CxxTokenizer;
+    using tfel::material::SlipSystemsDescription;
+    auto throw_if = [](const bool c,const std::string& msg){
+      if(c){throw(std::runtime_error("readSlipSystem: "+msg));}
+    };
+    const auto direction = CxxTokenizer::readList("readSlipSystem","<",">",p,pe);
+    const auto plane     = CxxTokenizer::readList("readSlipSystem","{","}",p,pe);
+    throw_if(plane.size()!=direction.size(),
+	       "plane and direction don't match in size");
+    throw_if((plane.size()!=3u)&&(plane.size()!=4u),
+	     "invalid definition of a plane "
+	     "(must be an array of 3 or 4 integers, read '"+
+	     std::to_string(plane.size())+"' values)");
+    if(plane.size()==3u){
+      SlipSystemsDescription::system3d s3d;
+      for(tfel::math::tvector<3u,int>::size_type i=0;i!=3;++i){
+	s3d.plane[i]  = std::stoi(plane[i].value);
+	s3d.burgers[i] = std::stoi(direction[i].value);
+      }
+      return {s3d};
+    }
+    SlipSystemsDescription::system4d s4d;
+    for(tfel::math::tvector<4u,int>::size_type i=0;i!=4;++i){
+      s4d.plane[i]  = std::stoi(plane[i].value);
+      s4d.burgers[i] = std::stoi(direction[i].value);
+    }
+    return {s4d};
+  }
+
+  void BehaviourDSLCommon::treatSlipSystem(){
+    const auto s = readSlipSystem(this->current,this->tokens.end());
+    this->mb.setSlipSystems({1u,s});
+    this->readSpecifiedToken("BehaviourDSLCommon::treatSlipSystem",";");
+  } // end of BehaviourDescription::treatSlipSystem()
+
+  void BehaviourDSLCommon::treatSlipSystems(){
+    const std::string m  = "BehaviourDSLCommon::treatSlipSystems";
+    std::vector<BehaviourDescription::SlipSystem> ss;
+    this->readSpecifiedToken(m,"{");
+    this->checkNotEndOfFile(m,"expected token");
+    while(this->current->value!="}"){
+      this->checkNotEndOfFile(m,"expected slip system");
+      ss.push_back(readSlipSystem(this->current,this->tokens.end()));
+      this->checkNotEndOfFile(m,"expected ',' or '}'");
+      if(this->current->value!="}"){
+	this->readSpecifiedToken(m,",");
+	this->checkNotEndOfFile(m,"expected slip system");
+	if(this->current->value=="}"){
+	  throw(std::runtime_error("unexpected token '}'"));
+	}
+      }
+    }
+    this->readSpecifiedToken(m,"}");
+    this->readSpecifiedToken(m,";");
+    this->mb.setSlipSystems(ss);
+  } // end of BehaviourDSLCommon::treatSlipSystems
+
+  void BehaviourDSLCommon::treatCrystalStructure(){
+    using tfel::material::CrystalStructure;
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatCrystalStructure",
+			    "expected crystal structure");
+    if(this->current->value=="Cubic"){
+      this->mb.setCrystalStructure(CrystalStructure::Cubic);
+    } else if(this->current->value=="FCC"){
+      this->mb.setCrystalStructure(CrystalStructure::FCC);
+    } else if(this->current->value=="BCC"){
+      this->mb.setCrystalStructure(CrystalStructure::BCC);
+    } else if(this->current->value=="HCP"){
+      this->mb.setCrystalStructure(CrystalStructure::HCP);
+    } else {
+      throw(std::runtime_error("BehaviourDSLCommon::treatCrystalStructure: "
+			       "unsupported crystal structure "
+			       "'"+this->current->value+"'"));
+    }
+    ++(this->current);
+    this->readSpecifiedToken("BehaviourDSLCommon::treatCrystalStructure",";");
+  } // end of BehaviourDSLCommon::treatCrystalStructure
+
+  void BehaviourDSLCommon::treatInteractionMatrix(){
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("BehaviourDSLCommon::treatInteractionMatrix",m);};
+    };
+    throw_if(!this->mb.areSlipSystemsDefined(),
+	     "slip systems have not been defined");
+    const auto& im = this->mb.getInteractionMatrixStructure();
+    const auto  r  = im.rank();
+    const auto  mv = CxxTokenizer::readArray("BehaviourDSLCommon::treatInteractionMatrix",
+					     this->current,this->tokens.end());
+    this->readSpecifiedToken("BehaviourDSLCommon::treatInteractionMatrix",";");
+    throw_if(mv.size()!=r,"the number of values does "
+	     "not match the number of independent coefficients "
+	     "in the interaction matrix");
+    auto imv = std::vector<long double>{};
+    imv.reserve((mv.size()));
+    for(const auto& v:mv){
+      imv.push_back(tfel::utilities::convert<long double>(v));
+    }
+    this->mb.setInteractionMatrix(imv);
+  } // end of BehaviourDSLCommon::treatInteractionMatrix
   
   void
   BehaviourDSLCommon::setComputeFinalStressFromComputeFinalStressCandidateIfNecessary()

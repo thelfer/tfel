@@ -633,6 +633,14 @@ namespace mfront{
     virtual void treatSwelling();
     //! \brief treat the @AxialGrowth keyword
     virtual void treatAxialGrowth();
+    //! \brief treat the @CrystalStructure keyword
+    virtual void treatCrystalStructure();
+    //! \brief treat the @SlipSystem keyword
+    virtual void treatSlipSystem();
+    //! \brief treat the @SlipSystems keyword
+    virtual void treatSlipSystems();
+    //! \brief treat the @InteractionMatrix keyword
+    virtual void treatInteractionMatrix();
     /*!
      * \brief read a swelling description.
      *

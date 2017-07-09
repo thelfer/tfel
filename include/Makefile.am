@@ -561,7 +561,12 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			NUMODIS/IDirection.hxx									     \
 			NUMODIS/IPlane.hxx									     \
 			NUMODIS/Math/Utilities.hxx								     \
-			NUMODIS/Vect3.hxx
+			NUMODIS/Vect3.hxx								             \
+			NUMODIS/AnalyseJunction.hxx								     \
+			NUMODIS/FrankRead.hxx								             \
+			NUMODIS/IsotropicLineTensionModel.hxx						             \
+			NUMODIS/TripleNode.hxx
+
 
 EXTRA_DIST = CMakeLists.txt                 \
 	     TFEL/Math/math.doxygen         \

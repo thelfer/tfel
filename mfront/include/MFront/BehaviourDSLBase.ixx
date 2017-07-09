@@ -118,6 +118,14 @@ namespace mfront{
     this->registerNewCallBack("@AxialGrowth",&Child::treatAxialGrowth);
     this->registerNewCallBack("@InternalEnergy",&Child::treatInternalEnergy);
     this->registerNewCallBack("@DissipatedEnergy",&Child::treatDissipatedEnergy);
+    this->registerNewCallBack("@CrystalStructure",&Child::treatCrystalStructure);
+    this->registerNewCallBack("@SlipSystem",&Child::treatSlipSystem);
+    this->registerNewCallBack("@GlidingSystem",&Child::treatSlipSystem);
+    this->registerNewCallBack("@SlidingSystem",&Child::treatSlipSystem);
+    this->registerNewCallBack("@SlipSystems",&Child::treatSlipSystems);
+    this->registerNewCallBack("@GlidingSystems",&Child::treatSlipSystems);
+    this->registerNewCallBack("@SlidingSystems",&Child::treatSlipSystems);
+    this->registerNewCallBack("@InteractionMatrix",&Child::treatInteractionMatrix);
   } // end of BehaviourDSLBase<Child>::registerDefaultCallBacks
 
   template<typename Child>

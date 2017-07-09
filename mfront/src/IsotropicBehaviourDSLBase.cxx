@@ -56,6 +56,14 @@ namespace mfront{
     this->disableCallBack("@IsotropicBehaviour");
     this->disableCallBack("@RequireStiffnessOperator");
     this->disableCallBack("@RequireThermalExpansionCoefficientTensor");
+    this->disableCallBack("@CrystalStructure");
+    this->disableCallBack("@SlipSystem");
+    this->disableCallBack("@GlidingSystem");
+    this->disableCallBack("@SlidingSystem");
+    this->disableCallBack("@SlipSystems");
+    this->disableCallBack("@GlidingSystems");
+    this->disableCallBack("@SlidingSystems");
+    this->disableCallBack("@InteractionMatrix");
     // a defaut version of the prediction operator is always provided
     this->mb.setAttribute(h,BehaviourData::hasPredictionOperator,true);
     this->mb.setIntegrationScheme(BehaviourDescription::SPECIFICSCHEME);

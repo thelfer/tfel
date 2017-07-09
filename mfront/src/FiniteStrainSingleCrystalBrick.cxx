@@ -95,106 +95,6 @@ namespace mfront{
     this->bd.reserveName(h,"fsscb_dinv_Fp_dDF");
     this->bd.reserveName(h,"fsscb_dFe_dDF");
   } // end of FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick
-
-  std::pair<bool,FiniteStrainSingleCrystalBrick::tokens_iterator>
-  FiniteStrainSingleCrystalBrick::treatKeyword(const std::string& key,
-					       tokens_iterator& p,
-					       const tokens_iterator pe)
-  {
-    using CrystalStructure       = BehaviourDescription::CrystalStructure;
-    using SlipSystemsDescription = BehaviourDescription::SlipSystemsDescription;
-    const auto m = std::string("FiniteStrainSingleCrystalBrick::treatKeyword");
-    auto throw_if = [](const bool c,const std::string& msg){
-      if(c){throw(std::runtime_error("FiniteStrainSingleCrystalBrick::"
-				     "treatKeyword: "+msg));}
-    };
-    auto gs = [&m,&p,&throw_if,pe](){
-      const auto direction = CxxTokenizer::readList(m,"<",">",p,pe);
-      const auto plane     = CxxTokenizer::readList(m,"{","}",p,pe);
-      throw_if(plane.size()!=direction.size(),
-	       "plane and direction don't match in size");
-      throw_if((plane.size()!=3u)&&(plane.size()!=4u),
-	       "invalid definition of a plane "
-	       "(must be an array of 3 or 4 integers, read '"+
-	       std::to_string(plane.size())+"' values)");
-      BehaviourDescription::SlipSystem s;
-      if(plane.size()==3u){
-	SlipSystemsDescription::system3d s3d;
-	for(tfel::math::tvector<3u,int>::size_type i=0;i!=3;++i){
-	  s3d.plane[i]  = std::stoi(plane[i].value);
-	  s3d.burgers[i] = std::stoi(direction[i].value);
-	}
-	s = s3d;
-      } else {
-	SlipSystemsDescription::system4d s4d;
-	for(tfel::math::tvector<4u,int>::size_type i=0;i!=4;++i){
-	  s4d.plane[i]  = std::stoi(plane[i].value);
-	  s4d.burgers[i] = std::stoi(direction[i].value);
-	}
-	s = s4d;
-      }
-      return s;
-    };
-    if((key=="@SlidingSystem")||(key=="@GlidingSystem")||(key=="@SlipSystem")){
-      const auto s = gs();
-      this->bd.setSlipSystems({1u,s});
-      CxxTokenizer::readSpecifiedToken(m,";",p,pe);
-      return {true,p};
-    } else if ((key=="@SlidingSystems")||(key=="@GlidingSystems")||(key=="@SlipSystems")){
-      std::vector<BehaviourDescription::SlipSystem> ss;
-      CxxTokenizer::readSpecifiedToken(m,"{",p,pe);
-      CxxTokenizer::checkNotEndOfLine(m,p,pe);
-      while(p->value!="}"){
-	CxxTokenizer::checkNotEndOfLine(m,p,pe);
-	ss.push_back(gs());
-	CxxTokenizer::checkNotEndOfLine(m,p,pe);
-	if(p->value!="}"){
-	  CxxTokenizer::readSpecifiedToken(m,",",p,pe);
-	  CxxTokenizer::checkNotEndOfLine(m,p,pe);
-	  throw_if(p->value=="}","unexpected token '}'");
-	}
-      }
-      CxxTokenizer::readSpecifiedToken(m,"}",p,pe);
-      CxxTokenizer::readSpecifiedToken(m,";",p,pe);
-      this->bd.setSlipSystems(ss);
-      return {true,p};
-    } else if (key=="@CrystalStructure"){
-      CxxTokenizer::checkNotEndOfLine(m,p,pe);
-      const auto cs = p->value;
-      ++p;
-      if(cs=="Cubic"){
-	this->bd.setCrystalStructure(CrystalStructure::Cubic);
-      } else if(cs=="FCC"){
-	this->bd.setCrystalStructure(CrystalStructure::FCC);
-      } else if(cs=="BCC"){
-	this->bd.setCrystalStructure(CrystalStructure::BCC);
-      } else if(cs=="HCP"){
-	this->bd.setCrystalStructure(CrystalStructure::HCP);
-      } else {
-	throw_if(true,"unsupported crystal structure '"+cs+"'");
-      }
-      CxxTokenizer::readSpecifiedToken(m,";",p,pe);
-      return {true,p};
-    } else if (key=="@InteractionMatrix"){
-      throw_if(!this->bd.areSlipSystemsDefined(),
-	       "slip systems have not been defined");
-      const auto& im = this->bd.getInteractionMatrixStructure();
-      const auto  r  = im.rank();
-      const auto  mv = CxxTokenizer::readArray(m,p,pe);
-      CxxTokenizer::readSpecifiedToken(m,";",p,pe);
-      throw_if(mv.size()!=r,"the number of values does "
-	       "not match the number of independent coefficients "
-	       "in the interaction matrix");
-      auto imv = std::vector<long double>{};
-      imv.reserve((mv.size()));
-      for(const auto& v:mv){
-	imv.push_back(tfel::utilities::convert<long double>(v));
-      }
-      this->bd.setInteractionMatrix(imv);
-      return {true,p};
-    }
-    return BehaviourBrickBase::treatKeyword(key,p,pe);
-  } // end of FiniteStrainSingleCrystalBrick::treatKeyword
   
   void FiniteStrainSingleCrystalBrick::completeVariableDeclaration() const
   {
@@ -287,11 +187,11 @@ namespace mfront{
     to.code = 
       "static_cast<void>(smt);\n"
       "const auto& ss = "+cn+"::getSlidingSystems();\n"
-      "const t2tost2<N,stress> fsscb_dC_dFe = t2tost2<N,real>::dCdF(this->Fe);\n"
-      "const t2tost2<N,stress> fsscb_dS_dFe = 0.5*(this->D)*fsscb_dC_dFe;\n"
+      "const auto fsscb_dC_dFe = t2tost2<N,real>::dCdF(this->Fe);\n"
+      "const auto fsscb_dS_dFe = eval((this->D)*fsscb_dC_dFe/2);\n"
       "const auto fsscb_dtau_dFe = computePushForwardDerivative(fsscb_dS_dFe,this->fsscb_data.fsscb_S,this->Fe); \n"
-      "const t2tot2<N,real> fsscb_dFe_dDF_tot = t2tot2<N,real>::tpld(this->fsscb_data.inv_dFp,t2tot2<N,real>::tpld(this->fsscb_data.Fe0));\n"
-      "const t2tost2<N,real> fsscb_dfeel_dDF  = -0.5*(fsscb_dC_dFe)*(fsscb_dFe_dDF_tot);\n"
+      "const auto fsscb_dFe_dDF_tot = t2tot2<N,real>::tpld(this->fsscb_data.inv_dFp,t2tot2<N,real>::tpld(this->fsscb_data.Fe0));\n"
+      "const auto fsscb_dfeel_dDF   = eval(-(fsscb_dC_dFe)*(fsscb_dFe_dDF_tot)/2);\n"
       "st2tost2<N,real> fsscb_Je;\n"
       "tvector<"+cn+"::Nss,Stensor> fsscb_Jg;\n"
       "getPartialJacobianInvert(fsscb_Je,fsscb_Jg);\n"
@@ -299,7 +199,7 @@ namespace mfront{
       "for(unsigned short i=1;i!="+cn+"::Nss;++i){\n"
       "  fsscb_dinv_Fp_dDF += (ss.mu[i])^(fsscb_Jg[i]|fsscb_dfeel_dDF);\n"
       "}\n"
-      "const t2tot2<N,real> fsscb_dFe_dDF=\n"
+      "const auto fsscb_dFe_dDF=\n"
       "  fsscb_dFe_dDF_tot+t2tot2<N,real>::tprd(this->fsscb_data.Fe_tr,fsscb_dinv_Fp_dDF);\n"
       "Dt = fsscb_dtau_dFe*fsscb_dFe_dDF;\n";
     to.members  = {"Fe","D"};

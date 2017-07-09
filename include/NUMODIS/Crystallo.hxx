@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef NUMEODIS_CRYSTALLO_HXX
-#define NUMEODIS_CRYSTALLO_HXX
+#ifndef LIB_NUMEODIS_CRYSTALLO_HXX
+#define LIB_NUMEODIS_CRYSTALLO_HXX
 
 #include <iosfwd>
 #include <string>
@@ -276,4 +276,4 @@ namespace numodis
 
 } // end of namespace numodis
   
-#endif
+#endif /* LIB_NUMEODIS_CRYSTALLO_HXX */

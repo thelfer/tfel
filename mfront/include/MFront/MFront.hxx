@@ -120,11 +120,9 @@ namespace mfront{
     virtual void writeTargetsDescription(void) const;
 
 #ifdef MFRONT_MAKE_SUPPORT
-    virtual void
-    buildLibraries(const std::string&);
+    virtual void buildLibraries(const std::string&);
 
-    virtual void
-    cleanLibraries(void);
+    virtual void cleanLibraries(void);
 #endif /* MFRONT_MAKE_SUPPORT */
 
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)

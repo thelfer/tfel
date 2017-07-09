@@ -117,37 +117,35 @@ namespace numodis
 	    return this->InitGSystem(ijunctionBurgers,gsystem1.getIPlane());		    
 	  }	    	    
       }
-    else
-      {
-
-	if(Coincide(gsystem1.getIBurgers(),gsystem2.getIBurgers())!=0)
-	  {
-		    
-	    // colinear situation
-	    throw -2;
-	  }
-	else
-	  {
-	    // compute junction direction
-	    IDirection ijunction(this->getNindices());;
-	    this->CrossProduct(gsystem1.getIPlane(),gsystem2.getIPlane(),ijunction);
-
-	    // add Burgers vectors
-	    IBurgers iburgers3a(gsystem1.getIBurgers()+gsystem2.getIBurgers());
-	    IBurgers iburgers3b(gsystem1.getIBurgers()-gsystem2.getIBurgers());
-		    
-	    // consider the smallest one
-	    IBurgers ijunctionBurgers( this->Norm2(iburgers3a)<this->Norm2(iburgers3b) ? iburgers3a : iburgers3b );
-		    
-	    // compute the glide plane
-	    IPlane ijunctionPlane(this->getNindices());
-	    this->CrossProduct(ijunctionBurgers,ijunction,ijunctionPlane);
-
-	    // return new glide system
-	    return this->InitGSystem(ijunctionBurgers,ijunctionPlane);
-		    
-	  }
+    else {
+      if(Coincide(gsystem1.getIBurgers(),gsystem2.getIBurgers())!=0){
+	// colinear situation
+	throw -2;
       }
+      // compute junction direction
+      IDirection ijunction(this->getNindices());;
+      this->CrossProduct(gsystem1.getIPlane(),gsystem2.getIPlane(),ijunction);
+
+      // add Burgers vectors
+      IBurgers iburgers3a(gsystem1.getIBurgers()+gsystem2.getIBurgers());
+      IBurgers iburgers3b(gsystem1.getIBurgers()-gsystem2.getIBurgers());
+		    
+      // consider the smallest
+      Vect3 xjunction  = this->direction(ijunction);
+      Vect3 xburgers3a = this->burgers_vector(iburgers3a);
+      Vect3 xburgers3b = this->burgers_vector(iburgers3b);
+      double E3a = xburgers3a.SquareLength()*(1-0.3*pow(xjunction.Dot(xburgers3a.UnitVector()),2));
+      double E3b = xburgers3b.SquareLength()*(1-0.3*pow(xjunction.Dot(xburgers3b.UnitVector()),2));
+							    		    
+      IBurgers ijunctionBurgers( E3a<E3b ? iburgers3a : iburgers3b );
+		    
+      // compute the glide plane
+      IPlane ijunctionPlane(this->getNindices());
+      this->CrossProduct(ijunctionBurgers,ijunction,ijunctionPlane);
+
+      // return new glide system
+      return this->InitGSystem(ijunctionBurgers,ijunctionPlane);
+    }
   }
 
   //=====================================================================
