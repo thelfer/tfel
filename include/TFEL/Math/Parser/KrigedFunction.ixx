@@ -47,10 +47,10 @@ namespace tfel
 
       template<unsigned short N>
       double
-      KrigedFunction<N>::getValue(void) const
+      KrigedFunction<N>::getValue() const
       {
 	return this->k->operator()(this->v);
-      } // end of KrigedFunction<N>::getValue(void)
+      } // end of KrigedFunction<N>::getValue()
 
       template<unsigned short N>
       void
@@ -71,7 +71,7 @@ namespace tfel
 
       template<unsigned short N>
       std::vector<double>::size_type
-      KrigedFunction<N>::getNumberOfVariables(void) const
+      KrigedFunction<N>::getNumberOfVariables() const
       {
 	return N;
       } // end of KrigedFunction<N>::getNumberOfVariables
@@ -113,7 +113,7 @@ namespace tfel
 
       template<unsigned short N>
       std::shared_ptr<ExternalFunction>
-      KrigedFunction<N>::resolveDependencies(void) const
+      KrigedFunction<N>::resolveDependencies() const
       {
 	return std::shared_ptr<ExternalFunction>(new KrigedFunction<N>(*this));
       } // end of KrigedFunction<N>::resolveDependencies

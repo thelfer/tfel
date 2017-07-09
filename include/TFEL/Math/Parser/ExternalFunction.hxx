@@ -36,12 +36,12 @@ namespace tfel
       struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalFunction
       {
 	virtual double
-	getValue(void) const = 0;
+	getValue() const = 0;
 	virtual void
 	setVariableValue(const std::vector<double>::size_type,
 			 const double) = 0;
 	virtual std::vector<double>::size_type
-	getNumberOfVariables(void) const = 0;
+	getNumberOfVariables() const = 0;
 	virtual void
 	checkCyclicDependency(const std::string&) const = 0;
 	virtual void
@@ -51,7 +51,7 @@ namespace tfel
 	virtual	std::shared_ptr<ExternalFunction>
 	differentiate(const std::string&) const = 0;
 	virtual	std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const = 0;
+	resolveDependencies() const = 0;
 	virtual std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const = 0;
 	virtual std::shared_ptr<ExternalFunction>

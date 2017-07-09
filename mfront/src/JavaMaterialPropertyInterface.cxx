@@ -428,6 +428,6 @@ namespace mfront
     }
     jc << "}\n";
     jc.close();
-  } // end of JavaMaterialPropertyInterface::writeSrcFile(void)
+  } // end of JavaMaterialPropertyInterface::writeSrcFile()
 
 } // end of namespace mfront

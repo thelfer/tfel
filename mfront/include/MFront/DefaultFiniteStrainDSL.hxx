@@ -23,9 +23,9 @@ namespace mfront{
     : public DefaultDSLBase
   {
 
-    static std::string getName(void);
+    static std::string getName();
 
-    static std::string getDescription(void);
+    static std::string getDescription();
 
     DefaultFiniteStrainDSL();
 

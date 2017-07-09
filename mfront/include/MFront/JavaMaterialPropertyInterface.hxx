@@ -25,7 +25,7 @@ namespace mfront{
   {
     //! \return the interface name
     static std::string 
-    getName(void);
+    getName();
     //! constructor
     JavaMaterialPropertyInterface();
     /*!

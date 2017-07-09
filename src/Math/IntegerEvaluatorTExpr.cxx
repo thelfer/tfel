@@ -59,7 +59,7 @@ namespace tfel
     int IntegerEvaluator::TNegation::Negation::getValue() const
     {
       return -(this->expr->getValue());
-    } // end of IntegerEvaluator::TNegation::Negation::getValue(void)
+    } // end of IntegerEvaluator::TNegation::Negation::getValue()
     
     std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TNegation::Negation::clone(const std::vector<int>& v) const
@@ -81,21 +81,21 @@ namespace tfel
     IntegerEvaluator::TOperator::getOperatorType() const
     {
       return this->type;
-    } // end of IntegerEvaluator::TOperator::getOperatorType(void) const
+    } // end of IntegerEvaluator::TOperator::getOperatorType() const
      
     bool IntegerEvaluator::TOperator::isOperator() const
     {
       return true;
-    } // end of IntegerEvaluator::TOperator::isOperator(void) const
+    } // end of IntegerEvaluator::TOperator::isOperator() const
     
     void IntegerEvaluator::TOperator::reduce()
-    {} // end of IntegerEvaluator::TOperator::reduce(void)
+    {} // end of IntegerEvaluator::TOperator::reduce()
     
     std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TOperator::analyse()
     {
       throw(std::runtime_error("IntegerEvaluator::TOperator : invalid call"));
-    } // end of IntegerEvaluator::TOperator::analyse(void)
+    } // end of IntegerEvaluator::TOperator::analyse()
 
     IntegerEvaluator::TOperator::~TOperator() = default;
 
@@ -161,13 +161,13 @@ namespace tfel
     bool IntegerEvaluator::TBinaryOperation::isOperator() const
     {
       return false;
-    } // end of IntegerEvaluator::TBinaryOperation::isOperator(void) const
+    } // end of IntegerEvaluator::TBinaryOperation::isOperator() const
     
     void IntegerEvaluator::TBinaryOperation::reduce()
     {
       a->reduce();
       b->reduce();
-    } // end of IntegerEvaluator::TBinaryOperation::reduce(void)
+    } // end of IntegerEvaluator::TBinaryOperation::reduce()
      
     std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TBinaryOperation::analyse()
@@ -184,7 +184,7 @@ namespace tfel
       }
       throw(std::runtime_error("IntegerEvaluator::TBinaryOperation : "
 			       "invalid operation type  '"+op->getOperatorType()+"'"));
-    } // end of IntegerEvaluator::TBinaryOperation::analyse(void)
+    } // end of IntegerEvaluator::TBinaryOperation::analyse()
     
     IntegerEvaluator::TBinaryOperation::~TBinaryOperation() = default;
 

@@ -77,7 +77,7 @@ struct BehaviourBrickProviderTest final
   //  * MaterialLawProvider::getIdentifier method returns the expected
   //  * identifier.
   //  */
-  // void test3(void){
+  // void test3(){
   //   using namespace mfront::bbrick;
   //   const auto p = MaterialLawProvider{};
   //   TFEL_TESTS_ASSERT(p.getIdentifier()==ProviderIdentifier::MATERIALLAW);

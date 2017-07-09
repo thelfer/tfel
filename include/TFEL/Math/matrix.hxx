@@ -152,7 +152,7 @@ namespace tfel
       using typename tfel::math::vector<T>::difference_type;
 
       TFEL_MATH_INLINE2
-      matrix(void);
+      matrix();
 
       TFEL_MATH_INLINE2
       matrix(const size_type,
@@ -195,7 +195,7 @@ namespace tfel
 #else
       TFEL_MATH_INLINE const RunTimeProperties&
 #endif /* LIB_TFEL_MATH_MATRIX_HXX */
-      getRunTimeProperties(void) const;
+      getRunTimeProperties() const;
 
       /*
        * return an iterator to the first element of the matrix

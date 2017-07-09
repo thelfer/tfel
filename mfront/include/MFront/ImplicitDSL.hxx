@@ -26,9 +26,9 @@ namespace mfront
     : public ImplicitDSLBase
   {
     static std::string 
-    getName(void);
+    getName();
     static std::string 
-    getDescription(void);
+    getDescription();
     ImplicitDSL();
     ~ImplicitDSL();
   }; // end of struct ImplicitDSL

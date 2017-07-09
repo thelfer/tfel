@@ -21,7 +21,7 @@ namespace mfront
   ModelDSL::getName()
   {
     return "Model";
-  } // end of MaterialPropertyDSL::getName(void)
+  } // end of MaterialPropertyDSL::getName()
 
   std::string
   ModelDSL::getDescription()

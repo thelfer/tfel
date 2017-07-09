@@ -189,7 +189,7 @@ namespace mfront{
        * \return all unresolved requirements
        */
       std::vector<std::string>
-      getUnresolvedRequirements(void) const;
+      getUnresolvedRequirements() const;
       /*!
        * \param[in] n : external name of the requirement
        * \return the requirement

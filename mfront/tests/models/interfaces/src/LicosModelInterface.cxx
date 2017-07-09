@@ -262,7 +262,7 @@ namespace mfront{
     this->headerFile.close();
     this->writeSrcFile(fd,md);
     this->srcFile.close();
-  } // end of MFrontModelInterface::generateOutputFiles(void)
+  } // end of MFrontModelInterface::generateOutputFiles()
 
   void
   MFrontModelInterface::writeHeaderFile(const FileDescription& fd,
@@ -339,12 +339,12 @@ namespace mfront{
 		     << "pleiades::time::SClock&,\n"
 		     << "pleiades::loading::SLoadingManager&,\n"
 		     << "pleiades::signal::SSignalManager&);\n\n";
-    this->headerFile << "std::string\ngetName(void) const;\n\n"
+    this->headerFile << "std::string\ngetName() const;\n\n"
 		     << "void\ninitialize(const pleiades::parser::DataManager&);\n\n"
 		     << "void\ndeclareRequirements(pleiades::coupling::SRequirementManager&);\n\n"
 		     << "void\nresolveRequirements(pleiades::coupling::SRequirementManager&);\n\n"
 		     << "void\ninitializeOutput(pleiades::coupling::Requirement&);\n\n"
-		     << "void\nexecute(void);\n\n"
+		     << "void\nexecute();\n\n"
 		     << "void\nsave(const std::string&,\n"
 		     << "pleiades::parser::DataMap&);\n\n"
 		     << "void\nrestore(const pleiades::time::ptime,\n"
@@ -453,9 +453,9 @@ namespace mfront{
       }
       this->headerFile << getVariableType(p->type) << " " << p->name << ";\n";
     }
-    this->headerFile << "void\ninitializeOutputsVariablesDepths(void);\n";
+    this->headerFile << "void\ninitializeOutputsVariablesDepths();\n";
     this->headerFile << "void\ninitializeOutputsVariablesInitialValues(const pleiades::parser::DataManager&);\n";
-    this->headerFile << "void\ninitializeInputsVariablesDepths(void);";
+    this->headerFile << "void\ninitializeInputsVariablesDepths();";
     if(!md.constantMaterialProperties.empty()){
       this->headerFile << "\nvoid\ninitializeConstantMaterialProperties(const pleiades::parser::DataManager&);\n\n";
     } else {
@@ -488,7 +488,7 @@ namespace mfront{
     this->headerFile << "#endif /* _PLEIADES_"
 		     << makeUpperCase(md.className)
 		     << "_HH */\n";
-  } // end of MFrontModelInterface::writeHeaderFile(void)
+  } // end of MFrontModelInterface::writeHeaderFile()
 
   std::string
   MFrontModelInterface::getGenTypeGetMethod(const std::string& type) const
@@ -949,7 +949,7 @@ namespace mfront{
     // getName
     this->srcFile << "std::string\n"
 		  << md.className
-		  << "::getName(void) const\n"
+		  << "::getName() const\n"
 		  << "{\n"
 		  << "return \"" << md.className << "\";\n"
 		  << "}\n\n";
@@ -1131,7 +1131,7 @@ namespace mfront{
     // execute
     this->srcFile << "void\n"
 		  << md.className
-		  << "::execute(void){\n";
+		  << "::execute(){\n";
     this->srcFile << "using namespace std;\n";
     this->srcFile << "using namespace boost;\n";
     this->srcFile << "using namespace pleiades;\n";
@@ -1302,12 +1302,12 @@ namespace mfront{
 		  << ");\n\n";
     this->srcFile << "} // end of namespace model\n\n";
     this->srcFile << "} // end of namespace pleiades\n";
-  } // end of MFrontModelInterface::writeSrcFile(void)
+  } // end of MFrontModelInterface::writeSrcFile()
     
   void
   MFrontModelInterface::writeInitializeOutputsVariablesDepths(const ModelDescription& md)
   {
-    this->srcFile << "void\n" << md.className << "::initializeOutputsVariablesDepths(void)\n{\n";
+    this->srcFile << "void\n" << md.className << "::initializeOutputsVariablesDepths()\n{\n";
     this->srcFile << "using namespace std;\n";
     this->srcFile << "using namespace pleiades::glossary;\n";
     this->srcFile << "vector<string>::const_iterator ptr;\n";
@@ -1400,7 +1400,7 @@ namespace mfront{
       }
     }
     this->srcFile << "} // end of " << md.className << "::initializeConstantMaterialProperties\n\n";
-  } // end of MFrontModelInterface::writeInitializeConstantMaterialProperties(void)
+  } // end of MFrontModelInterface::writeInitializeConstantMaterialProperties()
 
   void
   MFrontModelInterface::writeInitializeOutputsVariablesInitialValues(const ModelDescription& md)
@@ -1493,7 +1493,7 @@ namespace mfront{
   MFrontModelInterface::writeInitializeInputsVariablesDepths(const ModelDescription& md)
   {
     std::set<std::string> treatedVars;
-    this->srcFile << "void\n" << md.className << "::initializeInputsVariablesDepths(void)\n{\n";
+    this->srcFile << "void\n" << md.className << "::initializeInputsVariablesDepths()\n{\n";
     unsigned int i = 0;
     for(const auto& f : md.functions){
       for(const auto & v : f.usedVariables){
@@ -1647,7 +1647,7 @@ namespace mfront{
   MFrontModelInterface::getName()
   {
     return "@application@";
-  } // end of MFrontModelInterface::getName(void)
+  } // end of MFrontModelInterface::getName()
 
   void
   MFrontModelInterface::getTargetsDescription(TargetsDescription& td,

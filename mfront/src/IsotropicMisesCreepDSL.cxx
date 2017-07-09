@@ -74,7 +74,7 @@ namespace mfront{
       this->throwRuntimeError("IsotropicMisesCreepDSL::writeBehaviourParserSpecificMembers",
 			      "no flow rule declared (use the @FlowRule directive)");
     }
-    os << "void computeFlow(void){\n"
+    os << "void computeFlow(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "using namespace tfel::material;\n"
@@ -82,7 +82,7 @@ namespace mfront{
     writeMaterialLaws(os,this->mb.getMaterialLaws());
     os << this->mb.getCode(h,BehaviourData::FlowRule)
        << "\n}\n\n"
-       << "bool NewtonIntegration(void){\n"
+       << "bool NewtonIntegration(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "bool converge=false;\n"

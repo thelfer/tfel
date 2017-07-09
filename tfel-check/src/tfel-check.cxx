@@ -48,7 +48,7 @@ protected:
    * \brief method called while parsing unregistred command line
    * arguments.
    */
-  virtual void treatUnknownArgument(void) override;
+  virtual void treatUnknownArgument() override;
   /*!
    * \brief register call backs associated to command line arguments
    */
@@ -56,7 +56,7 @@ protected:
 
   virtual std::string getVersionDescription() const override;
   
-  virtual std::string getUsageDescription(void) const override;
+  virtual std::string getUsageDescription() const override;
 
   std::vector<std::string> inputs;  
 };

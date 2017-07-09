@@ -37,7 +37,7 @@ namespace tfel
       struct TFELMATHPARSER_VISIBILITY_EXPORT KrigedFunctionBase final
       {
 	TFEL_NORETURN static void
-	throwInvalidCreateFunctionByChangingParametersIntoVariables(void);
+	throwInvalidCreateFunctionByChangingParametersIntoVariables();
 
 	TFEL_NORETURN static void
 	throwInvalidIndexException(const std::vector<double>::size_type i,
@@ -59,14 +59,14 @@ namespace tfel
 	KrigedFunction(const KrigedFunction&);
 
 	virtual double
-	getValue(void) const override;
+	getValue() const override;
 
 	virtual void
 	setVariableValue(const std::vector<double>::size_type,
 			 const double) override;
 
 	virtual std::vector<double>::size_type
-	getNumberOfVariables(void) const override;
+	getNumberOfVariables() const override;
 
 	virtual void
 	checkCyclicDependency(const std::string&) const override;
@@ -81,7 +81,7 @@ namespace tfel
 	differentiate(const std::string&) const override;
 
 	virtual	std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
 
 	virtual std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const override;

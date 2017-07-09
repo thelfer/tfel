@@ -39,7 +39,7 @@ namespace tfel
       addValue(const typename KrigingVariable<N,T>::type&,
 	       const T&);
 
-      void buildInterpolation(void);
+      void buildInterpolation();
   
       T operator()(const typename KrigingVariable<N,T>::type&) const;
 

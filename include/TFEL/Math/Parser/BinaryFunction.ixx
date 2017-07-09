@@ -39,7 +39,7 @@ namespace tfel
 
       template<double (*f)(const double,const double)>
       double
-      StandardBinaryFunction<f>::getValue(void) const
+      StandardBinaryFunction<f>::getValue() const
       {
 	using namespace std;
 	double res;

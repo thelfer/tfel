@@ -33,7 +33,7 @@ namespace mtest
      * \return the name of the acceleration algorithm
      */
     virtual std::string
-    getName(void) const override;
+    getName() const override;
     /*!
      * \param[in] psz : total number of unknowns (problem size)
      */
@@ -52,7 +52,7 @@ namespace mtest
      * algorithm
      */
     virtual void
-    preExecuteTasks(void) override;
+    preExecuteTasks() override;
     /*!
      * \param[in,out] u1   : current estimate of the unknowns
      * \param[in]     u0   : previous estimate of the unknowns
@@ -72,7 +72,7 @@ namespace mtest
      * called at each time step, once convergence is reached
      */
     virtual void
-    postExecuteTasks(void) override;
+    postExecuteTasks() override;
     //! destructor
     virtual ~UAndersonAccelerationAlgorithm();
   protected:

@@ -48,14 +48,14 @@ namespace tfel
 
     template<typename T>
     typename LevenbergMarquardtFunctionWrapper<T>::size_type
-    LevenbergMarquardtFunctionWrapper<T>::getNumberOfVariables(void) const
+    LevenbergMarquardtFunctionWrapper<T>::getNumberOfVariables() const
     {
       return this->nv;
     } // end of LevenbergMarquardtFunctionWrapper<T>::getNumberOfVariables()
 
     template<typename T>
     typename LevenbergMarquardtFunctionWrapper<T>::size_type
-    LevenbergMarquardtFunctionWrapper<T>::getNumberOfParameters(void) const
+    LevenbergMarquardtFunctionWrapper<T>::getNumberOfParameters() const
     {
       return this->np;
     } // end of LevenbergMarquardtFunctionWrapper<T>::getNumberOfParameters()

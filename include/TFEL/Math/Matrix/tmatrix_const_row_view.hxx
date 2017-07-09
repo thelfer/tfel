@@ -86,7 +86,7 @@ namespace tfel
        * the tmatrix
        */
       TFEL_MATH_INLINE RunTimeProperties
-      getRunTimeProperties(void) const;
+      getRunTimeProperties() const;
       /*!
        * \brief index operator.
        * This is a vector concept requirement.

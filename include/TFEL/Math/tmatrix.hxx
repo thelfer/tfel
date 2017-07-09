@@ -251,16 +251,16 @@ namespace tfel{
        * the tmatrix
        */
       TFEL_MATH_INLINE RunTimeProperties
-      getRunTimeProperties(void) const
+      getRunTimeProperties() const
       {
 	return RunTimeProperties();
       }
       //! return the number of columns of the matrix
       constexpr TFEL_MATH_INLINE
-      unsigned short getNbCols(void) const ;
+      unsigned short getNbCols() const ;
       //! return the number of rows of the matrix
       constexpr TFEL_MATH_INLINE
-      unsigned short getNbRows(void) const ;
+      unsigned short getNbRows() const ;
       /*!
        * \return a view of a row of this matrix
        * \param[in] I : row index
@@ -353,15 +353,15 @@ namespace tfel{
       submatrix_view() const;
 
       TFEL_MATH_INLINE2
-      T max(void) const ;
+      T max() const ;
 
       TFEL_MATH_INLINE2
-      T abs_max(void) const ;
+      T abs_max() const ;
 
       TFEL_MATH_INLINE2
       void swap_rows(const unsigned short i,const unsigned short j);
       
-      static tmatrix<N,N,T> Id(void);
+      static tmatrix<N,N,T> Id();
       /*!
        * copy the N*Mth elements following this argument.
        * \param const InputIterator, an iterator to the first element

@@ -41,7 +41,7 @@ namespace tfel
       Argument& operator=(Argument&&);
       Argument& operator=(const Argument&);
       //! \return true if an option was given for this argument
-      bool hasOption(void) const noexcept;
+      bool hasOption() const noexcept;
       //! convertion to string
       std::string& as_string() noexcept;
       //! convertion to string

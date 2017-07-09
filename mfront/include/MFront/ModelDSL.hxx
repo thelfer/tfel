@@ -27,9 +27,9 @@ namespace mfront{
     : public ModelDSLBase<ModelDSL>
   {
     //! \return the name of the dsl
-    static std::string getName(void);
+    static std::string getName();
     //! \return the description of the dsl
-    static std::string getDescription(void);
+    static std::string getDescription();
     /*!
      * \brief add interfaces used for generating output files
      * \param[in] i: list of interfaces
@@ -43,7 +43,7 @@ namespace mfront{
      * method.
      */
     virtual ModelDescription
-    getModelDescription(void) const;
+    getModelDescription() const;
   }; // end of ModelDSL
 
 } // end of namespace mfront

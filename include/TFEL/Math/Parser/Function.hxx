@@ -38,7 +38,7 @@ namespace tfel
       struct StandardFunctionBase
       {
 	TFEL_NORETURN static void
-	throwUnimplementedDifferentiateFunctionException(void);
+	throwUnimplementedDifferentiateFunctionException();
 	TFEL_NORETURN static void
 	throwInvalidCallException(const double,const int);
       }; // end of struct StandardFunctionBase
@@ -48,7 +48,7 @@ namespace tfel
 	: public Function
       {
 	StandardFunction(const std::shared_ptr<Expr>);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual std::shared_ptr<Expr>

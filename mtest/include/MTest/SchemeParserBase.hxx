@@ -240,7 +240,7 @@ namespace mtest{
      */
     bool treatKeyword(SchemeBase&,tokens_iterator&);
     //! \return the list of keywords
-    std::vector<std::string> getKeyWordsList(void) const;
+    std::vector<std::string> getKeyWordsList() const;
     //! a simple alias
     using CallBack = void (SchemeParserBase::*)(SchemeBase&,
 						tokens_iterator&);

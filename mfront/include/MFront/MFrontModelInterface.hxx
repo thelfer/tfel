@@ -25,7 +25,7 @@ namespace mfront {
     : public AbstractModelInterface
   {
     //! \return the name of the interface
-    static std::string getName(void);
+    static std::string getName();
     //! constructor
     MFrontModelInterface();
     /*!

@@ -286,7 +286,7 @@ namespace mfront
 	<< "#endif /* __cplusplus */\n\n"
 	<< "#endif /* " << makeUpperCase(name) << "_CASTEM_HH */\n";
     out.close();
-  } // end of CastemMaterialPropertyInterface::writeHeaderFile(void)
+  } // end of CastemMaterialPropertyInterface::writeHeaderFile()
 
   void
   CastemMaterialPropertyInterface::writeSrcFile(const MaterialPropertyDescription& mpd,
@@ -453,6 +453,6 @@ namespace mfront
 	<< "} // end of extern \"C\"\n"
 	<< "#endif /* __cplusplus */\n\n";
     out.close();
-  } // end of CastemMaterialPropertyInterface::writeSrcFile(void)
+  } // end of CastemMaterialPropertyInterface::writeSrcFile()
 
 } // end of namespace mfront

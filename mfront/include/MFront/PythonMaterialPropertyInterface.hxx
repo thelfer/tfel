@@ -26,7 +26,7 @@ namespace mfront{
     : public AbstractMaterialPropertyInterface
   {
     static std::string 
-    getName(void);
+    getName();
     
     PythonMaterialPropertyInterface();
     /*!

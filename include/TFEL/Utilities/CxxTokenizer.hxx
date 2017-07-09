@@ -92,11 +92,11 @@ namespace tfel{
       /*!
        * \brief remove all comment tokens
        */ 
-      void stripComments(void);
+      void stripComments();
       /*!
        * \brief clear the object
        */ 
-      void clear(void);
+      void clear();
       /*!
        * \brief set if char tokens shall be treated as string tokens
        * \param[in] b : boolean telling if char tokens shall be
@@ -291,9 +291,9 @@ namespace tfel{
       static int readInt(const_iterator&, 
 			 const const_iterator);	
       //! \return an iterator to the first token
-      const_iterator begin(void) const;
+      const_iterator begin() const;
       //! \return an iterator past the last token
-      const_iterator end(void) const;
+      const_iterator end() const;
       /*!
        * \return the ith token
        * \param[in] i : index

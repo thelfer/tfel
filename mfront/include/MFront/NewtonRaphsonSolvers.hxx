@@ -37,26 +37,26 @@ namespace mfront{
     MFrontNewtonRaphsonSolverBase();
     //! \return the reserved names
     virtual std::vector<std::string>
-    getReservedNames(void) const override;
+    getReservedNames() const override;
     /*!
      * \return true if the solver uses the jacobian of the system
      * (Newton-Raphson solvers) or an approximation of it (Broyden
      * method).
      */
     virtual bool
-    usesJacobian(void) const override;
+    usesJacobian() const override;
     /*!
      * \return true if the solver uses the invert of the jacobian of
      * the system or an approximation of it (second Broyden method).
      */
     virtual bool
-    usesJacobianInvert(void) const override;
+    usesJacobianInvert() const override;
     /*!
      * \return true if the solver allows the user to initialize the
      * jacobian
      */
     virtual bool
-    allowsJacobianInitialisation(void) const override;
+    allowsJacobianInitialisation() const override;
     /*!
      * \return true if the solver allows the user to initialize the
      * invert of the jacobian.
@@ -65,14 +65,14 @@ namespace mfront{
      * identity in the behaviour constructor.
      */
     virtual bool
-    allowsJacobianInvertInitialisation(void) const override;
+    allowsJacobianInvertInitialisation() const override;
     /*!
      * \return true if the solver requires the jacobian to be
      * initialized to the identity matrix at the beginning of the
      * computeFdF method.
      */
     virtual bool
-    requiresJacobianToBeReinitialisedToIdentityAtEachIterations(void) const override;
+    requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const override;
     /*!
      * \brief write the algorithm specific members
      * \param[in,out] md  : mechanical description
@@ -133,7 +133,7 @@ namespace mfront{
      * shall be combined with the powell dog leg algorithm
      */
     virtual bool
-    usesPowellDogLegAlgorithm(void) const = 0;
+    usesPowellDogLegAlgorithm() const = 0;
     //! update jacobian period
     int jacobianUpdatePeriod;
   }; // end of struct MFrontNewtonRaphsonSolverBase
@@ -148,7 +148,7 @@ namespace mfront{
      * \return true if the solver requires a numerical jacobian
      */
     virtual bool
-    requiresNumericalJacobian(void) const override;
+    requiresNumericalJacobian() const override;
     /*!
      * destructor
      */
@@ -159,7 +159,7 @@ namespace mfront{
      * shall be combined with the powell dog leg algorithm
      */
     virtual bool
-    usesPowellDogLegAlgorithm(void) const override;
+    usesPowellDogLegAlgorithm() const override;
   };
 
   /*!
@@ -172,7 +172,7 @@ namespace mfront{
      * \return true if the solver requires a numerical jacobian
      */
     virtual bool
-    requiresNumericalJacobian(void) const override;
+    requiresNumericalJacobian() const override;
     /*!
      * destructor
      */
@@ -183,7 +183,7 @@ namespace mfront{
      * shall be combined with the powell dog leg algorithm
      */
     virtual bool
-    usesPowellDogLegAlgorithm(void) const override;
+    usesPowellDogLegAlgorithm() const override;
   };
 
   /*!
@@ -196,7 +196,7 @@ namespace mfront{
      * \return true if the solver requires a numerical jacobian
      */
     virtual bool
-    requiresNumericalJacobian(void) const override;
+    requiresNumericalJacobian() const override;
     /*!
      * destructor
      */
@@ -207,7 +207,7 @@ namespace mfront{
      * shall be combined with the powell dog leg algorithm
      */
     virtual bool
-    usesPowellDogLegAlgorithm(void) const override;
+    usesPowellDogLegAlgorithm() const override;
   };
 
   /*!
@@ -220,7 +220,7 @@ namespace mfront{
      * \return true if the solver requires a numerical jacobian
      */
     virtual bool
-    requiresNumericalJacobian(void) const override;
+    requiresNumericalJacobian() const override;
     /*!
      * destructor
      */
@@ -231,7 +231,7 @@ namespace mfront{
      * shall be combined with the powell dog leg algorithm
      */
     virtual bool
-    usesPowellDogLegAlgorithm(void) const override;
+    usesPowellDogLegAlgorithm() const override;
   };
 
 } // end of namespace mfront

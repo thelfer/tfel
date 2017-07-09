@@ -58,7 +58,7 @@ namespace tfel{
 	 * \brief A function returning a T.
 	 * A small trick for classes that are not default constructible.
 	 */
-	static Subs<A> MakeSubsA(void);
+	static Subs<A> MakeSubsA();
 	
       public:
 	

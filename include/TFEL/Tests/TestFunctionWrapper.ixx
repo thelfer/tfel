@@ -20,19 +20,19 @@ namespace tfel
   namespace tests
   {
     
-    template<bool (*f)(void)>
+    template<bool (*f)()>
     TestFunctionWrapper<f>::TestFunctionWrapper(const std::string& g,
 						const std::string& n)
       : gname(g),
 	fname(n)
     {} // end of TestFunctionWrapper<f>::TestFunctionWrapper
 
-    template<bool (*f)(void)>
+    template<bool (*f)()>
     TestFunctionWrapper<f>::TestFunctionWrapper(const char * const n)
       : fname(n)
     {} // end of TestFunctionWrapper<f>::TestFunctionWrapper
 
-    template<bool (*f)(void)>
+    template<bool (*f)()>
     std::string
     TestFunctionWrapper<f>::name() const
     {
@@ -40,14 +40,14 @@ namespace tfel
     } // end of TestFunctionWrapper<f>::name
 
 
-    template<bool (*f)(void)>
+    template<bool (*f)()>
     std::string
     TestFunctionWrapper<f>::classname() const
     {
       return this->gname;
     } // end of TestFunctionWrapper<f>::classname
 
-    template<bool (*f)(void)>
+    template<bool (*f)()>
     TestResult
     TestFunctionWrapper<f>::execute()
     {
@@ -55,7 +55,7 @@ namespace tfel
       return TestResult(b,this->fname);
     }
 
-    template<bool (*f)(void)>
+    template<bool (*f)()>
     TestFunctionWrapper<f>::~TestFunctionWrapper()
     {} // end of TestFunctionWrapper<f>::~TestFunctionWrapper
     

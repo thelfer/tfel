@@ -79,14 +79,14 @@ namespace tfel
       EvaluatorFunction1P1V::getValue() const
       {
 	return (*(this->f))(this->n,this->expr->getValue());
-      } // end of EvaluatorFunction1P1V::getValue(void) const
+      } // end of EvaluatorFunction1P1V::getValue() const
 
       std::shared_ptr<Expr>
       EvaluatorFunction1P1V::resolveDependencies(const std::vector<double>& v) const
       {
 	return std::shared_ptr<Expr>(new EvaluatorFunction1P1V(this->f,this->n,
 							       this->expr->resolveDependencies(v)));
-      } // end of EvaluatorFunction1P1V::resolveDependencies(void) const
+      } // end of EvaluatorFunction1P1V::resolveDependencies() const
 
       void
       EvaluatorFunction1P1V::getParametersNames(std::set<std::string>& p) const
@@ -127,14 +127,14 @@ namespace tfel
       EvaluatorFunction2P1V::getValue() const
       {
 	return (*(this->f))(this->n,this->m,this->expr->getValue());
-      } // end of EvaluatorFunction2P1V::getValue(void) const
+      } // end of EvaluatorFunction2P1V::getValue() const
 
       std::shared_ptr<Expr>
       EvaluatorFunction2P1V::resolveDependencies(const std::vector<double>& v) const
       {
 	return std::shared_ptr<Expr>(new EvaluatorFunction2P1V(this->f,this->n,this->m,
 							       this->expr->resolveDependencies(v)));
-      } // end of EvaluatorFunction2P1V::resolveDependencies(void) const
+      } // end of EvaluatorFunction2P1V::resolveDependencies() const
 
       void
       EvaluatorFunction2P1V::getParametersNames(std::set<std::string>& p) const
@@ -174,7 +174,7 @@ namespace tfel
       EvaluatorFunction1P2V::getValue() const
       {
 	return (*(this->f))(this->n,this->e1->getValue(),this->e2->getValue());
-      } // end of EvaluatorFunction1P2V::getValue(void) const
+      } // end of EvaluatorFunction1P2V::getValue() const
 
       std::shared_ptr<Expr>
       EvaluatorFunction1P2V::resolveDependencies(const std::vector<double>& v) const
@@ -182,7 +182,7 @@ namespace tfel
 	return std::shared_ptr<Expr>(new EvaluatorFunction1P2V(this->f,this->n,
 							       this->e1->resolveDependencies(v),
 							       this->e2->resolveDependencies(v)));
-      } // end of EvaluatorFunction1P2V::resolveDependencies(void) const
+      } // end of EvaluatorFunction1P2V::resolveDependencies() const
 
       void
       EvaluatorFunction1P2V::getParametersNames(std::set<std::string>& p) const
@@ -229,7 +229,7 @@ namespace tfel
 	return (*(this->f))(this->n,this->m,
 			    this->e1->getValue(),
 			    this->e2->getValue());
-      } // end of EvaluatorFunction2P2V::getValue(void) const
+      } // end of EvaluatorFunction2P2V::getValue() const
 
       std::shared_ptr<Expr>
       EvaluatorFunction2P2V::resolveDependencies(const std::vector<double>& v) const
@@ -238,7 +238,7 @@ namespace tfel
 							       this->n,this->m,
 							       this->e1->resolveDependencies(v),
 							       this->e2->resolveDependencies(v)));
-      } // end of EvaluatorFunction2P2V::resolveDependencies(void) const
+      } // end of EvaluatorFunction2P2V::resolveDependencies() const
 
       void
       EvaluatorFunction2P2V::getParametersNames(std::set<std::string>& p) const

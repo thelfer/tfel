@@ -19,11 +19,11 @@ namespace tfel{
 
   namespace system{
 
-    void ThreadedTaskResultBase::throwBadCastException(void){
+    void ThreadedTaskResultBase::throwBadCastException(){
       throw(std::bad_cast());
     } // end of ThreadPool::ResultBase::throwBadCastException
     
-    void ThreadedTaskResultBase::throwNullException(void){
+    void ThreadedTaskResultBase::throwNullException(){
       throw(std::runtime_error("ThreadPool::Result::rethrow: "
 			       "no exception defined"));
     } // end of ThreadPool::ResultBase::throwNullException

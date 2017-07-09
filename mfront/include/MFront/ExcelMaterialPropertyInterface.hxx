@@ -28,7 +28,7 @@ namespace mfront{
     : public AbstractMaterialPropertyInterface
   {
     static std::string 
-    getName(void);
+    getName();
     /*!
      * \param[in] k  : keyword treated
      * \param[in] i:   list of interfaces to which the keyword is restricted

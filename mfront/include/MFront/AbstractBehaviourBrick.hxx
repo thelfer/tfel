@@ -103,7 +103,7 @@ namespace mfront
      *   list, a set of default modelling hypotheses is selected.
      */
     virtual std::vector<Hypothesis> 
-    getSupportedModellingHypotheses(void) const =0;
+    getSupportedModellingHypotheses() const =0;
     /*!
      * \brief add requirements for the given modelling hypothesis
      * \param[in] r : requirement manager

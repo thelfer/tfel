@@ -123,7 +123,7 @@ struct converter
   : public index<N>
 {
   using size_type = unsigned short;
-  static void exe(void){
+  static void exe(){
     for(size_type i=0;i!=3;++i){
       for(size_type j=0;j!=3;++j){
 	for(size_type k=0;k!=3;++k){
@@ -195,7 +195,7 @@ struct converter
   } // end of exe
 };
 
-int main(void){
+int main(){
   std::cout << "// in 1D: " << std::endl;
   converter<1u>::exe();
   std::cout << "// in 2D: " << std::endl;

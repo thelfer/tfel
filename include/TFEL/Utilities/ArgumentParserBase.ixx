@@ -51,7 +51,7 @@ namespace tfel
     }
 
     template<typename Child>
-    ArgumentParserBase<Child>::~ArgumentParserBase(void) = default;
+    ArgumentParserBase<Child>::~ArgumentParserBase() = default;
 
   } // end of namespace utilities
 

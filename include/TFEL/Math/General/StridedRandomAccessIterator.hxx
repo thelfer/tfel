@@ -28,9 +28,9 @@ namespace tfel{
     struct TFELMATH_VISIBILITY_EXPORT StridedRandomAccessIteratorBase
     {
       //! 
-      TFEL_NORETURN static void throwNullStrideException(void);
+      TFEL_NORETURN static void throwNullStrideException();
       //! 
-      TFEL_NORETURN static void throwUmatchedStrideException(void);
+      TFEL_NORETURN static void throwUmatchedStrideException();
     };
     
     /*!

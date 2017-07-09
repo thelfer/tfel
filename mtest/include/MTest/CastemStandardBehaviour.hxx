@@ -45,7 +45,7 @@ namespace mtest
      * \return the default type of stiffness matrix used by the behaviour
      */
     virtual StiffnessMatrixType
-    getDefaultStiffnessMatrixType(void) const override;
+    getDefaultStiffnessMatrixType() const override;
     /*!
      * \brief allocate internal workspace
      * \param[out] wk : workspace
@@ -79,7 +79,7 @@ namespace mtest
      * CMNAME parameter.
      */
     virtual const char*
-    getBehaviourNameForUMATFunctionCall(void) const = 0;
+    getBehaviourNameForUMATFunctionCall() const = 0;
     /*!
      * destructor
      */

@@ -318,6 +318,6 @@ namespace mfront
       out.close();
     }
 
-  } // end of GnuplotMaterialPropertyInterface::writeSrcFile(void)
+  } // end of GnuplotMaterialPropertyInterface::writeSrcFile()
 
 } // end of namespace mfront

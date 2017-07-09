@@ -47,7 +47,7 @@ namespace mfront{
     addVariable(const Hypothesis,
 		const Variable&);
     //! \brief return the list of specialised hypotheses
-    std::vector<Hypothesis> getSpecialisedHypotheses(void) const;
+    std::vector<Hypothesis> getSpecialisedHypotheses() const;
     /*!
      * \brief return the list of variables of variables of the given
      * hypothesis

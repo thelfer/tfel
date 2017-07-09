@@ -138,7 +138,7 @@ namespace tfel
 
     protected:
       
-      virtual void cleanUp(void);
+      virtual void cleanUp();
       
     private:
  

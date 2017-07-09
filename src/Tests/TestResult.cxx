@@ -88,7 +88,7 @@ namespace tfel
       return r;
     }
   
-    TestResult::~TestResult(void) = default;
+    TestResult::~TestResult() = default;
 
     std::ostream&
     operator << (std::ostream& os,const TestResult& r)

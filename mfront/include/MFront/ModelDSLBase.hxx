@@ -66,15 +66,15 @@ namespace mfront{
 			    const std::map<std::string,std::string>&) override;
   protected:
 
-    typedef void (Child::* MemberFuncPtr)(void);
+    typedef void (Child::* MemberFuncPtr)();
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
 
     ModelDSLBase();
 
-    virtual void analyse(void);
+    virtual void analyse();
     
     virtual void
-    registerDefaultCallBacks(void);
+    registerDefaultCallBacks();
 
     virtual void
     registerNewCallBack(const std::string&,const MemberFuncPtr);

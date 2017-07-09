@@ -69,7 +69,7 @@ namespace tfel
       bool NegLogicalExpression::getValue() const
       {
 	return !this->a->getValue();
-      } // end of NegLogicalExpression::getValue(void) const
+      } // end of NegLogicalExpression::getValue() const
       
       void
       NegLogicalExpression::checkCyclicDependency(std::vector<std::string>& names) const
@@ -81,7 +81,7 @@ namespace tfel
       NegLogicalExpression::resolveDependencies(const std::vector<double>& v) const
       {
 	return std::shared_ptr<LogicalExpr>(new NegLogicalExpression(this->a->resolveDependencies(v)));
-      } // end of NegLogicalExpression::resolveDependencies(void) const
+      } // end of NegLogicalExpression::resolveDependencies() const
       
       std::shared_ptr<LogicalExpr>
       NegLogicalExpression::clone(const std::vector<double>& v) const

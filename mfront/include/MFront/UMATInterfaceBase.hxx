@@ -142,7 +142,7 @@ namespace mfront{
      * name and the second element is the variable description.
      */
     virtual std::vector<std::pair<std::string,std::string>>
-    getBehaviourConstructorsAdditionalVariables(void) const;
+    getBehaviourConstructorsAdditionalVariables() const;
     /*!
      * \return the list of additional variables to be passed to the
      * behaviour data constructor which are specific to the interface.
@@ -151,7 +151,7 @@ namespace mfront{
      * name and the second element is the variable description.
      */
     virtual std::vector<std::pair<std::string,std::string>>
-    getBehaviourDataConstructorAdditionalVariables(void) const;
+    getBehaviourDataConstructorAdditionalVariables() const;
     /*!
      * \return the list of additional variables to be passed to the
      * integration data constructor which are specific to the interface.
@@ -160,7 +160,7 @@ namespace mfront{
      * name and the second element is the variable description.
      */
     virtual std::vector<std::pair<std::string,std::string>>
-    getIntegrationDataConstructorAdditionalVariables(void) const;
+    getIntegrationDataConstructorAdditionalVariables() const;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile           : output file
@@ -336,7 +336,7 @@ namespace mfront{
     checkIfAxialStrainIsDefinedAndGetItsOffset(const BehaviourDescription&) const;
 
     virtual std::string
-    getInterfaceName(void) const = 0;
+    getInterfaceName() const = 0;
     /*!
      * \return the name of the generated library
      * \param[in] mb : behaviour description

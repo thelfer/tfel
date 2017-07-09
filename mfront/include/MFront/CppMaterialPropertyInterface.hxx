@@ -30,7 +30,7 @@ namespace mfront{
   struct CppMaterialPropertyInterface
     : public AbstractMaterialPropertyInterface
   {
-    static std::string getName(void);
+    static std::string getName();
     //! default constructor
     CppMaterialPropertyInterface();
     /*!

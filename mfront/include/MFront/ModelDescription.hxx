@@ -183,7 +183,7 @@ namespace mfront
      */
     bool isNameReserved(const std::string&) const;
     //! \return the list of reserved names
-    std::set<std::string>& getReservedNames(void);
+    std::set<std::string>& getReservedNames();
   protected:
     /*!
      * check that a variable exists
@@ -191,7 +191,7 @@ namespace mfront
      */
     void checkVariableExistence(const std::string&) const;
     //! \return the list of reserved names
-    const std::set<std::string>& getReservedNames(void) const;
+    const std::set<std::string>& getReservedNames() const;
   private:
     /*!
      * \return the variable description with the given name

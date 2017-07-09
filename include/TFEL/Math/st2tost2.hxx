@@ -265,16 +265,16 @@ namespace tfel{
        * \return tvector::RunTimeProperties
        */
       TFEL_MATH_INLINE RunTimeProperties
-      getRunTimeProperties(void) const;
+      getRunTimeProperties() const;
 
       template<typename InputIterator>
       TFEL_MATH_INLINE2 void copy(const InputIterator src);
 
-      static TFEL_MATH_INLINE constexpr st2tost2 Id(void);
-      static TFEL_MATH_INLINE constexpr st2tost2 IxI(void);
-      static TFEL_MATH_INLINE constexpr st2tost2 K(void);
-      static TFEL_MATH_INLINE constexpr st2tost2 M(void);
-      static TFEL_MATH_INLINE constexpr st2tost2 J(void);
+      static TFEL_MATH_INLINE constexpr st2tost2 Id();
+      static TFEL_MATH_INLINE constexpr st2tost2 IxI();
+      static TFEL_MATH_INLINE constexpr st2tost2 K();
+      static TFEL_MATH_INLINE constexpr st2tost2 M();
+      static TFEL_MATH_INLINE constexpr st2tost2 J();
 
     private:
             

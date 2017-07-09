@@ -161,7 +161,7 @@ namespace mfront
   {} // end of Fortran03MaterialPropertyInterface::writeBeginHeaderNamespace
   
   void Fortran03MaterialPropertyInterface::writeEndHeaderNamespace(std::ostream&) const
-  {} // end of Fortran03MaterialPropertyInterface::writeEndHeaderNamespace(void)
+  {} // end of Fortran03MaterialPropertyInterface::writeEndHeaderNamespace()
 
   void Fortran03MaterialPropertyInterface::writeBeginSrcNamespace(std::ostream& os) const
   {
@@ -175,7 +175,7 @@ namespace mfront
     os << "#ifdef __cplusplus\n"
        << "} // end of extern \"C\"\n"
        << "#endif /* __cplusplus */\n\n";
-  } // end of Fortran03MaterialPropertyInterface::writeEndSrcNamespace(void)
+  } // end of Fortran03MaterialPropertyInterface::writeEndSrcNamespace()
 
   std::string
   Fortran03MaterialPropertyInterface::getFunctionName(const MaterialPropertyDescription& mpd) const

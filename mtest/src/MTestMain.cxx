@@ -219,7 +219,7 @@ namespace mtest
     action.sa_flags = 0;
     sm.registerHandler(SIGSEGV,sigPtrFun(SignalManager::printBackTrace),action);
     sm.registerHandler(SIGFPE,sigPtrFun(SignalManager::printBackTrace),action);
-  } // end of MTestMain::treatBacktrace(void)
+  } // end of MTestMain::treatBacktrace()
 #endif
 
   void MTestMain::treatVerbose()

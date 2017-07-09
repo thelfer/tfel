@@ -41,11 +41,11 @@ namespace mfront{
     struct MFRONT_VISIBILITY_EXPORT Provider
     {
       //! \return the type of the variable that can be produced
-      virtual std::string getVariableType(void) const = 0;
+      virtual std::string getVariableType() const = 0;
       //! \return the external name of the variable that can be produced
-      virtual std::string getExternalName(void) const = 0;
+      virtual std::string getExternalName() const = 0;
       //! \return the array size of the variable
-      virtual unsigned short getArraySize(void) const = 0;
+      virtual unsigned short getArraySize() const = 0;
       /*!
        * \return true if the given requirement can be handled by the provider
        * \param[in] r : requirement
@@ -54,7 +54,7 @@ namespace mfront{
       virtual bool handleRequirement(const Requirement&,
 				     const bool) const = 0;
       //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier(void) const = 0;
+      virtual ProviderIdentifier getIdentifier() const = 0;
       //! destructor
       virtual ~Provider();
     }; // end of struct Provider
@@ -108,11 +108,11 @@ namespace mfront{
 		       const std::string&,
 		       const bool);
       //! \return the type of the variable that can be produced
-      virtual std::string getVariableType(void) const override final;
+      virtual std::string getVariableType() const override final;
       //! \return the external name of the variable that can be produced
-      virtual std::string getExternalName(void) const override final;
+      virtual std::string getExternalName() const override final;
       //! \return the array size of the variable
-      virtual unsigned short getArraySize(void) const override final;
+      virtual unsigned short getArraySize() const override final;
       //! variable type
       const std::string type;
       //! variable name
@@ -153,7 +153,7 @@ namespace mfront{
       MaterialPropertyProvider(const mfront::VariableDescription&,
 			       const std::string&);
       //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier(void) const override final;
+      virtual ProviderIdentifier getIdentifier() const override final;
       //! destructor
       virtual ~MaterialPropertyProvider();
     }; // end of struct MaterialPropertyProvider
@@ -183,7 +183,7 @@ namespace mfront{
       AuxiliaryStateVariableProvider(const mfront::VariableDescription&,
 				     const std::string&);
       //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier(void) const override final;
+      virtual ProviderIdentifier getIdentifier() const override final;
       //! destructor
       virtual ~AuxiliaryStateVariableProvider();
     }; // end of struct AuxiliaryStateVariableProvider
@@ -213,7 +213,7 @@ namespace mfront{
       ExternalStateVariableProvider(const mfront::VariableDescription&,
 				    const std::string&);
       //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier(void) const override final;
+      virtual ProviderIdentifier getIdentifier() const override final;
       //! destructor
       virtual ~ExternalStateVariableProvider();
     }; // end of struct ExternalStateVariableProvider
@@ -243,7 +243,7 @@ namespace mfront{
       IntegrationVariableProvider(const mfront::VariableDescription&,
 				  const std::string&);
       //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier(void) const override final;
+      virtual ProviderIdentifier getIdentifier() const override final;
       //! destructor
       virtual ~IntegrationVariableProvider();
     }; // end of struct IntegrationVariableProvider
@@ -273,7 +273,7 @@ namespace mfront{
       LocalVariableProvider(const mfront::VariableDescription&,
 			    const std::string&);
       //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier(void) const override final;
+      virtual ProviderIdentifier getIdentifier() const override final;
       //! destructor
       virtual ~LocalVariableProvider();
     }; // end of struct LocalVariableProvider
@@ -301,13 +301,13 @@ namespace mfront{
       StaticVariableProvider(const mfront::StaticVariableDescription&,
 			     const std::string&);
       //! \return the type of the variable that can be produced
-      virtual std::string getVariableType(void) const override final;
+      virtual std::string getVariableType() const override final;
       //! \return the external name of the variable that can be produced
-      virtual std::string getExternalName(void) const override final;
+      virtual std::string getExternalName() const override final;
       //! \return the array size of the variable
-      virtual unsigned short getArraySize(void) const override final;
+      virtual unsigned short getArraySize() const override final;
       //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier(void) const override final;
+      virtual ProviderIdentifier getIdentifier() const override final;
       //! variable type
       const std::string type;
       //! variable name
@@ -344,13 +344,13 @@ namespace mfront{
       ParameterProvider(const mfront::VariableDescription&,
 			const std::string&);
       //! \return the type of the variable that can be produced
-      virtual std::string getVariableType(void) const override final;
+      virtual std::string getVariableType() const override final;
       //! \return the external name of the variable that can be produced
-      virtual std::string getExternalName(void) const override final;
+      virtual std::string getExternalName() const override final;
       //! \return the array size of the variable
-      virtual unsigned short getArraySize(void) const override final;
+      virtual unsigned short getArraySize() const override final;
       //! \return the identifier of the provider
-      virtual ProviderIdentifier getIdentifier(void) const override final;
+      virtual ProviderIdentifier getIdentifier() const override final;
       //! variable type
       const std::string type;
       //! variable name
@@ -373,13 +373,13 @@ namespace mfront{
     //   //! constructor
     //   MaterialLawProvider();
     //   //! \return the type of the variable that can be produced
-    //   virtual std::string getVariableType(void) const override final;
+    //   virtual std::string getVariableType() const override final;
     //   //! \return the external name of the variable that can be produced
-    //   virtual std::string getExternalName(void) const override final;
+    //   virtual std::string getExternalName() const override final;
     //   //! \return the array size of the variable
-    //   virtual unsigned short getArraySize(void) const override final;
+    //   virtual unsigned short getArraySize() const override final;
     //   //! \return the identifier of the provider
-    //   virtual ProviderIdentifier getIdentifier(void) const override final;
+    //   virtual ProviderIdentifier getIdentifier() const override final;
     //   //! destructor
     //   virtual ~MaterialLawProvider();
     // }; // end of struct MaterialLawProvider

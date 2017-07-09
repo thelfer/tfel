@@ -29,10 +29,10 @@ namespace mfront
     ImplicitFiniteStrainDSL();
 
     static std::string 
-    getName(void);
+    getName();
 
     static std::string 
-    getDescription(void);
+    getDescription();
 
     virtual ~ImplicitFiniteStrainDSL() noexcept;
 

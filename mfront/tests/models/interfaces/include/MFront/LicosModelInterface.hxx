@@ -23,7 +23,7 @@ namespace mfront{
     : public AbstractModelInterface
   {
     static std::string 
-    getName(void);
+    getName();
 
     MFrontModelInterface();
 
@@ -65,7 +65,7 @@ namespace mfront{
   private:
 
     virtual void
-    openOutputFiles(void);
+    openOutputFiles();
     
     /*!
      * \param pdata : processing data
@@ -115,7 +115,7 @@ namespace mfront{
     writeAssignDefaultValue(const VariableDescription&);
 
     void
-    closeOutputFiles(void);
+    closeOutputFiles();
 
     static VariableDescriptionContainer::const_iterator
     findVariableDescription(const VarContainer&,

@@ -357,7 +357,7 @@ namespace mtest
   } // end of MistralBehaviour::setOptionalMaterialPropertiesDefaultValues
 
   const char*
-  MistralBehaviour::getBehaviourNameForUMATFunctionCall(void) const{
+  MistralBehaviour::getBehaviourNameForUMATFunctionCall() const{
     return this->mname;
   } // end of MistralBehaviour::getBehaviourNameForUMATFunctionCall
   

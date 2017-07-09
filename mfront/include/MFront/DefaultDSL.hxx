@@ -25,10 +25,10 @@ namespace mfront{
   {
 
     static std::string 
-    getName(void);
+    getName();
 
     static std::string 
-    getDescription(void);
+    getDescription();
 
     DefaultDSL();
 

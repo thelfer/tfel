@@ -38,7 +38,7 @@ namespace tfel
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
     // code retrieved from
     // http://www.codeproject.com/Tips/479880/GetLastError-as-std-string
-    static std::string getLastWin32Error(void)
+    static std::string getLastWin32Error()
     {
       const DWORD error = GetLastError();
       if (error){
@@ -340,8 +340,8 @@ namespace tfel
     {
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
       HINSTANCE__* lib = this->loadLibrary(l);
-      int (*p)(void)   = (int (*)(void)) ::GetProcAddress(lib,s.c_str());
-      return p!=static_cast<int (*)(void)>(nullptr);
+      int (*p)()   = (int (*)()) ::GetProcAddress(lib,s.c_str());
+      return p!=static_cast<int (*)()>(nullptr);
 #else
       void * lib = this->loadLibrary(l);
       void * p   = ::dlsym(lib,s.c_str());

@@ -25,7 +25,7 @@ namespace tfel{
   namespace utilities{
 
     ArgumentParser::CallBack::CallBack(const std::string& d_,
-				       const std::function<void(void)>& c_,
+				       const std::function<void()>& c_,
 				       const bool b)
       : d(d_),c(c_),hasOption(b)
     {} // end of ArgumentParser::CallBack::CallBack

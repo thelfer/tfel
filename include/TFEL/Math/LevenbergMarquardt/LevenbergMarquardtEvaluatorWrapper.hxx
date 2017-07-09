@@ -34,9 +34,9 @@ namespace tfel
 					 const size_type,
 					 const size_type);
       
-      size_type getNumberOfVariables(void) const;
+      size_type getNumberOfVariables() const;
       
-      size_type getNumberOfParameters(void) const;
+      size_type getNumberOfParameters() const;
       
       void operator()(double&,tfel::math::vector<double>&,
 		      const tfel::math::vector<double>&,

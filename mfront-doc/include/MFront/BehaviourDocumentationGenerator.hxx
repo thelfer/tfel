@@ -59,27 +59,27 @@ namespace mfront{
 				    std::shared_ptr<AbstractBehaviourDSL>,
 				    const std::string&);
     //! treat the requests
-    void exe(void);
+    void exe();
     //! destructor
     ~BehaviourDocumentationGenerator();
   private:
     //! ArgumentParserBase must be a friend
     friend struct tfel::utilities::ArgumentParserBase<BehaviourDocumentationGenerator>;
     //! \brief register call-backs associated with command line arguments
-    virtual void registerCommandLineCallBacks(void);
+    virtual void registerCommandLineCallBacks();
     //! return the current argument
     virtual const tfel::utilities::Argument&
     getCurrentCommandLineArgument() const override final;
     //! treat an unknown argument
-    virtual void treatWeb(void);
+    virtual void treatWeb();
     //! treat an unknown argument
-    virtual void treatUnknownArgument(void) final;
+    virtual void treatUnknownArgument() final;
     //! get the version description
     virtual std::string
-    getVersionDescription(void) const override final;
+    getVersionDescription() const override final;
     //! get the usage description
     virtual std::string
-    getUsageDescription(void) const override final;
+    getUsageDescription() const override final;
     virtual void writeWebOutput(std::ostream&,
 				const BehaviourDescription&,
 				const FileDescription&) const;

@@ -75,7 +75,7 @@ namespace tfel
        * \return tvector::RunTimeProperties
        */
       RunTimeProperties
-      getRunTimeProperties(void) const
+      getRunTimeProperties() const
       {
 	return RunTimeProperties();
       }

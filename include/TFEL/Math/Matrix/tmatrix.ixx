@@ -165,25 +165,25 @@ namespace tfel{
     }
 
     template<unsigned short N,unsigned short M, typename T>
-    constexpr unsigned short tmatrix<N,M,T>::getNbCols(void) const
+    constexpr unsigned short tmatrix<N,M,T>::getNbCols() const
     {
       return M;
     }
 
     template<unsigned short N,unsigned short M, typename T>
-    constexpr unsigned short tmatrix<N,M,T>::getNbRows(void) const
+    constexpr unsigned short tmatrix<N,M,T>::getNbRows() const
     {
       return N;
     }
 
     template<unsigned short N,unsigned short M, typename T>
-    T tmatrix<N,M,T>::max(void) const
+    T tmatrix<N,M,T>::max() const
     {
       return *tfel::fsalgo::max_element<N*M>::exe(this->v);
     }
 
     template<unsigned short N,unsigned short M, typename T>
-    T tmatrix<N,M,T>::abs_max(void) const
+    T tmatrix<N,M,T>::abs_max() const
     {
       return std::abs(*tfel::fsalgo::max_element<N*M>::exe(this->v,absCompare<T>()));
     }
@@ -197,7 +197,7 @@ namespace tfel{
 
     template<unsigned short N,unsigned short M, typename T>
     tmatrix<N,N,T> 
-    tmatrix<N,M,T>::Id(void)
+    tmatrix<N,M,T>::Id()
     {
       TFEL_STATIC_ASSERT(N==M);
       tmatrix<N,N,T> m2(static_cast<T>(0.));

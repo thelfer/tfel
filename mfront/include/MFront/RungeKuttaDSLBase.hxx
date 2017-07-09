@@ -23,7 +23,7 @@ namespace mfront{
     : public BehaviourDSLBase<RungeKuttaDSLBase>
   {
     //! return a generic description of DSL based on this class
-    static std::string getDescription(void);
+    static std::string getDescription();
     //! constructor
     RungeKuttaDSLBase();
     //! destructor

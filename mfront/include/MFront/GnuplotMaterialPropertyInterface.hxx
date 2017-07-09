@@ -30,7 +30,7 @@ namespace mfront{
   struct GnuplotMaterialPropertyInterface
     : public AbstractMaterialPropertyInterface
   {
-    static std::string getName(void);
+    static std::string getName();
     
     GnuplotMaterialPropertyInterface();
     /*!

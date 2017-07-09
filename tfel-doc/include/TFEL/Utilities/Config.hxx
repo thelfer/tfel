@@ -19,25 +19,25 @@ namespace tfel{
   namespace utilities{
     
     std::map<std::string,std::map<std::string,std::string> >&
-    getTypeMap(void);
+    getTypeMap();
     
     std::map<std::string,std::string>&
     getTypeMap(const std::string& l);
     
     std::map<std::string,std::map<std::string,std::string> >&
-    getCategoriesMap(void);
+    getCategoriesMap();
     
     std::map<std::string,std::string>&
     getCategoriesMap(const std::string& l);
     
     std::map<std::string,std::map<std::string,std::string> >&
-    getKeysMap(void);
+    getKeysMap();
     
     std::map<std::string,std::string>&
     getKeysMap(const std::string& l);
     
     std::map<std::string,std::map<std::string,std::string> >&
-    getTranslationsMap(void);
+    getTranslationsMap();
     
     std::map<std::string,std::string>&
     getTranslationsMap(const std::string& l);

@@ -23,25 +23,25 @@ namespace mfront{
 
   struct MFRONT_VISIBILITY_EXPORT MFrontHeader{
 
-    static std::string getVersionName(void);
+    static std::string getVersionName();
 
-    static std::string getVersionNumber(void);
+    static std::string getVersionNumber();
 
-    static std::string getBugReportAdress(void);
+    static std::string getBugReportAdress();
 
-    static std::string getCompilerName(void);
+    static std::string getCompilerName();
 
-    static std::string getBuildOs(void);
+    static std::string getBuildOs();
 
-    static std::string getBuildCpu(void);
+    static std::string getBuildCpu();
 
-    static std::string getHostOs(void);
+    static std::string getHostOs();
 
-    static std::string getHostCpu(void);
+    static std::string getHostCpu();
 
-    static std::string getTargetOs(void);
+    static std::string getTargetOs();
 
-    static std::string getTargetCpu(void);
+    static std::string getTargetCpu();
 
     static std::string getHeader(const std::string& = "");      
     

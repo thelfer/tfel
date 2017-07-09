@@ -26,9 +26,9 @@ namespace mfront{
     : public IsotropicBehaviourDSLBase
   {
 
-    static std::string getName(void);
+    static std::string getName();
 
-    static std::string getDescription(void);
+    static std::string getDescription();
 
     MultipleIsotropicMisesFlowsDSL();
 
@@ -55,7 +55,7 @@ namespace mfront{
     writeBehaviourComputeTangentOperator(std::ostream&,
 					 const Hypothesis) const override;
     
-    virtual void treatFlowRule(void) override;
+    virtual void treatFlowRule() override;
 
     struct FlowHandler
     {

@@ -180,6 +180,6 @@ namespace mfront
       }
     }
     wrapper.close();
-  } // end of ExcelMaterialPropertyInterface::writeSrcFile(void)
+  } // end of ExcelMaterialPropertyInterface::writeSrcFile()
 
 } // end of namespace mfront

@@ -381,7 +381,7 @@ namespace mfront{
     this->writeGetOutOfBoundsPolicyFunctionImplementation(out,name);
     
     if(ppolicy=="ThreadPool"){
-      out << "static size_t getAbaqusExplicitNumberOfThreads(void){\n"
+      out << "static size_t getAbaqusExplicitNumberOfThreads(){\n"
 	  << "const auto nthreads = ::getenv(\"ABAQUSEXPLICIT_NTHREADS\");\n"
 	  << "if(nthreads==nullptr){\n"
 	  << "return 4;\n"

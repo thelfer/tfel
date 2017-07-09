@@ -238,7 +238,7 @@ namespace mfront{
 								   const std::string& name) const
   {
     out << "static tfel::material::OutOfBoundsPolicy&\n"
-	<< getFunctionName(name) << "_getOutOfBoundsPolicy(void){\n"
+	<< getFunctionName(name) << "_getOutOfBoundsPolicy(){\n"
 	<< "using namespace cyrano;\n"
       	<< "using namespace tfel::material;\n"
 	<< "static OutOfBoundsPolicy policy = CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy().getOutOfBoundsPolicy();\n"

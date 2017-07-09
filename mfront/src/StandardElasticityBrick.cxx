@@ -212,7 +212,7 @@ namespace mfront{
     for(const auto h:this->bd.getDistinctModellingHypotheses()){
       std::string m =
     	"//! \\brief return an elastic prediction of the stresses\n"
-    	"StressStensor computeElasticPrediction(void) const{\n";
+    	"StressStensor computeElasticPrediction() const{\n";
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
     	if((this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,false))||
     	   (this->bd.getAttribute(BehaviourDescription::computesStiffnessTensor,false))){

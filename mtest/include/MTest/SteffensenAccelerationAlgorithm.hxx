@@ -37,7 +37,7 @@ namespace mtest
      * \return the name of the acceleration algorithm
      */
     virtual std::string
-    getName(void) const override;
+    getName() const override;
     /*!
      * set a parameter of the acceleration algorithm
      * \param[in] p : parameter name
@@ -51,7 +51,7 @@ namespace mtest
      * algorithm
      */
     virtual void
-    preExecuteTasks(void) override;
+    preExecuteTasks() override;
     /*!
      * \param[in,out] u1   : current estimate of the unknowns
      * \param[in]     u0   : current estimate of the unknowns
@@ -71,7 +71,7 @@ namespace mtest
      * called at each time step, once convergence is reached
      */
     virtual void
-    postExecuteTasks(void) override;
+    postExecuteTasks() override;
     //! destructor
     virtual ~SteffensenAccelerationAlgorithm();
   protected:

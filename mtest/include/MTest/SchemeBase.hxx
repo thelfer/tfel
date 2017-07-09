@@ -74,7 +74,7 @@ namespace mtest{
     virtual void
     setOutputFileName(const std::string&);
     //! \return true if the output file name has been defined
-    virtual bool isOutputFileNameDefined(void) const;
+    virtual bool isOutputFileNameDefined() const;
     /*!
      * \brief set the output file precision
      * \param[in] p : precision
@@ -88,16 +88,16 @@ namespace mtest{
     virtual void
     setResidualFileName(const std::string&);
     //! \return true if the residual file name has been defined
-    virtual bool isResidualFileNameDefined(void) const;
+    virtual bool isResidualFileNameDefined() const;
     /*!
      * \brief set the residual file
      * \param[in] f : file name
      */
     virtual void setXMLOutputFileName(const std::string&);
     //! \return true if the residual file name has been defined
-    virtual bool isXMLOutputFileNameDefined(void) const;
+    virtual bool isXMLOutputFileNameDefined() const;
     //! \return true if the residual file name has been defined
-    virtual std::string getXMLOutputFileName(void) const;
+    virtual std::string getXMLOutputFileName() const;
     /*!
      * \brief set the residual file precision
      * \param[in] p : precision
@@ -191,10 +191,10 @@ namespace mtest{
     virtual void setMaximumNumberOfSubSteps(const unsigned int);
     //! \return the dimension
     virtual unsigned short
-    getDimension(void) const;
+    getDimension() const;
     //! \return the modelling hypothesis
     virtual ModellingHypothesis::Hypothesis
-    getModellingHypothesis(void) const;
+    getModellingHypothesis() const;
     /*!
      * \brief set the stiffness updating policy
      * \param[in] b : boolean
@@ -247,10 +247,10 @@ namespace mtest{
      * complete the initialisation. This method must be called once.
      * \note this method must be called by the derived class.
      */ 
-    virtual void completeInitialisation(void);
+    virtual void completeInitialisation();
     //! \return the default stiffness matrix type
     virtual StiffnessMatrixType
-    getDefaultStiffnessMatrixType(void) const = 0;
+    getDefaultStiffnessMatrixType() const = 0;
     /*!
      * \brief declare a new variable
      * \param[in] v : variable name

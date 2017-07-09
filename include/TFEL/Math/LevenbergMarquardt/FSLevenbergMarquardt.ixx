@@ -109,7 +109,7 @@ namespace tfel
 	     unsigned short M,
 	     typename T>
     const typename FSLevenbergMarquardt<N,M,T>::Parameter&
-    FSLevenbergMarquardt<N,M,T>::execute(void)
+    FSLevenbergMarquardt<N,M,T>::execute()
     {
       using namespace std;
       using tfel::fsalgo::fill;

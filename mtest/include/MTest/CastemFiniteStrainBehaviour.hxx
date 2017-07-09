@@ -92,7 +92,7 @@ namespace mtest
      * CMNAME parameter.
      */
     virtual const char*
-    getBehaviourNameForUMATFunctionCall(void) const override;
+    getBehaviourNameForUMATFunctionCall() const override;
     //! destructor
     virtual ~CastemFiniteStrainBehaviour();
   protected:

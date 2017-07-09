@@ -175,7 +175,7 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     constexpr typename stensor<N,T>::RunTimeProperties
-    stensor<N,T>::getRunTimeProperties(void) const noexcept{
+    stensor<N,T>::getRunTimeProperties() const noexcept{
       return RunTimeProperties();
     }
 
@@ -571,7 +571,7 @@ namespace tfel{
     // Return Id
     template<unsigned short N,typename T>
     constexpr stensor<N,T>
-    stensor<N,T>::Id(void)
+    stensor<N,T>::Id()
     {
       return stensor<N,T>{{T{1},T{1},T{1},T{0},T{0},T{0}}};
     } // end of stensor<N,T>::Id

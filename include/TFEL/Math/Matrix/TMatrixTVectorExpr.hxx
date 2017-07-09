@@ -52,7 +52,7 @@ namespace tfel{
       typedef EmptyRunTimeProperties RunTimeProperties;
       //! \brief return the runtime properties
       TFEL_MATH_INLINE RunTimeProperties
-      getRunTimeProperties(void) const
+      getRunTimeProperties() const
       {
 	return RunTimeProperties();
       } // end of getRunTimeProperties
@@ -77,7 +77,7 @@ namespace tfel{
 	} // end of operator++
 	//! \return the current matrix value
 	TFEL_MATH_INLINE NumType
-	operator *(void) const
+	operator *() const
 	{
 	  return this->m(this->i,this->j);
 	}
@@ -101,7 +101,7 @@ namespace tfel{
 	  return *this;
 	} // end of operator++
 	TFEL_MATH_INLINE NumType
-	operator *(void) const
+	operator *() const
 	{
 	  return this->v(this->i);
 	}

@@ -59,7 +59,7 @@ namespace mtest
      * \return the default type of stiffness matrix used by the behaviour
      */
     virtual StiffnessMatrixType
-    getDefaultStiffnessMatrixType(void) const override;
+    getDefaultStiffnessMatrixType() const override;
     /*!
      * \param[out] v : initial values of the driving variables
      */

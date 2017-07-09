@@ -41,7 +41,7 @@ namespace tfel
      */
     TFELMATERIAL_VISIBILITY_EXPORT
     std::vector<FiniteStrainBehaviourTangentOperatorBase::Flag>
-    getFiniteStrainBehaviourTangentOperatorFlags(void);
+    getFiniteStrainBehaviourTangentOperatorFlags();
     /*!
      * \return a string describing the given tangent operator type 
      */
@@ -114,7 +114,7 @@ namespace tfel
       typename std::enable_if<
 	tfel::meta::TLCountNbrOfT<T1,TOTypes>::value==1, 
 	void >::type 
-      set_uninitialised(void){
+      set_uninitialised(){
 	GenType::template set_uninitialised<T1>();
       }
       /*!

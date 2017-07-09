@@ -34,7 +34,7 @@ namespace tfel
 
       struct TFEL_VISIBILITY_LOCAL IntegerExpr
       {
-	virtual int getValue(void) const = 0;
+	virtual int getValue() const = 0;
 	virtual std::shared_ptr<IntegerExpr>
 	clone(const std::vector<int>&) const = 0;
 	virtual ~IntegerExpr();
@@ -94,11 +94,11 @@ namespace tfel
        */
       void setFunction(const std::vector<std::string>&,
 		       const std::string&);
-      int  getValue(void) const;
+      int  getValue() const;
       std::vector<std::string>
-      getVariablesNames(void) const;
+      getVariablesNames() const;
       std::vector<int>::size_type
-      getNumberOfVariables(void) const;
+      getNumberOfVariables() const;
       void
       setVariableValue(const std::vector<int>::size_type,
 		       const int);

@@ -40,7 +40,7 @@ namespace tfel{
       typedef typename TensorTraits<typename std::decay<A>::type>::NumType   NumType;
       
       TFEL_MATH_INLINE RunTimeProperties
-      getRunTimeProperties(void) const
+      getRunTimeProperties() const
       {
 	return EmptyRunTimeProperties();
       }

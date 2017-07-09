@@ -51,11 +51,11 @@ namespace tfel
 		   const int) = 0;
       
       void setPid(const pid_t);
-      pid_t getPid(void) const;
+      pid_t getPid() const;
       int
-      getOutputStream(void) const;
+      getOutputStream() const;
       int
-      getInputStream(void) const;
+      getInputStream() const;
       virtual ~ChildProcess();
     protected:
       pid_t pid;

@@ -36,11 +36,11 @@ namespace tfel
 
       template<typename Op>
       bool
-      LogicalOperation<Op>::getValue(void) const
+      LogicalOperation<Op>::getValue() const
       {
 	return Op::apply(this->a->getValue(),
 			 this->b->getValue());
-      } // end of LogicalOperation::getValue(void) const
+      } // end of LogicalOperation::getValue() const
 
       template<typename Op>
       void
@@ -62,7 +62,7 @@ namespace tfel
       {
 	return std::shared_ptr<LogicalExpr>(new LogicalOperation<Op>(this->a->resolveDependencies(v),
 							      this->b->resolveDependencies(v)));
-      } // end of LogicalOperation<Op>::resolveDependencies(void) const
+      } // end of LogicalOperation<Op>::resolveDependencies() const
 
       template<typename Op>
       std::shared_ptr<LogicalExpr>
@@ -105,11 +105,11 @@ namespace tfel
 
       template<typename Op>
       bool
-      LogicalBinaryOperation<Op>::getValue(void) const
+      LogicalBinaryOperation<Op>::getValue() const
       {
 	return Op::apply(this->a->getValue(),
 			 this->b->getValue());
-      } // end of LogicalBinaryOperation::getValue(void) const
+      } // end of LogicalBinaryOperation::getValue() const
 
       template<typename Op>
       void
@@ -139,7 +139,7 @@ namespace tfel
       {
 	return std::shared_ptr<LogicalExpr>(new LogicalBinaryOperation<Op>(this->a->resolveDependencies(v),
 								    this->b->resolveDependencies(v)));
-      } // end of LogicalBinaryOperation<Op>::resolveDependencies(void) const
+      } // end of LogicalBinaryOperation<Op>::resolveDependencies() const
 
       template<typename Op>
       std::shared_ptr<LogicalExpr>

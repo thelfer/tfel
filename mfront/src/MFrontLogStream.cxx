@@ -69,7 +69,7 @@ namespace mfront
       return *s;
     }
     return *(this->ps);
-  } // end of LogStream::getStream(void)
+  } // end of LogStream::getStream()
 
   LogStream& LogStream::getLogStream()
   {

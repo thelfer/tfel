@@ -225,7 +225,7 @@ namespace tfel{
        * \return tvector::RunTimeProperties
        */
       TFEL_MATH_INLINE constexpr RunTimeProperties
-      getRunTimeProperties(void) const noexcept;
+      getRunTimeProperties() const noexcept;
       /*!
        * copy the Nth elements following this argument.
        * \param const InputIterator, an iterator to the first element
@@ -240,7 +240,7 @@ namespace tfel{
        */
       template<unsigned short I>
       Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >
-      slice(void);
+      slice();
       /*!
        * \brief create a slice
        * \param[in] I : the starting index
@@ -251,7 +251,7 @@ namespace tfel{
       template<unsigned short I,
 	       unsigned short J>
       Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >
-      slice(void);
+      slice();
       /*!
        * \brief create a slice (const version)
        * \param[in] I : the starting index
@@ -260,7 +260,7 @@ namespace tfel{
        */
       template<unsigned short I>
       Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >
-      slice(void) const;
+      slice() const;
       /*!
        * \brief create a slice (const version)
        * \param[in] I : the starting index
@@ -271,7 +271,7 @@ namespace tfel{
       template<unsigned short I,
 	       unsigned short J>
       Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >
-      slice(void) const;
+      slice() const;
     private:
       //! a simple assertion stating that the dimension is valid.
       TFEL_STATIC_ASSERT(N!=0);

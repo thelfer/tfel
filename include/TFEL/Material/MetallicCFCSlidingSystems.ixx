@@ -24,7 +24,7 @@ namespace tfel
 
     template<typename NumType>
     const MetallicCFCSlidingSystems<NumType>&
-    MetallicCFCSlidingSystems<NumType>::getSlidingSystems(void)
+    MetallicCFCSlidingSystems<NumType>::getSlidingSystems()
     {
       static MetallicCFCSlidingSystems gs;
       return gs;

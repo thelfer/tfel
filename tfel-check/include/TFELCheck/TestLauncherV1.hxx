@@ -39,11 +39,11 @@ namespace tfel_check {
   {
     
     TestLauncherV1(const std::string&, const PCLogger&);
-    bool execute(void);
-    ~TestLauncherV1(void);
+    bool execute();
+    ~TestLauncherV1();
 
   private:
-    typedef void (TestLauncherV1::*CallBack)(void);
+    typedef void (TestLauncherV1::*CallBack)();
 
     //! list of all tokens of the file, sorted by line
     std::vector<std::vector<tfel::utilities::Token> > tokens;
@@ -73,21 +73,21 @@ namespace tfel_check {
     void registerCallBack(const std::string&, const CallBack&);
     //! analyse the input file
     void
-    analyseInputFile(void);
+    analyseInputFile();
     void
-    treatTest(void);
+    treatTest();
     void
-    treatPrecision(void);
+    treatPrecision();
     void
-    treatCommand(void);
+    treatCommand();
     void
-    treatMeshCommand(void);
+    treatMeshCommand();
     void
-    treatEnvironment(void);
+    treatEnvironment();
     void
-    treatTestType(void);
+    treatTestType();
     void
-    treatInterpolation(void);
+    treatInterpolation();
 
     enum ClockEventType {
       START,

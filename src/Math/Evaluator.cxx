@@ -418,7 +418,7 @@ namespace tfel
     {
       static FunctionGeneratorManager m;
       return m;
-    } // end of Evaluator::getFunctionGeneratorManager(void)
+    } // end of Evaluator::getFunctionGeneratorManager()
 
     bool Evaluator::isValidIdentifier(const std::string& s)
     {
@@ -1051,7 +1051,7 @@ namespace tfel
     Evaluator::getNumberOfVariables() const
     {
       return this->variables.size();
-    } // end of Evaluator::getNumberOfVariables(void) const;
+    } // end of Evaluator::getNumberOfVariables() const;
 
     void Evaluator::analyse(const std::string& f,
 			    const bool b)

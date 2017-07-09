@@ -63,7 +63,7 @@ namespace tfel
       
       template<StandardFunctionPtr f>
       double
-      StandardFunction<f>::getValue(void) const
+      StandardFunction<f>::getValue() const
       {
 	using namespace std;
 	double res;
@@ -92,7 +92,7 @@ namespace tfel
       StandardFunction<f>::resolveDependencies(const std::vector<double>& v) const
       {
 	return std::shared_ptr<Expr>(new StandardFunction<f>(this->expr->resolveDependencies(v)));
-      } // end of StandardFunction<f>::resolveDependencies(void)
+      } // end of StandardFunction<f>::resolveDependencies()
       
       template<StandardFunctionPtr f>
       std::shared_ptr<Expr>

@@ -50,7 +50,7 @@ namespace mfront{
      * \return the name of the interface
      */
     static std::string 
-    getName(void);
+    getName();
     /*!
      * \param[in,out] mb: behaviour description
      * \param[in] k  : keyword treated
@@ -192,7 +192,7 @@ namespace mfront{
 			  const FileDescription&) const;
     
     virtual std::string
-    getInterfaceName(void) const override;
+    getInterfaceName() const override;
     /*!
      * write the initialisation of the driving variables
      * \param[out] os: output file
@@ -259,7 +259,7 @@ namespace mfront{
      * name and the second element is the variable description.
      */
     virtual std::vector<std::pair<std::string,std::string>>
-    getBehaviourDataConstructorAdditionalVariables(void) const override;
+    getBehaviourDataConstructorAdditionalVariables() const override;
     /*!
      * \brief add interface specific lines at the end of the behaviour
      * data constructor

@@ -114,7 +114,7 @@ namespace tfel
 
     template<unsigned short N,typename T,typename Model>
     void
-    Kriging<N,T,Model>::buildInterpolation(void)
+    Kriging<N,T,Model>::buildInterpolation()
     {
       using namespace std;
       using namespace tfel::math;

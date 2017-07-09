@@ -102,7 +102,7 @@ namespace tfel
       /*!
        * execute registred tests
        */
-      TestResult execute(void);
+      TestResult execute();
     private:
       //! a simple alias
       typedef std::shared_ptr<MultipleTestOutputs> MultipleTestOutputsPtr;

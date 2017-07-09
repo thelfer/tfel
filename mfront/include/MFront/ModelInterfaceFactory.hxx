@@ -26,13 +26,13 @@ namespace mfront{
 
   struct MFRONT_VISIBILITY_EXPORT ModelInterfaceFactory
   {
-    typedef std::shared_ptr<AbstractModelInterface> (*InterfaceCreator)(void);
+    typedef std::shared_ptr<AbstractModelInterface> (*InterfaceCreator)();
     
     static ModelInterfaceFactory&
     getModelInterfaceFactory();
 
     std::vector<std::string>
-    getRegistredInterfaces(void) const;
+    getRegistredInterfaces() const;
 
     void registerInterfaceCreator(const std::string&,
 				  InterfaceCreator);
@@ -59,7 +59,7 @@ namespace mfront{
 
     TFEL_VISIBILITY_LOCAL
     InterfaceCreatorsContainer&
-    getInterfaceCreatorsMap(void) const;
+    getInterfaceCreatorsMap() const;
 
   };
 

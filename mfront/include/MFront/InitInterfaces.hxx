@@ -21,7 +21,7 @@ namespace mfront
 {
   
   MFRONT_VISIBILITY_EXPORT void
-  initInterfaces(void);
+  initInterfaces();
 
 } // end of namespace mfront  
 

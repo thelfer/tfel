@@ -31,7 +31,7 @@ namespace tfel
 
       struct Expr
       {
-	virtual double getValue(void) const = 0;
+	virtual double getValue() const = 0;
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const = 0;
 	virtual std::shared_ptr<Expr>

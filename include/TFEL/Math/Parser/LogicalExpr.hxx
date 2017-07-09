@@ -76,7 +76,7 @@ namespace tfel
 
       struct LogicalExpr
       {
-      	virtual bool getValue(void) const = 0;
+      	virtual bool getValue() const = 0;
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const = 0;
 	virtual std::shared_ptr<LogicalExpr>
@@ -103,7 +103,7 @@ namespace tfel
 	LogicalOperation(const ExprPtr,
 			 const ExprPtr);
 	virtual bool
-	  getValue(void) const override;
+	  getValue() const override;
 	virtual void
 	  checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual LogicalExprPtr
@@ -132,7 +132,7 @@ namespace tfel
 	LogicalBinaryOperation(LogicalExprPtr,
 			       LogicalExprPtr);
 	virtual bool
-	  getValue(void) const override;
+	  getValue() const override;
 	virtual void
 	  checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual LogicalExprPtr
@@ -158,7 +158,7 @@ namespace tfel
 	: public LogicalExpr
       {
 	NegLogicalExpression(LogicalExprPtr);
-	virtual bool getValue(void) const override;
+	virtual bool getValue() const override;
 	virtual void
 	  checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual LogicalExprPtr

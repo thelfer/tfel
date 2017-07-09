@@ -199,7 +199,7 @@ namespace mfront{
     this->headerFile << "bool\n"
 		     << "initialize(const Pleiades::PMetier::IArgumentMetier&);\n\n";
     this->headerFile << "bool\n"
-		     << "execute(void);\n\n";
+		     << "execute();\n\n";
     this->headerFile << "void\n"
 		     << "executeInitialPostProcessingTasks(const bool);\n\n";
     this->headerFile << "void\n"
@@ -321,7 +321,7 @@ namespace mfront{
     this->headerFile << "#endif /* _PLEIADES_"
 		     << makeUpperCase(md.className)
 		     << "_HH */\n";
-  } // end of MFrontPleiadesModelInterfaceBase::writeHeaderFile(void)
+  } // end of MFrontPleiadesModelInterfaceBase::writeHeaderFile()
 
   std::string
   MFrontPleiadesModelInterfaceBase::getGenTypeMethod(const std::string& type) const
@@ -625,7 +625,7 @@ namespace mfront{
     // execute
     this->srcFile << "bool\n"
 		  << md.className
-		  << "::execute(void){\n";
+		  << "::execute(){\n";
     this->srcFile << "using namespace std;\n";
     this->srcFile << "using namespace Pleiades::PUtilitaires;\n";
     this->srcFile << "using namespace Pleiades::PExceptions;\n";
@@ -722,7 +722,7 @@ namespace mfront{
     this->srcFile << "} // end of namespace PModels\n\n";
     this->srcFile << "} // end of namespace PMetier\n\n";
     this->srcFile << "} // end of namespace Pleiades\n";
-  } // end of MFrontPleiadesModelInterfaceBase::writeSrcFile(void)
+  } // end of MFrontPleiadesModelInterfaceBase::writeSrcFile()
 
   void
   MFrontPleiadesModelInterfaceBase::getTargetsDescription(TargetsDescription& td,

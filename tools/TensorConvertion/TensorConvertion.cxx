@@ -110,7 +110,7 @@ struct converter1
   : public index<N>
 {
   using size_type = unsigned short;
-  static void exe(void){
+  static void exe(){
     for(size_type i=0;i!=3;++i){
       for(size_type j=0;j!=3;++j){
 	const auto ri = index<N>::row_index(i,j);
@@ -165,7 +165,7 @@ struct converter2
   : public index<N>  
 {
   using size_type = unsigned short;
-  static void exe(void){
+  static void exe(){
     for(size_type i=0;i!=3;++i){
       for(size_type j=0;j!=3;++j){
 	const auto rij = index<N>::row_index(i,j);
@@ -196,7 +196,7 @@ struct converter2
   } // end of exe
 };
 
-int main(void){
+int main(){
   converter2<3>::exe();
   return EXIT_SUCCESS;
 }

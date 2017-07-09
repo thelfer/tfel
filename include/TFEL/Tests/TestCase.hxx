@@ -144,12 +144,12 @@ namespace tfel
        * \return the name of the test
        */
       virtual std::string
-      name(void) const override;
+      name() const override;
       /*! 
        * \return the group of the test
        */
       virtual std::string
-      classname(void) const override;
+      classname() const override;
     protected:
       /*!
        * Constructor

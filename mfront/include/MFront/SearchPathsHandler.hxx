@@ -60,13 +60,13 @@ namespace mfront
      */
     MFRONT_VISIBILITY_EXPORT static
     const std::vector<std::string>&
-    getSearchPaths(void);
+    getSearchPaths();
   private:
     /*!
      * return the uniq instance of the class
      */
     static TFEL_VISIBILITY_LOCAL SearchPathsHandler&
-    getSearchPathsHandler(void);
+    getSearchPathsHandler();
     /*!
      * Default constructor
      *

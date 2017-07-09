@@ -165,7 +165,7 @@ namespace tfel{
     
     template<unsigned short N, typename T>
     constexpr typename tvector<N,T>::RunTimeProperties
-    tvector<N,T>::getRunTimeProperties(void) const noexcept
+    tvector<N,T>::getRunTimeProperties() const noexcept
     {
       return RunTimeProperties();
     }
@@ -181,16 +181,16 @@ namespace tfel{
     template<unsigned short N, typename T>
     template<unsigned short I>
     Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >
-    tvector<N,T>::slice(void)
+    tvector<N,T>::slice()
     {
       return Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,false> >(*this);
-    } // end of tvector<N,T>::slice(void)
+    } // end of tvector<N,T>::slice()
 
     template<unsigned short N, typename T>
     template<unsigned short I,
 	     unsigned short J>
     Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >
-    tvector<N,T>::slice(void)
+    tvector<N,T>::slice()
     {
       return Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,false> >(*this);
     }
@@ -198,7 +198,7 @@ namespace tfel{
     template<unsigned short N, typename T>
       template<unsigned short I>
     Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >
-    tvector<N,T>::slice(void) const
+    tvector<N,T>::slice() const
     {
       return Expr<tvector<N-I,T>,TinyVectorFromTinyVectorViewExpr<N-I,N,I,T,true> >(*this);
     } // end of tvector<N,T>::slice
@@ -207,7 +207,7 @@ namespace tfel{
     template<unsigned short I,
 	     unsigned short J>
     Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >
-    tvector<N,T>::slice(void) const
+    tvector<N,T>::slice() const
     {
       return Expr<tvector<J-I,T>,TinyVectorFromTinyVectorViewExpr<J-I,N,I,T,true> >(*this);
     } // end of tvector<N,T>::slice

@@ -842,7 +842,7 @@ namespace mfront{
     }
     // minimal tangent operator
     this->setMinimalTangentOperator();
-  } // end of ImplicitDSLBase::endsInputFileProcessing(void)
+  } // end of ImplicitDSLBase::endsInputFileProcessing()
 
   void ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation(std::ostream& os,
 								   const Hypothesis h) const
@@ -1025,13 +1025,13 @@ namespace mfront{
       os << "#include\"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx\"\n"
 	 << "#include\"TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorViewIO.hxx\"\n";
     }
-  } // end of ImplicitDSLBase::writeBehaviourParserSpecificIncludes(void)
+  } // end of ImplicitDSLBase::writeBehaviourParserSpecificIncludes()
   
   void ImplicitDSLBase::writeBehaviourParserSpecificTypedefs(std::ostream& os) const
   {
     this->checkBehaviourFile(os);
     BehaviourDSLCommon::writeBehaviourParserSpecificTypedefs(os);
-  } // end of ImplicitDSLBase::writeBehaviourParserSpecificTypedefs(void)
+  } // end of ImplicitDSLBase::writeBehaviourParserSpecificTypedefs()
 
   void ImplicitDSLBase::writeBehaviourParserSpecificMembers(std::ostream& os,
 							    const Hypothesis h) const
@@ -1372,7 +1372,7 @@ namespace mfront{
     }
     // compute stress
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "void computeStress(void){\n"
+      os << "void computeStress(){\n"
 	 << "using namespace std;\n"
 	 << "using namespace tfel::math;\n"
 	 << "using std::vector;\n";
@@ -1381,7 +1381,7 @@ namespace mfront{
 	 << "\n} // end of " << this->mb.getClassName() << "::computeStress\n\n";
     }
     if(this->mb.hasCode(h,BehaviourData::ComputeFinalStress)){
-      os << "void computeFinalStress(void){\n"
+      os << "void computeFinalStress(){\n"
 	 << "using namespace std;\n"
 	 << "using namespace tfel::math;\n"
 	 << "using std::vector;\n";
@@ -1709,7 +1709,7 @@ namespace mfront{
        << "* \\brief compute fzeros and jacobian\n"
        << "*/\n"
        << "bool\n"
-       << "computeFdF(void){\n"
+       << "computeFdF(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "using std::vector;\n";

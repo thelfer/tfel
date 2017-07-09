@@ -507,10 +507,10 @@ namespace tfel
 
       template<unsigned short N>
       double
-      EvaluatorFunctionNV<N>::getValue(void) const
+      EvaluatorFunctionNV<N>::getValue() const
       {
 	return EvaluatorFunctionWrapper<N>::apply(f,args);
-      } // end of EvaluatorFunctionNV<N>::getValue(void) const
+      } // end of EvaluatorFunctionNV<N>::getValue() const
 
       template<unsigned short N>
       void
@@ -597,10 +597,10 @@ namespace tfel
 
       template<unsigned short N>
       double
-      EvaluatorFunction1PNV<N>::getValue(void) const
+      EvaluatorFunction1PNV<N>::getValue() const
       {
 	return EvaluatorFunctionWrapper<N>::apply(this->f,this->n,this->args);
-      } // end of EvaluatorFunction1PNV<N>::getValue(void) const
+      } // end of EvaluatorFunction1PNV<N>::getValue() const
 
       template<unsigned short N>
       std::shared_ptr<Expr>
@@ -689,10 +689,10 @@ namespace tfel
 
       template<unsigned short N>
       double
-      EvaluatorFunction2PNV<N>::getValue(void) const
+      EvaluatorFunction2PNV<N>::getValue() const
       {
 	return EvaluatorFunctionWrapper<N>::apply(this->f,this->n,this->m,this->args);
-      } // end of EvaluatorFunction2PNV<N>::getValue(void) const
+      } // end of EvaluatorFunction2PNV<N>::getValue() const
 
       template<unsigned short N>
       std::shared_ptr<Expr>
@@ -768,10 +768,10 @@ namespace tfel
 
       template<unsigned short N>
       double
-      EvaluatorFunction1UPNV<N>::getValue(void) const
+      EvaluatorFunction1UPNV<N>::getValue() const
       {
 	return EvaluatorFunctionWrapper<N>::apply(this->f,this->n,this->args);
-      } // end of EvaluatorFunction1UPNV<N>::getValue(void) const
+      } // end of EvaluatorFunction1UPNV<N>::getValue() const
 
       template<unsigned short N>
       std::shared_ptr<Expr>
@@ -860,10 +860,10 @@ namespace tfel
 
       template<unsigned short N>
       double
-      EvaluatorFunction2UPNV<N>::getValue(void) const
+      EvaluatorFunction2UPNV<N>::getValue() const
       {
 	return EvaluatorFunctionWrapper<N>::apply(this->f,this->n,this->m,this->args);
-      } // end of EvaluatorFunction2UPNV<N>::getValue(void) const
+      } // end of EvaluatorFunction2UPNV<N>::getValue() const
 
       template<unsigned short N>
       std::shared_ptr<Expr>

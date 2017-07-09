@@ -137,14 +137,14 @@ namespace tfel{
        */
       TFEL_MATH_INLINE 
       const value_type 
-      operator*(void) const 
+      operator*() const 
       {
 	return a*(*p);
       }
       
       TFEL_MATH_INLINE 
       ScalarObjectRandomAccessConstIterator& 
-      operator++(void)
+      operator++()
       {
 	p++;
 	return *this;
@@ -262,12 +262,12 @@ namespace tfel{
 	return *this;
       }
 
-      TFEL_MATH_INLINE value_type operator*(void) const 
+      TFEL_MATH_INLINE value_type operator*() const 
       {
 	return a/(*p);
       }
       
-      TFEL_MATH_INLINE ScalarObjectRandomAccessConstIterator& operator++(void)
+      TFEL_MATH_INLINE ScalarObjectRandomAccessConstIterator& operator++()
       {
 	p++;
 	return *this;
@@ -372,13 +372,13 @@ namespace tfel{
       }
 
       TFEL_MATH_INLINE value_type 
-      operator*(void) const 
+      operator*() const 
       {
 	return (*p)*b;
       }
       
       TFEL_MATH_INLINE ObjectScalarRandomAccessConstIterator& 
-      operator++(void)
+      operator++()
       {
 	p++;
 	return *this;
@@ -489,13 +489,13 @@ namespace tfel{
       }
 
       TFEL_MATH_INLINE value_type 
-      operator*(void) const 
+      operator*() const 
       {
 	return (*p)/b;
       }
       
       TFEL_MATH_INLINE ObjectScalarRandomAccessConstIterator& 
-      operator++(void)
+      operator++()
       {
 	p++;
 	return *this;

@@ -492,7 +492,7 @@ namespace mfront
 #else
     wrapper << "PyMODINIT_FUNC ";
 #endif
-    wrapper << "PyInit_" << md << "(void)\n"
+    wrapper << "PyInit_" << md << "()\n"
 	    << "{\n"
 	    << "  struct ModuleState {\n"
 	    << "    PyObject *error;\n"
@@ -532,7 +532,7 @@ namespace mfront
 #else
     wrapper << "PyMODINIT_FUNC ";
 #endif
-    wrapper << "init" << md << "(void)\n"
+    wrapper << "init" << md << "()\n"
 	    << "{\n"
 	    << "  static struct {\n"
 	    << "    PyObject *error;\n"
@@ -559,7 +559,7 @@ namespace mfront
     copy(interfaces.begin(),interfaces.end(),
 	 ostream_iterator<string>(wrapper,"\n"));
     wrapper.close();
-  } // end of PythonMaterialPropertyInterface::writeSrcFile(void)
+  } // end of PythonMaterialPropertyInterface::writeSrcFile()
 
   PythonMaterialPropertyInterface::~PythonMaterialPropertyInterface() = default;
   

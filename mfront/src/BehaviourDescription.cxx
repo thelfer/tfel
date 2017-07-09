@@ -705,7 +705,7 @@ namespace mfront
   } // end of BehaviourDescription::addHillTensor
 
   const std::vector<BehaviourDescription::HillTensor>&
-  BehaviourDescription::getHillTensors(void) const{
+  BehaviourDescription::getHillTensors() const{
     return this->hillTensors;
   } // end of BehaviourDescription::getHillTensors
   

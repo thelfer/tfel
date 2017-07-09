@@ -74,7 +74,7 @@ namespace mfront{
      * \return the list of supported modelling hypotheses.
      */
     virtual std::vector<Hypothesis> 
-    getSupportedModellingHypotheses(void) const override;
+    getSupportedModellingHypotheses() const override;
     //! complete the variable description
     virtual void completeVariableDeclaration() const override;
     //! method called at the end of the input file processing

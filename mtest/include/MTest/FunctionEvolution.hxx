@@ -42,7 +42,7 @@ namespace mtest
      * \return true if the evolution is constant
      */
     virtual bool
-    isConstant(void) const override;
+    isConstant() const override;
     /*!
      * \brief set the evolution value for a given date
      * \param[in] v  : value

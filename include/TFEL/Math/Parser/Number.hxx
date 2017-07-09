@@ -46,7 +46,7 @@ namespace tfel
 							const std::map<std::string,
 							std::vector<double>::size_type>&) const override;
 	virtual double
-	getValue(void) const override;
+	getValue() const override;
       private:
 	Number& operator=(const Number&) = delete;
 	Number& operator=(Number&&) = delete;

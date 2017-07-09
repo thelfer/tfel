@@ -328,7 +328,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
 	 << " * \\return all the registred keys\n"
 	 << " */" << endl;
   header << "const std::vector<std::string>&" << endl;
-  header << "getKeys(void) const;" << endl;
+  header << "getKeys() const;" << endl;
   header << endl;
   header << "protected :" << endl;
   if(!names.empty()){
@@ -427,7 +427,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
 	<< n << ");\n" << endl;
   }
   src << "Glossary&" << endl;
-  src << "Glossary::getGlossary(void)" << endl;
+  src << "Glossary::getGlossary()" << endl;
   src << "{" << endl;
   src << "static Glossary glossary;" << endl;
   src << "return glossary;" << endl;
@@ -474,7 +474,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer)
       << "} // end of Glossary::contains" << endl;
   src << endl;
   src << "const std::vector<std::string>&" << endl;
-  src << "Glossary::getKeys(void) const" << endl;
+  src << "Glossary::getKeys() const" << endl;
   src << "{" << endl
       << "return this->keys;" << endl
       << "} // end of Glossary::contains" << endl;
@@ -569,7 +569,7 @@ void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer)
   header << "  /*!\n"
          << "   * \\return all the registred keys\n"
          << "   */" << endl;
-  header << "  const std::vector<std::string>& getKeys(void) const;" << endl;
+  header << "  const std::vector<std::string>& getKeys() const;" << endl;
   header << endl;
 
   header << "  protected:" << endl;
@@ -650,7 +650,7 @@ void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer)
   << n << ");\n" << endl;
   }
 
-  src << "Glossary& Glossary::getGlossary(void) {" << endl;
+  src << "Glossary& Glossary::getGlossary() {" << endl;
   src << "  static Glossary glossary;" << endl;
   src << "  return glossary;" << endl;
   src << "} // end of Glossary::getGlossary" << endl;
@@ -691,7 +691,7 @@ void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer)
   src << "} // end of Glossary::contains" << endl;
   src << endl;
 
-  src << "const std::vector<std::string>& Glossary::getKeys(void) const {" << endl;
+  src << "const std::vector<std::string>& Glossary::getKeys() const {" << endl;
   src << "  return this->keys;" << endl;
   src << "} // end of Glossary::contains" << endl;
   src << endl;
@@ -729,7 +729,7 @@ void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer)
   psrc << "#include\"TFEL/Glossary/Glossary.hxx\"" << endl;
   psrc << "#include\"TFEL/Glossary/GlossaryEntry.hxx\"" << endl;
   psrc << endl;
-  psrc << "void\ndeclareGlossary(void)" << endl;
+  psrc << "void\ndeclareGlossary()" << endl;
   psrc << "{" << endl;
   psrc << "using namespace boost;" << endl;
   psrc << "using namespace boost::python;" << endl;

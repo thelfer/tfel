@@ -69,21 +69,21 @@ namespace tfel
 
     template<unsigned short N,typename C,typename S>
     const typename RungeKutta54<N,C,S>::VariableType&
-    RungeKutta54<N,C,S>::getValue(void) const
+    RungeKutta54<N,C,S>::getValue() const
     {
       return this->y;
     } // end of RungeKutta54<N,C,S>::getValue
 
     template<unsigned short N,typename C,typename S>
     const S&
-    RungeKutta54<N,C,S>::getTimeIncrement(void) const
+    RungeKutta54<N,C,S>::getTimeIncrement() const
     {
       return this->dt;
     } // end of RungeKutta54<N,C,S>::getTimeIncrement
 
     template<unsigned short N,typename Child,typename Scalar>
     void
-    RungeKutta54<N,Child,Scalar>::iterate(void)
+    RungeKutta54<N,Child,Scalar>::iterate()
     {
       TFEL_CONSTEXPR const Scalar cste12_13       = Scalar(12)/Scalar(13);
       TFEL_CONSTEXPR const Scalar cste1932_2197   = Scalar(1932)/Scalar(2197);

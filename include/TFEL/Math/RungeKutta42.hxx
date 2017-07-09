@@ -41,11 +41,11 @@ namespace tfel{
       void
       setCriterium(const Scalar);
       void
-      iterate(void);
+      iterate();
       const VariableType&
-      getValue(void) const;
+      getValue() const;
       const Scalar&
-      getTimeIncrement(void) const;
+      getTimeIncrement() const;
     private:
       struct AbsoluteSommation;
       VariableType y;

@@ -51,16 +51,16 @@ namespace mfront{
 
   protected:
     
-    typedef void (Child::* MemberFuncPtr)(void);
+    typedef void (Child::* MemberFuncPtr)();
     typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
 
     BehaviourDSLBase();
 
-    virtual void analyse(void);
+    virtual void analyse();
     
-    void registerDefaultCallBacks(void);
+    void registerDefaultCallBacks();
 
-    void treatDisabledCallBack(void);
+    void treatDisabledCallBack();
 
     void registerNewCallBack(const std::string&,const MemberFuncPtr);
 

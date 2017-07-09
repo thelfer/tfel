@@ -38,7 +38,7 @@ namespace tfel{
 	this->h = h_;
       }
 
-      TFEL_MATH_INLINE2 void increm(void){
+      TFEL_MATH_INLINE2 void increm(){
 	TFEL_CONSTEXPR const auto one_half = T{1}/T{2};
 	static_cast<Func &>(*this).computeF(t,y);
 	k1 = y+one_half*h*f;
@@ -54,15 +54,15 @@ namespace tfel{
 	}
       }
 
-      TFEL_MATH_INLINE2 const tvector<N,T>& get_y(void) const{
+      TFEL_MATH_INLINE2 const tvector<N,T>& get_y() const{
 	return this->y;
       }
 
-      TFEL_MATH_INLINE2 T get_t(void) const {
+      TFEL_MATH_INLINE2 T get_t() const {
 	return this->t;
       }
 
-      TFEL_MATH_INLINE2 T get_h(void) const {
+      TFEL_MATH_INLINE2 T get_h() const {
 	return this->h;
       }
 

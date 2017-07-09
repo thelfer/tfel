@@ -55,7 +55,7 @@ namespace tfel
        * \return the name of the test
        */
       std::string
-      name(void) const;
+      name() const;
       /*!
        * add a new test
        * \param t : test to be added
@@ -74,7 +74,7 @@ namespace tfel
        * \return tests global results
        */
       TestResult
-      execute(void);
+      execute();
       /*! 
        * destructor
        */

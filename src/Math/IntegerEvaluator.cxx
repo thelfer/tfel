@@ -364,7 +364,7 @@ namespace tfel
     IntegerEvaluator::getNumberOfVariables() const
     {
       return this->variables.size();
-    } // end of IntegerEvaluator::getNumberOfVariables(void) const;
+    } // end of IntegerEvaluator::getNumberOfVariables() const;
 
     void IntegerEvaluator::analyse(const std::string& f,
 				   const bool b)

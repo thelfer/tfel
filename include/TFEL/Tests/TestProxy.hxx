@@ -103,10 +103,10 @@
  * \date   11 Apr 2010
  */
 #define TFEL_TESTS_FUNCTION(X,G,Y)				   \
-  bool TFEL_VISIBILITY_LOCAL X(void);	                           \
+  bool TFEL_VISIBILITY_LOCAL X();	                           \
   TFEL_TESTS_GENERATE_PROXY3(tfel::tests::TestFunctionWrapper<X>,  \
                              TFEL_PP_JOIN(X,FunctionWrapper),G,Y); \
-  bool X(void)
+  bool X()
 
 namespace tfel
 {

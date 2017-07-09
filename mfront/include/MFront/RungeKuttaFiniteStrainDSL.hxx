@@ -28,9 +28,9 @@ namespace mfront
     : public RungeKuttaDSLBase
   {
     //! \return the name of the dsl
-    static std::string getName(void);
+    static std::string getName();
     //! \return the description of the dsl
-    static std::string getDescription(void);
+    static std::string getDescription();
     //! constructor
     RungeKuttaFiniteStrainDSL();
     //! destructor

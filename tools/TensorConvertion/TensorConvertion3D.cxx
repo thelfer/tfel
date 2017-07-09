@@ -49,7 +49,7 @@ void t2tot2()
   }
 }
 
-int main(void){
+int main(){
   return EXIT_SUCCESS;
 }
 

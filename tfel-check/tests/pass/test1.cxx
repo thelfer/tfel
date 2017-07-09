@@ -1,7 +1,7 @@
 #include<cstdlib>
 #include<cstring>
 
-int main(void) {
+int main() {
   const char * my_env = ::getenv("TFEL_CHECK_TEST1_ENV");
   if (my_env == 0) {
     return EXIT_FAILURE;

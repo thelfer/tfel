@@ -102,7 +102,7 @@ namespace mfront{
       os << p->flowRule << endl;
       os << "}\n\n";
     }
-    os << "bool NewtonIntegration(void){\n"
+    os << "bool NewtonIntegration(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "tvector<" << this->flows.size() << ",strain> vdp(strain(real(0.)));\n"

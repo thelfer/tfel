@@ -41,7 +41,7 @@ namespace mtest{
      * multipliers)
      */
     virtual size_type
-    getNumberOfUnknowns(void) const = 0;
+    getNumberOfUnknowns() const = 0;
     /*!
      * \brief initialize the current state
      * \param[in] s : current state
@@ -204,7 +204,7 @@ namespace mtest{
     virtual void printOutput(const real,const StudyCurrentState&,
 			     const bool) const = 0;
     //! \brief set the modelling hypothesis to the default one
-    virtual void setDefaultModellingHypothesis(void) = 0;
+    virtual void setDefaultModellingHypothesis() = 0;
     //! destructor
     virtual ~Study();
   protected:

@@ -43,7 +43,7 @@ namespace tfel
 	msg += "throwInvalidCreateFunctionByChangingParametersIntoVariables : ";
 	msg += "invalid call";
 	throw(runtime_error(msg));
-      } // end of KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables(void)
+      } // end of KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables()
 
       void
       KrigedFunctionBase::throwInvalidIndexException(const std::vector<double>::size_type i,

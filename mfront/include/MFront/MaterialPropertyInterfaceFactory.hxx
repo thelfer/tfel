@@ -27,13 +27,13 @@ namespace mfront{
   struct MFRONT_VISIBILITY_EXPORT MaterialPropertyInterfaceFactory
   {
 
-    typedef std::shared_ptr<AbstractMaterialPropertyInterface> (*InterfaceCreator)(void);
+    typedef std::shared_ptr<AbstractMaterialPropertyInterface> (*InterfaceCreator)();
   
     static MaterialPropertyInterfaceFactory&
     getMaterialPropertyInterfaceFactory();
 
     std::vector<std::string>
-    getRegistredInterfaces(void) const;
+    getRegistredInterfaces() const;
 
     void
     registerInterfaceCreator(const std::string&,
@@ -79,15 +79,15 @@ namespace mfront{
 
     TFEL_VISIBILITY_LOCAL
     InterfaceDependencyContainer&
-    getDependenciesMap(void) const;
+    getDependenciesMap() const;
 
     TFEL_VISIBILITY_LOCAL
     InterfaceCreatorsContainer&
-    getInterfaceCreatorsMap(void) const;
+    getInterfaceCreatorsMap() const;
 
     TFEL_VISIBILITY_LOCAL
     AliasContainer&
-    getAliasesMap(void) const;
+    getAliasesMap() const;
 
   };
 

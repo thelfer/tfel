@@ -8,7 +8,7 @@
 #include<iostream>
 #include<cstdlib>
 
-int main(void){
+int main(){
   for(unsigned short i=0;i!=3;++i){
     for(unsigned short j=0;j!=3;++j){
       if((i==0)&&(j==0)){

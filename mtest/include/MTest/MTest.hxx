@@ -74,17 +74,17 @@ namespace mtest
     /*!
      * default constructor
      */
-    MTest(void);
+    MTest();
     /*! 
      * \return the name of the test
      */
     virtual std::string
-    name(void) const override;
+    name() const override;
     /*! 
      * \return the group of the test
      */
     virtual std::string
-    classname(void) const override;
+    classname() const override;
     /*!
      * \param[in] f : file to be read
      * \param[in] ecmds: external commands
@@ -101,7 +101,7 @@ namespace mtest
      * \note this method is called automatically by the execute method.
      */ 
     virtual void
-    completeInitialisation(void) override;
+    completeInitialisation() override;
     /*!
      * \brief initialize the current state
      * \param[in] s : current state
@@ -119,7 +119,7 @@ namespace mtest
      * along the loading path
      */ 
     virtual tfel::tests::TestResult
-    execute(void) override;
+    execute() override;
     /*!
      * \brief update current state at the beginning of a new time step:
      * - update the material properties
@@ -337,7 +337,7 @@ namespace mtest
     ~MTest();
   protected:
     //! \brief set the modelling hypothesis to the default one
-    virtual void setDefaultModellingHypothesis(void) override;
+    virtual void setDefaultModellingHypothesis() override;
     /*!
      * \brief set the position of the Gauss point in the evolution
      * manager
@@ -349,7 +349,7 @@ namespace mtest
      * \return the number of unknowns (size of driving variables plus
      * the number of lagrangian multipliers)
      */
-    virtual size_t getNumberOfUnknowns(void) const override;
+    virtual size_t getNumberOfUnknowns() const override;
     //! list of tests
     std::vector<std::shared_ptr<UTest>> tests;
     //! constraints

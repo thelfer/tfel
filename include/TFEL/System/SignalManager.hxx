@@ -33,7 +33,7 @@ namespace tfel
       static void
       printBackTrace(const int);
       static SignalManager&
-      getSignalManager(void);
+      getSignalManager();
       unsigned short
       registerHandler(const int,SignalHandler *const,struct sigaction&);
       unsigned short
@@ -55,7 +55,7 @@ namespace tfel
       SignalManager&
       operator = (const SignalManager &);
       TFEL_VISIBILITY_LOCAL
-      void eraseHandlers(void);
+      void eraseHandlers();
       TFEL_VISIBILITY_LOCAL
       static void treatAction(int);
       std::map<int,std::map<unsigned short,SignalHandler *> > callBacks;

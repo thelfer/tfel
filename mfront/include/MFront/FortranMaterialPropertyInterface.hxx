@@ -22,7 +22,7 @@ namespace mfront{
     : public CMaterialPropertyInterfaceBase
   {
     static std::string 
-    getName(void);
+    getName();
     
     FortranMaterialPropertyInterface();
     /*!
@@ -115,7 +115,7 @@ namespace mfront{
     getCheckBoundsFunctionName(const MaterialPropertyDescription&) const override;
 
     virtual bool
-    requiresCheckBoundsFunction(void) const override;
+    requiresCheckBoundsFunction() const override;
 
   }; // end of MfrontFortranMaterialPropertyInterface
 

@@ -199,19 +199,19 @@ namespace tfel{
        */
       static TFEL_MATH_INLINE TFEL_CONSTEXPR
       tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type>
-      transpose_derivative(void);
+      transpose_derivative();
       //! \return the identity
       static TFEL_MATH_INLINE TFEL_CONSTEXPR
-      tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type> Id(void);
+      tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type> Id();
       //! \return Id2^Id2, where Id2 is the identity tensor 
       static TFEL_MATH_INLINE TFEL_CONSTEXPR
-      tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type> IxI(void);
+      tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type> IxI();
       /*!
        * \return Id4-Id2^Id2/3, where Id4 is the identity of t2tot2 and
        * Id2 is the identity tensor
        */
       static TFEL_MATH_INLINE TFEL_CONSTEXPR
-      tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type> K(void);
+      tfel::math::t2tot2<N,typename tfel::typetraits::BaseType<T>::type> K();
       //! This is a T2toT2 concept requirement.
       typedef EmptyRunTimeProperties RunTimeProperties;
       /*!
@@ -269,7 +269,7 @@ namespace tfel{
        * \return tvector::RunTimeProperties
        */
       TFEL_MATH_INLINE RunTimeProperties
-      getRunTimeProperties(void) const;
+      getRunTimeProperties() const;
 
       template<typename InputIterator>
       TFEL_MATH_INLINE2 void copy(const InputIterator src);

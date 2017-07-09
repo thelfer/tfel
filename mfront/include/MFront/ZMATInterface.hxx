@@ -38,7 +38,7 @@ namespace mfront{
     //! a simple alias
     typedef ModellingHypothesis::Hypothesis Hypothesis;
     //! \return the name of the interface
-    static std::string getName(void);
+    static std::string getName();
 
     ZMATInterface();
 

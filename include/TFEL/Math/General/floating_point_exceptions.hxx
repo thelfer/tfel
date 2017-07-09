@@ -30,9 +30,9 @@ namespace tfel{
      * - FE_OVERFLOW: the Underflow exception occurs when a result has to be represented as a floating point number,  but  has  smaller absolute  value  than  the  smallest positive normalized floating point number (and would lose much accuracy when represented as a denormalized number).
      * - FE_INEXACT: the Inexact exception occurs when the rounded result of an operation is  not  equal  to  the  infinite  precision result.  It may occur whenever Overflow or Underflow occurs.
      */
-    inline void init_floating_point_exceptions(void);
+    inline void init_floating_point_exceptions();
 
-    void init_floating_point_exceptions(void)
+    void init_floating_point_exceptions()
     {
 #ifdef HAVE_FENV
 #ifdef _GNU_SOURCE

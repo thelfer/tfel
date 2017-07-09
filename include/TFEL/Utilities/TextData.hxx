@@ -91,7 +91,7 @@ namespace tfel
        * \return the legend associated to the curves
        */
       const std::vector<std::string>&
-      getLegends(void) const;
+      getLegends() const;
       /*!
        * \return the title of the specified column
        * \param[in] c : column number
@@ -113,7 +113,7 @@ namespace tfel
        * get the first commented lines
        */
       const std::vector<std::string>&
-      getPreamble(void) const;
+      getPreamble() const;
       /*!
        * skip the first lines of the file
        * \param[in] n : number of lines to be skipped

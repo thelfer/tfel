@@ -24,12 +24,12 @@ namespace mfront{
   {
     IsotropicStrainHardeningMisesCreepDSL();
 
-    static std::string getName(void);
+    static std::string getName();
 
-    static std::string getDescription(void);
+    static std::string getDescription();
     
     virtual void
-    endsInputFileProcessing(void) override;
+    endsInputFileProcessing() override;
 
     virtual ~IsotropicStrainHardeningMisesCreepDSL();
 

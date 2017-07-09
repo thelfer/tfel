@@ -63,10 +63,10 @@ namespace tfel
 	   const mode_t=S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
 
       void
-      close(void);
+      close();
 
       int
-      getFileDescriptor(void) const;
+      getFileDescriptor() const;
 
       // destructor
       ~wfstream();

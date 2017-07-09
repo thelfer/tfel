@@ -85,12 +85,12 @@ namespace mtest{
 			     const EvolutionPtr,
 			     const bool);
     //! \return the behaviour type
-    virtual BehaviourType getBehaviourType(void) const;
+    virtual BehaviourType getBehaviourType() const;
     //! \return the behaviour kinematic
-    virtual Kinematic getBehaviourKinematic(void) const;
+    virtual Kinematic getBehaviourKinematic() const;
     //! \return the behaviour
     virtual std::shared_ptr<Behaviour>
-    getBehaviour(void);
+    getBehaviour();
     /*!
      * \brief set if mtest shall handle thermal expansion coefficient
      * If true, the thermal expansion will be handled if the thermal
@@ -180,10 +180,10 @@ namespace mtest{
      * complete the initialisation. This method must be called once.
      * \note this method must be called by the derived class.
      */ 
-    virtual void completeInitialisation(void) override;
+    virtual void completeInitialisation() override;
     //! \return the default stiffness matrix type
     virtual StiffnessMatrixType
-    getDefaultStiffnessMatrixType(void) const override;
+    getDefaultStiffnessMatrixType() const override;
     //! list of internal variable names, including their suffixes
     std::vector<std::string> ivfullnames;
     //! the mechanical behaviour

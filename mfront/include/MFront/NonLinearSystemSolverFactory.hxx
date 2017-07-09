@@ -29,7 +29,7 @@ namespace mfront
   struct NonLinearSystemSolverFactory
   {
     //! a simple alias
-    typedef std::shared_ptr<NonLinearSystemSolver> (* constructor)(void);
+    typedef std::shared_ptr<NonLinearSystemSolver> (* constructor)();
     /*!
      * \return the uniq instance of the solver factory
      */

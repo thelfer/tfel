@@ -46,7 +46,7 @@ namespace tfel{
     };
 
     template<typename T, template<typename> class concept>
-    constexpr bool implements(void){
+    constexpr bool implements(){
       return Implements<T,concept>::cond;
     }
     

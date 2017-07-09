@@ -33,7 +33,7 @@ namespace tfel
       ExternalCastemFunction::getValue() const
       {
 	return (*f)(&(this->variables[0]));
-      } // end of getValue(void) const
+      } // end of getValue() const
 
       void
       ExternalCastemFunction::setVariableValue(const std::vector<double>::size_type pos,
@@ -91,7 +91,7 @@ namespace tfel
       {
 	return std::shared_ptr<ExternalFunction>(new ExternalCastemFunction(this->f,
 									    static_cast<unsigned short>(this->variables.size())));
-      } // end of ExternalCastemFunction::resolveDependencies(void) const
+      } // end of ExternalCastemFunction::resolveDependencies() const
 
       std::shared_ptr<ExternalFunction>
       ExternalCastemFunction::differentiate(const std::vector<double>::size_type) const

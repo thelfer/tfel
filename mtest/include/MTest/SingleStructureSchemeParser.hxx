@@ -86,14 +86,14 @@ namespace mtest{
      * register the call backs associated with each command
      */
     virtual void
-    registerCallBacks(void) override;
+    registerCallBacks() override;
     /*!
      * \brief treat the current keyword
      * \param[in,out] p : position in the input file
      */
     bool treatKeyword(SingleStructureScheme&,tokens_iterator&);
     //! \return the list of keywords
-    std::vector<std::string> getKeyWordsList(void) const;
+    std::vector<std::string> getKeyWordsList() const;
   private:
     //! a simple alias
     using CallBack = void (SingleStructureSchemeParser::*)(SingleStructureScheme&,

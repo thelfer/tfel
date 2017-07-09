@@ -240,7 +240,7 @@ namespace castem{
      * parameter is not valid
      */
     static void
-    displayInvalidModellingHypothesisErrorMessage(void);
+    displayInvalidModellingHypothesisErrorMessage();
 
   }; // end of struct CastemInterfaceExceptions
   

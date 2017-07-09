@@ -26,7 +26,7 @@ namespace mfront
    * Users can use the MFRONT_ADDITIONAL_LIBRARIES environment to load
    * their own libraries. See the DSLProxy class for details.
    */
-  MFRONT_VISIBILITY_EXPORT void initDSLs(void);
+  MFRONT_VISIBILITY_EXPORT void initDSLs();
 
 } // end of namespace mfront  
 

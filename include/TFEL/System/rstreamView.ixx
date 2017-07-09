@@ -30,7 +30,7 @@ namespace tfel
     template<bool isBlocking>
     TFEL_INLINE2
     int
-    rstreamView<isBlocking>::getFileDescriptor(void) const
+    rstreamView<isBlocking>::getFileDescriptor() const
     {
       return this->fd;
     } // end of rstreamView<isBlocking>::getFileDescriptor

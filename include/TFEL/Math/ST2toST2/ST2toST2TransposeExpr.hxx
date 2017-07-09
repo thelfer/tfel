@@ -46,7 +46,7 @@ namespace tfel{
       typedef ST2toST2NumType<typename std::decay<A>::type>   NumType;
       
       TFEL_MATH_INLINE RunTimeProperties
-      getRunTimeProperties(void) const
+      getRunTimeProperties() const
       {
 	return EmptyRunTimeProperties();
       }

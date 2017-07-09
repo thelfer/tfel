@@ -269,7 +269,7 @@ writeFileTrailer(std::ostream& out,
 } // end of writeFileTrailer
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using namespace std;
   // all fouth order tensor

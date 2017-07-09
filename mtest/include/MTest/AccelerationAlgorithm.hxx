@@ -38,7 +38,7 @@ namespace mtest{
      * \return the name of the acceleration algorithm
      */
     virtual std::string
-    getName(void) const = 0;
+    getName() const = 0;
     /*!
      * \param[in] psz : total number of unknowns (problem size)
      */

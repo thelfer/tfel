@@ -32,45 +32,45 @@ namespace tfel{
 
       TestDocMain(const int, const char *const *const);
 
-      virtual void treatUnknownArgument(void) override;
+      virtual void treatUnknownArgument() override;
       
-      virtual int execute(void);
+      virtual int execute();
       
       virtual ~TestDocMain();
 
     private :
       
-      void registerArgumentCallBacks(void);    
+      void registerArgumentCallBacks();    
 
       virtual std::string
-      getVersionDescription(void) const override;
+      getVersionDescription() const override;
       
       virtual std::string
-      getUsageDescription(void) const override;
+      getUsageDescription() const override;
 
-      void treatLaTeX(void);
+      void treatLaTeX();
 
-      void treatMarkdown(void);
+      void treatMarkdown();
       
-      void treatSplit(void);
+      void treatSplit();
 
-      void treatFragment(void);
+      void treatFragment();
       
-      void treatSrc(void);
+      void treatSrc();
 
-      void treatLang(void);
+      void treatLang();
 
-      void treatLogFile(void);
+      void treatLogFile();
 
-      void treatPrefix(void);
+      void treatPrefix();
 
-      void treatKeyFile(void);
+      void treatKeyFile();
 
-      void treatCategoryFile(void);
+      void treatCategoryFile();
       
-      void treatTranslationFile(void);
+      void treatTranslationFile();
 
-      void treatMTest(void);
+      void treatMTest();
 
       std::string srcdir;
 

@@ -93,7 +93,7 @@ namespace mfront
     os << "#ifdef __cplusplus\n"
        << "} /* end of extern \"C\" */\n"
        << "#endif /* __cplusplus */\n\n";
-  } // end of CMaterialPropertyInterface::writeEndHeaderNamespace(void)
+  } // end of CMaterialPropertyInterface::writeEndHeaderNamespace()
 
   void CMaterialPropertyInterface::writeBeginSrcNamespace(std::ostream& os) const
   {
@@ -107,7 +107,7 @@ namespace mfront
     os << "#ifdef __cplusplus\n"
        << "} // end of extern \"C\"\n"
        << "#endif /* __cplusplus */\n\n";
-  } // end of CMaterialPropertyInterface::writeEndSrcNamespace(void)
+  } // end of CMaterialPropertyInterface::writeEndSrcNamespace()
 
   std::string
   CMaterialPropertyInterface::getFunctionName(const MaterialPropertyDescription& mpd) const

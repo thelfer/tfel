@@ -71,7 +71,7 @@ namespace tfel
 	BinaryOperation(const std::shared_ptr<Expr>,
 			const std::shared_ptr<Expr>);
 	virtual double
-	getValue(void) const override final;
+	getValue() const override final;
 	virtual void
         checkCyclicDependency(std::vector<std::string>&) const override final;
 	virtual std::shared_ptr<Expr>

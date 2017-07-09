@@ -43,7 +43,7 @@ namespace tfel
       wstreamView(const int);
       
       int
-      getFileDescriptor(void) const;
+      getFileDescriptor() const;
 
     private:
 

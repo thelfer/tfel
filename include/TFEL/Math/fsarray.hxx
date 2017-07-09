@@ -140,76 +140,76 @@ namespace tfel
        * \return iterator, an iterator to the first element
        */
       TFEL_MATH_INLINE iterator
-      begin(void) noexcept;
+      begin() noexcept;
       /*!
        * return an const iterator to the first element of the vector
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator to the first element
        */
       TFEL_MATH_INLINE const_iterator 
-      begin(void) const noexcept;
+      begin() const noexcept;
       /*!
        * return an const iterator to the first element of the vector
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator to the first element
        */
       TFEL_MATH_INLINE const_iterator 
-      cbegin(void) const noexcept;
+      cbegin() const noexcept;
       /*!
        * return an iterator after the last element of the vector
        * (provided for stl compatibility)
        * \return iterator, an iterator after the last element
        */
       TFEL_MATH_INLINE iterator
-      end(void) noexcept;
+      end() noexcept;
       /*!
        * return an const iterator after the last element of the vector
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator after the last element
        */
       TFEL_MATH_INLINE const_iterator
-      end(void) const noexcept;
+      end() const noexcept;
       /*!
        * return an const iterator after the last element of the vector
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator after the last element
        */
       TFEL_MATH_INLINE const_iterator
-      cend(void) const noexcept;
+      cend() const noexcept;
       /*!
        * return an reverse iterator to the last element of the vector
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator to the last element
        */
       TFEL_MATH_INLINE reverse_iterator
-      rbegin(void) noexcept;
+      rbegin() noexcept;
       /*!
        * return an const reverse iterator to the last element of the vector
        * (provided for stl compatibility)
        * \return const_reverse_iterator, a const reverse iterator to the last element
        */
       TFEL_MATH_INLINE const_reverse_iterator
-      rbegin(void) const noexcept;
+      rbegin() const noexcept;
       /*!
        * return an  reverse iterator before the first element of the vector
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator before the first element
        */
       TFEL_MATH_INLINE reverse_iterator
-      rend(void) noexcept;
+      rend() noexcept;
       /*!
        * return an const reverse iterator before the first element of the vector
        * (provided for stl compatibility)
        * \return const_reverse_iterator, a const reverse iterator before the first element
        */
       TFEL_MATH_INLINE const_reverse_iterator
-      rend(void) const noexcept;
+      rend() const noexcept;
       /*!
        * size of the finite size array
        * (compatibility with array)
        */
       constexpr TFEL_MATH_INLINE unsigned short
-      size(void) const noexcept;
+      size() const noexcept;
       /*!
        * access operator
        */

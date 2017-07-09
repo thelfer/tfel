@@ -319,7 +319,7 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     constexpr typename tensor<N,T>::RunTimeProperties
-    tensor<N,T>::getRunTimeProperties(void) const{
+    tensor<N,T>::getRunTimeProperties() const{
       return RunTimeProperties();
     }
 
@@ -358,7 +358,7 @@ namespace tfel{
     // Return Id
     template<unsigned short N,typename T>
     const tensor<N,T>&
-    tensor<N,T>::Id(void)
+    tensor<N,T>::Id()
     {
       typedef tfel::typetraits::base_type<T> base;
       constexpr base zero{0};

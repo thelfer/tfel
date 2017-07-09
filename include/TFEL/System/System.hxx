@@ -40,14 +40,14 @@ namespace tfel
      * \return the directory separator
      */
     TFELSYSTEM_VISIBILITY_EXPORT
-    char dirSeparator(void);
+    char dirSeparator();
     
     /*!
      * \return the directory separator as a string
      */
     TFELSYSTEM_VISIBILITY_EXPORT
     const std::string&
-    dirStringSeparator(void);
+    dirStringSeparator();
 
     /*!
      * This structure contains C++ wrapping over many
@@ -110,17 +110,17 @@ namespace tfel
       // get the current working directory
       // (little wrapper of ::getwd)
       static std::string
-      getCurrentWorkingDirectory(void);
+      getCurrentWorkingDirectory();
 
       // get the current working directory
       // (little wrapper of ::getlogin_r)
       static std::string
-      getUserName(void);
+      getUserName();
 
       // get the current working directory
       // (little wrapper of ::gethostname)
       static std::string
-      getHostName(void);
+      getHostName();
 
     private:
 

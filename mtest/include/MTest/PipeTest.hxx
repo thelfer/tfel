@@ -90,23 +90,23 @@ namespace mtest{
     //! default constructor
     PipeTest();
     //! return the mesh
-    const PipeMesh& getMesh(void) const;
+    const PipeMesh& getMesh() const;
     /*! 
      * \return the name of the test
      */
     virtual std::string
-    name(void) const override;
+    name() const override;
     /*! 
      * \return the group of the test
      */
     virtual std::string
-    classname(void) const override;
+    classname() const override;
     /*!
      * integrate the behaviour
      * along the loading path
      */ 
     virtual tfel::tests::TestResult
-    execute(void) override;
+    execute() override;
     /*!
      * integrate the behaviour over one step
      * \param[out] s: current structure state
@@ -204,17 +204,17 @@ namespace mtest{
      * complete the initialisation. This method must be called once.
      * \note this method is called automatically by the execute method.
      */ 
-    virtual void completeInitialisation(void) override;
+    virtual void completeInitialisation() override;
     /*!
      * \return the total number of unknowns
      */
     virtual size_type
-    getNumberOfUnknowns(void) const override;
+    getNumberOfUnknowns() const override;
     /*!
      * \return the total number of nodes
      */
     virtual size_type
-    getNumberOfNodes(void) const;
+    getNumberOfNodes() const;
     /*!
      * \brief initialize the current state
      * \param[in] s : current state
@@ -368,9 +368,9 @@ namespace mtest{
     virtual void
     setModellingHypothesis(const std::string&) override;
     //! \brief set the modelling hypothesis to the default one
-    virtual void setDefaultModellingHypothesis(void) override;
+    virtual void setDefaultModellingHypothesis() override;
     //! \brief turn hpp to true
-    virtual void performSmallStrainAnalysis(void);
+    virtual void performSmallStrainAnalysis();
     /*!
      * \brief print usefull information in the output file 
      * \param[in] t: time

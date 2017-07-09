@@ -33,7 +33,7 @@ namespace mfront{
     using const_iterator =
       tfel::utilities::CxxTokenizer::TokensContainer::const_iterator;
     
-    static std::string getName(void);
+    static std::string getName();
     
     MFrontPleiadesMaterialPropertyInterface();
     /*!

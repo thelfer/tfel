@@ -52,7 +52,7 @@ namespace mfront{
     }; // end of enum FiniteStrainStrategy
     //! return the name of the interface
     static std::string 
-    getName(void);
+    getName();
     /*!
      * \param[in,out] mb: behaviour description
      * \param[in] k  : keyword treated
@@ -92,7 +92,7 @@ namespace mfront{
     getLibraryName(const BehaviourDescription&) const override;
     
     virtual std::string
-    getInterfaceName(void) const override;
+    getInterfaceName() const override;
     /*!
      * write the initialisation of the driving variables
      * \param[out] os: output file

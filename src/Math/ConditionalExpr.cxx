@@ -37,7 +37,7 @@ namespace tfel
 	  return this->a->getValue();
 	}
 	return this->b->getValue();
-      } // end of ConditionalExpr::getValue(void) const
+      } // end of ConditionalExpr::getValue() const
 
       void
       ConditionalExpr::checkCyclicDependency(std::vector<std::string>& vars) const

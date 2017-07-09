@@ -167,10 +167,10 @@ namespace mfront
       header << ");\n\n";
     }
     for(const auto& p : mpd.parameters){
-      header << "const double& get" << p.name << "(void) const;\n";
+      header << "const double& get" << p.name << "() const;\n";
     }
     for(const auto& p : mpd.parameters){
-      header << "double& get" << p.name << "(void);\n";
+      header << "double& get" << p.name << "();\n";
     }
     for(const auto& p : mpd.parameters){
       header << "void set" << p.name << "(const double);\n";
@@ -186,7 +186,7 @@ namespace mfront
 	   << "} // end of namespace mfront\n\n"
 	   << "#endif /* LIB_MFRONT_" << makeUpperCase(name) << "_HXX */\n";
     header.close();
-  } // end of CppMaterialPropertyInterface::writeHeaderFile(void)
+  } // end of CppMaterialPropertyInterface::writeHeaderFile()
 
   void CppMaterialPropertyInterface::writeSrcFile(const MaterialPropertyDescription& mpd,
 						  const FileDescription& fd) const
@@ -245,10 +245,10 @@ namespace mfront
       src << "const double& ";
       src << name;
       src << "::get"
-	  << p.name << "(void) const{\n"
+	  << p.name << "() const{\n"
 	  << "return this->" << p.name << ";\n"
 	  << "} // end of " << name << "::get\n\n";
-      src << "double& " << name << "::get" << p.name << "(void){\n"
+      src << "double& " << name << "::get" << p.name << "(){\n"
 	  << "return " << p.name << ";\n"
 	  << "} // end of " << name << "::get\n\n";
       src << "void " << name;
@@ -461,7 +461,7 @@ namespace mfront
 	<< name << "\n\n"
 	<< "} // end of namespace mfront\n\n";
     src.close();
-  } // end of CppMaterialPropertyInterface::writeSrcFile(void)
+  } // end of CppMaterialPropertyInterface::writeSrcFile()
 
   CppMaterialPropertyInterface::~CppMaterialPropertyInterface() = default;
   

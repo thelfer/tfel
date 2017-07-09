@@ -49,19 +49,19 @@ namespace mfront{
     //! return the current Argument
     virtual const tfel::utilities::Argument&
     getCurrentCommandLineArgument() const = 0;
-    virtual bool treatUnknownArgumentBase(void);
+    virtual bool treatUnknownArgumentBase();
     //! treat the --verbose command line option
-    virtual void treatVerbose(void);
+    virtual void treatVerbose();
     //! treat the --search-path command line option
-    virtual void treatSearchPath(void);
+    virtual void treatSearchPath();
     //! treat the --warning command line option
-    virtual void treatWarning(void);
+    virtual void treatWarning();
     //! treat the --debug command line option
-    virtual void treatDebug(void);
+    virtual void treatDebug();
     //! treat the --pedantic command line option
-    virtual void treatPedantic(void);
+    virtual void treatPedantic();
     //! treat the --interface command line option
-    virtual void treatInterface(void);
+    virtual void treatInterface();
     /*!
      * \brief external commands specificed on the command line through
      * an --@XXX option

@@ -125,7 +125,7 @@ namespace mfront
      * \param[in] n : name
      */
     const std::map<std::string,VariableAttribute>&
-    getAttributes(void) const;
+    getAttributes() const;
     //! \return true if bounds has been specified for this variable
     bool hasBounds() const;
     /*!

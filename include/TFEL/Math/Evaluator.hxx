@@ -70,7 +70,7 @@ namespace tfel
 				   std::vector<std::shared_ptr<tfel::math::parser::Expr> >&);
       struct FunctionGeneratorManager;
       static FunctionGeneratorManager&
-      getFunctionGeneratorManager(void);
+      getFunctionGeneratorManager();
 
       static double max(const double,const double);
       static double min(const double,const double);
@@ -180,13 +180,13 @@ namespace tfel
 		  const std::string&,
 		  std::shared_ptr<tfel::math::parser::ExternalFunctionManager>&);
       virtual double
-      getValue(void) const override;
+      getValue() const override;
       virtual std::vector<std::string>
-      getVariablesNames(void) const;
+      getVariablesNames() const;
       virtual std::vector<double>::size_type
-      getNumberOfVariables(void) const override;
+      getNumberOfVariables() const override;
       virtual void
-      checkCyclicDependency(void) const;
+      checkCyclicDependency() const;
       virtual void
       checkCyclicDependency(const std::string&) const override;
       virtual void
@@ -196,9 +196,9 @@ namespace tfel
       virtual std::shared_ptr<tfel::math::parser::ExternalFunction>
       differentiate(const std::string&) const override;
       virtual std::shared_ptr<tfel::math::parser::ExternalFunction>
-      resolveDependencies(void) const override;
+      resolveDependencies() const override;
       virtual void
-      removeDependencies(void);
+      removeDependencies();
       virtual void setVariableValue(const std::vector<double>::size_type,
 				    const double) override;
       virtual void setVariableValue(const std::string&,const double);
@@ -226,7 +226,7 @@ namespace tfel
       static bool TFEL_VISIBILITY_LOCAL
       isNumber(const std::string&);
       //! \brief clear the object
-      TFEL_VISIBILITY_LOCAL void clear(void);
+      TFEL_VISIBILITY_LOCAL void clear();
       void TFEL_VISIBILITY_LOCAL
       treatDiff(std::vector<std::string>::const_iterator&,
 		const std::vector<std::string>::const_iterator,

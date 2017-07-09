@@ -36,7 +36,7 @@ namespace tfel{
       typedef EmptyRunTimeProperties RunTimeProperties; 
 
       TFEL_MATH_INLINE RunTimeProperties
-      getRunTimeProperties(void) const
+      getRunTimeProperties() const
       {
 	return EmptyRunTimeProperties();
       }

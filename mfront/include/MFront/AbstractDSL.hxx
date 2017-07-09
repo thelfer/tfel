@@ -43,7 +43,7 @@ namespace mfront{
       MODELDSL
     }; // end of 
     //! \return the target of the dsl
-    virtual DSLTarget getTargetType(void) const = 0;
+    virtual DSLTarget getTargetType() const = 0;
     //! \return the file description associated with the treated file
     virtual const FileDescription& getFileDescription() const = 0;
     /*!
@@ -66,7 +66,7 @@ namespace mfront{
      * \return the target description
      * \note This method shall be called *after* the analyseFile method
      */
-    virtual const TargetsDescription& getTargetsDescription(void) const = 0;
+    virtual const TargetsDescription& getTargetsDescription() const = 0;
     /*!
      * \brief treat the specified file.
      * \note This method shall be called *after* the analyseFile method

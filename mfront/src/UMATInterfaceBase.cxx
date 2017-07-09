@@ -1109,7 +1109,7 @@ namespace mfront
 								     const std::string& name) const
   {
     out << "static tfel::material::OutOfBoundsPolicy&\n"
-	<< this->getFunctionName(name) << "_getOutOfBoundsPolicy(void){\n"
+	<< this->getFunctionName(name) << "_getOutOfBoundsPolicy(){\n"
 	<< "using namespace tfel::material;\n"
 	<< "static OutOfBoundsPolicy policy = None;\n"
 	<< "return policy;\n"

@@ -73,48 +73,48 @@ namespace mtest
     UmatBehaviourBase(const UmatBehaviourDescription&,
 		      const Hypothesis);
     //! \return the modelling hypothesis 
-    virtual Hypothesis getHypothesis(void) const override;
+    virtual Hypothesis getHypothesis() const override;
     //! \return the type of the behaviour
-    virtual BehaviourType getBehaviourType(void) const override;
+    virtual BehaviourType getBehaviourType() const override;
     //! \return the type of the behaviour
-    virtual Kinematic getBehaviourKinematic(void) const override;
+    virtual Kinematic getBehaviourKinematic() const override;
     /*!
      * \return the size of a vector able to contain all the components
      * of the driving variables
      */
     virtual unsigned short
-    getDrivingVariablesSize(void) const override;
+    getDrivingVariablesSize() const override;
     /*!
      * \return the size of a vector able to contain all the components
      * of the thermodynamic forces
      */
     virtual unsigned short
-    getThermodynamicForcesSize(void) const override;
+    getThermodynamicForcesSize() const override;
     /*!
      * \return the components suffixes of a symmetric tensor
      */
     virtual std::vector<std::string>
-    getStensorComponentsSuffixes(void) const override;
+    getStensorComponentsSuffixes() const override;
     /*!
      * \return the components suffixes of a vector
      */
     virtual std::vector<std::string>
-    getVectorComponentsSuffixes(void) const override;
+    getVectorComponentsSuffixes() const override;
     /*!
      * \return the components suffixes of a tensor
      */
     virtual std::vector<std::string>
-    getTensorComponentsSuffixes(void) const override;
+    getTensorComponentsSuffixes() const override;
     /*!
      * \return the components of the driving variables
      */
     virtual std::vector<std::string>
-    getDrivingVariablesComponents(void) const override;
+    getDrivingVariablesComponents() const override;
     /*!
      * \return the components of the thermodynamic forces
      */
     virtual std::vector<std::string>
-    getThermodynamicForcesComponents(void) const override;
+    getThermodynamicForcesComponents() const override;
     /*!
      * \param[in] cname : component name
      */
@@ -131,24 +131,24 @@ namespace mtest
      * 1 means that the behaviour is orthotropic.
      */
     virtual unsigned short
-    getSymmetryType(void) const override;
+    getSymmetryType() const override;
     /*!
      * \return the names of material properties
      */
     virtual std::vector<std::string>
-    getMaterialPropertiesNames(void) const override;
+    getMaterialPropertiesNames() const override;
     //! \return the names of internal variables
     virtual std::vector<std::string>
-    getInternalStateVariablesNames(void) const override;
+    getInternalStateVariablesNames() const override;
     //! \return expand the names of internal variables
     virtual std::vector<std::string>
     expandInternalStateVariablesNames() const override;
     //! \return the size of the array of internal variables
     virtual size_t
-    getInternalStateVariablesSize(void) const override;
+    getInternalStateVariablesSize() const override;
     //! \return the descriptions the internal variables
     virtual std::vector<std::string>
-    getInternalStateVariablesDescriptions(void) const override;
+    getInternalStateVariablesDescriptions() const override;
     /*!
      * \return the type of an internal variable
      * \param[in] n : internal variable name
@@ -163,7 +163,7 @@ namespace mtest
     getInternalStateVariablePosition(const std::string&) const override;
     //! \return the names of external variables
     virtual std::vector<std::string>
-    getExternalStateVariablesNames(void) const override;
+    getExternalStateVariablesNames() const override;
     //! \return the names of floating point parameters
     virtual std::vector<std::string>
     getParametersNames() const override;

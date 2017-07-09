@@ -43,25 +43,25 @@ namespace mfront
      * \return the reserved names
      */
     virtual std::vector<std::string>
-    getReservedNames(void) const = 0;
+    getReservedNames() const = 0;
     /*!
      * \return true if the solver uses the jacobian of the system
      * (Newton-Raphson solvers) or an approximation of it (Broyden
      * method).
      */
     virtual bool
-    usesJacobian(void) const = 0;
+    usesJacobian() const = 0;
     /*!
      * \return true if the solver uses the invert jacobian of the system
      * or an approximation of it (second Broyden method).
      */
     virtual bool
-    usesJacobianInvert(void) const = 0;
+    usesJacobianInvert() const = 0;
     /*!
      * \return true if the solver requires a numerical jacobian
      */
     virtual bool
-    requiresNumericalJacobian(void) const = 0;
+    requiresNumericalJacobian() const = 0;
     /*!
      * \return true if the solver allows the user to initialize the
      * jacobian.
@@ -70,7 +70,7 @@ namespace mfront
      * behaviour constructor.
      */
     virtual bool
-    allowsJacobianInitialisation(void) const = 0;
+    allowsJacobianInitialisation() const = 0;
     /*!
      * \return true if the solver allows the user to initialize the
      * invert of the jacobian.
@@ -79,14 +79,14 @@ namespace mfront
      * identity in the behaviour constructor.
      */
     virtual bool
-    allowsJacobianInvertInitialisation(void) const = 0;
+    allowsJacobianInvertInitialisation() const = 0;
     /*!
      * \return true if the solver requires the jacobian to be
      * initialized to the identity matrix at the beginning of the
      * computeFdF method.
      */
     virtual bool
-    requiresJacobianToBeReinitialisedToIdentityAtEachIterations(void) const = 0;
+    requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const = 0;
     /*!
      * \brief write the algorithm specific members
      * \param[in,out] md  : mechanical description

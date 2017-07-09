@@ -29,7 +29,7 @@ namespace tfel
      * A simple wrapper around test functions
      * \param f : function to be wrapped
      */ 
-   template<bool (*f)(void)>
+   template<bool (*f)()>
    struct TestFunctionWrapper final
      : public Test
    {
@@ -59,7 +59,7 @@ namespace tfel
       * execute test
       * \return the results of the test
       */
-     virtual TestResult execute(void) override;
+     virtual TestResult execute() override;
      //! destructor
      virtual ~TestFunctionWrapper();
    private:

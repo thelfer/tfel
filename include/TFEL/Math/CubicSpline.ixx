@@ -93,7 +93,7 @@ namespace tfel
 
     template<typename real,
 	     typename value>
-    void CubicSpline<real,value>::buildInterpolation(void) {
+    void CubicSpline<real,value>::buildInterpolation() {
       using namespace std;
       using std::vector;
       if(this->values.size()==1){

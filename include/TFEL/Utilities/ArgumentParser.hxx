@@ -45,7 +45,7 @@ namespace tfel
 	 * \param[in] b : true if the callback requires an option
 	 */
 	CallBack(const std::string&,
-		 const std::function<void(void)>&,
+		 const std::function<void()>&,
 		 const bool);
 	//! move constructor
 	CallBack(CallBack&&);
@@ -58,7 +58,7 @@ namespace tfel
 	//! description
 	const std::string d;
 	//! action performed
-	std::function<void(void)> c;
+	std::function<void()> c;
 	//! flag, true if the callback has an option
 	const bool hasOption = false;
       };
@@ -99,7 +99,7 @@ namespace tfel
 				    const std::string&,
 				    const CallBack&);
       //! \brief parse arguments using registred methods.
-      virtual void parseArguments(void);
+      virtual void parseArguments();
       //! destructor
       virtual ~ArgumentParser();
     protected:
@@ -121,14 +121,14 @@ namespace tfel
        *    class (if the 'treatVersion' method is not overriden if the
        *    derivate class)
        */
-      virtual void registerDefaultCallBacks(void);
+      virtual void registerDefaultCallBacks();
       /*!
        * \brief method called while parsing unregistred command line
        * arguments.
        *
        * \throw runtime_error
        */
-      virtual void treatUnknownArgument(void);
+      virtual void treatUnknownArgument();
       /*!
        * \brief method associated with the '--help' command line
        * argument.
@@ -139,12 +139,12 @@ namespace tfel
        * This method stops the execution by calling the exit
        * method.
        */
-      virtual void treatHelp(void);
+      virtual void treatHelp();
       /*!
        * \brief method associated with the '--version' command line
        * argument
        */
-      virtual void treatVersion(void);
+      virtual void treatVersion();
       //! container of all the call-backs
       CallBacksContainer callBacksContainer;
       //! container of all the alias
@@ -165,14 +165,14 @@ namespace tfel
       //! move assignement
       ArgumentParser& operator=(ArgumentParser&&) = delete;
       //! \brief replaces aliases by their usual names
-      virtual void replaceAliases(void);
+      virtual void replaceAliases();
       //! \brief slip arguments and options
-      virtual void stripArguments(void);
+      virtual void stripArguments();
     protected:
       //! \return the version of the program being used
-      virtual std::string getVersionDescription(void) const = 0;
+      virtual std::string getVersionDescription() const = 0;
       //! \return the usage of the program being used
-      virtual std::string getUsageDescription(void) const = 0;
+      virtual std::string getUsageDescription() const = 0;
     };
   } // end of namespace utilities
 

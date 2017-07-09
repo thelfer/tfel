@@ -15,7 +15,7 @@ static int index(const unsigned short i,
   return -1;
 }
 
-int main(void){
+int main(){
   // CIJKL=1/J(K_{IJKN}*F_{LN}
   for(unsigned short i=0;i!=3;++i){
     for(unsigned short j=0;j!=3;++j){

@@ -82,7 +82,7 @@ namespace mfront{
 			       "no flow rule defined for hypothesis "
 			       "'"+ModellingHypothesis::toString(h)+"'."));
     }
-    os << "void computeFlow(void){\n"
+    os << "void computeFlow(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "using namespace tfel::material;\n"
@@ -91,7 +91,7 @@ namespace mfront{
     os << this->mb.getCode(h,BehaviourData::FlowRule)
        << "\n}\n\n";
 
-    os << "bool NewtonIntegration(void){\n"
+    os << "bool NewtonIntegration(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "bool converge=false;\n"

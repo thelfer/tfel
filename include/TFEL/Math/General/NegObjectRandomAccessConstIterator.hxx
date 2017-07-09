@@ -66,13 +66,13 @@ namespace tfel{
       }											    
 											    
       TFEL_MATH_INLINE value_type 							    
-      operator*(void) const 								    
+      operator*() const 								    
       {											    
 	return -(*p);									    
       }											    
       											    
       TFEL_MATH_INLINE NegObjectRandomAccessConstIterator& 						    
-      operator++(void)									    
+      operator++()									    
       {											    
 	p++;										    
 	return *this;									    

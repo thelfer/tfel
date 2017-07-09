@@ -28,14 +28,14 @@ namespace tfel
 
     template<typename Child,typename Traits>
     TFEL_INLINE2
-    basic_wstream<Child,Traits>::operator int (void)
+    basic_wstream<Child,Traits>::operator int ()
     {
       return static_cast<Child* const>(this)->getFileDescriptor();
     } // end of basic_wstream<Child,Traits>::operator int
 
     template<typename Child,typename Traits>
     TFEL_INLINE2
-    basic_wstream<Child,Traits>::operator int (void) const
+    basic_wstream<Child,Traits>::operator int () const
     {
       return static_cast<const Child*>(this)->getFileDescriptor();
     } // end of basic_wstream<Child,Traits>::operator const int

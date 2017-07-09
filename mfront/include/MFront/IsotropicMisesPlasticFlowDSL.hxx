@@ -26,14 +26,14 @@ namespace mfront{
     : public IsotropicBehaviourDSLBase
   {
     //! \return the name of the dsl
-    static std::string getName(void);
+    static std::string getName();
     //! \return a description of the dsl
-    static std::string getDescription(void);
+    static std::string getDescription();
     //! constructor
     IsotropicMisesPlasticFlowDSL();
 
     virtual void
-    endsInputFileProcessing(void) override;
+    endsInputFileProcessing() override;
     //! desctructor
     virtual ~IsotropicMisesPlasticFlowDSL();
 

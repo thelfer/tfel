@@ -24,7 +24,7 @@ namespace tfel{
     
     template<typename T>
     tmatrix<3u,3u,T>
-    getRandomRotationMatrix(void)
+    getRandomRotationMatrix()
     {
       using namespace std;
       const T rmax = static_cast<T>(RAND_MAX);

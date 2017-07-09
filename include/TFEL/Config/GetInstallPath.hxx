@@ -14,7 +14,7 @@
 namespace tfel{
 
   TFELCONFIG_VISIBILITY_EXPORT std::string
-  getInstallPath(void);
+  getInstallPath();
   
 } // end of namespace tfel
 

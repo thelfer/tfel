@@ -33,7 +33,7 @@ namespace tfel
 	Variable(const std::vector<double>&,
 		 const std::vector<double>::size_type);
 	virtual double
-	getValue(void) const override;
+	getValue() const override;
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual std::shared_ptr<Expr>

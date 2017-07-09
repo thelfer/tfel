@@ -232,7 +232,7 @@ namespace mtest
      * register the call backs associated with each command
      */
     virtual void
-    registerCallBacks(void) override;
+    registerCallBacks() override;
     /*!
      * \brief treat the current keyword
      * \param[in,out] p: position in the input file

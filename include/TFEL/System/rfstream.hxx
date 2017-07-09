@@ -67,9 +67,9 @@ namespace tfel
       void open(const std::string&,
 		const int=O_RDONLY);
 
-      void close(void);
+      void close();
 
-      int getFileDescriptor(void) const;
+      int getFileDescriptor() const;
 
       //! destructor
       ~rfstream();

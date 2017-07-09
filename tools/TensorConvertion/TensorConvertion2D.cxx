@@ -19,7 +19,7 @@ static int index(const unsigned short i,
   return -1;
 }
 
-int main(void){
+int main(){
   // CIJKN=1/J(K_{IJKL}*F_{NL}
   // CIJKM=1/J(K_{IJKL}*F_{ML} (N=>M)
   // CIJKM=1/J(K_{IJKN}*F_{MN} (L=>N)

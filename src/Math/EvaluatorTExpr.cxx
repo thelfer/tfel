@@ -72,21 +72,21 @@ namespace tfel
     Evaluator::TOperator::getOperatorType() const
     {
       return this->type;
-    } // end of Evaluator::TOperator::getOperatorType(void) const
+    } // end of Evaluator::TOperator::getOperatorType() const
      
     bool Evaluator::TOperator::isOperator() const
     {
       return true;
-    } // end of Evaluator::TOperator::isOperator(void) const
+    } // end of Evaluator::TOperator::isOperator() const
     
     void Evaluator::TOperator::reduce()
-    {} // end of Evaluator::TOperator::reduce(void)
+    {} // end of Evaluator::TOperator::reduce()
     
     parser::ExprPtr
     Evaluator::TOperator::analyse()
     {
       throw(std::runtime_error("Evaluator::TOperator : invalid call"));
-    } // end of Evaluator::TOperator::analyse(void)
+    } // end of Evaluator::TOperator::analyse()
 
     Evaluator::TOperator::~TOperator() noexcept = default;
 
@@ -99,13 +99,13 @@ namespace tfel
     bool Evaluator::TBinaryOperation::isOperator() const
     {
       return false;
-    } // end of Evaluator::TBinaryOperation::isOperator(void) const
+    } // end of Evaluator::TBinaryOperation::isOperator() const
     
     void Evaluator::TBinaryOperation::reduce()
     {
       a->reduce();
       b->reduce();
-    } // end of Evaluator::TBinaryOperation::reduce(void)
+    } // end of Evaluator::TBinaryOperation::reduce()
      
     parser::ExprPtr
     Evaluator::TBinaryOperation::analyse()
@@ -124,7 +124,7 @@ namespace tfel
       }
       throw(std::runtime_error("Evaluator::TBinaryOperation : "
 			       "invalid operation type  '"+op->getOperatorType()+"'"));
-    } // end of Evaluator::TBinaryOperation::analyse(void)
+    } // end of Evaluator::TBinaryOperation::analyse()
     
     Evaluator::TBinaryOperation::~TBinaryOperation() = default;
 
@@ -419,7 +419,7 @@ namespace tfel
     bool Evaluator::TExternalOperator::isOperator() const
     {
       return false;
-    } // end of Evaluator::TExternalOperator::isOperator(void) const
+    } // end of Evaluator::TExternalOperator::isOperator() const
     
     parser::ExprPtr Evaluator::TExternalOperator::analyse()
     {
@@ -429,14 +429,14 @@ namespace tfel
 	r.push_back(a->analyse());
       }
       return (*(this->f))(this->param,r);
-    } // end of Evaluator::TExternalOperator::analyse(void)
+    } // end of Evaluator::TExternalOperator::analyse()
     
     void Evaluator::TExternalOperator::reduce()
     {
       for(auto& a : this->args){
 	a->reduce();
       }
-    } // end of Evaluator::TExternalOperator::reduce(void)
+    } // end of Evaluator::TExternalOperator::reduce()
     
     Evaluator::TExternalOperator::~TExternalOperator() = default;
 

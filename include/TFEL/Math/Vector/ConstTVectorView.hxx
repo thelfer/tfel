@@ -87,7 +87,7 @@ namespace tfel
        * (compatibility with vector)
        */
       constexpr TFEL_MATH_INLINE size_type
-      size(void) const noexcept{
+      size() const noexcept{
 	return N;
       }      
       

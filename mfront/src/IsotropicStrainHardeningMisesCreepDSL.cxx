@@ -85,7 +85,7 @@ namespace mfront{
     writeMaterialLaws(os,this->mb.getMaterialLaws());
     os << this->mb.getCode(h,BehaviourData::FlowRule) 
        << "\n}\n\n"
-       << "bool NewtonIntegration(void){\n"
+       << "bool NewtonIntegration(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "bool converge=false;\n"

@@ -67,11 +67,11 @@ namespace mtest{
     /*!
      * \return the behaviour workspace associated to the current thread.
      */
-    BehaviourWorkSpace& getBehaviourWorkSpace(void) const;
+    BehaviourWorkSpace& getBehaviourWorkSpace() const;
     /*!
      * \return the behaviour associated to the structure
      */
-    const Behaviour& getBehaviour(void) const;
+    const Behaviour& getBehaviour() const;
     //! destructor
     ~StructureCurrentState();
     //! current state of each integration points

@@ -37,7 +37,7 @@ namespace tfel
 	     unsigned short K,
 	     typename T>
     typename TMatrixConstColumnView<N,M,I,J,K,T>::RunTimeProperties
-    TMatrixConstColumnView<N,M,I,J,K,T>::getRunTimeProperties(void) const
+    TMatrixConstColumnView<N,M,I,J,K,T>::getRunTimeProperties() const
     {
       return RunTimeProperties();
     }

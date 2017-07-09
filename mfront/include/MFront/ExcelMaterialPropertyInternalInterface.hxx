@@ -35,7 +35,7 @@ namespace mfront{
      * \return the name of this interface
      */
     static std::string 
-    getName(void);
+    getName();
     //! constructor
     ExcelMaterialPropertyInternalInterface();
     //! destructor
@@ -43,7 +43,7 @@ namespace mfront{
   private:
 
     virtual std::string
-    getCallingConvention(void) const override;
+    getCallingConvention() const override;
     /*!
      * \return the name of the generated library
      * \param[in] mpd: material property description

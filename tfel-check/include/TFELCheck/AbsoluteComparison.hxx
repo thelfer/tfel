@@ -27,7 +27,7 @@ namespace tfel_check {
     : public Comparison
   {
     AbsoluteComparison();
-    virtual void compare(void) override;
+    virtual void compare() override;
     virtual ~AbsoluteComparison();
   };
 

@@ -47,10 +47,10 @@ namespace tfel
 		 const tfel::math::vector<T>&) const;
       
       TFEL_MATH_INLINE2 size_type
-      getNumberOfVariables(void) const;
+      getNumberOfVariables() const;
 
       TFEL_MATH_INLINE2 size_type
-      getNumberOfParameters(void) const;
+      getNumberOfParameters() const;
 
     private:
       

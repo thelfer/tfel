@@ -61,7 +61,7 @@ namespace mtest
      * \return the default type of stiffness matrix used by the behaviour
      */
     virtual StiffnessMatrixType
-    getDefaultStiffnessMatrixType(void) const override;
+    getDefaultStiffnessMatrixType() const override;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return a pair. The first member is true if the integration was

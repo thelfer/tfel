@@ -115,13 +115,13 @@ namespace tfel{
       /*!
        * Return the value of the qt.
        */
-      TFEL_MATH_INLINE T& getValue(void) noexcept;
+      TFEL_MATH_INLINE T& getValue() noexcept;
 
       /*!
        * Return the value of the qt, const version
        */
       TFEL_MATH_INLINE constexpr const T&
-      getValue(void) const noexcept;
+      getValue() const noexcept;
       //! assignement operator
       TFEL_MATH_INLINE qt<unit,T>&
       operator = (const qt<unit,T>&);
@@ -256,13 +256,13 @@ namespace tfel{
       /*!
        * Return the value of the qt
        */
-      TFEL_MATH_INLINE T& getValue(void) noexcept;
+      TFEL_MATH_INLINE T& getValue() noexcept;
 
       /*!
        * Return the value of the qt, const version
        */
       TFEL_MATH_INLINE constexpr
-      const T& getValue(void) const noexcept;
+      const T& getValue() const noexcept;
       /*!
        * Operator =
        */

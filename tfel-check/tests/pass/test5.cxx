@@ -8,7 +8,7 @@
 #include<cstdlib>
 #include<fstream>
 
-int main(void) {
+int main() {
   using namespace std;
   ofstream file("test5.res");
   if (!file) {

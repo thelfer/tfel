@@ -30,7 +30,7 @@ namespace mfront
     typedef tfel::material::FiniteStrainBehaviourTangentOperatorBase::Flag TangentOperatorFlag;
     //! \return : the list of all available conversions
     static std::vector<FiniteStrainBehaviourTangentOperatorConversion>
-    getAvailableFiniteStrainBehaviourTangentOperatorConversions(void);
+    getAvailableFiniteStrainBehaviourTangentOperatorConversions();
     /* copy and move constructors/assignement operators */
     FiniteStrainBehaviourTangentOperatorConversion(const FiniteStrainBehaviourTangentOperatorConversion&) = default;
     FiniteStrainBehaviourTangentOperatorConversion(FiniteStrainBehaviourTangentOperatorConversion&&) = default;
@@ -39,15 +39,15 @@ namespace mfront
     FiniteStrainBehaviourTangentOperatorConversion&
     operator=(FiniteStrainBehaviourTangentOperatorConversion&&) = default;
     //! \return the conversion starting point
-    TangentOperatorFlag from(void) const;
+    TangentOperatorFlag from() const;
     //! \return the conversion result point
-    TangentOperatorFlag to(void) const;
+    TangentOperatorFlag to() const;
     //! \return ther intermediate conversion code
     const std::string&
-    getIntermediateConversion(void) const;
+    getIntermediateConversion() const;
     //! \return ther intermediate conversion code
     const std::string&
-    getFinalConversion(void) const;
+    getFinalConversion() const;
     //! destrutor
     ~FiniteStrainBehaviourTangentOperatorConversion() noexcept;
   protected:

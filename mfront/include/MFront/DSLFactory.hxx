@@ -26,14 +26,14 @@ namespace mfront{
 
   struct MFRONT_VISIBILITY_EXPORT DSLFactory
   {
-    typedef std::shared_ptr<AbstractDSL> (*ParserCreator)(void);
-    typedef std::string (*DescriptionPtr)(void);
+    typedef std::shared_ptr<AbstractDSL> (*ParserCreator)();
+    typedef std::string (*DescriptionPtr)();
     
     static DSLFactory&
     getDSLFactory();
 
     std::vector<std::string>
-    getRegistredParsers(void);
+    getRegistredParsers();
 
     void registerParserCreator(const std::string&,
 			       ParserCreator,
@@ -60,11 +60,11 @@ namespace mfront{
 
     TFEL_VISIBILITY_LOCAL
     DescriptionPtrContainer&
-    getDescriptionMap(void);
+    getDescriptionMap();
 
     TFEL_VISIBILITY_LOCAL
     ParserCreatorsContainer&
-    getMap(void);
+    getMap();
 
   }; // end of struct DSLFactory
 

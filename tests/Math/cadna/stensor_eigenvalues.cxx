@@ -23,7 +23,7 @@
 #include"TFEL/Math/stensor.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(void)
+int main()
 {
   using real = cadna::numeric_type<double>;
   real vp1,vp2,vp3;

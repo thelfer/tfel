@@ -31,9 +31,9 @@ namespace mfront{
     writeBehaviourLocalVariablesInitialisation(std::ostream&,
 					       const Hypothesis) const override;
     virtual void
-    treatProvidesTangentOperator(void);
+    treatProvidesTangentOperator();
     virtual void
-    treatProvidesSymmetricTangentOperator(void);
+    treatProvidesSymmetricTangentOperator();
   }; // end of struct DefaultDSLBase
 
 } // end of namespace mfront  

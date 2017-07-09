@@ -140,7 +140,7 @@ namespace tfel
        * \throw MathDivergenceException if convergence was not reached
        */
       const Parameter&
-      execute(void);
+      execute();
       
     private:
 

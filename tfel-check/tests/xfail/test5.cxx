@@ -1,6 +1,6 @@
 #include<cstdlib>
 #include<cstring>
 
-int main(void) {
+int main() {
   return EXIT_FAILURE;
 }

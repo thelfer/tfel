@@ -58,7 +58,7 @@ namespace tfel{
     } // end of matrix<T>::resize
 
     template<typename T>
-    void matrix<T>::clear(void)
+    void matrix<T>::clear()
     {
       const typename matrix<T>::size_type n(0);
       vector<T>::clear();
@@ -228,14 +228,14 @@ namespace tfel{
 #else
     const typename matrix<T>::RunTimeProperties&
 #endif /* LIB_TFEL_MATRIXIXX */
-    matrix<T>::getRunTimeProperties(void) const
+    matrix<T>::getRunTimeProperties() const
     {
 #ifdef NO_RUNTIME_CHECK_BOUNDS
       return RunTimeProperties();
 #else
       return *this;
 #endif /* LIB_TFEL_MATRIXIXX */
-    } // end of matrix<T>::getRunTimeProperties(void) const
+    } // end of matrix<T>::getRunTimeProperties() const
 
     template<typename T>
     MatrixProperties<T>::MatrixProperties(const typename MatrixProperties<T>::IndexType n,

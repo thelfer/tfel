@@ -32,7 +32,7 @@ namespace tfel{
 
     template<typename T>
     bool
-    Permutation<T>::isIdentity(void) const
+    Permutation<T>::isIdentity() const
     {
       return this->is_identity;
     } // end of Permutation<T>::isIdendity

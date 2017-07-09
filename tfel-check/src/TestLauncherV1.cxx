@@ -117,7 +117,7 @@ namespace tfel_check {
     }
   }  // end of TestLauncherV1::registerCallBack
 
-  void TestLauncherV1::treatEnvironment(void) {
+  void TestLauncherV1::treatEnvironment() {
     using namespace std;
     using namespace tfel::utilities;
     if (this->current == this->line->end()) {
@@ -235,7 +235,7 @@ namespace tfel_check {
     ++(this->current);
   }  // end of TestLauncherV1::treatEnvironment
 
-  void TestLauncherV1::treatCommand(void) {
+  void TestLauncherV1::treatCommand() {
     using namespace std;
     using namespace tfel::utilities;
     if (this->current == this->line->end()) {
@@ -259,7 +259,7 @@ namespace tfel_check {
     ++(this->current);
   }  // end of TestLauncherV1::treatTestCommand
 
-  void TestLauncherV1::treatMeshCommand(void) {
+  void TestLauncherV1::treatMeshCommand() {
     using namespace std;
     using namespace tfel::utilities;
     if (this->current == this->line->end()) {
@@ -284,7 +284,7 @@ namespace tfel_check {
     ++(this->current);
   }  // end of TestLauncherV1::treatTestMeshCommand
 
-  void TestLauncherV1::treatTestType(void) {
+  void TestLauncherV1::treatTestType() {
     using namespace std;
     using namespace tfel::utilities;
     if (this->current == this->line->end()) {
@@ -401,7 +401,7 @@ namespace tfel_check {
     }
   }  // end of TestLauncherV1::treatTestType
 
-  void TestLauncherV1::treatTest(void) {
+  void TestLauncherV1::treatTest() {
     using namespace std;
     using namespace tfel::utilities;
     if (this->current == this->line->end()) {
@@ -504,7 +504,7 @@ namespace tfel_check {
     }
   }  // end of TestLauncherV1::treatTest
 
-  void TestLauncherV1::treatPrecision(void) {
+  void TestLauncherV1::treatPrecision() {
     using namespace std;
     this->prec = 1.e-8;
     this->precision2 = 0.;
@@ -544,7 +544,7 @@ namespace tfel_check {
     }
   }  // end of TestLauncherV1::treatPrecision
 
-  void TestLauncherV1::treatInterpolation(void) {
+  void TestLauncherV1::treatInterpolation() {
     using namespace std;
     using namespace tfel::utilities;
     if (this->current == this->line->end()) {
@@ -647,7 +647,7 @@ namespace tfel_check {
 
   }  // end of treatInterpolation
 
-  void TestLauncherV1::analyseInputFile(void) {
+  void TestLauncherV1::analyseInputFile() {
     using namespace std;
     map<string, CallBack>::const_iterator p;
     for (this->line = this->tokens.begin(); this->line != this->tokens.end();
@@ -702,7 +702,7 @@ namespace tfel_check {
     return 0.;
   }
 
-  bool TestLauncherV1::execute(void) {
+  bool TestLauncherV1::execute() {
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::utilities;

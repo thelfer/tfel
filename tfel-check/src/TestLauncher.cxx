@@ -126,7 +126,7 @@ namespace tfel_check {
     return v;
   }
   
-  void TestLauncher::treatEnvironment(void) {
+  void TestLauncher::treatEnvironment() {
     this->readSpecifiedToken("TestLauncher::treatEnvironment","{");
     this->checkNotEndOfFile("TestLauncher::treatEnvironment");
     while (this->current->value != "}") {
@@ -157,13 +157,13 @@ namespace tfel_check {
     this->readSpecifiedToken("TestLauncher::treatEnvironment",";");
   }  // end of TestLauncher::treatEnvironment
 
-  void TestLauncher::treatCommand(void) {
+  void TestLauncher::treatCommand() {
     const auto c = this->readString("TestLauncher::treatCommand");
     this->commands.push_back(c);
     this->readSpecifiedToken("TestLauncher::treatCommand",";");
   }  // end of TestLauncher::treatCommand
 
-  void TestLauncher::treatTestType(void) {
+  void TestLauncher::treatTestType() {
     if (this->current->value == "Absolute") {
       this->comparison.reset(new AbsoluteComparison());
     } else if (this->current->value == "Relative") {
@@ -211,7 +211,7 @@ namespace tfel_check {
     this->readSpecifiedToken("TestLauncher::treatTestType",";");
   }  // end of TestLauncher::treatTestType
 
-  void TestLauncher::treatTest(void) {
+  void TestLauncher::treatTest() {
     auto getColumn = [this](){
       // fetching the column's name to compare
       if ((this->current->flag==tfel::utilities::Token::String)||
@@ -287,7 +287,7 @@ namespace tfel_check {
     this->readSpecifiedToken("TestLauncher::treatTest",";");
   }  // end of TestLauncher::treatTest
 
-  void TestLauncher::treatPrecision(void) {
+  void TestLauncher::treatPrecision() {
     this->prec = CxxTokenizer::readDouble(this->current,this->end());
     this->checkNotEndOfFile("TestLauncher::treatPrecision");
     if(this->current->value!=";"){
@@ -314,7 +314,7 @@ namespace tfel_check {
     ++(this->current);
   }
   
-  void TestLauncher::treatInterpolation(void) {
+  void TestLauncher::treatInterpolation() {
     this->setInterpolation("TestLauncher::treatInterpolation");
     this->checkNotEndOfFile("TestLauncher::treatInterpolation");
     if(this->current->value==";"){
@@ -348,7 +348,7 @@ namespace tfel_check {
     this->readSpecifiedToken("TestLauncher::treatInterpolation",";");
   }  // end of treatInterpolation
 
-  void TestLauncher::analyseInputFile(void) {
+  void TestLauncher::analyseInputFile() {
     this->current=this->begin();
     while(this->current!=this->end()){
       auto p = this->callBacks.find(this->current->value);
@@ -390,7 +390,7 @@ namespace tfel_check {
     return 0.;
   }
 
-  bool TestLauncher::execute(void) {
+  bool TestLauncher::execute() {
     using namespace tfel::utilities;
     tfel::system::ProcessManager manager;
     bool gsuccess = true; /* global success indicator : false only

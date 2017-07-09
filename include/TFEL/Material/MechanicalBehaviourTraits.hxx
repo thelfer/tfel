@@ -90,7 +90,7 @@ namespace tfel{
        * can lead to static assertion failures.
        */
       static const char*
-      getName(void){
+      getName(){
 	return "";
       }
     };

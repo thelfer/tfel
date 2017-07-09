@@ -44,7 +44,7 @@ namespace tfel
       return this->as_string();
     }
     
-    bool Argument::hasOption(void) const noexcept
+    bool Argument::hasOption() const noexcept
     {
       return this->isOptionSet;
     }

@@ -142,7 +142,7 @@ namespace mfront {
        << "} // end of namespace Pleiades\n\n"
        << "#endif /* _PLEIADES_" << makeUpperCase(name) << "_HH */\n";
     os .close();
-  } // end of MFrontPleiadesMaterialPropertyInterface::writeHeaderFile(void)
+  } // end of MFrontPleiadesMaterialPropertyInterface::writeHeaderFile()
 
   void MFrontPleiadesMaterialPropertyInterface::writeSrcFile(const MaterialPropertyDescription& mpd,
 							     const FileDescription& fd) const {
@@ -208,7 +208,7 @@ namespace mfront {
     os << "}\n\n";
 
     // Compute
-    os << "void " << name << "::compute(void) {\n"
+    os << "void " << name << "::compute() {\n"
        << "apply(*this, getOutputField<double>(\"OutputField\")";
     for(const auto& i : mpd.inputs){
       os << ", getField<double>(\"" << i.name << "\")";
@@ -338,7 +338,7 @@ namespace mfront {
        << "GENERATE_PROXY(IMaterialProperty," << name << ");\n"
        << "} // end of namespace Pleiades\n";
     os.close();
-  } // end of MFrontPleiadesMaterialPropertyInterface::writeSrcFile(void)
+  } // end of MFrontPleiadesMaterialPropertyInterface::writeSrcFile()
 
   MaterialPropertyInterfaceProxy<MFrontPleiadesMaterialPropertyInterface> pleiadesLawProxy;
 

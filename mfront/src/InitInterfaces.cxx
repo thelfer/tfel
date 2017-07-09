@@ -150,6 +150,6 @@ namespace mfront
 
     ModelInterfaceProxy<MFrontModelInterface> mmi;
     
-  } // end of initInterfaces(void)
+  } // end of initInterfaces()
 
 } // end of namespace mfront

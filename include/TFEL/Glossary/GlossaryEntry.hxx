@@ -145,37 +145,37 @@ namespace tfel
        * \return the key
        */
       const std::string&
-	getKey(void) const;
+	getKey() const;
       /*!
        * \return names asssociated with this key
        */
       const std::vector<std::string>&
-	getNames(void) const;
+	getNames() const;
       /*!
        * \return the unit
        */
       const std::string&
-	getUnit(void) const;
+	getUnit() const;
       /*!
        * \return the type
        */
       const std::string&
-	getType(void) const;
+	getType() const;
       /*!
        * \return the short description
        */
       const std::string&
-	getShortDescription(void) const;
+	getShortDescription() const;
       /*!
        * \return the description
        */
       const std::vector<std::string>&
-	getDescription(void) const;
+	getDescription() const;
       /*!
        * \return the notes
        */
       const std::vector<std::string>&
-	getNotes(void) const;
+	getNotes() const;
       /*!
        * cast operator to string. Equivalent to getKey()
        */
@@ -221,7 +221,7 @@ namespace tfel
        * \brief check if this entry is valid.
        * Called by constructors
        */
-      void check(void) const;
+      void check() const;
       /*!
        * key used to store this entry in the glossary
        */

@@ -29,9 +29,9 @@ namespace tfel
     template<typename Child,typename Traits>
     struct basic_rstream
     {
-      operator int (void);
+      operator int ();
 
-      operator int (void) const;
+      operator int () const;
 
       basic_rstream& 
       operator>>(char&);
@@ -103,7 +103,7 @@ namespace tfel
       read(long double* const,const size_t);
 
       const std::string
-      getLine(void);
+      getLine();
       
     protected :
 

@@ -36,7 +36,7 @@ namespace tfel
       struct StandardBinaryFunctionBase
       {
 	TFEL_NORETURN static void
-	throwUnimplementedDifferentiateFunctionException(void);
+	throwUnimplementedDifferentiateFunctionException();
 	TFEL_NORETURN static void
 	throwInvalidCallException(const int);
       }; // end of struct StandardBinaryFunctionBase
@@ -50,7 +50,7 @@ namespace tfel
 			       const std::shared_ptr<Expr>);
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const override;
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<Expr>
 	resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>

@@ -62,7 +62,7 @@ namespace tfel
       unsigned short
       getNumberOfIterations() const;
 
-      const Parameter& execute(void);
+      const Parameter& execute();
       
       ~LevenbergMarquardt();
 

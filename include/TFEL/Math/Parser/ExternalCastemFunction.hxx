@@ -48,8 +48,8 @@ namespace tfel
 	setVariableValue(const std::vector<double>::size_type,
 			 const double) override;
 	virtual std::vector<double>::size_type
-	getNumberOfVariables(void) const override;
-	virtual double getValue(void) const override;
+	getNumberOfVariables() const override;
+	virtual double getValue() const override;
 	virtual void
 	checkCyclicDependency(const std::string&) const override;
 	virtual void
@@ -59,7 +59,7 @@ namespace tfel
 	virtual std::shared_ptr<ExternalFunction>
 	differentiate(const std::string&) const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
 	virtual std::shared_ptr<ExternalFunction>
 	createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const override;
 	virtual std::shared_ptr<ExternalFunction>

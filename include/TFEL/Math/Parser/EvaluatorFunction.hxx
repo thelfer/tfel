@@ -94,7 +94,7 @@ namespace tfel
 	EvaluatorFunction1P1V(const EvaluatorProxyFunctionPtr1P1V,
 			      const int,
 			      const std::shared_ptr<Expr>);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<Expr>
 	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
@@ -121,7 +121,7 @@ namespace tfel
 			      const int,
 			      const int,
 			      const std::shared_ptr<Expr>);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<Expr>
 	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
@@ -149,7 +149,7 @@ namespace tfel
 			      const int,
 			      const std::shared_ptr<Expr>,
 			      const std::shared_ptr<Expr>);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<Expr>
 	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
@@ -177,7 +177,7 @@ namespace tfel
 			      const int,
 			      const std::shared_ptr<Expr>,
 			      const std::shared_ptr<Expr>);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<Expr>
 	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
@@ -207,7 +207,7 @@ namespace tfel
       {
 	EvaluatorFunctionNV(typename EvaluatorFunctionWrapper<N>::type,
 			    const std::vector<std::shared_ptr<Expr> >&);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<Expr>
 	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
@@ -236,7 +236,7 @@ namespace tfel
 	EvaluatorFunction1PNV(typename EvaluatorFunctionWrapper<N>::type1P,
 			      const int,
 			      const std::vector<std::shared_ptr<Expr> >&);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<Expr>
 	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
@@ -266,7 +266,7 @@ namespace tfel
 	EvaluatorFunction2PNV(typename EvaluatorFunctionWrapper<N>::type2P,
 			      const int,const int,
 			      const std::vector<std::shared_ptr<Expr> >&);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<Expr>
 	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
@@ -295,7 +295,7 @@ namespace tfel
 	EvaluatorFunction1UPNV(typename EvaluatorFunctionWrapper<N>::type1UP,
 			       const unsigned int,
 			       const std::vector<std::shared_ptr<Expr> >&);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<Expr>
 	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>
@@ -326,7 +326,7 @@ namespace tfel
 			       const unsigned int n,
 			       const unsigned int m,
 			       const std::vector<std::shared_ptr<Expr> >&);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<Expr>
 	  resolveDependencies(const std::vector<double>&) const override;
 	virtual std::shared_ptr<Expr>

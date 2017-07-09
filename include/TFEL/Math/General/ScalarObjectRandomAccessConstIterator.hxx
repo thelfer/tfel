@@ -73,12 +73,12 @@ namespace tfel{
       }
 
       TFEL_MATH_INLINE 
-      value_type operator*(void) const 
+      value_type operator*() const 
       {
 	return Op::apply(a,*p);
       }
       
-      TFEL_MATH_INLINE ScalarObjectRandomAccessConstIterator& operator++(void)
+      TFEL_MATH_INLINE ScalarObjectRandomAccessConstIterator& operator++()
       {
 	p++;
 	return *this;
@@ -182,13 +182,13 @@ namespace tfel{
       }
 
       TFEL_MATH_INLINE value_type 
-      operator*(void) const 
+      operator*() const 
       {
 	return Op::apply(*p,b);
       }
       
       TFEL_MATH_INLINE ObjectScalarRandomAccessConstIterator& 
-      operator++(void)
+      operator++()
       {
 	p++;
 	return *this;

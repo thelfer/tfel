@@ -70,7 +70,7 @@ namespace tfel
     template<unsigned short N,unsigned short M,
 	     typename T,typename Model1,typename Model2>
     void
-    FactorizedKriging<N,M,T,Model1,Model2>::buildInterpolation(void)
+    FactorizedKriging<N,M,T,Model1,Model2>::buildInterpolation()
     {
       using namespace std;
       using namespace tfel::math::internals;

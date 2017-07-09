@@ -243,7 +243,7 @@ namespace tfel{
        */
       TFEL_MATH_INLINE2
       const RunTimeProperties
-      getRunTimeProperties(void) const;
+      getRunTimeProperties() const;
       /*
        * swap two vectors
        * \param vector&, the other vector

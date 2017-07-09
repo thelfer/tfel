@@ -40,7 +40,7 @@ namespace tfel{
        * identity
        */
       TFEL_MATH_INLINE
-      void reset(void);
+      void reset();
 
       using vector<T>::operator[];
       using vector<T>::operator();

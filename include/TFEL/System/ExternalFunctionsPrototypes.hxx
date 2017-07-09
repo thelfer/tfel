@@ -76,7 +76,7 @@ namespace tfel
       typedef double (TFEL_ADDCALL_PTR CastemFunctionPtr)(const double*);
 
       //! a simple alias
-      typedef double (TFEL_ADDCALL_PTR CFunction0Ptr)(void);
+      typedef double (TFEL_ADDCALL_PTR CFunction0Ptr)();
 
       //! a simple alias
       typedef double (TFEL_ADDCALL_PTR CFunction1Ptr)(double);
@@ -154,7 +154,7 @@ namespace tfel
 						       double,double);
 
       //! a simple alias
-      typedef double (TFEL_ADDCALL_PTR FortranFunction0Ptr)(void);
+      typedef double (TFEL_ADDCALL_PTR FortranFunction0Ptr)();
 
       //! a simple alias
       typedef double (TFEL_ADDCALL_PTR FortranFunction1Ptr)(const double *);

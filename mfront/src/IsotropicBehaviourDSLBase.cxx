@@ -397,7 +397,7 @@ namespace mfront{
     } else {
       BehaviourDSLCommon::writeBehaviourComputePredictionOperator(os,h);
     }
-  } // end of IsotropicBehaviourDSLBase::writeBehaviourComputePredictionOperator(void)
+  } // end of IsotropicBehaviourDSLBase::writeBehaviourComputePredictionOperator()
 
   void IsotropicBehaviourDSLBase::writeBehaviourComputeTangentOperator(std::ostream&,
 								       const Hypothesis) const

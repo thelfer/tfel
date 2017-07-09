@@ -703,7 +703,7 @@ const GlossaryEntry Glossary::YoungModulus3("YoungModulus3","YoungModulus3",
 "" /* no 'notes' defined */);
 
 Glossary&
-Glossary::getGlossary(void)
+Glossary::getGlossary()
 {
 static Glossary glossary;
 return glossary;
@@ -839,7 +839,7 @@ return *p;
 } // end of Glossary::contains
 
 const std::vector<std::string>&
-Glossary::getKeys(void) const
+Glossary::getKeys() const
 {
 return this->keys;
 } // end of Glossary::contains

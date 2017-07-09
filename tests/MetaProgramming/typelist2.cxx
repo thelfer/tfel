@@ -67,7 +67,7 @@ public:
   typename std::enable_if< 
     (N < tfel::meta::TLSize<T>::value),  
       typename tfel::meta::TLFindNthElt<T,N>::type >::type
-  get(void) const {
+  get() const {
     return static_cast<const holder<typename tfel::meta::TLFindNthElt<T,N>::type> *>(this)->value;
   }
   

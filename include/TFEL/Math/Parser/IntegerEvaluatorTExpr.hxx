@@ -31,9 +31,9 @@ namespace tfel
       TExpr& operator=(TExpr&&) = default;
       TExpr& operator=(const TExpr&) = default;
       virtual parser::IntegerExprPtr
-      analyse(void) = 0;
-      virtual void reduce(void) = 0;
-      virtual bool isOperator(void) const =0;
+      analyse() = 0;
+      virtual void reduce() = 0;
+      virtual bool isOperator() const =0;
       virtual ~TExpr();
     }; // end of IntegerEvaluator::TExpr
   
@@ -45,7 +45,7 @@ namespace tfel
 	: public tfel::math::parser::IntegerExpr
       {
 	Negation(const parser::IntegerExprPtr);
-	virtual int getValue(void) const override;
+	virtual int getValue() const override;
 	virtual parser::IntegerExprPtr
 	  clone(const std::vector<int>&) const override;
 	virtual ~Negation();
@@ -56,11 +56,11 @@ namespace tfel
       };
       TNegation(std::shared_ptr<IntegerEvaluator::TExpr>);
       virtual bool
-	isOperator(void) const override;
+	isOperator() const override;
       virtual parser::IntegerExprPtr
-	analyse(void) override;
+	analyse() override;
       virtual void
-	reduce(void) override;
+	reduce() override;
       virtual ~TNegation();
     private:
       std::shared_ptr<IntegerEvaluator::TExpr> expr;
@@ -99,7 +99,7 @@ namespace tfel
 	BinaryOperation(const parser::IntegerExprPtr,
 			const parser::IntegerExprPtr);
 	virtual int
-	  getValue(void) const override;
+	  getValue() const override;
 	virtual parser::IntegerExprPtr
 	  clone(const std::vector<int>&) const override;
 	virtual ~BinaryOperation();
@@ -116,11 +116,11 @@ namespace tfel
 		       const std::shared_ptr<TOperator>,
 		       std::shared_ptr<IntegerEvaluator::TExpr>);
       virtual bool
-	isOperator(void) const override;
+	isOperator() const override;
       virtual void
-	reduce(void) override;
+	reduce() override;
       virtual parser::IntegerExprPtr
-	analyse(void) override;
+	analyse() override;
       virtual ~TBinaryOperation();
     private:
       TBinaryOperation& operator=(const TBinaryOperation&) = delete;
@@ -138,7 +138,7 @@ namespace tfel
       {
 	Variable(const std::vector<int>&,
 		 const std::vector<int>::size_type);
-	virtual int getValue(void) const override;
+	virtual int getValue() const override;
 	virtual parser::IntegerExprPtr
 	  clone(const std::vector<int>&) const override;
       private:
@@ -151,10 +151,10 @@ namespace tfel
 		IntegerEvaluator &);
       TVariable(const std::vector<int>::size_type,
 		std::vector<int>&);
-      virtual bool isOperator(void) const override;
-      virtual void reduce(void) override;
+      virtual bool isOperator() const override;
+      virtual void reduce() override;
       virtual parser::IntegerExprPtr
-	analyse(void) override;
+	analyse() override;
     private:
       TVariable& operator=(const TVariable&) = delete;
       TVariable& operator=(TVariable&&) = delete;
@@ -169,13 +169,13 @@ namespace tfel
       TOperator(const TOperator&);
       TOperator(TOperator&&);
       virtual std::string
-	getOperatorType(void) const;
+	getOperatorType() const;
       virtual bool
-	isOperator(void) const override;
+	isOperator() const override;
       virtual void
-	reduce(void) override;
+	reduce() override;
       virtual parser::IntegerExprPtr
-	analyse(void) override;
+	analyse() override;
       virtual ~TOperator();
     private:
       TOperator& operator=(const TOperator&) = delete;
@@ -187,13 +187,13 @@ namespace tfel
       : public IntegerEvaluator::TExpr
     {
       virtual bool
-	isOperator(void) const override;
+	isOperator() const override;
       virtual void
 	add(std::shared_ptr<IntegerEvaluator::TExpr>const);
       virtual void
-	reduce(void) override;
+	reduce() override;
       virtual parser::IntegerExprPtr
-	analyse(void) override;
+	analyse() override;
       virtual ~TGroup();
     private:
       void reduce(const std::string&);
@@ -214,16 +214,16 @@ namespace tfel
 	virtual parser::IntegerExprPtr
 	  clone(const std::vector<int>&) const override;
 	virtual int
-	  getValue(void) const override;
+	  getValue() const override;
 	const int value;
       }; // end of struct Number
       TNumber(const int v);
       virtual bool
-	isOperator(void) const override;
+	isOperator() const override;
       virtual parser::IntegerExprPtr
-	analyse(void) override;
+	analyse() override;
       virtual void
-	reduce(void) override;
+	reduce() override;
     private:
       TNumber& operator=(const TNumber&);
       TNumber& operator=(TNumber&&);

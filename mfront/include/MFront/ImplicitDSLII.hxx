@@ -29,10 +29,10 @@ namespace mfront
     ImplicitDSLII();
 
     static std::string 
-    getName(void);
+    getName();
 
     static std::string 
-    getDescription(void);
+    getDescription();
 
     virtual ~ImplicitDSLII() noexcept;
 

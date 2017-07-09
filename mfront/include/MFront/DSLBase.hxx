@@ -51,7 +51,7 @@ namespace mfront
      * \note This method shall be called *after* the analyseFile method
      */
     virtual const TargetsDescription&
-    getTargetsDescription(void) const override;
+    getTargetsDescription() const override;
     /*!
      * \brief open a file and add given external instructions at the
      * beginning
@@ -183,7 +183,7 @@ namespace mfront
     /*!
      * \return the name of the generated class
      */
-    virtual std::string getClassName(void) const = 0;
+    virtual std::string getClassName() const = 0;
     /*!
      * \brief add a material law
      * \param[in] m : added material law name
@@ -243,7 +243,7 @@ namespace mfront
      * \return concatenate all the tokens from the current position up
      * to the first ';' token
      */
-    std::string readUntilEndOfInstruction(void);
+    std::string readUntilEndOfInstruction();
     /*!
      * read an unsigned short in the file
      * \param[in] m : calling method
@@ -272,7 +272,7 @@ namespace mfront
      * \brief read one token and increment "current"
      */
     std::string
-    readOnlyOneToken(void);
+    readOnlyOneToken();
     /*!
      *
      */
@@ -396,39 +396,39 @@ namespace mfront
     virtual std::shared_ptr<MaterialPropertyDescription>
     handleMaterialPropertyDescription(const std::string&);
     //! handle the `@MFront` keyword
-    virtual void treatMFront(void);
+    virtual void treatMFront();
     //! handle the `@Import` keyword
-    virtual void treatImport(void);
+    virtual void treatImport();
     //! handle the `@MaterialLaw` keyword
-    virtual void treatMaterialLaw(void);
+    virtual void treatMaterialLaw();
     //! handle the `@Link` keyword
-    virtual void treatLink(void);
+    virtual void treatLink();
     //! handle the `@Author` keyword
-    virtual void treatAuthor(void);
+    virtual void treatAuthor();
     //! handle the `@Data` keyword
-    virtual void treatDate(void);
+    virtual void treatDate();
     //! handle the `@Includes` keyword
-    virtual void treatIncludes(void);
+    virtual void treatIncludes();
     //! handle the `@Sources` keyword
-    virtual void treatSources(void);
+    virtual void treatSources();
     //! handle the `@Private` keyword
-    virtual void treatPrivate(void);
+    virtual void treatPrivate();
     //! handle the `@Members` keyword
-    virtual void treatMembers(void);
+    virtual void treatMembers();
     //! handle the `@Parser` keyword
-    virtual void treatParser(void);
+    virtual void treatParser();
     //! handle the `@StaticVar` keyword
-    virtual void treatStaticVar(void);
+    virtual void treatStaticVar();
     //! handle the `@IntegerConstant` keyword
-    virtual void treatIntegerConstant(void);
+    virtual void treatIntegerConstant();
     //! handle the `@Description` keyword
-    virtual void treatDescription(void);
+    virtual void treatDescription();
     //! handle the `@LonelySeparator` keyword
-    virtual void treatLonelySeparator(void);
+    virtual void treatLonelySeparator();
     //! 
     virtual void ignoreKeyWord(const std::string&);
     //! treat an unknown keyword
-    virtual void treatUnknownKeyword(void);
+    virtual void treatUnknownKeyword();
     /*!
      * \brief this method must be called at the end of the treatment:
      * - to set each libraries defined the auxiliary targets as
@@ -436,7 +436,7 @@ namespace mfront
      * - merge the auxiliary targets descriptions into the main one.
      * - clear the auxiliary targets descriptions
      */
-    virtual void completeTargetsDescription(void);
+    virtual void completeTargetsDescription();
     /*!
      * \brief register an integer constant.
      * \param[in] n: name of the constant
@@ -449,7 +449,7 @@ namespace mfront
     /*!
      * \brief extract a double from the current token
      */
-    double readDouble(void);
+    double readDouble();
     //! destructor
     virtual ~DSLBase();
     //! \brief description of the file treated

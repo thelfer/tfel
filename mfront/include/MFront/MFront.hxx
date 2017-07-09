@@ -57,7 +57,7 @@ namespace mfront{
     /*!
      * \brief execute MFront process
      */
-    virtual void exe(void);
+    virtual void exe();
     //! destructor
     virtual ~MFront();
 
@@ -66,74 +66,74 @@ namespace mfront{
     friend struct tfel::utilities::ArgumentParserBase<MFront>;
 
     //! treat an unknown argument
-    virtual void treatUnknownArgument(void) final;
+    virtual void treatUnknownArgument() final;
     //! a do nothing callback
-    virtual void doNothing(void) final;
+    virtual void doNothing() final;
     //! return the current argument
     virtual const tfel::utilities::Argument&
     getCurrentCommandLineArgument() const override final;
     //! get the version description
     virtual std::string
-    getVersionDescription(void) const override final;
+    getVersionDescription() const override final;
     //! get the usage description
     virtual std::string
-    getUsageDescription(void) const override final;
+    getUsageDescription() const override final;
     //! treat the -D command line option
-    virtual void treatDefine(void);
+    virtual void treatDefine();
     //! treat the --help-commands-list command line option
-    virtual void treatHelpCommandsList(void);
+    virtual void treatHelpCommandsList();
     //! treat the --help-commands command line option
-    virtual void treatHelpCommands(void);
+    virtual void treatHelpCommands();
     //! treat the --help-command
-    virtual void treatHelpCommand(void);
+    virtual void treatHelpCommand();
     //! treat the --no-melt command line option
-    virtual void treatNoMelt(void);
+    virtual void treatNoMelt();
     //! treat the --silent-build command line option
-    virtual void treatSilentBuild(void);
+    virtual void treatSilentBuild();
 
 #ifdef MFRONT_MAKE_SUPPORT
 
-    virtual void treatNoDeps(void);
+    virtual void treatNoDeps();
 
-    virtual void treatOMake(void);
+    virtual void treatOMake();
 
-    virtual void treatOBuild(void);
+    virtual void treatOBuild();
 
-    virtual void treatMake(void);
+    virtual void treatMake();
 
-    virtual void treatBuild(void);
+    virtual void treatBuild();
 
-    virtual void treatClean(void);
+    virtual void treatClean();
 
-    virtual void treatTarget(void);
+    virtual void treatTarget();
 
-    virtual void treatOTarget(void);
+    virtual void treatOTarget();
 
 #endif /* MFRONT_MAKE_SUPPORT */
     
-    virtual void treatListParsers(void);
+    virtual void treatListParsers();
 
-    virtual void registerArgumentCallBacks(void);
+    virtual void registerArgumentCallBacks();
 
-    virtual void analyseTargetsFile(void);
+    virtual void analyseTargetsFile();
 
-    virtual void writeTargetsDescription(void) const;
+    virtual void writeTargetsDescription() const;
 
 #ifdef MFRONT_MAKE_SUPPORT
     virtual void buildLibraries(const std::string&);
 
-    virtual void cleanLibraries(void);
+    virtual void cleanLibraries();
 #endif /* MFRONT_MAKE_SUPPORT */
 
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     //! treat the --def-file command line option
-    virtual void treatDefFile(void);
+    virtual void treatDefFile();
     //! generate def files
-    virtual void generateDefsFiles(void);
+    virtual void generateDefsFiles();
 #endif
     
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-    virtual void treatWin32(void);
+    virtual void treatWin32();
 #endif /* LIB_MFRONT_HXX */
 
     //! description of the targets that can be build

@@ -390,7 +390,7 @@ namespace tfel{
       /*!
        * Return Identity
        */
-      TFEL_MATH_INLINE static constexpr stensor<N,T> Id(void);
+      TFEL_MATH_INLINE static constexpr stensor<N,T> Id();
 
       TFEL_MATH_INLINE constexpr const T&
       operator()(const unsigned short) const noexcept;
@@ -403,7 +403,7 @@ namespace tfel{
        * \return the RunTimeProperties of the stensor
        */
       constexpr TFEL_MATH_INLINE RunTimeProperties
-      getRunTimeProperties(void) const noexcept;
+      getRunTimeProperties() const noexcept;
       /*!
        * copy the value from a container
        */

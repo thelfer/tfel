@@ -232,7 +232,7 @@ namespace tfel{
       /*!
        * \return the identity tensor
        */
-      TFEL_MATH_INLINE static const tensor<N,T>& Id(void);
+      TFEL_MATH_INLINE static const tensor<N,T>& Id();
 
       using fsarray<TensorDimeToSize<N>::value,T>::operator[];
 
@@ -248,7 +248,7 @@ namespace tfel{
        * \return tvector::RunTimeProperties
        */
       constexpr TFEL_MATH_INLINE RunTimeProperties
-      getRunTimeProperties(void) const;
+      getRunTimeProperties() const;
 
       template<typename InputIterator>
       TFEL_MATH_INLINE2 void 

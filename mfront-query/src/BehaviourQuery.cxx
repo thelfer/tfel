@@ -861,7 +861,7 @@ namespace mfront{
     }
   }
 
-  template<const VariableDescriptionContainer& (BehaviourData::* m)(void) const>
+  template<const VariableDescriptionContainer& (BehaviourData::* m)() const>
   typename BehaviourQuery::query
   BehaviourQuery::generateVariablesListQuery(){
     return [](const FileDescription&,

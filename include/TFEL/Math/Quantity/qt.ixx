@@ -23,13 +23,13 @@ namespace tfel{
 
     template<typename unit,typename T>
     T&
-    qt<unit,T>::getValue(void) noexcept{
+    qt<unit,T>::getValue() noexcept{
       return this->value;
     }
 
     template<typename unit,typename T>
     constexpr const T&
-    qt<unit,T>::getValue(void) const noexcept{
+    qt<unit,T>::getValue() const noexcept{
       return value;
     }
 
@@ -94,13 +94,13 @@ namespace tfel{
 
     template<typename T>
     T&
-    qt<NoUnit,T>::getValue(void) noexcept  {
+    qt<NoUnit,T>::getValue() noexcept  {
       return value;
     }
 
     template<typename T>
     constexpr const T&
-    qt<NoUnit,T>::getValue(void) const  noexcept{
+    qt<NoUnit,T>::getValue() const  noexcept{
       return value;
     }
 

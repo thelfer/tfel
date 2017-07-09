@@ -207,31 +207,31 @@ namespace tfel{
     struct ComputeSpecialST2ST2Values<1u,T>
     {
       static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
-      getId(void){
+      getId(){
 	return st2tost2<1u,T>{{T{1},T{0},T{0},
 			       T{0},T{1},T{0},
 			       T{0},T{0},T{1}}};
       } // end of getId()
       static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
-      getIxI(void){
+      getIxI(){
 	return st2tost2<1u,T>{{T{1},T{1},T{1},
 			       T{1},T{1},T{1},
 			       T{1},T{1},T{1}}};
       } // end of getIxI()
       static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
-      getJ(void){
+      getJ(){
 	return st2tost2<1u,T>{{T{1}/T{3},T{1}/T{3},T{1}/T{3},
 			       T{1}/T{3},T{1}/T{3},T{1}/T{3},
 			       T{1}/T{3},T{1}/T{3},T{1}/T{3}}};
       } // end of getJ()
       static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
-      getK(void){
+      getK(){
 	return st2tost2<1u,T>{{ T{2}/T{3},-T{1}/T{3},-T{1}/T{3},
 			       -T{1}/T{3}, T{2}/T{3},-T{1}/T{3},
 			       -T{1}/T{3},-T{1}/T{3}, T{2}/T{3}}};
       } // end of getK()
       static TFEL_MATH_INLINE constexpr st2tost2<1u,T>
-      getM(void){
+      getM(){
 	return st2tost2<1u,T>{{ T{1}     ,-T{1}/T{2},-T{1}/T{2},
 			       -T{1}/T{2}, T{1}     ,-T{1}/T{2},
 			       -T{1}/T{2},-T{1}/T{2}, T{1}}};
@@ -242,35 +242,35 @@ namespace tfel{
     struct ComputeSpecialST2ST2Values<2u,T>
     {
       static TFEL_MATH_INLINE constexpr st2tost2<2u,T>
-      getId(void){
+      getId(){
 	return st2tost2<2u,T>{{T{1},T{0},T{0},T{0},
 			       T{0},T{1},T{0},T{0},
 			       T{0},T{0},T{1},T{0},
 			       T{0},T{0},T{0},T{1}}};
       } // end of getId()
       static TFEL_MATH_INLINE constexpr st2tost2<2u,T>
-      getIxI(void){
+      getIxI(){
 	return st2tost2<2u,T>{{T{1},T{1},T{1},T{0},
 			       T{1},T{1},T{1},T{0},
 			       T{1},T{1},T{1},T{0},
 			       T{0},T{0},T{0},T{0}}};
       } // end of getIxI()
       static TFEL_MATH_INLINE constexpr st2tost2<2u,T>
-      getJ(void){
+      getJ(){
 	return st2tost2<2u,T>{{T{1}/T{3},T{1}/T{3},T{1}/T{3},T{0},
 			       T{1}/T{3},T{1}/T{3},T{1}/T{3},T{0},
 			       T{1}/T{3},T{1}/T{3},T{1}/T{3},T{0},
 			       T{0},T{0},T{0},T{0}}};
       } // end of getJ()
       static TFEL_MATH_INLINE constexpr st2tost2<2u,T>
-      getK(void){
+      getK(){
 	return st2tost2<2u,T>{{ T{2}/T{3},-T{1}/T{3},-T{1}/T{3},T{0},
 			       -T{1}/T{3}, T{2}/T{3},-T{1}/T{3},T{0},
 			       -T{1}/T{3},-T{1}/T{3}, T{2}/T{3},T{0},
 			        T{0},           T{0},      T{0},T{1}}};
       } // end of getK()
       static TFEL_MATH_INLINE constexpr st2tost2<2u,T>
-      getM(void){
+      getM(){
 	return st2tost2<2u,T>{{      T{1},-T{1}/T{2},-T{1}/T{2},T{0},
 			       -T{1}/T{2},      T{1},-T{1}/T{2},T{0},
 			       -T{1}/T{2},-T{1}/T{2},      T{1},T{0},
@@ -282,7 +282,7 @@ namespace tfel{
     struct ComputeSpecialST2ST2Values<3u,T>
     {
       static TFEL_MATH_INLINE constexpr st2tost2<3u,T>
-      getId(void){
+      getId(){
 	return st2tost2<3u,T>{{T{1},T{0},T{0},T{0},T{0},T{0},
 			       T{0},T{1},T{0},T{0},T{0},T{0},
 			       T{0},T{0},T{1},T{0},T{0},T{0},
@@ -291,7 +291,7 @@ namespace tfel{
 			       T{0},T{0},T{0},T{0},T{0},T{1}}};
       } // end of getId()
       static TFEL_MATH_INLINE constexpr st2tost2<3u,T>
-      getIxI(void){
+      getIxI(){
 	return st2tost2<3u,T>{{T{1},T{1},T{1},T{0},T{0},T{0},
 			       T{1},T{1},T{1},T{0},T{0},T{0},
 			       T{1},T{1},T{1},T{0},T{0},T{0},
@@ -300,7 +300,7 @@ namespace tfel{
 			       T{0},T{0},T{0},T{0},T{0},T{0}}};
       } // end of getIxI()
       static TFEL_MATH_INLINE constexpr st2tost2<3u,T>
-      getJ(void){
+      getJ(){
 	return st2tost2<3u,T>{{T{1}/T{3},T{1}/T{3},T{1}/T{3},T{0},T{0},T{0},
 			       T{1}/T{3},T{1}/T{3},T{1}/T{3},T{0},T{0},T{0},
 			       T{1}/T{3},T{1}/T{3},T{1}/T{3},T{0},T{0},T{0},
@@ -309,7 +309,7 @@ namespace tfel{
 			       T{0},T{0},T{0},T{0},T{0},T{0}}};
       } // end of getJ()
       static TFEL_MATH_INLINE constexpr st2tost2<3u,T>
-      getK(void){
+      getK(){
 	return st2tost2<3u,T>{{ T{2}/T{3},-T{1}/T{3},-T{1}/T{3},T{0},T{0},T{0},
 			       -T{1}/T{3}, T{2}/T{3},-T{1}/T{3},T{0},T{0},T{0},
 			       -T{1}/T{3},-T{1}/T{3}, T{2}/T{3},T{0},T{0},T{0},
@@ -318,7 +318,7 @@ namespace tfel{
 			        T{0},           T{0},      T{0},T{0},T{0},T{1}}};
       } // end of getK()
       static TFEL_MATH_INLINE constexpr st2tost2<3u,T>
-      getM(void){
+      getM(){
 	return st2tost2<3u,T>{{       T{1},-T{1}/T{2},-T{1}/T{2},T{0},T{0},T{0},
 				-T{1}/T{2},      T{1},-T{1}/T{2},T{0},T{0},T{0},
 				-T{1}/T{2},-T{1}/T{2},      T{1},T{0},T{0},T{0},
@@ -330,31 +330,31 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     constexpr st2tost2<N,T>
-    st2tost2<N,T>::Id(void){
+    st2tost2<N,T>::Id(){
       return ComputeSpecialST2ST2Values<N,T>::getId();
     } // end of st2tost2<N,T>::Id
 
     template<unsigned short N, typename T>
     constexpr st2tost2<N,T>
-    st2tost2<N,T>::IxI(void){
+    st2tost2<N,T>::IxI(){
       return ComputeSpecialST2ST2Values<N,T>::getIxI();
     } // end of st2tost2<N,T>::Id
 
     template<unsigned short N, typename T>
     constexpr st2tost2<N,T>
-    st2tost2<N,T>::K(void){
+    st2tost2<N,T>::K(){
       return ComputeSpecialST2ST2Values<N,T>::getK();
     } // end of st2tost2<N,T>::K
 
     template<unsigned short N, typename T>
     constexpr st2tost2<N,T>
-    st2tost2<N,T>::M(void){
+    st2tost2<N,T>::M(){
       return ComputeSpecialST2ST2Values<N,T>::getM();
     } // end of st2tost2<N,T>::M
 
     template<unsigned short N, typename T>
     constexpr st2tost2<N,T>
-    st2tost2<N,T>::J(void){
+    st2tost2<N,T>::J(){
       return ComputeSpecialST2ST2Values<N,T>::getJ();
     } // end of st2tost2<N,T>::J
 
@@ -424,7 +424,7 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     typename st2tost2<N,T>::RunTimeProperties
-    st2tost2<N,T>::getRunTimeProperties(void) const
+    st2tost2<N,T>::getRunTimeProperties() const
     {
       return RunTimeProperties();
     } // end of st2tost2<N,T>::getRunTimeProperties

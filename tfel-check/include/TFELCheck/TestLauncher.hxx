@@ -40,21 +40,21 @@ namespace tfel_check {
     using CxxTokenizer=tfel::utilities::CxxTokenizer;
     
     TestLauncher(const std::string&, const PCLogger&);
-    bool execute(void);
+    bool execute();
     //! desctrutor
-    ~TestLauncher(void);
+    ~TestLauncher();
 
   private:
-    typedef void (TestLauncher::*CallBack)(void);
+    typedef void (TestLauncher::*CallBack)();
     void registerCallBack(const std::string&, const CallBack&);
     //! analyse the input file
-    void analyseInputFile(void);
-    void treatTest(void);
-    void treatPrecision(void);
-    void treatCommand(void);
-    void treatEnvironment(void);
-    void treatTestType(void);
-    void treatInterpolation(void);
+    void analyseInputFile();
+    void treatTest();
+    void treatPrecision();
+    void treatCommand();
+    void treatEnvironment();
+    void treatTestType();
+    void treatInterpolation();
     /*!
      * \brief register the error and throw an runtime_error
      * \param[in] m:   calling method

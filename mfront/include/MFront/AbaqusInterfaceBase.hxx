@@ -81,7 +81,7 @@ namespace mfront{
     /*!
      * \return the list of supported keywords
      */
-    std::vector<std::string> getCommonKeywords(void) const;
+    std::vector<std::string> getCommonKeywords() const;
     /*!
      * \return the name of the generated library
      * \param[in] mb : behaviour description

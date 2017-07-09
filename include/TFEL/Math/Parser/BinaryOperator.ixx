@@ -35,7 +35,7 @@ namespace tfel
       
       template<typename Op>
       double
-      BinaryOperation<Op>::getValue(void) const
+      BinaryOperation<Op>::getValue() const
       {
 	return Op::apply(this->a->getValue(),this->b->getValue());
       } // end of BinaryOperation<Op>::getValue

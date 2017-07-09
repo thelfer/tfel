@@ -69,7 +69,7 @@ namespace tfel{
 	  return *this;
 	} // end of operator++
 	TFEL_MATH_INLINE NumType
-	operator *(void) const
+	operator *() const
 	{
 	  return m(i,j);
 	}
@@ -92,7 +92,7 @@ namespace tfel{
 	  return *this;
 	} // end of operator++
 	TFEL_MATH_INLINE NumType
-	operator *(void) const
+	operator *() const
 	{
 	  return this->v(this->i);
 	}
@@ -131,7 +131,7 @@ namespace tfel{
     public:
       
       TFEL_MATH_INLINE const RunTimeProperties
-      getRunTimeProperties(void) const
+      getRunTimeProperties() const
       {
 	return RunTimeProperties();
       }

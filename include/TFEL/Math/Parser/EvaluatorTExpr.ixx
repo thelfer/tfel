@@ -27,7 +27,7 @@ namespace tfel
 
     template<typename Op>
     void
-    Evaluator::TLogicalOperation<Op>::reduce(void)
+    Evaluator::TLogicalOperation<Op>::reduce()
     {
       this->a->reduce();
       this->b->reduce();
@@ -35,12 +35,12 @@ namespace tfel
 
     template<typename Op>
     std::shared_ptr<tfel::math::parser::LogicalExpr>
-    Evaluator::TLogicalOperation<Op>::analyse(void)
+    Evaluator::TLogicalOperation<Op>::analyse()
     {
       using namespace tfel::math::parser;
       return std::shared_ptr<LogicalExpr>(new LogicalOperation<Op>(this->a->analyse(),
 								   this->b->analyse()));
-    } // end of Evaluator::TLogicalOperation::TLogicalOperation::analyse(void)
+    } // end of Evaluator::TLogicalOperation::TLogicalOperation::analyse()
 
     template<typename Op>
     Evaluator::TLogicalOperation<Op>::~TLogicalOperation() noexcept
@@ -54,7 +54,7 @@ namespace tfel
 
     template<typename Op>
     void
-    Evaluator::TLogicalBinaryOperation<Op>::reduce(void)
+    Evaluator::TLogicalBinaryOperation<Op>::reduce()
     {
       this->a->reduce();
       this->b->reduce();
@@ -62,7 +62,7 @@ namespace tfel
 
     template<typename Op>
     std::shared_ptr<tfel::math::parser::LogicalExpr>
-    Evaluator::TLogicalBinaryOperation<Op>::analyse(void)
+    Evaluator::TLogicalBinaryOperation<Op>::analyse()
     {
       using namespace tfel::math::parser;
       return std::shared_ptr<LogicalExpr>(new LogicalBinaryOperation<Op>(this->a->analyse(),

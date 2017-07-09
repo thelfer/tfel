@@ -53,7 +53,7 @@ namespace mfront{
 	       std::shared_ptr<ModelDSL>,
 	       const std::string&);
     //! treat the requests
-    virtual void exe(void);
+    virtual void exe();
     //! destructor
     virtual ~ModelQuery();
   private :
@@ -63,30 +63,30 @@ namespace mfront{
     //! ArgumentParserBase must be a friend
     friend struct tfel::utilities::ArgumentParserBase<ModelQuery>;
     //! \brief register call-backs associated with command line arguments
-    virtual void registerCommandLineCallBacks(void);
+    virtual void registerCommandLineCallBacks();
     //! return the current argument
     virtual const tfel::utilities::Argument&
     getCurrentCommandLineArgument() const override final;
     //! treat the "--generated-sources" query
-    virtual void treatGeneratedSources(void) final;
+    virtual void treatGeneratedSources() final;
     //! treat the "--cppflags" query
-    virtual void treatCppFlags(void) final;
+    virtual void treatCppFlags() final;
     //! treat the "--generated-headers" query
-    virtual void treatGeneratedHeaders(void) final;
+    virtual void treatGeneratedHeaders() final;
     //! treat the "--libraries-dependencies" query
-    virtual void treatLibrariesDependencies(void) final;
+    virtual void treatLibrariesDependencies() final;
     //! treat the "--specific-targets" query
-    virtual void treatSpecificTargets(void) final;
+    virtual void treatSpecificTargets() final;
     //! treat a standard query
-    virtual void treatStandardQuery(void) final;
+    virtual void treatStandardQuery() final;
     //! treat an unknown argument
-    virtual void treatUnknownArgument(void) final;
+    virtual void treatUnknownArgument() final;
     //! get the version description
     virtual std::string
-    getVersionDescription(void) const override final;
+    getVersionDescription() const override final;
     //! get the usage description
     virtual std::string
-    getUsageDescription(void) const override final;
+    getUsageDescription() const override final;
     //! all the registred queries
     std::vector<std::pair<std::string,query>> queries;
     //! abstract behaviour dsl

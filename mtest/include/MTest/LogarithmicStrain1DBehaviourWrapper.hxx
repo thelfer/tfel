@@ -30,7 +30,7 @@ namespace mtest
      */
     LogarithmicStrain1DBehaviourWrapper(const std::shared_ptr<Behaviour>&);
     //! \return the modelling hypothesis 
-    virtual Hypothesis getHypothesis(void) const override;
+    virtual Hypothesis getHypothesis() const override;
     /*!
      * \brief This function set a material property to its default value if it not already declared
      * \param[out] mp  : evolution manager where 
@@ -44,9 +44,9 @@ namespace mtest
 					    const std::string&,
 					    const real);
     //! \return the type of the behaviour
-    virtual BehaviourType getBehaviourType(void) const override;
+    virtual BehaviourType getBehaviourType() const override;
     //! \return the type of the behaviour
-    virtual Kinematic getBehaviourKinematic(void) const override;
+    virtual Kinematic getBehaviourKinematic() const override;
     /*!
      * \return the size of a vector able to contain all the components
      * of the driving variables
@@ -73,7 +73,7 @@ namespace mtest
      * \return the components suffixes of a vector
      */
     virtual std::vector<std::string>
-    getVectorComponentsSuffixes(void) const override;
+    getVectorComponentsSuffixes() const override;
     /*!
      * \return the components suffixes of a tensor
      */
@@ -105,12 +105,12 @@ namespace mtest
      * 1 means that the behaviour is orthotropic.
      */
     virtual unsigned short
-    getSymmetryType(void) const override;
+    getSymmetryType() const override;
     /*!
      * \return the number of material properties
      */
     virtual std::vector<std::string>
-    getMaterialPropertiesNames(void) const override;
+    getMaterialPropertiesNames() const override;
     /*!
      * \brief some interfaces requires dummy material properties to be
      * declared. For example, the Cast3M finite element solver
@@ -128,7 +128,7 @@ namespace mtest
      * \return the number of internal variables
      */
     virtual std::vector<std::string>
-    getInternalStateVariablesNames(void) const  override;
+    getInternalStateVariablesNames() const  override;
     //! \return expand the names of internal variables
     virtual std::vector<std::string>
     expandInternalStateVariablesNames() const override;
@@ -152,7 +152,7 @@ namespace mtest
     getInternalStateVariablePosition(const std::string&) const override;
     //! \return the number of external variables
     virtual std::vector<std::string>
-    getExternalStateVariablesNames(void) const  override;
+    getExternalStateVariablesNames() const  override;
     //! \return the names of floating point parameters
     virtual std::vector<std::string>
     getParametersNames() const override;
@@ -270,7 +270,7 @@ namespace mtest
      * \return the default type of stiffness matrix used by the behaviour
      */
     virtual StiffnessMatrixType
-    getDefaultStiffnessMatrixType(void) const override;
+    getDefaultStiffnessMatrixType() const override;
     /*!
      * \brief compute the *real* rotation matrix
      * \param[in] mp : material properties

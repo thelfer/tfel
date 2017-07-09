@@ -23,13 +23,13 @@ namespace mfront{
     : public IsotropicBehaviourDSLBase
   {
 
-    static std::string getName(void);
+    static std::string getName();
 
-    static std::string getDescription(void);
+    static std::string getDescription();
 
     IsotropicMisesCreepDSL();
     
-    virtual void endsInputFileProcessing(void) override;
+    virtual void endsInputFileProcessing() override;
 
     virtual ~IsotropicMisesCreepDSL();
 

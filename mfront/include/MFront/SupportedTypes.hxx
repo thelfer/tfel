@@ -89,7 +89,7 @@ namespace mfront
 
       int getValueForModellingHypothesis(const Hypothesis) const;
       //! \return true is all components of the TipeSize are null
-      bool isNull(void) const;
+      bool isNull() const;
       
     private:
       //! ouptut operator
@@ -106,7 +106,7 @@ namespace mfront
     }; // end of class SupportedTypes::TypeSize
     //! \return a list of type names associated with type flags
     static const std::map<std::string,TypeFlag>&
-    getTypeFlags(void);
+    getTypeFlags();
     /*!
      * \return the flag associated with the given type
      * \param[in] t : type

@@ -48,7 +48,7 @@ namespace mfront
     getVariableDescription(const std::string&) const;
     //! \return the external names of each input variables.
     std::vector<std::string>
-    getInputVariablesExternalNames(void);
+    getInputVariablesExternalNames();
     /*!
      * \return true if the given variable is the name of a input
      * \param[in] n: name

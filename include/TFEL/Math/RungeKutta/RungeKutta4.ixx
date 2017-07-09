@@ -59,7 +59,7 @@ namespace tfel{
 	this->h = h_;
       }
 
-      void increm(void){
+      void increm(){
 	TFEL_CONSTEXPR const auto Cste_1_2 = T{1}/T{2};
 	TFEL_CONSTEXPR const auto Cste_1_3 = T{1}/T{3};
 	TFEL_CONSTEXPR const auto Cste_1_6 = T{1}/T{6};
@@ -86,15 +86,15 @@ namespace tfel{
 	}
       }
 
-      TFEL_MATH_INLINE2 const tvector<N,T>& get_y(void) const{
+      TFEL_MATH_INLINE2 const tvector<N,T>& get_y() const{
 	return this->y;
       }
 
-      TFEL_MATH_INLINE2 T get_t(void) const {
+      TFEL_MATH_INLINE2 T get_t() const {
 	return this->t;
       }
 
-      TFEL_MATH_INLINE2 T get_h(void) const {
+      TFEL_MATH_INLINE2 T get_h() const {
 	return this->h;
       }
 

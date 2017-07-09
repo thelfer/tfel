@@ -30,7 +30,7 @@ namespace tfel
       Negation::getValue() const
       {
 	return -(this->expr->getValue());
-      } // end of Negation::getValue(void)
+      } // end of Negation::getValue()
 
       void
       Negation::checkCyclicDependency(std::vector<std::string>& names) const

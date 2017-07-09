@@ -57,7 +57,7 @@ namespace mfront{
       }
     }
     return false;
-  } // end of ModelDSLCommon::is(void)
+  } // end of ModelDSLCommon::is()
   
   ModelDSLCommon::ModelDSLCommon(){
     for(const auto& v : DSLBase::getDefaultReservedNames()){
@@ -267,7 +267,7 @@ namespace mfront{
     this->md.domains.insert(this->current->value.substr(1,this->current->value.size()-2));
     ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatDomain",";");
-  } // end of ModelDSLCommon::treatDomain(void)
+  } // end of ModelDSLCommon::treatDomain()
 
   void ModelDSLCommon::treatDomains()
   {
@@ -281,17 +281,17 @@ namespace mfront{
     }
     throw_if(this->md.domains.empty(),"@Domains does not set any domain");
     this->readSpecifiedToken("ModelDSLCommon::treatDomain",";");
-  } // end of ModelDSLCommon::treatDomains(void)
+  } // end of ModelDSLCommon::treatDomains()
 
   bool ModelDSLCommon::isInputVariable(const std::string& v) const
   {
     return is(this->md.inputs,v);
-  } // end of ModelDSLCommon::isInputVariable(void)
+  } // end of ModelDSLCommon::isInputVariable()
 
   bool ModelDSLCommon::isOutputVariable(const std::string& v) const
   {
     return is(this->md.outputs,v);
-  } // end of ModelDSLCommon::isInputVariable(void)
+  } // end of ModelDSLCommon::isInputVariable()
   
   void ModelDSLCommon::treatFunction()
   {
@@ -494,7 +494,7 @@ namespace mfront{
       }
     }
     this->md.functions.push_back(f);
-  } // end of ModelDSLCommon::treatFunction(void)
+  } // end of ModelDSLCommon::treatFunction()
 
   void ModelDSLCommon::treatOutput()
   {
@@ -509,7 +509,7 @@ namespace mfront{
       this->md.registerMemberName(v.name);
       this->md.outputs.push_back(v);
     }
-  } // end of ModelDSLCommon::treatOutput(void)
+  } // end of ModelDSLCommon::treatOutput()
 
   void ModelDSLCommon::treatInput()
   {
@@ -524,7 +524,7 @@ namespace mfront{
       this->md.registerMemberName(v.name);
       this->md.inputs.push_back(v);
     }
-  } // end of ModelDSLCommon::treatInput(void)
+  } // end of ModelDSLCommon::treatInput()
 
   void ModelDSLCommon::treatOutputMethod() 
   {
@@ -673,7 +673,7 @@ namespace mfront{
       this->throwRuntimeError("DSLBase::handleParameter",
 			      "Expected ';' before end of file");
     }
-  } // end of ModelDSLCommon::treatParameter(void)
+  } // end of ModelDSLCommon::treatParameter()
 
   void ModelDSLCommon::treatLocalParameter()
   {
@@ -722,7 +722,7 @@ namespace mfront{
       this->md.registerMemberName(mp.name);
       this->md.constantMaterialProperties.push_back(mp);
     }
-  } // end of ModelDSLCommon::treatConstantMaterialProperty(void)
+  } // end of ModelDSLCommon::treatConstantMaterialProperty()
 
   void ModelDSLCommon::treatConstantMaterialPropertyMethod() 
   {

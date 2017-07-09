@@ -43,7 +43,7 @@ namespace tfel
       : public ArgumentParser
     {
       //! a simple alias
-      using MemberFuncPtr = void (Child::*)(void);
+      using MemberFuncPtr = void (Child::*)();
       //! default constructor
       ArgumentParserBase();
       /*!

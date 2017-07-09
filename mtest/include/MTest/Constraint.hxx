@@ -36,7 +36,7 @@ namespace mtest
      * associated with this contraint
      */
     virtual unsigned short
-    getNumberOfLagrangeMultipliers(void) const = 0;
+    getNumberOfLagrangeMultipliers() const = 0;
     /*!
      * \brief builds up the stiffness matrix and the residual.
      * \param[out] K:  stiffness matrix

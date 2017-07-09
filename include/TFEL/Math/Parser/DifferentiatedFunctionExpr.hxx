@@ -39,7 +39,7 @@ namespace tfel
 				   std::vector<std::shared_ptr<Expr> >&,
 				   const std::vector<std::vector<double>::size_type>&);
 	virtual double
-	getValue(void) const override;
+	getValue() const override;
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual std::shared_ptr<Expr>
@@ -59,7 +59,7 @@ namespace tfel
 	virtual ~DifferentiatedFunctionExpr();
       private:
 	std::shared_ptr<ExternalFunction> TFEL_VISIBILITY_LOCAL
-	getDerivative(void) const;
+	getDerivative() const;
 	mutable std::shared_ptr<ExternalFunction> f;
 	std::vector<std::shared_ptr<Expr> > args;
 	std::vector<std::vector<double>::size_type> pvar;

@@ -746,21 +746,21 @@ namespace mfront{
   {
     this->checkBehaviourFile(os);
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
-      os << "bool\ncomputeStress(void){\n"
+      os << "bool\ncomputeStress(){\n"
 	 << "using namespace std;\n"
 	 << "using namespace tfel::math;\n"
 	 << this->mb.getCode(h,BehaviourData::ComputeStress) << '\n'
 	 << "return true;\n"
 	 << "} // end of " << this->mb.getClassName() << "::computeStress\n\n";
     }
-    os  << "bool\ncomputeFinalStress(void){\n"
+    os  << "bool\ncomputeFinalStress(){\n"
 	<< "using namespace std;\n"
 	<< "using namespace tfel::math;\n";
     writeMaterialLaws(os,this->mb.getMaterialLaws());
     os << this->mb.getCode(h,BehaviourData::ComputeFinalStress) << '\n'
        << "return true;\n"
        << "} // end of " << this->mb.getClassName() << "::computeFinalStress\n\n"
-       << "bool\ncomputeDerivative(void){\n"
+       << "bool\ncomputeDerivative(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n";
     writeMaterialLaws(os,this->mb.getMaterialLaws());
@@ -2385,7 +2385,7 @@ namespace mfront{
 	 << btype << ",hypothesis,Type,false>::SUCCESS;\n";
     }
     os << "} // end of " << this->mb.getClassName() << "::integrate\n\n";
-  } // end of void RungeKuttaDSLBase::writeBehaviourIntegrator(void)
+  } // end of void RungeKuttaDSLBase::writeBehaviourIntegrator()
 
   RungeKuttaDSLBase::~RungeKuttaDSLBase() = default;
 

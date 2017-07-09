@@ -149,7 +149,7 @@ getGlossaryEntry(const std::string&) const;
  * \return all the registred keys
  */
 const std::vector<std::string>&
-getKeys(void) const;
+getKeys() const;
 
 protected :
 //! all glossary names (to initialise glossary entries)

@@ -155,7 +155,7 @@ namespace mfront{
   std::string MaterialPropertyDSL::getName()
   {
     return "MaterialLaw";
-  } // end of MaterialPropertyDSL::getName(void)
+  } // end of MaterialPropertyDSL::getName()
 
   void MaterialPropertyDSL::treatMaterial()
   {
@@ -372,7 +372,7 @@ namespace mfront{
     throw_if(openedBrackets!=0,"parenthesis still opened at the end of function");
     throw_if(this->md.f.body.empty(),"empty function");
     throw_if(!this->md.f.modified,"function does not modifiy output.");
-  } // end of MaterialPropertyDSL::treatFunction(void)
+  } // end of MaterialPropertyDSL::treatFunction()
 
   void MaterialPropertyDSL::treatMethod() 
   {

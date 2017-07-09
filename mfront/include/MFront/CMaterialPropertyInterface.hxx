@@ -22,7 +22,7 @@ namespace mfront{
     : public CMaterialPropertyInterfaceBase
   {
     static std::string 
-    getName(void);
+    getName();
     
     CMaterialPropertyInterface();
     /*!
@@ -94,7 +94,7 @@ namespace mfront{
      * \return true if a check bounds function is required
      */
     virtual bool
-    requiresCheckBoundsFunction(void) const override;
+    requiresCheckBoundsFunction() const override;
   }; // end of CMaterialPropertyInterface
 
 } // end of namespace mfront

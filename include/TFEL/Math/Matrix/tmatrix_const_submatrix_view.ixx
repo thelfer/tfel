@@ -33,7 +33,7 @@ namespace tfel
 	     unsigned short R,unsigned short C,
 	     typename T>
     typename tmatrix_const_submatrix_view_expr<N,M,I,J,R,C,T>::RunTimeProperties
-    tmatrix_const_submatrix_view_expr<N,M,I,J,R,C,T>::getRunTimeProperties(void) const
+    tmatrix_const_submatrix_view_expr<N,M,I,J,R,C,T>::getRunTimeProperties() const
     {
       return RunTimeProperties();
     }

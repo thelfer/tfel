@@ -143,22 +143,22 @@ namespace mfront{
     MaterialPropertyProvider::~MaterialPropertyProvider() = default;
 
     // std::string
-    // MaterialLawProvider::getVariableType(void) const{
+    // MaterialLawProvider::getVariableType() const{
     //   return this->type;
     // } // end of MaterialLawProvider::getVariableType
 
     // std::string
-    // MaterialLawProvider::getExternalName(void) const{
+    // MaterialLawProvider::getExternalName() const{
     //   return this->name;
     // }
     
     // unsigned short
-    // MaterialLawProvider::getArraySize(void) const{
+    // MaterialLawProvider::getArraySize() const{
     //   return 1u;
     // }
     
     // ProviderIdentifier
-    // MaterialLawProvider::getIdentifier(void) const{
+    // MaterialLawProvider::getIdentifier() const{
     //   return ProviderIdentifier::MATERIALLAW;
     // } // end of MaterialLawProvider::getIdentifier
 

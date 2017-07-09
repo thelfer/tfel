@@ -91,7 +91,7 @@ namespace tfel{
 	this->iter_max = n;
       }
 
-      void exe(void)
+      void exe()
       {
 	iter = 0;	
 	while((iter<iter_max) && (convergence==false)){
@@ -109,12 +109,12 @@ namespace tfel{
 	}
       }
       
-      tvector<N,T> getX(void) const
+      tvector<N,T> getX() const
       {
 	return this->x;
       }
 
-      unsigned short getIter(void) const
+      unsigned short getIter() const
       {
 	return this->iter;
       }
@@ -166,7 +166,7 @@ namespace tfel{
 	this->iter_max = n;
       }
 
-      void exe(void)
+      void exe()
       {
 	iter = 0;	
 	while((iter<iter_max) && (convergence==false)){
@@ -187,12 +187,12 @@ namespace tfel{
 	}
       }
 
-      T getX(void) const
+      T getX() const
       {
 	return this->x;
       }
 
-      unsigned short getIter(void) const
+      unsigned short getIter() const
       {
 	return this->iter;
       }

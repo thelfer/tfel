@@ -91,7 +91,7 @@ namespace mtest
      * register the call backs associated with each command
      */
     virtual void
-    registerCallBacks(void) override;
+    registerCallBacks() override;
     /*!
      * \brief handle the @CompareToNumericalTangentOperator keyword
      * \param[in,out] t: `MTest` object to be configured

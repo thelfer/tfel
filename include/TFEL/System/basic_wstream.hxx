@@ -29,9 +29,9 @@ namespace tfel
     template<typename Child,typename Traits>
     struct basic_wstream
     {
-      operator int (void);
+      operator int ();
 
-      operator int (void) const;
+      operator int () const;
 
       basic_wstream& 
       operator<<(const char&);

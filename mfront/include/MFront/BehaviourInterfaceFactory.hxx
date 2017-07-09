@@ -26,13 +26,13 @@ namespace mfront{
 
   struct MFRONT_VISIBILITY_EXPORT BehaviourInterfaceFactory
   {
-    typedef std::shared_ptr<AbstractBehaviourInterface> (*InterfaceCreator)(void);
+    typedef std::shared_ptr<AbstractBehaviourInterface> (*InterfaceCreator)();
     
     static BehaviourInterfaceFactory&
     getBehaviourInterfaceFactory();
 
     std::vector<std::string>
-    getRegistredInterfaces(void) const;
+    getRegistredInterfaces() const;
     /*!
      * \return true if the given interface exists
      * \param[in] n : interface name
@@ -68,11 +68,11 @@ namespace mfront{
 
     TFEL_VISIBILITY_LOCAL
     InterfaceCreatorsContainer&
-    getInterfaceCreatorsMap(void) const;
+    getInterfaceCreatorsMap() const;
 
     TFEL_VISIBILITY_LOCAL
     AliasContainer&
-    getAliasesMap(void) const;
+    getAliasesMap() const;
 
   };
 

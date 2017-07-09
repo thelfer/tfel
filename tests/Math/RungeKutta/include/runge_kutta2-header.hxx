@@ -76,10 +76,10 @@ public:
 };
 
 template<typename T>
-void test(void);
+void test();
 
 template<typename T>
-void test(void){
+void test(){
 
   using namespace std;
   using namespace tfel::math;

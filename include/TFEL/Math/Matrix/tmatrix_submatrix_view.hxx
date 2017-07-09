@@ -94,7 +94,7 @@ namespace tfel
        */
       TFEL_MATH_INLINE
       RunTimeProperties
-      getRunTimeProperties(void) const;
+      getRunTimeProperties() const;
       /*!
        * \brief index operator.
        * This is a matrix concept requirement.

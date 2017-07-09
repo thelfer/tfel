@@ -111,9 +111,9 @@ namespace mfront{
     writeCErrorTreatment(std::ostream&,
 			 const MaterialPropertyDescription&) const;
     
-    virtual std::string getCallingConvention(void) const;
+    virtual std::string getCallingConvention() const;
     
-    virtual bool requiresCheckBoundsFunction(void) const = 0;
+    virtual bool requiresCheckBoundsFunction() const = 0;
     /*!
      * \param[in] mpd: material property description
      */

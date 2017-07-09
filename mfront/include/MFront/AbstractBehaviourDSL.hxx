@@ -44,10 +44,10 @@ namespace mfront{
     //! a simple alias
     using Hypothesis =  ModellingHypothesis::Hypothesis;
     //! \return the target of the dsl
-    virtual DSLTarget getTargetType(void) const override final;
+    virtual DSLTarget getTargetType() const override final;
     //! \return the behaviour description
     virtual const BehaviourDescription&
-    getBehaviourDescription(void) const = 0;
+    getBehaviourDescription() const = 0;
     /*!
      * \return the list of hypothesis a priori supported by
      * the parser.
@@ -57,7 +57,7 @@ namespace mfront{
      * `@ModellingHypotheses` keywords.
      */
     virtual std::set<Hypothesis>
-    getDefaultModellingHypotheses(void) const = 0;
+    getDefaultModellingHypotheses() const = 0;
     /*!
      * \brief write the call to a material property
      * \param[out] out: output stream

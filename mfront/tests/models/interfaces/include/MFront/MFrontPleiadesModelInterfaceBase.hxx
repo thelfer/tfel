@@ -43,10 +43,10 @@ namespace mfront{
   protected:
 
     virtual void
-    openOutputFiles(void);
+    openOutputFiles();
 
     virtual void
-    closeOutputFiles(void);
+    closeOutputFiles();
 
     virtual void
     generateOutputFiles(const FileDescription&,
@@ -82,10 +82,10 @@ namespace mfront{
 				     const ModelDescription&);
 
     virtual void
-    buildDomainName(void) = 0;
+    buildDomainName() = 0;
 
     virtual std::string
-    getApplicationName(void) const = 0;
+    getApplicationName() const = 0;
 
     virtual void
     generateDomainsList(const ModelDescription&);

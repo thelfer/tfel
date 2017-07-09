@@ -23,7 +23,7 @@ namespace mfront{
   {
 
     static std::string 
-    getName(void);
+    getName();
 
     /*!
      * \param[in] k  : keyword treated
@@ -50,7 +50,7 @@ namespace mfront{
 				     const ModelDescription&) override;
 
     virtual std::string
-    getApplicationName(void) const override;
+    getApplicationName() const override;
 
     virtual void
     writeInitializeMethod(const ModelDescription&) override;

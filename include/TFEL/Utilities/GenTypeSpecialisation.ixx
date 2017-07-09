@@ -37,7 +37,7 @@
 	 * get an object of type X.                                     \
 	 * \return X&                                                   \
 	 */                                                             \
-	TFEL_INLINE X& get##Y(void)                                     \
+	TFEL_INLINE X& get##Y()                                     \
 	{                                                               \
 	  return static_cast<Child *>(this)->template get< X >();       \
 	}                                                               \
@@ -45,7 +45,7 @@
 	 * get an object of type X (const version).                     \
 	 * \return const X&                                             \
  	 */                                                             \
-	TFEL_INLINE const X& get##Y(void) const                         \
+	TFEL_INLINE const X& get##Y() const                         \
 	{                                                               \
 	  return static_cast<const Child *>(this)->template get< X >();	\
 	}                                                               \
@@ -99,7 +99,7 @@ namespace tfel{
 	 * get an object of type std::string.
 	 * \return std::string&
 	 */
-	TFEL_INLINE std::string& getString(void)
+	TFEL_INLINE std::string& getString()
 	{
 	  return static_cast<Child *>(this)->template get<std::string>();
 	}
@@ -107,7 +107,7 @@ namespace tfel{
 	 * get an object of type std::string (const version).
 	 * \return const std::string&
  	 */
-	TFEL_INLINE const std::string& getString(void) const
+	TFEL_INLINE const std::string& getString() const
 	{
 	  return static_cast<const Child *>(this)->template get<std::string>();
 	}

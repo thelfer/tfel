@@ -390,7 +390,7 @@ namespace tfel{
 	return *this;
       }
       //! \return true if empty
-      bool empty(void) const{
+      bool empty() const{
 	return this->index==ListSize;
       }
       /*!
@@ -450,7 +450,7 @@ namespace tfel{
        */
       template<typename T1>
       TFEL_INLINE requires<T1,const T1&>
-      get(void) const
+      get() const
       {	
 	// a silly trick to avoir a gcc warning
 	union{
@@ -471,7 +471,7 @@ namespace tfel{
        */
       template<typename T1>
       TFEL_INLINE requires<T1,T1&>
-      get(void)
+      get()
       {
 	// a silly trick to avoir a gcc warning
 	union{
@@ -488,7 +488,7 @@ namespace tfel{
        * \return the type index of the object 
        */
       TFEL_INLINE unsigned short
-      getTypeIndex(void) const{
+      getTypeIndex() const{
 	return this->index;
       }
       //! destructor
@@ -513,7 +513,7 @@ namespace tfel{
        */
       template<typename T1>
       TFEL_INLINE requires<T1,void>
-      set_uninitialised(void)
+      set_uninitialised()
       {
 	this->clear();
 	this->index=tfel::meta::TLFindEltPos<T1,List>::value;

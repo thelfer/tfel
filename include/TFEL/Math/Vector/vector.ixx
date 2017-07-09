@@ -80,7 +80,7 @@ namespace tfel{
 
     template<typename T>
     const typename vector<T>::RunTimeProperties 
-    vector<T>::getRunTimeProperties(void) const
+    vector<T>::getRunTimeProperties() const
     {
       return std::vector<T>::size();
     }

@@ -27,7 +27,7 @@ namespace tfel{
      */
     TFELUTILITIES_VISIBILITY_EXPORT 
     unsigned short
-    getNumberOfCxxKeywords(void);
+    getNumberOfCxxKeywords();
 
     /*!
      * \return true if the specified string is a of c++ keyword

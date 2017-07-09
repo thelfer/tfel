@@ -27,9 +27,9 @@ namespace tfel{
     {
     protected:
       //! thr
-      TFEL_NORETURN static void throwBadCastException(void);
+      TFEL_NORETURN static void throwBadCastException();
       //! thr
-      TFEL_NORETURN static void throwNullException(void);
+      TFEL_NORETURN static void throwNullException();
     }; // end of struct ThreadedTaskResultBase
     /*!
      * \brief a class standing for the result of a taks
@@ -70,9 +70,9 @@ namespace tfel{
       TFEL_INLINE void setException(const std::exception_ptr&);
       //! \brief throw the catched exception
 #ifndef _MSC_VER
-      TFEL_NORETURN TFEL_INLINE void rethrow(void);
+      TFEL_NORETURN TFEL_INLINE void rethrow();
 #else /* _MSC_VER */
-      TFEL_INLINE void rethrow(void);
+      TFEL_INLINE void rethrow();
 #endif /* _MSC_VER */
 	  //! \brief conversion to bool
       TFEL_INLINE operator bool () const;
@@ -125,7 +125,7 @@ namespace tfel{
       //! \brief set current exception
       void setException(const std::exception_ptr&);
       //! \brief throw the catched exception
-      TFEL_NORETURN void rethrow(void);
+      TFEL_NORETURN void rethrow();
       //! \brief conversion to bool
       operator bool () const;
       //! \brief destructor

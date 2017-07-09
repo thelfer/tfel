@@ -54,7 +54,7 @@ namespace tfel_check {
      * \return true if the evolution
      * is constant
      */
-    bool isConstant(void) const;
+    bool isConstant() const;
 
   private:
     std::map<double, double> values; /*< the times and values */

@@ -114,77 +114,77 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     typename fsarray<N,T>::iterator 
-    fsarray<N,T>::begin(void) noexcept
+    fsarray<N,T>::begin() noexcept
     {
       return this->v;
     }
 
     template<unsigned short N, typename T>
     typename fsarray<N,T>::const_iterator 
-    fsarray<N,T>::begin(void) const noexcept
+    fsarray<N,T>::begin() const noexcept
     {
       return this->v;
     }
 
     template<unsigned short N, typename T>
     typename fsarray<N,T>::const_iterator 
-    fsarray<N,T>::cbegin(void) const noexcept
+    fsarray<N,T>::cbegin() const noexcept
     {
       return this->v;
     }
 
     template<unsigned short N, typename T>
     typename fsarray<N,T>::iterator 
-    fsarray<N,T>::end(void) noexcept
+    fsarray<N,T>::end() noexcept
     {
       return this->v+N;
     }
 
     template<unsigned short N, typename T>
     typename fsarray<N,T>::const_iterator 
-    fsarray<N,T>::end(void) const noexcept
+    fsarray<N,T>::end() const noexcept
     {
       return this->v+N;
     }
 
     template<unsigned short N, typename T>
     typename fsarray<N,T>::const_iterator 
-    fsarray<N,T>::cend(void) const noexcept
+    fsarray<N,T>::cend() const noexcept
     {
       return this->v+N;
     }
 
     template<unsigned short N, typename T>
     typename fsarray<N,T>::reverse_iterator 
-    fsarray<N,T>::rbegin(void) noexcept
+    fsarray<N,T>::rbegin() noexcept
     {
       return reverse_iterator(this->v+N);
     }
 
     template<unsigned short N, typename T>
     typename fsarray<N,T>::const_reverse_iterator 
-    fsarray<N,T>::rbegin(void) const noexcept
+    fsarray<N,T>::rbegin() const noexcept
     {
       return const_reverse_iterator(this->v+N);
     }
 
     template<unsigned short N, typename T>
     typename fsarray<N,T>::reverse_iterator 
-    fsarray<N,T>::rend(void) noexcept
+    fsarray<N,T>::rend() noexcept
     {
       return reverse_iterator(this->v);
     }
 
     template<unsigned short N, typename T>
     typename fsarray<N,T>::const_reverse_iterator 
-    fsarray<N,T>::rend(void) const noexcept
+    fsarray<N,T>::rend() const noexcept
     {
       return const_reverse_iterator(this->v);
     }
 
     template<unsigned short N, typename T>
     constexpr unsigned short
-    fsarray<N,T>::size(void) const  noexcept
+    fsarray<N,T>::size() const  noexcept
     {
       return N;
     }

@@ -81,7 +81,7 @@ namespace mtest{
      * \brief revert the state: values at the end of the time step are
      * set equal to the values at the beginning of the next time step
      */
-    void revert(void);
+    void revert();
     /*!
      * \return the state associated with a structure
      * \param[in] n: structure name

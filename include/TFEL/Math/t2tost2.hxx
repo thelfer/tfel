@@ -214,7 +214,7 @@ namespace tfel{
        * \return tvector::RunTimeProperties
        */
       TFEL_MATH_INLINE RunTimeProperties
-      getRunTimeProperties(void) const;
+      getRunTimeProperties() const;
 
       template<typename InputIterator>
       TFEL_MATH_INLINE2 void copy(const InputIterator src);

@@ -89,7 +89,7 @@ namespace mfront
   void MFrontMaterialPropertyInterface::writeEndHeaderNamespace(std::ostream& os) const
   {
     os << "} // end of namespace mfront\n\n";
-  } // end of MFrontMaterialPropertyInterface::writeEndHeaderNamespace(void)
+  } // end of MFrontMaterialPropertyInterface::writeEndHeaderNamespace()
 
   void MFrontMaterialPropertyInterface::writeBeginSrcNamespace(std::ostream& os) const
   {
@@ -99,7 +99,7 @@ namespace mfront
   void MFrontMaterialPropertyInterface::writeEndSrcNamespace(std::ostream& os) const
   {
     os << "} // end of namespace mfront\n";
-  } // end of MFrontMaterialPropertyInterface::writeEndSrcNamespace(void)
+  } // end of MFrontMaterialPropertyInterface::writeEndSrcNamespace()
 
   std::string
   MFrontMaterialPropertyInterface::getFunctionName(const MaterialPropertyDescription& mpd) const

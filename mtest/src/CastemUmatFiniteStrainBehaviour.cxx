@@ -46,7 +46,7 @@ namespace mtest
   } // end of CastemUmatFiniteStrainBehaviour::setOptionalMaterialPropertiesDefaultValues
   
   const char*
-  CastemUmatFiniteStrainBehaviour::getBehaviourNameForUMATFunctionCall(void) const{
+  CastemUmatFiniteStrainBehaviour::getBehaviourNameForUMATFunctionCall() const{
     return this->mname;
   } // end of CastemUmatFiniteStrainBehaviour::getBehaviourNameForUMATFunctionCal
   

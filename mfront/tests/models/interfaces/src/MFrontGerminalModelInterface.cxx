@@ -28,7 +28,7 @@ namespace mfront{
   MFrontGerminalModelInterface::getName()
   {
     return "germinal";
-  } // end of MFrontGerminalModelInterface::getName(void)
+  } // end of MFrontGerminalModelInterface::getName()
 
   std::pair<bool,MFrontGerminalModelInterface::tokens_iterator>
   MFrontGerminalModelInterface::treatKeyword(const std::string& k,
@@ -50,7 +50,7 @@ namespace mfront{
     this->headerFileName += "-germinal.hxx";
     this->srcFileName  = md.className;
     this->srcFileName += "-germinal.cxx";
-  } // end of MFrontGerminalModelInterface::setOutputFileNames(void)
+  } // end of MFrontGerminalModelInterface::setOutputFileNames()
 
   std::string
   MFrontGerminalModelInterface::getApplicationName() const

@@ -57,7 +57,7 @@ namespace mtest
      * associated with this contraint
      */
     virtual unsigned short
-    getNumberOfLagrangeMultipliers(void) const override;
+    getNumberOfLagrangeMultipliers() const override;
     /*!
      * \brief builds up the stiffness matrix and the residual.
      * \param[out] K:  stiffness matrix

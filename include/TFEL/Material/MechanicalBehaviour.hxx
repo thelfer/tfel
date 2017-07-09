@@ -150,7 +150,7 @@ namespace tfel{
        * failed.
        */
       virtual NumType
-      getMinimalTimeStepScalingFactor(void) const = 0;
+      getMinimalTimeStepScalingFactor() const = 0;
       /*!
        * \param[in] dt: time step scaling factor proposed by the calling code
        * \return a pair containing:

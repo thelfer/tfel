@@ -132,7 +132,7 @@ namespace mfront
     this->writeEndHeaderNamespace(os);
     os << "#endif /* " << headerGard << " */\n";
     os.close();
-  } // end of CMaterialPropertyInterfaceBase::writeHeaderFile(void)
+  } // end of CMaterialPropertyInterfaceBase::writeHeaderFile()
 
   void
   CMaterialPropertyInterfaceBase::writeInterfaceSpecificVariables(std::ostream&,
@@ -340,7 +340,7 @@ namespace mfront
     }
     this->writeEndSrcNamespace(os);
     os.close();
-  } // end of CMaterialPropertyInterfaceBase::writeSrcFile(void)
+  } // end of CMaterialPropertyInterfaceBase::writeSrcFile()
 
   void
   CMaterialPropertyInterfaceBase::writeCErrorTreatment(std::ostream& os,

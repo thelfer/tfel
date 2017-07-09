@@ -58,7 +58,7 @@ namespace tfel
 	     unsigned short K,
 	     typename T>
     typename tmatrix_column_view_expr<N,M,I,J,K,T>::RunTimeProperties
-    tmatrix_column_view_expr<N,M,I,J,K,T>::getRunTimeProperties(void) const
+    tmatrix_column_view_expr<N,M,I,J,K,T>::getRunTimeProperties() const
     {
       return RunTimeProperties();
     }

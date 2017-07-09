@@ -233,7 +233,7 @@ namespace tfel{
 
     template<unsigned short N, typename T>
     typename st2tot2<N,T>::RunTimeProperties
-    st2tot2<N,T>::getRunTimeProperties(void) const
+    st2tot2<N,T>::getRunTimeProperties() const
     {
       return RunTimeProperties();
     } // end of st2tot2<N,T>::getRunTimeProperties

@@ -38,7 +38,7 @@ namespace mfront{
      * \return the reserved names
      */
     static std::vector<std::string>
-    getReservedNames(void);
+    getReservedNames();
     /*!
      * \brief write the algorithm specific members
      * \param[in,out] md  : mechanical description

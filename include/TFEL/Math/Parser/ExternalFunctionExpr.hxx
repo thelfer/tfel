@@ -39,7 +39,7 @@ namespace tfel
 			     std::vector<std::shared_ptr<Expr> >&,
 			     std::shared_ptr<ExternalFunctionManager>&);
 	virtual double
-	getValue(void) const override;
+	getValue() const override;
 	virtual void
 	checkCyclicDependency(std::vector<std::string>&) const override;
 	virtual std::shared_ptr<Expr>

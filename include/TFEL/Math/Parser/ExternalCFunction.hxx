@@ -33,9 +33,9 @@ namespace tfel
       struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunctionException
       {
 	TFEL_NORETURN static void
-	throwUnimplementedDifferentiateFunctionException(void);
+	throwUnimplementedDifferentiateFunctionException();
 	TFEL_NORETURN static void
-	throwInvalidCreateFunctionByChangingParametersIntoVariables(void);
+	throwInvalidCreateFunctionByChangingParametersIntoVariables();
 	TFEL_NORETURN static void
 	throwInvalidVariableIndex(const std::vector<double>::size_type,
 				  const unsigned short);
@@ -50,7 +50,7 @@ namespace tfel
 	setVariableValue(const std::vector<double>::size_type,
 			 const double) override;
 	virtual std::vector<double>::size_type
-	getNumberOfVariables(void) const override;
+	getNumberOfVariables() const override;
 	virtual void
 	checkCyclicDependency(const std::string&) const override;
 	virtual void
@@ -146,10 +146,10 @@ namespace tfel
 
       template<unsigned short N>
       std::vector<double>::size_type
-      ExternalCFunctionBase<N>::getNumberOfVariables(void) const
+      ExternalCFunctionBase<N>::getNumberOfVariables() const
       {
 	return N;
-      } // end of ExternalCFunctionBase<N>::getNumberOfVariables(void) const
+      } // end of ExternalCFunctionBase<N>::getNumberOfVariables() const
 
       template<>
       struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunctionBase<0u>
@@ -159,7 +159,7 @@ namespace tfel
 	setVariableValue(const std::vector<double>::size_type,
 			 const double) override;
 	virtual std::vector<double>::size_type
-	getNumberOfVariables(void) const override;
+	getNumberOfVariables() const override;
 	virtual void
 	checkCyclicDependency(const std::string&) const override;
 	virtual void
@@ -190,9 +190,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction0Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       }; // end of struct ExternalCFunction
@@ -203,9 +203,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction1Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       }; // end of struct ExternalCFunction
@@ -216,9 +216,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction2Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       }; // end of struct ExternalCFunction
@@ -229,9 +229,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction3Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       }; // end of struct ExternalCFunction
@@ -242,9 +242,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction4Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       }; // end of struct ExternalCFunction
@@ -255,9 +255,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction5Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       };// end of struct ExternalCFunction
@@ -268,9 +268,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction6Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       };// end of struct ExternalCFunction
@@ -281,9 +281,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction7Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       };// end of struct ExternalCFunction
@@ -294,9 +294,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction8Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       };// end of struct ExternalCFunction
@@ -307,9 +307,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction9Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       };// end of struct ExternalCFunction
@@ -320,9 +320,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction10Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       };// end of struct ExternalCFunction
@@ -333,9 +333,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction11Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       };// end of struct ExternalCFunction
@@ -346,9 +346,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction12Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       };// end of struct ExternalCFunction
@@ -359,9 +359,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction13Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       };// end of struct ExternalCFunction
@@ -372,9 +372,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction14Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       };// end of struct ExternalCFunction
@@ -385,9 +385,9 @@ namespace tfel
       {
 	typedef tfel::system::CFunction15Ptr FunctionPtr;
 	ExternalCFunction(FunctionPtr);
-	virtual double getValue(void) const override;
+	virtual double getValue() const override;
 	virtual std::shared_ptr<ExternalFunction>
-	resolveDependencies(void) const override;
+	resolveDependencies() const override;
       private:
 	FunctionPtr f;
       };// end of struct ExternalCFunction

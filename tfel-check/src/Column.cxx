@@ -100,7 +100,7 @@ namespace tfel_check {
   const std::vector<double>& Column::getValues() {
     return this->values;
   }
-  void Column::clearValues(void) {
+  void Column::clearValues() {
     this->values.clear();
   }
 
@@ -134,7 +134,7 @@ namespace tfel_check {
   }
 
   const std::shared_ptr<tfel::utilities::TextData>
-  Column::getData(void) const {
+  Column::getData() const {
     return this->data;
   }
 

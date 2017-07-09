@@ -42,7 +42,7 @@ namespace mfront
      * \return an uniq identifier
      */
     static unsigned int
-    getIdentifier(void);
+    getIdentifier();
     /*!
      * Constructor
      */

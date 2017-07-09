@@ -26,14 +26,14 @@ namespace tfel
     
     template<typename Child,typename Traits>
     TFEL_INLINE2
-    basic_rstream<Child,Traits>::operator int (void)
+    basic_rstream<Child,Traits>::operator int ()
     {
       return static_cast<Child* const>(this)->getFileDescriptor();
     } // end of basic_rstream<Child,Traits>::operator int
 
     template<typename Child,typename Traits>
     TFEL_INLINE2
-    basic_rstream<Child,Traits>::operator int (void) const
+    basic_rstream<Child,Traits>::operator int () const
     {
       return static_cast<const Child*>(this)->getFileDescriptor();
     } // end of basic_rstream<Child,Traits>::operator const int
@@ -261,7 +261,7 @@ namespace tfel
 
     template<typename Child,typename Traits>
     const std::string
-    basic_rstream<Child,Traits>::getLine(void)
+    basic_rstream<Child,Traits>::getLine()
     {
       using namespace std;
       string res;

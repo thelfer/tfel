@@ -85,14 +85,14 @@ namespace tfel
 
     template<typename F>
     unsigned short
-    LevenbergMarquardt<F>::getNumberOfIterations(void) const
+    LevenbergMarquardt<F>::getNumberOfIterations() const
     {
       return this->iter;
     } // end of LevenbergMarquardt::getNumberOfIterations
 
     template<typename F>
     const typename LevenbergMarquardt<F>::Parameter&
-    LevenbergMarquardt<F>::execute(void)
+    LevenbergMarquardt<F>::execute()
     {
       using namespace std;
       using tfel::math::stdfunctions::power;
