@@ -2210,6 +2210,7 @@ mfront/src/FiniteStrainBehaviourTangentOperatorConversionPath.cxx -text
 mfront/src/FiniteStrainSingleCrystalBrick.cxx -text
 mfront/src/Fortran03MaterialPropertyInterface.cxx -text
 mfront/src/FortranMaterialPropertyInterface.cxx -text
+mfront/src/GeneratorOptions.cxx -text
 mfront/src/GnuplotMaterialPropertyInterface.cxx -text
 mfront/src/ImplicitDSL.cxx -text
 mfront/src/ImplicitDSLBase.cxx -text

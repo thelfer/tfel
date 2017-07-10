@@ -12,22 +12,54 @@
  */
 
 #include<set>
+#include<cstring>
 #include<ostream>
 #include<sstream>
 #include<fstream>
 #include<iterator>
 #include<algorithm>
 
+#include<sys/types.h>
+#include<sys/stat.h>
+#if defined _WIN32 || defined _WIN64
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <io.h>
+#include <conio.h>
+#include <windows.h>
+#include <process.h>
+#else
+#include<dlfcn.h> 
+#include<sys/wait.h>
+#include<dirent.h>
+#include<unistd.h>
+#endif
+
 #include"TFEL/System/System.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/SearchPathsHandler.hxx"
 #include"MFront/MFrontLock.hxx"
+#include"MFront/MFrontDebugMode.hxx"
 #include"MFront/TargetsDescription.hxx"
 #include"MFront/GeneratorOptions.hxx"
 #include"MFront/MakefileGenerator.hxx"
 
 namespace mfront{
+
+
+  static const char* getMakeCommand(){
+    const char * emake = ::getenv("MAKE");
+    if(emake!=nullptr){
+      return emake;
+    }
+#if defined _WIN32 || defined _WIN64
+    return "make.exe";
+#else
+    return "make";
+#endif
+  }
   
   static std::string
   getLibraryLinkFlags(const TargetsDescription& t,
@@ -204,16 +236,18 @@ namespace mfront{
 #endif /* __CYGWIN__ */
       if(cxxflags!=nullptr){
 	m << cxxflags << " ";
-      } else if(o.oflags0||o.oflags||o.oflags2){
-	if(o.oflags2){
-	  m << "$(shell " << tfel_config << " --compiler-flags --oflags --oflags2) ";
-	} else if(o.oflags){
-	  m << "$(shell " << tfel_config << " --compiler-flags --oflags) ";
-	} else {
-	  m << "$(shell " << tfel_config << " --compiler-flags --oflags0) ";
-	}
       } else {
-	m << "-O2 $(shell " << tfel_config << " --compiler-flags)";
+	switch(o.olevel){
+	case GeneratorOptions::LEVEL2:
+	  m << "$(shell " << tfel_config << " --compiler-flags --oflags --oflags2) ";
+	  break;
+	case GeneratorOptions::LEVEL1:
+	  m << "$(shell " << tfel_config << " --compiler-flags --oflags) ";
+	  break;
+	case GeneratorOptions::LEVEL0:
+	  m << "$(shell " << tfel_config << " --compiler-flags --oflags0) ";
+	  break;
+	}
       }
       if((o.sys=="win32")||(o.sys=="cygwin")){
 	m << "-DWIN32 -DMFRONT_COMPILING $(INCLUDES) \n\n";
@@ -229,16 +263,18 @@ namespace mfront{
 #endif /* __CYGWIN__ */
       if(cflags!=nullptr){
 	m << cflags << " ";
-      } else if(o.oflags0||o.oflags||o.oflags2){
-	if(o.oflags2){
-	  m << "$(shell " << tfel_config << " --oflags --oflags2) ";
-	} else if(o.oflags){
-	  m << "$(shell " << tfel_config << " --compiler-flags --oflags) ";
-	} else {
-	  m << "$(shell " << tfel_config << " --compiler-flags --oflags0) ";
-	}
       } else {
-	m << "-O2 ";
+	switch(o.olevel){
+	case GeneratorOptions::LEVEL2:
+	  m << "$(shell " << tfel_config << " --compiler-flags --oflags --oflags2) ";
+	  break;
+	case GeneratorOptions::LEVEL1:
+	  m << "$(shell " << tfel_config << " --compiler-flags --oflags) ";
+	  break;
+	case GeneratorOptions::LEVEL0:
+	  m << "$(shell " << tfel_config << " --compiler-flags --oflags0) ";
+	  break;
+	}
       }
       if((o.sys=="win32")||(o.sys=="cygwin")){
 	m << "-DWIN32 -DMFRONT_COMPILING $(INCLUDES)\n\n";
@@ -419,6 +455,51 @@ namespace mfront{
       }
     }
     m.close();
+  }
+  
+  void callMake(const std::string& t,
+		const std::string& d,
+		const std::string& f){
+    const char * make = getMakeCommand();
+    const char * silent = getDebugMode() ? nullptr : "-s";
+    const char *const argv[] = {make,"-C",d.c_str(),"-f",
+				f.c_str(),
+				t.c_str(),
+				silent,nullptr};
+    auto error = [&argv,&t](const std::string& e){
+      auto msg = "callMake: can't build target '"+t+"'\n";
+      if(!e.empty()){
+	msg += e+'\n';
+      }
+      msg += "Command was: ";
+      for(const char * const * a = argv;*a!=nullptr;++a){
+	msg += *a;msg += ' ';
+      }
+      throw(std::runtime_error(msg));
+    };
+    if(::strlen(make)==0u){
+      throw(std::runtime_error("callMake: empty make command"));
+    }
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+    if(_spawnvp(_P_WAIT,make,argv)!=0){
+      error("");
+    }
+#else
+    const auto child_pid = fork();
+    if(child_pid!=0){
+      int status;
+      if(wait(&status)==-1){
+	error("something went wrong while "
+	      "waiting end of make process");
+      }
+      if(status!=0){
+	error("libraries building went wrong");
+      }
+    } else {
+      execvp(make,const_cast<char* const*>(argv));
+      ::exit(EXIT_FAILURE);
+    }
+#endif
   }
   
 } // end of namespace mfront

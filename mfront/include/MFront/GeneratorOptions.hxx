@@ -23,6 +23,20 @@ namespace mfront{
    * a data structure holding options passed to generators
    */
   struct MFRONT_VISIBILITY_EXPORT GeneratorOptions{
+    /*!
+     * \brief a simple enumeration describing the optimisation level.
+     * \note See the `tfel-config` utility for more details
+     */
+    enum OptimisationLevel{
+      LEVEL0, //!< no architecture specific optimisations (i.e. no
+	      //   `-march=native` under gcc). The options used are
+	      //   the one returned by `tfel-config --oflags0`.
+      LEVEL1, //!< standard optimisation level. The options used are
+	      //   the one returned by `tfel-config --oflags`.
+      LEVEL2  //!< add potentially unsafe math optmisations. The
+	      //   options used are the one returned by
+              //   `tfel-config --oflags2`.
+    };
     //! \brief default constructor
     GeneratorOptions();
     /*!
@@ -47,6 +61,7 @@ namespace mfront{
     GeneratorOptions& operator =(GeneratorOptions&&);
     //! \brief destructor
     ~GeneratorOptions();
+    //! targeted operating system
 #if ((defined(_WIN32)||defined(_WIN64)) && (!defined (__CYGWIN__)))
     std::string sys = "win32";
 #elif defined __CYGWIN__
@@ -56,9 +71,12 @@ namespace mfront{
 #else
     std::string sys = "default";
 #endif /* __CYGWIN__ */
-    bool oflags0 = false;
-    bool oflags  = false;
-    bool oflags2 = false;
+    //! \brief optimisation level
+    OptimisationLevel olevel = LEVEL1;
+    /*!
+     * \brief boolean stating that no output regarding the compilation
+     * commands shall be displayed.
+     */
     bool silentBuild = true;
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     bool nodeps = true;
