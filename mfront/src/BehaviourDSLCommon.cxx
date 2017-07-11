@@ -839,7 +839,7 @@ namespace mfront{
 	log << "BehaviourDSLCommon::writeOutputFiles : "
 	    << "treating default hypothesis\n";
       }
-      const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // Generating BehaviourData's outputClass
       if(getVerboseMode()>=VERBOSE_DEBUG){
 	auto& log = getLogStream();
@@ -911,6 +911,10 @@ namespace mfront{
       }
       i.second->endTreatment(this->mb,*this);
     }
+    behaviourFile.close();
+    behaviourDataFile.close();
+    integrationDataFile.close();
+    srcFile.close();
   }
 
   void
