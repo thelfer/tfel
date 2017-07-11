@@ -25,23 +25,6 @@
 #include<cerrno>
 #include<memory>
 
-#include<sys/types.h>
-#include<sys/stat.h>
-#if defined _WIN32 || defined _WIN64
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-#include <io.h>
-#include <conio.h>
-#include <windows.h>
-#include <process.h>
-#else
-#include<dlfcn.h> 
-#include<sys/wait.h>
-#include<dirent.h>
-#include<unistd.h>
-#endif
-
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
@@ -153,18 +136,18 @@ namespace mfront{
     const auto level = this->currentArgument->getOption();
     if(!level.empty()){
       if(level=="level2"){
-	this->opts.oflags2   = true;
+	this->opts.olevel = GeneratorOptions::LEVEL2;
       } else if(level=="level0"){
-	this->opts.oflags0   = true;
+	this->opts.olevel = GeneratorOptions::LEVEL0;
       } else if(level=="level1"){
-	this->opts.oflags    = true;
-      } else if(level!="level1"){
+	this->opts.olevel = GeneratorOptions::LEVEL1;
+      } else {
 	throw(std::runtime_error("MFront::treatOMake: "
 				 "unsupported value '"+level+
 				 "' for the --omake option"));
       }
     } else {
-      this->opts.oflags  = true;
+      this->opts.olevel = GeneratorOptions::LEVEL1;
     }
   } // end of MFront::treatOMake
 
@@ -175,18 +158,18 @@ namespace mfront{
     const auto level = this->currentArgument->getOption();
     if(!level.empty()){
       if(level=="level2"){
-	this->opts.oflags2   = true;
+	this->opts.olevel = GeneratorOptions::LEVEL2;
       } else if(level=="level0"){
-	this->opts.oflags0   = true;
+	this->opts.olevel = GeneratorOptions::LEVEL0;
       } else if(level=="level1"){
-	this->opts.oflags    = true;
-      } else if(level!="level1"){
+	this->opts.olevel = GeneratorOptions::LEVEL1;
+      } else {
 	throw(std::runtime_error("MFront::treatOBuild: "
 				 "unsupported value '"+level+
 				 "' for the --obuild option"));
       }
     } else {
-      this->opts.oflags    = true;
+      this->opts.olevel = GeneratorOptions::LEVEL1;
     }
   } // end of MFront::treatOBuild
 
@@ -252,7 +235,7 @@ namespace mfront{
 			       "no argument given to the "
 			       "--otarget option"));
     }
-    this->opts.oflags    = true;
+    this->opts.olevel = GeneratorOptions::LEVEL1;
     this->treatTarget();
   } // end of MFront::treatTarget
 
@@ -335,19 +318,7 @@ namespace mfront{
 #endif /* __CYGWIN__ */
   } // end of MFront::registerArgumentCallBacks
 
-  MFront::MFront()
-    : tfel::utilities::ArgumentParserBase<MFront>()
-  {
-#if ((defined(_WIN32)||defined(_WIN64)) && (!defined (__CYGWIN__)))
-    this->opts.sys = "win32";
-#elif defined __CYGWIN__
-    this->opts.sys = "cygwin";
-#elif defined __APPLE__
-    this->opts.sys = "apple";
-#else
-    this->opts.sys = "default";
-#endif /* __CYGWIN__ */
-  } // end of MFront::MFront
+  MFront::MFront() = default;
   
   MFront::MFront(const int argc, const char *const *const argv)
     : MFront()
@@ -495,7 +466,7 @@ namespace mfront{
   } // end of MFront::treatNoMelt
 
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-  void MFront::treatDefFile(void){
+  void MFront::treatDefFile(){
     const auto& o = this->getCurrentCommandLineArgument().getOption();
     if(o.empty()){
       throw(std::runtime_error("MFrontBase::treatDefFile: "
@@ -535,7 +506,7 @@ namespace mfront{
       }
     }
     return td;
-  } // end of MFront::treatFile(void)
+  } // end of MFront::treatFile()
 
   void MFront::analyseTargetsFile(){
     using tfel::system::dirStringSeparator;
@@ -562,62 +533,6 @@ namespace mfront{
   }
   
 #ifdef MFRONT_MAKE_SUPPORT
-  static const char*
-  getMakeCommand(){
-    const char * emake = ::getenv("MAKE");
-    if(emake!=nullptr){
-      return emake;
-    }
-#if defined _WIN32 || defined _WIN64
-    return "make.exe";
-#else
-    return "make";
-#endif
-  }
-
-  static void callMake(const std::string& target){
-    const char * make = getMakeCommand();
-    const char * silent = getDebugMode() ? nullptr : "-s";
-    const char *const argv[] = {make,"-C","src","-f",
-				"Makefile.mfront",
-				target.c_str(),
-				silent,nullptr};
-    auto error = [&argv,&target](const std::string& e){
-      auto msg = "callMake: can't build target '"+target+"'\n";
-      if(!e.empty()){
-	msg += e+'\n';
-      }
-      msg += "Command was: ";
-      for(const char * const * a = argv;*a!=nullptr;++a){
-	msg += *a;msg += ' ';
-      }
-      throw(std::runtime_error(msg));
-    };
-    if(::strlen(make)==0u){
-      throw(std::runtime_error("callMake: empty make command"));
-    }
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-    if(_spawnvp(_P_WAIT,make,argv)!=0){
-      error("");
-    }
-#else
-    const auto child_pid = fork();
-    if(child_pid!=0){
-      int status;
-      if(wait(&status)==-1){
-	error("something went wrong while "
-	      "waiting end of make process");
-      }
-      if(status!=0){
-	error("libraries building went wrong");
-      }
-    } else {
-      execvp(make,const_cast<char* const*>(argv));
-      ::exit(EXIT_FAILURE);
-    }
-#endif
-  }
-  
   void MFront::buildLibraries(const std::string& target)
   {
     callMake(target);
@@ -630,7 +545,7 @@ namespace mfront{
 #endif /* MFRONT_MAKE_SUPPORT */
 
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
-  void MFront::generateDefsFiles(void){
+  void MFront::generateDefsFiles(){
     MFrontLockGuard lock;
     for(const auto& d:this->defs){
       if(!describes(this->targets,d)){

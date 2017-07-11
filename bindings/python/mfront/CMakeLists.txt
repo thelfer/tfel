@@ -27,7 +27,9 @@ mfront_python_module(_mfront mfront.cxx
   VariableDescription.cxx
   BehaviourAttribute.cxx
   BehaviourData.cxx
-  BehaviourDescription.cxx)
+  BehaviourDescription.cxx
+  GeneratorOptions.cxx
+  MakefileGenerator.cxx)
 target_link_libraries(py_mfront__mfront TFELMFront
   MFrontLogStream TFELMaterial
   TFELMathParser  TFELSystem

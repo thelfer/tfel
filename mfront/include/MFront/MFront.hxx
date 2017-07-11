@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MFRONT_H_
-#define LIB_MFRONT_MFRONT_H_ 
+#ifndef LIB_MFRONT_MFRONT_HXX
+#define LIB_MFRONT_MFRONT_HXX 
 
 #include<set>
 #include<map>

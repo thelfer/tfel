@@ -32,8 +32,10 @@ bindings/python/mfront/BehaviourDescription.cxx -text
 bindings/python/mfront/CMakeLists.txt -text
 bindings/python/mfront/DSLFactory.cxx -text
 bindings/python/mfront/FileDescription.cxx -text
+bindings/python/mfront/GeneratorOptions.cxx -text
 bindings/python/mfront/LibraryDescription.cxx -text
 bindings/python/mfront/Makefile.am -text
+bindings/python/mfront/MakefileGenerator.cxx -text
 bindings/python/mfront/TargetsDescription.cxx -text
 bindings/python/mfront/VariableDescription.cxx -text
 bindings/python/mfront/__init__.py.in -text
@@ -2011,6 +2013,7 @@ mfront/src/FiniteStrainBehaviourTangentOperatorConversionPath.cxx -text
 mfront/src/FiniteStrainSingleCrystalBrick.cxx -text
 mfront/src/Fortran03MaterialPropertyInterface.cxx -text
 mfront/src/FortranMaterialPropertyInterface.cxx -text
+mfront/src/GeneratorOptions.cxx -text
 mfront/src/GnuplotMaterialPropertyInterface.cxx -text
 mfront/src/ImplicitDSL.cxx -text
 mfront/src/ImplicitDSLBase.cxx -text

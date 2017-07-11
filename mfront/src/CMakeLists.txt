@@ -38,6 +38,7 @@ set(TFELMFront_SOURCES
     MFront.cxx
     MFrontBase.cxx
     MFrontUtilities.cxx
+    GeneratorOptions.cxx
     MakefileGenerator.cxx
     CodeBlock.cxx
     FileDescription.cxx

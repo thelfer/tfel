@@ -28,6 +28,8 @@ void declareVariableDescription();
 void declareBehaviourAttribute();
 void declareBehaviourData();
 void declareBehaviourDescription();
+void declareGeneratorOptions();
+void declareMakefileGenerator();
 
 static boost::python::object
 getDSL(const std::string& f)
@@ -60,4 +62,6 @@ BOOST_PYTHON_MODULE(_mfront)
   declareVariableDescription();
   declareBehaviourData();
   declareBehaviourDescription();
+  declareGeneratorOptions();
+  declareMakefileGenerator();
 }

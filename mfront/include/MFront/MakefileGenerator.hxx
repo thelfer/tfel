@@ -11,10 +11,11 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_MAKEFILEGENERATOR_HXX_
-#define LIB_MFRONT_MAKEFILEGENERATOR_HXX_
+#ifndef LIB_MFRONT_MAKEFILEGENERATOR_HXX
+#define LIB_MFRONT_MAKEFILEGENERATOR_HXX
 
 #include<string>
+#include"MFront/MFrontConfig.hxx"
 
 namespace mfront{
 
@@ -24,18 +25,30 @@ namespace mfront{
   struct GeneratorOptions;
   
   /*!
-   * a function generating a standard Makefile from a target
-   * description
+   * \brief a function generating a standard Makefile from a target
+   * description.
    * \param[in] t : target description
    * \param[in] o : options
    * \param[in] d : directory
    * \param[in] f : file name
    */
-  void generateMakeFile(const TargetsDescription&,
+  MFRONT_VISIBILITY_EXPORT void
+  generateMakeFile(const TargetsDescription&,
 			const GeneratorOptions&,
+		   const std::string& = "src",
+		   const std::string& = "Makefile.mfront");
+  /*!
+   * \brief a function calling the `make` utility in the given
+   * directory using the specified file.
+   * \param[in] t : target name
+   * \param[in] d : directory
+   * \param[in] f : file name
+   */
+  MFRONT_VISIBILITY_EXPORT void
+  callMake(const std::string&,
 			const std::string& = "src",
 			const std::string& = "Makefile.mfront");
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_MAKEFILEGENERATOR_HXX_ */
+#endif /* LIB_MFRONT_MAKEFILEGENERATOR_HXX */
