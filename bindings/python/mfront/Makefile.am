@@ -15,7 +15,6 @@ _mfront_la_SOURCES = mfront.cxx                    \
 		     FileDescription.cxx           \
 		     LibraryDescription.cxx        \
 		     TargetsDescription.cxx        \
-		     GeneratorOptions.cxx          \
 		     DSLFactory.cxx                \
 		     VariableBoundsDescription.cxx \
 		     VariableDescription.cxx       \
