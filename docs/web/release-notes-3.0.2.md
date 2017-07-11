@@ -4,6 +4,33 @@
 
 # Tickets fixed
 
+## Ticket #80: Adding the possiblity to compile a law using python module
+
+`MFront` relies on external tools, called generators, for this step
+(this semantic is the same than the one used by `cmake`).
+
+The only available generator is currently the `Makefile` generator,
+handled by the `MakefileGenerator` class. This generator can be used
+as follows:
+
+~~~~{.python}
+import mfront
+dsl = mfront.getDSL("Chaboche.mfront")
+
+dsl.setInterfaces(['castem'])
+dsl.analyseFile("Chaboche.mfront")
+dsl.generateOutputFiles()
+
+m = mfront.MakefileGenerator()
+m.exe(dsl.getTargetsDescription())
+~~~~
+
+The `exe` methods provides several overloads and may accept an
+additional argument of type `GeneratorOptions` which let the user
+specifiy the optimisation level to be used.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/80/>
+
 ## Ticket #78: Fix transpose of `st2tost2` when using rvalue reference
 
 The definition of the transpose of `st2tost2` was broken when the

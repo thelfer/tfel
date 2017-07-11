@@ -30,7 +30,9 @@ mfront_python_module(_mfront mfront.cxx
   BehaviourData.cxx
   BehaviourSymmetryType
   BehaviourDescription.cxx
-  SearchPathsHandler.cxx)
+  SearchPathsHandler.cxx
+  GeneratorOptions.cxx
+  MakefileGenerator.cxx)
 target_link_libraries(py_mfront__mfront TFELMFront
   MFrontLogStream TFELMaterial
   TFELMathParser  TFELSystem

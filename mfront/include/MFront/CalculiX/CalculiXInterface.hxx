@@ -64,7 +64,7 @@ namespace calculix
     TFEL_CALCULIX_INLINE2 static
     int exe(const CalculiXData& d)
     {
-      using BV = Behaviour<,CalculiXReal,false>;
+      using BV = Behaviour<H,CalculiXReal,false>;
       using MTraits  = tfel::material::MechanicalBehaviourTraits<BV>;
       const bool is_defined_ = MTraits::is_defined;
       using Handler = typename std::conditional<is_defined_,CallBehaviour,

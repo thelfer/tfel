@@ -30,12 +30,12 @@ namespace mfront{
     enum OptimisationLevel{
       LEVEL0, //!< no architecture specific optimisations (i.e. no
 	      //   `-march=native` under gcc). The options used are
-	      //   the one returned by `tfel-config --oflags0`.
+	      //   the ones returned by `tfel-config --oflags0`.
       LEVEL1, //!< standard optimisation level. The options used are
-	      //   the one returned by `tfel-config --oflags`.
+	      //   the ones returned by `tfel-config --oflags`.
       LEVEL2  //!< add potentially unsafe math optmisations. The
-	      //   options used are the one returned by
-              //   `tfel-config --oflags2`.
+	      //   options used are the ones returned by
+              //   `tfel-config --oflags --oflags2`.
     };
     //! \brief default constructor
     GeneratorOptions();

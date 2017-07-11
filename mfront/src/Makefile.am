@@ -299,7 +299,6 @@ endif # HAVE_ABAQUS
 if HAVE_CALCULIX
 lib_LTLIBRARIES += libCalculiXInterface.la
 libCalculiXInterface_la_SOURCES = CalculiXInterfaceExceptions.cxx                      \
-		                  CalculiXRotation.cxx                                 \
 				  CalculiXException.cxx                                \
 			          CalculiXComputeStiffnessTensor.cxx                   \
 			          CalculiXStressFreeExpansionHandler.cxx               \

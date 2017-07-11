@@ -237,7 +237,7 @@ namespace mfront{
      * \brief perturbation value used for the computation of the
      * numerical approximation of the tangent operator
      */
-    double strainPerturbationValue = 1.e6;
+    double strainPerturbationValue = 1.e-6;
     /*!
      * \brief comparison critera value used for comparing of the user
      * defined tangent operator with a numerical approximation.

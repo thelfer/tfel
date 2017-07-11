@@ -15,6 +15,7 @@ _mfront_la_SOURCES = mfront.cxx                    \
 		     FileDescription.cxx           \
 		     LibraryDescription.cxx        \
 		     TargetsDescription.cxx        \
+		     GeneratorOptions.cxx          \
 		     DSLFactory.cxx                \
 		     VariableBoundsDescription.cxx \
 		     VariableDescription.cxx       \
@@ -23,7 +24,9 @@ _mfront_la_SOURCES = mfront.cxx                    \
 		     BehaviourData.cxx             \
 		     BehaviourSymmetryType.cxx     \
 		     BehaviourDescription.cxx      \
-		     SearchPathsHandler.cxx
+		     SearchPathsHandler.cxx        \
+		     GeneratorOptions.cxx          \
+		     MakefileGenerator.cxx
 
 _mfront_la_LDFLAGS = -module
 _mfront_la_LIBADD  = -L@top_builddir@/mfront/src                       \

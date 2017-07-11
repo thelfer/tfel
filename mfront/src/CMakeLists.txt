@@ -223,7 +223,6 @@ if(HAVE_CALCULIX)
     ${TFELMFront_SOURCES})
   set(CalculiXInterface_SOURCES
     CalculiXInterfaceExceptions.cxx
-    CalculiXRotation.cxx
     CalculiXException.cxx
     CalculiXComputeStiffnessTensor.cxx
     CalculiXStressFreeExpansionHandler.cxx

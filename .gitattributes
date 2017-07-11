@@ -33,8 +33,10 @@ bindings/python/mfront/BehaviourSymmetryType.cxx -text
 bindings/python/mfront/CMakeLists.txt -text
 bindings/python/mfront/DSLFactory.cxx -text
 bindings/python/mfront/FileDescription.cxx -text
+bindings/python/mfront/GeneratorOptions.cxx -text
 bindings/python/mfront/LibraryDescription.cxx -text
 bindings/python/mfront/Makefile.am -text
+bindings/python/mfront/MakefileGenerator.cxx -text
 bindings/python/mfront/SearchPathsHandler.cxx -text
 bindings/python/mfront/TargetsDescription.cxx -text
 bindings/python/mfront/VariableBoundsDescription.cxx -text
@@ -1937,7 +1939,6 @@ mfront/include/MFront/CalculiX/CalculiXException.hxx -text
 mfront/include/MFront/CalculiX/CalculiXFiniteStrain.hxx -text
 mfront/include/MFront/CalculiX/CalculiXInterface.hxx -text
 mfront/include/MFront/CalculiX/CalculiXInterfaceExceptions.hxx -text
-mfront/include/MFront/CalculiX/CalculiXRotation.hxx -text
 mfront/include/MFront/CalculiX/CalculiXStressFreeExpansionHandler.hxx -text
 mfront/include/MFront/CalculiX/CalculiXTangentOperator.hxx -text
 mfront/include/MFront/CalculiX/CalculiXTangentOperator.ixx -text
@@ -2162,7 +2163,6 @@ mfront/src/CalculiXException.cxx -text
 mfront/src/CalculiXFiniteStrain.cxx -text
 mfront/src/CalculiXInterface.cxx -text
 mfront/src/CalculiXInterfaceExceptions.cxx -text
-mfront/src/CalculiXRotation.cxx -text
 mfront/src/CalculiXStressFreeExpansionHandler.cxx -text
 mfront/src/CastemComputeStiffnessTensor.cxx -text
 mfront/src/CastemComputeThermalExpansionCoefficientTensor.cxx -text

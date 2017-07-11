@@ -79,7 +79,6 @@ void declareAbstractDSL(){
     .def("getTargetsDescription",&AbstractDSL::getTargetsDescription,
 	 return_internal_reference<>())
     .def("generateOutputFiles",&AbstractDSL::generateOutputFiles)
-    .def("generateOutputFiles",&AbstractDSL::generateOutputFiles)
     .def("setInterfaces",&setInterfaces)
     .def("getKeywordsList",&getKeywordsList)
     ;

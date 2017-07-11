@@ -238,7 +238,6 @@ if HAVE_ABAQUS
 nobase_include_HEADERS += MFront/CalculiX/CalculiX.hxx                                         \
 			  MFront/CalculiX/CalculiXData.hxx                                     \
 			  MFront/CalculiX/CalculiXConvert.hxx                                  \
-			  MFront/CalculiX/CalculiXRotation.hxx                                 \
 			  MFront/CalculiX/CalculiXConfig.hxx                                   \
 			  MFront/CalculiX/CalculiXTraits.hxx                                   \
 			  MFront/CalculiX/CalculiXException.hxx 		               \

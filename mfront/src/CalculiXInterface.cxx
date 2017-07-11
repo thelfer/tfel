@@ -41,147 +41,120 @@ namespace mfront{
   static void
   writeUMATArguments(std::ostream& out,
 		     const BehaviourDescription::BehaviourType& t,
-		     const CalculiXInterface::FiniteStrainStrategy fss,
 		     const bool f)
   {
     if(f){
-      out << "(calculix::CalculiXReal *const STRESS,\n"
-	  << " calculix::CalculiXReal *const STATEV,\n"
-	  << " calculix::CalculiXReal *const DDSDDE,\n"
-	  << " calculix::CalculiXReal *const SSE,\n"
-	  << " calculix::CalculiXReal *const SPD,\n"
-	  << " calculix::CalculiXReal *const SCD,\n"
-	  << " calculix::CalculiXReal *const RPL,\n"
-	  << " calculix::CalculiXReal *const DDSDDT,\n"
-	  << " calculix::CalculiXReal *const DRPLDE,\n"
-	  << " calculix::CalculiXReal *const DRPLDT,\n"
-	  << " const calculix::CalculiXReal *const STRAN,\n"
-	  << " const calculix::CalculiXReal *const DSTRAN,\n"
-	  << " const calculix::CalculiXReal *const TIME,\n"
-	  << " const calculix::CalculiXReal *const DTIME,\n"
-	  << " const calculix::CalculiXReal *const TEMP,\n"
-	  << " const calculix::CalculiXReal *const DTEMP,\n"
-	  << " const calculix::CalculiXReal *const PREDEF,\n"
-	  << " const calculix::CalculiXReal *const DPRED,\n"
-	  << " const char           *const CMNAME,\n"
-	  << " const calculix::CalculiXInt  *const NDI,\n"
-	  << " const calculix::CalculiXInt  *const NSHR,\n"
-	  << " const calculix::CalculiXInt  *const NTENS,\n"
-	  << " const calculix::CalculiXInt  *const NSTATV,\n"
-	  << " const calculix::CalculiXReal *const PROPS,\n"
-	  << " const calculix::CalculiXInt  *const NPROPS,\n"
-	  << " const calculix::CalculiXReal *const COORDS,\n"
-	  << " const calculix::CalculiXReal *const DROT,\n"
-	  << "       calculix::CalculiXReal *const PNEWDT,\n"
-	  << " const calculix::CalculiXReal *const CELENT,\n"
-	  << " const calculix::CalculiXReal *const DFGRD0,\n"
-	  << " const calculix::CalculiXReal *const DFGRD1,\n"
-	  << " const calculix::CalculiXInt  *const NOEL,\n"
-	  << " const calculix::CalculiXInt  *const NPT,\n"
-	  << " const calculix::CalculiXInt  *const LAYER,\n"
-	  << " const calculix::CalculiXInt  *const KSPT,\n"
-	  << " const calculix::CalculiXInt  *const KSTEP,\n"
-	  << "       calculix::CalculiXInt  *const KINC,\n"
-	  << "const int size)";
+      out << "(const char * const amat,"
+	  << " const calculix::CalculiXInt* const iel,"
+	  << " const calculix::CalculiXInt* const iint,"
+	  << " const calculix::CalculiXInt* const NPROPS,"
+	  << " const calculix::CalculiXReal* const MPROPS,"
+	  << " const calculix::CalculiXReal* const STRAN1,"
+	  << " const calculix::CalculiXReal* const STRAN0,"
+	  << " const calculix::CalculiXReal* const beta,"
+	  << " const calculix::CalculiXReal* const F0,"
+	  << " const calculix::CalculiXReal* const voj,"
+	  << " const calculix::CalculiXReal* const F1,"
+	  << " const calculix::CalculiXReal* const vj,"
+	  << " const calculix::CalculiXInt* const ithermal,"
+	  << " const calculix::CalculiXReal* const TEMP1,"
+	  << " const calculix::CalculiXReal* const DTIME,"
+	  << " const calculix::CalculiXReal* const time,"
+	  << " const calculix::CalculiXReal* const ttime,"
+	  << " const calculix::CalculiXInt* const icmd,"
+	  << " const calculix::CalculiXInt* const ielas,"
+	  << " const calculix::CalculiXInt* const mi,"
+	  << " const calculix::CalculiXInt* const NSTATV,"
+	  << " const calculix::CalculiXReal* const STATEV0,"
+	  << "       calculix::CalculiXReal* const STATEV1,"
+	  << "       calculix::CalculiXReal* const STRESS,"
+	  << "       calculix::CalculiXReal* const DDSDDE,"
+	  << " const calculix::CalculiXInt* const iorien,"
+	  << " const calculix::CalculiXReal* const pgauss,"
+	  << " const calculix::CalculiXReal* const orab,"
+	  << "       calculix::CalculiXReal* const PNEWDT,"
+	  << " const calculix::CalculiXInt* const ipkon,"
+	  << " const int size)";
     } else {
-      out << "(calculix::CalculiXReal *const STRESS,\n"
-	  << " calculix::CalculiXReal *const STATEV,\n"
-	  << " calculix::CalculiXReal *const DDSDDE,\n"
-	  << " calculix::CalculiXReal *const,\n"
-	  << " calculix::CalculiXReal *const,\n"
-	  << " calculix::CalculiXReal *const,\n"
-	  << " calculix::CalculiXReal *const,\n"
-	  << " calculix::CalculiXReal *const,\n"
-	  << " calculix::CalculiXReal *const,\n"
-	  << " calculix::CalculiXReal *const,\n";
+      out << "(const char * const,"
+	  << " const calculix::CalculiXInt* const,"
+	  << " const calculix::CalculiXInt* const,"
+	  << " const calculix::CalculiXInt* const  NPROPS,"
+	  << " const calculix::CalculiXReal* const MPROPS,";
       if(t==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	out << " const calculix::CalculiXReal *const STRAN,\n"
-	    << " const calculix::CalculiXReal *const DSTRAN,\n";
+	out << " const calculix::CalculiXReal *const STRAN1,\n"
+	    << " const calculix::CalculiXReal *const STRAN0,\n";
       } else {
 	out << " const calculix::CalculiXReal *const,\n"
 	    << " const calculix::CalculiXReal *const,\n";
       }
-      out << " const calculix::CalculiXReal *const,\n"
-	  << " const calculix::CalculiXReal *const DTIME,\n"
-	  << " const calculix::CalculiXReal *const TEMP,\n"
-	  << " const calculix::CalculiXReal *const DTEMP,\n"
-	  << " const calculix::CalculiXReal *const PREDEF,\n"
-	  << " const calculix::CalculiXReal *const DPRED,\n"
-	  << " const char           *const,\n"
-	  << " const calculix::CalculiXInt  *const,\n"
-	  << " const calculix::CalculiXInt  *const,\n"
-	  << " const calculix::CalculiXInt  *const NTENS,\n"
-	  << " const calculix::CalculiXInt  *const NSTATV,\n"
-	  << " const calculix::CalculiXReal *const PROPS,\n"
-	  << " const calculix::CalculiXInt  *const NPROPS,\n"
-	  << " const calculix::CalculiXReal *const,\n"
-	  << " const calculix::CalculiXReal *const DROT,\n"
-	  << "       calculix::CalculiXReal *const PNEWDT,\n"
-	  << " const calculix::CalculiXReal *const,\n";
-      if(t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-	out << " const calculix::CalculiXReal *const F0,\n"
-	    << " const calculix::CalculiXReal *const F1,\n";
+      out << " const calculix::CalculiXReal* const,";
+      if(t==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	out << " const calculix::CalculiXReal* const F0,"
+	    << " const calculix::CalculiXReal* const ,"
+	    << " const calculix::CalculiXReal* const F1,"
+	    << " const calculix::CalculiXReal* const,";
       } else {
-	out << " const calculix::CalculiXReal *const,\n"
-	    << " const calculix::CalculiXReal *const,\n";
+	out << " const calculix::CalculiXReal* const,"
+	    << " const calculix::CalculiXReal* const ,"
+	    << " const calculix::CalculiXReal* const,"
+	    << " const calculix::CalculiXReal* const,";
       }
-      out << " const calculix::CalculiXInt  *const,\n"
-	  << " const calculix::CalculiXInt  *const,\n"
-	  << " const calculix::CalculiXInt  *const,\n"
-	  << " const calculix::CalculiXInt  *const,\n";
-      if((t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
-	 ((fss!=CalculiXInterface::NATIVEFINITESTRAINSTRATEGY)&&
-	  (fss!=CalculiXInterface::UNDEFINEDSTRATEGY))){
-	out << " const calculix::CalculiXInt  *const KSTEP,\n";
-      } else {
-	out << " const calculix::CalculiXInt  *const,\n";
-      }
-      out << "       calculix::CalculiXInt  *const,\n"
-	  << "const int)";
+      out << " const calculix::CalculiXInt* const ithermal,"
+	  << " const calculix::CalculiXReal* const TEMP1,"
+	  << " const calculix::CalculiXReal* const DTIME,"
+	  << " const calculix::CalculiXReal* const,"
+	  << " const calculix::CalculiXReal* const,"
+	  << " const calculix::CalculiXInt* const icmd,"
+	  << " const calculix::CalculiXInt* const ielas,"
+	  << " const calculix::CalculiXInt* const,"
+	  << " const calculix::CalculiXInt* const  NSTATV,"
+	  << " const calculix::CalculiXReal* const STATEV0,"
+	  << "       calculix::CalculiXReal* const STATEV1,"
+	  << "       calculix::CalculiXReal* const STRESS,"
+	  << "       calculix::CalculiXReal* const DDSDDE,"
+	  << " const calculix::CalculiXInt* const,"
+	  << " const calculix::CalculiXReal* const,"
+	  << " const calculix::CalculiXReal* const,"
+	  << "       calculix::CalculiXReal* const PNEWDT,"
+	  << " const calculix::CalculiXInt* const,"
+	  << " const int size)";
     }
   } // end of writeUMATArguments
 
-  static void
-  writeUMATArguments(std::ostream& out)
+  static void writeUMATArguments(std::ostream& out)
   {
-    out << "(calculix::CalculiXReal *const,\n"
-	<< " calculix::CalculiXReal *const,\n"
-	<< " calculix::CalculiXReal *const,\n"
-	<< " calculix::CalculiXReal *const,\n"
-	<< " calculix::CalculiXReal *const,\n"
-	<< " calculix::CalculiXReal *const,\n"
-	<< " calculix::CalculiXReal *const,\n"
-	<< " calculix::CalculiXReal *const,\n"
-	<< " calculix::CalculiXReal *const,\n"
-	<< " calculix::CalculiXReal *const,\n"
-	<< " const calculix::CalculiXReal *const,\n"
-	<< " const calculix::CalculiXReal *const,\n"
-	<< " const calculix::CalculiXReal *const,\n"
-	<< " const calculix::CalculiXReal *const,\n"
-	<< " const calculix::CalculiXReal *const,\n"
-	<< " const calculix::CalculiXReal *const,\n"
-	<< " const calculix::CalculiXReal *const,\n"
-	<< " const calculix::CalculiXReal *const,\n"
-	<< " const char           *const,\n"
-	<< " const calculix::CalculiXInt  *const,\n"
-	<< " const calculix::CalculiXInt  *const,\n"
-	<< " const calculix::CalculiXInt  *const,\n"
-	<< " const calculix::CalculiXInt  *const,\n"
-	<< " const calculix::CalculiXReal *const,\n"
-	<< " const calculix::CalculiXInt  *const,\n"
-	<< " const calculix::CalculiXReal *const,\n"
-	<< " const calculix::CalculiXReal *const,\n"
-	<< "       calculix::CalculiXReal *const,\n"
-        << " const calculix::CalculiXReal *const,\n"
-	<< " const calculix::CalculiXReal *const,\n"
-	<< " const calculix::CalculiXReal *const,\n"
-	<< " const calculix::CalculiXInt  *const,\n"
-	<< " const calculix::CalculiXInt  *const,\n"
-	<< " const calculix::CalculiXInt  *const,\n"
-	<< " const calculix::CalculiXInt  *const,\n"
-	<< " const calculix::CalculiXInt  *const,\n"
-	<< "       calculix::CalculiXInt  *const,\n"
-	<< "const int)";
+    out << "(const char * const,"
+	<< " const calculix::CalculiXInt* const,"
+	<< " const calculix::CalculiXInt* const,"
+	<< " const calculix::CalculiXInt* const,"
+	<< " const calculix::CalculiXReal* const,"
+	<< " const calculix::CalculiXReal* const,"
+	<< " const calculix::CalculiXReal* const,"
+	<< " const calculix::CalculiXReal* const,"
+	<< " const calculix::CalculiXReal* const,"
+	<< " const calculix::CalculiXReal* const,"
+	<< " const calculix::CalculiXReal* const,"
+	<< " const calculix::CalculiXReal* const,"
+	<< " const calculix::CalculiXInt* const,"
+	<< " const calculix::CalculiXReal* const,"
+	<< " const calculix::CalculiXReal* const,"
+	<< " const calculix::CalculiXReal* const,"
+	<< " const calculix::CalculiXReal* const,"
+	<< " const calculix::CalculiXInt* const,"
+	<< " const calculix::CalculiXInt* const,"
+	<< " const calculix::CalculiXInt* const,"
+	<< " const calculix::CalculiXInt* const,"
+	<< " const calculix::CalculiXReal* const,"
+	<< "       calculix::CalculiXReal* const,"
+	<< "       calculix::CalculiXReal* const,"
+	<< "       calculix::CalculiXReal* const,"
+	<< " const calculix::CalculiXInt* const,"
+	<< " const calculix::CalculiXReal* const,"
+	<< " const calculix::CalculiXReal* const,"
+	<< "       calculix::CalculiXReal* const,"
+	<< " const calculix::CalculiXInt* const,"
+	<< " const int)";
   } // end of writeUMATArguments
 
   std::string CalculiXInterface::getName()
@@ -196,10 +169,10 @@ namespace mfront{
 
   std::pair<bool,CalculiXInterface::tokens_iterator>
   CalculiXInterface::treatKeyword(BehaviourDescription&,
-				const std::string& key,
-				const std::vector<std::string>& i,
-				tokens_iterator current,
-				const tokens_iterator end)
+				  const std::string& key,
+				  const std::vector<std::string>& i,
+				  tokens_iterator current,
+				  const tokens_iterator end)
   {
     using tfel::utilities::CxxTokenizer;
     auto throw_if = [](const bool b,const std::string& m){
@@ -209,7 +182,6 @@ namespace mfront{
       if(std::find(i.begin(),i.end(),this->getName())!=i.end()){
 	const auto keys =  std::vector<std::string>{
 	  "@CalculiXFiniteStrainStrategy",
-	  "@CalculiXOrthotropyManagementPolicy",
 	  "@CalculiXGenerateMTestFileOnFailure",
 	  "@CalculiXCompareToNumericalTangentOperator",
 	  "@CalculiXTangentOperatorComparisonCriterium",
@@ -239,25 +211,6 @@ namespace mfront{
 	       "a finite strain strategy has already been defined");
       throw_if(current==end,"unexpected end of file");
       this->fss = read(current->value);
-      throw_if(++current==end,"unexpected end of file");
-      throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
-      ++(current);
-      return {true,current};
-    } else if (key=="@CalculiXOrthotropyManagementPolicy"){
-      auto read = [&throw_if](const std::string& s){
-	if(s=="Native"){
-	  return NATIVEORTHOTROPYMANAGEMENTPOLICY;
-	} else if(s=="MFront"){
-	  return MFRONTORTHOTROPYMANAGEMENTPOLICY;
-	}
-	throw_if(true,"unsupported orthotropy management policy '"+s+"'\n"
-		 "The only supported policies are "
-		 "'MFront' and 'Native'");
-      };
-      throw_if(this->omp!=UNDEFINEDORTHOTROPYMANAGEMENTPOLICY,
-	       "an orthotropy management policy has already been defined");
-      throw_if(current==end,"unexpected end of file");
-      this->omp = read(current->value);
       throw_if(++current==end,"unexpected end of file");
       throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
       ++(current);
@@ -295,9 +248,8 @@ namespace mfront{
     return {false,current};
   } // end of treatKeyword
 
-  void
-  CalculiXInterface::endTreatment(const BehaviourDescription& mb,
-				const FileDescription& fd) const
+  void CalculiXInterface::endTreatment(const BehaviourDescription& mb,
+				       const FileDescription& fd) const
   {
     using namespace tfel::system;
     auto throw_if = [](const bool b,const std::string& m){
@@ -310,6 +262,9 @@ namespace mfront{
 	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
 	     "the calculix interface only supports small and "
 	     "finite strain behaviours");
+    // the only supported modelling hypothesis
+    constexpr const auto h = ModellingHypothesis::TRIDIMENSIONAL;
+    // checks
     if(this->compareToNumericalTangentOperator){
       throw_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
 	       "unsupported feature @CalculiXSaveTangentOperator "
@@ -320,18 +275,7 @@ namespace mfront{
 	     (this->omp!=UNDEFINEDORTHOTROPYMANAGEMENTPOLICY),
 	     "orthotropy management policy is only valid "
 	     "for orthotropic behaviour");
-    if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      if(((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	  (this->fss!=UNDEFINEDSTRATEGY))||
-	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
-	throw_if(this->omp!=MFRONTORTHOTROPYMANAGEMENTPOLICY,
-		 "orthotropic finite strain behaviours are only supported with the "
-		 "'MFront' othotropy management policy. See the "
-		 "'@CalculiXOrthotropyManagementPolicy' for details");
-      }
-    }
     // get the modelling hypotheses to be treated
-    const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
     // output directories
     systemCall::mkdir("include/MFront");
@@ -355,8 +299,8 @@ namespace mfront{
 		    << "could not open file '" << fn << "'" << std::endl;
 	}
       } else {
-	  std::cerr << "CalculiXInterface::endTreatment: "
-		    << "could not open file 'calculix/umat.cpp'" << std::endl;
+	std::cerr << "CalculiXInterface::endTreatment: "
+		  << "could not open file 'calculix/umat.cpp'" << std::endl;
       }
       out.close();
     }
@@ -379,8 +323,8 @@ namespace mfront{
 	<< "#define "<< header << "\n\n"
 	<< "#include\"TFEL/Config/TFELConfig.hxx\"\n\n"
 	<< "#include\"MFront/CalculiX/CalculiX.hxx\"\n"
-	<< "#include\"MFront/CalculiX/CalculiXData.hxx\"\n\n";
-    out << "#ifdef __cplusplus\n"
+	<< "#include\"MFront/CalculiX/CalculiXData.hxx\"\n\n"
+	<< "#ifdef __cplusplus\n"
 	<< "#include\"MFront/CalculiX/CalculiXTraits.hxx\"\n";
     if(this->fss!=UNDEFINEDSTRATEGY){
       out << "#include\"MFront/CalculiX/CalculiXFiniteStrain.hxx\"\n\n";
@@ -393,14 +337,7 @@ namespace mfront{
     out << "#ifdef __cplusplus\n\n"
 	<< "namespace calculix{\n\n";
 
-    if(!mb.areAllMechanicalDataSpecialised(mh)){
-      this->writeCalculiXBehaviourTraits(out,mb,ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-    }
-    for(const auto & h : mh){
-      if(mb.hasSpecialisedMechanicalData(h)){
-	this->writeCalculiXBehaviourTraits(out,mb,h);
-      }
-    }
+    this->writeCalculiXBehaviourTraits(out,mb);
 
     out << "} // end of namespace calculix\n\n"
 	<< "#endif /* __cplusplus */\n\n"
@@ -411,12 +348,10 @@ namespace mfront{
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
 
-    for(const auto h: mh){
-      out << "MFRONT_SHAREDOBJ void\n"
-	  << this->getFunctionNameForHypothesis(name,h);
-      writeUMATArguments(out);
-      out << ";\n\n";
-    }
+    out << "MFRONT_SHAREDOBJ void\n"
+	<< this->getFunctionName(name);
+    writeUMATArguments(out);
+    out << ";\n\n";
 
     out << "#ifdef __cplusplus\n"
 	<< "}\n"
@@ -449,9 +384,6 @@ namespace mfront{
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
-    if(this->omp!=UNDEFINEDORTHOTROPYMANAGEMENTPOLICY){
-      out << "#include\"MFront/CalculiX/CalculiXRotation.hxx\"\n\n";
-    }
     out << "#include\"MFront/CalculiX/CalculiXStressFreeExpansionHandler.hxx\"\n\n"
 	<< "#include\"MFront/CalculiX/CalculiXInterface.hxx\"\n\n"
 	<< "#include\"MFront/CalculiX/calculix" << name << ".hxx\"\n\n";
@@ -461,36 +393,26 @@ namespace mfront{
     out << "extern \"C\"{\n\n";
  
     this->generateUMATxxGeneralSymbols(out,name,mb,fd);
-    if(!mb.areAllMechanicalDataSpecialised(mh)){
-      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      this->generateUMATxxSymbols(out,name,uh,mb,fd);
-    }
-    for(const auto &h : mh){
-      if(mb.hasSpecialisedMechanicalData(h)){
-	this->generateUMATxxSymbols(out,name,h,mb,fd);
-      }
-    }
+    this->generateUMATxxSymbols(out,name,h,mb,fd);
     
     this->writeSetParametersFunctionsImplementations(out,name,mb);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
-    for(const auto h: mh){
-      if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	 ((this->fss==UNDEFINEDSTRATEGY)||(this->fss==NATIVEFINITESTRAINSTRATEGY))){
-	this->writeUMATSmallStrainFunction(out,mb,name,h);
-      } else if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		((this->fss!=UNDEFINEDSTRATEGY)&&(this->fss!=NATIVEFINITESTRAINSTRATEGY))){
-	if(this->fss==FINITEROTATIONSMALLSTRAIN){
-	  this->writeUMATFiniteRotationSmallStrainFunction(out,mb,name,h);
-	} else {
-	  throw_if(true,"unsupported finite strain strategy !");
-	}
-      } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-	this->writeUMATFiniteStrainFunction(out,mb,name,h);
+    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+       ((this->fss==UNDEFINEDSTRATEGY)||(this->fss==NATIVEFINITESTRAINSTRATEGY))){
+      this->writeUMATSmallStrainFunction(out,mb,name);
+    } else if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	      ((this->fss!=UNDEFINEDSTRATEGY)&&(this->fss!=NATIVEFINITESTRAINSTRATEGY))){
+      if(this->fss==FINITEROTATIONSMALLSTRAIN){
+	this->writeUMATFiniteRotationSmallStrainFunction(out,mb,name);
       } else {
-	throw_if(true,"the calculix interface only supports small "
-		 "and finite strain behaviours");
+	throw_if(true,"unsupported finite strain strategy !");
       }
+    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      this->writeUMATFiniteStrainFunction(out,mb,name);
+    } else {
+      throw_if(true,"the calculix interface only supports small "
+	       "and finite strain behaviours");
     }
     out << "} // end of extern \"C\"\n";
     out.close();
@@ -498,140 +420,41 @@ namespace mfront{
   } // end of CalculiXInterface::endTreatment
   
   void CalculiXInterface::writeUMATFunctionBase(std::ostream& out,
-					      const BehaviourDescription& mb,
-					      const std::string& name,
-					      const std::string& sfeh,
-					      const Hypothesis h) const
+						const BehaviourDescription& mb,
+						const std::string& name,
+						const std::string& sfeh) const
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("CalculiXInterface::writeUMATFunctionBase: "+m));}
     };
     std::string dv0,dv1,sig,statev,nstatev;
     const auto btype = mb.getBehaviourType();
-    out << "static void\n" << name << "_base" << this->getFunctionNameForHypothesis("",h);
-    writeUMATArguments(out,btype,this->fss,false);
+    out << "static void\n" << name << "_base";
+    writeUMATArguments(out,btype,false);
     out << "{\n";
-    if((btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
-       ((btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	((this->fss!=CalculiXInterface::NATIVEFINITESTRAINSTRATEGY)&&
-	 (this->fss!=CalculiXInterface::UNDEFINEDSTRATEGY)))){
-      out << "#ifndef MFRONT_CALCULIX_NORUNTIMECHECKS\n"
-	  << "if(KSTEP[2]!=1){\n"
-	  << "std::cerr << \"the " << name << " behaviour is only "
-	  << "valid in finite strain analysis\\n\";\n"
-	  << "*PNEWDT=-1;\n"
-	  << "return;\n"
-	  << "}\n"
-	  << "#endif /* MFRONT_CALCULIX_NORUNTIMECHECKS */\n";
-    }
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
-      if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-    	// turning the deformation and the deformation gradient
-    	// increment to the material frame
-	out << "#ifndef MFRONT_CALCULIX_NORUNTIMECHECKS\n"
-	    << "if(*NSTATV<6){\n"
-	    << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
-	    << "          << \"invalid number of state variables\\n\";\n"
-	    << "*PNEWDT = -1.;\n"
-	    << "return;\n"
-	    << "}\n"
-	    << "#endif /* MFRONT_CALCULIX_NORUNTIMECHECKS */\n"
-	    << "calculix::CalculiXRotation R(STATEV);\n"
-	    << "calculix::CalculiXReal e[6u];\n"
-	    << "calculix::CalculiXReal de[6u];\n"
-	    << "calculix::CalculiXReal sm[6u];\n"
-	    << "R.rotateStrainsForward(STRAN,e);\n"
-	    << "R.rotateStrainsForward(DSTRAN,de);\n"
-	    << "R.rotateStressesForward(STRESS,sm);\n"
-	    << "const calculix::CalculiXInt nstatev = *NSTATV-6;\n";
-	statev="STATEV+6";	    
-    	dv0 = "e";
-    	dv1 = "de";
-    	sig = "sm";
-	nstatev = "nstatev";
-      } else if(btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-	out << "#ifndef MFRONT_CALCULIX_NORUNTIMECHECKS\n"
-	    << "if(*NSTATV<6){\n"
-	    << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
-	    << "          << \"invalid number of state variables\\n\";\n"
-	    << "*PNEWDT = -1.;\n"
-	    << "return;\n"
-	    << "}\n"
-	    << "#endif /* MFRONT_CALCULIX_NORUNTIMECHECKS */\n"
-	    << "calculix::CalculiXRotation R(STATEV);\n"
-	    << "calculix::CalculiXReal Fm0[9u];\n"
-	    << "calculix::CalculiXReal Fm1[9u];\n"
-	    << "calculix::CalculiXReal sm[6u];\n"
-	    << "R.rotateDeformationGradientForward(F0,Fm0);\n"
-	    << "R.rotateDeformationGradientForward(F1,Fm1);\n"
-	    << "R.rotateStressesForward(STRESS,sm);\n"
-	    << "const calculix::CalculiXInt nstatev = *NSTATV-6;\n";
-	statev="STATEV+6";
-	dv0 = "Fm0";
-	dv1 = "Fm1";
-	sig = "sm";
-	nstatev = "nstatev";
-      } else {
-    	throw_if(true,"the calculix interface only supports small "
-    		 "and finite strain behaviours");
-      }
+    if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      dv0 = "STRAN";
+      dv1 = "DSTRAN";
+    } else if(btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      dv0 = "F0";
+      dv1 = "F1";
     } else {
-      if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	dv0 = "STRAN";
-	dv1 = "DSTRAN";
-      } else if(btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-	dv0 = "F0";
-	dv1 = "F1";
-      } else {
-    	throw_if(true,"the calculix interface only supports small "
-    		 "and finite strain behaviours");
-      }
-      sig = "STRESS";
-      statev="STATEV";
-      nstatev="*NSTATV";
+      throw_if(true,"the calculix interface only supports small "
+	       "and finite strain behaviours");
     }
+    sig = "STRESS";
+    statev="STATEV";
+    nstatev="*NSTATV";
     out << "calculix::CalculiXData d = {" << sig << ",PNEWDT,DDSDDE," << statev << ",\n"
 	<< "                        *NTENS,*NPROPS," << nstatev << ",*DTIME,\n"
 	<< "                        DROT," << dv0 << "," << dv1 << ",TEMP,DTEMP,\n"
 	<< "                        PROPS,PREDEF,DPRED,\n"
 	<< getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
-	<< "if(calculix::CalculiXInterface<tfel::material::ModellingHypothesis::"
-	<< ModellingHypothesis::toUpperCaseString(h) << ",tfel::material::" << mb.getClassName() 
+	<< "if(calculix::CalculiXInterface<tfel::material::" << mb.getClassName() 
 	<< ">::exe(d)!=0){\n";
-    out << "*PNEWDT = -1.;\n"
+    out << "*PNEWDT = 0.2;\n"
 	<< "return;\n"
 	<< "}\n";
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
-      if(h==ModellingHypothesis::PLANESTRESS){
-	out << "calculix::CalculiXReal D[16u] = {DDSDDE[0],DDSDDE[3],0,DDSDDE[6],\n"
-	    << "                             DDSDDE[1],DDSDDE[4],0,DDSDDE[7],\n"
-	    << "                             0,0,0,0,\n"
-	    << "                             DDSDDE[2],DDSDDE[5],0,DDSDDE[8]};\n"
-	    << "sm[3]=sm[2];\n"
-	    << "sm[2]=0;\n"
-	    << "R.rotateStressesBackward(sm,sg);\n"
-	    << "R.rotateTangentOperatorBackward(D);\n"
-	    << "STRESS[0]=sg[0];\n"
-	    << "STRESS[1]=sg[1];\n"
-	    << "STRESS[2]=sg[3];\n"
-	    << "DDSDDE[0]=D[0];\n"
-	    << "DDSDDE[1]=D[4];\n"
-	    << "DDSDDE[2]=D[12];\n"
-	    << "DDSDDE[3]=D[1];\n"
-	    << "DDSDDE[4]=D[5];\n"
-	    << "DDSDDE[5]=D[13];\n"
-	    << "DDSDDE[6]=D[3];\n"
-	    << "DDSDDE[7]=D[7];\n"
-	    << "DDSDDE[8]=D[15];\n";
-      } else if ((h==ModellingHypothesis::AXISYMMETRICAL)||
-		 (h==ModellingHypothesis::PLANESTRAIN)||
-		 (h==ModellingHypothesis::TRIDIMENSIONAL)){
-	out << "R.rotateStressesBackward(sm,STRESS);\n"
-	    << "R.rotateTangentOperatorBackward(DDSDDE);\n";
-      } else {
-	throw_if(true,"unsupported hypothesis");
-      }
-    }
     if(getDebugMode()){
       out << "std::cout << \"Dt :\" << std::endl;\n"
 	  << "for(calculix::CalculiXInt i=0;i!=*NTENS;++i){\n"
@@ -646,15 +469,13 @@ namespace mfront{
   } // end of CalculiXInterface::writeUMATFunctionBase
 
   void CalculiXInterface::writeUMATFiniteStrainFunction(std::ostream& out,
-						     const BehaviourDescription& mb,
-						     const std::string& name,
-						     const Hypothesis h) const
+							const BehaviourDescription& mb,
+							const std::string& name) const
   {
     const std::string sfeh = "nullptr";
-    this->writeUMATFunctionBase(out,mb,name,sfeh,h);
-    out << "MFRONT_SHAREDOBJ void\n"
-	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,this->fss,true);
+    this->writeUMATFunctionBase(out,mb,name,sfeh);
+    out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
+    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -663,24 +484,22 @@ namespace mfront{
 	  << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
-    out << name << "_base" << this->getFunctionNameForHypothesis("",h)
-	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,DRPLDT,\n"
-	<< "STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,CMNAME,\n"
-	<< "NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,PNEWDT,\n"
-	<< "CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,KINC,size);\n"
+    out << name << "_base"
+	<< "(amat,iel,iint,NPROPS,MPROPS,STRAN1,STRAN0,beta,F0,"
+	<< " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
+	<< " ielas,mi,NSTATV,STATEV0,STATEV1,STRESS,DDSDDE,"
+	<< "iorien,pgauss,orab,PNEWDT,ipkon,size);\n"
 	<< "}\n\n";
   }
   
   void CalculiXInterface::writeUMATSmallStrainFunction(std::ostream& out,
-						     const BehaviourDescription& mb,
-						     const std::string& name,
-						     const Hypothesis h) const
+						       const BehaviourDescription& mb,
+						       const std::string& name) const
   {
     const std::string sfeh = "calculix::CalculiXStandardSmallStrainStressFreeExpansionHandler";
-    this->writeUMATFunctionBase(out,mb,name,sfeh,h);
-    out << "MFRONT_SHAREDOBJ void\n"
-	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,this->fss,true);
+    this->writeUMATFunctionBase(out,mb,name,sfeh);
+    out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
+    writeUMATArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,true);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -690,7 +509,7 @@ namespace mfront{
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
     if(this->compareToNumericalTangentOperator){
-      out << "calculix::CalculiXReal pnewdt0(*PNEWDT);\n"
+      out << "calculix::CalculiXReal PNEWDT0(*PNEWDT);\n"
 	  << "std::vector<calculix::CalculiXReal> deto0(*NTENS);\n"
 	  << "std::vector<calculix::CalculiXReal> sig0(*NTENS);\n"
 	  << "std::vector<calculix::CalculiXReal> sv0(*NSTATV);\n"
@@ -701,11 +520,11 @@ namespace mfront{
     if(this->generateMTestFile){
       this->generateMTestFile1(out);
     }
-    out << name << "_base" << this->getFunctionNameForHypothesis("",h)
-	<< "(STRESS,STATEV,DDSDDE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,DRPLDT,\n"
-	<< "STRAN,DSTRAN,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,CMNAME,\n"
-	<< "NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,PNEWDT,\n"
-	<< "CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,KINC,size);\n";
+    out << name << "_base"
+	<< "(amat,iel,iint,NPROPS,MPROPS,STRAN1,STRAN0,beta,F0,"
+	<< " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
+	<< " ielas,mi,NSTATV,STATEV0,STATEV1,STRESS,DDSDDE,"
+	<< "iorien,pgauss,orab,PNEWDT,ipkon,size);\n";
     if(this->generateMTestFile){
       out << "if(*PNEWDT<1){\n";
       this->generateMTestFile2(out,mb.getBehaviourType(),
@@ -720,7 +539,7 @@ namespace mfront{
 	  << "std::vector<calculix::CalculiXReal> sigb(*NTENS);\n"
 	  << "std::vector<calculix::CalculiXReal> sv(*NSTATV);\n"
 	  << "std::vector<calculix::CalculiXReal> D((*NTENS)*(*NTENS));\n"
-	  << "calculix::CalculiXReal pnewdt(pnewdt0);\n"
+	  << "calculix::CalculiXReal PNEWDT(PNEWDT0);\n"
 	  << "calculix::CalculiXReal m;\n"
 	  << "calculix::CalculiXReal mDt;\n"
 	  << "calculix::CalculiXReal mnDt;\n"
@@ -730,29 +549,26 @@ namespace mfront{
 	  << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
 	  << "deto[i] += " << this->strainPerturbationValue << ";\n"
 	  << "D[0] = 0.;\n"
-	  << "calculix::CalculiXData d2 = {&sigf[0],&pnewdt0,&D[0],&sv[0],\n"
+	  << "calculix::CalculiXData d2 = {&sigf[0],&PNEWDT0,&D[0],&sv[0],\n"
 	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
 	  << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
 	  << "                         PROPS,PREDEF,DPRED,\n"
 	  << getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
-	  << "if(calculix::CalculiXInterface<tfel::material::ModellingHypothesis::"
-	  << ModellingHypothesis::toUpperCaseString(h) << ","
-	  << "tfel::material::" << mb.getClassName() << ">::exe(d2)!=0){\n"
+	  << "if(calculix::CalculiXInterface<tfel::material::"
+	  << mb.getClassName() << ">::exe(d2)!=0){\n"
 	  << "return;\n"
 	  << "}\n"
-	  << "calculix::CalculiXReal pnewdt(pnewdt0);\n"
+	  << "calculix::CalculiXReal PNEWDT(PNEWDT0);\n"
 	  << "std::copy(deto0.begin(),deto0.end(),deto.begin());\n"
 	  << "std::copy(sig0.begin(),sig0.end(),sigb.begin());\n"
 	  << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
 	  << "deto[i] -= " << this->strainPerturbationValue << ";\n"
 	  << "D[0] = 0.;\n"
-	  << "calculix::CalculiXData d3 = {&sigf[0],&pnewdt0,&D[0],&sv[0],\n"
+	  << "calculix::CalculiXData d3 = {&sigf[0],&PNEWDT0,&D[0],&sv[0],\n"
 	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
 	  << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
 	  << "                         PROPS,PREDEF,DPRED,\n"
-	  << "if(calculix::CalculiXInterface<tfel::material::ModellingHypothesis::"
-	  << ModellingHypothesis::toUpperCaseString(h) << ","
-	  << "tfel::material::" << mb.getClassName() << ">::exe(d3)!=0){\n"
+	  << "if(calculix::CalculiXInterface<tfel::material::" << mb.getClassName() << ">::exe(d3)!=0){\n"
 	  << "return;\n"
 	  << "}\n"
 	  << "for(calculix::CalculiXInt j=0;j!=*NTENS;++j){\n"
@@ -788,27 +604,20 @@ namespace mfront{
 	  << "}\n";
     }
     if(this->fss==NATIVEFINITESTRAINSTRATEGY){
-	out << "calculix::CalculiXFiniteStrain::applyNativeFiniteStrainCorrection(DDSDDE,DFGRD1,STRESS,*NTENS);\n";
+      out << "calculix::CalculiXFiniteStrain::applyNativeFiniteStrainCorrection(DDSDDE,DFGRD1,STRESS,*NTENS);\n";
     }
     out << "}\n\n";
   }
   
   void
   CalculiXInterface::writeUMATFiniteRotationSmallStrainFunction(std::ostream& out,
-							      const BehaviourDescription& mb,
-							      const std::string& name,
-							      const Hypothesis h) const
+								const BehaviourDescription& mb,
+								const std::string& name) const
   {
-    if(h==ModellingHypothesis::PLANESTRESS){
-      throw(std::runtime_error("CalculiXInterface::writeUMATFiniteRotationSmallStrainFunction: "
-			       "plane stress is not supported yet"));
-    }
-    const auto ps = h==ModellingHypothesis::PLANESTRESS ? "true" : "false";
     const std::string sfeh = "calculix::CalculiXStandardSmallStrainStressFreeExpansionHandler";
-    this->writeUMATFunctionBase(out,mb,name,sfeh,h);
-    out << "MFRONT_SHAREDOBJ void\n"
-	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,this->fss,true);
+    this->writeUMATFunctionBase(out,mb,name,sfeh);
+    out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
+    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
     out << "{\n"
 	<< "using namespace calculix;\n"
 	<< "CalculiXReal eto[6];\n"
@@ -827,35 +636,35 @@ namespace mfront{
     
     out << "static_cast<void>(STRAN);\n"
 	<< "static_cast<void>(DSTRAN);\n"
-	<< "CalculiXFiniteStrain::computeGreenLagrangeStrain(eto,DFGRD0,*NTENS," << ps << ");\n"
-	<< "CalculiXFiniteStrain::computeGreenLagrangeStrain(deto,DFGRD1,*NTENS," << ps << ");\n"
-	<< "CalculiXFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,DFGRD0,*NTENS," << ps << ",0);\n"
+	<< "CalculiXFiniteStrain::computeGreenLagrangeStrain(eto,DFGRD0);\n"
+	<< "CalculiXFiniteStrain::computeGreenLagrangeStrain(deto,DFGRD1);\n"
+	<< "CalculiXFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,DFGRD0);\n"
 	<< "for(int i=0;i!=*NTENS;++i){\n"
 	<< "deto[i] -= eto[i];\n"
 	<< "}\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "}\n";
     }
-    out	<< name << "_base" << this->getFunctionNameForHypothesis("",h)
-	<< "(STRESS,STATEV,CSE,SSE,SPD,SCD,RPL,DDSDDT,DRPLDE,DRPLDT,\n"
-	<< "eto,deto,TIME,DTIME,TEMP,DTEMP,PREDEF,DPRED,CMNAME,\n"
-	<< "NDI,NSHR,NTENS,NSTATV,PROPS,NPROPS,COORDS,DROT,PNEWDT,\n"
-	<< "CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,KINC,size);\n";
-    out << "if(*PNEWDT>=0.99999){\n";
+    out	<< name << "_base"
+	<< "(amat,iel,iint,NPROPS,MPROPS,STRAN1,STRAN0,beta,F0,"
+	<< " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
+	<< " ielas,mi,NSTATV,STATEV0,STATEV1,STRESS,DDSDDE,"
+	<< "iorien,pgauss,orab,PNEWDT,ipkon,size);\n"
+	<< "if(*PNEWDT>=0.99999){\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
     }
-    out << "CalculiXFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,DFGRD1,*NTENS," << ps << ",0);\n";
-    out << "CalculiXFiniteStrain::computeCalculiXTangentOperatorFromCSE(DDSDDE,CSE,DFGRD1,STRESS,*NTENS," << ps << ");\n";
-    out << "}\n";
-    out << "}\n\n";
+    out << "CalculiXFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,DFGRD1);\n"
+	<< "CalculiXFiniteStrain::computeCalculiXTangentOperatorFromCSE(DDSDDE,CSE,DFGRD1,STRESS);\n"
+	<< "}\n"
+	<< "}\n\n";
   }
   
   void
   CalculiXInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
-						   const std::string& name,
-						   const BehaviourDescription& mb) const
+						     const std::string& name,
+						     const BehaviourDescription& mb) const
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("CalculiXInterface::writeUMATxxBehaviourTypeSymbols: "+m));}
@@ -877,8 +686,8 @@ namespace mfront{
 
   void
   CalculiXInterface::writeUMATxxBehaviourKinematicSymbols(std::ostream& out,
-						   const std::string& name,
-						   const BehaviourDescription& mb) const
+							  const std::string& name,
+							  const BehaviourDescription& mb) const
   {
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("CalculiXInterface::writeUMATxxBehaviourKinematicSymbols: "+m));}
@@ -900,20 +709,20 @@ namespace mfront{
   
   void 
   CalculiXInterface::writeInterfaceSpecificIncludes(std::ostream& out,
-						  const BehaviourDescription&) const
+						    const BehaviourDescription&) const
   {
     out << "#include\"MFront/CalculiX/CalculiX.hxx\"\n"
 	<< "#include\"MFront/CalculiX/CalculiXConvert.hxx\"\n\n";
   } // end of CalculiXInterface::writeInterfaceSpecificIncludes
 
   std::vector<std::pair<std::string,std::string>>
-  CalculiXInterface::getBehaviourDataConstructorAdditionalVariables() const{
+	   CalculiXInterface::getBehaviourDataConstructorAdditionalVariables() const{
     return {{"DR","increment of rigid body rotation"}};
   } // end of CalculiXInterface::getBehaviourDataConstructorAdditionalVariables
 
   void 
   CalculiXInterface::writeBehaviourDataMainVariablesSetters(std::ostream& os,
-							  const BehaviourDescription& mb) const
+							    const BehaviourDescription& mb) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov,of;
@@ -938,8 +747,8 @@ namespace mfront{
 
   void 
   CalculiXInterface::writeBehaviourDataDrivingVariableSetter(std::ostream& os,
-							   const DrivingVariable& v,
-							   const SupportedTypes::TypeSize o) const
+							     const DrivingVariable& v,
+							     const SupportedTypes::TypeSize o) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(!o.isNull()){
@@ -957,8 +766,8 @@ namespace mfront{
 
   void 
   CalculiXInterface::writeIntegrationDataDrivingVariableSetter(std::ostream& os,
-							   const DrivingVariable& v,
-							   const SupportedTypes::TypeSize o) const
+							       const DrivingVariable& v,
+							       const SupportedTypes::TypeSize o) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(!o.isNull()){
@@ -976,8 +785,8 @@ namespace mfront{
   
   void 
   CalculiXInterface::writeBehaviourDataThermodynamicForceSetter(std::ostream& os,
-							      const ThermodynamicForce& f,
-							      const SupportedTypes::TypeSize o) const
+								const ThermodynamicForce& f,
+								const SupportedTypes::TypeSize o) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(SupportedTypes::getTypeFlag(f.type)==SupportedTypes::Stensor){
@@ -995,8 +804,8 @@ namespace mfront{
   
   void 
   CalculiXInterface::completeBehaviourDataConstructor(std::ostream& out,
-						    const Hypothesis h,
-						    const BehaviourDescription& mb) const
+						      const Hypothesis h,
+						      const BehaviourDescription& mb) const
   {
     auto do_nothing = [&out](){
       out << "static_cast<void>(CALCULIXDR);\n";
@@ -1050,10 +859,10 @@ namespace mfront{
 
   void 
   CalculiXInterface::exportThermodynamicForce(std::ostream& out,
-					    const std::string& a,
-					    const ThermodynamicForce& f,
-					    const SupportedTypes::TypeSize o) const
-   {
+					      const std::string& a,
+					      const ThermodynamicForce& f,
+					      const SupportedTypes::TypeSize o) const
+  {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto flag = SupportedTypes::getTypeFlag(f.type);
     if(flag==SupportedTypes::Stensor){
@@ -1071,7 +880,7 @@ namespace mfront{
 
   void
   CalculiXInterface::getTargetsDescription(TargetsDescription& d,
-					const BehaviourDescription& bd)
+					   const BehaviourDescription& bd)
   {
     const auto lib  = this->getLibraryName(bd);
     const auto name = bd.getLibrary()+bd.getClassName(); 
@@ -1088,9 +897,7 @@ namespace mfront{
       insert_if(d[lib].ldflags,"-lMTestFileGenerator");
     }
     insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
-    for(const auto h : this->getModellingHypothesesToBeTreated(bd)){
-      insert_if(d[lib].epts,this->getFunctionNameForHypothesis(name,h));
-    }
+    insert_if(d[lib].epts,this->getFunctionName(name));
   } // end of CalculiXInterface::getTargetsDescription
 
   std::string
@@ -1111,7 +918,7 @@ namespace mfront{
 
   unsigned short
   CalculiXInterface::getStateVariablesOffset(const BehaviourDescription&,
-					       const Hypothesis h) const{
+					     const Hypothesis h) const{
     if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
       if((h==ModellingHypothesis::AXISYMMETRICAL)||
 	 (h==ModellingHypothesis::PLANESTRAIN)||
@@ -1130,57 +937,23 @@ namespace mfront{
   {
     return makeUpperCase(name);
   } // end of CalculiXInterface::getFunctionName
-
-  std::string CalculiXInterface::getFunctionNameForHypothesis(const std::string& name,
-								const Hypothesis h) const
-  {
-    const auto s = [h]() -> std::string {
-      if(h==ModellingHypothesis::AXISYMMETRICAL){
-	return "AXIS";
-      } else if(h==ModellingHypothesis::PLANESTRAIN){
-	return "PSTRAIN";
-      } else if(h==ModellingHypothesis::PLANESTRESS){
-	return "PSTRESS";
-      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	return "3D";
-      }
-      throw(std::runtime_error("CalculiXInterface::getFunctionNameForHypothesis: "
-			       "invalid hypothesis."));
-    }();
-    return makeUpperCase(name)+"_"+s;
-  } // end of CalculiXInterface::getFunctionNameForHypothesis
   
   std::set<CalculiXInterface::Hypothesis>
   CalculiXInterface::getModellingHypothesesToBeTreated(const BehaviourDescription& mb) const
   {
-    auto h = std::set<Hypothesis>{};
     const auto& bh = mb.getModellingHypotheses();
-    if(bh.find(ModellingHypothesis::AXISYMMETRICAL)!=bh.end()){
-      h.insert(ModellingHypothesis::AXISYMMETRICAL);
-    }
-    if(bh.find(ModellingHypothesis::PLANESTRAIN)!=bh.end()){
-      h.insert(ModellingHypothesis::PLANESTRAIN);
-    }
-    if(bh.find(ModellingHypothesis::PLANESTRESS)!=bh.end()){
-      h.insert(ModellingHypothesis::PLANESTRESS);
-    }
     if(bh.find(ModellingHypothesis::TRIDIMENSIONAL)!=bh.end()){
-      h.insert(ModellingHypothesis::TRIDIMENSIONAL);
-    }
-    if(h.empty()){
       throw(std::runtime_error("CalculiXInterface::getModellingHypothesesToBeTreated : "
-			       "no hypotheses selected. This means that the given beahviour "
-			       "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
-			       "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
-			       "make sense to use the CalculiX interface"));
+			       "the Tridimensional hypothesis is not supported, "
+			       "which is required for the CalculiX interface"));
     }
-    return h;
+    return {ModellingHypothesis::TRIDIMENSIONAL};
   } // end of CalculiXInterface::getModellingHypothesesToBeTreated
 
   std::pair<std::vector<UMATInterfaceBase::UMATMaterialProperty>,
 	    SupportedTypes::TypeSize>
   CalculiXInterface::buildMaterialPropertiesList(const BehaviourDescription& mb,
-						   const Hypothesis h) const
+						 const Hypothesis h) const
   {
     using namespace std;
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
@@ -1302,39 +1075,27 @@ namespace mfront{
 
   void
   CalculiXInterface::writeCalculiXBehaviourTraits(std::ostream& out,
-						  const BehaviourDescription& mb,
-						  const Hypothesis h) const
+						  const BehaviourDescription& mb) const
   {
     using namespace std;
+    constexpr const auto h = ModellingHypothesis::TRIDIMENSIONAL;
     const auto mvs = mb.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(mb,h);
-    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type";
-      if(mb.useQt()){
-	out << ",bool use_qt";
-      }
-    } else {
-      out << "template<typename Type";
-      if(mb.useQt()){
-	out << ",bool use_qt";
-      }
+    out << "template<typename Type";
+    if(mb.useQt()){
+      out << ",bool use_qt";
     }
-    out << ">\n";
-    out << "struct CalculiXTraits<tfel::material::" << mb.getClassName() << "<";
-    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      out << "H";
-    } else {
-      out << "tfel::material::ModellingHypothesis::"
-	  << ModellingHypothesis::toUpperCaseString(h);
-    }
-    out << ",Type,";
+    out << ">\n"
+	<< "struct CalculiXTraits<tfel::material::"
+	<< mb.getClassName() << "<tfel::material::ModellingHypothesis::TRIDIMENSIONAL,";
+    out << "Type,";
     if(mb.useQt()){
       out << "use_qt";
     } else {
       out << "false";
     }
-    out << "> >\n{\n";
-    out << "//! behaviour type\n";
+    out << ">>\n{\n"
+	<< "//! behaviour type\n";
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       out << "static " << constexpr_c << " CalculiXBehaviourType btype = calculix::SMALLSTRAINSTANDARDBEHAVIOUR;\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
@@ -1344,24 +1105,18 @@ namespace mfront{
 			       "unsupported behaviour type"));
     }
     out << "//! space dimension\n";
-    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      out << "static " << constexpr_c << " unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
-    } else {
-      out << "static " << constexpr_c << " unsigned short N           = tfel::material::ModellingHypothesisToSpaceDimension<"
-	  << "tfel::material::ModellingHypothesis::"
-	  << ModellingHypothesis::toUpperCaseString(h)
-	  << ">::value;\n";
-    }
-    out << "// tiny vector size\n";
-    out << "static " << constexpr_c << " unsigned short TVectorSize = N;\n";
-    out << "// symmetric tensor size\n";
-    out << "static " << constexpr_c << " unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
-    out << "// tensor size\n";
-    out << "static " << constexpr_c << " unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
-    out << "// size of the driving variable array\n";
-    out << "static " << constexpr_c << " unsigned short DrivingVariableSize = " << mvs.first <<  ";\n";
-    out << "// size of the thermodynamic force variable array (STRESS)\n";
-    out << "static " << constexpr_c << " unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
+    out << "static " << constexpr_c << " unsigned short N "
+	<< "= tfel::material::ModellingHypothesisToSpaceDimension<tfel::material::ModellingHypothesis::TRIDIMENSIONAL>::value;\n";
+    out << "// tiny vector size\n"
+	<< "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
+	<< "// symmetric tensor size\n"
+	<< "static " << constexpr_c << " unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n"
+	<< "// tensor size\n"
+	<< "static " << constexpr_c << " unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n"
+	<< "// size of the driving variable array\n"
+	<< "static " << constexpr_c << " unsigned short DrivingVariableSize = " << mvs.first <<  ";\n"
+	<< "// size of the thermodynamic force variable array (STRESS)\n"
+	<< "static " << constexpr_c << " unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
     if(mb.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,false)){
       out << "static " << constexpr_c << " bool requiresUnAlteredStiffnessTensor = true;\n";
     } else {
@@ -1462,16 +1217,16 @@ namespace mfront{
 
   void
   CalculiXInterface::writeUMATxxAdditionalSymbols(std::ostream&,
-					      const std::string&,
-					      const Hypothesis,
-					      const BehaviourDescription&,
-					      const FileDescription&) const
+						  const std::string&,
+						  const Hypothesis,
+						  const BehaviourDescription&,
+						  const FileDescription&) const
   {} // end of CalculiXInterface::writeUMATxxAdditionalSymbols
 
   void CalculiXInterface::writeUMATxxSpecificSymbols(std::ostream& out,
-						       const std::string& name,
-						       const BehaviourDescription& mb,
-						       const FileDescription&) const
+						     const std::string& name,
+						     const BehaviourDescription& mb,
+						     const FileDescription&) const
   {
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
       if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
@@ -1508,8 +1263,8 @@ namespace mfront{
 
   void
   CalculiXInterface::writeInputFileExample(const BehaviourDescription& mb,
-					     const FileDescription& fd,
-					     const bool b) const{ 
+					   const FileDescription& fd,
+					   const bool b) const{ 
     auto throw_if = [](const bool c,const std::string& m){
       if(c){throw(std::runtime_error("CalculiXInterface::writeInputFileExample: "+m));}
     };
@@ -1553,41 +1308,20 @@ namespace mfront{
 	  out << "** " << i << ": " << mb.getExternalName(h,pv->name);
 	}
       }
-      out << "*Material, name="
-	  << this->getFunctionNameForHypothesis(mn,h) << '\n';
+      out << "*Material, name=" << this->getFunctionName(mn) << '\n';
       if(!b){
 	out << "*DENSITY\n<density>\n";
       }
       if(vsize!=0){
 	out << "*Depvar\n" << vsize  << ",\n";
 	int i=1;
-	if(this->omp!=UNDEFINEDORTHOTROPYMANAGEMENTPOLICY){
-	  if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
-	    if((h==ModellingHypothesis::AXISYMMETRICAL)||
-	       (h==ModellingHypothesis::PLANESTRAIN)||
-	       (h==ModellingHypothesis::PLANESTRESS)){
-	      out << i++ << ", FirstOrthotropicAxis_1\n";
-	      out << i++ << ", FirstOrthotropicAxis_2\n";
-	    } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	      out << i++ << ", FirstOrthotropicAxis_1\n";
-	      out << i++ << ", FirstOrthotropicAxis_2\n";
-	      out << i++ << ", FirstOrthotropicAxis_3\n";
-	      out << i++ << ", SecondOrthotropicAxis_1\n";
-	      out << i++ << ", SecondOrthotropicAxis_2\n";
-	      out << i++ << ", SecondOrthotropicAxis_3\n";
-	    }
-	  } else {
-	    throw_if(this->omp!=NATIVEORTHOTROPYMANAGEMENTPOLICY,
-		     "unsupported orthotropy management policy");
-	  }
-	}
 	for(const auto& v : persistentVarsHolder){
 	  const auto vn = mb.getExternalName(h,v.name);
 	  if(v.arraySize==1){
-	    this->writeDepvar(out,i,h,v,vn);
+	    this->writeDepvar(out,i,v,vn);
 	  } else {
 	    for(unsigned short a=0;a!=v.arraySize;++a){
-	      this->writeDepvar(out,i,h,v,vn+'['+std::to_string(a)+']');
+	      this->writeDepvar(out,i,v,vn+'['+std::to_string(a)+']');
 	    }
 	  }
 	}
@@ -1633,12 +1367,10 @@ namespace mfront{
     }
   } // end of CalculiXInterface::writeInputFileExample
 
-  void 
-  CalculiXInterface::writeDepvar(std::ostream& out,
-				   int& i,
-				   const Hypothesis& h,
-				   const VariableDescription& v,
-				   const std::string& n) const {
+  void CalculiXInterface::writeDepvar(std::ostream& out,
+				      int& i,
+				      const VariableDescription& v,
+				      const std::string& n) const {
     if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Scalar){
       out << i++ << ", " << n << '\n';
     } else if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Stensor){
@@ -1646,22 +1378,18 @@ namespace mfront{
       out << i++ << ", " << n << "_22\n";
       out << i++ << ", " << n << "_33\n";
       out << i++ << ", " << n << "_12\n";
-      if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	out << i++ << ", " << n << "_13\n";
-	out << i++ << ", " << n << "_23\n";
-      }
+      out << i++ << ", " << n << "_13\n";
+      out << i++ << ", " << n << "_23\n";
     } else if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Tensor){
       out << i++ << ", " << n << "_11\n";
       out << i++ << ", " << n << "_22\n";
       out << i++ << ", " << n << "_33\n";
       out << i++ << ", " << n << "_12\n";
       out << i++ << ", " << n << "_21\n";
-      if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	out << i++ << ", " << n << "_13\n";
-	out << i++ << ", " << n << "_31\n";
-	out << i++ << ", " << n << "_23\n";
-	out << i++ << ", " << n << "_32\n";
-      }
+      out << i++ << ", " << n << "_13\n";
+      out << i++ << ", " << n << "_31\n";
+      out << i++ << ", " << n << "_23\n";
+      out << i++ << ", " << n << "_32\n";
     } else {
       throw(std::runtime_error("CalculiXInterface::writeDepvar: "
 			       "unsupported variable type"));
