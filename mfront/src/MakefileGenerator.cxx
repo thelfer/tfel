@@ -429,19 +429,19 @@ namespace mfront{
     if(!o.nodeps){
       if(!cppSources.empty()){
 	m << "%.d:%.cxx\n";
-	m << "\t@set -e; rm -f $@;					  \\\n";
+	m << "\t" << sb << "set -e; rm -f $@;	    \\\n";
 	m << "\t$(CXX) -M $(CXXFLAGS) $< > $@.$$$$; \\\n";
 	m << "\tsed 's,\\($*\\)\\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; \\\n";
 	m << "\trm -f $@.$$$$\n\n";
 	m << "%.d:%.cpp\n";
-	m << "\t@set -e; rm -f $@;					  \\\n";
+	m << "\t" << sb << "set -e; rm -f $@;       \\\n";
 	m << "\t$(CXX) -M $(CXXFLAGS) $< > $@.$$$$; \\\n";
 	m << "\tsed 's,\\($*\\)\\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; \\\n";
 	m << "\trm -f $@.$$$$\n\n";
       }
       if(!cSources.empty()){
 	m << "%.d:%.c\n";
-	m << "\t@set -e; rm -f $@;					  \\\n";
+	m << "\t" << sb << "set -e; rm -f $@;    \\\n";
 	m << "\t$(CC) -M $(CFLAGS) $< > $@.$$$$; \\\n";
 	m << "\tsed 's,\\($*\\)\\.o[ :]*,\\1.o $@ : ,g' < $@.$$$$ > $@; \\\n";
 	m << "\trm -f $@.$$$$\n";

@@ -36,7 +36,7 @@ struct MakefileGenerator
    * \param[in] tn: target to be build
    */ 
   void exe2(const mfront::TargetsDescription&,
-	    const std::string& tn);
+	    const std::string&);
   /*!
    * \param[in] t: target description
    * \param[in] o: generator options
@@ -44,7 +44,23 @@ struct MakefileGenerator
    */ 
   void exe3(const mfront::TargetsDescription&,
 	    const mfront::GeneratorOptions&,
-	    const std::string& tn);
+	    const std::string&);
+  /*!
+   * \param[in] t: target description
+   */ 
+  void generate0(const mfront::TargetsDescription&);
+  /*!
+   * \param[in] t: target description
+   * \param[in] o: generator options
+   */ 
+  void generate1(const mfront::TargetsDescription&,
+		 const mfront::GeneratorOptions&);
+  //! 
+  void callMake0();
+  /*!
+   * \param[in] tn: target to be build
+   */ 
+  void callMake1(const std::string&);
 }; // end of MakefileGenerator
 
 void MakefileGenerator::exe0(const mfront::TargetsDescription& t)
@@ -72,6 +88,27 @@ void MakefileGenerator::exe3(const mfront::TargetsDescription& t,
   mfront::callMake(tn);
 }
 
+void MakefileGenerator::generate0(const mfront::TargetsDescription& t)
+{
+  this->generate1(t,mfront::GeneratorOptions());
+}
+
+void MakefileGenerator::generate1(const mfront::TargetsDescription& t,
+				  const mfront::GeneratorOptions& o)
+{
+  mfront::generateMakeFile(t,o);
+}
+
+void MakefileGenerator::callMake0()
+{
+  this->callMake1("all");
+}
+
+void MakefileGenerator::callMake1(const std::string& tn)
+{
+  mfront::callMake(tn);
+}
+
 void declareMakefileGenerator();
 
 void declareMakefileGenerator()
@@ -80,6 +117,15 @@ void declareMakefileGenerator()
   using namespace mfront;
 
   class_<MakefileGenerator>("MakefileGenerator")
+    .def("generate",&MakefileGenerator::generate0,
+	 "generate the `Makefile.mfront` file")
+    .def("generate",&MakefileGenerator::generate1,
+	 "generate the `Makefile.mfront` file "
+	 "using the provided options")
+    .def("callMake",&MakefileGenerator::callMake0,
+	 "call the `make` utility")
+    .def("callMake",&MakefileGenerator::callMake1,
+	 "call the `make` utility for the specified target")
     .def("exe",&MakefileGenerator::exe0,
 	 "This methods generates the `Makefile.mfront` "
 	 "file in the `src` subdirectory and "
