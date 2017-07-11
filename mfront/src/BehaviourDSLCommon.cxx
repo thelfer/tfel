@@ -943,6 +943,10 @@ namespace mfront{
       }
       i.second->endTreatment(this->mb,this->fd);
     }
+    behaviourFile.close();
+    behaviourDataFile.close();
+    integrationDataFile.close();
+    srcFile.close();
   }
 
   void BehaviourDSLCommon::generateSlipSystemsFiles()
