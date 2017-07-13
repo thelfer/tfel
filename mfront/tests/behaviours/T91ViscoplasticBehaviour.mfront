@@ -12,7 +12,8 @@
 @Date      27/11/13;
 
 @Theta 0.5;
-@Epsilon 1.E-8 ;
+@Epsilon 1.E-10;
+@PerturbationValueForNumericalJacobianComputation 1e-8;
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
