@@ -84,7 +84,7 @@ namespace calculix
 	void exe(BV& b,
 		 const CalculiXReal *const STRAN,
 		 const CalculiXReal *const DSTRAN,
-		 const StressFreeExpansionHandler<CalculiXReal>& sfeh)
+		 const StressFreeExpansionHandler& sfeh)
       {
 	using std::pair;
 	using tfel::fsalgo::copy;
@@ -131,7 +131,7 @@ namespace calculix
 	void exe(BV& b,
 		 const CalculiXReal *const STRAN,
 		 const CalculiXReal *const DSTRAN,
-		 const StressFreeExpansionHandler<CalculiXReal>&)
+		 const StressFreeExpansionHandler&)
       {
 	b.setCALCULIXBehaviourDataDrivingVariables(STRAN);
 	b.setCALCULIXIntegrationDataDrivingVariables(DSTRAN);

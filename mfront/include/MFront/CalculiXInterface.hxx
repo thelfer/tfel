@@ -52,14 +52,6 @@ namespace mfront{
       MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN
     }; // end of enum FiniteStrainStrategy
     /*!
-     * This enum defines how orthotropy is handled by the behaviour
-     */
-    enum OrthotropyManagementPolicy{
-      UNDEFINEDORTHOTROPYMANAGEMENTPOLICY,
-      NATIVEORTHOTROPYMANAGEMENTPOLICY,
-      MFRONTORTHOTROPYMANAGEMENTPOLICY
-    }; // end of enum FiniteStrainStrategy
-    /*!
      * \return the name of the interface
      */
     static std::string 
@@ -252,15 +244,6 @@ namespace mfront{
 					       const BehaviourDescription&,
 					       const std::string&) const;
     /*!
-     * \brief return the state variable offset used for variables used
-     * internally by the calculix interface
-     * \param[in] mb: behaviour description
-     * \param[in] h:  modelling hypothesis
-     */
-    virtual unsigned short
-    getStateVariablesOffset(const BehaviourDescription&,
-			    const Hypothesis) const;
-    /*!
      * \return the name of the generated library
      * \param[in] mb : behaviour description
      */
@@ -289,19 +272,6 @@ namespace mfront{
 				 const Hypothesis,
 				 const BehaviourDescription&,
 				 const FileDescription&) const override;
-    /*!
-     * \param[in] out  : output file
-     * \param[in] name : name of the behaviour as defined by interface
-     *                   (generally taking into account the material
-     *                    and the behaviour name)
-     * \param[in] mb   : behaviour description
-     * \param[in] fd   : file description
-     */
-    virtual void
-    writeUMATxxSpecificSymbols(std::ostream&,
-			       const std::string&,
-			       const BehaviourDescription&,
-			       const FileDescription&) const override;
     /*!
      * \param[in] out : output file
      */
@@ -356,8 +326,6 @@ namespace mfront{
 			     const std::string&) const;
     //! selected finite strain strategy
     FiniteStrainStrategy fss = UNDEFINEDSTRATEGY;
-    //! selected orthotropy management policy
-    OrthotropyManagementPolicy omp = UNDEFINEDORTHOTROPYMANAGEMENTPOLICY;
     /*!
      * \brief boolean stating the we want a comparison of the user
      * defined tangent operator with a numerical approximation.

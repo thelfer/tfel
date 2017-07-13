@@ -41,7 +41,7 @@ namespace calculix{
     const CalculiXReal *const PREDEF;
     const CalculiXReal *const DPRED;
     const tfel::material::OutOfBoundsPolicy op;
-    const StressFreeExpansionHandler<CalculiXReal> sfeh;
+    const StressFreeExpansionHandler sfeh;
   }; // end of struct CalculiXData
   
 } // end of namespace calculix

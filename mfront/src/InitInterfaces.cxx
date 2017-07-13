@@ -68,6 +68,10 @@
 #include"MFront/EuroplexusInterface.hxx"
 #endif
 
+#ifdef HAVE_CALCULIX
+#include"MFront/CalculiXInterface.hxx"
+#endif
+
 #include"MFront/ZMATInterface.hxx"
 #include"MFront/MFrontModelInterface.hxx"
 #include"MFront/InitInterfaces.hxx"
@@ -92,10 +96,10 @@ namespace mfront
     MaterialPropertyInterfaceProxy<ExcelMaterialPropertyInterface> excelLawProxy(ExcelMaterialPropertyInterface::getName(),
 										 ExcelMaterialPropertyInternalInterface::getName());
 
-    constexpr const char * cppLawProxyNames [6] = {"c++","C++",
-						   "cxx","Cxx",
-						   "cpp","Cpp"};
-    MaterialPropertyInterfaceProxy<CppMaterialPropertyInterface> cppLawProxy(cppLawProxyNames,cppLawProxyNames+6);
+    constexpr const char * cppLawNames [6] = {"c++","C++",
+					      "cxx","Cxx",
+					      "cpp","Cpp"};
+    MaterialPropertyInterfaceProxy<CppMaterialPropertyInterface> cppLawProxy(cppLawNames,cppLawNames+6);
 
     MaterialPropertyInterfaceProxy<CppTestMaterialPropertyInterface> cppTestLawProxy(CppTestMaterialPropertyInterface::getName(),
     										     CppMaterialPropertyInterface::getName());
@@ -108,19 +112,19 @@ namespace mfront
     MaterialPropertyInterfaceProxy<OctaveMaterialPropertyInterface> octaveLawProxy;
 
 #ifdef HAVE_PYTHON
-    constexpr const char * pythonProxyNames[2] = {"python","Python"};
-    MaterialPropertyInterfaceProxy<PythonMaterialPropertyInterface> pythonLawProxy(pythonProxyNames,pythonProxyNames+2);
+    constexpr const char * pythonNames[2] = {"python","Python"};
+    MaterialPropertyInterfaceProxy<PythonMaterialPropertyInterface> pythonLawProxy(pythonNames,pythonNames+2);
 #endif /* HAVE_PYTHON */
 
 #ifdef HAVE_JAVA
-    constexpr const char * javaProxyNames[2] = {"java","Java"};
-    MaterialPropertyInterfaceProxy<JavaMaterialPropertyInterface> javaLawProxy(javaProxyNames,javaProxyNames+2);
+    constexpr const char * javaNames[2] = {"java","Java"};
+    MaterialPropertyInterfaceProxy<JavaMaterialPropertyInterface> javaLawProxy(javaNames,javaNames+2);
 #endif /* HAVE_JAVA */
     
 #ifdef HAVE_CASTEM
-    constexpr const char * castemProxyNames[3] = {"castem","Castem","Cast3M"};
-    MaterialPropertyInterfaceProxy<CastemMaterialPropertyInterface> castemLawProxy(castemProxyNames,castemProxyNames+3);
-    BehaviourInterfaceProxy<CastemInterface> umatProxy(castemProxyNames,castemProxyNames+3);
+    constexpr const char * castemNames[3] = {"castem","Castem","Cast3M"};
+    MaterialPropertyInterfaceProxy<CastemMaterialPropertyInterface> castemLawProxy(castemNames,castemNames+3);
+    BehaviourInterfaceProxy<CastemInterface> umatProxy(castemNames,castemNames+3);
 #endif /* HAVE_CASTEM */
 
 #ifdef HAVE_CYRANO
@@ -143,6 +147,11 @@ namespace mfront
 #ifdef HAVE_EUROPLEXUS
     BehaviourInterfaceProxy<EuroplexusInterface> europlexusProxy;
 #endif /* HAVE_EUROPLEXUS */
+
+#ifdef HAVE_CALCULIX
+    constexpr const char * ccxNames[1] = {"CalculiX"};
+    BehaviourInterfaceProxy<CalculiXInterface> ccxProxy(ccxNames,ccxNames+1);
+#endif /* HAVE_CALCULIX */
     
 #ifdef HAVE_ZMAT
     BehaviourInterfaceProxy<ZMATInterface> zmatProxy;

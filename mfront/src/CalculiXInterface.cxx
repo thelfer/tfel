@@ -271,10 +271,6 @@ namespace mfront{
 	       "and @CalculiXCompareToNumericalTangentOperator : "
 	       "those are only valid for small strain beahviours");
     }
-    throw_if((mb.getSymmetryType()!=mfront::ORTHOTROPIC)&&
-	     (this->omp!=UNDEFINEDORTHOTROPYMANAGEMENTPOLICY),
-	     "orthotropy management policy is only valid "
-	     "for orthotropic behaviour");
     // get the modelling hypotheses to be treated
     const auto name =  mb.getLibrary()+mb.getClassName();
     // output directories
@@ -283,28 +279,7 @@ namespace mfront{
     systemCall::mkdir("calculix");
 
     std::ofstream out;
-    {
-      // copy umat.cpp locally
-      MFrontLockGuard lock;
-      out.open("calculix/umat.cpp");
-      if(out){
-	const auto root = tfel::getInstallPath();
-	const auto fn = root+"/share/doc/mfront/calculix/umat.cpp";
-	std::ifstream in{fn};
-	if(in){
-	  out << in.rdbuf();
-	  in.close();
-	} else {
-	  std::cerr << "CalculiXInterface::endTreatment: "
-		    << "could not open file '" << fn << "'" << std::endl;
-	}
-      } else {
-	std::cerr << "CalculiXInterface::endTreatment: "
-		  << "could not open file 'calculix/umat.cpp'" << std::endl;
-      }
-      out.close();
-    }
-    
+
     // header
     auto fname = "calculix"+name+".hxx";
     out.open("include/MFront/CalculiX/"+fname);
@@ -915,23 +890,6 @@ namespace mfront{
     }
     return makeUpperCase(lib);
   } // end of CalculiXInterface::getLibraryName
-
-  unsigned short
-  CalculiXInterface::getStateVariablesOffset(const BehaviourDescription&,
-					     const Hypothesis h) const{
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
-      if((h==ModellingHypothesis::AXISYMMETRICAL)||
-	 (h==ModellingHypothesis::PLANESTRAIN)||
-	 (h==ModellingHypothesis::PLANESTRESS)){
-	return 2u;
-      } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-	return 6u;
-      }
-      throw(std::runtime_error("CalculiXInterface::getStateVariablesOffset: "
-			       "invalid hypothesis"));
-    }
-    return 0u;
-  }
   
   std::string CalculiXInterface::getFunctionName(const std::string& name) const
   {
@@ -942,9 +900,9 @@ namespace mfront{
   CalculiXInterface::getModellingHypothesesToBeTreated(const BehaviourDescription& mb) const
   {
     const auto& bh = mb.getModellingHypotheses();
-    if(bh.find(ModellingHypothesis::TRIDIMENSIONAL)!=bh.end()){
+    if(bh.find(ModellingHypothesis::TRIDIMENSIONAL)==bh.end()){
       throw(std::runtime_error("CalculiXInterface::getModellingHypothesesToBeTreated : "
-			       "the Tridimensional hypothesis is not supported, "
+			       "the 'Tridimensional' hypothesis is not supported, "
 			       "which is required for the CalculiX interface"));
     }
     return {ModellingHypothesis::TRIDIMENSIONAL};
@@ -1223,28 +1181,6 @@ namespace mfront{
 						  const FileDescription&) const
   {} // end of CalculiXInterface::writeUMATxxAdditionalSymbols
 
-  void CalculiXInterface::writeUMATxxSpecificSymbols(std::ostream& out,
-						     const std::string& name,
-						     const BehaviourDescription& mb,
-						     const FileDescription&) const
-  {
-    if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
-	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-	    << "_OrthotropyManagementPolicy = 2u;\n\n";    
-      } else if(this->omp==NATIVEORTHOTROPYMANAGEMENTPOLICY){
-	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-	    << "_OrthotropyManagementPolicy = 1u;\n\n";    
-      } else if(this->omp==UNDEFINEDORTHOTROPYMANAGEMENTPOLICY){
-	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-	    << "_OrthotropyManagementPolicy = 0u;\n\n";    
-      } else {
-	throw(std::runtime_error("CalculiXInterface::writeUMATxxSpecificSymbols: "
-				 "unsupported orthotropy management policy"));
-      }
-    }
-  }
-  
   void
   CalculiXInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
   {
@@ -1295,8 +1231,7 @@ namespace mfront{
       for(const auto& v : persistentVarsHolder){
 	vs+=SupportedTypes::getTypeSize(v.type,v.arraySize);
       }
-      const auto vsize = vs.getValueForModellingHypothesis(h)+ 
-	this->getStateVariablesOffset(mb,h);
+      const auto vsize = vs.getValueForModellingHypothesis(h);
       const auto& externalStateVarsHolder = d.getExternalStateVariables();
       out << "** Example for the '" << ModellingHypothesis::toString(h) << "' modelling hypothesis\n";
       if(!externalStateVarsHolder.empty()){
