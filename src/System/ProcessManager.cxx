@@ -51,7 +51,7 @@ namespace tfel
     {
       auto& signalManager = SignalManager::getSignalManager();
       struct sigaction action;
-      MemberSignalHandler<ProcessManager>::Fct f = &ProcessManager::sigChildHandler;
+      auto f = &ProcessManager::sigChildHandler;
       // blocking all signals during treatment of sigChildHandler
       sigfillset(&(action.sa_mask));
       action.sa_flags = 0;
@@ -73,7 +73,7 @@ namespace tfel
 	// blocking all signals during treatment of terminateHandler
 	sigfillset(&(action.sa_mask));
 	action.sa_flags = SA_RESETHAND;
-	MemberSignalHandler<ProcessManager>::Fct f = &ProcessManager::terminateHandler;
+	auto f = &ProcessManager::terminateHandler;
 	this->sHandlerSIGBUS  = signalManager.registerHandler(SIGBUS,sigMemFun(*this,f),action);
 	this->sHandlerSIGSEGV = signalManager.registerHandler(SIGSEGV,sigMemFun(*this,f),action);
 	this->sHandlerSIGFPE  = signalManager.registerHandler(SIGFPE,sigMemFun(*this,f),action);
@@ -144,8 +144,7 @@ namespace tfel
       }
     } // end of ProcessManager::closeProcessFiles
 
-    void
-    ProcessManager::terminateHandler(const int)
+    void ProcessManager::terminateHandler(const int)
     {
       // treating handled processes
       auto& signalManager = SignalManager::getSignalManager();

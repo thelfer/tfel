@@ -10,7 +10,10 @@
  * with the sources of TFEL. CEA or EDF may also distribute this 
  * project under specific licensing conditions. 
  */
-#include<iostream>
+
+#ifdef __CYGWIN__
+#define _GNU_SOURCE
+#endif /* __CYGWIN__ */
 
 #include<sstream>
 #include<fstream>

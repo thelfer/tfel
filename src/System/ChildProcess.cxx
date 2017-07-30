@@ -11,6 +11,10 @@
  * project under specific licensing conditions. 
  */
 
+#ifdef __CYGWIN__
+#define _GNU_SOURCE
+#endif /* __CYGWIN__ */
+
 #include<sys/types.h>
 #include<csignal>
 
