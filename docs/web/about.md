@@ -40,7 +40,7 @@
 - Luc Portelette
 - Laurent Dupuy
 - Fabien Onimus
-
+- Jordi Alberich
 
 # Tools
 
