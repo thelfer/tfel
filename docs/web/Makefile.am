@@ -34,6 +34,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./mtest.md						      \
 	   ./mtest-python.md					      \
 	   ./tutorial.md					      \
+	   ./tutorial-spanish.md				      \
 	   ./LICENSE.md						      \
 	   ./glossary.md					      \
 	   ./parameters.md					      \
@@ -151,6 +152,49 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/tplot.svg                                            \
 	   ./img/AccesDigiteo.png                                     \
 	   ./img/IsotropicViscoplasticityAmstrongFredericKinematicHardening.svg \
+	   ./img/tutorial-spanish-1.png				      \
+	   ./img/tutorial-spanish-2.png				      \
+	   ./img/tutorial-spanish-3.png				      \
+	   ./img/tutorial-spanish-4.png				      \
+	   ./img/tutorial-spanish-5.png				      \
+	   ./img/tutorial-spanish-6.png				      \
+	   ./img/tutorial-spanish-7.png				      \
+	   ./img/tutorial-spanish-8.png				      \
+	   ./img/tutorial-spanish-9.png				      \
+	   ./img/tutorial-spanish-10.png			      \
+	   ./img/tutorial-spanish-11.png			      \
+	   ./img/tutorial-spanish-12.png			      \
+	   ./img/tutorial-spanish-13.png			      \
+	   ./img/tutorial-spanish-14.png			      \
+	   ./img/tutorial-spanish-15.png			      \
+	   ./img/tutorial-spanish-16.png			      \
+	   ./img/tutorial-spanish-17.png			      \
+	   ./img/tutorial-spanish-18.png			      \
+	   ./img/tutorial-spanish-19.png			      \
+	   ./img/tutorial-spanish-20.png			      \
+	   ./img/tutorial-spanish-21.png			      \
+	   ./img/tutorial-spanish-22.png			      \
+	   ./img/tutorial-spanish-23.png			      \
+	   ./img/tutorial-spanish-24.png			      \
+	   ./img/tutorial-spanish-25.png			      \
+	   ./img/tutorial-spanish-26.png			      \
+	   ./img/tutorial-spanish-27.png			      \
+	   ./img/tutorial-spanish-28.png			      \
+	   ./img/tutorial-spanish-29.png			      \
+	   ./img/tutorial-spanish-30.png			      \
+	   ./img/tutorial-spanish-31.png			      \
+	   ./img/tutorial-spanish-32.png			      \
+	   ./img/tutorial-spanish-33.png			      \
+	   ./img/tutorial-spanish-34.png			      \
+	   ./img/tutorial-spanish-35.png			      \
+	   ./img/tutorial-spanish-36.png			      \
+	   ./img/tutorial-spanish-37.png			      \
+	   ./img/tutorial-spanish-38.png			      \
+	   ./img/tutorial-spanish-39.png			      \
+	   ./img/tutorial-spanish-40.png			      \
+	   ./img/tutorial-spanish-41.png			      \
+	   ./img/tutorial-spanish-42.png			      \
+	   ./img/tutorial-spanish-43.png			      \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \
