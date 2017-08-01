@@ -16,6 +16,22 @@
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 
+# Official twitter account (1/08/2017)
+
+![](img/twitter.png "")
+
+`TFEL` and `MFront` now have their official twitter account !
+
+We will use it to spread various events and developments make in
+`TFEL` and `MFront`.
+
+# A spanish introduction to `MFront` and `Salome-Meca` (1/08/2017)
+
+Thanks to Jordi Alberich, a spanish introduction to `MFront` and
+`Salome-Meca` is available here:
+
+<http://tfel.sourceforge.net/tutorial-spanish.html>
+
 # The talks of the third MFront Users Day (21 June 2017)
 
 The talks of the third MFront Users Day are available here:

@@ -38,6 +38,16 @@
 \newcommand{\mts}[1]{\left.#1\right|_{t+\theta\,\Delta\,t}}
 \newcommand{\ets}[1]{\left.#1\right|_{t+\Delta\,t}}
 
+> La siguiente página es una introducción a MFront / MTest 2.0.4 y
+> Salome-Meca 2016.
+> 
+> Te da una buena visión general de las habilidades de MFront y MTest y
+> todos los ejemplos funcionarán con las versiones más recientes. Sin
+> embargo, las nuevas versiones (>= 3.0.x) introducen nuevos conceptos e
+> instrucciones que simplifican aún más la implementación de nuevos
+> comportamientos mecánicos (en particular, el bloque StandardElasticity
+> descrito [aquí](http://tfel.sourceforge.net/BehaviourBricks.html).
+
 Introducción
 ============
 
@@ -231,8 +241,10 @@ formato en el que se debe definir cada parte del código con una serie de
 instrucciones señalizadas con `@`.
 
 A lo largo de este apartado se describirán las instrucciones y
-parámetros de este archivo según su función. Todas las instrucciones
-disponibles se pueden ver en el Anexo 4: .
+parámetros de este archivo según su función.
+
+<!-- Todas las instrucciones -->
+<!-- disponibles se pueden ver en el Anexo 4: . -->
 
 Estructura del archivo .mfront
 ------------------------------
@@ -467,7 +479,7 @@ interfaces permiten al usuario elegir una de las siguientes políticas:
 
 ~~~~{.cpp}
 // El intervalo puede contener el infinito, representado por el carácter '\*'.
-@Bounds T in \[293.15:873.15\];
+@Bounds T in [293.15:873.15];
 ~~~~
 
 `@PhysicalBounds` permite al usuario definir el dominio físico de una
@@ -481,7 +493,7 @@ integración dependiendo de la naturaleza de la variable.
 
 ~~~~{.cpp}
 // La temperatura (en Kelvin) no puede ser negativa.
-@PhysicalBounds T in \[0:\*\[;
+@PhysicalBounds T in [0:*[;
 ~~~~
 
 ### Definición de parámetros
@@ -1857,7 +1869,7 @@ concluida la edición básica del archivo de comandos para la inclusión de
 la librería del comportamiento editado con `MFront`, quedando para el
 usuario la edición del resto de comandos o parámetros del archivo según
 los intereses de este. (El archivo .comm resultante de este ejemplo está
-incluido en el “Anexo 5: Archivo de comandos Test_1.”)
+incluido en el “Anexo 4: Archivo de comandos Test_1.”)
 
 Una vez editado el archivo de comandos, tan solo queda volver al módulo
 Aster y ejecutar el análisis.
@@ -1877,65 +1889,6 @@ con la extensión `.resu` (Ilustración 41)
 ![Ilustración 40: Módulo Aster, resultado de la ejecución 'Failure'](img/tutorial-spanish-41.png){width="3.6280325896762906in" height="0.9555774278215223in"}
 
 ![Ilustración 41: Resultados de la ejecución en el archivo 'linear-static.resu'](img/tutorial-spanish-42.png){width="4.457160979877515in" height="2.8567377515310586in"}
-
-Bibliografia
-============
-
-\[1\] Página oficial de TFEL / MFRONT:
-[*http://tfel.sourceforge.net*](http://tfel.sourceforge.net)
-
-\[2\] Página oficial de Salome:
-[*http://www.salome-platform.org*](http://www.salome-platform.org)
-
-\[3\] Página oficial de Code-Aster:
-[*http://www.code-aster.org*](http://www.code-aster.org)
-
-\[4\] Página oficial de CEA Cadarache:
-[*http://www-cadarache.cea.fr*](http://www-cadarache.cea.fr)
-
-\[5\] Información de EDF en Wikipedia
-[*https://es.wikipedia.org/wiki/Électricité_de_France*](https://es.wikipedia.org/wiki/Électricité_de_France)
-
-\[6\] Sección de documentos de MFront:
-[*http://tfel.sourceforge.net/documentations.html*](http://tfel.sourceforge.net/documentations.html)
-
-\[7\] Comportamientos mecánicos:
-[*http://tfel.sourceforge.net/documents/mfront/behaviours.pdf*](http://tfel.sourceforge.net/documents/mfront/behaviours.pdf)
-
-\[8\] Definición de material ortótropo:
-[*https://es.wikipedia.org/wiki/Material_ortótropo*](https://es.wikipedia.org/wiki/Material_ortótropo)
-
-\[9\] Mtest:
-[*http://tfel.sourceforge.net/documents/mtest/mtest.pdf*](http://tfel.sourceforge.net/documents/mtest/mtest.pdf)
-
-\[10\] Introducción a Salome y Salome-Meca:
-[*http://calculixforwin.blogspot.com.es/2015/12/salome-platform-and-salome-meca.html*](http://calculixforwin.blogspot.com.es/2015/12/salome-platform-and-salome-meca.html)
-
-\[11\] Introducción a Code-Aster:
-[*http://ingenierialibreyabierta.blogspot.com.es/2016/03/analisis-numerico-estructural-fem-de_26.html\#more*](http://ingenierialibreyabierta.blogspot.com.es/2016/03/analisis-numerico-estructural-fem-de_26.html#more)
-
-\[12\] Modelo de la ley de Lemaitre:
-[*http://code-aster.org/doc/v12/en/man_r/r5/r5.03.08.pdf*](http://code-aster.org/doc/v12/en/man_r/r5/r5.03.08.pdf)
-
-\[13\] Incluir un comportamiento en Code-Aster:
-[*http://tfel.sourceforge.net/documents/tp/tp.pdf*](http://tfel.sourceforge.net/documents/tp/tp.pdf)
-
-\[14\] Manual ASTK:
-[*http://www.code-aster.org/doc/v12/en/man_u/u1/u1.04.00.pdf*](http://www.code-aster.org/doc/v12/en/man_u/u1/u1.04.00.pdf)
-
-\[15\] Ejemplos de uso de Salome-Meca:
-[*http://engineering.moonish.biz/fea.using-open-source-software/*](http://engineering.moonish.biz/fea.using-open-source-software/)
-
-\[16\] Guia de uso de Mfront con Code-Aster:
-[*http://www.code-aster.org/V2/doc/default/en/man_u/u2/u2.10.02.pdf*](http://www.code-aster.org/V2/doc/default/en/man_u/u2/u2.10.02.pdf)
-
-\[17\] Manual de Code-Aster:
-[*https://framabook.org/docs/Code_Aster/beginning_with_Code_Aster_JPAubry_20131206.pdf*](https://framabook.org/docs/Code_Aster/beginning_with_Code_Aster_JPAubry_20131206.pdf)
-
-\[18\] Foro de TFEL/MFront:
-https://sourceforge.net/p/tfel/discussion/installation/thread/49ea414b/
-
-\[19\] Foro de Code-Aster: http://code-aster.org/forum2/
 
 Anexo 1: Instalación de los prerequisitos {#anexo-1-instalación-de-los-prerequisitos .ListParagraph}
 =========================================
@@ -1997,36 +1950,44 @@ Se podrá descargar la última versión lanzada del producto desde la
 página dedicada a la descarga de archivos de TFEL
 ([*https://sourceforge.net/projects/tfel/files/)*](https://sourceforge.net/projects/tfel/files/)),
 donde a fecha de realización de este trabajo, la última versión
-disponible era la **tfel-2.0.4**.
+disponible era la `tfel-2.0.4`.
 
-Una vez ya se haya descargado el archivo tfel-2.0.4.tar.bz2, se accederá
+Una vez ya se haya descargado el archivo `tfel-2.0.4.tar.bz2`, se accederá
 al directorio de descargas:
 
-\$ cd /home/*\[nombre_usuario\]*/Descargas
+~~~~{.bash}
+$ cd /home/*\[nombre_usuario\]*/Descargas
+~~~~~
 
 Y se descomprimirá el archivo descargado:
 
-\$ tar xvf tfel-2.0.4.tar.bz2
+~~~~{.bash}
+$ tar xvf tfel-2.0.4.tar.bz2
+~~~~~
 
 Antes de proceder a la instalación del paquete descargado, hay que
 asegurarse que la versión de `cmake` sea superior a la 2.8:
 
-\$ cmake --version
+~~~~{.bash}
+$ cmake --version
+~~~~~
 
 Si se cumple, ya se puede proceder a la instalación:
 
-\$ cmake \[opciones\]
-
-\$ make
-
-\$ make install
+~~~~{.bash}
+$ cmake \[opciones\]
+$ make
+$ make install
+~~~~
 
 Donde las opciones serán según las preferencias del usuario, por
 ejemplo, una instalación recomendada sería:
 
-\$ cmake –DCMAKE_BUILD_TYPE=Release –Dlocal-castem-header=ON
+~~~~{.bash}
+$ cmake –DCMAKE_BUILD_TYPE=Release –Dlocal-castem-header=ON
 –Denable-fortran=ON –Denable-aster=ON –DCMAKE_INSTALL_PREFIX=
 /root/tfel
+~~~~
 
 Finalmente, para asegurarse que la instalación se ha realizado
 correctamente, tan solo queda probarlo:
@@ -2039,9 +2000,9 @@ Anexo 3: Instalación de Salome-Meca {#anexo-3-instalación-de-salome-meca .List
 
 Para la instalación de Salome-Meca se podrá efectuar la descarga del
 archivo desde la página oficial de Code-Aster
-([*www.code-aster.org)*](http://www.code-aster.org)) donde en el menú
+([www.code-aster.org](http://www.code-aster.org)) donde en el menú
 principal se deberá acceder a la sección de descargas (`Download` o
-*Téléchargement*).
+`Téléchargement`).
 
 La sección de descargar dispone de un menú a la izquierda desde donde se
 podrá acceder a la sección *Salome-Meca* y donde ya se podrá descargar
@@ -2051,208 +2012,25 @@ elaboración de este documento, `Salome-Meca 2016`.
 Entonces, una vez ya descargado el paquete deseado, se accede a la
 carpeta de descargas y se deberá descomprimir el binario descargado:
 
-\$ tar xvf SALOME-MECA-2016-LGPL-1.tgz
+~~~~{.bash}
+$ tar xvf SALOME-MECA-2016-LGPL-1.tgz
+~~~~
 
 Y cuando se haya descomprimido, se puede ejecutar el instalador:
 
-\$ ./SMECA_V2016_LGPL.run
+~~~~{.bash}
+$ ./SMECA_V2016_LGPL.run
+~~~~
 
 Cuando se haya instalado se podrá acceder donde se haya instalado (por
 defecto /root/salome_meca), y desde ese directorio, para ejecutar-lo:
 
-\$ cd appli_V2016
-
-\$ ./salome
-
-Anexo 4: Instrucciones disponibles en MFront {#anexo-4-instrucciones-disponibles-en-mfront .ListParagraph}
-==========================================================================================================
-
-A continuación, se detallan el conjunto de instrucciones disponibles en
-MFront marcando en qué analizadores se pueden usar cada una de ellas.
-
-  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  `INSTRUCCIONES`                                   > `DefaultParser`   > `DefaultCZMParser`   > `DefaultFiniteStrainParser`   > `Implicit`   > `ImplicitFiniteStrain`   > `ImplicitII`   > `IsotropicMisesCreep`   > `IsotropicPlasticMisesFlow`   > `IsotropicStrainHardeningMisesCreep`   > `MaterialLaw`   > `Model`   > `MultipleIsotropicMisesFlows`   > `RungeKutta`
-                                                                                                                                       >
-                                                                                                                                       > `Implicit`
-  --------------------------------------------------- --------------------- ------------------------ --------------------------------- ---------------- ---------------------------- ------------------ --------------------------- --------------------------------- ------------------------------------------ ------------------- ------------- ----------------------------------- ------------------
-  `@Algorithm`                                                                                                                           ✔                ✔                            ✔                                                                                                                                                                                                 ✔
-
-  `@Author`                                             ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                   ✔             ✔                                   ✔
-
-  `@AuxiliaryStateVar`                                  ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@AuxiliaryStateVariable`                             ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔
-
-  `@Behaviour`                                          ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@Bounds`                                             ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                   ✔             ✔                                   ✔
-
-  `@Coef`                                               ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@CompareToNumericalJacobian`                                                                                                          ✔                ✔                            ✔
-
-  `@ComputedVar`                                                                                                                         ✔                ✔                            ✔                                                                                                                                                                                                 ✔
-
-  `@ComputeFinalStress`                                                                                                                  ✔                ✔                            ✔
-
-  `@ComputeStress`                                                                                                                       ✔                ✔                            ✔                                                                                                                                                                                                 ✔
-
-  `@ComputeThermalExpansion`                            ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@Constant`                                                                                                                                                                                                                                                                                                      ✔
-
-  `@ConstantMaterialProperty`                                                                                                                                                                                                                                                                                                          ✔
-
-  `@Date`                                               ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                   ✔             ✔                                   ✔
-
-  `@Derivative`                                                                                                                                                                                                                                                                                                                                                                          ✔
-
-  `@Description`                                        ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                   ✔             ✔                                   ✔
-
-  `@Domain`                                                                                                                                                                                                                                                                                                                            ✔
-
-  `@Domains`                                                                                                                                                                                                                                                                                                                           ✔
-
-  `@DSL`                                                ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@Epsilon`                                                                                                                             ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@ExternalStateVar`                                   ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@ExternalStateVariable`                              ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@FlowRule`                                                                                                                                                                                             ✔                           ✔                                 ✔                                                                            ✔
-
-  `@Function`                                                                                                                                                                                                                                                                                                      ✔                   ✔
-
-  `@GlobalParameter`                                                                                                                                                                                                                                                                                                                   ✔
-
-  `@Import`                                             ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                   ✔             ✔                                   ✔
-
-  `@Includes`                                           ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                   ✔             ✔                                   ✔
-
-  `@InitializeJacobian`                                                                                                                  ✔                ✔                            ✔
-
-  `@InitializeJacobianInvert`                                                                                                            ✔                ✔                            ✔
-
-  `@InitializeLocalVariables`                           ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@InitJacobian`                                                                                                                        ✔                ✔                            ✔
-
-  `@InitJacobianInvert`                                                                                                                  ✔                ✔                            ✔
-
-  `@InitLocalVariables`                                 ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@InitLocalVars`                                      ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@Input`                                                                                                                                                                                                                                                                                                         ✔                   ✔
-
-  `@IntegerConstant`                                    ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@IntegrationVariable`                                                                                                                 ✔                ✔                            ✔
-
-  `@Integrator`                                         ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@Interface`                                          ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                                 ✔                                   ✔
-
-  `@IsotropicBehaviour`                                 ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@IsotropicElasticBehaviour`                          ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@IsTangentOperatorSymmetric`                         ✔                     ✔                        ✔                                 ✔                ✔                            ✔                                                                                                                                                                                                 ✔
-
-  `@IterMax`                                                                                                                             ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔
-
-  `@JacobianComparisonCriterion`                                                                                                         ✔                ✔                            ✔
-
-  `@JacobianComparisonCriterium`                                                                                                         ✔                ✔                            ✔
-
-  `@Law`                                                                                                                                                                                                                                                                                                           ✔
-
-  `@Library`                                            ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                                 ✔                                   ✔
-
-  `@Link`                                               ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                                 ✔                                   ✔
-
-  `@LocalParameter`                                                                                                                                                                                                                                                                                                                    ✔
-
-  `@LocalVar`                                           ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@LocalVariable`                                      ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@Material`                                           ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                   ✔             ✔                                   ✔
-
-  `@MaterialLaw`                                        ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                   ✔             ✔                                   ✔
-
-  `@MaterialProperty`                                   ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@MaximumIncrementValuePerIteration`                                                                                                   ✔                ✔                            ✔
-
-  `@MaximumNumberOfIterations`                                                                                                           ✔                ✔                            ✔
-
-  `@Members`                                            ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@Mfront`                                             ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                                 ✔                                   ✔
-
-  `@MinimalTimeStep`                                                                                                                                                                                                                                                                                                                                                                     ✔
-
-  `@Model`                                                                                                                                                                                                                                                                                                                             ✔
-
-  `@ModellingHypotheses`                                ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@OrthotropicBehaviour`                               ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@Output`                                                                                                                                                                                                                                                                                                        ✔                   ✔
-
-  `@Parameter`                                          ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                                 ✔                                   ✔
-
-  `@Parser`                                             ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                   ✔             ✔                                   ✔
-
-  `@PerturbationValueForNumericalJacobianComputation`                                                                                    ✔                ✔                            ✔
-
-  `@PhysicalBounds`                                     ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                   ✔             ✔                                   ✔
-
-  `@PredictionOperator`                                 ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@Predictor`                                                                                                                           ✔                ✔                            ✔
-
-  `@Private`                                            ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@Profiling`                                          ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@ProvidesSymmetricTangentOperator`                   ✔                     ✔                        ✔
-
-  `@ProvidesTangentOperator`                            ✔                     ✔                        ✔
-
-  `@RequireStiffnessOperator`                           ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@RequireStiffnessTensor`                             ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@RequireThermalExpansionCoefficientTensor`           ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@Sources`                                            ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@StateVar`                                           ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@StateVariable`                                      ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@StaticVar`                                          ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                   ✔             ✔                                   ✔
-
-  `@StaticVariable`                                     ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                          ✔                   ✔             ✔                                   ✔
-
-  `@TangentOperator`                                    ✔                     ✔                        ✔                                 ✔                ✔                            ✔                                                                                                                                                                                                 ✔
-
-  `@Theta`                                                                                                                               ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔
-
-  `@UpdateAuxiliaryStateVariables`                      ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@UpdateAuxiliaryStateVars`                           ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-
-  `@UsableInPurelyImplicitResolution`                                                                                                    ✔                ✔                            ✔                  ✔                           ✔                                                                                                              ✔                                   ✔
-
-  `@UseQt`                                              ✔                     ✔                        ✔                                 ✔                ✔                            ✔                  ✔                           ✔                                 ✔                                                                            ✔                                   ✔
-  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-Anexo 5: Archivo de comandos Test_1.comm {#anexo-5-archivo-de-comandos-test_1.comm .ListParagraph}
+~~~~{.bash}
+$ cd appli_V2016
+$ ./salome
+~~~~
+
+Anexo 4: Archivo de comandos Test_1.comm {#anexo-5-archivo-de-comandos-test_1.comm .ListParagraph}
 ==================================================================================================
 
 En este anexo se incluye el archivo resultante del apartado
@@ -2279,55 +2057,55 @@ m = 11;
 un_sur_k = 0.00032840723;
 un_sur_m = 0.178571429;
 L_REEL=DEFI_LIST_REEL(DEBUT=0.0,
-INTERVALLE=(_F(JUSQU_A=0.02,
-PAS=0.002,),
-_F(JUSQU_A=0.06,
-PAS=0.004,),
-_F(JUSQU_A=0.24,
-PAS=0.01,),),);
+                      INTERVALLE=(_F(JUSQU_A=0.02,
+                                     PAS=0.002,),
+                                  _F(JUSQU_A=0.06,
+                                     PAS=0.004,),
+                                  _F(JUSQU_A=0.24,
+                                     PAS=0.01,),),);
 L_INST=DEFI_LIST_INST(DEFI_LIST=_F(METHODE='MANUEL',
-LIST_INST=L_REEL,),);
+                                   LIST_INST=L_REEL,),);
 MA=**DEFI_MATERIAU**(ELAS=_F(E=2.1e+11,
-NU=0.3,),
-**MFRONT=_F(LISTE_COEF=(young,poisson,m,un_sur_k,un_sur_m,),)**,);
+                             NU=0.3,),
+                     **MFRONT=_F(LISTE_COEF=(young,poisson,m,un_sur_k,un_sur_m,),)**,);
 MAIL=LIRE_MAILLAGE(FORMAT='MED',);
 MAIL=MODI_MAILLAGE(reuse =MAIL,
-MAILLAGE=MAIL,
-ORIE_PEAU_3D=_F(GROUP_MA='Press',),);
+                   MAILLAGE=MAIL,
+                   ORIE_PEAU_3D=_F(GROUP_MA='Press',),);
 MODE=AFFE_MODELE(MAILLAGE=MAIL,
-AFFE=_F(TOUT='OUI',
-PHENOMENE='MECANIQUE',
-MODELISATION='3D',),);
+                 AFFE=_F(TOUT='OUI',
+                         PHENOMENE='MECANIQUE',
+                         MODELISATION='3D',),);
 MATE=AFFE_MATERIAU(MAILLAGE=MAIL,
-AFFE=_F(TOUT='OUI',
-MATER=MA,),);
+                   AFFE=_F(TOUT='OUI',
+                           MATER=MA,),);
 CHAR=AFFE_CHAR_MECA(MODELE=MODE,
-DDL_IMPO=_F(GROUP_MA='Fix',
-DX=0.0,
-DY=0.0,
-DZ=0.0,),
-PRES_REP=_F(GROUP_MA='Press',
-PRES=1.0,),);
+                    DDL_IMPO=_F(GROUP_MA='Fix',
+                                DX=0.0,
+                                DY=0.0,
+                                DZ=0.0,),
+                    PRES_REP=_F(GROUP_MA='Press',
+                                PRES=1.0,),);
 RESM=**STAT_NON_LINE**(MODELE=MODE,
-CHAM_MATER=MATE,
-EXCIT=_F(CHARGE=CHAR,),
-**COMPORTEMENT=_F(RELATION='MFRONT',
-LIBRAIRIE='/home/jordi/Mfront/Test_1/src/libAsterBehaviour.so',**
-**NOM_ROUTINE='asterlemaitre',),**
-INCREMENT=_F(LIST_INST=L_INST,),
-NEWTON=_F(REAC_INCR=1,
-REAC_ITER=1,),);
+                       CHAM_MATER=MATE,
+                       EXCIT=_F(CHARGE=CHAR,),
+                       **COMPORTEMENT=_F(RELATION='MFRONT',
+                                         LIBRAIRIE='/home/jordi/Mfront/Test_1/src/libAsterBehaviour.so',**
+                                         **NOM_ROUTINE='asterlemaitre',),**
+                       INCREMENT=_F(LIST_INST=L_INST,),
+                       NEWTON=_F(REAC_INCR=1,
+                                 REAC_ITER=1,),);
 RESU=MECA_STATIQUE(MODELE=MODE,
-CHAM_MATER=MATE,
-EXCIT=_F(CHARGE=CHAR,),);
+                   CHAM_MATER=MATE,
+                   EXCIT=_F(CHARGE=CHAR,),);
 RESM=CALC_CHAMP(reuse =RESM,
-RESULTAT=RESM,
-PRECISION=1e-06,
-CONTRAINTE=('SIGM_ELNO','SIGM_NOEU',),
-CRITERES=('SIEQ_ELNO','SIEQ_NOEU',),);
+                RESULTAT=RESM,
+                PRECISION=1e-06,
+                CONTRAINTE=('SIGM_ELNO','SIGM_NOEU',),
+                CRITERES=('SIEQ_ELNO','SIEQ_NOEU',),);
 IMPR_RESU(FORMAT='MED',
-UNITE=80,
-RESU=_F(RESULTAT=RESM,
-NOM_CHAM=('SIGM_NOEU','SIEQ_NOEU','DEPL','SIGM_ELNO','SIEQ_ELNO',),),);
+          UNITE=80,
+          RESU=_F(RESULTAT=RESM,
+                  NOM_CHAM=('SIGM_NOEU','SIEQ_NOEU','DEPL','SIGM_ELNO','SIEQ_ELNO',),),);
 FIN();
 ~~~~
