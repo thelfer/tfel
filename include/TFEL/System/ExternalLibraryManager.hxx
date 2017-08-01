@@ -377,6 +377,12 @@ namespace tfel
       getAbaqusExplicitExternalBehaviourFunction(const std::string&,
 						 const std::string&);
       /*!
+       * \param[in] l : name of the library
+       * \param[in] f : law name
+       */
+      CalculiXFctPtr getCalculiXExternalBehaviourFunction(const std::string&,
+							  const std::string&);
+      /*!
        * \note the loadLibrary must have already been called with this name
        */
       bool isUMATBehaviourUsableInPurelyImplicitResolution(const std::string&,

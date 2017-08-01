@@ -189,7 +189,7 @@ namespace ansys
 	: behaviour(&(d.DTIME),d.TEMP,d.DTEMP,
 		    d.PROPS+AnsysTraits<BV>::elasticPropertiesOffset+
 		    AnsysTraits<BV>::thermalExpansionPropertiesOffset,
-		    d.STATEV,nullptr,nullptr,d.DROT),
+		    d.STATEV,d.DROT),
 	  dt(d.DTIME)
        {
 	 using namespace tfel::material;
@@ -259,12 +259,12 @@ namespace ansys
       using namespace tfel::material;
       typedef Behaviour<H,AnsysReal,false> BV;
       typedef MechanicalBehaviourTraits<BV> Traits;
-      const unsigned short offset  = (AnsysTraits<BV>::elasticPropertiesOffset+
-				      AnsysTraits<BV>::thermalExpansionPropertiesOffset+
-				      AnsysTraits<BV>::orthotropicAxesOffset);
-      const unsigned short nprops  = AnsysTraits<BV>::material_properties_nb;
-      const unsigned short NPROPS_ = offset+nprops ==0 ? 1 : offset+nprops; 
-      const bool is_defined_       = Traits::is_defined;
+      const auto offset  = (AnsysTraits<BV>::elasticPropertiesOffset+
+			    AnsysTraits<BV>::thermalExpansionPropertiesOffset+
+			    AnsysTraits<BV>::orthotropicAxesOffset);
+      const auto nprops  = AnsysTraits<BV>::material_properties_nb;
+      const auto NPROPS_ = offset+nprops ==0 ? 1 : offset+nprops; 
+      const auto is_defined_       = Traits::is_defined;
       //Test if the nb of properties matches Behaviour requirements
       if((NPROPS!=NPROPS_)&&is_defined_){
 	throwUnMatchedNumberOfMaterialProperties(Traits::getName(),
@@ -277,8 +277,8 @@ namespace ansys
     {
       typedef Behaviour<H,AnsysReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
-      const unsigned short nstatv  = Traits::internal_variables_nb;
-      const bool is_defined_       = Traits::is_defined;
+      const auto nstatv      = Traits::internal_variables_nb;
+      const auto is_defined_ = Traits::is_defined;
       //Test if the nb of state variables matches Behaviour requirements
       if((nstatv!=NSTATV)&&is_defined_){
 	throwUnMatchedNumberOfStateVariables(Traits::getName(),

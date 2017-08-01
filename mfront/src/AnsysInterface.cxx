@@ -1206,11 +1206,10 @@ namespace mfront{
 	  << "std::copy(sig0.begin(),sig0.end(),sigf.begin());\n"
 	  << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
 	  << "deto[i] += " << this->strainPerturbationValue << ";\n"
-	  << "D[0] = 0.;\n"
-	  << "ansys::AnsysData d2 = {&sigf[0],&keycut0,&D[0],&sv[0],\n"
-	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
-	  << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
-	  << "                         PROPS,PREDEF,DPRED,\n"
+	  << "ansys::AnsysData d2 = {&sigf[0],&D[0],&sv[0],\n"
+	  << "                         SEDEL,SEDPL,EPSEQ,EPSPL,EPSZZ,\n"
+	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,DROT,\n"
+	  << "                         STRAN,&deto[0],TEMP,DTEMP,PROPS,"
 	  << getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
 	  << "if(ansys::AnsysInterface<tfel::material::ModellingHypothesis::"
 	  << ModellingHypothesis::toUpperCaseString(h) << ","
@@ -1222,11 +1221,10 @@ namespace mfront{
 	  << "std::copy(sig0.begin(),sig0.end(),sigb.begin());\n"
 	  << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
 	  << "deto[i] -= " << this->strainPerturbationValue << ";\n"
-	  << "D[0] = 0.;\n"
-	  << "ansys::AnsysData d3 = {&sigf[0],&keycut0,&D[0],&sv[0],\n"
-	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
-	  << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
-	  << "                         PROPS,PREDEF,DPRED,\n"
+	  << "ansys::AnsysData d3 = {&sigf[0],&D[0],&sv[0],\n"
+	  << "                         SEDEL,SEDPL,EPSEQ,EPSPL,EPSZZ,\n"
+	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,DROT,\n"
+	  << "                         STRAN,&deto[0],TEMP,DTEMP,PROPS,"
 	  << "if(ansys::AnsysInterface<tfel::material::ModellingHypothesis::"
 	  << ModellingHypothesis::toUpperCaseString(h) << ","
 	  << "tfel::material::" << mb.getClassName() << ">::exe(d3)!=0){\n"
@@ -1527,11 +1525,10 @@ namespace mfront{
     }
   } // end of AnsysInterface::completeBehaviourDataConstructor
 
-  void 
-  AnsysInterface::exportThermodynamicForce(std::ostream& out,
-					   const std::string& a,
-					   const ThermodynamicForce& f,
-					   const SupportedTypes::TypeSize o) const
+  void AnsysInterface::exportThermodynamicForce(std::ostream& out,
+						const std::string& a,
+						const ThermodynamicForce& f,
+						const SupportedTypes::TypeSize o) const
    {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto flag = SupportedTypes::getTypeFlag(f.type);
@@ -1548,9 +1545,13 @@ namespace mfront{
     }
   } // end of AnsysInterface::exportThermodynamicForce
 
-  void
-  AnsysInterface::getTargetsDescription(TargetsDescription& d,
-					const BehaviourDescription& bd)
+  bool AnsysInterface::areExternalStateVariablesSupported() const
+  {
+    return false;
+  } // end of AnsysInterface::areExternalStateVariablesSupported()
+
+  void AnsysInterface::getTargetsDescription(TargetsDescription& d,
+					     const BehaviourDescription& bd)
   {
     const auto lib  = this->getLibraryName(bd);
     const auto name = bd.getLibrary()+bd.getClassName(); 

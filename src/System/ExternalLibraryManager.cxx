@@ -1072,6 +1072,21 @@ namespace tfel
       return fct;
     }
 
+    CalculiXFctPtr
+    ExternalLibraryManager::getCalculiXExternalBehaviourFunction(const std::string& l,
+								 const std::string& f)
+    {
+      const auto lib = this->loadLibrary(l);
+      auto fct = ::tfel_getCalculiXExternalBehaviourFunction(lib,f.c_str());
+      if(fct==nullptr){
+	auto msg = std::string("ExternalLibraryManager::getCalculiXExternalBehaviourFunction: "
+			       " could not load CalculiX external behaviour '"+f+"' "
+			       "("+getErrorMessage()+")");
+	throw(std::runtime_error(msg));
+      }
+      return fct;
+    }
+    
     CastemFctPtr
     ExternalLibraryManager::getCastemExternalBehaviourFunction(const std::string& l,
 							       const std::string& f)

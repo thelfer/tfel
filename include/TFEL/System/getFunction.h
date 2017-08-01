@@ -426,6 +426,48 @@ extern "C" {
 											   const EuroplexusRealType *const,
 											   const EuroplexusIntegerType  *const);
   /*!
+   * \return a pointer to an CalculiX external behaviour
+   *
+   * This function is a simple wrapper around dlsym. We can check if a
+   * symbol with the given name exists but cannot check if it points to
+   * a function with that prototype.
+   *
+   * \param[in] l: link to library opened through dlopen
+   * \param[in] n: name of the function to be checked
+   * \return a function pointer if the call succeed, the NULL pointer if not.
+   */
+  void (TFEL_ADDCALL_PTR tfel_getCalculiXExternalBehaviourFunction(LibraryHandlerPtr,const char * const))(const char * const,
+													  const CalculiXIntegerType* const,
+													  const CalculiXIntegerType* const,
+													  const CalculiXIntegerType* const,
+													  const CalculiXRealType* const,
+													  const CalculiXRealType* const,
+													  const CalculiXRealType* const,
+													  const CalculiXRealType* const,
+													  const CalculiXRealType* const,
+													  const CalculiXRealType* const,
+													  const CalculiXRealType* const,
+													  const CalculiXRealType* const,
+													  const CalculiXIntegerType* const,
+													  const CalculiXRealType* const,
+													  const CalculiXRealType* const,
+													  const CalculiXRealType* const,
+													  const CalculiXRealType* const,
+													  const CalculiXIntegerType* const,
+													  const CalculiXIntegerType* const,
+													  const CalculiXIntegerType* const,
+													  const CalculiXIntegerType* const,
+													  const CalculiXRealType* const,
+													  CalculiXRealType* const,
+													  CalculiXRealType* const,
+													  CalculiXRealType* const,
+													  const CalculiXIntegerType* const,
+													  const CalculiXRealType* const,
+													  const CalculiXRealType* const,
+													  CalculiXRealType* const,
+													  const CalculiXIntegerType* const,
+													  const int);
+  /*!
    * \brief this function returns a function of type
    * double (*)(const double * const)
    *

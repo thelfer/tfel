@@ -94,14 +94,6 @@ namespace mfront{
     virtual std::string
     getInterfaceName() const override;
     /*!
-     * write the initialisation of the driving variables
-     * \param[out] os: output file
-     * \param[in]  mb: mechanical behaviour description
-     */
-    virtual void
-    writeBehaviourDataMainVariablesSetters(std::ostream&,
-					   const BehaviourDescription&) const override;
-    /*!
      * \brief write the initialisation of a driving variables
      * \param[in] os : output file
      * \param[in] v  : variable to be initialised
@@ -151,26 +143,6 @@ namespace mfront{
     writeBehaviourDataThermodynamicForceSetter(std::ostream&,
 					       const ThermodynamicForce&,
 					       const SupportedTypes::TypeSize) const override;
-    /*!
-     * \return the list of additional variables to be passed to the
-     * behaviour data constructor which are specific to the interface.
-     *
-     * For each item in the list, the first element is the variable
-     * name and the second element is the variable description.
-     */
-    virtual std::vector<std::pair<std::string,std::string>>
-    getBehaviourDataConstructorAdditionalVariables() const override;
-    /*!
-     * \brief add interface specific lines at the end of the behaviour
-     * data constructor
-     * \param[in] out : output file
-     * \param[in] h   : modelling hypothesis
-     * \param[in] mb  : mechanical behaviour description
-     */
-    virtual void 
-    completeBehaviourDataConstructor(std::ostream&,
-				     const Hypothesis,
-				     const BehaviourDescription&) const override;
     /*!
      * \param[in] out  : output file
      * \param[in] name : name of the behaviour as defined by interface
@@ -324,6 +296,10 @@ namespace mfront{
     virtual void writeDepvar(std::ostream&,int&,
 			     const VariableDescription&,
 			     const std::string&) const;
+    //! \return true if the interface handles external state variables
+    virtual bool areExternalStateVariablesSupported() const;
+    //! \return true if the interface handles temperature increment
+    virtual bool isTemperatureIncrementSupported() const;
     //! selected finite strain strategy
     FiniteStrainStrategy fss = UNDEFINEDSTRATEGY;
     /*!

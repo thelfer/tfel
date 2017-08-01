@@ -73,18 +73,18 @@ namespace calculix
       typedef Behaviour<H,CalculiXReal,false> BV;
       /*!
        * \param[out] b      : behaviour
-       * \param[in]  STRAN  : driving variable at the beginning of the
+       * \param[in]  DV0  : driving variable at the beginning of the
        *                      time step
-       * \param[in]  DSTRAN : driving variable at the end of the
+       * \param[in]  DV1 : driving variable at the end of the
        *                      time step or driving variable increment
        * \param[in]  sfeh   : function handling the stress-free expansion
        *                      at the beginning of the time step
        */
       TFEL_CALCULIX_INLINE static 
-	void exe(BV& b,
-		 const CalculiXReal *const STRAN,
-		 const CalculiXReal *const DSTRAN,
-		 const StressFreeExpansionHandler& sfeh)
+      void exe(BV& b,
+	       const CalculiXReal *const DV1,
+	       const CalculiXReal *const DV0,
+	       const StressFreeExpansionHandler& sfeh)
       {
 	using std::pair;
 	using tfel::fsalgo::copy;
@@ -94,8 +94,8 @@ namespace calculix
 	const CalculiXInt N = ModellingHypothesisToSpaceDimension<H>::value;
 	CalculiXReal dv0[CalculiXTraits<BV>::DrivingVariableSize];
 	CalculiXReal dv1[CalculiXTraits<BV>::DrivingVariableSize];
-	copy<CalculiXTraits<BV>::DrivingVariableSize>::exe(STRAN,dv0);
-	copy<CalculiXTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
+	copy<CalculiXTraits<BV>::DrivingVariableSize>::exe(DV0,dv0);
+	copy<CalculiXTraits<BV>::DrivingVariableSize>::exe(DV1,dv1);
 	// check that the function pointer are not null
 	if(sfeh==nullptr){
 	  throwUnsupportedStressFreeExpansionException(Traits::getName());
@@ -120,21 +120,21 @@ namespace calculix
       typedef Behaviour<H,CalculiXReal,false> BV;
       /*!
        * \param[out] b      : b
-       * \param[in]  STRAN  : driving variable at the beginning of the
+       * \param[in]  DV0  : driving variable at the beginning of the
        *                     time step
-       * \param[in]  DSTRAN : driving variable at the end of the
+       * \param[in]  DV1 : driving variable at the end of the
        *                      time step or driving variable increment
        * \param[in]  sfeh   : function handling the stress-free expansion
        *                      at the beginning of the time step
        */
       TFEL_CALCULIX_INLINE static 
 	void exe(BV& b,
-		 const CalculiXReal *const STRAN,
-		 const CalculiXReal *const DSTRAN,
+		 const CalculiXReal *const DV0,
+		 const CalculiXReal *const DV1,
 		 const StressFreeExpansionHandler&)
       {
-	b.setCALCULIXBehaviourDataDrivingVariables(STRAN);
-	b.setCALCULIXIntegrationDataDrivingVariables(DSTRAN);
+	b.setCALCULIXBehaviourDataDrivingVariables(DV0);
+	b.setCALCULIXIntegrationDataDrivingVariables(DV1);
       } // end of exe
     }; // end of struct DrivingVariableInitialiserWithoutStressFreeExpansion
 
@@ -157,12 +157,11 @@ namespace calculix
       typedef Behaviour<H,CalculiXReal,false> BV;
       typedef typename BV::BehaviourData  BData;
       TFEL_CALCULIX_INLINE static void
-	exe(BData& data,const CalculiXReal * const props){
-	const unsigned short o =
-	  CalculiXTraits<BV>::elasticPropertiesOffset;
+      exe(BData& data,const CalculiXReal * const props){
+	const auto o = CalculiXTraits<BV>::elasticPropertiesOffset;
 	CalculiXComputeThermalExpansionCoefficientTensor<CalculiXTraits<BV>::btype,H,
-						       CalculiXTraits<BV>::stype>::exe(props+o,
-										     data.getThermalExpansionCoefficientTensor());
+							 CalculiXTraits<BV>::stype>::exe(props+o,
+											 data.getThermalExpansionCoefficientTensor());
       } // end of exe
     }; // end of struct ThermalExpansionCoefficientTensorInitializer
 
@@ -186,10 +185,10 @@ namespace calculix
 					DoNothingInitializer>::type AInitializer;
 
       TFEL_CALCULIX_INLINE Integrator(const CalculiXData& d)
-	: behaviour(&(d.DTIME),d.TEMP,d.DTEMP,
-		    d.PROPS+CalculiXTraits<BV>::elasticPropertiesOffset+
+	: behaviour(&(d.DTIME),d.TEMP,
+		    d.MPROPS+CalculiXTraits<BV>::elasticPropertiesOffset+
 		    CalculiXTraits<BV>::thermalExpansionPropertiesOffset,
-		    d.STATEV,d.PREDEF,d.DPRED,d.DROT),
+		    d.STATEV0),
 	  dt(d.DTIME)
        {
 	 using namespace tfel::material;
@@ -198,10 +197,10 @@ namespace calculix
 	   Traits::hasStressFreeExpansion,
 	   DrivingVariableInitialiserWithStressFreeExpansion,
 	   DrivingVariableInitialiserWithoutStressFreeExpansion>::type DVInitializer;
-	 SInitializer::exe(this->behaviour,d.PROPS);
-	 AInitializer::exe(this->behaviour,d.PROPS);
-	 DVInitializer::exe(this->behaviour,d.STRAN,d.DSTRAN,d.sfeh);
-	 this->behaviour.setCALCULIXBehaviourDataThermodynamicForces(d.STRESS,d.DROT);
+	 SInitializer::exe(this->behaviour,d.MPROPS);
+	 AInitializer::exe(this->behaviour,d.MPROPS);
+	 DVInitializer::exe(this->behaviour,d.DV0,d.DV1,d.sfeh);
+	 this->behaviour.setCALCULIXBehaviourDataThermodynamicForces(d.STRESS);
 	 this->behaviour.setOutOfBoundsPolicy(d.op);
 	 this->behaviour.initialize();
        } // end of Integrator::Integrator
@@ -246,7 +245,7 @@ namespace calculix
 	  return;
 	}
 	this->behaviour.checkBounds();
-	this->behaviour.CALCULIXexportStateData(d.STRESS,d.STATEV);
+	this->behaviour.CALCULIXexportStateData(d.STRESS,d.STATEV1);
 	ConsistentTangentOperatorHandler::exe(this->behaviour,d.DDSDDE);
       } // end of Integrator::exe
 	
@@ -274,11 +273,11 @@ namespace calculix
       using namespace tfel::material;
       typedef Behaviour<H,CalculiXReal,false> BV;
       typedef MechanicalBehaviourTraits<BV> Traits;
-      const unsigned short offset  = (CalculiXTraits<BV>::elasticPropertiesOffset+
-				      CalculiXTraits<BV>::thermalExpansionPropertiesOffset);
-      const unsigned short nprops  = CalculiXTraits<BV>::material_properties_nb;
-      const unsigned short NPROPS_ = offset+nprops ==0 ? 1 : offset+nprops; 
-      const bool is_defined_       = Traits::is_defined;
+      const auto offset  = (CalculiXTraits<BV>::elasticPropertiesOffset+
+			    CalculiXTraits<BV>::thermalExpansionPropertiesOffset);
+      const auto nprops  = CalculiXTraits<BV>::material_properties_nb;
+      const auto NPROPS_ = offset+nprops ==0 ? 1 : offset+nprops; 
+      const auto is_defined_       = Traits::is_defined;
       //Test if the nb of properties matches Behaviour requirements
       if((NPROPS!=NPROPS_)&&is_defined_){
 	throwUnMatchedNumberOfMaterialProperties(Traits::getName(),
@@ -291,8 +290,8 @@ namespace calculix
     {
       typedef Behaviour<H,CalculiXReal,false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
-      const unsigned short nstatv  = Traits::internal_variables_nb;
-      const bool is_defined_       = Traits::is_defined;
+      const auto nstatv  = Traits::internal_variables_nb;
+      const auto is_defined_       = Traits::is_defined;
       //Test if the nb of state variables matches Behaviour requirements
       if((nstatv!=NSTATV)&&is_defined_){
 	throwUnMatchedNumberOfStateVariables(Traits::getName(),

@@ -408,8 +408,8 @@ namespace mfront{
     writeUMATArguments(out,btype,false);
     out << "{\n";
     if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      dv0 = "STRAN";
-      dv1 = "DSTRAN";
+      dv0 = "STRAN0";
+      dv1 = "STRAN1";
     } else if(btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       dv0 = "F0";
       dv1 = "F1";
@@ -417,29 +417,25 @@ namespace mfront{
       throw_if(true,"the calculix interface only supports small "
 	       "and finite strain behaviours");
     }
-    sig = "STRESS";
-    statev="STATEV";
-    nstatev="*NSTATV";
-    out << "calculix::CalculiXData d = {" << sig << ",PNEWDT,DDSDDE," << statev << ",\n"
-	<< "                        *NTENS,*NPROPS," << nstatev << ",*DTIME,\n"
-	<< "                        DROT," << dv0 << "," << dv1 << ",TEMP,DTEMP,\n"
-	<< "                        PROPS,PREDEF,DPRED,\n"
+    out << "using calculix::CalculiXData;\n"
+	<< "CalculiXData d = {STRESS,PNEWDT,DDSDDE,STATEV1,*DTIME,STATEV1,\n"
+	<< "                  " << dv0 << "," << dv1 << ",TEMP1,MPROPS,\n"
 	<< getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
 	<< "if(calculix::CalculiXInterface<tfel::material::" << mb.getClassName() 
 	<< ">::exe(d)!=0){\n";
     out << "*PNEWDT = 0.2;\n"
 	<< "return;\n"
 	<< "}\n";
-    if(getDebugMode()){
-      out << "std::cout << \"Dt :\" << std::endl;\n"
-	  << "for(calculix::CalculiXInt i=0;i!=*NTENS;++i){\n"
-	  << "for(calculix::CalculiXInt j=0;j!=*NTENS;++j){\n"
-	  << "std::cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n"
-	  << "}\n"
-	  << "std::cout << std::endl;\n"
-	  << "}\n"
-	  << "std::cout << std::endl;\n";
-    }
+    // if(getDebugMode()){
+    //   out << "std::cout << \"Dt :\" << std::endl;\n"
+    // 	  << "for(calculix::CalculiXInt i=0;i!=6;++i){\n"
+    // 	  << "for(calculix::CalculiXInt j=0;j!=6;++j){\n"
+    // 	  << "std::cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n"
+    // 	  << "}\n"
+    // 	  << "std::cout << std::endl;\n"
+    // 	  << "}\n"
+    // 	  << "std::cout << std::endl;\n";
+    // }
     out << "}\n\n";
   } // end of CalculiXInterface::writeUMATFunctionBase
 
@@ -690,36 +686,6 @@ namespace mfront{
 	<< "#include\"MFront/CalculiX/CalculiXConvert.hxx\"\n\n";
   } // end of CalculiXInterface::writeInterfaceSpecificIncludes
 
-  std::vector<std::pair<std::string,std::string>>
-	   CalculiXInterface::getBehaviourDataConstructorAdditionalVariables() const{
-    return {{"DR","increment of rigid body rotation"}};
-  } // end of CalculiXInterface::getBehaviourDataConstructorAdditionalVariables
-
-  void 
-  CalculiXInterface::writeBehaviourDataMainVariablesSetters(std::ostream& os,
-							    const BehaviourDescription& mb) const
-  {
-    const auto iprefix = makeUpperCase(this->getInterfaceName());
-    SupportedTypes::TypeSize ov,of;
-    os << "void set"
-       << iprefix << "BehaviourDataDrivingVariables(const Type* const " << iprefix << "stran)\n"
-       << "{\n";
-    for(const auto& v : mb.getMainVariables()){
-      this->writeBehaviourDataDrivingVariableSetter(os,v.first,ov);
-      ov += SupportedTypes::getTypeSize(v.first.type,1u);
-    }
-    os << "}\n\n";
-    os << "void set"
-       << iprefix << "BehaviourDataThermodynamicForces(const Type* const " << iprefix << "stress_,\n"
-       << "                                                        const Type* const )\n"
-       << "{\n";
-    for(const auto& v : mb.getMainVariables()){
-      this->writeBehaviourDataThermodynamicForceSetter(os,v.second,of);
-      of += SupportedTypes::getTypeSize(v.second.type,1u);
-    }
-    os << "}\n\n";
-  } // end of CalculiXInterface::writeBehaviourDataMainVariablesSetters
-
   void 
   CalculiXInterface::writeBehaviourDataDrivingVariableSetter(std::ostream& os,
 							     const DrivingVariable& v,
@@ -731,10 +697,10 @@ namespace mfront{
 			       "only one driving variable supported"));
     }
     if(v.increment_known){
-      os << "calculix::UMATImportDrivingVariables<hypothesis>::exe(this->" << v.name << ","
+      os << "calculix::ImportDrivingVariables<hypothesis>::exe(this->" << v.name << ","
 	 << iprefix << "stran);\n";
     } else {
-      os << "calculix::UMATImportDrivingVariables<hypothesis>::exe(this->" << v.name << "0,"
+      os << "calculix::ImportDrivingVariables<hypothesis>::exe(this->" << v.name << "0,"
 	 << iprefix << "stran);\n";
     }
   } // end of CalculiXInterface::writeBehaviourDataDrivingVariableSetter
@@ -750,10 +716,10 @@ namespace mfront{
 			       "only one driving variable supported"));
     }
     if(v.increment_known){
-      os << "calculix::UMATImportDrivingVariables<hypothesis>::exe(this->d" << v.name << ","
+      os << "calculix::ImportDrivingVariables<hypothesis>::exe(this->d" << v.name << ","
 	 << iprefix << "dstran);\n";
     } else {
-      os << "calculix::UMATImportDrivingVariables<hypothesis>::exe(this->" << v.name << "1,"
+      os << "calculix::ImportDrivingVariables<hypothesis>::exe(this->" << v.name << "1,"
 	 << iprefix << "dstran);\n";
     }
   } // end of CalculiXInterface::writeIntegrationDataDrivingVariableSetter
@@ -765,7 +731,7 @@ namespace mfront{
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(SupportedTypes::getTypeFlag(f.type)==SupportedTypes::Stensor){
-      os << "calculix::UMATImportThermodynamicForces<hypothesis>::exe(this->" << f.name << ",";
+      os << "calculix::ImportThermodynamicForces<hypothesis>::exe(this->" << f.name << ",";
       if(!o.isNull()){
 	os << iprefix << "stress_+" << o << ");\n";
       } else {
@@ -778,61 +744,6 @@ namespace mfront{
   } // end of CalculiXInterface::writeBehaviourDataThermodynamicForceSetter
   
   void 
-  CalculiXInterface::completeBehaviourDataConstructor(std::ostream& out,
-						      const Hypothesis h,
-						      const BehaviourDescription& mb) const
-  {
-    auto do_nothing = [&out](){
-      out << "static_cast<void>(CALCULIXDR);\n";
-    };
-    /* 
-     * We apply the rotation associated to the Jauman corotationnal frame only if:
-     * - the behaviour symmetry is isotropic
-     * - the behaviour is written in small strain
-     * - the finite strain strategy is either undefined or `Native`
-     */
-    const bool c = ((mb.getSymmetryType()==mfront::ISOTROPIC)&&
-		    (mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR) &&
-		    ((this->fss==UNDEFINEDSTRATEGY)||(this->fss==NATIVEFINITESTRAINSTRATEGY)));
-    if(!c){
-      do_nothing();
-      return;
-    }
-    // checking if there are variables that need to be rotated
-    const auto& d = mb.getBehaviourData(h);
-    bool b = false; // have persistent variables that have to be updated
-    for(const auto& v:d.getPersistentVariables()){
-      const auto flag = SupportedTypes::getTypeFlag(v.type);
-      if((flag==SupportedTypes::Stensor)||
-	 (flag==SupportedTypes::Tensor)){
-	b = true;
-	break;
-      }
-    }
-    if(!b){
-      do_nothing();
-      return;
-    }
-    // rotate variables
-    out << "const tfel::math::tmatrix<3u,3u,real> calculix_dr = {CALCULIXDR[0],CALCULIXDR[1],CALCULIXDR[2],\n"
-      "                                                        CALCULIXDR[3],CALCULIXDR[4],CALCULIXDR[5],\n"
-      "                                                        CALCULIXDR[6],CALCULIXDR[7],CALCULIXDR[8]};\n";
-    for(const auto& v:d.getPersistentVariables()){
-      const auto flag = SupportedTypes::getTypeFlag(v.type);
-      if((flag==SupportedTypes::Stensor)||
-	 (flag==SupportedTypes::Tensor)){
-	if(v.arraySize==1u){
-	  out << "this->" << v.name << ".changeBasis(calculix_dr);\n";
-	} else {
-	  for(unsigned short i=0;i!=v.arraySize;++i){
-	    out << "this->" << v.name << "[" << i << "].changeBasis(calculix_dr);\n";
-	  }
-	}
-      }
-    }
-  } // end of UMATInterface::completeBehaviourDataConstructor
-
-  void 
   CalculiXInterface::exportThermodynamicForce(std::ostream& out,
 					      const std::string& a,
 					      const ThermodynamicForce& f,
@@ -842,10 +753,10 @@ namespace mfront{
     const auto flag = SupportedTypes::getTypeFlag(f.type);
     if(flag==SupportedTypes::Stensor){
       if(!o.isNull()){
-	out << "calculix::UMATExportThermodynamicForces<hypothesis>::exe("
+	out << "calculix::ExportThermodynamicForces<hypothesis>::exe("
 	    << a << "+" << o << ",this->sig);\n";
       } else {
-	out << "calculix::UMATExportThermodynamicForces<hypothesis>::exe(" << a << ",this->sig);\n";
+	out << "calculix::ExportThermodynamicForces<hypothesis>::exe(" << a << ",this->sig);\n";
       }
     } else {
       throw(std::runtime_error("CalculiXInterface::exportThermodynamicForce: "
@@ -1159,42 +1070,33 @@ namespace mfront{
     return UMATInterfaceBase::gatherModellingHypothesesAndTests(mb);
   } // end of CalculiXInterface::gatherModellingHypothesesAndTests
 
-  std::string
-  CalculiXInterface::getModellingHypothesisTest(const Hypothesis h) const
+  std::string CalculiXInterface::getModellingHypothesisTest(const Hypothesis h) const
   {
-    if(h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
-      return "*NTENS==4";
-    } else if(h==ModellingHypothesis::PLANESTRESS){
-      return "*NTENS==3";
-    } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      return "*NTENS==6";
+    if(h==ModellingHypothesis::TRIDIMENSIONAL){
+      return "true";
     }
     throw(std::runtime_error("CalculiXInterface::getModellingHypothesisTest : "
 			     "unsupported modelling hypothesis"));
   } // end of CalculiXInterface::gatherModellingHypothesesAndTests
 
-  void
-  CalculiXInterface::writeUMATxxAdditionalSymbols(std::ostream&,
-						  const std::string&,
-						  const Hypothesis,
-						  const BehaviourDescription&,
-						  const FileDescription&) const
+  bool CalculiXInterface::areExternalStateVariablesSupported() const{
+    return false;
+  } // end of CalculiXInterface::areExternalStateVariablesSupported()
+
+  bool CalculiXInterface::isTemperatureIncrementSupported() const{
+    return false;
+  } // end of CalculiXInterface::isTemperatureIncrementSupported()
+  
+  void CalculiXInterface::writeUMATxxAdditionalSymbols(std::ostream&,
+						       const std::string&,
+						       const Hypothesis,
+						       const BehaviourDescription&,
+						       const FileDescription&) const
   {} // end of CalculiXInterface::writeUMATxxAdditionalSymbols
 
-  void
-  CalculiXInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
+  void CalculiXInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
   {
-    out << "ModellingHypothesis::Hypothesis h;\n"
-	<< "if( *NTENS == 6 ){\n"
-	<< "  h = ModellingHypothesis::TRIDIMENSIONAL;\n"
-	<< "} else if(*NTENS==3){\n"
-	<< "  h = ModellingHypothesis::PLANESTRESS;\n"
-	<< "} else if(*NTENS==4){\n"
-	<< "  h = ModellingHypothesis::GENERALISEDPLANESTRAIN;\n"
-	<< "} else {\n"
-	<< "  return;\n"
-	<< "}\n"
-	<< "mg.setModellingHypothesis(h);\n";
+    out << "mg.setModellingHypothesis(ModellingHypothesis::TRIDIMENSIONAL);\n";
   } // end of CalculiXInterface::writeMTestFileGeneratorSetModellingHypothesis
 
   void

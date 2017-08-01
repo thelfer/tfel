@@ -50,6 +50,7 @@ extern "C" {
   typedef int AbaqusIntegerType;
   typedef int AnsysIntegerType;
   typedef int EuroplexusIntegerType;
+  typedef int CalculiXIntegerType;
   
   typedef double AbaqusRealType;
   typedef double AnsysRealType;
@@ -57,6 +58,7 @@ extern "C" {
   typedef double CastemRealType;
   typedef double AsterRealType;
   typedef double EuroplexusRealType;
+  typedef double CalculiXRealType;
   
 #ifdef	__cplusplus
 }
@@ -491,6 +493,42 @@ namespace tfel
 						       const EuroplexusRealType *const,      // external state variables
 						       const EuroplexusRealType *const,      // external state variables increments
 						       const EuroplexusIntegerType  *const); // number of external state variables
+      /*!
+       * a simple alias.
+       * This is the prototype of the external functions used by the
+       * pleiades version of the castem finite element solver
+       */
+      typedef void (TFEL_ADDCALL_PTR CalculiXFctPtr)(const char * const,
+						     const CalculiXIntegerType* const,
+						     const CalculiXIntegerType* const,
+						     const CalculiXIntegerType* const,
+						     const CalculiXRealType* const,
+						     const CalculiXRealType* const,
+						     const CalculiXRealType* const,
+						     const CalculiXRealType* const,
+						     const CalculiXRealType* const,
+						     const CalculiXRealType* const,
+						     const CalculiXRealType* const,
+						     const CalculiXRealType* const,
+						     const CalculiXIntegerType* const,
+						     const CalculiXRealType* const,
+						     const CalculiXRealType* const,
+						     const CalculiXRealType* const,
+						     const CalculiXRealType* const,
+						     const CalculiXIntegerType* const,
+						     const CalculiXIntegerType* const,
+						     const CalculiXIntegerType* const,
+						     const CalculiXIntegerType* const,
+						     const CalculiXRealType* const,
+						     CalculiXRealType* const,
+						     CalculiXRealType* const,
+						     CalculiXRealType* const,
+						     const CalculiXIntegerType* const,
+						     const CalculiXRealType* const,
+						     const CalculiXRealType* const,
+						     CalculiXRealType* const,
+						     const CalculiXIntegerType* const,
+						     const int /* hidden fortran parameter */);
       
     }
     

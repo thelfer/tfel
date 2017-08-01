@@ -772,7 +772,6 @@ namespace mfront{
      */
     virtual void
     writeMTestFileGeneratorSetModellingHypothesis(std::ostream&) const = 0;
-
     /*!
      * \brief associates each distinct modelling hypothesis to appropriate tests
      * \param[in] mb : behaviour description
@@ -787,9 +786,12 @@ namespace mfront{
     virtual bool
     isModellingHypothesisHandled(const Hypothesis,
 				 const BehaviourDescription&) const override;
-    
-    virtual std::string
-    getModellingHypothesisTest(const Hypothesis) const = 0;
+    //! \return true if the interface handles external state variables
+    virtual bool areExternalStateVariablesSupported() const;
+    //! \return true if the interface handles temperature increment
+    virtual bool isTemperatureIncrementSupported() const;
+    //! \return a test for the given modelling hypotesis
+    virtual std::string getModellingHypothesisTest(const Hypothesis) const = 0;
 
     bool generateMTestFile = false;
     

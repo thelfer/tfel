@@ -27,19 +27,15 @@ namespace calculix{
     CalculiXReal *const STRESS;
     CalculiXReal *const PNEWDT;
     CalculiXReal *const DDSDDE;
-    CalculiXReal *const STATEV;
-    const CalculiXInt  NTENS;
-    const CalculiXInt  NPROPS;
-    const CalculiXInt  NSTATV;
+    CalculiXReal *const STATEV1;
+    //! time increment
     const CalculiXReal DTIME;
-    const CalculiXReal *const DROT;
-    const CalculiXReal *const STRAN;
-    const CalculiXReal *const DSTRAN;
+    const CalculiXReal *const STATEV0;
+    const CalculiXReal *const DV0;
+    const CalculiXReal *const DV1;
+    //! temperature at the end of the time step
     const CalculiXReal *const TEMP;
-    const CalculiXReal *const DTEMP;
-    const CalculiXReal *const PROPS;
-    const CalculiXReal *const PREDEF;
-    const CalculiXReal *const DPRED;
+    const CalculiXReal *const MPROPS;
     const tfel::material::OutOfBoundsPolicy op;
     const StressFreeExpansionHandler sfeh;
   }; // end of struct CalculiXData

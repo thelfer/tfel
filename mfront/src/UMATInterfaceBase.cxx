@@ -484,12 +484,16 @@ namespace mfront
     out << "/*\n"
 	<< " * \\brief constructor for the umat interface\n"
 	<< " * \\param[in] " << iprefix << "dt_: time increment\n"
-	<< " * \\param[in] " << iprefix << "T_: temperature\n"
-	<< " * \\param[in] " << iprefix << "dT_: temperature increment\n"
-	<< " * \\param[in] " << iprefix << "mat: material properties\n"
-	<< " * \\param[in] " << iprefix << "int_vars: state variables\n" 
-	<< " * \\param[in] " << iprefix << "ext_vars: external state variables\n"
-	<< " * \\param[in] " << iprefix << "dext_vars: external state variables increments\n";
+	<< " * \\param[in] " << iprefix << "T_: temperature\n";
+    if(this->isTemperatureIncrementSupported()){
+      out << " * \\param[in] " << iprefix << "dT_: temperature increment\n";
+    }
+    out << " * \\param[in] " << iprefix << "mat: material properties\n"
+	<< " * \\param[in] " << iprefix << "int_vars: state variables\n";
+    if(this->areExternalStateVariablesSupported()){
+      out << " * \\param[in] " << iprefix << "ext_vars: external state variables\n"
+	  << " * \\param[in] " << iprefix << "dext_vars: external state variables increments\n";
+    }
     for(const auto& v: abdv){
       out << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
     }
@@ -501,10 +505,17 @@ namespace mfront
     }
     out << " */\n"
 	<< mb.getClassName() 
-	<< "(const Type* const " << iprefix << "dt_,\n" 
-	<<  "const Type* const " << iprefix << "T_,const Type* const " << iprefix << "dT_,\n"
-	<<  "const Type* const " << iprefix << "mat,const Type* const " << iprefix << "int_vars,\n"
-	<<  "const Type* const " << iprefix << "ext_vars,const Type* const " << iprefix << "dext_vars";
+	<< "(const Type* const " << iprefix << "dt_"
+	<< ",\nconst Type* const " << iprefix << "T_";
+    if(this->isTemperatureIncrementSupported()){
+      out << ",\nconst Type* const " << iprefix << "dT_";
+    }
+    out << ",\nconst Type* const " << iprefix << "mat"
+	<< ",\nconst Type* const " << iprefix << "int_vars";
+    if(this->areExternalStateVariablesSupported()){
+      out << ",\nconst Type* const " << iprefix << "ext_vars"
+	  << ",\nconst Type* const " << iprefix << "dext_vars";
+    }
     for(const auto& v: abdv){
       out << ",\nconst Type* const " << iprefix << v.first;
     }
@@ -518,7 +529,10 @@ namespace mfront
     if(mb.useQt()){
       out << ": " << mb.getClassName() 
 	  << "BehaviourData<hypothesis,Type,use_qt>(" << iprefix << "T_," << iprefix << "mat,\n"
-	  << iprefix+"int_vars," << iprefix << "ext_vars";
+	  << iprefix+"int_vars";
+      if(this->areExternalStateVariablesSupported()){
+	out << "," << iprefix << "ext_vars";
+      }
       for(const auto& v: abdv){
 	out << "," << iprefix << v.first;
       }
@@ -527,7 +541,13 @@ namespace mfront
       }
       out << "),\n"
 	  << mb.getClassName() 
-	  << "IntegrationData<hypothesis,Type,use_qt>(" << iprefix << "dt_," << iprefix << "dT_," << iprefix << "dext_vars";
+	  << "IntegrationData<hypothesis,Type,use_qt>(" << iprefix << "dt_";
+      if(this->isTemperatureIncrementSupported()){
+	out << "," << iprefix << "dT_";
+      }
+      if(this->areExternalStateVariablesSupported()){
+	out << "," << iprefix << "dext_vars";
+      }
       for(const auto& v: aidv){
 	out << "," << iprefix << v.first;
       }
@@ -538,7 +558,10 @@ namespace mfront
     } else {
       out << ": " << mb.getClassName() 
 	  << "BehaviourData<hypothesis,Type,false>(" << iprefix << "T_," << iprefix << "mat,\n"
-	  << iprefix+"int_vars," << iprefix << "ext_vars";
+	  << iprefix+"int_vars";
+      if(this->areExternalStateVariablesSupported()){
+	out << "," << iprefix << "ext_vars";
+      }
       for(const auto& v: abdv){
 	out << "," << iprefix << v.first;
       }
@@ -547,7 +570,13 @@ namespace mfront
       }
       out << "),\n"
 	  << mb.getClassName() 
-	  << "IntegrationData<hypothesis,Type,false>(" << iprefix << "dt_," << iprefix << "dT_," << iprefix << "dext_vars";
+	  << "IntegrationData<hypothesis,Type,false>(" << iprefix << "dt_";
+      if(this->isTemperatureIncrementSupported()){
+	out << "," << iprefix << "dT_";
+      }
+      if(this->areExternalStateVariablesSupported()){
+	out << "," << iprefix << "dext_vars";
+      }
       for(const auto& v: aidv){
 	out << "," << iprefix << v.first;
       }
@@ -700,8 +729,10 @@ namespace mfront
 	<< " * \\brief constructor for the umat interface\n"
 	<< " * \\param[in] " << iprefix << "T_: temperature\n"
 	<< " * \\param[in] " << iprefix << "mat: material properties\n"
-	<< " * \\param[in] " << iprefix << "int_vars: state variables\n"
-	<< " * \\param[in] " << iprefix << "ext_vars: external std::ate variables\n";
+	<< " * \\param[in] " << iprefix << "int_vars: state variables\n";
+    if(this->areExternalStateVariablesSupported()){
+      out << " * \\param[in] " << iprefix << "ext_vars: external std::ate variables\n";
+    }
     for(const auto& v: abdv){
       out << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
     }
@@ -718,13 +749,15 @@ namespace mfront
     }
     out <<  "const Type* const";
     if(!persistentVarsHolder.empty()){
-      out << " " << iprefix << "int_vars,\n";
+      out << " " << iprefix << "int_vars\n";
     } else {
-      out << ",\n";
+      out << "\n";
     }
-    out << "const Type* const";
-    if(externalStateVarsHolder.size()!=1){
-      out << " " << iprefix << "ext_vars";
+    if(this->areExternalStateVariablesSupported()){
+      out << ",const Type* const";
+      if(externalStateVarsHolder.size()!=1){
+	out << " " << iprefix << "ext_vars";
+      }
     }
     for(const auto& v: abdv){
       out << ",const Type* const " << iprefix << v.first;
@@ -782,9 +815,13 @@ namespace mfront
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
     out << "/*\n"
 	<< " * \\brief constructor for the umat interface\n"
-	<< " * \\param[in] "+ iprefix+"dt_: time increment\n"
-	<< " * \\param[in] "+ iprefix+"dT_: temperature increment\n"
-	<< " * \\param[in] "+ iprefix+"dext_vars: external state variables increments\n";
+	<< " * \\param[in] "+ iprefix+"dt_: time increment\n";
+    if(this->isTemperatureIncrementSupported()){
+      out << " * \\param[in] "+ iprefix+"dT_: temperature increment\n";
+    }
+    if(this->areExternalStateVariablesSupported()){
+      out << " * \\param[in] "+ iprefix+"dext_vars: external state variables increments\n";
+    }
     for(const auto& v: aidv){
       out << " * \\param[in] " << iprefix << v.first << ":  " << v.second << "\n";
     }
@@ -793,10 +830,16 @@ namespace mfront
     }
     out << " */\n"
 	<< mb.getClassName() << "IntegrationData"
-	<< "(const Type* const " << iprefix << "dt_,\n" 
-	<<  "const Type* const " << iprefix << "dT_,const Type* const";
-    if(externalStateVarsHolder.size()!=1){
-      out << " " << iprefix << "dext_vars";
+	<< "(const Type* const " << iprefix << "dt_";
+    if(this->isTemperatureIncrementSupported()){
+      out <<  ",\nconst Type* const " << iprefix << "dT_";
+    }
+    if(this->areExternalStateVariablesSupported()){
+      if(externalStateVarsHolder.size()!=1){
+	out << ",const Type* const " << iprefix << "dext_vars";
+      } else {
+	out << ",const Type* const";
+      }
     }
     for(const auto& v: aidv){
       out << ",const Type* const " << iprefix << v.first;
@@ -804,8 +847,13 @@ namespace mfront
     for(const auto& v: av){
       out << ",const Type* const " << iprefix << v.first;
     }
-    out << ")\n";
-    out << ": dt(*" << iprefix << "dt_),dT(*" << iprefix << "dT_)";
+    out << ")\n"
+	<< ": dt(*" << iprefix << "dt_)";
+    if(this->isTemperatureIncrementSupported()){
+      out << ",dT(*" << iprefix << "dT_)";
+    } else {
+      out << ",dT(temperature(0))";
+    }
     bool first = false;
     this->writeVariableInitializersInBehaviourDataConstructorI(out,first,
 							       std::next(externalStateVarsHolder.begin()),
@@ -1349,13 +1397,12 @@ namespace mfront
 	const auto& d = mb.getBehaviourData(elem.first);
 	const auto& persistentVarsHolder = d.getPersistentVariables();
 	const auto& externalStateVarsHolder = d.getExternalStateVariables();
-	pair<vector<UMATMaterialProperty>,
-	     SupportedTypes::TypeSize> mprops = this->buildMaterialPropertiesList(mb,elem.first);
-	VariableDescriptionContainer::const_iterator p;
-	unsigned short i;
-	unsigned int offset;
-	out << "if(" << elem.second << "){\n";
-	offset=0;
+	const auto mprops = this->buildMaterialPropertiesList(mb,elem.first);
+	const auto b = elem.second!="true";
+	if(b){
+	  out << "if(" << elem.second << "){\n";
+	}
+	unsigned int offset=0;
 	for(const auto& m : mprops.first){
 	  auto flag = SupportedTypes::getTypeFlag(m.type);
 	  if(flag!=SupportedTypes::Scalar){
@@ -1382,10 +1429,10 @@ namespace mfront
 	  }
 	}
 	SupportedTypes::TypeSize ivoffset;
-	for(p=persistentVarsHolder.begin();p!=persistentVarsHolder.end();++p){
-	  auto flag = SupportedTypes::getTypeFlag(p->type);
-	  const auto& ivname = d.getExternalName(p->name);
-	  if(p->arraySize==1u){
+	for(const auto& v : persistentVarsHolder){
+	  auto flag = SupportedTypes::getTypeFlag(v.type);
+	  const auto& ivname = d.getExternalName(v.name);
+	  if(v.arraySize==1u){
 	    if(flag==SupportedTypes::Scalar){
 	      out << "mg.addInternalStateVariable(\"" << ivname << "\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]);\n";
 	      ivoffset += SupportedTypes::TypeSize(1u,0u,0u,0u);
@@ -1394,8 +1441,8 @@ namespace mfront
 	      ivoffset += SupportedTypes::TypeSize(0u,0u,1u,0u);
 	    }
 	  } else {
-	    if(p->arraySize>=SupportedTypes::ArraySizeLimit){
-	      out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
+	    if(v.arraySize>=SupportedTypes::ArraySizeLimit){
+	      out << "for(unsigned short i=0;i!=" << v.arraySize << ";++i){\n";
 	      out << "ostringstream name;\n";
 	      out << "name << \"" << ivname << "[\" << i << \"]\";\n";
 	      if(flag==SupportedTypes::Scalar){
@@ -1405,12 +1452,12 @@ namespace mfront
 	      }
 	      out << "}\n";
 	      if(flag==SupportedTypes::Scalar){
-		ivoffset += SupportedTypes::TypeSize(p->arraySize,0u,0u,0u);
+		ivoffset += SupportedTypes::TypeSize(v.arraySize,0u,0u,0u);
 	      } else {
-		ivoffset += SupportedTypes::TypeSize(0u,0u,p->arraySize,0u);
+		ivoffset += SupportedTypes::TypeSize(0u,0u,v.arraySize,0u);
 	      }
 	    } else {
-	      for(i=0;i!=p->arraySize;++i){
+	      for(unsigned short i=0;i!=v.arraySize;++i){
 		if(flag==SupportedTypes::Scalar){
 		  out << "mg.addInternalStateVariable(\""
 		      << ivname << "[" << i << "]\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset<< "]);\n";
@@ -1426,7 +1473,7 @@ namespace mfront
 	}
 	out << "mg.addExternalStateVariableValue(\"Temperature\",0.,*TEMP);\n";
 	out << "mg.addExternalStateVariableValue(\"Temperature\",*DTIME,*TEMP+*DTEMP);\n";
-	p=std::next(externalStateVarsHolder.begin());
+	auto p=std::next(externalStateVarsHolder.begin());
 	for(offset=0;p!=externalStateVarsHolder.end();++p){
 	  auto flag = SupportedTypes::getTypeFlag(p->type);
 	  if(flag!=SupportedTypes::Scalar){
@@ -1467,7 +1514,7 @@ namespace mfront
 	      out << "}\n";
 	      offset += p->arraySize;
 	    } else {
-	      for(i=0;i!=p->arraySize;++i,++offset){
+	      for(unsigned short i=0;i!=p->arraySize;++i,++offset){
 		if(offset==0){
 		  out << "mg.addExternalStateVariableValue(\"" << evname
 		      << "[" << i << "]\",0,*PREDEF);\n";
@@ -1485,7 +1532,9 @@ namespace mfront
 	    }
 	  }
 	}
-	out << "}\n";
+	if(b){
+	  out << "}\n";
+	}
       }
       out << "mg.generate(\""+name+"\");\n";
       out << "static_cast<void>(TVectorSize); // remove gcc warning\n";
@@ -2081,6 +2130,14 @@ namespace mfront
     }
     return {false,o};
   }
+
+  bool UMATInterfaceBase::areExternalStateVariablesSupported() const{
+    return true;
+  } // end of UMATInterfaceBase::areExternalStateVariablesSupported()
+
+  bool UMATInterfaceBase::isTemperatureIncrementSupported() const{
+    return true;
+  } // end of UMATInterfaceBase::isTemperatureIncrementSupported()
   
   UMATInterfaceBase::~UMATInterfaceBase() = default;
 

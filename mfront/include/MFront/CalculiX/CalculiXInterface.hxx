@@ -127,10 +127,10 @@ namespace calculix
 	const bool bs = ATraits::requiresStiffnessTensor;
 	const bool ba = ATraits::requiresThermalExpansionCoefficientTensor;
 	using Integrator = typename AHandler::template Integrator<bs,ba>;
-#ifndef MFRONT_CALCULIX_NORUNTIMECHECKS
-	AHandler::checkNPROPS(d.NPROPS);
-	AHandler::checkNSTATV(d.NSTATV);
-#endif /* MFRONT_CALCULIX_NORUNTIMECHECKS */
+// #ifndef MFRONT_CALCULIX_NORUNTIMECHECKS
+// 	AHandler::checkNPROPS(d.NPROPS);
+// 	AHandler::checkNSTATV(d.NSTATV);
+// #endif /* MFRONT_CALCULIX_NORUNTIMECHECKS */
 	Integrator i(d);
 	i.exe(d);
       }

@@ -577,6 +577,52 @@ extern "C" {
 				    const EuroplexusRealType     *const, const EuroplexusRealType     *const,
 				    const EuroplexusIntegerType  *const))dlsym(l,n);
   }
+
+  void (TFEL_ADDCALL_PTR tfel_getCalculiXExternalBehaviourFunction(LibraryHandlerPtr l,
+								   const char * const n))(const char * const,
+											  const CalculiXIntegerType* const,
+											  const CalculiXIntegerType* const,
+											  const CalculiXIntegerType* const,
+											  const CalculiXRealType* const,
+											  const CalculiXRealType* const,
+											  const CalculiXRealType* const,
+											  const CalculiXRealType* const,
+											  const CalculiXRealType* const,
+											  const CalculiXRealType* const,
+											  const CalculiXRealType* const,
+											  const CalculiXRealType* const,
+											  const CalculiXIntegerType* const,
+											  const CalculiXRealType* const,
+											  const CalculiXRealType* const,
+											  const CalculiXRealType* const,
+											  const CalculiXRealType* const,
+											  const CalculiXIntegerType* const,
+											  const CalculiXIntegerType* const,
+											  const CalculiXIntegerType* const,
+											  const CalculiXIntegerType* const,
+											  const CalculiXRealType* const,
+											  CalculiXRealType* const,
+											  CalculiXRealType* const,
+											  CalculiXRealType* const,
+											  const CalculiXIntegerType* const,
+											  const CalculiXRealType* const,
+											  const CalculiXRealType* const,
+											  CalculiXRealType* const,
+											  const CalculiXIntegerType* const,
+											  const int)
+  {
+    return (void (TFEL_ADDCALL_PTR)(const char * const,const CalculiXIntegerType* const,const CalculiXIntegerType* const,
+				    const CalculiXIntegerType* const,const CalculiXRealType* const,const CalculiXRealType* const,
+				    const CalculiXRealType* const,const CalculiXRealType* const,const CalculiXRealType* const,
+				    const CalculiXRealType* const,const CalculiXRealType* const,const CalculiXRealType* const,
+				    const CalculiXIntegerType* const,const CalculiXRealType* const,const CalculiXRealType* const,
+				    const CalculiXRealType* const,const CalculiXRealType* const,const CalculiXIntegerType* const,
+				    const CalculiXIntegerType* const,const CalculiXIntegerType* const,const CalculiXIntegerType* const,
+				    const CalculiXRealType* const,CalculiXRealType* const,CalculiXRealType* const,
+				    CalculiXRealType* const,const CalculiXIntegerType* const,const CalculiXRealType* const,
+				    const CalculiXRealType* const,CalculiXRealType* const,const CalculiXIntegerType* const,
+				    const int))dlsym(l,n);
+  }
   
   double (TFEL_ADDCALL_PTR tfel_getCFunction0(LibraryHandlerPtr lib,const char * const name))(void){
     return (double (TFEL_ADDCALL_PTR)(void)) dlsym(lib,name);

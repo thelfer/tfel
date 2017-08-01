@@ -15,14 +15,11 @@ namespace calculix{
   /*!
    * \brief class defining the convertion from calculix to mfront for
    * driving variables
-   * \tparam H: modelling hypothesis
    */
-  template<tfel::material::ModellingHypothesis::Hypothesis H>
-  struct UMATImportDrivingVariables
+  struct ImportDrivingVariables
   {
     //! space dimension
-    static constexpr const unsigned short N =
-      tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+    static constexpr const unsigned short N = 3u;
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] s: symmetric tensor to be filled
@@ -31,7 +28,7 @@ namespace calculix{
     template<typename T>
     static inline void
     exe(tfel::math::stensor<N,T>& e,const CalculiXReal* const v){
-      e.importVoigt(v);
+      e.importTab(v);
     } // end of exe
     /*!
      * \tparam T: type of the thermodynamique forces
@@ -43,50 +40,15 @@ namespace calculix{
     exe(tfel::math::tensor<N,T>& F,const CalculiXReal* const v){
       tfel::math::tensor<N,T>::buildFromFortranMatrix(F,v);
     } // end of exe
-  }; // end of struct UMATImportDrivingVariables
-  /*!
-   * \brief partial specialisation of the UMATImportDrivingVariables
-   * for the plane stress modelling hypothesis.
-   */
-  template<>
-  struct UMATImportDrivingVariables<tfel::material::ModellingHypothesis::PLANESTRESS>
-  {
-    /*!
-     * \tparam T: type of the thermodynamique forces
-     * \param[out] s: symmetric tensor to be filled
-     * \param[in]  v: values
-     */
-    template<typename T>
-    static inline void
-    exe(tfel::math::stensor<2u,T>& e,const CalculiXReal* const v){
-      constexpr const auto icste = tfel::math::Cste<CalculiXReal>::isqrt2;
-      e[0]=v[0];
-      e[1]=v[1];
-      e[2]=CalculiXReal{0};
-      e[3]=v[2]*icste;
-    } // end of exe
-    /*!
-     * \tparam T: type of the thermodynamique forces
-     * \param[out] s: symmetric tensor to be filled
-     * \param[in]  v: values
-     */
-    template<typename T>
-    static inline void
-    exe(tfel::math::tensor<2u,T>& F,const CalculiXReal* const v){
-      tfel::math::tensor<2u,T>::buildFromFortranMatrix(F,v);
-    } // end of exe
-  }; // end of struct UMATImportDrivingVariables
+  }; // end of struct ImportDrivingVariables
   /*!
    * \brief class defining the convertion from calculix to mfront for
    * thermodynamic forces
-   * \tparam H: modelling hypothesis
    */
-  template<tfel::material::ModellingHypothesis::Hypothesis H>
-  struct UMATImportThermodynamicForces
+  struct ImportThermodynamicForces
   {
     //! space dimension
-    static constexpr const unsigned short N =
-      tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+    static constexpr const unsigned short N = 3u;
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] s: symmetric tensor to be filled
@@ -97,40 +59,15 @@ namespace calculix{
     exe(tfel::math::stensor<N,T>& s,const CalculiXReal* const v){
       s.importTab(v);
     } // end of exe
-  }; // end of struct UMATImportThermodynamicForces
-  /*!
-   * \brief partial specialisation of the UMATImportThermodynamicForces
-   * for the plane stress modelling hypothesis.
-   */
-  template<>
-  struct UMATImportThermodynamicForces<tfel::material::ModellingHypothesis::PLANESTRESS>
-  {
-    /*!
-     * \tparam T: type of the thermodynamique forces
-     * \param[out] s: symmetric tensor to be filled
-     * \param[in]  v: values
-     */
-    template<typename T>
-    static inline void
-    exe(tfel::math::stensor<2u,T>& s,const CalculiXReal* const v){
-      constexpr const auto cste = tfel::math::Cste<CalculiXReal>::sqrt2;
-      s[0]=v[0];
-      s[1]=v[1];
-      s[2]=CalculiXReal{0};
-      s[3]=v[2]*cste;
-    } // end of exe
-  }; // end of struct UMATImportThermodynamicForces
+  }; // end of struct ImportThermodynamicForces
   /*!
    * \brief class defining the convertion from mfront to calculix for
    * thermodynamic forces
-   * \tparam H: modelling hypothesis
    */
-  template<tfel::material::ModellingHypothesis::Hypothesis H>
-  struct UMATExportThermodynamicForces
+  struct ExportThermodynamicForces
   {
     //! space dimension
-    static constexpr const unsigned short N =
-      tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+    static constexpr const unsigned short N = 3u;
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] v: values
@@ -141,28 +78,7 @@ namespace calculix{
     exe(CalculiXReal* const v,const tfel::math::stensor<N,T>& s){
       s.exportTab(v);
     } // end of exe
-  }; // end of struct UMATExportThermodynamicForces
-  /*!
-   * \brief partial specialisation of the UMATExportThermodynamicForces
-   * for the plane stress modelling hypothesis.
-   */
-  template<>
-  struct UMATExportThermodynamicForces<tfel::material::ModellingHypothesis::PLANESTRESS>
-  {
-    /*!
-     * \tparam T: type of the thermodynamique forces
-     * \param[out] v: values
-     * \param[in]  s: symmetric tensor to be exported
-     */
-    template<typename T>
-    static inline void
-    exe(CalculiXReal* const v,const tfel::math::stensor<2u,T>& s){
-      constexpr const auto icste = tfel::math::Cste<CalculiXReal>::isqrt2;
-      v[0]=s[0];
-      v[1]=s[1];
-      v[2]=s[3]*icste;
-    } // end of exe
-  }; // end of struct UMATExportThermodynamicForces
+  }; // end of struct ExportThermodynamicForces
 
 } // end of namespace calculix
 
