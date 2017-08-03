@@ -491,8 +491,14 @@ namespace mfront{
     if(this->generateMTestFile){
       this->generateMTestFile1(out);
     }
-    out << name << "_base"
-	<< "(amat,iel,iint,NPROPS,MPROPS,STRAN1,STRAN0,beta,F0,"
+    out << "calculix::CalculiXReal DSTRAN[6] = {STRAN1[0]-STRAN0[0],\n"
+	<< "                                    STRAN1[1]-STRAN0[1],\n"
+      	<< "                                    STRAN1[2]-STRAN0[2],\n"
+      	<< "                                    STRAN1[3]-STRAN0[3],\n"
+      	<< "                                    STRAN1[4]-STRAN0[4],\n"
+	<< "                                    STRAN1[5]-STRAN0[5]};\n" 
+	<< name << "_base"
+	<< "(amat,iel,iint,NPROPS,MPROPS,DSTRAN,STRAN0,beta,F0,"
 	<< " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
 	<< " ielas,mi,NSTATV,STATEV0,STATEV1,STRESS,DDSDDE,"
 	<< "iorien,pgauss,orab,PNEWDT,ipkon,size);\n";
@@ -697,10 +703,10 @@ namespace mfront{
 			       "only one driving variable supported"));
     }
     if(v.increment_known){
-      os << "calculix::ImportDrivingVariables<hypothesis>::exe(this->" << v.name << ","
+      os << "calculix::ImportDrivingVariables::exe(this->" << v.name << ","
 	 << iprefix << "stran);\n";
     } else {
-      os << "calculix::ImportDrivingVariables<hypothesis>::exe(this->" << v.name << "0,"
+      os << "calculix::ImportDrivingVariables::exe(this->" << v.name << "0,"
 	 << iprefix << "stran);\n";
     }
   } // end of CalculiXInterface::writeBehaviourDataDrivingVariableSetter
@@ -716,10 +722,10 @@ namespace mfront{
 			       "only one driving variable supported"));
     }
     if(v.increment_known){
-      os << "calculix::ImportDrivingVariables<hypothesis>::exe(this->d" << v.name << ","
+      os << "calculix::ImportDrivingVariables::exe(this->d" << v.name << ","
 	 << iprefix << "dstran);\n";
     } else {
-      os << "calculix::ImportDrivingVariables<hypothesis>::exe(this->" << v.name << "1,"
+      os << "calculix::ImportDrivingVariables::exe(this->" << v.name << "1,"
 	 << iprefix << "dstran);\n";
     }
   } // end of CalculiXInterface::writeIntegrationDataDrivingVariableSetter
@@ -731,7 +737,7 @@ namespace mfront{
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(SupportedTypes::getTypeFlag(f.type)==SupportedTypes::Stensor){
-      os << "calculix::ImportThermodynamicForces<hypothesis>::exe(this->" << f.name << ",";
+      os << "calculix::ImportThermodynamicForces::exe(this->" << f.name << ",";
       if(!o.isNull()){
 	os << iprefix << "stress_+" << o << ");\n";
       } else {
@@ -753,10 +759,10 @@ namespace mfront{
     const auto flag = SupportedTypes::getTypeFlag(f.type);
     if(flag==SupportedTypes::Stensor){
       if(!o.isNull()){
-	out << "calculix::ExportThermodynamicForces<hypothesis>::exe("
+	out << "calculix::ExportThermodynamicForces::exe("
 	    << a << "+" << o << ",this->sig);\n";
       } else {
-	out << "calculix::ExportThermodynamicForces<hypothesis>::exe(" << a << ",this->sig);\n";
+	out << "calculix::ExportThermodynamicForces::exe(" << a << ",this->sig);\n";
       }
     } else {
       throw(std::runtime_error("CalculiXInterface::exportThermodynamicForce: "

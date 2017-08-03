@@ -213,17 +213,19 @@ namespace calculix
     using namespace tfel::material;
     using TangentOperator = FiniteStrainBehaviourTangentOperatorBase;
     if(NTENS==6){
-      using tensor = tensor<3u,CalculiXReal>;
-      stensor<3u,CalculiXReal> s;
-      s.importTab(STRESS);
-      auto F1 = tensor::buildFromFortranMatrix(F);
-      const auto C =
-	UmatNormaliseTangentOperator<3u,CalculiXReal>::exe(CSE);
-      ST2toST2View<3u,CalculiXReal> Ca(D);
-      Ca = convert<TangentOperator::ABAQUS,
-		   TangentOperator::DS_DEGL>(C,tensor::Id(),F1,s);
-      // now convert to calculix      
-      CalculiXTangentOperator<CalculiXReal>::normalize(Ca);
+      throw(std::runtime_error("CalculiXFiniteStrain::computeCalculiXTangentOperatorFromCSE: "
+			       "unimplemented feature"));
+      // using tensor = tensor<3u,CalculiXReal>;
+      // stensor<3u,CalculiXReal> s;
+      // s.importTab(STRESS);
+      // auto F1 = tensor::buildFromFortranMatrix(F);
+      // const auto C =
+      // 	UmatNormaliseTangentOperator<3u,CalculiXReal>::exe(CSE);
+      // ST2toST2View<3u,CalculiXReal> Ca(D);
+      // Ca = convert<TangentOperator::ABAQUS,
+      // 		   TangentOperator::DS_DEGL>(C,tensor::Id(),F1,s);
+      // // now convert to calculix      
+      // CalculiXTangentOperator<CalculiXReal>::normalize(Ca);
     }
   } // end of CalculiXFiniteStrain::computeCalculiXTangentOperatorFromCSE
 

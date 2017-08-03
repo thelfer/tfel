@@ -75,6 +75,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./Norton-web.md				              \
 	   ./Norton-full.md				              \
 	   ./coverity-scan.md                                         \
+	   ./tensors.md                                               \
 	   ./robots.txt						      \
 	   ./crossdomain.xml					      \
 	   ./js/vendor						      \

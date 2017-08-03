@@ -212,7 +212,7 @@ namespace calculix
 	typedef MechanicalBehaviourTraits<BV> Traits;
 	typedef typename std::conditional<
 	  Traits::hasConsistentTangentOperator,
-	  ExtractAndConvertTangentOperator<H>,
+	  ExtractAndConvertTangentOperator,
 	  ConsistentTangentOperatorIsNotAvalaible
 	  >::type ConsistentTangentOperatorHandler;
 	if(this->dt<0.){

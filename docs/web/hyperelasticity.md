@@ -41,7 +41,7 @@ The three invariants are defined by:
 \[
 \left\{
 \begin{aligned}
-I_{1} &= \trace{C} \\
+I_{1} &= \trace{\C} \\
 I_{2} &= \Frac{1}{2}\left(\paren{\trace{\C}}^{2}-\trace{\C^{2}}\right) \\
 I_{3} &= \det\paren{\C} = J^{2}
 \end{aligned}
@@ -64,7 +64,7 @@ The derivative of the invariants are classically given by:
 \begin{aligned}
 \deriv{I_{1}}{\C} &= \tenseur{I}\\
 \deriv{I_{2}}{\C} &= I_{1}\,\tenseur{I}-\C\\
-\deriv{I_{3}}{\C} &= C^{2}-I_{1}\,C-I_{2} \\
+\deriv{I_{3}}{\C} &= \C^{2}-I_{1}\,C-I_{2} \\
 \end{aligned}
 \right.
 \]
@@ -86,7 +86,7 @@ In `MFront`, the fourth order tensors
 `Stensor4::IxI()` and `Stensor4::Id()` respectively.
 
 The \(\sderiv{I_{3}}{\C}\) term can be computed using the
-`computeJacobianSecondDerivative` function.
+`computeDeterminantSecondDerivative` function.
 
 # A second class of hyperelastic behaviours
 

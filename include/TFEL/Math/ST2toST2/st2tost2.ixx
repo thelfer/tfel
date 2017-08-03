@@ -134,7 +134,7 @@ namespace tfel{
       Expr<st2tost2<N,T>,StensorSquareDerivativeExpr<N> > >::type
     st2tost2<N,T>::dsquare(const StensorType& s)
     {
-      return Expr<st2tost2<N,T>,StensorSquareDerivativeExpr<N> >(s);
+      return Expr<st2tost2<N,T>,StensorSquareDerivativeExpr<N>>(s);
     }
 
     template<unsigned short N, typename T>
@@ -563,14 +563,3 @@ namespace tfel{
 } // end of namespace tfel
 
 #endif /* LIB_TFEL_ST2TOST2IXX */
-
-
-
-
-
-
-
-
-
-
-

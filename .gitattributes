@@ -1988,7 +1988,6 @@ mfront/include/MFront/CalculiX/CalculiXInterface.hxx -text
 mfront/include/MFront/CalculiX/CalculiXInterfaceExceptions.hxx -text
 mfront/include/MFront/CalculiX/CalculiXStressFreeExpansionHandler.hxx -text
 mfront/include/MFront/CalculiX/CalculiXTangentOperator.hxx -text
-mfront/include/MFront/CalculiX/CalculiXTangentOperator.ixx -text
 mfront/include/MFront/CalculiX/CalculiXTraits.hxx -text
 mfront/include/MFront/CalculiX/calculix.doxygen -text
 mfront/include/MFront/CalculiXInterface.hxx -text
