@@ -16,6 +16,25 @@
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 
+# First tests of `MFront` in the `Windows` `Subsystem` for `LinuX` environment (3/08/2017)
+
+![](img/CalculiX_MFRONT_WSL.png "")
+
+After [`Visual Studio`](https://www.visualstudio.com),
+[`Mingw`](http://www.mingw.org/) and
+[`Cygwin`](https://www.cygwin.com/), there is a new way to get
+`MFront` working on `Windows` !
+
+Rafal Brzegowy have successfully compiled and tested `MFront` using
+the
+[`Windows` `Subsystem` for `LinuX`](https://blogs.msdn.microsoft.com/wsl/)
+(WSL). He was able to use `MFront` generated behaviours with
+[`CalculiX`](http://www.calculix.de) delivered by the
+[`bConverged`](http://www.bconverged.com/products.php) suite.
+
+All tests worked, except some tests related to the `long double`
+support in WSL.
+
 # Official twitter account (1/08/2017)
 
 ![](img/twitter.png "")

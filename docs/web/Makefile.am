@@ -197,6 +197,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/tutorial-spanish-42.png			      \
 	   ./img/tutorial-spanish-43.png			      \
 	   ./img/twitter.png			                      \
+	   ./img/CalculiX_MFRONT_WSL.png	                      \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \
