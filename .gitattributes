@@ -1248,6 +1248,7 @@ docs/web/release-notes.md -text
 docs/web/robots.txt -text
 docs/web/signorini.md -text
 docs/web/svn.md -text
+docs/web/tensors.md -text
 docs/web/tex/lcmd_utf8.tex -text
 docs/web/tutorial-spanish.md -text
 docs/web/tutorial.md -text
