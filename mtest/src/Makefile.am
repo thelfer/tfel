@@ -118,6 +118,13 @@ libTFELMTest_la_SOURCES += AbaqusStandardBehaviour.cxx     \
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAbaqusInterface
 endif
 
+if HAVE_CALCULIX
+libTFELMTest_la_SOURCES += CalculiXStandardBehaviour.cxx     \
+			   CalculiXSmallStrainBehaviour.cxx
+#			   CalculiXFiniteStrainBehaviour.cxx
+libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lCalculiXInterface
+endif
+
 if HAVE_ANSYS
 libTFELMTest_la_SOURCES += AnsysStandardBehaviour.cxx        \
 			   AnsysSmallStrainBehaviour.cxx     \

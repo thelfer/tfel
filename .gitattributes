@@ -5019,6 +5019,9 @@ mtest/include/MTest/AsterSmallStrainBehaviour.hxx -text
 mtest/include/MTest/AsterStandardBehaviour.hxx -text
 mtest/include/MTest/Behaviour.hxx -text
 mtest/include/MTest/BehaviourWorkSpace.hxx -text
+mtest/include/MTest/CalculiXFiniteStrainBehaviour.hxx -text
+mtest/include/MTest/CalculiXSmallStrainBehaviour.hxx -text
+mtest/include/MTest/CalculiXStandardBehaviour.hxx -text
 mtest/include/MTest/CastemAccelerationAlgorithm.hxx -text
 mtest/include/MTest/CastemCohesiveZoneModel.hxx -text
 mtest/include/MTest/CastemEvolution.hxx -text
@@ -5104,6 +5107,9 @@ mtest/src/AsterStandardBehaviour.cxx -text
 mtest/src/Behaviour.cxx -text
 mtest/src/BehaviourWorkSpace.cxx -text
 mtest/src/CMakeLists.txt -text
+mtest/src/CalculiXFiniteStrainBehaviour.cxx -text
+mtest/src/CalculiXSmallStrainBehaviour.cxx -text
+mtest/src/CalculiXStandardBehaviour.cxx -text
 mtest/src/CastemAccelerationAlgorithm.cxx -text
 mtest/src/CastemCohesiveZoneModel.cxx -text
 mtest/src/CastemEvolution.cxx -text

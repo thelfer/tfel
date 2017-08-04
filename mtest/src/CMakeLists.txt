@@ -128,6 +128,14 @@ set(TFELMTest_LDADD
     ${TFELMTest_LDADD})
 endif(HAVE_ABAQUS)
 
+if(HAVE_CALCULIX)
+set(TFELMTest_SOURCES
+    CalculiXStandardBehaviour.cxx
+    CalculiXSmallStrainBehaviour.cxx
+# CalculiXFiniteStrainBehaviour.cxx
+    ${TFELMTest_SOURCES})
+endif(HAVE_CALCULIX)
+
 if(HAVE_ANSYS)
 set(TFELMTest_SOURCES
     AnsysStandardBehaviour.cxx

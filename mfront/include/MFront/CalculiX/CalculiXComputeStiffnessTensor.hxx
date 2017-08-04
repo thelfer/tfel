@@ -31,8 +31,8 @@ namespace calculix
    * \param[in]  props : material properties
    */
   MFRONT_CALCULIX_VISIBILITY_EXPORT void
-  CalculiXComputeIsotropicStiffnessTensor3D(tfel::config::Types<3u,CalculiXReal,false>::StiffnessTensor&,
-					    const CalculiXReal* const);
+  computeIsotropicStiffnessTensor(tfel::config::Types<3u,CalculiXReal,false>::StiffnessTensor&,
+				  const CalculiXReal* const);
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
    * modelling hypothesis.
@@ -40,83 +40,51 @@ namespace calculix
    * \param[in]  props : material properties
    */
   MFRONT_CALCULIX_VISIBILITY_EXPORT void
-  CalculiXComputeOrthotropicStiffnessTensor3D(tfel::config::Types<3u,CalculiXReal,false>::StiffnessTensor&,
-					      const CalculiXReal* const);
-  
+  computeOrthotropicStiffnessTensor(tfel::config::Types<3u,CalculiXReal,false>::StiffnessTensor&,
+				    const CalculiXReal* const);
+
   /*!
-   * This structure is in charge of computing the Stiffness operator
-   * from the material properties given by Cast3M.  The resulting
-   * operator uses MFront representation of tensors and symmetric
-   * tensors.
+   * This structure is in charge of computing the stiffness operator
+   * from the material properties. The resulting operator uses MFront
+   * representation of tensors and symmetric tensors.
    */
-  template<CalculiXBehaviourType,
-	   tfel::material::ModellingHypothesis::Hypothesis,
-	   CalculiXSymmetryType,bool>
+  template<CalculiXSymmetryType>
   struct CalculiXComputeStiffnessTensor;
 
-  template<bool b>
+  template<>
   struct TFEL_VISIBILITY_LOCAL
-  CalculiXComputeStiffnessTensor<calculix::SMALLSTRAINSTANDARDBEHAVIOUR,
-			     tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
-			     ISOTROPIC,b>
+  CalculiXComputeStiffnessTensor<ISOTROPIC>
   {
     /*!
      * \brief compute the stiffness tensor.
      * \param[out] C     : stiffness tensor
      * \param[in]  props : material properties
      */
-    template<typename real>
     static void
-    exe(typename tfel::config::Types<3u,real,false>::StiffnessTensor& C,
-	const real* const props)
+    exe(tfel::config::Types<3u,CalculiXReal,false>::StiffnessTensor& C,
+	const CalculiXReal* const props)
     {
-      CalculiXComputeIsotropicStiffnessTensor3D(C,props);
+      computeIsotropicStiffnessTensor(C,props);
     }
   }; // end of struct CalculiXComputeStiffnessTensor
 
-  template<bool b>
+  template<>
   struct TFEL_VISIBILITY_LOCAL
-  CalculiXComputeStiffnessTensor<calculix::SMALLSTRAINSTANDARDBEHAVIOUR,
-				 tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
-				 ORTHOTROPIC,b>
+  CalculiXComputeStiffnessTensor<ORTHOTROPIC>
   {
     /*!
      * \brief compute the stiffness tensor.
      * \param[out] C     : stiffness tensor
      * \param[in]  props : material properties
      */
-    template<typename real>
     static void
-    exe(typename tfel::config::Types<3u,real,false>::StiffnessTensor& C,
-	const real* const props)
+    exe(tfel::config::Types<3u,CalculiXReal,false>::StiffnessTensor& C,
+	const CalculiXReal* const props)
     {
-      CalculiXComputeOrthotropicStiffnessTensor3D(C,props);      
+      computeOrthotropicStiffnessTensor(C,props);
     }
   }; // end of struct CalculiXComputeStiffnessTensor
-
-  /*!
-   * Partial specialisation for finite strain behaviours
-   */
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   CalculiXSymmetryType stype,bool b>
-  struct TFEL_VISIBILITY_LOCAL
-  CalculiXComputeStiffnessTensor<calculix::FINITESTRAINSTANDARDBEHAVIOUR,H,stype,b>
-  {
-    typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
-    /*!
-     * \brief compute the stiffness tensor.
-     * \param[out] C     : stiffness tensor
-     * \param[in]  props : material properties
-     */
-    template<typename real>
-    static void
-    exe(typename tfel::config::Types<ModellingHypothesisToSpaceDimension::value,real,false>::StiffnessTensor& D,
-	const real* const props)
-    {
-      CalculiXComputeStiffnessTensor<calculix::SMALLSTRAINSTANDARDBEHAVIOUR,H,stype,b>::exe(D,props);
-    }
-  }; // end of struct CalculiXComputeStiffnessTensor
-
+  
 } // end of namespace calculix
 
 #endif /* LIB_MFRONT_CALCULIXCOMPUTESTIFFNESSTENSOR_HXX */

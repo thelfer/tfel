@@ -25,167 +25,25 @@
 namespace calculix
 {
 
-  template<CalculiXBehaviourType,
-	   tfel::material::ModellingHypothesis::Hypothesis H,
-	   CalculiXSymmetryType>
+  template<CalculiXSymmetryType>
   struct CalculiXComputeThermalExpansionCoefficientTensor;
 
   template<>
   struct MFRONT_CALCULIX_VISIBILITY_EXPORT
-  CalculiXComputeThermalExpansionCoefficientTensor<calculix::SMALLSTRAINSTANDARDBEHAVIOUR,
-					       tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>
+  CalculiXComputeThermalExpansionCoefficientTensor<ISOTROPIC>
   {
     static void
-    exe(const float* const,
-	tfel::config::Types<1u,float,false>::ThermalExpansionCoefficientTensor&);
-    static void
-    exe(const double* const,
-	tfel::config::Types<1u,double,false>::ThermalExpansionCoefficientTensor&);
+    exe(const CalculiXReal* const,
+	tfel::config::Types<3u,CalculiXReal,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct CalculiXComputeThermalExpansionCoefficientTensor
 
   template<>
   struct MFRONT_CALCULIX_VISIBILITY_EXPORT
-  CalculiXComputeThermalExpansionCoefficientTensor<calculix::SMALLSTRAINSTANDARDBEHAVIOUR,
-					       tfel::material::ModellingHypothesis::AXISYMMETRICAL,ISOTROPIC>
+  CalculiXComputeThermalExpansionCoefficientTensor<ORTHOTROPIC>
   {
     static void
-    exe(const float* const,
-	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
-    static void
-    exe(const double* const,
-	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
-  }; // end of struct CalculiXComputeThermalExpansionCoefficientTensor
-
-  template<>
-  struct MFRONT_CALCULIX_VISIBILITY_EXPORT
-  CalculiXComputeThermalExpansionCoefficientTensor<calculix::SMALLSTRAINSTANDARDBEHAVIOUR,
-					       tfel::material::ModellingHypothesis::PLANESTRESS,ISOTROPIC>
-  {
-    static void
-    exe(const float* const,
-	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
-    static void
-    exe(const double* const,
-	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
-  }; // end of struct CalculiXComputeThermalExpansionCoefficientTensor
-
-
-  template<>
-  struct MFRONT_CALCULIX_VISIBILITY_EXPORT
-  CalculiXComputeThermalExpansionCoefficientTensor<calculix::SMALLSTRAINSTANDARDBEHAVIOUR,
-					       tfel::material::ModellingHypothesis::PLANESTRAIN,ISOTROPIC>
-  {
-    static void
-    exe(const float* const,
-	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
-    static void
-    exe(const double* const,
-	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
-  }; // end of struct CalculiXComputeThermalExpansionCoefficientTensor
-
-  template<>
-  struct MFRONT_CALCULIX_VISIBILITY_EXPORT
-  CalculiXComputeThermalExpansionCoefficientTensor<calculix::SMALLSTRAINSTANDARDBEHAVIOUR,
-					       tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ISOTROPIC>
-  {
-    static void
-    exe(const float* const,
-	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
-    static void
-    exe(const double* const,
-	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
-  }; // end of struct CalculiXComputeThermalExpansionCoefficientTensor
-
-  template<>
-  struct MFRONT_CALCULIX_VISIBILITY_EXPORT
-  CalculiXComputeThermalExpansionCoefficientTensor<calculix::SMALLSTRAINSTANDARDBEHAVIOUR,
-					       tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ISOTROPIC>
-  {
-    static void
-    exe(const float* const,
-	tfel::config::Types<3u,float,false>::ThermalExpansionCoefficientTensor&);
-    static void
-    exe(const double* const,
-	tfel::config::Types<3u,double,false>::ThermalExpansionCoefficientTensor&);
-  }; // end of struct CalculiXComputeThermalExpansionCoefficientTensor
-
-  template<>
-  struct MFRONT_CALCULIX_VISIBILITY_EXPORT
-  CalculiXComputeThermalExpansionCoefficientTensor<calculix::SMALLSTRAINSTANDARDBEHAVIOUR,
-					       tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>
-  {
-    static void
-    exe(const float* const,
-	tfel::config::Types<1u,float,false>::ThermalExpansionCoefficientTensor&);
-    static void
-    exe(const double* const,
-	tfel::config::Types<1u,double,false>::ThermalExpansionCoefficientTensor&);
-  }; // end of struct CalculiXComputeThermalExpansionCoefficientTensor
-
-  template<>
-  struct MFRONT_CALCULIX_VISIBILITY_EXPORT
-  CalculiXComputeThermalExpansionCoefficientTensor<calculix::SMALLSTRAINSTANDARDBEHAVIOUR,
-					       tfel::material::ModellingHypothesis::AXISYMMETRICAL,ORTHOTROPIC>
-  {
-    static void
-    exe(const float* const,
-	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
-    static void
-    exe(const double* const,
-	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
-  }; // end of struct CalculiXComputeThermalExpansionCoefficientTensor
-
-  template<>
-  struct MFRONT_CALCULIX_VISIBILITY_EXPORT
-  CalculiXComputeThermalExpansionCoefficientTensor<calculix::SMALLSTRAINSTANDARDBEHAVIOUR,
-					       tfel::material::ModellingHypothesis::PLANESTRESS,ORTHOTROPIC>
-  {
-    static void
-    exe(const float* const,
-	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
-    static void
-    exe(const double* const,
-	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
-  }; // end of struct CalculiXComputeThermalExpansionCoefficientTensor
-
-
-  template<>
-  struct MFRONT_CALCULIX_VISIBILITY_EXPORT
-  CalculiXComputeThermalExpansionCoefficientTensor<calculix::SMALLSTRAINSTANDARDBEHAVIOUR,
-					       tfel::material::ModellingHypothesis::PLANESTRAIN,ORTHOTROPIC>
-  {
-    static void
-    exe(const float* const,
-	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
-    static void
-    exe(const double* const,
-	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
-  }; // end of struct CalculiXComputeThermalExpansionCoefficientTensor
-
-  template<>
-  struct MFRONT_CALCULIX_VISIBILITY_EXPORT
-  CalculiXComputeThermalExpansionCoefficientTensor<calculix::SMALLSTRAINSTANDARDBEHAVIOUR,
-					       tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ORTHOTROPIC>
-  {
-    static void
-    exe(const float* const,
-	tfel::config::Types<2u,float,false>::ThermalExpansionCoefficientTensor&);
-    static void
-    exe(const double* const,
-	tfel::config::Types<2u,double,false>::ThermalExpansionCoefficientTensor&);
-  }; // end of struct CalculiXComputeThermalExpansionCoefficientTensor
-
-  template<>
-  struct MFRONT_CALCULIX_VISIBILITY_EXPORT
-  CalculiXComputeThermalExpansionCoefficientTensor<calculix::SMALLSTRAINSTANDARDBEHAVIOUR,
-					       tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ORTHOTROPIC>
-  {
-    static void
-    exe(const float* const,
-	tfel::config::Types<3u,float,false>::ThermalExpansionCoefficientTensor&);
-    static void
-    exe(const double* const,
-	tfel::config::Types<3u,double,false>::ThermalExpansionCoefficientTensor&);
+    exe(const CalculiXReal* const,
+	tfel::config::Types<3u,CalculiXReal,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct CalculiXComputeThermalExpansionCoefficientTensor
 
 } // end of namespace calculix

@@ -144,11 +144,8 @@ namespace calculix
       typedef typename BV::BehaviourData  BData;
       TFEL_CALCULIX_INLINE static void
 	exe(BData& data,const CalculiXReal * const props){
-	typedef CalculiXTraits<BV> Traits;
-	const bool buas = Traits::requiresUnAlteredStiffnessTensor;
-	CalculiXComputeStiffnessTensor<CalculiXTraits<BV>::btype,H,
-				     CalculiXTraits<BV>::etype,buas>::exe(data.getStiffnessTensor(),
-									props);
+	CalculiXComputeStiffnessTensor<CalculiXTraits<BV>::etype>::exe(data.getStiffnessTensor(),
+								       props);
       } // end of exe
     }; // end of struct StiffnessOperatorInitializer
 
@@ -159,8 +156,7 @@ namespace calculix
       TFEL_CALCULIX_INLINE static void
       exe(BData& data,const CalculiXReal * const props){
 	const auto o = CalculiXTraits<BV>::elasticPropertiesOffset;
-	CalculiXComputeThermalExpansionCoefficientTensor<CalculiXTraits<BV>::btype,H,
-							 CalculiXTraits<BV>::stype>::exe(props+o,
+	CalculiXComputeThermalExpansionCoefficientTensor<CalculiXTraits<BV>::stype>::exe(props+o,
 											 data.getThermalExpansionCoefficientTensor());
       } // end of exe
     }; // end of struct ThermalExpansionCoefficientTensorInitializer
@@ -189,7 +185,7 @@ namespace calculix
 		    d.MPROPS+CalculiXTraits<BV>::elasticPropertiesOffset+
 		    CalculiXTraits<BV>::thermalExpansionPropertiesOffset,
 		    d.STATEV0),
-	  dt(d.DTIME)
+	dt(d.DTIME)
        {
 	 using namespace tfel::material;
 	 typedef MechanicalBehaviourTraits<BV> Traits;

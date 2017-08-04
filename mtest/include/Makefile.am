@@ -48,6 +48,9 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/AbaqusSmallStrainBehaviour.hxx            \
 			 MTest/AbaqusFiniteStrainBehaviour.hxx           \
 			 MTest/AbaqusExplicitBehaviour.hxx               \
+			 MTest/CalculiXStandardBehaviour.hxx             \
+			 MTest/CalculiXSmallStrainBehaviour.hxx          \
+			 MTest/CalculiXFiniteStrainBehaviour.hxx         \
 			 MTest/AnsysStandardBehaviour.hxx                \
 			 MTest/AnsysSmallStrainBehaviour.hxx             \
 			 MTest/AnsysNormaliseTangentOperator.hxx         \

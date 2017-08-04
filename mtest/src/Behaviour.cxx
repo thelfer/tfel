@@ -50,6 +50,9 @@
 #ifdef HAVE_CYRANO
 #include"MTest/CyranoBehaviour.hxx"
 #endif /* HAVE_CYRANO  */
+#ifdef HAVE_CALCULIX
+#include"MTest/CalculiXSmallStrainBehaviour.hxx"
+#endif /* HAVE_CALCULIX  */
 
 namespace mtest
 {
@@ -183,6 +186,17 @@ namespace mtest
 	}
       } else {
 	throw_if(true,"unsupported behaviour type");
+      }
+    }
+#endif
+#ifdef HAVE_CALCULIX
+    if((in=="calculix")||(in=="CalculiX")){
+      check_no_parameters();
+      const auto type = elm.getUMATBehaviourType(l,f);
+      if(type==1u){
+	b = std::make_shared<CalculiXSmallStrainBehaviour>(h,l,f);
+      } else {
+	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }
     }
 #endif

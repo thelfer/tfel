@@ -153,6 +153,11 @@ namespace mtest{
 	i = p->value;
       }
 #endif /* HAVE_CYRANO */
+#ifdef HAVE_CALCULIX
+      if((p->value=="calculix")||(p->value=="CalculiX")){
+	i = "CalculiX";
+      }
+#endif /* HAVE_CALCULIX */
       if(i.empty()){
 	throw(std::runtime_error("SingleStructureSchemeParser::handleBehaviour: "
 				 "unknown interface '"+p->value+"'"));
