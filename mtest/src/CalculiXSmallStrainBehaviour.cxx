@@ -62,7 +62,7 @@ namespace mtest
     throw_if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR,
 	     "CalculiX behaviours only provide the "
 	     "consistent tangent operator");
-    const auto nprops = static_cast<CalculiXInt>(s.mprops1.size());
+    const CalculiXInt nprops = -100-static_cast<CalculiXInt>(s.mprops1.size());
     fill(wk.D.begin(),wk.D.end(),0.);
     // using a local copy of internal state variables to handle the
     // case where s.iv0 is empty

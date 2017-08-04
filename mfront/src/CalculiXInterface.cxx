@@ -426,16 +426,17 @@ namespace mfront{
     out << "*PNEWDT = 0.2;\n"
 	<< "return;\n"
 	<< "}\n";
-    // if(getDebugMode()){
-    //   out << "std::cout << \"Dt :\" << std::endl;\n"
-    // 	  << "for(calculix::CalculiXInt i=0;i!=6;++i){\n"
-    // 	  << "for(calculix::CalculiXInt j=0;j!=6;++j){\n"
-    // 	  << "std::cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n"
-    // 	  << "}\n"
-    // 	  << "std::cout << std::endl;\n"
-    // 	  << "}\n"
-    // 	  << "std::cout << std::endl;\n";
-    // }
+    if(getDebugMode()){
+      out << "std::cout << \"Dt :\" << std::endl;\n"
+	  << "const calculix::CalculiXReal *p = DDSDDE;\n"
+    	  << "for(calculix::CalculiXInt i=0;i!=6;++i){\n"
+    	  << "for(calculix::CalculiXInt j=0;j!=i+1;++j,++p){\n"
+    	  << "std::cout << *p << \" \";\n"
+    	  << "}\n"
+    	  << "std::cout << std::endl;\n"
+    	  << "}\n"
+    	  << "std::cout << std::endl;\n";
+    }
     out << "}\n\n";
   } // end of CalculiXInterface::writeUMATFunctionBase
 
