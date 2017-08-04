@@ -77,8 +77,8 @@ namespace mfront{
 	  << " const int size)";
     } else {
       out << "(const char * const,"
-	  << " const calculix::CalculiXInt* const,"
-	  << " const calculix::CalculiXInt* const,"
+	  << " const calculix::CalculiXInt* const iel,"
+	  << " const calculix::CalculiXInt* const iint,"
 	  << " const calculix::CalculiXInt* const  NPROPS,"
 	  << " const calculix::CalculiXReal* const MPROPS,";
       if(t==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
@@ -107,7 +107,7 @@ namespace mfront{
 	  << " const calculix::CalculiXReal* const,"
 	  << " const calculix::CalculiXInt* const icmd,"
 	  << " const calculix::CalculiXInt* const ielas,"
-	  << " const calculix::CalculiXInt* const,"
+	  << " const calculix::CalculiXInt* const mi,"
 	  << " const calculix::CalculiXInt* const  NSTATV,"
 	  << " const calculix::CalculiXReal* const STATEV0,"
 	  << "       calculix::CalculiXReal* const STATEV1,"
@@ -418,7 +418,9 @@ namespace mfront{
 	       "and finite strain behaviours");
     }
     out << "using calculix::CalculiXData;\n"
-	<< "CalculiXData d = {STRESS,PNEWDT,DDSDDE,STATEV1,*DTIME,STATEV1,\n"
+	<< "const auto ivs0 =  STATEV0+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
+	<< "const auto ivs1 =  STATEV1+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
+ 	<< "CalculiXData d = {STRESS,PNEWDT,DDSDDE,ivs1,*DTIME,ivs0,\n"
 	<< "                  " << dv0 << "," << dv1 << ",TEMP1,MPROPS,\n"
 	<< getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
 	<< "if(calculix::CalculiXInterface<tfel::material::" << mb.getClassName() 
