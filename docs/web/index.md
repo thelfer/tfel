@@ -48,15 +48,22 @@ A set of interfaces are provided for various solvers:
   interface is described [here](castem.html).
 - the [`Code_Aster`](http://www.code-aster.org) finite element
   solver. This interface is described [here](aster.html)
-- the [`Europlexus`](http://europlexus.jrc.ec.europa.eu/) finite element solver.
+- the [`Europlexus`](http://europlexus.jrc.ec.europa.eu/) finite
+  element solver. This interface is described [here](epx.html)
 - the
   [`Abaqus Standard`](http://www.3ds.com/products-services/simulia/products/abaqus/abaqusstandard/)
-  finite element solver.
+  finite element solver. This interface is described
+  [here](abaqus.html).
 - the
   [`Abaqus Explicit`](http://www.3ds.com/products-services/simulia/products/abaqus/abaqusexplicit/)
-  finite element solver.
+  finite element solver. This interface is described
+  [here](abaqus.html).
+- the
+  [`CalculiX`](http://www.calculix.de/)
+  finite element solver. This interface is described
+  [here](calculix.html).
 - the [`ZeBuLoN`](http://www.zset-software.com/products/zebulon)
-  finite element solver. This interface is described [here](zmat.html)
+  finite element solver. This interface is described [here](zmat.html).
 - the `TMFFT` and the
   [`AMITEX_FFTP`](http://www.maisondelasimulation.fr/projects/amitex/html/)
   Fast Fourier Transform solvers developed internally at

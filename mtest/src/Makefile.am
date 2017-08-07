@@ -120,8 +120,8 @@ endif
 
 if HAVE_CALCULIX
 libTFELMTest_la_SOURCES += CalculiXStandardBehaviour.cxx     \
-			   CalculiXSmallStrainBehaviour.cxx
-#			   CalculiXFiniteStrainBehaviour.cxx
+			   CalculiXSmallStrainBehaviour.cxx  \
+			   CalculiXFiniteStrainBehaviour.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lCalculiXInterface
 endif
 

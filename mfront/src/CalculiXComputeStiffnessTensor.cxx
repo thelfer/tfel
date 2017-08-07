@@ -21,8 +21,8 @@ namespace calculix
 {
  
   void
-  computeIsotropicStiffnessTensor3D(tfel::config::Types<3u,double,false>::StiffnessTensor& C,
-					  const double* const props)
+  computeIsotropicStiffnessTensor(tfel::config::Types<3u,double,false>::StiffnessTensor& C,
+				  const double* const props)
   {
     using namespace tfel::material;
     using STAC = StiffnessTensorAlterationCharacteristic;
@@ -30,8 +30,8 @@ namespace calculix
   } // end of struct computeIsotropicStiffnessTensor
 
   void
-  computeOrthotropicStiffnessTensor3D(tfel::config::Types<3u,double,false>::StiffnessTensor& C,
-					    const double* const props)
+  computeOrthotropicStiffnessTensor(tfel::config::Types<3u,double,false>::StiffnessTensor& C,
+				    const double* const props)
   {
     using namespace tfel::material;
     using STAC = StiffnessTensorAlterationCharacteristic;

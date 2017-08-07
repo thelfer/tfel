@@ -52,6 +52,7 @@
 #endif /* HAVE_CYRANO  */
 #ifdef HAVE_CALCULIX
 #include"MTest/CalculiXSmallStrainBehaviour.hxx"
+#include"MTest/CalculiXFiniteStrainBehaviour.hxx"
 #endif /* HAVE_CALCULIX  */
 
 namespace mtest
@@ -195,6 +196,8 @@ namespace mtest
       const auto type = elm.getUMATBehaviourType(l,f);
       if(type==1u){
 	b = std::make_shared<CalculiXSmallStrainBehaviour>(h,l,f);
+      } else if(type==2u){
+	b = std::make_shared<CalculiXFiniteStrainBehaviour>(h,l,f);
       } else {
 	throw_if(true,"unsupported behaviour type ("+std::to_string(type)+")");
       }

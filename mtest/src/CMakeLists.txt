@@ -132,7 +132,7 @@ if(HAVE_CALCULIX)
 set(TFELMTest_SOURCES
     CalculiXStandardBehaviour.cxx
     CalculiXSmallStrainBehaviour.cxx
-# CalculiXFiniteStrainBehaviour.cxx
+    CalculiXFiniteStrainBehaviour.cxx
     ${TFELMTest_SOURCES})
 endif(HAVE_CALCULIX)
 

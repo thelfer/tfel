@@ -219,4 +219,5 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./downloads/example-castem2014.tar.bz2                     \
 	   ./downloads/patchs-Cast3M-2014.tar.bz2                     \
 	   ./downloads/patchs-Cast3M-2015.tar.bz2                     \
-	   ./downloads/example-zset8.5.tar.bz2
+	   ./downloads/example-zset8.5.tar.bz2                        \
+	   ./downloads/patchs-CalculiX-2.12.tar.bz2

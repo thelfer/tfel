@@ -276,7 +276,7 @@ illustrated in the code below:
 ~~~~~{.cpp}
 tmatrix<3u,3u,real> m2;
 tvector<3u,real>    vp2;
-std::tie(vp,m)=s.computeEigenVectors<Stensor::GTESYMMETRICQREIGENSOLVER>();
+std::tie(vp,m)=s.computeEigenVectors<stensor::GTESYMMETRICQREIGENSOLVER>();
 ~~~~~
 
 |  Algorithm                  |  Failure ratio  | \(\Delta_{\infty}\) |   Times (ns)  |  Time ratio |
@@ -359,7 +359,7 @@ templated by the name of the eigen solver (if no template parameter is
 given, the `TFELEIGENSOLVER` is used).
 
 Various new overloaded versions of those methods have been introduced
-in `TFEL-3.1`. This overloaded methods are meant to:
+in `TFEL-3.1`. Those overloaded methods are meant to:
 
 - allow the user to explicitly give the values of \(f\) or \(df\),
   rather than the functions to compute them. This allows to reduce the

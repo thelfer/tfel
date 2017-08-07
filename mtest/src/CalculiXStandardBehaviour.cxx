@@ -39,6 +39,8 @@ namespace mtest
 				     "CalculiXStandardBehaviour: "+m));}
     };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    throw_if(h!=ModellingHypothesis::TRIDIMENSIONAL,
+	     "unsupported modelling hypothesis");
     throw_if(elm.getInterface(l,b)!="CalculiX",
 	     "invalid interface '"+elm.getInterface(l,b)+"'");
     this->fct = elm.getCalculiXExternalBehaviourFunction(l,b);
@@ -51,8 +53,6 @@ namespace mtest
 	tmp.push_back("ThermalExpansion");
       }
     } else if(this->etype==1u){
-      throw_if(h!=ModellingHypothesis::TRIDIMENSIONAL,
-	       "unsupported modelling hypothesis");
       if(this->requiresStiffnessTensor){
 	tmp.insert(tmp.end(),{"YoungModulus1","YoungModulus2","YoungModulus3",
 	      "PoissonRatio12","PoissonRatio23","PoissonRatio13",

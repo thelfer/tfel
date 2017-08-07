@@ -292,10 +292,6 @@ namespace mfront{
     writeInputFileExample(const BehaviourDescription&,
 			  const FileDescription&,
 			  const bool) const;
-    
-    virtual void writeDepvar(std::ostream&,int&,
-			     const VariableDescription&,
-			     const std::string&) const;
     //! \return true if the interface handles external state variables
     virtual bool areExternalStateVariablesSupported() const;
     //! \return true if the interface handles temperature increment

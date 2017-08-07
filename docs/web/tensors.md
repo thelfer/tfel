@@ -41,7 +41,10 @@ following template arguments:
 
 Symmetric tensors are denoted as follows \(\s\).
 
-### Special values
+### The identity tensor
+
+The symmetric second order identity tensor is returned by the `Id`
+static member of the `stensor` class.
 
 ## General (non symmetric) second order tensors
 
@@ -56,7 +59,15 @@ following template arguments:
 
 Non symmetric tensors are denoted as follows \(\a\).
 
-### Special values
+### The identity tensor
+
+The symmetric second order identity tensor is returned by the `Id`
+static member of the `stensor` class.
+
+### The identity tensor
+
+The second order identity tensor is returned by the `Id` static member
+of the `tensor` class.
 
 ## Fourth order tensors
 
@@ -293,13 +304,130 @@ const auto d2I3_dA2 = computeDeterminantSecondDerivative(A);
 
 ## Eigenvalues, eigenvectors and eigentensors of symmetric tensors
 
+### Eigenvalue
+
+The eigenvalues can be computed by the `computeEigenValues` method, as
+follows:
+
+~~~~{.cpp}
+const auto vp = s.computeEigenValues();
+~~~~
+
+Those eigen values can be ordered by using one of the following argument:
+
+- `ASCENDING`: eigenvalues are sorted from the lowest to the greatest.
+- `DESCENDING`: eigenvalues are sorted from the greatest to the lowest.
+
+~~~~{.cpp}
+const auto vp = s.computeEigenValues(stensor::ASCENDING);
+~~~~
+
+By default, the eigenvalues are computed using Cardano
+formula. However, one may use one of the following eigensolver
+decribed in the next paragraph as follows:
+
+~~~~{.cpp}
+constexpr const auto es = stensor<3u,real>::FSESQLEIGENSOLVER;
+const auto vp = s.computeEigenValues<es>();
+~~~~
+
+### Eigenvectors
+
+The default eigen solver for symmetric tensors used in `TFEL` is based
+on analitical computations of the eigen values and eigen vectors. Such
+computations are more efficient but less accurate than the iterative
+Jacobi algorithm (see [@kopp_efficient_2008;@kopp_numerical_2017]).
+
+With the courtesy of Joachim Kopp, we have created a `C++11` compliant
+version of his routines that we gathered in header-only library called
+`FSES` (Fast Symmetric Eigen Solver). This library is included with
+`TFEL` and provides the following algorithms:
+
+- Jacobi
+- QL with implicit shifts
+- Cuppen
+- Analytical
+- Hybrid
+- Householder reduction
+
+We have also introduced the Jacobi implementation of the `Geometric`
+`Tools` library (see [@eberly_robust_2016;@eberly_geometric_2017]).
+
+Those algorithms are available in 3D. For 2D symmetric tensors, we
+fall back to some default algorithm as described below.
+
+| Name                        | Algorithm  in 3D          | Algorithm  in 2D   |
+|:---------------------------:|:-------------------------:|:------------------:|
+| `TFELEIGENSOLVER`           | Analytical (TFEL)         | Analytical (TFEL)  |
+| `FSESJACOBIEIGENSOLVER`     | Jacobi                    | Analytical (FSES)  |
+| `FSESQLEIGENSOLVER`         | QL with implicit shifts   | Analytical (FSES)  |
+| `FSESCUPPENEIGENSOLVER`     | Cuppen's Divide & Conquer | Analytical (FSES)  |
+| `FSESANALYTICALEIGENSOLVER` | Analytical			      | Analytical (FSES)  |
+| `FSESHYBRIDEIGENSOLVER`     | Hybrid				      | Analytical (FSES)  |
+| `GTESYMMETRICQREIGENSOLVER` | Symmetric QR              | Analytical (TFEL)  |
+: List of available eigen solvers. {#tbl:eigensolvers}
+
+The various eigen solvers available are enumerated in Table
+@tbl:eigensolvers.
+
+The eigen solver is passed as a template argument of the
+`computeEigenValues` or the `computeEigenVectors` methods as
+illustrated in the code below:
+
+~~~~~{.cpp}
+tmatrix<3u,3u,real> m2;
+tvector<3u,real>    vp2;
+std::tie(vp,m)=s.computeEigenVectors<stensor::GTESYMMETRICQREIGENSOLVER>();
+~~~~~
+
 ## Isotropic functions of a symmetric tensor
 
-### Definition
+Given a scalar valuated function \(f\), one can define an associated
+isotropic function for symmetric tensors as:
+\[
+f\paren{\tenseur{s}}=\sum_{i=1}^{3}f\paren{\lambda_{i}}\tenseur{n}_{i}
+\]
 
-### Computation
+where \(\left.\lambda_{i}\right|_{i\in[1,2,3]}\) are the eigen values
+of the symmetric tensor \(\tenseur{s}\) and
+\(\left.\tenseur{n}_{i}\right|_{i\in[1,2,3]}\) the associated eigen
+tensors.
 
-### Derivative of an isotropic function of a symmetric
+If \(f\) is \(\mathcal{C}^{1}\), then \(f\) is a differentiable
+function of \(\tenseur{s}\).
+
+\(f\) can be computed with the `computeIsotropicFunction` method of
+the stensor class. \(\deriv{f}{\tenseur{s}}\) can be computed with
+`computeIsotropicFunctionDerivative`. One can also compute \(f\) and
+\(\deriv{f}{\tenseur{s}}\) all at once by the
+`computeIsotropicFunctionAndDerivative` method. All those methods are
+templated by the name of the eigen solver (if no template parameter is
+given, the `TFELEIGENSOLVER` is used).
+
+Various new overloaded versions of those methods have been
+introduced. Those overloaded methods are meant to:
+
+- allow the user to explicitly give the values of \(f\) or \(df\),
+  rather than the functions to compute them. This allows to reduce the
+  computational cost of the evaluation of the isotropic function when
+  the values of the derivatives can directly be computed from the
+  values of \(f\). See the example \(\exp\) example below.
+- return the results by value. This allow a much more readable code if
+  the *structured bindings* feature of the `C++17` standard is
+  available.
+
+To illustrate this new features, assuming that the *structured
+bindings* feature of the `C++17` standard is available, one can now
+efficiently evaluate the exponential of a symmetric tensor and its
+derivative as follows:
+
+~~~~{.cpp}
+const auto [vp,m] = s.computeEigenVectors();
+const auto evp    = map([](const auto x){return exp(x)},vp);
+const auto [f,df] = Stensor::computeIsotropicFunctionAndDerivative(evp,evp,vp,m,1.e-12);
+~~~~
+
+# References
 
 <!-- Local IspellDict: english -->
 

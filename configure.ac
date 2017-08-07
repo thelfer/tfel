@@ -2905,6 +2905,38 @@ AC_OUTPUT([debug.sh
   	   mfront/tests/behaviours/fanderson/fandersontvergaard.mtest
   	   mfront/tests/behaviours/fanderson/fandersonviscochaboche.mtest
   	   mfront/tests/behaviours/fanderson/fandersonviscoplasisocin.mtest
+  	   mfront/tests/behaviours/calculix/Makefile
+  	   mfront/tests/behaviours/calculix/calculixelasticity.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity2.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity3.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity4.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity5.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity6.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity7.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity8.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity9.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity10.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity11.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity14.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity15.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity18.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity19.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity20.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity21.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity22.mtest
+  	   mfront/tests/behaviours/calculix/calculixelasticity23.mtest
+  	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-uniaxialloading-sig11-3D.mtest
+  	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-uniaxialloading-sig22-3D.mtest
+  	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-uniaxialloading-sig33-3D.mtest
+  	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-uniaxialloading-1-3D.mtest
+  	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-uniaxialloading-2-3D.mtest
+  	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-uniaxialloading-3-3D.mtest
+  	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-1-3D.mtest
+  	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-2-3D.mtest
+  	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-3-3D.mtest
+  	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-4-3D.mtest
+  	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-5-3D.mtest
+  	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-6-3D.mtest	   
            mfront/tests/models/Makefile
            mfront/tests/models/interfaces/Makefile
            mfront/tests/models/interfaces/include/Makefile

@@ -38,6 +38,10 @@ if(HAVE_CYRANO)
   add_subdirectory(cyrano)
 endif(HAVE_CYRANO)
 
+if(HAVE_CALCULIX)
+  add_subdirectory(calculix)
+endif(HAVE_CALCULIX)
+
 configure_file(PolyCrystals_DD_CC.mfront PolyCrystals_DD_CC.mfront.in @ONLY)
 
 install_mfront_data(tests/behaviours MaterialPropertiesBoundsCheck.mfront)

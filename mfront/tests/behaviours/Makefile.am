@@ -4,7 +4,7 @@ SUBDIRS = unit-tests bricks                              \
 	  alternatedelta2 alternate2delta crossedsecant  \
 	  crosseddelta2 crossed2delta crossed2deltabis   \
 	  abaqus abaqus-explicit uanderson fanderson     \
-          ansys
+          ansys calculix
 
 MFRONTS= DDIF2.mfront                                                      \
          MaterialPropertiesBoundsCheck.mfront                              \

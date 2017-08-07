@@ -44,43 +44,43 @@ namespace mfront{
 		     const bool f)
   {
     if(f){
-      out << "(const char * const amat,"
-	  << " const calculix::CalculiXInt* const iel,"
-	  << " const calculix::CalculiXInt* const iint,"
-	  << " const calculix::CalculiXInt* const NPROPS,"
-	  << " const calculix::CalculiXReal* const MPROPS,"
-	  << " const calculix::CalculiXReal* const STRAN1,"
-	  << " const calculix::CalculiXReal* const STRAN0,"
-	  << " const calculix::CalculiXReal* const beta,"
-	  << " const calculix::CalculiXReal* const F0,"
-	  << " const calculix::CalculiXReal* const voj,"
-	  << " const calculix::CalculiXReal* const F1,"
-	  << " const calculix::CalculiXReal* const vj,"
-	  << " const calculix::CalculiXInt* const ithermal,"
-	  << " const calculix::CalculiXReal* const TEMP1,"
-	  << " const calculix::CalculiXReal* const DTIME,"
-	  << " const calculix::CalculiXReal* const time,"
-	  << " const calculix::CalculiXReal* const ttime,"
-	  << " const calculix::CalculiXInt* const icmd,"
-	  << " const calculix::CalculiXInt* const ielas,"
-	  << " const calculix::CalculiXInt* const mi,"
-	  << " const calculix::CalculiXInt* const NSTATV,"
-	  << " const calculix::CalculiXReal* const STATEV0,"
-	  << "       calculix::CalculiXReal* const STATEV1,"
-	  << "       calculix::CalculiXReal* const STRESS,"
-	  << "       calculix::CalculiXReal* const DDSDDE,"
-	  << " const calculix::CalculiXInt* const iorien,"
-	  << " const calculix::CalculiXReal* const pgauss,"
-	  << " const calculix::CalculiXReal* const orab,"
-	  << "       calculix::CalculiXReal* const PNEWDT,"
-	  << " const calculix::CalculiXInt* const ipkon,"
+      out << "(const char * const amat,\n"
+	  << " const calculix::CalculiXInt* const iel,\n"
+	  << " const calculix::CalculiXInt* const iint,\n"
+	  << " const calculix::CalculiXInt* const NPROPS,\n"
+	  << " const calculix::CalculiXReal* const MPROPS,\n"
+	  << " const calculix::CalculiXReal* const STRAN1,\n"
+	  << " const calculix::CalculiXReal* const STRAN0,\n"
+	  << " const calculix::CalculiXReal* const beta,\n"
+	  << " const calculix::CalculiXReal* const F0,\n"
+	  << " const calculix::CalculiXReal* const voj,\n"
+	  << " const calculix::CalculiXReal* const F1,\n"
+	  << " const calculix::CalculiXReal* const vj,\n"
+	  << " const calculix::CalculiXInt* const ithermal,\n"
+	  << " const calculix::CalculiXReal* const TEMP1,\n"
+	  << " const calculix::CalculiXReal* const DTIME,\n"
+	  << " const calculix::CalculiXReal* const time,\n"
+	  << " const calculix::CalculiXReal* const ttime,\n"
+	  << " const calculix::CalculiXInt* const icmd,\n"
+	  << " const calculix::CalculiXInt* const ielas,\n"
+	  << " const calculix::CalculiXInt* const mi,\n"
+	  << " const calculix::CalculiXInt* const NSTATV,\n"
+	  << " const calculix::CalculiXReal* const STATEV0,\n"
+	  << "       calculix::CalculiXReal* const STATEV1,\n"
+	  << "       calculix::CalculiXReal* const STRESS,\n"
+	  << "       calculix::CalculiXReal* const DDSDDE,\n"
+	  << " const calculix::CalculiXInt* const iorien,\n"
+	  << " const calculix::CalculiXReal* const pgauss,\n"
+	  << " const calculix::CalculiXReal* const orab,\n"
+	  << "       calculix::CalculiXReal* const PNEWDT,\n"
+	  << " const calculix::CalculiXInt* const ipkon,\n"
 	  << " const int size)";
     } else {
-      out << "(const char * const,"
-	  << " const calculix::CalculiXInt* const iel,"
-	  << " const calculix::CalculiXInt* const iint,"
-	  << " const calculix::CalculiXInt* const  NPROPS,"
-	  << " const calculix::CalculiXReal* const MPROPS,";
+      out << "(const char * const,\n"
+	  << " const calculix::CalculiXInt* const iel,\n"
+	  << " const calculix::CalculiXInt* const iint,\n"
+	  << " const calculix::CalculiXInt* const  NPROPS,\n"
+	  << " const calculix::CalculiXReal* const MPROPS,\n";
       if(t==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
 	out << " const calculix::CalculiXReal *const STRAN1,\n"
 	    << " const calculix::CalculiXReal *const STRAN0,\n";
@@ -88,72 +88,72 @@ namespace mfront{
 	out << " const calculix::CalculiXReal *const,\n"
 	    << " const calculix::CalculiXReal *const,\n";
       }
-      out << " const calculix::CalculiXReal* const,";
-      if(t==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	out << " const calculix::CalculiXReal* const F0,"
-	    << " const calculix::CalculiXReal* const ,"
-	    << " const calculix::CalculiXReal* const F1,"
-	    << " const calculix::CalculiXReal* const,";
+      out << " const calculix::CalculiXReal* const,\n";
+      if(t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	out << " const calculix::CalculiXReal* const F0,\n"
+	    << " const calculix::CalculiXReal* const ,\n"
+	    << " const calculix::CalculiXReal* const F1,\n"
+	    << " const calculix::CalculiXReal* const vj,\n";
       } else {
-	out << " const calculix::CalculiXReal* const,"
-	    << " const calculix::CalculiXReal* const ,"
-	    << " const calculix::CalculiXReal* const,"
-	    << " const calculix::CalculiXReal* const,";
+	out << " const calculix::CalculiXReal* const,\n"
+	    << " const calculix::CalculiXReal* const ,\n"
+	    << " const calculix::CalculiXReal* const,\n"
+	    << " const calculix::CalculiXReal* const,\n";
       }
-      out << " const calculix::CalculiXInt* const ithermal,"
-	  << " const calculix::CalculiXReal* const TEMP1,"
-	  << " const calculix::CalculiXReal* const DTIME,"
-	  << " const calculix::CalculiXReal* const,"
-	  << " const calculix::CalculiXReal* const,"
-	  << " const calculix::CalculiXInt* const icmd,"
-	  << " const calculix::CalculiXInt* const ielas,"
-	  << " const calculix::CalculiXInt* const mi,"
-	  << " const calculix::CalculiXInt* const  NSTATV,"
-	  << " const calculix::CalculiXReal* const STATEV0,"
-	  << "       calculix::CalculiXReal* const STATEV1,"
-	  << "       calculix::CalculiXReal* const STRESS,"
-	  << "       calculix::CalculiXReal* const DDSDDE,"
-	  << " const calculix::CalculiXInt* const,"
-	  << " const calculix::CalculiXReal* const,"
-	  << " const calculix::CalculiXReal* const,"
-	  << "       calculix::CalculiXReal* const PNEWDT,"
-	  << " const calculix::CalculiXInt* const,"
-	  << " const int size)";
+      out << " const calculix::CalculiXInt* const ithermal,\n"
+	  << " const calculix::CalculiXReal* const TEMP1,\n"
+	  << " const calculix::CalculiXReal* const DTIME,\n"
+	  << " const calculix::CalculiXReal* const,\n"
+	  << " const calculix::CalculiXReal* const,\n"
+	  << " const calculix::CalculiXInt* const icmd,\n"
+	  << " const calculix::CalculiXInt* const ielas,\n"
+	  << " const calculix::CalculiXInt* const mi,\n"
+	  << " const calculix::CalculiXInt* const  NSTATV,\n"
+	  << " const calculix::CalculiXReal* const STATEV0,\n"
+	  << "       calculix::CalculiXReal* const STATEV1,\n"
+	  << "       calculix::CalculiXReal* const STRESS,\n"
+	  << "       calculix::CalculiXReal* const DDSDDE,\n"
+	  << " const calculix::CalculiXInt* const,\n"
+	  << " const calculix::CalculiXReal* const,\n"
+	  << " const calculix::CalculiXReal* const,\n"
+	  << "       calculix::CalculiXReal* const PNEWDT,\n"
+	  << " const calculix::CalculiXInt* const,\n"
+	  << " const int)";
     }
   } // end of writeUMATArguments
 
   static void writeUMATArguments(std::ostream& out)
   {
-    out << "(const char * const,"
-	<< " const calculix::CalculiXInt* const,"
-	<< " const calculix::CalculiXInt* const,"
-	<< " const calculix::CalculiXInt* const,"
-	<< " const calculix::CalculiXReal* const,"
-	<< " const calculix::CalculiXReal* const,"
-	<< " const calculix::CalculiXReal* const,"
-	<< " const calculix::CalculiXReal* const,"
-	<< " const calculix::CalculiXReal* const,"
-	<< " const calculix::CalculiXReal* const,"
-	<< " const calculix::CalculiXReal* const,"
-	<< " const calculix::CalculiXReal* const,"
-	<< " const calculix::CalculiXInt* const,"
-	<< " const calculix::CalculiXReal* const,"
-	<< " const calculix::CalculiXReal* const,"
-	<< " const calculix::CalculiXReal* const,"
-	<< " const calculix::CalculiXReal* const,"
-	<< " const calculix::CalculiXInt* const,"
-	<< " const calculix::CalculiXInt* const,"
-	<< " const calculix::CalculiXInt* const,"
-	<< " const calculix::CalculiXInt* const,"
-	<< " const calculix::CalculiXReal* const,"
-	<< "       calculix::CalculiXReal* const,"
-	<< "       calculix::CalculiXReal* const,"
-	<< "       calculix::CalculiXReal* const,"
-	<< " const calculix::CalculiXInt* const,"
-	<< " const calculix::CalculiXReal* const,"
-	<< " const calculix::CalculiXReal* const,"
-	<< "       calculix::CalculiXReal* const,"
-	<< " const calculix::CalculiXInt* const,"
+    out << "(const char * const,\n"
+	<< " const calculix::CalculiXInt* const,\n"
+	<< " const calculix::CalculiXInt* const,\n"
+	<< " const calculix::CalculiXInt* const,\n"
+	<< " const calculix::CalculiXReal* const,\n"
+	<< " const calculix::CalculiXReal* const,\n"
+	<< " const calculix::CalculiXReal* const,\n"
+	<< " const calculix::CalculiXReal* const,\n"
+	<< " const calculix::CalculiXReal* const,\n"
+	<< " const calculix::CalculiXReal* const,\n"
+	<< " const calculix::CalculiXReal* const,\n"
+	<< " const calculix::CalculiXReal* const,\n"
+	<< " const calculix::CalculiXInt* const,\n"
+	<< " const calculix::CalculiXReal* const,\n"
+	<< " const calculix::CalculiXReal* const,\n"
+	<< " const calculix::CalculiXReal* const,\n"
+	<< " const calculix::CalculiXReal* const,\n"
+	<< " const calculix::CalculiXInt* const,\n"
+	<< " const calculix::CalculiXInt* const,\n"
+	<< " const calculix::CalculiXInt* const,\n"
+	<< " const calculix::CalculiXInt* const,\n"
+	<< " const calculix::CalculiXReal* const,\n"
+	<< "       calculix::CalculiXReal* const,\n"
+	<< "       calculix::CalculiXReal* const,\n"
+	<< "       calculix::CalculiXReal* const,\n"
+	<< " const calculix::CalculiXInt* const,\n"
+	<< " const calculix::CalculiXReal* const,\n"
+	<< " const calculix::CalculiXReal* const,\n"
+	<< "       calculix::CalculiXReal* const,\n"
+	<< " const calculix::CalculiXInt* const,\n"
 	<< " const int)";
   } // end of writeUMATArguments
 
@@ -458,11 +458,61 @@ namespace mfront{
 	  << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
-    out << name << "_base"
+    out << "calculix::CalculiXReal s[6];\n"
+	<< "const auto  J = *vj;\n"
+	<< "const auto iJ = 1/J;\n"
+	<< "const calculix::CalculiXReal iF1[9] = {iJ*(F1[4]*F1[8]-F1[5]*F1[7]),\n"
+	<< "		                           iJ*(F1[2]*F1[7]-F1[1]*F1[8]),\n"
+	<< "		                           iJ*(F1[1]*F1[5]-F1[2]*F1[4]),\n"
+	<< "		                           iJ*(F1[5]*F1[6]-F1[3]*F1[8]),\n"
+	<< "		                           iJ*(F1[0]*F1[8]-F1[2]*F1[6]),\n"
+	<< "		                           iJ*(F1[2]*F1[3]-F1[0]*F1[5]),\n"
+	<< "		                           iJ*(F1[3]*F1[7]-F1[4]*F1[6]),\n"
+	<< "		                           iJ*(F1[1]*F1[6]-F1[0]*F1[7]),\n"
+	<< "		                           iJ*(F1[0]*F1[4]-F1[1]*F1[3])};\n"
+      	<< "// turning pk2 to Cauchy stress\n"
+	<< "s[0] = iJ*(F1[3]*(STRESS[5]*F1[6]+STRESS[1]*F1[3]+STRESS[3]*F1[0])+\n"
+	<< "	       F1[0]*(STRESS[4]*F1[6]+STRESS[3]*F1[3]+STRESS[0]*F1[0])+\n"
+	<< "	       F1[6]*(STRESS[2]*F1[6]+STRESS[5]*F1[3]+STRESS[4]*F1[0]));\n"
+	<< "s[1] = iJ*(F1[4]*(STRESS[5]*F1[7]+STRESS[1]*F1[4]+STRESS[3]*F1[1])+\n"
+	<< "	       F1[1]*(STRESS[4]*F1[7]+STRESS[3]*F1[4]+STRESS[0]*F1[1])+\n"
+	<< "	       F1[7]*(STRESS[2]*F1[7]+STRESS[5]*F1[4]+STRESS[4]*F1[1]));\n"
+	<< "s[2] = iJ*(F1[5]*(STRESS[5]*F1[8]+STRESS[1]*F1[5]+STRESS[3]*F1[2])+\n"
+	<< "	       F1[2]*(STRESS[4]*F1[8]+STRESS[3]*F1[5]+STRESS[0]*F1[2])+\n"
+	<< "	       F1[8]*(STRESS[2]*F1[8]+STRESS[5]*F1[5]+STRESS[4]*F1[2]));\n"
+	<< "s[3] = iJ*(F1[3]*(STRESS[5]*F1[7]+STRESS[1]*F1[4]+STRESS[3]*F1[1])+\n"
+	<< "	       F1[0]*(STRESS[4]*F1[7]+STRESS[3]*F1[4]+STRESS[0]*F1[1])+\n"
+	<< "	       F1[6]*(STRESS[2]*F1[7]+STRESS[5]*F1[4]+STRESS[4]*F1[1]));\n"
+	<< "s[4] = iJ*(F1[3]*(STRESS[5]*F1[8]+STRESS[1]*F1[5]+STRESS[3]*F1[2])+\n"
+	<< "	       F1[0]*(STRESS[4]*F1[8]+STRESS[3]*F1[5]+STRESS[0]*F1[2])+\n"
+	<< "	       F1[6]*(STRESS[2]*F1[8]+STRESS[5]*F1[5]+STRESS[4]*F1[2]));\n"
+	<< "s[5] = iJ*(F1[4]*(STRESS[5]*F1[8]+STRESS[1]*F1[5]+STRESS[3]*F1[2])+\n"
+	<< "	       F1[1]*(STRESS[4]*F1[8]+STRESS[3]*F1[5]+STRESS[0]*F1[2])+\n"
+	<< "           F1[7]*(STRESS[2]*F1[8]+STRESS[5]*F1[5]+STRESS[4]*F1[2]));\n"
+	<< name << "_base"
 	<< "(amat,iel,iint,NPROPS,MPROPS,STRAN1,STRAN0,beta,F0,"
 	<< " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
-	<< " ielas,mi,NSTATV,STATEV0,STATEV1,STRESS,DDSDDE,"
+	<< " ielas,mi,NSTATV,STATEV0,STATEV1,s,DDSDDE,"
 	<< "iorien,pgauss,orab,PNEWDT,ipkon,size);\n"
+	<< "// turning Cauchy stress to pk2\n"
+	<< "STRESS[0] = J*(iF1[3]*(s[5]*iF1[6]+s[1]*iF1[3]+s[3]*iF1[0])+\n"
+	<< "		   iF1[0]*(s[4]*iF1[6]+s[3]*iF1[3]+s[0]*iF1[0])+\n"
+	<< "		   iF1[6]*(s[2]*iF1[6]+s[5]*iF1[3]+s[4]*iF1[0]));\n"
+	<< "STRESS[1] = J*(iF1[4]*(s[5]*iF1[7]+s[1]*iF1[4]+s[3]*iF1[1])+\n"
+	<< "		   iF1[1]*(s[4]*iF1[7]+s[3]*iF1[4]+s[0]*iF1[1])+\n"
+	<< "		   iF1[7]*(s[2]*iF1[7]+s[5]*iF1[4]+s[4]*iF1[1]));\n"
+	<< "STRESS[2] = J*(iF1[5]*(s[5]*iF1[8]+s[1]*iF1[5]+s[3]*iF1[2])+\n"
+	<< "		   iF1[2]*(s[4]*iF1[8]+s[3]*iF1[5]+s[0]*iF1[2])+\n"
+	<< "		   iF1[8]*(s[2]*iF1[8]+s[5]*iF1[5]+s[4]*iF1[2]));\n"
+	<< "STRESS[3] = J*(iF1[3]*(s[5]*iF1[7]+s[1]*iF1[4]+s[3]*iF1[1])+\n"
+	<< "		   iF1[0]*(s[4]*iF1[7]+s[3]*iF1[4]+s[0]*iF1[1])+\n"
+	<< "		   iF1[6]*(s[2]*iF1[7]+s[5]*iF1[4]+s[4]*iF1[1]));\n"
+	<< "STRESS[4] = J*(iF1[3]*(s[5]*iF1[8]+s[1]*iF1[5]+s[3]*iF1[2])+\n"
+	<< "		   iF1[0]*(s[4]*iF1[8]+s[3]*iF1[5]+s[0]*iF1[2])+\n"
+	<< "		   iF1[6]*(s[2]*iF1[8]+s[5]*iF1[5]+s[4]*iF1[2]));\n"
+	<< "STRESS[5] = J*(iF1[4]*(s[5]*iF1[8]+s[1]*iF1[5]+s[3]*iF1[2])+\n"
+	<< "		   iF1[1]*(s[4]*iF1[8]+s[3]*iF1[5]+s[0]*iF1[2])+\n"
+	<< "		   iF1[7]*(s[2]*iF1[8]+s[5]*iF1[5]+s[4]*iF1[2]));\n"
 	<< "}\n\n";
   }
   
@@ -1128,119 +1178,63 @@ namespace mfront{
 	<< "** Date   "  << fd.date       << '\n'
 	<< "**\n\n";
     // loop over hypothesis
-    for(const auto & h : this->getModellingHypothesesToBeTreated(mb)){
-      const auto& d = mb.getBehaviourData(h);
-      const auto mps = this->buildMaterialPropertiesList(mb,h);
-      auto msize = SupportedTypes::TypeSize{};
-      if(!mps.first.empty()){
-	const auto& m = mps.first.back();
-	msize  = m.offset;
-	msize += SupportedTypes::getTypeSize(m.type,m.arraySize);
-      }
-      const auto& persistentVarsHolder = d.getPersistentVariables();
-      auto vs = SupportedTypes::TypeSize{};
-      for(const auto& v : persistentVarsHolder){
-	vs+=SupportedTypes::getTypeSize(v.type,v.arraySize);
-      }
-      const auto vsize = vs.getValueForModellingHypothesis(h);
-      const auto& externalStateVarsHolder = d.getExternalStateVariables();
-      out << "** Example for the '" << ModellingHypothesis::toString(h) << "' modelling hypothesis\n";
-      if(!externalStateVarsHolder.empty()){
-	out << "** This behaviour requires " << externalStateVarsHolder.size()
-	    <<  " field variables to be defined:\n";
-	int i=1;
-	for(auto pv=std::next(externalStateVarsHolder.begin()); // skipping the temperature
-	    pv!=externalStateVarsHolder.end();++pv,++i){
-	  out << "** " << i << ": " << mb.getExternalName(h,pv->name);
-	}
-      }
-      out << "*Material, name=" << this->getFunctionName(mn) << '\n';
-      if(!b){
-	out << "*DENSITY\n<density>\n";
-      }
-      if(vsize!=0){
-	out << "*Depvar\n" << vsize  << ",\n";
-	int i=1;
-	for(const auto& v : persistentVarsHolder){
-	  const auto vn = mb.getExternalName(h,v.name);
-	  if(v.arraySize==1){
-	    this->writeDepvar(out,i,v,vn);
-	  } else {
-	    for(unsigned short a=0;a!=v.arraySize;++a){
-	      this->writeDepvar(out,i,v,vn+'['+std::to_string(a)+']');
-	    }
-	  }
-	}
-      }
-      if(!mps.first.empty()){
-	out << "** The material properties are given as if we used parameters to explicitly\n"
-	    << "** display their names. Users shall replace those declaration by\n"
-	    << "** theirs values and/or declare those parameters in the appropriate *parameters\n"
-	    << "** section of the input file\n";
-      }
-      out << "*User Material, constants=" << msize.getValueForModellingHypothesis(h);
-      if(!mb.getAttribute(h,BehaviourData::isConsistentTangentOperatorSymmetric,false)){
-	out << ", unsymm";
-      }
-      out << '\n';
-      if(!mps.first.empty()){      
-	int i=1;
-	auto write = [&i,&out](const std::string& n){
-	  if(i%9==0){
-	    out << "\n";
-	    i=1;
-	  }
-	  out << '<' << n << '>';
-	  ++i;
-	};
-	for(auto pm =mps.first.begin();pm!=mps.first.end();){
-	  if(pm->arraySize==1u){
-	    write(pm->name);
-	  } else {
-	    for(unsigned short a=0;a!=pm->arraySize;){
-	      write(pm->name+"_"+std::to_string(a));
-	      if(++a!=pm->arraySize){
-		out << ", ";
-	      }
-	    }
-	  }
-	  if(++pm!=mps.first.end()){
-	    out << ", ";
-	  }
-	}
-      }
-      out << "\n\n";
+    const auto h = ModellingHypothesis::TRIDIMENSIONAL;
+    const auto& d = mb.getBehaviourData(h);
+    const auto mps = this->buildMaterialPropertiesList(mb,h);
+    auto msize = SupportedTypes::TypeSize{};
+    if(!mps.first.empty()){
+      const auto& m = mps.first.back();
+      msize  = m.offset;
+      msize += SupportedTypes::getTypeSize(m.type,m.arraySize);
     }
+    const auto& persistentVarsHolder = d.getPersistentVariables();
+    auto vs = SupportedTypes::TypeSize{};
+    for(const auto& v : persistentVarsHolder){
+      vs+=SupportedTypes::getTypeSize(v.type,v.arraySize);
+    }
+    const auto vsize = vs.getValueForModellingHypothesis(h);
+    out << "*Material, name=@" << this->getFunctionName(mn) << '\n';
+    if(!b){
+      out << "*DENSITY\n<density>\n";
+    }
+    if(vsize!=0){
+      out << "*Depvar\n" << vsize  << "\n";
+    }
+    if(!mps.first.empty()){
+      out << "** The material properties are given as if we used parameters to explicitly\n"
+	  << "** display their names. Users shall replace those declaration by\n"
+	  << "** theirs values\n";
+    }
+    out << "*User Material, constants=" << msize.getValueForModellingHypothesis(h);
+    out << '\n';
+    if(!mps.first.empty()){      
+      int i=1;
+      auto write = [&i,&out](const std::string& n){
+	if(i%9==0){
+	  out << "\n";
+	  i=1;
+	}
+	out << '<' << n << '>';
+	++i;
+      };
+      for(auto pm =mps.first.begin();pm!=mps.first.end();){
+	if(pm->arraySize==1u){
+	  write(pm->name);
+	} else {
+	  for(unsigned short a=0;a!=pm->arraySize;){
+	    write(pm->name+"_"+std::to_string(a));
+	    if(++a!=pm->arraySize){
+	      out << ", ";
+	    }
+	  }
+	}
+	if(++pm!=mps.first.end()){
+	  out << ", ";
+	}
+      }
+    }
+    out << "\n\n";
   } // end of CalculiXInterface::writeInputFileExample
-
-  void CalculiXInterface::writeDepvar(std::ostream& out,
-				      int& i,
-				      const VariableDescription& v,
-				      const std::string& n) const {
-    if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Scalar){
-      out << i++ << ", " << n << '\n';
-    } else if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Stensor){
-      out << i++ << ", " << n << "_11\n";
-      out << i++ << ", " << n << "_22\n";
-      out << i++ << ", " << n << "_33\n";
-      out << i++ << ", " << n << "_12\n";
-      out << i++ << ", " << n << "_13\n";
-      out << i++ << ", " << n << "_23\n";
-    } else if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::Tensor){
-      out << i++ << ", " << n << "_11\n";
-      out << i++ << ", " << n << "_22\n";
-      out << i++ << ", " << n << "_33\n";
-      out << i++ << ", " << n << "_12\n";
-      out << i++ << ", " << n << "_21\n";
-      out << i++ << ", " << n << "_13\n";
-      out << i++ << ", " << n << "_31\n";
-      out << i++ << ", " << n << "_23\n";
-      out << i++ << ", " << n << "_32\n";
-    } else {
-      throw(std::runtime_error("CalculiXInterface::writeDepvar: "
-			       "unsupported variable type"));
-    }
-  }
   
   CalculiXInterface::~CalculiXInterface() = default;
   
