@@ -174,7 +174,6 @@ if(HAVE_CALCULIX)
   install_mfront_header(MFront/CalculiX CalculiXComputeStiffnessTensor.hxx)
   install_mfront_header(MFront/CalculiX CalculiXStressFreeExpansionHandler.hxx)
   install_mfront_header(MFront/CalculiX CalculiXComputeThermalExpansionCoefficientTensor.hxx)
-  install_mfront_header(MFront/CalculiX CalculiXFiniteStrain.hxx)
 endif(HAVE_CALCULIX)
 
 if(HAVE_ANSYS)

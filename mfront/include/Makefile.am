@@ -248,7 +248,6 @@ nobase_include_HEADERS += MFront/CalculiX/CalculiX.hxx                          
 			  MFront/CalculiX/CalculiXComputeThermalExpansionCoefficientTensor.hxx \
 			  MFront/CalculiX/CalculiXStressFreeExpansionHandler.hxx               \
 			  MFront/CalculiX/CalculiXTangentOperator.hxx                          \
-			  MFront/CalculiX/CalculiXFiniteStrain.hxx                             \
 			  MFront/CalculiXInterface.hxx
 endif
 

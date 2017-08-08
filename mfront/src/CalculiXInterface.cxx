@@ -183,9 +183,6 @@ namespace mfront{
 	const auto keys =  std::vector<std::string>{
 	  "@CalculiXFiniteStrainStrategy",
 	  "@CalculiXGenerateMTestFileOnFailure",
-	  "@CalculiXCompareToNumericalTangentOperator",
-	  "@CalculiXTangentOperatorComparisonCriterium",
-	  "@CalculiXTangentOperatorComparisonCriterion",
 	  "@CalculiXStrainPerturbationValue"};
 	throw_if(std::find(keys.begin(),keys.end(),key)==keys.end(),
 		 "unsupported key '"+key+"'");
@@ -217,34 +214,8 @@ namespace mfront{
       return {true,current};
     } else if (key=="@CalculiXGenerateMTestFileOnFailure"){
       this->generateMTestFile = this->readBooleanValue(key,current,end);
-      return {true,current};      
-    } else if(key=="@CalculiXCompareToNumericalTangentOperator"){
-      this->compareToNumericalTangentOperator  = this->readBooleanValue(key,current,end);
-      return make_pair(true,current);
-    } else if ((key=="@CalculiXTangentOperatorComparisonCriterium")||
-	       (key=="@CalculiXTangentOperatorComparisonCriterion")){
-      throw_if(!this->compareToNumericalTangentOperator,
-	       "comparison to tangent operator is not enabled at this stage.\n"
-	       "Use the @CalculiXCompareToNumericalTangentOperator directive before "
-	       "@CalculiXTangentOperatorComparisonCriterion");
-      throw_if(current==end,"unexpected end of file");
-      this->tangentOperatorComparisonCriterion = CxxTokenizer::readDouble(current,end);
-      throw_if(current==end,"unexpected end of file");
-      throw_if(current->value!=";","expected ';', read '"+current->value+"'");
-      ++(current);
       return {true,current};
-    } else if (key=="@CalculiXStrainPerturbationValue"){
-      throw_if(!this->compareToNumericalTangentOperator,
-	       "time stepping is not enabled at this stage.\n"
-	       "Use the @CalculiXUseTimeSubStepping directive before "
-	       "@CalculiXStrainPerturbationValue");
-      throw_if(current==end,"unexpected end of file");
-      this->strainPerturbationValue = CxxTokenizer::readDouble(current,end);
-      throw_if(current==end,"unexpected end of file");
-      throw_if(current->value!=";","expected ';', read '"+current->value+"'");
-      ++(current);
-      return {true,current};
-    }
+    }      
     return {false,current};
   } // end of treatKeyword
 
@@ -264,13 +235,6 @@ namespace mfront{
 	     "finite strain behaviours");
     // the only supported modelling hypothesis
     constexpr const auto h = ModellingHypothesis::TRIDIMENSIONAL;
-    // checks
-    if(this->compareToNumericalTangentOperator){
-      throw_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
-	       "unsupported feature @CalculiXSaveTangentOperator "
-	       "and @CalculiXCompareToNumericalTangentOperator : "
-	       "those are only valid for small strain beahviours");
-    }
     // get the modelling hypotheses to be treated
     const auto name =  mb.getLibrary()+mb.getClassName();
     // output directories
@@ -349,11 +313,6 @@ namespace mfront{
 
     this->getExtraSrcIncludes(out,mb);
 
-    if(this->compareToNumericalTangentOperator){
-      out << "#include<cmath>\n"
-	  << "#include<vector>\n"
-	  << "#include<algorithm>\n";
-    }
     out << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n"
 	<< "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
@@ -532,15 +491,6 @@ namespace mfront{
 	  << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
-    if(this->compareToNumericalTangentOperator){
-      out << "calculix::CalculiXReal PNEWDT0(*PNEWDT);\n"
-	  << "std::vector<calculix::CalculiXReal> deto0(*NTENS);\n"
-	  << "std::vector<calculix::CalculiXReal> sig0(*NTENS);\n"
-	  << "std::vector<calculix::CalculiXReal> sv0(*NSTATV);\n"
-	  << "std::copy(DSTRAN,DSTRAN+*(NTENS),deto0.begin());\n"
-	  << "std::copy(STRESS,STRESS+*(NTENS),sig0.begin());\n"
-	  << "std::copy(STATEV,STATEV+*(NSTATV),sv0.begin());\n";
-    }
     if(this->generateMTestFile){
       this->generateMTestFile1(out);
     }
@@ -549,8 +499,8 @@ namespace mfront{
       	<< "                                    STRAN1[2]-STRAN0[2],\n"
       	<< "                                    STRAN1[3]-STRAN0[3],\n"
       	<< "                                    STRAN1[4]-STRAN0[4],\n"
-	<< "                                    STRAN1[5]-STRAN0[5]};\n" 
-	<< name << "_base"
+	<< "                                    STRAN1[5]-STRAN0[5]};\n";
+    out << name << "_base"
 	<< "(amat,iel,iint,NPROPS,MPROPS,DSTRAN,STRAN0,beta,F0,"
 	<< " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
 	<< " ielas,mi,NSTATV,STATEV0,STATEV1,STRESS,DDSDDE,"
@@ -561,81 +511,6 @@ namespace mfront{
 			       name,"",mb);
       out << "}\n";
     }
-    if(this->compareToNumericalTangentOperator){
-      out << "// computing the tangent operator by pertubation\n"
-	  << "std::vector<calculix::CalculiXReal> nD((*NTENS)*(*NTENS));\n"
-	  << "std::vector<calculix::CalculiXReal> deto(*NTENS);\n"
-	  << "std::vector<calculix::CalculiXReal> sigf(*NTENS);\n"
-	  << "std::vector<calculix::CalculiXReal> sigb(*NTENS);\n"
-	  << "std::vector<calculix::CalculiXReal> sv(*NSTATV);\n"
-	  << "std::vector<calculix::CalculiXReal> D((*NTENS)*(*NTENS));\n"
-	  << "calculix::CalculiXReal PNEWDT(PNEWDT0);\n"
-	  << "calculix::CalculiXReal m;\n"
-	  << "calculix::CalculiXReal mDt;\n"
-	  << "calculix::CalculiXReal mnDt;\n"
-	  << "for(calculix::CalculiXInt i=0;i!=*NTENS;++i){\n"
-	  << "std::copy(deto0.begin(),deto0.end(),deto.begin());\n"
-	  << "std::copy(sig0.begin(),sig0.end(),sigf.begin());\n"
-	  << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
-	  << "deto[i] += " << this->strainPerturbationValue << ";\n"
-	  << "D[0] = 0.;\n"
-	  << "calculix::CalculiXData d2 = {&sigf[0],&PNEWDT0,&D[0],&sv[0],\n"
-	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
-	  << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
-	  << "                         PROPS,PREDEF,DPRED,\n"
-	  << getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
-	  << "if(calculix::CalculiXInterface<tfel::material::"
-	  << mb.getClassName() << ">::exe(d2)!=0){\n"
-	  << "return;\n"
-	  << "}\n"
-	  << "calculix::CalculiXReal PNEWDT(PNEWDT0);\n"
-	  << "std::copy(deto0.begin(),deto0.end(),deto.begin());\n"
-	  << "std::copy(sig0.begin(),sig0.end(),sigb.begin());\n"
-	  << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
-	  << "deto[i] -= " << this->strainPerturbationValue << ";\n"
-	  << "D[0] = 0.;\n"
-	  << "calculix::CalculiXData d3 = {&sigf[0],&PNEWDT0,&D[0],&sv[0],\n"
-	  << "                         *NTENS,*NPROPS,*NSTATV,*DTIME,\n"
-	  << "                         DROT,STRAN,&deto[0],TEMP,DTEMP,\n"
-	  << "                         PROPS,PREDEF,DPRED,\n"
-	  << "if(calculix::CalculiXInterface<tfel::material::" << mb.getClassName() << ">::exe(d3)!=0){\n"
-	  << "return;\n"
-	  << "}\n"
-	  << "for(calculix::CalculiXInt j=0;j!=*NTENS;++j){\n"
-	  << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*" << this->strainPerturbationValue << ");\n"
-	  << "}\n"
-	  << "}\n"
-	  << "// comparison\n"
-	  << "m=0.;\n"
-	  << "mDt=0.;\n"
-	  << "mnDt=0.;\n"
-	  << "for(i=0;i!=(*NTENS)*(*NTENS);++i){\n"
-	  << "mDt=std::max(mDt,*(DDSDDE+i));\n"
-	  << "mnDt=std::max(mnDt,nD[i]);\n"
-	  << "m=std::max(m,std::abs(nD[i]-*(DDSDDE+i)));\n"
-	  << "}\n"
-	  << "if(m>" << this->tangentOperatorComparisonCriterion << "){\n"
-	  << "std::cout << \"||nDt-Dt|| = \" << m << \" (\" << 100.*m/(0.5*(mDt+mnDt)) << \"%)\"<< std::endl;\n"
-	  << "std::cout << \"Dt :\" << std::endl;\n"
-	  << "for(calculix::CalculiXInt i=0;i!=*NTENS;++i){\n"
-	  << "for(calculix::CalculiXInt j=0;j!=*NTENS;++j){\n"
-	  << "std::cout << *(DDSDDE+j*(*NTENS)+i) << \" \";\n"
-	  << "}\n"
-	  << "std::cout << std::endl;\n"
-	  << "}\n"
-	  << "std::cout << \"nDt :\" << std::endl;\n"
-	  << "for(calculix::CalculiXInt i=0;i!=*NTENS;++i){\n"
-	  << "for(calculix::CalculiXInt j=0;j!=*NTENS;++j){\n"
-	  << "std::cout << nD[j*(*NTENS)+i] << \" \";\n"
-	  << "}\n"
-	  << "std::cout << std::endl;\n"
-	  << "}\n"
-	  << "std::cout << std::endl;\n"
-	  << "}\n";
-    }
-    if(this->fss==NATIVEFINITESTRAINSTRATEGY){
-      out << "calculix::CalculiXFiniteStrain::applyNativeFiniteStrainCorrection(DDSDDE,DFGRD1,STRESS,*NTENS);\n";
-    }
     out << "}\n\n";
   }
   
@@ -644,52 +519,8 @@ namespace mfront{
 								const BehaviourDescription& mb,
 								const std::string& name) const
   {
-    const std::string sfeh = "calculix::CalculiXStandardSmallStrainStressFreeExpansionHandler";
-    this->writeUMATFunctionBase(out,mb,name,sfeh);
-    out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
-    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
-    out << "{\n"
-	<< "using namespace calculix;\n"
-	<< "CalculiXReal eto[6];\n"
-      	<< "CalculiXReal deto[6];\n"
-	<< "CalculiXReal CSE[36];\n";
-    if(mb.getAttribute(BehaviourData::profiling,false)){
-      out << "using mfront::BehaviourProfiler;\n"
-	  << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
-	  << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
-	  << "Profiler::getProfiler(),\n"
-	  << "BehaviourProfiler::TOTALTIME);\n";
-      out << "{\n"
-	  << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
-	  << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
-    }
-    
-    out << "static_cast<void>(STRAN);\n"
-	<< "static_cast<void>(DSTRAN);\n"
-	<< "CalculiXFiniteStrain::computeGreenLagrangeStrain(eto,DFGRD0);\n"
-	<< "CalculiXFiniteStrain::computeGreenLagrangeStrain(deto,DFGRD1);\n"
-	<< "CalculiXFiniteStrain::computeSecondPiolaKirchhoffStressFromCauchyStress(STRESS,DFGRD0);\n"
-	<< "for(int i=0;i!=*NTENS;++i){\n"
-	<< "deto[i] -= eto[i];\n"
-	<< "}\n";
-    if(mb.getAttribute(BehaviourData::profiling,false)){
-      out << "}\n";
-    }
-    out	<< name << "_base"
-	<< "(amat,iel,iint,NPROPS,MPROPS,STRAN1,STRAN0,beta,F0,"
-	<< " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
-	<< " ielas,mi,NSTATV,STATEV0,STATEV1,STRESS,DDSDDE,"
-	<< "iorien,pgauss,orab,PNEWDT,ipkon,size);\n"
-	<< "if(*PNEWDT>=0.99999){\n";
-    if(mb.getAttribute(BehaviourData::profiling,false)){
-      out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
-	  << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
-    }
-    out << "CalculiXFiniteStrain::computeCauchyStressFromSecondPiolaKirchhoffStress(STRESS,DFGRD1);\n"
-	<< "CalculiXFiniteStrain::computeCalculiXTangentOperatorFromCSE(DDSDDE,CSE,DFGRD1,STRESS);\n"
-	<< "}\n"
-	<< "}\n\n";
-  }
+    this->writeUMATSmallStrainFunction(out,mb,name);
+  } // end of CalculiXInterface::writeUMATFiniteRotationSmallStrainFunction
   
   void
   CalculiXInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,

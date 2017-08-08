@@ -123,28 +123,37 @@ namespace mtest
   tfel::math::st2tost2<3u,real>
   CalculiXStandardBehaviour::convertTangentOperator(const real* const D) const{
     tfel::math::st2tost2<3u,real> K;
-    constexpr const auto sqrt2 = tfel::math::Cste<real>::sqrt2;
+    constexpr const auto sqrt2  = tfel::math::Cste<real>::sqrt2;
     K(0,0)       =D[0];
     K(0,1)=K(1,0)=D[1];
     K(1,1)       =D[2];
     K(0,2)=K(2,0)=D[3];
     K(1,2)=K(2,1)=D[4];
     K(2,2)       =D[5];
-    K(0,3)=K(3,0)=D[6]*sqrt2;
-    K(1,3)=K(3,1)=D[7]*sqrt2;
-    K(2,3)=K(3,2)=D[8]*sqrt2;
-    K(3,3)       =D[9];
-    K(0,4)=K(4,0)=D[10]*sqrt2;
-    K(1,4)=K(4,1)=D[11]*sqrt2;
-    K(2,4)=K(4,2)=D[12]*sqrt2;
-    K(3,4)=K(4,3)=D[13];
-    K(4,4)       =D[14];
-    K(0,5)=K(5,0)=D[15]*sqrt2;
-    K(1,5)=K(5,1)=D[16]*sqrt2;
-    K(2,5)=K(5,2)=D[17]*sqrt2;
-    K(3,5)=K(5,3)=D[18];
-    K(4,5)=K(5,4)=D[19];
-    K(5,5)       =D[20];
+    K(0,3)=D[6]*sqrt2;
+    K(3,0)=D[6]*sqrt2;
+    K(1,3)=D[7]*sqrt2;
+    K(3,1)=D[7]*sqrt2;
+    K(2,3)=D[8]*sqrt2;
+    K(3,2)=D[8]*sqrt2;
+    K(3,3)       =D[9]*2;
+    K(0,4)=D[10]*sqrt2;
+    K(4,0)=D[10]*sqrt2;
+    K(1,4)=D[11]*sqrt2;
+    K(4,1)=D[11]*sqrt2;
+    K(2,4)=D[12]*sqrt2;
+    K(4,2)=D[12]*sqrt2;
+    K(3,4)=K(4,3)=D[13]*2;
+    K(4,4)       =D[14]*2;
+    K(0,5)=D[15]*sqrt2;
+    K(5,0)=D[15]*sqrt2;
+    K(1,5)=D[16]*sqrt2;
+    K(5,1)=D[16]*sqrt2;
+    K(2,5)=D[17]*sqrt2;
+    K(5,2)=D[17]*sqrt2;
+    K(3,5)=K(5,3)=D[18]*2;
+    K(4,5)=K(5,4)=D[19]*2;
+    K(5,5)       =D[20]*2;
     return K;
   } // end of CalculiXStandardBehaviour::convertTangentOperator
   

@@ -226,8 +226,7 @@ if(HAVE_CALCULIX)
     CalculiXException.cxx
     CalculiXComputeStiffnessTensor.cxx
     CalculiXStressFreeExpansionHandler.cxx
-    CalculiXComputeThermalExpansionCoefficientTensor.cxx
-    CalculiXFiniteStrain.cxx)
+    CalculiXComputeThermalExpansionCoefficientTensor.cxx)
   mfront_library(CalculiXInterface ${CalculiXInterface_SOURCES})
   target_link_libraries(CalculiXInterface
     MTestFileGenerator

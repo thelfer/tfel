@@ -302,8 +302,8 @@ libCalculiXInterface_la_SOURCES = CalculiXInterfaceExceptions.cxx               
 				  CalculiXException.cxx                                \
 			          CalculiXComputeStiffnessTensor.cxx                   \
 			          CalculiXStressFreeExpansionHandler.cxx               \
-			          CalculiXComputeThermalExpansionCoefficientTensor.cxx \
-			          CalculiXFiniteStrain.cxx
+			          CalculiXComputeThermalExpansionCoefficientTensor.cxx
+
 
 libCalculiXInterface_la_LIBADD  = -L$(top_builddir)/src/Utilities -lTFELUtilities       \
 			          -L$(top_builddir)/src/Exception -lTFELException       \

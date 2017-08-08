@@ -298,21 +298,6 @@ namespace mfront{
     virtual bool isTemperatureIncrementSupported() const;
     //! selected finite strain strategy
     FiniteStrainStrategy fss = UNDEFINEDSTRATEGY;
-    /*!
-     * \brief boolean stating the we want a comparison of the user
-     * defined tangent operator with a numerical approximation.
-     */
-    bool compareToNumericalTangentOperator = false;
-    /*!
-     * \brief perturbation value used for the computation of the
-     * numerical approximation of the tangent operator
-     */
-    double strainPerturbationValue = 1.e-6;
-    /*!
-     * \brief comparison critera value used for comparing of the user
-     * defined tangent operator with a numerical approximation.
-     */
-    double tangentOperatorComparisonCriterion = 1.e7;
   }; // end of CalculiXInterface
 
 } // end of namespace mfront

@@ -91,8 +91,8 @@ namespace mtest
       us(i)  /= sqrt2;
     }
     auto ndt = std::numeric_limits<CalculiXReal>::max();
-    const auto iel      = CalculiXInt(0);
-    const auto iint     = CalculiXInt(0);
+    const auto iel      = CalculiXInt(1);
+    const auto iint     = CalculiXInt(1);
     const auto ithermal = CalculiXInt(1);
     const auto icmd     = CalculiXInt(0);
     const auto ielas    = CalculiXInt(1);
@@ -101,11 +101,11 @@ namespace mtest
     const auto T = s.esv0(0)+s.desv(0);
     (this->fct)(nullptr,&iel,&iint,&nprops,
 		s.mprops1.empty() ? nullptr : &s.mprops1[0],
-		&ue1(0),&ue0(1),
+		&ue1(0),&ue0(0),
 		nullptr,nullptr,nullptr,nullptr,nullptr,
 		&ithermal,&T,&dt,nullptr,nullptr,&icmd,&ielas,
 		&mi,&nstatv,
-		s.iv0.empty() ? nullptr : &s.iv0(0),
+		s.iv0.empty()  ? nullptr : &s.iv0(0),
 		wk.ivs.empty() ? nullptr : &wk.ivs(0),
 		&us(0),&(wk.D(0,0)),&ioren,nullptr,
 		nullptr,&ndt,nullptr,0);
@@ -136,7 +136,7 @@ namespace mtest
     if(b){
       // treating internal state variables
       if(!s.iv0.empty()){
-	copy_n(wk.ivs.begin(),s.iv1.size(),s.iv1.begin());
+	std::copy_n(wk.ivs.begin(),s.iv1.size(),s.iv1.begin());
       }
       // turning stresses in TFEL conventions
       for(CalculiXInt i=3;i!=6;++i){

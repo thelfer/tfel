@@ -1986,7 +1986,6 @@ mfront/include/MFront/CalculiX/CalculiXConfig.hxx -text
 mfront/include/MFront/CalculiX/CalculiXConvert.hxx -text
 mfront/include/MFront/CalculiX/CalculiXData.hxx -text
 mfront/include/MFront/CalculiX/CalculiXException.hxx -text
-mfront/include/MFront/CalculiX/CalculiXFiniteStrain.hxx -text
 mfront/include/MFront/CalculiX/CalculiXInterface.hxx -text
 mfront/include/MFront/CalculiX/CalculiXInterfaceExceptions.hxx -text
 mfront/include/MFront/CalculiX/CalculiXStressFreeExpansionHandler.hxx -text
@@ -2209,7 +2208,6 @@ mfront/src/CMaterialPropertyInterfaceBase.cxx -text
 mfront/src/CalculiXComputeStiffnessTensor.cxx -text
 mfront/src/CalculiXComputeThermalExpansionCoefficientTensor.cxx -text
 mfront/src/CalculiXException.cxx -text
-mfront/src/CalculiXFiniteStrain.cxx -text
 mfront/src/CalculiXInterface.cxx -text
 mfront/src/CalculiXInterfaceExceptions.cxx -text
 mfront/src/CalculiXStressFreeExpansionHandler.cxx -text
