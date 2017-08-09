@@ -1,7 +1,7 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = include src mfront mfront-query mfm mfront-doc \
-	  mtest tests mfm bindings cmake docs
+SUBDIRS = include src mfront mfront-query mfm mfront-doc  \
+	  mtest tests mfm bindings cmake docs tfel-config
 
 if !TFEL_WIN
 SUBDIRS += tfel-doc tfel-check

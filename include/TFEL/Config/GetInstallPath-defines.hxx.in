@@ -1,0 +1,4 @@
+#define PREFIXDIR     "@prefix@"
+#define EXECPREFIXDIR "@exec_prefix@"
+#define INCLUDEDIR    "@includedir@"
+#define LIBDIR        "@libdir@"

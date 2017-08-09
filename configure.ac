@@ -602,6 +602,7 @@ AC_OUTPUT([debug.sh
 	   cmake/Makefile
 	   cmake/modules/Makefile
 	   include/Makefile
+	   include/TFEL/Config/GetInstallPath-defines.hxx
 	   src/Makefile
 	   src/Config/Makefile
 	   src/Tests/Makefile
@@ -612,8 +613,6 @@ AC_OUTPUT([debug.sh
 	   src/NUMODIS/Makefile
 	   src/Material/Makefile
 	   src/System/Makefile
-	   src/TFELConfig/Makefile
-	   src/TFELConfig/tfel-config.hxx
 	   mfront/Makefile
 	   mfront/include/Makefile
 	   mfront/src/Makefile
@@ -3011,7 +3010,11 @@ AC_OUTPUT([debug.sh
    	   mtest/tests/ptest/cyrano/cyranotightpipe-gd-quadratic.ptest
    	   mtest/tests/ptest/cyrano/cyranotightpipe-linear.ptest
    	   mtest/tests/ptest/cyrano/cyranotightpipe-quadratic.ptest
+	   tfel-config/Makefile
 	   tfel-doc/Makefile
+	   tfel-config/include/Makefile
+	   tfel-config/include/tfel-config.hxx
+	   tfel-config/src/Makefile
 	   tfel-doc/src/Makefile
 	   tfel-doc/include/Makefile
 	   tfel-check/tests/pass/Makefile

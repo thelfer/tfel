@@ -1,8 +1,3 @@
-#define PREFIXDIR     "@prefix@"
-#define EXECPREFIXDIR "@exec_prefix@"
-#define INCLUDEDIR    "@includedir@"
-#define LIBDIR        "@libdir@"
-
 #define CASTEMFLAGS1 "@CASTEM_CPPFLAGS@"
 #ifndef LOCAL_CASTEM_HEADER
 #define CASTEMFLAGS2 "-I@CASTEM_ROOT@/include"

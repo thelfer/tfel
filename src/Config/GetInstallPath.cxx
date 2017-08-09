@@ -16,8 +16,8 @@
 #include<windows.h>
 #endif
 
-#include"tfel-config.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
+#include"TFEL/Config/GetInstallPath-defines.hxx"
 
 namespace tfel{
 

@@ -583,3 +583,7 @@ install_header(NUMODIS FrankRead.hxx)
 install_header(NUMODIS IsotropicLineTensionModel.hxx)
 install_header(NUMODIS TripleNode.hxx)
 
+configure_file(${PROJECT_SOURCE_DIR}/include/TFEL/Config/GetInstallPath-defines.hxx.in
+               ${PROJECT_BINARY_DIR}/include/TFEL/Config/GetInstallPath-defines.hxx)
+
+

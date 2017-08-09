@@ -19,6 +19,7 @@
 #include<stdexcept>
 
 #include"TFEL/Config/TFELConfig.hxx"
+#include"TFEL/Config/GetInstallPath-defines.hxx"
 #include"tfel-config.hxx"
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
@@ -31,8 +32,7 @@
 using FuncPtr = void (*)();
 using CallBacksContainer = std::map<std::string,std::pair<FuncPtr,std::string>>;
 
-static std::string
-handleSpace(const std::string& p)
+static std::string handleSpace(const std::string& p)
 {
   if(find(p.begin(),p.end(),' ')!=p.end()){
 #if defined _WIN32 || defined _WIN64
@@ -47,83 +47,59 @@ handleSpace(const std::string& p)
   return p;
 }
 
-static std::string
-getTFELHOME();
+static std::string getTFELHOME();
 
-static std::string
-libDir();
+static std::string libDir();
 
-static std::string
-includeDir();
+static std::string includeDir();
 
-static void
-registerCallBack(const std::string&,
-		 const FuncPtr&,
-		 const std::string&);
+static void registerCallBack(const std::string&,
+			     const FuncPtr&,
+			     const std::string&);
 
-static void
-treatCompilerFlags();
+static void treatCompilerFlags();
 
-static void
-treatOFlags0();
+static void treatOFlags0();
 
-static void
-treatOFlags();
+static void treatOFlags();
 
-static void
-treatOFlags2();
+static void treatOFlags2();
 
 #ifdef HAVE_CASTEM
-static void
-treatCastem();
+static void treatCastem();
 #endif /* HAVE_CASTEM */
 
 #ifdef HAVE_ZMAT
-static void
-treatZMAT();
+static void treatZMAT();
 #endif /* HAVE_ZMAT */
 
-static void
-treatExceptions();
+static void treatExceptions();
 
-static void
-treatMath();
+static void treatMath();
 
-static void
-treatMathCubicSpline();
+static void treatMathCubicSpline();
 
-static void
-treatMathKriging();
+static void treatMathKriging();
 
-static void
-treatMathParser();
+static void treatMathParser();
 
-static void
-treatMathInterpreter();
+static void treatMathInterpreter();
 
-static void
-treatUtilities();
+static void treatUtilities();
 
-static void
-treatGlossary();
+static void treatGlossary();
 
-static void
-treatFiniteElement();
+static void treatFiniteElement();
 
-static void
-treatAll();
+static void treatAll();
 
-static void
-treatCppFlags();
+static void treatCppFlags();
 
-static void
-treatIncludes();
+static void treatIncludes();
 
-static void
-treatLibs();
+static void treatLibs();
 
-static void
-listOptions(std::ostream&);
+static void listOptions(std::ostream&);
 
 TFEL_NORETURN static void
 treatUnknownOption(const std::string&);
@@ -189,8 +165,7 @@ getValueInRegistry(std::string &value)
 }
 #endif
 
-static std::string
-getTFELHOME()
+static std::string getTFELHOME()
 {
   using namespace std;
 #if defined _WIN32 || defined _WIN64
@@ -216,8 +191,7 @@ getTFELHOME()
 #endif
 }
 
-static std::string
-libDir()
+static std::string libDir()
 {
   using namespace std;
   const string prefix(PREFIXDIR);
@@ -261,10 +235,9 @@ static std::string includeDir()
   return inc;
 } // end of libDir
 
-static void
-registerCallBack(const std::string& key,
-		 const FuncPtr& f,
-		 const std::string& description)
+static void registerCallBack(const std::string& key,
+			     const FuncPtr& f,
+			     const std::string& description)
 {
   callBacksContainer.insert({key,{f,description}});
 } // end of registerNewCallBack

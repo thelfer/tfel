@@ -1,5 +1,6 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
-AM_CPPFLAGS = -I$(top_builddir)/src/TFELConfig/ \
+AM_CPPFLAGS = -I$(top_builddir)/tfel-config/include/ \
+	      -I$(top_builddir)/include/             \
 	      -I$(top_srcdir)/include
 
 if TFEL_WIN

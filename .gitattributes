@@ -1298,6 +1298,7 @@ include/NUMODIS/IsotropicLineTensionModel.hxx -text
 include/NUMODIS/Math/Utilities.hxx -text
 include/NUMODIS/TripleNode.hxx -text
 include/NUMODIS/Vect3.hxx -text
+include/TFEL/Config/GetInstallPath-defines.hxx.in -text
 include/TFEL/Config/GetInstallPath.hxx -text
 include/TFEL/Config/Internals/HeatFluxVectorType.hxx -text
 include/TFEL/Config/Internals/InvJacobianType.hxx -text
@@ -5397,10 +5398,6 @@ src/System/getFunction.c -text
 src/System/getFunction.impl -text
 src/System/rfstream.cxx -text
 src/System/wfstream.cxx -text
-src/TFELConfig/CMakeLists.txt -text
-src/TFELConfig/Makefile.am -text
-src/TFELConfig/tfel-config.cxx -text
-src/TFELConfig/tfel-config.hxx.in -text
 src/Tests/CMakeLists.txt -text
 src/Tests/Makefile.am -text
 src/Tests/MultipleTestOutputs.cxx -text
@@ -5756,6 +5753,12 @@ tfel-check/tests/xfail/test4.res -text
 tfel-check/tests/xfail/test5.check -text
 tfel-check/tests/xfail/test5.cxx -text
 tfel-check/tests/xfail/test6.check -text
+tfel-config/include/CMakeLists.txt -text
+tfel-config/include/Makefile.am -text
+tfel-config/include/tfel-config.hxx.in -text
+tfel-config/src/CMakeLists.txt -text
+tfel-config/src/Makefile.am -text
+tfel-config/src/tfel-config.cxx -text
 tfel-doc/CMakeLists.txt -text
 tfel-doc/Makefile.am -text
 tfel-doc/include/CMakeLists.txt -text

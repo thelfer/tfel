@@ -323,6 +323,7 @@ add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(bindings)
 
+add_subdirectory(tfel-config)
 if(UNIX AND (NOT CYGWIN))
   add_subdirectory(tfel-doc)
   add_subdirectory(tfel-check)
