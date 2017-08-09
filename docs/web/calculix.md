@@ -132,8 +132,6 @@ external behaviour:
 *User Material, constants=2
 150000,0.3
 
-<C_inf_1>, <g_0_0>, <g_0_1>, <a_inf>
-
 *Material, name=@CALCULIXBEHAVIOUR_ELASTICITY@2
 *User Material, constants=2
 200000,0.3
@@ -160,8 +158,8 @@ the logarithimc strain is directly linked to the change of volume.
 This situation is also different from the strategy used in
 `Abaqus/Standard` which tries to integrate the behaviour in rate form
 and then uses the Jauman objective stress rate to ensure objectivity
-(see @hughes_finite_1980): this approach is based of the fact that the
-trace of the deformation rate is directly linked to the change of
+(see [@hughes_finite_1980]): this approach is based of the fact that
+the trace of the deformation rate is directly linked to the change of
 volume.
 
 To describe plasticity and viscoplasticity at finite strain using an
@@ -170,7 +168,7 @@ additive decomposition of the strain, we recommend using the
 `MFront` which is also based on the Hencky strain but interprets the
 output of the behaviour as the dual of the Hencky strain, which is
 consistent from the point of view of energy and automatically ensures
-objectivity. See miehe_anisotropic_2002 for details.
+objectivity. See [@miehe_anisotropic_2002] for details.
 
 ## Using the `Abaqus/Standard` interface
 
