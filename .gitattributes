@@ -5753,6 +5753,8 @@ tfel-check/tests/xfail/test4.res -text
 tfel-check/tests/xfail/test5.check -text
 tfel-check/tests/xfail/test5.cxx -text
 tfel-check/tests/xfail/test6.check -text
+tfel-config/CMakeLists.txt -text
+tfel-config/Makefile.am -text
 tfel-config/include/CMakeLists.txt -text
 tfel-config/include/Makefile.am -text
 tfel-config/include/tfel-config.hxx.in -text
