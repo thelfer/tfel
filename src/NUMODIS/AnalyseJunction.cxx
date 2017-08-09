@@ -1,3 +1,4 @@
+#include<algorithm>
 #include<iostream>
 #include "NUMODIS/AnalyseJunction.hxx"
 #include "NUMODIS/GSystem.hxx"
@@ -114,9 +115,6 @@ namespace numodis
 				   const std::vector<double>& burgers,
 				   const std::vector<double>& phi)
     {
-
-      // pi = 3.1415...
-      double pi = atan(1.0)*4.0;
   
       // line tension model for all three segments
       double mu = 1.0;
@@ -152,7 +150,7 @@ namespace numodis
 	    {
 	      stress = tn.computeCriticalStress(anglerad,0.001,0.00001,20);
 	    }
-	  catch(int error)
+	  catch(int)
 	    {
 	      std::cerr << "=>could not compute critical stress of the triple node" << std::endl;
 	    }

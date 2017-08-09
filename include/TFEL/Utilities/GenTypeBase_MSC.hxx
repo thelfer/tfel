@@ -170,7 +170,7 @@ namespace tfel{
 	this->template set_uninitialised<T1>();
 	void * p = reinterpret_cast<void*>(&(this->buffer));
 	// the magic of placement new...
-	return new (p) T1(std::forward(args)...);
+	return *(new (p) T1(std::forward<Args>(args)...));
       } // end of emplace
       //! set the value of the GenType.
       /*

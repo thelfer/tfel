@@ -37,6 +37,8 @@ macro(add_mfront_generated_source lib interface ext file)
       COMMAND "set"
       ARGS "PATH=$<TARGET_FILE_DIR:TFELMaterial>;%PATH%"
       COMMAND "set"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELNUMODIS>;%PATH%"
+      COMMAND "set"
       ARGS "PATH=$<TARGET_FILE_DIR:TFELMathParser>;%PATH%"
       COMMAND "set"
       ARGS "PATH=$<TARGET_FILE_DIR:TFELGlossary>;%PATH%"

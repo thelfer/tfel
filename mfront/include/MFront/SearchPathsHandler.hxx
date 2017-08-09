@@ -44,8 +44,7 @@ namespace mfront
      * \param[in] f : file name
      * \return the full path of the file
      */
-    MFRONT_VISIBILITY_EXPORT static std::string
-    search(const std::string&);
+    static std::string search(const std::string&);
     /*!
      * \brief Add new search paths.
      *
@@ -53,13 +52,11 @@ namespace mfront
      * by semicolons under Windows systems.
      * \param[in] p : new search paths
      */
-    MFRONT_VISIBILITY_EXPORT static void
-    addSearchPaths(const std::string&);
+    static void addSearchPaths(const std::string&);
     /*!
      * \return the list of the search paths
      */
-    MFRONT_VISIBILITY_EXPORT static
-    const std::vector<std::string>&
+    static const std::vector<std::string>&
     getSearchPaths();
   private:
     /*!
@@ -73,8 +70,8 @@ namespace mfront
      * The MFRONT_INCLUDE_PATH environnement variable
      * is used to fill the search paths.
      */
-    TFEL_VISIBILITY_LOCAL SearchPathsHandler();
-    SearchPathsHandler(const SearchPathsHandler&) = delete;
+	SearchPathsHandler();
+	SearchPathsHandler(const SearchPathsHandler&) = delete;
     SearchPathsHandler(SearchPathsHandler&&) = delete;
     SearchPathsHandler& operator=(const SearchPathsHandler&) = delete;
     SearchPathsHandler& operator=(SearchPathsHandler&&) = delete;

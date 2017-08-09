@@ -57,7 +57,7 @@ then
 fi
 
 # source directory
-src=$(dirname $(realpath $0))
+src=$(cd $(dirname $0) && pwd)
 # current directory
 build=$(pwd)
 
