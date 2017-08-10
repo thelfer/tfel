@@ -448,11 +448,17 @@ namespace mfront
     writeExportDirectives(wrapper);
     wrapper << endl;
 #endif /* _WIN32 */
-    if(!material.empty()){
-      wrapper << "static PyMethodDef " << material << "LawMethods[] = {\n";
-    } else {
-      wrapper << "static PyMethodDef MaterialLawMethods[] = {\n";
-    }
+    const auto wn = [&library,&material]() -> std::string {
+      if(library.empty()){
+	if(!material.empty()){
+	  return "src/"+material+"lawwrapper.cxx";
+	} else {
+	  return "src/materiallawwrapper.cxx";
+	}
+      }
+      return "src/"+library+"wrapper.cxx";
+    }();
+    wrapper << "static PyMethodDef " << wn << "[] = {\n";
     for(const auto& i : interfaces){
       wrapper << "{\"" << i << "\"," << i << "_wrapper,METH_VARARGS,\n"
 	      << "\"compute the " << i <<  " law.\"},\n";
@@ -485,7 +491,7 @@ namespace mfront
 	    << "    PyModuleDef_HEAD_INIT,\n"
 	    << "    \"" << md << "\",\n"
 	    << "    nullptr,sizeof(ModuleState),\n"
-	    << "    " << material << "LawMethods,\n"
+	    << "    " << wn << ",\n"
 	    << "    nullptr,+traverse,+clear,nullptr\n"
 	    << "  };\n"
 	    << "  auto *m = PyModule_Create(&d);\n"
@@ -511,7 +517,7 @@ namespace mfront
 	    << "  static struct {\n"
 	    << "    PyObject *error;\n"
 	    << "  } state;\n"
-	    << "  auto *m = Py_InitModule(\"" << md << "\"," << material << "LawMethods);\n"
+	    << "  auto *m = Py_InitModule(\"" << md << "\"," << wn << ");\n"
 	    << "  if (m == nullptr){\n"
 	    << "    return;\n"
 	    << "  }\n"
