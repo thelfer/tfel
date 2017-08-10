@@ -4,6 +4,10 @@
 
 # Tickets fixed
 
+## Ticket #82: Python interface is broken if no material name if not defined
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/82/>
+
 ## Ticket #80: Adding the possiblity to compile a law using python module
 
 `MFront` relies on external tools, called generators, for this step

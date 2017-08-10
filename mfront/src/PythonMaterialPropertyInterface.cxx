@@ -209,26 +209,17 @@ namespace mfront
     const auto& function=mpd.f;
     const auto name = (!material.empty()) ? material+"_"+law : law;
     const auto outName  = "include/"+name+"-python.hxx";
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("PythonMaterialPropertyInterface::writeOutputFiles: "+m));}
+    };
     std::ofstream out;
     out.open(outName);
-    if(!out){
-      string msg("PythonMaterialPropertyInterface::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += outName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
+    throw_if(!out,"unable to open '"+outName+"' for writing output file.");
     out.exceptions(ios::badbit|ios::failbit);
     const auto srcFileName = "src/"+name+"-python.cxx";
     std::ofstream srcFile;
     srcFile.open(srcFileName);
-    if(!srcFile){
-      string msg("PythonMaterialPropertyInterface::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += srcFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
+    throw_if(!srcFile,"unable to open '"+srcFileName+"' for writing output file.");
     srcFile.exceptions(ios::badbit|ios::failbit);
     // writing header
     out << "/*!\n"
@@ -407,42 +398,31 @@ namespace mfront
     set<string> interfaces;
     struct stat buffer; // for call to stat
     if(access(fname.c_str(),F_OK)==0){
-      if(stat(fname.c_str(),&buffer)==-1){
-	throw(runtime_error("PythonMaterialPropertyInterface::writeOutputFiles : "
-			    "can't stat file '"+fname+"'"));
-      }
-      if(!S_ISREG(buffer.st_mode)){
-	throw(runtime_error("PythonMaterialPropertyInterface::writeOutputFiles : "
-			    "'"+fname+"' is not a regular file"));
-      }
+      throw_if(stat(fname.c_str(),&buffer)==-1,
+	       "can't stat file '"+fname+"'");
+      throw_if(!S_ISREG(buffer.st_mode),
+	       "'"+fname+"' is not a regular file");
       ifstream iwrapper(fname);
-      if(!iwrapper){
-	string msg("PythonMaterialPropertyInterface::writeOutputFiles : ");
-	msg += "unable to open '"+fname+"'";
-	throw(runtime_error(msg));
-      }
+      throw_if(!iwrapper,"unable to open '"+fname+"'");
       copy(istream_iterator<string>(iwrapper),
 	   istream_iterator<string>(),
 	   insert_iterator<set<string> >(interfaces,interfaces.begin()));      
       iwrapper.close();
     }
     interfaces.insert(name);
-    ofstream wrapper;
-    if(library.empty()){
-      if(!material.empty()){
-	wrapper.open(("src/"+material+"lawwrapper.cxx").c_str());
-      } else {
-	wrapper.open("src/materiallawwrapper.cxx");
+    const auto wn = [&library,&material]() -> std::string {
+      if(library.empty()){
+	if(!material.empty()){
+	  return "src/"+material+"lawwrapper.cxx";
+	} else {
+	  return "src/materiallawwrapper.cxx";
+	}
       }
-    } else {
-      wrapper.open(("src/"+library+"wrapper.cxx").c_str());
-    }
+      return "src/"+library+"wrapper.cxx";
+    }();
+    ofstream wrapper(wn);
     wrapper.exceptions(ios::badbit|ios::failbit);
-    if(!wrapper){
-      string msg("PythonMaterialPropertyInterface::writeOutputFiles : ");
-      msg += "unable to open file";
-      throw(runtime_error(msg));
-    }
+    throw_if(!wrapper,"unable to open file '"+wn+"'");
     wrapper << "/*!\n";
     if(library.empty()){
       if(!material.empty()){
@@ -475,11 +455,8 @@ namespace mfront
     writeExportDirectives(wrapper);
     wrapper << '\n';
 #endif /* _WIN32 */
-    if(!material.empty()){
-      wrapper << "static PyMethodDef " << material << "LawMethods[] = {\n";
-    } else {
-      wrapper << "static PyMethodDef MaterialLawMethods[] = {\n";
-    }
+    const auto mlm = (material.empty() ? "Material" : material) + "LawMethods";
+    wrapper << "static PyMethodDef " << mlm << "[] = {\n";
     for(const auto& i : interfaces){
       wrapper << "{\"" << i << "\"," << i << "_wrapper,METH_VARARGS,\n"
 	      << "\"compute the " << i <<  " law.\"},\n";
@@ -511,7 +488,7 @@ namespace mfront
 	    << "    PyModuleDef_HEAD_INIT,\n"
 	    << "    \"" << md << "\",\n"
 	    << "    nullptr,sizeof(ModuleState),\n"
-	    << "    " << material << "LawMethods,\n"
+	    << "    " << mlm << ",\n"
 	    << "    nullptr,+traverse,+clear,nullptr\n"
 	    << "  };\n"
 	    << "  auto *m = PyModule_Create(&d);\n"
@@ -537,7 +514,7 @@ namespace mfront
 	    << "  static struct {\n"
 	    << "    PyObject *error;\n"
 	    << "  } state;\n"
-	    << "  auto *m = Py_InitModule(\"" << md << "\"," << material << "LawMethods);\n"
+	    << "  auto *m = Py_InitModule(\"" << md << "\"," << mlm << ");\n"
 	    << "  if (m == nullptr){\n"
 	    << "    return;\n"
 	    << "  }\n"
@@ -551,11 +528,7 @@ namespace mfront
 	    << "#endif\n";
     wrapper.close();
     wrapper.open(fname);
-    if(!wrapper){
-      string msg("PythonMaterialPropertyInterface::writeOutputFiles : ");
-      msg += "unable to open file '"+fname+"'";
-      throw(runtime_error(msg));
-    }
+    throw_if(!wrapper,"unable to open file '"+fname+"'");
     copy(interfaces.begin(),interfaces.end(),
 	 ostream_iterator<string>(wrapper,"\n"));
     wrapper.close();
