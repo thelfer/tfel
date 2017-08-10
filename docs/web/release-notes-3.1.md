@@ -461,6 +461,14 @@ back stress:
 
 ## Behaviours interfaces
 
+### Native `CalculiX` interface
+
+A native interface for the `CalculiX` solver has been added.
+
+Calling external libraries from `CalculiX` for the native interface
+requires a patch in version `2.12` that can be downloaded
+[here](downloads/patchs-CalculiX-2.12.tar.bz2). 
+
 ### The `Cast3M` interface
 
 #### The `MieheApelLambrechtLogarithmic` finite strain strategy
@@ -722,6 +730,25 @@ This method takes two named arguments:
   sliding systems' interaction are represented by their ranks.
 - `--interaction-matrix-structure`: return the number of independent
   coefficients and the sliding systems sorted by rank.
+
+# New functionalities of the `tfel-config` tool
+
+`tfel-config` provides new options for better integration with build
+systems, such as `cmake`:
+
+- `--ldflags`: returns appropriate flags for the linker to link
+  against specified libraries (see `--math`, `--system` the options
+  and others). This option is equivalent to the `--libs` options but
+  better reflects the intent of the option.
+- `--include-path`: returns the path the `TFEL` headers.
+- `--library-path`: returns the path the `TFEL` libraries.
+- `--library-dependency`: returns the list of dependencies of a `TFEL`
+  library. The given library is included in the list.
+
+~~~~{.bash}
+$ tfel-config --library-dependency --material
+TFELMaterial TFELMath TFELUtilities TFELException TFELNUMODIS
+~~~~
 
 # Tickets fixed
 

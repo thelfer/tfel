@@ -1096,6 +1096,7 @@ docs/web/img/Behaviour-img8.png -text
 docs/web/img/Behaviour-img9.eps -text
 docs/web/img/Behaviour-img9.png -text
 docs/web/img/BrittleFracturePhaseField.png -text
+docs/web/img/CalculiXBenchmarkSmallStrain.png -text
 docs/web/img/CalculiX_MFRONT_WSL.png -text
 docs/web/img/CalculiX_MFRONT_WSL.xcf -text
 docs/web/img/CastemWebSite.png -text
@@ -1977,6 +1978,7 @@ mfront/include/MFront/BehaviourInterfaceProxy.ixx -text
 mfront/include/MFront/BehaviourProfiler.hxx -text
 mfront/include/MFront/BehaviourSymmetryType.hxx -text
 mfront/include/MFront/BroydenSolvers.hxx -text
+mfront/include/MFront/CMakeGenerator.hxx -text
 mfront/include/MFront/CMaterialPropertyInterface.hxx -text
 mfront/include/MFront/CMaterialPropertyInterfaceBase.hxx -text
 mfront/include/MFront/CalculiX/CalculiX.hxx -text
@@ -2203,6 +2205,7 @@ mfront/src/BehaviourDescription.cxx -text
 mfront/src/BehaviourInterfaceFactory.cxx -text
 mfront/src/BehaviourProfiler.cxx -text
 mfront/src/BroydenSolvers.cxx -text
+mfront/src/CMakeGenerator.cxx -text
 mfront/src/CMakeLists.txt -text
 mfront/src/CMaterialPropertyInterface.cxx -text
 mfront/src/CMaterialPropertyInterfaceBase.cxx -text

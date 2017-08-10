@@ -75,7 +75,7 @@ pandoc_html(release-notes-3.0   "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.0.1 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.0.2 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.1   "--toc" "--toc-depth=2")
-pandoc_html(tensors "--toc" "--toc-depth=3")
+pandoc_html(tensors "--toc" "--toc-depth=2")
 
 # mfront keywords
 

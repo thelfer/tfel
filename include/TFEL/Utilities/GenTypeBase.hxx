@@ -421,6 +421,27 @@ namespace tfel{
 	this->template set_uninitialised<type>();
 	void * p = reinterpret_cast<void*>(&(this->buffer));
 	// the magic of placement new...
+	new (p) type(std::forward<T1>(src));
+      }
+      //! set the value of the GenType.
+      /*
+       * \param const T1&, the value affected to the GenType.
+       * \pre   T1 must be a type that the GenType can hold.
+       */
+      template<typename T1>
+      TFEL_INLINE requires<T1,void>
+      set(const T1& src)
+      {
+	using type = typename std::decay<T1>::type;
+	if(this->template is<type>()){
+	  if(&(this->template get<type>())==&src){
+	    return;
+	  }
+	}
+	// We create a new object of type T1 by calling the copy constructor
+	this->template set_uninitialised<type>();
+	void * p = reinterpret_cast<void*>(&(this->buffer));
+	// the magic of placement new...
 	new (p) type(src);
       }
       //! assignement operator.

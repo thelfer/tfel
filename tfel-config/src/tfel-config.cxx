@@ -57,42 +57,14 @@ static void registerCallBack(const std::string&,
 			     const FuncPtr&,
 			     const std::string&);
 
-#ifdef HAVE_CASTEM
-static void treatCastem();
-#endif /* HAVE_CASTEM */
-
-#ifdef HAVE_ZMAT
-static void treatZMAT();
-#endif /* HAVE_ZMAT */
-
-static void treatExceptions();
-
-static void treatMath();
-
-static void treatMathCubicSpline();
-
-static void treatMathKriging();
-
-static void treatMathParser();
-
-static void treatMathInterpreter();
-
-static void treatUtilities();
-
-static void treatGlossary();
-
-static void treatAll();
-
 static void listOptions(std::ostream&);
 
 TFEL_NORETURN static void
 treatUnknownOption(const std::string&);
 
-TFEL_NORETURN static void
-treatHelp();
+TFEL_NORETURN static void treatHelp();
 
-TFEL_NORETURN static void
-treatLicences();
+TFEL_NORETURN static void treatLicences();
 
 static CallBacksContainer callBacksContainer;
 static bool compilerflags   = false;
@@ -103,6 +75,7 @@ static bool warning         = false;
 static bool incs            = false;
 static bool incspath        = false;
 static bool cppflags        = false;
+static bool libsdeps        = false;
 static bool libspath        = false;
 static bool ldflags         = false;
 static bool exceptions      = false;
@@ -227,115 +200,6 @@ static void registerCallBack(const std::string& key,
   callBacksContainer.insert({key,{f,description}});
 } // end of registerNewCallBack
 
-#ifdef HAVE_CASTEM
-static void treatCastem()
-{
-  castem = true;
-} // end of treatCastem
-#endif /* HAVE_CASTEM */
-
-#ifdef HAVE_ZMAT
-static void treatZMAT()
-{
-  zmat = true;
-} // end of treatZMAT
-#endif /* HAVE_ZMAT */
-
-static void treatExceptions()
-{
-  exceptions = true;
-} // end of treatExceptions
-
-static void treatMath()
-{
-  exceptions = true;
-  math       = true;
-} // end of treatMath
-
-static void treatMathKriging()
-{
-  exceptions = true;
-  math       = true;
-  mathKriging = true;
-} // end of treatMathKriging
-
-static void treatMathCubicSpline()
-{
-  exceptions = true;
-  math       = true;
-  mathCubicSpline = true;
-} // end of treatMathCubicSpline
-
-static void treatMathParser()
-{
-  exceptions  = true;
-  math        = true;
-  mathKriging = true;
-  mathParser  = true;
-} // end of treatMathParser
-
-static void treatMathInterpreter()
-{
-  exceptions      = true;
-  math            = true;
-  mathKriging     = true;
-  mathParser      = true;
-  mathInterpreter = true;
-} // end of treatMathInterpreter
-
-static void treatUtilities()
-{
-  utilities = true;
-} // end of treatUtilities
-
-static void treatGlossary()
-{
-  glossary = true;
-} // end of treatGlossary
-
-static void treatSystem()
-{
-  exceptions    = true;
-  lsystem        = true;
-} // end of treatSystem
-
-static void treatNumodis()
-{
-  numodis  = true;
-} // end of treatNumodis
-
-static void treatMaterial()
-{
-  numodis     = true;
-  exceptions  = true;
-  math        = true;
-  utilities   = true;
-  material    = true;
-} // end of treatMaterial
-
-static void treatMFrontProfiling()
-{
-  mfront_profiling  = true;
-} // end of treatMFrontProfiling
-
-static void treatTests()
-{
-  tests  = true;
-} // end of treatTests
-
-static void treatAll()
-{
-  exceptions   = true;
-  math         = true;
-  numodis      = true;
-  material     = true;
-  utilities    = true;
-  glossary     = true;
-  lsystem      = true;
-  tests        = true;
-  mfront_profiling = true;
-} // end of treatAll
-
 static void listOptions(std::ostream& os)
 {
   os << "Valid options are:\n";
@@ -350,44 +214,39 @@ static void listOptions(std::ostream& os)
 
 TFEL_NORETURN static void treatVersion()
 {
-  using namespace std;
-  cout << "tfel-config " << VERSION 
-       << " (svn revision : " << TFEL_SVN_REVISION 
-       << ")" << endl;
-  exit(EXIT_SUCCESS);
+  std::cout << "tfel-config " << VERSION 
+	    << " (svn revision : " << TFEL_SVN_REVISION 
+	    << ")" << std::endl;
+  std::exit(EXIT_SUCCESS);
 } // end of treatHelp
 
 TFEL_NORETURN static void treatHelp()
 {
-  using namespace std;
-  cout << "usage : tfel-config [options]" << endl;
-  listOptions(cout);
-  exit(EXIT_SUCCESS);
+  std::cout << "usage : tfel-config [options]" << std::endl;
+  listOptions(std::cout);
+  std::exit(EXIT_SUCCESS);
 } // end of treatHelp
 
 TFEL_NORETURN static void treatUnknownOption(const std::string& o)
 {
-  using namespace std;
-  cerr << "unknown option " << o << endl;
-  listOptions(cerr);
-  exit(EXIT_FAILURE);
+  std::cerr << "unknown option " << o << std::endl;
+  listOptions(std::cerr);
+  std::exit(EXIT_FAILURE);
 } // end of treatUnknownOption
 
 TFEL_NORETURN static void treatLicences()
 {
-  using namespace std;
-  cout << "Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights reserved." << endl;
-  cout << "This project is publicly released under either the GNU GPL Licence or the" << endl;
-  cout << "CECILL-A licence. A copy of thoses licences are delivered with the sources of" << endl;
-  cout << "TFEL. CEA or EDF may also distribute this project under specific licensing" << endl;
-  cout << "conditions." << endl;
-  cout << endl;
-  cout << "For further information, please read the licences files or visit the following" << endl;
-  cout << "websites:" << endl;
-  cout << "    http://www.gnu.org/licenses" << endl;
-  cout << "    http://www.cecill.info/licences.en.html" << endl;
-  cout << "    http://www.cecill.info/licences.fr.html" << endl;
-  exit(EXIT_SUCCESS);
+  std::cout << "Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights reserved.\n";
+  std::cout << "This project is publicly released under either the GNU GPL Licence or the\n";
+  std::cout << "CECILL-A licence. A copy of thoses licences are delivered with the sources of\n";
+  std::cout << "TFEL. CEA or EDF may also distribute this project under specific licensing\n";
+  std::cout << "conditions.\n\n";
+  std::cout << "For further information, please read the licences files or visit the following\n";
+  std::cout << "websites:\n";
+  std::cout << "    http://www.gnu.org/licenses\n";
+  std::cout << "    http://www.cecill.info/licences.en.html\n";
+  std::cout << "    http://www.cecill.info/licences.fr.html" << std::endl;
+  std::exit(EXIT_SUCCESS);
 } // end of treatLicences
 
 static void listLibraries(const char* p)
@@ -441,69 +300,108 @@ int main(const int argc,
   try{
 #endif /* __CYGWIN__ */
 
-  registerCallBack("--compiler-flags",[](){compilerflags=true;},
+  registerCallBack("--compiler-flags",[]{compilerflags=true;},
 		   "return tfel recommended compiler flags.");
-  registerCallBack("--oflags0",[](){oflags0=true;},
+  registerCallBack("--oflags0",[]{oflags0=true;},
 		   "return tfel recommended optimisation "
 		   "flags without architecture specific flags.");
-  registerCallBack("--oflags",[](){oflags0=oflags=true;},
+  registerCallBack("--oflags",[]{oflags0=oflags=true;},
 		   "return tfel recommended optimisation "
 		   "flags with architecture specific flags.");
-  registerCallBack("--oflags2",[](){oflags2=true;},
+  registerCallBack("--oflags2",[]{oflags2=true;},
 		   "return some aggressive optimisation flags, "
 		   "possibly at the expense of numerical precision. "
 		   "This shall be added to `--oflags` results.");
-  registerCallBack("--warning",[](){warning=true;},
+  registerCallBack("--warning",[]{warning=true;},
 		   "return tfel recommended warnings.");
-  registerCallBack("--includes",[](){incs=true;},
+  registerCallBack("--includes",[]{incs=true;},
 		   "return tfel include path.");
-  registerCallBack("--cppflags",[](){cppflags=true;},
+  registerCallBack("--cppflags",[]{cppflags=true;},
 		   "return preprocessor flags.");
-  registerCallBack("--ldflags",[](){ldflags=true;},
+  registerCallBack("--ldflags",[]{ldflags=true;},
 		   "return linking flags.");
-  registerCallBack("--libs",[](){ldflags=true;},
+  registerCallBack("--libs",[]{ldflags=true;},
 		   "return linking flags.");
-  registerCallBack("--include-path",[](){incspath=true;},
-		   "return the path to the tfel headers.");
-  registerCallBack("--library-path",[](){libspath=true;},
-		   "return  to the library.");
+  registerCallBack("--include-path",[]{incspath=true;},
+		   "return the path to the `TFEL` headers.");
+  registerCallBack("--library-path",[]{libspath=true;},
+		   "return the path to the `TFEL` library.");
+  registerCallBack("--library-dependency",[]{libsdeps=true;},
+		   "return the dependencies of a `TFEL` library.");
   registerCallBack("--help",&treatHelp
 ,"print this help message.");
 #ifdef HAVE_CASTEM
-  registerCallBack("--castem",&treatCastem
-,"request flags for castem.");
+  registerCallBack("--castem",[]{castem=true;},"request flags for castem.");
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ZMAT
-  registerCallBack("--zmat",&treatZMAT,"request flags for zmat.");
+  registerCallBack("--zmat",[]{zmat=true;},"request flags for zmat.");
 #endif /* HAVE_ZMAT */
-  registerCallBack("--exceptions",&treatExceptions,
+  registerCallBack("--exceptions",[]{exceptions=true;},
 		   "request flags for libTFELException.");
-  registerCallBack("--math-kriging",&treatMathKriging,
-		   "request flags for libTFELMathKriging.");
-  registerCallBack("--math-cubic-spline",&treatMathCubicSpline,
-		   "request flags for libTFELMathCubicSpline.");
-  registerCallBack("--math",&treatMath,
-		   "request flags for libTFELMath.");
-  registerCallBack("--math-parser",&treatMathParser,
-		   "request flags for libTFELMathParser.");
-  registerCallBack("--math-interpreter",&treatMathInterpreter,
-		   "request flags for libTFELMathInterpreter.");
-  registerCallBack("--tests",&treatTests,
-		   "request flags for libTFELTests.");
-  registerCallBack("--system",&treatSystem,
-		   "request flags for libTFELSystem.");
-  registerCallBack("--utilities",&treatUtilities,
-		   "request flags for libTFELUtilities.");
-  registerCallBack("--glossary",&treatGlossary,
-		   "request flags for libTFELGlossary.");
-  registerCallBack("--material",&treatMaterial,
-		   "request flags for libTFELMaterial.");
-  registerCallBack("--numodis",&treatNumodis,
-		   "request flags for libTFELNUMODIS.");
-  registerCallBack("--mfront-profiling",&treatMFrontProfiling,
-		   "request flags for libMFrontProfiling.");
-  registerCallBack("--all",&treatAll,
-		   "request flags for all librairies.");
+  registerCallBack("--math",[]{
+      math       = true;
+      exceptions = true;
+    },"request flags for libTFELMath.");
+  registerCallBack("--math-kriging",[]{
+      exceptions  = true;
+      math        = true;
+      mathKriging = true;
+    },"request flags for libTFELMathKriging.");
+  registerCallBack("--math-cubic-spline",[]{
+        exceptions = true;
+	math       = true;
+	mathCubicSpline = true;
+    },"request flags for libTFELMathCubicSpline.");
+  registerCallBack("--math-parser",[]{
+        exceptions  = true;
+	math        = true;
+	mathKriging = true;
+	mathParser  = true;
+    },"request flags for libTFELMathParser.");
+  registerCallBack("--math-interpreter",[]{
+      exceptions      = true;
+      math            = true;
+      mathKriging     = true;
+      mathParser      = true;
+      mathInterpreter = true;
+    },"request flags for libTFELMathInterpreter.");
+  registerCallBack("--tests",[]{
+      tests  = true;
+    },"request flags for libTFELTests.");
+  registerCallBack("--system",[]{
+      exceptions = true;
+      lsystem    = true;
+    },"request flags for libTFELSystem.");
+  registerCallBack("--utilities",[]{
+      utilities = true;
+    },"request flags for libTFELUtilities.");
+  registerCallBack("--glossary",[]{
+      glossary = true;
+    },"request flags for libTFELGlossary.");
+  registerCallBack("--material",[]{
+      numodis     = true;
+      exceptions  = true;
+      math        = true;
+      utilities   = true;
+      material    = true;
+    },"request flags for libTFELMaterial.");
+  registerCallBack("--numodis",[]{
+      numodis  = true;      
+    },"request flags for libTFELNUMODIS.");
+  registerCallBack("--mfront-profiling",[]{
+      mfront_profiling  = true;      
+    },"request flags for libMFrontProfiling.");
+  registerCallBack("--all",[]{
+      exceptions   = true;
+      math         = true;
+      numodis      = true;
+      material     = true;
+      utilities    = true;
+      glossary     = true;
+      lsystem      = true;
+      tests        = true;
+      mfront_profiling = true;
+    },"request flags for all librairies.");
   registerCallBack("--version",&treatVersion,
 		   "print tfel version and svn revision.");
   registerCallBack("--licence",&treatLicences,
@@ -590,6 +488,10 @@ int main(const int argc,
     listLibraries("-l");
   }
 
+  if(libsdeps){
+    listLibraries("");
+  }
+  
   if(compilerflags){
     std::cout << COMPILER_FLAGS << " " << COMPILER_CXXFLAGS << " ";
   }

@@ -102,8 +102,11 @@ respectively. Those classes have the following template arguments:
 Thanks to operator overloading, the following operations are written
 using standard mathematical notations:
 
-- Addition of two tensors
-- Subtraction of two tensors
+- Addition of two tensors.
+- Subtraction of two tensors.
+- Multiplication of two tensors. Be cautious of the fact that the
+  multiplication of two symmetric tensors results in a non symmetric
+  tensor.
 - Multiplication and division of a tensor by a scalar.
 
 For example, the following code shows how to perform the addition of two tensors `a` and `b`
@@ -128,6 +131,23 @@ const auto c=eval(a+b);
 
 ### In-place operations
 
+Operations like `b=b+a` can be also be written using operator `+=` as
+follows:
+
+~~~~{.cpp}
+b+=a;
+~~~~
+
+The operator `-=` is also available for operations like `b=b-a`.
+
+The operators `*=` and `/=` are also available for inplace
+multiplication or division by a scalar :
+
+~~~~{.cpp}
+// divide tensor a by 2
+a/=2;
+~~~~
+
 ## Symmetrization and unsymmetrization of second order tensors
 
 A non symmetric second order tensor can be symmetrized using the
@@ -136,9 +156,54 @@ A non symmetric second order tensor can be symmetrized using the
 A symmetric second order tensor can be unsymmetrized using the
 `unsyme` function. The result match the `TensorConcept`.
 
+##  Frobenius inner product of second order tensors
+
+The Frobenius inner product \(\tns{a}\,\colon\,\tns{b}\) of two tensors
+\(\tns{a}\) and \(\tns{b}\) is defined by:
+
+\[
+\tns{a}\,\colon\,\tns{b}=\trace{\transpose{\tns{a}}\,\dot\,\tns{b}}=\sum_{i,j}a_{ij}b_{ij}
+\]
+
+This operation is implemented in `TFEL/Math` using the `^` operator,
+as follows:
+
+~~~~{.cpp}
+const auto r = a|b;
+~~~~
+
+The user must be aware that this operator as a low priority in `C++`,
+so one must usually use parenthesis to properly evaluate operations
+involving those operations.
+
 ## Diadic product
 
-## Contracted products of second order tensors
+The diadic product \(\tns{a}\,\otimes\,\tns{b}\) of two tensors
+\(\tns{a}\) and \(\tns{b}\) satisfies, for any tensor \(\tns{c}\):
+
+\[
+\left\{
+\begin{array}
+\,\tns{c}\,\colon\,\paren {\tns{a}\,\otimes\,\tns{b}}=\paren{\tns{c}\,\colon\,\tns{a}}\,\tns{b} \\
+\,\paren {\tns{a}\,\otimes\,\tns{b}}\,\colon\,\tns{c}=\paren{\tns{c}\,\colon\,\tns{b}}\,\tns{a} \\
+\end{array}
+\right.
+\]
+
+The diadic product is implemented in `TFEL/Math` using operator
+`^`. The user must be aware that this operator as a low priority in
+`C++`, so one must usually use parenthesis to properly evaluate
+operations involving diadic products.
+
+~~~~{.cpp}
+dfeel_ddeel += 2.*mu*theta*dp*iseq*(Stensor4::M()-(n^n));
+~~~~
+
+The diadic product of two symmetric tensors results in an object
+matching the `ST2toST2Concept`.
+
+The diadic product of two non symmetric tensors results in an object
+matching the `T2toT2Concept`.
 
 ## Application of a fourth order tensor
 

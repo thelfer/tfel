@@ -49,8 +49,6 @@ namespace std{
 
 static constexpr unsigned short TFEL_MFRONTPLEAIDESPARSER_MAXUSEDVARIABLESFORUSINGAPPLY = 8;
 
-
-
 namespace mfront{
 
   static std::string getDeclaration(const VariableDescription& v)
@@ -73,13 +71,12 @@ namespace mfront{
   static std::string
   getLibraryName(const ModelDescription& md)
   {
-    using namespace std;
-    string a = "@Application@";
+    std::string a = "@Application@";
     if(md.library.empty()){
       if(!md.material.empty()){
-	return "lib"+a+md.material+"Models";
+	return a+md.material+"Models";
       } else {
-	return "lib"+a+"MaterialModels";
+	return a+"MaterialModels";
       }
     }
     return md.library;
@@ -477,7 +474,7 @@ namespace mfront{
       ++i;
     }
     this->headerFile << "std::map<std::string,std::map<std::string,unsigned short> > outputsDepths;\n";
-    this->headerFile << "std::map<std::string,std::map<std::string,boost::shared_ptr<StateVariableDescription> > > outputsInitialValues;\n";
+    this->headerFile << "std::map<std::string,std::map<std::string,std::shared_ptr<StateVariableDescription>>> outputsInitialValues;\n";
     this->headerFile << "std::map<std::string,std::map<std::string,unsigned short> > inputsDepths;\n";
     if(!md.constantMaterialProperties.empty()){
       this->headerFile << "std::map<std::string,std::map<std::string,pleiades::field::real> > constantMaterialProperties;\n";
@@ -565,7 +562,7 @@ namespace mfront{
     this->srcFile << "#include<cmath>\n\n";
     this->srcFile << "#include\"Pleiades/Global.hxx\"\n";
     this->srcFile << "#include\"Pleiades/OutOfBoundsPolicy.hxx\"\n";
-    this->srcFile << "#include\"Pleiades/Parser/Md.hxx\"\n";
+    this->srcFile << "#include\"Pleiades/Parser/Data.hxx\"\n";
     this->srcFile << "#include\"Pleiades/Parser/DataManager.hxx\"\n";
     this->srcFile << "#include\"Pleiades/Glossary/Glossary.hxx\"\n";
     this->srcFile << "#include\"Pleiades/Time/SClock.hxx\"\n";
@@ -852,7 +849,7 @@ namespace mfront{
     this->srcFile << "map<string,Data>::const_iterator ptr;\n";
     this->srcFile << "vector<string>::const_iterator ptr2;\n";
     this->srcFile << "vector<string>::const_iterator ptr3;\n";
-    this->srcFile << "for(ptr=md.begin();ptr!=md.end();++ptr){\n";
+    this->srcFile << "for(ptr=data.begin();ptr!=data.end();++ptr){\n";
     this->srcFile << "if(find(ValidParametersNames,ValidParametersNames+" 
 		  << specializedParametersNumber
 		  << ",ptr->first)==ValidParametersNames+"
@@ -865,8 +862,8 @@ namespace mfront{
     this->srcFile << "ActivableObjectBase::handleSpecialisationData(data);\n";
     for(const auto& p : md.parameters){
       const auto name = getDeclaration(p);
-      this->srcFile << "ptr = md.find(" << name << ");\n";
-      this->srcFile << "if(ptr==md.end()){\n";
+      this->srcFile << "ptr = data.find(" << name << ");\n";
+      this->srcFile << "if(ptr==data.end()){\n";
       if(p.hasAttribute(VariableDescription::defaultValue)){
 	this->writeAssignDefaultValue(p);
       } else {
@@ -884,9 +881,9 @@ namespace mfront{
 		    << this->getGenTypeGetMethod(p.type) << "();\n";
       this->srcFile << "}\n";
     }
-    this->srcFile << "if((md.find(\"domain\")!=md.end())||(md.find(\"domains\")!=md.end())){\n";
-    this->srcFile << "if(md.find(\"domain\")!=md.end()){\n";
-    this->srcFile << "ptr = md.find(\"domain\");\n";
+    this->srcFile << "if((data.find(\"domain\")!=data.end())||(data.find(\"domains\")!=data.end())){\n";
+    this->srcFile << "if(data.find(\"domain\")!=data.end()){\n";
+    this->srcFile << "ptr = data.find(\"domain\");\n";
     this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,ptr->second.get<string>());\n";
     this->srcFile << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n";
     this->srcFile << "if(find(this->domains.begin(),this->domains.end(),*ptr2)!=this->domains.end()){\n";
@@ -897,9 +894,9 @@ namespace mfront{
     this->srcFile << "this->domains.push_back(*ptr2);\n";
     this->srcFile << "}\n";
     this->srcFile << "}\n";
-    this->srcFile << "if(md.find(\"domains\")!=md.end()){\n";
-    this->srcFile << "ptr = md.find(\"domains\");\n";
-    this->srcFile << "if(ptr!=md.end()){\n";
+    this->srcFile << "if(data.find(\"domains\")!=data.end()){\n";
+    this->srcFile << "ptr = data.find(\"domains\");\n";
+    this->srcFile << "if(ptr!=data.end()){\n";
     this->srcFile << "if(!ptr->second.is<vector<string> >()){\n";
     this->srcFile << "string msg(\"" << md.className << "::" << md.className << " : \");\n";
     this->srcFile << "msg += \"invalid type for parameter 'domains'\";\n";
@@ -989,7 +986,7 @@ namespace mfront{
     this->srcFile << "map<string,map<string,unsigned short> >::const_iterator ptr;\n";
     this->srcFile << "map<string,unsigned short>::const_iterator ptr2;\n";
     this->srcFile << "for(ptr=this->inputsDepths.begin();ptr!=this->inputsDepths.end();++ptr){\n";
-    this->srcFile << "const map<string,unsigned auto& tmp = ptr->second;\n";
+    this->srcFile << "auto& tmp = ptr->second;\n";
     this->srcFile << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n";
     this->srcFile << "requirementManager.addRequirement(static_cast<IModel&>(*this),\n";
     this->srcFile << "ptr->first,ptr2->first,\n";
@@ -1010,7 +1007,7 @@ namespace mfront{
     this->srcFile << "map<string,map<string,unsigned short> >::const_iterator ptr;\n";
     this->srcFile << "map<string,unsigned short>::const_iterator ptr2;\n";
     this->srcFile << "for(ptr=this->outputsDepths.begin();ptr!=this->outputsDepths.end();++ptr){\n";
-    this->srcFile << "const map<string,unsigned auto& tmp = ptr->second;\n";
+    this->srcFile << "auto& tmp = ptr->second;\n";
     this->srcFile << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n";
     this->srcFile << "if(this->outputsInitialValues.find(ptr->first)==this->outputsInitialValues.end()){\n";
     this->srcFile << "requirementManager.setRequirementProvider(static_cast<IModel&>(*this),\n"
@@ -1032,7 +1029,6 @@ namespace mfront{
     this->srcFile << md.className << "::initializeOutput(pleiades::coupling::Requirement& requirement)\n";
     this->srcFile << "{\n";
     this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace boost;\n";
     this->srcFile << "using namespace pleiades::glossary;\n";
     this->srcFile << "using namespace pleiades::field;\n";
     this->srcFile << "map<string,map<string,unsigned short> >::const_iterator ptr;\n";
@@ -1072,8 +1068,8 @@ namespace mfront{
 		  << "typedef map<string,string>::value_type MVType;\n"
 		  << "vector<string>::const_iterator ptr;\n"
 		  << "ModelBase::save(directory,saveddata);\n"
-		  << "auto& msaveddata = savedmd.get<DataMap>(this->getName(),true);\n"
-		  << "auto& activestate = msavedmd.get<map<string,string> >(\"ActiveState\",true);\n"
+		  << "auto& msaveddata = saveddata.get<DataMap>(this->getName(),true);\n"
+		  << "auto& activestate = msaveddata.get<map<string,string> >(\"ActiveState\",true);\n"
 		  << "if(this->isActive()){\n" 
 		  << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n"
 		  << "activestate.insert({*ptr,\"true\"});\n"
@@ -1088,23 +1084,23 @@ namespace mfront{
 		  << md.className
 		  << "::restore(const pleiades::time::ptime t,\n"
 		  << "const std::string& directory,\n" 
-		  << "const pleiades::parser::DataMap&saveddata)\n"
+		  << "const pleiades::parser::DataMap& saveddata)\n"
 		  << "{\n"
 		  << "using namespace std;\n"
 		  << "using namespace pleiades::parser;\n"
 		  << "vector<string>::const_iterator ptr;\n"
 		  << "map<string,string>::const_iterator ptr2;\n"
 		  << "ModelBase::restore(t,directory,saveddata);\n"
-		  <<  "if(!savedmd.contains(this->getName())){\n"
+		  <<  "if(!saveddata.contains(this->getName())){\n"
 		  << "return;"
 		  << "}\n"
-		  << "const auto& msaveddata = savedmd.get<DataMap>(this->getName());\n"
-		  << "if(!msavedmd.contains(\"ActiveState\")){\n"
+		  << "const auto& msaveddata = saveddata.get<DataMap>(this->getName());\n"
+		  << "if(!msaveddata.contains(\"ActiveState\")){\n"
 		  << "return;\n"
 		  << "}\n"
 		  << "bool first     = true;\n"
 		  << "bool dactivate = true;\n"
-		  << "const auto& activestate = msavedmd.get<map<string,string> >(\"ActiveState\");\n"
+		  << "const auto& activestate = msaveddata.get<map<string,string> >(\"ActiveState\");\n"
 		  << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n"
 		  << "ptr2 = activestate.find(*ptr);\n"
 		  << "if(ptr2!=activestate.end()){\n"
@@ -1133,7 +1129,6 @@ namespace mfront{
 		  << md.className
 		  << "::execute(){\n";
     this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace boost;\n";
     this->srcFile << "using namespace pleiades;\n";
     this->srcFile << "using namespace pleiades::time;\n";
     this->srcFile << "using namespace pleiades::mesh;\n";
@@ -1357,12 +1352,12 @@ namespace mfront{
 	const auto& en = getDeclaration(v);
 	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	// getting material description
-	this->srcFile << "if(!md.hasMaterialDescription(*ptr)){\n";
+	this->srcFile << "if(!data.hasMaterialDescription(*ptr)){\n";
 	this->srcFile << "string msg(\"" << md.className << "::initializeConstantMaterialProperties : \");\n";
 	this->srcFile << "msg += \"no material description  on material '\"+*ptr+\"'\";\n";
 	this->srcFile << "throw(runtime_error(msg));\n";
 	this->srcFile << "}\n";
-	this->srcFile << "const MaterialDescription& md = *(md.getMaterialDescription(*ptr));\n";
+	this->srcFile << "const auto& md = *(data.getMaterialDescription(*ptr));\n";
 	this->srcFile << "if(md.containsMaterialProperty(" << en << ")){\n";
 	this->srcFile << "if(!md.isMaterialPropertyAccesible(" << en << ")){\n";
 	this->srcFile << "string msg(\"" << md.className << "::initializeConstantMaterialProperties : \");\n";
@@ -1409,12 +1404,10 @@ namespace mfront{
 		  << "::initializeOutputsVariablesInitialValues(" 
 		  << "const pleiades::parser::DataManager& data)\n{\n";
     this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace boost;\n";
     this->srcFile << "using namespace pleiades::glossary;\n";
     this->srcFile << "using namespace pleiades::field;\n";
     this->srcFile << "using std::shared_ptr;\n";
     this->srcFile << "typedef UniformScalarStateVariableDescription USSVD;\n";
-    this->srcFile << "typedef std::shared_ptr<USSVD> USSVDPtr;\n";
     this->srcFile << "vector<string>::const_iterator ptr;\n";
     for(const auto& f : md.functions){
       for(const auto& mv : f.modifiedVariables){
@@ -1425,10 +1418,10 @@ namespace mfront{
 	// getting material description
 	if(v.hasAttribute(VariableDescription::initialValue)){
 	  const auto iv = v.getAttribute<double>(VariableDescription::initialValue);
-	  this->srcFile << "if(md.hasMaterialDescription(*ptr)){\n";
-	  this->srcFile << "const MaterialDescription& md = *(md.getMaterialDescription(*ptr));\n";
+	  this->srcFile << "if(data.hasMaterialDescription(*ptr)){\n";
+	  this->srcFile << "const auto& md = *(data.getMaterialDescription(*ptr));\n";
 	  this->srcFile << "if(md.containsStateVariable(" <<  en << ")){\n";
-	  this->srcFile << "shared_ptr<StateVariableDescription> tmp = md.getStateVariable("<<  en << ");\n";
+	  this->srcFile << "auto tmp = md.getStateVariable("<<  en << ");\n";
 	  this->srcFile << "if(!this->outputsInitialValues[" << en
 			<< "].insert({*ptr,tmp}).second){\n";
 	  this->srcFile << "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n";
@@ -1462,7 +1455,7 @@ namespace mfront{
 	  this->srcFile << "}\n";
 	  this->srcFile << "}\n";
 	} else {
-	  this->srcFile << "if(!md.hasMaterialDescription(*ptr)){\n";
+	  this->srcFile << "if(!data.hasMaterialDescription(*ptr)){\n";
 	  this->srcFile << "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n";
 	  this->srcFile << "msg += \"no material description  on material '\"+*ptr+\"', \";\n";
 	  this->srcFile << "msg += \"required to initialize output value '\";\n";
@@ -1470,9 +1463,9 @@ namespace mfront{
 	  this->srcFile << "msg += '\\\'';\n";
 	  this->srcFile << "throw(runtime_error(msg));\n";
 	  this->srcFile << "}\n";
-	  this->srcFile << "const MaterialDescription& md = *(md.getMaterialDescription(*ptr));\n";
+	  this->srcFile << "const auto& md = *(data.getMaterialDescription(*ptr));\n";
 	  this->srcFile << "if(md.containsStateVariable(" <<  en << ")){\n";
-	  this->srcFile << "shared_ptr<StateVariableDescription> tmp = md.getStateVariable("<< en << ");\n";
+	  this->srcFile << "auto tmp = md.getStateVariable("<< en << ");\n";
 	  this->srcFile << "if(!this->outputsInitialValues[" << en
 			<< "].insert({*ptr,tmp}).second){\n";
 	  this->srcFile << "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n";
@@ -1521,7 +1514,7 @@ namespace mfront{
 					 "in function '"+f.name+"'"));
 	      }
 	      this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
-	      this->srcFile << "map<string,unsigned auto& tmp = this->inputsDepths[" << en << "];\n";
+	      this->srcFile << "auto& tmp = this->inputsDepths[" << en << "];\n";
 	      if(p3->second==0){
 		this->srcFile << "if(tmp.find(*ptr)==tmp.end()){\n";
 		this->srcFile << "tmp[*ptr]=0;\n";
@@ -1656,13 +1649,12 @@ namespace mfront{
     const auto lib = getLibraryName(md);
     td[lib].sources.push_back(md.className+"-@application@.cxx");
     td.headers.push_back("Pleiades/Model/"+md.className+"-@application@.hxx");
-    td[lib].cppflags.push_back("`@application@-config --includes`\n");
+    td[lib].cppflags.push_back("`@application@-config --includes`");
     td[lib].ldflags.push_back("`@application@-config --libs` -lm");
     td[lib].epts.push_back(md.className);
   } // end of MFrontModelInterface::getTargetsDescription
 
-  MFrontModelInterface::~MFrontModelInterface()
-  {} // end of MFrontModelInterface::~MFrontModelInterface
+  MFrontModelInterface::~MFrontModelInterface() = default;
 
   ModelInterfaceProxy<MFrontModelInterface>      ModelProxy;
   

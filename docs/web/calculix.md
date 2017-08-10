@@ -1,5 +1,5 @@
 % How to use `MFront` in `CalculiX`
-% Thomas Helfer
+% Thomas Helfer, Rafal Brzegowy
 % 2/02/2017
 
 ![](img/CalculiX_MFRONT_WSL.png "")
@@ -342,5 +342,48 @@ behaviour is called in a finite strain resolution. This information is
 not available in `CalculiX` 2.12. See the
 `SaintVenantKirchhoffElasticity` example for details of how to
 circumvent this issue.
+
+# Benchmarks
+
+## Small strain
+
+![](img/CalculiXBenchmarkSmallStrain.png "")
+
+This example describes an tensile test on an AE specimen using an
+[isotropic linear hardening plasticity behaviour](gallery/plasticity/IsotropicLinearKinematicHardeningPlasticity.mfront)
+depicted on the previous figure.
+
+CPU times between the native implementation and the MFront
+implementation (using the `CalculiX` interface) are reported in the
+following table:
+
+|       | `CalculiX` | `MFront`  |
+|-------|------------|-----------|
+|real	| 7m43.588s  | 8m6.849s  |
+|user	| 7m40.572s  | 7m59.904s |
+|sys	| 0m4.180s   | 0m6.676s  |
+
+Those figures shows that using the `MFront` implementation is
+\(4.9\%\) slower. Using the `callgrind` profiling tool of `valgrind`
+framework, one can see that more time is spend in looking for function
+`calculix_searchExternalBehaviours` than in the behaviour integration:
+\(2.65\%\) of the time vs \(1.66\%\) !
+
+This is du to the mostly non intrusive way of introducing external
+behaviours in `CalculiX`. This additional cost could totally disapear
+with a more clever and intrusive development.
+
+If those 2.65% are removed from the total computational time, the
+`MFront` only causes to a \(2.3\%\) slow down, which is
+acceptable.
+
+This slow down could be du to the fact that the `MFront` behaviours
+update the elastic strain and recomputes the stress (it does not
+simply update it by adding an increment, as this is done in most
+implementation). Using the elastic strain is mandatory to handle
+properly material properties changing with temperature and thermal
+expansion.
+
+# References
 
 <!-- Local IspellDict: english -->
