@@ -670,7 +670,8 @@ namespace mfront{
 #else /* WIN32 */
     const std::string tfel_config = "tfel-config";
 #endif /* WIN32 */
-    insert_if(d[lib].cppflags,"$(shell "+tfel_config+" --includes)");
+    insert_if(d[lib].cppflags,
+	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
 #if ASTER_ARCH == 64
     insert_if(d[lib].cppflags,"-DASTER_ARCH=64");
 #elif ASTER_ARCH == 32
@@ -678,13 +679,19 @@ namespace mfront{
 #else
 #error "AsterInterface::getGlobalIncludes : unsuported architecture"
 #endif
+    insert_if(d[lib].include_directories,
+	      "$(shell "+tfel_config+" --include-path)");
     insert_if(d[lib].sources,"aster"+name+".cxx");
     d.headers.push_back("MFront/Aster/aster"+name+".hxx");
-    insert_if(d[lib].ldflags,"-lAsterInterface");
+    insert_if(d[lib].link_libraries,"AsterInterface");
     if(this->generateMTestFile){
-      insert_if(d[lib].ldflags,"-lMTestFileGenerator");
+      insert_if(d[lib].link_libraries,"MTestFileGenerator");
     }
-    insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
+    insert_if(d[lib].link_directories,
+	      "$(shell "+tfel_config+" --library-path)");
+    insert_if(d[lib].link_libraries,
+	      "$(shell "+tfel_config+" --library-dependency "
+	      "--material --mfront-profiling)");
     // insert_if(d[lib].epts,name);
     insert_if(d[lib].epts,this->getFunctionName(name));
   } // end of AsterInterface::getTargetsDescription

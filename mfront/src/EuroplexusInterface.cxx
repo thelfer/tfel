@@ -756,14 +756,20 @@ namespace mfront{
 #else /* WIN32 */
     const std::string tfel_config = "tfel-config";
 #endif /* WIN32 */
-    insert_if(d[lib].cppflags,"$(shell "+tfel_config+" --includes)");
+    insert_if(d[lib].cppflags,
+	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
+    insert_if(d[lib].include_directories,
+	      "$(shell "+tfel_config+" --include-path)");
     insert_if(d[lib].sources,"epx"+name+".cxx");
     d.headers.push_back("MFront/Europlexus/europlexus"+name+".hxx");
-    insert_if(d[lib].ldflags,"-lEuroplexusInterface");
+    insert_if(d[lib].link_directories,"$(shell "+tfel_config+" --library-path)");
+    insert_if(d[lib].link_libraries,"EuroplexusInterface");
     if(this->generateMTestFile){
-      insert_if(d[lib].ldflags,"-lMTestFileGenerator");
+      insert_if(d[lib].link_libraries,"MTestFileGenerator");
     }
-    insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
+    insert_if(d[lib].link_libraries,
+	      "$(shell "+tfel_config+" --library-dependency "
+	      "--material --mfront-profiling)");
     // insert_if(d[lib].epts,name);
     insert_if(d[lib].epts,this->getFunctionName(name));
   } // end of EuroplexusInterface::getTargetsDescription

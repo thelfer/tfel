@@ -56,7 +56,10 @@ namespace mfront{
     }
     insert_if(d.sources,s.sources);
     insert_if(d.cppflags,s.cppflags);
+    insert_if(d.include_directories,s.include_directories);
     insert_if(d.ldflags,s.ldflags);
+    insert_if(d.link_directories,s.link_directories);
+    insert_if(d.link_libraries,s.link_libraries);
     insert_if(d.epts,s.epts);
     insert_if(d.deps,s.deps);
   } // end of mergeLibraryDescription
@@ -149,7 +152,10 @@ namespace mfront{
     os << "suffix : \"" << l.suffix << "\";\n";
     write(os,l.sources,"sources");
     write(os,l.cppflags,"cppflags");
+    write(os,l.include_directories,"include_directories");
     write(os,l.ldflags,"ldflags");
+    write(os,l.link_directories,"link_directories");
+    write(os,l.link_libraries,"link_libraries");
     write(os,l.epts,"epts");
     write(os,l.deps,"deps");
     os << "};\n";    
@@ -186,7 +192,10 @@ namespace mfront{
     auto suffix   = std::string{};
     auto sources  = std::vector<std::string>{};
     auto cppflags = std::vector<std::string>{};
+    auto include_directories = std::vector<std::string>{};
     auto ldflags  = std::vector<std::string>{};
+    auto link_directories = std::vector<std::string>{};
+    auto link_libraries   = std::vector<std::string>{};
     auto epts     = std::vector<std::string>{};
     auto deps     = std::vector<std::string>{};
     // parsing 
@@ -242,9 +251,18 @@ namespace mfront{
       } else if(c->value=="cppflags"){
 	++c;
 	get_vector(cppflags,c,pe,"cppflags");
+      } else if(c->value=="include_directories"){
+	++c;
+	get_vector(include_directories,c,pe,"include_directories");
       } else if(c->value=="ldflags"){
 	++c;
 	get_vector(ldflags,c,pe,"ldflags");
+      } else if(c->value=="link_directories"){
+	++c;
+	get_vector(link_directories,c,pe,"link_directories");
+      } else if(c->value=="link_libraries"){
+	++c;
+	get_vector(link_libraries,c,pe,"link_libraries");
       } else if(c->value=="epts"){
 	++c;
 	get_vector(epts,c,pe,"epts");
@@ -262,7 +280,10 @@ namespace mfront{
     LibraryDescription l{name,prefix,suffix,type};
     std::swap(l.sources,sources);
     std::swap(l.cppflags,cppflags);
+        std::swap(l.include_directories,include_directories);
     std::swap(l.ldflags,ldflags);
+    std::swap(l.link_directories,link_directories);
+    std::swap(l.link_libraries,link_libraries);
     std::swap(l.epts,epts);
     std::swap(l.deps,deps);
     p = c;

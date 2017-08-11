@@ -53,11 +53,18 @@ namespace mfront
     const auto  name = this->getSrcFileName(mpd.material,mpd.className);
     const auto f = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
     const auto header = this->getHeaderFileName(mpd.material,mpd.className);
-    insert_if(d[lib].ldflags,"-lm");
-    insert_if(d[lib].sources,name+".cxx");
+#ifdef _WIN32
+    const std::string tfel_config = "tfel-config.exe";
+#else /* WIN32 */
+    const std::string tfel_config = "tfel-config";
+#endif /* WIN32 */
+    insert_if(d[lib].cppflags,
+	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
     if(!header.empty()){
       insert_if(d.headers,header+".hxx");
     }
+    insert_if(d[lib].sources,name+".cxx");
+    insert_if(d[lib].link_libraries,"m");
     insert_if(d[lib].epts,{f,f+"_checkBounds"});
   } // end of MFrontMaterialPropertyInterface::getTargetsDescription
 

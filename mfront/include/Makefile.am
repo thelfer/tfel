@@ -6,6 +6,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                               \
 			MFront/MFrontUtilities.hxx                      \
 			MFront/MFrontUtilities.ixx                      \
 			MFront/GeneratorOptions.hxx                     \
+			MFront/CMakeGenerator.hxx                       \
 			MFront/MakefileGenerator.hxx                    \
 			MFront/CodeBlock.hxx                            \
 			MFront/MFrontConfig.hxx	                        \

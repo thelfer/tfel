@@ -1126,7 +1126,8 @@ namespace mfront{
 #else /* WIN32 */
     const std::string tfel_config = "tfel-config";
 #endif /* WIN32 */
-    insert_if(d[lib].cppflags,"$(shell "+tfel_config+" --includes)");
+    insert_if(d[lib].cppflags,
+	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
 #ifdef CASTEM_CPPFLAGS
     insert_if(d[lib].cppflags,CASTEM_CPPFLAGS);
 #endif /* CASTEM_CPPFLAGS */
@@ -1144,13 +1145,18 @@ namespace mfront{
     }
 #endif /* CASTEM_ROOT */
 #endif /* LOCAL_CASTEM_HEADER_FILE */
+    insert_if(d[lib].include_directories,
+	      "$(shell "+tfel_config+" --include-path)");
     insert_if(d[lib].sources,"umat"+name+".cxx");    
     insert_if(d.headers,"MFront/Castem/umat"+name+".hxx");
-    insert_if(d[lib].ldflags,"-lCastemInterface");
+    insert_if(d[lib].link_directories,"$(shell "+tfel_config+" --library-path)");
+    insert_if(d[lib].link_libraries,"CastemInterface");
     if(this->generateMTestFile){
-      insert_if(d[lib].ldflags,"-lMTestFileGenerator");
+      insert_if(d[lib].link_libraries,"MTestFileGenerator");
     }
-    insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
+    insert_if(d[lib].link_libraries,
+	      "$(shell "+tfel_config+" --library-dependency "
+	      "--material --mfront-profiling)");
     // entry points
     auto b = std::vector<std::string>{};
     const auto base = this->getUmatFunctionName(bd);

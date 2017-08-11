@@ -32,6 +32,21 @@
 using FuncPtr = void (*)();
 using CallBacksContainer = std::map<std::string,std::pair<FuncPtr,std::string>>;
 
+static std::vector<std::string>
+tokenize(const std::string& s,const char c)
+{
+  auto res = std::vector<std::string>{};
+  std::string::size_type b = 0u;
+  std::string::size_type e = s.find_first_of(c, b);
+  while (std::string::npos != e || std::string::npos != b){
+    // Found a token, add it to the vector.
+    res.push_back(s.substr(b, e - b));
+    b = s.find_first_not_of(c, e);
+    e = s.find_first_of(c, b);
+  }
+  return res;
+} // end of tokenize
+
 static std::string handleSpace(const std::string& p)
 {
   if(find(p.begin(),p.end(),' ')!=p.end()){
@@ -99,8 +114,7 @@ static bool zmat          = false;
 static bool lsystem         = false;
 
 #if defined _WIN32 || defined _WIN64
-static bool
-getValueInRegistry(std::string &value)
+static bool getValueInRegistry(std::string &value)
 {
   using namespace std;
   HKEY  hKey;
@@ -251,50 +265,26 @@ TFEL_NORETURN static void treatLicences()
 
 static void listLibraries(const char* p)
 {
-  if(mfront_profiling){
-    std::cout << p << "MFrontProfiling ";
-  }
-  if(material){
-    std::cout << p << "TFELMaterial ";
-  }
-  if(mathInterpreter){
-    std::cout << p << "TFELMathInterpreter ";
-  }
-  if(mathParser){
-    std::cout << p << "TFELMathParser ";
-  }
-  if(mathCubicSpline){
-    std::cout << p << "TFELMathCubicSpline ";
-  }
-  if(mathKriging){
-    std::cout << p << "TFELMathKriging ";
-  }
-  if(math){
-    std::cout << p << "TFELMath ";
-  }
-  if(lsystem){
-    std::cout << p << "TFELSystem ";
-  }
-  if(utilities){
-    std::cout << p << "TFELUtilities ";
-  }
-  if(glossary){
-    std::cout << p << "TFELGlossary ";
-  }
-  if(exceptions){
-    std::cout << p << "TFELException ";
-  }
-  if(numodis){
-    std::cout << p << "TFELNUMODIS ";
-  }
-  if(tests){
-    std::cout << p << "TFELTests ";
-  }
+  auto display_if = [&p](const bool b, const char* s){
+    if(b){std::cout << p << s << ' ';}
+  };
+  display_if(mfront_profiling,"MFrontProfiling");
+  display_if(material,"TFELMaterial");
+  display_if(mathInterpreter,"TFELMathInterpreter");
+  display_if(mathParser,"TFELMathParser");
+  display_if(mathCubicSpline,"TFELMathCubicSpline");
+  display_if(mathKriging,"TFELMathKriging");
+  display_if(math,"TFELMath");
+  display_if(lsystem,"TFELSystem");
+  display_if(utilities,"TFELUtilities");
+  display_if(glossary,"TFELGlossary");
+  display_if(exceptions,"TFELException");
+  display_if(numodis,"TFELNUMODIS");
+  display_if(tests,"TFELTests");
 }
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(const int argc,
-	 const char *const *const argv)
+int main(const int argc,const char *const *const argv)
 {
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   try{
@@ -339,38 +329,27 @@ int main(const int argc,
   registerCallBack("--exceptions",[]{exceptions=true;},
 		   "request flags for libTFELException.");
   registerCallBack("--math",[]{
-      math       = true;
-      exceptions = true;
+      math =exceptions = true;
     },"request flags for libTFELMath.");
   registerCallBack("--math-kriging",[]{
-      exceptions  = true;
-      math        = true;
-      mathKriging = true;
+      mathKriging = math = exceptions  = true;
     },"request flags for libTFELMathKriging.");
   registerCallBack("--math-cubic-spline",[]{
-        exceptions = true;
-	math       = true;
-	mathCubicSpline = true;
+	mathCubicSpline = math = exceptions = true;
     },"request flags for libTFELMathCubicSpline.");
   registerCallBack("--math-parser",[]{
-        exceptions  = true;
-	math        = true;
-	mathKriging = true;
-	mathParser  = true;
+      math = exceptions  = true;
+      mathParser = mathKriging = true; 
     },"request flags for libTFELMathParser.");
   registerCallBack("--math-interpreter",[]{
-      exceptions      = true;
-      math            = true;
-      mathKriging     = true;
-      mathParser      = true;
-      mathInterpreter = true;
+      math = exceptions  = true;
+      mathInterpreter = mathParser = mathKriging = true; 
     },"request flags for libTFELMathInterpreter.");
   registerCallBack("--tests",[]{
       tests  = true;
     },"request flags for libTFELTests.");
   registerCallBack("--system",[]{
-      exceptions = true;
-      lsystem    = true;
+      lsystem = exceptions = true;
     },"request flags for libTFELSystem.");
   registerCallBack("--utilities",[]{
       utilities = true;
@@ -379,11 +358,8 @@ int main(const int argc,
       glossary = true;
     },"request flags for libTFELGlossary.");
   registerCallBack("--material",[]{
-      numodis     = true;
-      exceptions  = true;
-      math        = true;
-      utilities   = true;
-      material    = true;
+      exceptions = numodis = true;
+      material = utilities = math = true;
     },"request flags for libTFELMaterial.");
   registerCallBack("--numodis",[]{
       numodis  = true;      
@@ -392,18 +368,30 @@ int main(const int argc,
       mfront_profiling  = true;      
     },"request flags for libMFrontProfiling.");
   registerCallBack("--all",[]{
-      exceptions   = true;
-      math         = true;
-      numodis      = true;
-      material     = true;
-      utilities    = true;
-      glossary     = true;
-      lsystem      = true;
-      tests        = true;
+      exceptions = math     = numodis = material = true;
+      utilities  = glossary = lsystem = tests = true;
       mfront_profiling = true;
     },"request flags for all librairies.");
   registerCallBack("--version",&treatVersion,
 		   "print tfel version and svn revision.");
+  registerCallBack("--major-version",[]{
+      const auto v = tokenize(VERSION,'.');
+      if(v.size()>=1){
+	std::cout << v[0] << " ";
+      }
+    },"print tfel major version.");
+  registerCallBack("--minor-version",[]{
+      const auto v = tokenize(VERSION,'.');
+      if(v.size()>=2){
+	std::cout << v[1] << " ";
+      }
+    },"print tfel minor version.");
+  registerCallBack("--revision-version",[]{
+      const auto v = tokenize(VERSION,'.');
+      if(v.size()>=3){
+	std::cout << v[2] << " ";
+      }
+    },"print tfel revision version.");
   registerCallBack("--licence",&treatLicences,
 		   "print tfel licences.");
 
@@ -448,7 +436,7 @@ int main(const int argc,
     if(!incs){
       std::cout << CASTEMFLAGS1 << " ";
     }
-    const char * const castempath = getenv("CASTEM_ROOT");
+    const auto castempath = getenv("CASTEM_ROOT");
     if(castempath!=nullptr){
       std::cout << "-I" << castempath << "/include ";
     } else {

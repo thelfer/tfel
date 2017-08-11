@@ -97,12 +97,18 @@ namespace mfront{
     std::vector<std::string> sources;
     //! additional preprocessor flags
     std::vector<std::string> cppflags;
+    //! path to the libraries to be linked
+    std::vector<std::string> include_directories;
+    //! path to the libraries to be linked
+    std::vector<std::string> link_directories;
+    //! libraries to be linked
+    std::vector<std::string> link_libraries;
+    //! dependencies to other generated libraries
+    std::vector<std::string> deps;
     //! the linker flags
     std::vector<std::string> ldflags;
     //! generated entry points
     std::vector<std::string> epts;
-    //! dependencies to other generated libraries
-    std::vector<std::string> deps;
   }; // end of struct LibraryDescription
 
   /*!

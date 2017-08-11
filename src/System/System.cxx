@@ -561,8 +561,7 @@ namespace tfel
       out.close();
     } // end of systemCall::copyFile
     
-    std::string
-    systemCall::getCurrentWorkingDirectory()
+    std::string systemCall::getCurrentWorkingDirectory()
     {
       using namespace std;
       char *name  = nullptr;
@@ -593,8 +592,7 @@ namespace tfel
     } // end of systemCall::getCurrentWorkingDirectory
 
 #if !(defined _WIN32 || defined _WIN64 )
-    std::string
-    systemCall::getHostName()
+    std::string systemCall::getHostName()
     {
       using namespace std;
       char *name  = nullptr;
@@ -620,28 +618,23 @@ namespace tfel
       return res;
     } // end of systemCall::getHostName
 
-    std::string
-    systemCall::getUserName()
+    std::string systemCall::getUserName()
     {
-      const char * const l = ::getlogin();
-      if(l!=nullptr){
-	return l;
-      }
-      return "";
+      const auto l = ::getlogin();
+      return l!=nullptr ? l : "";
     } // end of systemCall::getUserName
 #endif /* !(defined _WIN32 || defined _WIN64 ) */
 
     void
     systemCall::changeCurrentWorkingDirectory(const std::string& name)
     {
-      using namespace std;
 #if defined _WIN32 || defined _WIN64 
-	  if(_chdir(name.c_str())==-1){
+      if(_chdir(name.c_str())==-1){
 #else
-	  if (::chdir(name.c_str()) == -1) {
+      if (::chdir(name.c_str()) == -1) {
 #endif
-	systemCall::throwSystemError("systemCall::changeCurrentWorkingDirectory : "
-				     "can't change to directory "+name+".",errno);
+      systemCall::throwSystemError("systemCall::changeCurrentWorkingDirectory : "
+				   "can't change to directory "+name+".",errno);
       }
     } // end of systemCall::changeCurrentWorkingDirectory
 

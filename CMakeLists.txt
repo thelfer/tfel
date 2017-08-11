@@ -78,6 +78,7 @@ execute_process(COMMAND svnversion
 		OUTPUT_STRIP_TRAILING_WHITESPACE)
 endif(NOT TFEL_SVN_REVISION)
 add_definitions("-DTFEL_SVN_REVISION=\\\"\"${TFEL_SVN_REVISION}\"\\\"")
+add_definitions("-DTFEL_CMAKE_GENERATOR=\\\"\"${CMAKE_GENERATOR}\"\\\"")
 
 # testing
 set(CTEST_CONFIGURATION_TYPE "${JOB_BUILD_CONFIGURATION}")

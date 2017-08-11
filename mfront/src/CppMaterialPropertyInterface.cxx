@@ -64,9 +64,16 @@ namespace mfront
     {
       const auto lib  = "Cpp"+getMaterialLawLibraryNameBase(mpd);
       const auto name = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
-      insert_if(d[lib].ldflags,"-lm");
+#ifdef _WIN32
+    const std::string tfel_config = "tfel-config.exe";
+#else /* WIN32 */
+    const std::string tfel_config = "tfel-config";
+#endif /* WIN32 */
+      insert_if(d[lib].cppflags,
+		"$(shell "+tfel_config+" --cppflags --compiler-flags)");
       insert_if(d[lib].sources,name+"-cxx.cxx");
       insert_if(d.headers,getHeaderFileName(name));
+      insert_if(d[lib].link_libraries,"m");
       auto cn = std::string{};
 #pragma message("handle namespace")
       // for(const auto& ns : this->namespaces){

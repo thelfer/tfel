@@ -75,9 +75,16 @@ namespace mfront
   {
     const auto lib = "Castem"+getMaterialLawLibraryNameBase(mpd);
     const auto name    = this->getCastemFunctionName(mpd);
-    insert_if(d[lib].ldflags,"-lm");
+#ifdef _WIN32
+    const std::string tfel_config = "tfel-config.exe";
+#else /* WIN32 */
+    const std::string tfel_config = "tfel-config";
+#endif /* WIN32 */
     insert_if(d[lib].cppflags,CASTEM_CPPFLAGS);
+    insert_if(d[lib].cppflags,
+	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
     insert_if(d[lib].sources,this->getSourceFileName(name));
+    insert_if(d[lib].link_libraries,"m");
     d.headers.push_back("include/"+this->getHeaderFileName(name));    
     insert_if(d[lib].epts,name);
   } // end of CastemMaterialPropertyInterface::getTargetsDescription

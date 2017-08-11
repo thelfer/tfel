@@ -78,6 +78,11 @@ namespace mfront
     const auto lib = makeLowerCase(getMaterialLawLibraryNameBase(mpd));
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto headerFileName  = "include/"+name+"-python.hxx";
+#ifdef _WIN32
+    const std::string tfel_config = "tfel-config.exe";
+#else /* WIN32 */
+    const std::string tfel_config = "tfel-config";
+#endif /* WIN32 */
     auto src = std::string{};
     if(mpd.library.empty()){
       if(!mpd.material.empty()){
@@ -89,9 +94,11 @@ namespace mfront
       src = mpd.library+"wrapper.cxx";
     }
     auto& l = d(lib,"");
-    insert_if(l.ldflags,"-lm");    
-    insert_if(l.ldflags,TFEL_PYTHON_LIBS);
     insert_if(l.cppflags,TFEL_PYTHON_INCLUDES);
+    insert_if(l.cppflags,
+	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
+    insert_if(l.link_libraries,"m");    
+    insert_if(l.ldflags,TFEL_PYTHON_LIBS);
     insert_if(l.sources,name+"-python.cxx");
     insert_if(l.sources,src);
     insert_if(l.epts,name);

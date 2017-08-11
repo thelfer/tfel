@@ -421,8 +421,6 @@ defined in the `TFEL/Math/General/IEEE754.hxx` header file in the
 
 ### The `SlipSystemsDescription` class
 
-
-
 # New functionalities of the `MFront` code generator
 
 ## Gallery
@@ -458,6 +456,57 @@ kinematic hardenings following an Armstrong-Frederic evolution of the
 back stress:
 
 <http://tfel.sourceforge.net/isotropicplasticityamstrongfrederickinematichardening.html>
+
+## `cmake` Generator
+
+For `Visual Studio` users, who do not have access to the `GNU` `make`
+utility, a `cmake` generator was introduced.
+
+This generator is the default with `Visual Studio`. In other
+development environment, the default generator is the `Makefile`
+generator.
+
+One can switch from a generator to another using the `--generator`
+(`-G`) option of `mfront`, as follows:
+
+~~~~{.bash}
+$ mfront -G cmake --obuild --interface=python YoungModulusTest.mfront
+~~~~
+
+In this case, `MFront` will perform the following operations:
+
+- Generate the sources of the python module.
+- Generate a `CMakeLists.txt` file in the `src` directory.
+- Configure the `src` directory using `cmake`.
+- Build the python module using `cmake`.
+
+The output of the previous command is, on `LinuX`:
+
+~~~~{.bash}
+Treating target : all
+-- The C compiler identification is GNU 4.9.2
+-- The CXX compiler identification is GNU 4.9.2
+-- Check for working C compiler: /usr/bin/cc
+-- Check for working C compiler: /usr/bin/cc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- tfel-config         : /home/th202608/codes/tfel/trunk/install/bin/tfel-config
+-- tfel oflags         : -fvisibility-inlines-hidden;-fvisibility=hidden;-fno-fast-math;-DNO_RUNTIME_CHECK_BOUNDS;-O2;-DNDEBUG;-ftree-vectorize;-march=native
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /tmp/src
+Scanning dependencies of target materiallaw
+[ 50%] Building CXX object CMakeFiles/materiallaw.dir/YoungModulusTest-python.o
+[100%] Building CXX object CMakeFiles/materiallaw.dir/materiallawwrapper.o
+Linking CXX shared library libmateriallaw.so
+[100%] Built target materiallaw
+The following library has been built :
+- materiallaw.so :  YoungModulusTest
+~~~~
 
 ## Behaviours interfaces
 
@@ -744,6 +793,9 @@ systems, such as `cmake`:
 - `--library-path`: returns the path the `TFEL` libraries.
 - `--library-dependency`: returns the list of dependencies of a `TFEL`
   library. The given library is included in the list.
+- `--major-version`: returns the major version of `TFEL`
+- `--minor-version`: returns the minor version of `TFEL`
+- `--revision-version`: returns the revision version of `TFEL`
 
 ~~~~{.bash}
 $ tfel-config --library-dependency --material

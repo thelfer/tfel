@@ -126,9 +126,16 @@ namespace mfront
   {
     const auto lib = getMaterialLawLibraryNameBase(mpd)+"-java";
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
-    insert_if(d[lib].ldflags,"-lm");    
+#ifdef _WIN32
+    const std::string tfel_config = "tfel-config.exe";
+#else /* WIN32 */
+    const std::string tfel_config = "tfel-config";
+#endif /* WIN32 */
+    insert_if(d[lib].link_libraries,"m");    
     // the jni part
     insert_if(d[lib].cppflags,TFEL_JAVA_INCLUDES);
+    insert_if(d[lib].cppflags,
+	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
     insert_if(d[lib].sources,name+"-java.cxx");
     if(this->package.empty()){
       insert_if(d[lib].epts,getJavaClassName(mpd)+"."+mpd.law);

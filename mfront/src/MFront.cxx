@@ -41,12 +41,9 @@
 #include"MFront/MFrontLock.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/MFrontUtilities.hxx"
-
-#include"MFront/MFront.hxx"
-
-#ifdef MFRONT_MAKE_SUPPORT  
+#include"MFront/CMakeGenerator.hxx"
 #include"MFront/MakefileGenerator.hxx"
-#endif /* MFRONT_MAKE_SUPPORT */
+#include"MFront/MFront.hxx"
 
 namespace mfront{
 
@@ -74,14 +71,12 @@ namespace mfront{
     return "";
   }
 
-  std::string 
-  MFront::getVersionDescription() const
+  std::string MFront::getVersionDescription() const
   {
     return MFrontHeader::getHeader();
   }
 
-  std::string 
-  MFront::getUsageDescription() const
+  std::string MFront::getUsageDescription() const
   {
     return "Usage: "+this->programName+" [options] [files]";
   }
@@ -92,12 +87,10 @@ namespace mfront{
     return *(this->currentArgument);
   }
 
-  void
-  MFront::doNothing()
+  void MFront::doNothing()
   {} // end of MFront::doNothing
   
-  void
-  MFront::treatUnknownArgument()
+  void MFront::treatUnknownArgument()
   {
     if(!MFrontBase::treatUnknownArgumentBase()){
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
@@ -111,7 +104,19 @@ namespace mfront{
     }
   } // end of MFront::treatUnknownArgument()
 
-#ifdef MFRONT_MAKE_SUPPORT  
+  void MFront::treatGenerator()
+  {
+    const auto g = this->currentArgument->getOption();
+    if(g=="make"){
+      this->generator=MAKE;
+    } else if(g=="cmake"){
+      this->generator=CMAKE;
+    } else {
+      throw(std::runtime_error("MFront::treatGenerator: "
+			       "unsupported generator '"+g+"'"));
+    }
+  } // end of MFront::treatGenerator
+  
   void MFront::treatMake()
   {
     this->genMake = true;
@@ -172,8 +177,6 @@ namespace mfront{
     }
   } // end of MFront::treatOBuild
 
-#endif /* MFRONT_MAKE_SUPPORT */
-  
   void MFront::treatListParsers()
   {
     std::cout << "available dsl: \n";
@@ -211,8 +214,6 @@ namespace mfront{
   } // end of MFront::treatSilentBuild
 
   
-#ifdef MFRONT_MAKE_SUPPORT
-  
   void MFront::treatTarget()
   {
     using tfel::utilities::tokenize;
@@ -237,8 +238,6 @@ namespace mfront{
     this->opts.olevel = GeneratorOptions::LEVEL1;
     this->treatTarget();
   } // end of MFront::treatTarget
-
-#endif /* MFRONT_MAKE_SUPPORT */
   
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
   void MFront::treatWin32()
@@ -247,8 +246,7 @@ namespace mfront{
   } // end of MFront::treatWin32
 #endif /* __CYGWIN__ */
 
-  void 
-  MFront::registerArgumentCallBacks()
+  void MFront::registerArgumentCallBacks()
   {
     this->registerNewCallBack("--no-terminate-handler",&MFront::doNothing,
 			      "don't set a terminate handler");
@@ -289,26 +287,27 @@ namespace mfront{
 #endif    
     this->registerNewCallBack("--silent-build",&MFront::treatSilentBuild,
 			      "active or desactivate silent build",true);
-#ifdef MFRONT_MAKE_SUPPORT
     this->registerNewCallBack("--make",&MFront::treatMake,
 			      "generate MakeFile (see also --build)");
     this->registerNewCallBack("--build",&MFront::treatBuild,
 			      "generate MakeFile and build libraries");
     this->registerNewCallBack("--omake","-m",&MFront::treatOMake,
-			      "generate MakeFile with optimized compilations flags (see also --obuild)",true);
+			      "generate build file with optimized compilations flags (see also --obuild)",true);
     this->registerNewCallBack("--obuild","-b",&MFront::treatOBuild,
-			      "generate MakeFile with optimized compilations flags and build libraries",true);
+			      "generate build file with optimized compilations flags and build libraries",true);
     this->registerNewCallBack("--target","-t",&MFront::treatTarget,
-			      "generate MakeFile and build the specified target",true);
+			      "generate build file and build the specified target",true);
     this->registerNewCallBack("--otarget",&MFront::treatOTarget,
-			      "generate MakeFile with optimized compilations flags and build the specified target",true);
+			      "generate build file with optimized compilations flags "
+			      "and build the specified target",true);
     this->registerNewCallBack("--clean",&MFront::treatClean,
-			      "generate MakeFile and clean libraries");
+			      "generate build file and clean libraries");
+    this->registerNewCallBack("--generator","-G",&MFront::treatGenerator,
+			      "choose build system",true);
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     this->registerNewCallBack("--nodeps",&MFront::treatNoDeps,
 			      "don't generate compilation dependencies");
 #endif /* __CYGWIN__ */
-#endif /* MFRONT_MAKE_SUPPORT */    
     this->registerNewCallBack("--nomelt",&MFront::treatNoMelt,
 			      "don't melt librairies sources");
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
@@ -451,13 +450,10 @@ namespace mfront{
     exit(EXIT_SUCCESS);
   } // end of MFront::treatHelpCommand
 
-#ifdef MFRONT_MAKE_SUPPORT
-  void
-  MFront::treatNoDeps()
+  void MFront::treatNoDeps()
   {
     this->opts.nodeps = true;
   } // end of MFront::treatNoDeps
-#endif /* MFRONT_MAKE_SUPPORT */
 
   void MFront::treatNoMelt()
   {
@@ -482,8 +478,7 @@ namespace mfront{
   } // end of void MFront::treatDefFile
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
   
-  TargetsDescription
-  MFront::treatFile(const std::string& f) const
+  TargetsDescription MFront::treatFile(const std::string& f) const
   {
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       getLogStream() << "Treating file: '" << f << "'" <<  std::endl;
@@ -531,17 +526,23 @@ namespace mfront{
     }
   }
   
-#ifdef MFRONT_MAKE_SUPPORT
   void MFront::buildLibraries(const std::string& target)
   {
-    callMake(target);
+    if(this->generator==CMAKE){
+      callCMake(target);
+    } else {
+      callMake(target);
+    }
   } // end of MFront::buildLibraries
 
   void MFront::cleanLibraries()
   {
-    callMake("clean");
+    if(this->generator==CMAKE){
+      //      callCMake("clean");
+    } else {
+      callMake("clean");
+    }
   } // end of MFront::cleanLibraries
-#endif /* MFRONT_MAKE_SUPPORT */
 
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
   void MFront::generateDefsFiles(){
@@ -588,9 +589,7 @@ namespace mfront{
       this->specifiedTargets.insert("all");
     }
     bool w = !this->inputs.empty(); //< something to be done 
-#ifdef MFRONT_MAKE_SUPPORT
     w = w || this->genMake;
-#endif /* MFRONT_MAKE_SUPPORT */
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     w = w || (!this->defs.empty());
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
@@ -650,10 +649,13 @@ namespace mfront{
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     this->generateDefsFiles();
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
-#ifdef MFRONT_MAKE_SUPPORT
     const auto has_libs = this->targets.begin()!=this->targets.end();
     if((this->genMake)&&((has_libs)||(!this->targets.specific_targets.empty()))){
-      generateMakeFile(this->targets,this->opts);
+      if(this->generator==CMAKE){
+	generateCMakeListFile(this->targets,this->opts);
+      } else {
+	generateMakeFile(this->targets,this->opts);
+      }
     }
     if(this->cleanLibs){
       this->cleanLibraries();
@@ -699,7 +701,6 @@ namespace mfront{
 	}
       }
     }
-#endif /* MFRONT_MAKE_SUPPORT */
   } // end of MFront::exe
 
   MFront::~MFront() = default;

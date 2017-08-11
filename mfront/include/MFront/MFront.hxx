@@ -26,10 +26,6 @@
 #include"MFront/GeneratorOptions.hxx"
 #include"MFront/TargetsDescription.hxx"
 
-#if (!(defined _WIN32 || defined _WIN64)) || ((defined __CYGWIN__)|| (defined __MINGW32__)) || defined(__MINGW64__) 
-#define MFRONT_MAKE_SUPPORT
-#endif /* (!(defined _WIN32 || defined _WIN64)) || ((defined __CYGWIN__)|| (defined __MINGW32__)) || defined(__MINGW64__)  */
-
 namespace mfront{
 
   /*!
@@ -78,6 +74,8 @@ namespace mfront{
     //! get the usage description
     virtual std::string
     getUsageDescription() const override final;
+    //! treat the -G command line option
+    virtual void treatGenerator();
     //! treat the -D command line option
     virtual void treatDefine();
     //! treat the --help-commands-list command line option
@@ -90,8 +88,6 @@ namespace mfront{
     virtual void treatNoMelt();
     //! treat the --silent-build command line option
     virtual void treatSilentBuild();
-
-#ifdef MFRONT_MAKE_SUPPORT
 
     virtual void treatNoDeps();
 
@@ -108,8 +104,6 @@ namespace mfront{
     virtual void treatTarget();
 
     virtual void treatOTarget();
-
-#endif /* MFRONT_MAKE_SUPPORT */
     
     virtual void treatListParsers();
 
@@ -119,11 +113,9 @@ namespace mfront{
 
     virtual void writeTargetsDescription() const;
 
-#ifdef MFRONT_MAKE_SUPPORT
     virtual void buildLibraries(const std::string&);
 
     virtual void cleanLibraries();
-#endif /* MFRONT_MAKE_SUPPORT */
 
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     //! treat the --def-file command line option
@@ -134,8 +126,14 @@ namespace mfront{
     
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     virtual void treatWin32();
-#endif /* LIB_MFRONT_HXX */
+#endif
 
+#ifndef _MSC_VER
+    enum {MAKE,CMAKE} generator = MAKE;
+#else
+    enum {MAKE,CMAKE} generator = CMAKE;
+#endif
+    
     //! description of the targets that can be build
     TargetsDescription targets;
 
@@ -152,15 +150,11 @@ namespace mfront{
     std::set<std::string> defs;
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
     
-#ifdef MFRONT_MAKE_SUPPORT
-
     bool genMake = false;
 
     bool buildLibs = false;
 
     bool cleanLibs = false;
-
-#endif /* MFRONT_MAKE_SUPPORT */
 
   }; // end of class MFront
 

@@ -90,8 +90,15 @@ namespace mfront
     auto fmname = (mpd.material.empty()) ? "mfront_mp" : mpd.material;
     const auto lib  = "Fortran03"+getMaterialLawLibraryNameBase(mpd);
     const auto name = this->getSrcFileName(mpd.material,mpd.className);
-    insert_if(d[lib].ldflags,"-lm");
+#ifdef _WIN32
+    const std::string tfel_config = "tfel-config.exe";
+#else /* WIN32 */
+    const std::string tfel_config = "tfel-config";
+#endif /* WIN32 */
+    insert_if(d[lib].cppflags,
+	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
     insert_if(d[lib].sources,name+".cxx");
+    insert_if(d[lib].link_libraries,"m");
     insert_if(d[lib].epts,{fmname+"::"+mpd.law,fmname+"::"+mpd.law+"_checkBounds"});
   } // end of Fortran03MaterialPropertyInterface::getTargetsDescription
 

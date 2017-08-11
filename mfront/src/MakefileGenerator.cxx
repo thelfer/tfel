@@ -36,6 +36,7 @@
 #include<unistd.h>
 #endif
 
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/MFrontLogStream.hxx"
@@ -61,10 +62,9 @@ namespace mfront{
 #endif
   }
   
-  static std::string
-  getLibraryLinkFlags(const TargetsDescription& t,
-		      const GeneratorOptions& o,
-		      const std::string& name)
+  static std::string getLibraryLinkFlags(const TargetsDescription& t,
+					 const GeneratorOptions& o,
+					 const std::string& name)
   {
     if(!describes(t,name)){
       throw(std::runtime_error("getLibraryLinkFlags : no library "
@@ -72,8 +72,24 @@ namespace mfront{
     }
     const auto& l = t[name];
     auto res = std::string{};
-    for(const auto& d : l.ldflags){
-      res += d+" ";
+    for(const auto& d : l.link_directories){
+      if((tfel::utilities::starts_with(d,"$(shell "))||
+	 (tfel::utilities::ends_with(d,")"))){
+	res += "$(patsubst %,-L%,"+d+") ";
+      } else {
+	res += "-L"+d+" ";
+      }
+    }    
+    for(const auto& ll : l.link_libraries){
+      if((tfel::utilities::starts_with(ll,"$(shell "))||
+	 (tfel::utilities::ends_with(ll,")"))){
+	res += "$(patsubst %,-l%,"+ll+") ";
+      } else {
+	res += "-l"+ll+" ";
+      }
+    }
+    for(const auto& ld : l.ldflags){
+      res += ld+" ";
     }
     if(o.melt){
       for(const auto& ldn : l.deps){
@@ -138,7 +154,6 @@ namespace mfront{
 			const std::string& d,
 			const std::string& f){
     using namespace std;
-    using namespace tfel::system;
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       auto& log = getLogStream();
       log << "generating Makefile\n";
@@ -158,7 +173,7 @@ namespace mfront{
 #else /* WIN32 */
     const string tfel_config = "tfel-config";
 #endif /* WIN32 */
-    auto mfile = d+dirStringSeparator()+f;
+    auto mfile = d+tfel::system::dirStringSeparator()+f;
     ofstream m(mfile);
     m.exceptions(ios::badbit|ios::failbit);
     if(!m){
@@ -199,18 +214,27 @@ namespace mfront{
     if(inc!=nullptr){
       m << inc << " ";
     }
-    m << "-I../include $(shell " << tfel_config << " --includes)";
+    m << "-I../include";
     // cpp flags
-    vector<string> tmp_cppflags;
+    vector<string> cppflags;
     for(const auto& l:t){
-      tmp_cppflags.insert(tmp_cppflags.end(),
-			  l.cppflags.begin(),l.cppflags.end());
+      for(const auto flags : l.cppflags){
+	insert_if(cppflags,flags);
+      }
+      for(const auto id: l.include_directories){
+	if((tfel::utilities::starts_with(id,"$(shell "))||
+	   (tfel::utilities::ends_with(id,")"))){
+	  insert_if(cppflags,"$(patsubst %,-I%,"+id+")");
+	} else {
+	  insert_if(cppflags,"-I"+id);
+	}
+      }
     }
-    if(!tmp_cppflags.empty()){
+    if(!cppflags.empty()){
       m << " \\\n";
-      for(auto p7=tmp_cppflags.begin();p7!=tmp_cppflags.end();){
+      for(auto p7=cppflags.begin();p7!=cppflags.end();){
 	m << "\t     " << *p7;
-	if(++p7!=tmp_cppflags.end()){
+	if(++p7!=cppflags.end()){
 	  m << " \\\n";
 	}
       }
@@ -218,8 +242,13 @@ namespace mfront{
     // adding the mfront search path to the include files
     if(!SearchPathsHandler::getSearchPaths().empty()){
       const auto& paths = SearchPathsHandler::getSearchPaths();
+      auto first = cppflags.empty();
       for(const auto& path : paths){
-	m << "\\\n\t     -I" << path;
+	if(!first){
+	  m << "\\\n";
+	  first = false;
+	}
+	m << "\t     -I" << path;
       }
     }
     //
@@ -239,13 +268,13 @@ namespace mfront{
       } else {
 	switch(o.olevel){
 	case GeneratorOptions::LEVEL2:
-	  m << "$(shell " << tfel_config << " --compiler-flags --oflags --oflags2) ";
+	  m << "$(shell " << tfel_config << " --oflags --oflags2) ";
 	  break;
 	case GeneratorOptions::LEVEL1:
-	  m << "$(shell " << tfel_config << " --compiler-flags --oflags) ";
+	  m << "$(shell " << tfel_config << " --oflags) ";
 	  break;
 	case GeneratorOptions::LEVEL0:
-	  m << "$(shell " << tfel_config << " --compiler-flags --oflags0) ";
+	  m << "$(shell " << tfel_config << " --oflags0) ";
 	  break;
 	}
       }
@@ -266,13 +295,13 @@ namespace mfront{
       } else {
 	switch(o.olevel){
 	case GeneratorOptions::LEVEL2:
-	  m << "$(shell " << tfel_config << " --compiler-flags --oflags --oflags2) ";
+	  m << "$(shell " << tfel_config << " --oflags --oflags2) ";
 	  break;
 	case GeneratorOptions::LEVEL1:
-	  m << "$(shell " << tfel_config << " --compiler-flags --oflags) ";
+	  m << "$(shell " << tfel_config << " --oflags) ";
 	  break;
 	case GeneratorOptions::LEVEL0:
-	  m << "$(shell " << tfel_config << " --compiler-flags --oflags0) ";
+	  m << "$(shell " << tfel_config << " --oflags0) ";
 	  break;
 	}
       }
@@ -350,7 +379,7 @@ namespace mfront{
 	m << "\t" << cmd << "\n";
       }
     }
-    m << "\n";
+    m << "\n\n";
     for(const auto& target : t.specific_targets){
       if((target.first!="all")&&(target.first!="clean")){
 	m << target.first << " : ";

@@ -19,8 +19,6 @@
 
 namespace aster{
 
-  
-
   void
   AsterInterfaceExceptions::throwUnMatchedNumberOfMaterialProperties(const std::string& b,
 								     const unsigned short n1,

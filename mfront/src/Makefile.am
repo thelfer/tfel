@@ -24,6 +24,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                           
 			   MFrontBase.cxx                                         \
 			   MFrontUtilities.cxx                                    \
 			   GeneratorOptions.cxx                                   \
+			   CMakeGenerator.cxx                                     \
 			   MakefileGenerator.cxx                                  \
 		           FileDescription.cxx                                    \
 		           TargetsDescription.cxx                                 \
