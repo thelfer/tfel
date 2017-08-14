@@ -23,12 +23,20 @@ namespace mtest{
 					     const std::string& k) const
   {
     const auto root = tfel::getInstallPath();
+#ifdef TFEL_APPEND_VERSION
+    auto f = root+"/share/doc/mtest-" VERSION "/"+s+'/'+k.substr(1)+".md";
+#else  /* TFEL_APPEND_VERSION */
     auto f = root+"/share/doc/mtest/"+s+'/'+k.substr(1)+".md";
+#endif /* TFEL_APPEND_VERSION */
     std::ifstream desc{f};
     if(desc){
       return f;
     }
+#ifdef TFEL_APPEND_VERSION
+    f = root+"/share/doc/mtest-" VERSION "/"+k.substr(1)+".md";
+#else  /* TFEL_APPEND_VERSION */
     f = root+"/share/doc/mtest/"+k.substr(1)+".md";
+#endif /* TFEL_APPEND_VERSION */
     desc.open(f);
     if(desc){
       return f;

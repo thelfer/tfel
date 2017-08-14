@@ -16,6 +16,7 @@
 #include<cstdlib>
 #include<stdexcept>
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 
@@ -35,8 +36,7 @@ static const char * const constexpr_c = "const";
 
 namespace mfront{
 
-  std::string
-  AsterInterface::getName()
+  std::string AsterInterface::getName()
   {
     return "aster";
   }
@@ -656,11 +656,7 @@ namespace mfront{
   {
     const auto lib  = AsterInterface::getLibraryName(bd);
     const auto name = bd.getLibrary()+bd.getClassName(); 
-#ifdef _WIN32
-    const std::string tfel_config = "tfel-config.exe";
-#else /* WIN32 */
-    const std::string tfel_config = "tfel-config";
-#endif /* WIN32 */
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(d[lib].cppflags,"$(shell "+tfel_config+" --includes)");
 #if ASTER_ARCH == 64
     insert_if(d[lib].cppflags,"-DASTER_ARCH=64");
@@ -671,9 +667,9 @@ namespace mfront{
 #endif
     insert_if(d[lib].sources,"aster"+name+".cxx");
     d.headers.push_back("MFront/Aster/aster"+name+".hxx");
-    insert_if(d[lib].ldflags,"-lAsterInterface");
+    insert_if(d[lib].ldflags,"-l"+tfel::getLibraryInstallName("AsterInterface"));
     if(this->generateMTestFile){
-      insert_if(d[lib].ldflags,"-lMTestFileGenerator");
+      insert_if(d[lib].ldflags,"-l"+tfel::getLibraryInstallName("MTestFileGenerator"));
     }
     insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
     // insert_if(d[lib].epts,name);

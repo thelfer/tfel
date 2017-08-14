@@ -12,6 +12,7 @@
  */
 
 #include<map>
+#include<vector>
 #include<string>
 #include<cstdlib>
 #include<iostream>
@@ -53,8 +54,7 @@ getTFELHOME();
 static std::string
 libDir();
 
-static std::string
-includeDir();
+static std::string includeDir();
 
 static void
 registerCallBack(const std::string&,
@@ -108,9 +108,6 @@ static void
 treatGlossary();
 
 static void
-treatFiniteElement();
-
-static void
 treatAll();
 
 static void
@@ -151,7 +148,6 @@ static bool mathParser      = false;
 static bool mathInterpreter = false;
 static bool utilities       = false;
 static bool glossary        = false;
-static bool finiteElement   = false;
 static bool material        = false;
 static bool tests           = false;
 static bool mfront_profiling    = false;
@@ -222,7 +218,7 @@ libDir()
   const string prefix(PREFIXDIR);
   const string execPrefix(EXECPREFIXDIR);
   string lib(LIBDIR);
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
   const string ldir("/bin");
 #else 
 #ifdef LIB_SUFFIX
@@ -250,6 +246,15 @@ static std::string includeDir()
   const std::string prefix(PREFIXDIR);
   std::string inc(INCLUDEDIR);
   const auto& th = getTFELHOME();
+#ifdef TFEL_APPEND_VERSION
+  if(!th.empty()){
+    return th+"/include/TFEL-" VERSION;
+  } else {
+    if(inc.substr(0,9)=="${prefix}"){
+      inc = handleSpace(prefix + "/include/TFEL-" VERSION);
+    }
+  }
+#else  /* TFEL_APPEND_VERSION  */
   if(!th.empty()){
     return th+"/include";
   } else {
@@ -257,8 +262,9 @@ static std::string includeDir()
       inc = handleSpace(prefix + "/include");
     }
   }
+#endif /* TFEL_APPEND_VERSION  */
   return inc;
-} // end of libDir
+} // end of includeDir
 
 static void
 registerCallBack(const std::string& key,
@@ -360,18 +366,11 @@ static void treatGlossary()
   glossary = true;
 } // end of treatGlossary
 
-static void treatFiniteElement()
-{
-  exceptions    = true;
-  math          = true;
-  finiteElement = true;
-} // end of treatFiniteElement
-
 static void treatSystem()
 {
   exceptions    = true;
   lsystem        = true;
-} // end of treatFiniteElement
+} // end of treatSystem
 
 static void treatMaterial()
 {
@@ -476,14 +475,34 @@ TFEL_NORETURN static void treatLicences()
   exit(EXIT_SUCCESS);
 } // end of treatLicences
 
+static void listLibraries()
+{
+  auto display_if = [](const bool b,const char* const s){
+#ifdef TFEL_APPEND_VERSION
+    if(b){std::cout << s << "-" << VERSION << ' ';}
+#else /* TFEL_APPEND_VERSION*/
+    if(b){std::cout << s << ' ';}
+#endif /* TFEL_APPEND_VERSION*/
+  };
+  display_if(mfront_profiling,"-lMFrontProfiling");
+  display_if(material,"-lTFELMaterial");
+  display_if(mathInterpreter,"-lTFELMathInterpreter");
+  display_if(mathParser,"-lTFELMathParser");
+  display_if(mathCubicSpline,"-lTFELMathCubicSpline");
+  display_if(mathKriging,"-lTFELMathKriging");
+  display_if(math,"-lTFELMath");
+  display_if(lsystem,"-lTFELSystem");
+  display_if(utilities,"-lTFELUtilities");
+  display_if(glossary,"-lTFELGlossary");
+  display_if(exceptions,"-lTFELException");
+  display_if(tests,"-lTFELTests");
+}
+
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(const int argc,
-	 const char *const *const argv)
+int main(const int argc,const char *const *const argv)
 {
   using namespace std;
-  CallBacksContainer::const_iterator p;
-  const char * const * p2;
-
+  
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
   try{
 #endif /* __CYGWIN__ */
@@ -520,13 +539,11 @@ int main(const int argc,
 		   "request flags for libTFELMaterial.");
   registerCallBack("--mfront-profiling",&treatMFrontProfiling,
 		   "request flags for libMFrontProfiling.");
-  registerCallBack("--finiteElement",&treatFiniteElement,
-		   "request flags for libTFELFiniteElement.");
   registerCallBack("--all",&treatAll,"request flags for all librairies.");
   registerCallBack("--version",&treatVersion,"print tfel version and svn revision.");
   registerCallBack("--licence",&treatLicences,"print tfel licences.");
-  for(p2=argv+1;p2!=argv+argc;++p2){
-    p = callBacksContainer.find(*p2);
+  for(auto p2=argv+1;p2!=argv+argc;++p2){
+    auto p = callBacksContainer.find(*p2);
     if(p==callBacksContainer.end()){
       treatUnknownOption(*p2);
     }
@@ -591,45 +608,7 @@ int main(const int argc,
 
   if(libs){
     cout << "-L" << libDir() << " ";
-    if(mfront_profiling){
-      cout << "-lMFrontProfiling ";
-    }
-    if(material){
-      cout << "-lTFELMaterial ";
-    }
-    if(finiteElement){
-      cout << "-lTFELFiniteElement ";
-    }
-    if(mathInterpreter){
-      cout << "-lTFELMathInterpreter ";
-    }
-    if(mathParser){
-      cout << "-lTFELMathParser ";
-    }
-    if(mathCubicSpline){
-      cout << "-lTFELMathCubicSpline ";
-    }
-    if(mathKriging){
-      cout << "-lTFELMathKriging ";
-    }
-    if(math){
-      cout << "-lTFELMath ";
-    }
-    if(lsystem){
-      cout << "-lTFELSystem ";
-    }
-    if(utilities){
-      cout << "-lTFELUtilities ";
-    }
-    if(glossary){
-      cout << "-lTFELGlossary ";
-    }
-    if(exceptions){
-      cout << "-lTFELException ";
-    }
-    if(tests){
-      cout << "-lTFELTests ";
-    }
+    listLibraries();
   }
 
   if(compilerflags){

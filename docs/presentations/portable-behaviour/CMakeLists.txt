@@ -10,6 +10,30 @@
 add_custom_target(portable-behaviour-html ALL DEPENDS portability.html)
 add_dependencies(doc portable-behaviour-html)
 
+if(TFEL_APPEND_VERSION)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/portability.html
+    DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/portable-behaviour
+    COMPONENT website)
+  install(DIRECTORY img
+    DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/portable-behaviour
+    COMPONENT website
+    PATTERN ".svn" EXCLUDE)
+  install(DIRECTORY ${CMAKE_SOURCE_DIR}/docs/html/reveal.js
+    DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/portable-behaviour
+    COMPONENT website
+    PATTERN ".svn" EXCLUDE)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/portability.html
+    DESTINATION share/doc/mfront-${TFEL_VERSION}/portable-behaviour
+    COMPONENT docs)
+  install(DIRECTORY img
+    DESTINATION share/doc/mfront-${TFEL_VERSION}/portable-behaviour
+    COMPONENT docs
+    PATTERN ".svn" EXCLUDE)
+  install(DIRECTORY ${CMAKE_SOURCE_DIR}/docs/html/reveal.js
+    DESTINATION share/doc/mfront-${TFEL_VERSION}/portable-behaviour
+    COMPONENT docs
+    PATTERN ".svn" EXCLUDE)
+else(TFEL_APPEND_VERSION)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/portability.html
     DESTINATION share/doc/tfel/web/documents/portable-behaviour
     COMPONENT website)
@@ -33,4 +57,5 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/docs/html/reveal.js
     DESTINATION share/doc/mfront/portable-behaviour
     COMPONENT docs
     PATTERN ".svn" EXCLUDE)
+endif(TFEL_APPEND_VERSION)
 

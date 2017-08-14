@@ -72,9 +72,15 @@ macro(cyranotest_brick test_arg behaviour)
       set_property(TEST brick${test_arg}${behaviour}_mtest
 	PROPERTY DEPENDS "MFrontCyranoBehaviours MFrontMaterialProperties-cyrano mtest")
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-    install(FILES ${file}
-      DESTINATION "share/mfront/tests/behaviours/bricks"
-      COMPONENT mtest)
+    if(TFEL_APPEND_VERSION)
+      install(FILES ${file}
+	DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/bricks"
+	COMPONENT mtest)
+    else(TFEL_APPEND_VERSION)
+      install(FILES ${file}
+	DESTINATION "share/doc/mfront/tests/behaviours/bricks"
+	COMPONENT mtest)
+    endif(TFEL_APPEND_VERSION)
   endif(HAVE_CYRANO)
 endmacro(cyranotest_brick)
 

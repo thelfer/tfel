@@ -293,6 +293,10 @@ target_link_libraries(MTestFileGenerator
 # MFront
 
 add_executable(mfront main.cxx)
+if(TFEL_APPEND_VERSION)
+  set_target_properties(mfront
+    PROPERTIES OUTPUT_NAME "mfront-${TFEL_VERSION}")
+endif(TFEL_APPEND_VERSION)
 target_link_libraries(mfront
   TFELMFront 
   MFrontLogStream
@@ -309,6 +313,10 @@ add_executable(mfront-query mfront-query.cxx
   MaterialPropertyQuery.cxx
   BehaviourQuery.cxx
   ModelQuery.cxx)
+if(TFEL_APPEND_VERSION)
+  set_target_properties(mfront-query
+    PROPERTIES OUTPUT_NAME "mfront-query-${TFEL_VERSION}")
+endif(TFEL_APPEND_VERSION)
 target_link_libraries(mfront-query
   TFELMFront 
   MFrontLogStream
@@ -319,6 +327,10 @@ install(TARGETS mfront-query DESTINATION bin
 # mfront-doc
 add_executable(mfront-doc mfront-doc.cxx
   BehaviourDocumentationGenerator.cxx)
+if(TFEL_APPEND_VERSION)
+  set_target_properties(mfront-doc
+    PROPERTIES OUTPUT_NAME "mfront-doc-${TFEL_VERSION}")
+endif(TFEL_APPEND_VERSION)
 target_link_libraries(mfront-doc
   TFELMFront 
   MFrontLogStream

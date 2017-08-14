@@ -49,6 +49,16 @@ add_custom_target(aster-doc-pdf ALL DEPENDS aster.pdf)
 add_dependencies(doc-pdf
   aster-doc-pdf)
 
+if(TFEL_APPEND_VERSION)
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/aster.pdf
+    DESTINATION share/doc/mfront-${TFEL_VERSION}/references
+    COMPONENT docs)
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/aster.pdf
+    DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/mfront
+    COMPONENT website)
+else(TFEL_APPEND_VERSION)
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/aster.pdf
   DESTINATION share/doc/mfront/references
@@ -57,3 +67,5 @@ install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/aster.pdf
   DESTINATION share/doc/tfel/web/documents/mfront
   COMPONENT website)
+
+endif(TFEL_APPEND_VERSION)

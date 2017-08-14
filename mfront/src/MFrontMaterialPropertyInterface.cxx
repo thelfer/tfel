@@ -15,6 +15,7 @@
 #include<stdexcept>
 #include<algorithm>
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"

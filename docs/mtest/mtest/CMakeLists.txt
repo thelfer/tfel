@@ -1,6 +1,13 @@
 macro(install_mtest_desc2 file)
-  install(FILES ${file}.md DESTINATION share/doc/mtest/mtest
+  if(TFEL_APPEND_VERSION)
+    install(FILES ${file}.md
+      DESTINATION share/doc/mtest-${TFEL_VERSION}/mtest
     COMPONENT mtest)
+  else(TFEL_APPEND_VERSION)
+    install(FILES ${file}.md
+      DESTINATION share/doc/mtest/mtest
+      COMPONENT mtest)
+  endif(TFEL_APPEND_VERSION)
 endmacro(install_mtest_desc2 file)
 
 install_mtest_desc2(ModellingHypothesis)

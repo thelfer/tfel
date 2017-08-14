@@ -159,9 +159,15 @@ macro(test_abaqus test_arg)
         set_property(TEST abaqus${test_arg}_${conf}_mtest
           PROPERTY DEPENDS MFrontAbaqusBehaviours MFrontMaterialProperties-castem mtest)
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	DESTINATION "share/mfront/tests/behaviours/abaqus"
-	COMPONENT mtest)
+      if(TFEL_APPEND_VERSION)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/abaqus"
+	  COMPONENT mtest)
+      else(TFEL_APPEND_VERSION)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  DESTINATION "share/doc/mfront/tests/behaviours/abaqus"
+	  COMPONENT mtest)
+      endif(TFEL_APPEND_VERSION)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
     get_property(MFrontAbaqusBehavioursBuildPath TARGET MFrontAbaqusBehaviours PROPERTY LOCATION)
@@ -185,9 +191,15 @@ macro(test_abaqus test_arg)
       PROPERTIES DEPENDS MFrontAbaqusBehaviours)
     set_tests_properties(abaqus${test_arg}_mtest
       PROPERTIES DEPENDS mtest)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/abaqus${test_arg}.mtest
-      DESTINATION "share/mfront/tests/behaviours/abaqus"
-      COMPONENT mtest)
+    if(TFEL_APPEND_VERSION)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/abaqus${test_arg}.mtest
+	DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/abaqus"
+	COMPONENT mtest)
+    else(TFEL_APPEND_VERSION)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/abaqus${test_arg}.mtest
+	DESTINATION "share/doc/mfront/tests/behaviours/abaqus"
+	COMPONENT mtest)
+      endif(TFEL_APPEND_VERSION)
   endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(test_abaqus)
 

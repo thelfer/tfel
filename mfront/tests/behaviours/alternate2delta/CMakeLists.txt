@@ -31,10 +31,17 @@ macro(test_alternate2delta test_arg)
         set_property(TEST alternate2delta${test_arg}_${conf}_mtest
           PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	DESTINATION "share/mfront/tests/behaviours/alternate2delta"
-	CONFIGURATIONS ${conf}
-	COMPONENT mtest)
+      if(TFEL_APPEND_VERSION)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/alternate2delta"
+	  CONFIGURATIONS ${conf}
+	  COMPONENT mtest)
+      else(TFEL_APPEND_VERSION)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  DESTINATION "share/doc/mfront/tests/behaviours/alternate2delta"
+	  CONFIGURATIONS ${conf}
+	  COMPONENT mtest)
+      endif(TFEL_APPEND_VERSION)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
     get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
@@ -48,9 +55,15 @@ macro(test_alternate2delta test_arg)
       PROPERTIES DEPENDS MFrontMaterialProperties-castem)
     set_tests_properties(alternate2delta${test_arg}_mtest
       PROPERTIES DEPENDS mtest)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/alternate2delta${test_arg}.mtest
-      DESTINATION "share/mfront/tests/behaviours/alternate2delta"
-      COMPONENT mtest)
+    if(TFEL_APPEND_VERSION)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/alternate2delta${test_arg}.mtest
+	DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/alternate2delta"
+	COMPONENT mtest)
+    else(TFEL_APPEND_VERSION)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/alternate2delta${test_arg}.mtest
+	DESTINATION "share/doc/mfront/tests/behaviours/alternate2delta"
+	COMPONENT mtest)
+    endif(TFEL_APPEND_VERSION)
   endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(test_alternate2delta)
 

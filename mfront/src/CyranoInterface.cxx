@@ -18,6 +18,7 @@
 #include<stdexcept>
 #include<algorithm>
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 
@@ -435,11 +436,7 @@ namespace mfront{
 					 const BehaviourDescription& bd){
     const auto lib  = CyranoInterface::getLibraryName(bd);
     const auto name = ((!bd.getLibrary().empty()) ? bd.getLibrary() : "") + bd.getClassName();
-#ifdef _WIN32
-    const std::string tfel_config = "tfel-config.exe";
-#else /* WIN32 */
-    const std::string tfel_config = "tfel-config";
-#endif /* WIN32 */
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(d[lib].cppflags,"$(shell "+tfel_config+" --includes)");
 #if CYRANO_ARCH == 64
     insert_if(d[lib].cppflags,"-DCYRANO_ARCH=64");
@@ -452,9 +449,9 @@ namespace mfront{
     insert_if(d[lib].epts,name);
     insert_if(d[lib].epts,this->getFunctionName(name));
     insert_if(d.headers,"MFront/Cyrano/cyrano"+name+".hxx");
-    insert_if(d[lib].ldflags,"-lCyranoInterface");
+    insert_if(d[lib].ldflags,"-l"+tfel::getLibraryInstallName("CyranoInterface"));
     if(this->generateMTestFile){
-      insert_if(d[lib].ldflags,"-lMTestFileGenerator");
+      insert_if(d[lib].ldflags,"-l"+tfel::getLibraryInstallName("MTestFileGenerator"));
     }
     insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
   } // end of CyranoInterface::getTargetsDescription(TargetsDescription&)

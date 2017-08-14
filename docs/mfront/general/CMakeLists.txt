@@ -51,6 +51,16 @@ add_custom_target(mfront-doc-pdf ALL DEPENDS mfront.pdf)
 add_dependencies(doc-pdf
   mfront-doc-pdf)
 
+if(TFEL_APPEND_VERSION)
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/mfront.pdf
+    DESTINATION share/doc/mfront-${TFEL_VERSION}/references
+    COMPONENT docs)
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/mfront.pdf
+    DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/mfront
+    COMPONENT website)
+else(TFEL_APPEND_VERSION)
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/mfront.pdf
   DESTINATION share/doc/mfront/references
@@ -59,4 +69,4 @@ install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/mfront.pdf
   DESTINATION share/doc/tfel/web/documents/mfront
   COMPONENT website)
-
+endif(TFEL_APPEND_VERSION)

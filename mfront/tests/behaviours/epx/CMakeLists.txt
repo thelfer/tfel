@@ -79,9 +79,15 @@ macro(test_epx test_arg)
         set_property(TEST epx${test_arg}_${conf}_mtest
           PROPERTY DEPENDS MFrontEuroplexusBehaviours MFrontMaterialProperties-castem mtest)
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	DESTINATION "share/mfront/tests/behaviours/europlexus"
-	COMPONENT mtest)
+      if(TFEL_APPEND_VERSION)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/europlexus"
+	  COMPONENT mtest)
+      else(TFEL_APPEND_VERSION)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  DESTINATION "share/doc/mfront/tests/behaviours/europlexus"
+	  COMPONENT mtest)
+      endif(TFEL_APPEND_VERSION)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
     get_property(MFrontEuroplexusBehavioursBuildPath TARGET MFrontEuroplexusBehaviours PROPERTY LOCATION)
@@ -105,9 +111,15 @@ macro(test_epx test_arg)
       PROPERTIES DEPENDS MFrontEuroplexusBehaviours)
     set_tests_properties(epx${test_arg}_mtest
       PROPERTIES DEPENDS mtest)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/epx${test_arg}.mtest
-      DESTINATION "share/mfront/tests/behaviours/europlexus"
-      COMPONENT mtest)
+    if(TFEL_APPEND_VERSION)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/epx${test_arg}.mtest
+	DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/europlexus"
+	COMPONENT mtest)
+    else(TFEL_APPEND_VERSION)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/epx${test_arg}.mtest
+	DESTINATION "share/doc/mfront/tests/behaviours/europlexus"
+	COMPONENT mtest)
+    endif(TFEL_APPEND_VERSION)
   endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(test_epx)
 

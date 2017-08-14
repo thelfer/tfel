@@ -39,10 +39,12 @@ bindings/python/mfront/MakefileGenerator.cxx -text
 bindings/python/mfront/TargetsDescription.cxx -text
 bindings/python/mfront/VariableDescription.cxx -text
 bindings/python/mfront/__init__.py.in -text
+bindings/python/mfront/__init__.py.version.in -text
 bindings/python/mfront/mfront.cxx -text
 bindings/python/mfront/mtest/CMakeLists.txt -text
 bindings/python/mfront/mtest/Makefile.am -text
 bindings/python/mfront/mtest/__init__.py.in -text
+bindings/python/mfront/mtest/__init__.py.version.in -text
 bindings/python/mfront/umatxx/Behaviour.py.in -text
 bindings/python/mfront/umatxx/CMakeLists.txt -text
 bindings/python/mfront/umatxx/Makefile.am -text
@@ -61,6 +63,7 @@ bindings/python/mtest/SolverWorkSpace.cxx -text
 bindings/python/mtest/StructureCurrentState.cxx -text
 bindings/python/mtest/StudyCurrentState.cxx -text
 bindings/python/mtest/__init__.py.in -text
+bindings/python/mtest/__init__.py.version.in -text
 bindings/python/mtest/pymtest.cxx -text
 bindings/python/std/CMakeLists.txt -text
 bindings/python/std/Makefile.am -text
@@ -86,6 +89,7 @@ bindings/python/tfel/ProcessManagerCommand.cxx -text
 bindings/python/tfel/TestResult.cxx -text
 bindings/python/tfel/TextData.cxx -text
 bindings/python/tfel/__init__.py.in -text
+bindings/python/tfel/__init__.py.version.in -text
 bindings/python/tfel/material.cxx -text
 bindings/python/tfel/math.cxx -text
 bindings/python/tfel/pyglossary.cxx -text

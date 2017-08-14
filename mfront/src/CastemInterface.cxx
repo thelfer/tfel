@@ -19,6 +19,7 @@
 #include<cstdlib>
 #include<stdexcept>
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 
@@ -1133,11 +1134,7 @@ namespace mfront{
     using namespace std;
     const auto lib  = CastemInterface::getLibraryName(bd);
     const auto name = this->getBehaviourName(bd);
-#ifdef _WIN32
-    const string tfel_config = "tfel-config.exe";
-#else /* WIN32 */
-    const string tfel_config = "tfel-config";
-#endif /* WIN32 */
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(d[lib].cppflags,"$(shell "+tfel_config+" --includes)");
 #ifdef CASTEM_CPPFLAGS
     insert_if(d[lib].cppflags,CASTEM_CPPFLAGS);
@@ -1158,9 +1155,9 @@ namespace mfront{
 #endif /* LOCAL_CASTEM_HEADER_FILE */
     insert_if(d[lib].sources,"umat"+name+".cxx");    
     insert_if(d.headers,"MFront/Castem/umat"+name+".hxx");
-    insert_if(d[lib].ldflags,"-lCastemInterface");
+    insert_if(d[lib].ldflags,"-l"+tfel::getLibraryInstallName("CastemInterface"));
     if(this->generateMTestFile){
-      insert_if(d[lib].ldflags,"-lMTestFileGenerator");
+      insert_if(d[lib].ldflags,"-l"+tfel::getLibraryInstallName("MTestFileGenerator"));
     }
     insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
     // entry points

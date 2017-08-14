@@ -62,4 +62,5 @@ system_la_LIBADD  = -L@top_builddir@/src/System -lTFELSystem    \
 	            -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 system_la_LDFLAGS = -module
 
-EXTRA_DIST=CMakeLists.txt
+EXTRA_DIST=CMakeLists.txt         \
+	   __init__.py.version.in

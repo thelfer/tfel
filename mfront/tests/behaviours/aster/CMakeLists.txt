@@ -148,9 +148,15 @@ macro(test_aster test_arg)
         set_property(TEST aster${test_arg}_${conf}_mtest
           PROPERTY DEPENDS MFrontAsterBehaviours MFrontMaterialProperties-castem mtest)
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	DESTINATION "share/mfront/tests/behaviours/aster"
-	COMPONENT mtest)
+      if(TFEL_APPEND_VERSION)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/aster"
+	  COMPONENT mtest)
+      else(TFEL_APPEND_VERSION)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  DESTINATION "share/doc/mfront/tests/behaviours/aster"
+	  COMPONENT mtest)
+      endif(TFEL_APPEND_VERSION)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
     get_property(MFrontAsterBehavioursBuildPath TARGET MFrontAsterBehaviours PROPERTY LOCATION)
@@ -174,9 +180,15 @@ macro(test_aster test_arg)
       PROPERTIES DEPENDS MFrontAsterBehaviours)
     set_tests_properties(aster${test_arg}_mtest
       PROPERTIES DEPENDS mtest)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/aster${test_arg}.mtest
-      DESTINATION "share/mfront/tests/behaviours/aster"
-      COMPONENT mtest)
+    if(TFEL_APPEND_VERSION)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/aster${test_arg}.mtest
+	DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/aster"
+	COMPONENT mtest)
+    else(TFEL_APPEND_VERSION)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/aster${test_arg}.mtest
+	DESTINATION "share/doc/mfront/tests/behaviours/aster"
+	COMPONENT mtest)
+    endif(TFEL_APPEND_VERSION)
   endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(test_aster)
 

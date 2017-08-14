@@ -38,6 +38,16 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
 
   add_dependencies(doc-pdf
     abaqus-doc-pdf)
+  if(TFEL_APPEND_VERSION)
+    install(FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/abaqus.pdf
+      DESTINATION share/doc/mfront-${TFEL_VERSION}/references
+      COMPONENT docs)
+    install(FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/abaqus.pdf
+      DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/mfront
+      COMPONENT website)
+  else(TFEL_APPEND_VERSION)
   install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/abaqus.pdf
     DESTINATION share/doc/mfront/references
@@ -46,12 +56,22 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     ${CMAKE_CURRENT_BINARY_DIR}/abaqus.pdf
     DESTINATION share/doc/tfel/web/documents/mfront
     COMPONENT website)
+  endif(TFEL_APPEND_VERSION)
 
 endif(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
 
+if(TFEL_APPEND_VERSION)
+  install(FILES umat.cpp DESTINATION share/doc/mfront-${TFEL_VERSION}/abaqus
+    COMPONENT mfront)
+  install(FILES vumat-dp.cpp DESTINATION share/doc/mfront-${TFEL_VERSION}/abaqus
+    COMPONENT mfront)
+  install(FILES vumat-sp.cpp DESTINATION share/doc/mfront-${TFEL_VERSION}/abaqus
+    COMPONENT mfront)
+else(TFEL_APPEND_VERSION)
 install(FILES umat.cpp DESTINATION share/doc/mfront/abaqus
     COMPONENT mfront)
 install(FILES vumat-dp.cpp DESTINATION share/doc/mfront/abaqus
     COMPONENT mfront)
 install(FILES vumat-sp.cpp DESTINATION share/doc/mfront/abaqus
     COMPONENT mfront)
+endif(TFEL_APPEND_VERSION)

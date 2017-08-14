@@ -32,6 +32,7 @@
 #endif
 #endif
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/System/System.hxx"
 
 #include"MFront/MFrontHeader.hxx"

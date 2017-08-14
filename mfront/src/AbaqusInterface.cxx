@@ -301,7 +301,11 @@ namespace mfront{
       out.open("abaqus/umat.cpp");
       if(out){
 	const auto root = tfel::getInstallPath();
+#ifdef TFEL_APPEND_VERSION
+	const auto fn = root+"/share/doc/mfront-" VERSION "/abaqus/umat.cpp";
+#else  /* TFEL_APPEND_VERSION */
 	const auto fn = root+"/share/doc/mfront/abaqus/umat.cpp";
+#endif /* TFEL_APPEND_VERSION */
 	std::ifstream in{fn};
 	if(in){
 	  out << in.rdbuf();
@@ -1115,17 +1119,13 @@ namespace mfront{
   {
     const auto lib  = this->getLibraryName(bd);
     const auto name = bd.getLibrary()+bd.getClassName(); 
-#ifdef _WIN32
-    const std::string tfel_config = "tfel-config.exe";
-#else /* WIN32 */
-    const std::string tfel_config = "tfel-config";
-#endif /* WIN32 */
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(d[lib].cppflags,"$(shell "+tfel_config+" --includes)");
     insert_if(d[lib].sources,"abaqus"+name+".cxx");
     d.headers.push_back("MFront/Abaqus/abaqus"+name+".hxx");
-    insert_if(d[lib].ldflags,"-lAbaqusInterface");
+    insert_if(d[lib].ldflags,"-l"+tfel::getLibraryInstallName("AbaqusInterface"));
     if(this->generateMTestFile){
-      insert_if(d[lib].ldflags,"-lMTestFileGenerator");
+      insert_if(d[lib].ldflags,"-l"+tfel::getLibraryInstallName("MTestFileGenerator"));
     }
     insert_if(d[lib].ldflags,"$(shell "+tfel_config+" --libs --material --mfront-profiling)");
     for(const auto h : this->getModellingHypothesesToBeTreated(bd)){

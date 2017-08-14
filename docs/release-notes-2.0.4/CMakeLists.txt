@@ -20,10 +20,19 @@ if(HAVE_LATEX)
   add_custom_target(tfel-2.0.4-doc-pdf ALL DEPENDS tfel-2.0.4.pdf)
   add_dependencies(doc-pdf
     tfel-2.0.4-doc-pdf)
+  if(TFEL_APPEND_VERSION)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tfel-2.0.4.pdf
+      DESTINATION share/doc/tfel-${TFEL_VERSION}/references
+      COMPONENT docs)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tfel-2.0.4.pdf
+      DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/tfel
+      COMPONENT website)
+  else(TFEL_APPEND_VERSION)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tfel-2.0.4.pdf
     DESTINATION share/doc/tfel/references
     COMPONENT docs)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tfel-2.0.4.pdf
     DESTINATION share/doc/tfel/web/documents/tfel
     COMPONENT website)
+  endif(TFEL_APPEND_VERSION)
 endif(HAVE_LATEX)

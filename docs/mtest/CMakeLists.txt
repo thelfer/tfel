@@ -2,8 +2,14 @@ add_subdirectory(mtest)
 add_subdirectory(ptest)
 
 macro(install_mtest_desc file)
+  if(TFEL_APPEND_VERSION)
+    install(FILES ${file}.md
+      DESTINATION share/doc/mtest-${TFEL_VERSION}
+      COMPONENT mtest)
+  else(TFEL_APPEND_VERSION)
   install(FILES ${file}.md DESTINATION share/doc/mtest
     COMPONENT mtest)
+  endif(TFEL_APPEND_VERSION)
 endmacro(install_mtest_desc file)
 
 install_mtest_desc(Author)
@@ -91,11 +97,19 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
   add_custom_target(mtest-doc-pdf ALL DEPENDS mtest.pdf)
   add_dependencies(doc-pdf
     mtest-doc-pdf)
+  if(TFEL_APPEND_VERSION)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mtest.pdf
+      DESTINATION share/doc/mtest-${TFEL_VERSION}
+      COMPONENT docs)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mtest.pdf
+      DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/mtest
+      COMPONENT website)
+  else(TFEL_APPEND_VERSION)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mtest.pdf
     DESTINATION share/doc/mtest
     COMPONENT docs)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mtest.pdf
     DESTINATION share/doc/tfel/web/documents/mtest
     COMPONENT website)
-  
+  endif(TFEL_APPEND_VERSION)
 endif(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
