@@ -16,6 +16,7 @@
 #include<algorithm>
 #include<stdexcept>
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontUtilities.hxx"
@@ -60,11 +61,7 @@ namespace mfront
     const auto name = this->getSrcFileName(mpd.material,mpd.className);
     const auto f = makeLowerCase(mpd.material.empty()
 				 ? mpd.className : mpd.material+"_"+mpd.className);
-#ifdef _WIN32
-    const std::string tfel_config = "tfel-config.exe";
-#else /* WIN32 */
-    const std::string tfel_config = "tfel-config";
-#endif /* WIN32 */
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(d[lib].cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
     insert_if(d[lib].sources,name+".cxx");

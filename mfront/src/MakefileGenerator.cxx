@@ -36,6 +36,7 @@
 #include<unistd.h>
 #endif
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 #include"MFront/MFrontHeader.hxx"
@@ -168,11 +169,7 @@ namespace mfront{
     const auto sb  = o.silentBuild ? "@" : "";
     const auto cxx = (env_cxx==nullptr) ? "$(CXX)" : env_cxx;
     const auto cc  = (env_cc ==nullptr) ? "$(CC)"  : env_cc;
-#ifdef _WIN32
-    const string tfel_config = "tfel-config.exe";
-#else /* WIN32 */
-    const string tfel_config = "tfel-config";
-#endif /* WIN32 */
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto mfile = d+tfel::system::dirStringSeparator()+f;
     ofstream m(mfile);
     m.exceptions(ios::badbit|ios::failbit);

@@ -42,12 +42,21 @@ if(LATEX_COMPILER)
     add_custom_target(${doc}-doc-pdf ALL DEPENDS ${doc}.pdf)
     add_dependencies(doc-pdf
       ${doc}-doc-pdf)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
-      DESTINATION share/doc/mfront/${doc}
-      COMPONENT docs)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
-      DESTINATION share/doc/tfel/web/documents/${doc}
-      COMPONENT website)
+    if(TFEL_APPEND_VERSION)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
+	DESTINATION share/doc/mfront-${TFEL_VERSION}/${doc}
+	COMPONENT docs)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
+	DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/${doc}
+	COMPONENT website)
+    else(TFEL_APPEND_VERSION)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
+	DESTINATION share/doc/mfront/${doc}
+	COMPONENT docs)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
+	DESTINATION share/doc/tfel/web/documents/${doc}
+	COMPONENT website)
+    endif(TFEL_APPEND_VERSION)
   endmacro(latex_presentation doc)
 
   macro(pdflatex_presentation doc)
@@ -74,11 +83,20 @@ if(LATEX_COMPILER)
     add_custom_target(${doc}-doc-pdf ALL DEPENDS ${doc}.pdf)
     add_dependencies(doc-pdf
       ${doc}-doc-pdf)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
-      DESTINATION share/doc/mfront/${doc}
-      COMPONENT docs)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
-      DESTINATION share/doc/tfel/web/documents/${doc}
-      COMPONENT website)
+    if(TFEL_APPEND_VERSION)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
+	DESTINATION share/doc/mfront-${TFEL_VERSION}/${doc}
+	COMPONENT docs)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
+	DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/${doc}
+	COMPONENT website)
+    else(TFEL_APPEND_VERSION)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
+	DESTINATION share/doc/mfront/${doc}
+	COMPONENT docs)
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${doc}.pdf
+	DESTINATION share/doc/tfel/web/documents/${doc}
+	COMPONENT website)
+    endif(TFEL_APPEND_VERSION)
   endmacro(pdflatex_presentation doc)
 endif(LATEX_COMPILER)

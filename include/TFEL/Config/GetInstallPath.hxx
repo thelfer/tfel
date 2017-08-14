@@ -15,6 +15,12 @@ namespace tfel{
 
   TFELCONFIG_VISIBILITY_EXPORT std::string
   getInstallPath();
+
+  TFELCONFIG_VISIBILITY_EXPORT std::string
+  getTFELConfigExecutableName();
+
+  TFELCONFIG_VISIBILITY_EXPORT std::string
+  getLibraryInstallName(const std::string&);
   
 } // end of namespace tfel
 

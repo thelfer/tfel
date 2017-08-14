@@ -58,12 +58,20 @@ namespace mfront{
 			   const std::string& k)
   {
     const auto root = tfel::getInstallPath();
+#ifdef TFEL_APPEND_VERSION
+    auto fn = root+"/share/doc/mfront-" VERSION "/"+pn+"/"+k.substr(1)+".md";
+#else /* TFEL_APPEND_VERSION */
     auto fn = root+"/share/doc/mfront/"+pn+"/"+k.substr(1)+".md";
+#endif /* TFEL_APPEND_VERSION */
     std::ifstream desc{fn};
     if(desc){
       return fn;
     }
+#ifdef TFEL_APPEND_VERSION
+    fn = root+"/share/doc/mfront-" VERSION "/"+k.substr(1)+".md";
+#else  /* TFEL_APPEND_VERSION */
     fn = root+"/share/doc/mfront/"+k.substr(1)+".md";
+#endif /* TFEL_APPEND_VERSION */
     desc.open(fn);
     if(desc){
       return fn;

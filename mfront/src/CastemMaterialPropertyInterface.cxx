@@ -16,6 +16,7 @@
 #include<algorithm>
 #include<stdexcept>
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 
@@ -75,11 +76,7 @@ namespace mfront
   {
     const auto lib = "Castem"+getMaterialLawLibraryNameBase(mpd);
     const auto name    = this->getCastemFunctionName(mpd);
-#ifdef _WIN32
-    const std::string tfel_config = "tfel-config.exe";
-#else /* WIN32 */
-    const std::string tfel_config = "tfel-config";
-#endif /* WIN32 */
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(d[lib].cppflags,CASTEM_CPPFLAGS);
     insert_if(d[lib].cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");

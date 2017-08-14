@@ -47,11 +47,23 @@ ADD_CUSTOM_COMMAND(
 add_custom_target(castem-doc-pdf ALL DEPENDS castem.pdf)
 add_dependencies(doc-pdf
   castem-doc-pdf)
-install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/castem.pdf
-  DESTINATION share/doc/mfront/references
-  COMPONENT docs)
-install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/castem.pdf
-  DESTINATION share/doc/tfel/web/documents/mfront
-  COMPONENT website)
+
+if(TFEL_APPEND_VERSION)
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/castem.pdf
+    DESTINATION share/doc/mfront-${TFEL_VERSION}/references
+    COMPONENT docs)
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/castem.pdf
+    DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/mfront
+    COMPONENT website)
+else(TFEL_APPEND_VERSION)
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/castem.pdf
+    DESTINATION share/doc/mfront/references
+    COMPONENT docs)
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/castem.pdf
+    DESTINATION share/doc/tfel/web/documents/mfront
+    COMPONENT website)
+endif(TFEL_APPEND_VERSION)

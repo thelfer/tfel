@@ -16,6 +16,7 @@
 #include<cstdlib>
 #include<stdexcept>
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 
@@ -751,11 +752,7 @@ namespace mfront{
   {
     const auto lib  = EuroplexusInterface::getLibraryName(bd);
     const auto name = bd.getLibrary()+bd.getClassName(); 
-#ifdef _WIN32
-    const std::string tfel_config = "tfel-config.exe";
-#else /* WIN32 */
-    const std::string tfel_config = "tfel-config";
-#endif /* WIN32 */
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(d[lib].cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
     insert_if(d[lib].include_directories,
@@ -763,9 +760,9 @@ namespace mfront{
     insert_if(d[lib].sources,"epx"+name+".cxx");
     d.headers.push_back("MFront/Europlexus/europlexus"+name+".hxx");
     insert_if(d[lib].link_directories,"$(shell "+tfel_config+" --library-path)");
-    insert_if(d[lib].link_libraries,"EuroplexusInterface");
+    insert_if(d[lib].link_libraries,tfel::getLibraryInstallName("EuroplexusInterface"));
     if(this->generateMTestFile){
-      insert_if(d[lib].link_libraries,"MTestFileGenerator");
+      insert_if(d[lib].link_libraries,tfel::getLibraryInstallName("MTestFileGenerator"));
     }
     insert_if(d[lib].link_libraries,
 	      "$(shell "+tfel_config+" --library-dependency "

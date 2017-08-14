@@ -32,6 +32,7 @@
 #endif
 #endif
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/System/System.hxx"
 
 #include"MFront/MFrontHeader.hxx"
@@ -90,11 +91,7 @@ namespace mfront
     auto fmname = (mpd.material.empty()) ? "mfront_mp" : mpd.material;
     const auto lib  = "Fortran03"+getMaterialLawLibraryNameBase(mpd);
     const auto name = this->getSrcFileName(mpd.material,mpd.className);
-#ifdef _WIN32
-    const std::string tfel_config = "tfel-config.exe";
-#else /* WIN32 */
-    const std::string tfel_config = "tfel-config";
-#endif /* WIN32 */
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(d[lib].cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
     insert_if(d[lib].sources,name+".cxx");

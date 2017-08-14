@@ -33,6 +33,7 @@
 #endif
 #endif
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/System/System.hxx"
 
 #include"MFront/DSLUtilities.hxx"
@@ -78,11 +79,7 @@ namespace mfront
     const auto lib = makeLowerCase(getMaterialLawLibraryNameBase(mpd));
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto headerFileName  = "include/"+name+"-python.hxx";
-#ifdef _WIN32
-    const std::string tfel_config = "tfel-config.exe";
-#else /* WIN32 */
-    const std::string tfel_config = "tfel-config";
-#endif /* WIN32 */
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto src = std::string{};
     if(mpd.library.empty()){
       if(!mpd.material.empty()){

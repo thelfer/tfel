@@ -8,6 +8,77 @@
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/82/>
 
+## Ticket #81: Have two versions of MFront in the same environment
+
+In `cmake`, the `TFEL_APPEND_VERSION` option will append the version
+number to the names of:
+
+- The executables.
+- The libraries.
+- The python modules. Note that, to comply with `python` restriction
+  on module' names, the characters `.` and `-` are replace by `_` and
+  that only the first level modules are affected.
+- The directories in the `share` folder.
+
+The headers are installed in a subforder named `TFEL-${TVEL_VERSION}`.
+
+For example, if the `TFEL` version is `3.0.2-dev`, using
+`TFEL_APPEND_VERSION` opion will generate:
+
+- The `mfront-3.0.2-dev` executable.
+- The `libTFELMaterial-3.0.2-dev.so` library.
+- The `mtest_3_0_2_dev` `python` module.
+- The `tfel_3_0_2_dev.material` `python` module. In this case, the
+  second level (`material`) is not affected.
+
+This allows multiple executables to be installed in the same
+directory.
+
+## The `tfel-config` tool
+
+The `tfel-config` tool has been modified to take this
+option appropriately. For example:
+
+~~~~{.bash}
+$ tfel-config-3.0.2-dev --includes
+-I/tmp/install/include/TFEL-3.0.2-dev
+$ tfel-config-3.0.2-dev --libs --material
+-L/tmp/install/lib -lTFELMaterial-3.0.2-dev -lTFELMath-3.0.2-dev -lTFELUtilities-3.0.2-dev -lTFELException-3.0.2-dev
+~~~~
+
+## Modification to `mfront`
+
+`mfront` has been modified to call the appropriate `tfel-config`
+executable.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/81/>
+
+### An helper function for importing `TFEL` modules
+
+~~~~{.python}
+import os, importlib
+
+def python_module_version(v):
+    """Return the python module extension from the TFEL version"""
+    return v.replace('.','_').replace('-','_')
+
+def import_tfel_module(n,*v):
+    """Try to import a tfel module, taking into account the TFEL_VERSION environment variable."""
+    if not n:
+        ImportError('Empty module name')
+    m   = n.split('.')
+    if not v:
+        env = os.environ;
+        if('TFEL_VERSION' in env):
+            v = env.get('TFEL_VERSION')
+            m[0] = m[0]+'_'+python_module_version(v)
+    elif len(v)==1:
+        m[0] = m[0]+'_'+python_module_version(v[0])
+    else:
+        ImportError('Invalid number of arguments')
+    return importlib.import_module('.'.join(m))
+~~~~
+
 ## Ticket #80: Adding the possiblity to compile a law using python module
 
 `MFront` relies on external tools, called generators, for this step

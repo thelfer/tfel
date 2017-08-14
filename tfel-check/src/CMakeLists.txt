@@ -32,5 +32,9 @@ target_link_libraries(TFELCheck
 add_executable(tfel-check tfel-check.cxx)
 target_link_libraries(tfel-check
   TFELCheck TFELUtilities TFELSystem)
-install(TARGETS tfel-check DESTINATION bin
-  COMPONENT core)
+if(TFEL_APPEND_VERSION)
+  set_target_properties(tfel-check
+    PROPERTIES OUTPUT_NAME "tfel-check-${TFEL_VERSION}")
+endif(TFEL_APPEND_VERSION)
+  install(TARGETS tfel-check DESTINATION bin
+    COMPONENT core)

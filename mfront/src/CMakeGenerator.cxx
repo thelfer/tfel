@@ -117,9 +117,13 @@ namespace mfront{
       << "else(TFEL_INSTALL_PATH)\n"
       << "  set(TFELHOME $ENV{TFELHOME})\n"
       << "endif(TFEL_INSTALL_PATH)\n"
-      << "\n"
-      << "find_program(TFEL_CONFIG  tfel-config  \"${TFELHOME}/bin\")\n"
-      << "message(STATUS \"tfel-config         : ${TFEL_CONFIG}\")\n"
+      << "\n";
+#ifdef TFEL_APPEND_VERSION
+    m << "find_program(TFEL_CONFIG  tfel-config-" VERSION " \"${TFELHOME}/bin\")\n";
+#else  /* TFEL_APPEND_VERSION */
+    m << "find_program(TFEL_CONFIG  tfel-config \"${TFELHOME}/bin\")\n";
+#endif /* TFEL_APPEND_VERSION */
+    m << "message(STATUS \"tfel-config         : ${TFEL_CONFIG}\")\n"
       << "\n";
       // << "spawn(TFEL_INCLUDE_PATH ${TFEL_CONFIG} \"--include-path\")\n"
       // << "spawn(TFEL_LIBRARY_PATH ${TFEL_CONFIG} \"--library-path\")\n"

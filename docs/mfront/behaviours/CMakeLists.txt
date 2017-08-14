@@ -60,11 +60,22 @@ add_custom_target(behaviours-doc-pdf ALL DEPENDS behaviours.pdf)
 add_dependencies(doc-pdf
   behaviours-doc-pdf)
 
-install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/behaviours.pdf
-  DESTINATION share/doc/behaviours/references
-  COMPONENT docs)
-install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/behaviours.pdf
-  DESTINATION share/doc/tfel/web/documents/mfront
-  COMPONENT website)
+if(TFEL_APPEND_VERSION)
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/behaviours.pdf
+    DESTINATION share/doc/mfront-${TFEL_VERSION}/behaviours/references
+    COMPONENT docs)
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/behaviours.pdf
+    DESTINATION share/doc/tfel-${TFEL_VERSION}/web/documents/mfront
+    COMPONENT website)
+else(TFEL_APPEND_VERSION)
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/behaviours.pdf
+    DESTINATION share/doc/mfront/behaviours/references
+    COMPONENT docs)
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/behaviours.pdf
+    DESTINATION share/doc/tfel/web/documents/mfront
+    COMPONENT website)
+endif(TFEL_APPEND_VERSION)

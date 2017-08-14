@@ -33,6 +33,7 @@
 #endif
 #endif
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/System/System.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 
@@ -126,11 +127,7 @@ namespace mfront
   {
     const auto lib = getMaterialLawLibraryNameBase(mpd)+"-java";
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
-#ifdef _WIN32
-    const std::string tfel_config = "tfel-config.exe";
-#else /* WIN32 */
-    const std::string tfel_config = "tfel-config";
-#endif /* WIN32 */
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(d[lib].link_libraries,"m");    
     // the jni part
     insert_if(d[lib].cppflags,TFEL_JAVA_INCLUDES);

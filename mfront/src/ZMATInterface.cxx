@@ -16,6 +16,7 @@
 #include<stdexcept>
 #include<algorithm>
 
+#include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/System/System.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 
@@ -1545,13 +1546,9 @@ namespace mfront
 					    const BehaviourDescription& bd){
     const auto lib  = getLibraryName(bd);
     const auto name = bd.getLibrary()+bd.getClassName();
-#ifdef _WIN32
-    const std::string tfel_config = "tfel-config.exe";
-#else /* WIN32 */
-    const std::string tfel_config = "tfel-config";
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(d[lib].cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
-#endif /* WIN32 */
     insert_if(d[lib].cppflags,"$(shell "+tfel_config+" --zmat)");
 #pragma message("Linux specific")
     insert_if(d[lib].cppflags,"-DLinux");

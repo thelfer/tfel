@@ -37,7 +37,11 @@ namespace mfront{
       out.open("abaqus-explicit/"+f);
       if(out){
 	const auto root = tfel::getInstallPath();
+#ifdef TFEL_APPEND_VERSION
+	const auto fn = root+"/share/doc/mfront-" VERSION "/abaqus/"+f;
+#else  /* TFEL_APPEND_VERSION */
 	const auto fn = root+"/share/doc/mfront/abaqus/"+f;
+#endif /* TFEL_APPEND_VERSION */
 	std::ifstream in{fn};
 	if(in){
 	  out << in.rdbuf();
@@ -221,11 +225,7 @@ namespace mfront{
       bd.getAttribute<std::string>(AbaqusExplicitParallelizationPolicy,"None");
     const auto lib  = this->getLibraryName(bd);
     const auto name = bd.getLibrary()+bd.getClassName();
-#ifdef _WIN32
-    const std::string tfel_config = "tfel-config.exe";
-#else /* WIN32 */
-    const std::string tfel_config = "tfel-config";
-#endif /* WIN32 */
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(d[lib].cppflags,
 	      "$(shell "+tfel_config+" --cppflags --compiler-flags)");
     insert_if(d[lib].include_directories,
@@ -233,7 +233,7 @@ namespace mfront{
     insert_if(d[lib].sources,"abaqusexplicit"+name+".cxx");
     d.headers.push_back("MFront/Abaqus/abaqusexplicit"+name+".hxx");
     insert_if(d[lib].link_directories,"$(shell "+tfel_config+" --library-path)");
-    insert_if(d[lib].link_libraries,"AbaqusInterface");
+    insert_if(d[lib].link_libraries,tfel::getLibraryInstallName("AbaqusInterface"));
     if(ppolicy=="ThreadPool"){
       insert_if(d[lib].link_libraries,
 		"$(shell "+tfel_config+" --library-dependency "

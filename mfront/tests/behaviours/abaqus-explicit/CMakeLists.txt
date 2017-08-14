@@ -77,15 +77,21 @@ macro(test_abaqus_explicit test_arg)
 	endif(_WILL_FAIL)
 	if((CMAKE_HOST_WIN32) AND (NOT MSYS))
           set_property(TEST ${test}
-            PROPERTY DEPENDS MFrontAbaqusExplicitBehaviours MFrontMaterialProperties-europlexus mtest
+            PROPERTY DEPENDS MFrontAbaqusExplicitBehaviours MFrontMaterialProperties-castem mtest
 	    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$ENV{PATH}")
 	elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
           set_property(TEST ${test}
             PROPERTY DEPENDS MFrontAbaqusExplicitBehaviours MFrontMaterialProperties-castem mtest)
 	endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	  DESTINATION "share/mfront/tests/behaviours/europlexus"
-	  COMPONENT mtest)
+	if(TFEL_APPEND_VERSION)
+	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	    DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/abaqus-explicit"
+	    COMPONENT mtest)
+	else(TFEL_APPEND_VERSION)
+	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	    DESTINATION "share/doc/mfront/tests/behaviours/abaqus-explicit"
+	    COMPONENT mtest)
+	endif(TFEL_APPEND_VERSION)
       endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
     else(CMAKE_CONFIGURATION_TYPES)
       set(file "abaqusexplicit${test_arg}-${rm}.mtest")
@@ -107,9 +113,15 @@ macro(test_abaqus_explicit test_arg)
       endif(_WILL_FAIL)
       set_tests_properties(${test} PROPERTIES DEPENDS MFrontAbaqusExplicitBehaviours)
       set_tests_properties(${test} PROPERTIES DEPENDS mtest)
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	DESTINATION "share/mfront/tests/behaviours/europlexus"
-	COMPONENT mtest)
+      if(TFEL_APPEND_VERSION)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  DESTINATION "share/doc/mfront-${TFEL_VERSION}/tests/behaviours/abaqus-explicit"
+	  COMPONENT mtest)
+      else(TFEL_APPEND_VERSION)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  DESTINATION "share/doc/mfront/tests/behaviours/abaqus-explicit"
+	  COMPONENT mtest)
+      endif(TFEL_APPEND_VERSION)
     endif(CMAKE_CONFIGURATION_TYPES)
   endforeach(rm ${IEEE754_ROUNDING_MODES})
 endmacro(test_abaqus_explicit)

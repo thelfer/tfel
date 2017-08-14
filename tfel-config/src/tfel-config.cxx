@@ -199,7 +199,11 @@ static std::string includeDir()
   std::string inc(INCLUDEDIR);
   const auto& th = getTFELHOME();
   if(!th.empty()){
+#ifdef TFEL_APPEND_VERSION
+    return th+"/include"+"/TFEL-"+VERSION;
+#else /* TFEL_APPEND_VERSION */
     return th+"/include";
+#endif /* TFEL_APPEND_VERSION */
   } else {
     if(inc.substr(0,9)=="${prefix}"){
       inc = handleSpace(prefix + "/include");
@@ -267,7 +271,11 @@ TFEL_NORETURN static void treatLicences()
 static void listLibraries(const char* p)
 {
   auto display_if = [&p](const bool b, const char* s){
+#ifdef TFEL_APPEND_VERSION
+    if(b){std::cout << p << s << "-" << VERSION << ' ';}
+#else /* TFEL_APPEND_VERSION*/
     if(b){std::cout << p << s << ' ';}
+#endif /* TFEL_APPEND_VERSION*/
   };
   display_if(mfront_profiling,"MFrontProfiling");
   display_if(material,"TFELMaterial");

@@ -33,4 +33,5 @@ _mtest_la_LIBADD  = -L@top_builddir@/mtest/src                   \
 		    -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 _mtest_la_LDFLAGS = -module
 
-EXTRA_DIST=CMakeLists.txt
+EXTRA_DIST=CMakeLists.txt          \
+	   __init__.py.version.in

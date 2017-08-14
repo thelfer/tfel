@@ -16,9 +16,15 @@ macro(pandoc_html file)
     ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/${file}.md -o ${file}.html)
   add_custom_target(${file}-html ALL DEPENDS ${file}.html)
   add_dependencies(website ${file}-html)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}.html
-    DESTINATION share/doc/tfel/web
-    COMPONENT website)
+  if(TFEL_APPEND_VERSION)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}.html
+      DESTINATION share/doc/tfel-${TFEL_VERSION}/web
+      COMPONENT website)
+  else(TFEL_APPEND_VERSION)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}.html
+      DESTINATION share/doc/tfel/web
+      COMPONENT website)
+  endif(TFEL_APPEND_VERSION)
 endmacro(pandoc_html)
 
 add_custom_target(website)
@@ -98,12 +104,24 @@ pandoc_html(BehaviourBricks "--toc" "--toc-depth=2")
 
 pandoc_html(MTest-keywords "--toc" "--toc-depth=1")
 
-install(DIRECTORY js css doc img media downloads
+if(TFEL_APPEND_VERSION)
+  install(DIRECTORY js css doc img media downloads
+    DESTINATION share/doc/tfel-${TFEL_VERSION}/web
+    COMPONENT website
+    PATTERN ".svn" EXCLUDE)
+  install(FILES 404.html apple-touch-icon-precomposed.png 
+    CHANGELOG.md CONTRIBUTING.md crossdomain.xml favicon.ico
+    humans.txt LICENSE.md README.md robots.txt TODO.md
+    DESTINATION share/doc/tfel-${TFEL_VERSION}/web
+    COMPONENT website)
+else(TFEL_APPEND_VERSION)
+  install(DIRECTORY js css doc img media downloads
     DESTINATION share/doc/tfel/web
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
-install(FILES 404.html apple-touch-icon-precomposed.png 
-  CHANGELOG.md CONTRIBUTING.md crossdomain.xml favicon.ico
-  humans.txt LICENSE.md README.md robots.txt TODO.md
-  DESTINATION share/doc/tfel/web
-  COMPONENT website)
+  install(FILES 404.html apple-touch-icon-precomposed.png 
+    CHANGELOG.md CONTRIBUTING.md crossdomain.xml favicon.ico
+    humans.txt LICENSE.md README.md robots.txt TODO.md
+    DESTINATION share/doc/tfel/web
+    COMPONENT website)
+endif(TFEL_APPEND_VERSION)

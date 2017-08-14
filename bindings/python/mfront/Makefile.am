@@ -40,4 +40,5 @@ _mfront_la_LIBADD  = -L@top_builddir@/mfront/src                       \
 		     @BOOST_LIBS@ @BOOST_PYTHON_LIBS@                  \
 		     -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 
-EXTRA_DIST=CMakeLists.txt
+EXTRA_DIST=CMakeLists.txt          \
+	   __init__.py.version.in

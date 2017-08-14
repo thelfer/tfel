@@ -16,8 +16,14 @@ macro(install_mfront_desc file)
   #     DESTINATION share/doc/tfel/web/mfront
   #     COMPONENT website)
   # endif(HAVE_PANDOC)
-  install(FILES ${file}.md DESTINATION share/doc/mfront
-    COMPONENT mfront)
+  if(TFEL_APPEND_VERSION)
+    install(FILES ${file}.md
+      DESTINATION share/doc/mfront-${TFEL_VERSION}
+      COMPONENT mfront)
+  else(TFEL_APPEND_VERSION)
+    install(FILES ${file}.md DESTINATION share/doc/mfront
+      COMPONENT mfront)
+  endif(TFEL_APPEND_VERSION)
 endmacro(install_mfront_desc file)
 
 macro(install_mfront_desc2 directory file)
@@ -36,8 +42,15 @@ macro(install_mfront_desc2 directory file)
   #     DESTINATION share/doc/tfel/web/mfront/${directory}/${file}.html
   #     COMPONENT website)
   # endif(HAVE_PANDOC)
-  install(FILES ${directory}/${file}.md DESTINATION share/doc/mfront/${directory}
-    COMPONENT mfront)
+  if(TFEL_APPEND_VERSION)
+    install(FILES ${directory}/${file}.md
+      DESTINATION share/doc/mfront-${TFEL_VERSION}/${directory}
+      COMPONENT mfront)
+  else(TFEL_APPEND_VERSION)
+    install(FILES ${directory}/${file}.md
+      DESTINATION share/doc/mfront/${directory}
+      COMPONENT mfront)
+  endif(TFEL_APPEND_VERSION)
 endmacro(install_mfront_desc2 directory file)
 
 install_mfront_desc(Algorithm)
