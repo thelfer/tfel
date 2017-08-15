@@ -20,6 +20,19 @@
 namespace abaqus{
 
   void
+  AbaqusInterfaceExceptions::throwInvalidTensorSize(const std::string& b,
+						    const unsigned short n1,
+						    const AbaqusInt n2)
+  {
+    std::ostringstream msg;
+    msg << "AbaqusInterfaceExceptions::throwInvalidTensorSize: "
+	<< "the size of symmetric tensors for the current hypothesis does not match "
+	<< "`Abaqus` declaration (NTENS) for behaviour '" << b << "'. Expected '" 
+	<< n1 << "', got '" << n2 << "'.";
+    throw(AbaqusException(msg.str()));
+  } // end AbaqusInterfaceExceptions::throwInvalidTensorSize
+  
+  void
   AbaqusInterfaceExceptions::throwUnMatchedNumberOfMaterialProperties(const std::string& b,
 								     const unsigned short n1,
 								     const AbaqusInt n2)

@@ -57,6 +57,17 @@ namespace abaqus
     static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::ABAQUS;
   };
 
+  template<tfel::material::ModellingHypothesis::Hypothesis H>
+  struct AbaqusStensorSize
+    : public tfel::material::ModellingHypothesisToStensorSize<H>
+  {}; // end of struct AbaqusStensorSize
+
+  template<>
+  struct AbaqusStensorSize<tfel::material::ModellingHypothesis::PLANESTRESS>
+  {
+    //! the return of the metafunction
+    static constexpr unsigned short value = 3u;
+  }; // end of struct AbaqusStensorSize
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AbaqusBehaviourHandler
@@ -270,7 +281,6 @@ namespace abaqus
     TFEL_ABAQUS_INLINE2 static void
     checkNPROPS(const AbaqusInt NPROPS)
     {
-      using namespace std;
       using namespace tfel::material;
       typedef Behaviour<H,AbaqusReal,false> BV;
       typedef MechanicalBehaviourTraits<BV> Traits;
@@ -297,6 +307,19 @@ namespace abaqus
       if((nstatv!=NSTATV)&&is_defined_){
 	throwUnMatchedNumberOfStateVariables(Traits::getName(),
 					     nstatv,NSTATV);
+      }
+    } // end of checkNSTATV
+
+    TFEL_ABAQUS_INLINE2 static void
+    checkNTENS(const AbaqusInt ntens)
+    {
+      typedef Behaviour<H,AbaqusReal,false> BV;
+      typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
+      TFEL_CONSTEXPR const auto size = AbaqusStensorSize<H>::value;
+      TFEL_CONSTEXPR const bool is_defined_ = Traits::is_defined;
+      //Test if the nb of state variables matches Behaviour requirements
+      if((ntens!=size)&&is_defined_){
+	throwInvalidTensorSize(Traits::getName(),ntens,size);
       }
     } // end of checkNSTATV
       

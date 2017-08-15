@@ -122,13 +122,14 @@ namespace abaqus
 	typedef AbaqusBehaviourHandler<H,Behaviour> AHandler;
 	using BV = Behaviour<H,AbaqusReal,false>;
 	using ATraits =  AbaqusTraits<BV>;
-	const bool bs = ATraits::requiresStiffnessTensor;
-	const bool ba = ATraits::requiresThermalExpansionCoefficientTensor;
+	TFEL_CONSTEXPR const auto bs = ATraits::requiresStiffnessTensor;
+	TFEL_CONSTEXPR const auto ba = ATraits::requiresThermalExpansionCoefficientTensor;
 	using Integrator = typename AHandler::template Integrator<bs,ba>;
 #ifndef MFRONT_ABAQUS_NORUNTIMECHECKS
 	AHandler::checkNPROPS(d.NPROPS);
 	AHandler::checkNSTATV(d.NSTATV);
-#endif  /* MFRONT_ABAQUS_NORUNTIMECHECKS */
+	AHandler::checkNTENS(d.NTENS);
+#endif /* MFRONT_ABAQUS_NORUNTIMECHECKS */
 	Integrator i(d);
 	i.exe(d);
       }
