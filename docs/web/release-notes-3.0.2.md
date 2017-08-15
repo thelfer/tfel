@@ -4,6 +4,13 @@
 
 # Tickets fixed
 
+## Ticket #84: Check the `NTENS` value in the `Abaqus` interface
+
+The value of the `NTENS` value was not used to check that the function
+called was consistent with the modelling hypothesis used.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/84/>
+
 ## Ticket #82: Python interface is broken if no material name if not defined
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/82/>

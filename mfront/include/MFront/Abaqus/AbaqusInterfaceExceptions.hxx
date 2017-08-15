@@ -62,10 +62,22 @@ namespace abaqus{
    */
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusInterfaceExceptions
   {
-
+    /*!
+     * \brief throw an AbaqusException. This method shall be called
+     * when the number of components of symmetric tensors for the
+     * current hypothesis does not match the the number of components
+     * of symmetric tensors given by `Abaqus/Standard`
+     * \param[in] b  : behaviour name
+     * \param[in] n1 : size of symmetric tensors for the current hypothesis
+     * \param[in] n2 : size of symmetric tensors declared by the `Abaqus/Standard`
+     */
+    TFEL_NORETURN static void
+    throwInvalidTensorSize(const std::string&,
+			   const unsigned short n1,
+			   const AbaqusInt n2);
     /*!
      * \brief throw an AbaqusException. This method shall be called when
-     * the number of materials properties declared by the beahviour and the
+     * the number of materials properties declared by the behaviour and the
      * number of  materials properties declared by the interface does not
      * match.
      * \param[in] b  : behaviour name
@@ -76,10 +88,9 @@ namespace abaqus{
     throwUnMatchedNumberOfMaterialProperties(const std::string&,
 					     const unsigned short n1,
 					     const AbaqusInt n2);
-    
     /*!
      * \brief throw an AbaqusException. This method shall be called when
-     * the number of state variables declared by the beahviour and the
+     * the number of state variables declared by the behaviour and the
      * number of state variables declared by the interface does not
      * match.
      * \param[in] b  : behaviour name

@@ -20,12 +20,25 @@
 namespace abaqus{
 
   void
+  AbaqusInterfaceExceptions::throwInvalidTensorSize(const std::string& b,
+						    const unsigned short n1,
+						    const AbaqusInt n2)
+  {
+    std::ostringstream msg;
+    msg << "AbaqusInterfaceExceptions::throwInvalidTensorSize: "
+	<< "the size of symmetric tensors for the current hypothesis does not match "
+	<< "`Abaqus` declaration (NTENS) for behaviour '" << b << "'. Expected '" 
+	<< n1 << "', got '" << n2 << "'.";
+    throw(AbaqusException(msg.str()));
+  } // end AbaqusInterfaceExceptions::throwInvalidTensorSize
+  
+  void
   AbaqusInterfaceExceptions::throwUnMatchedNumberOfMaterialProperties(const std::string& b,
 								     const unsigned short n1,
 								     const AbaqusInt n2)
   {
     std::ostringstream msg;
-    msg << "AbaqusInterfaceExceptions::throwUnMatchedNumberOfMaterialProperties : "
+    msg << "AbaqusInterfaceExceptions::throwUnMatchedNumberOfMaterialProperties: "
 	<< "the number of material properties does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " material properties, and "
 	<< n2 << " material properties were declared";
@@ -38,7 +51,7 @@ namespace abaqus{
 								 const AbaqusInt n2)
   {
     std::ostringstream msg;
-    msg << "AbaqusInterfaceExceptions::throwUnMatchedNumberOfStateVariables : "
+    msg << "AbaqusInterfaceExceptions::throwUnMatchedNumberOfStateVariables: "
 	<< "the number of internal state variables does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " state variables, and "
 	<< n2 << " state variables were declared";
@@ -50,7 +63,7 @@ namespace abaqus{
 						const AbaqusException& e)
   {
     std::cout << "The behaviour '" << b 
-	      << "' has thrown an AbaqusException : "
+	      << "' has thrown an AbaqusException: "
 	      << e.what() << std::endl;
   } // end of AbaqusInterfaceExceptions::treatAbaqusException
 
@@ -59,7 +72,7 @@ namespace abaqus{
 						   const tfel::material::MaterialException& e)
   {
     std::cout << "The behaviour '" << b 
-	      << "' has thrown an MaterialException : "
+	      << "' has thrown an MaterialException: "
 	      << e.what() << std::endl;
   } // end of treatMaterialException
     
@@ -68,7 +81,7 @@ namespace abaqus{
 					       const tfel::exception::TFELException& e)
   {
     std::cout << "The behaviour '" << b 
-	      << "' has thrown a generic tfel exception : "
+	      << "' has thrown a generic tfel exception: "
 	      << e.what() << std::endl;
   } // end of treatTFELException
 
@@ -77,7 +90,7 @@ namespace abaqus{
 						   const std::exception& e)
   {
     std::cout << "The behaviour '" << b 
-	      << "' has thrown a generic standard exception : "
+	      << "' has thrown a generic standard exception: "
 	      << e.what() << std::endl;
   } // end of treatStandardException
 
@@ -127,7 +140,7 @@ namespace abaqus{
   void
   AbaqusInterfaceExceptions::displayUnsupportedHypothesisMessage()
   {
-    std::cout << "AbaqusInterfaceExceptions::displayUnsupportedHypothesisMessage : "
+    std::cout << "AbaqusInterfaceExceptions::displayUnsupportedHypothesisMessage: "
 	      << "unsupported hypothesis" << std::endl;
   }
   
@@ -148,7 +161,7 @@ namespace abaqus{
 				   AbaqusReal *const,
 				    const StressFreeExpansionHandler<AbaqusReal>&)
   {
-    throw(std::runtime_error("AbaqusUnSupportedCaseHandler::exe : "
+    throw(std::runtime_error("AbaqusUnSupportedCaseHandler::exe: "
 			     "we fall in a case that the abaqus interface "
 			     "is not able to handle."));  
   } // end of exe

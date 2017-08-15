@@ -59,8 +59,7 @@ namespace tfel
        * GENERALISEDPLANESTRAIN               <=> GeneralisedPlaneStrain		     
        * TRIDIMENSIONAL                       <=> Tridimensional
        */
-      static Hypothesis
-      fromString(const std::string&);
+      static Hypothesis fromString(const std::string&);
       /*!
        * \return a string correpsonding to the modelling hypothesis
        * AXISYMMETRICALGENERALISEDPLANESTRAIN <=> AxisymmetricalGeneralisedPlaneStrain
@@ -71,20 +70,17 @@ namespace tfel
        * GENERALISEDPLANESTRAIN               <=> GeneralisedPlaneStrain		     
        * TRIDIMENSIONAL                       <=> Tridimensional
        */
-      static std::string
-      toString(const Hypothesis);
+      static std::string toString(const Hypothesis);
       /*!
        * \return an upper case string correpsonding to the modelling
        * hypothesis
        */
-      static std::string
-      toUpperCaseString(const Hypothesis);
+      static std::string toUpperCaseString(const Hypothesis);
       /*!
        * \return true if the given string stands for a modelling
        * hypothesis
        */
-      static bool
-      isModellingHypothesis(const std::string&);
+      static bool isModellingHypothesis(const std::string&);
     }; // end of struct ModellingHypothesis
 
     /*!
@@ -171,6 +167,90 @@ namespace tfel
       static constexpr unsigned short value = 3u;
     };
 
+    /*!
+     * a metafunction returning the space dimension of a modelling
+     * hypothesis.
+     */
+    template<ModellingHypothesis::Hypothesis>
+    struct ModellingHypothesisToStensorSize;
+
+    /*!
+     * partial specialisation for
+     * ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN
+     */
+    template<>
+    struct ModellingHypothesisToStensorSize<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN>
+    {
+      //! the return of the metafunction
+      static constexpr unsigned short value = 3u;
+    };
+
+    /*!
+     * partial specialisation for
+     * ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS
+     */
+    template<>
+    struct ModellingHypothesisToStensorSize<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS>
+    {
+      //! the return of the metafunction
+      static constexpr unsigned short value = 3u;
+    };
+
+    /*!
+     * partial specialisation for
+     * ModellingHypothesis::AXISYMETRICAL
+     */
+    template<>
+    struct ModellingHypothesisToStensorSize<ModellingHypothesis::AXISYMMETRICAL>
+    {
+      //! the return of the metafunction
+      static constexpr unsigned short value = 4u;
+    };
+
+    /*!
+     * partial specialisation for
+     * ModellingHypothesis::PLANESTRESS
+     */
+    template<>
+    struct ModellingHypothesisToStensorSize<ModellingHypothesis::PLANESTRESS>
+    {
+      //! the return of the metafunction
+      static constexpr unsigned short value = 4u;
+    };
+
+    /*!
+     * partial specialisation for
+     * ModellingHypothesis::PLANESTRAIN
+     */
+    template<>
+    struct ModellingHypothesisToStensorSize<ModellingHypothesis::PLANESTRAIN>
+    {
+      //! the return of the metafunction
+      static constexpr unsigned short value = 4u;
+    };
+
+    /*!
+     * partial specialisation for
+     * ModellingHypothesis::GENERALISEDPLANESTRAIN
+     */
+    template<>
+    struct ModellingHypothesisToStensorSize<ModellingHypothesis::GENERALISEDPLANESTRAIN>
+    {
+      //! the return of the metafunction
+      static constexpr unsigned short value = 4u;
+    };
+
+    /*!
+     * partial specialisation for
+     * ModellingHypothesis::TRIDIMENSIONAL
+     */
+    template<>
+    struct ModellingHypothesisToStensorSize<ModellingHypothesis::TRIDIMENSIONAL>
+    {
+      //! the return of the metafunction
+      static constexpr unsigned short value = 6u;
+    };
+    
     /*!
      * \return the space dimension associated to a modelling hypothesis
      * \param[in] h: modelling hypothesis
