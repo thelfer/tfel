@@ -478,12 +478,14 @@ namespace mfront{
        ((btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
 	((this->fss!=AbaqusInterfaceBase::NATIVEFINITESTRAINSTRATEGY)&&
 	 (this->fss!=AbaqusInterfaceBase::UNDEFINEDSTRATEGY)))){
-      out << "if(KSTEP[2]!=1){\n"
+      out << "#ifndef MFRONT_ABAQUS_NORUNTIMECHECKS\n"
+	  << "if(KSTEP[2]!=1){\n"
 	  << "std::cerr << \"the " << name << " behaviour is only "
 	  << "valid in finite strain analysis\\n\";\n"
 	  << "*PNEWDT=-1;\n"
 	  << "return;\n"
-	  << "}\n";
+	  << "}\n"
+	  << "#endif /* MFRONT_ABAQUS_NORUNTIMECHECKS */\n";
     }
     if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
       if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
