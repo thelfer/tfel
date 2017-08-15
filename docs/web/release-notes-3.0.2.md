@@ -153,6 +153,32 @@ propagate to inner structures, wheres the visibility flags used under
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/69/>
 
+## Ticket #70: `PLASTIC` + `MFRONT` in `CalculiX`
+
+`CalculiX` provides two interfaces to `ABAQUS` `umat` behaviours. In
+versions prior to 2.12, those interfaces are not fully compatible with
+`ABAQUS` concerning various checks. The issue has been reported to
+`CalculiX` developers.
+
+To circumvent those issues, the `MFRONT_ABAQUS_NORUNTIMECHECKS` flag
+has been added. This flag desactivates:
+
+- checks related to the number of material properties (value of
+  `NPROPS`)
+- checks related to the number of state variables (value of `NSTATV`)
+- checks related to usage of the behaviour in finite strain analysis
+  (`KSTEP`)
+
+All those checks may fail with the `ABAQUS` and `ABAQUSNL` interfaces
+in `CalculiX` for reasons described in the previous posts. This flag
+can be set as follows:
+
+~~~~{.bash}
+mfront --obuild --interface=abaqus -D MFRONT_ABAQUS_NORUNTIMECHECKS SaintVenantKirchhoffElasticityTotalLagrangian.mfront
+~~~~
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/70/>
+
 ## Ticket #64: Change the library prefix to "cyg" under cygwin
 
 The default library prefix under cygwin has been changed to `cyg`
