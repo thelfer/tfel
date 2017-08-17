@@ -21,7 +21,9 @@
 #include "TFELCheck/TFELCheckConfig.hxx"
 #include "TFELCheck/Comparison.hxx"
 
-namespace tfel_check {
+namespace tfel{
+
+namespace check{
 
   struct TFELCHECK_VISIBILITY_EXPORT RelativeComparison final
     : public Comparison
@@ -31,6 +33,8 @@ namespace tfel_check {
     virtual ~RelativeComparison();
   };
 
-} /* namespace tfel_check */
+  } // end of namespace check
+
+} // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_RELATIVECOMPARISON_HXX */

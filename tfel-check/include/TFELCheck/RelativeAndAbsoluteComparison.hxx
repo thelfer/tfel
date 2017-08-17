@@ -23,16 +23,20 @@
 #include "TFELCheck/TFELCheckConfig.hxx"
 #include "TFELCheck/Comparison.hxx"
 
-namespace tfel_check {
+namespace tfel{
 
-  struct TFELCHECK_VISIBILITY_EXPORT RelativeAndAbsoluteComparison final
-    : public Comparison
-  {
-    RelativeAndAbsoluteComparison();
-    virtual void compare() override;
-    virtual ~RelativeAndAbsoluteComparison();
-};
+  namespace check{
 
-} /* namespace tfel_check */
+    struct TFELCHECK_VISIBILITY_EXPORT RelativeAndAbsoluteComparison final
+      : public Comparison
+    {
+      RelativeAndAbsoluteComparison();
+      virtual void compare() override;
+      virtual ~RelativeAndAbsoluteComparison();
+    };
+
+  } // end of namespace check
+
+} // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_RELATIVEANDABSOLUTECOMPARISON_HXX */

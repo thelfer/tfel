@@ -22,32 +22,37 @@
 #include "TFELCheck/TFELCheckConfig.hxx"
 #include "TFELCheck/PCILogDriver.hxx"
 
-namespace tfel_check {
+namespace tfel{
 
-  struct TFELCHECK_VISIBILITY_EXPORT PCTextDriver
-    : public PCILogDriver
-  {
+  namespace check{
 
-    PCTextDriver();
-    PCTextDriver(const std::string&);
-    virtual void addMessage(const std::string&) override;
-    /*!
-     * \param[in] testname:
-     * \param[in] step:
-     * \param[in] command:
-     * \param[in] time:
-     * \param[in] success:
-     * \param[in] message:
-     */
-    virtual void addTestResult(const std::string&,
-			       const std::string&,
-			       const std::string&,
-			       const float,
-			       bool,
-			       const std::string& = "") override;
-    //! destructor
-    virtual ~PCTextDriver();
-  };
-}  // namespace tfel_check
+    struct TFELCHECK_VISIBILITY_EXPORT PCTextDriver
+      : public PCILogDriver
+    {
+
+      PCTextDriver();
+      PCTextDriver(const std::string&);
+      virtual void addMessage(const std::string&) override;
+      /*!
+       * \param[in] testname:
+       * \param[in] step:
+       * \param[in] command:
+       * \param[in] time:
+       * \param[in] success:
+       * \param[in] message:
+       */
+      virtual void addTestResult(const std::string&,
+				 const std::string&,
+				 const std::string&,
+				 const float,
+				 bool,
+				 const std::string& = "") override;
+      //! destructor
+      virtual ~PCTextDriver();
+    };
+
+  } // end of namespace check
+
+} // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_PCTEXTDRIVER_HXX */

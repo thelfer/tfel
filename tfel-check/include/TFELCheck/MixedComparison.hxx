@@ -17,24 +17,28 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFELCHECK_MIXEDCOMPARISON_HH_
-#define LIB_TFELCHECK_MIXEDCOMPARISON_HH_
+#ifndef LIB_TFELCHECK_MIXEDCOMPARISON_HXX
+#define LIB_TFELCHECK_MIXEDCOMPARISON_HXX
 
 #include "TFELCheck/TFELCheckConfig.hxx"
 #include "TFELCheck/Comparison.hxx"
 
-namespace tfel_check {
+namespace tfel{
 
-  struct TFELCHECK_VISIBILITY_EXPORT MixedComparison final
-    : public Comparison
-  {
-    //! constructor
-    MixedComparison();
-    virtual void compare() override;
-    //! destructor
-    virtual ~MixedComparison();
-  };
+  namespace check{
 
-} /* namespace tfel_check */
+    struct TFELCHECK_VISIBILITY_EXPORT MixedComparison final
+      : public Comparison
+    {
+      //! constructor
+      MixedComparison();
+      virtual void compare() override;
+      //! destructor
+      virtual ~MixedComparison();
+    };
 
-#endif /* LIB_TFELCHECK_MIXEDCOMPARISON_HH_ */
+  } // end of namespace check
+
+} // end of namespace tfel
+
+#endif /* LIB_TFELCHECK_MIXEDCOMPARISON_HXX */

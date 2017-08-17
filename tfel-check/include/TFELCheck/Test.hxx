@@ -20,170 +20,174 @@
 #include "TFELCheck/Interpolation.hxx"
 #include "TFELCheck/Comparison.hxx"
 
-namespace tfel_check {
+namespace tfel{
 
-  struct TFELCHECK_VISIBILITY_EXPORT Test {
+  namespace check{
 
-    Test();
-    Test(Test&&);
-    Test(const Test&);
-    Test& operator=(Test&&);
-    Test& operator=(const Test&);
-    virtual ~Test();
+    struct TFELCHECK_VISIBILITY_EXPORT Test {
 
-    /*!
-     * \brief Does the comparison between the two columns, based on comparison_
-     */
-    void compare();
+      Test();
+      Test(Test&&);
+      Test(const Test&);
+      Test& operator=(Test&&);
+      Test& operator=(const Test&);
+      virtual ~Test();
 
-    /*!
-     * \brief Returns true if the current test succeeded
-     */
-    bool hasSucceed() const;
+      /*!
+       * \brief Does the comparison between the two columns, based on comparison_
+       */
+      void compare();
 
-    /*!
-     * \brief Returns the message to be added in the log
-     */
-    std::string getMsgLog();
+      /*!
+       * \brief Returns true if the current test succeeded
+       */
+      bool hasSucceed() const;
 
-    /*!
-     * \brief Returns comparison_
-     */
-    const std::shared_ptr<Comparison> getComparison() const;
+      /*!
+       * \brief Returns the message to be added in the log
+       */
+      std::string getMsgLog();
 
-    /*!
-     * \brief Sets the value of comparison_
-     */
-    void setComparison(const std::shared_ptr<Comparison>&);
+      /*!
+       * \brief Returns comparison_
+       */
+      const std::shared_ptr<Comparison> getComparison() const;
 
-    /*!
-     * \brief Returns true if user allowed less values for the results in the test
-     */
-    bool isAllowLessResults() const;
+      /*!
+       * \brief Sets the value of comparison_
+       */
+      void setComparison(const std::shared_ptr<Comparison>&);
 
-    /*!
-     * \brief Sets the value of allowLessResults_
-     */
-    void setAllowLessResults(const bool);
+      /*!
+       * \brief Returns true if user allowed less values for the results in the test
+       */
+      bool isAllowLessResults() const;
 
-    /*!
-     * \brief Sets the first column to compare
-     */
-    void setColA(const std::shared_ptr<Column>&);
+      /*!
+       * \brief Sets the value of allowLessResults_
+       */
+      void setAllowLessResults(const bool);
 
-    /*!
-     * \brief Sets the second column to compare
-     */
-    void setColB(const std::shared_ptr<Column>&);
+      /*!
+       * \brief Sets the first column to compare
+       */
+      void setColA(const std::shared_ptr<Column>&);
 
-    /*!
-     * \brief Sets the column to be interpolated
-     */
-    void setColInterpolated(const std::shared_ptr<Column>& ci);
+      /*!
+       * \brief Sets the second column to compare
+       */
+      void setColB(const std::shared_ptr<Column>&);
 
-    /*!
-     * \brief Returns the name of the file containing the references
-     */
-    const std::string& getFileA() const;
+      /*!
+       * \brief Sets the column to be interpolated
+       */
+      void setColInterpolated(const std::shared_ptr<Column>& ci);
 
-    /*!
-     * \brief Sets the name of the file containing the references
-     */
-    void setFileA(const std::string& f1);
+      /*!
+       * \brief Returns the name of the file containing the references
+       */
+      const std::string& getFileA() const;
 
-    /*!
-     * \brief Returns the name of the file containing the results
-     */
-    const std::string& getFileB() const;
+      /*!
+       * \brief Sets the name of the file containing the references
+       */
+      void setFileA(const std::string& f1);
 
-    /*!
-     * \brief Sets the name of the file containing the results
-     */
-    void setFileB(const std::string& f2);
+      /*!
+       * \brief Returns the name of the file containing the results
+       */
+      const std::string& getFileB() const;
 
-    /*!
-     * \brief Returns the interpolation used for this test
-     */
-    const std::shared_ptr<Interpolation>& getInterpolation() const;
+      /*!
+       * \brief Sets the name of the file containing the results
+       */
+      void setFileB(const std::string& f2);
 
-    /*!
-     * \brief Sets the interpolation used for this test
-     */
-    void setInterpolation(const std::shared_ptr<Interpolation>& interpolation);
+      /*!
+       * \brief Returns the interpolation used for this test
+       */
+      const std::shared_ptr<Interpolation>& getInterpolation() const;
 
-    /*!
-     * \brief Returns the first precision
-     */
-    double getPrec() const;
+      /*!
+       * \brief Sets the interpolation used for this test
+       */
+      void setInterpolation(const std::shared_ptr<Interpolation>& interpolation);
 
-    /*!
-     * \brief Sets the first precision
-     */
-    void setPrec(double prec);
+      /*!
+       * \brief Returns the first precision
+       */
+      double getPrec() const;
 
-    /*!
-     * \brief Returns the second precision
-     */
-    double getPrecision2() const;
+      /*!
+       * \brief Sets the first precision
+       */
+      void setPrec(double prec);
 
-    /*!
-     * \brief Sets the second precision
-     */
-    void setPrecision2(double precision2);
+      /*!
+       * \brief Returns the second precision
+       */
+      double getPrecision2() const;
 
-    /*!
-     * \brief Applies the interpolation
-     */
-    void applyInterpolation();
+      /*!
+       * \brief Sets the second precision
+       */
+      void setPrecision2(double precision2);
 
-    /*!
-     * \brief Gets the column to be interpolated for the integration
-     */
-    const std::shared_ptr<Column>& getColIntegralInterpolated() const;
+      /*!
+       * \brief Applies the interpolation
+       */
+      void applyInterpolation();
 
-    /*!
-     * \brief Sets the column to be interpolated for the integration
-     */
-    void setColIntegralInterpolated(const std::shared_ptr<Column>& colIntegralInterpolated);
+      /*!
+       * \brief Gets the column to be interpolated for the integration
+       */
+      const std::shared_ptr<Column>& getColIntegralInterpolated() const;
 
-    /*!
-     * \brief Gets the interpolation for the integration
-     */
-    const std::shared_ptr<Interpolation>& getIntegralInterpolation() const;
+      /*!
+       * \brief Sets the column to be interpolated for the integration
+       */
+      void setColIntegralInterpolated(const std::shared_ptr<Column>& colIntegralInterpolated);
 
-    /*!
-     * \brief Sets the interpolation for the integration
-     */
-    void setIntegralInterpolation(const std::shared_ptr<Interpolation>& integralInterpolation);
+      /*!
+       * \brief Gets the interpolation for the integration
+       */
+      const std::shared_ptr<Interpolation>& getIntegralInterpolation() const;
 
-    /*!
-     * \brief Gets the column of values of the first file
-     */
-    const std::shared_ptr<Column>& getColA() const;
+      /*!
+       * \brief Sets the interpolation for the integration
+       */
+      void setIntegralInterpolation(const std::shared_ptr<Interpolation>& integralInterpolation);
 
-    /*!
-     * \brief Gets the column of values of the second file
-     */
-    const std::shared_ptr<Column>& getColB() const;
+      /*!
+       * \brief Gets the column of values of the first file
+       */
+      const std::shared_ptr<Column>& getColA() const;
 
-  private:
-    double prec = 0; /**!< the first precision given */
-    double precision2 = 0; /**!< the second optional precision given */
-    bool allowLessResults = false; /**!< true if user allows to interpolate ref */
-    std::string f1; /**!< first file : .ref */
-    std::string f2; /**!< second file : .res */
-    std::shared_ptr<Column> c1; /**!< column used in first file **/
-    std::shared_ptr<Column> c2; /**!< column used in second file **/
-    std::shared_ptr<Interpolation> interpolation; /**!< the interpolation chosen */
-    std::shared_ptr<Column> ci; /**!< the column used for interpolation (abscissa) */
-    std::shared_ptr<Interpolation> integralInterpolation; /**!< the interpolation chosen for the integration*/
-    std::shared_ptr<Column> colIntegralInterpolated; /**!< the column used for integration interpolation (abscissa)*/
-    std::shared_ptr<Comparison> comparison; /**!< the type of the test (absolute, relative...) */
-    std::string msgLog; /**!< message log */
+      /*!
+       * \brief Gets the column of values of the second file
+       */
+      const std::shared_ptr<Column>& getColB() const;
 
-  };
-  // end of struct Test
+    private:
+      double prec = 0; /**!< the first precision given */
+      double precision2 = 0; /**!< the second optional precision given */
+      bool allowLessResults = false; /**!< true if user allows to interpolate ref */
+      std::string f1; /**!< first file : .ref */
+      std::string f2; /**!< second file : .res */
+      std::shared_ptr<Column> c1; /**!< column used in first file **/
+      std::shared_ptr<Column> c2; /**!< column used in second file **/
+      std::shared_ptr<Interpolation> interpolation; /**!< the interpolation chosen */
+      std::shared_ptr<Column> ci; /**!< the column used for interpolation (abscissa) */
+      std::shared_ptr<Interpolation> integralInterpolation; /**!< the interpolation chosen for the integration*/
+      std::shared_ptr<Column> colIntegralInterpolated; /**!< the column used for integration interpolation (abscissa)*/
+      std::shared_ptr<Comparison> comparison; /**!< the type of the test (absolute, relative...) */
+      std::string msgLog; /**!< message log */
 
-}
+    };
+    // end of struct Test
+
+  } // end of namespace check
+
+} // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_TEST_HXX */

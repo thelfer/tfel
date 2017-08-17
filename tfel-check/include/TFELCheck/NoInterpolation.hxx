@@ -24,26 +24,30 @@
 #include "TFELCheck/TFELCheckConfig.hxx"
 #include "TFELCheck/Interpolation.hxx"
 
-namespace tfel_check {
+namespace tfel{
 
-  struct TFELCHECK_VISIBILITY_EXPORT NoInterpolation
-    : public Interpolation
-  {
-    NoInterpolation();
-    NoInterpolation(NoInterpolation&&);
-    NoInterpolation(const NoInterpolation&);
-    NoInterpolation& operator=(NoInterpolation&&);
-    NoInterpolation& operator=(const NoInterpolation&);
-    virtual ~NoInterpolation();
-    virtual void interpolate(const std::vector<double>&,
-			     const std::vector<double>&) override;
-    virtual double getValue(const double) const override;
-    virtual std::string getType() const override;
-    virtual bool isConform() const override;
-    virtual std::shared_ptr<Interpolation>
-    clone() const override;
-  };
+  namespace check{
 
-} /* namespace tfel_check */
+    struct TFELCHECK_VISIBILITY_EXPORT NoInterpolation
+      : public Interpolation
+    {
+      NoInterpolation();
+      NoInterpolation(NoInterpolation&&);
+      NoInterpolation(const NoInterpolation&);
+      NoInterpolation& operator=(NoInterpolation&&);
+      NoInterpolation& operator=(const NoInterpolation&);
+      virtual ~NoInterpolation();
+      virtual void interpolate(const std::vector<double>&,
+			       const std::vector<double>&) override;
+      virtual double getValue(const double) const override;
+      virtual std::string getType() const override;
+      virtual bool isConform() const override;
+      virtual std::shared_ptr<Interpolation>
+	clone() const override;
+    };
+
+  } // end of namespace check
+
+} // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_NOINTERPOLATION_HXX */

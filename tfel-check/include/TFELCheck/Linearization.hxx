@@ -16,49 +16,54 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LINEARIZATION_HH_
-#define LINEARIZATION_HH_
+#ifndef LIB_TFELCHECK_LINEARIZATION_HXX
+#define LIB_TFELCHECK_LINEARIZATION_HXX
 
 #include <map>
 #include <vector>
 #include "TFELCheck/TFELCheckConfig.hxx"
 
-namespace tfel_check {
+namespace tfel{
 
-  struct TFELCHECK_VISIBILITY_EXPORT Linearization
-  {
-    //! constructor
-    Linearization();
-    //! move constructor
-    Linearization(Linearization&&);
-    //! copy constructor
-    Linearization(const Linearization&);
-    //! move assignement
-    Linearization& operator=(Linearization&&);
-    //! copy assignement
-    Linearization& operator=(const Linearization&);
-    /*!
-     * \param[in] times
-     * \param[in] values
-     */
-    Linearization(const std::vector<double>&,
-		  const std::vector<double>&);
-    //! destructor
-    ~Linearization();
-    /*!
-     * \return the value at time in parameter
-     */
-    double operator()(const double x) const;
+  namespace check{
 
-    /*!
-     * \return true if the evolution
-     * is constant
-     */
-    bool isConstant() const;
+    struct TFELCHECK_VISIBILITY_EXPORT Linearization
+    {
+      //! constructor
+      Linearization();
+      //! move constructor
+      Linearization(Linearization&&);
+      //! copy constructor
+      Linearization(const Linearization&);
+      //! move assignement
+      Linearization& operator=(Linearization&&);
+      //! copy assignement
+      Linearization& operator=(const Linearization&);
+      /*!
+       * \param[in] times
+       * \param[in] values
+       */
+      Linearization(const std::vector<double>&,
+		    const std::vector<double>&);
+      //! destructor
+      ~Linearization();
+      /*!
+       * \return the value at time in parameter
+       */
+      double operator()(const double x) const;
 
-  private:
-    std::map<double, double> values; /*< the times and values */
-  };
+      /*!
+       * \return true if the evolution
+       * is constant
+       */
+      bool isConstant() const;
 
-} /* namespace tfel_check */
-#endif /* LINEARIZATION_HH_ */
+    private:
+      std::map<double, double> values; /*< the times and values */
+    };
+
+  } // end of namespace check
+
+} // end of namespace tfel
+
+#endif /* LIB_TFELCHECK_LINEARIZATION_HXX */

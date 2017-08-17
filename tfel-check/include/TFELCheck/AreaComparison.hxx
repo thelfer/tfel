@@ -20,16 +20,20 @@
 #include "TFELCheck/TFELCheckConfig.hxx"
 #include "TFELCheck/Comparison.hxx"
 
-namespace tfel_check {
+namespace tfel{
 
-  struct TFELCHECK_VISIBILITY_EXPORT AreaComparison
-    : public Comparison
-  {
-    AreaComparison();
-    virtual void compare() override;
-    virtual ~AreaComparison();
-  };
+  namespace check{
 
-} /* namespace tfel_check */
+    struct TFELCHECK_VISIBILITY_EXPORT AreaComparison
+      : public Comparison
+    {
+      AreaComparison();
+      virtual void compare() override;
+      virtual ~AreaComparison();
+    };
+
+  } // end of namespace check
+
+} // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_AREACOMPARISON_HXX */

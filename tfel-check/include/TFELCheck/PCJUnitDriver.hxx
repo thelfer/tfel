@@ -23,33 +23,37 @@
 #include "TFELCheck/TFELCheckConfig.hxx"
 #include "TFELCheck/PCILogDriver.hxx"
 
-namespace tfel_check {
+namespace tfel{
 
-  struct TFELCHECK_VISIBILITY_EXPORT PCJUnitDriver
-    : public PCILogDriver
-  {
-    PCJUnitDriver(const std::string& f = "");
-    //! destructor
-    virtual ~PCJUnitDriver();
+  namespace check{
 
-    virtual void addMessage(const std::string&) override;
-    /*!
-     * \param[in] testname:
-     * \param[in] step:
-     * \param[in] command:
-     * \param[in] time:
-     * \param[in] success:
-     * \param[in] message:
-     */
-    virtual void addTestResult(const std::string&,
-			       const std::string&,
-			       const std::string&,
-			       const float,
-			       const bool,
-			       const std::string& = "") override;
-    virtual void terminate() override;
-  };
+    struct TFELCHECK_VISIBILITY_EXPORT PCJUnitDriver
+      : public PCILogDriver
+    {
+      PCJUnitDriver(const std::string& f = "");
+      //! destructor
+      virtual ~PCJUnitDriver();
 
-}  // namespace tfel_check
+      virtual void addMessage(const std::string&) override;
+      /*!
+       * \param[in] testname:
+       * \param[in] step:
+       * \param[in] command:
+       * \param[in] time:
+       * \param[in] success:
+       * \param[in] message:
+       */
+      virtual void addTestResult(const std::string&,
+				 const std::string&,
+				 const std::string&,
+				 const float,
+				 const bool,
+				 const std::string& = "") override;
+      virtual void terminate() override;
+    };
+
+  } // end of namespace check
+
+} // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_PCJUNITDRIVER_HXX */

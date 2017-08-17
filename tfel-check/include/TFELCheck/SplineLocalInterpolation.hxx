@@ -25,25 +25,29 @@
 #include "TFEL/Math/CubicSpline.hxx"
 #include "TFELCheck/Interpolation.hxx"
 
-namespace tfel_check {
+namespace tfel{
 
-  struct TFELCHECK_VISIBILITY_EXPORT SplineLocalInterpolation
-    : public Interpolation
-  {
-    SplineLocalInterpolation();
-    virtual ~SplineLocalInterpolation();
-    virtual void interpolate(const std::vector<double>&,
-			     const std::vector<double>&) override;
-    virtual double getValue(const double) const override;
-    virtual std::string getType() const override;
-    virtual bool isConform() const override;
-    virtual std::shared_ptr<Interpolation>
-    clone() const override;
-  private:
-    std::map<double, struct tfel::math::CubicSpline<double> > splines;
-    std::vector<double> timesBefore; /**< vector containing the first times of each group of 3 times **/
-  };
+  namespace check{
 
-} /* namespace tfel_check */
+    struct TFELCHECK_VISIBILITY_EXPORT SplineLocalInterpolation
+      : public Interpolation
+    {
+      SplineLocalInterpolation();
+      virtual ~SplineLocalInterpolation();
+      virtual void interpolate(const std::vector<double>&,
+			       const std::vector<double>&) override;
+      virtual double getValue(const double) const override;
+      virtual std::string getType() const override;
+      virtual bool isConform() const override;
+      virtual std::shared_ptr<Interpolation>
+	clone() const override;
+    private:
+      std::map<double, struct tfel::math::CubicSpline<double> > splines;
+      std::vector<double> timesBefore; /**< vector containing the first times of each group of 3 times **/
+    };
+
+  } // end of namespace check
+
+} // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_SPLINELOCALINTERPOLATION_HXX */

@@ -24,60 +24,65 @@
 #include "TFELCheck/Column.hxx"
 #include "TFELCheck/Interpolation.hxx"
 
-namespace tfel_check {
+namespace tfel{
 
-  struct TFELCHECK_VISIBILITY_EXPORT Comparison
-  {
+  namespace check{
 
-    Comparison();
-    Comparison(const std::shared_ptr<Column> c1, const std::shared_ptr<Column> c2, const double prec,
-	       const double precision2, const std::shared_ptr<Column> ci,
-	       const std::string interpolationType,
-	       const bool interpolationIsConform,
-	       const std::shared_ptr<Column> colIntegralInterpolated,
-	       const std::shared_ptr<Interpolation> integralInterpolation);
-    /*!
-     * \brief returns true if Comparison has succeed
-     */
-    bool hasSucceed() const;
-    /*!
-     * \brief returns the log message with comparison info
-     */
-    std::string getMsgLog() const;
-    /*!
-     * \brief executes the comparison between the values
-     */
-    virtual void compare() = 0;
-    /*!
-     * \brief sets the parameters for the comparison
-     */
-    void setParameters(const std::shared_ptr<Column> c1, const std::shared_ptr<Column> c2,
-		       const double prec, const double precision2,
-		       const std::shared_ptr<Column> ci,
-		       const std::string interpolationType,
-		       const bool interpolationIsConform,
-		       const std::shared_ptr<Column> colIntegralInterpolated,
-		       const std::shared_ptr<Interpolation> integralInterpolation);
+    struct TFELCHECK_VISIBILITY_EXPORT Comparison
+    {
 
-    const std::string& getName() const;
-    //! destructor
-    virtual ~Comparison();
-  protected:
-    bool success; /**!< current Comparison success indicator */
-    std::string msgLog;
-    std::shared_ptr<Column> c1; /**!< the first column on which the comparison will be made */
-    std::shared_ptr<Column> c2; /**!< the second column on which the comparison will be made */
-    double prec; /**!< the precision of the Comparison */
-    double precision2; /**!< the optional second precision of the Comparison */
-    std::shared_ptr<Column> ci; /**!< the column that has been interpolated */
-    std::string interpolationType; /**!< the interpolation that has been done */
-    bool interpolationIsConform; /**!< true if the interpolation isConform */
-    std::string name; /**!< the name of the comparison */
-    /**!< only for AreaComparison */
-    std::shared_ptr<Column> colIntegralInterpolated; /**!< the column used for integration interpolation (abscissa)*/
-    std::shared_ptr<Interpolation> integralInterpolation; /**!< the interpolation chosen for the integration*/
+      Comparison();
+      Comparison(const std::shared_ptr<Column> c1, const std::shared_ptr<Column> c2, const double prec,
+		 const double precision2, const std::shared_ptr<Column> ci,
+		 const std::string interpolationType,
+		 const bool interpolationIsConform,
+		 const std::shared_ptr<Column> colIntegralInterpolated,
+		 const std::shared_ptr<Interpolation> integralInterpolation);
+      /*!
+       * \brief returns true if Comparison has succeed
+       */
+      bool hasSucceed() const;
+      /*!
+       * \brief returns the log message with comparison info
+       */
+      std::string getMsgLog() const;
+      /*!
+       * \brief executes the comparison between the values
+       */
+      virtual void compare() = 0;
+      /*!
+       * \brief sets the parameters for the comparison
+       */
+      void setParameters(const std::shared_ptr<Column> c1, const std::shared_ptr<Column> c2,
+			 const double prec, const double precision2,
+			 const std::shared_ptr<Column> ci,
+			 const std::string interpolationType,
+			 const bool interpolationIsConform,
+			 const std::shared_ptr<Column> colIntegralInterpolated,
+			 const std::shared_ptr<Interpolation> integralInterpolation);
 
-  };
+      const std::string& getName() const;
+      //! destructor
+      virtual ~Comparison();
+    protected:
+      bool success; /**!< current Comparison success indicator */
+      std::string msgLog;
+      std::shared_ptr<Column> c1; /**!< the first column on which the comparison will be made */
+      std::shared_ptr<Column> c2; /**!< the second column on which the comparison will be made */
+      double prec; /**!< the precision of the Comparison */
+      double precision2; /**!< the optional second precision of the Comparison */
+      std::shared_ptr<Column> ci; /**!< the column that has been interpolated */
+      std::string interpolationType; /**!< the interpolation that has been done */
+      bool interpolationIsConform; /**!< true if the interpolation isConform */
+      std::string name; /**!< the name of the comparison */
+      /**!< only for AreaComparison */
+      std::shared_ptr<Column> colIntegralInterpolated; /**!< the column used for integration interpolation (abscissa)*/
+      std::shared_ptr<Interpolation> integralInterpolation; /**!< the interpolation chosen for the integration*/
 
-} /* namespace tfel_check */
+    };
+
+  } // end of namespace check
+
+} // end of namespace tfel
+
 #endif /* LIB_TFELCHECK_COMPARISON_HXX */

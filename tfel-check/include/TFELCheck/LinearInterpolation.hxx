@@ -23,28 +23,32 @@
 #include "TFELCheck/Interpolation.hxx"
 #include "TFELCheck/Linearization.hxx"
 
-namespace tfel_check {
+namespace tfel{
 
-  struct TFELCHECK_VISIBILITY_EXPORT LinearInterpolation
-    : public Interpolation
-  {
-    LinearInterpolation();
-    LinearInterpolation(LinearInterpolation&&);
-    LinearInterpolation(const LinearInterpolation&);
-    LinearInterpolation& operator=(LinearInterpolation&&);
-    LinearInterpolation& operator=(const LinearInterpolation&);
-    virtual void interpolate(const std::vector<double>&,
-			     const std::vector<double>&) override;
-    virtual double getValue(const double) const  override;
-    virtual std::string getType() const  override;
-    virtual bool isConform() const  override;
-    virtual std::shared_ptr<Interpolation>
-    clone() const override;
-    virtual ~LinearInterpolation();
-  private:
-    Linearization linear;
-  };
+  namespace check{
 
-} /* namespace tfel_check */
+    struct TFELCHECK_VISIBILITY_EXPORT LinearInterpolation
+      : public Interpolation
+    {
+      LinearInterpolation();
+      LinearInterpolation(LinearInterpolation&&);
+      LinearInterpolation(const LinearInterpolation&);
+      LinearInterpolation& operator=(LinearInterpolation&&);
+      LinearInterpolation& operator=(const LinearInterpolation&);
+      virtual void interpolate(const std::vector<double>&,
+			       const std::vector<double>&) override;
+      virtual double getValue(const double) const  override;
+      virtual std::string getType() const  override;
+      virtual bool isConform() const  override;
+      virtual std::shared_ptr<Interpolation>
+	clone() const override;
+      virtual ~LinearInterpolation();
+    private:
+      Linearization linear;
+    };
+
+  } // end of namespace check
+
+} // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_LINEARINTERPOLATION_HXX */

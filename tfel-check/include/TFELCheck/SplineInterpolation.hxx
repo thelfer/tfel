@@ -24,29 +24,33 @@
 #include "TFEL/Math/CubicSpline.hxx"
 #include "TFELCheck/Interpolation.hxx"
 
-namespace tfel_check {
+namespace tfel{
 
-  struct TFELCHECK_VISIBILITY_EXPORT SplineInterpolation
-    : public Interpolation
-  {
-    SplineInterpolation();
-    SplineInterpolation(SplineInterpolation&&);
-    SplineInterpolation(const SplineInterpolation&);
-    SplineInterpolation& operator=(SplineInterpolation&&);
-    SplineInterpolation& operator=(const SplineInterpolation&);
-    virtual ~SplineInterpolation();
-    virtual void interpolate(const std::vector<double>&,
-			     const std::vector<double>&) override;
-    virtual double getValue(const double x) const override;
-    virtual std::string getType() const override;
-    virtual bool isConform() const override;
-    virtual std::shared_ptr<Interpolation>
-    clone() const override;
-  private:
-    struct tfel::math::CubicSpline<double> spline;
+  namespace check{
 
-  };
+    struct TFELCHECK_VISIBILITY_EXPORT SplineInterpolation
+      : public Interpolation
+    {
+      SplineInterpolation();
+      SplineInterpolation(SplineInterpolation&&);
+      SplineInterpolation(const SplineInterpolation&);
+      SplineInterpolation& operator=(SplineInterpolation&&);
+      SplineInterpolation& operator=(const SplineInterpolation&);
+      virtual ~SplineInterpolation();
+      virtual void interpolate(const std::vector<double>&,
+			       const std::vector<double>&) override;
+      virtual double getValue(const double x) const override;
+      virtual std::string getType() const override;
+      virtual bool isConform() const override;
+      virtual std::shared_ptr<Interpolation>
+	clone() const override;
+    private:
+      struct tfel::math::CubicSpline<double> spline;
 
-} /* namespace tfel_check */
+    };
+
+  } // end of namespace check
+
+} // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_SPLINEINTERPOLATION_HXX */

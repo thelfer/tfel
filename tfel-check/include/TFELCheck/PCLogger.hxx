@@ -1,8 +1,6 @@
 /*!
  * \file PCLogger.hxx
- * \brief tfel_check-check Logger.
- *
- * A class designed to manage logs with different format (used with tfel-check).
+ * \brief A class designed to manage logs with different format.
  *
  * \author sb152252
  * \date 31 août 2009
@@ -23,73 +21,77 @@
 #include "TFELCheck/TFELCheckConfig.hxx"
 #include "TFELCheck/PCILogDriver.hxx"
 
-namespace tfel_check {
+namespace tfel{
 
-  struct TFELCHECK_VISIBILITY_EXPORT PCLogger
-  {
-    using driver = std::shared_ptr<PCILogDriver>;
+  namespace check{
+
+    struct TFELCHECK_VISIBILITY_EXPORT PCLogger
+    {
+      using driver = std::shared_ptr<PCILogDriver>;
     
-    PCLogger();
-    /*!
-     * \param[in] logDriver
-     */
-    PCLogger(const driver&);
-    PCLogger(PCLogger&&);
-    PCLogger(const PCLogger&);
-    PCLogger& operator=(PCLogger&&);
-    PCLogger& operator=(const PCLogger&);
-    virtual ~PCLogger();
+      PCLogger();
+      /*!
+       * \param[in] logDriver
+       */
+      PCLogger(const driver&);
+      PCLogger(PCLogger&&);
+      PCLogger(const PCLogger&);
+      PCLogger& operator=(PCLogger&&);
+      PCLogger& operator=(const PCLogger&);
+      virtual ~PCLogger();
 
-    /*!
-     * \brief Add a driver (an output format) to PCLogger
-     *
-     * \param logDriver a PCILogDriver object.
-     *
-     * \see PCILogDriver
-     * Exemple :
-     * PCLogger log;
-     * ...
-     * log.addDriver(new PCTextDriver())
-     */
-    void addDriver(driver logDriver);
+      /*!
+       * \brief Add a driver (an output format) to PCLogger
+       *
+       * \param logDriver a PCILogDriver object.
+       *
+       * \see PCILogDriver
+       * Exemple :
+       * PCLogger log;
+       * ...
+       * log.addDriver(new PCTextDriver())
+       */
+      void addDriver(driver logDriver);
 
-    /*!
-     * \brief add a log message to all log outputs
-     *
-     * \param message a message to send to log.
-     */
-    void addMessage(const std::string& message);
+      /*!
+       * \brief add a log message to all log outputs
+       *
+       * \param message a message to send to log.
+       */
+      void addMessage(const std::string& message);
 
-    /*!
-     * \brief add a simple test result to all log outputs
-     *
-     * \param testname a string message explaining the test
-     * \param success a bool test success
-     * \param message a string message explaining the test result
-     */
-    void addSimpleTestResult(const std::string& testname, bool success,
-			     const std::string& message = "");
+      /*!
+       * \brief add a simple test result to all log outputs
+       *
+       * \param testname a string message explaining the test
+       * \param success a bool test success
+       * \param message a string message explaining the test result
+       */
+      void addSimpleTestResult(const std::string& testname, bool success,
+			       const std::string& message = "");
 
-    /*!
-     * \brief add a test result to all log outputs
-     *
-     * \param testname a string message explaining the test
-     * \param step a string describing the current step
-     * \param command a string describing the test command
-     * \param time a float, test time execution
-     * \param success a bool test success
-     * \param message a string message explaining the test result
-     */
-    void addTestResult(const std::string& testname, const std::string& step,
-		       const std::string& command, float time, bool success,
-		       const std::string& message = "");
+      /*!
+       * \brief add a test result to all log outputs
+       *
+       * \param testname a string message explaining the test
+       * \param step a string describing the current step
+       * \param command a string describing the test command
+       * \param time a float, test time execution
+       * \param success a bool test success
+       * \param message a string message explaining the test result
+       */
+      void addTestResult(const std::string& testname, const std::string& step,
+			 const std::string& command, float time, bool success,
+			 const std::string& message = "");
 
-    void terminate();
+      void terminate();
 
-  private:
-    std::vector<driver> drivers;
-  };
+    private:
+      std::vector<driver> drivers;
+    };
 
-}  // namespace tfel_check
+  } // end of namespace check
+
+} // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_PCLOGGER_HXX */
