@@ -10,7 +10,7 @@ link_directories("${PROJECT_BINARY_DIR}/src/")
 #     set_property(TEST ${test_arg}
 #   	         PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMath>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
 #   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-#   target_link_libraries(${test_arg} TFELCheck)
+#   target_link_libraries(${test_arg} TFEL/Check)
 # endmacro(tests_check)
 
 # test_check(test1)

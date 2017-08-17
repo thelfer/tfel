@@ -20,8 +20,8 @@
 #define LIB_TFELCHECK_PCJUNITDRIVER_HXX
 
 #include <string>
-#include "TFELCheck/TFELCheckConfig.hxx"
-#include "TFELCheck/PCILogDriver.hxx"
+#include "TFEL/Check/TFELCheckConfig.hxx"
+#include "TFEL/Check/PCILogDriver.hxx"
 
 namespace tfel{
 

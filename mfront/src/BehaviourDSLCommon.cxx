@@ -12,14 +12,12 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
-
 #include<algorithm>
+#include<stdexcept>
 #include<iterator>
-#include<vector>
 #include<sstream>
 #include<utility>
-#include<stdexcept>
+#include<vector>
 #include<limits>
 #include<cctype>
 #include<cmath>

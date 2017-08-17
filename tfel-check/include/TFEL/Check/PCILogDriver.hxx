@@ -23,7 +23,7 @@
 #include<string>
 #include<memory>
 #include<iosfwd>
-#include "TFELCheck/TFELCheckConfig.hxx"
+#include "TFEL/Check/TFELCheckConfig.hxx"
 
 namespace tfel{
 

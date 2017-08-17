@@ -1,5 +1,5 @@
 /*!
- * \file  tfel-check/include/TFELCheck/Test.hxx
+ * \file  tfel-check/include/TFEL/Check/Test.hxx
  * \brief Represents a single test between two columns
  * \date 29 mai 2013
  * \author Remy Petkantchin
@@ -15,10 +15,10 @@
 #define LIB_TFELCHECK_TEST_HXX
 
 #include <string>
-#include "TFELCheck/TFELCheckConfig.hxx"
-#include "TFELCheck/Column.hxx"
-#include "TFELCheck/Interpolation.hxx"
-#include "TFELCheck/Comparison.hxx"
+#include "TFEL/Check/TFELCheckConfig.hxx"
+#include "TFEL/Check/Column.hxx"
+#include "TFEL/Check/Interpolation.hxx"
+#include "TFEL/Check/Comparison.hxx"
 
 namespace tfel{
 

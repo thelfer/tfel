@@ -21,8 +21,8 @@
 #ifndef LIB_TFELCHECK_NOINTERPOLATION_HXX
 #define LIB_TFELCHECK_NOINTERPOLATION_HXX
 
-#include "TFELCheck/TFELCheckConfig.hxx"
-#include "TFELCheck/Interpolation.hxx"
+#include "TFEL/Check/TFELCheckConfig.hxx"
+#include "TFEL/Check/Interpolation.hxx"
 
 namespace tfel{
 

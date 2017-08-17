@@ -17,8 +17,8 @@
 #ifndef LIB_TFELCHECK_AREACOMPARISON_HXX
 #define LIB_TFELCHECK_AREACOMPARISON_HXX
 
-#include "TFELCheck/TFELCheckConfig.hxx"
-#include "TFELCheck/Comparison.hxx"
+#include "TFEL/Check/TFELCheckConfig.hxx"
+#include "TFEL/Check/Comparison.hxx"
 
 namespace tfel{
 

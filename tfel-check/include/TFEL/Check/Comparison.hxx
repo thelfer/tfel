@@ -20,9 +20,9 @@
 #include <cmath>
 #include <string>
 
-#include "TFELCheck/TFELCheckConfig.hxx"
-#include "TFELCheck/Column.hxx"
-#include "TFELCheck/Interpolation.hxx"
+#include "TFEL/Check/TFELCheckConfig.hxx"
+#include "TFEL/Check/Column.hxx"
+#include "TFEL/Check/Interpolation.hxx"
 
 namespace tfel{
 

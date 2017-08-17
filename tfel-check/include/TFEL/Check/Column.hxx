@@ -21,10 +21,10 @@
 #include <vector>
 #include <memory>
 
-#include "TFELCheck/TFELCheckConfig.hxx"
+#include "TFEL/Check/TFELCheckConfig.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "TFEL/Utilities/TextData.hxx"
-#include "TFELCheck/PCLogger.hxx"
+#include "TFEL/Check/PCLogger.hxx"
 
 namespace tfel{
 

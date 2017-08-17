@@ -8,7 +8,7 @@
  */
 
 #include<iostream>
-#include "TFELCheck/PCLogger.hxx"
+#include "TFEL/Check/PCLogger.hxx"
 
 namespace tfel{
 

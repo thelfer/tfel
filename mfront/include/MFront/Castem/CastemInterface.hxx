@@ -41,7 +41,8 @@ namespace castem{
    * \author Helfer Thomas
    * \date   28 Jul 2006
    */
-  template<template<tfel::material::ModellingHypothesis::Hypothesis,
+  template<tfel::material::ModellingHypothesis::Hypothesis H,
+	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemInterface
     : protected CastemInterfaceExceptions
@@ -60,56 +61,9 @@ namespace castem{
 	       const CastemReal *const PREDEF,const CastemReal *const DPRED,
 	       CastemReal *const STATEV,const CastemInt  *const NSTATV,
 	       CastemReal *const STRESS,      CastemReal *const PNEWDT,
-	       const CastemInt  *const NDI,
 	       CastemInt  *const KINC,
 	       const tfel::material::OutOfBoundsPolicy op,
 	       const StressFreeExpansionHandler& sfeh)
-    {
-      using namespace tfel::material;
-      typedef ModellingHypothesis MH;
-      if(*NDI==2){
-	CastemInterface::template callBehaviour<MH::TRIDIMENSIONAL>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-								  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								  STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
-      } else if(*NDI==0){
-	CastemInterface::template callBehaviour<MH::AXISYMMETRICAL>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-								  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								  STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
-      } else if(*NDI==-1){
-	CastemInterface::template callBehaviour<MH::PLANESTRAIN>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-							       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-							       STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
-      } else if(*NDI==-2){
-	CastemInterface::template callBehaviour<MH::PLANESTRESS>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-							       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-							       STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
-      } else if(*NDI==-3){
-	CastemInterface::template callBehaviour<MH::GENERALISEDPLANESTRAIN>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-									  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-									  STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
-      } else if(*NDI==14){
-	CastemInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-											TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-											STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
-      } else {
-	CastemInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage();
-	*KINC = -7;
-      }
-    } // end of exe
-    
-    template<tfel::material::ModellingHypothesis::Hypothesis H>
-    TFEL_CASTEM_INLINE2 static void
-    callBehaviour(const CastemInt  *const NTENS, const CastemReal *const DTIME,
-		  const CastemReal *const DROT,  CastemReal *const DDSDDE,
-		  const CastemReal *const STRAN, const CastemReal *const DSTRAN,
-		  const CastemReal *const TEMP,  const CastemReal *const DTEMP,
-		  const CastemReal *const PROPS, const CastemInt  *const NPROPS,
-		  const CastemReal *const PREDEF,const CastemReal *const DPRED,
-		  CastemReal *const STATEV,const CastemInt  *const NSTATV,
-		  CastemReal *const STRESS,      CastemReal *const PNEWDT,
-		  CastemInt  *const KINC,
-		  const tfel::material::OutOfBoundsPolicy op,
-		  const StressFreeExpansionHandler& sfeh)
     {
       using tfel::material::MechanicalBehaviourTraits;
       typedef Behaviour<H,CastemReal,false> BV;

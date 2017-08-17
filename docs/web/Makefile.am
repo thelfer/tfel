@@ -199,6 +199,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/twitter.png			                      \
 	   ./img/CalculiX_MFRONT_WSL.png	                      \
 	   ./img/CalculiXBenchmarkSmallStrain.png                     \
+	   ./img/AsterTotalLagrangian.png                             \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \

@@ -11,7 +11,7 @@
  * project under specific licensing conditions. 
  */
 
-#include "TFELCheck/SplineInterpolation.hxx"
+#include "TFEL/Check/SplineInterpolation.hxx"
 
 namespace tfel{
 

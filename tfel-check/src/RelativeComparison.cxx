@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <limits>
-#include "TFELCheck/RelativeComparison.hxx"
+#include "TFEL/Check/RelativeComparison.hxx"
 
 namespace tfel{
 

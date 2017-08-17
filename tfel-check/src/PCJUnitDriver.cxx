@@ -13,7 +13,7 @@
 
 #include <sstream>
 #include "TFEL/Utilities/StringAlgorithms.hxx"
-#include "TFELCheck/PCJUnitDriver.hxx"
+#include "TFEL/Check/PCJUnitDriver.hxx"
 
 namespace tfel{
 

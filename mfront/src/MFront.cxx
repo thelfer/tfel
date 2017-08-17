@@ -660,7 +660,7 @@ namespace mfront{
     const auto has_libs = this->targets.begin()!=this->targets.end();
     if((this->genMake)&&((has_libs)||(!this->targets.specific_targets.empty()))){
       if(this->generator==CMAKE){
-	generateCMakeListFile(this->targets,this->opts);
+	generateCMakeListsFile(this->targets,this->opts);
       } else {
 	generateMakeFile(this->targets,this->opts);
       }

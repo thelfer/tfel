@@ -20,9 +20,9 @@
 #ifndef LIB_TFELCHECK_SPLINEINTERPOLATION_HXX
 #define LIB_TFELCHECK_SPLINEINTERPOLATION_HXX
 
-#include "TFELCheck/TFELCheckConfig.hxx"
+#include "TFEL/Check/TFELCheckConfig.hxx"
 #include "TFEL/Math/CubicSpline.hxx"
-#include "TFELCheck/Interpolation.hxx"
+#include "TFEL/Check/Interpolation.hxx"
 
 namespace tfel{
 

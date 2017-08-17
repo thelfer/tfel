@@ -18,8 +18,8 @@
 
 #include <vector>
 #include <memory>
-#include "TFELCheck/TFELCheckConfig.hxx"
-#include "TFELCheck/PCILogDriver.hxx"
+#include "TFEL/Check/TFELCheckConfig.hxx"
+#include "TFEL/Check/PCILogDriver.hxx"
 
 namespace tfel{
 

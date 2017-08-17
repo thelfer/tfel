@@ -1,12 +1,13 @@
 /*
- * \brief test_Column.cpp
- *
  * \file test_Column.cpp
- *
- * \date 11 juin 2013
  * \author rp238441
- *
- * Copyright © 2013
+ * \date 11 juin 2013
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
  */
 
 #include<cmath>
@@ -17,13 +18,13 @@
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
-#include"TFELCheck/Column.hxx"
+#include"TFEL/Check/Column.hxx"
 
 struct test_Column final
   : public tfel::tests::TestCase
 {
   test_Column()
-    : tfel::tests::TestCase("TFELCheck","Column")
+    : tfel::tests::TestCase("TFEL/Check","Column")
   {}
 
   virtual tfel::tests::TestResult
@@ -31,7 +32,7 @@ struct test_Column final
   {
     const double eps = 1.e-14;
     const std::string f = "test_Column.res";
-    tfel_check::Column c("B");
+    tfel::check::Column c("B");
     std::ofstream file{f};
     if (!file) {
       throw std::runtime_error("test_Column::execute: "

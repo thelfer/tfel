@@ -35,7 +35,7 @@ namespace tfel{
   namespace system{
     
     /*!
-     * structure handling a fixed-size pool of threads
+     * \brief structure handling a fixed-size pool of threads
      */
     struct TFELSYSTEM_VISIBILITY_EXPORT ThreadPool
     {
@@ -62,12 +62,16 @@ namespace tfel{
       //! wrapper around the given task
       template<typename F>
       struct Wrapper;
-      // need to keep track of threads so we can join them
+      enum Status {
+	WORKING,
+	IDLE
+      }; // end of enum Status
+      std::vector<Status> statuses;
       std::vector<std::thread> workers;
       // the task queue
       std::queue<std::function<void()>> tasks;
       // synchronization
-      std::mutex queue_mutex;
+      std::mutex m;
       std::condition_variable condition;
       bool stop = false;
     };

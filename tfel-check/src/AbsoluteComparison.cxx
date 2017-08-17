@@ -14,7 +14,7 @@
 #include <cmath>
 #include <vector>
 #include <cstdlib>
-#include "TFELCheck/AbsoluteComparison.hxx"
+#include "TFEL/Check/AbsoluteComparison.hxx"
 
 namespace tfel{
 

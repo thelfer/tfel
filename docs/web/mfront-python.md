@@ -241,6 +241,35 @@ additional argument of type `GeneratorOptions` which let the user
 specifiy the optimisation level to be used. See the results of
 `help(mfront.MakefileGenerator)` for details.
 
+## Compiling using the `CMakeGenerator` class
+
+Once `C++` sources have been generated, one may want to compile them
+and generate the final libraries.
+
+`MFront` relies on external tools, called generators, for this step
+(this semantic is the same than the one used by `cmake`).
+
+The only available generator is currently the `CMake` generator,
+handled by the `CMakeGenerator` class. This generator can be used
+as follows:
+
+~~~~{.python}
+import mfront
+dsl = mfront.getDSL("Chaboche.mfront")
+
+dsl.setInterfaces(['castem'])
+dsl.analyseFile("Chaboche.mfront")
+dsl.generateOutputFiles()
+
+m = mfront.CMakeGenerator()
+m.exe(dsl.getTargetsDescription())
+~~~~
+
+The `exe` methods provides several overloads and may accept an
+additional argument of type `GeneratorOptions` which let the user
+specifiy the optimisation level to be used. See the results of
+`help(mfront.CMakeGenerator)` for details.
+
 # Analysing Mechanical Behaviours
 
 This section is dedicated to the use of `AbstractBehaviourDSL` class

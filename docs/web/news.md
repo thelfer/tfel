@@ -16,6 +16,15 @@
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 
+# Support for the total lagragian framework in `Code_Aster`
+
+![](img/AsterTotalLagrangian.png){width=50%}
+
+Thanks to M. Abbas, `MFront` finite strain behaviours can now be used
+in the total lagragian framework in `Code_Aster` (called
+`GROT_GDEP`). First tests confirm that the robustness and the effiency
+of this framework are much better than with the `SIMO_MIEHE` framework.
+
 # First tests of `MFront` in the `Windows` `Subsystem` for `LinuX` environment (3/08/2017)
 
 ![](img/CalculiX_MFRONT_WSL.png "")

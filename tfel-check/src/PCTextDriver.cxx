@@ -13,7 +13,7 @@
 #include <iomanip>
 
 #include"TFEL/Utilities/TerminalColors.hxx"
-#include "TFELCheck/PCTextDriver.hxx"
+#include "TFEL/Check/PCTextDriver.hxx"
 
 namespace tfel{
 

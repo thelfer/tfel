@@ -15,7 +15,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "TFELCheck/AreaComparison.hxx"
+#include "TFEL/Check/AreaComparison.hxx"
 
 namespace tfel{
 

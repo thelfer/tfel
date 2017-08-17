@@ -12,7 +12,7 @@
 #include <limits>
 #include <cstdlib>
 
-#include "TFELCheck/MixedComparison.hxx"
+#include "TFEL/Check/MixedComparison.hxx"
 
 namespace tfel{
 

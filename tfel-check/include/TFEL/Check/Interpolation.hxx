@@ -20,7 +20,7 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include "TFELCheck/TFELCheckConfig.hxx"
+#include "TFEL/Check/TFELCheckConfig.hxx"
 
 namespace tfel{
 

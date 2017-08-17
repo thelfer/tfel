@@ -13,7 +13,7 @@
 #include<sstream>
 #include<stdexcept>
 
-#include "TFELCheck/Test.hxx"
+#include "TFEL/Check/Test.hxx"
 
 namespace tfel{
 

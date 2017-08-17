@@ -744,6 +744,10 @@ namespace mfront{
 	     MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)!=this->finiteStrainStrategies.end())){
       out << "#include\"MFront/Castem/CastemFiniteStrain.hxx\"\n\n";
     }
+    if(find(this->finiteStrainStrategies.begin(),this->finiteStrainStrategies.end(),
+	    MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)!=this->finiteStrainStrategies.end()){
+      out << "#include\"TFEL/Material/LogarithmicStrainHandler.hxx\"\n\n";
+    }
     out << "#include\"MFront/Castem/CastemOutOfBoundsPolicy.hxx\"\n"
 	<< "#include\"MFront/Castem/CastemInterface.hxx\"\n\n"
 	<< "#include\"MFront/Castem/CastemStressFreeExpansionHandler.hxx\"\n\n"
@@ -1024,8 +1028,75 @@ namespace mfront{
       }
     }
 
-    out << "static void \numat"
-	<< makeLowerCase(name) << "_base" 
+    for(const auto & h : {ModellingHypothesis::TRIDIMENSIONAL,
+	  ModellingHypothesis::AXISYMMETRICAL,
+	  ModellingHypothesis::PLANESTRAIN,
+	  ModellingHypothesis::PLANESTRESS,
+	  ModellingHypothesis::GENERALISEDPLANESTRAIN,
+	  ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN}){
+      const auto b = [this,&mb,&mh,h]{
+	if(std::find(mh.begin(),mh.end(),h)!=mh.end()){
+	  return true;
+	}
+	if(h==ModellingHypothesis::PLANESTRESS){
+	  return this->usesGenericPlaneStressAlgorithm(mb);
+	}
+	return false;
+      }();
+      if(b){
+	out << "static void \numat"
+	    << makeLowerCase(name) << "_base_" << ModellingHypothesis::toUpperCaseString(h) 
+	    << "(const castem::CastemInt *const NTENS, const castem::CastemReal *const DTIME,\n"
+	    << "const castem::CastemReal *const DROT,  castem::CastemReal *const DDSDDE,\n"
+	    << "const castem::CastemReal *const STRAN, const castem::CastemReal *const DSTRAN,\n"
+	    << "const castem::CastemReal *const TEMP,  const castem::CastemReal *const DTEMP,\n"
+	    << "const castem::CastemReal *const PROPS, const castem::CastemInt    *const NPROPS,\n"
+	    << "const castem::CastemReal *const PREDEF,const castem::CastemReal *const DPRED,\n"
+	    << "castem::CastemReal *const STATEV,const castem::CastemInt    *const NSTATV,\n"
+	    << "castem::CastemReal *const STRESS,castem::CastemReal *const PNEWDT,\n"
+	    << "castem::CastemInt  *const KINC,\n"
+	    << "const castem::StressFreeExpansionHandler& sfeh)\n"
+	    << "{\n"
+	    << "const auto op = "
+	    << this->getFunctionName(name) << "_getOutOfBoundsPolicy();\n"
+	    << "castem::CastemInterface<tfel::material::ModellingHypothesis::"
+	    << ModellingHypothesis::toUpperCaseString(h) << ","
+	    << "tfel::material::" << mb.getClassName()
+	    << ">::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,\n"
+	    << "TEMP,DTEMP,PROPS,NPROPS,\n"
+	    << "PREDEF,DPRED,STATEV,NSTATV,\n"
+	    << "STRESS,PNEWDT,KINC,op,sfeh);\n"
+	    << "}\n\n";
+      } else {
+	out << "static void \numat"
+	    << makeLowerCase(name) << "_base_" << ModellingHypothesis::toUpperCaseString(h) 
+	    << "(const castem::CastemInt *const, const castem::CastemReal *const,\n"
+	    << "const castem::CastemReal *const,  castem::CastemReal *const,\n"
+	    << "const castem::CastemReal *const, const castem::CastemReal *const,\n"
+	    << "const castem::CastemReal *const,  const castem::CastemReal *const,\n"
+	    << "const castem::CastemReal *const, const castem::CastemInt    *const,\n"
+	    << "const castem::CastemReal *const,const castem::CastemReal *const,\n"
+	    << "castem::CastemReal *const,const castem::CastemInt    *const,\n"
+	    << "castem::CastemReal *const,castem::CastemReal *const,\n"
+	    << "castem::CastemInt  *const KINC,\n"
+	    << "const castem::StressFreeExpansionHandler&)\n"
+	    << "{\n"
+	    << "*KINC = -2;\n"
+	    << "}\n\n";
+      }
+    }
+    
+    auto ndi_dispatch = [&out,&name,&mh](const int ndi,const Hypothesis h,const bool b){
+      out << (b ? "if" : " else if") << "(*NDI==" << ndi << "){\n"
+      << "	umat" << makeLowerCase(name) << "_base_"
+      << ModellingHypothesis::toUpperCaseString(h)
+      << "(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,\n"
+      << " TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,\n"
+      << " STATEV,NSTATV,STRESS,PNEWDT,KINC,sfeh);\n"
+      << " }";
+    };
+    
+    out << "static void \numat"	<< makeLowerCase(name) << "_base"
 	<< "(const castem::CastemInt *const NTENS, const castem::CastemReal *const DTIME,\n"
 	<< "const castem::CastemReal *const DROT,  castem::CastemReal *const DDSDDE,\n"
 	<< "const castem::CastemReal *const STRAN, const castem::CastemReal *const DSTRAN,\n"
@@ -1037,16 +1108,18 @@ namespace mfront{
 	<< "const castem::CastemInt *const NDI,\n"
 	<< "castem::CastemInt  *const KINC,\n"
 	<< "const castem::StressFreeExpansionHandler& sfeh)\n"
-	<< "{\n"
-	<< "tfel::material::OutOfBoundsPolicy op = "
-	<< this->getFunctionName(name) << "_getOutOfBoundsPolicy();\n"
-	<< "castem::CastemInterface<tfel::material::" << mb.getClassName()
-	<< ">::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,\n"
-	<< "TEMP,DTEMP,PROPS,NPROPS,\n"
-	<< "PREDEF,DPRED,STATEV,NSTATV,\n"
-	<< "STRESS,PNEWDT,NDI,KINC,op,sfeh);\n"
-	<< "}\n\n";
-
+	<< "{\n";
+    ndi_dispatch( 2,ModellingHypothesis::TRIDIMENSIONAL,true);
+    ndi_dispatch( 0,ModellingHypothesis::AXISYMMETRICAL,false);
+    ndi_dispatch(-1,ModellingHypothesis::PLANESTRAIN,false);
+    ndi_dispatch(-2,ModellingHypothesis::PLANESTRESS,false);
+    ndi_dispatch(-3,ModellingHypothesis::GENERALISEDPLANESTRAIN,false);
+    ndi_dispatch(14,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,false);
+    out << " else {\n"
+	<< "castem::CastemInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage();\n"
+	<< "*KINC = -7;\n"
+	<< "}\n"
+    	<< "}\n\n";
     
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       if(this->finiteStrainStrategies.empty()){

@@ -15,7 +15,7 @@
 #include <stdexcept>
 #include <fstream>
 
-#include "TFELCheck/PCILogDriver.hxx"
+#include "TFEL/Check/PCILogDriver.hxx"
 
 namespace tfel{
 

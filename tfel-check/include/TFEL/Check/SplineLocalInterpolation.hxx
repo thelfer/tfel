@@ -21,9 +21,9 @@
 #define LIB_TFELCHECK_SPLINELOCALINTERPOLATION_HXX
 
 #include <map>
-#include "TFELCheck/TFELCheckConfig.hxx"
+#include "TFEL/Check/TFELCheckConfig.hxx"
 #include "TFEL/Math/CubicSpline.hxx"
-#include "TFELCheck/Interpolation.hxx"
+#include "TFEL/Check/Interpolation.hxx"
 
 namespace tfel{
 

@@ -1,11 +1,14 @@
 /*
- * \file test_Test.cpp
- * \brief test_Test.cpp
- *
+ * \file tfel-check/tests/unitTest/test_Test.cxx
  * tests the Test class
- * \date 11 juin 2013
  * \author Rémy Petkantchin
- *
+ * \date 11 juin 2013
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
  */
 
 #include<vector>
@@ -16,16 +19,16 @@
 
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
-#include"TFELCheck/NoInterpolation.hxx"
-#include"TFELCheck/Interpolation.hxx"
-#include"TFELCheck/Test.hxx"
-#include"TFELCheck/AbsoluteComparison.hxx"
+#include"TFEL/Check/NoInterpolation.hxx"
+#include"TFEL/Check/Interpolation.hxx"
+#include"TFEL/Check/Test.hxx"
+#include"TFEL/Check/AbsoluteComparison.hxx"
 
 struct test_Test final
   : public tfel::tests::TestCase
 {
   test_Test()
-    : tfel::tests::TestCase("TFELCheck","Test")
+    : tfel::tests::TestCase("TFEL/Check","Test")
   {}
   virtual tfel::tests::TestResult
   execute() override
@@ -50,17 +53,17 @@ struct test_Test final
     file << "3. 3. 1.\n";
     file.close();
     // beginning of the tests
-    tfel_check::Test t;
+    tfel::check::Test t;
     t.setPrec(0.);
     t.setPrecision2(0.);
-    t.setInterpolation(std::shared_ptr<tfel_check::Interpolation>(new tfel_check::NoInterpolation()));
+    t.setInterpolation(std::shared_ptr<tfel::check::Interpolation>(new tfel::check::NoInterpolation()));
     if (t.getInterpolation()->isConform()){
-      t.setColInterpolated(std::make_shared<tfel_check::Column>("tps"));
+      t.setColInterpolated(std::make_shared<tfel::check::Column>("tps"));
     }
     t.setAllowLessResults(false);
-    t.setComparison(std::shared_ptr<tfel_check::Comparison>(new tfel_check::AbsoluteComparison()));
-    t.setColA(std::make_shared<tfel_check::Column>("B"));
-    t.setColB(std::make_shared<tfel_check::Column>("B"));
+    t.setComparison(std::shared_ptr<tfel::check::Comparison>(new tfel::check::AbsoluteComparison()));
+    t.setColA(std::make_shared<tfel::check::Column>("B"));
+    t.setColB(std::make_shared<tfel::check::Column>("B"));
     t.setFileA("test_Test.res");
     t.setFileB("test_Test.res");
     {

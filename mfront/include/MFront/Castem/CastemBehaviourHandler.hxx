@@ -380,7 +380,7 @@ namespace castem
 	using namespace tfel::material;
 	typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false>> Traits;
 	throw(CastemInvalidDimension(Traits::getName(),
-				   ModellingHypothesisToSpaceDimension<H>::value));
+				     ModellingHypothesisToSpaceDimension<H>::value));
 	return;
       } // end of Error::exe
       

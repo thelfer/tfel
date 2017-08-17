@@ -33,9 +33,9 @@ namespace mfront{
    * \param[in] f : file name
    */
   MFRONT_VISIBILITY_EXPORT void
-  generateCMakeListFile(const TargetsDescription&,
-			const GeneratorOptions&,
-			const std::string& = "src");
+  generateCMakeListsFile(const TargetsDescription&,
+			 const GeneratorOptions&,
+			 const std::string& = "src");
   /*!
    * \brief a function calling the `make` utility in the given
    * directory using the specified file.

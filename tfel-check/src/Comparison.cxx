@@ -1,7 +1,7 @@
 #include <string>
 #include <sstream>
 
-#include "TFELCheck/Comparison.hxx"
+#include "TFEL/Check/Comparison.hxx"
 
 namespace tfel{
 

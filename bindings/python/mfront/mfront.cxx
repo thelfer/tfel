@@ -33,6 +33,7 @@ void declareBehaviourDescription();
 void declareSearchPathsHandler();
 void declareGeneratorOptions();
 void declareMakefileGenerator();
+void declareCMakeGenerator();
 
 static boost::python::object getDSL(const std::string& f)
 {
@@ -70,4 +71,5 @@ BOOST_PYTHON_MODULE(_mfront)
   // generators
   declareGeneratorOptions();
   declareMakefileGenerator();
+  declareCMakeGenerator();
 }

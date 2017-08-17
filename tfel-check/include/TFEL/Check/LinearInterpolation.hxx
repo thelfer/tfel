@@ -19,9 +19,9 @@
 #ifndef LIB_TFELCHECK_LINEARINTERPOLATION_HXX
 #define LIB_TFELCHECK_LINEARINTERPOLATION_HXX
 
-#include "TFELCheck/TFELCheckConfig.hxx"
-#include "TFELCheck/Interpolation.hxx"
-#include "TFELCheck/Linearization.hxx"
+#include "TFEL/Check/TFELCheckConfig.hxx"
+#include "TFEL/Check/Interpolation.hxx"
+#include "TFEL/Check/Linearization.hxx"
 
 namespace tfel{
 

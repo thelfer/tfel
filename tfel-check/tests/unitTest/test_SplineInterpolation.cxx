@@ -1,35 +1,33 @@
 /*!
- * \brief test_SplineInterpolation
- *
- * tests if SplineInterpolation class works well.
- *
- * \file test_SplineInterpolation.cpp
- *
- *
+ * \file   tfel-check/tests/unitTest/test_SplineInterpolation.cpp
+ * \brief  test of the `SplineInterpolation` class.
  * \author rp238441
- * \date
- *
- * Copyright © 2013
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
  */
 
 #include<cmath>
 #include<stdexcept>
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
-#include"TFELCheck/SplineInterpolation.hxx"
+#include"TFEL/Check/SplineInterpolation.hxx"
 
 struct test_SplineInterpolation
   : public tfel::tests::TestCase
 {
   test_SplineInterpolation()
-    : tfel::tests::TestCase("TFELCheck","SplineInterpolation")
+    : tfel::tests::TestCase("TFEL/Check","SplineInterpolation")
   {}
 
   virtual tfel::tests::TestResult
   execute() override
   {
     constexpr const double eps = 1.e-14;
-    tfel_check::SplineInterpolation i;
+    tfel::check::SplineInterpolation i;
     i.interpolate({1.,2.},{5.,7.});
     TFEL_TESTS_ASSERT(std::abs(6.-i.getValue(1.5))<eps);
     TFEL_TESTS_ASSERT(std::abs(10.-i.getValue(1.5))>eps);

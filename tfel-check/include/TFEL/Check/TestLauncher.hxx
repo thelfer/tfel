@@ -25,12 +25,12 @@
 
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Utilities/TextData.hxx"
-#include "TFELCheck/TFELCheckConfig.hxx"
-#include"TFELCheck/PCLogger.hxx"
-#include"TFELCheck/Interpolation.hxx"
-#include"TFELCheck/Column.hxx"
-#include"TFELCheck/Comparison.hxx"
-#include"TFELCheck/Test.hxx"
+#include "TFEL/Check/TFELCheckConfig.hxx"
+#include"TFEL/Check/PCLogger.hxx"
+#include"TFEL/Check/Interpolation.hxx"
+#include"TFEL/Check/Column.hxx"
+#include"TFEL/Check/Comparison.hxx"
+#include"TFEL/Check/Test.hxx"
 
 namespace tfel{
 

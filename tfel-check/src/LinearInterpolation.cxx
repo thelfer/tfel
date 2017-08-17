@@ -11,7 +11,7 @@
  * project under specific licensing conditions. 
  */
 
-#include "TFELCheck/LinearInterpolation.hxx"
+#include "TFEL/Check/LinearInterpolation.hxx"
 
 namespace tfel{
 

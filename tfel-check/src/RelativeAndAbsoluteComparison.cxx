@@ -12,7 +12,7 @@
 #include <cstdlib>
 #include <limits>
 
-#include "TFELCheck/RelativeAndAbsoluteComparison.hxx"
+#include "TFEL/Check/RelativeAndAbsoluteComparison.hxx"
 
 namespace tfel{
 

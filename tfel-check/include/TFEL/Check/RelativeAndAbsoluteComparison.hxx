@@ -20,8 +20,8 @@
 #ifndef LIB_TFELCHECK_RELATIVEANDABSOLUTECOMPARISON_HXX
 #define LIB_TFELCHECK_RELATIVEANDABSOLUTECOMPARISON_HXX
 
-#include "TFELCheck/TFELCheckConfig.hxx"
-#include "TFELCheck/Comparison.hxx"
+#include "TFEL/Check/TFELCheckConfig.hxx"
+#include "TFEL/Check/Comparison.hxx"
 
 namespace tfel{
 

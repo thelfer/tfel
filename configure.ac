@@ -305,9 +305,9 @@ then
 #!$PYTHON
 from distutils import sysconfig
 if sysconfig.get_python_inc() != sysconfig.get_python_inc(plat_specific=True) :
-    print '-I' + sysconfig.get_python_inc() + '-I' + sysconfig.get_python_inc(plat_specific=True)
+    print('-I' + sysconfig.get_python_inc() + '-I' + sysconfig.get_python_inc(plat_specific=True))
 else :
-    print '-I' + sysconfig.get_python_inc()
+    print('-I' + sysconfig.get_python_inc())
 EOF
 	PYTHON_INCLUDES=$($PYTHON $file)
 	rm $file
@@ -317,11 +317,22 @@ EOF
 	cat > $file << EOF
 #!$PYTHON
 from distutils import sysconfig
-print '-L' + sysconfig.PREFIX  +'/lib/ ' + '-lpython'+sysconfig.get_python_version()
+print('-L' + sysconfig.PREFIX  +'/lib/ ' + '-lpython'+sysconfig.get_python_version())
 EOF
 	PYTHON_LIBS=$($PYTHON $file)
 	rm $file
 	AC_DEFINE_UNQUOTED(TFEL_PYTHON_LIBS,"$PYTHON_LIBS")
+#python version
+	file=$(mktemp)
+	cat > $file << EOF
+#!$PYTHON
+import platform
+print(platform.python_version())
+EOF
+	PYTHONLIBS_VERSION_STRING=$($PYTHON $file)
+	rm $file
+	AC_SUBST(PYTHONLIBS_VERSION_STRING)
+#python path	
 	PYTHONPATH=$(echo $PYTHON |sed 's/\/bin\/python.*//')
 	AC_SUBST(PYTHONPATH)
 	have_python=yes
@@ -349,7 +360,7 @@ if test "x$use_python_bindings" != "xno";
     CHECK_BOOST
     CHECK_BOOST_PYTHON
     TFEL_PYTHON_BINDINGS=yes
-    AC_DEFINE(HAVE_TFEL_PYTHON_BINDINGS)
+    AC_DEFINE(TFEL_PYTHON_BINDINGS)
     AM_CONDITIONAL([TFEL_PYTHON_BINDINGS],true)
 else
     TFEL_PYTHON_BINDINGS=no

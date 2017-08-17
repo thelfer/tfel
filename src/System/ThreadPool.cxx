@@ -21,12 +21,13 @@ namespace tfel{
    
     ThreadPool::ThreadPool(const size_t n)
     {
+      this->statuses.resize(n);
       for(size_t i = 0;i<n;++i){
-	auto f = [this]{
+	auto f = [this,n]{
 	  for(;;){
 	    std::function<void()> task;
 	    {
-	      std::unique_lock<std::mutex> lock(this->queue_mutex);
+	      std::unique_lock<std::mutex> lock(this->m);
 	      this->condition.wait(lock,[this]{
 		  return this->stop || !this->tasks.empty();
 		});
@@ -35,8 +36,13 @@ namespace tfel{
 	      }
 	      task = std::move(this->tasks.front());
 	      this->tasks.pop();
+	      this->statuses[n] = ThreadPool::WORKING;
 	    }
 	    task();
+	    {
+	      std::unique_lock<std::mutex> lock(this->m);
+	      this->statuses[n] = ThreadPool::IDLE;
+	    }
 	  }
 	};
 	this->workers.emplace_back(f);
@@ -50,7 +56,7 @@ namespace tfel{
     ThreadPool::~ThreadPool()
     {
       {
-	std::unique_lock<std::mutex> lock(queue_mutex);
+	std::unique_lock<std::mutex> lock(m);
 	this->stop = true;
       }
       condition.notify_all();

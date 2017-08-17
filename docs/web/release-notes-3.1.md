@@ -785,6 +785,9 @@ This method takes two named arguments:
 `tfel-config` provides new options for better integration with build
 systems, such as `cmake`:
 
+- `--major-version`: returns the major version of `TFEL`
+- `--minor-version`: returns the minor version of `TFEL`
+- `--revision-version`: returns the revision version of `TFEL`
 - `--ldflags`: returns appropriate flags for the linker to link
   against specified libraries (see `--math`, `--system` the options
   and others). This option is equivalent to the `--libs` options but
@@ -793,9 +796,8 @@ systems, such as `cmake`:
 - `--library-path`: returns the path the `TFEL` libraries.
 - `--library-dependency`: returns the list of dependencies of a `TFEL`
   library. The given library is included in the list.
-- `--major-version`: returns the major version of `TFEL`
-- `--minor-version`: returns the minor version of `TFEL`
-- `--revision-version`: returns the revision version of `TFEL`
+- `--python-version`: returns the python version used to build the
+  python bindings.
 
 ~~~~{.bash}
 $ tfel-config --library-dependency --material

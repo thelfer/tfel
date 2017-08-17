@@ -70,9 +70,9 @@ namespace mfront{
 #endif /* TFEL_CMAKE_GENERATOR */
   }
   
-  void generateCMakeListFile(const TargetsDescription& t,
-			     const GeneratorOptions& o,
-			     const std::string&){
+  void generateCMakeListsFile(const TargetsDescription& t,
+			      const GeneratorOptions& o,
+			      const std::string&){
     auto throw_if = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("generateCMakeListFile: "+m));}
     };

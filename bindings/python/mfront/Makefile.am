@@ -25,7 +25,8 @@ _mfront_la_SOURCES = mfront.cxx                    \
 		     BehaviourDescription.cxx      \
 		     SearchPathsHandler.cxx        \
 		     GeneratorOptions.cxx          \
-		     MakefileGenerator.cxx
+		     MakefileGenerator.cxx         \
+		     CMakeGenerator.cxx
 
 _mfront_la_LDFLAGS = -module
 _mfront_la_LIBADD  = -L@top_builddir@/mfront/src                       \

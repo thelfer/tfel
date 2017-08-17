@@ -140,10 +140,9 @@ static bool getValueInRegistry(std::string &value)
 
 static std::string getTFELHOME()
 {
-  using namespace std;
 #if defined _WIN32 || defined _WIN64
   // check in the registry (installation through NSIS)
-  string rpath;
+  std::string rpath;
   if(getValueInRegistry(rpath)){
     return handleSpace(rpath);
   }
@@ -155,10 +154,10 @@ static std::string getTFELHOME()
   }
 
 #if defined _WIN32 || defined _WIN64
-  string msg("tfel-config getTFELHOME: "
-	     "no TFELHOME registry key defined and no TFEHOME "
-	     "environment variable defined");
-  throw(runtime_error(msg));
+  throw(std::runtime_error("tfel-config getTFELHOME: "
+			   "no TFELHOME registry key defined "
+			   "and no TFEHOME environment "
+			   "variable defined"));
 #else
   return "";
 #endif
@@ -403,7 +402,12 @@ int main(const int argc,const char *const *const argv)
     },"print tfel revision version.");
   registerCallBack("--licence",&treatLicences,
 		   "print tfel licences.");
-
+#ifdef TFEL_PYTHON_BINDINGS
+  registerCallBack("--python-version",[]{
+      std::cout << PYTHON_VERSION << " ";
+    },"print the python version used to build the python bindings.");
+#endif /* TFEL_PYTHON_BINDINGS */
+  
   if(argc==1){
     treatHelp();
   }
@@ -460,7 +464,7 @@ int main(const int argc,const char *const *const argv)
     if(!incs){
       std::cout << ZMATFLAGS1 << " ";
     }
-    const char * const zmatpath = getenv("ZSET_ROOT");
+    const auto zmatpath = getenv("ZSET_ROOT");
     if(zmatpath!=nullptr){
       std::cout << "-I" << zmatpath << "/include ";
     } else {

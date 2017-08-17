@@ -106,7 +106,7 @@ mapping algorithms exist (see @simo_computational_1998).
 The following listing shows  how a simple plastic behaviour can be implemented:
 
 ~~~~ {#Plasticity .cpp .numberLines}
-@Parser IsotropicPlasticMisesFlow; //< domain specific language
+@DSL IsotropicPlasticMisesFlow; //< domain specific language
 @Behaviour Plasticity;             //< name of the behaviour
 @Parameter  H  = 22e9;             //< hardening slope
 @Parameter s0 = 200e6;             //< elasticity limit
@@ -219,7 +219,7 @@ The implementation of the Tvergaard cohesive zone model using the
 `Default` domain specific language is given below:
 
 ~~~~ {#Tvergaard .cpp .numberLines}
-@Parser DefaultCZMParser;     // domain specific language
+@DSL DefaultCZM;     // domain specific language
 @Behaviour Tvergaard;         // name of the behaviour
 @MaterialProperty stress kn;  // normal stiffness
 @MaterialProperty stress ks;  // tangential elastic stiffness
@@ -254,15 +254,12 @@ The implementation of a generalisation of the Norton
 creep law for anisotropic materials is given below:
 
 ~~~~ {#OrthotropicCreep .cpp .numberLines}
-@Parser    RungeKutta;           // domain specific language
+@DSL    RungeKutta;              // domain specific language
 @Behaviour OrthotropicCreep;     // name of the behaviour
 @OrthotropicBehaviour;           // treating an orthotropic behaviou
 @RequireStiffnessTensor;         // requires the stiffness tensor to be computed
 @StateVariable Stensor evp;      // viscoplastic strain
 @StateVariable strain p;         // Equivalent viscoplastic strain
-@Includes{                       // header files
-#include<TFEL/Material/Hill.hxx>
-}
 @ComputeStress{                  /* stress computation */
   sig = D*eel;
 }
@@ -270,10 +267,10 @@ creep law for anisotropic materials is given below:
   st2tost2<N,real> H;            // Hill Tensor
   H = hillTensor<N,real>(0.371,0.629,4.052,1.5,1.5,1.5);
   stress sigeq = sqrt(sig|H*sig);  // equivalent Hill stress
-  if(sigeq>1e9){                 // automatic sub-stepping
+  if(sigeq>1e9){                   // automatic sub-stepping
     return false;
   }
-  Stensor  n(0.);                // flow direction
+  Stensor  n(real(0));                // flow direction
   if(sigeq > 10.e-7){
     n    = H*sig/sigeq;
   }
@@ -399,77 +396,39 @@ automatically with only a small numerical cost.
 The Norton creep law can be implemented as follows:
 
 ~~~~ {#ImplicitNorton .cpp .numberLines}
-@Parser Implicit;
+@DSL Implicit;
 @Behaviour ImplicitNorton;
-@Includes{
-#include"TFEL/Material/Lame.hxx"
-}
+@Brick StandardElasticity;
 
 @MaterialProperty stress young; /* mandatory for castem */
 young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;    /* mandatory for castem */
 nu.setGlossaryName("PoissonRatio");
 
-@LocalVariable real     lambda;
-@LocalVariable real     mu;
-
-// store for the Von Mises stress 
-// for the tangent operator
-@LocalVariable real seq;
-// store the derivative of the creep function
-// for the tangent operator
-@LocalVariable real df_dseq;
-// store the normal tensor
-// for the tangent operator
-@LocalVariable Stensor n;
+@LocalVariable stress lambda,mu;
 
 @StateVariable real    p;
 @PhysicalBounds p in [0:*[;
 
 /* Initialize Lame coefficients */
-@InitLocalVars{
+@InitLocalVariables{
   using namespace tfel::material::lame;
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 } // end of @InitLocalVars
 
-@IsTangentOperatorSymmetric true;
-@TangentOperator{
-  using namespace tfel::material::lame;
-  if((smt==ELASTIC)||(smt==SECANTOPERATOR)||
-     (smt==TANGENTOPERATOR)){
-    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
-  } else if (smt==CONSISTENTTANGENTOPERATOR){
-    StiffnessTensor Hooke;
-    Stensor4 Je;
-    computeElasticStiffness<N,Type>::exe(Hooke,lambda,mu);
-    getPartialJacobianInvert(Je);
-    Dt = Hooke*Je;
-  } else {
-    return false;
-  }
-}
-
-@ComputeStress{
-  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
-} // end of @ComputeStresss
-
 @Integrator{
   const real A = 8.e-67;
   const real E = 8.2;
-  seq = sigmaeq(sig);
-  const real tmp = A*pow(seq,E-1.);
-  df_dseq = E*tmp;
-  real inv_seq(0);
-  n = Stensor(0.);
-  if(seq > 1.e-8*young){
-    inv_seq = 1/seq;
-    n       = 1.5*deviator(sig)*inv_seq;
-  }
-  feel += dp*n-deto;
+  const auto seq = sigmaeq(sig);
+  const auto tmp = A*pow(seq,E-1.);
+  const auto df_dseq = E*tmp;
+  const auto iseq = 1/max(seq,real(1.e-8)*young);
+  const auto n    = eval(3*deviator(sig)*iseq/2);
+  feel += dp*n;
   fp   -= tmp*seq*dt;
   // jacobian
-  dfeel_ddeel += 2.*mu*theta*dp*inv_seq*(Stensor4::M()-(n^n));
+  dfeel_ddeel += 2.*mu*theta*dp*iseq*(Stensor4::M()-(n^n));
   dfeel_ddp    = n;
   dfp_ddeel    = -2*mu*theta*df_dseq*dt*n;
 } // end of @Integrator

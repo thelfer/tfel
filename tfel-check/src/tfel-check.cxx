@@ -29,11 +29,11 @@
 #include"TFEL/System/System.hxx"
 #include"TFEL/System/RecursiveFind.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
-#include"TFELCheck/TestLauncher.hxx"
-#include"TFELCheck/TestLauncherV1.hxx"
-#include"TFELCheck/PCLogger.hxx"
-#include"TFELCheck/PCTextDriver.hxx"
-#include"TFELCheck/PCJUnitDriver.hxx"
+#include"TFEL/Check/TestLauncher.hxx"
+#include"TFEL/Check/TestLauncherV1.hxx"
+#include"TFEL/Check/PCLogger.hxx"
+#include"TFEL/Check/PCTextDriver.hxx"
+#include"TFEL/Check/PCJUnitDriver.hxx"
 
 namespace tfel{
 

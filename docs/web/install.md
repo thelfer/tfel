@@ -217,6 +217,41 @@ architectures and in `lib`. This can be changed by defining a
 $ cmake -DLIB_SUFFIX=64 ....
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+### Appending the version number
+
+The `TFEL_APPEND_VERSION` option will append the version number to the
+names of:
+
+- The executables.
+- The libraries.
+- The python modules. Note that, to comply with `python` restriction
+  on module' names, the characters `.` and `-` are replace by `_` and
+  that only the first level modules are affected.
+- The directories in the `share` folder.
+
+The headers are installed in a subforder named `TFEL-${TVEL_VERSION}`.
+
+For example, if the `TFEL` version is `3.0.2-dev`, using
+`TFEL_APPEND_VERSION` opion will generate:
+
+- The `mfront-3.0.2-dev` executable.
+- The `libTFELMaterial-3.0.2-dev.so` library.
+- The `mtest_3_0_2_dev` `python` module.
+- The `tfel_3_0_2_dev.material` `python` module. In this case, the
+  second level (`material`) is not affected.
+
+This allows multiple executables to be installed in the same
+directory.
+
+### Selecting the `python` version
+
+A specific `python` version can be selected by setting the
+`Python_ADDITIONAL_VERSIONS`, as follows:
+
+~~~~{.bash}
+cmake ../trunk/ -Denable-python-bindings=ON -DPython_ADDITIONAL_VERSIONS=2.7 ...
+~~~~
+
 ## Using the `configure` script
 
 ~~~~ {#building-configure .bash}

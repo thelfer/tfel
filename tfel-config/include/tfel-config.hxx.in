@@ -7,3 +7,5 @@
 #ifdef ZSET_ROOT
 #define ZMATFLAGS2 "-I@ZSET_ROOT@/include"
 #endif /* ZSET_ROOT */
+
+#define PYTHON_VERSION "@PYTHONLIBS_VERSION_STRING@"

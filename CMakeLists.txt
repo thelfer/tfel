@@ -296,6 +296,7 @@ if(enable-python-bindings)
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DESCRIPTION 
     "Contains the python bindings for TFEL, MFront and MTest")
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DEPENDS  core mfront mtest)
+  add_definitions("-DTFEL_PYTHON_BINDINGS")
 endif(enable-python-bindings)
 
 # java

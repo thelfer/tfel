@@ -14,7 +14,7 @@
 #include<string>
 #include<stdexcept>
 
-#include "TFELCheck/Linearization.hxx"
+#include "TFEL/Check/Linearization.hxx"
 
 namespace tfel{
 

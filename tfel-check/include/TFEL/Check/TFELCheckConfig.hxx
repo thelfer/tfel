@@ -1,5 +1,5 @@
 /*!
- * \file   TFELCheckConfig.hxx
+ * \file   TFEL/Check/TFELCheckConfig.hxx
  * \brief    
  * \author THOMAS HELFER
  * \date   27 sept. 2016
@@ -17,7 +17,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#  if defined TFELTFELCheck_EXPORTS
+#  if defined TFELTFEL/Check_EXPORTS
 #    define TFELCHECK_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
 #  else
 #  ifndef TFEL_STATIC_BUILD

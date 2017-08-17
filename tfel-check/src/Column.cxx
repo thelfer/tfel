@@ -15,7 +15,7 @@
 #include<stdexcept>
 #include<algorithm>
 #include"TFEL/Math/Evaluator.hxx"
-#include"TFELCheck/Column.hxx"
+#include"TFEL/Check/Column.hxx"
 
 namespace tfel{
 
