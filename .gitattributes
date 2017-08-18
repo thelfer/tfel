@@ -85,6 +85,7 @@ bindings/python/tfel/GlossaryEntry.cxx -text
 bindings/python/tfel/Makefile.am -text
 bindings/python/tfel/ModellingHypothesis.cxx -text
 bindings/python/tfel/OutOfBoundsPolicy.cxx -text
+bindings/python/tfel/PhysicalConstants.cxx -text
 bindings/python/tfel/ProcessManagerCommand.cxx -text
 bindings/python/tfel/TestResult.cxx -text
 bindings/python/tfel/TextData.cxx -text
@@ -96,6 +97,7 @@ bindings/python/tfel/pyglossary.cxx -text
 bindings/python/tfel/stensor.cxx -text
 bindings/python/tfel/system.cxx -text
 bindings/python/tfel/tests.cxx -text
+bindings/python/tfel/tfel.cxx -text
 bindings/python/tfel/tvector.cxx -text
 bindings/python/tfel/utilities.cxx -text
 bindings/python/tfel/vector.cxx -text
@@ -1584,6 +1586,7 @@ include/TFEL/Metaprogramming/ResultOf.hxx -text
 include/TFEL/Metaprogramming/StaticAssert.hxx -text
 include/TFEL/Metaprogramming/TypeList.hxx -text
 include/TFEL/Metaprogramming/TypeList.ixx -text
+include/TFEL/PhysicalConstants.hxx -text
 include/TFEL/System/BinaryRead.hxx -text
 include/TFEL/System/BinaryWrite.hxx -text
 include/TFEL/System/ChildProcess.hxx -text
