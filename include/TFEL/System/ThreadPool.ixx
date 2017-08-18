@@ -73,7 +73,7 @@ namespace tfel{
 						std::forward<Args>(a)...));
       auto res = t->get_future();
       {
-	std::unique_lock<std::mutex> lock(this->queue_mutex);
+	std::unique_lock<std::mutex> lock(this->m);
 	// don't allow enqueueing after stopping the pool
 	if(this->stop){
 	  throw std::runtime_error("ThreadPool::addTask: "
@@ -81,7 +81,7 @@ namespace tfel{
 	}
 	this->tasks.emplace([t](){ (*t)(); });
       }
-      condition.notify_one();
+      this->c.notify_one();
       return res;
     }
     

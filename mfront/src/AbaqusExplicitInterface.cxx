@@ -936,7 +936,8 @@ namespace mfront{
 	  << "}\n"
 	  << "if(*nblock-ntasks*nthreads!=0){\n"
 	  << "pool.addTask(integrate2,nthreads*ntasks,*nblock);\n"
-	  << "}\n";
+	  << "}\n"
+	  << "pool.wait();\n";
     } else {
       throw(std::runtime_error("AbaqusExplicitInterface::writeIntegrateLoop: "
 			       "internal error (unsupported parallelization policy"));

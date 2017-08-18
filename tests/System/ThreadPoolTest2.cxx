@@ -1,8 +1,8 @@
 /*!
- * \file   ThreadPoolTest.cxx
+ * \file   ThreadPoolTest2.cxx
  * \brief    
- * \author THOMAS HELFER
- * \date   09 nov. 2016
+ * \author Thomas Helfer
+ * \date   17 août 2017
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 
@@ -17,39 +17,41 @@
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/System/ThreadPool.hxx"
 
-struct ThreadPoolTest final
+struct ThreadPoolTest2 final
   : public tfel::tests::TestCase
 {
-   ThreadPoolTest()
-    : tfel::tests::TestCase("TFEL/System","ThreadPoolTest")
-  {} // end of ThreadPoolTest
+   ThreadPoolTest2()
+    : tfel::tests::TestCase("TFEL/System","ThreadPoolTest2")
+  {} // end of ThreadPoolTest2
   virtual tfel::tests::TestResult
   execute() override
   {
-    using namespace tfel::system;
-    ThreadPool pool(2);
-    auto results = std::vector<std::future<ThreadedTaskResult<int>>>{};
-    for(int i = 0; i < 5; ++i) {
-      auto r = pool.addTask([i]{
-	  return i*i;
-	});
-      results.emplace_back(std::move(r));
-    }
-    int value = 0;
-    for(auto && r: results){
-      value += *(r.get());
-    }
-    TFEL_TESTS_ASSERT(value==30);    
+    std::atomic<int> res(0);
+    auto task = [&res](const int i){
+      return [&res,i]{
+	res+=i;
+      };
+    };
+    tfel::system::ThreadPool p(2);
+    p.addTask(task(-1));
+    p.addTask(task(2));
+    p.addTask(task(4));
+    p.wait();
+    TFEL_TESTS_ASSERT(res==5);
+    p.addTask(task(5));
+    p.addTask(task(-8));
+    p.wait();
+    TFEL_TESTS_ASSERT(res==2);
     return this->result;
   } // end of execute
 };
 
-TFEL_TESTS_GENERATE_PROXY(ThreadPoolTest,"ThreadPoolTest");
+TFEL_TESTS_GENERATE_PROXY(ThreadPoolTest2,"ThreadPoolTest2");
 
 int main()
 {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("ThreadPoolTest.xml");
+  m.addXMLTestOutput("ThreadPoolTest2.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
