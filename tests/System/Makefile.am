@@ -13,8 +13,10 @@ LDADD = -lTFELSystem -lTFELException -lTFELTests \
 	-L$(top_builddir)/src/Exception          \
 	-L$(top_builddir)/src/Tests
 
-test_PROGRAMS          = ThreadPoolTest
-ThreadPoolTest_SOURCES = ThreadPoolTest.cxx
+test_PROGRAMS           = ThreadPoolTest \
+			  ThreadPoolTest2
+ThreadPoolTest_SOURCES  = ThreadPoolTest.cxx
+ThreadPoolTest2_SOURCES = ThreadPoolTest2.cxx
 
 if !TFEL_WIN
 test_PROGRAMS  += process_test_target \
@@ -51,5 +53,3 @@ clean-local:
 TESTS=$(test_PROGRAMS)
 
 endif
-
-

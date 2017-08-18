@@ -81,7 +81,7 @@ namespace tfel{
 	}
 	this->tasks.emplace([t](){ (*t)(); });
       }
-      condition.notify_one();
+      this->c.notify_one();
       return res;
     }
     

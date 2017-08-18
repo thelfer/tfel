@@ -166,6 +166,33 @@ for e in elm.getEntryPoints(l):
 		ab.append(e)
 ~~~~
 
+### Improvements the `ThreadPool` class
+
+The `ThreadPool` class is used to handle a pool of threads that are
+given tasks. This class now has a `wait` method which blocks the main
+thread up to tasks completion.
+
+~~~~{.cpp}
+    std::atomic<int> res(0);
+    auto task = [&res](const int i){
+	  // update the res variable
+      return [&res,i]{
+	    res+=i;
+      };
+    };
+	// create a pool of two threads
+    tfel::system::ThreadPool p(2);
+	// Create two tasks that can be executed
+	// using one or two threads.
+    p.addTask(task(-1));
+    p.addTask(task(2));
+	// Waiting for the tasks to end
+    p.wait();
+	// At this point, res is equal to 1.
+	// The 2 threads in the pool are *not* joined
+	// and are waiting for new tasks.
+~~~~
+
 ## TFEL/Math
 
 ### Symmetric tensor eigen values and eigen vectors

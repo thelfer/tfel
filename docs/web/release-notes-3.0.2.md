@@ -41,7 +41,7 @@ For example, if the `TFEL` version is `3.0.2-dev`, using
 This allows multiple executables to be installed in the same
 directory.
 
-## The `tfel-config` tool
+### The `tfel-config` tool
 
 The `tfel-config` tool has been modified to take this
 option appropriately. For example:
@@ -53,7 +53,7 @@ $ tfel-config-3.0.2-dev --libs --material
 -L/tmp/install/lib -lTFELMaterial-3.0.2-dev -lTFELMath-3.0.2-dev -lTFELUtilities-3.0.2-dev -lTFELException-3.0.2-dev
 ~~~~
 
-## Modification to `mfront`
+### Modifications to `mfront`
 
 `mfront` has been modified to call the appropriate `tfel-config`
 executable.
@@ -138,6 +138,15 @@ module declaration. See
 <https://docs.python.org/3/howto/cporting.html> for details.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/75/>
+
+## Ticket #73 AbaqusExplicit: wait for tasks termination when the `ThreadPool` threading model is used
+
+The `ThreadPool` class now has a `wait` method that stops the main
+thread up to tasks completion. This method is now called at the end of
+the integration in the `AbaqusExplicit` interface when the
+`ThreadPool` threading model is used.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/73/>
 
 ## Ticket #72: Error at compilation of documentation
 
