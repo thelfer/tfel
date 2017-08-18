@@ -1,6 +1,7 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
 nobase_include_HEADERS= TFEL/Macros.hxx                                                                              \
+			TFEL/PhysicalConstants.hxx                                                                   \
 			TFEL/FSAlgorithm/swap_ranges.hxx		                                             \
 			TFEL/FSAlgorithm/copy.hxx			                                             \
 			TFEL/FSAlgorithm/generate.hxx		                                                     \

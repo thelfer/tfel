@@ -1,4 +1,5 @@
 install_header(TFEL Macros.hxx)
+install_header(TFEL PhysicalConstants.hxx)
 
 install_header(TFEL/Config/Internals TFELTypesInternals.hxx)
 install_header(TFEL/Config/Internals SpatialGradType.hxx)

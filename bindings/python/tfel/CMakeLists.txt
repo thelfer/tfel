@@ -12,6 +12,9 @@ link_directories("${PROJECT_BINARY_DIR}/src/Tests")
 link_directories("${Boost_LIBRARY_DIRS}")
 link_directories("${PYTHON_LIBRARY_PATH}")
 
+tfel_python_module(_tfel tfel.cxx
+  PhysicalConstants.cxx)
+
 tfel_python_module(tests tests.cxx
   TestResult.cxx)
 target_link_libraries(py_tfel_tests TFELTests)

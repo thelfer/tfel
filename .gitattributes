@@ -92,6 +92,7 @@ bindings/python/tfel/LibraryInformation.cxx -text
 bindings/python/tfel/Makefile.am -text
 bindings/python/tfel/ModellingHypothesis.cxx -text
 bindings/python/tfel/OutOfBoundsPolicy.cxx -text
+bindings/python/tfel/PhysicalConstants.cxx -text
 bindings/python/tfel/ProcessManagerCommand.cxx -text
 bindings/python/tfel/TestResult.cxx -text
 bindings/python/tfel/TextData.cxx -text
@@ -103,6 +104,7 @@ bindings/python/tfel/pyglossary.cxx -text
 bindings/python/tfel/stensor.cxx -text
 bindings/python/tfel/system.cxx -text
 bindings/python/tfel/tests.cxx -text
+bindings/python/tfel/tfel.cxx -text
 bindings/python/tfel/tvector.cxx -text
 bindings/python/tfel/utilities.cxx -text
 bindings/python/tfel/vector.cxx -text
@@ -1250,6 +1252,7 @@ docs/web/packages.md -text
 docs/web/pandoc-crossref.yaml -text
 docs/web/parameters.md -text
 docs/web/phasefield.md -text
+docs/web/physical-constants.md -text
 docs/web/publications.md -text
 docs/web/release-notes-2.0.5.md -text
 docs/web/release-notes-3.0.1.md -text
@@ -1757,6 +1760,7 @@ include/TFEL/Metaprogramming/ResultOf.hxx -text
 include/TFEL/Metaprogramming/StaticAssert.hxx -text
 include/TFEL/Metaprogramming/TypeList.hxx -text
 include/TFEL/Metaprogramming/TypeList.ixx -text
+include/TFEL/PhysicalConstants.hxx -text
 include/TFEL/System/BinaryRead.hxx -text
 include/TFEL/System/BinaryWrite.hxx -text
 include/TFEL/System/ChildProcess.hxx -text
@@ -5802,6 +5806,8 @@ tfel-doc/src/TestDocumentation.cxx -text
 tfel-doc/src/tfel-doc.cxx -text
 /tfel.doxygen -text
 tools/FourthOrderTensorProduct/generate.cxx -text
+tools/PhysicalConstants/physical_constants.cxx -text
+tools/PhysicalConstants/physical_constants.json -text
 tools/TensorConvertion/SpatialModuliToKirchhoffJaumanRateModuli.cxx -text
 tools/TensorConvertion/TensorConvertion.cxx -text
 tools/TensorConvertion/TensorConvertion1D.cxx -text

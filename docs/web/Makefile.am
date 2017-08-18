@@ -70,10 +70,11 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./MaterialLaw-keywords.md				      \
 	   ./Model-keywords.md					      \
 	   ./MultipleIsotropicMisesFlows-keywords.md		      \
-	   ./RungeKutta-keywords.md				      \
 	   ./mfront-doc.md				              \
 	   ./Norton-web.md				              \
 	   ./Norton-full.md				              \
+	   ./physical-constants.md		                      \
+	   ./RungeKutta-keywords.md				      \
 	   ./coverity-scan.md                                         \
 	   ./tensors.md                                               \
 	   ./robots.txt						      \

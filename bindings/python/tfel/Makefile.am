@@ -6,12 +6,19 @@ AM_CPPFLAGS = -I@top_srcdir@/include/                       \
 tfeldir = @pythondir@/tfel
 tfel_PYTHON = __init__.py
 
-tfel_LTLIBRARIES = tests.la     \
+tfel_LTLIBRARIES = _tfel.la     \
+		   tests.la     \
 		   math.la      \
 		   utilities.la \
-		   glossary.la \
+		   glossary.la  \
 		   material.la  \
 		   system.la
+
+_tfel_la_SOURCES = tfel.cxx              \
+		   PhysicalConstants.cxx
+_tfel_la_LIBADD  = @BOOST_LIBS@ @BOOST_PYTHON_LIBS@             \
+		   -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
+_tfel_la_LDFLAGS = -module
 
 tests_la_SOURCES = tests.cxx      \
 		   TestResult.cxx

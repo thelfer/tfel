@@ -185,6 +185,6 @@ then
 	popd #from build-cmake-i586-mingw32msvc
     fi
 fi
-
 popd #from cmake
+
 popd #from build-check
