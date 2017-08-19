@@ -20,7 +20,7 @@
 namespace mfront{
 
   /*!
-   * base class for non linear system solver based on the
+   * \brief base class for non linear system solver based on the
    * Newton-Raphson algorithm.
    * The Newton-Raphson algorithm can be coupled with the
    * PowellDogLegAlgorithm for increased robustness.
@@ -29,6 +29,8 @@ namespace mfront{
     : public    NonLinearSystemSolverBase,
       protected PowellDogLegAlgorithmBase
   {
+    //! a simple alias
+    using NonLinearSystemSolverBase::CxxTokenizer;
     //! a simple alias
     using NonLinearSystemSolverBase::tokens_iterator;
     //! a simple alias
@@ -43,8 +45,7 @@ namespace mfront{
      * (Newton-Raphson solvers) or an approximation of it (Broyden
      * method).
      */
-    virtual bool
-    usesJacobian() const override;
+    virtual bool usesJacobian() const override;
     /*!
      * \return true if the solver uses the invert of the jacobian of
      * the system or an approximation of it (second Broyden method).

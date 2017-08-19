@@ -47,6 +47,7 @@ MFRONT_DOCS = Algorithm.md				                \
 	      MaterialLaw.md                                            \
 	      MaterialProperty.md                                       \
 	      MaximumNumberOfIterations.md                              \
+	      NumericallyComputedJacobianBlocks.md                      \
 	      OrthotropicBehaviour.md                                   \
 	      Parameter.md                                              \
 	      Parser.md                                                 \

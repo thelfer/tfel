@@ -52,12 +52,11 @@ namespace mfront
   GnuplotMaterialPropertyInterface::nextToken(tokens_iterator current,
 				       const tokens_iterator endTokens,
 				       const std::string &msg) {
-    using namespace std;
-    string what(msg) ;
+    std::string what(msg) ;
     if(++current==endTokens){
       what+="unexpected end of file.\n";
       what+="Error at line : ";
-      what+=to_string((--current)->line);
+      what+=std::to_string((--current)->line);
       throw(std::runtime_error(what));
     }
     return current;
@@ -75,8 +74,7 @@ namespace mfront
   std::string
   GnuplotMaterialPropertyInterface::eraseQuote(const std::string& in)
   {
-    using namespace std;
-    string res(in);
+    auto res = in;
     if ((res[0]=='"')&&(res[res.size()-1]=='"')) {
       res.erase(res.begin()) ;
       res.erase(res.end()-1) ;

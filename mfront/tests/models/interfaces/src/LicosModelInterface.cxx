@@ -1583,7 +1583,7 @@ namespace mfront{
       msg += "type " + v.type + " is not a supported type for a static variable.";
       msg += "Supported types are short, ushort, int, uint, long, ulong,";
       msg += "float, double, ldouble and real.\n";
-      msg += "Error at line " + to_string(v.lineNumber);
+      msg += "Error at line " + std::to_string(v.lineNumber);
       throw(runtime_error(msg));
     }
   } // end of MFrontModelInterface::writeStaticVariableInitialisation

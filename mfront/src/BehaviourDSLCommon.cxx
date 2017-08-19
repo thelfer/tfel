@@ -1952,6 +1952,13 @@ namespace mfront{
     }
   }
 
+  std::set<BehaviourDSLCommon::Hypothesis>
+  BehaviourDSLCommon::readHypothesesList(){
+    std::set<Hypothesis> mh;
+    this->readHypothesesList(mh);
+    return mh;
+  } // end of BehaviourDSLCommon::readHypothesesList
+  
   void BehaviourDSLCommon::readHypothesesList(std::set<Hypothesis>& h)
   {
     h.clear();

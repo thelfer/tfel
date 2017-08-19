@@ -60,6 +60,15 @@ namespace mfront{
      * \param[in] out : output file
      * \param[in] mb  : mechanical behaviour description
      * \param[in] h   : modelling hypothesis
+     */
+    static void writeEvaluateNumericallyComputedBlocks(std::ostream&,
+						       const BehaviourDescription&,
+						       const Hypothesis);
+    /*!
+     * \return write the code comparing the jacobian to a numerical one
+     * \param[in] out : output file
+     * \param[in] mb  : mechanical behaviour description
+     * \param[in] h   : modelling hypothesis
      * \param[in] nj  : name of the variable holding the numerical jacobian
      */
     static void

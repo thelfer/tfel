@@ -63,8 +63,8 @@ namespace mfront{
 					tokens_iterator current,
 					const tokens_iterator end)
   {
-    auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AbaqusExplicitInterface::treatKeyword: "+m));}
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("AbaqusExplicitInterface::treatKeyword: "+m));}
     };
     if(!i.empty()){
       if(std::find(i.begin(),i.end(),this->getName())==i.end()){

@@ -173,24 +173,24 @@ given tasks. This class now has a `wait` method which blocks the main
 thread up to tasks completion.
 
 ~~~~{.cpp}
-    std::atomic<int> res(0);
-    auto task = [&res](const int i){
-	  // update the res variable
-      return [&res,i]{
-	    res+=i;
-      };
-    };
-	// create a pool of two threads
-    tfel::system::ThreadPool p(2);
-	// Create two tasks that can be executed
-	// using one or two threads.
-    p.addTask(task(-1));
-    p.addTask(task(2));
-	// Waiting for the tasks to end
-    p.wait();
-	// At this point, res is equal to 1.
-	// The 2 threads in the pool are *not* joined
-	// and are waiting for new tasks.
+std::atomic<int> res(0);
+auto task = [&res](const int i){
+  // update the res variable
+  return [&res,i]{
+    res+=i;
+  };
+};
+// create a pool of two threads
+tfel::system::ThreadPool p(2);
+// Create two tasks that can be executed
+// using one or two threads.
+p.addTask(task(-1));
+p.addTask(task(2));
+// Waiting for the tasks to end
+p.wait();
+// At this point, res is equal to 1.
+// The 2 threads in the pool are *not* joined
+// and are waiting for new tasks.
 ~~~~
 
 ## TFEL/Math
@@ -535,6 +535,38 @@ The following library has been built :
 - materiallaw.so :  YoungModulusTest
 ~~~~
 
+## `Implicit` DSL
+
+### `@NumericallyComputedJacobianBlocks`
+
+Computing the jacobian of the implicit system is the most difficult
+part of implementing a behaviour. Computing the jacobian by finite
+difference is interesting but significantly decreases the performances
+of the behaviour and can be (very) sensitive to the choice of the
+numerical perturbation.
+
+The `@NumericallyComputedJacobianBlocks` keyword is used select a list
+of jacobian blocks that have to be computed numerically. This is more
+efficient than computing the whole jacobian numerically. Combined with
+the ability to compare the jacobian to a numerical approximation, the
+user now has the ability to build the jacobian incrementally, block by
+block and checks at each steps that their analytical expressions are
+correct.
+
+This keyword can optionnaly be followed by a list of modelling
+hypotheses. The list of jacobian blocks is given as an array.
+
+#### Notes
+
+- This keyword can be used multiple times. The newly declared jacobian
+  blocks are added to the existing ones.
+
+#### Example
+
+~~~~{#NumericallyComputedJacobianBlocks .cpp}
+@NumericallyComputedJacobianBlocks {dfp_ddeel,dfeel_ddeel};
+~~~~
+
 ## Behaviours interfaces
 
 ### Native `CalculiX` interface
@@ -833,6 +865,13 @@ TFELMaterial TFELMath TFELUtilities TFELException TFELNUMODIS
 
 # Tickets fixed
 
+## Ticket #37: Add the ability to compute part of the jacobian numerically
+
+The `@NumericallyComputedJacobianBlocks` keyword can be used for that
+purpose.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/37/>
+
 ## Ticket #40:  `ImplicitDSL`: Detect non finite values during resolution
 
 During the resolution of the implicit system, invalid results may
@@ -1101,7 +1140,6 @@ The following queries are now available:
 - `--has-physical-bounds`: return `true` if a variable has physical bounds, `false` otherwise.
 - `--physical-bounds-type`: return the physical bounds type associated to a variable.
 - `--physical-bounds-value`: show the bounds value associated as a range.
-
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/50/>
 

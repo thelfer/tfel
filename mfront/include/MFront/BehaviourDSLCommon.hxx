@@ -462,12 +462,16 @@ namespace mfront{
     virtual void
     readStringList(std::vector<std::string>&);
     /*!
+     * \return a list of hypotheses
+     * \note by default, the returning set contains UNDEFINEDHYPOTHESIS
+     */
+    virtual std::set<Hypothesis> readHypothesesList();
+    /*!
      * read a list of hypotheses
      * \param[out] h : list of hypotheses
      * \note by default, the returning set contains UNDEFINEDHYPOTHESIS
      */
-    virtual void
-    readHypothesesList(std::set<Hypothesis>&);
+    virtual void readHypothesesList(std::set<Hypothesis>&);
     /*!
      * \brief append the given modelling hypothesis to the set of hypothesis
      * \param[out] h : list of hypotheses

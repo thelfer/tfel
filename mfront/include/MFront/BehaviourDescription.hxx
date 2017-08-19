@@ -1130,6 +1130,15 @@ namespace mfront
 		      const BehaviourAttribute&,
 		      const bool = false);
     /*!
+     * \brief update an attribute
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: name
+     * \param[in] a: attribute
+     */
+    void updateAttribute(const Hypothesis,
+			 const std::string&,
+			 const BehaviourAttribute&);
+    /*!
      * \return a mechanical attribute
      * \param[in] h: modelling hypothesis
      * \param[in] n: name

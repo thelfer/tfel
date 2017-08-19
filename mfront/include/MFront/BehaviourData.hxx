@@ -120,6 +120,8 @@ namespace mfront{
     //! if this attribute is true, the implicit algorithm compares the
     //! analytical jacobian to the numeric one
     static const std::string compareToNumericalJacobian;
+    //! list of jacobian blocks that must be computed numerically
+    static const std::string numericallyComputedJacobianBlocks;
     /*!
      * a boolean attribute telling if the additionnal variables can be
      * declared. This attribute is set by DSL's when the first code
@@ -709,6 +711,13 @@ namespace mfront{
     void setAttribute(const std::string&,
 		      const BehaviourAttribute&,
 		      const bool);
+    /*!
+     * \brief update an existing new attribute
+     * \param[in] n: name
+     * \param[in] a: attribute
+     */
+    void updateAttribute(const std::string&,
+			 const BehaviourAttribute&);
     /*!
      * \return true if an attribute with the given name as been registred
      * \param[in] n : name

@@ -21,9 +21,8 @@
 namespace mfront{
 
   //! types that can be stored in a behaviour attribute
-  typedef tfel::meta::GenerateTypeList<bool,
-				       unsigned short,
-				       std::string>::type BehaviourAttributeTypes;
+  using BehaviourAttributeTypes = tfel::meta::GenerateTypeList<bool,unsigned short,std::string,
+							       std::vector<std::string>>::type;
   //! a class storing mechanical behaviour attribute
   typedef tfel::utilities::GenTypeBase<BehaviourAttributeTypes> BehaviourAttribute;
 

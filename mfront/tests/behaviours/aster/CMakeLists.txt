@@ -39,6 +39,7 @@ set(mfront_tests_SOURCES
   ImplicitNorton_Broyden
   ImplicitNorton_Broyden2
   ImplicitNorton_LevenbergMarquardt
+  ImplicitNorton_NumericallyComputedJacobianBlocks
   EllipticCreep
   StrainHardeningCreep
   Mazars
@@ -292,6 +293,7 @@ test_aster(implicitnorton_broyden)
 test_aster(implicitnorton_broyden2)
 test_aster(implicitorthotropiccreep)
 test_aster(implicitnorton_levenbergmarquardt)
+test_aster(implicitnorton_numericallycomputedjacobianblocks)
 test_aster(plasticity)
 test_aster(ellipticcreep)
 test_aster(strainhardeningcreep)

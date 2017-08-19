@@ -643,6 +643,17 @@ namespace mfront{
 	  cout << a.get<unsigned short>() << '\n';
 	} else if(a.is<string>()){
 	  cout << a.get<string>() << '\n';
+	} else if(a.is<vector<string>>()){
+	  const auto& vs = a.get<vector<string>>();
+	  bool first = true;
+	  for(const auto& v : vs){
+	    if(!first){
+	      cout << " ";
+	    }
+	    cout << v;
+	    first = false;
+	  }
+	  cout << '\n';
 	} else {
 	  throw(runtime_error("Behaviour::treatStandardQuery2 : "
 			      "unsupported attribute type"));

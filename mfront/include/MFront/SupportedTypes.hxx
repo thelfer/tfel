@@ -88,9 +88,13 @@ namespace mfront
       int getValueForDimension(const unsigned short) const;
 
       int getValueForModellingHypothesis(const Hypothesis) const;
-      //! \return true is all components of the TipeSize are null
+      //! \return true if all components of the TipeSize are null
       bool isNull() const;
-      
+      /*!
+       * \return true if only the scalar component is not null and is
+       * equal to one
+       */
+      bool isOne() const;
     private:
       //! ouptut operator
       friend std::ostream& 
@@ -141,6 +145,13 @@ namespace mfront
 
   }; // end of class SupportedTypes
 
+  /*!
+   * \brief convert to string
+   * \param[in] s: type size
+   */
+  MFRONT_VISIBILITY_EXPORT std::string
+  to_string(const SupportedTypes::TypeSize&);
+  
 } // end of namespace mfront
 
 #endif /* LIB_MFRONT_SUPPORTEDTYPES_HXX */

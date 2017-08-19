@@ -37,6 +37,7 @@ MFRONTS= DDIF2.mfront                                                      \
          ImplicitNorton_Broyden.mfront                                     \
          ImplicitNorton_Broyden2.mfront                                    \
          ImplicitNorton_LevenbergMarquardt.mfront                          \
+         ImplicitNorton_NumericallyComputedJacobianBlocks.mfront           \
 	 EllipticCreep.mfront                                              \
          NortonRK.mfront                                                   \
          NortonRK2.mfront                                                  \

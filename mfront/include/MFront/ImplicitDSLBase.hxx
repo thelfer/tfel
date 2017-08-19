@@ -162,6 +162,8 @@ namespace mfront{
     virtual void treatInitJacobianInvert();
     //! \brief treat the @MaximumIncrementValuePerIteration keyword
     virtual void treatMaximumIncrementValuePerIteration();
+    //! \brief treat the @NumericallyComputedJacobianBlocks keyword
+    virtual void treatNumericallyComputedJacobianBlocks();
     /*!
      * \return true if the the given variable may have methods
      * \param[in] h : modelling hypothesis

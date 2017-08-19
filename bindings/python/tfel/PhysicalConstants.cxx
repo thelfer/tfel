@@ -16,8 +16,7 @@
 
 void declarePhysicalConstants();
 
-namespace tfel{
-  struct TFEL_VISIBILITY_EXPORT PhysicalConstants{
+struct TFEL_VISIBILITY_LOCAL PhysicalConstants{
 //! Atomic mass constant (kg)
 static const double mu;
 //! Avogadro constant (mol-1)
@@ -57,33 +56,32 @@ const double PhysicalConstants::a = double(0.00729735);
 const double PhysicalConstants::R = double(8.31446);
 const double PhysicalConstants::s = double(5.67037e-08);
 
-} // end of namespace tfel
 void declarePhysicalConstants()
 {
-  boost::python::class_<tfel::PhysicalConstants>("PhysicalConstants")
-.def_readonly("mu",tfel::PhysicalConstants::mu,
+  boost::python::class_<PhysicalConstants>("PhysicalConstants")
+.def_readonly("mu",PhysicalConstants::mu,
 "Atomic mass constant (kg)")
-.def_readonly("Na",tfel::PhysicalConstants::Na,
+.def_readonly("Na",PhysicalConstants::Na,
 "Avogadro constant (mol-1)")
-.def_readonly("kb",tfel::PhysicalConstants::kb,
+.def_readonly("kb",PhysicalConstants::kb,
 "Boltzmann constant (J.K-1)")
-.def_readonly("G0",tfel::PhysicalConstants::G0,
+.def_readonly("G0",PhysicalConstants::G0,
 "Conductance quantum (S)")
-.def_readonly("e0",tfel::PhysicalConstants::e0,
+.def_readonly("e0",PhysicalConstants::e0,
 "Electric constant (F.m-1)")
-.def_readonly("me",tfel::PhysicalConstants::me,
+.def_readonly("me",PhysicalConstants::me,
 "Electron mass (kg)")
-.def_readonly("eV",tfel::PhysicalConstants::eV,
+.def_readonly("eV",PhysicalConstants::eV,
 "Electron volt (J)")
-.def_readonly("e",tfel::PhysicalConstants::e,
+.def_readonly("e",PhysicalConstants::e,
 "Elementary charge (C)")
-.def_readonly("F",tfel::PhysicalConstants::F,
+.def_readonly("F",PhysicalConstants::F,
 "Faraday constant (C.mol-1)")
-.def_readonly("a",tfel::PhysicalConstants::a,
+.def_readonly("a",PhysicalConstants::a,
 "Fine-structure constant")
-.def_readonly("R",tfel::PhysicalConstants::R,
+.def_readonly("R",PhysicalConstants::R,
 "Molar gas constant (J.mol-1.K-1)")
-.def_readonly("s",tfel::PhysicalConstants::s,
+.def_readonly("s",PhysicalConstants::s,
 "Stefan-Boltzmann constant (W.m-2.K-4)")
 ;
 

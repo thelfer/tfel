@@ -74,11 +74,9 @@ namespace mfront{
   void
   MTestFileGeneratorBase::addTime(const MTestFileGeneratorBase::real t)
   {
-    using namespace std;
     if(!this->times.insert(t).second){
-      string msg("MTestFileGeneratorBase::addTime : "
-		 "time '"+to_string(t)+"' already defined");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTestFileGeneratorBase::addTime: "
+			       "time '"+std::to_string(t)+"' already defined"));
     }
   } // end of MTestFileGeneratorBase::addTime
 
@@ -145,29 +143,25 @@ namespace mfront{
 							const MTestFileGeneratorBase::real t,
 							const MTestFileGeneratorBase::real v)
   {
-    using namespace std;
     if(!(this->evs[n].insert({t,v}).second)){
-      string msg("MTestFileGeneratorBase::addExternalStateVariableValue : "
-		 "time '"+to_string(t)+"' already defined "
-		 "for variable '"+n+"'");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTestFileGeneratorBase::addExternalStateVariableValue: "
+			       "time '"+std::to_string(t)+"' already defined "
+			       "for variable '"+n+"'"));
     }
   } // end of MTestFileGeneratorBase::addValue
 
   void
   MTestFileGeneratorBase::generate(const std::string& n) const
   {
-    using namespace std;
-    ofstream file(n+"-"+to_string(getIdentifier())+".mtest");
+    std::ofstream file(n+"-"+std::to_string(getIdentifier())+".mtest");
     if(!file){
-      string msg("MTestFileGeneratorBase::generate : "
-		 "can't open file '"+n+".mtest'");
-      throw(runtime_error(msg));
+      throw(std::runtime_error("MTestFileGeneratorBase::generate: "
+			       "can't open file '"+n+".mtest'"));
     }
     if(this->handleThermalExpansion){
-      file << "@HandleThermalExpansion true;" << endl;
+      file << "@HandleThermalExpansion true;\n";
     } else {
-      file << "@HandleThermalExpansion false;" << endl;
+      file << "@HandleThermalExpansion false;\n";
     }
     this->writeModellingHypothesis(file);
     this->writeBehaviourDeclaration(file);
@@ -182,13 +176,11 @@ namespace mfront{
   void
   MTestFileGeneratorBase::writeRotationMatrix(std::ostream& os) const
   {
-    using namespace std;
     if(this->hasRotationMatrix){
       os.precision(14);
-      os << "@RotationMatrix {{" << m[0] << "," << m[1] << "," << m[2] << "}," << endl
-	 << "                 {" << m[3] << "," << m[4] << "," << m[5] << "}," << endl
-	 << "                 {" << m[6] << "," << m[7] << "," << m[8] << "}};"
-	 << endl << endl;
+      os << "@RotationMatrix {{" << m[0] << "," << m[1] << "," << m[2] << "},\n"
+	 << "                 {" << m[3] << "," << m[4] << "," << m[5] << "},\n"
+	 << "                 {" << m[6] << "," << m[7] << "," << m[8] << "}};\n\n";
     }
   }
 

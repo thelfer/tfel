@@ -12,6 +12,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
+
 #include<cmath>
 #include<limits>
 #include<cstdlib>
@@ -20,6 +22,7 @@
 
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/NonLinearSystemSolver.hxx"
@@ -105,6 +108,8 @@ namespace mfront{
 			      &ImplicitDSLBase::treatComputeStiffnessTensor);
     this->registerNewCallBack("@ElasticMaterialProperties",
 			      &ImplicitDSLBase::treatElasticMaterialProperties);
+    this->registerNewCallBack("@NumericallyComputedJacobianBlocks",
+			      &ImplicitDSLBase::treatNumericallyComputedJacobianBlocks);
     this->registerNewCallBack("@HillTensor",&ImplicitDSLBase::treatHillTensor);
     this->disableCallBack("@ComputedVar");
     this->disableCallBack("@UseQt");
@@ -252,9 +257,8 @@ namespace mfront{
     BehaviourDSLCommon::treatUnknownVariableMethod(h,n);
   } // end of ImplicitDSLBase::treatUnknowVariableMethod
   
-  bool
-  ImplicitDSLBase::isCallableVariable(const Hypothesis h,
-				      const std::string& n) const
+  bool ImplicitDSLBase::isCallableVariable(const Hypothesis h,
+					   const std::string& n) const
     
   {
     if(n.empty()){
@@ -267,8 +271,7 @@ namespace mfront{
     return BehaviourDSLCommon::isCallableVariable(h,n);
   } // end of ImplicitDSLBase::isCallableVariable
 
-  void
-  ImplicitDSLBase::treatCompareToNumericalJacobian()
+  void ImplicitDSLBase::treatCompareToNumericalJacobian()
   {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("ImplicitDSLBase::treatCompareToNumericalJacobian : ",
@@ -285,8 +288,7 @@ namespace mfront{
     this->readSpecifiedToken("ImplicitDSLBase::treatCompareToNumericalJacobian",";");
   } // end of ImplicitDSLBase::treatCompareToNumericalJacobian
   
-  void
-  ImplicitDSLBase::treatJacobianComparisonCriterion()
+  void ImplicitDSLBase::treatJacobianComparisonCriterion()
   {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(!this->mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
@@ -333,8 +335,7 @@ namespace mfront{
     this->mb.setAttribute(BehaviourData::algorithm,s,false);
   } // end of ImplicitDSLBase::treatAlgorithm
 
-  void
-  ImplicitDSLBase::treatTheta()
+  void ImplicitDSLBase::treatTheta()
   {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double theta;
@@ -359,8 +360,7 @@ namespace mfront{
     this->mb.setEntryName(h,"theta","theta");
   } // end of ImplicitDSLBase::treatTheta
 
-  void
-  ImplicitDSLBase::treatEpsilon()
+  void ImplicitDSLBase::treatEpsilon()
   {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double epsilon;
@@ -385,8 +385,7 @@ namespace mfront{
     this->mb.setEntryName(h,"epsilon","epsilon");
   } // ImplicitDSLBase::treatEpsilon
 
-  void
-  ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation()
+  void ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation()
   {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     double epsilon;
@@ -410,8 +409,7 @@ namespace mfront{
     this->mb.setParameterDefaultValue(h,"numerical_jacobian_epsilon",epsilon);
   } // ImplicitDSLBase::treatEpsilon
 
-  void
-  ImplicitDSLBase::treatIterMax()
+  void ImplicitDSLBase::treatIterMax()
   {
     using namespace std;
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -427,10 +425,9 @@ namespace mfront{
     this->mb.setParameterDefaultValue(h,"iterMax",iterMax);
   } // end of ImplicitDSLBase::treatIterMax
 
-  std::string
-  ImplicitDSLBase::tangentOperatorVariableModifier(const Hypothesis h,
-						   const std::string& var,
-						   const bool addThisPtr)
+  std::string ImplicitDSLBase::tangentOperatorVariableModifier(const Hypothesis h,
+							       const std::string& var,
+							       const bool addThisPtr)
   {
     using namespace std;
     const auto& d = this->mb.getBehaviourData(h);
@@ -460,10 +457,9 @@ namespace mfront{
     }
   } // end of ImplicitDSLBase::tangentOperatorVariableModifier
 
-  std::string
-  ImplicitDSLBase::integratorVariableModifier(const Hypothesis h,
-					      const std::string& var,
-					      const bool addThisPtr)
+  std::string ImplicitDSLBase::integratorVariableModifier(const Hypothesis h,
+							  const std::string& var,
+							  const bool addThisPtr)
   {
     const auto& d = this->mb.getBehaviourData(h);
     if(d.isIntegrationVariableIncrementName(var)){
@@ -493,10 +489,9 @@ namespace mfront{
     }
   } // end of ImplicitDSLBase::integratorVariableModifier
 
-  std::string
-  ImplicitDSLBase::computeStressVariableModifier1(const Hypothesis h,
-						  const std::string& var,
-						  const bool addThisPtr)
+  std::string ImplicitDSLBase::computeStressVariableModifier1(const Hypothesis h,
+							      const std::string& var,
+							      const bool addThisPtr)
   {
     const auto& d = this->mb.getBehaviourData(h);
     if(this->mb.isDrivingVariableName(var)||(d.isExternalStateVariableName(var))){
@@ -531,10 +526,9 @@ namespace mfront{
     return var;
   } // end of ImplicitDSLBase::computeStressVariableModifier1
 
-  std::string
-  ImplicitDSLBase::computeStressVariableModifier2(const Hypothesis h,
-						  const std::string& var,
-						  const bool addThisPtr)
+  std::string ImplicitDSLBase::computeStressVariableModifier2(const Hypothesis h,
+							      const std::string& var,
+							      const bool addThisPtr)
   {
     const auto& d = this->mb.getBehaviourData(h);
     if((this->mb.isDrivingVariableName(var))||(d.isExternalStateVariableName(var))){
@@ -553,9 +547,8 @@ namespace mfront{
     return var;
   } // end of ImplicitDSLBase::computeStressVariableModifier2
 
-  bool
-  ImplicitDSLBase::isJacobianPart(const Hypothesis h,
-				  const std::string& w)
+  bool ImplicitDSLBase::isJacobianPart(const Hypothesis h,
+				       const std::string& w)
   {
     const auto& d = this->mb.getBehaviourData(h);
     TokensContainer::const_iterator previous;
@@ -649,27 +642,70 @@ namespace mfront{
 
   void ImplicitDSLBase::treatMaximumIncrementValuePerIteration()
   {
-    using namespace std;
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    double value;
     this->checkNotEndOfFile("ImplicitDSLBase::treatMaximumIncrementValuePerIteration",
 			    "Cannot read value value.");
-    istringstream flux(current->value);
-    flux >> value;
-    if((flux.fail())||(!flux.eof())){
-      this->throwRuntimeError("ImplicitDSLBase::treatMaximumIncrementValuePerIteration",
-			      "Failed to read value.");
-    }
+    const auto value = tfel::utilities::convert<double>(current->value);
+    ++(this->current);
     if(value<=0){
       this->throwRuntimeError("ImplicitDSLBase::treatMaximumIncrementValuePerIteration",
 			      "Value must be positive.");
     }
-    ++(this->current);
     this->readSpecifiedToken("ImplicitDSLBase::MaximumIncrementValuePerIteration",";");
     this->mb.addParameter(h,VariableDescription("real","maximum_increment_value_per_iteration",1u,0u),
 			  BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h,"maximum_increment_value_per_iteration",value);
   } // end of ImplicitDSLBase::treatMaximumIncrementValuePerIteration
+
+  void ImplicitDSLBase::treatNumericallyComputedJacobianBlocks(){
+    const std::string m = "ImplicitDSLBase::treatNumericallyComputedJacobianBlocks";
+    auto throw_if = [this,m](const bool b,const std::string& msg){
+      if(b){this->throwRuntimeError(m,msg);};
+    };
+    for(const auto& h : this->readHypothesesList()){
+      const auto as = this->readList(m,"{","}",false);
+      this->readSpecifiedToken(m,";");
+      throw_if(as.empty(),"no block defined");
+      const auto jbs = [&as]{
+	auto r = std::vector<std::string>(as.size());
+	std::transform(as.begin(),as.end(),r.begin(),[](const tfel::utilities::Token& t){
+	    return t.value;
+	  });
+	return r;
+      }();
+      std::for_each(jbs.begin(),jbs.end(),[throw_if](const std::string& jb){
+	  throw_if(jb.empty(),"empty jacobian block");
+	  throw_if(jb.size()<6,"invalid jacobian block '"+jb+"'");
+	  throw_if(jb[0]!='d',"invalid jacobian block '"+jb+"'");
+	  throw_if(jb[1]!='f',"invalid jacobian block '"+jb+"'");
+	  const auto p = jb.find('_');
+	  throw_if(p==std::string::npos,"invalid jacobian block '"+jb+"'");
+	  throw_if(p+2>=jb.size(),"invalid jacobian block '"+jb+"'");
+	  throw_if(jb[p+1]!='d',"invalid jacobian block '"+jb+"'");
+	  throw_if(jb[p+2]!='d',"invalid jacobian block '"+jb+"'");
+	  const auto n = jb.substr(2,p-2);
+	  const auto d = jb.substr(p+3);
+	  throw_if(n.empty(),"invalid jacobian block '"+jb+"'");
+	  throw_if(d.empty(),"invalid jacobian block '"+jb+"'");
+	});
+      for(const auto& jb: jbs){
+	throw_if(std::count(jbs.begin(),jbs.end(),jb)>1,
+		 "jacobian block '"+jb+"' multiply delcared");
+      }
+      if(this->mb.hasAttribute(h,BehaviourData::numericallyComputedJacobianBlocks)){
+	auto cjbs =
+	  this->mb.getAttribute<std::vector<std::string>>(h,BehaviourData::numericallyComputedJacobianBlocks);
+	for(const auto& jb: jbs){
+	  throw_if(std::find(cjbs.begin(),cjbs.end(),jb)!=cjbs.end(),
+		   "jacobian block '"+jb+"' multiply delcared");
+	  cjbs.push_back(jb);
+	}
+	this->mb.updateAttribute(h,BehaviourData::numericallyComputedJacobianBlocks,cjbs);
+      } else {
+	this->mb.setAttribute(h,BehaviourData::numericallyComputedJacobianBlocks,jbs);
+      }
+    }
+  } // end of treatNumericallyComputedJacobianBlocks
 
   void ImplicitDSLBase::completeVariableDeclaration(){
     using namespace tfel::glossary;
@@ -788,23 +824,57 @@ namespace mfront{
   void ImplicitDSLBase::endsInputFileProcessing()
   {
     using namespace tfel::glossary;
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    auto throw_if = [this](const bool c,const std::string& m){
+      if(c){this->throwRuntimeError("ImplicitDSLBase::endsInputFileProcessing",m);}
+    };
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     BehaviourDSLCommon::endsInputFileProcessing();
-    if(this->mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
-      if((!this->solver->usesJacobian())||(this->solver->requiresNumericalJacobian())){
-	this->throwRuntimeError("ImplicitDSLBase::endsInputFileProcessing",
-				"@CompareToNumericalJacobian can only be used with solver using "
-				"an analytical jacobian (or an approximation of it");
-      }
+    if(this->mb.getAttribute(uh,BehaviourData::compareToNumericalJacobian,false)){
+      throw_if((!this->solver->usesJacobian())||(this->solver->requiresNumericalJacobian()),
+	       "@CompareToNumericalJacobian can only be used with solver using "
+	       "an analytical jacobian (or an approximation of it");
     }
     // create the compute final stress code is necessary
     this->setComputeFinalStressFromComputeFinalStressCandidateIfNecessary();
     // correct prediction to take into account normalisation factors
-    const std::set<Hypothesis> mh(this->mb.getDistinctModellingHypotheses());
-    for(const auto & elem : mh){
-      if(this->mb.hasCode(elem,BehaviourData::ComputePredictor)){
+    const auto mh = this->mb.getDistinctModellingHypotheses();
+    for(const auto & h : mh){
+      if(this->mb.hasAttribute(h,BehaviourData::numericallyComputedJacobianBlocks)){
+	throw_if((!this->solver->usesJacobian())||(this->solver->requiresNumericalJacobian()),
+		 "numerically computed jacobian blocks can only be "
+		 "used with solver using an analytical jacobian "
+		 "(or an approximation of it");
+	auto decompose = [throw_if](const std::string& jb)
+	  -> std::pair<std::string,std::string> {
+	  throw_if(jb.empty(),"empty jacobian block");
+	  throw_if(jb.size()<6,"invalid jacobian block '"+jb+"'");
+	  throw_if(jb[0]!='d',"invalid jacobian block '"+jb+"'");
+	  throw_if(jb[1]!='f',"invalid jacobian block '"+jb+"'");
+	  const auto p = jb.find('_');
+	  throw_if(p==std::string::npos,"invalid jacobian block '"+jb+"'");
+	  throw_if(p+2>=jb.size(),"invalid jacobian block '"+jb+"'");
+	  throw_if(jb[p+1]!='d',"invalid jacobian block '"+jb+"'");
+	  throw_if(jb[p+2]!='d',"invalid jacobian block '"+jb+"'");
+	  const auto n = jb.substr(2,p-2);
+	  const auto d = jb.substr(p+3);
+	  throw_if(n.empty(),"invalid jacobian block '"+jb+"'");
+	  throw_if(d.empty(),"invalid jacobian block '"+jb+"'");
+	  return {n,d};
+	};
+	const auto& jbs = this->mb.getAttribute<std::vector<std::string>>(h,BehaviourData::numericallyComputedJacobianBlocks);
+	for(const auto& jb : jbs){
+	const auto nd = decompose(jb);
+	throw_if(!this->mb.isIntegrationVariableName(h,nd.first),
+		 "invalid jacobian block '"+jb+"', "
+		 "'"+nd.first+"' is not an integration variable");
+	throw_if(!this->mb.isIntegrationVariableName(h,nd.second),
+		 "invalid jacobian block '"+jb+"', "
+		 "'"+nd.second+"' is not an integration variable");
+	}
+      }
+      if(this->mb.hasCode(h,BehaviourData::ComputePredictor)){
 	CodeBlock predictor;
-	const auto& d = this->mb.getBehaviourData(elem);
+	const auto& d = this->mb.getBehaviourData(h);
 	for(const auto& v: d.getIntegrationVariables()){
 	  if(this->integrationVariablesIncrementsUsedInPredictor.find('d'+v.name)!=
 	     this->integrationVariablesIncrementsUsedInPredictor.end()){
@@ -814,28 +884,25 @@ namespace mfront{
 	    }
 	  }
 	}
-	this->mb.setCode(elem,BehaviourData::ComputePredictor,predictor,
+	this->mb.setCode(h,BehaviourData::ComputePredictor,predictor,
 			 BehaviourData::CREATEORAPPEND,
 			 BehaviourData::AT_END);
       }
     }
     if(!this->mb.areAllMechanicalDataSpecialised()){
-      if(this->mb.hasCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-			  BehaviourData::ComputePredictor)){
+      if(this->mb.hasCode(uh,BehaviourData::ComputePredictor)){
 	CodeBlock predictor;
-	const auto& d =
-	  this->mb.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+	const auto& d = this->mb.getBehaviourData(uh);
 	for(const auto& v : d.getIntegrationVariables()){
 	  if(this->integrationVariablesIncrementsUsedInPredictor.find('d'+v.name)!=
 	     this->integrationVariablesIncrementsUsedInPredictor.end()){
-	    if(this->mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = this->mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
+	    if(this->mb.hasAttribute(uh,v.name+"_normalisation_factor")){
+	      const auto& nf = this->mb.getAttribute<std::string>(uh,v.name+"_normalisation_factor");
 	      predictor.code += "this->d"+v.name + " /= " + nf + ";\n";
 	    }
 	  }
 	}
-	this->mb.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-			 BehaviourData::ComputePredictor,predictor,
+	this->mb.setCode(uh,BehaviourData::ComputePredictor,predictor,
 			 BehaviourData::CREATEORAPPEND,
 			 BehaviourData::AT_END);
       }
@@ -1543,7 +1610,7 @@ namespace mfront{
       os << "this->computeStress();\n";
     }
     os << "this->computeFdF();\n"
-       << "this->fzeros = (this->fzeros-tfzeros2)/(real(2)*(this->numerical_jacobian_epsilon));\n"
+       << "this->fzeros = (this->fzeros-tfzeros2)/(2*(this->numerical_jacobian_epsilon));\n"
        << "for(unsigned short idx2 = 0; idx2!= "<< n <<  ";++idx2){\n"
        << "njacobian(idx2,idx) = this->fzeros(idx2);\n"
        << "}\n"
@@ -1556,8 +1623,7 @@ namespace mfront{
        << "}\n\n";
   }
 
-  std::string
-  ImplicitDSLBase::getVectorMappingClass(const VariableDescription& v) const
+  std::string ImplicitDSLBase::getVectorMappingClass(const VariableDescription& v) const
   {
     const auto f = SupportedTypes::getTypeFlag(v.type);
     if(f==SupportedTypes::Stensor){
@@ -1893,8 +1959,7 @@ namespace mfront{
        << "}\n\n";
   } // end of ImplicitDSLBase::writeBehaviourIntegrator
 
-  std::string
-  ImplicitDSLBase::getIntegrationVariablesIncrementsInitializers(const Hypothesis h) const
+  std::string ImplicitDSLBase::getIntegrationVariablesIncrementsInitializers(const Hypothesis h) const
   {
     SupportedTypes::TypeSize n;
     std::ostringstream init;
@@ -1919,8 +1984,7 @@ namespace mfront{
     return init.str();
   } // end of ImplicitDSLBase::getIntegrationVariableIncrementsInitializers
 
-  std::string
-  ImplicitDSLBase::getBehaviourConstructorsInitializers(const Hypothesis h) const
+  std::string ImplicitDSLBase::getBehaviourConstructorsInitializers(const Hypothesis h) const
   {    
     auto init = BehaviourDSLCommon::getBehaviourConstructorsInitializers(h);
     init += (!init.empty()) ? ",\n" : "";

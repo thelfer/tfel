@@ -123,6 +123,25 @@ void generate_cxx(const std::vector<Constant>& cs)
   }
   os << "  }; // end of PhysicalConstants\n"
      << "\n"
+     << "#if __cplusplus >= 201402L\n"
+     << "namespace constants{\n\n";
+  for(const auto& c : cs){
+    if((!c.description.empty())||(!c.unit.empty())){
+      os << "//!";
+      if(!c.description.empty()){
+	os << ' ' << c.description;
+      }
+      if(!c.unit.empty()){
+	os << " (" << c.unit << ')';
+      }
+      os << '\n';
+    }
+    os << "template<typename real>\n"
+       << "constexpr const real " << c.name << " = real(" << c.value << ");\n";
+  }
+  os << "\n"
+     << "} // end of namespace constants\n"
+     << "#endif /* __cplusplus >= 201402L */\n\n"
      << "} // end of namespace tfel\n"
      << "\n"
      << "#endif /* LIB_TFEL_PHYSICALCONSTANTS_HXX */\n";
@@ -149,8 +168,7 @@ void generate_python(const std::vector<Constant>& cs)
      << "\n"
      << "void declarePhysicalConstants();\n"
      << "\n"
-     << "namespace tfel{\n"
-     << "  struct TFEL_VISIBILITY_EXPORT PhysicalConstants{\n";
+     << "struct TFEL_VISIBILITY_LOCAL PhysicalConstants{\n";
   for(const auto& c : cs){
     if((!c.description.empty())||(!c.unit.empty())){
       os << "//!";
@@ -169,13 +187,12 @@ void generate_python(const std::vector<Constant>& cs)
     os << "const double PhysicalConstants::" << c.name
        << " = double(" << c.value << ");\n";
   }
-  os << "\n";
-  os << "} // end of namespace tfel\n"
+  os << "\n"
      << "void declarePhysicalConstants()\n"
      << "{\n"
-     << "  boost::python::class_<tfel::PhysicalConstants>(\"PhysicalConstants\")\n";
+     << "  boost::python::class_<PhysicalConstants>(\"PhysicalConstants\")\n";
   for(const auto& c : cs){
-    os << ".def_readonly(\"" << c.name << "\",tfel::PhysicalConstants::" << c.name;
+    os << ".def_readonly(\"" << c.name << "\",PhysicalConstants::" << c.name;
     if((!c.description.empty())||(!c.unit.empty())){
       os << ",\n\"";
       if(!c.description.empty()){

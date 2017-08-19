@@ -694,7 +694,8 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/aster/asterimplicitnorton3.mtest
            mfront/tests/behaviours/aster/asterimplicitnorton_broyden.mtest
            mfront/tests/behaviours/aster/asterimplicitnorton_broyden2.mtest
-           mfront/tests/behaviours/aster/asterimplicitnorton_levenbergmarquardt.mtest	   
+           mfront/tests/behaviours/aster/asterimplicitnorton_levenbergmarquardt.mtest
+	   mfront/tests/behaviours/aster/asterimplicitnorton_numericallycomputedjacobianblocks.mtest
            mfront/tests/behaviours/aster/asterimplicitorthotropiccreep.mtest
            mfront/tests/behaviours/aster/asterellipticcreep.mtest
            mfront/tests/behaviours/aster/asterplasticity.mtest

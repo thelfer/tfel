@@ -84,6 +84,8 @@ namespace mfront{
   const std::string
   BehaviourData::compareToNumericalJacobian("compareToNumericalJacobian");
   const std::string
+  BehaviourData::numericallyComputedJacobianBlocks("numericallyComputedJacobianBlocks");
+  const std::string
   BehaviourData::allowsNewUserDefinedVariables("allowsNewUserDefinedVariables");
   const std::string
   BehaviourData::algorithm("algorithm");
@@ -1289,6 +1291,20 @@ namespace mfront{
     }
   } // end of BehaviourData::setAttribute
 
+  void BehaviourData::updateAttribute(const std::string& n,
+				      const BehaviourAttribute& a)
+  {
+    auto throw_if = [](const bool c, const std::string& m){
+      if(c){throw(std::runtime_error("BehaviourData::updateAttribute: "+m));}
+    };    
+    auto p=this->attributes.find(n);
+    throw_if(p==this->attributes.end(),
+	     "unknown attribute '"+n+"'");
+    throw_if(a.getTypeIndex()!=p->second.getTypeIndex(),
+	     "attribute already exists with a different type");
+    p->second = a;
+  } // end of BehaviourData::setAttribute
+  
   bool BehaviourData::hasAttribute(const std::string& n) const
   {
     return this->attributes.count(n)!=0u;

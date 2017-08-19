@@ -149,6 +149,7 @@ namespace mfront{
 	<< "(this->iter<" << mb.getClassName() << "::iterMax)){\n"
 	<< "++(this->iter);\n"
 	<< "this->zeros_1  = this->zeros;\n";
+    NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks(out,mb,h);
     NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(out,mb,h,"jacobian");
     out << "converged = ((error)/(real(" << n2 << "))<"
 	<< "(this->epsilon));\n";

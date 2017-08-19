@@ -628,6 +628,17 @@ namespace mfront
     this->readVarList(cont,type,allowArray);
   } // end of DSLBase::readVarList
 
+  std::vector<tfel::utilities::Token>
+  DSLBase::readList(const std::string& m,
+		    const std::string& db,
+		    const std::string& de,
+		    const bool b)
+  {
+    std::vector<tfel::utilities::Token> t;
+    this->readList(t,m,db,de,b);
+    return t;
+  } // end of DSLBase::readList
+  
   void DSLBase::readList(std::vector<tfel::utilities::Token>& l,
 			 const std::string& m,
 			 const std::string& db,

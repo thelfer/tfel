@@ -335,7 +335,7 @@ namespace mfront
     std::vector<std::string>
     readStringOrArrayOfString(const std::string&);
     /*!
-     * extract a list of token
+     * \brief extract a list of token
      * \param[out] l  : list read
      * \param[in]  m  : calling method name (used for error message)
      * \param[in]  db : beginning delimiter
@@ -349,6 +349,20 @@ namespace mfront
 		  const std::string&,
 		  const std::string&,
 		  const bool);
+    /*!
+     * \return a list of token
+     * \param[in]  m  : calling method name (used for error message)
+     * \param[in]  db : beginning delimiter
+     * \param[in]  de : end delimiter
+     * \param[in] b   : if the current value is not the beginning
+     * delimiter (or is past the end of the file), nothing is returned
+     * if this parameter is true. An exception is thrown otherwise
+     */
+    std::vector<tfel::utilities::Token>
+    readList(const std::string&,
+	     const std::string&,
+	     const std::string&,
+	     const bool);
     
     std::string
     readSpecifiedValue(const std::string&,

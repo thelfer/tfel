@@ -1,4 +1,4 @@
-The `@Author` keyword is used give the name of the person who wrote
+The `@Author` keyword is used to give the name of the person who wrote
 the `mfront` file.
 
 All the following words are appended to the author's name up to a

@@ -1876,6 +1876,20 @@ namespace mfront
     }
   } // end of BehaviourDescription::setAttribute
 
+  void BehaviourDescription::updateAttribute(const Hypothesis h,
+					     const std::string& n,
+					     const BehaviourAttribute& a)
+  {
+    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      this->d.updateAttribute(n,a);
+      for(const auto& md : this->sd){
+  	md.second->updateAttribute(n,a);
+      }
+    } else {
+      this->getBehaviourData2(h).updateAttribute(n,a);
+    }
+  } // end of BehaviourDescription::updateAttribute
+  
   bool BehaviourDescription::hasAttribute(const Hypothesis h,
 					  const std::string& n) const
   {

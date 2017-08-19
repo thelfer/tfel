@@ -62,36 +62,31 @@ namespace mfront{
     return !this->requiresNumericalJacobian();
   } // end of MFrontNewtonRaphsonSolverBase::requiresJacobianToBeReinitialisedToIdentityAtEachIterations
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  std::pair<bool,MFrontNewtonRaphsonSolverBase::tokens_iterator>
   MFrontNewtonRaphsonSolverBase::treatSpecificKeywords(BehaviourDescription& mb,
 						       const std::string& key,
 						       const tokens_iterator p,
 						       const tokens_iterator pe)
   {
-    using namespace std;
-    using tfel::utilities::CxxTokenizer;
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("MFrontNewtonRaphsonSolverBase::treatSpecificKeywords: "+m));}
+    };
     const auto r = PowellDogLegAlgorithmBase::treatSpecificKeywords(mb,key,p,pe);
     if(r.first){
       return r;
     }
     if(key=="@JacobianUpdatePeriod"){
-      if(!this->requiresNumericalJacobian()){
-	throw(runtime_error("MFrontNewtonRaphsonSolverBase::treatSpecificKeywords : "
-			    "jacobian update period is only defined "
-			    "for algorithms using a numerical jacobian"));
-      }
-      if(this->jacobianUpdatePeriod!=-1){
-	throw(runtime_error("MFrontNewtonRaphsonSolverBase::treatSpecificKeywords : "
-			    "jacobian update period already defined"));
-      }
+      throw_if(!this->requiresNumericalJacobian(),
+	       "jacobian update period is only defined "
+	       "for algorithms using a numerical jacobian");
+      throw_if(this->jacobianUpdatePeriod!=-1,
+	       "jacobian update period already defined");
       auto c = p;
       this->jacobianUpdatePeriod=CxxTokenizer::readInt(c,pe);
-      if(this->jacobianUpdatePeriod<=0){
-	throw(runtime_error("MFrontNewtonRaphsonSolverBase::treatSpecificKeywords : "
-			    "invalid value for jacobian update period "
-			    "(read '"+p->value+"')"));
-      }
-      CxxTokenizer::readSpecifiedToken("MFrontNewtonRaphsonSolverBase::treatSpecificKeywords : ",
+      throw_if(this->jacobianUpdatePeriod<=0,
+	       "invalid value for jacobian update period "
+	       "(read '"+p->value+"')");
+      CxxTokenizer::readSpecifiedToken("MFrontNewtonRaphsonSolverBase::treatSpecificKeywords",
 				       ";",c,pe);
       return {true,c};
     }
@@ -120,21 +115,23 @@ namespace mfront{
 							       const Hypothesis h) const
   {
     
-    using namespace std;
     const auto  btype = mb.getBehaviourTypeFlag();
     const auto& d = mb.getBehaviourData(h);
     const auto n2 = d.getIntegrationVariables().getTypeSize();
     if(mb.hasAttribute(h,BehaviourData::compareToNumericalJacobian)){
       out << "tmatrix<" << n2 << "," << n2 << ",real> njacobian;\n";
     }
-    if((this->requiresNumericalJacobian())&&(this->jacobianUpdatePeriod!=-1)&&(n2.getValueForDimension(1u)>3)){
+    if((this->requiresNumericalJacobian())&&
+       (this->jacobianUpdatePeriod!=-1)&&
+       (n2.getValueForDimension(1u)>3)){
       out << "TinyPermutation<" << n2 << "> permutation_vector;\n";
     }
     out << "real error;\n"
 	<< "bool converged=false;\n"
 	<< "this->iter=0;\n";
     if(getDebugMode()){
-      out << "cout << endl << \"" << mb.getClassName() << "::integrate() : beginning of resolution\" << endl;\n";
+      out << "cout << endl << \"" << mb.getClassName()
+	  << "::integrate() : beginning of resolution\" << endl;\n";
     }
     out << "while((converged==false)&&\n"
 	<< "(this->iter<" << mb.getClassName() << "::iterMax)){\n"
@@ -168,7 +165,8 @@ namespace mfront{
 	<< "} else {\n"
 	<< "this->zeros_1  = this->zeros;\n";
     if(!this->requiresNumericalJacobian()){
-      this->writeComparisonToNumericalJacobian(out,mb,h,"njacobian");
+      NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks(out,mb,h);
+      NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(out,mb,h,"njacobian");
     }
     out << "converged = ((error)/(real(" << n2 << "))<"
 	<< "(this->epsilon));\n";

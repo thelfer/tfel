@@ -273,6 +273,19 @@ namespace mfront{
 	    (this->getTVectorSize()==0) && (this->getTensorSize()==0));
   } // end of SupportedTypes::TypeSize::isNull
 
+  bool SupportedTypes::TypeSize::isOne() const
+  {
+    return ((this->getScalarSize()==1)  && (this->getStensorSize()==0)&&
+	    (this->getTVectorSize()==0) && (this->getTensorSize()==0));
+  } // end of SupportedTypes::TypeSize::isOne
+  
   SupportedTypes::~SupportedTypes() = default;
 
+  std::string to_string(const SupportedTypes::TypeSize& s)
+  {
+    std::ostringstream os;
+    os << s;
+    return os.str();
+  } // end of to_string
+  
 } // end of namespace mfront

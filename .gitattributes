@@ -381,6 +381,7 @@ docs/mfront/Model/Input.md -text
 docs/mfront/Model/LocalParameter.md -text
 docs/mfront/Model/Model.md -text
 docs/mfront/Model/Output.md -text
+docs/mfront/NumericallyComputedJacobianBlocks.md -text
 docs/mfront/OrthotropicBehaviour.md -text
 docs/mfront/Parameter.md -text
 docs/mfront/Parser.md -text
@@ -2390,6 +2391,7 @@ mfront/tests/behaviours/ImplicitNorton4.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden2.mfront -text
 mfront/tests/behaviours/ImplicitNorton_LevenbergMarquardt.mfront -text
+mfront/tests/behaviours/ImplicitNorton_NumericallyComputedJacobianBlocks.mfront -text
 mfront/tests/behaviours/ImplicitOrthotropicCreep.mfront -text
 mfront/tests/behaviours/ImplicitOrthotropicCreep2.mfront -text
 mfront/tests/behaviours/ImplicitSimoMieheElastoPlasticity.mfront -text
@@ -3157,6 +3159,7 @@ mfront/tests/behaviours/aster/asterimplicitnorton3.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton_broyden.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton_broyden2.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitnorton_levenbergmarquardt.mtest.in -text
+mfront/tests/behaviours/aster/asterimplicitnorton_numericallycomputedjacobianblocks.mtest.in -text
 mfront/tests/behaviours/aster/asterimplicitorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/aster/asterisotropiclinearswelling.mtest.in -text
 mfront/tests/behaviours/aster/asterisotropicvolumeswelling.mtest.in -text

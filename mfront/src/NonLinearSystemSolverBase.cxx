@@ -11,6 +11,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
+
 #include<cmath>
 #include<limits>
 #include<sstream>
@@ -36,8 +38,10 @@ namespace mfront{
 					     const std::string& j,
 					     const std::string& p)
   {
-    using namespace std;
-    ostringstream d;
+    auto lthrow = [](const std::string& m){
+      throw(std::runtime_error("NonLinearSystemSolverBase::getJacobianPart: "+m));
+    };
+    std::ostringstream d;
     if(mb.getTypeFlag(v1.type)==SupportedTypes::Stensor){
       if(mb.getTypeFlag(v2.type)==SupportedTypes::Stensor){
 	d << "typename tfel::math::ST2toST2FromTinyMatrixView<N,"
@@ -50,10 +54,7 @@ namespace mfront{
 	  << n  << "," << n3
 	  << ",real>::type "+p+"df" << v1.name << "_dd" << v2.name << "("+j+");\n";
       } else {
-	string msg("NonLinearSystemSolverBase::getJacobianPart : ");
-	msg += "unsupported type for integration variable ";
-	msg += v2.name;
-	throw(runtime_error(msg));
+	lthrow("unsupported type for integration variable '"+v2.name+"'");
       }
     } else if(mb.getTypeFlag(v1.type)==SupportedTypes::Scalar){
       if(mb.getTypeFlag(v2.type)==SupportedTypes::Stensor){
@@ -66,126 +67,226 @@ namespace mfront{
 	d << "real& "+p+"df" << v1.name << "_dd" << v2.name 
 	  << " = "+j+"(" << n << "," << n3 << ");\n";
       } else {
-	string msg("NonLinearSystemSolverBase::getJacobianPart : ");
-	msg += "unsupported type for integration variable ";
-	msg += v2.name;
-	throw(runtime_error(msg));
+	lthrow("unsupported type for integration variable '"+v2.name+"'");
       }
     } else {
-      string msg("NonLinearSystemSolverBase::getJacobianPart : ");
-      msg += "unsupported type for integration variable ";
-      msg += v1.name;
-      throw(runtime_error(msg));
+      lthrow("unsupported type for integration variable '"+v2.name+"'");
     }
     return d.str();
   } // end of NonLinearSystemSolverBase::getJacobianPart
 
+  void
+  NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks(std::ostream& out,
+								    const BehaviourDescription& mb,
+								    const Hypothesis h)
+  {
+    auto throw_if = [](const bool c,const std::string& m){
+      if(c){throw(std::runtime_error("NonLinearSystemSolverBase::"
+				     "writeEvaluateNumericallyComputedBlocks: "+m));}
+    };
+    const auto& d = mb.getBehaviourData(h);
+    if(!d.hasAttribute(BehaviourData::numericallyComputedJacobianBlocks)){
+      return;
+    }
+    // First sort blocks by column
+    const auto blocs = [&d,throw_if]{
+      auto r = std::map<std::string,std::vector<std::string>>{};
+      const auto& jbs =
+      d.getAttribute<std::vector<std::string>>(BehaviourData::numericallyComputedJacobianBlocks);
+      for(const auto& jb: jbs){
+	const auto nd = [throw_if,&jb]()
+	  -> std::pair<std::string,std::string> {
+	  throw_if(jb.empty(),"empty jacobian block");
+	  throw_if(jb.size()<6,"invalid jacobian block '"+jb+"'");
+	  throw_if(jb[0]!='d',"invalid jacobian block '"+jb+"'");
+	  throw_if(jb[1]!='f',"invalid jacobian block '"+jb+"'");
+	  const auto p = jb.find('_');
+	  throw_if(p==std::string::npos,"invalid jacobian block '"+jb+"'");
+	  throw_if(p+2>=jb.size(),"invalid jacobian block '"+jb+"'");
+	  throw_if(jb[p+1]!='d',"invalid jacobian block '"+jb+"'");
+	  throw_if(jb[p+2]!='d',"invalid jacobian block '"+jb+"'");
+	  const auto nn = jb.substr(2,p-2);
+	  const auto dn = jb.substr(p+3);
+	  throw_if(nn.empty(),"invalid jacobian block '"+jb+"'");
+	  throw_if(dn.empty(),"invalid jacobian block '"+jb+"'");
+	  return {nn,dn};
+	}();
+	throw_if(!d.isIntegrationVariableName(nd.first),
+		 "invalid jacobian block '"+jb+"', "
+		 "'"+nd.first+"' is not an integration variable");
+	throw_if(!d.isIntegrationVariableName(nd.second),
+		 "invalid jacobian block '"+jb+"', "
+		 "'"+nd.second+"' is not an integration variable");
+	r[nd.second].push_back(nd.first);
+      }
+      return r;
+    }();
+    const auto& ivs = d.getIntegrationVariables();
+    for(const auto& b: blocs){
+      auto getPositionAndSize = [&ivs,throw_if](const std::string& v)
+	-> std::pair<SupportedTypes::TypeSize,SupportedTypes::TypeSize> {
+	auto n = SupportedTypes::TypeSize{};
+	for(const auto& iv : ivs){
+	  const auto s = SupportedTypes::getTypeSize(iv.type,iv.arraySize);
+	  if(iv.name==v){
+	    return {n,s};
+	  }
+	  n += s;
+	}
+	throw_if(true,"no integration variable named '"+v+"'");
+      };
+      const auto n = ivs.getTypeSize();
+      out << "tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n"
+	  << "tvector<" << n << ",real> tfzeros(this->fzeros);\n";
+      const auto pd = getPositionAndSize(b.first);
+      auto update_jacobian = [&out,&b,getPositionAndSize](const std::string& j){
+	// fzeros contain the new jacobian value
+	for(const auto& v : b.second){
+	  const auto pn = getPositionAndSize(v);
+	  if(pn.second.isOne()){
+	    out << "tjacobian(" << pn.first << "," << j << ") = "
+		<< "this->fzeros[" << pn.first <<  "];\n";
+	  } else {
+	    out << "for(unsigned short idx2 = 0; idx2!= "<< pn.second <<  ";++idx2){\n"
+	        << "tjacobian(" << pn.first << "+idx2," << j << ") = "
+	        << "this->fzeros[" << pn.first <<  "+idx2];\n"
+	        << "}\n";
+	  }
+	}
+      };
+      auto compute_perturbation=[&out,&update_jacobian,&d,&n](const std::string& i){
+	out << "this->zeros(" << i << ") -= this->numerical_jacobian_epsilon;\n";
+	if(d.hasCode(BehaviourData::ComputeStress)){
+	  out << "this->computeStress();\n";
+	}
+	out << "this->computeFdF();\n"
+	    << "this->zeros = this->zeros_1;\n"
+	    << "tvector<" << n << ",real> tfzeros2(this->fzeros);\n"
+	    << "this->zeros(" << i << ") += this->numerical_jacobian_epsilon;\n";
+	if(d.hasCode(BehaviourData::ComputeStress)){
+	  out << "this->computeStress();\n";
+	}
+	out << "this->computeFdF();\n"
+	    << "this->zeros  = this->zeros_1;\n"
+	    << "this->fzeros = (this->fzeros-tfzeros2)/(2*(this->numerical_jacobian_epsilon));\n"
+	    << "// update jacobian\n";
+	update_jacobian(i);
+      };	
+      if(pd.second.isOne()){
+	compute_perturbation(to_string(pd.first));
+      } else {
+	out << "for(unsigned short idx = 0; idx!= "<< pd.second <<  ";++idx){\n";
+	compute_perturbation(to_string(pd.first)+"+idx");
+	out << "}\n";
+      }
+      out << "// restore values\n"
+	  << "this->fzeros = tfzeros;\n"
+	  << "this->jacobian = tjacobian;\n";
+    }
+  } // end of NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks
+  
   void
   NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(std::ostream& out,
 								const BehaviourDescription& mb,
 								const Hypothesis h,
 								const std::string& nj)
   {
+    if(!mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
+      return;
+    }
     const auto& d = mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
     SupportedTypes::TypeSize n3;
     const auto n2 = d.getIntegrationVariables().getTypeSize();
-    if(mb.getAttribute(h,BehaviourData::compareToNumericalJacobian,false)){
-      out << "auto jacobian_error = real{};"
-	  << "this->computeNumericalJacobian(" << nj << ");\n";
-      n = SupportedTypes::TypeSize();
-      for(const auto& v : d.getIntegrationVariables()){
-	if(v.arraySize==1){
-	  n3 = SupportedTypes::TypeSize();
-	  for(const auto& v2 : d.getIntegrationVariables()){
-	    if((v.arraySize==1)&&(v2.arraySize==1)){
-	      out << "// derivative of variable f" << v.name 
-		  << " by variable " << v2.name << "\n"
-		  << NonLinearSystemSolverBase::getJacobianPart(mb,v,v2,n,n2,n3)
-		  << "// numerical derivative of variable f" << v.name 
-		  << " by variable " << v2.name << "\n"
-		  << NonLinearSystemSolverBase::getJacobianPart(mb,v,v2,n,n2,n3,
-								nj,"n");
-	      n3 += mb.getTypeSize(v2.type,v2.arraySize);
-	    }
+    out << "auto jacobian_error = real{};"
+	<< "this->computeNumericalJacobian(" << nj << ");\n";
+    n = SupportedTypes::TypeSize();
+    for(const auto& v : d.getIntegrationVariables()){
+      if(v.arraySize==1){
+	n3 = SupportedTypes::TypeSize();
+	for(const auto& v2 : d.getIntegrationVariables()){
+	  if((v.arraySize==1)&&(v2.arraySize==1)){
+	    out << "// derivative of variable f" << v.name 
+		<< " by variable " << v2.name << "\n"
+		<< NonLinearSystemSolverBase::getJacobianPart(mb,v,v2,n,n2,n3)
+		<< "// numerical derivative of variable f" << v.name 
+		<< " by variable " << v2.name << "\n"
+		<< NonLinearSystemSolverBase::getJacobianPart(mb,v,v2,n,n2,n3,
+							      nj,"n");
+	    n3 += mb.getTypeSize(v2.type,v2.arraySize);
 	  }
 	}
-	n += mb.getTypeSize(v.type,v.arraySize);
       }
-      for(const auto& v1 : d.getIntegrationVariables()){
-	for(const auto& v2 : d.getIntegrationVariables()){
-	  auto nv1 = mb.getTypeSize(v1.type,1u);
-	  auto nv2 = mb.getTypeSize(v2.type,1u);
-	  out << "jacobian_error=" << nv1 << "*" << nv2 << "*"
-	      << "(this->jacobianComparisonCriterion)" <<";\n";
-	  if((v1.arraySize==1u)&&(v2.arraySize==1u)){
-	    out << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
-		<< "ndf" << v1.name  << "_dd" << v2.name << ") > jacobian_error)\n" 
-		<< "{\n";
-	    out << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
-		<< "ndf" << v1.name  << "_dd" << v2.name << ") << \" \" << jacobian_error << endl;\n";
-	    out << "cout << \"df" << v1.name
-		<< "_dd" << v2.name << " :\\n\" << " 
-		<< "df" << v1.name  << "_dd" << v2.name << " << endl;\n";
-	    out << "cout << \"ndf" << v1.name
-		<< "_dd" << v2.name << " :\\n\" << " 
-		<< "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n";
-	    out << "cout << \"df" << v1.name << "_dd" << v2.name 
-		<< " - ndf" << v1.name << "_dd" << v2.name << " :\\n\" << "
-		<< "df" << v1.name  << "_dd" << v2.name << "-"
-		<< "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n";
-	    out << "cout << endl;\n";
-	    out << "}\n";
-	  } else if(((v1.arraySize!=1u)&&(v2.arraySize==1u))||
-		    ((v2.arraySize!=1u)&&(v1.arraySize==1u))){
-	    unsigned short asize;
-	    if(v1.arraySize!=1u){
-	      asize = v1.arraySize;
-	    } else {
-	      asize = v2.arraySize;
-	    }
-	    out << "for(unsigned short idx=0;idx!=" << asize << ";++idx){\n";
-	    out << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
-		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx)) > jacobian_error)\n" 
-		<< "{\n";
-	    out << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
-		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx)) << \" \" << jacobian_error << endl;\n";
-	    out << "cout << \"df" << v1.name
-		<< "_dd" << v2.name << "(\" << idx << \") :\\n\" << " 
-		<< "df" << v1.name  << "_dd" << v2.name << "(idx) << endl;\n";
-	    out << "cout << \"ndf" << v1.name
-		<< "_dd" << v2.name << "(\" << idx << \") :\\n\" << " 
-		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx) << endl;\n";
-	    out << "cout << \"df" << v1.name << "_dd" << v2.name 
-		<< " - ndf" << v1.name << "_dd" << v2.name << "(\" << idx << \") :\\n\" << "
-		<< "df" << v1.name  << "_dd" << v2.name << "(idx) -"
-		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx) << endl;\n";
-	    out << "cout << endl;\n";
-	    out << "}\n";
-	    out << "}\n";
-	  } else {
-	    out << "for(unsigned short idx=0;idx!=" << v1.arraySize << ";++idx){\n";
-	    out << "for(unsigned short idx2=0;idx2!=" << v2.arraySize << ";++idx2){\n";
-	    out << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
-		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx,idx2)) > jacobian_error)\n" 
-		<< "{\n";
-	    out << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
-		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx,idx2)) << \" \" << jacobian_error << endl;\n";
-	    out << "cout << \"df" << v1.name
-		<< "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << " 
-		<< "df" << v1.name  << "_dd" << v2.name << "(idx,idx2) << endl;\n";
-	    out << "cout << \"ndf" << v1.name
-		<< "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << " 
-		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx,idx2) << endl;\n";
-	    out << "cout << \"df" << v1.name << "_dd" << v2.name 
-		<< " - ndf" << v1.name << "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << "
-		<< "df" << v1.name  << "_dd" << v2.name << "(idx,idx2) -"
-		<< "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx,idx2) << endl;\n";
-	    out << "cout << endl;\n";
-	    out << "}\n";
-	    out << "}\n";
-	    out << "}\n";
-	  }
+      n += mb.getTypeSize(v.type,v.arraySize);
+    }
+    for(const auto& v1 : d.getIntegrationVariables()){
+      for(const auto& v2 : d.getIntegrationVariables()){
+	const auto nv1 = mb.getTypeSize(v1.type,1u);
+	const auto nv2 = mb.getTypeSize(v2.type,1u);
+	out << "jacobian_error=" << nv1 << "*" << nv2 << "*"
+	    << "(this->jacobianComparisonCriterion)" <<";\n";
+	if((v1.arraySize==1u)&&(v2.arraySize==1u)){
+	  out << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
+	      << "ndf" << v1.name  << "_dd" << v2.name << ") > jacobian_error)\n" 
+	      << "{\n"
+	      << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "-"
+	      << "ndf" << v1.name  << "_dd" << v2.name << ") << \" \" << jacobian_error << endl;\n"
+	      << "cout << \"df" << v1.name
+	      << "_dd" << v2.name << " :\\n\" << " 
+	      << "df" << v1.name  << "_dd" << v2.name << " << endl;\n"
+	      << "cout << \"ndf" << v1.name
+	      << "_dd" << v2.name << " :\\n\" << " 
+	      << "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n"
+	      << "cout << \"df" << v1.name << "_dd" << v2.name 
+	      << " - ndf" << v1.name << "_dd" << v2.name << " :\\n\" << "
+	      << "df" << v1.name  << "_dd" << v2.name << "-"
+	      << "ndf" << v1.name  << "_dd" << v2.name << " << endl;\n"
+	      << "cout << endl;\n"
+	      << "}\n";
+	} else if(((v1.arraySize!=1u)&&(v2.arraySize==1u))||
+		  ((v2.arraySize!=1u)&&(v1.arraySize==1u))){
+	  const auto asize = (v1.arraySize!=1u) ? v1.arraySize : v2.arraySize;
+	  out << "for(unsigned short idx=0;idx!=" << asize << ";++idx){\n"
+	      << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
+	      << "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx)) > jacobian_error)\n" 
+	      << "{\n"
+	      << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx)-"
+	      << "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx)) << \" \" << jacobian_error << endl;\n"
+	      << "cout << \"df" << v1.name
+	      << "_dd" << v2.name << "(\" << idx << \") :\\n\" << " 
+	      << "df" << v1.name  << "_dd" << v2.name << "(idx) << endl;\n"
+	      << "cout << \"ndf" << v1.name
+	      << "_dd" << v2.name << "(\" << idx << \") :\\n\" << " 
+	      << "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx) << endl;\n"
+	      << "cout << \"df" << v1.name << "_dd" << v2.name 
+	      << " - ndf" << v1.name << "_dd" << v2.name << "(\" << idx << \") :\\n\" << "
+	      << "df" << v1.name  << "_dd" << v2.name << "(idx) -"
+	      << "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx) << endl;\n"
+	      << "cout << endl;\n"
+	      << "}\n"
+	      << "}\n";
+	} else {
+	  out << "for(unsigned short idx=0;idx!=" << v1.arraySize << ";++idx){\n"
+	      << "for(unsigned short idx2=0;idx2!=" << v2.arraySize << ";++idx2){\n"
+	      << "if(abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
+	      << "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx,idx2)) > jacobian_error)\n" 
+	      << "{\n"
+	      << "cout << abs(" << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2)-"
+	      << "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx,idx2)) << \" \" << jacobian_error << endl;\n"
+	      << "cout << \"df" << v1.name
+	      << "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << " 
+	      << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2) << endl;\n"
+	      << "cout << \"ndf" << v1.name
+	      << "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << " 
+	      << "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx,idx2) << endl;\n"
+	      << "cout << \"df" << v1.name << "_dd" << v2.name 
+	      << " - ndf" << v1.name << "_dd" << v2.name << "(\" << idx << \",\" << idx2 << \") :\\n\" << "
+	      << "df" << v1.name  << "_dd" << v2.name << "(idx,idx2) -"
+	      << "df" << v1.name  << "_dd" << v2.name << "(" << nj << ",idx,idx2) << endl;\n"
+	      << "cout << endl;\n"
+	      << "}\n"
+	      << "}\n"
+	      << "}\n";
 	}
       }
     }
@@ -197,7 +298,6 @@ namespace mfront{
 							  const Hypothesis h,
 							  const std::string& v)
   {
-    using namespace std;
     const auto& d = mb.getBehaviourData(h);
     SupportedTypes::TypeSize n;
     for(const auto& iv : d.getIntegrationVariables()){
@@ -205,7 +305,7 @@ namespace mfront{
       if(mb.hasParameter(h,iv.name+"_maximum_increment_value_per_iteration")){
 	out << "for(unsigned short idx = 0; idx!=" << nv << ";++idx){\n";
 	if(mb.hasAttribute(h,iv.name+"_normalisation_factor")){
-	  const auto& nf = mb.getAttribute<string>(h,iv.name+"_normalisation_factor");
+	  const auto& nf = mb.getAttribute<std::string>(h,iv.name+"_normalisation_factor");
 	  out << "if(std::abs(" << v << "[" << n 
 	      << "+idx])>" << nf << "*(this->" << iv.name << "_maximum_increment_value_per_iteration)){\n";
 	} else {
@@ -214,7 +314,7 @@ namespace mfront{
 	}
 	out << "if("<< v << "[" << n << "+idx]<0){\n";
 	if(mb.hasAttribute(h,iv.name+"_normalisation_factor")){
-	  const auto& nf = mb.getAttribute<string>(h,iv.name+"_normalisation_factor");
+	  const auto& nf = mb.getAttribute<std::string>(h,iv.name+"_normalisation_factor");
 	  out << "" << v << "[" << n
 	      << "+idx] = -"  << nf << "*(this->" << iv.name << "_maximum_increment_value_per_iteration);\n";
 	} else {
@@ -223,7 +323,7 @@ namespace mfront{
 	}
 	out << "} else {\n";
 	if(mb.hasAttribute(h,iv.name+"_normalisation_factor")){
-	  const auto& nf = mb.getAttribute<string>(h,iv.name+"_normalisation_factor");
+	  const auto& nf = mb.getAttribute<std::string>(h,iv.name+"_normalisation_factor");
 	  out << "" << v << "[" << n
 	      << "+idx] = " << nf << "*(this->" << iv.name << "_maximum_increment_value_per_iteration);\n";
 	} else {
@@ -256,7 +356,6 @@ namespace mfront{
 											     const BehaviourDescription& mb,
 											     const Hypothesis h)
   {
-    using namespace std;
     const auto& d = mb.getBehaviourData(h);
     auto n = SupportedTypes::TypeSize{};
     for(const auto& v : d.getStateVariables()){
@@ -270,21 +369,21 @@ namespace mfront{
 	 (b.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
 	if((mb.getTypeFlag(v.type)==SupportedTypes::Scalar)&&(v.arraySize==1u)){
 	  if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	    const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	    const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	    out << "if(this->" << v.name << "+ " << nf << "*(this->zeros[" << n << "]) <" << b.lowerBound << "){\n";
 	  } else {
 	    out << "if(this->" << v.name << "+this->zeros[" << n << "]<" << b.lowerBound << "){\n";
 	  }
-	  if(std::abs(b.lowerBound)>numeric_limits<long double>::min()){
+	  if(std::abs(b.lowerBound)>std::numeric_limits<long double>::min()){
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "this->zeros[" << n << "] = (" << b.lowerBound << "- (this->" << v.name << "))/(" << nf << ");\n";
 	    } else {
 	      out << "this->zeros[" << n << "] = " << b.lowerBound << "- (this->" << v.name << ");\n";
 	    }
 	  } else {
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "this->zeros[" << n << "] = - (this->" << v.name << ")/(" << nf << ");\n";
 	    } else {
 	      out << "this->zeros[" << n << "] = - (this->" << v.name << ");\n";
@@ -293,23 +392,23 @@ namespace mfront{
 	  out << "}\n";
 	}
 	if((mb.getTypeFlag(v.type)==SupportedTypes::Scalar)&&(v.arraySize!=1u)){
-	  out << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){" << endl;
+	  out << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
 	  if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	    const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	    const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	    out << "if(this->" << v.name << "[idx]+(" << nf << ")*(this->zeros[" << n << "+idx])<" << b.lowerBound << "){\n";
 	  } else {
 	    out << "if(this->" << v.name << "[idx]+this->zeros[" << n << "+idx]<" << b.lowerBound << "){\n";
 	  }
-	  if(std::abs(b.lowerBound)>numeric_limits<long double>::min()){
+	  if(std::abs(b.lowerBound)>std::numeric_limits<long double>::min()){
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "this->zeros[" << n << "+idx] = (" << b.lowerBound << "- (this->" << v.name << "[idx]))/(" << nf <<");\n";
 	    } else {
 	      out << "this->zeros[" << n << "+idx] = " << b.lowerBound << "- (this->" << v.name << "[idx]);\n";
 	    }
 	  } else {
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "this->zeros[" << n << "+idx] = - (this->" << v.name << "[idx])/(" << nf << ");\n";
 	    } else {
 	      out << "this->zeros[" << n << "+idx] = - (this->" << v.name << "[idx]);\n";
@@ -321,47 +420,47 @@ namespace mfront{
 	if((mb.getTypeFlag(v.type)!=SupportedTypes::Scalar)&&(v.arraySize==1u)){
 	  if(b.component==-1){
 	    const auto n2 =  mb.getTypeSize(v.type,1u);
-	    out << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl;
+	    out << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){\n";
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "if(this->" << v.name << "[idx]+(" << nf << ")*(this->zeros[" << n << "+idx])<" << b.lowerBound << "){\n";
 	    } else {
 	      out << "if(this->" << v.name << "[idx]+this->zeros[" << n << "+idx]<" << b.lowerBound << "){\n";
 	    }
-	    if(std::abs(b.lowerBound)>numeric_limits<long double>::min()){
+	    if(std::abs(b.lowerBound)>std::numeric_limits<long double>::min()){
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+idx] = (" << b.lowerBound << "- (this->" << v.name << "[idx]))/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+idx] = " << b.lowerBound << "- (this->" << v.name << "[idx]);\n";
 	      }
 	    } else {
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+idx] = - (this->" << v.name << "[idx])/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+idx] = - (this->" << v.name << "[idx]);\n";
 	      }
 	    }
-	    out << "}\n";
-	    out << "}\n";
+	    out << "}\n"
+		<< "}\n";
 	  } else {
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "if(this->" << v.name << "[" << b.component << "]+(" << nf << ")*(this->zeros[" << n << "+" << b.component << "])<" << b.lowerBound << "){\n";
 	    } else {
 	      out << "if(this->" << v.name << "[" << b.component << "]+this->zeros[" << n << "+" << b.component << "]<" << b.lowerBound << "){\n";
 	    }
-	    if(std::abs(b.lowerBound)>numeric_limits<long double>::min()){
+	    if(std::abs(b.lowerBound)>std::numeric_limits<long double>::min()){
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+" << b.component << "] = (" << b.lowerBound << "- (this->" << v.name << "[" << b.component << "]))/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+" << b.component << "] = " << b.lowerBound << "- (this->" << v.name << "[" << b.component << "]);\n";
 	      }
 	    } else {
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+" << b.component << "] = - (this->" << v.name << "[" << b.component << "])/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+" << b.component << "] = - (this->" << v.name << "[" << b.component << "]);\n";
@@ -372,25 +471,25 @@ namespace mfront{
 	}
 	if((mb.getTypeFlag(v.type)!=SupportedTypes::Scalar)&&(v.arraySize!=1u)){
 	  const auto n2 =  mb.getTypeSize(v.type,1u);
-	  out << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){" << endl;
+	  out << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
 	  if(b.component==-1){
-	    out << "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){" << endl;
+	    out << "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){\n";
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "if(this->" << v.name << "[idx][idx2]+(" << nf << ")*(this->zeros[" << n << "+" << n2 << "*idx+idx2])<" << b.lowerBound << "){\n";
 	    } else {
 	      out << "if(this->" << v.name << "[idx][idx2]+this->zeros[" << n << "+" << n2 << "*idx+idx2]<" << b.lowerBound << "){\n";
 	    }
-	    if(std::abs(b.lowerBound)>numeric_limits<long double>::min()){
+	    if(std::abs(b.lowerBound)>std::numeric_limits<long double>::min()){
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = (" << b.lowerBound << "- (this->" << v.name << "[idx][idx2]))/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = " << b.lowerBound << "- (this->" << v.name << "[idx][idx2]);\n";
 	      }
 	    } else {
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << v.name << "[idx][idx2])/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << v.name << "[idx][idx2]);\n";
@@ -400,21 +499,21 @@ namespace mfront{
 		<< "}\n";
 	  } else {
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "if(this->" << v.name << "[idx][" << b.component << "]+(" << nf << ")*(this->zeros[" << n << "+" << n2 << "*idx+" << b.component << "])<" << b.lowerBound << "){\n";
 	    } else {
 	      out << "if(this->" << v.name << "[idx][" << b.component << "]+this->zeros[" << n << "+" << n2 << "*idx+" << b.component << "]<" << b.lowerBound << "){\n";
 	    }
-	    if(std::abs(b.lowerBound)>numeric_limits<long double>::min()){
+	    if(std::abs(b.lowerBound)>std::numeric_limits<long double>::min()){
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+" << n2 << "*idx+" << b.component << "] = (" << b.lowerBound << "- (this->" << v.name << "[idx][" << b.component << "]))/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+" << n2 << "*idx+" << b.component << "] = " << b.lowerBound << "- (this->" << v.name << "[idx][" << b.component << "]);\n";
 	      }
 	    } else {
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+" << n2 << "*idx+" << b.component << "] = - (this->" << v.name << "[idx][" << b.component << "])/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+" << n2 << "*idx+" << b.component << "] = - (this->" << v.name << "[idx][" << b.component << "]);\n";
@@ -430,21 +529,21 @@ namespace mfront{
 	 (b.boundsType==VariableBoundsDescription::LOWERANDUPPER)){
 	if((mb.getTypeFlag(v.type)==SupportedTypes::Scalar)&&(v.arraySize==1u)){
 	  if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	    const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	    const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	    out << "if(this->" << v.name << "+ " << nf << "*(this->zeros[" << n << "]) >" << b.upperBound << "){\n";
 	  } else {
 	    out << "if(this->" << v.name << "+this->zeros[" << n << "]>" << b.upperBound << "){\n";
 	  }
-	  if(std::abs(b.upperBound)>numeric_limits<long double>::min()){
+	  if(std::abs(b.upperBound)>std::numeric_limits<long double>::min()){
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "this->zeros[" << n << "] = (" << b.upperBound << "- (this->" << v.name << "))/(" << nf << ");\n";
 	    } else {
 	      out << "this->zeros[" << n << "] = " << b.upperBound << "- (this->" << v.name << ");\n";
 	    }
 	  } else {
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "this->zeros[" << n << "] = - (this->" << v.name << ")/(" << nf << ");\n";
 	    } else {
 	      out << "this->zeros[" << n << "] = - (this->" << v.name << ");\n";
@@ -453,23 +552,23 @@ namespace mfront{
 	  out << "}\n";
 	}
 	if((mb.getTypeFlag(v.type)==SupportedTypes::Scalar)&&(v.arraySize!=1u)){
-	  out << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){" << endl;
+	  out << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
 	  if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	    const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	    const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	    out << "if(this->" << v.name << "[idx]+(" << nf << ")*(this->zeros[" << n << "+idx])>" << b.upperBound << "){\n";
 	  } else {
 	    out << "if(this->" << v.name << "[idx]+this->zeros[" << n << "+idx]>" << b.upperBound << "){\n";
 	  }
-	  if(std::abs(b.upperBound)>numeric_limits<long double>::min()){
+	  if(std::abs(b.upperBound)>std::numeric_limits<long double>::min()){
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "this->zeros[" << n << "+idx] = (" << b.upperBound << "- (this->" << v.name << "[idx]))/(" << nf <<");\n";
 	    } else {
 	      out << "this->zeros[" << n << "+idx] = " << b.upperBound << "- (this->" << v.name << "[idx]);\n";
 	    }
 	  } else {
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "this->zeros[" << n << "+idx] = - (this->" << v.name << "[idx])/(" << nf << ");\n";
 	    } else {
 	      out << "this->zeros[" << n << "+idx] = - (this->" << v.name << "[idx]);\n";
@@ -481,47 +580,47 @@ namespace mfront{
 	if((mb.getTypeFlag(v.type)!=SupportedTypes::Scalar)&&(v.arraySize==1u)){
 	  if(b.component==-1){
 	    const auto n2 =  mb.getTypeSize(v.type,1u);
-	    out << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){" << endl;
+	    out << "for(unsigned short idx=0;idx!=" << n2 << ";++idx){\n";
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "if(this->" << v.name << "[idx]+(" << nf << ")*(this->zeros[" << n << "+idx])>" << b.upperBound << "){\n";
 	    } else {
 	      out << "if(this->" << v.name << "[idx]+this->zeros[" << n << "+idx]>" << b.upperBound << "){\n";
 	    }
-	    if(std::abs(b.upperBound)>numeric_limits<long double>::min()){
+	    if(std::abs(b.upperBound)>std::numeric_limits<long double>::min()){
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+idx] = (" << b.upperBound << "- (this->" << v.name << "[idx]))/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+idx] = " << b.upperBound << "- (this->" << v.name << "[idx]);\n";
 	      }
 	    } else {
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+idx] = - (this->" << v.name << "[idx])/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+idx] = - (this->" << v.name << "[idx]);\n";
 	      }
 	    }
-	    out << "}\n";
-	    out << "}\n";
+	    out << "}\n"
+		<< "}\n";
 	  } else {
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "if(this->" << v.name << "[" << b.component << "]+(" << nf << ")*(this->zeros[" << n << "+" << b.component << "])>" << b.upperBound << "){\n";
 	    } else {
 	      out << "if(this->" << v.name << "[" << b.component << "]+this->zeros[" << n << "+" << b.component << "]>" << b.upperBound << "){\n";
 	    }
-	    if(std::abs(b.upperBound)>numeric_limits<long double>::min()){
+	    if(std::abs(b.upperBound)>std::numeric_limits<long double>::min()){
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+" << b.component << "] = (" << b.upperBound << "- (this->" << v.name << "[" << b.component << "]))/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+" << b.component << "] = " << b.upperBound << "- (this->" << v.name << "[" << b.component << "]);\n";
 	      }
 	    } else {
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+" << b.component << "] = - (this->" << v.name << "[" << b.component << "])/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+" << b.component << "] = - (this->" << v.name << "[" << b.component << "]);\n";
@@ -532,49 +631,49 @@ namespace mfront{
 	}
 	if((mb.getTypeFlag(v.type)!=SupportedTypes::Scalar)&&(v.arraySize!=1u)){
 	  const auto n2 =  mb.getTypeSize(v.type,1u);
-	  out << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){" << endl;
+	  out << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
 	  if(b.component==-1){
-	    out << "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){" << endl;
+	    out << "for(unsigned short idx2=0;idx2!=" << n2 << ";++idx2){\n";
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "if(this->" << v.name << "[idx][idx2]+(" << nf << ")*(this->zeros[" << n << "+" << n2 << "*idx+idx2])>" << b.upperBound << "){\n";
 	    } else {
 	      out << "if(this->" << v.name << "[idx][idx2]+this->zeros[" << n << "+" << n2 << "*idx+idx2]>" << b.upperBound << "){\n";
 	    }
-	    if(std::abs(b.upperBound)>numeric_limits<long double>::min()){
+	    if(std::abs(b.upperBound)>std::numeric_limits<long double>::min()){
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = (" << b.upperBound << "- (this->" << v.name << "[idx][idx2]))/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = " << b.upperBound << "- (this->" << v.name << "[idx][idx2]);\n";
 	      }
 	    } else {
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << v.name << "[idx][idx2])/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+" << n2 << "*idx+idx2] = - (this->" << v.name << "[idx][idx2]);\n";
 	      }
 	    }
-	    out << "}\n";
-	    out << "}\n";
+	    out << "}\n"
+		<< "}\n";
 	  } else {
 	    if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-	      const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+	      const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 	      out << "if(this->" << v.name << "[idx][" << b.component << "]+(" << nf << ")*(this->zeros[" << n << "+" << n2 << "*idx+" << b.component << "])>" << b.upperBound << "){\n";
 	    } else {
 	      out << "if(this->" << v.name << "[idx][" << b.component << "]+this->zeros[" << n << "+" << n2 << "*idx+" << b.component << "]>" << b.upperBound << "){\n";
 	    }
-	    if(std::abs(b.upperBound)>numeric_limits<long double>::min()){
+	    if(std::abs(b.upperBound)>std::numeric_limits<long double>::min()){
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+" << n2 << "*idx+" << b.component << "] = (" << b.upperBound << "- (this->" << v.name << "[idx][" << b.component << "]))/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+" << n2 << "*idx+" << b.component << "] = " << b.upperBound << "- (this->" << v.name << "[idx][" << b.component << "]);\n";
 	      }
 	    } else {
 	      if(mb.hasAttribute(h,v.name+"_normalisation_factor")){
-		const auto& nf = mb.getAttribute<string>(h,v.name+"_normalisation_factor");
+		const auto& nf = mb.getAttribute<std::string>(h,v.name+"_normalisation_factor");
 		out << "this->zeros[" << n << "+" << n2 << "*idx+" << b.component << "] = - (this->" << v.name << "[idx][" << b.component << "])/(" << nf << ");\n";
 	      } else {
 		out << "this->zeros[" << n << "+" << n2 << "*idx+" << b.component << "] = - (this->" << v.name << "[idx][" << b.component << "]);\n";
