@@ -30,13 +30,16 @@ processManager_wexitstatus(int status){
 } /* end of processManager_wexitstatus */
 
 #ifndef _AIX
-int
-processManager_wtermsig(int status){
+int processManager_wtermsig(int status){
   return WTERMSIG(status);
 } /* end of processManager_wtermsig */
 
-int
-processManager_wcoredump(int status){
+int processManager_wcoredump(int status){
+#ifdef WCOREDUMP
   return WCOREDUMP(status);
+#else
+  return false;
+#endif
 } /* end of processManager_wcoredump */
+
 #endif

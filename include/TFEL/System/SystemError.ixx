@@ -20,7 +20,7 @@ namespace tfel
   namespace system
   {
 
-    template<unsigned short N>
+    template<int N>
     PosixError<N>::PosixError(const std::string& msg_)
       : SystemError(msg_)
     {} // end of PosixError::PosixError

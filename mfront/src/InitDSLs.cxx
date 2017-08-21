@@ -12,7 +12,9 @@
  * project under specific licensing conditions. 
  */
 
+#ifndef TFEL_MISSING_STD_THREADS_SUPPORT
 #include<mutex>
+#endif /* TFEL_MISSING_STD_THREADS_SUPPORT */
 #include"MFront/DSLProxy.hxx"
 
 #include"MFront/DefaultDSL.hxx"
@@ -38,8 +40,10 @@ namespace mfront
   void initDSLs()
   {
     static bool init = false;
+#ifndef TFEL_MISSING_STD_THREADS_SUPPORT
     static std::mutex m;
     std::lock_guard<std::mutex> lock(m);
+#endif /* TFEL_MISSING_STD_THREADS_SUPPORT */
     if(init){
       return;
     }

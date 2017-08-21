@@ -213,8 +213,10 @@ namespace tfel
       case ERANGE:
 	throw(PosixError<ERANGE>(msg));
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#ifndef __HAIKU__
       case ENOTBLK:
 	throw(PosixError<ENOTBLK>(msg));
+#endif /* __HAIKU__ */
       case ETXTBSY:
 	throw(PosixError<ETXTBSY>(msg));
 #endif /* defined _WIN32 || _WIN64 || defined __CYGWIN__ */      
@@ -570,7 +572,8 @@ namespace tfel
 	auto ptr = static_cast<char *>(realloc(name,size));
 	if(ptr==nullptr){
 	  if(name!=nullptr){::free(name);}
-	  throw(SystemError("systemCall::getCurrentWorkingDirectory : out of memory"));
+	  throw(SystemError("systemCall::getCurrentWorkingDirectory: "
+			    "out of memory"));
 	}
 	name = ptr;
 #if defined _WIN32 || defined _WIN64 
@@ -582,7 +585,7 @@ namespace tfel
 	}
 	if(errno!=ERANGE){
 	  if(name!=nullptr){::free(name);}
-	  systemCall::throwSystemError("systemCall::getCurrentWorkingDirectory ",errno);
+	  systemCall::throwSystemError("systemCall::getCurrentWorkingDirectory",errno);
 	}
 	size*=2u;
       }
@@ -601,7 +604,7 @@ namespace tfel
 	auto ptr = static_cast<char *>(realloc(name,size));
 	if(ptr==nullptr){
 	  if(name!=nullptr){::free(name);}
-	  throw(SystemError("systemCall::getHostName : out of memory"));
+	  throw(SystemError("systemCall::getHostName: out of memory"));
 	}
 	name = ptr;
 	if(::gethostname(name,size)==0){
@@ -609,7 +612,7 @@ namespace tfel
 	}
 	if(errno!=ENAMETOOLONG){
 	  if(name!=nullptr){::free(name);}
-	  systemCall::throwSystemError("systemCall::getHostName ",errno);
+	  systemCall::throwSystemError("systemCall::getHostName",errno);
 	}
 	size*=2u;
       }

@@ -38,7 +38,7 @@ namespace tfel
       std::string msg;
     }; // end of struct SystemError
     
-    template<unsigned short N>
+    template<int N>
     struct PosixError
       : public SystemError
     {
@@ -113,8 +113,10 @@ namespace tfel
     typedef PosixError<ERANGE>  ERANGEError;
   
 #if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#ifndef __HAIKU__
     //! a simple alias
     typedef PosixError<ENOTBLK> ENOTBLKError;
+#endif /* __HAIKU__ */
     //! a simple alias
     typedef PosixError<ETXTBSY> ETXTBSYError;
 #endif /* LIB_TFEL_SYSTEMERROR_HXX */

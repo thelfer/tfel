@@ -28,9 +28,9 @@ mfront_library(MFrontLogStream
 
 mfront_library(MFrontProfiling
   BehaviourProfiler.cxx)
-if(UNIX AND (NOT APPLE))
+if(UNIX AND (NOT APPLE) AND (NOT HAIKU))
   target_link_libraries(MFrontProfiling rt)
-endif(UNIX AND (NOT APPLE))
+endif(UNIX AND (NOT APPLE) AND (NOT HAIKU))
 
 # TFELMFront
 
@@ -298,13 +298,23 @@ endif(HAVE_CYRANO)
 mfront_library(TFELMFront ${TFELMFront_SOURCES})
 
 if(UNIX)
-  target_link_libraries(TFELMFront
-    MFrontLogStream
-    TFELMaterial TFELMathParser
-    TFELSystem   TFELUtilities
-    TFELGlossary TFELException
-    TFELConfig
-    -pthread ${TFEL_DL_LIBRARY})
+  if(NOT HAIKU)
+    target_link_libraries(TFELMFront
+      MFrontLogStream
+      TFELMaterial TFELMathParser
+      TFELSystem   TFELUtilities
+      TFELGlossary TFELException
+      TFELConfig
+      -pthread ${TFEL_DL_LIBRARY})
+  else(NOT HAIKU)
+    target_link_libraries(TFELMFront
+      MFrontLogStream
+      TFELMaterial TFELMathParser
+      TFELSystem   TFELUtilities
+      TFELGlossary TFELException
+      TFELConfig
+      ${TFEL_DL_LIBRARY})
+  endif(NOT HAIKU)
 else(UNIX)
   target_link_libraries(TFELMFront
     MFrontLogStream

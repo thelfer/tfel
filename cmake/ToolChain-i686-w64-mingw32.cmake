@@ -17,3 +17,8 @@ set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 set(i686-w64-mingw32_COMPILER ON)
+add_definitions("-DTFEL_MISSING_STD_THREADS_SUPPORT")
+
+# wine executable
+# find_program(WINE NAMES wine)
+# set(RUNNER ${WINE})

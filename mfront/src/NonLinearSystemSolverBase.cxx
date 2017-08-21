@@ -147,22 +147,28 @@ namespace mfront{
 	    out << "tjacobian(" << pn.first << "," << j << ") = "
 		<< "this->fzeros[" << pn.first <<  "];\n";
 	  } else {
-	    out << "for(unsigned short idx2 = 0; idx2!= "<< pn.second <<  ";++idx2){\n"
-	        << "tjacobian(" << pn.first << "+idx2," << j << ") = "
-	        << "this->fzeros[" << pn.first <<  "+idx2];\n"
+	    const auto i = [&pn]() -> std::string {
+	      if(!pn.first.isNull()){
+		return to_string(pn.first) + "+idx2";
+	      }
+	      return "idx2";
+	    }();
+	    out << "for(unsigned short idx2 = 0; idx2!= " << pn.second <<  ";++idx2){\n"
+	        << "tjacobian(" << i << "," << j << ") = "
+	        << "this->fzeros[" << i << "];\n"
 	        << "}\n";
 	  }
 	}
       };
-      auto compute_perturbation=[&out,&update_jacobian,&d,&n](const std::string& i){
-	out << "this->zeros(" << i << ") -= this->numerical_jacobian_epsilon;\n";
+      auto compute_perturbation=[&out,&update_jacobian,&d,&n](const std::string& j){
+	out << "this->zeros(" << j << ") -= this->numerical_jacobian_epsilon;\n";
 	if(d.hasCode(BehaviourData::ComputeStress)){
 	  out << "this->computeStress();\n";
 	}
 	out << "this->computeFdF();\n"
 	    << "this->zeros = this->zeros_1;\n"
 	    << "tvector<" << n << ",real> tfzeros2(this->fzeros);\n"
-	    << "this->zeros(" << i << ") += this->numerical_jacobian_epsilon;\n";
+	    << "this->zeros(" << j << ") += this->numerical_jacobian_epsilon;\n";
 	if(d.hasCode(BehaviourData::ComputeStress)){
 	  out << "this->computeStress();\n";
 	}
@@ -170,13 +176,17 @@ namespace mfront{
 	    << "this->zeros  = this->zeros_1;\n"
 	    << "this->fzeros = (this->fzeros-tfzeros2)/(2*(this->numerical_jacobian_epsilon));\n"
 	    << "// update jacobian\n";
-	update_jacobian(i);
+	update_jacobian(j);
       };	
       if(pd.second.isOne()){
 	compute_perturbation(to_string(pd.first));
       } else {
 	out << "for(unsigned short idx = 0; idx!= "<< pd.second <<  ";++idx){\n";
-	compute_perturbation(to_string(pd.first)+"+idx");
+	if(!pd.first.isNull()){
+	  compute_perturbation(to_string(pd.first)+"+idx");
+	} else {
+	  compute_perturbation("idx");
+	}
 	out << "}\n";
       }
       out << "// restore values\n"

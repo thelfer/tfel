@@ -7,9 +7,14 @@ set(TFELSystem_SOURCES
   ExternalLibraryManager.cxx
   ExternalBehaviourDescription.cxx
   System.cxx
-  SystemError.cxx
-  ThreadPool.cxx
-  ThreadedTaskResult.cxx)
+  SystemError.cxx)
+
+if((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
+  set(TFELSystem_SOURCES
+    ThreadPool.cxx
+    ThreadedTaskResult.cxx
+    ${TFELSystem_SOURCES})
+endif((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
 
 if(UNIX)
   set(TFELSystem_SOURCES
@@ -45,5 +50,9 @@ tfel_library(TFELSystem ${TFELSystem_SOURCES})
 if(TFEL_DL_LIBRARY)
   target_link_libraries(TFELSystem TFELException ${TFEL_DL_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 else(TFEL_DL_LIBRARY)
-  target_link_libraries(TFELSystem TFELException Threads::Threads)
+  if((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
+    target_link_libraries(TFELSystem TFELException Threads::Threads)
+  else((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
+    target_link_libraries(TFELSystem TFELException)
+  endif((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
 endif(TFEL_DL_LIBRARY)
