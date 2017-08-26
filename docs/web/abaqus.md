@@ -134,13 +134,22 @@ The user must launch `Abaqus/Standard` or `Abaqus/Explicit` with one
 of the previous generic files as an external user file. Those files
 handles the loading of `MFront` shared libraries *using the material
 name*: the name of the material shall thus define the function to be
-called and the library in which this function is implemented. The
-function name includes the modelling hypothesis, see below. By
-convention, this name is splitted into two parts, separed by the
-underscore character (`_`). The first part is the name of library,
-without prefix (`lib`) or suffix (`.dll` or `.so` depending on the
-system). *This convention implies that the library name does not
-contain an underscore character*.
+called and the library in which this function is implemented.
+
+The function name includes the modelling hypothesis, see below. An
+identifier can optionnaly be added to reuse the same behaviour for
+several material (with different material properties for
+instance). The identifier is discarded in the `umat.cpp`,
+`vumat-sp.cpp` and and `vumat-dp.cpp` files.
+
+Thus, the material name in `Abaqus/Standard` and `Abaqus/Explicit` is
+expected to have the following form:
+`LIBRARY_FUNCTION_HYPOTHESIS_IDENTIFIER`.
+
+The first part is the name of library, without prefix (`lib`) or
+suffix (`.dll` or `.so` depending on the system). *This convention
+implies that the library name does not contain an underscore
+character*.
 
 For example, on `UNIX` systems, if one want to call the
 `ELASTICITY_3D` behaviour in ` libABAQUSBEHAVIOUR.so` library, the

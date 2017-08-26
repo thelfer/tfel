@@ -15,6 +15,7 @@
 #define LIB_MFRONT_BEHAVIOURATTRIBUTE_HXX 
 
 #include<string>
+#include<vector>
 #include"TFEL/Metaprogramming/GenerateTypeList.hxx"
 #include"TFEL/Utilities/GenTypeBase.hxx"
 

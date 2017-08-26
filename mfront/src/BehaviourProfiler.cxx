@@ -193,7 +193,7 @@ namespace mfront
 
   BehaviourProfiler::~BehaviourProfiler()
   {
-	using size_type = std::array<std::atomic<std::intmax_t>, 21>::size_type;
+    using size_type = std::array<std::atomic<std::intmax_t>, 21>::size_type;
     std::cout << "\nResults of " << this->name << " profiling : ";
     print_time(std::cout,measures.back());
     std::cout << '\n';

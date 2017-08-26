@@ -1,4 +1,5 @@
-include_directories("${PROJECT_SOURCE_DIR}/include")
+include_directories("${PROJECT_SOURCE_DIR}/include"
+  "${PROJECT_SOURCE_DIR}/docs/mfront/abaqus")
 include_directories("${PROJECT_SOURCE_DIR}/mfront/include")
 link_directories("${PROJECT_BINARY_DIR}/src/Material"
                  "${PROJECT_BINARY_DIR}/src/Math"
@@ -72,3 +73,7 @@ test_mfront2(BehaviourBrickRequirementManagerTest)
 test_mfront3(TargetsDescriptionTest)
 test_mfront3(StandardElasticityBrickTest)
 test_mfront3(LocalDataStructureTest)
+
+test_mfront(UMATTest)
+test_mfront(VUMATTest_dp)
+test_mfront(VUMATTest_sp)

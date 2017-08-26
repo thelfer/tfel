@@ -197,6 +197,16 @@ mfront --obuild --interface=abaqus -D MFRONT_ABAQUS_NORUNTIMECHECKS SaintVenantK
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/70/>
 
+## Ticket #67 A suffix to the material name is required (`abaqus` interface)
+
+The material name in `Abaqus/Standard` and `Abaqus/Explicit` are now
+expected to have the following form:
+`LIBRARY_FUNCTION_HYPOTHESIS_IDENTIFIER`.
+
+The last part (`_IDENTIFIER`) is optional.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/67/>
+
 ## Ticket #64: Change the library prefix to "cyg" under cygwin
 
 The default library prefix under cygwin has been changed to `cyg`

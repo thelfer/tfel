@@ -25,6 +25,7 @@
 
 #include <cmath>
 #include <vector>
+#include <cstdlib>
 #include <functional>
 #include "NUMODIS/Config.hxx"
 #include "NUMODIS/Vect3.hxx"

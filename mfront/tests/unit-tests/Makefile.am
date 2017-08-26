@@ -1,7 +1,8 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
-AM_CPPFLAGS = -I$(top_srcdir)/include        \
-	     -I$(top_srcdir)/mfront/include
+AM_CPPFLAGS = -I$(top_srcdir)/include            \
+	      -I$(top_srcdir)/mfront/include     \
+	      -I$(top_srcdir)/docs/mfront/abaqus
 
 if WITH_TESTS
 
@@ -18,8 +19,10 @@ test_PROGRAMS = DSLTest                                    \
 		StandardElasticityBrickTest                \
 		LocalDataStructureTest                     \
 		ComputeStiffnessTensorTest                 \
-		SlipSystemsTest
-
+		SlipSystemsTest                            \
+		UMATTest				   \
+		VUMATTest_dp				   \
+		VUMATTest_sp
 
 DSLTest_SOURCES                     = DSLTest.cxx
 DSLTest2_SOURCES                    = DSLTest2.cxx
@@ -34,6 +37,9 @@ LocalDataStructureTest_SOURCES      = LocalDataStructureTest.cxx
 ComputeStiffnessTensorTest_SOURCES  = ComputeStiffnessTensorTest.cxx
 BehaviourDescriptionBoundsHandlingTest_SOURCES = BehaviourDescriptionBoundsHandlingTest.cxx
 SlipSystemsTest_SOURCES    = SlipSystemsTest.cxx
+UMATTest_SOURCES           = UMATTest.cxx
+VUMATTest_sp_SOURCES       = VUMATTest_sp.cxx
+VUMATTest_dp_SOURCES       = VUMATTest_dp.cxx
 
 LDADD = -L$(top_builddir)/mfront/src    \
 	-L$(top_builddir)/src/Material  \
@@ -48,8 +54,25 @@ LDADD = -L$(top_builddir)/mfront/src    \
 	-lTFELUtilities -lTFELGlossary  \
 	-lTFELException -lTFELTests
 
+UMATTest_LDADD     = $(LDADD)
+VUMATTest_dp_LDADD = $(LDADD)
+VUMATTest_sp_LDADD = $(LDADD)
+if !TFEL_WIN
+UMATTest_LDADD     += -lpthread
+VUMATTest_sp_LDADD += -lpthread
+VUMATTest_dp_LDADD += -lpthread
+if TFEL_LINUX
+UMATTest_LDADD     += -ldl
+VUMATTest_sp_LDADD += -ldl
+VUMATTest_dp_LDADD += -ldl
+endif
+endif # !TFEL_WIN
+
+
+
 endif
 
 EXTRA_DIST=CMakeLists.txt      \
 	   mfront/test1.mfront \
 	   mfront/test2.mfront 
+
