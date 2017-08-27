@@ -4693,6 +4693,9 @@ mfront/tests/unit-tests/Makefile.am -text
 mfront/tests/unit-tests/StandardElasticityBrickTest.cxx -text
 mfront/tests/unit-tests/SwellingTest.cxx.in -text
 mfront/tests/unit-tests/TargetsDescriptionTest.cxx -text
+mfront/tests/unit-tests/UMATTest.cxx -text
+mfront/tests/unit-tests/VUMATTest_dp.cxx -text
+mfront/tests/unit-tests/VUMATTest_sp.cxx -text
 mfront/tests/unit-tests/mfront/test1.mfront -text
 mfront/tests/unit-tests/mfront/test2.mfront -text
 mtest/CMakeLists.txt -text
