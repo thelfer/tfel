@@ -233,7 +233,7 @@ namespace tfel{
        *  the st2tost2. This tabular is left unchanged.
        */
       TFEL_MATH_INLINE
-      explicit st2tost2(const typename tfel::typetraits::BaseType<T>::type* const);
+      explicit st2tost2(const tfel::typetraits::base_type<T>* const);
       //! copy Constructor
       constexpr st2tost2(const st2tost2<N,T>&) = default;
       // Copy Constructor
@@ -247,7 +247,7 @@ namespace tfel{
        */
       template<typename T2>
       TFEL_MATH_INLINE2 typename std::enable_if<
-	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,typename tfel::typetraits::BaseType<T>::type>::cond,
+	tfel::typetraits::IsSafelyReinterpretCastableTo<T2,tfel::typetraits::base_type<T>>::cond,
 	void>::type
       import(const T2* const);
 
@@ -307,7 +307,7 @@ namespace tfel{
 	       ST2toST2NumType<ST2toST2Type>>
     >::type
     change_basis(const ST2toST2Type&,
-		 const tfel::math::tmatrix<3u,3u,typename tfel::typetraits::BaseType<ST2toST2NumType<ST2toST2Type>>::type>&);
+		 const tfel::math::tmatrix<3u,3u,tfel::typetraits::base_type<ST2toST2NumType<ST2toST2Type>>>&);
     /*!
      * \return the invert of a st2tost2
      * \param[in] s : st2tost2 to be inverted
@@ -317,7 +317,7 @@ namespace tfel{
     typename std::enable_if<
       tfel::meta::Implements<ST2toST2Type,ST2toST2Concept>::cond,
       st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
-	       typename ComputeBinaryResult<typename tfel::typetraits::BaseType<ST2toST2NumType<ST2toST2Type>>::type,
+	       typename ComputeBinaryResult<typename tfel::typetraits::base_type<ST2toST2NumType<ST2toST2Type>>,
 					    ST2toST2NumType<ST2toST2Type>,OpDiv>::Result>
     >::type
     invert(const ST2toST2Type&);

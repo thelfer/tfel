@@ -589,54 +589,51 @@ namespace tfel{
       ((TensorTraits<TensorType>::dime == 2u)||(TensorTraits<TensorType>::dime == 3u)),
       void
       >::type
-    polar_decomposition(TensorType&,
-			StensorType&,
-			const TensorType2&);
+    polar_decomposition(TensorType&,StensorType&,const TensorType2&);
 
-    template<typename TensorType>
-    TFEL_MATH_INLINE auto
-    matrix_view(TensorType&& t)
-    -> typename std::enable_if<
-      tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond,
-      Expr<tmatrix<3u,3u,TensorNumType<typename std::decay<decltype(t)>::type>>,
-      MatrixViewFromTensorExpr<decltype(t)>>
-      >::type;
+    // template<typename TensorType>
+    // TFEL_MATH_INLINE auto
+    // matrix_view(TensorType&& t)
+    // -> typename std::enable_if<
+    //   tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond,
+    //   Expr<tmatrix<3u,3u,TensorNumType<typename std::decay<decltype(t)>::type>>,
+    //   MatrixViewFromTensorExpr<decltype(t)>>>::type;
 
-    /*!
-     * \return a transposed view of  the tensor
-     */
-    template<typename TensorType>
-    TFEL_MATH_INLINE auto
-    transpose(TensorType&& t)
-    -> typename std::enable_if<
-      tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond &&
-      (TensorTraits<typename std::decay<TensorType>::type>::dime==1u),
-      Expr<tensor<1u,TensorNumType<typename std::decay<decltype(t)>::type>>,
-	   TensorTransposeExpr1D<decltype(t)>>>::type;
+    // /*!
+    //  * \return a transposed view of  the tensor
+    //  */
+    // template<typename TensorType>
+    // TFEL_MATH_INLINE auto
+    // transpose(TensorType&& t)
+    // -> typename std::enable_if<
+    //   tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond &&
+    //   (TensorTraits<typename std::decay<TensorType>::type>::dime==1u),
+    //   Expr<tensor<1u,TensorNumType<typename std::decay<decltype(t)>::type>>,
+    // 	   TensorTransposeExpr1D<decltype(t)>>>::type;
 
-    /*!
-     * \return a transposed view of  the tensor
-     */
-    template<typename TensorType>
-    TFEL_MATH_INLINE auto
-    transpose(TensorType&& t)
-    -> typename std::enable_if<
-      tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond &&
-      (TensorTraits<typename std::decay<TensorType>::type>::dime==2u),
-      Expr<tensor<2u,TensorNumType<typename std::decay<decltype(t)>::type>>,
-	   TensorTransposeExpr2D<decltype(t)>>>::type;
+    // /*!
+    //  * \return a transposed view of  the tensor
+    //  */
+    // template<typename TensorType>
+    // TFEL_MATH_INLINE auto
+    // transpose(TensorType&& t)
+    // -> typename std::enable_if<
+    //   tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond &&
+    //   (TensorTraits<typename std::decay<TensorType>::type>::dime==2u),
+    //   Expr<tensor<2u,TensorNumType<typename std::decay<decltype(t)>::type>>,
+    // 	   TensorTransposeExpr2D<decltype(t)>>>::type;
 
-    /*!
-     * \return a transposed view of  the tensor
-     */
-    template<typename TensorType>
-    TFEL_MATH_INLINE auto
-    transpose(TensorType&& t)
-    -> typename std::enable_if<
-      tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond &&
-      (TensorTraits<typename std::decay<TensorType>::type>::dime==3u),
-      Expr<tensor<3u,TensorNumType<typename std::decay<decltype(t)>::type>>,
-	   TensorTransposeExpr3D<decltype(t)>>>::type;
+    // /*!
+    //  * \return a transposed view of  the tensor
+    //  */
+    // template<typename TensorType>
+    // TFEL_MATH_INLINE auto
+    // transpose(TensorType&& t)
+    // -> typename std::enable_if<
+    //   tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond &&
+    //   (TensorTraits<typename std::decay<TensorType>::type>::dime==3u),
+    //   Expr<tensor<3u,TensorNumType<typename std::decay<decltype(t)>::type>>,
+    // 	   TensorTransposeExpr3D<decltype(t)>>>::type;
 
   } // end of namespace math
 

@@ -762,12 +762,11 @@ namespace tfel{
     } // end of polar_decomposition
 
     template<typename TensorType>
-    auto matrix_view(TensorType&& t)
+    TFEL_MATH_INLINE auto matrix_view(TensorType&& t)
     -> typename std::enable_if<
       tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond,
       Expr<tmatrix<3u,3u,TensorNumType<typename std::decay<decltype(t)>::type>>,
-      MatrixViewFromTensorExpr<decltype(t)>>
-      >::type
+      MatrixViewFromTensorExpr<decltype(t)>>>::type
     {
       using NumType = TensorNumType<typename std::decay<decltype(t)>::type>;
       return Expr<tmatrix<3u,3u,NumType>,
@@ -775,8 +774,7 @@ namespace tfel{
     } // end of matrix_view
 		    
     template<typename TensorType>
-    TFEL_MATH_INLINE auto
-    transpose(TensorType&& t)
+    TFEL_MATH_INLINE auto transpose(TensorType&& t)
     -> typename std::enable_if<
       tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond &&
       (TensorTraits<typename std::decay<TensorType>::type>::dime==1u),
@@ -787,8 +785,7 @@ namespace tfel{
      } // end of transpose
 
     template<typename TensorType>
-    TFEL_MATH_INLINE auto
-    transpose(TensorType&& t)
+    TFEL_MATH_INLINE auto transpose(TensorType&& t)
     -> typename std::enable_if<
       tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond &&
       (TensorTraits<typename std::decay<TensorType>::type>::dime==2u),
@@ -799,8 +796,7 @@ namespace tfel{
     } // end of transpose
 
     template<typename TensorType>
-    TFEL_MATH_INLINE auto
-    transpose(TensorType&& t)
+    TFEL_MATH_INLINE auto transpose(TensorType&& t)
     -> typename std::enable_if<
       tfel::meta::Implements<typename std::decay<TensorType>::type,TensorConcept>::cond &&
       (TensorTraits<typename std::decay<TensorType>::type>::dime==3u),
