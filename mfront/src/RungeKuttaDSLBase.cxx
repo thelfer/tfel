@@ -518,8 +518,6 @@ namespace mfront{
     if(!this->mb.hasAttribute(BehaviourData::algorithm)){
       this->setDefaultAlgorithm();
     }
-    const auto& algorithm =
-      this->mb.getAttribute<std::string>(BehaviourData::algorithm);
     const auto n =
       this->mb.getAttribute<unsigned short>(BehaviourData::numberOfEvaluations);
     // some checks
@@ -605,8 +603,6 @@ namespace mfront{
     }
     const auto& algorithm =
       this->mb.getAttribute<std::string>(BehaviourData::algorithm);
-    const auto n =
-      this->mb.getAttribute<unsigned short>(BehaviourData::numberOfEvaluations);
     // some checks
     for(const auto & h : this->mb.getDistinctModellingHypotheses()){
       const auto& d = this->mb.getBehaviourData(h);

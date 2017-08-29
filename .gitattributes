@@ -16,6 +16,12 @@
 /TODO.org -text
 bindings/CMakeLists.txt -text
 bindings/Makefile.am -text
+bindings/fortran77/CMakeLists.txt -text
+bindings/fortran77/Makefile.am -text
+bindings/fortran77/TFELPHYSICALCONSTANTS.INC -text
+bindings/fortran90/CMakeLists.txt -text
+bindings/fortran90/Makefile.am -text
+bindings/fortran90/tfel_physical_constants.f90 -text
 bindings/python/CMakeLists.txt -text
 bindings/python/Makefile.am -text
 bindings/python/include/CMakeLists.txt -text

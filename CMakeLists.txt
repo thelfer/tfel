@@ -132,9 +132,11 @@ if(enable-fortran)
   add_definitions("-DHAVE_FORTRAN=1")
   enable_language (Fortran)
   message(STATUS "fortran support enabled")
+  set(enable-fortran-bindings ON)
 else(enable-fortran)
   set(HAVE_FORTRAN OFF)
   message(STATUS "fortran support disabled")
+  set(enable-fortran-bindings OFF)
 endif(enable-fortran)
 
 #compiler options

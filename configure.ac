@@ -273,11 +273,14 @@ if test "x$use_fortran" != "xno";
 	FFLAGS=""
     fi
     AC_PROG_F77
+    AC_PROG_FC
     AC_F77_WRAPPERS
     AC_DEFINE(HAVE_FORTRAN)
     AM_CONDITIONAL([HAVE_FORTRAN],true)
+    AM_CONDITIONAL([TFEL_FORTRAN_BINDINGS],true)
 else
     AM_CONDITIONAL([HAVE_FORTRAN],false)
+    AM_CONDITIONAL([TFEL_FORTRAN_BINDINGS],false)
 fi
 
 # checks for python
@@ -3056,6 +3059,8 @@ AC_OUTPUT([debug.sh
    	   bindings/python/tests/pymfronttest1.py
       	   bindings/python/tests/pymfronttest2.py
        	   bindings/python/tests/pymfronttest3.py
+	   bindings/fortran77/Makefile
+   	   bindings/fortran90/Makefile
 	   tests/Makefile
 	   tests/Tests/Makefile
 	   tests/Math/Makefile

@@ -16,15 +16,21 @@
 #include<iostream>
 
 #include<stdexcept>
+#include<algorithm>
 #include<cstdlib>
 #include<fstream>
+#include<sstream>
+#include<cstring>
+#include<limits>
 #include<string>
 #include<vector>
 
 #include"TFEL/Utilities/CxxTokenizer.hxx"
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 
 struct Constant{
   std::string name;
+  std::string short_name;
   std::string description;
   std::string unit;
   long double value;
@@ -51,6 +57,12 @@ Constant extract(tfel::utilities::CxxTokenizer::const_iterator& p,
   read_tokens({"{","name",":"});
   c.name = CxxTokenizer::readString(p,pe);
   read_token(";");
+  CxxTokenizer::checkNotEndOfLine("extract",p,pe);
+  if(p->value=="short_name"){
+    read_tokens({"short_name",":"});
+    c.short_name = CxxTokenizer::readString(p,pe);
+    read_token(";");
+  }
   CxxTokenizer::checkNotEndOfLine("extract",p,pe);
   if(p->value=="description"){
     read_tokens({"description",":"});
@@ -85,8 +97,21 @@ std::vector<Constant> extract(const std::string& f)
   return r;
 } // end of extract
 
-void generate_cxx(const std::vector<Constant>& cs)
+static void generate_cxx(const std::vector<Constant>& cs)
 {
+  auto write_comments = [](std::ostream& os,
+			   const Constant& c){
+    if((!c.description.empty())||(!c.unit.empty())){
+      os << "//!";
+      if(!c.description.empty()){
+	os << ' ' << c.description;
+      }
+      if(!c.unit.empty()){
+	os << " (" << c.unit << ')';
+      }
+      os << '\n';
+    }
+  };
   std::ofstream os("PhysicalConstants.hxx");
   os << "/*!\n"
      << " * \\file   include/TFEL/PhysicalConstants.hxx\n"
@@ -106,38 +131,29 @@ void generate_cxx(const std::vector<Constant>& cs)
      << "\n"
      << "namespace tfel{\n"
      << "\n"
-     << "  template<typename real = double,bool use_qt = false>\n"
+     << "  template<typename real = double>\n"
      << "  struct PhysicalConstants{\n";
   for(const auto& c : cs){
-    if((!c.description.empty())||(!c.unit.empty())){
-      os << "//!";
-      if(!c.description.empty()){
-	os << ' ' << c.description;
-      }
-      if(!c.unit.empty()){
-	os << " (" << c.unit << ')';
-      }
-      os << '\n';
-    }
+    write_comments(os,c);
     os << "static constexpr const real " << c.name << " = real(" << c.value << ");\n";
+    if(!c.short_name.empty()){
+      write_comments(os,c);
+      os << "static constexpr const real " << c.short_name << " = real(" << c.value << ");\n";
+    }
   }
   os << "  }; // end of PhysicalConstants\n"
      << "\n"
      << "#if __cplusplus >= 201402L\n"
      << "namespace constants{\n\n";
   for(const auto& c : cs){
-    if((!c.description.empty())||(!c.unit.empty())){
-      os << "//!";
-      if(!c.description.empty()){
-	os << ' ' << c.description;
-      }
-      if(!c.unit.empty()){
-	os << " (" << c.unit << ')';
-      }
-      os << '\n';
-    }
+    write_comments(os,c);
     os << "template<typename real>\n"
        << "constexpr const real " << c.name << " = real(" << c.value << ");\n";
+    if(!c.short_name.empty()){
+      write_comments(os,c);
+      os << "template<typename real = double>\n"
+	 << "constexpr const real " << c.short_name << " = real(" << c.value << ");\n";
+    }
   }
   os << "\n"
      << "} // end of namespace constants\n"
@@ -147,7 +163,7 @@ void generate_cxx(const std::vector<Constant>& cs)
      << "#endif /* LIB_TFEL_PHYSICALCONSTANTS_HXX */\n";
 } // end of generate_cxx
 
-void generate_python(const std::vector<Constant>& cs)
+static void generate_python(const std::vector<Constant>& cs)
 {
   std::ofstream os("PhysicalConstants.cxx");
   os << "/*!\n"
@@ -192,29 +208,166 @@ void generate_python(const std::vector<Constant>& cs)
      << "{\n"
      << "  boost::python::class_<PhysicalConstants>(\"PhysicalConstants\")\n";
   for(const auto& c : cs){
-    os << ".def_readonly(\"" << c.name << "\",PhysicalConstants::" << c.name;
-    if((!c.description.empty())||(!c.unit.empty())){
-      os << ",\n\"";
-      if(!c.description.empty()){
-	os << c.description;
-      }
-      if(!c.unit.empty()){
+    auto write_comments = [&os,&c]{
+      if((!c.description.empty())||(!c.unit.empty())){
+	os << ",\n\"";
 	if(!c.description.empty()){
-	  os << ' ';
+	  os << c.description;
 	}
-	os << "(" << c.unit << ')';
+	if(!c.unit.empty()){
+	  if(!c.description.empty()){
+	    os << ' ';
+	  }
+	  os << "(" << c.unit << ')';
+	}
+	os << '"';
       }
-      os << '"';
-    }
+    };
+    os << ".def_readonly(\"" << c.name << "\",PhysicalConstants::" << c.name;
+    write_comments();
     os << ")\n";
+    if(!c.short_name.empty()){
+      os << ".def_readonly(\"" << c.short_name << "\",PhysicalConstants::" << c.name;
+      write_comments();
+      os << ")\n";
+    }
   }
   os << ";\n\n"
      << "} // end of declarePhysicalConstants\n\n";
 } // end of declarePhysicalConstants
 
+static void generate_fortran77(const std::vector<Constant>& cs)
+{
+  auto upper = [](const std::string& n){
+    std::string r(n);
+    std::transform(r.begin(),r.end(),r.begin(),[](const char c){
+	return std::toupper(c);
+      });
+    return r;
+  };
+  std::ofstream os("TFELPHYSICALCONSTANTS.INC");
+  os << "C> \\file   bindings/fortran77/TFELPHYSICALCONSTANTS.cxx\n"
+     << "C> \\brief\n"
+     << "C> \\author Thomas Helfer\n"
+     << "C> \\date   18 août 2017\n"
+     << "C> \\copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights \n"
+     << "C> reserved. \n"
+     << "C> This project is publicly released under either the GNU GPL Licence \n"
+     << "C> or the CECILL-A licence. A copy of thoses licences are delivered \n"
+     << "C> with the sources of TFEL. CEA or EDF may also distribute this \n"
+     << "C> project under specific licensing conditions.\n\n";
+  for(const auto& c : cs){
+    auto write_comment = [&os,&c]{
+      if((!c.description.empty())||(!c.unit.empty())){
+	os << "C>";
+	if(!c.description.empty()){
+	  os << ' ' << c.description;
+	}
+	if(!c.unit.empty()){
+	  os << " (" << c.unit << ')';
+	}
+	os << '\n';
+      }
+    };
+    write_comment();
+    os << "      DOUBLE PRECISION CSTE_" << upper(c.name) << "\n";
+    if(!c.short_name.empty()){
+      write_comment();
+      os << "      DOUBLE PRECISION CSTE_" << upper(c.short_name) << "\n";
+    }
+  }
+  os << "*\n";
+  for(const auto& c : cs){
+    auto convert = [](const double v){
+      auto append_if = [](const std::string& f){
+	if(f.find('D')==std::string::npos){
+	  return f+"D0";
+	}
+	return f;
+      };
+      using tfel::utilities::replace_all;
+      std::ostringstream converter;
+      converter.precision(std::numeric_limits<double>::max_digits10);
+      converter << v;
+      return append_if(replace_all(replace_all(converter.str(),'e','D'),'E','D'));
+    };
+    os << "      PARAMETER (CSTE_" << upper(c.name) << " = "
+       << convert(c.value) << ");\n";
+    if(!c.short_name.empty()){
+      os << "      PARAMETER (CSTE_" << upper(c.short_name) << " = "
+	 << convert(c.value) << ");\n";
+    }
+  }
+} // end of generate_fortran77
+
+static void generate_fortran90(const std::vector<Constant>& cs)
+{
+  auto upper = [](const std::string& n){
+    std::string r(n);
+    std::transform(r.begin(),r.end(),r.begin(),[](const char c){
+	return std::toupper(c);
+      });
+    return r;
+  };
+  const auto t = "  ";
+  std::ofstream os("tfel_physical_constants.f90");
+  os << "!> \\file   bindings/fortran90/TFELPHYSICALCONSTANTS.mod\n"
+     << "!> \\brief  physical constants from CODATA Internationally recommended values,\n"
+     << "!           http://physics.nist.gov/cuu/Constants/index.html\n"
+     << "!> \\author Thomas Helfer\n"
+     << "!> \\date   18 août 2017\n"
+     << "!> \\copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights \n"
+     << "!  reserved. \n"
+     << "!  This project is publicly released under either the GNU GPL Licence \n"
+     << "!  or the CECILL-A licence. A copy of thoses licences are delivered \n"
+     << "!  with the sources of TFEL. CEA or EDF may also distribute this \n"
+     << "!  project under specific licensing conditions.\n\n"
+     << "module TFEL_PHYSICAL_CONSTANTS\n"
+     << t << "use,intrinsic :: ISO_FORTRAN_ENV\n"
+     << t << "implicit none\n";
+  for(const auto& c : cs){
+    auto write_comment = [&t,&os,&c]{
+      if((!c.description.empty())||(!c.unit.empty())){
+	os << t << "!>";
+	if(!c.description.empty()){
+	  os << ' ' << c.description;
+	}
+	if(!c.unit.empty()){
+	  os << " (" << c.unit << ')';
+	}
+	os << '\n';
+      }
+    };
+    auto convert = [](const double v){
+      using tfel::utilities::replace_all;
+      auto append_if = [](const std::string& f){
+	if(f.find('D')==std::string::npos){
+	  return f+"D0";
+	}
+	return f;
+      };
+      std::ostringstream converter;
+      converter.precision(std::numeric_limits<double>::max_digits10);
+      converter << v;
+      return append_if(replace_all(replace_all(converter.str(),'e','D'),'E','D'));
+    };
+    write_comment();
+    os << t << "real (real64), parameter :: " << upper(c.name) << " = "
+       << convert(c.value) << "\n";
+    if(!c.short_name.empty()){
+      write_comment();
+      os << t << "real (real64), parameter :: " << upper(c.short_name) << " = "
+	 << convert(c.value) << "\n";
+    }
+  }
+  os << "endmodule TFEL_PHYSICAL_CONSTANTS\n";
+}
+
 int main(){
   const auto cs = extract("physical_constants.json");
   generate_cxx(cs);
   generate_python(cs);
+  generate_fortran77(cs);
+  generate_fortran90(cs);
   return EXIT_SUCCESS;
 }
