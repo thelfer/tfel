@@ -418,7 +418,7 @@ namespace tfel{
       template<typename MatrixType>
       static TFEL_MATH_INLINE2
       typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<typename MatrixTraits<MatrixType>::NumType,T>::cond,
+	tfel::typetraits::IsAssignableTo<MatrixNumType<MatrixType>,T>::cond,
 	stensor<N,T> >::type
        buildFromMatrix(const MatrixType&);
 
@@ -430,7 +430,7 @@ namespace tfel{
       static TFEL_MATH_INLINE2
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<
-	  typename ComputeUnaryResult<typename VectorTraits<VectorType>::NumType,
+	  typename ComputeUnaryResult<VectorNumType<VectorType>,
 				      Power<2> >::Result,T
 	  >::cond,
 	stensor<N,T> >::type
@@ -446,8 +446,8 @@ namespace tfel{
       static TFEL_MATH_INLINE2
       typename std::enable_if<
 	tfel::typetraits::IsAssignableTo<
-	  typename ComputeBinaryResult<typename VectorTraits<VectorType>::NumType,
-				       typename VectorTraits<VectorType2>::NumType,
+	  typename ComputeBinaryResult<VectorNumType<VectorType>,
+				       VectorNumType<VectorType2>,
 				       OpMult>::Result,T
 	  >::cond,
 	stensor<N,T> >::type
@@ -637,7 +637,7 @@ namespace tfel{
 	(ST2toST2Traits<ST2toST2Type>::dime==N)&&
 	(tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<tfel::typetraits::base_type<T>,
 								       T,OpDiv>::Result,
-					  typename ST2toST2Traits<ST2toST2Type>::NumType>::cond),
+	                                  ST2toST2NumType<ST2toST2Type>>::cond),
 	void>::type
       computeEigenTensorsDerivatives(ST2toST2Type&,
 				     ST2toST2Type&,
@@ -695,7 +695,7 @@ namespace tfel{
 	(ST2toST2Traits<ST2toST2Type>::dime==N)&&
 	(tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<tfel::typetraits::base_type<T>,
 								       T,OpDiv>::Result,
-					  typename ST2toST2Traits<ST2toST2Type>::NumType>::cond),
+					  ST2toST2NumType<ST2toST2Type>>::cond),
 	void>::type
       computeIsotropicFunctionDerivative(ST2toST2Type&,
 					 const tvector<3u,T1>&,
@@ -736,7 +736,7 @@ namespace tfel{
 	(ST2toST2Traits<ST2toST2Type>::dime==N)&&
 	(tfel::typetraits::IsAssignableTo<typename ComputeBinaryResult<tfel::typetraits::base_type<T>,
 								       T,OpDiv>::Result,
-					  typename ST2toST2Traits<ST2toST2Type>::NumType>::cond),
+					  ST2toST2NumType<ST2toST2Type>>::cond),
 	void>::type
       computeIsotropicFunctionDerivative(ST2toST2Type&,
 					 const Function&,

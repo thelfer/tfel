@@ -408,7 +408,7 @@ namespace tfel{
     {
       return tfel::math::internals::StensorComputeEigenValuesDerivatives<N>::exe(n0,n1,n2,m);      
     } // end of stensor<N,T>::computeEigenTensors
-
+    
     template<unsigned short N,typename T>
     template<typename ST2toST2Type>
     typename std::enable_if<
