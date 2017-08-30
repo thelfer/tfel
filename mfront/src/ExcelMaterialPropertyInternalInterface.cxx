@@ -46,6 +46,11 @@ namespace mfront
   {
     return CMaterialPropertyInterface::getSrcFileName(m,c)+"-Excel";
   } // end of ExcelMaterialPropertyInternalInterface::getSrcFileName
+
+  void ExcelMaterialPropertyInternalInterface::writeInterfaceSymbol(std::ostream& os,
+								    const MaterialPropertyDescription& mpd) const{
+    mfront::writeInterfaceSymbol(os,this->getFunctionName(mpd),"Excel");
+  } // end of ExcelMaterialPropertyInternalInterface::writeInterfaceSymbol
   
   void ExcelMaterialPropertyInternalInterface::writeHeaderPreprocessorDirectives(std::ostream& os,
 										 const MaterialPropertyDescription&) const

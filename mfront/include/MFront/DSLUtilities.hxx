@@ -43,7 +43,7 @@ namespace mfront{
   writeEntryPointSymbol(std::ostream&,
 			const std::string&);
   /*!
-   * \brief write a specific symbols stating that a given name entry
+   * \brief write a specific symbol stating that a given name entry
    * point (`C`-like function for example) has been created using
    * `MFront`.
    * \param[out] os: output stream
@@ -54,6 +54,29 @@ namespace mfront{
   writeEntryPointSymbol(std::ostream&,
 			const std::string&,
 			const std::string&);
+  /*!
+   * \brief write a specific symbol for the interface of an entry
+   * point.
+   * \param[out] os: output stream
+   * \param[out] n:  entry point alias
+   * \param[out] i: entry point name
+   */
+  MFRONT_VISIBILITY_EXPORT void
+  writeInterfaceSymbol(std::ostream&,
+		       const std::string&,
+		       const std::string&);
+  /*!
+   * \brief write a symbol stating that a given entry point is
+   * associated to a material.
+   * \param[out] os: output stream
+   * \param[out] n: entry point name
+   * \param[in]  m:  material name
+   * name
+   */
+  MFRONT_VISIBILITY_EXPORT void
+  writeMaterialSymbol(std::ostream&,
+		      const std::string&,
+		      const std::string&);
   /*!
    * \brief write the symbol giving the material knowledge type.
    * \param[out] os: output stream

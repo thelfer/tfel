@@ -235,6 +235,10 @@ namespace mfront{
 	     "finite strain behaviours");
     // the only supported modelling hypothesis
     constexpr const auto h = ModellingHypothesis::TRIDIMENSIONAL;
+    const auto& d = mb.getBehaviourData(h);
+    throw_if(d.getExternalStateVariables().size()!=1u,
+	     "external state variables are not supported "
+	     "by CaculiX's native interface");
     // get the modelling hypotheses to be treated
     const auto name =  mb.getLibrary()+mb.getClassName();
     // output directories

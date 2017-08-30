@@ -21,8 +21,7 @@ namespace mfront{
   struct CMaterialPropertyInterface
     : public CMaterialPropertyInterfaceBase
   {
-    static std::string 
-    getName();
+    static std::string getName();
     
     CMaterialPropertyInterface();
     /*!
@@ -46,6 +45,12 @@ namespace mfront{
      */
     virtual void getTargetsDescription(TargetsDescription&,
 				       const MaterialPropertyDescription&) const override;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
+    virtual void writeInterfaceSymbol(std::ostream&,
+				      const MaterialPropertyDescription&) const override;
     //! destructor
     virtual ~CMaterialPropertyInterface();
         

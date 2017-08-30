@@ -312,11 +312,20 @@ namespace tfel
        * \return the interface of the function or the mechanical behaviour
        * \param[in] l: name of the library
        * \param[in] s: name of function or mechanical behaviour
-       * This function looks for the symbol s+'_interface' in the library
+       * This function looks for the symbol s+'_mfront_interface' in the library
        * and expect it to a pointer to characters.
        * If the symbol is not found, an empty string is returned.
        */
       std::string getInterface(const std::string&,const std::string&);
+      /*!
+       * \return the material associated with the entry point
+       * \param[in] l: name of the library
+       * \param[in] s: name of function or mechanical behaviour
+       * This function looks for the symbol s+'_mfront_material' in the library
+       * and expect it to a pointer to characters.
+       * If the symbol is not found, an empty string is returned.
+       */
+      std::string getMaterial(const std::string&,const std::string&);
       /*!
        * \return the list of supported modelling hypotheses
        * \param[in] l : name of the library

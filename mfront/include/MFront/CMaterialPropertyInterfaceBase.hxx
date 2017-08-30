@@ -79,6 +79,18 @@ namespace mfront{
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
+    virtual void writeMaterialSymbol(std::ostream&,
+				     const MaterialPropertyDescription&) const;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
+    virtual void writeInterfaceSymbol(std::ostream&,
+				      const MaterialPropertyDescription&) const = 0;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
     virtual void writeMaterialKnowledgeTypeSymbol(std::ostream&,
 						  const MaterialPropertyDescription&) const;
     /*!

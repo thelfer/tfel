@@ -290,11 +290,17 @@ namespace mfront
       srcFile << includes << "\n\n";
     }
     srcFile << "#include\"" << name << "-python.hxx\"\n\n";
+    writeExportDirectives(srcFile);
     writeMaterialPropertyParametersHandler(srcFile,mpd,
 					   name,"double","python");
     srcFile << "#ifdef __cplusplus\n"
 	    << "extern \"C\"{\n"
 	    << "#endif /* __cplusplus */\n\n";
+    // mfront metadata
+    writeEntryPointSymbol(srcFile,name);
+    writeInterfaceSymbol(srcFile,name,"Python");
+    writeMaterialSymbol(srcFile,name,mpd.material);
+    writeMaterialKnowledgeTypeSymbol(srcFile,name,MATERIALPROPERTY);
     if(!inputs.empty()){
       srcFile << "PyObject *\n" << name << "_wrapper("
 	      << "PyObject *,PyObject * py_args_)\n{\n";

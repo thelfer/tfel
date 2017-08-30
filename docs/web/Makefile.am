@@ -70,6 +70,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./MaterialLaw-keywords.md				      \
 	   ./Model-keywords.md					      \
 	   ./MultipleIsotropicMisesFlows-keywords.md		      \
+	   ./mfm.md				                      \
 	   ./mfront-doc.md				              \
 	   ./Norton-web.md				              \
 	   ./Norton-full.md				              \

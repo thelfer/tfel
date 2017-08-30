@@ -15,11 +15,10 @@
 #define LIB_TFEL_SYSTEM_RECURSIVEFIND_HXX 
 
 #include<map>
+#include<regex>
 #include<vector>
 #include<string>
 
-#include<sys/types.h>
-#include<regex.h>
 
 #include"TFEL/Config/TFELConfig.hxx"
 
@@ -77,7 +76,7 @@ namespace tfel
      */
     TFELSYSTEM_VISIBILITY_EXPORT
     std::map<std::string,std::vector<std::string> >
-    recursiveFind(const regex_t&,
+    recursiveFind(const std::regex&,
 		  const std::string&,
 		  const bool = true,
 		  const unsigned short = 0u,
@@ -95,7 +94,7 @@ namespace tfel
      */
     TFELSYSTEM_VISIBILITY_EXPORT void
     recursiveFind(std::map<std::string,std::vector<std::string> >&,
-		  const regex_t&,
+		  const std::regex&,
 		  const std::string&,
 		  const bool = true,
 		  const unsigned short = 0u,

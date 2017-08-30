@@ -42,6 +42,8 @@ namespace mfront{
 
     ZMATInterface();
 
+    //! \return the name of the interface
+    virtual std::string getInterfaceName() const override;
     /*!
      * \param[in,out] mb: behaviour description
      * \param[in] k:   keyword treated

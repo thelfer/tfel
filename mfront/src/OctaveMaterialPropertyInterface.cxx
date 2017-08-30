@@ -145,9 +145,16 @@ namespace mfront
       out << mpd.includes << "\n\n";
     }
     writeMaterialPropertyParametersHandler(out,mpd,name,"double","octave");
+    writeExportDirectives(out);
     out << "#ifdef __cplusplus\n"
 	<< "extern \"C\"{\n"
 	<< "#endif /* __cplusplus */\n\n";
+    // mfront metadata
+    writeEntryPointSymbol(out,name);
+    writeInterfaceSymbol(out,name,"Octave");
+    writeMaterialSymbol(out,name,mpd.material);
+    writeMaterialKnowledgeTypeSymbol(out,name,MATERIALPROPERTY);
+
     if(mpd.inputs.size()>1){
       out << "static double\n"
 	  << "get_scalar_value(const octave_value& value,const octave_idx_type,const octave_idx_type){\n"

@@ -338,12 +338,11 @@ namespace tfel
     bool ExternalLibraryManager::contains(const std::string& l,
 					  const std::string& s)
     {
+      const auto lib = this->loadLibrary(l);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
       int (*p)()   = (int (*)()) ::GetProcAddress(lib,s.c_str());
       return p!=static_cast<int (*)()>(nullptr);
 #else
-      void * lib = this->loadLibrary(l);
       void * p   = ::dlsym(lib,s.c_str());
       return p!=nullptr;
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
@@ -353,11 +352,10 @@ namespace tfel
 						  const std::string& f)
     {
       auto s = std::string{};
+      const auto lib = this->loadLibrary(l);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      auto lib = this->loadLibrary(l);
       const auto p  = (const char* const *) ::GetProcAddress(lib,(f+"_src").c_str());
 #else
-      auto lib = this->loadLibrary(l);
       auto p   = ::dlsym(lib,(f+"_src").c_str());
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
       if(p!=nullptr){
@@ -373,12 +371,11 @@ namespace tfel
     std::string ExternalLibraryManager::getInterface(const std::string& l,
 						     const std::string& f)
     {
+      const auto lib = this->loadLibrary(l);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      const auto lib = this->loadLibrary(l);
-      const auto p   = (const char* const *) ::GetProcAddress(lib,(f+"_interface").c_str());
+      const auto p   = (const char* const *) ::GetProcAddress(lib,(f+"_mfront_interface").c_str());
 #else
-      const auto lib = this->loadLibrary(l);
-      const auto p   = ::dlsym(lib,(f+"_interface").c_str());
+      const auto p   = ::dlsym(lib,(f+"_mfront_interface").c_str());
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
       if(p==nullptr){
 	throw(std::runtime_error("ExternalLibraryManager::getInterface: "
@@ -391,6 +388,25 @@ namespace tfel
       return *(static_cast<const char* const *>(p));
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     } // end of ExternalLibraryManager::getInterface
+
+    std::string ExternalLibraryManager::getMaterial(const std::string& l,
+						     const std::string& f)
+    {
+      const auto lib = this->loadLibrary(l);
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+      const auto p   = (const char* const *) ::GetProcAddress(lib,(f+"_mfront_material").c_str());
+#else
+      const auto p   = ::dlsym(lib,(f+"_mfront_material").c_str());
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      if(p==nullptr){
+	return "";
+      }
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
+      return *p;
+#else
+      return *(static_cast<const char* const *>(p));
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+    } // end of ExternalLibraryManager::getMaterial
     
     std::vector<std::string>
     ExternalLibraryManager::getSupportedModellingHypotheses(const std::string& l,
@@ -426,11 +442,7 @@ namespace tfel
 						 const tfel::material::OutOfBoundsPolicy p)
     {
       using namespace std;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGQWIN__)
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGQWIN__) */
+      const auto lib = this->loadLibrary(l);
       int (TFEL_ADDCALL_PTR fct)(int);
       fct = ::tfel_getSetOutOfBoundsPolicyFunction(lib,(f+"_setOutOfBoundsPolicy").c_str());
       if(fct==nullptr){

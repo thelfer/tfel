@@ -384,6 +384,8 @@ namespace mfront
 	  << "}\n\n";
     }
     writeEntryPointSymbol(out,name);
+    writeInterfaceSymbol(out,name,"Castem");
+    writeMaterialSymbol(out,name,mpd.material);
     writeMaterialKnowledgeTypeSymbol(out,name,MATERIALPROPERTY);
     out << "MFRONT_SHAREDOBJ double\n" << name << "(";
     if(!mpd.inputs.empty()){

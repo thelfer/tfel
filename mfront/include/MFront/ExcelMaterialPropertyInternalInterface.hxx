@@ -38,6 +38,12 @@ namespace mfront{
     getName();
     //! constructor
     ExcelMaterialPropertyInternalInterface();
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
+    virtual void writeInterfaceSymbol(std::ostream&,
+				      const MaterialPropertyDescription&) const override;
     //! destructor
     virtual ~ExcelMaterialPropertyInternalInterface();
   private:

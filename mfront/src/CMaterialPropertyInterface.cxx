@@ -71,6 +71,11 @@ namespace mfront
     }
   } // end of CMaterialPropertyInterface::getTargetsDescription
 
+  void CMaterialPropertyInterface::writeInterfaceSymbol(std::ostream& out,
+							      const MaterialPropertyDescription& mpd) const{
+    mfront::writeInterfaceSymbol(out,this->getFunctionName(mpd),"C");
+  } // end of CMaterialPropertyInterface
+  
   std::string
   CMaterialPropertyInterface::getHeaderFileName(const std::string& material,
 						const std::string& className) const

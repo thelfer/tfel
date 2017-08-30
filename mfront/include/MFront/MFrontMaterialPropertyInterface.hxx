@@ -21,8 +21,7 @@ namespace mfront{
   struct MFrontMaterialPropertyInterface
     : public CMaterialPropertyInterfaceBase
   {
-    static std::string 
-    getName();
+    static std::string getName();
     
     MFrontMaterialPropertyInterface();
     /*!
@@ -58,6 +57,18 @@ namespace mfront{
     virtual std::string
     getHeaderFileName(const std::string&,
 		      const std::string&) const override;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
+    virtual void writeMaterialSymbol(std::ostream&,
+				     const MaterialPropertyDescription&) const override;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
+    virtual void writeInterfaceSymbol(std::ostream&,
+				      const MaterialPropertyDescription&) const override;
     //! destructor
     virtual ~MFrontMaterialPropertyInterface();
   private:

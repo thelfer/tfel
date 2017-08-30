@@ -45,9 +45,9 @@ int main(const int argc, const char *const *const argv)
   auto mpqueries = vector<shared_ptr<MaterialPropertyQuery>>{};
   auto bqueries  = vector<shared_ptr<BehaviourQuery>>{};
   auto mqueries  = vector<shared_ptr<ModelQuery>>{};
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if not defined(__GLIBCXX__)
   try{
-#endif /* __CYGWIN__ */
+#endif /* not defined(__GLIBCXX__) */
     for(auto a=argv+1;a!=argv+argc;++a){
       if((*a)[0]!='-'){
 	const string f{*a};
@@ -119,16 +119,17 @@ int main(const int argc, const char *const *const argv)
     for(const auto& q : mqueries){
       q->exe();
     }
+#if not defined(__GLIBCXX__)
+  } catch(exception& e){
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-  }
-  catch(exception& e){
     MessageBox(nullptr,e.what(),
 	       "mfront",0);
+#else /* defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ */
+  } catch(exception& e){
+    std::cerr << e.what() << std::endl;
+#endif /* defined _WIN32 || defined _WIN64 ||defined __CYGWIN__ */
     return EXIT_FAILURE;
   }
-  catch(...){
-    return EXIT_FAILURE;
-  }
-#endif /* __CYGWIN__ */
+#endif /* not defined(__GLIBCXX__) */
   return EXIT_SUCCESS;
 }

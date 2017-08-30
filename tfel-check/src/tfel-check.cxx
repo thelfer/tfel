@@ -128,13 +128,8 @@ namespace tfel{
       };
       int status = EXIT_SUCCESS;
       if(this->inputs.empty()){
-	regex_t re;
-	if (regcomp(&re, ".*\\.check$", REG_EXTENDED | REG_NOSUB) != 0) {
-	  cerr << "main : can't compile regular expression\n";
-	  return EXIT_FAILURE; /* Report error. */
-	}
+	std::regex re(".+\\.check",std::regex_constants::extended);
 	const auto& files = tfel::system::recursiveFind(re, ".", 0);
-	regfree(&re);
 	for (const auto& d : files) {
 	  for (const auto& f : d.second) {
 	    if(!exe(d.first,f)){

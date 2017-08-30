@@ -38,68 +38,49 @@ namespace tfel
 		  const unsigned short depth,
 		  const unsigned short mdepth)
     {
-      using namespace std;
-      map<string,vector<string> > r;
+      std::map<std::string,std::vector<std::string> > r;
       recursiveFind(r,re,name,b,depth,mdepth);
       return r;
     } // end of recursiveFind
 
-    void
-    recursiveFind(std::map<std::string,std::vector<std::string> >& r,
-		  const std::string& re,
-		  const std::string& name,
-		  const bool b,
-		  const unsigned short depth,
-		  const unsigned short mdepth)
+    void recursiveFind(std::map<std::string,std::vector<std::string> >& r,
+		       const std::string& re,
+		       const std::string& name,
+		       const bool b,
+		       const unsigned short depth,
+		       const unsigned short mdepth)
     {
-      using namespace std;
-      regex_t regex;
-      try{
-	if(regcomp(&regex,re.c_str(),REG_EXTENDED|REG_NOSUB)!=0){
-	  string msg("recursiveFind : ");
-	  msg += "can't compile regular expression '"+re+"'";
-	  throw(runtime_error(msg));
-	}
-	recursiveFind(r,regex,name,b,depth,mdepth);
-	regfree(&regex);
-      }	catch(...){
-	regfree(&regex);
-	throw;
-      }
+      recursiveFind(r,std::regex(re),name,b,depth,mdepth);
     } // end of recursiveFind
 
     std::map<std::string,std::vector<std::string> >
-    recursiveFind(const regex_t& re,
+    recursiveFind(const std::regex& re,
 		  const std::string& name,
 		  const bool b,
 		  const unsigned short depth,
 		  const unsigned short mdepth)
     {
-      using namespace std;
-      map<string,vector<string> > r;
+      std::map<std::string,std::vector<std::string> > r;
       recursiveFind(r,re,name,b,depth,mdepth);
       return r;
     } // end of recursiveFind
 
-    void
-    recursiveFind(std::map<std::string,std::vector<std::string> >& r,
-		  const regex_t& re,
-		  const std::string& name,
-		  const bool b,
-		  const unsigned short depth,
-		  const unsigned short mdepth)
+    void recursiveFind(std::map<std::string,std::vector<std::string> >& r,
+		       const std::regex& re,
+		       const std::string& name,
+		       const bool b,
+		       const unsigned short depth,
+		       const unsigned short mdepth)
     {
-      using namespace std;
       using namespace tfel::system;
+      auto throw_if = [](const bool c,const std::string& m){
+	if(c){throw(std::runtime_error("recursiveFind: "+m));}
+      };
       DIR* dir;
       struct dirent* p;
       struct stat buf;
       if(depth>mdepth){
-	if(b){
-	  string msg("recursiveFind : ");
-	  msg += "maximal directory depth reached";
-	  throw(runtime_error(msg));
-	}
+	throw_if(b,"maximal directory depth reached");
 	return;
       }
       dir = opendir(name.c_str());
@@ -111,28 +92,23 @@ namespace tfel
       }
       try{
 	while((p=readdir(dir))!=nullptr){
-	  string file = name+"/";
-	  file += p->d_name;
+	  const auto file = name+dirSeparator()+p->d_name;
 	  if(stat(file.c_str(),&buf)==0){
 	    if(S_ISREG(buf.st_mode)){
-	      if(regexec(&re,p->d_name,0,nullptr,0)==0){
+	      if(std::regex_match(p->d_name,re)){
 		r[name].emplace_back(p->d_name);
 	      }
 	    } else if(S_ISDIR(buf.st_mode)){
 	      if((strcmp(p->d_name,".") !=0)&&
 	       (strcmp(p->d_name,"..")!=0)){
-		map<string,vector<string> > r2;
+		std::map<std::string,std::vector<std::string> > r2;
 		recursiveFind(r2,re,name+'/'+p->d_name,
 			      depth+1,mdepth);
 		r.insert(r2.begin(),r2.end());
 	      }
 	    }
 	  } else {
-	    if(b){
-	      string msg("tfel::system::recursiveFind : ");
-	      msg += "can't stat file '"+file+"'";
-	      systemCall::throwSystemError(msg,errno);
-	    }
+	    throw_if(b,"can't stat file '"+file+"'");
 	  }
 	}
       } catch(...){

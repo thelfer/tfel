@@ -53,6 +53,12 @@ namespace mfront{
      */
     virtual void writeOutputFiles(const MaterialPropertyDescription&,
 				  const FileDescription&) const override;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
+    virtual void writeInterfaceSymbol(std::ostream&,
+				      const MaterialPropertyDescription&) const override;
     //! destructor
     virtual ~Fortran03MaterialPropertyInterface();
         

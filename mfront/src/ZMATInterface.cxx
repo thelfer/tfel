@@ -140,15 +140,20 @@ namespace mfront
       }
     }
     return "ZMAT"+mb.getLibrary();
-  } // end of ZMATInterface::getLibraryName
+  } // end of getLibraryName
 
   std::string ZMATInterface::getName()
   {
     return "zmat";
   }
-
+  
   ZMATInterface::ZMATInterface() = default;
 
+  std::string ZMATInterface::getInterfaceName() const
+  {
+    return "ZMAT";
+  }
+  
   std::pair<bool,ZMATInterface::tokens_iterator>
   ZMATInterface::treatKeyword(BehaviourDescription&,
 			      const std::string& key,
@@ -215,8 +220,8 @@ namespace mfront
 	  << "ZMATexportStateData("
 	  << "ZSET::TENSOR2_FLUX& ZMATsig,ZSET::MAT_DATA&) const\n";
     }
-    out << "{\n";
-    out << "using namespace tfel::math;\n";
+    out << "{\n"
+	<< "using namespace tfel::math;\n";
     if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
       throw(runtime_error("ZMATInterface::exportMechanicalData: "
@@ -310,14 +315,14 @@ namespace mfront
   ZMATInterface::writeInterfaceSpecificIncludes(std::ostream& out,
 						const BehaviourDescription& mb) const
   {
-    out << "#include\"MFront/ZMAT/ZMATInterface.hxx\"\n";
-    out << "#include\"Coefficient.h\"\n";
+    out << "#include\"MFront/ZMAT/ZMATInterface.hxx\"\n"
+	<< "#include\"Coefficient.h\"\n";
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       out << "#include\"Auto_ptr.h\"\n";
       out << "#include\"Elasticity.h\"\n";
     }
-    out << "#include\"Coefficient.h\"\n";
-    out << "#include\"Behavior.h\"\n";
+    out << "#include\"Coefficient.h\"\n"
+	<< "#include\"Behavior.h\"\n";
     writeZMATUndefs(out);
     out << '\n';
   } // end of ZMATInterface::writeInterfaceSpecificIncludes
@@ -339,9 +344,9 @@ namespace mfront
       throw(runtime_error("ZMATInterface::writeBehaviourDataConstructor: "
 			  "only small or finite strain behaviours are supported"));
     }
-    out << "/*!\n";
-    out << " * \\brief constructor for the ZMAT interface\n";
-    out << " *\n";
+    out << "/*!\n"
+	<< " * \\brief constructor for the ZMAT interface\n"
+	<< " *\n";
     if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
        (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
       out << " * \\param ZMATsig     : stress at the beginning of the time step\n";
@@ -352,12 +357,12 @@ namespace mfront
     if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << " \\param ZMATF0      : deformation gradient at the begining of the time step\n";
     }
-    out << " * \\param ZMATmprops  : material properties\n";
-    out << " * \\param ZMATdata    : material data handler\n";
-    out << " * \\param ZMATT_pos   : position of the temperature\n";
-    out << " * \\param ZMATevs_pos : position of the external state varaibles\n";
-    out << " */\n";
-    out << mb.getClassName() << "BehaviourData(";
+    out << " * \\param ZMATmprops  : material properties\n"
+	<< " * \\param ZMATdata    : material data handler\n"
+	<< " * \\param ZMATT_pos   : position of the temperature\n"
+	<< " * \\param ZMATevs_pos : position of the external state varaibles\n"
+	<< " */\n"
+	<< mb.getClassName() << "BehaviourData(";
     if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
        (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
       out << "const ZSET::TENSOR2_FLUX& ZMATsig,\n";
@@ -378,8 +383,8 @@ namespace mfront
     } else {
       out << "const ZSET::ARRAY<ZSET::COEFF>&,\n";
     }
-    out << "const ZSET::MAT_DATA& ZMATdata,\n";
-    out << "const int ZMATT_pos,\n";
+    out << "const ZSET::MAT_DATA& ZMATdata,\n"
+	<< "const int ZMATT_pos,\n";
     if(!evs.empty()){
       out << "const ZSET::ARRAY<int>& ZMATevs_pos){\n";
     } else {
@@ -388,8 +393,8 @@ namespace mfront
     if(!ivs.empty()){
       out << "const auto& ZMATstatev = ZMATdata.var_int_ini()[0];\n";
     }
-    out << "const ZSET::EXTERNAL_PARAMETER_VECTOR& ZMATextvars_t = *(ZMATdata.param_set_ini());\n";
-    out << "zmat::ZMATInterface::convert(this->sig,&ZMATsig[0]);\n";
+    out << "const ZSET::EXTERNAL_PARAMETER_VECTOR& ZMATextvars_t = *(ZMATdata.param_set_ini());\n"
+	<< "zmat::ZMATInterface::convert(this->sig,&ZMATsig[0]);\n";
     switch(mb.getBehaviourType()){
     case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
       out << "zmat::ZMATInterface::convert(this->eto,&ZMATeto[0]);\n";
@@ -526,8 +531,8 @@ namespace mfront
 	}
       }
     }
-    out << "this->T = ZMATextvars_t[ZMATT_pos];\n";
-    out << "}\n\n";
+    out << "this->T = ZMATextvars_t[ZMATT_pos];\n"
+	<< "}\n\n";
   } // end of ZMATInterface::writeBehaviourDataConstructor
 
   void
@@ -542,9 +547,9 @@ namespace mfront
 		 "only small or finite strain behaviours are supported");
       throw(runtime_error(msg));
     }
-    out << "/*!\n";
-    out << " * \\brief constructor for the ZMAT interface\n";
-    out << " *\n";
+    out << "/*!\n"
+	<< " * \\brief constructor for the ZMAT interface\n"
+	<< " *\n";
     if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
        (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
       out << " * \\param ZMATsig     : strains\n";
@@ -563,13 +568,13 @@ namespace mfront
 		 "unsupported behaviour type");
       throw(runtime_error(msg));
     } 
-    out << " * \\param ZMATmprops  : material properties\n";
-    out << " * \\param ZMATdata    : material data handler\n";
-    out << " * \\param ZMATT_pos   : position of the temperature\n";
-    out << " * \\param ZMATevs_pos : position of the external state varaibles\n";
-    out << " * \\param ZMATdt      : time step\n";
-    out << " */\n";
-    out << mb.getClassName() << "(";
+    out << " * \\param ZMATmprops  : material properties\n"
+	<< " * \\param ZMATdata    : material data handler\n"
+	<< " * \\param ZMATT_pos   : position of the temperature\n"
+	<< " * \\param ZMATevs_pos : position of the external state varaibles\n"
+	<< " * \\param ZMATdt      : time step\n"
+	<< " */\n"
+	<< mb.getClassName() << "(";
     if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
        (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
       out << "const ZSET::TENSOR2_FLUX& ZMATsig,\n";
@@ -646,9 +651,9 @@ namespace mfront
 		 "only small or finite strain behaviours are supported");
       throw(runtime_error(msg));
     }
-    out << "/*!\n";
-    out << " * \\brief constructor for the ZMAT interface\n";
-    out << " *\n";
+    out << "/*!\n"
+	<< " * \\brief constructor for the ZMAT interface\n"
+	<< " *\n";
     switch(mb.getBehaviourType()){
     case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
       out << " \\param ZMATdeto  : strain increment \n";
@@ -661,12 +666,12 @@ namespace mfront
 		 "unsupported behaviour type");
       throw(runtime_error(msg));
     }
-    out << " * \\param ZMATdata    : material data handler\n";
-    out << " * \\param ZMATT_pos   : position of the temperature\n";
-    out << " * \\param ZMATevs_pos : position of the external state varaibles\n";
-    out << " * \\param ZMATdt      : time step\n";
-    out << " */\n";
-    out << mb.getClassName() << "IntegrationData(";
+    out << " * \\param ZMATdata    : material data handler\n"
+	<< " * \\param ZMATT_pos   : position of the temperature\n"
+	<< " * \\param ZMATevs_pos : position of the external state varaibles\n"
+	<< " * \\param ZMATdt      : time step\n"
+	<< " */\n"
+	<< mb.getClassName() << "IntegrationData(";
     switch(mb.getBehaviourType()){
     case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
       out << "const real * const ZMATdeto,\n";
@@ -686,11 +691,11 @@ namespace mfront
     } else {
       out << "const ZSET::ARRAY<int>&,\n";
     }
-    out << "const double ZMATdt)\n";
-    out << ": dt(ZMATdt)\n"; 
-    out << "{\n";
-    out << "const ZSET::EXTERNAL_PARAMETER_VECTOR& ZMATextvars_t   = *(ZMATdata.param_set_ini());\n";
-    out << "const ZSET::EXTERNAL_PARAMETER_VECTOR& ZMATextvars_tdt = *(ZMATdata.param_set());\n";
+    out << "const double ZMATdt)\n"
+	<< ": dt(ZMATdt)\n"; 
+    out << "{\n"
+	<< "const ZSET::EXTERNAL_PARAMETER_VECTOR& ZMATextvars_t   = *(ZMATdata.param_set_ini());\n"
+	<< "const ZSET::EXTERNAL_PARAMETER_VECTOR& ZMATextvars_tdt = *(ZMATdata.param_set());\n";
     switch(mb.getBehaviourType()){
     case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
       out << "zmat::ZMATInterface::convert(this->deto,ZMATdeto);\n";
@@ -732,8 +737,8 @@ namespace mfront
 	}
       }
     }
-    out << "this->dT = ZMATextvars_tdt[ZMATT_pos]-ZMATextvars_t[ZMATT_pos];\n";
-    out << "}\n\n";
+    out << "this->dT = ZMATextvars_tdt[ZMATT_pos]-ZMATextvars_t[ZMATT_pos];\n"
+	<< "}\n\n";
   }
 
   void 
@@ -776,45 +781,45 @@ namespace mfront
     throw_if(nbh==0,"no suitable modelling hypothesis supported");
     std::ofstream out("include/MFront/ZMAT/"+headerFileName);
     throw_if(!out,"could not open header file '"+headerFileName+"'");
-    out << "/*!\n";
-    out << "* \\file   "  << headerFileName << '\n';
-    out << "* \\brief  This file declares the ZMAT interface for the " 
-	<< mb.getClassName() << " behaviour law\n";
-    out << "* \\author "  << fd.authorName << '\n';
-    out << "* \\date   "  << fd.date       << '\n';
-    out << "*/\n\n";
-    out << "#ifndef MFRONT_ZMAT_" << makeUpperCase(mb.getClassName()) << "_HXX\n";
-    out << "#define MFRONT_ZMAT_" << makeUpperCase(mb.getClassName()) << "_HXX\n\n";
-    out << "#include\"Behavior.h\"\n";
-    writeZMATUndefs(out);
-    out << '\n';
-    out << "Z_START_NAMESPACE;\n";
-    out << '\n';
     out << "/*!\n"
+	<< "* \\file   "  << headerFileName << '\n'
+	<< "* \\brief  This file declares the ZMAT interface for the " 
+	<< mb.getClassName() << " behaviour law\n"
+	<< "* \\author "  << fd.authorName << '\n'
+	<< "* \\date   "  << fd.date       << '\n'
+	<< "*/\n\n"
+	<< "#ifndef MFRONT_ZMAT_" << makeUpperCase(mb.getClassName()) << "_HXX\n"
+	<< "#define MFRONT_ZMAT_" << makeUpperCase(mb.getClassName()) << "_HXX\n\n"
+	<< "#include\"Behavior.h\"\n";
+    writeZMATUndefs(out);
+    out << '\n'
+	<< "Z_START_NAMESPACE;\n"
+	<< '\n'
+	<< "/*!\n"
 	<< "* ZMAT Interface to the " << mb.getClassName() << " behaviour"
-	<< "*/\n";
-    out << "struct ZMAT" << mb.getClassName() << '\n';
-    out << ": public BEHAVIOR\n";
-    out << "{\n";
-    out << "//! constructor;\n";
-    out << "ZMAT" << mb.getClassName() << "();\n";
-    out << "/*!\n";
-    out << " * \\brief integrate the beahviour over a time step\n";
-    out << " * \\param[in,out] file  : input file \n";
-    out << " * \\param[in]     dim   : dimension (used by the BEHAVIOUR class)\n";
-    out << " * \\param[in]     integ : pointer to the local integration\n";
-    out << " */\n";
-    out << "virtual void initialize(ASCII_FILE&,int,LOCAL_INTEGRATION*);\n";
-    out << "/*!\n";
-    out << " * \\brief integrate the beahviour over a time step\n";
-    out << " * \\param[in,out] mat        : material properties\n";
-    out << " * \\param[out]    delta_grad : increment of driving variables\n";
-    out << " * \\param[out]    tg_matrix  : tangent operator\n";
-    out << " * \\param[int]    flags      : integration option\n";
-    out << " * \\return NULL on success\n";
-    out << " */\n";
-    out << "INTEGRATION_RESULT*\n";
-    out << "integrate(MAT_DATA&,const VECTOR&,MATRIX*&,int);\n";
+	<< "*/\n"
+	<< "struct ZMAT" << mb.getClassName() << '\n'
+	<< ": public BEHAVIOR\n"
+	<< "{\n"
+	<< "//! constructor;\n"
+	<< "ZMAT" << mb.getClassName() << "();\n"
+	<< "/*!\n"
+	<< " * \\brief integrate the beahviour over a time step\n"
+	<< " * \\param[in,out] file  : input file \n"
+	<< " * \\param[in]     dim   : dimension (used by the BEHAVIOUR class)\n"
+	<< " * \\param[in]     integ : pointer to the local integration\n"
+	<< " */\n"
+	<< "virtual void initialize(ASCII_FILE&,int,LOCAL_INTEGRATION*);\n"
+	<< "/*!\n"
+	<< " * \\brief integrate the beahviour over a time step\n"
+	<< " * \\param[in,out] mat        : material properties\n"
+	<< " * \\param[out]    delta_grad : increment of driving variables\n"
+	<< " * \\param[out]    tg_matrix  : tangent operator\n"
+	<< " * \\param[int]    flags      : integration option\n"
+	<< " * \\return NULL on success\n"
+	<< " */\n"
+	<< "INTEGRATION_RESULT*\n"
+	<< "integrate(MAT_DATA&,const VECTOR&,MATRIX*&,int);\n";
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       out << "/*!\n";
       out << " * \\brief return the elasticity matrix\n";
@@ -823,11 +828,11 @@ namespace mfront
       out << "SMATRIX\n"
 	  << "get_elasticity_matrix(MAT_DATA&,double);\n";
     }
-    out << "//! destructor\n";
-    out << "virtual ~ZMAT" << mb.getClassName() << "();\n";
-    out << '\n';
-    out << "protected:\n";
-    out << '\n';
+    out << "//! destructor\n"
+	<< "virtual ~ZMAT" << mb.getClassName() << "();\n"
+	<< '\n'
+	<< "protected:\n"
+	<< '\n';
     if(!all_mp_names.empty()){
       for(const auto h : hypotheses){
 	if(mb.isModellingHypothesisSupported(h)){
@@ -865,8 +870,8 @@ namespace mfront
 	    <<"(MAT_DATA&,const VECTOR&,MATRIX*&,int);\n";
       }
     }
-    out << "//! stresses\n";
-    out << "TENSOR2_FLUX sig;\n";
+    out << "//! stresses\n"
+	<< "TENSOR2_FLUX sig;\n";
     switch(mb.getBehaviourType()){
     case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
       out << "//! strains\n";
@@ -890,8 +895,8 @@ namespace mfront
       out << "//! elasticity matrix\n";
       out << "AUTO_PTR<ELASTICITY> elasticity; \n";
     }
-    out << "//! material properties\n";
-    out << "ARRAY<COEFF> mprops; \n";
+    out << "//! material properties\n"
+	<< "ARRAY<COEFF> mprops; \n";
     const auto& svs = getAllStateVariables(mb);
     if(!svs.empty()){
       for(const auto & sv : svs){
@@ -953,10 +958,18 @@ namespace mfront
     out << '\n'
 	<< "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
 	<< "#include\"MFront/ZMAT/" << headerFileName << "\"\n"
-	<< '\n'
+	<< '\n';
+    writeExportDirectives(out);
+    const auto zcn = "ZMAT"+mb.getClassName();
+    writeEntryPointSymbol(out,zcn);
+    writeMaterialSymbol(out,zcn,mb.getMaterialName());
+    out << "MFRONT_SHAREDOBJ const char *\n"
+  	<< zcn << "_mfront_interface = \""
+  	<< this->getInterfaceName()	<< "\";\n\n";
+    out << '\n'
 	<< "Z_START_NAMESPACE;\n"
 	<< '\n'
-	<< "ZMAT" << mb.getClassName() << "::ZMAT" << mb.getClassName() << "()\n"
+	<< zcn << "::" << zcn << "()\n"
 	<< ": obp(tfel::material::None)\n"
 	<< "{\n"
 	<< "this->zbb_keep_ep = &this->local_ep_list;\n" 
@@ -990,20 +1003,20 @@ namespace mfront
        (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
       out << "this->tg_mat.resize(this->tsz(), this->tsz());\n";
     }
-    out << "// initialisation dispatch\n";
-    out << "if(this->tsz()==6){\n";
+    out << "// initialisation dispatch\n"
+	<< "if(this->tsz()==6){\n";
     this->writeBehaviourInitialisation(out,mb,ModellingHypothesis::TRIDIMENSIONAL);
     out << "} else if(this->tsz()==4){\n";
     this->writeBehaviourInitialisation(out,mb,ModellingHypothesis::GENERALISEDPLANESTRAIN);
     out << "} else if(this->tsz()==3){\n";
     this->writeBehaviourInitialisation(out,mb,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN);
-    out << "} else {\n";
-    out << "ERROR(\"Invalid tensor size\");\n";
-    out << "}\n";
-    out << "this->temperature_position = EXTERNAL_PARAM::rank_of_nodal_ip(\"temperature\");\n";
-    out << "if(this->temperature_position==-1){;\n";
-    out << "INPUT_ERROR(\"temperature is not defined\");\n";
-    out << "}\n";
+    out << "} else {\n"
+	<< "ERROR(\"Invalid tensor size\");\n"
+	<< "}\n"
+	<< "this->temperature_position = EXTERNAL_PARAM::rank_of_nodal_ip(\"temperature\");\n"
+	<< "if(this->temperature_position==-1){;\n"
+	<< "INPUT_ERROR(\"temperature is not defined\");\n"
+	<< "}\n";
     if(!all_mp_names.empty()){
       out << "// check that all material properties were initialised\n";
       out << "for(int pc=0;pc!=this->mprops.size();++pc){\n"
@@ -1012,8 +1025,8 @@ namespace mfront
 	  << "}\n"
 	  << "}\n";
     }
-    out << "ZSET::Verbose = keep_verbose;\n";
-    out << "} // end of ZMAT" << mb.getClassName() << "::initialize\n\n";
+    out << "ZSET::Verbose = keep_verbose;\n"
+	<< "} // end of ZMAT" << mb.getClassName() << "::initialize\n\n";
     if(!all_mp_names.empty()){
       for(const auto h : hypotheses){
 	if(mb.isModellingHypothesisSupported(h)){
@@ -1026,8 +1039,8 @@ namespace mfront
 	this->writeParametersInitialisation(out,mb,h);
       }
     }
-    out << "INTEGRATION_RESULT*\n";
-    out << "ZMAT" << mb.getClassName()
+    out << "INTEGRATION_RESULT*\n"
+	<< "ZMAT" << mb.getClassName()
 	<< "::integrate(MAT_DATA& mdat,\n"
 	<< "const VECTOR& delta_grad,\n"
 	<< "MATRIX*& tg_matrix,\n"
@@ -1044,8 +1057,8 @@ namespace mfront
 	<< "}\n"
 	<< "this->calc_local_coefs();\n"
 	<< "INTEGRATION_RESULT* r = NULL;\n"
-	<< "try{\n";
-    out << "if(this->tsz()==6){\n";
+	<< "try{\n"
+	<< "if(this->tsz()==6){\n";
     if(!mb.isModellingHypothesisSupported(ModellingHypothesis::TRIDIMENSIONAL)){
       out << "ERROR(\"Computations using the 'Tridimensional'\" \n"
 	  << "\"modelling hypothesis are not supported by the \"\n" 
@@ -1072,10 +1085,10 @@ namespace mfront
       out << "r=this->callMFrontBehaviour1D"
 	  << "(mdat,delta_grad,tg_matrix,flags);\n";
     }
-    out << "} else {\n";
-    out << "ERROR(\"Invalid tensor size\");\n";
-    out << "}\n";
-    out << "}\n"
+    out << "} else {\n"
+	<< "ERROR(\"Invalid tensor size\");\n"
+	<< "}\n"
+	<< "}\n"
 	<< "catch(std::exception& e){\n"
 	<< "static INTEGRATION_RESULT bad_result;\n"
 	<< "*(*ZSET::stored_thread_zbase_globals).ptr()->out_msg << e.what() << endl;\n"
@@ -1101,8 +1114,8 @@ namespace mfront
 	<< "EXTERNAL_PARAM::set_EP_list(ep_save);\n"
 	<< "ZSET::Verbose = keep_verbose;\n"
 	<< "ZSET::stored_thread_zbase_globals->ptr()->active_clock = keep_clock;\n"
-	<< "return NULL;\n";
-    out << "} // end of ZMAT" << mb.getClassName() << "::integrate\n\n";
+	<< "return NULL;\n"
+	<< "} // end of ZMAT" << mb.getClassName() << "::integrate\n\n";
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       out << "SMATRIX\n"
 	  << "ZMAT" << mb.getClassName() << "::get_elasticity_matrix(MAT_DATA& mdat,double){\n"
@@ -1116,11 +1129,11 @@ namespace mfront
 	this->writeCallMFrontBehaviour(out,mb,h);
       }
     }
-    out << '\n';
-    out << "ZMAT" << mb.getClassName() << "::~ZMAT" << mb.getClassName() << "(){\n";
-    out << "} // end of ZMAT" << mb.getClassName() << "::~ZMAT" << mb.getClassName() << "\n\n";
-    out << "BEHAVIOR_READER(ZMAT" << mb.getClassName() << "," << mb.getClassName() << ")\n\n";
-    out << "Z_END_NAMESPACE;\n";
+    out << '\n'
+	<< "ZMAT" << mb.getClassName() << "::~ZMAT" << mb.getClassName() << "(){\n"
+	<< "} // end of ZMAT" << mb.getClassName() << "::~ZMAT" << mb.getClassName() << "\n\n"
+	<< "BEHAVIOR_READER(ZMAT" << mb.getClassName() << "," << mb.getClassName() << ")\n\n"
+	<< "Z_END_NAMESPACE;\n";
     out.close();
     out.open("zmat/"+name+".inp");
     if(!out){return;}
@@ -1326,10 +1339,10 @@ namespace mfront
     const auto pnames = d.getExternalNames(params);
     VariableDescriptionContainer::const_iterator p;
     vector<string>::const_iterator pn;
-    out << "void\n";
-    out << "ZMAT" << mb.getClassName()
-	<< "::initializeParameters" << getSpaceDimensionSuffix(h) << "(ASCII_FILE& file){\n";
-    out << "for(;;){\n"
+    out << "void\n"
+	<< "ZMAT" << mb.getClassName()
+	<< "::initializeParameters" << getSpaceDimensionSuffix(h) << "(ASCII_FILE& file){\n"
+	<< "for(;;){\n"
 	<< "STRING str=file.getSTRING();\n"
 	<< "if(str[0]=='*'){\n"
 	<< "file.back();\n"
@@ -1375,8 +1388,8 @@ namespace mfront
       (mb.isModellingHypothesisSupported(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ? 1 : 0);
     const unsigned short dime = getSpaceDimension(h);
     const int mps_size  = mps.getTypeSize().getValueForDimension(dime);
-    out << "void\n";
-    out << "ZMAT" << mb.getClassName()
+    out << "void\n"
+	<< "ZMAT" << mb.getClassName()
 	<< "::initializeMaterialProperties" << getSpaceDimensionSuffix(h) << "(ASCII_FILE& file){\n"
 	<< "using std::find;\n";
     if(nbh!=1){
@@ -1410,12 +1423,12 @@ namespace mfront
       out << "INPUT_ERROR(\"No material property named '\"+str+\"'\");\n";
       out << "}\n";
     }
-    out << "if(this->mprops[pmat-mp_names" << getSpaceDimensionSuffix(h) << "].ok()){\n";
-    out << "INPUT_ERROR(\"material property '\"+str+\"' already defined\");\n";
-    out << "}\n";
-    out << "this->mprops[pmat-mp_names" << getSpaceDimensionSuffix(h) << "].read(str,file,this);\n";
-    out << "}\n";
-    out << "} // end of ZMAT" << mb.getClassName() 
+    out << "if(this->mprops[pmat-mp_names" << getSpaceDimensionSuffix(h) << "].ok()){\n"
+	<< "INPUT_ERROR(\"material property '\"+str+\"' already defined\");\n"
+	<< "}\n"
+	<< "this->mprops[pmat-mp_names" << getSpaceDimensionSuffix(h) << "].read(str,file,this);\n"
+	<< "}\n"
+	<< "} // end of ZMAT" << mb.getClassName() 
 	<< "::initializeMaterialProperties" << getSpaceDimensionSuffix(h) << "\n\n";
   }
 
@@ -1425,8 +1438,8 @@ namespace mfront
 					  const ZMATInterface::Hypothesis h) const
   {
     using namespace std;
-    out << "INTEGRATION_RESULT*\n";
-    out << "ZMAT" << mb.getClassName()
+    out << "INTEGRATION_RESULT*\n"
+	<< "ZMAT" << mb.getClassName()
 	<< "::callMFrontBehaviour" << getSpaceDimensionSuffix(h) << "(MAT_DATA& mdat,\n"
 	<< "const VECTOR& delta_grad,\n"
 	<< "MATRIX*& tg_matrix,\n"
@@ -1518,8 +1531,8 @@ namespace mfront
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       out << "zmat::ZMATInterface::convert(b.getStiffnessTensor(),this->get_elasticity_matrix(mdat,1.));\n";
     }
-    out << "b.initialize();\n";
-    out << "if(b.integrate(smflag,smtype)!=" << mb.getClassName() << "::SUCCESS){\n"
+    out << "b.initialize();\n"
+	<< "if(b.integrate(smflag,smtype)!=" << mb.getClassName() << "::SUCCESS){\n"
 	<< "static INTEGRATION_RESULT bad_result;\n"
 	<< "bad_result.set_error(INTEGRATION_RESULT::UNDEFINED_BEHAVIOR);\n"
 	<< "return &bad_result;\n"

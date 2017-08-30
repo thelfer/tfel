@@ -483,20 +483,17 @@ namespace mtest
 int main(const int argc,
 	 const char * const * const argv)
 {
-  using namespace std;
-  using namespace mtest;
   int r = EXIT_FAILURE;
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if not defined(__GLIBCXX__)
   try{
-#endif /* __CYGWIN__ */
-    MTestMain m(argc,argv);
+#endif /* not defined(__GLIBCXX__) */
+    mtest::MTestMain m(argc,argv);
     r = m.execute();
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-  }
-  catch(exception& e){
-    cerr << e.what() << endl;
+#if not defined(__GLIBCXX__)
+  } catch(std::exception& e){
+    std::cerr << e.what() << std::endl;
     return r;
   }
-#endif /* __CYGWIN__ */
+#endif /* not defined(__GLIBCXX__) */
   return r;
 } // end of main

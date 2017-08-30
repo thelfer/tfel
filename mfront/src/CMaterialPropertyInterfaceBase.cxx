@@ -224,6 +224,12 @@ namespace mfront
     mfront::writeEntryPointSymbol(os,this->getFunctionName(mpd));
   } // end of CMaterialPropertyInterfaceBase::writeEntryPointSymbol
 
+  void CMaterialPropertyInterfaceBase::writeMaterialSymbol(std::ostream& os,
+							   const MaterialPropertyDescription& mpd) const
+  {
+    mfront::writeMaterialSymbol(os,this->getFunctionName(mpd),mpd.material);
+  } // end of CMaterialPropertyInterfaceBase::writeMaterialSymbol
+  
   void CMaterialPropertyInterfaceBase::writeMaterialKnowledgeTypeSymbol(std::ostream& os,
 									const MaterialPropertyDescription& mpd) const
   {
@@ -273,6 +279,8 @@ namespace mfront
     }
     this->writeSrcPreprocessorDirectives(os,mpd);
     this->writeEntryPointSymbol(os,mpd);
+    this->writeInterfaceSymbol(os,mpd);
+    this->writeMaterialSymbol(os,mpd);
     this->writeMaterialKnowledgeTypeSymbol(os,mpd);
     this->writeBeginSrcNamespace(os);
     os << "double " << this->getFunctionName(mpd) << "(";

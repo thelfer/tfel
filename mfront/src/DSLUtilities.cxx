@@ -36,7 +36,7 @@ namespace mfront
 			     const std::string& n)
   {
     writeEntryPointSymbol(out,n,n);
-  } // end of writeMFrontEntryPointSymbols
+  } // end of writeEntryPointSymbols
   
   void writeEntryPointSymbol(std::ostream& out,
 			     const std::string& n,
@@ -44,7 +44,25 @@ namespace mfront
   {
     out << "MFRONT_SHAREDOBJ const char* \n"
 	<< n << "_mfront_ept = \"" << n2 << "\";\n\n";
-  } // end of writeMFrontEntryPointSymbols
+  } // end of writeEntryPointSymbols
+
+  void writeInterfaceSymbol(std::ostream& out,
+			     const std::string& n,
+			     const std::string& i)
+  {
+    out << "MFRONT_SHAREDOBJ const char *\n" << n
+	<< "_mfront_interface = \"" << i << "\";\n\n";
+  } // end of writeInterfaceSymbol
+  
+  void writeMaterialSymbol(std::ostream& out,
+			   const std::string& n,
+			   const std::string& m)
+  {
+    if(!m.empty()){
+      out << "MFRONT_SHAREDOBJ const char* " << n
+	  << "_mfront_material = \"" << m << "\";\n";
+    }
+  } // end of writeMaterialSymbol
   
   void writeMaterialKnowledgeTypeSymbol(std::ostream& out,
 					const std::string& n,

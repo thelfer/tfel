@@ -101,7 +101,7 @@ namespace numodis
     /*! \return index of the Burgers vector                      */
     //=============================================================
     void getIndex(std::vector<int>& b) const
-    { b=_index; };
+    { b=_index; }
 
     //=============================================================
     // IBurgers::getIndex

@@ -122,17 +122,14 @@ namespace tfel
     }
 #endif /* (defined _WIN32) || (defined _WIN64) */
 
-    char
-    dirSeparator()
+    char dirSeparator()
     {
       return '/';
-    } // end of systemCall::dirSeparator
+    } // end of dirSeparator
 
-    const std::string&
-    dirStringSeparator()
+    const std::string& dirStringSeparator()
     {
-      using namespace std;
-      static string s(1u,dirSeparator());
+      static std::string s(1u,dirSeparator());
       return s;
     } // end of systemCall::dirStringSeparator
 

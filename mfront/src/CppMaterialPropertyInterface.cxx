@@ -227,8 +227,20 @@ namespace mfront
       	<< "#include<vector>\n"
       	<< "#include<string>\n"
 	<< "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
-	<< "#include\"" << name << "-cxx.hxx\"\n\n"
-	<< "namespace mfront\n{\n\n"
+	<< "#include\"" << name << "-cxx.hxx\"\n\n";
+    writeExportDirectives(src);
+    src << "#ifdef __cplusplus\n"
+	    << "extern \"C\"{\n"
+	    << "#endif /* __cplusplus */\n\n";
+    // mfront metadata
+    writeEntryPointSymbol(src,name);
+    writeInterfaceSymbol(src,name,"C++");
+    writeMaterialSymbol(src,name,mpd.material);
+    writeMaterialKnowledgeTypeSymbol(src,name,MATERIALPROPERTY);
+    src << "#ifdef __cplusplus\n"
+	<< "} // end of extern \"C\"\n"
+	<< "#endif /* __cplusplus */\n\n";
+    src	<< "namespace mfront\n{\n\n"
 	<< name << "::" << name << "() noexcept\n";
     if(!mpd.parameters.empty()){
       src << ": ";

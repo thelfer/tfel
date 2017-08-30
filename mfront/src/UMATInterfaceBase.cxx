@@ -35,12 +35,7 @@ namespace mfront
 								const unsigned short a,
 								const SupportedTypes::TypeSize o,
 								const bool d)
-    : type(t),
-      name(n),
-      var_name(v),
-      arraySize(a),
-      offset(o),
-      dummy(d)
+    : type(t),name(n),var_name(v),arraySize(a),offset(o),dummy(d)
   {} // end olf UMATMaterialProperty::UMATMaterialProperty
   
   UMATInterfaceBase::UMATMaterialProperty::~UMATMaterialProperty() = default;
@@ -240,10 +235,10 @@ namespace mfront
 
   void
   UMATInterfaceBase::writeVariableInitializersInBehaviourDataConstructorI(std::ostream& f,bool& first,
-  								       const VariableDescriptionContainer& v,
-  								       const std::string& src,
-  								       const std::string& prefix,
-  								       const std::string& suffix) const
+									  const VariableDescriptionContainer& v,
+									  const std::string& src,
+									  const std::string& prefix,
+									  const std::string& suffix) const
   {
     this->writeVariableInitializersInBehaviourDataConstructorI(f,first,v.begin(),v.end(),
   							       src,prefix,suffix);
@@ -251,11 +246,11 @@ namespace mfront
   
   void
   UMATInterfaceBase::writeVariableInitializersInBehaviourDataConstructorI(std::ostream& f,bool& first,
-  								       const VariableDescriptionContainer::const_iterator& b,
-  								       const VariableDescriptionContainer::const_iterator& e,
-  								       const std::string& src,
-  								       const std::string& prefix,
-  								       const std::string& suffix) const
+									  const VariableDescriptionContainer::const_iterator& b,
+									  const VariableDescriptionContainer::const_iterator& e,
+									  const std::string& src,
+									  const std::string& prefix,
+									  const std::string& suffix) const
   {
     SupportedTypes::TypeSize currentOffset;
     for(auto p=b;p!=e;++p){
@@ -1224,24 +1219,22 @@ namespace mfront
 								const std::string& name,
 								const BehaviourDescription& mb) const
   {
-    using namespace std;
-    set<Hypothesis> h  = mb.getDistinctModellingHypotheses();
-    set<Hypothesis> h2 = this->getModellingHypothesesToBeTreated(mb);
-    set<Hypothesis>::const_iterator p;
-    for(p=h.begin();p!=h.end();++p){
-      if((*p==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
-	 (h2.find(*p)!=h2.end())){
-	const auto& d = mb.getBehaviourData(*p);
+    const auto mh  = mb.getDistinctModellingHypotheses();
+    const auto mh2 = this->getModellingHypothesesToBeTreated(mb);
+    for(const auto& h : mh){
+      if((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
+	 (mh2.find(h)!=mh2.end())){
+	const auto& d = mb.getBehaviourData(h);
 	const auto& pc = d.getParameters();
 	bool rp,ip,up;
 	this->checkParametersType(rp,ip,up,pc);
-	string fctName = this->getFunctionName(name);
-	string suffix;
-	if(*p!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	  suffix  += ModellingHypothesis::toString(*p);
+	auto fctName = this->getFunctionName(name);
+	std::string suffix;
+	if(h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	  suffix  += ModellingHypothesis::toString(h);
 	  fctName += "_"+suffix;
 	}
-	string cname = mb.getClassName() + suffix + "ParametersInitializer";
+	const auto cname = mb.getClassName() + suffix + "ParametersInitializer";
 	if(rp){
 	  out << "MFRONT_SHAREDOBJ int\n"
 	      << fctName << "_setParameter(const char *const key,const double value){\n"
@@ -1373,20 +1366,20 @@ namespace mfront
       }
       this->writeMTestFileGeneratorSetModellingHypothesis(out);
       this->writeMTestFileGeneratorSetRotationMatrix(out,mb);
-      out << "const unsigned short TVectorSize = mg.getTVectorSize();\n";
-      out << "const unsigned short StensorSize = mg.getStensorSize();\n";
-      out << "const unsigned short TensorSize  = mg.getTensorSize();\n";
-      out << "mg.setHandleThermalExpansion(false);\n";
-      out << "mg.addTime(0.);\n";
-      out << "mg.addTime(*DTIME>0 ? *DTIME : 1.e-50);\n";
+      out << "const unsigned short TVectorSize = mg.getTVectorSize();\n"
+	  << "const unsigned short StensorSize = mg.getStensorSize();\n"
+	  << "const unsigned short TensorSize  = mg.getTensorSize();\n"
+	  << "mg.setHandleThermalExpansion(false);\n"
+	  << "mg.addTime(0.);\n"
+	  << "mg.addTime(*DTIME>0 ? *DTIME : 1.e-50);\n";
       if(type==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-    	out << "mg.setStrainTensor(STRAN);\n";
-    	out << "mg.setStrainTensorIncrement(DSTRAN);\n";
-    	out << "mg.setStressTensor(&mg_STRESS[0]);\n";
+    	out << "mg.setStrainTensor(STRAN);\n"
+	    << "mg.setStrainTensorIncrement(DSTRAN);\n"
+	    << "mg.setStressTensor(&mg_STRESS[0]);\n";
       } else if(type==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-    	out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(F0);\n";
-    	out << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);\n";
-    	out << "mg.setStressTensor(&mg_STRESS[0]);\n";
+    	out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(F0);\n"
+	    << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);\n"
+	    << "mg.setStressTensor(&mg_STRESS[0]);\n";
       } else {
     	string msg("UMATInterfaceBase::generateMTestFile2 : ");
     	msg += "only small strain or finite strain behaviours are supported";
@@ -1536,10 +1529,10 @@ namespace mfront
 	  out << "}\n";
 	}
       }
-      out << "mg.generate(\""+name+"\");\n";
-      out << "static_cast<void>(TVectorSize); // remove gcc warning\n";
-      out << "static_cast<void>(StensorSize); // remove gcc warning\n";
-      out << "static_cast<void>(TensorSize);  // remove gcc warning\n";
+      out << "mg.generate(\""+name+"\");\n"
+	  << "static_cast<void>(TVectorSize); // remove gcc warning\n"
+	  << "static_cast<void>(StensorSize); // remove gcc warning\n"
+	  << "static_cast<void>(TensorSize);  // remove gcc warning\n";
     }
   }
 
@@ -1561,6 +1554,7 @@ namespace mfront
 						       const FileDescription & fd) const
   {
     this->writeUMATxxEntryPointSymbol(out,name);
+    this->writeUMATxxMaterialSymbol(out,name,mb);
     this->writeUMATxxMaterialKnowledgeTypeSymbol(out,name);
     this->writeUMATxxInterfaceNameSymbols(out,name,mb,fd);
     this->writeUMATxxSourceFileSymbols(out,name,mb,fd);
@@ -1575,6 +1569,12 @@ namespace mfront
   void UMATInterfaceBase::writeUMATxxEntryPointSymbol(std::ostream& out,
 						      const std::string& n) const{
     writeEntryPointSymbol(out,this->getFunctionName(n));
+  } // end of UMATInterfaceBase::writeUMATxxEntryPointSymbol
+
+  void UMATInterfaceBase::writeUMATxxMaterialSymbol(std::ostream& out,
+						    const std::string& n,
+						    const BehaviourDescription& mb) const{
+    writeMaterialSymbol(out,this->getFunctionName(n),mb.getMaterialName());
   } // end of UMATInterfaceBase::writeUMATxxEntryPointSymbol
   
   void UMATInterfaceBase::writeUMATxxMaterialKnowledgeTypeSymbol(std::ostream& out,
@@ -1655,13 +1655,13 @@ namespace mfront
     auto ih = this->getModellingHypothesesToBeTreated(mb);
     if(ih.empty()){
       out << "MFRONT_SHAREDOBJ unsigned short "  << this->getFunctionName(name)
-	  << "_nModellingHypotheses = 0u;\n\n";
-      out << "MFRONT_SHAREDOBJ const char * const * "  << this->getFunctionName(name)
+	  << "_nModellingHypotheses = 0u;\n\n"
+	  << "MFRONT_SHAREDOBJ const char * const * "  << this->getFunctionName(name)
 	  << "_ModellingHypotheses = 0;\n\n";
     } else {
       out << "MFRONT_SHAREDOBJ unsigned short "  << this->getFunctionName(name)
-	  << "_nModellingHypotheses = " << ih.size() << "u;\n\n";
-      out << "MFRONT_SHAREDOBJ const char * \n"
+	  << "_nModellingHypotheses = " << ih.size() << "u;\n\n"
+	  << "MFRONT_SHAREDOBJ const char * \n"
 	  << this->getFunctionName(name) << "_ModellingHypotheses[" << ih.size() << "u] = {";
       for(auto ph=ih.begin();ph!=ih.end();){
 	out << "\"" << ModellingHypothesis::toString(*ph) << "\"";
@@ -1686,8 +1686,8 @@ namespace mfront
     const auto mprops = this->buildMaterialPropertiesList(mb,h);
     if(mprops.first.empty()){
       out << "MFRONT_SHAREDOBJ unsigned short "  << this->getSymbolName(name,h)
-	  << "_nMaterialProperties = 0u;\n\n";
-      out << "MFRONT_SHAREDOBJ const char * const *"  << this->getSymbolName(name,h)
+	  << "_nMaterialProperties = 0u;\n\n"
+	  << "MFRONT_SHAREDOBJ const char * const *"  << this->getSymbolName(name,h)
 	  << "_MaterialProperties = nullptr;\n\n";
     } else {
       const auto& last = mprops.first.back();
@@ -2076,9 +2076,7 @@ namespace mfront
 						     const BehaviourDescription&,
 						     const mfront::FileDescription&) const
   {
-    out << "MFRONT_SHAREDOBJ const char *\n"
-  	<< this->getFunctionName(name) << "_interface = \""
-  	<< this->getInterfaceName()	<< "\";\n\n";
+    writeInterfaceSymbol(out,this->getFunctionName(name),this->getInterfaceName());
   }
   
   std::map<UMATInterfaceBase::Hypothesis,std::string>

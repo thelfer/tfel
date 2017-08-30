@@ -86,6 +86,11 @@ namespace mfront
     return material+"_"+className+"-fortran";
   } // end of FortranMaterialPropertyInterface::getSrcFileName
 
+  void FortranMaterialPropertyInterface::writeInterfaceSymbol(std::ostream& out,
+							      const MaterialPropertyDescription& mpd) const{
+    mfront::writeInterfaceSymbol(out,this->getFunctionName(mpd),"Fortran");
+  } // end of FortranMaterialPropertyInterface
+  
   void
   FortranMaterialPropertyInterface::writeInterfaceSpecificVariables(std::ostream& os,
 								    const VariableDescriptionContainer& inputs) const

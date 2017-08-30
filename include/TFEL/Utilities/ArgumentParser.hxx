@@ -80,9 +80,6 @@ namespace tfel
        * \brief register a new callback
        * \param key         : command line argument name
        * \param f           : callback
-       * \param description : description of the command line argument
-       *                      (used for the --help) options
-       * \param b           : This command line argument can have an option
        */
       virtual void registerCallBack(const std::string&,
 				    const CallBack&);
@@ -91,9 +88,6 @@ namespace tfel
        * \param key         : command line argument name
        * \param aliasName   : command line argument alias
        * \param f           : callback
-       * \param description : description of the command line argument
-       *                      (used for the --help) options
-       * \param b           : This command line argument can have an option
        */
       virtual void registerCallBack(const std::string&,
 				    const std::string&,

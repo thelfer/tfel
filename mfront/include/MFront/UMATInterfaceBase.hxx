@@ -335,8 +335,6 @@ namespace mfront{
     std::pair<bool,SupportedTypes::TypeSize>
     checkIfAxialStrainIsDefinedAndGetItsOffset(const BehaviourDescription&) const;
 
-    virtual std::string
-    getInterfaceName() const = 0;
     /*!
      * \return the name of the generated library
      * \param[in] mb : behaviour description
@@ -527,6 +525,16 @@ namespace mfront{
      */
     virtual void writeUMATxxEntryPointSymbol(std::ostream&,
 					     const std::string&) const;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] name : name of the behaviour as defined by interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
+     * \param[in] mb   : behaviour description
+     */
+    virtual void writeUMATxxMaterialSymbol(std::ostream&,
+					   const std::string&,
+					   const BehaviourDescription&) const;
     /*!
      * \param[in] out: output file
      * \param[in] n:   name of the entry point

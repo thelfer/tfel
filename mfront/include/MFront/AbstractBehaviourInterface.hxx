@@ -48,6 +48,8 @@ namespace mfront{
     using CxxTokenizer = tfel::utilities::CxxTokenizer;
     //! a simple alias
     using tokens_iterator = CxxTokenizer::TokensContainer::const_iterator;
+    //! \return the name of the interface
+    virtual std::string getInterfaceName() const = 0;
     /*!
      * \brief treat a keyword
      * \param[in,out] bd: behaviour description

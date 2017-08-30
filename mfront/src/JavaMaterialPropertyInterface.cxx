@@ -294,9 +294,16 @@ namespace mfront
     if(!mpd.includes.empty()){
       srcFile << mpd.includes << "\n\n";
     }
+    writeExportDirectives(srcFile);
     srcFile << "#ifdef __cplusplus\n";
     srcFile << "extern \"C\"{\n";
     srcFile << "#endif /* __cplusplus */\n\n";
+    // mfront metadata
+    writeEntryPointSymbol(srcFile,name);
+    writeInterfaceSymbol(srcFile,name,"Java");
+    writeMaterialSymbol(srcFile,name,mpd.material);
+    writeMaterialKnowledgeTypeSymbol(srcFile,name,MATERIALPROPERTY);
+    // java
     srcFile << "JNIEXPORT jdouble JNICALL\n";
     if(this->package.empty()){
       srcFile << "Java_" << replace_all(getJavaClassName(mpd),"_","_1");
