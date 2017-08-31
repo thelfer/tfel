@@ -63,15 +63,11 @@ namespace mfront{
   }
 
   static std::string getCMakeDefaultGenerator(){
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-
-#else
 #ifdef TFEL_CMAKE_GENERATOR
     return TFEL_CMAKE_GENERATOR;
 #else  /* TFEL_CMAKE_GENERATOR */
-      return "Unix Makefiles";
+      return "\"Unix Makefiles\"";
 #endif /* TFEL_CMAKE_GENERATOR */
-#endif
   }
   
   void generateCMakeListsFile(const TargetsDescription& t,
@@ -285,14 +281,23 @@ namespace mfront{
     // check for multi-configuration generator
     const char* cfg1 = nullptr;
     const char* cfg2 = nullptr;
-    if((starts_with(g,"Visual Studio"))||
+    if((starts_with(g,"\"Visual Studio"))||
        (starts_with(g,"XCode"))){
       cfg1 = "--config";
       cfg2 = "Release";
     }
-    const char *const argv[]  = {cmake,"-G",g.c_str(),".",silent,nullptr};
-    const char *const argv2[] = {cmake,"--build",".","--target",t.c_str(),
+	const char* tg1 = nullptr;
+	const char* tg2 = nullptr;
+	if (t != "all") {
+		tg1 = "--target";
+		tg2 = t.c_str();
+	}
+    const char * argv[]  = {cmake,"-G",g.c_str(),".",silent,nullptr};
+    const char * argv2[] = {cmake,"--build",".",tg1,tg2,
 				 cfg1,cfg2,silent,nullptr};
+	std::remove_if(argv2, argv2 + 9, [](const char* ptr) {
+		return ptr == nullptr;
+	});
     auto error = [&argv,&t](const std::string& e,
 			    const char* const* args){
       auto msg = "callCmake: can't build target '"+t+"'\n";
