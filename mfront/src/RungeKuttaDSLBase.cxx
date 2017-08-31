@@ -944,7 +944,7 @@ namespace mfront{
        << "time t      = time(0);\n"
        << "time dt_    = this->dt;\n"
        << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();\n"
-       << "Type error;\n"
+       << "auto error = Type{};\n"
        << "bool converged = false;\n";
     if(getDebugMode()){
       os << "cout << endl << \"" << this->mb.getClassName()
@@ -1832,7 +1832,7 @@ namespace mfront{
        << "time t   = time(0);\n"
        << "time dt_ = this->dt;\n"
        << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();\n"
-       << "Type error;\n"
+       << "auto error = Type{};\n"
        << "bool converged = false;\n";
     if(getDebugMode()){
       os << "cout << endl << \"" << this->mb.getClassName()

@@ -117,8 +117,8 @@ namespace mfront{
     out << "tmatrix<" << n2 << "," << n2 << ",real> jacobian2;\n"
 	<< "tvector<" << n2 << ",real> fzeros2;\n"
 	<< "tvector<" << n2 << ",real> Dzeros;\n"
-	<< "real broyden_inv;\n"
-	<< "real error;\n"
+	<< "auto broyden_inv = real{};\n"
+	<< "auto error = real{};\n"
 	<< "bool converged=false;\n"
 	<< "this->iter=0;\n";
     if(getDebugMode()){

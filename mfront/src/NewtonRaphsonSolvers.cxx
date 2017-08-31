@@ -126,7 +126,7 @@ namespace mfront{
        (n2.getValueForDimension(1u)>3)){
       out << "TinyPermutation<" << n2 << "> permutation_vector;\n";
     }
-    out << "real error;\n"
+    out << "auto error = real{};\n"
 	<< "bool converged=false;\n"
 	<< "this->iter=0;\n";
     if(getDebugMode()){

@@ -113,7 +113,7 @@ namespace mfront{
 	<< "tvector<" << n2 << ",real> Dzeros;\n"
 	<< "tvector<" << n2 << ",real> Dfzeros;\n"
 	<< "real broyden_inv;\n"
-	<< "real error;\n"
+	<< "auto error = real{};\n"
 	<< "bool converged=false;\n"
 	<< "this->iter=0;\n";
     if(getDebugMode()){

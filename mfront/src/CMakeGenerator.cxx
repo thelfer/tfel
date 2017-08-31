@@ -62,12 +62,16 @@ namespace mfront{
 #endif
   }
 
-  static const char* getCMakeDefaultGenerator(){
+  static std::string getCMakeDefaultGenerator(){
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+
+#else
 #ifdef TFEL_CMAKE_GENERATOR
     return TFEL_CMAKE_GENERATOR;
 #else  /* TFEL_CMAKE_GENERATOR */
       return "Unix Makefiles";
 #endif /* TFEL_CMAKE_GENERATOR */
+#endif
   }
   
   void generateCMakeListsFile(const TargetsDescription& t,
@@ -264,13 +268,31 @@ namespace mfront{
   
   void callCMake(const std::string& t,const std::string& d){
     using namespace tfel::system;
+    using tfel::utilities::starts_with;
     const char * cmake = getCMakeCommand();
     //    const char * silent = getDebugMode() ? nullptr : "-s";
     const char * silent = nullptr;
-    const char *const argv[]  = {cmake,"-G",getCMakeDefaultGenerator(),
-				 ".",silent,nullptr};
+    const auto g = []{
+      const auto dg = getCMakeDefaultGenerator();
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+      // spawn function do not like spaces in arguments
+      if(dg.find(' ')!=std::string::npos){
+	return '"'+dg+'"';
+      }
+#endif
+      return dg;
+    }();
+    // check for multi-configuration generator
+    const char* cfg1 = nullptr;
+    const char* cfg2 = nullptr;
+    if((starts_with(g,"Visual Studio"))||
+       (starts_with(g,"XCode"))){
+      cfg1 = "--config";
+      cfg2 = "Release";
+    }
+    const char *const argv[]  = {cmake,"-G",g.c_str(),".",silent,nullptr};
     const char *const argv2[] = {cmake,"--build",".","--target",t.c_str(),
-				 silent,nullptr};
+				 cfg1,cfg2,silent,nullptr};
     auto error = [&argv,&t](const std::string& e,
 			    const char* const* args){
       auto msg = "callCmake: can't build target '"+t+"'\n";

@@ -120,7 +120,7 @@ namespace mfront{
     const auto n2 = d.getIntegrationVariables().getTypeSize();
     out << "// dumping parameter\n";
     out << "real levmar_mu = this->levmar_mu0;\n";
-    out << "real error;\n";
+    out << "auto error = real{};\n";
     out << "bool converged=false;\n";
     out << "this->iter=0;\n";
     if(getDebugMode()){
