@@ -19,7 +19,6 @@
 #include<vector>
 #include<string>
 
-
 #include"TFEL/Config/TFELConfig.hxx"
 
 namespace tfel
@@ -105,4 +104,3 @@ namespace tfel
 } // end of namespace tfel
 
 #endif /* LIB_TFEL_SYSTEM_RECURSIVEFIND_HXX */
-

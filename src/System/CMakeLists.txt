@@ -3,6 +3,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include"
 link_directories("${PROJECT_BINARY_DIR}/src/Exception")
 
 set(TFELSystem_SOURCES
+  RecursiveFind.cxx
   LibraryInformation.cxx
   ExternalLibraryManager.cxx
   ExternalBehaviourDescription.cxx
@@ -18,32 +19,31 @@ endif((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
 
 if(UNIX)
   set(TFELSystem_SOURCES
-      RecursiveFind.cxx
-      ProcessManager-c.c
-      ProcessManager.cxx
-      ChildProcess.cxx
-      SignalHandler.cxx
-      SignalManager.cxx
-      basic_rstream.cxx
-      basic_wstream.cxx
-      rfstream.cxx
-      wfstream.cxx
-      BinaryRead.cxx
-      BinaryWrite.cxx
-      ${TFELSystem_SOURCES})
+    ProcessManager-c.c
+    ProcessManager.cxx
+    ChildProcess.cxx
+    SignalHandler.cxx
+    SignalManager.cxx
+    basic_rstream.cxx
+    basic_wstream.cxx
+    rfstream.cxx
+    wfstream.cxx
+    BinaryRead.cxx
+    BinaryWrite.cxx
+    ${TFELSystem_SOURCES})
   if(CYGWIN)
     set(TFELSystem_SOURCES
-        getFunction-win.cxx
-        ${TFELSystem_SOURCES})
+      getFunction-win.cxx
+      ${TFELSystem_SOURCES})
   else(CYGWIN)
     set(TFELSystem_SOURCES
-        getFunction.c
-        ${TFELSystem_SOURCES})
+      getFunction.c
+      ${TFELSystem_SOURCES})
   endif(CYGWIN)    
 else(UNIX)
   set(TFELSystem_SOURCES
-      getFunction-win.cxx
-      ${TFELSystem_SOURCES})
+    getFunction-win.cxx
+    ${TFELSystem_SOURCES})
 endif(UNIX)
 
 tfel_library(TFELSystem ${TFELSystem_SOURCES})

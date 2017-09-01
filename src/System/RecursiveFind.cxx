@@ -13,14 +13,19 @@
 
 #include<stdexcept>
 #include<cstring>
+#include<memory>
 #include<cerrno>
 
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+#include <windows.h>
+#include <conio.h>
+#else /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 #include<unistd.h>
 #include<dirent.h>
 #include<sys/stat.h>
 #include<sys/types.h>
 #include<sys/param.h>
-#include<regex.h>
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 
 #include"TFEL/System/System.hxx"
 #include"TFEL/System/RecursiveFind.hxx"
@@ -72,52 +77,81 @@ namespace tfel
 		       const unsigned short depth,
 		       const unsigned short mdepth)
     {
-      using namespace tfel::system;
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       auto throw_if = [](const bool c,const std::string& m){
 	if(c){throw(std::runtime_error("recursiveFind: "+m));}
       };
-      DIR* dir;
-      struct dirent* p;
-      struct stat buf;
       if(depth>mdepth){
 	throw_if(b,"maximal directory depth reached");
 	return;
       }
-      dir = opendir(name.c_str());
-      if(dir==nullptr){
+      WIN32_FIND_DATA fh; // File information
+      auto f = ::FindFirstFile((name + "\\*.*").c_str(), &fh);
+      if(f==INVALID_HANDLE_VALUE){
+	if(b){
+	  throw(SystemError("tfel::system::recursiveFind: "
+			    "can't open directory '"+name+"'"));
+	}
+	return;
+      }
+      try{
+	do{
+	  if(fh.cFileName[0]=='.'){
+	    continue;
+	  }
+	  if(fh.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY){
+	    recursiveFind(r,re,name+"\\"+fh.cFileName,b,depth+1,mdepth);
+	  } else {
+	    if(std::regex_match(fh.cFileName,re)){
+	      r[name].emplace_back(fh.cFileName);
+	    }
+	  }
+	} while(::FindNextFile(f,&fh) == TRUE);
+	// Close handle
+      } catch(...){
+	::FindClose(f);
+	throw;
+      }
+      ::FindClose(f);
+#else /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+      using DIRHandler = std::unique_ptr<DIR,int(*)(DIR*)>;
+      DIRHandler dir(::opendir(name.c_str()),&::closedir);
+      if(depth>mdepth){
+	throw_if(b,"maximal directory depth reached");
+	return;
+      }
+      if(!dir){
 	if(b){
 	  systemCall::throwSystemError("can't open directory '"+name+"'",errno);
 	}
 	return;
       }
-      try{
-	while((p=readdir(dir))!=nullptr){
-	  const auto file = name+dirSeparator()+p->d_name;
-	  if(stat(file.c_str(),&buf)==0){
-	    if(S_ISREG(buf.st_mode)){
-	      if(std::regex_match(p->d_name,re)){
-		r[name].emplace_back(p->d_name);
-	      }
-	    } else if(S_ISDIR(buf.st_mode)){
-	      if((strcmp(p->d_name,".") !=0)&&
-	       (strcmp(p->d_name,"..")!=0)){
-		std::map<std::string,std::vector<std::string> > r2;
-		recursiveFind(r2,re,name+'/'+p->d_name,
-			      depth+1,mdepth);
-		r.insert(r2.begin(),r2.end());
-	      }
+      struct dirent* p;
+      while((p=readdir(dir.get()))!=nullptr){
+	const auto file = name+tfel::system::dirSeparator()+p->d_name;
+	struct stat buf;
+	if(stat(file.c_str(),&buf)==0){
+	  if(S_ISREG(buf.st_mode)){
+	    if(std::regex_match(p->d_name,re)){
+	      r[name].emplace_back(p->d_name);
 	    }
-	  } else {
-	    throw_if(b,"can't stat file '"+file+"'");
+	  } else if(S_ISDIR(buf.st_mode)){
+	    if((strcmp(p->d_name,".") !=0)&&
+	       (strcmp(p->d_name,"..")!=0)){
+	      std::map<std::string,std::vector<std::string> > r2;
+	      recursiveFind(r2,re,name+'/'+p->d_name,
+			    depth+1,mdepth);
+	      r.insert(r2.begin(),r2.end());
+	    }
 	  }
+	} else {
+	  throw_if(b,"can't stat file '"+file+"'");
 	}
-      } catch(...){
-	closedir(dir);
-	throw;
       }
-      closedir(dir);
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     } // end of recursiveFind
- 
+
+    
   } // end of namespace system
 
 } // end of namespace tfel
