@@ -1329,7 +1329,7 @@ namespace mfront{
       if(!found){
 	ostringstream msg;
 	msg << "BehaviourDSLCommon::treatTangentOperator : "
-	    << "invalid tangent operator type '"+ktype+"'. Valid tanget operator type are :\n";
+	    << "invalid tangent operator type '"+ktype+"'. Valid tangent operator type are :\n";
 	for(const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()){
 	  msg << "- " << convertFiniteStrainBehaviourTangentOperatorFlagToString(to) << " : "
 	      << getFiniteStrainBehaviourTangentOperatorDescription(to) << '\n';

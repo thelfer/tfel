@@ -80,6 +80,8 @@ namespace mfront{
     this->bd.setEntryName(h,"Fe","ElasticPartOfTheDeformationGradient");
     // additional includes
     this->bd.appendToIncludes("#include\"TFEL/Math/General/CubicRoots.hxx\"");
+    // set that the tangent operator is computed
+    this->bd.setAttribute(h,BehaviourData::hasConsistentTangentOperator,true);
     // reserve some specific variables
     this->bd.reserveName(h,"ss");
     this->bd.reserveName(h,"g");
@@ -204,7 +206,7 @@ namespace mfront{
       "const auto& ss = "+cn+"::getSlidingSystems();\n"
       "const auto fsscb_dC_dFe = t2tost2<N,real>::dCdF(this->Fe);\n"
       "const auto fsscb_dS_dFe = eval((this->D)*fsscb_dC_dFe/2);\n"
-      "const auto fsscb_dtau_dFe = computePushForwardDerivative(fsscb_dS_dFe,this->fsscb_data.fsscb_S,this->Fe); \n"
+      "const auto fsscb_dtau_dFe = computePushForwardDerivative(fsscb_dS_dFe,this->fsscb_data.S,this->Fe); \n"
       "const auto fsscb_dFe_dDF_tot = t2tot2<N,real>::tpld(this->fsscb_data.inv_dFp,t2tot2<N,real>::tpld(this->fsscb_data.Fe0));\n"
       "const auto fsscb_dfeel_dDF   = eval(-(fsscb_dC_dFe)*(fsscb_dFe_dDF_tot)/2);\n"
       "st2tost2<N,real> fsscb_Je;\n"
