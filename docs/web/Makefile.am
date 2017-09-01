@@ -22,7 +22,9 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./zmat.md						      \
 	   ./getting-started.md					      \
 	   ./install.md						      \
-	   ./install-windows.md					      \
+	   ./install-windows-msys.md				      \
+	   ./install-windows-Cast3M2017.md			      \
+	   ./install-windows-VisualStudio.md			      \
 	   ./packages.md					      \
 	   ./about.md						      \
 	   ./news.md						      \
@@ -220,6 +222,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./css/slideshow.css					      \
 	   ./css/main.css					      \
 	   ./tex/lcmd_utf8.tex                                        \
+	   ./downloads/win32-scripts.tar.bz2                          \
 	   ./downloads/example-castem2014.tar.bz2                     \
 	   ./downloads/patchs-Cast3M-2014.tar.bz2                     \
 	   ./downloads/patchs-Cast3M-2015.tar.bz2                     \

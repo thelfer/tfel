@@ -1076,6 +1076,7 @@ docs/web/downloads/example-zset8.5.tar.bz2 -text
 docs/web/downloads/patchs-CalculiX-2.12.tar.bz2 -text
 docs/web/downloads/patchs-Cast3M-2014.tar.bz2 -text
 docs/web/downloads/patchs-Cast3M-2015.tar.bz2 -text
+docs/web/downloads/win32-scripts.tar.bz2 -text
 docs/web/epx.md -text
 docs/web/faq.md -text
 docs/web/favicon.ico -text
@@ -1230,7 +1231,9 @@ docs/web/img/tutorielch12-img1.png -text
 docs/web/img/twitter.png -text
 docs/web/img/twitter.xcf -text
 docs/web/index.md -text
-docs/web/install-windows.md -text
+docs/web/install-windows-Cast3M2017.md -text
+docs/web/install-windows-VisualStudio.md -text
+docs/web/install-windows-msys.md -text
 docs/web/install.md -text
 docs/web/interfaces.md -text
 docs/web/isotropicplasticityamstrongfrederickinematichardening.md -text

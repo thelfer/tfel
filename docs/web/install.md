@@ -22,7 +22,13 @@ other posix-compliant operating systems, notably `FreeBSD`, is
 lacking, although compilation and unit testing is known to work.
 
 The installation on [Windows plateform](http://windows.microsoft.com)
-is described [here](install-windows.html)
+is described in the following pages:
+
+- [Installation based on `cmake` and `Visual Studio`](install-windows-VisualStudio.html).
+- [Installation based on `cmake` and `MinGW` (as packaged with `Cast3M` `2017`)](install-windows-Cast3M2017.html). This
+  tutorial can easily be adapted to other versions of `MinGW`, without
+  requiring `Cast3M` to be installed.
+- [Installation based on `MSYS`](install-windows-msys.html).
 
 The creation of binary packages are detailled [here](packages.html)
 

@@ -246,6 +246,27 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/53/>
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/52/>
 
+## Ticket #20 Allow `MFront` to work under `Windows` without requiring `MSYS`
+
+The documentation describing how to install `TFEL` on `Windows` has
+been updated: The main difficulty associated with building
+`TFEL/MFront` on [Windows plateform](http://windows.microsoft.com) is
+the lack of an unified build environment which must be set up by the
+user.
+
+The installation on [Windows plateform](http://windows.microsoft.com)
+is thus described in the following pages:
+
+- [Installation based on `cmake` and `Visual Studio`](http://tfel.sourceforge.net/install-windows-VisualStudio.html).
+- [Installation based on `cmake` and `MinGW` (as packaged with `Cast3M` `2017`)](http://tfel.sourceforge.net/install-windows-Cast3M2017.html). This
+  tutorial can easily be adapted to other versions of `MinGW`, without
+  requiring `Cast3M` to be installed.
+- [Installation based on `MSYS`](http://tfel.sourceforge.net/install-windows-msys.html).
+
+The two first solutions does not depend on `MSYS`.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/20/>
+
 ## Ticket #17: Add physical constants from CODATA
 
 Various physical constants are now available. The values are extracted from: <http://physics.nist.gov/cuu/Constants/index.htm>
