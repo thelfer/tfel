@@ -128,10 +128,7 @@ namespace tfel{
        * \return the number of slip systems for the given family
        */
       size_type getNumberOfSlipSystems(const size_type) const;
-      /*!
-       * \param[in] i: family index
-       * \return the number of slip systems for the given family
-       */
+      //! \return the number of slip systems
       size_type getNumberOfSlipSystems() const;
       /*!
        * \return all the slip systems associated with the ith family

@@ -122,22 +122,23 @@ namespace mfront{
       return r;
     }();
     const auto& ivs = d.getIntegrationVariables();
+    const auto n = ivs.getTypeSize();
+    out << "tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n"
+	<< "tvector<" << n << ",real> tfzeros(this->fzeros);\n";
+    bool first = true;
     for(const auto& b: blocs){
       auto getPositionAndSize = [&ivs,throw_if](const std::string& v)
 	-> std::pair<SupportedTypes::TypeSize,SupportedTypes::TypeSize> {
-	auto n = SupportedTypes::TypeSize{};
+	auto ns = SupportedTypes::TypeSize{};
 	for(const auto& iv : ivs){
 	  const auto s = SupportedTypes::getTypeSize(iv.type,iv.arraySize);
 	  if(iv.name==v){
-	    return {n,s};
+	    return {ns,s};
 	  }
-	  n += s;
+	  ns += s;
 	}
 	throw_if(true,"no integration variable named '"+v+"'");
       };
-      const auto n = ivs.getTypeSize();
-      out << "tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n"
-	  << "tvector<" << n << ",real> tfzeros(this->fzeros);\n";
       const auto pd = getPositionAndSize(b.first);
       auto update_jacobian = [&out,&b,getPositionAndSize](const std::string& j){
 	// fzeros contain the new jacobian value
@@ -178,6 +179,10 @@ namespace mfront{
 	    << "// update jacobian\n";
 	update_jacobian(j);
       };	
+      if(!first){
+	out << "// restore residual values\n"
+	    << "this->fzeros = tfzeros;\n";
+      }
       if(pd.second.isOne()){
 	compute_perturbation(to_string(pd.first));
       } else {
@@ -189,10 +194,12 @@ namespace mfront{
 	}
 	out << "}\n";
       }
-      out << "// restore values\n"
-	  << "this->fzeros = tfzeros;\n"
-	  << "this->jacobian = tjacobian;\n";
+      first=false;
     }
+    out << "// update jacobian\n"
+	<< "this->jacobian = tjacobian;\n"
+	<< "// restore residual values\n"
+	<< "this->fzeros = tfzeros;\n";
   } // end of NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks
   
   void

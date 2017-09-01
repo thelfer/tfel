@@ -82,6 +82,8 @@ namespace mfront{
     this->bd.appendToIncludes("#include\"TFEL/Math/General/CubicRoots.hxx\"");
     // reserve some specific variables
     this->bd.reserveName(h,"ss");
+    this->bd.reserveName(h,"g");
+    this->bd.reserveName(h,"fg");
     this->bd.reserveName(h,"fsscb_data");
     this->bd.reserveName(h,"fsscb_tprd");
     this->bd.reserveName(h,"fsscb_dfeel_dinv_dFp");
@@ -99,6 +101,10 @@ namespace mfront{
   void FiniteStrainSingleCrystalBrick::completeVariableDeclaration() const
   {
     using tfel::glossary::Glossary; 
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("FiniteStrainSingleCrystalBrick:"
+				     ":completeVariableDeclaration: "+m));}
+    };
     const auto h = ModellingHypothesis::TRIDIMENSIONAL;
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "FiniteStrainSingleCrystalBrick::completeVariableDeclaration: begin\n";
@@ -119,6 +125,15 @@ namespace mfront{
     d.addVariable(h,{"real","J_inv_dFp"});
     d.addVariable(h,{"StrainStensor","tmp"});
     this->bd.addLocalDataStructure(d,BehaviourData::ALREADYREGISTRED);
+    // various checks
+    throw_if(!this->bd.hasCrystalStructure(),"no crystal structure defined");
+    throw_if(!this->bd.areSlipSystemsDefined(),"no slip systems defined");
+    const auto& ss = this->bd.getSlipSystems();
+    // declaring the plastic slip
+    VariableDescription g("strain","g",ss.getNumberOfSlipSystems(),0u);
+    g.description = "plastic slip";
+    this->bd.addStateVariable(h,g,BehaviourData::ALREADYREGISTRED);
+    this->bd.setEntryName(h,"g","PlasticSlip");
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "FiniteStrainSingleCrystalBrick::completeVariableDeclaration: end\n";
     }
@@ -126,8 +141,8 @@ namespace mfront{
   
   void FiniteStrainSingleCrystalBrick::endTreatment() const
   {
-    const auto h = ModellingHypothesis::TRIDIMENSIONAL;
-    const auto cn   = this->bd.getClassName()+"SlipSystems<real>";
+    const auto h  = ModellingHypothesis::TRIDIMENSIONAL;
+    const auto cn = this->bd.getClassName()+"SlipSystems<real>";
     // local data values initialisation
     CodeBlock init;
     init.code =

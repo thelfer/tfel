@@ -31,7 +31,6 @@ E.setEntryName("NortonExponent");
 
 @Integrator{
   const real eps = 1.e-12;
-  const auto mu  = computeMu(young,nu);
   const auto seq = sigmaeq(sig);
   const auto tmp = A*pow(seq,E-1.);
   const auto df_dseq = E*tmp;
