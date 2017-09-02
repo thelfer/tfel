@@ -77,10 +77,10 @@ namespace tfel
 		       const unsigned short depth,
 		       const unsigned short mdepth)
     {
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       auto throw_if = [](const bool c,const std::string& m){
 	if(c){throw(std::runtime_error("recursiveFind: "+m));}
       };
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       if(depth>mdepth){
 	throw_if(b,"maximal directory depth reached");
 	return;
