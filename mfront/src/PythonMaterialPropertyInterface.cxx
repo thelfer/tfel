@@ -401,16 +401,17 @@ namespace mfront
       iwrapper.close();
     }
     interfaces.insert(name);
-    ofstream wrapper;
-    if(library.empty()){
-      if(!material.empty()){
-	wrapper.open(("src/"+material+"lawwrapper.cxx").c_str());
-      } else {
-	wrapper.open("src/materiallawwrapper.cxx");
+    const auto wn = [&library,&material]() -> std::string {
+      if(library.empty()){
+	if(!material.empty()){
+	  return "src/"+material+"lawwrapper.cxx";
+	} else {
+	  return "src/materiallawwrapper.cxx";
+	}
       }
-    } else {
-      wrapper.open(("src/"+library+"wrapper.cxx").c_str());
-    }
+      return "src/"+library+"wrapper.cxx";
+    }();
+    ofstream wrapper(wn);
     wrapper.exceptions(ios::badbit|ios::failbit);
     if(!wrapper){
       string msg("PythonMaterialPropertyInterface::writeOutputFiles : ");
@@ -449,17 +450,8 @@ namespace mfront
     writeExportDirectives(wrapper);
     wrapper << endl;
 #endif /* _WIN32 */
-    const auto wn = [&library,&material]() -> std::string {
-      if(library.empty()){
-	if(!material.empty()){
-	  return "src/"+material+"lawwrapper.cxx";
-	} else {
-	  return "src/materiallawwrapper.cxx";
-	}
-      }
-      return "src/"+library+"wrapper.cxx";
-    }();
-    wrapper << "static PyMethodDef " << wn << "[] = {\n";
+    const auto mlm = (material.empty() ? "Material" : material) + "LawMethods";
+    wrapper << "static PyMethodDef " << mlm << "[] = {\n";
     for(const auto& i : interfaces){
       wrapper << "{\"" << i << "\"," << i << "_wrapper,METH_VARARGS,\n"
 	      << "\"compute the " << i <<  " law.\"},\n";
@@ -492,7 +484,7 @@ namespace mfront
 	    << "    PyModuleDef_HEAD_INIT,\n"
 	    << "    \"" << md << "\",\n"
 	    << "    nullptr,sizeof(ModuleState),\n"
-	    << "    " << wn << ",\n"
+	    << "    " << mlm << ",\n"
 	    << "    nullptr,+traverse,+clear,nullptr\n"
 	    << "  };\n"
 	    << "  auto *m = PyModule_Create(&d);\n"
@@ -518,7 +510,7 @@ namespace mfront
 	    << "  static struct {\n"
 	    << "    PyObject *error;\n"
 	    << "  } state;\n"
-	    << "  auto *m = Py_InitModule(\"" << md << "\"," << wn << ");\n"
+	    << "  auto *m = Py_InitModule(\"" << md << "\"," << mlm << ");\n"
 	    << "  if (m == nullptr){\n"
 	    << "    return;\n"
 	    << "  }\n"
