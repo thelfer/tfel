@@ -252,6 +252,8 @@ namespace mfront{
 			      &RungeKuttaDSLBase::treatRequireStiffnessOperator);
     this->disableCallBack("@Integrator");
     this->disableCallBack("@ComputedVar");
+    this->registerNewCallBack("@ElasticMaterialProperties",
+			      &RungeKuttaDSLBase::treatElasticMaterialProperties);
     this->registerNewCallBack("@ComputeStiffnessTensor",
 			      &RungeKuttaDSLBase::treatComputeStiffnessTensor);
     this->mb.setIntegrationScheme(BehaviourDescription::EXPLICITSCHEME);
@@ -724,8 +726,10 @@ namespace mfront{
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       this->behaviourFile << "bool\ncomputeStress(void){\n"
 			  << "using namespace std;\n"
-			  << "using namespace tfel::math;\n"
-			  << this->mb.getCode(h,BehaviourData::ComputeStress) << '\n'
+			  << "using namespace tfel::math;\n";
+      writeMaterialLaws("RungeKuttaDSLBase::writeBehaviourParserSpecificMembers",
+			this->behaviourFile,this->mb.getMaterialLaws());
+      this->behaviourFile << this->mb.getCode(h,BehaviourData::ComputeStress) << '\n'
 			  << "return true;\n"
 			  << "} // end of " << this->mb.getClassName() << "::computeStress\n\n";
     }
