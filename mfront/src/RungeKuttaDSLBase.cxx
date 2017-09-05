@@ -744,8 +744,9 @@ namespace mfront{
     if(this->mb.hasCode(h,BehaviourData::ComputeStress)){
       os << "bool\ncomputeStress(){\n"
 	 << "using namespace std;\n"
-	 << "using namespace tfel::math;\n"
-	 << this->mb.getCode(h,BehaviourData::ComputeStress) << '\n'
+	 << "using namespace tfel::math;\n";
+      writeMaterialLaws(os,this->mb.getMaterialLaws());
+      os << this->mb.getCode(h,BehaviourData::ComputeStress) << '\n'
 	 << "return true;\n"
 	 << "} // end of " << this->mb.getClassName() << "::computeStress\n\n";
     }

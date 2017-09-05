@@ -6,6 +6,19 @@
 
 # Tickets fixed
 
+## Ticket #86: The material laws are not available in the `ComputeStress` block in the `RungeKutta` DSL
+
+The material laws (declared for example via the `@MaterialLaw`
+keyword) were not available without extra qualification in the
+`ComputeStress` block when using the `RungeKutta` DSL: one have to add
+the `mfront::` qualifier in front of the material law.
+
+The problem is a missing call to `writeMaterialLaws` in the
+`writeBehaviourParserSpecificMembers` member function of the
+`RungeKuttaDSLBase` class.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/86/>
+
 ## Ticket #84: Check the `NTENS` value in the `Abaqus` interface
 
 The value of the `NTENS` value was not used to check that the function
