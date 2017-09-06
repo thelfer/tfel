@@ -162,7 +162,6 @@ private:
     auto type_filter = [this](const EntryPoint& e,
 			      const std::string& t){
       using tfel::system::ExternalLibraryManager;
-      auto& elm = ExternalLibraryManager::getExternalLibraryManager();
       if(t=="material_property"){
 	return e.type==EntryPoint::MATERIALPROPERTY;
       } else if(t=="behaviour"){
