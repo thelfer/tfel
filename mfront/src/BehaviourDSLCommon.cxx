@@ -3823,9 +3823,13 @@ namespace mfront{
 	if(s.sfe.is<BehaviourData::SFED_ESV>()){
 	  const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
 	  this->behaviourFile << "dl0_l0[2]+=this->" << ev << ";\n";
-	  this->behaviourFile << "dl0_l0[0]=dl0_l0[1]=real(1)/std::sqrt(1+dl0_l0[2])-real(1);\n";
+	  this->behaviourFile << "dl0_l0[0]+=real(1)/std::sqrt(1+this->" << ev << ")-real(1);\n";
+	  this->behaviourFile << "dl0_l0[1]+=real(1)/std::sqrt(1+this->" << ev << ")-real(1);\n";
 	  this->behaviourFile << "dl1_l0[2]+=this->" << ev << "+this->d" << ev << ";\n";
-	  this->behaviourFile << "dl1_l0[0]=dl1_l0[1]=real(1)/std::sqrt(1+dl1_l0[2])-real(1);\n";
+	  this->behaviourFile << "dl1_l0[0]+=real(1)/std::sqrt(1+this->"
+			      << ev << "+this->d" << ev << ")-real(1);\n";
+	  this->behaviourFile << "dl1_l0[1]+=real(1)/std::sqrt(1+this->"
+			      << ev << "+this->d" << ev << ")-real(1);\n";
 	} else if (s.sfe.is<std::shared_ptr<ModelDescription>>()){
 	  const auto& md =
 	    *(s.sfe.get<std::shared_ptr<ModelDescription>>());
@@ -3833,10 +3837,16 @@ namespace mfront{
 		   "invalid number of outputs for model '"+md.className+"'");
 	  const auto vs = md.className+"_"+md.outputs[0].name;	  
 	  this->behaviourFile << "dl0_l0[2]+=this->" << vs << ";\n";
-	  this->behaviourFile << "dl0_l0[0]=dl0_l0[1]=real(1)/std::sqrt(1+dl0_l0[2])-real(1);\n";
+	  this->behaviourFile << "dl0_l0[0]+="
+			      << "real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
+	  this->behaviourFile << "dl0_l0[1]+="
+			      << "real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
 	  this->writeModelCall(this->behaviourFile,h,md,vs,vs,"sfeh");
 	  this->behaviourFile << "dl1_l0[2]+=this->" << vs << ";\n";
-	  this->behaviourFile << "dl1_l0[0]=dl1_l0[1]=real(1)/std::sqrt(1+dl1_l0[2])-real(1);\n";
+	  this->behaviourFile << "dl1_l0[0]+="
+			      << "real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
+	  this->behaviourFile << "dl1_l0[1]+="
+			      << "real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
 	} else {
 	  throw_if(true,"internal error, unsupported stress free expansion");
 	}
