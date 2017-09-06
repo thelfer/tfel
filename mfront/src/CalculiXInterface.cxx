@@ -380,10 +380,10 @@ namespace mfront{
       throw_if(true,"the calculix interface only supports small "
 	       "and finite strain behaviours");
     }
-    out << "using calculix::CalculiXData;\n"
-	<< "const auto ivs0 =  STATEV0+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
+    out << "using calculix::CalculiXData;\n";
+    out	<< "const auto ivs0 =  STATEV0+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
 	<< "const auto ivs1 =  STATEV1+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
- 	<< "CalculiXData d = {STRESS,PNEWDT,DDSDDE,ivs1,*DTIME,ivs0,\n"
+	<< "CalculiXData d = {STRESS,PNEWDT,DDSDDE,ivs1,*DTIME,ivs0,\n"
 	<< "                  " << dv0 << "," << dv1 << ",TEMP1,MPROPS,\n"
 	<< getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
 	<< "if(calculix::CalculiXInterface<tfel::material::" << mb.getClassName() 
@@ -451,13 +451,29 @@ namespace mfront{
 	<< "	       F1[6]*(STRESS[2]*F1[8]+STRESS[5]*F1[5]+STRESS[4]*F1[2]));\n"
 	<< "s[5] = iJ*(F1[4]*(STRESS[5]*F1[8]+STRESS[1]*F1[5]+STRESS[3]*F1[2])+\n"
 	<< "	       F1[1]*(STRESS[4]*F1[8]+STRESS[3]*F1[5]+STRESS[0]*F1[2])+\n"
-	<< "           F1[7]*(STRESS[2]*F1[8]+STRESS[5]*F1[5]+STRESS[4]*F1[2]));\n"
-	<< name << "_base"
-	<< "(amat,iel,iint,NPROPS,MPROPS,STRAN1,STRAN0,beta,F0,"
-	<< " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
-	<< " ielas,mi,NSTATV,STATEV0,STATEV1,s,DDSDDE,"
-	<< "iorien,pgauss,orab,PNEWDT,ipkon,size);\n"
-	<< "// turning Cauchy stress to pk2\n"
+	<< "           F1[7]*(STRESS[2]*F1[8]+STRESS[5]*F1[5]+STRESS[4]*F1[2]));\n";
+    if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      if(mb.getSymmetryType()!=mfront::ISOTROPIC){
+	throw(std::runtime_error("CalculiXInterface::writeUMATFiniteStrainFunction: "
+				 "orthotropic symmetry is unsupported yet"));
+      }
+    } else {
+      if(mb.getSymmetryType()!=mfront::ISOTROPIC){
+	throw(std::runtime_error("CalculiXInterface::writeUMATFiniteStrainFunction: "
+				 "unsupported symmetry type"));
+      }
+      out << "if(*iorien!=0){\n"
+	  << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
+	  << "            << \"no orientation shall be defined for an istropic behaviour\\n\";\n"
+	  << "  std::exit(-1);\n"
+	  << "}\n"
+	  << name << "_base"
+	  << "(amat,iel,iint,NPROPS,MPROPS,STRAN1,STRAN0,beta,F0,"
+	  << " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
+	  << " ielas,mi,NSTATV,STATEV0,STATEV1,s,DDSDDE,"
+	  << "iorien,pgauss,orab,PNEWDT,ipkon,size);\n";
+    }
+    out << "// turning Cauchy stress to pk2\n"
 	<< "STRESS[0] = J*(iF1[3]*(s[5]*iF1[6]+s[1]*iF1[3]+s[3]*iF1[0])+\n"
 	<< "		   iF1[0]*(s[4]*iF1[6]+s[3]*iF1[3]+s[0]*iF1[0])+\n"
 	<< "		   iF1[6]*(s[2]*iF1[6]+s[5]*iF1[3]+s[4]*iF1[0]));\n"
@@ -504,11 +520,27 @@ namespace mfront{
       	<< "                                    STRAN1[3]-STRAN0[3],\n"
       	<< "                                    STRAN1[4]-STRAN0[4],\n"
 	<< "                                    STRAN1[5]-STRAN0[5]};\n";
-    out << name << "_base"
-	<< "(amat,iel,iint,NPROPS,MPROPS,DSTRAN,STRAN0,beta,F0,"
-	<< " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
-	<< " ielas,mi,NSTATV,STATEV0,STATEV1,STRESS,DDSDDE,"
-	<< "iorien,pgauss,orab,PNEWDT,ipkon,size);\n";
+    if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      if(mb.getSymmetryType()!=mfront::ISOTROPIC){
+	throw(std::runtime_error("CalculiXInterface::writeUMATFiniteStrainFunction: "
+				 "orthotropic symmetry is unsupported yet"));
+      }
+    } else {
+      if(mb.getSymmetryType()!=mfront::ISOTROPIC){
+	throw(std::runtime_error("CalculiXInterface::writeUMATFiniteStrainFunction: "
+				 "unsupported symmetry type"));
+      }
+      out << "if(*iorien!=0){\n"
+	  << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
+	  << "            << \"no orientation shall be defined for an istropic behaviour\\n\";\n"
+	  << "  std::exit(-1);\n"
+	  << "}\n"
+	  << name << "_base"
+	  << "(amat,iel,iint,NPROPS,MPROPS,DSTRAN,STRAN0,beta,F0,"
+	  << " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
+	  << " ielas,mi,NSTATV,STATEV0,STATEV1,STRESS,DDSDDE,"
+	  << "iorien,pgauss,orab,PNEWDT,ipkon,size);\n";
+    }
     if(this->generateMTestFile){
       out << "if(*PNEWDT<1){\n";
       this->generateMTestFile2(out,mb.getBehaviourType(),
@@ -842,7 +874,6 @@ namespace mfront{
   CalculiXInterface::writeCalculiXBehaviourTraits(std::ostream& out,
 						  const BehaviourDescription& mb) const
   {
-    using namespace std;
     constexpr const auto h = ModellingHypothesis::TRIDIMENSIONAL;
     const auto mvs = mb.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(mb,h);
@@ -869,10 +900,10 @@ namespace mfront{
       throw(std::runtime_error("CalculiXInterface::writeCalculiXBehaviourTraits : "
 			       "unsupported behaviour type"));
     }
-    out << "//! space dimension\n";
-    out << "static " << constexpr_c << " unsigned short N "
-	<< "= tfel::material::ModellingHypothesisToSpaceDimension<tfel::material::ModellingHypothesis::TRIDIMENSIONAL>::value;\n";
-    out << "// tiny vector size\n"
+    out << "//! space dimension\n"
+	<< "static " << constexpr_c << " unsigned short N "
+	<< "= tfel::material::ModellingHypothesisToSpaceDimension<tfel::material::ModellingHypothesis::TRIDIMENSIONAL>::value;\n"
+	<< "// tiny vector size\n"
 	<< "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
 	<< "// symmetric tensor size\n"
 	<< "static " << constexpr_c << " unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n"

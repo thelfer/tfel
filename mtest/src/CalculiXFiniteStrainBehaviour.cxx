@@ -73,7 +73,18 @@ namespace mtest
     tmatrix<3u,3u,real> uu0(real(0));
     tmatrix<3u,3u,real> uu1(real(0));
     stensor<3u,real> us(real(0));
-    throw_if(this->stype==1u,"orthotropic behaviour are not supported yet");
+    real orab[6] = {real(0),real(0),real(0),
+		    real(0),real(0),real(0)};
+    if(this->stype==1u){
+      orab[0] = s.r(0,0);
+      orab[1] = s.r(1,0);
+      orab[2] = s.r(2,0);
+      orab[3] = s.r(0,1);
+      orab[4] = s.r(1,1);
+      orab[5] = s.r(2,1);
+    }
+    throw_if(this->stype==1u,"orthotropic behaviour "
+	     "are not supported yet");
     uu0(0,0) = s.e0(0); uu1(0,0) = s.e1(0);
     uu0(1,1) = s.e0(1); uu1(1,1) = s.e1(1);
     uu0(2,2) = s.e0(2); uu1(2,2) = s.e1(2);
@@ -98,7 +109,7 @@ namespace mtest
     const auto icmd     = CalculiXInt(0);
     const auto ielas    = CalculiXInt(1);
     const auto mi       = CalculiXInt(1);
-    const auto ioren    = CalculiXInt(0);
+    const auto ioren    = (this->stype==1u) ? CalculiXInt(1) : CalculiXInt(0);
     const auto T = s.esv0(0)+s.desv(0);
     (this->fct)(nullptr,&iel,&iint,&nprops,
 		s.mprops1.empty() ? nullptr : &s.mprops1[0],
@@ -109,26 +120,17 @@ namespace mtest
 		s.iv0.empty() ? nullptr : &s.iv0(0),
 		wk.ivs.empty() ? nullptr : &wk.ivs(0),
 		&us(0),&(wk.D(0,0)),&ioren,nullptr,
-		nullptr,&ndt,nullptr,0);
+		orab,&ndt,nullptr,
+		0 /*hidden fortran parameter */);
     if(ndt<1.){
       return {false,ndt};
     }
-    const auto rb = transpose(s.r);
     // treating the consistent tangent operator
     if(h==ModellingHypothesis::TRIDIMENSIONAL){
       const auto K = this->convertTangentOperator(&(wk.D(0,0)));
-      if(this->stype==1u){
-	const auto nK = change_basis(K,rb);
-	for(unsigned short i=0;i!=6u;++i){
-	  for(unsigned short j=0;j!=6u;++j){
-	    Kt(i,j)=nK(i,j);
-	  }
-	}
-      } else {
-	for(unsigned short i=0;i!=6u;++i){
-	  for(unsigned short j=0;j!=6u;++j){
-	    Kt(i,j)=K(i,j);
-	  }
+      for(unsigned short i=0;i!=6u;++i){
+	for(unsigned short j=0;j!=6u;++j){
+	  Kt(i,j)=K(i,j);
 	}
       }
     } else {
@@ -142,9 +144,6 @@ namespace mtest
       // turning stresses in TFEL conventions
       for(CalculiXInt i=3;i!=6;++i){
 	us[i] *= sqrt2;
-      }
-      if(this->stype==1u){
-	us.changeBasis(rb);
       }
       // turning pk2 to Cauchy stress
       const auto pk2 = us;

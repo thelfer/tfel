@@ -62,6 +62,8 @@ namespace mtest
     throw_if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR,
 	     "CalculiX behaviours only provide the "
 	     "consistent tangent operator");
+    real orab[6] = {real(0),real(0),real(0),
+		    real(0),real(0),real(0)};
     const CalculiXInt nprops = -100-static_cast<CalculiXInt>(s.mprops1.size());
     fill(wk.D.begin(),wk.D.end(),0.);
     // using a local copy of internal state variables to handle the
@@ -80,9 +82,12 @@ namespace mtest
       ue1(i) -= s.e_th1(i);
     }
     if(this->stype==1u){
-      ue0.changeBasis(s.r);
-      ue1.changeBasis(s.r);
-      us.changeBasis(s.r);
+      orab[0] = s.r(0,0);
+      orab[1] = s.r(1,0);
+      orab[2] = s.r(2,0);
+      orab[3] = s.r(0,1);
+      orab[4] = s.r(1,1);
+      orab[5] = s.r(2,1);
     }
     // CalculiX standard convention
     for(CalculiXInt i=3;i!=6;++i){
@@ -97,7 +102,7 @@ namespace mtest
     const auto icmd     = CalculiXInt(0);
     const auto ielas    = CalculiXInt(1);
     const auto mi       = CalculiXInt(1);
-    const auto ioren    = CalculiXInt(0);
+    const auto ioren    = (this->stype==1u) ? CalculiXInt(1) : CalculiXInt(0);
     const auto T = s.esv0(0)+s.desv(0);
     (this->fct)(nullptr,&iel,&iint,&nprops,
 		s.mprops1.empty() ? nullptr : &s.mprops1[0],
@@ -108,26 +113,17 @@ namespace mtest
 		s.iv0.empty()  ? nullptr : &s.iv0(0),
 		wk.ivs.empty() ? nullptr : &wk.ivs(0),
 		&us(0),&(wk.D(0,0)),&ioren,nullptr,
-		nullptr,&ndt,nullptr,0);
+		orab,&ndt,nullptr,
+		0 /*hidden fortran parameter */);
     if(ndt<1.){
       return {false,ndt};
     }
-    const auto rb = transpose(s.r);
     // treating the consistent tangent operator
     if(h==ModellingHypothesis::TRIDIMENSIONAL){
       const auto K = this->convertTangentOperator(&(wk.D(0,0)));
-      if(this->stype==1u){
-	const auto nK = change_basis(K,rb);
-	for(unsigned short i=0;i!=6u;++i){
-	  for(unsigned short j=0;j!=6u;++j){
-	    Kt(i,j)=nK(i,j);
-	  }
-	}
-      } else {
-	for(unsigned short i=0;i!=6u;++i){
-	  for(unsigned short j=0;j!=6u;++j){
-	    Kt(i,j)=K(i,j);
-	  }
+      for(unsigned short i=0;i!=6u;++i){
+	for(unsigned short j=0;j!=6u;++j){
+	  Kt(i,j)=K(i,j);
 	}
       }
     } else {
@@ -141,9 +137,6 @@ namespace mtest
       // turning stresses in TFEL conventions
       for(CalculiXInt i=3;i!=6;++i){
 	us[i] *= sqrt2;
-      }
-      if(this->stype==1u){
-	us.changeBasis(rb);
       }
       copy(us.begin(),us.begin()+s.s1.size(),s.s1.begin());
     }
