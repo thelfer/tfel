@@ -99,9 +99,14 @@ namespace tfel
        * \param const std::string&, src.
        * \param const std::string&, destination.
        */
-      static void
-      copy(const std::string&,const std::string&);
-
+      static void copy(const std::string&,
+		       const std::string&);
+      /*!
+       * \return the absolute path of a file (this is a simple wrapper
+       * around ::realpath).
+       * \param[in] f: file name
+       */
+      static std::string getAbsoluteFileName(const std::string&);
       // change the current working directory
       // (little wrapper of ::chdir)
       static void
