@@ -1986,6 +1986,9 @@ namespace mfront{
       out << '\n';
       std::ostringstream mmod;
       mmod << "MO = 'MODELISER' v 'MECANIQUE' 'ELASTIQUE' ";
+      if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+	mmod << "'ORTHOTROPE'";
+      }
       mmod << nonlin << "\n"
 	   << "'LIB_LOI' 'lib"+this->getLibraryName(mb)+".so'\n"
 	   << "'FCT_LOI' '"+this->getUmatFunctionName(mb)+"'\n"
