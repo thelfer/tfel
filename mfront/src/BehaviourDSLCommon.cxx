@@ -4094,21 +4094,27 @@ namespace mfront{
 		 "null swelling is not supported here");
 	if(s.sfe.is<BehaviourData::SFED_ESV>()){
 	  const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
-	  os << "dl0_l0[2]+=this->" << ev << ";\n";
-	  os << "dl0_l0[0]=dl0_l0[1]=real(1)/std::sqrt(1+dl0_l0[2])-real(1);\n";
-	  os << "dl1_l0[2]+=this->" << ev << "+this->d" << ev << ";\n";
-	  os << "dl1_l0[0]=dl1_l0[1]=real(1)/std::sqrt(1+dl1_l0[2])-real(1);\n";
+	  os << "dl0_l0[2]+=this->" << ev << ";\n"
+	     << "dl0_l0[0]+=real(1)/std::sqrt(1+this->" << ev << ")-real(1);\n"
+	     << "dl0_l0[1]+=real(1)/std::sqrt(1+this->" << ev << ")-real(1);\n"
+	     << "dl1_l0[2]+=this->" << ev << "+this->d" << ev << ";\n"
+	     << "dl1_l0[0]+=real(1)/std::sqrt(1+this->" << ev
+	     << "+this->d" << ev << ")-real(1);\n"
+	     << "dl1_l0[1]+=real(1)/std::sqrt(1+this->" << ev
+	     << "+this->d" << ev << ")-real(1);\n";
 	} else if (s.sfe.is<std::shared_ptr<ModelDescription>>()){
 	  const auto& md =
 	    *(s.sfe.get<std::shared_ptr<ModelDescription>>());
 	  throw_if(md.outputs.size()!=1u,
 		   "invalid number of outputs for model '"+md.className+"'");
 	  const auto vs = md.className+"_"+md.outputs[0].name;	  
-	  os << "dl0_l0[2]+=this->" << vs << ";\n";
-	  os << "dl0_l0[0]=dl0_l0[1]=real(1)/std::sqrt(1+dl0_l0[2])-real(1);\n";
+	  os << "dl0_l0[2]+=this->" << vs << ";\n"
+	     << "dl0_l0[0]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n"
+	     << "dl0_l0[1]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
 	  this->writeModelCall(os,tmpnames,h,md,vs,vs,"sfeh");
-	  os << "dl1_l0[2]+=this->" << vs << ";\n";
-	  os << "dl1_l0[0]=dl1_l0[1]=real(1)/std::sqrt(1+dl1_l0[2])-real(1);\n";
+	  os << "dl1_l0[2]+=this->" << vs << ";\n"
+	     << "dl1_l0[0]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n"
+	     << "dl1_l0[1]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
 	} else {
 	  throw_if(true,"internal error, unsupported stress free expansion");
 	}
