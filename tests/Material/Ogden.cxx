@@ -73,7 +73,6 @@ struct Ogden final
     using real    = double;
     using Stensor  = stensor<N,real>;
     const real alpha = 28.8;
-    const real mu    = 0.4e6;
     const auto a = alpha/2;
     auto f = [&a](const real x){
       return a*pow(x,a-1);
