@@ -10,6 +10,7 @@ nocite: |
 	@helfer_mfront_2017
 	@farsi_full_2017
 	@portillo_muesli_2017
+	@seck_three_2016
 	@torelli_multiaxial_2016
 	@michel_3d_2016
 	@bary_thermoviscoelastic_2016
