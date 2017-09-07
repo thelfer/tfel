@@ -214,7 +214,7 @@ namespace mtest
     if(!s.iv1.empty()){
       copy_n(wk.ivs.begin(), s.iv1.size(),s.iv1.begin());
     }
-    // turning back to MFront conventions
+    // turning back to MTest conventions
     swap(s.s1(1),s.s1(2));
     // tangent operator (...)
     if(ktype!=StiffnessMatrixType::NOSTIFFNESS){ 

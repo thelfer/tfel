@@ -6,7 +6,7 @@
 };
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoaxialgrowth';
+@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoaxialgrowth2';
 
 @Real 'E1'   '7.8e+10';
 @Real 'E2'   '2.64233e+11';
@@ -22,9 +22,10 @@
 @MaterialProperty<constant> 'PoissonRatio13'    'nu13';
 @MaterialProperty<constant> 'PoissonRatio23'    'nu23';
 
+@Real 'tmax' '3600*24*365';
 @ExternalStateVariable 'Temperature' 293.15;
-@ExternalStateVariable 'AxialGrowth' {0:0,3600:1.45e-3};
-@Evolution 'ag' {0:0,3600:1.45e-3};
+@ExternalStateVariable 'FastNeutronFluence_1MeV' {0:0,'tmax':3e25};
+@Evolution<function> 'ag' '2.1224e-4*(FastNeutronFluence_1MeV/1e25)**0.794';
 // transverse growth
 @Evolution<function> 'tg' '1/sqrt(1+ag)-1';
 
@@ -32,7 +33,7 @@
 @ImposedStrain 'EZZ' 0.;
 @ImposedStrain 'ETT' 0.;
 
-@Times {0.,3600 in 20};
+@Times {0.,'tmax' in 20};
 
 @Real 'S11' '1/E1';
 @Real 'S22' '1/E2';
@@ -50,6 +51,6 @@
 @Real 'C20' '(S12*S23-S13*S22)/dS';
 @Real 'C21' '(S12*S13-S11*S23)/dS';
 @Real 'C22' '(S11*S22-S12*S12)/dS';
-@Test<function> 'SRR' '-((C00+C01)*tg+C02*ag)'  1.e-3;
-@Test<function> 'SZZ' '-((C10+C11)*tg+C12*ag)'  1.e-3;
-@Test<function> 'STT' '-((C20+C21)*tg+C22*ag)'  1.e-3;
+@Test<function> 'SRR' '-((C00+C02)*tg+C01*ag)'  1.e-3;
+@Test<function> 'SZZ' '-((C10+C12)*tg+C11*ag)'  1.e-3;
+@Test<function> 'STT' '-((C20+C22)*tg+C21*ag)'  1.e-3;

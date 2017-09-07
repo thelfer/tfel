@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURDSLBASE_IXX_
-#define LIB_MFRONT_BEHAVIOURDSLBASE_IXX_ 
+#ifndef LIB_MFRONT_BEHAVIOURDSLBASE_IXX
+#define LIB_MFRONT_BEHAVIOURDSLBASE_IXX 
 
 #include<sstream>
 #include<stdexcept>
@@ -116,6 +116,7 @@ namespace mfront{
 			      &Child::treatComputeStressFreeExpansion);
     this->registerNewCallBack("@Swelling",&Child::treatSwelling);
     this->registerNewCallBack("@AxialGrowth",&Child::treatAxialGrowth);
+    this->registerNewCallBack("@Relocation",&Child::treatRelocation);
     this->registerNewCallBack("@InternalEnergy",&Child::treatInternalEnergy);
     this->registerNewCallBack("@DissipatedEnergy",&Child::treatDissipatedEnergy);
   } // end of BehaviourDSLBase<Child>::registerDefaultCallBacks
@@ -253,10 +254,9 @@ namespace mfront{
   } // end of BehaviourDSLCommon::analyseString
   
   template<typename Child>
-  BehaviourDSLBase<Child>::~BehaviourDSLBase()
-  {} // end of BehaviourDSLBase<Child>::~BehaviourDSLBase
+  BehaviourDSLBase<Child>::~BehaviourDSLBase() = default;
   
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURDSLBASE_IXX_ */
+#endif /* LIB_MFRONT_BEHAVIOURDSLBASE_IXX */
 

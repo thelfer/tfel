@@ -2992,7 +2992,7 @@ namespace mfront{
     const auto sd = this->readStressFreeExpansionHandler();
     this->readSpecifiedToken("BehaviourDSLCommon::treatSwelling",";");
     if(sd.size()==1){
-      throw_if(sd[0].is<BehaviourData::NullSwelling>(),
+      throw_if(sd[0].is<BehaviourData::NullExpansion>(),
 	       "a null swelling is not allowed here");
       if(etype==VOLUME){
 	VolumeSwelling vs = {sd[0]};
@@ -3011,9 +3011,9 @@ namespace mfront{
     } else if(sd.size()==3){
       throw_if(etype!=ORTHOTROPIC,"the 'Orthotropic' option must be "
 	       "used for an orthotropic swelling");
-      throw_if(sd[0].is<BehaviourData::NullSwelling>()&&
-	       sd[1].is<BehaviourData::NullSwelling>()&&
-	       sd[2].is<BehaviourData::NullSwelling>(),
+      throw_if(sd[0].is<BehaviourData::NullExpansion>()&&
+	       sd[1].is<BehaviourData::NullExpansion>()&&
+	       sd[2].is<BehaviourData::NullExpansion>(),
 	       "all swelling component are null");
       OrthotropicSwelling os = {sd[0],sd[1],sd[2]};
       this->mb.addStressFreeExpansion(uh,os);
@@ -3036,7 +3036,7 @@ namespace mfront{
       return {ptr};
     }
     if(t.value=="0"){
-      return {BehaviourData::NullSwelling{}};
+      return {BehaviourData::NullExpansion{}};
     }
     throw_if(!CxxTokenizer::isValidIdentifier(t.value,true),
 	     "unexpected token '"+t.value+"', expected "
@@ -3085,7 +3085,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::readStressFreeExpansionHandler
 
   void BehaviourDSLCommon::treatAxialGrowth(){
-    using AxialGrowth = BehaviourData::AxialGrowthStressFreeExpansion;
+    using AxialGrowth = BehaviourData::AxialGrowth;
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("BehaviourDSLCommon::treatAxialGrowth",m);}
@@ -3102,6 +3102,41 @@ namespace mfront{
     this->readSpecifiedToken("BehaviourDSLCommon::treatAxialGrowth",";");
     this->mb.addStressFreeExpansion(uh,AxialGrowth{s});
   } // end of BehaviourDSLCommon::treatAxialGrowth
+
+  void BehaviourDSLCommon::treatRelocation(){
+    using Relocation = BehaviourData::Relocation;
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("BehaviourDSLCommon::treatRelocation",m);}
+    };
+    throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	     (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+	     "the @Relocation keyword is only valid for small or "
+	     "finite strain behaviours");
+    if(!this->mb.areModellingHypothesesDefined()){
+      this->mb.setModellingHypotheses(this->getDefaultModellingHypotheses());
+    }
+    const auto& mh = this->mb.getModellingHypotheses();
+    throw_if((mh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)==mh.end())&&
+	     (mh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)==mh.end())&&
+	     (mh.find(ModellingHypothesis::GENERALISEDPLANESTRAIN)==mh.end()),
+	     "the @Relocation keyword has not effect on this behaviour as the none of "
+	     "the following hypothesis is supported:\n"
+	     "- AxisymmetricalGeneralisedPlaneStress\n"
+	     "- AxisymmetricalGeneralisedPlaneStrain\n"
+	     "- GeneralisedPlaneStrain");
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatRelocation");
+    const auto s  = this->readStressFreeExpansionHandler(*(this->current));
+    ++(this->current);
+    this->readSpecifiedToken("BehaviourDSLCommon::treatRelocation",";");
+    auto add = [this,&mh,&s](const Hypothesis h){
+      if(mh.find(h)!=mh.end()){
+	this->mb.addStressFreeExpansion(h,Relocation{s});      
+      }
+    };
+    add(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
+    add(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN);
+    add(ModellingHypothesis::GENERALISEDPLANESTRAIN);
+  } // end of BehaviourDSLCommon::treatRelocation
   
   void BehaviourDSLCommon::writeBehaviourUpdateIntegrationVariables(const Hypothesis h)
   {
@@ -3810,43 +3845,85 @@ namespace mfront{
       }
     }
     for(const auto& d : this->mb.getStressFreeExpansionDescriptions(h)){
-      if (d.is<BehaviourData::AxialGrowthStressFreeExpansion>()){
+      if (d.is<BehaviourData::AxialGrowth>()){
 	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
 		 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
 		 "only finite strain or small strain behaviour are supported");
 	throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
 		 "axial growth is only supported for orthotropic behaviours");
-	const auto& s =
-	  d.get<BehaviourData::AxialGrowthStressFreeExpansion>();
-	throw_if(s.sfe.is<BehaviourData::NullSwelling>(),
+	const auto& s = d.get<BehaviourData::AxialGrowth>();
+	throw_if(s.sfe.is<BehaviourData::NullExpansion>(),
 		 "null swelling is not supported here");
+	// The z-axis is supposed to be aligned with the second
+	// direction of orthotropy.
 	if(s.sfe.is<BehaviourData::SFED_ESV>()){
 	  const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
-	  this->behaviourFile << "dl0_l0[2]+=this->" << ev << ";\n";
-	  this->behaviourFile << "dl0_l0[0]+=real(1)/std::sqrt(1+this->" << ev << ")-real(1);\n";
-	  this->behaviourFile << "dl0_l0[1]+=real(1)/std::sqrt(1+this->" << ev << ")-real(1);\n";
-	  this->behaviourFile << "dl1_l0[2]+=this->" << ev << "+this->d" << ev << ";\n";
-	  this->behaviourFile << "dl1_l0[0]+=real(1)/std::sqrt(1+this->"
-			      << ev << "+this->d" << ev << ")-real(1);\n";
-	  this->behaviourFile << "dl1_l0[1]+=real(1)/std::sqrt(1+this->"
-			      << ev << "+this->d" << ev << ")-real(1);\n";
+	  this->behaviourFile << "dl0_l0[1]+=this->" << ev << ";\n"
+	     << "dl0_l0[0]+=real(1)/std::sqrt(1+this->" << ev << ")-real(1);\n"
+	     << "dl0_l0[2]+=real(1)/std::sqrt(1+this->" << ev << ")-real(1);\n"
+	     << "dl1_l0[1]+=this->" << ev << "+this->d" << ev << ";\n"
+	     << "dl1_l0[0]+=real(1)/std::sqrt(1+this->" << ev
+	     << "+this->d" << ev << ")-real(1);\n"
+	     << "dl1_l0[2]+=real(1)/std::sqrt(1+this->" << ev
+	     << "+this->d" << ev << ")-real(1);\n";
 	} else if (s.sfe.is<std::shared_ptr<ModelDescription>>()){
 	  const auto& md =
 	    *(s.sfe.get<std::shared_ptr<ModelDescription>>());
 	  throw_if(md.outputs.size()!=1u,
 		   "invalid number of outputs for model '"+md.className+"'");
 	  const auto vs = md.className+"_"+md.outputs[0].name;	  
-	  this->behaviourFile << "dl0_l0[2]+=this->" << vs << ";\n";
-	  this->behaviourFile << "dl0_l0[0]+="
-			      << "real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
-	  this->behaviourFile << "dl0_l0[1]+="
-			      << "real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
+	  this->behaviourFile << "dl0_l0[1]+=this->" << vs << ";\n"
+	     << "dl0_l0[0]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n"
+	     << "dl0_l0[2]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
 	  this->writeModelCall(this->behaviourFile,h,md,vs,vs,"sfeh");
-	  this->behaviourFile << "dl1_l0[2]+=this->" << vs << ";\n";
-	  this->behaviourFile << "dl1_l0[0]+="
-			      << "real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
-	  this->behaviourFile << "dl1_l0[1]+="
-			      << "real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
+	  this->behaviourFile << "dl1_l0[1]+=this->" << vs << ";\n"
+	     << "dl1_l0[0]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n"
+	     << "dl1_l0[2]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
+	} else {
+	  throw_if(true,"internal error, unsupported stress free expansion");
+	}
+      } else if (d.is<BehaviourData::Relocation>()){
+	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+		 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+		 "only finite strain or small strain behaviour are supported");
+	const auto& s = d.get<BehaviourData::Relocation>();
+	throw_if(s.sfe.is<BehaviourData::NullExpansion>(),
+		 "null swelling is not supported here");
+	if(s.sfe.is<BehaviourData::SFED_ESV>()){
+	  const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
+	  if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)||
+	     (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)){
+	    this->behaviourFile << "dl0_l0[0]+=this->" << ev << "/2;\n"
+				<< "dl0_l0[2]+=this->" << ev << "/2;\n"
+				<< "dl1_l0[0]+=(this->" << ev << "+this->d" << ev << ")/2;\n"
+				<< "dl1_l0[2]+=(this->" << ev << "+this->d" << ev << ")/2;\n";
+	  }
+	  if((h==ModellingHypothesis::GENERALISEDPLANESTRAIN)||
+	     (h==ModellingHypothesis::PLANESTRAIN)||
+	     (h==ModellingHypothesis::PLANESTRESS)){
+	    this->behaviourFile << "dl0_l0[0]+=this->" << ev << "/2;\n"
+				<< "dl0_l0[1]+=this->" << ev << "/2;\n"
+				<< "dl1_l0[0]+=(this->" << ev << "+this->d" << ev << ")/2;\n"
+				<< "dl1_l0[1]+=(this->" << ev << "+this->d" << ev << ")/2;\n";
+	  }
+	} else if (s.sfe.is<std::shared_ptr<ModelDescription>>()){
+	  const auto& md =
+	    *(s.sfe.get<std::shared_ptr<ModelDescription>>());
+	  throw_if(md.outputs.size()!=1u,
+		   "invalid number of outputs for model '"+md.className+"'");
+	  const auto vs = md.className+"_"+md.outputs[0].name;	  
+	  if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)||
+	     (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)){
+	    this->behaviourFile << "dl0_l0[0]+=(this->" << vs << ")/2;\n"
+				<< "dl0_l0[2]+=(this->" << vs << ")/2;\n";
+	  }
+	  this->writeModelCall(this->behaviourFile,h,md,vs,vs,"sfeh");
+	  if((h==ModellingHypothesis::GENERALISEDPLANESTRAIN)||
+	     (h==ModellingHypothesis::PLANESTRAIN)||
+	     (h==ModellingHypothesis::PLANESTRESS)){
+	    this->behaviourFile << "dl0_l0[0]+=(this->" << vs << ")/2;\n"
+				<< "dl0_l0[1]+=(this->" << vs << ")/2;\n";
+	  }
 	} else {
 	  throw_if(true,"internal error, unsupported stress free expansion");
 	}
@@ -3867,7 +3944,7 @@ namespace mfront{
 	    this->behaviourFile << "dl0_l0[" << c << "]+=this->" << vs << ";\n";
 	    this->writeModelCall(this->behaviourFile,h,md,vs,vs,"sfeh");
 	    this->behaviourFile << "dl1_l0[" << c << "]+=this->" << vs << ";\n";
-	  } else if(!sfe.is<BehaviourData::NullSwelling>()){
+	  } else if(!sfe.is<BehaviourData::NullExpansion>()){
 	    throw_if(true,"internal error, unsupported stress free expansion");
 	  }
 	};
@@ -3877,9 +3954,9 @@ namespace mfront{
 	throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
 		 "orthotropic stress free expansion is only supported "
 		 "for orthotropic behaviours");
-	throw_if(s.sfe0.is<BehaviourData::NullSwelling>()&&
-		 s.sfe1.is<BehaviourData::NullSwelling>()&&
-		 s.sfe2.is<BehaviourData::NullSwelling>(),
+	throw_if(s.sfe0.is<BehaviourData::NullExpansion>()&&
+		 s.sfe1.is<BehaviourData::NullExpansion>()&&
+		 s.sfe2.is<BehaviourData::NullExpansion>(),
 		 "null swelling is not supported here");
 	write(s.sfe0,"0");
 	write(s.sfe1,"1");
@@ -3906,7 +3983,7 @@ namespace mfront{
 		 "only finite strain or small strain behaviour are supported");
 	const auto& s =
 	  d.get<BehaviourData::IsotropicStressFreeExpansion>();
-	throw_if(s.sfe.is<BehaviourData::NullSwelling>(),
+	throw_if(s.sfe.is<BehaviourData::NullExpansion>(),
 		 "null swelling is not supported here");
 	if(s.sfe.is<BehaviourData::SFED_ESV>()){
 	  const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
@@ -3938,7 +4015,7 @@ namespace mfront{
 		 "only finite strain or small strain behaviour are supported");
 	const auto& s =
 	  d.get<BehaviourData::VolumeSwellingStressFreeExpansion>();
-	throw_if(s.sfe.is<BehaviourData::NullSwelling>(),
+	throw_if(s.sfe.is<BehaviourData::NullExpansion>(),
 		 "null swelling is not supported here");
 	if(s.sfe.is<BehaviourData::SFED_ESV>()){
 	  const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;

@@ -12,8 +12,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX_
-#define LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX_
+#ifndef LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX
+#define LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX
 
 #include<set>
 #include<map>
@@ -639,6 +639,8 @@ namespace mfront{
     virtual void treatSwelling(void);
     //! \brief treat the @AxialGrowth keyword
     virtual void treatAxialGrowth(void);
+    //! \brief treat the @Relocation keyword
+    virtual void treatRelocation();
     /*!
      * \brief read a swelling description.
      *
@@ -1247,4 +1249,4 @@ namespace mfront{
 
 #include"MFront/BehaviourDSLCommon.ixx"
 
-#endif /* LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX_ */
+#endif /* LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX */

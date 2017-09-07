@@ -912,7 +912,7 @@ namespace mfront
     auto throw_if = [](const bool c,const std::string& m){
       if(c){throw(std::runtime_error("BehaviourDescription::addStressFreeExpansion: "+m));}
     };
-    if ((sfed.is<BehaviourData::AxialGrowthStressFreeExpansion>())||
+    if ((sfed.is<BehaviourData::AxialGrowth>())||
 	(sfed.is<BehaviourData::OrthotropicStressFreeExpansion>())||
 	(sfed.is<BehaviourData::OrthotropicStressFreeExpansionII>())){ 
       throw_if((this->getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
@@ -924,11 +924,12 @@ namespace mfront
 	       "axial growth is only valid for orthotropic behaviour");
     } else {
       throw_if((!sfed.is<BehaviourData::VolumeSwellingStressFreeExpansion>())&&
+	       (!sfed.is<BehaviourData::Relocation>())&&
 	       (!sfed.is<BehaviourData::IsotropicStressFreeExpansion>()),
 	       "internal error, unsupported stress free expansion type");
       throw_if((this->getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
 	       (this->getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
-	       "Isotropic or VolumeSwelling "
+	       "Isotropic, Relocation or VolumeSwelling "
 	       "are only valid for small or "
 	       "finite strain behaviours");
     }
