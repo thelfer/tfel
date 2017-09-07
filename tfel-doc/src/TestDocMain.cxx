@@ -51,18 +51,15 @@ namespace tfel
     parse_files(std::ostream& log,
 		std::map<std::string,std::vector<TestDocumentation>>& tests,
 		const std::string& ext){
-      char path[MAXPATHLEN];
+      using namespace tfel::system;
       auto files = tfel::system::recursiveFind(".*\\."+ext,".",false);
       for(const auto& d : files){
-	if(realpath(d.first.c_str(),path)==nullptr){
-	  log << "entering directory " << d.first << '\n';
-	} else {
-	  log << "entering directory " << path << '\n';
-	} 
+	const auto path  = systemCall::getAbsolutePath(d.first);
+	log << "entering directory '"+path+"'\n";
 	for(const auto& f : d.second){
-	  auto name = d.first+'/'+f;
+	  const auto name = d.first+'/'+f;
 	  try{
-	    Parser{name}.addDocumentation(tests);
+	    Parser(name).addDocumentation(tests);
 	  }
 	  catch(std::exception& e){
 	    log << TerminalColors::Reset;
@@ -152,8 +149,7 @@ namespace tfel
       }
     } // end of TestDocMain::TestDocMain
 
-    void
-    TestDocMain::treatUnknownArgument()
+    void TestDocMain::treatUnknownArgument()
     {
       using namespace std;
       const auto& s = this->currentArgument->as_string();
@@ -172,8 +168,7 @@ namespace tfel
       }
     } // end of TestDocMain::treatUnknownArgument
 
-    void 
-    TestDocMain::registerArgumentCallBacks()
+    void TestDocMain::registerArgumentCallBacks()
     {
       this->registerNewCallBack("--lang",&TestDocMain::treatLang,
 				"specify output language (french,english)",true);
@@ -244,8 +239,7 @@ namespace tfel
       }
     } // end of TestDocMain::treatLogFile
 
-    void
-    TestDocMain::treatPrefix()
+    void TestDocMain::treatPrefix()
     {
       using namespace std;
       if(!this->opts.prefix.empty()){
@@ -261,8 +255,7 @@ namespace tfel
       }
     } // end of TestDocMain::treatPrefix
 
-    void
-    TestDocMain::treatSrc()
+    void TestDocMain::treatSrc()
     {
       using namespace std;
       if(!this->srcdir.empty()){
@@ -278,8 +271,7 @@ namespace tfel
       }
     } // end of TestDocMain::treatSrc
 
-    void
-    TestDocMain::treatLang()
+    void TestDocMain::treatLang()
     {
       using namespace std;
       if(!this->opts.lang.empty()){
@@ -295,59 +287,54 @@ namespace tfel
       }
     } // end of TestDocMain::treatLang
 
-    void
-    TestDocMain::treatKeyFile()
+    void TestDocMain::treatKeyFile()
     {
-      using namespace std;
-      const auto& f = this->currentArgument->getOption();
-      declareKeys(f);
+      declareKeys(this->currentArgument->getOption());
     } // end of TestDocMain::treatKeyFile
 
-    void
-    TestDocMain::treatCategoryFile()
+    void TestDocMain::treatCategoryFile()
     {
-      using namespace std;
-      const auto& f = this->currentArgument->getOption();
-      declareCategories(f);
+      declareCategories(this->currentArgument->getOption());
     } // end of TestDocMain::treatCategoryFile
 
-    void
-    TestDocMain::treatTranslationFile()
+    void TestDocMain::treatTranslationFile()
     {
-      using namespace std;
-      const auto& f = this->currentArgument->getOption();
-      declareTranslations(f);
+      declareTranslations(this->currentArgument->getOption());
     } // end of TestDocMain::treatTranslationFile
 
-    std::string 
-    TestDocMain::getVersionDescription() const
+    std::string TestDocMain::getVersionDescription() const
     {
-      using namespace std;
       return "1.1";
     }
     
-    std::string 
-    TestDocMain::getUsageDescription() const
+    std::string TestDocMain::getUsageDescription() const
     {
-      using namespace std;
-      string usage("Usage : tfel-doc [options] output");
-      return usage;
+      return "Usage : tfel-doc [options] output";
     }
 
-    int
-    TestDocMain::execute()
+    int TestDocMain::execute()
     {
       using namespace std;
-      using namespace tfel::utilities;
-      char cpath[MAXPATHLEN];
-      if(realpath(".",cpath)==nullptr){
-	throw(runtime_error("TestDocMain::execute : can't get real path of current directory, aborting"));
-      }
-      if(!this->srcdir.empty()){
-	if(chdir(this->srcdir.c_str())==-1){
-	  throw(runtime_error("TestDocMain::execute : "
-			      "can't move to directory '"+this->srcdir+'\''));
+      using namespace tfel::system;
+      auto chdir = [](const std::string& d){
+	try{
+	  systemCall::changeCurrentWorkingDirectory(d);
+	} catch(std::exception& e){
+	  throw(std::runtime_error("TestDocMain::execute : "
+				   "can't move to directory '"+d+"\' ("+
+				   std::string(e.what())+")'"));
 	}
+      };
+      const auto cpath = []{
+	try{
+	  return systemCall::getCurrentWorkingDirectory();
+	} catch(std::exception& e){
+	  throw(std::runtime_error("TestDocMain::execute: can't get real path of "
+				   "current directory ("+std::string(e.what())+"), aborting"));
+	}
+      }();
+      if(!this->srcdir.empty()){
+	chdir(this->srcdir);
       }
       // all the tests, sorted by category
       auto tests = map<string,vector<TestDocumentation>>{};
@@ -357,10 +344,7 @@ namespace tfel
 	parse_files<MTestDocParser>(*(this->log),tests,"mtest");
       }
       if(!this->srcdir.empty()){
-	if(chdir(cpath)==-1){
-	  throw(runtime_error("TestDocMain::execute : "
-			      "can't move to directory '"+string(cpath)+'\''));
-	}
+	chdir(cpath);
       }
       // output
       if(this->latex){

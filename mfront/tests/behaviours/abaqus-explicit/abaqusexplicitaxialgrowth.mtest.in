@@ -67,7 +67,7 @@
 @Real 'C20' '(S12*S23-S13*S22)/dS';
 @Real 'C21' '(S12*S13-S11*S23)/dS';
 @Real 'C22' '(S11*S22-S12*S12)/dS';
-@Test<function> 'SYY' '-((C00+C01)*log(1+tg)+C02*log(1+ag))'  1.e-3;
-@Test<function> 'SXX' '-((C10+C11)*log(1+tg)+C12*log(1+ag))'  1.e-3;
-@Test<function> 'SZZ' '-((C20+C21)*log(1+tg)+C22*log(1+ag))'  1.e-3;
+@Test<function> 'SXX' '-((C10+C12)*log(1+tg)+C11*log(1+ag))'  1.e-3;
+@Test<function> 'SYY' '-((C00+C02)*log(1+tg)+C01*log(1+ag))'  1.e-3;
+@Test<function> 'SZZ' '-((C22+C20)*log(1+tg)+C21*log(1+ag))'  1.e-3;
 @Test<function> {'SXY':'0.','SXZ':'0.','SYZ':'0.'} 1.e-3;

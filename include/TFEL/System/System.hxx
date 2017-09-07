@@ -102,11 +102,11 @@ namespace tfel
       static void copy(const std::string&,
 		       const std::string&);
       /*!
-       * \return the absolute path of a file (this is a simple wrapper
-       * around ::realpath).
+       * \return the absolute path of a file or a directory (this is a
+       * simple wrapper around ::realpath).
        * \param[in] f: file name
        */
-      static std::string getAbsoluteFileName(const std::string&);
+      static std::string getAbsolutePath(const std::string&);
       // change the current working directory
       // (little wrapper of ::chdir)
       static void

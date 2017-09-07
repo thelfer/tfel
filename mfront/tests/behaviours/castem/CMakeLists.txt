@@ -129,7 +129,8 @@ set(mfront_tests_SOURCES
   OrthotropicSwelling2
   AxialGrowth
   AxialGrowth2
-  AxialGrowth3)
+  AxialGrowth3
+  RelocationTest)
 
 mfront_dependencies(MFrontCastemBehaviours
   Inconel600_YoungModulus
@@ -651,6 +652,7 @@ test_castem(axialgrowth)
 test_castem(axialgrowth2)
 test_castem(axialgrowth3)
 test_castem(axialgrowth4)
+test_castem(relocationtest)
 
 macro(test_castem_cxx test_arg)
   if(CMAKE_CONFIGURATION_TYPES)

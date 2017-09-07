@@ -1586,7 +1586,7 @@ namespace mfront{
 	auto o = md.outputs[0];
 	o.name = md.className+"_"+o.name;
 	this->addAuxiliaryStateVariable(o,UNREGISTRED);
-      } else if (h.is<NullSwelling>()){
+      } else if (h.is<NullExpansion>()){
 	// do nothing
       } else {
 	throw_if(true,"unsupported stress free expansion handler");
@@ -1594,24 +1594,29 @@ namespace mfront{
     };
     if(sfed.is<VolumeSwellingStressFreeExpansion>()){
       const auto& s = sfed.get<VolumeSwellingStressFreeExpansion>();
-      throw_if(s.sfe.is<NullSwelling>(),
+      throw_if(s.sfe.is<NullExpansion>(),
 	       "null swelling is not allowed");
       treat(s.sfe);
     } else if (sfed.is<IsotropicStressFreeExpansion>()){
       const auto& s = sfed.get<IsotropicStressFreeExpansion>();
-      throw_if(s.sfe.is<NullSwelling>(),
+      throw_if(s.sfe.is<NullExpansion>(),
 	       "null swelling is not allowed");
       treat(s.sfe);
-    } else if (sfed.is<AxialGrowthStressFreeExpansion>()){
-      const auto& s = sfed.get<AxialGrowthStressFreeExpansion>();
-      throw_if(s.sfe.is<NullSwelling>(),
+    } else if (sfed.is<AxialGrowth>()){
+      const auto& s = sfed.get<AxialGrowth>();
+      throw_if(s.sfe.is<NullExpansion>(),
+	       "null swelling is not allowed");
+      treat(s.sfe);
+    } else if (sfed.is<Relocation>()){
+      const auto& s = sfed.get<Relocation>();
+      throw_if(s.sfe.is<NullExpansion>(),
 	       "null swelling is not allowed");
       treat(s.sfe);
     } else if (sfed.is<OrthotropicStressFreeExpansion>()){
       const auto& s = sfed.get<OrthotropicStressFreeExpansion>();
-      throw_if(s.sfe0.is<NullSwelling>()&&
-	       s.sfe1.is<NullSwelling>()&&
-	       s.sfe2.is<NullSwelling>(),
+      throw_if(s.sfe0.is<NullExpansion>()&&
+	       s.sfe1.is<NullExpansion>()&&
+	       s.sfe2.is<NullExpansion>(),
 	       "null swelling is not allowed");
       treat(s.sfe0);
       treat(s.sfe1);
@@ -1632,7 +1637,8 @@ namespace mfront{
 
   bool BehaviourData::isStressFreeExansionAnisotropic() const{
     for(const auto& sfed:this->sfeds){
-      if ((sfed.is<BehaviourData::AxialGrowthStressFreeExpansion>())||
+      if ((sfed.is<BehaviourData::AxialGrowth>())||
+	  (sfed.is<BehaviourData::Relocation>())||
 	  (sfed.is<BehaviourData::OrthotropicStressFreeExpansion>())||
 	  (sfed.is<BehaviourData::OrthotropicStressFreeExpansionII>())){ 
 	return true;

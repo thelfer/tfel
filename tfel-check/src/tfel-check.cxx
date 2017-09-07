@@ -85,21 +85,15 @@ namespace tfel{
       log.addDriver(std::make_shared<PCTextDriver>());
       auto exe = [&log](const std::string& d,
 			const std::string& f){
-	char path[PATH_MAX];
-	char cpath[PATH_MAX];
-	if (realpath(".", cpath) == nullptr) {
-	  cerr << "main : can't get real path of current directory, aborting\n";
-	  log.addMessage("main : can't get real path of current directory, aborting");
-	  exit(EXIT_FAILURE);
-	}
-	if (realpath(d.c_str(), path) == nullptr) {
-	  log.addMessage("entering directory " + d);
-	} else {
-	  log.addMessage(string("entering directory ") + path);
-	}
-	if (chdir(d.c_str()) == -1) {
-	  log.addMessage("can't move to directory " + d);
-	  log.addSimpleTestResult("* result of test "+ d +'/'+f,false);
+	using namespace tfel::system;
+	const auto cpath = systemCall::getCurrentWorkingDirectory();
+	const auto path  = systemCall::getAbsolutePath(d);
+	log.addMessage("entering directory '"+path+"'");
+	try{
+	  systemCall::changeCurrentWorkingDirectory(d);
+	} catch(std::exception& e){
+	  log.addMessage("can't move to directory '"+d+"' ("+std::string(e.what())+")");
+	  log.addSimpleTestResult("* result of test '"+ d +'/'+f+"'",false);
 	  return false;
 	}
 	log.addMessage("* beginning of test '" + d + '/' + f + "'");
@@ -114,13 +108,16 @@ namespace tfel{
 	  success = c.execute();
 	  //      }
 	} catch (std::exception& e) {
-	  log.addMessage("test failed : " + f + ", reason:\n"+e.what());
+	  log.addMessage("test failed : '" + f + "', reason:\n"+e.what());
 	  success = false;
 	}
-	log.addSimpleTestResult("* end of test '"+d+'/'+f,success);
+	log.addSimpleTestResult("* end of test '"+d+'/'+f+"'",success);
 	log.addMessage("======");
-	if (chdir(cpath) == -1) {
-	  log.addMessage(string("can't move back to top directory ") + cpath);
+	try{
+	  systemCall::changeCurrentWorkingDirectory(cpath);
+	} catch(std::exception& e){
+	  log.addMessage("can't move back to top directory '"+cpath+
+			 "' ("+std::string(e.what())+")");
 	  log.addMessage("Aborting");
 	  exit(EXIT_FAILURE);
 	}

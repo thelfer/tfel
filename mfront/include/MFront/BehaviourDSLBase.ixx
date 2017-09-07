@@ -116,6 +116,7 @@ namespace mfront{
 			      &Child::treatComputeStressFreeExpansion);
     this->registerNewCallBack("@Swelling",&Child::treatSwelling);
     this->registerNewCallBack("@AxialGrowth",&Child::treatAxialGrowth);
+    this->registerNewCallBack("@Relocation",&Child::treatRelocation);
     this->registerNewCallBack("@InternalEnergy",&Child::treatInternalEnergy);
     this->registerNewCallBack("@DissipatedEnergy",&Child::treatDissipatedEnergy);
     this->registerNewCallBack("@CrystalStructure",&Child::treatCrystalStructure);

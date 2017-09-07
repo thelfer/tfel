@@ -1,0 +1,28 @@
+@Behaviour RelocationTest;
+@Author Thomas Helfer;
+@Author 6/09/2017;
+@Description{
+  "Behaviour used to test the "
+  "`@Relocation` keyword."
+}
+
+@Parameter lambda = 86538461538.46153;
+@Parameter mu     = 57692307692.30769;
+
+@ExternalStateVariable strain r;
+r.setEntryName("RelocationStrain");
+@Relocation r;
+
+@PredictionOperator{
+  static_cast<void>(smt); // remove unused variable warning
+  computeAlteredElasticStiffness<hypothesis,real>::exe(Dt,lambda,mu);
+}
+
+@Integrator{
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+}
+
+@TangentOperator{
+  static_cast<void>(smt); // remove unused variable warning
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}

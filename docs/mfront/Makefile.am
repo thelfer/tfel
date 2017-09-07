@@ -55,6 +55,7 @@ MFRONT_DOCS = Algorithm.md				                \
 	      PhysicalBounds.md                                         \
 	      Private.md                                                \
 	      Profiling.md                                              \
+	      Relocation.md			                        \
 	      RequireStiffnessOperator.md                               \
 	      RequireStiffnessTensor.md                                 \
 	      RequireThermalExpansionCoefficientTensor.md               \

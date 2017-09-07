@@ -29,6 +29,7 @@ set(mfront_tests_SOURCES
   OrthotropicSwelling
   OrthotropicSwelling2
   AxialGrowth
+  AxialGrowth2
   AxialGrowth3
   )
 mfront_dependencies(MFrontCyranoBehaviours
@@ -212,5 +213,6 @@ test_cyrano(isotropiclinearswelling)
 test_cyrano(isotropicvolumeswelling)
 test_cyrano(axialgrowth)
 test_cyrano(axialgrowth3)
+test_cyrano(axialgrowth4)
 test_cyrano(orthotropicswelling)
 test_cyrano(orthotropicswelling2)

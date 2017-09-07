@@ -1549,6 +1549,7 @@ AC_OUTPUT([debug.sh
   	   mfront/tests/behaviours/castem/castemaxialgrowth2.mtest
     	   mfront/tests/behaviours/castem/castemaxialgrowth3.mtest
 	   mfront/tests/behaviours/castem/castemaxialgrowth4.mtest
+   	   mfront/tests/behaviours/castem/castemrelocationtest.mtest
            mfront/tests/behaviours/castem/castemorthotropicsaintvenantkirchhoffelasticity-3D-sig11.mtest
            mfront/tests/behaviours/castem/dgibi/Makefile
            mfront/tests/behaviours/castem2/Makefile   
@@ -2495,6 +2496,7 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/cyrano/cyranoorthotropicswelling2.mtest
   	   mfront/tests/behaviours/cyrano/cyranoaxialgrowth.mtest
     	   mfront/tests/behaviours/cyrano/cyranoaxialgrowth3.mtest
+       	   mfront/tests/behaviours/cyrano/cyranoaxialgrowth4.mtest
   	   mfront/tests/behaviours/uanderson/Makefile	   
   	   mfront/tests/behaviours/uanderson/uandersonageingburger.mtest
   	   mfront/tests/behaviours/uanderson/uandersonanistropiclemaitreviscoplasticbehaviour.mtest

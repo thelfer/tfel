@@ -637,6 +637,8 @@ namespace mfront{
     virtual void treatSwelling();
     //! \brief treat the @AxialGrowth keyword
     virtual void treatAxialGrowth();
+    //! \brief treat the @Relocation keyword
+    virtual void treatRelocation();
     //! \brief treat the @CrystalStructure keyword
     virtual void treatCrystalStructure();
     //! \brief treat the @SlipSystem keyword

@@ -1,0 +1,30 @@
+@Author Thomas Helfer;
+@Date   06 sept. 2017;
+@Description{
+
+};
+
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatrelocationtest';
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+@ExternalStateVariable 'RelocationStrain' {0:0,3600.:1.34e-3};
+
+@ImposedStrain 'ERR' '0';
+@ImposedStrain 'EZZ' '0';
+@ImposedStrain 'ETT' '0';
+
+@Times {0.,3600 in 20};
+
+@Evolution<function> 'C1' 'YoungModulus/((1+PoissonRatio)*(1-2*PoissonRatio))';
+@Evolution<function> 'C2' '1-PoissonRatio';
+@Evolution<function> 'C3' 'PoissonRatio';
+@Evolution<function> 'r_rr' 'RelocationStrain/2';
+@Evolution<function> 'r_tt' 'RelocationStrain/2';
+
+// stresses
+@Test<function> 'SRR' '-C1*(C2*r_rr+C3*r_tt)' 1.e2;
+@Test<function> 'SZZ' '-C1*C3*(r_tt+r_rr)'    1.e2;
+@Test<function> 'STT' '-C1*(C2*r_tt+C3*r_rr)' 1.e2;

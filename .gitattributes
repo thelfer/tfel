@@ -395,6 +395,7 @@ docs/mfront/PerturbationValueForNumericalJacobianComputation.md -text
 docs/mfront/PhysicalBounds.md -text
 docs/mfront/Private.md -text
 docs/mfront/Profiling.md -text
+docs/mfront/Relocation.md -text
 docs/mfront/RequireStiffnessOperator.md -text
 docs/mfront/RequireStiffnessTensor.md -text
 docs/mfront/RequireThermalExpansionCoefficientTensor.md -text
@@ -2480,6 +2481,7 @@ mfront/tests/behaviours/Plasticity.mfront -text
 mfront/tests/behaviours/PolyCrystals.mfront -text
 mfront/tests/behaviours/PolyCrystals_DD_CC.mfront -text
 mfront/tests/behaviours/PolyCrystals_DD_CFC.mfront -text
+mfront/tests/behaviours/RelocationTest.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticity.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticity2.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticity3.mfront -text
@@ -3641,6 +3643,7 @@ mfront/tests/behaviours/castem/castemplasticity.mtest.in -text
 mfront/tests/behaviours/castem/castempolycrystals.mtest.in -text
 mfront/tests/behaviours/castem/castempolycrystals_dd_cc.mtest.in -text
 mfront/tests/behaviours/castem/castempolycrystals_dd_cfc.mtest.in -text
+mfront/tests/behaviours/castem/castemrelocationtest.mtest.in -text
 mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-1-2D.mtest.in -text
 mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-1-3D.mtest.in -text
 mfront/tests/behaviours/castem/castemsaintvenantkirchhoffelasticity-shear-2-2D.mtest.in -text
@@ -4057,6 +4060,7 @@ mfront/tests/behaviours/cyrano/CMakeLists.txt -text
 mfront/tests/behaviours/cyrano/Makefile.am -text
 mfront/tests/behaviours/cyrano/cyranoaxialgrowth.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoaxialgrowth3.mtest.in -text
+mfront/tests/behaviours/cyrano/cyranoaxialgrowth4.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranocomputestressfreeexpansion.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity.mtest.in -text
 mfront/tests/behaviours/cyrano/cyranoelasticity10.mtest.in -text

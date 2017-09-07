@@ -407,6 +407,7 @@ namespace cyrano
 	    throwMaximumNumberOfSubSteppingReachedException(Traits::getName());
 	  }
 	  this->bData.CYRANOexportStateData(sig,STATEV);
+	  // back to cyrano conventions
 	  STRESS[0]=sig[0];
 	  STRESS[1]=sig[2];
 	  STRESS[2]=sig[1];

@@ -149,10 +149,8 @@ namespace mfront{
       //! variable name
       std::string vname;
     }; // end of SFED_ESV
-    /*!
-     * a placeholder for null swelling
-     */
-    struct NullSwelling{};
+    //! a placeholder for null expansion
+    struct NullExpansion{};
     /*!
      * a stress free expansion can be computed using by:
      * - an external state variable
@@ -160,7 +158,7 @@ namespace mfront{
      */
     using StressFreeExpansionHandlerTypes =
       typename tfel::meta::GenerateTypeList<SFED_ESV,
-					    NullSwelling,
+					    NullExpansion,
 					    std::shared_ptr<ModelDescription>>::type;
     /*!
      * a stress free expansion handler
@@ -179,16 +177,27 @@ namespace mfront{
       StressFreeExpansionHandler sfe;
     }; // end of struct VolumeSwellingStressFreeExpansion
     /*!
-     * \brief a simple wrapper around a model descripbing an axial
+     * \brief a simple wrapper around a model describing an axial
      * growth.
      * \[
      * s = \left(0,0,dlz_lz\,0\,0\,0\right)
      * \]
      */
-    struct AxialGrowthStressFreeExpansion{
+    struct AxialGrowth{
       //! description of the axial growth
       StressFreeExpansionHandler sfe;
-    }; // end of struct AxialGrowthStressFreeExpansion
+    }; // end of struct AxialGrowth
+    /*!
+     * \brief a simple wrapper around a model describing fuel
+     * relocation.
+     * \[
+     * s = \left(0,0,dlz_lz\,0\,0\,0\right)
+     * \]
+     */
+    struct Relocation{
+      //! description of the axial growth
+      StressFreeExpansionHandler sfe;
+    }; // end of struct Relocation
     /*!
      * \brief a brief structure describing a stress free expansion du
      * to an isotropic swelling given by a linear change in each
@@ -228,7 +237,7 @@ namespace mfront{
     using StressFreeExpansionDescriptionTypes =
       typename tfel::meta::GenerateTypeList<
       VolumeSwellingStressFreeExpansion,
-      AxialGrowthStressFreeExpansion,
+      AxialGrowth,Relocation,
       IsotropicStressFreeExpansion,
       OrthotropicStressFreeExpansion,
       OrthotropicStressFreeExpansionII>::type;
