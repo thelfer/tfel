@@ -39,7 +39,7 @@ static const char * const constexpr_c = "const";
 namespace mfront{
   
   static void
-  writeUMATArguments(std::ostream& out,
+  writeArguments(std::ostream& out,
 		     const BehaviourDescription::BehaviourType& t,
 		     const bool f)
   {
@@ -120,9 +120,9 @@ namespace mfront{
 	  << " const calculix::CalculiXInt* const,\n"
 	  << " const int)";
     }
-  } // end of writeUMATArguments
+  } // end of writeArguments
 
-  static void writeUMATArguments(std::ostream& out)
+  static void writeArguments(std::ostream& out)
   {
     out << "(const char * const,\n"
 	<< " const calculix::CalculiXInt* const,\n"
@@ -155,7 +155,7 @@ namespace mfront{
 	<< "       calculix::CalculiXReal* const,\n"
 	<< " const calculix::CalculiXInt* const,\n"
 	<< " const int)";
-  } // end of writeUMATArguments
+  } // end of writeArguments
 
   std::string CalculiXInterface::getName()
   {
@@ -264,15 +264,15 @@ namespace mfront{
     const auto header = this->getHeaderDefine(mb);
     out << "#ifndef "<< header << "\n"
 	<< "#define "<< header << "\n\n"
-	<< "#include\"TFEL/Config/TFELConfig.hxx\"\n\n"
-	<< "#include\"MFront/CalculiX/CalculiX.hxx\"\n"
+	<< "#include\"TFEL/Config/TFELConfig.hxx\"\n\n";
+    if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+      out << "#include\"TFEL/Material/LogarithmicStrainHandler.hxx\"\n\n";
+    }
+    out << "#include\"MFront/CalculiX/CalculiX.hxx\"\n"
 	<< "#include\"MFront/CalculiX/CalculiXData.hxx\"\n\n"
 	<< "#ifdef __cplusplus\n"
-	<< "#include\"MFront/CalculiX/CalculiXTraits.hxx\"\n";
-    if(this->fss!=UNDEFINEDSTRATEGY){
-      out << "#include\"MFront/CalculiX/CalculiXFiniteStrain.hxx\"\n\n";
-    }
-    out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
+	<< "#include\"MFront/CalculiX/CalculiXTraits.hxx\"\n"
+	<< "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n\n"
 	<< "#endif /* __cplusplus */\n\n";
 
     this->writeVisibilityDefines(out);
@@ -293,7 +293,7 @@ namespace mfront{
 
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionName(name);
-    writeUMATArguments(out);
+    writeArguments(out);
     out << ";\n\n";
 
     out << "#ifdef __cplusplus\n"
@@ -338,16 +338,18 @@ namespace mfront{
 
     if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
        ((this->fss==UNDEFINEDSTRATEGY)||(this->fss==NATIVEFINITESTRAINSTRATEGY))){
-      this->writeUMATSmallStrainFunction(out,mb,name);
+      this->writeSmallStrainFunction(out,mb,name);
     } else if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
 	      ((this->fss!=UNDEFINEDSTRATEGY)&&(this->fss!=NATIVEFINITESTRAINSTRATEGY))){
       if(this->fss==FINITEROTATIONSMALLSTRAIN){
-	this->writeUMATFiniteRotationSmallStrainFunction(out,mb,name);
+	this->writeFiniteRotationSmallStrainFunction(out,mb,name);
+      } else if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	this->writeMieheApelLambrechtLogarithmicStrainFunction(out,mb,name);
       } else {
 	throw_if(true,"unsupported finite strain strategy !");
       }
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      this->writeUMATFiniteStrainFunction(out,mb,name);
+      this->writeFiniteStrainFunction(out,mb,name);
     } else {
       throw_if(true,"the calculix interface only supports small "
 	       "and finite strain behaviours");
@@ -357,18 +359,18 @@ namespace mfront{
     this->writeInputFileExample(mb,fd,true);
   } // end of CalculiXInterface::endTreatment
   
-  void CalculiXInterface::writeUMATFunctionBase(std::ostream& out,
+  void CalculiXInterface::writeFunctionBase(std::ostream& out,
 						const BehaviourDescription& mb,
 						const std::string& name,
 						const std::string& sfeh) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("CalculiXInterface::writeUMATFunctionBase: "+m));}
+      if(b){throw(std::runtime_error("CalculiXInterface::writeFunctionBase: "+m));}
     };
     std::string dv0,dv1,sig,statev,nstatev;
     const auto btype = mb.getBehaviourType();
     out << "static void\n" << name << "_base";
-    writeUMATArguments(out,btype,false);
+    writeArguments(out,btype,false);
     out << "{\n";
     if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       dv0 = "STRAN0";
@@ -390,29 +392,18 @@ namespace mfront{
 	<< ">::exe(d)!=0){\n";
     out << "*PNEWDT = 0.2;\n"
 	<< "return;\n"
-	<< "}\n";
-    if(getDebugMode()){
-      out << "std::cout << \"Dt :\" << std::endl;\n"
-	  << "const calculix::CalculiXReal *p = DDSDDE;\n"
-    	  << "for(calculix::CalculiXInt i=0;i!=6;++i){\n"
-    	  << "for(calculix::CalculiXInt j=0;j!=i+1;++j,++p){\n"
-    	  << "std::cout << *p << \" \";\n"
-    	  << "}\n"
-    	  << "std::cout << std::endl;\n"
-    	  << "}\n"
-    	  << "std::cout << std::endl;\n";
-    }
-    out << "}\n\n";
-  } // end of CalculiXInterface::writeUMATFunctionBase
+	<< "}\n"
+	<< "}\n\n";
+  } // end of CalculiXInterface::writeFunctionBase
 
-  void CalculiXInterface::writeUMATFiniteStrainFunction(std::ostream& out,
+  void CalculiXInterface::writeFiniteStrainFunction(std::ostream& out,
 							const BehaviourDescription& mb,
 							const std::string& name) const
   {
     const std::string sfeh = "nullptr";
-    this->writeUMATFunctionBase(out,mb,name,sfeh);
+    this->writeFunctionBase(out,mb,name,sfeh);
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
-    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
+    writeArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -422,6 +413,12 @@ namespace mfront{
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
     out << "calculix::CalculiXReal s[6];\n"
+	<< "calculix::CalculiXReal D[36] = {0,0,0,0,0,0,\n"
+	<< "                                0,0,0,0,0,0,\n"
+      	<< "                                0,0,0,0,0,0,\n"
+      	<< "                                0,0,0,0,0,0,\n"
+      	<< "                                0,0,0,0,0,0,\n"
+      	<< "                                0,0,0,0,0,0};\n"
 	<< "const auto  J = *vj;\n"
 	<< "const auto iJ = 1/J;\n"
 	<< "const calculix::CalculiXReal iF1[9] = {iJ*(F1[4]*F1[8]-F1[5]*F1[7]),\n"
@@ -454,12 +451,12 @@ namespace mfront{
 	<< "           F1[7]*(STRESS[2]*F1[8]+STRESS[5]*F1[5]+STRESS[4]*F1[2]));\n";
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       if(mb.getSymmetryType()!=mfront::ISOTROPIC){
-	throw(std::runtime_error("CalculiXInterface::writeUMATFiniteStrainFunction: "
+	throw(std::runtime_error("CalculiXInterface::writeFiniteStrainFunction: "
 				 "orthotropic symmetry is unsupported yet"));
       }
     } else {
       if(mb.getSymmetryType()!=mfront::ISOTROPIC){
-	throw(std::runtime_error("CalculiXInterface::writeUMATFiniteStrainFunction: "
+	throw(std::runtime_error("CalculiXInterface::writeFiniteStrainFunction: "
 				 "unsupported symmetry type"));
       }
       out << "if(*iorien!=0){\n"
@@ -470,7 +467,7 @@ namespace mfront{
 	  << name << "_base"
 	  << "(amat,iel,iint,NPROPS,MPROPS,STRAN1,STRAN0,beta,F0,"
 	  << " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
-	  << " ielas,mi,NSTATV,STATEV0,STATEV1,s,DDSDDE,"
+	  << " ielas,mi,NSTATV,STATEV0,STATEV1,s,D,"
 	  << "iorien,pgauss,orab,PNEWDT,ipkon,size);\n";
     }
     out << "// turning Cauchy stress to pk2\n"
@@ -492,17 +489,30 @@ namespace mfront{
 	<< "STRESS[5] = J*(iF1[4]*(s[5]*iF1[8]+s[1]*iF1[5]+s[3]*iF1[2])+\n"
 	<< "		   iF1[1]*(s[4]*iF1[8]+s[3]*iF1[5]+s[0]*iF1[2])+\n"
 	<< "		   iF1[7]*(s[2]*iF1[8]+s[5]*iF1[5]+s[4]*iF1[2]));\n"
-	<< "}\n\n";
+	<< "// converting the consistent tangent operator\n"
+	<< "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D);\n";
+    if(getDebugMode()){
+      out << "std::cout << \"Dt :\" << std::endl;\n"
+	  << "const calculix::CalculiXReal *p = DDSDDE;\n"
+    	  << "for(calculix::CalculiXInt i=0;i!=6;++i){\n"
+    	  << "for(calculix::CalculiXInt j=0;j!=i+1;++j,++p){\n"
+    	  << "std::cout << *p << \" \";\n"
+    	  << "}\n"
+    	  << "std::cout << std::endl;\n"
+    	  << "}\n"
+    	  << "std::cout << std::endl;\n";
+    }
+    out	<< "}\n\n";
   }
   
-  void CalculiXInterface::writeUMATSmallStrainFunction(std::ostream& out,
+  void CalculiXInterface::writeSmallStrainFunction(std::ostream& out,
 						       const BehaviourDescription& mb,
 						       const std::string& name) const
   {
     const std::string sfeh = "calculix::CalculiXStandardSmallStrainStressFreeExpansionHandler";
-    this->writeUMATFunctionBase(out,mb,name,sfeh);
+    this->writeFunctionBase(out,mb,name,sfeh);
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
-    writeUMATArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,true);
+    writeArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,true);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -514,7 +524,13 @@ namespace mfront{
     if(this->generateMTestFile){
       this->generateMTestFile1(out);
     }
-    out << "calculix::CalculiXReal DSTRAN[6] = {STRAN1[0]-STRAN0[0],\n"
+    out << "calculix::CalculiXReal D[36] = {0,0,0,0,0,0,\n"
+	<< "                                0,0,0,0,0,0,\n"
+      	<< "                                0,0,0,0,0,0,\n"
+      	<< "                                0,0,0,0,0,0,\n"
+      	<< "                                0,0,0,0,0,0,\n"
+      	<< "                                0,0,0,0,0,0};\n"
+	<< "calculix::CalculiXReal DSTRAN[6] = {STRAN1[0]-STRAN0[0],\n"
 	<< "                                    STRAN1[1]-STRAN0[1],\n"
       	<< "                                    STRAN1[2]-STRAN0[2],\n"
       	<< "                                    STRAN1[3]-STRAN0[3],\n"
@@ -522,12 +538,12 @@ namespace mfront{
 	<< "                                    STRAN1[5]-STRAN0[5]};\n";
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       if(mb.getSymmetryType()!=mfront::ISOTROPIC){
-	throw(std::runtime_error("CalculiXInterface::writeUMATFiniteStrainFunction: "
+	throw(std::runtime_error("CalculiXInterface::writeFiniteStrainFunction: "
 				 "orthotropic symmetry is unsupported yet"));
       }
     } else {
       if(mb.getSymmetryType()!=mfront::ISOTROPIC){
-	throw(std::runtime_error("CalculiXInterface::writeUMATFiniteStrainFunction: "
+	throw(std::runtime_error("CalculiXInterface::writeFiniteStrainFunction: "
 				 "unsupported symmetry type"));
       }
       out << "if(*iorien!=0){\n"
@@ -538,8 +554,10 @@ namespace mfront{
 	  << name << "_base"
 	  << "(amat,iel,iint,NPROPS,MPROPS,DSTRAN,STRAN0,beta,F0,"
 	  << " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
-	  << " ielas,mi,NSTATV,STATEV0,STATEV1,STRESS,DDSDDE,"
-	  << "iorien,pgauss,orab,PNEWDT,ipkon,size);\n";
+	  << " ielas,mi,NSTATV,STATEV0,STATEV1,STRESS,D,"
+	  << "iorien,pgauss,orab,PNEWDT,ipkon,size);\n"
+	  << "// converting the consistent tangent operator\n"
+	  << "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D);\n";
     }
     if(this->generateMTestFile){
       out << "if(*PNEWDT<1){\n";
@@ -547,16 +565,113 @@ namespace mfront{
 			       name,"",mb);
       out << "}\n";
     }
+    if(getDebugMode()){
+      out << "std::cout << \"Dt :\" << std::endl;\n"
+	  << "const calculix::CalculiXReal *p = DDSDDE;\n"
+    	  << "for(calculix::CalculiXInt i=0;i!=6;++i){\n"
+    	  << "for(calculix::CalculiXInt j=0;j!=i+1;++j,++p){\n"
+    	  << "std::cout << *p << \" \";\n"
+    	  << "}\n"
+    	  << "std::cout << std::endl;\n"
+    	  << "}\n"
+    	  << "std::cout << std::endl;\n";
+    }
     out << "}\n\n";
   }
   
-  void
-  CalculiXInterface::writeUMATFiniteRotationSmallStrainFunction(std::ostream& out,
-								const BehaviourDescription& mb,
-								const std::string& name) const
+  void CalculiXInterface::writeFiniteRotationSmallStrainFunction(std::ostream& out,
+								 const BehaviourDescription& mb,
+								 const std::string& name) const
   {
-    this->writeUMATSmallStrainFunction(out,mb,name);
-  } // end of CalculiXInterface::writeUMATFiniteRotationSmallStrainFunction
+    this->writeSmallStrainFunction(out,mb,name);
+  } // end of CalculiXInterface::writeFiniteRotationSmallStrainFunction
+
+  void CalculiXInterface::writeMieheApelLambrechtLogarithmicStrainFunction(std::ostream& out,
+									   const BehaviourDescription& mb,
+									   const std::string& name) const
+  {
+    const std::string sfeh = "calculix::CalculiXLogarithmicStrainStressFreeExpansionHandler";
+    this->writeFunctionBase(out,mb,name,sfeh);
+    out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
+    writeArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
+    out << "{\n"
+	<< "using namespace tfel::math;\n"
+    	<< "using namespace tfel::material;\n"
+	<< "using real = calculix::CalculiXReal;\n"
+	<< "TFEL_CONSTEXPR const real isqrt2 = Cste<real>::isqrt2;\n";
+    if(this->generateMTestFile){
+      this->generateMTestFile1(out);
+    }
+    out << "real D[36] = {0,0,0,0,0,0,\n"
+	<< "              0,0,0,0,0,0,\n"
+      	<< "              0,0,0,0,0,0,\n"
+      	<< "              0,0,0,0,0,0,\n"
+      	<< "              0,0,0,0,0,0,\n"
+      	<< "              0,0,0,0,0,0};\n"
+	<< "LogarithmicStrainHandler<3u,real> "
+	<< "lsh0(LogarithmicStrainHandlerBase::LAGRANGIAN,\n"
+	<< "     tensor<3u,real>::buildFromFortranMatrix(F0));\n"
+	<< "LogarithmicStrainHandler<3u,real> "
+	<< "lsh1(LogarithmicStrainHandlerBase::LAGRANGIAN,\n"
+	<< "     tensor<3u,real>::buildFromFortranMatrix(F1));\n"
+	<< "auto eto  = lsh0.getHenckyLogarithmicStrain();\n"
+      	<< "auto deto = eval(lsh1.getHenckyLogarithmicStrain()-eto);\n"
+	<< "lsh0.convertFromSecondPiolaKirchhoffStress(STRESS);\n"
+	<< "// turning tensors in CalculiX conventions\n";
+    for(unsigned short i=3;i!=6;++i){
+      out << "eto["  << i << "]*=isqrt2;\n";
+    }
+    for(unsigned short i=3;i!=6;++i){
+      out << "deto["  << i << "]*=isqrt2;\n";
+    }
+    if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      if(mb.getSymmetryType()!=mfront::ISOTROPIC){
+	throw(std::runtime_error("CalculiXInterface::writeFiniteStrainFunction: "
+				 "orthotropic symmetry is unsupported yet"));
+      }
+    } else {
+      if(mb.getSymmetryType()!=mfront::ISOTROPIC){
+	throw(std::runtime_error("CalculiXInterface::writeFiniteStrainFunction: "
+				 "unsupported symmetry type"));
+      }
+      out << "if(*iorien!=0){\n"
+	  << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
+	  << "            << \"no orientation shall be defined for an istropic behaviour\\n\";\n"
+	  << "  std::exit(-1);\n"
+	  << "}\n"
+	  << name << "_base"
+	  << "(amat,iel,iint,NPROPS,MPROPS,&deto[0],&eto[0],beta,F0,"
+	  << " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
+	  << " ielas,mi,NSTATV,STATEV0,STATEV1,STRESS,D,"
+	  << "iorien,pgauss,orab,PNEWDT,ipkon,size);\n"
+	  << "// converting the consistent tangent operator\n"
+	  << "stensor<3u,real> T;\n"
+	  << "T.importTab(STRESS);\n"
+	  << "ST2toST2View<3u,real> Dv(D);\n"
+	  << "Dv = lsh1.convertToMaterialTangentModuli(ConstST2toST2View<3u,real>(D),T);\n"
+	  << "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D);\n"
+	  << "// converting the stress\n"
+	  << "lsh1.convertToSecondPiolaKirchhoffStress(STRESS);\n";
+    }
+    if(this->generateMTestFile){
+      out << "if(*PNEWDT<1){\n";
+      this->generateMTestFile2(out,mb.getBehaviourType(),
+			       name,"",mb);
+      out << "}\n";
+    }
+    if(getDebugMode()){
+      out << "std::cout << \"Dt :\" << std::endl;\n"
+	  << "const calculix::CalculiXReal *p = DDSDDE;\n"
+    	  << "for(calculix::CalculiXInt i=0;i!=6;++i){\n"
+    	  << "for(calculix::CalculiXInt j=0;j!=i+1;++j,++p){\n"
+    	  << "std::cout << *p << \" \";\n"
+    	  << "}\n"
+    	  << "std::cout << std::endl;\n"
+    	  << "}\n"
+    	  << "std::cout << std::endl;\n";
+    }
+    out << "}\n\n";
+  } // end of CalculiXInterface::writeMieheApelLambrechtLogarithmicStrainFunction
   
   void
   CalculiXInterface::writeUMATxxBehaviourTypeSymbols(std::ostream& out,
@@ -564,7 +679,7 @@ namespace mfront{
 						     const BehaviourDescription& mb) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("CalculiXInterface::writeUMATxxBehaviourTypeSymbols: "+m));}
+      if(b){throw(std::runtime_error("CalculiXInterface::writexxBehaviourTypeSymbols: "+m));}
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
@@ -579,7 +694,7 @@ namespace mfront{
     } else {
       throw_if(true,"unsupported behaviour type");
     }
-  } // end of CalculiXInterface::writeUMATxxBehaviourTypeSymbols
+  } // end of CalculiXInterface::writexxBehaviourTypeSymbols
 
   void
   CalculiXInterface::writeUMATxxBehaviourKinematicSymbols(std::ostream& out,
@@ -587,7 +702,7 @@ namespace mfront{
 							  const BehaviourDescription& mb) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("CalculiXInterface::writeUMATxxBehaviourKinematicSymbols: "+m));}
+      if(b){throw(std::runtime_error("CalculiXInterface::writexxBehaviourKinematicSymbols: "+m));}
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourKinematic = " ;
@@ -602,7 +717,7 @@ namespace mfront{
     } else {
       throw_if(true,"unsupported behaviour type");
     }
-  } // end of CalculiXInterface::writeUMATxxBehaviourKinematicSymbols
+  } // end of CalculiXInterface::writexxBehaviourKinematicSymbols
   
   void 
   CalculiXInterface::writeInterfaceSpecificIncludes(std::ostream& out,

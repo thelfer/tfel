@@ -16,7 +16,7 @@
 
 #include<type_traits>
 
-#include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
+#include"TFEL/Math/ST2toST2/ConstST2toST2View.hxx"
 #include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Material/MechanicalBehaviourTraits.hxx"
@@ -32,89 +32,85 @@ namespace calculix
    * \brief this class extracts and normalise (convert to
    * calculix/fortran conventions) the tangent operator
    */
-  struct ExtractAndConvertTangentOperator
+  struct ExtractTangentOperator
   {
     template<typename Behaviour,typename real>
-    static void exe(const Behaviour& b,real *const DDSDDE){
-      using namespace tfel::material;
-      typedef MechanicalBehaviourTraits<Behaviour> Traits;
-      using handler = typename std::conditional<
-	Traits::isConsistentTangentOperatorSymmetric,
-	SymmetricConsistentTangentOperatorComputer,
-	GeneralConsistentTangentOperatorComputer
-	>::type;
-      handler::exe(b,DDSDDE);
-    }// end of exe
-  private:
-    struct SymmetricConsistentTangentOperatorComputer
+    static void exe(const Behaviour& bv,
+		    real *const DDSDDE)
     {
-      template<typename Behaviour,typename real>
-      static void exe(const Behaviour& bv,
-		      real *const DDSDDE)
-      {
-	using TangentOperatorType = tfel::math::st2tost2<3u,real>;
-	TFEL_CONSTEXPR const auto one_half = real(1)/real(2);
-	TFEL_CONSTEXPR const auto icste    = tfel::math::Cste<real>::isqrt2;
-	const auto& Dt =
-	  static_cast<const TangentOperatorType&>(bv.getTangentOperator());
-	DDSDDE[0]  = Dt(0,0);
-	DDSDDE[1]  = Dt(0,1);
-	DDSDDE[2]  = Dt(1,1);
-	DDSDDE[3]  = Dt(0,2);
-	DDSDDE[4]  = Dt(1,2);
-	DDSDDE[5]  = Dt(2,2);
-	DDSDDE[6]  = Dt(0,3)*icste;
-	DDSDDE[7]  = Dt(1,3)*icste;
-	DDSDDE[8]  = Dt(2,3)*icste;
-	DDSDDE[9]  = Dt(3,3)*one_half;
-	DDSDDE[10] = Dt(0,4)*icste;
-	DDSDDE[11] = Dt(1,4)*icste;
-	DDSDDE[12] = Dt(2,4)*icste;
-	DDSDDE[13] = Dt(3,4)*one_half;
-	DDSDDE[14] = Dt(4,4)*one_half;
-	DDSDDE[15] = Dt(0,5)*icste;
-	DDSDDE[16] = Dt(1,5)*icste;
-	DDSDDE[17] = Dt(2,5)*icste;
-	DDSDDE[18] = Dt(3,5)*one_half;
-	DDSDDE[19] = Dt(4,5)*one_half;
-	DDSDDE[20] = Dt(5,5)*one_half;
-      } // end of exe	  
-    };
-    struct GeneralConsistentTangentOperatorComputer
+      using TangentOperatorType = tfel::math::st2tost2<3u,real>;
+      const auto& Dt =
+	static_cast<const TangentOperatorType&>(bv.getTangentOperator());
+      std::copy(Dt.begin(),Dt.end(),DDSDDE);
+    }
+  }; // end of ExtractTangentOperator
+
+  struct ConvertSymmetricTangentOperator
+  {
+    template<typename real>
+    static void exe(real *const DDSDDE,
+		    const real *const D)
     {
-      template<typename Behaviour,typename real>
-      static void exe(const Behaviour& bv,real *const DDSDDE)
-      {
-	using TangentOperatorType = tfel::math::st2tost2<3u,real>;
-	TFEL_CONSTEXPR const auto one_half   = real(1)/real(2);
-	TFEL_CONSTEXPR const auto one_fourth = real(1)/real(4);
-	TFEL_CONSTEXPR const auto hicste     = tfel::math::Cste<real>::isqrt2/2;
-	const auto& Dt =
-	  static_cast<const TangentOperatorType&>(bv.getTangentOperator());
-	DDSDDE[0]  = Dt(0,0);
-	DDSDDE[1]  = (Dt(0,1)+Dt(1,0))*one_half;
-	DDSDDE[2]  = Dt(1,1);
-	DDSDDE[3]  = (Dt(0,2)+Dt(2,0))*one_half;
-	DDSDDE[4]  = (Dt(1,2)+Dt(2,1))*one_half;
-	DDSDDE[5]  = Dt(2,2);
-	DDSDDE[6]  = (Dt(0,3)+Dt(3,0))*hicste;
-	DDSDDE[7]  = (Dt(1,3)+Dt(3,1))*hicste;
-	DDSDDE[8]  = (Dt(2,3)+Dt(3,2))*hicste;
-	DDSDDE[9]  = Dt(3,3)*one_half;
-	DDSDDE[10] = (Dt(0,4)+Dt(4,0))*hicste;
-	DDSDDE[11] = (Dt(1,4)+Dt(4,1))*hicste;
-	DDSDDE[12] = (Dt(2,4)+Dt(4,2))*hicste;
-	DDSDDE[13] = (Dt(3,4)+Dt(4,3))*one_fourth;
-	DDSDDE[14] = Dt(4,4)*one_half;
-	DDSDDE[15] = (Dt(0,5)+Dt(5,0))*hicste;
-	DDSDDE[16] = (Dt(1,5)+Dt(5,1))*hicste;
-	DDSDDE[17] = (Dt(2,5)+Dt(5,2))*hicste;
-	DDSDDE[18] = (Dt(3,5)+Dt(5,3))*one_fourth;
-	DDSDDE[19] = (Dt(4,5)+Dt(5,4))*one_fourth;
-	DDSDDE[20] = Dt(5,5)*one_half;
-      } // end of exe	  
-    };
-  }; // end of struct ExtractAndConvertTangentOperator
+      TFEL_CONSTEXPR const auto one_half = real(1)/real(2);
+      TFEL_CONSTEXPR const auto icste    = tfel::math::Cste<real>::isqrt2;
+      tfel::math::ConstST2toST2View<3u,real> Dt(D);
+      DDSDDE[0]  = Dt(0,0);
+      DDSDDE[1]  = Dt(0,1);
+      DDSDDE[2]  = Dt(1,1);
+      DDSDDE[3]  = Dt(0,2);
+      DDSDDE[4]  = Dt(1,2);
+      DDSDDE[5]  = Dt(2,2);
+      DDSDDE[6]  = Dt(0,3)*icste;
+      DDSDDE[7]  = Dt(1,3)*icste;
+      DDSDDE[8]  = Dt(2,3)*icste;
+      DDSDDE[9]  = Dt(3,3)*one_half;
+      DDSDDE[10] = Dt(0,4)*icste;
+      DDSDDE[11] = Dt(1,4)*icste;
+      DDSDDE[12] = Dt(2,4)*icste;
+      DDSDDE[13] = Dt(3,4)*one_half;
+      DDSDDE[14] = Dt(4,4)*one_half;
+      DDSDDE[15] = Dt(0,5)*icste;
+      DDSDDE[16] = Dt(1,5)*icste;
+      DDSDDE[17] = Dt(2,5)*icste;
+      DDSDDE[18] = Dt(3,5)*one_half;
+      DDSDDE[19] = Dt(4,5)*one_half;
+      DDSDDE[20] = Dt(5,5)*one_half;
+    } // end of exe	  
+  };
+
+  struct ConvertUnsymmetricTangentOperator
+  {
+    template<typename real>
+    static void exe(real *const DDSDDE,
+		    const real* const D)
+    {
+      TFEL_CONSTEXPR const auto one_half   = real(1)/real(2);
+      TFEL_CONSTEXPR const auto one_fourth = real(1)/real(4);
+      TFEL_CONSTEXPR const auto hicste     = tfel::math::Cste<real>::isqrt2/2;
+      tfel::math::ConstST2toST2View<3u,real> Dt(D);
+      DDSDDE[0]  = Dt(0,0);
+      DDSDDE[1]  = (Dt(0,1)+Dt(1,0))*one_half;
+      DDSDDE[2]  = Dt(1,1);
+      DDSDDE[3]  = (Dt(0,2)+Dt(2,0))*one_half;
+      DDSDDE[4]  = (Dt(1,2)+Dt(2,1))*one_half;
+      DDSDDE[5]  = Dt(2,2);
+      DDSDDE[6]  = (Dt(0,3)+Dt(3,0))*hicste;
+      DDSDDE[7]  = (Dt(1,3)+Dt(3,1))*hicste;
+      DDSDDE[8]  = (Dt(2,3)+Dt(3,2))*hicste;
+      DDSDDE[9]  = Dt(3,3)*one_half;
+      DDSDDE[10] = (Dt(0,4)+Dt(4,0))*hicste;
+      DDSDDE[11] = (Dt(1,4)+Dt(4,1))*hicste;
+      DDSDDE[12] = (Dt(2,4)+Dt(4,2))*hicste;
+      DDSDDE[13] = (Dt(3,4)+Dt(4,3))*one_fourth;
+      DDSDDE[14] = Dt(4,4)*one_half;
+      DDSDDE[15] = (Dt(0,5)+Dt(5,0))*hicste;
+      DDSDDE[16] = (Dt(1,5)+Dt(5,1))*hicste;
+      DDSDDE[17] = (Dt(2,5)+Dt(5,2))*hicste;
+      DDSDDE[18] = (Dt(3,5)+Dt(5,3))*one_fourth;
+      DDSDDE[19] = (Dt(4,5)+Dt(5,4))*one_fourth;
+      DDSDDE[20] = Dt(5,5)*one_half;
+    } // end of exe	  
+  };
   
 } // end of namespace calculix
 

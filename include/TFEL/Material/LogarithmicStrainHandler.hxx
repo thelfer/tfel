@@ -95,10 +95,12 @@ namespace tfel
        */
       LogarithmicStrainHandler(const Setting,
 			       const DeformationGradient&);
-      /*!
-       * \return the logarithmic strain
-       */
+      //! \return the the logarithmic strain
       StrainStensor getHenckyLogarithmicStrain() const;
+      /*!
+       * \param[out] elog: the logarithmic strain in `Abaqus/Standard` conventions
+       */
+      void getHenckyLogarithmicStrain(real *const) const;
       /*!
        * \return the Cauchy stress from the dual of the logarithmic strain
        * \param[in] T: dual of the logarithmic strain
@@ -106,21 +108,45 @@ namespace tfel
       StressStensor
       convertToSecondPiolaKirchhoffStress(const StressStensor&) const;
       /*!
+       * \brief compute the second Piola-Kirchhoff stress from the
+       * dual of the logarithmic strain.
+       * \param[in,out] TS: stress in `Abaqus/Standard` conventions.
+       */
+      void convertToSecondPiolaKirchhoffStress(stress *const) const;
+      /*!
        * \return the dual of the logarithmic strain
        * \param[in] S: Second Piola Kirchhoff stress.
        */
       StressStensor
       convertFromSecondPiolaKirchhoffStress(const StressStensor&) const;
       /*!
+       * \brief compute the dual of the logarithmic strain from the
+       * second Piola-Kirchhoff stress from.
+       * \param[in,out] ST: stress in `Abaqus/Standard` conventions.
+       */
+      void convertFromSecondPiolaKirchhoffStress(stress *const) const;
+      /*!
        * \return the Cauchy stress from the dual of the logarithmic strain
        * \param[in] T: dual of the logarithmic strain
        */
       StressStensor convertToCauchyStress(const StressStensor&) const;
       /*!
+       * \brief compute the Cauchy stress from the dual of the
+       * logarithmic strain.
+       * \param[in,out] Ts: stress in `Abaqus/Standard` conventions.
+       */
+      void convertToCauchyStress(stress *const) const;
+      /*!
        * \return the dual of the logarithmic strain
        * \param[in] s: Cauchy stress.
        */
       StressStensor convertFromCauchyStress(const StressStensor&) const;
+      /*!
+       * \brief compute the dual of the logarithmic strain from the
+       * Cauchy stress.
+       * \param[in,out] sT: stress in `Abaqus/Standard` conventions.
+       */
+      void convertFromCauchyStress(stress *const) const;
       /*!
        * \return the material tangent moduli
        * \param[in] Ks: tangent moduli in the logarithmic space
@@ -178,7 +204,7 @@ namespace tfel
       using TangentOperator = tfel::math::st2tost2<2u,stress>;
       //! a simple alias
       using size_type = unsigned short;
-      //
+      //! criterion used to check if eigenvalues are equal.
       static constexpr const real eps = 1.e-14;
       /*!
        * \brief constructor
@@ -188,15 +214,32 @@ namespace tfel
       LogarithmicStrainHandler(const Setting,
 			       const DeformationGradient&);
       /*!
+       * \brief update the axial deformation gradient
+       * \param[in] Fzz: axial deformation gradient
+       * \note This only updates the deformation gradient, not the
+       * Hencky strain, nor the eigen values and so on.  This is
+       * because the whole deformation gradient is only needed for
+       * stress and tangent moduli conversion.
+       */
+      void updateAxialDeformationGradient(const real);
+      /*!
        * \return the Cauchy stress from the dual of the logarithmic strain
        * \param[in] T: dual of the logarithmic strain
        */
       StressStensor
       convertToSecondPiolaKirchhoffStress(const StressStensor&) const;
       /*!
-       * \return the logarithmic strain
+       * \brief compute the second Piola-Kirchhoff stress from the
+       * dual of the logarithmic strain.
+       * \param[in,out] TS: stress in `Abaqus/Standard` conventions.
        */
+      void convertToSecondPiolaKirchhoffStress(stress *const) const;
+      //! \return the the logarithmic strain
       StrainStensor getHenckyLogarithmicStrain() const;
+      /*!
+       * \param[out] elog: the logarithmic strain in `Abaqus/Standard` conventions
+       */
+      void getHenckyLogarithmicStrain(real *const) const;
       /*!
        * \return the dual of the logarithmic strain
        * \param[in] S: Second Piola Kirchhoff stress.
@@ -204,15 +247,33 @@ namespace tfel
       StressStensor
       convertFromSecondPiolaKirchhoffStress(const StressStensor&) const;
       /*!
+       * \brief compute the dual of the logarithmic strain from the
+       * second Piola-Kirchhoff stress from.
+       * \param[in,out] ST: stress in `Abaqus/Standard` conventions.
+       */
+      void convertFromSecondPiolaKirchhoffStress(stress *const) const;
+      /*!
        * \return the Cauchy stress from the dual of the logarithmic strain
        * \param[in] T: dual of the logarithmic strain
        */
       StressStensor convertToCauchyStress(const StressStensor&) const;
       /*!
+       * \brief compute the Cauchy stress from the dual of the
+       * logarithmic strain.
+       * \param[in,out] Ts: stress in `Abaqus/Standard` conventions.
+       */
+      void convertToCauchyStress(stress *const) const;
+      /*!
        * \return the dual of the logarithmic strain
        * \param[in] s: Cauchy stress.
        */
       StressStensor convertFromCauchyStress(const StressStensor&) const;
+      /*!
+       * \brief compute the dual of the logarithmic strain from the
+       * Cauchy stress.
+       * \param[in,out] sT: stress in `Abaqus/Standard` conventions.
+       */
+      void convertFromCauchyStress(stress *const) const;
       /*!
        * \return the material tangent moduli
        * \param[in] Ks: tangent moduli in the logarithmic space
@@ -309,7 +370,7 @@ namespace tfel
        */
       const tfel::math::st2tost2<2u,real> p;
       //! deformation gradient
-      const DeformationGradient F;
+      DeformationGradient F;
       //! eigenvectors of the right Cauchy-Green tensor
       const tfel::math::tmatrix<3u,3u,real>  m;
       //! eigenvalues of the right Cauchy-Green tensor
@@ -349,10 +410,12 @@ namespace tfel
        */
       LogarithmicStrainHandler(const Setting,
 			       const DeformationGradient&);
-      /*!
-       * \return the the logarithmic strain
-       */
+      //! \return the the logarithmic strain
       StrainStensor getHenckyLogarithmicStrain() const;
+      /*!
+       * \param[out] elog: the logarithmic strain in `Abaqus/Standard` conventions
+       */
+      void getHenckyLogarithmicStrain(real *const) const;
       /*!
        * \return the Cauchy stress from the dual of the logarithmic strain
        * \param[in] T: dual of the logarithmic strain
@@ -360,21 +423,45 @@ namespace tfel
       StressStensor
       convertToSecondPiolaKirchhoffStress(const StressStensor&) const;
       /*!
+       * \brief compute the second Piola-Kirchhoff stress from the
+       * dual of the logarithmic strain.
+       * \param[in,out] TS: stress in `Abaqus/Standard` conventions.
+       */
+      void convertToSecondPiolaKirchhoffStress(stress *const) const;
+      /*!
        * \return the dual of the logarithmic strain
        * \param[in] S: Second Piola Kirchhoff stress.
        */
       StressStensor
       convertFromSecondPiolaKirchhoffStress(const StressStensor&) const;
       /*!
+       * \brief compute the dual of the logarithmic strain from the
+       * second Piola-Kirchhoff stress from.
+       * \param[in,out] ST: stress in `Abaqus/Standard` conventions.
+       */
+      void convertFromSecondPiolaKirchhoffStress(stress *const) const;
+      /*!
        * \return the Cauchy stress from the dual of the logarithmic strain
        * \param[in] T: dual of the logarithmic strain
        */
       StressStensor convertToCauchyStress(const StressStensor&) const;
       /*!
+       * \brief compute the Cauchy stress from the dual of the
+       * logarithmic strain.
+       * \param[in,out] Ts: stress in `Abaqus/Standard` conventions.
+       */
+      void convertToCauchyStress(stress *const) const;
+      /*!
        * \return the dual of the logarithmic strain
        * \param[in] s: Cauchy stress.
        */
       StressStensor convertFromCauchyStress(const StressStensor&) const;
+      /*!
+       * \brief compute the dual of the logarithmic strain from the
+       * Cauchy stress.
+       * \param[in,out] sT: stress in `Abaqus/Standard` conventions.
+       */
+      void convertFromCauchyStress(stress *const) const;
       /*!
        * \return the material tangent moduli
        * \param[in] Ks: tangent moduli in the logarithmic space

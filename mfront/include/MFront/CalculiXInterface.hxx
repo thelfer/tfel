@@ -79,7 +79,7 @@ namespace mfront{
      */
     virtual void
     endTreatment(const BehaviourDescription&,
-		  const FileDescription&) const override;
+		 const FileDescription&) const override;
     /*!
      * \param[out] d  : target description
      * \param[out] bd : behaviour description
@@ -175,10 +175,10 @@ namespace mfront{
      * \param[in] sfeh: name of the function used to handle the stress
      *                  expansion
      */
-    virtual void writeUMATFunctionBase(std::ostream&,
-				       const BehaviourDescription&,
-				       const std::string&,
-				       const std::string&) const;
+    virtual void writeFunctionBase(std::ostream&,
+				   const BehaviourDescription&,
+				   const std::string&,
+				   const std::string&) const;
     /*!
      * \brief write the call to the base function
      * \param[in] out:  output file
@@ -188,11 +188,13 @@ namespace mfront{
      *                  and the behaviour name)
      */
     virtual void
-    writeUMATSmallStrainFunction(std::ostream&,
-				 const BehaviourDescription&,
-				 const std::string&) const;
+    writeSmallStrainFunction(std::ostream&,
+			     const BehaviourDescription&,
+			     const std::string&) const;
     /*!
-     * \brief write the call to the base function
+     * \brief write the integration of a "true" finite strain
+     * behaviour, i.e. a finite strain behaviour not associated to a
+     * finite strain strategy.
      * \param[in] out:  output file
      * \param[in] mb:   mechanical behaviour description
      * \param[in] name: name of the behaviour as defined by interface
@@ -200,11 +202,12 @@ namespace mfront{
      *                  and the behaviour name)
      */
     virtual void
-    writeUMATFiniteStrainFunction(std::ostream&,
-				  const BehaviourDescription&,
-				  const std::string&) const;
+    writeFiniteStrainFunction(std::ostream&,
+			      const BehaviourDescription&,
+			      const std::string&) const;
     /*!
-     * \brief write the call to the base function
+     * \brief integrate the behaiour using the
+     * `FINITEROTATIONSMALLSTRAIN` finite strain strategy.
      * \param[in] out:  output file
      * \param[in] mb:   mechanical behaviour description
      * \param[in] name: name of the behaviour as defined by interface
@@ -212,9 +215,22 @@ namespace mfront{
      *                  and the behaviour name)
      */
     virtual void
-    writeUMATFiniteRotationSmallStrainFunction(std::ostream&,
-					       const BehaviourDescription&,
-					       const std::string&) const;
+    writeFiniteRotationSmallStrainFunction(std::ostream&,
+					   const BehaviourDescription&,
+					   const std::string&) const;
+    /*!
+     * \brief integrate the behaiour using the
+     * `MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN` finite strain strategy.
+     * \param[in] out:  output file
+     * \param[in] mb:   mechanical behaviour description
+     * \param[in] name: name of the behaviour as defined by interface
+     *                  (generally taking into account the material
+     *                  and the behaviour name)
+     */
+    virtual void
+    writeMieheApelLambrechtLogarithmicStrainFunction(std::ostream&,
+						     const BehaviourDescription&,
+						     const std::string&) const;
     /*!
      * \return the name of the generated library
      * \param[in] mb : behaviour description
@@ -228,7 +244,7 @@ namespace mfront{
      */
     virtual void
     writeCalculiXBehaviourTraits(std::ostream&,
-			       const BehaviourDescription&) const;
+				 const BehaviourDescription&) const;
     /*!
      * \param[in] out  : output file
      * \param[in] name : name of the behaviour as defined by interface

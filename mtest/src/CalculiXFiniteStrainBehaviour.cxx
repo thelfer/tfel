@@ -19,6 +19,8 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
+#include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
+
 #include"MFront/CalculiX/CalculiX.hxx"
 #include"MFront/CalculiX/CalculiXComputeStiffnessTensor.hxx"
 
@@ -53,8 +55,10 @@ namespace mtest
   {
     using namespace std;
     using namespace tfel::math;
+    using namespace tfel::material;
     using namespace calculix;
     using tfel::math::vector;
+    using FSTOBase = FiniteStrainBehaviourTangentOperatorBase;
     constexpr const auto sqrt2 = Cste<real>::sqrt2;
     const auto h = this->getHypothesis();
     auto throw_if = [](const bool c, const std::string& m){
@@ -64,6 +68,8 @@ namespace mtest
     throw_if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR,
 	     "CalculiX behaviours only provide the "
 	     "consistent tangent operator");
+    throw_if(h!=ModellingHypothesis::TRIDIMENSIONAL,
+	     "unsupported modelling hypothesis");
     const CalculiXInt nprops = -100-static_cast<CalculiXInt>(s.mprops1.size());
     fill(wk.D.begin(),wk.D.end(),0.);
     // using a local copy of internal state variables to handle the
@@ -125,31 +131,29 @@ namespace mtest
     if(ndt<1.){
       return {false,ndt};
     }
-    // treating the consistent tangent operator
-    if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      const auto K = this->convertTangentOperator(&(wk.D(0,0)));
-      for(unsigned short i=0;i!=6u;++i){
-	for(unsigned short j=0;j!=6u;++j){
-	  Kt(i,j)=K(i,j);
-	}
+    // turning stresses in TFEL conventions
+    for(CalculiXInt i=3;i!=6;++i){
+      us[i] *= sqrt2;
+    }
+    const auto F0  = tensor<3u,real>(&s.e0(0));
+    const auto F1  = tensor<3u,real>(&s.e1(0));
+    // turning pk2 to Cauchy stress
+    const auto pk2 = us;
+    us = convertSecondPiolaKirchhoffStressToCauchyStress(pk2,F1);
+    // converting the tangent operator
+    const auto Cse = this->convertTangentOperator(&(wk.D(0,0)));
+    const auto K   = convert<FSTOBase::DSIG_DF,
+			     FSTOBase::DS_DEGL>(Cse,F0,F1,us);
+    for(unsigned short i=0;i!=6u;++i){
+      for(unsigned short j=0;j!=6u;++j){
+	Kt(i,j)=K(i,j);
       }
-    } else {
-      throw_if(true,"unsupported modelling hypothesis");
     }
     if(b){
       // treating internal state variables
       if(!s.iv0.empty()){
 	copy_n(wk.ivs.begin(),s.iv1.size(),s.iv1.begin());
       }
-      // turning stresses in TFEL conventions
-      for(CalculiXInt i=3;i!=6;++i){
-	us[i] *= sqrt2;
-      }
-      // turning pk2 to Cauchy stress
-      const auto pk2 = us;
-      auto F1  = tensor<3u,real>();
-      copy(s.e1.begin(),s.e1.begin()+9,F1.begin());
-      us = convertSecondPiolaKirchhoffStressToCauchyStress(pk2,F1);
       copy(us.begin(),us.begin()+s.s1.size(),s.s1.begin());
     }
     return {true,ndt};
