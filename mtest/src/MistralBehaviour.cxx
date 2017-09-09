@@ -76,7 +76,7 @@ namespace mtest
     md.mname = std::string(16,' ');
     std::copy(ns.rbegin(),ns.rend(),md.mname.rbegin());
     // mistral parameters file
-    const auto& m = [&mp,&throw_if](){
+    const auto& m = [&mp,&throw_if]{
       auto p = mp.find("mistral_parameters_file");
       throw_if(p==mp.end(),"no mistral parameters file defined. "
 	       "You shall defined a parameter named "
@@ -91,7 +91,7 @@ namespace mtest
     md.SENSIP2 = get_int_parameter("SENSIP2");
     md.ICBASE  = get_int_parameter("ICBASE");
     // number of user defined state variable
-    const int NVIU = [&get_int_parameter,&throw_if](){
+    const int NVIU = [&get_int_parameter,&throw_if]{
       const auto v = get_int_parameter("NVIU");
       throw_if(v<0,"invalid value for parameter 'NVIU'");
       return v;

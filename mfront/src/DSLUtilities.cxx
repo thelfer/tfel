@@ -156,7 +156,7 @@ namespace mfront
 
   void writeF77FUNCMacros(std::ostream& f)
   {
-    auto def = [&f](){
+    auto def = [&f]{
       f << "#ifndef F77_FUNC\n"
       << "#define F77_FUNC(X,Y) X##_\n"
       << "#endif\n"

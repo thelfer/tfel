@@ -627,7 +627,7 @@ namespace mfront{
   AbaqusExplicitInterface::writeBehaviourDataMainVariablesSetters(std::ostream& os,
 								  const BehaviourDescription& mb) const
   {
-    auto throw_unsupported_hypothesis = [](){
+    auto throw_unsupported_hypothesis = []{
       throw(std::runtime_error("AbaqusExplicitInterface::writeBehaviourDataMainVariablesSetters: "
 			       "only small strain or finite behaviours are supported"));
     };
@@ -671,7 +671,7 @@ namespace mfront{
   AbaqusExplicitInterface::writeIntegrationDataMainVariablesSetters(std::ostream& os,
 								    const BehaviourDescription& mb) const
   {
-    auto throw_unsupported_hypothesis = [](){
+    auto throw_unsupported_hypothesis = []{
       throw(std::runtime_error("AbaqusExplicitInterface::writeIntegrationDataMainVariablesSetters: "
 			       "only small strain or finite behaviours are supported"));
     };
@@ -989,7 +989,7 @@ namespace mfront{
 						  const std::string& t,
 						  const Hypothesis h) const
   {
-    auto throw_unsupported_hypothesis = [](){
+    auto throw_unsupported_hypothesis = []{
       throw(std::runtime_error("AbaqusExplicitInterface::writeNativeBehaviourIntegration: "
 			       "internal error, unsupported hypothesis"));
     };
@@ -1131,7 +1131,7 @@ namespace mfront{
 								     const std::string& t,
 								     const Hypothesis h) const
   {
-    auto throw_unsupported_hypothesis = [](){
+    auto throw_unsupported_hypothesis = []{
       throw(std::runtime_error("AbaqusExplicitInterface::writeFiniteRotationSmallStrainIntegration: "
 			       "internal error, unsupported hypothesis"));
     };
@@ -1302,7 +1302,7 @@ namespace mfront{
 							     const std::string& t,
 							     const Hypothesis h) const
   {
-    auto throw_unsupported_hypothesis = [](){
+    auto throw_unsupported_hypothesis = []{
       throw(std::runtime_error("AbaqusExplicitInterface::writeLogarithmicStrainIntegration: "
 			       "internal error, unsupported hypothesis"));
     };

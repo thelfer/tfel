@@ -113,7 +113,7 @@ namespace mfront{
 	<< "mfront::" << md.className << "<Type> " << sm << ";\n"
 	<< "" << sm << ".setOutOfBoundsPolicy(this->policy);\n"
 	<< "this->" << vo << " = " << sm << "." << f.name << "(";
-    const auto args = [&f](){
+    const auto args = [&f]{
       auto a = std::vector<std::string>{};
       for(const auto& uv: f.usedVariables){
 	a.push_back(uv);
@@ -3670,7 +3670,7 @@ namespace mfront{
 						      const Hypothesis h) const
   {
     auto tmpnames = std::vector<std::string>{};
-    auto write_body = [this,&os,&tmpnames,h](){
+    auto write_body = [this,&os,&tmpnames,h]{
       os << "\n{\n"
       << "using namespace std;\n"
       << "using namespace tfel::math;\n"

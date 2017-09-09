@@ -215,7 +215,7 @@ namespace mtest
 	       ModellingHypothesis::toString(h)+")");
     }
     const AbaqusInt nblock = 1;
-    const AbaqusInt ndir = [&h,&throw_if](){
+    const AbaqusInt ndir = [&h,&throw_if]{
       switch(h){
       case ModellingHypothesis::PLANESTRESS:
       return 2;
@@ -227,7 +227,7 @@ namespace mtest
       throw_if(true,"unsupported hypothesis ("+
 	       ModellingHypothesis::toString(h)+")");
     }();
-    const AbaqusInt nshr = [&h,&throw_if](){
+    const AbaqusInt nshr = [&h,&throw_if]{
       switch(h){
       case ModellingHypothesis::PLANESTRESS:
       case ModellingHypothesis::AXISYMMETRICAL:
@@ -442,7 +442,7 @@ namespace mtest
     const AbaqusInt nblock = 1;
     const auto h = this->getHypothesis();
     const AbaqusInt ndir = 3;
-    const AbaqusInt nshr = [&h,&throw_if](){
+    const AbaqusInt nshr = [&h,&throw_if]{
       switch(h){
       case ModellingHypothesis::PLANESTRESS:
       case ModellingHypothesis::AXISYMMETRICAL:

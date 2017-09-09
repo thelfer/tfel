@@ -97,7 +97,7 @@ private:
     const double mu     = tfel::material::computeMu(E,nu);
     const st2tost2<3u,double> D =
       lambda*st2tost2<3u,double>::IxI()+2*mu*st2tost2<3u,double>::Id();
-    const auto F = [](){
+    const auto F = []{
       tensor<3u,double> Fi;
       for(size_type i=0;i!=Fi.size();++i){
         if(i<3){

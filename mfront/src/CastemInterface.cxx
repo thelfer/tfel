@@ -1651,16 +1651,23 @@ namespace mfront{
     auto preprocessing = [&out,this,&mb](const unsigned short d,
 					 const unsigned short n,
 					 const bool ps){
-      out << "LogarithmicStrainHandler<" << d << ",CastemReal> "
-          << "lsh0(LogarithmicStrainHandlerBase::EULERIAN,\n"
-          << "     tensor<" << d << ",CastemReal>::buildFromFortranMatrix(F0));\n"
-          << "LogarithmicStrainHandler<" << d << ",CastemReal> "
-          << "lsh1(LogarithmicStrainHandlerBase::EULERIAN,\n"
-          << "     tensor<" << d << ",CastemReal>::buildFromFortranMatrix(F1));\n";
       if(ps){
+	out << "LogarithmicStrainHandler<" << d << ",CastemReal> "
+	    << "lsh0(LogarithmicStrainHandlerBase::EULERIAN,\n"
+	    << "     tensor<" << d << ",CastemReal>::buildFromFortranMatrix(F0),false);\n"
+	    << "LogarithmicStrainHandler<" << d << ",CastemReal> "
+	    << "lsh1(LogarithmicStrainHandlerBase::EULERIAN,\n"
+	    << "     tensor<" << d << ",CastemReal>::buildFromFortranMatrix(F1),false);\n";
 	if(this->writeInitializeAxialStrain(out,mb)){
-	  out << "lsh0.updateAxialDeformationGradient(std::exp(ezz));\n";
+	    out << "lsh0.updateAxialDeformationGradient(std::exp(ezz));\n";
 	}
+      } else {
+	out << "LogarithmicStrainHandler<" << d << ",CastemReal> "
+	    << "lsh0(LogarithmicStrainHandlerBase::EULERIAN,\n"
+	    << "     tensor<" << d << ",CastemReal>::buildFromFortranMatrix(F0));\n"
+	    << "LogarithmicStrainHandler<" << d << ",CastemReal> "
+	    << "lsh1(LogarithmicStrainHandlerBase::EULERIAN,\n"
+	    << "     tensor<" << d << ",CastemReal>::buildFromFortranMatrix(F1));\n";
       }
       out << "CastemReal eto[" << n << "];\n"
           << "CastemReal deto[" << n << "];\n"
@@ -1677,7 +1684,12 @@ namespace mfront{
 	  out << "lsh1.updateAxialDeformationGradient(std::exp(ezz));\n";
 	}
       }
-      out << "lsh1.convertToCauchyStress(STRESS);\n";
+      out << "// converting the consistent tangent operator\n"
+          << "if(k){\n"
+          << "  lsh1.convertToCauchyStressTruesdellRateTangentModuli(DDSDDE,STRESS);\n"
+          << "}\n"
+          << "// converting the stress\n"
+          << "lsh1.convertToCauchyStress(STRESS);\n";
     };
     auto ndi_dispatch = [this,&out,&name,&mb,&suffix,
 			 &preprocessing,&postprocessing,
@@ -1709,7 +1721,8 @@ namespace mfront{
           << " castem::CastemLogarithmicStrainStressFreeExpansionHandler);\n"
           << "if(*KINC==1){\n";
       if(mb.getAttribute(BehaviourData::profiling,false)){
-	out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	out << "BehaviourProfiler::Timer post_timer("
+	    << mb.getClassName() << "Profiler::getProfiler(),\n"
 	    << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
       }
       if(h==ModellingHypothesis::TRIDIMENSIONAL){

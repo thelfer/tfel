@@ -651,7 +651,7 @@ namespace mfront{
       writeMaterialLaws(this->srcFile,md.materialLaws);		      
       i=0;
       for(auto puv=f.usedVariables.begin();puv!=f.usedVariables.end();++puv,++i){
-	const auto& v = [&md,puv](){
+	const auto& v = [&md,puv]{
 	  for(const auto& vo : md.outputs){
 	    if(*puv==vo.name){
 	      return vo;

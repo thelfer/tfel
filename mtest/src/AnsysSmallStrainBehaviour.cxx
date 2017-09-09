@@ -63,7 +63,7 @@ namespace mtest
 	     "ansys behaviours only provide the "
 	     "consistent tangent operator");
     const AnsysInt nprops = s.mprops1.size();
-    const AnsysInt ndirect = [&h,&throw_if](){
+    const AnsysInt ndirect = [&h,&throw_if]{
       if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 	  (h==ModellingHypothesis::PLANESTRAIN)||
 	  (h==ModellingHypothesis::PLANESTRESS)){
@@ -73,7 +73,7 @@ namespace mtest
       } 
       throw_if(true,"unsupported hypothesis");
     }();
-    const AnsysInt nshear = [&h,&throw_if](){
+    const AnsysInt nshear = [&h,&throw_if]{
       if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 	  (h==ModellingHypothesis::PLANESTRAIN)||
 	  (h==ModellingHypothesis::PLANESTRESS)){
@@ -83,7 +83,7 @@ namespace mtest
       } 
       throw_if(true,"unsupported hypothesis");
     }();
-    const AnsysInt ntens = [&h,&throw_if](){
+    const AnsysInt ntens = [&h,&throw_if]{
       if ((h==ModellingHypothesis::AXISYMMETRICAL)||
 	  (h==ModellingHypothesis::PLANESTRAIN)||
 	  (h==ModellingHypothesis::PLANESTRESS)){

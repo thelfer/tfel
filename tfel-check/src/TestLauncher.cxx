@@ -85,7 +85,7 @@ namespace tfel{
 
     void TestLauncher::throwRuntimeError(const std::string& m,
 					 const std::string& msg){
-      const auto e = [this,&m,&msg](){
+      const auto e = [this,&m,&msg]{
 	auto error = this->file;
 	if(this->current!=this->end()){
 	  error+=':'+std::to_string(this->current->line);
@@ -189,7 +189,7 @@ namespace tfel{
 	this->readSpecifiedToken("TestLauncher::treatTest",";");
 	return;
       }
-      auto check = [this](){
+      auto check = [this]{
 	if (this->current == this->end()) {
 	  this->throwRuntimeError("TestLauncher::treatTestType",
 				  "missing argument after '"+
@@ -217,7 +217,7 @@ namespace tfel{
     }  // end of TestLauncher::treatTestType
 
     void TestLauncher::treatTest() {
-      auto getColumn = [this](){
+      auto getColumn = [this]{
 	// fetching the column's name to compare
 	if ((this->current->flag==tfel::utilities::Token::String)||
 	    (this->current->flag==tfel::utilities::Token::Char)) {
@@ -229,7 +229,7 @@ namespace tfel{
 	  return std::make_shared<Column>(c);
 	}
       };
-      auto make_test = [this](){
+      auto make_test = [this]{
 	auto test = std::make_shared<Test>();
 	test->setComparison(this->comparison);
 	test->setPrec(this->prec);
@@ -247,7 +247,7 @@ namespace tfel{
       };
       this->checkNotEndOfFile("TestLauncher::treatTest");
       if(this->current->value=="{"){
-	auto getFileAndColumn = [this,&getColumn](){
+	auto getFileAndColumn = [this,&getColumn]{
 	  this->readSpecifiedToken("TestLauncher::treatTest","{");
 	  const auto f = this->readString("TestLauncher::treatTest");
 	  this->readSpecifiedToken("TestLauncher::treatTest",":");

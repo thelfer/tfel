@@ -79,7 +79,7 @@ namespace tfel{
 	  throw std::runtime_error("ThreadPool::addTask: "
 				   "enqueue on stopped ThreadPool");
 	}
-	this->tasks.emplace([t](){ (*t)(); });
+	this->tasks.emplace([t]{ (*t)(); });
       }
       this->c.notify_one();
       return res;

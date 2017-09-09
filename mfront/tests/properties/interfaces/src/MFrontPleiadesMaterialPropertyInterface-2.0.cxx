@@ -194,7 +194,7 @@ namespace mfront {
        << "setFieldName(\"OutputField\", " << oname << ");\n";
 
     for(const auto& i : mpd.inputs){
-      const auto iname = [&i](){
+      const auto iname = [&i]{
 	if(i.hasGlossaryName()){
 	  return "GlossaireField::"+i.getExternalName();
 	} else if(i.hasEntryName()){

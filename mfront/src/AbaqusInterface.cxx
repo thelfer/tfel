@@ -1056,7 +1056,7 @@ namespace mfront{
 						    const Hypothesis h,
 						    const BehaviourDescription& mb) const
   {
-    auto do_nothing = [&out](){
+    auto do_nothing = [&out]{
       out << "static_cast<void>(ABAQUSDR);\n";
     };
     /* 

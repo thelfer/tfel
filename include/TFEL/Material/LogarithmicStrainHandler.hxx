@@ -172,6 +172,17 @@ namespace tfel
       TangentOperator
       convertToCauchyStressTruesdellRateTangentModuli(const TangentOperator&,
 						      const StressStensor&) const;
+      /*!
+       * \param[in,out] K: On input, the consistent tangent operator
+       * in the logarithmic space. On output, the moduli associated
+       * with the Truesdell' rate of the Cauchy stress. Both are
+       * expressed in the Abaqus/Standard conventions.
+       * \param[in] T: dual of the logarithmic strain in
+       * Abaqus/Standard conventions.
+       */
+      void
+      convertToCauchyStressTruesdellRateTangentModuli(stress *const,
+						      const stress* const) const;
     private:
       //! deformation gradient
       DeformationGradient F;
@@ -210,9 +221,12 @@ namespace tfel
        * \brief constructor
        * \param[in] c:  setting
        * \param[in] F1: deformation gradient
+       * \param[in] b: compute the axial component. This component is
+       * unused in plane stress analyses.
        */
       LogarithmicStrainHandler(const Setting,
-			       const DeformationGradient&);
+			       const DeformationGradient&,
+			       const bool = true);
       /*!
        * \brief update the axial deformation gradient
        * \param[in] Fzz: axial deformation gradient
@@ -237,7 +251,8 @@ namespace tfel
       //! \return the the logarithmic strain
       StrainStensor getHenckyLogarithmicStrain() const;
       /*!
-       * \param[out] elog: the logarithmic strain in `Abaqus/Standard` conventions
+       * \param[out] elog: the logarithmic strain in `Abaqus/Standard`
+       * conventions.
        */
       void getHenckyLogarithmicStrain(real *const) const;
       /*!
@@ -299,6 +314,17 @@ namespace tfel
       TangentOperator
       convertToCauchyStressTruesdellRateTangentModuli(const TangentOperator&,
 						      const StressStensor&) const;
+      /*!
+       * \param[in,out] K: On input, the consistent tangent operator
+       * in the logarithmic space. On output, the moduli associated
+       * with the Truesdell' rate of the Cauchy stress. Both are
+       * expressed in the Abaqus/Standard conventions.
+       * \param[in] T: dual of the logarithmic strain in
+       * Abaqus/Standard conventions.
+       */
+      void
+      convertToCauchyStressTruesdellRateTangentModuli(stress *const,
+						      const stress* const) const;
     private:
       /*!
        * \brief compute the N tensors
@@ -324,9 +350,12 @@ namespace tfel
 	 * \brief constructor
 	 * \param[in] c:  setting
 	 * \param[in] F1: deformation gradient
+	 * \param[in] b: compute the axial component. This component is
+	 * unused in plane stress analyses.
 	 */
 	Builder(const Setting,
-		const DeformationGradient&);
+		const DeformationGradient&,
+		const bool);
 	/*!
 	 * derivative of the logarithmic strain with respect to the
 	 * right Cauchy-Green tensor
@@ -487,6 +516,17 @@ namespace tfel
       TangentOperator
       convertToCauchyStressTruesdellRateTangentModuli(const TangentOperator&,
 						      const StressStensor&) const;
+      /*!
+       * \param[in,out] K: On input, the consistent tangent operator
+       * in the logarithmic space. On output, the moduli associated
+       * with the Truesdell' rate of the Cauchy stress. Both are
+       * expressed in the Abaqus/Standard conventions.
+       * \param[in] T: dual of the logarithmic strain in
+       * Abaqus/Standard conventions.
+       */
+      void
+      convertToCauchyStressTruesdellRateTangentModuli(stress *const,
+						      const stress* const) const;
     private:
       //! \return true if all eigenvalues are equal
       static bool areEigenValuesEqual(const tfel::math::tvector<3u,real>&);

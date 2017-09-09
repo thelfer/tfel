@@ -62,7 +62,7 @@ namespace tfel{
 #error "Unsupported long double representation"
 #endif
 #endif /* __BYTE_ORDER	*/
-	auto le = [](){
+	auto le = []{
 	  union {
 	    uint32_t i;
 	    char c[4];
@@ -101,7 +101,7 @@ namespace tfel{
 #error "Unsupported long double representation"
 #endif
 #endif /* __BYTE_ORDER */
-	auto le = [](){
+	auto le = []{
 	  union {
 	    uint32_t i;
 	    char c[4];

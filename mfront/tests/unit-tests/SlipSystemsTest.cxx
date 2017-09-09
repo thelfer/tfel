@@ -67,7 +67,7 @@ private:
 		<<" " << t[3] << " " << t[4] << " " << t[5]
 		<<" " << t[6] << " " << t[7] << " " << t[8]
 		<< '\n';
-      const auto b = [&ss,&t](){
+      const auto b = [&ss,&t]{
 	for(const auto& mu : ss.mu){
 	  std::cout << "mu: " << mu << '\n';
 	  auto e1 = real{};

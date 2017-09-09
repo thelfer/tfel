@@ -67,7 +67,7 @@ private:
 		  const std::string& d,
 		  const FilterType& f)
   {
-    auto add = [this,f](){
+    auto add = [this,f]{
       const auto opt = this->currentArgument->getOption();
       if(opt.empty()){
 	throw(std::runtime_error("add_filter: no argument given"));

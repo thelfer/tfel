@@ -958,7 +958,7 @@ namespace mfront{
     writeUMATArguments(out,btype,this->fss,false);
     out << "{\n";
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      const auto mpoffset = [this,h,&mb](){
+      const auto mpoffset = [this,h,&mb]{
 	auto o = size_t{};
 	if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
 	  if((h==ModellingHypothesis::PLANESTRESS)||
@@ -1479,7 +1479,7 @@ namespace mfront{
 						    const Hypothesis h,
 						    const BehaviourDescription& mb) const
   {
-    auto do_nothing = [&out](){
+    auto do_nothing = [&out]{
       out << "static_cast<void>(ANSYSDR);\n";
     };
     /* 

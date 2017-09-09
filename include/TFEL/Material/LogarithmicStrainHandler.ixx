@@ -16,6 +16,7 @@
 
 #include<iostream>
 #include"TFEL/Math/Stensor/StensorConceptIO.hxx"
+#include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
 
 #include<cmath>
@@ -169,16 +170,36 @@ namespace tfel
       Kr(2,2) = (Ks(2,2)-2*T[2])*iJ;
       return Kr;
     } // end of LogarithmicStrainHandler<1u,StressType>::convertToCauchyStressTruesdellRateTangentModuli
+
+    template<typename StressType>
+    void
+    LogarithmicStrainHandler<1u,StressType>::convertToCauchyStressTruesdellRateTangentModuli(stress *const K,
+											     const stress* const T) const
+    {
+      const auto iJ = 1/tfel::math::det(this->F);
+      tfel::math::ST2toST2View<1u,stress> Kr(K);
+      Kr(0,0) = (Kr(0,0)-2*T[0])*iJ;
+      Kr(0,1)*=iJ;
+      Kr(0,2)*=iJ;
+      Kr(1,0)*=iJ;
+      Kr(1,1) = (Kr(1,1)-2*T[1])*iJ;
+      Kr(1,2)*=iJ;
+      Kr(2,0)*=iJ;
+      Kr(2,1)*=iJ;
+      Kr(2,2) = (Kr(2,2)-2*T[2])*iJ;
+    } // end of LogarithmicStrainHandler<1u,StressType>::convertToCauchyStressTruesdellRateTangentModuli
     
     template<typename StressType>
     LogarithmicStrainHandler<2u,StressType>::LogarithmicStrainHandler(const Setting c,
-								      const DeformationGradient& F1)
-      : LogarithmicStrainHandler(Builder(c,F1),c,F1)
+								      const DeformationGradient& F1,
+								      const bool b)
+      : LogarithmicStrainHandler(Builder(c,F1,b),c,F1)
     {} // end of LogarithmicStrainHandler<2u,StressTupe>::LogarithmicStrainHandler
 
     template<typename StressType>
     LogarithmicStrainHandler<2u,StressType>::Builder::Builder(const Setting c,
-							      const DeformationGradient& F1)
+							      const DeformationGradient& F1,
+							      const bool b)
     {
       using namespace tfel::math;
       using stensor = stensor<2u,real>;
@@ -186,8 +207,14 @@ namespace tfel
       const auto dfl = [](const real x){return 1/(2*x);};
       const auto C = computeRightCauchyGreenTensor(F1);
       std::tie(this->vp,this->m) = C.template computeEigenVectors<stensor::FSESJACOBIEIGENSOLVER>();
-      this->e = map(fl,vp);
-      const auto d = map(dfl,vp);
+      if(b){
+	this->e = map(fl,this->vp);
+      }  else {
+	this->e[0] = fl(this->vp(0));
+	this->e[1] = fl(this->vp(1));
+	this->e[2] = real(0);
+      }
+      const auto d = map(dfl,this->vp);
       if(c==LAGRANGIAN){
 	// p is one half of the tensor defined by Miehe
 	this->p = stensor::computeIsotropicFunctionDerivative(this->e,d,this->vp,this->m,eps);
@@ -444,6 +471,31 @@ namespace tfel
       Kr /= tfel::math::det(this->F);
       return Kr;
     } // end of LogarithmicStrainHandler<2u,StressType>::convertToCauchyStressTruesdellRateTangentModuli
+
+    template<typename StressType>
+    void
+    LogarithmicStrainHandler<2u,StressType>::convertToCauchyStressTruesdellRateTangentModuli(stress *const K,
+											     const stress* const T) const
+    {
+      tfel::math::ST2toST2View<2u,stress> k(K);
+      auto to_tfel = [&k]{
+	TFEL_CONSTEXPR const auto cste  = tfel::math::Cste<real>::sqrt2;
+	k(0,3)*=cste;k(1,3)*=cste;k(2,3)*=cste;
+	k(3,0)*=cste;k(3,1)*=cste;k(3,2)*=cste;
+	k(3,3)*=2;
+      };
+      auto to_abaqus = [&k]{
+	TFEL_CONSTEXPR const auto icste = tfel::math::Cste<real>::isqrt2;
+	k(0,3)*=icste;k(1,3)*=icste;k(2,3)*=icste;
+	k(3,0)*=icste;k(3,1)*=icste;k(3,2)*=icste;
+	k(3,3)/=2;
+      };
+      to_tfel();
+      tfel::math::stensor<2u,stress> t;
+      t.importTab(T);
+      k = this->convertToCauchyStressTruesdellRateTangentModuli(k,t);
+      to_abaqus();
+    } // end of LogarithmicStrainHandler<2u,StressType>::convertToCauchyStressTruesdellRateTangentModuli
     
     template<typename StressType>
     LogarithmicStrainHandler<3u,StressType>::LogarithmicStrainHandler(const Setting c,
@@ -461,8 +513,8 @@ namespace tfel
       const auto dfl = [](const real x){return 1/(2*x);};
       const auto C = computeRightCauchyGreenTensor(F1);
       std::tie(this->vp,this->m) = C.template computeEigenVectors<stensor::FSESJACOBIEIGENSOLVER>();
-      this->e = map(fl,vp);
-      const auto d = map(dfl,vp);
+      this->e = map(fl,this->vp);
+      const auto d = map(dfl,this->vp);
       // p is one half of the tensor defined by Miehe
       if(c==LAGRANGIAN){
 	this->p = stensor::computeIsotropicFunctionDerivative(this->e,d,this->vp,this->m,eps);
@@ -709,7 +761,7 @@ namespace tfel
 	return (j==0) ? 1 : 0;
       };
       const auto dfl = [](const real x){return 1/(2*x);};
-      const auto d = map(dfl,vp); // half compared to Miehe definition
+      const auto d = map(dfl,this->vp); // half compared to Miehe definition
       const auto f = map([](const real x){return -2/(x*x);},this->vp);
       const auto xsi = [this,&d,&f] () -> tmatrix<3u,3u,real> {
 	if(areEigenValuesEqual(this->vp)){
@@ -858,6 +910,43 @@ namespace tfel
 	Kr /= tfel::math::det(this->F);
 	return Kr;
       }
+    } // end of LogarithmicStrainHandler<3u,StressType>::convertToCauchyStressTruesdellRateTangentModuli
+
+    template<typename StressType>
+    void
+    LogarithmicStrainHandler<3u,StressType>::convertToCauchyStressTruesdellRateTangentModuli(stress *const K,
+											     const stress* const T) const
+    {
+      tfel::math::ST2toST2View<3u,stress> k(K);
+      auto to_tfel = [&k]{
+	TFEL_CONSTEXPR const auto cste  = tfel::math::Cste<real>::sqrt2;
+	k(0,3)*=cste;k(1,3)*=cste;k(2,3)*=cste;
+	k(0,4)*=cste;k(1,4)*=cste;k(2,4)*=cste;
+	k(0,5)*=cste;k(1,5)*=cste;k(2,5)*=cste;
+	k(3,0)*=cste;k(3,1)*=cste;k(3,2)*=cste;
+	k(4,0)*=cste;k(4,1)*=cste;k(4,2)*=cste;
+	k(5,0)*=cste;k(5,1)*=cste;k(5,2)*=cste;
+	k(3,3)*=2;k(3,4)*=2;k(3,5)*=2;
+	k(4,3)*=2;k(4,4)*=2;k(4,5)*=2;
+	k(5,3)*=2;k(5,4)*=2;k(5,5)*=2;
+      };
+      auto to_abaqus = [&k]{
+	TFEL_CONSTEXPR const auto icste = tfel::math::Cste<real>::isqrt2;
+	k(0,3)*=icste;k(1,3)*=icste;k(2,3)*=icste;
+	k(0,4)*=icste;k(1,4)*=icste;k(2,4)*=icste;
+	k(0,5)*=icste;k(1,5)*=icste;k(2,5)*=icste;
+	k(3,0)*=icste;k(3,1)*=icste;k(3,2)*=icste;
+	k(4,0)*=icste;k(4,1)*=icste;k(4,2)*=icste;
+	k(5,0)*=icste;k(5,1)*=icste;k(5,2)*=icste;
+	k(3,3)/=2;k(3,4)/=2;k(3,5)/=2;
+	k(4,3)/=2;k(4,4)/=2;k(4,5)/=2;
+	k(5,3)/=2;k(5,4)/=2;k(5,5)/=2;
+      };
+      to_tfel();
+      tfel::math::stensor<3u,stress> t;
+      t.importTab(T);
+      k = this->convertToCauchyStressTruesdellRateTangentModuli(k,t);
+      to_abaqus();
     } // end of LogarithmicStrainHandler<3u,StressType>::convertToCauchyStressTruesdellRateTangentModuli
     
   } // end of namespace material

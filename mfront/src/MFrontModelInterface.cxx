@@ -134,7 +134,7 @@ namespace mfront{
 	   << "#define "<< getHeaderDefine(md) << "\n\n"
 	   << "#include\"TFEL/Material/BoundsCheck.hxx\"\n"
 	   << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n";
-    const auto hasBounds = [&md](){
+    const auto hasBounds = [&md]{
       const auto hasBounds2 = [](const VariableDescriptionContainer& c){
 	for(const auto& v: c){
 	  if((v.hasBounds())||(v.hasPhysicalBounds())){
@@ -195,7 +195,7 @@ namespace mfront{
       throw_if(f.modifiedVariables.empty(),"no modified variable for function '"+f.name+"'");
       throw_if((f.usedVariables.empty())&&(!f.useTimeIncrement),
 	       "no used variable for function '"+f.name+"'");
-      const auto args = [&f](){
+      const auto args = [&f]{
 	auto a = std::vector<std::string>{};
 	for(const auto& uv: f.usedVariables){
 	  a.push_back(uv);

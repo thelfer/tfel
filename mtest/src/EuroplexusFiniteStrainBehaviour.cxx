@@ -62,7 +62,7 @@ namespace mtest
     const auto nstatv  = static_cast<epx::EuroplexusInt>(s.iv0.size());
     const auto npredef = static_cast<epx::EuroplexusInt>(s.esv0.size())-1;
     const auto h = this->getHypothesis();
-    const epx::EuroplexusInt hv = [&h](){
+    const epx::EuroplexusInt hv = [&h]{
       if (h==ModellingHypothesis::AXISYMMETRICAL){
 	return 3;
       } else if (h==ModellingHypothesis::PLANESTRESS){

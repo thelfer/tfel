@@ -56,7 +56,7 @@ namespace mtest
   void
   FAndersonAccelerationAlgorithm::initialize(const unsigned short psz)
   {
-    this->a = std::unique_ptr<FAnderson>(new FAnderson([psz](){
+    this->a = std::unique_ptr<FAnderson>(new FAnderson([psz]{
 	  return new tfel::math::vector<real>(psz);
 	}));
     if(this->Nmax==-1){this->Nmax = 4;}

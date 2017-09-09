@@ -55,7 +55,7 @@ namespace mtest
 
   void UAndersonAccelerationAlgorithm::initialize(const unsigned short psz)
   {
-    this->a = std::unique_ptr<UAnderson>(new UAnderson([psz](){
+    this->a = std::unique_ptr<UAnderson>(new UAnderson([psz]{
 	  return new tfel::math::vector<real>(psz);
 	}));
     if(this->Nmax==-1){this->Nmax = 4;}

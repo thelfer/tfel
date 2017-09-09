@@ -876,7 +876,7 @@ namespace mfront{
       return v.getAttribute<std::string>(VariableDescription::errorNormalisationFactor);      
     };
     const auto& d = this->mb.getBehaviourData(h);
-    auto shallUpdateInternalStateValues = [this,d,h](){
+    auto shallUpdateInternalStateValues = [this,d,h]{
       const auto uvs = getVariablesUsedDuringIntegration(this->mb,h);
       for(const auto& v : d.getIntegrationVariables()){
 	if(uvs.find(v.name)!=uvs.end()){
@@ -885,7 +885,7 @@ namespace mfront{
       }
       return false;
     }();
-    auto shallUpdateExternalStateValues = [this,d,h](){
+    auto shallUpdateExternalStateValues = [this,d,h]{
       const auto uvs = getVariablesUsedDuringIntegration(this->mb,h);
       for(const auto& mv : this->mb.getMainVariables()){
 	const auto& dv = mv.first;

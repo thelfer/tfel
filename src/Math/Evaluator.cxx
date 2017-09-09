@@ -314,7 +314,7 @@ namespace tfel
       throw_if(var.empty(),"empty var list");
       throw_if((var.size()>1)&&(diffNumber!=-1),
 	       "only one variable name allowed when degree of differentiation specified");
-      auto pev = [this,b,&f](){
+      auto pev = [this,b,&f]{
 	if(this->manager==nullptr){
 	  if(b){
 	    // variable names are fixed

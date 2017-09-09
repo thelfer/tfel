@@ -76,7 +76,7 @@ namespace mfront{
   const char*
   LibraryDescription::getDefaultLibrarySuffix(const TargetSystem s,
 					      const LibraryType l) noexcept{
-    auto error = [](){
+    auto error = []{
       throw(std::runtime_error("LibraryDescription::getDefaultLibrarySuffix : "
 			       "internal errror : unsupported system or library type"));
     };
@@ -129,7 +129,7 @@ namespace mfront{
   std::ostream&
   operator << (std::ostream& os,
 	       const LibraryDescription& l){
-    auto error = [&l](){
+    auto error = [&l]{
       throw(std::runtime_error("operator << : "
 			       "unsuported library type (neither module or "
 			       "shared library)  for library '"+l.name+"'"));
