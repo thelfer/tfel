@@ -204,9 +204,8 @@ namespace mtest
     }
   } // end of CastemFiniteStrainBehaviour::CastemFiniteStrainBehaviour
 
-  CastemFiniteStrainBehaviour::CastemFiniteStrainBehaviour(const UmatBehaviourDescription& umb,
-							   const Hypothesis h)
-    : CastemStandardBehaviour(umb,h)
+  CastemFiniteStrainBehaviour::CastemFiniteStrainBehaviour(const UmatBehaviourDescription& umb)
+    : CastemStandardBehaviour(umb)
   {} // end of CastemFiniteStrainBehaviour::CastemFiniteStrainBehaviour
   
   void

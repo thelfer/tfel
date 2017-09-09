@@ -37,10 +37,8 @@ namespace mtest
 			    const std::string&);
     /*!
      * \param[in] umb: behaviour description
-     * \param[in] h:   modelling hypothesis
      */
-    CastemStandardBehaviour(const UmatBehaviourDescription&,
-			    const Hypothesis);
+    CastemStandardBehaviour(const UmatBehaviourDescription&);
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */

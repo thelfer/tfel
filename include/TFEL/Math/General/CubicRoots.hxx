@@ -244,7 +244,7 @@ namespace tfel{
 	auto f  = [&a3,&a2,&a1,&a0](const T x){
 	  return ((a3*x+a2)*x+a1)*x+a0;
 	};
-	auto df = [&a3,&a2,&a1,&a0](const T x){
+	auto df = [&a3,&a2,&a1](const T x){
 	  return (3*a3*x+2*a2)*x+a1;
 	};
 	TFEL_CONSTEXPR const auto emin = std::numeric_limits<T>::min();

@@ -14,5 +14,5 @@ struct LibraryInformation::LibraryInformation::Implementation
   virtual std::vector<std::string> sections() = 0;
   virtual std::vector<std::string> symbols() = 0;
   virtual std::vector<std::string> symbols(const char*) = 0;
-  virtual ~Implementation() = default;
+  virtual ~Implementation();
 }; // end of struct LibraryInformation::LibraryInformation::Implementation

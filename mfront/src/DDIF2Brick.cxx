@@ -38,7 +38,7 @@ namespace mfront{
       if(b){throw(std::runtime_error("DDIF2Brick::DDIF2Brick: "+m));}
     };
     std::function<std::string(const MaterialPropertyInput&)> ets =
-      [this,throw_if](const MaterialPropertyInput& i) -> std::string {
+      [throw_if](const MaterialPropertyInput& i) -> std::string {
       if((i.type==MaterialPropertyInput::TEMPERATURE)||
 	 (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
 	 (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)){

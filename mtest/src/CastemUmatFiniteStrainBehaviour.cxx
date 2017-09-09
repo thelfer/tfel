@@ -27,9 +27,8 @@ namespace mtest
   } // end of CastemUmatFiniteStrainBehaviour::buildCastemUmatFiniteStrainBehaviour
   
   CastemUmatFiniteStrainBehaviour::CastemUmatFiniteStrainBehaviour(const UmatBehaviourDescription& bd,
-								   const std::string& cn,
-								   const Hypothesis h)
-    : CastemFiniteStrainBehaviour(bd,h)
+								   const std::string& cn)
+    : CastemFiniteStrainBehaviour(bd)
   {
     if(cn.size()!=16u){
       throw(std::runtime_error("CastemUmatFiniteStrainBehaviour::CastemUmatFiniteStrainBehaviour: "

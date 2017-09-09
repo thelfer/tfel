@@ -132,7 +132,7 @@ namespace details {
       : f_(f)
     {}
 
-    std::vector<std::string> sections() {
+    std::vector<std::string> sections() override{
       std::vector<std::string> ret;
       std::vector<char> names;
       sections_names_raw(names);

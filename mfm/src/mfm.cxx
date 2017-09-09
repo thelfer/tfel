@@ -159,8 +159,8 @@ private:
       std::regex r(n,this->rs|std::regex_constants::icase);
       return std::regex_match(e.name,r);
     };
-    auto type_filter = [this](const EntryPoint& e,
-			      const std::string& t){
+    auto type_filter = [](const EntryPoint& e,
+			  const std::string& t){
       using tfel::system::ExternalLibraryManager;
       if(t=="material_property"){
 	return e.type==EntryPoint::MATERIALPROPERTY;

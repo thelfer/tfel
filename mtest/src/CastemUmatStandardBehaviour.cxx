@@ -32,6 +32,7 @@ namespace mtest{
     UmatBehaviourDescription md;
     md.library = l;
     md.behaviour = f;
+    md.hypothesis = ModellingHypothesis::toString(h);
     throw_if((t!=1u)&&(t!=2u),"invalid behaviour");
     md.btype=t;
     if(t==1u){
@@ -110,7 +111,7 @@ namespace mtest{
 	ompnames.insert(ompnames.begin(),{"RHO","ALP1","ALP2","ALP3"});
       }
     }
-    auto get = [&mp,&throw_if](const std::string& n)
+    auto get = [&mp](const std::string& n)
       -> std::vector<std::string> {
       auto pd = mp.find(n);
       if(pd==mp.end()){
@@ -148,9 +149,9 @@ namespace mtest{
     md.evnames = evnames;
     std::shared_ptr<Behaviour> ptr;
     if(t==1u){
-      ptr = std::make_shared<CastemUmatSmallStrainBehaviour>(md,mname,h);
+      ptr = std::make_shared<CastemUmatSmallStrainBehaviour>(md,mname);
     } else {
-      ptr = std::make_shared<CastemUmatFiniteStrainBehaviour>(md,mname,h);
+      ptr = std::make_shared<CastemUmatFiniteStrainBehaviour>(md,mname);
     }
     return ptr;
   }

@@ -14,6 +14,7 @@
 #ifndef NUMEODIS_IPLANE_HXX
 #define NUMEODIS_IPLANE_HXX
 
+#include "NUMODIS/Config.hxx"
 #include "NUMODIS/Math/Utilities.hxx"
 
 namespace numodis
@@ -24,8 +25,13 @@ namespace numodis
   //---------------------------------------------------------------
   //! IPlane handles the indices of a critallographic plane
   //===============================================================
-  struct IPlane
+  struct TFELNUMODIS_VISIBILITY_EXPORT IPlane
   {
+
+    IPlane(IPlane&&);
+
+    IPlane(const IPlane&);
+
     using size_type = std::vector<int>::size_type;
 
     IPlane& operator=(const IPlane& rhs);

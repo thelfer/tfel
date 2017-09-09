@@ -2952,7 +2952,16 @@ AC_OUTPUT([debug.sh
   	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-3-3D.mtest
   	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-4-3D.mtest
   	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-5-3D.mtest
-  	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-6-3D.mtest	   
+  	   mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-6-3D.mtest
+           mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D.mtest
+           mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D.mtest
+           mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest
            mfront/tests/models/Makefile
            mfront/tests/models/interfaces/Makefile
            mfront/tests/models/interfaces/include/Makefile

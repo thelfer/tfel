@@ -44,10 +44,6 @@ namespace mtest
     operator=(UmatBehaviourDescription&&);
     UmatBehaviourDescription&
     operator=(const UmatBehaviourDescription&);
-    //! library
-    std::string library;
-    //! function
-    std::string behaviour;
   };
   
   /*!
@@ -66,12 +62,8 @@ namespace mtest
     UmatBehaviourBase(const Hypothesis,
 		      const std::string&,
 		      const std::string&);
-    /*!
-     * \param[in] umb: behaviour description
-     * \param[in] h:   modelling hypothesis
-     */
-    UmatBehaviourBase(const UmatBehaviourDescription&,
-		      const Hypothesis);
+    //! \param[in] umb: behaviour description
+    UmatBehaviourBase(const UmatBehaviourDescription&);
     //! \return the modelling hypothesis 
     virtual Hypothesis getHypothesis() const override;
     //! \return the type of the behaviour
@@ -307,8 +299,6 @@ namespace mtest
     initializeTangentOperator(tfel::math::matrix<real>&,
 			      const StiffnessMatrixType,
 			      const bool) const;
-    //! hypothesis
-    const std::string hypothesis;
   }; // end of struct Behaviour
   
 } // end of namespace mtest

@@ -20,8 +20,8 @@
 
 namespace numodis{
 
-  class Crystallo;
-  class GSystem;
+  struct Crystallo;
+  struct GSystem;
 
   //===============================================================================================
   // class FrankRead

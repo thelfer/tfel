@@ -3329,6 +3329,15 @@ mfront/tests/behaviours/calculix/calculixelasticity6.mtest.in -text
 mfront/tests/behaviours/calculix/calculixelasticity7.mtest.in -text
 mfront/tests/behaviours/calculix/calculixelasticity8.mtest.in -text
 mfront/tests/behaviours/calculix/calculixelasticity9.mtest.in -text
+mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D.mtest.in -text
+mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D.mtest.in -text
+mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D.mtest.in -text
+mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-3D.mtest.in -text
+mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-3D.mtest.in -text
+mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3D.mtest.in -text
+mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D.mtest.in -text
+mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D.mtest.in -text
+mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest.in -text
 mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-1-3D.mtest.in -text
 mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-2-3D.mtest.in -text
 mfront/tests/behaviours/calculix/calculixsaintvenantkirchhoffelasticity-shear-3-3D.mtest.in -text

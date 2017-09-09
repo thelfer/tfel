@@ -58,11 +58,16 @@ Options
 cmake usefull variables
 =======================
 
-  CASTEM_INSTALL_PATH  : specify where the castem has been installed
-  ZSET_INSTALL_PATH    : specify where the ZSET sofware has been installed
-  CMAKE_TOOLCHAIN_FILE : specify a tool chain file
-  CMAKE_BUILD_TYPE     : two values are supported 'Release' and 'Debug'
-  TFEL_SVN_REVISION    : tfel-svn revision
+- `CMAKE_BUILD_TYPE`           : two values are supported 'Release' and 'Debug'
+- `CASTEM_INSTALL_PATH`        : specify where the castem has been installed
+- `ZSET_INSTALL_PATH`          : specify where the ZSET sofware has been installed
+- `CMAKE_TOOLCHAIN_FILE`       : specify a tool chain file
+- `TFEL_SVN_REVISION`          : tfel-svn revision
+- `Python_ADDITIONAL_VERSIONS` : select the `python` version to
+  			         use. Note that only the major and minor
+  			         version of python shall be passed, not
+  			         the revision version or the detection
+  			         fails.
 
 cmake typical usage
 ===================

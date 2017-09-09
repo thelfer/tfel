@@ -22,6 +22,11 @@
 namespace numodis
 {
 
+  Cubic::Cubic(Cubic&&) = default;
+
+  Cubic::Cubic(const Cubic&) = default;
+
+  
   //===============================================================
   // Cubic::Symmetry
   //---------------------------------------------------------------

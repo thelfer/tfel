@@ -374,6 +374,17 @@ namespace mfront{
      * \brief plane stress handling requires to have access to the
      * axial strain, but it is not obvious nor always possible to get it...
      * This method handles all the cases.
+     * \return false if the axial strain can't be initialized.
+     * \param[in] out : ouptut file
+     * \param[in] mb  : behaviour description
+     */    
+    virtual bool
+    writeInitializeAxialStrain(std::ostream& out,
+			       const BehaviourDescription& mb) const;
+    /*!
+     * \brief plane stress handling requires to have access to the
+     * axial strain, but it is not obvious nor always possible to get it...
+     * This method handles all the cases.
      * \param[in] out : ouptut file
      * \param[in] mb  : behaviour description
      * \param[in] c   : beginning of the call

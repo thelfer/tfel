@@ -34,8 +34,6 @@ namespace mtest
   UmatBehaviourDescription::UmatBehaviourDescription(const std::string& l,
 						     const std::string& b,
 						     const std::string& h)
-    : library(l),
-      behaviour(b)
   {
     using namespace tfel::system;
     ExternalBehaviourData::operator=(ExternalBehaviourDescription(l,b,h));
@@ -44,8 +42,7 @@ namespace mtest
   UmatBehaviourBase::UmatBehaviourBase(const Hypothesis h,
 				       const std::string& l,
 				       const std::string& b)
-    : UmatBehaviourDescription(l,b,ModellingHypothesis::toString(h)),
-      hypothesis(ModellingHypothesis::toString(h))
+    : UmatBehaviourDescription(l,b,ModellingHypothesis::toString(h))
   {
     if(this->stype>=2u){
       throw(std::runtime_error("UmatBehaviourBase::UmatBehaviourBase : "
@@ -55,10 +52,8 @@ namespace mtest
     this->evnames.insert(this->evnames.begin(),"Temperature");
   }
 
-  UmatBehaviourBase::UmatBehaviourBase(const UmatBehaviourDescription& umb,
-				       const Hypothesis h)
-    : UmatBehaviourDescription(umb),
-      hypothesis(ModellingHypothesis::toString(h))
+  UmatBehaviourBase::UmatBehaviourBase(const UmatBehaviourDescription& umb)
+    : UmatBehaviourDescription(umb)
   {
     if(this->stype>=2u){
       throw(std::runtime_error("UmatBehaviourBase::UmatBehaviourBase : "

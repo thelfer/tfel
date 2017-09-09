@@ -101,16 +101,19 @@ namespace mtest
     uu0(0,2) = s.e0(6); uu1(0,2) = s.e1(6);
     uu0(2,1) = s.e0(7); uu1(2,1) = s.e1(7);
     uu0(1,2) = s.e0(8); uu1(1,2) = s.e1(8);
-    const auto v0j = det(uu0);
-    const auto vj  = det(uu1);
+    const auto F0  = tensor<3u,real>(&s.e0(0));
+    const auto F1  = tensor<3u,real>(&s.e1(0));
+    const auto v0j = det(F0);
+    const auto vj  = det(F1);
     // CalculiX standard convention
-    copy(s.s0.begin(),s.s0.end(),us.begin());
+    std::copy(s.s0.begin(),s.s0.end(),us.begin());
+    auto pk2 = convertCauchyStressToSecondPiolaKirchhoffStress(us,F0);
     for(CalculiXInt i=3;i!=6;++i){
-      us(i)  /= sqrt2;
+      pk2(i)  /= sqrt2;
     }
     auto ndt = std::numeric_limits<CalculiXReal>::max();
-    const auto iel      = CalculiXInt(0);
-    const auto iint     = CalculiXInt(0);
+    const auto iel      = CalculiXInt(1);
+    const auto iint     = CalculiXInt(1);
     const auto ithermal = CalculiXInt(1);
     const auto icmd     = CalculiXInt(0);
     const auto ielas    = CalculiXInt(1);
@@ -125,7 +128,7 @@ namespace mtest
 		&mi,&nstatv,
 		s.iv0.empty() ? nullptr : &s.iv0(0),
 		wk.ivs.empty() ? nullptr : &wk.ivs(0),
-		&us(0),&(wk.D(0,0)),&ioren,nullptr,
+		&pk2(0),&(wk.D(0,0)),&ioren,nullptr,
 		orab,&ndt,nullptr,
 		0 /*hidden fortran parameter */);
     if(ndt<1.){
@@ -133,12 +136,9 @@ namespace mtest
     }
     // turning stresses in TFEL conventions
     for(CalculiXInt i=3;i!=6;++i){
-      us[i] *= sqrt2;
+      pk2[i] *= sqrt2;
     }
-    const auto F0  = tensor<3u,real>(&s.e0(0));
-    const auto F1  = tensor<3u,real>(&s.e1(0));
     // turning pk2 to Cauchy stress
-    const auto pk2 = us;
     us = convertSecondPiolaKirchhoffStressToCauchyStress(pk2,F1);
     // converting the tangent operator
     const auto Cse = this->convertTangentOperator(&(wk.D(0,0)));

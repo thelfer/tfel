@@ -30,6 +30,10 @@ namespace numodis
   struct TFELNUMODIS_VISIBILITY_EXPORT IBurgers
   {
 
+    IBurgers(IBurgers&&);
+
+    IBurgers(const IBurgers&);
+    
     using size_type = std::vector<int>::size_type;
     
     IBurgers operator+ (const IBurgers& rhs) const;

@@ -31,8 +31,7 @@ namespace tfel
 
     rfstream::rfstream(const rfstream&) = default;
 
-    rfstream &
-    rfstream::operator=(const rfstream& src)
+    rfstream & rfstream::operator=(const rfstream& src)
     {
       if(this==&src){
 	return *this;
@@ -50,11 +49,9 @@ namespace tfel
       this->open(name,flags);
     } // end of rfstream::rfstream
 
-    void
-    rfstream::open(const std::string& name,
-		   const int flags)
+    void rfstream::open(const std::string& name,
+			const int flags)
     {
-      using namespace std;
       int fd;
       if(*(this->get())!=-1){
 	// closing the previous file
@@ -62,39 +59,37 @@ namespace tfel
       }
       fd=::open(name.c_str(),flags);
       if(fd==-1){
-	string msg("rfstream::open : ");
-	msg += "failed to open file "+name+".";
-	systemCall::throwSystemError(msg,errno);
+	systemCall::throwSystemError("rfstream::open: failed "
+				     "to open file '"+name+"'.",errno);
       }
       shared_ptr<int>::operator=(std::make_shared<int>(fd));
     } // end of rfstream::open
 
-    void
-    rfstream::close()
+    void rfstream::close()
     {
-      using namespace std;
       if(*(this->get())==-1){
 	return;
       }
       if(this->unique()){
 	if(::close(*(this->get()))==-1){
-	  string msg("rfstream::close : ");
-	  msg += "failed to close file.";
-	  systemCall::throwSystemError(msg,errno);
+	  systemCall::throwSystemError("rfstream::close: failed to "
+				       "close file.",errno);
 	}
       }
       shared_ptr<int>::operator=(std::make_shared<int>(-1));
     } // end of rfstream::close
 
-    int
-    rfstream::getFileDescriptor() const
+    int rfstream::getFileDescriptor() const
     {
       return *(this->get());
     } // end of rfstream::getFileDescriptor
 
     rfstream::~rfstream()
     {
-      this->close();
+      try{
+	this->close();
+      } catch(...){
+      }
     } // end of rfstream::~rfstream
     
   } // end of namespace system  

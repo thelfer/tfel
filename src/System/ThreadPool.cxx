@@ -23,7 +23,7 @@ namespace tfel{
     {
       this->statuses.resize(n,ThreadPool::Status::IDLE);
       for(size_t i = 0;i<n;++i){
-	auto f = [this,n,i]{
+	auto f = [this,i]{
 	  for(;;){
 	    std::function<void()> task;
 	    {

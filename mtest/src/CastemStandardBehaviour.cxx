@@ -84,9 +84,8 @@ namespace mtest
     setMaterialProperties(*this,h);
   } // end of CastemStandardBehaviour::CastemStandardBehaviour
 
-  CastemStandardBehaviour::CastemStandardBehaviour(const UmatBehaviourDescription& umb,
-						   const Hypothesis h)
-    : UmatBehaviourBase(umb,h)
+  CastemStandardBehaviour::CastemStandardBehaviour(const UmatBehaviourDescription& umb)
+    : UmatBehaviourBase(umb)
   {
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     this->fct = elm.getCastemExternalBehaviourFunction(this->library,this->behaviour);

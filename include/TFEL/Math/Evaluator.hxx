@@ -325,12 +325,12 @@ namespace tfel
     }; // end of struct FunctionManager
 
     template<double (*f)(const double,const double)>
-    static std::shared_ptr<tfel::math::parser::Expr>
+    TFEL_VISIBILITY_LOCAL std::shared_ptr<tfel::math::parser::Expr>
     StandardBinaryFctGenerator(std::shared_ptr<tfel::math::parser::Expr>,
 			       std::shared_ptr<tfel::math::parser::Expr>);
     
     template<double (*f)(const double)>
-    static std::shared_ptr<tfel::math::parser::Expr>
+    TFEL_VISIBILITY_LOCAL std::shared_ptr<tfel::math::parser::Expr>
     StandardFctGenerator(const std::shared_ptr<tfel::math::parser::Expr>);
     
   } // end of namespace math

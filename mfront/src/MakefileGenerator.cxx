@@ -215,10 +215,10 @@ namespace mfront{
     // cpp flags
     vector<string> cppflags;
     for(const auto& l:t){
-      for(const auto flags : l.cppflags){
+      for(const auto& flags : l.cppflags){
 	insert_if(cppflags,flags);
       }
-      for(const auto id: l.include_directories){
+      for(const auto& id: l.include_directories){
 	if((tfel::utilities::starts_with(id,"$(shell "))||
 	   (tfel::utilities::ends_with(id,")"))){
 	  insert_if(cppflags,"$(patsubst %,-I%,"+id+")");

@@ -163,7 +163,7 @@ namespace mfront{
     }
     throw(std::runtime_error(msg.str()));
   } // end of getCastemModellingHypothesisIndex
-
+  
   CastemInterface::CastemInterface() = default;
 
   std::string CastemInterface::getName()
@@ -1086,7 +1086,7 @@ namespace mfront{
       }
     }
     
-    auto ndi_dispatch = [&out,&name,&mh](const int ndi,const Hypothesis h,const bool b){
+    auto ndi_dispatch = [&out,&name](const int ndi,const Hypothesis h,const bool b){
       out << (b ? "if" : " else if") << "(*NDI==" << ndi << "){\n"
       << "	umat" << makeLowerCase(name) << "_base_"
       << ModellingHypothesis::toUpperCaseString(h)
@@ -1481,47 +1481,55 @@ namespace mfront{
     out << ";\n\n";
   } // end of CastemInterface::writeCastemFunctionDeclaration
 
+  bool CastemInterface::writeInitializeAxialStrain(std::ostream& out,
+						   const BehaviourDescription& mb) const{
+    if(mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
+      const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
+      if(v.first){
+	out << "const CastemReal ezz = STATEV[" << v.second.getValueForDimension(2) << "];\n";
+      } else {
+	// no axial strain
+	out << "std::cerr << \"no state variable standing for the axial strain `\"\n"
+	    << "\"(variable with the glossary name 'AxialStrain')\" << std::endl;\n"
+	    << "*KINC=-1;\n"
+	    << "return;\n";
+	return false;
+      }
+    } else {
+      // generic algorithm, this means that the behaviour
+      // can be called in generalised plane strain
+      const auto& d = mb.getBehaviourData(ModellingHypothesis::GENERALISEDPLANESTRAIN);
+      const auto s =  d.getPersistentVariables().getTypeSize();
+      if(s.getValueForDimension(2)==0){
+	out << "const CastemReal ezz = STATEV[0];\n";
+      } else {
+	out << "if(*NSTATV!=" << s.getValueForDimension(2)+1 << "){\n"
+	    << "std::cerr << \"invalid number of internal state variables\" << std::endl;\n"
+	    << "*KINC=-1;\n"
+	    << "return;\n"
+	    << "}\n"
+	    << "const CastemReal ezz = STATEV[" << s.getValueForDimension(2) << "];\n";
+      }
+    }
+    return true;
+  } // end of CastemInterface::writeInitializeAxialStrain
+  
   void
   CastemInterface::writeFiniteStrainStrategiesPlaneStressSpecificCall(std::ostream& out,
-									  const BehaviourDescription& mb,
-									  const std::string& c,
-									  const std::string& c2) const
+								      const BehaviourDescription& mb,
+								      const std::string& c,
+								      const std::string& c2) const
   {
     if((mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS))||
        (this->usesGenericPlaneStressAlgorithm(mb))){
       out << "if(*NDI==" << getCastemModellingHypothesisIndex(ModellingHypothesis::PLANESTRESS) << "){\n";
-      if(mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)){
-	const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
-	if(v.first){
-	  out << "const CastemReal ezz = STATEV[" << v.second.getValueForDimension(2) << "];\n"
-	      << "const CastemReal Fzz = " << c2 << ";\n";
-	  out << c << ",Fzz);\n";	  
-	} else {
-	  // no axial strain
-	  out << "std::cerr << \"no state variable standing for the axial strain (variable with the "
-	      << "glossary name 'AxialStrain')\" << std::endl;\n";
-	  out << "*KINC=-1;\n";
-	  out << "return;\n";
-	}
-      } else {
-	// generic algorithm, this means that the behaviour
-	// can be called in generalised plane strain
-	const auto& d = mb.getBehaviourData(ModellingHypothesis::GENERALISEDPLANESTRAIN);
-	const auto s =  d.getPersistentVariables().getTypeSize();
-	if(s.getValueForDimension(2)==0){
-	  out << "const CastemReal ezz = STATEV[0];\n";
-	} else {
-	  out << "if(*NSTATV!=" << s.getValueForDimension(2)+1 << "){\n"
-	      << "std::cerr << \"invalid number of internal state variables\" << std::endl;\n"
-	      << "}\n";
-	  out << "const CastemReal ezz = STATEV[" << s.getValueForDimension(2) << "];\n";
-	}
-	out << "const CastemReal Fzz = " << c2 << ";\n";
-	out << c << ",Fzz);\n";
+      if(this->writeInitializeAxialStrain(out,mb)){
+	out << "const CastemReal Fzz = " << c2 << ";\n"
+	    << c << ",Fzz);\n";
       }
-      out << "} else {\n";
-      out << c << ",0);\n";
-      out << "}\n";
+      out << "} else {\n"
+	  << c << ",0);\n"
+	  << "}\n";
     } else {
       out << c << ",0);\n";
     }
@@ -1619,16 +1627,19 @@ namespace mfront{
 									  const std::string& suffix,
 									  const BehaviourDescription& mb) const
   {
-    if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      throw(std::runtime_error("CastemInterface::"
-			       "writeMieheApelLambrechtLogarithmicStrainCastemFunction: "
-			       "finite strain strategies shall be used with "
-			       "small strain behaviours"));
-    }
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("CastemInterface::"
+				     "writeMieheApelLambrechtLogarithmicStrainCastemFunction: "+m));}
+    };
+    throw_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+	     "finite strain strategies shall be used with "
+	     "small strain behaviours");
     out << "MFRONT_SHAREDOBJ void\n" << fname;
     writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR);
     out << "\n{\n"
-	<< "using namespace castem;\n";
+    	<< "using namespace castem;\n"
+	<< "using namespace tfel::math;\n"
+    	<< "using namespace tfel::material;\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n";
       out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
@@ -1637,52 +1648,102 @@ namespace mfront{
     }
     out << "const auto k = std::abs(*DDSDDE)>0.5;\n";
     this->generateMTestFile1(out);
-    out << "// computing the logarithmic strain\n"
-	<< "CastemReal eto[6];\n"
-	<< "CastemReal deto[6];\n"
-	<< "CastemReal P0[36];\n"
-	<< "CastemReal P1[36];\n"
-	<< "CastemReal s[6];\n"
-	<< "CastemInt  i;\n";
-    if(mb.getAttribute(BehaviourData::profiling,false)){
-      out << "{\n"
-	  << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
-	  << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
-    }
-    out << "CastemFiniteStrain::computeLogarithmicStrainAndDerivative(P0,eto ,F0,*NTENS,*NDI);\n"
-	<< "CastemFiniteStrain::computeLogarithmicStrainAndDerivative(P1,deto,F1,*NTENS,*NDI);\n";
-    const auto c1 = "CastemFiniteStrain::computeDualStressOfLogarithmicStrainFromCauchyStress(s,STRESS,P0,F0,*NTENS,*NDI";
-    this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c1,"std::exp(ezz)");
-    out << "for(i=0;i!=*NTENS;++i){\n"
-	<< "deto[i] -= eto[i];\n"
-	<< "}\n";
-    if(mb.getAttribute(BehaviourData::profiling,false)){
+    auto preprocessing = [&out,this,&mb](const unsigned short d,
+					 const unsigned short n,
+					 const bool ps){
+      out << "LogarithmicStrainHandler<" << d << ",CastemReal> "
+          << "lsh0(LogarithmicStrainHandlerBase::EULERIAN,\n"
+          << "     tensor<" << d << ",CastemReal>::buildFromFortranMatrix(F0));\n"
+          << "LogarithmicStrainHandler<" << d << ",CastemReal> "
+          << "lsh1(LogarithmicStrainHandlerBase::EULERIAN,\n"
+          << "     tensor<" << d << ",CastemReal>::buildFromFortranMatrix(F1));\n";
+      if(ps){
+	if(this->writeInitializeAxialStrain(out,mb)){
+	  out << "lsh0.updateAxialDeformationGradient(std::exp(ezz));\n";
+	}
+      }
+      out << "CastemReal eto[" << n << "];\n"
+          << "CastemReal deto[" << n << "];\n"
+          << "lsh0.getHenckyLogarithmicStrain(eto);\n"
+          << "lsh1.getHenckyLogarithmicStrain(deto);\n";
+      for(unsigned short i=0;i!=n;++i){
+	out << "deto[" << i << "]-=eto[" << i << "];\n";
+      }
+      out << "lsh0.convertFromCauchyStress(STRESS);\n";
+    };
+    auto postprocessing = [&out,this,&mb](const bool ps){
+      if(ps){
+	if(this->writeInitializeAxialStrain(out,mb)){
+	  out << "lsh1.updateAxialDeformationGradient(std::exp(ezz));\n";
+	}
+      }
+      out << "lsh1.convertToCauchyStress(STRESS);\n";
+    };
+    auto ndi_dispatch = [this,&out,&name,&mb,&suffix,
+			 &preprocessing,&postprocessing,
+			 &throw_if](const int ndi,const Hypothesis h,const bool b){
+      out << (b ? "if" : " else if") << "(*NDI==" << ndi << "){\n";
+      if(mb.getAttribute(BehaviourData::profiling,false)){
+	out << "{\n"
+	    << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName()
+	    << "Profiler::getProfiler(),\n"
+	    << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
+      }
+      if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	preprocessing(3u,6u,false);
+      } else if((h==ModellingHypothesis::AXISYMMETRICAL)||
+		(h==ModellingHypothesis::PLANESTRAIN)||
+		(h==ModellingHypothesis::PLANESTRESS)||
+		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	preprocessing(2u,4u,h==ModellingHypothesis::PLANESTRESS);
+      } else {
+	throw_if(h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+		 "unsupported modelling hypothesis");
+	preprocessing(1u,3u,false);
+      }
+      out << "	umat" << makeLowerCase(name) << "_base_"
+          << ModellingHypothesis::toUpperCaseString(h)
+          << "(NTENS,DTIME,DROT,DDSDDE,&eto[0],&deto[0],\n"
+          << " TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,\n"
+          << " STATEV,NSTATV,STRESS,PNEWDT,KINC,\n"
+          << " castem::CastemLogarithmicStrainStressFreeExpansionHandler);\n"
+          << "if(*KINC==1){\n";
+      if(mb.getAttribute(BehaviourData::profiling,false)){
+	out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+	    << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
+      }
+      if(h==ModellingHypothesis::TRIDIMENSIONAL){
+	postprocessing(false);
+      } else if((h==ModellingHypothesis::AXISYMMETRICAL)||
+		(h==ModellingHypothesis::PLANESTRAIN)||
+		(h==ModellingHypothesis::PLANESTRESS)||
+		(h==ModellingHypothesis::GENERALISEDPLANESTRAIN)){
+	postprocessing(h==ModellingHypothesis::PLANESTRESS);
+      } else {
+	throw_if(h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+		 "unsupported modelling hypothesis");
+	postprocessing(false);
+      }
       out << "}\n";
-    }
-    out << "umat" << makeLowerCase(name)
-	<< "_base(NTENS, DTIME,DROT,DDSDDE,eto,deto,TEMP,DTEMP,\n"
-	<< "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-	<< "s,PNEWDT,NDI,KINC,\n"
-	<< "castem::CastemLogarithmicStrainStressFreeExpansionHandler);\n"
-	<< "if(*KINC==1){\n";
-    if(mb.getAttribute(BehaviourData::profiling,false)){
-      out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
-	  << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
-    }
-    const auto c2 = "CastemFiniteStrain::computeCauchyStressFromDualStressOfLogarithmicStrain(STRESS,s,P1,F1,*NTENS,*NDI";
-    this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c2,"std::exp(ezz)");
-    out << "if(k){\n";
-    // const auto c3 = "CastemFiniteStrain::convertLogarithmicModuliToCauchyTruesdellRateModuli(DDSDDE,STRESS,F1,*NTENS,*NDI";
-    // this->writeFiniteStrainStrategiesPlaneStressSpecificCall(out,mb,c3,"std::exp(ezz)");
-    out << "}\n"
-	<< "}\n";
-    if(this->generateMTestFile){
-      out << "if(*KINC!=1){\n";
-      this->generateMTestFile2(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,
-       			       name,suffix,mb);
-      out << "}\n";
-    }
-    out << "}\n\n";
+      if(this->generateMTestFile){
+	out << "if(*KINC!=1){\n";
+	this->generateMTestFile2(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,
+				 name,suffix,mb);
+	out << "}\n";
+      }
+      out << "}";
+    };
+    ndi_dispatch( 2,ModellingHypothesis::TRIDIMENSIONAL,true);
+    ndi_dispatch( 0,ModellingHypothesis::AXISYMMETRICAL,false);
+    ndi_dispatch(-1,ModellingHypothesis::PLANESTRAIN,false);
+    ndi_dispatch(-2,ModellingHypothesis::PLANESTRESS,false);
+    ndi_dispatch(-3,ModellingHypothesis::GENERALISEDPLANESTRAIN,false);
+    ndi_dispatch(14,ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,false);
+    out << " else {\n"
+	<< "castem::CastemInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage();\n"
+	<< "*KINC = -7;\n"
+	<< "}\n"
+        << "}\n\n";
   }
 
   void

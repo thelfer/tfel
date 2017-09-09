@@ -55,6 +55,10 @@ namespace numodis
 
     FCC();
 
+    FCC(FCC&&);
+
+    FCC(const FCC&);
+
   private:
 
     virtual void Init() override;

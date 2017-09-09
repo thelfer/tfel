@@ -17,6 +17,9 @@ set(mfront_tests_SOURCES
   Elasticity
   Elasticity2
   Elasticity3
+  LogarithmicStrainElasticity
+  LogarithmicStrainElasticity2
+  LogarithmicStrainNortonCreep
   SaintVenantKirchhoffElasticity)
 mfront_dependencies(MFrontCalculiXBehaviours
   ThermalExpansionCoefficientTest
@@ -155,3 +158,13 @@ test_calculix(saintvenantkirchhoffelasticity-shear-3-3D)
 test_calculix(saintvenantkirchhoffelasticity-shear-4-3D)
 test_calculix(saintvenantkirchhoffelasticity-shear-5-3D)
 test_calculix(saintvenantkirchhoffelasticity-shear-6-3D)
+
+test_calculix(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D)
+test_calculix(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D)
+test_calculix(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D)
+test_calculix(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-3D)
+test_calculix(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-3D)
+test_calculix(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3D)
+test_calculix(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D)
+test_calculix(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D)
+test_calculix(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D)

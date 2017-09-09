@@ -179,7 +179,7 @@ namespace numodis
 
     */
     //=========================================================================
-    double computeHeuristicNonColinearHardeningCoefficient(double nu,
+    double computeHeuristicNonColinearHardeningCoefficient(double,
 							   double sij)
     {
       return pow( 0.21 * sij + 0.37 , 2.0 );

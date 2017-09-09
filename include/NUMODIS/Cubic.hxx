@@ -44,7 +44,11 @@ namespace numodis
 
     Cubic();
 
-    virtual Vect3 direction(const IDirection&) const;
+    Cubic(Cubic&&);
+
+    Cubic(const Cubic&);
+
+    virtual Vect3 direction(const IDirection&) const override;
     
     virtual Vect3 burgers_vector(const IBurgers&) const override;
     
@@ -142,7 +146,7 @@ namespace numodis
 				 const IPlane& iplane1,
 				 const IBurgers& iburgers1) const override;
 
-    virtual ~Cubic();
+    virtual ~Cubic() override;
 
   protected:
 

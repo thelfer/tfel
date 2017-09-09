@@ -124,7 +124,7 @@ namespace mfront
       }
       return false;
     };
-    auto is_used2 = [&e,is_used](const VariableDescriptionContainer& c){
+    auto is_used2 = [is_used](const VariableDescriptionContainer& c){
       for(const auto& v: c){
 	if(is_used(v)){
 	  return true;

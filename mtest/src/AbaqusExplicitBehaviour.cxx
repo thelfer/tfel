@@ -42,7 +42,7 @@ namespace mtest
   AbaqusExplicitBehaviour::getBehaviourName(const std::string& b,
 					    const Hypothesis h)
   {
-    auto ends = [&b,h](const std::string& s){
+    auto ends = [&b](const std::string& s){
       if(b.length()>=s.length()){
         return b.compare(b.length()-s.length(),s.length(),s)==0;
       }

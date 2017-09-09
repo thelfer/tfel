@@ -309,9 +309,9 @@ namespace mfront{
 			  const FileDescription&,
 			  const bool) const;
     //! \return true if the interface handles external state variables
-    virtual bool areExternalStateVariablesSupported() const;
+    virtual bool areExternalStateVariablesSupported() const override;
     //! \return true if the interface handles temperature increment
-    virtual bool isTemperatureIncrementSupported() const;
+    virtual bool isTemperatureIncrementSupported() const override;
     //! selected finite strain strategy
     FiniteStrainStrategy fss = UNDEFINEDSTRATEGY;
   }; // end of CalculiXInterface

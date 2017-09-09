@@ -36,10 +36,8 @@ namespace mtest
 				const std::string&);
     /*!
      * \param[in] umb: behaviour description
-     * \param[in] h:   modelling hypothesis
      */
-    CastemFiniteStrainBehaviour(const UmatBehaviourDescription&,
-				const Hypothesis);
+    CastemFiniteStrainBehaviour(const UmatBehaviourDescription&);
     /*!
      * \param[out] v : initial values of the driving variables
      */

@@ -1042,7 +1042,6 @@ namespace mfront{
 	out << "//! number of sliding systems\n"
 	    << "static constexpr const unsigned short Nss" << idx
 	    << " = " << sss.getNumberOfSlipSystems(idx) << ";\n";
-    	++idx;
       }
       out << "static const constexpr const Nss = ";
       for(size_type idx=0;idx!=nb;){
@@ -6327,8 +6326,8 @@ namespace mfront{
       const auto b = ((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 		      ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 		       (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name))));
-      auto write = [&os,&p,&write_if,&b,&dcname,&cname](const std::string& vn,
-							const std::string& en){
+      auto write = [&os,&p,&b,&dcname,&cname](const std::string& vn,
+					      const std::string& en){
 	os << "\"" <<  en << "\"==tokens[0]){\n";
 	if(b){
 	  os << "pi." << vn << " = ";

@@ -48,11 +48,9 @@ namespace mtest
     /*!
      * \param[in] bd: umat behaviour description
      * \param[in] cn: material name
-     * \param[in] h:  modelling hypothesis
      */
     CastemUmatFiniteStrainBehaviour(const UmatBehaviourDescription&,
-				   const std::string&,
-				   const Hypothesis);
+				    const std::string&);
     /*!
      * \brief This method solves two issues:
      * 

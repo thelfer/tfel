@@ -23,6 +23,12 @@
 namespace numodis
 {
 
+  Crystallo::Crystallo() = default;
+  
+  Crystallo::Crystallo(Crystallo&&) = default;
+
+  Crystallo::Crystallo(const Crystallo&) = default;
+  
   //===============================================================
   // Crystallo::InitGSystem
   //---------------------------------------------------------------

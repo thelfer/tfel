@@ -64,9 +64,8 @@ namespace mtest
     }
   }
 
-  CastemSmallStrainBehaviour::CastemSmallStrainBehaviour(const UmatBehaviourDescription& umb,
-							 const Hypothesis h)
-    : CastemStandardBehaviour(umb,h)
+  CastemSmallStrainBehaviour::CastemSmallStrainBehaviour(const UmatBehaviourDescription& umb)
+    : CastemStandardBehaviour(umb)
   {} // end of CastemSmallStrainBehaviour::CastemSmallStrainBehaviour
 
   void CastemSmallStrainBehaviour::allocate(BehaviourWorkSpace& wk) const

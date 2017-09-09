@@ -20,6 +20,10 @@
 namespace numodis
 {
 
+  IPlane::IPlane(IPlane&&) = default;
+
+  IPlane::IPlane(const IPlane&) = default;
+  
   //===============================================================
   // IPlane : Operator <<
   //---------------------------------------------------------------

@@ -62,7 +62,6 @@ namespace tfel
       ValueType
       operator()(const unsigned short i) const
       {
-	using traits = StensorTraits<typename std::decay<T>::type>;
 	constexpr const auto icste = Cste<ValueType>::isqrt2;
 	switch(i){
 	case 0:

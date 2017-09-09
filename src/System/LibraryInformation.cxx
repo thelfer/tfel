@@ -30,6 +30,8 @@ namespace tfel{
 #include "LibraryInformation-elf_info.cxx"
 #include "LibraryInformation-pe_info.cxx"
 #include "LibraryInformation-macho_info.cxx"
+
+    LibraryInformation::LibraryInformation::Implementation::~Implementation() = default;
     
     LibraryInformation::LibraryInformation(const std::string& f,
 					   const bool b)
@@ -37,28 +39,34 @@ namespace tfel{
       auto throw_if = [](const bool c,const std::string& m){
 	if(c){throw(std::runtime_error("LibraryInformation::LibraryInformation: "+m));}
       };
-      auto throw_if_in_32bits = [throw_if]() {
+      auto throw_if_in_32bits = [throw_if]{
 	constexpr const auto c = sizeof(void*) == 4;
         throw_if(c,"not native format (64bit binary)");
       };
-      auto throw_if_in_windows = [throw_if]() {
 #if (defined(_WIN32) || defined(_WIN64))
+      auto throw_if_in_windows = [throw_if]{
 	throw_if(true,"not native format (not a PE binary)");
-#endif
       };
-      auto throw_if_in_linux = [throw_if]() {
+#else
+      auto throw_if_in_windows = []{};
+#endif
 #if !((defined(_WIN32)    || defined(_WIN64))   || \
       (defined(macintosh) || defined(Macintosh) || \
        ((defined(__APPLE__) && defined(__MACH__)))))
+      auto throw_if_in_linux = [throw_if]{
 	throw_if(true,"not native format (not an ELF binary)");
-#endif
       };
-      auto throw_if_in_macos = [throw_if]() {
+#else
+      auto throw_if_in_linux = []{};
+#endif
 #if (defined(macintosh) || defined(Macintosh) || \
      (defined(__APPLE__) && defined(__MACH__)))
+      auto throw_if_in_macos = [throw_if]{
 	throw_if(true,"not native format (not an Mach-O binary)");
-#endif
       };
+#else
+      auto throw_if_in_macos = []{};
+#endif
       //
       auto file = std::make_shared<std::ifstream>(f);
       throw_if(!(*file),"no library named '"+f+"' found");

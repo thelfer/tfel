@@ -59,6 +59,8 @@ namespace mtest
       if(c){throw(std::runtime_error("CalculiXSmallStrainBehaviour::"
 				     "call_behaviour: "+m));}
     };
+    throw_if(h!=ModellingHypothesis::TRIDIMENSIONAL,
+	     "unsupported modelling hypothesis");
     throw_if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR,
 	     "CalculiX behaviours only provide the "
 	     "consistent tangent operator");
@@ -119,15 +121,11 @@ namespace mtest
       return {false,ndt};
     }
     // treating the consistent tangent operator
-    if(h==ModellingHypothesis::TRIDIMENSIONAL){
-      const auto K = this->convertTangentOperator(&(wk.D(0,0)));
-      for(unsigned short i=0;i!=6u;++i){
-	for(unsigned short j=0;j!=6u;++j){
-	  Kt(i,j)=K(i,j);
-	}
+    const auto K = this->convertTangentOperator(&(wk.D(0,0)));
+    for(unsigned short i=0;i!=6u;++i){
+      for(unsigned short j=0;j!=6u;++j){
+	Kt(i,j)=K(i,j);
       }
-    } else {
-      throw_if(true,"unsupported modelling hypothesis");
     }
     if(b){
       // treating internal state variables
@@ -138,7 +136,7 @@ namespace mtest
       for(CalculiXInt i=3;i!=6;++i){
 	us[i] *= sqrt2;
       }
-      copy(us.begin(),us.begin()+s.s1.size(),s.s1.begin());
+      std::copy(us.begin(),us.begin()+s.s1.size(),s.s1.begin());
     }
     return {true,ndt};
   }

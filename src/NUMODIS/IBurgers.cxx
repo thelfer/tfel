@@ -21,6 +21,10 @@
 namespace numodis
 {
 
+  IBurgers::IBurgers(IBurgers&&) = default;
+
+  IBurgers::IBurgers(const IBurgers&) = default;
+  
   //===============================================================
   // IBurgers::operator+
   //---------------------------------------------------------------

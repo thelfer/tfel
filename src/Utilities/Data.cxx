@@ -33,7 +33,7 @@ namespace tfel{
       auto throw_if = [](const bool b,const std::string& msg){
 	if(b){throw(std::runtime_error("Data::read: "+msg));}
       };
-      auto is_integer = [&throw_if,&pe](const std::string& s){
+      auto is_integer = [&throw_if](const std::string& s){
 	auto ps  = s.cbegin();
 	const auto pse = s.cend();
 	if(*ps=='-'){

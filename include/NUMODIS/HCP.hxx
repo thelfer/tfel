@@ -55,6 +55,10 @@ namespace numodis
 
     HCP();
 
+    HCP(HCP&&);
+
+    HCP(const HCP&);
+
     virtual double Norm2(const IBurgers& iburgers) const override;
 
     virtual int getNsymmetries() const override;

@@ -27,9 +27,8 @@ namespace mtest
   } // end of CastemUmatSmallStrainBehaviour::buildCastemUmatSmallStrainBehaviour
   
   CastemUmatSmallStrainBehaviour::CastemUmatSmallStrainBehaviour(const UmatBehaviourDescription& bd,
-								 const std::string& cn,
-								 const Hypothesis h)
-    : CastemSmallStrainBehaviour(bd,h)
+								 const std::string& cn)
+    : CastemSmallStrainBehaviour(bd)
   {
     if(cn.size()!=16u){
       throw(std::runtime_error("CastemUmatSmallStrainBehaviour::CastemUmatSmallStrainBehaviour: "

@@ -81,7 +81,7 @@ struct AbaqusTangentOperator final
       return l0*st2tost2::IxI()+2*m*st2tost2::Id();
     };
     // abaqus operator
-    const auto Ca = [&l0,&m0,nhb,&Cs](const tfel::math::tensor<N,real>& F)
+    const auto Ca = [nhb,&Cs](const tfel::math::tensor<N,real>& F)
       -> st2tost2
     {
       const auto J = det(F);

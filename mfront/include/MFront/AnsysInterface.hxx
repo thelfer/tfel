@@ -352,7 +352,7 @@ namespace mfront{
 					       const std::string&,
 					       const Hypothesis) const;    
     //! \return true if the interface handles external state variables
-    virtual bool areExternalStateVariablesSupported() const;
+    virtual bool areExternalStateVariablesSupported() const override;
     //! selected finite strain strategy
     FiniteStrainStrategy fss = UNDEFINEDSTRATEGY;
     /*!

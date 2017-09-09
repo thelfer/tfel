@@ -118,7 +118,7 @@ namespace numodis
 	  {
 	    beta0 = this->computeEquilibriumBeta0(phi);
 	  }
-	catch(int error)
+	catch(int)
 	  {
 	    std::cerr << "=> could not find beta0 at equilibrium" << std::endl;
 	    throw -1;
@@ -126,27 +126,21 @@ namespace numodis
 
 	// compute betaF from beta0
 	double betaF;
-	try
-	  {
+	try{
 	    betaF = _lt0.computeBetaF(_alpha0-phi,beta0,tol,Nmax);
-	  }
-	catch(int error)
-	  {
-	    std::cerr << "=> could not find betaF from beta0" << std::endl;
-	    throw -2;
-	  }
-
+	} catch(int) {
+	  std::cerr << "=> could not find betaF from beta0" << std::endl;
+	  throw -2;
+	}
 	// compute the corresponding stress
 	double sigma = _lt0.SigmaBurgersLength(_alpha0-phi,beta0,betaF)*sin(phi);
 
 	//      std::cout << " ? phi =" << phi << " => sigma = " << sigma << std::endl;
       
 	// maximum value?
-	if(sigma>sigmaMax)
-	  {
-	    sigmaMax = sigma;
-	  }
-	else if (sigma<0.95*sigmaMax)
+	if(sigma>sigmaMax){
+	  sigmaMax = sigma;
+	} else if (sigma<0.95*sigmaMax)
 	  activated = true;
       
 	// decrease phi

@@ -113,7 +113,7 @@ namespace mtest
       const auto v = CxxTokenizer::readDouble(c,pe);
       return v;
     };
-    auto get_array = [&pe,&get_int,&get_double](CxxTokenizer::const_iterator& c){
+    auto get_array = [&get_int,&get_double](CxxTokenizer::const_iterator& c){
       const auto size = get_int(c);
       auto v = std::vector<double>{};
       v.reserve(size);
@@ -276,7 +276,7 @@ namespace mtest
 				     const int SENSIP2_,
 				     const int ICBASE_,
 				     const Hypothesis h)
-    : CastemSmallStrainBehaviour(bd,h),
+    : CastemSmallStrainBehaviour(bd),
       parameters(cvalues),
       young_modulus(yg),
       poisson_ratio(nu),
@@ -298,8 +298,8 @@ namespace mtest
       if(c){throw(std::runtime_error("MTestStandardUmatBehaviour::setOptionalMaterialPropertiesDefaultValues: "+m));};
     };
     CastemSmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues(mp,evm);
-    auto add_mp = [&mp,&evm,&throw_if](const std::string& n,
-				       const std::shared_ptr<Evolution> m){
+    auto add_mp = [&mp,&throw_if](const std::string& n,
+				  const std::shared_ptr<Evolution> m){
       if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
 	auto& log = mfront::getLogStream();
 	log << "MistralBehaviour::setOptionalMaterialPropertiesDefaultValues: "

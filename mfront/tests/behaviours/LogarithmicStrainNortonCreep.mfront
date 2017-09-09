@@ -4,6 +4,7 @@
 @Date      4/12/13;
 
 @UMATFiniteStrainStrategy[umat]                    MieheApelLambrechtLogarithmicStrain;
+@CalculiXFiniteStrainStrategy[calculix]            MieheApelLambrechtLogarithmicStrain;
 @AbaqusFiniteStrainStrategy[abaqus,abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
 @EPXFiniteStrainStrategy[epx]                      MieheApelLambrechtLogarithmicStrain;
 @Theta 1.;

@@ -103,6 +103,10 @@ namespace numodis
 
   }
 
+  HCP::HCP(HCP&&) = default;
+
+  HCP::HCP(const HCP&)  = default;
+  
   int HCP::getNsymmetries() const
   {
     return 96;

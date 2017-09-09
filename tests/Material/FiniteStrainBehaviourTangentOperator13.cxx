@@ -135,7 +135,7 @@ struct FiniteStrainBehaviourTangentOperator13 final
     // changing the rounding mode
     std::fesetround(r);
     // Hencky-Biot law with Cauchy result
-    auto hb = [&l0,&m0,&D](const tensor& F) -> stensor{
+    auto hb = [&l0,&D](const tensor& F) -> stensor{
       const auto C = computeRightCauchyGreenTensor(F);
       auto e = stensor{};
       auto p = st2tost2{};

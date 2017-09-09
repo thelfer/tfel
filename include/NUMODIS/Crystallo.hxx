@@ -45,6 +45,12 @@ namespace numodis
   struct TFELNUMODIS_VISIBILITY_EXPORT Crystallo
   {
 
+    Crystallo();
+    
+    Crystallo(Crystallo&&);
+
+    Crystallo(const Crystallo&);
+    
     GSystem InitGSystem(const IBurgers& iburgers,
 			const IPlane& iplane) const;
 
