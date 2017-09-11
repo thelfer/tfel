@@ -291,14 +291,18 @@ docs/mfront/ComputeStiffnessTensor.md -text
 docs/mfront/ComputeStress.md -text
 docs/mfront/ComputeStressFreeExpansion.md -text
 docs/mfront/ComputeThermalExpansion.md -text
+docs/mfront/CrystalStructure.md -text
 docs/mfront/DSL.md -text
 docs/mfront/Date.md -text
 docs/mfront/Description.md -text
+docs/mfront/DislocationsMeanFreePathInteractionMatrix.md -text
 docs/mfront/DissipatedEnergy.md -text
 docs/mfront/ElasticMaterialProperties.md -text
 docs/mfront/Epsilon.md -text
 docs/mfront/ExternalStateVar.md -text
 docs/mfront/ExternalStateVariable.md -text
+docs/mfront/GlidingSystem.md -text
+docs/mfront/GlidingSystems.md -text
 docs/mfront/Images/2norton-rk.mfront -text
 docs/mfront/Images/2norton-rk.mfront.tex -text
 docs/mfront/Images/2norton-rk.tex -text
@@ -355,6 +359,7 @@ docs/mfront/InitializeJacobian.md -text
 docs/mfront/InitializeJacobianInvert.md -text
 docs/mfront/InitializeLocalVariables.md -text
 docs/mfront/IntegrationVariable.md -text
+docs/mfront/InteractionMatrix.md -text
 docs/mfront/Interface.md -text
 docs/mfront/InternalEnergy.md -text
 docs/mfront/IsotropicBehaviour.md -text
@@ -399,6 +404,10 @@ docs/mfront/Relocation.md -text
 docs/mfront/RequireStiffnessOperator.md -text
 docs/mfront/RequireStiffnessTensor.md -text
 docs/mfront/RequireThermalExpansionCoefficientTensor.md -text
+docs/mfront/SlidingSystem.md -text
+docs/mfront/SlidingSystems.md -text
+docs/mfront/SlipSystem.md -text
+docs/mfront/SlipSystems.md -text
 docs/mfront/Sources.md -text
 docs/mfront/StateVar.md -text
 docs/mfront/StateVariable.md -text
@@ -1274,6 +1283,7 @@ docs/web/release-notes-3.1.md -text
 docs/web/release-notes.md -text
 docs/web/robots.txt -text
 docs/web/signorini.md -text
+docs/web/singlecrystal.md -text
 docs/web/svn.md -text
 docs/web/tensors.md -text
 docs/web/tex/lcmd_utf8.tex -text

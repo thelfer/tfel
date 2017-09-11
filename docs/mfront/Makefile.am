@@ -15,14 +15,18 @@ MFRONT_DOCS = Algorithm.md				                \
 	      ComputeStressFreeExpansion.md				\
 	      ComputeThermalExpansion.md				\
 	      CompareToNumericalJacobian.md		                \
+	      CrystalStructure.md		                        \
 	      Date.md				                        \
 	      Description.md                                            \
+	      DislocationsMeanFreePathInteractionMatrix.md              \
 	      DissipatedEnergy.md                                       \
 	      DSL.md				                        \
 	      ElasticMaterialProperties.md                              \
 	      Epsilon.md                                                \
 	      ExternalStateVar.md                                       \
 	      ExternalStateVariable.md                                  \
+	      GlidingSystem.md                                          \
+	      GlidingSystems.md                                         \
 	      Import.md                                                 \
 	      InitJacobian.md                                           \
 	      InitializeJacobian.md                                     \
@@ -32,6 +36,7 @@ MFRONT_DOCS = Algorithm.md				                \
 	      InitLocalVars.md                                          \
 	      InitLocalVariables.md                                     \
 	      InitializeLocalVariables.md                               \
+	      InteractionMatrix.md                                      \
 	      IntegrationVariable.md                                    \
 	      Interface.md                                              \
 	      InternalEnergy.md                                         \
@@ -59,6 +64,10 @@ MFRONT_DOCS = Algorithm.md				                \
 	      RequireStiffnessOperator.md                               \
 	      RequireStiffnessTensor.md                                 \
 	      RequireThermalExpansionCoefficientTensor.md               \
+	      SlidingSystem.md                                          \
+	      SlidingSystems.md                                         \
+	      SlipSystem.md				                \
+	      SlipSystems.md				                \
 	      Sources.md				                \
 	      StateVar.md			                        \
 	      StateVariable.md			                        \

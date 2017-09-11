@@ -189,6 +189,9 @@ namespace mfront{
       {"--orientation-tensors-by-index","list all the orientation tensors"},
       {"--orientation-tensors-by-slip-system","list all the orientation tensors"},
       {"--interaction-matrix","show the interaction matrix"},
+      {"--dislocations-mean-free-path-interaction-matrix",
+       "show the interaction matrix associated to the effect of dislocations of the "
+       "mean-free-path of a dislocation"},
       {"--interaction-matrix-structure","show the structure of the interaction matrix"},
       {"--supported-modelling-hypotheses","show the list of supported modelling hypothesis"},
       {"--material-properties","show the list of material properties for the selected modelling hypothesis"},
@@ -491,6 +494,43 @@ namespace mfront{
 		  }
 		}
 		cout << " |\n";
+	      }
+	    }
+	    if(d.hasInteractionMatrix()){
+	      cout << "with:\n";
+	      const auto& ivs = ssd.getInteractionMatrix();
+	      for(size_t i=0;i!=ivs.size();++i){
+		cout << "- coefficient '" << i << "': " << ivs[i] << '\n';
+	      }
+	    }
+	  }});
+    } else if(qn=="--dislocations-mean-free-path-interaction-matrix"){
+      this->queries.push_back({"dislocations-mean-free-path-interaction-matrix",
+	    [](const FileDescription&,
+	       const BehaviourDescription& d,
+	       const Hypothesis){
+	    if(!d.areSlipSystemsDefined()){
+	      throw(std::runtime_error("no slip system defined"));
+	    }
+	    const auto& ssd = d.getSlipSystems();
+	    const auto& im  = d.getInteractionMatrixStructure();
+	    const auto nss  = ssd.getNumberOfSlipSystemsFamilies();
+	    for(size_t i=0;i!=nss;++i){
+	      for(const auto& gs1 : ssd.getSlipSystems(i)){
+		cout << '|';
+		for(size_t j=0;j!=nss;++j){
+		  for(const auto& gs2 : ssd.getSlipSystems(j)){
+		    cout << " " << im.getRank(gs1,gs2);
+		  }
+		}
+		cout << " |\n";
+	      }
+	    }
+	    if(d.hasDislocationsMeanFreePathInteractionMatrix()){
+	      cout << "with:\n";
+	      const auto& ivs = ssd.getDislocationsMeanFreePathInteractionMatrix();
+	      for(size_t i=0;i!=ivs.size();++i){
+		cout << "- coefficient '" << i << "': " << ivs[i] << '\n';
 	      }
 	    }
 	  }});

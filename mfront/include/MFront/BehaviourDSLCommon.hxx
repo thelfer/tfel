@@ -648,6 +648,11 @@ namespace mfront{
     //! \brief treat the @InteractionMatrix keyword
     virtual void treatInteractionMatrix();
     /*!
+     * \brief treat the @DislocationsMeanFreePathInteractionMatrix
+     * keyword.
+     */
+    virtual void treatDislocationsMeanFreePathInteractionMatrix();
+    /*!
      * \brief read a swelling description.
      *
      * An array is expected at the current point of the file. Each

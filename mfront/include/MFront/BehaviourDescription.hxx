@@ -389,6 +389,19 @@ namespace mfront
      */
     bool hasInteractionMatrix() const;
     /*!
+     * \brief return true if an interaction matrix is defined.
+     * \note: this method is only valid if one and only one slip
+     * system is defined.
+     */
+    bool hasDislocationsMeanFreePathInteractionMatrix() const;
+    /*!
+     * \brief set the interaction matrix.
+     * \param[in] m: interaction matrix
+     * \note: this method is only valid if one and only one slip
+     * system is defined.
+     */
+    void setDislocationsMeanFreePathInteractionMatrix(const std::vector<long double>&);
+    /*!
      * \return true if the material property is constant over the time step
      * \param[in] mp: material property
      */

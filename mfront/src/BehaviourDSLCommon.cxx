@@ -949,8 +949,9 @@ namespace mfront{
 
   void BehaviourDSLCommon::generateSlipSystemsFiles()
   {
-    using size_type = BehaviourDescription::SlipSystemsDescription::size_type;
-    using tensor    = BehaviourDescription::SlipSystemsDescription::tensor;
+    using SlipSystemsDescription = BehaviourDescription::SlipSystemsDescription;
+    using size_type = SlipSystemsDescription::size_type;
+    using tensor    = SlipSystemsDescription::tensor;
     auto throw_if   = [](const bool b,const std::string& m){
       if(b){throw(std::runtime_error("FiniteStrainSingleCrystalBrick::generateSlipSystems: "+m));}
     };
@@ -1043,14 +1044,14 @@ namespace mfront{
 	    << "static constexpr const unsigned short Nss" << idx
 	    << " = " << sss.getNumberOfSlipSystems(idx) << ";\n";
       }
-      out << "static const constexpr const Nss = ";
+      out << "static constexpr const unsigned short Nss = ";
       for(size_type idx=0;idx!=nb;){
     	out << "Nss" << idx;
     	if(++idx!=nb){
     	  out << "+";
     	};
       }
-      out << "\n";
+      out << ";\n";
     }
     out << "//! tensor of directional sense\n"
 	<< "tfel::math::tvector<Nss" << ",tensor> mu" << ";\n"
@@ -1065,10 +1066,37 @@ namespace mfront{
     if(this->mb.hasInteractionMatrix()){
       out << "//! interaction matrix\n"
 	  << "tfel::math::tmatrix<Nss,Nss,real> mh;\n";
+      out << "//! interaction matrix\n"
+	  << "tfel::math::tmatrix<Nss,Nss,real> him;\n";
     }
-    out << "//! return the unique instance of the class\n"
+    if(this->mb.hasDislocationsMeanFreePathInteractionMatrix()){
+      out << "tfel::math::tmatrix<Nss,Nss,real> dim;\n";
+    }
+    if(nb!=1u){
+      for(size_type i=0;i!=nb;++i){
+	out << "/*!\n"
+	    << " * \\return the gobal index of the ith system of " << i << "th family\n"
+	    << " * \\param[in] i: local slip system index\n"
+	    << " */\n"
+	    << "constexpr unsigned short offset" << i << "(const unsigned short) const;\n";
+      }
+    }
+    out << "/*!\n"
+	<< " * \\return true if two systems are coplanar\n"
+	<< " * \\param[in] i: first slip system index\n"
+	<< " * \\param[in] j: second slip system index\n"
+      	<< " */\n"
+	<< "bool areCoplanar(const unsigned short,\n"
+	<< "                 const unsigned short) const;\n"
+	<< "//! return the unique instance of the class\n"
     	<< "static const " << cn << "&\n"
     	<< "getSlidingSystems();\n"
+      	<< "//! return the unique instance of the class\n"
+    	<< "static const " << cn << "&\n"
+    	<< "getSlipSystems();\n"
+      	<< "//! return the unique instance of the class\n"
+    	<< "static const " << cn << "&\n"
+    	<< "getGlidingSystems();\n"
     	<< "private:\n"
     	<< "//! Constructor\n"
     	<< cn << "();\n"
@@ -1083,7 +1111,15 @@ namespace mfront{
     	<< cn << "&\n"
     	<< "operator=(const " << cn << "&) = delete;\n"
     	<< "}; // end of struct " <<  cn << "\n\n"
-    	<< "} // end of namespace material\n\n"
+	<< "//! a simple alias\n"
+	<< "template<typename real>\n"
+	<< "using " << this->mb.getClassName() << "SlidingSystems "
+	<< "= " << cn << "<real>;\n\n"
+      	<< "//! a simple alias\n"
+	<< "template<typename real>\n"
+    	<< "using " << this->mb.getClassName() << "GlidingSystems "
+	<< "= " << cn << "<real>;\n\n"
+	<< "} // end of namespace material\n\n"
     	<< "} // end of namespace tfel\n\n"
     	<< "#include\"TFEL/Material/" << cn << ".ixx\"\n\n"
     	<< "#endif /* LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_HXX */\n";
@@ -1150,11 +1186,11 @@ namespace mfront{
       }
     }
     out << "};\n";
-    if(this->mb.hasInteractionMatrix()){
+    auto write_imatrix = [&out,&sss,&nb,&nss](const std::vector<long double>& m,
+					      const std::string& n){
       const auto ims = sss.getInteractionMatrixStructure();
-      const auto& mh = sss.getInteractionMatrix();
       auto count = size_type{}; // number of terms of the matrix treated so far
-      out << "this-> mh = {";
+      out << "this->" << n <<  " = {";
       for(size_type idx=0;idx!=nb;++idx){
 	const auto gsi = sss.getSlipSystems(idx);
 	for(size_type idx2=0;idx2!=gsi.size();++idx2){
@@ -1162,7 +1198,7 @@ namespace mfront{
 	    const auto gsj = sss.getSlipSystems(jdx);
 	    for(size_type jdx2=0;jdx2!=gsj.size();++jdx2){
 	      const auto r = ims.getRank(gsi[idx2],gsj[jdx2]);
-	      out << "real(" << mh[r] << ")";
+	      out << "real(" << m[r] << ")";
 	      if(++count!=nss*nss){
 		out << ",";
 	      }
@@ -1172,8 +1208,103 @@ namespace mfront{
 	}
       }
       out << "};\n";
+      
+    };
+    if(this->mb.hasInteractionMatrix()){
+      write_imatrix(sss.getInteractionMatrix(),"mh");
+      write_imatrix(sss.getInteractionMatrix(),"him");
     }
-    out << "} // end of "<< cn << "::" << cn << "\n\n"
+    if(this->mb.hasDislocationsMeanFreePathInteractionMatrix()){
+      write_imatrix(sss.getDislocationsMeanFreePathInteractionMatrix(),"dim");
+    }
+    out << "} // end of " << cn << "::" << cn << "\n\n";
+    if(nb!=1u){
+      for(size_type i=0;i!=nb;++i){
+	out << "/*!\n"
+	    << " * \\return the gobal index of the ith system of " << i << "th family\n"
+	    << " * \\param[in] i: local slip system index\n"
+	    << " */\n"
+	    << "template<typename real>\n"
+	    << "constexpr unsigned short\n"
+	    << cn << "<real>::offset" << i << "(const unsigned short i) const{\n";
+	if(i!=0){
+	  out << "constexpr const unsigned short offset = ";
+	  for(size_type j=0;j!=nb;){
+	    out << "Nss" << j;
+	    if(++j!=nb){
+	      out << "+";
+	    }
+	  }
+	  out << ";\n"
+	      << "return offset+i;\n";
+	} else {
+	  out << "return i;\n";
+	}
+	out << "}\n\n";
+      }
+    }
+    out << "template<typename real>\n"
+	<< "bool " << cn << "<real>::areCoplanar(const unsigned short i,\n"
+	<< "                                     const unsigned short j) const{\n";
+    std::vector<std::vector<bool>> are_coplanar(nss,std::vector<bool>(nss));
+    auto i = size_type{};
+    for(size_type idx=0;idx!=nb;++idx){
+      const auto gsi = sss.getSlipSystems(idx);
+      for(size_type idx2=0;idx2!=gsi.size();++idx2,++i){
+	auto j = size_type{};
+	for(size_type jdx=0;jdx!=nb;++jdx){
+	  const auto gsj = sss.getSlipSystems(jdx);
+	  for(size_type jdx2=0;jdx2!=gsj.size();++jdx2,++j){
+	    if(gsi[idx2].is<SlipSystemsDescription::system3d>()){
+	      const auto& si = gsi[idx2].get<SlipSystemsDescription::system3d>();
+	      const auto& sj = gsj[jdx2].get<SlipSystemsDescription::system3d>();
+	      const auto& ni = si.plane;
+	      const auto& nj = sj.plane;
+	      are_coplanar[i][j] = (std::equal(ni.begin(),ni.end(),nj.begin())||
+				    std::equal(ni.begin(),ni.end(),nj.begin(),
+					       [](const int a,const int b){
+						 return a==-b;
+					       }));
+	    } else {
+	      const auto& si = gsi[idx2].get<SlipSystemsDescription::system4d>();
+	      const auto& sj = gsj[jdx2].get<SlipSystemsDescription::system4d>();
+	      const auto& ni = si.plane;
+	      const auto& nj = sj.plane;
+	      are_coplanar[i][j] = (std::equal(ni.begin(),ni.end(),nj.begin())||
+				    std::equal(ni.begin(),ni.end(),nj.begin(),
+					       [](const int a,const int b){
+						 return a==-b;
+					       }));
+	    }
+	  }
+	}
+      }
+    }
+    out << "const auto mi = std::min(i,j);\n"
+	<< "const auto mj = std::max(i,j);\n"
+	<< "switch(mi){\n";
+    for(i=0;i!=nss;++i){
+      out << "case " << i << ":\n";
+      if(i+1==nss){
+	out << "return (mi==" << nss-1 << ")&&(mj==" << nss-1 << ");\n";
+      } else {
+	out << "switch (mj){\n";
+	for(size_type j=i;j!=nss;++j){
+	  out << "case " << j << ":\n"
+	      << "return " << (are_coplanar[i][j] ? "true" : "false") << ";\n"
+	      << "break;\n";
+	}
+	out << "default:\n"
+	    << "return false;\n"
+	    << "}\n";
+      }
+      out << "break;\n";
+    }
+    out << "default:\n"
+	<< "break;\n"
+	<< "}\n"
+	<< "return false;\n"
+      	<< "}\n\n"
     	<< "} // end of namespace material\n\n"
     	<< "} // end of namespace tfel\n\n"
     	<< "#endif /* LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_IXX */\n";
@@ -6791,6 +6922,31 @@ namespace mfront{
     }
     this->mb.setInteractionMatrix(imv);
   } // end of BehaviourDSLCommon::treatInteractionMatrix
+
+  void BehaviourDSLCommon::treatDislocationsMeanFreePathInteractionMatrix(){
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("BehaviourDSLCommon::"
+				    "treatDislocationsMeanFreePathInteractionMatrix",m);};
+    };
+    throw_if(!this->mb.areSlipSystemsDefined(),
+	     "slip systems have not been defined");
+    const auto& im = this->mb.getInteractionMatrixStructure();
+    const auto  r  = im.rank();
+    const auto  mv = CxxTokenizer::readArray("BehaviourDSLCommon::"
+					     "treatDislocationsMeanFreePathInteractionMatrix",
+					     this->current,this->tokens.end());
+    this->readSpecifiedToken("BehaviourDSLCommon::"
+			     "treatDislocationsMeanFreePathInteractionMatrix",";");
+    throw_if(mv.size()!=r,"the number of values does "
+	     "not match the number of independent coefficients "
+	     "in the interaction matrix");
+    auto imv = std::vector<long double>{};
+    imv.reserve((mv.size()));
+    for(const auto& v:mv){
+      imv.push_back(tfel::utilities::convert<long double>(v));
+    }
+    this->mb.setDislocationsMeanFreePathInteractionMatrix(imv);
+  } // end of BehaviourDSLCommon::treatDislocationsMeanFreePathInteractionMatrix
   
   void
   BehaviourDSLCommon::setComputeFinalStressFromComputeFinalStressCandidateIfNecessary()

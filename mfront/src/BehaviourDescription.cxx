@@ -1036,6 +1036,14 @@ namespace mfront
     return this->gs.get<SlipSystemsDescription>().getInteractionMatrixStructure();
   } // end of BehaviourDescription::getInteractionMatrix
 
+  bool BehaviourDescription::hasInteractionMatrix() const
+  {
+    if(!this->gs.is<SlipSystemsDescription>()){
+      return false;
+    }
+    return this->gs.get<SlipSystemsDescription>().hasInteractionMatrix();
+  } // end of BehaviourDescription::hasInteractionMatrix
+
   void BehaviourDescription::setInteractionMatrix(const std::vector<long double>& m)
   {
     auto throw_if = [](const bool c,const std::string& msg){
@@ -1046,14 +1054,26 @@ namespace mfront
     throw_if(!this->areSlipSystemsDefined(),"no slip system defined");
     this->gs.get<SlipSystemsDescription>().setInteractionMatrix(m);
   } // end of BehaviourDescription::setInteractionMatrix
-  
-  bool BehaviourDescription::hasInteractionMatrix() const
+
+  bool BehaviourDescription::hasDislocationsMeanFreePathInteractionMatrix() const
   {
     if(!this->gs.is<SlipSystemsDescription>()){
       return false;
     }
-    return this->gs.get<SlipSystemsDescription>().hasInteractionMatrix();
-  } // end of BehaviourDescription::hasInteractionMatrix
+    return this->gs.get<SlipSystemsDescription>().hasDislocationsMeanFreePathInteractionMatrix();
+  } // end of BehaviourDescription::hasDislocationsMeanFreePathInteractionMatrix
+
+  void BehaviourDescription::setDislocationsMeanFreePathInteractionMatrix(const std::vector<long double>& m)
+  {
+    auto throw_if = [](const bool c,const std::string& msg){
+      if(c){throw(std::runtime_error("BehaviourDescription::"
+				     "setDislocationsMeanFreePathInteractionMatrix: "+msg));}
+    };
+    throw_if(!this->allowsNewUserDefinedVariables(),
+	     "new variables are can't be defined after the first code block.");
+    throw_if(!this->areSlipSystemsDefined(),"no slip system defined");
+    this->gs.get<SlipSystemsDescription>().setDislocationsMeanFreePathInteractionMatrix(m);
+  } // end of BehaviourDescription::setDislocationsMeanFreePathInteractionMatrix
   
   void BehaviourDescription::setUseQt(const bool b)
   {

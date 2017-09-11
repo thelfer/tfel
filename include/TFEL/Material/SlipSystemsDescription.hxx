@@ -171,6 +171,20 @@ namespace tfel{
       void setInteractionMatrix(const std::vector<long double>&);
       //! \return the interaction matrix
       const std::vector<long double>& getInteractionMatrix() const;
+      /*!
+       * \return if an interaction matrix for defining the effects of
+       * the dislocations on the mean free path of a dislocation has
+       * been defined.
+       */
+      bool hasDislocationsMeanFreePathInteractionMatrix() const;
+      /*!
+       * \brief set the interaction matrix
+       * \param[in] v: values
+       */
+      void setDislocationsMeanFreePathInteractionMatrix(const std::vector<long double>&);
+      //! \return the interaction matrix
+      const std::vector<long double>&
+      getDislocationsMeanFreePathInteractionMatrix() const;
       //! destructor
       ~SlipSystemsDescription();
     private:

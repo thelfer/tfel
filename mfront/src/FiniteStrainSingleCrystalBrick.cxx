@@ -45,7 +45,7 @@ namespace mfront{
     // basic checks
     if(this->bd.areModellingHypothesesDefined()){
       const auto bmh = this->bd.getModellingHypotheses();
-      throw_if(bmh.size()==1u,"the only supported hypothesis is 'Tridimensional'");
+      throw_if(bmh.size()!=1u,"the only supported hypothesis is 'Tridimensional'");
       throw_if(*(bmh.begin())!=ModellingHypothesis::TRIDIMENSIONAL,
 	       "the only supported hypothesis is 'Tridimensional'");
     } else {

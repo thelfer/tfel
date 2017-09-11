@@ -569,6 +569,35 @@ namespace tfel{
       }
       return this->m;
     } // end of SlipSystemsDescription::getInteractionMatrix
+
+    bool SlipSystemsDescription::hasDislocationsMeanFreePathInteractionMatrix() const{
+      return !this->m.empty();
+    } // end of SlipSystemsDescription::hasDislocationsMeanFreePathInteractionMatrix
+
+    void SlipSystemsDescription::setDislocationsMeanFreePathInteractionMatrix(const std::vector<long double>& v){
+      auto throw_if = [](const bool c, const std::string& msg){
+	if(c){throw(std::runtime_error("SlipSystemsDescription::"
+				       "setDislocationsMeanFreePathInteractionMatrix: "+msg));}
+      };
+      const auto im = this->getInteractionMatrixStructure();
+      throw_if(this->hasDislocationsMeanFreePathInteractionMatrix(),"the interaction matrix "
+	       "has already been defined");
+      throw_if(im.rank()!=v.size(),"the number of values does "
+	       "not match the number of independent coefficients "
+	       "in the interaction matrix ("+std::to_string(im.rank())+" vs "+
+	       std::to_string(v.size())+")");
+      this->m = v;
+    } // end of SlipSystemsDescription::setDislocationsMeanFreePathInteractionMatrix
+
+    const std::vector<long double>&
+    SlipSystemsDescription::getDislocationsMeanFreePathInteractionMatrix() const{
+      if(!this->hasDislocationsMeanFreePathInteractionMatrix()){
+	throw(std::runtime_error("SlipSystemsDescription::"
+				 "getDislocationsMeanFreePathInteractionMatrix: "
+				 "no interaction matrix defined"));
+      }
+      return this->m;
+    } // end of SlipSystemsDescription::getDislocationsMeanFreePathInteractionMatrix
     
     template<CrystalStructure cs>
     static SlipSystemsDescription::InteractionMatrixStructure
