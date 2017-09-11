@@ -1,0 +1,10 @@
+images:
+  - Visual Studio 2017
+clone_folder: c:\projects\tfel-master
+build_script:
+  - cmd: >-
+      mkdir build
+      cd build
+      cmake c:\projects\tfel-master -G "Visual Studio 15"
+      cmake --build . --config "Release"
+

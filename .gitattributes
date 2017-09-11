@@ -14,6 +14,7 @@
 /README -text
 /README.md -text
 /TODO.org -text
+/appveyor.yml -text
 bindings/CMakeLists.txt -text
 bindings/Makefile.am -text
 bindings/fortran77/CMakeLists.txt -text
