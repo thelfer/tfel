@@ -21,7 +21,8 @@ if(HAVE_CYRANO)
     ShearModulusTest_23
     ShearModulusTest_13
     Inconel600_YoungModulus)
-  mfront_behaviour_check_library(MFrontCyranoBehaviourBricks cyrano
+  mfront_behaviour_brick_check_library(MFrontCyranoBehaviourBricks
+    StandardElasticity cyrano
     IsotropicStandardElasticity
     IsotropicStandardElasticity2
     IsotropicStandardElasticity3

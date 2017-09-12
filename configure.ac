@@ -1211,8 +1211,9 @@ AC_OUTPUT([debug.sh
 	   mfront/tests/behaviours/ansys/ansysmaterialpropertiesboundscheck6.mtest
 	   mfront/tests/behaviours/ansys/ansysmaterialpropertiesboundscheck.mtest
 	   mfront/tests/behaviours/bricks/Makefile
-	   mfront/tests/behaviours/bricks/castem/Makefile
-	   mfront/tests/behaviours/bricks/cyrano/Makefile
+   	   mfront/tests/behaviours/bricks/StandardElasticity/Makefile
+	   mfront/tests/behaviours/bricks/StandardElasticity/castem/Makefile
+	   mfront/tests/behaviours/bricks/StandardElasticity/cyrano/Makefile
 	   mfront/tests/behaviours/castem/Makefile
 	   mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx
    	   mfront/tests/behaviours/castem/LibraryInformationCastemTest.cxx

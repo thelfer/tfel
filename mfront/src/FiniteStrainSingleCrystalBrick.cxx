@@ -84,7 +84,7 @@ namespace mfront{
     this->bd.setAttribute(h,BehaviourData::hasConsistentTangentOperator,true);
     // reserve some specific variables
     this->bd.reserveName(h,"ss");
-    this->bd.reserveName(h,"g");
+    this->bd.registerMemberName(h,"g");
     this->bd.reserveName(h,"fg");
     this->bd.reserveName(h,"fsscb_data");
     this->bd.reserveName(h,"fsscb_tprd");
@@ -162,10 +162,15 @@ namespace mfront{
       "this->fsscb_data.S = (this->D)*(this->eel+this->deel);\n"
       "this->fsscb_data.tmp = StrainStensor::Id() + 2*(this->eel+this->deel);\n"
       "// Mandel stress tensor\n"
-      "const auto M = eval((StrainStensor::Id() + 2*(this->eel+this->deel))*(this->fsscb_data.S));\n"
-      "// Mandel stress tensor derivative\n"
-      "const auto dM_ddeel = eval(2*st2tot2<N,real>::tpld(this->fsscb_data.S)+\n"
-      "				    st2tot2<N,real>::tprd(this->fsscb_data.tmp,this->D));\n"
+      "const auto M = eval(this->fsscb_data.tmp*(this->fsscb_data.S));\n";
+    const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
+    if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
+      integrator.code +=
+	"// Mandel stress tensor derivative\n"
+	"const auto dM_ddeel = eval(2*st2tot2<N,real>::tpld(this->fsscb_data.S)+\n"
+	"			    st2tot2<N,real>::tprd(this->fsscb_data.tmp,this->D));\n";
+    }
+    integrator.code +=
       "this->fsscb_data.inv_dFp = Tensor::Id();\n"
       "for(unsigned short i=0;i!="+cn+"::Nss;++i){\n"
       "  this->fsscb_data.inv_dFp -= (this->dg[i])*ss.mu[i];\n"
@@ -173,12 +178,15 @@ namespace mfront{
       "this->fsscb_data.J_inv_dFp = det(this->fsscb_data.inv_dFp);\n"
       "this->fsscb_data.inv_dFp /= CubicRoots::cbrt(this->fsscb_data.J_inv_dFp);\n"
       "this->Fe = (this->fsscb_data.Fe_tr)*(this->fsscb_data.inv_dFp);\n"
-      "feel = this->eel+this->deel-computeGreenLagrangeTensor(this->Fe);\n"
-      "const auto fsscb_tprd = t2tot2<N,real>::tprd(this->fsscb_data.Fe_tr);\n"
-      "const auto fsscb_dfeel_dinv_dFp = t2tost2<N,real>::dCdF(this->Fe)*fsscb_tprd;\n"
-      "for(unsigned short i=0;i!="+cn+"::Nss;++i){\n"
-      "  dfeel_ddg(i) = (fsscb_dfeel_dinv_dFp)*ss.mu[i]/2;\n"
-      "}\n";
+      "feel = this->eel+this->deel-computeGreenLagrangeTensor(this->Fe);\n";
+    if((idsl.getSolver().usesJacobian())&&(!idsl.getSolver().requiresNumericalJacobian())){
+      integrator.code +=
+	"const auto fsscb_tprd = t2tot2<N,real>::tprd(this->fsscb_data.Fe_tr);\n"
+	"const auto fsscb_dfeel_dinv_dFp = t2tost2<N,real>::dCdF(this->Fe)*fsscb_tprd;\n"
+	"for(unsigned short i=0;i!="+cn+"::Nss;++i){\n"
+	"  dfeel_ddg(i) = (fsscb_dfeel_dinv_dFp)*ss.mu[i]/2;\n"
+	"}\n";
+    }
     integrator.members  = {"eel","Fe","D"};
     this->bd.setCode(h,BehaviourData::Integrator,
     		     integrator,BehaviourData::CREATEORAPPEND,

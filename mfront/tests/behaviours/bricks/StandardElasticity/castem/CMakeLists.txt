@@ -21,7 +21,8 @@ if(HAVE_CASTEM)
     ShearModulusTest_23
     ShearModulusTest_13
     Inconel600_YoungModulus)
-  mfront_behaviour_check_library(MFrontCastemBehaviourBricks umat
+  mfront_behaviour_brick_check_library(MFrontCastemBehaviourBricks
+    StandardElasticity umat
     IsotropicStandardElasticity
     IsotropicStandardElasticity2
     IsotropicStandardElasticity3
