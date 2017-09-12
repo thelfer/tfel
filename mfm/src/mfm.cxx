@@ -285,7 +285,7 @@ private:
 };
 
 int main(const int argc,const char* const* const argv){
-#if not defined(__GLIBCXX__)
+#if ! defined(__GLIBCXX__)
   try{
 #endif /* not defined(__GLIBCXX__) */
     MFM m(argc,argv);
