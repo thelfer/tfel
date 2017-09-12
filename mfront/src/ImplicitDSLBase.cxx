@@ -730,7 +730,7 @@ namespace mfront{
     if((!this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false))&&
        (this->mb.getElasticSymmetryType()==ISOTROPIC)&&
        (this->mb.areElasticMaterialPropertiesDefined())){
-      auto add_lv = [this](BehaviourDescription& bd,
+      auto add_lv = [this,h](BehaviourDescription& bd,
 			   const std::string& t,
 			   const std::string& n,
 			   const std::string& g,
