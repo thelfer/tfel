@@ -10,6 +10,7 @@
  * project under specific licensing conditions. 
  */
 
+#include <algorithm>
 #include <vector>
 #include <cstdlib>
 #include <cmath>

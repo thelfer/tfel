@@ -17,6 +17,7 @@
 #include<cerrno>
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+#define NOMINAX
 #include <windows.h>
 #include <conio.h>
 #else /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */

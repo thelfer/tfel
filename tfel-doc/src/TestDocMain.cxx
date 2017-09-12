@@ -11,6 +11,11 @@
  * project under specific licensing conditions. 
  */
 
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+#define NOMINAX
+#include <windows.h>
+#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+
 #include<string>
 #include<vector>
 #include<cstdlib>
@@ -25,8 +30,6 @@
 #include<cerrno>
 #include<cstring>
 #include<memory>
-
-#include <sys/param.h>
 
 #include"TFEL/System/System.hxx"
 #include"TFEL/System/RecursiveFind.hxx"

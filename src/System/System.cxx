@@ -630,17 +630,17 @@ namespace tfel
       auto throw_if = [](const bool c,const std::string& m){
 	if(c){throw(SystemError("systemCall::getAbsolutePath: "+m));}
       };
-#if (defined _WIN32 || defined _WIN64 ) && (not (defined __CYGWIN__))
+#if (defined _WIN32 || defined _WIN64 ) && (! defined __CYGWIN__)
       throw_if(::access(f.c_str(),4)!=0,"no existing path '"+f+"'");
       std::unique_ptr<char> r(_fullpath(nullptr,f.c_str(),_MAX_PATH));
       throw_if(!r,"can't retrieve full path for for '"+f+"'");
       return r.get();
-#else /* (defined _WIN32 || defined _WIN64 ) && (not (defined __CYGWIN__)) */
+#else /* (defined _WIN32 || defined _WIN64 ) && (! defined __CYGWIN__) */
       char path[MAXPATHLEN];
       throw_if(::realpath(f.c_str(),path)==nullptr,
 	       "can't retrieve full path for for '"+f+"'");
       return path;
-#endif  /* (defined _WIN32 || defined _WIN64 ) && (not (defined __CYGWIN__)) */
+#endif  /* (defined _WIN32 || defined _WIN64 ) && (! defined __CYGWIN__) */
     } // end of systemCall::getAbsolutePath
     
     void

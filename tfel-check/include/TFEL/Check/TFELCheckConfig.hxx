@@ -17,7 +17,7 @@
 #include"TFEL/Config/TFELConfig.hxx"
 
 #if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#  if defined TFELTFEL/Check_EXPORTS
+#  if defined TFELCheck_EXPORTS
 #    define TFELCHECK_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
 #  else
 #  ifndef TFEL_STATIC_BUILD

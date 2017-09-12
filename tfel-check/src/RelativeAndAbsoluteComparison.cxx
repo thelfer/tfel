@@ -5,6 +5,7 @@
  *      Author: rp238441
  */
 
+#include <algorithm>
 #include <cmath>
 #include <sstream>
 #include <iomanip>
