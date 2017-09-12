@@ -285,15 +285,15 @@ private:
 };
 
 int main(const int argc,const char* const* const argv){
-#if ! defined(__GLIBCXX__)
+#if !defined(__GLIBCXX__)
   try{
 #endif /* not defined(__GLIBCXX__) */
     MFM m(argc,argv);
-#if not defined(__GLIBCXX__)
+#if !defined(__GLIBCXX__)
   } catch(std::exception& e){
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
   }
-#endif /* not defined(__GLIBCXX__) */
+#endif /* !defined(__GLIBCXX__) */
   return EXIT_SUCCESS;
 }
