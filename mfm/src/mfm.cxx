@@ -23,6 +23,8 @@ struct MFM
   MFM(const int argc,const char *const *const argv)
     : tfel::utilities::ArgumentParserBase<MFM>(argc,argv)
   {
+    using tfel::system::ExternalLibraryManager;
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     this->registerCommandLineCallBacks();
     this->parseArguments();
     for(const auto& f: this->filters){
@@ -34,10 +36,18 @@ struct MFM
     }
     for(const auto& e : this->epts){
       if(this->show_libs){
-	std::cout << "- " << e.library << ": " << e.name << '\n';
+	std::cout << "- " << e.library << ": " << e.name;
       } else {
-	std::cout << "- " << e.name << '\n';
+	std::cout << "- " << e.name;
       }
+      if(this->show_sources){
+	try{
+	  std::cout << " (" << elm.getSource(e.library,e.name) << ')';
+	} catch(std::exception&){
+	  std::cout << " (undetermined source file)";
+	}
+      }
+      std::cout << '\n';
     }
   } // end of MFM
 
@@ -197,6 +207,10 @@ private:
 			   CallBack("show library name in front "
 				    "of entry points",
 				    [this]{this->show_libs=true;},false));
+    this->registerCallBack("--show-sources",
+			   CallBack("show the name of the MFront "
+				    "file used to generate the entry points",
+				    [this]{this->show_sources=true;},false));
   } // end of registerCommandLineCallBacks
 
   const tfel::utilities::Argument&
@@ -282,6 +296,8 @@ private:
   VerboseLevel vlevel = VERBOSE_LEVEL0;
 
   bool show_libs = false;
+
+  bool show_sources = false;
 };
 
 int main(const int argc,const char* const* const argv){

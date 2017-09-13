@@ -1886,6 +1886,10 @@ mfm/Makefile.am -text
 mfm/src/CMakeLists.txt -text
 mfm/src/Makefile.am -text
 mfm/src/mfm.cxx -text
+mfm/tests/CMakeLists.txt -text
+mfm/tests/Makefile.am -text
+mfm/tests/mfm.cmake -text
+mfm/tests/references/mfm-t91.ref -text
 mfront-doc/CMakeLists.txt -text
 mfront-doc/Makefile.am -text
 mfront-doc/include/CMakeLists.txt -text

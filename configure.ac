@@ -3014,6 +3014,7 @@ AC_OUTPUT([debug.sh
   	   mfront-query/tests/Makefile
    	   mfm/Makefile
 	   mfm/src/Makefile
+  	   mfm/tests/Makefile
    	   mfront-doc/Makefile
 	   mfront-doc/src/Makefile
    	   mfront-doc/include/Makefile
