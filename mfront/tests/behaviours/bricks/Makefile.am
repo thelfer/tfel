@@ -1,0 +1,2 @@
+SUBDIRS=StandardElasticity FiniteStrainSingleCrystal
+EXTRA_DIST=CMakeLists.txt

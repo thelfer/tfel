@@ -1,3 +1,4 @@
+add_subdirectory(aster)
 add_subdirectory(castem)
 add_subdirectory(cyrano)
 
@@ -18,3 +19,4 @@ install_mfront_data(tests/behavioursbricks/StandardElasticity OrthotropicStandar
 install_mfront_data(tests/behavioursbricks/StandardElasticity OrthotropicStandardElasticity3.mfront)
 install_mfront_data(tests/behavioursbricks/StandardElasticity TestComputeElasticPrediction.mfront)
 install_mfront_data(tests/behavioursbricks/StandardElasticity TestComputeElasticPrediction2.mfront)
+install_mfront_data(tests/behavioursbricks/StandardElasticity SingleCrystal_DD_FCC.mfront)

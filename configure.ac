@@ -1214,6 +1214,10 @@ AC_OUTPUT([debug.sh
    	   mfront/tests/behaviours/bricks/StandardElasticity/Makefile
 	   mfront/tests/behaviours/bricks/StandardElasticity/castem/Makefile
 	   mfront/tests/behaviours/bricks/StandardElasticity/cyrano/Makefile
+   	   mfront/tests/behaviours/bricks/StandardElasticity/aster/Makefile
+   	   mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/Makefile
+	   mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/castem/Makefile
+	   mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/aster/Makefile
 	   mfront/tests/behaviours/castem/Makefile
 	   mfront/tests/behaviours/castem/UMATExternalBehaviourDescription.cxx
    	   mfront/tests/behaviours/castem/LibraryInformationCastemTest.cxx

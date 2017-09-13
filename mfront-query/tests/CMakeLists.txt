@@ -24,7 +24,7 @@ macro(mfront_query_test args mfront_file file)
 	endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
-    set(test "mfront-query-test-${MFRONT_QUERY_TEST_ID}_${conf}")
+    set(test "mfront-query-test-${MFRONT_QUERY_TEST_ID}")
     add_test(NAME ${test}
       COMMAND ${CMAKE_COMMAND}
       -D TEST_PROGRAM=$<TARGET_FILE:mfront-query>
@@ -52,5 +52,7 @@ endmacro(mfront_query_test)
 
 mfront_query_test("--material-properties" "Norton.mfront"
   "mfront-query-norton-material-properites.ref")
+mfront_query_test("--slip-systems-by-index" "bricks/FiniteStrainSingleCrystal/FiniteStrainSingleCrystal.mfront"
+  "mfront-query-finitestrainsinglecrystal.ref")
 # mfront_query_test("--state-variables" "Norton.mfront"
 #   "mfront-query-norton-material-properites.ref")
