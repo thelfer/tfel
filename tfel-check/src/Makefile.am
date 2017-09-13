@@ -3,7 +3,9 @@ AM_CPPFLAGS = -I$(top_srcdir)/include            \
 
 lib_LTLIBRARIES=libTFELCheck.la
 
-libTFELCheck_la_SOURCES = PCILogDriver.cxx                  \
+libTFELCheck_la_SOURCES = Configuration.cxx                 \
+			  ConfigurationManager.cxx          \
+			  PCILogDriver.cxx	            \
 			  PCJUnitDriver.cxx	            \
 		          PCLogger.cxx		            \
 			  PCTextDriver.cxx	            \

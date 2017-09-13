@@ -1,5 +1,5 @@
 @DSL Implicit;
-@Behaviour ImplicitHayhurst;
+@Behaviour Hayhurst;
 @Author Jean-Michel Proix;
 @Date   07/02/2013;
 @Description{
@@ -34,13 +34,13 @@ nu.setGlossaryName("PoissonRatio");
 @LocalVariable stress lambda;
 @LocalVariable stress mu;
 
+@Parameter dmax = 0.999999999999999;
+
 /* Initialize Lame coefficients */
 @InitLocalVariables{
   lambda = computeLambda(young,nu);
   mu = computeMu(young,nu);
 }
-
-@Parameter dmax = 0.999999999999999;
 
 @ComputeStress{
   if(d > dmax){

@@ -271,13 +271,6 @@ namespace tfel{
       return apply<DataComparator>(lhs,rhs);
     }
 
-    /*!
-     * \param[in] d: data extract a vector of string from a Data
-     *               structure.
-     * \return the extracted value.
-     * \pre The Data must hold a vector of Data and each Data of the
-     *      vector must be a string
-     */
     template<>
     std::vector<std::string>
     extract<std::vector<std::string>>(const Data& d){
@@ -294,7 +287,23 @@ namespace tfel{
       }
       return r;
     } // end of extract<std::vector<std::string>>
-    
+
+    template<>
+    std::map<std::string,std::string>
+    extract<std::map<std::string,std::string>>(const Data& d){
+      auto throw_if = [](const bool b,const std::string& msg){
+	if(b){throw(std::runtime_error("extract<std::map<std::string,std::string>>: "+msg));}
+      };
+      throw_if(!d.is<std::map<std::string,Data>>(),"invalid data type");
+      const auto& m = d.get<std::map<std::string,Data>>();
+      auto r = std::map<std::string,std::string>{};
+      for(const auto&e : m){
+	throw_if(!e.second.is<std::string>(),"invalid data type");
+	r.emplace(std::make_pair(e.first,e.second.get<std::string>()));
+      }
+      return r;
+    } // end of extract<std::vector<std::string>>
+
   } // end of namespace utilities
 
 } // end of namespace tfel

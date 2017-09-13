@@ -29,6 +29,7 @@
 #include"TFEL/System/System.hxx"
 #include"TFEL/System/RecursiveFind.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
+#include"TFEL/Check/ConfigurationManager.hxx"
 #include"TFEL/Check/TestLauncher.hxx"
 #include"TFEL/Check/TestLauncherV1.hxx"
 #include"TFEL/Check/PCLogger.hxx"
@@ -59,18 +60,78 @@ namespace tfel{
        * arguments.
        */
       virtual void treatUnknownArgument() override;
-      /*!
-       * \brief register call backs associated to command line arguments
-       */
-      void registerArgumentCallBacks();
-
+      //! \brief register call backs associated to command line arguments
+      virtual void registerArgumentCallBacks();
+      //! \return the current version of `tfel-check`
       virtual std::string getVersionDescription() const override;
-  
+        //! \return the description of the usage of `tfel-check`
       virtual std::string getUsageDescription() const override;
-
+      //! list of configuration files
+      std::vector<std::string> configFiles;  
+      //! list of input files
       std::vector<std::string> inputs;  
-    };
+    }; // end of struct TFELCheck
 
+    void TFELCheck::treatUnknownArgument(){
+      auto throw_if = [](const bool c,const std::string& m){
+	if(c){throw(std::runtime_error("TFELCheck::treatUnknownArgument: "+m));}
+      };
+      const auto& arg = this->currentArgument->as_string();
+      const auto b = [&arg]{
+	if(arg.size()>=4){
+	  return ((arg[0]=='-')&&(arg[1]=='-')&&
+		  (arg[2]=='@')&&(arg.back()=='@'));
+	}
+	return false;
+      }();
+      if(b){
+	const auto s1 = arg.substr(2);
+	throw_if(std::count(s1.begin(),s1.end(),'@')!=2,
+		 "bad substitution pattern '"+s1+"'");
+	// throw_if(!this->substitutions.insert({s1,o}).second,
+	// 	 "a substitution for '"+s1+"' has "
+	// 	 "already been defined");
+      }
+      if(arg[0]=='-'){
+	ArgumentParserBase<TFELCheck>::treatUnknownArgument();
+	return;
+      }
+      this->inputs.push_back(arg);
+    } // end of TFELCheck::treatUnknownArgument
+
+    void TFELCheck::registerArgumentCallBacks(){
+      auto add_config_files = [this]{
+	const auto f = this->currentArgument->getOption();
+	if(std::find(this->configFiles.begin(),this->configFiles.end(),f)==
+	   this->configFiles.end()){
+	  throw(std::runtime_error("tfel-check: configuration file "
+				   "'"+f+"' already defined"));
+	}
+	this->configFiles.push_back(f);
+      };
+      auto declare = [this](const char* const n,
+			    const CallBack& c){
+	this->registerCallBack(n,c);
+      };
+      auto declare2 = [this](const char* const n,
+			     const char* const a,
+			     const CallBack& c){
+	this->registerCallBack(n,a,c);
+      };
+      declare2("--config","c",CallBack("add a configuration file",
+				       add_config_files,true));
+    } // end of TFELCheck::registerArgumentCallBacks
+
+    std::string TFELCheck::getVersionDescription() const
+    {
+      return VERSION;
+    }
+
+    std::string TFELCheck::getUsageDescription() const
+    {
+      return "Usage: "+this->programName+" [options] [files]";
+    }
+    
     TFELCheck::TFELCheck(const int argc, const char *const *const argv)
       : tfel::utilities::ArgumentParserBase<TFELCheck>()
     {
@@ -124,6 +185,21 @@ namespace tfel{
 	return success;
       };
       int status = EXIT_SUCCESS;
+      ConfigurationManager c;
+      if(this->configFiles.empty()){
+	std::ofstream cf("tfel-check.config");
+	if(cf){
+	  log.addMessage("Parsing configuration file 'tfel-check.config'");
+	  parse(c,"tfel-check.config");
+	  log.addMessage("======");
+	}
+      } else {
+	for(const auto& cf:this->configFiles){
+	  log.addMessage("Parsing configuration file '"+cf+"'");
+	  parse(c,cf);
+	  log.addMessage("======");
+	}
+      }
       if(this->inputs.empty()){
 	std::regex re(".+\\.check",std::regex_constants::extended);
 	const auto& files = tfel::system::recursiveFind(re, ".", 0);
@@ -150,30 +226,6 @@ namespace tfel{
       }
       log.terminate();
       return status;
-    }
-
-    void TFELCheck::treatUnknownArgument(){
-      const auto& arg = this->currentArgument->as_string();
-      if(arg[0]=='-'){
-	ArgumentParserBase<TFELCheck>::treatUnknownArgument();
-	return;
-      }
-      this->inputs.push_back(arg);
-    } // end of TFELCheck::treatUnknownArgument
-
-
-    void TFELCheck::registerArgumentCallBacks(){
-  
-    } // end of TFELCheck::registerArgumentCallBacks
-
-    std::string TFELCheck::getVersionDescription() const
-    {
-      return VERSION;
-    }
-
-    std::string TFELCheck::getUsageDescription() const
-    {
-      return "Usage: "+this->programName+" [options] [files]";
     }
 
     TFELCheck::~TFELCheck() = default;

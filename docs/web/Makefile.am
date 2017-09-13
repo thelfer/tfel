@@ -210,6 +210,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./media/abaqus-explicit.mp4                                \
 	   ./media/SignoriniCompression.mp4                           \
 	   ./media/SignoriniStrip.mp4                                 \
+	   ./media/CalculiXSheetForming-50.mp4                        \
 	   ./doc/js.md						      \
 	   ./doc/usage.md					      \
 	   ./doc/css.md						      \

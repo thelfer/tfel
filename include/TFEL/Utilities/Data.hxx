@@ -120,8 +120,8 @@ namespace tfel{
     template<typename T>
     T extract(const Data&);
     /*!
-     * \param[in] d: data extract a vector of string from a Data
-     *               structure.
+     * \brief extract a vector of string from a `Data` structure.
+     * \param[in] d: data
      * \return the extracted value.
      * \pre The Data must hold a vector of Data and each Data of the
      *      vector must be a string
@@ -129,6 +129,17 @@ namespace tfel{
     template<>
     TFELUTILITIES_VISIBILITY_EXPORT std::vector<std::string>
     extract<std::vector<std::string>>(const Data&);
+    /*!
+     * \brief extract a std::map<std::string,std::string> from a
+     * `Data` structure.
+     * \param[in] d: data
+     * \return the extracted value.
+     * \pre The Data must hold a map of Data and each Data of the map
+     *      must be a string.
+     */
+    template<>
+    TFELUTILITIES_VISIBILITY_EXPORT std::map<std::string,std::string>
+    extract<std::map<std::string,std::string>>(const Data&);
     
   } // end of namespace utilities
 

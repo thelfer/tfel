@@ -134,7 +134,7 @@ namespace mfront{
 	    const auto s1 = an.substr(2);
 	    if(std::count(s1.begin(),s1.end(),'@')!=2){
 	      throw(std::runtime_error("MFrontBase::treatUnknownArgumentBase: "
-				       "bas substitution pattern '"+s1+"'"));
+				       "bad substitution pattern '"+s1+"'"));
 	    }
 	    if(s1.empty()){
 	      return false;

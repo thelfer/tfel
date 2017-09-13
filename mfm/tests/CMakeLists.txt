@@ -50,7 +50,9 @@ macro(mfm_test args mfront_library file)
   MATH(EXPR MFM_TEST_ID "${MFM_TEST_ID}+1")
 endmacro(mfm_test)
 
+if(HAVE_CASTEM)
 mfm_test("--filter-by-name=.+t91.+" $<TARGET_FILE:MFrontCastemBehaviours>
   "mfm-t91.ref")
+endif(HAVE_CASTEM)
 # mfm_test("--state-variables" "Norton.mfront"
 #   "mfm-norton-material-properites.ref")

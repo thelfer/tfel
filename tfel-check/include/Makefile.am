@@ -1,4 +1,6 @@
-nobase_noinst_HEADERS = TFEL/Check/PCILogDriver.hxx	             \
+nobase_noinst_HEADERS = TFEL/Check/Configuration.hxx	             \
+			TFEL/Check/ConfigurationManager.hxx	     \
+			TFEL/Check/PCILogDriver.hxx	             \
 			TFEL/Check/TFELCheckConfig.hxx	             \
 			TFEL/Check/PCJUnitDriver.hxx                 \
 			TFEL/Check/PCLogger.hxx	                     \

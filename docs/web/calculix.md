@@ -2,7 +2,21 @@
 % Thomas Helfer, Rafal Brzegowy
 % 2/02/2017
 
-![](img/CalculiX_MFRONT_WSL.png "")
+<div id="slideshow">
+  <ul class="slides">
+  <li>
+    <video style="display:block; margin: 0 auto;" width="640" height="320" controls>
+      <source src="media/CalculiXSheetForming-50.mp4" type="video/mp4">
+	Your browser does not support the video tag.
+    </video>
+  </li>
+  <li><img src="img/CalculiX_MFRONT_WSL.png" width="620" height="320" alt="Forming test by Rafal Brzegowy" /></li>
+  </ul>
+  <span class="arrow previous"></span>
+  <span class="arrow next"></span>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="js/slideshow.js"></script>
 
 # User defined behaviour in `CalculiX`
 

@@ -1255,6 +1255,7 @@ docs/web/js/slideshow.js -text
 docs/web/js/vendor/jquery-1.10.2.min.js -text
 docs/web/js/vendor/modernizr-2.6.2.min.js -text
 docs/web/material-properties.md -text
+docs/web/media/CalculiXSheetForming-50.mp4 -text
 docs/web/media/SignoriniCompression.mp4 -text
 docs/web/media/SignoriniStrip.mp4 -text
 docs/web/media/abaqus-explicit.mp4 -text
@@ -5782,6 +5783,8 @@ tfel-check/include/TFEL/Check/AbsoluteComparison.hxx -text
 tfel-check/include/TFEL/Check/AreaComparison.hxx -text
 tfel-check/include/TFEL/Check/Column.hxx -text
 tfel-check/include/TFEL/Check/Comparison.hxx -text
+tfel-check/include/TFEL/Check/Configuration.hxx -text
+tfel-check/include/TFEL/Check/ConfigurationManager.hxx -text
 tfel-check/include/TFEL/Check/Interpolation.hxx -text
 tfel-check/include/TFEL/Check/LinearInterpolation.hxx -text
 tfel-check/include/TFEL/Check/Linearization.hxx -text
@@ -5804,6 +5807,8 @@ tfel-check/src/AreaComparison.cxx -text
 tfel-check/src/CMakeLists.txt -text
 tfel-check/src/Column.cxx -text
 tfel-check/src/Comparison.cxx -text
+tfel-check/src/Configuration.cxx -text
+tfel-check/src/ConfigurationManager.cxx -text
 tfel-check/src/Interpolation.cxx -text
 tfel-check/src/LinearInterpolation.cxx -text
 tfel-check/src/Linearization.cxx -text

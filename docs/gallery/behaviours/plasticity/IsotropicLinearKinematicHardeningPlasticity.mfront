@@ -7,8 +7,6 @@
   isotropic plasticity behaviour.
 }
 
-@AbaqusFiniteStrainStrategy MieheApelLambrechtLogarithmicStrain;
-
 @StateVariable StrainStensor eel;
 eel.setGlossaryName("ElasticStrain");
 @StateVariable StrainStensor a;
