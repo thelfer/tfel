@@ -465,12 +465,13 @@ namespace mfront{
      * (<2.0), auxiliary state variables shall be put after
      * state variables.
      */
-    auto found = false;
-    auto p=this->persistentVariables.begin();
-    while((p!=this->persistentVariables.end())&&(!found)){
+    bool found = false;
+    auto p = this->persistentVariables.begin();
+    while(p!=this->persistentVariables.end()){
       if(this->isAuxiliaryStateVariableName(p->name)){
 	this->persistentVariables.insert(p,v);
 	found = true;
+	break;
       } else {
 	++p;
       }
