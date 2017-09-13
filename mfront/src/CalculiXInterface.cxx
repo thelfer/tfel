@@ -198,6 +198,8 @@ namespace mfront{
 	  return FINITEROTATIONSMALLSTRAIN;
 	} else if(s=="MieheApelLambrechtLogarithmicStrain"){
 	  return MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
+	} else if(s=="MieheApelLambrechtLogarithmicStrainII"){
+	  return MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII;
 	}
 	throw_if(true,"unsupported strategy '"+s+"'\n"
 		 "The only supported strategies are 'Native',"
@@ -265,7 +267,8 @@ namespace mfront{
     out << "#ifndef "<< header << "\n"
 	<< "#define "<< header << "\n\n"
 	<< "#include\"TFEL/Config/TFELConfig.hxx\"\n\n";
-    if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+    if((this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)||
+       (this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII)){
       out << "#include\"TFEL/Material/LogarithmicStrainHandler.hxx\"\n\n";
     }
     out << "#include\"MFront/CalculiX/CalculiX.hxx\"\n"
@@ -343,7 +346,8 @@ namespace mfront{
 	      ((this->fss!=UNDEFINEDSTRATEGY)&&(this->fss!=NATIVEFINITESTRAINSTRATEGY))){
       if(this->fss==FINITEROTATIONSMALLSTRAIN){
 	this->writeFiniteRotationSmallStrainFunction(out,mb,name);
-      } else if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+      } else if((this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)||
+		(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII)){
 	this->writeMieheApelLambrechtLogarithmicStrainFunction(out,mb,name);
       } else {
 	throw_if(true,"unsupported finite strain strategy !");
@@ -389,8 +393,8 @@ namespace mfront{
 	<< "                  " << dv0 << "," << dv1 << ",TEMP1,MPROPS,\n"
 	<< getFunctionName(name) << "_getOutOfBoundsPolicy()," << sfeh << "};\n"
 	<< "if(calculix::CalculiXInterface<tfel::material::" << mb.getClassName() 
-	<< ">::exe(d)!=0){\n";
-    out << "*PNEWDT = 0.2;\n"
+	<< ">::exe(d)!=0){\n"
+	<< "*PNEWDT = 0.2;\n"
 	<< "return;\n"
 	<< "}\n"
 	<< "}\n\n";
@@ -590,6 +594,13 @@ namespace mfront{
 									   const BehaviourDescription& mb,
 									   const std::string& name) const
   {
+    auto throw_if = [](const bool b,const std::string& m){
+      if(b){throw(std::runtime_error("CalculiXInterface::writeMieheApelLambrecht"
+				     "LogarithmicStrainFunction: "+m));}
+    };
+    constexpr const auto h = ModellingHypothesis::TRIDIMENSIONAL;
+    const auto& ivs  = mb.getBehaviourData(h).getPersistentVariables();
+    const auto  nivs = ivs.getTypeSize().getValueForModellingHypothesis(h);
     const std::string sfeh = "calculix::CalculiXLogarithmicStrainStressFreeExpansionHandler";
     this->writeFunctionBase(out,mb,name,sfeh);
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
@@ -607,40 +618,49 @@ namespace mfront{
       	<< "              0,0,0,0,0,0,\n"
       	<< "              0,0,0,0,0,0,\n"
       	<< "              0,0,0,0,0,0,\n"
-      	<< "              0,0,0,0,0,0};\n"
-	<< "LogarithmicStrainHandler<3u,real> "
-	<< "lsh0(LogarithmicStrainHandlerBase::LAGRANGIAN,\n"
-	<< "     tensor<3u,real>::buildFromFortranMatrix(F0));\n"
-	<< "LogarithmicStrainHandler<3u,real> "
-	<< "lsh1(LogarithmicStrainHandlerBase::LAGRANGIAN,\n"
-	<< "     tensor<3u,real>::buildFromFortranMatrix(F1));\n"
-	<< "auto eto  = lsh0.getHenckyLogarithmicStrain();\n"
-      	<< "auto deto = eval(lsh1.getHenckyLogarithmicStrain()-eto);\n"
-	<< "lsh0.convertFromSecondPiolaKirchhoffStress(STRESS);\n"
-	<< "// turning tensors in CalculiX conventions\n";
+      	<< "              0,0,0,0,0,0};\n";
+    if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+      out << "LogarithmicStrainHandler<3u,real> "
+	  << "lsh0(LogarithmicStrainHandlerBase::LAGRANGIAN,\n"
+	  << "     tensor<3u,real>::buildFromFortranMatrix(F0));\n"
+	  << "LogarithmicStrainHandler<3u,real> "
+	  << "lsh1(LogarithmicStrainHandlerBase::LAGRANGIAN,\n"
+	  << "     tensor<3u,real>::buildFromFortranMatrix(F1));\n"
+	  << "auto eto0 = lsh0.getHenckyLogarithmicStrain();\n"
+	  << "auto deto = eval(lsh1.getHenckyLogarithmicStrain()-eto0);\n"
+	  << "lsh0.convertFromSecondPiolaKirchhoffStress(STRESS);\n";
+    } else if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
+      out << "LogarithmicStrainHandler<3u,real> "
+	  << "lsh1(LogarithmicStrainHandlerBase::LAGRANGIAN,\n"
+	  << "     tensor<3u,real>::buildFromFortranMatrix(F1));\n"
+	  << "const auto ivs0 =  STATEV0+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
+	  << "const auto ivs1 =  STATEV1+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
+	  << "stensor<3u,real> eto0(ivs0+" << nivs << ");\n"
+	  << "const auto eto1 = lsh1.getHenckyLogarithmicStrain();\n" 
+	  << "auto deto = eval(eto1-eto0);\n";
+    } else {
+      throw_if(true,"internal error (unexpected finite strain strategy)");
+    }
+    out << "// turning tensors in CalculiX conventions\n";
     for(unsigned short i=3;i!=6;++i){
-      out << "eto["  << i << "]*=isqrt2;\n";
+      out << "eto0["  << i << "]*=isqrt2;\n";
     }
     for(unsigned short i=3;i!=6;++i){
       out << "deto["  << i << "]*=isqrt2;\n";
     }
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      if(mb.getSymmetryType()!=mfront::ISOTROPIC){
-	throw(std::runtime_error("CalculiXInterface::writeFiniteStrainFunction: "
-				 "orthotropic symmetry is unsupported yet"));
-      }
+      throw_if(mb.getSymmetryType()!=mfront::ISOTROPIC,
+	       "orthotropic symmetry is unsupported yet");
     } else {
-      if(mb.getSymmetryType()!=mfront::ISOTROPIC){
-	throw(std::runtime_error("CalculiXInterface::writeFiniteStrainFunction: "
-				 "unsupported symmetry type"));
-      }
+      throw_if(mb.getSymmetryType()!=mfront::ISOTROPIC,
+	       "unsupported symmetry type");
       out << "if(*iorien!=0){\n"
 	  << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
 	  << "            << \"no orientation shall be defined for an istropic behaviour\\n\";\n"
 	  << "  std::exit(-1);\n"
 	  << "}\n"
 	  << name << "_base"
-	  << "(amat,iel,iint,NPROPS,MPROPS,&deto[0],&eto[0],beta,F0,"
+	  << "(amat,iel,iint,NPROPS,MPROPS,&deto[0],&eto0[0],beta,F0,"
 	  << " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
 	  << " ielas,mi,NSTATV,STATEV0,STATEV1,STRESS,D,"
 	  << "iorien,pgauss,orab,PNEWDT,ipkon,size);\n"
@@ -649,9 +669,15 @@ namespace mfront{
 	  << "T.importTab(STRESS);\n"
 	  << "ST2toST2View<3u,real> Dv(D);\n"
 	  << "Dv = lsh1.convertToMaterialTangentModuli(ConstST2toST2View<3u,real>(D),T);\n"
-	  << "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D);\n"
-	  << "// converting the stress\n"
+	  << "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D);\n";
+      if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
+	out << "std::copy(STRESS,STRESS+6u,ivs1+" << nivs+6 << ");\n";
+      }
+      out << "// converting the stress\n"
 	  << "lsh1.convertToSecondPiolaKirchhoffStress(STRESS);\n";
+      if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
+	out << "std::copy(eto1.begin(),eto1.end(),ivs1+" << nivs << ");\n";
+      }
     }
     if(this->generateMTestFile){
       out << "if(*PNEWDT<1){\n";
@@ -944,17 +970,8 @@ namespace mfront{
 	this->appendToMaterialPropertiesList(mprops,"real",  "PoissonRatio23","nu23",false);
 	this->appendToMaterialPropertiesList(mprops,"real",  "PoissonRatio13","nu13",false);
 	this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus12","g12",false);
-	if (h==ModellingHypothesis::TRIDIMENSIONAL){
-	  this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus23","g23",false);
-	  this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus13","g13",false);
-	} else if((h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)&&
-		  (h!=ModellingHypothesis::GENERALISEDPLANESTRAIN)&&
-		  (h!=ModellingHypothesis::AXISYMMETRICAL)&&
-		  (h!=ModellingHypothesis::PLANESTRAIN)&&
-		  (h!=ModellingHypothesis::PLANESTRESS)){
-	  throw(std::runtime_error("CalculiXInterface::buildMaterialPropertiesList : "
-				   "unsupported modelling hypothesis"));
-	}
+	this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus23","g23",false);
+	this->appendToMaterialPropertiesList(mprops,"stress","ShearModulus13","g13",false);
       } else {
 	throw(std::runtime_error("CalculiXInterface::buildMaterialPropertiesList : "
 				 "unsupported behaviour symmetry type"));
@@ -1141,10 +1158,9 @@ namespace mfront{
     out << "mg.setModellingHypothesis(ModellingHypothesis::TRIDIMENSIONAL);\n";
   } // end of CalculiXInterface::writeMTestFileGeneratorSetModellingHypothesis
 
-  void
-  CalculiXInterface::writeInputFileExample(const BehaviourDescription& mb,
-					   const FileDescription& fd,
-					   const bool b) const{ 
+  void CalculiXInterface::writeInputFileExample(const BehaviourDescription& mb,
+						const FileDescription& fd,
+						const bool b) const{ 
     auto throw_if = [](const bool c,const std::string& m){
       if(c){throw(std::runtime_error("CalculiXInterface::writeInputFileExample: "+m));}
     };
@@ -1175,13 +1191,18 @@ namespace mfront{
     for(const auto& v : persistentVarsHolder){
       vs+=SupportedTypes::getTypeSize(v.type,v.arraySize);
     }
-    const auto vsize = vs.getValueForModellingHypothesis(h);
+    const auto vsize = [this,&vs,&h]() -> unsigned int{
+      if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
+	return vs.getValueForModellingHypothesis(h)+12u;
+      }
+      return vs.getValueForModellingHypothesis(h);
+    }();
     out << "*Material, name=@" << this->getFunctionName(mn) << '\n';
     if(!b){
       out << "*DENSITY\n<density>\n";
     }
     if(vsize!=0){
-      out << "*Depvar\n" << vsize  << "\n";
+	out << "*Depvar\n" << vsize  << "\n";
     }
     if(!mps.first.empty()){
       out << "** The material properties are given as if we used parameters to explicitly\n"
