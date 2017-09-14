@@ -59,7 +59,7 @@ namespace tfel{
 				 "invalid location '"+n+"'"));
       }
       if(this->subordinates.find(r.first)==this->subordinates.end()){
-	this->subordinates.emplace(std::make_pair(r.first,this->c));
+	this->subordinates.insert({r.first,this->c});
       }
       return this->subordinates[r.first].getConfigurationManager(r.second);
     } // end of ConfigurationManager::getConfigurationManager
