@@ -299,7 +299,7 @@ namespace tfel{
       auto r = std::map<std::string,std::string>{};
       for(const auto&e : m){
 	throw_if(!e.second.is<std::string>(),"invalid data type");
-	r.emplace(std::make_pair(e.first,e.second.get<std::string>()));
+	r.insert({e.first,e.second.get<std::string>()});
       }
       return r;
     } // end of extract<std::vector<std::string>>
