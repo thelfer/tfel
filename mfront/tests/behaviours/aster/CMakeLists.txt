@@ -30,6 +30,10 @@ set(mfront_tests_SOURCES
   DruckerPrager
   DruckerPragerEcroLin
   DruckerPragerEcroLinDefault
+  JohnsonCook_s
+  JohnsonCook_ssr
+  JohnsonCook_ssrt
+  RusinekKlepaczko_ssrt
   Norton NortonRK DDIF2
   Norton_Euler Norton_rk2
   Norton_rk4   Norton_rk42

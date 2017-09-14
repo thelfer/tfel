@@ -68,6 +68,10 @@ set(mfront_tests_SOURCES
   ImplicitNorton_Broyden
   ImplicitNorton_Broyden2
   ImplicitNorton_LevenbergMarquardt
+  JohnsonCook_s
+  JohnsonCook_ssr
+  JohnsonCook_ssrt
+  RusinekKlepaczko_ssrt
   LogarithmicStrainNortonCreep
   EllipticCreep
   OrthotropicCreep

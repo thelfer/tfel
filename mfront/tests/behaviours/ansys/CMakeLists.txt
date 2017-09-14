@@ -11,7 +11,11 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
 set(mfront_tests_SOURCES
   MaterialPropertiesBoundsCheck
   Elasticity
-  OrthotropicElastic)
+  OrthotropicElastic
+  JohnsonCook_s
+  JohnsonCook_ssr
+  JohnsonCook_ssrt
+  RusinekKlepaczko_ssrt)
 mfront_dependencies(MFrontAnsysBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2

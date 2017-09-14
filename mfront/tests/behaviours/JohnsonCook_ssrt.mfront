@@ -1,0 +1,123 @@
+@Parser Implicit;
+@Behaviour JohnsonCook_ssrt;
+@Author G. Michal;
+@Date 21/06/2017;
+
+@Description
+{
+  Johnson-Cook law.
+  Full implementation, strain rate and temperature effects.
+  ** thermal strain e_th not implemented in this version. **
+  
+  This example provides implementation of analytical jacobian
+  with strain rate and adiabatic plastic strain heating generation.
+  
+  This is a file part of a set of three:
+
+  - johnsoncook_s   : Strain influence,
+  - johnsoncook_ssr : Strain and Strain Rate influence,
+  - johnsoncook_ssrt: Strain and Strain Rate and Temperature influence (adiabatic heating).
+}
+
+@Algorithm NewtonRaphson;
+@Theta 1. ;
+@Epsilon 1.e-12;
+
+@Brick StandardElasticity;
+@ElasticMaterialProperties {212000.,0.33};
+
+@Parameter rho = 7800;
+@Parameter A = 57.27;
+@Parameter B = 479.93;
+@Parameter n = 0.316;
+@Parameter C = 0.0362;
+@Parameter e0Dot = 1e-3;
+@Parameter m = 0.28;
+@Parameter theta0 = 298;
+@Parameter thetam = 1600;
+@Parameter beta = 0.9;
+@Parameter cp = 470;
+@Parameter alpha = 1.e-5;
+@Parameter T0 = 300;
+
+@StateVariable strain  p;
+@PhysicalBounds p in [0:*[;
+
+//! global temperature change (since step 0 of simulation)
+@AuxiliaryStateVariable temperature  dTg;
+//! Current temperature at beginning of step
+@LocalVariable temperature Tn;
+
+@LocalVariable strain e0Dot_dt;
+@LocalVariable real   brcp;
+@LocalVariable real   itmt0;
+@LocalVariable stress Fel;
+
+@StaticVariable real   p_eps = 1.e-13;
+@StaticVariable real seq_eps = 1.e-13;
+
+/* Initialize Lame coefficients */
+@InitLocalVariables{
+  // Product of minimum strain rate by time increment
+  e0Dot_dt = e0Dot*dt;
+  brcp     = 1.e6*beta/(rho*cp);
+  itmt0    = 1/(thetam-theta0);
+  Tn       = T0 + dTg;
+  // Elastic stress preediction and equivalent elastic stress
+  const auto sigel = computeElasticPrediction();
+  const auto seqel = sigmaeq(sigel);
+  // Hardening law elastic prediction.
+  // No further plastic strain -> strain rate null <-> dpdt = eoDot in Rp
+  const auto rp = (A+B*pow(max(p_eps,p), n))*(1.-pow((Tn-theta0)*itmt0,m));
+  // Yield surface
+  Fel = seqel - rp;
+}
+
+@Integrator{	
+  if(Fel <= 0){
+    return true;
+  }
+  // Flow direction
+  const auto seq  = sigmaeq(sig);
+  const auto iseq = 1/max(seq,seq_eps*young);
+  const auto n_   = eval(3*deviator(sig)*(iseq/2));
+  // stress       seq_ = max(sigmaeq(sig),seq_eps*young);
+  // const Stensor  n_ = 1.5*deviator(sig)/seq_;
+
+  // Plastic increment
+  const auto p_ = max(p_eps,p+theta*dp);
+
+  // Temperature increment
+  const auto Kt  = brcp*theta;
+  const auto  T_ = Tn + Kt*seq*dp;     // /!\ May be an issue if dp < 0
+  const auto rT_ = (T_-theta0)*itmt0;   // /!\ Can be a problem if rT_ <= 0.
+
+  // Flow stress
+  auto Kc = real(1);
+  real idp;		
+  if (dp <= e0Dot_dt){
+    idp = 1/e0Dot_dt;
+  } else{
+    Kc  += C*log(dp/e0Dot_dt);
+    idp  = 1/dp;
+  }
+  const auto Tpow      = pow(rT_,m-1.);
+  const auto ppow      = B*pow(p_,n-1.);
+  real       rp        = A+p_*ppow;
+  const auto Kr        = m*Kt*rp*Kc*Tpow*itmt0;
+  const auto drp_ddeel = Kr*dp;
+  const auto drp_ddp   = (theta*n*ppow + rp*C*idp)*(1.-rT_*Tpow) - Kr*seq;
+  rp       *= Kc*(1.-rT_*Tpow);
+
+  fp        = (seq-rp)/young;
+  dfp_ddeel = 2*(mu/young)*theta*(1.+drp_ddeel)*n_;
+  dfp_ddp   = -drp_ddp/young;
+
+  feel        += dp*n_;
+  dfeel_ddeel += 2.*mu*theta*dp*(Stensor4::M()-(n_^n_))*iseq;
+  dfeel_ddp    = n_;
+}
+
+@UpdateAuxiliaryStateVariables{
+  dTg += 1.e6*beta/(rho*cp)*sigmaeq(deviator(sig))*dp;
+}

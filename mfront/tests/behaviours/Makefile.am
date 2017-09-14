@@ -107,6 +107,10 @@ MFRONTS= DDIF2.mfront                                                      \
 	 IncompressiblePlaneStressMooneyRivlinBehaviour.mfront             \
 	 IncompressiblePlaneStressGornetDesmoratBehaviour.mfront           \
 	 ImplicitSimoMieheElastoPlasticity.mfront                          \
+	 JohnsonCook_s.mfront                                              \
+	 JohnsonCook_ssr.mfront                                            \
+	 JohnsonCook_ssrt.mfront                                           \
+	 RusinekKlepaczko_ssrt.mfront                                      \
 	 T91ViscoplasticBehaviour.mfront                                   \
 	 FiniteStrainSingleCrystal.mfront                                  \
 	 FiniteStrainSingleCrystal2.mfront                                 \

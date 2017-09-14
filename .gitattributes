@@ -2430,6 +2430,9 @@ mfront/tests/behaviours/IsotropicLinearSwelling.mfront -text
 mfront/tests/behaviours/IsotropicLinearSwelling2.mfront -text
 mfront/tests/behaviours/IsotropicVolumeSwelling.mfront -text
 mfront/tests/behaviours/IsotropicVolumeSwelling2.mfront -text
+mfront/tests/behaviours/JohnsonCook_s.mfront -text
+mfront/tests/behaviours/JohnsonCook_ssr.mfront -text
+mfront/tests/behaviours/JohnsonCook_ssrt.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity2.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity3.mfront -text
@@ -2482,6 +2485,7 @@ mfront/tests/behaviours/PolyCrystals.mfront -text
 mfront/tests/behaviours/PolyCrystals_DD_CC.mfront -text
 mfront/tests/behaviours/PolyCrystals_DD_CFC.mfront -text
 mfront/tests/behaviours/RelocationTest.mfront -text
+mfront/tests/behaviours/RusinekKlepaczko_ssrt.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticity.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticity2.mfront -text
 mfront/tests/behaviours/SaintVenantKirchhoffElasticity3.mfront -text
@@ -4614,6 +4618,7 @@ mfront/tests/behaviours/references/finitestrainsinglecrystal-159.ref -text
 mfront/tests/behaviours/references/generalizedmaxwell.ref -text
 mfront/tests/behaviours/references/hayhurst.ref -text
 mfront/tests/behaviours/references/implicitsimomieheelastoplasticity.ref -text
+mfront/tests/behaviours/references/johnson-cook.ref -text
 mfront/tests/behaviours/references/logarithmicstrainnortoncreepuniaxialtesting.ref -text
 mfront/tests/behaviours/references/mazars-aster.ref -text
 mfront/tests/behaviours/references/monocrystal.ref -text

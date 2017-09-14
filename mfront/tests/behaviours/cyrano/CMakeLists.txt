@@ -14,6 +14,10 @@ set(mfront_tests_SOURCES
   Elasticity
   Elasticity2
   Elasticity3
+  JohnsonCook_s
+  JohnsonCook_ssr
+  JohnsonCook_ssrt
+  RusinekKlepaczko_ssrt
   OrthotropicElastic
   OrthotropicElastic2
   OrthotropicElastic5
