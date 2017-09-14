@@ -187,7 +187,7 @@ namespace tfel{
       int status = EXIT_SUCCESS;
       ConfigurationManager c;
       if(this->configFiles.empty()){
-	std::ofstream cf("tfel-check.config");
+	std::ifstream cf("tfel-check.config");
 	if(cf){
 	  log.addMessage("Parsing configuration file 'tfel-check.config'");
 	  parse(c,"tfel-check.config");
