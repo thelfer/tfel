@@ -224,7 +224,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./css/slideshow.css					      \
 	   ./css/main.css					      \
 	   ./tex/lcmd_utf8.tex                                        \
-	   ./downloads/win32-scripts.tar.bz2                          \
+	   ./downloads/windows-install-scripts.tar.bz2                \
 	   ./downloads/example-castem2014.tar.bz2                     \
 	   ./downloads/patchs-Cast3M-2014.tar.bz2                     \
 	   ./downloads/patchs-Cast3M-2015.tar.bz2                     \

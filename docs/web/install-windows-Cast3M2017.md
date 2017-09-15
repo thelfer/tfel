@@ -21,7 +21,7 @@ This tutorial will show that:
   can be done by creating small wrapper scripts as discussed bellow.
 
 This tutorial is mostly based on `bat` scripts that can be downloaded
-[here](downloads/win32-scripts.tar.bz2).
+[here](downloads/windows-install-scripts.tar.bz2).
 
 ## Notes on the installation directory
 
@@ -58,7 +58,7 @@ installed.
 # Decompressing the archive
 
 As said before, this tutorial is mostly based on `bat` scripts that
-can be downloaded [here](downloads/win32-scripts.tar.bz2).
+can be downloaded [here](downloads/windows-install-scripts.tar.bz2).
 
 The archive contains the following files:
 

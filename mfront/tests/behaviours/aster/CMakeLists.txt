@@ -411,6 +411,8 @@ test_aster(orthotropicswelling2)
 test_aster(orthotropicswelling3)
 test_aster(axialgrowth)
 test_aster(axialgrowth2)
+test_aster(rusinekklepaczko_ssrt)
+test_aster(johnsoncook_ssrt)
 
 if(enable-python-bindings)
   test_aster_python(xx)

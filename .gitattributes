@@ -1087,7 +1087,7 @@ docs/web/downloads/example-zset8.5.tar.bz2 -text
 docs/web/downloads/patchs-CalculiX-2.12.tar.bz2 -text
 docs/web/downloads/patchs-Cast3M-2014.tar.bz2 -text
 docs/web/downloads/patchs-Cast3M-2015.tar.bz2 -text
-docs/web/downloads/win32-scripts.tar.bz2 -text
+docs/web/downloads/windows-install-scripts.tar.bz2 -text
 docs/web/epx.md -text
 docs/web/faq.md -text
 docs/web/favicon.ico -text
@@ -3177,6 +3177,7 @@ mfront/tests/behaviours/aster/asterimplicitnorton_numericallycomputedjacobianblo
 mfront/tests/behaviours/aster/asterimplicitorthotropiccreep.mtest.in -text
 mfront/tests/behaviours/aster/asterisotropiclinearswelling.mtest.in -text
 mfront/tests/behaviours/aster/asterisotropicvolumeswelling.mtest.in -text
+mfront/tests/behaviours/aster/asterjohnsoncook_ssrt.mtest.in -text
 mfront/tests/behaviours/aster/asterlorentz.mtest.in -text
 mfront/tests/behaviours/aster/asterlorentz2.mtest.in -text
 mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck.mtest.in -text
@@ -3209,6 +3210,7 @@ mfront/tests/behaviours/aster/asterplasticity.mtest.in -text
 mfront/tests/behaviours/aster/asterpolycrystals.mtest.in -text
 mfront/tests/behaviours/aster/asterpolycrystals_dd_cc.mtest.in -text
 mfront/tests/behaviours/aster/asterpolycrystals_dd_cfc.mtest.in -text
+mfront/tests/behaviours/aster/asterrusinekklepaczko_ssrt.mtest.in -text
 mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-1-2D.mtest.in -text
 mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-1-3D.mtest.in -text
 mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-2-2D.mtest.in -text
@@ -4618,7 +4620,7 @@ mfront/tests/behaviours/references/finitestrainsinglecrystal-159.ref -text
 mfront/tests/behaviours/references/generalizedmaxwell.ref -text
 mfront/tests/behaviours/references/hayhurst.ref -text
 mfront/tests/behaviours/references/implicitsimomieheelastoplasticity.ref -text
-mfront/tests/behaviours/references/johnson-cook.ref -text
+mfront/tests/behaviours/references/johnson-cook_ssrt.ref -text
 mfront/tests/behaviours/references/logarithmicstrainnortoncreepuniaxialtesting.ref -text
 mfront/tests/behaviours/references/mazars-aster.ref -text
 mfront/tests/behaviours/references/monocrystal.ref -text
@@ -4632,6 +4634,7 @@ mfront/tests/behaviours/references/plasticity.ref -text
 mfront/tests/behaviours/references/polycrystals.ref -text
 mfront/tests/behaviours/references/polycrystals_dd_cc.ref -text
 mfront/tests/behaviours/references/polycrystals_dd_cfc.ref -text
+mfront/tests/behaviours/references/rusinek-klepaczko_ssrt.ref -text
 mfront/tests/behaviours/references/tssf.ref -text
 mfront/tests/behaviours/references/tssf2.ref -text
 mfront/tests/behaviours/references/tssf3.ref -text

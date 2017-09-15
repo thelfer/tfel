@@ -178,6 +178,8 @@ EXTRA_DIST=CMakeLists.txt                                                 \
 	   references/finitestrainsinglecrystal-159.ref                   \
 	   references/AnistropicLemaitreViscoplasticBehaviour.ref         \
 	   references/ViscoChaboche.ref                                   \
+	   references/johnson-cook_ssrt.ref				  \
+	   references/rusinek-klepaczko_ssrt.ref			  \
 	   references/tssf.ref                                            \
 	   references/tssf2.ref                                           \
 	   references/tssf3.ref

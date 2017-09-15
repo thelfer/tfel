@@ -817,6 +817,8 @@ AC_OUTPUT([debug.sh
   	   mfront/tests/behaviours/aster/asterorthotropicswelling3.mtest
   	   mfront/tests/behaviours/aster/asteraxialgrowth.mtest
   	   mfront/tests/behaviours/aster/asteraxialgrowth2.mtest
+	   mfront/tests/behaviours/aster/asterjohnsoncook_ssrt.mtest
+	   mfront/tests/behaviours/aster/asterrusinekklepaczko_ssrt.mtest
            mfront/tests/behaviours/epx/Makefile
            mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
            mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
