@@ -21,5 +21,6 @@ tests_utilities(StringAlgorithms)
 tests_utilities(CxxTokenizerTest)
 tests_utilities(CxxTokenizerTest2)
 tests_utilities(DataTest)
-tests_utilities(FCString)
-
+if(NOT MSVC)
+  tests_utilities(FCString)
+endif(NOT MSVC)
