@@ -42,9 +42,6 @@ macro(astertest_finitestrainsinglecrystalbrick test_arg behaviour)
       set_property(TEST brick${test_arg}_${behaviour}_mtest
 	PROPERTY DEPENDS "MFrontAsterBehaviours MFrontMaterialProperties-aster mtest"
 	PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$ENV{PATH}")
-      set_property(TEST brick${test_arg}${behaviour}_consistenttangentoperator_mtest
-	PROPERTY DEPENDS "MFrontAsterBehaviours MFrontMaterialProperties-aster mtest"
-	PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$ENV{PATH}")
     elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
       set_property(TEST brick${test_arg}${behaviour}_mtest
 	PROPERTY DEPENDS "MFrontAsterBehaviours MFrontMaterialProperties-aster mtest")
