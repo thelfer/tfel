@@ -7,7 +7,7 @@ build_script:
 
     cd build
     
-    cmake c:\projects\tfel-master -G "Visual Studio 15"
+    cmake c:\projects\tfel-master -G "Visual Studio 15" -Dlocal-castem-header=ON
     
     cmake --build . --config "Release" --target ALL_BUILD
 
