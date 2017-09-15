@@ -12,5 +12,5 @@ build_script:
     cmake --build . --config "Release" --target ALL_BUILD
 
 test_script:
-- cmd: ctest -C Release
-
+- cmd: >-
+    cmake --build . --config "Release" --target check
