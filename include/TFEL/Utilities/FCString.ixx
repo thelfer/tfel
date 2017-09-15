@@ -155,11 +155,6 @@ namespace tfel{
     basic_fcstring<N,CharT,Traits>::operator std::basic_string<CharT,Traits>() const {
       return std::basic_string<CharT,Traits>(this->data());
     } // end of basic_fcstring<N,CharT,Traits>::operator std::string
-
-    template<std::size_t N,typename CharT,typename Traits>
-    basic_fcstring<N,CharT,Traits>::operator const CharT * () const {
-      return this->data();
-    } // end of basic_fcstring<N,CharT,Traits>::operator std::string
     
     template<std::size_t N,typename CharT,typename Traits>
     std::size_t basic_fcstring<N,CharT,Traits>::size() const
@@ -312,7 +307,7 @@ namespace tfel{
     std::ostream& operator << (std::ostream& os,
 			       const basic_fcstring<N,CharT,Traits>& s)
     {
-      os << static_cast<const char *>(s);
+      os << s.data();
       return os;
     } // end of std::ostream& operator
 
@@ -330,19 +325,19 @@ namespace tfel{
     bool operator == (const basic_fcstring<N,CharT,Traits>&  lhs,
 		      const basic_fcstring<N2,CharT,Traits>& rhs)
     {
-      return lhs.strcmp(static_cast<const CharT*>(rhs),rhs.size());
+      return lhs.strcmp(rhs.data(),rhs.size());
     }
     template<std::size_t N,typename CharT,typename Traits,typename Alloc>
     bool operator == (const basic_fcstring<N,CharT,Traits>& lhs,
 		      const std::basic_string<CharT,Traits,Alloc>& rhs)
     {
-      return rhs==static_cast<const CharT*>(lhs);
+      return rhs==lhs.data();
     }
     template<std::size_t N,typename CharT,typename Traits,typename Alloc>
     bool operator == (const std::basic_string<CharT,Traits,Alloc>& lhs,
 		      const basic_fcstring<N,CharT,Traits>& rhs)
     {
-      return lhs==static_cast<const CharT*>(rhs);
+      return lhs==rhs.data();
     }
     template<std::size_t N,typename CharT,typename Traits>
     bool operator == (const basic_fcstring<N,CharT,Traits>& lhs,

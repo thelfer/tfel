@@ -132,12 +132,9 @@ namespace tfel{
        * \param[in] rhs: source
        * \return this object
        */
-      basic_fcstring&
-      operator = (const CharT*);
+      basic_fcstring& operator = (const CharT*);
       //! \brief implicit conversion operator to `std::string`
-      operator std::basic_string<CharT,Traits>() const;
-      //! \brief implicit conversion operator to `C-string`
-      operator const CharT *() const;
+      explicit operator std::basic_string<CharT,Traits>() const;
       //! \return true if the first character is '\0'
       bool empty() const;
       //! \return the actual size of the string

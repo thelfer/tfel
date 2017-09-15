@@ -62,7 +62,7 @@ struct FCStringTest final
     TFEL_TESTS_ASSERT(s[1]=='b');
     TFEL_TESTS_ASSERT(s[2]=='c');
     TFEL_TESTS_ASSERT(s.back()=='c');
-    TFEL_TESTS_ASSERT(std::strcmp(s,"abc")==0);
+    TFEL_TESTS_ASSERT(std::strcmp(s.data(),"abc")==0);
     TFEL_TESTS_ASSERT(s.size()==3);
     TFEL_TESTS_CHECK_THROW(s[3]='1',std::out_of_range);
     TFEL_TESTS_ASSERT(!s2.empty());
@@ -70,7 +70,7 @@ struct FCStringTest final
     TFEL_TESTS_ASSERT(s2[1]=='b');
     TFEL_TESTS_ASSERT(s2[2]=='c');
     TFEL_TESTS_ASSERT(s2.back()=='c');
-    TFEL_TESTS_ASSERT(std::strcmp(s2,"abc")==0);
+    TFEL_TESTS_ASSERT(std::strcmp(s2.data(),"abc")==0);
     TFEL_TESTS_ASSERT(s2.size()==3);
     TFEL_TESTS_CHECK_THROW(s2[3],std::out_of_range);
   }
@@ -81,13 +81,13 @@ struct FCStringTest final
     TFEL_TESTS_ASSERT(!s.empty());
     TFEL_TESTS_ASSERT(s[0]=='a');
     TFEL_TESTS_ASSERT(s[1]=='b');
-    TFEL_TESTS_ASSERT(std::strcmp(s,"ab")==0);
+    TFEL_TESTS_ASSERT(std::strcmp(s.data(),"ab")==0);
     TFEL_TESTS_ASSERT(s.size()==2);
     TFEL_TESTS_CHECK_THROW(s[3]='1',std::out_of_range);
     TFEL_TESTS_ASSERT(!s2.empty());
     TFEL_TESTS_ASSERT(s2[0]=='a');
     TFEL_TESTS_ASSERT(s2[1]=='b');
-    TFEL_TESTS_ASSERT(std::strcmp(s2,"ab")==0);
+    TFEL_TESTS_ASSERT(std::strcmp(s2.data(),"ab")==0);
     TFEL_TESTS_ASSERT(s.size()==2);
     TFEL_TESTS_CHECK_THROW(s2[3],std::out_of_range);
   }
@@ -98,7 +98,7 @@ struct FCStringTest final
     TFEL_TESTS_ASSERT(s[0]=='a');
     TFEL_TESTS_ASSERT(s[1]=='b');
     TFEL_TESTS_ASSERT(s[2]=='c');
-    TFEL_TESTS_ASSERT(std::strcmp(s,"abc")==0);
+    TFEL_TESTS_ASSERT(std::strcmp(s.data(),"abc")==0);
     TFEL_TESTS_ASSERT(s.size()==3);
   }
   void test4()
@@ -107,7 +107,7 @@ struct FCStringTest final
     TFEL_TESTS_ASSERT(!s.empty());
     TFEL_TESTS_ASSERT(s[0]=='a');
     TFEL_TESTS_ASSERT(s[1]=='b');
-    TFEL_TESTS_ASSERT(std::strcmp(s,"ab")==0);
+    TFEL_TESTS_ASSERT(std::strcmp(s.data(),"ab")==0);
     TFEL_TESTS_ASSERT(s.size()==2);
   }
   void test5()
@@ -130,7 +130,7 @@ struct FCStringTest final
     os << s;
     is.str(os.str());
     is >> s2;
-    TFEL_TESTS_ASSERT(::strcmp(s2,"1234")==0);
+    TFEL_TESTS_ASSERT(::strcmp(s2.data(),"1234")==0);
   }
   void test7(){
     const tfel::utilities::fcstring<4> s  = "abc";

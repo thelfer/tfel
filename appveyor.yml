@@ -14,3 +14,9 @@ build_script:
 test_script:
 - cmd: >-
     cmake --build . --config "Release" --target check
+
+artifacts:
+  - path: Testing
+    name: Testing
+    type: zip
+
