@@ -116,4 +116,20 @@ script:
   - cd build
   - cmake ..// -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=OFF -Denable-python=OFF -Denable-python-bindings=OFF -Denable-java=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-cadna=OFF
   - make
+  - make MFrontCalculiXBehaviours
+  - make MFrontCastemBehaviours
+  - make MFrontCastemBehaviourBricks
+  - make MFrontCastemFiniteStrainSingleCrystalBrickBehaviours
+  - make MFrontAsterBehaviours
+  - make MFrontAsterStandardElasticityBrickBehaviours
+  - make MFrontAsterFiniteStrainSingleCrystalBrickBehaviours
+  - make MFrontCyranoBehaviours
+  - make MFrontCyranoBehaviourBricks
+  - make MFrontEuroplexusBehaviours
+  - make MFrontAbaqusBehaviours
+  - make MFrontAbaqusExplicitBehaviours
+  - make MFrontAnsysBehaviours
+  - make MFrontMaterialProperties
+  - make MFrontMaterialProperties-castem
+  - make MFrontMaterialProperties-cxx
   - make check
