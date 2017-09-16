@@ -114,6 +114,6 @@ before_install:
 script:
   - mkdir build
   - cd build
-  - cmake ..// -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-java=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-cadna=OFF
+  - cmake ..// -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=OFF -Denable-python=OFF -Denable-python-bindings=OFF -Denable-java=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-cadna=OFF
   - make
   - make check
