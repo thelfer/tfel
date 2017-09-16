@@ -1,6 +1,5 @@
 language: cpp
 sudo: required
-script: cmake
 
 matrix:
   include:
@@ -36,10 +35,7 @@ matrix:
             - g++-6
       env:
         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
-    - os: osx
-      osx_image: xcode8
-      env:
-        - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+        
     # works on Precise and Trusty
     - os: linux
       addons:
@@ -96,7 +92,12 @@ matrix:
             - clang-5.0
       env:
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
-        
+
+    - os: osx
+      osx_image: xcode8
+      env:
+        - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+
     - os: osx
       osx_image: xcode8
       env:
@@ -105,22 +106,14 @@ matrix:
     - os: osx
       osx_image: xcode8
       env:
-        - MATRIX_EVAL="brew install gcc && CC=gcc-6 && CXX=g++-6"
-
-addons:
-  apt:
-    sources:
-      - george-edison55-precise-backports
-    packages:
-      - cmake-data
-      - cmake
-      
+        - MATRIX_EVAL="brew install gcc && CC=gcc-6 && CXX=g++-6"        
+              
 before_install:
     - eval "${MATRIX_EVAL}"
 
 script:
   - mkdir build
   - cd build
-  - cmake ../ -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-java=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-cadna=OFF
+  - cmake ..// -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-java=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-cadna=OFF
   - make
   - make check
