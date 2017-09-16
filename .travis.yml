@@ -114,9 +114,9 @@ before_install:
 script:
   - mkdir build
   - cd build
-  - cmake ..// -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=OFF -Denable-python=OFF -Denable-python-bindings=OFF -Denable-java=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-cadna=OFF
+  - cmake ..// -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=OFF -Denable-python=OFF -Denable-python-bindings=OFF -Denable-java=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=OFF -Denable-ansys=OFF -Denable-europlexus=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-cadna=OFF
   - make
-  - make MFrontCalculiXBehaviours
+  # - make MFrontCalculiXBehaviours
   - make MFrontCastemBehaviours
   - make MFrontCastemBehaviourBricks
   - make MFrontCastemFiniteStrainSingleCrystalBrickBehaviours
@@ -128,7 +128,7 @@ script:
   - make MFrontEuroplexusBehaviours
   - make MFrontAbaqusBehaviours
   - make MFrontAbaqusExplicitBehaviours
-  - make MFrontAnsysBehaviours
+  # - make MFrontAnsysBehaviours
   - make MFrontMaterialProperties
   - make MFrontMaterialProperties-castem
   - make MFrontMaterialProperties-cxx
