@@ -6,13 +6,17 @@
 
 # Tickets fixed
 
+## Ticket #89: StandardElasticity: bug when only one the plane stress modelling hypotheses is selected
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/89/>
+
 ## Ticket #88: Error when treating axial growth: the axis along the growth is wrong
 
 The main axis for the axial growth shall be the second direction of
 orthotropy, as described in the documentation, not the third one
 as implemented in versions \(3.0\) and \(3.0.1\).
 
-For more details, see: <https://sourceforge.net/p/tfel/tickets/87/>
+For more details, see: <https://sourceforge.net/p/tfel/tickets/88/>
 
 ## Ticket #87: The correction of the axial growth modifies all the stress free expansion treated so far
 

@@ -158,6 +158,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/tplot.svg                                            \
 	   ./img/AccesDigiteo.png                                     \
 	   ./img/IsotropicViscoplasticityAmstrongFredericKinematicHardening.svg \
+	   ./img/rusinek-klepaczko.svg                                \
 	   ./img/tutorial-spanish-1.png				      \
 	   ./img/tutorial-spanish-2.png				      \
 	   ./img/tutorial-spanish-3.png				      \

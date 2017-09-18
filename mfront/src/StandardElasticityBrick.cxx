@@ -185,10 +185,10 @@ namespace mfront{
     if(this->pss){
       const bool agps = bmh.count(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=0;
       const bool ps   = bmh.count(ModellingHypothesis::PLANESTRESS)!=0;
-      if(agps){
+      if(ps){
 	this->addPlaneStressSupport();
       }
-      if(ps){
+      if(agps){
 	this->addAxisymmetricalGeneralisedPlaneStressSupport();
       }
     }

@@ -16,6 +16,24 @@
 \newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 
+# Behaviours for modelling mild steel (14/09/2017)
+
+![](img/rusinek-klepaczko.svg ""){width=75%}
+
+Thanks to Guillaume Michal, University of Wollongong (NSW, Australia),
+several implementation of behaviours suitable for the description of
+mild steel are now available:
+
+- Three versions of the Johnson-Cook behaviour:
+   - `JohnsonCook_s`: which describes strain hardening but does not describe rate effects,
+   - `JohnsonCook_ssr` : which describes both strain hardening and rate effects.
+   - `JohnsonCook_ssrt`: which describes both strain hardening, rate effects and adiabatic heating.
+-  The Rusinek-Klepaczko law as described in: "Constitutive relations
+  in 3-D for a wide range of strain rates and temperatures -
+  Application to mild steels". A. Rusinek, R. Zaera and
+  J. R. Klepaczko.  Int. J. of Solids and Structures, Vol. 44,
+  5611-5634, 2007.
+
 # Support for the total lagragian framework in `Code_Aster`
 
 ![](img/AsterTotalLagrangian.png){width=50%}

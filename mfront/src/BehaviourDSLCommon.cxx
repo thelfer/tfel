@@ -1566,7 +1566,7 @@ namespace mfront{
   void
   BehaviourDSLCommon::treatElasticMaterialProperties(){
     if(this->mb.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,false)){
-      this->throwRuntimeError("BehaviourDSLCommon::treatComputeStiffnessTensor",
+      this->throwRuntimeError("BehaviourDSLCommon::treatElasticMaterialProperties",
 			      "@ElasticMaterialProperties can not be used along with "
 			      "@RequireStiffnessTensor");
     }
