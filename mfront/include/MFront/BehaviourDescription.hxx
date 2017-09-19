@@ -1001,6 +1001,15 @@ namespace mfront
     std::string getExternalName(const Hypothesis h,
 				const std::string& n) const;
     /*!
+     * \return the variable description associated with the given
+     * glossary or entry name.
+     * \param[in] h: modelling Hypothesis
+     * \param[in] n: name
+     */
+    const VariableDescription&
+    getVariableDescriptionByExternalName(const Hypothesis,
+					 const std::string&) const;
+    /*!
      * \return the name of the variable associated with the given
      * glossary or entry name
      * \param[in] h: modelling Hypothesis

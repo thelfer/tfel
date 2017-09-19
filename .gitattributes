@@ -2034,6 +2034,7 @@ mfront/include/MFront/CalculiX/CalculiXData.hxx -text
 mfront/include/MFront/CalculiX/CalculiXException.hxx -text
 mfront/include/MFront/CalculiX/CalculiXInterface.hxx -text
 mfront/include/MFront/CalculiX/CalculiXInterfaceExceptions.hxx -text
+mfront/include/MFront/CalculiX/CalculiXRotationMatrix.hxx -text
 mfront/include/MFront/CalculiX/CalculiXStressFreeExpansionHandler.hxx -text
 mfront/include/MFront/CalculiX/CalculiXTangentOperator.hxx -text
 mfront/include/MFront/CalculiX/CalculiXTraits.hxx -text
@@ -2257,6 +2258,7 @@ mfront/src/CalculiXComputeThermalExpansionCoefficientTensor.cxx -text
 mfront/src/CalculiXException.cxx -text
 mfront/src/CalculiXInterface.cxx -text
 mfront/src/CalculiXInterfaceExceptions.cxx -text
+mfront/src/CalculiXRotationMatrix.cxx -text
 mfront/src/CalculiXStressFreeExpansionHandler.cxx -text
 mfront/src/CastemComputeStiffnessTensor.cxx -text
 mfront/src/CastemComputeThermalExpansionCoefficientTensor.cxx -text

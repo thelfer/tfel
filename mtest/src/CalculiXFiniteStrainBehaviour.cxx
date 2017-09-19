@@ -79,7 +79,7 @@ namespace mtest
     tmatrix<3u,3u,real> uu0(real(0));
     tmatrix<3u,3u,real> uu1(real(0));
     stensor<3u,real> us(real(0));
-    real orab[6] = {real(0),real(0),real(0),
+    real orab[7] = {real(0),real(0),real(0),real(0),
 		    real(0),real(0),real(0)};
     if(this->stype==1u){
       orab[0] = s.r(0,0);
@@ -88,6 +88,7 @@ namespace mtest
       orab[3] = s.r(0,1);
       orab[4] = s.r(1,1);
       orab[5] = s.r(2,1);
+      orab[6] = real(1);
     }
     throw_if(this->stype==1u,"orthotropic behaviour "
 	     "are not supported yet");

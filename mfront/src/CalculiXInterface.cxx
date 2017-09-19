@@ -325,6 +325,9 @@ namespace mfront{
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
+    if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      out << "#include\"MFront/CalculiX/CalculiXRotationMatrix.hxx\"\n";
+    }
     out << "#include\"MFront/CalculiX/CalculiXStressFreeExpansionHandler.hxx\"\n\n"
 	<< "#include\"MFront/CalculiX/CalculiXInterface.hxx\"\n\n"
 	<< "#include\"MFront/CalculiX/calculix" << name << ".hxx\"\n\n";
@@ -510,14 +513,20 @@ namespace mfront{
   }
   
   void CalculiXInterface::writeSmallStrainFunction(std::ostream& out,
-						       const BehaviourDescription& mb,
-						       const std::string& name) const
+						   const BehaviourDescription& mb,
+						   const std::string& name) const
   {
     const std::string sfeh = "calculix::CalculiXStandardSmallStrainStressFreeExpansionHandler";
     this->writeFunctionBase(out,mb,name,sfeh);
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
     writeArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,true);
-    out << "{\n";
+    out << "{\n"
+	<< "using namespace tfel::math;\n"
+	<< "using real = calculix::CalculiXReal;\n";
+    if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      out << "TFEL_CONSTEXPR const real sqrt2  = Cste<real>::sqrt2;\n"
+	  << "TFEL_CONSTEXPR const real isqrt2 = Cste<real>::isqrt2;\n";
+    }
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
 	  << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
@@ -528,41 +537,76 @@ namespace mfront{
     if(this->generateMTestFile){
       this->generateMTestFile1(out);
     }
-    out << "calculix::CalculiXReal D[36] = {0,0,0,0,0,0,\n"
-	<< "                                0,0,0,0,0,0,\n"
-      	<< "                                0,0,0,0,0,0,\n"
-      	<< "                                0,0,0,0,0,0,\n"
-      	<< "                                0,0,0,0,0,0,\n"
-      	<< "                                0,0,0,0,0,0};\n"
-	<< "calculix::CalculiXReal DSTRAN[6] = {STRAN1[0]-STRAN0[0],\n"
-	<< "                                    STRAN1[1]-STRAN0[1],\n"
-      	<< "                                    STRAN1[2]-STRAN0[2],\n"
-      	<< "                                    STRAN1[3]-STRAN0[3],\n"
-      	<< "                                    STRAN1[4]-STRAN0[4],\n"
-	<< "                                    STRAN1[5]-STRAN0[5]};\n";
-    if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      if(mb.getSymmetryType()!=mfront::ISOTROPIC){
-	throw(std::runtime_error("CalculiXInterface::writeFiniteStrainFunction: "
-				 "orthotropic symmetry is unsupported yet"));
-      }
-    } else {
-      if(mb.getSymmetryType()!=mfront::ISOTROPIC){
-	throw(std::runtime_error("CalculiXInterface::writeFiniteStrainFunction: "
-				 "unsupported symmetry type"));
-      }
-      out << "if(*iorien!=0){\n"
+    out << "st2tost2<3u,real> D = {0,0,0,0,0,0,\n"
+	<< "                       0,0,0,0,0,0,\n"
+      	<< "                       0,0,0,0,0,0,\n"
+      	<< "                       0,0,0,0,0,0,\n"
+      	<< "                       0,0,0,0,0,0,\n"
+      	<< "                       0,0,0,0,0,0};\n";
+    if (mb.getSymmetryType()==mfront::ISOTROPIC){
+      out << "const real* eto     = STRAN0;\n;\n"
+	  << "const real  deto[6] = {STRAN1[0]-STRAN0[0],\n"
+	  << "                       STRAN1[1]-STRAN0[1],\n"
+	  << "                       STRAN1[2]-STRAN0[2],\n"
+	  << "                       STRAN1[3]-STRAN0[3],\n"
+	  << "                       STRAN1[4]-STRAN0[4],\n"
+	  << "                       STRAN1[5]-STRAN0[5]};\n"
+	  << "real* s = STRESS;\n;\n"
+	  << "if(*iorien!=0){\n"
 	  << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
 	  << "            << \"no orientation shall be defined for an istropic behaviour\\n\";\n"
 	  << "  std::exit(-1);\n"
+	  << "}\n";
+    } else {
+      out << "stensor<3u,real> eto  = {STRAN0[0],\n"
+	  << "                         STRAN0[1],\n"
+	  << "                         STRAN0[2],\n"
+	  << "                         STRAN0[3]*sqrt2,\n"
+	  << "                         STRAN0[4]*sqrt2,\n"
+	  << "                         STRAN0[5]*sqrt2};\n"
+	  << "stensor<3u,real> deto = {STRAN1[0]-STRAN0[0],\n"
+	  << "                         STRAN1[1]-STRAN0[1],\n"
+	  << "                         STRAN1[2]-STRAN0[2],\n"
+	  << "                         (STRAN1[3]-STRAN0[3])*sqrt2,\n"
+	  << "                         (STRAN1[4]-STRAN0[4])*sqrt2,\n"
+	  << "                         (STRAN1[5]-STRAN0[5])*sqrt2};\n"
+	  << "stensor<3u,real> s;\n"
+	  << "s.importTab(STRESS);\n"
+	  << "if(*iorien==0){\n"
+	  << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
+	  << "            << \"no orientation defined for an orthotropic behaviour\\n\";\n"
+	  << "  std::exit(-1);\n"
 	  << "}\n"
-	  << name << "_base"
-	  << "(amat,iel,iint,NPROPS,MPROPS,DSTRAN,STRAN0,beta,F0,"
-	  << " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
-	  << " ielas,mi,NSTATV,STATEV0,STATEV1,STRESS,D,"
-	  << "iorien,pgauss,orab,PNEWDT,ipkon,size);\n"
-	  << "// converting the consistent tangent operator\n"
-	  << "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D);\n";
+	  << "const auto r  = calculix::getRotationMatrix(orab+7*(*iorien-1),pgauss);\n"
+	  << "const auto rb = transpose(r);\n"
+	  << "eto.changeBasis(r);\n"
+	  << "deto.changeBasis(r);\n"
+	  << "s.changeBasis(r);\n";
+      for(unsigned short i=3;i!=6;++i){
+	out << "eto["  << i << "]*=isqrt2;\n";
+      }
+      for(unsigned short i=3;i!=6;++i){
+	out << "deto["  << i << "]*=isqrt2;\n";
+      }
+      for(unsigned short i=3;i!=6;++i){
+	out << "s["  << i << "]*=isqrt2;\n";
+      }
     }
+    out << name << "_base"
+	<< "(amat,iel,iint,NPROPS,MPROPS,&deto[0],&eto[0],beta,F0,"
+	<< " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
+	<< " ielas,mi,NSTATV,STATEV0,STATEV1,&s[0],&D(0,0),"
+	<< "iorien,pgauss,orab,PNEWDT,ipkon,size);\n";
+    if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      for(unsigned short i=3;i!=6;++i){
+	out << "s["  << i << "]*=sqrt2;\n";
+      }
+      out << "s.changeBasis(rb);\n"
+	  << "s.exportTab(STRESS);\n"
+	  << "D = change_basis(st2tost2<3u,real>(D),rb);\n";
+    }
+    out << "// converting the consistent tangent operator\n"
+	<< "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,&D(0,0));\n";
     if(this->generateMTestFile){
       out << "if(*PNEWDT<1){\n";
       this->generateMTestFile2(out,mb.getBehaviourType(),
@@ -570,7 +614,8 @@ namespace mfront{
       out << "}\n";
     }
     if(getDebugMode()){
-      out << "std::cout << \"Dt :\" << std::endl;\n"
+      out << "if(*PNEWDT>=1){\n"
+	  << "std::cout << \"Dt :\" << std::endl;\n"
 	  << "const calculix::CalculiXReal *p = DDSDDE;\n"
     	  << "for(calculix::CalculiXInt i=0;i!=6;++i){\n"
     	  << "for(calculix::CalculiXInt j=0;j!=i+1;++j,++p){\n"
@@ -578,7 +623,8 @@ namespace mfront{
     	  << "}\n"
     	  << "std::cout << std::endl;\n"
     	  << "}\n"
-    	  << "std::cout << std::endl;\n";
+    	  << "std::cout << std::endl;\n"
+	  << "}\n";
     }
     out << "}\n\n";
   }
@@ -608,8 +654,11 @@ namespace mfront{
     out << "{\n"
 	<< "using namespace tfel::math;\n"
     	<< "using namespace tfel::material;\n"
-	<< "using real = calculix::CalculiXReal;\n"
-	<< "TFEL_CONSTEXPR const real isqrt2 = Cste<real>::isqrt2;\n";
+	<< "using real = calculix::CalculiXReal;\n";
+    if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
+      out << "TFEL_CONSTEXPR const real isqrt2 = Cste<real>::sqrt2;\n";
+    }
+    out << "TFEL_CONSTEXPR const real isqrt2 = Cste<real>::isqrt2;\n";
     if(this->generateMTestFile){
       this->generateMTestFile1(out);
     }
@@ -628,7 +677,9 @@ namespace mfront{
 	  << "     tensor<3u,real>::buildFromFortranMatrix(F1));\n"
 	  << "auto eto0 = lsh0.getHenckyLogarithmicStrain();\n"
 	  << "auto deto = eval(lsh1.getHenckyLogarithmicStrain()-eto0);\n"
-	  << "lsh0.convertFromSecondPiolaKirchhoffStress(STRESS);\n";
+	  << "tfel::math::stensor<3u,real> pk2;\n"
+	  << "pk2.importTab(STRESS);\n"
+	  << "auto T0 = lsh0.convertFromSecondPiolaKirchhoffStress(pk2);\n";
     } else if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
       out << "LogarithmicStrainHandler<3u,real> "
 	  << "lsh1(LogarithmicStrainHandlerBase::LAGRANGIAN,\n"
@@ -637,9 +688,33 @@ namespace mfront{
 	  << "const auto ivs1 =  STATEV1+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
 	  << "stensor<3u,real> eto0(ivs0+" << nivs << ");\n"
 	  << "const auto eto1 = lsh1.getHenckyLogarithmicStrain();\n" 
-	  << "auto deto = eval(eto1-eto0);\n";
+	  << "auto deto = eval(eto1-eto0);\n"
+	  << "stensor<3u,real> T0;\n"
+	  << "tfel::fsalgo::copy<6u>::exe(ivs1+" << nivs+6 << ",T0.begin());\n";
     } else {
       throw_if(true,"internal error (unexpected finite strain strategy)");
+    }
+    if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      out << "if(*iorien==0){\n"
+	  << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
+	  << "            << \"no orientation defined for an orthotropic behaviour\\n\";\n"
+	  << "  std::exit(-1);\n"
+	  << "}\n"
+	  << "const auto r  = calculix::getRotationMatrix(orab+7*(*iorien-1),pgauss);\n"
+	  << "const auto rb = transpose(r);\n"
+	  << "eto.changeBasis(r);\n"
+	  << "deto.changeBasis(r);\n";
+      if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	out << "T0.changeBasis(r);\n";
+      }
+    } else {
+      throw_if(mb.getSymmetryType()!=mfront::ISOTROPIC,
+	       "unsupported symmetry type");
+      out << "if(*iorien!=0){\n"
+	  << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
+	  << "            << \"no orientation shall be defined for an istropic behaviour\\n\";\n"
+	  << "  std::exit(-1);\n"
+	  << "}\n";
     }
     out << "// turning tensors in CalculiX conventions\n";
     for(unsigned short i=3;i!=6;++i){
@@ -648,36 +723,37 @@ namespace mfront{
     for(unsigned short i=3;i!=6;++i){
       out << "deto["  << i << "]*=isqrt2;\n";
     }
+    if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
+      for(unsigned short i=3;i!=6;++i){
+	out << "T0["  << i << "]*=isqrt2;\n";
+      }
+    }
+    out << name << "_base"
+	<< "(amat,iel,iint,NPROPS,MPROPS,&deto[0],&eto0[0],beta,F0,"
+	<< " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
+	<< " ielas,mi,NSTATV,STATEV0,STATEV1,&T0[0],D,"
+	<< "iorien,pgauss,orab,PNEWDT,ipkon,size);\n"
+	<< "// converting the consistent tangent operator\n"
+	<< "stensor<3u,real> T1;\n"
+	<< "T1.importTab(T0.begin());\n";
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      throw_if(mb.getSymmetryType()!=mfront::ISOTROPIC,
-	       "orthotropic symmetry is unsupported yet");
-    } else {
-      throw_if(mb.getSymmetryType()!=mfront::ISOTROPIC,
-	       "unsupported symmetry type");
-      out << "if(*iorien!=0){\n"
-	  << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
-	  << "            << \"no orientation shall be defined for an istropic behaviour\\n\";\n"
-	  << "  std::exit(-1);\n"
-	  << "}\n"
-	  << name << "_base"
-	  << "(amat,iel,iint,NPROPS,MPROPS,&deto[0],&eto0[0],beta,F0,"
-	  << " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
-	  << " ielas,mi,NSTATV,STATEV0,STATEV1,STRESS,D,"
-	  << "iorien,pgauss,orab,PNEWDT,ipkon,size);\n"
-	  << "// converting the consistent tangent operator\n"
-	  << "stensor<3u,real> T;\n"
-	  << "T.importTab(STRESS);\n"
-	  << "ST2toST2View<3u,real> Dv(D);\n"
-	  << "Dv = lsh1.convertToMaterialTangentModuli(ConstST2toST2View<3u,real>(D),T);\n"
-	  << "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D);\n";
-      if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
-	out << "std::copy(STRESS,STRESS+6u,ivs1+" << nivs+6 << ");\n";
-      }
-      out << "// converting the stress\n"
-	  << "lsh1.convertToSecondPiolaKirchhoffStress(STRESS);\n";
-      if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
-	out << "std::copy(eto1.begin(),eto1.end(),ivs1+" << nivs << ");\n";
-      }
+      out << "T1.changeBasis(rb)\n";
+    }
+    out << "ST2toST2View<3u,real> Dv(D);\n";
+    if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      out << "st2tost2<3u,real> D2 = ConstST2toST2View<3u,real>(D);\n"
+	  << "Dv = change_basis(D2,rb);\n";
+    }
+    out << "Dv = lsh1.convertToMaterialTangentModuli(ConstST2toST2View<3u,real>(D),T1);\n"
+	<< "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D);\n";
+    if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
+      out << "tfel::fsalgo::copy<6u>::exe(T1.begin(),ivs1+" << nivs+6 << ");\n";
+    }
+    out << "// converting the stress\n"
+	<< "const auto s = lsh1.convertToSecondPiolaKirchhoffStress(T1);\n"
+	<< "s.exportTab(STRESS);\n";
+    if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
+      out << "std::copy(eto1.begin(),eto1.end(),ivs1+" << nivs << ");\n";
     }
     if(this->generateMTestFile){
       out << "if(*PNEWDT<1){\n";

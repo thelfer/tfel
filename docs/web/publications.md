@@ -4,6 +4,7 @@
 
 ---
 nocite: |
+	@michel_new_2017
 	@bary_analytical_2017
 	@gelebart_fft_2017
 	@helfer_phase_field_2017

@@ -245,6 +245,7 @@ nobase_include_HEADERS += MFront/CalculiX/CalculiX.hxx                          
 			  MFront/CalculiX/CalculiXInterface.hxx	                               \
 			  MFront/CalculiX/CalculiXInterfaceExceptions.hxx                      \
 			  MFront/CalculiX/CalculiXBehaviourHandler.hxx                         \
+			  MFront/CalculiX/CalculiXRotationMatrix.hxx                           \
 			  MFront/CalculiX/CalculiXComputeStiffnessTensor.hxx                   \
 			  MFront/CalculiX/CalculiXComputeThermalExpansionCoefficientTensor.hxx \
 			  MFront/CalculiX/CalculiXStressFreeExpansionHandler.hxx               \

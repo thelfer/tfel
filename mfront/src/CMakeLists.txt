@@ -225,6 +225,7 @@ if(HAVE_CALCULIX)
   set(CalculiXInterface_SOURCES
     CalculiXInterfaceExceptions.cxx
     CalculiXException.cxx
+    CalculiXRotationMatrix.cxx
     CalculiXComputeStiffnessTensor.cxx
     CalculiXStressFreeExpansionHandler.cxx
     CalculiXComputeThermalExpansionCoefficientTensor.cxx)

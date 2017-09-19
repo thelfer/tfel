@@ -1487,7 +1487,7 @@ namespace mfront{
 	return e.first;
       }
     }
-    throw(std::runtime_error("BehaviourData::getVariableNameFromGlossaryNameOrEntryName : "
+    throw(std::runtime_error("BehaviourData::getVariableNameFromGlossaryNameOrEntryName: "
 			     "no variable with glossary or entry name '"+n+"'"));
   } // end of BehaviourData::getVariableNameFromGlossaryNameOrEntryName
 

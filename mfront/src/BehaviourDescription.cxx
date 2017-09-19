@@ -19,6 +19,7 @@
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
+#include"MFront/PedanticMode.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/LocalDataStructure.hxx"
 #include"MFront/ModelDescription.hxx"
@@ -317,7 +318,7 @@ namespace mfront
   BehaviourDescription::getMaterialPropertyInputs(const MaterialPropertyDescription& mpd) const
   {
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourDescription::MaterialPropertyInput: "+m));}
+      if(c){throw(std::runtime_error("BehaviourDescription::getMaterialPropertyInputs: "+m));}
     };
     auto getVariableType = [&throw_if,this](const Hypothesis h,
 					    const std::string& v){
@@ -341,9 +342,11 @@ namespace mfront
     };
     auto inputs = std::vector<MaterialPropertyInput>{};
     for(const auto& v : mpd.inputs){
-      throw_if(!(v.hasGlossaryName())&&(!v.hasEntryName()),
-	       "no glossary nor entry name declared for variable "
-	       "'"+v.name+"' used by the material property '"+mpd.law+"'");
+      if((getPedanticMode())&&(!(v.hasGlossaryName())&&(!v.hasEntryName()))){
+	getLogStream() << "BehaviourDescription::getMaterialPropertyInputs: "
+	  "no glossary nor entry name declared for variable "
+	  "'"+v.name+"' used by the material property '"+mpd.law+"'\n";
+      }
       const auto& vn = v.getExternalName();
       if(vn==tfel::glossary::Glossary::Temperature){
 	inputs.push_back({"T",tfel::glossary::Glossary::Temperature,
@@ -351,10 +354,10 @@ namespace mfront
       } else {
 	auto hs = this->getDistinctModellingHypotheses();
 	const auto n =
-	  this->getVariableNameFromGlossaryNameOrEntryName(*(hs.begin()),vn);
+	  this->getVariableDescriptionByExternalName(*(hs.begin()),vn).name;
 	const auto t = getVariableType(*(hs.begin()),n);
 	for(const auto h:hs){
-	  throw_if(this->getVariableNameFromGlossaryNameOrEntryName(h,vn)!=n,
+	  throw_if(this->getVariableDescriptionByExternalName(h,vn).name!=n,
 		   "the external name '"+vn+"' is associated with "
 		   "two differents variables in two distinct "
 		   "modelling hypotheses. This is not supported.");
@@ -1986,6 +1989,13 @@ namespace mfront
     return this->getBehaviourData(h).getVariableNameFromGlossaryNameOrEntryName(n);
   } // end of BehaviourDescription::getVariableNameFromGlossaryNameOrEntryName
 
+  const VariableDescription&
+  BehaviourDescription::getVariableDescriptionByExternalName(const Hypothesis h,
+							     const std::string& n) const
+  {
+    return this->getBehaviourData(h).getVariableDescriptionByExternalName(n);
+  } // end of BehaviourDescription::getVariableDescriptionByExternalName
+  
   void BehaviourDescription::setBounds(const Hypothesis h,
 				       const std::string& n,
 				       const VariableBoundsDescription& b)

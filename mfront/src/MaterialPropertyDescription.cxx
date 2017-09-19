@@ -120,6 +120,9 @@ namespace mfront
   {
     auto is_used  = [&e](const VariableDescription& v){
       if(v.getExternalName()==e){
+	if((v.name==e)&&(!v.hasEntryName())){
+	  return false;
+	}
 	return true;
       }
       return false;

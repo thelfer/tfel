@@ -301,7 +301,8 @@ if HAVE_CALCULIX
 lib_LTLIBRARIES += libCalculiXInterface.la
 libCalculiXInterface_la_SOURCES = CalculiXInterfaceExceptions.cxx                      \
 				  CalculiXException.cxx                                \
-			          CalculiXComputeStiffnessTensor.cxx                   \
+			          CalculiXRotationMatrix.cxx                           \
+				  CalculiXComputeStiffnessTensor.cxx                   \
 			          CalculiXStressFreeExpansionHandler.cxx               \
 			          CalculiXComputeThermalExpansionCoefficientTensor.cxx
 

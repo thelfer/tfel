@@ -17,6 +17,8 @@ set(mfront_tests_SOURCES
   Elasticity
   Elasticity2
   Elasticity3
+  OrthotropicElastic
+  OrthotropicElastic2
   JohnsonCook_s
   JohnsonCook_ssr
   JohnsonCook_ssrt
@@ -135,21 +137,21 @@ test_calculix(elasticity)
 test_calculix(elasticity2)
 test_calculix(elasticity3)
 test_calculix(elasticity4)
-# test_calculix(elasticity5)
-# test_calculix(elasticity6)
+test_calculix(elasticity5)
+test_calculix(elasticity6)
 test_calculix(elasticity7)
-# test_calculix(elasticity8)
-# test_calculix(elasticity9)
-# test_calculix(elasticity10)
-# test_calculix(elasticity11)
-# test_calculix(elasticity14)
+test_calculix(elasticity8)
+test_calculix(elasticity9)
+test_calculix(elasticity10)
+test_calculix(elasticity11)
+test_calculix(elasticity14)
 test_calculix(elasticity15)
 test_calculix(elasticity18)
 test_calculix(elasticity19)
 test_calculix(elasticity20)
-# test_calculix(elasticity21)
-# test_calculix(elasticity22)
-# test_calculix(elasticity23)
+test_calculix(elasticity21)
+test_calculix(elasticity22)
+test_calculix(elasticity23)
 test_calculix(saintvenantkirchhoffelasticity-uniaxialloading-sig11-3D)
 test_calculix(saintvenantkirchhoffelasticity-uniaxialloading-sig22-3D)
 test_calculix(saintvenantkirchhoffelasticity-uniaxialloading-sig33-3D)

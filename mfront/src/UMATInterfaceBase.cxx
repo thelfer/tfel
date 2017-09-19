@@ -1325,14 +1325,13 @@ namespace mfront
   UMATInterfaceBase::generateMTestFile1(std::ostream& out) const
   {
     if(this->generateMTestFile){
-      out << "using namespace std;\n"
-	  << "using tfel::material::ModellingHypothesis;\n"
+      out << "using tfel::material::ModellingHypothesis;\n"
 	  << "using mfront::SupportedTypes;\n"
 	  << "// double is used by MTestFileGeneratorBase\n"
-	  << "vector<double> mg_STRESS(*NTENS);\n"
-	  << "vector<double> mg_STATEV(*NSTATV);\n"
-	  << "copy(STRESS,STRESS+*NTENS,mg_STRESS.begin());\n"
-	  << "copy(STATEV,STATEV+*NSTATV,mg_STATEV.begin());\n";
+	  << "std::vector<double> mg_STRESS(*NTENS);\n"
+	  << "std::vector<double> mg_STATEV(*NSTATV);\n"
+	  << "std::copy(STRESS,STRESS+*NTENS,mg_STRESS.begin());\n"
+	  << "std::copy(STATEV,STATEV+*NSTATV,mg_STATEV.begin());\n";
     }
   } // end of UMATInterfaceBase::generateMTestFile1
 
@@ -1366,9 +1365,9 @@ namespace mfront
       }
       this->writeMTestFileGeneratorSetModellingHypothesis(out);
       this->writeMTestFileGeneratorSetRotationMatrix(out,mb);
-      out << "const unsigned short TVectorSize = mg.getTVectorSize();\n"
-	  << "const unsigned short StensorSize = mg.getStensorSize();\n"
-	  << "const unsigned short TensorSize  = mg.getTensorSize();\n"
+      out << "const auto TVectorSize = mg.getTVectorSize();\n"
+	  << "const auto StensorSize = mg.getStensorSize();\n"
+	  << "const auto TensorSize  = mg.getTensorSize();\n"
 	  << "mg.setHandleThermalExpansion(false);\n"
 	  << "mg.addTime(0.);\n"
 	  << "mg.addTime(*DTIME>0 ? *DTIME : 1.e-50);\n";

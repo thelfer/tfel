@@ -480,35 +480,37 @@ namespace mfront{
       out << "}\n";
     } else {
       out << "if(*(NSTATV)<(*NTENS)*(*NTENS)){\n"
-	  << "string msg(\"aster" << makeLowerCase(name) 
-	  << ": invalid number of state variables (can't save tangent operator)\");\n"
-	  << "throw(runtime_error(msg));\n"
-	  << "}\n";
-      out << "aster::AsterInt nNSTATV = max(*(NSTATV)-(*NTENS)*(*NTENS),aster::AsterInt(1));\n";
-      out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
+	  << "std::cerr << \"aster" << makeLowerCase(name) 
+	  << ": invalid number of state variables "
+	  << "(can't save tangent operator)\" << std::endl;\n"
+	  << "*PNEWDT = -1.;\n"
+	  << "return;\n"
+	  << "}\n"
+	  << "aster::AsterInt nNSTATV = std::max(*(NSTATV)-(*NTENS)*(*NTENS),aster::AsterInt(1));\n"
+	  << "if(aster::AsterInterface<tfel::material::" << mb.getClassName() 
 	  << ">::exe(NTENS,DTIME,DROT,DDSOE," << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,NPROPS,"
 	  << "PREDEF,DPRED,STATEV,&nNSTATV,STRESS,NUMMOD,"
 	  << getFunctionName(name) << "_getOutOfBoundsPolicy(),"
 	  << sfeh << ")!=0){\n";
       this->generateMTestFile2(out,mb.getBehaviourType(),
 			       name,"",mb);
-      out << "*PNEWDT = -1.;\n";
-      out << "return;\n";
-      out << "}\n";
-      out << "copy(DDSOE,DDSOE+(*NTENS)*(*NTENS),STATEV+*(NSTATV)-(*NTENS)*(*NTENS));\n";
+      out << "*PNEWDT = -1.;\n"
+	  << "return;\n"
+	  << "}\n"
+	  << "std::copy(DDSOE,DDSOE+(*NTENS)*(*NTENS),STATEV+*(NSTATV)-(*NTENS)*(*NTENS));\n";
     }
     if(getDebugMode()){
       out << "if(computeTangentOperator){\n"
 	  << "aster::AsterInt i;\n"
 	  << "aster::AsterInt j;\n"
-	  << "cout << \"Dt :\" << endl;\n"
+	  << "std::cout << \"Dt :\\n\";\n"
 	  << "for(i=0;i!=*NTENS;++i){\n"
 	  << "for(j=0;j!=*NTENS;++j){\n"
-	  << "cout << *(DDSOE+j*(*NTENS)+i) << \" \";\n"
+	  << "std::cout << *(DDSOE+j*(*NTENS)+i) << \" \";\n"
 	  << "}\n"
-	  << "cout << endl;\n"
+	  << "std::cout << '\\n';\n"
 	  << "}\n"
-	  << "cout << endl;\n"
+	  << "std::cout << '\\n';\n"
 	  << "}\n";
     }
     if(this->compareToNumericalTangentOperator){
@@ -516,12 +518,12 @@ namespace mfront{
 	  << "// computing the tangent operator by pertubation\n"
 	  << "aster::AsterInt i;\n"
 	  << "aster::AsterInt j;\n"
-	  << "vector<aster::AsterReal> nD((*NTENS)*(*NTENS));\n"
-	  << "vector<aster::AsterReal> deto(*NTENS);\n"
-	  << "vector<aster::AsterReal> sigf(*NTENS);\n"
-	  << "vector<aster::AsterReal> sigb(*NTENS);\n"
-	  << "vector<aster::AsterReal> sv(*NSTATV);\n"
-	  << "vector<aster::AsterReal> D((*NTENS)*(*NTENS));\n"
+	  << "std::vector<aster::AsterReal> nD((*NTENS)*(*NTENS));\n"
+	  << "std::vector<aster::AsterReal> deto(*NTENS);\n"
+	  << "std::vector<aster::AsterReal> sigf(*NTENS);\n"
+	  << "std::vector<aster::AsterReal> sigb(*NTENS);\n"
+	  << "std::vector<aster::AsterReal> sv(*NSTATV);\n"
+	  << "std::vector<aster::AsterReal> D((*NTENS)*(*NTENS));\n"
 	  << "aster::AsterReal m;\n"
 	  << "aster::AsterReal mDt;\n"
 	  << "aster::AsterReal mnDt;\n"
@@ -546,9 +548,9 @@ namespace mfront{
       }
       out << "return;\n"
 	  << "}\n"
-	  << "copy(deto0.begin(),deto0.end(),deto.begin());\n"
-	  << "copy(sig0.begin(),sig0.end(),sigb.begin());\n"
-	  << "copy(sv0.begin(),sv0.end(),sv.begin());\n"
+	  << "std::copy(deto0.begin(),deto0.end(),deto.begin());\n"
+	  << "std::copy(sig0.begin(),sig0.end(),sigb.begin());\n"
+	  << "std::copy(sv0.begin(),sv0.end(),sv.begin());\n"
 	  << "deto[i] -= " << this->strainPerturbationValue << ";\n"
 	  << "D[0] = 0.;\n";
       if(!this->savesTangentOperator){
@@ -575,27 +577,27 @@ namespace mfront{
 	  << "mDt=0.;\n"
 	  << "mnDt=0.;\n"
 	  << "for(i=0;i!=(*NTENS)*(*NTENS);++i){\n"
-	  << "mDt=max(mDt,*(DDSOE+i));\n"
-	  << "mnDt=max(mnDt,nD[i]);\n"
-	  << "m=max(m,abs(nD[i]-*(DDSOE+i)));\n"
+	  << "mDt=std::max(mDt,*(DDSOE+i));\n"
+	  << "mnDt=std::max(mnDt,nD[i]);\n"
+	  << "m=std::max(m,std::abs(nD[i]-*(DDSOE+i)));\n"
 	  << "}\n"
 	  << "if(m>" << this->tangentOperatorComparisonCriterion << "){\n"
-	  << "cout << \"||nDt-Dt|| = \" << m << \" (\" << 100.*m/(0.5*(mDt+mnDt)) << \"%)\"<< endl;\n"
-	  << "cout << \"Dt :\" << endl;\n"
+	  << "std::cout << \"||nDt-Dt|| = \" << m << \" (\" << 100.*m/(0.5*(mDt+mnDt)) << \"%)\\n\";\n"
+	  << "std::cout << \"Dt :\\n\";\n"
 	  << "for(i=0;i!=*NTENS;++i){\n"
 	  << "for(j=0;j!=*NTENS;++j){\n"
-	  << "cout << *(DDSOE+j*(*NTENS)+i) << \" \";\n"
+	  << "std::cout << *(DDSOE+j*(*NTENS)+i) << \" \";\n"
 	  << "}\n"
-	  << "cout << endl;\n"
+	  << "std::cout << '\\n';\n"
 	  << "}\n"
-	  << "cout << \"nDt :\" << endl;\n"
+	  << "std::cout << \"nDt :\" << '\\n';\n"
 	  << "for(i=0;i!=*NTENS;++i){\n"
 	  << "for(j=0;j!=*NTENS;++j){\n"
-	  << "cout << nD[j*(*NTENS)+i] << \" \";\n"
+	  << "std::cout << nD[j*(*NTENS)+i] << \" \";\n"
 	  << "}\n"
-	  << "cout << endl;\n"
+	  << "std::cout << '\\n';\n"
 	  << "}\n"
-	  << "cout << endl;\n"
+	  << "std::cout << std::endl;\n"
 	  << "}\n"
 	  << "}\n";
     }

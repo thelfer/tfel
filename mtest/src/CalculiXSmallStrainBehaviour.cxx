@@ -64,7 +64,7 @@ namespace mtest
     throw_if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR,
 	     "CalculiX behaviours only provide the "
 	     "consistent tangent operator");
-    real orab[6] = {real(0),real(0),real(0),
+    real orab[7] = {real(0),real(0),real(0),real(0),
 		    real(0),real(0),real(0)};
     const CalculiXInt nprops = -100-static_cast<CalculiXInt>(s.mprops1.size());
     fill(wk.D.begin(),wk.D.end(),0.);
@@ -90,6 +90,7 @@ namespace mtest
       orab[3] = s.r(0,1);
       orab[4] = s.r(1,1);
       orab[5] = s.r(2,1);
+      orab[6] = real(1);
     }
     // CalculiX standard convention
     for(CalculiXInt i=3;i!=6;++i){
