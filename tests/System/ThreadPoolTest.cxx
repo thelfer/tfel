@@ -23,8 +23,7 @@ struct ThreadPoolTest final
    ThreadPoolTest()
     : tfel::tests::TestCase("TFEL/System","ThreadPoolTest")
   {} // end of ThreadPoolTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace tfel::system;
     ThreadPool pool(2);

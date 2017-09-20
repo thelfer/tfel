@@ -24,8 +24,7 @@ struct BinaryReadWriteTest final
    BinaryReadWriteTest()
     : tfel::tests::TestCase("TFEL/System","BinaryReadWriteTest")
   {} // end of BinaryReadWriteTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     enum Value {VALUE1,VALUE2};
     

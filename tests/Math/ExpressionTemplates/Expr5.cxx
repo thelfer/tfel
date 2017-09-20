@@ -30,8 +30,7 @@ struct Expr5Test final
   Expr5Test()
     : tfel::tests::TestCase("TFEL/Math","Expr5Test")
   {} // end of Expr5Test()
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;

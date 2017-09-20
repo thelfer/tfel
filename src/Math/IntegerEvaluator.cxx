@@ -71,10 +71,7 @@ namespace tfel
 	return false;
       }
       is >> res;
-      if(!is&&(!is.eof())){
-	return false;
-      }
-      return true;
+      return !(!is&&(!is.eof()));
     } // end of convert
     
     bool IntegerEvaluator::isNumber(const std::string& value)
@@ -378,7 +375,6 @@ namespace tfel
     }
 
     IntegerEvaluator::IntegerEvaluator()
-      : expr()
     {} // end of IntegerEvaluator::IntegerEvaluator
 
     IntegerEvaluator::IntegerEvaluator(const IntegerEvaluator& src)

@@ -17,6 +17,7 @@
 #include<iterator>
 #include<utility>
 #include<cstdlib>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/Utilities/ArgumentParser.hxx"
 
@@ -94,10 +95,8 @@ namespace tfel{
     void ArgumentParser::registerCallBack(const std::string& k,
 					  const CallBack& c)
     {
-      if(k.empty()){
-	throw(std::runtime_error("ArgumentParser::registerNewCallBack: "
-				 "invalid key"));	
-      }
+      raise_if(k.empty(),"ArgumentParser::registerNewCallBack: "
+	       "invalid key");
 #ifdef _WIN32
       if(k.size()>2){
 	if((k[0]=='-')&&(k[1]=='-')){
@@ -112,10 +111,8 @@ namespace tfel{
 					  const std::string& a,
 					  const CallBack& c)
     {
-      if(a.empty()){
-	throw(std::runtime_error("ArgumentParser::registerNewCallBack: "
-				 "invalid alias"));	
-      }
+      raise_if(a.empty(),"ArgumentParser::registerNewCallBack: "
+	       "invalid alias");	
       this->alias.insert({a,k});
 #ifdef _WIN32
       if(a[0]=='-'){
@@ -128,10 +125,8 @@ namespace tfel{
     void ArgumentParser::setArguments(const int argc,
 				      const char * const * const argv)
     {
-      if(argc<1){
-	throw(std::runtime_error("ArgumentParser::setArguments: "
-				 "argc value not valid"));
-      }
+      raise_if(argc<1,"ArgumentParser::setArguments: "
+	       "argc value not valid");
       this->args.clear();
       this->programName = argv[0];
       std::copy(argv+1,argv+argc,std::back_inserter(this->args));
@@ -139,26 +134,23 @@ namespace tfel{
 
     void ArgumentParser::replaceAliases()
     {
+      auto throw_if = [](const bool b, const std::string& msg){
+	raise_if(b,"ArgumentParser::replaceAliases: "+msg);
+      };
       for(auto p=args.begin();p!=args.end();){
 	const auto& pn = p->as_string();
 	const auto pa=alias.find(pn);
 	if(pa!=alias.end()){
 	  const auto pf = this->callBacksContainer.find(pa->second);
-	  if(pf==this->callBacksContainer.end()){
-	    throw(std::runtime_error("ArgumentParser::replaceAliases: '"
-				     +pn+"' is not a known argument"));
-	  }
+	  throw_if(pf==this->callBacksContainer.end(),
+		   "'"+pn+"' is not a known argument");
 	  if(pf->second.hasOption){
 	    const auto p2 = p+1;
-	    if(p2==args.end()){
-	      throw(std::runtime_error("ArgumentParser::replaceAliases : '"
-				       "no argument given to option '"+pn+"'"));
-	    }
+	    throw_if(p2==args.end(),"no argument given "
+		     "to option '"+pn+"'");
 	    const auto& p2n = p2->as_string();
-	    if(p2n[0]=='-'){
-	      throw(std::runtime_error("ArgumentParser::replaceAliases : '"
-				       "no argument given to option '"+pn+"'"));
-	    }
+	    throw_if(p2n[0]=='-',"no argument given to "
+		     "option '"+pn+"'");
 	    *p = pa->second+'='+p2n;
 	    p = this->args.erase(p2);
 	  } else {
@@ -181,11 +173,10 @@ namespace tfel{
 	  an.erase(pos,std::string::npos);
 	  const auto pf = this->callBacksContainer.find(an);
 	  if(pf!=this->callBacksContainer.end()){
-	    if(!(pf->second.hasOption)){
-	      throw(std::runtime_error("ArgumentParser::stripArguments: "
-				       "argument '"+an+"' does not "
-				       "have any option"));
-	    }
+	    raise_if(!(pf->second.hasOption),
+		     "ArgumentParser::stripArguments: "
+		     "argument '"+an+"' does not "
+		     "have any option");
 	  }
 	  a.setOption(option);
 	}
@@ -194,9 +185,9 @@ namespace tfel{
 
     void ArgumentParser::treatUnknownArgument()
     {
-      throw(std::runtime_error("ArgumentParser::treatUnknownArg: '"+
-			       this->currentArgument->as_string()+
-			       "' is not a valid argument"));
+      raise<std::runtime_error>("ArgumentParser::treatUnknownArg: '"+
+				this->currentArgument->as_string()+
+				"' is not a valid argument");
     } // end of ArgumentParser::treatUnknownArgument
   
     void ArgumentParser::parseArguments()

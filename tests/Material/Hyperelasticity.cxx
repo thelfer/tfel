@@ -53,8 +53,7 @@ struct Hyperelasticity final
     : tfel::tests::TestCase("TFEL/Material",
 			    "Hyperelasticity")
     {} // end of Hyperelasticity
-  virtual tfel::tests::TestResult
-    execute() override
+  tfel::tests::TestResult execute() override
   {
     this->check<1u>();
     this->check<2u>();

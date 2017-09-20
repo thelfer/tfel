@@ -39,8 +39,7 @@ struct ST2toST2FromTinyMatrixView2Test
 			    "ST2toST2FromTinyMatrixView2")
   {} // end of ST2toST2FromTinyMatrixView2
   
-  tfel::tests::TestResult
-  execute()
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;

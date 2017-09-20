@@ -36,8 +36,7 @@ struct ComputePositivePartAndDerivativeTest1D final
     : tfel::tests::TestCase("TFEL/Math",
 			    "ComputePositivePartAndDerivativeTest1D")
   {} // end of ComputePositivePartAndDerivativeTest1D
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -107,8 +106,7 @@ struct ComputePositivePartAndDerivativeTest2D final
     : tfel::tests::TestCase("TFEL/Math",
 			    "ComputePositivePartAndDerivativeTest2D")
   {} // end of ComputePositivePartAndDerivativeTest2D
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -179,8 +177,7 @@ struct ComputePositivePartAndDerivativeTest3D final
     : tfel::tests::TestCase("TFEL/Math",
 			    "ComputePositivePartAndDerivativeTest3D")
   {} // end of ComputePositivePartAndDerivativeTest3D
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -254,8 +251,7 @@ struct DecompositionInPositiveAndNegativePartsTest1D final
     : tfel::tests::TestCase("TFEL/Math",
 			    "DecompositionInPositiveAndNegativePartsTest1D")
   {} // end of DecompositionInPositiveAndNegativePartsTest1D
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -335,8 +331,7 @@ struct DecompositionInPositiveAndNegativePartsTest2D final
     : tfel::tests::TestCase("TFEL/Math",
 			    "DecompositionInPositiveAndNegativePartsTest2D")
   {} // end of DecompositionInPositiveAndNegativePartsTest2D
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -417,8 +412,7 @@ struct DecompositionInPositiveAndNegativePartsTest3D final
     : tfel::tests::TestCase("TFEL/Math",
 			    "DecompositionInPositiveAndNegativePartsTest3D")
   {} // end of DecompositionInPositiveAndNegativePartsTest3D
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;

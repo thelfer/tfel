@@ -34,9 +34,7 @@ struct CxxMaterialPropertyInterfaceTest final
     : tfel::tests::TestCase("TFEL/Math",
 			    "CxxMaterialPropertyInterfaceTest")
     {} // end of CxxMaterialPropertyInterfaceTest
-
-  virtual tfel::tests::TestResult
-    execute() override
+  tfel::tests::TestResult execute() override
   {
     const auto y = [](const double T){
       return 127.8e9 * (1.-7.825e-5*(T-293.15));

@@ -22,7 +22,6 @@
 namespace mfront{
 
   DefaultFiniteStrainDSL::DefaultFiniteStrainDSL()
-    : DefaultDSLBase()
   {
     this->mb.setDSLName("DefaultFiniteStrain");
     this->mb.declareAsAFiniteStrainStandardBehaviour(false);

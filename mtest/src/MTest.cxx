@@ -160,7 +160,7 @@ namespace mtest
       throw(std::runtime_error("MTest::setRotationMatrix: "
 			       "rotation matrix already defined"));
     }
-    if(this->b.get()==nullptr){
+    if(this->b==nullptr){
       throw(std::runtime_error("MTest::setRotationMatrix: "
 			       "no behaviour defined"));
     }
@@ -197,7 +197,7 @@ namespace mtest
 			       "internal error : the modelling "
 			       "hypothesis is already defined"));
     }
-    if(this->b.get()!=nullptr){
+    if(this->b!=nullptr){
       throw(std::runtime_error("MTest::setDefaultModellingHypothesis: "
 			       "behaviour already defined"));
     }
@@ -407,7 +407,7 @@ namespace mtest
     auto throw_if = [](const bool c, const std::string& m){
       if(c){throw(std::runtime_error("MTest::initializeCurrentState: "+m));}
     };
-    throw_if(this->b.get()==nullptr,"mechanical behaviour not set");
+    throw_if(this->b==nullptr,"mechanical behaviour not set");
     throw_if(this->hypothesis==tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 	     "modelling hypothesis is not set");
     // unknowns

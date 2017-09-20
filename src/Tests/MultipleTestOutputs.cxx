@@ -22,8 +22,7 @@ namespace tfel
   namespace tests
   {
 
-    MultipleTestOutputs::MultipleTestOutputs()
-    {} // end of MultipleTestOutputs::MultipleTestOutputs
+    MultipleTestOutputs::MultipleTestOutputs() = default;
 
     void
     MultipleTestOutputs::addTestOutput(const TestOutputPtr& o)

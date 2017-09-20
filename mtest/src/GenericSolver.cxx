@@ -55,7 +55,7 @@ namespace mtest{
     // compute material properties and state variables
     s.prepare(scs,t,dt);
     // initializing the acceleration algorithm
-    if(o.aa.get()!=nullptr){
+    if(o.aa!=nullptr){
       o.aa->preExecuteTasks();
     }
     // packaging step
@@ -214,7 +214,7 @@ namespace mtest{
 	  }
 	  s.computeLoadingCorrection(scs,wk,o,t,dt);
 	  // call the acceleration algorithm
-	  if(o.aa.get()!=nullptr){
+	  if(o.aa!=nullptr){
 	    o.aa->execute(u1,wk.du,wk.r,o.eeps,o.seps,iter);
 	    if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
 	      wk.du = u1-scs.u10;
@@ -251,7 +251,7 @@ namespace mtest{
 	}
       }
     }
-    if(o.aa.get()!=nullptr){
+    if(o.aa!=nullptr){
       o.aa->postExecuteTasks();
     }
     s.postConvergence(scs,t,dt,scs.period);

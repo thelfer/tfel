@@ -33,8 +33,7 @@ struct LogarithmicStrainHandlerTest final
     : tfel::tests::TestCase("TFEL/Material",
 			    "LogarithmicStrainHandlerTest")
   {} // end of LogarithmicStrainHandlerTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->check1<1u,double>();
     this->check1<2u,double>();

@@ -14,6 +14,7 @@
 #include<iostream>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/General/IEEE754.hxx"
 #include"TFEL/Utilities/Data.hxx"
 
@@ -31,7 +32,7 @@ namespace tfel{
     Data Data::read_value(CxxTokenizer::const_iterator& p,
 			  const CxxTokenizer::const_iterator pe){
       auto throw_if = [](const bool b,const std::string& msg){
-	if(b){throw(std::runtime_error("Data::read: "+msg));}
+	raise_if(b,"Data::read: "+msg);
       };
       auto is_integer = [&throw_if](const std::string& s){
 	auto ps  = s.cbegin();
@@ -74,7 +75,7 @@ namespace tfel{
     Data Data::read_vector(CxxTokenizer::const_iterator& p,
 			   const CxxTokenizer::const_iterator pe){
       auto throw_if = [](const bool b,const std::string& msg){
-	if(b){throw(std::runtime_error("Data::read: "+msg));}
+	raise_if(b,"Data::read: "+msg);
       };
       CxxTokenizer::checkNotEndOfLine("Data::read",p,pe);
       CxxTokenizer::readSpecifiedToken("Data::read","{",p,pe);
@@ -97,7 +98,7 @@ namespace tfel{
     Data Data::read_map(CxxTokenizer::const_iterator& p,
 			const CxxTokenizer::const_iterator pe){
       auto throw_if = [](const bool b,const std::string& msg){
-	if(b){throw(std::runtime_error("Data::read: "+msg));}
+	raise_if(b,"Data::read: "+msg);
       };
       CxxTokenizer::checkNotEndOfLine("Data::read",p,pe);
       CxxTokenizer::readSpecifiedToken("Data::read","{",p,pe);
@@ -130,7 +131,7 @@ namespace tfel{
     Data Data::read(CxxTokenizer::const_iterator& p,
 		    const CxxTokenizer::const_iterator pe){
       auto throw_if = [](const bool b,const std::string& msg){
-	if(b){throw(std::runtime_error("Data::read: "+msg));}
+	raise_if(b,"Data::read: "+msg);
       };
       CxxTokenizer::checkNotEndOfLine("Data::read",p,pe);
       if(p->value=="{"){
@@ -143,12 +144,11 @@ namespace tfel{
 	if(p->value==":"){
 	  p = std::prev(p,2);
 	  return read_map(p,pe);
-	} else {
-	  throw_if((p->value!=",")&&(p->value!="}"),
-		   "expected ',' or ':' or '}', read '"+p->value+"'");
-	  p = std::prev(p,2);
-	  return read_vector(p,pe);
 	}
+	throw_if((p->value!=",")&&(p->value!="}"),
+		 "expected ',' or ':' or '}', read '"+p->value+"'");
+	p = std::prev(p,2);
+	return read_vector(p,pe);
       } else {
 	// standard value
 	return read_value(p,pe);
@@ -159,7 +159,7 @@ namespace tfel{
 		     const CxxTokenizer::const_iterator pe,
 		     const std::map<std::string,CallBack>& callbacks){
       auto throw_if = [](const bool b,const std::string& msg){
-	if(b){throw(std::runtime_error("Data::parse: "+msg));}
+	raise_if(b,"Data::parse: "+msg);
       };
       auto get = [&callbacks,throw_if](const std::string& k){
 	std::for_each(callbacks.begin(),callbacks.end(),
@@ -187,8 +187,9 @@ namespace tfel{
 	try{
 	  c(Data::read(p,pe));
 	} catch(std::exception& e){
-	  throw(std::runtime_error("Data::read: error while treating key '"+k+"'.\n"+
-				   std::string(e.what())));
+	  raise<std::runtime_error>("Data::read: error while "
+				    "treating key '"+k+"'.\n"+
+				    std::string(e.what()));
 	}
 	CxxTokenizer::checkNotEndOfLine("Data::parse",p,pe);
 	if(p->value!="}"){
@@ -275,7 +276,7 @@ namespace tfel{
     std::vector<std::string>
     extract<std::vector<std::string>>(const Data& d){
       auto throw_if = [](const bool b,const std::string& msg){
-	if(b){throw(std::runtime_error("extract<std::vector<std::string>>: "+msg));}
+	raise_if(b,"extract<std::vector<std::string>>: "+msg);
       };
       throw_if(!d.is<std::vector<Data>>(),"invalid data type");
       const auto& vd = d.get<std::vector<Data>>();
@@ -292,7 +293,8 @@ namespace tfel{
     std::map<std::string,std::string>
     extract<std::map<std::string,std::string>>(const Data& d){
       auto throw_if = [](const bool b,const std::string& msg){
-	if(b){throw(std::runtime_error("extract<std::map<std::string,std::string>>: "+msg));}
+	raise_if(b,"extract<std::map<std::string,"
+		 "std::string>>: "+msg);
       };
       throw_if(!d.is<std::map<std::string,Data>>(),"invalid data type");
       const auto& m = d.get<std::map<std::string,Data>>();

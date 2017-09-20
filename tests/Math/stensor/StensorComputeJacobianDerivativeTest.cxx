@@ -53,8 +53,7 @@ struct StensorComputeJacobianDerivativeTest final
     : tfel::tests::TestCase("TFEL/Math",
 			    "StensorComputeJacobianDerivativeTest")
   {} // end of StensorComputeJacobianDerivativeTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     const double sqrt2 = std::sqrt(2.);
     const double v0[6] = {0,0,0,0,0,0};

@@ -20,6 +20,7 @@
 #include<stdexcept>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/CxxKeywords.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
@@ -70,11 +71,9 @@ namespace tfel{
 
     void CxxTokenizer::openFile(const std::string& f)
     {
-      auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error("CxxTokenizer::openFile: "+m));}
-      };
       std::ifstream file{f};
-      throw_if(!file,"unable to open file '"+f+"'");
+      raise_if(!file,"CxxTokenizer::openFile: "
+	       "unable to open file '"+f+"'");
       Token::size_type n{0};
       this->parseStream(file,n," of file '"+f+"'");
     }
@@ -91,7 +90,7 @@ namespace tfel{
 				   const std::string& from)
     {
       auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error("CxxTokenizer::parseStream: "+m));}
+	raise_if(b,"CxxTokenizer::parseStream: "+m);
       };
       auto get_line = [&throw_if](std::istream& file,
 				  Token::size_type& ln) -> std::string{
@@ -124,9 +123,9 @@ namespace tfel{
 	  try{
 	    this->splitLine(line,n);
 	  } catch(std::runtime_error& e){
-	    throw(std::runtime_error(std::string(e.what())+".\n"+
-				     "Error at line: "+
-				     std::to_string(n)+from));
+	    raise<std::runtime_error>(std::string(e.what())+".\n"+
+				      "Error at line: "+
+				      std::to_string(n)+from);
 	  }
 	}
       } catch(...){
@@ -196,14 +195,13 @@ namespace tfel{
       advance(o,p,np);
     }
     
-    void
-    CxxTokenizer::treatChar(Token::size_type& o,
-			    std::string::const_iterator& p,
-			    const std::string::const_iterator pe,
-			    const Token::size_type n)
+    void CxxTokenizer::treatChar(Token::size_type& o,
+				 std::string::const_iterator& p,
+				 const std::string::const_iterator pe,
+				 const Token::size_type n)
     {
       auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error("CxxTokenizer::treatCChar: "+m));}
+	raise_if(b,"CxxTokenizer::treatCChar: "+m);
       };
       if(this->charAsString){
 	this->treatString(o,p,pe,n,'\'');
@@ -234,7 +232,7 @@ namespace tfel{
 			      const char e)
     {
       auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error("CxxTokenizer::treatString: "+m));}
+	raise_if(b,"CxxTokenizer::treatString: "+m);
       };
       auto ps = std::next(p,1);
       auto found=false;
@@ -305,7 +303,7 @@ namespace tfel{
 			     const Token::size_type n)
     {
       auto throw_if = [](const bool b,const std::string& m){
-	if(b){throw(std::runtime_error("CxxTokenizer::readNumber: "+m));}
+	raise_if(b,"CxxTokenizer::readNumber: "+m);
       };
       auto is_binary = [](const char c){
 	return (c=='0')||(c=='1');
@@ -489,14 +487,13 @@ namespace tfel{
       advance(o,p,d);
     } // end of CxxTokenizer::readNumber
 
-    void
-    CxxTokenizer::treatCComment(Token::size_type& o,
-				std::string::const_iterator& p,
-				const std::string::const_iterator pe,
-				const Token::size_type n)
+    void CxxTokenizer::treatCComment(Token::size_type& o,
+				     std::string::const_iterator& p,
+				     const std::string::const_iterator pe,
+				     const Token::size_type n)
     {
       auto throw_if = [](const bool b,const std::string& m){
-	if(b){throw(std::runtime_error("CxxTokenizer::treatCComment: "+m));}
+	raise_if(b,"CxxTokenizer::treatCComment: "+m);
       };
       auto get_end = [&pe](std::string::const_iterator e)
 	-> std::string::const_iterator{
@@ -547,7 +544,7 @@ namespace tfel{
 				  const Token::size_type n)
     {
       auto throw_if = [](const bool b,const std::string& m){
-	if(b){throw(std::runtime_error("CxxTokenizer::treatCxxComment: "+m));}
+	raise_if(b,"CxxTokenizer::treatCxxComment: "+m);
       };
       throw_if((p==pe)||(*p!='/'),"invalid call");
       advance(o,p,1u);
@@ -585,7 +582,7 @@ namespace tfel{
 	return std::find(keys.begin(),keys.end(),k)!=keys.end();
       };
       auto throw_if = [](const bool c, const std::string& m){
-	if(c){throw(std::runtime_error("CxxTokenizer::treatPreprocessorDirective: "+m));}
+	raise_if(c,"CxxTokenizer::treatPreprocessorDirective: "+m);
       };
       // preprocessor
       throw_if((p==pe)||(*p!='#'),"invalid call");
@@ -614,7 +611,7 @@ namespace tfel{
 					 const Token::size_type n)
     {
       auto throw_if = [](const bool c, const std::string& m){
-	if(c){throw(std::runtime_error("CxxTokenizer::treatStandardLine: "+m));}
+	raise_if(c,"CxxTokenizer::treatStandardLine: "+m);
       };
       ignore_space(o,p,pe);
       while(p!=pe){
@@ -701,7 +698,7 @@ namespace tfel{
 			    const Token::size_type n)
     {
       auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error("CxxTokenizer::splitLine: "+m));}
+	raise_if(b,"CxxTokenizer::splitLine: "+m);
       };
       auto b        = line.begin();
       auto p        = b;
@@ -859,9 +856,8 @@ namespace tfel{
     const Token&
     CxxTokenizer::operator[](const size_type i) const
     {
-      if(i>=this->size()){
-	throw(std::out_of_range("CxxTokenizer::operator[]"));
-      }
+      raise_if<std::out_of_range>(i>=this->size(),
+				  "CxxTokenizer::operator[]");
       const auto p = std::next(this->begin(),i); 
       return *p;
     } // end of CxxTokenizer::begin
@@ -891,34 +887,32 @@ namespace tfel{
 
     void
     CxxTokenizer::checkNotEndOfLine(const std::string& method,
-				    CxxTokenizer::const_iterator& p, 
-				    const CxxTokenizer::const_iterator pe)
+				    const_iterator& p, 
+				    const const_iterator pe)
     {
-      if(p==pe){
-	throw(std::runtime_error(method+" : unexpected end of line"));
-      }
+      raise_if(p==pe,method+" : unexpected end of line");
     } // end of CxxTokenizer::checkNotEndOfLine
     
     void
     CxxTokenizer::checkNotEndOfLine(const std::string& method,
 				    const std::string& error,
-				    CxxTokenizer::const_iterator& p, 
-				    const CxxTokenizer::const_iterator pe)
+				    const_iterator& p, 
+				    const const_iterator pe)
     {
       if(p==pe){
 	auto msg = method+": unexpected end of line";
 	if(!error.empty()){
 	  msg += " ("+error+")";
 	}
-	throw(std::runtime_error(msg));
+	raise(msg);
       }
     } // end of CxxTokenizer::checkNotEndOfLine
     
     void
     CxxTokenizer::readSpecifiedToken(const std::string& method,
 				     const std::string& value,
-				     CxxTokenizer::const_iterator& p, 
-				     const CxxTokenizer::const_iterator pe)
+				     const_iterator& p, 
+				     const const_iterator pe)
     {
       CxxTokenizer::checkNotEndOfLine(method,"expected '"+value+"'",p,pe);
       if(p->value!=value){
@@ -929,26 +923,22 @@ namespace tfel{
     } // end of CxxTokenizer::readSpecifiedToken
 
     std::string
-    CxxTokenizer::readString(CxxTokenizer::const_iterator& p, 
-			     const CxxTokenizer::const_iterator pe)
+    CxxTokenizer::readString(const_iterator& p, 
+			     const const_iterator pe)
     {
       CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readString","",p,pe);
-      if(p->flag!=Token::String){
-	throw(std::runtime_error("CxxTokenizer::readString: "
-				 "expected to read a string (read '"+p->value+"')."));
-      }
-      if(p->value.size()<2){
-	throw(std::runtime_error("CxxTokenizer::readString: "
-				 "internal error (invalid string size)"));
-      }
+      raise_if(p->flag!=Token::String,
+	       "CxxTokenizer::readString: "
+	       "expected to read a string (read '"+p->value+"').");
+      raise_if(p->value.size()<2,
+	       "CxxTokenizer::readString: "
+	       "internal error (invalid string size)");
       auto value = p->value.substr(1,p->value.size()-2);
-      ++p;
-      return value;
+      return ++p,value;
     } // end of CxxTokenizer::readString
 
-    double
-    CxxTokenizer::readDouble(CxxTokenizer::const_iterator& p, 
-			     const CxxTokenizer::const_iterator pe)
+    double CxxTokenizer::readDouble(const_iterator& p, 
+				    const const_iterator pe)
       
     {
       double res;
@@ -957,57 +947,48 @@ namespace tfel{
  #ifdef __CYGWIN__
       std::istringstream is(p->value);
       is >> res;
-      if(!is&&(!is.eof())){
-	throw(std::runtime_error("CxxTokenizer::readInt: "
-				 "could not read value from token '"+p->value+"'."));
-      }
+      raise_if(!is&&(!is.eof()),
+	       "CxxTokenizer::readInt: "
+	       "could not read value from token '"+p->value+"'.");
 #else
       try{
 	res=convert<double>(p->value);
       }
       catch(std::exception& e){
-	throw(std::runtime_error("CxxTokenizer::readDouble: "
-				 "could not read value from token "
-				 "'"+p->value+"' ("+std::string(e.what())+")."));
+	raise("CxxTokenizer::readDouble: "
+	      "could not read value from token "
+	      "'"+p->value+"' ("+std::string(e.what())+").");
       }
 #endif
-      ++p;
-      return res;
+      return ++p,res;
     } // end of CxxTokenizer::readDouble
 
-    int
-    CxxTokenizer::readInt(CxxTokenizer::const_iterator& p, 
-			  const CxxTokenizer::const_iterator pe)
+    int CxxTokenizer::readInt(const_iterator& p, 
+			      const const_iterator pe)
       
     {
       int res;
-      CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readInt","expected number",p,pe);
+      CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readInt",
+				      "expected number",p,pe);
       std::istringstream is(p->value);
       is >> res;
-      if(!is&&(!is.eof())){
-	throw(std::runtime_error("CxxTokenizer::readInt: "
-				 "could not read value from token '"+p->value+"'."));
-      }
-      ++p;
-      return res;
+      raise_if(!is&&(!is.eof()),"CxxTokenizer::readInt: "
+	       "could not read value from token '"+p->value+"'.");
+      return ++p,res;
     } // end of CxxTokenizer::readInt
 
-    unsigned int
-    CxxTokenizer::readUnsignedInt(CxxTokenizer::const_iterator& p, 
-				  const CxxTokenizer::const_iterator pe)
+    unsigned int CxxTokenizer::readUnsignedInt(const_iterator& p, 
+					       const const_iterator pe)
     {
       unsigned int res;
-      CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readUnsignedInt","expected number",p,pe);
+      CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readUnsignedInt",
+				      "expected number",p,pe);
       std::istringstream is(p->value);
       is >> res;
-      if(!is&&(!is.eof())){
-	std::ostringstream msg;
-	msg << "CxxTokenizer::readUnsignedInt: ";
-	msg << "could not read value from token '"+p->value+"'.\n";
-	throw(std::runtime_error(msg.str()));
-      }
-      ++p;
-      return res;
+      raise_if(!is&&(!is.eof()),
+	       "CxxTokenizer::readUnsignedInt: "
+	       "could not read value from token '"+p->value+"'.\n");
+      return ++p,res;
     } // end of CxxTokenizer::readUnsignedInt
 
     void CxxTokenizer::readList(std::vector<Token>& l,
@@ -1022,19 +1003,16 @@ namespace tfel{
       l.clear();
       while(p->value!=de){
 	CxxTokenizer::checkNotEndOfLine(m,p,pe);
-	if((p->value==",")||p->value==de||p->value==db){
-	  throw(std::runtime_error(m+" : unexpected token ',' or "
-				   "'"+db+"' or '"+de+"'"));
-	}
+	raise_if((p->value==",")||p->value==de||p->value==db,
+		 m+" : unexpected token ',' or "
+		 "'"+db+"' or '"+de+"'");
 	l.push_back(*p);
 	++p;
 	CxxTokenizer::checkNotEndOfLine(m,p,pe);
 	if(p->value!=de){
 	  CxxTokenizer::readSpecifiedToken(m,",",p,pe);
 	  CxxTokenizer::checkNotEndOfLine(m,p,pe);
-	  if(p->value==","){
-	    throw(std::runtime_error(m+" : unexpected token ',' or '}'"));
-	  }
+	  raise_if(p->value==",",m+" : unexpected token ',' or '}'");
 	}
       }
       CxxTokenizer::readSpecifiedToken(m,de,p,pe);
@@ -1061,19 +1039,15 @@ namespace tfel{
       v.clear();
       while(p->value!="}"){
 	CxxTokenizer::checkNotEndOfLine(m,p,pe);
-	if((p->value==",")||p->value=="}"||p->value=="{"){
-	  throw(std::runtime_error(m+" : unexpected token ',' or "
-				   "'{' or '}'"));
-	}
+	raise_if((p->value==",")||p->value=="}"||p->value=="{",
+		 m+" : unexpected token ',' or '{' or '}'");
 	v.push_back(p->value);
 	++p;
 	CxxTokenizer::checkNotEndOfLine(m,p,pe);
 	if(p->value!="}"){
 	  CxxTokenizer::readSpecifiedToken(m,",",p,pe);
 	  CxxTokenizer::checkNotEndOfLine(m,p,pe);
-	  if(p->value==","){
-	    throw(std::runtime_error(m+" : unexpected token ',' or '}'"));
-	  }
+	  raise_if(p->value==",",m+" : unexpected token ',' or '}'");
 	}
       }
       CxxTokenizer::readSpecifiedToken(m,"}",p,pe);
@@ -1103,18 +1077,15 @@ namespace tfel{
 	if(p->value!="}"){
 	  CxxTokenizer::readSpecifiedToken(m,",",p,pe);
 	  CxxTokenizer::checkNotEndOfLine(m,p,pe);
-	  if(p->value=="}"){
-	    throw(std::runtime_error("CxxTokenizer::readStringArray: "
-				     "unexpected token '}'"));
-	  }
+	  raise_if(p->value=="}","CxxTokenizer::readStringArray: "
+		   "unexpected token '}'");
 	}
       }
       CxxTokenizer::readSpecifiedToken(m,"}",p,pe);
       return r;
     } // end of CxxTokenizer::readStringArray
     
-    CxxTokenizer::size_type
-    CxxTokenizer::size() const
+    CxxTokenizer::size_type CxxTokenizer::size() const
     {
       return this->tokens.size();
     } // end of CxxTokenizer::size

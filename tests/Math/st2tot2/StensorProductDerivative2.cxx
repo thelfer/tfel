@@ -51,8 +51,7 @@ struct StensorProductDerivative2 final
 			    "StensorProductDerivative2"+
 			    std::to_string(N))
   {} // end of StensorProductDerivative2
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;

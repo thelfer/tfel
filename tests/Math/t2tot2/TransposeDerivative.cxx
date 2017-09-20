@@ -30,8 +30,7 @@ struct TransposeDerivativeTest final
     : tfel::tests::TestCase("TFEL/Math",
 			    "TransposeDerivativeTest")
   {} // end of TransposeDerivativeTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->execute<1>();
     this->execute<2>();

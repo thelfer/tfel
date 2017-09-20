@@ -188,7 +188,6 @@ namespace mfront{
   } // end of writeExternalVariablesCurrentValues2
 
   RungeKuttaDSLBase::RungeKuttaDSLBase()
-    : BehaviourDSLBase<RungeKuttaDSLBase>()
   {
     this->useStateVarTimeDerivative=true;
     // parameters

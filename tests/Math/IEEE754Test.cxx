@@ -32,8 +32,7 @@ struct IEEE754Test final
     : tfel::tests::TestCase("TFEL/Math",
 			    "IEEE754Test")
   {} // end of IEEE754Test
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->test<float>();
     this->test<double>();

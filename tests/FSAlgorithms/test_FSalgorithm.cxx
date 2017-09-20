@@ -49,11 +49,7 @@ struct abs_compare{
   template<typename T>
   bool operator()(const T&a,const T&b)
   {
-    if(std::abs(a)>std::abs(b)){
-      return true;
-    } else {
-      return false;
-    };
+    return std::abs(a)>std::abs(b);
   }
 };
 

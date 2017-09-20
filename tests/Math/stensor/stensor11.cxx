@@ -36,8 +36,7 @@ struct STensorTest11 final
     : tfel::tests::TestCase("TFEL/Math",
 			    "STensorTest11")
   {} // end of STensorTest11
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace tfel::math;
     const double eps   = 1.e-12;

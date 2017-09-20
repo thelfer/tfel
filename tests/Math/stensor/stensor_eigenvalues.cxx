@@ -36,8 +36,7 @@ struct StensorComputeEigenValues final
 			    "StensorComputeEigenValues")
   {} // end of StensorComputeEigenValues
 
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using EigenSolver = tfel::math::stensor_common::EigenSolver;
     this->test1<float>();

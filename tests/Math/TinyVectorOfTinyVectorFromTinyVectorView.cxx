@@ -33,8 +33,7 @@ struct TinyVectorOfTinyVectorFromTinyVectorViewTest final
 			    "TinyVectorOfTinyVectorFromTinyVectorView")
   {} // end of TinyVectorOfTinyVectorFromTinyVectorViewTest
   
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;

@@ -76,7 +76,6 @@ namespace mfront
   DSLBase::CodeBlockParserOptions::~CodeBlockParserOptions() noexcept = default;
 
   DSLBase::DSLBase()
-    : AbstractDSL()
   {}
 
   std::vector<std::string>

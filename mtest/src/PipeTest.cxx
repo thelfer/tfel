@@ -62,10 +62,10 @@ namespace mtest{
 				 "unsupported variable '"+n+"'"));
       }
     }
-    virtual void check(const StudyCurrentState& s,
-		       const real t,
-		       const real dt,
-		       const unsigned int p) override{
+    void check(const StudyCurrentState& s,
+	       const real t,
+	       const real dt,
+	       const unsigned int p) override{
       const auto uv = [](const tfel::math::vector<real>& u,
 			 const Variable vn){
 	if(vn==INNERDISPLACEMENT){
@@ -98,8 +98,7 @@ namespace mtest{
 	}
       }
     } // end of check
-    virtual tfel::tests::TestResult
-    getResults() const override{
+    tfel::tests::TestResult getResults() const override{
       if(this->results.success()){
 	std::ostringstream msg;
 	msg << "IntegralTest::check : comparison for variable '"
@@ -148,10 +147,10 @@ namespace mtest{
 	vpos(p),
 	eps(e)
     {}
-    virtual void check(const StudyCurrentState& ss,
-		       const real t,
-		       const real dt,
-		       const unsigned int p) override{
+    void check(const StudyCurrentState& ss,
+	       const real t,
+	       const real dt,
+	       const unsigned int p) override{
       auto& scs = ss.getStructureCurrentState("");
       // number of gauss points
       const auto ng = scs.istates.size();
@@ -184,7 +183,7 @@ namespace mtest{
 	++i;
       }
     } // end of check
-    virtual tfel::tests::TestResult
+    tfel::tests::TestResult
     getResults() const override{
       if(this->results.success()){
 	std::ostringstream msg;
@@ -233,7 +232,7 @@ namespace mtest{
      * extracted
      * \param[in] s: gauss point state
      */
-    virtual const tfel::math::vector<real>&
+    const tfel::math::vector<real>&
     getComputedValues(const CurrentState& s) const override{
       return s.s1;
     }
@@ -255,7 +254,7 @@ namespace mtest{
      * extracted
      * \param[in] s: gauss point state
      */
-    virtual const tfel::math::vector<real>&
+    const tfel::math::vector<real>&
     getComputedValues(const CurrentState& s) const override{
       return s.e1;
     }
@@ -277,7 +276,7 @@ namespace mtest{
      * extracted
      * \param[in] s: gauss point state
      */
-    virtual const tfel::math::vector<real>&
+    const tfel::math::vector<real>&
     getComputedValues(const CurrentState& s) const override{
       return s.iv1;
     }

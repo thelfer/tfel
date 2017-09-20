@@ -39,8 +39,7 @@ struct ResultOfTest final
     : tfel::tests::TestCase("TFEL/Math",
 			    "ResultOfTest")
   {} // end of ResultOfTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace tfel::meta;
     using namespace tfel::math;

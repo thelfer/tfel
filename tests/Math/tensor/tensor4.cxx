@@ -32,8 +32,7 @@ struct Tensor4Test1D final
     : tfel::tests::TestCase("TFEL/Math",
 			    "Tensor4Test1D")
   {} // end of Tensor4Test1D
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -72,8 +71,7 @@ struct Tensor4Test2D final
     : tfel::tests::TestCase("TFEL/Math",
 			    "Tensor4Test2D")
   {} // end of Tensor4Test2D
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -108,8 +106,7 @@ struct Tensor4Test3D final
     : tfel::tests::TestCase("TFEL/Math",
 			    "Tensor4Test3D")
   {} // end of Tensor4Test3D
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;

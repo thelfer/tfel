@@ -23,8 +23,7 @@ struct ThreadPoolTest2 final
    ThreadPoolTest2()
     : tfel::tests::TestCase("TFEL/System","ThreadPoolTest2")
   {} // end of ThreadPoolTest2
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     std::atomic<int> res(0);
     auto task = [&res](const int i){

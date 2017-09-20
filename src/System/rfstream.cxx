@@ -25,8 +25,7 @@ namespace tfel
   {
     
     rfstream::rfstream()
-      : basic_rstream<rfstream,stream_traits<rfstream> >(),
-	std::shared_ptr<int>(new int(-1))
+      : std::shared_ptr<int>(new int(-1))
     {} // end of rfstream::rfstream
 
     rfstream::rfstream(const rfstream&) = default;
@@ -43,8 +42,7 @@ namespace tfel
     } // end of rfstream::operator
 
     rfstream::rfstream(const std::string& name, const int flags)
-      : basic_rstream<rfstream,stream_traits<rfstream> >(),
-	std::shared_ptr<int>(new int(-1))
+      : std::shared_ptr<int>(new int(-1))
     {
       this->open(name,flags);
     } // end of rfstream::rfstream

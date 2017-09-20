@@ -31,8 +31,7 @@ struct ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTe
     : tfel::tests::TestCase("TFEL/Math",
 			    "ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest")
   {} // end of ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->test1<1u>();
     this->test1<2u>();

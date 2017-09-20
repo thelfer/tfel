@@ -34,7 +34,6 @@
 namespace mfront{
 
   ImplicitDSLBase::ImplicitDSLBase()
-    : BehaviourDSLBase<ImplicitDSLBase>()
   {
     // dynamically allocated vectors are not yet allowed in implicit
     // parsers
@@ -118,7 +117,7 @@ namespace mfront{
 
   const NonLinearSystemSolver& ImplicitDSLBase::getSolver() const
   {
-    if(this->solver.get()==nullptr){
+    if(this->solver==nullptr){
       this->throwRuntimeError("ImplicitBase::getSolver",
 			      "no solver defined");
     }
@@ -130,7 +129,7 @@ namespace mfront{
     --(this->current);
     const auto& key = this->current->value;
     ++(this->current);
-    if(this->solver.get()!=nullptr){
+    if(this->solver!=nullptr){
       const auto r =  this->solver->treatSpecificKeywords(this->mb,key,this->current,
 							  this->tokens.end());
       if(r.first){

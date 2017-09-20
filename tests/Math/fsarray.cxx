@@ -33,8 +33,7 @@ struct FSArrayTest final
     : tfel::tests::TestCase("TFEL/Math",
 			    "FSArrayTest")
   {} // end of FSArrayTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
 #if (!defined _MSC_VER) && (!defined _LIBCPP_VERSION)
     this->test1();

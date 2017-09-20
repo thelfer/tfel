@@ -31,8 +31,7 @@ struct ParserTest final
     : tfel::tests::TestCase("TFEL/Math",
 			    "ParserTest")
   {} // end of ParserTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace tfel::math;
     using namespace tfel::math::parser;

@@ -26,6 +26,7 @@
 
 #include<iterator>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/getFunction.h"
 #include"TFEL/System/LibraryInformation.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
@@ -76,31 +77,28 @@ namespace tfel
     static void
     ExternalLibraryManagerCheckModellingHypothesisName(const std::string& h)
     {
-      using namespace std;
-      if(!((h=="AxisymmetricalGeneralisedPlaneStrain")||
-	   (h=="AxisymmetricalGeneralisedPlaneStress")||
-	   (h=="Axisymmetrical")||
-	   (h=="PlaneStress")||
-	   (h=="PlaneStrain")||
-	   (h=="GeneralisedPlaneStrain")||
-	   (h=="Tridimensional"))){
-	string msg("ExternalLibraryManagerCheckModellingHypothesisName : "
-		   "invalid or unsupported hypothesis '"+h+"'. The following "
-		   "hypotheses are supported:\n"
-		   "- AxisymmetricalGeneralisedPlaneStrain\n"
-		   "- Axisymmetrical\n"
-		   "- PlaneStress\n"
-		   "- PlaneStrain\n"
-		   "- GeneralisedPlaneStrain\n"
-		   "- Tridimensional");
-	throw(runtime_error(msg));
-      }
+      raise_if(!((h=="AxisymmetricalGeneralisedPlaneStrain")||
+		 (h=="AxisymmetricalGeneralisedPlaneStress")||
+		 (h=="Axisymmetrical")||
+		 (h=="PlaneStress")||
+		 (h=="PlaneStrain")||
+		 (h=="GeneralisedPlaneStrain")||
+		 (h=="Tridimensional")),
+	       "ExternalLibraryManagerCheckModellingHypothesisName : "
+	       "invalid or unsupported hypothesis '"+h+"'. The following "
+	       "hypotheses are supported:\n"
+	       "- AxisymmetricalGeneralisedPlaneStrain\n"
+	       "- Axisymmetrical\n"
+	       "- PlaneStress\n"
+	       "- PlaneStrain\n"
+	       "- GeneralisedPlaneStrain\n"
+	       "- Tridimensional");
     } // end of ExternalLibraryManagerCheckModellingHypothesisName
 
     static std::string decomposeVariableName(const std::string& n)
     {
       auto throw_if = [](const bool c,const std::string& m){
-	if(c){throw(std::runtime_error("tfel::system::decomposeVariableName: "+m));}
+	raise_if(c,"tfel::system::decomposeVariableName: "+m);
       };
       auto p  = n.cbegin();
       auto pe = n.cend();
@@ -217,8 +215,7 @@ namespace tfel
 
     std::string ExternalLibraryManager::getLibraryPath(const std::string& l){
       auto throw_if = [](const bool c,const std::string& m){
-	if(c){throw(std::runtime_error("ExternalLibraryManager::"
-				       "getLibraryPath: "+m));}
+	raise_if(c,"ExternalLibraryManager::getLibraryPath: "+m);
       };
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       auto lib = this->loadLibrary(l);
@@ -277,11 +274,11 @@ namespace tfel
 	// this library has not been 
 	auto r = try_open(name);
 	auto lib = r.first;
-	if((lib==nullptr)&&(!b)){
-	  throw(std::runtime_error("ExternalLibraryManager::loadLibrary:"
-				   " library '"+name+"' could not be loaded, "
-				   "("+getErrorMessage()+")"));
-	} else if((lib==nullptr)&&(b)){
+	raise_if((lib==nullptr)&&(!b),
+		 "ExternalLibraryManager::loadLibrary:"
+		 " library '"+name+"' could not be loaded, "
+		 "("+getErrorMessage()+")");
+	if((lib==nullptr)&&(b)){
 	  return lib;
 	}
 	this->librairies.insert({name,lib});
@@ -300,11 +297,10 @@ namespace tfel
       }; // end of ends_with
       auto r  = std::vector<std::string>{};
       auto lib = try_open(l);
-      if(lib.first==nullptr){
-      	throw(std::runtime_error("ExternalLibraryManager::getEntryPoints:"
-      				 " library '"+l+"' could not be loaded, "
-      				 "("+getErrorMessage()+")"));
-      }
+      raise_if(lib.first==nullptr,
+	       "ExternalLibraryManager::getEntryPoints:"
+	       " library '"+l+"' could not be loaded, "
+	       "("+getErrorMessage()+")");
       auto pl = this->getLibraryPath(lib.second);
       for(const auto& s : LibraryInformation(pl).symbols()){
 	if(ends_with(s,"_mfront_ept")){
@@ -319,8 +315,7 @@ namespace tfel
 						     const std::string& f)
     {
       auto throw_if = [l,f](const bool c,const std::string& m){
-	if(c){throw(std::runtime_error("ExternalLibraryManager::"
-				       "getMaterialKnowledgeType: "+m));}
+	raise_if(c,"ExternalLibraryManager::getMaterialKnowledgeType: "+m);
       };
       const auto lib = this->loadLibrary(l);
       const int nb = ::tfel_getUnsignedShort(lib,(f+"_mfront_mkt").c_str());
@@ -377,11 +372,9 @@ namespace tfel
 #else
       const auto p   = ::dlsym(lib,(f+"_mfront_interface").c_str());
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-      if(p==nullptr){
-	throw(std::runtime_error("ExternalLibraryManager::getInterface: "
-				 "no interface found for entry point '"+f+"' "
-				 "in library '"+l+"'"));
-      }
+      raise_if(p==nullptr,"ExternalLibraryManager::getInterface: "
+	       "no interface found for entry point '"+f+"' "
+	       "in library '"+l+"'");
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
       return *p;
 #else
@@ -412,27 +405,20 @@ namespace tfel
     ExternalLibraryManager::getSupportedModellingHypotheses(const std::string& l,
 							    const std::string& f)
     {
-      using namespace std;
-      vector<string> h;
+      std::vector<std::string> h;
       const auto lib = this->loadLibrary(l);
-      const int nb = ::tfel_getUnsignedShort(lib,(f+"_nModellingHypotheses").c_str());
+      const auto nb  = ::tfel_getUnsignedShort(lib,(f+"_nModellingHypotheses").c_str());
       char ** res;
-      if(nb==-1){
-	string msg("ExternalLibraryManager::getSupportedModellingHypotheses : ");
-	msg += " number of modelling hypotheses could not be read (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      raise_if(nb==-1,"ExternalLibraryManager::"
+	       "getSupportedModellingHypotheses: "
+	       "number of modelling hypotheses could not be read ("
+	       +getErrorMessage()+")");
       res = ::tfel_getArrayOfStrings(lib,(f+"_ModellingHypotheses").c_str());
-      if(res==nullptr){
-	string msg("ExternalLibraryManager::getSupportedModellingHypotheses : ");
-	msg += "modelling hypotheses could not be read (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
-      copy(res,res+nb,back_inserter(h));
+      raise_if(res==nullptr,"ExternalLibraryManager::"
+	       "getSupportedModellingHypotheses: "
+	       "modelling hypotheses could not be read ("
+	       +getErrorMessage()+")");
+      std::copy(res,res+nb,std::back_inserter(h));
       return h;
     } // end of ExternalLibraryManager::getSupportedModellingHypotheses
 
@@ -441,21 +427,13 @@ namespace tfel
 						 const std::string& f,
 						 const tfel::material::OutOfBoundsPolicy p)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
       int (TFEL_ADDCALL_PTR fct)(int);
       fct = ::tfel_getSetOutOfBoundsPolicyFunction(lib,(f+"_setOutOfBoundsPolicy").c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::setOutOfBoundsPolicy : ");
-	msg += " can't get the '"+f+"_setOutOfBoundsPolicy' function (";
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-	msg += ::GetLastError();
-#else
-	msg += ::dlerror();
-#endif /* (defined _WIN32 || _WIN64) && (!defined __CYGWIN__) */
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::setOutOfBoundsPolicy: "
+	       "can't get the '"+f+"_setOutOfBoundsPolicy' function "
+	       "("+getErrorMessage()+")");
       if(p==tfel::material::None){
 	fct(0);
       } else if(p==tfel::material::Warning){
@@ -463,165 +441,123 @@ namespace tfel
       } else if(p==tfel::material::Strict){
 	fct(2);
       } else {
-	throw(runtime_error("ExternalLibraryManager::setOutOfBoundsPolicy: "
-			    "unsupported policy"));
+	raise("ExternalLibraryManager::setOutOfBoundsPolicy: "
+	      "unsupported policy");
       }
     } // end of ExternalLibraryManager::setParameter
     
-    void
-    ExternalLibraryManager::setParameter(const std::string& l,
-					 const std::string& f,
-					 const std::string& p,
-					 const double v)
+    void ExternalLibraryManager::setParameter(const std::string& l,
+					      const std::string& f,
+					      const std::string& p,
+					      const double v)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
       int (TFEL_ADDCALL_PTR fct)(const char*const,const double);
       fct = ::tfel_getSetParameterFunction(lib,(f+"_setParameter").c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::setParameter : ");
-	msg += " can't get the '"+f+"_setParameter' function (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
-      if(!fct(p.c_str(),v)){
-	string msg("ExternalLibraryManager::setParameter : ");
-	msg += " call to the '"+f+"_setParameter' function failed";
-	throw(runtime_error(msg));
-      }
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::setParameter: "
+	       "can't get the '"+f+"_setParameter' function ("
+	       +getErrorMessage()+")");
+      raise_if(!fct(p.c_str(),v),
+	       "ExternalLibraryManager::setParameter: "
+	       "call to the '"+f+"_setParameter' function failed");
     } // end of ExternalLibraryManager::setParameter
 
-    void
-    ExternalLibraryManager::setParameter(const std::string& l,
-					 const std::string& f,
-					 const std::string& p,
-					 const int v)
+    void ExternalLibraryManager::setParameter(const std::string& l,
+					      const std::string& f,
+					      const std::string& p,
+					      const int v)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
       int (TFEL_ADDCALL_PTR fct)(const char*const,const int);
       fct = ::tfel_getSetIntegerParameterFunction(lib,(f+"_setIntegerParameter").c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::setParameter : ");
-	msg += " can't get the '"+f+"_setParameter' function (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
-      if(!fct(p.c_str(),v)){
-	string msg("ExternalLibraryManager::setParameter : ");
-	msg += " call to the '"+f+"_setParameter' function failed";
-	throw(runtime_error(msg));
-      }
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::setParameter: "
+	       "can't get the '"+f+"_setParameter' function ("
+	       +getErrorMessage()+")");
+      raise_if(!fct(p.c_str(),v),
+	       "ExternalLibraryManager::setParameter: "
+	       "call to the '"+f+"_setParameter' function failed");
     } // end of ExternalLibraryManager::setParameter
     
-    void
-    ExternalLibraryManager::setParameter(const std::string& l,
-					 const std::string& f,
-					 const std::string& p,
-					 const unsigned short v)
+    void ExternalLibraryManager::setParameter(const std::string& l,
+					      const std::string& f,
+					      const std::string& p,
+					      const unsigned short v)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
       int (TFEL_ADDCALL_PTR fct)(const char*const,const unsigned short);
       fct = ::tfel_getSetUnsignedShortParameterFunction(lib,(f+"_setUnsignedShortParameter").c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::setParameter : ");
-	msg += " can't get the '"+f+"_setParameter' function (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
-      if(!fct(p.c_str(),v)){
-	string msg("ExternalLibraryManager::setParameter : ");
-	msg += " call to the '"+f+"_setParameter' function failed";
-	throw(runtime_error(msg));
-      }
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::setParameter: "
+	       "can't get the '"+f+"_setParameter' function ("
+	       +getErrorMessage()+")");
+      raise_if(!fct(p.c_str(),v),
+	       "ExternalLibraryManager::setParameter: "
+	       "call to the '"+f+"_setParameter' function failed");
     } // end of ExternalLibraryManager::setParameter
         
-    void
-    ExternalLibraryManager::setParameter(const std::string& l,
-					 const std::string& f,
-					 const std::string& h,
-					 const std::string& p,
-					 const double v)
+    void ExternalLibraryManager::setParameter(const std::string& l,
+					      const std::string& f,
+					      const std::string& h,
+					      const std::string& p,
+					      const double v)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
       int (TFEL_ADDCALL_PTR fct)(const char*const,const double);
       fct = ::tfel_getSetParameterFunction(lib,(f+"_"+h+"_setParameter").c_str());
       if(fct==nullptr){
 	fct = ::tfel_getSetParameterFunction(lib,(f+"_setParameter").c_str());
       }
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::setParameter : ");
-	msg += " can't get the '"+f+"_setParameter' function (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
-      if(!fct(p.c_str(),v)){
-	string msg("ExternalLibraryManager::setParameter : ");
-	msg += " call to the '"+f+"_setParameter' function failed";
-	throw(runtime_error(msg));
-      }
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::setParameter: "
+	       "can't get the '"+f+"_setParameter' function ("
+	       +getErrorMessage()+")");
+      raise_if(!fct(p.c_str(),v),
+	       "ExternalLibraryManager::setParameter: "
+	       "call to the '"+f+"_setParameter' function failed");
     } // end of ExternalLibraryManager::setParameter
 
-    void
-    ExternalLibraryManager::setParameter(const std::string& l,
-					 const std::string& f,
-					 const std::string& h,
-					 const std::string& p,
-					 const int v)
+    void ExternalLibraryManager::setParameter(const std::string& l,
+					      const std::string& f,
+					      const std::string& h,
+					      const std::string& p,
+					      const int v)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
       int (TFEL_ADDCALL_PTR fct)(const char*const,const int);
       fct = ::tfel_getSetIntegerParameterFunction(lib,(f+"_"+h+"_setIntegerParameter").c_str());
       if(fct==nullptr){
 	fct = ::tfel_getSetIntegerParameterFunction(lib,(f+"_setIntegerParameter").c_str());
       }
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::setParameter : ");
-	msg += " can't get the '"+f+"_setParameter' function (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
-      if(!fct(p.c_str(),v)){
-	string msg("ExternalLibraryManager::setParameter : ");
-	msg += " call to the '"+f+"_setParameter' function failed";
-	throw(runtime_error(msg));
-      }
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::setParameter: "
+	       "can't get the '"+f+"_setParameter' function ("
+	       +getErrorMessage()+")");
+      raise_if(!fct(p.c_str(),v),
+	       "ExternalLibraryManager::setParameter: "
+	       "call to the '"+f+"_setParameter' function failed");
     } // end of ExternalLibraryManager::setParameter
     
-    void
-    ExternalLibraryManager::setParameter(const std::string& l,
-					 const std::string& f,
-					 const std::string& h,
-					 const std::string& p,
-					 const unsigned short v)
+    void ExternalLibraryManager::setParameter(const std::string& l,
+					      const std::string& f,
+					      const std::string& h,
+					      const std::string& p,
+					      const unsigned short v)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
       int (TFEL_ADDCALL_PTR fct)(const char*const,const unsigned short);
       fct = ::tfel_getSetUnsignedShortParameterFunction(lib,(f+"_"+h+"_setUnsignedShortParameter").c_str());
       if(fct==nullptr){
 	fct = ::tfel_getSetUnsignedShortParameterFunction(lib,(f+"_setUnsignedShortParameter").c_str());
       }
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::setParameter : ");
-	msg += " can't get the '"+f+"_setParameter' function (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
-      if(!fct(p.c_str(),v)){
-	string msg("ExternalLibraryManager::setParameter : ");
-	msg += " call to the '"+f+"_setParameter' function failed";
-	throw(runtime_error(msg));
-      }
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::setParameter: "
+	       "can't get the '"+f+"_setParameter' function ("
+	       +getErrorMessage()+")");
+      raise_if(!fct(p.c_str(),v),
+	       "ExternalLibraryManager::setParameter: "
+	       "call to the '"+f+"_setParameter' function failed");
     } // end of ExternalLibraryManager::setParameter
 
     double ExternalLibraryManager::getRealParameterDefaultValue(const std::string& l,
@@ -632,14 +568,13 @@ namespace tfel
       const auto lib = this->loadLibrary(l);
       const auto pn  = decomposeVariableName(p);
       const auto n1 = f+"_"+h+"_"+pn+"_ParameterDefaultValue";
-      if(this->contains(l,n1.c_str())){
+      if(this->contains(l,n1)){
 	return tfel_getDouble(lib,n1.c_str());
       }
       const auto n2 = f+"_"+pn+"_ParameterDefaultValue";
-      if(!this->contains(l,n2.c_str())){
-	throw(std::runtime_error("ExternalLibraryManager::getRealParameterDefaultValue: "
-				 "can't get default value for parameter '"+p+"'"));
-      }
+      raise_if(!this->contains(l,n2),
+	       "ExternalLibraryManager::getRealParameterDefaultValue: "
+	       "can't get default value for parameter '"+p+"'");
       return tfel_getDouble(lib,n2.c_str());
     } // end of ExternalLibraryManager::getRealParameterDefaultValue
 
@@ -651,14 +586,13 @@ namespace tfel
       const auto lib = this->loadLibrary(l);
       const auto pn  = decomposeVariableName(p);
       const auto n1 = f+"_"+h+"_"+pn+"_ParameterDefaultValue";
-      if(this->contains(l,n1.c_str())){
+      if(this->contains(l,n1)){
 	return tfel_getInteger(lib,n1.c_str());
       }
       const auto n2 = f+"_"+pn+"_ParameterDefaultValue";
-      if(!this->contains(l,n2.c_str())){
-	throw(std::runtime_error("ExternalLibraryManager::getIntegerParameterDefaultValue: "
-				 "can't get default value for parameter '"+p+"'"));
-      }
+      raise_if(!this->contains(l,n2),
+	       "ExternalLibraryManager::getIntegerParameterDefaultValue: "
+	       "can't get default value for parameter '"+p+"'");
       return tfel_getInteger(lib,n2.c_str());
     } // end of ExternalLibraryManager::getIntegerParameterDefaultValue
 
@@ -674,14 +608,10 @@ namespace tfel
       auto res = ::tfel_getUnsignedShort(lib,n1.c_str());
       if(res<0){
 	res = ::tfel_getUnsignedShort(lib,(f+"_"+pn+"_ParameterDefaultValue").c_str());
-	if(res<0){
-	  auto msg = std::string("ExternalLibraryManager::"
-				 "getUnsignedShortParameterDefaultValue: "
-				 "information could not be read (");
-	  msg += getErrorMessage();
-	  msg += ")";
-	  throw(std::runtime_error(std::move(msg)));
-	}
+	raise_if(res<0,"ExternalLibraryManager::"
+		 "getUnsignedShortParameterDefaultValue: "
+		 "information could not be read ("
+		 +getErrorMessage()+")");
       }
       return static_cast<unsigned short>(res);
     } // end of ExternalLibraryManager::getUnsignedShortParameterDefaultValue
@@ -734,10 +664,9 @@ namespace tfel
 	return tfel_getLongDouble(lib,n1.c_str());
       }
       const auto n2 = f+"_"+vn+"_LowerBound";
-      if(!this->contains(l,n2)){
-	throw(std::runtime_error("ExternalLibraryManager::getLowerBound: "
-				 "no lower bound associated to variable '"+vn+"'"));
-      }
+      raise_if(!this->contains(l,n2),
+	       "ExternalLibraryManager::getLowerBound: "
+	       "no lower bound associated to variable '"+vn+"'");
       return tfel_getLongDouble(lib,n2.c_str());
     } // end of ExternalLibraryManager::getLowerBound
     
@@ -753,10 +682,9 @@ namespace tfel
 	return tfel_getLongDouble(lib,n1.c_str());
       }
       const auto n2 = f+"_"+vn+"_UpperBound";
-      if(!this->contains(l,n2)){
-	throw(std::runtime_error("ExternalLibraryManager::getUpperBound: "
-				 "no upper bound associated to variable '"+vn+"'"));
-      }
+      raise_if(!this->contains(l,n2),
+	       "ExternalLibraryManager::getUpperBound: "
+	       "no upper bound associated to variable '"+vn+"'");
       return tfel_getLongDouble(lib,n2.c_str());
     } // end of ExternalLibraryManager::getUpperBound
     
@@ -808,10 +736,9 @@ namespace tfel
 	return tfel_getLongDouble(lib,n1.c_str());
       }
       const auto n2 = f+"_"+vn+"_LowerPhysicalBound";
-      if(!this->contains(l,n2)){
-	throw(std::runtime_error("ExternalLibraryManager::getLowerPhysicalBound: "
-				 "no physical lower bound associated to variable '"+vn+"'"));
-      }
+      raise_if(!this->contains(l,n2),
+	       "ExternalLibraryManager::getLowerPhysicalBound: "
+	       "no physical lower bound associated to variable '"+vn+"'");
       return tfel_getLongDouble(lib,n2.c_str());
     } // end of ExternalLibraryManager::getLowerPhysicalBound
     
@@ -827,10 +754,9 @@ namespace tfel
 	return tfel_getLongDouble(lib,n1.c_str());
       }
       const auto n2 = f+"_"+vn+"_UpperPhysicalBound";
-      if(!this->contains(l,n2)){
-	throw(std::runtime_error("ExternalLibraryManager::getUpperPhysicalBound: "
-				 "no physical upper bound associated to variable '"+vn+"'"));
-      }
+      raise_if(!this->contains(l,n2),
+	       "ExternalLibraryManager::getUpperPhysicalBound: "
+	       "no physical upper bound associated to variable '"+vn+"'");
       return tfel_getLongDouble(lib,n2.c_str());
     } // end of ExternalLibraryManager::getUpperPhysicalBound
     
@@ -840,11 +766,10 @@ namespace tfel
     {
       const auto lib = this->loadLibrary(l);
       const auto res = ::tfel_getCastemFunctionNumberOfVariables(lib,f.c_str());
-      if(res<0){
-	throw(std::runtime_error("ExternalLibraryManager::getCastemFunctionNumberOfVariables: "
-				 "number of variables could not be read ("
-				 +getErrorMessage()+")"));
-      }
+      raise_if(res<0,
+	       "ExternalLibraryManager::getCastemFunctionNumberOfVariables: "
+	       "number of variables could not be read ("
+	       +getErrorMessage()+")");
       return static_cast<unsigned short>(res);
     }
 
@@ -861,21 +786,15 @@ namespace tfel
       if(res<0){
 	res = ::tfel_getUMATRequiresStiffnessTensor(lib,f.c_str());
       }
-      if(res<0){
-	string msg("ExternalLibraryManager::getUMATRequiresStiffnessTensor : ");
-	msg += "information could not be read (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      raise_if(res<0,
+	       "ExternalLibraryManager::getUMATRequiresStiffnessTensor: "
+	       "information could not be read ("+getErrorMessage()+")");
       if(res==1){
 	return true;
       }
-      if(res!=0){
-	string msg("ExternalLibraryManager::getUMATRequiresStiffnessTensor : ");
-	msg += "invalid returned value";
-	throw(runtime_error(msg));
-      }
+      raise_if(res!=0,
+	       "ExternalLibraryManager::getUMATRequiresStiffnessTensor: "
+	       "invalid returned value");
       return false;
     } // end of ExternalLibraryManager::getUMATRequiresStiffnessTensor
  
@@ -884,33 +803,21 @@ namespace tfel
 									     const std::string& f,
 									     const std::string& h)
     {
-      using namespace std;
       ExternalLibraryManagerCheckModellingHypothesisName(h);
-      int res;
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) 
-      HINSTANCE__* lib = this->loadLibrary(l);
-#else
-      void * lib = this->loadLibrary(l);
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-      res = ::tfel_getUMATRequiresThermalExpansionCoefficientTensor(lib,(f+"_"+h).c_str());
+      auto lib = this->loadLibrary(l);
+      auto res = ::tfel_getUMATRequiresThermalExpansionCoefficientTensor(lib,(f+"_"+h).c_str());
       if(res<0){
 	res = ::tfel_getUMATRequiresThermalExpansionCoefficientTensor(lib,f.c_str());
       }
-      if(res<0){
-	string msg("ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor : ");
-	msg += "information could not be read (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      raise_if(res<0,"ExternalLibraryManager::"
+	       "getUMATRequiresThermalExpansionCoefficientTensor: "
+	       "information could not be read ("+getErrorMessage()+")");
       if(res==1){
 	return true;
       }
-      if(res!=0){
-	string msg("ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor : ");
-	msg += "invalid returned value";
-	throw(runtime_error(msg));
-      }
+      raise_if(res!=0,"ExternalLibraryManager::"
+	       "getUMATRequiresThermalExpansionCoefficientTensor: "
+	       "invalid returned value");
       return false;
     } // end of ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor
 
@@ -918,26 +825,18 @@ namespace tfel
     ExternalLibraryManager::checkIfAsterBehaviourSavesTangentOperator(const std::string& l,
 								      const std::string& f)
     {
-      using namespace std;
-      int res;
       const auto lib = this->loadLibrary(l);
-      res = ::tfel_checkIfAsterBehaviourSavesTangentOperator(lib,f.c_str());
-      if(res<0){
-	string msg("ExternalLibraryManager::"
-		   "checkIfAsterBehaviourSaveTangentOperator: "
-		   "information could not be read (");
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto res = ::tfel_checkIfAsterBehaviourSavesTangentOperator(lib,f.c_str());
+      raise_if(res<0,"ExternalLibraryManager::"
+	       "checkIfAsterBehaviourSaveTangentOperator: "
+	       "information could not be read ("
+	       +getErrorMessage()+")");
       if(res==1){
 	return true;
       }
-      if(res!=0){
-	throw(runtime_error("ExternalLibraryManager::"
-			    "checkIfAsterBehaviourSaveTangentOperator: "
-			    "invalid returned value"));
-      }
+      raise_if(res!=0,"ExternalLibraryManager::"
+	       "checkIfAsterBehaviourSaveTangentOperator: "
+	       "invalid returned value");
       return false;
     } // end of ExternalLibraryManager::checkIfAsterBehaviourSaveTangentOperator
 
@@ -948,19 +847,14 @@ namespace tfel
       const auto lib = this->loadLibrary(l);
       const auto s   = f+"_FiniteStrainFormulation";
       const auto res = ::tfel_getUnsignedShort(lib,s.c_str());
-      if(res<0){
-	auto msg = std::string("ExternalLibraryManager::"
-			       "getAsterFiniteStrainFormulation: "
-			       "information could not be read (");
-	msg += getErrorMessage();
-	msg += ")";
-	throw(std::runtime_error(std::move(msg)));
-      }
-      if((res!=1)&&(res!=2)){
-	throw(std::runtime_error("ExternalLibraryManager::"
-				 "getAsterFiniteStrainFormulation: "
-				 "invalid returned value"));
-      }
+      raise_if(res<0,"ExternalLibraryManager::"
+	       "getAsterFiniteStrainFormulation: "
+	       "information could not be read ("
+	       +getErrorMessage()+")");
+      raise_if((res!=1)&&(res!=2),
+	       "ExternalLibraryManager::"
+	       "getAsterFiniteStrainFormulation: "
+	       "invalid returned value");
       return static_cast<unsigned short>(res);
     } // end of ExternalLibraryManager::getAsterFiniteStrainFormulation
     
@@ -968,23 +862,17 @@ namespace tfel
     ExternalLibraryManager::getAbaqusOrthotropyManagementPolicy(const std::string& l,
 								const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
       const auto s   = f+"_OrthotropyManagementPolicy";
       const auto res = ::tfel_getUnsignedShort(lib,s.c_str());
-      if(res<0){
-	string msg("ExternalLibraryManager::"
-		   "getAbaqusOrthotropyManagementPolicy: "
-		   "information could not be read (");
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
-      if((res!=0)&&(res!=1)&&(res!=2)){
-	throw(runtime_error("ExternalLibraryManager::"
-			    "getAbaqusOrthotropyManagementPolicy: "
-			    "invalid returned value"));
-      }
+      raise_if(res<0,"ExternalLibraryManager::"
+	       "getAbaqusOrthotropyManagementPolicy: "
+	       "information could not be read ("
+	       +getErrorMessage()+")");
+      raise_if((res!=0)&&(res!=1)&&(res!=2),
+	       "ExternalLibraryManager::"
+	       "getAbaqusOrthotropyManagementPolicy: "
+	       "invalid returned value");
       return static_cast<unsigned short>(res);
     } // end of ExternalLibraryManager::getAbaqusOrthotropyManagementPolicy
     
@@ -1007,13 +895,9 @@ namespace tfel
       unsigned short nb = this->getCastemFunctionNumberOfVariables(l,f);
       char ** res = ::tfel_getCastemFunctionVariables(lib,f.c_str());
       char **p;
-      if(res==nullptr){
-	string msg("ExternalLibraryManager::getCastemFunctionNumberOfVariables : ");
-	msg += " variables names could not be read (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      raise_if(res==nullptr,
+	       "ExternalLibraryManager::getCastemFunctionNumberOfVariables: "
+	       " variables names could not be read ("+getErrorMessage()+")");
       for(p=res;p!=res+nb;++p){
 	vars.emplace_back(*p);
       }
@@ -1022,16 +906,12 @@ namespace tfel
     CyranoFctPtr ExternalLibraryManager::getCyranoFunction(const std::string& l,
 							   const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      CyranoFctPtr fct = ::tfel_getCyranoFunction(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCyranoFunction : ");
-	msg += " could not load Cyrano function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCyranoFunction(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCyranoFunction: "
+	       "could not load Cyrano function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
@@ -1041,14 +921,11 @@ namespace tfel
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      AbaqusFctPtr fct = ::tfel_getAbaqusExternalBehaviourFunction(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getAbaqusExternalBehaviourFunction : ");
-	msg += " could not load Abaqus external behaviour '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getAbaqusExternalBehaviourFunction(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getAbaqusExternalBehaviourFunction: "
+	       "could not load Abaqus external behaviour '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
@@ -1058,13 +935,10 @@ namespace tfel
     {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getAnsysExternalBehaviourFunction(lib,f.c_str());
-      if(fct==nullptr){
-	auto msg = std::string("ExternalLibraryManager::getAnsysExternalBehaviourFunction : ");
-	msg += " could not load Ansys external behaviour '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(std::runtime_error(msg));
-      }
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getAnsysExternalBehaviourFunction: "
+	       "could not load Ansys external behaviour '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
     
@@ -1073,14 +947,11 @@ namespace tfel
 								       const std::string& f)
     {
       const auto lib = this->loadLibrary(l);
-      AbaqusExplicitFctPtr fct = ::tfel_getAbaqusExplicitExternalBehaviourFunction(lib,f.c_str());
-      if(fct==nullptr){
-	std::string msg("ExternalLibraryManager::getAbaqusExplicitExternalBehaviourFunction : ");
-	msg += " could not load AbaqusExplicit external behaviour '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(std::runtime_error(msg));
-      }
+      const auto fct = ::tfel_getAbaqusExplicitExternalBehaviourFunction(lib,f.c_str());
+      raise_if(fct==nullptr,"ExternalLibraryManager::"
+	       "getAbaqusExplicitExternalBehaviourFunction: "
+	       "could not load AbaqusExplicit external "
+	       "behaviour '"+f+"' ("+getErrorMessage()+")");
       return fct;
     }
 
@@ -1090,12 +961,10 @@ namespace tfel
     {
       const auto lib = this->loadLibrary(l);
       auto fct = ::tfel_getCalculiXExternalBehaviourFunction(lib,f.c_str());
-      if(fct==nullptr){
-	auto msg = std::string("ExternalLibraryManager::getCalculiXExternalBehaviourFunction: "
-			       " could not load CalculiX external behaviour '"+f+"' "
-			       "("+getErrorMessage()+")");
-	throw(std::runtime_error(msg));
-      }
+      raise_if(fct==nullptr,"ExternalLibraryManager::"
+	       "getCalculiXExternalBehaviourFunction: "
+	       "could not load CalculiX external behaviour '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
     
@@ -1103,16 +972,12 @@ namespace tfel
     ExternalLibraryManager::getCastemExternalBehaviourFunction(const std::string& l,
 							       const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      CastemFctPtr fct = ::tfel_getCastemExternalBehaviourFunction(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCastemExternalBehaviourFunction : ");
-	msg += " could not load castem external behaviour '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCastemExternalBehaviourFunction(lib,f.c_str());
+      raise_if(fct==nullptr,"ExternalLibraryManager::"
+	       "getCastemExternalBehaviourFunction: "
+	       "could not load castem external behaviour '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
     
@@ -1120,16 +985,12 @@ namespace tfel
     ExternalLibraryManager::getAsterFunction(const std::string& l,
 					     const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      AsterFctPtr fct = ::tfel_getAsterFunction(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getAsterFunction : ");
-	msg += " could not load Aster function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getAsterFunction(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getAsterFunction: "
+	       "could not load Aster function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
@@ -1138,14 +999,11 @@ namespace tfel
 						  const std::string& f)
     {
       const auto lib = this->loadLibrary(l);
-      EuroplexusFctPtr fct = ::tfel_getEuroplexusFunction(lib,f.c_str());
-      if(fct==nullptr){
-	std::string msg("ExternalLibraryManager::getEuroplexusFunction : ");
-	msg += " could not load Europlexus function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(std::runtime_error(msg));
-      }
+      const auto fct = ::tfel_getEuroplexusFunction(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getEuroplexusFunction: "
+	       " could not load Europlexus function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
     
@@ -1156,34 +1014,25 @@ namespace tfel
 					 const std::string& h,
 					 const std::string& n)
     {
-      using namespace std;
       ExternalLibraryManagerCheckModellingHypothesisName(h);
       const auto lib = this->loadLibrary(l);
       ExternalLibraryManagerCheckModellingHypothesisName(h);
-      int nb = ::tfel_getUnsignedShort(lib,(f+"_"+h+"_n"+n).c_str());
+      auto nb = ::tfel_getUnsignedShort(lib,(f+"_"+h+"_n"+n).c_str());
       if(nb==-1){
 	nb = ::tfel_getUnsignedShort(lib,(f+"_n"+n).c_str());
       }
       char ** res;
-      if(nb==-1){
-	string msg("ExternalLibraryManager::getUMATNames : ");
-	msg += " number of variables names could not be read (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      raise_if(nb==-1,"ExternalLibraryManager::getUMATNames: "
+	       "number of variables names could not be read "
+	       "("+getErrorMessage()+")");
       res = ::tfel_getArrayOfStrings(lib,(f+"_"+h+'_'+n).c_str());
       if(res==nullptr){
 	res = ::tfel_getArrayOfStrings(lib,(f+'_'+n).c_str());
       }
-      if(res==nullptr){
-	string msg("ExternalLibraryManager::getUMATNames : ");
-	msg += "variables names could not be read (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
-      copy(res,res+nb,back_inserter(vars));
+      raise_if(res==nullptr,"ExternalLibraryManager::getUMATNames: "
+	       "variables names could not be read "
+	       "("+getErrorMessage()+")");
+      std::copy(res,res+nb,std::back_inserter(vars));
     } // end of ExternalLibraryManager::getUMATNames
 
     bool
@@ -1214,10 +1063,7 @@ namespace tfel
       if(b==-1){
 	return false;
       }
-      if(b==1){
-	return true;
-      }
-      return false;
+      return b==1;
     } // end of ExternalLibraryManager::checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm
 
     unsigned short

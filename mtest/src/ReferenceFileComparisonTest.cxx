@@ -88,4 +88,4 @@ namespace mtest{
 
   ReferenceFileComparisonTest::~ReferenceFileComparisonTest() = default;
 
-}
+} // end of namespace mtest

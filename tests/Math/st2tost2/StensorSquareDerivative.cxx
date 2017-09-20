@@ -51,8 +51,7 @@ struct StensorSquareDerivative final
 			    "StensorSquareDerivative"+
 			    std::to_string(N))
   {} // end of StensorSquareDerivative
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;

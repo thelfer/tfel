@@ -29,8 +29,7 @@ struct TVector6 final
 			    "TVector6")
   {} // end of TVector6
 
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace tfel::fsalgo;
     using namespace tfel::math;

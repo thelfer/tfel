@@ -488,10 +488,7 @@ namespace tfel
       std::istringstream is(value);
       T res;
       is >> res;
-      if(!is||(!is.eof())){
-	return false;
-      }
-      return true;
+      return !(!is||(!is.eof()));
     } // end of convert
     
     bool Evaluator::isNumber(const std::string& value)

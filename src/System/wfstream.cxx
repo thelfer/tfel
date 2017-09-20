@@ -24,8 +24,7 @@ namespace tfel
   {
     
     wfstream::wfstream()
-      : basic_wstream<wfstream,stream_traits<wfstream> >(),
-	std::shared_ptr<int>(new int(-1))
+      : std::shared_ptr<int>(new int(-1))
     {} // end of wfstream::wfstream
 
     wfstream::wfstream(const wfstream&) = default;
@@ -45,8 +44,7 @@ namespace tfel
     wfstream::wfstream(const std::string& name,
 		       const int flags,
 		       const mode_t mode)
-      : basic_wstream<wfstream,stream_traits<wfstream> >(),
-	std::shared_ptr<int>(new int(-1))
+      : std::shared_ptr<int>(new int(-1))
     {
       this->open(name,flags,mode);
     } // end of wfstream::wfstream

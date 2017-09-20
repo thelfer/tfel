@@ -1,4 +1,6 @@
 install_header(TFEL Macros.hxx)
+install_header(TFEL Raise.hxx)
+install_header(TFEL Raise.ixx)
 install_header(TFEL PhysicalConstants.hxx)
 
 install_header(TFEL/Config/Internals TFELTypesInternals.hxx)

@@ -2319,8 +2319,7 @@ namespace mfront{
   } // end of BehaviourDSLCommon::registerDefaultVarNames
 
   BehaviourDSLCommon::BehaviourDSLCommon()
-    : DSLBase(),
-      useStateVarTimeDerivative(false),
+    : useStateVarTimeDerivative(false),
       explicitlyDeclaredUsableInPurelyImplicitResolution(false)
   {
     // By default disable use of quantities

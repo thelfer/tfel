@@ -52,9 +52,7 @@ namespace mfront
     return "fortran03";
   }
 
-  Fortran03MaterialPropertyInterface::Fortran03MaterialPropertyInterface()
-    : CMaterialPropertyInterfaceBase()
-  {}
+  Fortran03MaterialPropertyInterface::Fortran03MaterialPropertyInterface() = default;
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   Fortran03MaterialPropertyInterface::treatKeyword(const std::string& key,

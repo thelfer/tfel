@@ -30,8 +30,7 @@ struct TMatrix4Test final
     : tfel::tests::TestCase("TFEL/Math",
 			    "TMatrix4Test")
   {} // end of TMatrix4Test
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;

@@ -12,6 +12,7 @@
  */
 
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/General/StridedRandomAccessIterator.hxx"
 
 namespace tfel{
@@ -19,13 +20,15 @@ namespace tfel{
   namespace math{
 
     void StridedRandomAccessIteratorBase::throwNullStrideException(){
-      throw(std::runtime_error("StridedRandomAccessIteratorBase::throwNullStrideException: "
-			       "null stride"));
+      raise("StridedRandomAccessIteratorBase::"
+	    "throwNullStrideException: "
+	    "null stride");
     } // end of StridedRandomAccessIteratorBase::throwNullStrideException
     
     void StridedRandomAccessIteratorBase::throwUmatchedStrideException(){
-      throw(std::runtime_error("StridedRandomAccessIteratorBase::throwUmatchedStrideException: "
-			       "unmatched stride"));
+      raise("StridedRandomAccessIteratorBase::"
+	    "throwUmatchedStrideException: "
+	    "unmatched stride");
     } // end of StridedRandomAccessIteratorBase::throwUmatchedStrideException
 
   } // end of namespace math

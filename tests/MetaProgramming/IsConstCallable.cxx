@@ -26,8 +26,7 @@ struct IsConstCallableTest final
     : tfel::tests::TestCase("TFEL/Math",
 			    "IsConstCallableTest")
   {} // end of IsConstCallableTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace tfel::meta;
     TFEL_TESTS_STATIC_ASSERT((!IsConstCallable<std::string,double>::cond));

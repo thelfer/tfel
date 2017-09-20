@@ -33,8 +33,7 @@ struct StensorIsotropicFunctionDerivativeTest final
 			    "StensorIsotropicFunctionDerivativeTest")
   {} // end of StensorIsotropicFunctionDerivativeTest
 
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->test1<1>({1.,1.,1.});
     this->test1<2>({1.,1.,1.,0.});

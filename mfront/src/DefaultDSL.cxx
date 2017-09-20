@@ -22,7 +22,6 @@
 namespace mfront{
 
   DefaultDSL::DefaultDSL()
-    : DefaultDSLBase()
   {
     this->mb.setDSLName("Default");
     this->registerNewCallBack("@RequireStiffnessTensor",

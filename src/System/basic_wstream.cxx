@@ -29,8 +29,8 @@ namespace tfel
     BlockingStreamWriter::write(int fd,const void *const buf,const size_t count)
     {
       using namespace std;
-      const char * start = static_cast<const char *>(buf); //< some strange
-							   //  warning of gcc
+      auto start = static_cast<const char *>(buf); //< some strange
+                                                   //  warning of gcc
       size_t  r = count;       //< remaining block to be written
       if(count>static_cast<size_t>(numeric_limits<ssize_t>::max())){
 	throw(SystemError("BlockingStreamReader::write : number of bytes to write too high"));

@@ -31,8 +31,7 @@ struct MyTest final
   MyTest()
     : TestCase("TFEL/Tests","MyTest")
   {} // end of MyTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     TFEL_TESTS_ASSERT(true);
     TFEL_TESTS_ASSERT(1!=2);

@@ -35,7 +35,7 @@ namespace mtest{
   void
   StructureCurrentState::setBehaviour(const std::shared_ptr<Behaviour>& p)
   {
-    if(this->b.get()!=nullptr){
+    if(this->b!=nullptr){
       throw(std::runtime_error("StructureCurrentState::setBehaviour: "
 			       "behaviour already set"));
     }
@@ -57,7 +57,7 @@ namespace mtest{
   StructureCurrentState::getBehaviourWorkSpace() const{
     using tfel::material::ModellingHypothesis;
     if(this->bwks.empty()){
-      if(this->b.get()==nullptr){
+      if(this->b==nullptr){
 	throw(std::runtime_error("StructureCurrentState::getBehaviourWorkSpace: "
 				 "behaviour not set"));
       }
@@ -74,7 +74,7 @@ namespace mtest{
   const Behaviour&
   StructureCurrentState::getBehaviour() const
   {
-    if(this->b.get()==nullptr){
+    if(this->b==nullptr){
       throw(std::runtime_error("StructureCurrentState::getBehaviour: "
 			       "behaviour not set"));
     }

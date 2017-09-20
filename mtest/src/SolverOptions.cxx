@@ -24,4 +24,4 @@ namespace mtest{
   SolverOptions::operator=(const SolverOptions&) = default;
   SolverOptions::~SolverOptions() = default;
 
-}
+} // end of namespace mtest

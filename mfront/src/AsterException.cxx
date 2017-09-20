@@ -35,8 +35,7 @@ namespace aster
   {} // end of AsterException::AsterException
     
   AsterException::AsterException(const AsterException& e)
-    : std::exception(),
-      msg(e.msg)
+    : msg(e.msg)
   {} // end of AsterException::AsterException
 
   const char* 

@@ -32,8 +32,7 @@ struct StensorChangeBasis3Test final
 			    "StensorChangeBasis3Test")
   {} // end of StensorChangeBasis3Test
 
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     // The current version of Visual Studio (2015) and LLVM libc++
     // does not support the uniform_real_distribution function, so we

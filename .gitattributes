@@ -1787,6 +1787,8 @@ include/TFEL/Metaprogramming/StaticAssert.hxx -text
 include/TFEL/Metaprogramming/TypeList.hxx -text
 include/TFEL/Metaprogramming/TypeList.ixx -text
 include/TFEL/PhysicalConstants.hxx -text
+include/TFEL/Raise.hxx -text
+include/TFEL/Raise.ixx -text
 include/TFEL/System/BinaryRead.hxx -text
 include/TFEL/System/BinaryWrite.hxx -text
 include/TFEL/System/ChildProcess.hxx -text

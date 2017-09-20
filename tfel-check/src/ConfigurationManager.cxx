@@ -126,4 +126,4 @@ namespace tfel{
     
   } // end of namespace check
 
-} // end of namespace check
+} // end of namespace tfel

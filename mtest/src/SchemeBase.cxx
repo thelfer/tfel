@@ -255,7 +255,7 @@ namespace mtest{
 
   void SchemeBase::setAccelerationAlgorithm(const std::string& a)
   {
-    if(this->options.aa.get()!=nullptr){
+    if(this->options.aa!=nullptr){
       throw(std::runtime_error("SchemeBase::setAccelerationAlgorithm: "
 			       "acceleration algorithm already set"));
     }
@@ -266,7 +266,7 @@ namespace mtest{
   void SchemeBase::setAccelerationAlgorithmParameter(const std::string& p,
 					   const std::string& v)
   {
-    if(this->options.aa.get()==nullptr){
+    if(this->options.aa==nullptr){
       throw(std::runtime_error("SchemeBase::setAccelerationAlgorithmParameter: "
 			       "no acceleration algorithm set"));
     }
@@ -294,7 +294,7 @@ namespace mtest{
   void SchemeBase::setUseCastemAccelerationAlgorithm(const bool ucaa)
   {
     if(ucaa){
-      if(this->options.aa.get()!=nullptr){
+      if(this->options.aa!=nullptr){
 	throw(std::runtime_error("SchemeBase::setUseCastemAccelerationAlgorithm: "
 				 "an algorithm was already set"));
       }
@@ -316,7 +316,7 @@ namespace mtest{
 			       "use the @AccelerationAlgorithmParameter "
 			       "keyword to specify the acceleration trigger."));
     }
-    if(this->options.aa.get()==nullptr){
+    if(this->options.aa==nullptr){
       throw(std::runtime_error("SchemeBase::setCastemAccelerationTrigger: "
 			       "internal error"));
     }
@@ -339,7 +339,7 @@ namespace mtest{
 			       "@AccelerationAlgorithmParameter keyword to "
 			       "specify the acceleration period."));
     }
-    if(this->options.aa.get()==nullptr){
+    if(this->options.aa==nullptr){
       throw(std::runtime_error("SchemeBase::setCastemAccelerationPeriod: "
 			       "internal error"));
     }
@@ -376,7 +376,7 @@ namespace mtest{
       if(this->options.iterMax==-1){
 	this->options.iterMax=100;
       }
-      if(this->options.aa.get()!=nullptr){
+      if(this->options.aa!=nullptr){
 	this->options.aa->initialize(this->getNumberOfUnknowns());
       }
       // prediction policy
@@ -390,7 +390,7 @@ namespace mtest{
       // options selected
       if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
 	auto& log = mfront::getLogStream();
-	if(this->options.aa.get()!=nullptr){
+	if(this->options.aa!=nullptr){
 	  log << "** " << this->options.aa->getName()
 	      << " acceleration algorithm selected\n";
 	}

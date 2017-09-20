@@ -36,8 +36,7 @@ struct DifferenceRandomAccessIteratorTest final
     : tfel::tests::TestCase("TFEL/Math",
 			    "DifferenceRandomAccessIteratorTest")
   {} // end of DifferenceRandomAccessIteratorTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->test1();
     this->test2();

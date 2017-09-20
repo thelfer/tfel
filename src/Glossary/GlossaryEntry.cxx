@@ -13,6 +13,7 @@
 
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 
@@ -135,60 +136,50 @@ namespace tfel
     GlossaryEntry::GlossaryEntry(const GlossaryEntry&) = default;
     GlossaryEntry::GlossaryEntry(GlossaryEntry&&) = default;
 
-    void
-    GlossaryEntry::check() const
+    void GlossaryEntry::check() const
     {
-      if(this->names.empty()){
-	throw(std::runtime_error("GlossaryEntry::check : "
-				 "no name specified for key '"+this->getKey()+"'"));
-      }
-      if(!((this->type=="scalar")||(this->type=="vector")||
-	   (this->type=="symmetric tensor")||
-	   (this->type=="tensor"))){
-	throw(std::runtime_error("GlossaryEntry::check : "
-				 "unsupported type '"+this->type+"' for entry "
-				 "'"+this->getKey()+"'"));
-      }
+      raise_if(this->names.empty(),"GlossaryEntry::check: "
+	       "no name specified for key '"+this->getKey()+"'");
+      raise_if(!((this->type=="scalar")||
+		 (this->type=="vector")||
+		 (this->type=="symmetric tensor")||
+		 (this->type=="tensor")),
+	       "GlossaryEntry::check: "
+	       "unsupported type '"+this->type+"' "
+	       "for entry '"+this->getKey()+"'");
     } // end of GlossaryEntry::check
 
-    const std::string&
-    GlossaryEntry::getKey() const
+    const std::string& GlossaryEntry::getKey() const
     {
       return this->key;
     }
 
-    const std::vector<std::string>&
-    GlossaryEntry::getNames() const
+    const std::vector<std::string>& GlossaryEntry::getNames() const
     {
       return this->names;
     }
 
-    const std::string&
-    GlossaryEntry::getUnit() const
+    const std::string& GlossaryEntry::getUnit() const
     {
       return this->unit;
     }
 
-    const std::string&
-    GlossaryEntry::getType() const
+    const std::string& GlossaryEntry::getType() const
     {
       return this->type;
     }
 
-    const std::string&
-    GlossaryEntry::getShortDescription() const
+    const std::string& GlossaryEntry::getShortDescription() const
     {
       return this->short_description;
     }
 
-    const std::vector<std::string>&
-    GlossaryEntry::getDescription() const
+    const std::vector<std::string>& GlossaryEntry::getDescription() const
     {
       return this->description;
     }
 
-    const std::vector<std::string>&
-    GlossaryEntry::getNotes() const
+    const std::vector<std::string>& GlossaryEntry::getNotes() const
     {
       return this->notes;
     }
@@ -206,16 +197,14 @@ namespace tfel
       return e1.key < e2.key;
     }
 
-    bool
-    operator != (const std::string& e1,
-		 const GlossaryEntry& e2)
+    bool operator != (const std::string& e1,
+		      const GlossaryEntry& e2)
     {
       return e1 != e2.key;
     }
 
-    bool
-    operator != (const GlossaryEntry& e1,
-		 const std::string& e2)
+    bool operator != (const GlossaryEntry& e1,
+		      const std::string& e2)
     {
       return e1.key != e2;
     }

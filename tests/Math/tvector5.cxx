@@ -34,8 +34,7 @@ struct TVectorTest5 final
 			    "TVectorTesT5")
   {} // end of TVectorTest
 
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;

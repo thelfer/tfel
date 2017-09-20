@@ -40,8 +40,7 @@ struct FiniteStrainBehaviourTangentOperator5 final
     : tfel::tests::TestCase("TFEL/Material",
 			    "FiniteStrainBehaviourTangentOperator5")
   {} // end of FiniteStrainBehaviourTangentOperator5
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->check<1u>();
     this->check<2u>();

@@ -34,8 +34,7 @@ struct STensorTest7 final
     : tfel::tests::TestCase("TFEL/Math",
 			    "STensorTest7")
   {} // end of STensorTest7
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;  
     using namespace tfel::math;

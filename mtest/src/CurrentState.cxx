@@ -27,7 +27,7 @@ namespace mtest{
 
   void allocate(CurrentState& s,const std::shared_ptr<const Behaviour>& b)
   {
-    if(s.behaviour.get()!=nullptr){
+    if(s.behaviour!=nullptr){
       throw(std::runtime_error("mtest::allocate: state already allocated"));
     }
     s.behaviour = b;
@@ -71,7 +71,7 @@ namespace mtest{
 				 const std::vector<std::string>& mpnames,
 				 const real t,
 				 const real dt){
-    if(s.behaviour.get()==nullptr){
+    if(s.behaviour==nullptr){
       throw(std::runtime_error("mtest::computeMaterialProperties: "
 			       "uninitialised state"));
     }
@@ -105,7 +105,7 @@ namespace mtest{
 				     const std::vector<std::string>& esvnames,
 				     const real t,
 				     const real dt){
-    if(s.behaviour.get()==nullptr){
+    if(s.behaviour==nullptr){
       throw(std::runtime_error("mtest::computeThermalExpanstion: "
 			       "uninitialised state"));
     }
@@ -135,7 +135,7 @@ namespace mtest{
 			       const real dt){
     static const std::string T{"Temperature"};
     static const std::string a{"ThermalExpansion"};
-    if(s.behaviour.get()==nullptr){
+    if(s.behaviour==nullptr){
       throw(std::runtime_error("mtest::computeThermalExpanstion: "
 			       "uninitialised state"));
     }
@@ -165,7 +165,7 @@ namespace mtest{
     static const std::string a1{"ThermalExpansion1"};
     static const std::string a2{"ThermalExpansion2"};
     static const std::string a3{"ThermalExpansion3"};
-    if(s.behaviour.get()==nullptr){
+    if(s.behaviour==nullptr){
       throw(std::runtime_error("mtest::computeThermalExpanstion: "
 			       "uninitialised state"));
     }
@@ -241,7 +241,7 @@ namespace mtest{
     auto throw_if = [](const bool b, const std::string& m){
       if(b){throw(std::runtime_error("mtest::setInternalStateVariableValue: "+m));}
     };
-    throw_if(s.behaviour.get()==nullptr,"no behaviour defined");
+    throw_if(s.behaviour==nullptr,"no behaviour defined");
     const auto& ivsnames = s.behaviour->getInternalStateVariablesNames();
     throw_if(std::find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end(),
 	     "the behaviour don't declare an internal state "
@@ -279,7 +279,7 @@ namespace mtest{
     auto throw_if = [](const bool b, const std::string& m){
       if(b){throw(std::runtime_error("mtest::setInternalStateVariableValue: "+m));}
     };
-    throw_if(s.behaviour.get()==nullptr,"no behaviour defined");
+    throw_if(s.behaviour==nullptr,"no behaviour defined");
     const auto& ivsnames = s.behaviour->getInternalStateVariablesNames();
     throw_if(std::find(ivsnames.begin(),ivsnames.end(),n)==ivsnames.end(),
 	     "the behaviour don't declare an internal state "

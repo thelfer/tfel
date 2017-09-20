@@ -14,6 +14,7 @@
 #include<fstream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Tests/StdStreamTestOutput.hxx"
 
 namespace tfel
@@ -27,12 +28,8 @@ namespace tfel
 	os(*(pos.get())),
 	colorOutput(false)
     {
-      using namespace std;
-      if(!(*pos)){
-	string msg("StdStreamTestOutput::StdStreamTestOutput : ");
-	msg += "can't open file '"+o+"'";
-	throw(runtime_error(msg));
-      }
+      raise_if(!(*pos),"StdStreamTestOutput::StdStreamTestOutput: "
+	       "can't open file '"+o+"'");
     } // end of StdStreamTestOutput::StdStreamTestOutput
     
     StdStreamTestOutput::StdStreamTestOutput(std::ostream& o,
@@ -40,12 +37,8 @@ namespace tfel
       : os(o),
 	colorOutput(b)
     {
-      using namespace std;
-      if(!os){
-	string msg("StdStreamTestOutput::StdStreamTestOutput : ");
-	msg += "invalid stream";
-	throw(runtime_error(msg));
-      }
+      raise_if(!os,"StdStreamTestOutput::StdStreamTestOutput: "
+	       "invalid stream");
     } // end of StdStreamTestOutput::StdStreamTestOutput
 
     StdStreamTestOutput::StdStreamTestOutput(const std::shared_ptr<std::ostream>& o,
@@ -54,27 +47,18 @@ namespace tfel
 	os(*(pos.get())),
 	colorOutput(b)
     {
-      using namespace std;
-      if(!os){
-	string msg("StdStreamTestOutput::StdStreamTestOutput : ");
-	msg += "invalid stream";
-	throw(runtime_error(msg));
-      }
+      raise_if(!os,"StdStreamTestOutput::StdStreamTestOutput: "
+	       "invalid stream");
     } // end of StdStreamTestOutput::StdStreamTestOutput
     
-    void
-    StdStreamTestOutput::beginTestSuite(const std::string& n)
+    void StdStreamTestOutput::beginTestSuite(const std::string& n)
     {
-      using namespace std;
-      this->os << endl;
-      this->os << "Beginning of test suite '" << n << "'";
-      this->os << endl;
+      this->os << "\nBeginning of test suite '" << n << "'\n";
     } // end of StdStreamTestOutput::beginTestSuite
 
-    void
-    StdStreamTestOutput::addTest(const std::string& g,
-				 const std::string& n,
-				 const TestResult& r)
+    void StdStreamTestOutput::addTest(const std::string& g,
+				      const std::string& n,
+				      const TestResult& r)
     {
       using namespace std;
       const char red[5]   = {033,'[','3','1','m'};

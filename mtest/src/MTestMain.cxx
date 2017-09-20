@@ -63,7 +63,7 @@ namespace mtest
       DEFAULT
     } scheme = DEFAULT;
     friend struct tfel::utilities::ArgumentParserBase<MTestMain>;
-    virtual void treatUnknownArgument() override;
+    void treatUnknownArgument() override;
     void treatVerbose();
     void treatScheme();
     void treatXMLOutput();
@@ -80,10 +80,8 @@ namespace mtest
     //! treat the `--backtrace` option
     void treatBacktrace();
 #endif
-    virtual std::string 
-    getVersionDescription() const override;
-    virtual std::string 
-    getUsageDescription() const override;
+    std::string getVersionDescription() const override;
+    std::string getUsageDescription() const override;
     void registerArgumentCallBacks();
     //! input files
     std::vector<std::string> inputs;

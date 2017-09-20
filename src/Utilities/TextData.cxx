@@ -17,6 +17,7 @@
 #include<fstream>
 #include<algorithm>
 #include<iterator>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Utilities/TextData.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
@@ -62,10 +63,7 @@ namespace tfel
       bool firstComments;
       size_type nbr;
       std::ifstream f{file};
-      if(!f){
-	throw(std::runtime_error("TextData::TextData: "
-				 "can't open '"+file+'\''));
-      }
+      raise_if(!f,"TextData::TextData: can't open '"+file+'\'');
       nbr=1;
       firstLine=true;
       firstComments = true;
@@ -114,25 +112,19 @@ namespace tfel
       }
     } // end of TextData::TextData
       
-    const std::vector<std::string>&
-    TextData::getLegends() const
+    const std::vector<std::string>& TextData::getLegends() const
     {
       return this->legends;
     } // end of TextData::getLegends
 
-    const std::vector<std::string>&
-    TextData::getPreamble() const
+    const std::vector<std::string>& TextData::getPreamble() const
     {
       return this->preamble;
     } // end of TextData::getPreamble
 
-    std::string
-    TextData::getLegend(const size_type c) const
+    std::string TextData::getLegend(const size_type c) const
     {
-      if(c==0){
-	throw(std::runtime_error("TextData::getLegend: "
-				 "invalid column index"));
-      }
+      raise_if(c==0,"TextData::getLegend: invalid column index");
       if(c>=this->legends.size()+1){
 	return "";
       }
@@ -144,40 +136,36 @@ namespace tfel
     TextData::findColumn(const std::string& n) const
     {
       auto p = std::find(this->legends.begin(),this->legends.end(),n);
-      if(p==this->legends.end()){
-	throw(std::runtime_error("TextData::findColumn: "
-				 "no column named '"+n+"' found'."));
-      }
+      raise_if(p==this->legends.end(),
+	       "TextData::findColumn: "
+	       "no column named '"+n+"' found'.");
       return static_cast<size_type>(p-this->legends.begin()+1);
     } // end of TextData::findColumn
 
-    std::vector<double>
-    TextData::getColumn(const size_type i) const
+    std::vector<double> TextData::getColumn(const size_type i) const
     {
       std::vector<double> tab;
       this->getColumn(tab,i);
       return tab;
     } // end of TextData::getColumn
 
-    void
-    TextData::getColumn(std::vector<double>& tab,
-			const size_type i) const
+    void TextData::getColumn(std::vector<double>& tab,
+			     const size_type i) const
     {
+      auto throw_if = [](const bool b,const std::string& msg){
+	raise_if(b,"TextData::getColumn: "+msg);
+      };
       tab.clear();
       tab.reserve(this->lines.size());
       // sanity check
-      if(i==0u){
-	throw(std::runtime_error("TextData::getColumn: "
-				 "column '0' requested (column numbers begins at '1')."));
-      }
+      throw_if(i==0u,"column '0' requested "
+	       "(column numbers begins at '1').");
       // treatment
       for(const auto& l : this->lines){
 	auto n  = l.tokens.empty() ? 0 : l.tokens[0].line;
-	if(l.tokens.size()<i){
-	  throw(std::runtime_error("TextData::getColumn : "
-				   "line '"+std::to_string(n)+ "' "
-				   "does not have '"+std::to_string(i)+"' columns."));
-	}
+	throw_if(l.tokens.size()<i,
+		 "line '"+std::to_string(n)+ "' "
+		 "does not have '"+std::to_string(i)+"' columns.");
 	tab.push_back(convert<double>(l.tokens.at(i-1u).value));
       }
     } // end of TextData::getColumn

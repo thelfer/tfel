@@ -55,8 +55,7 @@ struct Ogden final
     : tfel::tests::TestCase("TFEL/Material",
 			    "Ogden")
     {} // end of Ogden
-  virtual tfel::tests::TestResult
-    execute() override
+  tfel::tests::TestResult execute() override
   {
     this->check<1u>();
     this->check<2u>();

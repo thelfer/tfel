@@ -66,8 +66,7 @@ struct TinyMatrixInvertTest2D final
 			    "TinyMatrixInvertTest2D<"+Name<T>::getName()+">")
   {} // end of TinyMatrixInvertTest2D
   
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace tfel::math;
     const auto eps = 100*std::numeric_limits<T>::epsilon();
@@ -94,8 +93,7 @@ struct TinyMatrixInvertTest3D final
 			    "TinyMatrixInvertTest3D<"+Name<T>::getName()+">")
   {} // end of TinyMatrixInvertTest3D
   
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace tfel::math;
     const auto eps = 100*std::numeric_limits<T>::epsilon();

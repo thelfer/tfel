@@ -31,8 +31,7 @@ struct Discretization1DTest final
 			    "Discretization1DTest")
   {} // end of Discretization1DTest
 
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;

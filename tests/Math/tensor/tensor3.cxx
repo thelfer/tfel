@@ -30,8 +30,7 @@ struct Tensor3Test final
     : tfel::tests::TestCase("TFEL/Math",
 			    "Tensor3Test")
   {} // end of Tensor3Test
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;

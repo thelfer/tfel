@@ -66,8 +66,7 @@ struct InvertTest2D final
 			    "InvertTest2D<"+Name<T>::getName()+">")
   {} // end of InvertTest2D
   
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -114,8 +113,7 @@ struct InvertTest3D final
 			    "InvertTest3D<"+Name<T>::getName()+">")
   {} // end of InvertTest3D
   
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;

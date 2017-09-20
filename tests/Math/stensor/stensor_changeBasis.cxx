@@ -32,8 +32,7 @@ struct StensorChangeBasisTest final
 			    "StensorChangeBasisTest")
   {} // end of StensorChangeBasisTest
 
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace tfel::math;
     using real = double;

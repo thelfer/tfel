@@ -35,8 +35,7 @@ struct T2tot2SpecialValuesTest final
     : tfel::tests::TestCase("TFEL/Math",
 			    "T2tot2SpecialValuesTest"+std::to_string(N))
   {} // end of T2tot2SpecialValuesTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->testId();
     this->testIdxId();

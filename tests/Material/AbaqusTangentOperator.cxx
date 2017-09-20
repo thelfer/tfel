@@ -47,8 +47,7 @@ struct AbaqusTangentOperator final
     : tfel::tests::TestCase("TFEL/Material",
 			    "AbaqusTangentOperator")
   {} // end of AbaqusTangentOperator
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->check1<1u>();
     this->check1<2u>();

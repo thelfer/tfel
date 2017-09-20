@@ -13,6 +13,7 @@
 
 #include<typeinfo>
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/ThreadedTaskResult.hxx"
 
 namespace tfel{
@@ -24,8 +25,8 @@ namespace tfel{
     } // end of ThreadPool::ResultBase::throwBadCastException
     
     void ThreadedTaskResultBase::throwNullException(){
-      throw(std::runtime_error("ThreadPool::Result::rethrow: "
-			       "no exception defined"));
+      raise<std::runtime_error>("ThreadPool::Result::rethrow: "
+				"no exception defined");
     } // end of ThreadPool::ResultBase::throwNullException
     
     ThreadedTaskResult<void>::ThreadedTaskResult() = default;

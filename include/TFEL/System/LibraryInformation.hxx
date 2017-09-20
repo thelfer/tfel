@@ -29,7 +29,7 @@ namespace tfel{
   namespace system{
 
     /*!
-     * \brief Class that is capable of extracting different
+     * \brief class that is capable of extracting different
      * information from a library or binary file.
      * Currently understands ELF, MACH-O and PE formats on all the
      * platforms.
@@ -43,8 +43,10 @@ namespace tfel{
       //! structure used to implement the PImpl idiom.
       struct Implementation;
       /*!
-       * Opens file with specified path and prepares for information extraction.
-       * \param[in] f: path to the binary file from which the info must be extracted.
+       * \brief opens file with specified path and prepares for
+       * information extraction.
+       * \param[in] f: path to the binary file from which the info
+       * must be extracted.
        * \param[in] b: throw an exception if this file format is not
        * supported by OS.
        */
@@ -60,12 +62,14 @@ namespace tfel{
        */
       std::vector<std::string> symbols();
       /*!
-       * \param[in] n: name of the section from which symbol names must be returned.
+       * \param[in] n: name of the section from which symbol names
+       * must be returned.
        * \return The list of symbols from the specified section.
        */
       std::vector<std::string> symbols(const char*);
       /*!
-       * \param[in] n: name of the section from which symbol names must be returned.
+       * \param[in] n: name of the section from which symbol names
+       * must be returned.
        * \return The list of symbols from the specified section.
        */
       std::vector<std::string> symbols(const std::string&);

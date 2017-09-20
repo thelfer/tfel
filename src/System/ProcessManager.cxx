@@ -33,6 +33,7 @@
 #include<sys/wait.h>
 #include<fcntl.h>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/System.hxx"
 #include"TFEL/System/SignalManager.hxx"
 #include"TFEL/System/ProcessManager.h"
@@ -293,7 +294,7 @@ namespace tfel
       sigset_t nSigSet;
       sigset_t oSigSet;
       // splitting the argument
-      if(cmd.size()==0){
+      if(cmd.empty()){
 	throw(SystemError("ProcessManager::createProcess : empty command"));
       }
       istringstream args(cmd);
@@ -666,57 +667,35 @@ namespace tfel
     ProcessManager::wstream
     ProcessManager::getInputStream(const ProcessManager::ProcessId id) const
     {
-      using namespace std;
+      auto throw_if = [](const bool c, const std::string& msg){
+	raise_if(c,"ProcessManager::getInputStream: "+msg);
+      };
       const auto p  = this->findProcess(id);
       const auto pe = this->processes.rend();
-      if(p==pe){
-	ostringstream msg;
-	msg << "ProcessManager::getInputStream : "
-	    << "no process associated with pid " << id;
-	throw(runtime_error(msg.str()));
-      }
-      if(!p->isRunning){
-	ostringstream msg;
-	msg << "ProcessManager::getInputStream : "
-	    << "process associated with pid " << id << " is not running";
-	throw(runtime_error(msg.str()));
-      }
+      throw_if(p==pe,"no process associated with pid "+std::to_string(id));
+      throw_if(!p->isRunning,"process associated with pid "+
+	       std::to_string(id)+" is not running");
       const auto p2 = this->inputs.find(id);
-      if(p2==this->inputs.end()){
-	ostringstream msg;
-	msg << "ProcessManager::getInputStream : "
-	    << "no stream associated with pid " << id;
-	throw(runtime_error(msg.str()));
-      }
-      return wstreamView<true>(p2->second);
+      throw_if(p2==this->inputs.end(),"no stream associated with pid "+
+	       std::to_string(id));
+      return {p2->second};
     } // end of ProcessManager::getInputStream
 
     ProcessManager::rstream
     ProcessManager::getOutputStream(const ProcessManager::ProcessId id) const
     {
-      using namespace std;
+      auto throw_if = [](const bool c, const std::string& msg){
+	raise_if(c,"ProcessManager::getOutputStream: "+msg);
+      };
       const auto p  = this->findProcess(id);
       const auto pe = this->processes.rend();
-      if(p==pe){
-	ostringstream msg;
-	msg << "ProcessManager::getInputStream : "
-	    << "no process associated with pid " << id;
-	throw(runtime_error(msg.str()));
-      }
-      if(!p->isRunning){
-	ostringstream msg;
-	msg << "ProcessManager::getInputStream : "
-	    << "process associated with pid " << id << " is not running";
-	throw(runtime_error(msg.str()));
-      }
+      throw_if(p==pe,"no process associated with pid "+std::to_string(id));
+      throw_if(!p->isRunning,"process associated with "
+	       "pid "+std::to_string(id)+" is not running");
       const auto p2 = this->outputs.find(id);
-      if(p2==this->outputs.end()){
-	ostringstream msg;
-	msg << "ProcessManager::getOutputStream : "
-	    << "no stream associated with pid " << id;
-	throw(runtime_error(msg.str()));
-      }
-      return rstreamView<true>(p2->second);
+      throw_if(p2==this->outputs.end(),
+	       "no stream associated with pid "+std::to_string(id));
+      return {p2->second};
     } // end of ProcessManager::getOutputStream
 
     void
@@ -726,7 +705,7 @@ namespace tfel
 			    const std::map<std::string,std::string>& e)
     {
       auto pid = this->createProcess(cmd,in,out,e);
-      const auto p  = static_cast<const ProcessManager&>(*this).findProcess(pid);
+      const auto p  = this->findProcess(pid);
       assert(p!=this->processes.rend());
       auto cond = p->isRunning;
       while(cond){
@@ -743,7 +722,7 @@ namespace tfel
 	std::ostringstream msg;
 	msg << "ProcessManager::execute : '" << cmd 
 	    << "' exited abnormally with value " << p->exitValue;
-	throw(SystemError(msg.str()));
+	raise<SystemError>(msg.str());
       }
     } // end of ProcessManager::execute
 
@@ -775,8 +754,7 @@ namespace tfel
       return p;
     } // end of ProcessManager::findProcess
 
-    void
-    ProcessManager::cleanUp()
+    void ProcessManager::cleanUp()
     {
       // clean up
       this->processes.clear();

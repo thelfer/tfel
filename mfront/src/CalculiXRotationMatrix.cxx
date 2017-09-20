@@ -53,7 +53,7 @@ namespace calculix
       // check whether p belongs to the cylindrical coordinate axis
       // if so, an arbitrary vector perpendicular to the axis can
       // be taken
-      if(dd2<=1.d-10){
+      if(dd2<=1.e-10){
 	if(std::abs(e3[0])>=eps){
 	  e1[1]=1;
 	  e1[2]=0;

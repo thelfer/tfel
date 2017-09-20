@@ -17,6 +17,7 @@
 
 #include<iostream>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Tests/XMLTestOutput.hxx"
 
 namespace tfel
@@ -25,25 +26,22 @@ namespace tfel
   namespace tests
   {
 
-    static
-    void replace_all(std::string& s,
-		     const char c,
-		     const std::string& n)
+    static void replace_all(std::string& s,
+			    const char c,
+			    const std::string& n)
     {
-      using namespace std;
-      string::size_type p  = 0u;
-      string::size_type ns = n.size();
+      std::string::size_type p  = 0u;
+      std::string::size_type ns = n.size();
       if((s.empty())||(ns==0)){
 	return;
       }
-      while((p=s.find(c,p))!=string::npos){
+      while((p=s.find(c,p))!=std::string::npos){
 	s.replace(p,1u,n);
 	p+=ns;
       }
     } // end of replace_all
 
-    static void
-    convert_to_xml(std::string& s)
+    static void convert_to_xml(std::string& s)
     {
       replace_all(s,'&',"&amp;");
       replace_all(s,'<',"&lt;");
@@ -63,75 +61,62 @@ namespace tfel
       }
     } // end of XMLTestOutput::XMLTestOutput
     
-    void
-    XMLTestOutput::beginTestSuite(const std::string& n)
+    void XMLTestOutput::beginTestSuite(const std::string& n)
     {
-      using namespace std;
-      if(this->os.is_open()){
-	string msg("XMLTestOutput::XMLTestOutput : ");
-	msg += "output file is not closed";
-	throw(runtime_error(msg));
-      }
-      ostringstream f;
+      raise_if(this->os.is_open(),"XMLTestOutput::beginTestSuite: "
+	       "output file is not closed");
+      std::ostringstream f;
       f << this->file;
       if(this->testsuite!=0u){
 	f << '-' << this->testsuite;
       }
       f << ".xml";
       ++(this->testsuite);
-      this->os.open(f.str().c_str());
-      if(!(this->os)){
-	string msg("XMLTestOutput::XMLTestOutput : ");
-	msg += "can't open file '"+f.str()+"'";
-	throw(runtime_error(msg));
-      }
-      string out(n);
+      this->os.open(f.str());
+      raise_if(!(this->os),"XMLTestOutput::XMLTestOutput: "
+	       "can't open file '"+f.str()+"'");
+      std::string out(n);
       convert_to_xml(out);
-      this->os << "<?xml version=\"1.0\" ?>" << endl;
-      this->os << "<testsuite name=\""+out+"\">" << endl;
+      this->os << "<?xml version=\"1.0\" ?>\n"
+	       << "<testsuite name=\""+out+"\">\n";
     } // end of XMLTestOutput::beginTestSuite
 
-    void
-    XMLTestOutput::addTest(const std::string& g,
-			   const std::string& n,
-			   const TestResult& r)
+    void XMLTestOutput::addTest(const std::string& g,
+				const std::string& n,
+				const TestResult& r)
     {
-      using namespace std;
-      TestResult::const_iterator p;
-      string gout(g);
-      string nout(n);
+      std::string gout(g);
+      std::string nout(n);
       convert_to_xml(nout);
       convert_to_xml(gout);
       this->os << "<testcase classname=\"" << gout 
 	       << "\" name=\"" << nout << "\" time=\""
-	       << r.duration() << "\">" << endl;
+	       << r.duration() << "\">\n";
       if(r.success()){
-	this->os << "<success>" << endl;
+	this->os << "<success>\n";
       } else {
-	this->os << "<failure>" << endl;
+	this->os << "<failure>\n";
       }
       if(!r.details().empty()){
-	string out(r.details());
+	std::string out(r.details());
 	convert_to_xml(out);
-	this->os << out << endl;
+	this->os << out << '\n';
       }
-      for(p=r.begin();p!=r.end();++p){
-	this->treatTest(*p);
+      for(const auto& t : r){
+	this->treatTest(t);
       }
       if(r.success()){
-	this->os << "</success>" << endl;
+	this->os << "</success>\n";
       } else {
-	this->os << "</failure>" << endl;
+	this->os << "</failure>\n";
       }
-      this->os << "</testcase>" << endl;
+      this->os << "</testcase>\n";
     } // end of XMLTestOutput::addTest
 
     void
     XMLTestOutput::treatTest(const TestResult& r)
     {
-      using namespace std;
-      TestResult::const_iterator p;
-      string out;
+      std::string out;
       if(r.success()){
 	out = "SUCCESS : ";
       } else {
@@ -139,16 +124,15 @@ namespace tfel
       }
       out += r.details();
       convert_to_xml(out);
-      this->os << out << endl;
-      for(p=r.begin();p!=r.end();++p){
-	this->treatTest(*p);
+      this->os << out << '\n';
+      for(const auto& t : r){
+	this->treatTest(t);
       }
     } // end of XMLTestOutput::treatTest
 
-    void
-    XMLTestOutput::endTestSuite(const TestResult&)
+    void XMLTestOutput::endTestSuite(const TestResult&)
     {
-      this->os << "</testsuite>" << std::endl;
+      this->os << "</testsuite>\n";
       this->os.close();
     } // end of XMLTestOutput::endTestSuite
   

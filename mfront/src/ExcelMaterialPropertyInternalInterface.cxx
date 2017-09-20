@@ -23,9 +23,7 @@ namespace mfront
     return "excel-internal";
   }
 
-  ExcelMaterialPropertyInternalInterface::ExcelMaterialPropertyInternalInterface()
-    : CMaterialPropertyInterface()
-  {}
+  ExcelMaterialPropertyInternalInterface::ExcelMaterialPropertyInternalInterface() = default;
 
   std::string
   ExcelMaterialPropertyInternalInterface::getGeneratedLibraryName(const MaterialPropertyDescription& mpd) const

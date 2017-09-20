@@ -27,8 +27,7 @@ struct test_Column final
     : tfel::tests::TestCase("TFEL/Check","Column")
   {}
 
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     const double eps = 1.e-14;
     const std::string f = "test_Column.res";

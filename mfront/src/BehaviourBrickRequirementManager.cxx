@@ -304,6 +304,6 @@ namespace mfront{
 
     RequirementManager::~RequirementManager() = default;
     
-  } // end of namspace bbrick
+  } // end of namespace bbrick
   
-} // end of namspace mfront
+} // end of namespace mfront

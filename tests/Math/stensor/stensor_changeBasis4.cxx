@@ -31,8 +31,7 @@ struct StensorChangeBasis4Test final
 			    "StensorChangeBasis4Test")
   {} // end of StensorChangeBasis4Test
 
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;

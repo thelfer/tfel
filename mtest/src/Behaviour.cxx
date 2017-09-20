@@ -203,7 +203,7 @@ namespace mtest
       }
     }
 #endif
-    throw_if(b.get()==nullptr,"unknown interface '"+in+"'");
+    throw_if(b==nullptr,"unknown interface '"+in+"'");
     return b;
   }
   

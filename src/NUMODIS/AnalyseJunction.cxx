@@ -244,6 +244,6 @@ namespace numodis
 	return computeHeuristicNonColinearHardeningCoefficient(nu,sij);
     }
     
-  }
+  } // end of namespace Dupuy2017
 
 } // end of namespace numodis

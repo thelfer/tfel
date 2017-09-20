@@ -25,8 +25,7 @@ struct IntegerParserTest final
   IntegerParserTest()
     : tfel::tests::TestCase("TFEL/Math","IntegerParserTest")
   {} // end of IntegerParserTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->check("x< 2 ? 3 : 1",{{1,3},{2,1},{5,1}});
     this->check("x<=2 ? 3 : 1",{{1,3},{2,3},{5,1}});

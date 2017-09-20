@@ -20,6 +20,7 @@
 #include<fstream>
 #include<stdexcept>
 #include<algorithm>
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/LibraryInformation.hxx"
 
 namespace tfel{
@@ -37,7 +38,7 @@ namespace tfel{
 					   const bool b)
     {
       auto throw_if = [](const bool c,const std::string& m){
-	if(c){throw(std::runtime_error("LibraryInformation::LibraryInformation: "+m));}
+	raise_if(c,"LibraryInformation::LibraryInformation: "+m);
       };
       auto throw_if_in_32bits = [throw_if]{
 	constexpr const auto c = sizeof(void*) == 4;

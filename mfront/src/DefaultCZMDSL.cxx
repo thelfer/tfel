@@ -22,7 +22,6 @@
 namespace mfront{
 
   DefaultCZMDSL::DefaultCZMDSL()
-    : DefaultDSLBase()
   {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("DefaultCZM");

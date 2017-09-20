@@ -418,4 +418,4 @@ namespace mtest{
   
   SingleStructureScheme::~SingleStructureScheme() = default;
   
-}
+} // end of namespace mtest

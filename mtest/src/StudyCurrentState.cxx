@@ -130,4 +130,4 @@ namespace mtest{
   
   StudyCurrentState::~StudyCurrentState() = default;
   
-}
+} // end of namespace mtest

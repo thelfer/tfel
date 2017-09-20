@@ -21,8 +21,7 @@ namespace tfel{
   namespace utilities {
   
     MTestDocParser::MTestDocParser(const std::string& f)
-      : MTest(),
-	file(f)
+      : file(f)
     {
       this->readInputFile(f,{},{});
     } // end of MTestDocParser::MTestDocParser

@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Kriging1D.hxx"
 
 namespace tfel
@@ -19,16 +20,15 @@ namespace tfel
   namespace math
   {
 
+    Kriging1D::Kriging1D() = default;
+
     Kriging1D::Kriging1D(const std::vector<double>& vx,
 			 const std::vector<double>& vy)
     {
-      using namespace std;
-      vector<double>::const_iterator px;
-      vector<double>::const_iterator py;
-      if(vx.size()!=vy.size()){
-	throw(KrigingErrorInvalidLength());
-      }
-      pair<double,double> n = KrigingUtilities::normalize(vx);
+      std::vector<double>::const_iterator px;
+      std::vector<double>::const_iterator py;
+      raise_if<KrigingErrorInvalidLength>(vx.size()!=vy.size());
+      const auto n = KrigingUtilities::normalize(vx);
       this->a = n.first;
       this->b = n.second;
       for(px=vx.begin(),py=vy.begin();
@@ -41,15 +41,11 @@ namespace tfel
     Kriging1D::Kriging1D(const tfel::math::vector<double>& vx,
 			 const tfel::math::vector<double>& vy)
     {
-      using namespace std;
-      using namespace tfel::math;
       using tfel::math::vector;
       vector<double>::const_iterator px;
       vector<double>::const_iterator py;
-      if(vx.size()!=vy.size()){
-	throw(KrigingErrorInvalidLength());
-      }
-      pair<double,double> n = KrigingUtilities::normalize(vx);
+      raise_if<KrigingErrorInvalidLength>(vx.size()!=vy.size());
+      const auto n = KrigingUtilities::normalize(vx);
       this->a = n.first;
       this->b = n.second;
       for(px=vx.begin(),py=vy.begin();
@@ -59,14 +55,12 @@ namespace tfel
       Kriging<1u,double>::buildInterpolation();
     }
   
-    double
-    Kriging1D::operator()(const double vx) const
+    double Kriging1D::operator()(const double vx) const
     {
       return Kriging<1u,double>::operator()(this->a*vx+this->b);
     } // end of Kriging1D::operator()
       
-    // Kriging1D::~Kriging1D()
-    // {} // end of Kriging1D::~Kriging1D
+    Kriging1D::~Kriging1D() = default;
 
   } // end of namespace math
 

@@ -32,8 +32,7 @@ struct RightCauchyGreenTensorTest final
     : tfel::tests::TestCase("TFEL/Math",
 			    "RightCauchyGreenTensorTest")
   {} // end of RightCauchyGreenTensorTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;  
     using namespace tfel::math;  
@@ -56,8 +55,7 @@ struct RightCauchyGreenTensorTest2 final
     : tfel::tests::TestCase("TFEL/Math",
 			    "RightCauchyGreenTensorTest2")
   {} // end of RightCauchyGreenTensorTest2
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;  
     using namespace tfel::math;  

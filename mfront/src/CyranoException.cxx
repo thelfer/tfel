@@ -35,8 +35,7 @@ namespace cyrano
   {} // end of CyranoException::CyranoException
     
   CyranoException::CyranoException(const CyranoException& e)
-    : std::exception(),
-      msg(e.msg)
+    : msg(e.msg)
   {} // end of CyranoException::CyranoException
 
   const char* 

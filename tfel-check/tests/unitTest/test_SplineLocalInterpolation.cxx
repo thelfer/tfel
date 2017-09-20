@@ -22,8 +22,7 @@ struct test_SplineLocalInterpolation
     : tfel::tests::TestCase("TFEL/Check","SplineLocalInterpolation")
   {}
 
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     TFEL_CONSTEXPR const double eps = 1.e-14;
     tfel::check::SplineLocalInterpolation i;

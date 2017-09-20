@@ -61,6 +61,7 @@
 #endif /* S_IFIFO */
 #endif 
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/SystemError.hxx"
 #include"TFEL/System/System.hxx"
 
@@ -398,14 +399,12 @@ namespace tfel
       if(::stat(d.c_str(),&dInfos)==-1){
 	systemCall::throwSystemError("systemCall::rmdir : can't stat directory "+d,errno);
       }
-      if(!S_ISDIR(dInfos.st_mode)){
-	string msg("systemCall::rmdir : '");
-	msg += d+"' is not a directory";
-	throw(runtime_error(msg));
-      }
-      DIR *dir = opendir(d.c_str());
+      raise_if(!S_ISDIR(dInfos.st_mode),"systemCall::rmdir: "
+	       "'"+d+"' is not a directory");
+      auto *dir = opendir(d.c_str());
       if(dir==nullptr){
-	systemCall::throwSystemError("systemCall::rmdir, can't open directory "+d,
+	systemCall::throwSystemError("systemCall::rmdir,"
+				     " can't open directory "+d,
 				     errno);
       }
       struct dirent *p;
@@ -415,13 +414,12 @@ namespace tfel
 	  o.emplace_back(p->d_name);
 	}
       }
-      vector<string>::const_iterator po;
-      for(po=o.begin();po!=o.end();++po){
+      for(const auto& fb : o){
 	struct stat pInfos;
-	string f;
-	f = d+"/"+*po;
+	const auto f = d+"/"+fb;
 	if(::stat(f.c_str(),&pInfos)==-1){
-	  systemCall::throwSystemError("systemCall::rmdir : can't stat '"+f+"'",errno);
+	  systemCall::throwSystemError("systemCall::rmdir: "
+				       "can't stat '"+f+"'",errno);
 	}
 	if(S_ISDIR(pInfos.st_mode)){
 	  systemCall::rmdir(f);
@@ -444,12 +442,10 @@ namespace tfel
        * page 5009
        */ 
       using namespace std;
-      const unsigned char * b = static_cast<const unsigned char*>(v);
+      auto b = static_cast<const unsigned char*>(v);
       size_t  r = s;
-      if(s>=SSIZE_MAX){
-	string msg("systemCall::write : invalid size (s>=SSIZE_MAX)");
-	throw(SystemError(msg));
-      }
+      raise_if<SystemError>(s>=SSIZE_MAX,"systemCall::write: "
+			    "invalid size (s>=SSIZE_MAX)");
       while(r>0){
 	ssize_t w;
 	while((w=::write(f,b,r))==-1){
@@ -469,7 +465,6 @@ namespace tfel
 
     std::string systemCall::fileType(const mode_t mode)
     {
-      using namespace std;
       if(S_ISDIR(mode)){
 	return "directory";
       } else if(S_ISREG(mode)){
@@ -492,27 +487,25 @@ namespace tfel
       return "unknown";
     } // end of systemCall::fileType
 
-    void
-    systemCall::copyDirectory(const std::string& src,
-			      const std::string& dest,
-			      const bool exists)
+    void systemCall::copyDirectory(const std::string& src,
+				   const std::string& dest,
+				   const bool exists)
     {
-      using namespace std;
       const auto& paths = systemCall::tokenize(src,'/');
-      string rdest;
-      if(exists){
-	rdest=dest+'/'+paths.back();
-      } else {
-	rdest=dest;
-      }
+      const auto rdest = [&exists,&dest,&paths]{
+	if(exists){
+	  return dest+'/'+paths.back();
+	}
+	return dest;
+      }();
       systemCall::mkdir(rdest);
 #if defined _WIN32 || defined _WIN64 
 #pragma message("windows port")
 #else
-      DIR *dir = opendir(src.c_str());
+      auto *dir = opendir(src.c_str());
       if(dir==nullptr){
-	systemCall::throwSystemError("systemCall::copy, can't open directory "+src,
-				     errno);
+	systemCall::throwSystemError("systemCall::copy, can't open"
+				     " directory '"+src+"'",errno);
       }
       struct dirent *p;
       while((p=readdir(dir))!=nullptr){
@@ -525,17 +518,17 @@ namespace tfel
 #endif
     } // end of systemCall::copyDirectory
 
-    void
-    systemCall::copyFile(const std::string& src,const std::string& dest)
+    void systemCall::copyFile(const std::string& src,
+			      const std::string& dest)
     {
       struct stat srcInfos;
       if(::stat(src.c_str(),&srcInfos)==-1){
-	systemCall::throwSystemError("systemCall::copyFile : can't stat file "+src,errno);
+	systemCall::throwSystemError("systemCall::copyFile: "
+				     "can't stat file "+src,errno);
       }
-      if(!S_ISREG(srcInfos.st_mode)){
-	throw(std::runtime_error("systemCall::copyFile : source '"+src+"' "
-				 "is not a regular file"));
-      }
+      raise_if(!S_ISREG(srcInfos.st_mode),
+	       "systemCall::copyFile: source '"+src+"' "
+	       "is not a regular file");
       // simple check
       if(src==dest){
 	return;
@@ -543,14 +536,12 @@ namespace tfel
       // do the copy
       std::ofstream out(dest.c_str(),std::ios_base::binary);
       std::ifstream in(src.c_str(),std::ios_base::binary);
-      if(!in){
-	throw(SystemError("systemCall::copyFile : can't open file "
-			  "'"+src+"' in read mode."));
-      }
-      if(!out){
-	throw(SystemError("systemCall::copyFile : can't open file "
-			  "'"+dest+"' in write mode."));
-      }
+      raise_if<SystemError>(!in,"systemCall::copyFile: "
+			    "can't open file '"+src+"' "
+			    "in read mode.");
+      raise_if<SystemError>(!out,"systemCall::copyFile: "
+			    "can't open file '"+dest+"' "
+			    "in write mode.");
       // local copy of the file
       if(srcInfos.st_size!=0){
 	// file is not empty
@@ -570,8 +561,8 @@ namespace tfel
 	auto ptr = static_cast<char *>(realloc(name,size));
 	if(ptr==nullptr){
 	  if(name!=nullptr){::free(name);}
-	  throw(SystemError("systemCall::getCurrentWorkingDirectory: "
-			    "out of memory"));
+	  raise<SystemError>("systemCall::getCurrentWorkingDirectory: "
+			     "out of memory");
 	}
 	name = ptr;
 #if defined _WIN32 || defined _WIN64 
@@ -602,7 +593,7 @@ namespace tfel
 	auto ptr = static_cast<char *>(realloc(name,size));
 	if(ptr==nullptr){
 	  if(name!=nullptr){::free(name);}
-	  throw(SystemError("systemCall::getHostName: out of memory"));
+	  raise<SystemError>("systemCall::getHostName: out of memory");
 	}
 	name = ptr;
 	if(::gethostname(name,size)==0){
@@ -628,7 +619,7 @@ namespace tfel
 
     std::string systemCall::getAbsolutePath(const std::string& f){
       auto throw_if = [](const bool c,const std::string& m){
-	if(c){throw(SystemError("systemCall::getAbsolutePath: "+m));}
+	raise_if<SystemError>(c,"systemCall::getAbsolutePath: "+m);
       };
 #if (defined _WIN32 || defined _WIN64 ) && (! defined __CYGWIN__)
       throw_if(::access(f.c_str(),4)!=0,"no existing path '"+f+"'");

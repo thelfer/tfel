@@ -35,8 +35,7 @@ struct STensorTest8_2D final
     : tfel::tests::TestCase("TFEL/Math",
 			    "STensorTest8-2D")
   {} // end of STensorTest8
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;
@@ -116,8 +115,7 @@ struct STensorTest8_3D final
     : tfel::tests::TestCase("TFEL/Math",
 			    "STensorTest8-3D")
   {} // end of STensorTest8
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;

@@ -12,6 +12,7 @@
  */
 
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/General/DifferenceRandomAccessIterator.hxx"
 
 namespace tfel{
@@ -19,9 +20,9 @@ namespace tfel{
   namespace math{
 
     void DifferenceRandomAccessIteratorBase::throwInconsistentIteratorDifference(){
-      throw(std::runtime_error("DifferenceRandomAccessIteratorBase::"
-			       "throwInconsistentIteratorDifference: "
-			       "inconsistent iterator difference"));
+      raise("DifferenceRandomAccessIteratorBase::"
+	    "throwInconsistentIteratorDifference: "
+	    "inconsistent iterator difference");
     } // end of DifferenceRandomAccessIteratorBase::throwNullStrideException
     
   } // end of namespace math

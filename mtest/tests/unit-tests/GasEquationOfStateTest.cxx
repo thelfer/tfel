@@ -29,8 +29,7 @@ struct GasEquationOfStateTest final
   GasEquationOfStateTest()
     : tfel::tests::TestCase("MTest","GasEquationOfStateTest")
     {} // end of GasEquationOfStateTest
-  virtual tfel::tests::TestResult
-    execute() override
+  tfel::tests::TestResult execute() override
   {
     this->test1();
     this->test2();

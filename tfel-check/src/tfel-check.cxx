@@ -59,13 +59,13 @@ namespace tfel{
        * \brief method called while parsing unregistred command line
        * arguments.
        */
-      virtual void treatUnknownArgument() override;
+      void treatUnknownArgument() override;
       //! \brief register call backs associated to command line arguments
       virtual void registerArgumentCallBacks();
       //! \return the current version of `tfel-check`
-      virtual std::string getVersionDescription() const override;
+      std::string getVersionDescription() const override;
         //! \return the description of the usage of `tfel-check`
-      virtual std::string getUsageDescription() const override;
+      std::string getUsageDescription() const override;
       //! list of configuration files
       std::vector<std::string> configFiles;  
       //! list of input files
@@ -133,7 +133,6 @@ namespace tfel{
     }
     
     TFELCheck::TFELCheck(const int argc, const char *const *const argv)
-      : tfel::utilities::ArgumentParserBase<TFELCheck>()
     {
       this->setArguments(argc,argv);
       this->registerArgumentCallBacks();

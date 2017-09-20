@@ -30,8 +30,7 @@ struct test_Test final
   test_Test()
     : tfel::tests::TestCase("TFEL/Check","Test")
   {}
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     std::ofstream file{"test_Test.res"};
     if (!file) {

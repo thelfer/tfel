@@ -28,6 +28,7 @@
 #include<sys/param.h>
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/System.hxx"
 #include"TFEL/System/RecursiveFind.hxx"
 
@@ -79,7 +80,7 @@ namespace tfel
 		       const unsigned short mdepth)
     {
       auto throw_if = [](const bool c,const std::string& m){
-	if(c){throw(std::runtime_error("recursiveFind: "+m));}
+	raise_if(c,"recursiveFind: "+m);
       };
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       if(depth>mdepth){
@@ -89,10 +90,8 @@ namespace tfel
       WIN32_FIND_DATA fh; // File information
       auto f = ::FindFirstFile((name + "\\*.*").c_str(), &fh);
       if(f==INVALID_HANDLE_VALUE){
-	if(b){
-	  throw(SystemError("tfel::system::recursiveFind: "
-			    "can't open directory '"+name+"'"));
-	}
+	raise_if<SystemError>(b,"tfel::system::recursiveFind: "
+			      "can't open directory '"+name+"'");
 	return;
       }
       try{

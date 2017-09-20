@@ -23,8 +23,7 @@ struct test_SplineInterpolation
     : tfel::tests::TestCase("TFEL/Check","SplineInterpolation")
   {}
 
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     constexpr const double eps = 1.e-14;
     tfel::check::SplineInterpolation i;

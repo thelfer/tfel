@@ -29,6 +29,8 @@ namespace tfel
       : private Kriging<1u,double>,
 	private KrigingUtilities
     {
+
+      Kriging1D();
       
       Kriging1D(const std::vector<double>&,
 		const std::vector<double>&);
@@ -36,10 +38,9 @@ namespace tfel
       Kriging1D(const tfel::math::vector<double>&,
 		const tfel::math::vector<double>&);
   
-      double
-      operator()(const double) const;
+      double operator()(const double) const;
       
-      Kriging1D() = default;
+      ~Kriging1D();
 
     private:
 

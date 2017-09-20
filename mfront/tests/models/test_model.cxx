@@ -30,8 +30,7 @@ struct B4CConcentrationModelTest final
   B4CConcentrationModelTest()
     : tfel::tests::TestCase("MFront/Model","B4CConcentrationModelTest")
     {} // end of B4CConcentrationModelTest
-  virtual tfel::tests::TestResult
-    execute() override
+  tfel::tests::TestResult execute() override
   {
     this->test1();
     this->test2();

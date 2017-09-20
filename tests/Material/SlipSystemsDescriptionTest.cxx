@@ -28,8 +28,7 @@ struct SlipSystemsDescriptionTest final
     : tfel::tests::TestCase("TFEL/Material",
 			    "SlipSystemsDescriptionTest")
   {} // end of SlipSystemsDescription
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->checkFCC();
     this->checkHCP();

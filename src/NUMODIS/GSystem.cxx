@@ -73,4 +73,4 @@ namespace numodis
     
   }
 
-} // end of NUMODIS
+} // end of namespace NUMODIS

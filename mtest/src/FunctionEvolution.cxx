@@ -85,4 +85,4 @@ namespace mtest{
   
   FunctionEvolution::~FunctionEvolution() = default;
 
-}
+} // end of namespace mtest

@@ -33,8 +33,7 @@ struct qtTest final
   qtTest()
     : tfel::tests::TestCase("TFEL/Math","qt")
   {} // end of qtTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace tfel::math; 
     TFEL_CONSTEXPR qt<Mass> m1(100.);

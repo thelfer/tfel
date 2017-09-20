@@ -24,35 +24,27 @@ namespace tfel
   namespace tests
   {
     
-    TestSuite::TestSuite()
-      : tests(),
-	sname()
-    {} // end of TestSuite::TestSuite
+    TestSuite::TestSuite() = default;
 
     TestSuite::TestSuite(const std::string& n)
-      : tests(),
-	sname(n)
+      : sname(n)
     {} // end of TestSuite::TestSuite
 
     TestSuite::TestSuite(const char * const n)
-      : tests(),
-	sname(n)
+      : sname(n)
     {} // end of TestSuite::TestSuite
 
-    std::string
-    TestSuite::name() const
+    std::string TestSuite::name() const
     {
       return this->sname;
     } // end of TestSuite::name
 
-    void
-    TestSuite::add(const TestSuite::TestPtr& t)
+    void TestSuite::add(const TestSuite::TestPtr& t)
     {
       this->tests.push_back(t);
     } // end of TestSuite::execute
 
-    TestResult
-    TestSuite::execute()
+    TestResult TestSuite::execute()
     {
       using namespace std;
       using namespace std::chrono;

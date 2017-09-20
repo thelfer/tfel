@@ -15,6 +15,7 @@
 #include<cstring>
 #include<stdexcept>
 #include<algorithm>
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"TFEL/System/ExternalBehaviourDescription.hxx"
 
@@ -34,8 +35,10 @@ namespace tfel
 							       const std::string& h)
     {
       auto throw_if = [l,f](const bool c,const std::string& m){
-	if(c){throw(std::runtime_error("ExternalBehaviourDescription::ExternalBehaviourDescription: "
-				       +m+" for behaviour '"+l+"' in library '"+l+"'"));}
+	raise_if(c,"ExternalBehaviourDescription::"
+		 "ExternalBehaviourDescription: "
+		 +m+" for behaviour '"+l+"' "
+		 "in library '"+l+"'");
       };
       auto& elm = ExternalLibraryManager::getExternalLibraryManager();
       const auto hypotheses = elm.getSupportedModellingHypotheses(l,f);
@@ -185,7 +188,7 @@ extern "C"{
 	if (length > n){
 	  length = n;
 	}
-	char *copy = static_cast<char *>(::malloc(length + 1));
+	auto copy = static_cast<char *>(::malloc(length + 1));
 	if (copy == nullptr){
 	  return nullptr;
 	}

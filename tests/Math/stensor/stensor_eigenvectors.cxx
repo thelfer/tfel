@@ -43,8 +43,7 @@ struct StensorComputeEigenvectors final
 			    "StensorComputeEigenvectors")
   {} // end of StensorComputeEigenvectors
 
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->test<float>();
     this->test<double>();

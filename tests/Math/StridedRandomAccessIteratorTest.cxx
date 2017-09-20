@@ -36,8 +36,7 @@ struct StridedRandomAccessIteratorTest final
     : tfel::tests::TestCase("TFEL/Math",
 			    "StridedRandomAccessIteratorTest")
   {} // end of StridedRandomAccessIteratorTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->test1();
     this->test2();

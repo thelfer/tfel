@@ -25,8 +25,7 @@ struct RateOfDeformationDerivativeTest final
     : tfel::tests::TestCase("TFEL/Math",
 			    "RateOfDeformationDerivativeTest")
   {} // end of RateOfDeformationDerivativeTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->execute<1>();
     this->execute<2>();

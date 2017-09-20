@@ -37,8 +37,7 @@ struct FiniteStrainBehaviourTangentOperator13 final
     : tfel::tests::TestCase("TFEL/Material",
 			    "FiniteStrainBehaviourTangentOperator13")
   {} // end of FiniteStrainBehaviourTangentOperator13
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     for(const auto& r : {FE_DOWNWARD,FE_UPWARD,FE_TONEAREST,FE_TOWARDZERO}){
       this->check1<1u,double>(r);

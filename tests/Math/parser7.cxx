@@ -51,20 +51,17 @@ struct TestFunction final
     assert(e>0);
   } // end of TestFunction
 
-  virtual std::string
-  name() const override
+  std::string name() const override
   {
     return fn;
   }
 
-  virtual std::string
-  classname() const override
+  std::string classname() const override
   {
     return "TFEL/Math";
   }
 
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     using namespace std;
     using namespace tfel::math;

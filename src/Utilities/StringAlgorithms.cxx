@@ -12,6 +12,7 @@
  */
 
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 
 namespace tfel
@@ -139,8 +140,9 @@ namespace tfel
     template<>
     double convert<>(const std::string& s){
       auto throw_if = [&s](const bool b){
-	if(b){throw(std::invalid_argument("tfel::utilities::convert: could not "
-					  "convert '"+s+"' to double"));}
+	raise_if<std::invalid_argument>(b,"tfel::utilities::convert: "
+					"could not convert '"+s+"' "
+					"to double");
       };
       throw_if(s.empty());
       std::size_t p;
@@ -152,8 +154,9 @@ namespace tfel
     template<>
     long double convert<>(const std::string& s){
       auto throw_if = [&s](const bool b){
-	if(b){throw(std::invalid_argument("tfel::utilities::convert: could not "
-					  "convert '"+s+"' to long double"));}
+	raise_if<std::invalid_argument>(b,"tfel::utilities::convert: "
+					"could not convert '"+s+"' "
+					"to long double");
       };
       throw_if(s.empty());
       std::size_t p;

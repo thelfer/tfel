@@ -24,7 +24,6 @@
 namespace mfront{
 
   DefaultDSLBase::DefaultDSLBase()
-    : BehaviourDSLBase<DefaultDSLBase>()
   {
     this->registerNewCallBack("@ProvidesTangentOperator",
 			      &DefaultDSLBase::treatProvidesTangentOperator);

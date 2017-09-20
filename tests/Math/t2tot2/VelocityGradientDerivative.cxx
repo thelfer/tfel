@@ -30,8 +30,7 @@ struct VelocityGradientDerivativeTest final
     : tfel::tests::TestCase("TFEL/Math",
 			    "VelocityGradientDerivativeTest")
   {} // end of VelocityGradientDerivativeTest
-  virtual tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->execute<1>();
     this->execute<2>();
