@@ -41,7 +41,7 @@ namespace mfront{
     this->ghMutex = CreateMutex(nullptr,   // default security attributes
 				FALSE,     // initially not owned
 				"mfront"); // named mutex
-    tfel::raise_if(this->ghMutex == nullptr
+    tfel::raise_if(this->ghMutex == nullptr,
 		   "MFrontLock::MFrontLock: "
 		   "semaphore creation failed");
 #else
@@ -63,7 +63,6 @@ namespace mfront{
     tfel::raise_if(dwWaitResult==WAIT_ABANDONED,
 		   "MFrontLock::MFrontLock: "
 		   "semaphore can't be aquired");
-    }
 #else
     tfel::raise_if(::sem_wait(this->l)==-1,
 		   "MFrontLock::MFrontLock: "
