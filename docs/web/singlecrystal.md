@@ -360,7 +360,7 @@ for(const unsigned short i=0;i!=Nss2;++i){
 }
 ~~~~
 
-This latter way can be more efficient that using the global `offset`
+This latter way can be more efficient than using the global `offset`
 method depending on the compiler (and the compiler options used).
 
 # References

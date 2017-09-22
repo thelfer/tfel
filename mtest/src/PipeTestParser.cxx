@@ -32,6 +32,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
 #include"MFront/MFrontLogStream.hxx"
 
@@ -90,9 +91,9 @@ namespace mtest
 	tokenizer.parseString(c);
 
       } catch(std::exception& e){
-	throw(std::runtime_error("PipeTestParser::execute: "
-				 "error while parsing external command "
-				 "'"+c+"'\n"+std::string(e.what())));
+	tfel::raise("PipeTestParser::execute: "
+		    "error while parsing external command "
+		    "'"+c+"'\n"+std::string(e.what()));
       }
       this->tokens.insert(this->tokens.begin(),tokenizer.begin(),tokenizer.end());
     }
@@ -116,7 +117,7 @@ namespace mtest
       msg << "PipeTestParser::execute : invalid keyword '"
 	  << p->value << "'. Error at line " 
 	  << p->line<< ".";
-      throw(std::runtime_error(msg.str()));
+      tfel::raise(msg.str());
     }
   } // end of PipeTestParser::execute
 
@@ -140,7 +141,7 @@ namespace mtest
       msg << "PipeTestParser::treatKeyword: error while "
 	  << "parsing file '" << this->file << "' at line '"
 	  << line << "'.\n" << e.what();
-      throw(std::runtime_error(msg.str()));
+      tfel::raise(msg.str());
     }
     return true;
   } // end of PipeTestParser::treatKeyword
@@ -204,10 +205,9 @@ namespace mtest
   void PipeTestParser::displayKeyWordDescription(const std::string& k) const
   {
     auto keys  = this->getKeyWordsList();
-    if(std::find(keys.begin(),keys.end(),k)==keys.end()){
-      throw(std::runtime_error("PipeTestParser::displayKeyWordDescription: "
-			       "unknown keyword '"+k+"'"));
-    }
+    tfel::raise_if(std::find(keys.begin(),keys.end(),k)==keys.end(),
+		   "PipeTestParser::displayKeyWordDescription: "
+		   "unknown keyword '"+k+"'");
     const auto f = SchemeParserBase::getDocumentationFilePath("ptest",k);
     if(f.empty()){
       std::cout << "no description available for keyword '"
@@ -281,10 +281,10 @@ namespace mtest
     } else if(h=="ImposedOuterRadius"){
       t.setRadialLoading(mtest::PipeTest::IMPOSEDOUTERRADIUS);
     } else {
-      throw(std::runtime_error("PipeTestParser::handleRadialLoading: "
-			       "invalid loading type ('"+h+"').\n"
-			       "Valid modelling hypothesis are "
-			       "'ImposedPressure' and 'ImposedOuterRadius'"));
+      tfel::raise("PipeTestParser::handleRadialLoading: "
+		  "invalid loading type ('"+h+"').\n"
+		  "Valid modelling hypothesis are "
+		  "'ImposedPressure' and 'ImposedOuterRadius'");
     }
     this->checkNotEndOfLine("PipeTestParser::handleRadialLoading",
 			    p,this->tokens.end());
@@ -306,11 +306,11 @@ namespace mtest
     } else if(h=="ImposedAxialGrowth"){
       t.setAxialLoading(mtest::PipeTest::IMPOSEDAXIALGROWTH);
     } else {
-      throw(std::runtime_error("PipeTestParser::handleAxialLoading: "
-			       "invalid pipe modelling hypothesis ('"+h+"').\n"
-			       "Valid modelling hypothesis are "
-			       "'None', 'ImposedAxialGrowth', "
-			       "'ImposedAxialForce' and 'EndCapEffect'"));
+      tfel::raise("PipeTestParser::handleAxialLoading: "
+		  "invalid pipe modelling hypothesis ('"+h+"').\n"
+		  "Valid modelling hypothesis are "
+		  "'None', 'ImposedAxialGrowth', "
+		  "'ImposedAxialForce' and 'EndCapEffect'");
     }
     this->checkNotEndOfLine("PipeTestParser::handleAxialLoading",
 			    p,this->tokens.end());
@@ -363,10 +363,10 @@ namespace mtest
     } else if(e=="Cubic"){
       t.setElementType(PipeMesh::CUBIC);
     } else {
-      throw(std::runtime_error("PipeTest::setElementType: "
-			       "invalid element type ('"+e+"').\n"
-			       "Valid element type are "
-			       "'Linear' and 'Quadratic'"));
+      tfel::raise("PipeTest::setElementType: "
+		  "invalid element type ('"+e+"').\n"
+		  "Valid element type are "
+		  "'Linear' and 'Quadratic'");
     }
     this->checkNotEndOfLine("PipeTestParser::handleElementType",
 			    p,this->tokens.end());
@@ -389,8 +389,8 @@ namespace mtest
     if(p->value=="true"){
       t.performSmallStrainAnalysis();
     } else if(p->value!="false"){
-      throw(std::runtime_error("PipeTestParser::handlePerformSmallStrainAnalysis: "
-			       "unexpected token '"+p->value+"'"));
+      tfel::raise("PipeTestParser::handlePerformSmallStrainAnalysis: "
+		  "unexpected token '"+p->value+"'");
     }
     ++p;
     this->checkNotEndOfLine("PipeTestParser::handlePerformSmallStrainAnalysis",
@@ -523,10 +523,9 @@ namespace mtest
 				   p,this->tokens.end());	
 	  this->checkNotEndOfLine("PipeTestParser::handleProfile",p,
 				  this->tokens.end());
-	  if(p->value=="}"){
-	    throw(std::runtime_error("PipeTestParser::handleProfile: "
-				     "unexpected token '}'"));
-	  }
+	  tfel::raise_if(p->value=="}",
+			 "PipeTestParser::handleProfile: "
+			 "unexpected token '}'");
 	}
       }
       this->readSpecifiedToken("PipeTestParser::handleProfile","}",
@@ -547,10 +546,9 @@ namespace mtest
 			    this->tokens.end());
     const auto& type = p->value;
     bool profile = false;
-    if(type!="file"){
-      throw(std::runtime_error("PipeTestParser::handleTest: "
-			       "invalid test type '"+type+"'"));
-    }
+    tfel::raise_if(type!="file",
+		   "PipeTestParser::handleTest: "
+		   "invalid test type '"+type+"'");
     ++p;
     if(p->value==","){
       ++p;
@@ -561,8 +559,8 @@ namespace mtest
       } else if(p->value=="profile"){
 	profile = true;
       } else {
-	throw(std::runtime_error("PipeTestParser::handleTest: "
-				 "invalid test option '"+p->value+"'"));
+	tfel::raise("PipeTestParser::handleTest: "
+		    "invalid test option '"+p->value+"'");
       }
       ++p;
       this->checkNotEndOfLine("PipeTestParser::handleTest",p,
@@ -577,7 +575,7 @@ namespace mtest
       auto variables = std::map<std::string,unsigned int>{}; 
       if(p->flag==tfel::utilities::Token::String){
 	const auto& v = this->readString(p,this->tokens.end());
-	const unsigned int c = this->readUnsignedInt(p,this->tokens.end());
+	const auto c = this->readUnsignedInt(p,this->tokens.end());
 	variables.insert({v,c});
       } else {
 	this->readSpecifiedToken("PipeTestParser::handleTest","{",
@@ -597,20 +595,17 @@ namespace mtest
 				     p,this->tokens.end());	
 	    this->checkNotEndOfLine("PipeTestParser::handleTest",p,
 				    this->tokens.end());
-	    if(p->value=="}"){
-	      throw(std::runtime_error("PipeTestParser::handleTest: "
-				       "unexpected token '}'"));
-	    }
+	    tfel::raise_if(p->value=="}",
+			   "PipeTestParser::handleTest: "
+			   "unexpected token '}'");
 	  }
 	}
 	this->readSpecifiedToken("PipeTestParser::handleTest","}",
 				 p,this->tokens.end());	
       }
       const real eps = this->readDouble(t,p);
-      if(eps<0){
-	throw(std::runtime_error("PipeTestParser::handleTest: "
-				 "invalid criterion value"));
-      }
+      tfel::raise_if(eps<0,"PipeTestParser::handleTest: "
+		     "invalid criterion value");
       const tfel::utilities::TextData data(f);
       if(profile){
 	for(const auto& v : variables){
@@ -624,8 +619,8 @@ namespace mtest
 	}
       }
     } else {
-      throw(std::runtime_error("PipeTestParser::handleTest: "
-			       "invalid test type '"+type+"'"));
+      tfel::raise("PipeTestParser::handleTest: "
+		  "invalid test type '"+type+"'");
     }
     this->readSpecifiedToken("PipeTestParser::handleTest",";",
 			     p,this->tokens.end());

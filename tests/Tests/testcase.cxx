@@ -21,6 +21,7 @@
 #include<fstream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
@@ -36,9 +37,9 @@ struct MyTest final
     TFEL_TESTS_ASSERT(true);
     TFEL_TESTS_ASSERT(1!=2);
     TFEL_TESTS_CALLMETHOD(test);
-    TFEL_TESTS_CHECK_THROW(throw(std::runtime_error("test")),
+    TFEL_TESTS_CHECK_THROW(tfel::raise("test"),
 			  std::runtime_error);
-    TFEL_TESTS_CHECK_THROW(throw(std::runtime_error("test")),
+    TFEL_TESTS_CHECK_THROW(tfel::raise("test"),
 			  std::exception);
     TFEL_TESTS_CHECK_EQUAL(std::string("test"),"test");
     return this->result;
@@ -55,16 +56,9 @@ TFEL_TESTS_GENERATE_PROXY(MyTest,"TestSuite1");
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main()
 {
-  using namespace std;
-  using namespace tfel::tests;
-  ofstream f("testcase.txt");
-  if(!f){
-    string msg("can't open file 'testproxy.txt'");
-    throw(runtime_error(msg));
-  }
-  auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(f,false);
-  TestResult r = manager.execute();
-  assert(r.success());
-  return EXIT_SUCCESS;
+  std::ofstream f("testcase.txt");
+  tfel::raise_if(!f,"can't open file 'testproxy.txt'");
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(f,false);
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 } // end of main

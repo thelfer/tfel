@@ -102,7 +102,7 @@ Tref.setDefaultValue(293.15);
   const stress tKeq = tKeq_tr-mu*trace(be_tr)*dp;
   // deviator of the Kirchhoff stress
   StressStensor dev_tK;
-  if(tKeq_tr>1.e-8*mu){
+  if(tKeq_tr>stress(1.e-8*mu)){
     dev_tK = (tKeq/tKeq_tr)*mu*deviator(be_tr);
   } else {
     dev_tK = StressStensor(stress(0));

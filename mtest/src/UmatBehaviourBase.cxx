@@ -399,12 +399,12 @@ namespace mtest
 	  c.push_back("Tt");
 	}
       } else {
-	throw(runtime_error("UmatBehaviourBase::getThermodynamicForcesComponents: "
-			    "unsupported modelling hypothesis"));
+	tfel::raise("UmatBehaviourBase::getThermodynamicForcesComponents: "
+		    "unsupported modelling hypothesis");
       }
     } else {
-      throw(runtime_error("UmatBehaviourBase::getThermodynamicForcesComponents: "
-			  "unsupported behaviour type"));
+      tfel::raise("UmatBehaviourBase::getThermodynamicForcesComponents: "
+		  "unsupported behaviour type");
     }
     return c;
   } // end of UmatBehaviourBase::getThermodynamicForcesComponents
@@ -420,7 +420,7 @@ namespace mtest
       msg << "UmatBehaviourBase::getDrivingVariableComponentPosition: "
 	"component '" << cname << "' is not valid. Valid components are:\n";
       copy(c.begin(),c.end(),ostream_iterator<string>(msg," "));
-      throw(runtime_error(msg.str()));
+      tfel::raise(msg.str());
     }
     return static_cast<unsigned short>(p-c.begin());
   } // end of UmatBehaviourBase::getDrivingVariableComponentPosition
@@ -428,21 +428,19 @@ namespace mtest
   unsigned short
   UmatBehaviourBase::getThermodynamicForceComponentPosition(const std::string& cname) const
   {
-    using namespace std;
     const auto c = this->getThermodynamicForcesComponents();
-    auto p = find(c.begin(),c.end(),cname);
+    auto p = std::find(c.begin(),c.end(),cname);
     if(p==c.end()){
-      ostringstream msg;
+      std::ostringstream msg;
       msg << "UmatBehaviourBase::getThermodynamicForceComponentPosition: "
 	"component '" << cname << "' is not valid. Valid components are:\n";
-      copy(c.begin(),c.end(),ostream_iterator<string>(msg," "));
-      throw(runtime_error(msg.str()));
+      std::copy(c.begin(),c.end(),std::ostream_iterator<std::string>(msg," "));
+      tfel::raise(msg.str());
     }
     return static_cast<unsigned short>(p-c.begin());
   } // end of UmatBehaviourBase::getThermodynamicForceComponentPosition
 
-  unsigned short
-  UmatBehaviourBase::getSymmetryType() const
+  unsigned short UmatBehaviourBase::getSymmetryType() const
   {
     if(this->stype==0){
       return 0u;

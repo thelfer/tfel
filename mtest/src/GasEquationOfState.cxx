@@ -12,6 +12,7 @@
  */
 
 #include<limits>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Evaluator.hxx"
 #include"TFEL/Math/Parser/ConstantExternalFunction.hxx"
 #include"MTest/Evolution.hxx"
@@ -32,8 +33,8 @@ namespace mtest{
     {
       using Constant = tfel::math::parser::ConstantExternalFunction;
       auto throw_if = [](const bool c, const std::string& msg){
-	if(c){throw(std::runtime_error("GasEquationOfStateMembers::"
-				       "GasEquationOfStateMembers: "+msg));}
+	tfel::raise_if(c,"GasEquationOfStateMembers::"
+		       "GasEquationOfStateMembers: "+msg);
       };
       std::set<std::string> params;
       this->s.getParametersNames(params);
@@ -71,11 +72,9 @@ namespace mtest{
 	iter(n,dn);
 	++i;
       }
-      if(i==imax){
-	throw(std::runtime_error("GasEquationOfStateMembers::computeNumberOfMoles: "
-				 "can't determine number of moles, "
-				 "maximum number of iterations reached"));
-      }
+      tfel::raise_if(i==imax,"GasEquationOfStateMembers::computeNumberOfMoles: "
+		     "can't determine number of moles, "
+		     "maximum number of iterations reached");
       return n;
     }
     /*!
@@ -100,11 +99,9 @@ namespace mtest{
 	iter(P,dP);
 	++i;
       }
-      if(i==imax){
-	throw(std::runtime_error("GasEquationOfStateMembers::computePressure: "
-				 "can't determine pressure, "
-				 "maximum number of iterations reached"));
-      }
+      tfel::raise_if(i==imax,"GasEquationOfStateMembers::computePressure: "
+		     "can't determine pressure, "
+		     "maximum number of iterations reached");
       return P;
     }
     /*!

@@ -87,8 +87,8 @@ namespace mtest{
     } else if(p->value=="false"){
       b = false;
     } else {
-      throw(std::runtime_error("SingleStructureSchemeParser::handleHandleThermalExpansion : "
-			       "unexpected token '"+p->value+"'"));
+      tfel::raise("SingleStructureSchemeParser::handleHandleThermalExpansion : "
+		  "unexpected token '"+p->value+"'");
     }
     ++p;
     this->readSpecifiedToken("SingleStructureSchemeParser::handleHandleThermalExpansion",
