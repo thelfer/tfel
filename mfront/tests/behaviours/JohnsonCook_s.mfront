@@ -56,8 +56,8 @@
     return true;
   }
   // Flow direction
-  const auto seq_  = sigmaeq(sig);
-  const auto iseq  = 1/max(seq_,seq_eps*young);
+  const auto seq   = sigmaeq(sig);
+  const auto iseq  = 1/max(seq,stress(seq_eps*young));
   const auto n_    = eval(3*deviator(sig)*(iseq/2));
   // Plastic increment
   const auto p_ = max(p_eps,p+theta*dp);
@@ -66,7 +66,7 @@
   const auto rp      = A+p_*ppow;
   const auto drp_ddp = theta*n*ppow;
   // Implicit system of equations to solve for dp and deel
-  fp           = (seq_-rp)/young;
+  fp           = (seq-rp)/young;
   dfp_ddeel    = 2*(mu/young)*theta*n_;
   dfp_ddp      = -drp_ddp/young;
   feel        += dp*n_;

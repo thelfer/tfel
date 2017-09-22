@@ -470,7 +470,7 @@ namespace mfront{
     }
     this->bd.setCode(agps,BehaviourData::Integrator,
 		     integrator,BehaviourData::CREATEORAPPEND,
-		     BehaviourData::AT_END);
+		     BehaviourData::AT_BEGINNING);
   }
 
   void StandardElasticityBrick::addPlaneStressSupport() const{
@@ -539,7 +539,7 @@ namespace mfront{
     }
     this->bd.setCode(ps,BehaviourData::Integrator,
 		     integrator,BehaviourData::CREATEORAPPEND,
-		     BehaviourData::AT_END);
+		     BehaviourData::AT_BEGINNING);
   }
 
   void StandardElasticityBrick::addGenericTangentOperatorSupport() const{

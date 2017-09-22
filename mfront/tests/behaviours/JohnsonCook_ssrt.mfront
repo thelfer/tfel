@@ -53,7 +53,7 @@
 @LocalVariable real   itmt0;
 @LocalVariable stress Fel;
 
-@StaticVariable real   p_eps = 1.e-13;
+@StaticVariable real p_eps   = 1.e-13;
 @StaticVariable real seq_eps = 1.e-13;
 
 /* Initialize Lame coefficients */
@@ -78,12 +78,9 @@
     return true;
   }
   // Flow direction
-  const auto seq  = sigmaeq(sig);
-  const auto iseq = 1/max(seq,seq_eps*young);
-  const auto n_   = eval(3*deviator(sig)*(iseq/2));
-  // stress       seq_ = max(sigmaeq(sig),seq_eps*young);
-  // const Stensor  n_ = 1.5*deviator(sig)/seq_;
-
+  const auto seq   = sigmaeq(sig);
+  const auto iseq  = 1/max(seq,stress(seq_eps*young));
+  const auto n_    = eval(3*deviator(sig)*(iseq/2));
   // Plastic increment
   const auto p_ = max(p_eps,p+theta*dp);
 

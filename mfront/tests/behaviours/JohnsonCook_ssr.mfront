@@ -40,7 +40,7 @@
 @LocalVariable strain e0Dot_dt;
 @LocalVariable stress Fel;
 
-@StaticVariable real   p_eps = 1.e-13;
+@StaticVariable real p_eps   = 1.e-13;
 @StaticVariable real seq_eps = 1.e-13;
 
 /* Initialize Lame coefficients */
@@ -62,7 +62,7 @@
   }
   // Flow direction
   const auto seq  = sigmaeq(sig);
-  const auto iseq  = 1/max(seq,seq_eps*young);
+  const auto iseq = 1/max(seq,stress(seq_eps*young));
   const auto n_    = eval(3*deviator(sig)*(iseq/2));
   // Plastic increment
   const auto p_ = max(p_eps,p+theta*dp);

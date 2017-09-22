@@ -67,9 +67,9 @@ Temp.setEntryName("Adiabatic_heating_dT");
 @LocalVariable stress      Fel;
 @LocalVariable real        rhoc;
 
-@StaticVariable real    T_eps = 1.e-12;
-@StaticVariable real  seq_eps = 1.e-12;
-@StaticVariable real fb       = 1000.;
+@StaticVariable real T_eps   = 1.e-12;
+@StaticVariable real seq_eps = 1.e-12;
+@StaticVariable real fb      = 1000.;
 
 @InitLocalVariables{
   // Product of minimum and maximum strain rates by time increment
@@ -105,11 +105,10 @@ Temp.setEntryName("Adiabatic_heating_dT");
   if( Fel <= 0 ){
     return true;
   }
-    
   // Flow direction
-  StressStensor sr_ = deviator(sig);
-  stress       seq_ = max(sigmaeq(sr_),seq_eps*young);
-  const Stensor  n_ = 1.5*sr_/seq_;
+  const auto seq   = sigmaeq(sig);
+  const auto iseq  = 1/max(seq,stress(seq_eps*young));
+  const auto n_    = eval(3*deviator(sig)*(iseq/2));
 
   // Plastic increment
   const real p_ = max(0.,p + theta*dp);
@@ -192,7 +191,7 @@ Temp.setEntryName("Adiabatic_heating_dT");
   const auto drp_ddT = (smu+ss)*drEE0_ddT + rEE0*(dsmu_ddT+dss_ddT);
 
   // System of equations and partial derivatives
-  fp         = (seq_-rp)/young;
+  fp         = (seq-rp)/young;
   dfp_ddp    = -drp_ddp/young;  
   dfp_ddTemp = -drp_ddT/young;
   dfp_ddeel  = 2.*mu*theta/young*n_;
@@ -202,7 +201,7 @@ Temp.setEntryName("Adiabatic_heating_dT");
   dfTemp_ddTemp = (1.-brcp*drp_ddT*dp)*itm; 
 
   feel         = deel - deto + dp*n_;		
-  dfeel_ddeel += (Stensor4::M()-(n_^n_))*2.*mu*theta*dp/seq_;
+  dfeel_ddeel += (Stensor4::M()-(n_^n_))*2.*mu*theta*dp*iseq;
   dfeel_ddp    = n_ ;
 } 
 
