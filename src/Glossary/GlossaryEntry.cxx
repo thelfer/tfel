@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
+#include<iostream>
 #include<stdexcept>
-
 #include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
@@ -22,6 +22,63 @@ namespace tfel
 
   namespace glossary
   {
+
+    static std::string nothrow(const char *c) noexcept{
+      std::string r;
+      try{
+	r = c;
+      } catch(std::exception& e){
+	std::cerr << "tfel::glossary::nothrow2: "
+		  << e.what() << '\n';
+      } catch(...){
+	std::cerr << "tfel::glossary::nothrow2: "
+		  << "unknown exception\n";
+      }
+      return r;
+    }
+
+    static std::vector<std::string> nothrow2(const char *c) noexcept{
+      std::vector<std::string> r;
+      try{
+	r.emplace_back(c);
+      } catch(std::exception& e){
+	std::cerr << "tfel::glossary::nothrow2: "
+		  << e.what() << '\n';
+      } catch(...){
+	std::cerr << "tfel::glossary::nothrow2: "
+		  << "unknown exception\n";
+      }
+      return r;
+    }
+
+    static std::vector<std::string> nothrow2(const char *const *const cb,
+					     const char *const *const ce) noexcept{
+      std::vector<std::string> r;
+      try{
+	r.insert(r.end(),cb,ce);
+      } catch(std::exception& e){
+	std::cerr << "tfel::glossary::nothrow2: "
+		  << e.what() << '\n';
+      } catch(...){
+	std::cerr << "tfel::glossary::nothrow2: "
+		  << "unknown exception\n";
+      }
+      return r;
+    }
+    
+    static std::vector<std::string> tokenize(const char * c) noexcept{
+      std::vector<std::string> r;
+      try{
+	r = tfel::utilities::tokenize(c,"@^separator^@");
+      } catch(std::exception& e){
+	std::cerr << "tfel::glossary::tokenize: "
+		  << e.what() << '\n';
+      } catch(...){
+	std::cerr << "tfel::glossary::tokenize: "
+		  << "unknown exception\n";
+      }
+      return r;
+    }
     
     GlossaryEntry::GlossaryEntry(const std::string& k,
 				 const std::string& n,
@@ -59,6 +116,31 @@ namespace tfel
       this->check();
     }
 
+    GlossaryEntry::GlossaryEntry(const char* const k,
+				 const char* const n,
+				 const char* const u,
+				 const char* const t,
+				 const char* const sd,
+				 const char* const d,
+				 const char* const no) noexcept
+      : key(nothrow(k)),
+	names(nothrow2(n)),
+	unit(nothrow(u)),
+	type(nothrow(t)),
+	short_description(nothrow(sd)),
+	description(tfel::glossary::tokenize(d)),
+	notes(tfel::glossary::tokenize(no))
+    {
+      try{
+	this->check();
+      } catch(std::exception& ex){
+	std::cerr << "GlossaryEntry::GlossaryEntry: " << ex.what() << '\n';
+      } catch(...){
+	std::cerr << "GlossaryEntry::GlossaryEntry: "
+		  << "unknown exception\n";
+      }
+    }
+    
     GlossaryEntry::GlossaryEntry(const std::string& k,
 				 const std::vector<std::string>& n,
 				 const std::string& u,
@@ -113,7 +195,7 @@ namespace tfel
     {
       this->check();
     }
-
+    
     GlossaryEntry::GlossaryEntry(const std::string& k,
 				 const char * const * const b,
 				 const char * const * const e,
@@ -133,6 +215,32 @@ namespace tfel
       this->check();
     }
 
+    GlossaryEntry::GlossaryEntry(const char* const k,
+				 const char * const * const b,
+				 const char * const * const e,
+				 const char* const u,
+				 const char* const t,
+				 const char* const sd,
+				 const char* const d,
+				 const char* const no) noexcept
+    : key(nothrow(k)),
+      names(nothrow2(b,e)),
+      unit(nothrow(u)),
+      type(nothrow(t)),
+      short_description(nothrow(sd)),
+      description(tfel::glossary::tokenize(d)),
+      notes(tfel::glossary::tokenize(no))
+    {
+      try{
+	this->check();
+      } catch(std::exception& ex){
+	std::cerr << "GlossaryEntry::GlossaryEntry: " << ex.what() << '\n';
+      } catch(...){
+	std::cerr << "GlossaryEntry::GlossaryEntry: "
+		  << "unknown exception\n";
+      }
+    }
+    
     GlossaryEntry::GlossaryEntry(const GlossaryEntry&) = default;
     GlossaryEntry::GlossaryEntry(GlossaryEntry&&) = default;
 

@@ -67,6 +67,23 @@ namespace tfel
 		    const std::string&);
       /*!
        * constructor
+       * \param[in] k  : key used to store
+       * \param[in] n  : name
+       * \param[in] u  : unit
+       * \param[in] t  : type
+       * \param[in] sd : short description
+       * \param[in] d  : description
+       * \param[in] no : note
+       */
+      GlossaryEntry(const char* const,
+		    const char* const,
+		    const char* const,
+		    const char* const,
+		    const char* const,
+		    const char* const,
+		    const char* const) noexcept;
+      /*!
+       * constructor
        * \param[in] k  : key used to store the entry
        * \param[in] n  : names
        * \param[in] u  : unit
@@ -137,6 +154,25 @@ namespace tfel
 		    const std::string&,
 		    const std::string&,
 		    const std::string&);
+      /*!
+       * constructor
+       * \param[in] k  : key used to store the entry
+       * \param[in] b  : iterator to the first name
+       * \param[in] e  : iterator to the last name
+       * \param[in] u  : unit
+       * \param[in] t  : type
+       * \param[in] sd : short description
+       * \param[in] d  : description
+       * \param[in] no : note
+       */
+      GlossaryEntry(const char* const,
+		    const char* const * const,
+		    const char* const * const,
+		    const char* const,
+		    const char* const,
+		    const char* const,
+		    const char* const,
+		    const char* const) noexcept;
       //! copy constructor
       GlossaryEntry(const GlossaryEntry&);
       //! move constructor

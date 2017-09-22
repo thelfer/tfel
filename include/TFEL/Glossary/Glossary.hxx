@@ -1,5 +1,5 @@
 /*!
- * \file   include/TFEL/Glossary/Glossary.hxx
+ * \file   Glossary.hxx
  * \author Helfer Thomas
  * \date   09/06/14
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights
@@ -135,13 +135,13 @@ static const GlossaryEntry YoungModulus3;
 
 /*!
  * \return true if the glossary contains the given name or key
- * \param[in] n : name
+ * \param[in] n: name
  */
 bool
 contains(const std::string&) const;
 /*!
  * \return the glossary entry associated with the given name or key
- * \param[in] n : name
+ * \param[in] n: name
  */
 const GlossaryEntry&
 getGlossaryEntry(const std::string&) const;
@@ -170,7 +170,7 @@ operator=(const Glossary&);
 /*!
 \return an iterator to the glossary associated with the given name or key. 
 Return this->entries.end() if no matching entry is found. 
-\param[in] n : name or key.
+\param[in] n: name or key.
 */
 std::set<GlossaryEntry>::const_iterator
 findGlossaryEntry(const std::string&) const;
