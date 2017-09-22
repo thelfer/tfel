@@ -236,13 +236,22 @@ namespace mfront{
     using namespace tfel::material;
     auto cposition = false;
     auto cmode     = false;
+    const auto dh = [this]{
+      if(this->mb.areModellingHypothesesDefined()){
+	const auto mh = this->mb.getModellingHypotheses();
+	if(mh.size()==1){
+	  return *(mh.begin());
+	}
+      }
+      return ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    }();
     o.hypotheses.clear();
     if(this->current==this->tokens.end()){
-      o.hypotheses.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+      o.hypotheses.insert(dh);
       return;
     }
     if(this->current->value!="<"){
-      o.hypotheses.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+      o.hypotheses.insert(dh);
       return;
     }
     auto options = std::vector<Token>{};
@@ -299,7 +308,7 @@ namespace mfront{
       }
     }
     if(o.hypotheses.empty()){
-      o.hypotheses.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+      o.hypotheses.insert(dh);
     }
     // checks
     if(!s){
@@ -307,7 +316,7 @@ namespace mfront{
 	this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions : ",
 				"specialisation is not allowed");
       }
-      if(*(o.hypotheses.begin())!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      if(*(o.hypotheses.begin())!=dh){
 	this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions : ",
 				"specialisation is not allowed");
       }

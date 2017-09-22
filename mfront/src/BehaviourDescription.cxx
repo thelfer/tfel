@@ -1090,11 +1090,14 @@ namespace mfront
   BehaviourDescription::setModellingHypotheses(const std::set<Hypothesis>& mh,
 					       const bool b)
   {
+    constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto throw_if = [](const bool c,const std::string& m){
       if(c){throw(std::runtime_error("BehaviourDescription::setHypotheses: "+m));}
     };
     // never ever trust a user
     throw_if(mh.empty(),"empty set of modelling hypotheses specificied");
+    // never ever trust a user
+    throw_if(mh.find(uh)!=mh.end(),"undefined modelling hypothesis specified");
     // check that the user did not already set the modelling hypotheses
     throw_if(!this->hypotheses.empty(),
 	     "supported modelling hypotheses have already been declared");
