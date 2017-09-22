@@ -14,7 +14,7 @@
 #include<limits>
 #include<ostream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/IronsTuckAccelerationAlgorithm.hxx"
 
@@ -25,41 +25,26 @@ namespace mtest
     : itat(-1)
   {} // end of IronsTuckAccelerationAlgorithm::IronsTuckAccelerationAlgorithm
 
-  std::string
-  IronsTuckAccelerationAlgorithm::getName() const{
+  std::string IronsTuckAccelerationAlgorithm::getName() const{
     return "Irons-Tuck";
   }
     
-  void
-  IronsTuckAccelerationAlgorithm::setParameter(const std::string& p,
+  void IronsTuckAccelerationAlgorithm::setParameter(const std::string& p,
 						    const std::string& v)
   {
-    using namespace std;
-    const string m = "IronsTuckAccelerationAlgorithm::setParameter";
+    const std::string m = "IronsTuckAccelerationAlgorithm::setParameter";
     if(p=="AccelerationTrigger"){
-      const unsigned short i =
-	AccelerationAlgorithm::convertToUnsignedShort(m,v);
-      if(this->itat!=-1){
-	string msg("IronsTuckAccelerationAlgorithm::setParameter : "
-		   "the castem acceleration trigger has already "
-		   "been defined");
-	throw(runtime_error(msg));
-      }
-      if(i<2){
-	string msg("IronsTuckAccelerationAlgorithm::setParameter",
-		   "invalid acceleration trigger value.");
-	throw(runtime_error(msg));
-      }
+      const auto i = AccelerationAlgorithm::convertToUnsignedShort(m,v);
+      tfel::raise_if(this->itat!=-1,m+": the acceleration trigger "
+		     "has already been defined");
+      tfel::raise_if(i<2,m+": invalid acceleration trigger value.");
       this->itat = i;
     } else {
-      string msg("IronsTuckAccelerationAlgorithm::setParameter : "
-		 "invalid parameter '"+p+"'.");
-      throw(runtime_error(msg));
+      tfel::raise(m+": invalid parameter '"+p+"'.");
     }
   } // end of IronsTuckAccelerationAlgorithm::setParameter
 
-  void
-  IronsTuckAccelerationAlgorithm::initialize(const unsigned short psz)
+  void IronsTuckAccelerationAlgorithm::initialize(const unsigned short psz)
   {
     this->ita_r0.resize(psz,0.);      
     this->ita_r1.resize(psz,0.);
@@ -69,12 +54,10 @@ namespace mtest
     }
   } // end of IronsTuckAccelerationAlgorithm::initialize
 
-  void
-  IronsTuckAccelerationAlgorithm::preExecuteTasks()
+  void IronsTuckAccelerationAlgorithm::preExecuteTasks()
   {} // end of IronsTuckAccelerationAlgorithm::preExecuteTasks
 
-  void
-  IronsTuckAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
+  void IronsTuckAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
 					       const tfel::math::vector<real>&rx,
 					       const tfel::math::vector<real>&,
 					       const real eeps,
@@ -99,11 +82,9 @@ namespace mtest
     }
   } // end of IronsTuckAccelerationAlgorithm::execute
 
-  void
-  IronsTuckAccelerationAlgorithm::postExecuteTasks()
+  void IronsTuckAccelerationAlgorithm::postExecuteTasks()
   {} // end of IronsTuckAccelerationAlgorithm::postExecuteTasks
 
-  IronsTuckAccelerationAlgorithm::~IronsTuckAccelerationAlgorithm()
-  {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
+  IronsTuckAccelerationAlgorithm::~IronsTuckAccelerationAlgorithm() = default;
 
 } // end of namespace mtest

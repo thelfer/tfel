@@ -17,6 +17,7 @@
 #include<cmath>
 #include<sstream>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Parser/Function.hxx"
 #include"TFEL/Math/Parser/BinaryOperator.hxx"
 
@@ -43,13 +44,11 @@ namespace tfel
 	return a*b;
       } // end of OpMult::apply
 
-      double
-      OpDiv::apply(const double a,const double b)
+      double OpDiv::apply(const double a,const double b)
       {
-	if(std::abs(b)<std::numeric_limits<double>::min()){
-	  throw(std::runtime_error("OpDiv::apply : second argument is too small "
-				   "("+std::to_string(b)+")"));
-	}
+	raise_if(std::abs(b)<std::numeric_limits<double>::min(),
+		 "OpDiv::apply : second argument is too small "
+		 "("+std::to_string(b)+")");
 	return a/b;
       } // end of OpDiv::apply
 
@@ -61,9 +60,9 @@ namespace tfel
       void
       BinaryOperationBase::throwUnimplementedDifferentiateFunctionException()
       {
-	throw(std::runtime_error("BinaryOperationBase::"
-				 "throwUnimplementedDifferentiateFunctionException : "
-				 "unimplemented feature"));
+	raise("BinaryOperationBase::"
+	      "throwUnimplementedDifferentiateFunctionException : "
+	      "unimplemented feature");
       }  // end of BinaryOperationBase::throwUnimplementedDifferentiateFunctionException()
 
       template<>

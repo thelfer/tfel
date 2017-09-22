@@ -12,6 +12,7 @@
  */
 
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/ParserBase.hxx"
 
 namespace tfel
@@ -22,21 +23,19 @@ namespace tfel
 
     void ParserBase::checkNotEndOfFile(const_iterator p)
     {
-      if(p==this->end()){
-	throw(std::runtime_error("ParserBase::checkNotEndOfFile: "
-				 "unexpected end of file"));
-      }
+      raise_if(p==this->end(),
+	       "ParserBase::checkNotEndOfFile: "
+	       "unexpected end of file");
     } // end of ParserBase::checkNotEndOfFile
 
     void ParserBase::readSpecifiedToken(const std::string& v,
 					const_iterator& p)
     {
       this->checkNotEndOfFile(p);
-      if(p->value!=v){
-	throw(std::runtime_error("ParserBase::readSpecifiedToken: "
-				 "expected token '"+v+"',"
-				 "read '"+p->value+"'"));
-      }
+      raise_if(p->value!=v,
+	       "ParserBase::readSpecifiedToken: "
+	       "expected token '"+v+"',"
+	       "read '"+p->value+"'");
       ++p;
     } // end of ParserBase::readSpecifiedToken
       
@@ -44,10 +43,9 @@ namespace tfel
 			   const_iterator& p)
     {
       this->checkNotEndOfFile(p);
-      if(p->flag!=tfel::utilities::Token::String){
-	throw(std::runtime_error("TestParser::readString: "
-				 "expected to read a string"));
-      }
+      raise_if(p->flag!=tfel::utilities::Token::String,
+	       "TestParser::readString: "
+	       "expected to read a string");
       s = p->value.substr(1,p->value.size()-2);
       ++p;      
     } // end of ParserBase::readString
@@ -64,4 +62,3 @@ namespace tfel
   } // end of namespace utilities
 
 } // end of namespace tfel
-

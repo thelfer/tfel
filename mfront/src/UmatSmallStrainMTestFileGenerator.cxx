@@ -15,7 +15,7 @@
 #include<ostream>
 #include<stdexcept>
 #include<algorithm>
-
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/General/MathConstants.hxx"
 #include"MFront/UmatSmallStrainMTestFileGenerator.hxx"
 
@@ -67,17 +67,14 @@ namespace mfront
   void
   UmatSmallStrainMTestFileGenerator::writeDrivingVariables(std::ostream& os) const
   {
-    using namespace std;
     using namespace tfel::material;
     constexpr const auto cste  = tfel::math::Cste<real>::sqrt2;
     constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
     const auto& n = this->getStrainComponentsNames();
-    vector<string>::const_iterator p;
     unsigned short i;
-    if(this->times.size()!=2){
-      throw(std::runtime_error("UmatSmallStrainMTestFileGenerator::writeDrivingVariables: "
-			       "invalid number of times"));
-    }
+    tfel::raise_if(this->times.size()!=2,
+		   "UmatSmallStrainMTestFileGenerator::writeDrivingVariables: "
+		   "invalid number of times");
     const real t0 = *(this->times.begin());
     const real t1 = *(this->times.rbegin());
     os << "@Stress {";
@@ -94,7 +91,8 @@ namespace mfront
     }
     os << "};\n\n";
     os << "@Strain {";
-    for(p=n.begin(),i=0;p!=n.end();++i){
+    auto p=n.begin();
+    for(i=0;p!=n.end();++i){
       os.precision(14);
       os << this->eto[i];
       if(++p!=n.end()){
@@ -116,7 +114,7 @@ namespace mfront
 	   << t1 << ":" << (this->eto[i]+this->deto[i])*icste << "};\n";
       }
     }
-    os << endl;
+    os << '\n';
   } // end of UmatSmallStrainMTestFileGenerator::writeDrivingVariables
   
   UmatSmallStrainMTestFileGenerator::~UmatSmallStrainMTestFileGenerator() = default;

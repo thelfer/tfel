@@ -15,7 +15,7 @@
 #include<ostream>
 #include<iterator>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/UAndersonAccelerationAlgorithm.hxx"
 
@@ -36,7 +36,7 @@ namespace mtest
   {
     const std::string m = "UAndersonAccelerationAlgorithm::setParameter";
     auto throw_if = [&m](const bool c, const std::string& msg){
-      if(c){throw(std::runtime_error(m+": "+msg));}
+      tfel::raise_if(c,m+": "+msg);
     };
     if(p=="MethodOrder"){
       throw_if(this->Nmax!=-1,"the method order has already been defined");
@@ -69,13 +69,12 @@ namespace mtest
     this->a->restart(this->uO,this->uN);
   } // end of UAndersonAccelerationAlgorithm::preExecuteTasks
 
-  void
-  UAndersonAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
-					  const tfel::math::vector<real>& du,
-					  const tfel::math::vector<real>&,
-					  const real,
-					  const real,
-					  const unsigned short iter)
+  void UAndersonAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
+					       const tfel::math::vector<real>& du,
+					       const tfel::math::vector<real>&,
+					       const real,
+					       const real,
+					       const unsigned short iter)
   {
     if(iter==1u){
       *(this->uO) = u1-du;      

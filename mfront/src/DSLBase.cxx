@@ -18,6 +18,7 @@
 #include<stdexcept>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/IntegerEvaluator.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 
@@ -138,9 +139,9 @@ namespace mfront
       try{
 	t.parseString(c);
       } catch(std::exception& e){
-	throw(std::runtime_error("DSLBase::openFile : "
-				 "error while parsing external command "
-				 "'"+c+"'\n"+std::string(e.what())));
+	tfel::raise("DSLBase::openFile : "
+		    "error while parsing external command "
+		    "'"+c+"'\n"+std::string(e.what()));
       }
       this->tokens.insert(this->tokens.begin(),t.begin(),t.end());
     }
@@ -365,7 +366,7 @@ namespace mfront
       }
       msg += "\nError at line " + std::to_string(t->line);
     }
-    throw(std::runtime_error(msg));
+    tfel::raise(msg);
   } // end of DSLBase::throwRuntimeError
 
   void DSLBase::treatImport()
@@ -806,8 +807,8 @@ namespace mfront
   {
     auto throw_if = [](const bool b,const std::string& m,
 		       const unsigned int l){
-      if(b){throw(std::runtime_error("DSLBase::readSpecifiedValues : "+m+"\n"
-				     "Error at line "+std::to_string(l)));}
+      tfel::raise_if(b,"DSLBase::readSpecifiedValues : "+m+"\n"
+		     "Error at line "+std::to_string(l));
     };
     tfel::utilities::CxxTokenizer cfile;
     auto res = std::vector<std::string>(values.size());

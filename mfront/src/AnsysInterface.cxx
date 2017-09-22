@@ -17,6 +17,7 @@
 #include<cstdlib>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
@@ -229,8 +230,8 @@ namespace mfront{
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6u;
       }
-      throw(std::runtime_error("AnsysInterface::getStateVariablesOffset: "
-			       "invalid hypothesis"));
+      tfel::raise("AnsysInterface::getStateVariablesOffset: "
+		  "invalid hypothesis");
     }
     return 0u;
   }
@@ -253,8 +254,8 @@ namespace mfront{
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return "3D";
       }
-      throw(std::runtime_error("AnsysInterface::getFunctionNameForHypothesis: "
-			       "invalid hypothesis."));
+      tfel::raise("AnsysInterface::getFunctionNameForHypothesis: "
+		  "invalid hypothesis.");
     }();
     return name+"_"+s;
   } // end of AnsysInterface::getFunctionNameForHypothesis
@@ -276,13 +277,12 @@ namespace mfront{
     if(bh.find(ModellingHypothesis::TRIDIMENSIONAL)!=bh.end()){
       h.insert(ModellingHypothesis::TRIDIMENSIONAL);
     }
-    if(h.empty()){
-      throw(std::runtime_error("AnsysInterface::getModellingHypothesesToBeTreated : "
-			       "no hypotheses selected. This means that the given beahviour "
-			       "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
-			       "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
-			       "make sense to use the Ansys interface"));
-    }
+    tfel::raise_if(h.empty(),
+		   "AnsysInterface::getModellingHypothesesToBeTreated : "
+		   "no hypotheses selected. This means that the given beahviour "
+		   "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
+		   "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
+		   "make sense to use the Ansys interface");
     return h;
   } // end of AnsysInterface::getModellingHypothesesToBeTreated
 
@@ -293,7 +293,7 @@ namespace mfront{
   {
     using namespace std;
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("AnsysInterface:buildMaterialPropertiesList: "+m));}
+      tfel::raise_if(c,"AnsysInterface:buildMaterialPropertiesList: "+m);
     };
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       const auto ah = this->getModellingHypothesesToBeTreated(mb);
@@ -385,8 +385,7 @@ namespace mfront{
 	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion3",
 					     "alp3",false);
       } else {
-	throw(std::runtime_error("AnsysInterface::buildMaterialPropertiesList : "
-				 "unsupported behaviour symmetry type"));
+	throw_if(true,"unsupported behaviour symmetry type");
       }
     }
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
@@ -454,8 +453,8 @@ namespace mfront{
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "static " << constexpr_c << " AnsysBehaviourType btype = ansys::FINITESTRAINSTANDARDBEHAVIOUR;\n";
     } else {
-      throw(std::runtime_error("AnsysInterface::writeAnsysBehaviourTraits : "
-			       "unsupported behaviour type"));
+      tfel::raise("AnsysInterface::writeAnsysBehaviourTraits : "
+		  "unsupported behaviour type");
     }
     out << "//! space dimension\n";
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
@@ -496,10 +495,10 @@ namespace mfront{
     } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "static " << constexpr_c << " AnsysSymmetryType type = ansys::ORTHOTROPIC;\n";
     } else {
-      throw(std::runtime_error("AnsysInterface::writeAnsysBehaviourTraits: "
-			       "unsupported behaviour type.\n"
-			       "The ansys interface only support isotropic or orthotropic "
-			       "behaviour at this time."));
+      tfel::raise("AnsysInterface::writeAnsysBehaviourTraits: "
+		  "unsupported behaviour type.\n"
+		  "The ansys interface only support isotropic or orthotropic "
+		  "behaviour at this time.");
     }
     // computing material properties size
     auto msize = SupportedTypes::TypeSize{};
@@ -538,10 +537,10 @@ namespace mfront{
       }
       out << "static " << constexpr_c << " unsigned short orthotropicAxesOffset = AnsysOrthotropicAxesOffset<N>::value;\n"; 
     } else {
-      throw(std::runtime_error("AnsysInterface::writeAnsysBehaviourTraits: "
-			       "unsupported behaviour type.\n"
-			       "The ansys interface only support isotropic or "
-			       "orthotropic behaviour at this time."));
+      tfel::raise("AnsysInterface::writeAnsysBehaviourTraits: "
+		  "unsupported behaviour type.\n"
+		  "The ansys interface only support isotropic or "
+		  "orthotropic behaviour at this time.");
     }
     out << "}; // end of class AnsysTraits\n\n";
   }
@@ -572,8 +571,8 @@ namespace mfront{
     } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
       return "*NTENS==6";
     }
-    throw(std::runtime_error("AnsysInterface::getModellingHypothesisTest : "
-			     "unsupported modelling hypothesis"));
+    tfel::raise("AnsysInterface::getModellingHypothesisTest : "
+		"unsupported modelling hypothesis");
   } // end of AnsysInterface::gatherModellingHypothesesAndTests
   
   void
@@ -596,7 +595,7 @@ namespace mfront{
   AnsysInterface::writeInputFileExample(const BehaviourDescription& mb,
 					const FileDescription& fd) const{ 
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("AnsysInterface::writeInputFileExample: "+m));}
+      tfel::raise_if(c,"AnsysInterface::writeInputFileExample: "+m);
     };
     const auto name =  mb.getLibrary()+mb.getClassName();
     const auto mn = this->getLibraryName(mb)+"_"+mb.getClassName();
@@ -671,7 +670,7 @@ namespace mfront{
   {
     using tfel::utilities::CxxTokenizer;
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AnsysInterface::treatKeyword: "+m));}
+      tfel::raise_if(b,"AnsysInterface::treatKeyword: "+m);
     };
     if(!i.empty()){
       if(std::find(i.begin(),i.end(),this->getName())!=i.end()){
@@ -748,7 +747,7 @@ namespace mfront{
   {
     using namespace tfel::system;
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AnsysInterface::endTreatment: "+m));}
+      tfel::raise_if(b,"AnsysInterface::endTreatment: "+m);
     };
     throw_if((mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
 	     (this->fss!=UNDEFINEDSTRATEGY),
@@ -950,7 +949,7 @@ namespace mfront{
 					 const Hypothesis h) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AnsysInterface::writeUMATFunctionBase: "+m));}
+      tfel::raise_if(b,"AnsysInterface::writeUMATFunctionBase: "+m);
     };
     std::string dv0,dv1,sig;
     const auto btype = mb.getBehaviourType();
@@ -1279,8 +1278,8 @@ namespace mfront{
 							      const Hypothesis h) const
   {
     if(h==ModellingHypothesis::PLANESTRESS){
-      throw(std::runtime_error("AnsysInterface::writeUMATFiniteRotationSmallStrainFunction: "
-			       "plane stress is not supported yet"));
+      tfel::raise("AnsysInterface::writeUMATFiniteRotationSmallStrainFunction: "
+		  "plane stress is not supported yet");
     }
     const auto ps = h==ModellingHypothesis::PLANESTRESS ? "true" : "false";
     const std::string sfeh = "ansys::AnsysStandardSmallStrainStressFreeExpansionHandler";
@@ -1339,7 +1338,7 @@ namespace mfront{
 						   const BehaviourDescription& mb) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AnsysInterface::writeUMATxxBehaviourTypeSymbols: "+m));}
+      tfel::raise_if(b,"AnsysInterface::writeUMATxxBehaviourTypeSymbols: "+m);
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
@@ -1362,7 +1361,7 @@ namespace mfront{
 						   const BehaviourDescription& mb) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AnsysInterface::writeUMATxxBehaviourKinematicSymbols: "+m));}
+      tfel::raise_if(b,"AnsysInterface::writeUMATxxBehaviourKinematicSymbols: "+m);
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourKinematic = " ;
@@ -1424,8 +1423,8 @@ namespace mfront{
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(!o.isNull()){
-      throw(std::runtime_error("AnsysInterface::writeBehaviourDataMainVariablesSetter : "
-			       "only one driving variable supported"));
+      tfel::raise("AnsysInterface::writeBehaviourDataMainVariablesSetter : "
+		  "only one driving variable supported");
     }
     if(v.increment_known){
       os << "ansys::ImportDrivingVariables<hypothesis>::exe(this->" << v.name << ","
@@ -1443,8 +1442,8 @@ namespace mfront{
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(!o.isNull()){
-      throw(std::runtime_error("AnsysInterface::writeIntegrationDataMainVariablesSetter : "
-			       "only one driving variable supported"));
+      tfel::raise("AnsysInterface::writeIntegrationDataMainVariablesSetter : "
+		  "only one driving variable supported");
     }
     if(v.increment_known){
       os << "ansys::ImportDrivingVariables<hypothesis>::exe(this->d" << v.name << ","
@@ -1469,8 +1468,8 @@ namespace mfront{
 	os << iprefix << "stress_);\n";
       }
     } else {
-      throw(std::runtime_error("AnsysInterface::writeBehaviourDataMainVariablesSetters : "
-			       "unsupported forces type"));
+      tfel::raise("AnsysInterface::writeBehaviourDataMainVariablesSetters : "
+		  "unsupported forces type");
     }
   } // end of AnsysInterface::writeBehaviourDataThermodynamicForceSetter
   
@@ -1544,8 +1543,8 @@ namespace mfront{
 	out << "ansys::ExportThermodynamicForces<hypothesis>::exe(" << a << ",this->sig);\n";
       }
     } else {
-      throw(std::runtime_error("AnsysInterface::exportThermodynamicForce: "
-			       "unsupported forces type"));
+      tfel::raise("AnsysInterface::exportThermodynamicForce: "
+		  "unsupported forces type");
     }
   } // end of AnsysInterface::exportThermodynamicForce
 

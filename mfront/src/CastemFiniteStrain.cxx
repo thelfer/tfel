@@ -14,7 +14,7 @@
 #include<cmath>
 #include<sstream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tmatrix.hxx"
@@ -33,16 +33,12 @@
 namespace castem
 {
   
-  static void
-  CastemCheckNDIValue(const CastemInt NDI)
+  static void CastemCheckNDIValue(const CastemInt NDI)
   {
-    if((NDI!=2)&&(NDI!=0)&&(NDI!=-1)&&
-       (NDI!=-2)&&(NDI!=-3)&&(NDI!=14)){
-      std::ostringstream msg;
-      msg << "CastemCheckNDIValue : unsupported modelling hypothesis (" 
-	  << NDI<< ")";
-      throw(std::runtime_error(msg.str()));
-    }
+    tfel::raise_if((NDI!=2)&&(NDI!=0)&&(NDI!=-1)&&
+		   (NDI!=-2)&&(NDI!=-3)&&(NDI!=14),
+		   "CastemCheckNDIValue : unsupported modelling "
+		   "hypothesis ("+std::to_string(NDI)+")");
   }
 
   void
@@ -265,8 +261,8 @@ namespace castem
 		   TangentOperator::DS_DEGL>(CSE,tensor::Id(),F1,s);
       CastemTangentOperator::normalize(CT);
     } else {
-      throw(std::runtime_error("CastemFiniteStrain::convertCSEtoCauchyTruesdellRateModuli: "
-			       "invalid NTENS value ("+std::to_string(NTENS)+")"));
+      tfel::raise("CastemFiniteStrain::convertCSEtoCauchyTruesdellRateModuli: "
+		  "invalid NTENS value ("+std::to_string(NTENS)+")");
     }
   } // end of CastemFiniteStrain::convertCSEtoCauchyTruesdellRateModuli
 
@@ -285,10 +281,9 @@ namespace castem
       const auto F = tensor::buildFromFortranMatrix(Fv);
       h.emplace<LogarithmicStrainHandler<2u>>(s,F);
     }
-    if(NTENS!=6){
-      throw(std::runtime_error("CastemFiniteStrain::initializeLogarithmicStrainHandler: "
-			       "invalid NTENS value ("+std::to_string(NTENS)+")"));
-    }
+    tfel::raise_if(NTENS!=6,
+		   "CastemFiniteStrain::initializeLogarithmicStrainHandler: "
+		   "invalid NTENS value ("+std::to_string(NTENS)+")");
     constexpr const auto s = LogarithmicStrainHandler<3u>::EULERIAN;
     using tensor = tfel::math::tensor<3u,CastemReal>;
     const auto F = tensor::buildFromFortranMatrix(Fv);

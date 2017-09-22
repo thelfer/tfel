@@ -2,6 +2,9 @@
 #+AUTHOR: Thomas Helfer
 #+DATE:   10 August 2015
 
+Fe in finite strain single crystal
+eto at beginning in standard elasticity
+
 #+CAPTION: MFront logo
 #+NAME:   fig:SED-HR4049
      [[./img/a.jpg]]

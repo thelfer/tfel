@@ -23,6 +23,7 @@
 #include<unistd.h>
 #endif
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/System.hxx"
 #include"MFront/MFrontLock.hxx"
 
@@ -40,18 +41,16 @@ namespace mfront{
     this->ghMutex = CreateMutex(nullptr,   // default security attributes
 				FALSE,     // initially not owned
 				"mfront"); // named mutex
-    if (this->ghMutex == nullptr){
-      throw(std::runtime_error("MFrontLock::MFrontLock: "
-			       "semaphore creation failed"));
-    }
+    tfel::raise_if(this->ghMutex == nullptr
+		   "MFrontLock::MFrontLock: "
+		   "semaphore creation failed");
 #else
     std::ostringstream sn;
     sn << "/mfront-" << ::geteuid();
     this->l = ::sem_open(sn.str().c_str(),O_CREAT,S_IRUSR|S_IWUSR,1);
-    if(this->l==SEM_FAILED){
-      throw(std::runtime_error("MFrontLock::MFrontLock: "
-			       "semaphore creation failed"));
-    }
+    tfel::raise_if(this->l==SEM_FAILED,
+		   "MFrontLock::MFrontLock: "
+		   "semaphore creation failed");
 #endif
   } // end of MFrontLock::MFrontLock()
 
@@ -61,15 +60,14 @@ namespace mfront{
     DWORD dwWaitResult;
     dwWaitResult = ::WaitForSingleObject(this->ghMutex, // handle to mutex
 					 INFINITE);     // no time-out interval
-    if(dwWaitResult==WAIT_ABANDONED){
-      throw(std::runtime_error("MFrontLock::MFrontLock: "
-			       "semaphore can't be aquired"));
+    tfel::raise_if(dwWaitResult==WAIT_ABANDONED,
+		   "MFrontLock::MFrontLock: "
+		   "semaphore can't be aquired");
     }
 #else
-    if(::sem_wait(this->l)==-1){
-      throw(std::runtime_error("MFrontLock::MFrontLock: "
-			       "semaphore can't be aquired"));
-    }
+    tfel::raise_if(::sem_wait(this->l)==-1,
+		   "MFrontLock::MFrontLock: "
+		   "semaphore can't be aquired");
 #endif
   } // end of MFrontLock::lock()
 
@@ -103,4 +101,3 @@ namespace mfront{
   } // end of MFrontLockGuard::~MFrontLockGuard
 
 } // end of namespace mfront
-

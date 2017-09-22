@@ -20,10 +20,11 @@
 #include<cassert>
 #include<cctype>
 
-#include"MFront/DSLUtilities.hxx"
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/System.hxx"
 
 #include"MFront/MFrontHeader.hxx"
+#include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/VariableDescription.hxx"
 #include"MFront/StaticVariableDescription.hxx"
@@ -95,31 +96,29 @@ namespace mfront{
   {
     auto get = [&n](const VariableDescriptionContainer& vc)
       -> std::pair<std::string,unsigned short>
-    {
-      using size_type = unsigned short;
-      for(const auto& v:vc){
-	if(v.name==n){
-	  return {v.name,0u};
-	}
-	const auto d = v.getAttribute<size_type>(VariableDescription::depth,0);
-	for(size_type j=1;j<=d;++j){
-	  auto fn = v.name + "_" + std::to_string(j);
-	  if(fn==n){
-	    return {v.name,j};
+      {
+	using size_type = unsigned short;
+	for(const auto& v:vc){
+	  if(v.name==n){
+	    return {v.name,0u};
+	  }
+	  const auto d = v.getAttribute<size_type>(VariableDescription::depth,0);
+	  for(size_type j=1;j<=d;++j){
+	    auto fn = v.name + "_" + std::to_string(j);
+	    if(fn==n){
+	      return {v.name,j};
+	    }
 	  }
 	}
-      }
-      return {};
-    };
+	return {};
+      };
     auto r = get(md.outputs);
     if(!r.first.empty()){
       return r;
     }
     r = get(md.inputs);
-    if(r.first.empty()){
-      throw(std::runtime_error("decomposeVariableName: "
-			       "field name '"+n+"' has not been found"));
-    }
+    tfel::raise_if(r.first.empty(),"decomposeVariableName: "
+		   "field name '"+n+"' has not been found");
     return r;
   } // end of decomposeVariableName
 
@@ -178,38 +177,28 @@ namespace mfront{
     v.insert("data");
   }
 
-  void
-  MFrontModelInterface::openOutputFiles()
+  void MFrontModelInterface::openOutputFiles()
   {
-    using namespace std;
-    using namespace tfel::system;
     // creating directories
-    systemCall::mkdir("include");
-    systemCall::mkdir("include/Pleiades");
-    systemCall::mkdir("include/Pleiades/Model");
-    systemCall::mkdir("src");
-    this->headerFile.open(this->headerFileName.c_str());
-    if(!this->headerFile){
-      string msg("MFrontModelInterface::openOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->headerFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
-    this->srcFile.open(this->srcFileName.c_str());
-    if(!this->srcFile){
-      string msg("MFrontModelInterface::openOutputFiles : ");
-      msg += "unable to open ";
-      msg += this->srcFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
-    this->headerFile.exceptions(ios::badbit|ios::failbit);
-    this->srcFile.exceptions(ios::badbit|ios::failbit);
+    tfel::system::systemCall::mkdir("include");
+    tfel::system::systemCall::mkdir("include/Pleiades");
+    tfel::system::systemCall::mkdir("include/Pleiades/Model");
+    tfel::system::systemCall::mkdir("src");
+    this->headerFile.open(this->headerFileName);
+    tfel::raise_if(!this->headerFile,
+		   "MFrontModelInterface::openOutputFiles: "
+		   "unable to open '"+this->headerFileName+"' "
+		   "for writing output file.");
+    this->srcFile.open(this->srcFileName);
+    tfel::raise_if(!this->srcFile,
+		   "MFrontModelInterface::openOutputFiles: "
+		   "unable to open "+this->srcFileName+"' "
+		   "for writing output file.");
+    this->headerFile.exceptions(std::ios::badbit|std::ios::failbit);
+    this->srcFile.exceptions(std::ios::badbit|std::ios::failbit);
   } // end of MFrontModelInterface::openOutputFiles()
 
-  void
-  MFrontModelInterface::closeOutputFiles()
+  void MFrontModelInterface::closeOutputFiles()
   {
     if(this->headerFile.is_open()){
       this->headerFile.close();
@@ -237,10 +226,9 @@ namespace mfront{
     }
     // sanity checks
     for(const auto& f : md.functions){
-      if(f.modifiedVariables.size()==0){
-	throw(std::runtime_error("MFrontModelInterface::generateOutputFiles: "
-				 "function '"+f.name+"' does not modify any output"));
-      }
+      tfel::raise_if(f.modifiedVariables.size()==0,
+		     "MFrontModelInterface::generateOutputFiles: "
+		     "function '"+f.name+"' does not modify any output");
     }
     for(const auto& v: md.outputs){
       auto found = false;
@@ -250,10 +238,8 @@ namespace mfront{
 	  found = true;
 	}
       }
-      if(!found){
-	throw(std::runtime_error("MFrontModelInterface::generateOutputFiles: "
-				 "output '"+v.name+"' is not modified by any function"));
-      }
+      tfel::raise_if(!found,"MFrontModelInterface::generateOutputFiles: "
+		     "output '"+v.name+"' is not modified by any function");
     }
     this->writeHeaderFile(fd,md);
     this->headerFile.close();
@@ -272,14 +258,14 @@ namespace mfront{
     set<unsigned short> applyHeaders;
     set<unsigned short>::const_iterator p18;
     unsigned short i;
-    this->headerFile << "/*!\n";
-    this->headerFile << "* \\file   " << this->headerFileName  << '\n';
-    this->headerFile << "* \\brief  " << "this file declares the " 
-		     << md.className << " Model.\n";
-    this->headerFile << "*         File generated by ";
-    this->headerFile << MFrontHeader::getVersionName() << " ";
-    this->headerFile << "version " << MFrontHeader::getVersionNumber();
-    this->headerFile << '\n';
+    this->headerFile << "/*!\n"
+		     << "* \\file   " << this->headerFileName  << '\n'
+		     << "* \\brief  " << "this file declares the " 
+		     << md.className << " Model.\n"
+		     << "*         File generated by "
+		     << MFrontHeader::getVersionName() << " "
+		     << "version " << MFrontHeader::getVersionNumber()
+		     << '\n';
     if(!fd.authorName.empty()){
       this->headerFile << "* \\author " << fd.authorName << '\n';
     }
@@ -293,8 +279,8 @@ namespace mfront{
 
     this->headerFile << "#ifndef _PLEIADES_" 
 		     << makeUpperCase(md.className)
-		     << "_HH\n";
-    this->headerFile << "#define _PLEIADES_"
+		     << "_HH\n"
+		     << "#define _PLEIADES_"
 		     << makeUpperCase(md.className)
 		     << "_HH\n\n";
 
@@ -310,62 +296,61 @@ namespace mfront{
 	this->headerFile << "#include\"Pleiades/Field/FieldSApply" << *p18 << ".hxx\"\n";
       }
     }
-    this->headerFile << "#include\"Pleiades/Model/ModelBase.hxx\"\n";
-    this->headerFile << "#include\"Pleiades/Model/StateVariableDescription.hxx\"\n\n";
+    this->headerFile << "#include\"Pleiades/Model/ModelBase.hxx\"\n"
+		     << "#include\"Pleiades/Model/StateVariableDescription.hxx\"\n\n";
     if(!md.includes.empty()){
       this->headerFile << md.includes << "\n\n";
     }
     writeExportDirectives(this->headerFile);
-    this->headerFile << "namespace pleiades\n{\n\n";
-    this->headerFile << "namespace model\n{\n\n";
-    this->headerFile << "struct MFRONT_SHAREDOBJ " << md.className << '\n';
-    this->headerFile << ": public ModelBase\n";
-    this->headerFile << "{\n\n";
-    this->headerFile << "//! Default constructor\n";
-    this->headerFile << md.className
+    this->headerFile << "namespace pleiades\n{\n\n"
+		     << "namespace model\n{\n\n"
+		     << "struct MFRONT_SHAREDOBJ " << md.className << '\n'
+		     << ": public ModelBase\n"
+		     << "{\n\n"
+		     << "//! Default constructor\n"
+		     << md.className
 		     << "(pleiades::mesh::SMeshManager&,\n"
 		     << "pleiades::field::SFieldManager&,\n"
 		     << "pleiades::time::SClock&,\n"
 		     << "pleiades::loading::SLoadingManager&,\n"
-		     << "pleiades::signal::SSignalManager&);\n\n";
-    this->headerFile << "//! Constructor to initialize local parameters\n";
-    this->headerFile << md.className
+		     << "pleiades::signal::SSignalManager&);\n\n"
+		     << "//! Constructor to initialize local parameters\n"
+		     << md.className
 		     << "(const std::map<std::string,pleiades::parser::Data>&,\n"
 		     << "pleiades::mesh::SMeshManager&,\n"
 		     << "pleiades::field::SFieldManager&,\n"
 		     << "pleiades::time::SClock&,\n"
 		     << "pleiades::loading::SLoadingManager&,\n"
-		     << "pleiades::signal::SSignalManager&);\n\n";
-    this->headerFile << "std::string\ngetName() const;\n\n"
-		     << "void\ninitialize(const pleiades::parser::DataManager&);\n\n"
-		     << "void\ndeclareRequirements(pleiades::coupling::SRequirementManager&);\n\n"
-		     << "void\nresolveRequirements(pleiades::coupling::SRequirementManager&);\n\n"
-		     << "void\ninitializeOutput(pleiades::coupling::Requirement&);\n\n"
-		     << "void\nexecute();\n\n"
-		     << "void\nsave(const std::string&,\n"
+		     << "pleiades::signal::SSignalManager&);\n\n"
+		     << "std::string\ngetName() const;\n\n"
+		     << "void initialize(const pleiades::parser::DataManager&);\n\n"
+		     << "void declareRequirements(pleiades::coupling::SRequirementManager&);\n\n"
+		     << "void resolveRequirements(pleiades::coupling::SRequirementManager&);\n\n"
+		     << "void initializeOutput(pleiades::coupling::Requirement&);\n\n"
+		     << "void execute();\n\n"
+		     << "void save(const std::string&,\n"
 		     << "pleiades::parser::DataMap&);\n\n"
-		     << "void\nrestore(const pleiades::time::ptime,\n"
+		     << "void restore(const pleiades::time::ptime,\n"
 		     << "const std::string&,\n" 
-		     << "const pleiades::parser::DataMap&);\n\n";
-    this->headerFile << "void\nexecuteInitialPostProcessingTasks(const bool);\n\n";
-    this->headerFile << "void\nexecutePostProcessingTasks(const bool);\n\n";
-    this->headerFile << "~" << md.className << "();\n\n";
-    this->headerFile << "private:\n\n";
+		     << "const pleiades::parser::DataMap&);\n\n"
+		     << "void executeInitialPostProcessingTasks(const bool);\n\n"
+		     << "void executePostProcessingTasks(const bool);\n\n"
+		     << "~" << md.className << "();\n\n"
+		     << "private:\n\n";
     // Disable copy constructor and assignement operator
-    this->headerFile << "//! Copy constructor (disabled)\n";
-    this->headerFile << md.className << "(const " 
-		     << md.className << "&);\n\n";
-    this->headerFile << "//! Assignement operator (disabled)\n";
-    this->headerFile << md.className << "&\n"
+    this->headerFile << "//! Copy constructor (disabled)\n"
+		     << md.className << "(const " 
+		     << md.className << "&);\n\n"
+		     << "//! Assignement operator (disabled)\n"
+		     << md.className << "&\n"
 		     << "operator=(const " 
 		     << md.className << "&);\n\n";
     for(const auto& f : md.functions){
-      if(f.modifiedVariables.size()==0){
-	throw(runtime_error("MFrontModelInterface::writeHeaderFile: "
-			    "function " + f.name + " does not modify "
-			    "any variable (internal error, this shall "
-			    "have been verified long ago)."));
-      }
+      tfel::raise_if(f.modifiedVariables.size()==0,
+		     "MFrontModelInterface::writeHeaderFile: "
+		     "function " + f.name + " does not modify "
+		     "any variable (internal error, this shall "
+		     "have been verified long ago).");
       if(getDebugMode()){
 	this->headerFile << "#line " << f.line << " \"" 
 			 << fd.fileName << "\"\n";
@@ -400,11 +385,9 @@ namespace mfront{
 	}
       } else {
 	if(f.usedVariables.size()==0){
-	  this->headerFile << "void\n";
-	  this->headerFile << "operator()(std::vector<pleiades::field::real>&";
+	  this->headerFile << "void operator()(std::vector<pleiades::field::real>&";
 	} else {
-	  this->headerFile << "void\n";
-	  this->headerFile << "operator()(std::vector<pleiades::field::real>&,\n"
+	  this->headerFile << "void operator()(std::vector<pleiades::field::real>&,\n"
 			   << "const std::vector<pleiades::field::real>&";
 	}
       }
@@ -450,22 +433,20 @@ namespace mfront{
       }
       this->headerFile << getVariableType(p->type) << " " << p->name << ";\n";
     }
-    this->headerFile << "void\ninitializeOutputsVariablesDepths();\n";
-    this->headerFile << "void\ninitializeOutputsVariablesInitialValues(const pleiades::parser::DataManager&);\n";
-    this->headerFile << "void\ninitializeInputsVariablesDepths();";
+    this->headerFile << "void initializeOutputsVariablesDepths();\n"
+		     << "void initializeOutputsVariablesInitialValues(const pleiades::parser::DataManager&);\n"
+		     << "void initializeInputsVariablesDepths();";
     if(!md.constantMaterialProperties.empty()){
-      this->headerFile << "\nvoid\ninitializeConstantMaterialProperties(const pleiades::parser::DataManager&);\n\n";
+      this->headerFile << "\nvoid initializeConstantMaterialProperties(const pleiades::parser::DataManager&);\n\n";
     } else {
       this->headerFile << "\n\n";
     }
     i=0;
     for(const auto& f : md.functions){
-      if(f.modifiedVariables.size()==0){
-	string msg("MFrontModelInterface::writeHeaderFile : ");
-	msg += "function " + f.name + " does not modify any variable ";
-	msg += "(internal error, this shall have been verified long ago).";
-	throw(runtime_error(msg));
-      }
+      tfel::raise_if(f.modifiedVariables.size()==0,
+		     "MFrontModelInterface::writeHeaderFile: "
+		     "function '"+f.name+"' does not modify any variable "
+		     "(internal error, this shall have been verified long ago).");
       if(getDebugMode()){
 	this->headerFile << "#line " << f.line << " \"" 
 			 << fd.fileName << "\"\n";
@@ -473,16 +454,16 @@ namespace mfront{
       this->headerFile << f.name << " functor" << i <<  ";\n";
       ++i;
     }
-    this->headerFile << "std::map<std::string,std::map<std::string,unsigned short> > outputsDepths;\n";
-    this->headerFile << "std::map<std::string,std::map<std::string,std::shared_ptr<StateVariableDescription>>> outputsInitialValues;\n";
-    this->headerFile << "std::map<std::string,std::map<std::string,unsigned short> > inputsDepths;\n";
+    this->headerFile << "std::map<std::string,std::map<std::string,unsigned short> > outputsDepths;\n"
+		     << "std::map<std::string,std::map<std::string,std::shared_ptr<StateVariableDescription>>> outputsInitialValues;\n"
+		     << "std::map<std::string,std::map<std::string,unsigned short> > inputsDepths;\n";
     if(!md.constantMaterialProperties.empty()){
       this->headerFile << "std::map<std::string,std::map<std::string,pleiades::field::real> > constantMaterialProperties;\n";
     }
-    this->headerFile << "}; // end of struct " << md.className << "\n\n";
-    this->headerFile << "} // end of namespace model\n\n";
-    this->headerFile << "} // end of namespace pleiades\n\n";
-    this->headerFile << "#endif /* _PLEIADES_"
+    this->headerFile << "}; // end of struct " << md.className << "\n\n"
+		     << "} // end of namespace model\n\n"
+		     << "} // end of namespace pleiades\n\n"
+		     << "#endif /* _PLEIADES_"
 		     << makeUpperCase(md.className)
 		     << "_HH */\n";
   } // end of MFrontModelInterface::writeHeaderFile()
@@ -499,8 +480,8 @@ namespace mfront{
     } else if(type=="string"){
       return "get<string>";
     } 
-    throw(std::runtime_error("MFrontModelInterface::getGenTypeGetMethod : "
-			     "no method associated with type '"+type+'\''));
+    tfel::raise("MFrontModelInterface::getGenTypeGetMethod : "
+		"no method associated with type '"+type+'\'');
   } // end of MFrontModelInterface::getGenTypeGetMethod
 
   std::string
@@ -515,60 +496,57 @@ namespace mfront{
     } else if(type=="string"){
       return "is<string>";
     }
-    throw(std::runtime_error("MFrontModelInterface::getGenTypeIsMethod : "
-			     "no method associated with type '"+type+'\''));
+    tfel::raise("MFrontModelInterface::getGenTypeIsMethod : "
+		"no method associated with type '"+type+'\'');
   } // end of MFrontModelInterface::isGenTypeMethod
 
   VariableDescriptionContainer::const_iterator
   MFrontModelInterface::findVariableDescription(const VariableDescriptionContainer& v,
 						const std::string& n)
   {
-    using namespace std;
-    VariableDescriptionContainer::const_iterator p;
-    for(p=v.begin();p!=v.end();++p){
+    for(auto p=v.begin();p!=v.end();++p){
       if(p->name==n){
 	return p;
       }
     }
-    throw(std::runtime_error("MFrontModelInterface::findVariableDescription : "
-			     "no variable named '"+n+"' found"));
+    tfel::raise("MFrontModelInterface::findVariableDescription : "
+		"no variable named '"+n+"' found");
   } // MFrontModelInterface::findVariableDescription
 
-  void
-  MFrontModelInterface::writeSrcFile(const FileDescription& fd,
-				     const ModelDescription& md)
+  void MFrontModelInterface::writeSrcFile(const FileDescription& fd,
+					  const ModelDescription& md)
   {
     std::set<unsigned short> applyHeaders;
     unsigned short specializedParametersNumber;
     unsigned int i;
-    this->srcFile << "/*!" << '\n';
-    this->srcFile << "* \\file   " << this->srcFileName  << '\n';
-    this->srcFile << "* \\brief  " << "this file implements the " 
-		  << md.className << "  model.\n";
-    this->srcFile << "*         File generated by ";
-    this->srcFile << MFrontHeader::getVersionName() << " ";
-    this->srcFile << "version " << MFrontHeader::getVersionNumber();
-    this->srcFile << '\n';
+    this->srcFile << "/*!" << '\n'
+		  << "* \\file   " << this->srcFileName  << '\n'
+		  << "* \\brief  " << "this file implements the " 
+		  << md.className << "  model.\n"
+		  << "*         File generated by "
+		  << MFrontHeader::getVersionName() << " "
+		  << "version " << MFrontHeader::getVersionNumber()
+		  << '\n';
     if(!fd.authorName.empty()){
       this->srcFile << "* \\author " << fd.authorName << '\n';
     }
     if(!fd.date.empty()){
       this->srcFile << "* \\date   " << fd.date       << '\n';
     }
-    this->srcFile << " */\n\n";
-    this->srcFile << "#include<iostream>\n";
-    this->srcFile << "#include<stdexcept>\n";
-    this->srcFile << "#include<sstream>\n";
-    this->srcFile << "#include<cmath>\n\n";
-    this->srcFile << "#include\"Pleiades/Global.hxx\"\n";
-    this->srcFile << "#include\"Pleiades/OutOfBoundsPolicy.hxx\"\n";
-    this->srcFile << "#include\"Pleiades/Parser/Data.hxx\"\n";
-    this->srcFile << "#include\"Pleiades/Parser/DataManager.hxx\"\n";
-    this->srcFile << "#include\"Pleiades/Glossary/Glossary.hxx\"\n";
-    this->srcFile << "#include\"Pleiades/Time/SClock.hxx\"\n";
-    this->srcFile << "#include\"Pleiades/Model/MaterialPropertyDescription.hxx\"\n";
-    this->srcFile << "#include\"Pleiades/Coupling/Requirement.hxx\"\n";
-    this->srcFile << "#include\"Pleiades/Coupling/SRequirementManager.hxx\"\n";
+    this->srcFile << " */\n\n"
+		  << "#include<iostream>\n"
+		  << "#include<stdexcept>\n"
+		  << "#include<sstream>\n"
+		  << "#include<cmath>\n\n"
+		  << "#include\"Pleiades/Global.hxx\"\n"
+		  << "#include\"Pleiades/OutOfBoundsPolicy.hxx\"\n"
+		  << "#include\"Pleiades/Parser/Data.hxx\"\n"
+		  << "#include\"Pleiades/Parser/DataManager.hxx\"\n"
+		  << "#include\"Pleiades/Glossary/Glossary.hxx\"\n"
+		  << "#include\"Pleiades/Time/SClock.hxx\"\n"
+		  << "#include\"Pleiades/Model/MaterialPropertyDescription.hxx\"\n"
+		  << "#include\"Pleiades/Coupling/Requirement.hxx\"\n"
+		  << "#include\"Pleiades/Coupling/SRequirementManager.hxx\"\n";
     // Functions
     bool requiresNFieldHolder = false;
     for(const auto& f : md.functions){
@@ -585,16 +563,16 @@ namespace mfront{
       }
     }
     if(requiresNFieldHolder){
-      this->srcFile << "#include\"Pleiades/Field/VNField.hxx\"\n";
-      this->srcFile << "#include\"Pleiades/Field/NFieldHolder.hxx\"\n";
+      this->srcFile << "#include\"Pleiades/Field/VNField.hxx\"\n"
+		    << "#include\"Pleiades/Field/NFieldHolder.hxx\"\n";
     }
-    this->srcFile << "#include\"Pleiades/Model/MaterialDescription.hxx\"\n";
-    this->srcFile << "#include\"Pleiades/Model/UniformScalarStateVariableDescription.hxx\"\n";
-    this->srcFile << "#include\"Pleiades/Model/IModelFactory.hxx\"\n";
-    this->srcFile << "#include\"Pleiades/Model/" 
-		  << md.className << "-@application@.hxx\"\n\n";
-    this->srcFile << "namespace pleiades\n{\n\n";
-    this->srcFile << "namespace model\n{\n\n";
+    this->srcFile << "#include\"Pleiades/Model/MaterialDescription.hxx\"\n"
+		  << "#include\"Pleiades/Model/UniformScalarStateVariableDescription.hxx\"\n"
+		  << "#include\"Pleiades/Model/IModelFactory.hxx\"\n"
+		  << "#include\"Pleiades/Model/" 
+		  << md.className << "-@application@.hxx\"\n\n"
+		  << "namespace pleiades\n{\n\n"
+		  << "namespace model\n{\n\n";
     // Functors
     for(const auto& f : md.functions){
       // operator()
@@ -604,8 +582,8 @@ namespace mfront{
       }
       if((f.modifiedVariables.size()==1)&&
 	 (f.usedVariables.size()<TFEL_MFRONTPLEAIDESPARSER_MAXUSEDVARIABLESFORUSINGAPPLY)){
-	this->srcFile << "pleiades::field::real\n";
-	this->srcFile << md.className << "::" << f.name << "::operator()(";
+	this->srcFile << "pleiades::field::real\n"
+		      << md.className << "::" << f.name << "::operator()(";
 	if(f.usedVariables.size()==0){
 	  if(f.modifiedVariables.size()==1){
 	    this->srcFile << "void";
@@ -622,17 +600,17 @@ namespace mfront{
 	  }
 	}
       } else {
-	this->srcFile << "void\n";
-	this->srcFile << md.className << "::" << f.name << "::operator()(";
-	this->srcFile << "std::vector<pleiades::field::real>& results";
+	this->srcFile << "void "
+		      << md.className << "::" << f.name << "::operator()("
+		      << "std::vector<pleiades::field::real>& results";
 	if(f.usedVariables.size()!=0){
 	  this->srcFile << ",\nconst std::vector<pleiades::field::real>& values";
 	}
       }
-      this->srcFile << ") const\n";
-      this->srcFile << "{\n";
-      this->srcFile << "using namespace std;\n";
-      this->srcFile << "using pleiades::field::real;\n";
+      this->srcFile << ") const\n"
+		    << "{\n"
+		    << "using namespace std;\n"
+		    << "using pleiades::field::real;\n";
       if((f.modifiedVariables.size()==1)&&
 	 (f.usedVariables.size()<TFEL_MFRONTPLEAIDESPARSER_MAXUSEDVARIABLESFORUSINGAPPLY)){
 	this->srcFile << "real " << *(f.modifiedVariables.begin()) << ";\n";	
@@ -662,9 +640,9 @@ namespace mfront{
 	      return vi;
 	    }
 	  }
-	  throw(std::runtime_error("MFrontModelInterface::writeSrcFile: "
-				   "no input or output variable "
-				   "named '"+*puv+"'"));
+	  tfel::raise("MFrontModelInterface::writeSrcFile: "
+		      "no input or output variable "
+		      "named '"+*puv+"'");
 	}();
 	if((v.hasBounds())||(v.hasPhysicalBounds())){
 	  this->srcFile << "#ifndef NO_PLEIADES_BOUNDS_CHECK\n";
@@ -771,34 +749,32 @@ namespace mfront{
 		    << "pleiades::time::SClock& c,\n"
 		    << "pleiades::loading::SLoadingManager& l,\n"
 		    << "pleiades::signal::SSignalManager& s)\n"
-		    << ": ModelBase(m,mf,c,l,s)\n{\n";
-      this->srcFile << "using namespace std;\n";
-      this->srcFile << "using namespace pleiades::glossary;\n";
-      this->srcFile << "vector<string> tmp;\n";
-      this->srcFile << "vector<string>::const_iterator ptr;\n";
-      this->srcFile << "vector<string>::const_iterator ptr2;\n";
+		    << ": ModelBase(m,mf,c,l,s)\n{\n"
+		    << "using namespace std;\n"
+		    << "using namespace pleiades::glossary;\n"
+		    << "vector<string> tmp;\n"
+		    << "vector<string>::const_iterator ptr;\n"
+		    << "vector<string>::const_iterator ptr2;\n";
       for(const auto& p : md.parameters){
 	this->writeAssignDefaultValue(p);
       }
-      if(md.domains.empty()){
-	throw(std::runtime_error("MFrontModelInterface::writeSrcFile: "
-				 "no domain defined (internal error, "
-				 "we shall not reach this point)"));
-      }
+      tfel::raise_if(md.domains.empty(),"MFrontModelInterface::writeSrcFile: "
+		     "no domain defined (internal error, "
+		     "we shall not reach this point)");
       for(const auto& d : md.domains){
-	this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,\"" << d << "\");\n";
-	this->srcFile << "for(ptr=tmp.begin();ptr!=tmp.end();++ptr){\n";
-	this->srcFile << "if(find(this->domains.begin(),this->domains.end(),*ptr)!=this->domains.end()){\n";
-	this->srcFile << "string msg(\"" << md.className << "::" << md.className << " : \");\n";
-	this->srcFile << "msg += \"domain '\"+*ptr+\"' multiply defined\";\n";
-	this->srcFile << "throw(runtime_error(msg));\n";
-	this->srcFile << "}\n";
-	this->srcFile << "this->domains.push_back(*ptr);\n";
-	this->srcFile << "}\n";
+	this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,\"" << d << "\");\n"
+		      << "for(ptr=tmp.begin();ptr!=tmp.end();++ptr){\n"
+		      << "if(find(this->domains.begin(),this->domains.end(),*ptr)!=this->domains.end()){\n"
+		      << "string msg(\"" << md.className << "::" << md.className << " : \");\n"
+		      << "msg += \"domain '\"+*ptr+\"' multiply defined\";\n"
+		      << "throw(runtime_error(msg));\n"
+		      << "}\n"
+		      << "this->domains.push_back(*ptr);\n"
+		      << "}\n";
       }
-      this->srcFile << "this->initializeOutputsVariablesDepths();\n";
-      this->srcFile << "this->initializeInputsVariablesDepths();\n";
-      this->srcFile << "} // end of " 
+      this->srcFile << "this->initializeOutputsVariablesDepths();\n"
+		    << "this->initializeInputsVariablesDepths();\n"
+		    << "} // end of " 
 		    << md.className << "::" 
 		    << md.className <<"\n\n";
     } else {
@@ -809,17 +785,17 @@ namespace mfront{
 		    << "pleiades::time::SClock& c,\n"
 		    << "pleiades::loading::SLoadingManager& l,\n"
 		    << "pleiades::signal::SSignalManager& s)\n"
-		    << ": ModelBase(m,mf,c,l,s)\n{\n";
-      this->srcFile << "using namespace std;\n";
-      this->srcFile << "string msg(\"" << md.className << "::" << md.className << " : \");\n";
-      this->srcFile << "msg += \"no domain defined\";\n";
-      this->srcFile << "throw(runtime_error(msg));\n";
-      this->srcFile << "} // end of " 
+		    << ": ModelBase(m,mf,c,l,s)\n{\n"
+		    << "using namespace std;\n"
+		    << "string msg(\"" << md.className << "::" << md.className << " : \");\n"
+		    << "msg += \"no domain defined\";\n"
+		    << "throw(runtime_error(msg));\n"
+		    << "} // end of " 
 		    << md.className << "::" 
 		    << md.className <<"\n\n";
     }
-    this->srcFile << "//! Constructor to initialize local parameters\n";
-    this->srcFile << md.className << "::" 
+    this->srcFile << "//! Constructor to initialize local parameters\n"
+		  << md.className << "::" 
 		  << md.className 
 		  << "(const std::map<std::string,pleiades::parser::Data>& data,\n"
 		  << "pleiades::mesh::SMeshManager& m,\n"
@@ -827,14 +803,14 @@ namespace mfront{
 		  << "pleiades::time::SClock& c,\n"
 		  << "pleiades::loading::SLoadingManager& l,\n"
 		  << "pleiades::signal::SSignalManager& s)\n"
-		  << ": ModelBase(m,mf,c,l,s)\n{\n";
-    this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace pleiades::field;\n";
-    this->srcFile << "using namespace pleiades::glossary;\n";
-    this->srcFile << "using namespace pleiades::parser;\n";
-    this->srcFile << "using namespace pleiades::coupling;\n";
-    this->srcFile << "static constexpr string ValidParametersNames[] = {";
-    this->srcFile << "\"domain\",\"domains\",\"Active\",\n"
+		  << ": ModelBase(m,mf,c,l,s)\n{\n"
+		  << "using namespace std;\n"
+		  << "using namespace pleiades::field;\n"
+		  << "using namespace pleiades::glossary;\n"
+		  << "using namespace pleiades::parser;\n"
+		  << "using namespace pleiades::coupling;\n"
+		  << "static constexpr string ValidParametersNames[] = {"
+		  << "\"domain\",\"domains\",\"Active\",\n"
 		  << "\"ActivatingEvents\",\"DesactivatingEvents\"";
     specializedParametersNumber=5u;
     for(const auto& p : md.parameters){
@@ -844,101 +820,101 @@ namespace mfront{
       ++(specializedParametersNumber);
     }
     // domain specialisation
-    this->srcFile << "};\n";
-    this->srcFile << "vector<string> tmp;\n";
-    this->srcFile << "map<string,Data>::const_iterator ptr;\n";
-    this->srcFile << "vector<string>::const_iterator ptr2;\n";
-    this->srcFile << "vector<string>::const_iterator ptr3;\n";
-    this->srcFile << "for(ptr=data.begin();ptr!=data.end();++ptr){\n";
-    this->srcFile << "if(find(ValidParametersNames,ValidParametersNames+" 
+    this->srcFile << "};\n"
+		  << "vector<string> tmp;\n"
+		  << "map<string,Data>::const_iterator ptr;\n"
+		  << "vector<string>::const_iterator ptr2;\n"
+		  << "vector<string>::const_iterator ptr3;\n"
+		  << "for(ptr=data.begin();ptr!=data.end();++ptr){\n"
+		  << "if(find(ValidParametersNames,ValidParametersNames+" 
 		  << specializedParametersNumber
 		  << ",ptr->first)==ValidParametersNames+"
-		  << specializedParametersNumber << "){\n";
-    this->srcFile << "string msg(\"" << md.className << "::" << md.className << " : \");\n";
-    this->srcFile << "msg += \"unknown parameter '\"+ptr->first+\"'\";\n";
-    this->srcFile << "throw(runtime_error(msg));\n";
-    this->srcFile << "}\n";
-    this->srcFile << "}\n";
-    this->srcFile << "ActivableObjectBase::handleSpecialisationData(data);\n";
+		  << specializedParametersNumber << "){\n"
+		  << "string msg(\"" << md.className << "::" << md.className << " : \");\n"
+		  << "msg += \"unknown parameter '\"+ptr->first+\"'\";\n"
+		  << "throw(runtime_error(msg));\n"
+		  << "}\n"
+		  << "}\n"
+		  << "ActivableObjectBase::handleSpecialisationData(data);\n";
     for(const auto& p : md.parameters){
       const auto name = getDeclaration(p);
-      this->srcFile << "ptr = data.find(" << name << ");\n";
-      this->srcFile << "if(ptr==data.end()){\n";
+      this->srcFile << "ptr = data.find(" << name << ");\n"
+		    << "if(ptr==data.end()){\n";
       if(p.hasAttribute(VariableDescription::defaultValue)){
 	this->writeAssignDefaultValue(p);
       } else {
-	this->srcFile << "string msg(\"" << md.className << "::" << md.className << " : \");\n";
-	this->srcFile << "msg += \"can't initialize parameter " << p.name << "\";\n";
-	this->srcFile << "throw(runtime_error(msg));\n";
+	this->srcFile << "string msg(\"" << md.className << "::" << md.className << " : \");\n"
+		      << "msg += \"can't initialize parameter " << p.name << "\";\n"
+		      << "throw(runtime_error(msg));\n";
       }
-      this->srcFile << "} else {\n";
-      this->srcFile << "if(!ptr->second." << this->getGenTypeIsMethod(p.type) << "()){\n";
-      this->srcFile << "string msg(\"" << md.className << "::" << md.className << " : \");\n";
-      this->srcFile << "msg += \"wrong type for parameter '" << p.name << "' (expected a '"+p.type+"')\";\n";
-      this->srcFile << "throw(runtime_error(msg));\n";
-      this->srcFile << "}\n";
-      this->srcFile << "this->" << p.name << " = ptr->second." 
-		    << this->getGenTypeGetMethod(p.type) << "();\n";
-      this->srcFile << "}\n";
+      this->srcFile << "} else {\n"
+		    << "if(!ptr->second." << this->getGenTypeIsMethod(p.type) << "()){\n"
+		    << "string msg(\"" << md.className << "::" << md.className << " : \");\n"
+		    << "msg += \"wrong type for parameter '" << p.name << "' (expected a '"+p.type+"')\";\n"
+		    << "throw(runtime_error(msg));\n"
+		    << "}\n"
+		    << "this->" << p.name << " = ptr->second." 
+		    << this->getGenTypeGetMethod(p.type) << "();\n"
+		    << "}\n";
     }
-    this->srcFile << "if((data.find(\"domain\")!=data.end())||(data.find(\"domains\")!=data.end())){\n";
-    this->srcFile << "if(data.find(\"domain\")!=data.end()){\n";
-    this->srcFile << "ptr = data.find(\"domain\");\n";
-    this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,ptr->second.get<string>());\n";
-    this->srcFile << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n";
-    this->srcFile << "if(find(this->domains.begin(),this->domains.end(),*ptr2)!=this->domains.end()){\n";
-    this->srcFile << "string msg(\"" << md.className << "::" << md.className << ": \");\n";
-    this->srcFile << "msg += \"domain '\"+*ptr2+\"' multiply defined\";\n";
-    this->srcFile << "throw(runtime_error(msg));\n";
-    this->srcFile << "}\n";
-    this->srcFile << "this->domains.push_back(*ptr2);\n";
-    this->srcFile << "}\n";
-    this->srcFile << "}\n";
-    this->srcFile << "if(data.find(\"domains\")!=data.end()){\n";
-    this->srcFile << "ptr = data.find(\"domains\");\n";
-    this->srcFile << "if(ptr!=data.end()){\n";
-    this->srcFile << "if(!ptr->second.is<vector<string> >()){\n";
-    this->srcFile << "string msg(\"" << md.className << "::" << md.className << " : \");\n";
-    this->srcFile << "msg += \"invalid type for parameter 'domains'\";\n";
-    this->srcFile << "throw(runtime_error(msg));\n";
-    this->srcFile << "}\n";
-    this->srcFile << "for(ptr3=ptr->second.get<vector<string> >().begin();\n";
-    this->srcFile << "ptr3!=ptr->second.get<vector<string> >().end();++ptr3){\n";
-    this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,*ptr3);\n";
-    this->srcFile << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n";
-    this->srcFile << "if(find(this->domains.begin(),this->domains.end(),*ptr2)!=this->domains.end()){\n";
-    this->srcFile << "string msg(\"" << md.className << "::" << md.className << ": \");\n";
-    this->srcFile << "msg += \"domain '\"+*ptr2+\"' multiply defined\";\n";
-    this->srcFile << "throw(runtime_error(msg));\n";
-    this->srcFile << "}\n";
-    this->srcFile << "this->domains.push_back(*ptr2);\n";
-    this->srcFile << "}\n";
-    this->srcFile << "}\n";
-    this->srcFile << "}\n";
-    this->srcFile << "}\n";
-    this->srcFile << "} else {\n";
+    this->srcFile << "if((data.find(\"domain\")!=data.end())||(data.find(\"domains\")!=data.end())){\n"
+		  << "if(data.find(\"domain\")!=data.end()){\n"
+		  << "ptr = data.find(\"domain\");\n"
+		  << "this->smanager.getMatchingMaterialsNames(tmp,ptr->second.get<string>());\n"
+		  << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n"
+		  << "if(find(this->domains.begin(),this->domains.end(),*ptr2)!=this->domains.end()){\n"
+		  << "string msg(\"" << md.className << "::" << md.className << ": \");\n"
+		  << "msg += \"domain '\"+*ptr2+\"' multiply defined\";\n"
+		  << "throw(runtime_error(msg));\n"
+		  << "}\n"
+		  << "this->domains.push_back(*ptr2);\n"
+		  << "}\n"
+		  << "}\n"
+		  << "if(data.find(\"domains\")!=data.end()){\n"
+		  << "ptr = data.find(\"domains\");\n"
+		  << "if(ptr!=data.end()){\n"
+		  << "if(!ptr->second.is<vector<string> >()){\n"
+		  << "string msg(\"" << md.className << "::" << md.className << " : \");\n"
+		  << "msg += \"invalid type for parameter 'domains'\";\n"
+		  << "throw(runtime_error(msg));\n"
+		  << "}\n"
+		  << "for(ptr3=ptr->second.get<vector<string> >().begin();\n"
+		  << "ptr3!=ptr->second.get<vector<string> >().end();++ptr3){\n"
+		  << "this->smanager.getMatchingMaterialsNames(tmp,*ptr3);\n"
+		  << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n"
+		  << "if(find(this->domains.begin(),this->domains.end(),*ptr2)!=this->domains.end()){\n"
+		  << "string msg(\"" << md.className << "::" << md.className << ": \");\n"
+		  << "msg += \"domain '\"+*ptr2+\"' multiply defined\";\n"
+		  << "throw(runtime_error(msg));\n"
+		  << "}\n"
+		  << "this->domains.push_back(*ptr2);\n"
+		  << "}\n"
+		  << "}\n"
+		  << "}\n"
+		  << "}\n"
+		  << "} else {\n";
     if(md.domains.empty()){
-      this->srcFile << "string msg(\"" << md.className << "::" << md.className << ": \");\n";
-      this->srcFile << "msg += \"no domain defined\";\n";
-      this->srcFile << "throw(runtime_error(msg));\n";
+      this->srcFile << "string msg(\"" << md.className << "::" << md.className << ": \");\n"
+		    << "msg += \"no domain defined\";\n"
+		    << "throw(runtime_error(msg));\n";
     } else {
       for(const auto& d : md.domains){
-	this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,\"" << d << "\");\n";
-	this->srcFile << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n";
-	this->srcFile << "if(find(this->domains.begin(),this->domains.end(),*ptr2)!=this->domains.end()){\n";
-	this->srcFile << "string msg(\"" << md.className << "::" 
-		      << md.className << " : \");\n";
-	this->srcFile << "msg += \"domain '\"+*ptr2+\"' multiply defined\";\n";
-	this->srcFile << "throw(runtime_error(msg));\n";
-	this->srcFile << "}\n";
-	this->srcFile << "this->domains.push_back(*ptr2);\n";
-	this->srcFile << "}\n";
+	this->srcFile << "this->smanager.getMatchingMaterialsNames(tmp,\"" << d << "\");\n"
+		      << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n"
+		      << "if(find(this->domains.begin(),this->domains.end(),*ptr2)!=this->domains.end()){\n"
+		      << "string msg(\"" << md.className << "::" 
+		      << md.className << " : \");\n"
+		      << "msg += \"domain '\"+*ptr2+\"' multiply defined\";\n"
+		      << "throw(runtime_error(msg));\n"
+		      << "}\n"
+		      << "this->domains.push_back(*ptr2);\n"
+		      << "}\n";
       }
     }
-    this->srcFile << "}\n";
-    this->srcFile << "this->initializeOutputsVariablesDepths();\n";
-    this->srcFile << "this->initializeInputsVariablesDepths();\n";
-    this->srcFile <<"} // end of "
+    this->srcFile << "}\n"
+		  << "this->initializeOutputsVariablesDepths();\n"
+		  << "this->initializeInputsVariablesDepths();\n"
+		  <<"} // end of "
 		  << md.className << "::" 
 		  << md.className <<"\n\n";
     this->writeInitializeOutputsVariablesDepths(md);
@@ -951,14 +927,14 @@ namespace mfront{
 		  << "return \"" << md.className << "\";\n"
 		  << "}\n\n";
     // initialize
-    this->srcFile << "void\n"
+    this->srcFile << "void "
 		  << md.className
-		  << "::initialize(const pleiades::parser::DataManager& data)";
-    this->srcFile << "{\n";
-    this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace pleiades::field;\n";
-    this->srcFile << "using namespace pleiades::glossary;\n";
-    this->srcFile << "this->initializeOutputsVariablesInitialValues(data);\n";
+		  << "::initialize(const pleiades::parser::DataManager& data)"
+		  << "{\n"
+		  << "using namespace std;\n"
+		  << "using namespace pleiades::field;\n"
+		  << "using namespace pleiades::glossary;\n"
+		  << "this->initializeOutputsVariablesInitialValues(data);\n";
     if(!md.constantMaterialProperties.empty()){
       this->srcFile << "this->initializeConstantMaterialProperties(data);\n";
     }
@@ -977,89 +953,89 @@ namespace mfront{
       this->writeInitializeConstantMaterialProperties(md);
     }
     // declareRequirements
-    this->srcFile << "void\n";
-    this->srcFile << md.className << "::declareRequirements(pleiades::coupling::SRequirementManager& requirementManager)\n";
-    this->srcFile << "{\n";
-    this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace pleiades::coupling;\n";
-    this->srcFile << "using namespace pleiades::glossary;\n";
-    this->srcFile << "map<string,map<string,unsigned short> >::const_iterator ptr;\n";
-    this->srcFile << "map<string,unsigned short>::const_iterator ptr2;\n";
-    this->srcFile << "for(ptr=this->inputsDepths.begin();ptr!=this->inputsDepths.end();++ptr){\n";
-    this->srcFile << "auto& tmp = ptr->second;\n";
-    this->srcFile << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n";
-    this->srcFile << "requirementManager.addRequirement(static_cast<IModel&>(*this),\n";
-    this->srcFile << "ptr->first,ptr2->first,\n";
-    this->srcFile << "Requirement::SCALAR,\n";
-    this->srcFile << "Requirement::MANDATORY,";
-    this->srcFile << "ptr2->second);\n";
-    this->srcFile << "}\n";
-    this->srcFile << "}\n";
-    this->srcFile << "} // end of " << md.className << "::declareRequirements\n\n";
+    this->srcFile << "void "
+		  << md.className << "::declareRequirements(pleiades::coupling::SRequirementManager& requirementManager)\n"
+		  << "{\n"
+		  << "using namespace std;\n"
+		  << "using namespace pleiades::coupling;\n"
+		  << "using namespace pleiades::glossary;\n"
+		  << "map<string,map<string,unsigned short> >::const_iterator ptr;\n"
+		  << "map<string,unsigned short>::const_iterator ptr2;\n"
+		  << "for(ptr=this->inputsDepths.begin();ptr!=this->inputsDepths.end();++ptr){\n"
+		  << "auto& tmp = ptr->second;\n"
+		  << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n"
+		  << "requirementManager.addRequirement(static_cast<IModel&>(*this),\n"
+		  << "ptr->first,ptr2->first,\n"
+		  << "Requirement::SCALAR,\n"
+		  << "Requirement::MANDATORY,"
+		  << "ptr2->second);\n"
+		  << "}\n"
+		  << "}\n"
+		  << "} // end of " << md.className << "::declareRequirements\n\n";
     // resolveDependencies
-    this->srcFile << "void\n";
-    this->srcFile << md.className << "::resolveRequirements(pleiades::coupling::SRequirementManager& requirementManager)\n";
-    this->srcFile << "{\n";
-    this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace pleiades::glossary;\n";
-    this->srcFile << "using namespace pleiades::coupling;\n";
-    this->srcFile << "using namespace pleiades::field;\n";
-    this->srcFile << "map<string,map<string,unsigned short> >::const_iterator ptr;\n";
-    this->srcFile << "map<string,unsigned short>::const_iterator ptr2;\n";
-    this->srcFile << "for(ptr=this->outputsDepths.begin();ptr!=this->outputsDepths.end();++ptr){\n";
-    this->srcFile << "auto& tmp = ptr->second;\n";
-    this->srcFile << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n";
-    this->srcFile << "if(this->outputsInitialValues.find(ptr->first)==this->outputsInitialValues.end()){\n";
-    this->srcFile << "requirementManager.setRequirementProvider(static_cast<IModel&>(*this),\n"
-		  << "ptr->first,ptr2->first,Requirement::SCALAR,false);\n";
-    this->srcFile << "} else {\n";
-    this->srcFile << "if(this->outputsInitialValues[ptr->first].find(ptr2->first)!=this->outputsInitialValues[ptr->first].end()){\n";
-    this->srcFile << "requirementManager.setRequirementProvider(static_cast<IModel&>(*this),\n"
-		  << "ptr->first,ptr2->first,Requirement::SCALAR,true);\n";
-    this->srcFile << "} else {\n";
-    this->srcFile << "requirementManager.setRequirementProvider(static_cast<IModel&>(*this),\n"
-		  << "ptr->first,ptr2->first,Requirement::SCALAR,false);\n";
-    this->srcFile << "}\n";
-    this->srcFile << "}\n";
-    this->srcFile << "}\n";
-    this->srcFile << "}\n";
-    this->srcFile << "} // end of " << md.className << "::resolveRequirements\n\n";
+    this->srcFile << "void "
+		  << md.className << "::resolveRequirements(pleiades::coupling::SRequirementManager& requirementManager)\n"
+		  << "{\n"
+		  << "using namespace std;\n"
+		  << "using namespace pleiades::glossary;\n"
+		  << "using namespace pleiades::coupling;\n"
+		  << "using namespace pleiades::field;\n"
+		  << "map<string,map<string,unsigned short> >::const_iterator ptr;\n"
+		  << "map<string,unsigned short>::const_iterator ptr2;\n"
+		  << "for(ptr=this->outputsDepths.begin();ptr!=this->outputsDepths.end();++ptr){\n"
+		  << "auto& tmp = ptr->second;\n"
+		  << "for(ptr2=tmp.begin();ptr2!=tmp.end();++ptr2){\n"
+		  << "if(this->outputsInitialValues.find(ptr->first)==this->outputsInitialValues.end()){\n"
+		  << "requirementManager.setRequirementProvider(static_cast<IModel&>(*this),\n"
+		  << "ptr->first,ptr2->first,Requirement::SCALAR,false);\n"
+		  << "} else {\n"
+		  << "if(this->outputsInitialValues[ptr->first].find(ptr2->first)!=this->outputsInitialValues[ptr->first].end()){\n"
+		  << "requirementManager.setRequirementProvider(static_cast<IModel&>(*this),\n"
+		  << "ptr->first,ptr2->first,Requirement::SCALAR,true);\n"
+		  << "} else {\n"
+		  << "requirementManager.setRequirementProvider(static_cast<IModel&>(*this),\n"
+		  << "ptr->first,ptr2->first,Requirement::SCALAR,false);\n"
+		  << "}\n"
+		  << "}\n"
+		  << "}\n"
+		  << "}\n"
+		  << "} // end of " << md.className << "::resolveRequirements\n\n";
     // initializeOutput
-    this->srcFile << "void\n";
-    this->srcFile << md.className << "::initializeOutput(pleiades::coupling::Requirement& requirement)\n";
-    this->srcFile << "{\n";
-    this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace pleiades::glossary;\n";
-    this->srcFile << "using namespace pleiades::field;\n";
-    this->srcFile << "map<string,map<string,unsigned short> >::const_iterator ptr;\n";
-    this->srcFile << "map<string,unsigned short>::const_iterator ptr2;\n";
-    this->srcFile << "map<string,map<string,shared_ptr<StateVariableDescription> > >::const_iterator ptr3;\n";
-    this->srcFile << "map<string,shared_ptr<StateVariableDescription> >::const_iterator ptr4;\n";
-    this->srcFile << "ptr = this->outputsDepths.find(requirement.getName());\n";
-    this->srcFile << "if(ptr==this->outputsDepths.end()){\n";
-    this->srcFile << "return ModelBase::initializeOutput(requirement);\n";
-    this->srcFile << "}\n";
-    this->srcFile << "ptr2 = ptr->second.find(requirement.getLocation());\n";
-    this->srcFile << "if(ptr2==ptr->second.end()){\n";
-    this->srcFile << "return ModelBase::initializeOutput(requirement);\n";
-    this->srcFile << "}\n";
-    this->srcFile << "ptr3 = this->outputsInitialValues.find(requirement.getName());\n";
-    this->srcFile << "if(ptr3==this->outputsInitialValues.end()){\n";
-    this->srcFile << "string msg(\"" << md.className << "::initializeOutput: \");\n";
-    this->srcFile << "msg += \"no initial value for '\"+requirement.getName()+\"'\";\n";
-    this->srcFile << "throw(runtime_error(msg));\n";
-    this->srcFile << "}\n";
-    this->srcFile << "ptr4 = ptr3->second.find(requirement.getLocation());\n";
-    this->srcFile << "if(ptr4==ptr3->second.end()){\n";
-    this->srcFile << "string msg(\"" << md.className << "::initializeOutput: \");\n";
-    this->srcFile << "msg += \"no initial value for '\"+requirement.getName()+\"'\";\n";
-    this->srcFile << "throw(runtime_error(msg));\n";
-    this->srcFile << "}\n";
-    this->srcFile << "ptr4->second->initialize(this->smanager.getMTFieldManager(requirement.getLocation()),\n"
-		  << "requirement,ptr2->second);\n";
-    this->srcFile << "} // end of " << md.className << "::initializeOutput\n\n";
+    this->srcFile << "void "
+		  << md.className << "::initializeOutput(pleiades::coupling::Requirement& requirement)\n"
+		  << "{\n"
+		  << "using namespace std;\n"
+		  << "using namespace pleiades::glossary;\n"
+		  << "using namespace pleiades::field;\n"
+		  << "map<string,map<string,unsigned short> >::const_iterator ptr;\n"
+		  << "map<string,unsigned short>::const_iterator ptr2;\n"
+		  << "map<string,map<string,shared_ptr<StateVariableDescription> > >::const_iterator ptr3;\n"
+		  << "map<string,shared_ptr<StateVariableDescription> >::const_iterator ptr4;\n"
+		  << "ptr = this->outputsDepths.find(requirement.getName());\n"
+		  << "if(ptr==this->outputsDepths.end()){\n"
+		  << "return ModelBase::initializeOutput(requirement);\n"
+		  << "}\n"
+		  << "ptr2 = ptr->second.find(requirement.getLocation());\n"
+		  << "if(ptr2==ptr->second.end()){\n"
+		  << "return ModelBase::initializeOutput(requirement);\n"
+		  << "}\n"
+		  << "ptr3 = this->outputsInitialValues.find(requirement.getName());\n"
+		  << "if(ptr3==this->outputsInitialValues.end()){\n"
+		  << "string msg(\"" << md.className << "::initializeOutput: \");\n"
+		  << "msg += \"no initial value for '\"+requirement.getName()+\"'\";\n"
+		  << "throw(runtime_error(msg));\n"
+		  << "}\n"
+		  << "ptr4 = ptr3->second.find(requirement.getLocation());\n"
+		  << "if(ptr4==ptr3->second.end()){\n"
+		  << "string msg(\"" << md.className << "::initializeOutput: \");\n"
+		  << "msg += \"no initial value for '\"+requirement.getName()+\"'\";\n"
+		  << "throw(runtime_error(msg));\n"
+		  << "}\n"
+		  << "ptr4->second->initialize(this->smanager.getMTFieldManager(requirement.getLocation()),\n"
+		  << "requirement,ptr2->second);\n"
+		  << "} // end of " << md.className << "::initializeOutput\n\n";
     // save
-    this->srcFile << "void\n"
+    this->srcFile << "void "
 		  << md.className
 		  << "::save(const std::string& directory,\npleiades::parser::DataMap& saveddata)\n"
 		  << "{\n"
@@ -1079,8 +1055,8 @@ namespace mfront{
 		  << "activestate.insert({*ptr,\"false\"});\n"
 		  << "}\n"
 		  << "}\n"
-		  << "}\n\n";
-    this->srcFile << "void\n"
+		  << "}\n\n"
+		  << "void "
 		  << md.className
 		  << "::restore(const pleiades::time::ptime t,\n"
 		  << "const std::string& directory,\n" 
@@ -1125,18 +1101,18 @@ namespace mfront{
 		  << "}\n"
 		  << "}\n\n";
     // execute
-    this->srcFile << "void\n"
+    this->srcFile << "void "
 		  << md.className
-		  << "::execute(){\n";
-    this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace pleiades;\n";
-    this->srcFile << "using namespace pleiades::time;\n";
-    this->srcFile << "using namespace pleiades::mesh;\n";
-    this->srcFile << "using namespace pleiades::field;\n";
-    this->srcFile << "using namespace pleiades::glossary;\n";
-    this->srcFile << "using std::shared_ptr;\n";
-    this->srcFile << "vector<string>::const_iterator ptr;\n";
-    this->srcFile << "this->computeMaterialProperties();\n";
+		  << "::execute(){\n"
+		  << "using namespace std;\n"
+		  << "using namespace pleiades;\n"
+		  << "using namespace pleiades::time;\n"
+		  << "using namespace pleiades::mesh;\n"
+		  << "using namespace pleiades::field;\n"
+		  << "using namespace pleiades::glossary;\n"
+		  << "using std::shared_ptr;\n"
+		  << "vector<string>::const_iterator ptr;\n"
+		  << "this->computeMaterialProperties();\n";
     // do we need time increment ?
     for(const auto& f : md.functions){
       if(f.useTimeIncrement){
@@ -1151,8 +1127,8 @@ namespace mfront{
       if(f.useTimeIncrement){
 	this->srcFile << "this->" << functor << ".dt=dt;\n";
       }
-      this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
-      this->srcFile << "auto& mm = this->smanager.getMTFieldManager(*ptr);\n";
+      this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n"
+		    << "auto& mm = this->smanager.getMTFieldManager(*ptr);\n";
       for(const auto &uv  : f.usedVariables){
 	const auto dv = decomposeVariableName(md,uv);
 	const auto en = getDeclaration(md.getVariableDescription(dv.first));
@@ -1169,10 +1145,10 @@ namespace mfront{
 	this->srcFile << "this->" << functor << "." << c 
 		      << " = this->constantMaterialProperties[*ptr][\"" << c << "\"];\n";
       }
-      this->srcFile << "if(getVerboseMode()==VERBOSE_LEVEL1){\n";
-      this->srcFile << "auto& log = getLogStream();\n";
-      this->srcFile << "log << \"**" << md.className << "::execute : \"" << "\n";
-      this->srcFile << "<< \"executing function '" << f.name
+      this->srcFile << "if(getVerboseMode()==VERBOSE_LEVEL1){\n"
+		    << "auto& log = getLogStream();\n"
+		    << "log << \"**" << md.className << "::execute : \"" << "\n"
+		    << "<< \"executing function '" << f.name
 		    << "' on domain '\" << *ptr << \"'\" << endl;\n"
 		    << "}\n";
       if((f.modifiedVariables.size()==1)&&
@@ -1195,12 +1171,12 @@ namespace mfront{
 	this->srcFile << ");\n";
       } else {
 	if(f.usedVariables.size()!=0){
-	  this->srcFile << "vector<real> results;\n";
-	  this->srcFile << "vector<real> values;\n";
-	  this->srcFile << "results.resize(" << f.modifiedVariables.size() << ");\n";
-	  this->srcFile << "values.resize("  << f.usedVariables.size()     << ");\n";
-	  this->srcFile << "shared_ptr<Support> support = mm.getSupportPtr();\n";
-	  this->srcFile << "if(";
+	  this->srcFile << "vector<real> results;\n"
+			<< "vector<real> values;\n"
+			<< "results.resize(" << f.modifiedVariables.size() << ");\n"
+			<< "values.resize("  << f.usedVariables.size()     << ");\n"
+			<< "shared_ptr<Support> support = mm.getSupportPtr();\n"
+			<< "if(";
 	  for(auto puv=f.usedVariables.begin();puv!=f.usedVariables.end();){
 	    this->srcFile << "(f_" << *puv << ".is<VNField<real> >())";
 	    if(++puv!=f.usedVariables.end()){
@@ -1209,9 +1185,9 @@ namespace mfront{
 	  }
 	  this->srcFile << "){\n";
 	  // a least one input is a field
-	  this->srcFile << "map<unsigned short,const VNField<real> *> fields;\n";
-	  this->srcFile << "VNField<real>::size_type ptr2;\n";
-	  this->srcFile << "map<unsigned short,const VNField<real> *>::const_iterator ptr3;\n";
+	  this->srcFile << "map<unsigned short,const VNField<real> *> fields;\n"
+			<< "VNField<real>::size_type ptr2;\n"
+			<< "map<unsigned short,const VNField<real> *>::const_iterator ptr3;\n";
 	  // converting the output
 	  for(const auto& mv : f.modifiedVariables){
 	    const auto en = getDeclaration(md.getVariableDescription(mv));
@@ -1235,10 +1211,10 @@ namespace mfront{
 			  << "}\n";
 	    ++i;
 	  }
-	  this->srcFile << "for(ptr2=0;ptr2!=ff_" << *(f.modifiedVariables.begin()) << ".size();++ptr2){\n";
-	  this->srcFile << "for(ptr3=fields.begin();ptr3!=fields.end();++ptr3){\n";
-	  this->srcFile << "values[ptr3->first]=ptr3->second->operator()(ptr2);\n";
-	  this->srcFile << "}\n";
+	  this->srcFile << "for(ptr2=0;ptr2!=ff_" << *(f.modifiedVariables.begin()) << ".size();++ptr2){\n"
+			<< "for(ptr3=fields.begin();ptr3!=fields.end();++ptr3){\n"
+			<< "values[ptr3->first]=ptr3->second->operator()(ptr2);\n"
+			<< "}\n";
 	  i=0;
 	  for(const auto& mv : f.modifiedVariables){
 	    this->srcFile << "results[" << i << "] = ff_" << mv << "[ptr2];\n";
@@ -1249,8 +1225,8 @@ namespace mfront{
 	  for(const auto& mv : f.modifiedVariables){
 	    this->srcFile << "ff_" << mv << "[ptr2] = " << "results[" << i << "];\n";  
 	  }
-	  this->srcFile << "}\n";
-	  this->srcFile << "} else {\n";
+	  this->srcFile << "}\n"
+			<< "} else {\n";
 	  // all fields are uniform
 	  i=0;
 	  for(const auto& uv : f.usedVariables){
@@ -1273,18 +1249,18 @@ namespace mfront{
 	  this->srcFile << "}\n";
 	} else {
 	  // no input variables
-	  throw(std::runtime_error("MFrontModelInterface : untreated case"));
+	  tfel::raise("MFrontModelInterface: untreated case");
 	}
       }
       this->srcFile << "}\n";
       ++i;
     }
-    this->srcFile << "} // end of " << md.className << "::execute\n\n";
-    this->srcFile << "void\n" << md.className 
+    this->srcFile << "} // end of " << md.className << "::execute\n\n"
+		  << "void " << md.className 
 		  << "::executeInitialPostProcessingTasks(const bool)\n{} // end of " << md.className 
 		  << "::executeInitialPostProcessingTasks\n\n";
     
-    this->srcFile << "void\n" << md.className 
+    this->srcFile << "void " << md.className 
 		  << "::executePostProcessingTasks(const bool)\n{} // end of " << md.className 
 		  << "::executePostProcessingTasks\n\n";
     
@@ -1294,18 +1270,18 @@ namespace mfront{
 		  << md.className << "," 
 		  << "\"1.2-svn:6534\","
 		  << "\""<< getLibraryName(md) <<"\""
-		  << ");\n\n";
-    this->srcFile << "} // end of namespace model\n\n";
-    this->srcFile << "} // end of namespace pleiades\n";
+		  << ");\n\n"
+		  << "} // end of namespace model\n\n"
+		  << "} // end of namespace pleiades\n";
   } // end of MFrontModelInterface::writeSrcFile()
     
   void
   MFrontModelInterface::writeInitializeOutputsVariablesDepths(const ModelDescription& md)
   {
-    this->srcFile << "void\n" << md.className << "::initializeOutputsVariablesDepths()\n{\n";
-    this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace pleiades::glossary;\n";
-    this->srcFile << "vector<string>::const_iterator ptr;\n";
+    this->srcFile << "void " << md.className << "::initializeOutputsVariablesDepths()\n{\n"
+		  << "using namespace std;\n"
+		  << "using namespace pleiades::glossary;\n"
+		  << "vector<string>::const_iterator ptr;\n";
     unsigned int i = 0;
     for(const auto& f : md.functions){
       ++i;
@@ -1313,23 +1289,22 @@ namespace mfront{
 	const auto en = getDeclaration(md.getVariableDescription(mf))	;
 	const auto functor = "functor"+std::to_string(i);
 	auto p3 = f.depths.find(mf);
-	if(p3==f.depths.end()){
-	  throw(std::runtime_error("MFrontModelInterface::writeInitializeOutputsVariablesDepths: "
-				   "internal error, no depth found for variable '"+mf+"' "
-				   "in function '"+f.name+"'"));
-	}
-	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
-	this->srcFile << "if(!this->outputsDepths[" << en
-		      << "].insert(make_pair(*ptr,";
-	this->srcFile << p3->second;
-	this->srcFile << ")).second){\n";
-	this->srcFile << "string msg(\"" << md.className << "::" << md.className << " : \");\n";
-	this->srcFile << "msg += \"output '\";\n";
-	this->srcFile << "msg += " << en << ";\n";
-	this->srcFile << "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n";
-	this->srcFile << "throw(runtime_error(msg));\n";
-	this->srcFile << "}\n";
-	this->srcFile << "}\n";
+	tfel::raise_if(p3==f.depths.end(),
+		       "MFrontModelInterface::writeInitializeOutputsVariablesDepths: "
+		       "internal error, no depth found for variable '"+mf+"' "
+		       "in function '"+f.name+"'");
+	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n"
+		      << "if(!this->outputsDepths[" << en
+		      << "].insert(make_pair(*ptr,"
+		      << p3->second
+		      << ")).second){\n"
+		      << "string msg(\"" << md.className << "::" << md.className << " : \");\n"
+		      << "msg += \"output '\";\n"
+		      << "msg += " << en << ";\n"
+		      << "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n"
+		      << "throw(runtime_error(msg));\n"
+		      << "}\n"
+		      << "}\n";
       }
     }
     this->srcFile << "} // end of " << md.className << "::initializeOutputsVariablesDepths\n\n";
@@ -1338,60 +1313,60 @@ namespace mfront{
   void
   MFrontModelInterface::writeInitializeConstantMaterialProperties(const ModelDescription& md)
   {
-    this->srcFile << "void\n" << md.className
+    this->srcFile << "void " << md.className
 		  << "::initializeConstantMaterialProperties(" 
-		  << "const pleiades::parser::DataManager& data)\n{\n";
-    this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace pleiades::glossary;\n";
-    this->srcFile << "using namespace pleiades::field;\n";
-    this->srcFile << "typedef ConstantMaterialPropertyDescription CMPD;\n";
-    this->srcFile << "vector<string>::const_iterator ptr;\n";
+		  << "const pleiades::parser::DataManager& data)\n{\n"
+		  << "using namespace std;\n"
+		  << "using namespace pleiades::glossary;\n"
+		  << "using namespace pleiades::field;\n"
+		  << "typedef ConstantMaterialPropertyDescription CMPD;\n"
+		  << "vector<string>::const_iterator ptr;\n";
     for(const auto& f : md.functions){
       for(const auto& c : f.constantMaterialProperties){
 	const auto& v  = md.constantMaterialProperties.getVariable(c);
 	const auto& en = getDeclaration(v);
 	this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
 	// getting material description
-	this->srcFile << "if(!data.hasMaterialDescription(*ptr)){\n";
-	this->srcFile << "string msg(\"" << md.className << "::initializeConstantMaterialProperties : \");\n";
-	this->srcFile << "msg += \"no material description  on material '\"+*ptr+\"'\";\n";
-	this->srcFile << "throw(runtime_error(msg));\n";
-	this->srcFile << "}\n";
-	this->srcFile << "const auto& md = *(data.getMaterialDescription(*ptr));\n";
-	this->srcFile << "if(md.containsMaterialProperty(" << en << ")){\n";
-	this->srcFile << "if(!md.isMaterialPropertyAccesible(" << en << ")){\n";
-	this->srcFile << "string msg(\"" << md.className << "::initializeConstantMaterialProperties : \");\n";
-	this->srcFile << "msg += \"material property '\";\n";
-	this->srcFile << "msg += " <<  en << ";\n";
-	this->srcFile << "msg += \"' is not accessible on material '\"+*ptr+\"'\";\n";
-	this->srcFile << "msg += \"' (this means that this property is define within a behaviour)\";\n";
-	this->srcFile << "throw(runtime_error(msg));\n";
-	this->srcFile << "}\n";
-	this->srcFile << "const MaterialPropertyDescription& mpd = *(md.getMaterialProperty(" 
-		      << en << "));\n";
-	this->srcFile << "if(!mpd.is<CMPD>()){\n";
-	this->srcFile << "string msg(\"" << md.className << "::initializeConstantMaterialProperties : \");\n";
-	this->srcFile << "msg += \"material property '\";\n";
-	this->srcFile << "msg += " <<  en << ";\n";
-	this->srcFile << "msg += \"' is not constant on material '\"+*ptr+\"'\";\n";
-	this->srcFile << "throw(runtime_error(msg));\n";
-	this->srcFile << "}\n";
-	this->srcFile << "this->constantMaterialProperties[*ptr][\"" << c << "\"]" 
-		      << " = mpd.get<CMPD>().getValue();\n";
-	this->srcFile << "} else {\n";
+	this->srcFile << "if(!data.hasMaterialDescription(*ptr)){\n"
+		      << "string msg(\"" << md.className << "::initializeConstantMaterialProperties : \");\n"
+		      << "msg += \"no material description  on material '\"+*ptr+\"'\";\n"
+		      << "throw(runtime_error(msg));\n"
+		      << "}\n"
+		      << "const auto& md = *(data.getMaterialDescription(*ptr));\n"
+		      << "if(md.containsMaterialProperty(" << en << ")){\n"
+		      << "if(!md.isMaterialPropertyAccesible(" << en << ")){\n"
+		      << "string msg(\"" << md.className << "::initializeConstantMaterialProperties : \");\n"
+		      << "msg += \"material property '\";\n"
+		      << "msg += " <<  en << ";\n"
+		      << "msg += \"' is not accessible on material '\"+*ptr+\"'\";\n"
+		      << "msg += \"' (this means that this property is define within a behaviour)\";\n"
+		      << "throw(runtime_error(msg));\n"
+		      << "}\n"
+		      << "const MaterialPropertyDescription& mpd = *(md.getMaterialProperty(" 
+		      << en << "));\n"
+		      << "if(!mpd.is<CMPD>()){\n"
+		      << "string msg(\"" << md.className << "::initializeConstantMaterialProperties : \");\n"
+		      << "msg += \"material property '\";\n"
+		      << "msg += " <<  en << ";\n"
+		      << "msg += \"' is not constant on material '\"+*ptr+\"'\";\n"
+		      << "throw(runtime_error(msg));\n"
+		      << "}\n"
+		      << "this->constantMaterialProperties[*ptr][\"" << c << "\"]" 
+		      << " = mpd.get<CMPD>().getValue();\n"
+		      << "} else {\n";
 	if(v.hasAttribute(VariableDescription::defaultValue)){
 	  this->srcFile << "this->constantMaterialProperties[*ptr][\"" << c 
 			<< "\"] = " << v.getAttribute<double>(VariableDescription::defaultValue) << ";\n";	  
 	} else {
 	  this->srcFile << "string msg(\"" << md.className
-			<< "::initializeConstantMaterialProperties : \");\n";
-	  this->srcFile << "msg += \"material property '\";\n";
-	  this->srcFile << "msg += " <<  en << ";\n";
-	  this->srcFile << "msg += \"' is undefined on material '\"+*ptr+\"'\";\n";
-	  this->srcFile << "throw(runtime_error(msg));\n";
+			<< "::initializeConstantMaterialProperties : \");\n"
+			<< "msg += \"material property '\";\n"
+			<< "msg += " <<  en << ";\n"
+			<< "msg += \"' is undefined on material '\"+*ptr+\"'\";\n"
+			<< "throw(runtime_error(msg));\n";
 	}
-	this->srcFile << "}\n";
-	this->srcFile << "}\n";
+	this->srcFile << "}\n"
+		      << "}\n";
       }
     }
     this->srcFile << "} // end of " << md.className << "::initializeConstantMaterialProperties\n\n";
@@ -1400,15 +1375,15 @@ namespace mfront{
   void
   MFrontModelInterface::writeInitializeOutputsVariablesInitialValues(const ModelDescription& md)
   {
-    this->srcFile << "void\n" << md.className
+    this->srcFile << "void " << md.className
 		  << "::initializeOutputsVariablesInitialValues(" 
-		  << "const pleiades::parser::DataManager& data)\n{\n";
-    this->srcFile << "using namespace std;\n";
-    this->srcFile << "using namespace pleiades::glossary;\n";
-    this->srcFile << "using namespace pleiades::field;\n";
-    this->srcFile << "using std::shared_ptr;\n";
-    this->srcFile << "typedef UniformScalarStateVariableDescription USSVD;\n";
-    this->srcFile << "vector<string>::const_iterator ptr;\n";
+		  << "const pleiades::parser::DataManager& data)\n{\n"
+		  << "using namespace std;\n"
+		  << "using namespace pleiades::glossary;\n"
+		  << "using namespace pleiades::field;\n"
+		  << "using std::shared_ptr;\n"
+		  << "typedef UniformScalarStateVariableDescription USSVD;\n"
+		  << "vector<string>::const_iterator ptr;\n";
     for(const auto& f : md.functions){
       for(const auto& mv : f.modifiedVariables){
 	// external name
@@ -1418,63 +1393,63 @@ namespace mfront{
 	// getting material description
 	if(v.hasAttribute(VariableDescription::initialValue)){
 	  const auto iv = v.getAttribute<double>(VariableDescription::initialValue);
-	  this->srcFile << "if(data.hasMaterialDescription(*ptr)){\n";
-	  this->srcFile << "const auto& md = *(data.getMaterialDescription(*ptr));\n";
-	  this->srcFile << "if(md.containsStateVariable(" <<  en << ")){\n";
-	  this->srcFile << "auto tmp = md.getStateVariable("<<  en << ");\n";
-	  this->srcFile << "if(!this->outputsInitialValues[" << en
-			<< "].insert({*ptr,tmp}).second){\n";
-	  this->srcFile << "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n";
-	  this->srcFile << "msg += \"output '\";\n";
-	  this->srcFile << "msg += " <<  en << ";\n";
-	  this->srcFile << "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n";
-	  this->srcFile << "throw(runtime_error(msg));\n";
-	  this->srcFile << "}\n";
-	  this->srcFile << "} else {\n";
-	  this->srcFile << "if(!this->outputsInitialValues[" << en
+	  this->srcFile << "if(data.hasMaterialDescription(*ptr)){\n"
+			<< "const auto& md = *(data.getMaterialDescription(*ptr));\n"
+			<< "if(md.containsStateVariable(" <<  en << ")){\n"
+			<< "auto tmp = md.getStateVariable("<<  en << ");\n"
+			<< "if(!this->outputsInitialValues[" << en
+			<< "].insert({*ptr,tmp}).second){\n"
+			<< "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n"
+			<< "msg += \"output '\";\n"
+			<< "msg += " <<  en << ";\n"
+			<< "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n"
+			<< "throw(runtime_error(msg));\n"
+			<< "}\n"
+			<< "} else {\n"
+			<< "if(!this->outputsInitialValues[" << en
 			<< "].insert({*ptr,std::make_shared<USSVD>("
-			<< en << "," << iv;
-	  this->srcFile << ")}).second){\n";
-	  this->srcFile << "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n";
-	  this->srcFile << "msg += \"output '\";\n";
-	  this->srcFile << "msg += " << en << ";\n";
-	  this->srcFile << "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n";
-	  this->srcFile << "throw(runtime_error(msg));\n";
-	  this->srcFile << "}\n";
-	  this->srcFile << "}\n";
-	  this->srcFile << "} else {\n";
-	  this->srcFile << "if(!this->outputsInitialValues[" << en
+			<< en << "," << iv
+			<< ")}).second){\n"
+			<< "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n"
+			<< "msg += \"output '\";\n"
+			<< "msg += " << en << ";\n"
+			<< "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n"
+			<< "throw(runtime_error(msg));\n"
+			<< "}\n"
+			<< "}\n"
+			<< "} else {\n"
+			<< "if(!this->outputsInitialValues[" << en
 			<< "].insert({*ptr,std::make_shared<USSVD>("
-			<< en << "," << iv;
-	  this->srcFile << ")}).second){\n";
-	  this->srcFile << "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n";
-	  this->srcFile << "msg += \"output '\";\n";
-	  this->srcFile << "msg += " <<  en << ";\n";
-	  this->srcFile << "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n";
-	  this->srcFile << "throw(runtime_error(msg));\n";
-	  this->srcFile << "}\n";
-	  this->srcFile << "}\n";
+			<< en << "," << iv
+			<< ")}).second){\n"
+			<< "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n"
+			<< "msg += \"output '\";\n"
+			<< "msg += " <<  en << ";\n"
+			<< "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n"
+			<< "throw(runtime_error(msg));\n"
+			<< "}\n"
+			<< "}\n";
 	} else {
-	  this->srcFile << "if(!data.hasMaterialDescription(*ptr)){\n";
-	  this->srcFile << "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n";
-	  this->srcFile << "msg += \"no material description  on material '\"+*ptr+\"', \";\n";
-	  this->srcFile << "msg += \"required to initialize output value '\";\n";
-	  this->srcFile << "msg += " << en << ";\n";
-	  this->srcFile << "msg += '\\\'';\n";
-	  this->srcFile << "throw(runtime_error(msg));\n";
-	  this->srcFile << "}\n";
-	  this->srcFile << "const auto& md = *(data.getMaterialDescription(*ptr));\n";
-	  this->srcFile << "if(md.containsStateVariable(" <<  en << ")){\n";
-	  this->srcFile << "auto tmp = md.getStateVariable("<< en << ");\n";
-	  this->srcFile << "if(!this->outputsInitialValues[" << en
-			<< "].insert({*ptr,tmp}).second){\n";
-	  this->srcFile << "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n";
-	  this->srcFile << "msg += \"output '\";\n";
-	  this->srcFile << "msg += " << en << ";\n";
-	  this->srcFile << "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n";
-	  this->srcFile << "throw(runtime_error(msg));\n";
-	  this->srcFile << "}\n";
-	  this->srcFile << "}\n";
+	  this->srcFile << "if(!data.hasMaterialDescription(*ptr)){\n"
+			<< "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n"
+			<< "msg += \"no material description  on material '\"+*ptr+\"', \";\n"
+			<< "msg += \"required to initialize output value '\";\n"
+			<< "msg += " << en << ";\n"
+			<< "msg += '\\\'';\n"
+			<< "throw(runtime_error(msg));\n"
+			<< "}\n"
+			<< "const auto& md = *(data.getMaterialDescription(*ptr));\n"
+			<< "if(md.containsStateVariable(" <<  en << ")){\n"
+			<< "auto tmp = md.getStateVariable("<< en << ");\n"
+			<< "if(!this->outputsInitialValues[" << en
+			<< "].insert({*ptr,tmp}).second){\n"
+			<< "string msg(\"" << md.className << "::initializeOutputsVariablesInitialValues : \");\n"
+			<< "msg += \"output '\";\n"
+			<< "msg += " << en << ";\n"
+			<< "msg += \"' multiply defined on material '\"+*ptr+\"'\";\n"
+			<< "throw(runtime_error(msg));\n"
+			<< "}\n"
+			<< "}\n";
 	}
 	this->srcFile << "}\n";
       }
@@ -1486,7 +1461,7 @@ namespace mfront{
   MFrontModelInterface::writeInitializeInputsVariablesDepths(const ModelDescription& md)
   {
     std::set<std::string> treatedVars;
-    this->srcFile << "void\n" << md.className << "::initializeInputsVariablesDepths()\n{\n";
+    this->srcFile << "void " << md.className << "::initializeInputsVariablesDepths()\n{\n";
     unsigned int i = 0;
     for(const auto& f : md.functions){
       for(const auto & v : f.usedVariables){
@@ -1496,9 +1471,9 @@ namespace mfront{
       }
     }
     if(i!=0){
-      this->srcFile << "using namespace std;\n";
-      this->srcFile << "using namespace pleiades::glossary;\n";
-      this->srcFile << "vector<string>::const_iterator ptr;\n";
+      this->srcFile << "using namespace std;\n"
+		    << "using namespace pleiades::glossary;\n"
+		    << "vector<string>::const_iterator ptr;\n";
       i=0;
       for(const auto& f : md.functions){
 	for(const auto& uv : f.usedVariables){
@@ -1507,26 +1482,25 @@ namespace mfront{
 	    const auto& en = getDeclaration(md.getVariableDescription(v));
 	    if(treatedVars.find(v)==treatedVars.end()){
 	      const auto p3 = f.depths.find(v);
-	      if(p3==f.depths.end()){
-		throw(std::runtime_error("MFrontModelInterface::"
-					 "writeInitializeInputsVariablesDepths: "
-					 "internal error, no depth found for variable '"+v+"' "
-					 "in function '"+f.name+"'"));
-	      }
-	      this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n";
-	      this->srcFile << "auto& tmp = this->inputsDepths[" << en << "];\n";
+	      tfel::raise_if(p3==f.depths.end(),
+			     "MFrontModelInterface::"
+			     "writeInitializeInputsVariablesDepths: "
+			     "internal error, no depth found for variable '"+v+"' "
+			     "in function '"+f.name+"'");
+	      this->srcFile << "for(ptr=this->domains.begin();ptr!=this->domains.end();++ptr){\n"
+			    << "auto& tmp = this->inputsDepths[" << en << "];\n";
 	      if(p3->second==0){
-		this->srcFile << "if(tmp.find(*ptr)==tmp.end()){\n";
-		this->srcFile << "tmp[*ptr]=0;\n";
-		this->srcFile << "}\n";
+		this->srcFile << "if(tmp.find(*ptr)==tmp.end()){\n"
+			      << "tmp[*ptr]=0;\n"
+			      << "}\n";
 	      } else {
-		this->srcFile << "if(tmp.find(*ptr)!=tmp.end()){\n";
-		this->srcFile << "if(tmp[*ptr]<" << p3->second << "){\n";
-		this->srcFile << "tmp[*ptr]=" << p3->second << ";\n";
-		this->srcFile << "}\n";
-		this->srcFile << "} else {\n";
-		this->srcFile << "tmp[*ptr]=" << p3->second << ";\n";
-		this->srcFile << "}\n";
+		this->srcFile << "if(tmp.find(*ptr)!=tmp.end()){\n"
+			      << "if(tmp[*ptr]<" << p3->second << "){\n"
+			      << "tmp[*ptr]=" << p3->second << ";\n"
+			      << "}\n"
+			      << "} else {\n"
+			      << "tmp[*ptr]=" << p3->second << ";\n"
+			      << "}\n";
 	      }
 	      this->srcFile << "}\n";
 	      treatedVars.insert(v);
@@ -1543,7 +1517,6 @@ namespace mfront{
 							  const ModelDescription& md,
 							  const StaticVariableDescription& v)
   {
-    using namespace std;
     if(getDebugMode()){
       this->srcFile << "#line " << v.lineNumber << " \"" 
 		    << fd.fileName << "\"\n";
@@ -1579,12 +1552,11 @@ namespace mfront{
       this->srcFile << "const pleiades::field::real " << md.className << "::" << v.name 
 		    << " = " << static_cast<double>(v.value) << ";" << '\n';
     } else {
-      string msg("MFrontModelInterface::writeStaticVariableInitialisation : ");
-      msg += "type " + v.type + " is not a supported type for a static variable.";
-      msg += "Supported types are short, ushort, int, uint, long, ulong,";
-      msg += "float, double, ldouble and real.\n";
-      msg += "Error at line " + std::to_string(v.lineNumber);
-      throw(runtime_error(msg));
+      tfel::raise("MFrontModelInterface::writeStaticVariableInitialisation: "
+		  "type " + v.type + " is not a supported type for a static variable."
+		  "Supported types are short, ushort, int, uint, long, ulong,"
+		  "float, double, ldouble and real.\n"
+		  "Error at line "+std::to_string(v.lineNumber));
     }
   } // end of MFrontModelInterface::writeStaticVariableInitialisation
     
@@ -1592,10 +1564,9 @@ namespace mfront{
   MFrontModelInterface::writeOutputFiles(const FileDescription& fd,
 					 const ModelDescription& md)
   {
-    if(md.className.empty()){
-      throw(std::runtime_error("MFrontModelInterface::writeOutputFiles: "
-			       "no class name defined."));      
-    }
+    tfel::raise_if(md.className.empty(),
+		   "MFrontModelInterface::writeOutputFiles: "
+		   "no class name defined.");
     this->headerFileName  = "include/Pleiades/Model/"+md.className;
     this->headerFileName += "-@application@.hxx";
     this->srcFileName  = "src/"+md.className;
@@ -1618,8 +1589,8 @@ namespace mfront{
       this->srcFile << "this->" << v.name << " = "
 		    << v.getAttribute<bool>(VariableDescription::defaultValue) << ";\n";
     } else {
-      throw(std::runtime_error("MFrontModelInterface::writeAssignDefaultValue: "
-			       "type '"+v.type+"' is not supported.\n"));
+      tfel::raise("MFrontModelInterface::writeAssignDefaultValue: "
+		  "type '"+v.type+"' is not supported.\n");
     }   
   } // end of MFrontModelInterface::writeAssignDefaultValue
 
@@ -1629,15 +1600,13 @@ namespace mfront{
 				     tokens_iterator c,
 				     const tokens_iterator)
   {
-    if(std::find(i.begin(),i.end(),"licos")!=i.end()){
-      throw(std::runtime_error("LicosModelInterface::treatKeyword: "
-			       "unsupported key '"+k+"'"));
-    }
+    tfel::raise_if(std::find(i.begin(),i.end(),"licos")!=i.end(),
+		   "LicosModelInterface::treatKeyword: "
+		   "unsupported key '"+k+"'");
     return {false,c};
   } // end of MFrontModelInterface::treatKeyword
 
-  std::string
-  MFrontModelInterface::getName()
+  std::string MFrontModelInterface::getName()
   {
     return "@application@";
   } // end of MFrontModelInterface::getName()

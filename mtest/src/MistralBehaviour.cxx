@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Evolution.hxx"
@@ -41,7 +42,7 @@ namespace mtest
 		  const MistralBehaviour::Parameters& parameters,
 		  const tfel::material::ModellingHypothesis::Hypothesis h){
     auto throw_if = [](const bool b,const std::string& msg){
-      if(b){throw(std::runtime_error("readMistralParameters: "+msg));};
+      tfel::raise_if(b,"readMistralParameters: "+msg);;
     };
     using CxxTokenizer = tfel::utilities::CxxTokenizer;
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
@@ -262,9 +263,9 @@ namespace mtest
 					  const Hypothesis h)
   {
     const auto md = readMistralFile(l,f,p,h);
-    return std::shared_ptr<MistralBehaviour>(new MistralBehaviour(md,md.mname,md.cvalues,
-								  md.young_modulus,md.poisson_ratio,
-								  md.SENSIP1,md.SENSIP2,md.ICBASE,h));
+    return std::shared_ptr<Behaviour>(new MistralBehaviour(md,md.mname,md.cvalues,
+							   md.young_modulus,md.poisson_ratio,
+							   md.SENSIP1,md.SENSIP2,md.ICBASE));
   } // end of MistralBehaviour::buildMistralBehaviour
     
   MistralBehaviour::MistralBehaviour(const UmatBehaviourDescription& bd,
@@ -274,8 +275,7 @@ namespace mtest
 				     const std::pair<double,double>& nu,
 				     const int SENSIP1_,
 				     const int SENSIP2_,
-				     const int ICBASE_,
-				     const Hypothesis h)
+				     const int ICBASE_)
     : CastemSmallStrainBehaviour(bd),
       parameters(cvalues),
       young_modulus(yg),
@@ -284,10 +284,9 @@ namespace mtest
       SENSIP2(SENSIP2_),
       ICBASE(ICBASE_)
   {
-    if(cn.size()!=16u){
-      throw(std::runtime_error("MistralBehaviour::MistralBehaviour: "
-			       "invalid size for the material name"));
-    }
+    tfel::raise_if(cn.size()!=16u,
+		   "MistralBehaviour::MistralBehaviour: "
+		   "invalid size for the material name");
     std::copy(cn.begin(),cn.end(),this->mname);
   } // end of MistralBehaviour::MistralBehaviour
 
@@ -295,7 +294,8 @@ namespace mtest
   MistralBehaviour::setOptionalMaterialPropertiesDefaultValues(EvolutionManager& mp,
 							       const EvolutionManager& evm) const{
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("MTestStandardUmatBehaviour::setOptionalMaterialPropertiesDefaultValues: "+m));};
+      tfel::raise_if(c,"MTestStandardUmatBehaviour::"
+		     "setOptionalMaterialPropertiesDefaultValues: "+m);
     };
     CastemSmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues(mp,evm);
     auto add_mp = [&mp,&throw_if](const std::string& n,

@@ -14,6 +14,7 @@
 #include<sstream>
 #include<stdexcept>
 
+#include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/Data.hxx"
@@ -34,7 +35,7 @@ namespace mfront{
     : BehaviourBrickBase(dsl_,mb_)
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("StandardElasticityBrick::StandardElasticityBrick: "+m));}
+      tfel::raise_if(b,"StandardElasticityBrick::StandardElasticityBrick: "+m);
     };
     // reserve some specific variables
     this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"sebdata");
@@ -88,7 +89,7 @@ namespace mfront{
   void StandardElasticityBrick::completeVariableDeclaration() const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("StandardElasticityBrick::completeVariableDeclaration: "+m));}
+      tfel::raise_if(b,"StandardElasticityBrick::completeVariableDeclaration: "+m);
     };
     using tfel::glossary::Glossary; 
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -179,7 +180,7 @@ namespace mfront{
     integrator.code = "feel -= this->deto;\n";
     this->bd.setCode(uh,BehaviourData::Integrator,
     		     integrator,BehaviourData::CREATEORAPPEND,
-    		     BehaviourData::AT_END);
+    		     BehaviourData::AT_BEGINNING);
     // modelling hypotheses supported by the behaviour
     // plane stress support
     if(this->pss){
@@ -249,11 +250,10 @@ namespace mfront{
 	    m += "prediction_stress(1) = this->sigzz+theta*(this->dsigzz);\n";
 	    m += "return prediction_stress;\n";
     	  } else {
-    	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-    	      throw(std::runtime_error("StandardElasticityBrick::declareComputeElasticPredictionMethod: "
-    				       "the stiffness tensor must be defined for "
-    				       "orthotropic behaviours"));
-    	    }
+	    tfel::raise_if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor),
+			   "StandardElasticityBrick::declareComputeElasticPredictionMethod: "
+			   "the stiffness tensor must be defined for "
+			   "orthotropic behaviours");
     	  }
 	}
       } else if (h==ModellingHypothesis::PLANESTRESS){
@@ -290,11 +290,10 @@ namespace mfront{
 	    m += "prediction_stress(3) = 2*("+mu+")*prediction_strain(3);\n";
 	    m += "return prediction_stress;\n";
 	  } else {
-	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-	      throw(std::runtime_error("StandardElasticityBrick::declareComputeElasticPredictionMethod: "
-				       "the stiffness tensor must be defined for "
-				       "orthotropic behaviours"));
-	    }
+	    tfel::raise_if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor),
+			   "StandardElasticityBrick::declareComputeElasticPredictionMethod: "
+			   "the stiffness tensor must be defined for "
+			   "orthotropic behaviours");
 	  }
 	}
       } else {
@@ -309,11 +308,10 @@ namespace mfront{
 	    m+= "return "+lambda+"*trace(this->eel+(this->theta)*(this->deto))*Stensor::Id()+"
 	      "2*("+mu+")*(this->eel+(this->theta)*(this->deto));\n";
     	  } else {
-    	    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-    	      throw(std::runtime_error("StandardElasticityBrick::declareComputeElasticPredictionMethod: "
-    				       "the stiffness tensor must be defined for "
-    				       "orthotropic behaviours"));
-    	    }
+	    tfel::raise_if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor),
+			   "StandardElasticityBrick::declareComputeElasticPredictionMethod: "
+			   "the stiffness tensor must be defined for "
+			   "orthotropic behaviours");
     	  }
     	}
       }
@@ -390,11 +388,10 @@ namespace mfront{
     if(!this->bd.hasAttribute(BehaviourDescription::requiresStiffnessTensor)){
       this->bd.setAttribute(h,BehaviourDescription::requiresStiffnessTensor,true);
     }
-    if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor)){
-      throw(std::runtime_error("StandardElasticityBrick::treatOrthotropicBehaviour: "
-			       "the stiffness tensor must be defined for "
-			       "orthotropic behaviours"));
-    }
+    tfel::raise_if(!this->bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor),
+		   "StandardElasticityBrick::treatOrthotropicBehaviour: "
+		   "the stiffness tensor must be defined for "
+		   "orthotropic behaviours");
     if(getVerboseMode()>=VERBOSE_DEBUG){
       getLogStream() << "StandardElasticityBrick::treatOrthotropic: end\n";
     }
@@ -547,8 +544,7 @@ namespace mfront{
 
   void StandardElasticityBrick::addGenericTangentOperatorSupport() const{
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("StandardElasticityBrick::"
-				     "addGenericTangentOperatorSupport: "+m));}
+      tfel::raise_if(b,"StandardElasticityBrick::addGenericTangentOperatorSupport: "+m);
     };
     const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(this->dsl);
     this->bd.checkVariablePosition("eel","IntegrationVariable",0u);
@@ -626,8 +622,7 @@ namespace mfront{
 
   void StandardElasticityBrick::addGenericPredictionOperatorSupport() const{
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("StandardElasticityBrick::"
-				     "addGenericPredictionOperatorSupport: "+m));}
+      tfel::raise_if(b,"StandardElasticityBrick::addGenericPredictionOperatorSupport: "+m);
     };
     CodeBlock tangentOperator;
     // modelling hypotheses supported by the behaviour

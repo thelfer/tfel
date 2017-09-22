@@ -12,11 +12,11 @@
  * project under specific licensing conditions. 
  */
 
+#include<cassert>
+#include<iterator>
 #include<stdexcept>
 #include<algorithm>
-#include<iterator>
-#include<cassert>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MaterialPropertyInterfaceFactory.hxx"
 
 namespace mfront{
@@ -66,13 +66,10 @@ namespace mfront{
   MaterialPropertyInterfaceFactory::registerInterfaceCreator(const std::string& i,
 							     const MaterialPropertyInterfaceFactory::InterfaceCreator f)
   {
-    using namespace std;
     auto& imap = this->getInterfaceCreatorsMap();
-    if(imap.find(i)!=imap.end()){
-      string msg("MaterialPropertyInterfaceFactory::registerInterfaceCreator : ");
-      msg += "interface creator '"+i+"' already declared";
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(imap.find(i)!=imap.end(),
+		   "MaterialPropertyInterfaceFactory::registerInterfaceCreator: "
+		   "interface creator '"+i+"' already declared");
     imap.insert(make_pair(i,f));
   }
 
@@ -80,13 +77,10 @@ namespace mfront{
   MaterialPropertyInterfaceFactory::registerInterfaceAlias(const std::string& i,
 							   const std::string& a)
   {
-    using namespace std;
     auto& amap = this->getAliasesMap();
-    if(amap.find(a)!=amap.end()){
-      string msg("MaterialPropertyInterfaceFactory::registerInterfaceCreator : ");
-      msg += "interface alias '"+a+"' already declared";
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(amap.find(a)!=amap.end(),
+		   "MaterialPropertyInterfaceFactory::registerInterfaceCreator: "
+		   "interface alias '"+a+"' already declared");
     amap.insert(make_pair(a,i));
   }
 
@@ -94,35 +88,31 @@ namespace mfront{
   MaterialPropertyInterfaceFactory::registerInterfaceDependency(const std::string& name,
 								const std::string& dep)
   {
-    using namespace std;
     this->getDependenciesMap()[name].push_back(dep);
   } // end of MaterialPropertyInterfaceFactory::registerInterfaceDependency
   
   std::vector<std::string>
   MaterialPropertyInterfaceFactory::getInterfaceDependencies(const std::string& name) const
   {
-    using namespace std;
-    vector<string> res;
-    vector<string> tmp;
-    AliasContainer::const_iterator p;
-    vector<string>::const_iterator p2;
-    p = this->getAliasesMap().find(name);
+    std::vector<std::string> res;
+    std::vector<std::string> tmp;
+    auto p = this->getAliasesMap().find(name);
     if(p==this->getAliasesMap().end()){
-      string msg = "MaterialPropertyInterfaceFactory::getInterfaceDependencies : no interface named '";
-      msg += name+"'.\n";
+      auto msg = std::string("MaterialPropertyInterfaceFactory::getInterfaceDependencies: ");
+      msg += "no interface named '"+name+"'.\n";
       msg += "Available interface are : \n";
       for(p=this->getAliasesMap().begin();p!=this->getAliasesMap().end();++p){
 	msg += p->first + " ";
       }
-      throw(runtime_error(msg));
+      tfel::raise(msg);
     }
     const auto& deps = this->getDependenciesMap()[p->second];
     copy(deps.begin(),deps.end(),back_inserter(tmp));
-    for(p2=deps.begin();p2!=deps.end();++p2){
-      const auto& deps2 = this->getInterfaceDependencies(*p2);
-      copy(deps2.begin(),deps2.end(),back_inserter(tmp));
+    for(const auto& d : deps){
+      const auto& deps2 = this->getInterfaceDependencies(d);
+      std::copy(deps2.begin(),deps2.end(),std::back_inserter(tmp));
     }
-    unique_copy(tmp.begin(),tmp.end(),back_inserter(res));
+    std::unique_copy(tmp.begin(),tmp.end(),std::back_inserter(res));
     return res;
   } // end of MaterialPropertyInterfaceFactory::getInterfaceDependencies
 
@@ -135,21 +125,20 @@ namespace mfront{
   std::shared_ptr<AbstractMaterialPropertyInterface>
   MaterialPropertyInterfaceFactory::getInterface(const std::string& interfaceName) const
   {
-    using namespace std;
     auto p2 = this->getAliasesMap().find(interfaceName);
     if(p2==this->getAliasesMap().end()){
-      string msg = "MaterialPropertyInterfaceFactory::createNewInterface : no interface named '";
-      msg += interfaceName+"'.\n";
+      auto msg = std::string("MaterialPropertyInterfaceFactory::createNewInterface: ");
+      msg += "no interface named '"+interfaceName+"'.\n";
       msg += "Available interface are : \n";
       for(p2  = this->getAliasesMap().begin();
 	  p2 != this->getAliasesMap().end();++p2){
 	msg += p2->first + " ";
       }
-      throw(runtime_error(msg));
+      tfel::raise(msg);
     }
     auto p = this->getInterfaceCreatorsMap().find(p2->second);
     assert(p!=this->getInterfaceCreatorsMap().end());
-    InterfaceCreator c = p->second;
+    auto c = p->second;
     return c();
   }
 

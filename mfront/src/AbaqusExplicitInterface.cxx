@@ -14,6 +14,7 @@
 #include<fstream>
 #include<iostream>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/System/System.hxx"
 
@@ -64,7 +65,7 @@ namespace mfront{
 					const tokens_iterator end)
   {
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("AbaqusExplicitInterface::treatKeyword: "+m));}
+      tfel::raise_if(c,"AbaqusExplicitInterface::treatKeyword: "+m);
     };
     if(!i.empty()){
       if(std::find(i.begin(),i.end(),this->getName())==i.end()){
@@ -72,10 +73,9 @@ namespace mfront{
       }
       auto keys =  AbaqusInterfaceBase::getCommonKeywords();
       keys.push_back("@AbaqusExplicitParallelizationPolicy");
-      if(std::find(keys.begin(),keys.end(),key)==keys.end()){
-	throw(std::runtime_error("AbaqusExplicitInterface::treatKeyword: "
-				 "unsupported key '"+key+"'"));
-      }
+      throw_if(std::find(keys.begin(),keys.end(),key)==keys.end(),
+	       "AbaqusExplicitInterface::treatKeyword: "
+	       "unsupported key '"+key+"'");
     }
     if(key=="@AbaqusExplicitParallelizationPolicy"){
       throw_if(bd.hasAttribute("AbaqusExplicit::ParallelizationPolicy"),
@@ -260,7 +260,7 @@ namespace mfront{
 					const FileDescription& fd) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AbaqusExplicitInterface::endTreatment: "+m));}
+      tfel::raise_if(b,"AbaqusExplicitInterface::endTreatment: "+m);
     };
     throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
@@ -353,10 +353,7 @@ namespace mfront{
 
     fname  = "abaqusexplicit"+name+".cxx";
     out.open("src/"+fname);
-    if(!out){
-      throw(std::runtime_error("AbaqusExplicitInterface::endTreatment : "
-			       "could not open file '"+fname+"'"));
-    }
+    throw_if(!out,"could not open file '"+fname+"'");
 
     out << "/*!\n"
 	<< "* \\file   "  << fname << '\n'
@@ -458,15 +455,15 @@ namespace mfront{
 	  } else if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
 	    this->writeLogarithmicStrainBehaviourCall(out,mb,t,h);
 	  } else {
-	    throw(std::runtime_error("AbaqusExplicitInterface::writeVUMATFunction: "
-				     "unsupported finite strain strategy (internal error)"));
+	    tfel::raise("AbaqusExplicitInterface::writeVUMATFunction: "
+			"unsupported finite strain strategy (internal error)");
 	  }
 	} else if (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
 	  this->writeFiniteStrainBehaviourCall(out,mb,t,h);
 	} else {
-	  throw(std::runtime_error("AbaqusExplicitInterface::writeVUMATFunction: "
-				   "the abaqus explicit interface only supports small "
-				   "and finite strain behaviours"));
+	  tfel::raise("AbaqusExplicitInterface::writeVUMATFunction: "
+		      "the abaqus explicit interface only supports small "
+		      "and finite strain behaviours");
 	}
 	out << "}\n\n";
       }
@@ -511,7 +508,7 @@ namespace mfront{
     } else if (h==AbaqusExplicitInterface::ModellingHypothesis::TRIDIMENSIONAL){
       out << "const auto R = abaqus::getRotationMatrix3D(cview(stateOld+i));\n";
     } else {
-      throw(std::runtime_error("writeGetRotationMatrix: unsupported hypothesis"));
+      tfel::raise("writeGetRotationMatrix: unsupported hypothesis");
     }
   }	  
   
@@ -628,8 +625,8 @@ namespace mfront{
 								  const BehaviourDescription& mb) const
   {
     auto throw_unsupported_hypothesis = []{
-      throw(std::runtime_error("AbaqusExplicitInterface::writeBehaviourDataMainVariablesSetters: "
-			       "only small strain or finite behaviours are supported"));
+      tfel::raise("AbaqusExplicitInterface::writeBehaviourDataMainVariablesSetters: "
+		  "only small strain or finite behaviours are supported");
     };
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if((mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
@@ -672,8 +669,8 @@ namespace mfront{
 								    const BehaviourDescription& mb) const
   {
     auto throw_unsupported_hypothesis = []{
-      throw(std::runtime_error("AbaqusExplicitInterface::writeIntegrationDataMainVariablesSetters: "
-			       "only small strain or finite behaviours are supported"));
+      tfel::raise("AbaqusExplicitInterface::writeIntegrationDataMainVariablesSetters: "
+		  "only small strain or finite behaviours are supported");
     };
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if((mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
@@ -758,8 +755,8 @@ namespace mfront{
 	  << "::exit(-1);\n"
 	  << "}\n";
     } else {
-      throw(std::runtime_error("AbaqusExplicitInterface::writeChecks: "
-			       "unsupported hypothesis"));
+      tfel::raise("AbaqusExplicitInterface::writeChecks: "
+		  "unsupported hypothesis");
     }
     out << "if(*nprops!=NPROPS_){\n"
 	<< "std::cerr << \"" << mb.getClassName() << ":"
@@ -833,8 +830,8 @@ namespace mfront{
 	  << "2*(*(strainInc+i+4*(*nblock)))};\n"
 	  << t << " D[36u];\n";
     } else {
-      throw(std::runtime_error("AbaqusExplicitInterface::writeComputeElasticPrediction: "
-			       "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'"));
+      tfel::raise("AbaqusExplicitInterface::writeComputeElasticPrediction: "
+		  "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'");
     }
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       out << "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ","
@@ -851,8 +848,8 @@ namespace mfront{
 	  << "::exit(-1);\n"
 	  << "}\n";
     } else {
-      throw(std::runtime_error("AbaqusExplicitInterface::writeComputeElasticPrediction: "
-			       "unsupported behaviour type"));
+      tfel::raise("AbaqusExplicitInterface::writeComputeElasticPrediction: "
+		  "unsupported behaviour type");
     }
     if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
       if(h==ModellingHypothesis::PLANESTRESS){
@@ -905,8 +902,8 @@ namespace mfront{
 	    << "*(stressNew+i+4*(*(nblock))) = *(sg+4);\n"
 	    << "*(stressNew+i+5*(*(nblock))) = *(sg+5);\n";
       } else {
-	throw(std::runtime_error("AbaqusExplicitInterface::writeComputeElasticPrediction: "
-				 "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'"));
+	tfel::raise("AbaqusExplicitInterface::writeComputeElasticPrediction: "
+		    "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'");
       }
     } else {
       if(h==ModellingHypothesis::PLANESTRESS){
@@ -927,8 +924,8 @@ namespace mfront{
 	    << "*(stressNew+i+4*(*(nblock))) = D[4]*eto[0]+D[10]*eto[1]+D[16]*eto[2]+D[22]*eto[3]+D[28]*eto[4]+D[34]*eto[5];\n"
 	    << "*(stressNew+i+5*(*(nblock))) = D[5]*eto[0]+D[11]*eto[1]+D[17]*eto[2]+D[23]*eto[3]+D[29]*eto[4]+D[35]*eto[5];\n";
       } else {
-	throw(std::runtime_error("AbaqusExplicitInterface::writeComputeElasticPrediction: "
-				 "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'"));
+	tfel::raise("AbaqusExplicitInterface::writeComputeElasticPrediction: "
+		    "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'");
       }
     }
     out << "}\n";
@@ -960,8 +957,8 @@ namespace mfront{
 	  << "}\n"
 	  << "pool.wait();\n";
     } else {
-      throw(std::runtime_error("AbaqusExplicitInterface::writeIntegrateLoop: "
-			       "internal error (unsupported parallelization policy"));
+      tfel::raise("AbaqusExplicitInterface::writeIntegrateLoop: "
+		  "internal error (unsupported parallelization policy");
     }
   }
   
@@ -990,8 +987,8 @@ namespace mfront{
 						  const Hypothesis h) const
   {
     auto throw_unsupported_hypothesis = []{
-      throw(std::runtime_error("AbaqusExplicitInterface::writeNativeBehaviourIntegration: "
-			       "internal error, unsupported hypothesis"));
+      tfel::raise("AbaqusExplicitInterface::writeNativeBehaviourIntegration: "
+		  "internal error, unsupported hypothesis");
     };
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
@@ -1132,8 +1129,8 @@ namespace mfront{
 								     const Hypothesis h) const
   {
     auto throw_unsupported_hypothesis = []{
-      throw(std::runtime_error("AbaqusExplicitInterface::writeFiniteRotationSmallStrainIntegration: "
-			       "internal error, unsupported hypothesis"));
+      tfel::raise("AbaqusExplicitInterface::writeFiniteRotationSmallStrainIntegration: "
+		  "internal error, unsupported hypothesis");
     };
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
@@ -1303,8 +1300,8 @@ namespace mfront{
 							     const Hypothesis h) const
   {
     auto throw_unsupported_hypothesis = []{
-      throw(std::runtime_error("AbaqusExplicitInterface::writeLogarithmicStrainIntegration: "
-			       "internal error, unsupported hypothesis"));
+      tfel::raise("AbaqusExplicitInterface::writeLogarithmicStrainIntegration: "
+		  "internal error, unsupported hypothesis");
     };
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
@@ -1655,16 +1652,16 @@ namespace mfront{
 	<< "_BehaviourType = " ;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       if(this->fss==UNDEFINEDSTRATEGY){
-	throw(std::runtime_error("AbaqusExplicitInterface::writeUMATxxBehaviourTypeSymbols: "
-				 "behaviours written in the small strain framework "
-				 "must be embedded in a strain strategy"));
+	tfel::raise("AbaqusExplicitInterface::writeUMATxxBehaviourTypeSymbols: "
+		    "behaviours written in the small strain framework "
+		    "must be embedded in a strain strategy");
       }
       out << "2u;\n\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "2u;\n\n";
     } else {
-      throw(std::runtime_error("AbaqusExplicitInterface::writeUMATxxBehaviourTypeSymbols: "
-			       "unsupported behaviour type"));
+      tfel::raise("AbaqusExplicitInterface::writeUMATxxBehaviourTypeSymbols: "
+		  "unsupported behaviour type");
     }
   } // end of AbaqusExplicitInterface::writeUMATxxBehaviourTypeSymbols
 
@@ -1676,17 +1673,16 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourKinematic = " ;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->fss==UNDEFINEDSTRATEGY){
-	throw(std::runtime_error("AbaqusExplicitInterface::writeUMATxxBehaviourKinematicSymbols: "
-				 "behaviours written in the small strain framework "
-				 "must be embedded in a strain strategy"));
-      }
+      tfel::raise_if(this->fss==UNDEFINEDSTRATEGY,
+		     "AbaqusExplicitInterface::writeUMATxxBehaviourKinematicSymbols: "
+		     "behaviours written in the small strain framework "
+		     "must be embedded in a strain strategy");
       out << "3u;\n\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "3u;\n\n";
     } else {
-      throw(std::runtime_error("AbaqusExplicitInterface::writeUMATxxBehaviourKinematicSymbols: "
-			       "unsupported behaviour type"));
+      tfel::raise("AbaqusExplicitInterface::writeUMATxxBehaviourKinematicSymbols: "
+		  "unsupported behaviour type");
     }
   } // end of AbaqusExplicitInterface::writeUMATxxBehaviourKinematicSymbols
   

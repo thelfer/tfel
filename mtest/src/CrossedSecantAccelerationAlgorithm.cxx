@@ -14,7 +14,7 @@
 #include<limits>
 #include<ostream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/CrossedSecantAccelerationAlgorithm.hxx"
 
@@ -25,41 +25,26 @@ namespace mtest
     : csat(-1)      
   {} // end of CrossedSecantAccelerationAlgorithm::CrossedSecantAccelerationAlgorithm
     
-  std::string
-  CrossedSecantAccelerationAlgorithm::getName() const{
+  std::string CrossedSecantAccelerationAlgorithm::getName() const{
     return "crossed secant";
   }
 
-  void
-  CrossedSecantAccelerationAlgorithm::setParameter(const std::string& p,
-						    const std::string& v)
+  void CrossedSecantAccelerationAlgorithm::setParameter(const std::string& p,
+							const std::string& v)
   {
-    using namespace std;
-    const string m = "CrossedSecantAccelerationAlgorithm::setParameter";
+    const std::string m = "CrossedSecantAccelerationAlgorithm::setParameter";
     if(p=="AccelerationTrigger"){
-      const unsigned short i =
-	AccelerationAlgorithm::convertToUnsignedShort(m,v);
-      if(this->csat!=-1){
-	string msg("CrossedSecantAccelerationAlgorithm::setParameter : "
-		   "the castem acceleration trigger has already "
-		   "been defined");
-	throw(runtime_error(msg));
-      }
-      if(i<2){
-	string msg("CrossedSecantAccelerationAlgorithm::setParameter",
-		   "invalid acceleration trigger value.");
-	throw(runtime_error(msg));
-      }
+      const auto i = AccelerationAlgorithm::convertToUnsignedShort(m,v);
+      tfel::raise_if(this->csat!=-1,m+": the acceleration trigger "
+		     "has already been defined");
+      tfel::raise_if(i<2,m+": invalid acceleration trigger value.");
       this->csat = i;
     } else {
-      string msg("CrossedSecantAccelerationAlgorithm::setParameter : "
-		 "invalid parameter '"+p+"'.");
-      throw(runtime_error(msg));
+      tfel::raise(m+": invalid parameter '"+p+"'.");
     }
   } // end of CrossedSecantAccelerationAlgorithm::setParameter
 
-  void
-  CrossedSecantAccelerationAlgorithm::initialize(const unsigned short psz)
+  void CrossedSecantAccelerationAlgorithm::initialize(const unsigned short psz)
   {
     this->csa_u0.resize(psz,0.);      
     this->csa_u1.resize(psz,0.);    
@@ -72,10 +57,8 @@ namespace mtest
     }
   } // end of CrossedSecantAccelerationAlgorithm::initialize
 
-  void
-  CrossedSecantAccelerationAlgorithm::preExecuteTasks()
-  {
-  } // end of AccelerationAlgorithm::preExecuteTaks
+  void CrossedSecantAccelerationAlgorithm::preExecuteTasks()
+  {} // end of AccelerationAlgorithm::preExecuteTaks
 
   void
   CrossedSecantAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
@@ -107,11 +90,9 @@ namespace mtest
 
   } // end of CrossedSecantAccelerationAlgorithm::execute
 
-  void
-  CrossedSecantAccelerationAlgorithm::postExecuteTasks()
+  void CrossedSecantAccelerationAlgorithm::postExecuteTasks()
   {} // end of AccelerationAlgorithm::postExecuteTaks
 
-  CrossedSecantAccelerationAlgorithm::~CrossedSecantAccelerationAlgorithm()
-  {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
+  CrossedSecantAccelerationAlgorithm::~CrossedSecantAccelerationAlgorithm() = default;
 
 } // end of namespace mtest

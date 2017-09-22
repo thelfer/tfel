@@ -17,6 +17,7 @@
 #include<iterator>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
@@ -58,13 +59,11 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return "_3D";
       }
-      throw(std::runtime_error("AbaqusExplicitBehaviour::getBehaviourName: "
-			       "invalid hypothesis."));
+      tfel::raise("AbaqusExplicitBehaviour::getBehaviourName: "
+		  "invalid hypothesis.");
     }();
-    if(!ends(s)){
-      throw(std::runtime_error("AbaqusExplicitBehaviour::getBehaviourName: "
-			       "invalid function name."));
-    }
+    tfel::raise_if(!ends(s),"AbaqusExplicitBehaviour::getBehaviourName: "
+		   "invalid function name.");
     return {b.begin(),b.begin()+b.length()-s.length()};    
   }
   
@@ -74,7 +73,7 @@ namespace mtest
     : UmatBehaviourBase(h,l,AbaqusExplicitBehaviour::getBehaviourName(b,h))
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("AbaqusExplicitBehaviour::AbaqusExplicitBehaviour: "+m));}
+      tfel::raise_if(c,"AbaqusExplicitBehaviour::AbaqusExplicitBehaviour: "+m);
     };
     auto& elm     = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     const auto bn = AbaqusExplicitBehaviour::getBehaviourName(b,h);
@@ -151,13 +150,13 @@ namespace mtest
 		     {"ThermalExpansion1","ThermalExpansion2","ThermalExpansion3"});
 	}
       } else { 
-	throw(std::runtime_error("AbaqusExplicitBehaviour::AbaqusExplicitBehaviour : "
-				 "unsupported modelling hypothesis"));
+	tfel::raise("AbaqusExplicitBehaviour::AbaqusExplicitBehaviour : "
+		    "unsupported modelling hypothesis");
       }
     } else {
-      throw(std::runtime_error("AbaqusExplicitBehaviour::AbaqusExplicitBehaviour : "
-			       "unsupported behaviour type "
-			       "(neither isotropic nor orthotropic)"));
+      tfel::raise("AbaqusExplicitBehaviour::AbaqusExplicitBehaviour : "
+		  "unsupported behaviour type "
+		  "(neither isotropic nor orthotropic)");
     }
     this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
   }
@@ -199,8 +198,7 @@ namespace mtest
     using tfel::math::matrix;
     using abaqus::AbaqusInt;
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("AbaqusExplicitBehaviour::"
-				     "doPackagingStep:"+m));}
+      tfel::raise_if(c,"AbaqusExplicitBehaviour::doPackagingStep:"+m);
     };
     matrix<real> K;
     const auto h = this->getHypothesis();
@@ -357,10 +355,9 @@ namespace mtest
 	K(i,5) /= 2*cste;
       }
     } else {
-      throw(std::runtime_error("AbaqusExplicitBehaviour::"
-			       "computePredictionOperator: "
-			       "no 'InitialElasticStiffness' found. "
-			       "Was the packaging step done ?"));
+      throw_if(true,"computePredictionOperator: "
+	       "no 'InitialElasticStiffness' found. "
+	       "Was the packaging step done ?");
     }
     if((h==ModellingHypothesis::PLANESTRESS)||
        (h==ModellingHypothesis::AXISYMMETRICAL)||
@@ -405,12 +402,11 @@ namespace mtest
   {
     if(ktype==StiffnessMatrixType::ELASTIC){
       const auto p = s.packaging_info.find("InitialElasticStiffness");
-      if(p==s.packaging_info.end()){
-	throw(std::runtime_error("AbaqusExplicitBehaviour::"
-				 "computePredictionOperator: "
-				 "no 'InitialElasticStiffness' found. "
-				 "Was the packaging step done ?"));
-      }
+      tfel::raise_if(p==s.packaging_info.end(),
+		     "AbaqusExplicitBehaviour::"
+		     "computePredictionOperator: "
+		     "no 'InitialElasticStiffness' found. "
+		     "Was the packaging step done ?");
       wk.kt = p->second.get<tfel::math::matrix<real>>();
       return {true,real{1}};
     }
@@ -427,8 +423,7 @@ namespace mtest
     using abaqus::AbaqusInt;
     constexpr const auto sqrt2 = Cste<real>::sqrt2;
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("AbaqusExplicitBehaviour::"
-				     "integrate:"+m));}
+      tfel::raise_if(c,"AbaqusExplicitBehaviour::ointegrate:"+m);
     };
     if(ktype==StiffnessMatrixType::ELASTIC){
       const auto p = s.packaging_info.find("InitialElasticStiffness");
@@ -565,9 +560,8 @@ namespace mtest
       std::swap(stressOld[5],stressOld[4]);
       std::swap(stressNew[5],stressNew[4]);
     } else {
-      throw(std::runtime_error("AbaqusExplicitBehaviour::integrate: "
-			       "unsupported hypothesis ("+
-			       ModellingHypothesis::toString(h)+")"));
+      throw_if(true,"unsupported hypothesis "
+	       "("+ModellingHypothesis::toString(h)+")");
     }
     (this->fct)(&nblock,&ndir,&nshr,&nstatv,&nfieldv,&nprops,
 		nullptr,&stepTime,&totalTime,&dt,nullptr,
@@ -617,9 +611,8 @@ namespace mtest
       }
       tfel::fsalgo::copy<6u>::exe(sig.begin(),s.s1.begin());
     } else {
-      throw(std::runtime_error("AbaqusExplicitBehaviour::integrate: "
-			       "unsupported hypothesis ("+
-			       ModellingHypothesis::toString(h)+")"));
+      throw_if(true,"unsupported hypothesis "
+	       "("+ModellingHypothesis::toString(h)+")");
     }
     return {true,real(1)};
   } // end of AbaqusExplicitBehaviour::integrate

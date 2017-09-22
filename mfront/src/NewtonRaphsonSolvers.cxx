@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include "TFEL/Raise.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/PerformanceProfiling.hxx"
@@ -69,7 +70,7 @@ namespace mfront{
 						       const tokens_iterator pe)
   {
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("MFrontNewtonRaphsonSolverBase::treatSpecificKeywords: "+m));}
+      tfel::raise_if(c,"MFrontNewtonRaphsonSolverBase::treatSpecificKeywords: "+m);
     };
     const auto r = PowellDogLegAlgorithmBase::treatSpecificKeywords(mb,key,p,pe);
     if(r.first){

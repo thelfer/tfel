@@ -14,7 +14,7 @@
 #include<limits>
 #include<ostream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/AlternateDelta2AccelerationAlgorithm.hxx"
 
@@ -25,36 +25,22 @@ namespace mtest
     : asat(-1)      
   {} // end of AlternateDelta2AccelerationAlgorithm::AlternateDelta2AccelerationAlgorithm
     
-  std::string
-  AlternateDelta2AccelerationAlgorithm::getName() const{
+  std::string AlternateDelta2AccelerationAlgorithm::getName() const{
     return "crossed secant";
   }
 
-  void
-  AlternateDelta2AccelerationAlgorithm::setParameter(const std::string& p,
-						    const std::string& v)
+  void AlternateDelta2AccelerationAlgorithm::setParameter(const std::string& p,
+							  const std::string& v)
   {
-    using namespace std;
-    const string m = "AlternateDelta2AccelerationAlgorithm::setParameter";
+    const std::string m = "AlternateDelta2AccelerationAlgorithm::setParameter";
     if(p=="AccelerationTrigger"){
-      const unsigned short i =
-	AccelerationAlgorithm::convertToUnsignedShort(m,v);
-      if(this->asat!=-1){
-	string msg("AlternateDelta2AccelerationAlgorithm::setParameter : "
-		   "the castem acceleration trigger has already "
-		   "been defined");
-	throw(runtime_error(msg));
-      }
-      if(i<2){
-	string msg("AlternateDelta2AccelerationAlgorithm::setParameter",
-		   "invalid acceleration trigger value.");
-	throw(runtime_error(msg));
-      }
+      const auto i = AccelerationAlgorithm::convertToUnsignedShort(m,v);
+      tfel::raise_if(this->asat!=-1,m+": the acceleration trigger "
+		     "has already been defined");
+      tfel::raise_if(i<2,m+": invalid acceleration trigger value.");
       this->asat = i;
     } else {
-      string msg("AlternateDelta2AccelerationAlgorithm::setParameter : "
-		 "invalid parameter '"+p+"'.");
-      throw(runtime_error(msg));
+      tfel::raise(m+": invalid parameter '"+p+"'.");
     }
   } // end of AlternateDelta2AccelerationAlgorithm::setParameter
 
@@ -76,10 +62,8 @@ namespace mtest
     }
   } // end of AlternateDelta2AccelerationAlgorithm::initialize
 
-  void
-  AlternateDelta2AccelerationAlgorithm::preExecuteTasks()
-  {
-  } // end of AccelerationAlgorithm::preExecuteTaks
+  void AlternateDelta2AccelerationAlgorithm::preExecuteTasks()
+  {} // end of AccelerationAlgorithm::preExecuteTaks
 
   void
   AlternateDelta2AccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
@@ -128,11 +112,9 @@ namespace mtest
     }
   } // end of AlternateDelta2AccelerationAlgorithm::execute
 
-  void
-  AlternateDelta2AccelerationAlgorithm::postExecuteTasks()
+  void AlternateDelta2AccelerationAlgorithm::postExecuteTasks()
   {} // end of AccelerationAlgorithm::postExecuteTaks
 
-  AlternateDelta2AccelerationAlgorithm::~AlternateDelta2AccelerationAlgorithm()
-  {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
+  AlternateDelta2AccelerationAlgorithm::~AlternateDelta2AccelerationAlgorithm() = default;
 
 } // end of namespace mtest

@@ -15,6 +15,7 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Parser/Number.hxx"
 #include"TFEL/Math/Parser/BinaryOperator.hxx"
 #include"TFEL/Math/Parser/ExternalFunctionExpr2.hxx"
@@ -33,24 +34,18 @@ namespace tfel
 	: f(std::move(ff)),
 	  args(fargs)	
       {
-	using namespace std;
-	if(f->getNumberOfVariables()!=args.size()){
-	  ostringstream msg;
-	  msg << "ExternalFunctionExpr2::ExternalFunctionExpr2 : "
-	      << "invalid number of arguments for function (" 
-	      << this->args.size() << " given, "
-	      << f->getNumberOfVariables() << " required)";
-	  throw(runtime_error(msg.str()));
-        }
+	raise_if(f->getNumberOfVariables()!=args.size(),
+		 "ExternalFunctionExpr2::ExternalFunctionExpr2: "
+		 "invalid number of arguments for function "
+		 "("+std::to_string(this->args.size())+" given, "+
+		 std::to_string(f->getNumberOfVariables())+" required)");
       } // end of ExternalFunctionExpr2::ExternalFunctionExpr2
 
-      double
-      ExternalFunctionExpr2::getValue() const
+      double ExternalFunctionExpr2::getValue() const
       {
-	using namespace std;
 	using namespace tfel::math::parser;
-	vector<shared_ptr<Expr> >::const_iterator p;
-	vector<shared_ptr<Expr> >::size_type i;
+	std::vector<std::shared_ptr<Expr> >::const_iterator p;
+	std::vector<std::shared_ptr<Expr> >::size_type i;
 	for(p=this->args.begin(),i=0u;p!=this->args.end();++p,++i){
 	  const double val = (*p)->getValue();
 	  this->f->setVariableValue(i,val);
@@ -61,11 +56,10 @@ namespace tfel
       void
       ExternalFunctionExpr2::checkCyclicDependency(std::vector<std::string>& names) const
       {
-	using namespace std;
-	vector<shared_ptr<Expr> >::const_iterator p;
-	vector<string> a;
+	std::vector<std::shared_ptr<Expr> >::const_iterator p;
+	std::vector<std::string> a;
 	for(p=this->args.begin();p!=this->args.end();++p){
-	  vector<string> n(a);
+	  std::vector<std::string> n(a);
 	  (*p)->checkCyclicDependency(n);
 	  mergeVariablesNames(names,n);
 	}

@@ -14,7 +14,7 @@
 #include<limits>
 #include<ostream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/CrossedDelta2AccelerationAlgorithm.hxx"
 
@@ -25,41 +25,26 @@ namespace mtest
     : csat(-1)      
   {} // end of CrossedDelta2AccelerationAlgorithm::CrossedDelta2AccelerationAlgorithm
     
-  std::string
-  CrossedDelta2AccelerationAlgorithm::getName() const{
+  std::string CrossedDelta2AccelerationAlgorithm::getName() const{
     return "crossed secant";
   }
 
-  void
-  CrossedDelta2AccelerationAlgorithm::setParameter(const std::string& p,
-						    const std::string& v)
+  void CrossedDelta2AccelerationAlgorithm::setParameter(const std::string& p,
+							const std::string& v)
   {
-    using namespace std;
-    const string m = "CrossedDelta2AccelerationAlgorithm::setParameter";
+    const std::string m = "CrossedDelta2AccelerationAlgorithm::setParameter";
     if(p=="AccelerationTrigger"){
-      const unsigned short i =
-	AccelerationAlgorithm::convertToUnsignedShort(m,v);
-      if(this->csat!=-1){
-	string msg("CrossedDelta2AccelerationAlgorithm::setParameter : "
-		   "the castem acceleration trigger has already "
-		   "been defined");
-	throw(runtime_error(msg));
-      }
-      if(i<2){
-	string msg("CrossedDelta2AccelerationAlgorithm::setParameter",
-		   "invalid acceleration trigger value.");
-	throw(runtime_error(msg));
-      }
+      const auto i = AccelerationAlgorithm::convertToUnsignedShort(m,v);
+      tfel::raise_if(this->csat!=-1,m+": the acceleration trigger "
+		     "has already been defined");
+      tfel::raise_if(i<2,m+": invalid acceleration trigger value.");
       this->csat = i;
     } else {
-      string msg("CrossedDelta2AccelerationAlgorithm::setParameter : "
-		 "invalid parameter '"+p+"'.");
-      throw(runtime_error(msg));
+      tfel::raise(m+": invalid parameter '"+p+"'.");
     }
   } // end of CrossedDelta2AccelerationAlgorithm::setParameter
 
-  void
-  CrossedDelta2AccelerationAlgorithm::initialize(const unsigned short psz)
+  void CrossedDelta2AccelerationAlgorithm::initialize(const unsigned short psz)
   {
     this->csa_u0.resize(psz,0.);      
     this->csa_u1.resize(psz,0.);     
@@ -74,10 +59,8 @@ namespace mtest
     }
   } // end of CrossedDelta2AccelerationAlgorithm::initialize
 
-  void
-  CrossedDelta2AccelerationAlgorithm::preExecuteTasks()
-  {
-  } // end of AccelerationAlgorithm::preExecuteTaks
+  void CrossedDelta2AccelerationAlgorithm::preExecuteTasks()
+  {} // end of AccelerationAlgorithm::preExecuteTaks
 
   void
   CrossedDelta2AccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
@@ -124,11 +107,9 @@ namespace mtest
     }
   } // end of CrossedDelta2AccelerationAlgorithm::execute
 
-  void
-  CrossedDelta2AccelerationAlgorithm::postExecuteTasks()
+  void CrossedDelta2AccelerationAlgorithm::postExecuteTasks()
   {} // end of AccelerationAlgorithm::postExecuteTaks
 
-  CrossedDelta2AccelerationAlgorithm::~CrossedDelta2AccelerationAlgorithm()
-  {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
+  CrossedDelta2AccelerationAlgorithm::~CrossedDelta2AccelerationAlgorithm() = default;
 
 } // end of namespace mtest

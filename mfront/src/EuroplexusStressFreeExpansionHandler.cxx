@@ -14,6 +14,7 @@
 #include<cmath>
 #include<limits>
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Stensor/StensorView.hxx"
 #include"TFEL/Math/Stensor/ConstStensorView.hxx"
 #include"MFront/Europlexus/EuroplexusStressFreeExpansionHandler.hxx"
@@ -55,15 +56,14 @@ namespace epx
       tfel::math::StensorView<3u,EuroplexusReal> sde(de);
       tfel::math::stensor<3u,EuroplexusReal> se0(s0);
       tfel::math::stensor<3u,EuroplexusReal> se1(s1);
-      if((std::abs(s0[3])>10*std::numeric_limits<EuroplexusReal>::min())||
-	 (std::abs(s1[3])>10*std::numeric_limits<EuroplexusReal>::min())||
-	 (std::abs(s0[4])>10*std::numeric_limits<EuroplexusReal>::min())||
-	 (std::abs(s1[4])>10*std::numeric_limits<EuroplexusReal>::min())||
-	 (std::abs(s0[5])>10*std::numeric_limits<EuroplexusReal>::min())||
-	 (std::abs(s1[5])>10*std::numeric_limits<EuroplexusReal>::min())){
-	throw(std::runtime_error("EuroplexusLogarithmicStrainStressFreeExpansionHandler: "
-				 "stress free expansion is assumed diagonal"));
-      }
+      tfel::raise_if((std::abs(s0[3])>10*std::numeric_limits<EuroplexusReal>::min())||
+		     (std::abs(s1[3])>10*std::numeric_limits<EuroplexusReal>::min())||
+		     (std::abs(s0[4])>10*std::numeric_limits<EuroplexusReal>::min())||
+		     (std::abs(s1[4])>10*std::numeric_limits<EuroplexusReal>::min())||
+		     (std::abs(s0[5])>10*std::numeric_limits<EuroplexusReal>::min())||
+		     (std::abs(s1[5])>10*std::numeric_limits<EuroplexusReal>::min()),
+		     "EuroplexusLogarithmicStrainStressFreeExpansionHandler: "
+		     "stress free expansion is assumed diagonal");
       se[0]  -= std::log1p(se0[0]);
       se[1]  -= std::log1p(se0[1]);
       se[2]  -= std::log1p(se0[2]);
@@ -75,11 +75,10 @@ namespace epx
       tfel::math::StensorView<2u,EuroplexusReal> sde(de);
       tfel::math::stensor<2u,EuroplexusReal> se0(s0);
       tfel::math::stensor<2u,EuroplexusReal> se1(s1);
-      if((std::abs(s0[3])>10*std::numeric_limits<EuroplexusReal>::min())||
-	 (std::abs(s1[3])>10*std::numeric_limits<EuroplexusReal>::min())){
-	throw(std::runtime_error("EuroplexusLogarithmicStrainStressFreeExpansionHandler: "
-				 "stress free expansion is assumed diagonal"));
-      }
+      tfel::raise_if((std::abs(s0[3])>10*std::numeric_limits<EuroplexusReal>::min())||
+		     (std::abs(s1[3])>10*std::numeric_limits<EuroplexusReal>::min()),
+		     "EuroplexusLogarithmicStrainStressFreeExpansionHandler: "
+		     "stress free expansion is assumed diagonal");
       se[0]  -= std::log1p(se0[0]);
       se[1]  -= std::log1p(se0[1]);
       se[2]  -= std::log1p(se0[2]);

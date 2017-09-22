@@ -14,7 +14,7 @@
 #include<fstream>
 #include<sstream>
 #include<stdexcept>
-
+#include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
@@ -39,7 +39,7 @@ namespace mfront{
     : BehaviourBrickBase(dsl_,mb_)
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick: "+m));}
+      tfel::raise_if(b,"FiniteStrainSingleCrystalBrick::FiniteStrainSingleCrystalBrick: "+m);
     };
     const auto h = ModellingHypothesis::TRIDIMENSIONAL;
     // basic checks
@@ -104,8 +104,8 @@ namespace mfront{
   {
     using tfel::glossary::Glossary; 
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("FiniteStrainSingleCrystalBrick:"
-				     ":completeVariableDeclaration: "+m));}
+      tfel::raise_if(b,"FiniteStrainSingleCrystalBrick:"
+		     ":completeVariableDeclaration: "+m);
     };
     const auto h = ModellingHypothesis::TRIDIMENSIONAL;
     if(getVerboseMode()>=VERBOSE_DEBUG){

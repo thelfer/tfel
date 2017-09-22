@@ -14,6 +14,7 @@
 #include<stdexcept>
 #include<boost/python.hpp>
 
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 
 static void
@@ -33,8 +34,8 @@ pySetVerboseMode(const std::string& m){
   } else if (m=="Full"){
     mfront::setVerboseMode(mfront::VERBOSE_FULL);
   } else {
-    throw(std::runtime_error("mfront::setVerboseMode: "
-			     "unknown mode '"+m+"'"));
+    tfel::raise("mfront::setVerboseMode: "
+		"unknown mode '"+m+"'");
   }
 }
 

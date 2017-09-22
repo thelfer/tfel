@@ -8,6 +8,7 @@
 #include<ostream>
 #include<algorithm>
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontUtilities.hxx"
 #include"MFront/TargetsDescription.hxx"
 
@@ -23,6 +24,9 @@ namespace mfront{
 				 const std::string& pr,
 				 const std::string& s,
 				 const LibraryDescription::LibraryType t){
+    auto throw_if = [](const bool b,const std::string& msg){
+      tfel::raise_if(b,"TargetsDescription::operator(): "+msg);
+    };
     auto c = [&n](const LibraryDescription& l){
       return l.name == n;
     };
@@ -34,21 +38,15 @@ namespace mfront{
       return this->libraries.back();
     }
     auto& l = *p;
-    if(l.prefix!=pr){
-      throw(std::runtime_error("TargetsDescription::operator() : "
-			       "unmatched library prefix for library '"+n+"'"
-			       " ('"+l.prefix+"' vs '"+s+"')"));
-    }
-    if(l.suffix!=s){
-      throw(std::runtime_error("TargetsDescription::operator() : "
-			       "unmatched library suffix for library '"+n+"'"
-			       " ('"+l.suffix+"' vs '"+s+"')"));
-    }
-    if(l.type!=t){
-      throw(std::runtime_error("TargetsDescription::operator() : "
-			       "unmatched library type for library '"+n+"'"
-			       " ('"+convert(l.type)+"' vs '"+convert(t)+"')"));
-    }
+    throw_if(l.prefix!=pr,
+	     "unmatched library prefix for library '"+n+"'"
+	     " ('"+l.prefix+"' vs '"+s+"')");
+    throw_if(l.suffix!=s,
+	     "unmatched library suffix for library '"+n+"'"
+	     " ('"+l.suffix+"' vs '"+s+"')");
+    throw_if(l.type!=t,
+	     "unmatched library type for library '"+n+"'"
+	     " ('"+convert(l.type)+"' vs '"+convert(t)+"')");
     return l;
   }
 
@@ -94,10 +92,8 @@ namespace mfront{
     const auto b = this->libraries.begin();
     const auto e = this->libraries.end();
     const auto p = std::find_if(b,e,c);
-    if(p==e){
-      throw(std::runtime_error("TargetsDescription::operator[] : "
-			       "no library named '"+n+"'"));
-    }
+    tfel::raise_if(p==e,"TargetsDescription::operator[]: "
+		   "no library named '"+n+"'");
     return *p;
   } // end of TargetsDescription::operator[]
 
@@ -195,16 +191,15 @@ namespace mfront{
     using tfel::utilities::CxxTokenizer;
     const auto f = "read<TargetsDescription>";
     auto error = [&f](const std::string& m){
-      throw(std::runtime_error(std::string{f}+": "+m));
+      tfel::raise(std::string{f}+": "+m);
     };
     auto get_vector = [&f](std::vector<std::string>& v,
 			   tfel::utilities::CxxTokenizer::const_iterator& pc,
 			   const tfel::utilities::CxxTokenizer::const_iterator e,
 			   const std::string& n){
-      if(!v.empty()){
-	throw(std::runtime_error(std::string{f}+": library member '"+
-				 n+"' multiply defined"));
-      }
+      tfel::raise_if(!v.empty(),
+		     std::string{f}+": library member '"+
+		     n+"' multiply defined");
       auto c = pc;
       CxxTokenizer::readSpecifiedToken(f,":",c,e);
       v  = read<std::vector<std::string>>(c,e);
@@ -252,7 +247,8 @@ namespace mfront{
 	    ++c;
 	    get_vector(cmds,c,pe,"commands");
 	  } else {
-	    error("unsupported tag '"+c->value+"' for specific target description");
+	    error("unsupported tag '"+c->value+"' "
+		  "for specific target description");
 	  }
 	}
 	CxxTokenizer::readSpecifiedToken(f,"}",c,pe);
@@ -277,5 +273,3 @@ namespace mfront{
   } // end of read
   
 } // end of namespace mfront
-
-

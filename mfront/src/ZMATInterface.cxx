@@ -16,6 +16,7 @@
 #include<stdexcept>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/System/System.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
@@ -30,16 +31,14 @@
 namespace mfront
 {
 
-  static void
-  writeZMATUndefs(std::ostream& out)
+  static void writeZMATUndefs(std::ostream& out)
   {
     out << "#include\"MFront/ZMAT/ZMATUndefs.hxx\"\n";
   } // end of writeZMATUndefs
 
   template<typename ArrayType>
-  static void
-  writeArray(std::ostream& out,
-	     const ArrayType& a)
+  static void writeArray(std::ostream& out,
+			 const ArrayType& a)
   {
     std::string buffer;
     out << "{";
@@ -102,10 +101,9 @@ namespace mfront
 	for(const auto & sv : svs){
 	  if(s.contains(sv.name)){
 	    const auto& v = s.getVariable(sv.name);
-	    if((sv.type!=v.type)||(sv.arraySize!=v.arraySize)){
-	      throw(std::runtime_error("getAllStateVariables : "
-				       "inconsistent type for variable '"+sv.name+"'"));
-	    }
+	    tfel::raise_if((sv.type!=v.type)||(sv.arraySize!=v.arraySize),
+			   "getAllStateVariables : "
+			   "inconsistent type for variable '"+sv.name+"'");
 	  } else {
 	    s.push_back(sv);
 	  }
@@ -126,7 +124,7 @@ namespace mfront
     } else if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
       return "1D";
     }
-    throw(std::runtime_error("getSpaceDimension: unsupported hypothesis"));
+    tfel::raise("getSpaceDimension: unsupported hypothesis");
   }
 
   static std::string
@@ -162,8 +160,8 @@ namespace mfront
 			      const tokens_iterator)
   {
     if(std::find(i.begin(),i.end(),this->getName())!=i.end()){
-      throw(std::runtime_error("ZMATInterface::treatKeyword: "
-			       "unsupported keyword '"+key+"'"));
+      tfel::raise("ZMATInterface::treatKeyword: "
+		  "unsupported keyword '"+key+"'");
     }
     return {false,current};
   }
@@ -194,13 +192,11 @@ namespace mfront
     if(bh.find(ModellingHypothesis::TRIDIMENSIONAL)!=bh.end()){
       h.insert(ModellingHypothesis::TRIDIMENSIONAL);
     }
-    if(h.empty()){
-      throw(std::runtime_error("ZMATInterfaceModellingHypothesesToBeTreated: "
-			       "no hypotheses selected. This means that the given beahviour "
-			       "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
-			       "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
-			       "make sense to use the ZMAT interface"));
-    }
+    tfel::raise_if(h.empty(),"ZMATInterfaceModellingHypothesesToBeTreated: "
+		   "no hypotheses selected. This means that the given beahviour "
+		   "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
+		   "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
+		   "make sense to use the ZMAT interface");
     return h;
   } // edn of ZMATInterface::getModellingHypothesesToBeTreated
 
@@ -222,11 +218,10 @@ namespace mfront
     }
     out << "{\n"
 	<< "using namespace tfel::math;\n";
-    if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
-      throw(runtime_error("ZMATInterface::exportMechanicalData: "
-			  "only small or finite strain behaviours are supported"));
-    }
+    tfel::raise_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		     (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+		   "ZMATInterface::exportMechanicalData: "
+		   "only small or finite strain behaviours are supported");
     out << "zmat::ZMATInterface::convert(&ZMATsig[0],this->sig);\n";
     if(!persistentVarsHolder.empty()){
       out << "auto& ZMATstatev = ZMATdata.var_int()[0];\n";
@@ -251,8 +246,8 @@ namespace mfront
 		<< currentOffset << "],this->" << v.name 
 		<< ");\n";  
 	  } else {
-	    throw(runtime_error("SupportedTypes::exportResults: "
-				"internal error, tag unsupported"));
+	    tfel::raise("ZMATInterface::exportMechanicalData: "
+			"internal error, tag unsupported");
 	  }
 	  currentOffset+=this->getTypeSize(v.type,v.arraySize);
 	} else {
@@ -275,8 +270,8 @@ namespace mfront
 		  << currentOffset << "+idx*StensorSize],this->" << v.name
 		  << "[idx]);\n";  
 	    } else {
-	      throw(runtime_error("SupportedTypes::exportResults: "
-				  "internal error, tag unsupported"));
+	      tfel::raise("ZMATInterface::exportMechanicalData: "
+			  "internal error, tag unsupported");
 	    }
 	    out << "}\n";
 	    currentOffset+=this->getTypeSize(v.type,v.arraySize);
@@ -299,8 +294,8 @@ namespace mfront
 		    << currentOffset << "],this->" << v.name
 		    << "[" << i << "]);\n";  
 	      } else {
-		throw(runtime_error("SupportedTypes::exportResults: "
-				    "internal error, tag unsupported"));
+		tfel::raise("ZMATInterface::exportMechanicalData: "
+			    "internal error, tag unsupported");
 	      }
 	      currentOffset+=this->getTypeSize(v.type,1u);
 	    }
@@ -318,8 +313,8 @@ namespace mfront
     out << "#include\"MFront/ZMAT/ZMATInterface.hxx\"\n"
 	<< "#include\"Coefficient.h\"\n";
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-      out << "#include\"Auto_ptr.h\"\n";
-      out << "#include\"Elasticity.h\"\n";
+      out << "#include\"Auto_ptr.h\"\n"
+	  << "#include\"Elasticity.h\"\n";
     }
     out << "#include\"Coefficient.h\"\n"
 	<< "#include\"Behavior.h\"\n";
@@ -339,11 +334,10 @@ namespace mfront
     auto evs = d.getExternalStateVariables();
     // removing the temperature
     evs.erase(evs.begin());
-    if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
-      throw(runtime_error("ZMATInterface::writeBehaviourDataConstructor: "
-			  "only small or finite strain behaviours are supported"));
-    }
+    tfel::raise_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		     (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+		   "ZMATInterface::writeBehaviourDataConstructor: "
+		   "only small or finite strain behaviours are supported");
     out << "/*!\n"
 	<< " * \\brief constructor for the ZMAT interface\n"
 	<< " *\n";
@@ -375,9 +369,9 @@ namespace mfront
       out << "const real * const ZMATF0,\n";
       break;
     default:
-      throw(runtime_error("ZMATInterface::writeBehaviourDataConstructor: "
-			  "unsupported behaviour type"));
-    } 
+      tfel::raise("ZMATInterface::writeBehaviourDataConstructor: "
+		  "unsupported behaviour type");
+    }
     if(!mps.empty()){
       out << "const ZSET::ARRAY<ZSET::COEFF>& ZMATmprops,\n";
     } else {
@@ -403,8 +397,8 @@ namespace mfront
       out << "zmat::ZMATInterface::convert(this->F0,&ZMATF0[0]);\n";
       break;
     default:
-      throw(runtime_error("ZMATInterface::writeCallMFrontBehaviour: "
-			  "unsupported behaviour type"));
+      tfel::raise("ZMATInterface::writeCallMFrontBehaviour: "
+		  "unsupported behaviour type");
     }
     if(!mps.empty()){
       SupportedTypes::TypeSize o;
@@ -429,8 +423,9 @@ namespace mfront
 	    }
 	  }
 	} else {
-	  throw(runtime_error("ZMATInterface::writeBehaviourDataConstructor : "
-			      "unsupported material properties type (only scalar supported yet)"));
+	  tfel::raise("ZMATInterface::writeBehaviourDataConstructor : "
+		      "unsupported material properties type "
+		      "(only scalar supported yet)");
 	}
       }
     }
@@ -449,9 +444,8 @@ namespace mfront
 	    out << "zmat::ZMATInterface::convert(" << n << "," << "&ZMATstatev[" << o << "]);\n";
 	    break;
 	  default:
-	    string msg("ZMATInterface::writeBehaviourDataConstructor : ");
-	    msg += "unsupported variable type ('"+iv.type+"')";
-	    throw(runtime_error(msg));
+	    tfel::raise("ZMATInterface::writeBehaviourDataConstructor: "
+			"unsupported variable type ('"+iv.type+"')");
 	  }
 	  o+=this->getTypeSize(iv.type,1u);
 	} else {
@@ -474,8 +468,8 @@ namespace mfront
 		  << o << "+idx*StensorSize]);\n";  
 	      break;
 	    default : 
-	      throw(runtime_error("ZMATInterface::writeBehaviourDataConstructor : "
-				  "unsupported variable type ('"+iv.type+"')"));
+	      tfel::raise("ZMATInterface::writeBehaviourDataConstructor: "
+			  "unsupported variable type ('"+iv.type+"')");
 	    }
 	    out << "}\n";
 	    o+=this->getTypeSize(iv.type,iv.arraySize);
@@ -492,9 +486,8 @@ namespace mfront
 		    << o << "]);\n";  
 		break;
 	      default : 
-		string msg("ZMATInterface::writeBehaviourDataConstructor : "
-			   "unsupported variable type ('"+iv.type+"')");
-		throw(runtime_error(msg));
+		tfel::raise("ZMATInterface::writeBehaviourDataConstructor: "
+			    "unsupported variable type ('"+iv.type+"')");
 	      }
 	      o+=this->getTypeSize(iv.type,1u);
 	    }
@@ -525,9 +518,9 @@ namespace mfront
 	    }
 	  }
 	} else {
-	  string msg("ZMATInterface::writeBehaviourDataConstructor : "
-		     "unsupported material properties type (only scalar supported yet)");
-	  throw(runtime_error(msg));
+	  tfel::raise("ZMATInterface::writeBehaviourDataConstructor: "
+		      "unsupported material properties type "
+		      "(only scalar supported yet)");
 	}
       }
     }
@@ -541,12 +534,12 @@ namespace mfront
 					   const std::string& initStateVarsIncrements) const
   {
     using namespace std;
-    if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
-      string msg("ZMATInterface::writeBehaviourDataConstructor : "
-		 "only small or finite strain behaviours are supported");
-      throw(runtime_error(msg));
-    }
+    auto throw_if = [](const bool c,const std::string& m){
+      tfel::raise_if(c,"ZMATInterface::writeBehaviourConstructor: "+m);
+    };
+    throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+	     "only small or finite strain behaviours are supported");
     out << "/*!\n"
 	<< " * \\brief constructor for the ZMAT interface\n"
 	<< " *\n";
@@ -556,17 +549,15 @@ namespace mfront
     }
     switch(mb.getBehaviourType()){
     case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
-      out << " \\param ZMATeto     : strain at the beginning of the time step\n";
-      out << " \\param ZMATdeto    : strain increment\n";
+      out << " \\param ZMATeto     : strain at the beginning of the time step\n"
+	  << " \\param ZMATdeto    : strain increment\n";
       break;
     case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
-      out << " \\param ZMATF0 : deformation gradient at the beginning of the time step\n";
-      out << " \\param ZMATF1 : deformation gradient at the end of the time step\n";
+      out << " \\param ZMATF0 : deformation gradient at the beginning of the time step\n"
+	  << " \\param ZMATF1 : deformation gradient at the end of the time step\n";
       break;
     default:
-      string msg("ZMATInterface::writeCallMFrontBehaviour : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      throw_if(true,"unsupported behaviour type");
     } 
     out << " * \\param ZMATmprops  : material properties\n"
 	<< " * \\param ZMATdata    : material data handler\n"
@@ -581,17 +572,15 @@ namespace mfront
     }
     switch(mb.getBehaviourType()){
     case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
-      out << " const real* const ZMATeto,\n";
-      out << " const real* const ZMATdeto,\n";
+      out << " const real* const ZMATeto,\n"
+	  << " const real* const ZMATdeto,\n";
       break;
     case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
-      out << " const real* const ZMATF0,\n";
-      out << " const real* const ZMATF1,\n";
+      out << " const real* const ZMATF0,\n"
+	  << " const real* const ZMATF1,\n";
       break;
     default:
-      string msg("ZMATInterface::writeCallMFrontBehaviour : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      throw_if(true,"unsupported behaviour type");
     }
     out << "const ZSET::ARRAY<ZSET::COEFF>& ZMATmprops,\n"
 	<< "const ZSET::MAT_DATA& ZMATdata,\n"
@@ -626,9 +615,7 @@ namespace mfront
       }
       break;
     default:
-      string msg("ZMATInterface::writeCallMFrontBehaviour : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      throw_if(true,"unsupported behaviour type");
     }
     if(!initStateVarsIncrements.empty()){
       out << ",\n" << initStateVarsIncrements;
@@ -641,16 +628,16 @@ namespace mfront
 						 const BehaviourDescription& mb) const
   {
     using namespace std;
+    auto throw_if = [](const bool c,const std::string& m){
+      tfel::raise_if(c,"ZMATInterface::writeIntegrationDataConstructor: "+m);
+    };
     const auto& d = mb.getBehaviourData(h);
     auto evs = d.getExternalStateVariables();
     // removing the temperature
     evs.erase(evs.begin());
-    if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR))){
-      string msg("ZMATInterface::writeBehaviourDataConstructor : "
-		 "only small or finite strain behaviours are supported");
-      throw(runtime_error(msg));
-    }
+    throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+	     "only small or finite strain behaviours are supported");
     out << "/*!\n"
 	<< " * \\brief constructor for the ZMAT interface\n"
 	<< " *\n";
@@ -662,9 +649,7 @@ namespace mfront
       out << " \\param ZMATF1    : deformation gradient at the end of the time step\n";
       break;
     default:
-      string msg("ZMATInterface::writeCallMFrontBehaviour : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      throw_if(true,"unsupported behaviour type");
     }
     out << " * \\param ZMATdata    : material data handler\n"
 	<< " * \\param ZMATT_pos   : position of the temperature\n"
@@ -680,9 +665,7 @@ namespace mfront
       out << "const real * const ZMATF1,\n";
       break;
     default:
-      string msg("ZMATInterface::writeCallMFrontBehaviour : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      throw_if(true,"unsupported behaviour type");
     }
     out << "const ZSET::MAT_DATA& ZMATdata,\n"
 	<< "const int ZMATT_pos,\n";
@@ -704,9 +687,7 @@ namespace mfront
       out << "zmat::ZMATInterface::convert(this->F1,ZMATF1);\n";
       break;
     default:
-      string msg("ZMATInterface::writeCallMFrontBehaviour : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      throw_if(true,"unsupported behaviour type");
     }
     if(!evs.empty()){
       SupportedTypes::TypeSize o;
@@ -731,9 +712,7 @@ namespace mfront
 	    }
 	  }
 	} else {
-	  string msg("ZMATInterface::writeBehaviourDataConstructor : "
-		     "unsupported material properties type (only scalar supported yet)");
-	  throw(runtime_error(msg));
+	  throw_if(true,"unsupported material properties type (only scalar supported yet)");
 	}
       }
     }
@@ -762,7 +741,7 @@ namespace mfront
     using namespace tfel::system;
     using namespace tfel::material;
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("ZMATInterface::endTreatment: "+m));}
+      tfel::raise_if(b,"ZMATInterface::endTreatment: "+m);
     };
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/ZMAT");
@@ -821,11 +800,11 @@ namespace mfront
 	<< "INTEGRATION_RESULT*\n"
 	<< "integrate(MAT_DATA&,const VECTOR&,MATRIX*&,int);\n";
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-      out << "/*!\n";
-      out << " * \\brief return the elasticity matrix\n";
-      out << " * \\param[in] mdat : material data\n";
-      out << " */\n";
-      out << "SMATRIX\n"
+      out << "/*!\n"
+	  << " * \\brief return the elasticity matrix\n"
+	  << " * \\param[in] mdat : material data\n"
+	  << " */\n"
+	  << "SMATRIX\n"
 	  << "get_elasticity_matrix(MAT_DATA&,double);\n";
     }
     out << "//! destructor\n"
@@ -874,26 +853,24 @@ namespace mfront
 	<< "TENSOR2_FLUX sig;\n";
     switch(mb.getBehaviourType()){
     case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
-      out << "//! strains\n";
-      out << "TENSOR2_GRAD eto;\n";
+      out << "//! strains\n"
+	  << "TENSOR2_GRAD eto;\n";
       break;
     case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
-      out << "//! deformation gradient\n";
-      out << "TENSOR2_GRAD F;\n";
+      out << "//! deformation gradient\n"
+	  << "TENSOR2_GRAD F;\n";
       break;
     default:
-      string msg("ZMATInterface::writeCallMFrontBehaviour : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      throw_if(true,"unsupported behaviour type");
     }
     if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
        (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
-      out << "//! tangent operator\n";
-      out << "MATRIX tg_mat; \n";
+      out << "//! tangent operator\n"
+	  << "MATRIX tg_mat; \n";
     }
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-      out << "//! elasticity matrix\n";
-      out << "AUTO_PTR<ELASTICITY> elasticity; \n";
+      out << "//! elasticity matrix\n"
+	  << "AUTO_PTR<ELASTICITY> elasticity; \n";
     }
     out << "//! material properties\n"
 	<< "ARRAY<COEFF> mprops; \n";
@@ -916,9 +893,7 @@ namespace mfront
 	    out << "ARRAY<TENSOR2_VINT> " << sv.name << ";\n"; 
 	  }
 	} else {
-	  string msg("ZMATInterface::endTreatment : "
-		     "unsupported state variable type");
-	  throw(runtime_error(msg));
+	  throw_if(true,"unsupported state variable type");
 	}
       }
     }
@@ -995,9 +970,7 @@ namespace mfront
       out << "this->F.initialize(this,\"F\",this->utsz(),1);\n";
       break;
     default:
-      string msg("ZMATInterface::writeCallMFrontBehaviour : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      throw_if(true,"unsupported behaviour type");
     }
     if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
        (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
@@ -1018,8 +991,8 @@ namespace mfront
 	<< "INPUT_ERROR(\"temperature is not defined\");\n"
 	<< "}\n";
     if(!all_mp_names.empty()){
-      out << "// check that all material properties were initialised\n";
-      out << "for(int pc=0;pc!=this->mprops.size();++pc){\n"
+      out << "// check that all material properties were initialised\n"
+	  << "for(int pc=0;pc!=this->mprops.size();++pc){\n"
 	  << "if(!this->mprops[pc].ok()){\n"
 	  << "INPUT_ERROR(\"Some material properties were not initialised\");\n"
 	  << "}\n"
@@ -1260,8 +1233,8 @@ namespace mfront
 	  }
 	}
       } else {
-	throw(runtime_error("ZMATInterface::endTreatment: "
-			    "unsupported state variable type"));
+	tfel::raise("ZMATInterface::writeBehaviourInitialisation: "
+		    "unsupported state variable type");
       }
     }
     out << "for(;;){\n"
@@ -1289,8 +1262,8 @@ namespace mfront
 	<< "INPUT_ERROR(\"unknown policy '\"+policy+\"'\");\n"
 	<< "}\n";
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-      out << "} else if((str==\"**elasticity\")||(str==\"**ELASTICITY\")){\n";
-      out << "if(!this->elasticity.Null()){\n"
+      out << "} else if((str==\"**elasticity\")||(str==\"**ELASTICITY\")){\n"
+	  << "if(!this->elasticity.Null()){\n"
 	  << "INPUT_ERROR(\"elasticity already defined\");\n"
 	  << "}\n"
 	  << "this->elasticity=ELASTICITY::read(file,this);\n";
@@ -1411,17 +1384,17 @@ namespace mfront
 	<< "}\n";
     if(nbh!=1u){
       out << "if(find(all_mp_names,all_mp_names+" << all_mp_names.size() << ",str)==all_mp_names+"
-	  << all_mp_names.size() << "){\n";
-      out << "INPUT_ERROR(\"No material property named '\"+str+\"'\");\n";
-      out << "}\n";
+	  << all_mp_names.size() << "){\n"
+	  << "INPUT_ERROR(\"No material property named '\"+str+\"'\");\n"
+	  << "}\n";
     }
     out << "const STRING * const pmat = find(mp_names"<<getSpaceDimensionSuffix(h)
 	<<",mp_names" << getSpaceDimensionSuffix(h) << "+" << mps_size << ",str);\n";
     if(nbh==1u){
       out << "if(pmat==mp_names" << getSpaceDimensionSuffix(h) << "+" <<
-	mps_size << "){\n";
-      out << "INPUT_ERROR(\"No material property named '\"+str+\"'\");\n";
-      out << "}\n";
+	mps_size << "){\n"
+	  << "INPUT_ERROR(\"No material property named '\"+str+\"'\");\n"
+	  << "}\n";
     }
     out << "if(this->mprops[pmat-mp_names" << getSpaceDimensionSuffix(h) << "].ok()){\n"
 	<< "INPUT_ERROR(\"material property '\"+str+\"' already defined\");\n"
@@ -1450,12 +1423,12 @@ namespace mfront
 	<< mb.getClassName() << ";\n"
 	<< "using tfel::math::st2tost2;\n";
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      out << "// strain and strain increment\n";
-      out << "double stran[" << getStensorSize(h) << "];\n";
-      out << "double dstran[" << getStensorSize(h) << "];\n";
-      out << "stran[0] = this->eto[0]-delta_grad[0];\n";
-      out << "stran[1] = this->eto[1]-delta_grad[1];\n";
-      out << "stran[2] = this->eto[2]-delta_grad[2];\n";
+      out << "// strain and strain increment\n"
+	  << "double stran[" << getStensorSize(h) << "];\n"
+	  << "double dstran[" << getStensorSize(h) << "];\n"
+	  << "stran[0] = this->eto[0]-delta_grad[0];\n"
+	  << "stran[1] = this->eto[1]-delta_grad[1];\n"
+	  << "stran[2] = this->eto[2]-delta_grad[2];\n";
       if((h==ModellingHypothesis::GENERALISEDPLANESTRAIN)||
 	 (h==ModellingHypothesis::TRIDIMENSIONAL)){
 	out << "stran[3] = this->eto[3]-delta_grad[3];\n";
@@ -1464,9 +1437,9 @@ namespace mfront
 	  out << "stran[5] = this->eto[5]-delta_grad[5];\n";
 	}
       }
-      out << "dstran[0] = delta_grad[0];\n";
-      out << "dstran[1] = delta_grad[1];\n";
-      out << "dstran[2] = delta_grad[2];\n";
+      out << "dstran[0] = delta_grad[0];\n"
+	  << "dstran[1] = delta_grad[1];\n"
+	  << "dstran[2] = delta_grad[2];\n";
       if((h==ModellingHypothesis::GENERALISEDPLANESTRAIN)||
 	 (h==ModellingHypothesis::TRIDIMENSIONAL)){
 	out << "dstran[3] = delta_grad[3];\n";
@@ -1476,11 +1449,11 @@ namespace mfront
 	}
       }
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      out << "// deformation gradients\n";
-      out << "double F0[" << getTensorSize(h) << "];\n";
-      out << "F0[0] = this->F[0]-delta_grad[0];\n";
-      out << "F0[1] = this->F[1]-delta_grad[1];\n";
-      out << "F0[2] = this->F[2]-delta_grad[2];\n";
+      out << "// deformation gradients\n"
+	  << "double F0[" << getTensorSize(h) << "];\n"
+	  << "F0[0] = this->F[0]-delta_grad[0];\n"
+	  << "F0[1] = this->F[1]-delta_grad[1];\n"
+	  << "F0[2] = this->F[2]-delta_grad[2];\n";
       if((h==ModellingHypothesis::GENERALISEDPLANESTRAIN)||
 	 (h==ModellingHypothesis::TRIDIMENSIONAL)){
 	out << "F0[3] = this->F[3]-delta_grad[3];\n";
@@ -1493,9 +1466,8 @@ namespace mfront
 	}
       }
     } else {
-      string msg("ZMATInterface::writeCallMFrontBehaviour : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      tfel::raise("ZMATInterface::writeCallMFrontBehaviour : "
+		  "unsupported behaviour type");
     }
     switch(mb.getBehaviourType()){
     case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
@@ -1505,9 +1477,8 @@ namespace mfront
       out << mb.getClassName() << "::SMFlag smflag = " << mb.getClassName() << "::C_TRUESDELL;\n";
       break;
     default:
-      string msg("ZMATInterface::writeCallMFrontBehaviour : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      tfel::raise("ZMATInterface::writeCallMFrontBehaviour : "
+		  "unsupported behaviour type");
     }
     out << "// tangent operator type\n"
 	<< mb.getClassName() << "::SMType smtype = " << mb.getClassName() << "::NOSTIFFNESSREQUESTED;\n"
@@ -1524,9 +1495,8 @@ namespace mfront
 	  << "this->evs_positions,ZSET::stored_thread_zbase_globals->ptr()->active_clock->get_dtime());\n";
       break;
     default:
-      string msg("ZMATInterface::writeCallMFrontBehaviour : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      tfel::raise("ZMATInterface::writeCallMFrontBehaviour: "
+		  "unsupported behaviour type");
     }
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       out << "zmat::ZMATInterface::convert(b.getStiffnessTensor(),this->get_elasticity_matrix(mdat,1.));\n";
@@ -1545,9 +1515,8 @@ namespace mfront
       out << "zmat::ZMATInterface::convert(*tg_matrix,b.getTangentOperator().get<st2tost2<"
 	  << getSpaceDimension(h) << ",double> >());\n";
     } else {
-      string msg("ZMATInterface::writeCallMFrontBehaviour : "
-		 "unsupported behaviour type");
-      throw(runtime_error(msg));
+      tfel::raise("ZMATInterface::writeCallMFrontBehaviour : "
+		  "unsupported behaviour type");
     }
     out << "}\n"
 	<< "return nullptr;\n"

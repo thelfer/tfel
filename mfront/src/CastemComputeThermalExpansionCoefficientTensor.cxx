@@ -13,6 +13,7 @@
 
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"MFront/Castem/CastemComputeThermalExpansionCoefficientTensor.hxx"
 
@@ -58,11 +59,11 @@ namespace castem
 						    tfel::config::Types<2u,CastemReal,false>::ThermalExpansionCoefficientTensor&)
   {
 #pragma message("something needs to be done HERE")
-    throw(std::runtime_error("CastemComputeThermalExpansionCoefficientTensor"
-			     "<castem::SMALLSTRAINSTANDARDBEHAVIOUR,"
-			     "tfel::material::ModellingHypothesis::PLANESTRESS,"
-			     "ISOTROPIC>::exe : "
-			     "unimplemented feature"));
+    tfel::raise("CastemComputeThermalExpansionCoefficientTensor"
+		"<castem::SMALLSTRAINSTANDARDBEHAVIOUR,"
+		"tfel::material::ModellingHypothesis::PLANESTRESS,"
+		"ISOTROPIC>::exe : "
+		"unimplemented feature");
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
 
   void
@@ -124,11 +125,11 @@ namespace castem
 						      tfel::config::Types<2u,CastemReal,false>::ThermalExpansionCoefficientTensor&)
   {
 #pragma message("something needs to be done HERE")
-    throw(std::runtime_error("CastemComputeThermalExpansionCoefficientTensor"
-			     "<castem::SMALLSTRAINSTANDARDBEHAVIOUR,"
-			     "tfel::material::ModellingHypothesis::PLANESTRESS,"
-			     "ORTHOTROPIC>::exe: "
-			     "unimplemented feature"));
+    tfel::raise("CastemComputeThermalExpansionCoefficientTensor"
+		"<castem::SMALLSTRAINSTANDARDBEHAVIOUR,"
+		"tfel::material::ModellingHypothesis::PLANESTRESS,"
+		"ORTHOTROPIC>::exe: "
+		"unimplemented feature");
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
 
   void

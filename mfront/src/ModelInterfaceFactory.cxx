@@ -12,9 +12,9 @@
  * project under specific licensing conditions. 
  */
 
-#include<stdexcept>
 #include<cassert>
-
+#include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"MFront/ModelInterfaceFactory.hxx"
 
 namespace mfront{
@@ -38,8 +38,7 @@ namespace mfront{
   std::vector<std::string>
   ModelInterfaceFactory::getRegistredInterfaces() const
   {
-    using namespace std;
-    auto res = vector<string>{};
+    auto res = std::vector<std::string>{};
     for(const auto& c : this->getInterfaceCreatorsMap()){
       res.push_back(c.first);
     }
@@ -56,32 +55,29 @@ namespace mfront{
   ModelInterfaceFactory::registerInterfaceCreator(const std::string& i,
 						  const ModelInterfaceFactory::InterfaceCreator f)
   {
-    using namespace std;
     auto& imap = this->getInterfaceCreatorsMap();
-    if(imap.find(i)!=imap.end()){
-      string msg("ModelInterfaceFactory::registerInterfaceCreator : ");
-      msg += "interface creator '"+i+"' already declared";
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(imap.find(i)!=imap.end(),
+		   "ModelInterfaceFactory::registerInterfaceCreator: "
+		   "interface creator '"+i+"' already declared");
     imap.insert({i,f});
   }
 
   std::shared_ptr<AbstractModelInterface>
   ModelInterfaceFactory::getInterface(const std::string& n) const
   {
-    using namespace std;
     auto p = this->getInterfaceCreatorsMap().find(n);
     if(p==this->getInterfaceCreatorsMap().end()){
-      string msg = "ModelInterfaceFactory::createNewInterface : no interface named '";
+      auto msg = std::string("ModelInterfaceFactory::createNewInterface: "
+			     "no interface named '");
       msg += n+"'.\n";
       msg += "Available interface are : \n";
       for(p  = this->getInterfaceCreatorsMap().begin();
 	  p != this->getInterfaceCreatorsMap().end();++p){
 	msg += p->first + " ";
       }
-      throw(runtime_error(msg));
+      tfel::raise(msg);
     }
-    InterfaceCreator c = p->second;
+    auto c = p->second;
     return c();
   }
 

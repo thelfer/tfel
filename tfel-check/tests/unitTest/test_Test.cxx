@@ -17,6 +17,7 @@
 #include<fstream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Check/NoInterpolation.hxx"
@@ -33,23 +34,19 @@ struct test_Test final
   tfel::tests::TestResult execute() override
   {
     std::ofstream file{"test_Test.res"};
-    if (!file) {
-      throw(std::runtime_error("test_Test::execute: "
-			       "could not open file 'test_Test.res'"));
-    }
-    file << "tps B C \n";
-    file << "1. 2. 2.\n";
-    file << "2. 3. 1.\n";
+    tfel::raise_if(!file,"test_Test::execute: "
+		   "could not open file 'test_Test.res'");
+    file << "tps B C \n"
+	 << "1. 2. 2.\n"
+	 << "2. 3. 1.\n";
     file.close();
     file.open("test_TestErr.res");
-    if (!file) {
-      throw(std::runtime_error("test_Test::execute: "
-			       "could not open file 'test_TestErr.res'"));
-    }    
-    file << "tps B C \n";
-    file << "1. 2. 2.\n";
-    file << "2. 3. 1.\n";
-    file << "3. 3. 1.\n";
+    tfel::raise_if(!file,"test_Test::execute: "
+		   "could not open file 'test_TestErr.res'");
+    file << "tps B C \n"
+	 << "1. 2. 2.\n"
+	 << "2. 3. 1.\n"
+	 << "3. 3. 1.\n";
     file.close();
     // beginning of the tests
     tfel::check::Test t;
@@ -89,5 +86,3 @@ struct test_Test final
 };
 
 TFEL_TESTS_GENERATE_PROXY(test_Test,"Test");
-
-

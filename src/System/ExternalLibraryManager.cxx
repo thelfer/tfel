@@ -1070,14 +1070,10 @@ namespace tfel
     ExternalLibraryManager::getUMATBehaviourType(const std::string& l,
 						 const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
       const auto u = ::tfel_getUnsignedShort(lib,(f+"_BehaviourType").c_str());
-      if(u==-1){
-	string msg("ExternalLibraryManager::getUMATBehaviourType: ");
-	msg += " behaviour type could not be read ("+getErrorMessage()+")";
-	throw(runtime_error(msg));
-      }
+      raise_if(u==-1,"ExternalLibraryManager::getUMATBehaviourType: "
+	       "behaviour type could not be read ("+getErrorMessage()+")");
       return static_cast<unsigned short>(u);
     } // end of ExternalLibraryManager::getUMATBehaviourType
 
@@ -1087,11 +1083,8 @@ namespace tfel
     {
       const auto lib = this->loadLibrary(l);
       const auto u = ::tfel_getUnsignedShort(lib,(f+"_BehaviourKinematic").c_str());
-      if(u==-1){
-	std::string msg("ExternalLibraryManager::getUMATBehaviourKinematic : ");
-	msg += " behaviour type could not be read ("+getErrorMessage()+")";
-	throw(std::runtime_error(msg));
-      }
+      raise_if(u==-1,"ExternalLibraryManager::getUMATBehaviourKinematic: "
+	       "behaviour type could not be read ("+getErrorMessage()+")");
       return static_cast<unsigned short>(u);
     } // end of ExternalLibraryManager::getUMATBehaviourKinematic
     
@@ -1099,16 +1092,10 @@ namespace tfel
     ExternalLibraryManager::getUMATSymmetryType(const std::string& l,
 						const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
       const auto u = ::tfel_getUnsignedShort(lib,(f+"_SymmetryType").c_str());
-      if(u==-1){
-	string msg("ExternalLibraryManager::getUMATSymmetryType : ");
-	msg += " symmetry type could not be read (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      raise_if(u==-1,"ExternalLibraryManager::getUMATSymmetryType: "
+	       "symmetry type could not be read ("+getErrorMessage()+")");
       return static_cast<unsigned short>(u);
     } // end of ExternalLibraryManager::getUMATSymmetryType
 
@@ -1119,13 +1106,9 @@ namespace tfel
       using namespace std;
       const auto lib = this->loadLibrary(l);
       const auto u = ::tfel_getUnsignedShort(lib,(f+"_ElasticSymmetryType").c_str());
-      if(u==-1){
-	string msg("ExternalLibraryManager::getUMATElasticSymmetryType : ");
-	msg += " elastic symmetry type could not be read (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      raise_if(u==-1,"ExternalLibraryManager::getUMATElasticSymmetryType: "
+	       "elastic symmetry type could not be read "
+	       "("+getErrorMessage()+")");
       return static_cast<unsigned short>(u);
     } // end of ExternalLibraryManager::getUMATElasticSymmetryType
 
@@ -1155,34 +1138,27 @@ namespace tfel
 							       const std::string& f,
 							       const std::string& h)
     {
-      using namespace std;
       ExternalLibraryManagerCheckModellingHypothesisName(h);
-      vector<int> types;
+      std::vector<int> types;
       const auto lib = this->loadLibrary(l);
-      int nb = ::tfel_getUnsignedShort(lib,(f+"_"+h+"_nInternalStateVariables").c_str());
+      auto nb = ::tfel_getUnsignedShort(lib,(f+"_"+h+"_nInternalStateVariables").c_str());
       if(nb==-1){
 	nb = ::tfel_getUnsignedShort(lib,(f+"_nInternalStateVariables").c_str());
       }
       int * res;
-      if(nb==-1){
-	string msg("ExternalLibraryManager::getUMATInternalStateVariablesTypes : ");
-	msg += " number of variables names could not be read (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      raise_if(nb==-1,
+	       "ExternalLibraryManager::getUMATInternalStateVariablesTypes: "
+	       "number of variables names could not be read "
+	       "("+getErrorMessage()+")");
       res = ::tfel_getArrayOfInt(lib,(f+"_"+h+"_InternalStateVariablesTypes").c_str());
       if(res==nullptr){
 	res = ::tfel_getArrayOfInt(lib,(f+"_InternalStateVariablesTypes").c_str());
       }
-      if(res==nullptr){
-	string msg("ExternalLibraryManager::getUMATInternalStateVariablesTypes : ");
-	msg += "internal state variables types could not be read (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
-      copy(res,res+nb,back_inserter(types));
+      raise_if(res==nullptr,"ExternalLibraryManager::"
+	       "getUMATInternalStateVariablesTypes: "
+	       "internal state variables types could not be read "
+	       "("+getErrorMessage()+")");
+      std::copy(res,res+nb,std::back_inserter(types));
       return types;
     } // end of ExternalLibraryManager::getUMATInternalVariablesTypes
     
@@ -1211,34 +1187,26 @@ namespace tfel
 						   const std::string& f,
 						   const std::string& h)
     {
-      using namespace std;
       ExternalLibraryManagerCheckModellingHypothesisName(h);
-      vector<int> types;
+      std::vector<int> types;
       const auto lib = this->loadLibrary(l);
-      int nb = ::tfel_getUnsignedShort(lib,(f+"_"+h+"_nParameters").c_str());
+      auto nb = ::tfel_getUnsignedShort(lib,(f+"_"+h+"_nParameters").c_str());
       if(nb==-1){
 	nb = ::tfel_getUnsignedShort(lib,(f+"_nParameters").c_str());
       }
       int * res;
-      if(nb==-1){
-	string msg("ExternalLibraryManager::getUMATParametersTypes : ");
-	msg += " number of variables names could not be read (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      raise_if(nb==-1,"ExternalLibraryManager::getUMATParametersTypes: "
+	       "number of variables names could not be read "
+	       "("+getErrorMessage()+")");
       res = ::tfel_getArrayOfInt(lib,(f+"_"+h+"_ParametersTypes").c_str());
       if(res==nullptr){
 	res = ::tfel_getArrayOfInt(lib,(f+"_ParametersTypes").c_str());
       }
-      if(res==nullptr){
-	string msg("ExternalLibraryManager::getUMATParametersTypes : ");
-	msg += "internal state variables types could not be read (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
-      copy(res,res+nb,back_inserter(types));
+      raise_if(res==nullptr,
+	       "ExternalLibraryManager::getUMATParametersTypes: "
+	       "internal state variables types could not be read "
+	       "("+getErrorMessage()+")");
+      std::copy(res,res+nb,std::back_inserter(types));
       return types;
     } // end of ExternalLibraryManager::getUMATInternalVariablesTypes
     
@@ -1246,32 +1214,24 @@ namespace tfel
     ExternalLibraryManager::getCastemFunction(const std::string& l,
 					      const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      CastemFunctionPtr fct = ::tfel_getCastemFunction(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCastemFunction : ");
-	msg += " could not load castem function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      auto fct = ::tfel_getCastemFunction(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCastemFunction: "
+	       "could not load castem function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     CFunction0Ptr ExternalLibraryManager::getCFunction0(const std::string& l,
 							const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getCFunction0(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction0 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction0(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction0: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
@@ -1280,494 +1240,371 @@ namespace tfel
     {
       using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getCFunction1(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction1 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction1(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction1: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     CFunction2Ptr ExternalLibraryManager::getCFunction2(const std::string& l,
 							const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getCFunction2(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction2 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction2(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction2: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     CFunction3Ptr ExternalLibraryManager::getCFunction3(const std::string& l,
 							const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getCFunction3(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction3 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction3(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction3: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     CFunction4Ptr ExternalLibraryManager::getCFunction4(const std::string& l,
 							const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      CFunction4Ptr fct  = ::tfel_getCFunction4(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction4 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction4(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction4: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     CFunction5Ptr ExternalLibraryManager::getCFunction5(const std::string& l,
 							const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getCFunction5(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction5 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction5(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction5: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     CFunction6Ptr ExternalLibraryManager::getCFunction6(const std::string& l,
 							const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getCFunction6(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction6 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction6(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction6: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     CFunction7Ptr ExternalLibraryManager::getCFunction7(const std::string& l,
 							const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getCFunction7(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction7 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction7(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction7: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     CFunction8Ptr ExternalLibraryManager::getCFunction8(const std::string& l,
 							const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getCFunction8(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction8 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction8(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction8: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     CFunction9Ptr ExternalLibraryManager::getCFunction9(const std::string& l,
 							const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getCFunction9(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction9 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction9(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction9: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     CFunction10Ptr ExternalLibraryManager::getCFunction10(const std::string& l,
 							  const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getCFunction10(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction10 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction10(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction10: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     CFunction11Ptr ExternalLibraryManager::getCFunction11(const std::string& l,
 							  const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getCFunction11(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction11 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction11(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction11: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     CFunction12Ptr ExternalLibraryManager::getCFunction12(const std::string& l,
 							  const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getCFunction12(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction12 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction12(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction12: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     CFunction13Ptr ExternalLibraryManager::getCFunction13(const std::string& l,
 							  const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getCFunction13(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction13 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction13(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction13: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     CFunction14Ptr ExternalLibraryManager::getCFunction14(const std::string& l,
 							  const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getCFunction14(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction14 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction14(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction14: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     CFunction15Ptr ExternalLibraryManager::getCFunction15(const std::string& l,
 							  const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getCFunction15(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getCFunction15 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getCFunction15(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getCFunction15: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction0Ptr ExternalLibraryManager::getFortranFunction0(const std::string& l,
 								    const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getFortranFunction0(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction0 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction0(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction0: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction1Ptr ExternalLibraryManager::getFortranFunction1(const std::string& l,
 								    const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getFortranFunction1(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction1 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction1(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction1: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction2Ptr ExternalLibraryManager::getFortranFunction2(const std::string& l,
 								    const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getFortranFunction2(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction2 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction2(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction2: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction3Ptr ExternalLibraryManager::getFortranFunction3(const std::string& l,
 								    const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getFortranFunction3(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction3 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction3(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction3: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction4Ptr ExternalLibraryManager::getFortranFunction4(const std::string& l,
 								    const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      FortranFunction4Ptr fct  = ::tfel_getFortranFunction4(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction4 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction4(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction4: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction5Ptr ExternalLibraryManager::getFortranFunction5(const std::string& l,
 								    const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getFortranFunction5(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction5 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction5(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction5: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction6Ptr ExternalLibraryManager::getFortranFunction6(const std::string& l,
 								    const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getFortranFunction6(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction6 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction6(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction6: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction7Ptr ExternalLibraryManager::getFortranFunction7(const std::string& l,
 								    const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getFortranFunction7(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction7 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction7(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction7: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction8Ptr ExternalLibraryManager::getFortranFunction8(const std::string& l,
 								    const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getFortranFunction8(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction8 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction8(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction8: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction9Ptr ExternalLibraryManager::getFortranFunction9(const std::string& l,
 								    const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getFortranFunction9(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction9 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction9(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction9: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction10Ptr ExternalLibraryManager::getFortranFunction10(const std::string& l,
 								      const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getFortranFunction10(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction10 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction10(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction10: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction11Ptr ExternalLibraryManager::getFortranFunction11(const std::string& l,
 								      const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getFortranFunction11(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction11 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction11(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction11: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction12Ptr ExternalLibraryManager::getFortranFunction12(const std::string& l,
 								      const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getFortranFunction12(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction12 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction12(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction12: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction13Ptr ExternalLibraryManager::getFortranFunction13(const std::string& l,
 								      const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getFortranFunction13(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction13 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction13(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction13: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction14Ptr ExternalLibraryManager::getFortranFunction14(const std::string& l,
 								      const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getFortranFunction14(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction14 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction14(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction14: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
 
     FortranFunction15Ptr ExternalLibraryManager::getFortranFunction15(const std::string& l,
 								      const std::string& f)
     {
-      using namespace std;
       const auto lib = this->loadLibrary(l);
-      auto fct = ::tfel_getFortranFunction15(lib,f.c_str());
-      if(fct==nullptr){
-	string msg("ExternalLibraryManager::getFortranFunction15 : ");
-	msg += " could not load function '"+f+"' (";
-	msg += getErrorMessage();
-	msg += ")";
-	throw(runtime_error(msg));
-      }
+      const auto fct = ::tfel_getFortranFunction15(lib,f.c_str());
+      raise_if(fct==nullptr,
+	       "ExternalLibraryManager::getFortranFunction15: "
+	       "could not load function '"+f+"' "
+	       "("+getErrorMessage()+")");
       return fct;
     }
     

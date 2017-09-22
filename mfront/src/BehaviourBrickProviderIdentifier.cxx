@@ -6,6 +6,7 @@
  */
 
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"MFront/BehaviourBrick/ProviderIdentifier.hxx"
 
 namespace mfront{
@@ -14,8 +15,7 @@ namespace mfront{
 
     std::string
     convertProviderIdentifierToString(const ProviderIdentifier& id){
-      using namespace std;
-      auto n = string{};
+      auto n = std::string{};
       switch(id){
       case ProviderIdentifier::MATERIALPROPERTY:
 	n = "MaterialProperty";
@@ -44,10 +44,8 @@ namespace mfront{
       default:
 	break;
       }
-      if(n.empty()){
-	throw(runtime_error("convertProviderIdentifierToString : "
-			    "internal error (unsupported identifier)"));
-      }
+      tfel::raise_if(n.empty(),"convertProviderIdentifierToString: "
+		     "internal error (unsupported identifier)");
       return n;
     } // end of convertProviderIdentifierToString
     

@@ -16,6 +16,7 @@
 #include <ostream>
 #include <stdexcept>
 
+#include "TFEL/Raise.hxx"
 #include "NUMODIS/Vect3.hxx"
 
 namespace numodis
@@ -287,12 +288,10 @@ namespace numodis
   bool Vect3::Normalize()
   {
     const auto length = Length();
-    if(length>std::numeric_limits<double>::min()){
-      *this/=length;
-    } else {
-      throw(std::runtime_error("Vect3::Normalize: "
-			       "Trying to normalize null vector"));
-    }
+    tfel::raise_if(length<=std::numeric_limits<double>::min(),
+		   "Vect3::Normalize: "
+		   "Trying to normalize null vector");
+    *this/=length;
     return true;
   }
 

@@ -40,8 +40,11 @@ Options
   enable-europlexus : enables europlexus support
   enable-zmat       : enables zmat support
   enable-cyrano     : enables cyrano support (cyrano is eDF fuel performance code)
+  enable-calculix   : enables CalculiX support
   enable-libcxx     : enable libc++ on Linux and clang
   
+  enable-random-tests: enable tests based on a random choice of 
+  enable-developer-warnings : enable additionnal compiler warnings 
   enable-sanitize-options : additional compiler flags (gcc specific)
   enable-portable-build   : do not use processor specific flags. The generated binaries can be
                             used on other machines as long as the architecture and the compiler
@@ -94,10 +97,13 @@ cmake for PLEIADES users
 
 cmake ../trunk -DCMAKE_BUILD_TYPE=Release  -DCASTEM_INSTALL_PATH=/home/th202608/codes/castem/2014/install/ -Denable-castem-pleiades=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-java=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-cadna=ON -DCADNA_INSTALL_PATH=/home/th202608/codes/cadna/3.0/install -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install
 
-cmake for TFEL developpers
-==========================
+cmake for TFEL developers
+=========================
 
-cmake ../trunk -DCMAKE_BUILD_TYPE=Release -DCASTEM_INSTALL_PATH=/home/th202608/codes/castem/2014/install/ -Denable-castem-pleiades=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-java=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-cadna=ON -DCADNA_INSTALL_PATH=/home/th202608/codes/cadna/3.0/install -Denable-reference-doc=ON -Denable-website=ON -Denable-sanitize-options=ON -Denable-vera++=ON -DVERA_ROOT=/home/th202608/codes/vera++/1.3.0/install/ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON  -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install 
+cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Denable-developer-warnings=ON -Denable-random-tests=ON -DCASTEM_INSTALL_PATH=/home/th202608/codes/castem/2014/install/ -Denable-castem-pleiades=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-java=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-cadna=ON -DCADNA_INSTALL_PATH=/home/th202608/codes/cadna/3.0/install -Denable-reference-doc=ON -Denable-website=ON -Denable-sanitize-options=ON -Denable-vera++=ON -DVERA_ROOT=/home/th202608/codes/vera++/1.3.0/install/ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON  -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install 
+
+cmake ../trunk -DCMAKE_BUILD_TYPE=Release -Denable-developer-warnings=ON -Denable-random-tests=ON -DCASTEM_INSTALL_PATH=/home/th202608/codes/castem/2014/install/ -Denable-castem-pleiades=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-java=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -DZSET_INSTALL_PATH=/home/th202608/codes/ZeBuLoN/8.5/Z8.5 -Denable-cyrano=ON -Denable-cadna=ON -DCADNA_INSTALL_PATH=/home/th202608/codes/cadna/3.0/install -Denable-reference-doc=ON -Denable-website=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON  -DCMAKE_INSTALL_PREFIX=/home/th202608/codes/tfel/trunk/install 
+
 
 main targets:
 =============

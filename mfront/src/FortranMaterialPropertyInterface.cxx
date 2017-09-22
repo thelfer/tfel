@@ -16,6 +16,7 @@
 #include<algorithm>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/DSLUtilities.hxx"
@@ -41,11 +42,9 @@ namespace mfront
 						 tokens_iterator current,
 						 const tokens_iterator)
   {
-    auto throw_if = [](const bool b, const std::string& m){
-      if(b){throw(std::runtime_error("FortranMaterialPropertyInterface::treatKeyword : "+m));}
-    };
     if(std::find(i.begin(),i.end(),"fortran")!=i.end()){
-      throw_if(key!="@Module","unsupported key '"+key+"'");
+      tfel::raise_if(key!="@Module","FortranMaterialPropertyInterface::treatKeyword: "
+		     "unsupported key '"+key+"'");
     }
     return {false,current};
   }

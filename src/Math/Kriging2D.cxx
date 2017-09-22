@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Kriging2D.hxx"
 
 namespace tfel
@@ -29,14 +30,12 @@ namespace tfel
       vector<double>::const_iterator py;
       vector<double>::const_iterator pz;
       tvector<2u,double> v;
-      if((vx.size()!=vy.size())||
-	 (vx.size()!=vz.size())){
-	throw(KrigingErrorInvalidLength());
-      }
-      pair<double,double> n1 = KrigingUtilities::normalize(vx);
+      raise_if<KrigingErrorInvalidLength>((vx.size()!=vy.size())||
+					  (vx.size()!=vz.size()));
+      const auto n1 = KrigingUtilities::normalize(vx);
       this->a1 = n1.first;
       this->b1 = n1.second;
-      pair<double,double> n2 = KrigingUtilities::normalize(vy);
+      const auto n2 = KrigingUtilities::normalize(vy);
       this->a2 = n2.first;
       this->b2 = n2.second;
       for(px=vx.begin(),py=vy.begin(),pz=vz.begin();
@@ -59,14 +58,12 @@ namespace tfel
       vector<double>::const_iterator py;
       vector<double>::const_iterator pz;
       tvector<2u,double> v;
-      if((vx.size()!=vy.size())||
-	 (vx.size()!=vz.size())){
-	throw(KrigingErrorInvalidLength());
-      }
-      pair<double,double> n1 = KrigingUtilities::normalize(vx);
+      raise_if<KrigingErrorInvalidLength>((vx.size()!=vy.size())||
+					  (vx.size()!=vz.size()));
+      const auto n1 = KrigingUtilities::normalize(vx);
       this->a1 = n1.first;
       this->b1 = n1.second;
-      pair<double,double> n2 = KrigingUtilities::normalize(vy);
+      const auto n2 = KrigingUtilities::normalize(vy);
       this->a2 = n2.first;
       this->b2 = n2.second;
       for(px=vx.begin(),py=vy.begin(),pz=vz.begin();
@@ -78,9 +75,8 @@ namespace tfel
       Kriging<2u,double>::buildInterpolation();
     }
   
-    double
-    Kriging2D::operator()(const double vx,
-			  const double vy) const
+    double Kriging2D::operator()(const double vx,
+				 const double vy) const
     {
       using namespace tfel::math;
       tvector<2u,double> v;

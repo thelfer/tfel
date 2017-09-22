@@ -14,7 +14,7 @@
 #include<fstream>
 #include<iterator>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MTestFileGeneratorBase.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
@@ -56,28 +56,22 @@ namespace mfront{
   void
   MTestFileGeneratorBase::setModellingHypothesis(const tfel::material::ModellingHypothesis::Hypothesis h)
   {
-    using namespace std;
     using namespace tfel::material;
-    if(this->hypothesis!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      string msg("MTestFileGeneratorBase::setModellingHypothesis : "
-		 "modelling hypothesis already set");
-      throw(runtime_error(msg));
-    }
-    if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      string msg("MTestFileGeneratorBase::setModellingHypothesis : "
-		 "invalid modelling hypothesis");
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(this->hypothesis!=ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		   "MTestFileGeneratorBase::setModellingHypothesis: "
+		   "modelling hypothesis already set");
+    tfel::raise_if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		   "MTestFileGeneratorBase::setModellingHypothesis: "
+		   "invalid modelling hypothesis");
     this->hypothesis = h;
   } // end of MTestFileGeneratorBase::setModellingHypothesis
 
   void
   MTestFileGeneratorBase::addTime(const MTestFileGeneratorBase::real t)
   {
-    if(!this->times.insert(t).second){
-      throw(std::runtime_error("MTestFileGeneratorBase::addTime: "
-			       "time '"+std::to_string(t)+"' already defined"));
-    }
+    tfel::raise_if(!this->times.insert(t).second,
+		   "MTestFileGeneratorBase::addTime: "
+		   "time '"+std::to_string(t)+"' already defined");
   } // end of MTestFileGeneratorBase::addTime
 
   void
@@ -101,12 +95,9 @@ namespace mfront{
   MTestFileGeneratorBase::addMaterialProperty(const std::string& n,
 					      const MTestFileGeneratorBase::real v)
   {
-    using namespace std;
-    if(!(this->mps.insert({n,v}).second)){
-      string msg("MTestFileGeneratorBase::addMaterialProperty : "
-		 "material property '"+n+"' already defined");
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(!(this->mps.insert({n,v}).second),
+		   "MTestFileGeneratorBase::addMaterialProperty: "
+		   "material property '"+n+"' already defined");
   } // end of MTestFileGeneratorBase::addMaterialProperty
 
   void
@@ -114,26 +105,21 @@ namespace mfront{
 						   const SupportedTypes::TypeFlag f,
 						   const MTestFileGeneratorBase::real* const v)
   {
-    using namespace std;
-    InternalStateVariable iv;
-    vector<InternalStateVariable>::const_iterator p;
-    for(p=this->ivs.begin();p!=this->ivs.end();++p){
-      if(p->name==n){
-	string msg("MTestFileGeneratorBase::addInternalStateVariable : "
-		   "variable already declared '"+n+"'");
-	throw(runtime_error(msg));
-      }
+    for(const auto& iv : this->ivs){
+      tfel::raise_if(iv.name==n,
+		     "MTestFileGeneratorBase::addInternalStateVariable: "
+		     "variable already declared '"+n+"'");
     }
+    InternalStateVariable iv;
     iv.name = n;
     iv.type = f;
     if(iv.type==SupportedTypes::Scalar){
       iv.values[0] = v[0];
     } else if(iv.type==SupportedTypes::Stensor){
-      copy(v,v+this->getStensorSize(),iv.values);
+      std::copy(v,v+this->getStensorSize(),iv.values);
     } else {
-      string msg("MTestFileGeneratorBase::addInternalStateVariable : "
-		 "unsupported type for variable '"+n+"'");
-      throw(runtime_error(msg));
+      tfel::raise("MTestFileGeneratorBase::addInternalStateVariable : "
+		  "unsupported type for variable '"+n+"'");
     }
     this->ivs.push_back(iv);
   } // end of MTestFileGeneratorBase::addInternalStateVariable
@@ -143,21 +129,18 @@ namespace mfront{
 							const MTestFileGeneratorBase::real t,
 							const MTestFileGeneratorBase::real v)
   {
-    if(!(this->evs[n].insert({t,v}).second)){
-      throw(std::runtime_error("MTestFileGeneratorBase::addExternalStateVariableValue: "
-			       "time '"+std::to_string(t)+"' already defined "
-			       "for variable '"+n+"'"));
-    }
+    tfel::raise_if(!this->evs[n].insert({t,v}).second,
+		   "MTestFileGeneratorBase::addExternalStateVariableValue: "
+		   "time '"+std::to_string(t)+"' already defined "
+		   "for variable '"+n+"'");
   } // end of MTestFileGeneratorBase::addValue
 
   void
   MTestFileGeneratorBase::generate(const std::string& n) const
   {
     std::ofstream file(n+"-"+std::to_string(getIdentifier())+".mtest");
-    if(!file){
-      throw(std::runtime_error("MTestFileGeneratorBase::generate: "
-			       "can't open file '"+n+".mtest'"));
-    }
+    tfel::raise_if(!file,"MTestFileGeneratorBase::generate: "
+		   "can't open file '"+n+".mtest'");
     if(this->handleThermalExpansion){
       file << "@HandleThermalExpansion true;\n";
     } else {
@@ -187,138 +170,121 @@ namespace mfront{
   void
   MTestFileGeneratorBase::writeModellingHypothesis(std::ostream& os) const
   {
-    using namespace std;
     using namespace tfel::material;
-    if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      string msg("MTestFileGeneratorBase::writeModellingHypothesis : ");
-      msg += "undefined modelling hypothesis";
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		   "MTestFileGeneratorBase::writeModellingHypothesis: "
+		   "undefined modelling hypothesis");
     os << "@ModellingHypothesis '"
        << ModellingHypothesis::toString(this->hypothesis)
-       << "';" << endl;
+       << "';\n";
   }
 
   void
   MTestFileGeneratorBase::writeMaterialProperties(std::ostream& os) const
   {
-    using namespace std;
-    map<string,real>::const_iterator p;
-    if(!this->mps.empty()){
-      os << "// Material properties" << endl;
-      for(p=this->mps.begin();p!=this->mps.end();++p){
-	os.precision(14);
-	os << "@MaterialProperty<constant> '" << p->first << "' " << p->second << ";" << endl;
-      }
-      os << endl;
+    if(this->mps.empty()){
+      return;
     }
+    os << "// Material properties\n";
+    for(const auto& mp : this->mps){
+      os.precision(14);
+      os << "@MaterialProperty<constant> '" << mp.first
+	 << "' " << mp.second << ";\n";
+    }
+    os << '\n';
   } // end of MTestFileGeneratorBase::writeMaterialProperties
 
-  void
-  MTestFileGeneratorBase::writeTimes(std::ostream& os) const
+  void MTestFileGeneratorBase::writeTimes(std::ostream& os) const
   {
-    using namespace std;
-    set<real>::const_iterator p;
-    if(this->times.empty()){
-      string msg("MTestFileGeneratorBase::writeTimes : "
-		 "no times defined");
-      throw(runtime_error(msg));
-    }
-    if(this->times.size()<2){
-      string msg("MTestFileGeneratorBase::writeTimes : "
-		 "only one time given");
-      throw(runtime_error(msg));
-    }
-    os << "// Times" << endl;
-    os << "@Times {";
+    tfel::raise_if(this->times.empty(),
+		   "MTestFileGeneratorBase::writeTimes: "
+		   "no times defined");
+    tfel::raise_if(this->times.size()<2,
+		   "MTestFileGeneratorBase::writeTimes : "
+		   "only one time given");
+    os << "// Times\n"
+       << "@Times {";
     os.precision(14);
-    for(p=this->times.begin();p!=times.end();){
+    for(auto p=this->times.begin();p!=times.end();){
       os << *p;
       if(++p!=times.end()){
 	os << ", ";
       }
     }
-    os << "};" << endl << endl;
+    os << "};\n\n";
   } // end of MTestFileGeneratorBase::writeTimes
 
   void
   MTestFileGeneratorBase::writeInternalStateVariables(std::ostream& os) const
   {
-    using namespace std;
-    vector<InternalStateVariable>::const_iterator p;
-    if(!this->ivs.empty()){
-      os << "// Internal state variables" << endl;
-      for(p=this->ivs.begin();p!=this->ivs.end();++p){
-	const InternalStateVariable& iv = *p;
-	os << "@InternalStateVariable '" << iv.name << "' ";
-	os.precision(14);
-	if(iv.type==SupportedTypes::Scalar){
-	  os << iv.values[0] << ";" << endl;
-	} else if(iv.type==SupportedTypes::Stensor){
-	  os << "{";
-	  for(unsigned short i=0;i!=this->getStensorSize();){
-	    os << iv.values[i];
-	    if(++i!=this->getStensorSize()){
-	      os << ",";
-	    }
-	  }
-	  os << "};" << endl;
-	} else {
-	  string msg("MTestFileGeneratorBase::writeInternalStateVariables : "
-		     "unsupported internal state variable type");
-	  throw(runtime_error(msg));
-	}
-      }
-      os << endl;
+    if(this->ivs.empty()){
+      return;
     }
+    os << "// Internal state variables\n";
+    for(const auto& iv : this->ivs){
+      os << "@InternalStateVariable '" << iv.name << "' ";
+      os.precision(14);
+      if(iv.type==SupportedTypes::Scalar){
+	os << iv.values[0] << ";\n";
+      } else if(iv.type==SupportedTypes::Stensor){
+	os << "{";
+	for(unsigned short i=0;i!=this->getStensorSize();){
+	  os << iv.values[i];
+	  if(++i!=this->getStensorSize()){
+	    os << ",";
+	  }
+	}
+	os << "};\n";
+      } else {
+	tfel::raise("MTestFileGeneratorBase::writeInternalStateVariables : "
+		    "unsupported internal state variable type");
+      }
+    }
+    os << '\n';
   } // end of MTestFileGeneratorBase::writeMaterialProperties
 
   void
   MTestFileGeneratorBase::writeExternalStateVariables(std::ostream& os) const
   {
-    using namespace std;
-    map<string,map<real,real> >::const_iterator p;
-    if(!this->evs.empty()){
-      os << "// External state variables" << endl;
-      for(p=this->evs.begin();p!=this->evs.end();++p){
-	const auto& n = p->first;
-	const auto& values = p->second;
-	if(values.size()==1){
-	  os.precision(14);
-	  os << "@ExternalStateVariable '" << n<< "' " << values.begin()->second << endl;
-	} else {
-	  map<real,real>::const_iterator pv;
-	  os.precision(14);
-	  os << "@ExternalStateVariable<evolution> '" << n<< "' {" ;
-	  for(pv=values.begin();pv!=values.end();){
-	    os << pv->first << " : " << pv->second;
-	    if(++pv!=values.end()){
-	      os << "," << endl;	    
-	    }
-	  }
-	  os << "};" << endl;
-	}
-      }
-      os << endl;
+    if(this->evs.empty()){
+      return;
     }
+    os << "// External state variables\n";
+    for(const auto& ev : this->evs){
+      const auto& n = ev.first;
+      const auto& v = ev.second;
+      if(v.size()==1){
+	os.precision(14);
+	os << "@ExternalStateVariable '"
+	   << n << "' " << v.begin()->second << ";\n";
+      } else {
+	os.precision(14);
+	os << "@ExternalStateVariable<evolution> '" << n<< "' {" ;
+	for(auto pv=v.begin();pv!=v.end();){
+	  os << pv->first << " : " << pv->second;
+	  if(++pv!=v.end()){
+	    os << ",\n";	    
+	  }
+	}
+	os << "};\n";
+      }
+    }
+    os << '\n';
   } // end of MTestFileGeneratorBase::writeExternalStateVariables
 
   std::vector<std::string>
   MTestFileGeneratorBase::getDeformationGradientComponentsNames() const
   {
-    using namespace std;
     using namespace tfel::material;
-    const string exts[9u]  = {"FXX","FYY","FZZ",
-			      "FXY","FYX","FXZ",
-			      "FZX","FYZ","FZY"};
-    const string aexts[5u] = {"FRR","FZZ","FTT",
-			      "FRZ","FZR"};  
-    vector<string> n;
-    if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      string msg("MTestFileGeneratorBase::getDeformationGradientsComponentsNames : ");
-      msg += "undefined modelling hypothesis";
-      throw(runtime_error(msg));
-    }
+    const std::string exts[9u]  = {"FXX","FYY","FZZ",
+				   "FXY","FYX","FXZ",
+				   "FZX","FYZ","FZY"};
+    const std::string aexts[5u] = {"FRR","FZZ","FTT",
+				   "FRZ","FZR"};  
+    std::vector<std::string> n;
+    tfel::raise_if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		   "MTestFileGeneratorBase::getDeformationGradientsComponentsNames: "
+		   "undefined modelling hypothesis");
     if((this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
        (this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       copy(aexts,aexts+3u,back_inserter(n));
@@ -331,9 +297,8 @@ namespace mfront{
     } else if(this->hypothesis==ModellingHypothesis::TRIDIMENSIONAL){
       copy(exts,exts+9u,back_inserter(n));
     } else {
-      string msg("MTestFileGeneratorBase::getDeformationGradientsComponentsNames : ");
-      msg += "unsupported hypothesis";
-      throw(runtime_error(msg));
+      tfel::raise("MTestFileGeneratorBase::getDeformationGradientsComponentsNames: "
+		  "unsupported hypothesis");
     }
     return n;
   }
@@ -341,17 +306,14 @@ namespace mfront{
   std::vector<std::string>
   MTestFileGeneratorBase::getStrainComponentsNames() const
   {
-    using namespace std;
     using namespace tfel::material;
-    const string exts[6u]  = {"EXX","EYY","EZZ",
-			      "EXY","EXZ","EYZ"};
-    const string aexts[4u] = {"ERR","EZZ","ETT","ERZ"};  
-    vector<string> n;
-    if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      string msg("MTestFileGeneratorBase::getStrainComponentsNames : ");
-      msg += "undefined modelling hypothesis";
-      throw(runtime_error(msg));
-    }
+    const std::string exts[6u]  = {"EXX","EYY","EZZ",
+				   "EXY","EXZ","EYZ"};
+    const std::string aexts[4u] = {"ERR","EZZ","ETT","ERZ"};  
+    std::vector<std::string> n;
+    tfel::raise_if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		   "MTestFileGeneratorBase::getStrainComponentsNames: "
+		   "undefined modelling hypothesis");
     if((this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
        (this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       copy(aexts,aexts+3u,back_inserter(n));
@@ -364,9 +326,8 @@ namespace mfront{
     } else if(this->hypothesis==ModellingHypothesis::TRIDIMENSIONAL){
       copy(exts,exts+6u,back_inserter(n));
     } else {
-      string msg("MTestFileGeneratorBase::getStrainComponentsNames : ");
-      msg += "unsupported hypothesis";
-      throw(runtime_error(msg));
+      tfel::raise("MTestFileGeneratorBase::getStrainComponentsNames: "
+		  "unsupported hypothesis");
     }
     return n;
   }
@@ -374,17 +335,14 @@ namespace mfront{
   std::vector<std::string>
   MTestFileGeneratorBase::getStressComponentsNames() const
   {
-    using namespace std;
     using namespace tfel::material;
-    const string exts[6u]  = {"SXX","SYY","SZZ",
-			      "SXY","SXZ","SYZ"};
-    const string aexts[4u] = {"SRR","SZZ","STT","SRZ"};  
-    vector<string> n;
-    if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      string msg("MTestFileGeneratorBase::getStressComponentsNames : ");
-      msg += "undefined modelling hypothesis";
-      throw(runtime_error(msg));
-    }
+    const std::string exts[6u]  = {"SXX","SYY","SZZ",
+				   "SXY","SXZ","SYZ"};
+    const std::string aexts[4u] = {"SRR","SZZ","STT","SRZ"};  
+    std::vector<std::string> n;
+    tfel::raise_if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		   "MTestFileGeneratorBase::getStressComponentsNames: "
+		   "undefined modelling hypothesis");
     if((this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
        (this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       copy(aexts,aexts+3u,back_inserter(n));
@@ -400,23 +358,18 @@ namespace mfront{
       copy(exts,exts+6u,
 	   back_inserter(n));
     } else {
-      string msg("MTestFileGeneratorBase::getStressComponentsNames : ");
-      msg += "unsupported hypothesis";
-      throw(runtime_error(msg));
+      tfel::raise("MTestFileGeneratorBase::getStressComponentsNames: "
+		  "unsupported hypothesis");
     }
     return n;
   }
 
-  unsigned short
-  MTestFileGeneratorBase::getTVectorSize() const
+  unsigned short MTestFileGeneratorBase::getTVectorSize() const
   {
-    using namespace std;
     using namespace tfel::material;
-    if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      string msg("MTestFileGeneratorBase::getTVectorSize : ");
-      msg += "undefined modelling hypothesis";
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		   "MTestFileGeneratorBase::getTVectorSize: "
+		   "undefined modelling hypothesis");
     if((this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
        (this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       return 1u;
@@ -428,20 +381,16 @@ namespace mfront{
     } else if(this->hypothesis==ModellingHypothesis::TRIDIMENSIONAL){
       return 3u;
     }
-    throw(std::runtime_error("MTestFileGeneratorBase::getTVectorSize : "
-			     "unsupported modelling hypothesis"));
+    tfel::raise("MTestFileGeneratorBase::getTVectorSize : "
+		"unsupported modelling hypothesis");
   } // end of MTestFileGeneratorBase::getTVectorSize
 
-  unsigned short
-  MTestFileGeneratorBase::getStensorSize() const
+  unsigned short MTestFileGeneratorBase::getStensorSize() const
   {
-    using namespace std;
     using namespace tfel::material;
-    if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      string msg("MTestFileGeneratorBase::getStensorSize : ");
-      msg += "undefined modelling hypothesis";
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		   "MTestFileGeneratorBase::getStensorSize: "
+		   "undefined modelling hypothesis");
     if((this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
        (this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       return 3u;
@@ -453,20 +402,16 @@ namespace mfront{
     } else if(this->hypothesis==ModellingHypothesis::TRIDIMENSIONAL){
       return 6u;
     }
-    throw(std::runtime_error("MTestFileGeneratorBase::getStensorSize : "
-			     "unsupported modelling hypothesis"));
+    tfel::raise("MTestFileGeneratorBase::getStensorSize : "
+		"unsupported modelling hypothesis");
   } // end of MTestFileGeneratorBase::getStensorSize
 
-  unsigned short
-  MTestFileGeneratorBase::getTensorSize() const
+  unsigned short MTestFileGeneratorBase::getTensorSize() const
   {
-    using namespace std;
     using namespace tfel::material;
-    if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      string msg("MTestFileGeneratorBase::getTensorSize : ");
-      msg += "undefined modelling hypothesis";
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(this->hypothesis==ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		   "MTestFileGeneratorBase::getTensorSize: "
+		   "undefined modelling hypothesis");
     if((this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
        (this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       return 3u;
@@ -478,8 +423,8 @@ namespace mfront{
     } else if(this->hypothesis==ModellingHypothesis::TRIDIMENSIONAL){
       return 9u;
     }
-    throw(std::runtime_error("MTestFileGeneratorBase::getTensorSize : "
-			     "unsupported modelling hypothesis"));
+    tfel::raise("MTestFileGeneratorBase::getTensorSize : "
+		"unsupported modelling hypothesis");
   } // end of MTestFileGeneratorBase::getTensorSize
 
   MTestFileGeneratorBase::~MTestFileGeneratorBase() = default;

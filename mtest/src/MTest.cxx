@@ -22,6 +22,7 @@
 #include<algorithm>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/TextData.hxx"
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
@@ -128,79 +129,67 @@ namespace mtest
 
   void MTest::setDrivingVariableEpsilon(const real e)
   {
-    if(this->options.eeps>0){
-      throw(std::runtime_error("MTest::setDrivingVariableEpsilon: the epsilon "
-			       "value has already been declared"));
-    }
-    if(e < 100*std::numeric_limits<real>::min()){
-      throw(std::runtime_error("MTest::setDrivingVariableEpsilon:"
-			       " invalid value"));
-    }
+    tfel::raise_if(this->options.eeps>0,
+		   "MTest::setDrivingVariableEpsilon: the epsilon "
+		   "value has already been declared");
+    tfel::raise_if(e < 100*std::numeric_limits<real>::min(),
+		   "MTest::setDrivingVariableEpsilon:"
+		   " invalid value");
     this->options.eeps = e;
   }
 
   void MTest::setThermodynamicForceEpsilon(const real s)
   {
-    if(this->options.seps>0){
-      throw(std::runtime_error("MTest::setThermodynamicForceEpsilon: the epsilon "
-			       "value has already been declared"));
-    }
-    if(s < 100*std::numeric_limits<real>::min()){
-      throw(std::runtime_error("MTest::setThermodynamicForceEpsilon: invalid value"));
-    }
+    tfel::raise_if(this->options.seps>0,
+		   "MTest::setThermodynamicForceEpsilon: the epsilon "
+		   "value has already been declared");
+    tfel::raise_if(s < 100*std::numeric_limits<real>::min(),
+		   "MTest::setThermodynamicForceEpsilon: invalid value");
     this->options.seps = s;
   }
 
-  void
-  MTest::setRotationMatrix(const tfel::math::tmatrix<3u,3u,real>& r,
-			   const bool bo)
+  void MTest::setRotationMatrix(const tfel::math::tmatrix<3u,3u,real>& r,
+				const bool bo)
   {
     using namespace tfel::math;
-    if((this->isRmDefined)&&(!bo)){
-      throw(std::runtime_error("MTest::setRotationMatrix: "
-			       "rotation matrix already defined"));
-    }
-    if(this->b==nullptr){
-      throw(std::runtime_error("MTest::setRotationMatrix: "
-			       "no behaviour defined"));
-    }
-    if(this->b->getSymmetryType()!=1){
-      throw(std::runtime_error("MTest::setRotationMatrix: "
-			       "rotation matrix may only be defined "
-			       "for orthotropic behaviours"));
-    }
+    tfel::raise_if(this->b==nullptr,
+		   "MTest::setRotationMatrix: "
+		   "no behaviour defined");
+    tfel::raise_if(this->b->getSymmetryType()!=1,
+		   "MTest::setRotationMatrix: "
+		   "rotation matrix may only be defined "
+		   "for orthotropic behaviours");
+    tfel::raise_if((this->isRmDefined)&&(!bo),
+		   "MTest::setRotationMatrix: "
+		   "rotation matrix already defined");
     this->isRmDefined = true;
     // checking that the given matrix is a rotation one
     const tvector<3u,real> c0 = r.column_view<0>();
     const tvector<3u,real> c1 = r.column_view<1>();
     const tvector<3u,real> c2 = r.column_view<2>();
-    if((abs(norm(c0)-real(1))>100*std::numeric_limits<real>::epsilon())||
-       (abs(norm(c1)-real(1))>100*std::numeric_limits<real>::epsilon())||
-       (abs(norm(c2)-real(1))>100*std::numeric_limits<real>::epsilon())){
-      throw(std::runtime_error("MTest::setRotationMatrix: "
-			       "at least one column is not normalised"));
-    }
-    if((abs(c0|c1)>100*std::numeric_limits<real>::epsilon())||
-       (abs(c0|c2)>100*std::numeric_limits<real>::epsilon())||
-       (abs(c1|c2)>100*std::numeric_limits<real>::epsilon())){
-      throw(std::runtime_error("MTest::setRotationMatrix : "
-			       "at least two columns are not orthogonals"));
-    }
+    tfel::raise_if((abs(norm(c0)-real(1))>100*std::numeric_limits<real>::epsilon())||
+		   (abs(norm(c1)-real(1))>100*std::numeric_limits<real>::epsilon())||
+		   (abs(norm(c2)-real(1))>100*std::numeric_limits<real>::epsilon()),
+		   "MTest::setRotationMatrix: "
+		   "at least one column is not normalised");
+    tfel::raise_if((abs(c0|c1)>100*std::numeric_limits<real>::epsilon())||
+		   (abs(c0|c2)>100*std::numeric_limits<real>::epsilon())||
+		   (abs(c1|c2)>100*std::numeric_limits<real>::epsilon()),
+		   "MTest::setRotationMatrix : "
+		   "at least two columns are not orthogonals");
     this->rm = r;
   }
 
   void MTest::setDefaultModellingHypothesis()
   {
     using tfel::material::ModellingHypothesis;
-    if(this->hypothesis!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      throw(std::runtime_error("MTest::setDefaultModellingHypothesis: "
-			       "internal error : the modelling "
-			       "hypothesis is already defined"));
-    }
-    if(this->b!=nullptr){
-      throw(std::runtime_error("MTest::setDefaultModellingHypothesis: "
-			       "behaviour already defined"));
-    }
+    tfel::raise_if(this->b!=nullptr,
+		   "MTest::setDefaultModellingHypothesis: "
+		   "behaviour already defined");
+    tfel::raise_if(this->hypothesis!=ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		   "MTest::setDefaultModellingHypothesis: "
+		   "internal error : the modelling "
+		   "hypothesis is already defined");
     if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
       auto& log = mfront::getLogStream();
       log << "No hypothesis defined, using default\n";
@@ -208,42 +197,35 @@ namespace mtest
     this->hypothesis = ModellingHypothesis::TRIDIMENSIONAL;
   }
 
-  void
-  MTest::addTest(const std::shared_ptr<MTest::UTest> t)
+  void MTest::addTest(const std::shared_ptr<MTest::UTest> t)
   {
     this->tests.push_back(t);
   }
 
-  void
-  MTest::setDrivingVariablesInitialValues(const std::vector<real>& v)
+  void MTest::setDrivingVariablesInitialValues(const std::vector<real>& v)
   {
-    if(!this->e_t0.empty()){
-      throw(std::runtime_error("MTest::setDrivingVariablesInitialValues: "
-			       "the initial values of the strains have "
-			       "already been declared"));
-    }
+    tfel::raise_if(!this->e_t0.empty(),
+		   "MTest::setDrivingVariablesInitialValues: "
+		   "the initial values of the strains have "
+		   "already been declared");
     const auto N = this->b->getDrivingVariablesSize();
-    if(v.size()!=N){
-      throw(std::runtime_error("MTest::setDrivingVariablesInitialValues: "
-			       "invalid initial values size"));
-    }
+    tfel::raise_if(v.size()!=N,
+		   "MTest::setDrivingVariablesInitialValues: "
+		   "invalid initial values size");
     this->e_t0.resize(N,0);
     std::copy(v.begin(),v.end(),this->e_t0.begin());
   }
   
-  void
-  MTest::setThermodynamicForcesInitialValues(const std::vector<real>& v)
+  void MTest::setThermodynamicForcesInitialValues(const std::vector<real>& v)
   {
-    if(!this->s_t0.empty()){
-      throw(std::runtime_error("MTest::setThermodynamicForcesInitialValues: "
-			       "the initial values of the strains have "
-			       "already been declared"));
-    }
+    tfel::raise_if(!this->s_t0.empty(),
+		   "MTest::setThermodynamicForcesInitialValues: "
+		   "the initial values of the strains have "
+		   "already been declared");
     const auto N = this->b->getThermodynamicForcesSize();
-    if(v.size()!=N){
-      throw(std::runtime_error("MTest::setThermodynamicForcesInitialValues: "
-			       "invalid initial values size"));
-    }
+    tfel::raise_if(v.size()!=N,
+		   "MTest::setThermodynamicForcesInitialValues: "
+		   "invalid initial values size");
     this->s_t0.resize(N,0);
     std::copy(v.begin(),v.end(),this->s_t0.begin());
   } // end of MTest::setThermodynamicForcesInitialValues
@@ -269,9 +251,9 @@ namespace mtest
 	auto ec = std::make_shared<ImposedDrivingVariable>(2,eev);
 	this->constraints.push_back(ec);
       }	else {
-	throw(std::runtime_error("MTest::completeInitialisation : "
-				 "plane strain hypothesis is only "
-				 "handled for small and finite strain behaviours"));
+	tfel::raise("MTest::completeInitialisation : "
+		    "plane strain hypothesis is only "
+		    "handled for small and finite strain behaviours");
       }
     }
     if(this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
@@ -296,9 +278,9 @@ namespace mtest
 	this->constraints.push_back(ec);
 	this->constraints.push_back(sc);
       } else {
-	throw(std::runtime_error("MTest::completeInitialisation : "
-				 "generalised plane stress is only "
-				 "handled for small and finite strain behaviours"));
+	tfel::raise("MTest::completeInitialisation : "
+		    "generalised plane stress is only "
+		    "handled for small and finite strain behaviours");
       }
     }
     if(this->hypothesis==ModellingHypothesis::PLANESTRESS){
@@ -317,9 +299,9 @@ namespace mtest
 	this->constraints.push_back(ec);
 	this->constraints.push_back(sc);
       } else {
-	throw(std::runtime_error("MTest::completeInitialisation : "
-				 "plane stress is only handled for small and "
-				 "finite strain behaviours"));
+	tfel::raise("MTest::completeInitialisation : "
+		    "plane stress is only handled for small and "
+		    "finite strain behaviours");
       }
     }
     SingleStructureScheme::completeInitialisation();
@@ -352,12 +334,11 @@ namespace mtest
       ++cnbr;
     }
     const auto& ivdes = this->b->getInternalStateVariablesDescriptions();
-    if(ivdes.size()!=this->b->getInternalStateVariablesSize()){
-      throw(std::runtime_error("MTest::completeInitialisation : internal error "
-			       "(the number of descriptions given by "
-			       "the mechanical behaviour don't match "
-			       "the number of internal state variables)"));
-    }
+    tfel::raise_if(ivdes.size()!=this->b->getInternalStateVariablesSize(),
+		   "MTest::completeInitialisation : internal error "
+		   "(the number of descriptions given by "
+		   "the mechanical behaviour don't match "
+		   "the number of internal state variables)");
     for(std::vector<string>::size_type i=0;i!=ivdes.size();++i){
       this->out << "# " << cnbr << " column : " << ivdes[i] << '\n';
       ++cnbr;
@@ -387,11 +368,10 @@ namespace mtest
     auto pev = this->evm->find("ThermalExpansionReferenceTemperature");
     if(pev!=this->evm->end()){
       const auto& ev = *(pev->second);
-      if(!ev.isConstant()){
-	throw(runtime_error("MTest::completeInitialisation: "
-			    "'ThermalExpansionReferenceTemperature' "
-			    "must be a constant evolution"));
-      }
+      tfel::raise_if(!ev.isConstant(),
+		     "MTest::completeInitialisation: "
+		     "'ThermalExpansionReferenceTemperature' "
+		     "must be a constant evolution");
     }
     // residual file
     if(this->residual){
@@ -405,7 +385,7 @@ namespace mtest
   void MTest::initializeCurrentState(StudyCurrentState& s) const
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("MTest::initializeCurrentState: "+m));}
+      tfel::raise_if(c,"MTest::initializeCurrentState: "+m);
     };
     throw_if(this->b==nullptr,"mechanical behaviour not set");
     throw_if(this->hypothesis==tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS,
@@ -451,13 +431,11 @@ namespace mtest
     }
   } // end of MTest::initializeCurrentState
 
-  void
-  MTest::initializeWorkSpace(SolverWorkSpace& wk) const
+  void MTest::initializeWorkSpace(SolverWorkSpace& wk) const
   {
-    if(!this->initialisationFinished){
-      throw(std::runtime_error("MTest::initializeWorkSpace: "
-			       "object not initialised"));
-    }
+    tfel::raise_if(!this->initialisationFinished,
+		   "MTest::initializeWorkSpace: "
+		   "object not initialised");
     const auto psz = this->getNumberOfUnknowns();
     // clear
     wk.K.clear();
@@ -476,10 +454,9 @@ namespace mtest
   size_t MTest::getNumberOfUnknowns() const
   {
     using tfel::math::vector;
-    if(!this->initialisationFinished){
-      throw(std::runtime_error("MTest::getNumberOfUnknowns: "
-			       "object not initialised"));
-    }
+    tfel::raise_if(!this->initialisationFinished,
+		   "MTest::getNumberOfUnknowns: "
+		   "object not initialised");
     // number of components of the driving variables
     const auto N = this->b->getDrivingVariablesSize();
     // getting the total number of unknowns
@@ -491,8 +468,7 @@ namespace mtest
     return s;
   } // end of MTest::getNumberOfUnknowns
 
-  tfel::tests::TestResult
-  MTest::execute()
+  tfel::tests::TestResult MTest::execute()
   {
     auto report = [](const StudyCurrentState& s,const bool bs){
       if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL1){
@@ -504,12 +480,8 @@ namespace mtest
       }
     };
     // some checks
-    if(times.empty()){
-      throw(std::runtime_error("MTest::execute: no times defined"));
-    }
-    if(times.size()<2){
-      throw(std::runtime_error("MTest::execute: invalid number of times defined"));
-    }
+    tfel::raise_if(times.empty(),"MTest::execute: no times defined");
+    tfel::raise_if(times.size()<2,"MTest::execute: invalid number of times defined");
     // initialize current state and work space
     StudyCurrentState state;
     SolverWorkSpace    wk;
@@ -542,41 +514,33 @@ namespace mtest
     return tr; 
   }
 
-  void
-  MTest::setCompareToNumericalTangentOperator(const bool bo)
+  void MTest::setCompareToNumericalTangentOperator(const bool bo)
   {
     this->cto = bo;
   } // end of MTest::setCompareToNumericalTangentOperator
 
-  void
-  MTest::setTangentOperatorComparisonCriterium(const real v)
+  void MTest::setTangentOperatorComparisonCriterium(const real v)
   {
-    if(v<100*std::numeric_limits<real>::min()){
-      throw(std::runtime_error("MTest::setTangentOperatorComparisonCriterium: " 
-			       "invalid comparison criterium"));
-    }
+    tfel::raise_if(v<100*std::numeric_limits<real>::min(),
+		   "MTest::setTangentOperatorComparisonCriterium: " 
+		   "invalid comparison criterium");
     this->toeps=v;
   } // end of MTest::handleTangentOperatorComparisonCriterium
 
-  void
-  MTest::setNumericalTangentOperatorPerturbationValue(const real v)
+  void MTest::setNumericalTangentOperatorPerturbationValue(const real v)
   {
-    if(v<100*std::numeric_limits<real>::min()){
-      throw(std::runtime_error("MTest::setNumericalTangentOperatorPerturbationValue: "
-			       "invalid perturbation value"));
-    }
+    tfel::raise_if(v<100*std::numeric_limits<real>::min(),
+		   "MTest::setNumericalTangentOperatorPerturbationValue: "
+		   "invalid perturbation value");
     this->pv=v;
   } // end of MTest::setNumericalTangentOperatorPerturbationValue
 
-  void
-  MTest::prepare(StudyCurrentState& state,
-		 const real t,
-		 const real dt) const{
+  void MTest::prepare(StudyCurrentState& state,
+		      const real t,
+		      const real dt) const{
     auto& scs = state.getStructureCurrentState("");
-    if(scs.istates.size()!=1u){
-      throw(std::runtime_error("MTest::prepare: "
-			       "invalid state"));
-    }
+    tfel::raise_if(scs.istates.size()!=1u,
+		   "MTest::prepare: invalid state");
     // driving variables at the beginning of the time step
     for(auto& s: scs.istates){
       const auto ndv = this->b->getDrivingVariablesSize();
@@ -587,15 +551,12 @@ namespace mtest
     SingleStructureScheme::prepare(state,t,dt);
   } // end of MTest::prepare
 
-  void
-  MTest::makeLinearPrediction(StudyCurrentState& state,
-			      const real dt) const
+  void MTest::makeLinearPrediction(StudyCurrentState& state,
+				   const real dt) const
   {
     auto& scs = state.getStructureCurrentState("");
-    if(scs.istates.size()!=1u){
-      throw(std::runtime_error("MTest::prepare: "
-			       "invalid state"));
-    }
+    tfel::raise_if(scs.istates.size()!=1u,
+		   "MTest::prepare: invalid state");
     auto& s = scs.istates[0];
     if(state.period>1){
       const auto r = dt/state.dt_1;
@@ -615,10 +576,8 @@ namespace mtest
     using tfel::material::MechanicalBehaviourBase;
     auto& scs = state.getStructureCurrentState("");
     auto& bwk = scs.getBehaviourWorkSpace();
-    if(scs.istates.size()!=1u){
-      throw(std::runtime_error("MTest::prepare: "
-			       "invalid state"));
-    }
+    tfel::raise_if(scs.istates.size()!=1u,
+		   "MTest::prepare: invalid state");
     auto& s = scs.istates[0];
     auto res = this->b->computePredictionOperator(bwk,s,smt);
     if(!res.first){
@@ -672,10 +631,8 @@ namespace mtest
     };    
     auto& scs = state.getStructureCurrentState("");
     auto& bwk = scs.getBehaviourWorkSpace();
-    if(scs.istates.size()!=1u){
-      throw(std::runtime_error("MTest::prepare: "
-			       "invalid state"));
-    }
+    tfel::raise_if(scs.istates.size()!=1u,
+		   "MTest::prepare: invalid state");
     auto& s = scs.istates[0];
     const auto ndv = this->b->getDrivingVariablesSize();
     const auto nth = this->b->getThermodynamicForcesSize();
@@ -817,10 +774,8 @@ namespace mtest
       os << ")\n";
     };
     const auto& scs = state.getStructureCurrentState("");
-    if(scs.istates.size()!=1u){
-      throw(std::runtime_error("MTest::prepare: "
-			       "invalid state"));
-    }
+    tfel::raise_if(scs.istates.size()!=1u,
+		   "MTest::prepare: invalid state");
     const auto& s = scs.istates[0];
     const auto ndv = this->b->getDrivingVariablesSize();
     const auto ne = getErrorNorm(du);
@@ -857,10 +812,8 @@ namespace mtest
 				     const real dt) const
   {
     const auto& scs = state.getStructureCurrentState("");
-    if(scs.istates.size()!=1u){
-      throw(std::runtime_error("MTest::prepare: "
-			       "invalid state"));
-    }
+    tfel::raise_if(scs.istates.size()!=1u,
+		   "MTest::getFailedCriteriaDiagnostic: invalid state");
     const auto& s = scs.istates[0];
     const auto ndv = this->b->getDrivingVariablesSize();
     const auto ne = this->getErrorNorm(du);
@@ -901,21 +854,18 @@ namespace mtest
   			      const real dt,
   			      const unsigned int p) const{
     auto& scs = state.getStructureCurrentState("");
-    if(scs.istates.size()!=1u){
-      throw(std::runtime_error("MTest::prepare: "
-			       "invalid state"));
-    }
+    tfel::raise_if(scs.istates.size()!=1u,
+		   "MTest::postConvergence: invalid state");
     auto& s = scs.istates[0];
     for(const auto& test : this->tests){
       test->check(s,t,dt,p);
     }
   } // end of MTest::postConvergence
   
-  void
-  MTest::execute(StudyCurrentState& state,
-		 SolverWorkSpace& wk,
-		 const real ti,
-		 const real te) const
+  void MTest::execute(StudyCurrentState& state,
+		      SolverWorkSpace& wk,
+		      const real ti,
+		      const real te) const
   {
     GenericSolver().execute(state,wk,*this,this->options,ti,te);
   }

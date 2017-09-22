@@ -14,6 +14,7 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Parser/KrigedFunction.hxx"
 
 namespace tfel
@@ -28,32 +29,27 @@ namespace tfel
       void
       KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException()
       {
-	using namespace std;
-	string msg("KrigedFunctionBase::");
-	msg += "throwUnimplementedDifferentiateFunctionException : ";
-	msg += "unimplemented feature";
-	throw(runtime_error(msg));
+	raise("KrigedFunctionBase::"
+	      "throwUnimplementedDifferentiateFunctionException: "
+	      "unimplemented feature");
       } // end of KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException
 
       void
       KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables()
       {
-	using namespace std;
-	string msg("KrigedFunctionException::");
-	msg += "throwInvalidCreateFunctionByChangingParametersIntoVariables : ";
-	msg += "invalid call";
-	throw(runtime_error(msg));
+	raise("KrigedFunctionException::"
+	      "throwInvalidCreateFunctionByChangingParametersIntoVariables: "
+	      "invalid call");
       } // end of KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables()
 
       void
       KrigedFunctionBase::throwInvalidIndexException(const std::vector<double>::size_type i,
 						     const unsigned short N)
       {
-	using namespace std;
-	ostringstream msg;
-	msg << "KrigedFunctionBase::throwInvalidIndexException : invalid index ("
-	    << i << " >  " << N << ")";
-	throw(runtime_error(msg.str()));
+	raise("KrigedFunctionBase::"
+	      "throwInvalidIndexException: "
+	      "invalid index ("+std::to_string(i)+" > "+
+	      std::to_string(N)+")");
       } // end of KrigedFunctionBase::throwInvalidIndexException
       
       template<>

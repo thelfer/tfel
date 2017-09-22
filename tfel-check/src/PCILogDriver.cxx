@@ -15,6 +15,7 @@
 #include <stdexcept>
 #include <fstream>
 
+#include "TFEL/Raise.hxx"
 #include "TFEL/Check/PCILogDriver.hxx"
 
 namespace tfel{
@@ -28,14 +29,12 @@ namespace tfel{
     PCILogDriver::PCILogDriver(const std::string& f)
     {
       this->log = std::make_shared<std::ofstream>(f);
-      if (!this->log->good()){
-	throw(std::runtime_error("PCILogDriver::PCILogDriver: "
-				 "can't open file '"+f+"'"));
-      }
+      raise_if(!this->log->good(),
+	       "PCILogDriver::PCILogDriver: "
+	       "can't open file '"+f+"'");
     }
 
-    std::ostream&
-    PCILogDriver::getStream() {
+    std::ostream& PCILogDriver::getStream() {
       if(this->log!=nullptr){
 	return *(this->log);
       }

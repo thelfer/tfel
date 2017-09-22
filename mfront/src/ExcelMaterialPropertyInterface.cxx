@@ -35,6 +35,7 @@
 #endif
 #endif
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/System.hxx"
 
 #include"MFront/DSLUtilities.hxx"
@@ -70,10 +71,8 @@ namespace mfront
       auto tokens = std::vector<std::string>{};
       copy(std::istream_iterator<std::string>(tokenizer),
 	   std::istream_iterator<std::string>(),back_inserter(tokens));
-      if(tokens.size()<2){
-	throw(std::runtime_error("ExcelMaterialPropertyInterface::readExcelInterface: "
-				 "invalid line '"+line+"'"));
-      }
+      tfel::raise_if(tokens.size()<2,"readExcelInterface: "
+		     "invalid line '"+line+"'");
       ExcelInterface i;
       i.function  = tokens[0];
       i.library   = tokens[1];
@@ -96,10 +95,9 @@ namespace mfront
 					       tokens_iterator current,
 					       const tokens_iterator)
   {
-    if(std::find(i.begin(),i.end(),"excel")!=i.end()){
-      throw(std::runtime_error("ExcelMaterialPropertyInterface::treatKeyword: "
-			       "unsupported key '"+k+"'"));
-    }
+    tfel::raise_if(std::find(i.begin(),i.end(),"excel")!=i.end(),
+		   "ExcelMaterialPropertyInterface::treatKeyword: "
+		   "unsupported key '"+k+"'");
     return {false,current};
   } // end of treatKeyword
 
@@ -113,7 +111,7 @@ namespace mfront
 						   const FileDescription&) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("ExcelMaterialPropertyInterface::writeOutputFiles: "+m));};
+      tfel::raise_if(b,"ExcelMaterialPropertyInterface::writeOutputFiles: "+m);
     };
     // writing excel interface
     MFrontLockGuard lock;

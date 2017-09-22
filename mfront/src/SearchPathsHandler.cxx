@@ -23,6 +23,7 @@
 #endif
 #include<cstdlib>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 #include"MFront/SearchPathsHandler.hxx"
@@ -35,24 +36,22 @@ namespace mfront
     using namespace tfel::system;
     auto& msf = SearchPathsHandler::getSearchPathsHandler();
     if(::access(f.c_str(),F_OK)==0){
-      if(::access(f.c_str(),R_OK)!=0){
-	throw(std::runtime_error("SearchPathsHandler::search : '"+
-				 f + "' is not readable"));
-      }
+      tfel::raise_if(::access(f.c_str(),R_OK)!=0,
+		     "SearchPathsHandler::search : "
+		     "'"+f+"' is not readable");
       return f;
     }
     for(const auto& p : msf.paths){
       const auto file = p+dirSeparator()+f;
       if(::access(file.c_str(),F_OK)==0){
-	if(::access(file.c_str(),R_OK)!=0){
-	  throw(std::runtime_error("SearchPathsHandler::search : '"+
-				   file + "' is not readable"));
-	}
+	tfel::raise_if(::access(file.c_str(),R_OK)!=0,
+		       "SearchPathsHandler::search : "
+		       "'"+file+"' is not readable");
 	return file;
       }
     }
-    throw(std::runtime_error("SearchPathsHandler::search : '"+f+
-			     "' has not been found."));
+    tfel::raise("SearchPathsHandler::search : "
+		"'"+f+"' has not been found.");
   }
 
   void SearchPathsHandler::addSearchPaths(const std::string& p)

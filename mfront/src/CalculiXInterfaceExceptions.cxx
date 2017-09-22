@@ -15,6 +15,7 @@
 #include<sstream>
 #include<iostream>
 
+#include "TFEL/Raise.hxx"
 #include "MFront/CalculiX/CalculiXInterfaceExceptions.hxx"
 
 namespace calculix{
@@ -29,7 +30,7 @@ namespace calculix{
 	<< "the number of material properties does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " material properties, and "
 	<< n2 << " material properties were declared";
-    throw(CalculiXException(msg.str()));
+    tfel::raise<CalculiXException>(msg.str());
   } // end of throwUnMatchedNumberOfMaterialProperties
     
   void
@@ -42,7 +43,7 @@ namespace calculix{
 	<< "the number of internal state variables does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " state variables, and "
 	<< n2 << " state variables were declared";
-    throw(CalculiXException(msg.str()));
+    tfel::raise<CalculiXException>(msg.str());
   } // end of throwUnMatchedNumberOfStateVariables
 
   void
@@ -91,37 +92,38 @@ namespace calculix{
   void
   CalculiXInterfaceExceptions::throwNegativeTimeStepException(const std::string& b)
   {
-    throw(std::runtime_error("CalculiXInterfaceExceptions::throwNegativeTimeStepException: "
-			     "negative time step detected for behaviour '"+b+"'"));
+    tfel::raise("CalculiXInterfaceExceptions::throwNegativeTimeStepException: "
+		"negative time step detected for behaviour '"+b+"'");
   } // end of CalculiXInterfaceExceptions::throwNegativeTimeStepException
   
   void
   CalculiXInterfaceExceptions::throwPredictionComputationFailedException(const std::string& b)
   {
-    throw(std::runtime_error("CalculiXInterfaceExceptions::throwPredictionComputationFailedException: "
-			     "prediction computation failed for behaviour '"+b+"'"));
+    tfel::raise("CalculiXInterfaceExceptions::throwPredictionComputationFailedException: "
+			     "prediction computation failed for behaviour '"+b+"'");
   }
 
   void
   CalculiXInterfaceExceptions::throwPredictionOperatorIsNotAvalaible(const std::string& b)
   {
-    throw(std::runtime_error("CalculiXInterfaceExceptions::throwPredictionOperatorIsNotAvalaible: "
-			     "behaviour '"+b+"' can't compute a prediction operator"));
+    tfel::raise("CalculiXInterfaceExceptions::throwPredictionOperatorIsNotAvalaible: "
+			     "behaviour '"+b+"' can't compute a prediction operator");
   } // end of CalculiXInterfaceExceptions::throwBehaviourIntegrationFailedException
 
   void
   CalculiXInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible(const std::string& b)
   {
-    throw(std::runtime_error("CalculiXInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible: "
-			     "behaviour '"+b+"' can't compute a consistent tangent operator"));
+    tfel::raise("CalculiXInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible: "
+		"behaviour '"+b+"' can't compute a consistent tangent operator");
   } // end of CalculiXInterfaceExceptions::throwBehaviourIntegrationFailedException
 
   void
   CalculiXInterfaceExceptions::throwUnsupportedStressFreeExpansionException(const std::string& b)
   {
     ;
-    throw(std::runtime_error("CalculiXInterfaceExceptions::throwUnsupportedStressFreeExpansionException: "
-			     "behaviour '"+b+"' can handle stress-free expansion but the CalculiX interface can't"));
+    tfel::raise("CalculiXInterfaceExceptions::throwUnsupportedStressFreeExpansionException: "
+		"behaviour '"+b+"' can handle stress-free expansion but "
+		"the CalculiX interface can't");
   } // end of CalculiXInterfaceExceptions::throwUnsupportedStressFreeExpansionException
 
   void
@@ -148,9 +150,9 @@ namespace calculix{
 				      CalculiXReal *const,
 				      const StressFreeExpansionHandler&)
   {
-    throw(std::runtime_error("CalculiXUnSupportedCaseHandler::exe : "
-			     "we fall in a case that the calculix interface "
-			     "is not able to handle."));  
+    tfel::raise("CalculiXUnSupportedCaseHandler::exe : "
+		"we fall in a case that the calculix interface "
+		"is not able to handle.");  
   } // end of exe
 
 } // end of namespace calculix 

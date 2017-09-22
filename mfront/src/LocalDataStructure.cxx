@@ -13,6 +13,7 @@
 
 #include<stdexcept>
 #include<algorithm>
+#include"TFEL/Raise.hxx"
 #include"MFront/BehaviourDescription.hxx"
 #include"MFront/LocalDataStructure.hxx"
 
@@ -26,10 +27,9 @@ namespace mfront{
       auto comp = [&v](const Variable& x){
 	return x.name==v.name;
       };
-      if(std::find_if(c.begin(),c.end(),comp)!=c.end()){
-	throw(std::runtime_error("LocalDataStructure::addVariable: "
-				 "member '"+v.name+"' multiply defined"));
-      }
+      tfel::raise_if(std::find_if(c.begin(),c.end(),comp)!=c.end(),
+		     "LocalDataStructure::addVariable: "
+		     "member '"+v.name+"' multiply defined");
       c.push_back(v);
     };
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
@@ -62,11 +62,10 @@ namespace mfront{
       return this->uv;
     }
     const auto p = this->sv.find(h);
-    if(p==std::end(this->sv)){
-      throw(std::runtime_error("LocalDataStructure::get: "
-			       "no variable defined for hypothesis '"+
-			       ModellingHypothesis::toString(h)+"'"));
-    }
+    tfel::raise_if(p==std::end(this->sv),
+		   "LocalDataStructure::get: "
+		   "no variable defined for hypothesis '"+
+		   ModellingHypothesis::toString(h)+"'");
     return p->second;
   } // end of LocalDataStructure::get
 

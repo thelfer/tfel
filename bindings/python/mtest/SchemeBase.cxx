@@ -13,6 +13,7 @@
 
 #include<string>
 #include<boost/python.hpp>
+#include"TFEL/Raise.hxx"
 #include"MTest/SchemeBase.hxx"
 #include"MTest/StudyCurrentState.hxx"
 
@@ -29,8 +30,8 @@ setPredictionPolicy(mtest::SchemeBase& s,const std::string& p){
   } else if (p=="TangentOperatorPrediction"){
     s.setPredictionPolicy(mtest::PredictionPolicy::TANGENTOPERATORPREDICTION);
   } else {
-    throw(std::runtime_error("SchemeBase::setPredictionPolicy: "
-			     "invalid policy '"+p+"'"));
+    tfel::raise("SchemeBase::setPredictionPolicy: "
+		"invalid policy '"+p+"'");
   }
 } // end of setPredictionPolicy
 
@@ -47,8 +48,8 @@ setStiffnessMatrixType(mtest::SchemeBase& s,const std::string& t){
   } else if (t=="ConsistentTangentOperator"){
     s.setStiffnessMatrixType(mtest::StiffnessMatrixType::CONSISTENTTANGENTOPERATOR);
   } else {
-    throw(std::runtime_error("SchemeBase::setStiffnessMatrixType: "
-			     "invalid type '"+t+"'"));
+    tfel::raise("SchemeBase::setStiffnessMatrixType: "
+		"invalid type '"+t+"'");
   }
 } // end of setStiffnessMatrixType
 
@@ -61,8 +62,8 @@ setStiffnessUpdatingPolicy(mtest::SchemeBase& s,const std::string& p){
   } else if (p=="UPDATEDSTIFFNESSMATRIX"){
     s.setStiffnessUpdatingPolicy(mtest::StiffnessUpdatingPolicy::UPDATEDSTIFFNESSMATRIX);
   } else {
-    throw(std::runtime_error("SchemeBase::setStiffnessUpdatingPolicy: "
-			     "invalid policy '"+p+"'"));
+    tfel::raise("SchemeBase::setStiffnessUpdatingPolicy: "
+		"invalid policy '"+p+"'");
   }
 }
 
@@ -73,8 +74,8 @@ setOutputFrequency(mtest::SchemeBase& s,const std::string& v){
   } else if(v=="EveryPeriod"){
     s.setOutputFrequency(mtest::SchemeBase::EVERYPERIOD);
   } else {
-    throw(std::runtime_error("SchemeBase::setOutputFrequency: "
-			       "invalid frequency '"+v+"'"));
+    tfel::raise("SchemeBase::setOutputFrequency: "
+		"invalid frequency '"+v+"'");
   }
 }
 

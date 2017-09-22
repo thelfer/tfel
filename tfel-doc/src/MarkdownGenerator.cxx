@@ -17,6 +17,7 @@
 #include<fstream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/Global.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
@@ -156,9 +157,7 @@ namespace tfel
 	  const auto& tf = replace_all(td.first,' ','_')+".tex";
 	  const auto& file = o.outputDirectory+"/"+tf;
 	  std::ofstream f(file);
-	  if(!f){
-	    throw(std::runtime_error("writeMarkdownFile : can't open file '"+file+"'"));
-	  }
+	  raise_if(!f,"writeMarkdownFile : can't open file '"+file+"'");
 	  writeMarkdownSection(f,td.first,td.second,o);
 	} else {
 	  writeMarkdownSection(out,td.first,td.second,o);

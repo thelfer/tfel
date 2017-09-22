@@ -15,6 +15,7 @@
 #include<ostream>
 #include<stdexcept>
 #include<algorithm>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/General/MathConstants.hxx"
 #include"MFront/UmatFiniteStrainMTestFileGenerator.hxx"
 
@@ -91,20 +92,16 @@ namespace mfront
   void
   UmatFiniteStrainMTestFileGenerator::writeDrivingVariables(std::ostream& os) const
   {
-    using namespace std;
     constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
     const auto& n = this->getDeformationGradientComponentsNames();
-    vector<string>::const_iterator p;
-    unsigned short i;
-    if(this->times.size()!=2){
-      string msg("UmatFiniteStrainMTestFileGenerator::writeDrivingVariables : "
-		 "invalid number of times");
-      throw(runtime_error(msg));
-    }
-    const real t0 = *(this->times.begin());
-    const real t1 = *(this->times.rbegin());
+    tfel::raise_if(this->times.size()!=2,
+		   "UmatFiniteStrainMTestFileGenerator::writeDrivingVariables: "
+		   "invalid number of times");
+    const auto t0 = *(this->times.begin());
+    const auto t1 = *(this->times.rbegin());
     os << "@Stress {";
     os.precision(14);
+    unsigned short i=0;
     for(i=0;i!=this->getStensorSize();){
       if(i<3){
 	os << this->stress[i];
@@ -115,9 +112,10 @@ namespace mfront
 	os << ",";
       }
     }
-    os << "};\n\n";
-    os << "@DeformationGradient {";
-    for(p=n.begin(),i=0;p!=n.end();++i){
+    os << "};\n\n"
+       << "@DeformationGradient {";
+    i=0;    
+    for(auto p=n.begin();p!=n.end();++i){
       os.precision(14);
       os << this->F0[i];
       if(++p!=n.end()){
@@ -125,13 +123,14 @@ namespace mfront
       }
     }
     os << "};\n";
-    for(p=n.begin(),i=0;p!=n.end();++p,++i){
+    i=0;
+    for(auto p=n.begin();p!=n.end();++p,++i){
       os.precision(14);
       os << "@ImposedDeformationGradient<evolution> '" << *p << "' {" 
 	 << t0 << ":" << this->F0[i]<< ","
 	 << t1 << ":" << this->F1[i]<< "};\n";
     }
-    os << endl;
+    os << '\n';
   } // end of UmatFiniteStrainMTestFileGenerator::writeDrivingVariables
   
   UmatFiniteStrainMTestFileGenerator::~UmatFiniteStrainMTestFileGenerator() = default;

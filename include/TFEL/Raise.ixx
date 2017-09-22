@@ -16,29 +16,27 @@
 
 namespace tfel{
 
-  template<typename Exception = std::runtime_error>
+  template<typename Exception>
   TFEL_NORETURN void raise()
   {
     Exception e;
-    throw(e);
+    throw(std::move(e));
   } // end of raise
   
-  template<typename Exception = std::runtime_error,
-	   typename... Args>
+  template<typename Exception,typename... Args>
   TFEL_NORETURN void raise(Args&&... a)
   {
     Exception e(std::forward<Args...>(a...));
-    throw(e);
+    throw(std::move(e));
   } // end of raise
 
-  template<typename Exception=std::runtime_error>
+  template<typename Exception>
   void raise_if(const bool c)
   {
     if(c){raise<Exception>();}
   } // end of raise
 
-  template<typename Exception=std::runtime_error,
-	   typename... Args>
+  template<typename Exception,typename... Args>
   void raise_if(const bool c,Args&&... a)
   {
     if(c){

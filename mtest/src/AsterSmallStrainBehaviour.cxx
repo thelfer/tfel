@@ -14,6 +14,7 @@
 #include<cmath>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
@@ -76,8 +77,8 @@ namespace mtest
       dimension = 3u;
       nummod = 3u;
     } else {
-      throw(runtime_error("AsterSmallStrainBehaviour::call_behaviour: "
-			  "unsupported hypothesis"));
+      tfel::raise("AsterSmallStrainBehaviour::call_behaviour: "
+		  "unsupported hypothesis");
     }
     fill(wk.D.begin(),wk.D.end(),0.);
     // choosing the type of stiffness matrix

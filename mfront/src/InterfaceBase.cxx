@@ -14,7 +14,7 @@
 
 #include<sstream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/InterfaceBase.hxx"
 
@@ -33,117 +33,96 @@ namespace std{
 
 namespace mfront{
 
-  void
-  InterfaceBase::checkNotEndOfFile(InterfaceBase::TokensContainer::const_iterator& current,
-				   const InterfaceBase::TokensContainer::const_iterator end,
-				   const std::string& method,
-				   const std::string& error)
+  void InterfaceBase::checkNotEndOfFile(TokensContainer::const_iterator& c,
+					const TokensContainer::const_iterator ce,
+					const std::string& m,
+					const std::string& msg)
   {
-    using namespace std;
-    if(current==end){
-      --(current);
-      string msg(method+" : ");
-      msg += "unexpected end of file.";
-      if(!error.empty()){
-	msg += "\n"+error;
+    if(c==ce){
+      --c;
+      auto e = m+": unexpected end of file.";
+      if(!msg.empty()){
+	e += "\n"+msg;
       }
-      msg += "\nError at line " + to_string(current->line);
-      throw(runtime_error(msg));
+      e += "\nError at line "+std::to_string(c->line);
+      tfel::raise(e);
     }
   } // end of InterfaceBase::checkNotEndOfFile
   
-  void
-  InterfaceBase::readSpecifiedToken(InterfaceBase::TokensContainer::const_iterator& current,
-				    const InterfaceBase::TokensContainer::const_iterator end,
-				    const std::string& method,
-				    const std::string& token)
+  void InterfaceBase::readSpecifiedToken(TokensContainer::const_iterator& c,
+					 const TokensContainer::const_iterator ce,
+					 const std::string& m,
+					 const std::string& v)
   {
-    using namespace std;
-    InterfaceBase::checkNotEndOfFile(current,end,
-				     method,"Expected '"+token+"'.");
-    if(current->value!=token){
-      string msg(method+" : ");
-      msg += "expected '"+token+"', read ";
-      msg += current->value;
-      msg += ".\n";
-      msg += "Error at line : ";
-      msg += to_string(current->line);
-      throw(runtime_error(msg));
-    }
-    ++(current);
+    InterfaceBase::checkNotEndOfFile(c,ce,m,"expected '"+v+"'.");
+    tfel::raise_if(c->value!=v,m+": expected '"+v+"', "
+		   "read '"+c->value+"'.\n"
+		   "Error at line:"+std::to_string(c->line));
+    ++c;
   } // end of InterfaceBase::readSpecifiedToken
   
-  void
-  InterfaceBase::throwRuntimeError(InterfaceBase::TokensContainer::const_iterator& current,
-				   const InterfaceBase::TokensContainer::const_iterator end,
-				   const std::string& method,
-				   const std::string& m)
+  void InterfaceBase::throwRuntimeError(TokensContainer::const_iterator& c,
+					const TokensContainer::const_iterator ce,
+					const std::string& m,
+					const std::string& msg)
   {
-    using namespace std;
-    if(current==end){
-      --(current);
+    if(c==ce){
+      --c;
     }
-    string msg(method);
-    if(!m.empty()){
-      msg +=" : " + m;
+    auto e = m;
+    if(!msg.empty()){
+      e +=": " + msg;
     }
-    msg += "\nError at line " + to_string(current->line);
-    throw(runtime_error(msg));
+    e += "\nError at line " + std::to_string(c->line);
+    tfel::raise(e);
   } // end of InterfaceBase::throwRuntimeError
   
   std::vector<std::string>
-  InterfaceBase::readArrayOfString(InterfaceBase::TokensContainer::const_iterator& current,
-				   const InterfaceBase::TokensContainer::const_iterator end,
-				   const std::string& method)
+  InterfaceBase::readArrayOfString(TokensContainer::const_iterator& c,
+				   const TokensContainer::const_iterator ce,
+				   const std::string& m)
   {
-    using namespace std;
-    using namespace tfel::utilities;
-    vector<string> res;
-    InterfaceBase::readSpecifiedToken(current,end,method,"{");
-    InterfaceBase::checkNotEndOfFile(current,end,method,"Expected '}'");
-    while(current->value!="}"){
-      if(current->flag!=Token::String){
-	InterfaceBase::throwRuntimeError(current,end,method,"Expected a string");
+    std::vector<std::string> res;
+    InterfaceBase::readSpecifiedToken(c,ce,m,"{");
+    InterfaceBase::checkNotEndOfFile(c,ce,m,"expected '}'");
+    while(c->value!="}"){
+      if(c->flag!=tfel::utilities::Token::String){
+	InterfaceBase::throwRuntimeError(c,ce,m,"expected a string");
       }
-      res.push_back(current->value.substr(1,current->value.size()-2));
-      ++(current);
-      InterfaceBase::checkNotEndOfFile(current,end,method,"Expected '}'");
-      if(!((current->value=="}")||
-	   (current->value==","))){
-	InterfaceBase::throwRuntimeError(current,end,method,
-					 "Expected ',' or '}', read '"+current->value+"'");
+      res.push_back(c->value.substr(1,c->value.size()-2));
+      ++c;
+      InterfaceBase::checkNotEndOfFile(c,ce,m,"expected '}'");
+      if(!((c->value=="}")||(c->value==","))){
+	InterfaceBase::throwRuntimeError(c,ce,m,"expected ',' or '}',"
+					 " read '"+c->value+"'");
       }
-      if(current->value==","){
-	++(current);
-	InterfaceBase::checkNotEndOfFile(current,end,method,"Expected '}'");
-	if(current->value=="}"){
-	  InterfaceBase::throwRuntimeError(current,end,method,"Expected a string");
+      if(c->value==","){
+	++c;
+	InterfaceBase::checkNotEndOfFile(c,ce,m,"expected '}'");
+	if(c->value=="}"){
+	  InterfaceBase::throwRuntimeError(c,ce,m,"expected a string");
 	}
       }
     }
-    ++(current);
+    ++c;
     return res;
   } // end of InterfaceBase::readArrayOfString
   
   std::vector<std::string>
-  InterfaceBase::readStringOrArrayOfString(InterfaceBase::TokensContainer::const_iterator& current,
-					   const InterfaceBase::TokensContainer::const_iterator end,
-					   const std::string& method)
+  InterfaceBase::readStringOrArrayOfString(TokensContainer::const_iterator& c,
+					   const TokensContainer::const_iterator ce,
+					   const std::string& m)
   {
-    using namespace std;
-    using namespace tfel::utilities;
-    vector<string> res;
-    InterfaceBase::checkNotEndOfFile(current,end,
-				     method,"Expected a string or '{'");
-    if(current->value=="{"){
-      return InterfaceBase::readArrayOfString(current,end,method);
+    std::vector<std::string> res;
+    InterfaceBase::checkNotEndOfFile(c,ce,m,"expected a string or '{'");
+    if(c->value=="{"){
+      return InterfaceBase::readArrayOfString(c,ce,m);
     }
-    if(current->flag!=Token::String){
-      InterfaceBase::throwRuntimeError(current,end,
-				       method,"Expected a string");
+    if(c->flag!=tfel::utilities::Token::String){
+      InterfaceBase::throwRuntimeError(c,ce,m,"expected a string");
     }
-    res.push_back(current->value.substr(1,current->value.size()-2));
-    ++(current);
+    res.push_back(c->value.substr(1,c->value.size()-2));
+    ++c;
     return res;
   } // end of InterfaceBase::readStringOrArrayOfString
 

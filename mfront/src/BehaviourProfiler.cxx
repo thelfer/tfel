@@ -18,7 +18,7 @@
 #include<iostream>
 #include<algorithm>
 #include<stdexcept>
-
+#include "TFEL/Raise.hxx"
 #include "MFront/BehaviourProfiler.hxx"
 
 namespace mfront
@@ -161,8 +161,8 @@ namespace mfront
       n = "TotalTime";
       break;
     default:
-      throw(std::runtime_error("getCodeBlockName : no name associated "
-			       "with the given code block"));
+      tfel::raise("getCodeBlockName : no name associated "
+		  "with the given code block");
     }
     return n;
   }

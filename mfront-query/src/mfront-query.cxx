@@ -23,6 +23,7 @@
 #include<iostream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"MFront/InitDSLs.hxx"
 #include"MFront/InitInterfaces.hxx"
 #include"MFront/MFrontHeader.hxx"
@@ -54,24 +55,18 @@ int main(const int argc, const char *const *const argv)
 	auto dsl = MFrontBase::getDSL(f);
 	if(dsl->getTargetType()==AbstractDSL::MATERIALPROPERTYDSL){
 	  auto b = dynamic_pointer_cast<MaterialPropertyDSL>(dsl);
-	  if(!b){
-	    throw(runtime_error("mfront-query : invalid dsl implementation"));
-	  }
+	  tfel::raise_if(!b,"mfront-query: invalid dsl implementation");
 	  mpqueries.push_back(make_shared<MaterialPropertyQuery>(argc,argv,b,f));
 	} else if(dsl->getTargetType()==AbstractDSL::BEHAVIOURDSL){
 	  auto b = dynamic_pointer_cast<AbstractBehaviourDSL>(dsl);
-	  if(!b){
-	    throw(runtime_error("mfront-query : invalid dsl implementation"));
-	  }
+	  tfel::raise_if(!b,"mfront-query: invalid dsl implementation");
 	  bqueries.push_back(make_shared<BehaviourQuery>(argc,argv,b,f));
 	} else if(dsl->getTargetType()==AbstractDSL::MODELDSL){
 	  auto b = dynamic_pointer_cast<ModelDSL>(dsl);
-	  if(!b){
-	    throw(runtime_error("mfront-query : invalid dsl implementation"));
-	  }
+	  tfel::raise_if(!b,"mfront-query: invalid dsl implementation");
 	  mqueries.push_back(make_shared<ModelQuery>(argc,argv,b,f));
 	} else {
-	  throw(runtime_error("mfront-query : unsupported dsl type"));
+	  tfel::raise("mfront-query: unsupported dsl type");
 	}
       } else if ((strcmp(*a,"--help")==0)||(strcmp(*a,"-h")==0)){
 	cout << "Usage : " << argv[0] << " [options] [files]\n"

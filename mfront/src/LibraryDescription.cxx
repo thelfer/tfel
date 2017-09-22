@@ -8,6 +8,7 @@
 #include<sstream>
 #include<stdexcept>
 #include<algorithm>
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontUtilities.hxx"
 #include"MFront/LibraryDescription.hxx"
 
@@ -26,34 +27,31 @@ namespace std{
 
 namespace mfront{
 
-  std::string
-  convert(const LibraryDescription::LibraryType t){
+  std::string convert(const LibraryDescription::LibraryType t){
     if(t==LibraryDescription::SHARED_LIBRARY){
       return "shared library";
     }
-    if(t!=LibraryDescription::MODULE){
-      throw(std::runtime_error("to_string : unsupported library type"));
-    }
+    tfel::raise_if(t!=LibraryDescription::MODULE,
+		   "convert: unsupported library type");
     return "module";
   } // end of to string
   
   void mergeLibraryDescription(LibraryDescription& d,
 			       const LibraryDescription& s)
   {
-    if((d.name!=s.name)||(d.prefix!=s.prefix)||
-       (d.suffix!=s.suffix)||(d.type!=s.type)){
-      throw(std::runtime_error("mergeLibraryDescription : "
-			       "can't merge description of library' "+
-			       d.name+"' ("
-			       "prefix: '"+d.prefix+"', "+
-			       "suffix: '"+d.suffix+"', "+
-			       "type: '"+convert(d.type)+"')"
-			       "and description of library '"+
-			       s.name+"' ("
-			       "prefix: '"+s.prefix+"', "+
-			       "suffix: '"+s.suffix+"', "+
-			       "type: '"+convert(s.type)+"')"));
-    }
+    tfel::raise_if((d.name!=s.name)||(d.prefix!=s.prefix)||
+		   (d.suffix!=s.suffix)||(d.type!=s.type),
+		   "mergeLibraryDescription : "
+		   "can't merge description of library' "+
+		   d.name+"' ("
+		   "prefix: '"+d.prefix+"', "+
+		   "suffix: '"+d.suffix+"', "+
+		   "type: '"+convert(d.type)+"')"
+		   "and description of library '"+
+		   s.name+"' ("
+		   "prefix: '"+s.prefix+"', "+
+		   "suffix: '"+s.suffix+"', "+
+		   "type: '"+convert(s.type)+"')");
     insert_if(d.sources,s.sources);
     insert_if(d.cppflags,s.cppflags);
     insert_if(d.include_directories,s.include_directories);
@@ -77,8 +75,8 @@ namespace mfront{
   LibraryDescription::getDefaultLibrarySuffix(const TargetSystem s,
 					      const LibraryType l) noexcept{
     auto error = []{
-      throw(std::runtime_error("LibraryDescription::getDefaultLibrarySuffix : "
-			       "internal errror : unsupported system or library type"));
+      tfel::raise("LibraryDescription::getDefaultLibrarySuffix : "
+		  "internal errror : unsupported system or library type");
     };
     const char* p = nullptr;
     switch(s){
@@ -130,9 +128,9 @@ namespace mfront{
   operator << (std::ostream& os,
 	       const LibraryDescription& l){
     auto error = [&l]{
-      throw(std::runtime_error("operator << : "
-			       "unsuported library type (neither module or "
-			       "shared library)  for library '"+l.name+"'"));
+      tfel::raise("operator << : "
+		  "unsuported library type (neither module or "
+		  "shared library)  for library '"+l.name+"'");
     };
     os << "{\n";
     os << "name   : \"" << l.name   << "\";\n";
@@ -169,16 +167,15 @@ namespace mfront{
     using tfel::utilities::CxxTokenizer;
     const auto f = "read<LibraryDescription>";
     auto error = [&f](const std::string& m){
-      throw(std::runtime_error(std::string{f}+": "+m));
+      tfel::raise(std::string{f}+": "+m);
     };
     auto get_vector = [&f](std::vector<std::string>& v,
 			   tfel::utilities::CxxTokenizer::const_iterator& pc,
 			   const tfel::utilities::CxxTokenizer::const_iterator e,
 			   const std::string& n){
-      if(!v.empty()){
-	throw(std::runtime_error(std::string{f}+": library member '"+
-				 n+"' multiply defined"));
-      }
+      tfel::raise_if(!v.empty(),
+		     std::string{f}+": library member '"+
+		     n+"' multiply defined");
       auto c = pc;
       CxxTokenizer::readSpecifiedToken(f,":",c,e);
       v  = read<std::vector<std::string>>(c,e);
@@ -291,5 +288,3 @@ namespace mfront{
   }
   
 } // end of namespace mfront
-
-

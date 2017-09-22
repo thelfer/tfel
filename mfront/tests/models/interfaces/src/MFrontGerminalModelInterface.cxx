@@ -15,6 +15,7 @@
 #include<iterator>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/System.hxx"
 
 #include"MFront/MFrontHeader.hxx"
@@ -36,10 +37,9 @@ namespace mfront{
 					     tokens_iterator c,
 					     const tokens_iterator)
   {
-    if(std::find(i.begin(),i.end(),"germinal")!=i.end()){
-      throw(std::runtime_error("MFrontGerminalModelInterface::treatKeyword: "
-			       "unsupported key '"+k+"'"));
-    }
+    tfel::raise_if(std::find(i.begin(),i.end(),"germinal")!=i.end(),
+		   "MFrontGerminalModelInterface::treatKeyword: "
+		   "unsupported key '"+k+"'");
     return {false,c};
   } // end of MFrontGerminalModelInterface::treatKeyword
   

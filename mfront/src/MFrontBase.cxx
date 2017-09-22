@@ -14,6 +14,7 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
@@ -32,7 +33,7 @@ namespace mfront{
   MFrontBase::getDSL(const std::string& f)
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("MFrontBase::getDSL: "+m));}
+      tfel::raise_if(b,"MFrontBase::getDSL: "+m);
     };
     using namespace tfel::system;
     auto& dslFactory = DSLFactory::getDSLFactory();
@@ -84,7 +85,7 @@ namespace mfront{
 	msg << "Available dsls:\n";
 	const auto& dsls = dslFactory.getRegistredParsers();
 	copy(dsls.begin(),dsls.end(),std::ostream_iterator<std::string>(msg," "));
-	throw(std::runtime_error(msg.str()));
+	tfel::raise(msg.str());
       }
     } else {
       if(getVerboseMode()>=VERBOSE_LEVEL2){
@@ -111,15 +112,12 @@ namespace mfront{
   void MFrontBase::treatSearchPath()
   {
     const auto& o = this->getCurrentCommandLineArgument().getOption();
-    if(o.empty()){
-      throw(std::runtime_error("MFrontBase::treatSearchPath : "
-			       "no path given"));
-    }
+    tfel::raise_if(o.empty(),"MFrontBase::treatSearchPath: "
+		   "no path given");
     SearchPathsHandler::addSearchPaths(o);
   }
 
-  bool
-  MFrontBase::treatUnknownArgumentBase(){
+  bool MFrontBase::treatUnknownArgumentBase(){
     const auto& a = this->getCurrentCommandLineArgument();
     const auto& an = a.as_string();
     if(an[0]=='-'){
@@ -132,21 +130,19 @@ namespace mfront{
 	      return false;
 	    }
 	    const auto s1 = an.substr(2);
-	    if(std::count(s1.begin(),s1.end(),'@')!=2){
-	      throw(std::runtime_error("MFrontBase::treatUnknownArgumentBase: "
-				       "bad substitution pattern '"+s1+"'"));
-	    }
+	    tfel::raise_if(std::count(s1.begin(),s1.end(),'@')!=2,
+			   "MFrontBase::treatUnknownArgumentBase: "
+			   "bad substitution pattern '"+s1+"'");
 	    if(s1.empty()){
 	      return false;
 	    }
 	    if(getVerboseMode()>=VERBOSE_LEVEL2){
 	      getLogStream() << "substituting '" << s1 << "' by '" << o << "'\n";
 	    }
-	    if(!this->substitutions.insert({s1,o}).second){
-	      throw(std::runtime_error("MFrontBase::treatUnknownArgumentBase: "
-				       "a substitution for '"+s1+"' has "
-				       "already been defined"));
-	    }
+	    tfel::raise_if(!this->substitutions.insert({s1,o}).second,
+			   "MFrontBase::treatUnknownArgumentBase: "
+			   "a substitution for '"+s1+"' has "
+			   "already been defined");
 	  } else {
 	    auto cmd = an.substr(2);
 	    if(!o.empty()){
@@ -185,8 +181,8 @@ namespace mfront{
       } else if (o=="full"){
 	setVerboseMode(VERBOSE_FULL);
       } else {
-	throw(std::runtime_error("MFrontBase::treatVerbose: "
-				 "unknown option '"+o+"'"));
+	tfel::raise("MFrontBase::treatVerbose: "
+		    "unknown option '"+o+"'");
       }
     }
   }
@@ -205,17 +201,16 @@ namespace mfront{
   {}
 
   void MFrontBase::setInterface(const std::string& i){
-    if(!this->interfaces.insert(i).second){
-      throw(std::runtime_error("MFrontBase::treatInterface : "
-			       "the interface '"+i+"' has "
-			       "already been specified"));
-    }
+    tfel::raise_if(!this->interfaces.insert(i).second,
+		   "MFrontBase::treatInterface : "
+		   "the interface '"+i+"' has "
+		   "already been specified");
   } // end of MFrontBase::setInterface
   
   void MFrontBase::treatInterface()
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("MFrontBase::treatInterface: "+m));}
+      tfel::raise_if(b,"MFrontBase::treatInterface: "+m);
     };
     const auto& o = this->getCurrentCommandLineArgument().getOption();
     throw_if(o.empty(),"no option given to the '--interface' argument");

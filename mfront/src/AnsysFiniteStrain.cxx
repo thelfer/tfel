@@ -16,6 +16,7 @@
 #include<iostream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tmatrix.hxx"
@@ -306,8 +307,8 @@ namespace ansys
       add(4,2,(*(s+4))*iJ);
       add(5,2,(*(s+5))*iJ);
     } else {
-      throw(std::runtime_error("AnsysFiniteStrain::applyNativeFiniteStrainCorrection: "
-			       "invalid NTENS value ("+std::to_string(NTENS)+")"));
+      tfel::raise("AnsysFiniteStrain::applyNativeFiniteStrainCorrection: "
+		  "invalid NTENS value ("+std::to_string(NTENS)+")");
     }
   } // end of AnsysFiniteStrain::applyNativeFiniteStrainCorrection
 

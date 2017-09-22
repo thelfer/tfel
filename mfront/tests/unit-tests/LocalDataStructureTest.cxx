@@ -39,8 +39,8 @@ struct LocalDataStructureTest final
   tfel::tests::TestResult
   execute() override
   {
-    this->test1();
-    this->test2();
+    // this->test1();
+    // this->test2();
     this->test3();
     return this->result;
   }
@@ -83,9 +83,9 @@ struct LocalDataStructureTest final
     TFEL_TESTS_CHECK_THROW(bd.addLocalDataStructure(lds),std::runtime_error);
     lds.name = "seb_data";
     bd.addLocalDataStructure(lds);
-    bd.setModellingHypotheses({uh,ps,as});
+    bd.setModellingHypotheses({ps,as});
     const auto& mh = bd.getDistinctModellingHypotheses();
-    TFEL_TESTS_ASSERT(mh.size()==3u);
+    TFEL_TESTS_ASSERT(mh.size()==2u);
     const auto& d  = bd.getBehaviourData(ps);
     const auto& lvs = d.getLocalVariables();
     TFEL_TESTS_ASSERT(lvs.size()==1u);

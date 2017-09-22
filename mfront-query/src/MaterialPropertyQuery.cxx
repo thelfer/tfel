@@ -13,6 +13,7 @@
 
 #include<iostream>
 #include<iterator>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"MFront/MaterialPropertyDSL.hxx"
 #include"MFront/MFrontLogStream.hxx"
@@ -121,8 +122,8 @@ namespace mfront{
 	    cout << (!l.empty() ? l : "(undefined)") << endl;
 	  }});
     } else {
-      throw(runtime_error("MaterialProperty::treatStandardQuery : "
-			  "unsupported query '"+qn+"'"));
+      tfel::raise("MaterialProperty::treatStandardQuery: "
+		  "unsupported query '"+qn+"'");
     }
   } // end of MaterialPropertyQuery::treatStandardQuery
   

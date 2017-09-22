@@ -37,6 +37,7 @@
 #include<algorithm>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
 #include"TFEL/Utilities/GenTypeBase.hxx"
 #include"MFront/MFrontLogStream.hxx"
@@ -95,9 +96,9 @@ namespace mtest
       try{
 	tokenizer.parseString(c);
       } catch(std::exception& e){
-	throw(std::runtime_error("MTestParser::execute : "
-				 "error while parsing external command "
-				 "'"+c+"'\n"+std::string(e.what())));
+	tfel::raise("MTestParser::execute : "
+		    "error while parsing external command "
+		    "'"+c+"'\n"+std::string(e.what()));
       }
       this->tokens.insert(this->tokens.begin(),tokenizer.begin(),tokenizer.end());
     }
@@ -121,7 +122,7 @@ namespace mtest
       msg << "MTestParser::execute : invalid keyword '"
 	  << p->value << "'. Error at line " 
 	  << p->line<< ".";
-      throw(std::runtime_error(msg.str()));
+      tfel::raise(msg.str());
     }
   } // end of MTestParser::execute
 
@@ -145,7 +146,7 @@ namespace mtest
       msg << "MTestParser::MTest : error while "
 	  << "parsing file '" << this->file << "' at line '"
 	  << line << "'.\n" << e.what();
-      throw(std::runtime_error(msg.str()));
+      tfel::raise(msg.str());
     }
     return true;
   } // end of MTestParser::treatKeyword
@@ -209,10 +210,9 @@ namespace mtest
   void MTestParser::displayKeyWordDescription(const std::string& k) const
   {
     auto keys  = this->getKeyWordsList();
-    if(std::find(keys.begin(),keys.end(),k)==keys.end()){
-      throw(std::runtime_error("MTestParser::displayKeyWordDescription: "
-			       "unknown keyword '"+k+"'"));
-    }
+    tfel::raise_if(std::find(keys.begin(),keys.end(),k)==keys.end(),
+		   "MTestParser::displayKeyWordDescription: "
+		   "unknown keyword '"+k+"'");
     const auto f = SchemeParserBase::getDocumentationFilePath("mtest",k);
     if(f.empty()){
       std::cout << "no description available for keyword '"
@@ -298,9 +298,9 @@ namespace mtest
     } else if(p->value=="false"){
       t.setCompareToNumericalTangentOperator(false);
     } else {
-      throw(std::runtime_error("MTestParser::handleCompareToNumericalTangentOperator: "
-			       "unexpected value (expected 'true' or 'false', "
-			       "read '"+p->value+"')"));
+      tfel::raise("MTestParser::handleCompareToNumericalTangentOperator: "
+		  "unexpected value (expected 'true' or 'false', "
+		  "read '"+p->value+"')");
     }
     ++p;
     this->checkNotEndOfLine("handleCompareToNumericalTangentOperator",
@@ -337,7 +337,7 @@ namespace mtest
   {
     using namespace std;
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("MTestParser::handleTest: "+m));}
+      tfel::raise_if(c,"MTestParser::handleTest: "+m);
     };
     this->readSpecifiedToken("MTestParser::handleTest","<",
 			     p,this->tokens.end());
@@ -487,8 +487,8 @@ namespace mtest
       } else if(p->value=="Miller"){
 	choice = MILLER;
       } else {
-	throw(std::runtime_error("MTestParser::handleRotationMatrix: "
-				 "unsupported roation matrix type"));
+	tfel::raise("MTestParser::handleRotationMatrix: "
+		    "unsupported roation matrix type");
       }
       ++p;
       this->checkNotEndOfLine("MTestParser::handleRotationMatrix",p,
@@ -552,36 +552,33 @@ namespace mtest
   void MTestParser::handleStrainEpsilon(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
-	  (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1)))){
-      throw(std::runtime_error("MTestParser::handleStrainEpsilon: "
-			       "the @StrainEpsilon keyword is only valid "
-			       "for small strain behaviours"));
-    }
+    tfel::raise_if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		     ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		      (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
+		   "MTestParser::handleStrainEpsilon: "
+		   "the @StrainEpsilon keyword is only valid "
+		   "for small strain behaviours");
     this->handleDrivingVariableEpsilon(t,p);
   }
 
   void MTestParser::handleDeformationGradientEpsilon(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    if(!((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
-	 (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY))){
-      throw(std::runtime_error("MTestParser::handleDeformationGradientEpsilon: "
-			       "the @DeformationGradientEpsilon keyword is only valid "
-			       "for finite strain behaviours"));
-    }
+    tfel::raise_if(!((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		     (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY)),
+		   "MTestParser::handleDeformationGradientEpsilon: "
+		   "the @DeformationGradientEpsilon keyword is only valid "
+		   "for finite strain behaviours");
     this->handleDrivingVariableEpsilon(t,p);
   } // end of MTestParser::handleDeformationGradientEpsilon
 
   void MTestParser::handleOpeningDisplacementEpsilon(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-      throw(std::runtime_error("MTestParser::handleOpeningDisplacementEpsilon: "
-			       "the @OpeningDisplacementEpsilon keyword is only valid "
-			       "for cohesive zone model behaviours"));
-    }
+    tfel::raise_if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL,
+		   "MTestParser::handleOpeningDisplacementEpsilon: "
+		   "the @OpeningDisplacementEpsilon keyword is only valid "
+		   "for cohesive zone model behaviours");
     this->handleDrivingVariableEpsilon(t,p);
   }
 
@@ -595,23 +592,21 @@ namespace mtest
   void MTestParser::handleStressEpsilon(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-       (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-      throw(std::runtime_error("MTestParser::handleStressEpsilon: "
-			       "the @StressEpsilon keyword is only valid "
-			       "for small strain behaviours"));
-    }
+    tfel::raise_if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+		   (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR),
+		   "MTestParser::handleStressEpsilon: "
+		   "the @StressEpsilon keyword is only valid "
+		   "for small strain behaviours");
     this->handleThermodynamicForceEpsilon(t,p);
   }
 
   void MTestParser::handleCohesiveForceEpsilon(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-      throw(std::runtime_error("MTestParser::handleCohesiveForceEpsilon: "
-			       "the @CohesiveForceEpsilon keyword is only valid "
-			       "for cohesive zone model behaviours"));
-    }
+    tfel::raise_if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL,
+		   "MTestParser::handleCohesiveForceEpsilon: "
+		   "the @CohesiveForceEpsilon keyword is only valid "
+		   "for cohesive zone model behaviours");
     this->handleThermodynamicForceEpsilon(t,p);
   }
 
@@ -632,23 +627,21 @@ namespace mtest
   void MTestParser::handleImposedStress(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-       (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-      throw(std::runtime_error("MTestParser::handleImposedStress: "
-			       "the @ImposedStress keyword is only valid "
-			       "for standard behaviours"));
-    }
+    tfel::raise_if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+		   (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR),
+		   "MTestParser::handleImposedStress: "
+		   "the @ImposedStress keyword is only valid "
+		   "for standard behaviours");
     this->handleImposedThermodynamicForce(t,p);
   } // end of MTestParser::handleImposedStress
 
   void MTestParser::handleImposedCohesiveForce(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-      throw(std::runtime_error("MTestParser::handleImposedCohesiveForce: "
-			       "the @ImposedCohesiveForce keyword is only valid "
-			       "for cohesive zone model behaviours"));
-    }
+    tfel::raise_if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL,
+		   "MTestParser::handleImposedCohesiveForce: "
+		   "the @ImposedCohesiveForce keyword is only valid "
+		   "for cohesive zone model behaviours");
     this->handleImposedThermodynamicForce(t,p);
   } // end of MTestParser::handleImposedCohesiveForce
 
@@ -691,8 +684,8 @@ namespace mtest
 		(t.getBehaviourType()==MechanicalBehaviourBase::COHESIVEZONEMODEL))){
       np = NonLinearConstraint::THERMODYNAMICFORCECONSTRAINT; 
     } else {
-      throw(std::runtime_error("MTestParser::handleNonLinearConstraint: "
-			       "invalid normalisation policy '"+p->value+"'"));
+      tfel::raise("MTestParser::handleNonLinearConstraint: "
+		  "invalid normalisation policy '"+p->value+"'");
     }
     ++p;
     this->readSpecifiedToken("MTestParser::handleNonLinearConstraint",">",
@@ -708,40 +701,36 @@ namespace mtest
   void MTestParser::handleImposedStrain(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
-	  (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1)))){
-      throw(std::runtime_error("MTestParser::handleImposedStrain: "
-			       "the @ImposedStrain keyword is only valid "
-			       "for small strain behaviours"));
-    }
+    tfel::raise_if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		     ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		      (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
+		   "MTestParser::handleImposedStrain: "
+		   "the @ImposedStrain keyword is only valid "
+		   "for small strain behaviours");
     this->handleImposedDrivingVariable(t,p);
   }
 
   void MTestParser::handleImposedDeformationGradient(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
-      throw(std::runtime_error("MTestParser::handleImposedDeformationGradient: "
-			       "the @ImposedDeformationGradient keyword is only valid "
-			       "for finite strain behaviours"));
-    }
-    if(t.getBehaviourKinematic()!=MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY){
-      throw(std::runtime_error("MTestParser::handleImposedDeformationGradient: "
-			       "the @ImposedDeformationGradient keyword is only valid "
-			       "invalid finite strain kinematic"));
-    }
+    tfel::raise_if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR,
+		   "MTestParser::handleImposedDeformationGradient: "
+		   "the @ImposedDeformationGradient keyword is only valid "
+		   "for finite strain behaviours");
+    tfel::raise_if(t.getBehaviourKinematic()!=MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY,
+		   "MTestParser::handleImposedDeformationGradient: "
+		   "the @ImposedDeformationGradient keyword is only valid "
+		   "invalid finite strain kinematic");
     this->handleImposedDrivingVariable(t,p);
   }
 
   void MTestParser::handleImposedOpeningDisplacement(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-      throw(std::runtime_error("MTestParser::ImposedOpeningDisplacement: "
-			       "the @ImposedOpeningDisplacement keyword is only valid "
-			       "for cohesive zone model behaviours"));
-    }
+    tfel::raise_if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL,
+		   "MTestParser::ImposedOpeningDisplacement: "
+		   "the @ImposedOpeningDisplacement keyword is only valid "
+		   "for cohesive zone model behaviours");
     this->handleImposedDrivingVariable(t,p);
   }
 
@@ -763,36 +752,33 @@ namespace mtest
   void MTestParser::handleStrain(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
-	  (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1)))){
-      throw(std::runtime_error("MTestParser::handleStrain: "
-			       "the @Strain keyword is only valid "
-			       "for small strain behaviours"));
-    }
+    tfel::raise_if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		     ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		      (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
+		     "MTestParser::handleStrain: "
+		     "the @Strain keyword is only valid "
+		     "for small strain behaviours");
     this->handleDrivingVariable(t,p);
   }
 
   void MTestParser::handleDeformationGradient(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    if(!((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
-	 (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY))){
-      throw(std::runtime_error("MTestParser::handleDeformationGradient: "
-			       "the @DeformationGradient keyword is only valid "
-			       "for finite strain behaviours"));
-    }
+    tfel::raise_if(!((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		     (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY)),
+		   "MTestParser::handleDeformationGradient: "
+		   "the @DeformationGradient keyword is only valid "
+		   "for finite strain behaviours");
     this->handleDrivingVariable(t,p);
   }
 
   void MTestParser::handleOpeningDisplacement(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    if(t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-      throw(std::runtime_error("MTestParser::handleOpeningDisplacement: "
-			       "the @OpeningDisplacement keyword is only valid "
-			       "for cohesive zone models behaviours"));
-    }
+    tfel::raise_if(t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL,
+		   "MTestParser::handleOpeningDisplacement: "
+		   "the @OpeningDisplacement keyword is only valid "
+		   "for cohesive zone models behaviours");
     this->handleDrivingVariable(t,p);
   }
       
@@ -810,23 +796,21 @@ namespace mtest
   void MTestParser::handleStress(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    if((t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-       (t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-      throw(std::runtime_error("MTestParser::handleStress: "
-			       "the @Stress keyword is only valid "
-			       "for small strain behaviours"));
-    }
+    tfel::raise_if((t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+		   (t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR),
+		   "MTestParser::handleStress: "
+		   "the @Stress keyword is only valid "
+		   "for small strain behaviours");
     this->handleThermodynamicForce(t,p);
   }
 
   void MTestParser::handleCohesiveForce(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    if(t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-      throw(std::runtime_error("MTestParser::handleCohesiveForce: "
-			       "the @CohesiveForce keyword is only valid "
-			       "for cohesive zone model behaviours"));
-    }
+    tfel::raise_if(t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL,
+		   "MTestParser::handleCohesiveForce: "
+		   "the @CohesiveForce keyword is only valid "
+		   "for cohesive zone model behaviours");
     this->handleThermodynamicForce(t,p);
   }
 

@@ -16,6 +16,7 @@
 #include<fstream>
 #include<sstream>
 
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Types.hxx"
 #include"MTest/RoundingMode.hxx"
@@ -96,10 +97,9 @@ namespace mtest{
 	}
       }
     } else {
-      if(o.ppolicy != PredictionPolicy::NOPREDICTION){
-	throw(runtime_error("GenericSolver::execute: internal error, "
-			    "unsupported prediction policy"));
-      }	    
+      tfel::raise_if(o.ppolicy != PredictionPolicy::NOPREDICTION,
+		     "GenericSolver::execute: internal error, "
+		     "unsupported prediction policy");
     }
     /* resolution */
     auto converged = false;
@@ -269,10 +269,8 @@ namespace mtest{
     auto t_eps = (te-ti)*100*std::numeric_limits<real>::epsilon();
     auto t  = ti;
     auto dt = te-ti;
-    if(dt<0){
-      throw(std::runtime_error("GenericSolver::execute: "
-			       "negative time step"));
-    }
+    tfel::raise_if(dt<0,"GenericSolver::execute: "
+		   "negative time step");
     // almost bone
     TFEL_CONSTEXPR real aone = 1-10*std::numeric_limits<real>::epsilon();
     bool end = false;
@@ -312,10 +310,8 @@ namespace mtest{
       } else {
 	++(scs.subSteps);
 	++subStep;
-	if(subStep==o.mSubSteps){
-	  throw(std::runtime_error("GenericSolver::execute: "
-				   "maximum number of sub stepping reached"));
-	}
+	tfel::raise_if(subStep==o.mSubSteps,"GenericSolver::execute: "
+		       "maximum number of sub stepping reached");
 	scs.revert();
 	if(o.dynamic_time_step_scaling){
 	  real rdt;
@@ -347,14 +343,11 @@ namespace mtest{
 	    dt = te-t;
 	  }
 	}
-	if(dt<0){
-	  throw(std::runtime_error("GenericSolver::execute: "
-				   "negative time step"));
-	}
-	if(dt<o.minimal_time_step){
-	  throw(std::runtime_error("GenericSolver::execute: "
-				   "time step is below its minimal value"));
-	}
+	tfel::raise_if(dt<0,"GenericSolver::execute: "
+		       "negative time step");
+	tfel::raise_if(dt<o.minimal_time_step,
+		       "GenericSolver::execute: "
+		       "time step is below its minimal value");
       }
     }
   }

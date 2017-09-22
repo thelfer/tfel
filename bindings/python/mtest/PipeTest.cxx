@@ -1,7 +1,7 @@
 /*!
- * \file   PipeTest.cxx
+ * \file   bindings/python/mtest/PipeTest.cxx
  * \brief    
- * \author THOMAS HELFER
+ * \author Thomas Helfer
  * \date   07 déc. 2015
  * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
  * reserved. 
@@ -16,6 +16,7 @@
 #include<limits>
 #include<boost/python.hpp>
 
+#include"TFEL/Raise.hxx"
 #include"MTest/Evolution.hxx"
 #include"MTest/StudyCurrentState.hxx"
 #include"MTest/SolverWorkSpace.hxx"
@@ -103,10 +104,10 @@ PipeTest_setAxialLoading(mtest::PipeTest& t,
   } else if(h=="ImposedAxialGrowth"){
     t.setAxialLoading(mtest::PipeTest::IMPOSEDAXIALGROWTH);
   } else {
-    throw(std::runtime_error("PipeTest::setAxialLoading: "
-			     "invalid pipe modelling hypothesis ('"+h+"').\n"
-			     "Valid modelling hypothesis are "
-			     "'None', 'ImposedAxialForce' and 'EndCapEffect'"));
+    tfel::raise("PipeTest::setAxialLoading: "
+		"invalid pipe modelling hypothesis ('"+h+"').\n"
+		"Valid modelling hypothesis are "
+		"'None', 'ImposedAxialForce' and 'EndCapEffect'");
   }
 } // end of PipeTest_setAxialLoading
 
@@ -120,11 +121,11 @@ PipeTest_setRadialLoading(mtest::PipeTest& t,
   } else if(h=="TightPipe"){
     t.setRadialLoading(mtest::PipeTest::TIGHTPIPE);
   } else {
-    throw(std::runtime_error("PipeTest::setRadialLoading: "
-			     "invalid pipe loading type ('"+h+"').\n"
-			     "Valid loading type are "
-			     "'ImposedPressure', 'TightPipe' "
-			     "and 'ImposedOuterRadius'"));
+    tfel::raise("PipeTest::setRadialLoading: "
+		"invalid pipe loading type ('"+h+"').\n"
+		"Valid loading type are "
+		"'ImposedPressure', 'TightPipe' "
+		"and 'ImposedOuterRadius'");
   }
 } // end of PipeTest_setRadialLoading
 
@@ -153,10 +154,10 @@ PipeTest_setElementType(mtest::PipeTest& t,
   } else if(e=="Cubic"){
     t.setElementType(mtest::PipeMesh::CUBIC);
   } else {
-    throw(std::runtime_error("PipeTest::setElementType: "
-			     "invalid element type ('"+e+"').\n"
-			     "Valid element type are "
-			     "'Linear' and 'Quadratic'"));
+    tfel::raise("PipeTest::setElementType: "
+		"invalid element type ('"+e+"').\n"
+		"Valid element type are "
+		"'Linear' and 'Quadratic'");
   }
 } // end of PipeTest_setElementType
 

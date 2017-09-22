@@ -13,7 +13,7 @@
 
 #include<sstream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/FileDescription.hxx"
@@ -84,11 +84,8 @@ namespace mfront
     }
     const auto fn  = "include/" + header +".hxx";
     std::ofstream os(fn);
-    if(!os){
-      throw(std::runtime_error("CMaterialPropertyInterfaceBase::writeOutputFiles : "
-			       "unable to open '"+fn+
-			       "' for writing output file."));
-    }
+    tfel::raise_if(!os,"CMaterialPropertyInterfaceBase::writeOutputFiles : "
+		   "unable to open '"+fn+"' for writing output file.");
     os.exceptions(std::ios::badbit|std::ios::failbit);
     const auto headerGard = transformHeaderName(header)+"_HH";
     os << "/*!\n"
@@ -164,8 +161,8 @@ namespace mfront
       }
       ++nbr;
     }
-    throw(std::runtime_error("CMaterialPropertyInterfaceBase::getVariableNumber: "
-			     "no inputs named '"+n+"'"));
+    tfel::raise("CMaterialPropertyInterfaceBase::getVariableNumber: "
+		"no inputs named '"+n+"'");
   } // end of CMaterialPropertyInterfaceBase::getVariableNumber
   
   static void writePhysicalBounds(std::ostream& out,
@@ -245,11 +242,8 @@ namespace mfront
     const auto src = this->getSrcFileName(mpd.material,mpd.className);
     const auto fn  = "src/" + src +".cxx";
     std::ofstream os(fn);
-    if(!os){
-      throw(std::runtime_error("CMaterialPropertyInterfaceBase::writeOutputFiles : "
-			       "unable to open '"+fn+
-			       "' for writing output file."));
-    }
+    tfel::raise_if(!os,"CMaterialPropertyInterfaceBase::writeOutputFiles : "
+		   "unable to open '"+fn+"' for writing output file.");
     os.exceptions(std::ios::badbit|std::ios::failbit);
     os << "/*!\n"
 	    << " * \\file   " << fn  << '\n'
@@ -295,11 +289,10 @@ namespace mfront
     // parameters
     if(!mpd.parameters.empty()){
       for(const auto& p : mpd.parameters){
-	if(!p.hasAttribute(VariableDescription::defaultValue)){
-	  throw(std::runtime_error("CMaterialPropertyInterfaceBase::writeSrcFile : "
-				   "internal error (can't find value of "
-				   "parameter '"+p.name+"')"));
-	}
+	tfel::raise_if(!p.hasAttribute(VariableDescription::defaultValue),
+		       "CMaterialPropertyInterfaceBase::writeSrcFile : "
+		       "internal error (can't find value of "
+		       "parameter '"+p.name+"')");
 	os << "static " << constexpr_c << " real " << p.name << " = "
 		<< p.getAttribute<double>(VariableDescription::defaultValue) << ";\n";
       }

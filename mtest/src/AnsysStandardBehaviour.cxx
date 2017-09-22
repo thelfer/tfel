@@ -14,7 +14,7 @@
 #include<cmath>
 #include<sstream>
 #include<algorithm>
-
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
@@ -49,13 +49,11 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return "_3D";
       }
-      throw(std::runtime_error("AnsysStandardBehaviour::AnsysStandardBehaviour: "
-			       "invalid hypothesis."));
+      tfel::raise("AnsysStandardBehaviour::AnsysStandardBehaviour: "
+		  "invalid hypothesis.");
     }();
-    if(!ends(s)){
-      throw(std::runtime_error("AnsysStandardBehaviour::AnsysStandardBehaviour: "
-			       "invalid function name."));
-    }
+    tfel::raise_if(!ends(s),"AnsysStandardBehaviour::AnsysStandardBehaviour: "
+		   "invalid function name.");
     return {b.begin(),b.begin()+b.length()-s.length()};    
   }
   
@@ -65,8 +63,7 @@ namespace mtest
     : UmatBehaviourBase(h,l,AnsysStandardBehaviour::getBehaviourName(b,h))
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("AnsysStandardBehaviour::"
-				     "AnsysStandardBehaviour: "+m));}
+      tfel::raise_if(c,"AnsysStandardBehaviour::AnsysStandardBehaviour: "+m);
     };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     const auto bn = AnsysStandardBehaviour::getBehaviourName(b,h);
@@ -177,10 +174,9 @@ namespace mtest
     const auto b = this->mpnames.begin();
     const auto e = this->mpnames.end();
     const auto p = std::find(b,e,"FirstOrthotropicAxis_1");
-    if(p==this->mpnames.end()){
-      throw(std::runtime_error("AnsysStandardBehaviour::getOrthototropicAxesOffset: "
-			       "orthotropic axes not found"));
-    }
+    tfel::raise_if(p==this->mpnames.end(),
+		   "AnsysStandardBehaviour::getOrthototropicAxesOffset: "
+		   "orthotropic axes not found");
     return static_cast<std::vector<std::string>::size_type>(p-b);
   } // end of AnsysStandardBehaviour::getOrthototropicAxesOffset
   
@@ -189,8 +185,8 @@ namespace mtest
 								     const EvolutionManager& evm) const
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("AnsysStandardBehaviour::"
-				     "setOptionalMaterialPropertiesDefaultValues: "+m));}
+      tfel::raise_if(c,"AnsysStandardBehaviour::"
+		     "setOptionalMaterialPropertiesDefaultValues: "+m);
     };
     if(this->stype==1){
       const auto h = this->getHypothesis();

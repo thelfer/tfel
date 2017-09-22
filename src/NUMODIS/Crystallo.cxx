@@ -16,6 +16,7 @@
 #include <vector>
 #include <string>
 
+#include "TFEL/Raise.hxx"
 #include "NUMODIS/Math/Utilities.hxx"
 #include "NUMODIS/GSystem.hxx"
 #include "NUMODIS/Crystallo.hxx"
@@ -47,7 +48,7 @@ namespace numodis
       std::ostringstream os;
       os << "Crystallo::InitGSystem: ill-defined glide system"
 	 << "'" << iburgers << iplane << "'";
-      throw(std::runtime_error(os.str()));
+      tfel::raise(os.str());
     }
     return GSystem(iburgers,iplane);
   }

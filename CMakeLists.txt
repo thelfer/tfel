@@ -15,6 +15,8 @@ if(TFEL_APPEND_VERSION)
   add_definitions("-DTFEL_APPEND_VERSION")
 endif(TFEL_APPEND_VERSION)
 
+option(enable-developer-warnings "add warnings mostly useful for TFEL developers" OFF)
+
 # tfel specific macros
 include(cmake/modules/tfel.cmake)
 # some variables for compatibility with autotools

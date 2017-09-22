@@ -16,6 +16,7 @@
 #include<algorithm>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/System/System.hxx"
 
@@ -47,15 +48,14 @@ namespace mfront
 					     tokens_iterator current,
 					     const tokens_iterator)
   {
-    if((std::find(i.begin(),i.end(),"c++")!=i.end())||
-       (std::find(i.begin(),i.end(),"C++")!=i.end())||
-       (std::find(i.begin(),i.end(),"cxx")!=i.end())||
-       (std::find(i.begin(),i.end(),"Cxx")!=i.end())||
-       (std::find(i.begin(),i.end(),"cpp")!=i.end())||
-       (std::find(i.begin(),i.end(),"Cpp")!=i.end())){
-      throw(std::runtime_error("CastemMaterialPropertyInterface::treatKeyword: "
-			       "unsupported keyword '"+k+"'"));
-    }
+    tfel::raise_if((std::find(i.begin(),i.end(),"c++")!=i.end())||
+		   (std::find(i.begin(),i.end(),"C++")!=i.end())||
+		   (std::find(i.begin(),i.end(),"cxx")!=i.end())||
+		   (std::find(i.begin(),i.end(),"Cxx")!=i.end())||
+		   (std::find(i.begin(),i.end(),"cpp")!=i.end())||
+		   (std::find(i.begin(),i.end(),"Cpp")!=i.end()),
+		   "CppMaterialPropertyInterface::treatKeyword: "
+		   "unsupported keyword '"+k+"'");
     return {false,current};
   } // end of treatKeyword
 
@@ -92,11 +92,9 @@ namespace mfront
   {
     const auto name = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
     std::ofstream header(getHeaderFileName(name));
-    if(!header){
-      throw(std::runtime_error("MaterialPropertyDSL::writeOutputFiles: "
-			       "unable to open '"+getHeaderFileName(name)+"' "
-			       "for writing output file."));
-    }
+    tfel::raise_if(!header,"CppMaterialPropertyInterface::writeHeaderFile: "
+		   "unable to open '"+getHeaderFileName(name)+"' "
+		   "for writing output file.");
     header.exceptions(std::ios::badbit|std::ios::failbit);
     header << "/*!\n"
 	   << "* \\file   " << getHeaderFileName(name)  << '\n'
@@ -196,7 +194,7 @@ namespace mfront
 						  const FileDescription& fd) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("CppMaterialPropertyInterface::writeOutputFiles: "+m));}
+      tfel::raise_if(b,"CppMaterialPropertyInterface::writeSrcFile: "+m);
     };
     const auto name = mpd.material.empty() ?
       mpd.className : mpd.material+"_"+mpd.className;

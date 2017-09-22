@@ -13,7 +13,7 @@
 
 #include<string>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MTest/Evolution.hxx"
 
 namespace mtest
@@ -42,9 +42,9 @@ namespace mtest
   
   void ConstantEvolution::setValue(const real,const real)
   {
-    throw(std::runtime_error("ConstantEvolution::setValue : "
-			     "this method does not makes sense "
-			     "for constant evolution"));
+    tfel::raise("ConstantEvolution::setValue : "
+		"this method does not makes sense "
+		"for constant evolution");
   }
 
   ConstantEvolution::~ConstantEvolution() = default;
@@ -52,11 +52,10 @@ namespace mtest
   LPIEvolution::LPIEvolution(const std::vector<real>& t,
 			     const std::vector<real>& v)
   {
-    if(t.size()!=v.size()){
-      throw(std::runtime_error("LPIEvolution::LPIEvolution : "
-			       "the number of values of the times don't match "
-			       "the number of values of the evolution"));
-    }
+    tfel::raise_if(t.size()!=v.size(),
+		   "LPIEvolution::LPIEvolution : "
+		   "the number of values of the times don't match "
+		   "the number of values of the evolution");
     auto pt = t.begin();
     auto pv = v.begin();
     while(pt!=t.end()){
@@ -68,9 +67,9 @@ namespace mtest
 
   void LPIEvolution::setValue(const real)
   {
-    throw(std::runtime_error("LPIEvolution::setValue : "
-			     "this method does not makes sense "
-			     "for LPI evolution"));
+    tfel::raise("LPIEvolution::setValue : "
+		"this method does not makes sense "
+		"for LPI evolution");
   }
   
   void LPIEvolution::setValue(const real t,const real v)
@@ -80,10 +79,9 @@ namespace mtest
 
   real LPIEvolution::operator()(const real t) const
   {
-    if(this->values.empty()){
-      throw(std::runtime_error("LPILoadingEvolution::getValue: "
-			       "no values specified"));
-    }
+    tfel::raise_if(this->values.empty(),
+		   "LPILoadingEvolution::getValue: "
+		   "no values specified");
     auto p = this->values.lower_bound(t);
     real x0;
     real x1;

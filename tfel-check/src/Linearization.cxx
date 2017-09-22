@@ -14,6 +14,7 @@
 #include<string>
 #include<stdexcept>
 
+#include "TFEL/Raise.hxx"
 #include "TFEL/Check/Linearization.hxx"
 
 namespace tfel{
@@ -32,7 +33,7 @@ namespace tfel{
     Linearization::Linearization(const std::vector<double>& t,
 				 const std::vector<double>& v) {
       auto throw_if = [](const bool b,const std::string& m){
-	if(b){throw(std::runtime_error("Linearization::Linearization: "+m));}
+	raise_if(b,"Linearization::Linearization: "+m);
       };
       throw_if(t.size() != v.size(),
 	       "the number of values of the times don't match "
@@ -50,10 +51,9 @@ namespace tfel{
 
     double Linearization::operator()(const double x) const {
 
-      if(this->values.empty()){
-	throw(std::runtime_error("Linearization::operator(): "
-				 "no values specified"));
-      }
+      raise_if(this->values.empty(),
+	       "Linearization::operator(): "
+	       "no values specified");
       auto p = this->values.lower_bound(x);
       double x0;
       double x1;

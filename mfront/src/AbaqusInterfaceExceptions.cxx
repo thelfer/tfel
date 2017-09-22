@@ -15,7 +15,8 @@
 #include<sstream>
 #include<iostream>
 
-#include "MFront/Abaqus/AbaqusInterfaceExceptions.hxx"
+#include"TFEL/Raise.hxx"
+#include"MFront/Abaqus/AbaqusInterfaceExceptions.hxx"
 
 namespace abaqus{
 
@@ -104,37 +105,36 @@ namespace abaqus{
   void
   AbaqusInterfaceExceptions::throwNegativeTimeStepException(const std::string& b)
   {
-    throw(std::runtime_error("AbaqusInterfaceExceptions::throwNegativeTimeStepException: "
-			     "negative time step detected for behaviour '"+b+"'"));
+    tfel::raise("AbaqusInterfaceExceptions::throwNegativeTimeStepException: "
+		"negative time step detected for behaviour '"+b+"'");
   } // end of AbaqusInterfaceExceptions::throwNegativeTimeStepException
   
   void
   AbaqusInterfaceExceptions::throwPredictionComputationFailedException(const std::string& b)
   {
-    throw(std::runtime_error("AbaqusInterfaceExceptions::throwPredictionComputationFailedException: "
-			     "prediction computation failed for behaviour '"+b+"'"));
+    tfel::raise("AbaqusInterfaceExceptions::throwPredictionComputationFailedException: "
+		"prediction computation failed for behaviour '"+b+"'");
   }
 
   void
   AbaqusInterfaceExceptions::throwPredictionOperatorIsNotAvalaible(const std::string& b)
   {
-    throw(std::runtime_error("AbaqusInterfaceExceptions::throwPredictionOperatorIsNotAvalaible: "
-			     "behaviour '"+b+"' can't compute a prediction operator"));
+    tfel::raise("AbaqusInterfaceExceptions::throwPredictionOperatorIsNotAvalaible: "
+		"behaviour '"+b+"' can't compute a prediction operator");
   } // end of AbaqusInterfaceExceptions::throwBehaviourIntegrationFailedException
 
   void
   AbaqusInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible(const std::string& b)
   {
-    throw(std::runtime_error("AbaqusInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible: "
-			     "behaviour '"+b+"' can't compute a consistent tangent operator"));
+    tfel::raise("AbaqusInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible: "
+		"behaviour '"+b+"' can't compute a consistent tangent operator");
   } // end of AbaqusInterfaceExceptions::throwBehaviourIntegrationFailedException
 
   void
   AbaqusInterfaceExceptions::throwUnsupportedStressFreeExpansionException(const std::string& b)
   {
-    ;
-    throw(std::runtime_error("AbaqusInterfaceExceptions::throwUnsupportedStressFreeExpansionException: "
-			     "behaviour '"+b+"' can handle stress-free expansion but the Abaqus interface can't"));
+    tfel::raise("AbaqusInterfaceExceptions::throwUnsupportedStressFreeExpansionException: "
+		"behaviour '"+b+"' can handle stress-free expansion but the Abaqus interface can't");
   } // end of AbaqusInterfaceExceptions::throwUnsupportedStressFreeExpansionException
 
   void
@@ -161,9 +161,9 @@ namespace abaqus{
 				   AbaqusReal *const,
 				    const StressFreeExpansionHandler<AbaqusReal>&)
   {
-    throw(std::runtime_error("AbaqusUnSupportedCaseHandler::exe: "
-			     "we fall in a case that the abaqus interface "
-			     "is not able to handle."));  
+    tfel::raise("AbaqusUnSupportedCaseHandler::exe: "
+		"we fall in a case that the abaqus interface "
+		"is not able to handle.");  
   } // end of exe
 
 } // end of namespace abaqus 

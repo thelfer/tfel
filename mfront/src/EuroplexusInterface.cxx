@@ -15,7 +15,7 @@
 #include<sstream>
 #include<cstdlib>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
@@ -127,7 +127,7 @@ namespace mfront{
   {
     using tfel::utilities::CxxTokenizer;
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("EuroplexusInterface::treatKeyword: "+m));}
+      tfel::raise_if(b,"EuroplexusInterface::treatKeyword: "+m);
     };
     if(!i.empty()){
       if(std::find(i.begin(),i.end(),this->getName())!=i.end()){
@@ -142,17 +142,16 @@ namespace mfront{
     }
     if ((key=="@EuroplexusFiniteStrainStrategy")||
 	(key=="@EPXFiniteStrainStrategy")){
-      auto read = [](const std::string& s){
+      auto read = [throw_if](const std::string& s){
 	if(s=="FiniteRotationSmallStrain"){
 	  return FINITEROTATIONSMALLSTRAIN;
 	} else if(s=="MieheApelLambrechtLogarithmicStrain"){
 	  return MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
 	} else {
-	  throw(std::runtime_error("EuroplexusInterface::treatKeyword: "
-				   "unsupported strategy '"+s+"'\n"
-				   "The only supported strategies are "
-				   "'FiniteRotationSmallStrain' and "
-				   "'MieheApelLambrechtLogarithmicStrain'"));
+	  throw_if(true,"unsupported strategy '"+s+"'\n"
+		   "The only supported strategies are "
+		   "'FiniteRotationSmallStrain' and "
+		   "'MieheApelLambrechtLogarithmicStrain'");
 	}
       };
       throw_if(this->fss!=UNDEFINEDSTRATEGY,
@@ -184,11 +183,9 @@ namespace mfront{
 	mh.insert(h);
       }
     }
-    if(mh.empty()){
-      throw(std::runtime_error("EuroplexusInterfaceModellingHypothesesToBeTreated : "
-			       "no hypotheses selected, so it does not "
-			       "make sense to use the Europlexus interface"));
-    }
+    tfel::raise_if(mh.empty(),"EuroplexusInterfaceModellingHypothesesToBeTreated: "
+		   "no hypotheses selected, so it does not "
+		   "make sense to use the Europlexus interface");
     return mh;
   } // end of EuroplexusInterface::getModellingHypothesesToBeTreated
 
@@ -198,7 +195,7 @@ namespace mfront{
   {
     using namespace tfel::system;
     auto throw_if = [](const bool b, const std::string& m){
-      if(b){throw(std::runtime_error("EuroplexusInterface::endTreatment: "+m));}
+      tfel::raise_if(b,"EuroplexusInterface::endTreatment: "+m);
     };
     throw_if((mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)&&
 	     (mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR),
@@ -359,8 +356,8 @@ namespace mfront{
     
     // this->generateMTestFile2(out,mb.getBehaviourType(),
     // 			     name,"",mb);
-    out << "}\n\n";
-    out << "} // end of extern \"C\"\n";
+    out << "}\n\n"
+ << "} // end of extern \"C\"\n";
     out.close();
     out.open("europlexus/"+mb.getClassName()+".epx");
     out << "!\n"
@@ -451,12 +448,11 @@ namespace mfront{
 							  const BehaviourDescription& mb,
 							  const std::string& name) const
   {
-    if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      throw(std::runtime_error("EuroplexusInterface::writeLogarithmicStrainCall: "
-			       "internal error, the 'finite rotation small strain' "
-			       "strategy shall be used only with small "
-			       "strain behaviour"));
-    }
+    tfel::raise_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+		   "EuroplexusInterface::writeFiniteRotationSmallStrainCall: "
+		   "internal error, the 'finite rotation small strain' "
+		   "strategy shall be used only with small "
+		   "strain behaviour");
     const auto sfeh = "epx::EuroplexusStandardSmallStrainStressFreeExpansionHandler";
     out << "epx::EuroplexusReal eto[6];\n"
 	<< "epx::EuroplexusReal deto[6];\n"
@@ -521,17 +517,15 @@ namespace mfront{
 	<< "}\n";
   }
 
-  void
-  EuroplexusInterface::writeLogarithmicStrainCall(std::ostream& out,
-						  const BehaviourDescription& mb,
-						  const std::string& name) const
+  void EuroplexusInterface::writeLogarithmicStrainCall(std::ostream& out,
+						       const BehaviourDescription& mb,
+						       const std::string& name) const
   {
-    if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      throw(std::runtime_error("EuroplexusInterface::writeFiniteRotationSmallStrainCall: "
-			       "internal error, the 'finite rotation small strain' "
-			       "strategy shall be used only with small "
-			       "strain behaviour"));
-    }
+    tfel::raise_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+		   "EuroplexusInterface::writeFiniteRotationSmallStrainCall: "
+		   "internal error, the 'finite rotation small strain' "
+		   "strategy shall be used only with small "
+		   "strain behaviour");
     const auto sfeh = "epx::EuroplexusLogarithmicStrainStressFreeExpansionHandler";
     out << "epx::EuroplexusReal eto[6];\n"
 	<< "epx::EuroplexusReal deto[6];\n"
@@ -638,10 +632,9 @@ namespace mfront{
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(!v.increment_known){
-      if(SupportedTypes::getTypeFlag(v.type)!=SupportedTypes::Tensor){
-	throw(std::runtime_error("EuroplexusInterface::writeBehaviourDataDrivingVariableSetter: "
-				 "unsupported driving variable type"));
-      }
+      tfel::raise_if(SupportedTypes::getTypeFlag(v.type)!=SupportedTypes::Tensor,
+		     "EuroplexusInterface::writeBehaviourDataDrivingVariableSetter: "
+		     "unsupported driving variable type");
       if(!o.isNull()){
 	os << "tfel::fsalgo::copy<TensorSize>::exe(" << iprefix << "stran+"  << o
 	   <<",this->" << v.name << "0.begin());\n";
@@ -650,10 +643,9 @@ namespace mfront{
 	   << v.name << "0.begin());\n";
       }
     } else {
-      if(SupportedTypes::getTypeFlag(v.type)!=SupportedTypes::Stensor){
-	throw(std::runtime_error("EuroplexusInterface::writeBehaviourDataDrivingVariableSetter: "
-				 "unsupported driving variable type"));
-      }
+      tfel::raise_if(SupportedTypes::getTypeFlag(v.type)!=SupportedTypes::Stensor,
+		     "EuroplexusInterface::writeBehaviourDataDrivingVariableSetter: "
+		     "unsupported driving variable type");
       if(!o.isNull()){
 	os << "tfel::fsalgo::copy<StensorSize>::exe(" << iprefix << "stran+"  << o
 	   <<",this->" << v.name << ".begin());\n";
@@ -671,10 +663,9 @@ namespace mfront{
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(!v.increment_known){
-      if(SupportedTypes::getTypeFlag(v.type)!=SupportedTypes::Tensor){
-	throw(std::runtime_error("EuroplexusInterface::writeIntegrationDataDrivingVariableSetter: "
-				 "unsupported driving variable type"));
-      }
+      tfel::raise_if(SupportedTypes::getTypeFlag(v.type)!=SupportedTypes::Tensor,
+		     "EuroplexusInterface::writeIntegrationDataDrivingVariableSetter: "
+		     "unsupported driving variable type");
       if(!o.isNull()){
 	os << "tfel::fsalgo::copy<TensorSize>::exe(" << iprefix << "dstran+"  << o
 	   <<",this->" << v.name << "1.begin());\n";
@@ -683,10 +674,9 @@ namespace mfront{
 	   << v.name << "1.begin());\n";
       }
     } else {
-      if(SupportedTypes::getTypeFlag(v.type)!=SupportedTypes::Stensor){
-	throw(std::runtime_error("EuroplexusInterface::writeIntegrationDataDrivingVariableSetter: "
-				 "unsupported driving variable type"));
-      }
+      tfel::raise_if(SupportedTypes::getTypeFlag(v.type)!=SupportedTypes::Stensor,
+		     "EuroplexusInterface::writeIntegrationDataDrivingVariableSetter: "
+		     "unsupported driving variable type");
       if(!o.isNull()){
 	os << "tfel::fsalgo::copy<StensorSize>::exe(" << iprefix << "dstran+"  << o
 	   <<",this->d" << v.name << ".begin());\n";
@@ -712,8 +702,8 @@ namespace mfront{
       }
       os << ",this->" << f.name << ".begin());\n";
     } else {
-      throw(std::runtime_error("EuroplexusInterface::writeBehaviourDataMainVariablesSetters : "
-			       "unsupported forces type"));
+      tfel::raise("EuroplexusInterface::writeBehaviourDataMainVariablesSetters : "
+		  "unsupported forces type");
     }
   } // end of EuroplexusInterface::writeBehaviourDataThermodynamicForceSetter
   
@@ -732,8 +722,8 @@ namespace mfront{
       }
       out << ");\n";
     } else {
-      throw(std::runtime_error("EuroplexusInterface::exportThermodynamicForce: "
-			       "unsupported forces type"));
+      tfel::raise("EuroplexusInterface::exportThermodynamicForce: "
+		  "unsupported forces type");
     }
   } // end of EuroplexusInterface::exportThermodynamicForce
     
@@ -785,12 +775,11 @@ namespace mfront{
 	  uh.insert(elem);
 	}
       }
-      if(uh.empty()){
-	throw(std::runtime_error("UMATInterface::endTreatment: "
-				 "internal error, the mechanical behaviour "
-				 "says that not all handled mechanical data "
-				 "are specialised, but we found none."));
-      }
+      tfel::raise_if(uh.empty(),
+		     "UMATInterface::endTreatment: "
+		     "internal error, the mechanical behaviour "
+		     "says that not all handled mechanical data "
+		     "are specialised, but we found none.");
       // material properties for all the selected hypothesis
       auto mpositions = vector<pair<vector<UMATMaterialProperty>,
 				    SupportedTypes::TypeSize>>{};
@@ -814,13 +803,11 @@ namespace mfront{
 	  o1+=pum->second;
 	  auto o2 = mp2.offset;
 	  o2+=mfirst.second;
-	  if(o1!=o2){
-	    throw(runtime_error("UMATInterface::buildMaterialPropertiesList : "
-				"incompatible offset for material property '"+mp.name+
-				"' (aka '"+mp1.name+"'). This is one pitfall of the "
-				"exp interface. To by-pass this limitation, you may "
-				"want to explicitely specialise some modelling hypotheses"));
-	  }
+	  tfel::raise_if(o1!=o2,"UMATInterface::buildMaterialPropertiesList : "
+			 "incompatible offset for material property '"+mp.name+
+			 "' (aka '"+mp1.name+"'). This is one pitfall of the "
+			 "exp interface. To by-pass this limitation, you may "
+			 "want to explicitely specialise some modelling hypotheses");
 	}
       }
       return mfirst;
@@ -839,7 +826,7 @@ namespace mfront{
       } else {
 	msg += " '"+ModellingHypothesis::toString(h)+"'";
       }
-      throw(runtime_error(msg));
+      tfel::raise(msg);
     }
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       if(mb.getSymmetryType()==mfront::ISOTROPIC){
@@ -860,12 +847,12 @@ namespace mfront{
 		  (h!=ModellingHypothesis::AXISYMMETRICAL)&&
 		  (h!=ModellingHypothesis::PLANESTRAIN)&&
 		  (h!=ModellingHypothesis::PLANESTRESS)){
-	  throw(runtime_error("EuroplexusInterface::buildMaterialPropertiesList : "
-			      "unsupported modelling hypothesis"));
+	  tfel::raise("EuroplexusInterface::buildMaterialPropertiesList : "
+		      "unsupported modelling hypothesis");
 	}
       } else {
-	throw(runtime_error("EuroplexusInterface::buildMaterialPropertiesList : "
-			    "unsupported behaviour symmetry type"));
+	tfel::raise("EuroplexusInterface::buildMaterialPropertiesList : "
+		    "unsupported behaviour symmetry type");
       }
     }
     if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
@@ -876,8 +863,8 @@ namespace mfront{
 	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion2","alp2",false);
 	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion3","alp3",false);
       } else {
-	throw(runtime_error("EuroplexusInterface::buildMaterialPropertiesList : "
-			    "unsupported behaviour symmetry type"));
+	tfel::raise("EuroplexusInterface::buildMaterialPropertiesList : "
+		    "unsupported behaviour symmetry type");
       }
     }
     if(!mprops.empty()){
@@ -908,8 +895,8 @@ namespace mfront{
 	out << ",bool use_qt";
       }
     }
-    out << ">\n";
-    out << "struct EuroplexusTraits<tfel::material::" << mb.getClassName() << "<";
+    out << ">\n"
+ << "struct EuroplexusTraits<tfel::material::" << mb.getClassName() << "<";
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       out << "H";
     } else {
@@ -922,15 +909,15 @@ namespace mfront{
     } else {
       out << "false";
     }
-    out << "> >\n{\n";
-    out << "//! behaviour type\n";
+    out << "> >\n{\n"
+ << "//! behaviour type\n";
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       out << "static " << constexpr_c << " EuroplexusBehaviourType btype = epx::SMALLSTRAINSTANDARDBEHAVIOUR;\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "static " << constexpr_c << " EuroplexusBehaviourType btype = epx::FINITESTRAINSTANDARDBEHAVIOUR;\n";
     } else {
-      throw(std::runtime_error("EuroplexusInterface::writeEuroplexusBehaviourTraits : "
-			       "unsupported behaviour type"));
+      tfel::raise("EuroplexusInterface::writeEuroplexusBehaviourTraits : "
+		  "unsupported behaviour type");
     }
     out << "//! space dimension\n";
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
@@ -941,16 +928,18 @@ namespace mfront{
 	  << ModellingHypothesis::toUpperCaseString(h)
 	  << ">::value;\n";
     }
-    out << "// tiny vector size\n";
-    out << "static " << constexpr_c << " unsigned short TVectorSize = N;\n";
-    out << "// symmetric tensor size\n";
-    out << "static " << constexpr_c << " unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
-    out << "// tensor size\n";
-    out << "static " << constexpr_c << " unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
-    out << "// size of the driving variable array\n";
-    out << "static " << constexpr_c << " unsigned short DrivingVariableSize = " << mvs.first <<  ";\n";
-    out << "// size of the thermodynamic force variable array (STRESS)\n";
-    out << "static " << constexpr_c << " unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
+    out << "// tiny vector size\n"
+	<< "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
+	<< "// symmetric tensor size\n"
+	<< "static " << constexpr_c << " unsigned short StensorSize = "
+	<< "tfel::math::StensorDimeToSize<N>::value;\n"
+	<< "// tensor size\n"
+	<< "static " << constexpr_c << " unsigned short TensorSize  = "
+	<< "tfel::math::TensorDimeToSize<N>::value;\n"
+	<< "// size of the driving variable array\n"
+	<< "static " << constexpr_c << " unsigned short DrivingVariableSize = " << mvs.first <<  ";\n"
+	<< "// size of the thermodynamic force variable array (STRESS)\n"
+	<< "static " << constexpr_c << " unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n";
     if(mb.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,false)){
       out << "static " << constexpr_c << " bool requiresUnAlteredStiffnessTensor = true;\n";
     } else {
@@ -971,9 +960,9 @@ namespace mfront{
     } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "static " << constexpr_c << " EuroplexusSymmetryType type = epx::ORTHOTROPIC;\n";
     } else {
-      throw(std::runtime_error("EuroplexusInterface::endTreatment: unsupported behaviour type.\n"
-			       "The europlexus interface only support isotropic or orthotropic "
-			       "behaviour at this time."));
+      tfel::raise("EuroplexusInterface::endTreatment: unsupported behaviour type.\n"
+		  "The europlexus interface only support isotropic or orthotropic "
+		  "behaviour at this time.");
     }
     // computing material properties size
     auto msize = SupportedTypes::TypeSize{};
@@ -1010,9 +999,9 @@ namespace mfront{
 	out << "static " << constexpr_c << " unsigned short thermalExpansionPropertiesOffset = 0u;\n"; 
       }
     } else {
-      throw(std::runtime_error("EuroplexusInterface::endTreatment: unsupported behaviour type.\n"
-			       "The europlexus interface only support isotropic or "
-			       "orthotropic behaviour at this time."));
+      tfel::raise("EuroplexusInterface::endTreatment: unsupported behaviour type.\n"
+		  "The europlexus interface only support isotropic or "
+		  "orthotropic behaviour at this time.");
     }
     out << "}; // end of class EuroplexusTraits\n\n";
   }
@@ -1045,8 +1034,8 @@ namespace mfront{
     } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
       return "*HYPOTHESIS==0";
     }
-    throw(std::runtime_error("EuroplexusInterface::getModellingHypothesisTest : "
-			     "unsupported modelling hypothesis"));
+    tfel::raise("EuroplexusInterface::getModellingHypothesisTest : "
+		"unsupported modelling hypothesis");
   } // end of EuroplexusInterface::gatherModellingHypothesesAndTests
 
   void
@@ -1057,17 +1046,16 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->fss==UNDEFINEDSTRATEGY){
-	throw(std::runtime_error("EuroplexusInterface::writeUMATxxBehaviourTypeSymbols: "
-				 "behaviours written in the small strain framework "
-				 "must be embedded in a strain strategy"));
-      }
+      tfel::raise_if(this->fss==UNDEFINEDSTRATEGY,
+		     "EuroplexusInterface::writeUMATxxBehaviourTypeSymbols: "
+		     "behaviours written in the small strain framework "
+		     "must be embedded in a strain strategy");
       out << "2u;\n\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "2u;\n\n";
     } else {
-      throw(std::runtime_error("EuroplexusInterface::writeUMATxxBehaviourTypeSymbols: "
-			       "unsupported behaviour type"));
+      tfel::raise("EuroplexusInterface::writeUMATxxBehaviourTypeSymbols: "
+		  "unsupported behaviour type");
     }
   } // end of EuroplexusInterface::writeUMATxxBehaviourTypeSymbols
 
@@ -1079,17 +1067,16 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourKinematic = " ;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->fss==UNDEFINEDSTRATEGY){
-	throw(std::runtime_error("EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols: "
-				 "behaviours written in the small strain framework "
-				 "must be embedded in a strain strategy"));
-      }
+      tfel::raise_if(this->fss==UNDEFINEDSTRATEGY,
+		     "EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols: "
+		     "behaviours written in the small strain framework "
+		     "must be embedded in a strain strategy");
       out << "3u;\n\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "3u;\n\n";
     } else {
-      throw(std::runtime_error("EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols: "
-			       "unsupported behaviour type"));
+      tfel::raise("EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols: "
+		  "unsupported behaviour type");
     }
   } // end of EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols
   

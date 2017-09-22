@@ -15,6 +15,7 @@
 #include<sstream>
 #include<iostream>
 
+#include "TFEL/Raise.hxx"
 #include "MFront/Europlexus/EuroplexusInterfaceExceptions.hxx"
 
 namespace epx{
@@ -29,7 +30,7 @@ namespace epx{
 	<< "the number of material properties does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " material properties, and "
 	<< n2 << " material properties were declared";
-    throw(EuroplexusException(msg.str()));
+    tfel::raise<EuroplexusException>(msg.str());
   } // end of throwUnMatchedNumberOfMaterialProperties
     
   void
@@ -42,7 +43,7 @@ namespace epx{
 	<< "the number of internal state variables does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " state variables, and "
 	<< n2 << " state variables were declared";
-    throw(EuroplexusException(msg.str()));
+    tfel::raise<EuroplexusException>(msg.str());
   } // end of throwUnMatchedNumberOfStateVariables
 
   void
@@ -55,7 +56,7 @@ namespace epx{
 	<< "the number of external state variables does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " state variables, and "
 	<< n2 << " state variables were declared";
-    throw(EuroplexusException(msg.str()));
+    tfel::raise<EuroplexusException>(msg.str());
   } // end of throwUnMatchedNumberOfExternalStateVariables
   
   void
@@ -104,53 +105,54 @@ namespace epx{
   void
   EuroplexusInterfaceExceptions::throwNegativeTimeStepException(const std::string& b)
   {
-    throw(std::runtime_error("EuroplexusInterfaceExceptions::throwNegativeTimeStepException: "
-			     "negative time step detected for behaviour '"+b+"'"));
+    tfel::raise("EuroplexusInterfaceExceptions::throwNegativeTimeStepException: "
+		"negative time step detected for behaviour '"+b+"'");
   } // end of EuroplexusInterfaceExceptions::throwNegativeTimeStepException
 
   void
   EuroplexusInterfaceExceptions::throwInvalidDDSDDEValueException(const std::string& b,
 								  const EuroplexusReal v){
-    throw(std::runtime_error("EuroplexusInterfaceExceptions::throwInvalidDDSDDEValueException: "
-			     "invalid value "+std::to_string(v)+" for DDSDDE. "
-			     "Invalid call to behaviour '"+b+"'"));
+    tfel::raise("EuroplexusInterfaceExceptions::throwInvalidDDSDDEValueException: "
+		"invalid value "+std::to_string(v)+" for DDSDDE. "
+		"Invalid call to behaviour '"+b+"'");
   } // end of EuroplexusInterfaceExceptions::throwInvalidDDSDDEValueException
 
   void
   EuroplexusInterfaceExceptions::throwInvalidTimeStepScalingFactorOnFailure(const std::string& b,
 									    const EuroplexusReal v){
-    throw(std::runtime_error("EuroplexusInterfaceExceptions::throwInvalidTimeStepScalingFactorOnFailure: "
-			     "invalid value '"+std::to_string(v)+"' for time"
-			     "step scaling factor on failure. "
-			     "Invalid call to behaviour '"+b+"'"));
+    tfel::raise("EuroplexusInterfaceExceptions::throwInvalidTimeStepScalingFactorOnFailure: "
+		"invalid value '"+std::to_string(v)+"' for time"
+		"step scaling factor on failure. "
+		"Invalid call to behaviour '"+b+"'");
   } // end of EuroplexusInterfaceExceptions::throwInvalidDDSDDEValueException
   
   void
   EuroplexusInterfaceExceptions::throwPredictionComputationFailedException(const std::string& b)
   {
-    throw(std::runtime_error("EuroplexusInterfaceExceptions::throwPredictionComputationFailedException: "
-			     "prediction computation failed for behaviour '"+b+"'"));
+    tfel::raise("EuroplexusInterfaceExceptions::throwPredictionComputationFailedException: "
+		"prediction computation failed for behaviour '"+b+"'");
   }
 
   void
   EuroplexusInterfaceExceptions::throwPredictionOperatorIsNotAvalaible(const std::string& b)
   {
-    throw(std::runtime_error("EuroplexusInterfaceExceptions::throwPredictionOperatorIsNotAvalaible: "
-			     "behaviour '"+b+"' can't compute a prediction operator"));
+    tfel::raise("EuroplexusInterfaceExceptions::throwPredictionOperatorIsNotAvalaible: "
+		"behaviour '"+b+"' can't compute a prediction operator");
   } // end of EuroplexusInterfaceExceptions::throwBehaviourIntegrationFailedException
 
   void
   EuroplexusInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible(const std::string& b)
   {
-    throw(std::runtime_error("EuroplexusInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible: "
-			     "behaviour '"+b+"' can't compute a consistent tangent operator"));
+    tfel::raise("EuroplexusInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible: "
+		"behaviour '"+b+"' can't compute a consistent tangent operator");
   } // end of EuroplexusInterfaceExceptions::throwBehaviourIntegrationFailedException
   
   void
   EuroplexusInterfaceExceptions::throwUnsupportedStressFreeExpansionException(const std::string& b)
   {
-    throw(std::runtime_error("EuroplexusInterfaceExceptions::throwUnsupportedStressFreeExpansionException: "
-			     "behaviour '"+b+"' can handle stress-free expansion but the Europlexus interface can't"));
+    tfel::raise("EuroplexusInterfaceExceptions::throwUnsupportedStressFreeExpansionException: "
+		"behaviour '"+b+"' can handle stress-free expansion "
+		"but the Europlexus interface can't");
   } // end of EuroplexusInterfaceExceptions::throwUnsupportedStressFreeExpansionException
 
   void
@@ -175,9 +177,9 @@ namespace epx{
 					EuroplexusReal *const,
 					const StressFreeExpansionHandler&)
   {
-    throw(std::runtime_error("EuroplexusUnSupportedCaseHandler::exe : "
-			     "we fall in a case that the Europlexus interface "
-			     "is not able to handle."));  
+    tfel::raise("EuroplexusUnSupportedCaseHandler::exe : "
+		"we fall in a case that the Europlexus interface "
+		"is not able to handle.");  
   } // end of exe
 
 } // end of namespace epx 

@@ -22,7 +22,7 @@
 #include<cstring>
 #include<iostream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/InitDSLs.hxx"
 #include"MFront/InitInterfaces.hxx"
 #include"MFront/MFrontHeader.hxx"
@@ -48,12 +48,10 @@ int main(const int argc, const char *const *const argv)
 	auto dsl = MFrontBase::getDSL(f);
 	if(dsl->getTargetType()==AbstractDSL::BEHAVIOURDSL){
 	  auto b = std::dynamic_pointer_cast<AbstractBehaviourDSL>(dsl);
-	  if(!b){
-	    throw(std::runtime_error("mfront-doc : invalid dsl implementation"));
-	  }
+	  tfel::raise_if(!b,"mfront-doc: invalid dsl implementation");
 	  bgens.push_back(std::make_shared<BGen>(argc,argv,b,f));
 	} else {
-	  throw(std::runtime_error("mfront-doc : unsupported dsl type"));
+	  tfel::raise("mfront-doc: unsupported dsl type");
 	}
       } else if ((strcmp(*a,"--help")==0)||(strcmp(*a,"-h")==0)){
 	std::cout << "Usage : " << argv[0] << " [options] [files]" << std::endl;

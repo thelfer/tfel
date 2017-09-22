@@ -11,8 +11,9 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
 #include<iterator>
+#include<iostream>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
@@ -143,8 +144,8 @@ namespace mfront{
 	      std::cout << std::endl;
 	    }}});
     } else {
-      throw(std::runtime_error("Model::treatStandardQuery : "
-			       "unsupported query '"+qn+"'"));
+      tfel::raise("Model::treatStandardQuery : "
+		  "unsupported query '"+qn+"'");
     }
   } // end of ModelQuery::treatStandardQuery
   

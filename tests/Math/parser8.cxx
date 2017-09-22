@@ -25,6 +25,7 @@
 #include<algorithm>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Tests/Test.hxx"
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
@@ -63,16 +64,14 @@ struct ParserTest final
       v1 = ev1.getVariablesNames();
       for(p=vars.begin();p!=vars.end();++p){
 	p2 = find(v1.begin(),v1.end(),*p);
-	if(p2==v1.end()){
-	  throw(runtime_error("unsued variable '"+*p+"'"));
-	}
+	tfel::raise_if(p2==v1.end(),
+		       "unsued variable '"+*p+"'");
 	v1.erase(p2);
       }
       for(p=v1.begin();p!=v1.end();++p){
 	p3 = values.find(*p);
-	if(p3==values.end()){
-	  throw(runtime_error("unknown external value '"+*p+"'"));
-	}
+	tfel::raise_if(p3==values.end(),
+		       "unknown external value '"+*p+"'");
 	ostringstream os;
 	os << p3->second;
 	fmanager->operator[](*p) = std::make_shared<Evaluator>(os.str()); 
@@ -95,16 +94,10 @@ struct ParserTest final
 TFEL_TESTS_GENERATE_PROXY(ParserTest,"Parser");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main()
-{
-  using namespace tfel::tests;
-  auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(std::cout);
-  manager.addXMLTestOutput("parser8.xml");
-  TestResult r = manager.execute();
-  if(!r.success()){
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+int main(){
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("parser8.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 } // end of main
 

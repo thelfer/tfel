@@ -21,7 +21,7 @@
 #include<algorithm>
 #include<iostream>
 #include<sstream>
-
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
@@ -68,10 +68,9 @@ namespace mfront{
       r += bb+to_string(b[0])+','+to_string(b[1])+','+to_string(b[2])+be;
       r += pb+to_string(p[0])+','+to_string(p[1])+','+to_string(p[2])+pe;
     } else {
-      if(!gs.is<SlipSystemsDescription::system4d>()){
-	throw(std::runtime_error("to_string: internal error "
-				 "(unsupported slip system type)"));
-      }
+      tfel::raise_if(!gs.is<SlipSystemsDescription::system4d>(),
+		     "to_string: internal error "
+		     "(unsupported slip system type)");
       const auto& p = gs.get<SlipSystemsDescription::system4d>().plane;
       const auto& b = gs.get<SlipSystemsDescription::system4d>().burgers;
       r += bb+to_string(b[0])+','+to_string(b[1])+','+
@@ -100,7 +99,7 @@ namespace mfront{
   {
     using tfel::utilities::tokenize;
     auto throw_if = [](const bool c,const std::string& msg){
-      if(c){throw(std::runtime_error("extract_crystal_direction: "+msg));}
+      tfel::raise_if(c,"extract_crystal_direction: "+msg);
     };
     auto throw_if2 = [throw_if](const bool c){
       throw_if(c,"ill defined direction");
@@ -316,7 +315,7 @@ namespace mfront{
 	    } else if(t==BehaviourDescription::COHESIVEZONEMODEL){
 	      std::cout << 3 << std::endl;
 	    } else {
-	      throw(std::runtime_error("unsupported behaviour type"));
+	      tfel::raise("unsupported behaviour type");
 	    }}});
     } else if(qn=="--symmetry"){
       this->queries.push_back({"symmetry",[](const FileDescription&,
@@ -328,7 +327,7 @@ namespace mfront{
 	    } else if(s==mfront::ORTHOTROPIC){
 	      cout << 1 << '\n';
 	    } else {
-	      throw(std::runtime_error("unsupported symmetry"));
+	      tfel::raise("unsupported symmetry");
 	    }
 	  }});
     } else if(qn=="--has-crystal-structure"){
@@ -354,16 +353,15 @@ namespace mfront{
 	    } else if(s==CrystalStructure::FCC){
 	      cout << "Face-centered cubic\n";
 	    } else {
-	      throw(std::runtime_error("unsupported crystal structure"));
+	      tfel::raise("unsupported crystal structure");
 	    }
 	  }});
     } else if(qn=="--slip-systems"){
       this->queries.push_back({"slip-systems",[](const FileDescription&,
 						 const BehaviourDescription& d,
 						 const Hypothesis){
-	    if(!d.areSlipSystemsDefined()){
-	      throw(std::runtime_error("no slip system defined"));
-	    }
+	    tfel::raise_if(!d.areSlipSystemsDefined(),
+			   "no slip system defined");
 	    const auto& ssd = d.getSlipSystems();
 	    const auto nss = ssd.getNumberOfSlipSystemsFamilies();
 	    for(size_t i=0;i!=nss;++i){
@@ -380,9 +378,8 @@ namespace mfront{
 	    [](const FileDescription&,
 	       const BehaviourDescription& d,
 	       const Hypothesis){
-	    if(!d.areSlipSystemsDefined()){
-	      throw(std::runtime_error("no slip system defined"));
-	    }
+	    tfel::raise_if(!d.areSlipSystemsDefined(),
+			   "no slip system defined");
 	    const auto& ssd = d.getSlipSystems();
 	    const auto nss = ssd.getNumberOfSlipSystemsFamilies();
 	    auto r = size_t{};
@@ -398,9 +395,8 @@ namespace mfront{
       this->queries.push_back({"orientation-tensors",[](const FileDescription&,
 						 const BehaviourDescription& d,
 						 const Hypothesis){
-	    if(!d.areSlipSystemsDefined()){
-	      throw(std::runtime_error("no slip system defined"));
-	    }
+	    tfel::raise_if(!d.areSlipSystemsDefined(),
+			   "no slip system defined");
 	    const auto& ssd = d.getSlipSystems();
 	    const auto nss = ssd.getNumberOfSlipSystemsFamilies();
 	    for(size_t i=0;i!=nss;++i){
@@ -417,9 +413,8 @@ namespace mfront{
 	    [](const FileDescription&,
 	       const BehaviourDescription& d,
 	       const Hypothesis){
-	    if(!d.areSlipSystemsDefined()){
-	      throw(std::runtime_error("no slip system defined"));
-	    }
+	    tfel::raise_if(!d.areSlipSystemsDefined(),
+			   "no slip system defined");
 	    const auto& ssd = d.getSlipSystems();
 	    const auto nss = ssd.getNumberOfSlipSystemsFamilies();
 	    auto r = size_t{};
@@ -436,9 +431,8 @@ namespace mfront{
 	    [](const FileDescription&,
 	       const BehaviourDescription& d,
 	       const Hypothesis){
-	    if(!d.areSlipSystemsDefined()){
-	      throw(std::runtime_error("no slip system defined"));
-	    }
+	    tfel::raise_if(!d.areSlipSystemsDefined(),
+			   "no slip system defined");
 	    const auto& ssd = d.getSlipSystems();
 	    const auto nss = ssd.getNumberOfSlipSystemsFamilies();
 	    auto r = size_t{};
@@ -456,9 +450,8 @@ namespace mfront{
 	    [](const FileDescription&,
 	       const BehaviourDescription& d,
 	       const Hypothesis){
-	    if(!d.areSlipSystemsDefined()){
-	      throw(std::runtime_error("no slip system defined"));
-	    }
+	    tfel::raise_if(!d.areSlipSystemsDefined(),
+			   "no slip system defined");
 	    const auto& im     = d.getInteractionMatrixStructure();
 	    const auto  r      = im.rank();
 	    const auto& ssis_r = im.getSlidingSystemsInteraction();
@@ -479,9 +472,8 @@ namespace mfront{
 	    [](const FileDescription&,
 	       const BehaviourDescription& d,
 	       const Hypothesis){
-	    if(!d.areSlipSystemsDefined()){
-	      throw(std::runtime_error("no slip system defined"));
-	    }
+	    tfel::raise_if(!d.areSlipSystemsDefined(),
+			   "no slip system defined");
 	    const auto& ssd = d.getSlipSystems();
 	    const auto& im  = d.getInteractionMatrixStructure();
 	    const auto nss  = ssd.getNumberOfSlipSystemsFamilies();
@@ -509,9 +501,8 @@ namespace mfront{
 	    [](const FileDescription&,
 	       const BehaviourDescription& d,
 	       const Hypothesis){
-	    if(!d.areSlipSystemsDefined()){
-	      throw(std::runtime_error("no slip system defined"));
-	    }
+	    tfel::raise_if(!d.areSlipSystemsDefined(),
+			   "no slip system defined");
 	    const auto& ssd = d.getSlipSystems();
 	    const auto& im  = d.getInteractionMatrixStructure();
 	    const auto nss  = ssd.getNumberOfSlipSystemsFamilies();
@@ -544,7 +535,7 @@ namespace mfront{
 	    } else if(s==mfront::ORTHOTROPIC){
 	      cout << 1 << '\n';
 	    } else {
-	      throw(std::runtime_error("unsupported elastic symmetry"));
+	      tfel::raise("unsupported elastic symmetry");
 	    }
 	  }});
     } else if(qn=="--supported-modelling-hypotheses"){
@@ -636,8 +627,8 @@ namespace mfront{
 	    }
 	  }});
     } else {
-      throw(std::runtime_error("Behaviour::treatStandardQuery : "
-			       "unsupported query '"+qn+"'"));
+      tfel::raise("Behaviour::treatStandardQuery : "
+		  "unsupported query '"+qn+"'");
     }
   }
 
@@ -648,10 +639,9 @@ namespace mfront{
     const auto& q  = this->getCurrentCommandLineArgument();
     const auto& qn = q.as_string();
     const auto  o  = q.getOption();
-    if(o.empty()){
-      throw(runtime_error("Behaviour::treatStandardQuery2 : "
-			  "no option given to the '"+qn+"' query"));
-    } else if (qn=="--attribute-type"){
+    tfel::raise_if(o.empty(),"Behaviour::treatStandardQuery2 : "
+		   "no option given to the '"+qn+"' query");
+    if (qn=="--attribute-type"){
       auto l = [o](const FileDescription&,
 		   const BehaviourDescription& d,
 		   const Hypothesis h){
@@ -663,8 +653,8 @@ namespace mfront{
 	} else if(a.is<string>()){
 	  cout << "string\n";
 	} else {
-	  throw(runtime_error("Behaviour::treatStandardQuery2 : "
-			      "unsupported attribute type"));
+	  tfel::raise("Behaviour::treatStandardQuery2 : "
+		      "unsupported attribute type");
 	}
       };
       this->queries.push_back({"attribute-type",l});
@@ -695,8 +685,8 @@ namespace mfront{
 	  }
 	  cout << '\n';
 	} else {
-	  throw(runtime_error("Behaviour::treatStandardQuery2 : "
-			      "unsupported attribute type"));
+	  tfel::raise("Behaviour::treatStandardQuery2 : "
+		      "unsupported attribute type");
 	}
       };
       this->queries.push_back({"attributes-value",l});
@@ -731,7 +721,7 @@ namespace mfront{
 	} else if(b.boundsType==VariableBoundsDescription::LOWERANDUPPER){
 	  cout << "LowerAndUpper\n";
 	} else {
-	  throw(std::runtime_error("unsupported bounds type"));
+	  tfel::raise("unsupported bounds type");
 	}
       };
       this->queries.push_back({"bounds-type",l});
@@ -751,7 +741,7 @@ namespace mfront{
 	} else if(b.boundsType==VariableBoundsDescription::LOWERANDUPPER){
 	  cout << "[" << b.lowerBound << ":" << b.upperBound << "]\n";
 	} else {
-	  throw(std::runtime_error("unsupported bounds type"));
+	  tfel::raise("unsupported bounds type");
 	}
       };
       this->queries.push_back({"bounds-value",l});
@@ -788,7 +778,7 @@ namespace mfront{
 	} else if(b.boundsType==VariableBoundsDescription::LOWERANDUPPER){
 	  cout << "LowerAndUpper\n";
 	} else {
-	  throw(std::runtime_error("unsupported physical bounds type"));
+	  tfel::raise("unsupported physical bounds type");
 	}
       };
       this->queries.push_back({"physical-bounds-type",l});
@@ -810,7 +800,7 @@ namespace mfront{
 	} else if(b.boundsType==VariableBoundsDescription::LOWERANDUPPER){
 	  cout << "[" << b.lowerBound << ":" << b.upperBound << "]\n";
 	} else {
-	  throw(std::runtime_error("unsupported bounds type"));
+	  tfel::raise("unsupported bounds type");
 	}
       };
       this->queries.push_back({"physical-bounds-value",l});
@@ -847,8 +837,8 @@ namespace mfront{
 	} else if(p.type=="ushort"){
 	  cout << bd.getUnsignedShortParameterDefaultValue(n) << '\n';
 	} else {
-	  throw(runtime_error("Behaviour::treatStandardQuery2 : "
-			      "unsupported parameter type"));
+	  tfel::raise("Behaviour::treatStandardQuery2 : "
+		      "unsupported parameter type");
 	}
       };
       this->queries.push_back({"parameter-default-value",l});
@@ -863,17 +853,16 @@ namespace mfront{
 	    return;
 	  }
 	}
-	throw(runtime_error("Behaviour::treatStandardQuery2 : "
-			    "no static variable '"+o+"'"));
+	tfel::raise("Behaviour::treatStandardQuery2 : "
+		    "no static variable '"+o+"'");
       };
       this->queries.push_back({"static-variable-value",l});
     } else if(qn=="--schmid-factors"){
       auto l = [o](const FileDescription&,
 		   const BehaviourDescription& d,
 		   const Hypothesis){
-	if(!d.areSlipSystemsDefined()){
-	  throw(std::runtime_error("no slip system defined"));
-	}
+	tfel::raise_if(!d.areSlipSystemsDefined(),
+		       "no slip system defined");
 	const auto dc = extract_crystal_direction(o);
 	const auto& ssd = d.getSlipSystems();
 	const auto nss  = ssd.getNumberOfSlipSystemsFamilies();
@@ -891,9 +880,8 @@ namespace mfront{
       auto l = [o](const FileDescription&,
 		   const BehaviourDescription& d,
 		   const Hypothesis){
-	if(!d.areSlipSystemsDefined()){
-	  throw(std::runtime_error("no slip system defined"));
-	}
+	tfel::raise_if(!d.areSlipSystemsDefined(),
+		       "no slip system defined");
 	const auto dc = extract_crystal_direction(o);
 	const auto& ssd = d.getSlipSystems();
 	const auto sfs  = ssd.getSchmidFactors(dc);
@@ -907,8 +895,8 @@ namespace mfront{
       };
       this->queries.push_back({"schmid-factors-by-index",l});
     } else {
-      throw(std::runtime_error("Behaviour::treatStandardQuery : "
-			       "unsupported query '"+qn+"'"));
+      tfel::raise("Behaviour::treatStandardQuery : "
+		  "unsupported query '"+qn+"'");
     }
   }
 
@@ -1030,15 +1018,13 @@ namespace mfront{
   {
     using namespace std;
     const auto& o = this->getCurrentCommandLineArgument().getOption();
-    if(o.empty()){
-      throw(runtime_error("BehaviourQuery::treatModellingHypothesis : "
-			  "no option given to --modelling-hypothesis"
-			  "command line option"));
-    }
-    if(this->hypothesis!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      throw(runtime_error("BehaviourQuery::treatModellingHypothesis : "
-			  "modelling hypothesis already defined"));
-    }
+    tfel::raise_if(o.empty(),
+		   "BehaviourQuery::treatModellingHypothesis: "
+		   "no option given to --modelling-hypothesis"
+		   "command line option");
+    tfel::raise_if(this->hypothesis!=ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		   "BehaviourQuery::treatModellingHypothesis: "
+		   "modelling hypothesis already defined");
     this->hypothesis = ModellingHypothesis::fromString(o);
   } // end of BehaviourQuery::treatModellingHypothesis
 
@@ -1067,16 +1053,15 @@ namespace mfront{
 	  for(const auto h : mh){
 	    msg << "- " << ModellingHypothesis::toString(h) << '\n';
 	  }
-	  throw(runtime_error(msg.str()));
+	  tfel::raise(msg.str());
 	}
       }
     } else  {
       const auto& mh = d.getDistinctModellingHypotheses();
-      if(mh.find(this->hypothesis)==mh.end()){
-	string msg("BehaviourQuery::exe : the specified modelling hypothesis ('"+
-		   ModellingHypothesis::toString(this->hypothesis)+"') is not supported by the behaviour");
-	throw(runtime_error(msg));
-      }
+      tfel::raise_if(mh.find(this->hypothesis)==mh.end(),
+		     "BehaviourQuery::exe: the specified modelling hypothesis "
+		     "('"+ModellingHypothesis::toString(this->hypothesis)+"') "
+		     "is not supported by the behaviour");
     }
     // treating the queries
     for(const auto& q : queries){

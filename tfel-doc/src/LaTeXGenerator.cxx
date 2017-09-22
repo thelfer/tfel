@@ -15,6 +15,7 @@
 #include<iostream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/Global.hxx"
 #include"TFEL/Utilities/GeneratorOptions.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
@@ -261,9 +262,7 @@ namespace tfel
 	  const auto& tf = replace_all(td.first,' ','_')+".tex";
 	  const auto& file = o.outputDirectory+"/"+tf;
 	  std::ofstream f(file);
-	  if(!f){
-	    throw(std::runtime_error("writeLaTeXFile : can't open file '"+file+"'"));
-	  }
+	  raise_if(!f,"writeLaTeXFile : can't open file '"+file+"'");
 	  writeLaTeXSection(f,td.first,td.second,o.prefix,o.lang);
 	  out << "\\input{" << tf << "}\n\n";
 	} else {

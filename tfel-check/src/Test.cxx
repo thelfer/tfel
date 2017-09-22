@@ -13,7 +13,8 @@
 #include<sstream>
 #include<stdexcept>
 
-#include "TFEL/Check/Test.hxx"
+#include"TFEL/Raise.hxx"
+#include"TFEL/Check/Test.hxx"
 
 namespace tfel{
 
@@ -160,7 +161,7 @@ namespace tfel{
 	      << this->c1->getValues().size() << " vs "
 	      << this->c2->getValues().size() << ")";
 	  this->msgLog.append(msg.str());
-	  throw(runtime_error(msg.str()));
+	  raise(msg.str());
 	}
       } else if (this->interpolation->isConform() && this->comparison->getName() != "area") {
 
@@ -239,7 +240,7 @@ namespace tfel{
 		   && !(this->allowLessResults)) {
 	  msg << "\nResults have less values than reference.\n";
 	  this->msgLog.append(msg.str());
-	  throw(runtime_error(msg.str()));
+	  raise(msg.str());
 	}
       }  // else if (this->interpolation->isConform())
     }

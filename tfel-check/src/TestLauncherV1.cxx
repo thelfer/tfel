@@ -19,6 +19,7 @@
 #include<ctime>
 #include<unistd.h> // sysconf
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/ProcessManager.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
 
@@ -78,12 +79,8 @@ namespace tfel{
       // store tokens line by line
       p = this->begin();
       // check that we don't treat an empty file
-      if (p == this->end()) {
-	string msg("TestLauncherV1::TestLauncherV1 : ");
-	msg += "file " + file + " is empty.";
-	log.addMessage(msg);
-	throw(runtime_error(msg));
-      }
+      raise_if(p == this->end(),"TestLauncherV1::TestLauncherV1: "
+	       "file " + file + " is empty.");
       currentLine = 0u;
       while (p != this->end()) {
 	if (p->line != currentLine) {
@@ -113,22 +110,21 @@ namespace tfel{
 
     void TestLauncherV1::registerCallBack(const std::string& n,
 					  const CallBack& f) {
-      if (!this->callBacks.insert({n,f}).second) {
-	throw(std::runtime_error("TestLauncherV1::registerCallBack: "
-				 "keyword '"+n+"' has already been registred."));
-      }
+      raise_if(!this->callBacks.insert({n,f}).second,
+	       "TestLauncherV1::registerCallBack: "
+	       "keyword '"+n+"' has already been registred.");
     }  // end of TestLauncherV1::registerCallBack
 
     void TestLauncherV1::treatEnvironment() {
       using namespace std;
       using namespace tfel::utilities;
-      if (this->current == this->line->end()) {
+      if(this->current == this->line->end()) {
 	ostringstream msg;
 	msg << "TestLauncherV1::treatEnvironment : ";
 	msg << "unexpected end of line.\n";
 	msg << "Error at line " << this->line->begin()->line;
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       if (this->current->value != "{") {
 	ostringstream msg;
@@ -136,7 +132,7 @@ namespace tfel{
 	msg << "expected token '{', read '" << this->current->value << "'.\n";
 	msg << "Error at line " << this->line->begin()->line;
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       ++(this->current);
       if (this->current == this->line->end()) {
@@ -145,7 +141,7 @@ namespace tfel{
 	msg << "unexpected end of line.\n";
 	msg << "Error at line " << this->line->begin()->line;
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       while (this->current->value != "}") {
 	if (!((this->current->flag == Token::String)
@@ -154,7 +150,7 @@ namespace tfel{
 	  msg << "TestLauncherV1::treatEnvironment : ";
 	  msg << "expected a string";
 	  log.addMessage(msg.str());
-	  throw(runtime_error(msg.str()));
+	  raise(msg.str());
 	}
 	const auto& key = this->current->value.substr(1,this->current->value.size()-2);
 	++(this->current);
@@ -164,7 +160,7 @@ namespace tfel{
 	  msg << "unexpected end of line.\n";
 	  msg << "Error at line " << this->line->begin()->line;
 	  log.addMessage(msg.str());
-	  throw(runtime_error(msg.str()));
+	  raise(msg.str());
 	}
 	if (this->current->value != ":") {
 	  ostringstream msg;
@@ -172,7 +168,7 @@ namespace tfel{
 	  msg << "expected token ':', read '" << this->current->value << "'.\n";
 	  msg << "Error at line " << this->line->begin()->line;
 	  log.addMessage(msg.str());
-	  throw(runtime_error(msg.str()));
+	  raise(msg.str());
 	}
 	++(this->current);
 	if (this->current == this->line->end()) {
@@ -181,7 +177,7 @@ namespace tfel{
 	  msg << "unexpected end of line.\n";
 	  msg << "Error at line " << this->line->begin()->line;
 	  log.addMessage(msg.str());
-	  throw(runtime_error(msg.str()));
+	  raise(msg.str());
 	}
 	if (!((this->current->flag == Token::String)||
 	      (this->current->flag == Token::Char))) {
@@ -189,7 +185,7 @@ namespace tfel{
 	  msg << "TestLauncherV1::treatEnvironment : ";
 	  msg << "expected a string";
 	  log.addMessage(msg.str());
-	  throw(runtime_error(msg.str()));
+	  raise(msg.str());
 	}
 	const auto& value = this->current->value.substr(1,this->current->value.size()-2);
 	++(this->current);
@@ -199,7 +195,7 @@ namespace tfel{
 	  msg << "unexpected end of line.\n";
 	  msg << "Error at line " << this->line->begin()->line;
 	  log.addMessage(msg.str());
-	  throw(runtime_error(msg.str()));
+	  raise(msg.str());
 	}
 	if (this->current->value != "}") {
 	  if (this->current->value != ",") {
@@ -208,7 +204,7 @@ namespace tfel{
 	    msg << "expected token ',', read '" << this->current->value << "'.\n";
 	    msg << "Error at line " << this->line->begin()->line;
 	    log.addMessage(msg.str());
-	    throw(runtime_error(msg.str()));
+	    raise(msg.str());
 	  }
 	  ++(this->current);
 	  if (this->current == this->line->end()) {
@@ -218,7 +214,7 @@ namespace tfel{
 	      msg << "TestLauncherV1::treatEnvironment : ";
 	      msg << "unexpected end of file";
 	      log.addMessage(msg.str());
-	      throw(runtime_error(msg.str()));
+	      raise(msg.str());
 	    }
 	    this->current = this->line->begin();
 	  }
@@ -246,7 +242,7 @@ namespace tfel{
 	msg << " unexpected end of line.\n";
 	msg << "Error at line " << this->line->begin()->line;
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       if ((this->current->flag != Token::String)
 	  && (this->current->flag != Token::Char)) {
@@ -255,7 +251,7 @@ namespace tfel{
 	msg << "invalid line " << this->line->begin()->line;
 	msg << " (first filename is invalid)";
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       this->commands.push_back(this->current->value.substr(1, this->current->value.size() - 2));
       ++(this->current);
@@ -270,7 +266,7 @@ namespace tfel{
 	msg << " unexpected end of line.\n";
 	msg << "Error at line " << this->line->begin()->line;
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       if ((this->current->flag != Token::String)
 	  && (this->current->flag != Token::Char)) {
@@ -279,7 +275,7 @@ namespace tfel{
 	msg << "invalid line " << this->line->begin()->line;
 	msg << " (first filename is invalid)";
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       this->meshCommands.push_back(
 				   this->current->value.substr(1, this->current->value.size() - 2));
@@ -295,7 +291,7 @@ namespace tfel{
 	msg << " unexpected end of line.\n";
 	msg << "Error at line " << this->line->begin()->line;
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }	// creates a Comparison based on the word read
       if (this->current->value == "Absolute") {
 	this->comparison.reset(new AbsoluteComparison());
@@ -313,7 +309,7 @@ namespace tfel{
 	msg << " unknown test type (read '" + this->current->value + "').\n";
 	msg << "Error at line " << this->line->begin()->line;
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       ++(this->current);
       // testing if when Area is used, we have 'using ColumnName|ColumnNumber' following
@@ -325,7 +321,7 @@ namespace tfel{
 	  msg << " usage : \"TestType Area interpolation <None|Linear|Spline|LocalSpline> using <columnName|columnNumber>\").\n";
 	  msg << "Error at line " << this->line->begin()->line;
 	  log.addMessage(msg.str());
-	  throw(runtime_error(msg.str()));
+	  raise(msg.str());
 	}
       } else if (this->current->value == "interpolation") {
 	++(this->current);
@@ -336,7 +332,7 @@ namespace tfel{
 	  msg << " usage : \"TestType Area interpolation <None|Linear|Spline|LocalSpline> using <columnName|columnNumber>\").\n";
 	  msg << "Error at line " << this->line->begin()->line;
 	  log.addMessage(msg.str());
-	  throw(runtime_error(msg.str()));
+	  raise(msg.str());
 	} else {
 	  if (this->current->value == "Spline") {
 	    this->integralInterpolation.reset(new SplineInterpolation());
@@ -353,7 +349,7 @@ namespace tfel{
 	      + "').\n";
 	    msg << "Error at line " << this->line->begin()->line;
 	    log.addMessage(msg.str());
-	    throw(runtime_error(msg.str()));
+	    raise(msg.str());
 	  }
 	  ++(this->current);
 	  if (this->current == this->line->end()) {
@@ -363,7 +359,7 @@ namespace tfel{
 	    msg << " usage : \"TestType Area interpolation <None|Linear|Spline|LocalSpline> using <columnName|columnNumber>\").\n";
 	    msg << "Error at line " << this->line->begin()->line;
 	    log.addMessage(msg.str());
-	    throw(runtime_error(msg.str()));
+	    raise(msg.str());
 	  }
 
 	  else if (this->current->value == "using") {
@@ -375,7 +371,7 @@ namespace tfel{
 	      msg << " usage : \"TestType Area interpolation <None|Linear|Spline|LocalSpline> using <columnName|columnNumber>\").\n";
 	      msg << "Error at line " << this->line->begin()->line;
 	      log.addMessage(msg.str());
-	      throw(runtime_error(msg.str()));
+	      raise(msg.str());
 	    }
 	    if ((this->current->flag == Token::String)
 		|| (this->current->flag == Token::Char)) {
@@ -393,7 +389,7 @@ namespace tfel{
 		    << ").\n";
 		msg << "Error ";
 		log.addMessage(msg.str());
-		throw(std::runtime_error(msg.str()));
+		raise(msg.str());
 	      }
 	      this->colIntegralInterpolated.reset(new Column(c));
 	    }
@@ -412,7 +408,7 @@ namespace tfel{
 	msg << " unexpected end of line.\n";
 	msg << "Error at line " << this->line->begin()->line;
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       if(this->current->flag != Token::String){
 	ostringstream msg;
@@ -420,7 +416,7 @@ namespace tfel{
 	msg << "invalid line " << this->line->begin()->line;
 	msg << " (first filename is invalid, read '"+this->current->value+"')";
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       const auto f1 = this->current->value.substr(1,this->current->value.size() - 2);
       ++(this->current);
@@ -430,7 +426,7 @@ namespace tfel{
 	msg << " unexpected end of line.\n";
 	msg << "Error at line " << this->line->begin()->line;
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       if(this->current->flag != Token::String){
 	ostringstream msg;
@@ -438,7 +434,7 @@ namespace tfel{
 	msg << "invalid line " << this->line->begin()->line;
 	msg << " (second filename is invalid, read "+this->current->value+")";
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       const auto f2 = this->current->value.substr(1,this->current->value.size() - 2);
       ++(this->current);
@@ -448,7 +444,7 @@ namespace tfel{
 	msg << " unexpected end of line.\n";
 	msg << "Error at line " << this->line->begin()->line;
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       while (this->current != this->line->end()) {
 
@@ -460,9 +456,10 @@ namespace tfel{
 	test->setInterpolation(this->interpolation->clone());
 	test->setIntegralInterpolation(this->integralInterpolation);
 
-	if (test->getInterpolation()->isConform())  // fetch the times if doing an interpolation
+	if(test->getInterpolation()->isConform()){
+	  // fetch the times if doing an interpolation
 	  test->setColInterpolated(this->ci);
-
+	}
 	test->setColIntegralInterpolated(this->colIntegralInterpolated);  // fetch the times for an integration
 	test->setAllowLessResults(this->allowLessResults);
 
@@ -487,7 +484,7 @@ namespace tfel{
 		<< ").\n";
 	    msg << "Error ";
 	    log.addMessage(msg.str());
-	    throw(std::runtime_error(msg.str()));
+	    raise(msg.str());
 	  }
 	  c1Tmp.reset(new Column(c));
 	  c2Tmp.reset(new Column(c));
@@ -523,7 +520,7 @@ namespace tfel{
 	      << ").\n";
 	  msg << "Error at line : " << ln;
 	  os.addMessage(msg.str());
-	  throw(runtime_error(msg.str()));
+	  raise(msg.str());
 	}
 	return v;
       };
@@ -533,7 +530,7 @@ namespace tfel{
 	msg << " unexpected end of line.\n";
 	msg << "Error at line " << this->line->begin()->line;
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       this->prec = converter(this->log,this->current->value,
 			     this->line->begin()->line);
@@ -555,7 +552,7 @@ namespace tfel{
 	msg << " unexpected end of line.\n";
 	msg << "Error at line " << this->line->begin()->line;
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       if (this->current->value == "Spline") {
 	this->interpolation.reset(new SplineInterpolation());
@@ -572,7 +569,7 @@ namespace tfel{
 	  + "').\n";
 	msg << "Error at line " << this->line->begin()->line;
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       ++(this->current);
       if (this->current == this->line->end()) {
@@ -583,7 +580,7 @@ namespace tfel{
 	  msg << " usage : \"Interpolation <None|Linear|Spline|LocalSpline> using <columnName|columnNumber> [AllowLessResults]\").\n";
 	  msg << "Error at line " << this->line->begin()->line;
 	  log.addMessage(msg.str());
-	  throw(runtime_error(msg.str()));
+	  raise(msg.str());
 	}
       } else if (this->current->value == "using") {
 	++(this->current);
@@ -594,7 +591,7 @@ namespace tfel{
 	  msg << " usage : \"Interpolation <None|Linear|Spline|LocalSpline> using <columnName|columnNumber> [AllowLessResults]\").\n";
 	  msg << "Error at line " << this->line->begin()->line;
 	  log.addMessage(msg.str());
-	  throw(runtime_error(msg.str()));
+	  raise(msg.str());
 	}
 	if ((this->current->flag == Token::String)
 	    || (this->current->flag == Token::Char)) {
@@ -612,7 +609,7 @@ namespace tfel{
 		<< ").\n";
 	    msg << "Error ";
 	    log.addMessage(msg.str());
-	    throw(std::runtime_error(msg.str()));
+	    raise(msg.str());
 	  }
 	  this->ci.reset(new Column(c));
 	}
@@ -634,7 +631,7 @@ namespace tfel{
 		  << ", expected \"AllowLessResults\").\n";
 	      msg << "Error at line : " << this->line->begin()->line;
 	      log.addMessage(msg.str());
-	      throw(runtime_error(msg.str()));
+	      raise(msg.str());
 	    }
 	  }
 	}
@@ -644,7 +641,7 @@ namespace tfel{
 	msg << " could not read argument '" << this->current->value << "'.\n";
 	msg << "Error at line " << this->line->begin()->line;
 	log.addMessage(msg.str());
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
 
     }  // end of treatInterpolation
@@ -663,7 +660,7 @@ namespace tfel{
 	  msg << "unknown keyword " << this->current->value << ".\n";
 	  msg << "Error at line " << this->line->begin()->line;
 	  log.addMessage(msg.str());
-	  throw(runtime_error(msg.str()));
+	  raise(msg.str());
 	}
 	++(this->current);
 	(this->*(p->second))();
@@ -673,7 +670,7 @@ namespace tfel{
 	  msg << "some tokens remains on line " << this->line->begin()->line
 	      << " after treatment.";
 	  log.addMessage(msg.str());
-	  throw(runtime_error(msg.str()));
+	  raise(msg.str());
 	}
       }
       // a bit of clean-up
@@ -688,18 +685,18 @@ namespace tfel{
       case START:
 	r = times(&this->timeStart);
 	if (r == static_cast<clock_t>(-1))
-	  throw(runtime_error("Failed times system call in TestLauncherV1::ClockAction"));
+	  raise("Failed times system call in TestLauncherV1::ClockAction");
 	break;
       case STOP:
 	r = times(&this->timeStop);
 	if (r == static_cast<clock_t>(-1))
-	  throw(runtime_error("Failed times system call in TestLauncherV1::ClockAction"));
+	  raise("Failed times system call in TestLauncherV1::ClockAction");
 	break;
       case GET:
 	return (this->timeStop.tms_cutime - this->timeStart.tms_cutime) * 1.0
 	  / sysconf(_SC_CLK_TCK);
       default:
-	throw(runtime_error("Wrong clockevent in TestLauncherV1::ClockAction"));
+	raise("Wrong clockevent in TestLauncherV1::ClockAction");
       }
       return 0.;
     }

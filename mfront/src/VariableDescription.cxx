@@ -14,7 +14,7 @@
 
 #include<sstream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"MFront/SupportedTypes.hxx"
@@ -58,7 +58,7 @@ namespace mfront{
   {
     using tfel::glossary::Glossary;
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("VariableDescription::setGlossaryName: "+m));}
+      tfel::raise_if(b,"VariableDescription::setGlossaryName: "+m);
     };
     const auto& glossary = Glossary::getGlossary();
     throw_if(!glossary.contains(g),"'"+g+"' is not a glossary name");
@@ -73,7 +73,7 @@ namespace mfront{
   {
     using tfel::glossary::Glossary;
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("VariableDescription::setEntryName: "+m));}
+      tfel::raise_if(b,"VariableDescription::setEntryName: "+m);
     };
     const auto& glossary = Glossary::getGlossary();
     throw_if(glossary.contains(e),"'"+e+"' is a glossary name");
@@ -105,8 +105,8 @@ namespace mfront{
 
   void VariableDescription::throwUndefinedAttribute(const std::string& n)
   {
-    throw(std::runtime_error("VariableDescription::getAttribute : "
-			     "no attribute named '"+n+"'"));
+    tfel::raise("VariableDescription::getAttribute : "
+		"no attribute named '"+n+"'");
   } // end of VariableDescription::throwUndefinedAttribute
 
   void VariableDescription::setAttribute(const std::string& n,
@@ -114,7 +114,7 @@ namespace mfront{
 					 const bool b)
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("VariableDescription::setAttribute: "+m));}
+      tfel::raise_if(c,"VariableDescription::setAttribute: "+m);
     };    
     auto p=this->attributes.find(n);
     if(p!=this->attributes.end()){
@@ -140,7 +140,7 @@ namespace mfront{
   static void checkBoundsCompatibility(const VariableDescription& v,
 				       const VariableBoundsDescription& b){
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("mfront::checkBoundsCompatibility: "+m));}
+      tfel::raise_if(c,"mfront::checkBoundsCompatibility: "+m);
     };    
     SupportedTypes st;
     throw_if(!st.isSupportedType(v.type),
@@ -165,7 +165,7 @@ namespace mfront{
 				       const VariableBoundsDescription& b2,
 				       const std::string& n){
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("mfront::checkBoundsCompatibility: "+m));}
+      tfel::raise_if(c,"mfront::checkBoundsCompatibility: "+m);
     };
     throw_if((!b1.hasLowerBound())&&(b2.hasLowerBound()),
 	     "standard bounds for variable '"+n+"' has no lower bounds "
@@ -192,11 +192,10 @@ namespace mfront{
 
   bool VariableDescription::hasBounds(const unsigned short i) const
   {
-    if(this->arraySize==1u){
-      throw(std::runtime_error("VariableDescription::hasBounds: "
-			       "invalid call on scalar variable '"+
-			       this->name+"'"));
-    }
+    tfel::raise_if(this->arraySize==1u,
+		   "VariableDescription::hasBounds: "
+		   "invalid call on scalar variable '"+
+		   this->name+"'");
     if(this->bounds.is<VariableBoundsDescription>()){
       return true;
     } else if (this->bounds.is<std::map<unsigned short,
@@ -210,11 +209,10 @@ namespace mfront{
   
   void VariableDescription::setBounds(const VariableBoundsDescription& b)
   {
-    if(!this->bounds.empty()){
-      throw(std::runtime_error("VariableDescription::setBounds: "
-			       "bounds have already been set on variable "
-			       "'"+this->name+"'"));
-    }
+    tfel::raise_if(!this->bounds.empty(),
+		   "VariableDescription::setBounds: "
+		   "bounds have already been set on variable "
+		   "'"+this->name+"'");
     mfront::checkBoundsCompatibility(*this,b);
     if(this->arraySize==1u){
       if(this->hasPhysicalBounds()){
@@ -236,7 +234,7 @@ namespace mfront{
 				      const unsigned short i)
   {
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("VariableDescription::setBounds: "+m));}
+      tfel::raise_if(c,"VariableDescription::setBounds: "+m);
     };    
     throw_if(this->arraySize==1u,"invalid call on scalar variable");
     throw_if(i>this->arraySize,"invalid index");
@@ -244,11 +242,10 @@ namespace mfront{
 	     "bounds have already been set on variable "
 	     "'"+this->name+"'");
     if(!this->bounds.empty()){
-      if(this->hasBounds(i)){
-	throw(std::runtime_error("VariableDescription::setBounds: "
-				 "bounds have already been set on variable "
-				 "'"+this->name+"'"));
-      }
+      tfel::raise_if(this->hasBounds(i),
+		     "VariableDescription::setBounds: "
+		     "bounds have already been set on variable "
+		     "'"+this->name+"'");
     }
     for(unsigned short j=0;j!=this->arraySize;++j){
       if(this->hasPhysicalBounds(j)){
@@ -271,22 +268,20 @@ namespace mfront{
   
   const VariableBoundsDescription& VariableDescription::getBounds() const
   {
-    if(!this->hasBounds()){
-      throw(std::runtime_error("VariableDescription::getBounds: "
-			       "no bounds set on variable "
-			       "'"+this->name+"'"));
-    }
+    tfel::raise_if(!this->hasBounds(),
+		   "VariableDescription::getBounds: "
+		   "no bounds set on variable "
+		   "'"+this->name+"'");
     return this->bounds.get<VariableBoundsDescription>();
   } // end of VariableDescription::getBounds
 
   const VariableBoundsDescription&
   VariableDescription::getBounds(const unsigned short i) const
   {
-    if(!this->hasBounds(i)){
-      throw(std::runtime_error("VariableDescription::getBounds: "
-			       "no bounds set on variable "
-			       "'"+this->name+"'"));
-    }
+    tfel::raise_if(!this->hasBounds(i),
+		   "VariableDescription::getBounds: "
+		   "no bounds set on variable "
+		   "'"+this->name+"'");
     if(this->bounds.is<VariableBoundsDescription>()){
       return this->bounds.get<VariableBoundsDescription>();
     }
@@ -302,11 +297,10 @@ namespace mfront{
 
   bool VariableDescription::hasPhysicalBounds(const unsigned short i) const
   {
-    if(this->arraySize==1u){
-      throw(std::runtime_error("VariableDescription::hasPhysicalBounds: "
-			       "invalid call on scalar variable '"+
-			       this->name+"'"));
-    }
+    tfel::raise_if(this->arraySize==1u,
+		   "VariableDescription::hasPhysicalBounds: "
+		   "invalid call on scalar variable '"+
+		   this->name+"'");
     if(this->physicalBounds.is<VariableBoundsDescription>()){
       return true;
     } else if (this->physicalBounds.is<std::map<unsigned short,
@@ -320,11 +314,10 @@ namespace mfront{
   
   void VariableDescription::setPhysicalBounds(const VariableBoundsDescription& b)
   {
-    if(!this->physicalBounds.empty()){
-      throw(std::runtime_error("VariableDescription::setPhysicalBounds: "
-			       "bounds have already been set on variable "
-			       "'"+this->name+"'"));
-    }
+    tfel::raise_if(!this->physicalBounds.empty(),
+		   "VariableDescription::setPhysicalBounds: "
+		   "bounds have already been set on variable "
+		   "'"+this->name+"'");
     mfront::checkBoundsCompatibility(*this,b);
     if(this->arraySize==1u){
       if(this->hasBounds()){
@@ -346,18 +339,17 @@ namespace mfront{
 					      const unsigned short i)
   {
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("VariableDescription::setPhysicalBounds: "+m));}
+      tfel::raise_if(c,"VariableDescription::setPhysicalBounds: "+m);
     };    
     throw_if(this->arraySize==1u,"invalid call on scalar variable");
     throw_if(i>this->arraySize,"invalid index");
     throw_if(this->physicalBounds.is<VariableBoundsDescription>(),
 	     "physical bounds have already been set on variable "
 	     "'"+this->name+"'");
-    if(this->hasPhysicalBounds(i)){
-      throw(std::runtime_error("VariableDescription::setPhysicalBounds: "
-			       "bounds have already been set on variable "
-			       "'"+this->name+"'"));
-    }
+    tfel::raise_if(this->hasPhysicalBounds(i),
+		   "VariableDescription::setPhysicalBounds: "
+		   "bounds have already been set on variable "
+		   "'"+this->name+"'");
     mfront::checkBoundsCompatibility(*this,b);
     for(unsigned short j=0;j!=this->arraySize;++j){
       if(this->hasBounds(j)){
@@ -375,22 +367,20 @@ namespace mfront{
   
   const VariableBoundsDescription& VariableDescription::getPhysicalBounds() const
   {
-    if(!this->hasPhysicalBounds()){
-      throw(std::runtime_error("VariableDescription::setPhysicalBounds: "
-			       "no bounds set on variable "
-			       "'"+this->name+"'"));
-    }
+    tfel::raise_if(!this->hasPhysicalBounds(),
+		   "VariableDescription::setPhysicalBounds: "
+		   "no bounds set on variable "
+		   "'"+this->name+"'");
     return this->physicalBounds.get<VariableBoundsDescription>();
   } // end of VariableDescription::getPhysicalBounds
 
   const VariableBoundsDescription&
   VariableDescription::getPhysicalBounds(const unsigned short i) const
   {
-    if(!this->hasPhysicalBounds(i)){
-      throw(std::runtime_error("VariableDescription::setPhysicalBounds: "
-			       "no bounds set on variable "
-			       "'"+this->name+"'"));
-    }
+    tfel::raise_if(!this->hasPhysicalBounds(i),
+		   "VariableDescription::setPhysicalBounds: "
+		   "no bounds set on variable "
+		   "'"+this->name+"'");
     if(this->physicalBounds.is<VariableBoundsDescription>()){
       return this->physicalBounds.get<VariableBoundsDescription>();
     }
@@ -480,8 +470,8 @@ namespace mfront{
 	return v;
       }
     }
-    throw(std::runtime_error("VariableDescriptionContainer::getVariable : "
-			     "no variable named '"+n+"'"));
+    tfel::raise("VariableDescriptionContainer::getVariable : "
+		"no variable named '"+n+"'");
   }
 
   const VariableDescription&
@@ -492,8 +482,8 @@ namespace mfront{
 	return v;
       }
     }
-    throw(std::runtime_error("VariableDescriptionContainer::getVariableByExternalName : "
-			     "no variable with external name '"+n+"'"));
+    tfel::raise("VariableDescriptionContainer::getVariableByExternalName : "
+		"no variable with external name '"+n+"'");
   } // end of VariableDescriptionContainer::getVariableByExternalName
   
   const VariableDescription&
@@ -504,8 +494,8 @@ namespace mfront{
 	return v;
       }
     }
-    throw(std::runtime_error("VariableDescriptionContainer::getVariable : "
-			     "no variable named '"+n+"'"));
+    tfel::raise("VariableDescriptionContainer::getVariable : "
+		"no variable named '"+n+"'");
   }
 
   SupportedTypes::TypeSize VariableDescriptionContainer::getTypeSize() const

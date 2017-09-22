@@ -16,6 +16,7 @@
 #include<algorithm>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
@@ -59,12 +60,11 @@ namespace mfront
 						tokens_iterator current,
 						const tokens_iterator)
   {
-    if((std::find(i.begin(),i.end(),"castem")!=i.end())||
-       (std::find(i.begin(),i.end(),"Castem")!=i.end())||
-       (std::find(i.begin(),i.end(),"Cast3m")!=i.end())){
-      throw(std::runtime_error("CastemMaterialPropertyInterface::treatKeyword: "
-			       "unsupported keyword '"+k+"'"));
-    }
+    tfel::raise_if((std::find(i.begin(),i.end(),"castem")!=i.end())||
+		   (std::find(i.begin(),i.end(),"Castem")!=i.end())||
+		   (std::find(i.begin(),i.end(),"Cast3m")!=i.end()),
+		   "CastemMaterialPropertyInterface::treatKeyword: "
+		   "unsupported keyword '"+k+"'");
     return {false,current};
   } // end of treatKeyword
 
@@ -245,10 +245,8 @@ namespace mfront
     const auto name = this->getCastemFunctionName(mpd);
     const auto fn = "include/"+this->getHeaderFileName(name);
     std::ofstream out{fn};
-    if(!out){
-      throw(std::runtime_error("CastemMaterialPropertyInterface::writeOutputFiles: "
-			       "unable to open '"+fn+"'"));
-    }
+    tfel::raise_if(!out,"CastemMaterialPropertyInterface::writeOutputFiles: "
+		   "unable to open '"+fn+"'");
     out.exceptions(std::ios::badbit|std::ios::failbit);
     out << "/*!\n"
 	<< "* \\file   " << fn  << "\n"
@@ -299,10 +297,8 @@ namespace mfront
     const auto name = this->getCastemFunctionName(mpd);
     const auto fn   = "src/"+this->getSourceFileName(name);
     std::ofstream out{fn};
-    if(!out){
-      throw(std::runtime_error("CastemMaterialPropertyInterface::writeOutputFiles: "
-			       "unable to open '"+fn+"'"));
-    }
+    tfel::raise_if(!out,"CastemMaterialPropertyInterface::writeOutputFiles: "
+		   "unable to open '"+fn+"'");
     out.exceptions(std::ios::badbit|std::ios::failbit);
     const auto& file=fd.fileName;
     const auto& author=fd.authorName;

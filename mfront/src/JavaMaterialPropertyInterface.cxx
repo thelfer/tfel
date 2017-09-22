@@ -33,6 +33,7 @@
 #endif
 #endif
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/System/System.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
@@ -93,7 +94,7 @@ namespace mfront
 					      const tokens_iterator end)
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("Fortran03MaterialPropertyInterface::treatKeyword : "+m));}
+      tfel::raise_if(b,"JavaMaterialPropertyInterface::treatKeyword : "+m);
     };
     if((std::find(i.begin(),i.end(),"java")!=i.end())||
        (std::find(i.begin(),i.end(),"Java")!=i.end())){
@@ -253,7 +254,7 @@ namespace mfront
 						  const FileDescription& fd) const
   {
     auto throw_if = [](const bool b, const std::string& m){
-      if(b){throw(std::runtime_error("JavaMaterialPropertyInterface::writeOutputFiles : "+m));}
+      tfel::raise_if(b,"JavaMaterialPropertyInterface::writeOutputFiles : "+m);
     };
     using tfel::utilities::replace_all;
     tfel::system::systemCall::mkdir("java");

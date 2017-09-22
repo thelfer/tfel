@@ -12,6 +12,7 @@
  */
 
 #include<algorithm>
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/CastemUmatSmallStrainBehaviour.hxx"
 
@@ -30,10 +31,9 @@ namespace mtest
 								 const std::string& cn)
     : CastemSmallStrainBehaviour(bd)
   {
-    if(cn.size()!=16u){
-      throw(std::runtime_error("CastemUmatSmallStrainBehaviour::CastemUmatSmallStrainBehaviour: "
-			       "invalid size for the material name"));
-    }
+    tfel::raise_if(cn.size()!=16u,
+		   "CastemUmatSmallStrainBehaviour::CastemUmatSmallStrainBehaviour: "
+		   "invalid size for the material name");
     std::copy(cn.begin(),cn.end(),this->mname);
   } // end of CastemUmatSmallStrainBehaviour::CastemUmatSmallStrainBehaviour
 

@@ -15,6 +15,7 @@
 #include<sstream>
 #include<algorithm>
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"MFront/SupportedTypes.hxx"
 #include"MFront/VariableDescription.hxx"
 #include"MFront/StaticVariableDescription.hxx"
@@ -42,7 +43,7 @@ namespace mfront{
 	    << "(requirement array size is " << r.asize << " and "
 	    << " provided variable array size is "
 	    << this->getArraySize() << ")";
-	throw(runtime_error(msg.str()));
+	tfel::raise(msg.str());
       }
       // check for type
       if(this->getVariableType()!=r.type){
@@ -50,24 +51,22 @@ namespace mfront{
 	const auto f1 = s.getTypeFlag(r.type);
 	const auto f2 = s.getTypeFlag(this->getVariableType());
 	const bool b1 = f1==f2;
-	if((!b1)||(b)){
-	  throw(runtime_error("ProviderBase::handleRequirement : "
-			      "provided value of type '"+
-			      this->getVariableType()+
-			      "' does not math requirement '"+
-			      r.name+"' type ('"+r.type+"""')"));
-	}
+	tfel::raise_if((!b1)||(b),
+		       "ProviderBase::handleRequirement : "
+		       "provided value of type '"+
+		       this->getVariableType()+
+		       "' does not math requirement '"+
+		       r.name+"' type ('"+r.type+"""')");
       }
       // check if provider is allowed
       const auto id = this->getIdentifier();
-      if(find(r.aproviders.begin(),r.aproviders.end(),id)==
-	 r.aproviders.end()){
-	throw(runtime_error("ProviderBase::handleRequirement : "
-			    "a provider of type '"+
-			    convertProviderIdentifierToString(id)+
-			    "' is not allowed for "
-			    "requirement '"+r.name+"'"));
-      }
+      tfel::raise_if(find(r.aproviders.begin(),r.aproviders.end(),id)==
+		     r.aproviders.end(),
+		     "ProviderBase::handleRequirement : "
+		     "a provider of type '"+
+		     convertProviderIdentifierToString(id)+
+		     "' is not allowed for "
+		     "requirement '"+r.name+"'");
       return true;
     } // end of ProviderBase::handleRequirement
     
@@ -85,10 +84,9 @@ namespace mfront{
     {
       const auto st = SupportedTypes{};
       if(b){
-	if(!st.isSupportedType(this->type)){
-	  throw(std::runtime_error("StandardProvider::StandardProvider : "
-				   "unsupported type '"+this->type+"'"));
-	}
+	tfel::raise_if(!st.isSupportedType(this->type),
+		       "StandardProvider::StandardProvider : "
+		       "unsupported type '"+this->type+"'");
       }
     } // end of StandardProvider::StandardProvider
 
@@ -102,10 +100,9 @@ namespace mfront{
     {
       const auto st = SupportedTypes{};
       if(b){
-	if(!st.isSupportedType(this->type)){
-	  throw(std::runtime_error("StandardProvider::StandardProvider : "
-				   "unsupported type '"+this->type+"'"));
-	}
+	tfel::raise_if(!st.isSupportedType(this->type),
+		       "StandardProvider::StandardProvider : "
+		       "unsupported type '"+this->type+"'");
       }
     } // end of StandardProvider::StandardProvider
     
@@ -248,10 +245,9 @@ namespace mfront{
 	ename(e)
     {
       const auto s = SupportedTypes{};
-      if(!s.isSupportedType(this->type)){
-	throw(std::runtime_error("StaticVariableProvider::StaticVariableProvider : "
-				 "unsupported type '"+this->type+"'"));
-      }
+      tfel::raise_if(!s.isSupportedType(this->type),
+		     "StaticVariableProvider::StaticVariableProvider : "
+		     "unsupported type '"+this->type+"'");
     } // end of StaticVariableProvider::StaticVariableProvider
 
     StaticVariableProvider::StaticVariableProvider(const mfront::StaticVariableDescription& v,
@@ -288,10 +284,9 @@ namespace mfront{
 	ename(e)
     {
       const auto s = SupportedTypes{};
-      if(!s.isSupportedType(this->type)){
-	throw(std::runtime_error("ParameterProvider::ParameterProvider : "
-				 "unsupported type '"+this->type+"'"));
-      }
+      tfel::raise_if(!s.isSupportedType(this->type),
+		     "ParameterProvider::ParameterProvider : "
+		     "unsupported type '"+this->type+"'");
     } // end of ParameterProvider::ParameterProvider
 
     ParameterProvider::ParameterProvider(const mfront::VariableDescription& v,
@@ -301,10 +296,9 @@ namespace mfront{
 	ename(e)
     {
       const auto s = SupportedTypes{};
-      if(!s.isSupportedType(this->type)){
-	throw(std::runtime_error("ParameterProvider::ParameterProvider : "
-				 "unsupported type '"+this->type+"'"));
-      }
+      tfel::raise_if(!s.isSupportedType(this->type),
+		     "ParameterProvider::ParameterProvider : "
+		     "unsupported type '"+this->type+"'");
     } // end of ParameterProvider::ParameterProvider
     
     std::string ParameterProvider::getVariableType() const {

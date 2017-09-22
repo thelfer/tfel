@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/FactorizedKriging1D3D.hxx"
 
 namespace tfel
@@ -25,10 +26,10 @@ namespace tfel
 						 const std::vector<double>& vz,
 						 const std::vector<double>& vv)
     {
-      if((vt.size()!=vx.size())||(vt.size()!=vy.size())||
-	 (vt.size()!=vz.size())||(vt.size()!=vv.size())){
-	throw(KrigingErrorInvalidLength());
-      }
+      raise_if<KrigingErrorInvalidLength>((vt.size()!=vx.size())||
+					  (vt.size()!=vy.size())||
+					  (vt.size()!=vz.size())||
+					  (vt.size()!=vv.size()));
       const auto n0 = KrigingUtilities::normalize(vt);
       this->a0 = n0.first;
       this->b0 = n0.second;
@@ -61,10 +62,10 @@ namespace tfel
 						 const tfel::math::vector<double>& vz,
 						 const tfel::math::vector<double>& vv)
     {
-      if((vt.size()!=vx.size())||(vt.size()!=vy.size())||
-	 (vt.size()!=vz.size())||(vt.size()!=vv.size())){
-	throw(KrigingErrorInvalidLength());
-      }
+      raise_if<KrigingErrorInvalidLength>((vt.size()!=vx.size())||
+					  (vt.size()!=vy.size())||
+					  (vt.size()!=vz.size())||
+					  (vt.size()!=vv.size()));
       const auto n0 = KrigingUtilities::normalize(vt);
       this->a0 = n0.first;
       this->b0 = n0.second;

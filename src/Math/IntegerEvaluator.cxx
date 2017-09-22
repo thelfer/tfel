@@ -20,6 +20,7 @@
 #include<sstream>
 #include<cctype>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/IntegerEvaluator.hxx"
 #include"TFEL/Math/Parser/IntegerEvaluatorTExpr.hxx"
 
@@ -39,18 +40,12 @@ namespace tfel
 
     void
     IntegerEvaluator::checkNotEndOfExpression(const std::string& method,
-				       const std::string& error,
-				       const std::vector<std::string>::const_iterator p,
-				       const std::vector<std::string>::const_iterator pe)
+					      const std::string& error,
+					      const std::vector<std::string>::const_iterator p,
+					      const std::vector<std::string>::const_iterator pe)
     {
-      if(p==pe){
-	auto msg = method;
-	msg += " : unexpected end of line";
-	if(!error.empty()){
-	  msg += " ("+error+")";
-	}
-	throw(std::runtime_error(msg));
-      }
+      raise_if(p==pe,method+" : unexpected end of line" +
+	       (!error.empty() ? " ("+error+")" : ""));
     } // end of IntegerEvaluator::checkNotEndOfExpression
 
     void
@@ -90,11 +85,9 @@ namespace tfel
       while(*p!=">"){
 	// check parameter validity
 	for(ps=p->begin();ps!=p->end();++ps){
-	  if(!(isalpha(*ps)||isdigit(*ps))||(*ps=='_')||(*ps=='-')){
-	    string msg("IntegerEvaluator::analyseParameters : ");
-	    msg += "invalid parameter '"+*p+"'";
-	    throw(runtime_error(msg));
-	  }
+	  raise_if(!(isalpha(*ps)||isdigit(*ps))||(*ps=='_')||(*ps=='-'),
+		   "IntegerEvaluator::analyseParameters: "
+		   "invalid parameter '"+*p+"'");
 	}
 	params.push_back(*p);
 	++p;
@@ -104,10 +97,9 @@ namespace tfel
 	    ++p;
 	    IntegerEvaluator::checkNotEndOfExpression("IntegerEvaluator::analyseParameters",p,pe);
 	  } else {
-	    string msg("IntegerEvaluator::analyseParameters");
-	    msg += "unexpected token '"+*p+"' ";
-	    msg += "(expected ',' or '>')";
-	    throw(runtime_error(msg));
+	    raise("IntegerEvaluator::analyseParameters: "
+		  "unexpected token '"+*p+"' "
+		  "(expected ',' or '>')");
 	  }
 	}
       }
@@ -121,8 +113,7 @@ namespace tfel
 				const std::vector<std::string>::const_iterator  pe,
 				const bool b)
     {
-      using namespace std;
-      vector<shared_ptr<IntegerEvaluator::TExpr> > res;
+      std::vector<std::shared_ptr<IntegerEvaluator::TExpr>> res;
       if(nbr>0){
 	unsigned short i;
 	for(i=0;i!=nbr-1u;++i){
@@ -184,7 +175,7 @@ namespace tfel
 	msg << "IntegerEvaluator::countNumberOfArguments : group ended while " 
 	    << opened << " parenthesis were still opened";
       }
-      throw(std::runtime_error(msg.str()));
+      raise(msg.str());
     } // end of IntegerEvaluator::analyseArguments
 
     std::pair<bool,std::vector<std::string>::const_iterator>
@@ -205,10 +196,8 @@ namespace tfel
 	  ++openedParenthesis;
 	}
 	if(*p==")"){
-	  if(openedParenthesis==0){
-	    throw(std::runtime_error("Analyser::readNextGroup: "
-				     "unbalanced parenthesis"));
-	  }
+	  raise_if(openedParenthesis==0,"Analyser::readNextGroup: "
+		   "unbalanced parenthesis");
 	  --openedParenthesis;
 	}
 	if((*p==m)&&(openedParenthesis==0)){
@@ -232,7 +221,7 @@ namespace tfel
     {
       using namespace tfel::math::parser;
       auto throw_if = [](const bool c, const std::string& m){
-	if(c){throw(std::runtime_error("IntegerEvaluator::treatGroup: "+m));}
+	raise_if(c,"IntegerEvaluator::treatGroup: "+m);
       };
       IntegerEvaluator::checkNotEndOfExpression("IntegerEvaluator::treatGroup",p,pe);
       assert(p!=pe);
@@ -307,10 +296,9 @@ namespace tfel
 					    const int value)
     {
       auto p = this->positions.find(vname);
-      if(p==this->positions.end()){
-	throw(std::runtime_error("IntegerEvaluator::setVariableValue: "
-				 "variable '"+vname+"' does not exist"));
-      }
+      raise_if(p==this->positions.end(),
+	       "IntegerEvaluator::setVariableValue: "
+	       "variable '"+vname+"' does not exist");
       this->variables[p->second] = value;
     }//end of IntegerEvaluator::setVariableValue
 
@@ -318,28 +306,27 @@ namespace tfel
     IntegerEvaluator::setVariableValue(const std::vector<int>::size_type pos,
 				       const int value)
     {
-      using namespace std;
       if(pos>=this->variables.size()){
-	ostringstream msg;
+	std::ostringstream msg;
 	msg << "IntegerEvaluator::setVariableValue : position '" << pos << "' is invalid ";
 	if(this->variables.empty()){
 	  msg << "(function has no variable).";
 	} else if(this->variables.size()==1){
 	  msg << "(function has one variable).";
 	} else {
-	  msg << "(function has only '" <<  this->variables.size() << "' variable(s)).";
+	  msg << "(function has only '"
+	      <<  this->variables.size() << "' variable(s)).";
 	}
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       this->variables[pos] = value;
     }//end of IntegerEvaluator::setVariableValue
 
     int IntegerEvaluator::getValue() const
     {
-      if(this->expr==nullptr){
-	throw(std::runtime_error("IntegerEvaluator::getValue: "
-				 "uninitialized expression."));
-      }
+      raise_if(this->expr==nullptr,
+	       "IntegerEvaluator::getValue: "
+	       "uninitialized expression.");
       return this->expr->getValue();
     }//end of IntegerEvaluator::getValue
 
@@ -430,10 +417,9 @@ namespace tfel
       this->variables.resize(vars.size());
       std::vector<int>::size_type pos = 0u;
       for(const auto& v : vars){
-	if(this->positions.find(v)!=this->positions.end()){
-	  throw(std::runtime_error("IntegerEvaluator::setFunction: "
-				   "variable '"+v+"' multiply defined."));
-	}
+	raise_if(this->positions.find(v)!=this->positions.end(),
+		 "IntegerEvaluator::setFunction: "
+		 "variable '"+v+"' multiply defined.");
 	this->positions[v]=pos;
 	++pos;
       }
@@ -443,11 +429,10 @@ namespace tfel
     std::vector<int>::size_type
     IntegerEvaluator::getVariablePosition(const std::string& name) const
     {
-      auto p = this->positions.find(name);
-      if(p==this->positions.end()){
-	throw(std::runtime_error("IntegerEvaluator::getVariablePosition: "
-				 "unknown variable '"+name+"'"));
-      }
+      const auto p = this->positions.find(name);
+      raise_if(p==this->positions.end(),
+	       "IntegerEvaluator::getVariablePosition: "
+	       "unknown variable '"+name+"'");
       return p->second;
     } // end of IntegerEvaluator::getVariablePosition(const std::string&)
 

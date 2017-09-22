@@ -12,6 +12,7 @@
  */
 
 #include<algorithm>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
@@ -31,12 +32,12 @@ namespace mfront
     if(this->parameters.contains(n)){
       return this->parameters.getVariable(n);
     }
-    throw(std::runtime_error("MaterialPropertyDescription::getVariableDescription:"
-			     "no variable named '"+n+"'.\n"
-			     "'"+n+"' is neither:\n"
-			     "- The output.\n"
-			     "- An input.\n"
-			     "- A parameter.\n"));    
+    tfel::raise("MaterialPropertyDescription::getVariableDescription:"
+		"no variable named '"+n+"'.\n"
+		"'"+n+"' is neither:\n"
+		"- The output.\n"
+		"- An input.\n"
+		"- A parameter.");    
   } // end of MaterialPropertyDescription::getVariableDescription
 
   VariableDescription&
@@ -51,12 +52,12 @@ namespace mfront
     if(this->parameters.contains(n)){
       return this->parameters.getVariable(n);
     }
-    throw(std::runtime_error("MaterialPropertyDescription::getVariableDescription:"
-			     "no variable named '"+n+"'.\n"
-			     "'"+n+"' is neither:\n"
-			     "- The output.\n"
-			     "- An input.\n"
-			     "- A parameter."));    
+    tfel::raise("MaterialPropertyDescription::getVariableDescription:"
+		"no variable named '"+n+"'.\n"
+		"'"+n+"' is neither:\n"
+		"- The output.\n"
+		"- An input.\n"
+		"- A parameter.");
   } // end of MaterialPropertyDescription::getVariableDescription
 
   bool MaterialPropertyDescription::isParameterName(const std::string& n) const
@@ -146,7 +147,7 @@ namespace mfront
   {
     using tfel::glossary::Glossary;
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("MaterialPropertyDescription::setGlossaryName: "+m));}
+      tfel::raise_if(b,"MaterialPropertyDescription::setGlossaryName: "+m);
     };
     const auto& glossary = Glossary::getGlossary();
     throw_if(!glossary.contains(g),"'"+g+"' is not a valid glossary name");
@@ -159,7 +160,7 @@ namespace mfront
   {
     using tfel::glossary::Glossary;
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("MaterialPropertyDescription::setEntryName: "+m));}
+      tfel::raise_if(b,"MaterialPropertyDescription::setEntryName: "+m);
     };
     const auto& glossary = Glossary::getGlossary();
     throw_if(glossary.contains(e),"'"+e+"' is a glossary name");
@@ -216,10 +217,9 @@ namespace mfront
   } // end of MaterialPropertyDescription::addMaterialLaw
 
   void MaterialPropertyDescription::reserveName(const std::string& n){
-    if(!this->reservedNames.insert(n).second){
-      throw(std::runtime_error("MaterialPropertyDescription::reserveName: "
-			       "name '"+n+"' already reserved"));
-    }
+    tfel::raise_if(!this->reservedNames.insert(n).second,
+		   "MaterialPropertyDescription::reserveName: "
+		   "name '"+n+"' already reserved");
   }
 
   bool MaterialPropertyDescription::isNameReserved(const std::string& n) const{

@@ -14,6 +14,7 @@
 #include<sstream>
 #include<stdexcept>
 
+#include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/ConfigParser.hxx"
 
 namespace tfel{
@@ -24,12 +25,8 @@ namespace tfel{
     insert(std::map<std::string,std::map<std::string,std::string> >& m,
 	   const std::string& n1)
     {
-      using namespace std;
-      if(!m["english"].insert({n1,n1}).second){
-	string msg("insert : ");
-	msg += "category '"+n1+"' already declared";
-	throw(runtime_error(msg));
-      }
+      raise_if(!m["english"].insert({n1,n1}).second,
+	       "insert: category '"+n1+"' already declared");
     } // end of insert
 
     static void
@@ -38,17 +35,10 @@ namespace tfel{
 	   const std::string& n2,
 	   const std::string& l)
     {
-      using namespace std;
-      if(m["english"].find(n1)==m["english"].end()){
-	string msg("insert : ");
-	msg += "category '"+n1+"' undeclared";
-	throw(runtime_error(msg));
-      }
-      if(!m[l].insert({n1,n2}).second){
-	string msg("insert : ");
-	msg += "category '"+n1+"' already declared";
-	throw(runtime_error(msg));
-      }
+      raise_if(m["english"].find(n1)==m["english"].end(),
+	       "insert: category '"+n1+"' undeclared");
+      raise_if(!m[l].insert({n1,n2}).second,
+	       "insert: category '"+n1+"' already declared");
     } // end of insert
 
     void
@@ -80,9 +70,7 @@ namespace tfel{
 	    this->checkNotEndOfFile(p);
 	    if(p->value!="}"){
 	      this->readSpecifiedToken(",",p);
-	      if(p->value!="}"){
-		throw(std::runtime_error("ConfigParser::execute"));
-	      }
+	      raise_if(p->value!="}","ConfigParser::execute");
 	    }
 	    insert(m,key,v,l);
 	  }
@@ -98,7 +86,7 @@ namespace tfel{
 	  msg << "\nError at line " << p->line
 	      << " of file '" << f << "'";
 	}
-	throw(std::runtime_error(msg.str()));
+	raise(msg.str());
       }
     } // end of ConfigParser::execute
 
@@ -107,4 +95,3 @@ namespace tfel{
   } // end of namespace utilities
 
 } // end of namespace tfel
-

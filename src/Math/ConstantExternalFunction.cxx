@@ -14,6 +14,7 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Parser/ConstantExternalFunction.hxx"
 
 namespace tfel
@@ -38,9 +39,9 @@ namespace tfel
       ConstantExternalFunction::setVariableValue(const std::vector<double>::size_type pos,
 						 const double)
       {
-	throw(std::runtime_error("ConstantExternalFunction::setVariableValue: "
-				 "invalid index "+std::to_string(pos)+
-				 " (function has no  variable)."));
+	raise("ConstantExternalFunction::setVariableValue: "
+	      "invalid index "+std::to_string(pos)+
+	      " (function has no  variable).");
       }
 
       std::vector<double>::size_type
@@ -78,9 +79,9 @@ namespace tfel
       std::shared_ptr<ExternalFunction>
       ConstantExternalFunction::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
       {
-	throw(std::runtime_error("ConstantExternalFunction::"
-				 "createFunctionByChangingParametersIntoVariables : "
-				 "invalid call"));
+	raise("ConstantExternalFunction::"
+	      "createFunctionByChangingParametersIntoVariables : "
+	      "invalid call");
       } // end of ConstantExternalFunction::createFunctionByChangingParametersIntoVariables
 
       

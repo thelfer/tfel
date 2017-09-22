@@ -13,7 +13,7 @@
 
 #include<cmath>
 #include<sstream>
-
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
@@ -44,22 +44,20 @@ namespace mtest
 				       const std::string& b)
     : UmatBehaviourDescription(l,b,ModellingHypothesis::toString(h))
   {
-    if(this->stype>=2u){
-      throw(std::runtime_error("UmatBehaviourBase::UmatBehaviourBase : "
-			       "unsupported behaviour type "
-			       "(neither isotropic nor orthotropic)"));
-    }
+    tfel::raise_if(this->stype>=2u,
+		   "UmatBehaviourBase::UmatBehaviourBase: "
+		   "unsupported behaviour type "
+		   "(neither isotropic nor orthotropic)");
     this->evnames.insert(this->evnames.begin(),"Temperature");
   }
 
   UmatBehaviourBase::UmatBehaviourBase(const UmatBehaviourDescription& umb)
     : UmatBehaviourDescription(umb)
   {
-    if(this->stype>=2u){
-      throw(std::runtime_error("UmatBehaviourBase::UmatBehaviourBase : "
-			       "unsupported behaviour type "
-			       "(neither isotropic nor orthotropic)"));
-    }
+    tfel::raise_if(this->stype>=2u,
+		   "UmatBehaviourBase::UmatBehaviourBase: "
+		   "unsupported behaviour type "
+		   "(neither isotropic nor orthotropic)");
   }
   
   UmatBehaviourBase::Hypothesis UmatBehaviourBase::getHypothesis() const{
@@ -136,8 +134,8 @@ namespace mtest
     case 3:
       return MechanicalBehaviourBase::COHESIVEZONEMODEL;
     }
-    throw(std::runtime_error("UmatBehaviourBase::getBehaviourType: "
-			     "unsupported behaviour type"));
+    tfel::raise("UmatBehaviourBase::getBehaviourType: "
+		"unsupported behaviour type");
   } // end of UmatBehaviourBase::getBehaviourType
 
   tfel::material::MechanicalBehaviourBase::Kinematic
@@ -156,12 +154,11 @@ namespace mtest
     case 4:
       return MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1;
     }
-    throw(std::runtime_error("UmatBehaviourBase::getBehaviourKinematic: "
-			     "unsupported behaviour type"));
+    tfel::raise("UmatBehaviourBase::getBehaviourKinematic: "
+		"unsupported behaviour type");
   } // end of UmatBehaviourBase::getBehaviourKinematic
   
-  unsigned short
-  UmatBehaviourBase::getDrivingVariablesSize() const
+  unsigned short UmatBehaviourBase::getDrivingVariablesSize() const
   {
     const auto h = this->getHypothesis();
     if((this->btype==1)||((this->btype==2u)&&(this->kinematic==4u))){
@@ -177,8 +174,8 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6u;
       } else {
-	throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesSize : "
-				 "unsupported modelling hypothesis"));
+	tfel::raise("UmatBehaviourBase::getDrivingVariablesSize: "
+		    "unsupported modelling hypothesis");
       }
     } else if(this->btype==2){
       // finite strain behaviours
@@ -193,8 +190,8 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 9u;
       } else {
-	throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesSize : "
-				 "unsupported modelling hypothesis"));
+	tfel::raise("UmatBehaviourBase::getDrivingVariablesSize: "
+		    "unsupported modelling hypothesis");
       }
     } else if(this->btype==3){
       // cohesive zone models
@@ -206,16 +203,15 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 3u;
       } else {
-	throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesSize : "
-				 "unsupported modelling hypothesis"));
+	tfel::raise("UmatBehaviourBase::getDrivingVariablesSize: "
+		    "unsupported modelling hypothesis");
       }      
     } 
-    throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesSize : "
-			     "unsupported behaviour type"));
+    tfel::raise("UmatBehaviourBase::getDrivingVariablesSize: "
+		"unsupported behaviour type");
   } // end of UmatBehaviourBase::getDrivingVariablesSize
 
-  unsigned short
-  UmatBehaviourBase::getThermodynamicForcesSize() const
+  unsigned short UmatBehaviourBase::getThermodynamicForcesSize() const
   {
     const auto h = this->getHypothesis();
     if((this->btype==1)||((this->btype==2u)&&(this->kinematic==4u))){
@@ -231,8 +227,8 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6u;
       } else {
-	throw(std::runtime_error("UmatBehaviourBase::getThermodynamicForcesSize : "
-				 "unsupported modelling hypothesis"));
+	tfel::raise("UmatBehaviourBase::getThermodynamicForcesSize: "
+				 "unsupported modelling hypothesis");
       }
     } else if(this->btype==2){
       // finite strain behaviours
@@ -247,8 +243,8 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6u;
       } else {
-	throw(std::runtime_error("UmatBehaviourBase::getThermodynamicForcesSize : "
-				 "unsupported modelling hypothesis"));
+	tfel::raise("UmatBehaviourBase::getThermodynamicForcesSize: "
+		    "unsupported modelling hypothesis");
       }
     } else if(this->btype==3){
       // cohesive zone models
@@ -260,12 +256,12 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 3u;
       } else {
-	throw(std::runtime_error("UmatBehaviourBase::getThermodynamicForcesSize : "
-				 "unsupported modelling hypothesis"));
+	tfel::raise("UmatBehaviourBase::getThermodynamicForcesSize: "
+		    "unsupported modelling hypothesis");
       }      
     }
-    throw(std::runtime_error("UmatBehaviourBase::getThermodynamicForcesSize : "
-			     "unsupported behaviour type"));
+    tfel::raise("UmatBehaviourBase::getThermodynamicForcesSize: "
+		"unsupported behaviour type");
   } // end of UmatBehaviourBase::getThermodynamicForcesSize
 
   std::vector<std::string>
@@ -289,8 +285,8 @@ namespace mtest
 	c.push_back("RZ");
       }
     } else {
-      throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesComponents : "
-			       "unsupported modelling hypothesis"));
+      tfel::raise("UmatBehaviourBase::getDrivingVariablesComponents: "
+		  "unsupported modelling hypothesis");
     }
     return c;
   } // end of UmatBehaviourBase::getStensorComponentsSuffixes
@@ -311,8 +307,8 @@ namespace mtest
 	       (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)){
       return {"R"};
     }
-    throw(std::runtime_error("UmatBehaviourBase::VectorComponentsSuffixes : "
-			     "unsupported modelling hypothesis"));
+    tfel::raise("UmatBehaviourBase::VectorComponentsSuffixes: "
+		"unsupported modelling hypothesis");
   } // end of UmatBehaviourBase::getVectorComponentsSuffixes
 
   std::vector<std::string>
@@ -336,8 +332,8 @@ namespace mtest
 	c.insert(c.end(),{"RZ","ZR"});
       }
     } else {
-      throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesComponents : "
-			       "unsupported modelling hypothesis"));
+      tfel::raise("UmatBehaviourBase::getDrivingVariablesComponents: "
+		  "unsupported modelling hypothesis");
     }
     return c;
   } // end of UmatBehaviourBase::getTensorComponentsSuffixes
@@ -369,12 +365,12 @@ namespace mtest
 	  c.push_back("Ut");
 	}
       } else {
-	throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesComponents: "
-				 "unsupported modelling hypothesis"));
+	tfel::raise("UmatBehaviourBase::getDrivingVariablesComponents: "
+		    "unsupported modelling hypothesis");
       }
     } else {
-      throw(std::runtime_error("UmatBehaviourBase::getDrivingVariablesComponents: "
-			       "unsupported behaviour type"));
+      tfel::raise("UmatBehaviourBase::getDrivingVariablesComponents: "
+		  "unsupported behaviour type");
     }
     return c;
   } // end of UmatBehaviourBase::getDrivingVariablesComponents
@@ -403,11 +399,11 @@ namespace mtest
 	  c.push_back("Tt");
 	}
       } else {
-	throw(runtime_error("UmatBehaviourBase::getThermodynamicForcesComponents : "
+	throw(runtime_error("UmatBehaviourBase::getThermodynamicForcesComponents: "
 			    "unsupported modelling hypothesis"));
       }
     } else {
-      throw(runtime_error("UmatBehaviourBase::getThermodynamicForcesComponents : "
+      throw(runtime_error("UmatBehaviourBase::getThermodynamicForcesComponents: "
 			  "unsupported behaviour type"));
     }
     return c;
@@ -421,7 +417,7 @@ namespace mtest
     auto p = find(c.begin(),c.end(),cname);
     if(p==c.end()){
       ostringstream msg;
-      msg << "UmatBehaviourBase::getDrivingVariableComponentPosition : "
+      msg << "UmatBehaviourBase::getDrivingVariableComponentPosition: "
 	"component '" << cname << "' is not valid. Valid components are:\n";
       copy(c.begin(),c.end(),ostream_iterator<string>(msg," "));
       throw(runtime_error(msg.str()));
@@ -437,7 +433,7 @@ namespace mtest
     auto p = find(c.begin(),c.end(),cname);
     if(p==c.end()){
       ostringstream msg;
-      msg << "UmatBehaviourBase::getThermodynamicForceComponentPosition : "
+      msg << "UmatBehaviourBase::getThermodynamicForceComponentPosition: "
 	"component '" << cname << "' is not valid. Valid components are:\n";
       copy(c.begin(),c.end(),ostream_iterator<string>(msg," "));
       throw(runtime_error(msg.str()));
@@ -453,9 +449,9 @@ namespace mtest
     } else if(this->stype==1){
       return 1u;
     }
-    throw(std::runtime_error("UmatBehaviourBase::getSymmetryType: "
-			     "unsupported behaviour type "
-			     "(neither isotropic nor orthotropic)"));
+    tfel::raise("UmatBehaviourBase::getSymmetryType: "
+		"unsupported behaviour type "
+		"(neither isotropic nor orthotropic)");
   } // end of UmatBehaviourBase::getSymmetryType
 
   std::vector<std::string>
@@ -490,8 +486,8 @@ namespace mtest
 	  ivfullnames.push_back(vn);
 	}
       } else {
-	throw(std::runtime_error("UmatBehaviourBase::expandInternalStateVariablesNames: "
-				 "unsupported variable type for variable '"+n+"'"));
+	tfel::raise("UmatBehaviourBase::expandInternalStateVariablesNames: "
+		    "unsupported variable type for variable '"+n+"'");
       }
     }
     return ivfullnames;
@@ -558,8 +554,8 @@ namespace mtest
 	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	  s+=6;
 	} else {
-	  throw(std::runtime_error("UmatBehaviourBase::getInternalStateVariablesSize: "
-				   "unsupported modelling hypothesis"));
+	  tfel::raise("UmatBehaviourBase::getInternalStateVariablesSize: "
+		      "unsupported modelling hypothesis");
 	}
       } else if(t==3){
 	if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
@@ -573,12 +569,12 @@ namespace mtest
 	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	  s+=9;
 	} else {
-	  throw(std::runtime_error("UmatBehaviourBase::getInternalStateVariablesSize: "
-				   "unsupported modelling hypothesis"));
+	  tfel::raise("UmatBehaviourBase::getInternalStateVariablesSize: "
+		      "unsupported modelling hypothesis");
 	}
       } else {
-	throw(std::runtime_error("UmatBehaviourBase::getInternalStateVariablesSize: "
-				 "unsupported variable type"));
+	tfel::raise("UmatBehaviourBase::getInternalStateVariablesSize: "
+		    "unsupported variable type");
       }
     }
     return s;
@@ -592,11 +588,10 @@ namespace mtest
     vector<string> desc;
     vector<int>::const_iterator p;
     vector<string>::const_iterator pn;
-    if(this->ivnames.size()!=this->ivtypes.size()){
-      throw(runtime_error("UmatBehaviourBase::getInternalStateVariablesDescriptions : "
-			  "internal error (the number of internal state variables names "
-			  "dont match the number of internal state variables types)"));
-    }
+    tfel::raise_if(this->ivnames.size()!=this->ivtypes.size(),
+		   "UmatBehaviourBase::getInternalStateVariablesDescriptions: "
+		   "internal error (the number of internal state variables names "
+		   "dont match the number of internal state variables types)");
     for(p=this->ivtypes.begin(),pn=this->ivnames.begin();
 	p!=this->ivtypes.end();++p,++pn){
       if(*p==0){
@@ -616,9 +611,8 @@ namespace mtest
 	    desc.push_back("fifth   component of internal variable '"+*pn+"'");
 	    desc.push_back("sixth   component of internal variable '"+*pn+"'");
 	  } else {
-	    string msg("UmatBehaviourBase::getInternalStateVariablesDescriptions : "
-		       "invalid modelling hypothesis");
-	    throw(runtime_error(msg));
+	    tfel::raise("UmatBehaviourBase::getInternalStateVariablesDescriptions: "
+			"invalid modelling hypothesis");
 	  }
 	}
       } else if(*p==3){
@@ -640,15 +634,13 @@ namespace mtest
 	    desc.push_back("eighth  component of internal variable '"+*pn+"'");
 	    desc.push_back("ninth   component of internal variable '"+*pn+"'");
 	  } else {
-	    string msg("UmatBehaviourBase::getInternalStateVariablesDescriptions : "
-		       "invalid modelling hypothesis");
-	    throw(runtime_error(msg));
+	    tfel::raise("UmatBehaviourBase::getInternalStateVariablesDescriptions: "
+			"invalid modelling hypothesis");
 	  }
 	}
       } else {
-	string msg("UmatBehaviourBase::getInternalStateVariablesDescriptions : "
-		   "unsupported variable type");
-	throw(runtime_error(msg));
+	tfel::raise("UmatBehaviourBase::getInternalStateVariablesDescriptions: "
+		    "unsupported variable type");
       }
     }
     return desc;
@@ -658,15 +650,13 @@ namespace mtest
   UmatBehaviourBase::getInternalStateVariableType(const std::string& n) const
   {
     auto p=find(this->ivnames.begin(),this->ivnames.end(),n);
-    if(p==this->ivnames.end()){
-      throw(std::runtime_error("UmatBehaviourBase::getInternalStateVariableType: "
-			       "no internal variable named '"+n+"' declared"));
-    }
-    if(this->ivnames.size()!=this->ivtypes.size()){
-      throw(std::runtime_error("UmatBehaviourBase::getInternalStateVariableType: "
-			       "the number of internal variables names and "
-			       "the number of internal variables types do not match"));
-    }
+    tfel::raise_if(p==this->ivnames.end(),
+		   "UmatBehaviourBase::getInternalStateVariableType: "
+		   "no internal variable named '"+n+"' declared");
+    tfel::raise_if(this->ivnames.size()!=this->ivtypes.size(),
+		   "UmatBehaviourBase::getInternalStateVariableType: "
+		   "the number of internal variables names and "
+		   "the number of internal variables types do not match");
     const auto t = this->ivtypes[p-this->ivnames.begin()];
     if(t==0){
       return 0u;
@@ -675,8 +665,8 @@ namespace mtest
     } else if(t==3){
       return 3u;
     }
-    throw(std::runtime_error("UmatBehaviourBase::getInternalStateVariableType : "
-			     "unsupported internal variable type"));
+    tfel::raise("UmatBehaviourBase::getInternalStateVariableType: "
+		"unsupported internal variable type");
   }
   
   unsigned short
@@ -684,7 +674,7 @@ namespace mtest
   {
     using namespace std;
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("UmatBehaviourBase::getInternalStateVariablePosition: "+m));}
+      tfel::raise_if(c,"UmatBehaviourBase::getInternalStateVariablePosition: "+m);
     };
     const auto h = this->getHypothesis();    
     auto p=find(this->ivnames.begin(),this->ivnames.end(),n);
@@ -748,9 +738,8 @@ namespace mtest
     elm.setParameter(this->library,this->behaviour,this->hypothesis,n,v);
   } // end of UmatBehaviourBase::setIntegerParameter
 
-  void
-  UmatBehaviourBase::setUnsignedIntegerParameter(const std::string& n,
-						 const unsigned short v) const
+  void UmatBehaviourBase::setUnsignedIntegerParameter(const std::string& n,
+						      const unsigned short v) const
   {
     using namespace tfel::system;
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
@@ -759,10 +748,8 @@ namespace mtest
 
   void
   UmatBehaviourBase::setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-								     const EvolutionManager&) const
+								const EvolutionManager&) const
   {} // end of UmatBehaviourBase::setOptionalMaterialPropertiesDefaultValues
-
-  
 
   void
   UmatBehaviourBase::initializeTangentOperator(tfel::math::matrix<real>& D,
@@ -782,8 +769,8 @@ namespace mtest
       } else if(ktype==StiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
 	D(0,0) = real(4);
       } else {
-	throw(std::runtime_error("UmatBehaviourBase::call_behaviour : "
-				 "invalid or unspecified stiffness matrix type"));
+	tfel::raise("UmatBehaviourBase::call_behaviour: "
+		    "invalid or unspecified stiffness matrix type");
       }
     } else {
       if(ktype==StiffnessMatrixType::ELASTIC){
@@ -793,15 +780,14 @@ namespace mtest
       } else if(ktype==StiffnessMatrixType::TANGENTOPERATOR){
 	D(0,0) = real(-3);
       } else {
-	throw(std::runtime_error("UmatBehaviourBase::call_behaviour : "
-				 "invalid or unspecified stiffness matrix type"));
+	tfel::raise("UmatBehaviourBase::call_behaviour: "
+		    "invalid or unspecified stiffness matrix type");
       }
     }
   } // end of UmatBehaviourBase::initializeTangentOperator
 
-  bool
-  UmatBehaviourBase::doPackagingStep(CurrentState&,
-				     BehaviourWorkSpace&) const
+  bool UmatBehaviourBase::doPackagingStep(CurrentState&,
+					  BehaviourWorkSpace&) const
   {
     return true;
   } // end of UmatBehaviourBase::doPackagingStep

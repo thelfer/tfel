@@ -19,6 +19,7 @@
 #include<algorithm>
 #include<cstdlib>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/System.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/DSLUtilities.hxx"
@@ -71,10 +72,9 @@ namespace mfront
 						tokens_iterator current,
 						const tokens_iterator)
   {
-    if(std::find(i.begin(),i.end(),"octave")!=i.end()){
-      throw(std::runtime_error("OctaveMaterialPropertyInterface::treatKeyword: "
-			       "unsupported key '"+k+"'"));
-    }
+    tfel::raise_if(std::find(i.begin(),i.end(),"octave")!=i.end(),
+		   "OctaveMaterialPropertyInterface::treatKeyword: "
+		   "unsupported key '"+k+"'");
     return {false,current};
   } // end of treatKeyword
 
@@ -107,10 +107,8 @@ namespace mfront
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto fn   = "octave/"+ name+".cpp";
     std::ofstream out{fn};
-    if(!out){
-      throw(std::runtime_error("OctaveMaterialPropertyInterface::writeOutputFiles: "
-			       "unable to open file '"+fn+"'"));
-    }
+    tfel::raise_if(!out,"OctaveMaterialPropertyInterface::writeOutputFiles: "
+		   "unable to open file '"+fn+"'");
     out.exceptions(std::ios::badbit|std::ios::failbit);
     out << "/*!\n"
 	<< "* \\file   " << fn  << '\n'

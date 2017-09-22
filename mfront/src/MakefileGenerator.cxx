@@ -36,6 +36,7 @@
 #include<unistd.h>
 #endif
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
@@ -67,10 +68,9 @@ namespace mfront{
 					 const GeneratorOptions& o,
 					 const std::string& name)
   {
-    if(!describes(t,name)){
-      throw(std::runtime_error("getLibraryLinkFlags : no library "
-			       "named '"+name+"'.\nInternal Error."));
-    }
+    tfel::raise_if(!describes(t,name),
+		   "getLibraryLinkFlags : no library "
+		   "named '"+name+"'.\nInternal Error.");
     const auto& l = t[name];
     auto res = std::string{};
     for(const auto& d : l.link_directories){
@@ -94,11 +94,10 @@ namespace mfront{
     }
     if(o.melt){
       for(const auto& ldn : l.deps){
-	if(!describes(t,ldn)){
-	  throw(std::runtime_error("getLibraryLinkFlags : no library "
-				   "named '"+ldn+"' (dependency of library "
-				   "'"+name+"').\nInternal Error."));
-	}
+	tfel::raise_if(!describes(t,ldn),
+		       "getLibraryLinkFlags : no library "
+		       "named '"+ldn+"' (dependency of library "
+		       "'"+name+"').\nInternal Error.");
 	const auto& ld = t[ldn];
 	for(const auto& d : ld.ldflags){
 	  res += d+" ";
@@ -173,9 +172,7 @@ namespace mfront{
     auto mfile = d+tfel::system::dirStringSeparator()+f;
     ofstream m(mfile);
     m.exceptions(ios::badbit|ios::failbit);
-    if(!m){
-      throw(runtime_error("generateMakeFile : can't open file '"+mfile+"'"));
-    }
+    tfel::raise_if(!m,"generateMakeFile : can't open file '"+mfile+"'");
     auto cppSources = set<string>{};
     auto cSources   = set<string>{};
     for(const auto& l : t){
@@ -501,11 +498,9 @@ namespace mfront{
       for(const char * const * a = argv;*a!=nullptr;++a){
 	msg += *a;msg += ' ';
       }
-      throw(std::runtime_error(msg));
+      tfel::raise(msg);
     };
-    if(::strlen(make)==0u){
-      throw(std::runtime_error("callMake: empty make command"));
-    }
+    tfel::raise_if(::strlen(make)==0u,"callMake: empty make command");
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
     if(_spawnvp(_P_WAIT,make,argv)!=0){
       error("");

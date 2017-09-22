@@ -32,6 +32,7 @@
 #endif
 #endif
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/System/System.hxx"
 
@@ -61,7 +62,7 @@ namespace mfront
 						   const tokens_iterator end)
   {
     auto throw_if = [](const bool b, const std::string& m){
-      if(b){throw(std::runtime_error("Fortran03MaterialPropertyInterface::treatKeyword : "+m));}
+      tfel::raise_if(b,"Fortran03MaterialPropertyInterface::treatKeyword : "+m);
     };
     if(std::find(i.begin(),i.end(),"fortran03")!=i.end()){
       throw_if(key!="@Module","unsupported key '"+key+"'");
@@ -207,7 +208,7 @@ namespace mfront
   Fortran03MaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
 						       const FileDescription& fd) const{
     auto throw_if = [](const bool b, const std::string& m){
-      if(b){throw(std::runtime_error("Fortran03MaterialPropertyInterface::writeOutputFiles : "+m));}
+      tfel::raise_if(b,"Fortran03MaterialPropertyInterface::writeOutputFiles : "+m);
     };
     CMaterialPropertyInterfaceBase::writeOutputFiles(mpd,fd);
     tfel::system::systemCall::mkdir("fortran");

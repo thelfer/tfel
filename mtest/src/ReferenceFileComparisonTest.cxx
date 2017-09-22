@@ -13,7 +13,7 @@
 
 #include<cmath>
 #include<sstream>
-
+#include"TFEL/Raise.hxx"
 #include"MTest/TextDataUtilities.hxx"
 #include"MTest/ReferenceFileComparisonTest.hxx"
 
@@ -48,7 +48,7 @@ namespace mtest{
 					  const unsigned int p)
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("ReferenceFileComparisonTest::check: "+m));}
+      tfel::raise_if(c,"ReferenceFileComparisonTest::check: "+m);
     };
     const real v = get(s);
     if(p>=this->values.size()){

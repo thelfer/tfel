@@ -8,6 +8,7 @@
 #include<random>
 #include<ostream>
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/RoundingMode.hxx"
 
@@ -39,8 +40,8 @@ namespace mtest{
     } else if(m=="Random"){
       getRoundingMode() = MTEST_RANDOM;
     } else {
-      throw(std::runtime_error("mtest::setRoundingMode: "
-			       "unsupported rounding mode '"+m+"'"));
+      tfel::raise("mtest::setRoundingMode: "
+		  "unsupported rounding mode '"+m+"'");
     }
     setRoundingMode();
   } // end of setRoundingMode

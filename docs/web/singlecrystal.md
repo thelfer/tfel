@@ -339,16 +339,29 @@ for(const unsigned short i=0;i!=Nss2;++i){
 
 However, this approach is error-prone, the data structure describing
 the slip systems provides methods to compute the offset of each
-family. Those methods are called `offset` plus the number of the
-family.
+family. There is one general method called `offset` and one methods
+per family called `offset` plus the number of the family
+(e.g. `offset1` for the second family).
 
-Hence, the previous loop can be written:
+Hence, the previous loop can be written with the `offset` method as
+follows:
+
+~~~~{.cpp}
+for(const unsigned short i=0;i!=Nss2;++i){
+  fg[ss.offset(2,i)]=...
+}
+~~~~
+
+This loop can also be written using the `offset2` method:
 
 ~~~~{.cpp}
 for(const unsigned short i=0;i!=Nss2;++i){
   fg[ss.offset2(i)]=...
 }
 ~~~~
+
+This latter way can be more efficient that using the global `offset`
+method depending on the compiler (and the compiler options used).
 
 # References
 

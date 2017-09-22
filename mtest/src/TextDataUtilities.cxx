@@ -12,6 +12,7 @@
  */
 
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Evaluator.hxx"
 #include"MTest/Evolution.hxx"
 #include"MTest/TextDataUtilities.hxx"
@@ -47,10 +48,9 @@ namespace mtest{
       unsigned short value{0};
       for(;p!=vn.end();++p){
 	const char c = *p;
-	if(!((c>='0')&&(c<='9'))){
-	  throw(std::runtime_error("mtest::eval::convert: "
-				   "invalid input '"+vn+"'"));
-	}
+	tfel::raise_if(!((c>='0')&&(c<='9')),
+		       "mtest::eval::convert: "
+		       "invalid input '"+vn+"'");
 	value*=10;
 	value+=c-'0';
       }
@@ -64,15 +64,13 @@ namespace mtest{
 	variables.push_back(Variable{p,d.getColumn(convert(v))});
       } else {
 	auto pev = m.find(v);
-	if(pev==m.end()){
-	  throw(std::runtime_error("mtest::eval: undeclared "
-				   "variable '"+v+"'"));
-	}
+	tfel::raise_if(pev==m.end(),
+		       "mtest::eval: undeclared "
+		       "variable '"+v+"'");
 	const auto& ev = *(pev->second);
-	if(!ev.isConstant()){
-	  throw(std::runtime_error("mtest::eval: evolution "
-				   "'"+v+"' is not constant"));
-	}
+	tfel::raise_if(!ev.isConstant(),
+		       "mtest::eval: evolution "
+		       "'"+v+"' is not constant");
 	e.setVariableValue(p,ev(real(0)));
       }
       ++p;

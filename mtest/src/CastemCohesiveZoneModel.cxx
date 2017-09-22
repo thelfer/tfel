@@ -15,6 +15,7 @@
 #include<limits>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Castem/Castem.hxx"
@@ -31,7 +32,7 @@ namespace mtest
     : UmatBehaviourBase(h,l,b)
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("CastemCohesiveZoneModel::CastemCohesiveZoneModel: "+m));}
+      tfel::raise_if(c,"CastemCohesiveZoneModel::CastemCohesiveZoneModel: "+m);
     };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     throw_if(elm.getInterface(l,b)!="Castem",
@@ -57,8 +58,7 @@ namespace mtest
   CastemCohesiveZoneModel::getRotationMatrix(const tfel::math::vector<real>&,
 					   const tfel::math::tmatrix<3u,3u,real>&) const
   {
-    throw(std::runtime_error("CastemCohesiveZoneModel::getRotationMatrix : "
-			     "invalid call"));
+    tfel::raise("CastemCohesiveZoneModel::getRotationMatrix: invalid call");
   } // end of CastemCohesiveZoneModel::getRotationMatrix
 
   void
@@ -101,9 +101,9 @@ namespace mtest
       this->computeElasticStiffness(wk.k,s.mprops1,drot);
       return {true,1};
     }
-    throw(std::runtime_error("CastemCohesiveZoneModel::computePredictionOperator : "
-			     "computation of the tangent operator "
-			     "is not supported"));
+    tfel::raise("CastemCohesiveZoneModel::computePredictionOperator: "
+		"computation of the tangent operator "
+		"is not supported");
   } // end of CastemCohesiveZoneModel::computePredictionOperator
 
   std::pair<bool,real>
@@ -121,12 +121,12 @@ namespace mtest
     CastemInt nprops = static_cast<CastemInt>(s.mprops1.size());
     CastemInt nstatv;
     const auto h = this->getHypothesis();
-    if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
-       (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)||
-       (h==ModellingHypothesis::AXISYMMETRICAL)){
-      throw(runtime_error("CastemCohesiveZoneModel::integrate: "
-			  "unsupported modelling hypothesis"));
-    } else if (h==ModellingHypothesis::PLANESTRESS){
+    tfel::raise_if((h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)||
+		   (h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)||
+		   (h==ModellingHypothesis::AXISYMMETRICAL),
+		   "CastemCohesiveZoneModel::integrate: "
+		   "unsupported modelling hypothesis");
+    if (h==ModellingHypothesis::PLANESTRESS){
       ndi = -2;
       ntens = 2;
     } else if (h==ModellingHypothesis::PLANESTRAIN){
@@ -139,23 +139,20 @@ namespace mtest
       ndi = 2;
       ntens = 3;
     } else {
-      throw(runtime_error("CastemCohesiveZoneModel::integrate: "
-			  "unsupported hypothesis"));
+      tfel::raise("CastemCohesiveZoneModel::integrate: unsupported hypothesis");
     }
-    if((wk.D.getNbRows()!=wk.k.getNbRows())||
-       (wk.D.getNbCols()!=wk.k.getNbCols())){
-      throw(runtime_error("CastemCohesiveZoneModel::integrate: "
-			  "the memory has not been allocated correctly"));
-    }
-    if(((s.iv0.size()==0)&&(wk.ivs.size()!=1u))||
-       ((s.iv0.size()!=0)&&(s.iv0.size()!=wk.ivs.size()))){
-      throw(runtime_error("CastemCohesiveZoneModel::integrate: "
-			  "the memory has not been allocated correctly"));
-    }
-    fill(wk.D.begin(),wk.D.end(),0.);
+    tfel::raise_if((wk.D.getNbRows()!=wk.k.getNbRows())||
+		   (wk.D.getNbCols()!=wk.k.getNbCols()),
+		   "CastemCohesiveZoneModel::integrate: "
+		   "the memory has not been allocated correctly");
+    tfel::raise_if(((s.iv0.size()==0)&&(wk.ivs.size()!=1u))||
+		   ((s.iv0.size()!=0)&&(s.iv0.size()!=wk.ivs.size())),
+		   "CastemCohesiveZoneModel::integrate: "
+		   "the memory has not been allocated correctly");
+    std::fill(wk.D.begin(),wk.D.end(),0.);
     if(s.iv0.size()!=0){
-      copy(s.iv0.begin(),s.iv0.end(),
-	   wk.ivs.begin());
+      std::copy(s.iv0.begin(),s.iv0.end(),
+		wk.ivs.begin());
     }
     nstatv = static_cast<CastemInt>(wk.ivs.size());
     // rotation matrix
@@ -192,9 +189,9 @@ namespace mtest
       if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
 	this->computeElasticStiffness(wk.k,s.mprops1,drot);
       } else {
-	throw(runtime_error("CastemCohesiveZoneModel::integrate : "
-			    "computation of the tangent operator "
-			    "is not supported"));
+	tfel::raise("CastemCohesiveZoneModel::integrate : "
+		    "computation of the tangent operator "
+		    "is not supported");
       }
     }
     if(!s.iv1.empty()){
@@ -236,17 +233,17 @@ namespace mtest
 	Kt(1,0) = Kt(1,2) = zero;
 	Kt(2,0) = Kt(2,1) = zero;
       } else {
-	throw(std::runtime_error("CastemCohesiveZoneModel::integrate: "
-				 "unsupported hypothesis"));
+	tfel::raise("CastemCohesiveZoneModel::computeElasticStiffness: "
+		    "unsupported hypothesis");
       }
     } else if(this->stype==1u){
-      throw(std::runtime_error("CastemCohesiveZoneModel::integrate: "
-			       "invalid behaviour type (orthotropic type "
-			       "is not supported yet)"));
+      tfel::raise("CastemCohesiveZoneModel::computeElasticStiffness: "
+		  "invalid behaviour type (orthotropic type "
+		  "is not supported yet)");
     } else {
-      throw(std::runtime_error("CastemCohesiveZoneModel::integrate: "
-			       "invalid behaviour type (neither "
-			       "isotropic or orthotropic)"));
+      tfel::raise("CastemCohesiveZoneModel::computeElasticStiffness: "
+		  "invalid behaviour type (neither "
+		  "isotropic or orthotropic)");
     }
   }
 
@@ -258,13 +255,12 @@ namespace mtest
     if(this->stype==0){
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"NormalThermalExpansion",0.);
     } else {
-      throw(std::runtime_error("CastemCohesiveZoneModel::CastemCohesiveZoneModel : "
-			       "unsupported symmetry type"));
+      tfel::raise("CastemCohesiveZoneModel::CastemCohesiveZoneModel : "
+		  "unsupported symmetry type");
     }
   } // end of CastemCohesiveZoneModel::setOptionalMaterialPropertiesDefaultValues
       
-  CastemCohesiveZoneModel::~CastemCohesiveZoneModel()
-  {}
+  CastemCohesiveZoneModel::~CastemCohesiveZoneModel() = default;
   
 } // end of namespace mtest
 

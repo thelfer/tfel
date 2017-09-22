@@ -15,7 +15,7 @@
 #include<fstream>
 #include<sstream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/TFELConfig.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"MFront/MFrontDebugMode.hxx"
@@ -75,8 +75,8 @@ namespace mfront
     } else if(t==MODEL){
       out << "MFRONT_SHAREDOBJ unsigned short " << n << "_mfront_mkt = 2u;\n\n";
     } else {
-      throw(std::runtime_error("writeMaterialKnowledgeTypeSymbol: "
-			       "internal error, (unsupported material knowledge type)"));
+      tfel::raise("writeMaterialKnowledgeTypeSymbol: "
+		  "internal error, (unsupported material knowledge type)");
     }
   } // end of writeMaterialKnowledgeTypeSymbol
   
@@ -135,7 +135,7 @@ namespace mfront
 	    << "is not a supported type for a static variable."
 	    << "Supported types are short, ushort, int, uint, long, ulong,"
 	    << "float, double and ldouble.";
-	throw(std::runtime_error(msg.str()));
+	tfel::raise(msg.str());
       }
     }
     os << '\n';

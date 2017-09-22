@@ -16,6 +16,7 @@
 #include<cstdlib>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
@@ -76,7 +77,7 @@ namespace mfront{
   {
     using tfel::utilities::CxxTokenizer;
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AsterInterface::treatKeyword : "+m));}
+      tfel::raise_if(b,"AsterInterface::treatKeyword : "+m);
     };
     if(!i.empty()){
       if(std::find(i.begin(),i.end(),this->getName())!=i.end()){
@@ -173,13 +174,12 @@ namespace mfront{
     if(bh.find(ModellingHypothesis::TRIDIMENSIONAL)!=bh.end()){
       h.insert(ModellingHypothesis::TRIDIMENSIONAL);
     }
-    if(h.empty()){
-      throw(std::runtime_error("AsterInterfaceModellingHypothesesToBeTreated : "
-			       "no hypotheses selected. This means that the given beahviour "
-			       "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
-			       "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
-			       "make sense to use the Aster interface"));
-    }
+    tfel::raise_if(h.empty(),
+		   "AsterInterfaceModellingHypothesesToBeTreated: "
+		   "no hypotheses selected. This means that the given beahviour "
+		   "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
+		   "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
+		   "make sense to use the Aster interface");
     return h;
   } // end of AsterInterface::getModellingHypothesesToBeTreated
 
@@ -189,30 +189,31 @@ namespace mfront{
     using namespace std;
     using namespace tfel::system;
     using namespace tfel::utilities;
-    string name;
-    if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
-	 (mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL))){
-      throw(runtime_error("AsterInterface::endTreatment : "
-			  "the aster interface only supports "
-			  "small and finite strain behaviours "
-			  "and cohesive zone models"));
-    }
+    auto throw_if = [](const bool b,const std::string& m){
+      tfel::raise_if(b,"AsterInterface::endTreatment : "+m);
+    };
+    throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
+	       (mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)),
+	     "AsterInterface::endTreatment : "
+	     "the aster interface only supports "
+	     "small and finite strain behaviours "
+	     "and cohesive zone models");
     if((this->compareToNumericalTangentOperator)||
        (this->savesTangentOperator)){
-      if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	throw(runtime_error("AsterInterface::endTreatment : "
-			    "unsupported feature @AsterSaveTangentOperator "
-			    "and @AsterCompareToNumericalTangentOperator : "
-			    "those are only valid for small strain beahviours"));
-      }
+      throw_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+	       "unsupported feature @AsterSaveTangentOperator "
+	       "and @AsterCompareToNumericalTangentOperator : "
+	       "those are only valid for small strain beahviours");
     }
     // get the modelling hypotheses to be treated
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
-    if(!mb.getLibrary().empty()){
-      name += mb.getLibrary();
-    }
-    name += mb.getClassName();
+    const auto name = [&mb]{
+      if(!mb.getLibrary().empty()){
+	return mb.getLibrary()+mb.getClassName();
+      }
+      return mb.getClassName();
+    }();
     // output directories
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/Aster");
@@ -222,12 +223,7 @@ namespace mfront{
     fileName += name;
     fileName += ".hxx";
     ofstream out("include/MFront/Aster/"+fileName);
-    if(!out){
-      string msg("AsterInterface::endTreatment : ");
-      msg += "could not open file ";
-      msg += fileName;
-      throw(runtime_error(msg));
-    }
+    throw_if(!out,"could not open file '"+fileName+"'");
 
     out << "/*!\n";
     out << "* \\file   "  << fileName << '\n';
@@ -339,26 +335,22 @@ namespace mfront{
     fileName += ".cxx";
 
     out.open("src/"+fileName);
-    if(!out){
-      string msg("AsterInterface::endTreatment : ");
-      msg += "could not open file ";
-      msg += fileName;
-      throw(runtime_error(msg));
-    }
+    throw_if(!out,"could not open file '"+fileName+")");
 
-    string sfeh;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      sfeh = "aster::AsterStandardSmallStrainStressFreeExpansionHandler";
-    } else if (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      sfeh = "nullptr";
-    } else if (mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
-      sfeh = "nullptr";
-    } else {
-      string msg("AsterInterface::endTreatment : "
-		 "the aster interface only supports small and finite strain behaviours and cohesive zone models");
-      throw(runtime_error(msg));
-    }
-
+    const auto sfeh = [&mb,&throw_if]{
+      if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	return "aster::AsterStandardSmallStrainStressFreeExpansionHandler";
+      } else if (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	return "nullptr";
+      } else if (mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
+	return "nullptr";
+      } else {
+	throw_if(true,"the aster interface only supports "
+		 "small and finite strain behaviours and "
+		 "cohesive zone models");
+      }
+    }();
+    
     out << "/*!\n";
     out << "* \\file   "  << fileName << '\n';
     out << "* \\brief  This file implements the aster interface for the " 
@@ -416,9 +408,8 @@ namespace mfront{
       dv0 = "U0";
       dv1 = "DU";
     } else {
-      throw(runtime_error("AsterInterface::endTreatment : "
-			  "the aster interface only supports small "
-			  "and finite strain behaviours and cohesive zone models"));
+      throw_if(true,"the aster interface only supports small "
+	       "and finite strain behaviours and cohesive zone models");
     }
 
     out << "MFRONT_SHAREDOBJ void\n"
@@ -701,7 +692,7 @@ namespace mfront{
 					      const Hypothesis h) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AsterInterface::buildMaterialPropertiesList: "+m));}
+      tfel::raise_if(b,"AsterInterface::buildMaterialPropertiesList: "+m);
     };
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       const auto ah = this->getModellingHypothesesToBeTreated(mb);
@@ -812,7 +803,7 @@ namespace mfront{
 						  const FileDescription&) const
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("AsterInterface::writeUMATxxSpecificSymbols: "+m));}
+      tfel::raise_if(c,"AsterInterface::writeUMATxxSpecificSymbols: "+m);
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
 	<< "_savesTangentOperator = ";
@@ -843,7 +834,7 @@ namespace mfront{
     const auto mvs = mb.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(mb,h);
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("AsterInterface::writeAsterBehaviourTraits: "+m));}
+      tfel::raise_if(c,"AsterInterface::writeAsterBehaviourTraits: "+m);
     };
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
       out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type";
@@ -925,10 +916,9 @@ namespace mfront{
     } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "static " << constexpr_c << " AsterSymmetryType type = aster::ORTHOTROPIC;\n";
     } else {
-      string msg("AsterInterface::endTreatment : ");
-      msg += "unsupported behaviour type.\n";
-      msg += "The aster interface only support isotropic or orthotropic behaviour at this time.";
-      throw(runtime_error(msg));
+      throw_if(true,"unsupported behaviour type. "
+	       "The aster interface only support isotropic or "
+	       "orthotropic behaviour at this time.");
     }
     out << "static " << constexpr_c << " AsterFiniteStrainFormulation afsf = aster::";
     if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
@@ -1015,8 +1005,8 @@ namespace mfront{
     } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
       return "*NUMMOD==3";
     }
-    throw(std::runtime_error("AsterInterface::getModellingHypothesisTest : "
-			     "unsupported modelling hypothesis"));
+    tfel::raise("AsterInterface::getModellingHypothesisTest : "
+		"unsupported modelling hypothesis");
   } // end of UMATInterface::gatherModellingHypothesesAndTests
 
 } // end of namespace mfront

@@ -12,6 +12,7 @@
  */
 
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Parser/EvaluatorFunction.hxx"
    
 namespace tfel
@@ -29,8 +30,8 @@ namespace tfel
       EvaluatorFunctionBase::differentiate(const std::vector<double>::size_type,
 					   const std::vector<double>&) const
       {
-	throw(std::runtime_error("EvaluatorFunctionBase::differentiate: "
-				 "unimplemented feature"));
+	raise("EvaluatorFunctionBase::differentiate: "
+	      "unimplemented feature");
       } // end of EvaluatorFunctionBase::differentiate
 
       EvaluatorFunctionBase::~EvaluatorFunctionBase() = default;
@@ -56,9 +57,8 @@ namespace tfel
       void
       EvaluatorFunction2VBase::checkCyclicDependency(std::vector<std::string>& names) const
       {
-	using namespace std;
-	vector<string> e1_vars;
-	vector<string> e2_vars;
+	std::vector<std::string> e1_vars;
+	std::vector<std::string> e2_vars;
 	this->e1->checkCyclicDependency(e1_vars);
 	this->e2->checkCyclicDependency(e2_vars);
 	mergeVariablesNames(names,e1_vars);

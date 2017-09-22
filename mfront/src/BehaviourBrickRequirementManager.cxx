@@ -8,6 +8,7 @@
 #include<utility>
 #include<algorithm>
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"MFront/VariableDescription.hxx"
 #include"MFront/StaticVariableDescription.hxx"
 #include"MFront/BehaviourData.hxx"
@@ -26,10 +27,9 @@ namespace mfront{
       auto test = [&r](const std::shared_ptr<Requirement>& rr){
 	return rr->name == r.name;
       };
-      if(std::find_if(rqs.begin(),rqs.end(),test)!=rqs.end()){
-	throw(std::runtime_error("RequirementManager::addRequirement : "
-				 "requirement '"+r.name+"' already registred"));
-      }
+      tfel::raise_if(std::find_if(rqs.begin(),rqs.end(),test)!=rqs.end(),
+		     "RequirementManager::addRequirement : "
+		     "requirement '"+r.name+"' already registred");
     }
 
     static void
@@ -110,10 +110,9 @@ namespace mfront{
 	}
 	++pr;
       }
-      if(pr==this->requirements.end()){
-	throw(std::runtime_error("RequirementManager::getRequirement : "
-				 "no requirement named '"+n+"'"));
-      }
+      tfel::raise_if(pr==this->requirements.end(),
+		     "RequirementManager::getRequirement : "
+		     "no requirement named '"+n+"'");
       return *(*pr);
     }
     
@@ -155,22 +154,20 @@ namespace mfront{
     const Provider&
     RequirementManager::getProvider(const std::string& e) const{
       const auto p = this->getProviderIterator(e);
-      if(p==this->providers.end()){
-	throw(std::runtime_error("RequirementManager::getProvider : "
-				 "a provider for quantity '"+e+"' "
-				 "declared"));
-      }
+      tfel::raise_if(p==this->providers.end(),
+		     "RequirementManager::getProvider : "
+		     "a provider for quantity '"+e+"' "
+		     "declared");
       return *(*p);
     }
     
     void
     RequirementManager::check(const Provider& p) const{
       const auto& e = p.getExternalName();
-      if(this->getProviderIterator(e)!=this->providers.end()){
-	throw(std::runtime_error("RequirementManager::check : "
-				 "a provider for quantity '"+e+"' "
-				 "has already been declared"));
-      }
+      tfel::raise_if(this->getProviderIterator(e)!=this->providers.end(),
+		     "RequirementManager::check : "
+		     "a provider for quantity '"+e+"' "
+		     "has already been declared");
       for(const auto& r:this->requirements){
 	if(p.handleRequirement(*r,this->checkUnits)){
 	  return;

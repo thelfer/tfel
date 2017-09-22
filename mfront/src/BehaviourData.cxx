@@ -17,6 +17,7 @@
 #include<algorithm>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
@@ -107,10 +108,9 @@ namespace mfront{
     auto check = [&n](const std::map<std::string,std::string>& m,
 		      const char* const t){
       for(const auto& v : m){
-	if(v.second==n){
-	  throw(std::runtime_error("BehaviourDataCheckIfNameIsAnEntryNameOrAGlossaryName : "
-				   "name '"+n+"' is already used as a "+std::string(t)));
-	}
+	tfel::raise_if(v.second==n,
+		       "BehaviourDataCheckIfNameIsAnEntryNameOrAGlossaryName : "
+		       "name '"+n+"' is already used as a "+std::string(t));
       }
     };
     check(gm,"glossary name");
@@ -134,35 +134,30 @@ namespace mfront{
 					 const std::string& n,
 					 const std::string& g)
   {
+    auto throw_if = [](const bool c, const std::string& msg){
+      tfel::raise_if(c,"BehaviourDataAddToGlossaryOrEntryNames: "+msg);
+    };
     BehaviourDataCheckIfNameIsAnEntryNameOrAGlossaryName(gn,en,g);
-    if(en.find(n)!=en.end()){
-      throw(std::runtime_error("BehaviourDataAddToGlossaryOrEntryNames : "
-			       "an entry name has already been specified for "
-			       "variable '"+n+"'"));
-    }
-    if(gn.find(n)!=gn.end()){
-      throw(std::runtime_error("BehaviourDataAddToGlossaryOrEntryNames : "
-			       "an glossary name has already been specified for "
-			       "variable '"+n+"'"));
-    }
+    throw_if(en.find(n)!=en.end(),
+	     "an entry name has already been specified for "
+	     "variable '"+n+"'");
+    throw_if(gn.find(n)!=gn.end(),
+	     "a glossary name has already been specified for "
+	     "variable '"+n+"'");
     if(n!=g){
-      if(vn.find(g)!=vn.end()){
-	throw(std::runtime_error("BehaviourDataAddToGlossaryOrEntryNames : "
-				 "a member with the '"+g+"' name has already "
-				 "been declared"));
-      }
+      throw_if(vn.find(g)!=vn.end(),
+	       "a member with the '"+g+"' name has already "
+	       "been declared");
     }
-    if(!m.insert({n,g}).second){
-      throw(std::runtime_error("BehaviourDataAddToGlossaryOrEntryNames : "
-			       "glossary name for variable '"+n+"' "
-			       "already specified"));
-    }
+    throw_if(!m.insert({n,g}).second,
+	     "glossary name for variable '"+n+"' "
+	     "already specified");
   }
   
   void BehaviourData::throwUndefinedAttribute(const std::string& n)
   {
-    throw(std::runtime_error("BehaviourData::getAttribute : "
-			     "no attribute named '"+n+"'"));
+    tfel::raise("BehaviourData::getAttribute : "
+		"no attribute named '"+n+"'");
   } // end of BehaviourData::throwUndefinedAttribute
   
   BehaviourData::CodeBlocksAggregator::CodeBlocksAggregator() = default;
@@ -279,10 +274,9 @@ namespace mfront{
 
   void BehaviourData::CodeBlocksAggregator::check() const
   {
-    if(!this->is_mutable){
-      throw(std::runtime_error("BehaviourData::CodeBlocksAggregator::set : "
-			       "can't modifiy a code block"));
-    }
+    tfel::raise_if(!this->is_mutable,
+		   "BehaviourData::CodeBlocksAggregator::set : "
+		   "can't modifiy a code block");
   } // end of BehaviourData::CodeBlocksAggregator::check
 
   const CodeBlock& BehaviourData::CodeBlocksAggregator::get() const
@@ -307,11 +301,10 @@ namespace mfront{
   static void
   checkAlreadyRegistred(const std::set<std::string>& r,
 			const std::string& n){
-    if(r.find(n)==r.end()){
-      throw(std::runtime_error("checkAlreadyRegistred: "
-			       "variable '"+n+"' was declared "
-			       "a 'already registred' but is not"));
-    }
+    tfel::raise_if(r.find(n)==r.end(),
+		   "checkAlreadyRegistred: "
+		   "variable '"+n+"' was declared "
+		   "a 'already registred' but is not");
   }
   
   void BehaviourData::addStaticVariable(const StaticVariableDescription& v,
@@ -320,22 +313,20 @@ namespace mfront{
     if((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables))&&
        (!this->getAttribute<bool>(BehaviourData::allowsNewUserDefinedVariables))){
       const auto cbn = this->getCodeBlockNames();
-      if(cbn.empty()){
-	throw(std::runtime_error("BehaviourData::addStaticVariable: "
-				 "no more variable can be defined. This may mean that "
-				 "the parser does not expect you to add variables"));
-      } else {
-	auto cbs = std::string{};
-	for(const auto& n : cbn){
-	  cbs += "\n- "+n;
-	}
-	throw(std::runtime_error("BehaviourData::addStaticVariable: "
-				 "no more variable can be defined. This may mean that "
-				 "you already declared a block of code (or that the dsl "
-				 "does not expect you to add variables for whatever reason). "
-				 "This is the list of "
-				 "code blocks defined :"+cbs));
+      tfel::raise_if(cbn.empty(),
+		     "BehaviourData::addStaticVariable: "
+		     "no more variable can be defined. This may mean that "
+		     "the parser does not expect you to add variables");
+      auto cbs = std::string{};
+      for(const auto& n : cbn){
+	cbs += "\n- "+n;
       }
+      tfel::raise("BehaviourData::addStaticVariable: "
+		  "no more variable can be defined. This may mean that "
+		  "you already declared a block of code (or that the dsl "
+		  "does not expect you to add variables for whatever reason). "
+		  "This is the list of "
+		  "code blocks defined :"+cbs);
     }
     if(s==UNREGISTRED){
       this->registerStaticMemberName(v.name);
@@ -348,15 +339,14 @@ namespace mfront{
   int BehaviourData::getIntegerConstant(const std::string& n) const{
     for(const auto& v:this->staticVariables){
       if(v.name==n){
-	if(v.type!="int"){
-	  throw(std::runtime_error("MaterialPropertyDSL::getIntegerConstant: "
-				   "invalid type for variable '"+n+"'"));
-	}
+	tfel::raise_if(v.type!="int",
+		       "MaterialPropertyDSL::getIntegerConstant: "
+		       "invalid type for variable '"+n+"'");
 	return v.value;
       }
     }
-    throw(std::runtime_error("MaterialPropertyDSL::getIntegerConstant: "
-			     "unknown variable '"+n+"'"));
+    tfel::raise("MaterialPropertyDSL::getIntegerConstant: "
+		"unknown variable '"+n+"'");
   } // end of BehaviourData::getIntegerConstant
   
   const StaticVariableDescriptionContainer&
@@ -626,11 +616,10 @@ namespace mfront{
     auto getNames = [](std::set<std::string>& r,
 		       const VariableDescriptionContainer& c){
       for(const auto& v : c){
-	if(!r.insert(v.name).second){
-	  throw(std::runtime_error("BehaviourData::getVariablesNames: "
-				   "internal error, variable name '"+
-				   v.name+"' multiply defined"));
-	}
+	tfel::raise_if(!r.insert(v.name).second,
+		       "BehaviourData::getVariablesNames: "
+		       "internal error, variable name "
+		       "'"+v.name+"' multiply defined");
       }
     };
     auto n = std::set<std::string>{};
@@ -661,8 +650,8 @@ namespace mfront{
     } else if(t=="Parameter"){
       m = &BehaviourData::getParameters;
     } else {
-      throw(std::runtime_error("BehaviourData::getVariables : "
-			       "invalid variables type '"+t+"'"));
+      tfel::raise("BehaviourData::getVariables : "
+		  "invalid variables type '"+t+"'");
     }
     return (this->*m)();
   } // end of BehaviourData::getIntegrationVariables
@@ -715,10 +704,8 @@ namespace mfront{
     set_bounds(this->persistentVariables);
     set_bounds(this->externalStateVariables);
     set_bounds(this->parameters);
-    if(!treated){
-      throw(std::runtime_error("BehaviourData::setBounds: "
-			       "no variable named '"+n+"'"));
-    }
+    tfel::raise_if(!treated,"BehaviourData::setBounds: "
+		   "no variable named '"+n+"'");
   } // end of BehaviourData::getBounds
 
   void BehaviourData::setBounds(const std::string& n,
@@ -740,10 +727,8 @@ namespace mfront{
     set_bounds(this->persistentVariables);
     set_bounds(this->externalStateVariables);
     set_bounds(this->parameters);
-    if(!treated){
-      throw(std::runtime_error("BehaviourData::setBounds: "
-			       "no variable named '"+n+"'"));
-    }
+    tfel::raise_if(!treated,"BehaviourData::setBounds: "
+		   "no variable named '"+n+"'");
   }
   
   const VariableDescription&
@@ -778,16 +763,16 @@ namespace mfront{
     if(contains(this->parameters)){
       return this->parameters.getVariableByExternalName(n);
     }
-    throw(std::runtime_error("BehaviourData::getVariableDescriptionByExternalName: "
-			     "no variable with external name '"+n+"' found. "
-			     "Such variable is *not*:\n"
-			     "- a material property\n"
-			     "- a local variable\n"
-			     "- a state variable\n"
-			     "- an auxiliary state variable\n"
-			     "- an integration variable\n"
-			     "- an external state variable\n"
-			     "- a parameter"));
+    tfel::raise("BehaviourData::getVariableDescriptionByExternalName: "
+		"no variable with external name '"+n+"' found. "
+		"Such variable is *not*:\n"
+		"- a material property\n"
+		"- a local variable\n"
+		"- a state variable\n"
+		"- an auxiliary state variable\n"
+		"- an integration variable\n"
+		"- an external state variable\n"
+		"- a parameter");
   } // end of BehaviourData::getVariableDescriptionByExternalName
 
   const VariableDescription&
@@ -814,16 +799,16 @@ namespace mfront{
     if(this->parameters.contains(n)){
       return this->parameters.getVariable(n);
     }
-    throw(std::runtime_error("BehaviourData::getVariableDescription: "
-			     "no variable named '"+n+"' found. "
-			     "This variable is *not*:\n"
-			     "- a material property\n"
-			     "- a local variable\n"
-			     "- a state variable\n"
-			     "- an auxiliary state variable\n"
-			     "- an integration variable\n"
-			     "- an external state variable\n"
-			     "- a parameter"));
+    tfel::raise("BehaviourData::getVariableDescription: "
+		"no variable named '"+n+"' found. "
+		"This variable is *not*:\n"
+		"- a material property\n"
+		"- a local variable\n"
+		"- a state variable\n"
+		"- an auxiliary state variable\n"
+		"- an integration variable\n"
+		"- an external state variable\n"
+		"- a parameter");
   } // end of BehaviourData::getVariableDescription
 
   void BehaviourData::setVariableAttribute(const std::string& v,
@@ -846,19 +831,17 @@ namespace mfront{
     set_if(this->persistentVariables);
     set_if(this->externalStateVariables);
     set_if(this->parameters);
-    if(!treated){
-      throw(std::runtime_error("BehaviourData::setVariableAttribute: "
-			       "no variable named '"+n+"' found."
-			       "This variable is *not*:\n"
-			       "- a material property\n"
-			       "- a local variable\n"
-			       "- a state variable\n"
-			       "- an auxiliary state variable\n"
-			       "- an integration variable\n"
-			       "- a  persistent variable\n"
-			       "- an external state variable\n"
-			       "- a parameter"));
-    }
+    tfel::raise_if(!treated,"BehaviourData::setVariableAttribute: "
+		   "no variable named '"+n+"' found."
+		   "This variable is *not*:\n"
+		   "- a material property\n"
+		   "- a local variable\n"
+		   "- a state variable\n"
+		   "- an auxiliary state variable\n"
+		   "- an integration variable\n"
+		   "- a  persistent variable\n"
+		   "- an external state variable\n"
+		   "- a parameter");
   } // end of BehaviourData::setVariableAttribute
   
   VariableDescription&
@@ -885,16 +868,16 @@ namespace mfront{
     if(this->parameters.contains(n)){
       return this->parameters.getVariable(n);
     }
-    throw(std::runtime_error("BehaviourData::getVariableDescription: "
-			     "no variable named '"+n+"' found."
-			     "This variable is *not*:\n"
-			     "- a material property\n"
-			     "- a local variable\n"
-			     "- a state variable\n"
-			     "- an auxiliary state variable\n"
-			     "- an integration variable\n"
-			     "- an external state variable\n"
-			     "- a parameter"));
+    tfel::raise("BehaviourData::getVariableDescription: "
+		"no variable named '"+n+"' found."
+		"This variable is *not*:\n"
+		"- a material property\n"
+		"- a local variable\n"
+		"- a state variable\n"
+		"- an auxiliary state variable\n"
+		"- an integration variable\n"
+		"- an external state variable\n"
+		"- a parameter");
   } // end of BehaviourData::getVariableDescription
   
   void BehaviourData::setPhysicalBounds(const std::string& n,
@@ -915,10 +898,8 @@ namespace mfront{
     set_bounds(this->persistentVariables);
     set_bounds(this->externalStateVariables);
     set_bounds(this->parameters);
-    if(!treated){
-      throw(std::runtime_error("BehaviourData::setPhysicalBounds: "
-			       "no variable named '"+n+"'"));
-    }
+    tfel::raise_if(!treated,"BehaviourData::setPhysicalBounds: "
+		   "no variable named '"+n+"'");
   } // end of BehaviourData::setPhysicalBounds
 
   void BehaviourData::setPhysicalBounds(const std::string& n,
@@ -940,10 +921,8 @@ namespace mfront{
     set_bounds(this->persistentVariables);
     set_bounds(this->externalStateVariables);
     set_bounds(this->parameters);
-    if(!treated){
-      throw(std::runtime_error("BehaviourData::setPhysicalBounds: "
-			       "no variable named '"+n+"'"));
-    }
+    tfel::raise_if(!treated,"BehaviourData::setPhysicalBounds: "
+		   "no variable named '"+n+"'");
   } // end of BehaviourData::setPhysicalBounds
   
   void BehaviourData::setUsableInPurelyImplicitResolution(const bool b)
@@ -973,22 +952,20 @@ namespace mfront{
       if((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables))&&
 	 (!this->getAttribute<bool>(BehaviourData::allowsNewUserDefinedVariables))){
 	const auto cbn = this->getCodeBlockNames();
-	if(cbn.empty()){
-	  throw(std::runtime_error("BehaviourData::addVariable: can't add variable '"+v.name+"', "
-				   "no more variable can be defined. This may mean that "
-				   "the parser does not expect you to add variables"));
-	} else {
-	  auto cbs = std::string{};
-	  for(const auto& n : cbn){
-	    cbs += "\n- "+n;
-	  }
-	  throw(std::runtime_error("BehaviourData::addVariable: can't add variable '"+v.name+"', "
-				   "no more variable can be defined. This may mean that "
-				   "you already declared a block of code (or that the dsl "
-				   "does not expect you to add variables for whatever reason). "
-				   "This is the list of "
-				   "code blocks defined :"+cbs));
+	tfel::raise_if(cbn.empty(),
+		       "BehaviourData::addVariable: can't add variable '"+v.name+"', "
+		       "no more variable can be defined. This may mean that "
+		       "the parser does not expect you to add variables");
+	auto cbs = std::string{};
+	for(const auto& n : cbn){
+	  cbs += "\n- "+n;
 	}
+	tfel::raise("BehaviourData::addVariable: can't add variable '"+v.name+"', "
+		    "no more variable can be defined. This may mean that "
+		    "you already declared a block of code (or that the dsl "
+		    "does not expect you to add variables for whatever reason). "
+		    "This is the list of "
+		    "code blocks defined :"+cbs);
       }
     }
     if(s==ALREADYREGISTRED){
@@ -1010,10 +987,9 @@ namespace mfront{
 
   void BehaviourData::reserveName(const std::string& n)
   {
-    if(!this->reservedNames.insert(n).second){
-      throw(std::runtime_error("BehaviourData::reserveName: "
-			       "name '"+n+"' already registred"));
-    }
+    tfel::raise_if(!this->reservedNames.insert(n).second,
+		   "BehaviourData::reserveName: "
+		   "name '"+n+"' already registred");
   } // end of BehaviourData::reserveName
 
   bool BehaviourData::isNameReserved(const std::string& n) const{
@@ -1025,48 +1001,44 @@ namespace mfront{
     using namespace tfel::glossary;
     const auto& glossary = Glossary::getGlossary();
     for(auto& e : this->entryNames){
-      if(e.second==n){
-	throw(std::runtime_error("BehaviourData::registerMemberName : "
-				 "the name '"+n+"' is already been used "
-				 "for an entry name"));
-      }
+      tfel::raise_if(e.second==n,
+		     "BehaviourData::registerMemberName : "
+		     "the name '"+n+"' is already been used "
+		     "for an entry name");
     }
     if(glossary.contains(n)){
       std::ostringstream msg;
       msg << "BehaviourData::registerMemberName : "
 	  << "the name '" << n << "' is a registred as a glossary name.\n";
       displayGlossaryEntryCompleteDescription(msg,glossary.getGlossaryEntry(n));
-      throw(std::runtime_error(msg.str()));
+      tfel::raise(msg.str());
     }
     this->reserveName(n);
-    if(!this->membersNames.insert(n).second){
-      throw(std::runtime_error("BehaviourData::registerMemberName : "
-			       "a variable named '"+n+"' has already been registred"));
-    }
+    tfel::raise_if(!this->membersNames.insert(n).second,
+		   "BehaviourData::registerMemberName : "
+		   "a variable named '"+n+"' has already been registred");
   } // end of BehaviourData::registerMemberName
 
   void BehaviourData::registerStaticMemberName(const std::string& n)
   {
     const auto& g = tfel::glossary::Glossary::getGlossary();
     for(auto& e : this->entryNames){
-      if(e.second==n){
-	throw(std::runtime_error("BehaviourData::registerStaticMemberName : "
-				 "the name '"+n+"' is already been used "
-				 "for an entry name"));
-      }
+      tfel::raise_if(e.second==n,
+		     "BehaviourData::registerStaticMemberName : "
+		     "the name '"+n+"' is already been used "
+		     "for an entry name");
     }
     if(g.contains(n)){
       std::ostringstream msg;
       msg << "BehaviourData::registerStaticMemberName : "
 	  << "the name '" << n << "' is a registred as a glossary name.\n";
       displayGlossaryEntryCompleteDescription(msg,g.getGlossaryEntry(n));
-      throw(std::runtime_error(msg.str()));
+      tfel::raise(msg.str());
     }
     this->reserveName(n);
-    if(!this->staticMembersNames.insert(n).second){
-      throw(std::runtime_error("BehaviourData::registerStaticMemberName : "
-			  "a variable named '"+n+"' has already been registred"));
-    }
+    tfel::raise_if(!this->staticMembersNames.insert(n).second,
+		   "BehaviourData::registerStaticMemberName : "
+		   "a variable named '"+n+"' has already been registred");
   } // end of BehaviourData::registerStaticMemberName
   
   const std::set<std::string>& BehaviourData::getRegistredMembersNames() const
@@ -1092,8 +1064,8 @@ namespace mfront{
        (this->staticVariables.contains(n))){
       return;
     }
-    throw(std::runtime_error("BehaviourData::checkVariableName : "
-			     "no variable named '"+n+"'"));
+    tfel::raise("BehaviourData::checkVariableName : "
+		"no variable named '"+n+"'");
   } // end of BehaviourData::checkVariableName
 
   void BehaviourData::setCode(const std::string& n,
@@ -1107,18 +1079,17 @@ namespace mfront{
       pc = this->cblocks.insert({n,CodeBlocksAggregator{}}).first;
     } else {
       if(m==CREATE){
-	throw(std::runtime_error("BehaviourData::setCode : "
-				 "a code block named '"+n+"' already exists.\n"
-				 "If you wanted to append this new code to the "
-				 "existing one, you shall use the 'Append' option.\n"
-				 "You can also replace it with 'Replace' option "
-				 "(assuming you know what you are doing).\n"));
+	tfel::raise("BehaviourData::setCode : "
+		    "a code block named '"+n+"' already exists.\n"
+		    "If you wanted to append this new code to the "
+		    "existing one, you shall use the 'Append' option.\n"
+		    "You can also replace it with 'Replace' option "
+		    "(assuming you know what you are doing).\n");
       } else if(m==CREATEORREPLACE){
-	if(!pc->second.isMutable()){
-	  throw(std::runtime_error("BehaviourData::setCode: "
-				   "the code block named '"+n+"' "
-				   "is not modifiable"));
-	}
+	tfel::raise_if(!pc->second.isMutable(),
+		       "BehaviourData::setCode: "
+		       "the code block named '"+n+"' "
+		       "is not modifiable");
 	this->cblocks.erase(pc);
 	pc = this->cblocks.insert({n,CodeBlocksAggregator{}}).first;
       } else if(m==CREATEBUTDONTREPLACE){
@@ -1131,10 +1102,9 @@ namespace mfront{
   const CodeBlock& BehaviourData::getCodeBlock(const std::string& n) const
   {
     auto p = this->cblocks.find(n);
-    if(p==this->cblocks.end()){
-      throw(std::runtime_error("BehaviourData::getCode: "
-			       "no code block associated with '"+n+"'"));
-    }
+    tfel::raise_if(p==this->cblocks.end(),
+		   "BehaviourData::getCode: "
+		   "no code block associated with '"+n+"'");
     return p->second.get();
   } // end of BehaviourData::getCodeBlock
 
@@ -1161,7 +1131,7 @@ namespace mfront{
 					       const double v)
   {
     auto throw_if = [](const bool b, const std::string& m){
-      if(b){throw(std::runtime_error("BehaviourData::setParameterDefaultValue: "+m));}
+      tfel::raise_if(b,"BehaviourData::setParameterDefaultValue: "+m);
     };
     throw_if(!this->parameters.contains(n),"no parameter '"+n+"' defined");
     const auto& p = this->parameters.getVariable(n);
@@ -1175,7 +1145,7 @@ namespace mfront{
 					       const double v)
   {
     auto throw_if = [](const bool b, const std::string& m){
-      if(b){throw(std::runtime_error("BehaviourData::setParameterDefaultValue: "+m));}
+      tfel::raise_if(b,"BehaviourData::setParameterDefaultValue: "+m);
     };
     throw_if(!this->parameters.contains(n),"no parameter '"+n+"' defined");
     const auto& p = this->parameters.getVariable(n);
@@ -1193,7 +1163,7 @@ namespace mfront{
 					       const int v)
   {
     auto throw_if = [](const bool b, const std::string& m){
-      if(b){throw(std::runtime_error("BehaviourData::setParameterDefaultValue: "+m));}
+      tfel::raise_if(b,"BehaviourData::setParameterDefaultValue: "+m);
     };
     throw_if(!this->parameters.contains(n),"no parameter '"+n+"' defined");
     const auto& p = this->parameters.getVariable(n);
@@ -1206,7 +1176,7 @@ namespace mfront{
 					       const unsigned short v)
   {
     auto throw_if = [](const bool b, const std::string& m){
-      if(b){throw(std::runtime_error("BehaviourData::setParameterDefaultValue: "+m));}
+      tfel::raise_if(b,"BehaviourData::setParameterDefaultValue: "+m);
     };
     throw_if(!this->parameters.contains(n),"no parameter '"+n+"' defined");
     const auto& p = this->parameters.getVariable(n);
@@ -1219,7 +1189,7 @@ namespace mfront{
   BehaviourData::getFloattingPointParameterDefaultValue(const std::string& n) const
   {
     auto throw_if = [](const bool b, const std::string& m){
-      if(b){throw(std::runtime_error("BehaviourData::getFloattingPointParameterDefaultValue: "+m));}
+      tfel::raise_if(b,"BehaviourData::getFloattingPointParameterDefaultValue: "+m);
     };
     throw_if(!this->parameters.contains(n),"no parameter '"+n+"' defined");
     const auto p = this->parametersDefaultValues.find(n);
@@ -1233,7 +1203,7 @@ namespace mfront{
 							const unsigned short i) const
   {
     auto throw_if = [](const bool b, const std::string& m){
-      if(b){throw(std::runtime_error("BehaviourData::getFloattingPointParameterDefaultValue: "+m));}
+      tfel::raise_if(b,"BehaviourData::getFloattingPointParameterDefaultValue: "+m);
     };
     throw_if(!this->parameters.contains(n),"no parameter '"+n+"' defined");
     const auto& v = this->parameters.getVariable(n);
@@ -1248,30 +1218,26 @@ namespace mfront{
 
   int BehaviourData::getIntegerParameterDefaultValue(const std::string& n) const
   {
-    if(!this->parameters.contains(n)){
-      throw(std::runtime_error("BehaviourData::getIntegerParameterDefaultValue : "
-			       "no parameter '"+n+"' defined"));
-    }
+    tfel::raise_if(!this->parameters.contains(n),
+		   "BehaviourData::getIntegerParameterDefaultValue : "
+		   "no parameter '"+n+"' defined");
     auto p = this->iParametersDefaultValues.find(n);
-    if(p==this->iParametersDefaultValues.end()){
-      throw(std::runtime_error("BehaviourData::getIntegerParameterDefaultValue : "
-			       "no default value defined for parameter '"+n+"'"));
-    }
+    tfel::raise_if(p==this->iParametersDefaultValues.end(),
+		   "BehaviourData::getIntegerParameterDefaultValue : "
+		   "no default value defined for parameter '"+n+"'");
     return p->second;
   } // end of BehaviourData::getIntegerParameterDefaultValue
 
   unsigned short
   BehaviourData::getUnsignedShortParameterDefaultValue(const std::string& n) const
   {
-    if(!this->parameters.contains(n)){
-      throw(std::runtime_error("BehaviourData::getUnsignedShortParameterDefaultValue : "
-			       "no parameter '"+n+"' defined"));
-    }
+    tfel::raise_if(!this->parameters.contains(n),
+		   "BehaviourData::getUnsignedShortParameterDefaultValue : "
+		   "no parameter '"+n+"' defined");
     auto p = this->uParametersDefaultValues.find(n);
-    if(p==this->uParametersDefaultValues.end()){
-      throw(std::runtime_error("BehaviourData::getUnsignedShortParameterDefaultValue : "
-			       "no default value defined for parameter '"+n+"'"));
-    }
+    tfel::raise_if(p==this->uParametersDefaultValues.end(),
+		   "BehaviourData::getUnsignedShortParameterDefaultValue : "
+		   "no default value defined for parameter '"+n+"'");
     return p->second;
   } // end of BehaviourData::getUnsignedShortParameterDefaultValue
 
@@ -1280,7 +1246,7 @@ namespace mfront{
 				   const bool b)
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourData::setAttribute: "+m));}
+      tfel::raise_if(c,"BehaviourData::setAttribute: "+m);
     };    
     auto p=this->attributes.find(n);
     if(p!=this->attributes.end()){
@@ -1296,7 +1262,7 @@ namespace mfront{
 				      const BehaviourAttribute& a)
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourData::updateAttribute: "+m));}
+      tfel::raise_if(c,"BehaviourData::updateAttribute: "+m);
     };    
     auto p=this->attributes.find(n);
     throw_if(p==this->attributes.end(),
@@ -1374,10 +1340,9 @@ namespace mfront{
   {
     using tfel::glossary::Glossary;
     const auto& glossary = Glossary::getGlossary();
-    if(!glossary.contains(g)){
-      throw(std::runtime_error("BehaviourData::setGlossaryName : "
-			       "'"+g+"' is not a glossary name"));
-    }
+    tfel::raise_if(!glossary.contains(g),
+		   "BehaviourData::setGlossaryName : "
+		   "'"+g+"' is not a glossary name");
     bool treated = false;
     auto set_glossary_name = [&n,&g,&treated](VariableDescriptionContainer& c){
       if(c.contains(n)){
@@ -1399,20 +1364,16 @@ namespace mfront{
     set_glossary_name(this->persistentVariables);
     set_glossary_name(this->externalStateVariables);
     set_glossary_name(this->parameters);
-    if(!treated){
-      throw(std::runtime_error("BehaviourData::setGlossaryName: "
-			       "no variable named '"+n+"'"));
-    }
+    tfel::raise_if(!treated,"BehaviourData::setGlossaryName: "
+		   "no variable named '"+n+"'");
   } // end of BehaviourData::addGlossaryName
 
   bool BehaviourData::isGlossaryNameUsed(const std::string& n) const
   {
     using namespace tfel::glossary;
     const auto& g = Glossary::getGlossary();
-    if(!g.contains(n)){
-      throw(std::runtime_error("BehaviourData::isGlossaryNameUsed: "
-			       "'"+n+"' is not a glossary name"));
-    }
+    tfel::raise_if(!g.contains(n),"BehaviourData::isGlossaryNameUsed: "
+		   "'"+n+"' is not a glossary name");
     for(const auto& gn : this->glossaryNames){
       if(gn.second==n){
 	return true;
@@ -1439,12 +1400,11 @@ namespace mfront{
 	  << "'" << e << "' is a glossary name. " << std::endl
 	  << "Please use 'setGlossaryName' method instead or choose another entry name.";
       displayGlossaryEntryCompleteDescription(msg,glossary.getGlossaryEntry(e));
-      throw(std::runtime_error(msg.str()));
+      tfel::raise(msg.str());
     }
-    if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e,false)){
-      throw(std::runtime_error("BehaviourData::setEntryName: "
-			       "'"+e+"' is a not a valid entry name"));
-    }
+    tfel::raise_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e,false),
+		   "BehaviourData::setEntryName: "
+		   "'"+e+"' is a not a valid entry name");
     this->checkVariableName(n);
     BehaviourDataAddToGlossaryOrEntryNames(this->entryNames,
 					   this->glossaryNames,
@@ -1458,10 +1418,8 @@ namespace mfront{
     set_entry_name(this->persistentVariables);
     set_entry_name(this->externalStateVariables);
     set_entry_name(this->parameters);
-    if(!treated){
-      throw(std::runtime_error("BehaviourData::setEntryName: "
-			       "no variable named '"+n+"'"));
-    }
+    tfel::raise_if(!treated,"BehaviourData::setEntryName: "
+		   "no variable named '"+n+"'");
   } // end of BehaviourData::addEntryName
 
   bool BehaviourData::isUsedAsEntryName(const std::string& n) const
@@ -1487,8 +1445,8 @@ namespace mfront{
 	return e.first;
       }
     }
-    throw(std::runtime_error("BehaviourData::getVariableNameFromGlossaryNameOrEntryName: "
-			     "no variable with glossary or entry name '"+n+"'"));
+    tfel::raise("BehaviourData::getVariableNameFromGlossaryNameOrEntryName: "
+		"no variable with glossary or entry name '"+n+"'");
   } // end of BehaviourData::getVariableNameFromGlossaryNameOrEntryName
 
   const VariableDescriptionContainer& BehaviourData::getParameters() const
@@ -1528,7 +1486,7 @@ namespace mfront{
 
   void BehaviourData::addStressFreeExpansion(const StressFreeExpansionDescription& sfed){
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourData::addStressFreeExpansion: "+m));}
+      tfel::raise_if(c,"BehaviourData::addStressFreeExpansion: "+m);
     };
     auto check_esv = [this,&throw_if](const SFED_ESV& h){
       throw_if(!this->isExternalStateVariableName(h.vname),
@@ -1644,12 +1602,11 @@ namespace mfront{
 	  (sfed.is<BehaviourData::OrthotropicStressFreeExpansionII>())){ 
 	return true;
       } else {
-	if ((!sfed.is<BehaviourData::IsotropicStressFreeExpansion>())&&
-	    (!sfed.is<BehaviourData::VolumeSwellingStressFreeExpansion>())){ 
-	  throw(std::runtime_error("BehaviourData::isStressFreeExansionAnisotropic: "
-				   "internal error, unsupported stress "
-				   "free expansion type"));
-	}
+	tfel::raise_if((!sfed.is<BehaviourData::IsotropicStressFreeExpansion>())&&
+		       (!sfed.is<BehaviourData::VolumeSwellingStressFreeExpansion>()),
+		       "BehaviourData::isStressFreeExansionAnisotropic: "
+		       "internal error, unsupported stress "
+		       "free expansion type");
       }
     }
     return false;

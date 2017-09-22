@@ -12,6 +12,7 @@
  */
 
 #include<boost/python.hpp>
+#include"TFEL/Raise.hxx"
 #include"MFront/InitDSLs.hxx"
 #include"MFront/MFrontBase.hxx"
 #include"MFront/InitInterfaces.hxx"
@@ -40,9 +41,7 @@ static boost::python::object getDSL(const std::string& f)
   auto dsl = mfront::MFrontBase::getDSL(f);
   if(dsl->getTargetType()==mfront::AbstractDSL::BEHAVIOURDSL){
     auto b = std::dynamic_pointer_cast<mfront::AbstractBehaviourDSL>(dsl);
-    if(!b){
-      throw(std::runtime_error("getDSL: invalid dsl implementation"));
-    }
+    tfel::raise_if(!b,"getDSL: invalid dsl implementation");
     return boost::python::object(b);
   }
   return boost::python::object(dsl);

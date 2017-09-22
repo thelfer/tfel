@@ -16,7 +16,7 @@
 #include<string>
 #include<fstream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/AbstractBehaviourInterface.hxx"
 #include"MFront/BehaviourInterfaceFactory.hxx"
 #include"MFront/DefaultDSLBase.hxx"
@@ -105,8 +105,8 @@ namespace mfront{
 		 (i.type==MaterialPropertyInput::PARAMETER)){
 	return "this->"+i.name;
       } else {
-	throw(std::runtime_error("DefaultDSLBase::writeBehaviourLocalVariablesInitialisation: "
-				 "unsupported input type for variable '"+i.name+"'"));
+	tfel::raise("DefaultDSLBase::writeBehaviourLocalVariablesInitialisation: "
+		    "unsupported input type for variable '"+i.name+"'");
       }
     };
     if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){

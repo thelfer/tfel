@@ -5,6 +5,7 @@
  * \date   11 nov. 2015
  */
 
+#include"TFEL/Raise.hxx"
 #include"MTest/StudyCurrentState.hxx"
 #include"MTest/StructureCurrentState.hxx"
 
@@ -69,10 +70,9 @@ namespace mtest{
   StudyCurrentState::getStructureCurrentState(const std::string& n) const
   {
     const auto p = this->s.find(n);
-    if(p==this->s.end()){
-      throw(std::runtime_error("StudyCurrentState::getStructureCurrentState: "
-			       "no state associated to structure '"+n+"'"));
-    }
+    tfel::raise_if(p==this->s.end(),
+		   "StudyCurrentState::getStructureCurrentState: "
+		   "no state associated to structure '"+n+"'");
     return *(p->second);
   }
 
@@ -82,28 +82,26 @@ namespace mtest{
 
   void
   StudyCurrentState::throwUnknownParameterException(const std::string& n){
-    throw(std::runtime_error("StudyCurrentState::throwUnknownParameterException:"
-			     "no parameter '"+n+"' declared"));
+    tfel::raise("StudyCurrentState::throwUnknownParameterException:"
+		"no parameter '"+n+"' declared");
   }
 
   void
   StudyCurrentState::throwAlreadyDeclaredParameterException(const std::string& n){
-    throw(std::runtime_error("StudyCurrentState::throwAlreadyDeclaredParameterException:"
-			     "parameter '"+n+"' already declared"));
+    tfel::raise("StudyCurrentState::throwAlreadyDeclaredParameterException:"
+		"parameter '"+n+"' already declared");
   }
 
-  bool
-  StudyCurrentState::containsEvolution(const std::string& n) const{
+  bool StudyCurrentState::containsEvolution(const std::string& n) const{
     return this->evs.find(n)!=this->evs.end();
   }
   
-  void
-  StudyCurrentState::addEvolution(const std::string& n,
-				  std::shared_ptr<Evolution> e){
+  void StudyCurrentState::addEvolution(const std::string& n,
+				       std::shared_ptr<Evolution> e){
     auto p = this->evs.find(n);
     if(p!=this->evs.end()){
-      throw(std::runtime_error("StudyCurrentState::getEvolution: "
-			       "evolution '"+n+"' already defined"));
+      tfel::raise("StudyCurrentState::getEvolution: "
+		  "evolution '"+n+"' already defined");
     }
     this->evs[n]=e;
   }
@@ -112,8 +110,8 @@ namespace mtest{
   StudyCurrentState::getEvolution(const std::string& n){
     auto p = this->evs.find(n);
     if(p==this->evs.end()){
-      throw(std::runtime_error("StudyCurrentState::getEvolution: "
-			       "no evolution named '"+n+"'"));
+      tfel::raise("StudyCurrentState::getEvolution: "
+		  "no evolution named '"+n+"'");
     }
     return *(p->second);
   }
@@ -122,8 +120,8 @@ namespace mtest{
   StudyCurrentState::getEvolution(const std::string& n) const{
     auto p = this->evs.find(n);
     if(p==this->evs.end()){
-      throw(std::runtime_error("StudyCurrentState::getEvolution: "
-			       "no evolution named '"+n+"'"));
+      tfel::raise("StudyCurrentState::getEvolution: "
+		  "no evolution named '"+n+"'");
     }
     return *(p->second);
   }

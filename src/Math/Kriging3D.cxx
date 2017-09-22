@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Kriging3D.hxx"
 
 namespace tfel
@@ -24,27 +25,24 @@ namespace tfel
 			 const std::vector<double>& vz,
 			 const std::vector<double>& vv)
     {
-      using namespace std;
       using tfel::math::tvector;
-      vector<double>::const_iterator px;
-      vector<double>::const_iterator py;
-      vector<double>::const_iterator pz;
-      vector<double>::const_iterator pv;
+      std::vector<double>::const_iterator px;
+      std::vector<double>::const_iterator py;
+      std::vector<double>::const_iterator pz;
+      std::vector<double>::const_iterator pv;
       tvector<3u,double> v;
-      pair<double,double> n1 = KrigingUtilities::normalize(vx);
+      const auto n1 = KrigingUtilities::normalize(vx);
       this->a1 = n1.first;
       this->b1 = n1.second;
-      pair<double,double> n2 = KrigingUtilities::normalize(vy);
+      const auto n2 = KrigingUtilities::normalize(vy);
       this->a2 = n2.first;
       this->b2 = n2.second;
-      pair<double,double> n3 = KrigingUtilities::normalize(vz);
+      const auto n3 = KrigingUtilities::normalize(vz);
       this->a3 = n3.first;
       this->b3 = n3.second;
-      if((vx.size()!=vy.size())||
-	 (vx.size()!=vz.size())||
-	 (vx.size()!=vv.size())){
-	throw(KrigingErrorInvalidLength());
-      }
+      raise_if<KrigingErrorInvalidLength>((vx.size()!=vy.size())||
+					  (vx.size()!=vz.size())||
+					  (vx.size()!=vv.size()));
       for(px=vx.begin(),py=vy.begin(),pz=vz.begin(),pv=vv.begin();
 	  px!=vx.end();++px,++py,++pz,++pv){
 	v(0)=this->a1*(*px)+this->b1;
@@ -60,7 +58,6 @@ namespace tfel
 			 const tfel::math::vector<double>& vz,
 			 const tfel::math::vector<double>& vv)
     {
-      using namespace std;
       using namespace tfel::math;
       using tfel::math::vector;
       vector<double>::const_iterator px;
@@ -68,18 +65,16 @@ namespace tfel
       vector<double>::const_iterator pz;
       vector<double>::const_iterator pv;
       tvector<3u,double> v;
-      if((vx.size()!=vy.size())||
-	 (vx.size()!=vz.size())||
-	 (vx.size()!=vv.size())){
-	throw(KrigingErrorInvalidLength());
-      }
-      pair<double,double> n1 = KrigingUtilities::normalize(vx);
+      raise_if<KrigingErrorInvalidLength>((vx.size()!=vy.size())||
+					  (vx.size()!=vz.size())||
+					  (vx.size()!=vv.size()));
+      const auto n1 = KrigingUtilities::normalize(vx);
       this->a1 = n1.first;
       this->b1 = n1.second;
-      pair<double,double> n2 = KrigingUtilities::normalize(vy);
+      const auto n2 = KrigingUtilities::normalize(vy);
       this->a2 = n2.first;
       this->b2 = n2.second;
-      pair<double,double> n3 = KrigingUtilities::normalize(vz);
+      const auto n3 = KrigingUtilities::normalize(vz);
       this->a3 = n3.first;
       this->b3 = n3.second;
       for(px=vx.begin(),py=vy.begin(),pz=vz.begin(),pv=vv.begin();
@@ -92,10 +87,9 @@ namespace tfel
       Kriging<3u,double>::buildInterpolation();
     }
   
-    double
-    Kriging3D::operator()(const double vx,
-			  const double vy,
-			  const double vz) const
+    double Kriging3D::operator()(const double vx,
+				 const double vy,
+				 const double vz) const
     {
       using namespace tfel::math;
       tvector<3u,double> v;

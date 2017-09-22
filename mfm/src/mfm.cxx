@@ -5,13 +5,13 @@
  * \date   13 avril 2017
  */
 
-#include<functional>
+#include<regex>
+#include<cstdlib>
+#include<iostream>
 #include<algorithm>
 #include<stdexcept>
-#include<iostream>
-#include<cstdlib>
-#include<regex>
-
+#include<functional>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
@@ -79,9 +79,7 @@ private:
   {
     auto add = [this,f]{
       const auto opt = this->currentArgument->getOption();
-      if(opt.empty()){
-	throw(std::runtime_error("add_filter: no argument given"));
-      }
+      tfel::raise_if(opt.empty(),"add_filter: no argument given");
       this->filters.push_back({f,opt});
     };
     this->registerCallBack(o,CallBack(d,add,true));
@@ -108,8 +106,7 @@ private:
 	} else if (o=="full"){
 	  this->vlevel=VERBOSE_FULL;
 	} else {
-	  throw(std::runtime_error("mfm: unknown "
-				   "verbose level '"+o+"'"));
+	  tfel::raise("mfm: unknown verbose level '"+o+"'");
 	}
       }
     };
@@ -128,8 +125,8 @@ private:
       } else if(o=="egrep"){
 	this->rs = std::regex_constants::egrep;
       } else {
-	throw(std::runtime_error("mfm: invalid regular "
-				 "expression syntax '"+o+"'"));
+	tfel::raise("mfm: invalid regular "
+		    "expression syntax '"+o+"'");
       }
     };
     auto interface_filter = [this](const EntryPoint& e,
@@ -179,7 +176,7 @@ private:
       } else if(t=="model"){
 	return e.type==EntryPoint::MODEL;
       } else {
-	throw(std::runtime_error("mfm: invalid type '"+t+"'")); 
+	tfel::raise("mfm: invalid type '"+t+"'"); 
       }
     };
     this->registerCallBack("--regex-syntax",
@@ -222,7 +219,7 @@ private:
   {
     using namespace tfel::system;
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("mfm: "+m));}
+      tfel::raise_if(c,"mfm: "+m);
     };
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     const auto& a  = this->getCurrentCommandLineArgument();

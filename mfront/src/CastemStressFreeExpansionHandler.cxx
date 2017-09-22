@@ -14,6 +14,7 @@
 #include<cmath>
 #include<limits>
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/General/MathConstants.hxx"
 #include"MFront/Castem/CastemStressFreeExpansionHandler.hxx"
 
@@ -64,46 +65,42 @@ namespace castem
       log_s1[1] = std::log1p(s1[1]);
       log_s1[2] = std::log1p(s1[2]);
     } else if (d==2){
-      if((std::abs(s0[3])>10*std::numeric_limits<CastemReal>::min())||
-	 (std::abs(s1[3])>10*std::numeric_limits<CastemReal>::min())){
-	throw(std::runtime_error("CastemLogarithmicStrainStressFreeExpansionHandler: "
-				 "stress free expansion is assumed diagonal"));
-      } else {
-	log_s0[0] = std::log1p(s0[0]);
-	log_s0[1] = std::log1p(s0[1]);
-	log_s0[2] = std::log1p(s0[2]);
-	log_s0[3] = CastemReal(0);
-	log_s1[0] = std::log1p(s1[0]);
-	log_s1[1] = std::log1p(s1[1]);
-	log_s1[2] = std::log1p(s1[2]);
-	log_s1[3] = CastemReal(0);
-      }
+      tfel::raise_if((std::abs(s0[3])>10*std::numeric_limits<CastemReal>::min())||
+		     (std::abs(s1[3])>10*std::numeric_limits<CastemReal>::min()),
+		     "CastemLogarithmicStrainStressFreeExpansionHandler: "
+		     "stress free expansion is assumed diagonal");
+      log_s0[0] = std::log1p(s0[0]);
+      log_s0[1] = std::log1p(s0[1]);
+      log_s0[2] = std::log1p(s0[2]);
+      log_s0[3] = CastemReal(0);
+      log_s1[0] = std::log1p(s1[0]);
+      log_s1[1] = std::log1p(s1[1]);
+      log_s1[2] = std::log1p(s1[2]);
+      log_s1[3] = CastemReal(0);
     } else if(d==3){
-      if((std::abs(s0[3])>10*std::numeric_limits<CastemReal>::min())||
-	 (std::abs(s1[3])>10*std::numeric_limits<CastemReal>::min())||
-	 (std::abs(s0[4])>10*std::numeric_limits<CastemReal>::min())||
-	 (std::abs(s1[4])>10*std::numeric_limits<CastemReal>::min())||
-	 (std::abs(s0[5])>10*std::numeric_limits<CastemReal>::min())||
-	 (std::abs(s1[5])>10*std::numeric_limits<CastemReal>::min())){
-	throw(std::runtime_error("CastemLogarithmicStrainStressFreeExpansionHandler: "
-				 "stress free expansion is assumed diagonal"));
-      } else {
-	log_s0[0] = std::log1p(s0[0]);
-	log_s0[1] = std::log1p(s0[1]);
-	log_s0[2] = std::log1p(s0[2]);
-	log_s0[3] = CastemReal(0);
-	log_s0[4] = CastemReal(0);
-	log_s0[5] = CastemReal(0);
-	log_s1[0] = std::log1p(s1[0]);
-	log_s1[1] = std::log1p(s1[1]);
-	log_s1[2] = std::log1p(s1[2]);
-	log_s1[3] = CastemReal(0);
-	log_s1[4] = CastemReal(0);
-	log_s1[5] = CastemReal(0);
-      }
+      tfel::raise_if((std::abs(s0[3])>10*std::numeric_limits<CastemReal>::min())||
+		     (std::abs(s1[3])>10*std::numeric_limits<CastemReal>::min())||
+		     (std::abs(s0[4])>10*std::numeric_limits<CastemReal>::min())||
+		     (std::abs(s1[4])>10*std::numeric_limits<CastemReal>::min())||
+		     (std::abs(s0[5])>10*std::numeric_limits<CastemReal>::min())||
+		     (std::abs(s1[5])>10*std::numeric_limits<CastemReal>::min()),
+		     "CastemLogarithmicStrainStressFreeExpansionHandler: "
+		     "stress free expansion is assumed diagonal");
+      log_s0[0] = std::log1p(s0[0]);
+      log_s0[1] = std::log1p(s0[1]);
+      log_s0[2] = std::log1p(s0[2]);
+      log_s0[3] = CastemReal(0);
+      log_s0[4] = CastemReal(0);
+      log_s0[5] = CastemReal(0);
+      log_s1[0] = std::log1p(s1[0]);
+      log_s1[1] = std::log1p(s1[1]);
+      log_s1[2] = std::log1p(s1[2]);
+      log_s1[3] = CastemReal(0);
+      log_s1[4] = CastemReal(0);
+      log_s1[5] = CastemReal(0);
     } else {
-      throw(std::runtime_error("CastemLogarithmicStrainStressFreeExpansionHandler: "
-			       "invalid dimension"));
+      tfel::raise("CastemLogarithmicStrainStressFreeExpansionHandler: "
+		  "invalid dimension");
     }
     e[0]  -= log_s0[0];
     e[1]  -= log_s0[1];

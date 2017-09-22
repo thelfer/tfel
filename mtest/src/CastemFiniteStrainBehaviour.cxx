@@ -15,6 +15,7 @@
 #include<limits>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Tensor/TensorConceptIO.hxx"
 #include"TFEL/Math/Stensor/StensorConceptIO.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
@@ -229,9 +230,9 @@ namespace mtest
       this->computeElasticStiffness(wk.kt,s.mprops1,rt);
       return {true,1};
     }
-    throw(std::runtime_error("CastemFiniteStrainBehaviour::computePredictionOperator : "
-			     "computation of the tangent operator "
-			     "is not supported"));
+    tfel::raise("CastemFiniteStrainBehaviour::computePredictionOperator : "
+		"computation of the tangent operator "
+		"is not supported");
   } // end of CastemFiniteStrainBehaviour::computePredictionOperator
 
   std::pair<bool,real>
@@ -269,20 +270,18 @@ namespace mtest
       ndi = 2;
       ntens = 6;
     } else {
-      throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
-			  "unsupported hypothesis"));
+      tfel::raise("CastemFiniteStrainBehaviour::integrate: "
+		  "unsupported hypothesis");
     }
-    if((wk.D.getNbRows()!=ntens)||(wk.D.getNbCols()!=ntens)){
-      throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
-			  "the memory has not been allocated correctly"));
-    }
-    if(((s.iv0.size()==0)&&(wk.ivs.size()!=1u))||
-       ((s.iv0.size()!=0)&&(s.iv0.size()!=wk.ivs.size()))){
-      throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
-			  "the memory has not been allocated correctly"));
-    }
+    tfel::raise_if((wk.D.getNbRows()!=ntens)||(wk.D.getNbCols()!=ntens),
+		   "CastemFiniteStrainBehaviour::integrate: "
+		   "the memory has not been allocated correctly");
+    tfel::raise_if(((s.iv0.size()==0)&&(wk.ivs.size()!=1u))||
+		   ((s.iv0.size()!=0)&&(s.iv0.size()!=wk.ivs.size())),
+		   "CastemFiniteStrainBehaviour::integrate: "
+		   "the memory has not been allocated correctly");
     if(s.iv0.size()!=0){
-      copy(s.iv0.begin(),s.iv0.end(),wk.ivs.begin());
+      std::copy(s.iv0.begin(),s.iv0.end(),wk.ivs.begin());
     }
     nstatv = static_cast<CastemInt>(wk.ivs.size());
     // rotation matrix
@@ -320,8 +319,8 @@ namespace mtest
       uu0(2,1) = s.e0(7); uu1(2,1) = s.e1(7);
       uu0(1,2) = s.e0(8); uu1(1,2) = s.e1(8);
     } else {
-      throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
-			  "unsupported hypothesis"));
+      tfel::raise("CastemFiniteStrainBehaviour::integrate: "
+		  "unsupported hypothesis");
     }
     copy(s.s0.begin(),s.s0.end(),s.s1.begin());
     for(tmatrix<3u,3u,real>::size_type i=3;i!=static_cast<unsigned short>(ntens);++i){
@@ -365,8 +364,8 @@ namespace mtest
 	} else if(ntens==6){
 	  computeTangentOperator<3u>(wk.k,wk.D,&s.e0(0),&s.e1(0),&s.s1(0));
 	} else {
-	  throw(runtime_error("CastemFiniteStrainBehaviour::integrate: "
-			      "unsupported dimension"));
+	  tfel::raise("CastemFiniteStrainBehaviour::integrate: "
+		      "unsupported dimension");
 	}
       }
     }
@@ -406,8 +405,8 @@ namespace mtest
 	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::TRIDIMENSIONAL,
 						    mfront::ISOTROPIC>::exe(De,&mp(0));
       } else {
-	throw(std::runtime_error("CastemFiniteStrainBehaviour::computeElasticMatrix: "
-				 "unsupported hypothesis"));
+	tfel::raise("CastemFiniteStrainBehaviour::computeElasticMatrix: "
+		    "unsupported hypothesis");
       }
     } else if(this->stype==1u){
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
@@ -435,12 +434,12 @@ namespace mtest
       	MTestCastemComputeFiniteStrainStiffnessTensor<ModellingHypothesis::TRIDIMENSIONAL,
 						      mfront::ORTHOTROPIC>::exe(De,r,&mp(0));
       } else {
-	throw(std::runtime_error("CastemFiniteStrainBehaviour::computeElasticMatrix: "
-				 "unsupported modelling hypothesis"));
+	tfel::raise("CastemFiniteStrainBehaviour::computeElasticMatrix: "
+		    "unsupported modelling hypothesis");
       }
     } else {
-      throw(std::runtime_error("CastemFiniteStrainBehaviour::integrate: "
-			       "invalid behaviour type (neither isotropic or orthotropic)"));
+      tfel::raise("CastemFiniteStrainBehaviour::integrate: "
+		  "invalid behaviour type (neither isotropic or orthotropic)");
     }
   }
 
@@ -456,9 +455,9 @@ namespace mtest
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion2",0.);
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion3",0.);
     } else {
-      throw(std::runtime_error("CastemSmallStrainBehaviour::"
-			       "setOptionalMaterialPropertiesDefaultValues : "
-			       "unsupported symmetry type"));
+      tfel::raise("CastemSmallStrainBehaviour::"
+		  "setOptionalMaterialPropertiesDefaultValues : "
+		  "unsupported symmetry type");
     }
   } // end of MTestCastemFiniteStrainStrainBehaviour::setOptionalMaterialPropertiesDefaultValues
 

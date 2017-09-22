@@ -12,7 +12,7 @@
  */
 
 #include<sstream>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/Cyrano/CyranoException.hxx"
 #include"MFront/Cyrano/CyranoGetModellingHypothesis.hxx"
 
@@ -36,7 +36,7 @@ namespace cyrano
     ostringstream msg;
     msg << "cyrano::getModellingHypothesis : "
 	<< "invalid argument ('" << ndi << "')";
-    throw(CyranoException(msg.str()));
+    tfel::raise<CyranoException>(msg.str());
   }
 
 } // end of namespace cyrano

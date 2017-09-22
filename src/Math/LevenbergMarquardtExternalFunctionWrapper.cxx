@@ -14,6 +14,7 @@
 #include<string>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/LevenbergMarquardt/LevenbergMarquardtExternalFunctionWrapper.hxx"
 
 namespace tfel
@@ -35,22 +36,22 @@ namespace tfel
       using namespace tfel::math::parser;
       using tfel::math::vector;
       vector<double>::size_type i;
-      if(this->ev->getNumberOfVariables()!=this->getNumberOfVariables()+this->getNumberOfParameters()){
-	string msg("LevenbergMarquardtExternalFunctionWrapper::LevenbergMarquardtExternalFunctionWrapper : ");
-	msg += "the number of variables declared in the specified externalFunction is not equal ";
-	msg += "to the sum of the number of variables and the number of paramters";
-	throw(runtime_error(msg));
-      }
-      if(this->getNumberOfVariables()==0){
-	string msg("LevenbergMarquardtExternalFunctionWrapper::LevenbergMarquardtExternalFunctionWrapper : ");
-	msg += "null variable number";
-	throw(runtime_error(msg));
-      }
-      if(this->getNumberOfParameters()==0){
-	string msg("LevenbergMarquardtExternalFunctionWrapper::LevenbergMarquardtExternalFunctionWrapper : ");
-	msg += "null parameters number";
-	throw(runtime_error(msg));
-      }
+      raise_if(this->ev->getNumberOfVariables()!=
+	       this->getNumberOfVariables()+this->getNumberOfParameters(),
+	       "LevenbergMarquardtExternalFunctionWrapper::"
+	       "LevenbergMarquardtExternalFunctionWrapper: "
+	       "the number of variables declared in the "
+	       "specified externalFunction is not equal "
+	       "to the sum of the number of variables and "
+	       "the number of paramters");
+      raise_if(this->getNumberOfVariables()==0,
+	       "LevenbergMarquardtExternalFunctionWrapper::"
+	       "LevenbergMarquardtExternalFunctionWrapper: "
+	       "null variable number");
+      raise_if(this->getNumberOfParameters()==0,
+	       "LevenbergMarquardtExternalFunctionWrapper::"
+	       "LevenbergMarquardtExternalFunctionWrapper: "
+	       "null parameters number");
       for(i=0;i!=this->getNumberOfParameters();++i){
 	dev[i]=this->ev->differentiate(this->getNumberOfVariables()+i);
       }
@@ -81,18 +82,12 @@ namespace tfel
       vector<double>::const_iterator p;
       vector<shared_ptr<ExternalFunction> >::iterator pdev;
       vector<double>::size_type i;
-      if(variables.size()!=this->getNumberOfVariables()){
-	string msg("LevenbergMarquardtExternalFunctionWrapper::operator() : ");
-	msg += "invalid number of variables";
-	throw(runtime_error(msg));
-	
-      }
-      if(params.size()!=this->getNumberOfParameters()){
-	string msg("LevenbergMarquardtExternalFunctionWrapper::operator() : ");
-	msg += "invalid number of parameters";
-	throw(runtime_error(msg));
-	
-      }
+      raise_if(variables.size()!=this->getNumberOfVariables(),
+	       "LevenbergMarquardtExternalFunctionWrapper::operator(): "
+	       "invalid number of variables");
+      raise_if(params.size()!=this->getNumberOfParameters(),
+	       "LevenbergMarquardtExternalFunctionWrapper::operator(): "
+	       "invalid number of parameters");
       i=0;
       g.resize(this->getNumberOfParameters());
       for(p=variables.begin();p!=variables.end();++p,++i){

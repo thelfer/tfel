@@ -12,7 +12,7 @@
  */
 
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MTest/CastemEvolution.hxx"
 
 namespace mtest{
@@ -32,39 +32,32 @@ namespace mtest{
     }
   } // end of CastemEvolution::CastemEvolution
 
-  real
-  CastemEvolution::operator()(const real t) const
+  real CastemEvolution::operator()(const real t) const
   {
     using namespace std;
     vector<string>::size_type i;
     for(i=0;i!=this->vnames.size();++i){
       auto pev = this->evm.find(vnames[i]);
-      if(pev==this->evm.end()){
-	throw(runtime_error("CastemEvolution::operator(): "
-			    "can't evaluate argument '"+vnames[i]+"'"));
-      } else {
-	const Evolution& ev = *(pev->second);
-	args[i] = ev(t);
-      }
+      tfel::raise_if(pev==this->evm.end(),
+		     "CastemEvolution::operator(): "
+		     "can't evaluate argument '"+vnames[i]+"'");
+      const Evolution& ev = *(pev->second);
+      args[i] = ev(t);
     }
     return this->f(&args[0]);
   } // end of CastemEvolution::operator()
 
-  bool
-  CastemEvolution::isConstant() const
+  bool CastemEvolution::isConstant() const
   {
-    using namespace std;
-    vector<string>::size_type i;
+    std::vector<std::string>::size_type i;
     for(i=0;i!=this->vnames.size();++i){
       auto pev = this->evm.find(vnames[i]);
-      if(pev==this->evm.end()){
-	throw(runtime_error("CastemEvolution::operator(): "
-			    "can't evaluate argument '"+vnames[i]+"'"));
-      } else {
-	const Evolution& ev = *(pev->second);
-	if(!ev.isConstant()){
-	  return false;
-	}
+      tfel::raise_if(pev==this->evm.end(),
+		     "CastemEvolution::operator(): "
+		     "can't evaluate argument '"+vnames[i]+"'");
+      const auto& ev = *(pev->second);
+      if(!ev.isConstant()){
+	return false;
       }
     }
     return true;
@@ -72,16 +65,16 @@ namespace mtest{
 
   void CastemEvolution::setValue(const real)
   {
-    throw(std::runtime_error("CastemEvolution::setValue : "
-			     "this method does not makes "
-			     "sense for castem evolution"));
+    tfel::raise("CastemEvolution::setValue : "
+		"this method does not makes "
+		"sense for castem evolution");
   }
   
   void CastemEvolution::setValue(const real,const real)
   {
-    throw(std::runtime_error("CastemEvolution::setValue : "
-			     "this method does not makes "
-			     "sense for castem evolution"));
+    tfel::raise("CastemEvolution::setValue : "
+		"this method does not makes "
+		"sense for castem evolution");
   }
   
   CastemEvolution::~CastemEvolution() = default;

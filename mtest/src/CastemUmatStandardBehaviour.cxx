@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Evolution.hxx"
 #include"MTest/UmatBehaviourBase.hxx"
@@ -27,7 +28,7 @@ namespace mtest{
 								const int t,
 								const Hypothesis h){
     auto throw_if = [](const bool b,const std::string& msg){
-      if(b){throw(std::runtime_error("CastemUmatStandardBehaviour::buildCastemUmatStandardBehaviour: "+msg));};
+      tfel::raise_if(b,"CastemUmatStandardBehaviour::buildCastemUmatStandardBehaviour: "+msg);
     };
     UmatBehaviourDescription md;
     md.library = l;
@@ -170,14 +171,14 @@ namespace mtest{
 	  log << "setOptionalMaterialPropertiesDefaultValues : "
 	  << "set material property '" << n << "' to default value\n";
 	}
-	if(!mp.insert({n,make_evolution(v)}).second){
-	  throw(std::runtime_error("setOptionalMaterialPropertiesDefaultValues: "
-				   "default value for material property '"+n+"' already declared"));
-	}
+	tfel::raise_if(!mp.insert({n,make_evolution(v)}).second,
+		       "setOptionalMaterialPropertiesDefaultValues: "
+		       "default value for material property '"+n+"' already declared");
       }
     };
     auto throw_if = [](const bool b,const std::string& msg){
-      if(b){throw(std::runtime_error("CastemUmatStandardBehaviour::setOptionalMaterialPropertiesDefaultValues: "+msg));};
+      tfel::raise_if(b,"CastemUmatStandardBehaviour::"
+		     "setOptionalMaterialPropertiesDefaultValues: "+msg);
     };
     setOptionalMaterialPropertyDefaultValue("RHO",0.);
     if(stype==1){

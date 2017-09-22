@@ -20,6 +20,7 @@
 #include<cstdlib>
 #include<iostream>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
@@ -88,11 +89,8 @@ struct CubicSplineTest final
     spline.setCollocationPoints(x,y);
     ofstream out;
     out.open("CubicSplineTest.out");
-    if(!out){
-      string msg("CubicSplineTest::execute : ");
-      msg += "can't open file 'CubicSplineTest.out'";
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(!out,"CubicSplineTest::execute : "
+		   "can't open file 'CubicSplineTest.out'");
     out << endl;
     for(i=0;i!=2*x.size();++i){
       double x1 = -1.+(2./static_cast<double>(2*x.size()-1))*static_cast<double>(i);

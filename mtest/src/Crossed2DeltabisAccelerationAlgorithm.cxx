@@ -14,7 +14,7 @@
 #include<limits>
 #include<ostream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Crossed2DeltabisAccelerationAlgorithm.hxx"
 
@@ -25,8 +25,7 @@ namespace mtest
     : csat(-1)      
   {} // end of Crossed2DeltabisAccelerationAlgorithm::Crossed2DeltabisAccelerationAlgorithm
     
-  std::string
-  Crossed2DeltabisAccelerationAlgorithm::getName() const{
+  std::string Crossed2DeltabisAccelerationAlgorithm::getName() const{
     return "crossed secant";
   }
 
@@ -34,32 +33,19 @@ namespace mtest
   Crossed2DeltabisAccelerationAlgorithm::setParameter(const std::string& p,
 						    const std::string& v)
   {
-    using namespace std;
-    const string m = "Crossed2DeltabisAccelerationAlgorithm::setParameter";
+    const std::string m = "Crossed2DeltabisAccelerationAlgorithm::setParameter";
     if(p=="AccelerationTrigger"){
-      const unsigned short i =
-	AccelerationAlgorithm::convertToUnsignedShort(m,v);
-      if(this->csat!=-1){
-	string msg("Crossed2DeltabisAccelerationAlgorithm::setParameter : "
-		   "the castem acceleration trigger has already "
-		   "been defined");
-	throw(runtime_error(msg));
-      }
-      if(i<2){
-	string msg("Crossed2DeltabisAccelerationAlgorithm::setParameter",
-		   "invalid acceleration trigger value.");
-	throw(runtime_error(msg));
-      }
+      const auto i = AccelerationAlgorithm::convertToUnsignedShort(m,v);
+      tfel::raise_if(this->csat!=-1,m+": the acceleration trigger "
+		     "has already been defined");
+      tfel::raise_if(i<2,m+": invalid acceleration trigger value.");
       this->csat = i;
     } else {
-      string msg("Crossed2DeltabisAccelerationAlgorithm::setParameter : "
-		 "invalid parameter '"+p+"'.");
-      throw(runtime_error(msg));
+      tfel::raise(m+": invalid parameter '"+p+"'.");
     }
   } // end of Crossed2DeltabisAccelerationAlgorithm::setParameter
 
-  void
-  Crossed2DeltabisAccelerationAlgorithm::initialize(const unsigned short psz)
+  void Crossed2DeltabisAccelerationAlgorithm::initialize(const unsigned short psz)
   {
     this->csa_u0.resize(psz,0.);      
     this->csa_u1.resize(psz,0.);     
@@ -79,18 +65,15 @@ namespace mtest
     }
   } // end of Crossed2DeltabisAccelerationAlgorithm::initialize
 
-  void
-  Crossed2DeltabisAccelerationAlgorithm::preExecuteTasks()
-  {
-  } // end of AccelerationAlgorithm::preExecuteTaks
+  void Crossed2DeltabisAccelerationAlgorithm::preExecuteTasks()
+  {} // end of AccelerationAlgorithm::preExecuteTaks
 
-  void
-  Crossed2DeltabisAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
-					    const tfel::math::vector<real>& rx,
-					    const tfel::math::vector<real>& ,
-					    const real eeps,
-					    const real ,
-					    const unsigned short iter)
+  void Crossed2DeltabisAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
+						      const tfel::math::vector<real>& rx,
+						      const tfel::math::vector<real>& ,
+						      const real eeps,
+						      const real ,
+						      const unsigned short iter)
   {
     using namespace std;
     const real csa_eps = 100*(eeps*numeric_limits<real>::epsilon());
@@ -105,7 +88,6 @@ namespace mtest
     this->csa_du = this->csa_u1-this->csa_u0; // G(Xn) - G(X{n-1})
     this->csa_dr = this->csa_r1-this->csa_r0; // Delta X{n} - Delta X{n-1}
     this->csa_dudx = this->csa_du - this->csa_dx0;
-
     if(iter>=this->csat){
       if (iter==2){
 	// crossed secant acceleration
@@ -118,8 +100,7 @@ namespace mtest
 	  const real csa_a = (this->csa_du|this->csa_dr)/nr2_dr;
 	  u1 -= csa_a*(this->csa_r1);
 	}
-      }
-      else{
+      } else{
 	const real ma = this->csa_dr|this->csa_dr;
 	const real mc = this->csa_dudx|this->csa_dudx;
 	const real mb = this->csa_dr|this->csa_dudx;
@@ -154,11 +135,9 @@ namespace mtest
     this->csa_dx2 = this->csa_x2 - this->csa_x1; // X{n+1} -Xn
   } // end of Crossed2DeltabisAccelerationAlgorithm::execute
 
-  void
-  Crossed2DeltabisAccelerationAlgorithm::postExecuteTasks()
+  void Crossed2DeltabisAccelerationAlgorithm::postExecuteTasks()
   {} // end of AccelerationAlgorithm::postExecuteTaks
 
-  Crossed2DeltabisAccelerationAlgorithm::~Crossed2DeltabisAccelerationAlgorithm()
-  {} // end of AccelerationAlgorithm::~AccelerationAlgorithm
+  Crossed2DeltabisAccelerationAlgorithm::~Crossed2DeltabisAccelerationAlgorithm() = default;
 
 } // end of namespace mtest

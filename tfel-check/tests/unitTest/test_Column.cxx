@@ -16,6 +16,7 @@
 #include<fstream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Tests/TestCase.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Check/Column.hxx"
@@ -33,10 +34,8 @@ struct test_Column final
     const std::string f = "test_Column.res";
     tfel::check::Column c("B");
     std::ofstream file{f};
-    if (!file) {
-      throw std::runtime_error("test_Column::execute: "
-			       "could not open file '"+f+"'");
-    }
+    tfel::raise_if(!file,"test_Column::execute: "
+		   "could not open file '"+f+"'");
     file << "tps B C \n";
     file << "1. 2. 2.\n";
     file << "2. 3. 1.\n";

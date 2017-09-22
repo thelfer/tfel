@@ -14,6 +14,7 @@
 #include<sstream>
 #include<stdexcept>
 #include<algorithm>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Evaluator.hxx"
 #include"TFEL/Check/Column.hxx"
 
@@ -49,10 +50,9 @@ namespace tfel{
 	unsigned short value{0};
 	for(;p!=vn.end();++p){
 	  const char c = *p;
-	  if(!((c>='0')&&(c<='9'))){
-	    throw(std::runtime_error("mtest::eval::convert: "
-				     "invalid input '"+vn+"'"));
-	  }
+	  raise_if(!((c>='0')&&(c<='9')),
+		   "tfel::check::eval::convert: "
+		   "invalid input '"+vn+"'");
 	  value*=10;
 	  value+=c-'0';
 	}
@@ -62,12 +62,9 @@ namespace tfel{
       std::vector<Variable> variables;
       unsigned short p = 0u;
       for(const auto& v : e.getVariablesNames()){
-	if(matches(v)){
-	  variables.push_back(Variable{p,d.getColumn(convert(v))});
-	} else {
-	  throw(std::runtime_error("mtest::eval: undeclared "
-				   "variable '"+v+"'"));
-	}
+	raise_if(!matches(v),"tfel::check::eval: undeclared "
+		 "variable '"+v+"'");
+	variables.push_back(Variable{p,d.getColumn(convert(v))});
 	++p;
       }
       if(variables.empty()){

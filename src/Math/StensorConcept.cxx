@@ -5,15 +5,14 @@
  * \date   02 janv. 2016
  */
 
-#include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Stensor/StensorConcept.hxx"
 
 namespace tfel{
 
   namespace math{
 
-    unsigned short
-    getStensorSize(const unsigned short d){
+    unsigned short getStensorSize(const unsigned short d){
       if(d==1u){
 	return 3u;
       }
@@ -23,8 +22,7 @@ namespace tfel{
       if(d==3u){
 	return 6u;
       }
-      throw(std::runtime_error("getStensorSize: "
-			       "invalid dimension"));
+      raise("getStensorSize: invalid dimension");
     }
 
   } // end of namespace math

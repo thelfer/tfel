@@ -11,12 +11,10 @@
  * project under specific licensing conditions. 
  */
 
-#include<iostream>
-
 #include<cmath>
 #include<limits>
 #include<sstream>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/BehaviourDescription.hxx"
 #include"MFront/NonLinearSystemSolverBase.hxx"
 
@@ -39,7 +37,7 @@ namespace mfront{
 					     const std::string& p)
   {
     auto lthrow = [](const std::string& m){
-      throw(std::runtime_error("NonLinearSystemSolverBase::getJacobianPart: "+m));
+      tfel::raise("NonLinearSystemSolverBase::getJacobianPart: "+m);
     };
     std::ostringstream d;
     if(mb.getTypeFlag(v1.type)==SupportedTypes::Stensor){
@@ -81,8 +79,8 @@ namespace mfront{
 								    const Hypothesis h)
   {
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("NonLinearSystemSolverBase::"
-				     "writeEvaluateNumericallyComputedBlocks: "+m));}
+      tfel::raise_if(c,"NonLinearSystemSolverBase::"
+		     "writeEvaluateNumericallyComputedBlocks: "+m);
     };
     const auto& d = mb.getBehaviourData(h);
     if(!d.hasAttribute(BehaviourData::numericallyComputedJacobianBlocks)){

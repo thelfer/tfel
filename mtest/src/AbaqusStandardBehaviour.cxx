@@ -15,6 +15,7 @@
 #include<sstream>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
@@ -49,13 +50,11 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return "_3D";
       }
-      throw(std::runtime_error("AbaqusStandardBehaviour::AbaqusStandardBehaviour: "
-			       "invalid hypothesis."));
+      tfel::raise("AbaqusStandardBehaviour::AbaqusStandardBehaviour: "
+		  "invalid hypothesis.");
     }();
-    if(!ends(s)){
-      throw(std::runtime_error("AbaqusStandardBehaviour::AbaqusStandardBehaviour: "
-			       "invalid function name."));
-    }
+    tfel::raise_if(!ends(s),"AbaqusStandardBehaviour::AbaqusStandardBehaviour: "
+		   "invalid function name.");
     return {b.begin(),b.begin()+b.length()-s.length()};    
   }
   
@@ -65,8 +64,8 @@ namespace mtest
     : UmatBehaviourBase(h,l,AbaqusStandardBehaviour::getBehaviourName(b,h))
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("AbaqusStandardBehaviour::"
-				     "AbaqusStandardBehaviour: "+m));}
+      tfel::raise_if(c,"AbaqusStandardBehaviour::"
+		     "AbaqusStandardBehaviour: "+m);
     };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     const auto bn = AbaqusStandardBehaviour::getBehaviourName(b,h);

@@ -15,7 +15,7 @@
 #include<ostream>
 #include<stdexcept>
 #include<algorithm>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/SecantAccelerationAlgorithm.hxx"
 
@@ -27,41 +27,26 @@ namespace mtest
       sat(-1)      
   {} // end of SecantAccelerationAlgorithm::SecantAccelerationAlgorithm
     
-  std::string
-  SecantAccelerationAlgorithm::getName() const{
+  std::string SecantAccelerationAlgorithm::getName() const{
     return "secant";
   }
 
-  void
-  SecantAccelerationAlgorithm::setParameter(const std::string& p,
-						    const std::string& v)
+  void SecantAccelerationAlgorithm::setParameter(const std::string& p,
+						 const std::string& v)
   {
-    using namespace std;
-    const string m = "SecantAccelerationAlgorithm::setParameter";
+    const std::string m = "SecantAccelerationAlgorithm::setParameter";
     if(p=="AccelerationTrigger"){
-      const unsigned short i =
-	AccelerationAlgorithm::convertToUnsignedShort(m,v);
-      if(this->sat!=-1){
-	string msg("SecantAccelerationAlgorithm::setParameter : "
-		   "the castem acceleration trigger has already "
-		   "been defined");
-	throw(runtime_error(msg));
-      }
-      if(i<3){
-	string msg("SecantAccelerationAlgorithm::setParameter",
-		   "invalid acceleration trigger value.");
-	throw(runtime_error(msg));
-      }
+      const auto i = AccelerationAlgorithm::convertToUnsignedShort(m,v);
+      tfel::raise_if(this->sat!=-1,m+": the acceleration trigger "
+		     "has already been defined");
+      tfel::raise_if(i<3,"m : invalid acceleration trigger value.");
       this->sat = i;
     } else {
-      string msg("SecantAccelerationAlgorithm::setParameter : "
-		 "invalid parameter '"+p+"'.");
-      throw(runtime_error(msg));
+      tfel::raise(m+": invalid parameter '"+p+"'.");
     }
   } // end of SecantAccelerationAlgorithm::setParameter
 
-  void
-  SecantAccelerationAlgorithm::initialize(const unsigned short psz)
+  void SecantAccelerationAlgorithm::initialize(const unsigned short psz)
   {
     this->sa_u0.resize(psz,0.);      
     this->sa_u1.resize(psz,0.);
@@ -74,15 +59,12 @@ namespace mtest
     }
   } // end of SecantAccelerationAlgorithm::initialize
 
-  void
-  SecantAccelerationAlgorithm::preExecuteTasks()
+  void SecantAccelerationAlgorithm::preExecuteTasks()
   {
-    using namespace std;
-    this->sa_w = max(min(this->sa_w,1.),-1.);
+    this->sa_w = std::max(std::min(this->sa_w,1.),-1.);
   } // end of AccelerationAlgorithm::preExecuteTaks
 
-  void
-  SecantAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
+  void SecantAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
 					    const tfel::math::vector<real>&,
 					    const tfel::math::vector<real>& r,
 					    const real ,
@@ -109,8 +91,7 @@ namespace mtest
     }
   } // end of SecantAccelerationAlgorithm::execute
 
-  void
-  SecantAccelerationAlgorithm::postExecuteTasks()
+  void SecantAccelerationAlgorithm::postExecuteTasks()
   {} // end of AccelerationAlgorithm::postExecuteTaks
 
   SecantAccelerationAlgorithm::~SecantAccelerationAlgorithm() = default;

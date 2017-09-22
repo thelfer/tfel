@@ -17,6 +17,7 @@
 #include<cstdlib>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
@@ -198,7 +199,7 @@ namespace mfront{
   {
     using tfel::utilities::CxxTokenizer;
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AbaqusInterface::treatKeyword: "+m));}
+      tfel::raise_if(b,"AbaqusInterface::treatKeyword: "+m);
     };
     if(!i.empty()){
       if(std::find(i.begin(),i.end(),this->getName())!=i.end()){
@@ -257,7 +258,7 @@ namespace mfront{
   {
     using namespace tfel::system;
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AbaqusInterface::endTreatment: "+m));}
+      tfel::raise_if(b,"AbaqusInterface::endTreatment: "+m);
     };
     throw_if((mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
 	     (this->fss!=UNDEFINEDSTRATEGY),
@@ -467,7 +468,7 @@ namespace mfront{
 					      const Hypothesis h) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AbaqusInterface::writeUMATFunctionBase: "+m));}
+      tfel::raise_if(b,"AbaqusInterface::writeUMATFunctionBase: "+m);
     };
     std::string dv0,dv1,sig,statev,nstatev;
     const auto btype = mb.getBehaviourType();
@@ -857,10 +858,9 @@ namespace mfront{
 							      const std::string& name,
 							      const Hypothesis h) const
   {
-    if(h==ModellingHypothesis::PLANESTRESS){
-      throw(std::runtime_error("AbaqusInterface::writeUMATFiniteRotationSmallStrainFunction: "
-			       "plane stress is not supported yet"));
-    }
+    tfel::raise_if(h==ModellingHypothesis::PLANESTRESS,
+		   "AbaqusInterface::writeUMATFiniteRotationSmallStrainFunction: "
+		   "plane stress is not supported yet");
     const auto ps = h==ModellingHypothesis::PLANESTRESS ? "true" : "false";
     const std::string sfeh = "abaqus::AbaqusStandardSmallStrainStressFreeExpansionHandler";
     this->writeUMATFunctionBase(out,mb,name,sfeh,h);
@@ -916,7 +916,7 @@ namespace mfront{
 						   const BehaviourDescription& mb) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AbaqusInterface::writeUMATxxBehaviourTypeSymbols: "+m));}
+      tfel::raise_if(b,"AbaqusInterface::writeUMATxxBehaviourTypeSymbols: "+m);
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
@@ -939,7 +939,7 @@ namespace mfront{
 						   const BehaviourDescription& mb) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AbaqusInterface::writeUMATxxBehaviourKinematicSymbols: "+m));}
+      tfel::raise_if(b,"AbaqusInterface::writeUMATxxBehaviourKinematicSymbols: "+m);
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourKinematic = " ;
@@ -1000,10 +1000,8 @@ namespace mfront{
 							   const SupportedTypes::TypeSize o) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if(!o.isNull()){
-      throw(std::runtime_error("AbaqusInterface::writeBehaviourDataMainVariablesSetter : "
-			       "only one driving variable supported"));
-    }
+    tfel::raise_if(!o.isNull(),"AbaqusInterface::writeBehaviourDataMainVariablesSetter : "
+		   "only one driving variable supported");
     if(v.increment_known){
       os << "abaqus::UMATImportDrivingVariables<hypothesis>::exe(this->" << v.name << ","
 	 << iprefix << "stran);\n";
@@ -1019,10 +1017,8 @@ namespace mfront{
 							   const SupportedTypes::TypeSize o) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if(!o.isNull()){
-      throw(std::runtime_error("AbaqusInterface::writeIntegrationDataMainVariablesSetter : "
-			       "only one driving variable supported"));
-    }
+    tfel::raise_if(!o.isNull(),"AbaqusInterface::writeIntegrationDataMainVariablesSetter : "
+		   "only one driving variable supported");
     if(v.increment_known){
       os << "abaqus::UMATImportDrivingVariables<hypothesis>::exe(this->d" << v.name << ","
 	 << iprefix << "dstran);\n";
@@ -1046,8 +1042,8 @@ namespace mfront{
 	os << iprefix << "stress_);\n";
       }
     } else {
-      throw(std::runtime_error("AbaqusInterface::writeBehaviourDataMainVariablesSetters : "
-			       "unsupported forces type"));
+      tfel::raise("AbaqusInterface::writeBehaviourDataMainVariablesSetters : "
+		  "unsupported forces type");
     }
   } // end of AbaqusInterface::writeBehaviourDataThermodynamicForceSetter
   
@@ -1122,8 +1118,8 @@ namespace mfront{
 	out << "abaqus::UMATExportThermodynamicForces<hypothesis>::exe(" << a << ",this->sig);\n";
       }
     } else {
-      throw(std::runtime_error("AbaqusInterface::exportThermodynamicForce: "
-			       "unsupported forces type"));
+      tfel::raise("AbaqusInterface::exportThermodynamicForce: "
+		  "unsupported forces type");
     }
   } // end of AbaqusInterface::exportThermodynamicForce
 

@@ -12,6 +12,7 @@
  */
 
 #include<ostream>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 
 namespace tfel{
@@ -58,8 +59,8 @@ namespace tfel{
       case FiniteStrainBehaviourTangentOperatorBase::DT_DELOG:
 	return "st2tost2";
       }
-      throw(std::runtime_error("getFiniteStrainBehaviourTangentOperatorFlagType : "
-			       "unsupported FiniteStrainBehaviourTangentOperatorBase flag "));
+      raise("getFiniteStrainBehaviourTangentOperatorFlagType : "
+	    "unsupported FiniteStrainBehaviourTangentOperatorBase flag ");
     }
     
     std::string
@@ -95,8 +96,8 @@ namespace tfel{
       case FiniteStrainBehaviourTangentOperatorBase::DT_DELOG:
 	return "DT_DELOG";
       }
-      throw(std::runtime_error("convertFiniteStrainBehaviourTangentOperatorFlagToString : "
-			       "unsupported FiniteStrainBehaviourTangentOperatorBase flag "));
+      raise("convertFiniteStrainBehaviourTangentOperatorFlagToString : "
+	    "unsupported FiniteStrainBehaviourTangentOperatorBase flag ");
     }
 
     std::string
@@ -146,8 +147,8 @@ namespace tfel{
 	return "derivative of the dual of the lagrangian Hencky strain "
 	  "with respect to the lagrangian Hencky strain tensor";
       }
-      throw(std::runtime_error("getFiniteStrainBehaviourTangentOperatorDescription : "
-			       "unsupported FiniteStrainBehaviourTangentOperatorBase flag "));
+      raise("getFiniteStrainBehaviourTangentOperatorDescription : "
+	    "unsupported FiniteStrainBehaviourTangentOperatorBase flag ");
     }
 
   } // end of namespace material

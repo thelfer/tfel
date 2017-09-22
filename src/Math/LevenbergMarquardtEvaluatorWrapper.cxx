@@ -14,6 +14,7 @@
 #include<string>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/LevenbergMarquardt/LevenbergMarquardtEvaluatorWrapper.hxx"
 
 namespace tfel
@@ -32,7 +33,7 @@ namespace tfel
     {
       using tfel::math::vector;
       auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error("EvaluatorBase::splitAtTokenSeperator: "+m));}
+	raise_if(b,"EvaluatorBase::splitAtTokenSeperator: "+m);
       };
       throw_if(this->ev->getNumberOfVariables()!=
 	       this->getNumberOfVariables()+this->getNumberOfParameters(),
@@ -64,7 +65,7 @@ namespace tfel
 						   const tfel::math::vector<double>& params)
     {
       auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error("EvaluatorBase::splitAtTokenSeperator: "+m));}
+	raise_if(b,"EvaluatorBase::splitAtTokenSeperator: "+m);
       };
       throw_if(variables.size()!=this->getNumberOfVariables(),
 	       "invalid number of variables");

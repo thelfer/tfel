@@ -14,6 +14,7 @@
 #include<cmath>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/Aster/Aster.hxx"
@@ -30,8 +31,7 @@ namespace mtest
     : UmatBehaviourBase(h,l,b)
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("AsterCohesiveZoneModel::"
-				     "AsterCohesiveZoneModel: "+m));}
+      tfel::raise_if(c,"AsterCohesiveZoneModel::AsterCohesiveZoneModel: "+m);
     };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     throw_if(elm.getInterface(l,b)!="Aster",
@@ -47,8 +47,7 @@ namespace mtest
   AsterCohesiveZoneModel::getRotationMatrix(const tfel::math::vector<real>&,
 					    const tfel::math::tmatrix<3u,3u,real>&) const
   {
-    throw(std::runtime_error("AsterCohesiveZoneModel::getRotationMatrix : "
-			     "invalid call"));
+    tfel::raise("AsterCohesiveZoneModel::getRotationMatrix: invalid call");
   } // end of AsterCohesiveZoneModel::getRotationMatrix
 
   void
@@ -131,8 +130,8 @@ namespace mtest
       ntens = 6;
       nummod = 3u;
     } else {
-      throw(std::runtime_error("AsterCohesiveZoneModel::call_behaviour: "
-			       "unsupported hypothesis"));
+      tfel::raise("AsterCohesiveZoneModel::call_behaviour: "
+		  "unsupported hypothesis");
     }
     fill(Kt.begin(),Kt.end(),0.);
     // choosing the type of stiffness matrix
@@ -148,9 +147,8 @@ namespace mtest
       } else if(ktype==StiffnessMatrixType::CONSISTENTTANGENTOPERATOR){
 	Kt(0,0) = real(4);
       } else {
-	string msg("AsterCohesiveZoneModel::call_behaviour : "
-		   "invalid or unspecified stiffness matrix type");
-	throw(runtime_error(msg));
+	tfel::raise("AsterCohesiveZoneModel::call_behaviour: "
+		    "invalid or unspecified stiffness matrix type");
       }
     } else {
       if(ktype==StiffnessMatrixType::ELASTIC){
@@ -160,9 +158,8 @@ namespace mtest
       } else if(ktype==StiffnessMatrixType::TANGENTOPERATOR){
 	Kt(0,0) = real(-3);
       } else {
-	string msg("AsterCohesiveZoneModel::call_behaviour : "
-		   "invalid or unspecified stiffness matrix type");
-	throw(runtime_error(msg));
+	tfel::raise("AsterCohesiveZoneModel::call_behaviour : "
+		    "invalid or unspecified stiffness matrix type");
       }
     }
     // using a local copy of material properties to handle the

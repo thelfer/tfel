@@ -14,6 +14,7 @@
 
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/IntegerEvaluator.hxx"
 #include"TFEL/Math/Parser/IntegerEvaluatorTExpr.hxx"
 
@@ -94,7 +95,7 @@ namespace tfel
     std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TOperator::analyse()
     {
-      throw(std::runtime_error("IntegerEvaluator::TOperator : invalid call"));
+      raise("IntegerEvaluator::TOperator : invalid call");
     } // end of IntegerEvaluator::TOperator::analyse()
 
     IntegerEvaluator::TOperator::~TOperator() = default;
@@ -182,8 +183,8 @@ namespace tfel
       } else if(op->getOperatorType()=="/"){
 	return std::make_shared<BinaryOperation<IntegerOpDiv>>(a->analyse(),b->analyse());
       }
-      throw(std::runtime_error("IntegerEvaluator::TBinaryOperation : "
-			       "invalid operation type  '"+op->getOperatorType()+"'"));
+      raise("IntegerEvaluator::TBinaryOperation : "
+	    "invalid operation type  '"+op->getOperatorType()+"'");
     } // end of IntegerEvaluator::TBinaryOperation::analyse()
     
     IntegerEvaluator::TBinaryOperation::~TBinaryOperation() = default;
@@ -262,10 +263,8 @@ namespace tfel
     std::shared_ptr<tfel::math::parser::IntegerExpr>
     IntegerEvaluator::TGroup::analyse()
     {
-      if(this->subExpr.size()!=1u){
-	throw(std::runtime_error("TGroup::analyse: "
-				 "tgroup has not been reduced."));
-      }
+      raise_if(this->subExpr.size()!=1u,
+	       "TGroup::analyse: tgroup has not been reduced.");
       return (this->subExpr[0])->analyse();
     }
     
@@ -276,7 +275,7 @@ namespace tfel
       using namespace std;
       using namespace tfel::math::parser;
       auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error("IntegerEvaluator::TGroup::reduce: "+m));}
+	raise_if(b,"IntegerEvaluator::TGroup::reduce: "+m);
       };
       auto p  = this->subExpr.begin();
       vector<shared_ptr<IntegerEvaluator::TExpr> >::iterator previous;

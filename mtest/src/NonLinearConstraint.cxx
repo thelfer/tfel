@@ -13,7 +13,7 @@
 
 #include<cmath>
 #include<string>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Behaviour.hxx"
 #include"MTest/NonLinearConstraint.hxx"
@@ -109,7 +109,7 @@ namespace mtest
   {
     using namespace tfel::math;
     auto throw_if = [](const bool cond, const std::string& m){
-      if(cond){throw(std::runtime_error("NonLinearConstraint::NonLinearConstraint: "+m));}
+      tfel::raise_if(cond,"NonLinearConstraint::NonLinearConstraint: "+m);
     };
     auto add_variable = [](std::vector<std::shared_ptr<Constraint::Variable>>& cv,
 			   const std::string& n,

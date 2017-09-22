@@ -13,7 +13,7 @@
 
 #include<sstream>
 #include<stdexcept>
-
+#include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/Data.hxx"
@@ -35,7 +35,7 @@ namespace mfront{
   {
     using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("DDIF2Brick::DDIF2Brick: "+m));}
+      tfel::raise_if(b,"DDIF2Brick::DDIF2Brick: "+m);
     };
     std::function<std::string(const MaterialPropertyInput&)> ets =
       [throw_if](const MaterialPropertyInput& i) -> std::string {
@@ -122,7 +122,7 @@ namespace mfront{
   {
     using tfel::glossary::Glossary; 
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("DDIF2Brick::completeVariableDeclaration: "+m));}
+      tfel::raise_if(b,"DDIF2Brick::completeVariableDeclaration: "+m);
     };
     constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(getVerboseMode()>=VERBOSE_DEBUG){

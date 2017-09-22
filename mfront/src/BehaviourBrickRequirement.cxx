@@ -13,6 +13,7 @@
  */
 
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"MFront/BehaviourBrick/Requirement.hxx"
 
 namespace mfront{
@@ -31,11 +32,10 @@ namespace mfront{
 	asize(s),
 	aproviders(a)
     {
-      if(this->aproviders.empty()){
-	throw(std::runtime_error("Requirement::Requirement : "
-				 "empty list of providers specified for "
-				 "requirement '"+this->name+"'"));
-      }
+      tfel::raise_if(this->aproviders.empty(),
+		     "Requirement::Requirement : "
+		     "empty list of providers specified for "
+		     "requirement '"+this->name+"'");
     } // end of Requirement::Requirement
 
     Requirement::~Requirement() = default;

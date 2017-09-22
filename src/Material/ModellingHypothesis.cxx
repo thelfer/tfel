@@ -13,6 +13,7 @@
 
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 
 namespace tfel
@@ -63,8 +64,8 @@ namespace tfel
       } else if (h==TRIDIMENSIONAL){
 	return "Tridimensional";
       }
-      throw(std::runtime_error("ModellingHypothesis::toString : "
-			       "unsupported modelling hypothesis"));
+      raise("ModellingHypothesis::toString : "
+	    "unsupported modelling hypothesis");
     }
 
     std::string
@@ -85,8 +86,8 @@ namespace tfel
       } else if (h==TRIDIMENSIONAL){
 	return "TRIDIMENSIONAL";
       }
-      throw(std::runtime_error("ModellingHypothesis::toUpperCaseString : "
-			       "unsupported modelling hypothesis"));
+      raise("ModellingHypothesis::toUpperCaseString: "
+	    "unsupported modelling hypothesis");
     }
 
     ModellingHypothesis::Hypothesis
@@ -107,16 +108,16 @@ namespace tfel
       } else if(h=="Tridimensional"){
 	return TRIDIMENSIONAL;
       }
-      throw(std::runtime_error("MFrontBehaviourParserCommon::getModellingHypothesisFromString : "
-			       "invalid or unsupported hypothesis '"+h+"'. The following "
-			       "hypotheses are supported:\n"
-			       "- AxisymmetricalGeneralisedPlaneStrain\n"
-			       "- AxisymmetricalGeneralisedPlaneStress\n"
-			       "- Axisymmetrical\n"
-			       "- PlaneStress\n"
-			       "- PlaneStrain\n"
-			       "- GeneralisedPlaneStrain\n"
-			       "- Tridimensional"));
+      raise("MFrontBehaviourParserCommon::getModellingHypothesisFromString: "
+	    "invalid or unsupported hypothesis '"+h+"'. The following "
+	    "hypotheses are supported:\n"
+	    "- AxisymmetricalGeneralisedPlaneStrain\n"
+	    "- AxisymmetricalGeneralisedPlaneStress\n"
+	    "- Axisymmetrical\n"
+	    "- PlaneStress\n"
+	    "- PlaneStrain\n"
+	    "- GeneralisedPlaneStrain\n"
+	    "- Tridimensional");
     }
 
     unsigned short
@@ -132,8 +133,8 @@ namespace tfel
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 3u;
       }
-      throw(std::runtime_error("tfel::material::getSpaceDimension : "
-			       "unsupported modelling hypothesis"));
+     raise("tfel::material::getSpaceDimension: "
+	   "unsupported modelling hypothesis");
     }
 
     unsigned short
@@ -149,8 +150,8 @@ namespace tfel
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6u;
       }
-      throw(std::runtime_error("tfel::material::getStensorSize : "
-			       "unsupported modelling hypothesis"));
+      raise("tfel::material::getStensorSize: "
+	    "unsupported modelling hypothesis");
     } // end of getStensorSize
 
     unsigned short
@@ -166,8 +167,8 @@ namespace tfel
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 9u;
       }
-      throw(std::runtime_error("tfel::material::getTensorSize : "
-			       "unsupported modelling hypothesis"));
+      raise("tfel::material::getTensorSize: "
+	    "unsupported modelling hypothesis");
     } // end of getTensorSize
     
   } // end of namespace material

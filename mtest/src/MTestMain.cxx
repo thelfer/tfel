@@ -24,6 +24,7 @@
 #include<windows.h>
 #endif
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Tests/XMLTestOutput.hxx"
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
@@ -102,10 +103,9 @@ namespace mtest
   {
     this->registerArgumentCallBacks();
     this->parseArguments();
-    if(this->inputs.empty()){
-      throw(std::runtime_error("MTestMain::MTestMain: "
-			       "no input file defined"));
-    }
+    tfel::raise_if(this->inputs.empty(),
+		   "MTestMain::MTestMain: "
+		   "no input file defined");
   }
 
   void MTestMain::registerArgumentCallBacks()
@@ -164,22 +164,20 @@ namespace mtest
 
   void MTestMain::treatScheme()
   {
-    if(this->currentArgument->getOption().empty()){
-      throw(std::runtime_error("MTestMain::treatScheme: "
-			       "no option given"));
-    }
-    if(this->scheme!=DEFAULT){
-      throw(std::runtime_error("MTestMain::treatScheme: "
-			       "scheme already given"));
-    }
+    tfel::raise_if(this->currentArgument->getOption().empty(),
+		   "MTestMain::treatScheme: "
+		   "no option given");
+    tfel::raise_if(this->scheme!=DEFAULT,
+		   "MTestMain::treatScheme: "
+		   "scheme already given");
     const auto& s = this->currentArgument->getOption();
     if((s=="MTest")||(s=="mtest")){
       this->scheme = MTEST;
     } else if((s=="PTest")||(s=="ptest")){
       this->scheme = PTEST;
     } else {
-      throw(std::runtime_error("MTestMain::treatScheme: "
-			       "invalid scheme '"+s+"'"));
+      tfel::raise("MTestMain::treatScheme: "
+		  "invalid scheme '"+s+"'");
     }
   } // end of MTestMain::treatScheme
   
@@ -200,10 +198,9 @@ namespace mtest
   void MTestMain::treatRoundingDirectionMode()
   {
     const auto& o = this->currentArgument->getOption();
-    if(o.empty()){
-      throw(std::runtime_error("MTestMain::setRoundingDirectionMode: "
-			       "no option given"));
-    }
+    tfel::raise_if(o.empty(),
+		   "MTestMain::setRoundingDirectionMode: "
+		   "no option given");
     mtest::setRoundingMode(o);
   } // end of MTestMain::setRoundingDirectionMode
   
@@ -243,8 +240,8 @@ namespace mtest
       } else if (option=="full"){
 	mfront::setVerboseMode(mfront::VERBOSE_FULL);
       } else {
-	throw(std::runtime_error("MTestMain::treatVerbose : "
-				 "unknown option '"+option+"'"));
+	tfel::raise("MTestMain::treatVerbose : "
+		    "unknown option '"+option+"'");
       }
     }
   } // end of MTestMain::treatVerbose
@@ -260,8 +257,8 @@ namespace mtest
       } else if(option=="false"){
 	this->xml_output = false;
       } else {
-	throw(std::runtime_error("MTestMain::treatXMLOutput: "
-				 "unknown option '"+option+"'"));
+	tfel::raise("MTestMain::treatXMLOutput: "
+		    "unknown option '"+option+"'");
       }
     }
   } // end of MTestMain::treatXMLOutput
@@ -277,8 +274,8 @@ namespace mtest
       } else if(option=="false"){
 	this->result_file_output = false;
       } else {
-	throw(std::runtime_error("MTestMain::treatResultFileOutput: "
-				 "unknown option '"+option+"'"));
+	tfel::raise("MTestMain::treatResultFileOutput: "
+		    "unknown option '"+option+"'");
       }
     }
   } // end of MTestMain::treatResultFileOutput
@@ -294,8 +291,8 @@ namespace mtest
       } else if(option=="false"){
 	this->residual_file_output = false;
       } else {
-	throw(std::runtime_error("MTestMain::treatResidualFileOutput : "
-				 "unknown option '"+option+"'"));
+	tfel::raise("MTestMain::treatResidualFileOutput : "
+		    "unknown option '"+option+"'");
       }
     }
   } // end of MTestMain::treatResidualFileOutput
@@ -323,10 +320,9 @@ namespace mtest
   void MTestMain::treatHelpCommand()
   {
     const auto& k = this->currentArgument->getOption();
-    if(k.empty()){
-      throw(std::runtime_error("MTestMain::treatHelpCommand : "
-			       "no command specified"));
-    }
+    tfel::raise_if(k.empty(),
+		   "MTestMain::treatHelpCommand : "
+		   "no command specified");
     if((this->scheme==MTEST)||(this->scheme==DEFAULT)){
       MTestParser().displayKeyWordDescription(k);
     } else if(this->scheme==PTEST){
@@ -342,23 +338,20 @@ namespace mtest
       if((a.size()>4)&&((a[1]=='-')&&(a[2]=='@'))){
 	if(a.back()=='@'){
 	  const auto s1 = a.substr(2);
-	  if(std::count(s1.begin(),s1.end(),'@')!=2){
-	    throw(std::runtime_error("MTestMain::treatUnknownArgument: "
-				     "bas substitution pattern '"+s1+"'"));
-	  }
+	  tfel::raise_if(std::count(s1.begin(),s1.end(),'@')!=2,
+			 "MTestMain::treatUnknownArgument: "
+			 "bas substitution pattern '"+s1+"'");
 	  const auto s2 = this->currentArgument->getOption();
-	  if(s2.empty()){
-	    throw(std::runtime_error("MTestMain::treatUnknownArgument: "
-				     "no substitution given for pattern '"+s1+"'"));
-	  }
+	  tfel::raise_if(s2.empty(),
+			 "MTestMain::treatUnknownArgument: "
+			 "no substitution given for pattern '"+s1+"'");
 	  if(mfront::getVerboseMode()>=mfront::VERBOSE_LEVEL2){
 	    mfront::getLogStream() << "substituting '" << s1 << "' by '" << s2 << "'\n";
 	  }
-	  if(!this->substitutions.insert({s1,s2}).second){
-	    throw(std::runtime_error("MTestMain::treatUnknownArgument: "
-				     "a substitution for '"+s1+"' has "
-				     "already been defined"));
-	  }
+	  tfel::raise_if(!this->substitutions.insert({s1,s2}).second,
+			 "MTestMain::treatUnknownArgument: "
+			 "a substitution for '"+s1+"' has "
+			 "already been defined");
 	  return;
 	} else {
 	  const auto o = this->currentArgument->getOption();
@@ -422,19 +415,16 @@ namespace mtest
       } else {
 	tname = i;
       }
-      if(tname.back()=='/'){
-	throw(std::runtime_error("MTestMain::execute: "
-				 "invalid input file name '"+i+"'"));
-      }
+      tfel::raise_if(tname.back()=='/',
+		     "MTestMain::execute: "
+		     "invalid input file name '"+i+"'");
       const auto pos2 = tname.rfind('/');
       if(pos2!=string::npos){
 	tname = tname.substr(pos2+1);
       }
-      if(tname.empty()){
-	throw(std::runtime_error("MTestMain::execute: "
-				 "invalid input file name '"+i+"'"));
-	
-      }
+      tfel::raise_if(tname.empty(),
+		     "MTestMain::execute: "
+		     "invalid input file name '"+i+"'");
       auto t = std::shared_ptr<SchemeBase>{};
       if(this->scheme==MTEST){
 	t = mtest(i,this->ecmds,this->substitutions);

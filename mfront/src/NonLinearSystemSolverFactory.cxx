@@ -12,7 +12,7 @@
  */
 
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/NonLinearSystemSolver.hxx"
 #include"MFront/NewtonRaphsonSolvers.hxx"
 #include"MFront/BroydenSolvers.hxx"
@@ -41,10 +41,9 @@ namespace mfront
   NonLinearSystemSolverFactory::getSolver(const std::string& a) const
   {
     const auto p = this->constructors.find(a);
-    if(p==this->constructors.end()){
-      throw(std::runtime_error("NonLinearSystemSolverFactory::getSolver : "
-			       "no solver '"+a+"' registred"));
-    }
+    tfel::raise_if(p==this->constructors.end(),
+		   "NonLinearSystemSolverFactory::getSolver : "
+		   "no solver '"+a+"' registred");
     return (*(p->second))();
   }
 
@@ -74,10 +73,9 @@ namespace mfront
   NonLinearSystemSolverFactory::registerSolver(const std::string& a,
 						       const constructor c)
   {
-    if(!this->constructors.insert({a,c}).second){
-      throw(std::runtime_error("NonLinearSystemSolverFactory::registerSolver : "
-			       "solver '"+a+"' already declared"));
-    }
+    tfel::raise_if(!this->constructors.insert({a,c}).second,
+		   "NonLinearSystemSolverFactory::registerSolver : "
+		   "solver '"+a+"' already declared");
   } // end of NonLinearSystemSolverFactory::registerSolver
 
 } // end of namespace mfront

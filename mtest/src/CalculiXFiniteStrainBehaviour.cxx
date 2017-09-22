@@ -15,6 +15,7 @@
 #include<limits>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
@@ -62,8 +63,7 @@ namespace mtest
     constexpr const auto sqrt2 = Cste<real>::sqrt2;
     const auto h = this->getHypothesis();
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("CalculiXFiniteStrainBehaviour::"
-				     "call_behaviour: "+m));}
+      tfel::raise_if(c,"CalculiXFiniteStrainBehaviour::call_behaviour: "+m);
     };
     throw_if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR,
 	     "CalculiX behaviours only provide the "

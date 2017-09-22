@@ -5,6 +5,7 @@
  * \date   23 oct. 2015
  */
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/stensor.hxx"
 
 #include"MTest/Evolution.hxx"
@@ -27,9 +28,8 @@ namespace mtest{
 
   void allocate(CurrentState& s,const std::shared_ptr<const Behaviour>& b)
   {
-    if(s.behaviour!=nullptr){
-      throw(std::runtime_error("mtest::allocate: state already allocated"));
-    }
+    tfel::raise_if(s.behaviour!=nullptr,
+		   "mtest::allocate: state already allocated");
     s.behaviour = b;
     const auto mpnames  = s.behaviour->getMaterialPropertiesNames();
     const auto esvnames = s.behaviour->getExternalStateVariablesNames();
@@ -71,15 +71,13 @@ namespace mtest{
 				 const std::vector<std::string>& mpnames,
 				 const real t,
 				 const real dt){
-    if(s.behaviour==nullptr){
-      throw(std::runtime_error("mtest::computeMaterialProperties: "
-			       "uninitialised state"));
-    }
-    if(s.mprops1.size()!=mpnames.size()){
-      throw(std::runtime_error("computeMaterialProperties:"
-			       "CurrentState variable was not "
-			       "initialized appropriately"));
-    }
+    tfel::raise_if(s.behaviour==nullptr,
+		   "mtest::computeMaterialProperties: "
+		   "uninitialised state");
+    tfel::raise_if(s.mprops1.size()!=mpnames.size(),
+		   "computeMaterialProperties:"
+		   "CurrentState variable was not "
+		   "initialized appropriately");
     std::vector<real>::size_type i=0;
     for(const auto& mpn : mpnames){
       auto pev = evm.find(mpn);
@@ -92,8 +90,8 @@ namespace mtest{
 	  const auto& ev = *(pev->second);
 	  s.mprops1[i] = ev(t+dt);
 	} else {
-	  throw(std::runtime_error("computeMaterialProperties: "
-				   "no evolution named '"+mpn+"'"));
+	  tfel::raise("computeMaterialProperties: "
+		      "no evolution named '"+mpn+"'");
 	}
       }
       ++i;
@@ -105,23 +103,20 @@ namespace mtest{
 				     const std::vector<std::string>& esvnames,
 				     const real t,
 				     const real dt){
-    if(s.behaviour==nullptr){
-      throw(std::runtime_error("mtest::computeThermalExpanstion: "
-			       "uninitialised state"));
-    }
-    if((s.esv0.size()!=esvnames.size())||
-       (s.desv.size()!=esvnames.size())){
-      throw(std::runtime_error("computeExternalStateVariables:"
-			       "CurrentState variable was not "
-			       "initialized appropriately"));
-    }
+    tfel::raise_if(s.behaviour==nullptr,
+		   "mtest::computeThermalExpanstion: "
+		   "uninitialised state");
+    tfel::raise_if((s.esv0.size()!=esvnames.size())||
+		   (s.desv.size()!=esvnames.size()),
+		   "computeExternalStateVariables:"
+		   "CurrentState variable was not "
+		   "initialized appropriately");
     std::vector<real>::size_type i=0;
     for(const auto& evn : esvnames){
       auto pev = evm.find(evn);
-      if(pev==evm.end()){
-	throw(std::runtime_error("computeExternalStateVariables:"
-				 "no evolution named '"+evn+"'"));
-      }
+      tfel::raise_if(pev==evm.end(),
+		     "computeExternalStateVariables:"
+		     "no evolution named '"+evn+"'");
       const auto& ev = *(pev->second);
       s.esv0[i] = ev(t);
       s.desv[i] = ev(t+dt)-s.esv0[i];
@@ -135,10 +130,9 @@ namespace mtest{
 			       const real dt){
     static const std::string T{"Temperature"};
     static const std::string a{"ThermalExpansion"};
-    if(s.behaviour==nullptr){
-      throw(std::runtime_error("mtest::computeThermalExpanstion: "
-			       "uninitialised state"));
-    }
+    tfel::raise_if(s.behaviour==nullptr,
+		   "mtest::computeThermalExpanstion: "
+		   "uninitialised state");
     auto pev   = evm.find(T);
     auto pev2  = evm.find(a);
     if((pev==evm.end())||(pev2==evm.end())){
@@ -154,21 +148,19 @@ namespace mtest{
     }
   }
 
-  void
-  computeThermalExpansion(CurrentState& s,
-			  const EvolutionManager& evm,
-			  const real t,
-			  const real dt,
-			  const unsigned short d)
+  void computeThermalExpansion(CurrentState& s,
+			       const EvolutionManager& evm,
+			       const real t,
+			       const real dt,
+			       const unsigned short d)
   {
     static const std::string T{"Temperature"};
     static const std::string a1{"ThermalExpansion1"};
     static const std::string a2{"ThermalExpansion2"};
     static const std::string a3{"ThermalExpansion3"};
-    if(s.behaviour==nullptr){
-      throw(std::runtime_error("mtest::computeThermalExpanstion: "
-			       "uninitialised state"));
-    }
+    tfel::raise_if(s.behaviour==nullptr,
+		   "mtest::computeThermalExpanstion: "
+		   "uninitialised state");
     const auto pev   = evm.find(T);
     const auto pev2  = evm.find(a1);
     const auto pev3  = evm.find(a2);
@@ -176,11 +168,10 @@ namespace mtest{
     if((pev==evm.end())||((pev2==evm.end())||(pev3==evm.end())||(pev4==evm.end()))){
       return;
     }
-    if((pev2==evm.end())||(pev3==evm.end())||(pev4==evm.end())){
-      throw(std::runtime_error("computeThermalExpansion: at least one "
-			       "of the three thermal expansion coefficient is "
-			       "defined and at least one is not"));
-    }
+    tfel::raise_if((pev2==evm.end())||(pev3==evm.end())||(pev4==evm.end()),
+		   "computeThermalExpansion: at least one "
+		   "of the three thermal expansion coefficient is "
+		   "defined and at least one is not");
     const auto& T_ev  = *(pev->second);
     const auto& a1_ev = *(pev2->second);
     const auto& a2_ev = *(pev3->second);
@@ -210,7 +201,7 @@ namespace mtest{
       std::copy(se_th0.begin(),se_th0.begin()+ss,s.e_th0.begin());
       std::copy(se_th1.begin(),se_th1.begin()+ss,s.e_th1.begin());
     } else {
-      throw(std::runtime_error("MTest::prepare: invalid dimension"));
+      tfel::raise("MTest::prepare: invalid dimension");
     }
   }
   
@@ -239,7 +230,7 @@ namespace mtest{
 				     const real v,
 				     const int d){
     auto throw_if = [](const bool b, const std::string& m){
-      if(b){throw(std::runtime_error("mtest::setInternalStateVariableValue: "+m));}
+      tfel::raise_if(b,"mtest::setInternalStateVariableValue: "+m);
     };
     throw_if(s.behaviour==nullptr,"no behaviour defined");
     const auto& ivsnames = s.behaviour->getInternalStateVariablesNames();
@@ -277,7 +268,7 @@ namespace mtest{
 				     const std::vector<real>& v,
 				     const int d){
     auto throw_if = [](const bool b, const std::string& m){
-      if(b){throw(std::runtime_error("mtest::setInternalStateVariableValue: "+m));}
+      tfel::raise_if(b,"mtest::setInternalStateVariableValue: "+m);
     };
     throw_if(s.behaviour==nullptr,"no behaviour defined");
     const auto& ivsnames = s.behaviour->getInternalStateVariablesNames();

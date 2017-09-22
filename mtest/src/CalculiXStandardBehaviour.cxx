@@ -15,6 +15,7 @@
 #include<sstream>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
@@ -35,8 +36,8 @@ namespace mtest
     : UmatBehaviourBase(h,l,b)
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("CalculiXStandardBehaviour::"
-				     "CalculiXStandardBehaviour: "+m));}
+      tfel::raise_if(c,"CalculiXStandardBehaviour::"
+		     "CalculiXStandardBehaviour: "+m);
     };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     throw_if(h!=ModellingHypothesis::TRIDIMENSIONAL,

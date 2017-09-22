@@ -15,6 +15,7 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MFront/VariableDescriptionBase.hxx"
 
@@ -31,10 +32,9 @@ namespace mfront{
       arraySize(s),
       lineNumber(l)
   {
-    if(this->arraySize==0){
-      throw(std::runtime_error("VariableDescriptionBase::VariableDescriptionBase: "
-			       "invalid array size"));
-    }
+    tfel::raise_if(this->arraySize==0,
+		   "VariableDescriptionBase::VariableDescriptionBase: "
+		   "invalid array size");
   } // end of VariableDescriptionBase::VariableDescriptionBase
 
   VariableDescriptionBase::VariableDescriptionBase(const VariableDescriptionBase&) = default;

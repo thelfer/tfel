@@ -16,6 +16,7 @@
 #include<iterator>
 #include<stdexcept>
 #include<algorithm>
+#include"TFEL/Raise.hxx"
 #include"TFEL/FSAlgorithm/copy.hxx"
 #include"MTest/RoundingMode.hxx"
 #include"MTest/CurrentState.hxx"
@@ -24,10 +25,9 @@
 
 namespace mtest{
 
-  static void
-  convertStiffness(tfel::math::matrix<real>& k,
-		   const tfel::math::vector<real>& e,
-		   const tfel::math::vector<real>& s){
+  static void convertStiffness(tfel::math::matrix<real>& k,
+			       const tfel::math::vector<real>& e,
+			       const tfel::math::vector<real>& s){
     k(0,0) = (-s(0)+k(0,0)/(1+e(0)))/(1+e(0));
     k(1,1) = (-s(1)+k(1,1)/(1+e(1)))/(1+e(1));
     k(2,2) = (-s(2)+k(2,2)/(1+e(2)))/(1+e(2));
@@ -44,16 +44,15 @@ namespace mtest{
   {
     using tfel::material::MechanicalBehaviourBase;
     const auto h = this->b->getHypothesis();
-    if(h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
-      throw(std::runtime_error("LogarithmicStrain1DBehaviourWrapper::"
-			       "LogarithmicStrain1DBehaviourWrapper: "
-			       "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'"));
-    }
-    if(this->b->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
-      throw(std::runtime_error("LogarithmicStrain1DBehaviourWrapper::"
-			       "LogarithmicStrain1DBehaviourWrapper: "
-			       "the underlying behaviour must be small strain"));
-    }
+    tfel::raise_if(h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
+		   "LogarithmicStrain1DBehaviourWrapper::"
+		   "LogarithmicStrain1DBehaviourWrapper: "
+		   "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'");
+    tfel::raise_if(this->b->getBehaviourType()!=
+		   MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR,
+		   "LogarithmicStrain1DBehaviourWrapper::"
+		   "LogarithmicStrain1DBehaviourWrapper: "
+		   "the underlying behaviour must be small strain");
   }
 
   LogarithmicStrain1DBehaviourWrapper::Hypothesis

@@ -14,7 +14,7 @@
 #include<sstream>
 #include<stdexcept>
 #include<algorithm>
-
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontUtilities.hxx"
@@ -39,10 +39,9 @@ namespace mfront
 						tokens_iterator current,
 						const tokens_iterator)
   {
-    if(std::find(i.begin(),i.end(),"mfront")!=i.end()){
-      throw(std::runtime_error("MFrontMaterialPropertyInterface::treatKeyword: "
-			       "unsupported key '"+k+"'"));
-    }
+    tfel::raise_if(std::find(i.begin(),i.end(),"mfront")!=i.end(),
+		   "MFrontMaterialPropertyInterface::treatKeyword: "
+		   "unsupported key '"+k+"'");
     return {false,current};
   } // end of treatKeyword
   

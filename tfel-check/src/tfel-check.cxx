@@ -25,6 +25,7 @@
 #include<unistd.h>
 #include<libgen.h>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/ArgumentParserBase.hxx"
 #include"TFEL/System/System.hxx"
 #include"TFEL/System/RecursiveFind.hxx"
@@ -74,7 +75,7 @@ namespace tfel{
 
     void TFELCheck::treatUnknownArgument(){
       auto throw_if = [](const bool c,const std::string& m){
-	if(c){throw(std::runtime_error("TFELCheck::treatUnknownArgument: "+m));}
+	raise_if(c,"TFELCheck::treatUnknownArgument: "+m);
       };
       const auto& arg = this->currentArgument->as_string();
       const auto b = [&arg]{
@@ -102,11 +103,11 @@ namespace tfel{
     void TFELCheck::registerArgumentCallBacks(){
       auto add_config_files = [this]{
 	const auto f = this->currentArgument->getOption();
-	if(std::find(this->configFiles.begin(),this->configFiles.end(),f)==
-	   this->configFiles.end()){
-	  throw(std::runtime_error("tfel-check: configuration file "
-				   "'"+f+"' already defined"));
-	}
+	raise_if(std::find(this->configFiles.begin(),
+			   this->configFiles.end(),f)==
+		 this->configFiles.end(),
+		 "tfel-check: configuration file '"+f+"' "
+		 "already defined");
 	this->configFiles.push_back(f);
       };
       auto declare = [this](const char* const n,

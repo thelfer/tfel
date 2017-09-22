@@ -17,6 +17,7 @@
 #include<iterator>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Parser/EvaluatorBase.hxx"
 
 namespace tfel
@@ -99,7 +100,7 @@ namespace tfel
       EvaluatorBase::splitAtTokenSeperator(std::vector<std::string>& t)
       {
 	auto throw_if = [](const bool b, const std::string& m){
-	  if(b){throw(std::runtime_error("EvaluatorBase::splitAtTokenSeperator: "+m));}
+	  raise_if(b,"EvaluatorBase::splitAtTokenSeperator: "+m);
 	};
 	auto res = std::vector<std::string>{};
 	for(const auto& w : t){

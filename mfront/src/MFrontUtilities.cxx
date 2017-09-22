@@ -17,6 +17,7 @@
 #include<cstring>
 #include<stdexcept>
 #include<algorithm>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"MFront/VariableBoundsDescription.hxx"
 #include"MFront/MFrontUtilities.hxx"
@@ -109,7 +110,7 @@ namespace mfront{
     using tfel::utilities::CxxTokenizer;
     const std::string m = "mfront::readVariableBounds";
     auto throw_if = [&m](const bool b,const std::string& msg){
-      if(b){throw(std::runtime_error(m+": "+msg));}
+      tfel::raise_if(b,m+": "+msg);
     };
     VariableBoundsDescription b;
     CxxTokenizer::checkNotEndOfLine(m,p,pe);
@@ -187,7 +188,7 @@ namespace mfront{
   extracVariableNameAndArrayPosition(const std::string& n)
   {
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("mfront::extracVariableNameAndArrayPosition: "+m));}
+      tfel::raise_if(c,"mfront::extracVariableNameAndArrayPosition: "+m);
     };
     unsigned short i = 0;
     auto p  = n.cbegin();

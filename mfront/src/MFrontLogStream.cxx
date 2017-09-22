@@ -12,11 +12,10 @@
  */
 
 #include<fstream>
+#include<memory>
 #include<iostream>
 #include<stdexcept>
-
-#include<memory>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 
 namespace mfront
@@ -53,14 +52,12 @@ namespace mfront
       this->ps->close();
     }
     this->ps = std::make_shared<std::ofstream>(f);
-    if(this->ps==nullptr){
-      throw(std::runtime_error("LogStream::setLogStream: "
-			       "can't allocate ofstream obect"));
-    }
-    if(!(*(this->ps))){
-      throw(std::runtime_error("LogStream::setLogStream: "
-			       "can't open file '"+f+"'"));
-    }
+    tfel::raise_if(this->ps==nullptr,
+		   "LogStream::setLogStream: "
+		   "can't allocate ofstream obect");
+    tfel::raise_if(!(*(this->ps)),
+		   "LogStream::setLogStream: "
+		   "can't open file '"+f+"'");
   } // end of LogStream::setLogStream
 
   std::ostream& LogStream::getStream()

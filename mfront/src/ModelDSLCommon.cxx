@@ -14,7 +14,7 @@
 #include<sstream>
 #include<stdexcept>
 #include<algorithm>
-
+#include"TFEL/Raise.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
@@ -256,8 +256,8 @@ namespace mfront{
 
   void ModelDSLCommon::treatDomain()
   {
-    auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("ModelDSLCommon::treatDomain: "+m));}
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("ModelDSLCommon::treatDomain",m);}
     };    
     throw_if(!this->md.domains.empty(),"domain defined");
     this->checkNotEndOfFile("ModelDSLCommon::treatDomain");
@@ -271,8 +271,8 @@ namespace mfront{
 
   void ModelDSLCommon::treatDomains()
   {
-    auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("ModelDSLCommon::treatDomains: "+m));}
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("ModelDSLCommon::treatDomains",m);}
     };    
     throw_if(!this->md.domains.empty(),"domains defined");
     for(const auto& d : this->readArrayOfString("ModelDSLCommon::treatDomains")){
@@ -687,8 +687,8 @@ namespace mfront{
     
   void ModelDSLCommon::treatParameterMethod() 
   {
-    auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("ModelDSLCommon::treatParameterMethod: "+m));}
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("ModelDSLCommon::treatParameterMethod",m);}
     };
     this->readSpecifiedToken("ModelDSLCommon::treatParameterMethod",".");
     this->checkNotEndOfFile("ModelDSLCommon::treatParameterMethod",
@@ -726,8 +726,8 @@ namespace mfront{
 
   void ModelDSLCommon::treatConstantMaterialPropertyMethod() 
   {
-    auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("ModelDSLCommon::treatConstantMaterialPropertyMethod: "+m));}
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("ModelDSLCommon::treatConstantMaterialPropertyMethod",m);}
     };
     this->readSpecifiedToken("ModelDSLCommon::treatConstantMaterialPropertyMethod",".");
     this->checkNotEndOfFile("ModelDSLCommon::treatConstantMaterialPropertyMethod",
@@ -751,8 +751,8 @@ namespace mfront{
 
   void ModelDSLCommon::readDefaultValue()
   {
-    auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("ModelDSLCommon::readDefaultValue: "+m));}
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){this->throwRuntimeError("ModelDSLCommon::readDefaultValue",m);}
     };
     auto& v = this->md.parameters.getVariable(this->currentVar);
     this->checkNotEndOfFile("ModelDSLCommon::readDefaultValue",
@@ -785,8 +785,8 @@ namespace mfront{
     } else if(this->md.inputs.contains(b.first)){
       this->md.inputs.getVariable(b.first).setBounds(b.second);
     } else {
-      throw(std::runtime_error("ModelDSLCommon::treatBounds: "
-			       "no variable named '"+b.first+"'"));
+      this->throwRuntimeError("ModelDSLCommon::treatBounds",
+			      "no variable named '"+b.first+"'");
     }
     this->readSpecifiedToken("ModelDSLCommon::treatBounds",";");
   } // end of ModelDSLCommon::treatBounds
@@ -799,8 +799,8 @@ namespace mfront{
     } else if(this->md.inputs.contains(b.first)){
       this->md.inputs.getVariable(b.first).setPhysicalBounds(b.second);
     } else {
-      throw(std::runtime_error("ModelDSLCommon::treatPhysicalBounds: "
-			       "no variable named '"+b.first+"'"));
+      this->throwRuntimeError("ModelDSLCommon::treatPhysicalBounds",
+			      "no variable named '"+b.first+"'");
     }
     this->readSpecifiedToken("ModelDSLCommon::treatPhysicalBounds",";");
   } // end of ModelDSLCommon::treatPhysicalBounds

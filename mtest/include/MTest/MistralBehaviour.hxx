@@ -80,15 +80,13 @@ namespace mtest
      * \param[in] SENSIP1: 
      * \param[in] SENSIP2: 
      * \param[in] ICBASE: 
-     * \param[in] h:  modelling hypothesis
      */
     MistralBehaviour(const UmatBehaviourDescription&,
 		     const std::string&,
 		     const std::vector<double>&,
 		     const std::pair<double,double>&,
 		     const std::pair<double,double>&,
-		     const int,const int,const int,
-		     const Hypothesis);
+		     const int,const int,const int);
     /*!
      * \brief values of the parameters (additional material properties
      * in Mistral behaviours

@@ -12,9 +12,9 @@
  * project under specific licensing conditions. 
  */
 
-#include<stdexcept>
 #include<cassert>
-
+#include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"MFront/BehaviourInterfaceFactory.hxx"
 
 namespace mfront{
@@ -54,13 +54,10 @@ namespace mfront{
   BehaviourInterfaceFactory::registerInterfaceCreator(const std::string& i,
 						      const BehaviourInterfaceFactory::InterfaceCreator f)
   {
-    using namespace std;
     auto& imap = this->getInterfaceCreatorsMap();
-    if(imap.find(i)!=imap.end()){
-      string msg("BehaviourInterfaceFactory::registerInterfaceCreator : ");
-      msg += "interface creator '"+i+"' already declared";
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(imap.find(i)!=imap.end(),
+		   "BehaviourInterfaceFactory::registerInterfaceCreator: "
+		   "interface creator '"+i+"' already declared");
     imap.insert({i,f});
     this->registerInterfaceAlias(i,i);
   }
@@ -69,40 +66,35 @@ namespace mfront{
   BehaviourInterfaceFactory::registerInterfaceAlias(const std::string& i,
 						    const std::string& a)
   {
-    using namespace std;
     auto& amap = this->getAliasesMap();
-    if(amap.find(a)!=amap.end()){
-      string msg("BehaviourInterfaceFactory::registerInterfaceAlias : ");
-      msg += "interface alias '"+a+"' already declared";
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(amap.find(a)!=amap.end(),
+		   "BehaviourInterfaceFactory::registerInterfaceAlias: "
+		   "interface alias '"+a+"' already declared");
     auto& imap = this->getInterfaceCreatorsMap();
-    if(imap.find(i)==imap.end()){
-      string msg("BehaviourInterfaceFactory::registerInterfaceAlias : ");
-      msg += "no interface named '"+i+"' declared";
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(imap.find(i)==imap.end(),
+		   "BehaviourInterfaceFactory::registerInterfaceAlias: "
+		   "no interface named '"+i+"' declared");
     amap.insert({a,i});
   }
 
   std::shared_ptr<AbstractBehaviourInterface>
   BehaviourInterfaceFactory::getInterface(const std::string& n)
   {
-    using namespace std;
     auto p2 = this->getAliasesMap().find(n);
     if(p2==this->getAliasesMap().end()){
-      string msg = "BehaviourInterfaceFactory::createNewInterface : no interface named '";
+      auto msg = std::string("BehaviourInterfaceFactory::createNewInterface:"
+			     " no interface named '");
       msg += n+"'.\n";
       msg += "Available interfaces are : \n";
       for(p2  = this->getAliasesMap().begin();
 	  p2 != this->getAliasesMap().end();++p2){
 	msg += p2->first + " ";
       }
-      throw(runtime_error(msg));
+      tfel::raise(msg);
     }
-    auto p = this->getInterfaceCreatorsMap().find(p2->second);
+    const auto p = this->getInterfaceCreatorsMap().find(p2->second);
     assert(p!=this->getInterfaceCreatorsMap().end());
-    InterfaceCreator c = p->second;
+    auto c = p->second;
     return c();
   }
 

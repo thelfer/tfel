@@ -22,6 +22,7 @@
 #include<ctime>
 #include<unistd.h> // sysconf
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/ProcessManager.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
 
@@ -77,10 +78,9 @@ namespace tfel{
 
     void TestLauncher::registerCallBack(const std::string& name,
 					const CallBack& f) {
-      if(!this->callBacks.insert({name, f}).second){
-	throw(std::runtime_error("TestLauncher::registerCallBack: "
-				 "keyword '"+name+"' has already been registred"));
-      }
+      raise_if(!this->callBacks.insert({name, f}).second,
+	       "TestLauncher::registerCallBack: "
+	       "keyword '"+name+"' has already been registred");
     }  // end of TestLauncher::registerCallBack
 
     void TestLauncher::throwRuntimeError(const std::string& m,
@@ -99,7 +99,7 @@ namespace tfel{
 	return error;
       }();
       this->log.addMessage(e);
-      throw(std::runtime_error(e));
+      raise(e);
     } // end of TestLauncher::throwRuntimeError
 
     void TestLauncher::checkNotEndOfFile(const std::string& m){
@@ -375,22 +375,22 @@ namespace tfel{
       switch (clockevent) {
       case START:
 	r = times(&this->timeStart);
-	if (r == static_cast<clock_t>(-1))
-	  throw(runtime_error("Failed times system call in "
-			      "TestLauncher::ClockAction"));
+	raise_if(r==static_cast<clock_t>(-1),
+		 "Failed times system call in "
+		 "TestLauncher::ClockAction");
 	break;
       case STOP:
 	r = times(&this->timeStop);
-	if (r == static_cast<clock_t>(-1))
-	  throw(runtime_error("Failed times system call in "
-			      "TestLauncher::ClockAction"));
+	raise_if(r==static_cast<clock_t>(-1),
+		 "Failed times system call in "
+		 "TestLauncher::ClockAction");
 	break;
       case GET:
 	return (this->timeStop.tms_cutime - this->timeStart.tms_cutime) * 1.0
 	  / sysconf(_SC_CLK_TCK);
       default:
-	throw(runtime_error("Wrong clockevent in "
-			    "TestLauncher::ClockAction"));
+	raise("Wrong clockevent in "
+	      "TestLauncher::ClockAction");
       }
       return 0.;
     }

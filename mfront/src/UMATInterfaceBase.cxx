@@ -16,6 +16,7 @@
 #include<stdexcept>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/System.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
@@ -49,9 +50,9 @@ namespace mfront
 	return m;
       }
     }
-    throw(std::runtime_error("UMATInterfaceBase::findUMATMaterialProperty : "
-			     "no material property associated with the "
-			     "glossary name '"+n+"'"));
+    tfel::raise("UMATInterfaceBase::findUMATMaterialProperty : "
+		"no material property associated with the "
+		"glossary name '"+n+"'");
   } // end of UMATInterfaceBase::findUMATMaterialProperty
 
 
@@ -84,10 +85,9 @@ namespace mfront
 						    const bool b) const
   {
     const auto flag = SupportedTypes::getTypeFlag(t);
-    if(flag!=SupportedTypes::Scalar){
-      throw(std::runtime_error("UMATMaterialProperty::UMATMaterialProperty: "
-			       "material properties shall be scalars"));
-    }
+    tfel::raise_if(flag!=SupportedTypes::Scalar,
+		   "UMATMaterialProperty::UMATMaterialProperty: "
+		   "material properties shall be scalars");
     auto o = SupportedTypes::TypeSize{};
     if(!l.empty()){
       const auto& m = l.back();
@@ -103,7 +103,7 @@ namespace mfront
 						    const Hypothesis h) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("UMATInterfaceBase::completeMaterialPropertiesList: "+m));}
+      tfel::raise_if(b,"UMATInterfaceBase::completeMaterialPropertiesList: "+m);
     };
     const auto& d = mb.getBehaviourData(h);
     const auto& mp = d.getMaterialProperties();
@@ -213,8 +213,8 @@ namespace mfront
 	out << "exportToBaseTypeArray(this->" << f.name << "," << a << ");\n";	
       }
     } else {
-      throw(std::runtime_error("UMATInterfaceBase::exportThermodynamicForce: "
-			       "unsupported forces type"));
+      tfel::raise("UMATInterfaceBase::exportThermodynamicForce: "
+		  "unsupported forces type");
     }
   } // end of UMATInterfaceBase::exportThermodynamicForce
   
@@ -270,9 +270,9 @@ namespace mfront
   	  f << n << "(&"+src+"[" 
   	    << currentOffset << "])";  
   	} else {
-  	  throw(std::runtime_error("SupportedTypes::"
-  				   "writeVariableInitializersInBehaviourDataConstructorI : "
-  				   "internal error, tag unsupported"));
+  	  tfel::raise("SupportedTypes::"
+		      "writeVariableInitializersInBehaviourDataConstructorI: "
+		      "internal error, tag unsupported");
   	}
       }
       currentOffset+=this->getTypeSize(p->type,p->arraySize);
@@ -330,9 +330,9 @@ namespace mfront
   	      << n << "[idx].begin());\n";  
   	    break;
   	  default : 
-  	    throw(std::runtime_error("SupportedTypes::"
-  				     "writeVariableInitializersInBehaviourDataConstructorII: "
-  				     "internal error, tag unsupported"));
+  	    tfel::raise("SupportedTypes::"
+			"writeVariableInitializersInBehaviourDataConstructorII: "
+			"internal error, tag unsupported");
   	  }
   	  f << "}\n";
   	  currentOffset+=this->getTypeSize(p->type,p->arraySize);
@@ -356,9 +356,9 @@ namespace mfront
   		<< currentOffset << "]," << n << "[" << i << "].begin());\n";  
   	      break;
   	    default : 
-  	      throw(std::runtime_error("SupportedTypes::"
-  				       "writeVariableInitializersInBehaviourDataConstructorII: "
-  				       "internal error, tag unsupported"));
+  	      tfel::raise("SupportedTypes::"
+			  "writeVariableInitializersInBehaviourDataConstructorII: "
+			  "internal error, tag unsupported");
   	    }
   	    currentOffset+=this->getTypeSize(p->type,1u);
   	  }
@@ -409,8 +409,8 @@ namespace mfront
 	    << ",&" << dest << "[" 
 	    << currentOffset << "]);\n";  
 	} else {
-	  throw(std::runtime_error("UMATInterfaceBase::exportResults: "
-				   "internal error, tag unsupported"));
+	  tfel::raise("UMATInterfaceBase::exportResults: "
+		      "internal error, tag unsupported");
 	}
 	currentOffset+=this->getTypeSize(p->type,p->arraySize);
       } else {
@@ -433,8 +433,8 @@ namespace mfront
 	      << "[idx],&" << dest << "[" 
 	      << currentOffset << "+idx*StensorSize]);\n";  
 	  } else {
-	    throw(std::runtime_error("UMATInterfaceBase::exportResults: "
-				     "internal error, tag unsupported"));
+	    tfel::raise("UMATInterfaceBase::exportResults: "
+			"internal error, tag unsupported");
 	  }
 	  f << "}\n";
 	  currentOffset+=this->getTypeSize(p->type,p->arraySize);
@@ -457,8 +457,8 @@ namespace mfront
 		<< "[" << i << "],&" << dest << "[" 
 		<< currentOffset << "]);\n";  
 	    } else {
-	      throw(std::runtime_error("UMATInterfaceBase::exportResults: "
-				       "internal error, tag unsupported"));
+	      tfel::raise("UMATInterfaceBase::exportResults: "
+			  "internal error, tag unsupported");
 	    }
 	    currentOffset+=this->getTypeSize(p->type,1u);
 	  }
@@ -620,9 +620,9 @@ namespace mfront
 	f << n << "(&"+src+"[" 
 	  << offset << "])";  
       } else {
-	throw(std::runtime_error("SupportedTypes::"
-				 "writeMaterialPropertiesInitializersInBehaviourDataConstructorI: "
-				 "internal error, tag unsupported"));
+	tfel::raise("SupportedTypes::"
+		    "writeMaterialPropertiesInitializersInBehaviourDataConstructorI: "
+		    "internal error, tag unsupported");
       }
     }
   } // end of UMATInterfaceBase::writeMaterialPropertiesInitializersInBehaviourDataConstructorI
@@ -672,9 +672,9 @@ namespace mfront
 	    << n << "[idx].begin());\n";  
 	  break;
 	default : 
-	  throw(std::runtime_error("UMATInterfaceBase::"
-				   "writeVariableInitializersInBehaviourDataConstructorII: "
-				   "internal error, tag unsupported"));
+	  tfel::raise("UMATInterfaceBase::"
+		      "writeVariableInitializersInBehaviourDataConstructorII: "
+		      "internal error, tag unsupported");
 	}
 	f << "}\n";
       } else {
@@ -697,9 +697,9 @@ namespace mfront
 	      << offset << "]," << n << "[" << index << "].begin());\n";  
 	    break;
 	  default : 
-	    throw(std::runtime_error("UMATInterfaceBase::"
-				     "writeVariableInitializersInBehaviourDataConstructorII: "
-				     "internal error, tag unsupported"));
+	    tfel::raise("UMATInterfaceBase::"
+			"writeVariableInitializersInBehaviourDataConstructorII: "
+			"internal error, tag unsupported");
 	  }
 	  offset+=SupportedTypes::getTypeSize(p->type,1u);
 	}
@@ -912,8 +912,8 @@ namespace mfront
 	     << iprefix << "stran);\n";
 	}
       } else {
-	throw(std::runtime_error("UMATInterfaceBase::writeBehaviourDataMainVariablesSetters : "
-				 "unsupported driving variable type"));
+	tfel::raise("UMATInterfaceBase::writeBehaviourDataMainVariablesSetters : "
+		    "unsupported driving variable type");
       }
     } else {
       if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::TVector){
@@ -937,8 +937,8 @@ namespace mfront
 	     << iprefix+"stran);\n";
 	}
       } else {
-	throw(std::runtime_error("UMATInterfaceBase::writeBehaviourDataMainVariablesSetters : "
-				 "unsupported driving variable type"));
+	tfel::raise("UMATInterfaceBase::writeBehaviourDataMainVariablesSetters : "
+		    "unsupported driving variable type");
       }
     }
   } // end of UMATInterfaceBase::writeBehaviourDataDrivingVariableSetter
@@ -970,8 +970,8 @@ namespace mfront
 	   << iprefix << "stress_);\n";
       }
     } else {
-      throw(std::runtime_error("UMATInterfaceBase::writeBehaviourDataMainVariablesSetters : "
-			       "unsupported forces type"));
+      tfel::raise("UMATInterfaceBase::writeBehaviourDataMainVariablesSetters : "
+		  "unsupported forces type");
     }
   } // end of UMATInterfaceBase::writeBehaviourDataThermodynamicForceSetter
   
@@ -1018,8 +1018,8 @@ namespace mfront
 	     << iprefix << "dstran);\n";
 	}
       } else {
-	throw(std::runtime_error("UMATInterfaceBase::writeIntegrationDataMainVariablesSetters : "
-				 "unsupported driving variable type"));
+	tfel::raise("UMATInterfaceBase::writeIntegrationDataMainVariablesSetters : "
+		    "unsupported driving variable type");
       }
     } else {
       if(SupportedTypes::getTypeFlag(v.type)==SupportedTypes::TVector){
@@ -1045,8 +1045,8 @@ namespace mfront
 	     << iprefix+"dstran);\n";
 	}
       } else {
-	throw(std::runtime_error("UMATInterfaceBase::writeIntegrationDataMainVariablesSetters : "
-				 "unsupported driving variable type"));
+	tfel::raise("UMATInterfaceBase::writeIntegrationDataMainVariablesSetters : "
+		    "unsupported driving variable type");
       }
     }
   } // end of UMATInterfaceBase::writeIntegrationDataDrivingVariableSetter
@@ -1087,8 +1087,8 @@ namespace mfront
 				      const tokens_iterator end) const
   {
     auto throw_if = [&key](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("UMATInterfaceBase::readBooleanValue: "+m+
-				     ".\nError while treating key ("+key+")\n"));}
+      tfel::raise_if(b,"UMATInterfaceBase::readBooleanValue: "+m+
+				     ".\nError while treating key ("+key+")\n");
     };
     bool b = true;
     throw_if(current==end,"unexpected end of file");
@@ -1133,8 +1133,8 @@ namespace mfront
       } else if(v.type=="ushort"){
 	up = true;
       } else {
-	throw(std::runtime_error("UMATInterfaceBase::checkParametersType: "
-				 "unsupport parameter type '"+v.type+"'."));
+	tfel::raise("UMATInterfaceBase::checkParametersType: "
+		    "unsupport parameter type '"+v.type+"'.");
       } 
     }
   }
@@ -1359,9 +1359,8 @@ namespace mfront
     	    << this->getLibraryName(mb) <<"\",\"" << this->getFunctionName(fname)
     	    <<  "\");\n";
       } else {
-    	string msg("UMATInterfaceBase::generateMTestFile2 : ");
-    	msg += "only small strain or finite strain behaviours are supported";
-    	throw(runtime_error(msg));
+	tfel::raise("UMATInterfaceBase::generateMTestFile2: "
+		    "only small strain or finite strain behaviours are supported");
       }
       this->writeMTestFileGeneratorSetModellingHypothesis(out);
       this->writeMTestFileGeneratorSetRotationMatrix(out,mb);
@@ -1380,9 +1379,8 @@ namespace mfront
 	    << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);\n"
 	    << "mg.setStressTensor(&mg_STRESS[0]);\n";
       } else {
-    	string msg("UMATInterfaceBase::generateMTestFile2 : ");
-    	msg += "only small strain or finite strain behaviours are supported";
-    	throw(runtime_error(msg));
+	tfel::raise("UMATInterfaceBase::generateMTestFile2: "
+		    "only small strain or finite strain behaviours are supported");
       }
       const auto& gh = this->gatherModellingHypothesesAndTests(mb);
       for(const auto & elem : gh){
@@ -1397,11 +1395,10 @@ namespace mfront
 	unsigned int offset=0;
 	for(const auto& m : mprops.first){
 	  auto flag = SupportedTypes::getTypeFlag(m.type);
-	  if(flag!=SupportedTypes::Scalar){
-	    throw(runtime_error("UMATInterfaceBase::generateFile2 : "
-				"unsupported external state variable type "
-				"in mtest file generation"));
-	  }
+	  tfel::raise_if(flag!=SupportedTypes::Scalar,
+			 "UMATInterfaceBase::generateFile2 : "
+			 "unsupported external state variable type "
+			 "in mtest file generation");
 	  if(m.arraySize==1u){
 	    if(offset==0){
 	      out << "mg.addMaterialProperty(\"" << m.name << "\",*(PROPS));\n";	    
@@ -1468,12 +1465,10 @@ namespace mfront
 	auto p=std::next(externalStateVarsHolder.begin());
 	for(offset=0;p!=externalStateVarsHolder.end();++p){
 	  auto flag = SupportedTypes::getTypeFlag(p->type);
-	  if(flag!=SupportedTypes::Scalar){
-	    string msg("UMATInterfaceBase::generateFile2 : "
-		       "unsupported external state variable type "
-		       "in mtest file generation");
-	    throw(runtime_error(msg));
-	  }
+	  tfel::raise_if(flag!=SupportedTypes::Scalar,
+			 "UMATInterfaceBase::generateFile2 : "
+			 "unsupported external state variable type "
+			 "in mtest file generation");
 	  const auto& evname = d.getExternalName(p->name);
 	  if(p->arraySize==1u){
 	    if(offset==0){
@@ -1620,8 +1615,8 @@ namespace mfront
     } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
       out << "3u;\n\n";
     } else {
-      throw(std::runtime_error("UMATInterfaceBase::writeUMATxxBehaviourTypeSymbols: "
-			       "unsupported behaviour type."));
+      tfel::raise("UMATInterfaceBase::writeUMATxxBehaviourTypeSymbols: "
+		  "unsupported behaviour type.");
     }
   } // end of UMATInterfaceBase::writeUMATxxBehaviourTypeSymbols
 
@@ -1641,8 +1636,8 @@ namespace mfront
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "3u;\n\n";
     } else {
-      throw(std::runtime_error("UMATInterfaceBase::writeUMATxxBehaviourKinematicSymbols: "
-			       "unsupported behaviour type."));
+      tfel::raise("UMATInterfaceBase::writeUMATxxBehaviourKinematicSymbols: "
+		  "unsupported behaviour type.");
     }
   } // end of UMATInterfaceBase::writeUMATxxBehaviourKinematicSymbols
   
@@ -1680,7 +1675,7 @@ namespace mfront
   {
     using namespace std;
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("UMATInterfaceBase::writeUMATxxMaterialPropertiesSymbols: "+m));}
+      tfel::raise_if(b,"UMATInterfaceBase::writeUMATxxMaterialPropertiesSymbols: "+m);
     };
     const auto mprops = this->buildMaterialPropertiesList(mb,h);
     if(mprops.first.empty()){
@@ -1779,9 +1774,9 @@ namespace mfront
   	    out << 3;
   	    break;
   	  default :
-  	    string msg("UMATInterfaceBase::writeUMATxxStateVariablesSymbols : ");
-  	    msg += "internal error, tag unsupported for variable '"+p->name+"'";
-  	    throw(runtime_error(msg));
+	    tfel::raise("UMATInterfaceBase::writeUMATxxStateVariablesSymbols: "
+			"internal error, tag unsupported for "
+			"variable '"+p->name+"'");
   	  }
   	  if(++is!=p->arraySize){
   	    out << ",";
@@ -1836,9 +1831,9 @@ namespace mfront
 	  } else if(p->type=="ushort"){
 	    out << "2";
 	  } else {
-  	    throw(std::runtime_error("UMATInterfaceBase::writeUMATxxParametersSymbols: "
-				     "internal error, unsupported type "
-				     "for parameter '"+p->name+"'"));
+  	    tfel::raise("UMATInterfaceBase::writeUMATxxParametersSymbols: "
+			"internal error, unsupported type "
+			"for parameter '"+p->name+"'");
   	  }
   	  if(++is!=p->arraySize){
   	    out << ",";
@@ -1861,8 +1856,8 @@ namespace mfront
 								  const BehaviourDescription& mb) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("UMATInterfaceBase::"
-				     "writeUMATxxParameterDefaultValueSymbols: "+m));}
+      tfel::raise_if(b,"UMATInterfaceBase::"
+		     "writeUMATxxParameterDefaultValueSymbols: "+m);
     };
     for(const auto& p: mb.getBehaviourData(h).getParameters()){
       if(p.type=="real"){
@@ -2029,10 +2024,10 @@ namespace mfront
     } else if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "1u;\n\n";
     } else {
-      throw(std::runtime_error("UMATInterfaceBase::writeUMATxxSymmetryTypeSymbols: "
-			       "unsupported behaviour type.\n"
-			       "only isotropic or orthotropic behaviours "
-			       "are supported at this time."));
+      tfel::raise("UMATInterfaceBase::writeUMATxxSymmetryTypeSymbols: "
+		  "unsupported behaviour type.\n"
+		  "only isotropic or orthotropic behaviours "
+		  "are supported at this time.");
     }
   } // end of UMATInterfaceBase::writeUMATxxSymmetryTypeSymbols
 
@@ -2048,10 +2043,10 @@ namespace mfront
     } else if(mb.getElasticSymmetryType()==mfront::ORTHOTROPIC){
       out << "1u;\n\n";
     } else {
-      throw(std::runtime_error("UMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols: "
-			       "unsupported behaviour type.\n"
-			       "only isotropic or orthotropic behaviours are "
-			       "supported at this time."));
+      tfel::raise("UMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols: "
+		  "unsupported behaviour type.\n"
+		  "only isotropic or orthotropic behaviours are "
+		  "supported at this time.");
     }
   } // end of UMATInterfaceBase::writeUMATxxElasticSymmetryTypeSymbols
 

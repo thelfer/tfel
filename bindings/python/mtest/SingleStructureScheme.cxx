@@ -13,6 +13,7 @@
 
 #include<tuple>
 #include<boost/python.hpp>
+#include"TFEL/Raise.hxx"
 #include"MTest/Behaviour.hxx"
 #include"MTest/Evolution.hxx"
 #include"MTest/FunctionEvolution.hxx"
@@ -137,19 +138,19 @@ SingleStructureScheme_setInternalStateVariableInitialValue2(mtest::SingleStructu
   const auto& b   = *(s.getBehaviour());
   const auto type = b.getInternalStateVariableType(n);
   if(type==0){
-    if(v.size()!=1u){
-      throw(std::runtime_error("SingleStructureScheme::setInternalStateVariableInitialValue: "
-			       "unsupported number of values for scalar internal "
-			       "state variable '"+n+"'"));
-    }
+    tfel::raise_if(v.size()!=1u,
+		   "SingleStructureScheme::"
+		   "setInternalStateVariableInitialValue: "
+		   "unsupported number of values for scalar internal "
+		   "state variable '"+n+"'");
     s.setScalarInternalStateVariableInitialValue(n,v[0]);
   } else  if(type==1){
     s.setStensorInternalStateVariableInitialValues(n,v);
   } else if(type==3){
     s.setTensorInternalStateVariableInitialValues(n,v);
   } else {
-    throw(std::runtime_error("SingleStructureScheme::setInternalStateVariableInitialValue: "
-			     "unsupported type for internal state variable '"+n+"'"));
+    tfel::raise("SingleStructureScheme::setInternalStateVariableInitialValue: "
+		"unsupported type for internal state variable '"+n+"'");
   }
 }
 

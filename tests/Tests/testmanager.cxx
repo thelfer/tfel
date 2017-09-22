@@ -17,10 +17,10 @@
 
 #include<cstdlib>
 #include<cassert>
-#include<stdexcept>
-
 #include<fstream>
-
+#include<stdexcept>
+#include"TFEL/Raise.hxx"
+#include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Tests/TestFunctionWrapper.hxx"
 
@@ -43,25 +43,21 @@ TFEL_TESTS_STATIC bool test2()
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main()
 {
-  using namespace std;
   using namespace tfel::tests;
   using Wrapper1 = TestFunctionWrapper<test1>;
   using Wrapper2 = TestFunctionWrapper<test2>;
-  auto& manager = TestManager::getTestManager();
+  auto& m = TestManager::getTestManager();
   auto a = std::make_shared<Wrapper1>("test1");
   auto b = std::make_shared<Wrapper2>("test2");
-  ofstream f("testmanager-3.txt");
-  if(!f){
-    throw(runtime_error("can't open file 'testmanager-3.txt'"));
-  }
-  manager.addTest("suite1",a);
-  manager.addTest("suite1",b);
-  manager.addTest("suite2",a);
-  manager.addTest("suite3",a);
-  manager.addTestOutput("suite1","testmanager-1.txt");
-  manager.addTestOutput("testmanager-2.txt");
-  manager.addTestOutput("suite3",f,false);
-  auto r = manager.execute();
-  assert(!r.success());
-  return EXIT_SUCCESS;
+  std::ofstream f("testmanager-3.txt");
+  tfel::raise_if(!f,"can't open file 'testmanager-3.txt'");
+  m.addTest("suite1",a);
+  m.addTest("suite1",b);
+  m.addTest("suite2",a);
+  m.addTest("suite3",a);
+  m.addTestOutput("suite1","testmanager-1.txt");
+  m.addTestOutput("testmanager-2.txt");
+  m.addTestOutput("suite3",f,false);
+  // tests are meant to fail
+  return m.execute().success() ? EXIT_FAILURE : EXIT_SUCCESS;
 } // end of main

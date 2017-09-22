@@ -13,6 +13,7 @@
 
 #include<stdexcept>
 #include<algorithm>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Utilities/Data.hxx"
@@ -43,10 +44,9 @@ namespace mfront{
   void
   BehaviourBrickBase::checkThatParameterHasNoValue(const Parameter& p) const
   {
-    if(!p.second.empty()){
-      throw(std::runtime_error("BehaviourBrickBase::checkThatParameterHasNoValue: "
-			       "parameter '"+p.first+"' shall not have any value"));
-    }
+    tfel::raise_if(!p.second.empty(),
+		   "BehaviourBrickBase::checkThatParameterHasNoValue: "
+		   "parameter '"+p.first+"' shall not have any value");
   } // end of BehaviourBrickBase::checkThatParameterHasNoValue
   
   void
@@ -55,9 +55,7 @@ namespace mfront{
 						      const GlossaryEntry& g) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){
-	throw(std::runtime_error("BehaviourBrickBase::addMaterialPropertyIfNotDefined: "+m));
-      }
+      tfel::raise_if(b,"BehaviourBrickBase::addMaterialPropertyIfNotDefined: "+m);
     };
     // treating material properties
     const auto b = this->bd.checkVariableExistence(n);
@@ -89,9 +87,7 @@ namespace mfront{
 						      const std::string& e) const
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){
-	throw(std::runtime_error("BehaviourBrickBase::addMaterialPropertyIfNotDefined: "+m));
-      }
+      tfel::raise_if(b,"BehaviourBrickBase::addMaterialPropertyIfNotDefined: "+m);
     };
     // treating material properties
     const auto b = this->bd.checkVariableExistence(n);
@@ -121,10 +117,9 @@ namespace mfront{
 					     const std::vector<std::string>& k,
 					     const std::string& n){
     for(const auto& de : d){
-      if(std::find(k.begin(),k.end(),de.first)==k.end()){
-	throw(std::runtime_error("BehaviourBrickBase::checkOptionsNames: "
-				 "brick '"+n+"' does not expect option '"+de.first+"'"));
-      }
+      tfel::raise_if(std::find(k.begin(),k.end(),de.first)==k.end(),
+		     "BehaviourBrickBase::checkOptionsNames: "
+		     "brick '"+n+"' does not expect option '"+de.first+"'");
     }
   } // end of BehaviourBrickBase::checkOptionsNames
   

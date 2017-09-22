@@ -14,7 +14,7 @@
 #include<limits>
 #include<ostream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Crossed2DeltaAccelerationAlgorithm.hxx"
 
@@ -35,8 +35,7 @@ namespace mtest
 						    const std::string& v)
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("Crossed2DeltaAccelerationAlgorithm::"
-				     "setParameter: "+m));}
+      tfel::raise_if(c,"Crossed2DeltaAccelerationAlgorithm::setParameter: "+m);
     };
     if(p=="AccelerationTrigger"){
       const auto m = "Crossed2DeltaAccelerationAlgorithm::setParameter";
@@ -50,8 +49,7 @@ namespace mtest
     }
   } // end of Crossed2DeltaAccelerationAlgorithm::setParameter
 
-  void
-  Crossed2DeltaAccelerationAlgorithm::initialize(const unsigned short psz)
+  void Crossed2DeltaAccelerationAlgorithm::initialize(const unsigned short psz)
   {
     this->csa_u0.resize(psz,0.);      
     this->csa_u1.resize(psz,0.);     
@@ -65,18 +63,15 @@ namespace mtest
     }
   } // end of Crossed2DeltaAccelerationAlgorithm::initialize
 
-  void
-  Crossed2DeltaAccelerationAlgorithm::preExecuteTasks()
-  {
-  } // end of AccelerationAlgorithm::preExecuteTaks
+  void Crossed2DeltaAccelerationAlgorithm::preExecuteTasks()
+  {} // end of AccelerationAlgorithm::preExecuteTaks
 
-  void
-  Crossed2DeltaAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
-					    const tfel::math::vector<real>& rx,
-					    const tfel::math::vector<real>& ,
-					    const real eeps,
-					    const real ,
-					    const unsigned short iter)
+  void Crossed2DeltaAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
+						   const tfel::math::vector<real>& rx,
+						   const tfel::math::vector<real>& ,
+						   const real eeps,
+						   const real ,
+						   const unsigned short iter)
   {
     using namespace std;
     const real csa_eps = 100*(eeps*numeric_limits<real>::epsilon());
@@ -128,8 +123,7 @@ namespace mtest
     }
   } // end of Crossed2DeltaAccelerationAlgorithm::execute
 
-  void
-  Crossed2DeltaAccelerationAlgorithm::postExecuteTasks()
+  void Crossed2DeltaAccelerationAlgorithm::postExecuteTasks()
   {} // end of AccelerationAlgorithm::postExecuteTaks
 
   Crossed2DeltaAccelerationAlgorithm::~Crossed2DeltaAccelerationAlgorithm() = default;

@@ -33,6 +33,7 @@
 #endif
 #endif
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/System/System.hxx"
 
@@ -64,11 +65,10 @@ namespace mfront
 						tokens_iterator current,
 						const tokens_iterator)
   {
-    if((std::find(i.begin(),i.end(),"python")!=i.end())||
-       (std::find(i.begin(),i.end(),"Python")!=i.end())){
-      throw(std::runtime_error("PythonMaterialPropertyInterface::treatKeyword: "
-			       "unsupported keyword '"+k+"'"));
-    }
+    tfel::raise_if((std::find(i.begin(),i.end(),"python")!=i.end())||
+		   (std::find(i.begin(),i.end(),"Python")!=i.end()),
+		   "PythonMaterialPropertyInterface::treatKeyword: "
+		   "unsupported keyword '"+k+"'");
     return {false,current};
   } // end of treatKeyword
 
@@ -214,7 +214,7 @@ namespace mfront
     const auto name = (!material.empty()) ? material+"_"+law : law;
     const auto outName  = "include/"+name+"-python.hxx";
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("PythonMaterialPropertyInterface::writeOutputFiles: "+m));}
+      tfel::raise_if(b,"PythonMaterialPropertyInterface::writeOutputFiles: "+m);
     };
     std::ofstream out;
     out.open(outName);

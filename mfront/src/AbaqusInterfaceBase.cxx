@@ -12,6 +12,7 @@
  */
 
 #include<fstream>
+#include"TFEL/Raise.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/FileDescription.hxx"
 #include"MFront/AbaqusInterfaceBase.hxx"
@@ -46,7 +47,7 @@ namespace mfront{
 					   const tokens_iterator end)
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("AbaqusInterfaceBase::treatCommonKeywords: "+m));}
+      tfel::raise_if(b,"AbaqusInterfaceBase::treatCommonKeywords: "+m);
     };
     if (key=="@AbaqusFiniteStrainStrategy"){
       auto read = [&throw_if](const std::string& s){
@@ -105,8 +106,8 @@ namespace mfront{
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 6u;
       }
-      throw(std::runtime_error("AbaqusInterfaceBase::getStateVariablesOffset: "
-			       "invalid hypothesis"));
+      tfel::raise("AbaqusInterfaceBase::getStateVariablesOffset: "
+		  "invalid hypothesis");
     }
     return 0u;
   }
@@ -134,8 +135,8 @@ namespace mfront{
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	return "3D";
       }
-      throw(std::runtime_error("AbaqusInterfaceBase::getFunctionNameForHypothesis: "
-			       "invalid hypothesis."));
+      tfel::raise("AbaqusInterfaceBase::getFunctionNameForHypothesis: "
+		  "invalid hypothesis.");
     }();
     return makeUpperCase(name)+"_"+s;
   } // end of AbaqusInterfaceBase::getFunctionNameForHypothesis
@@ -158,11 +159,11 @@ namespace mfront{
       h.insert(ModellingHypothesis::TRIDIMENSIONAL);
     }
     if(h.empty()){
-      throw(std::runtime_error("AbaqusInterfaceBase::getModellingHypothesesToBeTreated : "
-			       "no hypotheses selected. This means that the given beahviour "
-			       "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
-			       "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
-			       "make sense to use the Abaqus interface"));
+      tfel::raise("AbaqusInterfaceBase::getModellingHypothesesToBeTreated : "
+		  "no hypotheses selected. This means that the given beahviour "
+		  "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
+		  "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
+		  "make sense to use the Abaqus interface");
     }
     return h;
   } // end of AbaqusInterfaceBase::getModellingHypothesesToBeTreated
@@ -181,11 +182,10 @@ namespace mfront{
 	  uh.insert(lh);
 	}
       }
-      if(uh.empty()){
-	throw(runtime_error("AbaqusInterfaceBase::buildMaterialPropertiesList: "
-			    "internal error : the mechanical behaviour says that not "
-			    "all handled mechanical data are specialised, but we found none."));
-      }
+      tfel::raise_if(uh.empty(),
+		     "AbaqusInterfaceBase::buildMaterialPropertiesList: "
+		     "internal error : the mechanical behaviour says that not "
+		     "all handled mechanical data are specialised, but we found none.");
       // material properties for all the selected hypothesis
       auto mpositions = vector<pair<vector<UMATMaterialProperty>,
 				    SupportedTypes::TypeSize>>{};
@@ -209,13 +209,11 @@ namespace mfront{
 	  o1+=pum->second;
 	  auto o2 = mp2.offset;
 	  o2+=mfirst.second;
-	  if(o1!=o2){
-	    throw(runtime_error("AbaqusInterfaceBase::buildMaterialPropertiesList : "
-				"incompatible offset for material property '"+mp.name+
-				"' (aka '"+mp1.name+"'). This is one pitfall of the umat interface. "
-				"To by-pass this limitation, you may want to explicitely "
-				"specialise some modelling hypotheses"));
-	  }
+	  tfel::raise_if(o1!=o2,"AbaqusInterfaceBase::buildMaterialPropertiesList : "
+			 "incompatible offset for material property '"+mp.name+
+			 "' (aka '"+mp1.name+"'). This is one pitfall of the umat interface. "
+			 "To by-pass this limitation, you may want to explicitely "
+			 "specialise some modelling hypotheses");
 	}
       }
       return mfirst;
@@ -235,7 +233,7 @@ namespace mfront{
       } else {
 	msg += " '"+ModellingHypothesis::toString(h)+"'";
       }
-      throw(runtime_error(msg));
+      tfel::raise(msg);
     }
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       if(mb.getSymmetryType()==mfront::ISOTROPIC){
@@ -257,12 +255,12 @@ namespace mfront{
 		  (h!=ModellingHypothesis::AXISYMMETRICAL)&&
 		  (h!=ModellingHypothesis::PLANESTRAIN)&&
 		  (h!=ModellingHypothesis::PLANESTRESS)){
-	  throw(std::runtime_error("AbaqusInterfaceBase::buildMaterialPropertiesList : "
-				   "unsupported modelling hypothesis"));
+	  tfel::raise("AbaqusInterfaceBase::buildMaterialPropertiesList : "
+		      "unsupported modelling hypothesis");
 	}
       } else {
-	throw(std::runtime_error("AbaqusInterfaceBase::buildMaterialPropertiesList : "
-				 "unsupported behaviour symmetry type"));
+	tfel::raise("AbaqusInterfaceBase::buildMaterialPropertiesList : "
+		    "unsupported behaviour symmetry type");
       }
     }
     if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
@@ -277,8 +275,8 @@ namespace mfront{
 	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion3",
 					     "alp3",false);
       } else {
-	throw(std::runtime_error("AbaqusInterfaceBase::buildMaterialPropertiesList : "
-				 "unsupported behaviour symmetry type"));
+	tfel::raise("AbaqusInterfaceBase::buildMaterialPropertiesList : "
+		    "unsupported behaviour symmetry type");
       }
     }
     if(!mprops.empty()){
@@ -330,8 +328,8 @@ namespace mfront{
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "static " << constexpr_c << " AbaqusBehaviourType btype = abaqus::FINITESTRAINSTANDARDBEHAVIOUR;\n";
     } else {
-      throw(std::runtime_error("AbaqusInterfaceBase::writeAbaqusBehaviourTraits : "
-			       "unsupported behaviour type"));
+      tfel::raise("AbaqusInterfaceBase::writeAbaqusBehaviourTraits : "
+		  "unsupported behaviour type");
     }
     out << "//! space dimension\n";
     if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
@@ -372,10 +370,10 @@ namespace mfront{
     } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "static " << constexpr_c << " AbaqusSymmetryType type = abaqus::ORTHOTROPIC;\n";
     } else {
-      throw(std::runtime_error("AbaqusInterfaceBase::writeAbaqusBehaviourTraits: "
-			       "unsupported behaviour type.\n"
-			       "The abaqus interface only support isotropic or orthotropic "
-			       "behaviour at this time."));
+      tfel::raise("AbaqusInterfaceBase::writeAbaqusBehaviourTraits: "
+		  "unsupported behaviour type.\n"
+		  "The abaqus interface only support isotropic or orthotropic "
+		  "behaviour at this time.");
     }
     // computing material properties size
     auto msize = SupportedTypes::TypeSize{};
@@ -412,10 +410,10 @@ namespace mfront{
 	out << "static " << constexpr_c << " unsigned short thermalExpansionPropertiesOffset = 0u;\n"; 
       }
     } else {
-      throw(std::runtime_error("AbaqusInterfaceBase::writeAbaqusBehaviourTraits: "
-			       "unsupported behaviour type.\n"
-			       "The abaqus interface only support isotropic or "
-			       "orthotropic behaviour at this time."));
+      tfel::raise("AbaqusInterfaceBase::writeAbaqusBehaviourTraits: "
+		  "unsupported behaviour type.\n"
+		  "The abaqus interface only support isotropic or "
+		  "orthotropic behaviour at this time.");
     }
     out << "}; // end of class AbaqusTraits\n\n";
   }
@@ -446,8 +444,8 @@ namespace mfront{
     } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
       return "*NTENS==6";
     }
-    throw(std::runtime_error("AbaqusInterfaceBase::getModellingHypothesisTest : "
-			     "unsupported modelling hypothesis"));
+    tfel::raise("AbaqusInterfaceBase::getModellingHypothesisTest : "
+		"unsupported modelling hypothesis");
   } // end of AbaqusInterfaceBase::gatherModellingHypothesesAndTests
 
   void
@@ -474,8 +472,8 @@ namespace mfront{
 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
 	    << "_OrthotropyManagementPolicy = 0u;\n\n";    
       } else {
-	throw(std::runtime_error("AbaqusInterfaceBase::writeUMATxxSpecificSymbols: "
-				 "unsupported orthotropy management policy"));
+	tfel::raise("AbaqusInterfaceBase::writeUMATxxSpecificSymbols: "
+		    "unsupported orthotropy management policy");
       }
     }
   }
@@ -501,7 +499,7 @@ namespace mfront{
 					     const FileDescription& fd,
 					     const bool b) const{ 
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("AbaqusInterfaceBase::writeInputFileExample: "+m));}
+      tfel::raise_if(c,"AbaqusInterfaceBase::writeInputFileExample: "+m);
     };
     const auto name =  mb.getLibrary()+mb.getClassName();
     const auto mn = this->getLibraryName(mb)+"_"+mb.getClassName();
@@ -653,8 +651,8 @@ namespace mfront{
 	out << i++ << ", " << n << "_32\n";
       }
     } else {
-      throw(std::runtime_error("AbaqusInterfaceBase::writeDepvar: "
-			       "unsupported variable type"));
+      tfel::raise("AbaqusInterfaceBase::writeDepvar: "
+		  "unsupported variable type");
     }
   }
   

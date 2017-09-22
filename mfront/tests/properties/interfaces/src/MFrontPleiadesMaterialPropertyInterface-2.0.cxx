@@ -15,6 +15,7 @@
 #include<algorithm>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/System.hxx"
 
 #include"MFront/DSLUtilities.hxx"
@@ -39,10 +40,9 @@ namespace mfront {
 							const std::vector<std::string>& i,
 							const_iterator current,
 							const const_iterator) {
-    if(std::find(i.begin(),i.end(),"pleiades-2.0")!=i.end()){
-      throw(std::runtime_error("MFrontPleiadesMaterialPropertyInterface::treatKeyword: "
-			       "unsupported key '"+k+"'"));
-    }
+    tfel::raise_if(std::find(i.begin(),i.end(),"pleiades-2.0")!=i.end(),
+		   "MFrontPleiadesMaterialPropertyInterface::treatKeyword: "
+		   "unsupported key '"+k+"'");
     return {false,current};
   } // end of treatKeyword
 
@@ -77,10 +77,8 @@ namespace mfront {
     systemCall::mkdir("include/Pleiades/Metier/MaterialProperty");
     const auto fn  = "include/Pleiades/Metier/MaterialProperty/"+name+"-pleiades.hh";
     std::ofstream os(fn);
-    if(!os){
-      throw(std::runtime_error("MaterialLawParser::writeOutputFiles: "
-			       "unable to open '"+fn+"' for writing output file."));
-    }
+    tfel::raise_if(!os,"MaterialLawParser::writeOutputFiles: "
+		   "unable to open '"+fn+"' for writing output file.");
     os.exceptions(std::ios::badbit|std::ios::failbit);
     os << "/*!\n"
        << "* \\file   " << fn  << '\n'
@@ -147,7 +145,7 @@ namespace mfront {
   void MFrontPleiadesMaterialPropertyInterface::writeSrcFile(const MaterialPropertyDescription& mpd,
 							     const FileDescription& fd) const {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("MFrontPleiadesMaterialPropertyInterface::writeSrcFile: "+m));}
+      tfel::raise_if(b,"MFrontPleiadesMaterialPropertyInterface::writeSrcFile: "+m);
     };
     const auto name = (mpd.material.empty()) ? mpd.className : mpd.material+"_"+mpd.className;
     const auto fn  = "src/"+name+"-pleiades.cpp";

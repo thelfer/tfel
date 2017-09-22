@@ -15,7 +15,8 @@
 #include<sstream>
 #include<iostream>
 
-#include "MFront/Aster/AsterInterfaceExceptions.hxx"
+#include"TFEL/Raise.hxx"
+#include"MFront/Aster/AsterInterfaceExceptions.hxx"
 
 namespace aster{
 
@@ -24,13 +25,12 @@ namespace aster{
 								     const unsigned short n1,
 								     const AsterInt n2)
   {
-    using namespace std;
-    ostringstream msg;
+    std::ostringstream msg;
     msg << "AsterInterfaceExceptions::throwUnMatchedNumberOfMaterialProperties : "
 	<< "the number of material properties does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " material properties, and "
 	<< n2 << " material properties were declared";
-    throw(AsterException(msg.str()));
+    tfel::raise<AsterException>(msg.str());
   } // end of throwUnMatchedNumberOfMaterialProperties
     
   void
@@ -38,78 +38,67 @@ namespace aster{
 								 const unsigned short n1,
 								 const AsterInt n2)
   {
-    using namespace std;
-    ostringstream msg;
+    std::ostringstream msg;
     msg << "AsterInterfaceExceptions::throwUnMatchedNumberOfStateVariables : "
 	<< "the number of internal state variables does not match. The behaviour '" 
 	<< b  << "' requires " << n1 << " state variables, and "
 	<< n2 << " state variables were declared";
-    throw(AsterException(msg.str()));
+    tfel::raise<AsterException>(msg.str());
   } // end of throwUnMatchedNumberOfStateVariables
 
-  void
-  AsterInterfaceExceptions::treatAsterException(const std::string& b,
-						const AsterException& e)
+  void AsterInterfaceExceptions::treatAsterException(const std::string& b,
+						     const AsterException& e)
   {
-    using namespace std;
-    cout << "The behaviour '" << b 
-	 << "' has thrown an AsterException : "
-	 << e.what() << endl;
+    std::cout << "The behaviour '" << b 
+	      << "' has thrown an AsterException : "
+	      << e.what() << std::endl;
   } // end of AsterInterfaceExceptions::treatAsterException
 
-  void
-  AsterInterfaceExceptions::treatMaterialException(const std::string& b,
-						   const tfel::material::MaterialException& e)
+  void AsterInterfaceExceptions::treatMaterialException(const std::string& b,
+							const tfel::material::MaterialException& e)
   {
-    using namespace std;
-    cout << "The behaviour '" << b 
-	 << "' has thrown an MaterialException : "
-	 << e.what() << endl;
+    std::cout << "The behaviour '" << b 
+	      << "' has thrown an MaterialException : "
+	      << e.what() << std::endl;
   } // end of treatMaterialException
     
   void
   AsterInterfaceExceptions::treatTFELException(const std::string& b,
 					       const tfel::exception::TFELException& e)
   {
-    using namespace std;
-    cout << "The behaviour '" << b 
-	 << "' has thrown a generic tfel exception : "
-	 << e.what() << endl;
+    std::cout << "The behaviour '" << b 
+	      << "' has thrown a generic tfel exception : "
+	      << e.what() << std::endl;
   } // end of treatTFELException
 
   void
   AsterInterfaceExceptions::treatStandardException(const std::string& b,
 						   const std::exception& e)
   {
-    using namespace std;
-    cout << "The behaviour '" << b 
-	 << "' has thrown a generic standard exception : "
-	 << e.what() << endl;
+    std::cout << "The behaviour '" << b 
+	      << "' has thrown a generic standard exception : "
+	      << e.what() << std::endl;
   } // end of treatStandardException
 
   void
   AsterInterfaceExceptions::treatUnknownException(const std::string& b)
   {
-    using namespace std;
-    cout << "The behaviour '" << b 
-	 << "' has thrown an unknown exception" << endl;
+    std::cout << "The behaviour '" << b 
+	      << "' has thrown an unknown exception" << std::endl;
   } // end of treatUnknownException
   
   void
   AsterInterfaceExceptions::throwNegativeTimeStepException(const std::string& b)
   {
-    using namespace std;
-    string msg("AsterInterfaceExceptions::throwNegativeTimeStepException : ");
-    msg += "negative time step detected for behaviour '"+b+"'";
-    throw(runtime_error(msg));
+    tfel::raise("AsterInterfaceExceptions::throwNegativeTimeStepException: "
+		"negative time step detected for behaviour '"+b+"'");
   } // end of AsterInterfaceExceptions::throwNegativeTimeStepException
   
   void
   AsterInterfaceExceptions::throwInvalidDDSOEException(const std::string& b,
 						       const AsterReal v)
   {
-    using namespace std;
-    ostringstream msg;
+    std::ostringstream msg;
     msg << "AsterInterfaceExceptions::throwInvalidDDSOEException : "
 	<< "an invalid value for the DDSOE parameter has been given ('" << v << "')"
 	<< " to the behaviour '" << b << "'.\n"
@@ -122,60 +111,48 @@ namespace aster{
 	<< " 2 : integrate the behaviour over the time step, secant  operator  requested\n"
 	<< " 3 : integrate the behaviour over the time step, tagent  operator  requested\n"
 	<< " 4 : integrate the behaviour over the time step, consistent tagent operator requested\n";
-    throw(runtime_error(msg.str()));
+    tfel::raise(msg.str());
   } // end of AsterInterfaceExceptions::throwInvalidDDSOEException
 
   void
   AsterInterfaceExceptions::throwBehaviourIntegrationFailedException(const std::string& b)
   {
-    using namespace std;
-    string msg("AsterInterfaceExceptions::throwBehaviourIntegrationFailedException : ");
-    msg += "integration failed for behaviour '"+b+"'";
-    throw(runtime_error(msg));
+    tfel::raise("AsterInterfaceExceptions::throwBehaviourIntegrationFailedException: "
+		"integration failed for behaviour '"+b+"'");
   } // end of AsterInterfaceExceptions::throwBehaviourIntegrationFailedException
   
   void
   AsterInterfaceExceptions::throwPredictionComputationFailedException(const std::string& b)
   {
-    using namespace std;
-    string msg("AsterInterfaceExceptions::throwPredictionComputationFailedException : ");
-    msg += "prediction computation failed for behaviour '"+b+"'";
-    throw(runtime_error(msg));
+    tfel::raise("AsterInterfaceExceptions::throwPredictionComputationFailedException: "
+		"prediction computation failed for behaviour '"+b+"'");
   }
 
   void
   AsterInterfaceExceptions::throwPredictionOperatorIsNotAvalaible(const std::string& b)
   {
-    using namespace std;
-    string msg("AsterInterfaceExceptions::throwPredictionOperatorIsNotAvalaible : ");
-    msg += "behaviour '"+b+"' can't compute a prediction operator";
-    throw(runtime_error(msg));
+    tfel::raise("AsterInterfaceExceptions::throwPredictionOperatorIsNotAvalaible: "
+		"behaviour '"+b+"' can't compute a prediction operator");
   } // end of AsterInterfaceExceptions::throwBehaviourIntegrationFailedException
 
   void
   AsterInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible(const std::string& b)
   {
-    using namespace std;
-    string msg("AsterInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible : ");
-    msg += "behaviour '"+b+"' can't compute a consistent tangent operator";
-    throw(runtime_error(msg));
+    tfel::raise("AsterInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible: "
+		"behaviour '"+b+"' can't compute a consistent tangent operator");
   } // end of AsterInterfaceExceptions::throwBehaviourIntegrationFailedException
 
   void
   AsterInterfaceExceptions::throwUnsupportedStressFreeExpansionException(const std::string& b)
   {
-    using namespace std;
-    string msg("AsterInterfaceExceptions::throwUnsupportedStressFreeExpansionException : ");
-    msg += "behaviour '"+b+"' can handle stress-free expansion but the Aster interface can't";
-    throw(runtime_error(msg));
+    tfel::raise("AsterInterfaceExceptions::throwUnsupportedStressFreeExpansionException: "
+		"behaviour '"+b+"' can handle stress-free expansion but the Aster interface can't");
   } // end of AsterInterfaceExceptions::throwUnsupportedStressFreeExpansionException
 
-  void
-  AsterInterfaceExceptions::displayUnsupportedHypothesisMessage()
+  void AsterInterfaceExceptions::displayUnsupportedHypothesisMessage()
   {
-    using namespace std;
-    cout << "AsterInterfaceExceptions::displayUnsupportedHypothesisMessage : "
-	 << "unsupported hypothesis" << endl;
+    std::cout << "AsterInterfaceExceptions::displayUnsupportedHypothesisMessage : "
+	      << "unsupported hypothesis" << std::endl;
   }
 
 
@@ -233,11 +210,9 @@ namespace aster{
 				   AsterReal *const,
 				   const StressFreeExpansionHandler&)
   {
-    using namespace std;
-    string msg("AsterUnSupportedCaseHandler::exe : "
-	       "we fall in a case that the aster interface "
-	       "is not able to handle.");
-    throw(runtime_error(msg));  
+    tfel::raise("AsterUnSupportedCaseHandler::exe : "
+		"we fall in a case that the aster interface "
+		"is not able to handle.");
   } // end of exe
 
 } // end of namespace aster 

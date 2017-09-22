@@ -17,6 +17,7 @@
 #include<boost/python.hpp>
 #include<boost/python/suite/indexing/map_indexing_suite.hpp>
 #include<boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/Data.hxx"
 
 template<typename T>
@@ -41,8 +42,8 @@ convert_data_to_python_object(const tfel::utilities::Data& d)
   } else if(d.is<std::map<std::string,Data>>()){
     return object(d.get<std::map<std::string,Data>>());
   }
-  throw(std::runtime_error("convert_data_to_python_object: "
-			   "unsupported conversion"));
+  tfel::raise("convert_data_to_python_object: "
+	      "unsupported conversion");
 } // end of convert_data_to_python_object
 
 static void
@@ -60,8 +61,8 @@ convert_python_object_to_data(tfel::utilities::Data& d,
   } else if(is<std::string>(o)){
     d = Data(boost::python::extract<std::string>(o)());
   } else {
-    throw(std::runtime_error("convert_python_object_to_data: "
-			     "unsupported conversion"));
+    tfel::raise("convert_python_object_to_data: "
+		"unsupported conversion");
   }
 } // end of convert_python_object_to_data
 

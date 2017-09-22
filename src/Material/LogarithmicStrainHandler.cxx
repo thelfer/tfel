@@ -12,6 +12,7 @@
  */
 
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Material/LogarithmicStrainHandler.hxx"
 
 namespace tfel{
@@ -20,20 +21,16 @@ namespace tfel{
 
     void LogarithmicStrainHandlerBase::checkLagrangianSetting() const
     {
-      if(this->s!=LAGRANGIAN){
-	throw(std::runtime_error("LogarithmicStrainHandlerBase::"
-				 "checkLagrangianSetting: "
-				 "setting is not set to LAGRANGIAN"));
-      }
+      raise_if(this->s!=LAGRANGIAN,"LogarithmicStrainHandlerBase::"
+	       "checkLagrangianSetting: "
+	       "setting is not set to LAGRANGIAN");
     } // end of LogarithmicStrainHandlerBase::checkLagrangianSetting
 
     void LogarithmicStrainHandlerBase::checkEulerianSetting() const
     {
-      if(this->s!=EULERIAN){
-	throw(std::runtime_error("LogarithmicStrainHandlerBase::"
-				 "checkEulerianSetting: "
-				 "setting is not set to EULERIAN"));
-      }
+      raise_if(this->s!=EULERIAN,"LogarithmicStrainHandlerBase::"
+	       "checkEulerianSetting: "
+	       "setting is not set to EULERIAN");
     } // end of LogarithmicStrainHandlerBase::checkEulerianSetting
     
   } // end of namespace material

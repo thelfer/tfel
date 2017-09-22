@@ -15,7 +15,7 @@
 #include<ostream>
 #include<iterator>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/FAndersonAccelerationAlgorithm.hxx"
 
@@ -36,7 +36,7 @@ namespace mtest
   {
     const std::string m = "FAndersonAccelerationAlgorithm::setParameter";
     auto throw_if = [&m](const bool c, const std::string& msg){
-      if(c){throw(std::runtime_error(m+": "+msg));}
+      tfel::raise_if(c,m+": "+msg);
     };
     if(p=="MethodOrder"){
       throw_if(this->Nmax!=-1,"the method order has already been defined");

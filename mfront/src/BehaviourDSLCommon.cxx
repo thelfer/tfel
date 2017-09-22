@@ -22,6 +22,7 @@
 #include<cctype>
 #include<cmath>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/System.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
@@ -235,13 +236,22 @@ namespace mfront{
     using namespace tfel::material;
     auto cposition = false;
     auto cmode     = false;
+    const auto dh = [this]{
+      if(this->mb.areModellingHypothesesDefined()){
+	const auto mh = this->mb.getModellingHypotheses();
+	if(mh.size()==1){
+	  return *(mh.begin());
+	}
+      }
+      return ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    }();
     o.hypotheses.clear();
     if(this->current==this->tokens.end()){
-      o.hypotheses.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+      o.hypotheses.insert(dh);
       return;
     }
     if(this->current->value!="<"){
-      o.hypotheses.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+      o.hypotheses.insert(dh);
       return;
     }
     auto options = std::vector<Token>{};
@@ -298,7 +308,7 @@ namespace mfront{
       }
     }
     if(o.hypotheses.empty()){
-      o.hypotheses.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+      o.hypotheses.insert(dh);
     }
     // checks
     if(!s){
@@ -306,7 +316,7 @@ namespace mfront{
 	this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions: ",
 				"specialisation is not allowed");
       }
-      if(*(o.hypotheses.begin())!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+      if(*(o.hypotheses.begin())!=dh){
 	this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions: ",
 				"specialisation is not allowed");
       }
@@ -371,7 +381,6 @@ namespace mfront{
   {
     if(!o.untreated.empty()){
       std::ostringstream msg;
-      msg << "BehaviourDSLCommon::treatUnsupportedCodeBlockOptions: ";
       if(o.untreated.size()==1u){
 	msg << "option '" << o.untreated[0].value << "' is invalid";
       } else {
@@ -381,7 +390,8 @@ namespace mfront{
 	}
 	msg << " options are invalid";
       }
-      throw(std::runtime_error(msg.str()));
+      this->throwRuntimeError("BehaviourDSLCommon::"
+			      "treatUnsupportedCodeBlockOptions",msg.str());
     }
   } // end of BehaviourDSLCommon::treatUnsupportedCodeBlockOptions  
 
@@ -952,8 +962,11 @@ namespace mfront{
     using SlipSystemsDescription = BehaviourDescription::SlipSystemsDescription;
     using size_type = SlipSystemsDescription::size_type;
     using tensor    = SlipSystemsDescription::tensor;
-    auto throw_if   = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("FiniteStrainSingleCrystalBrick::generateSlipSystems: "+m));}
+    auto throw_if = [this](const bool b,const std::string& m){
+      if(b){
+	this->throwRuntimeError("FiniteStrainSingleCrystalBrick::"
+				"generateSlipSystems",m);
+      }
     };
     auto write_tensor = [](std::ostream& out,const std::vector<tensor>& ts){
       for(decltype(ts.size()) i=0;i!=ts.size();){
@@ -1014,6 +1027,7 @@ namespace mfront{
     out << " */\n\n";
     out << "#ifndef LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_HXX\n"
     	<< "#define LIB_TFEL_MATERIAL_"	<< makeUpperCase(cn) << "_HXX\n\n"
+    	<< "#include\"TFEL/Raise.hxx\"\n"
     	<< "#include\"TFEL/Math/tvector.hxx\"\n"
     	<< "#include\"TFEL/Math/stensor.hxx\"\n"
     	<< "#include\"TFEL/Math/tensor.hxx\"\n\n"
@@ -1073,6 +1087,12 @@ namespace mfront{
       out << "tfel::math::tmatrix<Nss,Nss,real> dim;\n";
     }
     if(nb!=1u){
+      out << "/*!\n"
+	  << " * \\return the gobal index of the jth system of ith family\n"
+	  << " * \\param[in] i: slip system family\n"
+	  << " * \\param[in] j: local slip system index\n"
+	  << " */\n"
+	  << "constexpr unsigned short offset(const unsigned short,\nconst unsigned short) const;\n";
       for(size_type i=0;i!=nb;++i){
 	out << "/*!\n"
 	    << " * \\return the gobal index of the ith system of " << i << "th family\n"
@@ -1219,28 +1239,54 @@ namespace mfront{
     }
     out << "} // end of " << cn << "::" << cn << "\n\n";
     if(nb!=1u){
+      out << "template<typename real>\n"
+	  << "constexpr unsigned short\n"
+	  << cn << "<real>::offset(const unsigned short i,\n"
+	  << "const unsigned short j\n) const{\n"
+	  << "const auto oi = [&i]() -> unsigned short{\n"
+	  << "switch(i){\n";
       for(size_type i=0;i!=nb;++i){
-	out << "/*!\n"
-	    << " * \\return the gobal index of the ith system of " << i << "th family\n"
-	    << " * \\param[in] i: local slip system index\n"
-	    << " */\n"
-	    << "template<typename real>\n"
-	    << "constexpr unsigned short\n"
-	    << cn << "<real>::offset" << i << "(const unsigned short i) const{\n";
-	if(i!=0){
-	  out << "constexpr const unsigned short offset = ";
-	  for(size_type j=0;j!=nb;){
+	out << "case " << i << ":\n";
+	if(i==0){
+	  out << "return 0;\n"
+	      << "break;\n";
+	} else {
+	  out << "return ";
+	  for(size_type j=0;j!=i;){
 	    out << "Nss" << j;
-	    if(++j!=nb){
+	    if(++j!=i){
 	      out << "+";
 	    }
 	  }
 	  out << ";\n"
-	      << "return offset+i;\n";
+	      << "break;\n";
+	}
+      }
+      out << "default:\n"
+	  << "tfel::raise<std::out_of_range>(\""<< cn
+	  << "::offset: :\"\n\"invalid index" << "\");\n"
+	  << "}\n"
+	  << "}();\n"
+	  << "return oi+j;\n"
+	  << "} // end of offset\n\n";
+      for(size_type i=0;i!=nb;++i){
+	out << "template<typename real>\n"
+	    << "constexpr unsigned short\n"
+	    << cn << "<real>::offset" << i << "(const unsigned short i) const{\n";
+	if(i!=0){
+	  out << "constexpr const unsigned short o = ";
+	  for(size_type j=0;j!=i;){
+	    out << "Nss" << j;
+	    if(++j!=i){
+	      out << "+";
+	    }
+	  }
+	  out << ";\n"
+	      << "return o+i;\n";
 	} else {
 	  out << "return i;\n";
 	}
-	out << "}\n\n";
+	out << "} // end of offset" << i << "\n\n";
       }
     }
     out << "template<typename real>\n"
@@ -1437,17 +1483,16 @@ namespace mfront{
       bool found = false;
       if(o.untreated.size()!=1u){
 	ostringstream msg;
-	msg << "BehaviourDSLCommon::treatTangentOperator : "
-	    << "tangent operator type is undefined. Valid tanget operator type are :\n";
+	msg << "tangent operator type is undefined. Valid tanget operator type are :\n";
 	for(const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()){
 	  msg << "- " << convertFiniteStrainBehaviourTangentOperatorFlagToString(to) << " : "
 	      << getFiniteStrainBehaviourTangentOperatorDescription(to) << '\n';
 	}
-	throw(runtime_error(msg.str()));
+	this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator",msg.str());
       }
       if(o.untreated[0].flag!=Token::Standard){
-	throw(runtime_error("BehaviourDSLCommon::treatTangentOperator : "
-			    "invalid option '"+o.untreated[0].value+"'"));
+	this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator",
+				"invalid option '"+o.untreated[0].value+"'");
       }
       const auto& ktype = o.untreated[0].value;
       for(const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()){
@@ -1458,13 +1503,12 @@ namespace mfront{
       }
       if(!found){
 	ostringstream msg;
-	msg << "BehaviourDSLCommon::treatTangentOperator : "
-	    << "invalid tangent operator type '"+ktype+"'. Valid tangent operator type are :\n";
+	msg << "invalid tangent operator type '"+ktype+"'. Valid tangent operator type are :\n";
 	for(const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()){
 	  msg << "- " << convertFiniteStrainBehaviourTangentOperatorFlagToString(to) << " : "
 	      << getFiniteStrainBehaviourTangentOperatorDescription(to) << '\n';
 	}
-	throw(runtime_error(msg.str()));
+	this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator",msg.str());
       }
       this->readCodeBlock(*this,o,BehaviourData::ComputeTangentOperator+"-"+ktype,
 			  &BehaviourDSLCommon::tangentOperatorVariableModifier,true);
@@ -2567,6 +2611,7 @@ namespace mfront{
        << "#include<iostream>\n"
        << "#include<stdexcept>\n"
        << "#include<algorithm>\n\n"
+       << "#include\"TFEL/Raise.hxx\"\n"
        << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
@@ -2604,7 +2649,7 @@ namespace mfront{
 	 << "#include\"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx\"\n";
     }
     os << "#include\"TFEL/Material/ModellingHypothesis.hxx\"\n\n";
-  }
+  } // end of BehaviourDSLCommon::writeBehaviourDataStandardTFELIncludes
 
   void BehaviourDSLCommon::writeBehaviourDataDefaultMembers(std::ostream& os) const
   {
@@ -3672,8 +3717,8 @@ namespace mfront{
 	   << "static_cast<real>("   << bounds.upperBound << "),this->policy);\n";
       }
     } else {
-      throw(std::runtime_error("BehaviourDSLCommon::writeBoundsChecks: "
-			       "internal error (unsupported bounds type)"));
+      tfel::raise("BehaviourDSLCommon::writeBoundsChecks: "
+		  "internal error (unsupported bounds type)");
     }
   } // end of writeBoundsChecks 
   
@@ -3732,8 +3777,8 @@ namespace mfront{
 	   << "static_cast<real>("   << bounds.upperBound << "));\n";
       }
     } else {
-      throw(std::runtime_error("BehaviourDSLCommon::writePhysicalBoundsChecks: "
-			       "internal error (unsupported bounds type)"));
+      tfel::raise("BehaviourDSLCommon::writePhysicalBoundsChecks: "
+		  "internal error (unsupported bounds type)");
     }
   } // end of writePhysicalBoundsChecks 
   
@@ -4115,7 +4160,7 @@ namespace mfront{
 						       const std::string& c,
 						       const std::string& suffix) const
   {
-    const auto Tref = [&a]() -> std::string {
+    const auto Tref = [&a,this]() -> std::string {
       if(a.is<BehaviourDescription::ConstantMaterialProperty>()){
 	return "293.15";
       } else if(a.is<BehaviourDescription::ComputedMaterialProperty>()){
@@ -4123,8 +4168,8 @@ namespace mfront{
 	return mpd.staticVars.contains("ReferenceTemperature") ?
 	std::to_string(mpd.staticVars.get("ReferenceTemperature").value) : "293.15";
       }
-      throw(std::runtime_error("BehaviourDSLCommon::writeThermalExpansionComputation: "
-			       "unsupported material property type"));
+      this->throwRuntimeError("BehaviourDSLCommon::writeThermalExpansionComputation",
+			      "unsupported material property type");
     }();
     const auto T = (t=="t") ? "this->T" : "this->T+this->dT";
     if(t=="t"){
@@ -4789,6 +4834,7 @@ namespace mfront{
        << "#include<limits>\n"
        << "#include<stdexcept>\n"
        << "#include<algorithm>\n\n"
+       << "#include\"TFEL/Raise.hxx\"\n"
        << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
@@ -5725,6 +5771,7 @@ namespace mfront{
        << "#include<limits>\n"
        << "#include<stdexcept>\n"
        << "#include<algorithm>\n\n"
+       << "#include\"TFEL/Raise.hxx\"\n"
        << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include\"TFEL/Metaprogramming/StaticAssert.hxx\"\n"
@@ -6456,8 +6503,8 @@ namespace mfront{
       const auto b = ((h==ModellingHypothesis::UNDEFINEDHYPOTHESIS)||
 		      ((h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)&&
 		       (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,p.name))));
-      auto write = [&os,&p,&b,&dcname,&cname](const std::string& vn,
-					      const std::string& en){
+      auto write = [this,&os,&p,&b,&dcname,&cname](const std::string& vn,
+						   const std::string& en){
 	os << "\"" <<  en << "\"==tokens[0]){\n";
 	if(b){
 	  os << "pi." << vn << " = ";
@@ -6468,8 +6515,8 @@ namespace mfront{
 	  } else if(p.type=="ushort"){
 	    os << cname << "::getUnsignedShort(tokens[0],tokens[1]);\n";
 	  } else {
-	    throw(std::runtime_error("BehaviourDSLCommon::writeSrcFileParametersInitializer: "
-				     "invalid parameter type '"+p.type+"'"));
+	    this->throwRuntimeError("BehaviourDSLCommon::writeSrcFileParametersInitializer",
+				    "invalid parameter type '"+p.type+"'");
 	  }
 	} else {
 	  os << dcname << "::get().set(\"" << en << "\",\n";
@@ -6480,8 +6527,8 @@ namespace mfront{
 	  } else if(p.type=="ushort"){
 	    os << dcname << "::getUnsignedShort(tokens[0],tokens[1])";
 	  } else {
-	    throw(std::runtime_error("BehaviourDSLCommon::writeSrcFileParametersInitializer: "
-				     "invalid parameter type '"+p.type+"'"));
+	    this->throwRuntimeError("BehaviourDSLCommon::writeSrcFileParametersInitializer",
+				    "invalid parameter type '"+p.type+"'");
 	  }
 	  os << ");\n";
 	}
@@ -6567,17 +6614,16 @@ namespace mfront{
       bool found = false;
       if(o.untreated.size()!=1u){
 	ostringstream msg;
-	msg << "BehaviourDSLCommon::treatPredictionOperator : "
-	    << "tangent operator type is undefined. Valid tanget operator type are :\n";
+	msg << "tangent operator type is undefined. Valid tanget operator type are :\n";
 	for(const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()){
 	  msg << "- " << convertFiniteStrainBehaviourTangentOperatorFlagToString(to) << " : "
 	      << getFiniteStrainBehaviourTangentOperatorDescription(to) << '\n';
 	}
-	throw(runtime_error(msg.str()));
+	this->throwRuntimeError("BehaviourDSLCommon::treatPredictionOperator",msg.str());
       }
       if(o.untreated[0].flag!=Token::Standard){
-	throw(runtime_error("BehaviourDSLCommon::treatPredictionOperator : "
-			    "invalid option '"+o.untreated[0].value+"'"));
+	this->throwRuntimeError("BehaviourDSLCommon::treatPredictionOperator",
+				"invalid option '"+o.untreated[0].value+"'");
       }
       const auto& ktype = o.untreated[0].value;
       for(const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()){
@@ -6588,13 +6634,12 @@ namespace mfront{
       }
       if(!found){
 	ostringstream msg;
-	msg << "BehaviourDSLCommon::treatPredictionOperator : "
-	    << "invalid tangent operator type '"+ktype+"'. Valid tanget operator type are :\n";
+	msg << "invalid tangent operator type '"+ktype+"'. Valid tanget operator type are :\n";
 	for(const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()){
 	  msg << "- " << convertFiniteStrainBehaviourTangentOperatorFlagToString(to) << " : "
 	      << getFiniteStrainBehaviourTangentOperatorDescription(to) << '\n';
 	}
-	throw(runtime_error(msg.str()));
+	this->throwRuntimeError("BehaviourDSLCommon::treatPredictionOperator",msg.str());
       }
       this->readCodeBlock(*this,o,BehaviourData::ComputePredictionOperator+"-"+ktype,
 			  &BehaviourDSLCommon::predictionOperatorVariableModifier,true);
@@ -6825,7 +6870,7 @@ namespace mfront{
     using tfel::utilities::CxxTokenizer;
     using tfel::material::SlipSystemsDescription;
     auto throw_if = [](const bool c,const std::string& msg){
-      if(c){throw(std::runtime_error("readSlipSystem: "+msg));}
+      tfel::raise_if(c,"readSlipSystem: "+msg);
     };
     const auto direction = CxxTokenizer::readList("readSlipSystem","<",">",p,pe);
     const auto plane     = CxxTokenizer::readList("readSlipSystem","{","}",p,pe);
@@ -6870,7 +6915,7 @@ namespace mfront{
 	this->readSpecifiedToken(m,",");
 	this->checkNotEndOfFile(m,"expected slip system");
 	if(this->current->value=="}"){
-	  throw(std::runtime_error("unexpected token '}'"));
+	  this->throwRuntimeError(m,"unexpected token '}'");
 	}
       }
     }
@@ -6892,9 +6937,9 @@ namespace mfront{
     } else if(this->current->value=="HCP"){
       this->mb.setCrystalStructure(CrystalStructure::HCP);
     } else {
-      throw(std::runtime_error("BehaviourDSLCommon::treatCrystalStructure: "
-			       "unsupported crystal structure "
-			       "'"+this->current->value+"'"));
+      this->throwRuntimeError("BehaviourDSLCommon::treatCrystalStructure",
+			      "unsupported crystal structure "
+			      "'"+this->current->value+"'");
     }
     ++(this->current);
     this->readSpecifiedToken("BehaviourDSLCommon::treatCrystalStructure",";");

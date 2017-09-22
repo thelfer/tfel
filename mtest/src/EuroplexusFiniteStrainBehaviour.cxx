@@ -13,7 +13,7 @@
 
 #include<cmath>
 #include<algorithm>
-
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
@@ -72,8 +72,8 @@ namespace mtest
       } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
 	return 0;
       } else {
-	throw(std::runtime_error("EuroplexusFiniteStrainBehaviour::call_behaviour: "
-				 "unsupported hypothesis"));
+	tfel::raise("EuroplexusFiniteStrainBehaviour::call_behaviour: "
+		    "unsupported hypothesis");
       }
     }();
     UmatBehaviourBase::initializeTangentOperator(Kt,ktype,b);

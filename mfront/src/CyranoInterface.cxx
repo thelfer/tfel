@@ -18,6 +18,7 @@
 #include<stdexcept>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
@@ -60,7 +61,7 @@ namespace mfront{
     } else {
       msg << " (" << ModellingHypothesis::toString(h) << "')";
     }
-    throw(std::runtime_error(msg.str()));
+    tfel::raise(msg.str());
   }
 
   std::string
@@ -118,7 +119,7 @@ namespace mfront{
 				const tokens_iterator end)
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("Cyrano::treatKeyword: "+m));}
+      tfel::raise_if(b,"Cyrano::treatKeyword: "+m);
     };
     if(!i.empty()){
       if(std::find(i.begin(),i.end(),this->getName())==i.end()){
@@ -165,12 +166,11 @@ namespace mfront{
     pair<vector<UMATMaterialProperty>,
 	 SupportedTypes::TypeSize> res;
     auto& mprops = res.first;
-    if((h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)&&
-       (h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)&&
-       (h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS)){
-      throw(runtime_error("CyranoInterface::buildMaterialPropertiesList: "
-			  "unsupported modelling hypothesis "));
-    }
+    tfel::raise_if((h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)&&
+		   (h!=ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)&&
+		   (h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS),
+		   "CyranoInterface::buildMaterialPropertiesList: "
+		   "unsupported modelling hypothesis ");
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
       if(mb.getSymmetryType()==mfront::ISOTROPIC){
 	this->appendToMaterialPropertiesList(mprops,"stress","YoungModulus","youn",false);
@@ -183,9 +183,8 @@ namespace mfront{
 	this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio23","nu23",false);
 	this->appendToMaterialPropertiesList(mprops,"real","PoissonRatio13","nu13",false);
       } else {
-	string msg("CyranoInterface::buildMaterialPropertiesList : "
-		   "unsupported behaviour symmetry type");
-	throw(runtime_error(msg));
+	tfel::raise("CyranoInterface::buildMaterialPropertiesList : "
+		    "unsupported behaviour symmetry type");
       }
     }
     if(mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,false)){
@@ -196,8 +195,8 @@ namespace mfront{
 	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion2","alp2",false);
 	this->appendToMaterialPropertiesList(mprops,"thermalexpansion","ThermalExpansion3","alp3",false);
       } else {
-	throw(runtime_error("CyranoInterface::buildMaterialPropertiesList: "
-			    "unsupported behaviour symmetry type"));
+	tfel::raise("CyranoInterface::buildMaterialPropertiesList: "
+		    "unsupported behaviour symmetry type");
       }
     }
     if(!mprops.empty()){
@@ -224,13 +223,12 @@ namespace mfront{
     if(bh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=bh.end()){
       h.insert(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
     }
-    if(h.empty()){
-      throw(std::runtime_error("CyranoInterface::getModellingHypothesesToBeTreated : "
-			       "no hypotheses selected. This means that the given beahviour "
-			       "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
-			       "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
-			       "make sense to use the Cyrano interface"));
-    }
+    tfel::raise_if(h.empty(),
+		   "CyranoInterface::getModellingHypothesesToBeTreated : "
+		   "no hypotheses selected. This means that the given beahviour "
+		   "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
+		   "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
+		   "make sense to use the Cyrano interface");
     return h;
   } // end of CyranoInterface::getModellingHypothesesToBeTreated
 
@@ -255,7 +253,7 @@ namespace mfront{
     using namespace tfel::system;
     using namespace tfel::utilities;
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("Cyrano::endTreatment: "+m));}
+      tfel::raise_if(b,"Cyrano::endTreatment: "+m);
     };
     // get the modelling hypotheses to be treated
     const auto& h = this->getModellingHypothesesToBeTreated(mb);
@@ -350,12 +348,8 @@ namespace mfront{
     fileName += ".cxx";
 
     out.open("src/"+fileName);
-    if(!out){
-      string msg("CyranoInterface::endTreatment : ");
-      msg += "could not open file ";
-      msg += fileName;
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(!out,"CyranoInterface::endTreatment: "
+		   "could not open file '"+fileName+"'");
 
     out << "/*!\n";
     out << "* \\file   "  << fileName << endl;
@@ -698,20 +692,20 @@ namespace mfront{
 	}
       }
     } else {
-      string msg("CyranoInterface::writeCyranoBehaviourTraits : ");
-      msg += "unsupported behaviour symmetry type.\n";
-      msg += "The cyrano interface only support isotropic or orthotropic behaviour at this time.";
-      throw(runtime_error(msg));
+      tfel::raise("CyranoInterface::writeCyranoBehaviourTraits: "
+		  "unsupported behaviour symmetry type.\n"
+		  "The cyrano interface only support isotropic or "
+		  "orthotropic behaviour at this time.");
     }
     if(mb.getSymmetryType()==mfront::ISOTROPIC){
       out << "static " << constexpr_c << " CyranoSymmetryType stype = cyrano::ISOTROPIC;\n";
     } else if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "static " << constexpr_c << " CyranoSymmetryType stype = cyrano::ORTHOTROPIC;\n";
     } else {
-      string msg("CyranoInterface::writeCyranoBehaviourTraits : ");
-      msg += "unsupported behaviour symmetry type.\n";
-      msg += "The cyrano interface only support isotropic or orthotropic behaviour at this time.";
-      throw(runtime_error(msg));
+      tfel::raise("CyranoInterface::writeCyranoBehaviourTraits: "
+		  "unsupported behaviour symmetry type.\n"
+		  "The cyrano interface only support isotropic or "
+		  "orthotropic behaviour at this time.");
     }
     out << "}; // end of class CyranoTraits\n\n";
   } // end of CyranoInterface::writeCyranoBehaviourTraits
@@ -719,8 +713,7 @@ namespace mfront{
   std::string
   CyranoInterface::getModellingHypothesisTest(const Hypothesis h) const
   {
-    using namespace std;
-    ostringstream test;
+    std::ostringstream test;
     test << "*NDI==" << this->getModellingHypothesisIdentifier(h);
     return test.str();
   }

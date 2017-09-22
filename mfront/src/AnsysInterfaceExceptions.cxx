@@ -15,6 +15,7 @@
 #include<sstream>
 #include<iostream>
 
+#include "TFEL/Raise.hxx"
 #include "MFront/Ansys/AnsysInterfaceExceptions.hxx"
 
 namespace ansys{
@@ -91,37 +92,37 @@ namespace ansys{
   void
   AnsysInterfaceExceptions::throwNegativeTimeStepException(const std::string& b)
   {
-    throw(std::runtime_error("AnsysInterfaceExceptions::throwNegativeTimeStepException: "
-			     "negative time step detected for behaviour '"+b+"'"));
+    tfel::raise("AnsysInterfaceExceptions::throwNegativeTimeStepException: "
+		"negative time step detected for behaviour '"+b+"'");
   } // end of AnsysInterfaceExceptions::throwNegativeTimeStepException
   
   void
   AnsysInterfaceExceptions::throwPredictionComputationFailedException(const std::string& b)
   {
-    throw(std::runtime_error("AnsysInterfaceExceptions::throwPredictionComputationFailedException: "
-			     "prediction computation failed for behaviour '"+b+"'"));
+    tfel::raise("AnsysInterfaceExceptions::throwPredictionComputationFailedException: "
+		"prediction computation failed for behaviour '"+b+"'");
   }
 
   void
   AnsysInterfaceExceptions::throwPredictionOperatorIsNotAvalaible(const std::string& b)
   {
-    throw(std::runtime_error("AnsysInterfaceExceptions::throwPredictionOperatorIsNotAvalaible: "
-			     "behaviour '"+b+"' can't compute a prediction operator"));
+    tfel::raise("AnsysInterfaceExceptions::throwPredictionOperatorIsNotAvalaible: "
+		"behaviour '"+b+"' can't compute a prediction operator");
   } // end of AnsysInterfaceExceptions::throwBehaviourIntegrationFailedException
 
   void
   AnsysInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible(const std::string& b)
   {
-    throw(std::runtime_error("AnsysInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible: "
-			     "behaviour '"+b+"' can't compute a consistent tangent operator"));
+    tfel::raise("AnsysInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible: "
+		"behaviour '"+b+"' can't compute a consistent tangent operator");
   } // end of AnsysInterfaceExceptions::throwBehaviourIntegrationFailedException
 
   void
   AnsysInterfaceExceptions::throwUnsupportedStressFreeExpansionException(const std::string& b)
   {
     ;
-    throw(std::runtime_error("AnsysInterfaceExceptions::throwUnsupportedStressFreeExpansionException: "
-			     "behaviour '"+b+"' can handle stress-free expansion but the Ansys interface can't"));
+    tfel::raise("AnsysInterfaceExceptions::throwUnsupportedStressFreeExpansionException: "
+		"behaviour '"+b+"' can handle stress-free expansion but the Ansys interface can't");
   } // end of AnsysInterfaceExceptions::throwUnsupportedStressFreeExpansionException
 
   void
@@ -148,9 +149,9 @@ namespace ansys{
 				   AnsysReal *const,
 				    const StressFreeExpansionHandler<AnsysReal>&)
   {
-    throw(std::runtime_error("AnsysUnSupportedCaseHandler::exe : "
-			     "we fall in a case that the ansys interface "
-			     "is not able to handle."));  
+    tfel::raise("AnsysUnSupportedCaseHandler::exe : "
+		"we fall in a case that the ansys interface "
+		"is not able to handle.");  
   } // end of exe
 
 } // end of namespace ansys 

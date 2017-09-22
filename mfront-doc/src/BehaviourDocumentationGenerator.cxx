@@ -5,10 +5,11 @@
  * \date   01 avril 2015
  */
 
-#include<iostream>
 #include<sstream>
 #include<fstream>
+#include<iostream>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
@@ -29,9 +30,7 @@ namespace mfront{
 	 const typename Map::key_type& k)
   {
     const auto p = m.find(k);
-    if(p==m.end()){
-      throw(std::runtime_error("map_at : unknown key '"+k+"'"));
-    }
+    tfel::raise_if(p==m.end(),"map_at : unknown key '"+k+"'");
     return p->second;
   }
 
@@ -177,13 +176,12 @@ namespace mfront{
 	pd->type         = pv->type;
 	pd->externalName = d.getExternalName(pv->name);
       } else {
-	if((pd->name         != pv->name)||
-	   (pd->type         != pv->type)||
-	   (pd->externalName != d.getExternalName(pv->name))||
-	   (pd->arraySize    != pv->arraySize)){
-	  throw(std::runtime_error("getData : inconsistent data across "
-				   "hypothesis for variable '"+pd->name+"'"));
-	}
+	tfel::raise_if((pd->name         != pv->name)||
+		       (pd->type         != pv->type)||
+		       (pd->externalName != d.getExternalName(pv->name))||
+		       (pd->arraySize    != pv->arraySize),
+		       "getData : inconsistent data across "
+		       "hypothesis for variable '"+pd->name+"'");
       }
       if(!pv->description.empty()){
 	pd->descriptions[h] = pv->description;
@@ -479,28 +477,23 @@ namespace mfront{
   std::string 
   BehaviourDocumentationGenerator::getUsageDescription() const
   {
-    using namespace std;
-    string usage("Usage : ");
+    std::string usage("Usage : ");
     usage += this->programName;
     usage += " [options] [files]";
     return usage;
   } // end of BehaviourDocumentationGenerator::getUsageDescription
 
-  void
-  BehaviourDocumentationGenerator::treatWeb()
+  void BehaviourDocumentationGenerator::treatWeb()
   {
-    using namespace std;
-    if(this->otype!=FULL){
-      throw(runtime_error("BehaviourDocumentationGenerator::treatWeb: "
-			  "output type already specified"));
-    }
+    tfel::raise_if(this->otype!=FULL,
+		   "BehaviourDocumentationGenerator::treatWeb: "
+		   "output type already specified");
     this->otype=WEB;
   } // end of BehaviourDocumentationGenerator::treatWeb
 
   void
   BehaviourDocumentationGenerator::exe()
   {
-    using namespace std;
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       getLogStream() << "Treating file '" << this->file << "'\n";
     }
@@ -512,28 +505,24 @@ namespace mfront{
       auto& log = getLogStream();
       log << "BehaviourDocumentationGenerator::exe : begin\n";
     }
-    const auto name = (!mb.getLibrary().empty()) ? mb.getLibrary() + mb.getClassName() : mb.getClassName();
-    ofstream out(name+".md");
-    out.exceptions(ios::badbit|ios::failbit);
-    if(!out){
-      string msg("BehaviourDocumentationGenerator::exe : ");
-      msg += "could not open file ";
-      msg += "'src/"+name+".txt'";
-      throw(runtime_error(msg));
-    }
+    const auto name = (!mb.getLibrary().empty()) ?
+      mb.getLibrary() + mb.getClassName() : mb.getClassName();
+    std::ofstream out(name+".md");
+    out.exceptions(std::ios::badbit|std::ios::failbit);
+    tfel::raise_if(!out,"BehaviourDocumentationGenerator::exe: "
+		   "could not open file 'src/"+name+".txt'");
     writeStandardLatexMacros(out);
     if(this->otype==FULL){
       this->writeFullOutput(out,mb,fd);
     } else if(this->otype==WEB){
       this->writeWebOutput(out,mb,fd);
     } else {
-      throw(runtime_error("BehaviourDocumentationGenerator::exe: "
-			  "unsupported output type"));
+      tfel::raise("BehaviourDocumentationGenerator::exe: "
+		  "unsupported output type");
     }
     out.close();
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      auto& log = getLogStream();
-      log << "BehaviourDocumentationGenerator::exe : end\n";
+      getLogStream() << "BehaviourDocumentationGenerator::exe : end\n";
     }
   } // end of BehaviourDocumentationGenerator::exe
 
@@ -544,10 +533,8 @@ namespace mfront{
   {
     using namespace tfel::utilities;
     std::ifstream f(this->file);
-    if(!f){
-      throw(std::runtime_error("BehaviourDocumentationGenerator::writeWebOutput: "
-			       "can't open file '"+this->file+"'"));
-    }
+    tfel::raise_if(!f,"BehaviourDocumentationGenerator::writeWebOutput: "
+		   "can't open file '"+this->file+"'");
     out << "# " << mb.getClassName() << " behaviour description\n\n"
 	<< "* file   : " << fd.fileName   << '\n'
 	<< "* author : ";

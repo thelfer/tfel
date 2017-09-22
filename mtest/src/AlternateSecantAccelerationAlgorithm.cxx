@@ -14,7 +14,7 @@
 #include<limits>
 #include<ostream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/AlternateSecantAccelerationAlgorithm.hxx"
 
@@ -30,31 +30,18 @@ namespace mtest
     return "crossed secant";
   }
 
-  void
-  AlternateSecantAccelerationAlgorithm::setParameter(const std::string& p,
-						    const std::string& v)
+  void AlternateSecantAccelerationAlgorithm::setParameter(const std::string& p,
+							  const std::string& v)
   {
-    using namespace std;
-    const string m = "AlternateSecantAccelerationAlgorithm::setParameter";
+    const std::string m = "AlternateSecantAccelerationAlgorithm::setParameter";
     if(p=="AccelerationTrigger"){
-      const unsigned short i =
-	AccelerationAlgorithm::convertToUnsignedShort(m,v);
-      if(this->asat!=-1){
-	string msg("AlternateSecantAccelerationAlgorithm::setParameter : "
-		   "the castem acceleration trigger has already "
-		   "been defined");
-	throw(runtime_error(msg));
-      }
-      if(i<2){
-	string msg("AlternateSecantAccelerationAlgorithm::setParameter",
-		   "invalid acceleration trigger value.");
-	throw(runtime_error(msg));
-      }
+      const auto i = AccelerationAlgorithm::convertToUnsignedShort(m,v);
+      tfel::raise_if(this->asat!=-1,m+": the castem acceleration trigger "
+		     "has already been defined");
+      tfel::raise_if(i<2,m+": invalid acceleration trigger value.");
       this->asat = i;
     } else {
-      string msg("AlternateSecantAccelerationAlgorithm::setParameter : "
-		 "invalid parameter '"+p+"'.");
-      throw(runtime_error(msg));
+      tfel::raise(m+": invalid parameter '"+p+"'.");
     }
   } // end of AlternateSecantAccelerationAlgorithm::setParameter
 
@@ -72,10 +59,8 @@ namespace mtest
     }
   } // end of AlternateSecantAccelerationAlgorithm::initialize
 
-  void
-  AlternateSecantAccelerationAlgorithm::preExecuteTasks()
-  {
-  } // end of AccelerationAlgorithm::preExecuteTaks
+  void AlternateSecantAccelerationAlgorithm::preExecuteTasks()
+  {} // end of AccelerationAlgorithm::preExecuteTaks
 
   void
   AlternateSecantAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
@@ -107,8 +92,7 @@ namespace mtest
 
   } // end of AlternateSecantAccelerationAlgorithm::execute
 
-  void
-  AlternateSecantAccelerationAlgorithm::postExecuteTasks()
+  void AlternateSecantAccelerationAlgorithm::postExecuteTasks()
   {} // end of AccelerationAlgorithm::postExecuteTaks
 
   AlternateSecantAccelerationAlgorithm::~AlternateSecantAccelerationAlgorithm() = default;

@@ -15,6 +15,7 @@
 #include<sstream>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
@@ -36,7 +37,7 @@ namespace mtest
       savesTangentOperator(false)
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("AsterStandardBehaviour::AsterStandardBehaviour: "+m));}
+      tfel::raise_if(c,"AsterStandardBehaviour::AsterStandardBehaviour: "+m);
     };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     throw_if(elm.getInterface(l,b)!="Aster",
@@ -100,8 +101,7 @@ namespace mtest
     return r;
   } // end of AsterStandardBehaviour::getRotationMatrix
 
-  size_t
-  AsterStandardBehaviour::getInternalStateVariablesSize() const
+  size_t AsterStandardBehaviour::getInternalStateVariablesSize() const
   {
     size_t s(0);
     const auto h = this->getHypothesis();
@@ -116,8 +116,8 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	s=36;
       } else {
-	throw(std::runtime_error("AsterStandardBehaviour::getInternalStateVariablesSize: "
-				 "invalid modelling hypothesis"));
+	tfel::raise("AsterStandardBehaviour::getInternalStateVariablesSize: "
+		    "invalid modelling hypothesis");
       }	
     }
     return s+ UmatBehaviourBase::getInternalStateVariablesSize();
@@ -140,8 +140,8 @@ namespace mtest
       } else if(h==ModellingHypothesis::TRIDIMENSIONAL){
 	s=6;
       } else {
-	throw(std::runtime_error("AsterStandardBehaviour::getInternalStateVariablesDescriptions: "
-				 "invalid modelling hypothesis"));
+	tfel::raise("AsterStandardBehaviour::getInternalStateVariablesDescriptions: "
+		    "invalid modelling hypothesis");
       }
       for(unsigned short i=0;i!=s;++i){
 	for(unsigned short j=0;j!=s;++j){

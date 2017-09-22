@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include"TFEL/Raise.hxx"
 #include"MTest/Behaviour.hxx"
 #include"MTest/CurrentState.hxx"
 #include"MTest/BehaviourWorkSpace.hxx"
@@ -35,10 +36,8 @@ namespace mtest{
   void
   StructureCurrentState::setBehaviour(const std::shared_ptr<Behaviour>& p)
   {
-    if(this->b!=nullptr){
-      throw(std::runtime_error("StructureCurrentState::setBehaviour: "
-			       "behaviour already set"));
-    }
+    tfel::raise_if(this->b!=nullptr,"StructureCurrentState::setBehaviour: "
+		   "behaviour already set");
     this->b=p;
   }
 
@@ -46,10 +45,9 @@ namespace mtest{
   StructureCurrentState::setModellingHypothesis(const Hypothesis mh)
   {
     using tfel::material::ModellingHypothesis;
-    if(this->h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-      throw(std::runtime_error("StructureCurrentState::setModellingHypothesis: "
-			       "modelling hypothesis already set"));
-    }
+    tfel::raise_if(this->h!=ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		   "StructureCurrentState::setModellingHypothesis: "
+		   "modelling hypothesis already set");
     this->h=mh;
   }
 
@@ -57,27 +55,23 @@ namespace mtest{
   StructureCurrentState::getBehaviourWorkSpace() const{
     using tfel::material::ModellingHypothesis;
     if(this->bwks.empty()){
-      if(this->b==nullptr){
-	throw(std::runtime_error("StructureCurrentState::getBehaviourWorkSpace: "
-				 "behaviour not set"));
-      }
-      if(this->h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
-	throw(std::runtime_error("StructureCurrentState::getBehaviourWorkSpace: "
-				 "modelling hypothesis not set"));
-      }
+      tfel::raise_if(this->b==nullptr,
+		     "StructureCurrentState::getBehaviourWorkSpace: "
+		     "behaviour not set");
+      tfel::raise_if(this->h==ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+		     "StructureCurrentState::getBehaviourWorkSpace: "
+		     "modelling hypothesis not set");
       this->bwks.push_back(std::make_shared<BehaviourWorkSpace>());
       this->b->allocate(*(this->bwks[0]));
     }
     return *(this->bwks[0]);
   } // end of StructureCurrentState::getBehaviourWorkSpace
 
-  const Behaviour&
-  StructureCurrentState::getBehaviour() const
+  const Behaviour& StructureCurrentState::getBehaviour() const
   {
-    if(this->b==nullptr){
-      throw(std::runtime_error("StructureCurrentState::getBehaviour: "
-			       "behaviour not set"));
-    }
+    tfel::raise_if(this->b==nullptr,
+		   "StructureCurrentState::getBehaviour: "
+		   "behaviour not set");
     return *(this->b);
   } // end of StructureCurrentState::getBehaviour
   

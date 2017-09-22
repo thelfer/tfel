@@ -20,6 +20,7 @@
 #include<sstream>
 #include<cctype>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/power.hxx"
 #include"TFEL/Math/Evaluator.hxx"
 
@@ -41,13 +42,8 @@ namespace tfel
 				       const std::vector<std::string>::const_iterator p,
 				       const std::vector<std::string>::const_iterator pe)
     {
-      if(p==pe){
-	auto msg = method + " : unexpected end of line";
-	if(!error.empty()){
-	  msg += " ("+error+")";
-	}
-	throw(std::runtime_error(msg));
-      }
+      raise_if(p==pe,method + ": unexpected end of line"
+	       +((!error.empty()) ? " ("+error+")" : ""));
     } // end of Evaluator::checkNotEndOfExpression
 
     void
@@ -65,12 +61,8 @@ namespace tfel
 				  const std::vector<std::string>::const_iterator pe)
     {
       Evaluator::checkNotEndOfExpression(method,"expected '"+value+"'",p,pe);
-      if(*p!=value){
-	auto msg = method;
-	msg += " : unexpected token '"+*p+"'";
-	msg += " (expected '"+value+"')";
-	throw(std::runtime_error(msg));
-      }
+      raise_if(*p!=value,method+": unexpected token '"+*p+"'"
+	       " (expected '"+value+"')");
       ++p;
     } // end of Evaluator::readSpecifiedToken
 
@@ -82,17 +74,12 @@ namespace tfel
       string::const_iterator ps;
       istringstream converter(value);
       for(ps=value.begin();ps!=value.end();++ps){
-	if(!isdigit(*ps)){
-	  throw(runtime_error(method+" : invalid entry"));
-	}
+	raise_if(!isdigit(*ps),method+" : invalid entry");
       }
       unsigned short u;
       converter >> u;
-      if(!converter||(!converter.eof())){
-	string msg(method+" : ");
-	msg += "not read value from token '"+value+"'";
-	throw(runtime_error(msg));
-      }
+      raise_if(!converter||(!converter.eof()),
+	       method+": not read value from token '"+value+"'");
       return u;
     } // end of Evaluator::convertToUnsignedShort
 
@@ -104,17 +91,12 @@ namespace tfel
       string::const_iterator ps;
       istringstream converter(value);
       for(ps=value.begin();ps!=value.end();++ps){
-	if(!isdigit(*ps)){
-	  throw(runtime_error(method+" : invalid entry"));
-	}
+	raise_if(!isdigit(*ps),method+" : invalid entry");
       }
       unsigned int u;
       converter >> u;
-      if(!converter||(!converter.eof())){
-	string msg(method+" : ");
-	msg += "not read value from token '"+value+"'";
-	throw(runtime_error(msg));
-      }
+      raise_if(!converter||(!converter.eof()),
+	       method+": not read value from token '"+value+"'");
       return u;
     } // end of Evaluator::convertToUnsignedInt
 
@@ -126,17 +108,12 @@ namespace tfel
       string::const_iterator ps;
       istringstream converter(value);
       for(ps=value.begin();ps!=value.end();++ps){
-	if(!isdigit(*ps)){
-	  throw(runtime_error(method+" : invalid entry"));
-	}
+	raise_if(!isdigit(*ps),method+" : invalid entry");
       }
       int u;
       converter >> u;
-      if(!converter||(!converter.eof())){
-	string msg(method+" : ");
-	msg += "not read value from token '"+value+"'";
-	throw(runtime_error(msg));
-      }
+      raise_if(!converter||(!converter.eof()),
+	       method+": not read value from token '"+value+"'");
       return u;
     } // end of Evaluator::convertToInt
 
@@ -156,13 +133,13 @@ namespace tfel
 				    const std::vector<double>::size_type p)
     {
       if(p!=n){
-	std::string msg("Evaluator::checkParameterNumber : ");
+	std::string msg("Evaluator::checkParameterNumber: ");
 	if(p==0){
 	  msg += "no parameter given";
 	} else {	
 	  msg += "too many parameters given";
 	}
-	throw(std::runtime_error(msg));
+	raise(msg);
       }
     } // end of Evaluator::checkParameterNubmer
 
@@ -171,13 +148,13 @@ namespace tfel
 				   const std::vector<double>::size_type p)
     {
       if(p!=n){
-	std::string msg("Evaluator::checkVariableNumber : ");
+	std::string msg("Evaluator::checkVariableNumber: ");
 	if(p==0){
 	  msg += "no parameter given";
 	} else {	
 	  msg += "too many parameters given";
 	}
-	throw(std::runtime_error(msg));
+	raise(msg);
       }
     } // end of Evaluator::checkVariableNubmer
 
@@ -246,7 +223,7 @@ namespace tfel
 	return EvaluatorPowerFunctionGenerator<16>(args[0]);
 #endif
       }
-      throw(std::runtime_error("EvaluatorTreatPower: only exponent below 16 are supported"));
+      raise("EvaluatorTreatPower: only exponent below 16 are supported");
     } // end of EvaluatorTreatPower
 
     void
@@ -258,14 +235,15 @@ namespace tfel
       using namespace tfel::math::parser;
       using size_type = std::vector<double>::size_type;
       auto throw_if = [](const bool c, const std::string& m){
-	if(c){throw(std::runtime_error("Evaluator::treatDiff: "+m));}
+	raise_if(c,"Evaluator::treatDiff: "+m);
       };
       unsigned short openedParenthesis=0u;
       int diffNumber = -1;
       Evaluator::checkNotEndOfExpression("Evaluator::treatDiff","(",p,pe);
       if(*p=="<"){
 	++p;
-	Evaluator::checkNotEndOfExpression("Evaluator::treatDiff","expected number",p,pe);
+	Evaluator::checkNotEndOfExpression("Evaluator::treatDiff",
+					   "expected number",p,pe);
 	auto       ps  = p->begin();
 	const auto pse = p->end();
 	while(ps!=pse){
@@ -356,7 +334,7 @@ namespace tfel
     Evaluator::FunctionGeneratorManager::checkName(const std::string& name) const
     {
       auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error("Evaluator::FunctionGeneratorManager::checkName: "+m));}
+	raise_if(b,"Evaluator::FunctionGeneratorManager::checkName: "+m);
       };
       throw_if(this->fctGenerators.find(name)!=this->fctGenerators.end(),
 	       "a function named '"+name+"' has already been declared");
@@ -455,30 +433,27 @@ namespace tfel
 
     void Evaluator::checkCyclicDependency(std::vector<std::string>& names) const
     {
-      if(this->expr==nullptr){
-	throw(std::runtime_error("Evaluator::checkCyclicDependency: "
-				 "uninitialized evaluator"));
-      }
+      raise_if(this->expr==nullptr,
+	       "Evaluator::checkCyclicDependency: "
+	       "uninitialized evaluator");
       this->expr->checkCyclicDependency(names);
     } // end of Evaluator::checkCyclicDependency
 
     void  Evaluator::checkCyclicDependency(const std::string& name) const
     {
       std::vector<std::string> names(1,name);
-      if(this->expr==nullptr){
-	throw(std::runtime_error("Evaluator::checkCyclicDependency: "
-				 "uninitialized evaluator"));
-      }
+      raise_if(this->expr==nullptr,
+	       "Evaluator::checkCyclicDependency: "
+	       "uninitialized evaluator");
       this->expr->checkCyclicDependency(names);
     } // end of Evaluator::checkCyclicDependency
 
     void Evaluator::checkCyclicDependency() const
     {
       std::vector<std::string> names; 
-      if(this->expr==nullptr){
-	throw(std::runtime_error("Evaluator::checkCyclicDependency: "
-				 "uninitialized evaluator"));
-      }
+      raise_if(this->expr==nullptr,
+	       "Evaluator::checkCyclicDependency: "
+	       "uninitialized evaluator");
      this->expr->checkCyclicDependency(names);
     } // end of Evaluator::checkCyclicDependency
 
@@ -507,23 +482,21 @@ namespace tfel
       while(*p!=">"){
 	// check parameter validity
 	for(ps=p->begin();ps!=p->end();++ps){
-	  if(!(isalpha(*ps)||isdigit(*ps))||(*ps=='_')||(*ps=='-')){
-	    throw(std::runtime_error("Evaluator::analyseParameters: "
-				     "invalid parameter '"+*p+"'"));
-	  }
+	  raise_if(!(isalpha(*ps)||isdigit(*ps))||(*ps=='_')||(*ps=='-'),
+		   "Evaluator::analyseParameters: "
+		   "invalid parameter '"+*p+"'");
 	}
 	params.push_back(*p);
 	++p;
 	Evaluator::checkNotEndOfExpression("Evaluator::analyseParameters",p,pe);
 	if(*p!=">"){
-	  if(*p==","){
-	    ++p;
-	    Evaluator::checkNotEndOfExpression("Evaluator::analyseParameters",p,pe);
-	  } else {
-	    throw(std::runtime_error("Evaluator::analyseParameters: "
-				     "unexpected token '"+*p+"' "
-				     "(expected ',' or '>')"));
-	  }
+	  raise_if(*p!=",","Evaluator::analyseParameters: "
+		   "unexpected token '"+*p+"' "
+		   "(expected ',' or '>')");
+		   
+	  ++p;
+	  Evaluator::checkNotEndOfExpression("Evaluator::"
+					     "analyseParameters",p,pe);
 	}
       }
       ++p;
@@ -599,7 +572,7 @@ namespace tfel
 	msg << "Evaluator::countNumberOfArguments : group ended while " 
 	    << opened << " parenthesis were still opened";
       }
-      throw(runtime_error(msg.str()));
+      raise(msg.str());
     } // end of Evaluator::analyseArguments
 
     std::pair<bool,std::vector<std::string>::const_iterator>
@@ -620,10 +593,9 @@ namespace tfel
 	  ++openedParenthesis;
 	}
 	if(*p==")"){
-	  if(openedParenthesis==0){
-	    throw(std::runtime_error("Analyser::readNextGroup: "
-				     "unbalanced parenthesis"));
-	  }
+	  raise_if(openedParenthesis==0,
+		   "Analyser::readNextGroup: "
+		   "unbalanced parenthesis");
 	  --openedParenthesis;
 	}
 	if((*p==m)&&(openedParenthesis==0)){
@@ -647,7 +619,7 @@ namespace tfel
       using namespace std;
       using namespace tfel::math::parser;
       auto throw_if = [](const bool c, const std::string& m){
-	if(c){throw(std::runtime_error("Evaluator::treatLogicalExpression: "+m));}
+	raise_if(c,"Evaluator::treatLogicalExpression: "+m);
       };
       vector<string>::const_iterator pb(p);           
       vector<string>::const_iterator pbe(pe);
@@ -700,11 +672,9 @@ namespace tfel
 	  ++openedParenthesis;
 	}
 	if(*p==")"){
-	  if(openedParenthesis==0){
-	    string msg("Analyser::readNextGroup : ");
-	    msg += "unbalanced parenthesis";
-	    throw(runtime_error(msg));
-	  }
+	  raise_if(openedParenthesis==0,
+		   "Analyser::readNextGroup: "
+		   "unbalanced parenthesis");
 	  --openedParenthesis;
 	}
 	if(openedParenthesis==0){
@@ -716,7 +686,7 @@ namespace tfel
 		  << "more than one logical operator found (error while parsing '";
 	      copy(pb,pe,ostream_iterator<string>(msg," "));
 	      msg << "')";
-	      throw(runtime_error(msg.str()));
+	      raise(msg.str());
 	    }
 	    po = p;
 	    found = true;
@@ -728,7 +698,7 @@ namespace tfel
 		  << "no left part to logical operator (error while parsing '";
 	      copy(p,pe,ostream_iterator<string>(msg," "));
 	      msg << "')";
-	      throw(runtime_error(msg.str()));
+	      raise(msg.str());
 	    }
 	    prev = p-1;
 	    peo = Evaluator::getFunctionGeneratorManager().extOpGenerators.find(*prev);
@@ -743,11 +713,8 @@ namespace tfel
 		++p;
 		Evaluator::checkNotEndOfExpression("Evaluator::searchComparisonOperator",p,pe);
 	      }
-	      if(*p!="("){
-		string msg("Evaluator::searchComparisonOperator : ");
-		msg += "expected '(', read '"+*p+"'";
-		throw(runtime_error(msg));
-	      }
+	      raise_if(*p!="(","Evaluator::searchComparisonOperator: "
+		       "expected '(', read '"+*p+"'");
 	      ++openedParenthesis;
 	    } else {
 	      if(found){
@@ -756,7 +723,7 @@ namespace tfel
 		    << "more than one logical operator found (error while parsing '";
 		copy(pb,pe,ostream_iterator<string>(msg," "));
 		msg << "')";
-		throw(runtime_error(msg.str()));
+		raise(msg.str());
 	      }
 	      po = p;
 	      found = true;
@@ -771,7 +738,7 @@ namespace tfel
 	    << "no logical operator found (error while parsing '";
 	copy(pb,pe,ostream_iterator<string>(msg," "));
 	msg << "')";
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       if(po==pb){
 	ostringstream msg;
@@ -779,7 +746,7 @@ namespace tfel
 	    << "no left part to logical operator (error while parsing '";
 	copy(p,pe,ostream_iterator<string>(msg," "));
 	msg << "')";
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       if(po+1==pe){
 	ostringstream msg;
@@ -787,7 +754,7 @@ namespace tfel
 	    << "no right part to logical operator (error while parsing '";
 	copy(pb,pe,ostream_iterator<string>(msg," "));
 	msg << "')";
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
       return po;
     } // end of Evaluator::searchComparisonOperator
@@ -814,8 +781,8 @@ namespace tfel
       } else if(*plo=="<="){
 	return std::make_shared<TLogicalOperation<OpLesserOrEqual>>(loexpr,roexpr);
       }
-      throw(std::runtime_error("Evaluator::treatLogicalExpression2 : "
-			       "unsupported logical operator '"+*plo+"'"));
+      raise("Evaluator::treatLogicalExpression2 : "
+	    "unsupported logical operator '"+*plo+"'");
     } // end of Evaluator::treatLogicalExpression2
 
     std::shared_ptr<Evaluator::TExpr>
@@ -827,7 +794,7 @@ namespace tfel
       using namespace std;
       using namespace tfel::math::parser;
       auto throw_if = [](const bool c, const std::string& m){
-	if(c){throw(std::runtime_error("Evaluator::treatGroup: "+m));}
+	raise_if(c,"Evaluator::treatGroup: "+m);
       };
       Evaluator::checkNotEndOfExpression("Evaluator::treatGroup",p,pe);
       throw_if(*p==s,"empty group");
@@ -930,19 +897,16 @@ namespace tfel
 	    if(this->manager!=nullptr){
 	      this->addExternalFunctionToGroup(g.get(),p,pe,b);
 	    } else {
-	      string msg("Evaluator::treatGroup2 : unknown function '"+*p+"'");
-	      throw(runtime_error(msg));
+	      raise("Evaluator::treatGroup2 : unknown function '"+*p+"'");
 	    }
 	  } else {
 	    if(b){
 	      // variable name is fixed
 	      if(this->positions.find(*p)==this->positions.end()){
 		vector<shared_ptr<Evaluator::TExpr> > args;
-		if(this->manager==nullptr){
-		  string msg("Evaluator::treatGroup2 : ");
-		  msg += "unknown variable '"+*p+"'";
-		  throw(runtime_error(msg));
-		}
+		raise_if(this->manager==nullptr,
+			 "Evaluator::treatGroup2: "
+			 "unknown variable '"+*p+"'");
 		g->add(std::make_shared<TExternalFunctionExpr>(*p,args,this->manager));
 
 	      } else {
@@ -960,10 +924,9 @@ namespace tfel
 	  test = (p!=pe)&&(*p!=s);
 	}
       }
-      if((!s.empty())&&(p==pe)){
-	string msg("Evaluator::treatGroup2 : unterminated group (group began with '"+s+"').");
-	throw(runtime_error(msg));
-      }
+      raise_if((!s.empty())&&(p==pe),
+	       "Evaluator::treatGroup2: "
+	       "unterminated group (group began with '"+s+"').");
       return g;
     } // end of Evaluator::treatGroup2
 
@@ -985,10 +948,9 @@ namespace tfel
 				     const double value)
     {
       auto p = this->positions.find(vname);
-      if(p==this->positions.end()){
-	throw(std::runtime_error("Evaluator::setVariableValue: "
-				 "variable '"+vname+ "' does not exist"));
-      }
+      raise_if(p==this->positions.end(),
+	       "Evaluator::setVariableValue: "
+	       "variable '"+vname+ "' does not exist");
       this->variables[p->second] = value;
     }//end of Evaluator::setVariableValue
 
@@ -996,10 +958,9 @@ namespace tfel
 				     const double value)
     {
       auto p = this->positions.find(vname);
-      if(p==this->positions.end()){
-	throw(std::runtime_error("Evaluator::setVariableValue: "
-				 "variable '"+std::string(vname)+"' does not exist"));
-      }
+      raise_if(p==this->positions.end(),
+	       "Evaluator::setVariableValue: "
+	       "variable '"+std::string(vname)+"' does not exist");
       this->variables[p->second] = value;
     }//end of Evaluator::setVariableValue
     
@@ -1017,17 +978,16 @@ namespace tfel
 	} else {
 	  msg << "(function has only '" <<  this->variables.size() << "' variable(s)).";
 	}
-	throw(std::runtime_error(msg.str()));
+	raise(msg.str());
       }
       this->variables[pos] = value;
     }//end of Evaluator::setVariableValue
 
     double Evaluator::getValue() const
     {
-      if(this->expr==nullptr){
-	throw(std::runtime_error("Evaluator::getValue: "
-				 "uninitialized expression."));
-      }
+      raise_if(this->expr==nullptr,
+	       "Evaluator::getValue: "
+	       "uninitialized expression.");
       return this->expr->getValue();
     }//end of Evaluator::getValue
 
@@ -1151,14 +1111,12 @@ namespace tfel
       this->variables.resize(vars.size());
       auto pos = std::vector<double>::size_type{0u};
       for(const auto& v: vars){
-	if(this->positions.find(v)!=this->positions.end()){
-	  throw(std::runtime_error("Evaluator::setFunction: "
-				   "variable '"+v+"' multiply defined."));
-	}
-	if(!Evaluator::isValidIdentifier(v)){
-	  throw(std::runtime_error("Evaluator::setFunction: "
-				   "variable '"+v+"' is not valid."));
-	}
+	raise_if(this->positions.find(v)!=this->positions.end(),
+		 "Evaluator::setFunction: "
+		 "variable '"+v+"' multiply defined.");
+	raise_if(!Evaluator::isValidIdentifier(v),
+		 "Evaluator::setFunction: "
+		 "variable '"+v+"' is not valid.");
 	this->positions[v]=pos;
 	++pos;
       }
@@ -1180,7 +1138,7 @@ namespace tfel
 			   std::shared_ptr<tfel::math::parser::ExternalFunctionManager>& m)
     {
       auto throw_if = [](const bool c, const std::string& msg){
-	if(c){throw(std::runtime_error("Evaluator::treatGroup: "+msg));}
+	raise_if(c,"Evaluator::treatGroup: "+msg);
       };
       this->clear();
       this->manager = m;
@@ -1201,10 +1159,9 @@ namespace tfel
     Evaluator::differentiate(const std::vector<double>::size_type pos) const
     {
       auto pev = std::make_shared<Evaluator>();
-      if(this->expr==nullptr){
-	throw(std::runtime_error("Evaluator::differentiate: "
-				 "uninitialized expression."));
-      }
+      raise_if(this->expr==nullptr,
+	       "Evaluator::differentiate: "
+	       "uninitialized expression.");
       pev->variables.resize(this->variables.size());
       pev->positions = this->positions;
       if(this->variables.empty()){
@@ -1221,7 +1178,7 @@ namespace tfel
 	  } else {
 	    msg << "(function has only '" <<  this->variables.size() << "' variable(s)).";
 	  }
-	  throw(std::runtime_error(msg.str()));
+	  raise(msg.str());
 	}
 	pev->expr = this->expr->differentiate(pos,pev->variables);
       }
@@ -1259,10 +1216,9 @@ namespace tfel
     Evaluator::getVariablePosition(const std::string& name) const
     {
       const auto p = this->positions.find(name);
-      if(p==this->positions.end()){
-	throw(std::runtime_error("Evaluator::getVariablePosition: "
-				 "unknown variable '"+name+"'"));
-      }
+      raise_if(p==this->positions.end(),
+	       "Evaluator::getVariablePosition: "
+	       "unknown variable '"+name+"'");
       return p->second;
     } // end of Evaluator::getVariablePosition(const std::string&)
 
@@ -1291,8 +1247,8 @@ namespace tfel
     {
       using namespace tfel::math::parser;
       auto throw_if = [](const bool b, const std::string& m){
-	if(b){throw(std::runtime_error("Evaluator::createFunctionByChanging"
-				       "ParametersIntoVariables: "+m));}
+	raise_if(b,"Evaluator::createFunctionByChanging"
+		 "ParametersIntoVariables: "+m);
       };
       std::set<std::string> ev_params;
       throw_if(this->variables.size()!=this->positions.size(),
@@ -1320,10 +1276,9 @@ namespace tfel
 
     void Evaluator::getParametersNames(std::set<std::string>& n) const
     {
-      if(this->expr==nullptr){
-	throw(std::runtime_error("Evaluator::getParametersNames: "
-				 "uninitialized evaluator"));
-      }
+      raise_if(this->expr==nullptr,
+	       "Evaluator::getParametersNames: "
+	       "uninitialized evaluator");
       return this->expr->getParametersNames(n);
     } // end of Evaluator::getParametersNames
 

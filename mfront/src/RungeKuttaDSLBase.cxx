@@ -14,7 +14,7 @@
 #include<string>
 #include<sstream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/DSLFactory.hxx"
@@ -133,9 +133,9 @@ namespace mfront{
 		 (i.type==MaterialPropertyInput::PARAMETER)){
 	return "this->"+i.name;
       } else {
-	throw(std::runtime_error("modifyVariableForStiffnessTensorComputation: "
-				 "unsupported input type for "
-				 "variable '"+i.name+"'"));
+	tfel::raise("modifyVariableForStiffnessTensorComputation: "
+		    "unsupported input type for "
+		    "variable '"+i.name+"'");
       }
     };
     return m;
@@ -158,9 +158,9 @@ namespace mfront{
 		 (i.type==MaterialPropertyInput::PARAMETER)){
 	return "this->"+i.name;
       } else {
-	throw(std::runtime_error("modifyVariableForStiffnessTensorComputation2: "
-				 "unsupported input type for "
-				 "variable '"+i.name+"'"));
+	tfel::raise("modifyVariableForStiffnessTensorComputation2: "
+		    "unsupported input type for "
+		    "variable '"+i.name+"'");
       }
     };
     return m;
@@ -714,7 +714,7 @@ namespace mfront{
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
     if(this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,false)){
       os << "// the stiffness tensor at the beginning of the time step\n";
-      Modifier bts = [](const MaterialPropertyInput& i){
+      Modifier bts = [this](const MaterialPropertyInput& i){
 	if((i.type==MaterialPropertyInput::TEMPERATURE)||
 	   (i.type==MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL)||
 	   (i.type==MaterialPropertyInput::EXTERNALSTATEVARIABLE)||
@@ -722,8 +722,9 @@ namespace mfront{
 	   (i.type==MaterialPropertyInput::PARAMETER)){
 	  return "this->"+i.name;
 	} else {
-	  throw(std::runtime_error("RungeKuttaDSLBase::writeBehaviourLocalVariablesInitialisation: "
-				   "unsupported input type for variable '"+i.name+"'"));
+	  this->throwRuntimeError("RungeKuttaDSLBase::"
+				  "writeBehaviourLocalVariablesInitialisation",
+				  "unsupported input type for variable '"+i.name+"'");
 	}
       };
       this->writeStiffnessTensorComputation(os,"this->D",bts);

@@ -14,7 +14,7 @@
 #include<limits>
 #include<ostream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Alternate2DeltaAccelerationAlgorithm.hxx"
 
@@ -35,11 +35,11 @@ namespace mtest
   {
     const std::string m = "Alternate2DeltaAccelerationAlgorithm::setParameter";
     auto throw_if = [&m](const bool c, const std::string& msg){
-      if(c){throw(std::runtime_error(m+": "+msg));}
+      tfel::raise_if(c,m+": "+msg);
     };
     if(p=="AccelerationTrigger"){
       const auto i = AccelerationAlgorithm::convertToUnsignedShort(m,v);
-      throw_if(this->asat!=-1,"the castem acceleration trigger "
+      throw_if(this->asat!=-1,"the acceleration trigger "
 	       "has already been defined");
       throw_if(i<2,"invalid acceleration trigger value");
       this->asat = i;

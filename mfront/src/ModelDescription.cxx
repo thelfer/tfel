@@ -12,6 +12,7 @@
  */
 
 #include<algorithm>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
@@ -55,10 +56,8 @@ namespace mfront
       return r;
     }
     r = get(this->inputs);
-    if(r.first.empty()){
-      throw(std::runtime_error("decomposeVariableName: "
-			       "field name '"+n+"' has not been found"));
-    }
+    tfel::raise_if(r.first.empty(),"decomposeVariableName: "
+		   "field name '"+n+"' has not been found");
     return r;
   } // end of ModelDescription::decomposeVariableName
 
@@ -71,10 +70,9 @@ namespace mfront
   ModelDescription::operator=(ModelDescription&&) = default;
 
   void ModelDescription::reserveName(const std::string& n){
-    if(!this->reservedNames.insert(n).second){
-      throw(std::runtime_error("ModelDescription::reserveName: "
-			       "name '"+n+"' already reserved"));
-    }
+    tfel::raise_if(!this->reservedNames.insert(n).second,
+		   "ModelDescription::reserveName: "
+		   "name '"+n+"' already reserved");
   }
 
   bool ModelDescription::isNameReserved(const std::string& n) const{
@@ -84,19 +82,17 @@ namespace mfront
   void ModelDescription::registerMemberName(const std::string& n)
   {
     this->reserveName(n);
-    if(!this->memberNames.insert(n).second){
-      throw(std::runtime_error("ModelDescription::registerMemberName: "
-			       "name '"+n+"' already reserved"));
-    }
+    tfel::raise_if(!this->memberNames.insert(n).second,
+		   "ModelDescription::registerMemberName: "
+		   "name '"+n+"' already reserved");
   } // end of ModelDescription::registerMemberName
 
   void ModelDescription::registerStaticMemberName(const std::string& n)
   {
     this->reserveName(n);
-    if(!this->staticMemberNames.insert(n).second){
-      throw(std::runtime_error("ModelDescription::registerStaticMemberName: "
-			       "name '"+n+"' already reserved"));
-    }
+    tfel::raise_if(!this->staticMemberNames.insert(n).second,
+		   "ModelDescription::registerStaticMemberName: "
+		   "name '"+n+"' already reserved");
   } // end of ModelDescription::registerStaticMemberName
   
   VariableDescription&
@@ -114,13 +110,13 @@ namespace mfront
     if(this->constantMaterialProperties.contains(n)){
       return this->constantMaterialProperties.getVariable(n);
     }
-    throw(std::runtime_error("ModelDescription::getVariableDescription: "
-			     "No variable named '"+n+"'.\n"
-			     "'"+n+"' is neither:\n"
-			     "- An output.\n"
-			     "- An input.\n"
-			     "- A parameter.\n"
-			     "- A constant material properties."));
+    tfel::raise("ModelDescription::getVariableDescription: "
+		"No variable named '"+n+"'.\n"
+		"'"+n+"' is neither:\n"
+		"- An output.\n"
+		"- An input.\n"
+		"- A parameter.\n"
+		"- A constant material properties.");
   } // end of ModelDescription::getVariableDescription
 
   const VariableDescription&
@@ -138,40 +134,37 @@ namespace mfront
     if(this->constantMaterialProperties.contains(n)){
       return this->constantMaterialProperties.getVariable(n);
     }
-    throw(std::runtime_error("ModelDescription::getVariableDescription: "
-			     "No variable named '"+n+"'.\n"
-			     "'"+n+"' is neither:\n"
-			     "- An output.\n"
-			     "- An input.\n"
-			     "- A parameter.\n"
-			     "- A constant material properties."));
+    tfel::raise("ModelDescription::getVariableDescription: "
+		"No variable named '"+n+"'.\n"
+		"'"+n+"' is neither:\n"
+		"- An output.\n"
+		"- An input.\n"
+		"- A parameter.\n"
+		"- A constant material properties.");
   } // end of ModelDescription::getVariableDescription
   
   void ModelDescription::checkVariableExistence(const std::string& v) const{
-    if((!this->inputs.contains(v))&&
-       (!this->outputs.contains(v))&&
-       (!this->parameters.contains(v))&&
-       (!this->staticVars.contains(v))&&
-       (!this->constantMaterialProperties.contains(v))){
-      throw(std::runtime_error("ModelDescription::checkVariableExistence: "
-			       "no variable named '"+v+"'"));
-    }
+    tfel::raise_if((!this->inputs.contains(v))&&
+		   (!this->outputs.contains(v))&&
+		   (!this->parameters.contains(v))&&
+		   (!this->staticVars.contains(v))&&
+		   (!this->constantMaterialProperties.contains(v)),
+		   "ModelDescription::checkVariableExistence: "
+		   "no variable named '"+v+"'");
   } // end of ModelDescription::checkVariableExistence
   
   void ModelDescription::setGlossaryName(const std::string& v,
 					 const std::string& g){
     this->checkVariableExistence(v);
     const auto& glossary = tfel::glossary::Glossary::getGlossary();
-    if(!glossary.contains(g)){
-      throw(std::runtime_error("ModelDescription::setGlossaryName: "
-			       "no glossary name '"+g+"'"));
-    }
-    if((this->glossaryNames.find(v)!=this->glossaryNames.end())||
-       (this->entryNames.find(v)!=this->entryNames.end())){
-      throw(std::runtime_error("ModelDescription::setGlossaryName: "
-			       "an external name has already been set "
-			       "for variable '"+v+"'"));
-    }
+    tfel::raise_if(!glossary.contains(g),
+		   "ModelDescription::setGlossaryName: "
+		   "no glossary name '"+g+"'");
+    tfel::raise_if((this->glossaryNames.find(v)!=this->glossaryNames.end())||
+		   (this->entryNames.find(v)!=this->entryNames.end()),
+		   "ModelDescription::setGlossaryName: "
+		   "an external name has already been set "
+		   "for variable '"+v+"'");
     if(v!=g){
       this->reserveName(g);
     }
@@ -183,20 +176,17 @@ namespace mfront
   void ModelDescription::setEntryName(const std::string& v,
 				      const std::string& e){
     this->checkVariableExistence(v);
-    if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e,false)){
-      throw(std::runtime_error("ModelDescription::setEntryName: "
-			       "'"+e+"' is a not a valid entry name"));
-    }
-    if(tfel::glossary::Glossary::getGlossary().contains(e)){
-      throw(std::runtime_error("ModelDescription::setEntryName: "
-			       "'"+e+"' is a glossary name"));
-    }
-    if((this->glossaryNames.find(v)!=this->glossaryNames.end())||
-       (this->entryNames.find(v)!=this->entryNames.end())){
-      throw(std::runtime_error("ModelDescription::setEntryName: "
-			       "an external name has already been set "
-			       "for variable '"+v+"'"));
-    }
+    tfel::raise_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e,false),
+		   "ModelDescription::setEntryName: "
+		   "'"+e+"' is a not a valid entry name");
+    tfel::raise_if(tfel::glossary::Glossary::getGlossary().contains(e),
+		   "ModelDescription::setEntryName: "
+		   "'"+e+"' is a glossary name");
+    tfel::raise_if((this->glossaryNames.find(v)!=this->glossaryNames.end())||
+		   (this->entryNames.find(v)!=this->entryNames.end()),
+		   "ModelDescription::setEntryName: "
+		   "an external name has already been set "
+		   "for variable '"+v+"'");
     if(v!=e){
       this->reserveName(e);
     }
@@ -204,8 +194,7 @@ namespace mfront
     this->entryNames.insert({v,e});
   }
 
-  std::set<std::string>&
-  ModelDescription::getReservedNames(){
+  std::set<std::string>& ModelDescription::getReservedNames(){
     return this->reservedNames;
   }
   

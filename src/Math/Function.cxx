@@ -15,6 +15,7 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Parser/Negation.hxx"
 #include"TFEL/Math/Parser/Number.hxx"
 #include"TFEL/Math/Parser/BinaryOperator.hxx"
@@ -49,21 +50,20 @@ namespace tfel
       void
       StandardFunctionBase::throwUnimplementedDifferentiateFunctionException()
       {
-	throw(std::runtime_error("StandardFunctionBase::"
-				 "throwUnimplementedDifferentiateFunctionException : "
-				 "unimplemented feature"));
+	raise("StandardFunctionBase::"
+	      "throwUnimplementedDifferentiateFunctionException : "
+	      "unimplemented feature");
       } // end of StandardFunctionBase::throwUnimplementedDifferentiateFunctionException()
 
       void
       StandardFunctionBase::throwInvalidCallException(const double v,
 						      const int e)
       {
-
-	throw(std::runtime_error("StandardFunctionBase::throwInvalidCallException: "
-				 "call to function failed for value "+std::to_string(v)+
-				 " ("+std::string(strerror(e))+")"));
+	raise("StandardFunctionBase::throwInvalidCallException: "
+	      "call to function failed for value "+std::to_string(v)+" "
+	      "("+std::string(strerror(e))+")");
       } // end of struct StandardFunctionBase::throwInvalidCallException()
-
+      
       TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(exp)
       {
 	auto ce = expr->clone(v);

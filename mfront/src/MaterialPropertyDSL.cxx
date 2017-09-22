@@ -19,6 +19,7 @@
 #include<iterator>
 #include<cstdlib>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/Token.hxx"
 #include"TFEL/System/System.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
@@ -538,7 +539,7 @@ namespace mfront{
   void MaterialPropertyDSL::generateOutputFiles()
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("MaterialPropertyDSL::generateOutputFiles: "+m));}
+      tfel::raise_if(b,"MaterialPropertyDSL::generateOutputFiles: "+m);
     };
     throw_if(this->md.className.empty(),"no material property name defined.");
     throw_if(this->md.f.body.empty(),"no function defined.");

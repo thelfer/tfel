@@ -13,6 +13,7 @@
 
 #include<ostream>
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"MFront/MaterialPropertyDescription.hxx"
 #include"MFront/MaterialPropertyParametersHandler.hxx"
 
@@ -50,11 +51,10 @@ namespace mfront{
     if(!mpd.parameters.empty()){
       os << "\n: ";
       for(auto p = mpd.parameters.begin();p!=mpd.parameters.end();){
-	if(!p->hasAttribute(VariableDescription::defaultValue)){
-	  throw(std::runtime_error("writeAssignMaterialPropertyParameters: "
-				   "no default value for parameter "
-				   "'"+p->name+"'"));
-	}
+	tfel::raise_if(!p->hasAttribute(VariableDescription::defaultValue),
+		       "writeAssignMaterialPropertyParameters: "
+		       "no default value for parameter "
+		       "'"+p->name+"'");
 	const auto pv = p->getAttribute<double>(VariableDescription::defaultValue);
 	os << p->name << "(" << pv  << ")";
 	if(++p!=mpd.parameters.end()){

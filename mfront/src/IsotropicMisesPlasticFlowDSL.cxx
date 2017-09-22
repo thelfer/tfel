@@ -13,7 +13,7 @@
 
 #include<string>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/DSLFactory.hxx"
@@ -66,9 +66,9 @@ namespace mfront{
     IsotropicBehaviourDSLBase::endsInputFileProcessing();
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(!this->mb.hasCode(h,BehaviourData::FlowRule)){
-      throw(std::runtime_error("IsotropicMisesCreepDSL::"
-			       "endsInputFileProcessing: "
-			       "no flow rule defined"));
+      this->throwRuntimeError("IsotropicMisesCreepDSL::"
+			      "endsInputFileProcessing",
+			      "no flow rule defined");
     }
   } // end of IsotropicMisesPlasticFlowDSL::endsInputFileProcessing
 
@@ -78,9 +78,15 @@ namespace mfront{
   {
     this->checkBehaviourFile(os);
     if(!this->mb.hasCode(h,BehaviourData::FlowRule)){
-      throw(std::runtime_error("IsotropicBehaviourDSLBase::endsInputFileProcessing: "
-			       "no flow rule defined for hypothesis "
-			       "'"+ModellingHypothesis::toString(h)+"'."));
+      const auto msg = [&h] () -> std::string {
+	if(h==ModellingHypothesis::UNDEFINEDHYPOTHESIS){
+	  return "no flow rule defined.";
+	}
+	return "no flow rule defined for hypothesis "
+	"'"+ModellingHypothesis::toString(h)+"'.";
+      }();
+      this->throwRuntimeError("IsotropicBehaviourDSLBase::"
+			      "endsInputFileProcessing: ",msg);
     }
     os << "void computeFlow(){\n"
        << "using namespace std;\n"

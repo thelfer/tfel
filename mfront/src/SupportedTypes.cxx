@@ -16,6 +16,7 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/VariableDescription.hxx"
 #include"MFront/SupportedTypes.hxx"
@@ -112,8 +113,8 @@ namespace mfront{
     case 3:
       return scalarSize+3*tvectorSize+6*stensorSize+9*tensorSize;
     }
-    throw(std::runtime_error("SupportedTypes::TypeSize::getValueForDimension : "
-			     "invalid type size"));
+    tfel::raise("SupportedTypes::TypeSize::getValueForDimension : "
+		"invalid type size");
   } // end of SupportedTypes::TypeSize::getValueForDimension
 
   int
@@ -121,8 +122,8 @@ namespace mfront{
     return this->getValueForDimension(tfel::material::getSpaceDimension(h));
   }
   
-  std::ostream&
-  operator << (std::ostream& os,const SupportedTypes::TypeSize& size)
+  std::ostream& operator << (std::ostream& os,
+			     const SupportedTypes::TypeSize& size)
   {
     bool first = true;
     if(size.scalarSize!=0){
@@ -181,10 +182,9 @@ namespace mfront{
   {
     const auto& flags = SupportedTypes_getFlags();
     const auto p = flags.find(name);
-    if(p==flags.end()){
-      throw(std::runtime_error("SupportedTypes::getTypeTag : "
-			       "'"+name+"' is not a supported type."));
-    }
+    tfel::raise_if(p==flags.end(),
+		   "SupportedTypes::getTypeTag : "
+		   "'"+name+"' is not a supported type.");
     return p->second;
   }
 
@@ -206,7 +206,7 @@ namespace mfront{
       res=TypeSize(0u,0u,0u,a);
       break;
     default : 
-      throw(std::runtime_error("SupportedTypes::getTypeSize: internal error."));
+      tfel::raise("SupportedTypes::getTypeSize: internal error.");
     }
     return res;
   }
@@ -229,8 +229,8 @@ namespace mfront{
     } else if (type=="DeformationGradientTensor"){
       return "DeformationGradientRateTensor";
     } else {
-      throw(std::runtime_error("SupportedTypes::getTimeDerivativeType: "
-			       "internal error, unsupported type '"+type+"'"));
+      tfel::raise("SupportedTypes::getTimeDerivativeType: "
+		  "internal error, unsupported type '"+type+"'");
     }
   }
 

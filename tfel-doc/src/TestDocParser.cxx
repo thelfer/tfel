@@ -16,6 +16,7 @@
 #include<stdexcept>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/Global.hxx"
 #include"TFEL/Utilities/TestDocParser.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
@@ -40,18 +41,16 @@ namespace tfel{
       auto pe = this->end();
       try{
 	while(p!=pe){
-	  if(p->flag!=Token::String){
-	    throw(runtime_error("TestDocParser::addDocumentation : "
-				"expected to read a string"));
-	  }
+	  raise_if(p->flag!=Token::String,
+		   "TestDocParser::addDocumentation : "
+		   "expected to read a string");
 	  TestDocumentation t;
 	  this->readString(t.name,p);
 	  for(const auto& td : tests){
 	    for(const auto& d : td.second){
-	      if(t.name==d.name){
-		throw(runtime_error("TestDocParser::addDocumentation : "
-				    "test '"+t.name+"' already described"));	  
-	      }
+	      raise_if(t.name==d.name,
+		       "TestDocParser::addDocumentation : "
+		       "test '"+t.name+"' already described");	  
 	    }
 	  }
 	  this->checkNotEndOfFile(p);
@@ -60,9 +59,7 @@ namespace tfel{
 	  this->treatTest(t,c,p);
 	  this->checkNotEndOfFile(p);
 	  this->readSpecifiedToken("}",p);
-	  if(c.empty()){
-	    throw(runtime_error("no category defined for test '"+t.name+"'"));
-	  }
+	  raise_if(c.empty(),"no category defined for test '"+t.name+"'");
 	  tests[c].push_back(t);
 	}
       } catch(exception& e){
@@ -72,14 +69,13 @@ namespace tfel{
 	if(p!=this->end()){
 	  msg << "\nError at line " << p->line;
 	}
-	throw(runtime_error(msg.str()));
+	raise(msg.str());
       }
     }
 
-    void
-    TestDocParser::treatTest(TestDocumentation& t,
-			     std::string& c,
-			     const_iterator& p)
+    void TestDocParser::treatTest(TestDocumentation& t,
+				  std::string& c,
+				  const_iterator& p)
     {
       using namespace std;
       using namespace tfel::utilities;
@@ -114,8 +110,8 @@ namespace tfel{
 	} else if(key=="keys"){
 	  this->treatIndex(t.keys,t.name,p,true);
 	} else {
-	  throw(runtime_error("TestDocParser::treatTest : "
-			      "unsupported keyword '"+key+"'"));
+	  raise("TestDocParser::treatTest : "
+		"unsupported keyword '"+key+"'");
 	}
 	this->readSpecifiedToken(";",p);
 	this->checkNotEndOfFile(p);
@@ -129,10 +125,9 @@ namespace tfel{
 				  const_iterator& p)
     {
       this->checkNotEndOfFile(p);
-      if(!s.empty()){
-	throw(std::runtime_error("TestDocParser::getStringValue : '"+
-				 v+"' already defined for test '"+name+"'"));
-      }
+      raise_if(!s.empty(),
+	       "TestDocParser::getStringValue : '"+
+	       v+"' already defined for test '"+name+"'");
       this->readString(s,p);
     }
 
@@ -143,11 +138,10 @@ namespace tfel{
     {
       this->checkNotEndOfFile(p);
       const auto l = (p->value!="{") ? this->readString(p) : "english";
-      if(dm.find(l)!=dm.end()){
-	throw(std::runtime_error("TestDocParser::treatDescription : "
-				 "description already defined for language '"+l+
-				 " 'for test '"+n+"'"));
-      }
+      raise_if(dm.find(l)!=dm.end(),
+	       "TestDocParser::treatDescription : "
+	       "description already defined for language '"+l+
+	       " 'for test '"+n+"'");
       auto& d = dm[l];
       this->readSpecifiedToken("{",p);
       this->checkNotEndOfFile(p);
@@ -212,11 +206,10 @@ namespace tfel{
 	    p2 = i.insert(make_pair(key2,vector<string>())).first;
 	  }
 	  auto& keys = p2->second;
-	  if(find(keys.begin(),keys.end(),key1)!=keys.end()){
-	    string msg("TestDocParser::treatIndex : ");
-	    msg += "key '"+key1+"' already defined for entry '"+key2+"' for test '"+n+"'";
-	    throw(runtime_error(msg));
-	  }
+	  raise_if(find(keys.begin(),keys.end(),key1)!=keys.end(),
+		   "TestDocParser::treatIndex: "
+		   "key '"+key1+"' already defined for entry "
+		   "'"+key2+"' for test '"+n+"'");
 	  keys.push_back(key1);
 	} else {
 	  auto p2 = i.find(key1);
@@ -227,11 +220,9 @@ namespace tfel{
 	if(p->value!="}"){
 	  this->readSpecifiedToken(",",p);
 	  this->checkNotEndOfFile(p);
-	  if(p->value==","){
-	    string msg("TestDocParser::treatIndex : ");
-	    msg += "unexpected comma";
-	    throw(runtime_error(msg));
-	  }
+	  raise_if(p->value==",",
+		   "TestDocParser::treatIndex: "
+		   "unexpected comma");
 	}
       }
       this->checkNotEndOfFile(p);

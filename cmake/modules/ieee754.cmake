@@ -1,4 +1,4 @@
-option(enable-random-tests "allow tests based on random rounding mode" ON)
+option(enable-random-tests "allow tests based on random rounding mode" OFF)
 set(IEEE754_ROUNDING_MODES )
 if(NOT TFEL_BROKEN_LIBMATH)
   list(APPEND IEEE754_ROUNDING_MODES "UpWard")

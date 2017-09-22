@@ -12,6 +12,7 @@
 
 #include<sstream>
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Parser/ExternalCastemFunction.hxx"
 
 namespace tfel
@@ -39,14 +40,12 @@ namespace tfel
       ExternalCastemFunction::setVariableValue(const std::vector<double>::size_type pos,
 					       const double value)
       {
-	using namespace std;
-	if(pos>=this->variables.size()){
-	  ostringstream msg;
-	  msg << "ExternalCFunctionBase::setVariableValue : "
-	      << "invalid index " << pos 
-	      << " (function has only " << this->variables.size() << " variables).";
-	  throw(runtime_error(msg.str()));
-	}
+	raise_if(pos>=this->variables.size(),
+		 "ExternalCFunctionBase::setVariableValue: "
+		 "invalid index "+std::to_string(pos)+
+		 " (function has only "+
+		 std::to_string(this->variables.size())+
+		 " variables).");
 	this->variables[pos] = value;
       } // end of ExternalCastemFunction::setVariableValue
 
@@ -71,8 +70,9 @@ namespace tfel
       std::shared_ptr<ExternalFunction>
       ExternalCastemFunction::createFunctionByChangingParametersIntoVariables(const std::vector<std::string>&) const
       {
-	throw(std::runtime_error("ExternalCastemFunction::createFunctionByChangingParametersIntoVariables : "
-				 "invalid call"));
+	raise("ExternalCastemFunction::"
+	      "createFunctionByChangingParametersIntoVariables : "
+	      "invalid call");
       } // end of ExternalCastemFunction::createFunctionByChangingParametersIntoVariables
 
       std::shared_ptr<ExternalFunction>
@@ -96,19 +96,15 @@ namespace tfel
       std::shared_ptr<ExternalFunction>
       ExternalCastemFunction::differentiate(const std::vector<double>::size_type) const
       {
-	using namespace std;
-	string msg("ExternalCastemFunction::differentiate : ");
-	msg += "can't differentiate external function";
-	throw(runtime_error(msg));
+	raise("ExternalCastemFunction::differentiate: "
+	      "can't differentiate external function");
       } // end of ExternalCastemFunction::differentiate
 
       std::shared_ptr<ExternalFunction>
       ExternalCastemFunction::differentiate(const std::string&) const
       {
-	using namespace std;
-	string msg("ExternalCastemFunction::differentiate : ");
-	msg += "can't differentiate external function";
-	throw(runtime_error(msg));
+	raise("ExternalCastemFunction::differentiate: "
+	      "can't differentiate external function");
       } // end of ExternalCastemFunction::differentiate
 
       ExternalCastemFunction::~ExternalCastemFunction() = default;

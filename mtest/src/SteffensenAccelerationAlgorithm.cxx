@@ -14,7 +14,7 @@
 #include<limits>
 #include<ostream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/SteffensenAccelerationAlgorithm.hxx"
 
@@ -25,42 +25,27 @@ namespace mtest
     : stat(-1)
   {} // end of SteffensenAccelerationAlgorithm::SteffensenAccelerationAlgorithm
     
-  std::string
-  SteffensenAccelerationAlgorithm::getName() const
+  std::string SteffensenAccelerationAlgorithm::getName() const
   {
     return "Steffensen";
   } // end of SteffensenAccelerationAlgorithm::getName
 
-  void
-  SteffensenAccelerationAlgorithm::setParameter(const std::string& p,
-						     const std::string& v)
+  void  SteffensenAccelerationAlgorithm::setParameter(const std::string& p,
+						      const std::string& v)
   {
-    using namespace std;
-    const string m = "SteffensenAccelerationAlgorithm::setParameter";
+    const std::string m = "SteffensenAccelerationAlgorithm::setParameter";
     if(p=="AccelerationTrigger"){
-      const unsigned short i =
-	AccelerationAlgorithm::convertToUnsignedShort(m,v);
-      if(this->stat!=-1){
-	string msg("SteffensenAccelerationAlgorithm::setParameter : "
-		   "the castem acceleration trigger has already "
-		   "been defined");
-	throw(runtime_error(msg));
-      }
-      if(i<3){
-	string msg("SteffensenAccelerationAlgorithm::setParameter",
-		   "invalid acceleration trigger value.");
-	throw(runtime_error(msg));
-      }
+      const auto i = AccelerationAlgorithm::convertToUnsignedShort(m,v);
+      tfel::raise_if(this->stat!=-1,m+": the acceleration trigger "
+		     "has already been defined");
+      tfel::raise_if(i<3,m+": invalid acceleration trigger value.");
       this->stat = i;
     } else {
-      string msg("SteffensenAccelerationAlgorithm::setParameter : "
-		 "invalid parameter '"+p+"'.");
-      throw(runtime_error(msg));
+      tfel::raise(m+": invalid parameter '"+p+"'.");
     }
   } // end of SteffensenAccelerationAlgorithm::setParameter
 
-  void
-  SteffensenAccelerationAlgorithm::initialize(const unsigned short psz)
+  void SteffensenAccelerationAlgorithm::initialize(const unsigned short psz)
   {
     this->sta_u0.resize(psz,0.);      
     this->sta_u1.resize(psz,0.);
@@ -72,12 +57,10 @@ namespace mtest
     }
   } // end of SteffensenAccelerationAlgorithm::initialize
 
-  void
-  SteffensenAccelerationAlgorithm::preExecuteTasks()
+  void SteffensenAccelerationAlgorithm::preExecuteTasks()
   {} // end of SteffensenAccelerationAlgorithm::preExecuteTasks
 
-  void
-  SteffensenAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
+  void SteffensenAccelerationAlgorithm::execute(tfel::math::vector<real>& u1,
 						const tfel::math::vector<real>&,
 						const tfel::math::vector<real>&,
 						const real eeps,
@@ -109,8 +92,7 @@ namespace mtest
     }
   } // end of SteffensenAccelerationAlgorithm::execute
 
-  void
-  SteffensenAccelerationAlgorithm::postExecuteTasks()
+  void SteffensenAccelerationAlgorithm::postExecuteTasks()
   {} // end of SteffensenAccelerationAlgorithm::postExecuteTasks
 
   SteffensenAccelerationAlgorithm::~SteffensenAccelerationAlgorithm() = default;

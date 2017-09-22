@@ -32,106 +32,96 @@ namespace mfront{
   } // end of registerNewCallBack
 
   template<typename Child>
-  void
-  BehaviourDSLBase<Child>::registerDefaultCallBacks()
+  void BehaviourDSLBase<Child>::registerDefaultCallBacks()
   {
-    this->registerNewCallBack(";",&Child::treatLonelySeparator);
-    this->registerNewCallBack("@DSL",&Child::treatParser);
-    this->registerNewCallBack("@Parser",&Child::treatParser);
-    this->registerNewCallBack("@Model",&Child::treatModel);
-    this->registerNewCallBack("@Brick",&Child::treatBrick);
-    this->registerNewCallBack("@ModellingHypothesis",
+    auto add = [this](const std::string& k,
+		      const MemberFuncPtr f){
+      this->registerNewCallBack(k,f);
+    };
+    add(";",&Child::treatLonelySeparator);
+    add("@DSL",&Child::treatParser);
+    add("@Parser",&Child::treatParser);
+    add("@Model",&Child::treatModel);
+    add("@Brick",&Child::treatBrick);
+    add("@ModellingHypothesis",
 			      &Child::treatModellingHypothesis);
-    this->registerNewCallBack("@ModellingHypotheses",
+    add("@ModellingHypotheses",
 			      &Child::treatModellingHypotheses);
-    this->registerNewCallBack("@Import",&Child::treatImport);
-    this->registerNewCallBack("@Material",&Child::treatMaterial);
-    this->registerNewCallBack("@Library",&Child::treatLibrary);
-    this->registerNewCallBack("@Profiling",
+    add("@Import",&Child::treatImport);
+    add("@Material",&Child::treatMaterial);
+    add("@Library",&Child::treatLibrary);
+    add("@Profiling",
 			      &Child::treatProfiling);
-    this->registerNewCallBack("@Behaviour",&Child::treatBehaviour);
-    this->registerNewCallBack("@Author",&Child::treatAuthor);
-    this->registerNewCallBack("@Date",&Child::treatDate);
-    this->registerNewCallBack("@MFront",&Child::treatMFront);
-    this->registerNewCallBack("@Link",&Child::treatLink);
-    this->registerNewCallBack("@Includes",&Child::treatIncludes);
-    this->registerNewCallBack("@Members",&Child::treatMembers);
-    this->registerNewCallBack("@Coef",&Child::treatCoef);
-    this->registerNewCallBack("@MaterialProperty",&Child::treatCoef);
-    this->registerNewCallBack("@LocalVar",&Child::treatLocalVar);
-    this->registerNewCallBack("@LocalVariable",&Child::treatLocalVar);
-    this->registerNewCallBack("@Parameter",&Child::treatParameter);
-    this->registerNewCallBack("@StateVar",&Child::treatStateVariable);
-    this->registerNewCallBack("@StateVariable",&Child::treatStateVariable);
-    this->registerNewCallBack("@AuxiliaryStateVar",
-			      &Child::treatAuxiliaryStateVariable);
-    this->registerNewCallBack("@AuxiliaryStateVariable",
-			      &Child::treatAuxiliaryStateVariable);
-    this->registerNewCallBack("@ExternalStateVar",&Child::treatExternalStateVariable);
-    this->registerNewCallBack("@ExternalStateVariable",
-			      &Child::treatExternalStateVariable);
-    this->registerNewCallBack("@InitLocalVars",
-			      &Child::treatInitLocalVariables);
-    this->registerNewCallBack("@InitLocalVariables",
-			      &Child::treatInitLocalVariables);
-    this->registerNewCallBack("@InitializeLocalVariables",
-			      &Child::treatInitLocalVariables);
-    this->registerNewCallBack("@MinimalTimeStepScalingFactor",
-			      &Child::treatMinimalTimeStepScalingFactor);
-    this->registerNewCallBack("@MaximalTimeStepScalingFactor",
-			      &Child::treatMaximalTimeStepScalingFactor);
-    this->registerNewCallBack("@APrioriTimeStepScalingFactor",
-			      &Child::treatAPrioriTimeStepScalingFactor);
-    this->registerNewCallBack("@Integrator",&Child::treatIntegrator);
-    this->registerNewCallBack("@APosterioriTimeStepScalingFactor",
-			      &Child::treatAPosterioriTimeStepScalingFactor);
-    this->registerNewCallBack("@Interface",&Child::treatInterface);
-    this->registerNewCallBack("@StaticVar",&Child::treatStaticVar);
-    this->registerNewCallBack("@StaticVariable",&Child::treatStaticVar);
-    this->registerNewCallBack("@IntegerConstant",
-			      &Child::treatIntegerConstant);
-    this->registerNewCallBack("@UseQt",&Child::treatUseQt);
-    this->registerNewCallBack("@Description",&Child::treatDescription);
-    this->registerNewCallBack("@Bounds",&Child::treatBounds);
-    this->registerNewCallBack("@PhysicalBounds",&Child::treatPhysicalBounds);
-    this->registerNewCallBack("@RequireStiffnessOperator",
-			      &Child::treatRequireStiffnessOperator);
-    this->registerNewCallBack("@RequireStiffnessTensor",
-			      &Child::treatRequireStiffnessTensor);
-    this->registerNewCallBack("@RequireThermalExpansionCoefficientTensor",
-			      &Child::treatRequireThermalExpansionCoefficientTensor);
-    this->registerNewCallBack("@OrthotropicBehaviour",&Child::treatOrthotropicBehaviour);
-    this->registerNewCallBack("@IsotropicElasticBehaviour",&Child::treatIsotropicElasticBehaviour);
-    this->registerNewCallBack("@IsotropicBehaviour",&Child::treatIsotropicBehaviour);
-    this->registerNewCallBack("@PredictionOperator",&Child::treatPredictionOperator);
-    this->registerNewCallBack("@Private",&Child::treatPrivate);
-    this->registerNewCallBack("@Sources",&Child::treatSources);
-    this->registerNewCallBack("@UpdateAuxiliaryStateVars",
-			      &Child::treatUpdateAuxiliaryStateVariables);
-    this->registerNewCallBack("@UpdateAuxiliaryStateVariables",
-			      &Child::treatUpdateAuxiliaryStateVariables);
-    this->registerNewCallBack("@ComputeThermalExpansion",
-			      &Child::treatComputeThermalExpansion);
-    this->registerNewCallBack("@ComputeStressFreeExpansion",
-			      &Child::treatComputeStressFreeExpansion);
-    this->registerNewCallBack("@Swelling",&Child::treatSwelling);
-    this->registerNewCallBack("@AxialGrowth",&Child::treatAxialGrowth);
-    this->registerNewCallBack("@Relocation",&Child::treatRelocation);
-    this->registerNewCallBack("@InternalEnergy",&Child::treatInternalEnergy);
-    this->registerNewCallBack("@DissipatedEnergy",&Child::treatDissipatedEnergy);
-    this->registerNewCallBack("@CrystalStructure",&Child::treatCrystalStructure);
-    this->registerNewCallBack("@SlipSystem",&Child::treatSlipSystem);
-    this->registerNewCallBack("@GlidingSystem",&Child::treatSlipSystem);
-    this->registerNewCallBack("@SlidingSystem",&Child::treatSlipSystem);
-    this->registerNewCallBack("@SlipSystems",&Child::treatSlipSystems);
-    this->registerNewCallBack("@GlidingSystems",&Child::treatSlipSystems);
-    this->registerNewCallBack("@SlidingSystems",&Child::treatSlipSystems);
-    this->registerNewCallBack("@InteractionMatrix",&Child::treatInteractionMatrix);
+    add("@Behaviour",&Child::treatBehaviour);
+    add("@Author",&Child::treatAuthor);
+    add("@Date",&Child::treatDate);
+    add("@MFront",&Child::treatMFront);
+    add("@Link",&Child::treatLink);
+    add("@Includes",&Child::treatIncludes);
+    add("@Members",&Child::treatMembers);
+    add("@Coef",&Child::treatCoef);
+    add("@MaterialProperty",&Child::treatCoef);
+    add("@LocalVar",&Child::treatLocalVar);
+    add("@LocalVariable",&Child::treatLocalVar);
+    add("@Parameter",&Child::treatParameter);
+    add("@StateVar",&Child::treatStateVariable);
+    add("@StateVariable",&Child::treatStateVariable);
+    add("@AuxiliaryStateVar",&Child::treatAuxiliaryStateVariable);
+    add("@AuxiliaryStateVariable",&Child::treatAuxiliaryStateVariable);
+    add("@ExternalStateVar",&Child::treatExternalStateVariable);
+    add("@ExternalStateVariable",&Child::treatExternalStateVariable);
+    add("@InitLocalVars",&Child::treatInitLocalVariables);
+    add("@InitLocalVariables",&Child::treatInitLocalVariables);
+    add("@InitializeLocalVariables",&Child::treatInitLocalVariables);
+    add("@MinimalTimeStepScalingFactor",
+	&Child::treatMinimalTimeStepScalingFactor);
+    add("@MaximalTimeStepScalingFactor",
+	&Child::treatMaximalTimeStepScalingFactor);
+    add("@APrioriTimeStepScalingFactor",
+	&Child::treatAPrioriTimeStepScalingFactor);
+    add("@Integrator",&Child::treatIntegrator);
+    add("@APosterioriTimeStepScalingFactor",
+	&Child::treatAPosterioriTimeStepScalingFactor);
+    add("@Interface",&Child::treatInterface);
+    add("@StaticVar",&Child::treatStaticVar);
+    add("@StaticVariable",&Child::treatStaticVar);
+    add("@IntegerConstant",&Child::treatIntegerConstant);
+    add("@UseQt",&Child::treatUseQt);
+    add("@Description",&Child::treatDescription);
+    add("@Bounds",&Child::treatBounds);
+    add("@PhysicalBounds",&Child::treatPhysicalBounds);
+    add("@RequireStiffnessOperator",
+	&Child::treatRequireStiffnessOperator);
+    add("@RequireStiffnessTensor",&Child::treatRequireStiffnessTensor);
+    add("@RequireThermalExpansionCoefficientTensor",
+	&Child::treatRequireThermalExpansionCoefficientTensor);
+    add("@OrthotropicBehaviour",&Child::treatOrthotropicBehaviour);
+    add("@IsotropicElasticBehaviour",&Child::treatIsotropicElasticBehaviour);
+    add("@IsotropicBehaviour",&Child::treatIsotropicBehaviour);
+    add("@PredictionOperator",&Child::treatPredictionOperator);
+    add("@Private",&Child::treatPrivate);
+    add("@Sources",&Child::treatSources);
+    add("@UpdateAuxiliaryStateVars",&Child::treatUpdateAuxiliaryStateVariables);
+    add("@UpdateAuxiliaryStateVariables",&Child::treatUpdateAuxiliaryStateVariables);
+    add("@ComputeThermalExpansion",&Child::treatComputeThermalExpansion);
+    add("@ComputeStressFreeExpansion",&Child::treatComputeStressFreeExpansion);
+    add("@Swelling",&Child::treatSwelling);
+    add("@AxialGrowth",&Child::treatAxialGrowth);
+    add("@Relocation",&Child::treatRelocation);
+    add("@InternalEnergy",&Child::treatInternalEnergy);
+    add("@DissipatedEnergy",&Child::treatDissipatedEnergy);
+    add("@CrystalStructure",&Child::treatCrystalStructure);
+    add("@SlipSystem",&Child::treatSlipSystem);
+    add("@GlidingSystem",&Child::treatSlipSystem);
+    add("@SlidingSystem",&Child::treatSlipSystem);
+    add("@SlipSystems",&Child::treatSlipSystems);
+    add("@GlidingSystems",&Child::treatSlipSystems);
+    add("@SlidingSystems",&Child::treatSlipSystems);
+    add("@InteractionMatrix",&Child::treatInteractionMatrix);
   } // end of BehaviourDSLBase<Child>::registerDefaultCallBacks
 
   template<typename Child>
-  void
-  BehaviourDSLBase<Child>::getKeywordsList(std::vector<std::string>& k) const
+  void BehaviourDSLBase<Child>::getKeywordsList(std::vector<std::string>& k) const
   {
     for(const auto& c : this->callBacks){
       k.push_back(c.first);
@@ -159,7 +149,6 @@ namespace mfront{
 
   template<typename Child>
   BehaviourDSLBase<Child>::BehaviourDSLBase()
-    : BehaviourDSLCommon()
   {
     // Register callbacks
     this->registerDefaultCallBacks();

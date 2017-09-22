@@ -21,6 +21,7 @@
 
 #include<fstream>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Tests/TestProxy.hxx"
 #include"TFEL/Tests/TestManager.hxx"
 #include"TFEL/Tests/TestFunctionWrapper.hxx"
@@ -33,16 +34,9 @@ TFEL_TESTS_FUNCTION(test1,"TFEL/Tests","suite1")
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main()
 {
-  using namespace std;
-  using namespace tfel::tests;
-  ofstream f("testproxy2.txt");
-  if(!f){
-    string msg("can't open file 'testproxy2.txt'");
-    throw(runtime_error(msg));
-  }
-  auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(f,false);
-  TestResult r = manager.execute();
-  assert(r.success());
-  return EXIT_SUCCESS;
+  std::ofstream f("testproxy2.txt");
+  tfel::raise_if(!f,"can't open file 'testproxy2.txt'");
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(f,false);
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 } // end of main

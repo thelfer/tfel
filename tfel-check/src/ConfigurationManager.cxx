@@ -12,6 +12,7 @@
  */
 
 #include<iostream>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/Data.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
 #include"TFEL/Check/ConfigurationManager.hxx"
@@ -53,11 +54,10 @@ namespace tfel{
 	return *this;
       }
       auto r = ConfigurationManager::extract(n);
-      if(r.first.empty()){
-	throw(std::runtime_error("ConfigurationManager::"
-				 "getConfigurationManager: "
-				 "invalid location '"+n+"'"));
-      }
+      raise_if(r.first.empty(),
+	       "ConfigurationManager::"
+	       "getConfigurationManager: "
+	       "invalid location '"+n+"'");
       if(this->subordinates.find(r.first)==this->subordinates.end()){
 	this->subordinates.insert({r.first,this->c});
       }
@@ -68,9 +68,9 @@ namespace tfel{
     ConfigurationManager::getConfigurationManager(const std::string& n) const
     {
       auto throw_if = [](const bool b,const std::string& m){
-	if(b){throw(std::runtime_error("ConfigurationManager::"
-				       "getConfigurationManager: "+m));}
-      };      
+	raise_if(b,"ConfigurationManager::"
+		 "getConfigurationManager: "+m);
+      };
       if(n.empty()){
 	return *this;
       }
@@ -96,8 +96,8 @@ namespace tfel{
     void parse(ConfigurationManager& c,const std::string& n){
       using namespace tfel::utilities;
       auto throw_if = [](const bool b,const std::string& m){
-	if(b){throw(std::runtime_error("tfel::check::parse: "+m));}
-      };      
+	raise_if(b,"tfel::check::parse: "+m);
+      };
       CxxTokenizer tokenizer;
       tokenizer.treatCharAsString(true);
       tokenizer.mergeStrings(false);

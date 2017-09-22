@@ -6,6 +6,7 @@
  */
 
 #include<sstream>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Material/OutOfBoundsPolicy.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/MTest.hxx"
@@ -51,8 +52,7 @@ namespace mtest{
     }
   } // end of selectVariables
 
-  static unsigned short
-  getSTensorSize(const unsigned short d)
+  static unsigned short getSTensorSize(const unsigned short d)
   {
     if(d==1){
       return 3;
@@ -61,12 +61,10 @@ namespace mtest{
     } else if(d==3){
       return 6;
     }
-    throw(std::runtime_error("mfront::getSTensorSize : "
-			     "invalid dimension"));
+    tfel::raise("mfront::getSTensorSize: invalid dimension");
   }
 
-  static unsigned short
-  getTensorSize(const unsigned short d)
+  static unsigned short getTensorSize(const unsigned short d)
   {
     if(d==1){
       return 3;
@@ -75,13 +73,11 @@ namespace mtest{
     } else if(d==3){
       return 9;
     }
-    throw(std::runtime_error("mfront::getTensorSize : "
-			     "invalid dimension"));
+    tfel::raise("mfront::getTensorSize: invalid dimension");
   }
 
-  void
-  SingleStructureSchemeParser::handleHandleThermalExpansion(SingleStructureScheme& t,
-							    tokens_iterator& p)
+  void SingleStructureSchemeParser::handleHandleThermalExpansion(SingleStructureScheme& t,
+								 tokens_iterator& p)
   {
     bool b;
     this->checkNotEndOfLine("SingleStructureSchemeParser::handleHandleThermalExpansion",
@@ -158,11 +154,9 @@ namespace mtest{
 	i = "CalculiX";
       }
 #endif /* HAVE_CALCULIX */
-      if(i.empty()){
-	throw(std::runtime_error("SingleStructureSchemeParser::handleBehaviour: "
-				 "unknown interface '"+p->value+"'"));
-      }
-      
+      tfel::raise_if(i.empty(),
+		     "SingleStructureSchemeParser::handleBehaviour: "
+		     "unknown interface '"+p->value+"'");
       ++p;
       this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",p,
 			      this->tokens.end());
@@ -209,8 +203,8 @@ namespace mtest{
        (p->value=="function")){
       i = p->value;
     } else {
-      throw(runtime_error("SingleStructureSchemeParser::handleMaterialProperty: "
-			  "unknown interface '"+p->value+"'"));
+      tfel::raise("SingleStructureSchemeParser::handleMaterialProperty: "
+		  "unknown interface '"+p->value+"'");
     }
     ++p;
     this->readSpecifiedToken("SingleStructureSchemeParser::handleMaterialProperty",">",p,
@@ -235,8 +229,8 @@ namespace mtest{
       mpev = shared_ptr<Evolution>(new CastemEvolution(l,f,t.getEvolutions()));
       t.setMaterialProperty(n,mpev,true);
     } else {
-      throw(runtime_error("SingleStructureSchemeParser::handleMaterialProperty: "
-			  "unknown interface '"+i+"'"));
+      tfel::raise("SingleStructureSchemeParser::handleMaterialProperty: "
+		  "unknown interface '"+i+"'");
     }
     this->readSpecifiedToken("SingleStructureSchemeParser::handleMaterialProperty",";",p,
 			     this->tokens.end());
@@ -256,8 +250,8 @@ namespace mtest{
     } else if(s=="Strict"){
       t.setOutOfBoundsPolicy(tfel::material::Strict);
     } else {
-      throw(std::runtime_error("SingleStructureSchemeParser::handleOutOfBoundsPolicy: "
-			       "unsupported policy '"+s+"'"));
+      tfel::raise("SingleStructureSchemeParser::handleOutOfBoundsPolicy: "
+		  "unsupported policy '"+s+"'");
     }
   } // end of SingleStructureSchemeParser::handleOutOfBoundsPolicy
 
@@ -304,12 +298,10 @@ namespace mtest{
     const vector<string>& ivsnames = b->getInternalStateVariablesNames();
     vector<string> ivs;
     selectVariables(ivs,ivsnames,n);
-    if(ivs.empty()){
-      string msg("SingleStructureSchemeParser::handleInternalStateVariable : ");
-      msg += "the behaviour does not declare an internal state ";
-      msg += "variable named '"+n+"'";
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(ivs.empty(),
+		   "SingleStructureSchemeParser::handleInternalStateVariable: "
+		   "the behaviour does not declare an internal state "
+		   "variable named '"+n+"'");
     if(ivs.size()==1){
       this->setInternalStateVariableValue(t,p,ivs[0]);
     } else {
@@ -318,11 +310,9 @@ namespace mtest{
       if(type==0){
 	uniform = p->value!="{";
       } else {
-	if(p->value!="{"){
-	  string msg("SingleStructureSchemeParser::handleInternalStateVariable : ");
-	  msg += "unexpected token '"+n+"'";
-	  throw(runtime_error(msg));
-	}
+	tfel::raise_if(p->value!="{",
+		       "SingleStructureSchemeParser::handleInternalStateVariable: "
+		       "unexpected token '"+n+"'");
 	++p;
 	this->checkNotEndOfLine("SingleStructureSchemeParser::handleInternalStateVariable",p,
 				this->tokens.end());
@@ -386,9 +376,9 @@ namespace mtest{
       this->readArrayOfSpecifiedSize(v,t,p);
       t.setTensorInternalStateVariableInitialValues(n,v);
     } else {
-      throw(runtime_error("SingleStructureSchemeParser::setInternalStateVariableValue : "
-			  "unsupported state variable type for "
-			  "internal state variable '"+n+"'"));
+      tfel::raise("SingleStructureSchemeParser::setInternalStateVariableValue : "
+		  "unsupported state variable type for "
+		  "internal state variable '"+n+"'");
     }
   }
 
@@ -442,7 +432,7 @@ namespace mtest{
       msg << "SingleStructureSchemeParser::SingleStructureScheme : error while "
 	  << "parsing file '" << this->file << "' at line '"
 	  << line << "'.\n" << e.what();
-      throw(std::runtime_error(msg.str()));
+      tfel::raise(msg.str());
     }
     return true;
   } // end of SingleStructureSchemeParser::treatKeyword

@@ -13,6 +13,7 @@
 
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/Data.hxx"
 #include"MFront/AbstractBehaviourBrick.hxx"
 #include"MFront/AbstractBehaviourBrickFactory.hxx"
@@ -48,10 +49,9 @@ namespace mfront
 				     const AbstractBehaviourBrick::DataMap& d) const
   {
     auto pc = this->constructors.find(a);
-    if(pc==this->constructors.end()){
-      throw(std::runtime_error("AbstractBehaviourBrickFactory::getAbstractBehaviourBrick : "
-			       "no AbstractBehaviourBrick '"+a+"' registred"));
-    }
+    tfel::raise_if(pc==this->constructors.end(),
+		   "AbstractBehaviourBrickFactory::getAbstractBehaviourBrick : "
+		   "no AbstractBehaviourBrick '"+a+"' registred");
     return (*(pc->second))(dsl,mb,p,d);
   }
 
@@ -69,10 +69,9 @@ namespace mfront
   AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick(const std::string& a,
 								const constructor c)
   {
-    if(!this->constructors.insert({a,c}).second){
-      throw(std::runtime_error("AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick : "
-			       "BehaviourBrick '"+a+"' already declared"));
-    }
+    tfel::raise_if(!this->constructors.insert({a,c}).second,
+		   "AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick : "
+		   "BehaviourBrick '"+a+"' already declared");
   } // end of AbstractBehaviourBrickFactory::registerAbstractBehaviourBrick
 
 } // end of namespace mfront

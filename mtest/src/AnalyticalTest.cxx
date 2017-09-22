@@ -13,7 +13,7 @@
 
 #include<cmath>
 #include<sstream>
-
+#include"TFEL/Raise.hxx"
 #include"MTest/Evolution.hxx"
 #include"MTest/AnalyticalTest.hxx"
 
@@ -38,7 +38,7 @@ namespace mtest
 			const unsigned int)
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("AnalyticalTest::check:"+m));}
+      tfel::raise_if(c,"AnalyticalTest::check:"+m);
     };
     for(const auto& vn:this->f.getVariablesNames()){
       if(vn=="t"){

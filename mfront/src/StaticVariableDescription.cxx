@@ -14,7 +14,7 @@
 
 #include<string>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/StaticVariableDescription.hxx"
 
 namespace mfront{
@@ -54,8 +54,8 @@ namespace mfront{
 	return v;
       }
     }
-    throw(std::runtime_error("StaticVariableDescriptionContainer::get : "
-			     "no static variable named '"+n+"'"));
+    tfel::raise("StaticVariableDescriptionContainer::get: "
+		"no static variable named '"+n+"'");
   } // end of StaticVariableDescriptionContainer::get
 
 } // end of namespace mfront

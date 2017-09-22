@@ -13,6 +13,7 @@
  */
 
 #include<sstream>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
@@ -191,10 +192,8 @@ namespace mfront{
 	v.description = d;
 	bd.addLocalVariable(h,v,BehaviourData::UNREGISTRED);
       } else {
-	if(!r.second){
-	  throw(std::runtime_error("ImplicitDSLBase::completeVariableDeclaration: "
-				   "Parameter '"+n+"' is not defined for all hypotheses"));
-	}
+	tfel::raise_if(!r.second,"ImplicitDSLBase::completeVariableDeclaration: "
+		       "Parameter '"+n+"' is not defined for all hypotheses");
 	if(!g.empty()){
 	  bd.checkVariableGlossaryName(n,g);
 	}

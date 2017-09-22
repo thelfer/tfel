@@ -15,6 +15,7 @@
 #include<limits>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
@@ -35,11 +36,10 @@ namespace mtest
 							   const std::string& b)
     : AbaqusStandardBehaviour(h,l,b)
   {
-    if((this->stype==1u)&&(this->omp!=2u)){
-      throw(std::runtime_error("AbaqusFiniteStrainBehaviour::AbaqusFiniteStrainBehaviour: "
-			       "orthotropic finite strain behaviour is only supported "
-			       "with the 'MFront' orthotropy management policy"));
-    }
+    tfel::raise_if((this->stype==1u)&&(this->omp!=2u),
+		   "AbaqusFiniteStrainBehaviour::AbaqusFiniteStrainBehaviour: "
+		   "orthotropic finite strain behaviour is only supported "
+		   "with the 'MFront' orthotropy management policy");
   }
 
   void
@@ -66,8 +66,7 @@ namespace mtest
     constexpr const auto sqrt2 = Cste<real>::sqrt2;
     const auto h = this->getHypothesis();
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("AbaqusSmallStrainBehaviour::"
-				     "call_behaviour: "+m));}
+      tfel::raise_if(c,"AbaqusSmallStrainBehaviour::call_behaviour: "+m);
     };
     throw_if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR,
 	     "abaqus behaviours only provide the "
@@ -146,8 +145,8 @@ namespace mtest
       uu0(2,1) = s.e0(7); uu1(2,1) = s.e1(7);
       uu0(1,2) = s.e0(8); uu1(1,2) = s.e1(8);
     } else {
-      throw(runtime_error("AbaqusFiniteStrainBehaviour::integrate: "
-			  "unsupported hypothesis"));
+      tfel::raise("AbaqusFiniteStrainBehaviour::integrate: "
+		  "unsupported hypothesis");
     }
     copy(s.s0.begin(),s.s0.end(),us.begin());
     if (h==ModellingHypothesis::PLANESTRESS){

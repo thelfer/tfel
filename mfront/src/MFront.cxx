@@ -25,6 +25,7 @@
 #include<cerrno>
 #include<memory>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Config/GetInstallPath.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
@@ -120,8 +121,8 @@ namespace mfront{
     } else if(g=="cmake"){
       this->generator=CMAKE;
     } else {
-      throw(std::runtime_error("MFront::treatGenerator: "
-			       "unsupported generator '"+g+"'"));
+      tfel::raise("MFront::treatGenerator: "
+		  "unsupported generator '"+g+"'");
     }
   } // end of MFront::treatGenerator
   
@@ -154,9 +155,9 @@ namespace mfront{
       } else if(level=="level1"){
 	this->opts.olevel = GeneratorOptions::LEVEL1;
       } else {
-	throw(std::runtime_error("MFront::treatOMake: "
-				 "unsupported value '"+level+
-				 "' for the --omake option"));
+	tfel::raise("MFront::treatOMake: "
+		    "unsupported value '"+level+
+		    "' for the --omake option");
       }
     } else {
       this->opts.olevel = GeneratorOptions::LEVEL1;
@@ -176,9 +177,9 @@ namespace mfront{
       } else if(level=="level1"){
 	this->opts.olevel = GeneratorOptions::LEVEL1;
       } else {
-	throw(std::runtime_error("MFront::treatOBuild: "
-				 "unsupported value '"+level+
-				 "' for the --obuild option"));
+	tfel::raise("MFront::treatOBuild: "
+		    "unsupported value '"+level+
+		    "' for the --obuild option");
       }
     } else {
       this->opts.olevel = GeneratorOptions::LEVEL1;
@@ -205,19 +206,17 @@ namespace mfront{
   void MFront::treatSilentBuild()
   {
     const auto& o = this->currentArgument->getOption();
-    if(o.empty()){
-      throw(std::runtime_error("MFront::treatSilentBuild: "
-			       "no argument given to the "
-			       "--silentBuild option"));
-    }
+    tfel::raise_if(o.empty(),"MFront::treatSilentBuild: "
+		   "no argument given to the "
+		   "--silentBuild option");
     if(o=="on"){
       this->opts.silentBuild=true;
     } else if(o=="off"){
       this->opts.silentBuild=false;
     } else {
-      throw(std::runtime_error("MFront::treatSilentBuild: "
-			       "unsupported argument '"+o+
-			       "' given to the --silentBuild option"));
+      tfel::raise("MFront::treatSilentBuild: "
+		  "unsupported argument '"+o+
+		  "' given to the --silentBuild option");
     }
   } // end of MFront::treatSilentBuild
 
@@ -226,11 +225,9 @@ namespace mfront{
   {
     using tfel::utilities::tokenize;
     const auto& t = tokenize(this->currentArgument->getOption(),',');
-    if(t.empty()){
-      throw(std::runtime_error("MFront::treatTarget: "
-			       "no argument given to the "
-			       "--target option"));
-    }
+    tfel::raise_if(t.empty(),"MFront::treatTarget: "
+		   "no argument given to the "
+		   "--target option");
     this->specifiedTargets.insert(t.begin(),t.end());
     this->genMake   = true;
     this->buildLibs = true;
@@ -238,11 +235,10 @@ namespace mfront{
 
   void MFront::treatOTarget()
   {
-    if(this->currentArgument==this->args.end()){
-      throw(std::runtime_error("MFront::treatTarget: "
-			       "no argument given to the "
-			       "--otarget option"));
-    }
+    tfel::raise_if(this->currentArgument==this->args.end(),
+		   "MFront::treatTarget: "
+		   "no argument given to the "
+		   "--otarget option");
     this->opts.olevel = GeneratorOptions::LEVEL1;
     this->treatTarget();
   } // end of MFront::treatTarget
@@ -337,10 +333,8 @@ namespace mfront{
   void MFront::treatDefine()
   {
     const auto& o = this->currentArgument->getOption();
-    if(o.empty()){
-      throw(std::runtime_error("MFront::treatDefine: "
-			       "no macro definition given"));
-    }
+    tfel::raise_if(o.empty(),"MFront::treatDefine: "
+		   "no macro definition given");
     this->defines.insert(o);
   } // end of MFront::treatDefine
   
@@ -349,10 +343,8 @@ namespace mfront{
     using tfel::utilities::TerminalColors;
     auto& f = DSLFactory::getDSLFactory();
     const auto& o = this->currentArgument->getOption();
-    if(o.empty()){
-      throw(std::runtime_error("MFront::treatHelpCommandsList: "
-			       "no parser name given"));
-    }
+    tfel::raise_if(o.empty(),"MFront::treatHelpCommandsList: "
+		   "no parser name given");
     std::shared_ptr<AbstractDSL> p{f.createNewParser(o)};
     std::vector<std::string> keys;
     p->getKeywordsList(keys);
@@ -382,10 +374,8 @@ namespace mfront{
   {
     auto& f = DSLFactory::getDSLFactory();
     const auto& o = this->currentArgument->getOption();
-    if(o.empty()){
-      throw(std::runtime_error("MFront::treatHelpCommandsList: "
-			       "no parser name given"));
-    }
+    tfel::raise_if(o.empty(),"MFront::treatHelpCommandsList: "
+		   "no parser name given");
     auto keys = std::vector<std::string>{};
     f.createNewParser(o)->getKeywordsList(keys);
     std::cout << "% `" << o << "` keywords\n\n";
@@ -412,35 +402,28 @@ namespace mfront{
   {
     auto& f = DSLFactory::getDSLFactory();
     const auto& o = this->currentArgument->getOption();
-    if(o.empty()){
-      throw(std::runtime_error("MFront::treatHelpCommand: "
-			       "no argument given"));
-    }
+    tfel::raise_if(o.empty(),"MFront::treatHelpCommand: "
+		   "no argument given");
     const auto pos = o.rfind(':');
-    if((pos==std::string::npos)||(pos+1==o.size())){
-      throw(std::runtime_error("MFront::treatHelpCommand: "
-			       "ill-formed argument, expected "
-			       "'parser:@keyword'"));
-    }
+    tfel::raise_if((pos==std::string::npos)||(pos+1==o.size()),
+		   "MFront::treatHelpCommand: "
+		   "ill-formed argument, expected "
+		   "'parser:@keyword'");
     const auto pn = o.substr(0,pos); // parser name
     const auto k  = o.substr(pos+1); // key
-    if((pn.empty())||(k.empty())){
-      throw(std::runtime_error("MFront::treatHelpCommand: "
-			       "ill-formed argument, expected "
-			       "'parser:@keyword'"));
-    }
-    if(k[0]!='@'){
-      throw(std::runtime_error("MFront::treatHelpCommand: "
-			       "ill-formed argument, expected "
-			       "'parser:@keyword'"));
-    }
+    tfel::raise_if((pn.empty())||(k.empty()),
+		   "MFront::treatHelpCommand: "
+		   "ill-formed argument, expected "
+		   "'parser:@keyword'");
+    tfel::raise_if(k[0]!='@',"MFront::treatHelpCommand: "
+		   "ill-formed argument, expected "
+		   "'parser:@keyword'");
     auto p = f.createNewParser(pn);
     std::vector<std::string> keys;
     p->getKeywordsList(keys);
-    if(std::find(keys.begin(),keys.end(),k)==keys.end()){
-      throw(std::runtime_error("MFront::treatHelpCommand: "
-			       "keyword '"+k+"' is not declared "));
-    }
+    tfel::raise_if(std::find(keys.begin(),keys.end(),k)==keys.end(),
+		   "MFront::treatHelpCommand: "
+		   "keyword '"+k+"' is not declared ");
     const auto fp = getDocumentationFilePath(pn,k);
     if(fp.empty()){
       std::cout << "no description available for keyword '"
@@ -471,16 +454,12 @@ namespace mfront{
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
   void MFront::treatDefFile(){
     const auto& o = this->getCurrentCommandLineArgument().getOption();
-    if(o.empty()){
-      throw(std::runtime_error("MFrontBase::treatDefFile: "
-			       "no option given to the "
-			       "'--def-file' argument"));
-    }
+    tfel::raise_if(o.empty(),"MFrontBase::treatDefFile: "
+		   "no option given to the "
+		   "'--def-file' argument");
     for(const auto& l : tfel::utilities::tokenize(o,',')){
-      if(l.empty()){
-	throw(std::runtime_error("MFrontBase::treatDefFile: "
-				 "empty library specified."));
-      }
+      tfel::raise_if(l.empty(),"MFrontBase::treatDefFile: "
+		     "empty library specified.");
       this->defs.insert(l);
     }    
   } // end of void MFront::treatDefFile
@@ -556,17 +535,14 @@ namespace mfront{
   void MFront::generateDefsFiles(){
     MFrontLockGuard lock;
     for(const auto& d:this->defs){
-      if(!describes(this->targets,d)){
-	throw(std::runtime_error("MFront::generateDefsFile: "
-				 "libray '"+d+"' is not handled"));
-      }
+      tfel::raise_if(!describes(this->targets,d),
+		     "MFront::generateDefsFile: "
+		     "libray '"+d+"' is not handled");
       const auto f = "src"+tfel::system::dirStringSeparator()+d+".def";
       std::ofstream def{f};
       def.exceptions(std::ios::badbit|std::ios::failbit);
-      if(!def){
-	throw(std::runtime_error("MFront::generateDefsFile: "
-				 "can't open file '"+f+"'"));
-      }
+      tfel::raise_if(!def,"MFront::generateDefsFile: "
+		     "can't open file '"+f+"'");
       def << "LIBRARY " << d << "\n"
 	  << "EXPORTS\n";
       std::copy(this->targets[d].epts.begin(),this->targets[d].epts.end(),
@@ -601,11 +577,9 @@ namespace mfront{
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     w = w || (!this->defs.empty());
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
-    if(!w){
-      throw(std::runtime_error("MFront::exe: no file name specified "
-			       "and nothing to be done\n"+
-			       this->getUsageDescription()));
-    }
+    tfel::raise_if(!w,"MFront::exe: no file name specified "
+		   "and nothing to be done\n"+
+		   this->getUsageDescription());
     // get file generated by previous sessions
     this->analyseTargetsFile();
     auto errors = std::vector<std::pair<std::string,std::string>>{};
@@ -652,7 +626,7 @@ namespace mfront{
 	  msg += "\n\n";
 	}
       }
-      throw(std::runtime_error(msg));
+      tfel::raise(msg);
     }
 #if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
     this->generateDefsFiles();

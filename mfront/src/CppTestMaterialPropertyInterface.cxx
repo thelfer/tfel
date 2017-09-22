@@ -14,7 +14,7 @@
 #include<sstream>
 #include<stdexcept>
 #include<algorithm>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/FileDescription.hxx"
@@ -56,10 +56,9 @@ namespace mfront
 						 const tokens_iterator pe)
   {
     if(std::find(i.begin(),i.end(),"cpptest")!=i.end()){
-      if(key!="@TestBounds"){
-	throw(std::runtime_error("CppTestMaterialPropertyInterface::treatKeyword: "
-				 "unsupported key '"+key+"'"));
-      }
+      tfel::raise_if(key!="@TestBounds",
+		     "CppTestMaterialPropertyInterface::treatKeyword: "
+		     "unsupported key '"+key+"'");
     }
     if ( key == "@TestBounds" ){
       return registerTestBounds(p,pe);
@@ -74,7 +73,7 @@ namespace mfront
     using tfel::utilities::CxxTokenizer;
     const std::string m = "GnuplotMaterialPropertyInterface::registerTestBounds";
     auto throw_if = [&m](const bool b,const std::string& msg){
-      if(b){throw(std::runtime_error(m+": "+msg));}
+      tfel::raise_if(b,m+": "+msg);
     };
     const auto b = mfront::readVariableBounds(p,pe);
     CxxTokenizer::readSpecifiedToken(m,";",p,pe);
@@ -114,13 +113,9 @@ namespace mfront
     const auto name = (material.empty()) ? className : material+"_"+className;
     const auto srcFileName  = "src/"+name+"-CppTest.cxx";
     std::ofstream srcFile(srcFileName);
-    if(!srcFile){
-      string msg("MaterialPropertyDSL::writeOutputFiles : ");
-      msg += "unable to open ";
-      msg += srcFileName;
-      msg += " for writing output file.";
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(!srcFile,"MaterialPropertyDSL::writeOutputFiles: "
+		   "unable to open '"+srcFileName+"' "
+		   "for writing output file.");
     srcFile.exceptions(ios::badbit|ios::failbit);
     // on initialise avec bounds
     // nombre de point de calcul
@@ -143,21 +138,17 @@ namespace mfront
 	tests.insert({i.name,i.getBounds()});
       }
     }
-    if(tests.empty()){
-      throw(runtime_error("MaterialPropertyDSL::writeTestFile:\n"
-			  "No bounds defined to draw graph !"));
-    }
+    tfel::raise_if(tests.empty(),"MaterialPropertyDSL::writeTestFile:\n"
+		   "No bounds defined to draw graph !");
     for(const auto& t : tests){
       const auto& n = t.first;
       const auto& b = t.second;
-      if(b.boundsType==VariableBoundsDescription::LOWER){
-	throw runtime_error("MaterialPropertyDSL::writeTestFile:\n"
-			    "No upper bound defined to draw graph !") ;
-      }
-      if(b.boundsType==VariableBoundsDescription::UPPER){
-	throw runtime_error("MaterialPropertyDSL::writeTestFile:\n"
-			    "No lower bound defined to draw graph !") ;
-      }
+      tfel::raise_if(b.boundsType==VariableBoundsDescription::LOWER,
+		     "MaterialPropertyDSL::writeTestFile:\n"
+		     "No upper bound defined to draw graph !");
+      tfel::raise_if(b.boundsType==VariableBoundsDescription::UPPER,
+		     "MaterialPropertyDSL::writeTestFile:\n"
+		     "No lower bound defined to draw graph !");
       srcFile<<"  const double " << n << "_min = " << b.lowerBound << " ;" <<endl;
       srcFile<<"  const double " << n << "_max = " << b.upperBound << " ;" <<endl;
       srcFile<<"  const double " << n << "_moy = (" 

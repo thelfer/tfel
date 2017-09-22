@@ -15,6 +15,7 @@
 #include<sstream>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
@@ -35,8 +36,7 @@ namespace mtest
     : UmatBehaviourBase(h,l,b)
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("EuroplexusStandardBehaviour::"
-				     "EuroplexusStandardBehaviour: "+m));}
+      tfel::raise_if(c,"EuroplexusStandardBehaviour::EuroplexusStandardBehaviour: "+m);
     };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     throw_if(elm.getInterface(l,b)!="Europlexus",
@@ -83,13 +83,11 @@ namespace mtest
 		"ThermalExpansion3"});
 	}
       } else { 
-	throw(std::runtime_error("EuroplexusStandardBehaviour::EuroplexusStandardBehaviour: "
-				 "unsupported modelling hypothesis"));
+	throw_if(true,"unsupported modelling hypothesis");
       }
     } else {
-      throw(std::runtime_error("EuroplexusStandardBehaviour::EuroplexusStandardBehaviour: "
-			       "unsupported behaviour type "
-			       "(neither isotropic nor orthotropic)"));
+      throw_if(true,"unsupported behaviour type "
+	       "(neither isotropic nor orthotropic)");
     }
     this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
   }

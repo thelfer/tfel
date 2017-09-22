@@ -1,5 +1,5 @@
 /*! 
- * \file  mfront/mtest/Behaviour.cxx
+ * \file   mtest/src/Behaviour.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 05 avril 2013
@@ -13,6 +13,7 @@
 
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 
 #include"MFront/MFrontLogStream.hxx"
@@ -58,15 +59,14 @@
 namespace mtest
 {
   
-  std::shared_ptr<Behaviour>
-  Behaviour::getBehaviour(const std::string& i,
-			  const std::string& l,
-			  const std::string& f,
-			  const Parameters& d,
-			  const Hypothesis h)
+  std::shared_ptr<Behaviour> Behaviour::getBehaviour(const std::string& i,
+						     const std::string& l,
+						     const std::string& f,
+						     const Parameters& d,
+						     const Hypothesis h)
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("Behaviour::getBehaviour: "+m));}
+      tfel::raise_if(c,"Behaviour::getBehaviour: "+m);
     };
     auto check_no_parameters = [&throw_if,&d]{
       if(d.empty()){return;}
@@ -219,10 +219,9 @@ namespace mtest
 	log << "Behaviour::setOptionalMaterialPropertiesDefaultValues : "
 	    << "set material property '" << n << "' to default value\n";
       }
-      if(!mp.insert({n,make_evolution(v)}).second){
-	throw(std::runtime_error("Behaviour::setOptionalMaterialPropertiesDefaultValues: "
-				 "default value for material property '"+n+"' already declared"));
-      }
+      tfel::raise_if(!mp.insert({n,make_evolution(v)}).second,
+		     "Behaviour::setOptionalMaterialPropertiesDefaultValues: "
+		     "default value for material property '"+n+"' already declared");
     }
   } // end of Behaviour::setOptionalMaterialPropertyDefaultValue
 
@@ -263,7 +262,7 @@ namespace mtest
 	return s.esv0[pos]+s.desv[pos];
       };
     }
-    throw(std::runtime_error("buildValueExtractor: no variable name '"+n+"'"));
+    tfel::raise("buildValueExtractor: no variable name '"+n+"'");
   } // end of buildValueExtractor
   
 } // end of namespace mtest

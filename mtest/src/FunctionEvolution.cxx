@@ -12,7 +12,7 @@
  */
 
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MTest/FunctionEvolution.hxx"
 
 namespace mtest{
@@ -33,20 +33,17 @@ namespace mtest{
 	this->f.setVariableValue("t",t);
       } else {
 	auto pev = evm.find(args[i]);
-	if(pev==evm.end()){
-	  throw(std::runtime_error("FunctionEvolution::operator(): "
-				   "can't evaluate argument '"+args[i]+"'"));
-	} else {
-	  const auto& ev = *(pev->second);
-	  this->f.setVariableValue(args[i],ev(t));
-	}
+	tfel::raise_if(pev==evm.end(),
+		       "FunctionEvolution::operator(): "
+		       "can't evaluate argument '"+args[i]+"'");
+	const auto& ev = *(pev->second);
+	this->f.setVariableValue(args[i],ev(t));
       }
     }
     return this->f.getValue();
   } // end of FunctionEvolution::operator()
 
-  bool
-  FunctionEvolution::isConstant() const
+  bool FunctionEvolution::isConstant() const
   {
     const auto& args = this->f.getVariablesNames();
     std::vector<std::string>::size_type i;
@@ -55,14 +52,12 @@ namespace mtest{
 	return false;
       } else {
 	auto pev = evm.find(args[i]);
-	if(pev==evm.end()){
-	  throw(std::runtime_error("FunctionEvolution::operator(): "
-				   "can't evaluate argument '"+args[i]+"'"));
-	} else {
-	  const Evolution& ev = *(pev->second);
-	  if(!ev.isConstant()){
-	    return false;
-	  }
+	tfel::raise_if(pev==evm.end(),
+		       "FunctionEvolution::operator(): "
+		       "can't evaluate argument '"+args[i]+"'");
+	const auto& ev = *(pev->second);
+	if(!ev.isConstant()){
+	  return false;
 	}
       }
     }
@@ -71,16 +66,16 @@ namespace mtest{
 
   void FunctionEvolution::setValue(const real)
   {
-    throw(std::runtime_error("FunctionEvolution::setValue: "
-			     "this method does not makes sense "
-			     "for function evolution"));
+    tfel::raise("FunctionEvolution::setValue: "
+		"this method does not makes sense "
+		"for function evolution");
   }
   
   void FunctionEvolution::setValue(const real,const real)
   {
-    throw(std::runtime_error("FunctionEvolution::setValue: "
-			     "this method does not makes sense "
-			     "for function evolution"));
+    tfel::raise("FunctionEvolution::setValue: "
+		"this method does not makes sense "
+		"for function evolution");
   }
   
   FunctionEvolution::~FunctionEvolution() = default;

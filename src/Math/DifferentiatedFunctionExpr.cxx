@@ -15,6 +15,7 @@
 #include<sstream>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Parser/Number.hxx"
 #include"TFEL/Math/Parser/Variable.hxx"
 #include"TFEL/Math/Parser/BinaryOperator.hxx"
@@ -37,15 +38,11 @@ namespace tfel
 	  args(fargs),
 	  pvar(fpvar)
       {
-	using namespace std;
-	if(f->getNumberOfVariables()!=args.size()){
-	  ostringstream msg;
-	  msg << "DifferentiatedFunctionExpr::DifferentiatedFunctionExpr : "
-	      << "invalid number of arguments for function (" 
-	      << this->args.size() << " given, "
-	      << f->getNumberOfVariables() << " required)";
-	  throw(runtime_error(msg.str()));
-        }
+	raise_if(f->getNumberOfVariables()!=args.size(),
+		 "DifferentiatedFunctionExpr::DifferentiatedFunctionExpr: "
+		 "invalid number of arguments for function "
+		 "("+std::to_string(this->args.size())+" given, "+
+		 std::to_string(f->getNumberOfVariables())+" required)");
       } // end of DifferentiatedFunctionExpr::DifferentiatedFunctionExpr
 
       std::shared_ptr<ExternalFunction>
@@ -58,8 +55,7 @@ namespace tfel
 	return df;
       } // end of DifferentiatedFunctionExpr::getDerivative
       
-      double
-      DifferentiatedFunctionExpr::getValue() const
+      double DifferentiatedFunctionExpr::getValue() const
       {
 	using namespace std;
 	using namespace tfel::math::parser;
@@ -149,24 +145,22 @@ namespace tfel
 	map<string,vector<double>::size_type>::const_iterator p3;
 	vector<string>::size_type i;
 	nf = this->f->createFunctionByChangingParametersIntoVariables(vnames,v,params,pos);
-	if(nf->getNumberOfVariables()<=this->args.size()){
-	  string msg;
-	  msg += "ExternalFunctionExpr::getValue : "
-	    "internal error (function as less variable after "
-	    "'createFunctionByChangingParametersIntoVariables' than before";
-	  throw(runtime_error(msg));
-	}
+	raise_if(nf->getNumberOfVariables()<=this->args.size(),
+		 "ExternalFunctionExpr::getValue: "
+		 "internal error (function has less variable after "
+		 "'createFunctionByChangingParametersIntoVariables' "
+		 "than before");
 	nargs.resize(nf->getNumberOfVariables());
         for(p=this->args.begin(),p2=nargs.begin();p!=this->args.end();++p,++p2){
 	  *p2 = (*p)->createFunctionByChangingParametersIntoVariables(v,params,pos);
 	}
 	for(i=0;i!=vnames.size();++i){
 	  p3 = pos.find(vnames[i]);
-	  if(p3==pos.end()){
-	    string msg("ExternalFunctionExpr::createFunctionByChangingParametersIntoVariables : ");
-	    msg += "internal error (no position found for parameter '"+vnames[i]+"')";
-	    throw(runtime_error(msg));
-	  }
+	  raise_if(p3==pos.end(),
+		   "ExternalFunctionExpr::"
+		   "createFunctionByChangingParametersIntoVariables: "
+		   "internal error (no position found for "
+		   "parameter '"+vnames[i]+"')");
 	  nargs[args.size()+i] = shared_ptr<Expr>(new Variable(v,p3->second));
 	}
         return shared_ptr<Expr>(new DifferentiatedFunctionExpr(nf,nargs,this->pvar));

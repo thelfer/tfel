@@ -13,7 +13,7 @@
 
 #include<string>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/DSLFactory.hxx"
@@ -60,10 +60,9 @@ namespace mfront{
   {
     IsotropicBehaviourDSLBase::endsInputFileProcessing();
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    if(!this->mb.hasCode(h,BehaviourData::FlowRule)){
-      throw(std::runtime_error("IsotropicMisesCreepDSL::endsInputFileProcessing : "
-			       "no flow rule defined"));
-    }
+    tfel::raise_if(!this->mb.hasCode(h,BehaviourData::FlowRule),
+		   "IsotropicMisesCreepDSL::endsInputFileProcessing: "
+		   "no flow rule defined");
   } // end of IsotropicStrainHardeningMisesCreepDSL::endsInputFileProcessing
 
   void

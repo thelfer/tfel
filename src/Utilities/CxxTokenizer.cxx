@@ -908,17 +908,14 @@ namespace tfel{
       }
     } // end of CxxTokenizer::checkNotEndOfLine
     
-    void
-    CxxTokenizer::readSpecifiedToken(const std::string& method,
-				     const std::string& value,
-				     const_iterator& p, 
-				     const const_iterator pe)
+    void CxxTokenizer::readSpecifiedToken(const std::string& method,
+					  const std::string& value,
+					  const_iterator& p, 
+					  const const_iterator pe)
     {
       CxxTokenizer::checkNotEndOfLine(method,"expected '"+value+"'",p,pe);
-      if(p->value!=value){
-	throw(std::runtime_error(method+": unexpected token '"+p->value+"'"+
-				 " (expected '"+value+"')"));
-      }
+      raise_if(p->value!=value,method+": unexpected token '"+p->value+"' "
+	       "(expected '"+value+"')");
       ++p;
     } // end of CxxTokenizer::readSpecifiedToken
 
@@ -933,8 +930,9 @@ namespace tfel{
       raise_if(p->value.size()<2,
 	       "CxxTokenizer::readString: "
 	       "internal error (invalid string size)");
-      auto value = p->value.substr(1,p->value.size()-2);
-      return ++p,value;
+      const auto value = p->value.substr(1,p->value.size()-2);
+      ++p;
+      return value;
     } // end of CxxTokenizer::readString
 
     double CxxTokenizer::readDouble(const_iterator& p, 
@@ -960,7 +958,8 @@ namespace tfel{
 	      "'"+p->value+"' ("+std::string(e.what())+").");
       }
 #endif
-      return ++p,res;
+      ++p;
+      return res;
     } // end of CxxTokenizer::readDouble
 
     int CxxTokenizer::readInt(const_iterator& p, 
@@ -974,7 +973,8 @@ namespace tfel{
       is >> res;
       raise_if(!is&&(!is.eof()),"CxxTokenizer::readInt: "
 	       "could not read value from token '"+p->value+"'.");
-      return ++p,res;
+      ++p;
+      return res;
     } // end of CxxTokenizer::readInt
 
     unsigned int CxxTokenizer::readUnsignedInt(const_iterator& p, 
@@ -988,7 +988,8 @@ namespace tfel{
       raise_if(!is&&(!is.eof()),
 	       "CxxTokenizer::readUnsignedInt: "
 	       "could not read value from token '"+p->value+"'.\n");
-      return ++p,res;
+      ++p;
+      return res;
     } // end of CxxTokenizer::readUnsignedInt
 
     void CxxTokenizer::readList(std::vector<Token>& l,

@@ -15,6 +15,7 @@
 #include<cerrno>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Parser/BinaryFunction.hxx"
 
 namespace tfel
@@ -27,17 +28,17 @@ namespace tfel
 
       void StandardBinaryFunctionBase::throwUnimplementedDifferentiateFunctionException()
       {
-	throw(std::runtime_error("StandardBinaryFunctionBase::"
-				 "throwUnimplementedDifferentiateFunctionException: "
-				 "unimplemented feature"));
+	raise("StandardBinaryFunctionBase::"
+	      "throwUnimplementedDifferentiateFunctionException: "
+	      "unimplemented feature");
       } // end of StandardBinaryFunctionBase::throwUnimplementedDifferentiateFunctionException
 
       void StandardBinaryFunctionBase::throwInvalidCallException(const int e)
       {
-	throw(std::runtime_error("StandardBinaryFunctionBase::"
-				 "throwInvalidCallException: "
-				 "call to function failed "
-				 "("+std::string(strerror(e))+")"));
+	raise("StandardBinaryFunctionBase::"
+	      "throwInvalidCallException: "
+	      "call to function failed "
+	      "("+std::string(strerror(e))+")");
       } // end of struct StandardBinaryFunctionBase::throwInvalidCallException
 
       BinaryFunction::~BinaryFunction() = default;

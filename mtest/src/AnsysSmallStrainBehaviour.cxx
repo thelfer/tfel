@@ -15,6 +15,7 @@
 #include<limits>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
@@ -56,8 +57,8 @@ namespace mtest
     constexpr const auto sqrt2 = Cste<real>::sqrt2;
     const auto h = this->getHypothesis();
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("AnsysSmallStrainBehaviour::"
-				     "call_behaviour: "+m));}
+      tfel::raise_if(c,"AnsysSmallStrainBehaviour::"
+		     "call_behaviour: "+m);
     };
     throw_if(ktype!=StiffnessMatrixType::CONSISTENTTANGENTOPERATOR,
 	     "ansys behaviours only provide the "

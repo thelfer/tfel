@@ -14,6 +14,7 @@
 
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Parser/Number.hxx"
 #include"TFEL/Math/Parser/Variable.hxx"
 
@@ -66,13 +67,11 @@ namespace tfel
 								const std::map<std::string,
 								std::vector<double>::size_type>&) const
       {
-	using namespace std;
-	if(v_.size()<this->pos){
-	  string msg("Variable::createFunctionByChangingParametersIntoVariables : ");
-	  msg += "invalid vector size";
-	  throw(runtime_error(msg));
-	}
-	return shared_ptr<Expr>(new Variable(v_,this->pos));
+	raise_if(v_.size()<this->pos,
+		 "Variable::createFunctionByChanging"
+		 "ParametersIntoVariables: "
+		 "invalid vector size");
+	return std::shared_ptr<Expr>(new Variable(v_,this->pos));
       } // end of Variable::createFunctionByChangingParametersIntoVariables
 
       std::shared_ptr<Expr>

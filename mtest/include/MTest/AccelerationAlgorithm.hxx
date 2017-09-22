@@ -37,27 +37,23 @@ namespace mtest{
     /*!
      * \return the name of the acceleration algorithm
      */
-    virtual std::string
-    getName() const = 0;
+    virtual std::string getName() const = 0;
     /*!
      * \param[in] psz : total number of unknowns (problem size)
      */
-    virtual void
-    initialize(const unsigned short) = 0;
+    virtual void initialize(const unsigned short) = 0;
     /*!
      * set a parameter of the acceleration algorithm
      * \param[in] p : parameter name
      * \param[in] v : parameter value
      */
-    virtual void
-    setParameter(const std::string&,
-		 const std::string&) = 0;
+    virtual void setParameter(const std::string&,
+			      const std::string&) = 0;
     /*!
      * called at each time step, before the beginning of the Newton
      * algorithm
      */
-    virtual void
-    preExecuteTasks() = 0;
+    virtual void preExecuteTasks() = 0;
     /*!
      * \param[in,out] u1   : current estimate of the unknowns (after incrementation)
      * \param[in]     ru   : fixed point residual on the unknowns
@@ -66,18 +62,16 @@ namespace mtest{
      * \param[in]     seps : criterium on the thermodynamic forces
      * \param[in]     iter : current iteration number
      */
-    virtual void
-    execute(tfel::math::vector<real>&,
-	    const tfel::math::vector<real>&,
-	    const tfel::math::vector<real>&,
-	    const real,
-	    const real,
-	    const unsigned short) = 0;
+    virtual void execute(tfel::math::vector<real>&,
+			 const tfel::math::vector<real>&,
+			 const tfel::math::vector<real>&,
+			 const real,
+			 const real,
+			 const unsigned short) = 0;
     /*!
      * called at each time step, once convergence is reached
      */
-    virtual void
-    postExecuteTasks() = 0;
+    virtual void postExecuteTasks() = 0;
     //! destructor
     virtual ~AccelerationAlgorithm();
   }; // end of struct struct AccelerationAlgorithm

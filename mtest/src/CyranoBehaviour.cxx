@@ -14,6 +14,7 @@
 #include<cmath>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
@@ -33,7 +34,7 @@ namespace mtest
     : UmatBehaviourBase(h,l,b)
   {
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("CyranoBehaviour::CyranoBehaviour: "+m));}
+      tfel::raise_if(c,"CyranoBehaviour::CyranoBehaviour: "+m);
     };
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     throw_if(elm.getInterface(l,b)!="Cyrano",
@@ -59,8 +60,8 @@ namespace mtest
 		"ThermalExpansion2","ThermalExpansion3"});
 	}
       } else {
-    	throw(std::runtime_error("CyranoBehaviour::CyranoBehaviour: "
-				 "unsupported hypothesis"));
+	tfel::raise("CyranoBehaviour::CyranoBehaviour: "
+		    "unsupported hypothesis");
       }
     }
     this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
@@ -135,7 +136,7 @@ namespace mtest
     using tfel::math::vector;
     using cyrano::CyranoComputeStiffnessTensor;
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("CyranoBehaviour::call_behaviour: "+m));}
+      tfel::raise_if(c,"CyranoBehaviour::call_behaviour: "+m);
     };
     CyranoInt ntens;
     CyranoInt ndi;

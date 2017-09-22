@@ -16,6 +16,7 @@
 #include<utility>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"MFront/DSLFactory.hxx"
 #include"MFront/DSLProxy.hxx"
 
@@ -58,24 +59,21 @@ namespace mfront{
 				    const DSLFactory::ParserCreator f,
 				    const DSLFactory::DescriptionPtr f2)
   {
-    if(!this->getMap().insert({n,f}).second){
-      throw(std::runtime_error("DSLFactory::registerParserCreator: "
-			       "a dsl named '"+n+"' has already been registred"));
-    }
-    if(!this->getDescriptionMap().insert({n,f2}).second){
-      throw(std::runtime_error("DSLFactory::registerParserCreator: "
-			       "a parser named "+n+" has already been registred"));
-    }
+    tfel::raise_if(!this->getMap().insert({n,f}).second,
+		   "DSLFactory::registerParserCreator: "
+		   "a dsl named '"+n+"' has already been registred");
+    tfel::raise_if(!this->getDescriptionMap().insert({n,f2}).second,
+		   "DSLFactory::registerParserCreator: "
+		   "a parser named "+n+" has already been registred");
   } // end of DSLFactory::registerParserCreator
 
   std::string
   DSLFactory::getParserDescription(const std::string& n)
   {
     auto p = this->getDescriptionMap().find(n);
-    if(p==this->getDescriptionMap().end()){
-      throw(std::runtime_error("DSLFactory::getParserDescription: "
-			       "no parser named '"+n+"'"));
-    }
+    tfel::raise_if(p==this->getDescriptionMap().end(),
+		   "DSLFactory::getParserDescription: "
+		   "no parser named '"+n+"'");
     auto c = p->second;
     return c();
   } // end of 
@@ -90,10 +88,9 @@ namespace mfront{
   DSLFactory::createNewDSL(const std::string& n)
   {
     auto p = this->getMap().find(n);
-    if(p==this->getMap().end()){
-      throw(std::runtime_error("DSLFactory::createNewDSL: "
-			       "no parser named '"+n+"'"));
-    }
+    tfel::raise_if(p==this->getMap().end(),
+		   "DSLFactory::createNewDSL: "
+		   "no parser named '"+n+"'");
     auto c = p->second;
     return c();
   }

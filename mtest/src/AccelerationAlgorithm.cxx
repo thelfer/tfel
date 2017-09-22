@@ -12,7 +12,7 @@
  */
 
 #include<sstream>
-
+#include"TFEL/Raise.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
 
 namespace mtest
@@ -25,10 +25,9 @@ namespace mtest
     std::istringstream converter(v);
     unsigned short res;
     converter >> res;
-    if((!converter)&&(!converter.eof())){
-      throw(std::runtime_error(m+": can't convert string '"+v+"' "
-			       "to unsigned short"));
-    }
+    tfel::raise_if((!converter)&&(!converter.eof()),
+		   m+": can't convert string '"+v+"' "
+		   "to unsigned short");
     return res;
   }
 

@@ -14,6 +14,7 @@
 #include<fstream>
 #include<iterator>
 #include<algorithm>
+#include "TFEL/Raise.hxx"
 #include "TFEL/System/System.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
@@ -67,10 +68,9 @@ namespace mfront{
 				     tokens_iterator p,
 				     const tokens_iterator)
   {
-    if(std::find(i.begin(),i.end(),"mfront")!=i.end()){
-      throw(std::runtime_error("MfrontMaterialPropertyInterface::"
-			       "treatKeyword: unsupported key '"+k+"'"));
-    }
+    tfel::raise_if(std::find(i.begin(),i.end(),"mfront")!=i.end(),
+		   "MfrontMaterialPropertyInterface::"
+		   "treatKeyword: unsupported key '"+k+"'");
     return {false,p};
   } // end of MFrontModelInterface::treatKeyword
     
@@ -84,7 +84,7 @@ namespace mfront{
 					      const ModelDescription& md)
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("MFrontModelInterface::writeOutputFiles: "+m));}
+      tfel::raise_if(b,"MFrontModelInterface::writeOutputFiles: "+m);
     };
     auto write_bounds = [&throw_if](std::ostream& out,
 				    const VariableDescription& v,

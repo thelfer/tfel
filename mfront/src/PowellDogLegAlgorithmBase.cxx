@@ -14,6 +14,8 @@
 #include<iostream>
 #include<sstream>
 
+#include"TFEL/Raise.hxx"
+#include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"MFront/BehaviourDescription.hxx"
 #include"MFront/NonLinearSystemSolverBase.hxx"
 #include"MFront/PowellDogLegAlgorithmBase.hxx"
@@ -35,35 +37,24 @@ namespace mfront{
 						   const tokens_iterator p,
 						   const tokens_iterator pe)
   {
-    using namespace std;
     using namespace tfel::material;
     using namespace tfel::utilities;
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if(key=="@PowellDogLegTrustRegionSize"){
       CxxTokenizer::TokensContainer::const_iterator current = p;
       CxxTokenizer::checkNotEndOfLine("PowellDogLegAlgorithmBase::treatSpecificKeywords",current,pe);
-      double pdl_trs;
       CxxTokenizer::checkNotEndOfLine("ImplicitDSLBase::treatPowellDogLegTrustRegionSize"
 				      "Cannot read pdl_trs value.",current,pe);
-      istringstream flux(current->value);
-      flux >> pdl_trs;
-      if((flux.fail())||(!flux.eof())){
-	string msg("ImplicitDSLBase::treatPowellDogLegTrustRegionSize",
-		   "Failed to read region size.");
-	throw(runtime_error(msg));
-      }
-      if(pdl_trs<0){
-	string msg("ImplicitDSLBase::treatPowellDogLegTrustRegionSize",
-		   "Region size must be positive.");
-	throw(runtime_error(msg));
-      }
+      const auto pdl_trs = convert<double>(current->value);
+      tfel::raise_if(pdl_trs<0,"ImplicitDSLBase::treatPowellDogLegTrustRegionSize: "
+		     "region size must be positive.");
       ++current;
       CxxTokenizer::readSpecifiedToken("ImplicitDSLBase::treatPowellDogLegTrustRegionSize",";",current,pe);
       mb.addParameter(h,VariableDescription("real","powell_dogleg_trust_region_size",1u,0u));
       mb.setParameterDefaultValue(h,"powell_dogleg_trust_region_size",pdl_trs);
-      return make_pair(true,current);
+      return {true,current};
     }
-    return make_pair(false,p);
+    return {false,p};
   } // end of PowellDogLegAlgorithmBase::treatSpecificKeywords
 
 

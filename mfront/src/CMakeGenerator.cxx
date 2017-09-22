@@ -36,6 +36,7 @@
 #include<unistd.h>
 #endif
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Utilities/StringAlgorithms.hxx"
 #include"TFEL/System/System.hxx"
 #include"MFront/MFrontHeader.hxx"
@@ -74,7 +75,7 @@ namespace mfront{
 			      const GeneratorOptions& o,
 			      const std::string&){
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("generateCMakeListFile: "+m));}
+      tfel::raise_if(b,"generateCMakeListFile: "+m);
     };
     if(getVerboseMode()>=VERBOSE_LEVEL2){
       getLogStream() << "generating 'src/CMakeList.txt'\n";
@@ -311,11 +312,9 @@ namespace mfront{
       for(const char * const * a = args;*a!=nullptr;++a){
 	msg += *a;msg += ' ';
       }
-      throw(std::runtime_error(msg));
+      tfel::raise(msg);
     };
-    if(::strlen(cmake)==0u){
-      throw(std::runtime_error("callCmake: empty cmake command"));
-    }
+    tfel::raise_if(::strlen(cmake)==0u,"callCMake: empty cmake command");
     const auto pwd = systemCall::getCurrentWorkingDirectory();
     systemCall::changeCurrentWorkingDirectory(d);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)

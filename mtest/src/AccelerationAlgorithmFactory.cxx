@@ -13,6 +13,7 @@
 
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"MTest/AccelerationAlgorithm.hxx"
 #include"MTest/CastemAccelerationAlgorithm.hxx"
 #include"MTest/IronsTuckAccelerationAlgorithm.hxx"
@@ -33,10 +34,9 @@ namespace mtest
 {
 
   template<typename T>
-  static std::shared_ptr<AccelerationAlgorithm>
-  buildAlgorithmConstructor()
+  static std::shared_ptr<AccelerationAlgorithm> buildAlgorithmConstructor()
   {
-    return std::shared_ptr<AccelerationAlgorithm>(new T());
+    return std::make_shared<T>();
   } // end of buildAlgoritmConstructor
 
   AccelerationAlgorithmFactory&
@@ -49,14 +49,10 @@ namespace mtest
   std::shared_ptr<AccelerationAlgorithm>
   AccelerationAlgorithmFactory::getAlgorithm(const std::string& a) const
   {
-    using namespace std;
-    map<string,constructor>::const_iterator p;
-    p = this->constructors.find(a);
-    if(p==this->constructors.end()){
-      string msg("AccelerationAlgorithmFactory::getAlgorithm : "
-		 "no algorithm '"+a+"' registred");
-      throw(runtime_error(msg));
-    }
+    const auto p = this->constructors.find(a);
+    tfel::raise_if(p==this->constructors.end(),
+		   "AccelerationAlgorithmFactory::getAlgorithm : "
+		   "no algorithm '"+a+"' registred");
     return (*(p->second))();
   }
 
@@ -77,17 +73,12 @@ namespace mtest
     this->registerAlgorithm("FAnderson",buildAlgorithmConstructor<FAndersonAccelerationAlgorithm>);
   } // end of AccelerationAlgorithmFactory::AccelerationAlgorithmFactory
 
-  void
-  AccelerationAlgorithmFactory::registerAlgorithm(const std::string& a,
+  void AccelerationAlgorithmFactory::registerAlgorithm(const std::string& a,
 						       const constructor c)
   {
-    using namespace std;
-    typedef map<string,constructor>::value_type value_type;
-    if(!this->constructors.insert(value_type(a,c)).second){
-      string msg("AccelerationAlgorithmFactory::registerAlgorithm : "
-		 "algorithm '"+a+"' already declared");
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(!this->constructors.insert({a,c}).second,
+		   "AccelerationAlgorithmFactory::registerAlgorithm: "
+		   "algorithm '"+a+"' already declared");
   } // end of AccelerationAlgorithmFactory::registerAlgorithm
 
 } // end of namespace mtest

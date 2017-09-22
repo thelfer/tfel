@@ -12,9 +12,9 @@
  */
 
 #include<string>
-#include<stdexcept>
 #include<sstream>
-
+#include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontDebugMode.hxx"
 #include"MFront/DSLFactory.hxx"
@@ -72,15 +72,12 @@ namespace mfront{
     using namespace std;
     vector<FlowHandler>::const_iterator p;
     vector<FlowHandler>::const_iterator p2;
-    bool found;
     unsigned short n;
     bool genericTheta;
     this->checkBehaviourFile(os);
-    if(this->flows.empty()){
-      string msg("MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificMembers : "
-		 "no flow rule defined");
-      throw(runtime_error(msg));
-    }
+    tfel::raise_if(this->flows.empty(),"MultipleIsotropicMisesFlowsDSL::"
+		   "writeBehaviourParserSpecificMembers : "
+		   "no flow rule defined");
     for(p=this->flows.begin(),n=0;p!=this->flows.end();++p,++n){    
       if(p->flow==FlowHandler::PlasticFlow){
 	os << "void computeFlow" << n << "(stress& f,\n"
@@ -126,8 +123,7 @@ namespace mfront{
       os << "stress mu_3_theta = 3*(";
       os << this->mb.getClassName() << "::theta)*(this->mu);\n";
     }
-
-    found=false;
+    bool found=false;
     for(p=this->flows.begin();(p!=this->flows.end())&&!(found);++p){
       if(p->flow==FlowHandler::PlasticFlow){
 	os << "real surf;\n";

@@ -11,6 +11,7 @@
  * project under specific licensing conditions. 
  */
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/ExternalLibraryManager.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/Evolution.hxx"
@@ -64,8 +65,7 @@ namespace mtest
 	    "V1X","V1Y","V1Z","V2X","V2Y","V2Z","MassDensity",
             "ThermalExpansion1","ThermalExpansion2","ThermalExpansion3"});
       } else {
-	throw(std::runtime_error("setMaterialProperties: "
-				 "unsupported hypothesis"));
+	tfel::raise("setMaterialProperties: unsupported hypothesis");
       }
     }
   } // end of setMaterialProperties
@@ -76,10 +76,9 @@ namespace mtest
     : UmatBehaviourBase(h,l,b)
   {
     auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
-    if(elm.getInterface(l,b)!="Castem"){
-      throw(std::runtime_error("CastemStandardBehaviour::CastemStandardBehaviour: "
-			       "invalid interface '"+elm.getInterface(l,b)+"'"));
-    }
+    tfel::raise_if(elm.getInterface(l,b)!="Castem",
+		   "CastemStandardBehaviour::CastemStandardBehaviour: "
+		   "invalid interface '"+elm.getInterface(l,b)+"'");
     this->fct = elm.getCastemExternalBehaviourFunction(l,b);
     setMaterialProperties(*this,h);
   } // end of CastemStandardBehaviour::CastemStandardBehaviour
@@ -176,11 +175,10 @@ namespace mtest
 	   (h==ModellingHypothesis::PLANESTRESS)||
 	   (h==ModellingHypothesis::PLANESTRAIN)){
 	  const bool b = bv1x&&bv1y;
-	  if(((bv1x)&&(!b))||((bv1y)&&(!b))){
-	    throw(std::runtime_error("Behaviour::setOptionalMaterialPropertiesDefaultValues : "
-				     "if one component of the orthotropic basis is defined, all "
-				     "the components must be defined."));
-	  }
+	  tfel::raise_if(((bv1x)&&(!b))||((bv1y)&&(!b)),
+			 "Behaviour::setOptionalMaterialPropertiesDefaultValues : "
+			 "if one component of the orthotropic basis is defined, all "
+			 "the components must be defined.");
 	  Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"V1X",1.);
 	  Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"V1Y",0.);
 	} else if(h==ModellingHypothesis::TRIDIMENSIONAL){
@@ -189,12 +187,11 @@ namespace mtest
 	  const bool bv2y = evm.find("V2Y")!=evm.end();
 	  const bool bv2z = evm.find("V2Z")!=evm.end();
 	  const bool b = bv1x&&bv1y&&bv1z&&bv2x&&bv2y&&bv2z;
-	  if(((bv1x)&&(!b))||((bv1y)&&(!b))||((bv1z)&&(!b))||
-	     ((bv2x)&&(!b))||((bv2y)&&(!b))||((bv2z)&&(!b))){
-	    throw(std::runtime_error("Behaviour::setOptionalMaterialPropertiesDefaultValues : "
-				     "if one component of the orthotropic basis is defined, all "
-				     "the components must be defined."));
-	  }
+	  tfel::raise_if(((bv1x)&&(!b))||((bv1y)&&(!b))||((bv1z)&&(!b))||
+			 ((bv2x)&&(!b))||((bv2y)&&(!b))||((bv2z)&&(!b)),
+			 "Behaviour::setOptionalMaterialPropertiesDefaultValues : "
+			 "if one component of the orthotropic basis is defined, all "
+			 "the components must be defined.");
 	  Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"V1X",1.);
 	  Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"V1Y",0.);
 	  Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"V1Z",0.);
@@ -202,8 +199,8 @@ namespace mtest
 	  Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"V2Y",1.);
 	  Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"V2Z",0.);
 	} else {
-	  throw(std::runtime_error("Behaviour::setOptionalMaterialPropertiesDefaultValues : "
-				   "unsupported hypothesis"));
+	  tfel::raise("Behaviour::setOptionalMaterialPropertiesDefaultValues : "
+		      "unsupported hypothesis");
 	}
       }
     }

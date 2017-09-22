@@ -12,6 +12,7 @@
  */
 
 #include<boost/python.hpp>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"MTest/Behaviour.hxx"
 #include"MTest/CurrentState.hxx"
@@ -52,20 +53,18 @@ static void
 v_setitem(tfel::math::vector<mtest::CurrentState>& s,
 	  const tfel::math::vector<mtest::CurrentState>::size_type i,
 	  const mtest::CurrentState& v){
-  if(i>=s.size()){
-    throw(std::out_of_range("tfel::math::vector<mtest::CurrentState>::operator[]: "
-			    "invalid_index"));
-  }
+  tfel::raise_if<std::out_of_range>(i>=s.size(),
+				    "tfel::math::vector<mtest::CurrentState>"
+				    "::operator[]: invalid_index");
   s[i] = v;
 }
 
 static mtest::CurrentState&
 v_getitem(tfel::math::vector<mtest::CurrentState>& s,
 	  const tfel::math::vector<mtest::CurrentState>::size_type i){
-  if(i>=s.size()){
-    throw(std::out_of_range("tfel::math::vector<mtest::CurrentState>::operator[]: "
-			    "invalid_index"));
-  }
+  tfel::raise_if<std::out_of_range>(i>=s.size(),
+				    "tfel::math::vector<mtest::CurrentState>"
+				    "::operator[]: invalid_index");
   return s[i];
 }
 
@@ -82,7 +81,7 @@ getInternalStateVariableValue(const mtest::CurrentState& s,
 			      const int i)
 {
   auto throw_if = [](const bool b, const std::string& m){
-    if(b){throw(std::runtime_error("mtest::getInternalStateVariableValue: "+m));}
+    tfel::raise_if(b,"mtest::getInternalStateVariableValue: "+m);
   };
   throw_if(s.behaviour==nullptr,"no behaviour defined");
   const auto& ivsnames = s.behaviour->getInternalStateVariablesNames();

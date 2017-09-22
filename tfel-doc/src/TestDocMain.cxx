@@ -31,6 +31,7 @@
 #include<cstring>
 #include<memory>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/System/System.hxx"
 #include"TFEL/System/RecursiveFind.hxx"
 #include"TFEL/Utilities/TerminalColors.hxx"
@@ -121,20 +122,14 @@ namespace tfel
       }
       this->opts.outputDirectory = getOutputDirectory(this->outputFile);
       this->output.open(this->outputFile.c_str());
-      if(!this->output){
-	string msg("TestDocMain : can't open output file '");
-	msg += this->outputFile;
-	msg += '\'';
-	throw(runtime_error(msg));
-      }
+      raise_if(!this->output,
+	       "TestDocMain: can't open output file "
+	       "'"+this->outputFile+'\'');
       if(!this->logFile.empty()){
 	this->logptr = shared_ptr<ostream>(new ofstream(argv[2]));
-	if(!(*(this->logptr))){
-	  string msg("TestDocMain : can't open log file '");
-	  msg += this->logFile;
-	  msg += '\'';
-	  throw(runtime_error(msg));
-	}
+	raise_if(!(*(this->logptr)),
+		 "TestDocMain : can't open log file "
+		 "'"+this->logFile+'\'');
 	this->log = this->logptr.get();
       } else{ 
 	this->log = &cerr;
@@ -142,11 +137,10 @@ namespace tfel
       if(this->opts.lang.empty()){
 	this->opts.lang = "english";
       }
-      if((this->latex)&&(this->markdown)){
-	throw(runtime_error("TestDocMain::TestDocMain : "
-			    "can't choose both latex and markdown "
-			    "generator at the same time"));
-      }
+      raise_if((this->latex)&&(this->markdown),
+	       "TestDocMain::TestDocMain : "
+	       "can't choose both latex and markdown "
+	       "generator at the same time");
       if((!this->latex)&&(!this->markdown)){
 	this->latex = true;
       }
@@ -235,11 +229,9 @@ namespace tfel
 	exit(EXIT_FAILURE);
       }
       this->logFile = this->currentArgument->getOption();
-      if(this->logFile.empty()){
-	string msg("TestDocMain::treatlogFile : ");
-	msg += "no option given to the --logFile argument";
-	throw(runtime_error(msg));
-      }
+      raise_if(this->logFile.empty(),
+	       "TestDocMain::treatlogFile: "
+	       "no option given to the --logFile argument");
     } // end of TestDocMain::treatLogFile
 
     void TestDocMain::treatPrefix()
@@ -251,11 +243,9 @@ namespace tfel
 	exit(EXIT_FAILURE);
       }
       this->opts.prefix = this->currentArgument->getOption();
-      if(this->opts.prefix.empty()){
-	string msg("TestDocMain::treatprefix : ");
-	msg += "no option given to the --prefix argument";
-	throw(runtime_error(msg));
-      }
+      raise_if(this->opts.prefix.empty(),
+	       "TestDocMain::treatprefix: "
+	       "no option given to the --prefix argument");
     } // end of TestDocMain::treatPrefix
 
     void TestDocMain::treatSrc()
@@ -267,11 +257,9 @@ namespace tfel
 	exit(EXIT_FAILURE);
       }
       this->srcdir = this->currentArgument->getOption();
-      if(this->srcdir.empty()){
-	string msg("TestDocMain::treatSrc : ");
-	msg += "no option given to the --src argument";
-	throw(runtime_error(msg));
-      }
+      raise_if(this->srcdir.empty(),
+	       "TestDocMain::treatSrc: "
+	       "no option given to the --src argument");
     } // end of TestDocMain::treatSrc
 
     void TestDocMain::treatLang()
@@ -283,11 +271,9 @@ namespace tfel
 	exit(EXIT_FAILURE);
       }
       this->opts.lang = this->currentArgument->getOption();
-      if(this->opts.lang.empty()){
-	string msg("TestDocMain::treatLang : ");
-	msg += "no option given to the --lang argument";
-	throw(runtime_error(msg));
-      }
+      raise_if(this->opts.lang.empty(),
+	       "TestDocMain::treatLang: "
+	       "no option given to the --lang argument");
     } // end of TestDocMain::treatLang
 
     void TestDocMain::treatKeyFile()
@@ -323,17 +309,17 @@ namespace tfel
 	try{
 	  systemCall::changeCurrentWorkingDirectory(d);
 	} catch(std::exception& e){
-	  throw(std::runtime_error("TestDocMain::execute : "
-				   "can't move to directory '"+d+"\' ("+
-				   std::string(e.what())+")'"));
+	  raise("TestDocMain::execute : "
+		"can't move to directory '"+d+"\' ("+
+		std::string(e.what())+")'");
 	}
       };
       const auto cpath = []{
 	try{
 	  return systemCall::getCurrentWorkingDirectory();
 	} catch(std::exception& e){
-	  throw(std::runtime_error("TestDocMain::execute: can't get real path of "
-				   "current directory ("+std::string(e.what())+"), aborting"));
+	  raise("TestDocMain::execute: can't get real path of "
+		"current directory ("+std::string(e.what())+"), aborting");
 	}
       }();
       if(!this->srcdir.empty()){

@@ -16,6 +16,7 @@
 #include<cstring>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
@@ -122,7 +123,7 @@ namespace mtest
     using castem::CastemComputeStiffnessTensor;
     constexpr const auto sqrt2 = Cste<real>::sqrt2;
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("CastemSmallStrainBehaviour::call_behaviour: "+m));}
+      tfel::raise_if(c,"CastemSmallStrainBehaviour::call_behaviour: "+m);
     };
     const auto h = this->usesGenericPlaneStressAlgorithm ?
                    ModellingHypothesis::PLANESTRESS :this->getHypothesis();
@@ -326,8 +327,8 @@ namespace mtest
 				   castem::ISOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<3u,real>(&Kt(0,0)) = De;
       } else {
-	throw(runtime_error("CastemSmallStrainBehaviour::computeElasticStiffness: "
-			    "unsupported hypothesis"));
+	tfel::raise("CastemSmallStrainBehaviour::computeElasticStiffness: "
+		    "unsupported hypothesis");
       }
     } else if(this->stype==1u){
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
@@ -367,13 +368,13 @@ namespace mtest
 				   castem::ORTHOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<3u,real>(&Kt(0,0)) = change_basis(De,drot);
       } else {
-	throw(std::runtime_error("CastemSmallStrainBehaviour::computeElasticStiffness : "
-				 "unsupported hypothesis"));
+	tfel::raise("CastemSmallStrainBehaviour::computeElasticStiffness : "
+		    "unsupported hypothesis");
       }
     } else {
-      throw(std::runtime_error("CastemSmallStrainBehaviour::computeElasticStiffness : "
-			       "invalid behaviour type (neither "
-			       "isotropic or orthotropic)"));
+      tfel::raise("CastemSmallStrainBehaviour::computeElasticStiffness : "
+		  "invalid behaviour type (neither "
+		  "isotropic or orthotropic)");
     }
   }
 
@@ -389,9 +390,9 @@ namespace mtest
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion2",0.);
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion3",0.);
     } else {
-      throw(std::runtime_error("CastemSmallStrainBehaviour::"
-			       "setOptionalMaterialPropertiesDefaultValues: "
-			       "unsupported symmetry type"));
+      tfel::raise("CastemSmallStrainBehaviour::"
+		  "setOptionalMaterialPropertiesDefaultValues: "
+		  "unsupported symmetry type");
     }
   } // end of CastemSmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues
 

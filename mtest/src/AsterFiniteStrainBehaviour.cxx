@@ -14,6 +14,7 @@
 #include<cmath>
 #include<algorithm>
 
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/tensor.hxx"
 #include"TFEL/Math/stensor.hxx"
@@ -132,9 +133,9 @@ namespace mtest
     } else if(fs==2){
       this->afsf = 2u;
     } else {
-      throw(std::runtime_error("AsterFiniteStrainBehaviour::AsterFiniteStrainBehaviour: "
-			       "invalid finite strain formulation for behaviour '"+b+"' "
-			       "in library '"+l+"'"));
+      tfel::raise("AsterFiniteStrainBehaviour::AsterFiniteStrainBehaviour: "
+		  "invalid finite strain formulation for behaviour '"+b+"' "
+		  "in library '"+l+"'");
     }
   } // end of AsterFiniteStrainBehaviour::AsterFiniteStrainBehaviour
 
@@ -169,7 +170,7 @@ namespace mtest
     using tfel::math::vector;
     using TangentOperator = tfel::material::FiniteStrainBehaviourTangentOperatorBase;
     auto throw_if = [](const bool c, const std::string& m){
-      if(c){throw(std::runtime_error("AsterFiniteStrainBehaviour::call_behaviour: "+m));}
+      tfel::raise_if(c,"AsterFiniteStrainBehaviour::call_behaviour: "+m);
     };
     constexpr const auto sqrt2 = Cste<real>::sqrt2;
     AsterInt ntens;

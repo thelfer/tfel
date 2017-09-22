@@ -15,7 +15,7 @@
 #include<sstream>
 #include<stdexcept>
 #include<algorithm>
-
+#include"TFEL/Raise.hxx"
 #include"TFEL/Glossary/Glossary.hxx"
 #include"TFEL/Glossary/GlossaryEntry.hxx"
 #include"TFEL/Utilities/CxxTokenizer.hxx"
@@ -190,17 +190,16 @@ namespace mfront
       return;
     }
     const auto& mpd = *(a.get<BehaviourDescription::ComputedMaterialProperty>().mpd);
-    if(!((mpd.inputs.size())||(mpd.inputs.size()!=1u))){
-      throw(std::runtime_error("checkThermalExpansionCoefficientArgument: "
-			       "thermal expansion shall only depend on temperature or be constant"));
-    }
+    tfel::raise_if(!((mpd.inputs.size())||(mpd.inputs.size()!=1u)),
+		   "checkThermalExpansionCoefficientArgument: "
+		   "thermal expansion shall only depend on "
+		   "temperature or be constant");
     if(mpd.inputs.size()==1u){
       const auto& v = mpd.inputs.front();
       const auto& vn = v.getExternalName();
-      if(vn!="Temperature"){
-	throw(std::runtime_error("checkThermalExpansionCoefficientArgument: "
-				 "thermal expansion shall only depend on temperature"));
-      }
+      tfel::raise_if(vn!="Temperature",
+		     "checkThermalExpansionCoefficientArgument: "
+		     "thermal expansion shall only depend on temperature");
     }
   } // end of checkThermalExpansionCoefficientArgument
 
@@ -234,8 +233,8 @@ namespace mfront
   
   void BehaviourDescription::throwUndefinedAttribute(const std::string& n)
   {
-    throw(std::runtime_error("BehaviourDescription::getAttribute: "
-			     "no attribute named '"+n+"'"));
+    tfel::raise("BehaviourDescription::getAttribute: "
+		"no attribute named '"+n+"'");
   } // end of BehaviourDescription::throwUndefinedAttribute
   
   const BehaviourData&
@@ -278,39 +277,35 @@ namespace mfront
 
   void BehaviourDescription::setBehaviourName(const std::string& m)
   {
-    if(!this->behaviour.empty()){
-      throw(std::runtime_error("BehaviourDescription::setBehaviourName: "
-			       "behaviour name already defined"));
-    }
+    tfel::raise_if(!this->behaviour.empty(),
+		   "BehaviourDescription::setBehaviourName: "
+		   "behaviour name already defined");
     this->behaviour = m;
     this->updateClassName();
   } // end of BehaviourDescription::setBehaviourName
 
   const std::string& BehaviourDescription::getBehaviourName() const
   {
-    if(this->behaviour.empty()){
-      throw(std::runtime_error("BehaviourDescription::getBehaviourName: "
-			       "behaviour name not defined"));
-    }
+    tfel::raise_if(this->behaviour.empty(),
+		   "BehaviourDescription::getBehaviourName: "
+		   "behaviour name not defined");
     return this->behaviour;
   } // end of BehaviourDescription::getBehaviourName
 
   void BehaviourDescription::setDSLName(const std::string& m)
   {
-    if(!this->dsl.empty()){
-      throw(std::runtime_error("BehaviourDescription::setDSLName: "
-			       "dsl name already defined"));
-    }
+    tfel::raise_if(!this->dsl.empty(),
+		   "BehaviourDescription::setDSLName: "
+		   "dsl name already defined");
     this->dsl = m;
     this->updateClassName();
   } // end of BehaviourDescription::setDSLName
 
   const std::string& BehaviourDescription::getDSLName() const
   {
-    if(this->dsl.empty()){
-      throw(std::runtime_error("BehaviourDescription::getDSLName: "
-			       "dsl name not defined"));
-    }
+    tfel::raise_if(this->dsl.empty(),
+		   "BehaviourDescription::getDSLName: "
+		   "dsl name not defined");
     return this->dsl;
   } // end of BehaviourDescription::getDSLName
 
@@ -318,7 +313,7 @@ namespace mfront
   BehaviourDescription::getMaterialPropertyInputs(const MaterialPropertyDescription& mpd) const
   {
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourDescription::getMaterialPropertyInputs: "+m));}
+      tfel::raise_if(c,"BehaviourDescription::getMaterialPropertyInputs: "+m);
     };
     auto getVariableType = [&throw_if,this](const Hypothesis h,
 					    const std::string& v){
@@ -375,29 +370,26 @@ namespace mfront
   void
   BehaviourDescription::setIntegrationScheme(const BehaviourDescription::IntegrationScheme s)
   {
-    if(this->ischeme!=UNDEFINEDINTEGRATIONSCHEME){
-      throw(std::runtime_error("BehaviourDescription::setIntegrationScheme: "
-			       "integration scheme already defined"));
-    }
+    tfel::raise_if(this->ischeme!=UNDEFINEDINTEGRATIONSCHEME,
+		   "BehaviourDescription::setIntegrationScheme: "
+		   "integration scheme already defined");
     this->ischeme = s;
   } // end of BehaviourDescription::setIntegrationScheme
 
   BehaviourDescription::IntegrationScheme
   BehaviourDescription::getIntegrationScheme() const
   {
-    if(this->ischeme==UNDEFINEDINTEGRATIONSCHEME){
-      throw(std::runtime_error("BehaviourDescription::getIntegrationScheme: "
-			       "the integration scheme is undefined"));
-    }
+    tfel::raise_if(this->ischeme==UNDEFINEDINTEGRATIONSCHEME,
+		   "BehaviourDescription::getIntegrationScheme: "
+		   "the integration scheme is undefined");
     return this->ischeme;
   } // end of BehaviourDescription::getIntegrationScheme
 
   void BehaviourDescription::setLibrary(const std::string& l)
   {
-    if(!this->library.empty()){
-      throw(std::runtime_error("BehaviourDescription::setLibrary: "
-			       "library alreay defined"));
-    }
+    tfel::raise_if(!this->library.empty(),
+		   "BehaviourDescription::setLibrary: "
+		   "library alreay defined");
     this->library = l;
   } // end of BehaviourDescription::setLibrary
 
@@ -408,10 +400,9 @@ namespace mfront
 
   void BehaviourDescription::setMaterialName(const std::string& m)
   {
-    if(!this->material.empty()){
-      throw(std::runtime_error("BehaviourDescription::setMaterialName: "
-			       "material name alreay defined"));
-    }
+    tfel::raise_if(!this->material.empty(),
+		   "BehaviourDescription::setMaterialName: "
+		   "material name alreay defined");
     this->material = m;
     this->updateClassName();
   } // end of BehaviourDescription::setMaterialName
@@ -423,19 +414,17 @@ namespace mfront
 
   void BehaviourDescription::setClassName(const std::string& n)
   {
-    if(!this->className.empty()){
-      throw(std::runtime_error("BehaviourDescription::setClassName: "
-			       "class name alreay defined"));
-    }
+    tfel::raise_if(!this->className.empty(),
+		   "BehaviourDescription::setClassName: "
+		   "class name alreay defined");
     this->className = n;
   } // end of BehaviourDescription::setClassName
 
   const std::string& BehaviourDescription::getClassName() const
   {
-    if(this->className.empty()){
-      throw(std::runtime_error("BehaviourDescription::getClassName: "
-			       "class name not defined"));
-    }
+    tfel::raise_if(this->className.empty(),
+		   "BehaviourDescription::getClassName: "
+		   "class name not defined");
     return this->className;
   } // end of BehaviourDescription::getClassName
 
@@ -508,8 +497,8 @@ namespace mfront
     } else if (this->getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
       btype="MechanicalBehaviourBase::COHESIVEZONEMODEL";
     } else {
-      throw(std::runtime_error("BehaviourDescription::getBehaviourTypeFlag: "
-			       "unsupported behaviour type"));
+      tfel::raise("BehaviourDescription::getBehaviourTypeFlag: "
+		  "unsupported behaviour type");
     }
     return btype;
   } // end of BehaviourDescription::getBehaviourTypeFlag
@@ -535,10 +524,9 @@ namespace mfront
   } // end of BehaviourDescription::isMaterialPropertyConstantDuringTheTimeStep
 
   bool BehaviourDescription::areElasticMaterialPropertiesConstantDuringTheTimeStep() const{
-    if(!this->areElasticMaterialPropertiesDefined()){
-      throw(std::runtime_error("BehaviourDescription::getElasticMaterialProperties: "
-			       "no elastic material property defined"));
-    }
+    tfel::raise_if(!this->areElasticMaterialPropertiesDefined(),
+		   "BehaviourDescription::getElasticMaterialProperties: "
+		   "no elastic material property defined");
     return this->areMaterialPropertiesConstantDuringTheTimeStep(this->elasticMaterialProperties);
   } // end of BehaviourDescription::areElasticMaterialPropertiesConstantDuringTheTimeStep
 
@@ -555,17 +543,16 @@ namespace mfront
   const std::vector<BehaviourDescription::MaterialProperty>&
   BehaviourDescription::getElasticMaterialProperties() const
   {
-    if(!this->areElasticMaterialPropertiesDefined()){
-      throw(std::runtime_error("BehaviourDescription::getElasticMaterialProperties: "
-			       "no elastic material property defined"));
-    }
+    tfel::raise_if(!this->areElasticMaterialPropertiesDefined(),
+		   "BehaviourDescription::getElasticMaterialProperties: "
+		   "no elastic material property defined");
     return this->elasticMaterialProperties;
   }
   
   void BehaviourDescription::setElasticMaterialProperties(const std::vector<MaterialProperty>& emps)
   {
     auto throw_if = [](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error("BehaviourDescription::setElasticMaterialProperties: "+m));}
+      tfel::raise_if(b,"BehaviourDescription::setElasticMaterialProperties: "+m);
     };
     throw_if(!this->allowsNewUserDefinedVariables(),
 	     "new variables are can't be defined after the first code block.");
@@ -621,16 +608,14 @@ namespace mfront
 
   void BehaviourDescription::setElasticSymmetryType(const BehaviourSymmetryType t)
   {
-    if(this->estypeIsDefined){
-      throw(std::runtime_error("BehaviourDescription::setElasticSymmetryType: "
-			       "elastic symmetry type already declared"));
-    }
+    tfel::raise_if(this->estypeIsDefined,
+		   "BehaviourDescription::setElasticSymmetryType: "
+		   "elastic symmetry type already declared");
     const auto s = this->getSymmetryType();
-    if((s==mfront::ISOTROPIC)&&(t==mfront::ORTHOTROPIC)){
-      throw(std::runtime_error("BehaviourDescription::setElasticSymmetryType: "
-			       "can't define an orthotropic elastic symmetry for "
-			       "an isotropic material"));
-    }
+    tfel::raise_if((s==mfront::ISOTROPIC)&&(t==mfront::ORTHOTROPIC),
+		   "BehaviourDescription::setElasticSymmetryType: "
+		   "can't define an orthotropic elastic symmetry for "
+		   "an isotropic material");
     this->estype = t;
     this->estypeIsDefined=true;
   } // end of BehaviourDescription::setElasticSymmetryType
@@ -651,10 +636,9 @@ namespace mfront
 
   void BehaviourDescription::setSymmetryType(const BehaviourSymmetryType t)
   {
-    if(this->stypeIsDefined){
-      throw(std::runtime_error("BehaviourDescription::setSymmetryType: "
-			       "symmetry type already declared"));
-    }
+    tfel::raise_if(this->stypeIsDefined,
+		   "BehaviourDescription::setSymmetryType: "
+		   "symmetry type already declared");
     this->stype = t;
     this->stypeIsDefined=true;
   } // end of BehaviourDescription::setSymmetryType
@@ -666,10 +650,9 @@ namespace mfront
 
   void BehaviourDescription::setCrystalStructure(const CrystalStructure s)
   {
-    if(this->hasCrystalStructure()){
-      throw(std::runtime_error("BehaviourDescription::setCrystalStructure: "
-			       "crystal structure already declared"));
-    }
+    tfel::raise_if(this->hasCrystalStructure(),
+		   "BehaviourDescription::setCrystalStructure: "
+		   "crystal structure already declared");
     this->gs = SlipSystemsDescription(s);
   } // end of BehaviourDescription::setCrystalStructure
 
@@ -680,17 +663,16 @@ namespace mfront
 
   BehaviourDescription::CrystalStructure BehaviourDescription::getCrystalStructure() const
   {
-    if(!this->hasCrystalStructure()){
-      throw(std::runtime_error("BehaviourDescription::setCrystalStructure: "
-			       "no crystal structure declared"));
-    }
+    tfel::raise_if(!this->hasCrystalStructure(),
+		   "BehaviourDescription::setCrystalStructure: "
+		   "no crystal structure declared");
     return this->gs.get<SlipSystemsDescription>().getCrystalStructure();
   } // end of BehaviourDescription::getCrystalStructure
   
   void BehaviourDescription::addHillTensor(const VariableDescription& v,
 					   const std::vector<MaterialProperty>& hcs){
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourDescription::addHillTensor: "+m));}
+      tfel::raise_if(c,"BehaviourDescription::addHillTensor: "+m);
     };
     throw_if((this->type!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)&&
 	     (this->type!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR),
@@ -714,10 +696,9 @@ namespace mfront
   
   void BehaviourDescription::declareAsASmallStrainStandardBehaviour()
   {
-    if(!this->mvariables.empty()){
-      throw(std::runtime_error("BehaviourDescription::declareAsASmallStrainStandardBehaviour: "
-			       "some driving variables are already declared"));
-    }
+    tfel::raise_if(!this->mvariables.empty(),
+		   "BehaviourDescription::declareAsASmallStrainStandardBehaviour: "
+		   "some driving variables are already declared");
     DrivingVariable eto;
     eto.name = "eto";
     eto.type = "StrainStensor";
@@ -734,10 +715,9 @@ namespace mfront
 
   void BehaviourDescription::declareAsAFiniteStrainStandardBehaviour(const bool b)
   {
-    if(!this->mvariables.empty()){
-      throw(std::runtime_error("BehaviourDescription::declareAsAFiniteStrainStandardBehaviour: "
-			       "some driving variables are already declared"));
-    }
+    tfel::raise_if(!this->mvariables.empty(),
+		   "BehaviourDescription::declareAsAFiniteStrainStandardBehaviour: "
+		   "some driving variables are already declared");
     DrivingVariable F;
     F.name = "F";
     F.type = "DeformationGradientTensor";
@@ -759,10 +739,9 @@ namespace mfront
   void
   BehaviourDescription::declareAsACohesiveZoneModel()
   {
-    if(!this->mvariables.empty()){
-      throw(std::runtime_error("BehaviourDescription::declareAsACohesiveZoneModel: "
-			       "some driving variables are already declared"));
-    }
+    tfel::raise_if(!this->mvariables.empty(),
+		   "BehaviourDescription::declareAsACohesiveZoneModel: "
+		   "some driving variables are already declared");
     DrivingVariable u;
     u.name = "u";
     u.type = "DisplacementTVector";
@@ -788,10 +767,9 @@ namespace mfront
       r += "}";
       return r;
     };
-    if(!tfel::utilities::CxxTokenizer::isValidIdentifier(lds.name,true)){
-      throw(std::runtime_error("BehaviourDSLCommon::addLocalDataStructure: "
-			       "invalid local structure name '"+lds.name+"'"));
-    }
+    tfel::raise_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(lds.name,true),
+		   "BehaviourDSLCommon::addLocalDataStructure: "
+		   "invalid local structure name '"+lds.name+"'");
     const auto mh = lds.getSpecialisedHypotheses();
     for(const auto h:mh){
       if(!lds.get(h).empty()){ // paranoiac checks, this can't occur
@@ -816,16 +794,14 @@ namespace mfront
   void BehaviourDescription::addMainVariable(const DrivingVariable&    v,
 					     const ThermodynamicForce& f)
   {
-    if(this->type!=BehaviourDescription::GENERALBEHAVIOUR){
-      throw(std::runtime_error("BehaviourDescription::addMainVariables: "
-			       "one can not add a main variable if the behaviour "
-			       "don't have a general behaviour type"));
-    }
-    if(!this->mvariables.insert({v,f}).second){
-      throw(std::runtime_error("BehaviourDescription::addMainVariables: "
-			       "a driving variable '"+v.name+"' has "
-			       "already been declared"));
-    }
+    tfel::raise_if(this->type!=BehaviourDescription::GENERALBEHAVIOUR,
+		   "BehaviourDescription::addMainVariables: "
+		   "one can not add a main variable if the behaviour "
+		   "don't have a general behaviour type");
+    tfel::raise_if(!this->mvariables.insert({v,f}).second,
+		   "BehaviourDescription::addMainVariables: "
+		   "a driving variable '"+v.name+"' has "
+		   "already been declared");
   } // end of BehaviourDescription::addMainVariables
 
   const std::map<DrivingVariable,ThermodynamicForce>&
@@ -871,14 +847,13 @@ namespace mfront
   {
     using tfel::glossary::Glossary;
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient: "+m));}
+      tfel::raise_if(c,"BehaviourDescription::setThermalExpansionCoefficient: "+m);
     };
     throw_if(!this->allowsNewUserDefinedVariables(),
 	     "new variables are can't be defined after the first code block.");
-    if(this->areThermalExpansionCoefficientsDefined()){
-      throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficient: "
-			       "thermal expansion coefficient already defined"));
-    }
+    tfel::raise_if(this->areThermalExpansionCoefficientsDefined(),
+		   "BehaviourDescription::setThermalExpansionCoefficient: "
+		   "thermal expansion coefficient already defined");
     this->setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		       BehaviourDescription::requiresThermalExpansionCoefficientTensor,false);
     checkThermalExpansionCoefficientArgument(*this,a,Glossary::ThermalExpansion,"alpha");
@@ -891,7 +866,7 @@ namespace mfront
   {
     using tfel::glossary::Glossary;
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourDescription::setThermalExpansionCoefficients: "+m));}
+      tfel::raise_if(c,"BehaviourDescription::setThermalExpansionCoefficients: "+m);
     };
     throw_if(!this->allowsNewUserDefinedVariables(),
 	     "new variables are can't be defined after the first code block.");
@@ -912,7 +887,7 @@ namespace mfront
   void BehaviourDescription::addStressFreeExpansion(const Hypothesis h,
 						    const StressFreeExpansionDescription& sfed){
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourDescription::addStressFreeExpansion: "+m));}
+      tfel::raise_if(c,"BehaviourDescription::addStressFreeExpansion: "+m);
     };
     throw_if(!this->allowsNewUserDefinedVariables(),
 	     "new variables are can't be defined after the first code block.");
@@ -961,17 +936,16 @@ namespace mfront
   const std::vector<BehaviourDescription::MaterialProperty>&
   BehaviourDescription::getThermalExpansionCoefficients() const
   {
-    if(!this->areThermalExpansionCoefficientsDefined()){
-      throw(std::runtime_error("BehaviourDescription::getThermalExpansionCoefficients: "
-			       "no thermal expansion coefficients defined"));
-    }
+    tfel::raise_if(!this->areThermalExpansionCoefficientsDefined(),
+		   "BehaviourDescription::getThermalExpansionCoefficients: "
+		   "no thermal expansion coefficients defined");
     return this->thermalExpansionCoefficients;
   }
 
   void BehaviourDescription::setSlipSystems(const std::vector<SlipSystem>& ss)
   {
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourDescription::setSlipSystems: "+m));}
+      tfel::raise_if(c,"BehaviourDescription::setSlipSystems: "+m);
     };
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     throw_if(!this->allowsNewUserDefinedVariables(),
@@ -1022,20 +996,18 @@ namespace mfront
   const tfel::material::SlipSystemsDescription&
   BehaviourDescription::getSlipSystems() const
   {
-    if(!this->areSlipSystemsDefined()){
-      throw(std::runtime_error("BehaviourDescription::getSlipSystems: "
-			       "no slip systems defined"));
-    }
+    tfel::raise_if(!this->areSlipSystemsDefined(),
+		   "BehaviourDescription::getSlipSystems: "
+		   "no slip systems defined");
     return this->gs;
   } // end of BehaviourDescription::getSlipSystems
 
   BehaviourDescription::InteractionMatrixStructure
   BehaviourDescription::getInteractionMatrixStructure() const
   {
-    if(!this->areSlipSystemsDefined()){
-      throw(std::runtime_error("BehaviourDescription::getInteractionMatrixStructure: "
-			       "no slip system defined"));
-    }
+    tfel::raise_if(!this->areSlipSystemsDefined(),
+		   "BehaviourDescription::getInteractionMatrixStructure: "
+		   "no slip system defined");
     return this->gs.get<SlipSystemsDescription>().getInteractionMatrixStructure();
   } // end of BehaviourDescription::getInteractionMatrix
 
@@ -1050,7 +1022,7 @@ namespace mfront
   void BehaviourDescription::setInteractionMatrix(const std::vector<long double>& m)
   {
     auto throw_if = [](const bool c,const std::string& msg){
-      if(c){throw(std::runtime_error("BehaviourDescription::setInteractionMatrix: "+msg));}
+      tfel::raise_if(c,"BehaviourDescription::setInteractionMatrix: "+msg);
     };
     throw_if(!this->allowsNewUserDefinedVariables(),
 	     "new variables are can't be defined after the first code block.");
@@ -1069,8 +1041,8 @@ namespace mfront
   void BehaviourDescription::setDislocationsMeanFreePathInteractionMatrix(const std::vector<long double>& m)
   {
     auto throw_if = [](const bool c,const std::string& msg){
-      if(c){throw(std::runtime_error("BehaviourDescription::"
-				     "setDislocationsMeanFreePathInteractionMatrix: "+msg));}
+      tfel::raise_if(c,"BehaviourDescription::"
+				     "setDislocationsMeanFreePathInteractionMatrix: "+msg);
     };
     throw_if(!this->allowsNewUserDefinedVariables(),
 	     "new variables are can't be defined after the first code block.");
@@ -1080,10 +1052,9 @@ namespace mfront
   
   void BehaviourDescription::setUseQt(const bool b)
   {
-    if (this->use_qt) {
-      throw(std::runtime_error("BehaviourDescription::setUseQt: "
-			       "setUseQt already called"));
-    }
+    tfel::raise_if(this->use_qt,
+		   "BehaviourDescription::setUseQt: "
+		   "setUseQt already called");
     this->use_qt = b;
   } // end of BehaviourDescription::setUseQt
 
@@ -1108,8 +1079,8 @@ namespace mfront
     } else if(this->type==COHESIVEZONEMODEL){
       return "tfel::math::tmatrix<N,N,stress>";
     }
-    throw(std::runtime_error("BehaviourDescription::getStiffnessOperatorType: "
-			     "internal error (unsupported behaviour type)"));
+    tfel::raise("BehaviourDescription::getStiffnessOperatorType: "
+		"internal error (unsupported behaviour type)");
   } // end of BehaviourDescription::getStiffnessOperatorType
 
   const std::vector<BehaviourData::StressFreeExpansionDescription>&
@@ -1124,8 +1095,8 @@ namespace mfront
        (this->type==FINITESTRAINSTANDARDBEHAVIOUR)){
       return "StrainStensor";
     }
-    throw(std::runtime_error("BehaviourDescription::getStressFreeExpansionType: "
-			     "internal error (unsupported behaviour type)"));
+    tfel::raise("BehaviourDescription::getStressFreeExpansionType: "
+		"internal error (unsupported behaviour type)");
   } // end of BehaviourDescription::getStressFreeExpansionType
 
   bool
@@ -1147,7 +1118,7 @@ namespace mfront
       for(const auto & lh : this->hypotheses){
 	msg << "\n- '" << ModellingHypothesis::toString(lh) << "'";
       }
-      throw(std::runtime_error(msg.str()));
+      tfel::raise(msg.str());
     }
   } // end of BehaviourDescription::checkModellingHypothesis
 
@@ -1159,10 +1130,9 @@ namespace mfront
   const std::set<BehaviourDescription::Hypothesis>&
   BehaviourDescription::getModellingHypotheses() const
   {
-    if(this->hypotheses.empty()){
-      throw(std::runtime_error("BehaviourDescription::getModellingHypotheses: "
-			       "hypothesis undefined yet"));
-    }
+    tfel::raise_if(this->hypotheses.empty(),
+		   "BehaviourDescription::getModellingHypotheses: "
+		   "hypothesis undefined yet");
     return this->hypotheses;
   } // end of BehaviourDescription::getModellingHypotheses
 
@@ -1198,11 +1168,14 @@ namespace mfront
   BehaviourDescription::setModellingHypotheses(const std::set<Hypothesis>& mh,
 					       const bool b)
   {
+    constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourDescription::setHypotheses: "+m));}
+      tfel::raise_if(c,"BehaviourDescription::setHypotheses: "+m);
     };
     // never ever trust a user
     throw_if(mh.empty(),"empty set of modelling hypotheses specificied");
+    // never ever trust a user
+    throw_if(mh.find(uh)!=mh.end(),"undefined modelling hypothesis specified");
     // check that the user did not already set the modelling hypotheses
     throw_if(!this->hypotheses.empty(),
 	     "supported modelling hypotheses have already been declared");
@@ -1245,7 +1218,8 @@ namespace mfront
     }
   } // end of BehaviourDescription::setModellingHypotheses
 
-  const std::vector<ModelDescription>& BehaviourDescription::getModelsDescriptions() const{
+  const std::vector<ModelDescription>&
+  BehaviourDescription::getModelsDescriptions() const{
     return this->models;
   }
   
@@ -1628,11 +1602,11 @@ namespace mfront
 
   bool BehaviourDescription::hasSpecialisedMechanicalData(const Hypothesis h) const
   {
-    if(this->getModellingHypotheses().find(h)==this->getModellingHypotheses().end()){
-      throw(std::runtime_error("BehaviourDescription::areAllMechanicalDataSpecialised: "
-			       "hypothesis '"+ModellingHypothesis::toString(h)+
-			       "' is not supported"));
-    }
+    tfel::raise_if(this->getModellingHypotheses().find(h)==
+    		   this->getModellingHypotheses().end(),
+    		   "BehaviourDescription::areAllMechanicalDataSpecialised: "
+    		   "hypothesis '"+ModellingHypothesis::toString(h)+
+    		   "' is not supported");
     return this->sd.find(h)!=this->sd.end();
   }
 
@@ -1704,10 +1678,9 @@ namespace mfront
   void BehaviourDescription::requiresTVectorOrVectorIncludes(bool& b1,bool& b2) const
   {
     b1 = b2 = false;
-    if(this->hypotheses.empty()){
-      throw(std::runtime_error("BehaviourDescription::areAllMechanicalDataSpecialised: "
-			       "no hypothesis defined"));
-    }
+    tfel::raise_if(this->hypotheses.empty(),
+		   "BehaviourDescription::areAllMechanicalDataSpecialised: "
+		   "no hypothesis defined");
     if(!this->areAllMechanicalDataSpecialised()){
       this->requiresTVectorOrVectorIncludes(b1,b2,d);
     }
@@ -2047,17 +2020,15 @@ namespace mfront
     if(b){
       auto p=this->attributes.find(n);
       if(p!=this->attributes.end()){
-	if(a.getTypeIndex()!=p->second.getTypeIndex()){
-	  throw(std::runtime_error("BehaviourDescription::setAttribute: "
-				   "attribute already exists with a different type"));
-	}
+	tfel::raise_if(a.getTypeIndex()!=p->second.getTypeIndex(),
+		       "BehaviourDescription::setAttribute: "
+		       "attribute already exists with a different type");
 	return;
       }
     }
-    if(!this->attributes.insert({n,a}).second){
-      throw(std::runtime_error("BehaviourDescription::setAttribute: "
-			       "attribute '"+n+"' already declared"));
-    }
+    tfel::raise_if(!this->attributes.insert({n,a}).second,
+		   "BehaviourDescription::setAttribute: "
+		   "attribute '"+n+"' already declared");
   } // end of BehaviourDescription::setAttribute
 
   bool BehaviourDescription::hasAttribute(const std::string& n) const
@@ -2143,11 +2114,10 @@ namespace mfront
     for(const auto h : mh){
       const auto& bd = this->getBehaviourData(h);
       const auto  f  = bd.getVariables(c).contains(n);
-      if(!f&&b){
-	throw(std::runtime_error("BehaviourDescription::checkVariableExistence: "
-				 "no '"+c+"' named '"+n+"' found for at "
-				 "least one modelling hypothesis"));
-      }
+      tfel::raise_if(!f&&b,
+		     "BehaviourDescription::checkVariableExistence: "
+		     "no '"+c+"' named '"+n+"' found for at "
+		     "least one modelling hypothesis");
       r.first  = r.first  && f;
       r.second = r.second || f;
     }
@@ -2161,8 +2131,8 @@ namespace mfront
 						       const std::string& g) const
   {
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourDescription::"
-				     "checkVariableGlossaryName: "+m));}
+      tfel::raise_if(c,"BehaviourDescription::"
+		     "checkVariableGlossaryName: "+m);
     };
     for(const auto & h : this->getDistinctModellingHypotheses()){
       const auto& bdata = this->getBehaviourData(h);
@@ -2178,8 +2148,8 @@ namespace mfront
 						    const std::string& e) const
   {
     auto throw_if = [](const bool c,const std::string& m){
-      if(c){throw(std::runtime_error("BehaviourDescription::"
-				     "checkVariableEntryName: "+m));}
+      tfel::raise_if(c,"BehaviourDescription::"
+		     "checkVariableEntryName: "+m);
     };
     for(const auto & h : this->getDistinctModellingHypotheses()){
       const auto& bdata = this->getBehaviourData(h);
@@ -2199,31 +2169,27 @@ namespace mfront
     for(const auto & h : this->getDistinctModellingHypotheses()){
       const auto& bdata = this->getBehaviourData(h);
       const auto& vc = bdata.getVariables(c);
-      if(p>=vc.size()){
-	throw(std::runtime_error("BehaviourDescription::checkVariablePosition: "
-				 "position given is greater than the number "
-				 "of variables of category '"+c+"'"));
-      }
+      tfel::raise_if(p>=vc.size(),
+		     "BehaviourDescription::checkVariablePosition: "
+		     "position given is greater than the number "
+		     "of variables of category '"+c+"'");
       const auto& v = vc[p];
-      if(v.name!=n){
-	throw(std::runtime_error("BehaviourDescription::checkVariablePosition: "
-				 "variable at the given position is not named '"+n+
-				 "' but '"+v.name+"'"));
-      }
+      tfel::raise_if(v.name!=n,
+		     "BehaviourDescription::checkVariablePosition: "
+		     "variable at the given position is not named '"+n+
+		     "' but '"+v.name+"'");
     }
   } // end of BehaviourDescription::checkVariablePosition
 
   void
   BehaviourDescription::setOrthotropicAxesConvention(const tfel::material::OrthotropicAxesConvention c)
   {
-    if(this->oacIsDefined){
-      throw(std::runtime_error("BehaviourDescription::setOrthotropicAxesConvention: "
-			       "orthotropic axes convention already defined"));
-    }
-    if(this->getSymmetryType()!=mfront::ORTHOTROPIC){
-      throw(std::runtime_error("BehaviourDescription::setOrthotropicAxesConvention: "
-			       "the behaviour is not orthotropic."));
-    }
+    tfel::raise_if(this->oacIsDefined,
+		   "BehaviourDescription::setOrthotropicAxesConvention: "
+		   "orthotropic axes convention already defined");
+    tfel::raise_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
+		   "BehaviourDescription::setOrthotropicAxesConvention: "
+		   "the behaviour is not orthotropic.");
     this->oacIsDefined = true;
     this->oac = c;
   }
@@ -2231,10 +2197,9 @@ namespace mfront
   tfel::material::OrthotropicAxesConvention
   BehaviourDescription::getOrthotropicAxesConvention() const
   {
-    if(this->getSymmetryType()!=mfront::ORTHOTROPIC){
-      throw(std::runtime_error("BehaviourDescription::getOrthotropicAxesConvention: "
-			       "the behaviour is not orthotropic."));
-    }
+    tfel::raise_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
+		   "BehaviourDescription::getOrthotropicAxesConvention: "
+		   "the behaviour is not orthotropic.");
     if(!this->oacIsDefined){
       this->oacIsDefined = true;
     }
@@ -2257,10 +2222,9 @@ namespace mfront
   void BehaviourDescription::areDynamicallyAllocatedVectorsAllowed(const bool b)
   {
     if(this->areDynamicallyAllocatedVectorsAllowed_.is<bool>()){
-      if(this->areDynamicallyAllocatedVectorsAllowed_.get<bool>()!=b){
-	throw(std::runtime_error("BehaviourDescription::areDynamicallyAllocatedVectorsAllowed: "
-				 "inconsistent policy for dynamically allocated vectors"));
-      }
+      tfel::raise_if(this->areDynamicallyAllocatedVectorsAllowed_.get<bool>()!=b,
+		     "BehaviourDescription::areDynamicallyAllocatedVectorsAllowed: "
+		     "inconsistent policy for dynamically allocated vectors");
       return;
     }
     this->areDynamicallyAllocatedVectorsAllowed_ = b;
@@ -2268,16 +2232,14 @@ namespace mfront
   
   BehaviourDescription::~BehaviourDescription() = default;
 
-  void
-  setElasticSymmetryType(BehaviourDescription& bd,
-			 const BehaviourSymmetryType s)
+  void setElasticSymmetryType(BehaviourDescription& bd,
+			      const BehaviourSymmetryType s)
   {
     if(bd.isElasticSymmetryTypeDefined()){
-      if(bd.getElasticSymmetryType()!=s){
-	throw(std::runtime_error("setElasticSymmetryType: "
-				 "the elastic symmetry type defined for "
-				 "the behaviour is inconsistent."));
-      }
+      tfel::raise_if(bd.getElasticSymmetryType()!=s,
+		     "setElasticSymmetryType: "
+		     "the elastic symmetry type defined for "
+		     "the behaviour is inconsistent.");
     } else {
       bd.setElasticSymmetryType(s);
     }

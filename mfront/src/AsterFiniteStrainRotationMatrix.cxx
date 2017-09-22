@@ -15,6 +15,7 @@
 #include<string>
 #include<stdexcept>
 #include<algorithm>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/General/MathConstants.hxx"
 #include"MFront/Aster/AsterFiniteStrainRotationMatrix.hxx"
 
@@ -97,8 +98,8 @@ namespace aster
   void
   AsterFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward(AsterReal *const) const
   {
-    throw(std::runtime_error("AsterFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward : "
-			     "unimplemented feature"));
+    tfel::raise("AsterFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward : "
+		"unimplemented feature");
   } // end of AsterFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward
 
   AsterFiniteStrainRotationMatrix3D::AsterFiniteStrainRotationMatrix3D(const AsterReal *const drot)

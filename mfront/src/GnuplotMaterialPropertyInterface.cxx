@@ -15,6 +15,7 @@
 #include<algorithm>
 #include<stdexcept>
 
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontHeader.hxx"
 #include"MFront/DSLUtilities.hxx"
 #include"MFront/MFrontUtilities.hxx"
@@ -50,15 +51,12 @@ namespace mfront
   
   GnuplotMaterialPropertyInterface::tokens_iterator
   GnuplotMaterialPropertyInterface::nextToken(tokens_iterator current,
-				       const tokens_iterator endTokens,
-				       const std::string &msg) {
-    std::string what(msg) ;
-    if(++current==endTokens){
-      what+="unexpected end of file.\n";
-      what+="Error at line : ";
-      what+=std::to_string((--current)->line);
-      throw(std::runtime_error(what));
-    }
+					      const tokens_iterator endTokens,
+					      const std::string &msg) {
+    tfel::raise_if(++current==endTokens,
+		   msg+": unexpected end of file.\n"
+		   "Error at line : "+
+		   std::to_string((--current)->line));
     return current;
   }
 
@@ -89,10 +87,9 @@ namespace mfront
 						 const tokens_iterator endTokens)
   {
     if(std::find(i.begin(),i.end(),"gnuplot")!=i.end()){
-      if((key!="@TestBounds")&&(key!="@Graph")){
-	throw(std::runtime_error("GnuplotMaterialPropertyInterface::treatKeyword: "
-				 "unsupported key '"+key+"'"));
-      }
+      tfel::raise_if((key!="@TestBounds")&&(key!="@Graph"),
+		     "GnuplotMaterialPropertyInterface::treatKeyword: "
+		     "unsupported key '"+key+"'");
     }
     if ( key == "@TestBounds" ){
       return registerTestBounds(current,endTokens);
@@ -109,7 +106,7 @@ namespace mfront
     using tfel::utilities::CxxTokenizer;
     const std::string m = "GnuplotMaterialPropertyInterface::registerTestBounds";
     auto throw_if = [&m](const bool b,const std::string& msg){
-      if(b){throw(std::runtime_error(m+": "+msg));}
+      tfel::raise_if(b,m+": "+msg);
     };
     const auto b = mfront::readVariableBounds(p,pe);
     CxxTokenizer::readSpecifiedToken(m,";",p,pe);
@@ -126,7 +123,7 @@ namespace mfront
   {
     const std::string method("GnuplotMaterialPropertyInterface::registerGraph");
     auto throw_if = [&method](const bool b,const std::string& m){
-      if(b){throw(std::runtime_error(method+": "+m));}
+      tfel::raise_if(b,method+": "+m);
     };
     current=nextToken(--current,pe,method);
     throw_if(current->value!="{","expected '{'.\n"
@@ -196,11 +193,9 @@ namespace mfront
     const auto& inputs=mpd.inputs;
     const auto name = (material.empty()) ? className : material+"_"+className;
     std::ofstream out("src/"+name+".gp");
-    if(!out){
-      throw(runtime_error("MaterialPropertyDSL::writeOutputFiles: "
-			  "unable to open 'src/"+name+".gp' "
-			  "for writing output file."));
-    }
+    tfel::raise_if(!out,"GnuplotMaterialPropertyInterface::writeOutputFiles: "
+		   "unable to open 'src/"+name+".gp' "
+		   "for writing output file.");
     out.exceptions(ios::badbit|ios::failbit);
     // writing src file
     string base;

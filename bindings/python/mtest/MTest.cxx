@@ -13,6 +13,7 @@
 
 #include<boost/python.hpp>
 
+#include"TFEL/Raise.hxx"
 #include"MTest/MTest.hxx"
 #include"MTest/Evolution.hxx"
 #include"MTest/Behaviour.hxx"
@@ -34,117 +35,116 @@ namespace mtest{
 static void
 MTest_setStrain(mtest::MTest& t, const std::vector<mtest::real>& v){
   using namespace tfel::material;
-  if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-       ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
-	(t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1)))){
-    throw(std::runtime_error("MTest::setStrain: "
-			     "this method is only valid "
-			     "small strain behaviour"));
-  }
+  const auto b = t.getBehaviourType();
+  const auto k = t.getBehaviourKinematic();
+  tfel::raise_if(!((b==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		   ((b==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		    (k==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
+		 "MTest::setStrain: this method is only valid "
+		 "small strain behaviour");
   t.setDrivingVariablesInitialValues(v);
 } // end of MTest_setStrain
 
 static void
 MTest_setDeformationGradient(mtest::MTest& t, const std::vector<mtest::real>& v){
   using namespace tfel::material;
-  if(!((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
-       (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY))){
-    throw(std::runtime_error("MTest::setDeformationGradient: "
-			     "this method is only valid "
-			     "finite strain behaviour"));
-  }
+  const auto b = t.getBehaviourType();
+  const auto k = t.getBehaviourKinematic();
+  tfel::raise_if(!((b==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		   (k==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY)),
+		 "MTest::setDeformationGradient: this method is only valid "
+		 "for finite strain behaviour");
   t.setDrivingVariablesInitialValues(v);
 } // end of MTest_setDeformationGradient
 
 static void
 MTest_setOpeningDisplacement(mtest::MTest& t, const std::vector<mtest::real>& v){
   using namespace tfel::material;
-  if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-    throw(std::runtime_error("MTest::setOpeningDisplacement: "
-			     "this method is only valid "
-			     "for cohesive zone models"));
-  }
+  tfel::raise_if(t.getBehaviourType()!=
+		 MechanicalBehaviourBase::COHESIVEZONEMODEL,
+		 "MTest::setOpeningDisplacement: "
+		 "this method is only valid "
+		 "for cohesive zone models");
   t.setDrivingVariablesInitialValues(v);
 } // end of MTest_setOpeningDisplacement
 
 static void
 MTest_setStress(mtest::MTest& t, const std::vector<mtest::real>& v){
   using namespace tfel::material;
-  if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-     (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-    throw(std::runtime_error("MTest::setStress: this method is only valid "
-			     "for small or finite strain behaviours"));
-  }
+  const auto b = t.getBehaviourType();
+  tfel::raise_if((b!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+		 (b!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR),
+		 "MTest::setStress: this method is only valid "
+		 "for small or finite strain behaviours");
   t.setThermodynamicForcesInitialValues(v);
 } // end of MTest_setStress
 
 static void
 MTest_setCohesiveForce(mtest::MTest& t, const std::vector<mtest::real>& v){
   using namespace tfel::material;
-  if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-    throw(std::runtime_error("MTest::setCohesiveForce: "
-			     "this method is only valid "
-			     "for cohesive zone models"));
-  }
+  tfel::raise_if(t.getBehaviourType()!=
+		 MechanicalBehaviourBase::COHESIVEZONEMODEL,
+		 "MTest::setCohesiveForce: "
+		 "this method is only valid "
+		 "for cohesive zone models");
   t.setThermodynamicForcesInitialValues(v);
 } // end of MTest_setCohesiveForce
 
 static void
 MTest_setStrainEpsilon(mtest::MTest& t, const mtest::real& v){
   using namespace tfel::material;
-  if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-       ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
-	(t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1)))){
-    throw(std::runtime_error("MTest::setStrainEpsilon: "
-			     "this method is only valid "
-			     "small strain behaviour"));
-  }
+  const auto b = t.getBehaviourType();
+  const auto k = t.getBehaviourKinematic();
+  tfel::raise_if(!((b==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		   ((b==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		    (k==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
+		 "MTest::setStrainEpsilon: this method is only valid "
+		 "for small strain behaviour");
   t.setDrivingVariableEpsilon(v);
 }
 
 static void
 MTest_setDeformationGradientEpsilon(mtest::MTest& t, const mtest::real& v){
   using namespace tfel::material;
-  if(!((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
-       (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY))){
-    throw(std::runtime_error("MTest::setDeformationGradientEpsilon: "
-			     "this method is only valid "
-			     "finite strain behaviour"));
-  }
+  const auto b = t.getBehaviourType();
+  const auto k = t.getBehaviourKinematic();
+  tfel::raise_if(!((b==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		   (k==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY)),
+		 "MTest::setDeformationGradientEpsilon: "
+		 "this method is only valid finite strain behaviour");
   t.setDrivingVariableEpsilon(v);
 }
 
 static void
 MTest_setOpeningDisplacementEpsilon(mtest::MTest& t,const mtest::real& v){
   using namespace tfel::material;
-  if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-    throw(std::runtime_error("MTest::setOpeningDisplacementEpsilon: "
-			     "this method is only valid "
-			     "for cohesize zone model"));
-  }
+  tfel::raise_if(t.getBehaviourType()!=
+		 MechanicalBehaviourBase::COHESIVEZONEMODEL,
+		 "MTest::setOpeningDisplacementEpsilon: "
+		 "this method is only valid for cohesize zone model");
   t.setDrivingVariableEpsilon(v);
 }
 
 static void
 MTest_setStressEpsilon(mtest::MTest& t,const mtest::real& v){
   using namespace tfel::material;
-  if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-     (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-    throw(std::runtime_error("MTest::setStressEpsilon: "
-			     "this method is only valid "
-			     "for small or finite strain behaviours"));
-  }
+  const auto b = t.getBehaviourType();
+  tfel::raise_if((b!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+		 (b!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR),
+		 "MTest::setStressEpsilon: "
+		 "this method is only valid "
+		 "for small or finite strain behaviours");
   t.setThermodynamicForceEpsilon(v);
 }
 
 static void
 MTest_setCohesiveForceEpsilon(mtest::MTest& t,const mtest::real& v){
   using namespace tfel::material;
-  if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-    throw(std::runtime_error("MTest::setCohesiveForceEpsilon: "
-			     "this method is only valid "
-			     "cohesive zone model"));
-  }
+  const auto b = t.getBehaviourType();
+  tfel::raise_if(b!=MechanicalBehaviourBase::COHESIVEZONEMODEL,
+		 "MTest::setCohesiveForceEpsilon: "
+		 "this method is only valid "
+		 "cohesive zone model");
   t.setThermodynamicForceEpsilon(v);
 }
 
@@ -179,12 +179,12 @@ MTest_setImposedStress(mtest::MTest& t,
 		       const mtest::real& v)
 {
   using namespace tfel::material;
-  if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-     (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-    throw(std::runtime_error("MTest::handleImposedStress : "
-			     "the setImposedStress method is only valid "
-			     "for small and finite strain behaviours"));
-  }
+  const auto b = t.getBehaviourType();
+  tfel::raise_if((b!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+		 (b!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR),
+		 "MTest::handleImposedStress : "
+		 "the setImposedStress method is only valid "
+		 "for small and finite strain behaviours");
   MTest_setImposedThermodynamicForce(t,n,v);
 }
 
@@ -195,12 +195,12 @@ MTest_setImposedStress2(mtest::MTest& t,
 			mtest::real>& v)
 {
   using namespace tfel::material;
-  if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-     (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
-    throw(std::runtime_error("MTestParser::handleImposedStress : "
-			     "the setImposedStress method is only valid "
-			     "for small and finite strain behaviours"));
-  }
+  const auto b = t.getBehaviourType();
+  tfel::raise_if((b!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+		 (b!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR),
+		 "MTestParser::handleImposedStress: "
+		 "the setImposedStress method is only valid "
+		 "for small and finite strain behaviours");
   MTest_setImposedThermodynamicForce2(t,n,v);
 }
 
@@ -210,11 +210,11 @@ MTest_setImposedCohesiveForce(mtest::MTest& t,
 			      const mtest::real& v)
 {
   using namespace tfel::material;
-  if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-    throw(std::runtime_error("MTestParser::handleImposedCohesiveForce : "
-			     "the setImposedCohesiveForce method is only valid "
-			     "for small strain behaviours"));
-  }
+  const auto b = t.getBehaviourType();
+  tfel::raise_if(b!=MechanicalBehaviourBase::COHESIVEZONEMODEL,
+		 "MTestParser::handleImposedCohesiveForce: "
+		 "the setImposedCohesiveForce method is only valid "
+		 "for small strain behaviours");
   MTest_setImposedThermodynamicForce(t,n,v);
 }
 
@@ -225,11 +225,11 @@ MTest_setImposedCohesiveForce2(mtest::MTest& t,
 			       mtest::real>& v)
 {
   using namespace tfel::material;
-  if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-    throw(std::runtime_error("MTestParser::handleImposedCohesiveForce: "
-			     "the setImposedCohesiveForce method is only valid "
-			     "for small strain behaviours"));
-  }
+  const auto b = t.getBehaviourType();
+  tfel::raise_if(b!=MechanicalBehaviourBase::COHESIVEZONEMODEL,
+		 "MTestParser::handleImposedCohesiveForce: "
+		 "the setImposedCohesiveForce method is only valid "
+		 "for small strain behaviours");
   MTest_setImposedThermodynamicForce2(t,n,v);
 }
 
@@ -239,13 +239,14 @@ static void MTest_setNonLinearConstraint(mtest::MTest& t,
 {
   using namespace tfel::material;
   using namespace mtest;
+  const auto b = t.getBehaviourType();
   if((np=="DrivingVariable")||
      ((np=="Strain")&&
-      (t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR))||
+      (b==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR))||
      ((np=="DeformationGradient")&&
-      (t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR))||
+      (b==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR))||
      ((np=="OpeningDisplacement")&&
-      (t.getBehaviourType()==MechanicalBehaviourBase::COHESIVEZONEMODEL))){
+      (b==MechanicalBehaviourBase::COHESIVEZONEMODEL))){
     const auto p = NonLinearConstraint::DRIVINGVARIABLECONSTRAINT;
     auto c = std::make_shared<mtest::NonLinearConstraint>(*(t.getBehaviour()),f,
 							  t.getEvolutions(),p);
@@ -253,17 +254,17 @@ static void MTest_setNonLinearConstraint(mtest::MTest& t,
     t.addConstraint(c);
   } else if ((np=="ThermodynamicForce")||
 	     ((np=="Stress")&&
-	      ((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	       (t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)))||
+	      ((b==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+	       (b==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)))||
 	     ((np=="CohesiveForce")&&
-	      (t.getBehaviourType()==MechanicalBehaviourBase::COHESIVEZONEMODEL))){
+	      (b==MechanicalBehaviourBase::COHESIVEZONEMODEL))){
     const auto p = NonLinearConstraint::THERMODYNAMICFORCECONSTRAINT;
     auto c = std::make_shared<mtest::NonLinearConstraint>(*(t.getBehaviour()),f,
 							  t.getEvolutions(),p);
     t.addConstraint(c);
   } else {
-    throw(std::runtime_error("MTest::setNonLinearConstraint: "
-			     "invalid normalisation policy"));
+    tfel::raise("MTest::setNonLinearConstraint: "
+		"invalid normalisation policy");
   }
 }
 
@@ -298,13 +299,14 @@ MTest_setImposedStrain(mtest::MTest& t,
 		       const mtest::real& v)
 {
   using namespace tfel::material;
-  if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-       ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
-	(t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1)))){
-    throw(std::runtime_error("MTest::setImposedStrain: "
-			     "the setImposedStrain method is only valid "
-			     "for small strain behaviours"));
-  }
+  const auto b = t.getBehaviourType();
+  tfel::raise_if(!((b==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		   ((b==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		    (t.getBehaviourKinematic()==
+		     MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
+		 "MTest::setImposedStrain: "
+		 "the setImposedStrain method is only valid "
+		 "for small strain behaviours");
   MTest_setImposedDrivingVariable(t,n,v);
 }
 
@@ -315,13 +317,15 @@ MTest_setImposedStrain2(mtest::MTest& t,
 			mtest::real>& v)
 {
   using namespace tfel::material;
-  if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-       ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
-	(t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1)))){
-    throw(std::runtime_error("MTest::handleImposedStrain: "
-			     "the setImposedStrain method is only valid "
-			     "for small strain behaviours"));
-  }
+  tfel::raise_if(!((t.getBehaviourType()==
+		    MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		   ((t.getBehaviourType()==
+		     MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		    (t.getBehaviourKinematic()==
+		     MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
+		 "MTest::handleImposedStrain: "
+		 "the setImposedStrain method is only valid "
+		 "for small strain behaviours");
   MTest_setImposedDrivingVariable2(t,n,v);
 }
 
@@ -331,12 +335,13 @@ MTest_setImposedDeformationGradient(mtest::MTest& t,
 		       const mtest::real& v)
 {
   using namespace tfel::material;
-  if(!((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
-       (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY))){
-    throw(std::runtime_error("MTest::setImposedDeformationGradient : "
-			     "the setImposedDeformationGradient method is only valid "
-			     "for finite strain behaviours"));
-  }
+  tfel::raise_if(!((t.getBehaviourType()==
+		    MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		   (t.getBehaviourKinematic()==
+		    MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY)),
+		 "MTest::setImposedDeformationGradient: "
+		 "the setImposedDeformationGradient method is only valid "
+		 "for finite strain behaviours");
   MTest_setImposedDrivingVariable(t,n,v);
 }
 
@@ -347,12 +352,13 @@ MTest_setImposedDeformationGradient2(mtest::MTest& t,
 			mtest::real>& v)
 {
   using namespace tfel::material;
-  if(!((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
-       (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY))){
-    throw(std::runtime_error("MTestParser::setImposedDeformationGradient: "
-			     "the setImposedDeformationGradient method is only valid "
-			     "for finite strain behaviours"));
-  }
+  tfel::raise_if(!((t.getBehaviourType()==
+		    MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		   (t.getBehaviourKinematic()==
+		    MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY)),
+		 "MTestParser::setImposedDeformationGradient: "
+		 "the setImposedDeformationGradient method is only valid "
+		 "for finite strain behaviours");
   MTest_setImposedDrivingVariable2(t,n,v);
 }
 
@@ -362,11 +368,11 @@ MTest_setImposedOpeningDisplacement(mtest::MTest& t,
 				    const mtest::real& v)
 {
   using namespace tfel::material;
-  if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-    throw(std::runtime_error("MTest::handleImposedOpeningDisplacement : "
-			     "the setImposedOpeningDisplacement method is only valid "
-			     "for small strain behaviours"));
-  }
+  tfel::raise_if(t.getBehaviourType()!=
+		 MechanicalBehaviourBase::COHESIVEZONEMODEL,
+		 "MTest::handleImposedOpeningDisplacement : "
+		 "the setImposedOpeningDisplacement method is only valid "
+		 "for small strain behaviours");
   MTest_setImposedDrivingVariable(t,n,v);
 }
 
@@ -377,11 +383,11 @@ MTest_setImposedOpeningDisplacement2(mtest::MTest& t,
 				     mtest::real>& v)
 {
   using namespace tfel::material;
-  if(t.getBehaviourType()!=MechanicalBehaviourBase::COHESIVEZONEMODEL){
-    throw(std::runtime_error("MTestParser::setImposedOpeningDisplacement : "
-			     "the setImposedOpeningDisplacement method is only valid "
-			     "for small strain behaviours"));
-  }
+  tfel::raise_if(t.getBehaviourType()!=
+		 MechanicalBehaviourBase::COHESIVEZONEMODEL,
+		 "MTestParser::setImposedOpeningDisplacement : "
+		 "the setImposedOpeningDisplacement method is only valid "
+		 "for small strain behaviours");
   MTest_setImposedDrivingVariable2(t,n,v);
 }
 
@@ -434,10 +440,9 @@ TFEL_PYTHON_MTESTCURRENTSTATEGETTER2(dt_1)
   MTestCurrentState_get##X(const mtest::MTestCurrentState& t) \
   {                                                           \
     const auto& sc = t.getStructureCurrentState("");          \
-    if(sc.istates.size()!=1){                                 \
-      throw(std::runtime_error("MTestCurrentState::get: "     \
-                               "uninitialized state"));       \
-    }                                                         \
+    tfel::raise_if(sc.istates.size()!=1,		      \
+                   "MTestCurrentState::get: "		      \
+                   "uninitialized state");                    \
     return sc. istates[0]. X ;				      \
   }
 
@@ -459,10 +464,9 @@ static mtest::real
 MTestCurrentState_getTref(const mtest::MTestCurrentState& t)
 {
   const auto& sc = t.getStructureCurrentState("");
-  if(sc.istates.size()!=1){
-    throw(std::runtime_error("MTestCurrentState::get: "
-			     "uninitialized state"));
-  }
+  tfel::raise_if(sc.istates.size()!=1,
+		 "MTestCurrentState::get: "
+		 "uninitialized state");
   return sc. istates[0]. Tref ;
 }
 
@@ -473,10 +477,9 @@ setInternalStateVariableValue3(mtest::MTestCurrentState& t,
 			       const int d)
 {
   auto& sc = t.getStructureCurrentState("");
-  if(sc.istates.size()!=1){
-    throw(std::runtime_error("MTestCurrentState::get: "
-			     "uninitialized state"));
-  }
+  tfel::raise_if(sc.istates.size()!=1,
+		 "MTestCurrentState::get: "
+		 "uninitialized state");
   auto& s = sc. istates[0];
   mtest::setInternalStateVariableValue(s,n,v,d);
 }
@@ -498,10 +501,9 @@ setInternalStateVariableValue4(mtest::MTestCurrentState& t,
 			       const int d)
 {
   auto& sc = t.getStructureCurrentState("");
-  if(sc.istates.size()!=1){
-    throw(std::runtime_error("MTestCurrentState::get: "
-			     "uninitialized state"));
-  }
+  tfel::raise_if(sc.istates.size()!=1,
+		 "MTestCurrentState::get: "
+		 "uninitialized state");
   auto& s = sc. istates[0];
   mtest::setInternalStateVariableValue(s,n,v,d);
 }
@@ -522,13 +524,11 @@ getInternalStateVariableValue1(const mtest::MTestCurrentState& t,
 			       const int i)
 {
   auto throw_if = [](const bool b, const std::string& m){
-    if(b){throw(std::runtime_error("mtest::getInternalStateVariableValue: "+m));}
+    tfel::raise_if(b,"mtest::getInternalStateVariableValue: "+m);
   };
   const auto& sc = t.getStructureCurrentState("");
-  if(sc.istates.size()!=1){
-    throw(std::runtime_error("MTestCurrentState::get: "
-			     "uninitialized state"));
-  }
+  throw_if(sc.istates.size()!=1,"MTestCurrentState::get: "
+	   "uninitialized state");
   auto& s = sc.istates[0];
   throw_if(s.behaviour==nullptr,"no behaviour defined");
   const auto& ivsnames = s.behaviour->getInternalStateVariablesNames();
@@ -550,7 +550,9 @@ getInternalStateVariableValue1(const mtest::MTestCurrentState& t,
     return 0;
   }();
   const auto pos = s.behaviour->getInternalStateVariablePosition(n);
-  throw_if((s.iv_1.size()<pos+size)||(s.iv0.size()<pos+size)||(s.iv1.size()<pos+size),
+  throw_if((s.iv_1.size()<pos+size)||
+	   (s.iv0.size()<pos+size)||
+	   (s.iv1.size()<pos+size),
 	   "invalid size for state variables (bad initialization)");
   const auto& iv = [&s,throw_if,i]() -> const tfel::math::vector<mtest::real>& {
     throw_if((i!=1)&&(i!=0)&&(i!=-1),"invalid depth");

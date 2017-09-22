@@ -14,7 +14,7 @@
 #include<limits>
 #include<ostream>
 #include<stdexcept>
-
+#include"TFEL/Raise.hxx"
 #include"MFront/MFrontLogStream.hxx"
 #include"MTest/CastemAccelerationAlgorithm.hxx"
 
@@ -38,7 +38,7 @@ namespace mtest
   {
     const std::string m = "CastemAccelerationAlgorithm::setParameter";
     auto throw_if = [&m](const bool c, const std::string& msg){
-      if(c){throw(std::runtime_error(m+": "+msg));}
+      tfel::raise_if(c,m+": "+msg);
     };
     if(p=="AccelerationTrigger"){
       const auto i = AccelerationAlgorithm::convertToUnsignedShort(m,v);

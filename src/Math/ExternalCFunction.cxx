@@ -12,6 +12,7 @@
 
 #include<sstream>
 #include<stdexcept>
+#include"TFEL/Raise.hxx"
 #include"TFEL/Math/Parser/ExternalCFunction.hxx"
 
 namespace tfel
@@ -26,28 +27,26 @@ namespace tfel
       void
       ExternalCFunctionException::throwUnimplementedDifferentiateFunctionException()
       {
-	throw(std::runtime_error("ExternalCFunctionException::"
-				 "throwUnimplementedDifferentiateFunctionException: "
-				 "unimplemented feature"));
+	raise("ExternalCFunctionException::"
+	      "throwUnimplementedDifferentiateFunctionException: "
+	      "unimplemented feature");
       } // end of ExternalCFunctionException::throwUnimplementedDifferentiateFunctionException()
 
       void
       ExternalCFunctionException::throwInvalidCreateFunctionByChangingParametersIntoVariables()
       {
-	throw(std::runtime_error("ExternalCFunctionException::"
-				 "throwInvalidCreateFunctionByChangingParametersIntoVariables : "
-				 "invalid call"));
+	raise("ExternalCFunctionException::"
+	      "throwInvalidCreateFunctionByChangingParametersIntoVariables : "
+	      "invalid call");
       } // end of ExternalCFunctionException::throwInvalidCreateFunctionByChangingParametersIntoVariables()
 
       void
       ExternalCFunctionException::throwInvalidVariableIndex(const std::vector<double>::size_type pos,
 							    const unsigned short N)
       {
-	std::ostringstream msg;
-	msg << "ExternalCFunctionBase::setVariableValue : "
-	    << "invalid index " << pos 
-	    << " (function has only " << N << " variables).";
-	throw(std::runtime_error(msg.str()));
+	raise("ExternalCFunctionBase::setVariableValue: "
+	      "invalid index "+std::to_string(pos)+
+	      " (function has only "+std::to_string(N)+" variables).");
       } // end of ExternalCFunctionException::throwInvalidVariableIndex
 
       std::shared_ptr<ExternalFunction>
@@ -71,11 +70,9 @@ namespace tfel
       ExternalCFunctionBase<0u>::setVariableValue(const std::vector<double>::size_type pos,
 						  const double)
       {
-	std::ostringstream msg;
-	msg << "ExternalCFunctionBase::setVariableValue : "
-	    << "invalid index " << pos 
-	    << " (function has no variable).";
-	throw(std::runtime_error(msg.str()));
+	raise("ExternalCFunctionBase::setVariableValue: "
+	      "invalid index "+std::to_string(pos)+
+	      " (function has no variable).");
       } // end of ExternalCFunctionBase<0u>::setVariableValue
 
       void
@@ -99,15 +96,15 @@ namespace tfel
       std::shared_ptr<ExternalFunction>
       ExternalCFunctionBase<0>::differentiate(const std::vector<double>::size_type) const
       {
-	throw(std::runtime_error("ExternalCFunctionBase<0>::differentiate : "
-				 "can't differentiate external function"));
+	raise("ExternalCFunctionBase<0>::differentiate: "
+	      "can't differentiate external function");
       } // end of ExternalCFunctionBase<0>::differentiate
 
       std::shared_ptr<ExternalFunction>
       ExternalCFunctionBase<0>::differentiate(const std::string&) const
       {
-	throw(std::runtime_error("ExternalCFunctionBase<0>::differentiate : "
-				 "can't differentiate external function"));
+	raise("ExternalCFunctionBase<0>::differentiate : "
+	      "can't differentiate external function");
       } // end of ExternalCFunctionBase<0>::differentiate
 
       ExternalCFunction<0u>::ExternalCFunction(ExternalCFunction<0u>::FunctionPtr f_)
