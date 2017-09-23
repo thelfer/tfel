@@ -111,7 +111,7 @@ Temp.setEntryName("Adiabatic_heating_dT");
   const auto n_    = eval(3*deviator(sig)*(iseq/2));
 
   // Plastic increment
-  const real p_ = max(0.,p + theta*dp);
+  const auto p_ = max(strain(0),p+theta*dp);
 
   // Temperature increment
   const real  T_ = max(T_eps, Tn + theta*dTemp);

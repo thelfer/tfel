@@ -107,11 +107,11 @@
   rp       *= Kc*(1.-rT_*Tpow);
 
   fp        = (seq-rp)/young;
-  dfp_ddeel = 2*(mu/young)*theta*(1.+drp_ddeel)*n_;
+  dfp_ddeel = 2*(mu/young)*theta*(1+drp_ddeel)*n_;
   dfp_ddp   = -drp_ddp/young;
 
   feel        += dp*n_;
-  dfeel_ddeel += 2.*mu*theta*dp*(Stensor4::M()-(n_^n_))*iseq;
+  dfeel_ddeel += 2*mu*theta*dp*(Stensor4::M()-(n_^n_))*iseq;
   dfeel_ddp    = n_;
 }
 
