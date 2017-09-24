@@ -25,6 +25,112 @@ static const char * const constexpr_c = "const";
 
 namespace mfront{
 
+  const char* const
+  AbaqusInterfaceBase::finiteStrainStrategy = "abaqus::finiteStrainStrategy";
+  
+  const char* const
+  AbaqusInterfaceBase::orthotropyManagementPolicy = "abaqus::orthotropyManagementPolicy";
+
+  static void checkFiniteStrainStrategy(const std::string& fs){
+    tfel::raise_if((fs!="Native")&&
+		   (fs!="FiniteRotationSmallStrain")&&
+		   (fs!="MieheApelLambrechtLogarithmicStrain"),
+		   "checkFiniteStrainStrategy: "
+		   "unsupported strategy '"+fs+"'\n"
+		   "The only supported strategies are "
+		   "'Native', 'FiniteRotationSmallStrain', "
+		   "'MieheApelLambrechtLogarithmicStrain'");
+  } // end of checkFiniteStrainStrategy
+
+  void
+  AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(const BehaviourDescription& bd,
+								      const std::string& fs)
+  {
+    auto throw_if = [](const bool c,const std::string& msg){
+      tfel::raise_if(c,"AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency: "+msg);
+    };
+    checkFiniteStrainStrategy(fs);
+    if(bd.isStrainMeasureDefined()){
+      const auto ms = bd.getStrainMeasure();
+      if(ms==BehaviourDescription::LINEARISED){
+	throw_if(fs!="Native","incompatible finite strain strategy "
+		 "'"+fs+"' (only `Native` accepted)");
+      } else if(ms==BehaviourDescription::GREENLAGRANGE){
+	throw_if(fs!="FiniteRotationSmallStrain",
+		 "incompatible finite strain strategy "
+		 "'"+fs+"' (only `FiniteRotationSmallStrain` accepted)");
+      } else if(ms==BehaviourDescription::HENCKY){
+ 	throw_if(fs!="MieheApelLambrechtLogarithmicStrain",
+		 "incompatible finite strain strategy '"+fs+"' "
+		 "(only `MieheApelLambrechtLogarithmicStrain` accepted)");
+      } else {
+	throw_if(true,"unsupported finite strain strategy");
+      }
+    }
+  } // end of AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency
+
+  void
+  AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(const BehaviourDescription& bd){
+    auto throw_if = [](const bool c,const std::string& msg){
+      tfel::raise_if(c,"AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency: "+msg);
+    };
+    if(bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      throw_if(bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy),
+	       "finite strain strategy is only supported for strain based behaviours");
+    } else {
+      if(bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy)){
+	const auto fs = bd.getAttribute<std::string>(AbaqusInterfaceBase::finiteStrainStrategy);
+	AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(bd,fs);
+      }
+    }
+  } // end of AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency
+
+  bool AbaqusInterfaceBase::hasFiniteStrainStrategy(const BehaviourDescription& bd){
+    checkFiniteStrainStrategyDefinitionConsistency(bd);
+    if(bd.isStrainMeasureDefined()){
+      return bd.getStrainMeasure()!=BehaviourDescription::LINEARISED;
+    }
+    return  bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy);
+  } // end of AbaqusInterfaceBase::hasFiniteStrainStrategy
+  
+  std::string AbaqusInterfaceBase::getFiniteStrainStrategy(const BehaviourDescription& bd){
+    checkFiniteStrainStrategyDefinitionConsistency(bd);
+    auto throw_if = [](const bool c,const std::string& msg){
+      tfel::raise_if(c,"AbaqusInterfaceBase::getFiniteStrainStrategy: "+msg);
+    };
+    if(bd.isStrainMeasureDefined()){
+      const auto ms = bd.getStrainMeasure();
+      if(ms==BehaviourDescription::GREENLAGRANGE){
+	return "FiniteRotationSmallStrain";
+      } else if(ms==BehaviourDescription::HENCKY){
+	return "MieheApelLambrechtLogarithmicStrain";
+      } else {
+	throw_if(true,"unsupported strain measure");
+      }
+    }
+    throw_if(!bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy),
+	     "no finite strain strategy defined");
+    return bd.getAttribute<std::string>(AbaqusInterfaceBase::finiteStrainStrategy);
+  } // end of AbaqusInterfaceBase::getFiniteStrainStrategy
+  
+  bool AbaqusInterfaceBase::hasOrthotropyManagementPolicy(const BehaviourDescription& mb){
+    return mb.hasAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy);
+  } // end of AbaqusInterfaceBase::hasOrthotropyManagementPolicy
+
+  std::string AbaqusInterfaceBase::getOrthotropyManagementPolicy(const BehaviourDescription& mb){
+    return mb.getAttribute<std::string>(AbaqusInterfaceBase::orthotropyManagementPolicy);
+  } // end of AbaqusInterfaceBase::getOrthotropyManagementPolicy
+
+  void
+  AbaqusInterfaceBase::checkOrthotropyManagementPolicyConsistency(const BehaviourDescription& mb){
+    if(AbaqusInterfaceBase::hasOrthotropyManagementPolicy(mb)){
+      tfel::raise_if(mb.getSymmetryType()!=mfront::ORTHOTROPIC,
+		     "AbaqusInterfaceBase::checkOrthotropyManagementPolicyConsistency: "
+		     "orthotropy management policy is only valid "
+		     "for orthotropic behaviour");
+    }
+  } // end of AbaqusInterfaceBase::checkOrthotropyManagementPolicyConsistency
+  
   std::string
   AbaqusInterfaceBase::getLibraryName(const BehaviourDescription& mb) const
   {
@@ -42,51 +148,43 @@ namespace mfront{
   } // end of AbaqusInterfaceBase::getLibraryName
 
   std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  AbaqusInterfaceBase::treatCommonKeywords(const std::string& key,
+  AbaqusInterfaceBase::treatCommonKeywords(BehaviourDescription& bd,
+					   const std::string& k,
 					   tokens_iterator current,
 					   const tokens_iterator end)
   {
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AbaqusInterfaceBase::treatCommonKeywords: "+m);
     };
-    if (key=="@AbaqusFiniteStrainStrategy"){
-      auto read = [&throw_if](const std::string& s){
-	if(s=="Native"){
-	  return NATIVEFINITESTRAINSTRATEGY;
-	} else if(s=="FiniteRotationSmallStrain"){
-	  return FINITEROTATIONSMALLSTRAIN;
-	} else if(s=="MieheApelLambrechtLogarithmicStrain"){
-	  return MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
-	}
-	throw_if(true,"unsupported strategy '"+s+"'\n"
-		 "The only supported strategies are 'Native',"
-		 "'FiniteRotationSmallStrain' and "
-		 "'MieheApelLambrechtLogarithmicStrain'");
-      };
-      throw_if(this->fss!=UNDEFINEDSTRATEGY,
+    if (k=="@AbaqusFiniteStrainStrategy"){
+      throw_if(bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy),
 	       "a finite strain strategy has already been defined");
       throw_if(current==end,"unexpected end of file");
-      this->fss = read(current->value);
+      const auto fs = current->value;
       throw_if(++current==end,"unexpected end of file");
       throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
       ++(current);
+      AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(bd,fs);
+      bd.setAttribute(AbaqusInterfaceBase::finiteStrainStrategy,fs,false);
       return {true,current};
     }
-    if (key=="@AbaqusOrthotropyManagementPolicy"){
+    if(k=="@AbaqusOrthotropyManagementPolicy"){
       auto read = [&throw_if](const std::string& s){
-	if(s=="Native"){
-	  return NATIVEORTHOTROPYMANAGEMENTPOLICY;
-	} else if(s=="MFront"){
-	  return MFRONTORTHOTROPYMANAGEMENTPOLICY;
-	}
-	throw_if(true,"unsupported orthotropy management policy '"+s+"'\n"
+	throw_if((s!="Native")&&(s!="MFront"),
+		 "unsupported orthotropy management "
+		 "policy '"+s+"'\n"
 		 "The only supported policies are "
 		 "'MFront' and 'Native'");
+	return s;
       };
-      throw_if(this->omp!=UNDEFINEDORTHOTROPYMANAGEMENTPOLICY,
+      throw_if(bd.getSymmetryType()!=mfront::ORTHOTROPIC,
+	       "orthotropy management policy is only valid "
+	       "for orthotropic behaviour");
+      throw_if(bd.hasAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy),
 	       "an orthotropy management policy has already been defined");
       throw_if(current==end,"unexpected end of file");
-      this->omp = read(current->value);
+      bd.setAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy,
+		      read(current->value),false);
       throw_if(++current==end,"unexpected end of file");
       throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
       ++(current);
@@ -96,9 +194,10 @@ namespace mfront{
   } // end of AbaqusInterfaceBase::treatCommonKeyword
 
   unsigned short
-  AbaqusInterfaceBase::getStateVariablesOffset(const BehaviourDescription&,
+  AbaqusInterfaceBase::getStateVariablesOffset(const BehaviourDescription& bd,
 					       const Hypothesis h) const{
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+    if((bd.hasAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy))&&
+       (bd.getAttribute<std::string>(AbaqusInterfaceBase::orthotropyManagementPolicy)=="MFront")){
       if((h==ModellingHypothesis::AXISYMMETRICAL)||
 	 (h==ModellingHypothesis::PLANESTRAIN)||
 	 (h==ModellingHypothesis::PLANESTRESS)){
@@ -462,21 +561,25 @@ namespace mfront{
 						       const FileDescription&) const
   {
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
-	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-	    << "_OrthotropyManagementPolicy = 2u;\n\n";    
-      } else if(this->omp==NATIVEORTHOTROPYMANAGEMENTPOLICY){
-	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
-	    << "_OrthotropyManagementPolicy = 1u;\n\n";    
-      } else if(this->omp==UNDEFINEDORTHOTROPYMANAGEMENTPOLICY){
+      if(!mb.hasAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy)){
 	out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
 	    << "_OrthotropyManagementPolicy = 0u;\n\n";    
       } else {
-	tfel::raise("AbaqusInterfaceBase::writeUMATxxSpecificSymbols: "
-		    "unsupported orthotropy management policy");
+	const auto omp =
+	  mb.getAttribute<std::string>(AbaqusInterfaceBase::orthotropyManagementPolicy);
+	if(omp=="MFront"){
+	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	      << "_OrthotropyManagementPolicy = 2u;\n\n";    
+	} else if(omp=="Native"){
+	  out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
+	      << "_OrthotropyManagementPolicy = 1u;\n\n";
+	} else {
+	  tfel::raise("AbaqusInterfaceBase::writeUMATxxSpecificSymbols: "
+		      "unsupported orthotropy management policy");
+	}
       }
     }
-  }
+  } // end of AbaqusInterfaceBase::writeUMATxxSpecificSymbols
   
   void
   AbaqusInterfaceBase::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const
@@ -549,8 +652,10 @@ namespace mfront{
       if(vsize!=0){
 	out << "*Depvar\n" << vsize  << ",\n";
 	int i=1;
-	if(this->omp!=UNDEFINEDORTHOTROPYMANAGEMENTPOLICY){
-	  if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+	if(mb.hasAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy)){
+	  const auto omp =
+	    mb.getAttribute<std::string>(AbaqusInterfaceBase::orthotropyManagementPolicy);
+	  if(omp=="MFront"){
 	    if((h==ModellingHypothesis::AXISYMMETRICAL)||
 	       (h==ModellingHypothesis::PLANESTRAIN)||
 	       (h==ModellingHypothesis::PLANESTRESS)){
@@ -565,8 +670,8 @@ namespace mfront{
 	      out << i++ << ", SecondOrthotropicAxis_3\n";
 	    }
 	  } else {
-	    throw_if(this->omp!=NATIVEORTHOTROPYMANAGEMENTPOLICY,
-		     "unsupported orthotropy management policy");
+	    throw_if(omp!="Native","unsupported orthotropy "
+		     "management policy");
 	  }
 	}
 	for(const auto& v : persistentVarsHolder){

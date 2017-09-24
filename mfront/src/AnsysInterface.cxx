@@ -40,13 +40,93 @@ static const char * const constexpr_c = "const";
 
 namespace mfront{
 
+  static void checkFiniteStrainStrategy(const std::string& fs){
+    tfel::raise_if((fs!="FiniteRotationSmallStrain")&&
+		   (fs!="Native")&&
+		   (fs!="MieheApelLambrechtLogarithmicStrain"),
+		   "checkFiniteStrainStrategy: "
+		   "unsupported strategy '"+fs+"'\n"
+		   "The only supported strategies are "
+		   "'Native', 'FiniteRotationSmallStrain' and "
+		   "'MieheApelLambrechtLogarithmicStrain'.");
+  } // end of checkFiniteStrainStrategy
+  
   static void
-  writeUMATArguments(std::ostream& out,
-		     const BehaviourDescription::BehaviourType& t,
-		     const AnsysInterface::FiniteStrainStrategy fss,
-		     const bool f)
+  checkFiniteStrainStrategyDefinitionConsistency(const BehaviourDescription& bd,
+						 const std::string& fs)
   {
-    if(f){
+    auto throw_if = [](const bool c,const std::string& msg){
+      tfel::raise_if(c,"checkFiniteStrainStrategyDefinitionConsistency: "+msg);
+    };
+    checkFiniteStrainStrategy(fs);
+    if(bd.isStrainMeasureDefined()){
+      const auto ms = bd.getStrainMeasure();
+      if(ms==BehaviourDescription::LINEARISED){
+	throw_if(fs!="Native","incompatible finite strain strategy "
+		 "'"+fs+"' (only `Native` accepted)");
+      } else if(ms==BehaviourDescription::GREENLAGRANGE){
+	throw_if(fs!="FiniteRotationSmallStrain",
+		 "incompatible finite strain strategy "
+		 "'"+fs+"' (only `FiniteRotationSmallStrain` accepted)");
+      } else if(ms==BehaviourDescription::HENCKY){
+ 	throw_if(fs!="MieheApelLambrechtLogarithmicStrain",
+		 "incompatible finite strain strategy '"+fs+"' "
+		 "(only `MieheApelLambrechtLogarithmicStrain` accepted)");
+      } else {
+	throw_if(true,"unsupported finite strain strategy");
+      }
+    }
+  } // end of checkFiniteStrainStrategyDefinitionConsistency
+
+  static void
+  checkFiniteStrainStrategyDefinitionConsistency(const BehaviourDescription& bd){
+    auto throw_if = [](const bool c,const std::string& msg){
+      tfel::raise_if(c,"checkFiniteStrainStrategyDefinitionConsistency: "+msg);
+    };
+    if(bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      throw_if(bd.hasAttribute(AnsysInterface::finiteStrainStrategy),
+	       "finite strain strategy is only supported for strain based behaviours");
+    } else {
+      if(bd.hasAttribute(AnsysInterface::finiteStrainStrategy)){
+	const auto fs = bd.getAttribute<std::string>(AnsysInterface::finiteStrainStrategy);
+	checkFiniteStrainStrategyDefinitionConsistency(bd,fs);
+      }
+    }
+  } // end of checkFiniteStrainStrategyDefinitionConsistency
+
+  static bool hasFiniteStrainStrategy(const BehaviourDescription& bd){
+    checkFiniteStrainStrategyDefinitionConsistency(bd);
+    if(bd.isStrainMeasureDefined()){
+      return bd.getStrainMeasure()!=BehaviourDescription::LINEARISED;
+    }
+    return  bd.hasAttribute(AnsysInterface::finiteStrainStrategy);
+  } // end of hasFiniteStrainStrategy
+  
+  static std::string getFiniteStrainStrategy(const BehaviourDescription& bd){
+    checkFiniteStrainStrategyDefinitionConsistency(bd);
+    auto throw_if = [](const bool c,const std::string& msg){
+      tfel::raise_if(c,"getFiniteStrainStrategy: "+msg);
+    };
+    if(bd.isStrainMeasureDefined()){
+      const auto ms = bd.getStrainMeasure();
+      if(ms==BehaviourDescription::GREENLAGRANGE){
+	return "FiniteRotationSmallStrain";
+      } else if(ms==BehaviourDescription::HENCKY){
+	return "MieheApelLambrechtLogarithmicStrain";
+      } else {
+	throw_if(true,"unsupported strain measure");
+      }
+    }
+    throw_if(!bd.hasAttribute(AnsysInterface::finiteStrainStrategy),
+	     "no finite strain strategy defined");
+    return bd.getAttribute<std::string>(AnsysInterface::finiteStrainStrategy);
+  } // end of getFiniteStrainStrategy
+  
+  static void writeUMATArguments(std::ostream& out,
+				 const BehaviourDescription& mb,
+				 const bool base)
+  {
+    if(!base){
       out << "(const ansys::AnsysInt *const matId,\n"
 	  << " const ansys::AnsysInt *const elemId,\n"
 	  << " const ansys::AnsysInt *const kDomIntPt,\n"
@@ -112,7 +192,8 @@ namespace mfront{
 	  << "       ansys::AnsysReal *const SEDEL,\n"
 	  << "       ansys::AnsysReal *const SEDPL,\n"
 	  << "       ansys::AnsysReal *const EPSEQ,\n";
-      if(t==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(mb.getBehaviourType()==
+	 BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
 	out << " const ansys::AnsysReal *const STRAN,\n"
 	    << " const ansys::AnsysReal *const DSTRAN,\n";
       } else {
@@ -123,9 +204,8 @@ namespace mfront{
 	  << " const ansys::AnsysReal *const PROPS,\n"
 	  << " const ansys::AnsysReal *const,\n"
 	  << " const ansys::AnsysReal *const DROT,\n";
-      if((t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
-	 ((fss!=AnsysInterface::NATIVEFINITESTRAINSTRATEGY)&&
-	  (fss!=AnsysInterface::UNDEFINEDSTRATEGY))){
+      if(mb.getBehaviourType()==
+	 BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
 	out << " const ansys::AnsysReal *const F0,\n"
 	    << " const ansys::AnsysReal *const F1,\n";
       } else {
@@ -650,6 +730,9 @@ namespace mfront{
 	  << "\n\n";
     }
   } // end of AnsysInterface::writeInputFileExample
+
+  const char* const
+  AnsysInterface::finiteStrainStrategy = "ansys::finiteStrainStrategy";
   
   std::string AnsysInterface::getName()
   {
@@ -662,7 +745,7 @@ namespace mfront{
   } // end of AnsysInterface::getInterfaceName
 
   std::pair<bool,AnsysInterface::tokens_iterator>
-  AnsysInterface::treatKeyword(BehaviourDescription&,
+  AnsysInterface::treatKeyword(BehaviourDescription& bd,
 				const std::string& key,
 				const std::vector<std::string>& i,
 				tokens_iterator current,
@@ -687,26 +770,20 @@ namespace mfront{
       }
     }
     if (key=="@AnsysFiniteStrainStrategy"){
-      auto read = [&throw_if](const std::string& s){
-	if(s=="Native"){
-	  return NATIVEFINITESTRAINSTRATEGY;
-	} else if(s=="FiniteRotationSmallStrain"){
-	  return FINITEROTATIONSMALLSTRAIN;
-	} else if(s=="MieheApelLambrechtLogarithmicStrain"){
-	  return MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
-	}
-	throw_if(true,"unsupported strategy '"+s+"'\n"
-		 "The only supported strategies are 'Native',"
-		 "'FiniteRotationSmallStrain' and "
-		 "'MieheApelLambrechtLogarithmicStrain'");
-      };
-      throw_if(this->fss!=UNDEFINEDSTRATEGY,
+      throw_if(bd.hasAttribute(AnsysInterface::finiteStrainStrategy),
 	       "a finite strain strategy has already been defined");
       throw_if(current==end,"unexpected end of file");
-      this->fss = read(current->value);
+      const auto fs = current->value;
       throw_if(++current==end,"unexpected end of file");
       throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
       ++(current);
+      checkFiniteStrainStrategyDefinitionConsistency(bd,fs);
+      if(fs=="Native"){
+	throw_if(bd.getSymmetryType()==mfront::ORTHOTROPIC,
+		 "orthotropic behaviours are not supported with the "
+		 "`Native` finite strain strategy");
+      }
+      bd.setAttribute(AnsysInterface::finiteStrainStrategy,fs,false);
       return {true,current};
     }
     if (key=="@AnsysGenerateMTestFileOnFailure"){
@@ -749,13 +826,19 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AnsysInterface::endTreatment: "+m);
     };
-    throw_if((mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	     (this->fss!=UNDEFINEDSTRATEGY),
-	     "finite strain strategy is only supported for small strain behaviours");
     throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
 	     "the ansys interface only supports small and "
 	     "finite strain behaviours");
+    checkFiniteStrainStrategyDefinitionConsistency(mb);
+    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if((hasFiniteStrainStrategy(mb))&&
+	 (getFiniteStrainStrategy(mb)=="Native")){
+	throw_if(mb.getSymmetryType()==mfront::ORTHOTROPIC,
+		 "orthotropic behaviours are not supported with the "
+		 "`Native` finite strain strategy");
+      }
+    }
     if(this->compareToNumericalTangentOperator){
       throw_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
 	       "unsupported feature @AnsysSaveTangentOperator "
@@ -827,7 +910,9 @@ namespace mfront{
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "#include\"MFront/Ansys/AnsysOrthotropicBehaviour.hxx\"\n";
     }
-    if(this->fss!=UNDEFINEDSTRATEGY){
+    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+       (hasFiniteStrainStrategy(mb))&&
+       (getFiniteStrainStrategy(mb)!="Native")){
       out << "#include\"MFront/Ansys/AnsysFiniteStrain.hxx\"\n\n";
     }
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
@@ -920,15 +1005,18 @@ namespace mfront{
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
     for(const auto h: mh){
-      if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	 ((this->fss==UNDEFINEDSTRATEGY)||(this->fss==NATIVEFINITESTRAINSTRATEGY))){
-	this->writeUMATSmallStrainFunction(out,mb,name,h);
-      } else if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		((this->fss!=UNDEFINEDSTRATEGY)&&(this->fss!=NATIVEFINITESTRAINSTRATEGY))){
-	if(this->fss==FINITEROTATIONSMALLSTRAIN){
-	  this->writeUMATFiniteRotationSmallStrainFunction(out,mb,name,h);
+      if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	if(hasFiniteStrainStrategy(mb)){
+	  const auto fs = getFiniteStrainStrategy(mb);
+	  if(fs=="Native"){
+	    this->writeUMATSmallStrainFunction(out,mb,name,h);
+	  } else if(fs=="FiniteRotationSmallStrain"){
+	    this->writeUMATFiniteRotationSmallStrainFunction(out,mb,name,h);
+	  } else {
+	    throw_if(true,"unsupported finite strain strategy !");
+	  }
 	} else {
-	  throw_if(true,"unsupported finite strain strategy !");
+	  this->writeUMATSmallStrainFunction(out,mb,name,h);
 	}
       } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
 	this->writeUMATFiniteStrainFunction(out,mb,name,h);
@@ -943,10 +1031,10 @@ namespace mfront{
   } // end of AnsysInterface::endTreatment
   
   void AnsysInterface::writeUMATFunctionBase(std::ostream& out,
-					 const BehaviourDescription& mb,
-					 const std::string& name,
-					 const std::string& sfeh,
-					 const Hypothesis h) const
+					     const BehaviourDescription& mb,
+					     const std::string& name,
+					     const std::string& sfeh,
+					     const Hypothesis h) const
   {
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AnsysInterface::writeUMATFunctionBase: "+m);
@@ -954,7 +1042,7 @@ namespace mfront{
     std::string dv0,dv1,sig;
     const auto btype = mb.getBehaviourType();
     out << "static void\n" << name << "_base" << this->getFunctionNameForHypothesis("",h);
-    writeUMATArguments(out,btype,this->fss,false);
+    writeUMATArguments(out,mb,true);
     out << "{\n";
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
       const auto mpoffset = [this,h,&mb]{
@@ -986,7 +1074,7 @@ namespace mfront{
     	if ((h==ModellingHypothesis::PLANESTRESS)||
 	    (h==ModellingHypothesis::AXISYMMETRICAL)||
 	    (h==ModellingHypothesis::PLANESTRAIN)){
-	  out << "if(*NPROPS<"+smpoffset+"+2u){\n"
+	  out << "if(*NPROPS<static_cast<ansys::AnsysInt>("+smpoffset+"+2u)){\n"
 	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
 	      << "          << \"invalid number of material properties\\n\";\n"
 	      << "*keycut = 1;\n"
@@ -1000,7 +1088,7 @@ namespace mfront{
     	      << "R.rotateStrainsForward(DSTRAN,de);\n"
     	      << "R.rotateStressesForward(STRESS,sm);\n";
     	} else if (h==ModellingHypothesis::TRIDIMENSIONAL){
-	  out << "if(*NPROPS<"+smpoffset+"+6u){\n"
+	  out << "if(*NPROPS<static_cast<ansys::AnsysInt>("+smpoffset+"+6u)){\n"
 	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
 	      << "          << \"invalid number of state variables\\n\";\n"
 	      << "*keycut = 1;\n"
@@ -1024,7 +1112,7 @@ namespace mfront{
     	if ((h==ModellingHypothesis::PLANESTRESS)||
 	    (h==ModellingHypothesis::AXISYMMETRICAL)||
 	    (h==ModellingHypothesis::PLANESTRAIN)){
-	  out << "if(*NPROPS<"+smpoffset+"+2u){\n"
+	  out << "if(*NPROPS<static_cast<ansys::AnsysInt>("+smpoffset+"+2u)){\n"
 	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
 	      << "          << \"invalid number of material properties\\n\";\n"
 	      << "*keycut = 1;\n"
@@ -1038,7 +1126,7 @@ namespace mfront{
     	      << "R.rotateDeformationGradientForward(F1,Fm1);\n"
      	      << "R.rotateStressesForward(STRESS,sm);\n";
     	} else if (h==ModellingHypothesis::TRIDIMENSIONAL){
-	  out << "if(*NPROPS<"+smpoffset+"+6u){\n"
+	  out << "if(*NPROPS<static_cast<ansys::AnsysInt>("+smpoffset+"+6u)){\n"
 	      << "std::cerr << \"" << name << this->getFunctionNameForHypothesis("",h) << ": \"\n"
 	      << "          << \"invalid number of state variables\\n\";\n"
 	      << "*keycut = 1;\n"
@@ -1133,7 +1221,7 @@ namespace mfront{
     this->writeUMATFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,this->fss,true);
+    writeUMATArguments(out,mb,false);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -1160,7 +1248,7 @@ namespace mfront{
     this->writeUMATFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,this->fss,true);
+    writeUMATArguments(out,mb,false);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -1265,9 +1353,11 @@ namespace mfront{
 	  << "std::cout << std::endl;\n"
 	  << "}\n";
     }
-    if(this->fss==NATIVEFINITESTRAINSTRATEGY){
-	out << "ansys::AnsysFiniteStrain::applyNativeFiniteStrainCorrection(DDSDDE,DFGRD1,STRESS,*NTENS);\n";
-    }
+    // if(hasFiniteStrainStrategy(mb)){
+    //   if(getFiniteStrainStrategy(mb)=="Native"){
+    // 	out << "ansys::AnsysFiniteStrain::applyNativeFiniteStrainCorrection(DDSDDE,DFGRD1,STRESS,*NTENS);\n";
+    //   }
+    // }
     out << "}\n\n";
   }
   
@@ -1286,7 +1376,7 @@ namespace mfront{
     this->writeUMATFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,this->fss,true);
+    writeUMATArguments(out,mb,false);
     out << "{\n"
 	<< "using namespace ansys;\n"
 	<< "AnsysReal eto[6];\n"
@@ -1343,10 +1433,11 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->fss==UNDEFINEDSTRATEGY){
-	out << "1u;\n\n";
-      } else {
+      if((hasFiniteStrainStrategy(mb))&&
+	 (getFiniteStrainStrategy(mb)!="Native")){
 	out << "2u;\n\n";
+      } else {
+	out << "1u;\n\n";
       }
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "2u;\n\n";
@@ -1366,10 +1457,11 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourKinematic = " ;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->fss==UNDEFINEDSTRATEGY){
-	out << "1u;\n\n";
-      } else {
+      if((hasFiniteStrainStrategy(mb))&&
+	 (getFiniteStrainStrategy(mb)!="Native")){
 	out << "3u;\n\n";
+      } else {
+	out << "1u;\n\n";
       }
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "3u;\n\n";
@@ -1481,15 +1573,22 @@ namespace mfront{
     auto do_nothing = [&out]{
       out << "static_cast<void>(ANSYSDR);\n";
     };
-    /* 
+    /*!
      * We apply the rotation associated to the Jauman corotationnal frame only if:
      * - the behaviour symmetry is isotropic
      * - the behaviour is written in small strain
      * - the finite strain strategy is either undefined or `Native`
      */
-    const bool c = ((mb.getSymmetryType()==mfront::ISOTROPIC)&&
-		    (mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR) &&
-		    ((this->fss==UNDEFINEDSTRATEGY)||(this->fss==NATIVEFINITESTRAINSTRATEGY)));
+    const auto c = [&mb]{
+      if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	if((hasFiniteStrainStrategy(mb))&&
+	   (getFiniteStrainStrategy(mb)!="Native")){
+	  return false;
+	}
+	return true;
+      }
+      return false;
+    }();
     if(!c){
       do_nothing();
       return;

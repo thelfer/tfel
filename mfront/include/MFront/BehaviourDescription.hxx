@@ -75,6 +75,12 @@ namespace mfront
     using  Mode = BehaviourData::Mode;
     //! a simple alias
     using  Position = BehaviourData::Position;
+    //! Strain measure
+    enum StrainMeasure{
+      LINEARISED,
+      GREENLAGRANGE,
+      HENCKY
+    }; // end of enum StrainMeasure
     /*!
      * \brief this structure holds the value of a constant material
      * property
@@ -146,15 +152,15 @@ namespace mfront
 	    EXTERNALSTATEVARIABLE,PARAMETER} type;
     }; // end of 
     //! attribute name
-    static const std::string requiresStiffnessTensor;
+    static const char *const requiresStiffnessTensor;
     //! attribute name
-    static const std::string computesStiffnessTensor;
+    static const char *const computesStiffnessTensor;
     //! attribute name
-    static const std::string requiresUnAlteredStiffnessTensor;
+    static const char *const requiresUnAlteredStiffnessTensor;
     //! attribute name
-    static const std::string requiresThermalExpansionCoefficientTensor;
+    static const char *const requiresThermalExpansionCoefficientTensor;
     //! attribute name
-    static const std::string setRequireThermalExpansionCoefficientTensor;
+    static const char *const setRequireThermalExpansionCoefficientTensor;
     //! constructor
     BehaviourDescription();
     //! copy constructor
@@ -301,6 +307,15 @@ namespace mfront
     void declareAsAFiniteStrainStandardBehaviour(const bool);
     //! \brief set the behaviour to be a cohesive zone model
     void declareAsACohesiveZoneModel();
+    /*!
+     * \brief set the strain measure to be used
+     * \param[in] m: measure
+     */
+    void setStrainMeasure(const StrainMeasure);
+    //! \return the strain measure associated with the behaviour
+    StrainMeasure getStrainMeasure() const;
+    //! \return if the strain measure has been set
+    bool isStrainMeasureDefined() const;
     //! \return the type of the stiffness operator
     std::string getTangentOperatorType() const;
 
@@ -1565,6 +1580,8 @@ namespace mfront
     optional<SlipSystemsDescription> gs;
     //! \brief list of all Hill tensors defined
     std::vector<HillTensor> hillTensors;
+    //! strain measure
+    optional<StrainMeasure> strainMeasure;
     //! use units
     bool use_qt = false;
     //! type of behaviour

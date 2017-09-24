@@ -73,6 +73,7 @@ MFRONT_DOCS = Algorithm.md				                \
 	      StateVariable.md			                        \
 	      StaticVar.md			                        \
 	      StaticVariable.md		                                \
+	      StrainMeasure.md		                                \
 	      Swelling.md		                                \
 	      TangentOperator.md		                        \
 	      Theta.md		                                        \

@@ -415,6 +415,7 @@ docs/mfront/StateVar.md -text
 docs/mfront/StateVariable.md -text
 docs/mfront/StaticVar.md -text
 docs/mfront/StaticVariable.md -text
+docs/mfront/StrainMeasure.md -text
 docs/mfront/Swelling.md -text
 docs/mfront/TangentOperator.md -text
 docs/mfront/Theta.md -text
@@ -2439,6 +2440,7 @@ mfront/tests/behaviours/IsotropicVolumeSwelling2.mfront -text
 mfront/tests/behaviours/JohnsonCook_s.mfront -text
 mfront/tests/behaviours/JohnsonCook_ssr.mfront -text
 mfront/tests/behaviours/JohnsonCook_ssrt.mfront -text
+mfront/tests/behaviours/LogarithmicStrainAxialGrowth.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity2.mfront -text
 mfront/tests/behaviours/LogarithmicStrainElasticity3.mfront -text
@@ -3374,6 +3376,10 @@ mfront/tests/behaviours/calculix/calculixelasticity6.mtest.in -text
 mfront/tests/behaviours/calculix/calculixelasticity7.mtest.in -text
 mfront/tests/behaviours/calculix/calculixelasticity8.mtest.in -text
 mfront/tests/behaviours/calculix/calculixelasticity9.mtest.in -text
+mfront/tests/behaviours/calculix/calculixfinitestrainsinglecrystal-001.mtest.in -text
+mfront/tests/behaviours/calculix/calculixfinitestrainsinglecrystal-012-2.mtest.in -text
+mfront/tests/behaviours/calculix/calculixfinitestrainsinglecrystal-012.mtest.in -text
+mfront/tests/behaviours/calculix/calculixfinitestrainsinglecrystal-159.mtest.in -text
 mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D.mtest.in -text
 mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D.mtest.in -text
 mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D.mtest.in -text

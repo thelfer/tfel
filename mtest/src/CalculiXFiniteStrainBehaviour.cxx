@@ -90,8 +90,6 @@ namespace mtest
       orab[5] = s.r(2,1);
       orab[6] = real(1);
     }
-    throw_if(this->stype==1u,"orthotropic behaviour "
-	     "are not supported yet");
     uu0(0,0) = s.e0(0); uu1(0,0) = s.e1(0);
     uu0(1,1) = s.e0(1); uu1(1,1) = s.e1(1);
     uu0(2,2) = s.e0(2); uu1(2,2) = s.e1(2);
@@ -106,11 +104,15 @@ namespace mtest
     const auto F1  = tensor<3u,real>(&s.e1(0));
     const auto v0j = det(F0);
     const auto vj  = det(F1);
+    auto ue0 = computeGreenLagrangeTensor(F0);
+    auto ue1 = computeGreenLagrangeTensor(F1);
     // CalculiX standard convention
     std::copy(s.s0.begin(),s.s0.end(),us.begin());
     auto pk2 = convertCauchyStressToSecondPiolaKirchhoffStress(us,F0);
     for(CalculiXInt i=3;i!=6;++i){
-      pk2(i)  /= sqrt2;
+      ue0(i) /= sqrt2;
+      ue1(i) /= sqrt2;
+      pk2(i) /= sqrt2;
     }
     auto ndt = std::numeric_limits<CalculiXReal>::max();
     const auto iel      = CalculiXInt(1);
@@ -123,7 +125,7 @@ namespace mtest
     const auto T = s.esv0(0)+s.desv(0);
     (this->fct)(nullptr,&iel,&iint,&nprops,
 		s.mprops1.empty() ? nullptr : &s.mprops1[0],
-		nullptr,nullptr,
+		&ue1(0),&ue0(0),
 		nullptr,&uu0(0,0),&v0j,&uu1(0,0),&vj,
 		&ithermal,&T,&dt,nullptr,nullptr,&icmd,&ielas,
 		&mi,&nstatv,

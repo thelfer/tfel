@@ -29,69 +29,69 @@
 
 namespace mfront{
 
-  const std::string
-  BehaviourData::FlowRule("FlowRule");
-  const std::string
-  BehaviourData::BeforeInitializeLocalVariables("BeforeInitializeLocalVariables");
-  const std::string
-  BehaviourData::InitializeLocalVariables("InitializeLocalVariables");
-  const std::string
-  BehaviourData::AfterInitializeLocalVariables("AfterInitializeLocalVariables");
-  const std::string
-  BehaviourData::ComputePredictor("ComputePredictor");
-  const std::string
-  BehaviourData::ComputeStressFreeExpansion("ComputeStressFreeExpansion");
-  const std::string
-  BehaviourData::ComputeStress("ComputeStress");
-  const std::string
-  BehaviourData::ComputeFinalStress("ComputeFinalStress");
-  const std::string
-  BehaviourData::ComputeFinalStressCandidate("ComputeFinalStressCandidate");
-  const std::string
-  BehaviourData::ComputeInternalEnergy("ComputeInternalEnergy");
-  const std::string
-  BehaviourData::ComputeDissipatedEnergy("ComputeDissipatedEnergy");
-  const std::string
-  BehaviourData::APrioriTimeStepScalingFactor("APrioriTimeStepScalingFactor");
-  const std::string
-  BehaviourData::Integrator("Integrator");
-  const std::string
-  BehaviourData::APosterioriTimeStepScalingFactor("APosterioriTimeStepScalingFactor");
-  const std::string
-  BehaviourData::ComputeDerivative("ComputeDerivative");
-  const std::string
-  BehaviourData::UpdateAuxiliaryStateVariables("UpdateAuxiliaryStateVariables");
-  const std::string
-  BehaviourData::ComputePredictionOperator("ComputePredictionOperator");
-  const std::string
-  BehaviourData::ComputeTangentOperator("ComputeTangentOperator");
-  const std::string
-  BehaviourData::InitializeJacobian("InitializeJacobian");
-  const std::string
-  BehaviourData::InitializeJacobianInvert("InitializeJacobianInvert");
+  const char *const
+  BehaviourData::FlowRule = "FlowRule";
+  const char *const
+  BehaviourData::BeforeInitializeLocalVariables = "BeforeInitializeLocalVariables";
+  const char *const
+  BehaviourData::InitializeLocalVariables = "InitializeLocalVariables";
+  const char *const
+  BehaviourData::AfterInitializeLocalVariables = "AfterInitializeLocalVariables";
+  const char *const
+  BehaviourData::ComputePredictor = "ComputePredictor";
+  const char *const
+  BehaviourData::ComputeStressFreeExpansion = "ComputeStressFreeExpansion";
+  const char *const
+  BehaviourData::ComputeStress = "ComputeStress";
+  const char *const
+  BehaviourData::ComputeFinalStress = "ComputeFinalStress";
+  const char *const
+  BehaviourData::ComputeFinalStressCandidate = "ComputeFinalStressCandidate";
+  const char *const
+  BehaviourData::ComputeInternalEnergy = "ComputeInternalEnergy";
+  const char *const
+  BehaviourData::ComputeDissipatedEnergy = "ComputeDissipatedEnergy";
+  const char *const
+  BehaviourData::APrioriTimeStepScalingFactor = "APrioriTimeStepScalingFactor";
+  const char *const
+  BehaviourData::Integrator = "Integrator";
+  const char *const
+  BehaviourData::APosterioriTimeStepScalingFactor = "APosterioriTimeStepScalingFactor";
+  const char *const
+  BehaviourData::ComputeDerivative = "ComputeDerivative";
+  const char *const
+  BehaviourData::UpdateAuxiliaryStateVariables = "UpdateAuxiliaryStateVariables";
+  const char *const
+  BehaviourData::ComputePredictionOperator = "ComputePredictionOperator";
+  const char *const
+  BehaviourData::ComputeTangentOperator = "ComputeTangentOperator";
+  const char *const
+  BehaviourData::InitializeJacobian = "InitializeJacobian";
+  const char *const
+  BehaviourData::InitializeJacobianInvert = "InitializeJacobianInvert";
 
-  const std::string
-  BehaviourData::profiling("profiling");
-  const std::string
-  BehaviourData::hasAPrioriTimeStepScalingFactor("hasAPrioriTimeStepScalingFactor");
-  const std::string
-  BehaviourData::hasAPosterioriTimeStepScalingFactor("hasAPosterioriTimeStepScalingFactor");
-  const std::string
-  BehaviourData::hasConsistentTangentOperator("hasConsistentTangentOperator");
-  const std::string
-  BehaviourData::isConsistentTangentOperatorSymmetric("isConsistentTangentOperatorSymmetric");
-  const std::string
-  BehaviourData::hasPredictionOperator("hasPredictionOperator");
-  const std::string
-  BehaviourData::compareToNumericalJacobian("compareToNumericalJacobian");
-  const std::string
-  BehaviourData::numericallyComputedJacobianBlocks("numericallyComputedJacobianBlocks");
-  const std::string
-  BehaviourData::allowsNewUserDefinedVariables("allowsNewUserDefinedVariables");
-  const std::string
-  BehaviourData::algorithm("algorithm");
-  const std::string
-  BehaviourData::numberOfEvaluations("numberOfEvaluations");
+  const char *const
+  BehaviourData::profiling = "profiling";
+  const char *const
+  BehaviourData::hasAPrioriTimeStepScalingFactor = "hasAPrioriTimeStepScalingFactor";
+  const char *const
+  BehaviourData::hasAPosterioriTimeStepScalingFactor = "hasAPosterioriTimeStepScalingFactor";
+  const char *const
+  BehaviourData::hasConsistentTangentOperator = "hasConsistentTangentOperator";
+  const char *const
+  BehaviourData::isConsistentTangentOperatorSymmetric = "isConsistentTangentOperatorSymmetric";
+  const char *const
+  BehaviourData::hasPredictionOperator = "hasPredictionOperator";
+  const char *const
+  BehaviourData::compareToNumericalJacobian = "compareToNumericalJacobian";
+  const char *const
+  BehaviourData::numericallyComputedJacobianBlocks = "numericallyComputedJacobianBlocks";
+  const char *const
+  BehaviourData::allowsNewUserDefinedVariables = "allowsNewUserDefinedVariables";
+  const char *const
+  BehaviourData::algorithm = "algorithm";
+  const char *const
+  BehaviourData::numberOfEvaluations = "numberOfEvaluations";
 
   /*!
    * check if the given name has already been used as value in the

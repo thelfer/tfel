@@ -203,17 +203,17 @@ namespace mfront
     }
   } // end of checkThermalExpansionCoefficientArgument
 
-  const std::string
-  BehaviourDescription::requiresStiffnessTensor("requiresStiffnessTensor");
+  const char *const
+  BehaviourDescription::requiresStiffnessTensor = "requiresStiffnessTensor";
 
-  const std::string
-  BehaviourDescription::computesStiffnessTensor("computesStiffnessTensor");
+  const char *const
+  BehaviourDescription::computesStiffnessTensor = "computesStiffnessTensor";
   
-  const std::string
-  BehaviourDescription::requiresUnAlteredStiffnessTensor("requiresUnAlteredStiffnessTensor");
+  const char *const
+  BehaviourDescription::requiresUnAlteredStiffnessTensor = "requiresUnAlteredStiffnessTensor";
   
-  const std::string
-  BehaviourDescription::requiresThermalExpansionCoefficientTensor("requiresThermalExpansionCoefficientTensor");
+  const char *const
+  BehaviourDescription::requiresThermalExpansionCoefficientTensor = "requiresThermalExpansionCoefficientTensor";
 
   BehaviourDescription::BehaviourDescription() = default;
 
@@ -2229,6 +2229,29 @@ namespace mfront
     }
     this->areDynamicallyAllocatedVectorsAllowed_ = b;
   } // end of SupportedTypes::areDynamicallyAllocatedVectorsAllowed
+  
+  void BehaviourDescription::setStrainMeasure(const StrainMeasure sm){
+    tfel::raise_if(this->getBehaviourType()!=
+		   BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+		   "BehaviourDescription::setStrainMeasure: "
+		   "invalid behaviour type");
+    tfel::raise_if(this->isStrainMeasureDefined(),
+		   "BehaviourDescription::setStrainMeasure: "
+		   "strain measure already defined");
+    this->strainMeasure = sm;
+  }
+  
+  BehaviourDescription::StrainMeasure
+  BehaviourDescription::getStrainMeasure() const{
+    tfel::raise_if(!this->isStrainMeasureDefined(),
+		   "BehaviourDescription::getStrainMeasure: "
+		   "no strain measure defined");
+    return this->strainMeasure.get<StrainMeasure>();
+  } // end of BehaviourDescription::setStrainMeasure()
+  
+  bool BehaviourDescription::isStrainMeasureDefined() const{
+    return this->strainMeasure.is<StrainMeasure>();
+  } // end of BehaviourDescription::isStrainMeasureDefined()
   
   BehaviourDescription::~BehaviourDescription() = default;
 

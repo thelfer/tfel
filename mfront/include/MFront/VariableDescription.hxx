@@ -34,13 +34,13 @@ namespace mfront
     : public VariableDescriptionBase
   {
     //! standard attribute name
-    static const std::string depth;
+    static const char *const depth;
     //! standard attribute name
-    static const std::string initialValue;
+    static const char *const initialValue;
     //! standard attribute name
-    static const std::string defaultValue;
+    static const char *const defaultValue;
     //! error normalisation factor
-    static const std::string errorNormalisationFactor;
+    static const char *const errorNormalisationFactor;
     //! default constructor
     VariableDescription();
     //! copy constructor

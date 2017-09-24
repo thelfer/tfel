@@ -1,13 +1,14 @@
 /*!
  * \file   CalculiXConvert.hxx
  * \brief    
- * \author THOMAS HELFER
+ * \author Thomas Helfer
  * \date   22 mars 2016
  */
 
 #ifndef LIB_MFRONT_CALCULIX_CALCULIXCONVERT_HXX
 #define LIB_MFRONT_CALCULIX_CALCULIXCONVERT_HXX
 
+#include"TFEL/FSAlgorithm/copy.hxx"
 #include"TFEL/Math/General/MathConstants.hxx"
 
 namespace calculix{
@@ -18,17 +19,15 @@ namespace calculix{
    */
   struct ImportDrivingVariables
   {
-    //! space dimension
-    static constexpr const unsigned short N = 3u;
-    /*!
+     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
     template<typename T>
     static inline void
-    exe(tfel::math::stensor<N,T>& e,const CalculiXReal* const v){
-      e.importTab(v);
+    exe(tfel::math::stensor<3,T>& e,const CalculiXReal* const v){
+      tfel::fsalgo::copy<6u>::exe(v,e.begin());
     } // end of exe
     /*!
      * \tparam T: type of the thermodynamique forces
@@ -37,8 +36,8 @@ namespace calculix{
      */
     template<typename T>
     static inline void
-    exe(tfel::math::tensor<N,T>& F,const CalculiXReal* const v){
-      tfel::math::tensor<N,T>::buildFromFortranMatrix(F,v);
+    exe(tfel::math::tensor<3u,T>& F,const CalculiXReal* const v){
+      tfel::fsalgo::copy<9u>::exe(v,F.begin());
     } // end of exe
   }; // end of struct ImportDrivingVariables
   /*!
@@ -47,8 +46,6 @@ namespace calculix{
    */
   struct ImportThermodynamicForces
   {
-    //! space dimension
-    static constexpr const unsigned short N = 3u;
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] s: symmetric tensor to be filled
@@ -56,8 +53,8 @@ namespace calculix{
      */
     template<typename T>
     static inline void
-    exe(tfel::math::stensor<N,T>& s,const CalculiXReal* const v){
-      s.importTab(v);
+    exe(tfel::math::stensor<3u,T>& s,const CalculiXReal* const v){
+      tfel::fsalgo::copy<6u>::exe(v,s.begin());
     } // end of exe
   }; // end of struct ImportThermodynamicForces
   /*!
@@ -66,8 +63,6 @@ namespace calculix{
    */
   struct ExportThermodynamicForces
   {
-    //! space dimension
-    static constexpr const unsigned short N = 3u;
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] v: values
@@ -75,8 +70,8 @@ namespace calculix{
      */
     template<typename T>
     static inline void
-    exe(CalculiXReal* const v,const tfel::math::stensor<N,T>& s){
-      s.exportTab(v);
+    exe(CalculiXReal* const v,const tfel::math::stensor<3u,T>& s){
+      tfel::fsalgo::copy<6u>::exe(s.begin(),v);
     } // end of exe
   }; // end of struct ExportThermodynamicForces
 

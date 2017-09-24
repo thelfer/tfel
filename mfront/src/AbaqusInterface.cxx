@@ -32,13 +32,50 @@
 #include"MFront/AbaqusInterface.hxx"
 
 namespace mfront{
+
+  static void
+  checkCompareToNumericalTangentOperatorConsistency(const BehaviourDescription& bd){
+    auto throw_if = [](const bool b,const std::string& m){
+      tfel::raise_if(b,"checkCompareToNumericalTangentOperatorConsistency "
+		     "(AbaqusInterface): "+m);
+    };
+    throw_if(bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+	     "unsupported feature @AbaqusSaveTangentOperator "
+	     "and @AbaqusCompareToNumericalTangentOperator : "
+	     "those are only valid for small strain beahviours");
+    if(AbaqusInterfaceBase::hasFiniteStrainStrategy(bd)){
+      const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(bd);
+      throw_if(fs!="Native",
+	       "unsupported feature @AbaqusSaveTangentOperator "
+	       "and @AbaqusCompareToNumericalTangentOperator : "
+	       "those are only valid for small strain beahviours or "
+	       "finite strain behaviours based on the `Native` "
+	       "finite strain strategy");
+    }
+  }
+
+  static bool usesMFrontOrthotropyManagementPolicy(const BehaviourDescription &mb){
+    if(AbaqusInterfaceBase::hasOrthotropyManagementPolicy(mb)){
+      return AbaqusInterfaceBase::getOrthotropyManagementPolicy(mb)=="MFront";
+    }
+    return false;
+  } // end of usesMFrontOrthotropyManagementPolicy
   
   static void
   writeUMATArguments(std::ostream& out,
-		     const BehaviourDescription::BehaviourType& t,
-		     const AbaqusInterface::FiniteStrainStrategy fss,
+		     const BehaviourDescription& bd,
 		     const bool f)
   {
+    const auto sb = (bd.getBehaviourType()==
+		     BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR);
+    const auto fs = [&bd,&sb]{
+      if((sb)&&(!AbaqusInterfaceBase::hasFiniteStrainStrategy(bd))){
+	return false;
+      }
+      return true;
+    }();
+    const auto fs2 = (bd.getBehaviourType()==
+		      BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR);
     if(f){
       out << "(abaqus::AbaqusReal *const STRESS,\n"
 	  << " abaqus::AbaqusReal *const STATEV,\n"
@@ -89,7 +126,7 @@ namespace mfront{
 	  << " abaqus::AbaqusReal *const,\n"
 	  << " abaqus::AbaqusReal *const,\n"
 	  << " abaqus::AbaqusReal *const,\n";
-      if(t==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(sb){
 	out << " const abaqus::AbaqusReal *const STRAN,\n"
 	    << " const abaqus::AbaqusReal *const DSTRAN,\n";
       } else {
@@ -113,7 +150,7 @@ namespace mfront{
 	  << " const abaqus::AbaqusReal *const DROT,\n"
 	  << "       abaqus::AbaqusReal *const PNEWDT,\n"
 	  << " const abaqus::AbaqusReal *const,\n";
-      if(t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      if(fs2){
 	out << " const abaqus::AbaqusReal *const F0,\n"
 	    << " const abaqus::AbaqusReal *const F1,\n";
       } else {
@@ -124,9 +161,7 @@ namespace mfront{
 	  << " const abaqus::AbaqusInt  *const,\n"
 	  << " const abaqus::AbaqusInt  *const,\n"
 	  << " const abaqus::AbaqusInt  *const,\n";
-      if((t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
-	 ((fss!=AbaqusInterfaceBase::NATIVEFINITESTRAINSTRATEGY)&&
-	  (fss!=AbaqusInterfaceBase::UNDEFINEDSTRATEGY))){
+      if(fs){
 	out << " const abaqus::AbaqusInt  *const KSTEP,\n";
       } else {
 	out << " const abaqus::AbaqusInt  *const,\n";
@@ -191,8 +226,8 @@ namespace mfront{
 
 
   std::pair<bool,AbaqusInterface::tokens_iterator>
-  AbaqusInterface::treatKeyword(BehaviourDescription&,
-				const std::string& key,
+  AbaqusInterface::treatKeyword(BehaviourDescription& bd,
+				const std::string& k,
 				const std::vector<std::string>& i,
 				tokens_iterator current,
 				const tokens_iterator end)
@@ -209,35 +244,37 @@ namespace mfront{
 	      "@AbaqusTangentOperatorComparisonCriterium",
 	      "@AbaqusTangentOperatorComparisonCriterion",
 	      "@AbaqusStrainPerturbationValue"});
-	throw_if(std::find(keys.begin(),keys.end(),key)==keys.end(),
-		 "unsupported key '"+key+"'");
+	throw_if(std::find(keys.begin(),keys.end(),k)==keys.end(),
+		 "unsupported key '"+k+"'");
       } else {
 	return {false,current};
       }
     }
-    const auto r = AbaqusInterfaceBase::treatCommonKeywords(key,current,end);
+    const auto r = AbaqusInterfaceBase::treatCommonKeywords(bd,k,current,end);
     if(r.first){
       return r;
     }
-    if (key=="@AbaqusGenerateMTestFileOnFailure"){
-      this->generateMTestFile = this->readBooleanValue(key,current,end);
+    if (k=="@AbaqusGenerateMTestFileOnFailure"){
+      this->generateMTestFile = this->readBooleanValue(k,current,end);
       return {true,current};      
-    } else if(key=="@AbaqusCompareToNumericalTangentOperator"){
-      this->compareToNumericalTangentOperator  = this->readBooleanValue(key,current,end);
+    } else if(k=="@AbaqusCompareToNumericalTangentOperator"){
+      checkCompareToNumericalTangentOperatorConsistency(bd);
+      this->compareToNumericalTangentOperator  = this->readBooleanValue(k,current,end);
       return make_pair(true,current);
-    } else if ((key=="@AbaqusTangentOperatorComparisonCriterium")||
-	       (key=="@AbaqusTangentOperatorComparisonCriterion")){
+    } else if ((k=="@AbaqusTangentOperatorComparisonCriterium")||
+	       (k=="@AbaqusTangentOperatorComparisonCriterion")){
       throw_if(!this->compareToNumericalTangentOperator,
 	       "comparison to tangent operator is not enabled at this stage.\n"
 	       "Use the @AbaqusCompareToNumericalTangentOperator directive before "
 	       "@AbaqusTangentOperatorComparisonCriterion");
+      checkCompareToNumericalTangentOperatorConsistency(bd);
       throw_if(current==end,"unexpected end of file");
       this->tangentOperatorComparisonCriterion = CxxTokenizer::readDouble(current,end);
       throw_if(current==end,"unexpected end of file");
       throw_if(current->value!=";","expected ';', read '"+current->value+"'");
       ++(current);
       return {true,current};
-    } else if (key=="@AbaqusStrainPerturbationValue"){
+    } else if (k=="@AbaqusStrainPerturbationValue"){
       throw_if(!this->compareToNumericalTangentOperator,
 	       "time stepping is not enabled at this stage.\n"
 	       "Use the @AbaqusUseTimeSubStepping directive before "
@@ -252,40 +289,40 @@ namespace mfront{
     return {false,current};
   } // end of treatKeyword
 
-  void
-  AbaqusInterface::endTreatment(const BehaviourDescription& mb,
-				const FileDescription& fd) const
+  void AbaqusInterface::endTreatment(const BehaviourDescription& mb,
+				     const FileDescription& fd) const
   {
     using namespace tfel::system;
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AbaqusInterface::endTreatment: "+m);
     };
-    throw_if((mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	     (this->fss!=UNDEFINEDSTRATEGY),
-	     "finite strain strategy is only supported for small strain behaviours");
+    AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(mb);
     throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
 	     "the abaqus interface only supports small and "
 	     "finite strain behaviours");
     if(this->compareToNumericalTangentOperator){
-      throw_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
-	       "unsupported feature @AbaqusSaveTangentOperator "
-	       "and @AbaqusCompareToNumericalTangentOperator : "
-	       "those are only valid for small strain beahviours");
+      checkCompareToNumericalTangentOperatorConsistency(mb);
     }
-    throw_if((mb.getSymmetryType()!=mfront::ORTHOTROPIC)&&
-	     (this->omp!=UNDEFINEDORTHOTROPYMANAGEMENTPOLICY),
-	     "orthotropy management policy is only valid "
-	     "for orthotropic behaviour");
+    AbaqusInterfaceBase::checkOrthotropyManagementPolicyConsistency(mb);
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      if(((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	  (this->fss!=UNDEFINEDSTRATEGY))||
-	 (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
-	throw_if(this->omp!=MFRONTORTHOTROPYMANAGEMENTPOLICY,
-		 "orthotropic finite strain behaviours are only supported with the "
-		 "'MFront' othotropy management policy. See the "
-		 "'@AbaqusOrthotropyManagementPolicy' for details");
-      }
+      const auto requires_mfront_omp = [&mb]{
+	if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	  if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
+	    const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(mb);
+	    return fs!="Native";
+	  } else {
+	    return false;
+	  }
+	}
+	return true;
+      }();
+      const auto mfront_omp = usesMFrontOrthotropyManagementPolicy(mb);
+      throw_if(((requires_mfront_omp)&&!(mfront_omp)),
+	       "orthotropic finite strain behaviours "
+	       "are only supported with the "
+	       "'MFront' othotropy management policy. See the "
+	       "'@AbaqusOrthotropyManagementPolicy' for details");
     }
     // get the modelling hypotheses to be treated
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
@@ -346,12 +383,14 @@ namespace mfront{
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "#include\"MFront/Abaqus/AbaqusOrthotropicBehaviour.hxx\"\n";
     }
-    if(this->fss!=UNDEFINEDSTRATEGY){
-      out << "#include\"MFront/Abaqus/AbaqusFiniteStrain.hxx\"\n\n";
+    if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
+      if(AbaqusInterfaceBase::getFiniteStrainStrategy(mb)!="Native"){
+	out << "#include\"MFront/Abaqus/AbaqusFiniteStrain.hxx\"\n\n";
+      }
     }
     out << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
 	<< "#endif /* __cplusplus */\n\n";
-
+    
     this->writeVisibilityDefines(out);
 
     out << "#ifdef __cplusplus\n\n"
@@ -413,8 +452,10 @@ namespace mfront{
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
-    if(this->omp!=UNDEFINEDORTHOTROPYMANAGEMENTPOLICY){
-      out << "#include\"MFront/Abaqus/AbaqusRotation.hxx\"\n\n";
+    if(mb.hasAttribute(AbaqusInterfaceBase::orthotropyManagementPolicy)){
+      if(AbaqusInterfaceBase::getOrthotropyManagementPolicy(mb)!="Native"){
+	out << "#include\"MFront/Abaqus/AbaqusRotation.hxx\"\n\n";
+      }
     }
     out << "#include\"MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx\"\n\n"
 	<< "#include\"MFront/Abaqus/AbaqusInterface.hxx\"\n\n"
@@ -439,15 +480,18 @@ namespace mfront{
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
     for(const auto h: mh){
-      if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	 ((this->fss==UNDEFINEDSTRATEGY)||(this->fss==NATIVEFINITESTRAINSTRATEGY))){
-	this->writeUMATSmallStrainFunction(out,mb,name,h);
-      } else if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		((this->fss!=UNDEFINEDSTRATEGY)&&(this->fss!=NATIVEFINITESTRAINSTRATEGY))){
-	if(this->fss==FINITEROTATIONSMALLSTRAIN){
-	  this->writeUMATFiniteRotationSmallStrainFunction(out,mb,name,h);
+      if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
+	  const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(mb);
+	  if(fs=="Native"){
+	    this->writeUMATSmallStrainFunction(out,mb,name,h);
+	  } else if(fs=="FiniteRotationSmallStrain"){
+	    this->writeUMATFiniteRotationSmallStrainFunction(out,mb,name,h);
+	  } else {
+	    throw_if(true,"unsupported finite strain strategy '"+fs+"'");
+	  }
 	} else {
-	  throw_if(true,"unsupported finite strain strategy !");
+	  this->writeUMATSmallStrainFunction(out,mb,name,h);
 	}
       } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
 	this->writeUMATFiniteStrainFunction(out,mb,name,h);
@@ -473,12 +517,18 @@ namespace mfront{
     std::string dv0,dv1,sig,statev,nstatev;
     const auto btype = mb.getBehaviourType();
     out << "static void\n" << name << "_base" << this->getFunctionNameForHypothesis("",h);
-    writeUMATArguments(out,btype,this->fss,false);
+    writeUMATArguments(out,mb,false);
     out << "{\n";
-    if((btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
-       ((btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	((this->fss!=AbaqusInterfaceBase::NATIVEFINITESTRAINSTRATEGY)&&
-	 (this->fss!=AbaqusInterfaceBase::UNDEFINEDSTRATEGY)))){
+    const auto is_fs = [&mb,&btype]{
+      if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
+	  return AbaqusInterfaceBase::getFiniteStrainStrategy(mb)!="Native";
+	}
+	return false;
+      }
+      return true;
+    }();
+    if(is_fs){
       out << "#ifndef MFRONT_ABAQUS_NORUNTIMECHECKS\n"
 	  << "if(KSTEP[2]!=1){\n"
 	  << "std::cerr << \"the " << name << " behaviour is only "
@@ -488,7 +538,8 @@ namespace mfront{
 	  << "}\n"
 	  << "#endif /* MFRONT_ABAQUS_NORUNTIMECHECKS */\n";
     }
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+    const auto mfront_omp = usesMFrontOrthotropyManagementPolicy(mb);
+    if(mfront_omp){
       if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
     	// turning the deformation and the deformation gradient
     	// increment to the material frame
@@ -660,7 +711,7 @@ namespace mfront{
     out << "*PNEWDT = -1.;\n"
 	<< "return;\n"
 	<< "}\n";
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+    if(mfront_omp){
       if(h==ModellingHypothesis::PLANESTRESS){
 	out << "abaqus::AbaqusReal D[16u] = {DDSDDE[0],DDSDDE[3],0,DDSDDE[6],\n"
 	    << "                             DDSDDE[1],DDSDDE[4],0,DDSDDE[7],\n"
@@ -713,7 +764,7 @@ namespace mfront{
     this->writeUMATFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,this->fss,true);
+    writeUMATArguments(out,mb,true);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -739,7 +790,7 @@ namespace mfront{
     this->writeUMATFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,this->fss,true);
+    writeUMATArguments(out,mb,true);
     out << "{\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
@@ -846,9 +897,11 @@ namespace mfront{
 	  << "std::cout << std::endl;\n"
 	  << "}\n";
     }
-    if(this->fss==NATIVEFINITESTRAINSTRATEGY){
-	out << "abaqus::AbaqusFiniteStrain::applyNativeFiniteStrainCorrection(DDSDDE,DFGRD1,STRESS,*NTENS);\n";
-    }
+    // if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
+    //   if(AbaqusInterfaceBase::getFiniteStrainStrategy(mb)=="Native"){
+    // 	out << "abaqus::AbaqusFiniteStrain::applyNativeFiniteStrainCorrection(DDSDDE,DFGRD1,STRESS,*NTENS);\n";
+    //   }
+    // }
     out << "}\n\n";
   }
   
@@ -866,7 +919,7 @@ namespace mfront{
     this->writeUMATFunctionBase(out,mb,name,sfeh,h);
     out << "MFRONT_SHAREDOBJ void\n"
 	<< this->getFunctionNameForHypothesis(name,h);
-    writeUMATArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,this->fss,true);
+    writeUMATArguments(out,mb,true);
     out << "{\n"
 	<< "using namespace abaqus;\n"
 	<< "AbaqusReal eto[6];\n"
@@ -921,10 +974,10 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->fss==UNDEFINEDSTRATEGY){
-	out << "1u;\n\n";
-      } else {
+      if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
 	out << "2u;\n\n";
+      } else {
+	out << "1u;\n\n";
       }
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "2u;\n\n";
@@ -944,7 +997,7 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourKinematic = " ;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->fss==UNDEFINEDSTRATEGY){
+      if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
 	out << "1u;\n\n";
       } else {
 	out << "3u;\n\n";
@@ -1061,9 +1114,17 @@ namespace mfront{
      * - the behaviour is written in small strain
      * - the finite strain strategy is either undefined or `Native`
      */
-    const bool c = ((mb.getSymmetryType()==mfront::ISOTROPIC)&&
-		    (mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR) &&
-		    ((this->fss==UNDEFINEDSTRATEGY)||(this->fss==NATIVEFINITESTRAINSTRATEGY)));
+    const auto c = [&mb]{
+      if(mb.getSymmetryType()==mfront::ISOTROPIC){
+	if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	  if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
+	    return AbaqusInterfaceBase::getFiniteStrainStrategy(mb)=="Native";
+	  }
+	  return true;
+	}
+      }
+      return false;
+    }();
     if(!c){
       do_nothing();
       return;

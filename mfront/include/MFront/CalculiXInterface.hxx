@@ -28,35 +28,10 @@ namespace mfront{
   struct CalculiXInterface
     : public UMATInterfaceBase
   {
-    /*!
-     * This enum defines the various finite strain strategies
-     * available to resuse HPP laws into finite strain computations.
-     *
-     * The "finite rotation small strain" strategy is defined in the
-     * reference of the Code-Aster finite element software:
-     * [R5.03.22] Loi de comportement en grandes rotations et petites déformations
-     *
-     * The logarithmic strain strategy has been introduced by Miehe,
-     * Apel and Lambrecht:
-     * Miehe C., Apel N., Lambrecht M.: Anisotropic additive plasticity in the logarithm strain space : modular
-     * kinematic formulation and implementation based on incremental minimization principles for
-     * standard materials., Computer Methods in Applied Mechanics and Engineering, 191,
-     * pp.5383-5425, 2002.
-     * This strategy is also developped int the reference of the Code-Aster finite element software:
-     * [R5.03.24] Modèles de grandes déformations GDEF_LOG et GDEF_HYPO_ELAS
-     */
-    enum FiniteStrainStrategy{
-      UNDEFINEDSTRATEGY,
-      NATIVEFINITESTRAINSTRATEGY,
-      FINITEROTATIONSMALLSTRAIN,
-      MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN,
-      MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII
-    }; // end of enum FiniteStrainStrategy
-    /*!
-     * \return the name of the interface
-     */
-    static std::string 
-    getName();
+    //! name of finite strain strategy attribute
+    static const char *const finiteStrainStrategy;
+    //! \return the name of the interface
+    static std::string getName();
     /*!
      * \param[in,out] mb: behaviour description
      * \param[in] k  : keyword treated
@@ -208,7 +183,7 @@ namespace mfront{
 			      const std::string&) const;
     /*!
      * \brief integrate the behaiour using the
-     * `FINITEROTATIONSMALLSTRAIN` finite strain strategy.
+     * `FiniteRotationSmallStrain` finite strain strategy.
      * \param[in] out:  output file
      * \param[in] mb:   mechanical behaviour description
      * \param[in] name: name of the behaviour as defined by interface
@@ -221,7 +196,7 @@ namespace mfront{
 					   const std::string&) const;
     /*!
      * \brief integrate the behaiour using the
-     * `MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN` finite strain strategy.
+     * `MieheApelLambrechtLogarithmiSstrain` finite strain strategy.
      * \param[in] out:  output file
      * \param[in] mb:   mechanical behaviour description
      * \param[in] name: name of the behaviour as defined by interface
@@ -313,8 +288,6 @@ namespace mfront{
     virtual bool areExternalStateVariablesSupported() const override;
     //! \return true if the interface handles temperature increment
     virtual bool isTemperatureIncrementSupported() const override;
-    //! selected finite strain strategy
-    FiniteStrainStrategy fss = UNDEFINEDSTRATEGY;
   }; // end of CalculiXInterface
 
 } // end of namespace mfront

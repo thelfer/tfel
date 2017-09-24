@@ -3,6 +3,12 @@
  * \brief    
  * \author THOMAS HELFER
  * \date   17 mars 2016
+ * \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
+ * reserved. 
+ * This project is publicly released under either the GNU GPL Licence 
+ * or the CECILL-A licence. A copy of thoses licences are delivered 
+ * with the sources of TFEL. CEA or EDF may also distribute this 
+ * project under specific licensing conditions. 
  */
 
 #ifndef LIB_MFRONT_ABAQUSINTERFACEBASE_HXX
@@ -23,37 +29,53 @@ namespace mfront{
   struct AbaqusInterfaceBase
     : public UMATInterfaceBase
   {
+    //! name of finite strain strategy attribute
+    static const char *const finiteStrainStrategy;
+    //! name of the orthotropy management policy attribute
+    static const char *const orthotropyManagementPolicy;
     /*!
-     * This enum defines the various finite strain strategies
-     * available to resuse HPP laws into finite strain computations.
+     * \param[in] bd: behaviour description
+     * \param[in] fs: finite strain strategy
      *
-     * The "finite rotation small strain" strategy is defined in the
-     * reference of the Code-Aster finite element software:
-     * [R5.03.22] Loi de comportement en grandes rotations et petites déformations
-     *
-     * The logarithmic strain strategy has been introduced by Miehe,
-     * Apel and Lambrecht:
-     * Miehe C., Apel N., Lambrecht M.: Anisotropic additive plasticity in the logarithm strain space : modular
-     * kinematic formulation and implementation based on incremental minimization principles for
-     * standard materials., Computer Methods in Applied Mechanics and Engineering, 191,
-     * pp.5383-5425, 2002.
-     * This strategy is also developped int the reference of the Code-Aster finite element software:
-     * [R5.03.24] Modèles de grandes déformations GDEF_LOG et GDEF_HYPO_ELAS
+     * This method is used to see if the given finite strain strategy
+     * can be used with this behaviour:
+     * - the behaviour must be strain based.
+     * - if a strain measure is defined, the finite strain strategy
+     *   must match this choice.
      */
-    enum FiniteStrainStrategy{
-      UNDEFINEDSTRATEGY,
-      NATIVEFINITESTRAINSTRATEGY,
-      FINITEROTATIONSMALLSTRAIN,
-      MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN
-    }; // end of enum FiniteStrainStrategy
+    static void
+    checkFiniteStrainStrategyDefinitionConsistency(const BehaviourDescription&,
+						   const std::string&);
     /*!
-     * This enum defines how orthotropy is handled by the behaviour
+     * \param[in] bd: behaviour description.
+     *
+     * If a strain measure and a finite strain strategy are defined,
+     * this method checks they are compatible.
      */
-    enum OrthotropyManagementPolicy{
-      UNDEFINEDORTHOTROPYMANAGEMENTPOLICY,
-      NATIVEORTHOTROPYMANAGEMENTPOLICY,
-      MFRONTORTHOTROPYMANAGEMENTPOLICY
-    }; // end of enum FiniteStrainStrategy
+    static void
+    checkFiniteStrainStrategyDefinitionConsistency(const BehaviourDescription&);
+    /*!
+     * \brief check if the behaviour has been associated to a strain
+     * measure or if a finite strain strategy has been defined.
+     * \param[in] bd: behaviour description.
+     */
+    static bool hasFiniteStrainStrategy(const BehaviourDescription&);
+    /*!
+     * \brief check if the behaviour has been associated to a strain
+     * measure or if a finite strain strategy has been defined.
+     * \param[in] bd: behaviour description.
+     */
+    static std::string getFiniteStrainStrategy(const BehaviourDescription&);
+    /*!
+     * \brief check if the orthotropy management policy defined is
+     * consistent with the behaviour.
+     * \param[in] bd: behaviour description.
+     */
+    static void checkOrthotropyManagementPolicyConsistency(const BehaviourDescription&);
+
+    static bool hasOrthotropyManagementPolicy(const BehaviourDescription&);
+    
+    static std::string getOrthotropyManagementPolicy(const BehaviourDescription&);
     //! destructor
     virtual ~AbaqusInterfaceBase();
   protected:
@@ -67,6 +89,7 @@ namespace mfront{
     getStateVariablesOffset(const BehaviourDescription&,
 			    const Hypothesis) const;
     /*!
+     * \param[in,out] bd: behaviour description
      * \param[in] k  : keyword treated
      * \param[in] p  : iterator to the current token
      * \param[in] pe : iterator past the end of the file
@@ -75,7 +98,8 @@ namespace mfront{
      * the last token treated.
      */
     virtual std::pair<bool,tokens_iterator>
-    treatCommonKeywords(const std::string&,
+    treatCommonKeywords(BehaviourDescription&,
+			const std::string&,
 			tokens_iterator,
 			const tokens_iterator);
     /*!
@@ -188,10 +212,6 @@ namespace mfront{
 			     const Hypothesis&,
 			     const VariableDescription&,
 			     const std::string&) const;
-    //! selected finite strain strategy
-    FiniteStrainStrategy fss = UNDEFINEDSTRATEGY;
-    //! selected orthotropy management policy
-    OrthotropyManagementPolicy omp = UNDEFINEDORTHOTROPYMANAGEMENTPOLICY;
   }; // end of struct AbaqusInterfaceBase
   
 } // end of namespace mfront

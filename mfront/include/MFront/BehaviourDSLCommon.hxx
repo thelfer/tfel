@@ -544,6 +544,8 @@ namespace mfront{
     virtual void treatPrivate() override;
     //! \brief treat the @Members keyword
     virtual void treatMembers() override;
+    //! \brief treat the @StrainMeasure keyword
+    virtual void treatStrainMeasure();
     //! \brief treat the @TangentOperator keyword
     virtual void treatTangentOperator();
     //! \brief treat the @IsTangentOperatorSymmetric keyword

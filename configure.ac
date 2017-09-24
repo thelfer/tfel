@@ -3005,6 +3005,10 @@ AC_OUTPUT([debug.sh
            mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D.mtest
            mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D.mtest
            mfront/tests/behaviours/calculix/calculixmieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest
+           mfront/tests/behaviours/calculix/calculixfinitestrainsinglecrystal-001.mtest
+           mfront/tests/behaviours/calculix/calculixfinitestrainsinglecrystal-012.mtest
+           mfront/tests/behaviours/calculix/calculixfinitestrainsinglecrystal-012-2.mtest
+           mfront/tests/behaviours/calculix/calculixfinitestrainsinglecrystal-159.mtest
            mfront/tests/models/Makefile
            mfront/tests/models/interfaces/Makefile
            mfront/tests/models/interfaces/include/Makefile

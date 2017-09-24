@@ -53,6 +53,7 @@ namespace mfront{
     add("@Profiling",
 			      &Child::treatProfiling);
     add("@Behaviour",&Child::treatBehaviour);
+    add("@StrainMeasure",&Child::treatStrainMeasure);
     add("@Author",&Child::treatAuthor);
     add("@Date",&Child::treatDate);
     add("@MFront",&Child::treatMFront);

@@ -164,6 +164,116 @@ namespace mfront{
     }
     tfel::raise(msg.str());
   } // end of getCastemModellingHypothesisIndex
+
+  const char *const
+  CastemInterface::finiteStrainStrategies = "castem::finiteStrainStrategies";
+  
+  const char *const
+  CastemInterface::useTimeSubStepping = "castem::useTimeSubStepping";
+
+  const char *const
+  CastemInterface::doSubSteppingOnInvalidResults = "castem::doSubSteppingOnInvalidResults";
+
+  const char *const
+  CastemInterface::maximumSubStepping = "castem::::maximumSubStepping";
+
+  static void checkFiniteStrainStrategy(const std::string& fs){
+    tfel::raise_if((fs!="None")&&
+		   (fs!="FiniteRotationSmallStrain")&&
+		   (fs!="MieheApelLambrechtLogarithmicStrain")&&
+		   (fs!="LogarithmicStrain1D"),
+		   "checkFiniteStrainStrategy: "
+		   "unsupported strategy '"+fs+"'\n"
+		   "The only supported strategies are "
+		   "'None', 'FiniteRotationSmallStrain', "
+		   "'MieheApelLambrechtLogarithmicStrain' and "
+		   "'LogarithmicStrain1D'");
+  } // end of checkFiniteStrainStrategy
+
+  static void
+  checkFiniteStrainStrategyDefinitionConsistency(const BehaviourDescription& bd,
+						 const std::vector<std::string>& fss)
+  {
+    auto throw_if = [](const bool c,const std::string& msg){
+      tfel::raise_if(c,"checkFiniteStrainStrategyDefinitionConsistency "
+		     "(CastemInterface): "+msg);
+    };
+    throw_if(bd.getBehaviourType()!=
+	     BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+	     "checkFiniteStrainStrategyDefinitionConsistency "
+	     "(CastemInterface): invalid behaviour type");
+    for(const auto& fs : fss){
+      checkFiniteStrainStrategy(fs);
+    }
+    if(bd.isStrainMeasureDefined()){
+      const auto ms = bd.getStrainMeasure();
+      if(ms==BehaviourDescription::LINEARISED){
+	throw_if(fss.size()!=1u,"only one finite strain strategy expected");
+	throw_if(fss[0]!="None","incompatible finite strain strategy "
+		 "'"+fss[0]+"' (only `None` accepted)");
+      } else if(ms==BehaviourDescription::GREENLAGRANGE){
+	throw_if(fss.size()!=1u,"only one finite strain strategy expected");
+	throw_if(fss[0]!="FiniteRotationSmallStrain",
+		 "incompatible finite strain strategy "
+		 "'"+fss[0]+"' (only `FiniteRotationSmallStrain` accepted)");
+      } else if(ms==BehaviourDescription::HENCKY){
+	throw_if((fss.size()!=1u)&&
+		 (fss.size()!=2u),"only one finite strain strategy expected");
+ 	throw_if((fss[0]!="MieheApelLambrechtLogarithmicStrain")&&
+		 (fss[0]!="LogarithmicStrain1D"),
+		 "incompatible finite strain strategy "
+		 "'"+fss[0]+"' (only `MieheApelLambrechtLogarithmicStrain` "
+		 "and 'LogarithmicStrain1D' accepted)");
+	if(fss.size()==2u){
+	  throw_if((fss[1]!="MieheApelLambrechtLogarithmicStrain")&&
+		   (fss[1]!="LogarithmicStrain1D"),
+		   "incompatible finite strain strategy "
+		   "'"+fss[1]+"' (only `MieheApelLambrechtLogarithmicStrain` "
+		   "and 'LogarithmicStrain1D' accepted)");
+	}
+      } else {
+	throw_if(true,"unsupported finite strain strategy");
+      }
+    }
+  } // end of checkFiniteStrainStrategyDefinitionConsistency
+    
+  static void
+  checkFiniteStrainStrategyDefinitionConsistency(const BehaviourDescription& bd){
+    tfel::raise_if(bd.getBehaviourType()!=
+		   BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+		   "checkFiniteStrainStrategyDefinitionConsistency "
+		   "(CastemInterface): invalid behaviour type");
+    if(!bd.hasAttribute(CastemInterface::finiteStrainStrategies)){
+      return;
+    }
+    const auto fss =
+      bd.getAttribute<std::vector<std::string>>(CastemInterface::finiteStrainStrategies);
+    checkFiniteStrainStrategyDefinitionConsistency(bd,fss);
+  } // end of checkFiniteStrainStrategyDefinitionConsistency
+
+  static bool areFiniteStrainStrategiesDefined(const BehaviourDescription& bd){
+    checkFiniteStrainStrategyDefinitionConsistency(bd);
+    return (bd.isStrainMeasureDefined()||
+	    bd.hasAttribute(CastemInterface::finiteStrainStrategies));
+  } // end of areFiniteStrainStrategiesDefined
+  
+  static std::vector<std::string>
+  getFiniteStrainStrategies(const BehaviourDescription& bd){
+    checkFiniteStrainStrategyDefinitionConsistency(bd);
+    if(bd.hasAttribute(CastemInterface::finiteStrainStrategies)){
+      return bd.getAttribute<std::vector<std::string>>(CastemInterface::finiteStrainStrategies);
+    }
+    const auto sm = bd.getStrainMeasure();
+    if(sm==BehaviourDescription::LINEARISED){
+      return {"None"};
+    } else if(sm==BehaviourDescription::GREENLAGRANGE){
+      return {"FiniteRotationSmallStrain"};
+    }
+    tfel::raise_if(sm!=BehaviourDescription::HENCKY,
+		   "getFiniteStrainStrategies (CastemInterface): "
+		   "unsupported strain measure");
+    return {"MieheApelLambrechtLogarithmicStrain","LogarithmicStrain1D"};
+  } // end of getFiniteStrainStrategies
   
   CastemInterface::CastemInterface() = default;
 
@@ -212,7 +322,7 @@ namespace mfront{
   } // end of CastemInterface::getUmatFunctionName
 
   std::pair<bool,CastemInterface::tokens_iterator>
-  CastemInterface::treatKeyword(BehaviourDescription&,
+  CastemInterface::treatKeyword(BehaviourDescription& bd,
 				const std::string& key,
 				const std::vector<std::string>& i,
 				tokens_iterator current,
@@ -250,98 +360,59 @@ namespace mfront{
       return {true,current};      
     } else if((key=="@CastemUseTimeSubStepping")||
 	      (key=="@UMATUseTimeSubStepping")){
-      this->useTimeSubStepping = this->readBooleanValue(key,current,end);
+      bd.setAttribute(CastemInterface::useTimeSubStepping,
+		      this->readBooleanValue(key,current,end),false);
       return {true,current};
     } else if ((key=="@CastemMaximumSubStepping")||
 	       (key=="@UMATMaximumSubStepping")){
-      throw_if(!this->useTimeSubStepping,
+      throw_if(!bd.getAttribute<bool>(CastemInterface::useTimeSubStepping,false),
 	       "time sub stepping is not enabled at this stage.\n"
 	       "Use the @CastemUseTimeSubStepping directive before "
 	       "@CastemMaximumSubStepping");
       throw_if(current==end,"unexpected end of file");
-      std::istringstream flux(current->value);
-      flux >> this->maximumSubStepping;
-      throw_if(flux.fail(),"failed to read maximum substepping value.");
-      throw_if(++current==end,"unexpected end of file");
+      const auto mss = CxxTokenizer::readUnsignedInt(current,end);
+      bd.setAttribute(CastemInterface::maximumSubStepping,
+		      static_cast<unsigned short>(mss),false);
+      throw_if(current==end,"unexpected end of file");
       throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
       ++(current);
       return {true,current};
     } else if ((key=="@CastemDoSubSteppingOnInvalidResults")||
 	       (key=="@UMATDoSubSteppingOnInvalidResults")){
-      throw_if(!this->useTimeSubStepping,
+      throw_if(!bd.getAttribute<bool>(CastemInterface::useTimeSubStepping,false),
 	       "time sub stepping is not enabled at this stage.\n"
 	       "Use the @CastemUseTimeSubStepping directive before "
 	       "@CastemMaximumSubStepping");
-      this->doSubSteppingOnInvalidResults = this->readBooleanValue(key,current,end);
+      bd.setAttribute(CastemInterface::doSubSteppingOnInvalidResults,
+		      this->readBooleanValue(key,current,end),false);
       return {true,current};
     } else if ((key=="@CastemFiniteStrainStrategy")||
 	       (key=="@UMATFiniteStrainStrategy")){
-      throw_if(!this->finiteStrainStrategies.empty(),
+      throw_if(bd.hasAttribute(CastemInterface::finiteStrainStrategies),
 	       "at least one strategy has already been defined");
       throw_if(current==end,"unexpected end of file");
-      const auto& fss = current->value;
-      if(fss=="FiniteRotationSmallStrain"){
-	this->finiteStrainStrategies.push_back(FINITEROTATIONSMALLSTRAIN);
-      } else if(fss=="MieheApelLambrechtLogarithmicStrain"){
-	this->finiteStrainStrategies.push_back(MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN);
-      } else if(fss=="LogarithmicStrain1D"){
-	this->finiteStrainStrategies.push_back(LOGARITHMICSTRAIN1D);
-      } else {
-	throw_if(true,"unsupported strategy '"+fss+"'\n"
-		 "The only supported strategies are "
-		 "'FiniteRotationSmallStrain', "
-		 "'MieheApelLambrechtLogarithmicStrain' and "
-		 "'LogarithmicStrain1D'");
-      }
+      std::vector<std::string> fss(1u,current->value);
+      checkFiniteStrainStrategyDefinitionConsistency(bd,fss);
+      bd.setAttribute(CastemInterface::finiteStrainStrategies,fss,false);
       throw_if(++current==end,"unexpected end of file");
       throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
       ++(current);
       return {true,current};
     } else if ((key=="@CastemFiniteStrainStrategies")||
 	       (key=="@UMATFiniteStrainStrategies")){
-      throw_if(!this->finiteStrainStrategies.empty(),
+      throw_if(bd.hasAttribute(CastemInterface::finiteStrainStrategies),
 	       "at least one strategy has already been defined");
       auto fss = std::vector<std::string>{};
-      CxxTokenizer::readArray("CastemInterface::treatKeyword (@CastemFiniteStrainStrategies)",
+      CxxTokenizer::readArray("CastemInterface::treatKeyword "
+			      "(@CastemFiniteStrainStrategies)",
 			      fss,current,end);
       CxxTokenizer::readSpecifiedToken("CastemInterface::treatKeyword "
 				       "(@CastemFiniteStrainStrategies)",
 				       ";",current,end);
       throw_if(fss.empty(),"no strategy defined");
-      for(const auto& fs : fss){
-	if(fs=="None"){
-	  throw_if(find(this->finiteStrainStrategies.begin(),
-			this->finiteStrainStrategies.end(),NONE)!=
-		   this->finiteStrainStrategies.end(),
-		   "strategy 'None' multiply defined");
-	  this->finiteStrainStrategies.push_back(NONE);
-	} else if(fs=="FiniteRotationSmallStrain"){
-	  throw_if(find(this->finiteStrainStrategies.begin(),
-			this->finiteStrainStrategies.end(),FINITEROTATIONSMALLSTRAIN)!=
-		   this->finiteStrainStrategies.end(),
-		   "strategy 'FiniteRotationSmallStrain' multiply defined");
-	  this->finiteStrainStrategies.push_back(FINITEROTATIONSMALLSTRAIN);
-	} else if(fs=="MieheApelLambrechtLogarithmicStrain"){
-	  throw_if(find(this->finiteStrainStrategies.begin(),
-			this->finiteStrainStrategies.end(),MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)!=
-		   this->finiteStrainStrategies.end(),
-		   "strategy 'MieheApelLambrechtLogarithmicStrain' multiply defined");
-	  this->finiteStrainStrategies.push_back(MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN);
-	} else if(fs=="LogarithmicStrain1D"){
-	  throw_if(find(this->finiteStrainStrategies.begin(),
-			this->finiteStrainStrategies.end(),LOGARITHMICSTRAIN1D)!=
-		   this->finiteStrainStrategies.end(),
-		   "strategy 'LogarithmicStrain1D' multiply defined");
-	  this->finiteStrainStrategies.push_back(LOGARITHMICSTRAIN1D);
-	} else {
-	  throw_if(true,"unsupported strategy '"+fs+"'\n"
-		   "The only supported strategies are "
-		   "'None', 'FiniteRotationSmallStrain', "
-		   "'MieheApelLambrechtLogarithmicStrain' and "
-		   "'LogarithmicStrain1D'");
-	}
-      }
-      return {true,current};      
+      checkFiniteStrainStrategyDefinitionConsistency(bd,fss);
+      bd.setAttribute(CastemInterface::finiteStrainStrategies,fss,false);
+      return {true,current};
     }
     return {false,current};
   } // end of treatKeyword
@@ -560,9 +631,8 @@ namespace mfront{
 	<< "}\n\n";
   }
   
-  void
-  CastemInterface::endTreatment(const BehaviourDescription& mb,
-				const FileDescription& fd) const
+  void CastemInterface::endTreatment(const BehaviourDescription& mb,
+				     const FileDescription& fd) const
   {
     using namespace std;
     using namespace tfel::system;
@@ -580,9 +650,10 @@ namespace mfront{
 	       "- an isotropic behaviour must have an isotropic elastic behaviour\n"
 	       "- an orthotropic behaviour must have an orthotropic elastic behaviour");
     }
-    if(this->useTimeSubStepping){
-      throw_if(this->maximumSubStepping==0u,
-	       "use of time sub stepping requested but MaximumSubStepping is zero.\n"
+    if(mb.getAttribute<bool>(CastemInterface::useTimeSubStepping,false)){
+      throw_if(!mb.hasAttribute(CastemInterface::maximumSubStepping),
+	       "use of time sub stepping requested but no "
+	       "maximum number of substeps defined.\n"
 	       "Please use the @CastemMaximumSubStepping directive");
     }
     systemCall::mkdir("include/MFront");
@@ -591,7 +662,6 @@ namespace mfront{
     const auto name = this->getBehaviourName(mb);
 
     auto fileName = "umat"+name+".hxx";
-
     std::ofstream out("include/MFront/Castem/"+fileName);
     throw_if(!out,"could not open file '"+fileName+"'");
   
@@ -645,22 +715,21 @@ namespace mfront{
     out << "#ifdef __cplusplus\n"
 	<< "extern \"C\"{\n"
 	<< "#endif /* __cplusplus */\n\n";
-
     this->writeSetParametersFunctionsDeclarations(out,name,mb);
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name);
     if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-       (!this->finiteStrainStrategies.empty())){
-      for(const auto& fs : this->finiteStrainStrategies){
-	if(fs==FINITEROTATIONSMALLSTRAIN){
+       (areFiniteStrainStrategiesDefined(mb))){
+      for(const auto& fs : getFiniteStrainStrategies(mb)){
+	if(fs=="FiniteRotationSmallStrain"){
 	  this->writeSetParametersFunctionsDeclarations(out,name+"_frst",mb);
 	  this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_frst");
-	} else if(fs==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	} else if(fs=="MieheApelLambrechtLogarithmicStrain"){
 	  this->writeSetParametersFunctionsDeclarations(out,name+"_malls",mb);
 	  this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_malls");
-	} else if(fs==LOGARITHMICSTRAIN1D){
+	} else if(fs=="LogarithmicStrain1D"){
 	  this->writeSetParametersFunctionsDeclarations(out,name+"_log1D",mb);
 	  this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_log1D");
-	} else if(fs==NONE){
+	} else if(fs=="None"){
 	  this->writeSetParametersFunctionsDeclarations(out,name+"_ss",mb);
 	  this->writeSetOutOfBoundsPolicyFunctionDeclaration(out,name+"_ss");
 	} else {
@@ -668,39 +737,38 @@ namespace mfront{
 	}
       }
     }
-    
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->finiteStrainStrategies.empty()){
+      if(!areFiniteStrainStrategiesDefined(mb)){
 	this->writeCastemFunctionDeclaration(out,name);
       } else {
-	for(const auto& fs : this->finiteStrainStrategies){
-	  if(fs==FINITEROTATIONSMALLSTRAIN){
+	const auto fss = getFiniteStrainStrategies(mb);
+	for(const auto& fs : fss){
+	  if(fs=="FiniteRotationSmallStrain"){
 	    this->writeCastemFunctionDeclaration(out,name+"_frst");
-	    if(this->finiteStrainStrategies.size()==1u){
+	    if(fss.size()==1u){
 	      this->writeCastemFunctionDeclaration(out,name);
 	    }
-	  } else if(fs==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	  } else if(fs=="MieheApelLambrechtLogarithmicStrain"){
 	    this->writeCastemFunctionDeclaration(out,name+"_malls");
-	    if(this->finiteStrainStrategies.size()==1u){
+	    if(fss.size()==1u){
 	      this->writeCastemFunctionDeclaration(out,name);
 	    }
-	  } else if(fs==LOGARITHMICSTRAIN1D){
+	  } else if(fs=="LogarithmicStrain1D"){
 	    this->writeCastemFunctionDeclaration(out,name+"_log1D");
-	    if(this->finiteStrainStrategies.size()==1u){
+	    if(fss.size()==1u){
 	      this->writeCastemFunctionDeclaration(out,name);
 	    }
-	  } else if(fs==NONE){
+	  } else if(fs=="None"){
 	    this->writeCastemFunctionDeclaration(out,name+"_ss");
-	    if(this->finiteStrainStrategies.size()==1u){
+	    if(fss.size()==1u){
 	      this->writeCastemFunctionDeclaration(out,name);
 	    }
 	  } else {
 	    throw_if(true,"internal error, unsupported finite strain strategy");
 	  }
 	}
-	if((this->finiteStrainStrategies.size()!=1u)&&
-	   (find(this->finiteStrainStrategies.begin(),
-		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
+	if((fss.size()!=1u)&&
+	   (std::find(fss.begin(),fss.end(),"None")!=fss.end())){
 	  this->writeCastemFunctionDeclaration(out,name);
 	}
       }
@@ -742,15 +810,19 @@ namespace mfront{
 	       "MTest file generation is not unsupported for this behaviour type");
       out << "#include\"MFront/Castem/CastemGetModellingHypothesis.hxx\"\n";
     }
-    if((find(this->finiteStrainStrategies.begin(),this->finiteStrainStrategies.end(),
-	     FINITEROTATIONSMALLSTRAIN)!=this->finiteStrainStrategies.end())||
-       (find(this->finiteStrainStrategies.begin(),this->finiteStrainStrategies.end(),
-	     MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)!=this->finiteStrainStrategies.end())){
-      out << "#include\"MFront/Castem/CastemFiniteStrain.hxx\"\n\n";
-    }
-    if(find(this->finiteStrainStrategies.begin(),this->finiteStrainStrategies.end(),
-	    MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)!=this->finiteStrainStrategies.end()){
-      out << "#include\"TFEL/Material/LogarithmicStrainHandler.hxx\"\n\n";
+    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+       (areFiniteStrainStrategiesDefined(mb))){
+      const auto fss = getFiniteStrainStrategies(mb);
+      if((std::find(fss.begin(),fss.end(),
+		    "FiniteRotationSmallStrain")!=fss.end())||
+	 (find(fss.begin(),fss.end(),
+	       "MieheApelLambrechtLogarithmicStrain")!=fss.end())){
+	out << "#include\"MFront/Castem/CastemFiniteStrain.hxx\"\n\n";
+      }
+      if(find(fss.begin(),fss.end(),
+	      "MieheApelLambrechtLogarithmicStrain")!=fss.end()){
+	out << "#include\"TFEL/Material/LogarithmicStrainHandler.hxx\"\n\n";
+      }
     }
     out << "#include\"MFront/Castem/CastemOutOfBoundsPolicy.hxx\"\n"
 	<< "#include\"MFront/Castem/CastemInterface.hxx\"\n\n"
@@ -763,7 +835,7 @@ namespace mfront{
     out << "extern \"C\"{\n\n";
 
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->finiteStrainStrategies.empty()){
+      if(!areFiniteStrainStrategiesDefined(mb)){
 	this->generateUMATxxGeneralSymbols(out,name,mb,fd);
 	UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);
 	if(!mb.areAllMechanicalDataSpecialised(mh)){
@@ -782,8 +854,9 @@ namespace mfront{
 	out << "MFRONT_SHAREDOBJ unsigned short umat"
 	    << makeLowerCase(name) << "_Interface = 1u;\n\n";
       } else {
-	for(const auto fss : this->finiteStrainStrategies){
-	  if(fss==FINITEROTATIONSMALLSTRAIN){
+	const auto fss = getFiniteStrainStrategies(mb);
+	for(const auto fs : fss){
+	  if(fs=="FiniteRotationSmallStrain"){
 	    this->generateUMATxxGeneralSymbols(out,name+"_frst",mb,fd);
 	    UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name+"_frst",mb);	      
 	    if(!mb.areAllMechanicalDataSpecialised(mh)){
@@ -801,7 +874,7 @@ namespace mfront{
 		<< "_BehaviourKinematic = 3u;\n\n";
 	    out << "MFRONT_SHAREDOBJ unsigned short umat"
 		<< makeLowerCase(name+"_frst") << "_Interface = 2u;\n\n";
-	    if(this->finiteStrainStrategies.size()==1u){
+	    if(fss.size()==1u){
 	      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
 	      UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);
 	      if(!mb.areAllMechanicalDataSpecialised(mh)){
@@ -820,7 +893,7 @@ namespace mfront{
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
 		  << makeLowerCase(name) << "_Interface = 2u;\n\n";
 	    }
-	  } else if(fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	  } else if(fs=="MieheApelLambrechtLogarithmicStrain"){
 	    this->generateUMATxxGeneralSymbols(out,name+"_malls",mb,fd);
 	    UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name+"_malls",mb);
 	    if(!mb.areAllMechanicalDataSpecialised(mh)){
@@ -838,7 +911,7 @@ namespace mfront{
 		<< "_BehaviourKinematic = 3u;\n\n";
 	    out << "MFRONT_SHAREDOBJ unsigned short umat"
 		<< makeLowerCase(name+"_malls") << "_Interface = 2u;\n\n";
-	    if(this->finiteStrainStrategies.size()==1u){
+	    if(fss.size()==1u){
 	      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
 	      UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);	      
 	      if(!mb.areAllMechanicalDataSpecialised(mh)){
@@ -857,7 +930,7 @@ namespace mfront{
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
 		  << makeLowerCase(name) << "_Interface = 2u;\n\n";
 	    }
-	  } else if(fss==LOGARITHMICSTRAIN1D){
+	  } else if(fs=="LogarithmicStrain1D"){
 	    const auto agps = ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
 	    this->generateUMATxxGeneralSymbols(out,name+"_log1D",mb,fd);
 	    if(!mb.areAllMechanicalDataSpecialised(mh)){
@@ -884,7 +957,7 @@ namespace mfront{
 		<< "_ModellingHypotheses[1u] = {\""
 		<< ModellingHypothesis::toString(agps)
 		<< "\"};\n";
-	    if(this->finiteStrainStrategies.size()==1u){
+	    if(fss.size()==1u){
 	      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
 	      out << "MFRONT_SHAREDOBJ unsigned short "  << this->getFunctionName(name)
 		  << "_nModellingHypotheses = " << 1u << "u;\n\n";
@@ -909,7 +982,7 @@ namespace mfront{
 	      out << "MFRONT_SHAREDOBJ unsigned short umat"
 		  << makeLowerCase(name) << "_Interface = 1u;\n\n";
 	    }
-	  } else if(fss==NONE){
+	  } else if(fs=="None"){
 	    this->generateUMATxxGeneralSymbols(out,name+"_ss",mb,fd);
 	    UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name+"_ss",mb);	      
 	    if(!mb.areAllMechanicalDataSpecialised(mh)){
@@ -927,7 +1000,7 @@ namespace mfront{
 		<< "_BehaviourKinematic = 1u;\n\n";
 	    out << "MFRONT_SHAREDOBJ unsigned short umat"
 		<< makeLowerCase(name+"_ss") << "_Interface = 1u;\n\n";
-	    if(this->finiteStrainStrategies.size()==1u){
+	    if(fss.size()==1u){
 	      this->generateUMATxxGeneralSymbols(out,name,mb,fd);
 	      UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);
 	      if(!mb.areAllMechanicalDataSpecialised(mh)){
@@ -950,9 +1023,8 @@ namespace mfront{
 	    throw_if(true,"internal error, unsupported finite strain strategy");
 	  }
 	}
-	if((this->finiteStrainStrategies.size()!=1u)&&
-	   (find(this->finiteStrainStrategies.begin(),
-		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
+	if((fss.size()!=1u)&&
+	   (std::find(fss.begin(),fss.end(),"None")!=fss.end())){
 	  this->generateUMATxxGeneralSymbols(out,name,mb,fd);
 	  UMATInterfaceBase::writeUMATxxSupportedModellingHypothesis(out,name,mb);
 	  if(!mb.areAllMechanicalDataSpecialised(mh)){
@@ -1004,26 +1076,28 @@ namespace mfront{
 
     this->writeSetParametersFunctionsImplementations(out,name,mb);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      for(const auto& fs : this->finiteStrainStrategies){
-	if(fs==FINITEROTATIONSMALLSTRAIN){
+    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+       (areFiniteStrainStrategiesDefined(mb))){
+      const auto fss = getFiniteStrainStrategies(mb);
+      for(const auto& fs : fss){
+	if(fs=="FiniteRotationSmallStrain"){
 	  this->writeSetParametersFunctionsImplementations(out,name+"_frst",mb);
-	  if(this->finiteStrainStrategies.size()!=1u){
+	  if(fss.size()!=1u){
 	    this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_frst");
 	  }
-	} else if(fs==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	} else if(fs=="MieheApelLambrechtLogarithmicStrain"){
 	  this->writeSetParametersFunctionsImplementations(out,name+"_malls",mb);
-	  if(this->finiteStrainStrategies.size()!=1u){
+	  if(fss.size()!=1u){
 	    this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_malls");
 	  }
-	} else if(fs==LOGARITHMICSTRAIN1D){
+	} else if(fs=="LogarithmicStrain1D"){
 	  this->writeSetParametersFunctionsImplementations(out,name+"_log1D",mb);
-	  if(this->finiteStrainStrategies.size()!=1u){
+	  if(fss.size()!=1u){
 	    this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_log1D");
 	  }
-	} else if(fs==NONE){
+	} else if(fs=="None"){
 	  this->writeSetParametersFunctionsImplementations(out,name+"_ss",mb);
-	  if(this->finiteStrainStrategies.size()!=1u){
+	  if(fss.size()!=1u){
 	    this->writeSetOutOfBoundsPolicyFunctionImplementation2(out,name,name+"_ss");
 	  }
 	} else {
@@ -1124,50 +1198,50 @@ namespace mfront{
 	<< "*KINC = -7;\n"
 	<< "}\n"
     	<< "}\n\n";
-    
+
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->finiteStrainStrategies.empty()){
+      if(!areFiniteStrainStrategiesDefined(mb)){
 	this->writeCastemFunction(out,name,"",mb,
-				&CastemInterface::writeStandardCastemFunction);
+				  &CastemInterface::writeStandardCastemFunction);
       } else {
-	for(const auto& fs : this->finiteStrainStrategies){
-	  if(fs==FINITEROTATIONSMALLSTRAIN){
+	const auto fss = getFiniteStrainStrategies(mb);
+	for(const auto& fs : fss){
+	  if(fs=="FiniteRotationSmallStrain"){
 	    this->writeCastemFunction(out,name,"frst",mb,
-				    &CastemInterface::writeFiniteRotationSmallStrainCastemFunction);
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeCastemFunction(out,name,"",mb,
 				      &CastemInterface::writeFiniteRotationSmallStrainCastemFunction);
+	    if(fss.size()==1u){
+	      this->writeCastemFunction(out,name,"",mb,
+					&CastemInterface::writeFiniteRotationSmallStrainCastemFunction);
 	    }
-	  } else if(fs==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	  } else if(fs=="MieheApelLambrechtLogarithmicStrain"){
 	    this->writeCastemFunction(out,name,"malls",mb,
-				    &CastemInterface::writeMieheApelLambrechtLogarithmicStrainCastemFunction);
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeCastemFunction(out,name,"",mb,
 				      &CastemInterface::writeMieheApelLambrechtLogarithmicStrainCastemFunction);
+	    if(fss.size()==1u){
+	      this->writeCastemFunction(out,name,"",mb,
+					&CastemInterface::writeMieheApelLambrechtLogarithmicStrainCastemFunction);
 	    }
-	  } else if(fs==LOGARITHMICSTRAIN1D){
+	  } else if(fs=="LogarithmicStrain1D"){
 	    this->writeCastemFunction(out,name,"log1D",mb,
-				    &CastemInterface::writeLogarithmicStrain1DCastemFunction);
-	    if(this->finiteStrainStrategies.size()==1u){
-	      this->writeCastemFunction(out,name,"",mb,
 				      &CastemInterface::writeLogarithmicStrain1DCastemFunction);
-	    }
-	  } else if(fs==NONE){
-	    this->writeCastemFunction(out,name,"ss",mb,
-				    &CastemInterface::writeStandardCastemFunction);
-	    if(this->finiteStrainStrategies.size()==1u){
+	    if(fss.size()==1u){
 	      this->writeCastemFunction(out,name,"",mb,
+					&CastemInterface::writeLogarithmicStrain1DCastemFunction);
+	    }
+	  } else if(fs=="None"){
+	    this->writeCastemFunction(out,name,"ss",mb,
 				      &CastemInterface::writeStandardCastemFunction);
+	    if(fss.size()==1u){
+	      this->writeCastemFunction(out,name,"",mb,
+					&CastemInterface::writeStandardCastemFunction);
 	    }
 	  } else {
 	    throw_if(true,"internal error, unsupported finite strain strategy");
 	  }
 	}
-	if((this->finiteStrainStrategies.size()!=1u)&&
-	   (find(this->finiteStrainStrategies.begin(),
-		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
+	if((fss.size()!=1u)&&
+	   (std::find(fss.begin(),fss.end(),"None")!=fss.end())){
 	  this->writeCastemFunction(out,name,"",mb,
-				  &CastemInterface::writeStandardCastemFunction);
+				    &CastemInterface::writeStandardCastemFunction);
 	}
       }
     } else {
@@ -1235,35 +1309,35 @@ namespace mfront{
     auto b = std::vector<std::string>{};
     const auto base = this->getUmatFunctionName(bd);
     if(bd.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->finiteStrainStrategies.empty()){
+      if(!areFiniteStrainStrategiesDefined(bd)){
 	b.push_back(base);
 	// b.push_back(name);
       } else {
-	for(const auto& fss : this->finiteStrainStrategies){
-	  if(fss==FINITEROTATIONSMALLSTRAIN){
+	const auto fss = getFiniteStrainStrategies(bd); 
+	for(const auto& fs : fss){
+	  if(fs=="FiniteRotationSmallStrain"){
 	    b.push_back(base+"_frst");
 	    //	    b.push_back(name+"_frst");
-	  } else if(fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	  } else if(fs=="MieheApelLambrechtLogarithmicStrain"){
 	    b.push_back(base+"_malls");
 	    //	    b.push_back(name+"_malls");
-	  } else if(fss==LOGARITHMICSTRAIN1D){
+	  } else if(fs=="LogarithmicStrain1D"){
 	    b.push_back(base+"_log1D");
 	    //	    b.push_back(name+"_log1D");
-	  } else if(fss==NONE){
+	  } else if(fs=="None"){
 	    b.push_back(base+"_ss");
 	    //	    b.push_back(name+"_ss");
 	  } else {
 	    tfel::raise("CastemInterface::getGeneratedEntryPoints: "
 			"internal error, unsupported finite strain strategy");
 	  }
-	  if(this->finiteStrainStrategies.size()==1u){
+	  if(fss.size()==1u){
 	    b.push_back(base);
 	    // b.push_back(name);
 	  }
 	}
-	if((this->finiteStrainStrategies.size()!=1u)&&
-	   (find(this->finiteStrainStrategies.begin(),
-		 this->finiteStrainStrategies.end(),NONE)!=this->finiteStrainStrategies.end())){
+	if((fss.size()!=1u)&&
+	   (std::find(fss.begin(),fss.end(),"None")!=fss.end())){
 	  b.push_back(base);
 	  //	  b.push_back(name);
 	}
@@ -2193,7 +2267,7 @@ namespace mfront{
 	<< "// size of the thermodynamic force variable array (STRESS)\n"
 	<< "static " << constexpr_c << " unsigned short ThermodynamicForceVariableSize = " << mvs.second <<  ";\n"
 	<< "static " << constexpr_c << " bool useTimeSubStepping = ";
-    if(this->useTimeSubStepping){
+    if(mb.getAttribute<bool>(CastemInterface::useTimeSubStepping,false)){
       out << "true;\n";
     } else {
       out << "false;\n";
@@ -2205,8 +2279,8 @@ namespace mfront{
       out << "false;\n";
     }
     out << "static " << constexpr_c << " unsigned short maximumSubStepping = ";
-    if(this->useTimeSubStepping){
-      out << this->maximumSubStepping << ";\n";
+    if(mb.getAttribute<bool>(CastemInterface::useTimeSubStepping,false)){
+      out << mb.getAttribute<unsigned short>(CastemInterface::maximumSubStepping) << ";\n";
     } else {
       out << "0u;\n";
     }

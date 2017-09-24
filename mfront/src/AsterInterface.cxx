@@ -60,8 +60,7 @@ namespace mfront{
     return "Aster";
   } // end of AsterInterface::getInterfaceName
 
-  std::string
-  AsterInterface::getFunctionName(const std::string& name) const
+  std::string AsterInterface::getFunctionName(const std::string& name) const
   {
     return "aster"+makeLowerCase(name);
   } // end of AsterInterface::getLibraryName
@@ -208,7 +207,7 @@ namespace mfront{
     }
     // get the modelling hypotheses to be treated
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
-    const auto name = [&mb]{
+    const auto name = [&mb]() -> std::string {
       if(!mb.getLibrary().empty()){
 	return mb.getLibrary()+mb.getClassName();
       }

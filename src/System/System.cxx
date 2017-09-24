@@ -492,7 +492,7 @@ namespace tfel
 				   const bool exists)
     {
       const auto& paths = systemCall::tokenize(src,'/');
-      const auto rdest = [&exists,&dest,&paths]{
+      const auto rdest = [&exists,&dest,&paths]() -> std::string {
 	if(exists){
 	  return dest+'/'+paths.back();
 	}

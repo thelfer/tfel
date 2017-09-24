@@ -46,17 +46,17 @@ namespace mfront{
      * \note code block name begins with an upper case
      */
     //! standard code name
-    static const std::string FlowRule;
+    static const char *const FlowRule;
     //! standard code name
-    static const std::string BeforeInitializeLocalVariables;
+    static const char *const BeforeInitializeLocalVariables;
     //! standard code name
-    static const std::string InitializeLocalVariables;
+    static const char *const InitializeLocalVariables;
     //! standard code name
-    static const std::string AfterInitializeLocalVariables;
+    static const char *const AfterInitializeLocalVariables;
     //! standard code name
-    static const std::string ComputePredictor;
+    static const char *const ComputePredictor;
     //! standard code name
-    static const std::string ComputeStress;
+    static const char *const ComputeStress;
     //! standard code name
     /* Most behaviours will only rely the @ComputeStress keyword to
      * estimate stresses at the middle of the time step and at the
@@ -67,61 +67,61 @@ namespace mfront{
      * the user does not provide an alternative through the
      * `@ComputeFinalStress`
      */
-    static const std::string ComputeFinalStressCandidate;
+    static const char *const ComputeFinalStressCandidate;
     //! standard code name
-    static const std::string ComputeFinalStress;
+    static const char *const ComputeFinalStress;
     //! standard code name
-    static const std::string DefaultComputeFinalStress;
+    static const char *const DefaultComputeFinalStress;
     //! standard code name
-    static const std::string APrioriTimeStepScalingFactor;
+    static const char *const APrioriTimeStepScalingFactor;
     //! standard code name
-    static const std::string Integrator;
+    static const char *const Integrator;
     //! standard code name
-    static const std::string APosterioriTimeStepScalingFactor;
+    static const char *const APosterioriTimeStepScalingFactor;
     //! standard code name
-    static const std::string ComputeDerivative;
+    static const char *const ComputeDerivative;
     //! standard code name
-    static const std::string ComputePredictionOperator;
+    static const char *const ComputePredictionOperator;
     //! standard code name
-    static const std::string ComputeTangentOperator;
+    static const char *const ComputeTangentOperator;
     //! standard code name
-    static const std::string ComputeStressFreeExpansion;
+    static const char *const ComputeStressFreeExpansion;
     //! standard code name
-    static const std::string UpdateAuxiliaryStateVariables;
+    static const char *const UpdateAuxiliaryStateVariables;
     //! standard code name
-    static const std::string InitializeJacobian;
+    static const char *const InitializeJacobian;
     //! standard code name
-    static const std::string InitializeJacobianInvert;
+    static const char *const InitializeJacobianInvert;
     //! standard code name
-    static const std::string ComputeInternalEnergy;
+    static const char *const ComputeInternalEnergy;
     //! standard code name
-    static const std::string ComputeDissipatedEnergy;
+    static const char *const ComputeDissipatedEnergy;
     /*
      * normalised attribute names
      * \note properties name begins with a lower case
      */
     //! if this attribute is true, the behaviour can compute a tangent
     //! operator
-    static const std::string hasConsistentTangentOperator;
+    static const char *const hasConsistentTangentOperator;
     //! if this attribute is true, the tangent operator can be
     //  considered symmetric
-    static const std::string isConsistentTangentOperatorSymmetric;
+    static const char *const isConsistentTangentOperatorSymmetric;
     //! if this attribute is true, the behaviour can compute an a
     //! priori estimate of the time step scaling factor after the
     //! initialisation
-    static const std::string hasAPrioriTimeStepScalingFactor;
+    static const char *const hasAPrioriTimeStepScalingFactor;
     //! if this attribute is true, the behaviour can compute an a
     //! posteriori estimate of the time step scaling factor after the
     //! integration
-    static const std::string hasAPosterioriTimeStepScalingFactor;
+    static const char *const hasAPosterioriTimeStepScalingFactor;
     //! if this attribute is true, the behaviour can compute a
     //! prediction operator
-    static const std::string hasPredictionOperator;
+    static const char *const hasPredictionOperator;
     //! if this attribute is true, the implicit algorithm compares the
     //! analytical jacobian to the numeric one
-    static const std::string compareToNumericalJacobian;
+    static const char *const compareToNumericalJacobian;
     //! list of jacobian blocks that must be computed numerically
-    static const std::string numericallyComputedJacobianBlocks;
+    static const char *const numericallyComputedJacobianBlocks;
     /*!
      * a boolean attribute telling if the additionnal variables can be
      * declared. This attribute is set by DSL's when the first code
@@ -130,14 +130,14 @@ namespace mfront{
      * \note This attribute applies to all variables except for local
      * variables.
      */
-    static const std::string allowsNewUserDefinedVariables;
+    static const char *const allowsNewUserDefinedVariables;
     //! a boolean attribute telling if profiling information shall be collected
-    static const std::string profiling;
+    static const char *const profiling;
     //! algorithm used
-    static const std::string algorithm;
+    static const char *const algorithm;
     //! number of evaluation of the computeDerivative method 
     //  of a Runge-Kutta algorithm
-    static const std::string numberOfEvaluations;
+    static const char *const numberOfEvaluations;
     /*!
      * The description of a stress free expansion defined through an
      * external state variable

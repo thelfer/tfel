@@ -35,41 +35,15 @@ namespace mfront{
     : public UMATInterfaceBase,
       protected InterfaceBase
   {
-    
-    /*!
-     * This enum defines the various finite strain strategies
-     * available to resuse HPP laws into finite strain computations.
-     *
-     * The "finite rotation small strain" strategy is defined in the
-     * reference of the Code-Aster finite element software:
-     * [R5.03.22] Loi de comportement en grandes rotations et petites déformations
-     *
-     * The logarithmic strain strategy has been introduced by Miehe,
-     * Apel and Lambrecht:
-     * Miehe C., Apel N., Lambrecht M.: Anisotropic additive plasticity in the logarithm strain space : modular
-     * kinematic formulation and implementation based on incremental minimization principles for
-     * standard materials., Computer Methods in Applied Mechanics and Engineering, 191,
-     * pp.5383-5425, 2002.
-     * This strategy is also developped int the reference of the Code-Aster finite element software:
-     * [R5.03.24] Modèles de grandes déformations GDEF_LOG et GDEF_HYPO_ELAS
-     *
-     * The 1D logarithmic strain strategy has been designed for fuel
-     * performance code written in small deformation. The handling of
-     * finite strains is done within the behaviour.
-     * See Helfer Thomas: Extension of monodimensional fuel
-     * performance codes to finite strain analysis using a lagrangian
-     * logarithmic strain framework. Proposed to Nuclear Engineering
-     * And Design.
-     */
-    enum FiniteStrainStrategy{
-      NONE,
-      FINITEROTATIONSMALLSTRAIN,
-      MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN,
-      LOGARITHMICSTRAIN1D
-    }; // end of enum FiniteStrainStrategy
+    static const char *const finiteStrainStrategies;
 
-    static std::string 
-    getName();
+    static const char *const useTimeSubStepping;
+
+    static const char *const doSubSteppingOnInvalidResults;
+
+    static const char *const maximumSubStepping;
+    
+    static std::string getName();
     /*!
      * \return true if the interface shall support plane stress
      * hypothesis through a generic algorithm.
@@ -407,14 +381,6 @@ namespace mfront{
      */
     virtual std::set<Hypothesis>
     getModellingHypothesesToBeTreated(const BehaviourDescription&) const override;
-
-    std::vector<FiniteStrainStrategy> finiteStrainStrategies;
-
-    bool useTimeSubStepping = false;
-
-    bool doSubSteppingOnInvalidResults = false;
-
-    unsigned short maximumSubStepping = 0u;
 
   }; // end of CastemInterface
 

@@ -38,24 +38,120 @@ static const char * const constexpr_c = "const";
 #endif
 
 namespace mfront{
-  
+
+  static void checkFiniteStrainStrategy(const std::string& fs){
+    tfel::raise_if((fs!="FiniteRotationSmallStrain")&&
+		   (fs!="MieheApelLambrechtLogarithmicStrain")&&
+		   (fs!="MieheApelLambrechtLogarithmicStrainII"),
+		   "checkFiniteStrainStrategy: "
+		   "unsupported strategy '"+fs+"'\n"
+		   "The only supported strategies are "
+		   "'FiniteRotationSmallStrain', "
+		   "'MieheApelLambrechtLogarithmicStrain' and "
+		   "'MieheApelLambrechtLogarithmicStrainII'.");
+  } // end of checkFiniteStrainStrategy
+
   static void
-  writeArguments(std::ostream& out,
-		     const BehaviourDescription::BehaviourType& t,
-		     const bool f)
+  checkFiniteStrainStrategyDefinitionConsistency(const BehaviourDescription& bd,
+						 const std::string& fs)
   {
-    if(f){
+    auto throw_if = [](const bool c,const std::string& msg){
+      tfel::raise_if(c,"checkFiniteStrainStrategyDefinitionConsistency: "+msg);
+    };
+    checkFiniteStrainStrategy(fs);
+    if(bd.isStrainMeasureDefined()){
+      const auto ms = bd.getStrainMeasure();
+      if(ms==BehaviourDescription::LINEARISED){
+	throw_if(fs!="Native","incompatible finite strain strategy "
+		 "'"+fs+"' (only `Native` accepted)");
+      } else if(ms==BehaviourDescription::GREENLAGRANGE){
+	throw_if(fs!="FiniteRotationSmallStrain",
+		 "incompatible finite strain strategy "
+		 "'"+fs+"' (only `FiniteRotationSmallStrain` accepted)");
+      } else if(ms==BehaviourDescription::HENCKY){
+ 	throw_if(fs!="MieheApelLambrechtLogarithmicStrain",
+		 "incompatible finite strain strategy '"+fs+"' "
+		 "(only `MieheApelLambrechtLogarithmicStrain` accepted)");
+      } else {
+	throw_if(true,"unsupported finite strain strategy");
+      }
+    }
+  } // end of checkFiniteStrainStrategyDefinitionConsistency
+
+  static void
+  checkFiniteStrainStrategyDefinitionConsistency(const BehaviourDescription& bd){
+    auto throw_if = [](const bool c,const std::string& msg){
+      tfel::raise_if(c,"checkFiniteStrainStrategyDefinitionConsistency: "+msg);
+    };
+    if(bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      throw_if(bd.hasAttribute(CalculiXInterface::finiteStrainStrategy),
+	       "finite strain strategy is only supported for strain based behaviours");
+    } else {
+      if(bd.hasAttribute(CalculiXInterface::finiteStrainStrategy)){
+	const auto fs = bd.getAttribute<std::string>(CalculiXInterface::finiteStrainStrategy);
+	checkFiniteStrainStrategyDefinitionConsistency(bd,fs);
+      }
+    }
+  } // end of checkFiniteStrainStrategyDefinitionConsistency
+
+  static bool hasFiniteStrainStrategy(const BehaviourDescription& bd){
+    checkFiniteStrainStrategyDefinitionConsistency(bd);
+    if(bd.isStrainMeasureDefined()){
+      return bd.getStrainMeasure()!=BehaviourDescription::LINEARISED;
+    }
+    return  bd.hasAttribute(CalculiXInterface::finiteStrainStrategy);
+  } // end of hasFiniteStrainStrategy
+  
+  static std::string getFiniteStrainStrategy(const BehaviourDescription& bd){
+    checkFiniteStrainStrategyDefinitionConsistency(bd);
+    auto throw_if = [](const bool c,const std::string& msg){
+      tfel::raise_if(c,"getFiniteStrainStrategy: "+msg);
+    };
+    if(bd.isStrainMeasureDefined()){
+      const auto ms = bd.getStrainMeasure();
+      if(ms==BehaviourDescription::GREENLAGRANGE){
+	return "FiniteRotationSmallStrain";
+      } else if(ms==BehaviourDescription::HENCKY){
+	return "MieheApelLambrechtLogarithmicStrain";
+      } else {
+	throw_if(true,"unsupported strain measure");
+      }
+    }
+    throw_if(!bd.hasAttribute(CalculiXInterface::finiteStrainStrategy),
+	     "no finite strain strategy defined");
+    return bd.getAttribute<std::string>(CalculiXInterface::finiteStrainStrategy);
+  } // end of getFiniteStrainStrategy
+  
+  static void writeArguments(std::ostream& out,
+			     const BehaviourDescription& mb,
+			     const bool base)
+  {
+    if(!base){
+      const auto requires_strain = [&mb]{
+	if(mb.getBehaviourType()==
+	   BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	  if(hasFiniteStrainStrategy(mb)){
+	    return getFiniteStrainStrategy(mb)=="FiniteRotationSmallStrain";
+	  }
+	}
+	return true;
+      }();
       out << "(const char * const amat,\n"
 	  << " const calculix::CalculiXInt* const iel,\n"
 	  << " const calculix::CalculiXInt* const iint,\n"
 	  << " const calculix::CalculiXInt* const NPROPS,\n"
-	  << " const calculix::CalculiXReal* const MPROPS,\n"
-	  << " const calculix::CalculiXReal* const STRAN1,\n"
-	  << " const calculix::CalculiXReal* const STRAN0,\n"
-	  << " const calculix::CalculiXReal* const beta,\n"
-	  << " const calculix::CalculiXReal* const F0,\n"
+	  << " const calculix::CalculiXReal* const MPROPS,\n";
+      if(requires_strain){
+	out << " const calculix::CalculiXReal* const STRAN1,\n"
+	    << " const calculix::CalculiXReal* const STRAN0,\n";
+      } else {
+	out << " const calculix::CalculiXReal* const,\n"
+	    << " const calculix::CalculiXReal* const,\n";
+      }
+      out << " const calculix::CalculiXReal* const beta,\n"
+	  << " const calculix::CalculiXReal* const XOKL,\n"
 	  << " const calculix::CalculiXReal* const voj,\n"
-	  << " const calculix::CalculiXReal* const F1,\n"
+	  << " const calculix::CalculiXReal* const XKL,\n"
 	  << " const calculix::CalculiXReal* const vj,\n"
 	  << " const calculix::CalculiXInt* const ithermal,\n"
 	  << " const calculix::CalculiXReal* const TEMP1,\n"
@@ -77,39 +173,43 @@ namespace mfront{
 	  << " const calculix::CalculiXInt* const ipkon,\n"
 	  << " const int size)";
     } else {
+      const auto requires_strain =
+	(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR);
+      const auto requires_F =
+	(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR);
       out << "(const char * const,\n"
 	  << " const calculix::CalculiXInt* const iel,\n"
 	  << " const calculix::CalculiXInt* const iint,\n"
-	  << " const calculix::CalculiXInt* const  NPROPS,\n"
+	  << " const calculix::CalculiXInt*  const,\n" //  NPROPS
 	  << " const calculix::CalculiXReal* const MPROPS,\n";
-      if(t==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	out << " const calculix::CalculiXReal *const STRAN1,\n"
+      if(requires_strain){
+	out << " const calculix::CalculiXReal *const DSTRAN,\n"
 	    << " const calculix::CalculiXReal *const STRAN0,\n";
       } else {
 	out << " const calculix::CalculiXReal *const,\n"
 	    << " const calculix::CalculiXReal *const,\n";
       }
       out << " const calculix::CalculiXReal* const,\n";
-      if(t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-	out << " const calculix::CalculiXReal* const F0,\n"
+      if(requires_F){
+	out << " const calculix::CalculiXReal* const XOKL,\n"
 	    << " const calculix::CalculiXReal* const ,\n"
-	    << " const calculix::CalculiXReal* const F1,\n"
-	    << " const calculix::CalculiXReal* const vj,\n";
+	    << " const calculix::CalculiXReal* const XKL,\n"
+	    << " const calculix::CalculiXReal* const,\n";
       } else {
 	out << " const calculix::CalculiXReal* const,\n"
 	    << " const calculix::CalculiXReal* const ,\n"
 	    << " const calculix::CalculiXReal* const,\n"
 	    << " const calculix::CalculiXReal* const,\n";
       }
-      out << " const calculix::CalculiXInt* const ithermal,\n"
+      out << " const calculix::CalculiXInt* const,\n" //  ithermal
 	  << " const calculix::CalculiXReal* const TEMP1,\n"
 	  << " const calculix::CalculiXReal* const DTIME,\n"
 	  << " const calculix::CalculiXReal* const,\n"
 	  << " const calculix::CalculiXReal* const,\n"
-	  << " const calculix::CalculiXInt* const icmd,\n"
-	  << " const calculix::CalculiXInt* const ielas,\n"
+	  << " const calculix::CalculiXInt* const,\n" // icmd
+	  << " const calculix::CalculiXInt* const,\n" // ielas
 	  << " const calculix::CalculiXInt* const mi,\n"
-	  << " const calculix::CalculiXInt* const  NSTATV,\n"
+	  << " const calculix::CalculiXInt* const NSTATV,\n"
 	  << " const calculix::CalculiXReal* const STATEV0,\n"
 	  << "       calculix::CalculiXReal* const STATEV1,\n"
 	  << "       calculix::CalculiXReal* const STRESS,\n"
@@ -158,6 +258,9 @@ namespace mfront{
 	<< " const int)";
   } // end of writeArguments
 
+  const char* const
+  CalculiXInterface::finiteStrainStrategy = "calculix::finiteStrainStrategy";
+  
   std::string CalculiXInterface::getName()
   {
     return "calculix";
@@ -169,8 +272,8 @@ namespace mfront{
   } // end of CalculiXInterface::getInterfaceName
 
   std::pair<bool,CalculiXInterface::tokens_iterator>
-  CalculiXInterface::treatKeyword(BehaviourDescription&,
-				  const std::string& key,
+  CalculiXInterface::treatKeyword(BehaviourDescription& bd,
+				  const std::string& k,
 				  const std::vector<std::string>& i,
 				  tokens_iterator current,
 				  const tokens_iterator end)
@@ -185,42 +288,29 @@ namespace mfront{
 	  "@CalculiXFiniteStrainStrategy",
 	  "@CalculiXGenerateMTestFileOnFailure",
 	  "@CalculiXStrainPerturbationValue"};
-	throw_if(std::find(keys.begin(),keys.end(),key)==keys.end(),
-		 "unsupported key '"+key+"'");
+	throw_if(std::find(keys.begin(),keys.end(),k)==keys.end(),
+		 "unsupported key '"+k+"'");
       } else {
 	return {false,current};
       }
     }
-    if (key=="@CalculiXFiniteStrainStrategy"){
-      auto read = [throw_if](const std::string& s){
-	if(s=="Native"){
-	  return NATIVEFINITESTRAINSTRATEGY;
-	} else if(s=="FiniteRotationSmallStrain"){
-	  return FINITEROTATIONSMALLSTRAIN;
-	} else if(s=="MieheApelLambrechtLogarithmicStrain"){
-	  return MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
-	} else if(s=="MieheApelLambrechtLogarithmicStrainII"){
-	  return MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII;
-	}
-	throw_if(true,"unsupported strategy '"+s+"'\n"
-		 "The only supported strategies are 'Native',"
-		 "'FiniteRotationSmallStrain' and "
-		 "'MieheApelLambrechtLogarithmicStrain'");
-      };
-      throw_if(this->fss!=UNDEFINEDSTRATEGY,
+    if (k=="@CalculiXFiniteStrainStrategy"){
+      throw_if(bd.hasAttribute(CalculiXInterface::finiteStrainStrategy),
 	       "a finite strain strategy has already been defined");
       throw_if(current==end,"unexpected end of file");
-      this->fss = read(current->value);
+      const auto fs = current->value;
       throw_if(++current==end,"unexpected end of file");
       throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
       ++(current);
+      checkFiniteStrainStrategyDefinitionConsistency(bd,fs);
+      bd.setAttribute(CalculiXInterface::finiteStrainStrategy,fs,false);
       return {true,current};
-    } else if (key=="@CalculiXGenerateMTestFileOnFailure"){
-      this->generateMTestFile = this->readBooleanValue(key,current,end);
+    } else if (k=="@CalculiXGenerateMTestFileOnFailure"){
+      this->generateMTestFile = this->readBooleanValue(k,current,end);
       return {true,current};
     }      
     return {false,current};
-  } // end of treatKeyword
+  } // end of CalculiXInterface::treatKeyword
 
   void CalculiXInterface::endTreatment(const BehaviourDescription& mb,
 				       const FileDescription& fd) const
@@ -229,13 +319,11 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"CalculiXInterface::endTreatment: "+m);
     };
-    throw_if((mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	     (this->fss!=UNDEFINEDSTRATEGY),
-	     "finite strain strategy is only supported for small strain behaviours");
     throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
 	     "the calculix interface only supports small and "
 	     "finite strain behaviours");
+    checkFiniteStrainStrategyDefinitionConsistency(mb);
     // the only supported modelling hypothesis
     constexpr const auto h = ModellingHypothesis::TRIDIMENSIONAL;
     const auto& d = mb.getBehaviourData(h);
@@ -268,9 +356,13 @@ namespace mfront{
     out << "#ifndef "<< header << "\n"
 	<< "#define "<< header << "\n\n"
 	<< "#include\"TFEL/Config/TFELConfig.hxx\"\n\n";
-    if((this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)||
-       (this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII)){
-      out << "#include\"TFEL/Material/LogarithmicStrainHandler.hxx\"\n\n";
+    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+       (hasFiniteStrainStrategy(mb))){
+      const auto fs = getFiniteStrainStrategy(mb);
+      if((fs=="MieheApelLambrechtLogarithmicStrain")||
+	 (fs=="MieheApelLambrechtLogarithmicStrainII")){
+	out << "#include\"TFEL/Material/LogarithmicStrainHandler.hxx\"\n\n";
+      }
     }
     out << "#include\"MFront/CalculiX/CalculiX.hxx\"\n"
 	<< "#include\"MFront/CalculiX/CalculiXData.hxx\"\n\n"
@@ -343,18 +435,19 @@ namespace mfront{
     this->writeSetParametersFunctionsImplementations(out,name,mb);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
-    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-       ((this->fss==UNDEFINEDSTRATEGY)||(this->fss==NATIVEFINITESTRAINSTRATEGY))){
-      this->writeSmallStrainFunction(out,mb,name);
-    } else if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	      ((this->fss!=UNDEFINEDSTRATEGY)&&(this->fss!=NATIVEFINITESTRAINSTRATEGY))){
-      if(this->fss==FINITEROTATIONSMALLSTRAIN){
-	this->writeFiniteRotationSmallStrainFunction(out,mb,name);
-      } else if((this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN)||
-		(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII)){
-	this->writeMieheApelLambrechtLogarithmicStrainFunction(out,mb,name);
+    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(hasFiniteStrainStrategy(mb)){
+	const auto fs = getFiniteStrainStrategy(mb);
+	if(fs=="FiniteRotationSmallStrain"){
+	  this->writeFiniteRotationSmallStrainFunction(out,mb,name);
+	} else if((fs=="MieheApelLambrechtLogarithmicStrain")||
+		  (fs=="MieheApelLambrechtLogarithmicStrainII")){
+	  this->writeMieheApelLambrechtLogarithmicStrainFunction(out,mb,name);
+	} else {
+	  throw_if(true,"unsupported finite strain strategy !");
+	}
       } else {
-	throw_if(true,"unsupported finite strain strategy !");
+	this->writeSmallStrainFunction(out,mb,name);
       }
     } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       this->writeFiniteStrainFunction(out,mb,name);
@@ -368,9 +461,9 @@ namespace mfront{
   } // end of CalculiXInterface::endTreatment
   
   void CalculiXInterface::writeFunctionBase(std::ostream& out,
-						const BehaviourDescription& mb,
-						const std::string& name,
-						const std::string& sfeh) const
+					    const BehaviourDescription& mb,
+					    const std::string& name,
+					    const std::string& sfeh) const
   {
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"CalculiXInterface::writeFunctionBase: "+m);
@@ -378,20 +471,20 @@ namespace mfront{
     std::string dv0,dv1,sig,statev,nstatev;
     const auto btype = mb.getBehaviourType();
     out << "static void\n" << name << "_base";
-    writeArguments(out,btype,false);
+    writeArguments(out,mb,true);
     out << "{\n";
     if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
       dv0 = "STRAN0";
-      dv1 = "STRAN1";
+      dv1 = "DSTRAN";
     } else if(btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      dv0 = "F0";
-      dv1 = "F1";
+      dv0 = "XOKL";
+      dv1 = "XKL";
     } else {
       throw_if(true,"the calculix interface only supports small "
 	       "and finite strain behaviours");
     }
-    out << "using calculix::CalculiXData;\n";
-    out	<< "const auto ivs0 =  STATEV0+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
+    out << "using calculix::CalculiXData;\n"
+      	<< "const auto ivs0 =  STATEV0+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
 	<< "const auto ivs1 =  STATEV1+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
 	<< "CalculiXData d = {STRESS,PNEWDT,DDSDDE,ivs1,*DTIME,ivs0,\n"
 	<< "                  " << dv0 << "," << dv1 << ",TEMP1,MPROPS,\n"
@@ -414,8 +507,10 @@ namespace mfront{
     const std::string sfeh = "nullptr";
     this->writeFunctionBase(out,mb,name,sfeh);
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
-    writeArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
-    out << "{\n";
+    writeArguments(out,mb,false);
+    out << "{\n"
+	<< "using namespace tfel::math;\n"
+    	<< "using real = calculix::CalculiXReal;\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
 	  << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
@@ -423,46 +518,20 @@ namespace mfront{
 	  << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
-    out << "calculix::CalculiXReal s[6];\n"
-	<< "calculix::CalculiXReal D[36] = {0,0,0,0,0,0,\n"
-	<< "                                0,0,0,0,0,0,\n"
-      	<< "                                0,0,0,0,0,0,\n"
-      	<< "                                0,0,0,0,0,0,\n"
-      	<< "                                0,0,0,0,0,0,\n"
-      	<< "                                0,0,0,0,0,0};\n"
-	<< "const auto  J = *vj;\n"
-	<< "const auto iJ = 1/J;\n"
-	<< "const calculix::CalculiXReal iF1[9] = {iJ*(F1[4]*F1[8]-F1[5]*F1[7]),\n"
-	<< "		                           iJ*(F1[2]*F1[7]-F1[1]*F1[8]),\n"
-	<< "		                           iJ*(F1[1]*F1[5]-F1[2]*F1[4]),\n"
-	<< "		                           iJ*(F1[5]*F1[6]-F1[3]*F1[8]),\n"
-	<< "		                           iJ*(F1[0]*F1[8]-F1[2]*F1[6]),\n"
-	<< "		                           iJ*(F1[2]*F1[3]-F1[0]*F1[5]),\n"
-	<< "		                           iJ*(F1[3]*F1[7]-F1[4]*F1[6]),\n"
-	<< "		                           iJ*(F1[1]*F1[6]-F1[0]*F1[7]),\n"
-	<< "		                           iJ*(F1[0]*F1[4]-F1[1]*F1[3])};\n"
-      	<< "// turning pk2 to Cauchy stress\n"
-	<< "s[0] = iJ*(F1[3]*(STRESS[5]*F1[6]+STRESS[1]*F1[3]+STRESS[3]*F1[0])+\n"
-	<< "	       F1[0]*(STRESS[4]*F1[6]+STRESS[3]*F1[3]+STRESS[0]*F1[0])+\n"
-	<< "	       F1[6]*(STRESS[2]*F1[6]+STRESS[5]*F1[3]+STRESS[4]*F1[0]));\n"
-	<< "s[1] = iJ*(F1[4]*(STRESS[5]*F1[7]+STRESS[1]*F1[4]+STRESS[3]*F1[1])+\n"
-	<< "	       F1[1]*(STRESS[4]*F1[7]+STRESS[3]*F1[4]+STRESS[0]*F1[1])+\n"
-	<< "	       F1[7]*(STRESS[2]*F1[7]+STRESS[5]*F1[4]+STRESS[4]*F1[1]));\n"
-	<< "s[2] = iJ*(F1[5]*(STRESS[5]*F1[8]+STRESS[1]*F1[5]+STRESS[3]*F1[2])+\n"
-	<< "	       F1[2]*(STRESS[4]*F1[8]+STRESS[3]*F1[5]+STRESS[0]*F1[2])+\n"
-	<< "	       F1[8]*(STRESS[2]*F1[8]+STRESS[5]*F1[5]+STRESS[4]*F1[2]));\n"
-	<< "s[3] = iJ*(F1[3]*(STRESS[5]*F1[7]+STRESS[1]*F1[4]+STRESS[3]*F1[1])+\n"
-	<< "	       F1[0]*(STRESS[4]*F1[7]+STRESS[3]*F1[4]+STRESS[0]*F1[1])+\n"
-	<< "	       F1[6]*(STRESS[2]*F1[7]+STRESS[5]*F1[4]+STRESS[4]*F1[1]));\n"
-	<< "s[4] = iJ*(F1[3]*(STRESS[5]*F1[8]+STRESS[1]*F1[5]+STRESS[3]*F1[2])+\n"
-	<< "	       F1[0]*(STRESS[4]*F1[8]+STRESS[3]*F1[5]+STRESS[0]*F1[2])+\n"
-	<< "	       F1[6]*(STRESS[2]*F1[8]+STRESS[5]*F1[5]+STRESS[4]*F1[2]));\n"
-	<< "s[5] = iJ*(F1[4]*(STRESS[5]*F1[8]+STRESS[1]*F1[5]+STRESS[3]*F1[2])+\n"
-	<< "	       F1[1]*(STRESS[4]*F1[8]+STRESS[3]*F1[5]+STRESS[0]*F1[2])+\n"
-	<< "           F1[7]*(STRESS[2]*F1[8]+STRESS[5]*F1[5]+STRESS[4]*F1[2]));\n";
+    out << "st2tost2<3u,real> D = {0,0,0,0,0,0,\n"
+	<< "                       0,0,0,0,0,0,\n"
+      	<< "                       0,0,0,0,0,0,\n"
+      	<< "                       0,0,0,0,0,0,\n"
+      	<< "                       0,0,0,0,0,0,\n"
+      	<< "                       0,0,0,0,0,0};\n";
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      throw_if(mb.getSymmetryType()!=mfront::ISOTROPIC,
-	       "orthotropic symmetry is unsupported yet");
+      out << "if(*iorien==0){\n"
+	  << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
+	  << "            << \"no orientation defined for an orthotropic behaviour\\n\";\n"
+	  << "  std::exit(-1);\n"
+	  << "}\n"
+	  << "const auto r  = calculix::getRotationMatrix(orab+7*(*iorien-1),pgauss);\n"
+	  << "const auto rb = transpose(r);\n";
     } else {
       throw_if(mb.getSymmetryType()!=mfront::ISOTROPIC,
 	       "unsupported symmetry type");
@@ -470,35 +539,39 @@ namespace mfront{
 	  << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
 	  << "            << \"no orientation shall be defined for an istropic behaviour\\n\";\n"
 	  << "  std::exit(-1);\n"
-	  << "}\n"
+	  << "}\n";
+    }
+    out << "const auto F0 = tensor<3u,real>::buildFromFortranMatrix(XOKL);\n"
+	<< "const auto F1 = tensor<3u,real>::buildFromFortranMatrix(XKL);\n"
+	<< "stensor<3u,real> pk2;\n"
+	<< "pk2.importTab(STRESS);\n"
+	<< "auto s = convertSecondPiolaKirchhoffStressToCauchyStress(pk2,F1);\n";
+    if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      out << "const auto rF0 = change_basis(F0,r);\n"
+	  << "const auto rF1 = change_basis(F1,r);\n"
+	  << "s.changeBasis(r);\n"
 	  << name << "_base"
-	  << "(amat,iel,iint,NPROPS,MPROPS,STRAN1,STRAN0,beta,F0,"
-	  << " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
-	  << " ielas,mi,NSTATV,STATEV0,STATEV1,s,D,"
+	  << "(amat,iel,iint,NPROPS,MPROPS,STRAN1,STRAN0,beta,rF0.begin(),"
+	  << " voj,rF1.begin(),vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
+	  << " ielas,mi,NSTATV,STATEV0,STATEV1,s.begin(),D.begin(),"
+	  << "iorien,pgauss,orab,PNEWDT,ipkon,size);\n";
+    } else {
+      out << name << "_base"
+	  << "(amat,iel,iint,NPROPS,MPROPS,STRAN1,STRAN0,beta,F0.begin(),"
+	  << " voj,F1.begin(),vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
+	  << " ielas,mi,NSTATV,STATEV0,STATEV1,s.begin(),D.begin(),"
 	  << "iorien,pgauss,orab,PNEWDT,ipkon,size);\n";
     }
-    out << "if(*PNEWDT>=1){\n"
-	<< "// turning Cauchy stress to pk2\n"
-	<< "STRESS[0] = J*(iF1[3]*(s[5]*iF1[6]+s[1]*iF1[3]+s[3]*iF1[0])+\n"
-	<< "		   iF1[0]*(s[4]*iF1[6]+s[3]*iF1[3]+s[0]*iF1[0])+\n"
-	<< "		   iF1[6]*(s[2]*iF1[6]+s[5]*iF1[3]+s[4]*iF1[0]));\n"
-	<< "STRESS[1] = J*(iF1[4]*(s[5]*iF1[7]+s[1]*iF1[4]+s[3]*iF1[1])+\n"
-	<< "		   iF1[1]*(s[4]*iF1[7]+s[3]*iF1[4]+s[0]*iF1[1])+\n"
-	<< "		   iF1[7]*(s[2]*iF1[7]+s[5]*iF1[4]+s[4]*iF1[1]));\n"
-	<< "STRESS[2] = J*(iF1[5]*(s[5]*iF1[8]+s[1]*iF1[5]+s[3]*iF1[2])+\n"
-	<< "		   iF1[2]*(s[4]*iF1[8]+s[3]*iF1[5]+s[0]*iF1[2])+\n"
-	<< "		   iF1[8]*(s[2]*iF1[8]+s[5]*iF1[5]+s[4]*iF1[2]));\n"
-	<< "STRESS[3] = J*(iF1[3]*(s[5]*iF1[7]+s[1]*iF1[4]+s[3]*iF1[1])+\n"
-	<< "		   iF1[0]*(s[4]*iF1[7]+s[3]*iF1[4]+s[0]*iF1[1])+\n"
-	<< "		   iF1[6]*(s[2]*iF1[7]+s[5]*iF1[4]+s[4]*iF1[1]));\n"
-	<< "STRESS[4] = J*(iF1[3]*(s[5]*iF1[8]+s[1]*iF1[5]+s[3]*iF1[2])+\n"
-	<< "		   iF1[0]*(s[4]*iF1[8]+s[3]*iF1[5]+s[0]*iF1[2])+\n"
-	<< "		   iF1[6]*(s[2]*iF1[8]+s[5]*iF1[5]+s[4]*iF1[2]));\n"
-	<< "STRESS[5] = J*(iF1[4]*(s[5]*iF1[8]+s[1]*iF1[5]+s[3]*iF1[2])+\n"
-	<< "		   iF1[1]*(s[4]*iF1[8]+s[3]*iF1[5]+s[0]*iF1[2])+\n"
-	<< "		   iF1[7]*(s[2]*iF1[8]+s[5]*iF1[5]+s[4]*iF1[2]));\n"
+    out << "if(*PNEWDT>=1){\n";
+    if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
+      out << "s.changeBasis(rb);\n"
+	  << "D = change_basis(st2tost2<3u,real>(D),rb);\n";
+    }
+    out << "// turning Cauchy stress to pk2\n"
+	<< "pk2 = convertCauchyStressToSecondPiolaKirchhoffStress(s,F1);\n"
+	<< "pk2.exportTab(STRESS);\n"
 	<< "// converting the consistent tangent operator\n"
-	<< "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D);\n";
+	<< "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D.begin());\n";
     if(getDebugMode()){
       out << "std::cout << \"Dt :\" << std::endl;\n"
 	  << "const calculix::CalculiXReal *p = DDSDDE;\n"
@@ -518,17 +591,17 @@ namespace mfront{
 						   const BehaviourDescription& mb,
 						   const std::string& name) const
   {
+    auto throw_if = [](const bool b,const std::string& m){
+      tfel::raise_if(b,"CalculiXInterface::writeSmallStrainFunction: "+m);
+    };
     const std::string sfeh = "calculix::CalculiXStandardSmallStrainStressFreeExpansionHandler";
     this->writeFunctionBase(out,mb,name,sfeh);
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
-    writeArguments(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,true);
+    writeArguments(out,mb,false);
     out << "{\n"
 	<< "using namespace tfel::math;\n"
-	<< "using real = calculix::CalculiXReal;\n";
-    if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "TFEL_CONSTEXPR const real sqrt2  = Cste<real>::sqrt2;\n"
-	  << "TFEL_CONSTEXPR const real isqrt2 = Cste<real>::isqrt2;\n";
-    }
+	<< "using real = calculix::CalculiXReal;\n"
+	<< "TFEL_CONSTEXPR const real sqrt2  = Cste<real>::sqrt2;\n";
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "using mfront::BehaviourProfiler;\n"
 	  << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
@@ -545,21 +618,7 @@ namespace mfront{
       	<< "                       0,0,0,0,0,0,\n"
       	<< "                       0,0,0,0,0,0,\n"
       	<< "                       0,0,0,0,0,0};\n";
-    if (mb.getSymmetryType()==mfront::ISOTROPIC){
-      out << "const real* eto     = STRAN0;\n;\n"
-	  << "const real  deto[6] = {STRAN1[0]-STRAN0[0],\n"
-	  << "                       STRAN1[1]-STRAN0[1],\n"
-	  << "                       STRAN1[2]-STRAN0[2],\n"
-	  << "                       STRAN1[3]-STRAN0[3],\n"
-	  << "                       STRAN1[4]-STRAN0[4],\n"
-	  << "                       STRAN1[5]-STRAN0[5]};\n"
-	  << "real* s = STRESS;\n;\n"
-	  << "if(*iorien!=0){\n"
-	  << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
-	  << "            << \"no orientation shall be defined for an istropic behaviour\\n\";\n"
-	  << "  std::exit(-1);\n"
-	  << "}\n";
-    } else {
+    if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "stensor<3u,real> eto  = {STRAN0[0],\n"
 	  << "                         STRAN0[1],\n"
 	  << "                         STRAN0[2],\n"
@@ -580,34 +639,47 @@ namespace mfront{
 	  << "  std::exit(-1);\n"
 	  << "}\n"
 	  << "const auto r  = calculix::getRotationMatrix(orab+7*(*iorien-1),pgauss);\n"
-	  << "const auto rb = transpose(r);\n"
 	  << "eto.changeBasis(r);\n"
 	  << "deto.changeBasis(r);\n"
 	  << "s.changeBasis(r);\n";
-      for(unsigned short i=3;i!=6;++i){
-	out << "eto["  << i << "]*=isqrt2;\n";
-      }
-      for(unsigned short i=3;i!=6;++i){
-	out << "deto["  << i << "]*=isqrt2;\n";
-      }
-      for(unsigned short i=3;i!=6;++i){
-	out << "s["  << i << "]*=isqrt2;\n";
-      }
-    }
+    } else {
+      throw_if(mb.getSymmetryType()!=mfront::ISOTROPIC,
+	       "unsupported symmetry type");
+      out << "const stensor<3u,real> eto  = {STRAN0[0],\n"
+	  << "                               STRAN0[1],\n"
+	  << "                               STRAN0[2],\n"
+	  << "                               STRAN0[3]*sqrt2,\n"
+	  << "                               STRAN0[4]*sqrt2,\n"
+	  << "                               STRAN0[5]*sqrt2};\n"
+	  << "const stensor<3u,real> deto = {STRAN1[0]-STRAN0[0],\n"
+	  << "                               STRAN1[1]-STRAN0[1],\n"
+	  << "                               STRAN1[2]-STRAN0[2],\n"
+	  << "                               (STRAN1[3]-STRAN0[3])*sqrt2,\n"
+	  << "                               (STRAN1[4]-STRAN0[4])*sqrt2,\n"
+	  << "                               (STRAN1[5]-STRAN0[5])*sqrt2};\n"
+	  << "stensor<3u,real> s;\n"
+	  << "s.importTab(STRESS);\n"
+	  << "if(*iorien!=0){\n"
+	  << "  std::cerr << \"" << this->getFunctionName(name) << ":\"\n"
+	  << "            << \"no orientation shall be defined for an istropic behaviour\\n\";\n"
+	  << "  std::exit(-1);\n"
+	  << "}\n";
+	}
     out << name << "_base"
-	<< "(amat,iel,iint,NPROPS,MPROPS,&deto[0],&eto[0],beta,F0,"
-	<< " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
-	<< " ielas,mi,NSTATV,STATEV0,STATEV1,&s[0],&D(0,0),"
-	<< "iorien,pgauss,orab,PNEWDT,ipkon,size);\n";
-    out << "if(*PNEWDT>=1){\n";
+	<< "(amat,iel,iint,NPROPS,MPROPS,deto.begin(),eto.begin(),beta,XOKL,"
+	<< " voj,XKL,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
+	<< " ielas,mi,NSTATV,STATEV0,STATEV1,s.begin(),D.begin(),"
+	<< "iorien,pgauss,orab,PNEWDT,ipkon,size);\n"
+	<< "if(*PNEWDT>=1){\n";
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      for(unsigned short i=3;i!=6;++i){
-	out << "s["  << i << "]*=sqrt2;\n";
-      }
-      out << "s.changeBasis(rb);\n"
-	  << "s.exportTab(STRESS);\n"
+      out << "const auto rb = transpose(r);\n"
+	  << "s.changeBasis(rb);\n"
 	  << "D = change_basis(st2tost2<3u,real>(D),rb);\n";
     }
+    out << "s.exportTab(STRESS);\n"
+	<< "// converting the consistent tangent operator\n"
+	<< "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D.begin());\n"
+	<< "}\n";
     if(getDebugMode()){
       out << "std::cout << \"Dt :\" << std::endl;\n"
 	  << "const calculix::CalculiXReal *p = DDSDDE;\n"
@@ -619,9 +691,6 @@ namespace mfront{
     	  << "}\n"
     	  << "std::cout << std::endl;\n";
     }
-    out << "// converting the consistent tangent operator\n"
-	<< "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,&D(0,0));\n"
-	<< "}\n";
     if(this->generateMTestFile){
       out << "if(*PNEWDT<1){\n";
       this->generateMTestFile2(out,mb.getBehaviourType(),
@@ -650,45 +719,49 @@ namespace mfront{
     const auto& ivs  = mb.getBehaviourData(h).getPersistentVariables();
     const auto  nivs = ivs.getTypeSize().getValueForModellingHypothesis(h);
     const std::string sfeh = "calculix::CalculiXLogarithmicStrainStressFreeExpansionHandler";
+    const auto variant = [&mb,throw_if]{
+      const auto fs = getFiniteStrainStrategy(mb);
+      throw_if((fs!="MieheApelLambrechtLogarithmicStrain")&&
+	       (fs!="MieheApelLambrechtLogarithmicStrainII"),
+	       "invalid finite strain strategy (internal error)");
+      return fs=="MieheApelLambrechtLogarithmicStrain";
+    }();
     this->writeFunctionBase(out,mb,name,sfeh);
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionName(name);
-    writeArguments(out,BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,true);
+    writeArguments(out,mb,false);
     out << "{\n"
 	<< "using namespace tfel::math;\n"
     	<< "using namespace tfel::material;\n"
-	<< "using real = calculix::CalculiXReal;\n"
-	<< "TFEL_CONSTEXPR const real isqrt2 = Cste<real>::isqrt2;\n";
+	<< "using real = calculix::CalculiXReal;\n";
     if(this->generateMTestFile){
       this->generateMTestFile1(out);
     }
-    out << "real D[36] = {0,0,0,0,0,0,\n"
-	<< "              0,0,0,0,0,0,\n"
-      	<< "              0,0,0,0,0,0,\n"
-      	<< "              0,0,0,0,0,0,\n"
-      	<< "              0,0,0,0,0,0,\n"
-      	<< "              0,0,0,0,0,0};\n";
-    if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+    out << "st2tost2<3u,real> D = {0,0,0,0,0,0,\n"
+	<< "                       0,0,0,0,0,0,\n"
+      	<< "                       0,0,0,0,0,0,\n"
+      	<< "                       0,0,0,0,0,0,\n"
+      	<< "                       0,0,0,0,0,0,\n"
+      	<< "                       0,0,0,0,0,0};\n";
+    if(variant){
       out << "LogarithmicStrainHandler<3u,real> "
 	  << "lsh0(LogarithmicStrainHandlerBase::LAGRANGIAN,\n"
-	  << "     tensor<3u,real>::buildFromFortranMatrix(F0));\n"
+	  << "     tensor<3u,real>::buildFromFortranMatrix(XOKL));\n"
 	  << "LogarithmicStrainHandler<3u,real> "
 	  << "lsh1(LogarithmicStrainHandlerBase::LAGRANGIAN,\n"
-	  << "     tensor<3u,real>::buildFromFortranMatrix(F1));\n"
+	  << "     tensor<3u,real>::buildFromFortranMatrix(XKL));\n"
 	  << "auto eto0 = lsh0.getHenckyLogarithmicStrain();\n"
 	  << "tfel::math::stensor<3u,real> pk2;\n"
 	  << "pk2.importTab(STRESS);\n"
-	  << "auto T0 = lsh0.convertFromSecondPiolaKirchhoffStress(pk2);\n";
-    } else if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
+	  << "auto T = lsh0.convertFromSecondPiolaKirchhoffStress(pk2);\n";
+    } else {
       out << "LogarithmicStrainHandler<3u,real> "
 	  << "lsh1(LogarithmicStrainHandlerBase::LAGRANGIAN,\n"
-	  << "     tensor<3u,real>::buildFromFortranMatrix(F1));\n"
+	  << "     tensor<3u,real>::buildFromFortranMatrix(XKL));\n"
 	  << "const auto ivs0 =  STATEV0+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
 	  << "const auto ivs1 =  STATEV1+(*NSTATV)*((*iint-1)+(*mi)*(*iel-1));\n"
 	  << "stensor<3u,real> eto0(ivs0+" << nivs << ");\n"
-	  << "stensor<3u,real> T0;\n"
-	  << "tfel::fsalgo::copy<6u>::exe(ivs1+" << nivs+6 << ",T0.begin());\n";
-    } else {
-      throw_if(true,"internal error (unexpected finite strain strategy)");
+	  << "stensor<3u,real> T;\n"
+	  << "tfel::fsalgo::copy<6u>::exe(ivs1+" << nivs+6 << ",T.begin());\n";
     }
     out << "auto eto1 = lsh1.getHenckyLogarithmicStrain();\n";
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
@@ -699,12 +772,12 @@ namespace mfront{
 	  << "}\n"
 	  << "const auto r  = calculix::getRotationMatrix(orab+7*(*iorien-1),pgauss);\n"
 	  << "const auto rb = transpose(r);\n";
-      if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){      
+      if(variant){      
 	out << "eto0.changeBasis(r);\n";
       }
       out << "eto1.changeBasis(r);\n";
-      if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){      
-	out << "T0.changeBasis(r);\n";
+      if(variant){      
+	out << "T.changeBasis(r);\n";
       }
     } else {
       throw_if(mb.getSymmetryType()!=mfront::ISOTROPIC,
@@ -716,49 +789,33 @@ namespace mfront{
 	  << "}\n";
     }
     out << "auto deto = eval(eto1-eto0);\n"
-	<< "// turning tensors in CalculiX conventions\n";
-    for(unsigned short i=3;i!=6;++i){
-      out << "eto0["  << i << "]*=isqrt2;\n";
-    }
-    for(unsigned short i=3;i!=6;++i){
-      out << "deto["  << i << "]*=isqrt2;\n";
-    }
-    if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
-      for(unsigned short i=3;i!=6;++i){
-	out << "T0["  << i << "]*=isqrt2;\n";
-      }
-    }
-    out << "// behaviour integration\n"
+	<< "// behaviour integration\n"
 	<< name << "_base"
-	<< "(amat,iel,iint,NPROPS,MPROPS,&deto[0],&eto0[0],beta,F0,"
-	<< " voj,F1,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
-	<< " ielas,mi,NSTATV,STATEV0,STATEV1,&T0[0],D,"
+	<< "(amat,iel,iint,NPROPS,MPROPS,deto.begin(),eto0.begin(),beta,XOKL,"
+	<< " voj,XKL,vj,ithermal,TEMP1,DTIME,time,ttime,icmd,"
+	<< " ielas,mi,NSTATV,STATEV0,STATEV1,T.begin(),D.begin(),"
 	<< "iorien,pgauss,orab,PNEWDT,ipkon,size);\n"
-	<< "if(*PNEWDT>=1){\n"
-	<< "// stress at the end of the time step\n"
-	<< "stensor<3u,real> T1;\n"
-	<< "T1.importTab(T0.begin());\n";
-    if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
+	<< "if(*PNEWDT>=1){\n";
+    if(!variant){
       // saving the stresses in the material frame
-      out << "tfel::fsalgo::copy<6u>::exe(T1.begin(),ivs1+" << nivs+6 << ");\n";
+      out << "tfel::fsalgo::copy<6u>::exe(eto1.begin(),ivs1+" << nivs << ");\n"
+	  << "tfel::fsalgo::copy<6u>::exe(T.begin(),ivs1+" << nivs+6 << ");\n";
     }
+    out << "// stress at the end of the time step\n";
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "T1.changeBasis(rb);\n";
+      out << "auto s = lsh1.convertToSecondPiolaKirchhoffStress(T);\n"
+	  << "s.changeBasis(rb);\n";
+    } else {
+      out << "const auto s = lsh1.convertToSecondPiolaKirchhoffStress(T);\n";
     }
-    out << "// converting the consistent tangent operator\n"
-	<< "ST2toST2View<3u,real> Dv(D);\n";
+    out << "D = lsh1.convertToMaterialTangentModuli(st2tost2<3u,real>(D),T);\n";
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      out << "st2tost2<3u,real> D2 = ConstST2toST2View<3u,real>(D);\n"
-	  << "Dv = change_basis(D2,rb);\n";
+      out << "D = change_basis(st2tost2<3u,real>(D),rb);\n";
     }
-    out << "Dv = lsh1.convertToMaterialTangentModuli(ConstST2toST2View<3u,real>(D),T1);\n"
-	<< "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D);\n"
-	<< "// converting the stress\n"
-	<< "const auto s = lsh1.convertToSecondPiolaKirchhoffStress(T1);\n"
-	<< "s.exportTab(STRESS);\n";
-    if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
-      out << "std::copy(eto1.begin(),eto1.end(),ivs1+" << nivs << ");\n";
-    }
+    out << "// converting the stress\n"
+	<< "s.exportTab(STRESS);\n"
+	<< "// converting the consistent tangent operator\n"
+	<< "calculix::ConvertUnsymmetricTangentOperator::exe(DDSDDE,D.begin());\n";
     if(getDebugMode()){
       out << "std::cout << \"Dt :\" << std::endl;\n"
 	  << "const calculix::CalculiXReal *p = DDSDDE;\n"
@@ -791,7 +848,7 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->fss==UNDEFINEDSTRATEGY){
+      if(!hasFiniteStrainStrategy(mb)){
 	out << "1u;\n\n";
       } else {
 	out << "2u;\n\n";
@@ -814,7 +871,7 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourKinematic = " ;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->fss==UNDEFINEDSTRATEGY){
+      if(hasFiniteStrainStrategy(mb)){
 	out << "1u;\n\n";
       } else {
 	out << "3u;\n\n";
@@ -870,10 +927,9 @@ namespace mfront{
     }
   } // end of CalculiXInterface::writeIntegrationDataDrivingVariableSetter
   
-  void 
-  CalculiXInterface::writeBehaviourDataThermodynamicForceSetter(std::ostream& os,
-								const ThermodynamicForce& f,
-								const SupportedTypes::TypeSize o) const
+  void CalculiXInterface::writeBehaviourDataThermodynamicForceSetter(std::ostream& os,
+								     const ThermodynamicForce& f,
+								     const SupportedTypes::TypeSize o) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if(SupportedTypes::getTypeFlag(f.type)==SupportedTypes::Stensor){
@@ -889,11 +945,10 @@ namespace mfront{
     }
   } // end of CalculiXInterface::writeBehaviourDataThermodynamicForceSetter
   
-  void 
-  CalculiXInterface::exportThermodynamicForce(std::ostream& out,
-					      const std::string& a,
-					      const ThermodynamicForce& f,
-					      const SupportedTypes::TypeSize o) const
+  void CalculiXInterface::exportThermodynamicForce(std::ostream& out,
+						   const std::string& a,
+						   const ThermodynamicForce& f,
+						   const SupportedTypes::TypeSize o) const
   {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto flag = SupportedTypes::getTypeFlag(f.type);
@@ -1266,8 +1321,12 @@ namespace mfront{
     for(const auto& v : persistentVarsHolder){
       vs+=SupportedTypes::getTypeSize(v.type,v.arraySize);
     }
-    const auto vsize = [this,&vs,&h]() -> unsigned int{
-      if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAINII){
+    const auto vsize = [mb,&vs,&h]() -> unsigned int{
+      if((mb.getBehaviourType()==
+	  BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	 (hasFiniteStrainStrategy(mb))&&
+	 (getFiniteStrainStrategy(mb)==
+	  "MieheApelLambrechtLogarithmicStrainII")){
 	return vs.getValueForModellingHypothesis(h)+12u;
       }
       return vs.getValueForModellingHypothesis(h);

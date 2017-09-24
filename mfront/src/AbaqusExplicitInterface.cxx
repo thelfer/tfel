@@ -57,6 +57,13 @@ namespace mfront{
     }
   } // end of copyVUMATFiles
 
+  static bool usesMFrontOrthotropyManagementPolicy(const BehaviourDescription &mb){
+    if(AbaqusInterfaceBase::hasOrthotropyManagementPolicy(mb)){
+      return AbaqusInterfaceBase::getOrthotropyManagementPolicy(mb)=="MFront";
+    }
+    return false;
+  } // end of usesMFrontOrthotropyManagementPolicy
+
   std::pair<bool,AbaqusExplicitInterface::tokens_iterator>
   AbaqusExplicitInterface::treatKeyword(BehaviourDescription& bd,
 					const std::string& key,
@@ -90,7 +97,7 @@ namespace mfront{
       ++(current);
       return {true,current};
     }
-    return AbaqusInterfaceBase::treatCommonKeywords(key,current,end);
+    return AbaqusInterfaceBase::treatCommonKeywords(bd,key,current,end);
   } // end of AbaqusExplicitInterface::treatKeyword
   
   static void
@@ -262,19 +269,17 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AbaqusExplicitInterface::endTreatment: "+m);
     };
+    AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(mb);
+    AbaqusInterfaceBase::checkOrthotropyManagementPolicyConsistency(mb);
     throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
 	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
 	     "the abaqus explicit interface only supports small and "
 	     "finite strain behaviours");
     throw_if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	     (this->fss==UNDEFINEDSTRATEGY),
+	     (!AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)),
 	     "behaviours written in the small strain framework "
 	     "must be embedded in a strain strategy. See the "
 	     "'@AbaqusFiniteStrainStrategy' keyword");
-    throw_if((mb.getSymmetryType()!=mfront::ORTHOTROPIC)&&
-	     (this->omp!=UNDEFINEDORTHOTROPYMANAGEMENTPOLICY),
-	     "orthotropy management policy is only valid "
-	     "for orthotropic behaviour");
     // get the modelling hypotheses to be treated
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
@@ -376,7 +381,7 @@ namespace mfront{
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+    if(usesMFrontOrthotropyManagementPolicy(mb)){
       out << "#include\"MFront/Abaqus/AbaqusRotation.hxx\"\n\n";
     }
     out << "#include\"MFront/Abaqus/AbaqusStressFreeExpansionHandler.hxx\"\n\n"
@@ -399,7 +404,7 @@ namespace mfront{
  
     this->generateUMATxxGeneralSymbols(out,name,mb,fd);
     if(!mb.areAllMechanicalDataSpecialised(mh)){
-      const Hypothesis uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       this->generateUMATxxSymbols(out,name,uh,mb,fd);
     }
     for(const auto &h : mh){
@@ -448,22 +453,24 @@ namespace mfront{
 	}	
 	this->writeChecks(out,mb,t,h);
 	if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-	  if(this->fss==NATIVEFINITESTRAINSTRATEGY){
+	  throw_if(!AbaqusInterfaceBase::hasFiniteStrainStrategy(mb),
+		   "no finite strain strategy defined");
+	  const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(mb);
+	  if(fs=="Native"){
 	    this->writeNativeBehaviourCall(out,mb,t,h);
-	  } else if(this->fss==FINITEROTATIONSMALLSTRAIN){
+	  } else if(fs=="FiniteRotationSmallStrain"){
 	    this->writeFiniteRotationSmallStrainBehaviourCall(out,mb,t,h);
-	  } else if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
+	  } else if(fs=="MieheApelLambrechtLogarithmicStrain"){
 	    this->writeLogarithmicStrainBehaviourCall(out,mb,t,h);
 	  } else {
-	    tfel::raise("AbaqusExplicitInterface::writeVUMATFunction: "
-			"unsupported finite strain strategy (internal error)");
+	    throw_if(true,"unsupported finite strain strategy (internal error)");
 	  }
 	} else if (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
 	  this->writeFiniteStrainBehaviourCall(out,mb,t,h);
 	} else {
-	  tfel::raise("AbaqusExplicitInterface::writeVUMATFunction: "
-		      "the abaqus explicit interface only supports small "
-		      "and finite strain behaviours");
+	  throw_if(true,"the abaqus explicit interface "
+		   "only supports small "
+		   "and finite strain behaviours");
 	}
 	out << "}\n\n";
       }
@@ -802,8 +809,14 @@ namespace mfront{
     }
     out << "for(int i=0;i!=*nblock;++i){\n";
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
+    const bool mfront_omp = [&mb]{
+      if(AbaqusInterfaceBase::hasOrthotropyManagementPolicy(mb)){
+	return AbaqusInterfaceBase::getOrthotropyManagementPolicy(mb)=="MFront";
+      }
+      return false;
+    }();
     if(h==ModellingHypothesis::PLANESTRESS){
-      if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+      if(mfront_omp){
 	out << t << " eto[4u]  = {*(strainInc+i),\n"
 	    << "*(strainInc+i+(*nblock)),\n"
 	    << "0,\n"
@@ -851,7 +864,7 @@ namespace mfront{
       tfel::raise("AbaqusExplicitInterface::writeComputeElasticPrediction: "
 		  "unsupported behaviour type");
     }
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+    if(mfront_omp){
       if(h==ModellingHypothesis::PLANESTRESS){
 	out << "abaqus::AbaqusRotation2D<" << t << "> R(cview(stateOld+i));\n"
 	    << t << " e[4u];\n"
@@ -1049,7 +1062,8 @@ namespace mfront{
     } else {
       throw_unsupported_hypothesis();
     }
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+    const auto mfront_omp = usesMFrontOrthotropyManagementPolicy(mb);
+    if(mfront_omp){
       writeGetRotationMatrix(out,h);
       out << "deto.changeBasis(R);\n"
 	  << "s.changeBasis(R);\n";
@@ -1079,7 +1093,7 @@ namespace mfront{
 	<< "std::cerr << \"" << mb.getClassName() << ": behaviour integration failed\";\n"
 	<< "::exit(-1);\n"
 	<< "}\n";
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+    if(mfront_omp){
       out << "s.changeBasis(transpose(R));\n";
     }
     if(h==ModellingHypothesis::PLANESTRESS){
@@ -1196,7 +1210,8 @@ namespace mfront{
       throw_unsupported_hypothesis();
     }
     out << "auto sk2 = convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(s,U0);\n";
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+    const auto mfront_omp = usesMFrontOrthotropyManagementPolicy(mb);
+    if(mfront_omp){
       writeGetRotationMatrix(out,h);
       out << "eto.changeBasis(R);\n"
 	  << "deto.changeBasis(R);\n"
@@ -1245,7 +1260,7 @@ namespace mfront{
 	out << "::exit(-1);\n";
       }
     }
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+    if(mfront_omp){
       out << "sk2.changeBasis(transpose(R));\n";
     }
     out << "s = convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(sk2,U1);\n";
@@ -1356,7 +1371,8 @@ namespace mfront{
 	  << "                              cste*(*(stressOld+i+5*(*nblock))),cste*(*(stressOld+i+4*(*nblock)))};\n";
     }
     out << "auto sk2 = convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(s,U0);\n";
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+    const auto mfront_omp = usesMFrontOrthotropyManagementPolicy(mb);
+    if(mfront_omp){
       writeGetRotationMatrix(out,h);
       out << "sk2.changeBasis(R);\n";
     }
@@ -1364,7 +1380,7 @@ namespace mfront{
 	<< "st2tost2<" << dime << "," << t << "> P1;\n"
 	<< "stensor<" << dime << "," << t << "> C0  = square(U0);\n"
 	<< "stensor<" << dime << "," << t << "> C1  = square(U1);\n";
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+    if(mfront_omp){
       out << "C0.changeBasis(R);\n"
 	  << "C1.changeBasis(R);\n";
     }
@@ -1451,7 +1467,7 @@ namespace mfront{
     }
     out << "// stress update\n"
 	<< "sk2 = 2*(T|P1);\n";
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+    if(mfront_omp){
       out << "sk2.changeBasis(transpose(R));\n";
     }
     out << "s = convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(sk2,U1);\n";
@@ -1597,7 +1613,8 @@ namespace mfront{
     }
     out << "const tmatrix<3u,3u," << t << "> R1 = matrix_view(F1*invert(U1));\n"
       	<< "s.changeBasis(transpose(R1));\n";
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+    const auto mfront_omp = usesMFrontOrthotropyManagementPolicy(mb);
+    if(mfront_omp){
       writeGetRotationMatrix(out,h);
       out << "F0.changeBasis(R);\n"
 	  << "F1.changeBasis(R);\n"
@@ -1609,7 +1626,7 @@ namespace mfront{
 	<< "std::cerr << \"" << mb.getClassName() << ": behaviour integration failed\";\n"
 	<< "::exit(-1);\n"
 	<< "}\n";
-    if(this->omp==MFRONTORTHOTROPYMANAGEMENTPOLICY){
+    if(mfront_omp){
       out << "s.changeBasis(transpose(R));\n";
     }
     out << "s.changeBasis(R1);\n";
@@ -1651,7 +1668,7 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      if(this->fss==UNDEFINEDSTRATEGY){
+      if(!AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
 	tfel::raise("AbaqusExplicitInterface::writeUMATxxBehaviourTypeSymbols: "
 		    "behaviours written in the small strain framework "
 		    "must be embedded in a strain strategy");
@@ -1673,7 +1690,7 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourKinematic = " ;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      tfel::raise_if(this->fss==UNDEFINEDSTRATEGY,
+      tfel::raise_if(!AbaqusInterfaceBase::hasFiniteStrainStrategy(mb),
 		     "AbaqusExplicitInterface::writeUMATxxBehaviourKinematicSymbols: "
 		     "behaviours written in the small strain framework "
 		     "must be embedded in a strain strategy");

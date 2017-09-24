@@ -35,9 +35,89 @@ static const char * const constexpr_c = "const";
 #endif
 
 namespace mfront{
+
+  static void checkFiniteStrainStrategy(const std::string& fs){
+    tfel::raise_if((fs!="FiniteRotationSmallStrain")&&
+		   (fs!="MieheApelLambrechtLogarithmicStrain"),
+		   "checkFiniteStrainStrategy: "
+		   "unsupported strategy '"+fs+"'\n"
+		   "The only supported strategies are "
+		   "'FiniteRotationSmallStrain' and "
+		   "'MieheApelLambrechtLogarithmicStrain'.");
+  } // end of checkFiniteStrainStrategy
   
   static void
-  writeEPXArguments(std::ostream& out)
+  checkFiniteStrainStrategyDefinitionConsistency(const BehaviourDescription& bd,
+						 const std::string& fs)
+  {
+    auto throw_if = [](const bool c,const std::string& msg){
+      tfel::raise_if(c,"checkFiniteStrainStrategyDefinitionConsistency: "+msg);
+    };
+    checkFiniteStrainStrategy(fs);
+    if(bd.isStrainMeasureDefined()){
+      const auto ms = bd.getStrainMeasure();
+      if(ms==BehaviourDescription::LINEARISED){
+	throw_if(fs!="Native","incompatible finite strain strategy "
+		 "'"+fs+"' (only `Native` accepted)");
+      } else if(ms==BehaviourDescription::GREENLAGRANGE){
+	throw_if(fs!="FiniteRotationSmallStrain",
+		 "incompatible finite strain strategy "
+		 "'"+fs+"' (only `FiniteRotationSmallStrain` accepted)");
+      } else if(ms==BehaviourDescription::HENCKY){
+ 	throw_if(fs!="MieheApelLambrechtLogarithmicStrain",
+		 "incompatible finite strain strategy '"+fs+"' "
+		 "(only `MieheApelLambrechtLogarithmicStrain` accepted)");
+      } else {
+	throw_if(true,"unsupported finite strain strategy");
+      }
+    }
+  } // end of checkFiniteStrainStrategyDefinitionConsistency
+
+  static void
+  checkFiniteStrainStrategyDefinitionConsistency(const BehaviourDescription& bd){
+    auto throw_if = [](const bool c,const std::string& msg){
+      tfel::raise_if(c,"checkFiniteStrainStrategyDefinitionConsistency: "+msg);
+    };
+    if(bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      throw_if(bd.hasAttribute(EuroplexusInterface::finiteStrainStrategy),
+	       "finite strain strategy is only supported for strain based behaviours");
+    } else {
+      if(bd.hasAttribute(EuroplexusInterface::finiteStrainStrategy)){
+	const auto fs = bd.getAttribute<std::string>(EuroplexusInterface::finiteStrainStrategy);
+	checkFiniteStrainStrategyDefinitionConsistency(bd,fs);
+      }
+    }
+  } // end of checkFiniteStrainStrategyDefinitionConsistency
+
+  static bool hasFiniteStrainStrategy(const BehaviourDescription& bd){
+    checkFiniteStrainStrategyDefinitionConsistency(bd);
+    if(bd.isStrainMeasureDefined()){
+      return bd.getStrainMeasure()!=BehaviourDescription::LINEARISED;
+    }
+    return  bd.hasAttribute(EuroplexusInterface::finiteStrainStrategy);
+  } // end of hasFiniteStrainStrategy
+  
+  static std::string getFiniteStrainStrategy(const BehaviourDescription& bd){
+    checkFiniteStrainStrategyDefinitionConsistency(bd);
+    auto throw_if = [](const bool c,const std::string& msg){
+      tfel::raise_if(c,"getFiniteStrainStrategy: "+msg);
+    };
+    if(bd.isStrainMeasureDefined()){
+      const auto ms = bd.getStrainMeasure();
+      if(ms==BehaviourDescription::GREENLAGRANGE){
+	return "FiniteRotationSmallStrain";
+      } else if(ms==BehaviourDescription::HENCKY){
+	return "MieheApelLambrechtLogarithmicStrain";
+      } else {
+	throw_if(true,"unsupported strain measure");
+      }
+    }
+    throw_if(!bd.hasAttribute(EuroplexusInterface::finiteStrainStrategy),
+	     "no finite strain strategy defined");
+    return bd.getAttribute<std::string>(EuroplexusInterface::finiteStrainStrategy);
+  } // end of getFiniteStrainStrategy
+  
+  static void writeEPXArguments(std::ostream& out)
   {
     out << "(epx::EuroplexusInt  *const,\n"
 	<< " epx::EuroplexusReal *const,\n"
@@ -85,6 +165,10 @@ namespace mfront{
 	<< " const epx::EuroplexusReal *const DPRED,\n"
 	<< " const epx::EuroplexusInt  *const NPREDEF)";
   } // end of writeEPXArguments
+
+  const char* const
+  EuroplexusInterface::finiteStrainStrategy = "epx::finiteStrainStrategy";
+
   
   std::string EuroplexusInterface::getName()
   {
@@ -119,7 +203,7 @@ namespace mfront{
   } // end of EuroplexusInterface::getLibraryName
 
   std::pair<bool,EuroplexusInterface::tokens_iterator>
-  EuroplexusInterface::treatKeyword(BehaviourDescription&,
+  EuroplexusInterface::treatKeyword(BehaviourDescription& bd,
 				    const std::string& key,
 				    const std::vector<std::string>& i,
 				    tokens_iterator current,
@@ -142,25 +226,20 @@ namespace mfront{
     }
     if ((key=="@EuroplexusFiniteStrainStrategy")||
 	(key=="@EPXFiniteStrainStrategy")){
-      auto read = [throw_if](const std::string& s){
-	if(s=="FiniteRotationSmallStrain"){
-	  return FINITEROTATIONSMALLSTRAIN;
-	} else if(s=="MieheApelLambrechtLogarithmicStrain"){
-	  return MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN;
-	} else {
-	  throw_if(true,"unsupported strategy '"+s+"'\n"
-		   "The only supported strategies are "
-		   "'FiniteRotationSmallStrain' and "
-		   "'MieheApelLambrechtLogarithmicStrain'");
-	}
-      };
-      throw_if(this->fss!=UNDEFINEDSTRATEGY,
+      throw_if(bd.hasAttribute(EuroplexusInterface::finiteStrainStrategy),
 	       "a finite strain strategy has already been defined");
       throw_if(current==end,"unexpected end of file");
-      this->fss = read(current->value);
+      const auto fs = current->value;
       throw_if(++current==end,"unexpected end of file");
       throw_if(current->value!=";","expected ';', read '"+current->value+'\'');
       ++(current);
+      checkFiniteStrainStrategyDefinitionConsistency(bd,fs);
+      if(fs=="Native"){
+	throw_if(bd.getSymmetryType()==mfront::ORTHOTROPIC,
+		 "orthotropic behaviours are not supported with the "
+		 "`Native` finite strain strategy");
+      }
+      bd.setAttribute(EuroplexusInterface::finiteStrainStrategy,fs,false);
       return {true,current};
     } else if ((key=="@EuroplexusGenerateMTestFileOnFailure")||
 	       (key=="@EPXGenerateMTestFileOnFailure")){
@@ -198,19 +277,11 @@ namespace mfront{
       tfel::raise_if(b,"EuroplexusInterface::endTreatment: "+m);
     };
     throw_if((mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)&&
-	     (mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR),
+	     ((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	      !hasFiniteStrainStrategy(mb)),
 	     "the europlexus interface only supports "
 	     "finite strain behaviours");
-    if(this->fss==UNDEFINEDSTRATEGY){
-      throw_if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
-	       "behaviours written in the small strain framework "
-	       "must be embedded in a strain strategy");
-    } else {
-      throw_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
-	       "finite strain strategies can only be defined "
-	       "for behaviours writtent in the "
-	       "small strain framework");
-    }
+    checkFiniteStrainStrategyDefinitionConsistency(mb);
     // get the modelling hypotheses to be treated
     const auto& mh = this->getModellingHypothesesToBeTreated(mb);
     const auto name =  mb.getLibrary()+mb.getClassName();
@@ -299,7 +370,7 @@ namespace mfront{
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
-    if(this->fss!=UNDEFINEDSTRATEGY){
+    if(mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
       out << "#include\"MFront/Europlexus/EuroplexusFiniteStrain.hxx\"\n\n";
     }
     out << "#include\"MFront/Europlexus/EuroplexusStressFreeExpansionHandler.hxx\"\n\n"
@@ -340,10 +411,15 @@ namespace mfront{
 	  << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
-    if(this->fss==FINITEROTATIONSMALLSTRAIN){
-      this->writeFiniteRotationSmallStrainCall(out,mb,name);
-    } else if(this->fss==MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN){
-      this->writeLogarithmicStrainCall(out,mb,name);
+    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      const auto fs = getFiniteStrainStrategy(mb);
+      if(fs=="FiniteRotationSmallStrain"){
+	this->writeFiniteRotationSmallStrainCall(out,mb,name);
+      } else if(fs=="MieheApelLambrechtLogarithmicStrain"){
+	this->writeLogarithmicStrainCall(out,mb,name);
+      } else {
+	throw_if(true,"unsupported finite strain strategy");
+      }
     } else {
       // this->generateMTestFile1(out);
       out << "const epx::EPXData d = {STATUS,STRESS,STATEV,DDSDDE,PNEWDT,BROKEN,MSG,\n"
@@ -1046,7 +1122,7 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      tfel::raise_if(this->fss==UNDEFINEDSTRATEGY,
+      tfel::raise_if(!hasFiniteStrainStrategy(mb),
 		     "EuroplexusInterface::writeUMATxxBehaviourTypeSymbols: "
 		     "behaviours written in the small strain framework "
 		     "must be embedded in a strain strategy");
@@ -1067,7 +1143,7 @@ namespace mfront{
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourKinematic = " ;
     if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      tfel::raise_if(this->fss==UNDEFINEDSTRATEGY,
+      tfel::raise_if(!hasFiniteStrainStrategy(mb),
 		     "EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols: "
 		     "behaviours written in the small strain framework "
 		     "must be embedded in a strain strategy");

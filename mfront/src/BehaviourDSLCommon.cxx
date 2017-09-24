@@ -330,7 +330,8 @@ namespace mfront{
   
   ModelDescription BehaviourDSLCommon::getModelDescription(const std::string& f){
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      getLogStream() << "BehaviourDSLCommon::treatModel: treating file '" << f << "'\n";
+      getLogStream() << "BehaviourDSLCommon::getModelDescription: "
+		     << "treating file '" << f << "'\n";
     }
     // getting informations the source files
     const auto path = SearchPathsHandler::search(f);
@@ -360,7 +361,8 @@ namespace mfront{
     const auto& md = dsl.getModelDescription();
     this->reserveName(md.className);
     if(getVerboseMode()>=VERBOSE_DEBUG){
-      getLogStream() << "BehaviourDSLCommon::treatModel: end of file '" << f << "' treatment\n";
+      getLogStream() << "BehaviourDSLCommon::getModelDescription: "
+		     << "end of file '" << f << "' treatment\n";
     }
     return md;
   } // end of BehaviourDSLCommon::getModelDescription
@@ -1388,6 +1390,24 @@ namespace mfront{
     return this->standardModifier(h,var,addThisPtr);
   } // end of BehaviourDSLCommon::tangentOperatorVariableModifier
 
+  void BehaviourDSLCommon::treatStrainMeasure(){
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatStrainMeasure",
+  			    "Expected strain measure name.");
+    const auto fs = this->current->value;
+    ++(this->current);
+    this->readSpecifiedToken("BehaviourDSLCommon::treatStrainMeasure",";");
+    if(fs=="Hencky"){
+      this->mb.setStrainMeasure(BehaviourDescription::HENCKY);
+    } else if (fs=="GreenLagrange"){
+      this->mb.setStrainMeasure(BehaviourDescription::GREENLAGRANGE);
+    } else if((fs=="Linearised")||(fs=="Linearized")){
+      this->mb.setStrainMeasure(BehaviourDescription::LINEARISED);
+    } else {
+      this->throwRuntimeError("BehaviourDSLCommon::treatStrainMeasure",
+			      "unsupported strain measure '"+fs+"'");
+    }
+  } // end of BehaviourDSLCommon::treatStrainMeasure
+
   void BehaviourDSLCommon::treatPrivate(){
     auto hs = std::set<Hypothesis>{};
     this->readHypothesesList(hs);
@@ -1510,7 +1530,8 @@ namespace mfront{
 	}
 	this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator",msg.str());
       }
-      this->readCodeBlock(*this,o,BehaviourData::ComputeTangentOperator+"-"+ktype,
+      this->readCodeBlock(*this,o,
+			  std::string(BehaviourData::ComputeTangentOperator)+"-"+ktype,
 			  &BehaviourDSLCommon::tangentOperatorVariableModifier,true);
       for(const auto & h : o.hypotheses){
 	if(!this->mb.hasAttribute(h,BehaviourData::hasConsistentTangentOperator)){
@@ -3574,7 +3595,7 @@ namespace mfront{
       // search tangent operators defined by the user
       for(const auto& t : tos){
 	const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
-	if(this->mb.hasCode(h,BehaviourData::ComputeTangentOperator+'-'+ktype)){
+	if(this->mb.hasCode(h,std::string(BehaviourData::ComputeTangentOperator)+'-'+ktype)){
 	  return true;
 	}
       }
@@ -5391,7 +5412,7 @@ namespace mfront{
       // search tangent operators defined by the user
       for(const auto& t : tos){
 	const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
-	if(mb.hasCode(h,BehaviourData::ComputePredictionOperator+'-'+ktype)){
+	if(mb.hasCode(h,std::string(BehaviourData::ComputePredictionOperator)+'-'+ktype)){
 	  return true;
 	}
       }
@@ -5433,7 +5454,8 @@ namespace mfront{
       vector<FiniteStrainBehaviourTangentOperatorBase::Flag> ktos;
       for(const auto& t : tos){
 	const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
-	if(this->mb.hasCode(h,BehaviourData::ComputePredictionOperator+'-'+ktype)){
+	if(this->mb.hasCode(h,std::string(BehaviourData::ComputePredictionOperator)
+			    +'-'+ktype)){
 	  ktos.push_back(t);
 	}
       }
@@ -5453,7 +5475,8 @@ namespace mfront{
 	       << "using namespace tfel::math;\n"
 	       << "using std::vector;\n";
 	    writeMaterialLaws(os,this->mb.getMaterialLaws());
-	    os << this->mb.getCode(h,BehaviourData::ComputePredictionOperator+"-"+ktype) << '\n'
+	    os << this->mb.getCode(h,std::string(BehaviourData::ComputePredictionOperator)
+				   +"-"+ktype) << '\n'
 	       << "return SUCCESS;\n"
 	       << "}\n\n";
 	  } else {
@@ -5547,7 +5570,8 @@ namespace mfront{
       vector<FiniteStrainBehaviourTangentOperatorBase::Flag> ktos;
       for(const auto& t : tos){
 	const auto ktype=convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
-	if(this->mb.hasCode(h,BehaviourData::ComputeTangentOperator+'-'+ktype)){
+	if(this->mb.hasCode(h,std::string(BehaviourData::ComputeTangentOperator)
+			    +'-'+ktype)){
 	  ktos.push_back(t);
 	}
       }
@@ -5567,7 +5591,8 @@ namespace mfront{
 	       << "using namespace tfel::math;\n"
 	       << "using std::vector;\n";
 	    writeMaterialLaws(os,this->mb.getMaterialLaws());
-	    os << this->mb.getCode(h,BehaviourData::ComputeTangentOperator+"-"+ktype) << '\n'
+	    os << this->mb.getCode(h,std::string(BehaviourData::ComputeTangentOperator)
+				   +"-"+ktype) << '\n'
 	       << "return true;\n"
 	       << "}\n\n";
 	  } else {
@@ -6641,7 +6666,8 @@ namespace mfront{
 	}
 	this->throwRuntimeError("BehaviourDSLCommon::treatPredictionOperator",msg.str());
       }
-      this->readCodeBlock(*this,o,BehaviourData::ComputePredictionOperator+"-"+ktype,
+      const auto po = std::string(BehaviourData::ComputePredictionOperator)+"-"+ktype;
+      this->readCodeBlock(*this,o,po,
 			  &BehaviourDSLCommon::predictionOperatorVariableModifier,true);
       for(const auto & h : o.hypotheses){
 	if(!this->mb.hasAttribute(h,BehaviourData::hasPredictionOperator)){

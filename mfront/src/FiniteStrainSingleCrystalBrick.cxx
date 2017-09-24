@@ -214,9 +214,12 @@ namespace mfront{
       "const auto& ss = "+cn+"::getSlidingSystems();\n"
       "const auto fsscb_dC_dFe = t2tost2<N,real>::dCdF(this->Fe);\n"
       "const auto fsscb_dS_dFe = eval((this->D)*fsscb_dC_dFe/2);\n"
-      "const auto fsscb_dtau_dFe = computePushForwardDerivative(fsscb_dS_dFe,this->fsscb_data.S,this->Fe); \n"
-      "const auto fsscb_dFe_dDF_tot = t2tot2<N,real>::tpld(this->fsscb_data.inv_dFp,t2tot2<N,real>::tpld(this->fsscb_data.Fe0));\n"
-      "const auto fsscb_dfeel_dDF   = eval(-(fsscb_dC_dFe)*(fsscb_dFe_dDF_tot)/2);\n"
+      "const auto fsscb_dtau_dFe = "
+      "computePushForwardDerivative(fsscb_dS_dFe,this->fsscb_data.S,this->Fe); \n"
+      "const auto fsscb_dFe_dDF_tot = "
+      "t2tot2<N,real>::tpld(this->fsscb_data.inv_dFp,"
+      "                     t2tot2<N,real>::tpld(this->fsscb_data.Fe0));\n"
+      "const auto fsscb_dfeel_dDF = eval(-(fsscb_dC_dFe)*(fsscb_dFe_dDF_tot)/2);\n"
       "st2tost2<N,real> fsscb_Je;\n"
       "tvector<"+cn+"::Nss,Stensor> fsscb_Jg;\n"
       "getPartialJacobianInvert(fsscb_Je,fsscb_Jg);\n"
@@ -228,8 +231,8 @@ namespace mfront{
       "  fsscb_dFe_dDF_tot+t2tot2<N,real>::tprd(this->fsscb_data.Fe_tr,fsscb_dinv_Fp_dDF);\n"
       "Dt = fsscb_dtau_dFe*fsscb_dFe_dDF;\n";
     to.members  = {"Fe","D"};
-    this->bd.setCode(h,BehaviourData::BehaviourData::ComputeTangentOperator+"-DTAU_DDF",
-    		     to,BehaviourData::CREATE,
+    const auto ton = std::string(BehaviourData::ComputeTangentOperator)+"-DTAU_DDF";
+    this->bd.setCode(h,ton,to,BehaviourData::CREATE,
     		     BehaviourData::AT_BEGINNING);
   } // end of FiniteStrainSingleCrystalBrick::endTreatment
   

@@ -1,6 +1,6 @@
 @DSL Implicit;
 @Author Thomas Helfer;
-@Date   21/09/2008;
+@Date   21/09/2017;
 @Behaviour ImplicitNorton_NumericallyComputedJacobianBlocks;
 @Description{
   This file implements the Norton law, described as:
@@ -26,12 +26,10 @@ young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
 
-@StateVariable real    p;
+@StateVariable strain p;
 @PhysicalBounds p in [0:*[;
 
 @Integrator{
-  const auto lambda = computeLambda(young,nu);
-  const auto mu = computeMu(young,nu);
   const auto A = 8.e-67;
   const auto E = 8.2;
   const auto seq = sigmaeq(sig);
