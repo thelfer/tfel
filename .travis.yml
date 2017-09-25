@@ -37,16 +37,16 @@ matrix:
         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
         
     # works on Precise and Trusty
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.7
-          packages:
-            - clang-3.7
-      env:
-        - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7"
+    # - os: linux
+    #   addons:
+    #     apt:
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+    #         - llvm-toolchain-precise-3.7
+    #       packages:
+    #         - clang-3.7
+    #   env:
+    #     - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7"
 
     # works on Precise and Trusty
     - os: linux
