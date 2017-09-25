@@ -306,7 +306,8 @@ namespace mfront{
     }
     AbaqusInterfaceBase::checkOrthotropyManagementPolicyConsistency(mb);
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
-      const auto requires_mfront_omp = [&mb]{
+      // this is required for gcc 4.7.2
+      const auto requires_mfront_omp = [&mb,this]{
 	if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	  if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
 	    const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(mb);
@@ -519,7 +520,8 @@ namespace mfront{
     out << "static void\n" << name << "_base" << this->getFunctionNameForHypothesis("",h);
     writeUMATArguments(out,mb,false);
     out << "{\n";
-    const auto is_fs = [&mb,&btype]{
+    // this is required for gcc 4.7.2
+    const auto is_fs = [&mb,&btype,this]{
       if(btype==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
 	  return AbaqusInterfaceBase::getFiniteStrainStrategy(mb)!="Native";
@@ -1114,7 +1116,8 @@ namespace mfront{
      * - the behaviour is written in small strain
      * - the finite strain strategy is either undefined or `Native`
      */
-    const auto c = [&mb] -> bool {
+    // this is required for gcc 4.7.2
+    const auto c = [&mb,this] {
       if(mb.getSymmetryType()==mfront::ISOTROPIC){
 	if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	  if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){

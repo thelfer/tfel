@@ -809,7 +809,8 @@ namespace mfront{
     }
     out << "for(int i=0;i!=*nblock;++i){\n";
     writeAbaqusExplicitDataInitialisation(out,this->getFunctionName(name),this->getStateVariablesOffset(mb,h));
-    const bool mfront_omp = [&mb]{
+    // this is required for gcc 4.7.2
+    const bool mfront_omp = [&mb,this]{
       if(AbaqusInterfaceBase::hasOrthotropyManagementPolicy(mb)){
 	return AbaqusInterfaceBase::getOrthotropyManagementPolicy(mb)=="MFront";
       }
