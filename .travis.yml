@@ -115,5 +115,5 @@ script:
   - mkdir build
   - cd build
   - cmake ../ -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-aster=ON
-  - make
-  - make check
+  - make |grep -v -e 'warning: section' |grep -v 'note: change section name to'
+  - make check |grep -v -e 'warning: section' |grep -v 'note: change section name to'
