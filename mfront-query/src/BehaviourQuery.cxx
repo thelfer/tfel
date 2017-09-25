@@ -308,9 +308,9 @@ namespace mfront{
 	    const auto t = d.getBehaviourType();
 	    if(t==BehaviourDescription::GENERALBEHAVIOUR){
 	      std::cout << 0 << std::endl;
-	    } else if(t==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	    } else if(t==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	      std::cout << 1 << std::endl;
-	    } else if(t==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	    } else if(t==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
 	      std::cout << 2 << std::endl;
 	    } else if(t==BehaviourDescription::COHESIVEZONEMODEL){
 	      std::cout << 3 << std::endl;

@@ -39,7 +39,7 @@ namespace mfront{
       tfel::raise_if(b,"checkCompareToNumericalTangentOperatorConsistency "
 		     "(AbaqusInterface): "+m);
     };
-    throw_if(bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+    throw_if(bd.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
 	     "unsupported feature @AbaqusSaveTangentOperator "
 	     "and @AbaqusCompareToNumericalTangentOperator : "
 	     "those are only valid for small strain beahviours");
@@ -67,7 +67,7 @@ namespace mfront{
 		     const bool f)
   {
     const auto sb = (bd.getBehaviourType()==
-		     BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR);
+		     BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR);
     const auto fs = [&bd,&sb]{
       if((sb)&&(!AbaqusInterfaceBase::hasFiniteStrainStrategy(bd))){
 	return false;
@@ -75,7 +75,7 @@ namespace mfront{
       return true;
     }();
     const auto fs2 = (bd.getBehaviourType()==
-		      BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR);
+		      BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR);
     if(f){
       out << "(abaqus::AbaqusReal *const STRESS,\n"
 	  << " abaqus::AbaqusReal *const STATEV,\n"
@@ -297,8 +297,8 @@ namespace mfront{
       tfel::raise_if(b,"AbaqusInterface::endTreatment: "+m);
     };
     AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(mb);
-    throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+    throw_if(!((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+	       (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)),
 	     "the abaqus interface only supports small and "
 	     "finite strain behaviours");
     if(this->compareToNumericalTangentOperator){
@@ -307,7 +307,7 @@ namespace mfront{
     AbaqusInterfaceBase::checkOrthotropyManagementPolicyConsistency(mb);
     if(mb.getSymmetryType()==mfront::ORTHOTROPIC){
       const auto requires_mfront_omp = [&mb]{
-	if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	  if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
 	    const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(mb);
 	    return fs!="Native";
@@ -480,7 +480,7 @@ namespace mfront{
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
     for(const auto h: mh){
-      if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
 	  const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(mb);
 	  if(fs=="Native"){
@@ -493,7 +493,7 @@ namespace mfront{
 	} else {
 	  this->writeUMATSmallStrainFunction(out,mb,name,h);
 	}
-      } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
 	this->writeUMATFiniteStrainFunction(out,mb,name,h);
       } else {
 	throw_if(true,"the abaqus interface only supports small "
@@ -520,7 +520,7 @@ namespace mfront{
     writeUMATArguments(out,mb,false);
     out << "{\n";
     const auto is_fs = [&mb,&btype]{
-      if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(btype==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
 	  return AbaqusInterfaceBase::getFiniteStrainStrategy(mb)!="Native";
 	}
@@ -540,7 +540,7 @@ namespace mfront{
     }
     const auto mfront_omp = usesMFrontOrthotropyManagementPolicy(mb);
     if(mfront_omp){
-      if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(btype==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
     	// turning the deformation and the deformation gradient
     	// increment to the material frame
     	if(h==ModellingHypothesis::PLANESTRESS){
@@ -614,7 +614,7 @@ namespace mfront{
     	dv1 = "de";
     	sig = "sm";
 	nstatev = "nstatev";
-      } else if(btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      } else if(btype==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
     	// turning the deformation gradients to the material frame
     	if(h==ModellingHypothesis::PLANESTRESS){
     	  out << "#ifndef MFRONT_ABAQUS_NORUNTIMECHECKS\n"
@@ -686,10 +686,10 @@ namespace mfront{
     		 "and finite strain behaviours");
       }
     } else {
-      if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(btype==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	dv0 = "STRAN";
 	dv1 = "DSTRAN";
-      } else if(btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      } else if(btype==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
 	dv0 = "F0";
 	dv1 = "F1";
       } else {
@@ -973,13 +973,13 @@ namespace mfront{
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
 	out << "2u;\n\n";
       } else {
 	out << "1u;\n\n";
       }
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "2u;\n\n";
     } else {
       throw_if(true,"unsupported behaviour type");
@@ -996,13 +996,13 @@ namespace mfront{
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourKinematic = " ;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
 	out << "1u;\n\n";
       } else {
 	out << "3u;\n\n";
       }
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "3u;\n\n";
     } else {
       throw_if(true,"unsupported behaviour type");
@@ -1114,9 +1114,9 @@ namespace mfront{
      * - the behaviour is written in small strain
      * - the finite strain strategy is either undefined or `Native`
      */
-    const auto c = [&mb]{
+    const auto c = [&mb] -> bool {
       if(mb.getSymmetryType()==mfront::ISOTROPIC){
-	if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	  if(AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
 	    return AbaqusInterfaceBase::getFiniteStrainStrategy(mb)=="Native";
 	  }

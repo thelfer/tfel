@@ -41,19 +41,19 @@ namespace ansys
   struct AnsysTangentOperatorFlag;
 
   template<>
-  struct AnsysTangentOperatorFlag<ansys::SMALLSTRAINSTANDARDBEHAVIOUR>
+  struct AnsysTangentOperatorFlag<ansys::STANDARDSTRAINBASEDBEHAVIOUR>
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
-    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>
     TangentOperatorTraits;
     static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
 
   template<>
-  struct AnsysTangentOperatorFlag<ansys::FINITESTRAINSTANDARDBEHAVIOUR>
+  struct AnsysTangentOperatorFlag<ansys::STANDARDFINITESTRAINBEHAVIOUR>
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
-    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR> TangentOperatorTraits;
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR> TangentOperatorTraits;
     static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::ABAQUS;
   };
 

@@ -552,8 +552,8 @@ namespace mtest
   void MTestParser::handleStrainEpsilon(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    tfel::raise_if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-		     ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+    tfel::raise_if(!((t.getBehaviourType()==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)||
+		     ((t.getBehaviourType()==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)&&
 		      (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
 		   "MTestParser::handleStrainEpsilon: "
 		   "the @StrainEpsilon keyword is only valid "
@@ -564,7 +564,7 @@ namespace mtest
   void MTestParser::handleDeformationGradientEpsilon(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    tfel::raise_if(!((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+    tfel::raise_if(!((t.getBehaviourType()==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)&&
 		     (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY)),
 		   "MTestParser::handleDeformationGradientEpsilon: "
 		   "the @DeformationGradientEpsilon keyword is only valid "
@@ -592,8 +592,8 @@ namespace mtest
   void MTestParser::handleStressEpsilon(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    tfel::raise_if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		   (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR),
+    tfel::raise_if((t.getBehaviourType()!=MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)&&
+		   (t.getBehaviourType()!=MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR),
 		   "MTestParser::handleStressEpsilon: "
 		   "the @StressEpsilon keyword is only valid "
 		   "for small strain behaviours");
@@ -627,8 +627,8 @@ namespace mtest
   void MTestParser::handleImposedStress(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    tfel::raise_if((t.getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		   (t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR),
+    tfel::raise_if((t.getBehaviourType()!=MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)&&
+		   (t.getBehaviourType()!=MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR),
 		   "MTestParser::handleImposedStress: "
 		   "the @ImposedStress keyword is only valid "
 		   "for standard behaviours");
@@ -670,16 +670,16 @@ namespace mtest
 			    p,this->tokens.end());
     if((p->value=="DrivingVariable")||
        ((p->value=="Strain")&&
-	(t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR))||
+	(t.getBehaviourType()==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR))||
        ((p->value=="DeformationGradient")&&
-	(t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR))||
+	(t.getBehaviourType()==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR))||
        ((p->value=="OpeningDisplacement")&&
 	(t.getBehaviourType()==MechanicalBehaviourBase::COHESIVEZONEMODEL))){
       np = NonLinearConstraint::DRIVINGVARIABLECONSTRAINT; 
     } else if ((p->value=="ThermodynamicForce")||
 	       ((p->value=="Stress")&&
-		((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-		 (t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)))||
+		((t.getBehaviourType()==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)||
+		 (t.getBehaviourType()==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)))||
 	       ((p->value=="CohesiveForce")&&
 		(t.getBehaviourType()==MechanicalBehaviourBase::COHESIVEZONEMODEL))){
       np = NonLinearConstraint::THERMODYNAMICFORCECONSTRAINT; 
@@ -701,8 +701,8 @@ namespace mtest
   void MTestParser::handleImposedStrain(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    tfel::raise_if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-		     ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+    tfel::raise_if(!((t.getBehaviourType()==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)||
+		     ((t.getBehaviourType()==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)&&
 		      (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
 		   "MTestParser::handleImposedStrain: "
 		   "the @ImposedStrain keyword is only valid "
@@ -713,7 +713,7 @@ namespace mtest
   void MTestParser::handleImposedDeformationGradient(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    tfel::raise_if(t.getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR,
+    tfel::raise_if(t.getBehaviourType()!=MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR,
 		   "MTestParser::handleImposedDeformationGradient: "
 		   "the @ImposedDeformationGradient keyword is only valid "
 		   "for finite strain behaviours");
@@ -752,8 +752,8 @@ namespace mtest
   void MTestParser::handleStrain(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    tfel::raise_if(!((t.getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-		     ((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+    tfel::raise_if(!((t.getBehaviourType()==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)||
+		     ((t.getBehaviourType()==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)&&
 		      (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
 		     "MTestParser::handleStrain: "
 		     "the @Strain keyword is only valid "
@@ -764,7 +764,7 @@ namespace mtest
   void MTestParser::handleDeformationGradient(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    tfel::raise_if(!((t.getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+    tfel::raise_if(!((t.getBehaviourType()==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)&&
 		     (t.getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY)),
 		   "MTestParser::handleDeformationGradient: "
 		   "the @DeformationGradient keyword is only valid "
@@ -796,8 +796,8 @@ namespace mtest
   void MTestParser::handleStress(MTest& t,tokens_iterator& p)
   {
     using namespace tfel::material;
-    tfel::raise_if((t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		   (t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR),
+    tfel::raise_if((t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)&&
+		   (t.getBehaviour()->getBehaviourType()!=MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR),
 		   "MTestParser::handleStress: "
 		   "the @Stress keyword is only valid "
 		   "for small strain behaviours");

@@ -97,7 +97,7 @@ namespace epx
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  EuroplexusComputeStiffnessTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeStiffnessTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::AXISYMMETRICAL,
 			     ISOTROPIC,b>
   {
@@ -116,7 +116,7 @@ namespace epx
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  EuroplexusComputeStiffnessTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeStiffnessTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ISOTROPIC,true>
   {
@@ -135,7 +135,7 @@ namespace epx
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  EuroplexusComputeStiffnessTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeStiffnessTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ISOTROPIC,false>
   {
@@ -154,7 +154,7 @@ namespace epx
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  EuroplexusComputeStiffnessTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeStiffnessTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRAIN,
 			     ISOTROPIC,b>
   {
@@ -173,7 +173,7 @@ namespace epx
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  EuroplexusComputeStiffnessTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeStiffnessTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
 			     ISOTROPIC,b>
   {
@@ -192,7 +192,7 @@ namespace epx
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  EuroplexusComputeStiffnessTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeStiffnessTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
 			     ISOTROPIC,b>
   {
@@ -211,7 +211,7 @@ namespace epx
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  EuroplexusComputeStiffnessTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeStiffnessTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::AXISYMMETRICAL,ORTHOTROPIC,b>
   {
     /*!
@@ -229,7 +229,7 @@ namespace epx
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  EuroplexusComputeStiffnessTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeStiffnessTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ORTHOTROPIC,true>
   {
@@ -248,7 +248,7 @@ namespace epx
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  EuroplexusComputeStiffnessTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeStiffnessTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ORTHOTROPIC,false>
   {
@@ -267,7 +267,7 @@ namespace epx
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  EuroplexusComputeStiffnessTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeStiffnessTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRAIN,
 			     ORTHOTROPIC,b>
   {
@@ -286,7 +286,7 @@ namespace epx
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  EuroplexusComputeStiffnessTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeStiffnessTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
 			     ORTHOTROPIC,b>
   {
@@ -305,7 +305,7 @@ namespace epx
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  EuroplexusComputeStiffnessTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeStiffnessTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
 			     ORTHOTROPIC,b>
   {
@@ -328,7 +328,7 @@ namespace epx
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   EuroplexusSymmetryType stype,bool b>
   struct TFEL_VISIBILITY_LOCAL
-  EuroplexusComputeStiffnessTensor<epx::FINITESTRAINSTANDARDBEHAVIOUR,H,stype,b>
+  EuroplexusComputeStiffnessTensor<epx::STANDARDFINITESTRAINBEHAVIOUR,H,stype,b>
   {
     typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
     /*!
@@ -340,7 +340,7 @@ namespace epx
     exe(typename tfel::config::Types<ModellingHypothesisToSpaceDimension::value,EuroplexusReal,false>::StiffnessTensor& D,
 	const EuroplexusReal* const props)
     {
-      EuroplexusComputeStiffnessTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,H,stype,b>::exe(D,props);
+      EuroplexusComputeStiffnessTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,H,stype,b>::exe(D,props);
     }
   }; // end of struct EuroplexusComputeStiffnessTensor
 

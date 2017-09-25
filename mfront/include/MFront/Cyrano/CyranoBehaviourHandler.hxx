@@ -350,7 +350,7 @@ namespace cyrano
 	      behaviour.setOutOfBoundsPolicy(this->policy);
 	      behaviour.checkBounds();
 	      const auto smflag = 
-		TangentOperatorTraits<BV::SMALLSTRAINSTANDARDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
+		TangentOperatorTraits<BV::STANDARDSTRAINBASEDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
 	      if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
 		r = PredictionOperatorComputer::exe(behaviour,smflag,BV::TANGENTOPERATOR);
 	      } else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){
@@ -505,7 +505,7 @@ namespace cyrano
 	  behaviour.checkBounds();
 	  auto r = BV::SUCCESS;
 	  const auto smflag = 
-	      TangentOperatorTraits<BV::SMALLSTRAINSTANDARDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
+	      TangentOperatorTraits<BV::STANDARDSTRAINBASEDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
 	  if((-3.25<*DDSOE)&&(*DDSOE<-2.75)){
 	    r = PredictionOperatorComputer::exe(this->behaviour,smflag,BV::TANGENTOPERATOR);
 	  } else if((-2.25<*DDSOE)&&(*DDSOE<-1.75)){

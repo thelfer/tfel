@@ -218,8 +218,8 @@ namespace mfront
     }
     out << "{\n"
 	<< "using namespace tfel::math;\n";
-    tfel::raise_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-		     (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+    tfel::raise_if(!((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+		     (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)),
 		   "ZMATInterface::exportMechanicalData: "
 		   "only small or finite strain behaviours are supported");
     out << "zmat::ZMATInterface::convert(&ZMATsig[0],this->sig);\n";
@@ -334,21 +334,21 @@ namespace mfront
     auto evs = d.getExternalStateVariables();
     // removing the temperature
     evs.erase(evs.begin());
-    tfel::raise_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-		     (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+    tfel::raise_if(!((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+		     (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)),
 		   "ZMATInterface::writeBehaviourDataConstructor: "
 		   "only small or finite strain behaviours are supported");
     out << "/*!\n"
 	<< " * \\brief constructor for the ZMAT interface\n"
 	<< " *\n";
-    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+    if((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+       (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)){
       out << " * \\param ZMATsig     : stress at the beginning of the time step\n";
     }
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       out << " \\param ZMATeto     : strain at the beginning of the time step\n";
     }
-    if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << " \\param ZMATF0      : deformation gradient at the begining of the time step\n";
     }
     out << " * \\param ZMATmprops  : material properties\n"
@@ -357,15 +357,15 @@ namespace mfront
 	<< " * \\param ZMATevs_pos : position of the external state varaibles\n"
 	<< " */\n"
 	<< mb.getClassName() << "BehaviourData(";
-    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+    if((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+       (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)){
       out << "const ZSET::TENSOR2_FLUX& ZMATsig,\n";
     }
     switch(mb.getBehaviourType()){
-    case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
       out << "const real * const ZMATeto,\n";
       break;
-    case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
       out << "const real * const ZMATF0,\n";
       break;
     default:
@@ -390,10 +390,10 @@ namespace mfront
     out << "const ZSET::EXTERNAL_PARAMETER_VECTOR& ZMATextvars_t = *(ZMATdata.param_set_ini());\n"
 	<< "zmat::ZMATInterface::convert(this->sig,&ZMATsig[0]);\n";
     switch(mb.getBehaviourType()){
-    case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
       out << "zmat::ZMATInterface::convert(this->eto,&ZMATeto[0]);\n";
       break;
-    case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
       out << "zmat::ZMATInterface::convert(this->F0,&ZMATF0[0]);\n";
       break;
     default:
@@ -537,22 +537,22 @@ namespace mfront
     auto throw_if = [](const bool c,const std::string& m){
       tfel::raise_if(c,"ZMATInterface::writeBehaviourConstructor: "+m);
     };
-    throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+    throw_if(!((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+	       (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)),
 	     "only small or finite strain behaviours are supported");
     out << "/*!\n"
 	<< " * \\brief constructor for the ZMAT interface\n"
 	<< " *\n";
-    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+    if((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+       (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)){
       out << " * \\param ZMATsig     : strains\n";
     }
     switch(mb.getBehaviourType()){
-    case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
       out << " \\param ZMATeto     : strain at the beginning of the time step\n"
 	  << " \\param ZMATdeto    : strain increment\n";
       break;
-    case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
       out << " \\param ZMATF0 : deformation gradient at the beginning of the time step\n"
 	  << " \\param ZMATF1 : deformation gradient at the end of the time step\n";
       break;
@@ -566,16 +566,16 @@ namespace mfront
 	<< " * \\param ZMATdt      : time step\n"
 	<< " */\n"
 	<< mb.getClassName() << "(";
-    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+    if((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+       (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)){
       out << "const ZSET::TENSOR2_FLUX& ZMATsig,\n";
     }
     switch(mb.getBehaviourType()){
-    case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
       out << " const real* const ZMATeto,\n"
 	  << " const real* const ZMATdeto,\n";
       break;
-    case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
       out << " const real* const ZMATF0,\n"
 	  << " const real* const ZMATF1,\n";
       break;
@@ -588,7 +588,7 @@ namespace mfront
 	<< "const ZSET::ARRAY<int>& ZMATevs_pos,\n"
 	<< "const double ZMATdt)\n";
     switch(mb.getBehaviourType()){
-    case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
       if(mb.useQt()){
 	out << ": " << mb.getClassName() 
 	    << "BehaviourData<hypothesis,Type,use_qt>(ZMATsig,ZMATeto,ZMATmprops,ZMATdata,ZMATT_pos,ZMATevs_pos),\n";
@@ -601,7 +601,7 @@ namespace mfront
 	    << "IntegrationData<hypothesis,Type,false>(ZMATdeto,ZMATdata,ZMATT_pos,ZMATevs_pos,ZMATdt)";
       }
       break;
-    case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
       if(mb.useQt()){
 	out << ": " << mb.getClassName() 
 	    << "BehaviourData<hypothesis,Type,use_qt>(ZMATsig,ZMATF0,ZMATmprops,ZMATdata,ZMATT_pos,ZMATevs_pos),\n";
@@ -635,17 +635,17 @@ namespace mfront
     auto evs = d.getExternalStateVariables();
     // removing the temperature
     evs.erase(evs.begin());
-    throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+    throw_if(!((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+	       (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)),
 	     "only small or finite strain behaviours are supported");
     out << "/*!\n"
 	<< " * \\brief constructor for the ZMAT interface\n"
 	<< " *\n";
     switch(mb.getBehaviourType()){
-    case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
       out << " \\param ZMATdeto  : strain increment \n";
       break;
-    case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
       out << " \\param ZMATF1    : deformation gradient at the end of the time step\n";
       break;
     default:
@@ -658,10 +658,10 @@ namespace mfront
 	<< " */\n"
 	<< mb.getClassName() << "IntegrationData(";
     switch(mb.getBehaviourType()){
-    case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
       out << "const real * const ZMATdeto,\n";
       break;
-    case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
       out << "const real * const ZMATF1,\n";
       break;
     default:
@@ -680,10 +680,10 @@ namespace mfront
 	<< "const ZSET::EXTERNAL_PARAMETER_VECTOR& ZMATextvars_t   = *(ZMATdata.param_set_ini());\n"
 	<< "const ZSET::EXTERNAL_PARAMETER_VECTOR& ZMATextvars_tdt = *(ZMATdata.param_set());\n";
     switch(mb.getBehaviourType()){
-    case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
       out << "zmat::ZMATInterface::convert(this->deto,ZMATdeto);\n";
       break;
-    case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
       out << "zmat::ZMATInterface::convert(this->F1,ZMATF1);\n";
       break;
     default:
@@ -852,19 +852,19 @@ namespace mfront
     out << "//! stresses\n"
 	<< "TENSOR2_FLUX sig;\n";
     switch(mb.getBehaviourType()){
-    case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
       out << "//! strains\n"
 	  << "TENSOR2_GRAD eto;\n";
       break;
-    case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
       out << "//! deformation gradient\n"
 	  << "TENSOR2_GRAD F;\n";
       break;
     default:
       throw_if(true,"unsupported behaviour type");
     }
-    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+    if((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+       (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)){
       out << "//! tangent operator\n"
 	  << "MATRIX tg_mat; \n";
     }
@@ -963,17 +963,17 @@ namespace mfront
 	<< "this->coord.resize(dim);\n"
 	<< "this->sig.initialize(this,\"sig\",this->tsz(),1);\n";
     switch(mb.getBehaviourType()){
-    case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
       out << "this->eto.initialize(this,\"eto\",this->tsz(),1);\n";
       break;
-    case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
       out << "this->F.initialize(this,\"F\",this->utsz(),1);\n";
       break;
     default:
       throw_if(true,"unsupported behaviour type");
     }
-    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+    if((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+       (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)){
       out << "this->tg_mat.resize(this->tsz(), this->tsz());\n";
     }
     out << "// initialisation dispatch\n"
@@ -1422,7 +1422,7 @@ namespace mfront
 	<< "<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ",double,false> "
 	<< mb.getClassName() << ";\n"
 	<< "using tfel::math::st2tost2;\n";
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       out << "// strain and strain increment\n"
 	  << "double stran[" << getStensorSize(h) << "];\n"
 	  << "double dstran[" << getStensorSize(h) << "];\n"
@@ -1448,7 +1448,7 @@ namespace mfront
 	  out << "dstran[5] = delta_grad[5];\n";
 	}
       }
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "// deformation gradients\n"
 	  << "double F0[" << getTensorSize(h) << "];\n"
 	  << "F0[0] = this->F[0]-delta_grad[0];\n"
@@ -1470,10 +1470,10 @@ namespace mfront
 		  "unsupported behaviour type");
     }
     switch(mb.getBehaviourType()){
-    case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
       out << mb.getClassName() << "::SMFlag smflag = " << mb.getClassName() << "::STANDARDTANGENTOPERATOR;\n";
       break;
-    case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
       out << mb.getClassName() << "::SMFlag smflag = " << mb.getClassName() << "::C_TRUESDELL;\n";
       break;
     default:
@@ -1486,11 +1486,11 @@ namespace mfront
 	<< "smtype = " << mb.getClassName() << "::CONSISTENTTANGENTOPERATOR;\n"
 	<< "}\n";
     switch(mb.getBehaviourType()){
-    case BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
       out << mb.getClassName() << " b(this->sig,stran,dstran,this->mprops,mdat,this->temperature_position,\n"
 	  << "this->evs_positions,ZSET::stored_thread_zbase_globals->ptr()->active_clock->get_dtime());\n";
       break;
-    case BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR:
+    case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
       out << mb.getClassName() << " b(this->sig,F0,&(this->F[0]),this->mprops,mdat,this->temperature_position,\n"
 	  << "this->evs_positions,ZSET::stored_thread_zbase_globals->ptr()->active_clock->get_dtime());\n";
       break;
@@ -1509,9 +1509,9 @@ namespace mfront
 	<< "}\n"
 	<< "b.ZMATexportStateData(this->sig,mdat);\n"
 	<< "if(smtype!=" << mb.getClassName() << "::NOSTIFFNESSREQUESTED){\n";
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       out << "zmat::ZMATInterface::convert(*tg_matrix,b.getTangentOperator());\n";
-    } else if (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "zmat::ZMATInterface::convert(*tg_matrix,b.getTangentOperator().get<st2tost2<"
 	  << getSpaceDimension(h) << ",double> >());\n";
     } else {

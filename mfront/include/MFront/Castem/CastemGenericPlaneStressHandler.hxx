@@ -255,7 +255,7 @@ namespace castem
 	       const StressFreeExpansionHandler& sfeh)
       {
 	using namespace tfel::material;
-	using BehaviourHandler = CastemIsotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
+	using BehaviourHandler = CastemIsotropicBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,
 								 ModellingHypothesis::GENERALISEDPLANESTRAIN,Behaviour>;
 	using BV = Behaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN,CastemReal,false>;
 	constexpr const auto offset  = CastemTraits<BV>::propertiesOffset;
@@ -300,7 +300,7 @@ namespace castem
 	using namespace tfel::material;
 	constexpr const auto H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
 	typedef Behaviour<H,CastemReal,false> BV;
-	typedef CastemOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour> BehaviourHandler;
+	typedef CastemOrthotropicBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour> BehaviourHandler;
 	constexpr const auto offset  = CastemTraits<BV>::propertiesOffset;
 	constexpr const auto nprops  = MechanicalBehaviourTraits<BV>::material_properties_nb;
 	static_assert(offset==13u,"invalid offset value");

@@ -97,7 +97,7 @@ namespace aster
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AsterComputeStiffnessTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AsterComputeStiffnessTensor<aster::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::AXISYMMETRICAL,
 			     ISOTROPIC,b>
   {
@@ -116,7 +116,7 @@ namespace aster
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  AsterComputeStiffnessTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AsterComputeStiffnessTensor<aster::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ISOTROPIC,true>
   {
@@ -135,7 +135,7 @@ namespace aster
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  AsterComputeStiffnessTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AsterComputeStiffnessTensor<aster::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ISOTROPIC,false>
   {
@@ -154,7 +154,7 @@ namespace aster
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AsterComputeStiffnessTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AsterComputeStiffnessTensor<aster::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRAIN,
 			     ISOTROPIC,b>
   {
@@ -173,7 +173,7 @@ namespace aster
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AsterComputeStiffnessTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AsterComputeStiffnessTensor<aster::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
 			     ISOTROPIC,b>
   {
@@ -192,7 +192,7 @@ namespace aster
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AsterComputeStiffnessTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AsterComputeStiffnessTensor<aster::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
 			     ISOTROPIC,b>
   {
@@ -211,7 +211,7 @@ namespace aster
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AsterComputeStiffnessTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AsterComputeStiffnessTensor<aster::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::AXISYMMETRICAL,ORTHOTROPIC,b>
   {
     /*!
@@ -229,7 +229,7 @@ namespace aster
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  AsterComputeStiffnessTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AsterComputeStiffnessTensor<aster::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ORTHOTROPIC,true>
   {
@@ -248,7 +248,7 @@ namespace aster
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  AsterComputeStiffnessTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AsterComputeStiffnessTensor<aster::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ORTHOTROPIC,false>
   {
@@ -267,7 +267,7 @@ namespace aster
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AsterComputeStiffnessTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AsterComputeStiffnessTensor<aster::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRAIN,
 			     ORTHOTROPIC,b>
   {
@@ -286,7 +286,7 @@ namespace aster
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AsterComputeStiffnessTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AsterComputeStiffnessTensor<aster::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
 			     ORTHOTROPIC,b>
   {
@@ -305,7 +305,7 @@ namespace aster
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AsterComputeStiffnessTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AsterComputeStiffnessTensor<aster::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
 			     ORTHOTROPIC,b>
   {
@@ -328,7 +328,7 @@ namespace aster
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   AsterSymmetryType stype,bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AsterComputeStiffnessTensor<aster::FINITESTRAINSTANDARDBEHAVIOUR,H,stype,b>
+  AsterComputeStiffnessTensor<aster::STANDARDFINITESTRAINBEHAVIOUR,H,stype,b>
   {
     typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
     /*!
@@ -340,7 +340,7 @@ namespace aster
     exe(typename tfel::config::Types<ModellingHypothesisToSpaceDimension::value,AsterReal,false>::StiffnessTensor& D,
 	const AsterReal* const props)
     {
-      AsterComputeStiffnessTensor<aster::SMALLSTRAINSTANDARDBEHAVIOUR,H,stype,b>::exe(D,props);
+      AsterComputeStiffnessTensor<aster::STANDARDSTRAINBASEDBEHAVIOUR,H,stype,b>::exe(D,props);
     }
   }; // end of struct AsterComputeStiffnessTensor
 

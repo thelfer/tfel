@@ -40,7 +40,7 @@ namespace mfront{
     // reserve some specific variables
     this->bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"sebdata");
     // basic checks
-    throw_if(this->bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+    throw_if(this->bd.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
 	     "this behaviour brick is only usable for small strain behaviours");
     throw_if(this->bd.getIntegrationScheme()!=BehaviourDescription::IMPLICITSCHEME,
 	     "this behaviour brick is only usable in implicit schemes");

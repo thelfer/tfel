@@ -32,7 +32,7 @@ namespace abaqus
 
   template<>
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>
   {
     static void
@@ -45,7 +45,7 @@ namespace abaqus
 
   template<>
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::AXISYMMETRICAL,ISOTROPIC>
   {
     static void
@@ -58,7 +58,7 @@ namespace abaqus
 
   template<>
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::PLANESTRESS,ISOTROPIC>
   {
     static void
@@ -72,7 +72,7 @@ namespace abaqus
 
   template<>
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::PLANESTRAIN,ISOTROPIC>
   {
     static void
@@ -85,7 +85,7 @@ namespace abaqus
 
   template<>
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ISOTROPIC>
   {
     static void
@@ -98,7 +98,7 @@ namespace abaqus
 
   template<>
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ISOTROPIC>
   {
     static void
@@ -111,7 +111,7 @@ namespace abaqus
 
   template<>
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>
   {
     static void
@@ -124,7 +124,7 @@ namespace abaqus
 
   template<>
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::AXISYMMETRICAL,ORTHOTROPIC>
   {
     static void
@@ -137,7 +137,7 @@ namespace abaqus
 
   template<>
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::PLANESTRESS,ORTHOTROPIC>
   {
     static void
@@ -151,7 +151,7 @@ namespace abaqus
 
   template<>
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::PLANESTRAIN,ORTHOTROPIC>
   {
     static void
@@ -164,7 +164,7 @@ namespace abaqus
 
   template<>
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ORTHOTROPIC>
   {
     static void
@@ -177,7 +177,7 @@ namespace abaqus
 
   template<>
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ORTHOTROPIC>
   {
     static void

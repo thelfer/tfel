@@ -51,7 +51,7 @@ namespace mfront{
     } else {
       this->bd.setModellingHypotheses({ModellingHypothesis::TRIDIMENSIONAL});
     }
-    throw_if(this->bd.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,
+    throw_if(this->bd.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR,
 	     "this BehaviourBrick is only usable for small strain behaviours");
     throw_if(this->bd.getIntegrationScheme()!=BehaviourDescription::IMPLICITSCHEME,
 	     "this BehaviourBrick is only usable in implicit schemes");

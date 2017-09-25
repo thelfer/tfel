@@ -40,7 +40,7 @@
   } /* end of struct AbaqusComputeThermalExpansionCoefficientTensor */                                                                   \
  																	 \
   void																	 \
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,							 \
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,							 \
 				    tfel::material::ModellingHypothesis::PLANESTRESS,							 \
 				    ISOTROPIC>::exe(const real* const props,							         \
 						    tfel::config::Types<2u,real,false>::ThermalExpansionCoefficientTensor& A)	         \
@@ -49,7 +49,7 @@
   } /* end of struct AbaqusComputeThermalExpansionCoefficientTensor */	                                                                 \
 																	 \
   void																	 \
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,							 \
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,							 \
 				    tfel::material::ModellingHypothesis::AXISYMMETRICAL,						 \
 				    ISOTROPIC>::exe(const real* const props,							         \
 						    tfel::config::Types<2u,real,false>::ThermalExpansionCoefficientTensor& A)	         \
@@ -58,7 +58,7 @@
   } /* end of struct AbaqusComputeThermalExpansionCoefficientTensor */	                                                                 \
 																	 \
   void																	 \
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,							 \
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,							 \
 				    tfel::material::ModellingHypothesis::PLANESTRAIN,							 \
 				    ISOTROPIC>::exe(const real* const props,							         \
 						    tfel::config::Types<2u,real,false>::ThermalExpansionCoefficientTensor& A)	         \
@@ -67,7 +67,7 @@
   } /* end of struct AbaqusComputeThermalExpansionCoefficientTensor */                                                                   \
 																	 \
   void																	 \
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,							 \
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,							 \
 				    tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,					 \
 				    ISOTROPIC>::exe(const real* const props,							         \
 						    tfel::config::Types<2u,real,false>::ThermalExpansionCoefficientTensor& A)	         \
@@ -76,7 +76,7 @@
   } /* end of struct AbaqusComputeThermalExpansionCoefficientTensor */                                                                   \
 																	 \
   void																	 \
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,							 \
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,							 \
 				    tfel::material::ModellingHypothesis::TRIDIMENSIONAL,						 \
 				    ISOTROPIC>::exe(const real* const props,							         \
 						    tfel::config::Types<3u,real,false>::ThermalExpansionCoefficientTensor& A)	         \
@@ -87,7 +87,7 @@
   } /* end of struct AbaqusComputeThermalExpansionCoefficientTensor */                                                                   \
 																	 \
   void																	 \
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,							 \
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,							 \
 				    tfel::material::ModellingHypothesis::PLANESTRESS,							 \
 				    ORTHOTROPIC>::exe(const real* const props,							         \
 						      tfel::config::Types<2u,real,false>::ThermalExpansionCoefficientTensor& A)	         \
@@ -96,7 +96,7 @@
   } /* end of struct AbaqusComputeThermalExpansionCoefficientTensor */								         \
 																	 \
   void																	 \
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,							 \
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,							 \
 				    tfel::material::ModellingHypothesis::AXISYMMETRICAL,						 \
 				    ORTHOTROPIC>::exe(const real* const props,							         \
 						      tfel::config::Types<2u,real,false>::ThermalExpansionCoefficientTensor& C)	         \
@@ -105,7 +105,7 @@
   } /* end of struct AbaqusComputeThermalExpansionCoefficientTensor */	                                                                 \
   																	 \
   void																	 \
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,							 \
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,							 \
 				    tfel::material::ModellingHypothesis::PLANESTRAIN,							 \
 				    ORTHOTROPIC>::exe(const real* const props,							         \
 						      tfel::config::Types<2u,real,false>::ThermalExpansionCoefficientTensor& C)	         \
@@ -114,7 +114,7 @@
   } /* end of struct AbaqusComputeThermalExpansionCoefficientTensor */	                                                                 \
   																	 \
   void																	 \
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,							 \
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,							 \
 				    tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,					 \
 				    ORTHOTROPIC>::exe(const real* const props,							         \
 						      tfel::config::Types<2u,real,false>::ThermalExpansionCoefficientTensor& C)	         \
@@ -123,7 +123,7 @@
   } /* end of struct AbaqusComputeThermalExpansionCoefficientTensor */	                                                                 \
   																	 \
   void																	 \
-  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,							 \
+  AbaqusComputeThermalExpansionCoefficientTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,							 \
 				    tfel::material::ModellingHypothesis::TRIDIMENSIONAL,						 \
 				    ORTHOTROPIC>::exe(const real* const props,							         \
 						      tfel::config::Types<3u,real,false>::ThermalExpansionCoefficientTensor& A)	         \

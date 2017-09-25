@@ -49,7 +49,7 @@ namespace mtest{
 		   "LogarithmicStrain1DBehaviourWrapper: "
 		   "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'");
     tfel::raise_if(this->b->getBehaviourType()!=
-		   MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR,
+		   MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR,
 		   "LogarithmicStrain1DBehaviourWrapper::"
 		   "LogarithmicStrain1DBehaviourWrapper: "
 		   "the underlying behaviour must be small strain");
@@ -64,7 +64,7 @@ namespace mtest{
   LogarithmicStrain1DBehaviourWrapper::getBehaviourType() const
   {
     using tfel::material::MechanicalBehaviourBase;
-    return MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR;
+    return MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR;
   } // end of LogarithmicStrain1DBehaviourWrapper::getBehaviourType
 
   tfel::material::MechanicalBehaviourBase::Kinematic

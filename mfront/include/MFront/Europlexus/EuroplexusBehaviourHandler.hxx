@@ -34,19 +34,19 @@ namespace epx
   struct EuroplexusTangentOperatorFlag;
   
   template<>
-  struct EuroplexusTangentOperatorFlag<epx::SMALLSTRAINSTANDARDBEHAVIOUR>
+  struct EuroplexusTangentOperatorFlag<epx::STANDARDSTRAINBASEDBEHAVIOUR>
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
-    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>
     TangentOperatorTraits;
     static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
 
   template<>
-  struct EuroplexusTangentOperatorFlag<epx::FINITESTRAINSTANDARDBEHAVIOUR>
+  struct EuroplexusTangentOperatorFlag<epx::STANDARDFINITESTRAINBEHAVIOUR>
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
-    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR>
     TangentOperatorTraits;
     static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DSIG_DF;
   };
@@ -55,14 +55,14 @@ namespace epx
   struct EuroplexusTangentOperatorType;
 
   template<unsigned short N>
-  struct EuroplexusTangentOperatorType<epx::SMALLSTRAINSTANDARDBEHAVIOUR,N>
+  struct EuroplexusTangentOperatorType<epx::STANDARDSTRAINBASEDBEHAVIOUR,N>
   {
     using type      = tfel::math::st2tost2<N,EuroplexusReal>;
     using view_type = tfel::math::ST2toST2View<N,EuroplexusReal>;
   };
 
   template<unsigned short N>
-  struct EuroplexusTangentOperatorType<epx::FINITESTRAINSTANDARDBEHAVIOUR,N>
+  struct EuroplexusTangentOperatorType<epx::STANDARDFINITESTRAINBEHAVIOUR,N>
   {
     using type      = tfel::math::t2tost2<N,EuroplexusReal>;
     using view_type = tfel::math::T2toST2View<N,EuroplexusReal>;

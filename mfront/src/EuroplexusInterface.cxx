@@ -78,7 +78,7 @@ namespace mfront{
     auto throw_if = [](const bool c,const std::string& msg){
       tfel::raise_if(c,"checkFiniteStrainStrategyDefinitionConsistency: "+msg);
     };
-    if(bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(bd.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       throw_if(bd.hasAttribute(EuroplexusInterface::finiteStrainStrategy),
 	       "finite strain strategy is only supported for strain based behaviours");
     } else {
@@ -276,8 +276,8 @@ namespace mfront{
     auto throw_if = [](const bool b, const std::string& m){
       tfel::raise_if(b,"EuroplexusInterface::endTreatment: "+m);
     };
-    throw_if((mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)&&
-	     ((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+    throw_if((mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)&&
+	     ((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
 	      !hasFiniteStrainStrategy(mb)),
 	     "the europlexus interface only supports "
 	     "finite strain behaviours");
@@ -370,7 +370,7 @@ namespace mfront{
     if(mb.getAttribute(BehaviourData::profiling,false)){
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n\n";
     }
-    if(mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "#include\"MFront/Europlexus/EuroplexusFiniteStrain.hxx\"\n\n";
     }
     out << "#include\"MFront/Europlexus/EuroplexusStressFreeExpansionHandler.hxx\"\n\n"
@@ -411,7 +411,7 @@ namespace mfront{
 	  << "Profiler::getProfiler(),\n"
 	  << "BehaviourProfiler::TOTALTIME);\n";
     }
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       const auto fs = getFiniteStrainStrategy(mb);
       if(fs=="FiniteRotationSmallStrain"){
 	this->writeFiniteRotationSmallStrainCall(out,mb,name);
@@ -524,7 +524,7 @@ namespace mfront{
 							  const BehaviourDescription& mb,
 							  const std::string& name) const
   {
-    tfel::raise_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+    tfel::raise_if(mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
 		   "EuroplexusInterface::writeFiniteRotationSmallStrainCall: "
 		   "internal error, the 'finite rotation small strain' "
 		   "strategy shall be used only with small "
@@ -597,7 +597,7 @@ namespace mfront{
 						       const BehaviourDescription& mb,
 						       const std::string& name) const
   {
-    tfel::raise_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+    tfel::raise_if(mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
 		   "EuroplexusInterface::writeFiniteRotationSmallStrainCall: "
 		   "internal error, the 'finite rotation small strain' "
 		   "strategy shall be used only with small "
@@ -987,10 +987,10 @@ namespace mfront{
     }
     out << "> >\n{\n"
  << "//! behaviour type\n";
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      out << "static " << constexpr_c << " EuroplexusBehaviourType btype = epx::SMALLSTRAINSTANDARDBEHAVIOUR;\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      out << "static " << constexpr_c << " EuroplexusBehaviourType btype = epx::FINITESTRAINSTANDARDBEHAVIOUR;\n";
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
+      out << "static " << constexpr_c << " EuroplexusBehaviourType btype = epx::STANDARDSTRAINBASEDBEHAVIOUR;\n";
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
+      out << "static " << constexpr_c << " EuroplexusBehaviourType btype = epx::STANDARDFINITESTRAINBEHAVIOUR;\n";
     } else {
       tfel::raise("EuroplexusInterface::writeEuroplexusBehaviourTraits : "
 		  "unsupported behaviour type");
@@ -1121,13 +1121,13 @@ namespace mfront{
   {
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       tfel::raise_if(!hasFiniteStrainStrategy(mb),
 		     "EuroplexusInterface::writeUMATxxBehaviourTypeSymbols: "
 		     "behaviours written in the small strain framework "
 		     "must be embedded in a strain strategy");
       out << "2u;\n\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "2u;\n\n";
     } else {
       tfel::raise("EuroplexusInterface::writeUMATxxBehaviourTypeSymbols: "
@@ -1142,13 +1142,13 @@ namespace mfront{
   {
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourKinematic = " ;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       tfel::raise_if(!hasFiniteStrainStrategy(mb),
 		     "EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols: "
 		     "behaviours written in the small strain framework "
 		     "must be embedded in a strain strategy");
       out << "3u;\n\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "3u;\n\n";
     } else {
       tfel::raise("EuroplexusInterface::writeUMATxxBehaviourKinematicSymbols: "

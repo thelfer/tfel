@@ -259,7 +259,7 @@ namespace mfront{
     const auto& h = this->getModellingHypothesesToBeTreated(mb);
     const auto name = mb.getLibrary()+mb.getClassName();
     // some checks
-    throw_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+    throw_if(mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
 	     "the cyrano interface only supports "
 	     "small strain behaviours");
     if(mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
@@ -552,7 +552,7 @@ namespace mfront{
 	<< "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC,op);\n";
     if(this->generateMTestFile){
       out << "if(*KINC!=1){\n";
-      this->generateMTestFile2(out,BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+      this->generateMTestFile2(out,BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
        			       n,"",mb);
       out << "}\n";
     }

@@ -37,8 +37,8 @@ MTest_setStrain(mtest::MTest& t, const std::vector<mtest::real>& v){
   using namespace tfel::material;
   const auto b = t.getBehaviourType();
   const auto k = t.getBehaviourKinematic();
-  tfel::raise_if(!((b==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-		   ((b==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+  tfel::raise_if(!((b==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)||
+		   ((b==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)&&
 		    (k==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
 		 "MTest::setStrain: this method is only valid "
 		 "small strain behaviour");
@@ -50,7 +50,7 @@ MTest_setDeformationGradient(mtest::MTest& t, const std::vector<mtest::real>& v)
   using namespace tfel::material;
   const auto b = t.getBehaviourType();
   const auto k = t.getBehaviourKinematic();
-  tfel::raise_if(!((b==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+  tfel::raise_if(!((b==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)&&
 		   (k==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY)),
 		 "MTest::setDeformationGradient: this method is only valid "
 		 "for finite strain behaviour");
@@ -72,8 +72,8 @@ static void
 MTest_setStress(mtest::MTest& t, const std::vector<mtest::real>& v){
   using namespace tfel::material;
   const auto b = t.getBehaviourType();
-  tfel::raise_if((b!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		 (b!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR),
+  tfel::raise_if((b!=MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)&&
+		 (b!=MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR),
 		 "MTest::setStress: this method is only valid "
 		 "for small or finite strain behaviours");
   t.setThermodynamicForcesInitialValues(v);
@@ -95,8 +95,8 @@ MTest_setStrainEpsilon(mtest::MTest& t, const mtest::real& v){
   using namespace tfel::material;
   const auto b = t.getBehaviourType();
   const auto k = t.getBehaviourKinematic();
-  tfel::raise_if(!((b==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-		   ((b==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+  tfel::raise_if(!((b==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)||
+		   ((b==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)&&
 		    (k==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
 		 "MTest::setStrainEpsilon: this method is only valid "
 		 "for small strain behaviour");
@@ -108,7 +108,7 @@ MTest_setDeformationGradientEpsilon(mtest::MTest& t, const mtest::real& v){
   using namespace tfel::material;
   const auto b = t.getBehaviourType();
   const auto k = t.getBehaviourKinematic();
-  tfel::raise_if(!((b==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+  tfel::raise_if(!((b==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)&&
 		   (k==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY)),
 		 "MTest::setDeformationGradientEpsilon: "
 		 "this method is only valid finite strain behaviour");
@@ -129,8 +129,8 @@ static void
 MTest_setStressEpsilon(mtest::MTest& t,const mtest::real& v){
   using namespace tfel::material;
   const auto b = t.getBehaviourType();
-  tfel::raise_if((b!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		 (b!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR),
+  tfel::raise_if((b!=MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)&&
+		 (b!=MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR),
 		 "MTest::setStressEpsilon: "
 		 "this method is only valid "
 		 "for small or finite strain behaviours");
@@ -180,8 +180,8 @@ MTest_setImposedStress(mtest::MTest& t,
 {
   using namespace tfel::material;
   const auto b = t.getBehaviourType();
-  tfel::raise_if((b!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		 (b!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR),
+  tfel::raise_if((b!=MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)&&
+		 (b!=MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR),
 		 "MTest::handleImposedStress : "
 		 "the setImposedStress method is only valid "
 		 "for small and finite strain behaviours");
@@ -196,8 +196,8 @@ MTest_setImposedStress2(mtest::MTest& t,
 {
   using namespace tfel::material;
   const auto b = t.getBehaviourType();
-  tfel::raise_if((b!=MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		 (b!=MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR),
+  tfel::raise_if((b!=MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)&&
+		 (b!=MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR),
 		 "MTestParser::handleImposedStress: "
 		 "the setImposedStress method is only valid "
 		 "for small and finite strain behaviours");
@@ -242,9 +242,9 @@ static void MTest_setNonLinearConstraint(mtest::MTest& t,
   const auto b = t.getBehaviourType();
   if((np=="DrivingVariable")||
      ((np=="Strain")&&
-      (b==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR))||
+      (b==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR))||
      ((np=="DeformationGradient")&&
-      (b==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR))||
+      (b==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR))||
      ((np=="OpeningDisplacement")&&
       (b==MechanicalBehaviourBase::COHESIVEZONEMODEL))){
     const auto p = NonLinearConstraint::DRIVINGVARIABLECONSTRAINT;
@@ -254,8 +254,8 @@ static void MTest_setNonLinearConstraint(mtest::MTest& t,
     t.addConstraint(c);
   } else if ((np=="ThermodynamicForce")||
 	     ((np=="Stress")&&
-	      ((b==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	       (b==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)))||
+	      ((b==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)||
+	       (b==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)))||
 	     ((np=="CohesiveForce")&&
 	      (b==MechanicalBehaviourBase::COHESIVEZONEMODEL))){
     const auto p = NonLinearConstraint::THERMODYNAMICFORCECONSTRAINT;
@@ -300,8 +300,8 @@ MTest_setImposedStrain(mtest::MTest& t,
 {
   using namespace tfel::material;
   const auto b = t.getBehaviourType();
-  tfel::raise_if(!((b==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-		   ((b==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+  tfel::raise_if(!((b==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)||
+		   ((b==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)&&
 		    (t.getBehaviourKinematic()==
 		     MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
 		 "MTest::setImposedStrain: "
@@ -318,9 +318,9 @@ MTest_setImposedStrain2(mtest::MTest& t,
 {
   using namespace tfel::material;
   tfel::raise_if(!((t.getBehaviourType()==
-		    MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
+		    MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)||
 		   ((t.getBehaviourType()==
-		     MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		     MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)&&
 		    (t.getBehaviourKinematic()==
 		     MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1))),
 		 "MTest::handleImposedStrain: "
@@ -336,7 +336,7 @@ MTest_setImposedDeformationGradient(mtest::MTest& t,
 {
   using namespace tfel::material;
   tfel::raise_if(!((t.getBehaviourType()==
-		    MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		    MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)&&
 		   (t.getBehaviourKinematic()==
 		    MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY)),
 		 "MTest::setImposedDeformationGradient: "
@@ -353,7 +353,7 @@ MTest_setImposedDeformationGradient2(mtest::MTest& t,
 {
   using namespace tfel::material;
   tfel::raise_if(!((t.getBehaviourType()==
-		    MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+		    MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)&&
 		   (t.getBehaviourKinematic()==
 		    MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY)),
 		 "MTestParser::setImposedDeformationGradient: "

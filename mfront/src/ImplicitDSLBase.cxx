@@ -760,8 +760,8 @@ namespace mfront{
       add_lv(this->mb,"stress","mu_tdt","","shear modulus at t+dt");
     }
     for(const auto& ht : this->mb.getHillTensors()){
-      if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+      if((this->mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+	 (this->mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)){
 	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
 				"Hill tensors shall only be defined for finite strain "
 				"or small strain behaviours");
@@ -949,8 +949,8 @@ namespace mfront{
       }
     }
     for(const auto& ht : this->mb.getHillTensors()){
-      if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+      if((this->mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+	 (this->mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)){
 	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
 				"Hill tensors shall only be defined for finite strain "
 				"or small strain behaviours");
@@ -1654,7 +1654,7 @@ namespace mfront{
     if(this->mb.hasAttribute(h,BehaviourData::hasConsistentTangentOperator)){
       os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
     } else {
-      if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+      if((this->mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
 	 (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
 	os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
       } else {
@@ -1664,7 +1664,7 @@ namespace mfront{
     os << "using namespace std;\n";
     os << "using namespace tfel::math;\n";
     writeMaterialLaws(os,this->mb.getMaterialLaws());
-    if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+    if((this->mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
        (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
       if(this->mb.useQt()){
 	os << "if(smflag!=MechanicalBehaviour<" << btype 
@@ -1728,7 +1728,7 @@ namespace mfront{
     }
     os << "if(smt!=NOSTIFFNESSREQUESTED){\n";
     if(this->mb.hasAttribute(h,BehaviourData::hasConsistentTangentOperator)){
-      if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      if(this->mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
 	os << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
       } else {
 	os << "if(!this->computeConsistentTangentOperator(smt)){\n";
@@ -1993,8 +1993,8 @@ namespace mfront{
       }
     }
     for(const auto& ht : this->mb.getHillTensors()){
-      if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+      if((this->mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+	 (this->mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)){
 	this->throwRuntimeError("ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
 				"Hill tensors shall only be defined for finite strain "
 				"or small strain behaviours");

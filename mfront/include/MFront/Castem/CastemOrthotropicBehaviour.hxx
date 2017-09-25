@@ -65,12 +65,12 @@ namespace castem
   struct CastemOrthotropicOffset;
 
   template<tfel::material::ModellingHypothesis::Hypothesis H>
-  struct CastemOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,H>
+  struct CastemOrthotropicOffset<STANDARDSTRAINBASEDBEHAVIOUR,H>
     : public CastemOrthotropicOffsetBase<tfel::material::ModellingHypothesisToSpaceDimension<H>::value>
   {};
 
   template<>
-  struct CastemOrthotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,
+  struct CastemOrthotropicOffset<STANDARDSTRAINBASEDBEHAVIOUR,
 				 tfel::material::ModellingHypothesis::PLANESTRESS>
   {
     // 7 elastic coefficients
@@ -82,12 +82,12 @@ namespace castem
   };
 
   template<tfel::material::ModellingHypothesis::Hypothesis H>
-  struct CastemOrthotropicOffset<FINITESTRAINSTANDARDBEHAVIOUR,H>
+  struct CastemOrthotropicOffset<STANDARDFINITESTRAINBEHAVIOUR,H>
     : public CastemOrthotropicOffsetBase<tfel::material::ModellingHypothesisToSpaceDimension<H>::value>
   {};
 
   template<>
-  struct CastemOrthotropicOffset<FINITESTRAINSTANDARDBEHAVIOUR,
+  struct CastemOrthotropicOffset<STANDARDFINITESTRAINBEHAVIOUR,
 				 tfel::material::ModellingHypothesis::PLANESTRESS>
   {
     // 7 elastic coefficients

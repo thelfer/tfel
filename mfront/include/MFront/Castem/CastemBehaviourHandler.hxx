@@ -34,19 +34,19 @@ namespace castem
   struct CastemTangentOperatorFlag;
 
   template<>
-  struct CastemTangentOperatorFlag<castem::SMALLSTRAINSTANDARDBEHAVIOUR>
+  struct CastemTangentOperatorFlag<castem::STANDARDSTRAINBASEDBEHAVIOUR>
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
-    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>
     TangentOperatorTraits;
     static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
 
   template<>
-  struct CastemTangentOperatorFlag<castem::FINITESTRAINSTANDARDBEHAVIOUR>
+  struct CastemTangentOperatorFlag<castem::STANDARDFINITESTRAINBEHAVIOUR>
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
-    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR>
     TangentOperatorTraits;
     static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::C_TRUESDELL;
   };
@@ -72,7 +72,7 @@ namespace castem
    * \tparam N: space dimension
    */
   template<unsigned short N>
-  struct CastemTangentOperatorType<castem::SMALLSTRAINSTANDARDBEHAVIOUR,N>
+  struct CastemTangentOperatorType<castem::STANDARDSTRAINBASEDBEHAVIOUR,N>
   {
     //! type of the tangent operator
     using type      = tfel::math::st2tost2<N,CastemReal>;
@@ -85,7 +85,7 @@ namespace castem
    * \tparam N: space dimension
    */
   template<unsigned short N>
-  struct CastemTangentOperatorType<castem::FINITESTRAINSTANDARDBEHAVIOUR,N>
+  struct CastemTangentOperatorType<castem::STANDARDFINITESTRAINBEHAVIOUR,N>
   {
     //! type of the tangent operator
     using type      = tfel::math::st2tost2<N,CastemReal>;
@@ -199,7 +199,7 @@ namespace castem
 	tfel::fsalgo::copy<CastemTraits<BV>::DrivingVariableSize>::exe(STRAN,dv0);
 	tfel::fsalgo::copy<CastemTraits<BV>::DrivingVariableSize>::exe(DSTRAN,dv1);
 	// check that the function pointer are not null
-	if(sfeh==0){
+	if(sfeh==nullptr){
 	  throwUnsupportedStressFreeExpansionException(Traits::getName());
 	}
 	// creating a fake behaviour to compoute the stress-free expansion

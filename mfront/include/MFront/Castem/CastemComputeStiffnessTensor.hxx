@@ -128,7 +128,7 @@ namespace castem
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 			     ISOTROPIC,b>
   {
@@ -147,7 +147,7 @@ namespace castem
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::AXISYMMETRICAL,
 			     ISOTROPIC,b>
   {
@@ -166,7 +166,7 @@ namespace castem
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ISOTROPIC,true>
   {
@@ -185,7 +185,7 @@ namespace castem
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ISOTROPIC,false>
   {
@@ -204,7 +204,7 @@ namespace castem
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRAIN,
 			     ISOTROPIC,b>
   {
@@ -223,7 +223,7 @@ namespace castem
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
 			     ISOTROPIC,b>
   {
@@ -242,7 +242,7 @@ namespace castem
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
 			     ISOTROPIC,b>
   {
@@ -261,7 +261,7 @@ namespace castem
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 			     ORTHOTROPIC,b>
   {
@@ -280,7 +280,7 @@ namespace castem
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::AXISYMMETRICAL,ORTHOTROPIC,b>
   {
     /*!
@@ -298,7 +298,7 @@ namespace castem
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ORTHOTROPIC,true>
   {
@@ -317,7 +317,7 @@ namespace castem
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ORTHOTROPIC,false>
   {
@@ -336,7 +336,7 @@ namespace castem
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRAIN,
 			     ORTHOTROPIC,b>
   {
@@ -355,7 +355,7 @@ namespace castem
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
 			     ORTHOTROPIC,b>
   {
@@ -374,7 +374,7 @@ namespace castem
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
 			     ORTHOTROPIC,b>
   {
@@ -397,7 +397,7 @@ namespace castem
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   CastemSymmetryType stype,bool b>
   struct TFEL_VISIBILITY_LOCAL
-  CastemComputeStiffnessTensor<castem::FINITESTRAINSTANDARDBEHAVIOUR,H,stype,b>
+  CastemComputeStiffnessTensor<castem::STANDARDFINITESTRAINBEHAVIOUR,H,stype,b>
   {
     typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
     /*!
@@ -409,7 +409,7 @@ namespace castem
     exe(typename tfel::config::Types<ModellingHypothesisToSpaceDimension::value,CastemReal,false>::StiffnessTensor& D,
 	const CastemReal* const props)
     {
-      CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,H,stype,b>::exe(D,props);
+      CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,H,stype,b>::exe(D,props);
     }
   }; // end of struct CastemComputeStiffnessTensor
 

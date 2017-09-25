@@ -2297,7 +2297,7 @@ namespace mfront{
     if(this->mb.hasAttribute(h,BehaviourData::hasConsistentTangentOperator)){
       os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
     } else {
-      if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+      if((this->mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
 	 (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
 	os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
       } else {
@@ -2306,7 +2306,7 @@ namespace mfront{
     }
     os << "using namespace std;\n"
        << "using namespace tfel::math;\n";
-    if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+    if((this->mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
        (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
       if(this->mb.useQt()){
 	os << "if(smflag!=MechanicalBehaviour<" << btype
@@ -2355,7 +2355,7 @@ namespace mfront{
     }
     os << "if(smt!=NOSTIFFNESSREQUESTED){\n";
     if(this->mb.hasAttribute(h,BehaviourData::hasConsistentTangentOperator)){
-      if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      if(this->mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
 	os << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
       } else {
 	os << "if(!this->computeConsistentTangentOperator(smt)){\n";

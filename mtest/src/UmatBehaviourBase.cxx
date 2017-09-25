@@ -128,9 +128,9 @@ namespace mtest
     case 0:
       return MechanicalBehaviourBase::GENERALBEHAVIOUR;
     case 1:
-      return MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR;
+      return MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR;
     case 2:
-      return MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR;
+      return MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR;
     case 3:
       return MechanicalBehaviourBase::COHESIVEZONEMODEL;
     }

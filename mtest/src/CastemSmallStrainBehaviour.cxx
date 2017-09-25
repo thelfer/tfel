@@ -292,37 +292,37 @@ namespace mtest
     if(this->stype==0u){
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	st2tost2<1u,real> De;
-	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+	CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				   ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 				   castem::ISOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<1u,real>(&Kt(0,0)) = De;
       } else if (h==ModellingHypothesis::AXISYMMETRICAL){
 	st2tost2<2u,real> De;
-	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+	CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				   ModellingHypothesis::AXISYMMETRICAL,
 				   castem::ISOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<2u,real>(&Kt(0,0)) = De;
       } else if (h==ModellingHypothesis::PLANESTRESS){
 	st2tost2<2u,real> De;
-	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+	CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				   ModellingHypothesis::PLANESTRESS,
 				   castem::ISOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<2u,real>(&Kt(0,0)) = De;
       } else if (h==ModellingHypothesis::PLANESTRAIN){
 	st2tost2<2u,real> De;
-	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+	CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				   ModellingHypothesis::PLANESTRAIN,
 				   castem::ISOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<2u,real>(&Kt(0,0)) = De;
       } else if (h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
 	st2tost2<2u,real> De;
-	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+	CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				   ModellingHypothesis::GENERALISEDPLANESTRAIN,
 				   castem::ISOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<2u,real>(&Kt(0,0)) = De;
       } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
 	st2tost2<3u,real> De;
-	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+	CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				   ModellingHypothesis::TRIDIMENSIONAL,
 				   castem::ISOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<3u,real>(&Kt(0,0)) = De;
@@ -333,37 +333,37 @@ namespace mtest
     } else if(this->stype==1u){
       if(h==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN){
 	st2tost2<1u,real> De;
-	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+	CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				   ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 				   castem::ORTHOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<1u,real>(&Kt(0,0)) = De;
       } else if (h==ModellingHypothesis::AXISYMMETRICAL){
 	st2tost2<2u,real> De;
-	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+	CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				     ModellingHypothesis::AXISYMMETRICAL,
 				     castem::ORTHOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<2u,real>(&Kt(0,0)) = change_basis(De,drot);
       } else if (h==ModellingHypothesis::PLANESTRESS){
 	st2tost2<2u,real> De;
-	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+	CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				   ModellingHypothesis::PLANESTRESS,
 				   castem::ORTHOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<2u,real>(&Kt(0,0)) = change_basis(De,drot);
       } else if (h==ModellingHypothesis::PLANESTRAIN){
 	st2tost2<2u,real> De;
-	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+	CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				   ModellingHypothesis::PLANESTRAIN,
 				   castem::ORTHOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<2u,real>(&Kt(0,0)) = change_basis(De,drot);
       } else if (h==ModellingHypothesis::GENERALISEDPLANESTRAIN){
 	st2tost2<2u,real> De;
-	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+	CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				   ModellingHypothesis::GENERALISEDPLANESTRAIN,
 				   castem::ORTHOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<2u,real>(&Kt(0,0)) = change_basis(De,drot);
       } else if (h==ModellingHypothesis::TRIDIMENSIONAL){
 	st2tost2<3u,real> De;
-	CastemComputeStiffnessTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+	CastemComputeStiffnessTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				   ModellingHypothesis::TRIDIMENSIONAL,
 				   castem::ORTHOTROPIC,false>::exe(De,&mp(0));
 	ST2toST2View<3u,real>(&Kt(0,0)) = change_basis(De,drot);

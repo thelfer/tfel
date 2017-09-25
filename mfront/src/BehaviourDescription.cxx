@@ -490,10 +490,10 @@ namespace mfront
   std::string BehaviourDescription::getBehaviourTypeFlag() const
   {
     std::string btype;
-    if(this->getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      btype="MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR";
-    } else if (this->getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      btype="MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR";
+    if(this->getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
+      btype="MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR";
+    } else if (this->getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
+      btype="MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR";
     } else if (this->getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
       btype="MechanicalBehaviourBase::COHESIVEZONEMODEL";
     } else {
@@ -556,8 +556,8 @@ namespace mfront
     };
     throw_if(!this->allowsNewUserDefinedVariables(),
 	     "new variables are can't be defined after the first code block.");
-    throw_if((this->getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)&&
-	     (this->getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR),
+    throw_if((this->getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)&&
+	     (this->getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR),
 	     "only finite and strain behaviour are supported");
     this->setAttribute(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
 		       BehaviourDescription::requiresStiffnessTensor,false);
@@ -674,8 +674,8 @@ namespace mfront
     auto throw_if = [](const bool c,const std::string& m){
       tfel::raise_if(c,"BehaviourDescription::addHillTensor: "+m);
     };
-    throw_if((this->type!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)&&
-	     (this->type!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR),
+    throw_if((this->type!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)&&
+	     (this->type!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR),
 	     "this method is only valid for small and finite strain behaviours");
     throw_if(this->getSymmetryType()!=mfront::ORTHOTROPIC,
 	     "the behaviour is not orthotropic.");
@@ -707,7 +707,7 @@ namespace mfront
     sig.name = "sig";
     sig.type = "StressStensor";
     this->mvariables.insert({eto,sig});
-    this->type = BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR;
+    this->type = BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR;
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"eto");
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"deto");
     this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"sig");
@@ -726,7 +726,7 @@ namespace mfront
     sig.name = "sig";
     sig.type = "StressStensor";
     this->mvariables.insert({F,sig});
-    this->type = BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR;
+    this->type = BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR;
     if(b){
       this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"F");
       this->registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,"dF");
@@ -894,8 +894,8 @@ namespace mfront
     if ((sfed.is<BehaviourData::AxialGrowth>())||
 	(sfed.is<BehaviourData::OrthotropicStressFreeExpansion>())||
 	(sfed.is<BehaviourData::OrthotropicStressFreeExpansionII>())){ 
-      throw_if((this->getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	       (this->getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+      throw_if((this->getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+	       (this->getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
 	       "AxialGrowth or OrthotropicStressFreeExpansion "
 	       "are only valid for small or "
 	       "finite strain behaviours");
@@ -906,8 +906,8 @@ namespace mfront
 	       (!sfed.is<BehaviourData::Relocation>())&&
 	       (!sfed.is<BehaviourData::IsotropicStressFreeExpansion>()),
 	       "internal error, unsupported stress free expansion type");
-      throw_if((this->getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	       (this->getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+      throw_if((this->getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+	       (this->getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
 	       "Isotropic, Relocation or VolumeSwelling "
 	       "are only valid for small or "
 	       "finite strain behaviours");
@@ -1072,9 +1072,9 @@ namespace mfront
 	<< msizes.first  << "," 
 	<< msizes.second << ",real>";
       return t.str();
-    } else if(this->type==SMALLSTRAINSTANDARDBEHAVIOUR){
+    } else if(this->type==STANDARDSTRAINBASEDBEHAVIOUR){
       return "StiffnessTensor";
-    } else if(this->type==FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(this->type==STANDARDFINITESTRAINBEHAVIOUR){
       return "FiniteStrainBehaviourTangentOperator<N,stress>";
     } else if(this->type==COHESIVEZONEMODEL){
       return "tfel::math::tmatrix<N,N,stress>";
@@ -1091,8 +1091,8 @@ namespace mfront
   std::string
   BehaviourDescription::getStressFreeExpansionType() const
   {
-    if((this->type==SMALLSTRAINSTANDARDBEHAVIOUR)||
-       (this->type==FINITESTRAINSTANDARDBEHAVIOUR)){
+    if((this->type==STANDARDSTRAINBASEDBEHAVIOUR)||
+       (this->type==STANDARDFINITESTRAINBEHAVIOUR)){
       return "StrainStensor";
     }
     tfel::raise("BehaviourDescription::getStressFreeExpansionType: "
@@ -2232,7 +2232,7 @@ namespace mfront
   
   void BehaviourDescription::setStrainMeasure(const StrainMeasure sm){
     tfel::raise_if(this->getBehaviourType()!=
-		   BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+		   BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
 		   "BehaviourDescription::setStrainMeasure: "
 		   "invalid behaviour type");
     tfel::raise_if(this->isStrainMeasureDefined(),

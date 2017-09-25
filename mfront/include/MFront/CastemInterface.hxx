@@ -351,10 +351,13 @@ namespace mfront{
      * \return false if the axial strain can't be initialized.
      * \param[in] out : ouptut file
      * \param[in] mb  : behaviour description
+     * \param[in] c: '0' (beginning of time step) or '1' (end of time
+     * step)
      */    
     virtual bool
     writeInitializeAxialStrain(std::ostream& out,
-			       const BehaviourDescription& mb) const;
+			       const BehaviourDescription& mb,
+			       const char c) const;
     /*!
      * \brief plane stress handling requires to have access to the
      * axial strain, but it is not obvious nor always possible to get it...
@@ -363,12 +366,15 @@ namespace mfront{
      * \param[in] mb  : behaviour description
      * \param[in] c   : beginning of the call
      * \param[in] c2  : code computing the axial deformation gradient from the axial strain
+     * \param[in] c3: '0' (beginning of time step) or '1' (end of time
+     * step)
      */    
     virtual void
     writeFiniteStrainStrategiesPlaneStressSpecificCall(std::ostream&,
 						       const BehaviourDescription&,
 						       const std::string&,
-						       const std::string&) const;
+						       const std::string&,
+						       const char) const;
 
     virtual std::string
     getModellingHypothesisTest(const Hypothesis) const override;

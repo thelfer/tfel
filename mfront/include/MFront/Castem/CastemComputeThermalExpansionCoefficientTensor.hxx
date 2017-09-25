@@ -32,7 +32,7 @@ namespace castem
 
   template<>
   struct MFRONT_CASTEM_VISIBILITY_EXPORT
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>
   {
     static void
@@ -42,7 +42,7 @@ namespace castem
 
   template<>
   struct MFRONT_CASTEM_VISIBILITY_EXPORT
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::AXISYMMETRICAL,ISOTROPIC>
   {
     static void
@@ -52,7 +52,7 @@ namespace castem
 
   template<>
   struct MFRONT_CASTEM_VISIBILITY_EXPORT
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::PLANESTRESS,ISOTROPIC>
   {
     TFEL_NORETURN static void
@@ -63,7 +63,7 @@ namespace castem
 
   template<>
   struct MFRONT_CASTEM_VISIBILITY_EXPORT
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::PLANESTRAIN,ISOTROPIC>
   {
     static void
@@ -73,7 +73,7 @@ namespace castem
 
   template<>
   struct MFRONT_CASTEM_VISIBILITY_EXPORT
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ISOTROPIC>
   {
     static void
@@ -83,7 +83,7 @@ namespace castem
 
   template<>
   struct MFRONT_CASTEM_VISIBILITY_EXPORT
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ISOTROPIC>
   {
     static void
@@ -93,7 +93,7 @@ namespace castem
 
   template<>
   struct MFRONT_CASTEM_VISIBILITY_EXPORT
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>
   {
     static void
@@ -103,7 +103,7 @@ namespace castem
 
   template<>
   struct MFRONT_CASTEM_VISIBILITY_EXPORT
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::AXISYMMETRICAL,ORTHOTROPIC>
   {
     static void
@@ -113,7 +113,7 @@ namespace castem
 
   template<>
   struct MFRONT_CASTEM_VISIBILITY_EXPORT
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::PLANESTRESS,ORTHOTROPIC>
   {
     TFEL_NORETURN static void
@@ -124,7 +124,7 @@ namespace castem
 
   template<>
   struct MFRONT_CASTEM_VISIBILITY_EXPORT
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::PLANESTRAIN,ORTHOTROPIC>
   {
     static void
@@ -134,7 +134,7 @@ namespace castem
 
   template<>
   struct MFRONT_CASTEM_VISIBILITY_EXPORT
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,ORTHOTROPIC>
   {
     static void
@@ -144,7 +144,7 @@ namespace castem
 
   template<>
   struct MFRONT_CASTEM_VISIBILITY_EXPORT
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::TRIDIMENSIONAL,ORTHOTROPIC>
   {
     static void

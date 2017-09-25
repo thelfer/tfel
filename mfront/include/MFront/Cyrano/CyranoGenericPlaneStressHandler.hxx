@@ -241,7 +241,7 @@ namespace cyrano
       {
 	using namespace tfel::material;
 	const ModellingHypothesis::Hypothesis H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
-	typedef CyranoIsotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour> BehaviourHandler;
+	typedef CyranoIsotropicBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour> BehaviourHandler;
 	const CyranoReal y = PROPS[0]; // Young Modulus
 	const CyranoReal n = PROPS[1]; // Poisson ratio
 	const CyranoReal c1 = -n/(1-n);
@@ -274,7 +274,7 @@ namespace cyrano
 	using tfel::fsalgo::copy;
 	typedef Behaviour<H,CyranoReal,false> BV;
 	typedef MechanicalBehaviourTraits<BV> Traits;
-	typedef CyranoOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour> BehaviourHandler;
+	typedef CyranoOrthotropicBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour> BehaviourHandler;
 	const unsigned short offset  = CyranoTraits<BV>::propertiesOffset;
 	const unsigned short nprops  = Traits::material_properties_nb;
 	const unsigned short NPROPS_ = offset+nprops == 0 ? 1u : offset+nprops; 

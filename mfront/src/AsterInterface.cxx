@@ -129,7 +129,7 @@ namespace mfront{
       this->errorReport = this->readBooleanValue(key,current,end);
       return {true,current};
     } else if(key=="@AsterFiniteStrainFormulation"){
-      throw_if(bd.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR,
+      throw_if(bd.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR,
 	       "the '@AsterFiniteStrainFormulation' is only valid "
 	       "for finite strain behaviour");
       throw_if(this->afsf!=UNDEFINEDFINITESTRAINFORMULATION,
@@ -191,8 +191,8 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AsterInterface::endTreatment : "+m);
     };
-    throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)||
+    throw_if(!((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+	       (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)||
 	       (mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)),
 	     "AsterInterface::endTreatment : "
 	     "the aster interface only supports "
@@ -200,7 +200,7 @@ namespace mfront{
 	     "and cohesive zone models");
     if((this->compareToNumericalTangentOperator)||
        (this->savesTangentOperator)){
-      throw_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+      throw_if(mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
 	       "unsupported feature @AsterSaveTangentOperator "
 	       "and @AsterCompareToNumericalTangentOperator : "
 	       "those are only valid for small strain beahviours");
@@ -337,9 +337,9 @@ namespace mfront{
     throw_if(!out,"could not open file '"+fileName+")");
 
     const auto sfeh = [&mb,&throw_if]{
-      if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	return "aster::AsterStandardSmallStrainStressFreeExpansionHandler";
-      } else if (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      } else if (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
 	return "nullptr";
       } else if (mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
 	return "nullptr";
@@ -397,10 +397,10 @@ namespace mfront{
 
     string dv0;
     string dv1;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       dv0 = "STRAN";
       dv1 = "DSTRAN";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       dv0 = "F0";
       dv1 = "F1";
     } else if (mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
@@ -812,7 +812,7 @@ namespace mfront{
       out << "0";
     }
     out << ";\n";
-    if(bd.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(bd.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name)
 	  << "_FiniteStrainFormulation = ";
       if((this->afsf==SIMO_MIEHE)||(this->afsf==UNDEFINEDFINITESTRAINFORMULATION)){
@@ -862,10 +862,10 @@ namespace mfront{
     }
     out << "> >\n{\n";
     out << "//! behaviour type\n";
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      out << "static " << constexpr_c << " AsterBehaviourType btype = aster::SMALLSTRAINSTANDARDBEHAVIOUR;\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      out << "static " << constexpr_c << " AsterBehaviourType btype = aster::FINITESTRAINSTANDARDBEHAVIOUR;\n";
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
+      out << "static " << constexpr_c << " AsterBehaviourType btype = aster::STANDARDSTRAINBASEDBEHAVIOUR;\n";
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
+      out << "static " << constexpr_c << " AsterBehaviourType btype = aster::STANDARDFINITESTRAINBEHAVIOUR;\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
       out << "static " << constexpr_c << " AsterBehaviourType btype = aster::COHESIVEZONEMODEL;\n";
     } else {
@@ -920,7 +920,7 @@ namespace mfront{
 	       "orthotropic behaviour at this time.");
     }
     out << "static " << constexpr_c << " AsterFiniteStrainFormulation afsf = aster::";
-    if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       if((this->afsf==SIMO_MIEHE)||(this->afsf==UNDEFINEDFINITESTRAINFORMULATION)){
 	out << "SIMO_MIEHE;\n";
       } else if(this->afsf==GROT_GDEP){

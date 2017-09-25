@@ -43,7 +43,7 @@ namespace castem
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
  
   void
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				    tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 				    ISOTROPIC>::exe(const CastemReal* const props,
 						    tfel::config::Types<1u,CastemReal,false>::ThermalExpansionCoefficientTensor& A)
@@ -53,21 +53,21 @@ namespace castem
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
 
   void
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				    tfel::material::ModellingHypothesis::PLANESTRESS,
 				    ISOTROPIC>::exe(const CastemReal* const,
 						    tfel::config::Types<2u,CastemReal,false>::ThermalExpansionCoefficientTensor&)
   {
 #pragma message("something needs to be done HERE")
     tfel::raise("CastemComputeThermalExpansionCoefficientTensor"
-		"<castem::SMALLSTRAINSTANDARDBEHAVIOUR,"
+		"<castem::STANDARDSTRAINBASEDBEHAVIOUR,"
 		"tfel::material::ModellingHypothesis::PLANESTRESS,"
 		"ISOTROPIC>::exe : "
 		"unimplemented feature");
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
 
   void
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				    tfel::material::ModellingHypothesis::AXISYMMETRICAL,
 				    ISOTROPIC>::exe(const CastemReal* const props,
 						    tfel::config::Types<2u,CastemReal,false>::ThermalExpansionCoefficientTensor& C)
@@ -76,7 +76,7 @@ namespace castem
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
 
   void
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				    tfel::material::ModellingHypothesis::PLANESTRAIN,
 				    ISOTROPIC>::exe(const CastemReal* const props,
 						    tfel::config::Types<2u,CastemReal,false>::ThermalExpansionCoefficientTensor& C)
@@ -85,7 +85,7 @@ namespace castem
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
 
   void
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				    tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
 				    ISOTROPIC>::exe(const CastemReal* const props,
 						    tfel::config::Types<2u,CastemReal,false>::ThermalExpansionCoefficientTensor& C)
@@ -94,7 +94,7 @@ namespace castem
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
 
   void
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				    tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
 				    ISOTROPIC>::exe(const CastemReal* const props,
 						    tfel::config::Types<3u,CastemReal,false>::ThermalExpansionCoefficientTensor& A)
@@ -105,7 +105,7 @@ namespace castem
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
 
   void
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				    tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
 				    ORTHOTROPIC>::exe(const CastemReal* const props,
 						      tfel::config::Types<1u,CastemReal,false>::ThermalExpansionCoefficientTensor& A)
@@ -119,21 +119,21 @@ namespace castem
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
 
   void
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				    tfel::material::ModellingHypothesis::PLANESTRESS,
 				    ORTHOTROPIC>::exe(const CastemReal* const,
 						      tfel::config::Types<2u,CastemReal,false>::ThermalExpansionCoefficientTensor&)
   {
 #pragma message("something needs to be done HERE")
     tfel::raise("CastemComputeThermalExpansionCoefficientTensor"
-		"<castem::SMALLSTRAINSTANDARDBEHAVIOUR,"
+		"<castem::STANDARDSTRAINBASEDBEHAVIOUR,"
 		"tfel::material::ModellingHypothesis::PLANESTRESS,"
 		"ORTHOTROPIC>::exe: "
 		"unimplemented feature");
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
 
   void
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				    tfel::material::ModellingHypothesis::AXISYMMETRICAL,
 				    ORTHOTROPIC>::exe(const CastemReal* const props,
 						      tfel::config::Types<2u,CastemReal,false>::ThermalExpansionCoefficientTensor& C)
@@ -142,7 +142,7 @@ namespace castem
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
   
   void
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				    tfel::material::ModellingHypothesis::PLANESTRAIN,
 				    ORTHOTROPIC>::exe(const CastemReal* const props,
 						      tfel::config::Types<2u,CastemReal,false>::ThermalExpansionCoefficientTensor& C)
@@ -151,7 +151,7 @@ namespace castem
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
   
   void
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				    tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
 				    ORTHOTROPIC>::exe(const CastemReal* const props,
 						      tfel::config::Types<2u,CastemReal,false>::ThermalExpansionCoefficientTensor& C)
@@ -160,7 +160,7 @@ namespace castem
   } // end of struct CastemComputeThermalExpansionCoefficientTensor
   
   void
-  CastemComputeThermalExpansionCoefficientTensor<castem::SMALLSTRAINSTANDARDBEHAVIOUR,
+  CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 				    tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
 				    ORTHOTROPIC>::exe(const CastemReal* const props,
 						      tfel::config::Types<3u,CastemReal,false>::ThermalExpansionCoefficientTensor& A)

@@ -152,7 +152,7 @@ namespace abaqus{
     {
       //! simple alias
       using TangentOperatorTraits =
-	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>;
+	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>;
       constexpr const T zero = T{0};
       const tfel::math::stensor<N,T> e(zero);
       const tfel::math::stensor<N,T> de(zero);
@@ -181,7 +181,7 @@ namespace abaqus{
     {
       //! simple alias
       using TangentOperatorTraits =
-	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>;
+	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR>;
       constexpr const T zero = T{0};
       const tfel::math::tensor<N,T> F0(tfel::math::tensor<N,T>::Id());
       const tfel::math::tensor<N,T> F1(tfel::math::tensor<N,T>::Id());
@@ -217,7 +217,7 @@ namespace abaqus{
     {
       //! simple alias
       using TangentOperatorTraits =
-	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>;
+	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>;
       using DVInitializer = typename std::conditional<
 	tfel::material::MechanicalBehaviourTraits<BV>::hasStressFreeExpansion,
 	DrivingVariableInitialiserWithStressFreeExpansion,
@@ -265,7 +265,7 @@ namespace abaqus{
     {
       //! simple alias
       using TangentOperatorTraits =
-	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>;
+	tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR>;
       Behaviour<H,T,false> b(d);
       SInitializer::exe(b,d.eth_props);
       AInitializer::exe(b,d.eth_props);

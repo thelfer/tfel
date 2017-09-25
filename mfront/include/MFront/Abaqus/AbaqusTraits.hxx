@@ -18,8 +18,8 @@
 namespace abaqus{
 
   enum AbaqusBehaviourType{
-    SMALLSTRAINSTANDARDBEHAVIOUR,
-    FINITESTRAINSTANDARDBEHAVIOUR
+    STANDARDSTRAINBASEDBEHAVIOUR,
+    STANDARDFINITESTRAINBEHAVIOUR
   }; // end of enum ABAQUSBehaviourType
 
   enum AbaqusSymmetryType{
@@ -29,7 +29,7 @@ namespace abaqus{
 
   template<typename Behaviour>
   struct AbaqusTraits{
-    static constexpr AbaqusBehaviourType btype = abaqus::SMALLSTRAINSTANDARDBEHAVIOUR;
+    static constexpr AbaqusBehaviourType btype = abaqus::STANDARDSTRAINBASEDBEHAVIOUR;
     // size of the driving variable array (STRAN)
     static constexpr unsigned short DrivingVariableSize = 0u;
     // size of the thermodynamic force variable array (STESS)

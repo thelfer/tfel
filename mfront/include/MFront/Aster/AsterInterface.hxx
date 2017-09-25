@@ -160,7 +160,7 @@ namespace aster
     struct Behaviour2DWrapper;
 
     template<tfel::material::ModellingHypothesis::Hypothesis H>
-    struct Behaviour2DWrapper<aster::SMALLSTRAINSTANDARDBEHAVIOUR,H>
+    struct Behaviour2DWrapper<aster::STANDARDSTRAINBASEDBEHAVIOUR,H>
     {
       TFEL_ASTER_INLINE2 static
       int exe(const AsterInt  *const, const AsterReal *const DTIME,
@@ -205,7 +205,7 @@ namespace aster
     };
 
     template<tfel::material::ModellingHypothesis::Hypothesis H>
-    struct Behaviour2DWrapper<aster::FINITESTRAINSTANDARDBEHAVIOUR,H>
+    struct Behaviour2DWrapper<aster::STANDARDFINITESTRAINBEHAVIOUR,H>
     {
       TFEL_ASTER_INLINE2 static
       int exe(const AsterInt  *const, const AsterReal *const DTIME,

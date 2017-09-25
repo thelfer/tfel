@@ -27,14 +27,14 @@ namespace castem{
   };
 
   template<>
-  struct CastemIsotropicOffset<SMALLSTRAINSTANDARDBEHAVIOUR,
+  struct CastemIsotropicOffset<STANDARDSTRAINBASEDBEHAVIOUR,
 			       tfel::material::ModellingHypothesis::PLANESTRESS>
   {
     static constexpr const unsigned short value = 5u;
   };
 
   template<>
-  struct CastemIsotropicOffset<FINITESTRAINSTANDARDBEHAVIOUR,
+  struct CastemIsotropicOffset<STANDARDFINITESTRAINBEHAVIOUR,
 			       tfel::material::ModellingHypothesis::PLANESTRESS>
   {
     static constexpr const unsigned short value = 5u;

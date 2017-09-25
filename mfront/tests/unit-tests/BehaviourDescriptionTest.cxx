@@ -158,7 +158,7 @@ private:
     TFEL_TESTS_CHECK_THROW(bd2.declareAsASmallStrainStandardBehaviour(), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd2.declareAsAFiniteStrainStandardBehaviour(false), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd2.declareAsACohesiveZoneModel(), runtime_error);
-    TFEL_TESTS_ASSERT(bd2.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR);
+    TFEL_TESTS_ASSERT(bd2.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR);
     TFEL_TESTS_ASSERT(bd2.isDrivingVariableName("eto"));
     TFEL_TESTS_ASSERT(bd2.isDrivingVariableIncrementName("deto"));
     TFEL_TESTS_ASSERT(bd2.getMainVariables().size()==1);
@@ -171,7 +171,7 @@ private:
     TFEL_TESTS_ASSERT(bd2.getStressFreeExpansionType() == "StrainStensor");
     BehaviourDescription bd3;
     bd3.declareAsAFiniteStrainStandardBehaviour(true);
-    TFEL_TESTS_ASSERT(bd3.getBehaviourType() == BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR);
+    TFEL_TESTS_ASSERT(bd3.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR);
     TFEL_TESTS_CHECK_THROW(bd3.declareAsASmallStrainStandardBehaviour(), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd3.declareAsAFiniteStrainStandardBehaviour(true), runtime_error);
     TFEL_TESTS_CHECK_THROW(bd3.declareAsACohesiveZoneModel(), runtime_error);

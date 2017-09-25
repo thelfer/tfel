@@ -41,19 +41,19 @@ namespace abaqus
   struct AbaqusTangentOperatorFlag;
 
   template<>
-  struct AbaqusTangentOperatorFlag<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR>
+  struct AbaqusTangentOperatorFlag<abaqus::STANDARDSTRAINBASEDBEHAVIOUR>
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
-    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>
     TangentOperatorTraits;
     static constexpr auto value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
 
   template<>
-  struct AbaqusTangentOperatorFlag<abaqus::FINITESTRAINSTANDARDBEHAVIOUR>
+  struct AbaqusTangentOperatorFlag<abaqus::STANDARDFINITESTRAINBEHAVIOUR>
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
-    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR> TangentOperatorTraits;
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR> TangentOperatorTraits;
     static constexpr auto value = TangentOperatorTraits::ABAQUS;
   };
 

@@ -18,8 +18,8 @@
 namespace epx{
 
   enum EuroplexusBehaviourType{
-    SMALLSTRAINSTANDARDBEHAVIOUR,
-    FINITESTRAINSTANDARDBEHAVIOUR
+    STANDARDSTRAINBASEDBEHAVIOUR,
+    STANDARDFINITESTRAINBEHAVIOUR
   }; // end of enum EPXBehaviourType
 
   enum EuroplexusSymmetryType{
@@ -29,7 +29,7 @@ namespace epx{
 
   template<typename Behaviour>
   struct EuroplexusTraits{
-    static constexpr EuroplexusBehaviourType btype = epx::SMALLSTRAINSTANDARDBEHAVIOUR;
+    static constexpr EuroplexusBehaviourType btype = epx::STANDARDSTRAINBASEDBEHAVIOUR;
     // size of the driving variable array (STRAN)
     static constexpr unsigned short DrivingVariableSize = 0u;
     // size of the thermodynamic force variable array (STESS)

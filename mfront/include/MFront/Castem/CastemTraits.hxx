@@ -18,8 +18,8 @@
 namespace castem{
 
   enum CastemBehaviourType{
-    SMALLSTRAINSTANDARDBEHAVIOUR,
-    FINITESTRAINSTANDARDBEHAVIOUR,
+    STANDARDSTRAINBASEDBEHAVIOUR,
+    STANDARDFINITESTRAINBEHAVIOUR,
     COHESIVEZONEMODEL
   }; // end of enum CastemBehaviourType
 
@@ -30,7 +30,7 @@ namespace castem{
 
   template<typename Behaviour>
   struct CastemTraits{
-    static constexpr CastemBehaviourType btype = castem::SMALLSTRAINSTANDARDBEHAVIOUR;
+    static constexpr CastemBehaviourType btype = castem::STANDARDSTRAINBASEDBEHAVIOUR;
     // size of the driving variable array (STRAN)
     static constexpr unsigned short DrivingVariableSize = 0u;
     // size of the thermodynamic force variable array (STESS)

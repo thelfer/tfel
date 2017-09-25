@@ -83,7 +83,7 @@ namespace mfront{
     auto throw_if = [](const bool c,const std::string& msg){
       tfel::raise_if(c,"checkFiniteStrainStrategyDefinitionConsistency: "+msg);
     };
-    if(bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(bd.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       throw_if(bd.hasAttribute(CalculiXInterface::finiteStrainStrategy),
 	       "finite strain strategy is only supported for strain based behaviours");
     } else {
@@ -129,7 +129,7 @@ namespace mfront{
     if(!base){
       const auto requires_strain = [&mb]{
 	if(mb.getBehaviourType()==
-	   BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	   BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	  if(hasFiniteStrainStrategy(mb)){
 	    return getFiniteStrainStrategy(mb)=="FiniteRotationSmallStrain";
 	  }
@@ -174,9 +174,9 @@ namespace mfront{
 	  << " const int size)";
     } else {
       const auto requires_strain =
-	(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR);
+	(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR);
       const auto requires_F =
-	(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR);
+	(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR);
       out << "(const char * const,\n"
 	  << " const calculix::CalculiXInt* const iel,\n"
 	  << " const calculix::CalculiXInt* const iint,\n"
@@ -319,8 +319,8 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"CalculiXInterface::endTreatment: "+m);
     };
-    throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+    throw_if(!((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+	       (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)),
 	     "the calculix interface only supports small and "
 	     "finite strain behaviours");
     checkFiniteStrainStrategyDefinitionConsistency(mb);
@@ -356,7 +356,7 @@ namespace mfront{
     out << "#ifndef "<< header << "\n"
 	<< "#define "<< header << "\n\n"
 	<< "#include\"TFEL/Config/TFELConfig.hxx\"\n\n";
-    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+    if((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
        (hasFiniteStrainStrategy(mb))){
       const auto fs = getFiniteStrainStrategy(mb);
       if((fs=="MieheApelLambrechtLogarithmicStrain")||
@@ -435,7 +435,7 @@ namespace mfront{
     this->writeSetParametersFunctionsImplementations(out,name,mb);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       if(hasFiniteStrainStrategy(mb)){
 	const auto fs = getFiniteStrainStrategy(mb);
 	if(fs=="FiniteRotationSmallStrain"){
@@ -449,7 +449,7 @@ namespace mfront{
       } else {
 	this->writeSmallStrainFunction(out,mb,name);
       }
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       this->writeFiniteStrainFunction(out,mb,name);
     } else {
       throw_if(true,"the calculix interface only supports small "
@@ -473,10 +473,10 @@ namespace mfront{
     out << "static void\n" << name << "_base";
     writeArguments(out,mb,true);
     out << "{\n";
-    if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(btype==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       dv0 = "STRAN0";
       dv1 = "DSTRAN";
-    } else if(btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(btype==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       dv0 = "XOKL";
       dv1 = "XKL";
     } else {
@@ -847,13 +847,13 @@ namespace mfront{
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       if(!hasFiniteStrainStrategy(mb)){
 	out << "1u;\n\n";
       } else {
 	out << "2u;\n\n";
       }
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "2u;\n\n";
     } else {
       throw_if(true,"unsupported behaviour type");
@@ -870,13 +870,13 @@ namespace mfront{
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourKinematic = " ;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       if(hasFiniteStrainStrategy(mb)){
 	out << "1u;\n\n";
       } else {
 	out << "3u;\n\n";
       }
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "3u;\n\n";
     } else {
       throw_if(true,"unsupported behaviour type");
@@ -1154,10 +1154,10 @@ namespace mfront{
     }
     out << ">>\n{\n"
 	<< "//! behaviour type\n";
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      out << "static " << constexpr_c << " CalculiXBehaviourType btype = calculix::SMALLSTRAINSTANDARDBEHAVIOUR;\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      out << "static " << constexpr_c << " CalculiXBehaviourType btype = calculix::FINITESTRAINSTANDARDBEHAVIOUR;\n";
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
+      out << "static " << constexpr_c << " CalculiXBehaviourType btype = calculix::STANDARDSTRAINBASEDBEHAVIOUR;\n";
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
+      out << "static " << constexpr_c << " CalculiXBehaviourType btype = calculix::STANDARDFINITESTRAINBEHAVIOUR;\n";
     } else {
       tfel::raise("CalculiXInterface::writeCalculiXBehaviourTraits : "
 		  "unsupported behaviour type");
@@ -1323,7 +1323,7 @@ namespace mfront{
     }
     const auto vsize = [mb,&vs,&h]() -> unsigned int{
       if((mb.getBehaviourType()==
-	  BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+	  BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
 	 (hasFiniteStrainStrategy(mb))&&
 	 (getFiniteStrainStrategy(mb)==
 	  "MieheApelLambrechtLogarithmicStrainII")){

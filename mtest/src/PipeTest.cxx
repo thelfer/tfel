@@ -990,12 +990,12 @@ namespace mtest{
     throw_if(bp==nullptr,"null behaviour pointer");
     if(this->hpp){
       throw_if(bp->getBehaviourType()!=
-	       MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR,
+	       MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR,
 	       "the behaviour must be a small strain one "
 	       "when performing small strain analysis");
     } else {
       throw_if(bp->getBehaviourType()!=
-	       MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR,
+	       MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR,
 	       "the behaviour must be a finite strain one "
 	       "when performing a finite strain analysis");
       throw_if(bp->getBehaviourKinematic()!=
@@ -1008,7 +1008,7 @@ namespace mtest{
     using tfel::material::MechanicalBehaviourBase;
     if(this->b!=nullptr){
       tfel::raise_if(this->b->getBehaviourType()!=
-		     MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR,
+		     MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR,
 		     "PipeTest::performSmallStrainAnalysis: "
 		     "the behaviour must be small strain");
     }

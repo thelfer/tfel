@@ -271,11 +271,11 @@ namespace mfront{
     };
     AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(mb);
     AbaqusInterfaceBase::checkOrthotropyManagementPolicyConsistency(mb);
-    throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+    throw_if(!((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+	       (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)),
 	     "the abaqus explicit interface only supports small and "
 	     "finite strain behaviours");
-    throw_if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+    throw_if((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
 	     (!AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)),
 	     "behaviours written in the small strain framework "
 	     "must be embedded in a strain strategy. See the "
@@ -452,7 +452,7 @@ namespace mfront{
 	  out << "static tfel::system::ThreadPool pool(getAbaqusExplicitNumberOfThreads());\n";
 	}	
 	this->writeChecks(out,mb,t,h);
-	if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	  throw_if(!AbaqusInterfaceBase::hasFiniteStrainStrategy(mb),
 		   "no finite strain strategy defined");
 	  const auto fs = AbaqusInterfaceBase::getFiniteStrainStrategy(mb);
@@ -465,7 +465,7 @@ namespace mfront{
 	  } else {
 	    throw_if(true,"unsupported finite strain strategy (internal error)");
 	  }
-	} else if (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	} else if (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
 	  this->writeFiniteStrainBehaviourCall(out,mb,t,h);
 	} else {
 	  throw_if(true,"the abaqus explicit interface "
@@ -636,16 +636,16 @@ namespace mfront{
 		  "only small strain or finite behaviours are supported");
     };
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if((mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-       (mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+    if((mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+       (mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)){
       throw_unsupported_hypothesis();
     }
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       os << "void setBehaviourDataDrivingVariables(const Stensor& " << iprefix << "stran)\n"
 	 << "{\n"
 	 << "this->eto = " << iprefix << "stran;\n"
 	 << "}\n\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       os << "void setBehaviourDataDrivingVariables(const Tensor& " << iprefix << "stran)\n"
 	 << "{\n"
 	 << "this->F0 = " << iprefix << "stran;\n"
@@ -680,16 +680,16 @@ namespace mfront{
 		  "only small strain or finite behaviours are supported");
     };
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if((mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-       (mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+    if((mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+       (mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)){
       throw_unsupported_hypothesis();
     }
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       os << "void setIntegrationDataDrivingVariables(const Stensor& " << iprefix << "dstran)\n"
 	 << "{\n"
 	 << "this->deto = " << iprefix << "dstran;\n"
 	 << "}\n\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       os << "void setIntegrationDataDrivingVariables(const Tensor& " << iprefix << "dstran)\n"
 	 << "{\n"
 	 << "this->F1 = " << iprefix << "dstran;\n"
@@ -846,14 +846,14 @@ namespace mfront{
       tfel::raise("AbaqusExplicitInterface::writeComputeElasticPrediction: "
 		  "unsupported hypothesis '"+ModellingHypothesis::toString(h)+"'");
     }
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       out << "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ","
 	  << t << "," << mb.getClassName()
 	  << ">::computeElasticPrediction(D,d)!=0){\n"
 	  << "std::cerr << \"" << mb.getClassName() << ": elastic loading failed\\n\";\n"
 	  << "::exit(-1);\n"
 	  << "}\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "if(abaqus::AbaqusExplicitInterface<ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h) << ","
 	  << t << "," << mb.getClassName()
 	  << ">::computeElasticPrediction2(D,d)!=0){\n"
@@ -1667,14 +1667,14 @@ namespace mfront{
   {
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       if(!AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)){
 	tfel::raise("AbaqusExplicitInterface::writeUMATxxBehaviourTypeSymbols: "
 		    "behaviours written in the small strain framework "
 		    "must be embedded in a strain strategy");
       }
       out << "2u;\n\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "2u;\n\n";
     } else {
       tfel::raise("AbaqusExplicitInterface::writeUMATxxBehaviourTypeSymbols: "
@@ -1689,13 +1689,13 @@ namespace mfront{
   {
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourKinematic = " ;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       tfel::raise_if(!AbaqusInterfaceBase::hasFiniteStrainStrategy(mb),
 		     "AbaqusExplicitInterface::writeUMATxxBehaviourKinematicSymbols: "
 		     "behaviours written in the small strain framework "
 		     "must be embedded in a strain strategy");
       out << "3u;\n\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "3u;\n\n";
     } else {
       tfel::raise("AbaqusExplicitInterface::writeUMATxxBehaviourKinematicSymbols: "

@@ -226,7 +226,7 @@ namespace epx
 	EuroplexusReal dv1[EuroplexusTraits<BV>::DrivingVariableSize];
 	using ChangeBasis =
 	  typename std::conditional<type==epx::ISOTROPIC,DoNothing<H>,
-				    typename std::conditional<btype==epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+				    typename std::conditional<btype==epx::STANDARDSTRAINBASEDBEHAVIOUR,
 							      SmallStrainChangeBasis<H>,
 							      FiniteStrainChangeBasis<H>>::type>::type;
 	auto ptr = ChangeBasis::forward(d,dv0,dv1);

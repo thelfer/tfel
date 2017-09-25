@@ -1349,12 +1349,12 @@ namespace mfront
       if(!suffix.empty()){
     	fname += "_"+suffix;
       }
-      if(type==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(type==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
     	out << "mfront::UmatSmallStrainMTestFileGenerator mg(\""
     	    << makeLowerCase(this->getInterfaceName()) << "\",\""
     	    << this->getLibraryName(mb) <<"\",\"" << this->getFunctionName(fname)
     	    <<  "\");\n";
-      } else if(type==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      } else if(type==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
     	out << "mfront::UmatFiniteStrainMTestFileGenerator mg(\""
     	    << makeLowerCase(this->getInterfaceName()) << "\",\""
     	    << this->getLibraryName(mb) <<"\",\"" << this->getFunctionName(fname)
@@ -1371,11 +1371,11 @@ namespace mfront
 	  << "mg.setHandleThermalExpansion(false);\n"
 	  << "mg.addTime(0.);\n"
 	  << "mg.addTime(*DTIME>0 ? *DTIME : 1.e-50);\n";
-      if(type==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(type==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
     	out << "mg.setStrainTensor(STRAN);\n"
 	    << "mg.setStrainTensorIncrement(DSTRAN);\n"
 	    << "mg.setStressTensor(&mg_STRESS[0]);\n";
-      } else if(type==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      } else if(type==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
     	out << "mg.setDeformationGradientAtTheBeginningOfTheStimeStep(F0);\n"
 	    << "mg.setDeformationGradientAtTheEndOfTheStimeStep(F1);\n"
 	    << "mg.setStressTensor(&mg_STRESS[0]);\n";
@@ -1609,9 +1609,9 @@ namespace mfront
 	<< "_BehaviourType = " ;
     if(mb.getBehaviourType()==BehaviourDescription::GENERALBEHAVIOUR){
       out << "0u;\n\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       out << "1u;\n\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "2u;\n\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
       out << "3u;\n\n";
@@ -1630,11 +1630,11 @@ namespace mfront
 	<< "_BehaviourKinematic = " ;
     if(mb.getBehaviourType()==BehaviourDescription::GENERALBEHAVIOUR){
       out << "0u;\n\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       out << "1u;\n\n";
     } else if(mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL){
       out << "2u;\n\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "3u;\n\n";
     } else {
       tfel::raise("UMATInterfaceBase::writeUMATxxBehaviourKinematicSymbols: "

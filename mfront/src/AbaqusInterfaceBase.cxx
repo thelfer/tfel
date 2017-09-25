@@ -74,7 +74,7 @@ namespace mfront{
     auto throw_if = [](const bool c,const std::string& msg){
       tfel::raise_if(c,"AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency: "+msg);
     };
-    if(bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(bd.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       throw_if(bd.hasAttribute(AbaqusInterfaceBase::finiteStrainStrategy),
 	       "finite strain strategy is only supported for strain based behaviours");
     } else {
@@ -422,10 +422,10 @@ namespace mfront{
     }
     out << "> >\n{\n";
     out << "//! behaviour type\n";
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      out << "static " << constexpr_c << " AbaqusBehaviourType btype = abaqus::SMALLSTRAINSTANDARDBEHAVIOUR;\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      out << "static " << constexpr_c << " AbaqusBehaviourType btype = abaqus::FINITESTRAINSTANDARDBEHAVIOUR;\n";
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
+      out << "static " << constexpr_c << " AbaqusBehaviourType btype = abaqus::STANDARDSTRAINBASEDBEHAVIOUR;\n";
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
+      out << "static " << constexpr_c << " AbaqusBehaviourType btype = abaqus::STANDARDFINITESTRAINBEHAVIOUR;\n";
     } else {
       tfel::raise("AbaqusInterfaceBase::writeAbaqusBehaviourTraits : "
 		  "unsupported behaviour type");

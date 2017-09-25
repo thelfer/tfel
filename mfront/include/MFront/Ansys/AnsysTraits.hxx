@@ -18,8 +18,8 @@
 namespace ansys{
 
   enum AnsysBehaviourType{
-    SMALLSTRAINSTANDARDBEHAVIOUR,
-    FINITESTRAINSTANDARDBEHAVIOUR
+    STANDARDSTRAINBASEDBEHAVIOUR,
+    STANDARDFINITESTRAINBEHAVIOUR
   }; // end of enum ANSYSBehaviourType
 
   enum AnsysSymmetryType{
@@ -29,7 +29,7 @@ namespace ansys{
 
   template<typename Behaviour>
   struct AnsysTraits{
-    static constexpr AnsysBehaviourType btype = ansys::SMALLSTRAINSTANDARDBEHAVIOUR;
+    static constexpr AnsysBehaviourType btype = ansys::STANDARDSTRAINBASEDBEHAVIOUR;
     // size of the driving variable array (STRAN)
     static constexpr unsigned short DrivingVariableSize = 0u;
     // size of the thermodynamic force variable array (STESS)

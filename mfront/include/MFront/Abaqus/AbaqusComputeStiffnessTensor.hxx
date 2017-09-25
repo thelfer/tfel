@@ -146,7 +146,7 @@ namespace abaqus
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AbaqusComputeStiffnessTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeStiffnessTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::AXISYMMETRICAL,
 			     ISOTROPIC,b>
   {
@@ -166,7 +166,7 @@ namespace abaqus
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  AbaqusComputeStiffnessTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeStiffnessTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ISOTROPIC,true>
   {
@@ -186,7 +186,7 @@ namespace abaqus
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  AbaqusComputeStiffnessTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeStiffnessTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ISOTROPIC,false>
   {
@@ -206,7 +206,7 @@ namespace abaqus
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AbaqusComputeStiffnessTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeStiffnessTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRAIN,
 			     ISOTROPIC,b>
   {
@@ -226,7 +226,7 @@ namespace abaqus
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AbaqusComputeStiffnessTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeStiffnessTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
 			     ISOTROPIC,b>
   {
@@ -246,7 +246,7 @@ namespace abaqus
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AbaqusComputeStiffnessTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeStiffnessTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
 			     ISOTROPIC,b>
   {
@@ -266,7 +266,7 @@ namespace abaqus
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AbaqusComputeStiffnessTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeStiffnessTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::AXISYMMETRICAL,ORTHOTROPIC,b>
   {
     /*!
@@ -285,7 +285,7 @@ namespace abaqus
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  AbaqusComputeStiffnessTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeStiffnessTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ORTHOTROPIC,true>
   {
@@ -305,7 +305,7 @@ namespace abaqus
 
   template<>
   struct TFEL_VISIBILITY_LOCAL
-  AbaqusComputeStiffnessTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeStiffnessTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRESS,
 			     ORTHOTROPIC,false>
   {
@@ -325,7 +325,7 @@ namespace abaqus
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AbaqusComputeStiffnessTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeStiffnessTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::PLANESTRAIN,
 			     ORTHOTROPIC,b>
   {
@@ -345,7 +345,7 @@ namespace abaqus
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AbaqusComputeStiffnessTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeStiffnessTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
 			     ORTHOTROPIC,b>
   {
@@ -365,7 +365,7 @@ namespace abaqus
 
   template<bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AbaqusComputeStiffnessTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,
+  AbaqusComputeStiffnessTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,
 			     tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
 			     ORTHOTROPIC,b>
   {
@@ -389,7 +389,7 @@ namespace abaqus
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   AbaqusSymmetryType stype,bool b>
   struct TFEL_VISIBILITY_LOCAL
-  AbaqusComputeStiffnessTensor<abaqus::FINITESTRAINSTANDARDBEHAVIOUR,H,stype,b>
+  AbaqusComputeStiffnessTensor<abaqus::STANDARDFINITESTRAINBEHAVIOUR,H,stype,b>
   {
     typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
     /*!
@@ -402,7 +402,7 @@ namespace abaqus
     exe(typename tfel::config::Types<ModellingHypothesisToSpaceDimension::value,real,false>::StiffnessTensor& D,
 	const real* const props)
     {
-      AbaqusComputeStiffnessTensor<abaqus::SMALLSTRAINSTANDARDBEHAVIOUR,H,stype,b>::exe(D,props);
+      AbaqusComputeStiffnessTensor<abaqus::STANDARDSTRAINBASEDBEHAVIOUR,H,stype,b>::exe(D,props);
     }
   }; // end of struct AbaqusComputeStiffnessTensor
 

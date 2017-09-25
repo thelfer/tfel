@@ -346,8 +346,8 @@ namespace mtest{
   				    this->b->getExternalStateVariablesNames(),t,dt);
       // thermal expansion
       if((this->handleThermalExpansion)&&
-	 ((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	  ((this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)&&
+	 ((this->b->getBehaviourType()==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)||
+	  ((this->b->getBehaviourType()==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)&&
 	   (this->b->getBehaviourKinematic()==MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1)))){
 	if(this->b->getSymmetryType()==0){
 	  // isotropic case

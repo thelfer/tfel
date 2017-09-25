@@ -41,19 +41,19 @@ namespace calculix
   struct CalculiXTangentOperatorFlag;
 
   template<>
-  struct CalculiXTangentOperatorFlag<calculix::SMALLSTRAINSTANDARDBEHAVIOUR>
+  struct CalculiXTangentOperatorFlag<calculix::STANDARDSTRAINBASEDBEHAVIOUR>
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
-    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>
     TangentOperatorTraits;
     static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
 
   template<>
-  struct CalculiXTangentOperatorFlag<calculix::FINITESTRAINSTANDARDBEHAVIOUR>
+  struct CalculiXTangentOperatorFlag<calculix::STANDARDFINITESTRAINBEHAVIOUR>
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
-    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR> TangentOperatorTraits;
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR> TangentOperatorTraits;
     static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DS_DEGL;
   };
 

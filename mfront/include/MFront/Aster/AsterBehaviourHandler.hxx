@@ -36,32 +36,32 @@ namespace aster
   struct AsterTangentOperatorFlag;
 
   template<>
-  struct AsterTangentOperatorFlag<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+  struct AsterTangentOperatorFlag<aster::STANDARDSTRAINBASEDBEHAVIOUR,
 				  aster::UNDEFINEDFINITESTRAINFORMULATION>
   {
     using MechanicalBehaviourBase = tfel::material::MechanicalBehaviourBase; 
     using TangentOperatorTraits =
-      tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR>;
+      tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>;
     static constexpr TangentOperatorTraits::SMFlag value =
       TangentOperatorTraits::STANDARDTANGENTOPERATOR;
   };
 
   template<>
-  struct AsterTangentOperatorFlag<aster::FINITESTRAINSTANDARDBEHAVIOUR,
+  struct AsterTangentOperatorFlag<aster::STANDARDFINITESTRAINBEHAVIOUR,
 				  aster::SIMO_MIEHE>
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
-    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR>
     TangentOperatorTraits;
     static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DTAU_DDF;
   };
 
   template<>
-  struct AsterTangentOperatorFlag<aster::FINITESTRAINSTANDARDBEHAVIOUR,
+  struct AsterTangentOperatorFlag<aster::STANDARDFINITESTRAINBEHAVIOUR,
 				  aster::GROT_GDEP>
   {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase; 
-    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
+    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR>
     TangentOperatorTraits;
     static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::DS_DEGL;
   };
@@ -83,7 +83,7 @@ namespace aster
   struct AsterTangentOperatorType;
 
   template<unsigned short N>
-  struct AsterTangentOperatorType<aster::SMALLSTRAINSTANDARDBEHAVIOUR,
+  struct AsterTangentOperatorType<aster::STANDARDSTRAINBASEDBEHAVIOUR,
 				  aster::UNDEFINEDFINITESTRAINFORMULATION,N>
   {
     using type      = tfel::math::st2tost2<N,AsterReal>;
@@ -91,7 +91,7 @@ namespace aster
   };
 
   template<unsigned short N>
-  struct AsterTangentOperatorType<aster::FINITESTRAINSTANDARDBEHAVIOUR,
+  struct AsterTangentOperatorType<aster::STANDARDFINITESTRAINBEHAVIOUR,
 				  aster::SIMO_MIEHE,N>
   {
     using type      = tfel::math::t2tost2<N,AsterReal>;
@@ -99,7 +99,7 @@ namespace aster
   };
 
   template<unsigned short N>
-  struct AsterTangentOperatorType<aster::FINITESTRAINSTANDARDBEHAVIOUR,
+  struct AsterTangentOperatorType<aster::STANDARDFINITESTRAINBEHAVIOUR,
 				  aster::GROT_GDEP,N>
   {
     using type      = tfel::math::st2tost2<N,AsterReal>;

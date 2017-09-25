@@ -106,7 +106,7 @@ namespace aster
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour>
+  struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour>
     : public AsterOrthotropicSmallStrainBehaviourDispatcher<H,Behaviour>::type
   {
     typedef typename AsterOrthotropicSmallStrainBehaviourDispatcher<H,Behaviour>::type Handler;
@@ -338,7 +338,7 @@ namespace aster
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,H,Behaviour>
+  struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour>
     : public AsterOrthotropicFiniteStrainBehaviourDispatcher<H,Behaviour>::type
   {
     typedef typename AsterOrthotropicFiniteStrainBehaviourDispatcher<H,Behaviour>::type Handler;

@@ -41,8 +41,8 @@ namespace tfel{
        */
       enum BehaviourType {
 	GENERALBEHAVIOUR              =  0,
-	SMALLSTRAINSTANDARDBEHAVIOUR  =  1,
-	FINITESTRAINSTANDARDBEHAVIOUR =  2,
+	STANDARDSTRAINBASEDBEHAVIOUR  =  1,
+	STANDARDFINITESTRAINBEHAVIOUR =  2,
 	COHESIVEZONEMODEL             =  3
       }; // end of enum MFrontBehaviourType
       /*!
@@ -98,7 +98,7 @@ namespace tfel{
      * computed by a mechanical behaviour.
      */
     template<>
-    struct TangentOperatorTraits<MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR>
+    struct TangentOperatorTraits<MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR>
       : public FiniteStrainBehaviourTangentOperatorBase
     {
       /*!

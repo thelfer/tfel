@@ -45,7 +45,7 @@ namespace aster{
    * \tparam N:     space dimension
    */
   template<unsigned short N>
-  struct AsterConvertStress<aster::FINITESTRAINSTANDARDBEHAVIOUR,
+  struct AsterConvertStress<aster::STANDARDFINITESTRAINBEHAVIOUR,
 			    aster::GROT_GDEP,N>
   {
     /*!

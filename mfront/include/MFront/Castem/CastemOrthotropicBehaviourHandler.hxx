@@ -125,7 +125,7 @@ namespace castem
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL CastemOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour>
+  struct TFEL_VISIBILITY_LOCAL CastemOrthotropicBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour>
     : public CastemOrthotropicSmallStrainBehaviourDispatcher<H,Behaviour>::type
   {
     typedef typename CastemOrthotropicSmallStrainBehaviourDispatcher<H,Behaviour>::type Handler;
@@ -136,7 +136,7 @@ namespace castem
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicSmallStrainBehaviourHandler1D
-    : private CastemBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour>
+    : private CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour>
   {
     TFEL_CASTEM_INLINE2 static 
       void exe(const CastemReal *const DTIME,
@@ -162,7 +162,7 @@ namespace castem
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
@@ -194,7 +194,7 @@ namespace castem
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicSmallStrainBehaviourHandler2D
-    : private CastemBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour>
+    : private CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour>
   {
     TFEL_CASTEM_INLINE2 static 
       void exe(const CastemReal *const DTIME ,
@@ -220,7 +220,7 @@ namespace castem
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
@@ -265,7 +265,7 @@ namespace castem
   struct TFEL_VISIBILITY_LOCAL
   CastemOrthotropicSmallStrainBehaviourHandler2D<tfel::material::ModellingHypothesis::PLANESTRESS,
 					       Behaviour>
-    : private CastemBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
+    : private CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,
 				   tfel::material::ModellingHypothesis::PLANESTRESS,
 				   Behaviour>
   {
@@ -294,7 +294,7 @@ namespace castem
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::PLANESTRESS;	   
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
@@ -337,7 +337,7 @@ namespace castem
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicSmallStrainBehaviourHandler3D
-    : private CastemBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour>
+    : private CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour>
   {
     TFEL_CASTEM_INLINE2 static 
       void exe(const CastemReal *const DTIME,
@@ -363,7 +363,7 @@ namespace castem
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
@@ -410,7 +410,7 @@ namespace castem
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL CastemOrthotropicBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,H,Behaviour>
+  struct TFEL_VISIBILITY_LOCAL CastemOrthotropicBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour>
     : public CastemOrthotropicFiniteStrainBehaviourDispatcher<H,Behaviour>::type
   {
     typedef typename CastemOrthotropicFiniteStrainBehaviourDispatcher<H,Behaviour>::type Handler;
@@ -420,7 +420,7 @@ namespace castem
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicFiniteStrainBehaviourHandler1D
-    : private CastemBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,H,Behaviour>
+    : private CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour>
   {
     TFEL_CASTEM_INLINE2 static 
       void exe(const CastemReal *const DTIME,
@@ -446,7 +446,7 @@ namespace castem
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
@@ -478,7 +478,7 @@ namespace castem
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicFiniteStrainBehaviourHandler2D
-    : private CastemBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,H,Behaviour>
+    : private CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour>
   {
     TFEL_CASTEM_INLINE2 static 
       void exe(const CastemReal *const DTIME ,
@@ -504,7 +504,7 @@ namespace castem
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
@@ -549,7 +549,7 @@ namespace castem
   struct TFEL_VISIBILITY_LOCAL
   CastemOrthotropicFiniteStrainBehaviourHandler2D<tfel::material::ModellingHypothesis::PLANESTRESS,
 						Behaviour>
-    : private CastemBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,
+    : private CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,
 				   tfel::material::ModellingHypothesis::PLANESTRESS,
 				   Behaviour>
   {
@@ -578,7 +578,7 @@ namespace castem
       const ModellingHypothesis::Hypothesis H = ModellingHypothesis::PLANESTRESS;	   
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
@@ -622,7 +622,7 @@ namespace castem
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicFiniteStrainBehaviourHandler3D
-    : private CastemBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,H,Behaviour>
+    : private CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour>
   {
     TFEL_CASTEM_INLINE2 static 
       void exe(const CastemReal *const DTIME,
@@ -648,7 +648,7 @@ namespace castem
       using namespace tfel::math;
       typedef MechanicalBehaviourTraits<Behaviour<H,CastemReal,false> > MTraits;
       typedef CastemTraits<Behaviour<H,CastemReal,false> > Traits;
-      typedef CastemBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
+      typedef CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour> CastemBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;

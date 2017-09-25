@@ -42,7 +42,7 @@ namespace epx
   } // end of struct EuroplexusComputeThermalExpansionCoefficientTensor
  
   void
-  EuroplexusComputeThermalExpansionCoefficientTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeThermalExpansionCoefficientTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 						     tfel::material::ModellingHypothesis::PLANESTRESS,
 						     ISOTROPIC>::exe(const EuroplexusReal* const props,
 								     tfel::config::Types<2u,EuroplexusReal,false>::ThermalExpansionCoefficientTensor& A)
@@ -51,7 +51,7 @@ namespace epx
   } // end of struct EuroplexusComputeThermalExpansionCoefficientTensor
 
   void
-  EuroplexusComputeThermalExpansionCoefficientTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeThermalExpansionCoefficientTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 						     tfel::material::ModellingHypothesis::AXISYMMETRICAL,
 						     ISOTROPIC>::exe(const EuroplexusReal* const props,
 								     tfel::config::Types<2u,EuroplexusReal,false>::ThermalExpansionCoefficientTensor& A)
@@ -60,7 +60,7 @@ namespace epx
   } // end of struct EuroplexusComputeThermalExpansionCoefficientTensor
 
   void
-  EuroplexusComputeThermalExpansionCoefficientTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeThermalExpansionCoefficientTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 						     tfel::material::ModellingHypothesis::PLANESTRAIN,
 						     ISOTROPIC>::exe(const EuroplexusReal* const props,
 								     tfel::config::Types<2u,EuroplexusReal,false>::ThermalExpansionCoefficientTensor& A)
@@ -69,7 +69,7 @@ namespace epx
   } // end of struct EuroplexusComputeThermalExpansionCoefficientTensor
 
   void
-  EuroplexusComputeThermalExpansionCoefficientTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeThermalExpansionCoefficientTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 						     tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
 						     ISOTROPIC>::exe(const EuroplexusReal* const props,
 								     tfel::config::Types<2u,EuroplexusReal,false>::ThermalExpansionCoefficientTensor& A)
@@ -78,7 +78,7 @@ namespace epx
   } // end of struct EuroplexusComputeThermalExpansionCoefficientTensor
 
   void
-  EuroplexusComputeThermalExpansionCoefficientTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeThermalExpansionCoefficientTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 						     tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
 						     ISOTROPIC>::exe(const EuroplexusReal* const props,
 								     tfel::config::Types<3u,EuroplexusReal,false>::ThermalExpansionCoefficientTensor& A)
@@ -89,7 +89,7 @@ namespace epx
   } // end of struct EuroplexusComputeThermalExpansionCoefficientTensor
 
   void
-  EuroplexusComputeThermalExpansionCoefficientTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeThermalExpansionCoefficientTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 						     tfel::material::ModellingHypothesis::PLANESTRESS,
 						     ORTHOTROPIC>::exe(const EuroplexusReal* const props,
 								       tfel::config::Types<2u,EuroplexusReal,false>::ThermalExpansionCoefficientTensor& A)
@@ -98,7 +98,7 @@ namespace epx
   } // end of struct EuroplexusComputeThermalExpansionCoefficientTensor
 
   void
-  EuroplexusComputeThermalExpansionCoefficientTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeThermalExpansionCoefficientTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 						     tfel::material::ModellingHypothesis::AXISYMMETRICAL,
 						     ORTHOTROPIC>::exe(const EuroplexusReal* const props,
 								       tfel::config::Types<2u,EuroplexusReal,false>::ThermalExpansionCoefficientTensor& C)
@@ -107,7 +107,7 @@ namespace epx
   } // end of struct EuroplexusComputeThermalExpansionCoefficientTensor
   
   void
-  EuroplexusComputeThermalExpansionCoefficientTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeThermalExpansionCoefficientTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 						     tfel::material::ModellingHypothesis::PLANESTRAIN,
 						     ORTHOTROPIC>::exe(const EuroplexusReal* const props,
 								       tfel::config::Types<2u,EuroplexusReal,false>::ThermalExpansionCoefficientTensor& C)
@@ -116,7 +116,7 @@ namespace epx
   } // end of struct EuroplexusComputeThermalExpansionCoefficientTensor
   
   void
-  EuroplexusComputeThermalExpansionCoefficientTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeThermalExpansionCoefficientTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 						     tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,
 						     ORTHOTROPIC>::exe(const EuroplexusReal* const props,
 								       tfel::config::Types<2u,EuroplexusReal,false>::ThermalExpansionCoefficientTensor& C)
@@ -125,7 +125,7 @@ namespace epx
   } // end of struct EuroplexusComputeThermalExpansionCoefficientTensor
   
   void
-  EuroplexusComputeThermalExpansionCoefficientTensor<epx::SMALLSTRAINSTANDARDBEHAVIOUR,
+  EuroplexusComputeThermalExpansionCoefficientTensor<epx::STANDARDSTRAINBASEDBEHAVIOUR,
 						     tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
 						     ORTHOTROPIC>::exe(const EuroplexusReal* const props,
 								       tfel::config::Types<3u,EuroplexusReal,false>::ThermalExpansionCoefficientTensor& A)

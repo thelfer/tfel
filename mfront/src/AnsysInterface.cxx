@@ -83,7 +83,7 @@ namespace mfront{
     auto throw_if = [](const bool c,const std::string& msg){
       tfel::raise_if(c,"checkFiniteStrainStrategyDefinitionConsistency: "+msg);
     };
-    if(bd.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(bd.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       throw_if(bd.hasAttribute(AnsysInterface::finiteStrainStrategy),
 	       "finite strain strategy is only supported for strain based behaviours");
     } else {
@@ -193,7 +193,7 @@ namespace mfront{
 	  << "       ansys::AnsysReal *const SEDPL,\n"
 	  << "       ansys::AnsysReal *const EPSEQ,\n";
       if(mb.getBehaviourType()==
-	 BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	 BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	out << " const ansys::AnsysReal *const STRAN,\n"
 	    << " const ansys::AnsysReal *const DSTRAN,\n";
       } else {
@@ -205,7 +205,7 @@ namespace mfront{
 	  << " const ansys::AnsysReal *const,\n"
 	  << " const ansys::AnsysReal *const DROT,\n";
       if(mb.getBehaviourType()==
-	 BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+	 BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
 	out << " const ansys::AnsysReal *const F0,\n"
 	    << " const ansys::AnsysReal *const F1,\n";
       } else {
@@ -528,10 +528,10 @@ namespace mfront{
     }
     out << "> >\n{\n";
     out << "//! behaviour type\n";
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
-      out << "static " << constexpr_c << " AnsysBehaviourType btype = ansys::SMALLSTRAINSTANDARDBEHAVIOUR;\n";
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
-      out << "static " << constexpr_c << " AnsysBehaviourType btype = ansys::FINITESTRAINSTANDARDBEHAVIOUR;\n";
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
+      out << "static " << constexpr_c << " AnsysBehaviourType btype = ansys::STANDARDSTRAINBASEDBEHAVIOUR;\n";
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
+      out << "static " << constexpr_c << " AnsysBehaviourType btype = ansys::STANDARDFINITESTRAINBEHAVIOUR;\n";
     } else {
       tfel::raise("AnsysInterface::writeAnsysBehaviourTraits : "
 		  "unsupported behaviour type");
@@ -826,12 +826,12 @@ namespace mfront{
     auto throw_if = [](const bool b,const std::string& m){
       tfel::raise_if(b,"AnsysInterface::endTreatment: "+m);
     };
-    throw_if(!((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	       (mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)),
+    throw_if(!((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+	       (mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)),
 	     "the ansys interface only supports small and "
 	     "finite strain behaviours");
     checkFiniteStrainStrategyDefinitionConsistency(mb);
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       if((hasFiniteStrainStrategy(mb))&&
 	 (getFiniteStrainStrategy(mb)=="Native")){
 	throw_if(mb.getSymmetryType()==mfront::ORTHOTROPIC,
@@ -840,7 +840,7 @@ namespace mfront{
       }
     }
     if(this->compareToNumericalTangentOperator){
-      throw_if(mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR,
+      throw_if(mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
 	       "unsupported feature @AnsysSaveTangentOperator "
 	       "and @AnsysCompareToNumericalTangentOperator : "
 	       "those are only valid for small strain beahviours");
@@ -910,7 +910,7 @@ namespace mfront{
     if (mb.getSymmetryType()==mfront::ORTHOTROPIC){
       out << "#include\"MFront/Ansys/AnsysOrthotropicBehaviour.hxx\"\n";
     }
-    if((mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
+    if((mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
        (hasFiniteStrainStrategy(mb))&&
        (getFiniteStrainStrategy(mb)!="Native")){
       out << "#include\"MFront/Ansys/AnsysFiniteStrain.hxx\"\n\n";
@@ -1005,7 +1005,7 @@ namespace mfront{
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,name);
 
     for(const auto h: mh){
-      if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	if(hasFiniteStrainStrategy(mb)){
 	  const auto fs = getFiniteStrainStrategy(mb);
 	  if(fs=="Native"){
@@ -1018,7 +1018,7 @@ namespace mfront{
 	} else {
 	  this->writeUMATSmallStrainFunction(out,mb,name,h);
 	}
-      } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
 	this->writeUMATFiniteStrainFunction(out,mb,name,h);
       } else {
 	throw_if(true,"the ansys interface only supports small "
@@ -1068,7 +1068,7 @@ namespace mfront{
 	return o;
       }();
       const auto smpoffset = std::to_string(mpoffset);
-      if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(btype==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
     	// turning the deformation and the deformation gradient
     	// increment to the material frame
     	if ((h==ModellingHypothesis::PLANESTRESS)||
@@ -1107,7 +1107,7 @@ namespace mfront{
     	dv0 = "e";
     	dv1 = "de";
     	sig = "sm";
-      } else if(btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      } else if(btype==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
     	// turning the deformation gradients to the material frame
     	if ((h==ModellingHypothesis::PLANESTRESS)||
 	    (h==ModellingHypothesis::AXISYMMETRICAL)||
@@ -1150,10 +1150,10 @@ namespace mfront{
     		 "and finite strain behaviours");
       }
     } else {
-      if(btype==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(btype==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	dv0 = "STRAN";
 	dv1 = "DSTRAN";
-      } else if(btype==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      } else if(btype==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
 	dv0 = "F0";
 	dv1 = "F1";
       } else {
@@ -1432,14 +1432,14 @@ namespace mfront{
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourType = " ;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       if((hasFiniteStrainStrategy(mb))&&
 	 (getFiniteStrainStrategy(mb)!="Native")){
 	out << "2u;\n\n";
       } else {
 	out << "1u;\n\n";
       }
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "2u;\n\n";
     } else {
       throw_if(true,"unsupported behaviour type");
@@ -1456,14 +1456,14 @@ namespace mfront{
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getFunctionName(name) 
 	<< "_BehaviourKinematic = " ;
-    if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
       if((hasFiniteStrainStrategy(mb))&&
 	 (getFiniteStrainStrategy(mb)!="Native")){
 	out << "3u;\n\n";
       } else {
 	out << "1u;\n\n";
       }
-    } else if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       out << "3u;\n\n";
     } else {
       throw_if(true,"unsupported behaviour type");
@@ -1580,7 +1580,7 @@ namespace mfront{
      * - the finite strain strategy is either undefined or `Native`
      */
     const auto c = [&mb]{
-      if(mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+      if(mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	if((hasFiniteStrainStrategy(mb))&&
 	   (getFiniteStrainStrategy(mb)!="Native")){
 	  return false;

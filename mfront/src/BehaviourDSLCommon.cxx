@@ -572,8 +572,8 @@ namespace mfront{
 			      "internal error, incompatible options for stiffness tensor");
     }
     // check of stiffness tensor requirement
-    if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-       (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+    if((this->mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+       (this->mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)){
       if((mh.find(ModellingHypothesis::PLANESTRESS)!=mh.end())||
 	 (mh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)!=mh.end())){
 	if(this->mb.hasAttribute(BehaviourDescription::requiresStiffnessTensor)){
@@ -1499,7 +1499,7 @@ namespace mfront{
     using namespace tfel::utilities;
     CodeBlockOptions o;
     this->readCodeBlockOptions(o,true);
-    if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(this->mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       bool found = false;
       if(o.untreated.size()!=1u){
 	ostringstream msg;
@@ -2656,7 +2656,7 @@ namespace mfront{
        << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
        << "#include\"TFEL/Math/st2tost2.hxx\"\n"
        << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
-    if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(this->mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       os << "#include\"TFEL/Math/tensor.hxx\"\n"
 	 << "#include\"TFEL/Math/Tensor/TensorConceptIO.hxx\"\n"
 	 << "#include\"TFEL/Math/t2tot2.hxx\"\n"
@@ -3291,8 +3291,8 @@ namespace mfront{
     };
     enum {VOLUME,LINEAR,ORTHOTROPIC,UNDEFINED} etype = UNDEFINED;
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	     (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+    throw_if((this->mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+	     (this->mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
 	     "the @Swelling keyword is only valid for small or "
 	     "finite strain behaviours");
     this->checkNotEndOfFile("DSLBase::treatSwelling");
@@ -3422,8 +3422,8 @@ namespace mfront{
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("BehaviourDSLCommon::treatAxialGrowth",m);}
     };
-    throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	     (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+    throw_if((this->mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+	     (this->mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
 	     "the @AxialGrowth keyword is only valid for small or "
 	     "finite strain behaviours");
     throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
@@ -3440,8 +3440,8 @@ namespace mfront{
     auto throw_if = [this](const bool b,const std::string& m){
       if(b){this->throwRuntimeError("BehaviourDSLCommon::treatRelocation",m);}
     };
-    throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	     (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+    throw_if((this->mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+	     (this->mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
 	     "the @Relocation keyword is only valid for small or "
 	     "finite strain behaviours");
     if(!this->mb.areModellingHypothesesDefined()){
@@ -3589,7 +3589,7 @@ namespace mfront{
   BehaviourDSLCommon::hasUserDefinedTangentOperatorCode(const Hypothesis h) const
   {
     using tfel::material::getFiniteStrainBehaviourTangentOperatorFlags;
-    if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(this->mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       // all available tangent operators for finite strain behaviours
       const auto tos = getFiniteStrainBehaviourTangentOperatorFlags();
       // search tangent operators defined by the user
@@ -3619,7 +3619,7 @@ namespace mfront{
        << "using namespace std;\n"
        << "using namespace tfel::math;\n";
     writeMaterialLaws(os,this->mb.getMaterialLaws());		      
-    if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+    if((this->mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
        (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
       if(this->mb.useQt()){
 	os << "if(smflag!=MechanicalBehaviour<" << btype 
@@ -3651,7 +3651,7 @@ namespace mfront{
     }
     if(this->hasUserDefinedTangentOperatorCode(h)){
       os << "if(computeTangentOperator_){\n";
-      if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+      if(this->mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
 	os << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
       } else {
 	os << "if(!this->computeConsistentTangentOperator(smt)){\n";
@@ -4233,8 +4233,8 @@ namespace mfront{
       return;
     }
     if(this->mb.areThermalExpansionCoefficientsDefined()){
-      throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-	       (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+      throw_if((this->mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+	       (this->mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
 	       "only finite strain or small strain behaviour are supported");
       if(this->mb.getSymmetryType()==mfront::ORTHOTROPIC){
 	if((this->mb.getOrthotropicAxesConvention()==
@@ -4313,8 +4313,8 @@ namespace mfront{
     }
     for(const auto& d : this->mb.getStressFreeExpansionDescriptions(h)){
       if (d.is<BehaviourData::AxialGrowth>()){
-	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+		 (this->mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
 		 "only finite strain or small strain behaviour are supported");
 	throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
 		 "axial growth is only supported for orthotropic behaviours");
@@ -4350,8 +4350,8 @@ namespace mfront{
 	  throw_if(true,"internal error, unsupported stress free expansion");
 	}
       } else if (d.is<BehaviourData::Relocation>()){
-	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+		 (this->mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
 		 "only finite strain or small strain behaviour are supported");
 	const auto& s = d.get<BehaviourData::Relocation>();
 	throw_if(s.sfe.is<BehaviourData::NullExpansion>(),
@@ -4415,8 +4415,8 @@ namespace mfront{
 	    throw_if(true,"internal error, unsupported stress free expansion");
 	  }
 	};
-	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+		 (this->mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
 		 "only finite strain or small strain behaviour are supported");
 	throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
 		 "orthotropic stress free expansion is only supported "
@@ -4432,8 +4432,8 @@ namespace mfront{
 	const auto& s =
 	  d.get<BehaviourData::OrthotropicStressFreeExpansionII>();
 	const auto& ev = s.esv.vname;
-	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+		 (this->mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
 		 "only finite strain or small strain behaviour are supported");
 	throw_if(this->mb.getSymmetryType()!=mfront::ORTHOTROPIC,
 		 "orthotropic stress free expansion is only supported "
@@ -4445,8 +4445,8 @@ namespace mfront{
 	   << "dl1_l0[1]+=this->" << ev << "[1]+this->d" << ev << "[1];\n"
 	   << "dl1_l0[2]+=this->" << ev << "[2]+this->d" << ev << "[2];\n";
       } else if(d.is<BehaviourData::IsotropicStressFreeExpansion>()){
-	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+		 (this->mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
 		 "only finite strain or small strain behaviour are supported");
 	const auto& s =
 	  d.get<BehaviourData::IsotropicStressFreeExpansion>();
@@ -4477,8 +4477,8 @@ namespace mfront{
 	  throw_if(true,"internal error, unsupported stress free expansion");
 	}
       } else if(d.is<BehaviourData::VolumeSwellingStressFreeExpansion>()){ 
-	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)&&
-		 (this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR),
+	throw_if((this->mb.getBehaviourType()!=BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)&&
+		 (this->mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
 		 "only finite strain or small strain behaviour are supported");
 	const auto& s =
 	  d.get<BehaviourData::VolumeSwellingStressFreeExpansion>();
@@ -4930,10 +4930,10 @@ namespace mfront{
        << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::TANGENTOPERATOR;\n"
        << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::CONSISTENTTANGENTOPERATOR;\n"
        << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::NOSTIFFNESSREQUESTED;\n";
-    if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+    if((this->mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
        (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
       os << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::STANDARDTANGENTOPERATOR;\n";
-    } else if (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if (this->mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       for(const auto & toflag : getFiniteStrainBehaviourTangentOperatorFlags()){
 	os << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::"
 	   << convertFiniteStrainBehaviourTangentOperatorFlagToString(toflag) << ";\n";
@@ -4943,8 +4943,8 @@ namespace mfront{
        << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::SUCCESS;\n"
        << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::FAILURE;\n"
        << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt << ">::UNRELIABLE_RESULTS;\n\n";
-    if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
-       (this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR)){
+    if((this->mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
+       (this->mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)){
       os << "using StressFreeExpansionType = "
 	 << this->mb.getStressFreeExpansionType()  << ";\n\n";
     }
@@ -5406,7 +5406,7 @@ namespace mfront{
 				       const tfel::material::ModellingHypothesis::Hypothesis h)
   {
     using tfel::material::getFiniteStrainBehaviourTangentOperatorFlags;
-    if(mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       // all available tangent operators for finite strain behaviours
       const auto tos = getFiniteStrainBehaviourTangentOperatorFlags();
       // search tangent operators defined by the user
@@ -5444,7 +5444,7 @@ namespace mfront{
 	 << "}\n\n";
       return;
     }
-    if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(this->mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       // all available tangent operators for finite strain behaviours
       const auto tos(getFiniteStrainBehaviourTangentOperatorFlags());
       // all known converters
@@ -5535,7 +5535,7 @@ namespace mfront{
 	 << "using namespace tfel::math;\n"
 	 << "using std::vector;\n";
       writeMaterialLaws(os,this->mb.getMaterialLaws());
-      if((this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR)||
+      if((this->mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR)||
 	 (this->mb.getBehaviourType()==BehaviourDescription::COHESIVEZONEMODEL)){
 	if(mb.useQt()){
 	  os << "if(smflag!=MechanicalBehaviour<" << btype 
@@ -5560,7 +5560,7 @@ namespace mfront{
   {
     using namespace std;
     using namespace tfel::material;
-    if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(this->mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       // all available tangent operators for finite strain behaviours
       const auto tos(getFiniteStrainBehaviourTangentOperatorFlags());
       // all known converters
@@ -5815,7 +5815,7 @@ namespace mfront{
     }
     os << "#include\"TFEL/Math/stensor.hxx\"\n"
        << "#include\"TFEL/Math/st2tost2.hxx\"\n";
-    if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(this->mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       os << "#include\"TFEL/Math/tensor.hxx\"\n"
 	 << "#include\"TFEL/Math/t2tot2.hxx\"\n"
 	 << "#include\"TFEL/Math/t2tost2.hxx\"\n"
@@ -6635,7 +6635,7 @@ namespace mfront{
     using namespace tfel::utilities;
     CodeBlockOptions o;
     this->readCodeBlockOptions(o,true);
-    if(this->mb.getBehaviourType()==BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(this->mb.getBehaviourType()==BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       bool found = false;
       if(o.untreated.size()!=1u){
 	ostringstream msg;
@@ -6845,7 +6845,7 @@ namespace mfront{
     
   void BehaviourDSLCommon::setMinimalTangentOperator()
   {
-    if(this->mb.getBehaviourType()!=BehaviourDescription::FINITESTRAINSTANDARDBEHAVIOUR){
+    if(this->mb.getBehaviourType()!=BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR){
       for(const auto & h : this->mb.getDistinctModellingHypotheses()){
 	// basic check
 	if(this->mb.hasAttribute(h,BehaviourData::hasConsistentTangentOperator)){
@@ -6857,7 +6857,7 @@ namespace mfront{
 	}
       }
       if(this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,false)){
-	if(this->mb.getBehaviourType()==BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR){
+	if(this->mb.getBehaviourType()==BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR){
 	  const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
 	  // if the user provided a tangent operator, it won't be
 	  // overriden

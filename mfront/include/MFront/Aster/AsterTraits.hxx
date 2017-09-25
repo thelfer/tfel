@@ -18,8 +18,8 @@
 namespace aster{
 
   enum AsterBehaviourType{
-    SMALLSTRAINSTANDARDBEHAVIOUR,
-    FINITESTRAINSTANDARDBEHAVIOUR,
+    STANDARDSTRAINBASEDBEHAVIOUR,
+    STANDARDFINITESTRAINBEHAVIOUR,
     COHESIVEZONEMODEL
   }; // end of enum ASTERBehaviourType
 
@@ -53,7 +53,7 @@ namespace aster{
    */
   template<typename Behaviour>
   struct AsterTraits{
-    static constexpr AsterBehaviourType btype = aster::SMALLSTRAINSTANDARDBEHAVIOUR;
+    static constexpr AsterBehaviourType btype = aster::STANDARDSTRAINBASEDBEHAVIOUR;
     // size of the driving variable array (STRAN)
     static constexpr unsigned short DrivingVariableSize = 0u;
     // size of the thermodynamic force variable array (STESS)

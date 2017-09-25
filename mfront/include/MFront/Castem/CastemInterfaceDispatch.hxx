@@ -73,7 +73,7 @@ namespace castem{
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
-  struct CastemInterfaceDispatch<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour>
+  struct CastemInterfaceDispatch<STANDARDSTRAINBASEDBEHAVIOUR,H,Behaviour>
     : public CastemInterfaceExceptions
   {
     TFEL_CASTEM_INLINE2 static
@@ -96,9 +96,9 @@ namespace castem{
       //! a simple alias
       typedef CastemTraits<BV> Traits;
       typedef typename std::conditional<Traits::stype==castem::ISOTROPIC,
-			  CastemIsotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
+			  CastemIsotropicBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,
 							H,Behaviour>,
-			  CastemOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
+			  CastemOrthotropicBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,
 							  H,Behaviour> >::type Handler;
       CastemInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,
@@ -115,7 +115,7 @@ namespace castem{
    */
   template<template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
-  struct CastemInterfaceDispatch<SMALLSTRAINSTANDARDBEHAVIOUR,
+  struct CastemInterfaceDispatch<STANDARDSTRAINBASEDBEHAVIOUR,
 				 tfel::material::ModellingHypothesis::PLANESTRESS,
 				 Behaviour>
     : public CastemInterfaceExceptions
@@ -146,9 +146,9 @@ namespace castem{
 	std::conditional<usesGenericPlaneStressHandler,
 			 CastemGenericPlaneStressHandler<Behaviour>,
 			 typename std::conditional<Traits::stype==castem::ISOTROPIC,
-						   CastemIsotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
+						   CastemIsotropicBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,
 										   MH::PLANESTRESS,Behaviour>,
-						   CastemOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
+						   CastemOrthotropicBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,
 										     MH::PLANESTRESS,Behaviour> >::type>::type;
       CastemInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,
@@ -166,7 +166,7 @@ namespace castem{
   template<tfel::material::ModellingHypothesis::Hypothesis H,
 	   template<tfel::material::ModellingHypothesis::Hypothesis,
 		    typename,bool> class Behaviour>
-  struct CastemInterfaceDispatch<FINITESTRAINSTANDARDBEHAVIOUR,H,Behaviour>
+  struct CastemInterfaceDispatch<STANDARDFINITESTRAINBEHAVIOUR,H,Behaviour>
     : public CastemInterfaceExceptions
   {
     TFEL_CASTEM_INLINE2 static
@@ -189,9 +189,9 @@ namespace castem{
       //! a simple alias
       typedef CastemTraits<BV> Traits;
       typedef typename std::conditional<Traits::stype==castem::ISOTROPIC,
-			  CastemIsotropicBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,
+			  CastemIsotropicBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,
 							H,Behaviour>,
-			  CastemOrthotropicBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,
+			  CastemOrthotropicBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,
 							  H,Behaviour> >::type Handler;
       CastemInterfaceExceptions::checkNTENSValue(*NTENS,Traits::ThermodynamicForceVariableSize);
       Handler::exe(DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,

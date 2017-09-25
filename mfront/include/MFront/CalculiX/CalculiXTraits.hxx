@@ -18,8 +18,8 @@
 namespace calculix{
 
   enum CalculiXBehaviourType{
-    SMALLSTRAINSTANDARDBEHAVIOUR,
-    FINITESTRAINSTANDARDBEHAVIOUR
+    STANDARDSTRAINBASEDBEHAVIOUR,
+    STANDARDFINITESTRAINBEHAVIOUR
   }; // end of enum CALCULIXBehaviourType
 
   enum CalculiXSymmetryType{
@@ -29,7 +29,7 @@ namespace calculix{
 
   template<typename Behaviour>
   struct CalculiXTraits{
-    static constexpr CalculiXBehaviourType btype = calculix::SMALLSTRAINSTANDARDBEHAVIOUR;
+    static constexpr CalculiXBehaviourType btype = calculix::STANDARDSTRAINBASEDBEHAVIOUR;
     // size of the driving variable array (STRAN)
     static constexpr unsigned short DrivingVariableSize = 0u;
     // size of the thermodynamic force variable array (STESS)

@@ -73,7 +73,7 @@ namespace mtest
     std::fill(k.begin(),k.end(),real(0));
     std::fill(r.begin(),r.end(),real(0));
     if(b.getBehaviourType()==
-       MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+       MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR){
       for(size_type i=0;i!=3u;++i){
 	r(i) += s(i);
 	for(size_type j=0;j!=ndv;++j){
@@ -240,10 +240,10 @@ namespace mtest
     // additional constraints
     // must be set *before* `SingleStructureScheme::completeInitialisation`
     if(this->hypothesis==ModellingHypothesis::PLANESTRAIN){
-      if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
+      if((this->b->getBehaviourType()==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)||
+	 (this->b->getBehaviourType()==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)){
 	shared_ptr<Evolution>  eev;
-	if(this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+	if(this->b->getBehaviourType()==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR){
 	  eev = make_evolution(1.);
 	} else {
 	  eev = make_evolution(0.);
@@ -258,10 +258,10 @@ namespace mtest
     }
     if(this->hypothesis==ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS){
       // shall be in the behaviour
-      if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
+      if((this->b->getBehaviourType()==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)||
+	 (this->b->getBehaviourType()==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)){
 	shared_ptr<Evolution>  eev;
-	if(this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+	if(this->b->getBehaviourType()==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR){
 	  eev = make_evolution(1.);
 	} else {
 	  eev = make_evolution(0.);
@@ -285,10 +285,10 @@ namespace mtest
     }
     if(this->hypothesis==ModellingHypothesis::PLANESTRESS){
       // shall be in the behaviour
-      if((this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR)||
-	 (this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR)){
+      if((this->b->getBehaviourType()==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR)||
+	 (this->b->getBehaviourType()==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)){
 	shared_ptr<Evolution>  eev;
-	if(this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+	if(this->b->getBehaviourType()==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR){
 	  eev = make_evolution(1.);
 	} else {
 	  eev = make_evolution(0.);
@@ -310,10 +310,10 @@ namespace mtest
     const char* dvn;
     const char* thn;
     this->out << "# first column : time" << endl;
-    if(this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(this->b->getBehaviourType()==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR){
       dvn = "strain";
       thn = "stress";
-    } else if(this->b->getBehaviourType()==MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+    } else if(this->b->getBehaviourType()==MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR){
       dvn = "deformation gradient";
       thn = "Cauchy stress";
     } else if(this->b->getBehaviourType()==MechanicalBehaviourBase::COHESIVEZONEMODEL){
@@ -589,7 +589,7 @@ namespace mtest
     const auto ndv = this->b->getDrivingVariablesSize();
     const auto nth = this->b->getThermodynamicForcesSize();
     // free dilatation treatment
-    if(this->b->getBehaviourType()==MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    if(this->b->getBehaviourType()==MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR){
       for(size_type i=0;i!=nth;++i){
   	for(size_type j=0;j!=ndv;++j){
   	  r(i) -= k(i,j)*(s.e_th1[j]-s.e_th0[j]);
