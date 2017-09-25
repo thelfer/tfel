@@ -1,7 +1,7 @@
 # This files gather compiler flags that are common to g++, clang and
 # pathCC
 
-tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wall" "W" "Wextra" "pedantic" "Wshadow")
+tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wall" "W" "Wshadow")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wpointer-arith" "Wcast-qual" "Wcast-align")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wwrite-strings" "Wctor-dtor-privacy" "Wnon-virtual-dtor")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Woverloaded-virtual" "Wreturn-type" "Wfloat-equal")
@@ -42,6 +42,8 @@ tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wint-in-bool-context")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wsuggest-override")
 
 if(enable-developer-warnings)
+  tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wextra")
+  tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "pedantic")
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wsign-compare")
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wswitch")
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wmissing-declarations")
@@ -54,9 +56,11 @@ if(enable-developer-warnings)
     tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wlong-long")
   endif(NOT (WIN32 AND ( CMAKE_SIZEOF_VOID_P EQUAL 8 )))
 else(enable-developer-warnings)
+  tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-switch-enum")
+  tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-covered-switch-default")
+  tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-covered-switch-default")
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-sign-compare")
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-missing-declarations")
-  tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-missing-prototypes")
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-weak-vtables")
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-unused-macros")
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS
