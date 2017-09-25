@@ -81,7 +81,6 @@ Temp.setEntryName("Adiabatic_heating_dT");
   // Update temperature and related factors
   Tn  = T0 + Temp;
   itm = 1./Tm;
-  real rT_ = Tn*itm;
   const stress rEE0 = (1.-Tn*itm*exp(thetas*(1.-Tm/Tn)));
   lambda = computeLambda(young*rEE0,nu);
   mu     = computeMu(young*rEE0,nu);

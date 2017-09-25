@@ -59,7 +59,7 @@ private:
     enum MaterialKnowledgeType{
       MATERIALPROPERTY,
       BEHAVIOUR,
-      MODEL,
+      MODEL
     }; // end of MaterialKnowledgeType
     std::string library;
     std::string name;

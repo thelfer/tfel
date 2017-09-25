@@ -644,9 +644,9 @@ namespace tfel{
     SlipSystemsDescription::InteractionMatrixStructure::getRank(const system& g1,
 								const system& g2) const
     {
-      auto throw_if = [](const bool b, const std::string& m){
+      auto throw_if = [](const bool b, const std::string& msg){
 	raise_if(b,"SlipSystemsDescription::InteractionMatrixStructure"
-		 "::getRank: "+m);
+		 "::getRank: "+msg);
       };
       auto equal = [throw_if](const system& ss1,
 			      const system& ss2){
